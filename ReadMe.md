@@ -139,9 +139,10 @@ See <a href="/_scenario_p_b_a_file.html">here</a> for more info.
 To run the driver, change directory in your cmd/bash shell to the build/install/bin directory and execute the following :
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
 # First ensure the release directory (or debug if that is what you are running) is on your path, so we can see the executable
+# Note release will contain 64bit binaries, if you build 32bit, there will be a release32 folder
 PATH=%PATH%;./release # for windows
 PATH=$PATH:./release # for linux
-ScenarioDriver BasicStandard.xml 
+PulseScenarioDriver verification/scenarios/patient/BasicStandard.pba 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 <b> .csv and .log files will be placed in the bin directory </b>
 
@@ -176,7 +177,7 @@ run [option]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Where [option] can be one of the following :
-- genData - Generate xml files from data in the ../data/Data.xlxs file (Patients, Substances, etc.)
+- genData - Generate pba files from data in the ../data/Data.xlxs file (Patients, Substances, etc.)
 - genStates - Generate state file for every patient at the point where the patient completed stabilization (Simulation time 0s)
 - Any of the testing configurations found in ../test/config without the suffix
   - For Example : DebugRun, CDMUnitTests, ValidationSystems, VerificationScenarios, etc.
@@ -225,4 +226,6 @@ You can edit the EngineHowTo.cpp to run a particular example, and even code in t
 
 
 There is also an example of using a Java based interface with an eclipse project you can explore as well.
+
+See the wiki for more examples using the SDK and building your own application with Pulse.
 
