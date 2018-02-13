@@ -4,6 +4,7 @@
 #pragma once
 #include "scenario/SEAction.h"
 CDM_BIND_DECL(PatientActionData)
+CDM_BIND_DECL(AnyPatientActionData)
 
 class CDM_DECL SEPatientAction : public SEAction
 {

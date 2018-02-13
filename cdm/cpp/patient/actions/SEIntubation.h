@@ -4,6 +4,9 @@
 #pragma once
 #include "patient/actions/SEPatientAction.h"
 CDM_BIND_DECL(IntubationData)
+PROTO_PUSH
+#include "bind/cdm/PatientActionEnums.pb.h"
+PROTO_POP
 
 class CDM_DECL SEIntubation : public SEPatientAction
 {
@@ -25,10 +28,10 @@ protected:
 
 public:
     
-  virtual cdm::IntubationData_eType GetType() const;
-  virtual void SetType(cdm::IntubationData_eType t);
+  virtual cdm::eIntubation_Type GetType() const;
+  virtual void SetType(cdm::eIntubation_Type t);
 
   virtual void ToString(std::ostream &str) const;
 protected:
-  cdm::IntubationData_eType m_Type;
+  cdm::eIntubation_Type m_Type;
 };  

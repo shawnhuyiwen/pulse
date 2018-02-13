@@ -2,9 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-
 CDM_BIND_DECL(AutoSerializationData)
-#include "properties/SEScalarTime.h"
 
 class CDM_DECL SEAutoSerialization : public Loggable
 {

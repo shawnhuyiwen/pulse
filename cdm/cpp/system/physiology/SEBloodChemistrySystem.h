@@ -3,7 +3,7 @@
 
 #pragma once
 #include "system/SESystem.h"
-namespace cdm { class BloodChemistrySystemData; }
+CDM_BIND_DECL(BloodChemistrySystemData)
 
 /** @copydoc Physiology_BloodChemistrySystemData
   @nosubgrouping */

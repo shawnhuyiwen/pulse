@@ -3,7 +3,7 @@
 
 #pragma once
 #include "properties/SEScalar.h"
-namespace cdm { class ScalarAmountPerTimeData; }
+CDM_BIND_DECL(ScalarAmountPerTimeData)
 
 class CDM_DECL AmountPerTimeUnit : public CCompoundUnit
 {

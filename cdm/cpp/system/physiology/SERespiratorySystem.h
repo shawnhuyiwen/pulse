@@ -3,7 +3,7 @@
 
 #pragma once
 #include "system/SESystem.h"
-namespace cdm { class RespiratorySystemData; }
+CDM_BIND_DECL(RespiratorySystemData)
 
 
 class CDM_DECL SERespiratorySystem : public SESystem

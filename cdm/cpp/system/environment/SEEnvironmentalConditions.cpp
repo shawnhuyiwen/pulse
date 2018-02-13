@@ -3,6 +3,10 @@
 
 #include "stdafx.h"
 #include "system/environment/SEEnvironmentalConditions.h"
+#include "substance/SESubstance.h"
+#include "substance/SESubstanceManager.h"
+#include "substance/SESubstanceFraction.h"
+#include "substance/SESubstanceConcentration.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarHeatConductancePerArea.h"
 #include "properties/SEScalarHeatResistanceArea.h"
@@ -13,11 +17,14 @@
 #include "properties/SEScalarTemperature.h"
 
 #include <google/protobuf/text_format.h>
+PROTO_PUSH
+#include "bind/cdm/EnvironmentConditions.pb.h"
+PROTO_POP
 
 
 SEEnvironmentalConditions::SEEnvironmentalConditions(SESubstanceManager& substances) : Loggable(substances.GetLogger()), m_Substances(substances)
 {
-  m_SurroundingType = cdm::EnvironmentData_eSurroundingType_NullSurrounding;
+  m_SurroundingType = cdm::eEnvironment_SurroundingType_NullSurrounding;
 
   m_AirDensity=nullptr;
   m_AirVelocity = nullptr;
@@ -37,7 +44,7 @@ SEEnvironmentalConditions::~SEEnvironmentalConditions()
 
 void SEEnvironmentalConditions::Clear()
 {
-  m_SurroundingType = cdm::EnvironmentData_eSurroundingType_NullSurrounding;
+  m_SurroundingType = cdm::eEnvironment_SurroundingType_NullSurrounding;
   SAFE_DELETE(m_AirDensity);
   SAFE_DELETE(m_AirVelocity);
   SAFE_DELETE(m_AmbientTemperature);
@@ -116,7 +123,7 @@ void SEEnvironmentalConditions::Serialize(const cdm::EnvironmentData_ConditionsD
       dst.Error("Ignoring an environmental conditions ambient gas that was not found : " + sfData.name());
       continue;
     }
-    if (sub->GetState() != cdm::SubstanceData_eState_Gas)
+    if (sub->GetState() != cdm::eSubstance_State_Gas)
     {
       dst.Error("Ignoring an environmental conditions ambient gas that is not a gas : " + sfData.name());
       continue;
@@ -133,7 +140,7 @@ void SEEnvironmentalConditions::Serialize(const cdm::EnvironmentData_ConditionsD
       dst.Error("Ignoring an environmental conditions ambient aerosol that was not found : " + scData.name());
       continue;
     }
-    if (sub->GetState() != cdm::SubstanceData_eState_Liquid && sub->GetState() != cdm::SubstanceData_eState_Solid)
+    if (sub->GetState() != cdm::eSubstance_State_Liquid && sub->GetState() != cdm::eSubstance_State_Solid)
     {
       dst.Error("Ignoring an environmental conditions ambient aerosol that is not a gas : " + scData.name());
       continue;
@@ -180,7 +187,7 @@ void SEEnvironmentalConditions::Serialize(const SEEnvironmentalConditions& src, 
 
 void SEEnvironmentalConditions::Merge(const SEEnvironmentalConditions& from)
 {
-  if(from.m_SurroundingType != cdm::EnvironmentData_eSurroundingType_NullSurrounding)
+  if(from.m_SurroundingType != cdm::eEnvironment_SurroundingType_NullSurrounding)
     SetSurroundingType(from.m_SurroundingType);
   COPY_PROPERTY(AirDensity);
   COPY_PROPERTY(AirVelocity);
@@ -252,11 +259,11 @@ bool SEEnvironmentalConditions::LoadFile(const std::string& filename)
   //src.ParseFromIstream(&binary_istream);
 }
 
-cdm::EnvironmentData_eSurroundingType SEEnvironmentalConditions::GetSurroundingType() const
+cdm::eEnvironment_SurroundingType SEEnvironmentalConditions::GetSurroundingType() const
 {
   return m_SurroundingType;
 }
-void SEEnvironmentalConditions::SetSurroundingType(cdm::EnvironmentData_eSurroundingType state)
+void SEEnvironmentalConditions::SetSurroundingType(cdm::eEnvironment_SurroundingType state)
 {
   m_SurroundingType = state;
 }

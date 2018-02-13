@@ -19,6 +19,6 @@ message AdvanceTimeData
 message SerializeStateData
 {
   ActionData            Action   = 1;
-  eAction.Serialization Type     = 2;
+  eSerialization.Type   Type     = 2;
   string                Filename = 3;
 }

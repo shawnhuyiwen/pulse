@@ -5,7 +5,7 @@
 class SETestCase;
 class SETestSuite;
 class SETestErrorStatistics;
-namespace cdm { class TestReportData; }
+CDM_BIND_DECL(TestReportData)
 
 class CDM_DECL SETestReport : public Loggable
 {

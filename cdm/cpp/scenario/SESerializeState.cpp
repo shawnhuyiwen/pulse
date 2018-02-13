@@ -3,11 +3,14 @@
 
 #include "stdafx.h"
 #include "scenario/SESerializeState.h"
+PROTO_PUSH
+#include "bind/cdm/Actions.pb.h"
+PROTO_POP
 
 SESerializeState::SESerializeState() : SEAction()
 {
   m_Filename="";
-  m_Type = cdm::SerializeStateData_eSerializationType_Save;
+  m_Type = cdm::eSerialization_Type_Save;
 }
 
 SESerializeState::~SESerializeState()
@@ -19,7 +22,7 @@ void SESerializeState::Clear()
 {
   SEAction::Clear();
   m_Filename = "";
-  m_Type = cdm::SerializeStateData_eSerializationType_Save;
+  m_Type = cdm::eSerialization_Type_Save;
 }
 
 bool SESerializeState::IsValid() const
@@ -56,15 +59,15 @@ void SESerializeState::ToString(std::ostream &str) const
 {  
   if(HasComment())
     str<<"\n\tComment : "<<m_Comment;
-  str << "\n\tType : " << cdm::SerializeStateData_eSerializationType_Name(m_Type);
+  str << "\n\tType : " << cdm::eSerialization_Type_Name(m_Type);
   str << "\n\tFilename : " << m_Filename;
 }
 
-cdm::SerializeStateData_eSerializationType SESerializeState::GetType() const
+cdm::eSerialization_Type SESerializeState::GetType() const
 {
   return m_Type;
 }
-void SESerializeState::SetType(cdm::SerializeStateData_eSerializationType Type)
+void SESerializeState::SetType(cdm::eSerialization_Type Type)
 {
   m_Type = Type;
 }

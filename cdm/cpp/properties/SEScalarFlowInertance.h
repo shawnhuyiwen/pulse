@@ -3,7 +3,7 @@
 
 #pragma once
 #include "properties/SEScalar.h"
-namespace cdm { class ScalarFlowInertanceData; }
+CDM_BIND_DECL(ScalarFlowInertanceData)
 
 class CDM_DECL FlowInertanceUnit : public CCompoundUnit
 {

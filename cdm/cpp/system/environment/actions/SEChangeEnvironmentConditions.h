@@ -1,8 +1,10 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 #pragma once
-#include "system/environment/SEEnvironmentalConditions.h"
 #include "system/environment/actions/SEEnvironmentAction.h"
+class SESubstanceManager;
+class SEEnvironmentalConditions;
+CDM_BIND_DECL(ChangeEnvironmentConditionsData)
 
 class CDM_DECL SEChangeEnvironmentConditions : public SEEnvironmentAction
 {

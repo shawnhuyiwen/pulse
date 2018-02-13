@@ -3,9 +3,7 @@
 
 #pragma once
 class SESubstanceClearanceAnatomyEffect;
-PROTO_PUSH
-#include "bind/cdm/Substance.pb.h"
-PROTO_POP
+CDM_BIND_DECL(SubstanceData_ClearanceData)
 
 enum class RenalDynamic{ NullDynamic, Clearance, Regulation };
 class CDM_DECL SESubstanceClearance : public Loggable

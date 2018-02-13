@@ -6,6 +6,10 @@
 #include "substance/SESubstanceManager.h"
 #include "patient/conditions/SEPatientCondition.h"
 #include "system/environment/conditions/SEEnvironmentCondition.h"
+PROTO_PUSH
+#include "bind/cdm/Conditions.pb.h"
+#include "bind/cdm/Scenario.pb.h"
+PROTO_POP
 
 SECondition::SECondition() : Loggable()
 {

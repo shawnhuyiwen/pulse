@@ -3,6 +3,9 @@
 #include "stdafx.h"
 #include "system/equipment/anesthesiamachine/actions/SEVaporizerFailure.h"
 #include "properties/SEScalar0To1.h"
+PROTO_PUSH
+#include "bind/cdm/AnesthesiaMachineActions.pb.h"
+PROTO_POP
 
 SEVaporizerFailure::SEVaporizerFailure() : SEAnesthesiaMachineAction()
 {

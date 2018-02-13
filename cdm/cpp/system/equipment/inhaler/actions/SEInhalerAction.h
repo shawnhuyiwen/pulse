@@ -2,8 +2,9 @@
    See accompanying NOTICE file for details.*/
 #pragma once
 #include "scenario/SEAction.h"
-#include "bind/cdm/InhalerActions.pb.h"
-#include "substance/SESubstanceManager.h"
+class SESubstanceManager;
+CDM_BIND_DECL(InhalerActionData)
+CDM_BIND_DECL(AnyInhalerActionData)
 
 class CDM_DECL SEInhalerAction : public SEAction
 {

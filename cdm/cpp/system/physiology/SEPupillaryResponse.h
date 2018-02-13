@@ -3,7 +3,7 @@
 
 #pragma once
 #include "system/SESystem.h"
-namespace cdm { class PupillaryResponseData; }
+CDM_BIND_DECL(PupillaryResponseData)
 
 class CDM_DECL SEPupillaryResponse
 {

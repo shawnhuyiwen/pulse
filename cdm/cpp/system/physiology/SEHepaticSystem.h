@@ -3,7 +3,7 @@
 
 #pragma once
 #include "system/SESystem.h"
-namespace cdm { class HepaticSystemData; }
+CDM_BIND_DECL(HepaticSystemData)
 
 class CDM_DECL SEHepaticSystem : public SESystem
 {

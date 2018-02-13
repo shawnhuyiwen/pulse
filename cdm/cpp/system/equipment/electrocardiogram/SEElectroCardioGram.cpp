@@ -3,8 +3,10 @@
 
 #include "stdafx.h"
 #include "system/equipment/electrocardiogram/SEElectroCardioGram.h"
-#include "substance/SESubstanceManager.h"
 #include "properties/SEScalarElectricPotential.h"
+PROTO_PUSH
+#include "bind/cdm/ElectroCardioGram.pb.h"
+PROTO_POP
 
 SEElectroCardioGram::SEElectroCardioGram(Logger* logger) : SESystem(logger)
 {

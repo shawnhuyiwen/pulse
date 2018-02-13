@@ -2,8 +2,10 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "system/equipment/electrocardiogram/SEElectroCardioGramWaveform.h"
-
+CDM_BIND_DECL(ElectroCardioGramWaveformListData)
+PROTO_PUSH
+#include "bind/cdm/ElectroCardioGramEnums.pb.h"
+PROTO_POP
 
 class CDM_DECL SEElectroCardioGramWaveformInterpolator : public Loggable
 {
@@ -29,19 +31,19 @@ public:
 
   // These are where the interpolator will put the interpolated electric potential data for each lead when you call CalculateWaveformsElectricPotential
   // You must have a waveform for the lead of the current rhythm for these scalars to be populated
-  virtual bool CanInterpolateLeadPotential(cdm::ElectroCardioGramWaveformData_eLead lead, cdm::eHeartRhythm rhythm) const;
-  virtual void SetLeadElectricPotential(cdm::ElectroCardioGramWaveformData_eLead lead, SEScalarElectricPotential& ep);
+  virtual bool CanInterpolateLeadPotential(cdm::eElectroCardioGram_WaveformLead lead, cdm::eHeartRhythm rhythm) const;
+  virtual void SetLeadElectricPotential(cdm::eElectroCardioGram_WaveformLead lead, SEScalarElectricPotential& ep);
 
 
-  virtual bool HasWaveform(cdm::ElectroCardioGramWaveformData_eLead lead, cdm::eHeartRhythm rhythm) const;
-  virtual SEElectroCardioGramWaveform& GetWaveform(cdm::ElectroCardioGramWaveformData_eLead lead, cdm::eHeartRhythm rhythm);
-  virtual const SEElectroCardioGramWaveform* GetWaveform(cdm::ElectroCardioGramWaveformData_eLead lead, cdm::eHeartRhythm rhythm) const;
-  virtual void RemoveWaveform(cdm::ElectroCardioGramWaveformData_eLead lead, cdm::eHeartRhythm rhythm);
+  virtual bool HasWaveform(cdm::eElectroCardioGram_WaveformLead lead, cdm::eHeartRhythm rhythm) const;
+  virtual SEElectroCardioGramWaveform& GetWaveform(cdm::eElectroCardioGram_WaveformLead lead, cdm::eHeartRhythm rhythm);
+  virtual const SEElectroCardioGramWaveform* GetWaveform(cdm::eElectroCardioGram_WaveformLead lead, cdm::eHeartRhythm rhythm) const;
+  virtual void RemoveWaveform(cdm::eElectroCardioGram_WaveformLead lead, cdm::eHeartRhythm rhythm);
 
 protected:
 
   virtual void Interpolate(SEElectroCardioGramWaveform& waveform, const SEScalarTime& timeStep);
   
-  std::map<cdm::ElectroCardioGramWaveformData_eLead, SEScalarElectricPotential*> m_Leads;
-  std::map<cdm::ElectroCardioGramWaveformData_eLead, std::map<cdm::eHeartRhythm, SEElectroCardioGramWaveform*>> m_Waveforms;
+  std::map<cdm::eElectroCardioGram_WaveformLead, SEScalarElectricPotential*> m_Leads;
+  std::map<cdm::eElectroCardioGram_WaveformLead, std::map<cdm::eHeartRhythm, SEElectroCardioGramWaveform*>> m_Waveforms;
 };

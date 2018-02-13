@@ -2,22 +2,21 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-PROTO_PUSH
-#include "bind/cdm/Scenario.pb.h"
-PROTO_POP
-#include "substance/SESubstanceManager.h"
+class SECondition;
 //Patient Conditions
-#include "patient/conditions/SEChronicAnemia.h"
-#include "patient/conditions/SEChronicObstructivePulmonaryDisease.h"
-#include "patient/conditions/SEChronicHeartFailure.h"
-#include "patient/conditions/SEChronicRenalStenosis.h"
-#include "patient/conditions/SEChronicVentricularSystolicDysfunction.h"
-#include "patient/conditions/SEConsumeMeal.h"
-#include "patient/conditions/SELobarPneumonia.h"
-#include "patient/conditions/SEChronicPericardialEffusion.h"
-#include "patient/conditions/SEImpairedAlveolarExchange.h"
+class SEChronicAnemia;
+class SEChronicObstructivePulmonaryDisease;
+class SEChronicHeartFailure;
+class SEChronicRenalStenosis;
+class SEChronicVentricularSystolicDysfunction;
+class SEConsumeMeal;
+class SELobarPneumonia;
+class SEChronicPericardialEffusion;
+class SEImpairedAlveolarExchange;
 // Environment Conditions
-#include "system/environment/conditions/SEInitialEnvironmentConditions.h"
+class SEInitialEnvironmentConditions;
+class SESubstanceManager;
+CDM_BIND_DECL(ConditionListData)
 
 class CDM_DECL SEConditionManager : public Loggable
 {

@@ -3,7 +3,7 @@
 
 #pragma once
 #include "properties/SEScalar.h"
-namespace cdm { class ScalarElectricResistanceData; }
+CDM_BIND_DECL(ScalarElectricResistanceData)
 
 class CDM_DECL ElectricResistanceUnit : public CCompoundUnit
 {

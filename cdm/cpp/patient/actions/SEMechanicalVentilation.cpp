@@ -3,17 +3,15 @@
 
 #include "stdafx.h"
 #include "patient/actions/SEMechanicalVentilation.h"
-
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarVolumePerTime.h"
-#include "properties/SEScalar0To1.h"
-
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceFraction.h"
 #include "substance/SESubstanceManager.h"
 PROTO_PUSH
 #include "bind/cdm/PatientActions.pb.h"
 PROTO_POP
+#include "properties/SEScalarPressure.h"
+#include "properties/SEScalarVolumePerTime.h"
+#include "properties/SEScalar0To1.h"
 
 SEMechanicalVentilation::SEMechanicalVentilation() : SEPatientAction()
 {
@@ -98,7 +96,7 @@ void SEMechanicalVentilation::Serialize(const cdm::MechanicalVentilationData& sr
       dst.Error("MechanicalVentilation substance not found : " + sfData.name());
       continue;
     }
-    if (sub->GetState() != cdm::SubstanceData_eState_Gas)
+    if (sub->GetState() != cdm::eSubstance_State_Gas)
     {
       dst.Error("MechanicalVentilation substance not gas : " + sfData.name());
       continue;

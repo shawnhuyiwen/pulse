@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "substance/SESubstanceTransport.h"
-
 #include "Eigen/Core"
 #include "properties/SEScalarVolume.h"
 

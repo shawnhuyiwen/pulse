@@ -7,6 +7,9 @@
 #include "system/equipment/anesthesiamachine/SEAnesthesiaMachineOxygenBottle.h"
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceManager.h"
+PROTO_PUSH
+#include "bind/cdm/AnesthesiaMachineActions.pb.h"
+PROTO_POP
 
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarFrequency.h"
@@ -110,13 +113,13 @@ void SEAnesthesiaMachineConfiguration::ToString(std::ostream &str) const
     str << "\n\tConfiguration File: "; str << m_ConfigurationFile;
   if (HasConfiguration())
   {
-    str << "\n\tConnection: " << cdm::AnesthesiaMachineData_eConnection_Name(m_Configuration->GetConnection());
+    str << "\n\tConnection: " << cdm::eAnesthesiaMachine_Connection_Name(m_Configuration->GetConnection());
     str << "\n\tInlet Flow Rate: "; m_Configuration->HasInletFlow() ? str << m_Configuration->GetInletFlow() : str << "NaN";
     str << "\n\tInspiratoryExpiratory Ratio: "; m_Configuration->HasInspiratoryExpiratoryRatio() ? str << m_Configuration->GetInspiratoryExpiratoryRatio() : str << "NaN";
     str << "\n\tOxygen Fraction: "; m_Configuration->HasOxygenFraction() ? str << m_Configuration->GetOxygenFraction() : str << "NaN";
-    str << "\n\tOxygen Source: " << cdm::AnesthesiaMachineData_eOxygenSource_Name(m_Configuration->GetOxygenSource());
+    str << "\n\tOxygen Source: " << cdm::eAnesthesiaMachine_OxygenSource_Name(m_Configuration->GetOxygenSource());
     str << "\n\tPositive End Expired Pressure: "; m_Configuration->HasPositiveEndExpiredPressure() ? str << m_Configuration->GetPositiveEndExpiredPressure() : str << "NaN";
-    str << "\n\tPrimary Gas: " << cdm::AnesthesiaMachineData_ePrimaryGas_Name(m_Configuration->GetPrimaryGas());
+    str << "\n\tPrimary Gas: " << cdm::eAnesthesiaMachine_PrimaryGas_Name(m_Configuration->GetPrimaryGas());
     str << "\n\tRelief Valve Pressure: "; m_Configuration->HasReliefValvePressure() ? str << m_Configuration->GetReliefValvePressure() : str << "NaN";
     str << "\n\tRespiratory Rate: "; m_Configuration->HasRespiratoryRate() ? str << m_Configuration->GetRespiratoryRate() : str << "NaN";
     str << "\n\tVentilator Pressure: "; m_Configuration->HasVentilatorPressure() ? str << m_Configuration->GetVentilatorPressure() : str << "NaN";

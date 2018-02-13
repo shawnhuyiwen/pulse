@@ -25,7 +25,6 @@ void SEMeal::Clear()
   SAFE_DELETE(m_ElapsedTime);
 }
 
-
 void SEMeal::Load(const cdm::MealData& src, SEMeal& dst)
 {
   SEMeal::Serialize(src, dst);

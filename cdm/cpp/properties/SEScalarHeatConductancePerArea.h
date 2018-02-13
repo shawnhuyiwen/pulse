@@ -3,7 +3,7 @@
 
 #pragma once
 #include "properties/SEScalar.h"
-namespace cdm { class ScalarHeatConductancePerAreaData; }
+CDM_BIND_DECL(ScalarHeatConductancePerAreaData)
 
 class CDM_DECL HeatConductancePerAreaUnit : public CCompoundUnit
 {

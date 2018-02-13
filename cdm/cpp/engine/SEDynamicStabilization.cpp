@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "engine/SEDynamicStabilization.h"
 #include "engine/SEDynamicStabilizationLedger.h"
+#include "engine/SEDynamicStabilizationEngineConvergence.h"
 #include "PhysiologyEngine.h"
 #include "scenario/SECondition.h"
 #include "utils/TimingProfile.h"

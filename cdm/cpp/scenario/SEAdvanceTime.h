@@ -3,6 +3,7 @@
 
 #pragma once
 #include "scenario/SEAction.h"
+CDM_BIND_DECL(AdvanceTimeData)
 
 class CDM_DECL SEAdvanceTime : public SEAction
 {

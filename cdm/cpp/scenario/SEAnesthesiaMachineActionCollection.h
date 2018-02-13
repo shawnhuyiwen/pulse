@@ -3,21 +3,24 @@
 
 #pragma once
 
-#include "substance/SESubstanceManager.h"
-#include "system/equipment/anesthesiamachine/SEAnesthesiaMachine.h"
-#include "system/equipment/anesthesiamachine/actions/SEOxygenTankPressureLoss.h"
-#include "system/equipment/anesthesiamachine/actions/SEOxygenWallPortPressureLoss.h"
-#include "system/equipment/anesthesiamachine/actions/SEExpiratoryValveLeak.h"
-#include "system/equipment/anesthesiamachine/actions/SEExpiratoryValveObstruction.h"
-#include "system/equipment/anesthesiamachine/actions/SEInspiratoryValveLeak.h"
-#include "system/equipment/anesthesiamachine/actions/SEInspiratoryValveObstruction.h"
-#include "system/equipment/anesthesiamachine/actions/SEMaskLeak.h"
-#include "system/equipment/anesthesiamachine/actions/SESodaLimeFailure.h"
-#include "system/equipment/anesthesiamachine/actions/SETubeCuffLeak.h"
-#include "system/equipment/anesthesiamachine/actions/SEVaporizerFailure.h"
-#include "system/equipment/anesthesiamachine/actions/SEVentilatorPressureLoss.h"
-#include "system/equipment/anesthesiamachine/actions/SEYPieceDisconnect.h"
-#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineConfiguration.h"
+class SESubstanceManager;
+class SEAnesthesiaMachine;
+class SEAnesthesiaMachineAction;
+class SEOxygenTankPressureLoss;
+class SEOxygenWallPortPressureLoss;
+class SEExpiratoryValveLeak;
+class SEExpiratoryValveObstruction;
+class SEInspiratoryValveLeak;
+class SEInspiratoryValveObstruction;
+class SEMaskLeak;
+class SESodaLimeFailure;
+class SETubeCuffLeak;
+class SEVaporizerFailure;
+class SEVentilatorPressureLoss;
+class SEYPieceDisconnect;
+class SEAnesthesiaMachineConfiguration;
+CDM_BIND_DECL(ActionListData)
+CDM_BIND_DECL(AnyAnesthesiaMachineActionData)
 
 class CDM_DECL SEAnesthesiaMachineActionCollection : public Loggable
 {

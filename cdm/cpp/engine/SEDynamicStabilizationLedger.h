@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "engine/SEDynamicStabilizationEngineConvergence.h"
+class SEDynamicStabilizationEngineConvergence;
 
 // Book keeping class that tracks all the properties and if their convergent state
 class CDM_DECL SEDynamicStabilizationLedger : public Loggable

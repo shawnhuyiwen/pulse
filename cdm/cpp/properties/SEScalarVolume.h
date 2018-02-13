@@ -3,7 +3,7 @@
 
 #pragma once
 #include "properties/SEScalar.h"
-namespace cdm { class ScalarVolumeData; }
+CDM_BIND_DECL(ScalarVolumeData)
 
 class CDM_DECL VolumeUnit : public CCompoundUnit
 {

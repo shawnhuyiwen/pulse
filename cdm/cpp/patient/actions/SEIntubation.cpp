@@ -9,7 +9,7 @@ PROTO_POP
 
 SEIntubation::SEIntubation() : SEPatientAction()
 {
-  m_Type = cdm::IntubationData_eType_Off;
+  m_Type = cdm::eIntubation_Type_Off;
 }
 
 SEIntubation::~SEIntubation()
@@ -20,7 +20,7 @@ SEIntubation::~SEIntubation()
 void SEIntubation::Clear()
 {
   SEPatientAction::Clear();
-  m_Type = cdm::IntubationData_eType_Off;
+  m_Type = cdm::eIntubation_Type_Off;
 }
 
 bool SEIntubation::IsValid() const
@@ -30,7 +30,7 @@ bool SEIntubation::IsValid() const
 
 bool SEIntubation::IsActive() const
 {
-  return GetType() != cdm::IntubationData_eType_Off;
+  return GetType() != cdm::eIntubation_Type_Off;
 }
 
 void SEIntubation::Load(const cdm::IntubationData& src, SEIntubation& dst)
@@ -55,11 +55,11 @@ void SEIntubation::Serialize(const SEIntubation& src, cdm::IntubationData& dst)
   dst.set_type(src.m_Type);
 }
 
-cdm::IntubationData_eType SEIntubation::GetType() const
+cdm::eIntubation_Type SEIntubation::GetType() const
 {
   return m_Type;
 }
-void SEIntubation::SetType(cdm::IntubationData_eType Type)
+void SEIntubation::SetType(cdm::eIntubation_Type Type)
 {
   m_Type = Type;
 }
@@ -69,6 +69,6 @@ void SEIntubation::ToString(std::ostream &str) const
   str << "Patient Action : Intubation";
   if (HasComment())
     str << "\n\tComment: " << m_Comment;
-  str << "\n\tType: " << cdm::IntubationData_eType_Name(GetType());
+  str << "\n\tType: " << cdm::eIntubation_Type_Name(GetType());
   str << std::flush;
 }

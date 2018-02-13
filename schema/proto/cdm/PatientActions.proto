@@ -8,7 +8,7 @@ import "cdm/Properties.proto";
 import "cdm/Substance.proto";
 import "cdm/PatientNutrition.proto";
 import "cdm/Actions.proto";
-import "cdm/PatientAssessments.proto";
+import "cdm/PatientAssessmentEnums.proto";
 
 message AnyPatientActionData
 {
@@ -49,7 +49,7 @@ message PatientActionData
 message PatientAssessmentRequestData
 {
   PatientActionData                         PatientAction                   = 1;
-  PatientAssessmentData.eType               Type                            = 2;
+  ePatientAssessment.Type                   Type                            = 2;
 }
 
 /** @brief Fight or flight.  The body prepares to defend itself. */

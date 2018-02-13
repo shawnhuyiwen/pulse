@@ -3,6 +3,10 @@
 
 #pragma once
 #include "scenario/SEAction.h"
+PROTO_PUSH
+#include "bind/cdm/ActionEnums.pb.h"
+PROTO_POP
+CDM_BIND_DECL(SerializeStateData)
 
 class CDM_DECL SESerializeState : public SEAction
 {
@@ -25,8 +29,8 @@ public:
 
   virtual void ToString(std::ostream &str) const;
 
-  virtual cdm::SerializeStateData_eSerializationType GetType() const;
-  virtual void SetType(cdm::SerializeStateData_eSerializationType t);
+  virtual cdm::eSerialization_Type GetType() const;
+  virtual void SetType(cdm::eSerialization_Type t);
 
   virtual bool HasFilename() const;
   virtual std::string GetFilename() const;
@@ -35,6 +39,6 @@ public:
 
 protected:
 
-  std::string                       m_Filename;
-  cdm::SerializeStateData_eSerializationType m_Type;
+  std::string              m_Filename;
+  cdm::eSerialization_Type m_Type;
 };                  

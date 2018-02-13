@@ -8,6 +8,11 @@
 #include "scenario/SEAdvanceTime.h"
 #include "scenario/SESerializeState.h"
 
+PROTO_PUSH
+#include "bind/cdm/Actions.pb.h"
+#include "bind/cdm/Scenario.pb.h"
+PROTO_POP
+
 SEAction::SEAction() : Loggable()
 {
   m_Comment="";

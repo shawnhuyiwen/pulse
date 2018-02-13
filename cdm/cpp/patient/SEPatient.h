@@ -4,8 +4,9 @@
 #pragma once
 class SEEventHandler;
 class SENutrition;
+CDM_BIND_DECL(PatientData)
 PROTO_PUSH
-#include "bind/cdm/Patient.pb.h"
+#include "bind/cdm/PatientEnums.pb.h"
 PROTO_POP
 
 class CDM_DECL SEPatient : public Loggable
@@ -38,10 +39,10 @@ public:
   */
   virtual const SEScalar* GetScalar(const std::string& name);
 
-  virtual const std::map<cdm::PatientData::eEvent, bool>& GetEventStates() const { return m_EventState; }
-  virtual void SetEvent(cdm::PatientData::eEvent type, bool active, const SEScalarTime& time);
-  virtual bool IsEventActive(cdm::PatientData::eEvent state) const;
-  virtual double GetEventDuration(cdm::PatientData::eEvent type, const TimeUnit& unit) const;
+  virtual const std::map<cdm::ePatient_Event, bool>& GetEventStates() const { return m_EventState; }
+  virtual void SetEvent(cdm::ePatient_Event type, bool active, const SEScalarTime& time);
+  virtual bool IsEventActive(cdm::ePatient_Event state) const;
+  virtual double GetEventDuration(cdm::ePatient_Event type, const TimeUnit& unit) const;
   virtual void UpdateEvents(const SEScalarTime& timeStep);
   /** @name ForwardEvents
    *  @brief - Set a callback class to invoke when any event changes
@@ -57,8 +58,8 @@ public:
   virtual bool HasName() const;
   virtual void InvalidateName();
 
-  virtual cdm::PatientData::eSex GetSex() const;
-  virtual void SetSex(cdm::PatientData::eSex sex);
+  virtual cdm::ePatient_Sex GetSex() const;
+  virtual void SetSex(cdm::ePatient_Sex sex);
   
   virtual bool HasAge() const;
   virtual SEScalarTime& GetAge();
@@ -168,11 +169,11 @@ protected:
 
   std::stringstream          m_ss;
   mutable SEEventHandler*    m_EventHandler;
-  std::map<cdm::PatientData::eEvent, bool>   m_EventState;
-  std::map<cdm::PatientData::eEvent, double> m_EventDuration_s;
+  std::map<cdm::ePatient_Event, bool>   m_EventState;
+  std::map<cdm::ePatient_Event, double> m_EventDuration_s;
 
   std::string                m_Name;
-  cdm::PatientData::eSex     m_Sex;
+  cdm::ePatient_Sex     m_Sex;
   SEScalarTime*              m_Age;
   SEScalarMass*              m_Weight;
   SEScalarLength*            m_Height;

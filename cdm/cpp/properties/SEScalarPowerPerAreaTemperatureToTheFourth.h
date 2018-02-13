@@ -3,7 +3,7 @@
 
 #pragma once
 #include "properties/SEScalar.h"
-namespace cdm { class ScalarPowerPerAreaTemperatureToTheFourthData; }
+CDM_BIND_DECL(ScalarPowerPerAreaTemperatureToTheFourthData)
 
 class CDM_DECL PowerPerAreaTemperatureToTheFourthUnit : public CCompoundUnit
 {

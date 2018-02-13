@@ -3,6 +3,23 @@
 
 #include "stdafx.h"
 #include "scenario/SEConditionManager.h"
+//Patient Conditions
+#include "patient/conditions/SEChronicAnemia.h"
+#include "patient/conditions/SEChronicObstructivePulmonaryDisease.h"
+#include "patient/conditions/SEChronicHeartFailure.h"
+#include "patient/conditions/SEChronicRenalStenosis.h"
+#include "patient/conditions/SEChronicVentricularSystolicDysfunction.h"
+#include "patient/conditions/SEConsumeMeal.h"
+#include "patient/conditions/SELobarPneumonia.h"
+#include "patient/conditions/SEChronicPericardialEffusion.h"
+#include "patient/conditions/SEImpairedAlveolarExchange.h"
+// Environment Conditions
+#include "system/environment/conditions/SEInitialEnvironmentConditions.h"
+PROTO_PUSH
+#include "bind/cdm/Scenario.pb.h"
+PROTO_POP
+#include "substance/SESubstance.h"
+#include "substance/SESubstanceManager.h"
 
 SEConditionManager::SEConditionManager(SESubstanceManager& substances) : Loggable(substances.GetLogger()), m_Substances(substances)
 {

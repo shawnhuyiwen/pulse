@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "engine/SEDynamicStabilizationLedger.h"
+#include "engine/SEDynamicStabilizationEngineConvergence.h"
 
 SEDynamicStabilizationLedger::SEDynamicStabilizationLedger(double timeStep_s, const SEDynamicStabilizationEngineConvergence& criteria) : m_properties(criteria.GetPropertyConvergence())
 {

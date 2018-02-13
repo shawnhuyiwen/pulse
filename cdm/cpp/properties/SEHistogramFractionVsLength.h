@@ -3,7 +3,7 @@
 
 #pragma once
 #include "properties/SEHistogram.h"
-namespace cdm { class HistogramFractionVsLengthData; }
+CDM_BIND_DECL(HistogramFractionVsLengthData)
 
 class CDM_DECL SEHistogramFractionVsLength : public SEHistogram
 {

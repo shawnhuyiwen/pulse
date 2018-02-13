@@ -4,7 +4,7 @@
 #pragma once
 #include "properties/SEProperty.h"
 #include "utils/unitconversion/UCCommon.h"
-namespace cdm { class HistogramData; }
+CDM_BIND_DECL(HistogramData)
 
 class CDM_DECL SEHistogram : public SEProperty
 {

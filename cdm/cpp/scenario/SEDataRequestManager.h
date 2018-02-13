@@ -2,8 +2,14 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "scenario/SEDataRequest.h"
+class SEDataRequest;
+class SEDecimalFormat;
 class SESubstance;
+class SESubstanceManager;
+CDM_BIND_DECL(DataRequestManagerData)
+PROTO_PUSH
+#include "bind/cdm/ScenarioEnums.pb.h"
+PROTO_PUSH
 
 class CDM_DECL SEDataRequestManager : public Loggable
 {
@@ -42,7 +48,7 @@ public:
   virtual SEDecimalFormat& GetOverrideDecimalFormatting();
   virtual void RemoveOverrideDecimalFormatting();
 
-  SEDataRequest& CreateDataRequest(cdm::DataRequestData_eCategory category, const SEDecimalFormat* dfault = nullptr);
+  SEDataRequest& CreateDataRequest(cdm::eDataRequest_Category category, const SEDecimalFormat* dfault = nullptr);
   SEDataRequest& CreatePatientDataRequest(const std::string& property, const SEDecimalFormat* dfault = nullptr);
   SEDataRequest& CreatePatientDataRequest(const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault = nullptr);
 

@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-namespace cdm { class RunningAverageData; }
+CDM_BIND_DECL(RunningAverageData)
 
 class CDM_DECL RunningAverage
 {

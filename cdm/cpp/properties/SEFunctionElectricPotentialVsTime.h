@@ -3,7 +3,7 @@
 
 #pragma once
 #include "properties/SEFunction.h"
-namespace cdm { class FunctionElectricPotentialVsTimeData; }
+CDM_BIND_DECL(FunctionElectricPotentialVsTimeData)
 
 class CDM_DECL SEFunctionElectricPotentialVsTime : public SEFunction
 {

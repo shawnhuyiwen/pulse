@@ -3,7 +3,7 @@
 
 #pragma once
 #include "system/SESystem.h"
-namespace cdm { class EnergySystemData; }
+CDM_BIND_DECL(EnergySystemData)
 
 class CDM_DECL SEEnergySystem : public SESystem
 {

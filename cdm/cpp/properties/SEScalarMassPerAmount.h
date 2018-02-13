@@ -3,7 +3,7 @@
 
 #pragma once
 #include "properties/SEScalar.h"
-namespace cdm { class ScalarMassPerAmountData; }
+CDM_BIND_DECL(ScalarMassPerAmountData)
 
 class CDM_DECL MassPerAmountUnit : public CCompoundUnit
 {

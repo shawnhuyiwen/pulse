@@ -3,12 +3,14 @@
 
 #pragma once
 #include "system/SESystem.h"
+class SESubstance;
+class SESubstanceManager;
+class SESubstanceFraction;
+class SESubstanceConcentration;
+CDM_BIND_DECL(EnvironmentData_ConditionsData)
 PROTO_PUSH
-#include "bind/cdm/EnvironmentConditions.pb.h"
+#include "bind/cdm/EnvironmentEnums.pb.h"
 PROTO_POP
-#include "substance/SESubstanceManager.h"
-#include "substance/SESubstanceFraction.h"
-#include "substance/SESubstanceConcentration.h"
 
 class CDM_DECL SEEnvironmentalConditions : public Loggable
 {
@@ -36,8 +38,8 @@ public:
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
-  virtual cdm::EnvironmentData_eSurroundingType GetSurroundingType() const;
-  virtual void SetSurroundingType(cdm::EnvironmentData_eSurroundingType name);
+  virtual cdm::eEnvironment_SurroundingType GetSurroundingType() const;
+  virtual void SetSurroundingType(cdm::eEnvironment_SurroundingType name);
 
   virtual bool HasAirDensity() const;
   virtual SEScalarMassPerVolume& GetAirDensity();
@@ -95,7 +97,7 @@ public:
 
 protected:
 
-  cdm::EnvironmentData_eSurroundingType        m_SurroundingType;
+  cdm::eEnvironment_SurroundingType            m_SurroundingType;
   
   SEScalarMassPerVolume*                       m_AirDensity;
   SEScalarLengthPerTime*                       m_AirVelocity;

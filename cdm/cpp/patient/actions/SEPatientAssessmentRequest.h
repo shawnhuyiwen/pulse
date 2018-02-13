@@ -4,6 +4,9 @@
 #pragma once
 #include "patient/actions/SEPatientAction.h"
 CDM_BIND_DECL(PatientAssessmentRequestData)
+PROTO_PUSH
+#include "bind/cdm/PatientAssessmentEnums.pb.h"
+PROTO_POP
 
 class CDM_DECL SEPatientAssessmentRequest : public SEPatientAction
 {
@@ -25,12 +28,12 @@ protected:
 
 public:
 
-  virtual cdm::PatientAssessmentData_eType GetType() const;
-  virtual void SetType(cdm::PatientAssessmentData_eType type);
+  virtual cdm::ePatientAssessment_Type GetType() const;
+  virtual void SetType(cdm::ePatientAssessment_Type type);
 
   virtual void ToString(std::ostream &str) const;
   
 protected:
 
-  cdm::PatientAssessmentData_eType m_Type;
+  cdm::ePatientAssessment_Type m_Type;
 }; 

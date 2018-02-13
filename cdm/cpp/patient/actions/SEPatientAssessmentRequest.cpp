@@ -9,7 +9,7 @@ PROTO_POP
 
 SEPatientAssessmentRequest::SEPatientAssessmentRequest() : SEPatientAction()
 {
-  m_Type=cdm::PatientAssessmentData_eType_CompleteBloodCount;
+  m_Type=cdm::ePatientAssessment_Type_CompleteBloodCount;
 }
 
 SEPatientAssessmentRequest::~SEPatientAssessmentRequest()
@@ -20,7 +20,7 @@ SEPatientAssessmentRequest::~SEPatientAssessmentRequest()
 void SEPatientAssessmentRequest::Clear()
 {
   SEPatientAction::Clear();
-  m_Type=cdm::PatientAssessmentData_eType_CompleteBloodCount;
+  m_Type=cdm::ePatientAssessment_Type_CompleteBloodCount;
 }
 
 bool SEPatientAssessmentRequest::IsValid() const
@@ -55,11 +55,11 @@ void SEPatientAssessmentRequest::Serialize(const SEPatientAssessmentRequest& src
   dst.set_type(src.m_Type);
 }
 
-cdm::PatientAssessmentData_eType SEPatientAssessmentRequest::GetType() const
+cdm::ePatientAssessment_Type SEPatientAssessmentRequest::GetType() const
 {
   return m_Type;
 }
-void SEPatientAssessmentRequest::SetType(cdm::PatientAssessmentData_eType Type)
+void SEPatientAssessmentRequest::SetType(cdm::ePatientAssessment_Type Type)
 {
   m_Type = Type;
 }
@@ -68,6 +68,6 @@ void SEPatientAssessmentRequest::ToString(std::ostream &str) const
   str << "Patient Action : Assessment Request"; 
   if(HasComment())
     str<<"\n\tComment: "<<m_Comment;
-  str  << "\n\tType: "<< cdm::PatientAssessmentData_eType_Name(GetType());
+  str  << "\n\tType: "<< cdm::ePatientAssessment_Type_Name(GetType());
   str  << std::flush;
 }

@@ -2,9 +2,9 @@ syntax = "proto3";
 package cdm;
 option java_package = "com.kitware.physiology.cdm";
 
-message eAction
+message eSerialization
 {
-  enum Serialization
+  enum Type
   {
     Save = 0;
     Load = 1;

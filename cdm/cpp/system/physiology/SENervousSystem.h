@@ -3,7 +3,7 @@
 
 #pragma once
 #include "system/SESystem.h"
-namespace cdm { class NervousSystemData; }
+CDM_BIND_DECL(NervousSystemData)
 class SEPupillaryResponse;
 
 class CDM_DECL SENervousSystem : public SESystem

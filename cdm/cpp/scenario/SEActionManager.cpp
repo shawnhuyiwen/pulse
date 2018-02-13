@@ -3,6 +3,14 @@
 
 #include "stdafx.h"
 #include "scenario/SEActionManager.h"
+#include "scenario/SEPatientActionCollection.h"
+#include "scenario/SEAnesthesiaMachineActionCollection.h"
+#include "scenario/SEEnvironmentActionCollection.h"
+#include "scenario/SEInhalerActionCollection.h"
+PROTO_PUSH
+#include "bind/cdm/Scenario.pb.h"
+PROTO_POP
+#include "substance/SESubstanceManager.h"
 
 SEActionManager::SEActionManager(SESubstanceManager& substances) : Loggable(substances.GetLogger()), 
                                                                    m_PatientActions(substances),

@@ -15,14 +15,14 @@ import "cdm/InhalerActions.proto";
 
 message DecimalFormatData
 {
-  eScenario.DecimalFormat          Type                      = 1;
+  eDecimalFormat.Type              Type                      = 1;
   uint32                           Precision                 = 2;
 }
 
 message DataRequestData
 {
   DecimalFormatData                DecimalFormat             = 1;/**<<@brief If writing to a file, specify the decimal formatting */
-  eScenario.DataRequestCategory    Category                  = 2;/**<<@brief A category assocated with the Name */
+  eDataRequest.Category            Category                  = 2;/**<<@brief A category assocated with the Name */
   string                           CompartmentName           = 3;/**<<@brief The compartment name the property could be associated with */
   string                           SubstanceName             = 4;/**<<@brief The substance name the property could be associated with */
   string                           PropertyName              = 5;/**<<@brief The name of the property requested */

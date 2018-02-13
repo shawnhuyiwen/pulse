@@ -3,9 +3,12 @@
 
 #pragma once
 
-#include "substance/SESubstanceManager.h"
-#include "system/equipment/inhaler/SEInhaler.h"
-#include "system/equipment/inhaler/actions/SEInhalerConfiguration.h"
+class SEInhalerAction;
+class SESubstanceManager;
+class SEInhaler;
+class SEInhalerConfiguration;
+CDM_BIND_DECL(ActionListData)
+CDM_BIND_DECL(AnyInhalerActionData)
 
 class CDM_DECL SEInhalerActionCollection : public Loggable
 {

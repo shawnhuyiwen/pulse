@@ -4,7 +4,7 @@
 #pragma once
 CDM_BIND_DECL(DynamicStabilizationData)
 #include "engine/SEEngineStabilization.h"
-#include "engine/SEDynamicStabilizationEngineConvergence.h"
+class SEDynamicStabilizationEngineConvergence;
 
 class CDM_DECL SEDynamicStabilization : public SEEngineStabilization
 {

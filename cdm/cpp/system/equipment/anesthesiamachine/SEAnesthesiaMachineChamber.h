@@ -5,9 +5,7 @@
 class SESubstance;
 class SESubstanceManager;
 class SEAnesthesiaMachine;
-PROTO_PUSH
-#include "bind/cdm/AnesthesiaMachine.pb.h"
-PROTO_POP
+CDM_BIND_DECL(AnesthesiaMachineData_ChamberData)
 
 class CDM_DECL SEAnesthesiaMachineChamber : Loggable
 {

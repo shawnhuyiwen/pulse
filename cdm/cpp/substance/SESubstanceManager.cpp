@@ -9,6 +9,9 @@
 #include "../utils/unitconversion/UnitConversionEngine.h"
 #include "dirent.h"
 #include <google/protobuf/text_format.h>
+PROTO_PUSH
+#include "bind/cdm/Substance.pb.h"
+PROTO_POP
 
 SESubstanceManager::SESubstanceManager(Logger* logger) : Loggable(logger)
 {
@@ -97,9 +100,9 @@ void SESubstanceManager::AddActiveSubstance(SESubstance& substance)
 {
   if (IsActive(substance))
     return;
-  if(substance.GetState()==cdm::SubstanceData_eState_Gas)
+  if(substance.GetState()==cdm::eSubstance_State_Gas)
     m_ActiveGases.push_back(&substance);
-  if(substance.GetState()== cdm::SubstanceData_eState_Liquid)
+  if(substance.GetState()== cdm::eSubstance_State_Liquid)
     m_ActiveLiquids.push_back(&substance);
     m_ActiveSubstances.push_back(&substance);
 }

@@ -4,14 +4,17 @@
 #include "stdafx.h"
 #include "substance/SESubstancePhysicochemicals.h"
 #include "properties/SEScalar0To1.h"
+PROTO_PUSH
+#include "bind/cdm/Substance.pb.h"
+PROTO_POP
 
 SESubstancePhysicochemicals::SESubstancePhysicochemicals(Logger* logger) : Loggable(logger)
 {
   m_AcidDissociationConstant = nullptr;
-  m_BindingProtein = cdm::SubstanceData_eBindingProtein_NullBindingProtein;
+  m_BindingProtein = cdm::eSubstance_BindingProtein_NullBindingProtein;
   m_BloodPlasmaRatio = nullptr;
   m_FractionUnboundInPlasma = nullptr;
-  m_IonicState = cdm::SubstanceData_eIonicState_NullIonicState;
+  m_IonicState = cdm::eSubstance_IonicState_NullIonicState;
   m_LogP = nullptr;
   m_OralAbsorptionRateConstant = nullptr;
 }
@@ -24,10 +27,10 @@ SESubstancePhysicochemicals::~SESubstancePhysicochemicals()
 void SESubstancePhysicochemicals::Clear()
 {
   SAFE_DELETE(m_AcidDissociationConstant);
-  m_BindingProtein = cdm::SubstanceData_eBindingProtein_NullBindingProtein;
+  m_BindingProtein = cdm::eSubstance_BindingProtein_NullBindingProtein;
   SAFE_DELETE(m_BloodPlasmaRatio);
   SAFE_DELETE(m_FractionUnboundInPlasma);
-  m_IonicState = cdm::SubstanceData_eIonicState_NullIonicState;
+  m_IonicState = cdm::eSubstance_IonicState_NullIonicState;
   SAFE_DELETE(m_LogP);
   SAFE_DELETE(m_OralAbsorptionRateConstant);
 }
@@ -129,21 +132,21 @@ double SESubstancePhysicochemicals::GetAcidDissociationConstant() const
   return m_AcidDissociationConstant->GetValue();
 }
 
-cdm::SubstanceData_eBindingProtein SESubstancePhysicochemicals::GetBindingProtein() const
+cdm::eSubstance_BindingProtein SESubstancePhysicochemicals::GetBindingProtein() const
 {
   return m_BindingProtein;
 }
-void SESubstancePhysicochemicals::SetBindingProtein(cdm::SubstanceData_eBindingProtein protein)
+void SESubstancePhysicochemicals::SetBindingProtein(cdm::eSubstance_BindingProtein protein)
 {
   m_BindingProtein = protein;
 }
 bool SESubstancePhysicochemicals::HasBindingProtein() const
 {
-  return m_BindingProtein == cdm::SubstanceData_eBindingProtein_NullBindingProtein ? false : true;
+  return m_BindingProtein == cdm::eSubstance_BindingProtein_NullBindingProtein ? false : true;
 }
 void SESubstancePhysicochemicals::InvalidateBindingProtein()
 {
-  m_BindingProtein = cdm::SubstanceData_eBindingProtein_NullBindingProtein;
+  m_BindingProtein = cdm::eSubstance_BindingProtein_NullBindingProtein;
 }
 
 bool SESubstancePhysicochemicals::HasBloodPlasmaRatio() const
@@ -181,21 +184,21 @@ double SESubstancePhysicochemicals::GetFractionUnboundInPlasma() const
 }
 
 
-cdm::SubstanceData_eIonicState SESubstancePhysicochemicals::GetIonicState() const
+cdm::eSubstance_IonicState SESubstancePhysicochemicals::GetIonicState() const
 {
   return m_IonicState;
 }
-void SESubstancePhysicochemicals::SetIonicState(cdm::SubstanceData_eIonicState state)
+void SESubstancePhysicochemicals::SetIonicState(cdm::eSubstance_IonicState state)
 {
   m_IonicState = state;
 }
 bool SESubstancePhysicochemicals::HasIonicState() const
 {
-  return m_IonicState == cdm::SubstanceData_eIonicState_NullIonicState ? false : true;
+  return m_IonicState == cdm::eSubstance_IonicState_NullIonicState ? false : true;
 }
 void SESubstancePhysicochemicals::InvalidateIonicState()
 {
-  m_IonicState = cdm::SubstanceData_eIonicState_NullIonicState;
+  m_IonicState = cdm::eSubstance_IonicState_NullIonicState;
 }
 
 bool SESubstancePhysicochemicals::HasLogP() const

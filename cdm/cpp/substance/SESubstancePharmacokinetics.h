@@ -2,8 +2,9 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "substance/SESubstancePhysicochemicals.h"
-#include "substance/SESubstanceTissuePharmacokinetics.h"
+class SESubstancePhysicochemicals;
+class SESubstanceTissuePharmacokinetics;
+CDM_BIND_DECL(SubstanceData_PharmacokineticsData)
 
 class CDM_DECL SESubstancePharmacokinetics : public Loggable
 {
