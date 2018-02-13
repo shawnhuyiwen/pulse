@@ -3,6 +3,7 @@
 
 #pragma once
 #include "system/SESystem.h"
+namespace cdm { class EndocrineSystemData; }
 
 class CDM_DECL SEEndocrineSystem : public SESystem
 {

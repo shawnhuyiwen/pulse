@@ -2,6 +2,7 @@ syntax = "proto3";
 package cdm;
 option java_package = "com.kitware.physiology.cdm";
 
+import "cdm/PhysiologyEnums.proto";
 import "cdm/Properties.proto";
 import "cdm/PatientNutrition.proto";
 
@@ -49,13 +50,6 @@ message BloodChemistrySystemData
   ScalarPressureData                  PulmonaryVenousOxygenPressure                  = 25;/**<< @brief Partial pressure of oxygen in the pulmonary veins.*/
   ScalarPressureData                  VenousCarbonDioxidePressure                    = 26;/**<< @brief Partial pressure of carbon dioxide in the vena cava.*/        
   ScalarPressureData                  VenousOxygenPressure                           = 27;/**<< @brief Partial pressure of oxygen in the vena cava.*/  
-}
-
-enum eHeartRhythm
-{
-  NormalSinus = 0;
-  Asystole    = 1;
-  
 }
 
 /** @brief Provides a representation of the human vasculature.

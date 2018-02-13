@@ -2,8 +2,10 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "utils/testing/SETestCase.h"
+class SETestCase;
 class SETestReport;
+class SETestErrorStatistics;
+namespace cdm { class TestReportData_TestSuiteData; }
 
 class CDM_DECL SETestSuite : public Loggable
 {
@@ -46,5 +48,5 @@ protected:
   std::vector<std::string> m_Requirements;
   std::vector<SETestErrorStatistics*> m_SuiteEqualError;
   std::vector<SETestCase*> m_TestCase;
-  mutable SEScalarTime m_Time;
+  mutable SEScalarTime* m_Time;
 };

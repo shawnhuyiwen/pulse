@@ -3,6 +3,7 @@
 
 #pragma once
 #include "system/SESystem.h"
+namespace cdm { class RespiratorySystemData; }
 
 
 class CDM_DECL SERespiratorySystem : public SESystem

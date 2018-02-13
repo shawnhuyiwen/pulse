@@ -3,6 +3,7 @@
 
 #pragma once
 #include "properties/SEScalar.h"
+namespace cdm { class ScalarVolumePerTimePressureData; }
 
 class CDM_DECL VolumePerTimePressureUnit : public CCompoundUnit
 {

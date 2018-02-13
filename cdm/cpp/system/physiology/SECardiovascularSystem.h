@@ -3,6 +3,11 @@
 
 #pragma once
 #include "system/SESystem.h"
+namespace cdm { class CardiovascularSystemData; }
+PROTO_PUSH
+#include "bind/cdm/PhysiologyEnums.pb.h"
+PROTO_POP
+namespace cdm { class CardiovascularSystemData; }
 
 class CDM_DECL SECardiovascularSystem : public SESystem
 {

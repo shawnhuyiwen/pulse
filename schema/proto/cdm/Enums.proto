@@ -30,3 +30,28 @@ enum eCharge
   Neutral    = 2;
   Positive   = 3;
 }
+
+enum eDecimalFormatType
+{
+  SystemFormatting  = 0;/*<<@brief Not provided, let the system do what it wants */
+  DefaultFloat      = 1;
+  FixedMantissa     = 2;
+  SignificantDigits = 3;
+}
+
+
+enum eDataRequestCategory
+{
+  Patient            = 0;
+  Physiology         = 1;
+  Environment        = 2;
+  GasCompartment     = 3;
+  LiquidCompartment  = 4;
+  ThermalCompartment = 5;
+  TissueCompartment  = 6;
+  Substance          = 7;
+  AnesthesiaMachine  = 8;
+  ECG                = 9;
+  Inhaler            = 10;
+}
+

@@ -3,6 +3,7 @@
 
 #pragma once
 #include "properties/SEScalar.h"
+namespace cdm { class ScalarVolumePerTimeAreaData; }
 
 class CDM_DECL VolumePerTimeAreaUnit : public CCompoundUnit
 {

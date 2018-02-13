@@ -3,6 +3,7 @@
 
 #pragma once
 #include "properties/SEScalar.h"
+namespace cdm { class ScalarInversePressureData; }
 
 class CDM_DECL InversePressureUnit : public CCompoundUnit
 {

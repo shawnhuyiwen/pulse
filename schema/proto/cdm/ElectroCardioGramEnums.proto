@@ -1,0 +1,23 @@
+syntax = "proto3";
+package cdm;
+option java_package = "com.kitware.physiology.cdm";
+
+message eElectroCardioGram
+{
+  enum WaveformLead
+  {
+    NullLead                                                     = 0;
+    Lead1                                                        = 1;
+    Lead2                                                        = 2;
+    Lead3                                                        = 3;
+    Lead4                                                        = 4;
+    Lead5                                                        = 5;
+    Lead6                                                        = 6;
+    Lead7                                                        = 7;
+    Lead8                                                        = 8;
+    Lead9                                                        = 9;
+    Lead10                                                       = 10;
+    Lead11                                                       = 11;
+    Lead12                                                       = 12;
+  }
+}

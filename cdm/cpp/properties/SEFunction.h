@@ -4,6 +4,7 @@
 #pragma once
 #include "properties/SEProperty.h"
 #include "utils/unitconversion/UCCommon.h"
+namespace cdm { class FunctionData; }
 
 class CDM_DECL SEFunction : public SEProperty
 {

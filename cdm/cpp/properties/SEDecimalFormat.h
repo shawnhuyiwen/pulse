@@ -2,9 +2,8 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-PROTO_PUSH
-#include "bind/cdm/Properties.pb.h"
-PROTO_PUSH
+namespace cdm { class DecimalFormatData; }
+
 class CDM_DECL SEDecimalFormat
 {
 public:

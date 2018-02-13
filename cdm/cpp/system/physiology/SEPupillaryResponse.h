@@ -3,6 +3,7 @@
 
 #pragma once
 #include "system/SESystem.h"
+namespace cdm { class PupillaryResponseData; }
 
 class CDM_DECL SEPupillaryResponse
 {

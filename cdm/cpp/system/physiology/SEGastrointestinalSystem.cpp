@@ -3,12 +3,14 @@
 
 #include "stdafx.h"
 #include "system/physiology/SEGastrointestinalSystem.h"
-#include "substance/SESubstanceManager.h"
-
+#include "patient/SENutrition.h"
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalarMassPerTime.h"
+PROTO_PUSH
+#include "bind/cdm/Physiology.pb.h"
+PROTO_POP
 
 SEGastrointestinalSystem::SEGastrointestinalSystem(Logger* logger) : SESystem(logger)
 {

@@ -1,0 +1,15 @@
+syntax = "proto3";
+package cdm;
+option java_package = "com.kitware.physiology.cdm";
+
+message eCompartment
+{
+  enum Type
+  {
+    Electrical = 0;
+    Gas        = 1;
+    Liquid     = 2;
+    Thermal    = 3;
+    Tissue     = 4;
+  }
+}

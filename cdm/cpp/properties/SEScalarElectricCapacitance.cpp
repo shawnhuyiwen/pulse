@@ -3,6 +3,9 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarElectricCapacitance.h"
+PROTO_PUSH
+#include "bind/cdm/Properties.pb.h"
+PROTO_POP
 
 const ElectricCapacitanceUnit ElectricCapacitanceUnit::F("F");
 

@@ -3,6 +3,7 @@
 
 #pragma once
 #include "properties/SEFunction.h"
+namespace cdm { class FunctionVolumeVsTimeData; }
 
 class CDM_DECL SEFunctionVolumeVsTime : public SEFunction
 {

@@ -3,6 +3,9 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarFrequency.h"
+PROTO_PUSH
+#include "bind/cdm/Properties.pb.h"
+PROTO_POP
 
 const FrequencyUnit FrequencyUnit::Per_min("1/min");
 const FrequencyUnit FrequencyUnit::Per_s("1/s");

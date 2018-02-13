@@ -5,6 +5,9 @@
 #include "properties/SEHistogramFractionVsLength.h"
 #include "properties/SEScalarLength.h"
 #include "properties/SEScalar0To1.h"
+PROTO_PUSH
+#include "bind/cdm/Properties.pb.h"
+PROTO_POP
 #include <numeric>
 
 

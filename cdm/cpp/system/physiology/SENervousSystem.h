@@ -3,7 +3,8 @@
 
 #pragma once
 #include "system/SESystem.h"
-#include "system/physiology/SEPupillaryResponse.h"
+namespace cdm { class NervousSystemData; }
+class SEPupillaryResponse;
 
 class CDM_DECL SENervousSystem : public SESystem
 {

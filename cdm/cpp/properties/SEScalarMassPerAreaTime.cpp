@@ -3,6 +3,9 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarMassPerAreaTime.h"
+PROTO_PUSH
+#include "bind/cdm/Properties.pb.h"
+PROTO_POP
 
 const MassPerAreaTimeUnit MassPerAreaTimeUnit::g_Per_cm2_s("g/cm^2 s");
 

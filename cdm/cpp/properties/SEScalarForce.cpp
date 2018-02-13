@@ -3,6 +3,9 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarForce.h"
+PROTO_PUSH
+#include "bind/cdm/Properties.pb.h"
+PROTO_POP
 
 const ForceUnit ForceUnit::N("N");
 const ForceUnit ForceUnit::lbf("lbf");

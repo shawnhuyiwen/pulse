@@ -4,6 +4,9 @@
 #include "stdafx.h"
 #include "utils/testing/SETestCase.h"
 #include "properties/SEScalarTime.h"
+PROTO_PUSH
+#include "bind/cdm/TestReport.pb.h"
+PROTO_POP
 
 SETestCase::SETestCase(Logger* logger) : Loggable(logger)
 {
@@ -12,24 +15,26 @@ SETestCase::SETestCase(Logger* logger) : Loggable(logger)
 SETestCase::SETestCase(const std::string& name, Logger* logger) : Loggable(logger)
 {
   m_Name = name;
+  m_Duration = new SEScalarTime();
 }
 
 SETestCase::~SETestCase()
 {
   Clear();
+  delete m_Duration;
 }
 
 void SETestCase::Clear()
 {
   m_Failure.clear();
-  m_Duration.SetValue(0, TimeUnit::s);
+  m_Duration->SetValue(0, TimeUnit::s);
   DELETE_VECTOR(m_CaseEqualsErrors);
 }
 
 void SETestCase::Reset()
 {
   m_Failure.clear();
-  m_Duration.SetValue(0,TimeUnit::s);
+  m_Duration->SetValue(0,TimeUnit::s);
   DELETE_VECTOR(m_CaseEqualsErrors);
 }
 
@@ -68,7 +73,7 @@ void SETestCase::Serialize(const SETestCase& src, cdm::TestReportData_TestCaseDa
 {
   dst.set_name(src.m_Name);
 
-  dst.set_allocated_duration(SEScalarTime::Unload(src.m_Duration));
+  dst.set_allocated_duration(SEScalarTime::Unload(*src.m_Duration));
 
   for (std::string s : src.m_Failure)
     dst.mutable_failure()->Add(s.c_str());
@@ -89,7 +94,7 @@ std::string SETestCase::GetName() const
 
 SEScalarTime& SETestCase::GetDuration()
 {
-  return m_Duration;
+  return *m_Duration;
 }
 
 

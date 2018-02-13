@@ -3,6 +3,7 @@
 
 #pragma once
 #include "properties/SEScalar.h"
+namespace cdm { class ScalarHeatCapacitancePerAmountData; }
 
 class CDM_DECL HeatCapacitancePerAmountUnit : public CCompoundUnit
 {

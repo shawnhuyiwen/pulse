@@ -3,6 +3,7 @@
 
 #pragma once
 #include "properties/SEScalar.h"
+namespace cdm { class ScalarElectricCapacitanceData; }
 
 class CDM_DECL ElectricCapacitanceUnit : public CCompoundUnit
 {

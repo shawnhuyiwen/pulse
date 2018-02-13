@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "system/physiology/SERenalSystem.h"
-#include "substance/SESubstanceManager.h"
 #include "properties/SEScalarArea.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarVolumePerTimePressure.h"
@@ -18,6 +17,9 @@
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarAmountPerVolume.h"
 #include "properties/SEScalarFlowResistance.h"
+PROTO_PUSH
+#include "bind/cdm/Physiology.pb.h"
+PROTO_POP
 
 SERenalSystem::SERenalSystem(Logger* logger) : SESystem(logger)
 {

@@ -3,6 +3,7 @@
 
 #pragma once
 #include "properties/SEScalar.h"
+namespace cdm { class ScalarTimeData; }
 
 class CDM_DECL TimeUnit : public CCompoundUnit
 {

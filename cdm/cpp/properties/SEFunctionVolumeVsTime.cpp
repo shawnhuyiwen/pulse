@@ -5,6 +5,9 @@
 #include "properties/SEFunctionVolumeVsTime.h"
 #include "properties/SEScalarTime.h"
 #include "properties/SEScalarVolume.h"
+PROTO_PUSH
+#include "bind/cdm/Properties.pb.h"
+PROTO_POP
 
 
 SEFunctionVolumeVsTime::SEFunctionVolumeVsTime() : SEFunction()

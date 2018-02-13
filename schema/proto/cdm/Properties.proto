@@ -2,18 +2,6 @@ syntax = "proto3";
 package cdm;
 option java_package = "com.kitware.physiology.cdm";
 
-message DecimalFormatData
-{
-  enum eType
-  {
-    SystemFormatting  = 0;/*<<@brief Not provided, let the system do what it wants */
-    DefaultFloat      = 1;
-    FixedMantissa     = 2;
-    SignificantDigits = 3;
-  }
-  eType                            Type                      = 1;
-  uint32                           Precision                 = 2;
-}
 
 message RunningAverageData
 {

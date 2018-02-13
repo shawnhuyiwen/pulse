@@ -3,6 +3,7 @@
 
 #pragma once
 #include "properties/SEScalar.h"
+namespace cdm { class ScalarForceData; }
 
 class CDM_DECL ForceUnit : public CCompoundUnit
 {

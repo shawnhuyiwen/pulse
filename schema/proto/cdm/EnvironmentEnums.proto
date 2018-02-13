@@ -1,0 +1,13 @@
+syntax = "proto3";
+package cdm;
+option java_package = "com.kitware.physiology.cdm";
+
+message eEnvironment 
+{
+  enum SurroundingType
+  {
+    NullSurrounding = 0;
+    Air             = 1;
+    Water           = 2;
+  }
+}

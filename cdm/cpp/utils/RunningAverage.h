@@ -2,9 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-PROTO_PUSH
-#include "bind/cdm/Properties.pb.h"
-PROTO_POP
+namespace cdm { class RunningAverageData; }
 
 class CDM_DECL RunningAverage
 {

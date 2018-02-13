@@ -3,8 +3,6 @@
 
 #pragma once
 
-#include "CommonDataModel.h"
-
 class CDM_DECL ScopedMutex
 {
 public:

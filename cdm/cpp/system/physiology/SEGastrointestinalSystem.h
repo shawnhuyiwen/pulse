@@ -3,7 +3,8 @@
 
 #pragma once
 #include "system/SESystem.h"
-#include "patient/SENutrition.h"
+namespace cdm { class GastrointestinalSystemData; }
+class SENutrition;
 
 class CDM_DECL SEGastrointestinalSystem : public SESystem
 {

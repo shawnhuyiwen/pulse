@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 #include "system/physiology/SEDrugSystem.h"
-#include "substance/SESubstanceManager.h"
+#include "system/physiology/SEPupillaryResponse.h"
 #include "properties/SEScalar.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarNegative1To1.h"
@@ -11,6 +11,9 @@
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarLength.h"
+PROTO_PUSH
+#include "bind/cdm/Physiology.pb.h"
+PROTO_POP
 
 SEDrugSystem::SEDrugSystem(Logger* logger) : SESystem(logger)
 {

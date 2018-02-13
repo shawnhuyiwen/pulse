@@ -3,8 +3,6 @@
 
 #include "stdafx.h"
 #include "system/physiology/SERespiratorySystem.h"
-#include "substance/SESubstanceManager.h"
-
 #include "properties/SEScalarArea.h"
 #include "properties/SEScalarFlowCompliance.h"
 #include "properties/SEScalarFlowResistance.h"
@@ -13,6 +11,9 @@
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
+PROTO_PUSH
+#include "bind/cdm/Physiology.pb.h"
+PROTO_POP
 
 SERespiratorySystem::SERespiratorySystem(Logger* logger) : SESystem(logger)
 {

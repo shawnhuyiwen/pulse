@@ -3,6 +3,7 @@ package cdm;
 option java_package = "com.kitware.physiology.cdm";
 
 import "cdm/Enums.proto";
+import "cdm/PatientActionEnums.proto";
 import "cdm/Properties.proto";
 import "cdm/Substance.proto";
 import "cdm/PatientNutrition.proto";
@@ -83,16 +84,8 @@ message AsthmaAttackData
 /** @brief A non-localized traumatic brain injury. */
 message BrainInjuryData
 {
-  /** @brief Types of Brain Injury that provided different nervous responses.*/
-  enum eType
-  {
-    Diffuse                                                                 = 0;
-    LeftFocal                                                               = 1;
-    RightFocal                                                              = 2;
-  }
-  
   PatientActionData                         PatientAction                   = 1;
-  eType                                     Type                            = 2;/**<<@brief */
+  eBrainInjury.Type                         Type                            = 2;/**<<@brief */
   Scalar0To1Data                            Severity                        = 3;/**<<@brief */
 }
 
@@ -202,16 +195,8 @@ message HemorrhageData
 /** @brief Insertion of tube into the patient's airway */
 message IntubationData
 {
-  enum eType
-  {
-    Off                                                                     = 0;
-    Esophageal                                                              = 1;
-    LeftMainstem                                                            = 2;
-    RightMainstem                                                           = 3;
-    Tracheal                                                                = 4;
-  }
   PatientActionData                         PatientAction                   = 1;
-  eType                                     Type                            = 2;/**<<@brief */
+  eIntubation.Type                          Type                            = 2;/**<<@brief */
 }
 
 /** @brief Mechanically breathing for the patient, such as with a squeeze bag or other equipment. */
@@ -243,19 +228,7 @@ message PericardialEffusionData
 /** @brief An administration of a substance that is given all at one time to raise its concentration in blood to an effective level. */
 message SubstanceBolusData
 {
-  enum eAdministrationRoute
-  {
-    Intravenous                                                             = 0;/** @brief Injection into a vein */          
-    Epidural                                                                = 1;/** @brief Injection into a epidural space */
-    Intraosseous                                                            = 2;/** @brief Injection into the bone marrow */
-    Intraarterial                                                           = 3;/** @brief Injection into an artery */
-    Intracardiac                                                            = 4;/** @brief Injection into the heart */
-    Intracerebral                                                           = 5;/** @brief Injection into the brain */
-    Intracerebroventricular                                                 = 6;/** @brief Injection into the cerebral ventricles */
-    Intradermal                                                             = 7;/** @brief Injection into the skin */
-    Intramuscular                                                           = 8;/** @brief Injection into the muscle */      
-    Subcutaneous                                                            = 9;/** @brief Injection under the skin */      
-  }
+  
   message StateData
   {
     string                                  Substance                       = 1;
@@ -264,7 +237,7 @@ message SubstanceBolusData
   }
  
   PatientActionData                         PatientAction                   = 1;
-  eAdministrationRoute                      AdministrationRoute             = 2;
+  eSubstanceAdministration.Route            AdministrationRoute             = 2;
   string                                    Substance                       = 3;/**<<@brief */
   ScalarMassPerVolumeData                   Concentration                   = 4;/**<<@brief */
   ScalarVolumeData                          Dose                            = 5;/**<<@brief */

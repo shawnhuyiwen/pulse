@@ -2,7 +2,10 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "utils/testing/SETestSuite.h"
+class SETestCase;
+class SETestSuite;
+class SETestErrorStatistics;
+namespace cdm { class TestReportData; }
 
 class CDM_DECL SETestReport : public Loggable
 {
