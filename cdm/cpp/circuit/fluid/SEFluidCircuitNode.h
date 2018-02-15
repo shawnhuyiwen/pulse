@@ -3,8 +3,6 @@
 
 #pragma once
 #include "circuit/SECircuitNode.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarVolume.h"
 CDM_BIND_DECL(FluidCircuitNodeData)
 
 class CDM_DECL SEFluidCircuitNode : public SECircuitNode<FLUID_CIRCUIT_NODE>

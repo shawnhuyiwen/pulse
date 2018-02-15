@@ -5,6 +5,14 @@
 #include "circuit/SECircuit.h"
 #include "circuit/electrical/SEElectricalCircuitNode.h"
 #include "circuit/electrical/SEElectricalCircuitPath.h"
+
+#include "properties/SEScalarElectricCapacitance.h"
+#include "properties/SEScalarElectricCurrent.h"
+#include "properties/SEScalarElectricCharge.h"
+#include "properties/SEScalarElectricInductance.h"
+#include "properties/SEScalarElectricPotential.h"
+#include "properties/SEScalarElectricResistance.h"
+
 CDM_BIND_DECL(ElectricalCircuitData)
 class SECircuitManager;
 

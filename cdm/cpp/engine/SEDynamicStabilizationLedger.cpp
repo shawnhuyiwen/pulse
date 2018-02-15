@@ -5,6 +5,11 @@
 #include "engine/SEDynamicStabilizationLedger.h"
 #include "engine/SEDynamicStabilizationEngineConvergence.h"
 
+
+#include "engine/SEEngineTracker.h"
+#include "engine/SEDynamicStabilizationPropertyConvergence.h"
+#include "properties/SEScalarTime.h"
+
 SEDynamicStabilizationLedger::SEDynamicStabilizationLedger(double timeStep_s, const SEDynamicStabilizationEngineConvergence& criteria) : m_properties(criteria.GetPropertyConvergence())
 {
   m_dT_s = timeStep_s;

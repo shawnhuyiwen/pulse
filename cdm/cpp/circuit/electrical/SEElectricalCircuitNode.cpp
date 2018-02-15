@@ -3,6 +3,8 @@
 
 #include "stdafx.h" 
 #include "circuit/electrical/SEElectricalCircuitNode.h"
+#include "properties/SEScalarElectricCharge.h"
+#include "properties/SEScalarElectricPotential.h"
 PROTO_PUSH
 #include "bind/cdm/Circuit.pb.h"
 PROTO_POP

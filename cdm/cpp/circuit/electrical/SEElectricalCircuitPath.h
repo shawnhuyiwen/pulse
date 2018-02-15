@@ -3,12 +3,6 @@
 
 #pragma once
 #include "circuit/SECircuitPath.h"
-#include "properties/SEScalarElectricResistance.h"
-#include "properties/SEScalarElectricCapacitance.h"
-#include "properties/SEScalarElectricInductance.h"
-#include "properties/SEScalarElectricCurrent.h"
-#include "properties/SEScalarElectricPotential.h"
-#include "properties/SEScalarElectricCharge.h"
 #include "circuit/electrical/SEElectricalCircuitNode.h"
 CDM_BIND_DECL(ElectricalCircuitPathData)
 

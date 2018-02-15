@@ -3,6 +3,8 @@
 
 #include "stdafx.h" 
 #include "circuit/thermal/SEThermalCircuitNode.h"
+#include "properties/SEScalarEnergy.h"
+#include "properties/SEScalarTemperature.h"
 PROTO_PUSH
 #include "bind/cdm/Circuit.pb.h"
 PROTO_POP

@@ -5,6 +5,12 @@
 #include "circuit/SECircuit.h"
 #include "circuit/fluid/SEFluidCircuitNode.h"
 #include "circuit/fluid/SEFluidCircuitPath.h"
+#include "properties/SEScalarFlowCompliance.h"
+#include "properties/SEScalarVolumePerTime.h"
+#include "properties/SEScalarFlowInertance.h"
+#include "properties/SEScalarPressure.h"
+#include "properties/SEScalarVolume.h"
+#include "properties/SEScalarFlowResistance.h"
 CDM_BIND_DECL(FluidCircuitData)
 
 class SECircuitManager;

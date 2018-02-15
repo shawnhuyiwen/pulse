@@ -5,6 +5,14 @@
 #include "circuit/SECircuit.h"
 #include "circuit/thermal/SEThermalCircuitNode.h"
 #include "circuit/thermal/SEThermalCircuitPath.h"
+
+#include "properties/SEScalarHeatCapacitance.h"
+#include "properties/SEScalarPower.h"
+#include "properties/SEScalarHeatInductance.h"
+#include "properties/SEScalarTemperature.h"
+#include "properties/SEScalarEnergy.h"
+#include "properties/SEScalarHeatResistance.h"
+
 CDM_BIND_DECL(ThermalCircuitData)
 class SECircuitManager;
 

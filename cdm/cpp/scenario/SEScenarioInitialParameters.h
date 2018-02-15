@@ -2,13 +2,11 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-PROTO_PUSH
-#include "bind/cdm/Scenario.pb.h"
-PROTO_POP
-#include "engine/SEEngineConfiguration.h"
-#include "patient/SEPatient.h"
-#include "scenario/SECondition.h"
-#include "substance/SESubstanceManager.h"
+class SEEngineConfiguration;
+class SEPatient;
+class SECondition;
+class SESubstanceManager;
+CDM_BIND_DECL(ScenarioData_InitialParametersData)
 
 class CDM_DECL SEScenarioInitialParameters : public Loggable
 {

@@ -6,7 +6,7 @@
 class SEAction;
 class SEScenario;
 class PhysiologyEngine;
-#include "engine/SEEngineConfiguration.h"
+class SEEngineConfiguration;
 
 class CDM_DECL SEScenarioCustomExec
 {

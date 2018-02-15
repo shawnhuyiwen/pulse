@@ -23,6 +23,7 @@ PROTO_POP
 
 SEConditionManager::SEConditionManager(SESubstanceManager& substances) : Loggable(substances.GetLogger()), m_Substances(substances)
 {
+  m_Conditions = new cdm::ConditionListData();
   m_Anemia = nullptr;
   m_COPD = nullptr;
   m_ChronicVentricularSystolicDysfunction = nullptr;
@@ -37,6 +38,7 @@ SEConditionManager::SEConditionManager(SESubstanceManager& substances) : Loggabl
 SEConditionManager::~SEConditionManager()
 {
   Clear();
+  delete m_Conditions;
 }
 
 void SEConditionManager::Clear()
@@ -50,7 +52,7 @@ void SEConditionManager::Clear()
   SAFE_DELETE(m_PericardialEffusion);
   SAFE_DELETE(m_ImpairedAlveolarExchange);
   SAFE_DELETE(m_InitialEnvironmentConditions);
-  m_Conditions.Clear(); // amd does this delete?
+  m_Conditions->Clear(); // amd does this delete?
 }
 
 void SEConditionManager::Load(const cdm::ConditionListData& src, SEConditionManager& dst)
@@ -104,7 +106,7 @@ bool SEConditionManager::ProcessCondition(const SECondition& condition)
     return false;
   }
 
-  cdm::AnyConditionData* cData = m_Conditions.add_anycondition();
+  cdm::AnyConditionData* cData = m_Conditions->add_anycondition();
 
   if (dynamic_cast<const SEPatientCondition*>(&condition) != nullptr)
   {
@@ -115,7 +117,7 @@ bool SEConditionManager::ProcessCondition(const SECondition& condition)
       if (HasChronicAnemia())
       {
         Error("Cannot have multiple Anemia conditions");
-        m_Conditions.mutable_anycondition()->RemoveLast();
+        m_Conditions->mutable_anycondition()->RemoveLast();
         return false;
       }
       m_Anemia = new SEChronicAnemia();
@@ -130,7 +132,7 @@ bool SEConditionManager::ProcessCondition(const SECondition& condition)
       if (HasChronicObstructivePulmonaryDisease())
       {
         Error("Cannot have multiple COPD conditions");
-        m_Conditions.mutable_anycondition()->RemoveLast();
+        m_Conditions->mutable_anycondition()->RemoveLast();
         return false;
       }
       m_COPD = new SEChronicObstructivePulmonaryDisease();
@@ -145,7 +147,7 @@ bool SEConditionManager::ProcessCondition(const SECondition& condition)
       if (HasChronicHeartFailure())
       {
         Error("Cannot have multiple Heart Failure conditions");
-        m_Conditions.mutable_anycondition()->RemoveLast();
+        m_Conditions->mutable_anycondition()->RemoveLast();
         return false;
       }
       const SEChronicVentricularSystolicDysfunction* vsd = dynamic_cast<const SEChronicVentricularSystolicDysfunction*>(&condition);
@@ -157,7 +159,7 @@ bool SEConditionManager::ProcessCondition(const SECondition& condition)
         return true;
       }
       Error("Unknown Heart Failure condition");
-      m_Conditions.mutable_anycondition()->RemoveLast();
+      m_Conditions->mutable_anycondition()->RemoveLast();
       return false;
     }
 
@@ -167,7 +169,7 @@ bool SEConditionManager::ProcessCondition(const SECondition& condition)
       if (HasChronicPericardialEffusion())
       {
         Error("Cannot have multiple Pericardial Effusion conditions");
-        m_Conditions.mutable_anycondition()->RemoveLast();
+        m_Conditions->mutable_anycondition()->RemoveLast();
         return false;
       }
       m_PericardialEffusion = new SEChronicPericardialEffusion();
@@ -182,7 +184,7 @@ bool SEConditionManager::ProcessCondition(const SECondition& condition)
       if (HasChronicRenalStenosis())
       {
         Error("Cannot have multiple Renal Stenosis conditions");
-        m_Conditions.mutable_anycondition()->RemoveLast();
+        m_Conditions->mutable_anycondition()->RemoveLast();
         return false;
       }
       m_RenalStenosis = new SEChronicRenalStenosis();
@@ -197,7 +199,7 @@ bool SEConditionManager::ProcessCondition(const SECondition& condition)
       if (HasConsumeMeal())
       {
         Error("Cannot have multiple Gut Nutrient conditions");
-        m_Conditions.mutable_anycondition()->RemoveLast();
+        m_Conditions->mutable_anycondition()->RemoveLast();
         return false;
       }
       m_ConsumeMeal = new SEConsumeMeal();
@@ -212,7 +214,7 @@ bool SEConditionManager::ProcessCondition(const SECondition& condition)
       if (HasImpairedAlveolarExchange())
       {
         Error("Cannot have multiple Impaired Alveolar Exchange conditions");
-        m_Conditions.mutable_anycondition()->RemoveLast();
+        m_Conditions->mutable_anycondition()->RemoveLast();
         return false;
       }
       m_ImpairedAlveolarExchange = new SEImpairedAlveolarExchange();
@@ -227,7 +229,7 @@ bool SEConditionManager::ProcessCondition(const SECondition& condition)
       if (HasLobarPneumonia())
       {
         Error("Cannot have multiple Lobar Pneumonia conditions");
-        m_Conditions.mutable_anycondition()->RemoveLast();
+        m_Conditions->mutable_anycondition()->RemoveLast();
         return false;
       }
       m_LobarPneumonia = new SELobarPneumonia();
@@ -245,7 +247,7 @@ bool SEConditionManager::ProcessCondition(const SECondition& condition)
       if (HasInitialEnvironmentConditions())
       {
         Error("Cannot have multiple Initial Environment conditions");
-        m_Conditions.mutable_anycondition()->RemoveLast();
+        m_Conditions->mutable_anycondition()->RemoveLast();
         return false;
       }
       m_InitialEnvironmentConditions = new SEInitialEnvironmentConditions(m_Substances);
@@ -257,7 +259,7 @@ bool SEConditionManager::ProcessCondition(const SECondition& condition)
   
   /// \error Unsupported Condition
   Error("Unsupported Condition");
-  m_Conditions.mutable_anycondition()->RemoveLast();
+  m_Conditions->mutable_anycondition()->RemoveLast();
   return false;
 }
 

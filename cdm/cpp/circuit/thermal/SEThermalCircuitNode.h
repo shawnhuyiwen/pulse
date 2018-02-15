@@ -3,8 +3,6 @@
 
 #pragma once
 #include "circuit/SECircuitNode.h"
-#include "properties/SEScalarEnergy.h"
-#include "properties/SEScalarTemperature.h"
 CDM_BIND_DECL(ThermalCircuitNodeData)
 
 class CDM_DECL SEThermalCircuitNode : public SECircuitNode<THERMAL_CIRCUIT_NODE>

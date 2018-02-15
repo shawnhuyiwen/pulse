@@ -3,6 +3,8 @@
 
 #include "stdafx.h" 
 #include "circuit/fluid/SEFluidCircuitNode.h"
+#include "properties/SEScalarPressure.h"
+#include "properties/SEScalarVolume.h"
 PROTO_PUSH
 #include "bind/cdm/Circuit.pb.h"
 PROTO_POP

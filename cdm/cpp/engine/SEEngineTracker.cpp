@@ -5,6 +5,8 @@
 #include "engine/SEEngineTracker.h"
 #include "PhysiologyEngine.h"
 #include "patient/SEPatient.h"
+#include "scenario/SEDataRequest.h"
+#include "scenario/SEDataRequestManager.h"
 // Compartments
 #include "compartment/SECompartmentManager.h"
 #include "compartment/fluid/SEGasCompartment.h"
@@ -12,8 +14,10 @@
 #include "compartment/fluid/SELiquidCompartment.h"
 #include "compartment/fluid/SELiquidCompartmentLink.h"
 #include "compartment/thermal/SEThermalCompartment.h"
+#include "compartment/tissue/SETissueCompartment.h"
 // Substances
 #include "substance/SESubstance.h"
+#include "substance/SESubstancePharmacokinetics.h"
 #include "substance/SESubstanceTissuePharmacokinetics.h"
 #include "substance/SESubstanceManager.h"
 // Patient
@@ -56,14 +60,14 @@ std::string Space2Underscore(const std::string& str)
 }
 
 SEEngineTracker::SEEngineTracker(PhysiologyEngine& engine) : Loggable(engine.GetLogger()),
-                                                                         m_DataRequestMgr(engine.GetLogger()),
+                                                                         m_DataRequestMgr(),
                                                                          m_Patient((SEPatient&)engine.GetPatient()),
                                                                          m_SubMgr((SESubstanceManager&)engine.GetSubstanceManager()),
                                                                          m_CmptMgr((SECompartmentManager&)engine.GetCompartments())
 {  
-
+  m_DataTrack = new DataTrack(engine.GetLogger());
+  m_DataRequestMgr = new SEDataRequestManager(engine.GetLogger());
   // TODO We are not handling nullptr well here... 
-
   SEBloodChemistrySystem* bchem = (SEBloodChemistrySystem*)engine.GetBloodChemistrySystem();
   if(bchem != nullptr)
     m_PhysiologySystems.push_back(bchem);
@@ -106,6 +110,8 @@ SEEngineTracker::SEEngineTracker(PhysiologyEngine& engine) : Loggable(engine.Get
 SEEngineTracker::~SEEngineTracker()
 {
   Clear();
+  delete m_DataTrack;
+  delete m_DataRequestMgr;
 }
 
 void SEEngineTracker::Clear()
@@ -113,7 +119,7 @@ void SEEngineTracker::Clear()
   ResetFile();
   m_ForceConnection = false;
   DELETE_MAP_SECOND(m_Request2Scalar);
-  m_DataRequestMgr.Clear();
+  m_DataRequestMgr->Clear();
 }
 
 void SEEngineTracker::ResetFile()
@@ -124,7 +130,7 @@ void SEEngineTracker::ResetFile()
 
 DataTrack& SEEngineTracker::GetDataTrack()
 {
-  return m_DataTrack;
+  return *m_DataTrack;
 }
 
 const SEDataRequestScalar* SEEngineTracker::GetScalar(const SEDataRequest& dr) const
@@ -140,7 +146,7 @@ void SEEngineTracker::SetupRequests()
   bool isOpen = m_ResultsStream.is_open();
   if (!isOpen || m_ForceConnection)
   {// Process/Hook up all requests with their associated scalers
-    for (SEDataRequest* dr : m_DataRequestMgr.GetDataRequests())
+    for (SEDataRequest* dr : m_DataRequestMgr->GetDataRequests())
     {
       if (!TrackRequest(*dr))
       {// Could not hook this up, get rid of it
@@ -153,22 +159,22 @@ void SEEngineTracker::SetupRequests()
   // Create the file now that all probes and requests have been added to the track
   // So we get columns for all of our data
   if (!isOpen)
-    m_DataTrack.CreateFile(m_DataRequestMgr.GetResultFilename().c_str(), m_ResultsStream);
+    m_DataTrack->CreateFile(m_DataRequestMgr->GetResultFilename().c_str(), m_ResultsStream);
 }
 
 void SEEngineTracker::TrackData(double time_s)
 {
-  if (!m_DataRequestMgr.HasDataRequests())
+  if (!m_DataRequestMgr->HasDataRequests())
     return;// Nothing to do here...
 
   SetupRequests();
   PullData();
-  m_DataTrack.StreamProbesToFile(time_s, m_ResultsStream);
+  m_DataTrack->StreamProbesToFile(time_s, m_ResultsStream);
 }
 void SEEngineTracker::PullData()
 {
   SEDataRequestScalar* ds;
-  for (SEDataRequest* dr : m_DataRequestMgr.GetDataRequests())
+  for (SEDataRequest* dr : m_DataRequestMgr->GetDataRequests())
   {
     ds = m_Request2Scalar[dr];
     if (ds == nullptr)
@@ -179,7 +185,7 @@ void SEEngineTracker::PullData()
     }
     if (!ds->HasScalar())
     {
-      m_DataTrack.Probe(ds->Heading, SEScalar::dNaN());
+      m_DataTrack->Probe(ds->Heading, SEScalar::dNaN());
       continue;
     }
     ds->UpdateScalar();// Update compartment if needed
@@ -189,15 +195,15 @@ void SEEngineTracker::PullData()
       {
         if (dr->GetUnit() == nullptr)
           dr->SetUnit(*ds->GetUnit());
-        m_DataTrack.Probe(ds->Heading, ds->GetValue(*dr->GetUnit()));
+        m_DataTrack->Probe(ds->Heading, ds->GetValue(*dr->GetUnit()));
       }
       else
-        m_DataTrack.Probe(ds->Heading, ds->GetValue());
+        m_DataTrack->Probe(ds->Heading, ds->GetValue());
     }
     else if (ds->IsInfinity())
-      m_DataTrack.Probe(ds->Heading, std::numeric_limits<double>::infinity());
+      m_DataTrack->Probe(ds->Heading, std::numeric_limits<double>::infinity());
     else
-      m_DataTrack.Probe(ds->Heading, SEScalar::dNaN());
+      m_DataTrack->Probe(ds->Heading, SEScalar::dNaN());
   }
 }
 
@@ -211,13 +217,13 @@ bool SEEngineTracker::TrackRequest(SEDataRequest& dr)
 
   switch (dr.GetCategory())
   {
-    case cdm::DataRequestData_eCategory_Patient:
+    case cdm::eDataRequest_Category_Patient:
       m_ss << "Patient";
-    case cdm::DataRequestData_eCategory_Physiology:
-    case cdm::DataRequestData_eCategory_Environment:
-    case cdm::DataRequestData_eCategory_AnesthesiaMachine:
-    case cdm::DataRequestData_eCategory_ECG:
-    case cdm::DataRequestData_eCategory_Inhaler:
+    case cdm::eDataRequest_Category_Physiology:
+    case cdm::eDataRequest_Category_Environment:
+    case cdm::eDataRequest_Category_AnesthesiaMachine:
+    case cdm::eDataRequest_Category_ECG:
+    case cdm::eDataRequest_Category_Inhaler:
     {
       if (!dr.GetUnit())
         m_ss << dr.GetPropertyName();
@@ -226,14 +232,14 @@ bool SEEngineTracker::TrackRequest(SEDataRequest& dr)
 
       ds->Heading = Space2Underscore(m_ss.str());
       m_ss.str("");//Reset Buffer
-      m_DataTrack.Probe(ds->Heading, 0);
-      m_DataTrack.SetFormatting(ds->Heading, dr);
+      m_DataTrack->Probe(ds->Heading, 0);
+      m_DataTrack->SetFormatting(ds->Heading, dr);
       return success;
     }
-    case cdm::DataRequestData_eCategory_GasCompartment:
-    case cdm::DataRequestData_eCategory_LiquidCompartment:
-    case cdm::DataRequestData_eCategory_ThermalCompartment:
-    case cdm::DataRequestData_eCategory_TissueCompartment:
+    case cdm::eDataRequest_Category_GasCompartment:
+    case cdm::eDataRequest_Category_LiquidCompartment:
+    case cdm::eDataRequest_Category_ThermalCompartment:
+    case cdm::eDataRequest_Category_TissueCompartment:
     {
       if (dr.HasSubstanceName())
       {
@@ -251,11 +257,11 @@ bool SEEngineTracker::TrackRequest(SEDataRequest& dr)
       }
       ds->Heading = Space2Underscore(m_ss.str());
       m_ss.str("");//Reset Buffer
-      m_DataTrack.Probe(ds->Heading, 0);
-      m_DataTrack.SetFormatting(ds->Heading, dr);
+      m_DataTrack->Probe(ds->Heading, 0);
+      m_DataTrack->SetFormatting(ds->Heading, dr);
       return success;
     }
-    case cdm::DataRequestData_eCategory_Substance:
+    case cdm::eDataRequest_Category_Substance:
     {
       if (dr.HasCompartmentName())
       {
@@ -265,8 +271,8 @@ bool SEEngineTracker::TrackRequest(SEDataRequest& dr)
           m_ss << dr.GetSubstanceName() << "-" << dr.GetCompartmentName() << "-" << dr.GetPropertyName() << "(" << *dr.GetUnit() << ")";
         ds->Heading = Space2Underscore(m_ss.str());
         m_ss.str("");//Reset Buffer
-        m_DataTrack.Probe(ds->Heading, 0);
-        m_DataTrack.SetFormatting(ds->Heading, dr);
+        m_DataTrack->Probe(ds->Heading, 0);
+        m_DataTrack->SetFormatting(ds->Heading, dr);
         return success;
       }
       else
@@ -277,8 +283,8 @@ bool SEEngineTracker::TrackRequest(SEDataRequest& dr)
           m_ss << dr.GetSubstanceName() << "-" << dr.GetPropertyName() << "(" << *dr.GetUnit() << ")";
         ds->Heading = Space2Underscore(m_ss.str());
         m_ss.str("");//Reset Buffer
-        m_DataTrack.Probe(ds->Heading, 0);
-        m_DataTrack.SetFormatting(ds->Heading, dr);
+        m_DataTrack->Probe(ds->Heading, 0);
+        m_DataTrack->SetFormatting(ds->Heading, dr);
         return success;
       }
     }
@@ -297,40 +303,40 @@ bool SEEngineTracker::ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds)
   std::string propertyName = dr.GetPropertyName();
   switch (dr.GetCategory())
   {
-    case cdm::DataRequestData_eCategory_Patient:
+    case cdm::eDataRequest_Category_Patient:
     {
       // casting of the const to modify the patient
       ds.SetScalar(m_Patient.GetScalar(propertyName), dr);
       return true;
     }
-    case cdm::DataRequestData_eCategory_Physiology:
+    case cdm::eDataRequest_Category_Physiology:
     {
       // Make sure we mapped something
       ds.SetScalar(SESystem::GetScalar(propertyName, &m_PhysiologySystems), dr);
       return true;
     }    
-    case cdm::DataRequestData_eCategory_Environment:
+    case cdm::eDataRequest_Category_Environment:
     {
       // Make sure we mapped something
       ds.SetScalar(m_Environment->GetScalar(propertyName), dr);
       return true;
     }
-    case cdm::DataRequestData_eCategory_AnesthesiaMachine:
+    case cdm::eDataRequest_Category_AnesthesiaMachine:
     {
       ds.SetScalar(m_AnesthesiaMachine->GetScalar(propertyName), dr);
       return true;
     }
-    case cdm::DataRequestData_eCategory_ECG:
+    case cdm::eDataRequest_Category_ECG:
     {
       ds.SetScalar(m_ECG->GetScalar(propertyName), dr);
       return true;
     }
-    case cdm::DataRequestData_eCategory_Inhaler:
+    case cdm::eDataRequest_Category_Inhaler:
     {
       ds.SetScalar(m_Inhaler->GetScalar(propertyName), dr);
       return true;
     }
-    case cdm::DataRequestData_eCategory_GasCompartment:
+    case cdm::eDataRequest_Category_GasCompartment:
     {
       if (!m_CmptMgr.HasGasCompartment(dr.GetCompartmentName()))
       {
@@ -377,7 +383,7 @@ bool SEEngineTracker::ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds)
       }
       return true;
     }
-    case cdm::DataRequestData_eCategory_LiquidCompartment:
+    case cdm::eDataRequest_Category_LiquidCompartment:
     {
       if (!m_CmptMgr.HasLiquidCompartment(dr.GetCompartmentName()))
       {
@@ -429,7 +435,7 @@ bool SEEngineTracker::ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds)
       }
       return true;
     }
-    case cdm::DataRequestData_eCategory_ThermalCompartment:
+    case cdm::eDataRequest_Category_ThermalCompartment:
     {
       if (!m_CmptMgr.HasThermalCompartment(dr.GetCompartmentName()))
       {
@@ -457,7 +463,7 @@ bool SEEngineTracker::ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds)
       ds.SetScalar(thermalCmpt->GetScalar(propertyName), dr);
       return true;
     }
-    case cdm::DataRequestData_eCategory_TissueCompartment:
+    case cdm::eDataRequest_Category_TissueCompartment:
     {
       if (!m_CmptMgr.HasTissueCompartment(dr.GetCompartmentName()))
       {
@@ -469,7 +475,7 @@ bool SEEngineTracker::ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds)
       ds.SetScalar(tissueCmpt->GetScalar(propertyName), dr);
       return true;
     }
-    case cdm::DataRequestData_eCategory_Substance:
+    case cdm::eDataRequest_Category_Substance:
     {
       // Removing const because I want to allocate and grab scalars to track for later
       SESubstance* sub = m_SubMgr.GetSubstance(dr.GetSubstanceName());

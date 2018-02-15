@@ -3,6 +3,13 @@
 
 #include "stdafx.h"
 #include "scenario/SEScenarioInitialParameters.h"
+#include "engine/SEEngineConfiguration.h"
+#include "patient/SEPatient.h"
+#include "scenario/SECondition.h"
+#include "substance/SESubstanceManager.h"
+PROTO_PUSH
+#include "bind/cdm/Scenario.pb.h"
+PROTO_POP
 
 SEScenarioInitialParameters::SEScenarioInitialParameters(SESubstanceManager& subMgr) : Loggable(subMgr.GetLogger()), m_SubMgr(subMgr)
 {

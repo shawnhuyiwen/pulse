@@ -3,8 +3,11 @@
 
 #include "stdafx.h"
 #include "engine/SEDynamicStabilizationPropertyConvergence.h"
+#include "properties/SEScalar.h"
+#include "scenario/SEDataRequest.h"
+#include "engine/SEEngineTracker.h"
 
-SEDynamicStabilizationPropertyConvergence::SEDynamicStabilizationPropertyConvergence(SEDataRequest& dr, Logger* logger) : Loggable(logger), m_DataRequest(dr), m_DataRequestScalar(logger)
+SEDynamicStabilizationPropertyConvergence::SEDynamicStabilizationPropertyConvergence(SEDataRequest& dr, Logger* logger) : Loggable(logger), m_DataRequest(dr)
 {
   m_Error = 0;
   m_Target = 0;
@@ -13,17 +16,19 @@ SEDynamicStabilizationPropertyConvergence::SEDynamicStabilizationPropertyConverg
   m_Optional = false;
   *(reinterpret_cast<unsigned long long int *>(&m_LastError)) = SEScalar::NaN;
   *(reinterpret_cast<unsigned long long int *>(&m_Target)) = SEScalar::NaN;
+  m_DataRequestScalar = new SEDataRequestScalar(logger);
 }
 
 SEDynamicStabilizationPropertyConvergence::~SEDynamicStabilizationPropertyConvergence()
 {
+  delete m_DataRequestScalar;
 }
 
 // This basically tests the current property with the target proptry and if they are in a window of acceptance
 bool SEDynamicStabilizationPropertyConvergence::Test(double time_s)
 {
-  double v = !m_DataRequestScalar.HasUnit() ?
-    m_DataRequestScalar.GetValue() : m_DataRequestScalar.GetValue(*m_DataRequestScalar.GetUnit());
+  double v = !m_DataRequestScalar->HasUnit() ?
+    m_DataRequestScalar->GetValue() : m_DataRequestScalar->GetValue(*m_DataRequestScalar->GetUnit());
   if (std::isnan(m_Target))
   {
     m_Target = v;
@@ -40,5 +45,15 @@ bool SEDynamicStabilizationPropertyConvergence::Test(double time_s)
   m_Target = v;
   m_LastErrorTime_s = time_s;
   return false;
+}
+
+
+void SEDynamicStabilizationPropertyConvergence::TrackScalar(const SEScalar& s) 
+{ 
+  m_DataRequestScalar->SetScalar(&s, m_DataRequest); 
+}
+SEDataRequestScalar& SEDynamicStabilizationPropertyConvergence::GetDataRequestScalar() 
+{ 
+  return *m_DataRequestScalar; 
 }
 

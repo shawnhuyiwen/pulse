@@ -3,12 +3,6 @@
 
 #pragma once
 #include "circuit/SECircuitPath.h"
-#include "properties/SEScalarFlowResistance.h"
-#include "properties/SEScalarFlowCompliance.h"
-#include "properties/SEScalarFlowInertance.h"
-#include "properties/SEScalarVolumePerTime.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarVolume.h"
 #include "circuit/fluid/SEFluidCircuitNode.h"
 CDM_BIND_DECL(FluidCircuitPathData)
 

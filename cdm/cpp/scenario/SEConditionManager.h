@@ -73,7 +73,7 @@ public:
   SEInitialEnvironmentConditions* GetInitialEnvironmentConditions() const;
   
   // This is here in case you want to take all the conditions from an engine and write them out so you can reproduce the same engine state later
-  const cdm::ConditionListData& GetConditionList() { return m_Conditions; }// I don't really have anything that does that yet...
+  const cdm::ConditionListData& GetConditionList() { return *m_Conditions; }// I don't really have anything that does that yet...
 
 protected:
 
@@ -89,6 +89,6 @@ protected:
 
   SEInitialEnvironmentConditions*          m_InitialEnvironmentConditions;
 
-  cdm::ConditionListData                   m_Conditions;
+  cdm::ConditionListData*                  m_Conditions;
   std::stringstream m_ss;
 };

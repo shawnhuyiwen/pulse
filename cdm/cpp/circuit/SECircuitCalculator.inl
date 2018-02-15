@@ -7,6 +7,7 @@
 #include "SECircuitPath.h"
 #include "properties/SEScalar.h"
 #include "utils/GeneralMath.h"
+#include "utils/TimingProfile.h"
 
 #include "Eigen/Dense"
 #include "Eigen/SparseLU"

@@ -2,11 +2,12 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "scenario/SEAction.h"
-#include "scenario/SECondition.h"
-#include "scenario/SEDataRequestManager.h"
-#include "scenario/SEScenarioInitialParameters.h"
-#include "substance/SESubstanceManager.h"
+class SEAction;
+class SECondition;
+class SEDataRequestManager;
+class SEScenarioInitialParameters;
+class SESubstanceManager;
+CDM_BIND_DECL(ScenarioData)
 
 class CDM_DECL SEScenario : public Loggable
 {
@@ -51,8 +52,8 @@ public:
   virtual void AddAction(const SEAction& action);
   virtual const std::vector<SEAction*>& GetActions() const;
 
-  virtual SEDataRequestManager& GetDataRequestManager() { return m_DataRequestMgr; }
-  virtual const SEDataRequestManager& GetDataRequestManager() const { return m_DataRequestMgr; }
+  virtual SEDataRequestManager& GetDataRequestManager() { return *m_DataRequestMgr; }
+  virtual const SEDataRequestManager& GetDataRequestManager() const { return *m_DataRequestMgr; }
 
 protected:
   SESubstanceManager&                         m_SubMgr;
@@ -60,7 +61,7 @@ protected:
   std::string                                 m_Description;
   std::string                                 m_EngineStateFile;
   SEScenarioInitialParameters*                m_InitialParameters;
-  SEDataRequestManager                        m_DataRequestMgr;
+  SEDataRequestManager*                       m_DataRequestMgr;
   std::vector<SEAction*>                      m_Actions;
 
 };

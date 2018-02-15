@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "utils/testing/SETestCase.h"
+#include "utils/testing/SETestErrorStatistics.h"
 #include "properties/SEScalarTime.h"
 PROTO_PUSH
 #include "bind/cdm/TestReport.pb.h"

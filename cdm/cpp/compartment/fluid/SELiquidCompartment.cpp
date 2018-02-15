@@ -100,7 +100,7 @@ void SELiquidCompartment::Balance(BalanceLiquidBy by)
 {
   for (SELiquidSubstanceQuantity* subQ : m_SubstanceQuantities)
   {
-    if (by == BalanceLiquidBy::PartialPressure && subQ->GetSubstance().GetState() != cdm::SubstanceData_eState_Gas)
+    if (by == BalanceLiquidBy::PartialPressure && subQ->GetSubstance().GetState() != cdm::eSubstance_State_Gas)
       continue;
 
     //Partial pressures only make sense for gases in liquids
