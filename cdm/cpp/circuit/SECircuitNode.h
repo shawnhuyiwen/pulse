@@ -4,6 +4,15 @@
 #pragma once
 CDM_BIND_DECL(CircuitNodeData)
 
+#include "properties/SEScalarElectricCharge.h"
+#include "properties/SEScalarElectricPotential.h"
+
+#include "properties/SEScalarPressure.h"
+#include "properties/SEScalarVolume.h"
+
+#include "properties/SEScalarTemperature.h"
+#include "properties/SEScalarEnergy.h"
+
 #define CIRCUIT_NODE_TEMPLATE typename PotentialScalar, typename QuantityScalar
 #define CIRCUIT_NODE_TYPES PotentialScalar,QuantityScalar
 #define ELECTRICAL_CIRCUIT_NODE SEScalarElectricPotential, SEScalarElectricCharge

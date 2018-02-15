@@ -2,8 +2,11 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "Controller/Controller.h"
 #include "Controller/Compartments.h"
+#include "Controller/Substances.h"
+#include "PulseConfiguration.h"
+
+#include "substance/SESubstance.h"
 #include "compartment/fluid/SEGasCompartment.h"
 #include "compartment/fluid/SEGasCompartmentLink.h"
 #include "compartment/fluid/SEGasCompartmentGraph.h"

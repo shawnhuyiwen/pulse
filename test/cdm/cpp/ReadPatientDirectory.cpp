@@ -6,7 +6,9 @@
 #include "utils/TimingProfile.h"
 #include "utils/FileUtils.h"
 #include "utils/testing/SETestReport.h"
+#include "utils/testing/SETestSuite.h"
 #include "utils/testing/SETestCase.h"
+#include "properties/SEScalarTime.h"
 
 void CommonDataModelTest::ReadPatientDirectory(const std::string& rptDirectory)
 {

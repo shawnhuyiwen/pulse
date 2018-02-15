@@ -2,8 +2,8 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "Controller/Engine.h"
 #include "scenario/SEScenarioExec.h"
+class PulseEngine;
 class PulseScenario;
 
 /**

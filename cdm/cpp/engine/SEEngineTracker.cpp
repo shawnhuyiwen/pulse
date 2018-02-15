@@ -15,6 +15,16 @@
 #include "compartment/fluid/SELiquidCompartmentLink.h"
 #include "compartment/thermal/SEThermalCompartment.h"
 #include "compartment/tissue/SETissueCompartment.h"
+// Circuit
+#include "circuit/fluid/SEFluidCircuit.h"
+#include "circuit/fluid/SEFluidCircuitNode.h"
+#include "circuit/fluid/SEFluidCircuitPath.h"
+#include "circuit/thermal/SEThermalCircuit.h"
+#include "circuit/thermal/SEThermalCircuitNode.h"
+#include "circuit/thermal/SEThermalCircuitPath.h"
+#include "circuit/electrical/SEElectricalCircuit.h"
+#include "circuit/electrical/SEElectricalCircuitNode.h"
+#include "circuit/electrical/SEElectricalCircuitPath.h"
 // Substances
 #include "substance/SESubstance.h"
 #include "substance/SESubstancePharmacokinetics.h"

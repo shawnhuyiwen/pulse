@@ -2,8 +2,9 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "system/physiology/SETissueSystem.h"
 struct error_functor;
+class SELiquidCompartment;
+class SELiquidSubstanceQuantity;
 
 /**
 * @brief

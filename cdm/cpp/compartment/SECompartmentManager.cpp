@@ -3,14 +3,26 @@
 
 #include "stdafx.h"
 #include "compartment/SECompartmentManager.h"
-#include "circuit/SECircuitManager.h"
 #include "compartment/fluid/SEGasCompartmentGraph.h"
 #include "compartment/fluid/SELiquidCompartmentGraph.h"
 #include "compartment/thermal/SEThermalCompartment.h"
 #include "compartment/thermal/SEThermalCompartmentLink.h"
 #include "compartment/tissue/SETissueCompartment.h"
+// Circuits
+#include "circuit/SECircuitManager.h"
+#include "circuit/fluid/SEFluidCircuit.h"
+#include "circuit/fluid/SEFluidCircuitNode.h"
+#include "circuit/fluid/SEFluidCircuitPath.h"
+#include "circuit/thermal/SEThermalCircuit.h"
+#include "circuit/thermal/SEThermalCircuitNode.h"
+#include "circuit/thermal/SEThermalCircuitPath.h"
+#include "circuit/electrical/SEElectricalCircuit.h"
+#include "circuit/electrical/SEElectricalCircuitNode.h"
+#include "circuit/electrical/SEElectricalCircuitPath.h"
+// Substances
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceManager.h"
+// Properties
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarAmountPerVolume.h"
 PROTO_PUSH

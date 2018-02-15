@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "compartment/fluid/SELiquidCompartment.h"
 #include "compartment/substances/SELiquidSubstanceQuantity.h"
+#include "substance/SESubstance.h"
 #include "substance/SESubstanceManager.h"
 #include "properties/SEScalar.h"
 #include "properties/SEScalar0To1.h"

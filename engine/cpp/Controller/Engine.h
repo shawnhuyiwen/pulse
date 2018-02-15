@@ -2,18 +2,8 @@
    See accompanying NOTICE file for details.*/
 #pragma once
 
-#pragma warning(push)
-// Disabling the waring about STL classes used have 
-// to have a dll interface to be used by clients
-// From what I have read STL is compiler dependent
-// But since we are releasing source, you can build
-// the project necessary to ensure proper linkage
-// If anyone else has opinions on this, let us know
-// kitware@kitware.com
-#pragma warning(disable : 4251)
-#include "Controller.h"
-#pragma warning(pop)
-
+#include "PhysiologyEngine.h"
+#include "Controller/Controller.h"
 
 //--------------------------------------------------------------------------------------------------
 /// @brief  
@@ -79,6 +69,6 @@ protected:
   virtual bool InitializeEngine(const std::vector<const SECondition*>* conditions = nullptr, const SEEngineConfiguration* config = nullptr);
 
   SEEventHandler*                                 m_EventHandler;
-  SEEngineTracker                                 m_EngineTrack;
+  SEEngineTracker*                                m_EngineTrack;
   std::stringstream                               m_ss;
 };

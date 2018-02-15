@@ -4,10 +4,8 @@
 #pragma once
 #include "Controller/System.h"
 #include "system/equipment/anesthesiamachine/SEAnesthesiaMachine.h"
-PROTO_PUSH
-#include "bind/engine/EngineEquipment.pb.h"
-PROTO_POP
 class SEAnesthesiaMachineActionCollection;
+PULSE_BIND_DECL(AnesthesiaMachineData)
 
 /**
  * @brief 
@@ -49,7 +47,7 @@ public:
 
   // Extending some functionality to these base class methods
   // We will update the Pulse Airway mode when these are called
-  virtual void SetConnection(cdm::AnesthesiaMachineData_eConnection c);
+  virtual void SetConnection(cdm::eAnesthesiaMachine_Connection c);
   virtual void InvalidateConnection();
 
 private:

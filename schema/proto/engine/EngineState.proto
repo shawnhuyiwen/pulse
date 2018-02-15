@@ -9,7 +9,7 @@ import "cdm/Scenario.proto";
 import "cdm/Substance.proto";
 import "cdm/Compartment.proto";
 import "cdm/Circuit.proto";
-import "engine/Engine.proto";
+import "engine/EngineEnums.proto";
 import "engine/EnginePhysiology.proto";
 import "engine/EngineEnvironment.proto";
 import "engine/EngineEquipment.proto";

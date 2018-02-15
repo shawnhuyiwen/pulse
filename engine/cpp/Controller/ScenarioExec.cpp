@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "Controller/ScenarioExec.h"
+#include "Controller/Engine.h"
 #include "engine/SEAutoSerialization.h"
 #include "PulseScenario.h"
 #include "PulseConfiguration.h"

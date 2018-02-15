@@ -1,12 +1,13 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 #include "stdafx.h"
+#include "Controller/Engine.h"
 PROTO_PUSH
 #include "bind/engine/EngineState.pb.h"
 PROTO_POP
-#include "Controller/Engine.h"
+
 #include "patient/SEPatient.h"
-#include "circuit/SECircuit.h"
+#include "circuit/SECircuitManager.h"
 #include "compartment/SECompartmentManager.h"
 #include "engine/SEEngineStabilization.h"
 #include "scenario/SEScenario.h"
@@ -469,7 +470,7 @@ void PulseEngine::AdvanceModelTime()
 {
   if (!IsReady())
     return;  
-  if(m_Patient->IsEventActive(cdm::PatientData_eEvent_IrreversibleState))
+  if(m_Patient->IsEventActive(cdm::ePatient_Event_IrreversibleState))
     return;  
 
   PreProcess();

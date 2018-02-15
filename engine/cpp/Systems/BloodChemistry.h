@@ -4,9 +4,12 @@
 #pragma once
 #include "Controller/System.h"
 #include "system/physiology/SEBloodChemistrySystem.h"
-#include "utils/RunningAverage.h"
+class RunningAverage;
 class SECompleteBloodCount;
 class SEComprehensiveMetabolicPanel;
+class SELiquidCompartment;
+class SELiquidSubstanceQuantity;
+PULSE_BIND_DECL(BloodChemistrySystemData)
 
 /**
  * @brief @copydoc Physiology_BloodChemistrySystemData
@@ -54,8 +57,8 @@ protected:
   void CheckBloodGasLevels();
   
   // Serializable member variables (Set in Initialize and in schema)
-  RunningAverage m_ArterialOxygen_mmHg;
-  RunningAverage m_ArterialCarbonDioxide_mmHg;
+  RunningAverage* m_ArterialOxygen_mmHg;
+  RunningAverage* m_ArterialCarbonDioxide_mmHg;
 
   // Stateless member variable (Set in SetUp())
   double m_redBloodCellVolume_mL;

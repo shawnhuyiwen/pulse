@@ -14,6 +14,7 @@
 #include "compartment/fluid/SELiquidCompartment.h"
 #include "compartment/fluid/SELiquidCompartmentLink.h"
 #include "compartment/fluid/SELiquidCompartmentGraph.h"
+#include "substance/SESubstance.h"
 #include "compartment/substances/SELiquidSubstanceQuantity.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarMass.h"

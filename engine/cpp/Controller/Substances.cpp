@@ -2,9 +2,16 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
+#include "Controller/Substances.h"
+#include "Controller/Compartments.h"
+#include "Controller/Controller.h"
+#include "Systems/Saturation.h"
+
+#include "patient/SEPatient.h"
+#include "substance/SESubstance.h"
+#include "substance/SESubstanceAerosolization.h"
+#include "substance/SESubstancePharmacodynamics.h"
 #include "system/environment/SEEnvironment.h"
-#include "Substances.h"
-#include "Controller.h"
 #include "compartment/fluid/SEGasCompartment.h"
 #include "compartment/fluid/SEGasCompartmentLink.h"
 #include "compartment/substances/SEGasSubstanceQuantity.h"
@@ -14,9 +21,11 @@
 #include "compartment/tissue/SETissueCompartment.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarAmountPerVolume.h"
+#include "properties/SEScalarMass.h"
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarMassPerAmount.h"
 #include "properties/SEHistogramFractionVsLength.h"
+#include "utils/DataTrack.h"
 
 PulseSubstances::PulseSubstances(PulseController& data) : SESubstanceManager(data.GetLogger()), m_data(data)
 {
@@ -182,7 +191,7 @@ void PulseSubstances::InitializeLiquidCompartmentGases()
   SEScalarAmountPerVolume phosphate;
 
   albuminConcentration.SetValue(45.0, MassPerVolumeUnit::g_Per_L);
-  hematocrit.SetValue(m_data.GetPatient().GetSex() == cdm::PatientData_eSex_Male ? 0.45 : 0.40);
+  hematocrit.SetValue(m_data.GetPatient().GetSex() == cdm::ePatient_Sex_Male ? 0.45 : 0.40);
   bodyTemp.SetValue(37.0, TemperatureUnit::C);
   strongIonDifference.SetValue(40.5, AmountPerVolumeUnit::mmol_Per_L);
   phosphate.SetValue(1.1, AmountPerVolumeUnit::mmol_Per_L);
@@ -814,7 +823,7 @@ void PulseSubstances::AddActiveSubstance(SESubstance& substance)
     return;// If its already active, don't do anything
   
   SESubstanceManager::AddActiveSubstance(substance);
-  if (substance.GetState() == cdm::SubstanceData_eState_Gas)
+  if (substance.GetState() == cdm::eSubstance_State_Gas)
     m_data.GetCompartments().AddGasCompartmentSubstance(substance);
   m_data.GetCompartments().AddLiquidCompartmentSubstance(substance);
 

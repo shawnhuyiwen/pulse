@@ -407,7 +407,7 @@ void Drugs::CalculatePartitionCoefficients()
         continue;
       
       SESubstancePhysicochemicals& pk = sub->GetPK().GetPhysicochemicals();
-      cdm::SubstanceData_eIonicState IonicState = pk.GetIonicState();
+      cdm::eSubstance_IonicState IonicState = pk.GetIonicState();
       double AcidDissociationConstant = pk.GetAcidDissociationConstant().GetValue();
       double P = exp(log(10) * pk.GetLogP().GetValue()); //Getting P from logP value
       if (tissue == m_fatTissue)
@@ -415,15 +415,15 @@ void Drugs::CalculatePartitionCoefficients()
         P = 1.115 * pk.GetLogP().GetValue() - 1.35;
         P = exp(log(10) * P);
       }
-      if (pk.GetBindingProtein() == cdm::SubstanceData_eBindingProtein_AAG)
+      if (pk.GetBindingProtein() == cdm::eSubstance_BindingProtein_AAG)
       {
         TissueToPlasmaProteinRatio = tissue->GetTissueToPlasmaAlphaAcidGlycoproteinRatio().GetValue();
       }
-      else if (pk.GetBindingProtein() == cdm::SubstanceData_eBindingProtein_Albumin)
+      else if (pk.GetBindingProtein() == cdm::eSubstance_BindingProtein_Albumin)
       {
         TissueToPlasmaProteinRatio = tissue->GetTissueToPlasmaAlbuminRatio().GetValue();
       }
-      else if (pk.GetBindingProtein() == cdm::SubstanceData_eBindingProtein_Lipoprotein)
+      else if (pk.GetBindingProtein() == cdm::eSubstance_BindingProtein_Lipoprotein)
       {
         TissueToPlasmaProteinRatio = tissue->GetTissueToPlasmaLipoproteinRatio().GetValue();
       }
@@ -438,7 +438,7 @@ void Drugs::CalculatePartitionCoefficients()
         Fatal(ss);
       }
       //Based on the ionic state, the partition coefficient equation and/or pH effect equations are varied.
-      if (IonicState == cdm::SubstanceData_eIonicState_Base)
+      if (IonicState == cdm::eSubstance_IonicState_Base)
       {
         IntracellularPHEffects = pow(10.0, (AcidDissociationConstant - IntracellularPH));
         PHEffectPower = PlasmaPH - AcidDissociationConstant;
@@ -450,14 +450,14 @@ void Drugs::CalculatePartitionCoefficients()
       }
       else
       {
-        if (IonicState == cdm::SubstanceData_eIonicState_Acid)
+        if (IonicState == cdm::eSubstance_IonicState_Acid)
         {
           PHEffectPower = IntracellularPH - AcidDissociationConstant;
           IntracellularPHEffects = 1.0 + pow(10.0, PHEffectPower);
           PHEffectPower = PlasmaPH - AcidDissociationConstant;
           PlasmaPHEffects = 1.0 + pow(10.0, PHEffectPower);
         }
-        else if (IonicState == cdm::SubstanceData_eIonicState_WeakBase)
+        else if (IonicState == cdm::eSubstance_IonicState_WeakBase)
         {
           PHEffectPower = AcidDissociationConstant - IntracellularPH;
           IntracellularPHEffects = 1.0 + pow(10.0, PHEffectPower);

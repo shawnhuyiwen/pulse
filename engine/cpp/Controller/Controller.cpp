@@ -264,7 +264,7 @@ bool PulseController::SetupPatient()
   double heightMin_cm = heightMinMale_cm;
   double heightMax_cm = heightMaxMale_cm;
   double heightStandard_cm = heightStandardMale_cm;
-  if (m_Patient->GetSex() == cdm::PatientData_eSex_Female)
+  if (m_Patient->GetSex() == cdm::ePatient_Sex_Female)
   {
     //Female
     heightMin_cm = heightMinFemale_cm;
@@ -351,7 +351,7 @@ bool PulseController::SetupPatient()
   double fatFractionMin = fatFractionMinMale;
   double fatFractionMax = fatFractionMaxMale;
   double fatFractionStandard = fatFractionStandardMale;
-  if (m_Patient->GetSex() == cdm::PatientData_eSex_Female)
+  if (m_Patient->GetSex() == cdm::ePatient_Sex_Female)
   {
     //Female
     fatFractionMin = fatFractionMinFemale;
@@ -798,7 +798,7 @@ bool PulseController::SetupPatient()
   /// \cite roza1984metabolic
   double BMR_kcal_Per_day;
   double computBMR_kcal_Per_day = 88.632 + 13.397 * weight_kg + 4.799 * height_cm - 5.677 * age_yr; //Male
-  if (m_Patient->GetSex() == cdm::PatientData_eSex_Female)
+  if (m_Patient->GetSex() == cdm::ePatient_Sex_Female)
   {
     computBMR_kcal_Per_day = 447.593 + 9.247 * weight_kg + 3.098 * height_cm - 4.330 * age_yr; //Female
   }
@@ -1009,7 +1009,7 @@ bool PulseController::CreateCircuitsAndCompartments()
 void PulseController::SetupCardiovascular()
 {
   Info("Setting Up Cardiovascular");
-  bool male = m_Patient->GetSex() == cdm::PatientData_eSex_Male ? true : false;
+  bool male = m_Patient->GetSex() == cdm::ePatient_Sex_Male ? true : false;
   double RightLungRatio = m_Patient->GetRightLungRatio().GetValue();
   double LeftLungRatio = 1 - RightLungRatio;
   double bloodVolume_mL = m_Patient->GetBloodVolumeBaseline(VolumeUnit::mL);
@@ -2794,7 +2794,7 @@ void PulseController::SetupTissue()
 
   //Typical ICRP Female - From ICRP
   //Total Mass (kg)
-  if (m_Patient->GetSex() == cdm::PatientData_eSex_Female)
+  if (m_Patient->GetSex() == cdm::ePatient_Sex_Female)
   {
     AdiposeTissueMass = 19.0;
     BoneTissueMass = 7.8;
@@ -2820,7 +2820,7 @@ void PulseController::SetupTissue()
   //Male
   double standardPatientWeight_lb = 170.0;
   double standardPatientHeight_in = 71.0;
-  if (m_Patient->GetSex() == cdm::PatientData_eSex_Female)
+  if (m_Patient->GetSex() == cdm::ePatient_Sex_Female)
   {
     //Female
     standardPatientWeight_lb = 130.0;
@@ -2833,14 +2833,14 @@ void PulseController::SetupTissue()
   //Modify most based on lean body mass
   //Hume, R (Jul 1966). "Prediction of lean body mass from height and weight." Journal of clinical pathology. 19 (4): 389�91. doi:10.1136/jcp.19.4.389. PMC 473290. PMID 5929341.
   //double typicalLeanBodyMass_kg = 0.32810 * Convert(standardPatientWeight_lb, MassUnit::lb, MassUnit::kg) + 0.33929 * Convert(standardPatientHeight_in, LengthUnit::in, LengthUnit::cm) - 29.5336; //Male
-  //if (m_Patient->GetSex() == cdm::PatientData_eSex_Female)
+  //if (m_Patient->GetSex() == cdm::ePatient_Sex_Female)
   //{
    // typicalLeanBodyMass_kg = 0.29569 * Convert(standardPatientWeight_lb, MassUnit::lb, MassUnit::kg) + 0.41813 * Convert(standardPatientHeight_in, LengthUnit::in, LengthUnit::cm) - 43.2933; //Female
   //}
 
   //Male
   double standardFatFraction = 0.21;
-  if (m_Patient->GetSex() == cdm::PatientData_eSex_Female)
+  if (m_Patient->GetSex() == cdm::ePatient_Sex_Female)
   {
     //Female
     standardFatFraction = 0.28;

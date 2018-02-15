@@ -2,17 +2,12 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-class PulseEngine;
-PROTO_PUSH
-#include "bind/engine/EnginePhysiology.pb.h"
-PROTO_POP
-
 /**
  * @brief Generic class for handling the %Pulse stabilization methodology
  */
 class PULSE_DECL PulseSystem
 {
-  friend PulseEngine;
+  friend class PulseEngine;
 public:
   /**
   * @brief - Default system values to their homeostatic values

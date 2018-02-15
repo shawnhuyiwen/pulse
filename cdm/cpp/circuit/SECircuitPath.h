@@ -4,6 +4,21 @@
 #pragma once
 #include "circuit/SECircuitNode.h"
 
+#include "properties/SEScalarElectricCapacitance.h"
+#include "properties/SEScalarElectricCurrent.h"
+#include "properties/SEScalarElectricInductance.h"
+#include "properties/SEScalarElectricResistance.h"
+
+#include "properties/SEScalarFlowCompliance.h"
+#include "properties/SEScalarVolumePerTime.h"
+#include "properties/SEScalarFlowInertance.h"
+#include "properties/SEScalarFlowResistance.h"
+
+#include "properties/SEScalarHeatCapacitance.h"
+#include "properties/SEScalarPower.h"
+#include "properties/SEScalarHeatInductance.h"
+#include "properties/SEScalarHeatResistance.h"
+
 #define CIRCUIT_PATH_TEMPLATE typename FluxScalar, typename ResistanceScalar, typename CapacitanceScalar, typename InductanceScalar, typename PotentialScalar, typename QuantityScalar
 #define CIRCUIT_PATH_TYPES FluxScalar,ResistanceScalar,CapacitanceScalar,InductanceScalar,PotentialScalar,QuantityScalar
 #define ELECTRICAL_CIRCUIT_PATH SEScalarElectricCurrent, SEScalarElectricResistance, SEScalarElectricCapacitance, SEScalarElectricInductance, SEScalarElectricPotential, SEScalarElectricCharge

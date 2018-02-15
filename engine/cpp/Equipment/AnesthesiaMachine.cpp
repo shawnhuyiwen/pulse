@@ -4,6 +4,9 @@
 
 #include "stdafx.h"
 #include "AnesthesiaMachine.h"
+PROTO_PUSH
+#include "bind/engine/EngineEquipment.pb.h"
+PROTO_POP
 
 #include "circuit/fluid/SEFluidCircuit.h"
 #include "compartment/substances/SEGasSubstanceQuantity.h"
