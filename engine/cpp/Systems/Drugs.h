@@ -4,6 +4,10 @@
 #pragma once
 #include "Controller/System.h"
 #include "system/physiology/SEDrugSystem.h"
+class SEFluidCircuitPath;
+class SELiquidCompartment;
+class SETissueCompartment;
+PULSE_BIND_DECL(DrugSystemData)
 
 /**
  * @brief

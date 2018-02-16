@@ -2,18 +2,42 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "Cardiovascular.h"
-#include "Drugs.h"
-#include "BloodChemistry.h"
-#include "Energy.h"
-#include "Renal.h"
-#include "Nervous.h"
-
+#include "Systems/Cardiovascular.h"
+#include "Systems/Saturation.h"
+#include "Controller/Circuits.h"
+#include "Controller/Compartments.h"
+#include "Controller/Substances.h"
+#include "PulseConfiguration.h"
+PROTO_PUSH
+#include "bind/engine/EnginePhysiology.pb.h"
+PROTO_POP
+// Conditions
+#include "scenario/SEConditionManager.h"
+#include "patient/conditions/SEChronicAnemia.h"
+#include "patient/conditions/SEChronicHeartFailure.h"
+#include "patient/conditions/SEChronicPericardialEffusion.h"
+#include "patient/conditions/SEChronicRenalStenosis.h"
+// Actions
+#include "scenario/SEActionManager.h"
+#include "scenario/SEPatientActionCollection.h"
+#include "patient/actions/SEBrainInjury.h"
+#include "patient/actions/SEChestCompressionForce.h"
+#include "patient/actions/SEChestCompressionForceScale.h"
+#include "patient/actions/SEHemorrhage.h"
+#include "patient/actions/SEPericardialEffusion.h"
+// Dependent Systems
+#include "system/physiology/SEBloodChemistrySystem.h"
+#include "system/physiology/SEDrugSystem.h"
+#include "system/physiology/SEEnergySystem.h"
+#include "system/physiology/SENervousSystem.h"
+// CDM
 #include "patient/SEPatient.h"
+#include "substance/SESubstance.h"
+#include "substance/SESubstanceTransport.h"
 #include "circuit/fluid/SEFluidCircuit.h"
+#include "circuit/fluid/SEFluidCircuitCalculator.h"
 #include "compartment/fluid/SELiquidCompartmentGraph.h"
 #include "compartment/substances/SELiquidSubstanceQuantity.h"
-#include "substance/SESubstance.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarFlowResistance.h"
@@ -35,25 +59,38 @@
 #include "properties/SEScalarVolumePerTimeArea.h"
 #include "properties/SEScalarArea.h"
 #include "properties/SEScalarPressureTimePerVolumeArea.h"
+#include "utils/RunningAverage.h"
+#include "utils/DataTrack.h"
 
-// Conditions 
-#include "patient/conditions/SEChronicAnemia.h"
-#include "patient/conditions/SEChronicHeartFailure.h"
-#include "patient/conditions/SEChronicPericardialEffusion.h"
-#include "patient/conditions/SEChronicRenalStenosis.h"
-
-
-Cardiovascular::Cardiovascular(PulseController& data) : SECardiovascularSystem(data.GetLogger()), m_data(data),
-m_circuitCalculator(FlowComplianceUnit::mL_Per_mmHg, VolumePerTimeUnit::mL_Per_s, FlowInertanceUnit::mmHg_s2_Per_mL, PressureUnit::mmHg, VolumeUnit::mL, FlowResistanceUnit::mmHg_s_Per_mL, data.GetLogger()),
-m_transporter(VolumePerTimeUnit::mL_Per_s, VolumeUnit::mL, MassUnit::ug, MassPerVolumeUnit::ug_Per_mL, data.GetLogger())
+Cardiovascular::Cardiovascular(PulseController& data) : SECardiovascularSystem(data.GetLogger()), m_data(data)
 {
   Clear();
   m_TuningFile = "";
+  m_transporter = new SELiquidTransporter(VolumePerTimeUnit::mL_Per_s, VolumeUnit::mL, MassUnit::ug, MassPerVolumeUnit::ug_Per_mL, data.GetLogger());
+  m_circuitCalculator = new SEFluidCircuitCalculator(FlowComplianceUnit::mL_Per_mmHg, VolumePerTimeUnit::mL_Per_s, FlowInertanceUnit::mmHg_s2_Per_mL, PressureUnit::mmHg, VolumeUnit::mL, FlowResistanceUnit::mmHg_s_Per_mL, data.GetLogger());
+  m_CardiacCycleArterialPressure_mmHg = new RunningAverage();
+  m_CardiacCycleArterialCO2PartialPressure_mmHg = new RunningAverage();
+  m_CardiacCyclePulmonaryCapillariesWedgePressure_mmHg = new RunningAverage();
+  m_CardiacCyclePulmonaryCapillariesFlow_mL_Per_s = new RunningAverage();
+  m_CardiacCyclePulmonaryShuntFlow_mL_Per_s = new RunningAverage();
+  m_CardiacCyclePulmonaryArteryPressure_mmHg = new RunningAverage();
+  m_CardiacCycleCentralVenousPressure_mmHg = new RunningAverage();
+  m_CardiacCycleSkinFlow_mL_Per_s = new RunningAverage();
 }
 
 Cardiovascular::~Cardiovascular()
 {
   Clear();
+  delete m_transporter;
+  delete m_circuitCalculator;
+  delete m_CardiacCycleArterialPressure_mmHg;
+  delete m_CardiacCycleArterialCO2PartialPressure_mmHg;
+  delete m_CardiacCyclePulmonaryCapillariesWedgePressure_mmHg;
+  delete m_CardiacCyclePulmonaryCapillariesFlow_mL_Per_s;
+  delete m_CardiacCyclePulmonaryShuntFlow_mL_Per_s;
+  delete m_CardiacCyclePulmonaryArteryPressure_mmHg;
+  delete m_CardiacCycleCentralVenousPressure_mmHg;
+  delete m_CardiacCycleSkinFlow_mL_Per_s;
 }
 
 void Cardiovascular::Clear()
@@ -118,14 +155,14 @@ void Cardiovascular::Clear()
   m_RightPulmonaryVeins = nullptr;
   m_VenaCava = nullptr;
 
-  m_CardiacCycleArterialPressure_mmHg.Reset();
-  m_CardiacCycleArterialCO2PartialPressure_mmHg.Reset();
-  m_CardiacCyclePulmonaryCapillariesWedgePressure_mmHg.Reset();
-  m_CardiacCyclePulmonaryCapillariesFlow_mL_Per_s.Reset();
-  m_CardiacCyclePulmonaryShuntFlow_mL_Per_s.Reset();
-  m_CardiacCyclePulmonaryArteryPressure_mmHg.Reset();
-  m_CardiacCycleCentralVenousPressure_mmHg.Reset();
-  m_CardiacCycleSkinFlow_mL_Per_s.Reset();
+  m_CardiacCycleArterialPressure_mmHg->Reset();
+  m_CardiacCycleArterialCO2PartialPressure_mmHg->Reset();
+  m_CardiacCyclePulmonaryCapillariesWedgePressure_mmHg->Reset();
+  m_CardiacCyclePulmonaryCapillariesFlow_mL_Per_s->Reset();
+  m_CardiacCyclePulmonaryShuntFlow_mL_Per_s->Reset();
+  m_CardiacCyclePulmonaryArteryPressure_mmHg->Reset();
+  m_CardiacCycleCentralVenousPressure_mmHg->Reset();
+  m_CardiacCycleSkinFlow_mL_Per_s->Reset();
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -165,7 +202,7 @@ void Cardiovascular::Initialize()
   m_CardiacCycleAortaPressureHigh_mmHg = m_patient->GetSystolicArterialPressureBaseline(PressureUnit::mmHg);
   m_CardiacCycleAortaPressureLow_mmHg = m_patient->GetDiastolicArterialPressureBaseline(PressureUnit::mmHg);
   GetMeanArterialPressure().SetValue((2. / 3.*m_CardiacCycleAortaPressureLow_mmHg) + (1. / 3.*m_CardiacCycleAortaPressureHigh_mmHg), PressureUnit::mmHg);
-  m_CardiacCycleArterialPressure_mmHg.Sample(GetMeanArterialPressure().GetValue(PressureUnit::mmHg));
+  m_CardiacCycleArterialPressure_mmHg->Sample(GetMeanArterialPressure().GetValue(PressureUnit::mmHg));
   m_CardiacCyclePulmonaryArteryPressureHigh_mmHg = 26;
   m_CardiacCyclePulmonaryArteryPressureLow_mmHg = 9;
   GetPulmonaryMeanArterialPressure().SetValue(15, PressureUnit::mmHg);
@@ -174,7 +211,7 @@ void Cardiovascular::Initialize()
   
   // Set system data based on physiology norms
   GetMeanCentralVenousPressure().SetValue(5.0, PressureUnit::mmHg);
-  m_CardiacCycleArterialCO2PartialPressure_mmHg.Sample(60.0);
+  m_CardiacCycleArterialCO2PartialPressure_mmHg->Sample(60.0);
   m_LastCardiacCycleMeanArterialCO2PartialPressure_mmHg = 60.0;
   GetMeanArterialCarbonDioxidePartialPressure().SetValue(60, PressureUnit::mmHg);
   GetMeanArterialCarbonDioxidePartialPressureDelta().SetValue(0.0, PressureUnit::mmHg);
@@ -240,14 +277,14 @@ void Cardiovascular::Serialize(const pulse::CardiovascularSystemData& src, Cardi
   dst.m_LastCardiacCycleMeanArterialCO2PartialPressure_mmHg = src.lastcardiaccyclemeanarterialco2partialpressure_mmhg();
   dst.m_CardiacCycleStrokeVolume_mL = src.cardiaccyclestrokevolume_ml();
 
-  RunningAverage::Load(src.cardiaccyclearterialpressure_mmhg(),dst.m_CardiacCycleArterialPressure_mmHg);
-  RunningAverage::Load(src.cardiaccyclearterialco2partialpressure_mmhg(), dst.m_CardiacCycleArterialCO2PartialPressure_mmHg);
-  RunningAverage::Load(src.cardiaccyclepulmonarycapillarieswedgepressure_mmhg(), dst.m_CardiacCyclePulmonaryCapillariesWedgePressure_mmHg);
-  RunningAverage::Load(src.cardiaccyclepulmonarycapillariesflow_ml_per_s(), dst.m_CardiacCyclePulmonaryCapillariesFlow_mL_Per_s);
-  RunningAverage::Load(src.cardiaccyclepulmonaryshuntflow_ml_per_s(), dst.m_CardiacCyclePulmonaryShuntFlow_mL_Per_s);
-  RunningAverage::Load(src.cardiaccyclepulmonaryarterypressure_mmhg(), dst.m_CardiacCyclePulmonaryArteryPressure_mmHg);
-  RunningAverage::Load(src.cardiaccyclecentralvenouspressure_mmhg(), dst.m_CardiacCycleCentralVenousPressure_mmHg);
-  RunningAverage::Load(src.cardiaccycleskinflow_ml_per_s(), dst.m_CardiacCycleSkinFlow_mL_Per_s);
+  RunningAverage::Load(src.cardiaccyclearterialpressure_mmhg(),*dst.m_CardiacCycleArterialPressure_mmHg);
+  RunningAverage::Load(src.cardiaccyclearterialco2partialpressure_mmhg(), *dst.m_CardiacCycleArterialCO2PartialPressure_mmHg);
+  RunningAverage::Load(src.cardiaccyclepulmonarycapillarieswedgepressure_mmhg(), *dst.m_CardiacCyclePulmonaryCapillariesWedgePressure_mmHg);
+  RunningAverage::Load(src.cardiaccyclepulmonarycapillariesflow_ml_per_s(), *dst.m_CardiacCyclePulmonaryCapillariesFlow_mL_Per_s);
+  RunningAverage::Load(src.cardiaccyclepulmonaryshuntflow_ml_per_s(), *dst.m_CardiacCyclePulmonaryShuntFlow_mL_Per_s);
+  RunningAverage::Load(src.cardiaccyclepulmonaryarterypressure_mmhg(), *dst.m_CardiacCyclePulmonaryArteryPressure_mmHg);
+  RunningAverage::Load(src.cardiaccyclecentralvenouspressure_mmhg(), *dst.m_CardiacCycleCentralVenousPressure_mmHg);
+  RunningAverage::Load(src.cardiaccycleskinflow_ml_per_s(), *dst.m_CardiacCycleSkinFlow_mL_Per_s);
 }
 
 pulse::CardiovascularSystemData* Cardiovascular::Unload(const Cardiovascular& src)
@@ -285,14 +322,14 @@ void Cardiovascular::Serialize(const Cardiovascular& src, pulse::CardiovascularS
   dst.set_lastcardiaccyclemeanarterialco2partialpressure_mmhg(src.m_LastCardiacCycleMeanArterialCO2PartialPressure_mmHg);
   dst.set_cardiaccyclestrokevolume_ml(src.m_CardiacCycleStrokeVolume_mL);
 
-  dst.set_allocated_cardiaccyclearterialpressure_mmhg(RunningAverage::Unload(src.m_CardiacCycleArterialPressure_mmHg));
-  dst.set_allocated_cardiaccyclearterialco2partialpressure_mmhg(RunningAverage::Unload(src.m_CardiacCycleArterialCO2PartialPressure_mmHg));
-  dst.set_allocated_cardiaccyclepulmonarycapillarieswedgepressure_mmhg(RunningAverage::Unload(src.m_CardiacCyclePulmonaryCapillariesWedgePressure_mmHg));
-  dst.set_allocated_cardiaccyclepulmonarycapillariesflow_ml_per_s(RunningAverage::Unload(src.m_CardiacCyclePulmonaryCapillariesFlow_mL_Per_s));
-  dst.set_allocated_cardiaccyclepulmonaryshuntflow_ml_per_s(RunningAverage::Unload(src.m_CardiacCyclePulmonaryShuntFlow_mL_Per_s));
-  dst.set_allocated_cardiaccyclepulmonaryarterypressure_mmhg(RunningAverage::Unload(src.m_CardiacCyclePulmonaryArteryPressure_mmHg));
-  dst.set_allocated_cardiaccyclecentralvenouspressure_mmhg(RunningAverage::Unload(src.m_CardiacCycleCentralVenousPressure_mmHg));
-  dst.set_allocated_cardiaccycleskinflow_ml_per_s(RunningAverage::Unload(src.m_CardiacCycleSkinFlow_mL_Per_s));
+  dst.set_allocated_cardiaccyclearterialpressure_mmhg(RunningAverage::Unload(*src.m_CardiacCycleArterialPressure_mmHg));
+  dst.set_allocated_cardiaccyclearterialco2partialpressure_mmhg(RunningAverage::Unload(*src.m_CardiacCycleArterialCO2PartialPressure_mmHg));
+  dst.set_allocated_cardiaccyclepulmonarycapillarieswedgepressure_mmhg(RunningAverage::Unload(*src.m_CardiacCyclePulmonaryCapillariesWedgePressure_mmHg));
+  dst.set_allocated_cardiaccyclepulmonarycapillariesflow_ml_per_s(RunningAverage::Unload(*src.m_CardiacCyclePulmonaryCapillariesFlow_mL_Per_s));
+  dst.set_allocated_cardiaccyclepulmonaryshuntflow_ml_per_s(RunningAverage::Unload(*src.m_CardiacCyclePulmonaryShuntFlow_mL_Per_s));
+  dst.set_allocated_cardiaccyclepulmonaryarterypressure_mmhg(RunningAverage::Unload(*src.m_CardiacCyclePulmonaryArteryPressure_mmHg));
+  dst.set_allocated_cardiaccyclecentralvenouspressure_mmhg(RunningAverage::Unload(*src.m_CardiacCycleCentralVenousPressure_mmHg));
+  dst.set_allocated_cardiaccycleskinflow_ml_per_s(RunningAverage::Unload(*src.m_CardiacCycleSkinFlow_mL_Per_s));
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -651,8 +688,8 @@ void Cardiovascular::PreProcess()
 //--------------------------------------------------------------------------------------------------
 void Cardiovascular::Process()
 {
-  m_circuitCalculator.Process(*m_CirculatoryCircuit, m_dT_s);
-  m_transporter.Transport(*m_CirculatoryGraph, m_dT_s);
+  m_circuitCalculator->Process(*m_CirculatoryCircuit, m_dT_s);
+  m_transporter->Transport(*m_CirculatoryGraph, m_dT_s);
   CalculateVitalSigns();
 }
 
@@ -665,7 +702,7 @@ void Cardiovascular::Process()
 //--------------------------------------------------------------------------------------------------
 void Cardiovascular::PostProcess()
 {
-  m_circuitCalculator.PostProcess(*m_CirculatoryCircuit);
+  m_circuitCalculator->PostProcess(*m_CirculatoryCircuit);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -742,14 +779,14 @@ void Cardiovascular::CalculateVitalSigns()
 
   // Increment stroke volume. Get samples for running means
   m_CardiacCycleStrokeVolume_mL += LHeartFlow_mL_Per_s*m_dT_s;
-  m_CardiacCycleArterialPressure_mmHg.Sample(AortaNodePressure_mmHg);
-  m_CardiacCycleArterialCO2PartialPressure_mmHg.Sample(AortaNodeCO2PartialPressure_mmHg);
-  m_CardiacCyclePulmonaryCapillariesWedgePressure_mmHg.Sample(PulmVeinNodePressure_mmHg);
-  m_CardiacCyclePulmonaryCapillariesFlow_mL_Per_s.Sample(PulmCapFlow_mL_Per_s);
-  m_CardiacCyclePulmonaryShuntFlow_mL_Per_s.Sample(PulmShuntFlow_mL_Per_s);
-  m_CardiacCyclePulmonaryArteryPressure_mmHg.Sample(PulmonaryArteryNodePressure_mmHg);
-  m_CardiacCycleCentralVenousPressure_mmHg.Sample(VenaCavaPressure_mmHg);
-  m_CardiacCycleSkinFlow_mL_Per_s.Sample(SkinFlow_mL_Per_s);
+  m_CardiacCycleArterialPressure_mmHg->Sample(AortaNodePressure_mmHg);
+  m_CardiacCycleArterialCO2PartialPressure_mmHg->Sample(AortaNodeCO2PartialPressure_mmHg);
+  m_CardiacCyclePulmonaryCapillariesWedgePressure_mmHg->Sample(PulmVeinNodePressure_mmHg);
+  m_CardiacCyclePulmonaryCapillariesFlow_mL_Per_s->Sample(PulmCapFlow_mL_Per_s);
+  m_CardiacCyclePulmonaryShuntFlow_mL_Per_s->Sample(PulmShuntFlow_mL_Per_s);
+  m_CardiacCyclePulmonaryArteryPressure_mmHg->Sample(PulmonaryArteryNodePressure_mmHg);
+  m_CardiacCycleCentralVenousPressure_mmHg->Sample(VenaCavaPressure_mmHg);
+  m_CardiacCycleSkinFlow_mL_Per_s->Sample(SkinFlow_mL_Per_s);
 
   /// \todo Make sure irreversible state is hit before we get here.
   if (m_CardiacCycleAortaPressureLow_mmHg < -2.0)
@@ -890,32 +927,32 @@ void Cardiovascular::RecordAndResetCardiacCycle()
 
   // Running means
   // Mean Arterial Pressure
-  GetMeanArterialPressure().SetValue(m_CardiacCycleArterialPressure_mmHg.Value(), PressureUnit::mmHg);
-  m_CardiacCycleArterialPressure_mmHg.Reset();
+  GetMeanArterialPressure().SetValue(m_CardiacCycleArterialPressure_mmHg->Value(), PressureUnit::mmHg);
+  m_CardiacCycleArterialPressure_mmHg->Reset();
   // Mean Aterial CO2 Partial Pressure
-  GetMeanArterialCarbonDioxidePartialPressure().SetValue(m_CardiacCycleArterialCO2PartialPressure_mmHg.Value(), PressureUnit::mmHg);
+  GetMeanArterialCarbonDioxidePartialPressure().SetValue(m_CardiacCycleArterialCO2PartialPressure_mmHg->Value(), PressureUnit::mmHg);
   // Mean Aterial CO2 Partial Pressure Delta
-  GetMeanArterialCarbonDioxidePartialPressureDelta().SetValue(m_CardiacCycleArterialCO2PartialPressure_mmHg.Value() - m_LastCardiacCycleMeanArterialCO2PartialPressure_mmHg, PressureUnit::mmHg);
-  m_LastCardiacCycleMeanArterialCO2PartialPressure_mmHg = m_CardiacCycleArterialCO2PartialPressure_mmHg.Value();
-  m_CardiacCycleArterialCO2PartialPressure_mmHg.Reset();
+  GetMeanArterialCarbonDioxidePartialPressureDelta().SetValue(m_CardiacCycleArterialCO2PartialPressure_mmHg->Value() - m_LastCardiacCycleMeanArterialCO2PartialPressure_mmHg, PressureUnit::mmHg);
+  m_LastCardiacCycleMeanArterialCO2PartialPressure_mmHg = m_CardiacCycleArterialCO2PartialPressure_mmHg->Value();
+  m_CardiacCycleArterialCO2PartialPressure_mmHg->Reset();
   // Pulmonary Capillary Wedge Pressure
-  GetPulmonaryCapillariesWedgePressure().SetValue(m_CardiacCyclePulmonaryCapillariesWedgePressure_mmHg.Value(), PressureUnit::mmHg);
-  m_CardiacCyclePulmonaryCapillariesWedgePressure_mmHg.Reset();
+  GetPulmonaryCapillariesWedgePressure().SetValue(m_CardiacCyclePulmonaryCapillariesWedgePressure_mmHg->Value(), PressureUnit::mmHg);
+  m_CardiacCyclePulmonaryCapillariesWedgePressure_mmHg->Reset();
   // Pulmonary Capillary Mean Flow
-  GetPulmonaryMeanCapillaryFlow().SetValue(m_CardiacCyclePulmonaryCapillariesFlow_mL_Per_s.Value(), VolumePerTimeUnit::mL_Per_s);
-  m_CardiacCyclePulmonaryCapillariesFlow_mL_Per_s.Reset();
+  GetPulmonaryMeanCapillaryFlow().SetValue(m_CardiacCyclePulmonaryCapillariesFlow_mL_Per_s->Value(), VolumePerTimeUnit::mL_Per_s);
+  m_CardiacCyclePulmonaryCapillariesFlow_mL_Per_s->Reset();
   // Pulmonary Shunt Mean Flow
-  GetPulmonaryMeanShuntFlow().SetValue(m_CardiacCyclePulmonaryShuntFlow_mL_Per_s.Value(), VolumePerTimeUnit::mL_Per_s);
-  m_CardiacCyclePulmonaryShuntFlow_mL_Per_s.Reset();
+  GetPulmonaryMeanShuntFlow().SetValue(m_CardiacCyclePulmonaryShuntFlow_mL_Per_s->Value(), VolumePerTimeUnit::mL_Per_s);
+  m_CardiacCyclePulmonaryShuntFlow_mL_Per_s->Reset();
   // Mean Pulmonary Artery Pressure
-  GetPulmonaryMeanArterialPressure().SetValue(m_CardiacCyclePulmonaryArteryPressure_mmHg.Value(), PressureUnit::mmHg);
-  m_CardiacCyclePulmonaryArteryPressure_mmHg.Reset();
+  GetPulmonaryMeanArterialPressure().SetValue(m_CardiacCyclePulmonaryArteryPressure_mmHg->Value(), PressureUnit::mmHg);
+  m_CardiacCyclePulmonaryArteryPressure_mmHg->Reset();
   // Mean Central Venous Pressure
-  GetMeanCentralVenousPressure().SetValue(m_CardiacCycleCentralVenousPressure_mmHg.Value(), PressureUnit::mmHg);
-  m_CardiacCycleCentralVenousPressure_mmHg.Reset();
+  GetMeanCentralVenousPressure().SetValue(m_CardiacCycleCentralVenousPressure_mmHg->Value(), PressureUnit::mmHg);
+  m_CardiacCycleCentralVenousPressure_mmHg->Reset();
   // Mean Skin Flow
-  GetMeanSkinFlow().SetValue(m_CardiacCycleSkinFlow_mL_Per_s.Value(), VolumePerTimeUnit::mL_Per_s);
-  m_CardiacCycleSkinFlow_mL_Per_s.Reset();
+  GetMeanSkinFlow().SetValue(m_CardiacCycleSkinFlow_mL_Per_s->Value(), VolumePerTimeUnit::mL_Per_s);
+  m_CardiacCycleSkinFlow_mL_Per_s->Reset();
 
   // Computed systemic Vascular Resistance
   double cardiacOutput_mL_Per_min = GetCardiacOutput().GetValue(VolumePerTimeUnit::mL_Per_s);
@@ -1570,9 +1607,9 @@ void Cardiovascular::TuneCircuit()
     while (!stable)
     {
       HeartDriver();
-      m_circuitCalculator.Process(*m_CirculatoryCircuit, m_dT_s);
+      m_circuitCalculator->Process(*m_CirculatoryCircuit, m_dT_s);
       CalculateVitalSigns();
-      m_circuitCalculator.PostProcess(*m_CirculatoryCircuit);
+      m_circuitCalculator->PostProcess(*m_CirculatoryCircuit);
       //return; //Skip stabelization for debugging
 
       map_mmHg = GetMeanArterialPressure(PressureUnit::mmHg);

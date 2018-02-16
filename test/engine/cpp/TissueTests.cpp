@@ -3,7 +3,12 @@
 
 #include "EngineTest.h"
 #include "Controller/Controller.h"
+#include "Controller/Substances.h"
+#include "Controller/Circuits.h"
+#include "Controller/Compartments.h"
+#include "PulseConfiguration.h"
 #include "Systems/Tissue.h"
+
 #include "substance/SESubstanceManager.h"
 #include "substance/SESubstance.h"
 #include "utils/TimingProfile.h"
@@ -15,12 +20,12 @@
 #include "compartment/tissue/SETissueCompartment.h"
 #include "compartment/fluid/SEGasCompartment.h"
 #include "properties/SEScalar0To1.h"
+#include "properties/SEScalarAmountPerVolume.h"
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarMassPerAmount.h"
 #include "properties/SEScalarMassPerVolume.h"
-#include "properties/SEScalarAmountPerVolume.h"
 #include "properties/SEScalarMassPerAreaTime.h"
-
+#include "properties/SEScalarTime.h"
 #include "utils/DataTrack.h"
 
 void PulseEngineTest::DistributeMass(SETestSuite& testSuite)

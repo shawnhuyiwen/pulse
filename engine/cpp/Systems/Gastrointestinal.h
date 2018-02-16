@@ -4,8 +4,10 @@
 #pragma once
 #include "Controller/System.h"
 #include "system/physiology/SEGastrointestinalSystem.h"
-#include "properties/SEScalarMassPerTime.h"
-#include "properties/SEScalarVolumePerTime.h"
+class SELiquidCompartment;
+class SELiquidSubstanceQuantity;
+class SEFluidCircuitPath;
+PULSE_BIND_DECL(GastrointestinalSystemData)
 
 /**
 * @brief @copydoc Physiology_GastrointestinalSystemData
@@ -62,8 +64,8 @@ protected:
 
   SEFluidCircuitPath*          m_GItoCVPath;
   SEFluidCircuitPath*          m_GutT1ToGroundPath;
-  SEScalarMassPerTime          m_CalciumDigestionRate;
-  SEScalarVolumePerTime        m_WaterDigestionRate;
+  SEScalarMassPerTime*         m_CalciumDigestionRate;
+  SEScalarVolumePerTime*       m_WaterDigestionRate;
 
   // We want to start simulation time 0 (after stabilization) with the initial gut mass from the meal specified in the config file
   std::map<SELiquidSubstanceQuantity*, double> m_InitialSubstanceMasses_ug;// Used only during the final AtSteadyState

@@ -9,14 +9,13 @@ import mil.tatrc.physiology.utilities.FileUtils;
 
 import com.google.protobuf.TextFormat;
 import com.google.protobuf.TextFormat.ParseException;
-import com.kitware.physiology.cdm.Patient.PatientData.eSex;
+import com.kitware.physiology.cdm.PatientEnums.ePatient.*;
 import com.kitware.physiology.cdm.Patient.PatientData;
-import com.kitware.physiology.cdm.Patient.PatientData.eEvent;
 
 public class SEPatient
 {
   protected String                    name;
-  protected eSex                      sex;
+  protected Sex                       sex;
   protected SEScalarTime              age;
   protected SEScalarMass              weight;
   protected SEScalarLength            height;
@@ -47,7 +46,7 @@ public class SEPatient
   protected SEScalarVolume            totalLungCapacity;
   protected SEScalarVolume            vitalCapacity;
 
-  protected Map<eEvent,Boolean> events = new HashMap<eEvent,Boolean>();
+  protected Map<Event,Boolean> events = new HashMap<Event,Boolean>();
 
   public SEPatient()
   {
@@ -133,7 +132,7 @@ public class SEPatient
   {
     dst.reset();
     dst.setName(src.getName());
-    if(src.getSex()!=eSex.UNRECOGNIZED)
+    if(src.getSex()!=Sex.UNRECOGNIZED)
     	dst.setSex(src.getSex());
     if(src.hasAge())
       SEScalarTime.load(src.getAge(),dst.getAge());
@@ -259,11 +258,11 @@ public class SEPatient
       dst.setVitalCapacity(SEScalarVolume.unload(src.vitalCapacity));
   }
 
-  public void setEvent(eEvent type, boolean active)
+  public void setEvent(Event type, boolean active)
   {
     this.events.put(type, active);
   }
-  public boolean isEventActive(eEvent type)
+  public boolean isEventActive(Event type)
   {
     if(!this.events.containsKey(type))
       return false;
@@ -274,8 +273,8 @@ public class SEPatient
   public void    setName(String name){this.name=name;}
   public boolean hasName(){return this.name==null?false:true;}
 
-  public eSex    getSex() { return this.sex;}
-  public void    setSex(eSex name){this.sex=name;}
+  public Sex     getSex() { return this.sex;}
+  public void    setSex(Sex name){this.sex=name;}
   public boolean hasSex(){return this.sex==null?false:true;}
 
   public SEScalarTime getAge() 

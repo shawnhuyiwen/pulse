@@ -2,46 +2,74 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "Respiratory.h"
-
-#include "circuit/fluid/SEFluidCircuit.h"
-// Properties
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarNegative1To1.h"
-#include "properties/SEScalarFrequency.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalarVolumePerTime.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarFlowResistance.h"
-#include "properties/SEScalarInversePressure.h"
-#include "properties/SEScalarFlowCompliance.h"
-#include "properties/SEScalarLength.h"
-#include "properties/SEScalarMass.h"
-#include "properties/SEScalarInverseVolume.h"
-#include "properties/SEScalarPower.h"
-#include "properties/SEScalarMassPerVolume.h"
-#include "properties/SEScalarArea.h"
-#include "properties/SEFunctionVolumeVsTime.h"
-//Circuits
-#include "circuit/fluid/SEFluidCircuit.h"
-#include "circuit/fluid/SEFluidCircuitNode.h"
-#include "circuit/fluid/SEFluidCircuitPath.h"
-#include "compartment/fluid/SEGasCompartmentGraph.h"
-#include "compartment/fluid/SELiquidCompartmentGraph.h"
-#include "substance/SESubstanceFraction.h"
+#include "Systems/Respiratory.h"
+#include "Controller/Circuits.h"
+#include "Controller/Compartments.h"
+#include "Controller/Substances.h"
+#include "PulseConfiguration.h"
+PROTO_PUSH
+#include "bind/engine/EnginePhysiology.pb.h"
+PROTO_POP
+// Conditions 
+#include "scenario/SEConditionManager.h"
+#include "patient/conditions/SEChronicObstructivePulmonaryDisease.h"
+#include "patient/conditions/SELobarPneumonia.h"
+#include "patient/conditions/SEImpairedAlveolarExchange.h"
 // Actions
+#include "scenario/SEActionManager.h"
+#include "scenario/SEPatientActionCollection.h"
+#include "patient/actions/SEAirwayObstruction.h"
+#include "patient/actions/SEApnea.h"
+#include "patient/actions/SEAsthmaAttack.h"
+#include "patient/actions/SEBronchoconstriction.h"
+#include "patient/actions/SEChestOcclusiveDressing.h"
 #include "patient/actions/SEConsciousRespiration.h"
 #include "patient/actions/SEBreathHold.h"
 #include "patient/actions/SEForcedExhale.h"
 #include "patient/actions/SEForcedInhale.h"
 #include "patient/actions/SEUseInhaler.h"
-// Conditions 
-#include "patient/conditions/SEChronicObstructivePulmonaryDisease.h"
-#include "patient/conditions/SELobarPneumonia.h"
-#include "patient/conditions/SEImpairedAlveolarExchange.h"
+#include "patient/actions/SEIntubation.h"
+#include "patient/actions/SEMechanicalVentilation.h"
+#include "patient/actions/SENeedleDecompression.h"
+#include "patient/actions/SETensionPneumothorax.h"
 // Assessments
 #include "patient/assessments/SEPulmonaryFunctionTest.h"
+// Dependent Systems
+#include "system/physiology/SEBloodChemistrySystem.h"
+#include "system/physiology/SEDrugSystem.h"
+#include "system/physiology/SEEnergySystem.h"
+// CDM
+#include "patient/SEPatient.h"
+#include "substance/SESubstance.h"
+#include "substance/SESubstanceAerosolization.h"
+#include "substance/SESubstanceFraction.h"
+#include "substance/SESubstanceTransport.h"
+#include "circuit/fluid/SEFluidCircuitCalculator.h"
+#include "circuit/fluid/SEFluidCircuit.h"
+#include "circuit/fluid/SEFluidCircuit.h"
+#include "circuit/fluid/SEFluidCircuitNode.h"
+#include "circuit/fluid/SEFluidCircuitPath.h"
+#include "compartment/fluid/SEGasCompartmentGraph.h"
+#include "compartment/fluid/SELiquidCompartmentGraph.h"
+// Properties
+#include "properties/SEScalar0To1.h"
+#include "properties/SEScalarArea.h"
+#include "properties/SEScalarFlowCompliance.h"
+#include "properties/SEScalarFlowResistance.h"
+#include "properties/SEScalarFrequency.h"
+#include "properties/SEScalarInversePressure.h"
+#include "properties/SEScalarInverseVolume.h"
+#include "properties/SEScalarLength.h"
+#include "properties/SEScalarMass.h"
+#include "properties/SEScalarMassPerVolume.h"
+#include "properties/SEScalarNegative1To1.h"
+#include "properties/SEScalarPower.h"
+#include "properties/SEScalarPressure.h"
+#include "properties/SEScalarTime.h"
+#include "properties/SEScalarVolume.h"
+#include "properties/SEScalarVolumePerTime.h"
+#include "properties/SEFunctionVolumeVsTime.h"
+#include "utils/RunningAverage.h"
 
 
 #ifdef _MSC_VER 
@@ -52,17 +80,28 @@
 //Should be commented out, unless debugging/tuning
 // #define TUNING
 
-Respiratory::Respiratory(PulseController& data) : SERespiratorySystem(data.GetLogger()), m_data(data),
-m_Calculator(FlowComplianceUnit::L_Per_cmH2O, VolumePerTimeUnit::L_Per_s, FlowInertanceUnit::cmH2O_s2_Per_L, PressureUnit::cmH2O, VolumeUnit::L, FlowResistanceUnit::cmH2O_s_Per_L, GetLogger()),
-m_GasTransporter(VolumePerTimeUnit::L_Per_s, VolumeUnit::L, VolumeUnit::L, NoUnit::unitless, GetLogger()),
-m_AerosolTransporter(VolumePerTimeUnit::mL_Per_s, VolumeUnit::mL, MassUnit::ug, MassPerVolumeUnit::ug_Per_mL, GetLogger())
+Respiratory::Respiratory(PulseController& data) : SERespiratorySystem(data.GetLogger()), m_data(data)
 {
   Clear();
+  m_BloodPHRunningAverage = new RunningAverage();
+  m_ArterialO2RunningAverage_mmHg = new RunningAverage();
+  m_ArterialCO2RunningAverage_mmHg = new RunningAverage();
+
+  m_Calculator = new SEFluidCircuitCalculator(FlowComplianceUnit::L_Per_cmH2O, VolumePerTimeUnit::L_Per_s, FlowInertanceUnit::cmH2O_s2_Per_L, PressureUnit::cmH2O, VolumeUnit::L, FlowResistanceUnit::cmH2O_s_Per_L, GetLogger());
+  m_GasTransporter = new SEGasTransporter(VolumePerTimeUnit::L_Per_s, VolumeUnit::L, VolumeUnit::L, GetLogger());
+  m_AerosolTransporter = new SELiquidTransporter(VolumePerTimeUnit::mL_Per_s, VolumeUnit::mL, MassUnit::ug, MassPerVolumeUnit::ug_Per_mL, GetLogger());
 }
 
 Respiratory::~Respiratory()
 {
   Clear();
+  delete m_BloodPHRunningAverage;
+  delete m_ArterialO2RunningAverage_mmHg;
+  delete m_ArterialCO2RunningAverage_mmHg;
+
+  delete m_Calculator;
+  delete m_GasTransporter;
+  delete m_AerosolTransporter;
 }
 
 void Respiratory::Clear()
@@ -120,9 +159,9 @@ void Respiratory::Clear()
   m_ConnectionToMouth = nullptr;
   m_GroundToConnection = nullptr;
 
-  m_BloodPHRunningAverage.Reset();
-  m_ArterialO2RunningAverage_mmHg.Reset();
-  m_ArterialCO2RunningAverage_mmHg.Reset();
+  m_BloodPHRunningAverage->Reset();
+  m_ArterialO2RunningAverage_mmHg->Reset();
+  m_ArterialCO2RunningAverage_mmHg->Reset();
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -223,7 +262,7 @@ void Respiratory::Serialize(const pulse::RespiratorySystemData& src, Respiratory
   dst.m_TopBreathPleuralPressure_cmH2O = src.topbreathpleuralpressure_cmh2o();
   dst.m_LastCardiacCycleBloodPH = src.lastcardiaccyclebloodph();
   dst.m_PreviousTotalLungVolume_L = src.previoustotallungvolume_l();
-  RunningAverage::Load(src.bloodphrunningaverage(),dst.m_BloodPHRunningAverage);
+  RunningAverage::Load(src.bloodphrunningaverage(),*dst.m_BloodPHRunningAverage);
 
   dst.m_BreathingCycle = src.breathingcycle();
   dst.m_ArterialO2PartialPressure_mmHg = src.arterialo2partialpressure_mmhg();
@@ -241,8 +280,8 @@ void Respiratory::Serialize(const pulse::RespiratorySystemData& src, Respiratory
   dst.m_PreviousTargetAlveolarVentilation_L_Per_min = src.previoustargetalveolarventilation_l_per_min();
   dst.m_VentilationFrequency_Per_min = src.ventilationfrequency_per_min();
   dst.m_VentilationToTidalVolumeSlope = src.ventilationtotidalvolumeslope();
-   RunningAverage::Load(src.arterialo2runningaverage_mmhg(), dst.m_ArterialO2RunningAverage_mmHg);
-   RunningAverage::Load(src.arterialco2runningaverage_mmhg(), dst.m_ArterialCO2RunningAverage_mmHg);
+   RunningAverage::Load(src.arterialo2runningaverage_mmhg(), *dst.m_ArterialO2RunningAverage_mmHg);
+   RunningAverage::Load(src.arterialco2runningaverage_mmhg(), *dst.m_ArterialCO2RunningAverage_mmHg);
 
   dst.m_ConsciousBreathing = src.consciousbreathing();
   dst.m_ConsciousRespirationPeriod_s = src.consciousrespirationperiod_s();
@@ -274,7 +313,7 @@ void Respiratory::Serialize(const Respiratory& src, pulse::RespiratorySystemData
   dst.set_topbreathpleuralpressure_cmh2o(src.m_TopBreathPleuralPressure_cmH2O);
   dst.set_lastcardiaccyclebloodph(src.m_LastCardiacCycleBloodPH);
   dst.set_previoustotallungvolume_l(src.m_PreviousTotalLungVolume_L);
-  dst.set_allocated_bloodphrunningaverage(RunningAverage::Unload(src.m_BloodPHRunningAverage));
+  dst.set_allocated_bloodphrunningaverage(RunningAverage::Unload(*src.m_BloodPHRunningAverage));
 
   dst.set_breathingcycle(src.m_BreathingCycle);
   dst.set_arterialo2partialpressure_mmhg(src.m_ArterialO2PartialPressure_mmHg);
@@ -292,8 +331,8 @@ void Respiratory::Serialize(const Respiratory& src, pulse::RespiratorySystemData
   dst.set_previoustargetalveolarventilation_l_per_min(src.m_PreviousTargetAlveolarVentilation_L_Per_min);
   dst.set_ventilationfrequency_per_min(src.m_VentilationFrequency_Per_min);
   dst.set_ventilationtotidalvolumeslope(src.m_VentilationToTidalVolumeSlope);
-  dst.set_allocated_arterialo2runningaverage_mmhg(RunningAverage::Unload(src.m_ArterialO2RunningAverage_mmHg));
-  dst.set_allocated_arterialco2runningaverage_mmhg(RunningAverage::Unload(src.m_ArterialCO2RunningAverage_mmHg));
+  dst.set_allocated_arterialo2runningaverage_mmhg(RunningAverage::Unload(*src.m_ArterialO2RunningAverage_mmHg));
+  dst.set_allocated_arterialco2runningaverage_mmhg(RunningAverage::Unload(*src.m_ArterialCO2RunningAverage_mmHg));
 
   dst.set_consciousbreathing(src.m_ConsciousBreathing);
   dst.set_consciousrespirationperiod_s(src.m_ConsciousRespirationPeriod_s);
@@ -502,14 +541,14 @@ void Respiratory::Process()
   // When dynamic intercircuit connections work, we can stash off the respiration circuit in a member variable
   SEFluidCircuit& RespirationCircuit = m_data.GetCircuits().GetActiveRespiratoryCircuit();
   // Calc the circuits
-  m_Calculator.Process(RespirationCircuit, m_dt_s);
+  m_Calculator->Process(RespirationCircuit, m_dt_s);
   //ModifyPleuralVolume();
   SEGasCompartmentGraph& RespirationGraph = m_data.GetCompartments().GetActiveRespiratoryGraph();
   SELiquidCompartmentGraph& AerosolGraph = m_data.GetCompartments().GetActiveAerosolGraph();
   // Transport substances
-  m_GasTransporter.Transport(RespirationGraph, m_dt_s);
+  m_GasTransporter->Transport(RespirationGraph, m_dt_s);
   if(m_AerosolMouth->HasSubstanceQuantities())
-    m_AerosolTransporter.Transport(AerosolGraph, m_dt_s);
+    m_AerosolTransporter->Transport(AerosolGraph, m_dt_s);
   //Update system data
   CalculateVitalSigns();
 }
@@ -527,7 +566,7 @@ void Respiratory::PostProcess()
   // Respiration circuit changes based on if Anesthesia Machine is on or off
   // When dynamic intercircuit connections work, we can stash off the respiration circuit in a member variable
   SEFluidCircuit& RespirationCircuit = m_data.GetCircuits().GetActiveRespiratoryCircuit();  
-  m_Calculator.PostProcess(RespirationCircuit);
+  m_Calculator->PostProcess(RespirationCircuit);
   
 }
 
@@ -848,16 +887,16 @@ void Respiratory::RespiratoryDriver()
   m_BreathingCycleTime_s += m_dt_s;
 
   //Keep a running average of the Arterial Partial Pressures  
-  m_ArterialO2RunningAverage_mmHg.Sample(m_AortaO2->GetPartialPressure(PressureUnit::mmHg));
-  m_ArterialCO2RunningAverage_mmHg.Sample(m_AortaCO2->GetPartialPressure(PressureUnit::mmHg));
+  m_ArterialO2RunningAverage_mmHg->Sample(m_AortaO2->GetPartialPressure(PressureUnit::mmHg));
+  m_ArterialCO2RunningAverage_mmHg->Sample(m_AortaCO2->GetPartialPressure(PressureUnit::mmHg));
   //Reset at start of cardiac cycle 
   if (m_Patient->IsEventActive(cdm::ePatient_Event_StartOfCardiacCycle))
   {
-    m_ArterialO2PartialPressure_mmHg = m_ArterialO2RunningAverage_mmHg.Value();
-    m_ArterialCO2PartialPressure_mmHg = m_ArterialCO2RunningAverage_mmHg.Value();
+    m_ArterialO2PartialPressure_mmHg = m_ArterialO2RunningAverage_mmHg->Value();
+    m_ArterialCO2PartialPressure_mmHg = m_ArterialCO2RunningAverage_mmHg->Value();
 
-    m_ArterialO2RunningAverage_mmHg.Reset();
-    m_ArterialCO2RunningAverage_mmHg.Reset();
+    m_ArterialO2RunningAverage_mmHg->Reset();
+    m_ArterialCO2RunningAverage_mmHg->Reset();
   }
 
 
@@ -1217,12 +1256,12 @@ void Respiratory::Intubation()
     SEIntubation* intubation = m_PatientActions->GetIntubation();
     switch (intubation->GetType())
     {
-      case cdm::IntubationData_eType_Tracheal:
+      case cdm::eIntubation_Type_Tracheal:
       {// The proper way to intubate
         // Airway mode handles this case by default
         break;
       }
-      case cdm::IntubationData_eType_Esophageal:
+      case cdm::eIntubation_Type_Esophageal:
       {        
         // Allow air flow between Airway and Stomach
         ///\todo Make this a modifier (i.e. multiplier), instead of setting it directly
@@ -1232,12 +1271,12 @@ void Respiratory::Intubation()
         m_MouthToCarina->GetNextResistance().SetValue(m_dDefaultOpenResistance_cmH2O_s_Per_L, FlowResistanceUnit::cmH2O_s_Per_L);
         break;
       }      
-      case cdm::IntubationData_eType_RightMainstem:
+      case cdm::eIntubation_Type_RightMainstem:
       {
         m_CarinaToLeftAnatomicDeadSpace->GetNextResistance().SetValue(m_dRespOpenResistance_cmH2O_s_Per_L, FlowResistanceUnit::cmH2O_s_Per_L);
         break;
       }
-      case cdm::IntubationData_eType_LeftMainstem:
+      case cdm::eIntubation_Type_LeftMainstem:
       {
         m_CarinaToRightAnatomicDeadSpace->GetNextResistance().SetValue(m_dRespOpenResistance_cmH2O_s_Per_L, FlowResistanceUnit::cmH2O_s_Per_L);
         break;
@@ -1858,12 +1897,12 @@ void Respiratory::CalculateVitalSigns()
   // The hydrogen ion concentration is a property of the blood
   // The events related to blood concentrations should be detected and set in blood chemistry.
   //Keep a running average of the pH
-  m_BloodPHRunningAverage.Sample(m_data.GetBloodChemistry().GetBloodPH().GetValue());
+  m_BloodPHRunningAverage->Sample(m_data.GetBloodChemistry().GetBloodPH().GetValue());
   //Reset at start of cardiac cycle 
   if (m_Patient->IsEventActive(cdm::ePatient_Event_StartOfCardiacCycle))
   {
-    m_LastCardiacCycleBloodPH = m_BloodPHRunningAverage.Value();
-    m_BloodPHRunningAverage.Reset();
+    m_LastCardiacCycleBloodPH = m_BloodPHRunningAverage->Value();
+    m_BloodPHRunningAverage->Reset();
   }
 
   if (m_data.GetState() > EngineState::InitialStabilization)
@@ -2258,8 +2297,8 @@ void Respiratory::TuneCircuit()
   {
     //Set the starting/default driver pressure
     m_DriverPressurePath->GetNextPressureSource().SetValue(m_DefaultDrivePressure_cmH2O, PressureUnit::cmH2O);
-    m_Calculator.Process(RespiratoryCircuit, m_dt_s);
-    m_Calculator.PostProcess(RespiratoryCircuit);
+    m_Calculator->Process(RespiratoryCircuit, m_dt_s);
+    m_Calculator->PostProcess(RespiratoryCircuit);
   }
 
   //Make sure the new volumes are accounted for with all the substance stuff

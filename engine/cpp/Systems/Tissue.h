@@ -4,6 +4,14 @@
 #pragma once
 #include "Controller/System.h"
 #include "system/physiology/SETissueSystem.h"
+class SESubstance;
+class SEFluidCircuitNode;
+class SEFluidCircuitPath;
+class SETissueCompartment;
+class SEGasCompartment;
+class SELiquidCompartment;
+class SELiquidSubstanceQuantity;
+PULSE_BIND_DECL(TissueSystemData)
 
 /**
  * @brief This class encapsulates logic necessary to connect independent systems together.
@@ -120,8 +128,6 @@ protected:
   SELiquidCompartment*        m_LeftPulmonaryCapillaries;
   SELiquidCompartment*        m_RightPulmonaryCapillaries;
   
-  SEPatientActionCollection*  m_PatientActions;  
-
   std::map<SETissueCompartment*, SELiquidCompartment*> m_TissueToVascular;
   std::vector<SETissueCompartment*>                    m_ConsumptionProdutionTissues;
 };

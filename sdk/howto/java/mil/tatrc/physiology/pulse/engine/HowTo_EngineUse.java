@@ -6,8 +6,10 @@ import java.util.*;
 
 import com.google.protobuf.TextFormat.ParseException;
 import com.kitware.physiology.cdm.AnesthesiaMachine.AnesthesiaMachineData;
+import com.kitware.physiology.cdm.AnesthesiaMachineEnums.eAnesthesiaMachine;
 import com.kitware.physiology.cdm.Patient.PatientData;
-import com.kitware.physiology.cdm.Scenario.DataRequestData.eCategory;
+import com.kitware.physiology.cdm.PatientEnums.ePatient;
+import com.kitware.physiology.cdm.ScenarioEnums.eDataRequest.*;
 
 import mil.tatrc.physiology.datamodel.conditions.SECondition;
 import mil.tatrc.physiology.datamodel.datarequests.SEDataRequest;
@@ -62,13 +64,13 @@ public class HowTo_EngineUse
  
  protected static class MyEventHandler implements SEEventHandler
  {
-  public void handlePatientEvent(PatientData.eEvent type, boolean active, SEScalarTime time)
+  public void handlePatientEvent(ePatient.Event type, boolean active, SEScalarTime time)
   {
-    if(type == PatientData.eEvent.StartOfCardiacCycle && active)
+    if(type == ePatient.Event.StartOfCardiacCycle && active)
       Log.info("Patient started a new heart beat at time "+time);    
   }
 
-  public void handleAnesthesiaMachineEvent(AnesthesiaMachineData.eEvent type, boolean active, SEScalarTime time)
+  public void handleAnesthesiaMachineEvent(eAnesthesiaMachine.Event type, boolean active, SEScalarTime time)
   {
     
   } 
@@ -105,22 +107,22 @@ public class HowTo_EngineUse
    // No other data values will have data in Java classes
    SEDataRequestManager dataRequests = new SEDataRequestManager();
    SEDataRequest hr = new SEDataRequest();
-   hr.setCategory(eCategory.Physiology);
+   hr.setCategory(Category.Physiology);
    hr.setPropertyName("HeartRate");
    hr.setUnit(FrequencyUnit.Per_min.toString());
    dataRequests.getRequestedData().add(hr);
    SEDataRequest rr = new SEDataRequest();
-   rr.setCategory(eCategory.Physiology);
+   rr.setCategory(Category.Physiology);
    rr.setPropertyName("RespirationRate");
    rr.setUnit(FrequencyUnit.Per_min.toString());
    dataRequests.getRequestedData().add(rr);
    SEDataRequest tlv = new SEDataRequest(); 
-   tlv.setCategory(eCategory.Physiology);   
+   tlv.setCategory(Category.Physiology);   
    tlv.setPropertyName("TotalLungVolume");
    tlv.setUnit(VolumeUnit.mL.toString());
    dataRequests.getRequestedData().add(tlv);
    SEDataRequest bv = new SEDataRequest();  
-   bv.setCategory(eCategory.Physiology);  
+   bv.setCategory(Category.Physiology);  
    bv.setPropertyName("BloodVolume");
    bv.setUnit(VolumeUnit.mL.toString());
    dataRequests.getRequestedData().add(bv);
@@ -137,7 +139,7 @@ public class HowTo_EngineUse
       // But you can get more complicated, consult our Patient Variability Documentation for more details
       SEPatient patient = new SEPatient();
       patient.setName("Standard");
-      patient.setSex(PatientData.eSex.Male);
+      patient.setSex(ePatient.Sex.Male);
       patient.getAge().setValue(44,TimeUnit.yr);
       patient.getWeight().setValue(170,MassUnit.lb);
       patient.getHeight().setValue(71,LengthUnit.in);
@@ -212,7 +214,7 @@ public class HowTo_EngineUse
    Log.info("White Blood Count "+cbc.getWhiteBloodCellCount());
    
    // You can check if the patient is in a specific state/event
-   if(pe.patient.isEventActive(PatientData.eEvent.CardiacArrest))
+   if(pe.patient.isEventActive(ePatient.Event.CardiacArrest))
      Log.info("CODE BLUE!");
    
    time.setValue(1, TimeUnit.s);

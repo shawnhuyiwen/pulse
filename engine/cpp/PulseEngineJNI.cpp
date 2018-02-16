@@ -4,17 +4,25 @@
 #include "PulseEngineJNI.h"
 #include "PulseScenario.h"
 #include "Controller/ScenarioExec.h"
+#include "patient/SEPatient.h"
 #include "scenario/SEDataRequest.h"
+#include "scenario/SEDataRequestManager.h"
 #include "scenario/SEAction.h"
 #include "scenario/SECondition.h"
+#include "engine/SEEngineTracker.h"
+#include "properties/SEScalarTime.h"
+#include "utils/DataTrack.h"
 
 #include "patient/assessments/SEPulmonaryFunctionTest.h"
 #include "patient/assessments/SECompleteBloodCount.h"
 #include "patient/assessments/SEComprehensiveMetabolicPanel.h"
 #include "patient/assessments/SEUrinalysis.h"
 
+PROTO_PUSH
 #include "bind/cdm/Patient.pb.h"
 #include "bind/cdm/AnesthesiaMachine.pb.h"
+#include "bind/cdm/Scenario.pb.h"
+PROTO_POP
 #include <google/protobuf/text_format.h>
 
 #include "EngineTest.h"
@@ -547,7 +555,7 @@ void PulseEngineJNI::ForwardFatal(const std::string&  msg, const std::string&  o
   throw PhysiologyEngineException(err);
 }
 
-void PulseEngineJNI::HandlePatientEvent(cdm::PatientData_eEvent type, bool active, const SEScalarTime* time)
+void PulseEngineJNI::HandlePatientEvent(cdm::ePatient_Event type, bool active, const SEScalarTime* time)
 {
   if (jniEnv != nullptr && jniObj != nullptr)
   {
@@ -557,7 +565,7 @@ void PulseEngineJNI::HandlePatientEvent(cdm::PatientData_eEvent type, bool activ
     jniEnv->CallVoidMethod(jniObj, m, 0, type, active, time != nullptr ? time->GetValue(TimeUnit::s) : 0);
   }
 }
-void PulseEngineJNI::HandleAnesthesiaMachineEvent(cdm::AnesthesiaMachineData_eEvent type, bool active, const SEScalarTime* time)
+void PulseEngineJNI::HandleAnesthesiaMachineEvent(cdm::eAnesthesiaMachine_Event type, bool active, const SEScalarTime* time)
 {
   if (jniEnv != nullptr && jniObj != nullptr)
   {

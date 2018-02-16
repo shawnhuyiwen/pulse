@@ -106,7 +106,7 @@ void ECG::Serialize(const ECG& src, pulse::ElectroCardioGramData& dst)
   SEElectroCardioGram::Serialize(src, *dst.mutable_common());
   dst.set_heartrythmtime_s(src.m_heartRhythmTime_s);
   dst.set_heartrythmperiod_s(src.m_heartRhythmPeriod_s);
-  dst.set_allocated_waveforms(SEElectroCardioGramWaveformInterpolator::Unload(src.m_interpolator));
+  dst.set_allocated_waveforms(SEElectroCardioGramWaveformInterpolator::Unload(*src.m_interpolator));
 }
 
 void ECG::SetUp()

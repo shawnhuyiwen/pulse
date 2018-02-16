@@ -2,17 +2,40 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "Controller.h"
+#include "Controller/Controller.h"
+#include "Controller/Circuits.h"
+#include "Controller/Compartments.h"
+#include "Controller/Substances.h"
+#include "Systems/BloodChemistry.h"
+#include "Systems/Cardiovascular.h"
+#include "Systems/Drugs.h"
+#include "Systems/Endocrine.h"
+#include "Systems/Energy.h"
+#include "Systems/Environment.h"
+#include "Systems/Gastrointestinal.h"
+#include "Systems/Hepatic.h"
+#include "Systems/Nervous.h"
+#include "Systems/Renal.h"
+#include "Systems/Respiratory.h"
+#include "Systems/Saturation.h"
+#include "Systems/Tissue.h"
+#include "Equipment/AnesthesiaMachine.h"
+#include "Equipment/ECG.h"
+#include "Equipment/Inhaler.h"
+#include "PulseConfiguration.h"
+
+#include "scenario/SEConditionManager.h"
+#include "scenario/SEActionManager.h"
 
 #include "substance/SESubstance.h"
-#include "patient/SEPatient.h"
-#include "utils/DataTrack.h"
-#include "utils/FileUtils.h"
 
-#include "../Equipment/ECG.h"
-#include "../Equipment/AnesthesiaMachine.h"
-#include "../Systems/Environment.h"
-#include "../Systems/Gastrointestinal.h"
+#include "circuit/SECircuitManager.h"
+#include "circuit/fluid/SEFluidCircuit.h"
+#include "circuit/fluid/SEFluidCircuitNode.h"
+#include "circuit/fluid/SEFluidCircuitPath.h"
+#include "circuit/thermal/SEThermalCircuit.h"
+#include "circuit/thermal/SEThermalCircuitNode.h"
+#include "circuit/thermal/SEThermalCircuitPath.h"
 
 #include "compartment/fluid/SEGasCompartment.h"
 #include "compartment/fluid/SEGasCompartmentLink.h"
@@ -24,21 +47,27 @@
 #include "compartment/thermal/SEThermalCompartmentLink.h"
 #include "compartment/tissue/SETissueCompartment.h"
 
+#include "patient/SEPatient.h"
 #include "patient/assessments/SEPulmonaryFunctionTest.h"
 #include "patient/assessments/SECompleteBloodCount.h"
 #include "patient/assessments/SEComprehensiveMetabolicPanel.h"
 #include "patient/assessments/SEUrinalysis.h"
 
-#include "properties/SEScalarArea.h"
+#include "system/environment/SEEnvironmentalConditions.h"
+
 #include "properties/SEScalar0To1.h"
+#include "properties/SEScalarArea.h"
+#include "properties/SEScalarFlowElastance.h"
 #include "properties/SEScalarFrequency.h"
+#include "properties/SEScalarHeatCapacitance.h"
+#include "properties/SEScalarHeatCapacitancePerMass.h"
 #include "properties/SEScalarLength.h"
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarMassPerMass.h"
 #include "properties/SEScalarMassPerVolume.h"
-#include "properties/SEScalarHeatCapacitance.h"
-#include "properties/SEScalarHeatCapacitancePerMass.h"
-#include "properties/SEScalarFlowElastance.h"
+#include "properties/SEScalarTime.h"
+#include "utils/DataTrack.h"
+#include "utils/FileUtils.h"
 #include <google/protobuf/text_format.h>
 
 PROTO_PUSH
@@ -190,6 +219,35 @@ bool PulseController::Initialize(const PulseConfiguration* config)
   return true;
 }
 
+EngineState               PulseController::GetState() { return m_State; }
+SaturationCalculator&     PulseController::GetSaturationCalculator() { return *m_SaturationCalculator; }
+PulseSubstances&          PulseController::GetSubstances() { return *m_Substances; }
+SEPatient&                PulseController::GetPatient() { return *m_Patient; }
+SEBloodChemistrySystem&   PulseController::GetBloodChemistry() { return *m_BloodChemistrySystem; }
+SECardiovascularSystem&   PulseController::GetCardiovascular() { return *m_CardiovascularSystem; }
+SEDrugSystem&             PulseController::GetDrugs() { return *m_DrugSystem; }
+SEEndocrineSystem&        PulseController::GetEndocrine() { return *m_EndocrineSystem; }
+SEEnergySystem&           PulseController::GetEnergy() { return *m_EnergySystem; }
+SEGastrointestinalSystem& PulseController::GetGastrointestinal() { return *m_GastrointestinalSystem; }
+SEHepaticSystem&          PulseController::GetHepatic() { return *m_HepaticSystem; }
+SENervousSystem&          PulseController::GetNervous() { return *m_NervousSystem; }
+SERenalSystem&            PulseController::GetRenal() { return *m_RenalSystem; }
+SERespiratorySystem&      PulseController::GetRespiratory() { return *m_RespiratorySystem; }
+SETissueSystem&           PulseController::GetTissue() { return *m_TissueSystem; }
+SEEnvironment&            PulseController::GetEnvironment() { return *m_Environment; }
+SEAnesthesiaMachine&      PulseController::GetAnesthesiaMachine() { return *m_AnesthesiaMachine; }
+SEElectroCardioGram&      PulseController::GetECG() { return *m_ECG; }
+SEInhaler&                PulseController::GetInhaler() { return *m_Inhaler; }
+SEActionManager&          PulseController::GetActions() { return *m_Actions; }
+SEConditionManager&       PulseController::GetConditions() { return *m_Conditions; }
+PulseCircuits&            PulseController::GetCircuits() { return *m_Circuits; }
+PulseCompartments&        PulseController::GetCompartments() { return *m_Compartments; }
+const PulseConfiguration& PulseController::GetConfiguration() { return *m_Config; }
+const SEScalarTime&       PulseController::GetEngineTime() { return *m_CurrentTime; }
+const SEScalarTime&       PulseController::GetSimulationTime() { return *m_SimulationTime; }
+const SEScalarTime&       PulseController::GetTimeStep() { return m_Config->GetTimeStep(); }
+
+pulse::eAirwayMode  PulseController::GetAirwayMode() { return m_AirwayMode; }
 void PulseController::SetAirwayMode(pulse::eAirwayMode mode)
 {
   if (mode == m_AirwayMode)
@@ -217,6 +275,7 @@ void PulseController::SetIntubation(cdm::eSwitch s)
     throw CommonDataModelException("Cannot intubate if the inhaler is active.");
   m_Intubation = s;
 }
+cdm::eSwitch PulseController::GetIntubation() { return m_Intubation; }
 
 bool PulseController::SetupPatient()
 {
@@ -4413,5 +4472,3 @@ void PulseController::SetupInternalTemperature()
   SEThermalCompartmentLink& InternalSkinToGround = m_Compartments->CreateThermalLink(InternalGround, InternalCore, pulse::TemperatureLink::InternalSkinToGround);
   InternalSkinToGround.MapPath(SkinToTemperatureGround);
 }
-
-

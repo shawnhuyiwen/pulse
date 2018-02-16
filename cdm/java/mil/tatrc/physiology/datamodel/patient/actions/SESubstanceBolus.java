@@ -4,7 +4,7 @@
 package mil.tatrc.physiology.datamodel.patient.actions;
 
 import com.kitware.physiology.cdm.PatientActions.SubstanceBolusData;
-import com.kitware.physiology.cdm.PatientActions.SubstanceBolusData.eAdministrationRoute;
+import com.kitware.physiology.cdm.PatientActionEnums.eSubstanceAdministration.Route;
 
 import mil.tatrc.physiology.datamodel.properties.SEScalarMassPerVolume;
 import mil.tatrc.physiology.datamodel.properties.SEScalarVolume;
@@ -12,7 +12,7 @@ import mil.tatrc.physiology.datamodel.substance.SESubstance;
 
 public class SESubstanceBolus extends SEPatientAction
 {
-  protected eAdministrationRoute adminRoute;
+  protected Route adminRoute;
   protected SEScalarMassPerVolume concentration;
   protected SEScalarVolume dose;
   protected SESubstance substance;
@@ -66,7 +66,7 @@ public class SESubstanceBolus extends SEPatientAction
       SEScalarVolume.load(src.getDose(),dst.getDose());
     if(src.hasConcentration())
       SEScalarMassPerVolume.load(src.getConcentration(),dst.getConcentration());
-    if(src.getAdministrationRoute()!=eAdministrationRoute.UNRECOGNIZED)
+    if(src.getAdministrationRoute()!=Route.UNRECOGNIZED)
     	dst.adminRoute = src.getAdministrationRoute();
   }
   
@@ -90,11 +90,11 @@ public class SESubstanceBolus extends SEPatientAction
       dst.setSubstance(src.substance.getName());
   }
 
-  public eAdministrationRoute getAdminRoute()
+  public Route getAdminRoute()
   {
     return adminRoute;
   }
-  public void setAdminRoute(eAdministrationRoute adminRoute)
+  public void setAdminRoute(Route adminRoute)
   {
     this.adminRoute = adminRoute;
   }

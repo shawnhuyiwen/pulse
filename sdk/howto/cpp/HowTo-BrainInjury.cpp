@@ -4,6 +4,10 @@
 #include "EngineHowTo.h"
 
 // Include the various types you will be using in your code
+#include "scenario/SEDataRequestManager.h"
+#include "engine/SEEngineTracker.h"
+#include "compartment/SECompartmentManager.h"
+#include "compartment/fluid/SELiquidCompartment.h"
 #include "system/physiology/SECardiovascularSystem.h"
 #include "system/physiology/SERespiratorySystem.h"
 #include "system/physiology/SEBloodChemistrySystem.h"
@@ -23,8 +27,6 @@
 #include "properties/SEScalarPower.h"
 #include "properties/SEScalarAmountPerVolume.h"
 #include "properties/SEScalar0To1.h"
-#include "engine/SEEngineTracker.h"
-#include "compartment/SECompartmentManager.h"
 
 int GlasgowEstimator(double);
 
@@ -89,7 +91,7 @@ void HowToBrainInjury()
   // Create an SEBrainInjury object
   // Set the severity (a fraction between 0 and 1; for maximal injury, use 1.)  
   SEBrainInjury tbi;
-  tbi.SetType(cdm::BrainInjuryData_eType_Diffuse);// Can also be LeftFocal or RightFocal, and you will get pupillary effects in only one eye 
+  tbi.SetType(cdm::eBrainInjury_Type_Diffuse);// Can also be LeftFocal or RightFocal, and you will get pupillary effects in only one eye 
   tbi.GetSeverity().SetValue(0.2);
   pe->ProcessAction(tbi);
   pe->GetLogger()->Info("Giving the patient a brain injury.");

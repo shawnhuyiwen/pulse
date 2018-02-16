@@ -2,17 +2,25 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include <algorithm>
 #include "Systems/Saturation.h"
+#include "Controller/Substances.h"
+PROTO_PUSH
+#include "bind/engine/EnginePhysiology.pb.h"
+PROTO_POP
+#include "substance/SESubstance.h"
+#include "substance/SESubstanceManager.h"
+#include "compartment/fluid/SELiquidCompartment.h"
 #include "compartment/substances/SELiquidSubstanceQuantity.h"
 #include "properties/SEScalarAmountPerVolume.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarMassPerAmount.h"
 #include "properties/SEScalarMassPerVolume.h"
+#include "properties/SEScalarPressure.h"
 #include "properties/SEScalarInversePressure.h"
 
 #include "unsupported/Eigen/NonLinearOptimization"
 #include <cmath>
+#include <algorithm>
 
 //#define VERBOSE
 

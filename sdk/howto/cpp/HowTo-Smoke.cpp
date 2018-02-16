@@ -4,11 +4,16 @@
 #include "EngineHowTo.h"
 
 // Include the various types you will be using in your code
+#include "scenario/SEDataRequestManager.h"
+#include "engine/SEEngineTracker.h"
+#include "compartment/SECompartmentManager.h"
+#include "compartment/fluid/SEGasCompartment.h"
 #include "system/environment/SEActiveConditioning.h"
 #include "system/environment/actions/SEChangeEnvironmentConditions.h"
 #include "system/environment/SEEnvironmentalConditions.h"
 #include "substance/SESubstanceFraction.h"
 #include "substance/SESubstanceConcentration.h"
+#include "substance/SESubstanceFraction.h"
 #include "system/physiology/SEBloodChemistrySystem.h"
 #include "system/physiology/SECardiovascularSystem.h"
 #include "system/physiology/SEEnergySystem.h"
@@ -28,9 +33,6 @@
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalarPower.h"
 #include "properties/SEScalarFlowResistance.h"
-#include "substance/SESubstanceFraction.h"
-#include "engine/SEEngineTracker.h"
-#include "compartment/SECompartmentManager.h"
 
 #include "system/environment/conditions/SEInitialEnvironmentConditions.h"
 

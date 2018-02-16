@@ -7,7 +7,9 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 import com.kitware.physiology.cdm.AnesthesiaMachine.AnesthesiaMachineData;
+import com.kitware.physiology.cdm.AnesthesiaMachineEnums.eAnesthesiaMachine;
 import com.kitware.physiology.cdm.Patient.PatientData;
+import com.kitware.physiology.cdm.PatientEnums.ePatient;
 
 import mil.tatrc.physiology.datamodel.compartment.SECompartment;
 import mil.tatrc.physiology.datamodel.patient.SEPatient;
@@ -56,7 +58,7 @@ public class CDM2MD
 
 			// PATIENT
 			WriteDoxyTable(SEPatient.class, "", writer, skipProperties);    
-			WriteDoxyTable(PatientData.eEvent.class, "PatientData_", writer, skipProperties);  
+			WriteDoxyTable(ePatient.Event.class, "PatientData_", writer, skipProperties);  
 			Set<Class<? extends SEPatientAction>> pActions = FindObjects.findClassSubTypes("mil.tatrc.physiology.datamodel.patient.actions", SEPatientAction.class);
 			for(Class<?> c : pActions)
 				WriteDoxyTable(c, "", writer, skipProperties);
@@ -86,7 +88,7 @@ public class CDM2MD
 
 			// ANESTHESIA MACHINE
 
-			WriteDoxyTable(AnesthesiaMachineData.eEvent.class, "Anesthesia", writer, skipProperties);  
+			WriteDoxyTable(eAnesthesiaMachine.Event.class, "Anesthesia", writer, skipProperties);  
 			Set<Class<? extends Object>> anes = FindObjects.findAllClasses("mil.tatrc.physiology.datamodel.system.equipment.anesthesia");
 			for(Class<?> c : anes)
 				WriteDoxyTable(c, "", writer, skipProperties);

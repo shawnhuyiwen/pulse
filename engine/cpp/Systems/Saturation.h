@@ -3,6 +3,8 @@
 
 #pragma once
 struct error_functor;
+class SESubstance;
+class SESubstanceManager;
 class SELiquidCompartment;
 class SELiquidSubstanceQuantity;
 

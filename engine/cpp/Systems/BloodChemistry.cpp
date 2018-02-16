@@ -10,10 +10,14 @@
 PROTO_PUSH
 #include "bind/engine/EnginePhysiology.pb.h"
 PROTO_POP
-
+// Dependent Systems
+#include "system/physiology/SECardiovascularSystem.h"
+// Assessments
+#include "patient/assessments/SECompleteBloodCount.h"
+#include "patient/assessments/SEComprehensiveMetabolicPanel.h"
+// CDM
 #include "patient/SEPatient.h"
 #include "substance/SESubstance.h"
-#include "system/physiology/SECardiovascularSystem.h"
 #include "compartment/fluid/SELiquidCompartment.h"
 #include "compartment/substances/SELiquidSubstanceQuantity.h"
 #include "properties/SEScalar0To1.h"
@@ -29,9 +33,6 @@ PROTO_POP
 #include "properties/SEScalarTime.h"
 #include "properties/SEScalarHeatCapacitancePerMass.h"
 #include "utils/RunningAverage.h"
-// Assessments
-#include "patient/assessments/SECompleteBloodCount.h"
-#include "patient/assessments/SEComprehensiveMetabolicPanel.h"
 
 #pragma warning(disable:4786)
 #pragma warning(disable:4275)

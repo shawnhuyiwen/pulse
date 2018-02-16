@@ -4,6 +4,8 @@
 #include "EngineHowTo.h"
 
 // Include the various types you will be using in your code
+#include "scenario/SEDataRequestManager.h"
+#include "engine/SEEngineTracker.h"
 #include "patient/actions/SESubstanceBolus.h"
 #include "system/equipment/anesthesiamachine/SEAnesthesiaMachine.h"
 #include "system/equipment/anesthesiamachine/SEAnesthesiaMachineOxygenBottle.h"
@@ -23,7 +25,6 @@
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalar0To1.h"
-#include "engine/SEEngineTracker.h"
 
 //---------------------------------------------------------------------------------------------------------------------
 /// \brief
@@ -83,13 +84,13 @@ void HowToAnesthesiaMachine()
   // Modifying the class will keep any old settings that are not provided in the config
   // Using a pba will set the anesthesia machine to only the property states specified in the file
   SEAnesthesiaMachine& config = AMConfig.GetConfiguration();
-  config.SetConnection(cdm::AnesthesiaMachineData_eConnection_Mask);
+  config.SetConnection(cdm::eAnesthesiaMachine_Connection_Mask);
   config.GetInletFlow().SetValue(2.0, VolumePerTimeUnit::L_Per_min);
   config.GetInspiratoryExpiratoryRatio().SetValue(.5);
   config.GetOxygenFraction().SetValue(.5);
-  config.SetOxygenSource(cdm::AnesthesiaMachineData_eOxygenSource_Wall);
+  config.SetOxygenSource(cdm::eAnesthesiaMachine_OxygenSource_Wall);
   config.GetPositiveEndExpiredPressure().SetValue(0.0, PressureUnit::cmH2O);
-  config.SetPrimaryGas(cdm::AnesthesiaMachineData_ePrimaryGas_Nitrogen);
+  config.SetPrimaryGas(cdm::eAnesthesiaMachine_PrimaryGas_Nitrogen);
   config.GetReliefValvePressure().SetValue(20.0, PressureUnit::cmH2O);
   config.GetRespiratoryRate().SetValue(12, FrequencyUnit::Per_min);
   config.GetVentilatorPressure().SetValue(0.0, PressureUnit::cmH2O);
@@ -117,7 +118,7 @@ void HowToAnesthesiaMachine()
   SESubstanceBolus bolus(*succs);
   bolus.GetConcentration().SetValue(4820, MassPerVolumeUnit::ug_Per_mL);
   bolus.GetDose().SetValue(20, VolumeUnit::mL);
-  bolus.SetAdminRoute(cdm::SubstanceBolusData_eAdministrationRoute_Intravenous);
+  bolus.SetAdminRoute(cdm::eSubstanceAdministration_Route_Intravenous);
   pe->ProcessAction(bolus);
   
   pe->GetLogger()->Info("Giving the patient Succinylcholine to test machine-driven ventilation.");

@@ -12,13 +12,15 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import com.kitware.physiology.cdm.ElectroCardioGram.ElectroCardioGramWaveformData.eLead;
-import com.kitware.physiology.cdm.Environment.EnvironmentData.eSurroundingType;
+import com.kitware.physiology.cdm.ElectroCardioGramEnums.eElectroCardioGram.WaveformLead;
+import com.kitware.physiology.cdm.EnvironmentEnums.eEnvironment.SurroundingType;
 import com.kitware.physiology.cdm.Patient.PatientData;
-import com.kitware.physiology.cdm.Physiology.eHeartRhythm;
+import com.kitware.physiology.cdm.PatientEnums.ePatient;
+import com.kitware.physiology.cdm.PhysiologyEnums.eHeartRhythm;
 import com.kitware.physiology.cdm.Enums.eCharge;
-import com.kitware.physiology.cdm.Scenario.DataRequestData.eCategory;
+import com.kitware.physiology.cdm.ScenarioEnums.eDataRequest.Category;
 import com.kitware.physiology.cdm.Substance.SubstanceData;
+import com.kitware.physiology.cdm.SubstanceEnums.eSubstance;
 
 import mil.tatrc.physiology.datamodel.substance.SESubstanceTissuePharmacokinetics;
 import mil.tatrc.physiology.datamodel.datarequests.SEDataRequest;
@@ -291,7 +293,7 @@ public class DataSetReader
     }
     if(property.equals("Sex"))
     {
-      patient.setSex(PatientData.eSex.valueOf(value));
+      patient.setSex(ePatient.Sex.valueOf(value));
       return true;
     }
     if(property.equals("Age"))
@@ -560,7 +562,7 @@ public class DataSetReader
     }
     if(property.equals("State"))
     {
-      substance.setState(SubstanceData.eState.valueOf(value));
+      substance.setState(eSubstance.State.valueOf(value));
       return true;
     }
     if(property.equals("Density"))
@@ -762,7 +764,7 @@ public class DataSetReader
     }
     if(property.equals("BindingProtein"))
     {
-      substance.getPK().getPhysicochemicals().setBindingProtein(SubstanceData.eBindingProtein.valueOf(value));
+      substance.getPK().getPhysicochemicals().setBindingProtein(eSubstance.BindingProtein.valueOf(value));
       return true;
     }
     if(property.equals("BloodPlasmaRatio"))
@@ -772,7 +774,7 @@ public class DataSetReader
     }
     if(property.equals("IonicState"))
     {
-      substance.getPK().getPhysicochemicals().setIonicState(SubstanceData.eIonicState.valueOf(value));
+      substance.getPK().getPhysicochemicals().setIonicState(eSubstance.IonicState.valueOf(value));
       return true;
     }
     if(property.equals("LogP"))
@@ -1070,7 +1072,7 @@ public class DataSetReader
 
     if(property.equals("SurroundingType"))
     {
-      env.setSurroundingType(eSurroundingType.valueOf(value));
+      env.setSurroundingType(SurroundingType.valueOf(value));
       return true;
     }
     if(property.equals("AirDensity"))
@@ -1312,7 +1314,7 @@ public class DataSetReader
         	// Note it is assumed that the all criteria are physiology requests
         	SEDataRequest dr = new SEDataRequest();
         	dr.setPropertyName(row.getCell(2).getStringCellValue());
-        	dr.setCategory(eCategory.Physiology);
+        	dr.setCategory(Category.Physiology);
           criteria.createProperty(row.getCell(1).getNumericCellValue(),dr);
         }
         else if(property.equals("ConvergenceTime"))
@@ -1368,7 +1370,7 @@ public class DataSetReader
     fields.add("ElectricPotential");
     fields.add("Time");
     String property,value,unit,cellValue;
-    eLead lead=eLead.NullLead;
+    WaveformLead lead=WaveformLead.NullLead;
     eHeartRhythm rhythm=eHeartRhythm.NormalSinus;
        
     SEElectroCardioGramWaveformList ecg=null;
@@ -1392,7 +1394,7 @@ public class DataSetReader
         }         
         else if(property.equals("Lead"))
         {          
-          lead = eLead.values()[((int)(row.getCell(1).getNumericCellValue()))];
+          lead = WaveformLead.values()[((int)(row.getCell(1).getNumericCellValue()))];
         }
         else if(property.equals("Rhythm"))
         {

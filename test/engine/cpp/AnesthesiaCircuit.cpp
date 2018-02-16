@@ -5,16 +5,24 @@
 
 #include "EngineTest.h"
 #include "Controller/Controller.h"
+#include "Controller/Substances.h"
+#include "Controller/Circuits.h"
+#include "Controller/Compartments.h"
+#include "PulseConfiguration.h"
+#include "patient/SEPatient.h"
+#include "substance/SESubstanceFraction.h"
+#include "substance/SESubstanceTransport.h"
 #include "circuit/fluid/SEFluidCircuit.h"
+#include "circuit/fluid/SEFluidCircuitCalculator.h"
 #include "compartment/fluid/SEGasCompartmentGraph.h"
 #include "compartment/fluid/SEFluidCompartmentLink.h"
+#include "system/environment/SEEnvironmentalConditions.h"
 #include "properties/SEScalarFlowCompliance.h"
 #include "properties/SEScalarFlowResistance.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalar0To1.h"
-#include "substance/SESubstanceFraction.h"
 #include "utils/DataTrack.h"
 #include "utils/TimingProfile.h"
 #include <math.h>
@@ -109,7 +117,7 @@ void PulseEngineTest::AnesthesiaMachineCircuitAndTransportTest(RespiratoryConfig
   SEFluidCircuitPath* SelectorToEnvironment = amCircuit->GetPath(pulse::AnesthesiaMachinePath::SelectorToEnvironment);
   SEFluidCircuitPath* EnvironmentToGasSource = amCircuit->GetPath(pulse::AnesthesiaMachinePath::EnvironmentToGasSource);
 
-  SEGasTransporter txpt(VolumePerTimeUnit::L_Per_s, VolumeUnit::L, VolumeUnit::L, NoUnit::unitless, pc.GetLogger());
+  SEGasTransporter txpt(VolumePerTimeUnit::L_Per_s, VolumeUnit::L, VolumeUnit::L, pc.GetLogger());
   SEFluidCircuitCalculator calc(FlowComplianceUnit::L_Per_cmH2O, VolumePerTimeUnit::L_Per_s, FlowInertanceUnit::cmH2O_s2_Per_L, PressureUnit::cmH2O, VolumeUnit::L, FlowResistanceUnit::cmH2O_s_Per_L, pc.GetLogger());
   
   //Execution parameters

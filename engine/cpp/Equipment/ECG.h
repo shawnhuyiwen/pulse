@@ -5,6 +5,7 @@
 #pragma once
 #include "Controller/System.h"
 #include "system/equipment/electrocardiogram/SEElectroCardioGram.h"
+class SEElectroCardioGramWaveformInterpolator;
 PULSE_BIND_DECL(ElectroCardioGramData)
 
 /**

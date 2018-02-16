@@ -2,29 +2,52 @@
    See accompanying NOTICE file for details.*/
 #include "stdafx.h"
 #include "Controller/Engine.h"
+#include "Controller/Circuits.h"
+#include "Controller/Compartments.h"
+#include "Controller/Substances.h"
+#include "Systems/BloodChemistry.h"
+#include "Systems/Cardiovascular.h"
+#include "Systems/Drugs.h"
+#include "Systems/Endocrine.h"
+#include "Systems/Energy.h"
+#include "Systems/Environment.h"
+#include "Systems/Gastrointestinal.h"
+#include "Systems/Hepatic.h"
+#include "Systems/Nervous.h"
+#include "Systems/Renal.h"
+#include "Systems/Respiratory.h"
+#include "Systems/Saturation.h"
+#include "Systems/Tissue.h"
+#include "Equipment/AnesthesiaMachine.h"
+#include "Equipment/ECG.h"
+#include "Equipment/Inhaler.h"
+#include "PulseConfiguration.h"
 PROTO_PUSH
 #include "bind/engine/EngineState.pb.h"
 PROTO_POP
-
 #include "patient/SEPatient.h"
-#include "circuit/SECircuitManager.h"
-#include "compartment/SECompartmentManager.h"
-#include "engine/SEEngineStabilization.h"
-#include "scenario/SEScenario.h"
-#include "scenario/SECondition.h"
-
-#include "utils/FileUtils.h"
-
-#include "scenario/SESerializeState.h"
 #include "patient/actions/SEPatientAssessmentRequest.h"
 #include "patient/assessments/SEPulmonaryFunctionTest.h"
 #include "patient/assessments/SEUrinalysis.h"
 #include "patient/assessments/SECompleteBloodCount.h"
 #include "patient/assessments/SEComprehensiveMetabolicPanel.h"
+#include "substance/SESubstance.h"
 #include "substance/SESubstanceCompound.h"
+#include "circuit/SECircuitManager.h"
+#include "compartment/SECompartmentManager.h"
+#include "engine/SEEngineStabilization.h"
+#include "engine/SEEngineTracker.h"
+#include "scenario/SEDataRequestManager.h"
+#include "scenario/SEScenario.h"
+#include "scenario/SEAction.h"
+#include "scenario/SEActionManager.h"
+#include "scenario/SECondition.h"
+#include "scenario/SEConditionManager.h"
+#include "scenario/SESerializeState.h"
+#include "properties/SEScalarTime.h"
+#include "utils/FileUtils.h"
 #include <google/protobuf/text_format.h>
 #include <google/protobuf/stubs/logging.h>
-
 #include <memory>
 
 PULSE_DECL std::unique_ptr<PhysiologyEngine> CreatePulseEngine(const std::string& logfile)
@@ -37,18 +60,20 @@ PULSE_DECL std::unique_ptr<PhysiologyEngine> CreatePulseEngine(Logger* logger)
   return std::unique_ptr<PulseEngine>(new PulseEngine(logger));
 }
 
-PulseEngine::PulseEngine(Logger* logger) : PulseController(logger), m_EngineTrack(*this)
+PulseEngine::PulseEngine(Logger* logger) : PulseController(logger)
 {
   m_State = EngineState::NotReady;
   m_EventHandler = nullptr;
-  m_DataTrack = &m_EngineTrack.GetDataTrack();
+  m_EngineTrack = new SEEngineTracker(*this);
+  m_DataTrack = &m_EngineTrack->GetDataTrack();
 }
 
-PulseEngine::PulseEngine(const std::string& logFileName) : PulseController(logFileName), m_EngineTrack(*this)
+PulseEngine::PulseEngine(const std::string& logFileName) : PulseController(logFileName)
 {
   m_State = EngineState::NotReady;
   m_EventHandler = nullptr;
-  m_DataTrack = &m_EngineTrack.GetDataTrack();
+  m_EngineTrack = new SEEngineTracker(*this);
+  m_DataTrack = &m_EngineTrack->GetDataTrack();
 }
 
 PulseEngine::~PulseEngine()
@@ -63,7 +88,7 @@ Logger* PulseEngine::GetLogger()
 
 SEEngineTracker* PulseEngine::GetEngineTracker()
 {
-  return &m_EngineTrack;
+  return m_EngineTrack;
 }
 
 
@@ -130,9 +155,9 @@ bool PulseEngine::LoadState(const google::protobuf::Message& state, const SEScal
   // Set it back up, and set or reset the results file they are using
   if (peState->has_datarequestmanager())
   {
-    m_EngineTrack.GetDataRequestManager().Clear();
-    SEDataRequestManager::Load(peState->datarequestmanager(), m_EngineTrack.GetDataRequestManager(), *m_Substances);
-    m_EngineTrack.ForceConnection();// I don't want to rest the file because I would loose all my data      
+    m_EngineTrack->GetDataRequestManager().Clear();
+    SEDataRequestManager::Load(peState->datarequestmanager(), m_EngineTrack->GetDataRequestManager(), *m_Substances);
+    m_EngineTrack->ForceConnection();// I don't want to rest the file because I would loose all my data      
   }
 
   if (simTime != nullptr)
@@ -301,8 +326,8 @@ std::unique_ptr<google::protobuf::Message> PulseEngine::SaveState(const std::str
   state->set_airwaymode(m_AirwayMode);
   state->set_intubation(m_Intubation);
   state->set_allocated_simulationtime(SEScalarTime::Unload(*m_SimulationTime));
-  if(m_EngineTrack.GetDataRequestManager().HasDataRequests())
-    state->set_allocated_datarequestmanager(SEDataRequestManager::Unload(m_EngineTrack.GetDataRequestManager()));
+  if(m_EngineTrack->GetDataRequestManager().HasDataRequests())
+    state->set_allocated_datarequestmanager(SEDataRequestManager::Unload(m_EngineTrack->GetDataRequestManager()));
   // Patient
   state->set_allocated_patient(SEPatient::Unload(*m_Patient));
   // Conditions
@@ -387,7 +412,7 @@ bool PulseEngine::InitializeEngine(const std::vector<const SECondition*>* condit
       return false;
     }
   }
-  m_EngineTrack.ResetFile();
+  m_EngineTrack->ResetFile();
   m_State = EngineState::Initialization;
   if (!PulseController::Initialize(pConfig))
     return false;
@@ -500,7 +525,7 @@ bool PulseEngine::ProcessAction(const SEAction& action)
   const SESerializeState* serialize = dynamic_cast<const SESerializeState*>(&action);
   if (serialize != nullptr)
   {
-    if (serialize->GetType() == cdm::SerializeStateData_eSerializationType_Save)
+    if (serialize->GetType() == cdm::eSerialization_Type_Save)
     {
       if (serialize->HasFilename())
       {
@@ -528,7 +553,7 @@ bool PulseEngine::ProcessAction(const SEAction& action)
   {
     switch (patientAss->GetType())
     {
-      case cdm::PatientAssessmentData_eType_PulmonaryFunctionTest:
+      case cdm::ePatientAssessment_Type_PulmonaryFunctionTest:
       {
         SEPulmonaryFunctionTest pft(m_Logger);
         GetPatientAssessment(pft);
@@ -544,7 +569,7 @@ bool PulseEngine::ProcessAction(const SEAction& action)
         pft.SaveFile(pftFile);
         break;
       }
-      case cdm::PatientAssessmentData_eType_Urinalysis:
+      case cdm::ePatientAssessment_Type_Urinalysis:
       {
         SEUrinalysis upan(m_Logger);
         GetPatientAssessment(upan);
@@ -560,7 +585,7 @@ bool PulseEngine::ProcessAction(const SEAction& action)
         break;
       }
 
-      case cdm::PatientAssessmentData_eType_CompleteBloodCount:
+      case cdm::ePatientAssessment_Type_CompleteBloodCount:
       {
         SECompleteBloodCount cbc(m_Logger);
         GetPatientAssessment(cbc);
@@ -575,7 +600,7 @@ bool PulseEngine::ProcessAction(const SEAction& action)
         break;
       }
 
-      case cdm::PatientAssessmentData_eType_ComprehensiveMetabolicPanel:
+      case cdm::ePatientAssessment_Type_ComprehensiveMetabolicPanel:
       {
         SEComprehensiveMetabolicPanel mp(m_Logger);
         GetPatientAssessment(mp);

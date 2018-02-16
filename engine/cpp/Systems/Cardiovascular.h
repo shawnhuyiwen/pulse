@@ -4,10 +4,17 @@
 #pragma once
 #include "Controller/System.h"
 #include "system/physiology/SECardiovascularSystem.h"
-#include "circuit/fluid/SEFluidCircuitCalculator.h"
-
+class SEPatient;
+class SELiquidCompartment;
+class SELiquidSubstanceQuantity;
 class SELiquidCompartmentGraph;
+class SELiquidTransporter;
+class SEFluidCircuit;
+class SEFluidCircuitNode;
+class SEFluidCircuitPath;
 class SEFluidCircuitCalculator;
+class RunningAverage;
+PULSE_BIND_DECL(CardiovascularSystemData)
 
 /**
 * @brief 
@@ -112,14 +119,14 @@ private:
   double m_CardiacCyclePulmonaryArteryPressureHigh_mmHg;  
   double m_LastCardiacCycleMeanArterialCO2PartialPressure_mmHg;
   double m_CardiacCycleStrokeVolume_mL; // Total volume of the left heart flow for the current cardiac cycle
-  RunningAverage m_CardiacCycleArterialPressure_mmHg;
-  RunningAverage m_CardiacCycleArterialCO2PartialPressure_mmHg;
-  RunningAverage m_CardiacCyclePulmonaryCapillariesWedgePressure_mmHg;
-  RunningAverage m_CardiacCyclePulmonaryCapillariesFlow_mL_Per_s;
-  RunningAverage m_CardiacCyclePulmonaryShuntFlow_mL_Per_s;
-  RunningAverage m_CardiacCyclePulmonaryArteryPressure_mmHg;
-  RunningAverage m_CardiacCycleCentralVenousPressure_mmHg;
-  RunningAverage m_CardiacCycleSkinFlow_mL_Per_s;
+  RunningAverage* m_CardiacCycleArterialPressure_mmHg;
+  RunningAverage* m_CardiacCycleArterialCO2PartialPressure_mmHg;
+  RunningAverage* m_CardiacCyclePulmonaryCapillariesWedgePressure_mmHg;
+  RunningAverage* m_CardiacCyclePulmonaryCapillariesFlow_mL_Per_s;
+  RunningAverage* m_CardiacCyclePulmonaryShuntFlow_mL_Per_s;
+  RunningAverage* m_CardiacCyclePulmonaryArteryPressure_mmHg;
+  RunningAverage* m_CardiacCycleCentralVenousPressure_mmHg;
+  RunningAverage* m_CardiacCycleSkinFlow_mL_Per_s;
   
   // Stateless member variable (Set in SetUp())
   double                           m_dT_s;
@@ -128,8 +135,8 @@ private:
 
   double                           m_minIndividialSystemicResistance__mmHg_s_Per_mL;
   
-  SEFluidCircuitCalculator         m_circuitCalculator;
-  SELiquidTransporter              m_transporter;
+  SEFluidCircuitCalculator*        m_circuitCalculator;
+  SELiquidTransporter*             m_transporter;
 
   SEPatient*                       m_patient;
 

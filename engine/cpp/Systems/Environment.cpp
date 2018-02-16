@@ -3,16 +3,40 @@
 
 #include "stdafx.h"
 
-#include "Environment.h"
-#include "circuit/thermal/SEThermalCircuit.h"
-#include "circuit/fluid/SEFluidCircuit.h"
-
-#include "substance/SESubstanceFraction.h"
-#include "substance/SESubstanceConcentration.h"
-
+#include "Systems/Environment.h"
+#include "Controller/Circuits.h"
+#include "Controller/Compartments.h"
+#include "Controller/Substances.h"
+#include "PulseConfiguration.h"
+PROTO_PUSH
+#include "bind/engine/EngineEnvironment.pb.h"
+PROTO_POP
+// Conditions
+#include "scenario/SEConditionManager.h"
+#include "system/environment/conditions/SEEnvironmentCondition.h"
+// Actions
+#include "scenario/SEActionManager.h"
+#include "scenario/SEEnvironmentActionCollection.h"
+#include "system/environment/actions/SEThermalApplication.h"
+#include "system/environment/actions/SEChangeEnvironmentConditions.h"
+// Dependent Systems
+#include "system/physiology/SEEnergySystem.h"
+#include "system/physiology/SERespiratorySystem.h"
+#include "system/environment/SEEnvironmentalConditions.h"
 #include "system/environment/SEActiveConditioning.h"
 #include "system/environment/SEAppliedTemperature.h"
-
+// CDM
+#include "patient/SEPatient.h"
+#include "circuit/fluid/SEFluidCircuit.h"
+#include "circuit/thermal/SEThermalCircuit.h"
+#include "circuit/thermal/SEThermalCircuitNode.h"
+#include "circuit/thermal/SEThermalCircuitPath.h"
+#include "compartment/fluid/SEGasCompartment.h"
+#include "compartment/substances/SEGasSubstanceQuantity.h"
+#include "substance/SESubstance.h"
+#include "substance/SESubstanceAerosolization.h"
+#include "substance/SESubstanceFraction.h"
+#include "substance/SESubstanceConcentration.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalarPressure.h"
@@ -48,8 +72,6 @@ void Environment::Clear()
 {
   SEEnvironment::Clear();
   m_Patient = nullptr;
-  m_PatientActions = nullptr;
-  m_EnvironmentActions = nullptr;
   m_AmbientGases = nullptr;
   m_AmbientAerosols = nullptr;
   m_EnvironmentCircuit = nullptr;
@@ -122,8 +144,6 @@ void Environment::SetUp()
 {
   // Patient and Actions
   m_Patient = &m_data.GetPatient();
-  m_PatientActions = &m_data.GetActions().GetPatientActions();
-  m_EnvironmentActions = &m_data.GetActions().GetEnvironmentActions();
   //Circuits
   m_EnvironmentCircuit = &m_data.GetCircuits().GetExternalTemperatureCircuit();
   //Compartments
@@ -229,10 +249,10 @@ void Environment::AtSteadyState()
 //--------------------------------------------------------------------------------------------------
 void Environment::PreProcess()
 {
-  if (m_EnvironmentActions->HasChange())
+  if (m_data.GetActions().GetEnvironmentActions().HasChange())
   {
-    ProcessChange(*m_EnvironmentActions->GetChange());
-    m_EnvironmentActions->RemoveChange();
+    ProcessChange(*m_data.GetActions().GetEnvironmentActions().GetChange());
+    m_data.GetActions().GetEnvironmentActions().RemoveChange();
   }
 
   //Set clothing resistor
@@ -297,7 +317,7 @@ void Environment::ProcessActions()
   //Open the switch
   m_ActiveSwitchPath->SetNextSwitch(cdm::eGate::Open);    
 
-  if (!m_EnvironmentActions->HasThermalApplication())
+  if (!m_data.GetActions().GetEnvironmentActions().HasThermalApplication())
   {
     //No action
     return;
@@ -305,7 +325,7 @@ void Environment::ProcessActions()
 
   //We'll allow heating, cooling, and temperature setting to be done simultaneously
   
-  SEThermalApplication* ta = m_EnvironmentActions->GetThermalApplication();
+  SEThermalApplication* ta = m_data.GetActions().GetEnvironmentActions().GetThermalApplication();
   double dEffectiveAreaFraction = 0.0;
   double dSurfaceArea_m2 = m_Patient->GetSkinSurfaceArea(AreaUnit::m2);
 
@@ -500,7 +520,7 @@ void Environment::CalculateSupplementalValues()
 
 
   //Water convective heat transfer properties
-  if (GetConditions().GetSurroundingType() == cdm::EnvironmentData_eSurroundingType_Water)
+  if (GetConditions().GetSurroundingType() == cdm::eEnvironment_SurroundingType_Water)
   {
     double dWaterTemperature_C = GetConditions().GetAmbientTemperature(TemperatureUnit::C);
     double dT = Convert(dWaterTemperature_C, TemperatureUnit::C, TemperatureUnit::K) / 298.15;
@@ -522,7 +542,7 @@ void Environment::CalculateSupplementalValues()
 //--------------------------------------------------------------------------------------------------
 void Environment::CalculateRadiation()
 {  
-  if (GetConditions().GetSurroundingType() == cdm::EnvironmentData_eSurroundingType_Water)
+  if (GetConditions().GetSurroundingType() == cdm::eEnvironment_SurroundingType_Water)
   {
     //Submerged - therefore, no radiation
     
@@ -589,7 +609,7 @@ void Environment::CalculateConvection()
 {
   double dConvectiveHeatTransferCoefficient_WPerM2_K = 0.0;
 
-  if (GetConditions().GetSurroundingType() == cdm::EnvironmentData_eSurroundingType_Water)
+  if (GetConditions().GetSurroundingType() == cdm::eEnvironment_SurroundingType_Water)
   {
     //Submerged - therefore, convection is most important
     double dClothingTemperature_K = m_ClothingNode->GetTemperature().GetValue(TemperatureUnit::K);
@@ -653,7 +673,7 @@ void Environment::CalculateConvection()
 //--------------------------------------------------------------------------------------------------
 void Environment::CalculateEvaporation()
 {  
-  if (GetConditions().GetSurroundingType() == cdm::EnvironmentData_eSurroundingType_Water)
+  if (GetConditions().GetSurroundingType() == cdm::eEnvironment_SurroundingType_Water)
   {
     //Submerged - therefore, no evaporation
 

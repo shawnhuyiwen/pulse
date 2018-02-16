@@ -3,10 +3,22 @@
 #include "EngineTest.h"
 #include "CommonDataModel.h"
 #include "Controller/Controller.h"
+#include "Controller/Substances.h"
+#include "Controller/Circuits.h"
+#include "Controller/Compartments.h"
+#include "Systems/Tissue.h"
+#include "Systems/Saturation.h"
+#include "PulseConfiguration.h"
 
+#include "patient/SEPatient.h"
+#include "substance/SESubstance.h"
 #include "substance/SESubstanceManager.h"
-#include "compartment/fluid/SELiquidCompartment.h"
+#include "circuit/fluid/SEFluidCircuit.h"
+#include "circuit/fluid/SEFluidCircuitCalculator.h"
 #include "compartment/SECompartmentManager.h"
+#include "compartment/fluid/SEFluidCompartmentLink.h"
+#include "compartment/fluid/SELiquidCompartmentGraph.h"
+#include "compartment/fluid/SELiquidCompartment.h"
 #include "utils/GeneralMath.h"
 #include "utils/DataTrack.h"
 #include "properties/SEScalar0To1.h"
@@ -14,11 +26,7 @@
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarMassPerAmount.h"
 #include "properties/SEScalarVolume.h"
-
 #include "properties/SEScalarAmountPerVolume.h"
-#include "compartment/SECompartmentManager.h"
-#include "compartment/fluid/SEFluidCompartmentLink.h"
-#include "compartment/fluid/SELiquidCompartmentGraph.h"
 
 double TotalHbMols(SELiquidCompartmentGraph& Graph, SESubstance& Hb, SESubstance& HbO2, SESubstance& HbO2CO2, SESubstance& HbCO2)
 {

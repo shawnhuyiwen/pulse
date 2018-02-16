@@ -2,19 +2,39 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "Drugs.h"
+#include "Systems/Drugs.h"
+#include "Controller/Compartments.h"
+#include "Controller/Circuits.h"
+#include "Controller/Substances.h"
+#include "PulseConfiguration.h"
+PROTO_PUSH
+#include "bind/engine/EnginePhysiology.pb.h"
+PROTO_POP
+// Dependent Systems
 #include "system/physiology/SEBloodChemistrySystem.h"
 #include "system/physiology/SECardiovascularSystem.h"
-#include "system/physiology/SEEnergySystem.h"
-#include "system/physiology/SERespiratorySystem.h"
+#include "system/physiology/SETissueSystem.h"
 #include "system/physiology/SEPupillaryResponse.h"
-
-#include "circuit/fluid/SEFluidCircuit.h"
-
+// Actions
+#include "scenario/SEActionManager.h"
+#include "scenario/SEPatientActionCollection.h"
+#include "patient/actions/SESubstanceBolus.h"
+#include "patient/actions/SESubstanceInfusion.h"
+#include "patient/actions/SESubstanceCompoundInfusion.h"
+// CDM
 #include "patient/SEPatient.h"
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceCompound.h"
 #include "substance/SESubstanceConcentration.h"
+#include "substance/SESubstanceClearance.h"
+#include "substance/SESubstancePhysicochemicals.h"
+#include "substance/SESubstancePharmacodynamics.h"
+#include "substance/SESubstancePharmacokinetics.h"
+#include "substance/SESubstanceTissuePharmacokinetics.h"
+#include "circuit/fluid/SEFluidCircuit.h"
+#include "compartment/tissue/SETissueCompartment.h"
+#include "compartment/fluid/SELiquidCompartmentGraph.h"
+#include "compartment/substances/SELiquidSubstanceQuantity.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
@@ -28,6 +48,7 @@
 #include "properties/SEScalarAreaPerTimePressure.h"
 #include "properties/SEScalarTemperature.h"
 #include "properties/SEScalarMassPerTime.h"
+#include "properties/SEScalarTime.h"
 #include "properties/SEScalarLength.h"
 #include "properties/SEScalarMassPerAmount.h"
 #include "properties/SEScalarAmountPerMass.h"
@@ -208,13 +229,13 @@ void Drugs::AdministerSubstanceBolus()
 
     switch (bolus->GetAdminRoute())
     {
-    case cdm::SubstanceBolusData_eAdministrationRoute_Intraarterial:
+    case cdm::eSubstanceAdministration_Route_Intraarterial:
       subQ = m_aortaVascular->GetSubstanceQuantity(*sub);
       break;
-    case cdm::SubstanceBolusData_eAdministrationRoute_Intravenous:
+    case cdm::eSubstanceAdministration_Route_Intravenous:
       subQ = m_venaCavaVascular->GetSubstanceQuantity(*sub);
       break;
-    case cdm::SubstanceBolusData_eAdministrationRoute_Intramuscular:
+    case cdm::eSubstanceAdministration_Route_Intramuscular:
       subQ = m_muscleIntracellular->GetSubstanceQuantity(*sub);            
       break;
     default:

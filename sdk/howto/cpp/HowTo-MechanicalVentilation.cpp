@@ -5,9 +5,18 @@
 #include "EngineHowTo.h"
 
 // Include the various types you will be using in your code
+#include "scenario/SEDataRequestManager.h"
+#include "engine/SEEngineTracker.h"
+#include "substance/SESubstance.h"
+#include "substance/SESubstanceFraction.h"
+#include "substance/SESubstanceManager.h"
+#include "patient/conditions/SEChronicObstructivePulmonaryDisease.h"
+#include "patient/conditions/SELobarPneumonia.h"
+#include "patient/conditions/SEImpairedAlveolarExchange.h"
 #include "system/physiology/SEBloodChemistrySystem.h"
 #include "system/physiology/SECardiovascularSystem.h"
 #include "system/physiology/SERespiratorySystem.h"
+#include "system/environment/SEEnvironmentalConditions.h"
 #include "system/environment/actions/SEChangeEnvironmentConditions.h"
 #include "patient/actions/SEMechanicalVentilation.h"
 #include "patient/actions/SEAirwayObstruction.h"
@@ -35,13 +44,6 @@
 #include "properties/SEScalarPressureTimePerVolumeArea.h"
 #include "properties/SEScalarLengthPerTime.h"
 #include "properties/SEScalar0To1.h"
-#include "engine/SEEngineTracker.h"
-#include "substance/SESubstance.h"
-#include "substance/SESubstanceFraction.h"
-#include "substance/SESubstanceManager.h"
-#include "patient/conditions/SEChronicObstructivePulmonaryDisease.h"
-#include "patient/conditions/SELobarPneumonia.h"
-#include "patient/conditions/SEImpairedAlveolarExchange.h"
 #include "utils/SEEventHandler.h"
 #include <math.h>
 
@@ -50,11 +52,11 @@ class MechVentHandler : public SEEventHandler
 {
 public:
   MechVentHandler(Logger *logger) : SEEventHandler(logger) { }
-  virtual void HandlePatientEvent(cdm::PatientData_eEvent type, bool active, const SEScalarTime* time = nullptr) 
+  virtual void HandlePatientEvent(cdm::ePatient_Event type, bool active, const SEScalarTime* time = nullptr) 
   {
     switch (type)
     {     
-      case cdm::PatientData_eEvent_MildAcuteRespiratoryDistress:
+      case cdm::ePatient_Event_MildAcuteRespiratoryDistress:
       {
         if (active)
           m_Logger->Info("Do something for MildAcuteRespiratoryDistress");
@@ -62,7 +64,7 @@ public:
           m_Logger->Info("Stop doing something for MildAcuteRespiratoryDistress");
         break;
       }
-      case cdm::PatientData_eEvent_ModerateAcuteRespiratoryDistress:
+      case cdm::ePatient_Event_ModerateAcuteRespiratoryDistress:
       {
         if (active)
           m_Logger->Info("Do something for ModerateAcuteRespiratoryDistress");
@@ -70,7 +72,7 @@ public:
           m_Logger->Info("Stop doing something for ModerateAcuteRespiratoryDistress");
         break;
       }
-      case cdm::PatientData_eEvent_SevereAcuteRespiratoryDistress:
+      case cdm::ePatient_Event_SevereAcuteRespiratoryDistress:
       {
         if (active)
           m_Logger->Info("Do something for SevereAcuteRespiratoryDistress");
@@ -78,7 +80,7 @@ public:
           m_Logger->Info("Stop doing something for SevereAcuteRespiratoryDistress");
         break;
       }
-      case cdm::PatientData_eEvent_CardiogenicShock:
+      case cdm::ePatient_Event_CardiogenicShock:
       {
         if (active)
           m_Logger->Info("Do something for CardiogenicShock");
@@ -88,7 +90,7 @@ public:
       }
     }
   }
-  virtual void HandleAnesthesiaMachineEvent(cdm::AnesthesiaMachineData_eEvent type, bool active, const SEScalarTime* time = nullptr) 
+  virtual void HandleAnesthesiaMachineEvent(cdm::eAnesthesiaMachine_Event type, bool active, const SEScalarTime* time = nullptr) 
   {
   }
 };
@@ -285,7 +287,7 @@ void HowToMechanicalVentilation()
   //TBI
   //See HowTo-BrainInjury for an example of getting the Glasgow Scale
   SEBrainInjury tbi;
-  tbi.SetType(cdm::BrainInjuryData_eType_Diffuse);// Can also be LeftFocal or RightFocal, and you will get pupillary effects in only one eye 
+  tbi.SetType(cdm::eBrainInjury_Type_Diffuse);// Can also be LeftFocal or RightFocal, and you will get pupillary effects in only one eye 
   tbi.GetSeverity().SetValue(0.2);
   pe->ProcessAction(tbi);
 
@@ -314,7 +316,7 @@ void HowToMechanicalVentilation()
   SESubstanceBolus bolus(*succs);
   bolus.GetConcentration().SetValue(4820, MassPerVolumeUnit::ug_Per_mL);
   bolus.GetDose().SetValue(20, VolumeUnit::mL);
-  bolus.SetAdminRoute(cdm::SubstanceBolusData_eAdministrationRoute_Intravenous);
+  bolus.SetAdminRoute(cdm::eSubstanceAdministration_Route_Intravenous);
   pe->ProcessAction(bolus);
 
   tracker.AdvanceModelTime(60.0);

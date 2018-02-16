@@ -4,6 +4,7 @@
 #include "EngineHowTo.h"
 
 // Include the various types you will be using in your code
+#include "scenario/SEDataRequestManager.h"
 #include "patient/actions/SETensionPneumothorax.h"
 #include "patient/actions/SENeedleDecompression.h"
 #include "system/physiology/SEBloodChemistrySystem.h"

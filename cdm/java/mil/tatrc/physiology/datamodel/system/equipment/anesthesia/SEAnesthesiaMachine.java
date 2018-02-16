@@ -6,10 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.kitware.physiology.cdm.AnesthesiaMachine.AnesthesiaMachineData;
-import com.kitware.physiology.cdm.AnesthesiaMachine.AnesthesiaMachineData.eConnection;
-import com.kitware.physiology.cdm.AnesthesiaMachine.AnesthesiaMachineData.eEvent;
-import com.kitware.physiology.cdm.AnesthesiaMachine.AnesthesiaMachineData.eOxygenSource;
-import com.kitware.physiology.cdm.AnesthesiaMachine.AnesthesiaMachineData.ePrimaryGas;
+import com.kitware.physiology.cdm.AnesthesiaMachineEnums.eAnesthesiaMachine.*;
 
 import mil.tatrc.physiology.datamodel.properties.SEScalar;
 import mil.tatrc.physiology.datamodel.properties.SEScalar0To1;
@@ -21,13 +18,13 @@ import mil.tatrc.physiology.datamodel.system.SESystem;
 
 public class SEAnesthesiaMachine implements SESystem
 {
-  protected eConnection                       connection;
+  protected Connection                        connection;
   protected SEScalarVolumePerTime             inletFlow;
   protected SEScalar                          inspiratoryExpiratoryRatio;
   protected SEScalar0To1                      oxygenFraction;
-  protected eOxygenSource                     oxygenSource;
+  protected OxygenSource                      oxygenSource;
   protected SEScalarPressure                  positiveEndExpiredPressure;
-  protected ePrimaryGas                       primaryGas;
+  protected PrimaryGas                        primaryGas;
   protected SEScalarFrequency                 respiratoryRate;
   protected SEScalarPressure                  reliefValvePressure;
 
@@ -40,7 +37,7 @@ public class SEAnesthesiaMachine implements SESystem
   protected SEAnesthesiaMachineOxygenBottle   oxygenBottleTwo;
 
 
-  protected Map<eEvent,Boolean> events = new HashMap<eEvent,Boolean>();
+  protected Map<Event,Boolean> events = new HashMap<Event,Boolean>();
 
   public SEAnesthesiaMachine()
   {
@@ -98,7 +95,7 @@ public class SEAnesthesiaMachine implements SESystem
   public void copy(SEAnesthesiaMachine from)
   {
     reset();
-    if(from.connection!=null && from.connection != eConnection.NullConnection)
+    if(from.connection!=null && from.connection != Connection.NullConnection)
     	this.connection=from.connection;      
     if(from.hasInletFlow())
       this.getInletFlow().set(from.getInletFlow());
@@ -106,11 +103,11 @@ public class SEAnesthesiaMachine implements SESystem
       this.getInspiratoryExpiratoryRatio().set(from.getInspiratoryExpiratoryRatio());
     if(from.hasOxygenFraction())
       this.getOxygenFraction().set(from.getOxygenFraction());
-    if(from.oxygenSource!=null && from.oxygenSource != eOxygenSource.NullSource)
+    if(from.oxygenSource!=null && from.oxygenSource != OxygenSource.NullSource)
     	this.setOxygenSource(from.getOxygenSource());
     if(from.hasPositiveEndExpiredPressure())
       this.getPositiveEndExpiredPressure().set(from.getPositiveEndExpiredPressure());
-    if(from.primaryGas!=null && from.primaryGas != ePrimaryGas.NullGas)
+    if(from.primaryGas!=null && from.primaryGas != PrimaryGas.NullGas)
     	this.setPrimaryGas(from.getPrimaryGas());
     if(from.hasReliefValvePressure())
       this.getReliefValvePressure().set(from.getReliefValvePressure());
@@ -134,7 +131,7 @@ public class SEAnesthesiaMachine implements SESystem
   public static void load(AnesthesiaMachineData src, SEAnesthesiaMachine dst, SESubstanceManager subMgr)
   {
     dst.reset();
-    if (src.getConnection()!=eConnection.UNRECOGNIZED)
+    if (src.getConnection()!=Connection.UNRECOGNIZED)
       dst.setConnection(src.getConnection());
     if (src.hasInletFlow())
       SEScalarVolumePerTime.load(src.getInletFlow(), dst.getInletFlow());
@@ -142,11 +139,11 @@ public class SEAnesthesiaMachine implements SESystem
       SEScalar.load(src.getInspiratoryExpiratoryRatio(), dst.getInspiratoryExpiratoryRatio());
     if (src.hasOxygenFraction())
       SEScalar0To1.load(src.getOxygenFraction(), dst.getOxygenFraction());
-    if (src.getOxygenSource()!=eOxygenSource.UNRECOGNIZED)
+    if (src.getOxygenSource()!=OxygenSource.UNRECOGNIZED)
       dst.setOxygenSource(src.getOxygenSource());
     if (src.hasPositiveEndExpiredPressure())
       SEScalarPressure.load(src.getPositiveEndExpiredPressure(), dst.getPositiveEndExpiredPressure());
-    if (src.getPrimaryGas()!=ePrimaryGas.UNRECOGNIZED)
+    if (src.getPrimaryGas()!=PrimaryGas.UNRECOGNIZED)
       dst.setPrimaryGas(src.getPrimaryGas());
     if (src.hasRespiratoryRate())
       SEScalarFrequency.load(src.getRespiratoryRate(), dst.getRespiratoryRate());
@@ -202,24 +199,24 @@ public class SEAnesthesiaMachine implements SESystem
       dst.setOxygenBottleTwo(SEAnesthesiaMachineOxygenBottle.unload(src.oxygenBottleTwo));
   }
 
-  public void setEvent(eEvent type, boolean active)
+  public void setEvent(Event type, boolean active)
   {
     this.events.put(type, active);
   }
-  public boolean isEventActive(eEvent type)
+  public boolean isEventActive(Event type)
   {
     if(!this.events.containsKey(type))
       return false;
     return this.events.get(type);
   }
   
-  public eConnection getConnection()
+  public Connection getConnection()
   {
     return connection;
   }
-  public void setConnection(eConnection c)
+  public void setConnection(Connection c)
   {
-    connection = (c == eConnection.UNRECOGNIZED) ? null : c;
+    connection = (c == Connection.UNRECOGNIZED) ? null : c;
   }
   public boolean hasConnection()
   {
@@ -271,13 +268,13 @@ public class SEAnesthesiaMachine implements SESystem
   /*
    * Oxygen Source
    */
-  public eOxygenSource getOxygenSource()
+  public OxygenSource getOxygenSource()
   {
     return oxygenSource;
   }
-  public void setOxygenSource(eOxygenSource os)
+  public void setOxygenSource(OxygenSource os)
   {
-  	oxygenSource = (os == eOxygenSource.UNRECOGNIZED) ? null : os;
+  	oxygenSource = (os == OxygenSource.UNRECOGNIZED) ? null : os;
   }
   public boolean hasOxygenSource()
   {
@@ -301,13 +298,13 @@ public class SEAnesthesiaMachine implements SESystem
   /*
    * Anesthesia Machine Primary Gas
    */
-  public ePrimaryGas getPrimaryGas()
+  public PrimaryGas getPrimaryGas()
   {
     return primaryGas;
   }
-  public void setPrimaryGas(ePrimaryGas pg)
+  public void setPrimaryGas(PrimaryGas pg)
   {
-  	primaryGas = (pg == ePrimaryGas.UNRECOGNIZED) ? null : pg;
+  	primaryGas = (pg == PrimaryGas.UNRECOGNIZED) ? null : pg;
   }
   public boolean hasPrimaryGas()
   {
