@@ -57,7 +57,6 @@ PROTO_POP// Conditions
 
 Renal::Renal(PulseController& data) : SERenalSystem(data.GetLogger()), m_data(data)
 {
-  Clear();
   m_spCleared = new SEScalarMass();
   m_urineProductionRate_mL_Per_min_runningAvg = new RunningAverage();
   m_urineOsmolarity_mOsm_Per_L_runningAvg = new RunningAverage();
@@ -67,6 +66,7 @@ Renal::Renal(PulseController& data) : SERenalSystem(data.GetLogger()), m_data(da
   m_rightSodiumFlow_mg_Per_s_runningAvg = new RunningAverage();
   m_leftRenalArterialPressure_mmHg_runningAvg = new RunningAverage();
   m_rightRenalArterialPressure_mmHg_runningAvg = new RunningAverage();
+  Clear();
 }
 
 Renal::~Renal()

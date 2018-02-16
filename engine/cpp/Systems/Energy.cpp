@@ -61,10 +61,10 @@ PROTO_POP
 
 Energy::Energy(PulseController& data) : SEEnergySystem(data.GetLogger()), m_data(data)
 {
-  Clear(); 
-  m_circuitCalculator = new SEThermalCircuitCalculator(GetLogger());
   m_BloodpH = new RunningAverage();
   m_BicarbonateMolarity_mmol_Per_L = new RunningAverage();
+  m_circuitCalculator = new SEThermalCircuitCalculator(GetLogger());
+  Clear();
 }
 
 Energy::~Energy()

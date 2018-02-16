@@ -39,9 +39,9 @@ PROTO_POP
 
 BloodChemistry::BloodChemistry(PulseController& data) : SEBloodChemistrySystem(data.GetLogger()), m_data(data)
 {
-  Clear();
   m_ArterialOxygen_mmHg = new RunningAverage();
   m_ArterialCarbonDioxide_mmHg = new RunningAverage();
+  Clear();
 }
 
 BloodChemistry::~BloodChemistry()

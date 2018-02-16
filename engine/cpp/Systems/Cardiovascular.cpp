@@ -64,7 +64,6 @@ PROTO_POP
 
 Cardiovascular::Cardiovascular(PulseController& data) : SECardiovascularSystem(data.GetLogger()), m_data(data)
 {
-  Clear();
   m_TuningFile = "";
   m_transporter = new SELiquidTransporter(VolumePerTimeUnit::mL_Per_s, VolumeUnit::mL, MassUnit::ug, MassPerVolumeUnit::ug_Per_mL, data.GetLogger());
   m_circuitCalculator = new SEFluidCircuitCalculator(FlowComplianceUnit::mL_Per_mmHg, VolumePerTimeUnit::mL_Per_s, FlowInertanceUnit::mmHg_s2_Per_mL, PressureUnit::mmHg, VolumeUnit::mL, FlowResistanceUnit::mmHg_s_Per_mL, data.GetLogger());
@@ -76,6 +75,7 @@ Cardiovascular::Cardiovascular(PulseController& data) : SECardiovascularSystem(d
   m_CardiacCyclePulmonaryArteryPressure_mmHg = new RunningAverage();
   m_CardiacCycleCentralVenousPressure_mmHg = new RunningAverage();
   m_CardiacCycleSkinFlow_mL_Per_s = new RunningAverage();
+  Clear();
 }
 
 Cardiovascular::~Cardiovascular()

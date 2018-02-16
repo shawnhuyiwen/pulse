@@ -82,7 +82,6 @@ PROTO_POP
 
 Respiratory::Respiratory(PulseController& data) : SERespiratorySystem(data.GetLogger()), m_data(data)
 {
-  Clear();
   m_BloodPHRunningAverage = new RunningAverage();
   m_ArterialO2RunningAverage_mmHg = new RunningAverage();
   m_ArterialCO2RunningAverage_mmHg = new RunningAverage();
@@ -90,6 +89,7 @@ Respiratory::Respiratory(PulseController& data) : SERespiratorySystem(data.GetLo
   m_Calculator = new SEFluidCircuitCalculator(FlowComplianceUnit::L_Per_cmH2O, VolumePerTimeUnit::L_Per_s, FlowInertanceUnit::cmH2O_s2_Per_L, PressureUnit::cmH2O, VolumeUnit::L, FlowResistanceUnit::cmH2O_s_Per_L, GetLogger());
   m_GasTransporter = new SEGasTransporter(VolumePerTimeUnit::L_Per_s, VolumeUnit::L, VolumeUnit::L, GetLogger());
   m_AerosolTransporter = new SELiquidTransporter(VolumePerTimeUnit::mL_Per_s, VolumeUnit::mL, MassUnit::ug, MassPerVolumeUnit::ug_Per_mL, GetLogger());
+  Clear();
 }
 
 Respiratory::~Respiratory()
