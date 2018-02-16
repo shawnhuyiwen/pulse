@@ -5,6 +5,10 @@
 #include "Controller/System.h"
 #include "system/equipment/anesthesiamachine/SEAnesthesiaMachine.h"
 class SEAnesthesiaMachineActionCollection;
+class SEGasCompartment;
+class SEGasSubstanceQuantity;
+class SEFluidCircuitNode;
+class SEFluidCircuitPath;
 PULSE_BIND_DECL(AnesthesiaMachineData)
 
 /**
@@ -62,10 +66,10 @@ private:
 
   // Serializable member variables (Set in Initialize and in schema)
   bool         m_inhaling; 
-  SEScalarTime m_inspirationTime;
-  SEScalar     m_O2InletVolumeFraction;
-  SEScalarTime m_currentbreathingCycleTime;
-  SEScalarTime m_totalBreathingCycleTime;
+  double       m_inspirationTime_s;
+  double       m_O2InletVolumeFraction;
+  double       m_currentbreathingCycleTime_s;
+  double       m_totalBreathingCycleTime_s;
 
   // Stateless member variable (Set in SetUp())
   double m_dt_s;
