@@ -3,6 +3,9 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarAmountPerVolume.h"
+PROTO_PUSH
+#include "bind/cdm/Properties.pb.h"
+PROTO_POP
 
 AmountPerVolumeUnit AmountPerVolumeUnit::mol_Per_L("mol/L");
 AmountPerVolumeUnit AmountPerVolumeUnit::mol_Per_mL("mol/mL");

@@ -8,6 +8,7 @@ import java.util.List;
 import com.kitware.physiology.cdm.PatientActions.MechanicalVentilationData;
 import com.kitware.physiology.cdm.Enums.eSwitch;
 import com.kitware.physiology.cdm.Substance.SubstanceData;
+import com.kitware.physiology.cdm.SubstanceEnums.eSubstance;
 
 import mil.tatrc.physiology.utilities.Log;
 import mil.tatrc.physiology.datamodel.properties.*;
@@ -118,7 +119,7 @@ public class SEMechanicalVentilation extends SEPatientAction
       {
         Log.error("Substance does not exist : "+subData.getName());
       }
-      if(sub.getState() != SubstanceData.eState.Gas)
+      if(sub.getState() != eSubstance.State.Gas)
       {
         Log.error("Gas Fraction substance must be a gas, "+subData.getName()+" is not a gas...");
       }

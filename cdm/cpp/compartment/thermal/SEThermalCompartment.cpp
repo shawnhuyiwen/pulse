@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "compartment/thermal/SEThermalCompartment.h"
 #include "compartment/thermal/SEThermalCompartmentLink.h"
+#include "circuit/thermal/SEThermalCircuitNode.h"
 #include "circuit/SECircuitManager.h"
 #include "properties/SEScalarPower.h"
 #include "properties/SEScalarEnergy.h"

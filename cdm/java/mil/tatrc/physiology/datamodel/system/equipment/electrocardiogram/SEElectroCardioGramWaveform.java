@@ -3,8 +3,8 @@
 package mil.tatrc.physiology.datamodel.system.equipment.electrocardiogram;
 
 import com.kitware.physiology.cdm.ElectroCardioGram.ElectroCardioGramWaveformData;
-import com.kitware.physiology.cdm.ElectroCardioGram.ElectroCardioGramWaveformData.eLead;
-import com.kitware.physiology.cdm.Physiology.eHeartRhythm;
+import com.kitware.physiology.cdm.ElectroCardioGramEnums.eElectroCardioGram;
+import com.kitware.physiology.cdm.PhysiologyEnums.eHeartRhythm;
 
 import mil.tatrc.physiology.datamodel.properties.SEFunctionElectricPotentialVsTime;
 import mil.tatrc.physiology.datamodel.properties.SEScalarTime;
@@ -12,7 +12,7 @@ import mil.tatrc.physiology.utilities.Log;
 
 public class SEElectroCardioGramWaveform
 {
-  protected eLead                             lead;
+  protected eElectroCardioGram.WaveformLead   lead;
   protected eHeartRhythm                      rhythm;
   protected SEFunctionElectricPotentialVsTime data;
   protected SEScalarTime                      timeStep;
@@ -24,7 +24,7 @@ public class SEElectroCardioGramWaveform
   
   public void reset()
   {
-    lead = eLead.NullLead;
+    lead = eElectroCardioGram.WaveformLead.NullLead;
     rhythm = null;
     data = null;
     timeStep = null;
@@ -35,7 +35,7 @@ public class SEElectroCardioGramWaveform
     dst.reset();
     if(src.getRhythm()!=eHeartRhythm.UNRECOGNIZED)
       dst.setRhythm(src.getRhythm());
-    if(src.getLead()!=eLead.UNRECOGNIZED)
+    if(src.getLead()!=eElectroCardioGram.WaveformLead.UNRECOGNIZED)
      dst.setLead(src.getLead());
     if(src.hasData())
       SEFunctionElectricPotentialVsTime.load(src.getData(),dst.getData());
@@ -60,17 +60,17 @@ public class SEElectroCardioGramWaveform
       dst.setTimeStep(SEScalarTime.unload(src.timeStep));
   }
   
-  public eLead getLead()
+  public eElectroCardioGram.WaveformLead getLead()
   {
     return lead;
   }
-  public void setLead(eLead l)
+  public void setLead(eElectroCardioGram.WaveformLead l)
   {
     this.lead = l;
   }
   public boolean hasLead()
   {
-    return lead==null ? false : lead != eLead.NullLead;
+    return lead==null ? false : lead != eElectroCardioGram.WaveformLead.NullLead;
   }
   public void removeLead()
   {

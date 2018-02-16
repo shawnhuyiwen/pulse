@@ -3,16 +3,16 @@
 
 #pragma once
 
-#include "substance/SESubstance.h"
 #include <iostream>
 #include <iomanip>
+class SESubstance;
 class SEElectricalCircuit;
 class SEFluidCircuit;
 class SEThermalCircuit;
 class SEGasCompartmentGraph;
 class SELiquidCompartmentGraph;
-
 class SEDecimalFormat;
+
 typedef std::map<std::string, double> ProbeMap;
 typedef std::map<std::string, double>::iterator ProbeMapItr;
 typedef std::map<std::string, std::vector<double>*> TrackMap;

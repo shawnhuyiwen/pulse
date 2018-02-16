@@ -2,9 +2,9 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "properties/SEScalarTime.h"
-#include "utils/testing/SETestErrorStatistics.h"
 class SETestSuite;
+class SETestErrorStatistics;
+namespace cdm { class TestReportData_TestCaseData; }
 
 class CDM_DECL SETestCase : public Loggable
 {
@@ -37,8 +37,8 @@ public:
   const std::vector<SETestErrorStatistics*>& GetErrorStatistics() const;
 
 protected:
-  std::string  m_Name;
-  SEScalarTime m_Duration;
+  std::string   m_Name;
+  SEScalarTime* m_Duration;
 
   std::vector<std::string> m_Failure;
   std::vector<SETestErrorStatistics*> m_CaseEqualsErrors;

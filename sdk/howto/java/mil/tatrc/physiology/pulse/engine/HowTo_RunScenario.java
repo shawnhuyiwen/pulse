@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 package mil.tatrc.physiology.pulse.engine;
 
-import com.kitware.physiology.cdm.Scenario.DataRequestData.eCategory;
+import com.kitware.physiology.cdm.ScenarioEnums.eDataRequest;
 
 import mil.tatrc.physiology.datamodel.actions.SEAdvanceTime;
 import mil.tatrc.physiology.datamodel.datarequests.SEDataRequest;
@@ -101,17 +101,17 @@ public class HowTo_RunScenario
     // When filling out a data request, units are optional
     // The units will be set to whatever units the engine uses.
     SEDataRequest hr = new SEDataRequest();
-    hr.setCategory(eCategory.Physiology);
+    hr.setCategory(eDataRequest.Category.Physiology);
     hr.setPropertyName("HeartRate");
     hr.setUnit(FrequencyUnit.Per_min.toString());
     sce.getDataRequestManager().getRequestedData().add(hr);
     SEDataRequest rr = new SEDataRequest();
-    rr.setCategory(eCategory.Physiology);
+    rr.setCategory(eDataRequest.Category.Physiology);
     rr.setPropertyName("RespirationRate");
     rr.setUnit(FrequencyUnit.Per_min.toString());
     sce.getDataRequestManager().getRequestedData().add(rr);
     SEDataRequest tlv = new SEDataRequest();   
-    tlv.setCategory(eCategory.Physiology); 
+    tlv.setCategory(eDataRequest.Category.Physiology); 
     tlv.setPropertyName("TotalLungVolume");
     tlv.setUnit(VolumeUnit.mL.toString());
     sce.getDataRequestManager().getRequestedData().add(tlv);

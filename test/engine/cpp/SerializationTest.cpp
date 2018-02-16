@@ -21,6 +21,9 @@
 
 #include "system/equipment/anesthesiamachine/SEAnesthesiaMachine.h"
 #include "system/equipment/anesthesiamachine/SEAnesthesiaMachineOxygenBottle.h"
+#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineConfiguration.h"
+#include "system/equipment/Inhaler/SEInhaler.h"
+#include "system/equipment/Inhaler/actions/SEInhalerConfiguration.h"
 
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarElectricPotential.h"
@@ -125,7 +128,7 @@ void PulseEngineTest::InjectSuccsState(PhysiologyEngine* pc, HowToTracker& track
   }
 
   SESubstanceBolus injection(succs);
-  injection.SetAdminRoute(cdm::SubstanceBolusData_eAdministrationRoute_Intravenous);
+  injection.SetAdminRoute(cdm::eSubstanceAdministration_Route_Intravenous);
   injection.GetConcentration().SetValue(4820, MassPerVolumeUnit::ug_Per_mL);
   injection.GetDose().SetValue(30, VolumeUnit::mL);
   pc->ProcessAction(injection);
@@ -146,13 +149,13 @@ void PulseEngineTest::InjectSuccsState(PhysiologyEngine* pc, HowToTracker& track
   tracker.AdvanceModelTime(15);
 
   SEAnesthesiaMachineConfiguration amConfig(pc->GetSubstanceManager());
-  amConfig.GetConfiguration().SetConnection(cdm::AnesthesiaMachineData_eConnection_Mask);
+  amConfig.GetConfiguration().SetConnection(cdm::eAnesthesiaMachine_Connection_Mask);
   amConfig.GetConfiguration().GetInletFlow().SetValue(5, VolumePerTimeUnit::L_Per_min);
   amConfig.GetConfiguration().GetInspiratoryExpiratoryRatio().SetValue(0.5);
   amConfig.GetConfiguration().GetOxygenFraction().SetValue(0.4);
-  amConfig.GetConfiguration().SetOxygenSource(cdm::AnesthesiaMachineData_eOxygenSource_Wall);
+  amConfig.GetConfiguration().SetOxygenSource(cdm::eAnesthesiaMachine_OxygenSource_Wall);
   amConfig.GetConfiguration().GetPositiveEndExpiredPressure().SetValue(3.0, PressureUnit::cmH2O);
-  amConfig.GetConfiguration().SetPrimaryGas(cdm::AnesthesiaMachineData_ePrimaryGas_Nitrogen);
+  amConfig.GetConfiguration().SetPrimaryGas(cdm::eAnesthesiaMachine_PrimaryGas_Nitrogen);
   amConfig.GetConfiguration().GetReliefValvePressure().SetValue(20, PressureUnit::cmH2O);
   amConfig.GetConfiguration().GetRespiratoryRate().SetValue(16.0, FrequencyUnit::Per_min);
   amConfig.GetConfiguration().GetVentilatorPressure().SetValue(10, PressureUnit::cmH2O);

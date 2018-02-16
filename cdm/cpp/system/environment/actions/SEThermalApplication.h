@@ -2,8 +2,9 @@
    See accompanying NOTICE file for details.*/
 #pragma once
 #include "system/environment/actions/SEEnvironmentAction.h"
-#include "system/environment/SEActiveConditioning.h"
-#include "system/environment/SEAppliedTemperature.h"
+class SEActiveConditioning;
+class SEAppliedTemperature;
+CDM_BIND_DECL(ThermalApplicationData)
 
 class CDM_DECL SEThermalApplication : public SEEnvironmentAction
 {

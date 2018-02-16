@@ -8,6 +8,10 @@
 #include "scenario/SEScenario.h"
 #include "scenario/SEScenarioInitialParameters.h"
 #include "scenario/SEAdvanceTime.h"
+#include "scenario/SEDataRequestManager.h"
+PROTO_PUSH
+#include "bind/cdm/Scenario.pb.h"
+PROTO_POP
 #include "PhysiologyEngine.h"
 #include "engine/SEEngineTracker.h"
 #include "engine/SEEngineConfiguration.h"
@@ -220,7 +224,7 @@ bool SEScenarioExec::ProcessActions(const SEScenario& scenario)
           profiler.Reset("Status");
           Info(m_ss);
         }
-        if(m_Engine.GetPatient().IsEventActive(cdm::PatientData_eEvent_IrreversibleState))
+        if(m_Engine.GetPatient().IsEventActive(cdm::ePatient_Event_IrreversibleState))
           return false;// Patient is for all intents and purposes dead, or out at least out of its methodology bounds, quit running
       }
       continue;
@@ -231,7 +235,7 @@ bool SEScenarioExec::ProcessActions(const SEScenario& scenario)
       err=true;
       break;
     }
-    if(m_Engine.GetPatient().IsEventActive(cdm::PatientData_eEvent_IrreversibleState))
+    if(m_Engine.GetPatient().IsEventActive(cdm::ePatient_Event_IrreversibleState))
       return false;// Patient is for all intents and purposes dead, or out at least out of its methodology bounds, quit running
   }
   m_ss << "It took " << profiler.GetElapsedTime_s("Total") << "s to run this simulation";

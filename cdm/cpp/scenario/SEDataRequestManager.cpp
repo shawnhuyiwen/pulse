@@ -3,7 +3,12 @@
 
 #include "stdafx.h"
 #include "SEDataRequestManager.h"
+#include "scenario/SEDataRequest.h"
+#include "substance/SESubstance.h"
 #include "substance/SESubstanceManager.h"
+PROTO_PUSH
+#include "bind/cdm/Scenario.pb.h"
+PROTO_PUSH
 #include <google/protobuf/text_format.h>
 
 SEDataRequestManager::SEDataRequestManager(Logger* logger) : Loggable(logger)
@@ -136,7 +141,7 @@ void SEDataRequestManager::RemoveOverrideDecimalFormatting()
   SAFE_DELETE(m_OverrideDecimalFormatting);
 }
 
-SEDataRequest& SEDataRequestManager::CreateDataRequest(cdm::DataRequestData_eCategory category, const SEDecimalFormat* dfault)
+SEDataRequest& SEDataRequestManager::CreateDataRequest(cdm::eDataRequest_Category category, const SEDecimalFormat* dfault)
 {
   SEDataRequest* dr = new SEDataRequest(category, dfault);
   m_Requests.push_back(dr);
@@ -145,14 +150,14 @@ SEDataRequest& SEDataRequestManager::CreateDataRequest(cdm::DataRequestData_eCat
 
 SEDataRequest& SEDataRequestManager::CreatePatientDataRequest(const std::string& property, const SEDecimalFormat* dfault)
 {
-  SEDataRequest* dr = new SEDataRequest(cdm::DataRequestData_eCategory_Patient, dfault);
+  SEDataRequest* dr = new SEDataRequest(cdm::eDataRequest_Category_Patient, dfault);
   m_Requests.push_back(dr);
   dr->SetPropertyName(property);
   return *dr;
 }
 SEDataRequest& SEDataRequestManager::CreatePatientDataRequest(const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault)
 {
-  SEDataRequest* dr = new SEDataRequest(cdm::DataRequestData_eCategory_Patient, dfault);
+  SEDataRequest* dr = new SEDataRequest(cdm::eDataRequest_Category_Patient, dfault);
   m_Requests.push_back(dr);
   dr->SetPropertyName(property);
   dr->SetUnit(unit);
@@ -161,14 +166,14 @@ SEDataRequest& SEDataRequestManager::CreatePatientDataRequest(const std::string&
 
 SEDataRequest& SEDataRequestManager::CreatePhysiologyDataRequest(const std::string& property, const SEDecimalFormat* dfault)
 {
-  SEDataRequest* dr = new SEDataRequest(cdm::DataRequestData_eCategory_Physiology, dfault);
+  SEDataRequest* dr = new SEDataRequest(cdm::eDataRequest_Category_Physiology, dfault);
   m_Requests.push_back(dr);
   dr->SetPropertyName(property);
   return *dr;
 }
 SEDataRequest& SEDataRequestManager::CreatePhysiologyDataRequest(const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault)
 {
-  SEDataRequest* dr = new SEDataRequest(cdm::DataRequestData_eCategory_Physiology, dfault);
+  SEDataRequest* dr = new SEDataRequest(cdm::eDataRequest_Category_Physiology, dfault);
   m_Requests.push_back(dr);
   dr->SetPropertyName(property);
   dr->SetUnit(unit);
@@ -177,14 +182,14 @@ SEDataRequest& SEDataRequestManager::CreatePhysiologyDataRequest(const std::stri
 
 SEDataRequest& SEDataRequestManager::CreateEnvironmentDataRequest(const std::string& property, const SEDecimalFormat* dfault)
 {
-  SEDataRequest* dr = new SEDataRequest(cdm::DataRequestData_eCategory_Environment, dfault);
+  SEDataRequest* dr = new SEDataRequest(cdm::eDataRequest_Category_Environment, dfault);
   m_Requests.push_back(dr);
   dr->SetPropertyName(property);
   return *dr;
 }
 SEDataRequest& SEDataRequestManager::CreateEnvironmentDataRequest(const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault)
 {
-  SEDataRequest* dr = new SEDataRequest(cdm::DataRequestData_eCategory_Environment, dfault);
+  SEDataRequest* dr = new SEDataRequest(cdm::eDataRequest_Category_Environment, dfault);
   m_Requests.push_back(dr);
   dr->SetPropertyName(property);
   dr->SetUnit(unit);
@@ -193,7 +198,7 @@ SEDataRequest& SEDataRequestManager::CreateEnvironmentDataRequest(const std::str
 
 SEDataRequest& SEDataRequestManager::CreateGasCompartmentDataRequest(const std::string& cmptName, const std::string& property, const SEDecimalFormat* dfault)
 {
-  SEDataRequest* dr = new SEDataRequest(cdm::DataRequestData_eCategory_GasCompartment, dfault);
+  SEDataRequest* dr = new SEDataRequest(cdm::eDataRequest_Category_GasCompartment, dfault);
   m_Requests.push_back(dr);
   dr->SetCompartmentName(cmptName);
   dr->SetPropertyName(property);
@@ -201,7 +206,7 @@ SEDataRequest& SEDataRequestManager::CreateGasCompartmentDataRequest(const std::
 }
 SEDataRequest& SEDataRequestManager::CreateGasCompartmentDataRequest(const std::string& cmptName, const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault)
 {
-  SEDataRequest* dr = new SEDataRequest(cdm::DataRequestData_eCategory_GasCompartment, dfault);
+  SEDataRequest* dr = new SEDataRequest(cdm::eDataRequest_Category_GasCompartment, dfault);
   m_Requests.push_back(dr);
   dr->SetCompartmentName(cmptName);
   dr->SetPropertyName(property);
@@ -211,7 +216,7 @@ SEDataRequest& SEDataRequestManager::CreateGasCompartmentDataRequest(const std::
 
 SEDataRequest& SEDataRequestManager::CreateGasCompartmentDataRequest(const std::string& cmptName, const SESubstance& sub, const std::string& property, const SEDecimalFormat* dfault)
 {
-  SEDataRequest* dr = new SEDataRequest(cdm::DataRequestData_eCategory_GasCompartment, dfault);
+  SEDataRequest* dr = new SEDataRequest(cdm::eDataRequest_Category_GasCompartment, dfault);
   m_Requests.push_back(dr);
   dr->SetCompartmentName(cmptName);
   dr->SetSubstanceName(sub.GetName());
@@ -220,7 +225,7 @@ SEDataRequest& SEDataRequestManager::CreateGasCompartmentDataRequest(const std::
 }
 SEDataRequest& SEDataRequestManager::CreateGasCompartmentDataRequest(const std::string& cmptName, const SESubstance& sub, const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault)
 {
-  SEDataRequest* dr = new SEDataRequest(cdm::DataRequestData_eCategory_GasCompartment, dfault);
+  SEDataRequest* dr = new SEDataRequest(cdm::eDataRequest_Category_GasCompartment, dfault);
   m_Requests.push_back(dr);
   dr->SetCompartmentName(cmptName);
   dr->SetSubstanceName(sub.GetName());
@@ -231,7 +236,7 @@ SEDataRequest& SEDataRequestManager::CreateGasCompartmentDataRequest(const std::
 
 SEDataRequest& SEDataRequestManager::CreateLiquidCompartmentDataRequest(const std::string& cmptName, const std::string& property, const SEDecimalFormat* dfault)
 {
-  SEDataRequest* dr = new SEDataRequest(cdm::DataRequestData_eCategory_LiquidCompartment, dfault);
+  SEDataRequest* dr = new SEDataRequest(cdm::eDataRequest_Category_LiquidCompartment, dfault);
   m_Requests.push_back(dr);
   dr->SetCompartmentName(cmptName);
   dr->SetPropertyName(property);
@@ -239,7 +244,7 @@ SEDataRequest& SEDataRequestManager::CreateLiquidCompartmentDataRequest(const st
 }
 SEDataRequest& SEDataRequestManager::CreateLiquidCompartmentDataRequest(const std::string& cmptName, const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault)
 {
-  SEDataRequest* dr = new SEDataRequest(cdm::DataRequestData_eCategory_LiquidCompartment, dfault);
+  SEDataRequest* dr = new SEDataRequest(cdm::eDataRequest_Category_LiquidCompartment, dfault);
   m_Requests.push_back(dr);
   dr->SetCompartmentName(cmptName);
   dr->SetPropertyName(property);
@@ -249,7 +254,7 @@ SEDataRequest& SEDataRequestManager::CreateLiquidCompartmentDataRequest(const st
 
 SEDataRequest& SEDataRequestManager::CreateLiquidCompartmentDataRequest(const std::string& cmptName, const SESubstance& sub, const std::string& property, const SEDecimalFormat* dfault)
 {
-  SEDataRequest* dr = new SEDataRequest(cdm::DataRequestData_eCategory_LiquidCompartment, dfault);
+  SEDataRequest* dr = new SEDataRequest(cdm::eDataRequest_Category_LiquidCompartment, dfault);
   m_Requests.push_back(dr);
   dr->SetCompartmentName(cmptName);
   dr->SetSubstanceName(sub.GetName());
@@ -258,7 +263,7 @@ SEDataRequest& SEDataRequestManager::CreateLiquidCompartmentDataRequest(const st
 }
 SEDataRequest& SEDataRequestManager::CreateLiquidCompartmentDataRequest(const std::string& cmptName, const SESubstance& sub, const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault)
 {
-  SEDataRequest* dr = new SEDataRequest(cdm::DataRequestData_eCategory_LiquidCompartment, dfault);
+  SEDataRequest* dr = new SEDataRequest(cdm::eDataRequest_Category_LiquidCompartment, dfault);
   m_Requests.push_back(dr);
   dr->SetCompartmentName(cmptName);
   dr->SetSubstanceName(sub.GetName());
@@ -269,14 +274,14 @@ SEDataRequest& SEDataRequestManager::CreateLiquidCompartmentDataRequest(const st
 
 SEDataRequest& SEDataRequestManager::CreateThermalCompartmentDataRequest(const std::string& property, const SEDecimalFormat* dfault)
 {
-  SEDataRequest* dr = new SEDataRequest(cdm::DataRequestData_eCategory_ThermalCompartment, dfault);
+  SEDataRequest* dr = new SEDataRequest(cdm::eDataRequest_Category_ThermalCompartment, dfault);
   m_Requests.push_back(dr);
   dr->SetPropertyName(property);
   return *dr;
 }
 SEDataRequest& SEDataRequestManager::CreateThermalCompartmentDataRequest(const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault)
 {
-  SEDataRequest* dr = new SEDataRequest(cdm::DataRequestData_eCategory_ThermalCompartment, dfault);
+  SEDataRequest* dr = new SEDataRequest(cdm::eDataRequest_Category_ThermalCompartment, dfault);
   m_Requests.push_back(dr);
   dr->SetPropertyName(property);
   dr->SetUnit(unit);
@@ -285,14 +290,14 @@ SEDataRequest& SEDataRequestManager::CreateThermalCompartmentDataRequest(const s
 
 SEDataRequest& SEDataRequestManager::CreateTissueCompartmentDataRequest(const std::string& property, const SEDecimalFormat* dfault)
 {
-  SEDataRequest* dr = new SEDataRequest(cdm::DataRequestData_eCategory_TissueCompartment, dfault);
+  SEDataRequest* dr = new SEDataRequest(cdm::eDataRequest_Category_TissueCompartment, dfault);
   m_Requests.push_back(dr);
   dr->SetPropertyName(property);
   return *dr;
 }
 SEDataRequest& SEDataRequestManager::CreateTissueCompartmentDataRequest(const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault)
 {
-  SEDataRequest* dr = new SEDataRequest(cdm::DataRequestData_eCategory_TissueCompartment, dfault);
+  SEDataRequest* dr = new SEDataRequest(cdm::eDataRequest_Category_TissueCompartment, dfault);
   m_Requests.push_back(dr);
   dr->SetPropertyName(property);
   dr->SetUnit(unit);
@@ -301,7 +306,7 @@ SEDataRequest& SEDataRequestManager::CreateTissueCompartmentDataRequest(const st
 
 SEDataRequest& SEDataRequestManager::CreateSubstanceDataRequest(const SESubstance& sub, const std::string& property, const SEDecimalFormat* dfault)
 {
-  SEDataRequest* dr = new SEDataRequest(cdm::DataRequestData_eCategory_Substance, dfault);
+  SEDataRequest* dr = new SEDataRequest(cdm::eDataRequest_Category_Substance, dfault);
   m_Requests.push_back(dr);
   dr->SetSubstanceName(sub.GetName());
   dr->SetPropertyName(property);
@@ -309,7 +314,7 @@ SEDataRequest& SEDataRequestManager::CreateSubstanceDataRequest(const SESubstanc
 }
 SEDataRequest& SEDataRequestManager::CreateSubstanceDataRequest(const SESubstance& sub, const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault)
 {
-  SEDataRequest* dr = new SEDataRequest(cdm::DataRequestData_eCategory_Substance, dfault);
+  SEDataRequest* dr = new SEDataRequest(cdm::eDataRequest_Category_Substance, dfault);
   m_Requests.push_back(dr);
   dr->SetSubstanceName(sub.GetName());
   dr->SetPropertyName(property);
@@ -319,14 +324,14 @@ SEDataRequest& SEDataRequestManager::CreateSubstanceDataRequest(const SESubstanc
 
 SEDataRequest& SEDataRequestManager::CreateAnesthesiaMachineDataRequest(const std::string& property, const SEDecimalFormat* dfault)
 {
-  SEDataRequest* dr = new SEDataRequest(cdm::DataRequestData_eCategory_AnesthesiaMachine, dfault);
+  SEDataRequest* dr = new SEDataRequest(cdm::eDataRequest_Category_AnesthesiaMachine, dfault);
   m_Requests.push_back(dr);
   dr->SetPropertyName(property);
   return *dr;
 }
 SEDataRequest& SEDataRequestManager::CreateAnesthesiaMachineDataRequest(const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault)
 {
-  SEDataRequest* dr = new SEDataRequest(cdm::DataRequestData_eCategory_AnesthesiaMachine, dfault);
+  SEDataRequest* dr = new SEDataRequest(cdm::eDataRequest_Category_AnesthesiaMachine, dfault);
   m_Requests.push_back(dr);
   dr->SetPropertyName(property);
   dr->SetUnit(unit);
@@ -335,14 +340,14 @@ SEDataRequest& SEDataRequestManager::CreateAnesthesiaMachineDataRequest(const st
 
 SEDataRequest& SEDataRequestManager::CreateECGDataRequest(const std::string& property, const SEDecimalFormat* dfault)
 {
-  SEDataRequest* dr = new SEDataRequest(cdm::DataRequestData_eCategory_ECG, dfault);
+  SEDataRequest* dr = new SEDataRequest(cdm::eDataRequest_Category_ECG, dfault);
   m_Requests.push_back(dr);
   dr->SetPropertyName(property);
   return *dr;
 }
 SEDataRequest& SEDataRequestManager::CreateECGDataRequest(const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault)
 {
-  SEDataRequest* dr = new SEDataRequest(cdm::DataRequestData_eCategory_ECG, dfault);
+  SEDataRequest* dr = new SEDataRequest(cdm::eDataRequest_Category_ECG, dfault);
   m_Requests.push_back(dr);
   dr->SetPropertyName(property);
   dr->SetUnit(unit);
@@ -351,14 +356,14 @@ SEDataRequest& SEDataRequestManager::CreateECGDataRequest(const std::string& pro
 
 SEDataRequest& SEDataRequestManager::CreateInhalerDataRequest(const std::string& property, const SEDecimalFormat* dfault)
 {
-  SEDataRequest* dr = new SEDataRequest(cdm::DataRequestData_eCategory_Inhaler, dfault);
+  SEDataRequest* dr = new SEDataRequest(cdm::eDataRequest_Category_Inhaler, dfault);
   m_Requests.push_back(dr);
   dr->SetPropertyName(property);
   return *dr;
 }
 SEDataRequest& SEDataRequestManager::CreateInhalerDataRequest(const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault)
 {
-  SEDataRequest* dr = new SEDataRequest(cdm::DataRequestData_eCategory_Inhaler, dfault);
+  SEDataRequest* dr = new SEDataRequest(cdm::eDataRequest_Category_Inhaler, dfault);
   m_Requests.push_back(dr);
   dr->SetPropertyName(property);
   dr->SetUnit(unit);

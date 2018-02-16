@@ -2,7 +2,14 @@
    See accompanying NOTICE file for details.*/
 #include "EngineTest.h"
 #include "Controller/Controller.h"
+#include "Controller/Circuits.h"
+#include "PulseConfiguration.h"
+
+#include "patient/SEPatient.h"
 #include "circuit/fluid/SEFluidCircuit.h"
+#include "circuit/fluid/SEFluidCircuitCalculator.h"
+#include "circuit/thermal/SEThermalCircuit.h"
+#include "circuit/thermal/SEThermalCircuitCalculator.h"
 #include "properties/SEScalar0To1.h"
 #include "substance/SESubstanceFraction.h"
 #include "utils/TimingProfile.h"

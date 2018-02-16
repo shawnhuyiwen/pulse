@@ -4,10 +4,12 @@
 #pragma once
 #include "Controller/System.h"
 #include "system/equipment/anesthesiamachine/SEAnesthesiaMachine.h"
-PROTO_PUSH
-#include "bind/engine/EngineEquipment.pb.h"
-PROTO_POP
 class SEAnesthesiaMachineActionCollection;
+class SEGasCompartment;
+class SEGasSubstanceQuantity;
+class SEFluidCircuitNode;
+class SEFluidCircuitPath;
+PULSE_BIND_DECL(AnesthesiaMachineData)
 
 /**
  * @brief 
@@ -49,7 +51,7 @@ public:
 
   // Extending some functionality to these base class methods
   // We will update the Pulse Airway mode when these are called
-  virtual void SetConnection(cdm::AnesthesiaMachineData_eConnection c);
+  virtual void SetConnection(cdm::eAnesthesiaMachine_Connection c);
   virtual void InvalidateConnection();
 
 private:
@@ -64,10 +66,10 @@ private:
 
   // Serializable member variables (Set in Initialize and in schema)
   bool         m_inhaling; 
-  SEScalarTime m_inspirationTime;
-  SEScalar     m_O2InletVolumeFraction;
-  SEScalarTime m_currentbreathingCycleTime;
-  SEScalarTime m_totalBreathingCycleTime;
+  double       m_inspirationTime_s;
+  double       m_O2InletVolumeFraction;
+  double       m_currentbreathingCycleTime_s;
+  double       m_totalBreathingCycleTime_s;
 
   // Stateless member variable (Set in SetUp())
   double m_dt_s;

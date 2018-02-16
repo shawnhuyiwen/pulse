@@ -3,6 +3,9 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarHeatCapacitance.h"
+PROTO_PUSH
+#include "bind/cdm/Properties.pb.h"
+PROTO_POP
 
 const HeatCapacitanceUnit HeatCapacitanceUnit::J_Per_K("J/K");
 const HeatCapacitanceUnit HeatCapacitanceUnit::kJ_Per_K("kJ/K");

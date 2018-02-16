@@ -4,6 +4,7 @@ See accompanying NOTICE file for details.*/
 #pragma once
 #include "properties/SEProperty.h"
 #include "utils/unitconversion/UCCommon.h"
+CDM_BIND_DECL(ScalarData)
 
 #define ZERO_APPROX 1e-10
 

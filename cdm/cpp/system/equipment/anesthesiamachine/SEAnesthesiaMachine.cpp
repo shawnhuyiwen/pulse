@@ -6,6 +6,9 @@
 #include "system/equipment/anesthesiamachine/SEAnesthesiaMachineChamber.h"
 #include "system/equipment/anesthesiamachine/SEAnesthesiaMachineOxygenBottle.h"
 #include "substance/SESubstanceManager.h"
+PROTO_PUSH
+#include "bind/cdm/AnesthesiaMachine.pb.h"
+PROTO_POP
 
 // State Actions
 #include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineConfiguration.h"
@@ -21,13 +24,13 @@
 
 SEAnesthesiaMachine::SEAnesthesiaMachine(SESubstanceManager& substances) : SESystem(substances.GetLogger()), m_Substances(substances)
 {
-  m_Connection = cdm::AnesthesiaMachineData_eConnection_NullConnection;
+  m_Connection = cdm::eAnesthesiaMachine_Connection_NullConnection;
   m_InletFlow = nullptr;
   m_InspiratoryExpiratoryRatio = nullptr;
   m_OxygenFraction = nullptr;
-  m_OxygenSource = cdm::AnesthesiaMachineData_eOxygenSource_NullSource;
+  m_OxygenSource = cdm::eAnesthesiaMachine_OxygenSource_NullSource;
   m_PositiveEndExpiredPressure = nullptr;
-  m_PrimaryGas = cdm::AnesthesiaMachineData_ePrimaryGas_NullGas;  
+  m_PrimaryGas = cdm::eAnesthesiaMachine_PrimaryGas_NullGas;  
   m_RespiratoryRate = nullptr;
   m_ReliefValvePressure = nullptr;
   m_VentilatorPressure = nullptr;
@@ -50,13 +53,13 @@ void SEAnesthesiaMachine::Clear()
   m_EventHandler = nullptr;
   m_EventState.clear();
   m_EventDuration_s.clear();
-  m_Connection = cdm::AnesthesiaMachineData_eConnection_NullConnection;
+  m_Connection = cdm::eAnesthesiaMachine_Connection_NullConnection;
   SAFE_DELETE(m_InletFlow);
   SAFE_DELETE(m_InspiratoryExpiratoryRatio);
   SAFE_DELETE(m_OxygenFraction);
-  m_OxygenSource = cdm::AnesthesiaMachineData_eOxygenSource_NullSource;
+  m_OxygenSource = cdm::eAnesthesiaMachine_OxygenSource_NullSource;
   SAFE_DELETE(m_PositiveEndExpiredPressure);
-  m_PrimaryGas = cdm::AnesthesiaMachineData_ePrimaryGas_NullGas;
+  m_PrimaryGas = cdm::eAnesthesiaMachine_PrimaryGas_NullGas;
   SAFE_DELETE(m_RespiratoryRate);
   SAFE_DELETE(m_ReliefValvePressure);
   SAFE_DELETE(m_VentilatorPressure);
@@ -68,7 +71,7 @@ void SEAnesthesiaMachine::Clear()
 
 void SEAnesthesiaMachine::Merge(const SEAnesthesiaMachine& from)
 {
-  if(from.m_Connection!=cdm::AnesthesiaMachineData_eConnection_NullConnection)
+  if(from.m_Connection!=cdm::eAnesthesiaMachine_Connection_NullConnection)
     SetConnection(from.m_Connection);
   // Copy EventHandler? I don't think so...
   for (auto e : from.m_EventState)
@@ -78,10 +81,10 @@ void SEAnesthesiaMachine::Merge(const SEAnesthesiaMachine& from)
   COPY_PROPERTY(InletFlow);
   COPY_PROPERTY(InspiratoryExpiratoryRatio);
   COPY_PROPERTY(OxygenFraction);
-  if (from.m_OxygenSource != cdm::AnesthesiaMachineData_eOxygenSource_NullSource)
+  if (from.m_OxygenSource != cdm::eAnesthesiaMachine_OxygenSource_NullSource)
     SetOxygenSource(from.m_OxygenSource);
   COPY_PROPERTY(PositiveEndExpiredPressure);
-  if (from.m_PrimaryGas != cdm::AnesthesiaMachineData_ePrimaryGas_NullGas)
+  if (from.m_PrimaryGas != cdm::eAnesthesiaMachine_PrimaryGas_NullGas)
     SetPrimaryGas(from.m_PrimaryGas);
   COPY_PROPERTY(RespiratoryRate);
   COPY_PROPERTY(ReliefValvePressure);
@@ -262,7 +265,7 @@ const SEScalar* SEAnesthesiaMachine::GetScalar(const std::string& name)
   return nullptr;
 }
 
-void SEAnesthesiaMachine::SetEvent(cdm::AnesthesiaMachineData_eEvent type, bool active, const SEScalarTime& time)
+void SEAnesthesiaMachine::SetEvent(cdm::eAnesthesiaMachine_Event type, bool active, const SEScalarTime& time)
 {
   bool b = false;// Default is off
   if (m_EventState.find(type) != m_EventState.end())
@@ -277,34 +280,34 @@ void SEAnesthesiaMachine::SetEvent(cdm::AnesthesiaMachineData_eEvent type, bool 
     {
       switch (type)
       {        
-      case cdm::AnesthesiaMachineData_eEvent_OxygenBottleOneExhausted:
+      case cdm::eAnesthesiaMachine_Event_OxygenBottleOneExhausted:
         m_ss << "Oxygen Bottle 1 has been exhausted";
         break;
-      case cdm::AnesthesiaMachineData_eEvent_OxygenBottleTwoExhausted:
+      case cdm::eAnesthesiaMachine_Event_OxygenBottleTwoExhausted:
         m_ss << "Oxygen Bottle 2 has been exhausted";
         break;
-      case cdm::AnesthesiaMachineData_eEvent_ReliefValveActive:
+      case cdm::eAnesthesiaMachine_Event_ReliefValveActive:
         m_ss << "Relief valve active - pressure exceeded";
         break;
       default:
-        m_ss << "Anesthesia Machine Event On : " << cdm::AnesthesiaMachineData_eEvent_Name(type);
+        m_ss << "Anesthesia Machine Event On : " << cdm::eAnesthesiaMachine_Event_Name(type);
       }
     }
     else
     {
       switch (type)
       {
-      case cdm::AnesthesiaMachineData_eEvent_OxygenBottleOneExhausted:
+      case cdm::eAnesthesiaMachine_Event_OxygenBottleOneExhausted:
         m_ss << "Oxygen Bottle 1 has been replenished";
         break;
-      case cdm::AnesthesiaMachineData_eEvent_OxygenBottleTwoExhausted:
+      case cdm::eAnesthesiaMachine_Event_OxygenBottleTwoExhausted:
         m_ss << "Oxygen Bottle 2 has been replenished";
         break;
-      case cdm::AnesthesiaMachineData_eEvent_ReliefValveActive:
+      case cdm::eAnesthesiaMachine_Event_ReliefValveActive:
         m_ss << "Relief valve inactive - pressure below setting";
         break;
       default:
-        m_ss << "Anesthesia Machine Event Off : " << cdm::AnesthesiaMachineData_eEvent_Name(type);
+        m_ss << "Anesthesia Machine Event Off : " << cdm::eAnesthesiaMachine_Event_Name(type);
       }
     }
     Info(m_ss);
@@ -315,7 +318,7 @@ void SEAnesthesiaMachine::SetEvent(cdm::AnesthesiaMachineData_eEvent type, bool 
     m_EventHandler->HandleAnesthesiaMachineEvent(type, active, &time);
 }
 
-bool SEAnesthesiaMachine::IsEventActive(cdm::AnesthesiaMachineData_eEvent type) const
+bool SEAnesthesiaMachine::IsEventActive(cdm::eAnesthesiaMachine_Event type) const
 {
   auto b = m_EventState.find(type);
   if (b == m_EventState.end())
@@ -323,7 +326,7 @@ bool SEAnesthesiaMachine::IsEventActive(cdm::AnesthesiaMachineData_eEvent type) 
   return b->second;
 }
 
-double SEAnesthesiaMachine::GetEventDuration(cdm::AnesthesiaMachineData_eEvent type, const TimeUnit& unit) const
+double SEAnesthesiaMachine::GetEventDuration(cdm::eAnesthesiaMachine_Event type, const TimeUnit& unit) const
 {
   auto i = m_EventDuration_s.find(type);
   if (i == m_EventDuration_s.end())
@@ -342,11 +345,11 @@ void SEAnesthesiaMachine::ForwardEvents(SEEventHandler* handler)
   m_EventHandler = handler;
 }
 
-void SEAnesthesiaMachine::SetConnection(cdm::AnesthesiaMachineData_eConnection c)
+void SEAnesthesiaMachine::SetConnection(cdm::eAnesthesiaMachine_Connection c)
 {
   m_Connection = c;
 }
-cdm::AnesthesiaMachineData_eConnection SEAnesthesiaMachine::GetConnection() const
+cdm::eAnesthesiaMachine_Connection SEAnesthesiaMachine::GetConnection() const
 {
   return m_Connection;
 }
@@ -402,11 +405,11 @@ double SEAnesthesiaMachine::GetOxygenFraction() const
   return m_OxygenFraction->GetValue();
 }
 
-cdm::AnesthesiaMachineData_eOxygenSource SEAnesthesiaMachine::GetOxygenSource() const
+cdm::eAnesthesiaMachine_OxygenSource SEAnesthesiaMachine::GetOxygenSource() const
 {
   return m_OxygenSource;
 }
-void SEAnesthesiaMachine::SetOxygenSource(cdm::AnesthesiaMachineData_eOxygenSource src)
+void SEAnesthesiaMachine::SetOxygenSource(cdm::eAnesthesiaMachine_OxygenSource src)
 {
   m_OxygenSource = src;
 }
@@ -428,11 +431,11 @@ double SEAnesthesiaMachine::GetPositiveEndExpiredPressure(const PressureUnit& un
   return m_PositiveEndExpiredPressure->GetValue(unit);
 }
 
-cdm::AnesthesiaMachineData_ePrimaryGas SEAnesthesiaMachine::GetPrimaryGas() const
+cdm::eAnesthesiaMachine_PrimaryGas SEAnesthesiaMachine::GetPrimaryGas() const
 {
   return m_PrimaryGas;
 }
-void SEAnesthesiaMachine::SetPrimaryGas(cdm::AnesthesiaMachineData_ePrimaryGas gas)
+void SEAnesthesiaMachine::SetPrimaryGas(cdm::eAnesthesiaMachine_PrimaryGas gas)
 {
   m_PrimaryGas = gas;
 }

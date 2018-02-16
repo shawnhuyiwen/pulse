@@ -3,9 +3,7 @@
 
 #pragma once
 #include "system/SESystem.h"
-PROTO_PUSH
-#include "bind/cdm/ElectroCardioGram.pb.h"
-PROTO_POP
+CDM_BIND_DECL(ElectroCardioGramData)
 
 class CDM_DECL SEElectroCardioGram : public SESystem
 {

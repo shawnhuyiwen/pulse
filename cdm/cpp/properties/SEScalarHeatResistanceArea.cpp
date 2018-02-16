@@ -3,6 +3,9 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarHeatResistanceArea.h"
+PROTO_PUSH
+#include "bind/cdm/Properties.pb.h"
+PROTO_POP
 
 const HeatResistanceAreaUnit HeatResistanceAreaUnit::rsi("rsi");
 const HeatResistanceAreaUnit HeatResistanceAreaUnit::clo("clo");

@@ -4,8 +4,11 @@
 #include "stdafx.h"
 #include "scenario/SEDataRequest.h"
 #include "utils/unitconversion/UCCommon.h"
+PROTO_PUSH
+#include "bind/cdm/Scenario.pb.h"
+PROTO_POP
 
-SEDataRequest::SEDataRequest(cdm::DataRequestData_eCategory category, const SEDecimalFormat* dfault) : SEDecimalFormat(dfault)
+SEDataRequest::SEDataRequest(cdm::eDataRequest_Category category, const SEDecimalFormat* dfault) : SEDecimalFormat(dfault)
 {
   m_Category = category;
   m_CompartmentName = "";
@@ -37,34 +40,34 @@ bool SEDataRequest::IsValid()
     return false;
   switch (m_Category)
   {
-    case cdm::DataRequestData_eCategory_Patient:
+    case cdm::eDataRequest_Category_Patient:
     {
       if (HasCompartmentName() || HasSubstanceName())
         std::cout << "Ignoring compartment and substance name on patient data request" << std::endl;
       return true;
     }
-    case cdm::DataRequestData_eCategory_Physiology:
+    case cdm::eDataRequest_Category_Physiology:
     {
       if (HasCompartmentName() || HasSubstanceName())
         std::cout << "Ignoring compartment and substance name on physiology data request" << std::endl;
       return true;
     }
-    case cdm::DataRequestData_eCategory_Environment:
+    case cdm::eDataRequest_Category_Environment:
     {
       if (HasCompartmentName() || HasSubstanceName())
         std::cout << "Ignoring compartment and substance name on environment data request" << std::endl;
       return true;
     }
-    case cdm::DataRequestData_eCategory_GasCompartment:
-    case cdm::DataRequestData_eCategory_LiquidCompartment:
-    case cdm::DataRequestData_eCategory_ThermalCompartment:
-    case cdm::DataRequestData_eCategory_TissueCompartment:
+    case cdm::eDataRequest_Category_GasCompartment:
+    case cdm::eDataRequest_Category_LiquidCompartment:
+    case cdm::eDataRequest_Category_ThermalCompartment:
+    case cdm::eDataRequest_Category_TissueCompartment:
     {
       if (!HasCompartmentName())
         return false;
       return true;
     }
-    case cdm::DataRequestData_eCategory_Substance:
+    case cdm::eDataRequest_Category_Substance:
     {
       if (!HasSubstanceName())
         return false;
@@ -116,7 +119,7 @@ void SEDataRequest::Serialize(const SEDataRequest& src, cdm::DataRequestData& ds
     dst.set_unit(src.m_RequestedUnit);
 }
 
-cdm::DataRequestData_eCategory SEDataRequest::GetCategory() const 
+cdm::eDataRequest_Category SEDataRequest::GetCategory() const 
 { 
   return m_Category; 
 }

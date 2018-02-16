@@ -3,6 +3,12 @@ See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "circuit/thermal/SEThermalCircuitPath.h"
+#include "properties/SEScalarHeatResistance.h"
+#include "properties/SEScalarHeatCapacitance.h"
+#include "properties/SEScalarHeatInductance.h"
+#include "properties/SEScalarPower.h"
+#include "properties/SEScalarTemperature.h"
+#include "properties/SEScalarEnergy.h"
 PROTO_PUSH
 #include "bind/cdm/Circuit.pb.h"
 PROTO_POP
@@ -118,6 +124,9 @@ void SEThermalCircuitPath::Serialize(const SEThermalCircuitPath& src, cdm::Therm
   if (src.HasValveBreakdownTemperature())
     dst.set_allocated_valvebreakdowntemperature(SEScalarTemperature::Unload(*src.m_ValveBreakdownPotential));
 }
+
+SEThermalCircuitNode& SEThermalCircuitPath::GetSourceNode() const { return m_ThermalSourceNode; }
+SEThermalCircuitNode& SEThermalCircuitPath::GetTargetNode() const { return m_ThermalTargetNode; }
 
 ////////////////////////////////
 // Thermal Resistance Types//

@@ -4,7 +4,8 @@
 #pragma once
 #include "Controller/System.h"
 #include "system/physiology/SEEndocrineSystem.h"
-#include "properties/SEScalarMass.h"
+class SELiquidSubstanceQuantity;
+PULSE_BIND_DECL(EndocrineSystemData)
 
 /**
  * @brief @copydoc Physiology_EndocrineSystemData

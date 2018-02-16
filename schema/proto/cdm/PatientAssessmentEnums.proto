@@ -1,0 +1,57 @@
+syntax = "proto3";
+package cdm;
+option java_package = "com.kitware.physiology.cdm";
+
+/** @brief Base Patient Assessment type */
+message ePatientAssessment
+{
+  enum Type
+  {
+    CompleteBloodCount                                                      = 0;
+    ComprehensiveMetabolicPanel                                             = 1;
+    PulmonaryFunctionTest                                                   = 2;
+    Urinalysis                                                              = 3;
+  }
+}
+
+message eUrinalysis
+{
+  enum PresenceIndicator
+  {
+    NullPresence    = 0;/**<< @brief Not provided in the assessment */
+    Positive        = 1;
+    Negative        = 2;
+  }
+
+  enum ClarityIndicator
+  {
+    NullClarity     = 0;/**<< @brief Not provided in the assessment */
+    Translucent     = 1;
+    SlightlyCloudy  = 2;
+    Cloudy          = 3;
+    Turbid          = 4;
+  }
+
+  enum UrineColor
+  {
+    NullColor       = 0;/**<< @brief Not provided in the assessment */
+    PaleYellow      = 1;
+    Yellow          = 2;
+    DarkYellow      = 3;
+  }
+
+  enum MicroscopicObservationType
+  {
+    NullObservationType = 0;/**<< @brief Not provided in the assessment */
+    LowPowerField       = 1;
+    HighPowerField      = 2;
+  }
+
+  enum MicroscopicObservationAmount
+  {
+    NullObservationAmount = 0;/**<< @brief Not provided in the assessment */
+    Few                   = 1;
+    Moderate              = 2;
+    Many                  = 3;
+  }
+}

@@ -4,12 +4,17 @@
 #pragma once
 #include "Controller/System.h"
 #include "system/physiology/SERenalSystem.h"
-#include "utils/RunningAverage.h"
-#include "properties/SEScalarMass.h"
-
+class SEPatient;
+class SESubstance;
+class SEFluidCircuit;
+class SEFluidCircuitNode;
+class SEFluidCircuitPath;
+class SELiquidCompartment;
+class SELiquidSubstanceQuantity;
+class SETissueCompartment;
 class SEUrinalysis;
-
-
+class RunningAverage;
+PULSE_BIND_DECL(RenalSystemData)
 
 /**
  * @brief @copydoc Physiology_RenalSystemData
@@ -43,8 +48,8 @@ protected:
 
 public:
   void AtSteadyState();
-  void PreProcess();  
-  void Process();  
+  void PreProcess();
+  void Process();
   void PostProcess();
 
   // Assessments
@@ -79,7 +84,7 @@ protected:
   void   Urinate();
 
   //Process
-  void CalculateActiveTransport();  
+  void CalculateActiveTransport();
   void   CalculateGlomerularTransport(SESubstance& sub);
   void   CalculateReabsorptionTransport(SESubstance& sub);
   void   CalculateSecretion();
@@ -96,14 +101,14 @@ protected:
   double m_leftSodiumFlowSetPoint_mg_Per_s;
   double m_rightSodiumFlowSetPoint_mg_Per_s;
   //Events
-  RunningAverage m_urineProductionRate_mL_Per_min_runningAvg;
-  RunningAverage m_urineOsmolarity_mOsm_Per_L_runningAvg;
-  RunningAverage m_sodiumConcentration_mg_Per_mL_runningAvg;
-  RunningAverage m_sodiumExcretionRate_mg_Per_min_runningAvg;
-  RunningAverage m_leftSodiumFlow_mg_Per_s_runningAvg;
-  RunningAverage m_rightSodiumFlow_mg_Per_s_runningAvg;
-  RunningAverage m_leftRenalArterialPressure_mmHg_runningAvg;
-  RunningAverage m_rightRenalArterialPressure_mmHg_runningAvg;
+  RunningAverage* m_urineProductionRate_mL_Per_min_runningAvg;
+  RunningAverage* m_urineOsmolarity_mOsm_Per_L_runningAvg;
+  RunningAverage* m_sodiumConcentration_mg_Per_mL_runningAvg;
+  RunningAverage* m_sodiumExcretionRate_mg_Per_min_runningAvg;
+  RunningAverage* m_leftSodiumFlow_mg_Per_s_runningAvg;
+  RunningAverage* m_rightSodiumFlow_mg_Per_s_runningAvg;
+  RunningAverage* m_leftRenalArterialPressure_mmHg_runningAvg;
+  RunningAverage* m_rightRenalArterialPressure_mmHg_runningAvg;
   
   // Stateless member variable (Set in SetUp())
   SEPatient*          m_patient;
@@ -220,6 +225,6 @@ protected:
   double m_rightReabsorptionPermeabilitySetpoint_mL_Per_s_mmHg_m2;
 
   // Utility/ScratchPads
-  SEScalarMass m_spCleared;
+  SEScalarMass* m_spCleared;
   ActiveTransport m_SubstanceTransport;
 };

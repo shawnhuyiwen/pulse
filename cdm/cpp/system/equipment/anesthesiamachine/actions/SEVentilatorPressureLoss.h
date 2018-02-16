@@ -2,6 +2,7 @@
    See accompanying NOTICE file for details.*/
 #pragma once
 #include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineAction.h"
+CDM_BIND_DECL(VentilatorPressureLossData)
 
 class CDM_DECL SEVentilatorPressureLoss : public SEAnesthesiaMachineAction
 {

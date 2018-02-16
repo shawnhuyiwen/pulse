@@ -3,17 +3,27 @@
 
 #include "stdafx.h"
 #include "scenario/SEScenario.h"
+#include "scenario/SEAction.h"
+#include "scenario/SECondition.h"
+#include "scenario/SEDataRequestManager.h"
+#include "scenario/SEScenarioInitialParameters.h"
+#include "substance/SESubstanceManager.h"
+PROTO_PUSH
+#include "bind/cdm/Scenario.pb.h"
+PROTO_POP
 #include <google/protobuf/text_format.h>
 
-SEScenario::SEScenario(SESubstanceManager& subMgr) : Loggable(subMgr.GetLogger()), m_SubMgr(subMgr), m_DataRequestMgr(subMgr.GetLogger())
+SEScenario::SEScenario(SESubstanceManager& subMgr) : Loggable(subMgr.GetLogger()), m_SubMgr(subMgr)
 {
   m_InitialParameters = nullptr;
+  m_DataRequestMgr = new SEDataRequestManager(subMgr.GetLogger());
   Clear();
 }
 
 SEScenario::~SEScenario()
 {
   Clear();
+  delete m_DataRequestMgr;
 }
 
 void SEScenario::Clear()
@@ -23,7 +33,7 @@ void SEScenario::Clear()
   m_EngineStateFile = "";
   SAFE_DELETE(m_InitialParameters);
   DELETE_VECTOR(m_Actions);
-  m_DataRequestMgr.Clear();
+  m_DataRequestMgr->Clear();
 }
 
 void SEScenario::Load(const cdm::ScenarioData& src, SEScenario& dst)
@@ -66,7 +76,7 @@ void SEScenario::Serialize(const SEScenario& src, cdm::ScenarioData& dst)
   else if (src.HasInitialParameters())
     dst.set_allocated_initialparameters(SEScenarioInitialParameters::Unload(*src.m_InitialParameters));
 
-  dst.set_allocated_datarequestmanager(SEDataRequestManager::Unload(src.m_DataRequestMgr));
+  dst.set_allocated_datarequestmanager(SEDataRequestManager::Unload(*src.m_DataRequestMgr));
 
   for (SEAction* a :src.m_Actions)
     dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*a));

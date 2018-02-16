@@ -3,6 +3,9 @@
 
 #include "stdafx.h"
 #include "scenario/SEAdvanceTime.h"
+PROTO_PUSH
+#include "bind/cdm/Actions.pb.h"
+PROTO_POP
 #include "properties/SEScalarTime.h"
 
 SEAdvanceTime::SEAdvanceTime() : SEAction()

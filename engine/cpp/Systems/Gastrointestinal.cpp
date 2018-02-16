@@ -2,26 +2,44 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "Gastrointestinal.h"
+#include "Systems/Gastrointestinal.h"
+#include "Controller/Circuits.h"
+#include "Controller/Compartments.h"
+#include "Controller/Substances.h"
+#include "PulseConfiguration.h"
+PROTO_PUSH
+#include "bind/engine/EnginePhysiology.pb.h"
+PROTO_POP
+// Conditions
+#include "scenario/SEConditionManager.h"
+#include "patient/conditions/SEConsumeMeal.h"
+// Actions
+#include "scenario/SEActionManager.h"
+#include "scenario/SEPatientActionCollection.h"
+#include "patient/actions/SEConsumeNutrients.h"
+// Dependent Systems
 #include "system/physiology/SEBloodChemistrySystem.h"
 #include "system/physiology/SECardiovascularSystem.h"
-#include "substance/SESubstance.h"
+#include "system/physiology/SETissueSystem.h"
+// CDM
+#include "patient/SEPatient.h"
 #include "patient/SEMeal.h"
 #include "patient/SENutrition.h"
-#include "patient/conditions/SEConsumeMeal.h"
-#include "patient/actions/SEConsumeNutrients.h"
+#include "substance/SESubstance.h"
 #include "circuit/fluid/SEFluidCircuit.h"
+#include "compartment/fluid/SELiquidCompartment.h"
+#include "compartment/substances/SELiquidSubstanceQuantity.h"
 #include "properties/SEScalar.h"
-#include "properties/SEScalarAmountPerVolume.h"
 #include "properties/SEScalar0To1.h"
+#include "properties/SEScalarAmountPerVolume.h"
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarMassPerTime.h"
-#include "properties/SEScalarPressure.h"
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarMassPerAmount.h"
+#include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
-#include "properties/SEScalarVolumePerTime.h"
+#include "properties/SEScalarTime.h"
 
 #pragma warning(disable:4786)
 #pragma warning(disable:4275)
@@ -31,6 +49,8 @@
 Gastrointestinal::Gastrointestinal(PulseController& data) : SEGastrointestinalSystem(data.GetLogger()), m_data(data)
 {
   Clear();
+  m_CalciumDigestionRate = new SEScalarMassPerTime();
+  m_WaterDigestionRate = new SEScalarVolumePerTime();
   /* Move to a unit test
   SENutrition one(m_Logger);
   SENutrition two(m_Logger);
@@ -57,6 +77,8 @@ Gastrointestinal::Gastrointestinal(PulseController& data) : SEGastrointestinalSy
 Gastrointestinal::~Gastrointestinal()
 {
   Clear();
+  delete m_CalciumDigestionRate;
+  delete m_WaterDigestionRate;
 }
 
 void Gastrointestinal::Clear()
@@ -120,8 +142,8 @@ void Gastrointestinal::Serialize(const Gastrointestinal& src, pulse::Gastrointes
 void Gastrointestinal::SetUp()
 {
   m_ConsumeRate = false;
-  m_WaterDigestionRate.SetValue(m_data.GetConfiguration().GetWaterDigestionRate(VolumePerTimeUnit::mL_Per_s), VolumePerTimeUnit::mL_Per_s);
-  m_CalciumDigestionRate.SetValue(m_data.GetConfiguration().GetCalciumDigestionRate(MassPerTimeUnit::g_Per_s), MassPerTimeUnit::g_Per_s);
+  m_WaterDigestionRate->SetValue(m_data.GetConfiguration().GetWaterDigestionRate(VolumePerTimeUnit::mL_Per_s), VolumePerTimeUnit::mL_Per_s);
+  m_CalciumDigestionRate->SetValue(m_data.GetConfiguration().GetCalciumDigestionRate(MassPerTimeUnit::g_Per_s), MassPerTimeUnit::g_Per_s);
 
   m_GItoCVPath                    = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(pulse::ChymePath::SmallIntestineC1ToSmallIntestine1);
   m_GutT1ToGroundPath             = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(pulse::ChymePath::GutT1ToGround);
@@ -335,7 +357,7 @@ void Gastrointestinal::DigestStomachNutrients(double duration_s)
   {// Sodium rate is a function of the concentration of sodium in the stomach, so do this before we do water
     double totalNa_g = m_StomachContents->GetSodium(MassUnit::g);
     double digestedNa_g = (totalNa_g / m_StomachContents->GetWater(VolumeUnit::mL))
-      * m_WaterDigestionRate.GetValue(VolumePerTimeUnit::mL_Per_s) * duration_s;
+      * m_WaterDigestionRate->GetValue(VolumePerTimeUnit::mL_Per_s) * duration_s;
     if (totalNa_g <= digestedNa_g)
     {
       digestedNa_g = totalNa_g;
@@ -358,7 +380,7 @@ void Gastrointestinal::DigestStomachNutrients(double duration_s)
     // Wait till the water volume is corret on the chyme before we balance
   }
 
-  digestedAmount = DigestNutrient(m_StomachContents->GetWater(), m_WaterDigestionRate, false, duration_s);
+  digestedAmount = DigestNutrient(m_StomachContents->GetWater(), *m_WaterDigestionRate, false, duration_s);
   if (digestedAmount > 0)
   {
 #ifdef logDigest
@@ -418,7 +440,7 @@ void Gastrointestinal::DigestStomachNutrients(double duration_s)
 
   if (m_StomachContents->HasCalcium())
   {
-    digestedAmount = DigestNutrient(m_StomachContents->GetCalcium(), m_CalciumDigestionRate, true, duration_s);
+    digestedAmount = DigestNutrient(m_StomachContents->GetCalcium(), *m_CalciumDigestionRate, true, duration_s);
     digestedAmount *= m_data.GetConfiguration().GetCalciumAbsorptionFraction(); // Take off percent that usually passes through the body
     if (digestedAmount != 0)
     {

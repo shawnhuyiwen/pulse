@@ -2,10 +2,12 @@
    See accompanying NOTICE file for details.*/
 
 #include "CommonDataModelTest.h"
+#include "substance/SESubstance.h"
 #include "substance/SESubstanceManager.h"
 #include "utils/testing/SETestReport.h"
 #include "utils/testing/SETestCase.h"
 #include "utils/testing/SETestSuite.h"
+#include "properties/SEScalarTime.h"
 #include "utils/FileUtils.h"
 #include "utils/TimingProfile.h"
 

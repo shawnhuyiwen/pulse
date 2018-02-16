@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "system/physiology/SECardiovascularSystem.h"
-#include "substance/SESubstanceManager.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEScalarPressure.h"
@@ -14,6 +13,9 @@
 #include "properties/SEScalarPressureTimePerArea.h"
 #include "properties/SEScalarPressureTimePerVolumeArea.h"
 #include "properties/SEScalarVolumePerTimeArea.h"
+PROTO_PUSH
+#include "bind/cdm/Physiology.pb.h"
+PROTO_POP
 
 SECardiovascularSystem::SECardiovascularSystem(Logger* logger) : SESystem(logger)
 {

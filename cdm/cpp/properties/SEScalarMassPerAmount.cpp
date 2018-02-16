@@ -3,6 +3,9 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarMassPerAmount.h"
+PROTO_PUSH
+#include "bind/cdm/Properties.pb.h"
+PROTO_POP
 
 const MassPerAmountUnit MassPerAmountUnit::g_Per_ct("g/ct");
 const MassPerAmountUnit MassPerAmountUnit::g_Per_mol("g/mol");

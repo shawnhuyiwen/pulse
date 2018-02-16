@@ -3,7 +3,6 @@
 
 #pragma once
 #include "compartment/SECompartmentGraph.h"
-#include "substance/SESubstanceTransport.h"
 
 #define COMPARTMENT_TRANSPORT_GRAPH_TEMPLATE typename GraphType, typename GraphVertexType, typename GraphEdgeType, typename CompartmentType, typename CompartmentLinkType
 #define COMPARTMENT_TRANSPORT_GRAPH_TYPES GraphType, GraphVertexType, GraphEdgeType, CompartmentType, CompartmentLinkType

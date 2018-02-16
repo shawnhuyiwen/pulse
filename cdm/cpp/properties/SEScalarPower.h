@@ -3,6 +3,7 @@
 
 #pragma once
 #include "properties/SEScalar.h"
+CDM_BIND_DECL(ScalarPowerData)
 
 class CDM_DECL PowerUnit : public CCompoundUnit
 {

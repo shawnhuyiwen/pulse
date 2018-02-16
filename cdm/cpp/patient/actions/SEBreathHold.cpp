@@ -3,10 +3,10 @@ See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "patient/actions/SEBreathHold.h"
-#include "properties/SEScalarTime.h"
 PROTO_PUSH
 #include "bind/cdm/PatientActions.pb.h"
 PROTO_POP
+#include "properties/SEScalarTime.h"
 
 SEBreathHold::SEBreathHold() : SEConsciousRespirationCommand()
 {

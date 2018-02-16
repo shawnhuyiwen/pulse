@@ -6,8 +6,10 @@
 #include "Controller/Controller.h"
 #include "utils/taskrunner/TaskRunner.h"
 #include "utils/FileUtils.h"
-
+#include "utils/TimingProfile.h"
 #include "scenario/SEScenarioExec.h"
+#include "properties/SEScalarTime.h"
+#include <iomanip>
 
 class RunEngineTask : public Task
 {

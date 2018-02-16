@@ -1,8 +1,9 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 #pragma once
-#include "system/environment/SEEnvironmentalConditions.h"
 #include "SEEnvironmentCondition.h"
+class SEEnvironmentalConditions;
+CDM_BIND_DECL(InitialEnvironmentConditionsData)
 
 class CDM_DECL SEInitialEnvironmentConditions : public SEEnvironmentCondition
 {

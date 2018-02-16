@@ -3,8 +3,6 @@
 
 #pragma once
 
-#include "CommonDataModel.h"
-
 #if defined(_MSC_VER) || defined(__MINGW64_VERSION_MAJOR)
 
 #include <windows.h>

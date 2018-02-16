@@ -2,9 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-PROTO_PUSH
-#include "bind/cdm/Substance.pb.h"
-PROTO_POP
+CDM_BIND_DECL(SubstanceData_AerosolizationData)
 
 class CDM_DECL SESubstanceAerosolization : public Loggable
 {

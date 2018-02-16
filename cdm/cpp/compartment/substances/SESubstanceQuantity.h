@@ -2,14 +2,14 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "substance/SESubstance.h"
 CDM_BIND_DECL(SubstanceQuantityData)
+class SESubstance;
 
 class CDM_DECL SESubstanceQuantity : public Loggable
 {
 public:
-  SESubstanceQuantity(SESubstance& sub) : Loggable(sub.GetLogger()), m_Substance(sub) {};
-  virtual ~SESubstanceQuantity(){};
+  SESubstanceQuantity(SESubstance& sub);
+  virtual ~SESubstanceQuantity();
 
   virtual void Clear() = 0; //clear memory
   virtual void Invalidate() = 0;

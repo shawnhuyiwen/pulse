@@ -2,9 +2,8 @@
    See accompanying NOTICE file for details.*/
 #pragma once
 #include "scenario/SECondition.h"
-PROTO_PUSH
-#include "bind/cdm/EnvironmentConditions.pb.h"
-PROTO_POP
+CDM_BIND_DECL(EnvironmentConditionData)
+CDM_BIND_DECL(AnyEnvironmentConditionData)
 
 class CDM_DECL SEEnvironmentCondition : public SECondition
 {

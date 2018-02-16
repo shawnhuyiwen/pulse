@@ -2,8 +2,6 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "compartment/SECompartment.h"
-#include "circuit/SECircuit.h"
 
 #define COMPARTMENT_NODE_TEMPLATE typename NodeType, typename PotentialScalar, typename PotentialUnit, typename QuantityScalar, typename QuantityUnit
 #define COMPARTMENT_NODE_TYPES NodeType, PotentialScalar, PotentialUnit, QuantityScalar, QuantityUnit

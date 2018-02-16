@@ -3,6 +3,7 @@
 
 #pragma once
 #include "properties/SEScalar.h"
+namespace cdm { class Scalar0To1Data; }
 
 class CDM_DECL SEScalar0To1 : public SEScalar
 {

@@ -8,6 +8,9 @@
 #include "properties/SEHistogramFractionVsLength.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarNegative1To1.h"
+PROTO_PUSH
+#include "bind/cdm/Substance.pb.h"
+PROTO_POP
 
 SESubstanceAerosolization::SESubstanceAerosolization(Logger* logger) : Loggable(logger)
 {

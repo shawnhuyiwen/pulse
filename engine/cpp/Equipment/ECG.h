@@ -4,11 +4,9 @@
 
 #pragma once
 #include "Controller/System.h"
-PROTO_PUSH
-#include "bind/engine/EngineEquipment.pb.h"
-PROTO_POP
 #include "system/equipment/electrocardiogram/SEElectroCardioGram.h"
-#include "system/equipment/electrocardiogram/SEElectroCardioGramWaveformInterpolator.h"
+class SEElectroCardioGramWaveformInterpolator;
+PULSE_BIND_DECL(ElectroCardioGramData)
 
 /**
 * @brief 
@@ -48,9 +46,9 @@ public:
 
 protected:
   // Serializable member variables (Set in Initialize and in schema)
-  SEScalarTime m_heartRhythmTime;
-  SEScalarTime m_heartRhythmPeriod;
-  SEElectroCardioGramWaveformInterpolator m_interpolator;
+  double m_heartRhythmTime_s;
+  double m_heartRhythmPeriod_s;
+  SEElectroCardioGramWaveformInterpolator* m_interpolator;
 
   // Stateless member variable (Set in SetUp())
   double m_dt_s;

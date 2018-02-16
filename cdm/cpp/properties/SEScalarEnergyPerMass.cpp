@@ -3,6 +3,9 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarEnergyPerMass.h"
+PROTO_PUSH
+#include "bind/cdm/Properties.pb.h"
+PROTO_POP
 
 const EnergyPerMassUnit EnergyPerMassUnit::J_Per_kg("J/kg");
 const EnergyPerMassUnit EnergyPerMassUnit::kJ_Per_kg("kJ/kg");

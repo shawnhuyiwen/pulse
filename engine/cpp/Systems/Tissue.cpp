@@ -2,16 +2,31 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "Tissue.h"
-#include "Cardiovascular.h"
-#include "Energy.h"
-#include "Respiratory.h"
-#include "Drugs.h"
-
+#include "Systems/Tissue.h"
+#include "Systems/Saturation.h"
+#include "Controller/Circuits.h"
+#include "Controller/Compartments.h"
+#include "Controller/Substances.h"
+#include "PulseConfiguration.h"
+PROTO_PUSH
+#include "bind/engine/EnginePhysiology.pb.h"
+PROTO_POP
+// Conditions
+#include "scenario/SEConditionManager.h"
+#include "patient/conditions/SEConsumeMeal.h"
+// Actions
+#include "scenario/SEActionManager.h"
+#include "scenario/SEPatientActionCollection.h"
+#include "patient/actions/SEExercise.h"
+// Dependent Systems
+#include "system/physiology/SEBloodChemistrySystem.h"
+#include "system/physiology/SEEnergySystem.h"
+// CDM
 #include "patient/SEPatient.h"
 #include "patient/SEMeal.h"
 #include "patient/conditions/SEConsumeMeal.h"
 #include "substance/SESubstance.h"
+#include "substance/SESubstanceClearance.h"
 #include "substance/SESubstancePharmacokinetics.h"
 #include "substance/SESubstanceTissuePharmacokinetics.h"
 #include "circuit/fluid/SEFluidCircuit.h"
@@ -20,27 +35,27 @@
 #include "compartment/tissue/SETissueCompartment.h"
 #include "compartment/substances/SEGasSubstanceQuantity.h"
 #include "compartment/substances/SELiquidSubstanceQuantity.h"
+#include "properties/SEScalar0To1.h"
+#include "properties/SEScalarAmountPerVolume.h"
+#include "properties/SEScalarAmountPerTime.h"
 #include "properties/SEScalarArea.h"
 #include "properties/SEScalarAreaPerTimePressure.h"
-#include "properties/SEScalar0To1.h"
+#include "properties/SEScalarEnergyPerAmount.h"
 #include "properties/SEScalarInversePressure.h"
 #include "properties/SEScalarLength.h"
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarMassPerAmount.h"
 #include "properties/SEScalarMassPerTime.h"
+#include "properties/SEScalarMassPerAreaTime.h"
 #include "properties/SEScalarMassPerVolume.h"
+#include "properties/SEScalarPower.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarTemperature.h"
+#include "properties/SEScalarTime.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalarVolumePerTimePressure.h"
 #include "properties/SEScalarVolumePerTimeMass.h"
-#include "properties/SEScalarEnergyPerAmount.h"
-#include "properties/SEScalarPower.h"
-#include "properties/SEScalarAmountPerVolume.h"
-#include "properties/SEScalarAmountPerTime.h"
-#include "properties/SEScalarMassPerAreaTime.h"
-#include "properties/SEScalarVolume.h"
 
 #pragma warning(disable:4786)
 #pragma warning(disable:4275)
@@ -92,8 +107,6 @@ void Tissue::Clear()
   m_RightAlveoli = nullptr;
   m_LeftPulmonaryCapillaries = nullptr;
   m_RightPulmonaryCapillaries = nullptr;
-  
-  m_PatientActions = nullptr;
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -177,8 +190,6 @@ void Tissue::Serialize(const Tissue& src, pulse::TissueSystemData& dst)
 void Tissue::SetUp()
 {
   m_Dt_s = m_data.GetTimeStep().GetValue(TimeUnit::s);
-
-  m_PatientActions = &m_data.GetActions().GetPatientActions();
 
   m_AlbuminProdutionRate_g_Per_s = 1.5e-4; /// \cite jarnum1972plasma
   m_Albumin = &m_data.GetSubstances().GetAlbumin();
@@ -418,7 +429,7 @@ void Tissue::CalculateDiffusion()
 
         // Currently, only drugs and gases transport across the capillary
         /// \todo Enable non-advective transport for all substances
-        if (sub->GetState() != cdm::SubstanceData_eState_Gas)
+        if (sub->GetState() != cdm::eSubstance_State_Gas)
         {
           // Sodium is special. We need to diffuse for renal function.
           // We will not treat sodium any differently once diffusion functionality is fully implemented.
@@ -658,7 +669,7 @@ void Tissue::CalculateMetabolicConsumptionAndProduction(double time_s)
   RespiratoryQuotient = currentTotalGlucoseStored_g / m_RestingTissueGlucose_g * 0.15 + 0.7;
   // If the patient is exercising, an emphasis is placed on glucose consumption (higher RQ) as long as plenty of glucose is available.
   // But if glucose stores are depleting, we want to emphasize glucose consumption a little less.
-  if (m_PatientActions->HasExercise() && RespiratoryQuotient > 0.8)
+  if (m_data.GetActions().GetPatientActions().HasExercise() && RespiratoryQuotient > 0.8)
   {
     double totalWorkRateLevel = m_data.GetEnergy().GetTotalWorkRateLevel().GetValue();
     if (RespiratoryQuotient > 0.775)
@@ -1104,11 +1115,11 @@ void Tissue::CalculateVitals()
   if ((m_RestingFluidMass_kg - currentFluidMass_kg) / m_RestingPatientMass_kg > 0.03)
   {
     /// \event Patient: Patient is dehydrated when 3% of body mass is lost due to fluid reduction
-    m_data.GetPatient().SetEvent(cdm::PatientData_eEvent_Dehydration, true, m_data.GetSimulationTime()); /// \cite who2005dehydration
+    m_data.GetPatient().SetEvent(cdm::ePatient_Event_Dehydration, true, m_data.GetSimulationTime()); /// \cite who2005dehydration
   }
   else if ((m_RestingFluidMass_kg - currentFluidMass_kg) / m_RestingPatientMass_kg < 0.02)
   {
-    m_data.GetPatient().SetEvent(cdm::PatientData_eEvent_Dehydration, false, m_data.GetSimulationTime());
+    m_data.GetPatient().SetEvent(cdm::ePatient_Event_Dehydration, false, m_data.GetSimulationTime());
   }
 
   // Total tissue volume
@@ -1132,11 +1143,11 @@ void Tissue::CalculateVitals()
   /*if (m_Muscleintracellular.GetSubstanceQuantity(*m_Calcium)->GetConcentration(MassPerVolumeUnit::g_Per_L) < 1.0)
   {
     /// \event Patient: Patient is fasciculating due to calcium deficiency
-    m_data.GetPatient().SetEvent(cdm::PatientData_eEvent_Fasciculation, true, m_data.GetSimulationTime());
+    m_data.GetPatient().SetEvent(cdm::ePatient_Event_Fasciculation, true, m_data.GetSimulationTime());
   }
   else if (m_Muscleintracellular.GetSubstanceQuantity(*m_Calcium)->GetConcentration(MassPerVolumeUnit::g_Per_L) > 3.0)
   {
-    m_data.GetPatient().SetEvent(cdm::PatientData_eEvent_Fasciculation, false, m_data.GetSimulationTime());
+    m_data.GetPatient().SetEvent(cdm::ePatient_Event_Fasciculation, false, m_data.GetSimulationTime());
   }*/
 }
 

@@ -3,14 +3,12 @@
 
 #pragma once
 #include "system/SESystem.h"
-PROTO_PUSH
-#include "bind/cdm/Environment.pb.h"
-PROTO_POP
-#include "system/environment/SEActiveConditioning.h"
-#include "system/environment/SEAppliedTemperature.h"
-#include "system/environment/SEEnvironmentalConditions.h"
-#include "system/environment/actions/SEChangeEnvironmentConditions.h"
-#include "system/environment/conditions/SEInitialEnvironmentConditions.h"
+class SEActiveConditioning;
+class SEAppliedTemperature;
+class SEEnvironmentalConditions;
+class SEChangeEnvironmentConditions;
+class SEInitialEnvironmentConditions;
+CDM_BIND_DECL(EnvironmentData)
 
 class CDM_DECL SEEnvironment : public SESystem
 {

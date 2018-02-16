@@ -2,22 +2,21 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-PROTO_PUSH
-#include "bind/cdm/Scenario.pb.h"
-PROTO_POP
-#include "substance/SESubstanceManager.h"
+class SECondition;
 //Patient Conditions
-#include "patient/conditions/SEChronicAnemia.h"
-#include "patient/conditions/SEChronicObstructivePulmonaryDisease.h"
-#include "patient/conditions/SEChronicHeartFailure.h"
-#include "patient/conditions/SEChronicRenalStenosis.h"
-#include "patient/conditions/SEChronicVentricularSystolicDysfunction.h"
-#include "patient/conditions/SEConsumeMeal.h"
-#include "patient/conditions/SELobarPneumonia.h"
-#include "patient/conditions/SEChronicPericardialEffusion.h"
-#include "patient/conditions/SEImpairedAlveolarExchange.h"
+class SEChronicAnemia;
+class SEChronicObstructivePulmonaryDisease;
+class SEChronicHeartFailure;
+class SEChronicRenalStenosis;
+class SEChronicVentricularSystolicDysfunction;
+class SEConsumeMeal;
+class SELobarPneumonia;
+class SEChronicPericardialEffusion;
+class SEImpairedAlveolarExchange;
 // Environment Conditions
-#include "system/environment/conditions/SEInitialEnvironmentConditions.h"
+class SEInitialEnvironmentConditions;
+class SESubstanceManager;
+CDM_BIND_DECL(ConditionListData)
 
 class CDM_DECL SEConditionManager : public Loggable
 {
@@ -74,7 +73,7 @@ public:
   SEInitialEnvironmentConditions* GetInitialEnvironmentConditions() const;
   
   // This is here in case you want to take all the conditions from an engine and write them out so you can reproduce the same engine state later
-  const cdm::ConditionListData& GetConditionList() { return m_Conditions; }// I don't really have anything that does that yet...
+  const cdm::ConditionListData& GetConditionList() { return *m_Conditions; }// I don't really have anything that does that yet...
 
 protected:
 
@@ -90,6 +89,6 @@ protected:
 
   SEInitialEnvironmentConditions*          m_InitialEnvironmentConditions;
 
-  cdm::ConditionListData                   m_Conditions;
+  cdm::ConditionListData*                  m_Conditions;
   std::stringstream m_ss;
 };

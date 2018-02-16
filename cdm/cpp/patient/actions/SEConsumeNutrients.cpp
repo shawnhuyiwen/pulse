@@ -3,12 +3,12 @@
 
 #include "stdafx.h"
 #include "patient/actions/SEConsumeNutrients.h"
-#include "properties/SEScalarMass.h"
-#include "properties/SEScalarMassPerTime.h"
-#include "properties/SEScalarVolume.h"
 PROTO_PUSH
 #include "bind/cdm/PatientActions.pb.h"
 PROTO_POP
+#include "properties/SEScalarMass.h"
+#include "properties/SEScalarMassPerTime.h"
+#include "properties/SEScalarVolume.h"
 
 SEConsumeNutrients::SEConsumeNutrients() : SEPatientAction()
 {

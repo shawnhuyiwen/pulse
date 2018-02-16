@@ -3,9 +3,41 @@
 
 #include "stdafx.h"
 #include "scenario/SEPatientActionCollection.h"
-#include "properties/SEScalarVolumePerTime.h"
+#include "patient/SEPatient.h"
+#include "patient/actions/SEAcuteStress.h"
+#include "patient/actions/SEAirwayObstruction.h"
+#include "patient/actions/SEApnea.h"
+#include "patient/actions/SEBrainInjury.h"
+#include "patient/actions/SEBronchoconstriction.h"
+#include "patient/actions/SECardiacArrest.h"
+#include "patient/actions/SEAsthmaAttack.h"
+#include "patient/actions/SEChestCompressionForce.h"
+#include "patient/actions/SEChestCompressionForceScale.h"
+#include "patient/actions/SEChestOcclusiveDressing.h"
+#include "patient/actions/SEConsciousRespiration.h"
+#include "patient/actions/SEConsumeNutrients.h"
+#include "patient/actions/SEExercise.h"
+#include "patient/actions/SEHemorrhage.h"
+#include "patient/actions/SEIntubation.h"
+#include "patient/actions/SEMechanicalVentilation.h"
+#include "patient/actions/SENeedleDecompression.h"
+#include "patient/actions/SEPericardialEffusion.h"
+#include "patient/actions/SETensionPneumothorax.h"
+#include "patient/actions/SESubstanceBolus.h"
+#include "patient/actions/SESubstanceCompoundInfusion.h"
+#include "patient/actions/SESubstanceInfusion.h"
+#include "patient/actions/SEUrinate.h"
+#include "patient/actions/SEPatientAssessmentRequest.h"
+
+#include "substance/SESubstanceManager.h"
+#include "substance/SESubstance.h"
 #include "substance/SESubstanceCompound.h"
 #include "substance/SESubstanceConcentration.h"
+
+PROTO_PUSH
+#include "bind/cdm/Scenario.pb.h"
+PROTO_POP
+#include "properties/SEScalarVolumePerTime.h"
 
 SEPatientActionCollection::SEPatientActionCollection(SESubstanceManager& substances) : Loggable(substances.GetLogger()), m_Substances(substances)
 {

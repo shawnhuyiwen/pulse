@@ -3,7 +3,8 @@
 
 #pragma once
 #include "system/SESystem.h"
-#include "system/physiology/SEPupillaryResponse.h"
+CDM_BIND_DECL(DrugSystemData)
+class SEPupillaryResponse;
 
 class CDM_DECL SEDrugSystem : public SESystem
 {

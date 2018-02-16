@@ -1,11 +1,12 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 #pragma once
-#include "substance/SESubstanceManager.h"
-class SEEnvironment;
-
-#include "system/environment/actions/SEChangeEnvironmentConditions.h"
-#include "system/environment/actions/SEThermalApplication.h"
+class SEEnvironmentAction;
+class SESubstanceManager;
+class SEThermalApplication;
+class SEChangeEnvironmentConditions;
+CDM_BIND_DECL(ActionListData)
+CDM_BIND_DECL(AnyEnvironmentActionData)
 
 class CDM_DECL SEEnvironmentActionCollection : public Loggable
 {

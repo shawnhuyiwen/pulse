@@ -7,6 +7,7 @@
 #include "PhysiologyEngine.h"
 #include "scenario/SECondition.h"
 #include "utils/TimingProfile.h"
+#include "properties/SEScalarTime.h"
 #include <google/protobuf/text_format.h>
 PROTO_PUSH
 #include "bind/cdm/Engine.pb.h"
@@ -14,6 +15,7 @@ PROTO_POP
 
 bool SETimedStabilization::StabilizeRestingState(PhysiologyEngine& engine)
 {
+  m_RestingStabilizationTime = new SEScalarTime();
   if (!GetRestingStabilizationTime().IsValid())
     return true;//No stabilization time requested
   return Stabilize(engine, GetRestingStabilizationTime());
@@ -133,12 +135,13 @@ SETimedStabilization::SETimedStabilization(Logger *logger) : SEEngineStabilizati
 SETimedStabilization::~SETimedStabilization()
 {
   Clear();
+  delete m_RestingStabilizationTime;
 }
 
 void SETimedStabilization::Clear()
 {
   SEEngineStabilization::Clear();
-  m_RestingStabilizationTime.Invalidate();
+  m_RestingStabilizationTime->Invalidate();
   SAFE_DELETE(m_FeedbackStabilizationTime);
   DELETE_MAP_SECOND(m_ConditionTimes);
 }
@@ -173,7 +176,7 @@ cdm::TimedStabilizationData* SETimedStabilization::Unload(const SETimedStabiliza
 void SETimedStabilization::Serialize(const SETimedStabilization& src, cdm::TimedStabilizationData& dst)
 {
   dst.set_trackingstabilization(src.m_TrackingStabilization);
-  dst.set_allocated_restingstabilizationtime(SEScalarTime::Unload(src.m_RestingStabilizationTime));
+  dst.set_allocated_restingstabilizationtime(SEScalarTime::Unload(*src.m_RestingStabilizationTime));
   if (src.HasFeedbackStabilizationTime())
     dst.set_allocated_feedbackstabilizationtime(SEScalarTime::Unload(*src.m_FeedbackStabilizationTime));
   for (auto cc : src.m_ConditionTimes)
@@ -208,11 +211,11 @@ bool SETimedStabilization::LoadFile(const std::string& file)
 
 SEScalarTime& SETimedStabilization::GetRestingStabilizationTime()
 {
-  return m_RestingStabilizationTime;
+  return *m_RestingStabilizationTime;
 }
 double SETimedStabilization::GetRestingStabilizationTime(const TimeUnit& unit) const
 {
-  return m_RestingStabilizationTime.GetValue(unit);
+  return m_RestingStabilizationTime->GetValue(unit);
 }
 
 bool SETimedStabilization::HasFeedbackStabilizationTime() const

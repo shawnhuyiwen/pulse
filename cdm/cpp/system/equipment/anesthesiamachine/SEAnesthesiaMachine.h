@@ -3,16 +3,17 @@
 
 #pragma once
 #include "system/SESystem.h"
-PROTO_PUSH
-#include "bind/cdm/AnesthesiaMachine.pb.h"
-PROTO_POP
 class SEEventHandler;
 class SESubstanceManager;
 class SEAnesthesiaMachineChamber;
 class SEAnesthesiaMachineOxygenBottle;
 class SEAnesthesiaMachineConfiguration;
 class SEGasSubstanceQuantity;
-class Serializer;
+CDM_BIND_DECL(AnesthesiaMachineData)
+PROTO_PUSH
+#include "bind/cdm/AnesthesiaMachineEnums.pb.h"
+PROTO_POP
+
 
 class CDM_DECL SEAnesthesiaMachine : public SESystem
 {
@@ -45,10 +46,10 @@ public:
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
-  virtual const std::map<cdm::AnesthesiaMachineData_eEvent, bool>& GetEventStates() const { return m_EventState; }
-  virtual void SetEvent(cdm::AnesthesiaMachineData_eEvent state, bool active, const SEScalarTime& time);
-  virtual bool IsEventActive(cdm::AnesthesiaMachineData_eEvent state) const;
-  virtual double GetEventDuration(cdm::AnesthesiaMachineData_eEvent type, const TimeUnit& unit) const;
+  virtual const std::map<cdm::eAnesthesiaMachine_Event, bool>& GetEventStates() const { return m_EventState; }
+  virtual void SetEvent(cdm::eAnesthesiaMachine_Event state, bool active, const SEScalarTime& time);
+  virtual bool IsEventActive(cdm::eAnesthesiaMachine_Event state) const;
+  virtual double GetEventDuration(cdm::eAnesthesiaMachine_Event type, const TimeUnit& unit) const;
   virtual void UpdateEvents(const SEScalarTime& timeStep);
   /** @name ForwardEvents
   *  @brief - Set a callback class to invoke when any event changes
@@ -59,8 +60,8 @@ public:
   */
   virtual void ForwardEvents(SEEventHandler* handler);
 
-  virtual cdm::AnesthesiaMachineData_eConnection GetConnection() const;
-  virtual void SetConnection(cdm::AnesthesiaMachineData_eConnection c);
+  virtual cdm::eAnesthesiaMachine_Connection GetConnection() const;
+  virtual void SetConnection(cdm::eAnesthesiaMachine_Connection c);
 
   virtual bool HasInletFlow() const;
   virtual SEScalarVolumePerTime& GetInletFlow();
@@ -74,15 +75,15 @@ public:
   virtual SEScalar0To1& GetOxygenFraction();
   virtual double GetOxygenFraction() const;
 
-  virtual cdm::AnesthesiaMachineData_eOxygenSource GetOxygenSource() const;
-  virtual void SetOxygenSource(cdm::AnesthesiaMachineData_eOxygenSource name);
+  virtual cdm::eAnesthesiaMachine_OxygenSource GetOxygenSource() const;
+  virtual void SetOxygenSource(cdm::eAnesthesiaMachine_OxygenSource name);
 
   virtual bool HasPositiveEndExpiredPressure() const;
   virtual SEScalarPressure& GetPositiveEndExpiredPressure();
   virtual double GetPositiveEndExpiredPressure(const PressureUnit& unit) const;
   
-  virtual cdm::AnesthesiaMachineData_ePrimaryGas GetPrimaryGas() const;
-  virtual void SetPrimaryGas(cdm::AnesthesiaMachineData_ePrimaryGas name);
+  virtual cdm::eAnesthesiaMachine_PrimaryGas GetPrimaryGas() const;
+  virtual void SetPrimaryGas(cdm::eAnesthesiaMachine_PrimaryGas name);
   
   virtual bool HasRespiratoryRate() const;
   virtual SEScalarFrequency& GetRespiratoryRate();
@@ -119,16 +120,16 @@ public:
 protected:
 
   SEEventHandler*                                        m_EventHandler;
-  std::map<cdm::AnesthesiaMachineData_eEvent, bool>      m_EventState;
-  std::map<cdm::AnesthesiaMachineData_eEvent, double>    m_EventDuration_s;
+  std::map<cdm::eAnesthesiaMachine_Event, bool>          m_EventState;
+  std::map<cdm::eAnesthesiaMachine_Event, double>        m_EventDuration_s;
 
-  cdm::AnesthesiaMachineData_eConnection                 m_Connection;
+  cdm::eAnesthesiaMachine_Connection                     m_Connection;
   SEScalarVolumePerTime*                                 m_InletFlow;
   SEScalar*                                              m_InspiratoryExpiratoryRatio;
   SEScalar0To1*                                          m_OxygenFraction;  
-  cdm::AnesthesiaMachineData_eOxygenSource               m_OxygenSource;
+  cdm::eAnesthesiaMachine_OxygenSource                   m_OxygenSource;
   SEScalarPressure*                                      m_PositiveEndExpiredPressure;  
-  cdm::AnesthesiaMachineData_ePrimaryGas                 m_PrimaryGas;
+  cdm::eAnesthesiaMachine_PrimaryGas                     m_PrimaryGas;
   SEScalarFrequency*                                     m_RespiratoryRate;
   SEScalarPressure*                                      m_ReliefValvePressure;
 

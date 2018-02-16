@@ -5,9 +5,8 @@
 class SESubstance;
 class SESubstanceManager;
 class SESubstanceConcentration;
-PROTO_PUSH
-#include "bind/cdm/Substance.pb.h"
-PROTO_POP
+CDM_BIND_DECL(SubstanceData)
+CDM_BIND_DECL(SubstanceData_CompoundData)
 
 class CDM_DECL SESubstanceCompound : public Loggable
 {

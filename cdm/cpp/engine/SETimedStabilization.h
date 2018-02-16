@@ -4,7 +4,6 @@
 #pragma once
 CDM_BIND_DECL(TimedStabilizationData)
 #include "engine/SEEngineStabilization.h"
-#include "properties/SEScalarTime.h"
 
 class CDM_DECL SETimedStabilization : public SEEngineStabilization
 {
@@ -45,7 +44,7 @@ protected:
 
   virtual bool Stabilize(PhysiologyEngine& engine, const SEScalarTime& time);
 
-  SEScalarTime m_RestingStabilizationTime;
+  SEScalarTime* m_RestingStabilizationTime;
   SEScalarTime* m_FeedbackStabilizationTime;
   std::map<std::string,SEScalarTime*> m_ConditionTimes;
 };

@@ -3,10 +3,10 @@
 
 #include "stdafx.h"
 #include "patient/actions/SEAsthmaAttack.h"
-#include "properties/SEScalar0To1.h"
 PROTO_PUSH
 #include "bind/cdm/PatientActions.pb.h"
 PROTO_POP
+#include "properties/SEScalar0To1.h"
 
 SEAsthmaAttack::SEAsthmaAttack() : SEPatientAction()
 {

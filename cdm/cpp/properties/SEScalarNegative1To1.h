@@ -3,6 +3,7 @@
 
 #pragma once
 #include "properties/SEScalar.h"
+namespace cdm { class ScalarNegative1To1Data; }
 
 class CDM_DECL SEScalarNegative1To1 : public SEScalar
 {

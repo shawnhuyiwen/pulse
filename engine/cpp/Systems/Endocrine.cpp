@@ -2,25 +2,28 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "Endocrine.h"
-#include "system/physiology/SEDrugSystem.h"
-#include "system/physiology/SECardiovascularSystem.h"
+#include "Systems/Endocrine.h"
+#include "Controller/Compartments.h"
+#include "Controller/Substances.h"
+PROTO_PUSH
+#include "bind/engine/EnginePhysiology.pb.h"
+PROTO_POP
+// Dependent Systems
 #include "system/physiology/SEEnergySystem.h"
-
-#include "patient/SEMeal.h"
-#include "patient/SENutrition.h"
-#include "patient/conditions/SEConsumeMeal.h"
-
-#include "properties/SEScalarPower.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarMass.h"
-#include "properties/SEScalarMassPerVolume.h"
+// Actions
+#include "scenario/SEActionManager.h"
+#include "scenario/SEPatientActionCollection.h"
+#include "patient/actions/SEAcuteStress.h"
+// CDM
+#include "patient/SEPatient.h"
+#include "substance/SESubstance.h"
+#include "compartment/fluid/SELiquidCompartment.h"
 #include "properties/SEScalarAmountPerTime.h"
+#include "properties/SEScalarMass.h"
 #include "properties/SEScalarMassPerAmount.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalarTemperature.h"
+#include "properties/SEScalarMassPerVolume.h"
+#include "properties/SEScalarTime.h"
 #include "properties/SEScalar0To1.h"
-
 
 Endocrine::Endocrine(PulseController& data) : SEEndocrineSystem(data.GetLogger()), m_data(data)
 {

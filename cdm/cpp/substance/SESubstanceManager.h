@@ -2,11 +2,10 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "substance/SESubstance.h"
-#include "substance/SESubstanceCompound.h"
-PROTO_PUSH
-#include "bind/cdm/Substance.pb.h"
-PROTO_POP
+class SESubstance;
+class SESubstanceCompound;
+CDM_BIND_DECL(SubstanceData)
+CDM_BIND_DECL(SubstanceData_CompoundData)
 
 class CDM_DECL SESubstanceManager : public Loggable
 {

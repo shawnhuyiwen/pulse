@@ -8,8 +8,9 @@ import java.util.*;
 import com.google.protobuf.TextFormat;
 import com.google.protobuf.TextFormat.ParseException;
 import com.kitware.physiology.cdm.Environment.EnvironmentData;
-import com.kitware.physiology.cdm.Environment.EnvironmentData.eSurroundingType;
+import com.kitware.physiology.cdm.EnvironmentEnums.eEnvironment.SurroundingType;
 import com.kitware.physiology.cdm.Substance.SubstanceData;
+import com.kitware.physiology.cdm.SubstanceEnums.eSubstance;
 
 import mil.tatrc.physiology.utilities.FileUtils;
 import mil.tatrc.physiology.utilities.Log;
@@ -23,7 +24,7 @@ import mil.tatrc.physiology.datamodel.substance.SESubstanceManager;
 
 public class SEEnvironmentalConditions
 {
-  protected eSurroundingType                surroundingType;
+  protected SurroundingType                 surroundingType;
   protected SEScalarMassPerVolume           airDensity;
   protected SEScalarLengthPerTime           airVelocity;
   protected SEScalarTemperature             ambientTemperature;
@@ -86,7 +87,7 @@ public class SEEnvironmentalConditions
   public void copy(SEEnvironmentalConditions from)
   {
     this.reset();
-    if(from.surroundingType != eSurroundingType.NullSurrounding)
+    if(from.surroundingType != SurroundingType.NullSurrounding)
       this.setSurroundingType(from.surroundingType);
     if(from.hasAirDensity())
       this.getAirDensity().set(from.getAirDensity());
@@ -144,7 +145,7 @@ public class SEEnvironmentalConditions
   public static void load(EnvironmentData.ConditionsData src, SEEnvironmentalConditions dst, SESubstanceManager substances)
   {
     dst.reset();
-    if (src.getSurroundingType() != eSurroundingType.UNRECOGNIZED)
+    if (src.getSurroundingType() != SurroundingType.UNRECOGNIZED)
       dst.setSurroundingType(src.getSurroundingType());
     if (src.hasAirDensity())
       SEScalarMassPerVolume.load(src.getAirDensity(),dst.getAirDensity());
@@ -176,7 +177,7 @@ public class SEEnvironmentalConditions
           Log.error("Substance does not exist for ambient gas : "+subData.getName());
           continue;
         }
-        if(sub.getState() != SubstanceData.eState.Gas)
+        if(sub.getState() != eSubstance.State.Gas)
         {
           Log.error("Environment Ambient Gas must be a gas, "+subData.getName()+" is not a gas...");
           continue;
@@ -195,7 +196,7 @@ public class SEEnvironmentalConditions
           Log.error("Substance does not exist for ambient aerosol : "+subData.getName());
           continue;
         }
-        if(sub.getState() != SubstanceData.eState.Solid && sub.getState() != SubstanceData.eState.Liquid)
+        if(sub.getState() != eSubstance.State.Solid && sub.getState() != eSubstance.State.Liquid)
         {
           Log.error("Environment Ambient Aerosol must be a liquid or a gas, "+subData.getName()+" is neither...");
           continue;
@@ -244,13 +245,13 @@ public class SEEnvironmentalConditions
   {
     return surroundingType != null;
   }
-  public eSurroundingType getSurroundingType()
+  public SurroundingType getSurroundingType()
   {
     return surroundingType;
   }
-  public void setSurroundingType(eSurroundingType st)
+  public void setSurroundingType(SurroundingType st)
   {
-    this.surroundingType = (st==eSurroundingType.UNRECOGNIZED) ? null : st;
+    this.surroundingType = (st==SurroundingType.UNRECOGNIZED) ? null : st;
   }
   public SEScalarMassPerVolume getAirDensity()
   {

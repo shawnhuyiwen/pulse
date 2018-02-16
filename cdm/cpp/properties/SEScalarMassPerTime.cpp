@@ -3,6 +3,9 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarMassPerTime.h"
+PROTO_PUSH
+#include "bind/cdm/Properties.pb.h"
+PROTO_POP
 
 const MassPerTimeUnit MassPerTimeUnit::g_Per_s("g/s");
 const MassPerTimeUnit MassPerTimeUnit::g_Per_min("g/min");

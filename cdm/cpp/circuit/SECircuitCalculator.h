@@ -3,8 +3,6 @@
 
 #pragma once
 #include "Eigen/Core"
-#include "utils/TimingProfile.h"
-#include "circuit/SECircuit.h"
 #include "utils/SmartEnum.h"
 
 #define CIRCUIT_CALCULATOR_TEMPLATE typename CircuitType, typename NodeType, typename PathType, typename CapacitanceUnit, typename FluxUnit, typename InductanceUnit, typename PotentialUnit, typename QuantityUnit, typename ResistanceUnit

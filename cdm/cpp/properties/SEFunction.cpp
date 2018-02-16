@@ -4,6 +4,9 @@
 #include "stdafx.h"
 #include "properties/SEFunction.h"
 #include "properties/SEScalar.h"//Utils
+PROTO_PUSH
+#include "bind/cdm/Properties.pb.h"
+PROTO_POP
 
 static std::stringstream err;
 

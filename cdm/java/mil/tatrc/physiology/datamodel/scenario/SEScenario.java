@@ -10,16 +10,14 @@ import java.util.Set;
 
 import com.google.protobuf.TextFormat;
 import com.google.protobuf.TextFormat.ParseException;
-import com.kitware.physiology.cdm.AnesthesiaMachine.AnesthesiaMachineData.eConnection;
-import com.kitware.physiology.cdm.AnesthesiaMachine.AnesthesiaMachineData.eOxygenSource;
-import com.kitware.physiology.cdm.AnesthesiaMachine.AnesthesiaMachineData.ePrimaryGas;
-import com.kitware.physiology.cdm.PatientAssessments.PatientAssessmentData.eType;
 import com.kitware.physiology.cdm.Enums.eSide;
 import com.kitware.physiology.cdm.Enums.eSwitch;
 import com.kitware.physiology.cdm.Scenario.AnyActionData;
 import com.kitware.physiology.cdm.Scenario.ScenarioData;
-import com.kitware.physiology.cdm.Scenario.DataRequestData.eCategory;
+import com.kitware.physiology.cdm.ScenarioEnums.eDataRequest;
 import com.kitware.physiology.pulse.Engine;
+import com.kitware.physiology.cdm.AnesthesiaMachineEnums.eAnesthesiaMachine;
+import com.kitware.physiology.cdm.PatientAssessmentEnums.ePatientAssessment;
 
 import mil.tatrc.physiology.datamodel.actions.SEAction;
 import mil.tatrc.physiology.datamodel.actions.SEAdvanceTime;
@@ -59,7 +57,7 @@ public class SEScenario
 			s.getInitialParameters().getConditions().add(cond);
 
 			SEDataRequest dr = new SEDataRequest();
-			dr.setCategory(eCategory.Physiology);
+			dr.setCategory(eDataRequest.Category.Physiology);
 			dr.setPropertyName("Weight");
 			dr.setUnit("kg");
 			dr.setPrecision(1);
@@ -75,13 +73,13 @@ public class SEScenario
 
 			SESubstance sub = mgr.getSubstance("Oxygen");
 			SEAnesthesiaMachineConfiguration anes = new SEAnesthesiaMachineConfiguration();
-			anes.getConfiguration().setConnection(eConnection.Tube);
+			anes.getConfiguration().setConnection(eAnesthesiaMachine.Connection.Tube);
 			anes.getConfiguration().getInletFlow().setValue(5.0, VolumePerTimeUnit.L_Per_min);
 			anes.getConfiguration().getInspiratoryExpiratoryRatio().setValue(0.5);
 			anes.getConfiguration().getOxygenFraction().setValue(0.23);
-			anes.getConfiguration().setOxygenSource(eOxygenSource.Wall);
+			anes.getConfiguration().setOxygenSource(eAnesthesiaMachine.OxygenSource.Wall);
 			anes.getConfiguration().getPositiveEndExpiredPressure().setValue(1.0, PressureUnit.cmH2O);
-			anes.getConfiguration().setPrimaryGas(ePrimaryGas.Nitrogen);
+			anes.getConfiguration().setPrimaryGas(eAnesthesiaMachine.PrimaryGas.Nitrogen);
 			anes.getConfiguration().getRespiratoryRate().setValue(16.0, FrequencyUnit.Per_min);
 			anes.getConfiguration().getVentilatorPressure().setValue(10.5, PressureUnit.cmH2O);      
 			anes.getConfiguration().getOxygenBottleOne().getVolume().setValue(660.0, VolumeUnit.L);
@@ -97,7 +95,7 @@ public class SEScenario
 			//SEPatientAssessment ass = new SEPatientAssessment();
 			//s.getActions().add(cbc);
 			SEPatientAssessmentRequest pa = new SEPatientAssessmentRequest();
-			pa.setType(eType.ComprehensiveMetabolicPanel);
+			pa.setType(ePatientAssessment.Type.ComprehensiveMetabolicPanel);
 			s.getActions().add(pa);
 
 			nd.setState(eSwitch.On);

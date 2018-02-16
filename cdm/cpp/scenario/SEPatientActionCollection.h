@@ -2,35 +2,37 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "patient/SEPatient.h"
-#include "patient/actions/SEAcuteStress.h"
-#include "patient/actions/SEAirwayObstruction.h"
-#include "patient/actions/SEApnea.h"
-#include "patient/actions/SEBrainInjury.h"
-#include "patient/actions/SEBronchoconstriction.h"
-#include "patient/actions/SECardiacArrest.h"
-#include "patient/actions/SEAsthmaAttack.h"
-#include "patient/actions/SEChestCompressionForce.h"
-#include "patient/actions/SEChestCompressionForceScale.h"
-#include "patient/actions/SEChestOcclusiveDressing.h"
-#include "patient/actions/SEConsciousRespiration.h"
-#include "patient/actions/SEConsumeNutrients.h"
-#include "patient/actions/SEExercise.h"
-#include "patient/actions/SEHemorrhage.h"
-#include "patient/actions/SEIntubation.h"
-#include "patient/actions/SEMechanicalVentilation.h"
-#include "patient/actions/SENeedleDecompression.h"
-#include "patient/actions/SEPericardialEffusion.h"
-#include "patient/actions/SETensionPneumothorax.h"
-#include "patient/actions/SESubstanceBolus.h"
-#include "patient/actions/SESubstanceCompoundInfusion.h"
-#include "patient/actions/SESubstanceInfusion.h"
-#include "patient/actions/SEUrinate.h"
-#include "patient/actions/SEPatientAssessmentRequest.h"
-
-#include "substance/SESubstanceManager.h"
-
-#include "system/physiology/SEGastrointestinalSystem.h"
+class SEPatientAction;
+class SEAcuteStress;
+class SEAirwayObstruction;
+class SEApnea;
+class SEBrainInjury;
+class SEBronchoconstriction;
+class SECardiacArrest;
+class SEAsthmaAttack;
+class SEChestCompression;
+class SEChestCompressionForce;
+class SEChestCompressionForceScale;
+class SEChestOcclusiveDressing;
+class SEConsciousRespiration;
+class SEConsumeNutrients;
+class SEExercise;
+class SEHemorrhage;
+class SEIntubation;
+class SEMechanicalVentilation;
+class SENeedleDecompression;
+class SEPericardialEffusion;
+class SETensionPneumothorax;
+class SESubstanceBolus;
+class SESubstanceCompoundInfusion;
+class SESubstanceInfusion;
+class SEUrinate;
+class SEPatientAssessmentRequest;
+class SESubstance;
+class SESubstanceCompound;
+class SESubstanceManager;
+CDM_BIND_DECL(ActionListData)
+CDM_BIND_DECL(AnyPatientActionData)
 
 class CDM_DECL SEPatientActionCollection : public Loggable
 {

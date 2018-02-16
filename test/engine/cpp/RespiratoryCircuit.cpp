@@ -4,21 +4,31 @@
 
 #include "EngineTest.h"
 #include "Controller/Controller.h"
+#include "Controller/Substances.h"
+#include "Controller/Circuits.h"
+#include "Controller/Compartments.h"
+#include "PulseConfiguration.h"
+
+#include "patient/SEPatient.h"
 #include "circuit/fluid/SEFluidCircuit.h"
+#include "circuit/fluid/SEFluidCircuitCalculator.h"
 #include "substance/SESubstanceFraction.h"
 #include "compartment/SECompartmentManager.h"
 #include "compartment/fluid/SEGasCompartmentGraph.h"
 #include "compartment/fluid/SELiquidCompartmentGraph.h"
 #include "compartment/substances/SEGasSubstanceQuantity.h"
+#include "system/environment/SEEnvironment.h"
+#include "system/environment/SEEnvironmentalConditions.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalar0To1.h"
+#include "properties/SEScalarMass.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalarFlowCompliance.h"
 #include "properties/SEScalarTime.h"
 #include "properties/SEScalarInverseVolume.h"
 #include "properties/SEScalarMassPerVolume.h"
-#include "patient/SEPatient.h"
+#include "utils/TimingProfile.h"
 #include "utils/DataTrack.h"
 #include <math.h>
 
@@ -96,7 +106,7 @@ void PulseEngineTest::RespiratoryCircuitAndTransportTest(RespiratoryConfiguratio
   }
 
   SEFluidCircuitPath *driverPath = rCircuit->GetPath(pulse::RespiratoryPath::EnvironmentToRespiratoryMuscle);
-  SEGasTransporter    gtxpt(VolumePerTimeUnit::L_Per_s, VolumeUnit::L, VolumeUnit::L, NoUnit::unitless, pc.GetLogger());
+  SEGasTransporter    gtxpt(VolumePerTimeUnit::L_Per_s, VolumeUnit::L, VolumeUnit::L, pc.GetLogger());
   SELiquidTransporter ltxpt(VolumePerTimeUnit::mL_Per_s, VolumeUnit::mL, MassUnit::ug, MassPerVolumeUnit::ug_Per_mL, pc.GetLogger());
   SEFluidCircuitCalculator calc(FlowComplianceUnit::L_Per_cmH2O, VolumePerTimeUnit::L_Per_s, FlowInertanceUnit::cmH2O_s2_Per_L, PressureUnit::cmH2O, VolumeUnit::L, FlowResistanceUnit::cmH2O_s_Per_L, pc.GetLogger());
   

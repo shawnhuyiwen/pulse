@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.google.protobuf.TextFormat;
 import com.google.protobuf.TextFormat.ParseException;
+import com.kitware.physiology.cdm.PatientAssessmentEnums.ePatientAssessment;
 import com.kitware.physiology.cdm.PatientAssessments.CompleteBloodCountData;
 import com.kitware.physiology.cdm.PatientAssessments.ComprehensiveMetabolicPanelData;
 import com.kitware.physiology.cdm.PatientAssessments.PatientAssessmentData;
@@ -213,7 +214,7 @@ public class PulseEngine extends Pulse
     if(assessment instanceof SEPulmonaryFunctionTest)
     {
     	PulmonaryFunctionTestData.Builder b = PulmonaryFunctionTestData.newBuilder();
-      String str = nativeGetAssessment(this.nativeObj, PatientAssessmentData.eType.PulmonaryFunctionTest.ordinal());
+      String str = nativeGetAssessment(this.nativeObj, ePatientAssessment.Type.PulmonaryFunctionTest.ordinal());
       TextFormat.getParser().merge(str, b);
       SEPulmonaryFunctionTest.load(b.build(),((SEPulmonaryFunctionTest)assessment));
       return true;
@@ -222,7 +223,7 @@ public class PulseEngine extends Pulse
     if(assessment instanceof SECompleteBloodCount)
     {
     	CompleteBloodCountData.Builder b = CompleteBloodCountData.newBuilder();
-      String str = nativeGetAssessment(this.nativeObj, PatientAssessmentData.eType.CompleteBloodCount.ordinal());
+      String str = nativeGetAssessment(this.nativeObj, ePatientAssessment.Type.CompleteBloodCount.ordinal());
       TextFormat.getParser().merge(str, b);
       SECompleteBloodCount.load(b.build(),((SECompleteBloodCount)assessment));
       return true;
@@ -231,7 +232,7 @@ public class PulseEngine extends Pulse
     if(assessment instanceof SEComprehensiveMetabolicPanel)
     {
     	ComprehensiveMetabolicPanelData.Builder b = ComprehensiveMetabolicPanelData.newBuilder();
-      String str = nativeGetAssessment(this.nativeObj, PatientAssessmentData.eType.ComprehensiveMetabolicPanel.ordinal());
+      String str = nativeGetAssessment(this.nativeObj, ePatientAssessment.Type.ComprehensiveMetabolicPanel.ordinal());
       TextFormat.getParser().merge(str, b);
       SEComprehensiveMetabolicPanel.load(b.build(),((SEComprehensiveMetabolicPanel)assessment));
       return true;
@@ -240,7 +241,7 @@ public class PulseEngine extends Pulse
     if(assessment instanceof SEUrinalysis)
     {
     	UrinalysisData.Builder b = UrinalysisData.newBuilder();
-      String str = nativeGetAssessment(this.nativeObj, PatientAssessmentData.eType.Urinalysis.ordinal());
+      String str = nativeGetAssessment(this.nativeObj, ePatientAssessment.Type.Urinalysis.ordinal());
       TextFormat.getParser().merge(str, b);
       SEUrinalysis.load(b.build(),((SEUrinalysis)assessment));
       return true;

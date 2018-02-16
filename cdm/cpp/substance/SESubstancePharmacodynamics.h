@@ -2,10 +2,8 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "system/physiology/SEPupillaryResponse.h"
-PROTO_PUSH
-#include "bind/cdm/Substance.pb.h"
-PROTO_POP
+class SEPupillaryResponse;
+CDM_BIND_DECL(SubstanceData_PharmacodynamicsData)
 
 class CDM_DECL SESubstancePharmacodynamics : Loggable
 {

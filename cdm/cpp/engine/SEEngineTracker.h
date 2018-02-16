@@ -3,20 +3,19 @@
 
 #pragma once
 
-#include "properties/SEScalar.h"
-#include "compartment/fluid/SEGasCompartment.h"
-#include "compartment/fluid/SEGasCompartmentLink.h"
-#include "compartment/fluid/SELiquidCompartment.h"
-#include "compartment/fluid/SELiquidCompartmentLink.h"
-#include "compartment/tissue/SETissueCompartment.h"
-#include "scenario/SEDataRequestManager.h"
-#include "utils/DataTrack.h"
+class DataTrack;
 class SESystem; 
 class SEPatient;
 class SEEnvironment;
 class PhysiologyEngine;
 class SESubstanceManager;
 class SECompartmentManager;
+class SEDataRequest;
+class SEDataRequestManager;
+class SEGasCompartment;
+class SEGasSubstanceQuantity;
+class SEThermalCompartment;
+#include "properties/SEScalar.h"
 
 enum class CompartmentUpdate {None,
                               InFlow, OutFlow,
@@ -66,7 +65,7 @@ public:
   void Clear();// Remove all requests and close the results file
     
   DataTrack& GetDataTrack();
-  SEDataRequestManager& GetDataRequestManager() { return m_DataRequestMgr; }
+  SEDataRequestManager& GetDataRequestManager() { return *m_DataRequestMgr; }
 
   void ResetFile();// Close file, so next Track Data will re hook up everything and make a new file
 
@@ -82,11 +81,11 @@ public:
   
 protected:
   bool                         m_ForceConnection;
-  DataTrack                    m_DataTrack;
+  DataTrack*                   m_DataTrack;
 
   std::stringstream            m_ss;
   std::ofstream                m_ResultsStream;
-  SEDataRequestManager         m_DataRequestMgr;
+  SEDataRequestManager*        m_DataRequestMgr;
   
   SEPatient&                   m_Patient;
   SESubstanceManager&          m_SubMgr;

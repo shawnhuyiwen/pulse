@@ -4,6 +4,9 @@
 #include "EngineHowTo.h"
 
 // Include the various types you will be using in your code
+#include "scenario/SEDataRequestManager.h"
+#include "engine/SEEngineTracker.h"
+#include "compartment/SECompartmentManager.h"
 #include "patient/actions/SEConsumeNutrients.h"
 #include "system/physiology/SEGastrointestinalSystem.h"
 #include "system/physiology/SECardiovascularSystem.h"
@@ -21,8 +24,6 @@
 #include "properties/SEScalarTime.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
-#include "engine/SEEngineTracker.h"
-#include "compartment/SECompartmentManager.h"
 
 //--------------------------------------------------------------------------------------------------
 /// \brief

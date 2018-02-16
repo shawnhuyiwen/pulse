@@ -3,6 +3,7 @@
 
 #pragma once
 #include "properties/SEScalar.h"
+CDM_BIND_DECL(ScalarElectricChargeData)
 
 class CDM_DECL ElectricChargeUnit : public CCompoundUnit
 {

@@ -4,7 +4,12 @@
 #include "EngineHowTo.h"
 
 // Include the various types you will be using in your code
+#include "scenario/SEDataRequestManager.h"
+#include "engine/SEEngineTracker.h"
+#include "compartment/SECompartmentManager.h"
+#include "compartment/fluid/SEGasCompartment.h"
 #include "system/environment/SEActiveConditioning.h"
+#include "system/environment/SEEnvironmentalConditions.h"
 #include "system/environment/actions/SEChangeEnvironmentConditions.h"
 #include "system/environment/actions/SEThermalApplication.h"
 #include "system/physiology/SEBloodChemistrySystem.h"
@@ -27,8 +32,6 @@
 #include "properties/SEScalarPower.h"
 #include "properties/SEScalarFlowResistance.h"
 #include "substance/SESubstanceFraction.h"
-#include "engine/SEEngineTracker.h"
-#include "compartment/SECompartmentManager.h"
 
 #include "system/environment/conditions/SEInitialEnvironmentConditions.h"
 
@@ -114,7 +117,7 @@ void HowToEnvironmentChange()
   // The core temperature follows the skin temperature, and the metabolic rate increases due to shivering.
   SEChangeEnvironmentConditions env(pe->GetSubstanceManager());
   SEEnvironmentalConditions& conditions = env.GetConditions();
-  conditions.SetSurroundingType(cdm::EnvironmentData_eSurroundingType_Water);
+  conditions.SetSurroundingType(cdm::eEnvironment_SurroundingType_Water);
   conditions.GetAirVelocity().SetValue(0, LengthPerTimeUnit::m_Per_s);
   conditions.GetAmbientTemperature().SetValue(10.0, TemperatureUnit::C);
   conditions.GetAtmosphericPressure().SetValue(760., PressureUnit::mmHg);
@@ -141,7 +144,7 @@ void HowToEnvironmentChange()
 
   // The patient is removed from the water and returns to the normal environment. 
   // The skin temperature rises, leading to a subsequent rise in core temperature
-  conditions.SetSurroundingType(cdm::EnvironmentData_eSurroundingType_Water);
+  conditions.SetSurroundingType(cdm::eEnvironment_SurroundingType_Water);
   conditions.GetAirVelocity().SetValue(0.1, LengthPerTimeUnit::m_Per_s);
   conditions.GetAmbientTemperature().SetValue(22.0, TemperatureUnit::C);
   conditions.GetAtmosphericPressure().SetValue(760., PressureUnit::mmHg);

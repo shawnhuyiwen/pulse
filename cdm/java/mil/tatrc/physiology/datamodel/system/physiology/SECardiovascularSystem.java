@@ -3,7 +3,7 @@
 package mil.tatrc.physiology.datamodel.system.physiology;
 
 import com.kitware.physiology.cdm.Physiology.CardiovascularSystemData;
-import com.kitware.physiology.cdm.Physiology.eHeartRhythm;
+import com.kitware.physiology.cdm.PhysiologyEnums.eHeartRhythm;
 
 import mil.tatrc.physiology.datamodel.properties.*;
 import mil.tatrc.physiology.datamodel.system.SESystem;

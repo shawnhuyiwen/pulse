@@ -2,6 +2,9 @@
    See accompanying NOTICE file for details.*/
 #include "stdafx.h"
 #include "system/environment/SEActiveConditioning.h"
+PROTO_PUSH
+#include "bind/cdm/Environment.pb.h"
+PROTO_POP
 #include "properties/SEScalarArea.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarPower.h"

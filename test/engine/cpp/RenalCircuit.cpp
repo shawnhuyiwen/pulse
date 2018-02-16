@@ -5,19 +5,36 @@
 
 #include "EngineTest.h"
 #include "Controller/Controller.h"
-#include <math.h>
+#include "Controller/Circuits.h"
+#include "Controller/Compartments.h"
+#include "Controller/Substances.h"
+#include "PulseConfiguration.h"
 #include "Systems/Renal.h"
+
+#include "patient/SEPatient.h"
 #include "system/physiology/SEBloodChemistrySystem.h"
 #include "circuit/fluid/SEFluidCircuit.h"
+#include "circuit/fluid/SEFluidCircuitCalculator.h"
+#include "compartment/fluid/SELiquidCompartment.h"
 #include "compartment/fluid/SELiquidCompartmentGraph.h"
+#include "compartment/substances/SELiquidSubstanceQuantity.h"
+#include "substance/SESubstance.h"
 #include "substance/SESubstanceFraction.h"
+#include "substance/SESubstanceClearance.h"
+#include "scenario/SEActionManager.h"
+#include "scenario/SEPatientActionCollection.h"
+#include "patient/actions/SEUrinate.h"
 #include "properties/SEScalarFlowResistance.h"
+#include "properties/SEScalarMass.h"
 #include "properties/SEScalarMassPerTime.h"
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarAmountPerVolume.h"
 #include "properties/SEScalarVolumePerTimePressureArea.h"
 #include "properties/SEScalar0To1.h"
+#include "properties/SEScalarTime.h"
 #include "utils/TimingProfile.h"
+#include "utils/DataTrack.h"
+#include <math.h>
 
 void PulseEngineTest::RenalCircuitAndTransportTest(const std::string& sTestDirectory)
 {
@@ -301,7 +318,7 @@ void PulseEngineTest::RenalFeedbackTest(RenalFeedback feedback, const std::strin
     for (unsigned int i = 0; i < 3e6; i++)
     {
       //Flag beginning of cardiac cycle - this will make it just use the current value instead of a running average
-      patient->SetEvent(cdm::PatientData_eEvent_StartOfCardiacCycle, true, eventTime);
+      patient->SetEvent(cdm::ePatient_Event_StartOfCardiacCycle, true, eventTime);
 
       GFRSteady = false;
       RBFSteady = false;

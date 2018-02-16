@@ -5,14 +5,6 @@ option java_package = "com.kitware.physiology.pulse";
 import "cdm/Scenario.proto";
 import "engine/EngineConfiguration.proto";
 
-enum eAirwayMode
-  {
-    Free                                                     = 0;
-    AnesthesiaMachine                                        = 1;
-    Inhaler                                                  = 2;
-    MechanicalVentilator                                     = 3;
-  }
-
 message ScenarioData
 {
   cdm.ScenarioData                        Scenario           = 1;

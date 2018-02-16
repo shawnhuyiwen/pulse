@@ -3,6 +3,7 @@
 
 #pragma once
 #include "scenario/SECondition.h"
+CDM_BIND_DECL(PatientConditionData)
 CDM_BIND_DECL(AnyPatientConditionData)
 
 class CDM_DECL SEPatientCondition : public SECondition

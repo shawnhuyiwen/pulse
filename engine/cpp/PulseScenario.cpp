@@ -3,6 +3,10 @@
 
 #include "stdafx.h"
 #include "PulseScenario.h"
+#include "PulseConfiguration.h"
+PROTO_PUSH
+#include "bind/engine/Engine.pb.h"
+PROTO_POP
 #include <google/protobuf/text_format.h>
 
 PulseScenario::PulseScenario(SESubstanceManager& subMgr) : SEScenario(subMgr)

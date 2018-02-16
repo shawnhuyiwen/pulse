@@ -3,10 +3,13 @@
 
 #include "stdafx.h"
 #include "system/physiology/SENervousSystem.h"
-#include "substance/SESubstanceManager.h"
+#include "system/physiology/SEPupillaryResponse.h"
 #include "properties/SEScalarPressurePerVolume.h"
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEScalarLength.h"
+PROTO_PUSH
+#include "bind/cdm/Physiology.pb.h"
+PROTO_POP
 
 SENervousSystem::SENervousSystem(Logger* logger) : SESystem(logger)
 {

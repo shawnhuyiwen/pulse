@@ -4,6 +4,9 @@
 #include "stdafx.h"
 #include "system/physiology/SEPupillaryResponse.h"
 #include "properties/SEScalarNegative1To1.h"
+PROTO_PUSH
+#include "bind/cdm/Physiology.pb.h"
+PROTO_POP
 
 SEPupillaryResponse::SEPupillaryResponse(Logger* logger)
 {

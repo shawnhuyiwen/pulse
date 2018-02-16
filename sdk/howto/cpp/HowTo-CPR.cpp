@@ -4,6 +4,11 @@
 #include "EngineHowTo.h"
 
 // Include the various types you will be using in your code
+#include "scenario/SEDataRequestManager.h"
+#include "engine/SEEngineTracker.h"
+#include "compartment/SECompartmentManager.h"
+#include "patient/actions/SECardiacArrest.h"
+#include "patient/actions/SEChestCompressionForce.h"
 #include "patient/SEPatient.h"
 #include "patient/actions/SEHemorrhage.h"
 #include "system/physiology/SEBloodChemistrySystem.h"
@@ -20,11 +25,7 @@
 #include "properties/SEScalarTime.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
-#include "engine/SEEngineTracker.h"
-#include "compartment/SECompartmentManager.h"
 #include "utils/SEEventHandler.h"
-#include "patient/actions/SECardiacArrest.h"
-#include "patient/actions/SEChestCompressionForce.h"
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
@@ -40,12 +41,12 @@ class MyListener : public SEEventHandler
 {
 public:
   MyListener(Logger* logger) : SEEventHandler(logger) {};
-  virtual void HandlePatientEvent(cdm::PatientData_eEvent type, bool active, const SEScalarTime* time) override
+  virtual void HandlePatientEvent(cdm::ePatient_Event type, bool active, const SEScalarTime* time) override
   {
     GetLogger()->Info(std::stringstream() <<"Recieved Patient Event : " << type);
   }
 
-  virtual void HandleAnesthesiaMachineEvent(cdm::AnesthesiaMachineData_eEvent type, bool active, const SEScalarTime* time) override
+  virtual void HandleAnesthesiaMachineEvent(cdm::eAnesthesiaMachine_Event type, bool active, const SEScalarTime* time) override
   {
     GetLogger()->Info(std::stringstream() <<"Recieved Anesthesia Machine Event : " << type);
   }

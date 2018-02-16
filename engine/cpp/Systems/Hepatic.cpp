@@ -2,7 +2,10 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "Hepatic.h"
+#include "Systems/Hepatic.h"
+PROTO_PUSH
+#include "bind/engine/EnginePhysiology.pb.h"
+PROTO_POP
 
 Hepatic::Hepatic(PulseController& data) : SEHepaticSystem(data.GetLogger()), m_data(data)
 {
