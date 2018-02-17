@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/cdm/cdm.iml" filepath="$PROJECT_DIR$/cdm/cdm.iml" />
+      <module fileurl="file://$PROJECT_DIR$/test/cdm/cdm_test.iml" filepath="$PROJECT_DIR$/test/cdm/cdm_test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/test/driver/driver.iml" filepath="$PROJECT_DIR$/test/driver/driver.iml" />
+      <module fileurl="file://$PROJECT_DIR$/engine/engine.iml" filepath="$PROJECT_DIR$/engine/engine.iml" />
+      <module fileurl="file://$PROJECT_DIR$/test/engine/engine_test.iml" filepath="$PROJECT_DIR$/test/engine/engine_test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sdk/howto/howto.iml" filepath="$PROJECT_DIR$/sdk/howto/howto.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../builds/engine/protobuf/src/protobuf/java/core/src/main/protobuf.iml" filepath="$PROJECT_DIR$/../../builds/engine/protobuf/src/protobuf/java/core/src/main/protobuf.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../builds/engine/Pulse/schema/schema.iml" filepath="$PROJECT_DIR$/../../builds/engine/Pulse/schema/schema.iml" />
+    </modules>
+  </component>
+</project>
