@@ -22,8 +22,8 @@
 #include "system/equipment/anesthesiamachine/SEAnesthesiaMachine.h"
 #include "system/equipment/anesthesiamachine/SEAnesthesiaMachineOxygenBottle.h"
 #include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineConfiguration.h"
-#include "system/equipment/Inhaler/SEInhaler.h"
-#include "system/equipment/Inhaler/actions/SEInhalerConfiguration.h"
+#include "system/equipment/inhaler/SEInhaler.h"
+#include "system/equipment/inhaler/actions/SEInhalerConfiguration.h"
 
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarElectricPotential.h"
