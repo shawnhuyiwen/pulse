@@ -3,7 +3,14 @@
 
 #include "EngineTest.h"
 #include "Controller/Controller.h"
+#include "Controller/Circuits.h"
+#include "Systems/Cardiovascular.h"
+#include "PulseConfiguration.h"
+
+#include "patient/SEPatient.h"
 #include "circuit/fluid/SEFluidCircuit.h"
+#include "circuit/fluid/SEFluidCircuitCalculator.h"
+#include "substance/SESubstanceFraction.h"
 #include "compartment/fluid/SELiquidCompartmentGraph.h"
 #include "properties/SEScalarFlowCompliance.h"
 #include "properties/SEScalarFlowResistance.h"
@@ -21,7 +28,6 @@
 #include "utils/testing/SETestReport.h"
 #include "utils/testing/SETestCase.h"
 #include "utils/testing/SETestSuite.h"
-#include "substance/SESubstanceFraction.h"
 
 void CalculateMultipliers(double& dsResistanceMultiplier, double& usResistanceMultiplier, const double& map_mmHg, const double& cvp_mmHg, const SEFluidCircuitPath* brainResistanceDownstream, const SEFluidCircuitPath* brainResistanceUpstream)
 {

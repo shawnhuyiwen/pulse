@@ -2,8 +2,10 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "bind/cdm/Patient.pb.h"
-#include "bind/cdm/AnesthesiaMachine.pb.h"
+PROTO_PUSH
+#include "bind/cdm/PatientEnums.pb.h"
+#include "bind/cdm/AnesthesiaMachineEnums.pb.h"
+PROTO_POP
 
 class CDM_DECL SEEventHandler : public Loggable
 {
@@ -11,6 +13,6 @@ public:
   SEEventHandler(Logger* logger) : Loggable(logger) {};
   virtual ~SEEventHandler(){};
 
-  virtual void HandlePatientEvent(cdm::PatientData_eEvent type, bool active, const SEScalarTime* time = nullptr)=0;
-  virtual void HandleAnesthesiaMachineEvent(cdm::AnesthesiaMachineData_eEvent type, bool active, const SEScalarTime* time = nullptr) = 0;
+  virtual void HandlePatientEvent(cdm::ePatient_Event type, bool active, const SEScalarTime* time = nullptr)=0;
+  virtual void HandleAnesthesiaMachineEvent(cdm::eAnesthesiaMachine_Event type, bool active, const SEScalarTime* time = nullptr) = 0;
 };

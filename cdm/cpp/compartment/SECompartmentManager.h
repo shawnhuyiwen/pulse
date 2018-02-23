@@ -17,8 +17,9 @@ class SEThermalCompartment;
 class SEThermalCompartmentLink;
 class SETissueCompartment;
 PROTO_PUSH
-#include "bind/cdm/Compartment.pb.h"
+#include "bind/cdm/CompartmentEnums.pb.h"
 PROTO_POP
+CDM_BIND_DECL(CompartmentManagerData)
 
 class CDM_DECL SECompartmentManager : public Loggable
 {
@@ -43,9 +44,9 @@ public:
   virtual void                                                UpdateLinks(SEGasCompartmentGraph& graph);
   virtual void                                                UpdateLinks(SELiquidCompartmentGraph& graph);
 
-  virtual bool                                                HasCompartment(cdm::eCompartmentType type, const std::string& name) const;
-  virtual SECompartment*                                      GetCompartment(cdm::eCompartmentType type, const std::string& name);
-  virtual const SECompartment*                                GetCompartment(cdm::eCompartmentType type, const std::string& name) const;
+  virtual bool                                                HasCompartment(cdm::eCompartment_Type type, const std::string& name) const;
+  virtual SECompartment*                                      GetCompartment(cdm::eCompartment_Type type, const std::string& name);
+  virtual const SECompartment*                                GetCompartment(cdm::eCompartment_Type type, const std::string& name) const;
 
   virtual SEGasCompartment&                                   CreateGasCompartment(const std::string& name);
   virtual void                                                DeleteGasCompartment(const std::string& name);

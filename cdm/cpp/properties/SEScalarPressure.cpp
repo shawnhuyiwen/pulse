@@ -3,6 +3,9 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarPressure.h"
+PROTO_PUSH
+#include "bind/cdm/Properties.pb.h"
+PROTO_POP
 
 const PressureUnit PressureUnit::Pa("Pa");
 const PressureUnit PressureUnit::mmHg("mmHg");

@@ -5,7 +5,7 @@ package mil.tatrc.physiology.datamodel.compartment;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.kitware.physiology.cdm.Compartment.eCompartmentType;
+import com.kitware.physiology.cdm.CompartmentEnums.eCompartment;
 
 public class SECompartmentManager
 {
@@ -27,7 +27,7 @@ public class SECompartmentManager
     tissue.clear();
   }
   
-  public SECompartment GetCompartment(String name, eCompartmentType type)
+  public SECompartment GetCompartment(String name, eCompartment.Type type)
   {
     switch(type)
     {

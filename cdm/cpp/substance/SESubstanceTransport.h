@@ -99,7 +99,20 @@ protected:
   const IntensiveUnit &m_IntensiveUnit;
 };
 
-using SEGasTransporter = SESubstanceTransporter<SEGasTransportGraph, VolumePerTimeUnit, VolumeUnit, VolumeUnit, NoUnit>;
-using SELiquidTransporter = SESubstanceTransporter<SELiquidTransportGraph, VolumePerTimeUnit, VolumeUnit, MassUnit, MassPerVolumeUnit>;
+class SEGasTransporter : public SESubstanceTransporter<SEGasTransportGraph, VolumePerTimeUnit, VolumeUnit, VolumeUnit, NoUnit>
+{
+public:
+  SEGasTransporter(Logger* logger);
+  SEGasTransporter(const VolumePerTimeUnit& fUnit, const VolumeUnit& qUnit, const VolumeUnit& eUnit, Logger* logger);
+  ~SEGasTransporter();
+};
+
+class SELiquidTransporter : public SESubstanceTransporter<SELiquidTransportGraph, VolumePerTimeUnit, VolumeUnit, MassUnit, MassPerVolumeUnit>
+{
+public:
+  SELiquidTransporter(Logger* logger);
+  SELiquidTransporter(const VolumePerTimeUnit& fUnit, const VolumeUnit& qUnit, const MassUnit& eUnit, const MassPerVolumeUnit& iUnit, Logger* logger);
+  ~SELiquidTransporter();
+};
 
 #include "substance/SESubstanceTransport.inl"

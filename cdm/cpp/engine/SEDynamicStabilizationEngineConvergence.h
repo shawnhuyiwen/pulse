@@ -3,9 +3,9 @@
 
 #pragma once
 CDM_BIND_DECL(DynamicStabilizationData_EngineConvergenceData)
-#include "engine/SEEngineTracker.h"
-#include "engine/SEDynamicStabilizationPropertyConvergence.h"
-#include "properties/SEScalarTime.h"
+class SEDynamicStabilizationPropertyConvergence;
+class SEDataRequest;
+class SEDataRequestManager;
 
 class CDM_DECL SEDynamicStabilizationEngineConvergence : public Loggable
 {
@@ -26,24 +26,24 @@ protected:
 
 public:
 
-  virtual SEScalarTime& GetConvergenceTime() { return m_ConvergenceTime; }
-  virtual double GetConvergenceTime(const TimeUnit& unit) const { return m_ConvergenceTime.GetValue(unit); }
+  virtual SEScalarTime& GetConvergenceTime();
+  virtual double GetConvergenceTime(const TimeUnit& unit) const;
 
-  virtual SEScalarTime& GetMinimumReactionTime() { return m_MinimumReactionTime; }
-  virtual double GetMinimumReactionTime(const TimeUnit& unit) const { return m_MinimumReactionTime.GetValue(unit); }
+  virtual SEScalarTime& GetMinimumReactionTime();
+  virtual double GetMinimumReactionTime(const TimeUnit& unit) const;
 
-  virtual SEScalarTime& GetMaximumAllowedStabilizationTime() { return m_MaximumAllowedStabilizationTime; }
-  virtual double GetMaximumAllowedStabilizationTime(const TimeUnit& unit) const { return m_MaximumAllowedStabilizationTime.GetValue(unit); }
+  virtual SEScalarTime& GetMaximumAllowedStabilizationTime();
+  virtual double GetMaximumAllowedStabilizationTime(const TimeUnit& unit) const;
 
   virtual const std::vector<SEDynamicStabilizationPropertyConvergence*>& GetPropertyConvergence() const;
   virtual SEDynamicStabilizationPropertyConvergence& CreatePropertyConvergence(SEDataRequest& dr, double percentError);
 
 protected:
-  SEScalarTime                                            m_ConvergenceTime;
-  SEScalarTime                                            m_MinimumReactionTime;
-  SEScalarTime                                            m_MaximumAllowedStabilizationTime;
+  SEScalarTime*                                           m_ConvergenceTime;
+  SEScalarTime*                                           m_MinimumReactionTime;
+  SEScalarTime*                                           m_MaximumAllowedStabilizationTime;
 
-  SEDataRequestManager                                    m_DataRequestMgr;
+  SEDataRequestManager*                                   m_DataRequestMgr;
   std::vector<SEDynamicStabilizationPropertyConvergence*> m_PropertyConvergence;
 };
 

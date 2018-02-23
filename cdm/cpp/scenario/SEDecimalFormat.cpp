@@ -3,9 +3,9 @@
 
 #include "stdafx.h"
 #include <iomanip> 
-#include "properties/SEDecimalFormat.h"
+#include "scenario/SEDecimalFormat.h"
 PROTO_PUSH
-#include "bind/cdm/Properties.pb.h"
+#include "bind/cdm/Scenario.pb.h"
 PROTO_PUSH
 
 SEDecimalFormat::SEDecimalFormat(const SEDecimalFormat* dfault)
@@ -23,7 +23,7 @@ SEDecimalFormat::~SEDecimalFormat()
 void SEDecimalFormat::Clear()
 {
   m_Precision = 6;
-  m_Notation = cdm::DecimalFormatData_eType_SystemFormatting;
+  m_Notation = cdm::eDecimalFormat_Type_SystemFormatting;
 }
 
 void SEDecimalFormat::Set(const SEDecimalFormat& f)
@@ -64,11 +64,11 @@ std::streamsize SEDecimalFormat::GetPrecision()
   return m_Precision;
 }
 
-void SEDecimalFormat::SetNotation(cdm::DecimalFormatData::eType n)
+void SEDecimalFormat::SetNotation(cdm::eDecimalFormat_Type n)
 {
   m_Notation = n;
 }
-cdm::DecimalFormatData::eType SEDecimalFormat::GetNotation()
+cdm::eDecimalFormat_Type SEDecimalFormat::GetNotation()
 {
   return m_Notation;
 }
@@ -77,16 +77,16 @@ void SEDecimalFormat::SetStream(std::ofstream& s)
 {
   switch (m_Notation)
   {
-  case cdm::DecimalFormatData_eType_SystemFormatting:
+  case cdm::eDecimalFormat_Type_SystemFormatting:
     s << std::fixed << std::setprecision(m_Precision);
     break;
-  case cdm::DecimalFormatData_eType_DefaultFloat:
+  case cdm::eDecimalFormat_Type_DefaultFloat:
     s << std::defaultfloat << std::setprecision(m_Precision);
     break;
-  case cdm::DecimalFormatData_eType_FixedMantissa:
+  case cdm::eDecimalFormat_Type_FixedMantissa:
     s << std::fixed << std::setprecision(m_Precision);
     break;
-  case cdm::DecimalFormatData_eType_SignificantDigits:
+  case cdm::eDecimalFormat_Type_SignificantDigits:
     s << std::scientific << std::setprecision(m_Precision);
   }
 }

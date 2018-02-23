@@ -4,7 +4,10 @@
 #include "EngineHowTo.h"
 
 // Include the various types you will be using in your code
+#include "scenario/SEDataRequestManager.h"
+#include "engine/SEEngineTracker.h"
 #include "utils/SEEventHandler.h"
+#include "compartment/SECompartmentManager.h"
 #include "patient/actions/SESubstanceBolus.h"
 #include "system/physiology/SEBloodChemistrySystem.h"
 #include "system/physiology/SECardiovascularSystem.h"
@@ -20,8 +23,6 @@
 #include "properties/SEScalarTime.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
-#include "engine/SEEngineTracker.h"
-#include "compartment/SECompartmentManager.h"
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
@@ -76,7 +77,7 @@ void HowToBolusDrug()
   SESubstanceBolus bolus(*succs);
   bolus.GetConcentration().SetValue(4820,MassPerVolumeUnit::ug_Per_mL);
   bolus.GetDose().SetValue(20,VolumeUnit::mL);
-  bolus.SetAdminRoute(cdm::SubstanceBolusData_eAdministrationRoute_Intravenous);
+  bolus.SetAdminRoute(cdm::eSubstanceAdministration_Route_Intravenous);
   // Pulse also supports Intramuscular as an admin route as well
   pe->ProcessAction(bolus);
   pe->GetLogger()->Info("Giving the patient Succinylcholine.");

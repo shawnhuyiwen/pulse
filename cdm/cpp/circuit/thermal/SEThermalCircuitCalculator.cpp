@@ -4,6 +4,13 @@
 #include "stdafx.h"
 #include "circuit/thermal/SEThermalCircuitCalculator.h"
 
+#include "properties/SEScalarHeatCapacitance.h"
+#include "properties/SEScalarPower.h"
+#include "properties/SEScalarHeatInductance.h"
+#include "properties/SEScalarTemperature.h"
+#include "properties/SEScalarEnergy.h"
+#include "properties/SEScalarHeatResistance.h"
+
 
 SEThermalCircuitCalculator::SEThermalCircuitCalculator(Logger* logger) : SECircuitCalculator<SEThermalCircuit, SEThermalCircuitNode,SEThermalCircuitPath, HeatCapacitanceUnit, PowerUnit, HeatInductanceUnit, TemperatureUnit, EnergyUnit, HeatResistanceUnit>(
   HeatCapacitanceUnit::J_Per_K, PowerUnit::W, HeatInductanceUnit::K_s_Per_W, TemperatureUnit::K, EnergyUnit::J,HeatResistanceUnit::K_Per_W,logger)

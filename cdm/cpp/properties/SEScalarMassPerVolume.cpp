@@ -3,6 +3,9 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarMassPerVolume.h"
+PROTO_PUSH
+#include "bind/cdm/Properties.pb.h"
+PROTO_POP
 
 const MassPerVolumeUnit MassPerVolumeUnit::g_Per_dL("g/dL");
 const MassPerVolumeUnit MassPerVolumeUnit::g_Per_cm3("g/cm^3");

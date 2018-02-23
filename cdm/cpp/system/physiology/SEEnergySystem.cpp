@@ -12,6 +12,9 @@
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalarAmountPerTime.h"
 #include "properties/SEScalarPressure.h"
+PROTO_PUSH
+#include "bind/cdm/Physiology.pb.h"
+PROTO_POP
 
 SEEnergySystem::SEEnergySystem(Logger* logger) : SESystem(logger)
 {

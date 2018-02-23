@@ -4,7 +4,6 @@
 #include "stdafx.h"
 #include "patient/actions/SEConsciousRespiration.h"
 #include "patient/actions/SEConsciousRespirationCommand.h"
-#include "substance/SESubstanceManager.h"
 
 #include "patient/actions/SEBreathHold.h"
 #include "patient/actions/SEForcedExhale.h"

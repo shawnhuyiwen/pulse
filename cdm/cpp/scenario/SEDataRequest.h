@@ -2,20 +2,17 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "properties/SEDecimalFormat.h"
-PROTO_PUSH
-#include "bind/cdm/Scenario.pb.h"
-PROTO_POP
 class SESubstanceManager;
 class CCompoundUnit;
-class SEDecimalFormat;
 class SEDataRequestManager;
+CDM_BIND_DECL(DataRequestData)
+#include "scenario/SEDecimalFormat.h"
 
 class CDM_DECL SEDataRequest : public SEDecimalFormat
 {
   friend class SEDataRequestManager;
 protected:
-  SEDataRequest(cdm::DataRequestData_eCategory category, const SEDecimalFormat* dfault = nullptr);
+  SEDataRequest(cdm::eDataRequest_Category category, const SEDecimalFormat* dfault = nullptr);
 public:
 
   virtual ~SEDataRequest();
@@ -34,7 +31,7 @@ public:
   virtual size_t HashCode() const;
 
   // The Request Category
-  virtual cdm::DataRequestData_eCategory GetCategory() const;
+  virtual cdm::eDataRequest_Category GetCategory() const;
 
   // OPTIONAL The Compartment Name holding the property
   virtual std::string GetCompartmentName() const;
@@ -71,7 +68,7 @@ public:
 
 protected:
 
-  cdm::DataRequestData_eCategory m_Category;
+  cdm::eDataRequest_Category m_Category;
   std::string                    m_CompartmentName;
   std::string                    m_SubstanceName;
   std::string                    m_PropertyName;

@@ -4,11 +4,22 @@
 #pragma once
 #include "Controller/System.h"
 #include "system/physiology/SERespiratorySystem.h"
-#include "patient/SEPatient.h"
-#include "circuit/fluid/SEFluidCircuitCalculator.h"
-#include "utils/RunningAverage.h"
-
+class SEPatient;
+class SEPatientActionCollection;
+class SEGasCompartment;
+class SEGasSubstanceQuantity;
+class SELiquidCompartment;
+class SELiquidSubstanceQuantity;
+class SEFluidCircuit;
+class SEFluidCircuitNode;
+class SEFluidCircuitPath;
+class SEFluidCircuitCalculator;
+class SEGasTransporter;
+class SELiquidTransporter;
+class RunningAverage;
+class SEConsciousRespirationCommand;
 class SEPulmonaryFunctionTest;
+PULSE_BIND_DECL(RespiratorySystemData)
 
 /**
 * @brief The %Respiratory System class handles the analysis and storage of
@@ -112,7 +123,7 @@ private:
   double m_TopBreathPleuralPressure_cmH2O;
   double m_LastCardiacCycleBloodPH;
   double m_PreviousTotalLungVolume_L;
-  RunningAverage m_BloodPHRunningAverage;
+  RunningAverage* m_BloodPHRunningAverage;
   //   Respiratory Driver
   bool   m_BreathingCycle;
   double m_ArterialO2PartialPressure_mmHg;
@@ -130,8 +141,8 @@ private:
   double m_PreviousTargetAlveolarVentilation_L_Per_min;
   double m_VentilationFrequency_Per_min;
   double m_VentilationToTidalVolumeSlope;
-  RunningAverage m_ArterialO2RunningAverage_mmHg;
-  RunningAverage m_ArterialCO2RunningAverage_mmHg;
+  RunningAverage* m_ArterialO2RunningAverage_mmHg;
+  RunningAverage* m_ArterialCO2RunningAverage_mmHg;
   //   Conscious Breathing
   bool   m_ConsciousBreathing;
   double m_ConsciousRespirationPeriod_s;
@@ -218,7 +229,7 @@ private:
   SEFluidCircuitPath*        m_ConnectionToMouth;
   SEFluidCircuitPath*        m_GroundToConnection;
 
-  SEFluidCircuitCalculator   m_Calculator;
-  SEGasTransporter           m_GasTransporter;
-  SELiquidTransporter        m_AerosolTransporter;
+  SEFluidCircuitCalculator*  m_Calculator;
+  SEGasTransporter*          m_GasTransporter;
+  SELiquidTransporter*       m_AerosolTransporter;
 };

@@ -3,14 +3,27 @@
 
 #include "EngineTest.h"
 #include "Controller/Controller.h"
+#include "Controller/Substances.h"
+#include "Controller/Circuits.h"
+#include "Controller/Compartments.h"
+#include "Systems/Cardiovascular.h"
+#include "Systems/Saturation.h"
+#include "PulseConfiguration.h"
+#include "patient/SEPatient.h"
+#include "substance/SESubstanceFraction.h"
 #include "circuit/fluid/SEFluidCircuit.h"
+#include "circuit/fluid/SEFluidCircuitCalculator.h"
+#include "compartment/fluid/SEGasCompartment.h"
 #include "compartment/fluid/SELiquidCompartmentGraph.h"
+#include "system/environment/SEEnvironment.h"
+#include "system/environment/SEEnvironmentalConditions.h"
 #include "properties/SEScalarFlowCompliance.h"
 #include "properties/SEScalarFlowResistance.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalarTime.h"
+#include "properties/SEScalarMass.h"
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEScalarLength.h"
@@ -21,7 +34,9 @@
 #include "utils/testing/SETestReport.h"
 #include "utils/testing/SETestCase.h"
 #include "utils/testing/SETestSuite.h"
-#include "substance/SESubstanceFraction.h"
+PROTO_PUSH
+#include "bind/cdm/Patient.pb.h"
+PROTO_POP
 
 enum Driver { Sinusoid = 0, Heart };
 
@@ -61,7 +76,7 @@ void PulseEngineTest::TuneCardiovascularCircuitTest(const std::string& sTestDire
 
   SEPatient patient(nullptr);
   patient.SetName("TuneTest");
-  patient.SetSex(cdm::PatientData_eSex_Male);
+  patient.SetSex(cdm::ePatient_Sex_Male);
 
   double HRLower = 60;
   double HRUpper = 100;

@@ -3,6 +3,9 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarVolumePerTime.h"
+PROTO_PUSH
+#include "bind/cdm/Properties.pb.h"
+PROTO_POP
 
 const VolumePerTimeUnit VolumePerTimeUnit::L_Per_s("L/s");
 const VolumePerTimeUnit VolumePerTimeUnit::mL_Per_s("mL/s");

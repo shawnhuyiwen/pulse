@@ -3,7 +3,15 @@
 
 #include "stdafx.h"
 #include "system/environment/SEEnvironment.h"
-
+#include "system/environment/SEActiveConditioning.h"
+#include "system/environment/SEAppliedTemperature.h"
+#include "system/environment/SEEnvironmentalConditions.h"
+#include "system/environment/actions/SEChangeEnvironmentConditions.h"
+#include "system/environment/conditions/SEInitialEnvironmentConditions.h"
+PROTO_PUSH
+#include "bind/cdm/Environment.pb.h"
+PROTO_POP
+#include "substance/SESubstanceManager.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarHeatConductancePerArea.h"
 #include "properties/SEScalarHeatResistanceArea.h"

@@ -3,10 +3,9 @@
 
 #pragma once
 #include "compartment/SECompartmentLink.h"
-#include "substance/SESubstanceTransport.h"
-#include "compartment/thermal/SEThermalCompartment.h"
-#include "circuit/thermal/SEThermalCircuitPath.h"
 CDM_BIND_DECL(ThermalCompartmentLinkData);
+class SEThermalCompartment;
+class SEThermalCircuitPath;
 
 class CDM_DECL SEThermalCompartmentLink : public SECompartmentLink
 {

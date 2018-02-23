@@ -3,6 +3,7 @@
 
 #pragma once
 #include "properties/SEFunction.h"
+CDM_BIND_DECL(FunctionVolumeVsTimeData)
 
 class CDM_DECL SEFunctionVolumeVsTime : public SEFunction
 {

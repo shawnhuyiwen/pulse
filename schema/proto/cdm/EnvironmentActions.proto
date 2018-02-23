@@ -38,5 +38,4 @@ message ThermalApplicationData
   EnvironmentData.ActiveConditioningData ActiveCooling            = 3; /**<< @brief @copybrief Environment_ActiveCoolingData */
   EnvironmentData.AppliedTemperatureData AppliedTemperature       = 4; /**<< @brief @copybrief Environment_AppliedTemperatureData */
   bool                                   AppendToPrevious         = 5; /**<< @brief Appends data provided to the engine without removing currect applications. @details For example if a previous aciton turned on heating, and you wanted to add cooling, set append to true, if you want tto cool and also have the heating off, set to false */
-
 }

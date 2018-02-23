@@ -4,8 +4,13 @@
 #include "stdafx.h"
 #include "engine/SEDynamicStabilization.h"
 #include "engine/SEDynamicStabilizationLedger.h"
+#include "engine/SEDynamicStabilizationEngineConvergence.h"
+#include "engine/SEDynamicStabilizationPropertyConvergence.h"
+#include "engine/SEEngineTracker.h"
 #include "PhysiologyEngine.h"
 #include "scenario/SECondition.h"
+#include "scenario/SEDataRequest.h"
+#include "properties/SEScalarTime.h"
 #include "utils/TimingProfile.h"
 #include <google/protobuf/text_format.h>
 PROTO_PUSH
@@ -13,26 +18,30 @@ PROTO_PUSH
 PROTO_POP
 
 
-SEDynamicStabilization::SEDynamicStabilization(Logger *logger) : SEEngineStabilization(logger), 
-m_RestingConvergence(logger), m_FeedbackConvergence(logger), m_MergedConditions(logger)
+SEDynamicStabilization::SEDynamicStabilization(Logger *logger) : SEEngineStabilization(logger)
 {
-  
+  m_MergedConditions = new SEDynamicStabilizationEngineConvergence(logger);
+  m_RestingConvergence = new SEDynamicStabilizationEngineConvergence(logger);
+  m_FeedbackConvergence= new SEDynamicStabilizationEngineConvergence(logger);
 }
 
 SEDynamicStabilization::~SEDynamicStabilization()
 {
   Clear();
+  delete m_MergedConditions;
+  delete m_RestingConvergence;
+  delete m_FeedbackConvergence;
 }
 
 
 void SEDynamicStabilization::Clear()
 {
   SEEngineStabilization::Clear();
-  m_MergedConditions.m_PropertyConvergence.clear();// \todo Make copies of stabilization Convergence
-  m_MergedConditions.Clear();
+  m_MergedConditions->m_PropertyConvergence.clear();// \todo Make copies of stabilization Convergence
+  m_MergedConditions->Clear();
   m_ActiveConditions.clear();
-  m_RestingConvergence.Clear();
-  m_FeedbackConvergence.Clear();
+  m_RestingConvergence->Clear();
+  m_FeedbackConvergence->Clear();
   DELETE_MAP_SECOND(m_ConditionConvergence);
 }
 
@@ -67,9 +76,9 @@ cdm::DynamicStabilizationData* SEDynamicStabilization::Unload(const SEDynamicSta
 void SEDynamicStabilization::Serialize(const SEDynamicStabilization& src, cdm::DynamicStabilizationData& dst)
 {
   dst.set_trackingstabilization(src.m_TrackingStabilization);
-  dst.set_allocated_restingconvergence(SEDynamicStabilizationEngineConvergence::Unload(src.m_RestingConvergence));
+  dst.set_allocated_restingconvergence(SEDynamicStabilizationEngineConvergence::Unload(*src.m_RestingConvergence));
   if (src.HasFeedbackConvergence())
-    dst.set_allocated_feedbackconvergence(SEDynamicStabilizationEngineConvergence::Unload(src.m_FeedbackConvergence));
+    dst.set_allocated_feedbackconvergence(SEDynamicStabilizationEngineConvergence::Unload(*src.m_FeedbackConvergence));
   for (auto &c : src.m_ConditionConvergence)
   {
     cdm::DynamicStabilizationData_EngineConvergenceData* cData = SEDynamicStabilizationEngineConvergence::Unload(*c.second);
@@ -100,24 +109,24 @@ bool SEDynamicStabilization::LoadFile(const std::string& file)
 
 SEDynamicStabilizationEngineConvergence& SEDynamicStabilization::GetRestingConvergence()
 {
-  return m_RestingConvergence;
+  return *m_RestingConvergence;
 }
 const SEDynamicStabilizationEngineConvergence& SEDynamicStabilization::GetRestingConvergence() const
 {
-  return m_RestingConvergence;
+  return *m_RestingConvergence;
 }
 
 bool SEDynamicStabilization::HasFeedbackConvergence() const
 {
-  return !m_FeedbackConvergence.m_PropertyConvergence.empty();
+  return !m_FeedbackConvergence->m_PropertyConvergence.empty();
 }
 SEDynamicStabilizationEngineConvergence& SEDynamicStabilization::GetFeedbackConvergence()
 {
-  return m_FeedbackConvergence;
+  return *m_FeedbackConvergence;
 }
 const SEDynamicStabilizationEngineConvergence* SEDynamicStabilization::GetFeedbackConvergence() const
 {
-  return &m_FeedbackConvergence;
+  return m_FeedbackConvergence;
 }
 
 
@@ -165,14 +174,14 @@ const std::map<std::string, SEDynamicStabilizationEngineConvergence*>& SEDynamic
 bool SEDynamicStabilization::StabilizeRestingState(PhysiologyEngine& engine)
 {
   Info("Converging to a steady state");
-  return Stabilize(engine, m_RestingConvergence);
+  return Stabilize(engine, *m_RestingConvergence);
 }
 bool SEDynamicStabilization::StabilizeFeedbackState(PhysiologyEngine& engine)
 {
   if (!HasFeedbackConvergence())
     return true;
   Info("Converging feedback to a steady state");
-  return Stabilize(engine, m_FeedbackConvergence);
+  return Stabilize(engine, *m_FeedbackConvergence);
 }
 bool SEDynamicStabilization::StabilizeConditions(PhysiologyEngine& engine, const std::vector<const SECondition*>& conditions)
 {
@@ -203,7 +212,7 @@ bool SEDynamicStabilization::StabilizeConditions(PhysiologyEngine& engine, const
       return false;
     }
     Info("Converging provided conditions to a steady state");
-    return Stabilize(engine, m_MergedConditions);
+    return Stabilize(engine, *m_MergedConditions);
   }
 }
 
@@ -336,8 +345,8 @@ bool SEDynamicStabilization::Merge()
   // From there find the PropertyConvergence with the largest %diff
   // Add that pointer to the m_MergedConditions (will need new friend method as that method should not be public)
   Info("Merging Conditions");
-  m_MergedConditions.m_PropertyConvergence.clear();// \todo Make copies of stabilization Convergence
-  m_MergedConditions.Clear();
+  m_MergedConditions->m_PropertyConvergence.clear();// \todo Make copies of stabilization Convergence
+  m_MergedConditions->Clear();
   double time_s;
   double maxConv_s = 0;
   double maxMinStabilize_s = 0;
@@ -400,18 +409,18 @@ bool SEDynamicStabilization::Merge()
       m_ss << "Not all conditions contain " << i->first << " in convergence Convergence. Making convergence on this property optional.";
       Warning(m_ss);
     }
-    m_MergedConditions.m_PropertyConvergence.push_back(pConv);
+    m_MergedConditions->m_PropertyConvergence.push_back(pConv);
   }
 
   DELETE_MAP_SECOND(cMap);// Clean up our Map  
-  m_MergedConditions.GetConvergenceTime().SetValue(maxConv_s, TimeUnit::s);
-  m_ss << "Merged Convergence Time : " << m_MergedConditions.GetConvergenceTime();
+  m_MergedConditions->GetConvergenceTime().SetValue(maxConv_s, TimeUnit::s);
+  m_ss << "Merged Convergence Time : " << m_MergedConditions->GetConvergenceTime();
   Info(m_ss);
-  m_MergedConditions.GetMinimumReactionTime().SetValue(maxMinStabilize_s, TimeUnit::s);
-  m_ss << "Merged Minimum Reaction Time : " << m_MergedConditions.GetMinimumReactionTime();
+  m_MergedConditions->GetMinimumReactionTime().SetValue(maxMinStabilize_s, TimeUnit::s);
+  m_ss << "Merged Minimum Reaction Time : " << m_MergedConditions->GetMinimumReactionTime();
   Info(m_ss);
-  m_MergedConditions.GetMaximumAllowedStabilizationTime().SetValue(maxMaxStabilize_s, TimeUnit::s);
-  m_ss << "Merged Maximum Allowed Stabilization Time : " << m_MergedConditions.GetMaximumAllowedStabilizationTime();
+  m_MergedConditions->GetMaximumAllowedStabilizationTime().SetValue(maxMaxStabilize_s, TimeUnit::s);
+  m_ss << "Merged Maximum Allowed Stabilization Time : " << m_MergedConditions->GetMaximumAllowedStabilizationTime();
   Info(m_ss);
   return true;
 }

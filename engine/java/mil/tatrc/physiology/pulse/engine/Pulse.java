@@ -6,7 +6,9 @@ import java.io.File;
 import java.util.*;
 
 import com.kitware.physiology.cdm.Patient.PatientData;
+import com.kitware.physiology.cdm.PatientEnums.ePatient;
 import com.kitware.physiology.cdm.AnesthesiaMachine.AnesthesiaMachineData;
+import com.kitware.physiology.cdm.AnesthesiaMachineEnums.eAnesthesiaMachine;
 
 import mil.tatrc.physiology.datamodel.compartment.*;
 import mil.tatrc.physiology.datamodel.datarequests.*;
@@ -189,13 +191,13 @@ public class Pulse
     {
       case 0:
         if(eventHandler!=null)
-          eventHandler.handlePatientEvent(PatientData.eEvent.values()[event],active,new SEScalarTime(time_s,TimeUnit.s));
-        this.patient.setEvent(PatientData.eEvent.values()[event],active);
+          eventHandler.handlePatientEvent(ePatient.Event.values()[event],active,new SEScalarTime(time_s,TimeUnit.s));
+        this.patient.setEvent(ePatient.Event.values()[event],active);
         break;
       case 1:
         if(eventHandler!=null)
-          eventHandler.handleAnesthesiaMachineEvent(AnesthesiaMachineData.eEvent.values()[event],active,new SEScalarTime(time_s,TimeUnit.s));
-        this.anesthesiaMachine.setEvent(AnesthesiaMachineData.eEvent.values()[event],active);
+          eventHandler.handleAnesthesiaMachineEvent(eAnesthesiaMachine.Event.values()[event],active,new SEScalarTime(time_s,TimeUnit.s));
+        this.anesthesiaMachine.setEvent(eAnesthesiaMachine.Event.values()[event],active);
         break;
       default:
           Log.error("Unsupported event type "+type);

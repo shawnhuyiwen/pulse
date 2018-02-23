@@ -3,6 +3,7 @@
 
 #pragma once
 #include "system/SESystem.h"
+CDM_BIND_DECL(RenalSystemData)
 
 class CDM_DECL SERenalSystem : public SESystem
 {

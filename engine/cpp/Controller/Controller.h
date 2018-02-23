@@ -2,38 +2,42 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "PulseConfiguration.h"
-#include "Controller/Circuits.h"
-#include "Controller/Compartments.h"
-#include "Controller/Substances.h"
+#include "CommonDataModel.h"
+PROTO_PUSH
+#include "bind/engine/EngineEnums.pb.h"
+PROTO_POP
+
+class PulseConfiguration;
+class PulseCircuits;
+class PulseCompartments;
+class PulseSubstances;
 
 // CDM 
-#include "scenario/SEActionManager.h"
-#include "scenario/SEConditionManager.h"
-#include "properties/SEScalarTime.h"
+class SEActionManager;
+class SEConditionManager;
 
-#include "utils/DataTrack.h"
-#include "engine/SEEngineTracker.h"
+class DataTrack;
+class SEEngineTracker;
 
 // Pulse
-#include "Systems/BloodChemistry.h"
-#include "Systems/Cardiovascular.h"
-#include "Systems/Endocrine.h"
-#include "Systems/Energy.h"
-#include "Systems/Gastrointestinal.h"
-#include "Systems/Hepatic.h"
-#include "Systems/Nervous.h"
-#include "Systems/Renal.h"
-#include "Systems/Respiratory.h"
-#include "Systems/Drugs.h"
-#include "Systems/Tissue.h"
-#include "Systems/Environment.h"
+class BloodChemistry;
+class Cardiovascular;
+class Endocrine;
+class Energy;
+class Gastrointestinal;
+class Hepatic;
+class Nervous;
+class Renal;
+class Respiratory;
+class Drugs;
+class Tissue;
+class Environment;
 
-#include "Equipment/ECG.h"
-#include "Equipment/AnesthesiaMachine.h"
-#include "Equipment/Inhaler.h"
+class ECG;
+class AnesthesiaMachine;
+class Inhaler;
 
-#include "Systems/Saturation.h"
+class SaturationCalculator;
 
 class PulseScenarioExec;
 enum class EngineState { NotReady=0, Initialization, InitialStabilization, AtInitialStableState, SecondaryStabilization, AtSecondaryStableState, Active };
@@ -55,55 +59,55 @@ public:
   virtual ~PulseController();
 
  
-  EngineState                             GetState() { return m_State; }
+  EngineState                             GetState();
 
   DataTrack&                              GetDataTrack();
-  SaturationCalculator&                   GetSaturationCalculator() { return *m_SaturationCalculator; }
+  SaturationCalculator&                   GetSaturationCalculator();
 
-  PulseSubstances&                        GetSubstances() { return *m_Substances; }
+  PulseSubstances&                        GetSubstances();
 
-  SEPatient&                              GetPatient() { return *m_Patient; }
+  SEPatient&                              GetPatient();
   bool                                    GetPatientAssessment(SEPatientAssessment& assessment);
 
-  SEBloodChemistrySystem&                 GetBloodChemistry() { return *m_BloodChemistrySystem; }
-  SECardiovascularSystem&                 GetCardiovascular() { return *m_CardiovascularSystem; }
-  SEDrugSystem&                           GetDrugs() { return *m_DrugSystem; }
-  SEEndocrineSystem&                      GetEndocrine() { return *m_EndocrineSystem; }
-  SEEnergySystem&                         GetEnergy() { return *m_EnergySystem; }
-  SEGastrointestinalSystem&               GetGastrointestinal() { return *m_GastrointestinalSystem; }
-  SEHepaticSystem&                        GetHepatic() { return *m_HepaticSystem; }
-  SENervousSystem&                        GetNervous() { return *m_NervousSystem; }
-  SERenalSystem&                          GetRenal() { return *m_RenalSystem; }
-  SERespiratorySystem&                    GetRespiratory() { return *m_RespiratorySystem; }
-  SETissueSystem&                         GetTissue() { return *m_TissueSystem; }
+  SEBloodChemistrySystem&                 GetBloodChemistry();
+  SECardiovascularSystem&                 GetCardiovascular();
+  SEDrugSystem&                           GetDrugs();
+  SEEndocrineSystem&                      GetEndocrine();
+  SEEnergySystem&                         GetEnergy();
+  SEGastrointestinalSystem&               GetGastrointestinal();
+  SEHepaticSystem&                        GetHepatic();
+  SENervousSystem&                        GetNervous();
+  SERenalSystem&                          GetRenal();
+  SERespiratorySystem&                    GetRespiratory();
+  SETissueSystem&                         GetTissue();
 
-  SEEnvironment&                          GetEnvironment() { return *m_Environment; }
+  SEEnvironment&                          GetEnvironment();
 
-  SEAnesthesiaMachine&                    GetAnesthesiaMachine() { return *m_AnesthesiaMachine; }
+  SEAnesthesiaMachine&                    GetAnesthesiaMachine();
 
-  SEElectroCardioGram&                    GetECG() { return *m_ECG; }
+  SEElectroCardioGram&                    GetECG();
 
-  SEInhaler&                              GetInhaler() { return *m_Inhaler; }
+  SEInhaler&                              GetInhaler();
 
-  SEActionManager&                        GetActions() { return *m_Actions; }
+  SEActionManager&                        GetActions();
 
-  SEConditionManager&                     GetConditions() { return *m_Conditions; }
+  SEConditionManager&                     GetConditions();
 
-  PulseCircuits&                          GetCircuits() { return *m_Circuits; }
+  PulseCircuits&                          GetCircuits();
 
 
-  PulseCompartments&                      GetCompartments() { return *m_Compartments; }
+  PulseCompartments&                      GetCompartments();
 
-  const PulseConfiguration&               GetConfiguration() { return *m_Config; }
+  const PulseConfiguration&               GetConfiguration();
 
-  const SEScalarTime&                     GetEngineTime() { return *m_CurrentTime; }
-  const SEScalarTime&                     GetSimulationTime() { return *m_SimulationTime; }
-  const SEScalarTime&                     GetTimeStep() { return m_Config->GetTimeStep(); }
+  const SEScalarTime&                     GetEngineTime();
+  const SEScalarTime&                     GetSimulationTime();
+  const SEScalarTime&                     GetTimeStep();
 
-  pulse::eAirwayMode                      GetAirwayMode() { return m_AirwayMode; }
+  pulse::eAirwayMode                      GetAirwayMode();
   void                                    SetAirwayMode(pulse::eAirwayMode mode);
 
-  cdm::eSwitch                            GetIntubation() { return m_Intubation; }
+  cdm::eSwitch                            GetIntubation();
   void                                    SetIntubation(cdm::eSwitch s);
 
   bool CreateCircuitsAndCompartments();

@@ -2,17 +2,40 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "Controller.h"
+#include "Controller/Controller.h"
+#include "Controller/Circuits.h"
+#include "Controller/Compartments.h"
+#include "Controller/Substances.h"
+#include "Systems/BloodChemistry.h"
+#include "Systems/Cardiovascular.h"
+#include "Systems/Drugs.h"
+#include "Systems/Endocrine.h"
+#include "Systems/Energy.h"
+#include "Systems/Environment.h"
+#include "Systems/Gastrointestinal.h"
+#include "Systems/Hepatic.h"
+#include "Systems/Nervous.h"
+#include "Systems/Renal.h"
+#include "Systems/Respiratory.h"
+#include "Systems/Saturation.h"
+#include "Systems/Tissue.h"
+#include "Equipment/AnesthesiaMachine.h"
+#include "Equipment/ECG.h"
+#include "Equipment/Inhaler.h"
+#include "PulseConfiguration.h"
+
+#include "scenario/SEConditionManager.h"
+#include "scenario/SEActionManager.h"
 
 #include "substance/SESubstance.h"
-#include "patient/SEPatient.h"
-#include "utils/DataTrack.h"
-#include "utils/FileUtils.h"
 
-#include "../Equipment/ECG.h"
-#include "../Equipment/AnesthesiaMachine.h"
-#include "../Systems/Environment.h"
-#include "../Systems/Gastrointestinal.h"
+#include "circuit/SECircuitManager.h"
+#include "circuit/fluid/SEFluidCircuit.h"
+#include "circuit/fluid/SEFluidCircuitNode.h"
+#include "circuit/fluid/SEFluidCircuitPath.h"
+#include "circuit/thermal/SEThermalCircuit.h"
+#include "circuit/thermal/SEThermalCircuitNode.h"
+#include "circuit/thermal/SEThermalCircuitPath.h"
 
 #include "compartment/fluid/SEGasCompartment.h"
 #include "compartment/fluid/SEGasCompartmentLink.h"
@@ -24,21 +47,27 @@
 #include "compartment/thermal/SEThermalCompartmentLink.h"
 #include "compartment/tissue/SETissueCompartment.h"
 
+#include "patient/SEPatient.h"
 #include "patient/assessments/SEPulmonaryFunctionTest.h"
 #include "patient/assessments/SECompleteBloodCount.h"
 #include "patient/assessments/SEComprehensiveMetabolicPanel.h"
 #include "patient/assessments/SEUrinalysis.h"
 
-#include "properties/SEScalarArea.h"
+#include "system/environment/SEEnvironmentalConditions.h"
+
 #include "properties/SEScalar0To1.h"
+#include "properties/SEScalarArea.h"
+#include "properties/SEScalarFlowElastance.h"
 #include "properties/SEScalarFrequency.h"
+#include "properties/SEScalarHeatCapacitance.h"
+#include "properties/SEScalarHeatCapacitancePerMass.h"
 #include "properties/SEScalarLength.h"
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarMassPerMass.h"
 #include "properties/SEScalarMassPerVolume.h"
-#include "properties/SEScalarHeatCapacitance.h"
-#include "properties/SEScalarHeatCapacitancePerMass.h"
-#include "properties/SEScalarFlowElastance.h"
+#include "properties/SEScalarTime.h"
+#include "utils/DataTrack.h"
+#include "utils/FileUtils.h"
 #include <google/protobuf/text_format.h>
 
 PROTO_PUSH
@@ -190,6 +219,35 @@ bool PulseController::Initialize(const PulseConfiguration* config)
   return true;
 }
 
+EngineState               PulseController::GetState() { return m_State; }
+SaturationCalculator&     PulseController::GetSaturationCalculator() { return *m_SaturationCalculator; }
+PulseSubstances&          PulseController::GetSubstances() { return *m_Substances; }
+SEPatient&                PulseController::GetPatient() { return *m_Patient; }
+SEBloodChemistrySystem&   PulseController::GetBloodChemistry() { return *m_BloodChemistrySystem; }
+SECardiovascularSystem&   PulseController::GetCardiovascular() { return *m_CardiovascularSystem; }
+SEDrugSystem&             PulseController::GetDrugs() { return *m_DrugSystem; }
+SEEndocrineSystem&        PulseController::GetEndocrine() { return *m_EndocrineSystem; }
+SEEnergySystem&           PulseController::GetEnergy() { return *m_EnergySystem; }
+SEGastrointestinalSystem& PulseController::GetGastrointestinal() { return *m_GastrointestinalSystem; }
+SEHepaticSystem&          PulseController::GetHepatic() { return *m_HepaticSystem; }
+SENervousSystem&          PulseController::GetNervous() { return *m_NervousSystem; }
+SERenalSystem&            PulseController::GetRenal() { return *m_RenalSystem; }
+SERespiratorySystem&      PulseController::GetRespiratory() { return *m_RespiratorySystem; }
+SETissueSystem&           PulseController::GetTissue() { return *m_TissueSystem; }
+SEEnvironment&            PulseController::GetEnvironment() { return *m_Environment; }
+SEAnesthesiaMachine&      PulseController::GetAnesthesiaMachine() { return *m_AnesthesiaMachine; }
+SEElectroCardioGram&      PulseController::GetECG() { return *m_ECG; }
+SEInhaler&                PulseController::GetInhaler() { return *m_Inhaler; }
+SEActionManager&          PulseController::GetActions() { return *m_Actions; }
+SEConditionManager&       PulseController::GetConditions() { return *m_Conditions; }
+PulseCircuits&            PulseController::GetCircuits() { return *m_Circuits; }
+PulseCompartments&        PulseController::GetCompartments() { return *m_Compartments; }
+const PulseConfiguration& PulseController::GetConfiguration() { return *m_Config; }
+const SEScalarTime&       PulseController::GetEngineTime() { return *m_CurrentTime; }
+const SEScalarTime&       PulseController::GetSimulationTime() { return *m_SimulationTime; }
+const SEScalarTime&       PulseController::GetTimeStep() { return m_Config->GetTimeStep(); }
+
+pulse::eAirwayMode  PulseController::GetAirwayMode() { return m_AirwayMode; }
 void PulseController::SetAirwayMode(pulse::eAirwayMode mode)
 {
   if (mode == m_AirwayMode)
@@ -217,6 +275,7 @@ void PulseController::SetIntubation(cdm::eSwitch s)
     throw CommonDataModelException("Cannot intubate if the inhaler is active.");
   m_Intubation = s;
 }
+cdm::eSwitch PulseController::GetIntubation() { return m_Intubation; }
 
 bool PulseController::SetupPatient()
 {
@@ -264,7 +323,7 @@ bool PulseController::SetupPatient()
   double heightMin_cm = heightMinMale_cm;
   double heightMax_cm = heightMaxMale_cm;
   double heightStandard_cm = heightStandardMale_cm;
-  if (m_Patient->GetSex() == cdm::PatientData_eSex_Female)
+  if (m_Patient->GetSex() == cdm::ePatient_Sex_Female)
   {
     //Female
     heightMin_cm = heightMinFemale_cm;
@@ -351,7 +410,7 @@ bool PulseController::SetupPatient()
   double fatFractionMin = fatFractionMinMale;
   double fatFractionMax = fatFractionMaxMale;
   double fatFractionStandard = fatFractionStandardMale;
-  if (m_Patient->GetSex() == cdm::PatientData_eSex_Female)
+  if (m_Patient->GetSex() == cdm::ePatient_Sex_Female)
   {
     //Female
     fatFractionMin = fatFractionMinFemale;
@@ -798,7 +857,7 @@ bool PulseController::SetupPatient()
   /// \cite roza1984metabolic
   double BMR_kcal_Per_day;
   double computBMR_kcal_Per_day = 88.632 + 13.397 * weight_kg + 4.799 * height_cm - 5.677 * age_yr; //Male
-  if (m_Patient->GetSex() == cdm::PatientData_eSex_Female)
+  if (m_Patient->GetSex() == cdm::ePatient_Sex_Female)
   {
     computBMR_kcal_Per_day = 447.593 + 9.247 * weight_kg + 3.098 * height_cm - 4.330 * age_yr; //Female
   }
@@ -1009,7 +1068,7 @@ bool PulseController::CreateCircuitsAndCompartments()
 void PulseController::SetupCardiovascular()
 {
   Info("Setting Up Cardiovascular");
-  bool male = m_Patient->GetSex() == cdm::PatientData_eSex_Male ? true : false;
+  bool male = m_Patient->GetSex() == cdm::ePatient_Sex_Male ? true : false;
   double RightLungRatio = m_Patient->GetRightLungRatio().GetValue();
   double LeftLungRatio = 1 - RightLungRatio;
   double bloodVolume_mL = m_Patient->GetBloodVolumeBaseline(VolumeUnit::mL);
@@ -2794,7 +2853,7 @@ void PulseController::SetupTissue()
 
   //Typical ICRP Female - From ICRP
   //Total Mass (kg)
-  if (m_Patient->GetSex() == cdm::PatientData_eSex_Female)
+  if (m_Patient->GetSex() == cdm::ePatient_Sex_Female)
   {
     AdiposeTissueMass = 19.0;
     BoneTissueMass = 7.8;
@@ -2820,7 +2879,7 @@ void PulseController::SetupTissue()
   //Male
   double standardPatientWeight_lb = 170.0;
   double standardPatientHeight_in = 71.0;
-  if (m_Patient->GetSex() == cdm::PatientData_eSex_Female)
+  if (m_Patient->GetSex() == cdm::ePatient_Sex_Female)
   {
     //Female
     standardPatientWeight_lb = 130.0;
@@ -2833,14 +2892,14 @@ void PulseController::SetupTissue()
   //Modify most based on lean body mass
   //Hume, R (Jul 1966). "Prediction of lean body mass from height and weight." Journal of clinical pathology. 19 (4): 389�91. doi:10.1136/jcp.19.4.389. PMC 473290. PMID 5929341.
   //double typicalLeanBodyMass_kg = 0.32810 * Convert(standardPatientWeight_lb, MassUnit::lb, MassUnit::kg) + 0.33929 * Convert(standardPatientHeight_in, LengthUnit::in, LengthUnit::cm) - 29.5336; //Male
-  //if (m_Patient->GetSex() == cdm::PatientData_eSex_Female)
+  //if (m_Patient->GetSex() == cdm::ePatient_Sex_Female)
   //{
    // typicalLeanBodyMass_kg = 0.29569 * Convert(standardPatientWeight_lb, MassUnit::lb, MassUnit::kg) + 0.41813 * Convert(standardPatientHeight_in, LengthUnit::in, LengthUnit::cm) - 43.2933; //Female
   //}
 
   //Male
   double standardFatFraction = 0.21;
-  if (m_Patient->GetSex() == cdm::PatientData_eSex_Female)
+  if (m_Patient->GetSex() == cdm::ePatient_Sex_Female)
   {
     //Female
     standardFatFraction = 0.28;
@@ -4413,5 +4472,3 @@ void PulseController::SetupInternalTemperature()
   SEThermalCompartmentLink& InternalSkinToGround = m_Compartments->CreateThermalLink(InternalGround, InternalCore, pulse::TemperatureLink::InternalSkinToGround);
   InternalSkinToGround.MapPath(SkinToTemperatureGround);
 }
-
-

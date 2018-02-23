@@ -4,14 +4,14 @@
 package mil.tatrc.physiology.datamodel.patient.actions;
 
 import com.kitware.physiology.cdm.PatientActions.BrainInjuryData;
-import com.kitware.physiology.cdm.PatientActions.BrainInjuryData.eType;
+import com.kitware.physiology.cdm.PatientActionEnums.eBrainInjury.Type;
 
 import mil.tatrc.physiology.datamodel.properties.SEScalar0To1;
 
 public class SEBrainInjury extends SEPatientAction
 {
-  protected SEScalar0To1        severity;
-  protected eType type;
+  protected SEScalar0To1  severity;
+  protected Type          type;
   
   public SEBrainInjury()
   {
@@ -47,7 +47,7 @@ public class SEBrainInjury extends SEPatientAction
   public static void load(BrainInjuryData src, SEBrainInjury dst) 
   {
     SEPatientAction.load(src.getPatientAction(), dst);
-    if(src.getType()!=eType.UNRECOGNIZED)
+    if(src.getType()!=Type.UNRECOGNIZED)
     	dst.setType(src.getType());
     if(src.hasSeverity())
       SEScalar0To1.load(src.getSeverity(),dst.getSeverity());
@@ -69,11 +69,11 @@ public class SEBrainInjury extends SEPatientAction
       dst.setSeverity(SEScalar0To1.unload(src.severity));
   }
   
-  public eType getType()
+  public Type getType()
   {
     return type;
   }
-  public void setType(eType t)
+  public void setType(Type t)
   {
     type = t;
   }

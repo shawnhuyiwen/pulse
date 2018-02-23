@@ -2,7 +2,9 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "Controller.h"
+#include "Controller/Circuits.h"
+#include "circuit/fluid/SEFluidCircuitNode.h"
+#include "circuit/fluid/SEFluidCircuitPath.h"
 
 PulseCircuits::PulseCircuits(PulseController& data) : SECircuitManager(data.GetLogger()), m_data(data)
 {

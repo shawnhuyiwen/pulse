@@ -31,12 +31,15 @@ void PulseScenarioDriver::Run()
 {
   // Set up the log file
   std::string logFile = m_file;
-  logFile = Replace(logFile, "verification", "");
+  logFile = Replace(logFile, "verification", "test_results");
   logFile = Replace(logFile, ".pba", ".log");
   // Set up the verification output file  
   std::string dataFile = m_file;
-  dataFile = Replace(dataFile, "verification", "");
+  dataFile = Replace(dataFile, "verification", "test_results");
   dataFile = Replace(dataFile, ".pba", "Results.txt");
+  // What are we creating?
+  std::cout << "Log File : " << logFile << std::endl;
+  std::cout << "Results File : " << dataFile << std::endl;
   // Delete any results file that may be there
   remove(dataFile.c_str());
   std::unique_ptr<PhysiologyEngine> Pulse = CreatePulseEngine(logFile.c_str());

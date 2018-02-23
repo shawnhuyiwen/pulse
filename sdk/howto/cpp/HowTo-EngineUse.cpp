@@ -4,7 +4,9 @@
 #include "EngineHowTo.h"
 
 // Include the various types you will be using in your code
+#include "scenario/SEDataRequestManager.h"
 #include "compartment/SECompartmentManager.h"
+#include "compartment/fluid/SEGasCompartment.h"
 #include "patient/SEPatient.h"
 #include "patient/assessments/SEPulmonaryFunctionTest.h"
 #include "system/physiology/SEBloodChemistrySystem.h"
@@ -75,8 +77,8 @@ class MyEventHandler : public SEEventHandler
 {
 public:
   MyEventHandler(Logger *logger) : SEEventHandler(logger) {}
-  virtual void HandlePatientEvent(cdm::PatientData_eEvent type, bool active, const SEScalarTime* time = nullptr) {}
-  virtual void HandleAnesthesiaMachineEvent(cdm::AnesthesiaMachineData_eEvent type, bool active, const SEScalarTime* time = nullptr) {}
+  virtual void HandlePatientEvent(cdm::ePatient_Event type, bool active, const SEScalarTime* time = nullptr) {}
+  virtual void HandleAnesthesiaMachineEvent(cdm::eAnesthesiaMachine_Event type, bool active, const SEScalarTime* time = nullptr) {}
 };
 
 //--------------------------------------------------------------------------------------------------
@@ -139,7 +141,7 @@ void HowToEngineUse()
 
   // There are specific events that can occur while the engine runs and you submit various actions
   // You can either poll/query the patient object to see if it is in a specific state
-  pe->GetPatient().IsEventActive(cdm::PatientData_eEvent_CardiacArrest);
+  pe->GetPatient().IsEventActive(cdm::ePatient_Event_CardiacArrest);
   // You can also derive a callback class that will be called whenever an Event is entered or exited by the patient
   MyEventHandler myEventHandler(pe->GetLogger());
   pe->SetEventHandler(&myEventHandler);

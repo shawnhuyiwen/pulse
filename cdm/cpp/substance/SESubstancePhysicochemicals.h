@@ -3,8 +3,9 @@
 
 #pragma once
 PROTO_PUSH
-#include "bind/cdm/Substance.pb.h"
+#include "bind/cdm/SubstanceEnums.pb.h"
 PROTO_POP
+CDM_BIND_DECL(SubstanceData_PhysicochemicalData)
 
 class CDM_DECL SESubstancePhysicochemicals : public Loggable
 {
@@ -29,8 +30,8 @@ public:
   virtual SEScalar& GetAcidDissociationConstant();
   virtual double GetAcidDissociationConstant() const;
 
-  virtual cdm::SubstanceData_eBindingProtein GetBindingProtein() const;
-  virtual void SetBindingProtein(cdm::SubstanceData_eBindingProtein state);
+  virtual cdm::eSubstance_BindingProtein GetBindingProtein() const;
+  virtual void SetBindingProtein(cdm::eSubstance_BindingProtein state);
   virtual bool HasBindingProtein() const;
   virtual void InvalidateBindingProtein();
 
@@ -42,8 +43,8 @@ public:
   virtual SEScalar0To1& GetFractionUnboundInPlasma();
   virtual double GetFractionUnboundInPlasma() const;
 
-  virtual cdm::SubstanceData_eIonicState GetIonicState() const;
-  virtual void SetIonicState(cdm::SubstanceData_eIonicState state);
+  virtual cdm::eSubstance_IonicState GetIonicState() const;
+  virtual void SetIonicState(cdm::eSubstance_IonicState state);
   virtual bool HasIonicState() const;
   virtual void InvalidateIonicState();
 
@@ -57,10 +58,10 @@ public:
 
 protected: 
   SEScalar*                                m_AcidDissociationConstant;
-  cdm::SubstanceData_eBindingProtein       m_BindingProtein;
+  cdm::eSubstance_BindingProtein       m_BindingProtein;
   SEScalar*                                m_BloodPlasmaRatio;
   SEScalar0To1*                            m_FractionUnboundInPlasma;
-  cdm::SubstanceData_eIonicState           m_IonicState;
+  cdm::eSubstance_IonicState           m_IonicState;
   SEScalar*                                m_LogP;
   SEScalar*                                m_OralAbsorptionRateConstant;
 };

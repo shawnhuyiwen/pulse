@@ -3,6 +3,7 @@
 
 #pragma once
 #include "system/SESystem.h"
+CDM_BIND_DECL(TissueSystemData)
 
 class CDM_DECL SETissueSystem : public SESystem
 {

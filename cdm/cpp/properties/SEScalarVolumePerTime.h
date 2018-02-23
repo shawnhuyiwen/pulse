@@ -3,6 +3,7 @@
 
 #pragma once
 #include "properties/SEScalar.h"
+CDM_BIND_DECL(ScalarVolumePerTimeData)
 
 class CDM_DECL VolumePerTimeUnit : public CCompoundUnit
 {

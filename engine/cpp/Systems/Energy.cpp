@@ -2,18 +2,33 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "Energy.h"
-#include "Drugs.h"
-#include "Environment.h"
-#include "Cardiovascular.h"
-#include "BloodChemistry.h"
-
+#include "Systems/Energy.h"
+#include "Controller/Circuits.h"
+#include "Controller/Compartments.h"
+#include "Controller/Substances.h"
+#include "PulseConfiguration.h"
+PROTO_PUSH
+#include "bind/engine/EnginePhysiology.pb.h"
+PROTO_POP
+// Conditions
+#include "scenario/SEConditionManager.h"
+#include "patient/conditions/SEConsumeMeal.h"
+// Actions
+#include "scenario/SEActionManager.h"
+#include "scenario/SEPatientActionCollection.h"
+#include "patient/actions/SEExercise.h"
+// Dependent Systems
+#include "system/physiology/SEBloodChemistrySystem.h"
+#include "system/physiology/SECardiovascularSystem.h"
+// CDM
 #include "patient/SEPatient.h"
 #include "patient/SEMeal.h"
 #include "patient/SENutrition.h"
-#include "patient/conditions/SEConsumeMeal.h"
-#include "circuit/thermal/SEThermalCircuit.h"
 #include "circuit/fluid/SEFluidCircuit.h"
+#include "circuit/thermal/SEThermalCircuit.h"
+#include "circuit/thermal/SEThermalCircuitNode.h"
+#include "circuit/thermal/SEThermalCircuitPath.h"
+#include "circuit/thermal/SEThermalCircuitCalculator.h"
 #include "compartment/fluid/SELiquidCompartment.h"
 #include "compartment/substances/SELiquidSubstanceQuantity.h"
 #include "properties/SEScalar0To1.h"
@@ -42,22 +57,27 @@
 #include "properties/SEScalarAmountPerTime.h"
 #include "properties/SEScalarTime.h"
 #include "properties/SEScalarVolumePerTimeMass.h"
+#include "utils/RunningAverage.h"
 
-Energy::Energy(PulseController& data) : SEEnergySystem(data.GetLogger()), m_data(data), m_circuitCalculator(GetLogger())
+Energy::Energy(PulseController& data) : SEEnergySystem(data.GetLogger()), m_data(data)
 {
+  m_BloodpH = new RunningAverage();
+  m_BicarbonateMolarity_mmol_Per_L = new RunningAverage();
+  m_circuitCalculator = new SEThermalCircuitCalculator(GetLogger());
   Clear();
 }
 
 Energy::~Energy()
 {
   Clear();
+  delete m_BloodpH;
+  delete m_BicarbonateMolarity_mmol_Per_L;
 }
 
 void Energy::Clear()
 {
   SEEnergySystem::Clear();
   m_Patient = nullptr;
-  m_PatientActions = nullptr;
   m_AortaHCO3 = nullptr;
   m_coreNode = nullptr;
   m_skinNode = nullptr;
@@ -67,8 +87,8 @@ void Energy::Clear()
   m_InternalTemperatureCircuit = nullptr;
   m_TemperatureCircuit = nullptr;
 
-  m_BloodpH.Reset(); 
-  m_BicarbonateMolarity_mmol_Per_L.Reset();
+  m_BloodpH->Reset(); 
+  m_BicarbonateMolarity_mmol_Per_L->Reset();
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -94,8 +114,8 @@ void Energy::Initialize()
   GetFatigueLevel().SetValue(0.0);
 
   //Running average quantities used to trigger events
-  m_BloodpH.Sample(7.4); //Initialize
-  m_BicarbonateMolarity_mmol_Per_L.Sample(24.0); //Initialize
+  m_BloodpH->Sample(7.4); //Initialize
+  m_BicarbonateMolarity_mmol_Per_L->Sample(24.0); //Initialize
 
   // Energy buckets for fatigue
   m_UsableEnergyStore_J = 2600.0;
@@ -117,8 +137,8 @@ void Energy::Serialize(const pulse::EnergySystemData& src, Energy& dst)
   dst.m_MediumPowerEnergyStore_J = src.mediumpowerenergystore_j();
   dst.m_EnduranceEnergyStore_J = src.enduranceenergystore_j();
 
-  RunningAverage::Load(src.bloodph(),dst.m_BloodpH);
-  RunningAverage::Load(src.bicarbonatemolarity_mmol_per_l(), dst.m_BicarbonateMolarity_mmol_Per_L);
+  RunningAverage::Load(src.bloodph(),*dst.m_BloodpH);
+  RunningAverage::Load(src.bicarbonatemolarity_mmol_per_l(), *dst.m_BicarbonateMolarity_mmol_Per_L);
 }
 
 pulse::EnergySystemData* Energy::Unload(const Energy& src)
@@ -135,8 +155,8 @@ void Energy::Serialize(const Energy& src, pulse::EnergySystemData& dst)
   dst.set_mediumpowerenergystore_j(src.m_MediumPowerEnergyStore_J);
   dst.set_enduranceenergystore_j(src.m_EnduranceEnergyStore_J);
 
-  dst.set_allocated_bloodph(RunningAverage::Unload(src.m_BloodpH));
-  dst.set_allocated_bicarbonatemolarity_mmol_per_l(RunningAverage::Unload(src.m_BicarbonateMolarity_mmol_Per_L));
+  dst.set_allocated_bloodph(RunningAverage::Unload(*src.m_BloodpH));
+  dst.set_allocated_bicarbonatemolarity_mmol_per_l(RunningAverage::Unload(*src.m_BicarbonateMolarity_mmol_Per_L));
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -152,7 +172,6 @@ void Energy::Serialize(const Energy& src, pulse::EnergySystemData& dst)
 void Energy::SetUp()
 {
   m_dT_s = m_data.GetTimeStep().GetValue(TimeUnit::s);
-  m_PatientActions = &m_data.GetActions().GetPatientActions();
   m_Patient = &m_data.GetPatient();
 
   m_AortaHCO3 = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta)->GetSubstanceQuantity(m_data.GetSubstances().GetHCO3());
@@ -302,7 +321,7 @@ void Energy::Exercise()
   // Any exercise action will reduce energy stores and induce some fatigue, setting the fatigue event.
   // While the fatigue event is active, the exercise method will execute even if there is no exercise action.
   // This allows the energy stores to refill post-exercise.
-  if (!m_PatientActions->HasExercise() && !m_Patient->IsEventActive(cdm::PatientData_eEvent_Fatigue))
+  if (!m_data.GetActions().GetPatientActions().HasExercise() && !m_Patient->IsEventActive(cdm::ePatient_Event_Fatigue))
     return;
 
   double exerciseIntensity = 0.0;
@@ -310,11 +329,11 @@ void Energy::Exercise()
   double basalMetabolicRate_kcal_Per_day = m_Patient->GetBasalMetabolicRate().GetValue(PowerUnit::kcal_Per_day);
 
   // Only try to get intensity if the exercise action is active. Otherwise, we are just refilling energy buckets post-exercise.
-  if (m_PatientActions->HasExercise())
+  if (m_data.GetActions().GetPatientActions().HasExercise())
   {
-    if (m_PatientActions->GetExercise()->HasIntensity())
+    if (m_data.GetActions().GetPatientActions().GetExercise()->HasIntensity())
     {
-      exerciseIntensity = m_PatientActions->GetExercise()->GetIntensity().GetValue();
+      exerciseIntensity = m_data.GetActions().GetPatientActions().GetExercise()->GetIntensity().GetValue();
     }    
     else
     {
@@ -440,10 +459,10 @@ void Energy::Exercise()
   double fatigue = (normalizedEnduranceEnergyDeficit + normalizedMediumEnergyDeficit + normalizedPeakEnergyDeficit + normalizedUsableEnergyDeficit) / 4.0;
   /// \event Patient: Fatigue - Energy stores are sub-maximal.
   if (fatigue > 0.0){
-    m_Patient->SetEvent(cdm::PatientData_eEvent_Fatigue, true, m_data.GetSimulationTime());
+    m_Patient->SetEvent(cdm::ePatient_Event_Fatigue, true, m_data.GetSimulationTime());
   }
   else {
-    m_Patient->SetEvent(cdm::PatientData_eEvent_Fatigue, false, m_data.GetSimulationTime());
+    m_Patient->SetEvent(cdm::ePatient_Event_Fatigue, false, m_data.GetSimulationTime());
   }
   GetFatigueLevel().SetValue(fatigue);
 
@@ -466,7 +485,7 @@ void Energy::Exercise()
   // The MetabolicRateGain is used to ramp the metabolic rate to the value specified by the user's exercise intensity.
   double MetabolicRateGain = 1.0;
   // We only let exercise control the metabolic rate if it is active, otherwise the heat generation method is in charge of the metabolic rate.
-  if (m_PatientActions->HasExercise())
+  if (m_data.GetActions().GetPatientActions().HasExercise())
   {
     double TotalMetabolicRateProduced_kcal_Per_day = currentMetabolicRate_kcal_Per_day + MetabolicRateGain*(TotalMetabolicRateSetPoint_kcal_Per_day - currentMetabolicRate_kcal_Per_day)*m_dT_s;
     GetTotalMetabolicRate().SetValue(TotalMetabolicRateProduced_kcal_Per_day, PowerUnit::kcal_Per_day);
@@ -485,7 +504,7 @@ void Energy::Exercise()
 //--------------------------------------------------------------------------------------------------
 void Energy::Process()
 {
-  m_circuitCalculator.Process(*m_TemperatureCircuit, m_dT_s);
+  m_circuitCalculator->Process(*m_TemperatureCircuit, m_dT_s);
   CalculateVitalSigns();
 }
 
@@ -499,7 +518,7 @@ void Energy::Process()
 //--------------------------------------------------------------------------------------------------
 void Energy::PostProcess()
 {
-  m_circuitCalculator.PostProcess(*m_TemperatureCircuit);
+  m_circuitCalculator->PostProcess(*m_TemperatureCircuit);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -524,30 +543,30 @@ void Energy::CalculateVitalSigns()
   if (coreTemperature_degC < 35.0) /// \cite mallet2001hypothermia
   {
     /// \event Patient: Core temperature has fallen below 35 degrees Celsius. Patient is hypothermic.
-    m_Patient->SetEvent(cdm::PatientData_eEvent_Hypothermia, true, m_data.GetSimulationTime());
+    m_Patient->SetEvent(cdm::ePatient_Event_Hypothermia, true, m_data.GetSimulationTime());
 
     /// \irreversible State: Core temperature has fallen below 20 degrees Celsius.
     if (coreTemperature_degC < coreTempIrreversible_degC)
     {
       ss << "Core temperature is " << coreTemperature_degC << ". This is below 20 degrees C, patient is experiencing extreme hypothermia and is in an irreversible state.";
       Warning(ss);
-      m_Patient->SetEvent(cdm::PatientData_eEvent_IrreversibleState, true, m_data.GetSimulationTime());
+      m_Patient->SetEvent(cdm::ePatient_Event_IrreversibleState, true, m_data.GetSimulationTime());
     }
 
   }
-  else if (m_Patient->IsEventActive(cdm::PatientData_eEvent_Hypothermia) && coreTemperature_degC>35.2)
+  else if (m_Patient->IsEventActive(cdm::ePatient_Event_Hypothermia) && coreTemperature_degC>35.2)
   {
-    m_Patient->SetEvent(cdm::PatientData_eEvent_Hypothermia, false, m_data.GetSimulationTime());
+    m_Patient->SetEvent(cdm::ePatient_Event_Hypothermia, false, m_data.GetSimulationTime());
   }
   //Hyperthermia check
   if (coreTemperature_degC > 38.8) /// \cite mallet2001hypothermia
   {
     /// \event Patient: Core temperature has exceeded 38.3 degrees Celsius. Patient is hyperthermic.
-    m_Patient->SetEvent(cdm::PatientData_eEvent_Hyperthermia, true, m_data.GetSimulationTime());
+    m_Patient->SetEvent(cdm::ePatient_Event_Hyperthermia, true, m_data.GetSimulationTime());
   }
-  else if (m_Patient->IsEventActive(cdm::PatientData_eEvent_Hyperthermia) && coreTemperature_degC < 38.0)
+  else if (m_Patient->IsEventActive(cdm::ePatient_Event_Hyperthermia) && coreTemperature_degC < 38.0)
   {
-    m_Patient->SetEvent(cdm::PatientData_eEvent_Hyperthermia, false, m_data.GetSimulationTime());
+    m_Patient->SetEvent(cdm::ePatient_Event_Hyperthermia, false, m_data.GetSimulationTime());
   }
 
   /// \todo Move to blood chemistry
@@ -557,50 +576,50 @@ void Energy::CalculateVitalSigns()
   // The events related to blood concentrations should be detected and set in blood chemistry.
   double highPh = 8.5;
   double lowPh = 6.5;   // \cite Edge2006AcidosisConscious
-  m_BloodpH.Sample(m_data.GetBloodChemistry().GetBloodPH().GetValue());
-  m_BicarbonateMolarity_mmol_Per_L.Sample(m_AortaHCO3->GetMolarity(AmountPerVolumeUnit::mmol_Per_L));
+  m_BloodpH->Sample(m_data.GetBloodChemistry().GetBloodPH().GetValue());
+  m_BicarbonateMolarity_mmol_Per_L->Sample(m_AortaHCO3->GetMolarity(AmountPerVolumeUnit::mmol_Per_L));
   //Only check these at the end of a cardiac cycle and reset at start of cardiac cycle 
-  if (m_Patient->IsEventActive(cdm::PatientData_eEvent_StartOfCardiacCycle))
+  if (m_Patient->IsEventActive(cdm::ePatient_Event_StartOfCardiacCycle))
   {
-    double bloodPH = m_BloodpH.Value();
-    double bloodBicarbonate_mmol_Per_L = m_BicarbonateMolarity_mmol_Per_L.Value();
+    double bloodPH = m_BloodpH->Value();
+    double bloodBicarbonate_mmol_Per_L = m_BicarbonateMolarity_mmol_Per_L->Value();
 
     if (m_data.GetState() > EngineState::InitialStabilization)
     {// Don't throw events if we are initializing
       if (bloodPH < 7.35 && bloodBicarbonate_mmol_Per_L < 22.0)
         /// \event The patient is in a state of metabolic acidosis
-        m_Patient->SetEvent(cdm::PatientData_eEvent_MetabolicAcidosis, true, m_data.GetSimulationTime());
+        m_Patient->SetEvent(cdm::ePatient_Event_MetabolicAcidosis, true, m_data.GetSimulationTime());
 
       /// \irreversible State: arterial blood pH has dropped below 6.5.
       if (bloodPH < lowPh)
       {
         ss << " Arterial blood PH is " << bloodPH << ". This is below 6.5, patient is experiencing extreme metabolic acidosis and is in an irreversible state.";
         Warning(ss);
-        m_Patient->SetEvent(cdm::PatientData_eEvent_IrreversibleState, true, m_data.GetSimulationTime());
+        m_Patient->SetEvent(cdm::ePatient_Event_IrreversibleState, true, m_data.GetSimulationTime());
       }
       else if (bloodPH > 7.38 && bloodBicarbonate_mmol_Per_L > 23.0)
         /// \event The patient has exited the state state of metabolic acidosis
-        m_Patient->SetEvent(cdm::PatientData_eEvent_MetabolicAcidosis, false, m_data.GetSimulationTime());
+        m_Patient->SetEvent(cdm::ePatient_Event_MetabolicAcidosis, false, m_data.GetSimulationTime());
 
       if (bloodPH > 7.45 && bloodBicarbonate_mmol_Per_L > 26.0)
         /// \event The patient is in a state of metabolic alkalosis
-        m_Patient->SetEvent(cdm::PatientData_eEvent_MetabolicAlkalosis, true, m_data.GetSimulationTime());
+        m_Patient->SetEvent(cdm::ePatient_Event_MetabolicAlkalosis, true, m_data.GetSimulationTime());
 
       /// \irreversible State: arterial blood pH has increased above 8.5.
       if (bloodPH > highPh)
       {
         ss << " Arterial blood PH is " << bloodPH << ". This is above 8.5, patient is experiencing extreme metabolic Alkalosis and is in an irreversible state.";
         Warning(ss);
-        m_Patient->SetEvent(cdm::PatientData_eEvent_IrreversibleState, true, m_data.GetSimulationTime());
+        m_Patient->SetEvent(cdm::ePatient_Event_IrreversibleState, true, m_data.GetSimulationTime());
       }
 
       else if (bloodPH < 7.42 && bloodBicarbonate_mmol_Per_L < 25.0)
         /// \event The patient has exited the state of metabolic alkalosis
-        m_Patient->SetEvent(cdm::PatientData_eEvent_MetabolicAlkalosis, false, m_data.GetSimulationTime());
+        m_Patient->SetEvent(cdm::ePatient_Event_MetabolicAlkalosis, false, m_data.GetSimulationTime());
     }
     // Reset the running averages. Why do we need running averages here? Does the aorta pH fluctuate that much? 
-    m_BloodpH.Reset();
-    m_BicarbonateMolarity_mmol_Per_L.Reset();
+    m_BloodpH->Reset();
+    m_BicarbonateMolarity_mmol_Per_L->Reset();
   }
 }
 
@@ -641,14 +660,14 @@ void Energy::CalculateMetabolicHeatGeneration()
     totalMetabolicRateNew_W = MIN(totalMetabolicRateNew_W, summitMetabolism_W); //Bounded at the summit metabolism so further heat generation doesn't continue for continue drops below 34 C.
     GetTotalMetabolicRate().SetValue(totalMetabolicRateNew_W, PowerUnit::W);
   }
-  else if (coreTemperature_degC >= 36.8 && coreTemperature_degC < 42.5 && !m_PatientActions->HasExercise()) //Basic Metabolic rate
+  else if (coreTemperature_degC >= 36.8 && coreTemperature_degC < 42.5 && !m_data.GetActions().GetPatientActions().HasExercise()) //Basic Metabolic rate
   {
     double TotalMetabolicRateSetPoint_kcal_Per_day = basalMetabolicRate_kcal_Per_day;
     double MetabolicRateGain = 0.0001;  //Used to ramp the metabolic rate from its current value to the basal value if the patient meet's the basal criteria
     double TotalMetabolicRateProduced_kcal_Per_day = currentMetabolicRate_kcal_Per_day + MetabolicRateGain*(TotalMetabolicRateSetPoint_kcal_Per_day - currentMetabolicRate_kcal_Per_day);
     GetTotalMetabolicRate().SetValue(TotalMetabolicRateProduced_kcal_Per_day, PowerUnit::kcal_Per_day);
   }
-  else if (coreTemperature_degC>40.0  && !m_PatientActions->HasExercise()) //Core temperature greater than 40.0. If not exercising, then the hyperthermia leads to increased metabolism
+  else if (coreTemperature_degC>40.0  && !m_data.GetActions().GetPatientActions().HasExercise()) //Core temperature greater than 40.0. If not exercising, then the hyperthermia leads to increased metabolism
   {
     totalMetabolicRateNew_Kcal_Per_day = basalMetabolicRate_kcal_Per_day*pow(1.11, coreTemperature_degC - coreTemperatureHigh_degC);  //The metabolic heat generated will increase by 11% for every degree above 40.0 C
     GetTotalMetabolicRate().SetValue(totalMetabolicRateNew_Kcal_Per_day, PowerUnit::kcal_Per_day);                  /// \cite pate2001thermal                  
@@ -739,7 +758,7 @@ void Energy::CalculateBasalMetabolicRate()
   //The basal metabolic rate is determined from the Harris-Benedict formula, with differences dependent on sex, age, height and mass
   /// \cite roza1984metabolic
   double patientBMR_kcal_Per_day = 0.0;
-  if (patient.GetSex() == cdm::PatientData_eSex_Male)
+  if (patient.GetSex() == cdm::ePatient_Sex_Male)
     patientBMR_kcal_Per_day = 88.632 + 13.397*PatientMass_kg + 4.799*PatientHeight_cm - 5.677*PatientAge_yr;
   else
     patientBMR_kcal_Per_day = 447.593 + 9.247*PatientMass_kg + 3.098*PatientHeight_cm - 4.330*PatientAge_yr;

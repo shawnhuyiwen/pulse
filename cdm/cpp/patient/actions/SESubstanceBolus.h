@@ -3,8 +3,10 @@
 
 #pragma once
 #include "patient/actions/SESubstanceAdministration.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalarTime.h"
+PROTO_PUSH
+#include "bind/cdm/PatientActionEnums.pb.h"
+PROTO_POP
+CDM_BIND_DECL(SubstanceBolusData)
 CDM_BIND_DECL(SubstanceBolusData_StateData)
 class SESubstance;
 
@@ -23,13 +25,13 @@ protected:
   static void Serialize(const SESubstanceBolusState& src, cdm::SubstanceBolusData_StateData& dst);
 
 public:
-  SEScalarTime& GetElapsedTime() { return m_ElapsedTime; }
-  SEScalarVolume& GetAdministeredDose() { return m_AdministeredDose; }
+  SEScalarTime& GetElapsedTime() { return *m_ElapsedTime; }
+  SEScalarVolume& GetAdministeredDose() { return *m_AdministeredDose; }
 
 protected:
   const SESubstance&   m_Substance;
-  SEScalarTime         m_ElapsedTime;
-  SEScalarVolume       m_AdministeredDose;
+  SEScalarTime*        m_ElapsedTime;
+  SEScalarVolume*      m_AdministeredDose;
 };
 
 class CDM_DECL SESubstanceBolus : public SESubstanceAdministration
@@ -52,8 +54,8 @@ protected:
 
 public:
 
-  virtual cdm::SubstanceBolusData_eAdministrationRoute GetAdminRoute() const;
-  virtual void SetAdminRoute(cdm::SubstanceBolusData_eAdministrationRoute name);
+  virtual cdm::eSubstanceAdministration_Route GetAdminRoute() const;
+  virtual void SetAdminRoute(cdm::eSubstanceAdministration_Route name);
 
   virtual bool HasConcentration() const;
   virtual SEScalarMassPerVolume& GetConcentration();
@@ -69,7 +71,7 @@ public:
   virtual void ToString(std::ostream &str) const;
 
 protected:
-  cdm::SubstanceBolusData_eAdministrationRoute m_AdminRoute;
+  cdm::eSubstanceAdministration_Route m_AdminRoute;
   SEScalarMassPerVolume*                       m_Concentration;
   SEScalarVolume*                              m_Dose;
   const SESubstance&                           m_Substance;

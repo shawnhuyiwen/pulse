@@ -4,6 +4,8 @@
 /schema/build/
 /test/build/
 /sdk/howto/build/
+# The IntelliJ build dir
+/.idea/out
 
 # This is for the C# how to
 /sdk/howto/csharp/.vs

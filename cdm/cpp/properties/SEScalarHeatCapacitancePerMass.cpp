@@ -3,6 +3,9 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarHeatCapacitancePerMass.h"
+PROTO_PUSH
+#include "bind/cdm/Properties.pb.h"
+PROTO_POP
 
 const HeatCapacitancePerMassUnit HeatCapacitancePerMassUnit::J_Per_K_kg("J/K kg");
 const HeatCapacitancePerMassUnit HeatCapacitancePerMassUnit::kJ_Per_K_kg("kJ/K kg");

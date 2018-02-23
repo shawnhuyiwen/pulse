@@ -9,6 +9,15 @@ PROTO_PUSH
 #include "bind/cdm/SubstanceQuantity.pb.h" 
 PROTO_POP
 
+SESubstanceQuantity::SESubstanceQuantity(SESubstance& sub) : Loggable(sub.GetLogger()), m_Substance(sub)
+{
+
+};
+SESubstanceQuantity::~SESubstanceQuantity()
+{
+
+};
+
 void SESubstanceQuantity::Serialize(const cdm::SubstanceQuantityData& src, SESubstanceQuantity& dst)
 {
   dst.Clear();

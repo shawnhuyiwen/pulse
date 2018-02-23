@@ -4,6 +4,7 @@
 #include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineAction.h"
 class SEAnesthesiaMachine;
 class SESubstanceManager;
+CDM_BIND_DECL(AnesthesiaMachineConfigurationData)
 
 class CDM_DECL SEAnesthesiaMachineConfiguration : public SEAnesthesiaMachineAction
 {

@@ -2,10 +2,22 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "BloodChemistry.h"
-
-#include "patient/SEPatient.h"
+#include "Systems/BloodChemistry.h"
+#include "Controller/Controller.h"
+#include "Controller/Substances.h"
+#include "Controller/Compartments.h"
+#include "PulseConfiguration.h"
+PROTO_PUSH
+#include "bind/engine/EnginePhysiology.pb.h"
+PROTO_POP
+// Dependent Systems
 #include "system/physiology/SECardiovascularSystem.h"
+// Assessments
+#include "patient/assessments/SECompleteBloodCount.h"
+#include "patient/assessments/SEComprehensiveMetabolicPanel.h"
+// CDM
+#include "patient/SEPatient.h"
+#include "substance/SESubstance.h"
 #include "compartment/fluid/SELiquidCompartment.h"
 #include "compartment/substances/SELiquidSubstanceQuantity.h"
 #include "properties/SEScalar0To1.h"
@@ -18,23 +30,25 @@
 #include "properties/SEScalarMassPerAmount.h"
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalarMassPerAmount.h"
-#include "properties/SEScalarMassPerAmount.h"
+#include "properties/SEScalarTime.h"
 #include "properties/SEScalarHeatCapacitancePerMass.h"
-// Assessments
-#include "patient/assessments/SECompleteBloodCount.h"
-#include "patient/assessments/SEComprehensiveMetabolicPanel.h"
+#include "utils/RunningAverage.h"
 
 #pragma warning(disable:4786)
 #pragma warning(disable:4275)
 
 BloodChemistry::BloodChemistry(PulseController& data) : SEBloodChemistrySystem(data.GetLogger()), m_data(data)
 {
+  m_ArterialOxygen_mmHg = new RunningAverage();
+  m_ArterialCarbonDioxide_mmHg = new RunningAverage();
   Clear();
 }
 
 BloodChemistry::~BloodChemistry()
 {
   Clear();
+  delete m_ArterialOxygen_mmHg;
+  delete m_ArterialCarbonDioxide_mmHg;
 }
 
 void BloodChemistry::Clear()
@@ -68,8 +82,8 @@ void BloodChemistry::Clear()
   m_venaCavaSodium = nullptr;
   m_venaCavaTristearin = nullptr;
   m_venaCavaUrea = nullptr;
-  m_ArterialOxygen_mmHg.Reset();
-  m_ArterialCarbonDioxide_mmHg.Reset();
+  m_ArterialOxygen_mmHg->Reset();
+  m_ArterialCarbonDioxide_mmHg->Reset();
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -87,8 +101,8 @@ void BloodChemistry::Initialize()
   GetPhosphate().SetValue(1.1, AmountPerVolumeUnit::mmol_Per_L);
   GetStrongIonDifference().SetValue(40.5, AmountPerVolumeUnit::mmol_Per_L);
 
-  m_ArterialOxygen_mmHg.Sample(m_aortaO2->GetPartialPressure(PressureUnit::mmHg));
-  m_ArterialCarbonDioxide_mmHg.Sample(m_aortaCO2->GetPartialPressure(PressureUnit::mmHg));
+  m_ArterialOxygen_mmHg->Sample(m_aortaO2->GetPartialPressure(PressureUnit::mmHg));
+  m_ArterialCarbonDioxide_mmHg->Sample(m_aortaCO2->GetPartialPressure(PressureUnit::mmHg));
 
   GetCarbonMonoxideSaturation().SetValue(0);
   Process();// Calculate the initial system values
@@ -103,9 +117,9 @@ void BloodChemistry::Serialize(const pulse::BloodChemistrySystemData& src, Blood
 {
   SEBloodChemistrySystem::Serialize(src.common(), dst);
   if (!src.has_arterialoxygenaverage_mmhg()) { dst.Fatal("Missing ArterialOxygen_mmHg","BloodChemistry::Serialize"); }
-  RunningAverage::Load(src.arterialoxygenaverage_mmhg(), dst.m_ArterialOxygen_mmHg);
+  RunningAverage::Load(src.arterialoxygenaverage_mmhg(), *dst.m_ArterialOxygen_mmHg);
   if (!src.has_arterialcarbondioxideaverage_mmhg()) { dst.Fatal("Missing ArterialCarbonDioxide_mmHg", "BloodChemistry::Serialize"); }
-  RunningAverage::Load(src.arterialcarbondioxideaverage_mmhg(), dst.m_ArterialCarbonDioxide_mmHg);
+  RunningAverage::Load(src.arterialcarbondioxideaverage_mmhg(), *dst.m_ArterialCarbonDioxide_mmHg);
 }
 
 pulse::BloodChemistrySystemData* BloodChemistry::Unload(const BloodChemistry& src)
@@ -117,8 +131,8 @@ pulse::BloodChemistrySystemData* BloodChemistry::Unload(const BloodChemistry& sr
 void BloodChemistry::Serialize(const BloodChemistry& src, pulse::BloodChemistrySystemData& dst)
 {
   SEBloodChemistrySystem::Serialize(src, *dst.mutable_common());
-  dst.set_allocated_arterialoxygenaverage_mmhg(RunningAverage::Unload(src.m_ArterialOxygen_mmHg));
-  dst.set_allocated_arterialcarbondioxideaverage_mmhg(RunningAverage::Unload(src.m_ArterialCarbonDioxide_mmHg));
+  dst.set_allocated_arterialoxygenaverage_mmhg(RunningAverage::Unload(*src.m_ArterialOxygen_mmHg));
+  dst.set_allocated_arterialcarbondioxideaverage_mmhg(RunningAverage::Unload(*src.m_ArterialCarbonDioxide_mmHg));
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -346,13 +360,13 @@ void BloodChemistry::CheckBloodGasLevels()
   double hypoxiaFlag = 65.0; //Arterial O2 Partial Pressure in mmHg \cite Pierson2000Pathophysiology
   double hypoxiaIrreversible = 15.0; // \cite hobler1973HypoxemiaCardiacOutput
 
-  m_ArterialOxygen_mmHg.Sample(m_aortaO2->GetPartialPressure(PressureUnit::mmHg));
-  m_ArterialCarbonDioxide_mmHg.Sample(m_aortaCO2->GetPartialPressure(PressureUnit::mmHg));
+  m_ArterialOxygen_mmHg->Sample(m_aortaO2->GetPartialPressure(PressureUnit::mmHg));
+  m_ArterialCarbonDioxide_mmHg->Sample(m_aortaCO2->GetPartialPressure(PressureUnit::mmHg));
   //Only check these at the end of a cardiac cycle and reset at start of cardiac cycle 
-  if (patient.IsEventActive(cdm::PatientData_eEvent_StartOfCardiacCycle))
+  if (patient.IsEventActive(cdm::ePatient_Event_StartOfCardiacCycle))
   {
-    double arterialOxygen_mmHg = m_ArterialOxygen_mmHg.Value();
-    double arterialCarbonDioxide_mmHg = m_ArterialCarbonDioxide_mmHg.Value();
+    double arterialOxygen_mmHg = m_ArterialOxygen_mmHg->Value();
+    double arterialCarbonDioxide_mmHg = m_ArterialCarbonDioxide_mmHg->Value();
 
     if (m_data.GetState() > EngineState::InitialStabilization)
     {// Don't throw events if we are initializing
@@ -362,47 +376,47 @@ void BloodChemistry::CheckBloodGasLevels()
       if (arterialCarbonDioxide_mmHg >= hypercapniaFlag)
       {
         /// \event Patient: Hypercapnia. The carbon dioxide partial pressure has risen above 60 mmHg. The patient is now hypercapnic.
-        patient.SetEvent(cdm::PatientData_eEvent_Hypercapnia, true, m_data.GetSimulationTime());
+        patient.SetEvent(cdm::ePatient_Event_Hypercapnia, true, m_data.GetSimulationTime());
 
         if (arterialCarbonDioxide_mmHg > carbonDioxideToxicity)
         {
           m_ss << "Arterial Carbon Dioxide partial pressure is " << arterialCarbonDioxide_mmHg << ". This is beyond 80 mmHg triggering extreme Hypercapnia, patient is in an irreversible state.";
           Warning(m_ss);
           /// \irreversible The carbon dioxide partial pressure is greater than 80 mmHg. 
-          patient.SetEvent(cdm::PatientData_eEvent_IrreversibleState, true, m_data.GetSimulationTime());
+          patient.SetEvent(cdm::ePatient_Event_IrreversibleState, true, m_data.GetSimulationTime());
         }
       }
-      else if (patient.IsEventActive(cdm::PatientData_eEvent_Hypercapnia) && arterialCarbonDioxide_mmHg < (hypercapniaFlag - 3))
+      else if (patient.IsEventActive(cdm::ePatient_Event_Hypercapnia) && arterialCarbonDioxide_mmHg < (hypercapniaFlag - 3))
       {
         /// \event Patient: End Hypercapnia. The carbon dioxide partial pressure has fallen below 57 mmHg. The patient is no longer considered to be hypercapnic.
         /// This event is triggered if the patient was hypercapnic and is now considered to be recovered.
-        patient.SetEvent(cdm::PatientData_eEvent_Hypercapnia, false, m_data.GetSimulationTime());
+        patient.SetEvent(cdm::ePatient_Event_Hypercapnia, false, m_data.GetSimulationTime());
       }
 
       // hypoxia check
       if (arterialOxygen_mmHg <= hypoxiaFlag)
       {
         /// \event Patient: Hypoxia Event. The oxygen partial pressure has fallen below 65 mmHg, indicating that the patient is hypoxic.
-        patient.SetEvent(cdm::PatientData_eEvent_Hypoxia, true, m_data.GetSimulationTime());
+        patient.SetEvent(cdm::ePatient_Event_Hypoxia, true, m_data.GetSimulationTime());
 
         if (arterialOxygen_mmHg < hypoxiaIrreversible)
         {
           m_ss << "Arterial Oxygen partial pressure is " << arterialOxygen_mmHg << ". This is below 15 mmHg triggering extreme Hypoxia, patient is in an irreversible state.";
           Warning(m_ss);
           /// \irreversible Arterial oxygen partial pressure has been critically reduced to below 15 mmHg.
-          patient.SetEvent(cdm::PatientData_eEvent_IrreversibleState, true, m_data.GetSimulationTime());
+          patient.SetEvent(cdm::ePatient_Event_IrreversibleState, true, m_data.GetSimulationTime());
         }
       }
       else if (arterialOxygen_mmHg > (hypoxiaFlag + 3))
       {
         /// \event Patient: End Hypoxia Event. The oxygen partial pressure has rise above 68 mmHg. If this occurs when the patient is hypoxic, it will reverse the hypoxic event.
         /// The patient is no longer considered to be hypoxic.
-        patient.SetEvent(cdm::PatientData_eEvent_Hypoxia, false, m_data.GetSimulationTime());
+        patient.SetEvent(cdm::ePatient_Event_Hypoxia, false, m_data.GetSimulationTime());
       }
     }
 
-    m_ArterialOxygen_mmHg.Reset();
-    m_ArterialCarbonDioxide_mmHg.Reset();
+    m_ArterialOxygen_mmHg->Reset();
+    m_ArterialCarbonDioxide_mmHg->Reset();
   }
 
 
@@ -416,70 +430,70 @@ void BloodChemistry::CheckBloodGasLevels()
     if (m_brainO2->GetPartialPressure(PressureUnit::mmHg) < 21.0)
     {     
       /// \event Patient: Brain Oxygen Deficit Event. The oxygen partial pressure in the brain has dropped to a dangerously low level.
-      patient.SetEvent(cdm::PatientData_eEvent_BrainOxygenDeficit, true, m_data.GetSimulationTime());
+      patient.SetEvent(cdm::ePatient_Event_BrainOxygenDeficit, true, m_data.GetSimulationTime());
 
       // Irreversible damage occurs if the deficit has gone on too long
-      if (patient.GetEventDuration(cdm::PatientData_eEvent_BrainOxygenDeficit, TimeUnit::s) > 1800)
+      if (patient.GetEventDuration(cdm::ePatient_Event_BrainOxygenDeficit, TimeUnit::s) > 1800)
       {
         m_ss << "Brain Oxygen partial pressure is " << m_brainO2->GetPartialPressure(PressureUnit::mmHg) << " and has been below the danger threshold for " <<
-          patient.GetEventDuration(cdm::PatientData_eEvent_BrainOxygenDeficit, TimeUnit::s) << " seconds. Damage is irreversible.";
+          patient.GetEventDuration(cdm::ePatient_Event_BrainOxygenDeficit, TimeUnit::s) << " seconds. Damage is irreversible.";
         Warning(m_ss);
         /// \irreversible Brain oxygen pressure has been dangerously low for more than 30 minutes.
-        patient.SetEvent(cdm::PatientData_eEvent_IrreversibleState, true, m_data.GetSimulationTime());
+        patient.SetEvent(cdm::ePatient_Event_IrreversibleState, true, m_data.GetSimulationTime());
       }
 
       // If the O2 tension is below a critical threshold, the irreversible damage occurs more quickly
       if (m_brainO2->GetPartialPressure(PressureUnit::mmHg) < 10.0)
       {
         /// \event Patient: Critical Brain Oxygen Deficit Event. The oxygen partial pressure in the brain has dropped to a critically low level.
-        patient.SetEvent(cdm::PatientData_eEvent_CriticalBrainOxygenDeficit, true, m_data.GetSimulationTime());
+        patient.SetEvent(cdm::ePatient_Event_CriticalBrainOxygenDeficit, true, m_data.GetSimulationTime());
       }
       else if (m_brainO2->GetPartialPressure(PressureUnit::mmHg) > 12.0)
       {
         /// \event Patient: End Brain Oxygen Deficit Event. The oxygen partial pressure has risen above 12 mmHg in the brain. If this occurs when the patient has a critical brain oxygen deficit event, it will reverse the event.
         /// The brain is not in a critical oxygen deficit.
-        patient.SetEvent(cdm::PatientData_eEvent_CriticalBrainOxygenDeficit, false, m_data.GetSimulationTime());
+        patient.SetEvent(cdm::ePatient_Event_CriticalBrainOxygenDeficit, false, m_data.GetSimulationTime());
       }
 
       // Irreversible damage occurs if the critical deficit has gone on too long
-      if (patient.GetEventDuration(cdm::PatientData_eEvent_CriticalBrainOxygenDeficit, TimeUnit::s) > 600)
+      if (patient.GetEventDuration(cdm::ePatient_Event_CriticalBrainOxygenDeficit, TimeUnit::s) > 600)
       {
         m_ss << "Brain Oxygen partial pressure is " << m_brainO2->GetPartialPressure(PressureUnit::mmHg) << " and has been below the critical threshold for " <<
-          patient.GetEventDuration(cdm::PatientData_eEvent_BrainOxygenDeficit, TimeUnit::s) << " seconds. Damage is irreversible.";
+          patient.GetEventDuration(cdm::ePatient_Event_BrainOxygenDeficit, TimeUnit::s) << " seconds. Damage is irreversible.";
         Warning(m_ss);
         /// \irreversible Brain oxygen pressure has been critically low for more than 10 minutes.
-        patient.SetEvent(cdm::PatientData_eEvent_IrreversibleState, true, m_data.GetSimulationTime());
+        patient.SetEvent(cdm::ePatient_Event_IrreversibleState, true, m_data.GetSimulationTime());
       }
     }
     else if (m_brainO2->GetPartialPressure(PressureUnit::mmHg) > 25.0)
     {
       /// \event Patient: End Brain Oxygen Deficit Event. The oxygen partial pressure has risen above 25 mmHg in the brain. If this occurs when the patient has a brain oxygen deficit event, it will reverse the event.
       /// The brain is getting oxygen.
-      patient.SetEvent(cdm::PatientData_eEvent_BrainOxygenDeficit, false, m_data.GetSimulationTime());
+      patient.SetEvent(cdm::ePatient_Event_BrainOxygenDeficit, false, m_data.GetSimulationTime());
       // The critical deficit event is also set to false just in case there is an unrealistically rapid transition in oxygen partial pressure.
-      patient.SetEvent(cdm::PatientData_eEvent_CriticalBrainOxygenDeficit, false, m_data.GetSimulationTime());
+      patient.SetEvent(cdm::ePatient_Event_CriticalBrainOxygenDeficit, false, m_data.GetSimulationTime());
     }
 
     //Myocardium Oxygen Check
     if (m_myocardiumO2->GetPartialPressure(PressureUnit::mmHg) < 5)
     {
       /// \event Patient: The heart is not receiving enough oxygen. Coronary arteries should dilate to increase blood flow to the heart.
-      patient.SetEvent(cdm::PatientData_eEvent_MyocardiumOxygenDeficit, true, m_data.GetSimulationTime());
+      patient.SetEvent(cdm::ePatient_Event_MyocardiumOxygenDeficit, true, m_data.GetSimulationTime());
 
-      if (patient.GetEventDuration(cdm::PatientData_eEvent_MyocardiumOxygenDeficit, TimeUnit::s) > 2400)  // \cite murry1986preconditioning
+      if (patient.GetEventDuration(cdm::ePatient_Event_MyocardiumOxygenDeficit, TimeUnit::s) > 2400)  // \cite murry1986preconditioning
       {
-        m_ss << "Myocardium oxygen partial pressure is  " << m_myocardiumO2->GetPartialPressure(PressureUnit::mmHg) << " and has been sustained for " << patient.GetEventDuration(cdm::PatientData_eEvent_MyocardiumOxygenDeficit, TimeUnit::s) <<
+        m_ss << "Myocardium oxygen partial pressure is  " << m_myocardiumO2->GetPartialPressure(PressureUnit::mmHg) << " and has been sustained for " << patient.GetEventDuration(cdm::ePatient_Event_MyocardiumOxygenDeficit, TimeUnit::s) <<
           "patient heart muscle has experienced necrosis and is in an irreversible state.";
         Warning(m_ss);
         /// \irreversible Heart has not been receiving enough oxygen for more than 40 min.
-        patient.SetEvent(cdm::PatientData_eEvent_IrreversibleState, true, m_data.GetSimulationTime());
+        patient.SetEvent(cdm::ePatient_Event_IrreversibleState, true, m_data.GetSimulationTime());
       }
     }
     else if (m_myocardiumO2->GetPartialPressure(PressureUnit::mmHg) > 8)
     {
       /// \event Patient: End Myocardium Oxygen Event. The heart is now receiving enough oxygen. If this occurs when the patient has a heart oxygen deficit event, it will reverse the event.
       /// The brain is getting oxygen.
-      patient.SetEvent(cdm::PatientData_eEvent_MyocardiumOxygenDeficit, false, m_data.GetSimulationTime());
+      patient.SetEvent(cdm::ePatient_Event_MyocardiumOxygenDeficit, false, m_data.GetSimulationTime());
     }
   }
 }

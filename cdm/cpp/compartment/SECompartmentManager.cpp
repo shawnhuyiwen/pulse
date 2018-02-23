@@ -3,14 +3,26 @@
 
 #include "stdafx.h"
 #include "compartment/SECompartmentManager.h"
-#include "circuit/SECircuitManager.h"
 #include "compartment/fluid/SEGasCompartmentGraph.h"
 #include "compartment/fluid/SELiquidCompartmentGraph.h"
 #include "compartment/thermal/SEThermalCompartment.h"
 #include "compartment/thermal/SEThermalCompartmentLink.h"
 #include "compartment/tissue/SETissueCompartment.h"
+// Circuits
+#include "circuit/SECircuitManager.h"
+#include "circuit/fluid/SEFluidCircuit.h"
+#include "circuit/fluid/SEFluidCircuitNode.h"
+#include "circuit/fluid/SEFluidCircuitPath.h"
+#include "circuit/thermal/SEThermalCircuit.h"
+#include "circuit/thermal/SEThermalCircuitNode.h"
+#include "circuit/thermal/SEThermalCircuitPath.h"
+#include "circuit/electrical/SEElectricalCircuit.h"
+#include "circuit/electrical/SEElectricalCircuitNode.h"
+#include "circuit/electrical/SEElectricalCircuitPath.h"
+// Substances
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceManager.h"
+// Properties
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarAmountPerVolume.h"
 PROTO_PUSH
@@ -296,47 +308,47 @@ void SECompartmentManager::Serialize(const SECompartmentManager& src, cdm::Compa
 }
 
 
-bool SECompartmentManager::HasCompartment(cdm::eCompartmentType type, const std::string& name) const
+bool SECompartmentManager::HasCompartment(cdm::eCompartment_Type type, const std::string& name) const
 {
   switch (type)
   {
-  case cdm::eCompartmentType::Gas:
+  case cdm::eCompartment_Type_Gas:
     return HasGasCompartment(name);
-  case cdm::eCompartmentType::Liquid:
+  case cdm::eCompartment_Type_Liquid:
     return HasLiquidCompartment(name);
-  case cdm::eCompartmentType::Thermal:
+  case cdm::eCompartment_Type_Thermal:
     return HasThermalCompartment(name);
-  case cdm::eCompartmentType::Tissue:
+  case cdm::eCompartment_Type_Tissue:
     return HasTissueCompartment(name);
   }
   return false;
 }
-SECompartment* SECompartmentManager::GetCompartment(cdm::eCompartmentType type, const std::string& name)
+SECompartment* SECompartmentManager::GetCompartment(cdm::eCompartment_Type type, const std::string& name)
 {
   switch (type)
   {
-  case cdm::eCompartmentType::Gas:
+  case cdm::eCompartment_Type_Gas:
     return GetGasCompartment(name);
-  case cdm::eCompartmentType::Liquid:
+  case cdm::eCompartment_Type_Liquid:
     return GetLiquidCompartment(name);
-  case cdm::eCompartmentType::Thermal:
+  case cdm::eCompartment_Type_Thermal:
     return GetThermalCompartment(name);
-  case cdm::eCompartmentType::Tissue:
+  case cdm::eCompartment_Type_Tissue:
     return GetTissueCompartment(name);
   }
   return nullptr;
 }
-const SECompartment* SECompartmentManager::GetCompartment(cdm::eCompartmentType type, const std::string& name) const
+const SECompartment* SECompartmentManager::GetCompartment(cdm::eCompartment_Type type, const std::string& name) const
 {
   switch (type)
   {
-  case cdm::eCompartmentType::Gas:
+  case cdm::eCompartment_Type_Gas:
     return GetGasCompartment(name);
-  case cdm::eCompartmentType::Liquid:
+  case cdm::eCompartment_Type_Liquid:
     return GetLiquidCompartment(name);
-  case cdm::eCompartmentType::Thermal:
+  case cdm::eCompartment_Type_Thermal:
     return GetThermalCompartment(name);
-  case cdm::eCompartmentType::Tissue:
+  case cdm::eCompartment_Type_Tissue:
     return GetTissueCompartment(name);
   }
   return nullptr;

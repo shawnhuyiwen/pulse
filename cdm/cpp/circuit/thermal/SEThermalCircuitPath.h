@@ -3,12 +3,6 @@
 
 #pragma once
 #include "circuit/SECircuitPath.h"
-#include "properties/SEScalarHeatResistance.h"
-#include "properties/SEScalarHeatCapacitance.h"
-#include "properties/SEScalarHeatInductance.h"
-#include "properties/SEScalarPower.h"
-#include "properties/SEScalarTemperature.h"
-#include "properties/SEScalarEnergy.h"
 #include "circuit/thermal/SEThermalCircuitNode.h"
 CDM_BIND_DECL(ThermalCircuitPathData)
 
@@ -30,8 +24,8 @@ protected:
 
 
 public:
-  virtual SEThermalCircuitNode& GetSourceNode() const { return m_ThermalSourceNode; }
-  virtual SEThermalCircuitNode& GetTargetNode() const { return m_ThermalTargetNode; }
+  virtual SEThermalCircuitNode& GetSourceNode() const;
+  virtual SEThermalCircuitNode& GetTargetNode() const;
 
   virtual bool HasResistance() const;
   virtual SEScalarHeatResistance& GetResistance();

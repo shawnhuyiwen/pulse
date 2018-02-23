@@ -2,7 +2,11 @@
    See accompanying NOTICE file for details.*/
 #include "EngineTest.h"
 #include "Controller/Controller.h"
+#include "Controller/Compartments.h"
+#include "Controller/Substances.h"
+#include "Systems/Saturation.h"
 #include "substance/SESubstanceManager.h"
+#include "substance/SESubstance.h"
 #include "compartment/fluid/SELiquidCompartment.h"
 #include "compartment/SECompartmentManager.h"
 #include "utils/GeneralMath.h"
@@ -11,14 +15,17 @@
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarMassPerAmount.h"
+#include "properties/SEScalarTime.h"
 #include "properties/SEScalarVolume.h"
-
 #include "properties/SEScalarAmountPerVolume.h"
 #include "compartment/SECompartmentManager.h"
 #include "compartment/fluid/SEFluidCompartmentLink.h"
 #include "compartment/fluid/SELiquidCompartmentGraph.h"
 #include "compartment/fluid/SELiquidCompartment.h"
 #include "utils/testing/SETestReport.h"
+#include "utils/testing/SETestSuite.h"
+#include "utils/testing/SETestCase.h"
+#include "utils/TimingProfile.h"
 
 #define VERBOSE
 

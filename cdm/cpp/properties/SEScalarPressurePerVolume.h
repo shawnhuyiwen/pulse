@@ -3,6 +3,7 @@
 
 #pragma once
 #include "properties/SEScalar.h"
+CDM_BIND_DECL(ScalarPressurePerVolumeData)
 
 class CDM_DECL PressurePerVolumeUnit : public CCompoundUnit
 {

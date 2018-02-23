@@ -3,6 +3,9 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarPressurePerVolume.h"
+PROTO_PUSH
+#include "bind/cdm/Properties.pb.h"
+PROTO_POP
 
 const PressurePerVolumeUnit PressurePerVolumeUnit::mmHg_Per_mL("mmHg/mL");
 const PressurePerVolumeUnit PressurePerVolumeUnit::cmH2O_Per_mL("cmH2O/mL");

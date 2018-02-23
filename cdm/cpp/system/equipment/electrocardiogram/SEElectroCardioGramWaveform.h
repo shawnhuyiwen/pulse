@@ -2,8 +2,10 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
+CDM_BIND_DECL(ElectroCardioGramWaveformData)
 PROTO_PUSH
-#include "bind/cdm/ElectroCardioGram.pb.h"
+#include "bind/cdm/PhysiologyEnums.pb.h"
+#include "bind/cdm/ElectroCardioGramEnums.pb.h"
 PROTO_POP
 
 class CDM_DECL SEElectroCardioGramWaveform : public Loggable
@@ -23,8 +25,8 @@ protected:
 
 public:  
   virtual bool HasLeadNumber() const;
-  virtual cdm::ElectroCardioGramWaveformData_eLead  GetLeadNumber() const;
-  virtual void SetLeadNumber(cdm::ElectroCardioGramWaveformData_eLead n);
+  virtual cdm::eElectroCardioGram_WaveformLead  GetLeadNumber() const;
+  virtual void SetLeadNumber(cdm::eElectroCardioGram_WaveformLead n);
   virtual void InvalidateLeadNumber();
 
   virtual cdm::eHeartRhythm GetRhythm() const;
@@ -42,7 +44,7 @@ public:
 
 protected:
 
-  cdm::ElectroCardioGramWaveformData_eLead m_LeadNumber;
+  cdm::eElectroCardioGram_WaveformLead     m_LeadNumber;
   cdm::eHeartRhythm                        m_Rhythm;
   SEScalarTime*                            m_TimeStep;
   SEFunctionElectricPotentialVsTime*       m_Data;

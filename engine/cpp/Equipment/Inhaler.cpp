@@ -3,17 +3,31 @@
 
 
 #include "stdafx.h"
-#include "Inhaler.h"
+#include "Equipment/Inhaler.h"
+#include "Controller/Controller.h"
+#include "Controller/Compartments.h"
+#include "Controller/Substances.h"
+PROTO_PUSH
+#include "bind/engine/EngineEquipment.pb.h"
+PROTO_POP
+#include "system/physiology/SERespiratorySystem.h"
 #include "circuit/SECircuit.h"
 #include "circuit/SECircuitPath.h"
 #include "circuit/SECircuitNode.h"
+#include "compartment/fluid/SEGasCompartment.h"
+#include "compartment/fluid/SELiquidCompartment.h"
+#include "scenario/SEActionManager.h"
+#include "scenario/SEInhalerActionCollection.h"
+#include "scenario/SEPatientActionCollection.h"
+#include "substance/SESubstance.h"
+#include "patient/actions/SEConsciousRespiration.h"
+#include "patient/actions/SEUseInhaler.h"
+#include "properties/SEScalarTime.h"
 #include "properties/SEScalarLength.h"
 #include "properties/SEScalarFlowResistance.h"
 #include "properties/SEScalarMassPerVolume.h"
+#include "properties/SEScalarMass.h"
 #include "properties/SEScalar0To1.h"
-#include "system/physiology/SERespiratorySystem.h"
-#include "patient/actions/SEConsciousRespiration.h"
-#include "patient/actions/SEUseInhaler.h"
 
 /*
 ========================

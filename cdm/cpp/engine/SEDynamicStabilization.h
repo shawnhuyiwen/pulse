@@ -2,9 +2,9 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-CDM_BIND_DECL(DynamicStabilizationData)
 #include "engine/SEEngineStabilization.h"
-#include "engine/SEDynamicStabilizationEngineConvergence.h"
+class SEDynamicStabilizationEngineConvergence;
+CDM_BIND_DECL(DynamicStabilizationData)
 
 class CDM_DECL SEDynamicStabilization : public SEEngineStabilization
 {
@@ -44,12 +44,12 @@ protected:
 
   virtual bool Stabilize(PhysiologyEngine& engine, const SEDynamicStabilizationEngineConvergence& criteria);
 
-  SEDynamicStabilizationEngineConvergence  m_RestingConvergence;
-  SEDynamicStabilizationEngineConvergence  m_FeedbackConvergence;
+  SEDynamicStabilizationEngineConvergence* m_RestingConvergence;
+  SEDynamicStabilizationEngineConvergence* m_FeedbackConvergence;
   std::map<std::string, SEDynamicStabilizationEngineConvergence*> m_ConditionConvergence;
 
   bool Merge();
-  SEDynamicStabilizationEngineConvergence m_MergedConditions;
+  SEDynamicStabilizationEngineConvergence* m_MergedConditions;
   std::map<std::string, SEDynamicStabilizationEngineConvergence*> m_ActiveConditions;
 };
 

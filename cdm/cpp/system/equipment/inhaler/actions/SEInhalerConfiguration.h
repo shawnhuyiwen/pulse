@@ -5,6 +5,7 @@
 #include "SEInhalerAction.h"
 class SEInhaler;
 class SESubstanceManager;
+CDM_BIND_DECL(InhalerConfigurationData)
 
 class CDM_DECL SEInhalerConfiguration : public SEInhalerAction
 {

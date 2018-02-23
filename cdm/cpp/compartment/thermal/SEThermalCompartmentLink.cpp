@@ -2,8 +2,10 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
+#include "compartment/thermal/SEThermalCompartment.h"
 #include "compartment/thermal/SEThermalCompartmentLink.h"
 #include "circuit/SECircuitManager.h"
+#include "circuit/thermal/SEThermalCircuitPath.h"
 #include "properties/SEScalarPower.h"
 PROTO_PUSH
 #include "bind/cdm/Compartment.pb.h"

@@ -24,16 +24,16 @@
 #include "properties/SEScalarVolumePerTime.h"
 
 #include "utils/DataTrack.h"
-#include "properties/SEDecimalFormat.h"
+#include "scenario/SEDecimalFormat.h"
 
 void CommonDataModelTest::ScalarTest(const std::string& sOutputDirectory)
 {
   std::ofstream file;
   SEDecimalFormat fixed;
-  fixed.SetNotation(cdm::DecimalFormatData_eType_FixedMantissa);
+  fixed.SetNotation(cdm::eDecimalFormat_Type_FixedMantissa);
   fixed.SetPrecision(8);
   SEDecimalFormat sci;
-  sci.SetNotation(cdm::DecimalFormatData_eType_SignificantDigits);
+  sci.SetNotation(cdm::eDecimalFormat_Type_SignificantDigits);
   sci.SetPrecision(4);
 
   DataTrack track;

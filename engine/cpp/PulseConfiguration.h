@@ -12,8 +12,7 @@ class SEElectroCardioGramWaveformInterpolator;
 #include "engine/SEEngineConfiguration.h"
 PULSE_BIND_DECL(ConfigurationData)
 PROTO_PUSH
-#include "bind/engine/Engine.pb.h"
-#include "bind/cdm/Properties.pb.h"
+#include "bind/engine/EngineEnums.pb.h"
 PROTO_POP
 
 /**

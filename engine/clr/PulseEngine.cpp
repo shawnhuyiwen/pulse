@@ -14,6 +14,8 @@ See accompanying NOTICE file for details.*/
 #include "utils/SEEventHandler.h"
 #include "substance/SESubstanceManager.h"
 #include "compartment/SECompartmentManager.h"
+#include "compartment/fluid/SEGasCompartment.h"
+#include "compartment/fluid/SELiquidCompartment.h"
 #include "compartment/substances/SEGasSubstanceQuantity.h"
 #include "compartment/substances/SELiquidSubstanceQuantity.h"
 
@@ -118,15 +120,15 @@ protected:
 
   //These methods need definitions and should call your callback with what ever data you made it require
 public:
-  virtual void HandlePatientEvent(cdm::PatientData_eEvent type, bool active, const SEScalarTime* time = nullptr) 
+  virtual void HandlePatientEvent(cdm::ePatient_Event type, bool active, const SEScalarTime* time = nullptr) 
   {
     // If you are looking for a lot of events, you should probably use a switch statement
-    if (_start_of_inhale != nullptr && type == cdm::PatientData_eEvent_StartOfInhale && active)
+    if (_start_of_inhale != nullptr && type == cdm::ePatient_Event_StartOfInhale && active)
     {
       _start_of_inhale();// Call the function pointer, from where ever it came and goes
     }
   }
-  virtual void HandleAnesthesiaMachineEvent(cdm::AnesthesiaMachineData_eEvent type, bool active, const SEScalarTime* time = nullptr) 
+  virtual void HandleAnesthesiaMachineEvent(cdm::eAnesthesiaMachine_Event type, bool active, const SEScalarTime* time = nullptr) 
   {
 
   }

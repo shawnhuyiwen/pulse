@@ -5,6 +5,7 @@
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceAerosolization.h"
 #include "substance/SESubstanceClearance.h"
+#include "substance/SESubstancePhysicochemicals.h"
 #include "substance/SESubstancePharmacokinetics.h"
 #include "substance/SESubstancePharmacodynamics.h"
 #include "properties/SEScalarMassPerAmount.h"
@@ -16,11 +17,14 @@
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalarVolumePerTimePressure.h"
+PROTO_PUSH
+#include "bind/cdm/Substance.pb.h"
+PROTO_POP
 
 SESubstance::SESubstance(Logger* logger) : Loggable(logger)
 {
   m_Name = "";
-  m_State = cdm::SubstanceData_eState_NullState;
+  m_State = cdm::eSubstance_State_NullState;
   m_Density = nullptr;
   m_MolarMass = nullptr;
 
@@ -56,7 +60,7 @@ SESubstance::~SESubstance()
 void SESubstance::Clear()
 {
   m_Name = "";
-  m_State = cdm::SubstanceData_eState_NullState;
+  m_State = cdm::eSubstance_State_NullState;
   SAFE_DELETE(m_Density); 
   SAFE_DELETE(m_MolarMass);
   
@@ -285,21 +289,21 @@ void SESubstance::InvalidateName()
   m_Name = "";
 }
 
-cdm::SubstanceData_eState SESubstance::GetState() const
+cdm::eSubstance_State SESubstance::GetState() const
 {
   return m_State;
 }
-void SESubstance::SetState(cdm::SubstanceData_eState state)
+void SESubstance::SetState(cdm::eSubstance_State state)
 {
   m_State = state;
 }
 bool SESubstance::HasState() const
 {
-  return m_State == cdm::SubstanceData_eState_NullState ? false : true;
+  return m_State == cdm::eSubstance_State_NullState ? false : true;
 }
 void SESubstance::InvalidateState()
 {
-  m_State = cdm::SubstanceData_eState_NullState;
+  m_State = cdm::eSubstance_State_NullState;
 }
 
 bool SESubstance::HasDensity() const

@@ -2,9 +2,11 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
+CDM_BIND_DECL(DecimalFormatData)
 PROTO_PUSH
-#include "bind/cdm/Properties.pb.h"
+#include "bind/cdm/ScenarioEnums.pb.h"
 PROTO_PUSH
+
 class CDM_DECL SEDecimalFormat
 {
 public:
@@ -24,13 +26,13 @@ public:
   void SetPrecision(std::streamsize p);
   std::streamsize GetPrecision();
 
-  void SetNotation(cdm::DecimalFormatData::eType n);
-  cdm::DecimalFormatData::eType GetNotation();
+  void SetNotation(cdm::eDecimalFormat_Type n);
+  cdm::eDecimalFormat_Type GetNotation();
 
   void SetStream(std::ofstream& s);
 
 protected:
   std::streamsize               m_Precision;
-  cdm::DecimalFormatData::eType m_Notation;
+  cdm::eDecimalFormat_Type m_Notation;
 
 };

@@ -47,7 +47,7 @@ SELiquidSubstanceQuantity::SELiquidSubstanceQuantity(SESubstance& sub, SELiquidC
   else if (sub.GetName() == "CarbonDioxide")
     m_isCO2 = true;
 
-  if (m_Substance.GetState() != cdm::SubstanceData_eState_Gas)
+  if (m_Substance.GetState() != cdm::eSubstance_State_Gas)
     GetPartialPressure().SetReadOnly(true);// Cannot have a partial pressure of a non gas
 }
 
@@ -67,7 +67,7 @@ void SELiquidSubstanceQuantity::Invalidate()
     m_MassDeposited->Invalidate();
   if (m_MassExcreted != nullptr)
     m_MassExcreted->Invalidate();
-  if (m_PartialPressure != nullptr && m_Substance.GetState() == cdm::SubstanceData_eState_Gas)
+  if (m_PartialPressure != nullptr && m_Substance.GetState() == cdm::eSubstance_State_Gas)
     m_PartialPressure->Invalidate();
   if (m_Saturation != nullptr)
     m_Saturation->Invalidate();
@@ -147,7 +147,7 @@ void SELiquidSubstanceQuantity::SetToZero()
   GetConcentration().SetValue(0, MassPerVolumeUnit::mg_Per_mL);
   GetMass().SetValue(0, MassUnit::mg);
   GetMolarity().SetValue(0, AmountPerVolumeUnit::mmol_Per_mL);
-  if (m_Substance.GetState() == cdm::SubstanceData_eState_Gas)
+  if (m_Substance.GetState() == cdm::eSubstance_State_Gas)
     GetPartialPressure().SetValue(0, PressureUnit::mmHg);
   if (m_isO2 || m_isCO || m_isCO2)
     GetSaturation().SetValue(0);
@@ -201,7 +201,7 @@ void SELiquidSubstanceQuantity::Balance(BalanceLiquidBy by)
         GetMass().SetValue(std::numeric_limits<double>::infinity(), MassUnit::ug);
       else
         GeneralMath::CalculateMass(volume, GetConcentration(), GetMass(), m_Logger);
-      if (m_Substance.GetState() == cdm::SubstanceData_eState_Gas)
+      if (m_Substance.GetState() == cdm::eSubstance_State_Gas)
         GeneralMath::CalculatePartialPressureInLiquid(m_Substance, GetConcentration(), GetPartialPressure(), m_Logger);
       double molarity_mmol_Per_mL = GetMass(MassUnit::ug) / m_Substance.GetMolarMass(MassPerAmountUnit::ug_Per_mmol) / volume.GetValue(VolumeUnit::mL);
       GetMolarity().SetValue(molarity_mmol_Per_mL, AmountPerVolumeUnit::mmol_Per_mL);
@@ -212,7 +212,7 @@ void SELiquidSubstanceQuantity::Balance(BalanceLiquidBy by)
       if (!volume.IsValid() || volume.IsInfinity() || !GetMass().IsValid() ||GetMass().IsInfinity())
         Fatal("Cannot balance by Mass if volume or mass is invalid or set to Infinity", "SELiquidSubstanceQuantity::Balance");
       GeneralMath::CalculateConcentration(GetMass(),volume,GetConcentration(), m_Logger);
-      if (m_Substance.GetState() == cdm::SubstanceData_eState_Gas)
+      if (m_Substance.GetState() == cdm::eSubstance_State_Gas)
         GeneralMath::CalculatePartialPressureInLiquid(m_Substance, GetConcentration(), GetPartialPressure(), m_Logger);
       double molarity_mmol_Per_mL = GetMass(MassUnit::ug) / m_Substance.GetMolarMass(MassPerAmountUnit::ug_Per_mmol) / volume.GetValue(VolumeUnit::mL);
       GetMolarity().SetValue(molarity_mmol_Per_mL, AmountPerVolumeUnit::mmol_Per_mL);
@@ -225,13 +225,13 @@ void SELiquidSubstanceQuantity::Balance(BalanceLiquidBy by)
       double mass_ug = GetMolarity(AmountPerVolumeUnit::mmol_Per_mL) *  m_Substance.GetMolarMass(MassPerAmountUnit::ug_Per_mmol) * volume.GetValue(VolumeUnit::mL);
       GetMass().SetValue(mass_ug, MassUnit::ug);
       GeneralMath::CalculateConcentration(GetMass(), volume, GetConcentration(), m_Logger);
-      if (m_Substance.GetState() == cdm::SubstanceData_eState_Gas)
+      if (m_Substance.GetState() == cdm::eSubstance_State_Gas)
         GeneralMath::CalculatePartialPressureInLiquid(m_Substance, GetConcentration(), GetPartialPressure(), m_Logger);
       break;
     }
     case BalanceLiquidBy::PartialPressure:
     {
-    if (m_Substance.GetState() != cdm::SubstanceData_eState_Gas)
+    if (m_Substance.GetState() != cdm::eSubstance_State_Gas)
       Fatal("Cannot balance by Partial Pressure if substance is not a gas", "SELiquidSubstanceQuantity::Balance");
     if (!volume.IsValid() || volume.IsInfinity() || !GetPartialPressure().IsValid() || GetPartialPressure().IsInfinity())
         Fatal("Cannot balance by Partial Pressure if volume or partial pressure is invalid or set to Infinity", "SELiquidSubstanceQuantity::Balance");

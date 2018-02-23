@@ -2,12 +2,6 @@
    See accompanying NOTICE file for details.*/
 #pragma once
 
-#ifdef REBASE_TOOL
-#define CDM_DECL
-#else
-#include "CommonDataModel.h"
-#endif
-
 #include <string>
 #include <vector>
 #include <map>

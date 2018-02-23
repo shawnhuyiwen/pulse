@@ -7,8 +7,9 @@
 #include "scenario/SEScenario.h"
 #include "scenario/SEScenarioInitialParameters.h"
 #include "scenario/SEScenarioExec.h"
-#include "compartment/SECompartmentManager.h"
+#include "scenario/SEDataRequestManager.h"
 #include "scenario/SEAdvanceTime.h"
+#include "compartment/SECompartmentManager.h"
 
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEScalarTime.h"

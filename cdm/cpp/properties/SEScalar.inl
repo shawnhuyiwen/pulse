@@ -2,6 +2,9 @@
 See accompanying NOTICE file for details.*/
 
 #include "utils/GeneralMath.h"
+PROTO_PUSH
+#include "bind/cdm/Properties.pb.h"
+PROTO_POP
 
 template<typename Unit>
 SEScalarQuantity<Unit>::SEScalarQuantity() : SEUnitScalar()

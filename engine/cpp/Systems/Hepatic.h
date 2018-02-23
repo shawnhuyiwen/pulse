@@ -4,6 +4,7 @@
 #pragma once
 #include "Controller/System.h"
 #include "system/physiology/SEHepaticSystem.h"
+PULSE_BIND_DECL(HepaticSystemData)
 
 /**
  * @copydoc Physiology_HepaticystemData

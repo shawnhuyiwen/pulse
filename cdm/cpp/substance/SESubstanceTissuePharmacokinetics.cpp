@@ -4,6 +4,9 @@
 #include "stdafx.h"
 #include "substance/SESubstanceTissuePharmacokinetics.h"
 #include "properties/SEScalar.h"
+PROTO_PUSH
+#include "bind/cdm/Substance.pb.h"
+PROTO_POP
 
 SESubstanceTissuePharmacokinetics::SESubstanceTissuePharmacokinetics(const std::string& name, Logger* logger) : Loggable(logger), m_Name(name)
 {

@@ -2,13 +2,13 @@
    See accompanying NOTICE file for details.*/
 package mil.tatrc.physiology.datamodel.utilities;
 
-import com.kitware.physiology.cdm.AnesthesiaMachine.AnesthesiaMachineData;
-import com.kitware.physiology.cdm.Patient.PatientData;
+import com.kitware.physiology.cdm.AnesthesiaMachineEnums.eAnesthesiaMachine;
+import com.kitware.physiology.cdm.PatientEnums.ePatient;
 
 import mil.tatrc.physiology.datamodel.properties.SEScalarTime;
 
 public interface SEEventHandler
 {
-  public void handlePatientEvent(PatientData.eEvent type, boolean active, SEScalarTime time);
-  public void handleAnesthesiaMachineEvent(AnesthesiaMachineData.eEvent type, boolean active, SEScalarTime time);
+  public void handlePatientEvent(ePatient.Event type, boolean active, SEScalarTime time);
+  public void handleAnesthesiaMachineEvent(eAnesthesiaMachine.Event type, boolean active, SEScalarTime time);
 }

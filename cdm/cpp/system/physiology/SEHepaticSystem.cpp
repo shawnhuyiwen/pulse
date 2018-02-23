@@ -3,6 +3,9 @@
 
 #include "stdafx.h"
 #include "system/physiology/SEHepaticSystem.h"
+PROTO_PUSH
+#include "bind/cdm/Physiology.pb.h"
+PROTO_POP
 
 SEHepaticSystem::SEHepaticSystem(Logger* logger) : SESystem(logger)
 {

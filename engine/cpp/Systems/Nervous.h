@@ -4,7 +4,7 @@
 #pragma once
 #include "Controller/System.h"
 #include "system/physiology/SENervousSystem.h"
-
+PULSE_BIND_DECL(NervousSystemData)
 /**
  * @brief 
  * The nervous class holds models of the peripheral and central nervous system. Currently, on the baroreceptor reflex is modeled.

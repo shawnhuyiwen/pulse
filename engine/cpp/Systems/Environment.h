@@ -3,10 +3,14 @@
 
 #pragma once
 #include "Controller/System.h"
-PROTO_PUSH
-#include "bind/engine/EngineEnvironment.pb.h"
-PROTO_POP
 #include "system/environment/SEEnvironment.h"
+class SEPatient;
+class SEGasCompartment;
+class SELiquidCompartment;
+class SEThermalCircuit;
+class SEThermalCircuitNode;
+class SEThermalCircuitPath;
+PULSE_BIND_DECL(EnvironmentData)
 
 /**
  * @brief The %Environment class characterizes the environment and manages interactions between the body its surroundings.
@@ -72,9 +76,7 @@ protected:
 
   // Stateless member variable (Set in SetUp())
   // Patient and Actions
-  SEPatient*                     m_Patient;  
-  SEPatientActionCollection*     m_PatientActions;
-  SEEnvironmentActionCollection* m_EnvironmentActions;
+  SEPatient*                     m_Patient;
   // Compartments
   SEGasCompartment*              m_AmbientGases;
   SELiquidCompartment*           m_AmbientAerosols;

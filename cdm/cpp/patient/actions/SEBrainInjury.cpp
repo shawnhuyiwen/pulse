@@ -3,15 +3,15 @@
 
 #include "stdafx.h"
 #include "patient/actions/SEBrainInjury.h"
-#include "properties/SEScalar0To1.h"
 PROTO_PUSH
 #include "bind/cdm/PatientActions.pb.h"
 PROTO_POP
+#include "properties/SEScalar0To1.h"
 
 SEBrainInjury::SEBrainInjury() : SEPatientAction()
 {
   m_Severity=nullptr;
-  m_Type = cdm::BrainInjuryData_eType_Diffuse;
+  m_Type = cdm::eBrainInjury_Type_Diffuse;
 }
 
 SEBrainInjury::~SEBrainInjury()
@@ -24,7 +24,7 @@ void SEBrainInjury::Clear()
   
   SEPatientAction::Clear();
   SAFE_DELETE(m_Severity);
-  m_Type = cdm::BrainInjuryData_eType_Diffuse;
+  m_Type = cdm::eBrainInjury_Type_Diffuse;
 }
 
 bool SEBrainInjury::IsValid() const
@@ -74,11 +74,11 @@ SEScalar0To1& SEBrainInjury::GetSeverity()
   return *m_Severity;
 }
 
-cdm::BrainInjuryData_eType SEBrainInjury::GetType() const
+cdm::eBrainInjury_Type SEBrainInjury::GetType() const
 {
   return m_Type;
 }
-void SEBrainInjury::SetType(cdm::BrainInjuryData_eType Type)
+void SEBrainInjury::SetType(cdm::eBrainInjury_Type Type)
 {
   m_Type = Type;
 }
@@ -88,6 +88,6 @@ void SEBrainInjury::ToString(std::ostream &str) const
   if(HasComment())
     str<<"\n\tComment: "<<m_Comment;
   str << "\n\tSeverity: "; HasSeverity() ? str << *m_Severity : str << "Not Set";
-  str << "\n\tType: "<< cdm::BrainInjuryData_eType_Name(GetType());
+  str << "\n\tType: "<< cdm::eBrainInjury_Type_Name(GetType());
   str << std::flush;
 }

@@ -3,6 +3,7 @@
 
 #pragma once
 #include "properties/SEScalar.h"
+CDM_BIND_DECL(ScalarAreaData)
 
 class CDM_DECL AreaUnit : public CCompoundUnit
 {

@@ -3,6 +3,12 @@ See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "circuit/electrical/SEElectricalCircuitPath.h"
+#include "properties/SEScalarElectricResistance.h"
+#include "properties/SEScalarElectricCapacitance.h"
+#include "properties/SEScalarElectricInductance.h"
+#include "properties/SEScalarElectricCurrent.h"
+#include "properties/SEScalarElectricPotential.h"
+#include "properties/SEScalarElectricCharge.h"
 PROTO_PUSH
 #include "bind/cdm/Circuit.pb.h"
 PROTO_POP

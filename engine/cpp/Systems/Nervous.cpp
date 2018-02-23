@@ -2,11 +2,23 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "Nervous.h"
+#include "Systems/Nervous.h"
+#include "PulseConfiguration.h"
+PROTO_PUSH
+#include "bind/engine/EnginePhysiology.pb.h"
+PROTO_POP
+// Actions
+#include "scenario/SEActionManager.h"
+#include "scenario/SEPatientActionCollection.h"
+#include "patient/actions/SEBrainInjury.h"
+// Dependent Systems
 #include "patient/SEPatient.h"
+#include "system/physiology/SEBloodChemistrySystem.h"
 #include "system/physiology/SECardiovascularSystem.h"
+#include "system/physiology/SEEnergySystem.h"
 #include "system/physiology/SEPupillaryResponse.h"
 #include "system/physiology/SEDrugSystem.h"
+// CDM
 #include "properties/SEScalarFlowCompliance.h"
 #include "properties/SEScalarFlowElastance.h"
 #include "properties/SEScalarFlowResistance.h"
@@ -242,24 +254,24 @@ void Nervous::CheckBrainStatus()
   if (icp_mmHg > 25.0) // \cite steiner2006monitoring
   {
     /// \event Patient: Intracranial Hypertension. The intracranial pressure has risen above 25 mmHg.
-    m_data.GetPatient().SetEvent(cdm::PatientData_eEvent_IntracranialHypertension, true, m_data.GetSimulationTime());
+    m_data.GetPatient().SetEvent(cdm::ePatient_Event_IntracranialHypertension, true, m_data.GetSimulationTime());
   }
-  else if (m_data.GetPatient().IsEventActive(cdm::PatientData_eEvent_IntracranialHypertension) && icp_mmHg < 24.0)
+  else if (m_data.GetPatient().IsEventActive(cdm::ePatient_Event_IntracranialHypertension) && icp_mmHg < 24.0)
   {
     /// \event Patient: End Intracranial Hypertension. The intracranial pressure has fallen below 24 mmHg.
-    m_data.GetPatient().SetEvent(cdm::PatientData_eEvent_IntracranialHypertension, false, m_data.GetSimulationTime());
+    m_data.GetPatient().SetEvent(cdm::ePatient_Event_IntracranialHypertension, false, m_data.GetSimulationTime());
   }
 
   //Intracranial Hypotension
   if (icp_mmHg < 7.0) // \cite steiner2006monitoring
   {
     /// \event Patient: Intracranial Hypotension. The intracranial pressure has fallen below 7 mmHg.
-    m_data.GetPatient().SetEvent(cdm::PatientData_eEvent_IntracranialHypotension, true, m_data.GetSimulationTime());
+    m_data.GetPatient().SetEvent(cdm::ePatient_Event_IntracranialHypotension, true, m_data.GetSimulationTime());
   }
-  else if (m_data.GetPatient().IsEventActive(cdm::PatientData_eEvent_IntracranialHypotension) && icp_mmHg > 7.5)
+  else if (m_data.GetPatient().IsEventActive(cdm::ePatient_Event_IntracranialHypotension) && icp_mmHg > 7.5)
   {
     /// \event Patient: End Intracranial Hypotension. The intracranial pressure has risen above 7.5 mmHg.
-    m_data.GetPatient().SetEvent(cdm::PatientData_eEvent_IntracranialHypertension, false, m_data.GetSimulationTime());
+    m_data.GetPatient().SetEvent(cdm::ePatient_Event_IntracranialHypertension, false, m_data.GetSimulationTime());
   }
 }
 
@@ -340,19 +352,19 @@ void Nervous::SetPupilEffects()
     {
       double icp_mmHg = m_data.GetCardiovascular().GetIntracranialPressure().GetValue(PressureUnit::mmHg);
 
-      if (b->GetType() == cdm::BrainInjuryData_eType_Diffuse)
+      if (b->GetType() == cdm::eBrainInjury_Type_Diffuse)
       {
         leftPupilSizeResponseLevel += (1 / (1 + exp(-2.3*(icp_mmHg - 22.5))));
         leftPupilReactivityResponseLevel += -.001*pow(10, .3*(icp_mmHg - 15));
         rightPupilSizeResponseLevel = leftPupilSizeResponseLevel;
         rightPupilReactivityResponseLevel = leftPupilReactivityResponseLevel;
       }
-      else if (b->GetType() == cdm::BrainInjuryData_eType_LeftFocal)
+      else if (b->GetType() == cdm::eBrainInjury_Type_LeftFocal)
       {
         leftPupilSizeResponseLevel += (1 / (1 + exp(-2.3*(icp_mmHg - 22.5))));
         leftPupilReactivityResponseLevel += -.001*pow(10, .3*(icp_mmHg - 15));
       }
-      else if(b->GetType() == cdm::BrainInjuryData_eType_RightFocal)
+      else if(b->GetType() == cdm::eBrainInjury_Type_RightFocal)
       {
         rightPupilSizeResponseLevel += (1 / (1 + exp(-2.3*(icp_mmHg - 22.5))));
         rightPupilReactivityResponseLevel += -.001*pow(10, .3*(icp_mmHg - 15));

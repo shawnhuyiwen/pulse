@@ -3,6 +3,7 @@
 
 #include "EngineHowTo.h"
 // Include the various types you will be using in your code
+#include "scenario/SEDataRequestManager.h"
 #include "patient/assessments/SEPulmonaryFunctionTest.h"
 #include "system/physiology/SEBloodChemistrySystem.h"
 #include "system/physiology/SECardiovascularSystem.h"

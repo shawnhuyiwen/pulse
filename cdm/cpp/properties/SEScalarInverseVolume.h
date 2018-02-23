@@ -3,6 +3,7 @@
 
 #pragma once
 #include "properties/SEScalar.h"
+CDM_BIND_DECL(ScalarInverseVolumeData)
 
 class CDM_DECL InverseVolumeUnit : public CCompoundUnit
 {

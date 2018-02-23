@@ -2,17 +2,25 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
+#include "utils/testing/SETestCase.h"
 #include "utils/testing/SETestSuite.h"
+#include "utils/testing/SETestErrorStatistics.h"
+#include "properties/SEScalarTime.h"
+PROTO_PUSH
+#include "bind/cdm/TestReport.pb.h"
+PROTO_POP
 
 SETestSuite::SETestSuite(Logger* logger) : Loggable(logger)
 {
   m_Performed = true;
   m_Name = "";
+  m_Time = new SEScalarTime();
 }
 
 SETestSuite::~SETestSuite()
 {
   Clear();
+  delete m_Time;
 }
 
 void SETestSuite::Clear()
@@ -110,8 +118,8 @@ const SEScalarTime& SETestSuite::GetDuration() const
   double time = 0;
   for (unsigned int i = 0; i < m_TestCase.size(); i++)
     time += m_TestCase.at(i)->GetDuration().GetValue(TimeUnit::s);
-  m_Time.SetValue(time,TimeUnit::s);
-  return m_Time;
+  m_Time->SetValue(time,TimeUnit::s);
+  return *m_Time;
 }
 
 std::vector<std::string>& SETestSuite::GetRequirements()

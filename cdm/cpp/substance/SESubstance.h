@@ -3,13 +3,13 @@
 
 #pragma once
 PROTO_PUSH 
-#include "bind/cdm/Substance.pb.h"
+#include "bind/cdm/SubstanceEnums.pb.h"
 PROTO_POP
-
-#include "substance/SESubstanceAerosolization.h"
-#include "substance/SESubstanceClearance.h"
-#include "substance/SESubstancePharmacokinetics.h"
-#include "substance/SESubstancePharmacodynamics.h"
+CDM_BIND_DECL(SubstanceData)
+class SESubstanceAerosolization;
+class SESubstanceClearance;
+class SESubstancePharmacokinetics;
+class SESubstancePharmacodynamics;
 
 class CDM_DECL SESubstance : public Loggable
 {
@@ -35,8 +35,8 @@ public:
   virtual bool HasName() const;
   virtual void InvalidateName();
 
-  virtual cdm::SubstanceData_eState GetState() const;
-  virtual void SetState(cdm::SubstanceData_eState state);
+  virtual cdm::eSubstance_State GetState() const;
+  virtual void SetState(cdm::eSubstance_State state);
   virtual bool HasState() const;
   virtual void InvalidateState();
 
@@ -135,7 +135,7 @@ public:
 protected: 
 
   std::string                       m_Name;
-  cdm::SubstanceData_eState         m_State;
+  cdm::eSubstance_State             m_State;
   SEScalarMassPerVolume*            m_Density;
   SEScalarMassPerAmount*            m_MolarMass;
 

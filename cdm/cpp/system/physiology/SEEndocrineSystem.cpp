@@ -4,6 +4,9 @@
 #include "stdafx.h"
 #include "system/physiology/SEEndocrineSystem.h"
 #include "properties/SEScalarAmountPerTime.h"
+PROTO_PUSH
+#include "bind/cdm/Physiology.pb.h"
+PROTO_POP
 
 SEEndocrineSystem::SEEndocrineSystem(Logger* logger) : SESystem(logger)
 {

@@ -4,16 +4,8 @@
 #include "CommonDataModelTest.h"
 
 #include "circuit/SECircuitManager.h"
-#include "circuit/fluid/SEFluidCircuit.h"
-#include "circuit/fluid/SEFluidCircuitCalculator.h"
 #include "compartment/SECompartmentManager.h"
-#include "compartment/fluid/SEFluidCompartment.h"
-#include "compartment/thermal/SEThermalCompartment.h"
-#include "compartment/substances/SEGasSubstanceQuantity.h"
-#include "compartment/fluid/SELiquidCompartmentGraph.h"
 #include "utils/FileUtils.h"
-#include "utils/testing/SETestCase.h"
-#include "utils/testing/SETestSuite.h"
 
 CommonDataModelTest::CommonDataModelTest() : Loggable(new Logger())
 {

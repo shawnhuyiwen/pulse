@@ -3,6 +3,9 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarElectricInductance.h"
+PROTO_PUSH
+#include "bind/cdm/Properties.pb.h"
+PROTO_POP
 
 const ElectricInductanceUnit ElectricInductanceUnit::H("H");
 

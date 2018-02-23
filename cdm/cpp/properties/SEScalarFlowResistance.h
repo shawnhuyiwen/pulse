@@ -3,6 +3,7 @@
 
 #pragma once
 #include "properties/SEScalar.h"
+CDM_BIND_DECL(ScalarFlowResistanceData)
 
 class CDM_DECL FlowResistanceUnit : public CCompoundUnit
 {

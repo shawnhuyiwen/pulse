@@ -3,6 +3,9 @@
 
 #pragma once
 #include "patient/actions/SEPatientAction.h"
+PROTO_PUSH
+#include "bind/cdm/PatientActionEnums.pb.h"
+PROTO_POP
 CDM_BIND_DECL(BrainInjuryData)
 
 class CDM_DECL SEBrainInjury : public SEPatientAction
@@ -28,12 +31,12 @@ public:
   virtual bool HasSeverity() const;
   virtual SEScalar0To1& GetSeverity();  
 
-  virtual cdm::BrainInjuryData_eType GetType() const;
-  virtual void SetType(cdm::BrainInjuryData_eType t);
+  virtual cdm::eBrainInjury_Type GetType() const;
+  virtual void SetType(cdm::eBrainInjury_Type t);
 
   virtual void ToString(std::ostream &str) const;
 
 protected:
-  SEScalar0To1*                   m_Severity;
-  cdm::BrainInjuryData_eType      m_Type;
+  SEScalar0To1*               m_Severity;
+  cdm::eBrainInjury_Type      m_Type;
 };

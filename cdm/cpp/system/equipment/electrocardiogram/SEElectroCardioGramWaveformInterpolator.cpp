@@ -2,11 +2,15 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
+#include "system/equipment/electrocardiogram/SEElectroCardioGramWaveform.h"
 #include "system/equipment/electrocardiogram/SEElectroCardioGramWaveformInterpolator.h"
 #include "properties/SEScalarTime.h"
 #include "properties/SEScalarElectricPotential.h"
 #include "properties/SEFunctionElectricPotentialVsTime.h"
 #include <google/protobuf/text_format.h>
+PROTO_PUSH
+#include "bind/cdm/ElectroCardioGram.pb.h"
+PROTO_POP
 
 SEElectroCardioGramWaveformInterpolator::SEElectroCardioGramWaveformInterpolator(Logger* logger) : Loggable(logger)
 {
@@ -118,7 +122,7 @@ void SEElectroCardioGramWaveformInterpolator::Interpolate(SEElectroCardioGramWav
   }
 }
 
-bool SEElectroCardioGramWaveformInterpolator::CanInterpolateLeadPotential(cdm::ElectroCardioGramWaveformData_eLead lead, cdm::eHeartRhythm rhythm) const
+bool SEElectroCardioGramWaveformInterpolator::CanInterpolateLeadPotential(cdm::eElectroCardioGram_WaveformLead lead, cdm::eHeartRhythm rhythm) const
 {
   if (!HasWaveform(lead, rhythm))
     return false;
@@ -127,7 +131,7 @@ bool SEElectroCardioGramWaveformInterpolator::CanInterpolateLeadPotential(cdm::E
     return false;
   return l->second != nullptr;
 }
-void SEElectroCardioGramWaveformInterpolator::SetLeadElectricPotential(cdm::ElectroCardioGramWaveformData_eLead lead, SEScalarElectricPotential& ep)
+void SEElectroCardioGramWaveformInterpolator::SetLeadElectricPotential(cdm::eElectroCardioGram_WaveformLead lead, SEScalarElectricPotential& ep)
 {
   m_Leads[lead] = &ep;
 }
@@ -190,7 +194,7 @@ void SEElectroCardioGramWaveformInterpolator::CalculateWaveformsElectricPotentia
 
 }
 
-bool SEElectroCardioGramWaveformInterpolator::HasWaveform(cdm::ElectroCardioGramWaveformData_eLead lead, cdm::eHeartRhythm rhythm) const
+bool SEElectroCardioGramWaveformInterpolator::HasWaveform(cdm::eElectroCardioGram_WaveformLead lead, cdm::eHeartRhythm rhythm) const
 {
   auto l = m_Waveforms.find(lead);
   if (l == m_Waveforms.end())
@@ -200,7 +204,7 @@ bool SEElectroCardioGramWaveformInterpolator::HasWaveform(cdm::ElectroCardioGram
     return false;
   return w->second != nullptr;
 }
-SEElectroCardioGramWaveform& SEElectroCardioGramWaveformInterpolator::GetWaveform(cdm::ElectroCardioGramWaveformData_eLead lead, cdm::eHeartRhythm rhythm)
+SEElectroCardioGramWaveform& SEElectroCardioGramWaveformInterpolator::GetWaveform(cdm::eElectroCardioGram_WaveformLead lead, cdm::eHeartRhythm rhythm)
 {
   SEElectroCardioGramWaveform* w = m_Waveforms[lead][rhythm];
   if (w == nullptr)
@@ -210,7 +214,7 @@ SEElectroCardioGramWaveform& SEElectroCardioGramWaveformInterpolator::GetWavefor
   }
   return *w;
 }
-const SEElectroCardioGramWaveform* SEElectroCardioGramWaveformInterpolator::GetWaveform(cdm::ElectroCardioGramWaveformData_eLead lead, cdm::eHeartRhythm rhythm) const
+const SEElectroCardioGramWaveform* SEElectroCardioGramWaveformInterpolator::GetWaveform(cdm::eElectroCardioGram_WaveformLead lead, cdm::eHeartRhythm rhythm) const
 {
   auto l = m_Waveforms.find(lead);
   if (l == m_Waveforms.end())
@@ -220,7 +224,7 @@ const SEElectroCardioGramWaveform* SEElectroCardioGramWaveformInterpolator::GetW
     return nullptr;
   return w->second;
 }
-void SEElectroCardioGramWaveformInterpolator::RemoveWaveform(cdm::ElectroCardioGramWaveformData_eLead lead, cdm::eHeartRhythm rhythm)
+void SEElectroCardioGramWaveformInterpolator::RemoveWaveform(cdm::eElectroCardioGram_WaveformLead lead, cdm::eHeartRhythm rhythm)
 {
   auto l = m_Waveforms.find(lead);
   if (l == m_Waveforms.end())

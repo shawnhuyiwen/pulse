@@ -2,7 +2,8 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "engine/SEEngineTracker.h"
+class SEDataRequest;
+class SEDataRequestScalar;
 
 class CDM_DECL SEDynamicStabilizationPropertyConvergence : public Loggable
 {
@@ -22,12 +23,12 @@ public:
   bool IsOptional()               const { return m_Optional; }
   void SetOptional(bool b)              { m_Optional = b; }
 
-  void TrackScalar(const SEScalar& s)   { m_DataRequestScalar.SetScalar(&s, m_DataRequest); }
-  SEDataRequestScalar& GetDataRequestScalar() { return m_DataRequestScalar; }
+  void TrackScalar(const SEScalar& s);
+  SEDataRequestScalar& GetDataRequestScalar();
 protected:
 
   SEDataRequest&       m_DataRequest;
-  SEDataRequestScalar  m_DataRequestScalar;
+  SEDataRequestScalar* m_DataRequestScalar;
 
   bool                 m_Optional;
   double               m_Target;

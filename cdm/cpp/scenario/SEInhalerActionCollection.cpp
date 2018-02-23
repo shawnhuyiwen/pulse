@@ -3,7 +3,12 @@
 
 #include "stdafx.h"
 #include "scenario/SEInhalerActionCollection.h"
+#include "substance/SESubstanceManager.h"
 #include "system/equipment/inhaler/SEInhaler.h"
+#include "system/equipment/inhaler/actions/SEInhalerConfiguration.h"
+PROTO_PUSH
+#include "bind/cdm/Scenario.pb.h"
+PROTO_POP
 
 SEInhalerActionCollection::SEInhalerActionCollection(SESubstanceManager& substances) : Loggable(substances.GetLogger()), m_Substances(substances)
 {

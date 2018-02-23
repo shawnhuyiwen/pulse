@@ -5,8 +5,6 @@
 
 #include "TaskQueue.h"
 
-#include "CommonDataModel.h"
-
 #include <queue>
 #include <memory>
 #include <mutex>

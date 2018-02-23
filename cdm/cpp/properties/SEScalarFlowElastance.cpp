@@ -3,6 +3,9 @@ See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "properties/SEScalarFlowElastance.h"
+PROTO_PUSH
+#include "bind/cdm/Properties.pb.h"
+PROTO_POP
 
 const FlowElastanceUnit FlowElastanceUnit::cmH2O_Per_L("cmH2O/L");
 const FlowElastanceUnit FlowElastanceUnit::mmHg_Per_mL("mmHg/mL");

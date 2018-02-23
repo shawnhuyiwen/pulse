@@ -3,6 +3,7 @@
 
 #pragma once
 #include "properties/SEScalar.h"
+CDM_BIND_DECL(ScalarOsmolarityData)
 
 class CDM_DECL OsmolarityUnit : public CCompoundUnit
 {

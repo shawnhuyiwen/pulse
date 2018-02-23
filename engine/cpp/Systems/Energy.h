@@ -4,9 +4,15 @@
 #pragma once
 #include "Controller/System.h"
 #include "system/physiology/SEEnergySystem.h"
-#include "utils/RunningAverage.h"
-#include "circuit/thermal/SEThermalCircuitCalculator.h"
+class SEPatient;
+class SELiquidSubstanceQuantity;
+class SEFluidCircuitPath;
+class SEThermalCircuit;
+class SEThermalCircuitNode;
+class SEThermalCircuitPath;
 class SEThermalCircuitCalculator;
+class RunningAverage;
+PULSE_BIND_DECL(EnergySystemData)
 
 /**
  * @brief @copydoc Physiology_EnergySystemData
@@ -64,13 +70,12 @@ private:
   double m_PeakPowerEnergyStore_J;
   double m_MediumPowerEnergyStore_J;
   double m_EnduranceEnergyStore_J;
-  RunningAverage m_BloodpH;
-  RunningAverage m_BicarbonateMolarity_mmol_Per_L;
+  RunningAverage* m_BloodpH;
+  RunningAverage* m_BicarbonateMolarity_mmol_Per_L;
 
   // Stateless member variable (Set in SetUp())
   double                      m_dT_s;
   SEPatient*                  m_Patient;
-  SEPatientActionCollection*  m_PatientActions;
   // Cmpts,Substance, and nodes
   SELiquidSubstanceQuantity*  m_AortaHCO3;  
   //Nodes
@@ -83,6 +88,6 @@ private:
   //Circuits
   SEThermalCircuit*           m_InternalTemperatureCircuit;
   SEThermalCircuit*           m_TemperatureCircuit;
-  SEThermalCircuitCalculator  m_circuitCalculator;
+  SEThermalCircuitCalculator* m_circuitCalculator;
 };
 

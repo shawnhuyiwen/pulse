@@ -3,22 +3,18 @@
 
 package mil.tatrc.physiology.datamodel.substance;
 
-import java.util.*;
-
 import com.google.protobuf.TextFormat;
 import com.google.protobuf.TextFormat.ParseException;
-import com.kitware.physiology.cdm.Patient.PatientData;
 import com.kitware.physiology.cdm.Substance.SubstanceData;
-import com.kitware.physiology.cdm.Substance.SubstanceData.eState;
+import com.kitware.physiology.cdm.SubstanceEnums.eSubstance.State;
 
-import mil.tatrc.physiology.datamodel.patient.SEPatient;
 import mil.tatrc.physiology.datamodel.properties.*;
 import mil.tatrc.physiology.utilities.FileUtils;
 import mil.tatrc.physiology.utilities.StringUtils;
 
 public class SESubstance
 {
-  protected eState                           state;
+  protected State                            state;
   protected String                           name;
   protected SEScalarMassPerVolume            density;
   protected SEScalarMassPerAmount            molarMass;
@@ -119,7 +115,7 @@ public class SESubstance
     dst.reset();
     if(src.getName()!=null)
       dst.setName(src.getName());
-    if(src.getState()!=eState.UNRECOGNIZED)
+    if(src.getState()!=State.UNRECOGNIZED)
       dst.setState(src.getState());
     if(src.hasDensity())
       SEScalarMassPerVolume.load(src.getDensity(), dst.getDensity());    
@@ -233,8 +229,8 @@ public class SESubstance
   public void    setName(String name){this.name=name;}
   public boolean hasName(){return StringUtils.exists(this.name);}
   
-  public eState  getState() { return this.state;}
-  public void    setState(eState state){this.state=state;}
+  public State   getState() { return this.state;}
+  public void    setState(State state){this.state=state;}
   public boolean hasState(){return this.state==null?false:state!=state.NullState;}
   
   public SEScalarMassPerVolume getDensity() 
