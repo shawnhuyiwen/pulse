@@ -33,6 +33,8 @@ Ensure that cmake bin is on your PATH and available in your cmd/bash shell.
 Note on Linux systems, make sure to have curl before you build/install cmake for it to behave properly when downloading 3rd party libraries.
 ~~~~~~~~~~~~~~~~~~~~~~~~
 sudo apt-get install curl
+# If you build cmake, make sure you enable system SSL and have installed:
+sudo apt-get install libcurl4-openssl-dev
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 ### Java JDK
@@ -94,7 +96,7 @@ cmake -DCMAKE_BUILD_TYPE:STRING=Release ../src
 cmake -DCMAKE_BUILD_TYPE:STRING=Release -DPULSE_DOWNLOAD_BASELINES:BOOL=ON ../src
 # Build the install target/project
 # On Linux/OSX/MinGW 
-make install 
+make
 # For MSVC
 # Open the OuterBuild.sln and build the INSTALL project (It will build everything!)
 # When the build is complete, MSVC users can close the OuterBuild solution, and open the Pulse.sln located in the Pulse directory.
