@@ -110,7 +110,18 @@ configure_file(${CMAKE_SOURCE_DIR}/bin/run.config.in ${CMAKE_INSTALL_PREFIX}/bin
 configure_file(${CMAKE_SOURCE_DIR}/docs/Doxygen/full.doxy.in ${CMAKE_INSTALL_PREFIX}/bin/docs/full.doxy @ONLY)
 configure_file(${CMAKE_SOURCE_DIR}/cmake/PulseConfig.cmake.in ${CMAKE_INSTALL_PREFIX}/PulseConfig.cmake @ONLY)
 
-# Install the proto libs to the right locations
+# Install Eigen
+install(DIRECTORY ${Eigen_INSTALL}/include
+        DESTINATION ${CMAKE_INSTALL_PREFIX})
+install(DIRECTORY ${Eigen_INSTALL}/share/eigen3/cmake
+        DESTINATION ${CMAKE_INSTALL_PREFIX})
+# Install Dirent
+if(WIN32)
+  install(DIRECTORY ${dirent_INSTALL}/include
+          DESTINATION ${CMAKE_INSTALL_PREFIX})
+endif()
+# Install Protobuf
+install(DIRECTORY ${protobuf_INSTALL}/include DESTINATION ${CMAKE_INSTALL_PREFIX})
 if(WIN32)
   if(BUILD_SHARED_LIBS)
     install(FILES "${protobuf_DIR}-build/Release/libprotobuf.dll"
@@ -137,6 +148,7 @@ else()
       CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
   endif()
 
+  
   install(FILES ${protobuf_DIR}-build/libprotobuf.a
     CONFIGURATIONS Release DESTINATION ${INSTALL_LIB}/release${EX_CONFIG})
   install(FILES ${protobuf_DIR}-build/libprotobufd.a

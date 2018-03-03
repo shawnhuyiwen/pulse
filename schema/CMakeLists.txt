@@ -92,7 +92,7 @@ set(BIND_FILES
   "${SCHEMA_DST}/cpp/bind/engine/EngineState.pb.h"
   "${SCHEMA_DST}/cpp/bind/engine/EngineState.pb.cc"
 )
-source_group("" FILES ${BIND_FILES})
+source_group("ProtoBuffers" FILES ${BIND_FILES})
 set(SOURCE ${BIND_FILES})
 
 if(NOT SOURCE)

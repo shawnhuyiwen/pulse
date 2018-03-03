@@ -4,6 +4,7 @@
 #pragma once
 CDM_BIND_DECL(ElectroCardioGramWaveformListData)
 PROTO_PUSH
+#include "bind/cdm/PhysiologyEnums.pb.h"
 #include "bind/cdm/ElectroCardioGramEnums.pb.h"
 PROTO_POP
 class SEElectroCardioGramWaveform;
