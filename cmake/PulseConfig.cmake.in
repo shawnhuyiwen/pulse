@@ -3,7 +3,13 @@
 #
 #    This file will define the following variables:
 #      - Pulse_LIBS                     : The list of libraries to link against.
-#      - Pulse_LIB_DIR                  : The directory(es) where lib files are. Calling LINK_DIRECTORIES
+#      - Pulse_DEBUG_LIBS               : The list of debug libraries to link against.
+#      - Pulse_LIB_ROOT_DIR             : The root library directory, libraries will be under a configuration
+#                                       : directory : 'release','debug','relwithdebinfo'
+#                                       : Use to link to pulse library builds of your choosing. 
+#      - Pulse_LIB_DIR                  : The directory where lib files are of the same build type
+#                                       : as the including project.
+#                                       : Calling LINK_DIRECTORIES
 #                                         with this path is NOT needed.
 #      - Pulse_INCLUDE_DIRS             : The Pulse include directories.
 #      - Pulse_VERSION                  : The version of this Pulse build. Example: "2.4.0"
@@ -18,11 +24,12 @@ set(Pulse_INCLUDE_DIRS "@CMAKE_INSTALL_PREFIX@/include"
                        "@CMAKE_INSTALL_PREFIX@/include/bind"
                        "@CMAKE_INSTALL_PREFIX@/include/cdm"
                        )
+set(Pulse_LIB_ROOT_DIR "@CMAKE_INSTALL_PREFIX@/lib/")
 if(MSVC)
-  set( Pulse_LIB_DIR "@CMAKE_INSTALL_PREFIX@/lib/$(Configuration)" )
+  set( Pulse_LIB_DIR "${Pulse_LIB_ROOT_DIR}$(Configuration)" )
 else()#TODO XCode might need a conditional
   string(TOLOWER "${CMAKE_BUILD_TYPE}" lower_build_type)
-  set( Pulse_LIB_DIR "@CMAKE_INSTALL_PREFIX@/lib/${lower_build_type}" )
+  set( Pulse_LIB_DIR "${Pulse_LIB_ROOT_DIR}${lower_build_type}" )
 endif()
 
 if(MSVC)
@@ -41,19 +48,19 @@ endif()
 
 set(Pulse_INSTALL "@CMAKE_INSTALL_PREFIX@")
 
-set(Pulse_LIBS "${Pulse_LIB_DIR}/PulseEngine.${LIB_ENDING}" 
-               "${Pulse_LIB_DIR}/CommonDataModel.${LIB_ENDING}"
-               "${Pulse_LIB_DIR}/DataModelBindings.${LIB_ENDING}"
-               "${Pulse_LIB_DIR}/${LOG4CPP_LIB}.${LIB_ENDING}"
-               "${Pulse_LIB_DIR}/libprotobuf.${LIB_ENDING}"
-   )
-   
-set(Pulse_DEBUG_LIBS "${Pulse_LIB_DIR}/PulseEngine.${LIB_ENDING}"
-               "${Pulse_LIB_DIR}/CommonDataModel.${LIB_ENDING}"
-               "${Pulse_LIB_DIR}/DataModelBindings.${LIB_ENDING}"
-               "${Pulse_LIB_DIR}/${LOG4CPP_LIB}.${LIB_ENDING}"
-               "${Pulse_LIB_DIR}/libprotobufd.${LIB_ENDING}"
-   )
+set(Pulse_LIBS "${Pulse_LIB_ROOT_DIR}/release/PulseEngine.${LIB_ENDING}" 
+               "${Pulse_LIB_ROOT_DIR}/release/CommonDataModel.${LIB_ENDING}"
+               "${Pulse_LIB_ROOT_DIR}/release/DataModelBindings.${LIB_ENDING}"
+               "${Pulse_LIB_ROOT_DIR}/release/${LOG4CPP_LIB}.${LIB_ENDING}"
+               "${Pulse_LIB_ROOT_DIR}/release/libprotobuf.${LIB_ENDING}"
+)
+
+set(Pulse_DEBUG_LIBS "${Pulse_LIB_ROOT_DIR}/debug/PulseEngine.${LIB_ENDING}"
+                     "${Pulse_LIB_ROOT_DIR}/debug/CommonDataModel.${LIB_ENDING}"
+                     "${Pulse_LIB_ROOT_DIR}/debug/DataModelBindings.${LIB_ENDING}"
+                     "${Pulse_LIB_ROOT_DIR}/debug/${LOG4CPP_LIB}.${LIB_ENDING}"
+                     "${Pulse_LIB_ROOT_DIR}/debug/libprotobufd.${LIB_ENDING}"
+)
 
 set( Pulse_VERSION_MAJOR "@PULSE_VERSION_MAJOR@" )
 set( Pulse_VERSION_MINOR "@PULSE_VERSION_MINOR@" )

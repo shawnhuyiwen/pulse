@@ -208,7 +208,8 @@ add_custom_command(TARGET PulseData POST_BUILD
     COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=genStates -P run.cmake WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin
             WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin)
 if(PULSE_DOWNLOAD_BASELINES)
-add_custom_command(TARGET PulseData POST_BUILD
+  message(STATUS "I am going to pull the latest Pulse Baselines!")
+  add_custom_command(TARGET PulseData POST_BUILD
     COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=updateBaselines -P run.cmake WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin
             WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin)
 endif()
