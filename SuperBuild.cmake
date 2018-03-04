@@ -212,4 +212,6 @@ if(PULSE_DOWNLOAD_BASELINES)
   add_custom_command(TARGET PulseData POST_BUILD
     COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=updateBaselines -P run.cmake WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin
             WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin)
+else()
+  message(STATUS "I am NOT going to pull the latest Pulse Baselines!")
 endif()
