@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
       //peTest.EnvironmentVariableTemperatureCircuitTest(peDir);
       //peTest.CombinedInternalAndEnvironmentVariableBMRandTemperatureCircuitTest(peDir);
       //peTest.CombinedInternalAndEnvironmentSkinTempDropCircuitTest(peDir);
-      peTest.EnvironmentISO7730ComparisonTest(peDir);
+      //peTest.EnvironmentISO7730ComparisonTest(peDir);
 
       //peTest.DiffusionClearanceExcretionTests(peDir);
       //peTest.AlveolarOxygenDiffusionTest(peDir);
@@ -97,27 +97,27 @@ int main(int argc, char* argv[])
       // CDM Tests //
       ///////////////
 
-      //Compartment Tests
+      // Compartment Tests
       //cdmTest.GasCompartmentTest(cdmDir);
       //cdmTest.LiquidCompartmentTest(cdmDir);
       //cdmTest.ThermalCompartmentTest(cdmDir);
       //cdmTest.TissueCompartmentTest(cdmDir);
 
-      //Transport Tests
+      // Transport Tests
       //cdmTest.LargeFlowTransportTest(cdmDir);
       //cdmTest.LiquidTransportTest(cdmDir);
       //cdmTest.GasTransportTest(cdmDir);
 
-      //I/O Tests
+      // I/O Tests
       //cdmTest.ReadPatientDirectory(cdmDir);
       //cdmTest.ReadScenarios(cdmDir);
       //cdmTest.ReadSubstanceDirectory(cdmDir);
 
-      //Property Tests
+      // Property Tests
       //cdmTest.ScalarTest(cdmDir);
       //cdmTest.UnitsTest(cdmDir);
 
-      //Advanced Circuit Tests
+      // Advanced Circuit Tests
       //cdmTest.ElectricalCircuitTest(cdmDir);
       //cdmTest.FluidCircuitTest(cdmDir);
       //cdmTest.ThermalCircuitTest(cdmDir);
@@ -133,7 +133,7 @@ int main(int argc, char* argv[])
       //cdmTest.PreChargeComplianceNonZeroVolume(cdmDir);
       //cdmTest.CircuitLockingTest(cdmDir);
 
-      ////Basic Circuit Tests
+      // Basic Circuit Tests
       //cdmTest.BasicCircuitTest(cdmDir);
 
       //cdmTest.SeriesRCDCTest(cdmDir);
@@ -213,7 +213,7 @@ int main(int argc, char* argv[])
       //cdmTest.BasicDiodeSINCurrentTest(cdmDir);
       //cdmTest.BasicDiodePULSECurrentTest(cdmDir);
 
-      //NOTE: These next three tests seem to give errors while running, but they produce output...
+      // NOTE: These next three tests seem to give errors while running, but they produce output...
       //cdmTest.SwitchRCDCCurrentTest(cdmDir);
       //cdmTest.SwitchRCSINCurrentTest(cdmDir);
       //cdmTest.SwitchRCPULSECurrentTest(cdmDir);
@@ -230,7 +230,7 @@ int main(int argc, char* argv[])
       //cdmTest.SeriesPressureSourceAdditionSINTest(cdmDir);
       //cdmTest.SeriesPressureSourceAdditionPULSETest(cdmDir);
 
-      //NOTE: These next six tests seem to give errors while running, but it's intentional
+      // NOTE: These next six tests seem to give errors while running, but it's intentional
       //cdmTest.SeriesCurrentSourceAdditionDCTest(cdmDir);
       //cdmTest.SeriesCurrentSourceAdditionSINTest(cdmDir);
       //cdmTest.SeriesCurrentSourceAdditionPULSETest(cdmDir);

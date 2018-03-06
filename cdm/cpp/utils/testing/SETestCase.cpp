@@ -9,9 +9,9 @@ PROTO_PUSH
 #include "bind/cdm/TestReport.pb.h"
 PROTO_POP
 
-SETestCase::SETestCase(Logger* logger) : Loggable(logger)
+SETestCase::SETestCase(Logger* logger) : SETestCase("default", logger)
 {
-  SETestCase("default", logger);
+
 }
 SETestCase::SETestCase(const std::string& name, Logger* logger) : Loggable(logger)
 {
