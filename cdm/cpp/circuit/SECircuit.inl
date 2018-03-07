@@ -32,7 +32,6 @@ void SECircuit<CIRCUIT_TYPES>::Clear()
   m_TargetPathMap.clear();
   m_SourcePathMap.clear();
   m_ConnectedPathMap.clear();
-  m_CalculatorIndex.clear();
   m_ValvePaths.clear();
   m_PolarizedElementPaths.clear();
 }
@@ -187,8 +186,7 @@ void SECircuit<CIRCUIT_TYPES>::StateChange()
       m_PolarizedElementPaths.push_back(p);
   }
 
-  size_t jIdx = 0;
-  m_CalculatorIndex.clear();
+  int jIdx = 0;
   for (NodeType* n : m_Nodes)
   {
     //There should never be a next pressure value set on a node
@@ -199,8 +197,15 @@ void SECircuit<CIRCUIT_TYPES>::StateChange()
     //    m_ss << "You cannot set a pressure value without using a path pressure source.  The NextPressure value will be ignored and overwritten for Node " << n->GetName();
     //    Warning(m_ss);
     //  }    
-    if (!IsReferenceNode(*n))
-      m_CalculatorIndex[n] = jIdx++;
+      if (!IsReferenceNode(*n))
+      {
+          n->SetCalculatorIndex(jIdx);
+          jIdx++;
+      }
+      else
+      {
+          n->SetCalculatorIndex(-1);
+      }
   }
   if ((m_ValvePaths.size()+m_PolarizedElementPaths.size()) > 64)
   {
@@ -320,17 +325,6 @@ void SECircuit<CIRCUIT_TYPES>::RemoveNode(const std::string& name)
     }
     i++;
   } 
-}
-template<CIRCUIT_TEMPLATE>
-size_t SECircuit<CIRCUIT_TYPES>::GetCalculatorIndex(const NodeType& node) const
-{
-  auto itr = m_CalculatorIndex.find(&node);
-  if (itr == m_CalculatorIndex.end())
-  {
-    Error("Node "+node.GetName()+" is not in Calculator Index Map.");
-    return -1;
-  }
-  return itr->second;
 }
 
 template<CIRCUIT_TEMPLATE>

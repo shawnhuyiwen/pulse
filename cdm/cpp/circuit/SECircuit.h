@@ -41,7 +41,6 @@ public:
   virtual const std::vector<NodeType*>& GetNodes() const;
   virtual void RemoveNode(const NodeType& node);
   virtual void RemoveNode(const std::string& name);
-  size_t GetCalculatorIndex(const NodeType& node) const;// Does not count the reference node
 
   // Paths //
   virtual void AddPath(PathType& node);
@@ -61,7 +60,7 @@ public:
 
   virtual void StateChange();
   virtual void SetNextAndCurrentFromBaselines();
-  
+
 protected:
   std::string  m_Name;
   std::stringstream m_ss;
@@ -76,6 +75,5 @@ protected:
 
   std::vector<PathType*>            m_ValvePaths;
   std::vector<PathType*>            m_PolarizedElementPaths; 
-  std::map<const NodeType*, size_t> m_CalculatorIndex;// A unique id (starting at 0) for all nodes except the reference node
 };
 #include "circuit/SECircuit.inl"

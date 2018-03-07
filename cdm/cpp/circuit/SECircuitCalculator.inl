@@ -274,7 +274,7 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
         else if (n == nTgt)
           dLastPressureDiff = nTgt->GetPotential().GetValue(m_PotentialUnit) - nSrc->GetPotential().GetValue(m_PotentialUnit);
 
-        m_bVector(m_circuit->GetCalculatorIndex(*n)) += (dMultiplier*dLastPressureDiff);
+        m_bVector(n->GetCalculatorIndex()) += (dMultiplier*dLastPressureDiff);
       }
       else if (p->HasNextInductance())
       {
@@ -324,7 +324,7 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
           dLastFlow = p->GetFlux().GetValue(m_FluxUnit);
           dLastPressureDiff = n->GetPotential().GetValue(m_PotentialUnit) - nSrc->GetPotential().GetValue(m_PotentialUnit);
         }
-        m_bVector(m_circuit->GetCalculatorIndex(*n)) += dLastFlow - (dMultiplier * dLastPressureDiff);
+        m_bVector(n->GetCalculatorIndex()) += dLastFlow - (dMultiplier * dLastPressureDiff);
       }
       else if (p->HasNextValve())
       {
@@ -348,7 +348,7 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
         //Therefore, out of the Node we're current analyzing (i.e. Source) reverses the sign when it goes into the right side vector.
         double sign = (n == nSrc) ? -1 : 1;
         double dFlow = p->GetNextFluxSource().GetValue(m_FluxUnit);
-        m_bVector(m_circuit->GetCalculatorIndex(*n)) += (sign*dFlow);
+        m_bVector(n->GetCalculatorIndex()) += (sign*dFlow);
       }
       else if (p->HasNextPotentialSource())
       {
@@ -384,11 +384,11 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
 
     if (!m_circuit->IsReferenceNode(nSrc))
     {
-      m_AMatrix(itr.second, m_circuit->GetCalculatorIndex(nSrc)) = -1;
+      m_AMatrix(itr.second, nSrc.GetCalculatorIndex()) = -1;
     }
     if (!m_circuit->IsReferenceNode(nTgt))
     {
-      m_AMatrix(itr.second, m_circuit->GetCalculatorIndex(nTgt)) = 1;
+      m_AMatrix(itr.second, nTgt.GetCalculatorIndex()) = 1;
     }
 
     if (p->HasNextSwitch() || p->HasNextValve() || p->NumberOfNextElements() < 1)
@@ -565,7 +565,7 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseOut()
       //Add the reference potential
       //For the calculations, we assume the reference potential is zero
       //When it's not zero, all potentials are just offset by that amount
-      double potential = m_xVector(m_circuit->GetCalculatorIndex(*n)) + refPotential;
+      double potential = m_xVector(n->GetCalculatorIndex()) + refPotential;
       ValueOverride<PotentialUnit>(n->GetNextPotential(), potential, m_PotentialUnit);
     }
   }
@@ -854,7 +854,7 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::PopulateAMatrix(NodeType& n,
       sign = -1;
     else if (&nTgt == &n)
       sign = 1;
-    m_AMatrix(m_circuit->GetCalculatorIndex(n), m_potentialSources[&p]) += sign;
+    m_AMatrix(n.GetCalculatorIndex(), m_potentialSources[&p]) += sign;
   }
   else
   {
@@ -864,32 +864,32 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::PopulateAMatrix(NodeType& n,
 
     if (m_circuit->IsReferenceNode(nSrc))
     {
-      m_bVector(m_circuit->GetCalculatorIndex(n)) += 0;
+      m_bVector(n.GetCalculatorIndex()) += 0;
     }
     else if (&nSrc == &n)
     {
       //If the Source Node is the Node we're sitting on, our convention is positive.
-      m_AMatrix(m_circuit->GetCalculatorIndex(n), m_circuit->GetCalculatorIndex(nSrc)) += dMultiplier;
+      m_AMatrix(n.GetCalculatorIndex(), nSrc.GetCalculatorIndex()) += dMultiplier;
     }
     else
     {
       //The Source Node is not the Node we're sitting on for KCL analysis.
-      m_AMatrix(m_circuit->GetCalculatorIndex(n), m_circuit->GetCalculatorIndex(nSrc)) -= dMultiplier;
+      m_AMatrix(n.GetCalculatorIndex(), nSrc.GetCalculatorIndex()) -= dMultiplier;
     }
 
     if (m_circuit->IsReferenceNode(nTgt))
     {
-      m_bVector(m_circuit->GetCalculatorIndex(n)) += 0;
+      m_bVector(n.GetCalculatorIndex()) += 0;
     }
     else if (&nTgt == &n)
     {
       //If the Target Node is the Node we're sitting on, our convention is positive.
-      m_AMatrix(m_circuit->GetCalculatorIndex(n), m_circuit->GetCalculatorIndex(nTgt)) += dMultiplier;
+      m_AMatrix(n.GetCalculatorIndex(), nTgt.GetCalculatorIndex()) += dMultiplier;
     }
     else
     {
       //The Target Node is not the Node we're sitting on for KCL analysis.
-      m_AMatrix(m_circuit->GetCalculatorIndex(n), m_circuit->GetCalculatorIndex(nTgt)) -= dMultiplier;
+      m_AMatrix(n.GetCalculatorIndex(), nTgt.GetCalculatorIndex()) -= dMultiplier;
     }
   }
 }

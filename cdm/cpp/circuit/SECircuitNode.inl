@@ -115,3 +115,14 @@ QuantityScalar& SECircuitNode<CIRCUIT_NODE_TYPES>::GetQuantityBaseline()
     m_QuantityBaseline = new QuantityScalar();
   return *m_QuantityBaseline;
 }
+
+template<CIRCUIT_NODE_TEMPLATE>
+size_t SECircuitNode<CIRCUIT_NODE_TYPES>::GetCalculatorIndex() const
+{
+    return m_calculatorIndex;
+}
+template<CIRCUIT_NODE_TEMPLATE>
+void SECircuitNode<CIRCUIT_NODE_TYPES>::SetCalculatorIndex(const size_t index)
+{
+    m_calculatorIndex = index;
+}
