@@ -30,12 +30,29 @@ Currently, the code requires CMake 3.7 or greater to properly build
 Go to the cmake website, `https://cmake.org/download`, and download the appropriate distribution.
 Ensure that cmake bin is on your PATH and available in your cmd/bash shell.
 
-Note on Linux systems, make sure to have curl before you build/install cmake for it to behave properly when downloading 3rd party libraries.
-~~~~~~~~~~~~~~~~~~~~~~~~
-sudo apt-get install curl
-# If you build cmake, make sure you enable system SSL and have installed:
+#### Building CMake
+
+If you are on a linux based system that requires you to build CMake for the latest version, the <a href="https://cmake.org/download/">CMake Download page</a> provides source releases.  
+The following should get you through the build process for CMake
+
+~~~bash
+# Set up some dependent libraries you will need
+sudo apt-get install zlib1g-dev
 sudo apt-get install libcurl4-openssl-dev
-~~~~~~~~~~~~~~~~~~~~~~~~
+# If you want to build the CMake GUI, you will need
+$sudo apt-get install libqt4-dev qt4-dev-tools libncurses5-dev
+# Get the code link for the cmake download
+# I used 'Copy Link Address' from my browser on the tar.gz source download link...
+# Run the following commands from the directory you wish to build CMake
+$ wget https://cmake.org/files/v3.11/cmake-3.11.0-rc2.tar.gz
+# Extract the source
+$ tar -zxvf cmake-3.11.0-rc2.tar.gz
+# run the bootstrap, build and install the code
+$ ./bootstrap --system-curl --qt-gui
+# Remove the --qt-gui if you do not want to build the CMake GUI
+$ make
+$ sudo make install
+~~~
 
 ### Java JDK
 
@@ -55,20 +72,20 @@ There are many ways to do this, here is a simple walk through to get you going w
 - Make sure to start a new cmd window.<br>
 
 #### Linux
-- You can find where java is by running `update-alternatives --list java <br>
- - If you don't have a Java SDK, I recommend using an installer like Synaptic
- - Search for 'jdk' by name and install the 'openjdk-8-jdk' 
-- You can then add the JAVA_HOME variable to a bash shell by typing
-    - export JAVA_HOME=(a path listed by a call to updata-alternatives --list java)
-    - For example : export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-- You can also add it to your ~/.bash_profile, or related file (.bashrc, .zshrc, .cshrc, setenv.sh), to get the path in all shells
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
-JAVA_HOME='/usr/lib/jvm/java-8-openjdk-amd64'
-export JAVA_HOME
-PATH="$JAVA_HOME/bin:$PATH"
-export PATH
+# Check to see if you have the JDK
+$ update-alternatives --list java
+# Note make sure you don't add the jre in the path of the java listed
+# for example you may see '/usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java'
+# you will want the truncated '/usr/lib/jvm/java-8-openjdk-amd64'
+# If you do not have the Java SDK
+$ sudo apt-get install openjdk-8-jdk
+# Set the JAVA_HOME environment variable
+export JAVA_HOME='/usr/lib/jvm/java-8-openjdk-amd64'
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can also add it to your ~/.bash_profile, or related file (.bashrc, .zshrc, .cshrc, setenv.sh), to get the path in all shells
 
 ## Building
 
@@ -103,6 +120,18 @@ make
 # Unix based systems should also cd into this directory for building any changes to the Pulse code base
 cd Pulse
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Note that on small boards, like the Beagle Board Black and DragonBoard 410c, you may need to allocate a <a href="https://www.cyberciti.biz/faq/linux-add-a-swap-file-howto/">temporary swap</a> file if your build runs out of memory
+
+It boils down to:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
+su - root
+fallocate -l 1G tmpswap
+mkswap tmpswap
+swapon tmpswap
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Read the article if you want to make this change permanent, it contains some valuable hints regarding permissions and fstab.
 
 ## Using Pulse
 
