@@ -82,6 +82,8 @@ $ update-alternatives --list java
 # If you do not have the Java SDK
 $ sudo apt-get install openjdk-8-jdk
 # Set the JAVA_HOME environment variable
+# NOTE your Java path may vary!
+# Use the update-alternatives to find your system's Java path
 export JAVA_HOME='/usr/lib/jvm/java-8-openjdk-amd64'
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
