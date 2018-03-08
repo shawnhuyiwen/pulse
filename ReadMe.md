@@ -137,5 +137,5 @@ Read the article if you want to make this change permanent, it contains some val
 
 ## Using Pulse
 
-With the code built, visit our [wiki](https://gitlab.kitware.com/physiology/engine/wikis/home) to learn how to execute Pulase and use our SDK to use Pulse in your own application with Pulse.
+With the code built, visit our [wiki](https://gitlab.kitware.com/physiology/engine/wikis/home) to learn how to execute Pulse and use our SDK to use Pulse in your own application with Pulse.
 
