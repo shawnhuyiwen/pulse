@@ -66,7 +66,7 @@ void SEScalarVolumePerTime::Load(const cdm::ScalarVolumePerTimeData& src, SEScal
 }
 void SEScalarVolumePerTime::Serialize(const cdm::ScalarVolumePerTimeData& src, SEScalarVolumePerTime& dst)
 {
-  SEScalarQuantity<VolumePerTimeUnit>::Serialize(src.scalarvolumepertime(), dst);
+  SEUnitScalar::Serialize(src.scalarvolumepertime(), dst);
 }
 
 cdm::ScalarVolumePerTimeData* SEScalarVolumePerTime::Unload(const SEScalarVolumePerTime& src)
@@ -79,5 +79,5 @@ cdm::ScalarVolumePerTimeData* SEScalarVolumePerTime::Unload(const SEScalarVolume
 }
 void SEScalarVolumePerTime::Serialize(const SEScalarVolumePerTime& src, cdm::ScalarVolumePerTimeData& dst)
 {
-  SEScalarQuantity<VolumePerTimeUnit>::Serialize(src, *dst.mutable_scalarvolumepertime());
+  SEUnitScalar::Serialize(src, *dst.mutable_scalarvolumepertime());
 }

@@ -51,7 +51,7 @@ void SEScalarFlowResistance::Load(const cdm::ScalarFlowResistanceData& src, SESc
 }
 void SEScalarFlowResistance::Serialize(const cdm::ScalarFlowResistanceData& src, SEScalarFlowResistance& dst)
 {
-  SEScalarQuantity<FlowResistanceUnit>::Serialize(src.scalarflowresistance(), dst);
+  SEUnitScalar::Serialize(src.scalarflowresistance(), dst);
 }
 
 cdm::ScalarFlowResistanceData* SEScalarFlowResistance::Unload(const SEScalarFlowResistance& src)
@@ -64,5 +64,5 @@ cdm::ScalarFlowResistanceData* SEScalarFlowResistance::Unload(const SEScalarFlow
 }
 void SEScalarFlowResistance::Serialize(const SEScalarFlowResistance& src, cdm::ScalarFlowResistanceData& dst)
 {
-  SEScalarQuantity<FlowResistanceUnit>::Serialize(src, *dst.mutable_scalarflowresistance());
+  SEUnitScalar::Serialize(src, *dst.mutable_scalarflowresistance());
 }

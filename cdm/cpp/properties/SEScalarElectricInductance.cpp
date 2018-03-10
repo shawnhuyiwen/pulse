@@ -31,7 +31,7 @@ void SEScalarElectricInductance::Load(const cdm::ScalarElectricInductanceData& s
 }
 void SEScalarElectricInductance::Serialize(const cdm::ScalarElectricInductanceData& src, SEScalarElectricInductance& dst)
 {
-  SEScalarQuantity<ElectricInductanceUnit>::Serialize(src.scalarelectricinductance(), dst);
+  SEUnitScalar::Serialize(src.scalarelectricinductance(), dst);
 }
 
 cdm::ScalarElectricInductanceData* SEScalarElectricInductance::Unload(const SEScalarElectricInductance& src)
@@ -44,5 +44,5 @@ cdm::ScalarElectricInductanceData* SEScalarElectricInductance::Unload(const SESc
 }
 void SEScalarElectricInductance::Serialize(const SEScalarElectricInductance& src, cdm::ScalarElectricInductanceData& dst)
 {
-  SEScalarQuantity<ElectricInductanceUnit>::Serialize(src, *dst.mutable_scalarelectricinductance());
+  SEUnitScalar::Serialize(src, *dst.mutable_scalarelectricinductance());
 }

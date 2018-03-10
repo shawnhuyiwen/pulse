@@ -46,7 +46,7 @@ void SEScalarFlowCompliance::Load(const cdm::ScalarFlowComplianceData& src, SESc
 }
 void SEScalarFlowCompliance::Serialize(const cdm::ScalarFlowComplianceData& src, SEScalarFlowCompliance& dst)
 {
-  SEScalarQuantity<FlowComplianceUnit>::Serialize(src.scalarflowcompliance(), dst);
+  SEUnitScalar::Serialize(src.scalarflowcompliance(), dst);
 }
 
 cdm::ScalarFlowComplianceData* SEScalarFlowCompliance::Unload(const SEScalarFlowCompliance& src)
@@ -59,5 +59,5 @@ cdm::ScalarFlowComplianceData* SEScalarFlowCompliance::Unload(const SEScalarFlow
 }
 void SEScalarFlowCompliance::Serialize(const SEScalarFlowCompliance& src, cdm::ScalarFlowComplianceData& dst)
 {
-  SEScalarQuantity<FlowComplianceUnit>::Serialize(src, *dst.mutable_scalarflowcompliance());
+  SEUnitScalar::Serialize(src, *dst.mutable_scalarflowcompliance());
 }

@@ -56,7 +56,7 @@ void SEScalarPower::Load(const cdm::ScalarPowerData& src, SEScalarPower& dst)
 }
 void SEScalarPower::Serialize(const cdm::ScalarPowerData& src, SEScalarPower& dst)
 {
-  SEScalarQuantity<PowerUnit>::Serialize(src.scalarpower(), dst);
+  SEUnitScalar::Serialize(src.scalarpower(), dst);
 }
 
 cdm::ScalarPowerData* SEScalarPower::Unload(const SEScalarPower& src)
@@ -69,5 +69,5 @@ cdm::ScalarPowerData* SEScalarPower::Unload(const SEScalarPower& src)
 }
 void SEScalarPower::Serialize(const SEScalarPower& src, cdm::ScalarPowerData& dst)
 {
-  SEScalarQuantity<PowerUnit>::Serialize(src, *dst.mutable_scalarpower());
+  SEUnitScalar::Serialize(src, *dst.mutable_scalarpower());
 }

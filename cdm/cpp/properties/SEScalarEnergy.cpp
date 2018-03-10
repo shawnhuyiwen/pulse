@@ -46,7 +46,7 @@ void SEScalarEnergy::Load(const cdm::ScalarEnergyData& src, SEScalarEnergy& dst)
 }
 void SEScalarEnergy::Serialize(const cdm::ScalarEnergyData& src, SEScalarEnergy& dst)
 {
-  SEScalarQuantity<EnergyUnit>::Serialize(src.scalarenergy(), dst);
+  SEUnitScalar::Serialize(src.scalarenergy(), dst);
 }
 
 cdm::ScalarEnergyData* SEScalarEnergy::Unload(const SEScalarEnergy& src)
@@ -59,5 +59,5 @@ cdm::ScalarEnergyData* SEScalarEnergy::Unload(const SEScalarEnergy& src)
 }
 void SEScalarEnergy::Serialize(const SEScalarEnergy& src, cdm::ScalarEnergyData& dst)
 {
-  SEScalarQuantity<EnergyUnit>::Serialize(src, *dst.mutable_scalarenergy());
+  SEUnitScalar::Serialize(src, *dst.mutable_scalarenergy());
 }

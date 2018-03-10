@@ -46,7 +46,7 @@ void SEScalarHeatCapacitance::Load(const cdm::ScalarHeatCapacitanceData& src, SE
 }
 void SEScalarHeatCapacitance::Serialize(const cdm::ScalarHeatCapacitanceData& src, SEScalarHeatCapacitance& dst)
 {
-  SEScalarQuantity<HeatCapacitanceUnit>::Serialize(src.scalarheatcapacitance(), dst);
+  SEUnitScalar::Serialize(src.scalarheatcapacitance(), dst);
 }
 
 cdm::ScalarHeatCapacitanceData* SEScalarHeatCapacitance::Unload(const SEScalarHeatCapacitance& src)
@@ -59,5 +59,5 @@ cdm::ScalarHeatCapacitanceData* SEScalarHeatCapacitance::Unload(const SEScalarHe
 }
 void SEScalarHeatCapacitance::Serialize(const SEScalarHeatCapacitance& src, cdm::ScalarHeatCapacitanceData& dst)
 {
-  SEScalarQuantity<HeatCapacitanceUnit>::Serialize(src, *dst.mutable_scalarheatcapacitance());
+  SEUnitScalar::Serialize(src, *dst.mutable_scalarheatcapacitance());
 }

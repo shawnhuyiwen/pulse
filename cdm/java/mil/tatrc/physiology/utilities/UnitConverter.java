@@ -24,8 +24,6 @@ public class UnitConverter
   static
   {
   	String location = System.getProperty("user.dir")+"/release";
-    if (System.getProperty("sun.arch.data.model").equals("32"))
-      location += "32";
     List<String>libs = new ArrayList<String>();
     libs.add("PulseJNI");
     if(!FileUtils.loadLibraries(libs,location))

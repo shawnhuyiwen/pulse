@@ -36,7 +36,7 @@ void SEScalarPressureTimePerArea::Load(const cdm::ScalarPressureTimePerAreaData&
 }
 void SEScalarPressureTimePerArea::Serialize(const cdm::ScalarPressureTimePerAreaData& src, SEScalarPressureTimePerArea& dst)
 {
-  SEScalarQuantity<PressureTimePerAreaUnit>::Serialize(src.scalarpressuretimeperarea(), dst);
+  SEUnitScalar::Serialize(src.scalarpressuretimeperarea(), dst);
 }
 
 cdm::ScalarPressureTimePerAreaData* SEScalarPressureTimePerArea::Unload(const SEScalarPressureTimePerArea& src)
@@ -49,5 +49,5 @@ cdm::ScalarPressureTimePerAreaData* SEScalarPressureTimePerArea::Unload(const SE
 }
 void SEScalarPressureTimePerArea::Serialize(const SEScalarPressureTimePerArea& src, cdm::ScalarPressureTimePerAreaData& dst)
 {
-  SEScalarQuantity<PressureTimePerAreaUnit>::Serialize(src, *dst.mutable_scalarpressuretimeperarea());
+  SEUnitScalar::Serialize(src, *dst.mutable_scalarpressuretimeperarea());
 }

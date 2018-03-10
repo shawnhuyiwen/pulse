@@ -31,7 +31,7 @@ void SEScalarMassPerAreaTime::Load(const cdm::ScalarMassPerAreaTimeData& src, SE
 }
 void SEScalarMassPerAreaTime::Serialize(const cdm::ScalarMassPerAreaTimeData& src, SEScalarMassPerAreaTime& dst)
 {
-  SEScalarQuantity<MassPerAreaTimeUnit>::Serialize(src.scalarmassperareatime(), dst);
+  SEUnitScalar::Serialize(src.scalarmassperareatime(), dst);
 }
 
 cdm::ScalarMassPerAreaTimeData* SEScalarMassPerAreaTime::Unload(const SEScalarMassPerAreaTime& src)
@@ -44,5 +44,5 @@ cdm::ScalarMassPerAreaTimeData* SEScalarMassPerAreaTime::Unload(const SEScalarMa
 }
 void SEScalarMassPerAreaTime::Serialize(const SEScalarMassPerAreaTime& src, cdm::ScalarMassPerAreaTimeData& dst)
 {
-  SEScalarQuantity<MassPerAreaTimeUnit>::Serialize(src, *dst.mutable_scalarmassperareatime());
+  SEUnitScalar::Serialize(src, *dst.mutable_scalarmassperareatime());
 }

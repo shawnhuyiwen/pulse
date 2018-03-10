@@ -56,7 +56,7 @@ void SEScalarLength::Load(const cdm::ScalarLengthData& src, SEScalarLength& dst)
 }
 void SEScalarLength::Serialize(const cdm::ScalarLengthData& src, SEScalarLength& dst)
 {
-  SEScalarQuantity<LengthUnit>::Serialize(src.scalarlength(), dst);
+  SEUnitScalar::Serialize(src.scalarlength(), dst);
 }
 
 cdm::ScalarLengthData* SEScalarLength::Unload(const SEScalarLength& src)
@@ -69,5 +69,5 @@ cdm::ScalarLengthData* SEScalarLength::Unload(const SEScalarLength& src)
 }
 void SEScalarLength::Serialize(const SEScalarLength& src, cdm::ScalarLengthData& dst)
 {
-  SEScalarQuantity<LengthUnit>::Serialize(src, *dst.mutable_scalarlength());
+  SEUnitScalar::Serialize(src, *dst.mutable_scalarlength());
 }

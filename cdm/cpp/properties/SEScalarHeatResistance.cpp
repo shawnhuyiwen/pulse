@@ -46,7 +46,7 @@ void SEScalarHeatResistance::Load(const cdm::ScalarHeatResistanceData& src, SESc
 }
 void SEScalarHeatResistance::Serialize(const cdm::ScalarHeatResistanceData& src, SEScalarHeatResistance& dst)
 {
-  SEScalarQuantity<HeatResistanceUnit>::Serialize(src.scalarheatresistance(), dst);
+  SEUnitScalar::Serialize(src.scalarheatresistance(), dst);
 }
 
 cdm::ScalarHeatResistanceData* SEScalarHeatResistance::Unload(const SEScalarHeatResistance& src)
@@ -59,5 +59,5 @@ cdm::ScalarHeatResistanceData* SEScalarHeatResistance::Unload(const SEScalarHeat
 }
 void SEScalarHeatResistance::Serialize(const SEScalarHeatResistance& src, cdm::ScalarHeatResistanceData& dst)
 {
-  SEScalarQuantity<HeatResistanceUnit>::Serialize(src, *dst.mutable_scalarheatresistance());
+  SEUnitScalar::Serialize(src, *dst.mutable_scalarheatresistance());
 }

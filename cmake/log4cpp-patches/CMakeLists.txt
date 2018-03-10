@@ -79,38 +79,38 @@ endif (WIN32)
 
 if(${BUILD_SHARED_LIBS})
   add_custom_command(TARGET log4cpp POST_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALL_BIN}/${CONFIGURATION}${EX_CONFIG}
-                   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:log4cpp> ${INSTALL_BIN}/${CONFIGURATION}${EX_CONFIG})
+                   COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALL_BIN}/${CONFIGURATION}
+                   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:log4cpp> ${INSTALL_BIN}/${CONFIGURATION})
 
   if(WIN32)# Copy dll files to the bin
     install(TARGETS log4cpp 
-            RUNTIME CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG}
-            LIBRARY CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
+            RUNTIME CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release
+            LIBRARY CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release)
     install(TARGETS log4cpp 
-            RUNTIME CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG}
-            LIBRARY CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
+            RUNTIME CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug
+            LIBRARY CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug)
     install(TARGETS log4cpp 
-            RUNTIME CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG}
-            LIBRARY CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
+            RUNTIME CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo
+            LIBRARY CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo)
   else()# Copy so files to the bin
     install(TARGETS log4cpp 
-            LIBRARY CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
+            LIBRARY CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release)
     install(TARGETS log4cpp 
-            LIBRARY CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
+            LIBRARY CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug)
     install(TARGETS log4cpp 
-            LIBRARY CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
+            LIBRARY CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo)
   endif()
 endif()
 # Copy lib/so files to the sdk/lib
 install(TARGETS log4cpp         
-        LIBRARY CONFIGURATIONS Release DESTINATION ${INSTALL_LIB}/release${EX_CONFIG}
-        ARCHIVE CONFIGURATIONS Release DESTINATION ${INSTALL_LIB}/release${EX_CONFIG})
+        LIBRARY CONFIGURATIONS Release DESTINATION ${INSTALL_LIB}/release
+        ARCHIVE CONFIGURATIONS Release DESTINATION ${INSTALL_LIB}/release)
 install(TARGETS log4cpp 
-        LIBRARY CONFIGURATIONS Debug DESTINATION ${INSTALL_LIB}/debug${EX_CONFIG}
-        ARCHIVE CONFIGURATIONS Debug DESTINATION ${INSTALL_LIB}/debug${EX_CONFIG})
+        LIBRARY CONFIGURATIONS Debug DESTINATION ${INSTALL_LIB}/debug
+        ARCHIVE CONFIGURATIONS Debug DESTINATION ${INSTALL_LIB}/debug)
 install(TARGETS log4cpp  
-        LIBRARY CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_LIB}/relwithdebinfo${EX_CONFIG}
-        ARCHIVE CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_LIB}/relwithdebinfo${EX_CONFIG})
+        LIBRARY CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_LIB}/relwithdebinfo
+        ARCHIVE CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_LIB}/relwithdebinfo)
 install (
   DIRECTORY include
   DESTINATION ${CMAKE_INSTALL_PREFIX}

@@ -66,7 +66,7 @@ void SEScalarMassPerTime::Load(const cdm::ScalarMassPerTimeData& src, SEScalarMa
 }
 void SEScalarMassPerTime::Serialize(const cdm::ScalarMassPerTimeData& src, SEScalarMassPerTime& dst)
 {
-  SEScalarQuantity<MassPerTimeUnit>::Serialize(src.scalarmasspertime(), dst);
+  SEUnitScalar::Serialize(src.scalarmasspertime(), dst);
 }
 
 cdm::ScalarMassPerTimeData* SEScalarMassPerTime::Unload(const SEScalarMassPerTime& src)
@@ -79,5 +79,5 @@ cdm::ScalarMassPerTimeData* SEScalarMassPerTime::Unload(const SEScalarMassPerTim
 }
 void SEScalarMassPerTime::Serialize(const SEScalarMassPerTime& src, cdm::ScalarMassPerTimeData& dst)
 {
-  SEScalarQuantity<MassPerTimeUnit>::Serialize(src, *dst.mutable_scalarmasspertime());
+  SEUnitScalar::Serialize(src, *dst.mutable_scalarmasspertime());
 }

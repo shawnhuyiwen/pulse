@@ -46,7 +46,7 @@ void SEScalarInversePressure::Load(const cdm::ScalarInversePressureData& src, SE
 }
 void SEScalarInversePressure::Serialize(const cdm::ScalarInversePressureData& src, SEScalarInversePressure& dst)
 {
-  SEScalarQuantity<InversePressureUnit>::Serialize(src.scalarinversepressure(), dst);
+  SEUnitScalar::Serialize(src.scalarinversepressure(), dst);
 }
 
 cdm::ScalarInversePressureData* SEScalarInversePressure::Unload(const SEScalarInversePressure& src)
@@ -59,5 +59,5 @@ cdm::ScalarInversePressureData* SEScalarInversePressure::Unload(const SEScalarIn
 }
 void SEScalarInversePressure::Serialize(const SEScalarInversePressure& src, cdm::ScalarInversePressureData& dst)
 {
-  SEScalarQuantity<InversePressureUnit>::Serialize(src, *dst.mutable_scalarinversepressure());
+  SEUnitScalar::Serialize(src, *dst.mutable_scalarinversepressure());
 }

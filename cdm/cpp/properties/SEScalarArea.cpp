@@ -36,7 +36,7 @@ void SEScalarArea::Load(const cdm::ScalarAreaData& src, SEScalarArea& dst)
 }
 void SEScalarArea::Serialize(const cdm::ScalarAreaData& src, SEScalarArea& dst)
 {
-  SEScalarQuantity<AreaUnit>::Serialize(src.scalararea(), dst);
+  SEUnitScalar::Serialize(src.scalararea(), dst);
 }
 
 cdm::ScalarAreaData* SEScalarArea::Unload(const SEScalarArea& src)
@@ -49,5 +49,5 @@ cdm::ScalarAreaData* SEScalarArea::Unload(const SEScalarArea& src)
 }
 void SEScalarArea::Serialize(const SEScalarArea& src, cdm::ScalarAreaData& dst)
 {
-  SEScalarQuantity<AreaUnit>::Serialize(src, *dst.mutable_scalararea());
+  SEUnitScalar::Serialize(src, *dst.mutable_scalararea());
 }

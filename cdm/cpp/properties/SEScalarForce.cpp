@@ -41,7 +41,7 @@ void SEScalarForce::Load(const cdm::ScalarForceData& src, SEScalarForce& dst)
 }
 void SEScalarForce::Serialize(const cdm::ScalarForceData& src, SEScalarForce& dst)
 {
-  SEScalarQuantity<ForceUnit>::Serialize(src.scalarforce(), dst);
+  SEUnitScalar::Serialize(src.scalarforce(), dst);
 }
 
 cdm::ScalarForceData* SEScalarForce::Unload(const SEScalarForce& src)
@@ -54,5 +54,5 @@ cdm::ScalarForceData* SEScalarForce::Unload(const SEScalarForce& src)
 }
 void SEScalarForce::Serialize(const SEScalarForce& src, cdm::ScalarForceData& dst)
 {
-  SEScalarQuantity<ForceUnit>::Serialize(src, *dst.mutable_scalarforce());
+  SEUnitScalar::Serialize(src, *dst.mutable_scalarforce());
 }

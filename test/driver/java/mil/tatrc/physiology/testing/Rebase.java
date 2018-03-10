@@ -4,76 +4,47 @@ package mil.tatrc.physiology.testing;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
 
 import mil.tatrc.physiology.utilities.FileUtils;
 import mil.tatrc.physiology.utilities.Log;
-import mil.tatrc.physiology.utilities.OrderedProperties;
+import mil.tatrc.physiology.utilities.RunConfiguration;
 
 public class Rebase
 {
 
   public static void main(String[] args)
   {
-    boolean scenarios=true;
+    RunConfiguration cfg = new RunConfiguration();
     Log.setFileName("Rebase.log");    
-    String fromDir = "\\bin\\test_results\\scenarios\\";
-    String toDir = "..\\verification\\Scenarios\\";
-    String configFile = "ALL";//"DebugRun.config";
+    String toDir = "./test_results/rebase/";
+    String configFile = "DebugRun.config";
     switch(args.length)
     {
       case 1:
       {
-        if(args[0].equals("UnitTests"))
-        {
-          scenarios = false;
-          fromDir = ".\\UnitTests\\";
-          toDir = "..\\verification\\UnitTests\\";
-          // TODO Not very well tested
-        }
+        toDir = args[0];
         break;
       }
       case 2:
       {
-        fromDir = args[0];
-        toDir = args[1];
-        break;
-      }
-      case 3:
-      {
-        fromDir = args[0];
-        toDir = args[1];
-        configFile = args[2];
-      }
-      case 4:
-      {
-        fromDir = args[0];
-        toDir = args[1];
-        configFile = args[2];
-        scenarios = args[3].equalsIgnoreCase("true") ? true:false;
+        toDir = args[0];
+        configFile = args[1];
       }
     }
-    // TODO Make sure from/to dir ends with a slash
-    
-    Log.info("Rebasing from "+fromDir);
+    // Replace back slashes with forward slashes
+    toDir = toDir.replaceAll("\\\\", "/");
+
     Log.info("Rebasing to "+toDir);
     Log.info("Rebasing config "+configFile);
-         
-    File fDir = new File(fromDir);
-    // TODO replace forward slashes with back slashes
-    if(!fromDir.endsWith("\\"))
-      fromDir = fromDir + "\\";
+    
+    // Yeh, this is a bit ugly...
+    // /I need to split the configuration parser and the execution from SETestDriver
+    SETestDriver config = new SETestDriver();
+    config.processConfigFile(new File(cfg.getTestConfigDirectory()+"/"+configFile), cfg.getVerificationDirectory());
 
-    if(!fDir.exists())
-    {
-      Log.error("From dir does not exist : "+fromDir);
-      return;
-    }
-    if(!fDir.isDirectory())
-    {
-      Log.error("From dir is not a directory : "+fromDir);
-      return;
-    }
+    // Make sure from/to dir ends with a slash
+    if(!toDir.endsWith("/"))
+      toDir = toDir + "/";
     try
     {
       FileUtils.createDirectory(toDir);
@@ -83,76 +54,49 @@ public class Rebase
       Log.error("Could not create to Directory : "+toDir,ex);
       return;
     }
-    List<String> resultsFiles;
-    if(configFile.isEmpty() || configFile.equalsIgnoreCase("ALL"))
-      resultsFiles = FileUtils.findFiles(fromDir, ".txt", true);
-    else
+    
+    for(SETestDriver.TestJob job : config.jobs)
     {
-      // Read the config file and find the files
-      resultsFiles = new ArrayList<String>();
-      OrderedProperties config = new OrderedProperties();
-      try
+      for(String rFile : job.computedFiles)
       {
-        config.load(configFile);
-      }
-      catch(Exception ex)
-      {
-        Log.error("Unable to find config file : "+configFile, ex);
-        return;
-      }
-      for(String f : config.getKeys())
-      {
-        if(f.endsWith(".pba"))
+        if(!new File(rFile).exists())
         {
-          String resultFile = fromDir+f;
-          resultsFiles.add(resultFile.replaceAll(".pba","Results.txt"));
+      	  Log.error("Result file does not exist : "+rFile);
+      	  continue;
         }
-      }
-    }
-    for(String rFile : resultsFiles)
-    {
-      String srcLog = "";
-      if(scenarios)
-        srcLog = rFile.replaceAll("Results.txt", ".log");
-      String prepend = rFile.substring(rFile.indexOf(fromDir)+fromDir.length(),rFile.indexOf(".txt"));
-      if(scenarios)
-      {
-        String[] dirs = prepend.split("[/\\\\]");
-        if(dirs.length==1)
-          continue;//We ignore anything in the Scenario\root folder, those are not verifiable runs, (like runs to make initial state files)
-        prepend = dirs[0] +"\\\\Current Baseline\\\\" + dirs[1];
-      }
-      String newFile = toDir + prepend + ".zip";
-      Log.info("Creating new file "+newFile);
-      String rPath = "";
-      for(String rDir : newFile.split("\\\\"))
-      {
-        if(rDir.endsWith(".zip"))
+        // Check for a log
+        String log = "";
+        if(job.name.endsWith(".pba"))
+      	  log = rFile.replaceAll("Results.txt", ".log");
+        String prepend = rFile.substring(0,rFile.lastIndexOf("/"));
+        String newFile = toDir + prepend + ".zip";
+        Log.info("Creating new file "+newFile);
+        String rPath = "";
+        for(String rDir : newFile.split("/"))
         {
-          break;
+          if(rDir.endsWith(".zip"))
+          {
+            break;
+          }
+          rPath += rDir + "/";
         }
-        rPath += rDir + "\\";
-      }
-      try
-      {
-        FileUtils.createDirectory(rPath);
-      } 
-      catch (IOException ex)
-      {
-        Log.error("Could not create directory : "+rPath, ex);
-      }
-      File oldZip = new File(newFile);
-      if(oldZip.exists())
-        oldZip.delete();
-      FileUtils.zipFiles(new String[]{rFile}, newFile);
-      try
-      {
-        if(!srcLog.isEmpty())
-          FileUtils.copy(new File(srcLog), new File(toDir + prepend + ".log"));
-      }
-      catch(Exception ex)
-      {
-        Log.error("Could not find a log : " + srcLog);
+        try
+        {
+          FileUtils.createDirectory(rPath);
+        } 
+        catch (IOException ex)
+        {
+          Log.error("Could not create directory : "+rPath, ex);
+        }
+        File oldZip = new File(newFile);
+        if(oldZip.exists())
+          oldZip.delete();
+        String[] files;
+        if(!log.isEmpty())
+      	  files = new String[]{rFile,log};
+        else
+      	  files = new String[]{rFile};
+        FileUtils.zipFiles(files, newFile);
       }
     }
   }

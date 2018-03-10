@@ -2,8 +2,6 @@
 add_executable(PulseScenarioDriver cpp/PulseScenarioDriver.cpp
                                    cpp/PulseScenarioDriver.h)
 
-#set_target_properties(PulseScenarioDriver PROPERTIES COMPILE_FLAGS -pthread LINK_FLAGS -pthread)
-
 # Preprocessor Definitions and Include Paths
 target_include_directories(PulseScenarioDriver PRIVATE ${CMAKE_BINARY_DIR}/schema/cpp)
 target_include_directories(PulseScenarioDriver PRIVATE ${CMAKE_BINARY_DIR}/schema/cpp/bind)
@@ -21,12 +19,12 @@ IF(UNIX)
 ENDIF()
 
 add_custom_command(TARGET PulseScenarioDriver POST_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALL_BIN}/${CONFIGURATION}${EX_CONFIG}
-                   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:PulseScenarioDriver> ${INSTALL_BIN}/${CONFIGURATION}${EX_CONFIG})
+                   COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALL_BIN}/${CONFIGURATION}
+                   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:PulseScenarioDriver> ${INSTALL_BIN}/${CONFIGURATION})
 
 install(TARGETS PulseScenarioDriver 
-        RUNTIME CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})
+        RUNTIME CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release)
 install(TARGETS PulseScenarioDriver 
-        RUNTIME CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
+        RUNTIME CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug)
 install(TARGETS PulseScenarioDriver 
-        RUNTIME CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
+        RUNTIME CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo)

@@ -41,7 +41,7 @@ void SEScalarFlowElastance::Load(const cdm::ScalarFlowElastanceData& src, SEScal
 }
 void SEScalarFlowElastance::Serialize(const cdm::ScalarFlowElastanceData& src, SEScalarFlowElastance& dst)
 {
-  SEScalarQuantity<FlowElastanceUnit>::Serialize(src.scalarflowelastance(), dst);
+  SEUnitScalar::Serialize(src.scalarflowelastance(), dst);
 }
 
 cdm::ScalarFlowElastanceData* SEScalarFlowElastance::Unload(const SEScalarFlowElastance& src)
@@ -54,5 +54,5 @@ cdm::ScalarFlowElastanceData* SEScalarFlowElastance::Unload(const SEScalarFlowEl
 }
 void SEScalarFlowElastance::Serialize(const SEScalarFlowElastance& src, cdm::ScalarFlowElastanceData& dst)
 {
-  SEScalarQuantity<FlowElastanceUnit>::Serialize(src, *dst.mutable_scalarflowelastance());
+  SEUnitScalar::Serialize(src, *dst.mutable_scalarflowelastance());
 }

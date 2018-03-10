@@ -56,7 +56,7 @@ void SEScalarAmountPerTime::Load(const cdm::ScalarAmountPerTimeData& src, SEScal
 }
 void SEScalarAmountPerTime::Serialize(const cdm::ScalarAmountPerTimeData& src, SEScalarAmountPerTime& dst)
 {
-  SEScalarQuantity<AmountPerTimeUnit>::Serialize(src.scalaramountpertime(), dst);
+  SEUnitScalar::Serialize(src.scalaramountpertime(), dst);
 }
 
 cdm::ScalarAmountPerTimeData* SEScalarAmountPerTime::Unload(const SEScalarAmountPerTime& src)
@@ -69,5 +69,5 @@ cdm::ScalarAmountPerTimeData* SEScalarAmountPerTime::Unload(const SEScalarAmount
 }
 void SEScalarAmountPerTime::Serialize(const SEScalarAmountPerTime& src, cdm::ScalarAmountPerTimeData& dst)
 {
-  SEScalarQuantity<AmountPerTimeUnit>::Serialize(src, *dst.mutable_scalaramountpertime());
+  SEUnitScalar::Serialize(src, *dst.mutable_scalaramountpertime());
 }

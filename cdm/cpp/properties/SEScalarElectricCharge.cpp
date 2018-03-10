@@ -31,7 +31,7 @@ void SEScalarElectricCharge::Load(const cdm::ScalarElectricChargeData& src, SESc
 }
 void SEScalarElectricCharge::Serialize(const cdm::ScalarElectricChargeData& src, SEScalarElectricCharge& dst)
 {
-  SEScalarQuantity<ElectricChargeUnit>::Serialize(src.scalarelectriccharge(), dst);
+  SEUnitScalar::Serialize(src.scalarelectriccharge(), dst);
 }
 
 cdm::ScalarElectricChargeData* SEScalarElectricCharge::Unload(const SEScalarElectricCharge& src)
@@ -44,5 +44,5 @@ cdm::ScalarElectricChargeData* SEScalarElectricCharge::Unload(const SEScalarElec
 }
 void SEScalarElectricCharge::Serialize(const SEScalarElectricCharge& src, cdm::ScalarElectricChargeData& dst)
 {
-  SEScalarQuantity<ElectricChargeUnit>::Serialize(src, *dst.mutable_scalarelectriccharge());
+  SEUnitScalar::Serialize(src, *dst.mutable_scalarelectriccharge());
 }

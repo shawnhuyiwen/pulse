@@ -51,7 +51,7 @@ void SEScalarPressure::Load(const cdm::ScalarPressureData& src, SEScalarPressure
 }
 void SEScalarPressure::Serialize(const cdm::ScalarPressureData& src, SEScalarPressure& dst)
 {
-  SEScalarQuantity<PressureUnit>::Serialize(src.scalarpressure(), dst);
+  SEUnitScalar::Serialize(src.scalarpressure(), dst);
 }
 
 cdm::ScalarPressureData* SEScalarPressure::Unload(const SEScalarPressure& src)
@@ -64,5 +64,5 @@ cdm::ScalarPressureData* SEScalarPressure::Unload(const SEScalarPressure& src)
 }
 void SEScalarPressure::Serialize(const SEScalarPressure& src, cdm::ScalarPressureData& dst)
 {
-  SEScalarQuantity<PressureUnit>::Serialize(src, *dst.mutable_scalarpressure());
+  SEUnitScalar::Serialize(src, *dst.mutable_scalarpressure());
 }

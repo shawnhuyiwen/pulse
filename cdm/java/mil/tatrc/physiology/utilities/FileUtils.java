@@ -18,6 +18,8 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
@@ -38,7 +40,7 @@ public class FileUtils
     for(String file : FileUtils.findFiles("./new_baselines", ".txt", false))
       FileUtils.zipFiles(new String[]{file}, file.replaceAll(".txt", ".zip"));    
   }
-  
+
   public static boolean loadLibraries(List<String> libs, String location)
   {
     boolean b = true;
@@ -74,13 +76,13 @@ public class FileUtils
     }
     catch(UnsatisfiedLinkError ex)
     {
-        Log.error("Unable to load "+location+"/"+libName, ex);
-        return false;
+      Log.error("Unable to load "+location+"/"+libName, ex);
+      return false;
     }
-    
+
     return true;
   }
-  
+
   /** 
    * Tests if a file can be created with this name on the OS
    * @param fileName
@@ -106,7 +108,7 @@ public class FileUtils
       return false;
     }
   }
-  
+
   /**
    * Writes from a string into a file
    *
@@ -147,7 +149,7 @@ public class FileUtils
       }
     }
   }
-  
+
   /**
    * Writes the specified byte[] to the specified File path.
    * 
@@ -178,13 +180,13 @@ public class FileUtils
       }
     }
   }
-  
+
   public static String readFile(String fileName)
   {
     File f = new File(fileName);
     return readFile(f);
   }
-  
+
   /**
    * Reads from a file into a String.
    *
@@ -221,7 +223,7 @@ public class FileUtils
       }
     }
   }
-  
+
   /** 
    * Read bytes from a File into a byte[].
    * 
@@ -282,8 +284,8 @@ public class FileUtils
    */
   public synchronized static File createFile(String directory, String filename, String extension, String classification) throws IOException
   {
-    
-  
+
+
     //get file path
     StringBuilder sb = new StringBuilder();    
     if(directory != null && directory.length() > 0)
@@ -292,10 +294,10 @@ public class FileUtils
       sb.append(directory);
     }         
     String path = sb.toString();
-    
+
     //if path doesn't exist, create it
     createDirectory(path);
-    
+
     //create file and return it
     return new File(path+"\\"+filename+extension);  
   }
@@ -316,18 +318,18 @@ public class FileUtils
   public synchronized static File createFile(String directory, String filename, String ext, String classification, String content)
   { 
     File file = null;
-    
+
     if(content == null || filename == null || ext == null || classification == null)
     {
       Log.error("Unable to export null content");
       return file;
     }             
-    
+
     try
     {     
       //create file
       file = createFile(directory, filename, ext, classification);
-  
+
       //write file contents
       PrintWriter out = new PrintWriter(new FileWriter(file));
       out.println(content);
@@ -337,7 +339,7 @@ public class FileUtils
     {
       Log.error("Unable to export file: " + filename, e);
     }  
-    
+
     return file;
   }
 
@@ -370,7 +372,7 @@ public class FileUtils
     //TimingProfile.profile(LogFile, "createDirectory:Exit");
     return dirFile;
   }
-  
+
   public synchronized static void copy(File source, File destination) throws IOException
   {
     if (source.isDirectory())
@@ -387,7 +389,7 @@ public class FileUtils
       Files.copy(source.toPath(), destination.toPath(), REPLACE_EXISTING);
     }
   }
-  
+
   /**
    * @param directory
    * @return
@@ -399,12 +401,12 @@ public class FileUtils
     dir.renameTo(newDir);
   }
 
-  
+
   public static boolean delete(String fileName)
   {
     return delete(new File(fileName));      
   }
-  
+
   public static boolean delete(File f)
   {
     if (f.isDirectory())
@@ -416,8 +418,8 @@ public class FileUtils
     }
     return f.delete();      
   }
-  
-  
+
+
   /**
    * Clean up - delete unzipped files that have already been included into ZIP
    */
@@ -441,7 +443,7 @@ public class FileUtils
   public static void deleteFiles(String[] fileNames, String directory)
   {
     File dir = new File(directory);
-    
+
     //delete files
     for(int i =0; i<fileNames.length;i++)
     {
@@ -553,7 +555,7 @@ public class FileUtils
       return s;
     }
   }
-  
+
   /**
    * @param string
    * @return
@@ -564,7 +566,7 @@ public class FileUtils
     string = stripTrailingChar(string, '/');
     return string;
   }
-  
+
   /**
    * Strip trailing character from string, if it ends with it
    * 
@@ -586,10 +588,10 @@ public class FileUtils
     {
       string = stripTrailingChar(string, toRemove);
     }
-    
+
     return string;
   }
-  
+
   /**
    * Strip extension from string
    * 
@@ -603,8 +605,8 @@ public class FileUtils
     if (i >= 0) s = s.substring(0,i);
     return s; 
   }
-  
-  
+
+
   /**
    * Get all but the last file component of the URL
    * 
@@ -618,8 +620,8 @@ public class FileUtils
     if (i >= 0) s = s.substring(0, i);
     return s;
   }
-  
-  
+
+
   /**
    * Get the last file component of the URL
    * 
@@ -633,7 +635,7 @@ public class FileUtils
     if (i >= 0) s = s.substring(i+1);
     return s; 
   }
-  
+
   /**
    * If the specified filename doesnt include a path, prepend the specified directory
    * 
@@ -645,14 +647,14 @@ public class FileUtils
   {
     if(file == null)
       return null;
-    
+
     //check if it is a filename or filepath
     if(file.indexOf('/') >= 0 || file.indexOf("/") >= 0)
       return file;
-    
+
     if(path == null)
       return file;
-    
+
     return path + "\\" + file;
   }
 
@@ -665,28 +667,28 @@ public class FileUtils
   {
     if(path == null)
       return "\\";
-    
+
     if(!path.endsWith("\\") && !path.endsWith("/"))
     {
       path += "\\";
     }
-    
+
     return path;
   }
-  
+
   /**
    * Removed Windows reserved filename characters, and optionally remove spaces
    *  http://msdn.microsoft.com/en-us/library/aa365247%28VS.85%29.aspx
    *  
    *  < (less than)
-    * > (greater than)
-    * : (colon)
-    * " (double quote)
-    * / (forward slash)
-    * \ (backslash)
-    * | (vertical bar or pipe)
-    * ? (question mark)
-    * * (asterisk)
+   * > (greater than)
+   * : (colon)
+   * " (double quote)
+   * / (forward slash)
+   * \ (backslash)
+   * | (vertical bar or pipe)
+   * ? (question mark)
+   * * (asterisk)
    * 
    * @param filename
    * @param removeSpace
@@ -706,20 +708,20 @@ public class FileUtils
     filename = filename.replace('*', '_');
     return filename.replace('?', '_');    
   }
- 
-  
+
+
   public static String[] getFilesOfSameName(String filename)
   {
     File file = new File("./");
-    
+
     FilenameFilter filenameFilter = new FileNameFilter(filename);
     return file.list(filenameFilter);
   }
-  
+
   public static String[] getFilesOfSameName(String filename, String...ignoreExtensions)
   {
     File file = new File("./");
-    
+
     FilenameFilter filenameFilter = new FileNameFilter(filename, ignoreExtensions);
     return file.list(filenameFilter);
   }
@@ -735,11 +737,11 @@ public class FileUtils
     {
       // Initiate ZipFile object with the path/name of the zip file.
       ZipFile zipFile = new ZipFile(zipfileName);
-      
+
       // Get the list of file headers from the zip file
       List<FileHeader> headers = zipFile.getFileHeaders();
       String[] fileNames = new String[headers.size()];
-      
+
       // Loop through the file headers
       for(int i = 0; i < headers.size(); i++) 
       {
@@ -754,9 +756,9 @@ public class FileUtils
     }
     return null;
   }
-  
-  
-  
+
+
+
   /**
    * Zip all files of given directory, and the directory
    * @param dirName
@@ -768,7 +770,7 @@ public class FileUtils
     zipDirectory(dirName,dirName);
     return dirName+".zip";
   }
-  
+
   public static void zipDirectory(String dirName, String zipFileName)
   {
     try 
@@ -779,20 +781,20 @@ public class FileUtils
         Log.warn(file.getName() + "Already exists, deleting old file");
         FileUtils.delete(new File(file.getName()));
       }
-      
+
       // Initiate ZipFile object with the path/name of the zip file.
       ZipFile zipFile = new ZipFile(zipFileName);
-      
+
       // Initiate Zip Parameters which define various properties such
       // as compression method, etc.
       ZipParameters parameters = new ZipParameters();
-      
+
       // set compression method to store compression
       parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
-      
+
       // Set the compression level
       parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_ULTRA);
-      
+
       // Add folder to the zip file
       parameters.setRootFolderInZip(dirName);
       zipFile.addFolder(dirName, parameters);  
@@ -802,13 +804,13 @@ public class FileUtils
       e.printStackTrace();
     }
   }
-  
+
   public static void zipDirectories(String[] directories, String zipFileName)
   {
     File f = new File(zipFileName);
     zipDirectories(directories,f);
   }
-  
+
   /**
    * @param directoriesToZip
    * @param file
@@ -822,19 +824,19 @@ public class FileUtils
         Log.warn(zipFile.getName() + "Already exists, deleting old file");
         FileUtils.delete(new File(zipFile.getName()));
       }
-      
+
       ZipFile zip = new ZipFile(zipFile);
-      
+
       // Initiate Zip Parameters which define various properties such
       // as compression method, etc.
       ZipParameters parameters = new ZipParameters();
-      
+
       // set compression method to store compression
       parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
-      
+
       // Set the compression level
       parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL);
-      
+
       // Add folder to the zip file
       for(String dir : directories)
       {
@@ -847,7 +849,7 @@ public class FileUtils
       Log.error("Unable to zip directories to  " + zipFile.getAbsolutePath(), e);
     }
   }
-  
+
   /**
    * Zips all files in fileNames array
    * @param fileNames
@@ -858,43 +860,55 @@ public class FileUtils
   {
     try
     {      
-      ZipFile zipFile = new ZipFile(zipFileName);
+      Set<String> entries = new HashSet<String>();
+      byte[] buffer = new byte[1024];
+      new File(zipFileName).delete();
+      FileOutputStream f = new FileOutputStream(zipFileName);
+      ZipOutputStream zip = new ZipOutputStream(new BufferedOutputStream(f));
+      zip.setLevel(Zip4jConstants.DEFLATE_LEVEL_ULTRA);
+      zip.setMethod(Zip4jConstants.COMP_DEFLATE);
 
       // Build the list of files to be added in the array list
       // Objects of type File have to be added to the ArrayList
-      ArrayList<File> filesToAdd = new ArrayList<File>();
-      for(int i = 0; i < fileNames.length; i++)
+      String path;
+      for(String file : fileNames)
       {
-        if(fileNames[i].equals(zipFileName))
-          continue;// Ignore self
-        filesToAdd.add(new File(fileNames[i]));
+        if(file.startsWith("."))
+          file = file.substring(1);
+        if(file.startsWith("/"))
+          file = file.substring(1);
+        
+        path = file.substring(0,file.lastIndexOf("/")+1);
+        if(!entries.contains(path))
+        {
+          entries.add(path);
+          zip.putNextEntry(new ZipEntry(path));
+          zip.closeEntry();
+        }
+        
+        FileInputStream fin = new FileInputStream(file);
+        zip.putNextEntry(new ZipEntry(file));
+        int length;
+        while ((length = fin.read(buffer)) > 0) 
+        {
+          zip.write(buffer, 0, length);
+        }
+        zip.closeEntry();
       }
-
-      // Initiate Zip Parameters which define various properties such
-      // as compression method, etc.
-      ZipParameters parameters = new ZipParameters();
-      parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE); // set compression method to store compression
-
-      // Set the compression level
-      parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_ULTRA); 
-
-      // Set the encryption flag to true
-      // If this is set to false, then the rest of encryption properties are ignored
-      parameters.setEncryptFiles(false);
 
       // Now add files to the zip file
       // Note: To add a single file, the method addFile can be used
       // Note: If the zip file already exists and if this zip file is a split file
       // then this method throws an exception as Zip Format Specification does not 
       // allow updating split zip files
-      zipFile.addFiles(filesToAdd, parameters);
+      zip.close();
     } 
-    catch (ZipException e) 
+    catch (IOException e) 
     {
       Log.error("Error compressing files to " + zipFileName + "\n", e);
     }
   }
-  
+
   /**
    * Zip files of filename.*
    * @param filename
@@ -904,7 +918,7 @@ public class FileUtils
   {
     String[] files;
     File file = new File("./");
-    
+
     FilenameFilter filenameFilter = new FileNameFilter(filename, excludeExtensions);
     files = file.list(filenameFilter);
     if(files.length == 0)
@@ -913,14 +927,14 @@ public class FileUtils
 
     return files;
   }
-  
+
   public static void zipDirectoryContents(File srcDir, File tgtDir, String extension) throws IOException
   {
     for(String l : srcDir.list())
     {
       File s = new File(srcDir.getAbsolutePath()+"\\"+l);
       File t = new File(tgtDir.getAbsolutePath()+"\\"+l);
-      
+
       if(s.isDirectory())
       {
         if(!t.exists())
@@ -937,7 +951,7 @@ public class FileUtils
       }
     }
   }
-  
+
   /**
    * Unzips specified directory
    * @param zipfileName (name includes .zip)
@@ -948,18 +962,18 @@ public class FileUtils
     File f = new File(zipFileName);
     unzip(f);
   }
-  
+
   public static void unzipToDirectory(String zipFileName, String toDirectory)
   {
     File f = new File(zipFileName);
     unzipToDirectory(f,toDirectory);
   }
-  
+
   public static void unzip(File f)
   {
     unzipToDirectory(f,"./");
   }
-  
+
   public static void unzipToDirectory(File f, String toDirectory)
   {
     try
@@ -997,7 +1011,7 @@ public class FileUtils
     }
     return size;
   }
-  
+
   // BLOCK_SIZE should probably a factor or multiple of the size of a disk sector/cluster.
   // your max heap size may need to be adjusted if you have a very big block size or many file comparisons.
   private final static int BLOCK_SIZE = 4096; //4k //65536;
@@ -1005,17 +1019,17 @@ public class FileUtils
   {
     File file1 = new File(filename1);
     File file2 = new File(filename2);
-    
+
     if (!file1.exists() && !file2.exists())
       return false;
-    
+
     if (!file1.isFile() && !file2.isFile())
       return false;
-    
+
     boolean compare = true;
     InputStream inputStream1 = null;
     InputStream inputStream2 = null;
- 
+
     try
     {
       if (file1.getCanonicalPath().equals(file2.getCanonicalPath()))
@@ -1049,10 +1063,10 @@ public class FileUtils
     {
       try
       {
-         if (inputStream1 != null)
-           inputStream1.close();
-         if (inputStream2 != null)
-           inputStream2.close();
+        if (inputStream1 != null)
+          inputStream1.close();
+        if (inputStream2 != null)
+          inputStream2.close();
       }
       catch(Exception e)
       {
@@ -1060,7 +1074,7 @@ public class FileUtils
         Log.error(e.getMessage());
       }
     }
-    
+
     return compare;
   }
 }

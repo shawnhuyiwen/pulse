@@ -41,7 +41,7 @@ void SEScalarHeatConductancePerArea::Load(const cdm::ScalarHeatConductancePerAre
 }
 void SEScalarHeatConductancePerArea::Serialize(const cdm::ScalarHeatConductancePerAreaData& src, SEScalarHeatConductancePerArea& dst)
 {
-  SEScalarQuantity<HeatConductancePerAreaUnit>::Serialize(src.scalarheatconductanceperarea(), dst);
+  SEUnitScalar::Serialize(src.scalarheatconductanceperarea(), dst);
 }
 
 cdm::ScalarHeatConductancePerAreaData* SEScalarHeatConductancePerArea::Unload(const SEScalarHeatConductancePerArea& src)
@@ -54,5 +54,5 @@ cdm::ScalarHeatConductancePerAreaData* SEScalarHeatConductancePerArea::Unload(co
 }
 void SEScalarHeatConductancePerArea::Serialize(const SEScalarHeatConductancePerArea& src, cdm::ScalarHeatConductancePerAreaData& dst)
 {
-  SEScalarQuantity<HeatConductancePerAreaUnit>::Serialize(src, *dst.mutable_scalarheatconductanceperarea());
+  SEUnitScalar::Serialize(src, *dst.mutable_scalarheatconductanceperarea());
 }

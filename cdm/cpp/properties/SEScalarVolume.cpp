@@ -51,7 +51,7 @@ void SEScalarVolume::Load(const cdm::ScalarVolumeData& src, SEScalarVolume& dst)
 }
 void SEScalarVolume::Serialize(const cdm::ScalarVolumeData& src, SEScalarVolume& dst)
 {
-  SEScalarQuantity<VolumeUnit>::Serialize(src.scalarvolume(), dst);
+  SEUnitScalar::Serialize(src.scalarvolume(), dst);
 }
 
 cdm::ScalarVolumeData* SEScalarVolume::Unload(const SEScalarVolume& src)
@@ -64,5 +64,5 @@ cdm::ScalarVolumeData* SEScalarVolume::Unload(const SEScalarVolume& src)
 }
 void SEScalarVolume::Serialize(const SEScalarVolume& src, cdm::ScalarVolumeData& dst)
 {
-  SEScalarQuantity<VolumeUnit>::Serialize(src, *dst.mutable_scalarvolume());
+  SEUnitScalar::Serialize(src, *dst.mutable_scalarvolume());
 }

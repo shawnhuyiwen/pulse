@@ -31,7 +31,7 @@ void SEScalarElectricResistance::Load(const cdm::ScalarElectricResistanceData& s
 }
 void SEScalarElectricResistance::Serialize(const cdm::ScalarElectricResistanceData& src, SEScalarElectricResistance& dst)
 {
-  SEScalarQuantity<ElectricResistanceUnit>::Serialize(src.scalarelectricresistance(), dst);
+  SEUnitScalar::Serialize(src.scalarelectricresistance(), dst);
 }
 
 cdm::ScalarElectricResistanceData* SEScalarElectricResistance::Unload(const SEScalarElectricResistance& src)
@@ -44,5 +44,5 @@ cdm::ScalarElectricResistanceData* SEScalarElectricResistance::Unload(const SESc
 }
 void SEScalarElectricResistance::Serialize(const SEScalarElectricResistance& src, cdm::ScalarElectricResistanceData& dst)
 {
-  SEScalarQuantity<ElectricResistanceUnit>::Serialize(src, *dst.mutable_scalarelectricresistance());
+  SEUnitScalar::Serialize(src, *dst.mutable_scalarelectricresistance());
 }

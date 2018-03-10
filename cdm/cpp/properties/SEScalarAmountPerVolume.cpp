@@ -56,7 +56,7 @@ void SEScalarAmountPerVolume::Load(const cdm::ScalarAmountPerVolumeData& src, SE
 }
 void SEScalarAmountPerVolume::Serialize(const cdm::ScalarAmountPerVolumeData& src, SEScalarAmountPerVolume& dst)
 {
-  SEScalarQuantity<AmountPerVolumeUnit>::Serialize(src.scalaramountpervolume(), dst);
+  SEUnitScalar::Serialize(src.scalaramountpervolume(), dst);
 }
 
 cdm::ScalarAmountPerVolumeData* SEScalarAmountPerVolume::Unload(const SEScalarAmountPerVolume& src)
@@ -69,5 +69,5 @@ cdm::ScalarAmountPerVolumeData* SEScalarAmountPerVolume::Unload(const SEScalarAm
 }
 void SEScalarAmountPerVolume::Serialize(const SEScalarAmountPerVolume& src, cdm::ScalarAmountPerVolumeData& dst)
 {
-  SEScalarQuantity<AmountPerVolumeUnit>::Serialize(src, *dst.mutable_scalaramountpervolume());
+  SEUnitScalar::Serialize(src, *dst.mutable_scalaramountpervolume());
 }

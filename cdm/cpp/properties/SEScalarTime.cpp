@@ -54,7 +54,7 @@ void SEScalarTime::Load(const cdm::ScalarTimeData& src, SEScalarTime& dst)
 }
 void SEScalarTime::Serialize(const cdm::ScalarTimeData& src, SEScalarTime& dst)
 {
-  SEScalarQuantity<TimeUnit>::Serialize(src.scalartime(), dst);
+  SEUnitScalar::Serialize(src.scalartime(), dst);
 }
 
 cdm::ScalarTimeData* SEScalarTime::Unload(const SEScalarTime& src)
@@ -67,5 +67,5 @@ cdm::ScalarTimeData* SEScalarTime::Unload(const SEScalarTime& src)
 }
 void SEScalarTime::Serialize(const SEScalarTime& src, cdm::ScalarTimeData& dst)
 {
-  SEScalarQuantity<TimeUnit>::Serialize(src, *dst.mutable_scalartime());
+  SEUnitScalar::Serialize(src, *dst.mutable_scalartime());
 }

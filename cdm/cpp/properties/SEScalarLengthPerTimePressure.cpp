@@ -46,7 +46,7 @@ void SEScalarLengthPerTimePressure::Load(const cdm::ScalarLengthPerTimePressureD
 }
 void SEScalarLengthPerTimePressure::Serialize(const cdm::ScalarLengthPerTimePressureData& src, SEScalarLengthPerTimePressure& dst)
 {
-  SEScalarQuantity<LengthPerTimePressureUnit>::Serialize(src.scalarlengthpertimepressure(), dst);
+  SEUnitScalar::Serialize(src.scalarlengthpertimepressure(), dst);
 }
 
 cdm::ScalarLengthPerTimePressureData* SEScalarLengthPerTimePressure::Unload(const SEScalarLengthPerTimePressure& src)
@@ -59,5 +59,5 @@ cdm::ScalarLengthPerTimePressureData* SEScalarLengthPerTimePressure::Unload(cons
 }
 void SEScalarLengthPerTimePressure::Serialize(const SEScalarLengthPerTimePressure& src, cdm::ScalarLengthPerTimePressureData& dst)
 {
-  SEScalarQuantity<LengthPerTimePressureUnit>::Serialize(src, *dst.mutable_scalarlengthpertimepressure());
+  SEUnitScalar::Serialize(src, *dst.mutable_scalarlengthpertimepressure());
 }

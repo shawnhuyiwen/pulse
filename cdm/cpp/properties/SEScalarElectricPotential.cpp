@@ -36,7 +36,7 @@ void SEScalarElectricPotential::Load(const cdm::ScalarElectricPotentialData& src
 }
 void SEScalarElectricPotential::Serialize(const cdm::ScalarElectricPotentialData& src, SEScalarElectricPotential& dst)
 {
-  SEScalarQuantity<ElectricPotentialUnit>::Serialize(src.scalarelectricpotential(), dst);
+  SEUnitScalar::Serialize(src.scalarelectricpotential(), dst);
 }
 
 cdm::ScalarElectricPotentialData* SEScalarElectricPotential::Unload(const SEScalarElectricPotential& src)
@@ -49,5 +49,5 @@ cdm::ScalarElectricPotentialData* SEScalarElectricPotential::Unload(const SEScal
 }
 void SEScalarElectricPotential::Serialize(const SEScalarElectricPotential& src, cdm::ScalarElectricPotentialData& dst)
 {
-  SEScalarQuantity<ElectricPotentialUnit>::Serialize(src, *dst.mutable_scalarelectricpotential());
+  SEUnitScalar::Serialize(src, *dst.mutable_scalarelectricpotential());
 }

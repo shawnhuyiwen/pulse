@@ -2,9 +2,6 @@
 See accompanying NOTICE file for details.*/
 
 #include "utils/GeneralMath.h"
-PROTO_PUSH
-#include "bind/cdm/Properties.pb.h"
-PROTO_POP
 
 template<typename Unit>
 SEScalarQuantity<Unit>::SEScalarQuantity() : SEUnitScalar()
@@ -40,28 +37,6 @@ bool SEScalarQuantity<Unit>::IsValid() const
   if (m_unit == nullptr)
     return false;
   return true;
-}
-
-template<typename Unit>
-void SEScalarQuantity<Unit>::Serialize(const cdm::ScalarData& src, SEScalarQuantity<Unit>& dst)
-{
-  dst.Clear();
-  if (!src.unit().empty())
-    dst.SetValue(src.value(), Unit::GetCompoundUnit(src.unit()));
-  else
-    throw CommonDataModelException("ScalarQuantity attempted to load a ScalarData with no unit, must have a unit.");
-  dst.m_readOnly = src.readonly();
-}
-
-template<typename Unit>
-void SEScalarQuantity<Unit>::Serialize(const SEScalarQuantity<Unit>& src, cdm::ScalarData& dst)
-{
-  dst.set_value(src.m_value);
-  if (src.m_unit != nullptr)
-    dst.set_unit(src.m_unit->GetString());
-  else
-    throw CommonDataModelException("ScalarQuantity attempted to unload a ScalarData with no unit, must have a unit.");
-  dst.set_readonly(src.m_readOnly);
 }
 
 template<typename Unit>

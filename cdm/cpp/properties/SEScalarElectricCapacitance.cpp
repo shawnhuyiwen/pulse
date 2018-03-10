@@ -31,7 +31,7 @@ void SEScalarElectricCapacitance::Load(const cdm::ScalarElectricCapacitanceData&
 }
 void SEScalarElectricCapacitance::Serialize(const cdm::ScalarElectricCapacitanceData& src, SEScalarElectricCapacitance& dst)
 {
-  SEScalarQuantity<ElectricCapacitanceUnit>::Serialize(src.scalarelectriccapacitance(), dst);
+  SEUnitScalar::Serialize(src.scalarelectriccapacitance(), dst);
 }
 
 cdm::ScalarElectricCapacitanceData* SEScalarElectricCapacitance::Unload(const SEScalarElectricCapacitance& src)
@@ -44,5 +44,5 @@ cdm::ScalarElectricCapacitanceData* SEScalarElectricCapacitance::Unload(const SE
 }
 void SEScalarElectricCapacitance::Serialize(const SEScalarElectricCapacitance& src, cdm::ScalarElectricCapacitanceData& dst)
 {
-  SEScalarQuantity<ElectricCapacitanceUnit>::Serialize(src, *dst.mutable_scalarelectriccapacitance());
+  SEUnitScalar::Serialize(src, *dst.mutable_scalarelectriccapacitance());
 }

@@ -31,7 +31,7 @@ void SEScalarPowerPerAreaTemperatureToTheFourth::Load(const cdm::ScalarPowerPerA
 }
 void SEScalarPowerPerAreaTemperatureToTheFourth::Serialize(const cdm::ScalarPowerPerAreaTemperatureToTheFourthData& src, SEScalarPowerPerAreaTemperatureToTheFourth& dst)
 {
-  SEScalarQuantity<PowerPerAreaTemperatureToTheFourthUnit>::Serialize(src.scalarpowerperareatemperaturetothefourth(), dst);
+  SEUnitScalar::Serialize(src.scalarpowerperareatemperaturetothefourth(), dst);
 }
 
 cdm::ScalarPowerPerAreaTemperatureToTheFourthData* SEScalarPowerPerAreaTemperatureToTheFourth::Unload(const SEScalarPowerPerAreaTemperatureToTheFourth& src)
@@ -44,5 +44,5 @@ cdm::ScalarPowerPerAreaTemperatureToTheFourthData* SEScalarPowerPerAreaTemperatu
 }
 void SEScalarPowerPerAreaTemperatureToTheFourth::Serialize(const SEScalarPowerPerAreaTemperatureToTheFourth& src, cdm::ScalarPowerPerAreaTemperatureToTheFourthData& dst)
 {
-  SEScalarQuantity<PowerPerAreaTemperatureToTheFourthUnit>::Serialize(src, *dst.mutable_scalarpowerperareatemperaturetothefourth());
+  SEUnitScalar::Serialize(src, *dst.mutable_scalarpowerperareatemperaturetothefourth());
 }

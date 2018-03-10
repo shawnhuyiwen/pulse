@@ -74,6 +74,27 @@ void SEScalar::Serialize(const SEScalar& src, cdm::ScalarData& dst)
   dst.set_readonly(src.m_readOnly);
 }
 
+void SEUnitScalar::Serialize(const cdm::ScalarData& src, SEUnitScalar& dst)
+{
+  dst.Clear();
+  if (!src.unit().empty())
+    dst.SetValue(src.value(), *dst.GetCompoundUnit(src.unit()));
+  else
+    throw CommonDataModelException("ScalarQuantity attempted to load a ScalarData with no unit, must have a unit.");
+  dst.m_readOnly = src.readonly();
+}
+
+
+void SEUnitScalar::Serialize(const SEUnitScalar& src, cdm::ScalarData& dst)
+{
+  dst.set_value(src.m_value);
+  if (src.HasUnit())
+    dst.set_unit(src.GetUnit()->GetString());
+  else
+    throw CommonDataModelException("ScalarQuantity attempted to unload a ScalarData with no unit, must have a unit.");
+  dst.set_readonly(src.m_readOnly);
+}
+
 bool SEScalar::Set(const SEScalar& s)
 {
   if (dynamic_cast<const SEUnitScalar*>(&s) != nullptr)

@@ -51,7 +51,7 @@ void SEScalarMass::Load(const cdm::ScalarMassData& src, SEScalarMass& dst)
 }
 void SEScalarMass::Serialize(const cdm::ScalarMassData& src, SEScalarMass& dst)
 {
-  SEScalarQuantity<MassUnit>::Serialize(src.scalarmass(), dst);
+  SEUnitScalar::Serialize(src.scalarmass(), dst);
 }
 
 cdm::ScalarMassData* SEScalarMass::Unload(const SEScalarMass& src)
@@ -64,5 +64,5 @@ cdm::ScalarMassData* SEScalarMass::Unload(const SEScalarMass& src)
 }
 void SEScalarMass::Serialize(const SEScalarMass& src, cdm::ScalarMassData& dst)
 {
-  SEScalarQuantity<MassUnit>::Serialize(src, *dst.mutable_scalarmass());
+  SEUnitScalar::Serialize(src, *dst.mutable_scalarmass());
 }

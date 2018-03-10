@@ -46,7 +46,7 @@ void SEScalarHeatConductance::Load(const cdm::ScalarHeatConductanceData& src, SE
 }
 void SEScalarHeatConductance::Serialize(const cdm::ScalarHeatConductanceData& src, SEScalarHeatConductance& dst)
 {
-  SEScalarQuantity<HeatConductanceUnit>::Serialize(src.scalarheatconductance(), dst);
+  SEUnitScalar::Serialize(src.scalarheatconductance(), dst);
 }
 
 cdm::ScalarHeatConductanceData* SEScalarHeatConductance::Unload(const SEScalarHeatConductance& src)
@@ -59,5 +59,5 @@ cdm::ScalarHeatConductanceData* SEScalarHeatConductance::Unload(const SEScalarHe
 }
 void SEScalarHeatConductance::Serialize(const SEScalarHeatConductance& src, cdm::ScalarHeatConductanceData& dst)
 {
-  SEScalarQuantity<HeatConductanceUnit>::Serialize(src, *dst.mutable_scalarheatconductance());
+  SEUnitScalar::Serialize(src, *dst.mutable_scalarheatconductance());
 }

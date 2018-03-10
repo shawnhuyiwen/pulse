@@ -57,7 +57,7 @@ void SEScalarTemperature::Load(const cdm::ScalarTemperatureData& src, SEScalarTe
 }
 void SEScalarTemperature::Serialize(const cdm::ScalarTemperatureData& src, SEScalarTemperature& dst)
 {
-  SEScalarQuantity<TemperatureUnit>::Serialize(src.scalartemperature(), dst);
+  SEUnitScalar::Serialize(src.scalartemperature(), dst);
 }
 
 cdm::ScalarTemperatureData* SEScalarTemperature::Unload(const SEScalarTemperature& src)
@@ -70,5 +70,5 @@ cdm::ScalarTemperatureData* SEScalarTemperature::Unload(const SEScalarTemperatur
 }
 void SEScalarTemperature::Serialize(const SEScalarTemperature& src, cdm::ScalarTemperatureData& dst)
 {
-  SEScalarQuantity<TemperatureUnit>::Serialize(src, *dst.mutable_scalartemperature());
+  SEUnitScalar::Serialize(src, *dst.mutable_scalartemperature());
 }

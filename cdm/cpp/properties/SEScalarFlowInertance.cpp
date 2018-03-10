@@ -51,7 +51,7 @@ void SEScalarFlowInertance::Load(const cdm::ScalarFlowInertanceData& src, SEScal
 }
 void SEScalarFlowInertance::Serialize(const cdm::ScalarFlowInertanceData& src, SEScalarFlowInertance& dst)
 {
-  SEScalarQuantity<FlowInertanceUnit>::Serialize(src.scalarflowinertance(), dst);
+  SEUnitScalar::Serialize(src.scalarflowinertance(), dst);
 }
 
 cdm::ScalarFlowInertanceData* SEScalarFlowInertance::Unload(const SEScalarFlowInertance& src)
@@ -64,5 +64,5 @@ cdm::ScalarFlowInertanceData* SEScalarFlowInertance::Unload(const SEScalarFlowIn
 }
 void SEScalarFlowInertance::Serialize(const SEScalarFlowInertance& src, cdm::ScalarFlowInertanceData& dst)
 {
-  SEScalarQuantity<FlowInertanceUnit>::Serialize(src, *dst.mutable_scalarflowinertance());
+  SEUnitScalar::Serialize(src, *dst.mutable_scalarflowinertance());
 }

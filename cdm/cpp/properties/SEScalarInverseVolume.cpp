@@ -36,7 +36,7 @@ void SEScalarInverseVolume::Load(const cdm::ScalarInverseVolumeData& src, SEScal
 }
 void SEScalarInverseVolume::Serialize(const cdm::ScalarInverseVolumeData& src, SEScalarInverseVolume& dst)
 {
-  SEScalarQuantity<InverseVolumeUnit>::Serialize(src.scalarinversevolume(), dst);
+  SEUnitScalar::Serialize(src.scalarinversevolume(), dst);
 }
 
 cdm::ScalarInverseVolumeData* SEScalarInverseVolume::Unload(const SEScalarInverseVolume& src)
@@ -49,5 +49,5 @@ cdm::ScalarInverseVolumeData* SEScalarInverseVolume::Unload(const SEScalarInvers
 }
 void SEScalarInverseVolume::Serialize(const SEScalarInverseVolume& src, cdm::ScalarInverseVolumeData& dst)
 {
-  SEScalarQuantity<InverseVolumeUnit>::Serialize(src, *dst.mutable_scalarinversevolume());
+  SEUnitScalar::Serialize(src, *dst.mutable_scalarinversevolume());
 }

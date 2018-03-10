@@ -35,7 +35,7 @@ void SEScalarAmount::Load(const cdm::ScalarAmountData& src, SEScalarAmount& dst)
 }
 void SEScalarAmount::Serialize(const cdm::ScalarAmountData& src, SEScalarAmount& dst)
 {
-  SEScalarQuantity<AmountUnit>::Serialize(src.scalaramount(), dst);
+  SEUnitScalar::Serialize(src.scalaramount(), dst);
 }
 
 cdm::ScalarAmountData* SEScalarAmount::Unload(const SEScalarAmount& src)
@@ -48,5 +48,5 @@ cdm::ScalarAmountData* SEScalarAmount::Unload(const SEScalarAmount& src)
 }
 void SEScalarAmount::Serialize(const SEScalarAmount& src, cdm::ScalarAmountData& dst)
 {
-  SEScalarQuantity<AmountUnit>::Serialize(src, *dst.mutable_scalaramount());
+  SEUnitScalar::Serialize(src, *dst.mutable_scalaramount());
 }

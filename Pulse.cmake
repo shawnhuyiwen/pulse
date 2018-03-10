@@ -125,36 +125,36 @@ install(DIRECTORY ${protobuf_INSTALL}/include DESTINATION ${CMAKE_INSTALL_PREFIX
 if(WIN32)
   if(BUILD_SHARED_LIBS)
     install(FILES "${protobuf_DIR}-build/Release/libprotobuf.dll"
-      CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})  
+      CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release)  
     install(FILES "${protobuf_DIR}-build/Debug/libprotobufd.dll"
-      CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
+      CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug)
     install(FILES "${protobuf_DIR}-build/RelWithDebInfo/libprotobuf.dll"
-      CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
+      CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo)
   endif()
 
   install(FILES "${protobuf_DIR}-build/Release/libprotobuf.lib"
-    CONFIGURATIONS Release DESTINATION ${INSTALL_LIB}/release${EX_CONFIG})
+    CONFIGURATIONS Release DESTINATION ${INSTALL_LIB}/release)
   install(FILES "${protobuf_DIR}-build/Debug/libprotobufd.lib"
-    CONFIGURATIONS Debug DESTINATION ${INSTALL_LIB}/debug${EX_CONFIG})
+    CONFIGURATIONS Debug DESTINATION ${INSTALL_LIB}/debug)
   install(FILES "${protobuf_DIR}-build/RelWithDebInfo/libprotobuf.lib"
-    CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_LIB}/relwithdebinfo${EX_CONFIG})
+    CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_LIB}/relwithdebinfo)
 else()
   if(BUILD_SHARED_LIBS)
     install(FILES ${protobuf_DIR}-build/libprotobuf.so
-      CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release${EX_CONFIG})  
+      CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release)  
     install(FILES ${protobuf_DIR}-build/libprotobufd.so
-      CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug${EX_CONFIG})
+      CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug)
     install(FILES ${protobuf_DIR}-build/libprotobuf.so
-      CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo${EX_CONFIG})
+      CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo)
   endif()
 
   
   install(FILES ${protobuf_DIR}-build/libprotobuf.a
-    CONFIGURATIONS Release DESTINATION ${INSTALL_LIB}/release${EX_CONFIG})
+    CONFIGURATIONS Release DESTINATION ${INSTALL_LIB}/release)
   install(FILES ${protobuf_DIR}-build/libprotobufd.a
-    CONFIGURATIONS Debug DESTINATION ${INSTALL_LIB}/debug${EX_CONFIG})
+    CONFIGURATIONS Debug DESTINATION ${INSTALL_LIB}/debug)
   install(FILES ${protobuf_DIR}-build/libprotobuf.a
-    CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_LIB}/relwithdebinfo${EX_CONFIG})  
+    CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_LIB}/relwithdebinfo)  
 endif()
 
 # Pulse Testing

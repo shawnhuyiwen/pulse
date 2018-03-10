@@ -36,7 +36,7 @@ void SEScalarOsmolarity::Load(const cdm::ScalarOsmolarityData& src, SEScalarOsmo
 }
 void SEScalarOsmolarity::Serialize(const cdm::ScalarOsmolarityData& src, SEScalarOsmolarity& dst)
 {
-  SEScalarQuantity<OsmolarityUnit>::Serialize(src.scalarosmolarity(), dst);
+  SEUnitScalar::Serialize(src.scalarosmolarity(), dst);
 }
 
 cdm::ScalarOsmolarityData* SEScalarOsmolarity::Unload(const SEScalarOsmolarity& src)
@@ -49,5 +49,5 @@ cdm::ScalarOsmolarityData* SEScalarOsmolarity::Unload(const SEScalarOsmolarity& 
 }
 void SEScalarOsmolarity::Serialize(const SEScalarOsmolarity& src, cdm::ScalarOsmolarityData& dst)
 {
-  SEScalarQuantity<OsmolarityUnit>::Serialize(src, *dst.mutable_scalarosmolarity());
+  SEUnitScalar::Serialize(src, *dst.mutable_scalarosmolarity());
 }

@@ -127,6 +127,9 @@ public:
 
 protected:
   virtual const CCompoundUnit* GetCompoundUnit(const std::string& unit) const = 0;
+
+  static void Serialize(const cdm::ScalarData& src, SEUnitScalar& dst);
+  static void Serialize(const SEUnitScalar& src, cdm::ScalarData& dst);
 };
 
 template <typename Unit>
@@ -141,8 +144,6 @@ public:
   virtual bool IsValid() const;
 
 protected:
-  static void Serialize(const cdm::ScalarData& src, SEScalarQuantity<Unit>& dst);
-  static void Serialize(const SEScalarQuantity<Unit>& src, cdm::ScalarData& dst);
 
   // We need to support the SEUnitScalar interface,  but make these protected
   // If you want access in a generic unit way, us an SEGenericScalar wrapper

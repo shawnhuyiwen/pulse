@@ -41,7 +41,7 @@ void SEScalarFrequency::Load(const cdm::ScalarFrequencyData& src, SEScalarFreque
 }
 void SEScalarFrequency::Serialize(const cdm::ScalarFrequencyData& src, SEScalarFrequency& dst)
 {
-  SEScalarQuantity<FrequencyUnit>::Serialize(src.scalarfrequency(), dst);
+  SEUnitScalar::Serialize(src.scalarfrequency(), dst);
 }
 
 cdm::ScalarFrequencyData* SEScalarFrequency::Unload(const SEScalarFrequency& src)
@@ -54,5 +54,5 @@ cdm::ScalarFrequencyData* SEScalarFrequency::Unload(const SEScalarFrequency& src
 }
 void SEScalarFrequency::Serialize(const SEScalarFrequency& src, cdm::ScalarFrequencyData& dst)
 {
-  SEScalarQuantity<FrequencyUnit>::Serialize(src, *dst.mutable_scalarfrequency());
+  SEUnitScalar::Serialize(src, *dst.mutable_scalarfrequency());
 }
