@@ -49,8 +49,11 @@ public:
   virtual bool HasQuantityBaseline() const;
   virtual QuantityScalar& GetQuantityBaseline();
 
+  void SetCalculatorIndex(const size_t index);
+  size_t GetCalculatorIndex() const;
+
 protected:
-  std::string             m_Name;
+  std::string            m_Name;
 
   PotentialScalar*       m_Potential;
   PotentialScalar*       m_NextPotential;
@@ -61,5 +64,9 @@ protected:
   QuantityScalar*         m_Quantity;
   QuantityScalar*         m_NextQuantity;
   QuantityScalar*         m_QuantityBaseline;
+
+private:
+  size_t                  m_calculatorIndex;
 };
+
 #include "circuit/SECircuitNode.inl"

@@ -19,14 +19,19 @@
 #include <numeric>
 #include <bitset>
 
+#include <iostream>
+#include <fstream>
+using namespace std;
+
 //#define VERBOSE
-//#define TIMING
+#define TIMING
 #define OPEN_RESISTANCE 1e100
 
 template<CIRCUIT_CALCULATOR_TEMPLATE>
 SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::SECircuitCalculator(const CapacitanceUnit& c, const FluxUnit& f, const InductanceUnit& i, const PotentialUnit& p, const QuantityUnit& q, const ResistanceUnit& r, Logger* logger) : Loggable(logger),
 m_CapacitanceUnit(c), m_FluxUnit(f), m_InductanceUnit(i), m_PotentialUnit(p), m_QuantityUnit(q), m_ResistanceUnit(r)
 {
+  m_currentTime_s = 0;
   m_solver.set(EigenCircuitSolver::SparseLU);
 
   //Make sure the base units are compatible
@@ -59,6 +64,7 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::Process(CircuitType& circuit
   m_circuit = &circuit;
   m_dT_s = timeStep_s;
   m_valveStates.clear();
+  m_currentTime_s += timeStep_s;
 
   //Reset all Polarized Elements to be shorted.
   for (PathType* p : circuit.GetPolarizedElementPaths())
@@ -74,12 +80,12 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::Process(CircuitType& circuit
   //and checking the resulting Flow and Pressure difference.
   //We'll keep looping until we've either found a solution or determined that it cannot be solved in the current configuration.
 #ifdef VERBOSE  
-  int i = 0;
+  //int i = 0;
 #endif
   do
   {
 #ifdef VERBOSE
-    i++;
+    //i++;
 #endif
     //We solve for the unknown circuit values this time-step by using Modified Nodal Analysis and linear algebra.
     //All of the source (i.e. Pressure and Flow) values are known, as well as all element (i.e. Resistance, Compliance, Inertance, Switch on/off, Valve direction) values.
@@ -91,7 +97,7 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::Process(CircuitType& circuit
     CalculateFluxes();
   } while (!CheckAndModifyValves());
 #ifdef VERBOSE
-  std::cout << "Number of Valve Loops = " << i << std::endl;
+  //std::cout << "Number of Valve Loops = " << i << std::endl;
 #endif
   CalculateQuantities();
 }
@@ -274,7 +280,7 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
         else if (n == nTgt)
           dLastPressureDiff = nTgt->GetPotential().GetValue(m_PotentialUnit) - nSrc->GetPotential().GetValue(m_PotentialUnit);
 
-        m_bVector(m_circuit->GetCalculatorIndex(*n)) += (dMultiplier*dLastPressureDiff);
+        m_bVector(n->GetCalculatorIndex()) += (dMultiplier*dLastPressureDiff);
       }
       else if (p->HasNextInductance())
       {
@@ -324,7 +330,7 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
           dLastFlow = p->GetFlux().GetValue(m_FluxUnit);
           dLastPressureDiff = n->GetPotential().GetValue(m_PotentialUnit) - nSrc->GetPotential().GetValue(m_PotentialUnit);
         }
-        m_bVector(m_circuit->GetCalculatorIndex(*n)) += dLastFlow - (dMultiplier * dLastPressureDiff);
+        m_bVector(n->GetCalculatorIndex()) += dLastFlow - (dMultiplier * dLastPressureDiff);
       }
       else if (p->HasNextValve())
       {
@@ -348,7 +354,7 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
         //Therefore, out of the Node we're current analyzing (i.e. Source) reverses the sign when it goes into the right side vector.
         double sign = (n == nSrc) ? -1 : 1;
         double dFlow = p->GetNextFluxSource().GetValue(m_FluxUnit);
-        m_bVector(m_circuit->GetCalculatorIndex(*n)) += (sign*dFlow);
+        m_bVector(n->GetCalculatorIndex()) += (sign*dFlow);
       }
       else if (p->HasNextPotentialSource())
       {
@@ -361,15 +367,23 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
         PopulateAMatrix(*n, *p, 1, true);
       }
     }
+
   }
 
 #ifdef VERBOSE
   //std::cout << "#iterations:     " << Solver.iterations() << std::endl;
   //std::cout << "estimated error: " << Solver.error()      << std::endl;
-  std::cout << "PrePotential" << std::endl;
-  std::cout << "A = " << std::endl << m_AMatrix << std::endl;
-  std::cout << "b = " << std::endl << m_bVector << std::endl;
-  std::cout << "x = " << std::endl << m_xVector << std::endl;
+  //std::cout << "PrePotential" << std::endl;
+  std::ofstream  fout;
+  fout.open("./test_results/unit_tests/pulse/PrePotential_aMatrix"+ std::to_string(currentTime_s) +".txt");
+  fout << m_AMatrix << std::endl;
+  fout.close();
+  fout.open("./test_results/unit_tests/pulse/PrePotential_bVector" + std::to_string(currentTime_s) +".txt");
+  fout << m_bVector << std::endl;
+  fout.close();
+  fout.open("./test_results/unit_tests/pulse/PrePotential_xVector" + std::to_string(currentTime_s) +".txt");
+  fout << m_xVector << std::endl;
+  fout.close();
 #endif
 
   //Deal with pressure sources
@@ -384,11 +398,11 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
 
     if (!m_circuit->IsReferenceNode(nSrc))
     {
-      m_AMatrix(itr.second, m_circuit->GetCalculatorIndex(nSrc)) = -1;
+      m_AMatrix(itr.second, nSrc.GetCalculatorIndex()) = -1;
     }
     if (!m_circuit->IsReferenceNode(nTgt))
     {
-      m_AMatrix(itr.second, m_circuit->GetCalculatorIndex(nTgt)) = 1;
+      m_AMatrix(itr.second, nTgt.GetCalculatorIndex()) = 1;
     }
 
     if (p->HasNextSwitch() || p->HasNextValve() || p->NumberOfNextElements() < 1)
@@ -416,10 +430,17 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::Solve()
 #ifdef VERBOSE
   //std::cout << "#iterations:     " << Solver.iterations() << std::endl;
   //std::cout << "estimated error: " << Solver.error()      << std::endl;
-  std::cout << "PreSolve" << std::endl;
-  std::cout << "A = " << std::endl << m_AMatrix << std::endl;
-  std::cout << "b = " << std::endl << m_bVector << std::endl;
-  std::cout << "x = " << std::endl << m_xVector << std::endl;
+  //std::cout << "PreSolve" << std::endl;std::ostream fout;
+    std::ofstream  fout;
+    fout.open("./test_results/unit_tests/pulse/PreSolve_aMatrix" + std::to_string(currentTime_s) +".txt");
+    fout << m_AMatrix << std::endl;
+    fout.close();
+    fout.open("./test_results/unit_tests/pulse/PreSolve_bVector" + std::to_string(currentTime_s) +".txt");
+    fout << m_bVector << std::endl;
+    fout.close();
+    fout.open("./test_results/unit_tests/pulse/PreSolve_xVector" + std::to_string(currentTime_s) +".txt");
+    fout << m_xVector << std::endl;
+    fout.close();
 #endif
 
   bool sparseFailed = false;
@@ -536,12 +557,16 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::Solve()
 #ifdef VERBOSE
   //std::cout << "#iterations:     " << Solver.iterations() << std::endl;
   //std::cout << "estimated error: " << Solver.error()      << std::endl;
-  std::cout << "PostSolve" << std::endl;
-  std::cout << "A = " << std::endl << m_AMatrix << std::endl;
-  std::cout << "b = " << std::endl << m_bVector << std::endl;
-  std::cout << "x = " << std::endl << m_xVector << std::endl;
-  double relative_error = (m_AMatrix*m_xVector - m_bVector).norm() / m_bVector.norm(); // norm() is L2 norm
-  std::cout << "The relative error is: " << relative_error << std::endl;
+  //std::cout << "PostSolve" << std::endl;std::ostream fout;
+  fout.open("./test_results/unit_tests/pulse/PostSolve_aMatrix" + std::to_string(currentTime_s) +".txt");
+  fout << m_AMatrix << std::endl;
+  fout.close();
+  fout.open("./test_results/unit_tests/pulse/PostSolve_bVector" + std::to_string(currentTime_s) +".txt");
+  fout << m_bVector << std::endl;
+  fout.close();
+  fout.open("./test_results/unit_tests/pulse/PostSolve_xVector" + std::to_string(currentTime_s) +".txt");
+  fout << m_xVector << std::endl;
+  fout.close();
 #endif
 }
 
@@ -565,7 +590,7 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseOut()
       //Add the reference potential
       //For the calculations, we assume the reference potential is zero
       //When it's not zero, all potentials are just offset by that amount
-      double potential = m_xVector(m_circuit->GetCalculatorIndex(*n)) + refPotential;
+      double potential = m_xVector(n->GetCalculatorIndex()) + refPotential;
       ValueOverride<PotentialUnit>(n->GetNextPotential(), potential, m_PotentialUnit);
     }
   }
@@ -854,7 +879,7 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::PopulateAMatrix(NodeType& n,
       sign = -1;
     else if (&nTgt == &n)
       sign = 1;
-    m_AMatrix(m_circuit->GetCalculatorIndex(n), m_potentialSources[&p]) += sign;
+    m_AMatrix(n.GetCalculatorIndex(), m_potentialSources[&p]) += sign;
   }
   else
   {
@@ -864,32 +889,32 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::PopulateAMatrix(NodeType& n,
 
     if (m_circuit->IsReferenceNode(nSrc))
     {
-      m_bVector(m_circuit->GetCalculatorIndex(n)) += 0;
+      m_bVector(n.GetCalculatorIndex()) += 0;
     }
     else if (&nSrc == &n)
     {
       //If the Source Node is the Node we're sitting on, our convention is positive.
-      m_AMatrix(m_circuit->GetCalculatorIndex(n), m_circuit->GetCalculatorIndex(nSrc)) += dMultiplier;
+      m_AMatrix(n.GetCalculatorIndex(), nSrc.GetCalculatorIndex()) += dMultiplier;
     }
     else
     {
       //The Source Node is not the Node we're sitting on for KCL analysis.
-      m_AMatrix(m_circuit->GetCalculatorIndex(n), m_circuit->GetCalculatorIndex(nSrc)) -= dMultiplier;
+      m_AMatrix(n.GetCalculatorIndex(), nSrc.GetCalculatorIndex()) -= dMultiplier;
     }
 
     if (m_circuit->IsReferenceNode(nTgt))
     {
-      m_bVector(m_circuit->GetCalculatorIndex(n)) += 0;
+      m_bVector(n.GetCalculatorIndex()) += 0;
     }
     else if (&nTgt == &n)
     {
       //If the Target Node is the Node we're sitting on, our convention is positive.
-      m_AMatrix(m_circuit->GetCalculatorIndex(n), m_circuit->GetCalculatorIndex(nTgt)) += dMultiplier;
+      m_AMatrix(n.GetCalculatorIndex(), nTgt.GetCalculatorIndex()) += dMultiplier;
     }
     else
     {
       //The Target Node is not the Node we're sitting on for KCL analysis.
-      m_AMatrix(m_circuit->GetCalculatorIndex(n), m_circuit->GetCalculatorIndex(nTgt)) -= dMultiplier;
+      m_AMatrix(n.GetCalculatorIndex(), nTgt.GetCalculatorIndex()) -= dMultiplier;
     }
   }
 }

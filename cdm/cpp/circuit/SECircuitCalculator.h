@@ -41,8 +41,7 @@ protected:
   virtual bool CheckAndModifyValves();
   virtual bool IsCurrentValveStateUnique();
   // Eigen Support
-  virtual void PopulateAMatrix(NodeType& nKCL, PathType& p, double dMultiplier, bool hasPotentialSource = false);
-
+  virtual void PopulateAMatrix(NodeType& nKCL, PathType& p, double dMultiplier, bool hasPotentialSource = false);  
   // These are all transient and cleared/set at the start of the process call
 
   std::stringstream    m_ss;
@@ -51,7 +50,8 @@ protected:
   Eigen::VectorXd m_xVector; //x
   Eigen::VectorXd m_bVector; //b
   
-  double                         m_dT_s;
+  double                         m_dT_s; 
+  double                         m_currentTime_s;
   CircuitType*                   m_circuit;
   EigenCircuitSolver             m_solver;
   std::set<uint64_t>             m_valveStates;
