@@ -70,7 +70,7 @@ protected:
   QuantityScalar*         m_QuantityBaseline;
 
 private:
-  size_t                  m_calculatorIndex;
+  size_t                  m_CalculatorIndex;
   bool                    m_IsReferenceNode = false;
 };
 
