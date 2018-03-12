@@ -8,13 +8,13 @@ import "cdm/Properties.proto";
 message CircuitData
 {
   string                             Name                      = 1;
-  repeated string                    ReferenceNode             = 2;
-  repeated string                    Node                      = 3;
-  repeated string                    Path                      = 4;
+  repeated string                    Node                      = 2;
+  repeated string                    Path                      = 3;
 }
 message CircuitNodeData
 {
   string                             Name                      = 1;
+  bool                               ReferenceNode             = 2;
 }
 message CircuitPathData
 {

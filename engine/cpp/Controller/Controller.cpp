@@ -1047,6 +1047,7 @@ bool PulseController::CreateCircuitsAndCompartments()
   gEnvironment.MapNode(Ambient);
   SELiquidCompartment& lEnvironment = m_Compartments->CreateLiquidCompartment(pulse::EnvironmentCompartment::Ambient);
   lEnvironment.MapNode(Ambient);
+  Ambient.SetAsReferenceNode();
 
   m_Environment->Initialize();
   auto* d = SEEnvironmentalConditions::Unload(m_Config->GetInitialEnvironmentalConditions());
@@ -1296,8 +1297,8 @@ void PulseController::SetupCardiovascular()
   VenaCava.GetVolumeBaseline().SetValue(VolumeFractionVenaCava*bloodVolume_mL, VolumeUnit::mL);
   VenaCava.GetPressure().SetValue(VascularPressureTargetVenaCava, PressureUnit::mmHg);
 
-  SEFluidCircuitNode& Ground = cCardiovascular.CreateNode(pulse::CardiovascularNode::Ground);
-  cCardiovascular.AddReferenceNode(Ground);
+  SEFluidCircuitNode& Ground = cCardiovascular.CreateNode(pulse::CardiovascularNode::Ground);  
+  Ground.SetAsReferenceNode();
   Ground.GetPressure().SetValue(0.0, PressureUnit::mmHg);
 
   double blood_mL = 0;
@@ -2090,8 +2091,8 @@ void PulseController::SetupRenal()
   ////////////
   // Ground //
   SEFluidCircuitNode& Ground = cRenal.CreateNode(pulse::RenalNode::Ground);
-  Ground.GetPressure().SetValue(0.0, PressureUnit::mmHg);
-  cRenal.AddReferenceNode(Ground);
+  Ground.GetPressure().SetValue(0.0, PressureUnit::mmHg);  
+  Ground.SetAsReferenceNode();
 
   //////////////////
   // Create Nodes //
@@ -3593,7 +3594,7 @@ void PulseController::SetupRespiratory()
 
   SEFluidCircuit& cRespiratory = m_Circuits->GetRespiratoryCircuit();
   SEFluidCircuitNode* Ambient = m_Circuits->GetFluidNode(pulse::EnvironmentNode::Ambient);
-  cRespiratory.AddReferenceNode(*Ambient);
+  cRespiratory.AddNode(*Ambient);  
                                      
   //Tuning parameters
   double AlveoliCompliance = 0.037;
@@ -3972,8 +3973,8 @@ void PulseController::SetupAnesthesiaMachine()
   double dLowResistance = 0.01;
 
   SEFluidCircuit& cAnesthesia = m_Circuits->GetAnesthesiaMachineCircuit();
-  SEFluidCircuitNode* Ambient = m_Circuits->GetFluidNode(pulse::EnvironmentNode::Ambient);
-  cAnesthesia.AddReferenceNode(*Ambient);
+  SEFluidCircuitNode* Ambient = m_Circuits->GetFluidNode(pulse::EnvironmentNode::Ambient);    
+  cAnesthesia.AddNode(*Ambient);
 
   ////////////////
   // Ventilator //
@@ -4356,8 +4357,8 @@ void PulseController::SetupExternalTemperature()
   Active.GetTemperature().SetValue(dAmbientTemperature_K, TemperatureUnit::K);
   SEThermalCircuitNode& Ground = exthermal.CreateNode(pulse::ExternalTemperatureNode::ExternalGround);
   Ground.GetTemperature().SetValue(0.0, TemperatureUnit::K);
-  Ground.GetNextTemperature().SetValue(0.0, TemperatureUnit::K);
-  exthermal.AddReferenceNode(Ground);
+  Ground.GetNextTemperature().SetValue(0.0, TemperatureUnit::K);  
+  Ground.SetAsReferenceNode();
 
   //Define Paths
   //Everything will be properly initialized in Evironment::Reset
@@ -4434,8 +4435,8 @@ void PulseController::SetupInternalTemperature()
   Skin.GetTemperature().SetValue(33.0, TemperatureUnit::C);
   SEThermalCircuitNode& Ground = cIntemperature.CreateNode(pulse::InternalTemperatureNode::InternalGround);
   Ground.GetTemperature().SetValue(0.0, TemperatureUnit::K);
-  Ground.GetNextTemperature().SetValue(0.0, TemperatureUnit::K);
-  cIntemperature.AddReferenceNode(Ground);
+  Ground.GetNextTemperature().SetValue(0.0, TemperatureUnit::K);  
+  Ground.SetAsReferenceNode();
 
   /*Metabolic heat generation, leading to a heat source into the core*/
   SEThermalCircuitPath& TemperatureGroundToCore = cIntemperature.CreatePath(Ground, Core, pulse::InternalTemperaturePath::GroundToInternalCore);

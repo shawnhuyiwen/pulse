@@ -38,11 +38,13 @@ void SECircuitNode<CIRCUIT_NODE_TYPES>::Serialize(const cdm::CircuitNodeData& sr
   dst.Clear();
   if (!src.name().empty())
     dst.m_Name = src.name();
+  dst.m_IsReferenceNode = src.referencenode();
 }
 template<CIRCUIT_NODE_TEMPLATE>
 void SECircuitNode<CIRCUIT_NODE_TYPES>::Serialize(const SECircuitNode<CIRCUIT_NODE_TYPES>& src, cdm::CircuitNodeData& dst)
 {
-  dst.set_name(src.m_Name);
+    dst.set_name(src.m_Name);
+    dst.set_referencenode(src.m_IsReferenceNode);
 }
 
 template<CIRCUIT_NODE_TEMPLATE>
@@ -125,4 +127,20 @@ template<CIRCUIT_NODE_TEMPLATE>
 void SECircuitNode<CIRCUIT_NODE_TYPES>::SetCalculatorIndex(const size_t index)
 {
     m_calculatorIndex = index;
+}
+
+template<CIRCUIT_NODE_TEMPLATE>
+void SECircuitNode<CIRCUIT_NODE_TYPES>::RemoveAsReferenceNode()
+{
+    m_IsReferenceNode = false;
+}
+template<CIRCUIT_NODE_TEMPLATE>
+void SECircuitNode<CIRCUIT_NODE_TYPES>::SetAsReferenceNode()
+{
+    m_IsReferenceNode = true;
+}
+template<CIRCUIT_NODE_TEMPLATE>
+bool SECircuitNode<CIRCUIT_NODE_TYPES>::IsReferenceNode() const
+{
+    return m_IsReferenceNode;
 }

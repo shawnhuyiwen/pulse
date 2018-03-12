@@ -125,10 +125,17 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
     Fatal("Circuit must have at least 1 reference node");
   }
 
+  size_t numRefNodes = 0;
   {// Create some scope for r
     NodeType* r = nullptr;
-    for (NodeType* ref : m_circuit->GetReferenceNodes())
+    for (NodeType* ref : m_circuit->GetNodes())
     {
+      if (!ref->IsReferenceNode())
+      {
+          continue;
+      }
+      numRefNodes++;
+
       if (!ref->HasPotential() && !ref->HasNextPotential())
       {
         ///\error Warning: Reference pressure is not defined - setting it to 0.
@@ -151,7 +158,7 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
   }
 
   size_t idx = 0;
-  size_t numNodes = m_circuit->GetNodes().size() - m_circuit->GetReferenceNodes().size();
+  size_t numNodes = m_circuit->GetNodes().size() - numRefNodes;
   m_potentialSources.clear();
   for (PathType* p : m_circuit->GetPaths())
   {
@@ -187,7 +194,7 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
   {
     //Sum of the flows at each node is 0
     //Skip known reference node (see comment above)
-    if (m_circuit->IsReferenceNode(*n))
+    if (n->IsReferenceNode())
       continue;
 
     for (PathType* p : *m_circuit->GetConnectedPaths(*n))
@@ -396,11 +403,11 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
     NodeType& nSrc = p->GetSourceNode();
     NodeType& nTgt = p->GetTargetNode();
 
-    if (!m_circuit->IsReferenceNode(nSrc))
+    if (!nSrc.IsReferenceNode())
     {
       m_AMatrix(itr.second, nSrc.GetCalculatorIndex()) = -1;
     }
-    if (!m_circuit->IsReferenceNode(nTgt))
+    if (!nTgt.IsReferenceNode())
     {
       m_AMatrix(itr.second, nTgt.GetCalculatorIndex()) = 1;
     }
@@ -581,16 +588,31 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::Solve()
 //--------------------------------------------------------------------------------------------------
 template<CIRCUIT_CALCULATOR_TEMPLATE>
 void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseOut()
-{
-  double refPotential = m_circuit->GetReferenceNodes()[0]->GetPotential().GetValue(m_PotentialUnit);
+{  
+  bool refNodeExists = false;
   for (NodeType* n : m_circuit->GetNodes())
   {
-    if (!m_circuit->IsReferenceNode(*n))
+      if (n->IsReferenceNode())
+      {
+          m_refPotential = n->GetPotential().GetValue(m_PotentialUnit);
+          refNodeExists = true;
+          break;
+      }
+  }
+  
+  if (!refNodeExists)
+  {
+      Fatal(std::stringstream("No reference node in the circuit "));
+  }
+
+  for (NodeType* n : m_circuit->GetNodes())
+  {
+    if (!n->IsReferenceNode())
     {
       //Add the reference potential
       //For the calculations, we assume the reference potential is zero
       //When it's not zero, all potentials are just offset by that amount
-      double potential = m_xVector(n->GetCalculatorIndex()) + refPotential;
+      double potential = m_xVector(n->GetCalculatorIndex()) + m_refPotential;
       ValueOverride<PotentialUnit>(n->GetNextPotential(), potential, m_PotentialUnit);
     }
   }
@@ -887,7 +909,7 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::PopulateAMatrix(NodeType& n,
     //Therefore, it's positive as either the Source or the Target.
     //Nodes on the other end of the path have a negative multiplier.
 
-    if (m_circuit->IsReferenceNode(nSrc))
+    if (nSrc.IsReferenceNode())
     {
       m_bVector(n.GetCalculatorIndex()) += 0;
     }
@@ -902,7 +924,7 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::PopulateAMatrix(NodeType& n,
       m_AMatrix(n.GetCalculatorIndex(), nSrc.GetCalculatorIndex()) -= dMultiplier;
     }
 
-    if (m_circuit->IsReferenceNode(nTgt))
+    if (nTgt.IsReferenceNode())
     {
       m_bVector(n.GetCalculatorIndex()) += 0;
     }

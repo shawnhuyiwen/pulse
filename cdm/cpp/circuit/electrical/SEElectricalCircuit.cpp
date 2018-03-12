@@ -36,8 +36,6 @@ void SEElectricalCircuit::AddCircuit(SEElectricalCircuit& circuit)
   for (SEElectricalCircuitNode* node : circuit.GetNodes())
     AddNode(*node);
   for (SEElectricalCircuitPath* path : circuit.GetPaths())
-    AddPath(*path);
-  for (SEElectricalCircuitNode* node : circuit.GetReferenceNodes())
-    AddReferenceNode(*node);
+    AddPath(*path);      
 }
 
