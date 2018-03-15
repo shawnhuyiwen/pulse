@@ -4,7 +4,7 @@ package mil.tatrc.physiology.datamodel.testing;
 
 import mil.tatrc.physiology.utilities.Log;
 import mil.tatrc.physiology.testing.SETestDriver;
-import mil.tatrc.physiology.testing.SETestDriver.TestJob;
+import mil.tatrc.physiology.testing.SETestJob;
 
 public class CDMUnitTestDriver implements SETestDriver.Executor
 {
@@ -23,7 +23,7 @@ public class CDMUnitTestDriver implements SETestDriver.Executor
     nativeDelete(this.nativeObj);
   }
   
-  public boolean ExecuteTest(TestJob job)
+  public boolean ExecuteTest(SETestJob job)
   {
     nativeExecute(this.nativeObj,job.name,job.computedDirectory);
     Log.info("Completed running "+job.name);

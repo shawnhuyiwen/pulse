@@ -849,6 +849,17 @@ public class FileUtils
       Log.error("Unable to zip directories to  " + zipFile.getAbsolutePath(), e);
     }
   }
+  
+  /**
+  * Zips all files in fileNames array
+  * @param fileNames
+  * @param zipFileName
+  * @return
+  */
+ public static void zipFiles(String[] fileNames, String zipFileName)
+ {
+  	zipFiles(fileNames,zipFileName,null);
+ }
 
   /**
    * Zips all files in fileNames array
@@ -856,7 +867,7 @@ public class FileUtils
    * @param zipFileName
    * @return
    */
-  public static void zipFiles(String[] fileNames, String zipFileName)
+  public static void zipFiles(String[] fileNames, String zipFileName, String zipPath)
   {
     try
     {      
@@ -871,6 +882,7 @@ public class FileUtils
       // Build the list of files to be added in the array list
       // Objects of type File have to be added to the ArrayList
       String path;
+      String fileName;
       for(String file : fileNames)
       {
         if(file.startsWith("."))
@@ -878,7 +890,16 @@ public class FileUtils
         if(file.startsWith("/"))
           file = file.substring(1);
         
-        path = file.substring(0,file.lastIndexOf("/")+1);
+        fileName = file.substring(file.lastIndexOf("/")+1);
+        if(zipPath==null||zipPath.isEmpty())
+        {
+          path = file.substring(0,file.lastIndexOf("/")+1);
+        }
+        else
+        {
+        	path = zipPath.substring(0,zipPath.lastIndexOf("/")+1);
+        }
+        
         if(!entries.contains(path))
         {
           entries.add(path);
@@ -887,7 +908,7 @@ public class FileUtils
         }
         
         FileInputStream fin = new FileInputStream(file);
-        zip.putNextEntry(new ZipEntry(file));
+        zip.putNextEntry(new ZipEntry(path+fileName));
         int length;
         while ((length = fin.read(buffer)) > 0) 
         {

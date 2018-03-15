@@ -14,11 +14,13 @@ import org.jfree.util.Log;
  */
 public class RunConfiguration 
 {
+	protected String rootDirectory;
   protected String dataDirectory;
   protected String testConfigDirectory;
   protected String validationDirectory;
   protected String verificationDirectory;
   
+  public    String getRootDirectory()         { return rootDirectory;         }
   public    String getDataDirectory()         { return dataDirectory;         }
   public    String getTestConfigDirectory()   { return testConfigDirectory;   }
   public    String getValidationDirectory()   { return validationDirectory; }
@@ -28,6 +30,7 @@ public class RunConfiguration
   public RunConfiguration()
   { 
     // Default values
+  	rootDirectory         = "./";
     dataDirectory         = "./";
     testConfigDirectory   = "./";
     validationDirectory   = "./";
@@ -56,6 +59,18 @@ public class RunConfiguration
   
   protected void setProperties(Properties properties)
   {
+  	if(properties.containsKey("root_dir"))
+    {  
+      String val = properties.get("root_dir").toString();
+      if(!val.startsWith("@"))
+      {
+        File dir = new File(val);
+        if(dir.exists() && dir.isDirectory())
+          rootDirectory = val;
+        else
+          Log.error("root_dir set to invalid directory "+val+", ignoring and using default ("+this.rootDirectory+")");
+      }
+    }
     if(properties.containsKey("data_dir"))
     {  
       String val = properties.get("data_dir").toString();
@@ -65,7 +80,7 @@ public class RunConfiguration
         if(dir.exists() && dir.isDirectory())
           dataDirectory = val;
         else
-          Log.error("data_root set to invalid directory "+val+", ignoring and using default ("+this.dataDirectory+")");
+          Log.error("data_dir set to invalid directory "+val+", ignoring and using default ("+this.dataDirectory+")");
       }
     }
     if(properties.containsKey("test_config_dir"))

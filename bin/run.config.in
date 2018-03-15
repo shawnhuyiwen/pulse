@@ -1,6 +1,7 @@
-# This file informs executable classes/binaries, avaliable via the Scripts.cmake file,
-# the root directory containing the folder structure and data needed to propertly execute
+# This file informs executable classes/binaries, available via the Scripts.cmake file,
+# the root directory containing the folder structure and data needed to properly execute
 
+root_dir=@CMAKE_SOURCE_DIR@/
 data_dir=@CMAKE_SOURCE_DIR@/data
 test_config_dir=@CMAKE_SOURCE_DIR@/test/config
 validation_dir=@CMAKE_SOURCE_DIR@/test/validation

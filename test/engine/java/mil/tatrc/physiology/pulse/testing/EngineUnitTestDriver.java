@@ -5,7 +5,7 @@ package mil.tatrc.physiology.pulse.testing;
 import mil.tatrc.physiology.utilities.Log;
 import mil.tatrc.physiology.utilities.UnitConverter;
 import mil.tatrc.physiology.testing.SETestDriver;
-import mil.tatrc.physiology.testing.SETestDriver.TestJob;
+import mil.tatrc.physiology.testing.SETestJob;
 
 public class EngineUnitTestDriver implements SETestDriver.Executor
 {
@@ -30,7 +30,7 @@ public class EngineUnitTestDriver implements SETestDriver.Executor
     nativeDelete(this.nativeObj);
   }
   
-  public boolean ExecuteTest(TestJob job)
+  public boolean ExecuteTest(SETestJob job)
   {
     nativeExecute(this.nativeObj,job.name,job.computedDirectory);
     Log.info("Completed running "+job.name);

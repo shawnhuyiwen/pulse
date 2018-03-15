@@ -5,7 +5,6 @@ package mil.tatrc.physiology.pulse.testing;
 import java.io.File;
 
 import com.google.protobuf.TextFormat;
-import com.kitware.physiology.cdm.Engine.AutoSerializationData;
 import com.kitware.physiology.cdm.Scenario.ScenarioData;
 import com.kitware.physiology.cdm.Scenario.ScenarioData.StartTypeCase;
 import com.kitware.physiology.pulse.*;
@@ -15,11 +14,11 @@ import mil.tatrc.physiology.pulse.engine.PulseScenarioExec;
 import mil.tatrc.physiology.utilities.FileUtils;
 import mil.tatrc.physiology.utilities.Log;
 import mil.tatrc.physiology.testing.SETestDriver;
-import mil.tatrc.physiology.testing.SETestDriver.TestJob;
+import mil.tatrc.physiology.testing.SETestJob;
 
 public class ScenarioTestDriver implements SETestDriver.Executor
 {
-  public boolean ExecuteTest(TestJob job)
+  public boolean ExecuteTest(SETestJob job)
   {
     String outputFile = job.computedDirectory+"/"+job.name;
     String log;
