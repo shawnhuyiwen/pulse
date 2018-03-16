@@ -47,6 +47,7 @@ $sudo apt-get install libqt4-dev qt4-dev-tools libncurses5-dev
 $ wget https://cmake.org/files/v3.11/cmake-3.11.0-rc2.tar.gz
 # Extract the source
 $ tar -zxvf cmake-3.11.0-rc2.tar.gz
+$ cd cmake-3.11.0-rc2
 # run the bootstrap, build and install the code
 $ ./bootstrap --system-curl --qt-gui
 # Remove the --qt-gui if you do not want to build the CMake GUI
