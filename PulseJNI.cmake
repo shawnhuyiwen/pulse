@@ -76,6 +76,9 @@ add_jar(PulseJava ${JAVA_FILES}
       ${CMAKE_SOURCE_DIR}/jar/pdfbox-2.0.0-RC3.jar
       ${CMAKE_SOURCE_DIR}/jar/reflections-0.9.9-RC1-uberjar.jar
       ${CMAKE_SOURCE_DIR}/jar/zip4j-1.3.1.jar
+      ${CMAKE_SOURCE_DIR}/jar/org.eclipse.jgit-4.11.0.201803080745-r.jar
+      ${CMAKE_SOURCE_DIR}/jar/slf4j-api-1.7.25.jar
+      ${CMAKE_SOURCE_DIR}/jar/slf4j-simple-1.7.25.jar
     OUTPUT_NAME Pulse)
 get_target_property(_jarFile PulseJava JAR_FILE)
 add_custom_command(TARGET PulseJava POST_BUILD

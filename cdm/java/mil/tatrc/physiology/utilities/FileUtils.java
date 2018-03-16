@@ -908,6 +908,7 @@ public class FileUtils
         }
         
         FileInputStream fin = new FileInputStream(file);
+        fileName=fileName.replaceAll(".txt", ".csv");
         zip.putNextEntry(new ZipEntry(path+fileName));
         int length;
         while ((length = fin.read(buffer)) > 0) 
