@@ -54,7 +54,7 @@ void HowToAirwayObstruction()
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("OxygenSaturation");
 
-  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToAirwayObstruction.txt");
+  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToAirwayObstruction.csv");
 
   pe->GetLogger()->Info("The patient is nice and healthy");
   pe->GetLogger()->Info(std::stringstream() << "Tidal Volume : " << pe->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL) << VolumeUnit::mL);

@@ -138,7 +138,7 @@ void PulseEngineTest::BrainInjuryTest(const std::string& sTestDirectory)
 
     if (i == 0)
     {
-      outTrk.CreateFile(std::string(sTestDirectory + "/" + tName + ".txt").c_str(), file);
+      outTrk.CreateFile(std::string(sTestDirectory + "/" + tName + ".csv").c_str(), file);
     }
 
     time_s += timeStep_s;

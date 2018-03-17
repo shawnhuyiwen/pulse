@@ -63,7 +63,7 @@ void HowToExercise()
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalMetabolicRate", PowerUnit::W);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalWorkRateLevel");
   
-  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToExercise.txt");
+  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToExercise.csv");
 
   // Advance some time to get some resting data
   tracker.AdvanceModelTime(20);

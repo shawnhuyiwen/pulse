@@ -27,8 +27,8 @@ public class CSVComparePlotter
       if(args.length==1&&args[0].equals("default"))
       {
         args = new String[10];
-        args[0] = "./BaselineResults.txt";// Expected
-        args[1] = "./ComputedResults.txt";// Computed          
+        args[0] = "./BaselineResults.csv";// Expected
+        args[1] = "./ComputedResults.csv";// Computed          
         args[2] = "false"; // Full plot
       }
       else
@@ -44,7 +44,7 @@ public class CSVComparePlotter
     if(!expected.exists())
     {
       // Check to see if there is a result file available
-      String rFile = args[0].replaceAll(".txt", ".txt");
+      String rFile = args[0].replaceAll(".csv", ".csv");
       expected = new File(rFile);
       if(!expected.exists())
       {

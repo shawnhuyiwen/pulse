@@ -105,7 +105,7 @@ void CommonDataModelTest::ElectricalCircuitTest(const std::string& sTestDirector
   SEElectricalCircuit* ElectricalCircuit = &m_Circuits->CreateElectricalCircuit("Electric");
   SEElectricalCircuitCalculator ElectricalCircuitCalculator(m_Logger);
   ElectricalCircuit->StateChange();
-  std::string sOutputFile = sTestDirectory + "/ElectricalCircuit.txt";
+  std::string sOutputFile = sTestDirectory + "/ElectricalCircuit.csv";
   //-----------------------------------------------------------
   //Nodes
   SEElectricalCircuitNode& Node1 = ElectricalCircuit->CreateNode("Node1");
@@ -171,7 +171,7 @@ void CommonDataModelTest::FluidCircuitTest(const std::string& sTestDirectory)
   SEFluidCircuit*  fluidCircuit = &m_Circuits->CreateFluidCircuit("Fluid");
   SEFluidCircuitCalculator      fluidCalculator(m_Logger);
   fluidCircuit->StateChange();
-  std::string sOutputFile = sTestDirectory + "/FluidCircuit.txt";
+  std::string sOutputFile = sTestDirectory + "/FluidCircuit.csv";
   //-----------------------------------------------------------
   //Nodes
   SEFluidCircuitNode& Node1 = fluidCircuit->CreateNode("Node1");
@@ -237,7 +237,7 @@ void CommonDataModelTest::ThermalCircuitTest(const std::string& sTestDirectory)
   SEThermalCircuit* ThermalCircuit = &m_Circuits->CreateThermalCircuit("Thermal");
   SEThermalCircuitCalculator    ThermalCircuitCalculator(m_Logger);
   ThermalCircuit->StateChange();
-  std::string sOutputFile = sTestDirectory + "/ThermalCircuit.txt";
+  std::string sOutputFile = sTestDirectory + "/ThermalCircuit.csv";
   //-----------------------------------------------------------
   //Nodes
   SEThermalCircuitNode& Node1 = ThermalCircuit->CreateNode("Node1");
@@ -413,7 +413,7 @@ void CommonDataModelTest::CombinedCircuitTest(const std::string& sTestDirectory)
       CombinedCircuit = m_Circuits->GetFluidCircuit("Combined");
     }
   }
-  std::string sOutputFile = sTestDirectory + "/CombinedCircuit.txt";
+  std::string sOutputFile = sTestDirectory + "/CombinedCircuit.csv";
   trk1.WriteTrackToFile(sOutputFile.c_str());
   m_Circuits->Clear();
 }
@@ -482,7 +482,7 @@ void CommonDataModelTest::InterCircuitComparisonTest(const std::string& sTestDir
       fluidCircuit = m_Circuits->GetFluidCircuit("Fluid");
     }
   }
-  std::string sOutputFile = sTestDirectory + "/InterCircuitComparison.txt";
+  std::string sOutputFile = sTestDirectory + "/InterCircuitComparison.csv";
   trk1.WriteTrackToFile(sOutputFile.c_str());
   m_Circuits->Clear();
 }
@@ -568,8 +568,8 @@ void CommonDataModelTest::InterCircuitIndividualTest(const std::string& sTestDir
     }
   }
 
-  std::string sOutputFile = sTestDirectory + "/InterCircuitIndividual1.txt";
-  std::string sOutputFile2 = sTestDirectory + "/InterCircuitIndividual2.txt";
+  std::string sOutputFile = sTestDirectory + "/InterCircuitIndividual1.csv";
+  std::string sOutputFile2 = sTestDirectory + "/InterCircuitIndividual2.csv";
   trk1.WriteTrackToFile(sOutputFile.c_str());
   trk2.WriteTrackToFile(sOutputFile2.c_str());
   m_Circuits->Clear();
@@ -638,8 +638,8 @@ void InterCircuitTest(const std::string& sTestDirectory)
     }
   }
 
-  std::string sOutputFile = sTestDirectory + "/InterCircuit.txt";
-  std::string sOutputFile2 = sTestDirectory + "/InterCircuit2.txt";
+  std::string sOutputFile = sTestDirectory + "/InterCircuit.csv";
+  std::string sOutputFile2 = sTestDirectory + "/InterCircuit2.csv";
   trk1.WriteTrackToFile(sOutputFile.c_str());
   trk2.WriteTrackToFile(sOutputFile2.c_str());
 
@@ -802,7 +802,7 @@ void CommonDataModelTest::DynamicallyChangingCircuitTest(const std::string& sTes
       fluidCircuit = m_Circuits->GetFluidCircuit("Fluid");
     }
   }
-  std::string sOutputFile = sTestDirectory + "/DynamicallyChangingCircuit.txt";
+  std::string sOutputFile = sTestDirectory + "/DynamicallyChangingCircuit.csv";
   trk1.WriteTrackToFile(sOutputFile.c_str());
   m_Circuits->Clear();
 }
@@ -877,7 +877,7 @@ void CommonDataModelTest::NonZeroReferencePositive(const std::string& sTestDirec
       fluidCircuit = m_Circuits->GetFluidCircuit("Fluid");
     }
   }
-  std::string sOutputFile = sTestDirectory + "/NonZeroReferencePositive.txt";
+  std::string sOutputFile = sTestDirectory + "/NonZeroReferencePositive.csv";
   trk1.WriteTrackToFile(sOutputFile.c_str());
   m_Circuits->Clear();
 }
@@ -951,7 +951,7 @@ void CommonDataModelTest::NonZeroReferenceNegative(const std::string& sTestDirec
       fluidCircuit = m_Circuits->GetFluidCircuit("Fluid");
     }
   }
-  std::string sOutputFile = sTestDirectory + "/NonZeroReferenceNegative.txt";
+  std::string sOutputFile = sTestDirectory + "/NonZeroReferenceNegative.csv";
   trk1.WriteTrackToFile(sOutputFile.c_str());
   m_Circuits->Clear();
 }
@@ -1030,7 +1030,7 @@ void CommonDataModelTest::PolarizedCapacitorTest(const std::string& sTestDirecto
       fluidCircuit = m_Circuits->GetFluidCircuit("Fluid");
     }
   }
-  std::string sOutputFile = sTestDirectory + "/PolarizedCapacitor.txt";
+  std::string sOutputFile = sTestDirectory + "/PolarizedCapacitor.csv";
   trk1.WriteTrackToFile(sOutputFile.c_str());
   m_Circuits->Clear();
 }
@@ -1077,7 +1077,7 @@ void CommonDataModelTest::PreChargeComplianceZeroVolume(const std::string& sTest
       fluidCircuit = m_Circuits->GetFluidCircuit("Fluid");
     }
   }
-  std::string sOutputFile1 = sTestDirectory + "/PreChargeComplianceZeroVolume.txt";
+  std::string sOutputFile1 = sTestDirectory + "/PreChargeComplianceZeroVolume.csv";
   trk1.WriteTrackToFile(sOutputFile1.c_str());
   m_Circuits->Clear();
 }
@@ -1124,7 +1124,7 @@ void CommonDataModelTest::PreChargeComplianceNonZeroVolume(const std::string& sT
       fluidCircuit = m_Circuits->GetFluidCircuit("Fluid");
     }
   }
-  std::string sOutputFile2 = sTestDirectory + "/PreChargeComplianceNonZeroVolume.txt";
+  std::string sOutputFile2 = sTestDirectory + "/PreChargeComplianceNonZeroVolume.csv";
   trk1.WriteTrackToFile(sOutputFile2.c_str());
   m_Circuits->Clear();
 }

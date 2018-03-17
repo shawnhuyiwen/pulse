@@ -99,7 +99,7 @@ void PulseEngineTest::InternalTemperatureVariableBMRCircuitTest(const std::strin
     outTrk.Track(time_s, m_TCircuit);
     if (i == 0)
     {
-      outTrk.CreateFile(std::string(sTestDirectory + "/InternalTemperatureVariableBMRCircuitOutput.txt").c_str(), file);
+      outTrk.CreateFile(std::string(sTestDirectory + "/InternalTemperatureVariableBMRCircuitOutput.csv").c_str(), file);
     }
     outTrk.StreamTrackToFile(file);
     time_s += deltaT_s;
@@ -196,7 +196,7 @@ void PulseEngineTest::InternalTemperatureVariableSkinCircuitTest(const std::stri
     outTrk.Track(time_s, m_TCircuit);
     if (i == 0)
     {
-      outTrk.CreateFile(std::string(sTestDirectory + "/InternalTemperatureVariableSkinCircuitOutput.txt").c_str(), file);
+      outTrk.CreateFile(std::string(sTestDirectory + "/InternalTemperatureVariableSkinCircuitOutput.csv").c_str(), file);
     }
     outTrk.StreamTrackToFile(file);
     time_s += deltaT_s;
@@ -292,7 +292,7 @@ void PulseEngineTest::InternalTemperatureVariableCoreCircuitTest(const std::stri
     outTrk.Track(time_s, m_TCircuit);
     if (i == 0)
     {
-      outTrk.CreateFile(std::string(sTestDirectory + "/InternalTemperatureVariableCoreCircuitOutput.txt").c_str(), file);
+      outTrk.CreateFile(std::string(sTestDirectory + "/InternalTemperatureVariableCoreCircuitOutput.csv").c_str(), file);
     }
     outTrk.StreamTrackToFile(file);
     time_s += deltaT_s;
@@ -322,7 +322,7 @@ void PulseEngineTest::EnvironmentVariableTemperatureCircuitTest(const std::strin
   SEThermalCircuitPath* GroundToEnclosure = m_ECircuit.GetPath(pulse::ExternalTemperaturePath::GroundToEnclosure);
 
   //You must initialize these resistors or the circuit won't solve
-  //These values were pulled from EnvironmentInput.txt from an older unit test
+  //These values were pulled from EnvironmentInput.csv from an older unit test
   //SkinToClothing->GetResistanceBaseline().SetValue(22.836, HeatResistanceUnit::K_Per_W);  //R Clothing
   SkinToClothing->GetResistanceBaseline().SetValue(.05, HeatResistanceUnit::K_Per_W);  //R Clothing
   ClothingToEnvironment->GetResistanceBaseline().SetValue(4.379, HeatResistanceUnit::K_Per_W); //R Convection
@@ -416,7 +416,7 @@ void PulseEngineTest::EnvironmentVariableTemperatureCircuitTest(const std::strin
     outTrk.Track(time_s, m_ECircuit);
     if (i == 0)
     {
-      outTrk.CreateFile(std::string(sTestDirectory + "/EnvironmentVariableTemperatureCircuitOutput.txt").c_str(), file);
+      outTrk.CreateFile(std::string(sTestDirectory + "/EnvironmentVariableTemperatureCircuitOutput.csv").c_str(), file);
     }
     outTrk.StreamTrackToFile(file);
     time_s += deltaT_s;
@@ -447,7 +447,7 @@ void PulseEngineTest::CombinedInternalAndEnvironmentVariableBMRandTemperatureCir
   SEThermalCircuitPath* ClothingToEnvironment = m_TECircuit.GetPath(pulse::ExternalTemperaturePath::ClothingToEnvironment);
 
   //You must initialize these resistors or the circuit won't solve
-  //These values were pulled from EnvironmentInput.txt from an older unit test
+  //These values were pulled from EnvironmentInput.csv from an older unit test
   double skinBloodFlow_m3Persec = 4.97E-06;
   double bloodDensity_kgPerm3 = 1050;
   double bloodSpecificHeat_JPerkgK = 3617;
@@ -570,7 +570,7 @@ void PulseEngineTest::CombinedInternalAndEnvironmentVariableBMRandTemperatureCir
     outTrk.Track(time_s, m_TECircuit);
     if (i == 0)
     {
-      outTrk.CreateFile(std::string(sTestDirectory + "/CombinedInternalAndEnvironmentVariableBMRandTemperatureCircuitOutput.txt").c_str(), file);
+      outTrk.CreateFile(std::string(sTestDirectory + "/CombinedInternalAndEnvironmentVariableBMRandTemperatureCircuitOutput.csv").c_str(), file);
     }
     outTrk.StreamTrackToFile(file);
     time_s += deltaT_s;
@@ -603,7 +603,7 @@ void PulseEngineTest::CombinedInternalAndEnvironmentSkinTempDropCircuitTest(cons
   SEThermalCircuitNode* Clothing = m_TECircuit.GetNode(pulse::ExternalTemperatureNode::Clothing);
 
   //You must initialize these resistors or the circuit won't solve
-  //These values were pulled from EnvironmentInput.txt from an older unit test
+  //These values were pulled from EnvironmentInput.csv from an older unit test
   double skinBloodFlow_m3Persec = 4.97E-06;
   double bloodDensity_kgPerm3 = 1050;
   double bloodSpecificHeat_JPerkgK = 3617;
@@ -664,7 +664,7 @@ void PulseEngineTest::CombinedInternalAndEnvironmentSkinTempDropCircuitTest(cons
     outTrk.Track(time_s, m_TECircuit);
     if (i == 0)
     {
-      outTrk.CreateFile(std::string(sTestDirectory + "/CombinedInternalAndEnvironmentSkinTempDropCircuitOutput.txt").c_str(), file);
+      outTrk.CreateFile(std::string(sTestDirectory + "/CombinedInternalAndEnvironmentSkinTempDropCircuitOutput.csv").c_str(), file);
     }
     outTrk.StreamTrackToFile(file);
     time_s += deltaT_s;
@@ -773,6 +773,6 @@ void PulseEngineTest::EnvironmentISO7730ComparisonTest(const std::string& sTestD
     trk.Track("EvaporativeHeatLoss(W/m^2)", i, dEvaporativeHeatLoss_WPerM2[i]);
   }
 
-  std::string sOutputFile = sTestDirectory + "/EnvironmentISO7730Comparison.txt";
+  std::string sOutputFile = sTestDirectory + "/EnvironmentISO7730Comparison.csv";
   trk.WriteTrackToFile(sOutputFile.c_str());
 }

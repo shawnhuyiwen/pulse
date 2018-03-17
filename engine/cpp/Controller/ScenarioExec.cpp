@@ -49,7 +49,7 @@ bool PulseScenarioExec::Execute(const std::string& scenarioFile, const std::stri
     if (rFile.empty())
     {
       rFile = scenarioFile;
-      rFile += ".txt";
+      rFile += ".csv";
     }
     return Execute(scenario, rFile, cExec);
   }

@@ -57,7 +57,7 @@ void HowToTensionPneumothorax()
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("OxygenSaturation");
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
 
-  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToTensionPneumothorax.txt");
+  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToTensionPneumothorax.csv");
 
   pe->GetLogger()->Info("The patient is nice and healthy");
   pe->GetLogger()->Info(std::stringstream() <<"Tidal Volume : " << pe->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL) << VolumeUnit::mL);

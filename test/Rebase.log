@@ -1,0 +1,4 @@
+INFO  Rebase  - Rebase::60::Rebasing from /bin/test_results/scenarios/
+INFO  Rebase  - Rebase::61::Rebasing to /bin/test_results/rebase/scenarios/
+INFO  Rebase  - Rebase::62::Rebasing config DebugRun.config
+ERROR Rebase  - Rebase::71::From dir does not exist : /bin/test_results/scenarios/

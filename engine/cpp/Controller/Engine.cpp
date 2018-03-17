@@ -564,7 +564,7 @@ bool PulseEngine::ProcessAction(const SEAction& action)
           pftFile = "PulmonaryFunctionTest";
         m_ss << "PFT@" << GetSimulationTime(TimeUnit::s) << "s";
         pftFile = Replace(pftFile, "Results", m_ss.str());
-        pftFile = Replace(pftFile, ".txt", ".pba");
+        pftFile = Replace(pftFile, ".csv", ".pba");
         m_ss << "PulmonaryFunctionTest@" << GetSimulationTime(TimeUnit::s) << "s.pba";
         pft.SaveFile(pftFile);
         break;
@@ -579,7 +579,7 @@ bool PulseEngine::ProcessAction(const SEAction& action)
           upanFile = "Urinalysis";
         m_ss << "Urinalysis@" << GetSimulationTime(TimeUnit::s) << "s";
         upanFile = Replace(upanFile, "Results", m_ss.str());
-        upanFile = Replace(upanFile, ".txt", ".pba");
+        upanFile = Replace(upanFile, ".csv", ".pba");
         m_ss << "Urinalysis@" << GetSimulationTime(TimeUnit::s) << "s.pba";
         upan.SaveFile(upanFile);
         break;
@@ -594,7 +594,7 @@ bool PulseEngine::ProcessAction(const SEAction& action)
           cbcFile = "CompleteBloodCount";
         m_ss << "CBC@" << GetSimulationTime(TimeUnit::s) << "s";
         cbcFile = Replace(cbcFile, "Results", m_ss.str());
-        cbcFile = Replace(cbcFile, ".txt", ".pba");
+        cbcFile = Replace(cbcFile, ".csv", ".pba");
         m_ss << "CompleteBloodCount@" << GetSimulationTime(TimeUnit::s) << "s.pba";
         cbc.SaveFile(cbcFile);
         break;
@@ -609,7 +609,7 @@ bool PulseEngine::ProcessAction(const SEAction& action)
           mpFile = "ComprehensiveMetabolicPanel";
         m_ss << "CMP@" << GetSimulationTime(TimeUnit::s) << "s";
         mpFile = Replace(mpFile, "Results", m_ss.str());
-        mpFile = Replace(mpFile, ".txt", ".pba");
+        mpFile = Replace(mpFile, ".csv", ".pba");
         m_ss << "ComprehensiveMetabolicPanel@" << GetSimulationTime(TimeUnit::s) << "s.pba";
         mp.SaveFile(mpFile);
         break;

@@ -67,7 +67,7 @@ void ECG::Initialize()
   DataTrack Original;  
   for (size_t i = 0; i < original_s.size(); i++)
     Original.Track("Original_ECG",original_s[i], original_mV[i]);
-  Original.WriteTrackToFile("OriginalECG.txt");
+  Original.WriteTrackToFile("OriginalECG.csv");
 */
   m_interpolator->Interpolate(m_data.GetTimeStep());
 /* Code to write out the Interpolated ECG data in a format easy to view in plotting tools
@@ -76,7 +76,7 @@ void ECG::Initialize()
   DataTrack Interpolated;
   for (size_t i = 0; i < interpolated_s.size(); i++)
     Interpolated.Track("Interpolated_ECG", interpolated_s[i], interpolated_mV[i]);
-  Interpolated.WriteTrackToFile("InterpolatedECG.txt");
+  Interpolated.WriteTrackToFile("InterpolatedECG.csv");
 */
   m_interpolator->SetLeadElectricPotential(cdm::eElectroCardioGram_WaveformLead_Lead3, GetLead3ElectricPotential());
 }

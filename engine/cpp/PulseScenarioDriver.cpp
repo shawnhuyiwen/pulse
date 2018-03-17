@@ -36,7 +36,7 @@ void PulseScenarioDriver::Run()
   // Set up the verification output file  
   std::string dataFile = m_file;
   dataFile = Replace(dataFile, "verification", "test_results");
-  dataFile = Replace(dataFile, ".pba", "Results.txt");
+  dataFile = Replace(dataFile, ".pba", "Results.csv");
   // What are we creating?
   std::cout << "Log File : " << logFile << std::endl;
   std::cout << "Results File : " << dataFile << std::endl;

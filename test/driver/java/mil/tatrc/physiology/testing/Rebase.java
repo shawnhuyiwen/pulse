@@ -100,13 +100,23 @@ public class Rebase
 				}
 				if(!job.PlottableResults)
 					continue;// Nothing to plot/compare, nothing to zip
+				
+				result_files.clear();
+				for(String j : job.computedFiles)
+				{
+				  result_files.add(j.replaceAll(".csv", ".txt"));
+				}
+				job.computedFiles.clear();
+				job.computedFiles.addAll(result_files);
+				
+				
 				log_file = "";
 				scenario_file = "";
 				result_files.clear();
 				result_path = job.computedFiles.get(0);
 				if(!new File(result_path).exists())
 				{
-				  Log.error("Unable to find file to rebase for "+job.name);
+				  Log.error("Unable to find file to rebase for "+job.name+" at path "+result_path);
 				  continue;
 				}
 

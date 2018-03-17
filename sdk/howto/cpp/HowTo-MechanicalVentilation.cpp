@@ -207,7 +207,7 @@ void HowToMechanicalVentilation()
   SESubstance* Lactate = pe->GetSubstanceManager().GetSubstance("Lactate");
   pe->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest(*Lactate, "BloodConcentration", MassPerVolumeUnit::ug_Per_mL);
   
-  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToMechanicalVentilation.txt");
+  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToMechanicalVentilation.csv");
 
   //Output some random stuff to the log
   pe->GetLogger()->Info(std::stringstream() << "Tidal Volume : " << pe->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL) << VolumeUnit::mL);

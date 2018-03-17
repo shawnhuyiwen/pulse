@@ -11,7 +11,7 @@ public class ReduceCSV
   {    
     Log.setFileName("ReduceHeaders.log");
 
-    String filename = "BasicStandard12hrResults.txt";
+    String filename = "BasicStandard12hrResults.csv";
 
     Log.info("Looking at file: " + filename);
     File fIn = new File(filename);

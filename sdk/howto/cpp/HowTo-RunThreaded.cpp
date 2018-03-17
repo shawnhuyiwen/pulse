@@ -23,7 +23,7 @@ void HowToDynamicHemorrhage()
 {
   // Create the engine and have it run in it's own thread
   // This call will block while the engine stabilizes
-  PulseThread pThread("./ThreadedDriver.txt");
+  PulseThread pThread("./ThreadedDriver.csv");
   // When it comes back, the engine will be running, waiting for your input
 
   int action;

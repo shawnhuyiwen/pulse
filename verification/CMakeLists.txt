@@ -1,11 +1,24 @@
 # External Data
 include(ExternalData)
 set(ExternalData_URL_TEMPLATES "https://data.kitware.com/api/v1/file/hashsum/%(algo)/%(hash)/download")
-ExternalData_Add_Test(ExternalData
-  NAME Download
-  COMMAND 
-  DATA{verification.zip}
+
+message(STATUS "Looking for zip shas")
+file(GLOB_RECURSE _VERIFICATION_SHA RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "*.sha512")
+
+foreach(_SHA_FILE ${_VERIFICATION_SHA})
+  string(REGEX MATCH "^(.*)\\.[^.]*$" dummy ${_SHA_FILE})
+  set(SHA_FILE_WITHOUT_EXT ${CMAKE_MATCH_1})
+  list(APPEND _VERIFICATION_ZIP ${SHA_FILE_WITHOUT_EXT})
+endforeach()
+
+foreach(_ZIP_FILE ${_VERIFICATION_ZIP})
+  #message(STATUS "Zip ${_ZIP_FILE}")
+  ExternalData_Add_Test(ExternalData
+    NAME ${_ZIP_FILE}
+    COMMAND 
+    DATA{${_ZIP_FILE}}
   )
+endforeach()
 ExternalData_Add_Target(ExternalData)
 set(ExternalData_LINK_CONTENT SHA512)
 set(ExternalData_TIMEOUT_ABSOLUTE 0)
@@ -21,7 +34,9 @@ add_custom_target(UpdateVerification ${INC_DOWNLOAD})
 add_dependencies(UpdateVerification ExternalData)
 add_custom_command(TARGET UpdateVerification POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E make_directory   ${CMAKE_INSTALL_PREFIX}/bin/verification)
+foreach(_ZIP_FILE ${_VERIFICATION_ZIP})
 add_custom_command(TARGET UpdateVerification POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E tar xzf ${CMAKE_BINARY_DIR}/verification/verification.zip 
-            WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin/verification
-)
+    COMMAND ${CMAKE_COMMAND} -E echo "Unzipping ${_ZIP_FILE} "
+    COMMAND ${CMAKE_COMMAND} -E tar xzf ${CMAKE_BINARY_DIR}/verification/${_ZIP_FILE} 
+            WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin/verification)
+endforeach()

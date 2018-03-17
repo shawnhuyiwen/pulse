@@ -53,7 +53,7 @@ public class MultiPlotter implements Plotter
     if(job.dataPath == null || job.dataPath.isEmpty())
     {job.dataPath = job.verificationDirectory+"/";}
     if(job.dataFile == null || job.dataFile.isEmpty())
-    {job.dataFile = job.name + "Results.txt";}
+    {job.dataFile = job.name + "Results.csv";}
     
     //Get data contents for all headers when all data is in one file
     if ((data.isEmpty() || data == null) && job.experimentalData == null)

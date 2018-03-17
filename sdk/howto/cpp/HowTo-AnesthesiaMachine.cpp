@@ -63,7 +63,7 @@ void HowToAnesthesiaMachine()
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("OxygenSaturation");
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SedationLevel");
 
-  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToAnesthesiaMachine.txt");
+  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToAnesthesiaMachine.csv");
 
   pe->GetLogger()->Info("The patient is nice and healthy");
   pe->GetLogger()->Info(std::stringstream() <<"Tidal Volume : " << pe->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL) << VolumeUnit::mL);

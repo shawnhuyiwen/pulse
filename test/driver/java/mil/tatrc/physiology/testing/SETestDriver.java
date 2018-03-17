@@ -161,8 +161,8 @@ public class SETestDriver
         {
           if(job.name.endsWith(".pba"))//This should be a scenario file, different naming convention
           {
-            String[] dirs = toCompute.substring(0,toCompute.indexOf(".txt")).split("[/\\\\]");
-            String report = toCompute.substring(0,toCompute.indexOf(".txt"))+"/"+dirs[dirs.length-1]+"Report.pba";
+            String[] dirs = toCompute.substring(0,toCompute.indexOf(".csv")).split("[/\\\\]");
+            String report = toCompute.substring(0,toCompute.indexOf(".csv"))+"/"+dirs[dirs.length-1]+"Report.pba";
             job.reportFiles.add(report);
           }
           else

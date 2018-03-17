@@ -39,7 +39,7 @@ void CommonDataModelTest::ScalarTest(const std::string& sOutputDirectory)
   DataTrack track;
   track.SetFormatting("Fixed", fixed);
   track.SetFormatting("Scientific", sci);
-  track.CreateFile("TrackText.txt", file);
+  track.CreateFile("TrackText.csv", file);
   for (int i = 0; i < 10; i++)
   {
     double d = std::sqrt(i)+100;

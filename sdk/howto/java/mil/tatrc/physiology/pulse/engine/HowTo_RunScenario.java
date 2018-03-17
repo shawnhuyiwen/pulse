@@ -91,7 +91,7 @@ public class HowTo_RunScenario
     // the name and location of a results file
     // an optional callback that will be called so you can get the latest data values and do some custom logic
     String pba = FileUtils.readFile("./verification/scenarios/patient/BasicStandard.pba");
-    pe.runScenario("./test_results/scenarios/patient/BasicStandard.log", pba,"./test_results/scenarios/patient/BasicStandardResults.txt", null);// No Callback, just write out the file
+    pe.runScenario("./test_results/scenarios/patient/BasicStandard.log", pba,"./test_results/scenarios/patient/BasicStandardResults.csv", null);// No Callback, just write out the file
     
     // You could create and provide an SEScenario object as well
     SEScenario sce = new SEScenario(pe.substanceManager);

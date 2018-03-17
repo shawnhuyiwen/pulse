@@ -40,7 +40,7 @@ public class WaveformUtils
 
     if(args.length==0)
     {
-      resultsFile = "./Scenarios/Basic/Basic1Results.txt";
+      resultsFile = "./Scenarios/Basic/Basic1Results.csv";
       resultsName = "TidalVolume(mL)";
       resultsName = "TotalLungVolume(mL)";
     }

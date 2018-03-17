@@ -88,7 +88,7 @@ void HowToCPR()
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CardiacOutput",VolumePerTimeUnit::mL_Per_min);
   pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Brain, "InFlow", VolumePerTimeUnit::mL_Per_min);
 
-  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToCPR.txt");
+  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToCPR.csv");
 
   // This is the total amount of time that CPR will be administered in seconds
   double durationOfCPR_Seconds = 120;

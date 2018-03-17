@@ -70,7 +70,7 @@ public:
 
 void PulseEngineTest::InhalerState(PhysiologyEngine* pc, HowToTracker& tracker)
 {
-  pc->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("InhalerResults.txt");
+  pc->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("InhalerResults.csv");
   if (!pc->InitializeEngine("StandardMale.pba"))
   {
     std::cerr << "Could not load initialize engine, check the error" << std::endl;
@@ -112,15 +112,15 @@ void PulseEngineTest::InhalerState(PhysiologyEngine* pc, HowToTracker& tracker)
 
   // Change the results file
   pc->GetLogger()->ResetLogFile("InhalerSerialization.log");
-  std::remove("InhalerSerializationResults.txt");
-  pc->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("InhalerSerializationResults.txt");
+  std::remove("InhalerSerializationResults.csv");
+  pc->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("InhalerSerializationResults.csv");
 
   tracker.AdvanceModelTime(145);
 }
 
 void PulseEngineTest::InjectSuccsState(PhysiologyEngine* pc, HowToTracker& tracker, const SESubstance& succs)
 {
-  pc->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("InjectSuccsResults.txt");
+  pc->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("InjectSuccsResults.csv");
   if (!pc->InitializeEngine("StandardMale.pba"))
   {
     std::cerr << "Could not load initialize engine, check the error" << std::endl;
@@ -138,8 +138,8 @@ void PulseEngineTest::InjectSuccsState(PhysiologyEngine* pc, HowToTracker& track
 
   // Change our results file name
   pc->GetLogger()->ResetLogFile("InjectSuccsSerialization.log");
-  std::remove("InjectSuccsSerialization.txt");
-  pc->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("InjectSuccsSerialization.txt");
+  std::remove("InjectSuccsSerialization.csv");
+  pc->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("InjectSuccsSerialization.csv");
 
   // Save and Load the Engine State
   pc->SaveState("./MidBolusState.pba");
@@ -273,7 +273,7 @@ void PulseEngineTest::SerializationTest(const std::string& sTestDirectory)
     // Gen Basic Standard Baseline
    /* {
       pc->GetLogger()->ResetLogFile("BasicStandardResults.log");
-      pc->GetEngineTrack()->RequestData(tracker.m_Requests, "BasicStandardResults.txt");
+      pc->GetEngineTrack()->RequestData(tracker.m_Requests, "BasicStandardResults.csv");
       if (!pc->InitializeEngine("StandardMale.pba"))
       {
         std::cerr << "Could not load initialize engine, check the error" << std::endl;
@@ -285,7 +285,7 @@ void PulseEngineTest::SerializationTest(const std::string& sTestDirectory)
     // Gen Basic Standard State
     /*{
       pc->GetLogger()->ResetLogFile("BasicStandardStateSetupResults.log");
-      pc->GetEngineTrack()->RequestData(tracker.m_Requests, "BasicStandardStateSetupResults.txt");
+      pc->GetEngineTrack()->RequestData(tracker.m_Requests, "BasicStandardStateSetupResults.csv");
       if (!pc->InitializeEngine("StandardMale.pba"))
       {
         std::cerr << "Could not load initialize engine, check the error" << std::endl;
@@ -298,7 +298,7 @@ void PulseEngineTest::SerializationTest(const std::string& sTestDirectory)
     // Run Basic Standard State
     {
       pc->GetLogger()->ResetLogFile("BasicStandardStateResults.log");
-      pc->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("BasicStandardStateResults.txt");
+      pc->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("BasicStandardStateResults.csv");
       pc->LoadStateFile("./BasicStandardState@60s.pba");
       tracker.AdvanceModelTime(60);
     }

@@ -79,8 +79,8 @@ void PulseEngineTest::AnesthesiaMachineCircuitAndTransportTest(RespiratoryConfig
   {
     amCircuit = &pc.GetCircuits().GetAnesthesiaMachineCircuit();
     amGraph = &pc.GetCompartments().GetAnesthesiaMachineGraph();
-    sCircuitFileName = "/AnesthesiaMachineCircuitOutput.txt";
-    sTransportFileName = "/AnesthesiaMachineTransportOutput.txt";
+    sCircuitFileName = "/AnesthesiaMachineCircuitOutput.csv";
+    sTransportFileName = "/AnesthesiaMachineTransportOutput.csv";
 
     //Allow things to flow to ground, since the respiratory circuit isn't here
     //This approximates the total respiratory system resistance
@@ -94,8 +94,8 @@ void PulseEngineTest::AnesthesiaMachineCircuitAndTransportTest(RespiratoryConfig
 
     amCircuit = &pc.GetCircuits().GetRespiratoryAndAnesthesiaMachineCircuit();
     amGraph = &pc.GetCompartments().GetRespiratoryAndAnesthesiaMachineGraph();
-    sCircuitFileName = "/RespiratoryAndAnesthesiaMachineCircuitOutput.txt";
-    sTransportFileName = "/RespiratoryAndAnesthesiaMachineTransportOutput.txt";
+    sCircuitFileName = "/RespiratoryAndAnesthesiaMachineCircuitOutput.csv";
+    sTransportFileName = "/RespiratoryAndAnesthesiaMachineTransportOutput.csv";
 
     //Precharge the stomach to prevent negative volume
     amCircuit->GetNode(pulse::RespiratoryNode::Stomach)->GetNextPressure().Set(env.GetAtmosphericPressure());

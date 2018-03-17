@@ -57,7 +57,7 @@ void HowToConsumeNutrients()
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("StomachContents-Water",VolumeUnit::mL);
   
-  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToConsumeNutrients.txt");
+  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToConsumeNutrients.csv");
 
   // Advance some time to get some resting data
   tracker.AdvanceModelTime(50);

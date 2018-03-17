@@ -76,7 +76,7 @@ void HowToScenarioBase()
  
 
   if (!pe->GetEngineTracker()->GetDataRequestManager().HasResultsFilename())
-    pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("./ResultsFileName.txt");
+    pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("./ResultsFileName.csv");
 
   // Let's request data do be tracked that is in the scenario  
   HowToTracker tracker(*pe);

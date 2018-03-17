@@ -78,7 +78,7 @@ public class ActionEventPlotter implements Plotter
     if(job.scenarioPath == null || job.scenarioPath.isEmpty())
     {job.scenarioPath = job.verificationDirectory+"/";}
     if(job.dataFile == null || job.dataFile.isEmpty())
-    {job.dataFile = job.name + "Results.txt";}
+    {job.dataFile = job.name + "Results.csv";}
     if(job.logFile == null || job.logFile.isEmpty())
     {job.logFile = job.name + ".log";}
     if(job.scenarioFile == null || job.scenarioFile.isEmpty())

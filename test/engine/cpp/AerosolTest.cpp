@@ -447,7 +447,7 @@ void PulseEngineTest::DepositionFractionTest(SETestSuite& suite, SESubstance& su
     trk.Track("RightAlveoliParticulateDeposited_ug", time, rightAlveoliParticulate == nullptr ? 0 : rightAlveoliParticulate->GetMassDeposited(MassUnit::ug));
 
     if (i == 0)
-      trk.CreateFile(std::string("./test_results/unit_tests/Pulse/"+substance.GetName()+"DepositionFraction.txt").c_str(), file);
+      trk.CreateFile(std::string("./test_results/unit_tests/Pulse/"+substance.GetName()+"DepositionFraction.csv").c_str(), file);
     trk.StreamTrackToFile(file);
     
     time += deltaT_s;

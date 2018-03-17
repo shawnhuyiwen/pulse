@@ -59,7 +59,7 @@ void HowToHemorrhage()
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HemoglobinContent",MassUnit::g);
   
-  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToHemorrhage.txt");
+  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToHemorrhage.csv");
   
   pe->GetLogger()->Info("The patient is nice and healthy");
   pe->GetLogger()->Info(std::stringstream() <<"Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);

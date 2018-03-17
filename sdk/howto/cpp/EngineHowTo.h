@@ -37,7 +37,7 @@ void HowToSandbox();
 class SEDataRequest;
 
 /// This class is here to demonstrate executing the engine
-/// and populating a txt file with data from the engine 
+/// and populating a csv file with data from the engine 
 /// This class will handle advancing time on the engine
 class HowToTracker
 {

@@ -174,7 +174,7 @@ void HowToEngineUse()
   pe->GetEngineTracker()->GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Lungs, "Volume");
   pe->GetEngineTracker()->GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Carina, "InFlow");
 
-  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToEngineUse.txt");
+  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToEngineUse.csv");
 
   // We are ready to execute the engine
   // simply tell the engine how long you would like it to execute

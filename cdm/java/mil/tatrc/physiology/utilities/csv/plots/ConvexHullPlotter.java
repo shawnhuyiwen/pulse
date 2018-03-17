@@ -110,7 +110,7 @@ public class ConvexHullPlotter implements Plotter
     if(job.dataPath == null || job.dataPath.isEmpty())
     {job.dataPath = job.verificationDirectory+"/";}
     if(job.dataFile == null || job.dataFile.isEmpty())
-    {job.dataFile = job.name + "Results.txt";}
+    {job.dataFile = job.name + "Results.csv";}
     
     //Get data contents for all headers
     if (data.isEmpty() || data == null)

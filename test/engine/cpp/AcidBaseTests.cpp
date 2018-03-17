@@ -107,7 +107,7 @@ void PulseEngineTest::AcidBaseMathTest(const std::string& rptDirectory)
   bool compareBeforeAfter = false;
 
   std::ofstream file;
-  std::string   rptFile = rptDirectory + "/AcidBaseMath.txt";
+  std::string   rptFile = rptDirectory + "/AcidBaseMath.csv";
 
   unsigned int testID = 0;
 
@@ -340,7 +340,7 @@ void PulseEngineTest::AcidBaseFeedbackTest(const std::string& rptDirectory)
   phosphate.SetValue(1.1, AmountPerVolumeUnit::mmol_Per_L);
 
   std::ofstream file;
-  std::string   rptFile = rptDirectory + "/AcidBaseFeedback.txt";
+  std::string   rptFile = rptDirectory + "/AcidBaseFeedback.csv";
 
   c.SetBodyState(albuminConcentration, hematocrit, bodyTemp, strongIonDifference, phosphate);
 
@@ -451,7 +451,7 @@ void PulseEngineTest::AcidBaseLimitsTest(const std::string& rptDirectory)
   phosphate.SetValue(1.1, AmountPerVolumeUnit::mmol_Per_L);
 
   std::ofstream file;
-  std::string   rptFile = rptDirectory + "/AcidBaseLimits.txt";
+  std::string   rptFile = rptDirectory + "/AcidBaseLimits.csv";
 
   c.SetBodyState(albuminConcentration, hematocrit, bodyTemp, strongIonDifference, phosphate);
 
@@ -599,7 +599,7 @@ void PulseEngineTest::AcidBaseExtremeTest(const std::string& rptDirectory)
   SESubstanceManager& subMgr = pc.GetSubstances();
 
   std::ofstream file;
-  std::string   rptFile = rptDirectory + "/AcidBaseExtreme.txt";
+  std::string   rptFile = rptDirectory + "/AcidBaseExtreme.csv";
 
 
   SESubstance* O2 = subMgr.GetSubstance("Oxygen");
@@ -1266,7 +1266,7 @@ void PulseEngineTest::AcidBaseBloodGasTests(const std::string& sOutputDirectory)
   //AcidBaseBloodGasTest(pc, METABOLIC_ACIDOSIS, testSuite, sOutputDirectory);
   //AcidBaseBloodGasTest(pc, RESPIRATORY_ALKALOSIS, testSuite, sOutputDirectory);
 
-  std::string results = sOutputDirectory + "/AcidBaseBloodGasTests.txt";
+  std::string results = sOutputDirectory + "/AcidBaseBloodGasTests.csv";
   pc.GetDataTrack().WriteTrackToFile(results.c_str());
 
   testReport.WriteFile(sOutputDirectory + "/AcidBaseBloodGasTestsReport.pba");

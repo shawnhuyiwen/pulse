@@ -21,7 +21,7 @@ import mil.tatrc.physiology.utilities.csv.plots.CSVComparePlotter.PlotType;
 
 public class SETestConfiguration 
 {
-	public static final String ext=".txt";
+	public static final String ext=".csv";
 	protected String testName;
 	protected String reportName;
 	protected int    numThreads=0;

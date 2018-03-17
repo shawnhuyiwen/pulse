@@ -56,7 +56,7 @@ void HowToAsthmaAttack()
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("InspiratoryExpiratoryRatio");
   pe->GetEngineTracker()->GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Carina, "InFlow");
 
-  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToAsthma.txt");
+  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToAsthma.csv");
 
   // Advance some time to get some healthy data
   tracker.AdvanceModelTime(50);

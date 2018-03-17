@@ -422,7 +422,7 @@ void PulseEngineTest::FourCompartmentTest(bool usingAcidBase, bool usingProducti
 
     if (i == 0)
     {
-      trk.CreateFile(std::string(rptDirectory + outputName + ".txt").c_str(), file);
+      trk.CreateFile(std::string(rptDirectory + outputName + ".csv").c_str(), file);
     }
     trk.StreamTrackToFile(file);
 

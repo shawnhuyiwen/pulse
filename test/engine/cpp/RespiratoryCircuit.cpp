@@ -64,8 +64,8 @@ void PulseEngineTest::RespiratoryCircuitAndTransportTest(RespiratoryConfiguratio
     rCircuit = &pc.GetCircuits().GetRespiratoryCircuit();
     rGraph = &pc.GetCompartments().GetRespiratoryGraph();
     aGraph = nullptr;
-    sCircuitFileName = "/RespiratoryCircuitOutput.txt";
-    sTransportFileName = "/RespiratoryTransportOutput.txt";
+    sCircuitFileName = "/RespiratoryCircuitOutput.csv";
+    sTransportFileName = "/RespiratoryTransportOutput.csv";
     sAerosolTxptFileName = "";
   }
   else if (config == RespiratoryWithInhaler)
@@ -73,9 +73,9 @@ void PulseEngineTest::RespiratoryCircuitAndTransportTest(RespiratoryConfiguratio
     rCircuit = &pc.GetCircuits().GetRespiratoryAndInhalerCircuit();
     rGraph = &pc.GetCompartments().GetRespiratoryAndInhalerGraph();
     aGraph = &pc.GetCompartments().GetAerosolAndInhalerGraph();
-    sCircuitFileName = "/RespiratoryAndInhalerCircuitOutput.txt";
-    sTransportFileName = "/RespiratoryAndInhalerTransportOutput.txt";
-    sAerosolTxptFileName = "/AerosolInhalerTransportOutput.txt";
+    sCircuitFileName = "/RespiratoryAndInhalerCircuitOutput.csv";
+    sTransportFileName = "/RespiratoryAndInhalerTransportOutput.csv";
+    sAerosolTxptFileName = "/AerosolInhalerTransportOutput.csv";
 
     // Get an aerosolized substance
     SESubstance* albuterol = pc.GetSubstances().GetSubstance("Albuterol");
@@ -96,8 +96,8 @@ void PulseEngineTest::RespiratoryCircuitAndTransportTest(RespiratoryConfiguratio
     rCircuit = &pc.GetCircuits().GetRespiratoryAndMechanicalVentilatorCircuit();
     rGraph = &pc.GetCompartments().GetRespiratoryAndMechanicalVentilatorGraph();
     aGraph = nullptr;
-    sCircuitFileName = "/RespiratoryAndMechanicalVentilatorCircuitOutput.txt";
-    sTransportFileName = "/RespiratoryAndMechanicalVentilatorTransportOutput.txt";
+    sCircuitFileName = "/RespiratoryAndMechanicalVentilatorCircuitOutput.csv";
+    sTransportFileName = "/RespiratoryAndMechanicalVentilatorTransportOutput.csv";
     sAerosolTxptFileName = "";
   }
   else
@@ -298,7 +298,7 @@ void PulseEngineTest::RespiratoryDriverTest(const std::string& sTestDirectory)
       DriverPressure_cmH2O = DriverPressure_cmH2O - PressureIncrement_cmH2O;
     }
   }
-  trk1.WriteTrackToFile(std::string(sTestDirectory + "/RespiratoryDriverOutput.txt").c_str());
+  trk1.WriteTrackToFile(std::string(sTestDirectory + "/RespiratoryDriverOutput.csv").c_str());
   std::stringstream ss;
   ss << "It took " << tmr.GetElapsedTime_s("Test") << "s to run";
   pc.GetLogger()->Info(ss.str(), "RespiratoryDriverTest");

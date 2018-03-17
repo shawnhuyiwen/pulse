@@ -58,13 +58,13 @@ public class ScenarioTestDriver implements SETestDriver.Executor
     if(job.patientFile==null)
     {
       log = outputFile.replaceAll("pba", "log");
-      results = outputFile.replaceAll(".pba", "Results.txt");
+      results = outputFile.replaceAll(".pba", "Results.csv");
     }
     else
     {
       String patientName = job.patientFile.substring(0,job.patientFile.length()-4);
       log = outputFile.replaceAll(".pba", "-"+patientName+".log");
-      results = outputFile.replaceAll(".pba", "-"+patientName+"Results.txt");
+      results = outputFile.replaceAll(".pba", "-"+patientName+"Results.csv");
       
       switch(builder.getStartTypeCase())      
       {
