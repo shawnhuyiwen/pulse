@@ -109,6 +109,7 @@ configure_file(${CMAKE_SOURCE_DIR}/bin/run.cmake.in ${CMAKE_INSTALL_PREFIX}/bin/
 configure_file(${CMAKE_SOURCE_DIR}/bin/run.config.in ${CMAKE_INSTALL_PREFIX}/bin/run.config @ONLY)
 configure_file(${CMAKE_SOURCE_DIR}/docs/Doxygen/full.doxy.in ${CMAKE_INSTALL_PREFIX}/bin/docs/full.doxy @ONLY)
 configure_file(${CMAKE_SOURCE_DIR}/cmake/PulseConfig.cmake.in ${CMAKE_INSTALL_PREFIX}/PulseConfig.cmake @ONLY)
+configure_file(${CMAKE_SOURCE_DIR}/bin/Rebase.py.in ${CMAKE_INSTALL_PREFIX}/bin/Rebase.py @ONLY)
 
 # Install Eigen
 install(DIRECTORY ${Eigen_INSTALL}/include

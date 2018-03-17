@@ -3,30 +3,48 @@
 import argparse
 import os
 import fnmatch
-import json
-import mimetypes
+import errno
 import girder_client
+import hashlib
 from girder_client import GirderClient
 from distutils.version import StrictVersion
 
 if StrictVersion(girder_client.__version__) < StrictVersion("2.0.0"):
     raise Exception("Girder 2.0.0 or newer is required")
 
+
+
 class GirderExternalDataCli(GirderClient):
     """
     A command line Python client for interacting with a Girder instance's
     RESTful api, specifically for performing uploads into a Girder instance.
     """
-    def __init__(self, apiKey, objectStore):
+    def __init__(self, apiKey, validationFolder):
         """initialization function to create a GirderCli instance, will attempt
         to authenticate with the designated Girder instance.
         """
         GirderClient.__init__(self,
                               apiUrl='https://data.kitware.com/api/v1')
-        self.objectStore = objectStore
+        self.validationFolder = validationFolder
         self.authenticate(apiKey=apiKey)
+        self.addItemUploadCallback(self.itemCallback)
 
-    def content_link_upload(self, localFolder, parentId, ext='.sha512',
+    def itemCallback(self, item, filepath):
+        # assume we have an itemMetadata dict that has
+        # filepath: metadata_dict_for_item
+        print("I just uploaded " + item['_id'])
+        print("Its hash is  " + self.item_hash)
+
+    def mkdir_p(self, path):
+        try:
+            os.makedirs(path)
+        except OSError as exc:  # Python >2.5
+            if exc.errno == errno.EEXIST and os.path.isdir(path):
+                pass
+            else:
+                raise
+
+    def content_link_upload(self, localFolder, parentId, ext='.zip',
             parentType='folder', blacklist=['.git', '.ExternalData'],
             reuseExisting=True, dryRun=False):
         """Upload objects corresponding to CMake ExternalData content links.
@@ -60,7 +78,7 @@ class GirderExternalDataCli(GirderClient):
                     dryRun=dryRun)
 
     def _uploadContentLinkItem(self, name, content_link, folder,
-            ext='.sha512', parentType='folder', dryRun=False,
+            ext='.zip', parentType='folder', dryRun=False,
             reuseExisting=False):
         """Upload objects corresponding to CMake ExternalData content links.
 
@@ -73,6 +91,7 @@ class GirderExternalDataCli(GirderClient):
             the same name in the same location, or create a new one instead.
         :param dryRun: Do not actually upload any content.
         """
+        full_name = name + ext
         content_link = os.path.normpath(content_link)
         if os.path.isfile(content_link) and \
                 fnmatch.fnmatch(content_link, '*' + ext):
@@ -81,17 +100,26 @@ class GirderExternalDataCli(GirderClient):
                                 % parentType) +
                                 ' Items can only be added to folders.')
             else:
-                with open(content_link, 'r') as fp:
-                    hash_value = fp.readline().strip()
+                m = hashlib.sha512()
+                with open(content_link, "rb") as f:
+                    for chunk in iter(lambda: f.read(4096), b""):
+                        m.update(chunk)
+                self.item_hash = m.hexdigest()
+                sha_file = content_link[content_link.find('scenarios'):]
+                full_path = self.validationFolder + "\\" + sha_file
+                self.mkdir_p(os.path.dirname(full_path))
+                f = open(self.validationFolder+"\\"+sha_file+".sha512", "w+")
+                f.write(self.item_hash)
                 self._uploadAsItem(
-                    name,
+                    full_name,
                     folder['_id'],
-                    os.path.join(self.objectStore, hash_value),
+                    content_link,
                     reuseExisting=reuseExisting,
-                    dryRun=dryRun)
+                    dryRun=dryRun
+                )
 
     def _uploadFolderRecursive(self, localFolder, parentId, parentType,
-                                 ext='.sha512',
+                                 ext='.zip',
                                  reuseExisting=False,
                                  blacklist=[],
                                  dryRun=False):
@@ -166,15 +194,15 @@ def main():
         help='will not write anything to Girder, only report on what would '
         'happen')
     parser.add_argument('--api-key', required=True, default=None)
-    parser.add_argument('--local-folder', required=False,
-                        default=os.path.join(os.path.dirname(__file__), '..',
-                            '..'),
-                        help='path to local target folder')
     # Default is Pulse/verification
     parser.add_argument('--parent-id', required=False,
                         default='598c95d88d777f7d33e9c1fa',
                         help='id of Girder parent target')
-    parser.add_argument('--object-store', required=True,
+    parser.add_argument('--rebase-folder', required=False,
+                        default='./test_results/rebase/',
+                        help='path to local target folder')
+    parser.add_argument('--validation-folder', required=False,
+                        default='@CMAKE_SOURCE_DIR@/verification',
                         help='Path to the CMake ExternalData object store')
     parser.add_argument(
         '--no-reuse', action='store_true',
@@ -182,9 +210,8 @@ def main():
     args = parser.parse_args()
 
     reuseExisting = not args.no_reuse
-    gc = GirderExternalDataCli(args.api_key,
-        objectStore=os.path.join(args.object_store, 'SHA512'))
-    gc.content_link_upload(args.local_folder, args.parent_id,
+    gc = GirderExternalDataCli(args.api_key, args.validation_folder)
+    gc.content_link_upload(args.rebase_folder, args.parent_id,
             reuseExisting=reuseExisting, dryRun=args.dry_run)
 
 if __name__ == '__main__':

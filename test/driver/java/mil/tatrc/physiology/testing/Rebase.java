@@ -12,11 +12,13 @@ import org.eclipse.jgit.lib.ObjectId;
 import mil.tatrc.physiology.utilities.FileUtils;
 import mil.tatrc.physiology.utilities.Log;
 import mil.tatrc.physiology.utilities.RunConfiguration;
+import mil.tatrc.physiology.utilities.UnitConverter;
 
 public class Rebase
 {
 	public static void main(String[] args)
 	{
+	  UnitConverter.initialize("./");
 		RunConfiguration cfg = new RunConfiguration();
 		Log.setFileName("Rebase.log");    
 		String toDir = "./test_results/rebase/";
@@ -102,6 +104,11 @@ public class Rebase
 				scenario_file = "";
 				result_files.clear();
 				result_path = job.computedFiles.get(0);
+				if(!new File(result_path).exists())
+				{
+				  Log.error("Unable to find file to rebase for "+job.name);
+				  continue;
+				}
 
 				if(job.name.endsWith(".pba"))
 				{
