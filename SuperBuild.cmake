@@ -128,11 +128,11 @@ if(WIN32)
   message( STATUS "External project - dirent" )
   set(dirent_DIR "${CMAKE_BINARY_DIR}/dirent/src/dirent")
   set(dirent_INSTALL "${CMAKE_CURRENT_BINARY_DIR}/dirent/install")
+  set(dirent_MD5 "cf5b4499d163604732f4dc91654056be" )
   ExternalProject_Add( dirent
     PREFIX dirent
-    GIT_REPOSITORY "https://github.com/tronkko/dirent.git"
-    GIT_TAG 1.22
-    GIT_SHALLOW 1
+    URL "https://github.com/tronkko/dirent/archive/1.22.zip"
+    URL_MD5 ${dirent_MD5}
     INSTALL_DIR "${dirent_INSTALL}"
     CMAKE_ARGS
           -DBUILD_SHARED_LIBS:BOOL=OFF
