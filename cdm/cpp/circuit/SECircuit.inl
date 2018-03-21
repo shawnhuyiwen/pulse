@@ -170,27 +170,6 @@ void SECircuit<CIRCUIT_TYPES>::StateChange()
       m_PolarizedElementPaths.push_back(p);
   }
 
-  int jIdx = 0;
-  for (NodeType* n : m_Nodes)
-  {
-    //There should never be a next pressure value set on a node
-    //  //Initializing a compliance "charge" is done on the current pressure value
-    //  //Pressure sources are defined on a path
-    //  if (n->HasNextPotential() && n!=GetReferenceNode())
-    //  {
-    //    m_ss << "You cannot set a pressure value without using a path pressure source.  The NextPressure value will be ignored and overwritten for Node " << n->GetName();
-    //    Warning(m_ss);
-    //  }    
-      if (!n->IsReferenceNode())
-      {
-          n->SetCalculatorIndex(jIdx);
-          jIdx++;
-      }
-      else
-      {
-          n->SetCalculatorIndex(-1);
-      }
-  }
   if ((m_ValvePaths.size()+m_PolarizedElementPaths.size()) > 64)
   {
     ///\error Fatal: There are too many assumed state options.  The Circuit solver can only handle up to 64 Diodes and Polar Elements in a single circuit (i.e. ~1.8e19 possible combinations).

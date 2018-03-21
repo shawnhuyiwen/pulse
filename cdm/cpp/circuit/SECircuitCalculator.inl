@@ -125,6 +125,29 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
     Fatal("Circuit must have at least 1 reference node");
   }
 
+  // Assign calculator index to the nodes in the circuit
+  int jIdx = 0;
+  for (NodeType* n : m_circuit->GetNodes())
+  {
+      //There should never be a next pressure value set on a node
+      //  //Initializing a compliance "charge" is done on the current pressure value
+      //  //Pressure sources are defined on a path
+      //  if (n->HasNextPotential() && n!=GetReferenceNode())
+      //  {
+      //    m_ss << "You cannot set a pressure value without using a path pressure source.  The NextPressure value will be ignored and overwritten for Node " << n->GetName();
+      //    Warning(m_ss);
+      //  }    
+      if (!n->IsReferenceNode())
+      {
+          n->SetCalculatorIndex(jIdx);
+          jIdx++;
+      }
+      else
+      {
+          n->SetCalculatorIndex(-1);
+      }
+  }
+
   size_t numRefNodes = 0;
   {// Create some scope for r
     NodeType* r = nullptr;
