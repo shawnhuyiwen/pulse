@@ -625,7 +625,7 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseOut()
   
   if (!refNodeExists)
   {
-      Fatal(std::stringstream("No reference node in the circuit "));
+      Fatal("No reference node in the circuit ");
   }
 
   for (NodeType* n : m_circuit->GetNodes())
