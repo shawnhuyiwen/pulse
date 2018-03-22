@@ -52,6 +52,10 @@ public:
   void SetCalculatorIndex(const size_t index);
   size_t GetCalculatorIndex() const;
 
+  bool IsReferenceNode() const;
+  void SetAsReferenceNode();
+  void RemoveAsReferenceNode();
+
 protected:
   std::string            m_Name;
 
@@ -66,7 +70,8 @@ protected:
   QuantityScalar*         m_QuantityBaseline;
 
 private:
-  size_t                  m_calculatorIndex;
+  size_t                  m_CalculatorIndex;
+  bool                    m_IsReferenceNode = false;
 };
 
 #include "circuit/SECircuitNode.inl"

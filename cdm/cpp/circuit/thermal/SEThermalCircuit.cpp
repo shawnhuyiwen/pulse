@@ -36,7 +36,5 @@ void SEThermalCircuit::AddCircuit(SEThermalCircuit& circuit)
   for (SEThermalCircuitNode* node : circuit.GetNodes())
     AddNode(*node);
   for (SEThermalCircuitPath* path : circuit.GetPaths())
-    AddPath(*path); 
-  for (SEThermalCircuitNode* node : circuit.GetReferenceNodes())
-    AddReferenceNode(*node);
+    AddPath(*path);
 }

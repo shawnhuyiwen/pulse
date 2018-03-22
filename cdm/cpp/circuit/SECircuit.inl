@@ -20,7 +20,6 @@ SECircuit<CIRCUIT_TYPES>::~SECircuit()
 template<CIRCUIT_TEMPLATE>
 void SECircuit<CIRCUIT_TYPES>::Clear()
 {
-  m_ReferenceNodes.clear();
   for (auto& itr : m_TargetPathMap)
     delete itr.second;
   for (auto& itr : m_SourcePathMap)
@@ -69,17 +68,7 @@ void SECircuit<CIRCUIT_TYPES>::Serialize(const CircuitBindType& src, SECircuit& 
       return;
     }
     dst.AddPath(*idx->second);
-  }
-  for (int i = 0; i<srcC.referencenode_size(); i++)
-  {
-    const std::string name = srcC.referencenode(i);
-    auto idx = nodes.find(name);
-    if (idx == nodes.end())
-    {
-      dst.Error(dst.m_Name + " could not find reference node " + name.c_str());
-    }
-    dst.AddReferenceNode(*idx->second);
-  }
+  }  
 }
 template<CIRCUIT_TEMPLATE>
 CircuitBindType* SECircuit<CIRCUIT_TYPES>::Unload(const SECircuit& src)
@@ -92,12 +81,7 @@ template<CIRCUIT_TEMPLATE>
 void SECircuit<CIRCUIT_TYPES>::Serialize(const SECircuit& src, CircuitBindType& dst)
 {
   cdm::CircuitData* dstC = dst.mutable_circuit();
-  dstC->set_name(src.m_Name);
-  if (src.HasReferenceNode())
-  {
-    for (NodeType* n : src.m_ReferenceNodes)
-      dstC->add_referencenode(n->GetName());
-  }    
+  dstC->set_name(src.m_Name);  
   for (auto* n : src.m_Nodes)
     dstC->add_node(n->GetName());
   for (auto* p : src.m_Paths)
@@ -186,27 +170,6 @@ void SECircuit<CIRCUIT_TYPES>::StateChange()
       m_PolarizedElementPaths.push_back(p);
   }
 
-  int jIdx = 0;
-  for (NodeType* n : m_Nodes)
-  {
-    //There should never be a next pressure value set on a node
-    //  //Initializing a compliance "charge" is done on the current pressure value
-    //  //Pressure sources are defined on a path
-    //  if (n->HasNextPotential() && n!=GetReferenceNode())
-    //  {
-    //    m_ss << "You cannot set a pressure value without using a path pressure source.  The NextPressure value will be ignored and overwritten for Node " << n->GetName();
-    //    Warning(m_ss);
-    //  }    
-      if (!IsReferenceNode(*n))
-      {
-          n->SetCalculatorIndex(jIdx);
-          jIdx++;
-      }
-      else
-      {
-          n->SetCalculatorIndex(-1);
-      }
-  }
   if ((m_ValvePaths.size()+m_PolarizedElementPaths.size()) > 64)
   {
     ///\error Fatal: There are too many assumed state options.  The Circuit solver can only handle up to 64 Diodes and Polar Elements in a single circuit (i.e. ~1.8e19 possible combinations).
@@ -223,38 +186,14 @@ std::string SECircuit<CIRCUIT_TYPES>::GetName() const
 template<CIRCUIT_TEMPLATE>
 bool SECircuit<CIRCUIT_TYPES>::HasReferenceNode() const
 {
-  return !m_ReferenceNodes.empty();
-}
-template<CIRCUIT_TEMPLATE>
-bool SECircuit<CIRCUIT_TYPES>::IsReferenceNode(NodeType& node) const
-{
-  for (NodeType* n : m_ReferenceNodes)
-    if (n == &node)
-      return true;
-  return false;  
-}
-template<CIRCUIT_TEMPLATE>
-const std::vector<NodeType*>& SECircuit<CIRCUIT_TYPES>::GetReferenceNodes() const
-{
-  return m_ReferenceNodes;
-}
-template<CIRCUIT_TEMPLATE>
-void SECircuit<CIRCUIT_TYPES>::AddReferenceNode(NodeType& node)
-{
-  // Make sure we have it
-  bool found = false;
-  for (NodeType* n : m_Nodes)
-  {
-    if (n == &node)
+    for (NodeType* n : m_Nodes)
     {
-      found = true;
-      break;
+        if (n->IsReferenceNode())
+        {
+            return true;
+        }
     }
-  }
-  if (!found)
-    AddNode(node);  
-  if(!Contains(m_ReferenceNodes,node))
-    m_ReferenceNodes.push_back(&node);
+  return false;
 }
 
 template<CIRCUIT_TEMPLATE>
