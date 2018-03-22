@@ -13,3 +13,5 @@
 /sdk/howto/csharp/obj
 /sdk/howto/csharp/HowToCSharp.csproj.user
 /sdk/howto/csharp/HowToCSharp.sdf
+sdk/howto/csharp/*.db
+sdk/howto/csharp/*.opendb
