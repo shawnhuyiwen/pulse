@@ -28,9 +28,6 @@ public:
   virtual std::string GetName() const;
 
   virtual bool HasReferenceNode() const;
-  virtual bool IsReferenceNode(NodeType& node) const;
-  virtual const std::vector<NodeType*>& GetReferenceNodes() const;
-  virtual void AddReferenceNode(NodeType& node);
 
   // Nodes //
   virtual void AddNode(NodeType& node);
@@ -64,8 +61,7 @@ public:
 protected:
   std::string  m_Name;
   std::stringstream m_ss;
-
-  std::vector<NodeType*>               m_ReferenceNodes;
+  
   std::vector<NodeType*>               m_Nodes;
   std::vector<PathType*>               m_Paths;
    

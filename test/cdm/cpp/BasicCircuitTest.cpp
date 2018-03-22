@@ -37,7 +37,8 @@ void CommonDataModelTest::TestSetup7SeriesRCDC()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node3);
+  fluidCircuit.AddNode(Node3);
+  Node3.SetAsReferenceNode();
   //We have to initialize pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node3.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -68,7 +69,8 @@ void CommonDataModelTest::TestSetup7SeriesRCSIN()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node3);
+  fluidCircuit.AddNode(Node3);
+  Node3.SetAsReferenceNode();
   //We have to initialize pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node3.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -99,7 +101,8 @@ void CommonDataModelTest::TestSetup7SeriesRCPULSE()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node3);
+  fluidCircuit.AddNode(Node3);
+  Node3.SetAsReferenceNode();
   //We have to initialize pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node3.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -131,7 +134,8 @@ void CommonDataModelTest::TestSetup8SeriesRDC()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node4);
+  fluidCircuit.AddNode(Node4);
+  Node4.SetAsReferenceNode();
   Node4.GetPressure().SetValue(0, PressureUnit::Pa);
 
   //-----------------------------------------------------------
@@ -162,7 +166,8 @@ void CommonDataModelTest::TestSetup8SeriesRSIN()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node4);
+  fluidCircuit.AddNode(Node4);
+  Node4.SetAsReferenceNode();
   Node4.GetPressure().SetValue(0, PressureUnit::Pa);
 
   //-----------------------------------------------------------
@@ -192,7 +197,8 @@ void CommonDataModelTest::TestSetup8SeriesRPULSE()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node4);
+  fluidCircuit.AddNode(Node4);
+  Node4.SetAsReferenceNode();
   Node4.GetPressure().SetValue(0, PressureUnit::Pa);
 
   //-----------------------------------------------------------
@@ -221,7 +227,8 @@ void CommonDataModelTest::TestSetup9SeriesRLDC()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node3);
+  fluidCircuit.AddNode(Node3);
+  Node3.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance (or inductor?)
   //But it doesn't necessarily have to be 0
   Node2.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -252,7 +259,8 @@ void CommonDataModelTest::TestSetup9SeriesRLSIN()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node3);
+  fluidCircuit.AddNode(Node3);
+  Node3.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance (or inductor?)
   //But it doesn't necessarily have to be 0
   Node2.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -283,7 +291,8 @@ void CommonDataModelTest::TestSetup9SeriesRLPULSE()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node3);
+  fluidCircuit.AddNode(Node3);
+  Node3.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance (or inductor?)
   //But it doesn't necessarily have to be 0
   Node2.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -313,7 +322,8 @@ void CommonDataModelTest::TestSetup10ParallelRDC()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2);
+  Node2.SetAsReferenceNode();
   Node2.GetPressure().SetValue(0, PressureUnit::Pa);
 
   //-----------------------------------------------------------
@@ -341,7 +351,8 @@ void CommonDataModelTest::TestSetup10ParallelRSIN()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2);
+  Node2.SetAsReferenceNode();
   Node2.GetPressure().SetValue(0, PressureUnit::Pa);
   
   //-----------------------------------------------------------
@@ -369,7 +380,8 @@ void CommonDataModelTest::TestSetup10ParallelRPULSE()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2);
+  Node2.SetAsReferenceNode();
   Node2.GetPressure().SetValue(0, PressureUnit::Pa);
 
   //-----------------------------------------------------------
@@ -397,7 +409,8 @@ void CommonDataModelTest::TestSetup11ParallelRCDC()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2);
+  Node2.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node2.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -427,7 +440,8 @@ void CommonDataModelTest::TestSetup11ParallelRCSIN()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2);
+  Node2.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node2.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -457,7 +471,8 @@ void CommonDataModelTest::TestSetup11ParallelRCPULSE()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2);
+  Node2.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node2.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -487,7 +502,8 @@ void CommonDataModelTest::TestSetup12ParallelRLDC()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2);
+  Node2.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance (inductor?)
   //But it doesn't necessarily have to be 0
   Node1.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -517,7 +533,8 @@ void CommonDataModelTest::TestSetup12ParallelRLSIN()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2);
+  Node2.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance (inductor?)
   //But it doesn't necessarily have to be 0
   Node1.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -547,7 +564,8 @@ void CommonDataModelTest::TestSetup12ParallelRLPULSE()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2);
+  Node2.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance (inductor?)
   //But it doesn't necessarily have to be 0
   //Node1.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -577,7 +595,8 @@ void CommonDataModelTest::TestSetup12ParallelRLSINCentered()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2);
+  Node2.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance (inductor?)
   //But it doesn't necessarily have to be 0
   Node1.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -609,7 +628,8 @@ void CommonDataModelTest::TestSetup13SeriesRLCDC()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node4);
+  fluidCircuit.AddNode(Node4);
+  Node4.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node2.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -645,7 +665,8 @@ void CommonDataModelTest::TestSetup13SeriesRLCSIN()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node4);
+  fluidCircuit.AddNode(Node4);
+  Node4.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node2.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -681,7 +702,8 @@ void CommonDataModelTest::TestSetup13SeriesRLCPULSE()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node4);
+  fluidCircuit.AddNode(Node4);
+  Node4.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node2.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -715,7 +737,7 @@ void CommonDataModelTest::TestSetup14ParallelRLCDC()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2); Node2.SetAsReferenceNode(); 
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node1.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -748,7 +770,7 @@ void CommonDataModelTest::TestSetup14ParallelRLCSIN()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2); Node2.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node1.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -781,7 +803,7 @@ void CommonDataModelTest::TestSetup14ParallelRLCPULSE()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2); Node2.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node1.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -816,7 +838,7 @@ void CommonDataModelTest::TestSetup15SwitchRCDC()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node4);
+  fluidCircuit.AddNode(Node4); Node4.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node3.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -850,7 +872,7 @@ void CommonDataModelTest::TestSetup15SwitchRCSIN()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node4);
+  fluidCircuit.AddNode(Node4); Node4.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node3.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -884,7 +906,7 @@ void CommonDataModelTest::TestSetup15SwitchRCPULSE()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node4);
+  fluidCircuit.AddNode(Node4); Node4.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node3.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -918,7 +940,7 @@ void CommonDataModelTest::TestSetup16Comprehensive1DC()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node4);
+  fluidCircuit.AddNode(Node4); Node4.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node3.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -962,7 +984,7 @@ void CommonDataModelTest::TestSetup16Comprehensive1SIN()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node4);
+  fluidCircuit.AddNode(Node4); Node4.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node3.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -1006,7 +1028,7 @@ void CommonDataModelTest::TestSetup16Comprehensive1PULSE()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node4);
+  fluidCircuit.AddNode(Node4); Node4.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node3.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -1049,7 +1071,7 @@ void CommonDataModelTest::TestSetup17BasicDiodeDC()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node3);
+  fluidCircuit.AddNode(Node3); Node3.SetAsReferenceNode();
   //We have to initialize pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node3.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -1082,7 +1104,7 @@ void CommonDataModelTest::TestSetup17BasicDiodeSIN()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node3);
+  fluidCircuit.AddNode(Node3); Node3.SetAsReferenceNode();
   //We have to initialize pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node3.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -1115,7 +1137,7 @@ void CommonDataModelTest::TestSetup17BasicDiodePULSE()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node3);
+  fluidCircuit.AddNode(Node3); Node3.SetAsReferenceNode();
   //We have to initialize pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node3.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -1156,7 +1178,7 @@ void CommonDataModelTest::TestSetup17BasicDiodePULSE()
 //
 //  //Reference node
 //  //This works like ground - I added code to allow it to have a value other than 0
-//  fluidCircuit.AddReferenceNode(Node4);
+//  fluidCircuit.AddNode(Node4); Node4.SetAsReferenceNode();
 //  //We have to initialize this pressure if it's attached to a Compliance
 //  //But it doesn't necessarily have to be 0
 //  Node3.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -1214,7 +1236,7 @@ void CommonDataModelTest::TestSetup18RCSeriesDCCurrent()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node3);
+  fluidCircuit.AddNode(Node3); Node3.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node2.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -1245,7 +1267,7 @@ void CommonDataModelTest::TestSetup18RCSeriesSINCurrent()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node3);
+  fluidCircuit.AddNode(Node3); Node3.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node2.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -1276,7 +1298,7 @@ void CommonDataModelTest::TestSetup18RCSeriesPulseCurrent()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node3);
+  fluidCircuit.AddNode(Node3); Node3.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node2.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -1307,7 +1329,7 @@ void CommonDataModelTest::TestSetup19RCParallelDCCurrent()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2); Node2.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node1.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -1338,7 +1360,7 @@ void CommonDataModelTest::TestSetup19RCParallelSINCurrent()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2); Node2.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node1.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -1369,7 +1391,7 @@ void CommonDataModelTest::TestSetup19RCParallelPulseCurrent()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2); Node2.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node1.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -1401,7 +1423,7 @@ void CommonDataModelTest::TestSetup20SeriesCapDC()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node4);
+  fluidCircuit.AddNode(Node4); Node4.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node1.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -1439,7 +1461,7 @@ void CommonDataModelTest::TestSetup20SeriesCapSIN()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node4);
+  fluidCircuit.AddNode(Node4); Node4.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node1.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -1477,7 +1499,7 @@ void CommonDataModelTest::TestSetup20SeriesCapPulse()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node4);
+  fluidCircuit.AddNode(Node4); Node4.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node1.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -1513,7 +1535,7 @@ void CommonDataModelTest::TestSetup21ParallelRDCCurrent()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2); Node2.SetAsReferenceNode();
   Node2.GetPressure().SetValue(0, PressureUnit::Pa);
 
   //-----------------------------------------------------------
@@ -1542,7 +1564,7 @@ void CommonDataModelTest::TestSetup21ParallelRSINCurrent()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2); Node2.SetAsReferenceNode();
   Node2.GetPressure().SetValue(0, PressureUnit::Pa);
 
   //-----------------------------------------------------------
@@ -1571,7 +1593,7 @@ void CommonDataModelTest::TestSetup21ParallelRPulseCurrent()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2); Node2.SetAsReferenceNode();
   Node2.GetPressure().SetValue(0, PressureUnit::Pa);
 
   //-----------------------------------------------------------
@@ -1602,7 +1624,7 @@ void CommonDataModelTest::TestSetup22CurrentCompDC()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node4);
+  fluidCircuit.AddNode(Node4); Node4.SetAsReferenceNode();
   Node4.GetPressure().SetValue(0, PressureUnit::Pa);
 
   //-----------------------------------------------------------
@@ -1637,7 +1659,7 @@ void CommonDataModelTest::TestSetup22CurrentCompSIN()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node4);
+  fluidCircuit.AddNode(Node4); Node4.SetAsReferenceNode();
   Node4.GetPressure().SetValue(0, PressureUnit::Pa);
 
   //-----------------------------------------------------------
@@ -1672,7 +1694,7 @@ void CommonDataModelTest::TestSetup22CurrentCompPulse()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node4);
+  fluidCircuit.AddNode(Node4); Node4.SetAsReferenceNode();
   Node4.GetPressure().SetValue(0, PressureUnit::Pa);
 
   //-----------------------------------------------------------
@@ -1706,7 +1728,7 @@ void CommonDataModelTest::TestSetup23SeriesRLDCCurrent()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node3);
+  fluidCircuit.AddNode(Node3); Node3.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance (or inductor?)
   //But it doesn't necessarily have to be 0
   Node2.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -1738,7 +1760,7 @@ void CommonDataModelTest::TestSetup23SeriesRLSINCurrent()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node3);
+  fluidCircuit.AddNode(Node3); Node3.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance (or inductor?)
   //But it doesn't necessarily have to be 0
   Node2.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -1770,7 +1792,7 @@ void CommonDataModelTest::TestSetup23SeriesRLPULSECurrent()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node3);
+  fluidCircuit.AddNode(Node3); Node3.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance (or inductor?)
   //But it doesn't necessarily have to be 0
   Node2.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -1801,7 +1823,7 @@ void CommonDataModelTest::TestSetup24ParallelRLDCCurrent()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2); Node2.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance (inductor?)
   //But it doesn't necessarily have to be 0
   Node1.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -1832,7 +1854,7 @@ void CommonDataModelTest::TestSetup24ParallelRLSINCurrent()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2); Node2.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance (inductor?)
   //But it doesn't necessarily have to be 0
   Node1.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -1863,7 +1885,7 @@ void CommonDataModelTest::TestSetup24ParallelRLPULSECurrent()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2); Node2.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance (inductor?)
   //But it doesn't necessarily have to be 0
   //Node1.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -1895,7 +1917,7 @@ void CommonDataModelTest::TestSetup25BasicDiodeDCCurrent()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node3);
+  fluidCircuit.AddNode(Node3); Node3.SetAsReferenceNode();
   //We have to initialize pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node3.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -1929,7 +1951,7 @@ void CommonDataModelTest::TestSetup25BasicDiodeSINCurrent()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node3);
+  fluidCircuit.AddNode(Node3); Node3.SetAsReferenceNode();
   //We have to initialize pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node3.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -1963,7 +1985,7 @@ void CommonDataModelTest::TestSetup25BasicDiodePULSECurrent()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node3);
+  fluidCircuit.AddNode(Node3); Node3.SetAsReferenceNode();
   //We have to initialize pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node3.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -1998,7 +2020,7 @@ void CommonDataModelTest::TestSetup26SwitchRCDCCurrent()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node4);
+  fluidCircuit.AddNode(Node4); Node4.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node3.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -2033,7 +2055,7 @@ void CommonDataModelTest::TestSetup26SwitchRCSINCurrent()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node4);
+  fluidCircuit.AddNode(Node4); Node4.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node3.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -2068,7 +2090,7 @@ void CommonDataModelTest::TestSetup26SwitchRCPULSECurrent()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node4);
+  fluidCircuit.AddNode(Node4); Node4.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node3.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -2103,7 +2125,7 @@ void CommonDataModelTest::TestSetup27SeriesRLCDCCurrent()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node4);
+  fluidCircuit.AddNode(Node4); Node4.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node1.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -2140,7 +2162,7 @@ void CommonDataModelTest::TestSetup27SeriesRLCSINCurrent()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node4);
+  fluidCircuit.AddNode(Node4); Node4.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node1.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -2177,7 +2199,7 @@ void CommonDataModelTest::TestSetup27SeriesRLCPULSECurrent()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node4);
+  fluidCircuit.AddNode(Node4); Node4.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node1.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -2212,7 +2234,7 @@ void CommonDataModelTest::TestSetup28ParallelRLCDCCurrent()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2); Node2.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node1.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -2246,7 +2268,7 @@ void CommonDataModelTest::TestSetup28ParallelRLCSINCurrent()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2); Node2.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node1.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -2280,7 +2302,7 @@ void CommonDataModelTest::TestSetup28ParallelRLCPULSECurrent()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2); Node2.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node1.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -2315,7 +2337,7 @@ void CommonDataModelTest::TestSetup29SeriesPressureSourceAdditionDC()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node3);
+  fluidCircuit.AddNode(Node3); Node3.SetAsReferenceNode();
   Node3.GetNextPressure().SetValue(0,PressureUnit::Pa);
 
 
@@ -2343,7 +2365,7 @@ void CommonDataModelTest::TestSetup29SeriesPressureSourceAdditionSIN()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node3);
+  fluidCircuit.AddNode(Node3); Node3.SetAsReferenceNode();
   Node3.GetNextPressure().SetValue(0,PressureUnit::Pa);
 
 
@@ -2371,7 +2393,7 @@ void CommonDataModelTest::TestSetup29SeriesPressureSourceAdditionPULSE()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node3);
+  fluidCircuit.AddNode(Node3); Node3.SetAsReferenceNode();
   Node3.GetNextPressure().SetValue(0,PressureUnit::Pa);
 
 
@@ -2398,7 +2420,7 @@ void CommonDataModelTest::TestSetup30SeriesCurrentSourceAdditionDC()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node3);
+  fluidCircuit.AddNode(Node3); Node3.SetAsReferenceNode();
   Node3.GetNextPressure().SetValue(0,PressureUnit::Pa);
 
 
@@ -2427,7 +2449,7 @@ void CommonDataModelTest::TestSetup30SeriesCurrentSourceAdditionSIN()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node3);
+  fluidCircuit.AddNode(Node3); Node3.SetAsReferenceNode();
   Node3.GetNextPressure().SetValue(0,PressureUnit::Pa);
 
 
@@ -2455,7 +2477,7 @@ void CommonDataModelTest::TestSetup30SeriesCurrentSourceAdditionPULSE()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node3);
+  fluidCircuit.AddNode(Node3); Node3.SetAsReferenceNode();
   Node3.GetNextPressure().SetValue(0,PressureUnit::Pa);
 
 
@@ -2482,7 +2504,7 @@ void CommonDataModelTest::TestSetup31ParallelPressureSourceAdditionDC()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2); Node2.SetAsReferenceNode();
   Node2.GetNextPressure().SetValue(0,PressureUnit::Pa);
 
   //-----------------------------------------------------------
@@ -2509,7 +2531,7 @@ void CommonDataModelTest::TestSetup31ParallelPressureSourceAdditionSIN()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2); Node2.SetAsReferenceNode();
   Node2.GetNextPressure().SetValue(0,PressureUnit::Pa);
 
   //-----------------------------------------------------------
@@ -2536,7 +2558,7 @@ void CommonDataModelTest::TestSetup31ParallelPressureSourceAdditionPULSE()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2); Node2.SetAsReferenceNode();
   Node2.GetNextPressure().SetValue(0,PressureUnit::Pa);
 
   //-----------------------------------------------------------
@@ -2563,7 +2585,7 @@ void CommonDataModelTest::TestSetup32ParallelCurrentSourceAdditionDC()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2); Node2.SetAsReferenceNode();
   Node2.GetNextPressure().SetValue(0,PressureUnit::Pa);
 
   //-----------------------------------------------------------
@@ -2590,7 +2612,7 @@ void CommonDataModelTest::TestSetup32ParallelCurrentSourceAdditionSIN()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2); Node2.SetAsReferenceNode();
   Node2.GetNextPressure().SetValue(0,PressureUnit::Pa);
 
   //-----------------------------------------------------------
@@ -2617,7 +2639,7 @@ void CommonDataModelTest::TestSetup32ParallelCurrrentSourceAdditionPULSE()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2); Node2.SetAsReferenceNode();
   Node2.GetNextPressure().SetValue(0,PressureUnit::Pa);
 
   //-----------------------------------------------------------
@@ -2646,7 +2668,7 @@ void CommonDataModelTest::TestSetup33SeriesCapDCCurrent()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node4);
+  fluidCircuit.AddNode(Node4); Node4.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node1.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -2684,7 +2706,7 @@ void CommonDataModelTest::TestSetup33SeriesCapSINCurrent()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node4);
+  fluidCircuit.AddNode(Node4); Node4.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node1.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -2722,7 +2744,7 @@ void CommonDataModelTest::TestSetup33SeriesCapPulseCurrent()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node4);
+  fluidCircuit.AddNode(Node4); Node4.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node1.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -2758,7 +2780,7 @@ void CommonDataModelTest::TestSetup34ParallelCapDC()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2); Node2.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node1.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -2792,7 +2814,7 @@ void CommonDataModelTest::TestSetup34ParallelCapSIN()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2); Node2.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node1.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -2826,7 +2848,7 @@ void CommonDataModelTest::TestSetup34ParallelCapPulse()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2); Node2.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node1.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -2860,7 +2882,7 @@ void CommonDataModelTest::TestSetup35ParallelCapDCCurrent()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2); Node2.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node1.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -2894,7 +2916,7 @@ void CommonDataModelTest::TestSetup35ParallelCapSINCurrent()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2); Node2.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node1.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -2928,7 +2950,7 @@ void CommonDataModelTest::TestSetup35ParallelCapPulseCurrent()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2); Node2.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node1.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -2964,7 +2986,7 @@ void CommonDataModelTest::TestSetup36SeriesIndDC()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node4);
+  fluidCircuit.AddNode(Node4); Node4.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node1.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -3002,7 +3024,7 @@ void CommonDataModelTest::TestSetup36SeriesIndSIN()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node4);
+  fluidCircuit.AddNode(Node4); Node4.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node1.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -3040,7 +3062,7 @@ void CommonDataModelTest::TestSetup36SeriesIndPulse()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node4);
+  fluidCircuit.AddNode(Node4); Node4.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node1.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -3078,7 +3100,7 @@ void CommonDataModelTest::TestSetup37SeriesIndDCCurrent()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node4);
+  fluidCircuit.AddNode(Node4); Node4.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node1.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -3116,7 +3138,7 @@ void CommonDataModelTest::TestSetup37SeriesIndSINCurrent()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node4);
+  fluidCircuit.AddNode(Node4); Node4.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node1.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -3154,7 +3176,8 @@ void CommonDataModelTest::TestSetup37SeriesIndPulseCurrent()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node4);
+  Node4.SetAsReferenceNode();
+  fluidCircuit.AddNode(Node4);
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node1.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -3190,7 +3213,7 @@ void CommonDataModelTest::TestSetup38ParallelIndDC()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2); Node2.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node1.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -3224,7 +3247,7 @@ void CommonDataModelTest::TestSetup38ParallelIndSIN()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2); Node2.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node1.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -3258,7 +3281,7 @@ void CommonDataModelTest::TestSetup38ParallelIndPulse()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2); Node2.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node1.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -3292,7 +3315,7 @@ void CommonDataModelTest::TestSetup39ParallelIndDCCurrent()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2); Node2.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node1.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -3326,7 +3349,7 @@ void CommonDataModelTest::TestSetup39ParallelIndSINCurrent()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2); Node2.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node1.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -3360,7 +3383,7 @@ void CommonDataModelTest::TestSetup39ParallelIndPulseCurrent()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2); Node2.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node1.GetPressure().SetValue(0, PressureUnit::Pa);
@@ -3395,7 +3418,7 @@ void CommonDataModelTest::TestSetup40BadDiodeDC()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2); Node2.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node2.GetPressure().SetValue(0,PressureUnit::Pa);
@@ -3424,7 +3447,7 @@ void CommonDataModelTest::TestSetup40BadDiodeSIN()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2); Node2.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node2.GetPressure().SetValue(0,PressureUnit::Pa);
@@ -3453,7 +3476,7 @@ void CommonDataModelTest::TestSetup40BadDiodePulse()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node2);
+  fluidCircuit.AddNode(Node2); Node2.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node2.GetPressure().SetValue(0,PressureUnit::Pa);
@@ -3488,7 +3511,7 @@ void CommonDataModelTest::TestSetup41ValidationComprehensive1DC()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node7);
+  fluidCircuit.AddNode(Node7); Node7.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node7.GetPressure().SetValue(0,PressureUnit::Pa);
@@ -3554,7 +3577,7 @@ void CommonDataModelTest::TestSetup41ValidationComprehensive1SIN()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node7);
+  fluidCircuit.AddNode(Node7); Node7.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node7.GetPressure().SetValue(0,PressureUnit::Pa);
@@ -3620,7 +3643,7 @@ void CommonDataModelTest::TestSetup41ValidationComprehensive1Pulse()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node7);
+  fluidCircuit.AddNode(Node7); Node7.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node7.GetPressure().SetValue(0,PressureUnit::Pa);
@@ -3685,7 +3708,7 @@ void CommonDataModelTest::TestSetup41ValidationComprehensive1SINCentered()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node7);
+  fluidCircuit.AddNode(Node7); Node7.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node7.GetPressure().SetValue(0,PressureUnit::Pa);
@@ -3750,7 +3773,7 @@ void CommonDataModelTest::TestSetup42ValidationComprehensive2DC()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node6);
+  fluidCircuit.AddNode(Node6); Node6.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node5.GetPressure().SetValue(0,PressureUnit::Pa);
@@ -3814,7 +3837,7 @@ void CommonDataModelTest::TestSetup42ValidationComprehensive2SIN()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node6);
+  fluidCircuit.AddNode(Node6); Node6.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node5.GetPressure().SetValue(0,PressureUnit::Pa);
@@ -3878,7 +3901,7 @@ void CommonDataModelTest::TestSetup42ValidationComprehensive2Pulse()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node6);
+  fluidCircuit.AddNode(Node6); Node6.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node5.GetPressure().SetValue(0,PressureUnit::Pa);
@@ -3941,7 +3964,7 @@ void CommonDataModelTest::TestSetup42ValidationComprehensive2SINCentered()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit.AddReferenceNode(Node6);
+  fluidCircuit.AddNode(Node6); Node6.SetAsReferenceNode();
   //We have to initialize this pressure if it's attached to a Compliance
   //But it doesn't necessarily have to be 0
   Node5.GetPressure().SetValue(0,PressureUnit::Pa);
@@ -4491,7 +4514,7 @@ void CommonDataModelTest::BasicCircuitTest(const std::string& outputDirectory)
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit->AddReferenceNode(Node4);
+  fluidCircuit->AddNode(Node4); Node4.SetAsReferenceNode();
   Node4.GetNextPressure().SetValue(0, PressureUnit::Pa);
 
   //-----------------------------------------------------------

@@ -45,7 +45,7 @@ void InterCircuitTestSetup()
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit->AddReferenceNode(Node4);
+  fluidCircuit->AddNode(Node4); Node4.SetAsReferenceNode();
   Node4.GetNextPressure().SetValue(0, PressureUnit::Pa);
 
   //-----------------------------------------------------------
@@ -69,7 +69,7 @@ void InterCircuitTestSetup()
   SEFluidCircuitNode& Node5 = AdvancedCircuit2->CreateNode(5,"Node5");
   SEFluidCircuitNode& Node6 = AdvancedCircuit2->CreateNode(6,"Node6");
 
-  AdvancedCircuit2->AddReferenceNode(Node6);
+  AdvancedCircuit2->AddNode(Node6); Node6.SetAsReferenceNode();
   Node6.GetNextPressure().SetValue(0, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path5 = AdvancedCircuit2->CreatePath(Node5,Node6,5,"Path5");
@@ -113,7 +113,7 @@ void CommonDataModelTest::ElectricalCircuitTest(const std::string& sTestDirector
   SEElectricalCircuitNode& Node3 = ElectricalCircuit->CreateNode("Node3");
   SEElectricalCircuitNode& Node4 = ElectricalCircuit->CreateNode("Node4");
   //Reference node
-  ElectricalCircuit->AddReferenceNode(Node4);
+  ElectricalCircuit->AddNode(Node4); Node4.SetAsReferenceNode();
   Node4.GetNextVoltage().SetValue(0, ElectricPotentialUnit::V);
   //-----------------------------------------------------------
   //Paths
@@ -179,7 +179,7 @@ void CommonDataModelTest::FluidCircuitTest(const std::string& sTestDirectory)
   SEFluidCircuitNode& Node3 = fluidCircuit->CreateNode("Node3");
   SEFluidCircuitNode& Node4 = fluidCircuit->CreateNode("Node4");
   //Reference node
-  fluidCircuit->AddReferenceNode(Node4);
+  fluidCircuit->AddNode(Node4); Node4.SetAsReferenceNode();
   Node4.GetNextPressure().SetValue(0, PressureUnit::Pa);
   //-----------------------------------------------------------
   //Paths
@@ -245,7 +245,7 @@ void CommonDataModelTest::ThermalCircuitTest(const std::string& sTestDirectory)
   SEThermalCircuitNode& Node3 = ThermalCircuit->CreateNode("Node3");
   SEThermalCircuitNode& Node4 = ThermalCircuit->CreateNode("Node4");
   //Reference node
-  ThermalCircuit->AddReferenceNode(Node4);
+  ThermalCircuit->AddNode(Node4); Node4.SetAsReferenceNode();
   Node4.GetNextTemperature().SetValue(0, TemperatureUnit::K);
   //-----------------------------------------------------------
   //Paths
@@ -337,7 +337,8 @@ void CommonDataModelTest::CombinedCircuitTest(const std::string& sTestDirectory)
   SEFluidCircuitNode& MasterNode4 = MasterCircuit->CreateNode("MasterNode4");
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  MasterCircuit->AddReferenceNode(MasterNode4);
+  MasterCircuit->AddNode(MasterNode4);
+  MasterNode4.SetAsReferenceNode();
   MasterNode4.GetNextPressure().SetValue(0, PressureUnit::Pa);
   //-----------------------------------------------------------
   //Paths
@@ -360,7 +361,8 @@ void CommonDataModelTest::CombinedCircuitTest(const std::string& sTestDirectory)
   SEFluidCircuitNode& SlaveNode4 = SlaveCircuit->CreateNode("SlaveNode4");
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  SlaveCircuit->AddReferenceNode(SlaveNode4);
+  SlaveCircuit->AddNode(SlaveNode4);
+  SlaveNode4.SetAsReferenceNode();
   SlaveNode4.GetNextPressure().SetValue(0, PressureUnit::Pa);
   //-----------------------------------------------------------
   //Paths
@@ -440,7 +442,7 @@ void CommonDataModelTest::InterCircuitComparisonTest(const std::string& sTestDir
   SEFluidCircuitNode& Node4 = fluidCircuit->CreateNode("Node4");
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit->AddReferenceNode(Node4);
+  fluidCircuit->AddNode(Node4); Node4.SetAsReferenceNode();
   Node4.GetNextPressure().SetValue(0, PressureUnit::Pa);
   //-----------------------------------------------------------
   //Paths
@@ -509,7 +511,7 @@ void CommonDataModelTest::InterCircuitIndividualTest(const std::string& sTestDir
   SEFluidCircuitNode& Node4 = fluidCircuit1->CreateNode("Node4");
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit1->AddReferenceNode(Node4);
+  fluidCircuit1->AddNode(Node4); Node4.SetAsReferenceNode();
   Node4.GetNextPressure().SetValue(0, PressureUnit::Pa);
   //-----------------------------------------------------------
   //Paths
@@ -530,7 +532,7 @@ void CommonDataModelTest::InterCircuitIndividualTest(const std::string& sTestDir
   SEFluidCircuit* fluidCircuit2 = &m_Circuits->CreateFluidCircuit("Fluid2");
   SEFluidCircuitNode& Node5 = fluidCircuit2->CreateNode("Node5");
   SEFluidCircuitNode& Node6 = fluidCircuit2->CreateNode("Node6");
-  fluidCircuit2->AddReferenceNode(Node6);
+  fluidCircuit2->AddNode(Node6); Node6.SetAsReferenceNode();
   Node6.GetNextPressure().SetValue(0, PressureUnit::Pa);
   SEFluidCircuitPath& Path6 = fluidCircuit2->CreatePath(Node5, Node6, "Path6");
   Path6.GetNextResistance().SetValue(25, FlowResistanceUnit::Pa_s_Per_m3);
@@ -677,7 +679,7 @@ void CommonDataModelTest::CircuitErrorTest(const std::string& sTestDirectory)
 
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit->AddReferenceNode(Node4);
+  fluidCircuit->AddNode(Node4); Node4.SetAsReferenceNode();
   Node4.GetNextPressure().SetValue(0, PressureUnit::Pa);
   //-----------------------------------------------------------
   //Paths
@@ -732,7 +734,7 @@ void CommonDataModelTest::DynamicallyChangingCircuitTest(const std::string& sTes
   SEFluidCircuitNode& Node3 = fluidCircuit->CreateNode("Node3");
   SEFluidCircuitNode& Node4 = fluidCircuit->CreateNode("Node4");
   //Reference node
-  fluidCircuit->AddReferenceNode(Node4);
+  fluidCircuit->AddNode(Node4); Node4.SetAsReferenceNode();
   Node4.GetNextPressure().SetValue(0, PressureUnit::Pa);
   //-----------------------------------------------------------
   //Paths
@@ -834,7 +836,7 @@ void CommonDataModelTest::NonZeroReferencePositive(const std::string& sTestDirec
   SEFluidCircuitNode& Node4 = fluidCircuit->CreateNode("Node4");
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit->AddReferenceNode(Node4);
+  fluidCircuit->AddNode(Node4); Node4.SetAsReferenceNode();
   double dRef = 10;
   std::cout << "Ref = 10\n";
   Node4.GetNextPressure().SetValue(dRef, PressureUnit::Pa);
@@ -908,7 +910,7 @@ void CommonDataModelTest::NonZeroReferenceNegative(const std::string& sTestDirec
   SEFluidCircuitNode& Node4 = fluidCircuit->CreateNode("Node4");
   //Reference node
   //This works like ground - I added code to allow it to have a value other than 0
-  fluidCircuit->AddReferenceNode(Node4);
+  fluidCircuit->AddNode(Node4); Node4.SetAsReferenceNode();
   double dRef = -10;
   std::cout << "Ref = -10\n";
   Node4.GetNextPressure().SetValue(dRef, PressureUnit::Pa);
@@ -984,7 +986,7 @@ void CommonDataModelTest::PolarizedCapacitorTest(const std::string& sTestDirecto
   SEFluidCircuitNode& Node3 = fluidCircuit->CreateNode("Node3");
   SEFluidCircuitNode& Node4 = fluidCircuit->CreateNode("Node4");
   //Reference node
-  fluidCircuit->AddReferenceNode(Node4);
+  fluidCircuit->AddNode(Node4); Node4.SetAsReferenceNode();
   Node4.GetNextPressure().SetValue(0, PressureUnit::Pa);
   //-----------------------------------------------------------
   //Paths
@@ -1050,7 +1052,8 @@ void CommonDataModelTest::PreChargeComplianceZeroVolume(const std::string& sTest
   SEFluidCircuitNode& node1 = fluidCircuit->CreateNode("node1");
   node1.GetPressure().SetValue(10.0, PressureUnit::mmHg);
   SEFluidCircuitNode& ground = fluidCircuit->CreateNode("node2");
-  fluidCircuit->AddReferenceNode(ground);
+  fluidCircuit->AddNode(ground);
+  ground.SetAsReferenceNode();
   ground.GetNextPressure().SetValue(0.0, PressureUnit::mmHg);
   SEFluidCircuitPath& groundTonode1 = fluidCircuit->CreatePath(ground, node1, "groundTonode1");
   groundTonode1.GetPressureSourceBaseline().SetValue(10.0, PressureUnit::mmHg);
@@ -1097,7 +1100,8 @@ void CommonDataModelTest::PreChargeComplianceNonZeroVolume(const std::string& sT
   SEFluidCircuitNode& node1 = fluidCircuit->CreateNode("node1");
   node1.GetPressure().SetValue(10.0, PressureUnit::mmHg);
   SEFluidCircuitNode& ground = fluidCircuit->CreateNode("node2");
-  fluidCircuit->AddReferenceNode(ground);
+  fluidCircuit->AddNode(ground);
+  ground.SetAsReferenceNode();
   ground.GetNextPressure().SetValue(0.0, PressureUnit::mmHg);
   SEFluidCircuitPath& groundTonode1 = fluidCircuit->CreatePath(ground, node1, "groundTonode1");
   groundTonode1.GetPressureSourceBaseline().SetValue(10.0, PressureUnit::mmHg);
@@ -1156,7 +1160,8 @@ void CommonDataModelTest::CircuitLockingTest(const std::string& sOutputDirectory
   Node3.GetPressure().SetValue(1, PressureUnit::Pa);
 
   //Reference node
-  fluidCircuit->AddReferenceNode(Node5);
+  fluidCircuit->AddNode(Node5);
+  Node5.SetAsReferenceNode();
   Node5.GetNextPressure().SetValue(0, PressureUnit::Pa);
   //-----------------------------------------------------------
   //Paths

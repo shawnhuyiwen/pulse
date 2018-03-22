@@ -35,7 +35,7 @@ void CommonDataModelTest::LargeFlowTransportTest(const std::string& sTestDirecto
   SEFluidCircuitNode& GroundNode = circuit.CreateNode("Ground");
   GroundNode.GetPressure().SetValue(0.0, PressureUnit::mmHg);
   GroundNode.GetVolumeBaseline().SetValue(100.0, VolumeUnit::L);
-  circuit.AddReferenceNode(GroundNode);
+  GroundNode.SetAsReferenceNode();
   SEFluidCircuitNode& Node1 = circuit.CreateNode("Node1");
   Node1.GetVolumeBaseline().SetValue(7.5, VolumeUnit::L);
   SEFluidCircuitNode& Node2 = circuit.CreateNode("Node2");
@@ -137,8 +137,8 @@ void CommonDataModelTest::LiquidTransportTest(const std::string& rptDirectory)
   SEFluidCircuitCalculator CircuitCalculator(&logger);
 
 
-  SEFluidCircuitNode& Ground = circuit.CreateNode("Ground");
-  circuit.AddReferenceNode(Ground);
+  SEFluidCircuitNode& Ground = circuit.CreateNode("Ground");  
+  Ground.SetAsReferenceNode();
   Ground.GetPressure().SetValue(0.0, PressureUnit::mmHg);
   SEFluidCircuitNode& Node1 = circuit.CreateNode("Node1");
   SEFluidCircuitNode& Node2 = circuit.CreateNode("Node2");
@@ -321,8 +321,8 @@ void CommonDataModelTest::GasTransportTest(const std::string& rptDirectory)
   SEFluidCircuit& circuit = m_Circuits->CreateFluidCircuit("Circuit");
   SEFluidCircuitCalculator CircuitCalculator(&logger);
 
-  SEFluidCircuitNode& Ground = circuit.CreateNode("Ground");
-  circuit.AddReferenceNode(Ground);
+  SEFluidCircuitNode& Ground = circuit.CreateNode("Ground");  
+  Ground.SetAsReferenceNode();
   Ground.GetPressure().SetValue(0.0, PressureUnit::mmHg);
   SEFluidCircuitNode& Node1 = circuit.CreateNode("Node1");
   SEFluidCircuitNode& Node2 = circuit.CreateNode("Node2");

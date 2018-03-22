@@ -52,6 +52,7 @@ protected:
   
   double                         m_dT_s; 
   double                         m_currentTime_s;
+  double                         m_refPotential;
   CircuitType*                   m_circuit;
   EigenCircuitSolver             m_solver;
   std::set<uint64_t>             m_valveStates;

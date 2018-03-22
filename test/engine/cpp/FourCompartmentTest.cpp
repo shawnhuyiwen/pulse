@@ -118,8 +118,8 @@ void PulseEngineTest::FourCompartmentTest(bool usingAcidBase, bool usingProducti
   nCapillaries.GetVolumeBaseline().SetValue(capillariesVolume, VolumeUnit::L);
   SEFluidCircuitNode& nArteries = Circuit->CreateNode("Arteries");
   nArteries.GetVolumeBaseline().SetValue(arteriesVolume, VolumeUnit::L);
-  SEFluidCircuitNode& nGround = Circuit->CreateNode("Ground");
-  Circuit->AddReferenceNode(nGround);
+  SEFluidCircuitNode& nGround = Circuit->CreateNode("Ground");  
+  nGround.SetAsReferenceNode();
   nGround.GetPressure().SetValue(0.0, PressureUnit::mmHg);
 
   SEFluidCircuitPath& pPulmonaryToArteries = Circuit->CreatePath(nPulmonary, nArteries, "PulmonaryToArteries");

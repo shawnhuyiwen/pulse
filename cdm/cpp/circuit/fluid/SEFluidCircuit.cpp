@@ -37,6 +37,4 @@ void SEFluidCircuit::AddCircuit(SEFluidCircuit& circuit)
     AddNode(*node);
   for (SEFluidCircuitPath* path : circuit.GetPaths())
     AddPath(*path);
-  for (SEFluidCircuitNode* node : circuit.GetReferenceNodes())
-    AddReferenceNode(*node);
 }
