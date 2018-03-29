@@ -905,6 +905,12 @@ void Respiratory::MechanicalVentilation()
 //--------------------------------------------------------------------------------------------------
 void Respiratory::RespiratoryDriver()
 {
+  /// \event Patient: Start of exhale/inhale
+  if (m_Patient->IsEventActive(cdm::PatientData_eEvent_StartOfExhale))
+    m_Patient->SetEvent(cdm::PatientData_eEvent_StartOfExhale, false, m_data.GetSimulationTime());
+  if (m_Patient->IsEventActive(cdm::PatientData_eEvent_StartOfInhale))
+    m_Patient->SetEvent(cdm::PatientData_eEvent_StartOfInhale, false, m_data.GetSimulationTime());
+
   m_BreathingCycleTime_s += m_dt_s;
 
   //Keep a running average of the Arterial Partial Pressures  
