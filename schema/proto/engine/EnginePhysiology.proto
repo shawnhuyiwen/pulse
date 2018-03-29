@@ -111,7 +111,7 @@ message RenalSystemData
 }
 
 message RespiratorySystemData
-{// Next value : 49
+{// Next value : 45
   cdm.RespiratorySystemData      Common                                              = 1;
   double                         InitialExpiratoryReserveVolume_L                    = 2;
   double                         InitialFunctionalResidualCapacity_L                 = 3;
@@ -152,13 +152,13 @@ message RespiratorySystemData
   cdm.RunningAverageData         ArterialO2RunningAverage_mmHg                       = 36;
   cdm.RunningAverageData         ArterialCO2RunningAverage_mmHg                      = 37;
   
-  bool                           ConsciousBreathing                                  = 42;
-  double                         ConsciousRespirationPeriod_s                        = 43;
-  double                         ConsciousRespirationRemainingPeriod_s               = 44;
-  double                         ExpiratoryReserveVolumeFraction                     = 45;
-  double                         InspiratoryCapacityFraction                         = 46;
-  double                         ConsciousStartPressure_cmH2O                        = 47;
-  double                         ConsciousEndPressure_cmH2O                          = 48;
+  bool                           ConsciousBreathing                                  = 38;
+  double                         ConsciousRespirationPeriod_s                        = 39;
+  double                         ConsciousRespirationRemainingPeriod_s               = 40;
+  double                         ExpiratoryReserveVolumeFraction                     = 41;
+  double                         InspiratoryCapacityFraction                         = 42;
+  double                         ConsciousStartPressure_cmH2O                        = 43;
+  double                         ConsciousEndPressure_cmH2O                          = 44;
 }
 
 message TissueSystemData

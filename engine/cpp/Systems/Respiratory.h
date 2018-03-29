@@ -130,7 +130,7 @@ private:
   double m_BottomBreathAlveoliVolume_L;
   double m_BottomBreathDeadSpaceVolume_L;
   double m_BottomBreathPleuralPressure_cmH2O;
-  RunningAverage m_BloodPHRunningAverage;
+  RunningAverage* m_BloodPHRunningAverage;
 
   //   Respiratory Driver
   double m_ArterialO2PartialPressure_mmHg;

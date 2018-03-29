@@ -274,7 +274,7 @@ void Respiratory::Serialize(const pulse::RespiratorySystemData& src, Respiratory
   dst.m_BottomBreathAlveoliVolume_L = src.bottombreathalveolivolume_l();
   dst.m_BottomBreathDeadSpaceVolume_L = src.bottombreathdeadspacevolume_l();
   dst.m_BottomBreathPleuralPressure_cmH2O = src.bottombreathpleuralpressure_cmh2o();
-  RunningAverage::Load(src.bloodphrunningaverage(),dst.m_BloodPHRunningAverage);
+  RunningAverage::Load(src.bloodphrunningaverage(), *dst.m_BloodPHRunningAverage);
     
   dst.m_ArterialO2PartialPressure_mmHg = src.arterialo2partialpressure_mmhg();
   dst.m_ArterialCO2PartialPressure_mmHg = src.arterialco2partialpressure_mmhg();
@@ -293,8 +293,6 @@ void Respiratory::Serialize(const pulse::RespiratorySystemData& src, Respiratory
   dst.m_VentilationToTidalVolumeSlope = src.ventilationtotidalvolumeslope();
    RunningAverage::Load(src.arterialo2runningaverage_mmhg(), *dst.m_ArterialO2RunningAverage_mmHg);
    RunningAverage::Load(src.arterialco2runningaverage_mmhg(), *dst.m_ArterialCO2RunningAverage_mmHg);
-
-  dst.m_RightBranchInspiratoryResistance_cmH2O_s_Per_L = src.rightbranchinspiratoryresistance_cmh2o_s_per_l();
 
   dst.m_ConsciousBreathing = src.consciousbreathing();
   dst.m_ConsciousRespirationPeriod_s = src.consciousrespirationperiod_s();
@@ -333,7 +331,7 @@ void Respiratory::Serialize(const Respiratory& src, pulse::RespiratorySystemData
   dst.set_bottombreathalveolivolume_l(src.m_BottomBreathAlveoliVolume_L);
   dst.set_bottombreathdeadspacevolume_l(src.m_BottomBreathDeadSpaceVolume_L);
   dst.set_bottombreathpleuralpressure_cmh2o(src.m_BottomBreathPleuralPressure_cmH2O);
-  dst.set_allocated_bloodphrunningaverage(RunningAverage::Unload(src.m_BloodPHRunningAverage));
+  dst.set_allocated_bloodphrunningaverage(RunningAverage::Unload(*src.m_BloodPHRunningAverage));
 
   dst.set_arterialo2partialpressure_mmhg(src.m_ArterialO2PartialPressure_mmHg);
   dst.set_arterialco2partialpressure_mmhg(src.m_ArterialCO2PartialPressure_mmHg);
@@ -906,10 +904,10 @@ void Respiratory::MechanicalVentilation()
 void Respiratory::RespiratoryDriver()
 {
   /// \event Patient: Start of exhale/inhale
-  if (m_Patient->IsEventActive(cdm::PatientData_eEvent_StartOfExhale))
-    m_Patient->SetEvent(cdm::PatientData_eEvent_StartOfExhale, false, m_data.GetSimulationTime());
-  if (m_Patient->IsEventActive(cdm::PatientData_eEvent_StartOfInhale))
-    m_Patient->SetEvent(cdm::PatientData_eEvent_StartOfInhale, false, m_data.GetSimulationTime());
+  if (m_Patient->IsEventActive(cdm::ePatient_Event_StartOfExhale))
+    m_Patient->SetEvent(cdm::ePatient_Event_StartOfExhale, false, m_data.GetSimulationTime());
+  if (m_Patient->IsEventActive(cdm::ePatient_Event_StartOfInhale))
+    m_Patient->SetEvent(cdm::ePatient_Event_StartOfInhale, false, m_data.GetSimulationTime());
 
   m_BreathingCycleTime_s += m_dt_s;
 
@@ -1295,17 +1293,17 @@ void Respiratory::Intubation()
         m_MouthToStomach->GetNextResistance().SetValue(1.2, FlowResistanceUnit::cmH2O_s_Per_L);
         // Stop air flow between the Airway and Carina
         //This is basically an open switch.  We don't need to worry about anyone else modifying it if this action is on.
-        m_MouthToCarina->GetNextResistance().SetValue(m_dDefaultOpenResistance_cmH2O_s_Per_L, FlowResistanceUnit::cmH2O_s_Per_L);
+        m_MouthToCarina->GetNextResistance().SetValue(m_DefaultOpenResistance_cmH2O_s_Per_L, FlowResistanceUnit::cmH2O_s_Per_L);
         break;
       }      
       case cdm::eIntubation_Type_RightMainstem:
       {
-        m_CarinaToLeftAnatomicDeadSpace->GetNextResistance().SetValue(m_dRespOpenResistance_cmH2O_s_Per_L, FlowResistanceUnit::cmH2O_s_Per_L);
+        m_CarinaToLeftAnatomicDeadSpace->GetNextResistance().SetValue(m_RespOpenResistance_cmH2O_s_Per_L, FlowResistanceUnit::cmH2O_s_Per_L);
         break;
       }
       case cdm::eIntubation_Type_LeftMainstem:
       {
-        m_CarinaToRightAnatomicDeadSpace->GetNextResistance().SetValue(m_dRespOpenResistance_cmH2O_s_Per_L, FlowResistanceUnit::cmH2O_s_Per_L);
+        m_CarinaToRightAnatomicDeadSpace->GetNextResistance().SetValue(m_RespOpenResistance_cmH2O_s_Per_L, FlowResistanceUnit::cmH2O_s_Per_L);
         break;
       }
     }
@@ -1903,30 +1901,30 @@ void Respiratory::CalculateVitalSigns()
         if (GetCarricoIndex().GetValue(PressureUnit::mmHg) < 100.0)
         {
           /// \event Patient: Severe ARDS: Carrico Index is below 100 mmHg
-          m_Patient->SetEvent(cdm::PatientData_eEvent_SevereAcuteRespiratoryDistress, true, m_data.GetSimulationTime());  /// \cite ranieriacute
-          m_Patient->SetEvent(cdm::PatientData_eEvent_ModerateAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
-          m_Patient->SetEvent(cdm::PatientData_eEvent_MildAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
+          m_Patient->SetEvent(cdm::ePatient_Event_SevereAcuteRespiratoryDistress, true, m_data.GetSimulationTime());  /// \cite ranieriacute
+          m_Patient->SetEvent(cdm::ePatient_Event_ModerateAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
+          m_Patient->SetEvent(cdm::ePatient_Event_MildAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
         }
         else if (GetCarricoIndex().GetValue(PressureUnit::mmHg) < 200.0)
         {
           /// \event Patient: Moderate ARDS: Carrico Index is below 200 mmHg
-          m_Patient->SetEvent(cdm::PatientData_eEvent_ModerateAcuteRespiratoryDistress, true, m_data.GetSimulationTime());  /// \cite ranieriacute
-          m_Patient->SetEvent(cdm::PatientData_eEvent_SevereAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
-          m_Patient->SetEvent(cdm::PatientData_eEvent_MildAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
+          m_Patient->SetEvent(cdm::ePatient_Event_ModerateAcuteRespiratoryDistress, true, m_data.GetSimulationTime());  /// \cite ranieriacute
+          m_Patient->SetEvent(cdm::ePatient_Event_SevereAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
+          m_Patient->SetEvent(cdm::ePatient_Event_MildAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
         }
         else if (GetCarricoIndex().GetValue(PressureUnit::mmHg) < 300.0)
         {
           /// \event Patient: Mild ARDS: Carrico Index is below 300 mmHg
-          m_Patient->SetEvent(cdm::PatientData_eEvent_MildAcuteRespiratoryDistress, true, m_data.GetSimulationTime());  /// \cite ranieriacute
-          m_Patient->SetEvent(cdm::PatientData_eEvent_SevereAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
-          m_Patient->SetEvent(cdm::PatientData_eEvent_ModerateAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
+          m_Patient->SetEvent(cdm::ePatient_Event_MildAcuteRespiratoryDistress, true, m_data.GetSimulationTime());  /// \cite ranieriacute
+          m_Patient->SetEvent(cdm::ePatient_Event_SevereAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
+          m_Patient->SetEvent(cdm::ePatient_Event_ModerateAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
         }
         else
         {
           /// \event Patient: End ARDS: Carrico Index is above 305 mmHg
-          m_Patient->SetEvent(cdm::PatientData_eEvent_SevereAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
-          m_Patient->SetEvent(cdm::PatientData_eEvent_ModerateAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
-          m_Patient->SetEvent(cdm::PatientData_eEvent_MildAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
+          m_Patient->SetEvent(cdm::ePatient_Event_SevereAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
+          m_Patient->SetEvent(cdm::ePatient_Event_ModerateAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
+          m_Patient->SetEvent(cdm::ePatient_Event_MildAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
         }
       }
 
@@ -2037,8 +2035,6 @@ void Respiratory::CalculateVitalSigns()
       m_Patient->SetEvent(cdm::ePatient_Event_RespiratoryAlkalosis, false, m_data.GetSimulationTime());
     }
   }
-
-  m_PreviousTotalLungVolume_L = GetTotalLungVolume(VolumeUnit::L);
 }
 
 //--------------------------------------------------------------------------------------------------
