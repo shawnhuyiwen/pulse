@@ -1230,7 +1230,7 @@ void Respiratory::BronchoDilation()
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
-/// Esophageal Intubation
+/// Intubation, including esophageal, left mainstem, and right mainstem
 ///
 /// \details
 /// During mechanical ventilation, one of the clinical complications of endotracheal intubation is esophageal intubation. This involves the 
