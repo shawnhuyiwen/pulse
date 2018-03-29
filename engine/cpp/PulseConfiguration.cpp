@@ -168,6 +168,8 @@ PulseConfiguration::PulseConfiguration(SESubstanceManager& substances) : SEEngin
   m_PulmonaryVentilationRateMaximum = nullptr;
   m_VentilationTidalVolumeIntercept = nullptr;
   m_VentilatoryOcclusionPressure = nullptr;
+  m_MinimumAllowableTidalVolume = nullptr;
+  m_MinimumAllowableInpiratoryAndExpiratoryPeriod = nullptr;
 
   // Tissue
   m_TissueEnabled = cdm::eSwitch::On;
@@ -298,6 +300,8 @@ void PulseConfiguration::Clear()
   SAFE_DELETE(m_PulmonaryVentilationRateMaximum);
   SAFE_DELETE(m_VentilationTidalVolumeIntercept);
   SAFE_DELETE(m_VentilatoryOcclusionPressure);
+  SAFE_DELETE(m_MinimumAllowableTidalVolume);
+  SAFE_DELETE(m_MinimumAllowableInpiratoryAndExpiratoryPeriod);
 
   //Tissue
   m_TissueEnabled = cdm::eSwitch::On;
@@ -428,6 +432,8 @@ void PulseConfiguration::Initialize()
   GetPulmonaryVentilationRateMaximum().SetValue(150.0, VolumePerTimeUnit::L_Per_min);
   GetVentilationTidalVolumeIntercept().SetValue(0.3, VolumeUnit::L);
   GetVentilatoryOcclusionPressure().SetValue(0.75, PressureUnit::cmH2O); //This increases the absolute max driver pressure
+  GetMinimumAllowableTidalVolume().SetValue(0.1, VolumeUnit::L);
+  GetMinimumAllowableInpiratoryAndExpiratoryPeriod().SetValue(0.25, TimeUnit::s);
 
   // Tissue
   m_TissueEnabled = cdm::eSwitch::On;
@@ -761,6 +767,10 @@ void PulseConfiguration::Serialize(const pulse::ConfigurationData& src, PulseCon
       SEScalarVolume::Load(config.ventilationtidalvolumeintercept(),dst.GetVentilationTidalVolumeIntercept());
     if (config.has_ventilatoryocclusionpressure())
       SEScalarPressure::Load(config.ventilatoryocclusionpressure(),dst.GetVentilatoryOcclusionPressure());
+    if (config.has_minimumallowabletidalvolume())
+      SEScalarVolume::Load(config.minimumallowabletidalvolume(), dst.GetMinimumAllowableTidalVolume());
+    if (config.has_minimumallowableinpiratoryandexpiratoryperiod())
+      SEScalarTime::Load(config.minimumallowableinpiratoryandexpiratoryperiod(), dst.GetMinimumAllowableInpiratoryAndExpiratoryPeriod());
   }
 
   // Tissue
@@ -995,6 +1005,10 @@ void PulseConfiguration::Serialize(const PulseConfiguration& src, pulse::Configu
     resp->set_allocated_ventilationtidalvolumeintercept(SEScalarVolume::Unload(*src.m_VentilationTidalVolumeIntercept));
   if (src.HasVentilatoryOcclusionPressure())
     resp->set_allocated_ventilatoryocclusionpressure(SEScalarPressure::Unload(*src.m_VentilatoryOcclusionPressure));
+  if (src.HasMinimumAllowableTidalVolume())
+    resp->set_allocated_minimumallowabletidalvolume(SEScalarVolume::Unload(*src.m_MinimumAllowableTidalVolume));
+  if (src.HasMinimumAllowableInpiratoryAndExpiratoryPeriod())
+    resp->set_allocated_minimumallowableinpiratoryandexpiratoryperiod(SEScalarTime::Unload(*src.m_MinimumAllowableInpiratoryAndExpiratoryPeriod));
 
   // Tissue
   pulse::ConfigurationData_TissueConfigurationData* tissue = dst.mutable_tissueconfiguration();
@@ -2589,4 +2603,38 @@ double PulseConfiguration::GetVentilationTidalVolumeIntercept(const VolumeUnit& 
   if (m_VentilationTidalVolumeIntercept == nullptr)
     return SEScalar::dNaN();
   return m_VentilationTidalVolumeIntercept->GetValue(unit);
+}
+
+bool PulseConfiguration::HasMinimumAllowableTidalVolume() const
+{
+  return m_MinimumAllowableTidalVolume == nullptr ? false : m_MinimumAllowableTidalVolume->IsValid();
+}
+SEScalarVolume& PulseConfiguration::GetMinimumAllowableTidalVolume()
+{
+  if (m_MinimumAllowableTidalVolume == nullptr)
+    m_MinimumAllowableTidalVolume = new SEScalarVolume();
+  return *m_MinimumAllowableTidalVolume;
+}
+double PulseConfiguration::GetMinimumAllowableTidalVolume(const VolumeUnit& unit) const
+{
+  if (m_MinimumAllowableTidalVolume == nullptr)
+    return SEScalar::dNaN();
+  return m_MinimumAllowableTidalVolume->GetValue(unit);
+}
+
+bool PulseConfiguration::HasMinimumAllowableInpiratoryAndExpiratoryPeriod() const
+{
+  return m_MinimumAllowableInpiratoryAndExpiratoryPeriod == nullptr ? false : m_MinimumAllowableInpiratoryAndExpiratoryPeriod->IsValid();
+}
+SEScalarTime& PulseConfiguration::GetMinimumAllowableInpiratoryAndExpiratoryPeriod()
+{
+  if (m_MinimumAllowableInpiratoryAndExpiratoryPeriod == nullptr)
+    m_MinimumAllowableInpiratoryAndExpiratoryPeriod = new SEScalarTime();
+  return *m_MinimumAllowableInpiratoryAndExpiratoryPeriod;
+}
+double PulseConfiguration::GetMinimumAllowableInpiratoryAndExpiratoryPeriod(const TimeUnit& unit) const
+{
+  if (m_MinimumAllowableInpiratoryAndExpiratoryPeriod == nullptr)
+    return SEScalar::dNaN();
+  return m_MinimumAllowableInpiratoryAndExpiratoryPeriod->GetValue(unit);
 }
