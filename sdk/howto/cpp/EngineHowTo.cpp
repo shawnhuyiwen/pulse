@@ -54,7 +54,7 @@ void HowToTracker::AdvanceModelTime(double time_s)
 {  
   // This samples the engine at each time step
   int count = static_cast<int>(time_s / m_dT_s);
-  for (int i = 0; i <= count; i++)
+  for (int i = 0; i < count; i++)
   {    
     m_Engine.AdvanceModelTime();  // Compute 1 time step
 
