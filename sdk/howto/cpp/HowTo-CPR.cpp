@@ -116,6 +116,7 @@ void HowToCPR()
 
   // Put the patient into cardiac arrest
   SECardiacArrest c;
+  c.SetState(cdm::eSwitch::On);
   pe->ProcessAction(c);
   
   pe->GetLogger()->Info("Giving the patient Cardiac Arrest.");
