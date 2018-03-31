@@ -43,12 +43,12 @@ public:
   MyListener(Logger* logger) : SEEventHandler(logger) {};
   virtual void HandlePatientEvent(cdm::ePatient_Event type, bool active, const SEScalarTime* time) override
   {
-    GetLogger()->Info(std::stringstream() <<"Recieved Patient Event : " << type);
+    GetLogger()->Info(std::stringstream() <<"Recieved Patient Event : " << cdm::ePatient_Event_Name(type));
   }
 
   virtual void HandleAnesthesiaMachineEvent(cdm::eAnesthesiaMachine_Event type, bool active, const SEScalarTime* time) override
   {
-    GetLogger()->Info(std::stringstream() <<"Recieved Anesthesia Machine Event : " << type);
+    GetLogger()->Info(std::stringstream() <<"Recieved Anesthesia Machine Event : " << cdm::eAnesthesiaMachine_Event_Name(type));
   }
 };
 
@@ -116,6 +116,7 @@ void HowToCPR()
 
   // Put the patient into cardiac arrest
   SECardiacArrest c;
+  c.SetState(cdm::eSwitch::On);
   pe->ProcessAction(c);
   
   pe->GetLogger()->Info("Giving the patient Cardiac Arrest.");

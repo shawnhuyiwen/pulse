@@ -23,7 +23,7 @@ int main()
   //HowToBolusDrug();
   //HowToConsumeNutrients();
   //HowToCOPD();
-  //HowToCPR(); 
+  HowToCPR(); 
   //HowToEnvironmentChange();
   //HowToExercise();
   //HowToHemorrhage();
@@ -38,7 +38,7 @@ int main()
 
   // More complicated examples that do run
   //HowToConcurrentEngines();
-    HowToDynamicHemorrhage();
+  //HowToDynamicHemorrhage();
 }
 
 HowToTracker::HowToTracker(PhysiologyEngine& engine) : m_Engine(engine)
