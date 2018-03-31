@@ -136,6 +136,63 @@ swapon tmpswap
 
 Read the article if you want to make this change permanent, it contains some valuable hints regarding permissions and fstab.
 
+## Updating Pulse
+
+The Pulse repository is always changing as we add improvments and features to the code base.
+These changes will require that you rebuild the source code when you pull the latest changes.
+Here are a few tips for keeping your source code up to date when you pull
+
+### Rebuilding the schema
+
+Pulse uses Google Protocol Buffers for data files and to communicate data between various languages and networking protocols.
+After you pull the latest, you will need to run the Protoc compiler to adjust the data model to any changes made to the proto files describing the Pulse Data Model.
+
+From a command/terminal in your pulse/build/install/bin directory : 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
+# On Windows
+> run protoc
+# On Linux/Max
+$ ./run.sh protoc
+# Note you may need to do a 
+$ chmod +x run.sh
+# To run this script on your machine
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<b>Please ensure CMake is on your path!</b>
+
+Note, if there were no changes to the protobuf files, the proto compile will not run and return this message 
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
+-- Not generating bindings, nothing has changed since last build
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you are getting linking errors about missing protobuf functions.
+Such as missing something in the cdm:: namespace.
+You can force the protoc compiler to run by deleting this timestamp file:
+
+<b>pulse/build/Pulse/schema/schema_last_built</b>
+
+### Rebuild the code base
+
+With the Protocol Buffer bindings updated, you can now build the updated code base
+
+### Regenerate State Data
+
+Any changes to the code base can change various aspects of the data our engine calculates.
+This inturn has can have an effect on the various state files used in our HowTo examples.
+(Located in the pulse/install/bin/states directory)
+If the state files no longer load, or you want to ensure they are up to date with your version of the engine code, regerate these state files:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
+# On Windows
+> run genStates
+# On Linux/Max
+$ ./run.sh genStates
+# Note you may need to do a 
+$ chmod +x run.sh
+# To run this script on your machine
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<b>Please ensure CMake is on your path!</b>
+
 ## Using Pulse
 
 With the code built, visit our [wiki](https://gitlab.kitware.com/physiology/engine/wikis/home) to learn how to execute Pulse and use our SDK to use Pulse in your own application with Pulse.
