@@ -1558,6 +1558,10 @@ void PulseController::SetupCardiovascular()
   LeftHeart1ToLeftHeart3.GetComplianceBaseline().SetValue(InitialComplianceHeartLeft, FlowComplianceUnit::mL_Per_mmHg);
   PericardiumToGround.GetComplianceBaseline().SetValue(100.0, FlowComplianceUnit::mL_Per_mmHg);
 
+  //Make these polarized, so chest compression can't give a negative volume
+  RightHeart1ToRightHeart3.SetNextPolarizedState(cdm::eGate::Closed);
+  LeftHeart1ToLeftHeart3.SetNextPolarizedState(cdm::eGate::Closed);
+
   double VolumeModifierAorta = 1.16722*1.018749, VolumeModifierBrain = 0.998011*1.038409, VolumeModifierBone = 1.175574*0.985629, VolumeModifierFat = 1.175573*0.986527;
   double VolumeModifierLargeIntestine = 1.17528*0.985609, VolumeModifierArmL = 1.175573*0.986529, VolumeModifierKidneyL = 0.737649*0.954339, VolumeModifierLegL = 1.175573*0.986529;
   double VolumeModifierPulmArtL = 0.855566*1.095697, VolumeModifierPulmCapL = 0.724704*1.079139, VolumeModifierPulmVeinL = 0.548452*1.056844*1.062, VolumeModifierLiver = 1.157475*0.991848;
