@@ -1132,6 +1132,8 @@ void Respiratory::RespiratoryDriver()
       //KEEP COMMENTED OUT - this is for keeping the driver constant while debugging
       //m_VentilationFrequency_Per_min = 16.0;
       //m_PeakRespiratoryDrivePressure = -11.3;
+
+      m_Patient->SetEvent(cdm::ePatient_Event_StartOfInhale, true, m_data.GetSimulationTime()); ///\todo rename "StartOfConsiousInhale"
     }
 
 
@@ -1143,9 +1145,10 @@ void Respiratory::RespiratoryDriver()
       double driverPressure_cmH2O = m_DefaultDrivePressure_cmH2O + m_PeakRespiratoryDrivePressure_cmH2O*(1.0 - exp(-((m_VentilationFrequency_Per_min + 4.0 * m_VentilatoryOcclusionPressure_cmH2O) / 10.0)*m_BreathingCycleTime_s));
       m_DriverPressure_cmH2O = driverPressure_cmH2O;
     }
-    else if (m_BreathingCycleTime_s >= driverInspirationTime_s &&  m_BreathingCycleTime_s < driverInspirationTime_s + m_dt_s) //Transition
+    else if (m_BreathingCycleTime_s >= driverInspirationTime_s &&  m_BreathingCycleTime_s < driverInspirationTime_s + m_dt_s) //Transition - only called once per cycle
     {
       m_DriverPressureMin_cmH2O = m_PeakRespiratoryDrivePressure_cmH2O*(1 - exp(-((m_VentilationFrequency_Per_min + 4.0 * m_VentilatoryOcclusionPressure_cmH2O) / 10.0)*driverInspirationTime_s));
+      m_Patient->SetEvent(cdm::ePatient_Event_StartOfExhale, true, m_data.GetSimulationTime());
     }
     else //Expiration
     {
@@ -1153,7 +1156,7 @@ void Respiratory::RespiratoryDriver()
       m_DriverPressure_cmH2O = driverPressure_cmH2O;
     }
 
-  Apnea();
+    Apnea();
 
     if (m_NotBreathing)
     {
