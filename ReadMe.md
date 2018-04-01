@@ -136,7 +136,6 @@ swapon tmpswap
 
 Read the article if you want to make this change permanent, it contains some valuable hints regarding permissions and fstab.
 
-=======
 ## Updating Pulse
 
 The Pulse repository is always changing as we add improvments and features to the code base.
