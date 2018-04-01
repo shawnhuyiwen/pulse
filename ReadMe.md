@@ -136,7 +136,6 @@ swapon tmpswap
 
 Read the article if you want to make this change permanent, it contains some valuable hints regarding permissions and fstab.
 
-<<<<<<< .merge_file_a10300
 =======
 ## Updating Pulse
 
@@ -195,7 +194,6 @@ $ chmod +x run.sh
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 <b>Please ensure CMake is on your path!</b>
 
->>>>>>> .merge_file_a06596
 ## Using Pulse
 
 With the code built, visit our [wiki](https://gitlab.kitware.com/physiology/engine/wikis/home) to learn how to execute Pulse and use our SDK to use Pulse in your own application with Pulse.
