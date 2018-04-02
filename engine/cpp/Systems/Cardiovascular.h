@@ -72,6 +72,7 @@ private:
   /**/void AdjustVascularTone();
   /**/void BeginCardiacCycle();
   /**/void CalculateHeartElastance();
+  /**/void UpdateHeartRhythm();
   // IF STABILIZING
   void TuneCircuit();
   /**/void TunePaths(double systemicResistanceScale, double systemicComplianceScale, double aortaResistanceScale, double aortaComplianceScale, double rightHeartResistanceScale, double venaCavaComplianceScale);

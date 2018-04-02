@@ -670,9 +670,8 @@ void Cardiovascular::PreProcess()
   // and do the appropriate calculations based on the time location.
   HeartDriver();
   ProcessActions();
+  UpdateHeartRhythm();
 }
-
-
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
@@ -858,27 +857,19 @@ void Cardiovascular::CalculateVitalSigns()
       m_patient->SetEvent(cdm::ePatient_Event_Bradycardia, true, m_data.GetSimulationTime());
     if (GetHeartRate().GetValue(FrequencyUnit::Per_min) > 65)
       m_patient->SetEvent(cdm::ePatient_Event_Bradycardia, false, m_data.GetSimulationTime());
-    if (GetHeartRate().GetValue(FrequencyUnit::Per_min) > 30)
-    {
-      if (GetHeartRhythm() != cdm::eHeartRhythm::Asystole)
-      {
-        m_patient->SetEvent(cdm::ePatient_Event_Asystole, false, m_data.GetSimulationTime());
-      }
-    }
-    ///\event Patient: Asystole: Heart Rate has fallen below minimum value and is being set to 0.
-    // @cite guinness2005lowest 
-    if (GetHeartRate().GetValue(FrequencyUnit::Per_min) < 27)
+    if (GetHeartRate().GetValue(FrequencyUnit::Per_min) == 0 || m_data.GetActions().GetPatientActions().HasCardiacArrest())
     {
       m_patient->SetEvent(cdm::ePatient_Event_Asystole, true, m_data.GetSimulationTime());
-      SetHeartRhythm(cdm::eHeartRhythm::Asystole);
+    }
+    else
+    {
+      m_patient->SetEvent(cdm::ePatient_Event_Asystole, false, m_data.GetSimulationTime());
     }
   }
 
   // Irreversible state if asystole persists.
   if (GetHeartRhythm() == cdm::eHeartRhythm::Asystole)
   {
-    m_patient->SetEvent(cdm::ePatient_Event_Asystole, true, m_data.GetSimulationTime());
-
     /// \event Patient: Irreversible State: heart has been in asystole for over 45 min:
     if (m_patient->GetEventDuration(cdm::ePatient_Event_Asystole, TimeUnit::s) > 2700.0) // \cite: Zijlmans2002EpilepticSeizuresAsystole
     {
@@ -1311,13 +1302,20 @@ void Cardiovascular::CalculateAndSetCPRcompressionForce()
 //--------------------------------------------------------------------------------------------------
 void Cardiovascular::CardiacArrest()
 {
-  // If there is no call for a cardiac arrest, return to ProcessActions
-  if (!m_data.GetActions().GetPatientActions().HasCardiacArrest())
-    return;
-  // Flip the cardiac arrest switch
-  // This tells the CV system that a cardiac arrest has been initiated.
-  // The cardiac arrest event will be triggered by CardiacCycleCalculations() at the end of the cardiac cycle.
-  m_EnterCardiacArrest = true;
+  if (m_data.GetActions().GetPatientActions().HasCardiacArrest())
+  {
+    // Flip the cardiac arrest switch
+    // This tells the CV system that a cardiac arrest has been initiated.
+    // The cardiac arrest event will be triggered by CardiacCycleCalculations() at the end of the cardiac cycle.
+    m_EnterCardiacArrest = true;
+    //Force a new cardiac cycle to start when cardiac arrest is removed
+    m_CurrentCardiacCycleTime_s = m_CardiacCyclePeriod_s - m_dT_s;
+  }
+  else
+  {
+    m_EnterCardiacArrest = false;
+    m_patient->SetEvent(cdm::ePatient_Event_CardiacArrest, false, m_data.GetSimulationTime());
+  }
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -1367,11 +1365,6 @@ void Cardiovascular::HeartDriver()
   if (m_StartSystole)
     BeginCardiacCycle();
 
-  // If any system set the rhythm to asystole (or other rhythms in the future) then trip the cardiac arrest flag so that we can deal with it at the top of the next cardiac cycle
-  // This prevents the heart from stopping in the middle of a contraction.
-  if (GetHeartRhythm() == cdm::eHeartRhythm::Asystole)
-    m_EnterCardiacArrest = true;
- 
   if (!m_patient->IsEventActive(cdm::ePatient_Event_CardiacArrest))
   {
     if (m_CurrentCardiacCycleTime_s >= m_CardiacCyclePeriod_s - m_dT_s)
@@ -1439,16 +1432,21 @@ void Cardiovascular::BeginCardiacCycle()
   if (m_EnterCardiacArrest)
   {
     m_patient->SetEvent(cdm::ePatient_Event_CardiacArrest, true, m_data.GetSimulationTime());
-    m_CardiacCyclePeriod_s = 1.0e9;
+    m_CardiacCyclePeriod_s = 1.0e9; // Not beating, so set the period to a large number (1.0e9 sec = 31.7 years) 
     RecordAndResetCardiacCycle();
     GetHeartRate().SetValue(0.0, FrequencyUnit::Per_min);
   }
   else
   {
     if (HeartDriverFrequency_Per_Min == 0)
-      m_CardiacCyclePeriod_s = 1.0e9; // Cannot divide by zero so set the period to a large number (1.0e9 sec = 31.7 years)      
+    {
+      m_CardiacCyclePeriod_s = 5.0; // Can't divide by 0, but we want to check this again in a while to see if we can get out of asystole
+      GetHeartRate().SetValue(0.0, FrequencyUnit::Per_min); // Will put patient into asystole
+    }
     else
+    {
       m_CardiacCyclePeriod_s = 60.0 / HeartDriverFrequency_Per_Min;
+    }
   }
 
   // Reset the systole flag and the cardiac cycle time
@@ -1923,4 +1921,25 @@ void Cardiovascular::CalculateHeartRate()
   double HeartRate_Per_s = 1.0 / (m_CurrentCardiacCycleDuration_s - m_dT_s);
   GetHeartRate().SetValue(HeartRate_Per_s * 60.0, FrequencyUnit::Per_min);
   m_CurrentCardiacCycleDuration_s = 0;
+}
+
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Determines the heart rhythm.
+///
+/// \details
+/// The heart rhythm is set to either Asystole or NormalSinus based on if the patient has an
+/// active cardiac arrest or has triggered the asystole event some other way.
+//--------------------------------------------------------------------------------------------------
+void Cardiovascular::UpdateHeartRhythm()
+{
+  if (m_data.GetActions().GetPatientActions().HasCardiacArrest() ||
+    m_patient->IsEventActive(cdm::ePatient_Event_Asystole))
+  {
+    SetHeartRhythm(cdm::eHeartRhythm::Asystole);
+  }
+  else
+  {
+    SetHeartRhythm(cdm::eHeartRhythm::NormalSinus);
+  }
 }
