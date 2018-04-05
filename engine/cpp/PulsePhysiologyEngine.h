@@ -47,7 +47,8 @@ namespace pulse {
     DEFINE_STATIC_STRING(RespiratoryAndMechanicalVentilator);
     DEFINE_STATIC_STRING(Aerosol);
     DEFINE_STATIC_STRING(AerosolAndInhaler);
-    DEFINE_STATIC_STRING(AnesthesiaMachine);         
+    DEFINE_STATIC_STRING(AerosolAndMechanicalVentilator);
+    DEFINE_STATIC_STRING(AnesthesiaMachine);
 
     static const std::vector<std::string>& GetValues()
     {
@@ -63,6 +64,7 @@ namespace pulse {
         _values.push_back(RespiratoryAndMechanicalVentilator);
         _values.push_back(Aerosol);
         _values.push_back(AerosolAndInhaler);
+        _values.push_back(AerosolAndMechanicalVentilator);
         _values.push_back(AnesthesiaMachine);
       }
       return _values;
@@ -890,7 +892,7 @@ namespace pulse {
     DEFINE_STATIC_STRING(Scrubber);
     DEFINE_STATIC_STRING(Selector);
     DEFINE_STATIC_STRING(Ventilator);
-DEFINE_STATIC_STRING(VentilatorConnection);
+    DEFINE_STATIC_STRING(VentilatorConnection);
     DEFINE_STATIC_STRING(YPiece);
 
     static const std::vector<std::string>& GetValues()
@@ -907,7 +909,7 @@ DEFINE_STATIC_STRING(VentilatorConnection);
         _values.push_back(Scrubber);
         _values.push_back(Selector);
         _values.push_back(Ventilator);
-  _values.push_back(VentilatorConnection);
+        _values.push_back(VentilatorConnection);
         _values.push_back(YPiece);
       }
       return _values;

@@ -13,6 +13,7 @@ SEFluidCompartmentLink<FLUID_COMPARTMENT_LINK_TYPES>::SEFluidCompartmentLink(Com
 {
   m_Flow = nullptr;
   m_Path = nullptr;
+  
 }
 template<FLUID_COMPARTMENT_LINK_TEMPLATE>
 SEFluidCompartmentLink<FLUID_COMPARTMENT_LINK_TYPES>::~SEFluidCompartmentLink()
@@ -78,6 +79,21 @@ const SEScalar* SEFluidCompartmentLink<FLUID_COMPARTMENT_LINK_TYPES>::GetScalar(
 }
 
 template<FLUID_COMPARTMENT_LINK_TEMPLATE>
+bool SEFluidCompartmentLink<FLUID_COMPARTMENT_LINK_TYPES>::HasCompliance() const
+{
+  if (m_Path != nullptr)
+    return m_Path->HasNextCompliance();
+  return false;
+}
+template<FLUID_COMPARTMENT_LINK_TEMPLATE>
+double SEFluidCompartmentLink<FLUID_COMPARTMENT_LINK_TYPES>::GetCompliance(const FlowComplianceUnit& unit) const
+{
+  if (m_Path != nullptr)
+    return m_Path->GetNextCompliance(unit);
+  return SEScalar::dNaN();
+}
+
+template<FLUID_COMPARTMENT_LINK_TEMPLATE>
 bool SEFluidCompartmentLink<FLUID_COMPARTMENT_LINK_TYPES>::HasFlow() const
 {
   if (m_Path != nullptr)
@@ -101,4 +117,20 @@ double SEFluidCompartmentLink<FLUID_COMPARTMENT_LINK_TYPES>::GetFlow(const Volum
   if (m_Flow == nullptr)
     return SEScalar::dNaN();
   return m_Flow->GetValue(unit);
+}
+
+
+template<FLUID_COMPARTMENT_LINK_TEMPLATE>
+bool SEFluidCompartmentLink<FLUID_COMPARTMENT_LINK_TYPES>::HasResistance() const
+{
+  if (m_Path != nullptr)
+    return m_Path->HasNextResistance();
+  return false;
+}
+template<FLUID_COMPARTMENT_LINK_TEMPLATE>
+double SEFluidCompartmentLink<FLUID_COMPARTMENT_LINK_TYPES>::GetResistance(const FlowResistanceUnit& unit) const
+{
+  if (m_Path != nullptr)
+    return m_Path->GetNextResistance(unit);
+  return SEScalar::dNaN();
 }

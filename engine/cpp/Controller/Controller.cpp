@@ -4293,6 +4293,8 @@ void PulseController::SetupMechanicalVentilator()
   /////////////////////// Circuit Interdependencies
   SEFluidCircuit& cRespiratory = m_Circuits->GetRespiratoryCircuit();
   SEGasCompartmentGraph& gRespiratory = m_Compartments->GetRespiratoryGraph();
+  SELiquidCompartmentGraph& lRespiratory = m_Compartments->GetAerosolGraph();
+  SELiquidCompartmentGraph& lAerosol = m_Compartments->GetAerosolGraph();
   ///////////////////////
 
   //Combined Respiratory and Mechanical Ventilator Circuit
@@ -4305,10 +4307,10 @@ void PulseController::SetupMechanicalVentilator()
   SEFluidCircuitNode& Connection = m_CombinedMechanicalVentilator.CreateNode(pulse::MechanicalVentilatorNode::Connection);
   Connection.GetPressure().Set(Ambient.GetPressure());
   Connection.GetNextPressure().Set(Ambient.GetNextPressure());
-  // No connection volume, so volume fractions work properly
+  Connection.GetVolumeBaseline().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::L);
   // Paths
   SEFluidCircuitPath& ConnectionToMouth = m_CombinedMechanicalVentilator.CreatePath(Connection, Mouth, pulse::MechanicalVentilatorPath::ConnectionToMouth);
-  ConnectionToMouth.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::L_Per_s);
+  //ConnectionToMouth.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::L_Per_s); //We add this on the fly, it can only be there when explicitly set
   SEFluidCircuitPath& GroundToConnection = m_CombinedMechanicalVentilator.CreatePath(Ambient, Connection, pulse::MechanicalVentilatorPath::GroundToConnection);
   GroundToConnection.GetPressureSourceBaseline().SetValue(0.0, PressureUnit::cmH2O);
   m_CombinedMechanicalVentilator.RemovePath(pulse::RespiratoryPath::EnvironmentToMouth);
@@ -4334,6 +4336,26 @@ void PulseController::SetupMechanicalVentilator()
   gCombinedMechanicalVentilator.AddCompartment(gConnection);
   gCombinedMechanicalVentilator.AddLink(gConnectionToMouth);
   gCombinedMechanicalVentilator.StateChange();
+
+  ///////////////////////////////////
+  // LIQUID (AEROSOL) COMPARTMENTS //
+  SELiquidCompartment* lMouth = m_Compartments->GetLiquidCompartment(pulse::PulmonaryCompartment::Mouth);
+  //////////////////
+  // Compartments //
+  SELiquidCompartment& lConnection = m_Compartments->CreateLiquidCompartment(pulse::MechanicalVentilatorCompartment::Connection);
+  lConnection.MapNode(Connection);
+  ///////////
+  // Links //  
+  SELiquidCompartmentLink& lConnectionToMouth = m_Compartments->CreateLiquidLink(lConnection, *lMouth, pulse::MechanicalVentilatorLink::ConnectionToMouth);
+  lConnectionToMouth.MapPath(ConnectionToMouth);
+  ///////////
+  // Graph //
+  SELiquidCompartmentGraph& lCombinedMechanicalVentilator = m_Compartments->GetAerosolAndMechanicalVentilatorGraph();
+  lCombinedMechanicalVentilator.AddGraph(lAerosol);
+  lCombinedMechanicalVentilator.RemoveLink(pulse::PulmonaryLink::EnvironmentToMouth);
+  lCombinedMechanicalVentilator.AddCompartment(lConnection);
+  lCombinedMechanicalVentilator.AddLink(lConnectionToMouth);
+  lCombinedMechanicalVentilator.StateChange();
 }
 
 void PulseController::SetupExternalTemperature()

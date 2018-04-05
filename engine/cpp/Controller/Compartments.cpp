@@ -1,12 +1,9 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
+#include "std_pulse.h"
+#include "Controller/Controller.h"
 #include "Controller/Compartments.h"
-#include "Controller/Substances.h"
-#include "PulseConfiguration.h"
-
-#include "substance/SESubstance.h"
 #include "compartment/fluid/SEGasCompartment.h"
 #include "compartment/fluid/SEGasCompartmentLink.h"
 #include "compartment/fluid/SEGasCompartmentGraph.h"
@@ -62,6 +59,7 @@ void PulseCompartments::Clear()
   m_AnesthesiaMachineGraph = nullptr;
   m_CombinedRespiratoryAnesthesiaGraph = nullptr;
   m_CombinedRespiratoryInhalerGraph = nullptr;
+  m_CombinedAerosolMechanicalVentilatorGraph = nullptr;
   m_CombinedRespiratoryMechanicalVentilatorGraph = nullptr;
   m_AerosolGraph = nullptr;
   m_CombinedAerosolInhalerGraph = nullptr;
@@ -88,6 +86,8 @@ void PulseCompartments::Clear()
   m_InhalerAerosolLeafCompartments.clear(); 
   m_MechanicalVentilatorCompartments.clear();
   m_MechanicalVentilatorLeafCompartments.clear();
+  m_MechanicalVentilatorAerosolCompartments.clear();
+  m_MechanicalVentilatorAerosolLeafCompartments.clear();
 
   m_ExtracellularFluid.clear();
   m_IntracellularFluid.clear();
@@ -147,9 +147,23 @@ void PulseCompartments::StateChange()
   // Equipment
   SORT_CMPTS(AnesthesiaMachine, Gas);
   SORT_CMPTS(Inhaler, Gas);
+  SORT_CMPTS(MechanicalVentilator, Gas);
 
-  // Aerosol liquid cmpts share the same names as the pulmonary gas compartments,
-  // so the macro does not work with us
+  m_AerosolCompartments.clear(); 
+  m_AerosolLeafCompartments.clear(); 
+  for (const std::string& name : pulse::PulmonaryCompartment::GetValues()) 
+  {
+    SELiquidCompartment* cmpt = GetLiquidCompartment(name); 
+    if (cmpt == nullptr) 
+    { 
+      Warning("Could not find expected Aerosol compartment, " + name + " in compartment manager"); 
+      continue; 
+    } 
+    m_AerosolCompartments.push_back(cmpt); 
+    if (!cmpt->HasChildren()) 
+      m_AerosolLeafCompartments.push_back(cmpt); 
+  }
+
   m_InhalerAerosolCompartments.clear();
   m_InhalerAerosolLeafCompartments.clear();
   for (const std::string& name : pulse::InhalerCompartment::GetValues())
@@ -165,22 +179,20 @@ void PulseCompartments::StateChange()
       m_InhalerAerosolLeafCompartments.push_back(cmpt);
   }
 
-  m_AerosolCompartments.clear(); 
-  m_AerosolLeafCompartments.clear(); 
-  for (const std::string& name : pulse::PulmonaryCompartment::GetValues()) 
-  { 
-    SELiquidCompartment* cmpt = GetLiquidCompartment(name); 
-    if (cmpt == nullptr) 
-    { 
-      Warning("Could not find expected Aerosol compartment, " + name + " in compartment manager"); 
-      continue; 
-    } 
-    m_AerosolCompartments.push_back(cmpt); 
-    if (!cmpt->HasChildren()) 
-      m_AerosolLeafCompartments.push_back(cmpt); 
-  } 
-
-  SORT_CMPTS(MechanicalVentilator, Gas);
+  m_MechanicalVentilatorAerosolCompartments.clear();
+  m_MechanicalVentilatorAerosolLeafCompartments.clear();
+  for (const std::string& name : pulse::MechanicalVentilatorCompartment::GetValues())
+  {
+    SELiquidCompartment* cmpt = GetLiquidCompartment(name);
+    if (cmpt == nullptr)
+    {
+      Warning("Could not find expected Aerosol compartment, " + name + " in compartment manager");
+      continue;
+    }
+    m_MechanicalVentilatorAerosolCompartments.push_back(cmpt);
+    if (!cmpt->HasChildren())
+      m_MechanicalVentilatorAerosolLeafCompartments.push_back(cmpt);
+  }
 
   // \todo Write some code to cross check compartments between what we have and what we should have
   // Here is some code to make sure all created compartments are in an enum
@@ -238,6 +250,11 @@ void PulseCompartments::StateChange()
   {
     Error("Could not find required Graph " + std::string(pulse::Graph::RespiratoryAndMechanicalVentilator));
   }
+  m_CombinedAerosolMechanicalVentilatorGraph = GetLiquidGraph(pulse::Graph::AerosolAndMechanicalVentilator);
+  if (m_CombinedAerosolMechanicalVentilatorGraph == nullptr)
+  {
+    Error("Could not find required Graph " + std::string(pulse::Graph::AerosolAndMechanicalVentilator));
+  }
 }
 
 void PulseCompartments::AddGasCompartmentSubstance(SESubstance& sub)
@@ -270,6 +287,9 @@ bool PulseCompartments::AllowLiquidSubstance(SESubstance& s, SELiquidCompartment
     // Don't add it to aerosol cmpts either
     const std::vector<std::string>& i = pulse::InhalerCompartment::GetValues();
     if (std::find(i.begin(), i.end(), cmpt.GetName()) != i.end())
+      return false;
+    const std::vector<std::string>& mv = pulse::MechanicalVentilatorCompartment::GetValues();
+    if (std::find(mv.begin(), mv.end(), cmpt.GetName()) != mv.end())
       return false;
   }
   return true;
@@ -351,12 +371,16 @@ SELiquidCompartmentGraph& PulseCompartments::GetActiveAerosolGraph()
   switch (m_data.GetAirwayMode())
   {
   case pulse::eAirwayMode::Free:
-  case pulse::eAirwayMode::AnesthesiaMachine:
-  case pulse::eAirwayMode::MechanicalVentilator:// Just use the regular graph
+  case pulse::eAirwayMode::AnesthesiaMachine:// Just use the regular graph
     if (m_UpdateActiveAerosolGraph)
       m_data.GetCompartments().UpdateLinks(*m_AerosolGraph);
     m_UpdateActiveAerosolGraph = false;
     return *m_AerosolGraph;
+  case pulse::eAirwayMode::MechanicalVentilator:
+    if (m_UpdateActiveAerosolGraph)
+      m_data.GetCompartments().UpdateLinks(*m_CombinedAerosolMechanicalVentilatorGraph);
+    m_UpdateActiveAerosolGraph = true;
+    return *m_CombinedAerosolMechanicalVentilatorGraph;
   case pulse::eAirwayMode::Inhaler:
     if (m_UpdateActiveAerosolGraph)
       m_data.GetCompartments().UpdateLinks(*m_CombinedAerosolInhalerGraph);
@@ -384,4 +408,10 @@ SEGasCompartmentGraph& PulseCompartments::GetRespiratoryAndMechanicalVentilatorG
   if (m_CombinedRespiratoryMechanicalVentilatorGraph == nullptr)
     m_CombinedRespiratoryMechanicalVentilatorGraph = &CreateGasGraph(pulse::Graph::RespiratoryAndMechanicalVentilator);
   return *m_CombinedRespiratoryMechanicalVentilatorGraph;
+}
+SELiquidCompartmentGraph& PulseCompartments::GetAerosolAndMechanicalVentilatorGraph()
+{
+  if (m_CombinedAerosolMechanicalVentilatorGraph == nullptr)
+    m_CombinedAerosolMechanicalVentilatorGraph = &CreateLiquidGraph(pulse::Graph::AerosolAndMechanicalVentilator);
+  return *m_CombinedAerosolMechanicalVentilatorGraph;
 }

@@ -8,14 +8,13 @@ import java.util.List;
 import com.kitware.physiology.cdm.PatientActions.MechanicalVentilationData;
 import com.kitware.physiology.cdm.Enums.eSwitch;
 import com.kitware.physiology.cdm.Substance.SubstanceData;
-import com.kitware.physiology.cdm.SubstanceEnums.eSubstance;
 
 import mil.tatrc.physiology.utilities.Log;
 import mil.tatrc.physiology.datamodel.properties.*;
 import mil.tatrc.physiology.datamodel.substance.SESubstance;
+import mil.tatrc.physiology.datamodel.substance.SESubstanceConcentration;
 import mil.tatrc.physiology.datamodel.substance.SESubstanceFractionAmount;
 import mil.tatrc.physiology.datamodel.substance.SESubstanceManager;
-import mil.tatrc.physiology.datamodel.system.SESystem;
 import mil.tatrc.physiology.utilities.DoubleUtils;
 
 public class SEMechanicalVentilation extends SEPatientAction
@@ -25,6 +24,7 @@ public class SEMechanicalVentilation extends SEPatientAction
   protected eSwitch               state;
 
   protected List<SESubstanceFractionAmount>  gasFractions;
+  protected List<SESubstanceConcentration>   aerosols;
 
   public SEMechanicalVentilation()
   {
@@ -37,6 +37,7 @@ public class SEMechanicalVentilation extends SEPatientAction
     pressure = null;
     state = eSwitch.Off;
     this.gasFractions=new ArrayList<SESubstanceFractionAmount>();
+    this.aerosols=new ArrayList<SESubstanceConcentration>();
   }
 
   public void reset()
@@ -47,6 +48,7 @@ public class SEMechanicalVentilation extends SEPatientAction
     if (pressure != null)
       pressure.invalidate();
     this.gasFractions.clear();
+    this.aerosols.clear();
   }
 
   public void copy(SEMechanicalVentilation from)
@@ -67,6 +69,17 @@ public class SEMechanicalVentilation extends SEPatientAction
         mine=this.createGasFraction(sf.getSubstance());
         if(sf.hasAmount())
           mine.getAmount().set(sf.getAmount());
+      }
+    }   
+    
+    if(from.aerosols!=null)
+    {
+      SESubstanceConcentration mine;
+      for(SESubstanceConcentration sc : from.aerosols)
+      {
+        mine=this.createAerosol(sc.getSubstance());
+        if(sc.hasConcentration())
+          mine.getConcentration().set(sc.getConcentration());
       }
     }    
   }
@@ -119,7 +132,7 @@ public class SEMechanicalVentilation extends SEPatientAction
       {
         Log.error("Substance does not exist : "+subData.getName());
       }
-      if(sub.getState() != eSubstance.State.Gas)
+      if(sub.getState() != SubstanceData.eState.Gas)
       {
         Log.error("Gas Fraction substance must be a gas, "+subData.getName()+" is not a gas...");
       }
@@ -225,6 +238,54 @@ public class SEMechanicalVentilation extends SEPatientAction
     }  
   }
 
+  public SESubstanceConcentration createAerosol(SESubstance substance)
+  {
+    return getAerosol(substance);
+  }
+  public SESubstanceConcentration getAerosol(SESubstance substance)
+  {
+    for(SESubstanceConcentration sc : this.aerosols)
+    {
+      if(sc.getSubstance().getName().equals(substance.getName()))
+      {        
+        return sc;
+      }
+    }    
+    SESubstanceConcentration sc = new SESubstanceConcentration(substance);    
+    this.aerosols.add(sc);
+    return sc;
+  }
+  public boolean hasAerosol()
+  {
+    return !this.aerosols.isEmpty();
+  }
+  public boolean hasAerosol(SESubstance substance)
+  {
+    for(SESubstanceConcentration sc : this.aerosols)
+    {
+      if(sc.getSubstance()==substance)
+      {        
+        return true;
+      }
+    }
+    return false;
+  }
+  public List<SESubstanceConcentration> getAerosol()
+  {
+    return this.aerosols;
+  }
+  public void removeAerosol(SESubstance substance)
+  {
+    for(SESubstanceConcentration sc : this.aerosols)
+    {
+      if(sc.getSubstance()==substance)
+      {
+        this.aerosols.remove(sc);
+        return;
+      }
+    }  
+  }
+  
   public String toString()
   {
     String cnts = "Mechanical Ventilation"
@@ -233,6 +294,8 @@ public class SEMechanicalVentilation extends SEPatientAction
         + "\n\tPressure: " + (hasPressure() ? getPressure() : "Not Provided");
     for(SESubstanceFractionAmount sf : this.gasFractions)
       cnts += "\n\tSubstanceFraction: " + sf.getSubstance().getName() + " : " + sf.getAmount();
+    for(SESubstanceConcentration sc : this.aerosols)
+        cnts += "\n\tSubstanceConcentration: " + sc.getSubstance().getName() + " : " + sc.getConcentration();
     
     return cnts;
   }

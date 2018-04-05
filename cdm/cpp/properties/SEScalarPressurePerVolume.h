@@ -16,6 +16,7 @@ public:
 
   static const PressurePerVolumeUnit mmHg_Per_mL;
   static const PressurePerVolumeUnit cmH2O_Per_mL;
+  static const PressurePerVolumeUnit cmH2O_Per_L;
 };
 
 class CDM_DECL SEScalarPressurePerVolume : public SEScalarQuantity<PressurePerVolumeUnit>
