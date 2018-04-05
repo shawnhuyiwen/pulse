@@ -99,16 +99,7 @@ public class Rebase
 					continue;
 				}
 				if(!job.PlottableResults)
-					continue;// Nothing to plot/compare, nothing to zip
-				
-				result_files.clear();
-				for(String j : job.computedFiles)
-				{
-				  result_files.add(j.replaceAll(".csv", ".txt"));
-				}
-				job.computedFiles.clear();
-				job.computedFiles.addAll(result_files);
-				
+					continue;// Nothing to plot/compare, nothing to zip			
 				
 				log_file = "";
 				scenario_file = "";
@@ -132,6 +123,7 @@ public class Rebase
 					log_file = result_files.get(0).replaceAll("Results"+SETestConfiguration.ext, ".log");   
 					result_files.add(log_file);
 					result_files.add(scenario_file);
+Log.info("Adding scenario file"+scenario_file);
 				}    	
 				else
 				{
@@ -157,6 +149,7 @@ public class Rebase
 				}
 				try
 				{
+                                        Log.info("Creating "+rPath);
 					FileUtils.createDirectory(rPath);
 				} 
 				catch (IOException ex)
