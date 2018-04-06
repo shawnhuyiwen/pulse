@@ -539,7 +539,7 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action, cdm
         m_Substances.AddActiveSubstance(scc->GetSubstance());
       }
     }
-    auto* copy = SESubstanceCompoundInfusion::Unload(*mySubCompInfuse);
+    auto* copy = SESubstanceCompoundInfusion::Unload(*cSubInfusion);
     SESubstanceCompoundInfusion::Load(*copy, *mySubCompInfuse);
     (any != nullptr) ? any->set_allocated_substancecompoundinfusion(copy) : delete copy;
     if (!mySubCompInfuse->IsActive())
