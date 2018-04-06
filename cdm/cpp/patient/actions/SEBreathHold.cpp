@@ -67,6 +67,12 @@ SEScalarTime& SEBreathHold::GetPeriod()
     m_Period = new SEScalarTime();
   return *m_Period;
 }
+double SEBreathHold::GetPeriod(const TimeUnit& unit) const
+{
+  if (m_Period == nullptr)
+    return SEScalar::dNaN();
+  return m_Period->GetValue(unit);
+}
 
 void SEBreathHold::ToString(std::ostream &str) const
 {

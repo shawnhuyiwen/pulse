@@ -61,6 +61,6 @@ void SECardiacArrest::ToString(std::ostream &str) const
   str << "Patient Action : Cardiac Arrest";
   if (HasComment())
     str << "\n\tComment: " << m_Comment;
-  str << "\n\tState: " << m_State;
+  str << "\n\tState: " << cdm::eSwitch_Name(m_State);;
   str << std::flush;
 }

@@ -28,9 +28,9 @@ PULSE_BIND_DECL(CardiovascularSystemData)
 * with other systems, if alterations are made to the cardiovascular system then the feedback will be felt in the other physiologic systems.
 *
 */
-class PULSE_DECL Cardiovascular : public SECardiovascularSystem, public PulseSystem
+class PULSE_DECL Cardiovascular : public SECardiovascularSystem, public PulseCardiovascularSystem, public PulseSystem
 {
-  friend PulseController;
+  friend class PulseController;
   friend class PulseEngineTest;
 protected:
   Cardiovascular(PulseController& data);
@@ -41,25 +41,21 @@ public:
 
   void Clear();
 
-  // Set members to a stable homeostatic state
-  void Initialize();
-
   static void Load(const pulse::CardiovascularSystemData& src, Cardiovascular& dst);
   static pulse::CardiovascularSystemData* Unload(const Cardiovascular& src);
 protected:
   static void Serialize(const pulse::CardiovascularSystemData& src, Cardiovascular& dst);
   static void Serialize(const Cardiovascular& src, pulse::CardiovascularSystemData& dst);
 
+  // Set members to a stable homeostatic state
+  void Initialize();
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
   void SetUp();
 
-public:
   void AtSteadyState();
   void PreProcess();
   void Process();
   void PostProcess();
-
-private:
 
   //Condition Methods
   void ChronicRenalStenosis();

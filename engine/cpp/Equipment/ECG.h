@@ -12,9 +12,9 @@ PULSE_BIND_DECL(ElectroCardioGramData)
 * @brief 
 * Generic ECG machine to assess the heart rhythm.
 */
-class PULSE_DECL ECG : public SEElectroCardioGram, public PulseSystem
+class PULSE_DECL ECG : public SEElectroCardioGram, public PulseElectroCardioGram, public PulseSystem
 {
-  friend PulseController;
+  friend class PulseController;
   friend class PulseEngineTest;
 protected:
   ECG(PulseController& pc);
@@ -25,26 +25,22 @@ public:
 
   void Clear();
 
-  // Set members to a stable homeostatic state
-  void Initialize();
-
   static void Load(const pulse::ElectroCardioGramData& src, ECG& dst);
   static pulse::ElectroCardioGramData* Unload(const ECG& src);
 protected:
   static void Serialize(const pulse::ElectroCardioGramData& src, ECG& dst);
   static void Serialize(const ECG& src, pulse::ElectroCardioGramData& dst);
 
+  // Set members to a stable homeostatic state
+  void Initialize();
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
   void SetUp();
-
-public:
 
   // main driver function responsible for calling the various ECG functions:
   void PreProcess();
   void Process();
   void PostProcess();
 
-protected:
   // Serializable member variables (Set in Initialize and in schema)
   double m_heartRhythmTime_s;
   double m_heartRhythmPeriod_s;

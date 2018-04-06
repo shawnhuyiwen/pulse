@@ -75,6 +75,12 @@ SEScalar0To1& SEChestCompressionForceScale::GetForceScale()
     m_ForceScale = new SEScalar0To1();
   return *m_ForceScale;
 }
+double SEChestCompressionForceScale::GetForceScale() const
+{
+  if (m_ForceScale == nullptr)
+    return SEScalar::dNaN();
+  return m_ForceScale->GetValue();
+}
 
 bool SEChestCompressionForceScale::HasForcePeriod() const
 {
@@ -85,6 +91,12 @@ SEScalarTime& SEChestCompressionForceScale::GetForcePeriod()
   if (m_ForcePeriod == nullptr)
     m_ForcePeriod = new SEScalarTime();
   return *m_ForcePeriod;
+}
+double SEChestCompressionForceScale::GetForcePeriod(const TimeUnit& unit) const
+{
+  if (m_ForcePeriod == nullptr)
+    return SEScalar::dNaN();
+  return m_ForcePeriod->GetValue(unit);
 }
 
 void SEChestCompressionForceScale::ToString(std::ostream &str) const

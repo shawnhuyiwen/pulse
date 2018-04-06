@@ -596,7 +596,7 @@ protected:
   SEScalarPressure*        m_CentralControllerCO2PressureSetPoint;
   SEScalar*                m_CentralVentilatoryControllerGain;
   SEScalarTime*            m_MinimumAllowableInpiratoryAndExpiratoryPeriod;
-  SEScalarVolume*          m_MinimumAllowableTidalVolume
+  SEScalarVolume*          m_MinimumAllowableTidalVolume;
   SEScalarPressure*        m_PeripheralControllerCO2PressureSetPoint;
   SEScalar*                m_PeripheralVentilatoryControllerGain;
   SEScalarInverseVolume*   m_PleuralComplianceSensitivity;

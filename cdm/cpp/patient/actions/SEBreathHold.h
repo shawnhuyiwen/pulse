@@ -28,6 +28,7 @@ public:
 
   virtual bool HasPeriod() const;
   virtual SEScalarTime& GetPeriod();
+  virtual double GetPeriod(const TimeUnit& unit) const;
 
   virtual void ToString(std::ostream &str) const;
 protected:

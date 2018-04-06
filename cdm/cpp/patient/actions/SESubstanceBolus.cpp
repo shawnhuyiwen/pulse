@@ -23,7 +23,6 @@ SESubstanceBolus::~SESubstanceBolus()
   Clear();
 }
 
-
 void SESubstanceBolus::Clear()
 {
   SESubstanceAdministration::Clear();
@@ -97,7 +96,12 @@ SEScalarVolume& SESubstanceBolus::GetDose()
     m_Dose=new SEScalarVolume();
   return *m_Dose;
 }
-
+double SESubstanceBolus::GetDose(const VolumeUnit& unit) const
+{
+  if (m_Dose == nullptr)
+    return SEScalar::dNaN();
+  return m_Dose->GetValue(unit);
+}
 
 bool SESubstanceBolus::HasConcentration() const
 {
@@ -109,8 +113,18 @@ SEScalarMassPerVolume& SESubstanceBolus::GetConcentration()
     m_Concentration=new SEScalarMassPerVolume();
   return *m_Concentration;
 }
+double SESubstanceBolus::GetConcentration(const MassPerVolumeUnit& unit) const
+{
+  if (m_Concentration == nullptr)
+    return SEScalar::dNaN();
+  return m_Concentration->GetValue(unit);
+}
 
-SESubstance& SESubstanceBolus::GetSubstance() const
+SESubstance& SESubstanceBolus::GetSubstance()
+{
+  return (SESubstance&)m_Substance;
+}
+const SESubstance& SESubstanceBolus::GetSubstance() const
 {
   return (SESubstance&)m_Substance;
 }

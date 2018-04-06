@@ -65,12 +65,17 @@ bool SEAirwayObstruction::HasSeverity() const
 {
   return m_Severity==nullptr?false:m_Severity->IsValid();
 }
-
 SEScalar0To1& SEAirwayObstruction::GetSeverity()
 {
   if(m_Severity==nullptr)
     m_Severity=new SEScalar0To1();
   return *m_Severity;
+}
+double SEAirwayObstruction::GetSeverity() const
+{
+  if (m_Severity == nullptr)
+    return SEScalar::dNaN();
+  return m_Severity->GetValue();
 }
 
 void SEAirwayObstruction::ToString(std::ostream &str) const

@@ -29,7 +29,8 @@ protected:
 public:
 
   virtual bool HasSeverity() const;
-  virtual SEScalar0To1& GetSeverity();  
+  virtual SEScalar0To1& GetSeverity();
+  virtual double GetSeverity() const;
 
   virtual cdm::eBrainInjury_Type GetType() const;
   virtual void SetType(cdm::eBrainInjury_Type t);

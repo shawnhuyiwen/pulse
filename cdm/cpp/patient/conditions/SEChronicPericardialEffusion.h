@@ -27,6 +27,7 @@ public:
 
   virtual bool HasAccumulatedVolume() const;
   virtual SEScalarVolume& GetAccumulatedVolume();
+  virtual double GetAccumulatedVolume(const VolumeUnit& unit) const;
 
   virtual void ToString(std::ostream &str) const;
 

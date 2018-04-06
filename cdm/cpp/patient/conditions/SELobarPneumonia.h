@@ -26,13 +26,16 @@ public:
   virtual std::string GetName() const { return "LobarPneumonia"; }
 
   virtual bool HasSeverity() const;
-  virtual SEScalar0To1& GetSeverity();  
+  virtual SEScalar0To1& GetSeverity();
+  virtual double GetSeverity() const;
 
   virtual bool HasLeftLungAffected() const;
   virtual SEScalar0To1& GetLeftLungAffected();
+  virtual double GetLeftLungAffected() const;
 
   virtual bool HasRightLungAffected() const;
   virtual SEScalar0To1& GetRightLungAffected();
+  virtual double GetRightLungAffected() const;
 
   virtual void ToString(std::ostream &str) const;
 

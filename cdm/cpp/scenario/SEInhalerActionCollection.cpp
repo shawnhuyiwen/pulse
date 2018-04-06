@@ -32,15 +32,16 @@ void SEInhalerActionCollection::Serialize(const SEInhalerActionCollection& src, 
     dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_Configuration));
 }
 
-bool SEInhalerActionCollection::ProcessAction(const SEInhalerAction& action, cdm::AnyInhalerActionData& any)
+bool SEInhalerActionCollection::ProcessAction(const SEInhalerAction& action, cdm::AnyInhalerActionData* any)
 {
   const SEInhalerConfiguration* config = dynamic_cast<const SEInhalerConfiguration*>(&action);
   if (config != nullptr)
   {
     if (m_Configuration == nullptr)
       m_Configuration = new SEInhalerConfiguration(m_Substances);
-    any.set_allocated_configuration(SEInhalerConfiguration::Unload(*config));
-    SEInhalerConfiguration::Load(any.configuration(), *m_Configuration);
+    auto* copy = SEInhalerConfiguration::Unload(*config);
+    SEInhalerConfiguration::Load(*copy, *m_Configuration);
+    (any != nullptr) ? any->set_allocated_configuration(copy) : delete copy;
     if (!m_Configuration->IsActive())
       RemoveConfiguration();
     return true;
@@ -55,7 +56,11 @@ bool SEInhalerActionCollection::HasConfiguration() const
 {
   return m_Configuration == nullptr ? false : true;
 }
-SEInhalerConfiguration* SEInhalerActionCollection::GetConfiguration() const
+SEInhalerConfiguration* SEInhalerActionCollection::GetConfiguration()
+{
+  return m_Configuration;
+}
+const SEInhalerConfiguration* SEInhalerActionCollection::GetConfiguration() const
 {
   return m_Configuration;
 }

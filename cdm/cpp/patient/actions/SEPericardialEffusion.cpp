@@ -62,12 +62,17 @@ bool SEPericardialEffusion::HasEffusionRate() const
 {
   return m_EffusionRate == nullptr ? false : m_EffusionRate->IsValid();
 }
-
 SEScalarVolumePerTime& SEPericardialEffusion::GetEffusionRate()
 {
   if (m_EffusionRate == nullptr)
     m_EffusionRate = new SEScalarVolumePerTime();
   return *m_EffusionRate;
+}
+double SEPericardialEffusion::GetEffusionRate(const VolumePerTimeUnit& unit) const
+{
+  if (m_EffusionRate == nullptr)
+    return SEScalar::dNaN();
+  return m_EffusionRate->GetValue(unit);
 }
 
 void SEPericardialEffusion::ToString(std::ostream &str) const

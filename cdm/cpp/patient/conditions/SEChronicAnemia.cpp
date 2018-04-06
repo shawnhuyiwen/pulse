@@ -64,6 +64,12 @@ SEScalar0To1& SEChronicAnemia::GetReductionFactor()
     m_ReductionFactor=new SEScalar0To1();
   return *m_ReductionFactor;
 }
+double SEChronicAnemia::GetReductionFactor() const
+{
+  if (m_ReductionFactor == nullptr)
+    return SEScalar::dNaN();
+  return m_ReductionFactor->GetValue();
+}
 
 void SEChronicAnemia::ToString(std::ostream &str) const
 {

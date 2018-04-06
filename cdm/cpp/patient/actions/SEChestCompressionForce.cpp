@@ -62,12 +62,17 @@ bool SEChestCompressionForce::HasForce() const
 {
   return m_Force == nullptr ? false : m_Force->IsValid();
 }
-
 SEScalarForce& SEChestCompressionForce::GetForce()
 {
   if (m_Force == nullptr)
     m_Force = new SEScalarForce();
   return *m_Force;
+}
+double SEChestCompressionForce::GetForce(const ForceUnit& unit) const
+{
+  if (m_Force == nullptr)
+    return SEScalar::dNaN();
+  return m_Force->GetValue(unit);
 }
 
 void SEChestCompressionForce::ToString(std::ostream &str) const

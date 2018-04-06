@@ -28,11 +28,14 @@ public:
 
   virtual bool HasBagVolume() const;
   virtual SEScalarVolume& GetBagVolume();
+  virtual double GetBagVolume(const VolumeUnit& unit) const;
 
   virtual bool HasRate() const;
-  virtual SEScalarVolumePerTime& GetRate();  
+  virtual SEScalarVolumePerTime& GetRate();
+  virtual double GetRate(const VolumePerTimeUnit& unit) const;
 
-  virtual SESubstanceCompound& GetSubstanceCompound() const;
+  virtual SESubstanceCompound& GetSubstanceCompound();
+  virtual const SESubstanceCompound& GetSubstanceCompound() const;
 
   virtual void ToString(std::ostream &str) const;
 

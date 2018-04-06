@@ -17,9 +17,9 @@ PULSE_BIND_DECL(EnergySystemData)
 /**
  * @brief @copydoc Physiology_EnergySystemData
  */  
-class PULSE_DECL Energy : public SEEnergySystem, public PulseSystem
+class PULSE_DECL Energy : public SEEnergySystem, public PulseEnergySystem, public PulseSystem
 {
-  friend PulseController;
+  friend class PulseController;
   friend class PulseEngineTest;
 protected:
   Energy(PulseController& data);
@@ -30,25 +30,21 @@ public:
 
   void Clear();
 
-  // Set members to a stable homeostatic state
-  void Initialize();
-
   static void Load(const pulse::EnergySystemData& src, Energy& dst);
   static pulse::EnergySystemData* Unload(const Energy& src);
 protected:
   static void Serialize(const pulse::EnergySystemData& src, Energy& dst);
   static void Serialize(const Energy& src, pulse::EnergySystemData& dst);
 
+  // Set members to a stable homeostatic state
+  void Initialize();
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
   void SetUp();
 
-public:
   void AtSteadyState();
   void PreProcess();
   void Process();
   void PostProcess();
-
-private:
 
   // Preprocess Methods
   void CalculateMetabolicHeatGeneration();

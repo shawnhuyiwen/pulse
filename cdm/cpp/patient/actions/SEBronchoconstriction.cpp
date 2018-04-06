@@ -69,6 +69,12 @@ SEScalar0To1& SEBronchoconstriction::GetSeverity()
     m_Severity=new SEScalar0To1();
   return *m_Severity;
 }
+double SEBronchoconstriction::GetSeverity() const
+{
+  if (m_Severity == nullptr)
+    return SEScalar::dNaN();
+  return m_Severity->GetValue();
+}
 
 void SEBronchoconstriction::ToString(std::ostream &str) const
 {

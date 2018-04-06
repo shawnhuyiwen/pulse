@@ -26,9 +26,11 @@ public:
 
   virtual bool HasForceScale() const;
   virtual SEScalar0To1& GetForceScale();
+  virtual double GetForceScale() const;
 
   virtual bool HasForcePeriod() const;
   virtual SEScalarTime& GetForcePeriod();
+  virtual double GetForcePeriod(const TimeUnit& unit) const;
 
   virtual void ToString(std::ostream &str) const;
 

@@ -9,9 +9,9 @@ PULSE_BIND_DECL(NervousSystemData)
  * @brief 
  * The nervous class holds models of the peripheral and central nervous system. Currently, on the baroreceptor reflex is modeled.
  */  
-class PULSE_DECL Nervous : public SENervousSystem, public PulseSystem
+class PULSE_DECL Nervous : public SENervousSystem, public PulseNervousSystem, public PulseSystem
 {
-  friend PulseController;
+  friend class PulseController;
   friend class PulseEngineTest;
 protected:
   Nervous(PulseController& data);
@@ -22,25 +22,22 @@ public:
 
   void Clear();
 
-  // Set members to a stable homeostatic state
-  void Initialize();
-
   static void Load(const pulse::NervousSystemData& src, Nervous& dst);
   static pulse::NervousSystemData* Unload(const Nervous& src);
 protected:
   static void Serialize(const pulse::NervousSystemData& src, Nervous& dst);
   static void Serialize(const Nervous& src, pulse::NervousSystemData& dst);
 
+  // Set members to a stable homeostatic state
+  void Initialize();
   // Set pointers and other member variables common to both homeostatic initialization and loading a state
   void SetUp();
 
-public:
   void AtSteadyState();  
   void PreProcess();
   void Process();
   void PostProcess();
 
-protected:
   void BaroreceptorFeedback();
   void CheckBrainStatus();
   void ChemoreceptorFeedback();

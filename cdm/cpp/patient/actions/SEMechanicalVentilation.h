@@ -7,6 +7,7 @@ CDM_BIND_DECL(MechanicalVentilationData)
 class Serializer;
 class SESubstance;
 class SESubstanceFraction;
+class SESubstanceConcentration;
 class SEMechanicalVentilationConfiguration;
 
 class CDM_DECL SEMechanicalVentilation : public SEPatientAction
@@ -51,6 +52,15 @@ public:
   void RemoveGasFraction(const SESubstance& substance);
   void RemoveGasFractions();
 
+  bool HasAerosol() const;
+  bool HasAerosol(const SESubstance& substance) const;
+  const std::vector<SESubstanceConcentration*>& GetAerosols();
+  const std::vector<const SESubstanceConcentration*>& GetAerosols() const;
+  SESubstanceConcentration& GetAerosol(SESubstance& substance);
+  const SESubstanceConcentration* GetAerosol(const SESubstance& substance) const;
+  void RemoveAerosol(const SESubstance& substance);
+  void RemoveAerosols();
+
   virtual void ToString(std::ostream &str) const;
 protected:
 
@@ -62,4 +72,7 @@ protected:
 
   std::vector<SESubstanceFraction*>       m_GasFractions;
   std::vector<const SESubstanceFraction*> m_cGasFractions;
+
+  std::vector<SESubstanceConcentration*>       m_Aerosols;
+  std::vector<const SESubstanceConcentration*> m_cAerosols;
 };

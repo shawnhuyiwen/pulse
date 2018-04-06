@@ -28,11 +28,14 @@ public:
 
   virtual bool HasConcentration() const;
   virtual SEScalarMassPerVolume& GetConcentration();
+  virtual double GetConcentration(const MassPerVolumeUnit& unit) const;
 
   virtual bool HasRate() const;
-  virtual SEScalarVolumePerTime& GetRate();  
+  virtual SEScalarVolumePerTime& GetRate();
+  virtual double GetRate(const VolumePerTimeUnit& unit) const;
 
-  virtual SESubstance& GetSubstance() const;
+  virtual SESubstance& GetSubstance();
+  virtual const SESubstance& GetSubstance() const;
 
   virtual void ToString(std::ostream &str) const;
 

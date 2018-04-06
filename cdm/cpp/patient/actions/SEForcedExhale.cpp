@@ -74,6 +74,12 @@ SEScalar0To1& SEForcedExhale::GetExpiratoryReserveVolumeFraction()
     m_ExpiratoryReserveVolumeFraction = new SEScalar0To1();
   return *m_ExpiratoryReserveVolumeFraction;
 }
+double SEForcedExhale::GetExpiratoryReserveVolumeFraction() const
+{
+  if (m_ExpiratoryReserveVolumeFraction == nullptr)
+    return SEScalar::dNaN();
+  return m_ExpiratoryReserveVolumeFraction->GetValue();
+}
 
 bool SEForcedExhale::HasPeriod() const
 {
@@ -84,6 +90,12 @@ SEScalarTime& SEForcedExhale::GetPeriod()
   if (m_Period == nullptr)
     m_Period = new SEScalarTime();
   return *m_Period;
+}
+double SEForcedExhale::GetPeriod(const TimeUnit& unit) const
+{
+  if (m_Period == nullptr)
+    return SEScalar::dNaN();
+  return m_Period->GetValue(unit);
 }
 
 void SEForcedExhale::ToString(std::ostream &str) const

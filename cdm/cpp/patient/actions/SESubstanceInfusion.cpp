@@ -22,14 +22,12 @@ SESubstanceInfusion::~SESubstanceInfusion()
   Clear();
 }
 
-
 void SESubstanceInfusion::Clear()
 {
   SESubstanceAdministration::Clear();
   m_Rate=nullptr;
   m_Concentration=nullptr;  
 }
-
 
 bool SESubstanceInfusion::IsValid() const
 {
@@ -80,6 +78,12 @@ SEScalarVolumePerTime& SESubstanceInfusion::GetRate()
     m_Rate=new SEScalarVolumePerTime();
   return *m_Rate;
 }
+double SESubstanceInfusion::GetRate(const VolumePerTimeUnit& unit) const
+{
+  if (m_Rate == nullptr)
+    return SEScalar::dNaN();
+  return m_Rate->GetValue(unit);
+}
 
 bool SESubstanceInfusion::HasConcentration() const
 {
@@ -91,8 +95,18 @@ SEScalarMassPerVolume& SESubstanceInfusion::GetConcentration()
     m_Concentration=new SEScalarMassPerVolume();
   return *m_Concentration;
 }
+double SESubstanceInfusion::GetConcentration(const MassPerVolumeUnit& unit) const
+{
+  if (m_Concentration == nullptr)
+    return SEScalar::dNaN();
+  return m_Concentration->GetValue(unit);
+}
 
-SESubstance& SESubstanceInfusion::GetSubstance() const
+SESubstance& SESubstanceInfusion::GetSubstance()
+{
+  return (SESubstance&)m_Substance;
+}
+const SESubstance& SESubstanceInfusion::GetSubstance() const
 {
   return (SESubstance&)m_Substance;
 }

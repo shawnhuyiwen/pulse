@@ -99,55 +99,55 @@ SEPatientCondition* SEPatientCondition::Load(const cdm::AnyPatientConditionData&
       return a;
     }
   }
-  subMgr.Error("Unknown action type : " + any.Condition_case());
+  subMgr.Error("Unknown condition type : " + any.Condition_case());
   return nullptr;
 }
-cdm::AnyPatientConditionData* SEPatientCondition::Unload(const SEPatientCondition& action)
+cdm::AnyPatientConditionData* SEPatientCondition::Unload(const SEPatientCondition& condition)
 {
   cdm::AnyPatientConditionData* any = new cdm::AnyPatientConditionData();
-  const SEChronicAnemia* ca = dynamic_cast<const SEChronicAnemia*>(&action);
+  const SEChronicAnemia* ca = dynamic_cast<const SEChronicAnemia*>(&condition);
   if (ca != nullptr)
   {
     any->set_allocated_chronicanemia(SEChronicAnemia::Unload(*ca));
     return any;
   }
-  const SEChronicObstructivePulmonaryDisease* copd = dynamic_cast<const SEChronicObstructivePulmonaryDisease*>(&action);
+  const SEChronicObstructivePulmonaryDisease* copd = dynamic_cast<const SEChronicObstructivePulmonaryDisease*>(&condition);
   if (copd != nullptr)
   {
     any->set_allocated_chronicobstructivepulmonarydisease(SEChronicObstructivePulmonaryDisease::Unload(*copd));
     return any;
   }
-  const SEChronicPericardialEffusion* cpe = dynamic_cast<const SEChronicPericardialEffusion*>(&action);
+  const SEChronicPericardialEffusion* cpe = dynamic_cast<const SEChronicPericardialEffusion*>(&condition);
   if (cpe != nullptr)
   {
     any->set_allocated_chronicpericardialeffusion(SEChronicPericardialEffusion::Unload(*cpe));
     return any;
   }
-  const SEChronicRenalStenosis* crs = dynamic_cast<const SEChronicRenalStenosis*>(&action);
+  const SEChronicRenalStenosis* crs = dynamic_cast<const SEChronicRenalStenosis*>(&condition);
   if (crs != nullptr)
   {
     any->set_allocated_chronicrenalstenosis(SEChronicRenalStenosis::Unload(*crs));
     return any;
   }
-  const SEChronicVentricularSystolicDysfunction* cvsd = dynamic_cast<const SEChronicVentricularSystolicDysfunction*>(&action);
+  const SEChronicVentricularSystolicDysfunction* cvsd = dynamic_cast<const SEChronicVentricularSystolicDysfunction*>(&condition);
   if (cvsd != nullptr)
   {
     any->set_allocated_chronicventricularsystolicdysfunction(SEChronicVentricularSystolicDysfunction::Unload(*cvsd));
     return any;
   }
-  const SEConsumeMeal* cm = dynamic_cast<const SEConsumeMeal*>(&action);
+  const SEConsumeMeal* cm = dynamic_cast<const SEConsumeMeal*>(&condition);
   if (cm != nullptr)
   {
     any->set_allocated_consumemeal(SEConsumeMeal::Unload(*cm));
     return any;
   }
-  const SEImpairedAlveolarExchange* iae = dynamic_cast<const SEImpairedAlveolarExchange*>(&action);
+  const SEImpairedAlveolarExchange* iae = dynamic_cast<const SEImpairedAlveolarExchange*>(&condition);
   if (iae != nullptr)
   {
     any->set_allocated_impairedalveolarexchange(SEImpairedAlveolarExchange::Unload(*iae));
     return any;
   }
-  const SELobarPneumonia* lp = dynamic_cast<const SELobarPneumonia*>(&action);
+  const SELobarPneumonia* lp = dynamic_cast<const SELobarPneumonia*>(&condition);
   if (lp != nullptr)
   {
     any->set_allocated_lobarpneumonia(SELobarPneumonia::Unload(*lp));

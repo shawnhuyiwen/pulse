@@ -32,9 +32,9 @@ PULSE_BIND_DECL(RespiratorySystemData)
 * of gases in the lungs, and ensures the integration and flow of data between the
 * respiratory system and the anesthesia machine during mechanical ventilation.
 */
-class PULSE_DECL Respiratory : public SERespiratorySystem, public PulseSystem
+class PULSE_DECL Respiratory : public SERespiratorySystem, public PulseRespiratorySystem, public PulseSystem
 {
-  friend PulseController;
+  friend class PulseController;
   friend class PulseEngineTest;
 protected:
 
@@ -46,26 +46,24 @@ public:
 
   void Clear();
 
-  // Set members to a stable homeostatic state
-  void Initialize();
-
   static void Load(const pulse::RespiratorySystemData& src, Respiratory& dst);
   static pulse::RespiratorySystemData* Unload(const Respiratory& src);
 protected:
   static void Serialize(const pulse::RespiratorySystemData& src, Respiratory& dst);
   static void Serialize(const Respiratory& src, pulse::RespiratorySystemData& dst);
 
+  // Set members to a stable homeostatic state
+  void Initialize();
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
   void SetUp();
 
-public:
   void AtSteadyState();
   void PreProcess();
   void Process();
   void PostProcess();
 
   bool CalculatePulmonaryFunctionTest(SEPulmonaryFunctionTest& pft);
-private:
+
   //Tuning
   void TuneCircuit();
 

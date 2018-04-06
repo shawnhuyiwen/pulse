@@ -31,7 +31,8 @@ public:
   virtual void InvalidateCompartment();
 
   virtual bool HasRate() const;
-  virtual SEScalarVolumePerTime& GetRate();  
+  virtual SEScalarVolumePerTime& GetRate();
+  virtual double GetRate(const VolumePerTimeUnit& unit) const;
 
   virtual void ToString(std::ostream &str) const;
 

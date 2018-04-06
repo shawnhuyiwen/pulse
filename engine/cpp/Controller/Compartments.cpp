@@ -1,9 +1,11 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "std_pulse.h"
+#include "stdafx.h"
+#include "PulseConfiguration.h"
 #include "Controller/Controller.h"
 #include "Controller/Compartments.h"
+#include "Controller/Substances.h"
 #include "compartment/fluid/SEGasCompartment.h"
 #include "compartment/fluid/SEGasCompartmentLink.h"
 #include "compartment/fluid/SEGasCompartmentGraph.h"
@@ -13,6 +15,7 @@
 #include "compartment/thermal/SEThermalCompartment.h"
 #include "compartment/thermal/SEThermalCompartmentLink.h"
 #include "compartment/tissue/SETissueCompartment.h"
+#include "substance/SESubstance.h"
 
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarMassPerVolume.h"

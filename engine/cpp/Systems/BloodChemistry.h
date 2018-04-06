@@ -19,9 +19,9 @@ PULSE_BIND_DECL(BloodChemistrySystemData)
  * The blood chemistry system houses all of the blood concentrations and compositions needed to assess a patient's health. This system is under development
  * and will be improved in future releases to include more substances that can provide clinician level details and assessments, such as a CBC and blood panel.
  */           
-class PULSE_DECL BloodChemistry : public SEBloodChemistrySystem, public PulseSystem
+class PULSE_DECL BloodChemistry : public SEBloodChemistrySystem, public PulseBloodChemistrySystem, public PulseSystem
 {
-  friend PulseController;
+  friend class PulseController;
   friend class PulseEngineTest;
 protected:
   BloodChemistry(PulseController& data);
@@ -32,19 +32,17 @@ public:
 
   void Clear();
 
-  // Set members to a stable homeostatic state
-  void Initialize();
-
   static void Load(const pulse::BloodChemistrySystemData& src, BloodChemistry& dst);
   static pulse::BloodChemistrySystemData* Unload(const BloodChemistry& src);
 protected:
   static void Serialize(const pulse::BloodChemistrySystemData& src, BloodChemistry& dst);
   static void Serialize(const BloodChemistry& src, pulse::BloodChemistrySystemData& dst);
 
+  // Set members to a stable homeostatic state
+  void Initialize();
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
   void SetUp();
 
-public:
   void AtSteadyState();
   void PreProcess();
   void Process();
@@ -53,7 +51,6 @@ public:
   bool CalculateCompleteBloodCount(SECompleteBloodCount& cbc);
   bool CalculateComprehensiveMetabolicPanel(SEComprehensiveMetabolicPanel& cmp);
 
-protected:
   void CheckBloodGasLevels();
   
   // Serializable member variables (Set in Initialize and in schema)
