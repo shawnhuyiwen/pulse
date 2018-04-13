@@ -42,6 +42,7 @@ PROTO_POP
 #include "patient/SEPatient.h"
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceAerosolization.h"
+#include "substance/SESubstanceConcentration.h"
 #include "substance/SESubstanceFraction.h"
 #include "substance/SESubstanceTransport.h"
 #include "circuit/fluid/SEFluidCircuitCalculator.h"
@@ -124,6 +125,7 @@ void Respiratory::Clear()
   m_AortaO2 = nullptr;
   m_AortaCO2 = nullptr;
   m_MechanicalVentilatorConnection = nullptr;
+  m_MechanicalVentilatorAerosolConnection = nullptr;
 
   m_RespiratoryCircuit = nullptr;
 
@@ -406,6 +408,7 @@ void Respiratory::SetUp()
   m_LeftAlveoliO2 = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::LeftAlveoli)->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
   m_RightAlveoliO2 = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::RightAlveoli)->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
   m_MechanicalVentilatorConnection = m_data.GetCompartments().GetGasCompartment(pulse::MechanicalVentilatorCompartment::Connection);
+  m_MechanicalVentilatorAerosolConnection = m_data.GetCompartments().GetLiquidCompartment(pulse::MechanicalVentilatorCompartment::Connection);
   // Compartments we will process aerosol effects on
   m_AerosolEffects.push_back(m_data.GetCompartments().GetLiquidCompartment(pulse::PulmonaryCompartment::Carina));
   m_AerosolEffects.push_back(m_data.GetCompartments().GetLiquidCompartment(pulse::PulmonaryCompartment::LeftAlveoli));
@@ -818,75 +821,104 @@ void Respiratory::MechanicalVentilation()
     SEMechanicalVentilation* mv = m_data.GetActions().GetPatientActions().GetMechanicalVentilation();
     // You only get here if action is On
     m_data.SetAirwayMode(pulse::eAirwayMode::MechanicalVentilator);
-    
-  //Set the substance volume fractions ********************************************
-  std::vector<SESubstanceFraction*> gasFractions = mv->GetGasFractions();
-  
-  //Reset the substance quantities at the connection
-  for (SEGasSubstanceQuantity* subQ : m_MechanicalVentilatorConnection->GetSubstanceQuantities())
-    subQ->SetToZero();  
-  
-  //If no gas fractions specified, assume ambient
-  if (gasFractions.empty())
-  {
-    for (auto s : m_Environment->GetSubstanceQuantities())
-    {
-      m_MechanicalVentilatorConnection->GetSubstanceQuantity(s->GetSubstance())->GetVolumeFraction().Set(s->GetVolumeFraction());
-    }
-  }
-  else
-  {
-    //Has fractions defined
-    for (auto f : gasFractions)
-    {
-      SESubstance& sub = f->GetSubstance();
-      double fraction = f->GetFractionAmount().GetValue();
 
-      //Do this, just in case it's something new
-      m_data.GetSubstances().AddActiveSubstance(sub);
+    //Set the substance volume fractions ********************************************
+    std::vector<SESubstanceFraction*> gasFractions = mv->GetGasFractions();
 
-      //Now set it on the connection compartment
-      //It has a NaN volume, so this will keep the same volume fraction no matter what's going on around it
-      m_MechanicalVentilatorConnection->GetSubstanceQuantity(sub)->GetVolumeFraction().SetValue(fraction);
-    }
-  }
+    //Reset the substance quantities at the connection
+    for (SEGasSubstanceQuantity* subQ : m_MechanicalVentilatorConnection->GetSubstanceQuantities())
+      subQ->SetToZero();
 
-  //Apply the instantaneous flow ********************************************
-  if (mv->HasFlow())
-  {
-    m_ConnectionToMouth->GetNextFlowSource().Set(mv->GetFlow());
-    //It may or may not be there
-    if (!m_ConnectionToMouth->HasFlowSource())
+    //If no gas fractions specified, assume ambient
+    if (gasFractions.empty())
     {
-      m_data.GetCircuits().GetRespiratoryAndMechanicalVentilatorCircuit().StateChange();
+      for (auto s : m_Environment->GetSubstanceQuantities())
+      {
+        m_MechanicalVentilatorConnection->GetSubstanceQuantity(s->GetSubstance())->GetVolumeFraction().Set(s->GetVolumeFraction());
+      }
     }
-  }
-  else
-  {
-    //If there's no flow specified, we need to remove the flow source    
-    if (m_ConnectionToMouth->HasNextFlowSource())
+    else
     {
-      m_ConnectionToMouth->GetNextFlowSource().Invalidate();
-      m_data.GetCircuits().GetRespiratoryAndMechanicalVentilatorCircuit().StateChange();
+      //Has fractions defined
+      for (auto f : gasFractions)
+      {
+        SESubstance& sub = f->GetSubstance();
+        double fraction = f->GetFractionAmount().GetValue();
+
+        //Do this, just in case it's something new
+        m_data.GetSubstances().AddActiveSubstance(sub);
+
+        //Now set it on the connection compartment
+        //It has a NaN volume, so this will keep the same volume fraction no matter what's going on around it
+        m_MechanicalVentilatorConnection->GetSubstanceQuantity(sub)->GetVolumeFraction().SetValue(fraction);
+      }
     }
-  }
-  
-  //Apply the instantaneous pressure ********************************************  
-  if (mv->HasPressure())
-  {
-    //This is the pressure above ambient
-    m_GroundToConnection->GetNextPressureSource().Set(mv->GetPressure());
-  }
-  else
-  {
-    //Pressure is same as ambient
-    m_GroundToConnection->GetNextPressureSource().SetValue(0.0, PressureUnit::cmH2O);
-  }  
+
+    //Set the aerosol concentrations ********************************************
+    std::vector<SESubstanceConcentration*> liquidConcentrations = mv->GetAerosols();
+
+    //Reset the substance quantities at the connection
+    for (SELiquidSubstanceQuantity* subQ : m_MechanicalVentilatorAerosolConnection->GetSubstanceQuantities())
+      subQ->SetToZero();
+
+    if (!liquidConcentrations.empty())
+    {
+      //Has fractions defined
+      for (auto f : liquidConcentrations)
+      {
+        SESubstance& sub = f->GetSubstance();
+        SEScalarMassPerVolume concentration = f->GetConcentration();
+
+        //Do this, just in case it's something new
+        m_data.GetSubstances().AddActiveSubstance(sub);
+
+        //Now set it on the connection compartment
+        //It has a NaN volume, so this will keep the same volume fraction no matter what's going on around it
+        m_MechanicalVentilatorAerosolConnection->GetSubstanceQuantity(sub)->GetConcentration().Set(concentration);
+      }
+    }
+
+    //Apply the instantaneous flow ********************************************
+    if (mv->HasFlow())
+    {
+      m_ConnectionToMouth->GetNextFlowSource().Set(mv->GetFlow());
+      //It may or may not be there
+      if (!m_ConnectionToMouth->HasFlowSource())
+      {
+        m_data.GetCircuits().GetRespiratoryAndMechanicalVentilatorCircuit().StateChange();
+      }
+    }
+    else
+    {
+      //If there's no flow specified, we need to remove the flow source    
+      if (m_ConnectionToMouth->HasNextFlowSource())
+      {
+        m_ConnectionToMouth->GetNextFlowSource().Invalidate();
+        m_data.GetCircuits().GetRespiratoryAndMechanicalVentilatorCircuit().StateChange();
+      }
+    }
+
+    //Apply the instantaneous pressure ********************************************  
+    if (mv->HasPressure())
+    {
+      //This is the pressure above ambient
+      m_GroundToConnection->GetNextPressureSource().Set(mv->GetPressure());
+    }
+    else
+    {
+      //Pressure is same as ambient
+      m_GroundToConnection->GetNextPressureSource().SetValue(0.0, PressureUnit::cmH2O);
+    }
   }
   else if (m_data.GetAirwayMode() == pulse::eAirwayMode::MechanicalVentilator)
   {
     // Was just turned off
     m_data.SetAirwayMode(pulse::eAirwayMode::Free);
+    if (m_ConnectionToMouth->HasNextFlowSource())
+    {
+      m_ConnectionToMouth->GetNextFlowSource().Invalidate();
+      m_data.GetCircuits().GetRespiratoryAndMechanicalVentilatorCircuit().StateChange();
+    }
   }
 }
 
