@@ -223,7 +223,9 @@ public class SETestDriver
             Set<String> failures = null;
             if(new File(job.baselineFiles.get(i)).exists())
             {
-              failures = compare.compare(job.baselineFiles.get(i), job.computedFiles.get(i));
+            	try {
+            		failures = compare.compare(job.baselineFiles.get(i), job.computedFiles.get(i));
+            	}catch(Exception ex){ failures=null; }
               if(failures==null)// Something bad happened in running this test...
                 compare.createErrorSuite(job.name,"Could not compare these files for some reason: "+job.baselineFiles.get(i)+" and " + job.computedFiles.get(i));
             }

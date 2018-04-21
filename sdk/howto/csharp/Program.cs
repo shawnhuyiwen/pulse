@@ -68,7 +68,7 @@ namespace HowToCSharp
         seconds++;
       }
 
-      // IF you are going to run pulse in its own thread, use a Thread, and not a Time
+      // IF you are going to run pulse in its own thread, use a Thread, and not a Timer!!
       // Create the thread object, passing in the Alpha.Beta method
       // via a ThreadStart delegate. This does not start the thread.
       //Thread oThread = new Thread(new ThreadStart(pulse.run));

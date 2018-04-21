@@ -95,10 +95,10 @@ void PulseEngineTest::RespiratoryCircuitAndTransportTest(RespiratoryConfiguratio
   {
     rCircuit = &pc.GetCircuits().GetRespiratoryAndMechanicalVentilatorCircuit();
     rGraph = &pc.GetCompartments().GetRespiratoryAndMechanicalVentilatorGraph();
-    aGraph = nullptr;
+    aGraph = &pc.GetCompartments().GetAerosolAndMechanicalVentilatorGraph();
     sCircuitFileName = "/RespiratoryAndMechanicalVentilatorCircuitOutput.csv";
     sTransportFileName = "/RespiratoryAndMechanicalVentilatorTransportOutput.csv";
-    sAerosolTxptFileName = "";
+    sAerosolTxptFileName = "/AerosolMechanicalVentilatorTransportOutput.csv";
   }
   else
   {

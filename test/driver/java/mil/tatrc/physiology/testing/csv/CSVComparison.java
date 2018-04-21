@@ -152,7 +152,7 @@ public class CSVComparison extends SETestReport
 
     if(expectedHeaders.size()!=computedHeaders.size())
     {
-      Log.warn("Number of results is different, expected "+expectedHeaders.size()+" but computed is "+computedHeaders.size());
+      Log.warn("Number of results is different, expected("+expectedFilePath+") "+expectedHeaders.size()+" but computed ("+computedFilePath+") is "+computedHeaders.size());
     }
     
     for(String header : expectedHeaders)
@@ -160,7 +160,7 @@ public class CSVComparison extends SETestReport
       if(!computedHeaders.contains(header))
       {
         totalErrors++;
-        Log.error("Computed results did not provide expected result "+header);
+        Log.error("Computed results ("+computedFilePath+") did not provide expected result "+header);
       }       
     }
     double time=0;
@@ -176,7 +176,7 @@ public class CSVComparison extends SETestReport
       if( ( expectedData.isEmpty() && !computedData.isEmpty()) ||
           (!expectedData.isEmpty() &&  computedData.isEmpty()))
       {
-        Log.error("Computed is not the same length as expected");
+        Log.error("Computed ("+computedFilePath+") is not the same length as expected");
         totalErrors++;
         break;
       }
