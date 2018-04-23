@@ -99,6 +99,20 @@ void PulseEngineTest::RespiratoryCircuitAndTransportTest(RespiratoryConfiguratio
     sCircuitFileName = "/RespiratoryAndMechanicalVentilatorCircuitOutput.csv";
     sTransportFileName = "/RespiratoryAndMechanicalVentilatorTransportOutput.csv";
     sAerosolTxptFileName = "/AerosolMechanicalVentilatorTransportOutput.csv";
+
+    // Get an aerosolized substance
+    SESubstance* albuterol = pc.GetSubstances().GetSubstance("Albuterol");
+    if (albuterol == nullptr)
+    {
+      pc.Error("Could not find the aerosol substance : Albuterol");
+    }
+    else
+    {
+      pc.GetSubstances().AddActiveSubstance(*albuterol);
+      SELiquidCompartment* connection = pc.GetCompartments().GetLiquidCompartment(pulse::MechanicalVentilatorCompartment::Connection);
+      //It has a NaN volume, so this will keep the same volume fraction no matter what's going on around it
+      connection->GetSubstanceQuantity(*albuterol)->GetConcentration().SetValue(10, MassPerVolumeUnit::ug_Per_L);
+    }
   }
   else
   {
