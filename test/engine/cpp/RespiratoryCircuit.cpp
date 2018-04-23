@@ -99,6 +99,20 @@ void PulseEngineTest::RespiratoryCircuitAndTransportTest(RespiratoryConfiguratio
     sCircuitFileName = "/RespiratoryAndMechanicalVentilatorCircuitOutput.csv";
     sTransportFileName = "/RespiratoryAndMechanicalVentilatorTransportOutput.csv";
     sAerosolTxptFileName = "/AerosolMechanicalVentilatorTransportOutput.csv";
+
+    // Get an aerosolized substance
+    SESubstance* albuterol = pc.GetSubstances().GetSubstance("Albuterol");
+    if (albuterol == nullptr)
+    {
+      pc.Error("Could not find the aerosol substance : Albuterol");
+    }
+    else
+    {
+      pc.GetSubstances().AddActiveSubstance(*albuterol);
+      SELiquidCompartment* connection = pc.GetCompartments().GetLiquidCompartment(pulse::MechanicalVentilatorCompartment::Connection);
+      //It has a NaN volume, so this will keep the same volume fraction no matter what's going on around it
+      connection->GetSubstanceQuantity(*albuterol)->GetConcentration().SetValue(10, MassPerVolumeUnit::ug_Per_L);
+    }
   }
   else
   {
@@ -106,9 +120,9 @@ void PulseEngineTest::RespiratoryCircuitAndTransportTest(RespiratoryConfiguratio
   }
 
   SEFluidCircuitPath *driverPath = rCircuit->GetPath(pulse::RespiratoryPath::EnvironmentToRespiratoryMuscle);
-  SEGasTransporter    gtxpt(VolumePerTimeUnit::L_Per_s, VolumeUnit::L, VolumeUnit::L, pc.GetLogger());
+  SEGasTransporter    gtxpt(VolumePerTimeUnit::mL_Per_s, VolumeUnit::mL, VolumeUnit::mL, pc.GetLogger());
   SELiquidTransporter ltxpt(VolumePerTimeUnit::mL_Per_s, VolumeUnit::mL, MassUnit::ug, MassPerVolumeUnit::ug_Per_mL, pc.GetLogger());
-  SEFluidCircuitCalculator calc(FlowComplianceUnit::L_Per_cmH2O, VolumePerTimeUnit::L_Per_s, FlowInertanceUnit::cmH2O_s2_Per_L, PressureUnit::cmH2O, VolumeUnit::L, FlowResistanceUnit::cmH2O_s_Per_L, pc.GetLogger());
+  SEFluidCircuitCalculator calc(FlowComplianceUnit::mL_Per_mmHg, VolumePerTimeUnit::mL_Per_s, FlowInertanceUnit::mmHg_s2_Per_mL, PressureUnit::mmHg, VolumeUnit::mL, FlowResistanceUnit::mmHg_s_Per_mL, pc.GetLogger());
   
   //Set the reference not pressure to the standard environment
   //This is needed because we're not setting the Environment during initialization in this unit test
