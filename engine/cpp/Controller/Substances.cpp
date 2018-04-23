@@ -117,6 +117,7 @@ void PulseSubstances::InitializeGasCompartments()
   Mouth->GetSubstanceQuantity(*m_CO2)->GetVolumeFraction().SetValue(AmbientCO2VF);
   Mouth->GetSubstanceQuantity(*m_N2)->GetVolumeFraction().SetValue(AmbientN2VF);
   Mouth->GetSubstanceQuantity(*m_O2)->GetVolumeFraction().SetValue(AmbientO2VF);
+  Mouth->Balance(BalanceGasBy::VolumeFraction);
   SEGasCompartment* Carina = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Carina);
   Carina->GetSubstanceQuantity(*m_CO2)->GetVolumeFraction().SetValue(AmbientCO2VF);
   Carina->GetSubstanceQuantity(*m_N2)->GetVolumeFraction().SetValue(AmbientN2VF);

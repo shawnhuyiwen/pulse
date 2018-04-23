@@ -66,6 +66,7 @@ public class HowTo_EngineUse
  {
   public void handlePatientEvent(ePatient.Event type, boolean active, SEScalarTime time)
   {
+    // Here is how you test against an event of interest and do something
     //if(type == ePatient.Event.StartOfCardiacCycle && active)
       //Log.info("Patient started a new heart beat at time "+time);    
   }
@@ -233,7 +234,7 @@ public class HowTo_EngineUse
    // Let's do something to the patient, you can either send actions over one at a time, or pass in a List<SEAction>
    SEHemorrhage h = new SEHemorrhage();
    h.setCompartment(PulseCompartments.Vascular.RightLeg);
-   h.getRate().setValue(200,VolumePerTimeUnit.mL_Per_min);
+   h.getRate().setValue(200,VolumePerTimeUnit.mL_Per_min);// Change this to 750 if you want to see how engine failures are handled!!
    pe.processAction(h);
    // Note CDM is not updated after this call, you have to advance some time
 
