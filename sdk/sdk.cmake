@@ -27,7 +27,7 @@ target_link_libraries(HowToDriver PulseEngine)
 
 
 IF(UNIX)
-    SET(CMAKE_INSTLL_RPATH "${CMAKE_INSTALL_RPATH}:\$ORIGIN")
+    SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_RPATH}:\$ORIGIN")
 ENDIF()
 
 add_custom_command(TARGET HowToDriver POST_BUILD
