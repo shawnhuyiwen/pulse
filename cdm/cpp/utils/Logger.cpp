@@ -5,42 +5,37 @@
 #include "utils/Logger.h"
 #include "utils/FileUtils.h"
 
-#pragma  warning(push)
-#pragma warning(disable:4512) // assignment operator could not be generated
-#pragma warning(disable:4290) // C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
-#include "log4cpp/Appender.hh"
-#include "log4cpp/FileAppender.hh"
-#include "log4cpp/OstreamAppender.hh"
-#include "log4cpp/Layout.hh"
-#include "log4cpp/BasicLayout.hh"
-#include "log4cpp/PatternLayout.hh"
-#include "log4cpp/Priority.hh"
-#include "log4cpp/PropertyConfigurator.hh"
-#pragma  warning(pop)
+#include <log4cplus/logger.h>
+#include <log4cplus/loglevel.h>
+#include <log4cplus/loggingmacros.h>
+#include <log4cplus/configurator.h>
+#include <log4cplus/consoleappender.h>
+#include <log4cplus/fileappender.h>
+#include <iomanip>
 
 #include "properties/SEScalarTime.h"
 
 const std::string Loggable::empty("");
 
 //logger constructor
-Logger::Logger(const std::string& logFilename)
+Logger::Logger(const std::string& logFilename) : m_Log(log4cplus::Logger::getRoot())
 {
   m_Forward = nullptr;
   m_time = nullptr;
+  //log4cplus::initialize();
   ResetLogFile(logFilename);
 }
 
 void Logger::LogToConsole(bool b)
 {
-  (b) ? m_Log->addAppender(m_ConsoleAppender) : m_Log->removeAppender(m_ConsoleAppender);
+  (b) ? m_Log.addAppender(m_ConsoleAppender) : m_Log.removeAppender(m_ConsoleAppender);
 }
 
 void Logger::ResetLogFile(const std::string& logFilename)
 {
-  log4cpp::Category& category = log4cpp::Category::getInstance(logFilename);
-  m_Log = &category;
-  m_Log->removeAllAppenders();
-  m_Log->setPriority(log4cpp::Priority::INFO);
+  if (m_Log.getAllAppenders().empty())
+    m_Log.removeAllAppenders();
+  m_Log.setLogLevel(log4cplus::INFO_LOG_LEVEL);
 
   if (!logFilename.empty())
   {
@@ -51,24 +46,22 @@ void Logger::ResetLogFile(const std::string& logFilename)
     if (FilePointer)
       fclose(FilePointer);
 
-    m_FileAppender = log4cpp::Appender::getAppender(logFilename);
+    m_FileAppender = m_Log.getAppender(logFilename);
     if (m_FileAppender == nullptr)
     {
-      m_FileAppender = new log4cpp::FileAppender(logFilename, logFilename);
-      log4cpp::PatternLayout* myLayout = new log4cpp::PatternLayout();
-      myLayout->setConversionPattern("%d [%p] %m%n");
-      m_FileAppender->setLayout(myLayout);
-      m_Log->addAppender(m_FileAppender);
+      m_FileAppender = new log4cplus::FileAppender(logFilename);
+      m_FileAppender->setName(logFilename);
+      m_FileAppender->setLayout(std::auto_ptr<log4cplus::Layout>(new log4cplus::PatternLayout("%d [%p] %m%n")));
+      m_Log.addAppender(m_FileAppender);
     }
   }
 
-  m_ConsoleAppender = log4cpp::Appender::getAppender(logFilename+"_console");
+  m_ConsoleAppender = m_Log.getAppender(logFilename+"_console");
   if (m_ConsoleAppender == nullptr)
   {
-    m_ConsoleAppender = new log4cpp::OstreamAppender("console", &std::cout);
-    log4cpp::PatternLayout* cLayout = new log4cpp::PatternLayout();
-    cLayout->setConversionPattern("%d [%p] %m%n");
-    m_ConsoleAppender->setLayout(cLayout);
+    m_ConsoleAppender = new log4cplus::ConsoleAppender();
+    m_ConsoleAppender->setName(logFilename + "_console");
+    m_ConsoleAppender->setLayout(std::auto_ptr<log4cplus::Layout>(new log4cplus::PatternLayout("%d [%p] %m%n")));
   }
   LogToConsole(true);
 }
@@ -87,16 +80,15 @@ void Logger::SetLogTime(const SEScalarTime* time)
 // TODO log4cpp::Priority::Value priority GetGlobalPriority()
 
 //This function will change the priority of the logger
-void Logger::SetLogLevel(log4cpp::Priority::Value priority)
+void Logger::SetLogLevel(log4cplus::LogLevel level)
 {
-  if (m_Log)
-    m_Log->setPriority(priority);
+  m_Log.setLogLevel(level);
 }
 
 //This function will return the priority of the logger
-log4cpp::Priority::Value Logger::GetLogLevel()
+log4cplus::LogLevel Logger::GetLogLevel()
 {
-  return m_Log != nullptr ? m_Log->getPriority() : log4cpp::Priority::INFO;
+  return m_Log.getLogLevel();
 }
 
 void Logger::SetForward(LoggerForward* forward)
@@ -123,10 +115,9 @@ std::string Logger::FormatLogMessage(const std::string&  msg, const std::string&
 }
 
 
-void Logger::Debug(const std::string&  msg, const std::string&  origin)
+void Logger::Debug(std::string const&  msg, const std::string&  origin)
 {
-  m_Log->debug(FormatLogMessage(msg, origin));
-  //m_Log->debugStream().flush();
+  LOG4CPLUS_DEBUG(m_Log, FormatLogMessage(msg,origin));
   if (m_Forward != nullptr)
     m_Forward->ForwardDebug(m_ss.str().c_str(), origin.c_str());
 }
@@ -146,9 +137,7 @@ void Logger::Debug(std::ostream &msg, const std::string&  origin)
 
 void Logger::Info(const std::string&  msg, const std::string&  origin)
 {
-  //std::cout<<"Number of appenders"<< m_Log->getAllAppenders().size() << std::endl;
-  m_Log->info(FormatLogMessage(msg, origin));
-  //m_Log->infoStream().flush();
+  LOG4CPLUS_INFO(m_Log, FormatLogMessage(msg, origin));
   if (m_Forward != nullptr)
     m_Forward->ForwardInfo(m_ss.str().c_str(), origin.c_str());
 }
@@ -174,8 +163,7 @@ void Logger::Info(std::ostream &msg, const std::string&  origin)
 
 void Logger::Warning(const std::string&  msg, const std::string&  origin)
 {
-  m_Log->warn(FormatLogMessage(msg, origin));
-  //m_Log->warnStream().flush();
+  LOG4CPLUS_WARN(m_Log, FormatLogMessage(msg, origin));
   if (m_Forward != nullptr)
     m_Forward->ForwardWarning(m_ss.str().c_str(), origin.c_str());
 }
@@ -194,8 +182,7 @@ void Logger::Warning(std::ostream &msg, const std::string&  origin)
 
 void Logger::Error(const std::string&  msg, const std::string&  origin)
 {
-  m_Log->error(FormatLogMessage(msg, origin));
-  //m_Log->errorStream().flush();
+  LOG4CPLUS_ERROR(m_Log, FormatLogMessage(msg, origin));
   if (m_Forward != nullptr)
     m_Forward->ForwardError(m_ss.str().c_str(), origin.c_str());
 }
@@ -214,8 +201,7 @@ void Logger::Error(std::ostream &msg, const std::string&  origin)
 
 void Logger::Fatal(const std::string&  msg, const std::string&  origin)
 {
-  m_Log->fatal(FormatLogMessage(msg, origin));
-  //m_Log->fatalStream().flush();
+  LOG4CPLUS_FATAL(m_Log, FormatLogMessage(msg, origin));
   if (m_Forward != nullptr)
     m_Forward->ForwardFatal(m_ss.str().c_str(), origin.c_str());
 }

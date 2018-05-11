@@ -15,12 +15,10 @@ target_include_directories(PulseEngineUnitTests PRIVATE ${CMAKE_CURRENT_SOURCE_D
 target_include_directories(PulseEngineUnitTests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/engine/cpp)
 target_include_directories(PulseEngineUnitTests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../engine/cpp)
 target_include_directories(PulseEngineUnitTests PRIVATE ${EIGEN3_INCLUDE_DIR})
-target_include_directories(PulseEngineUnitTests PRIVATE ${LOG4CPP_INCLUDE_DIR})
+target_include_directories(PulseEngineUnitTests PRIVATE ${LOG4CPLUS_INCLUDE_DIR})
 target_include_directories(PulseEngineUnitTests PRIVATE ${PROTOBUF_INCLUDE_DIR})
 
 set(ENGINE_TEST_FLAGS)
-set(ENGINE_TEST_FLAGS "${ENGINE_TEST_FLAGS} -D UNICODE")
-set(ENGINE_TEST_FLAGS "${ENGINE_TEST_FLAGS} -D _UNICODE")
 if(${BUILD_SHARED_LIBS}) 
   set(ENGINE_TEST_FLAGS "${ENGINE_TEST_FLAGS} -D SHARED_ENGINE_TEST")
 endif()

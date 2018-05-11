@@ -10,8 +10,6 @@ source_group("" FILES ${CDM_TEST_FILES})
 add_library(CommonDataModelUnitTests ${SOURCE})
 # Preprocessor Definitions and Include Paths
 set(CDM_TEST_FLAGS)
-set(CDM_TEST_FLAGS "${CDM_TEST_FLAGS} -D UNICODE")
-set(CDM_TEST_FLAGS "${CDM_TEST_FLAGS} -D _UNICODE")
 if(${BUILD_SHARED_LIBS}) 
   set(CDM_TEST_FLAGS "${CDM_TEST_FLAGS} -D SHARED_CDM_TEST")
 endif()
@@ -20,7 +18,7 @@ target_include_directories(CommonDataModelUnitTests PRIVATE ${CMAKE_BINARY_DIR}/
 target_include_directories(CommonDataModelUnitTests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/cdm/cpp)
 target_include_directories(CommonDataModelUnitTests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../cdm/cpp)
 target_include_directories(CommonDataModelUnitTests PRIVATE ${EIGEN3_INCLUDE_DIR})
-target_include_directories(CommonDataModelUnitTests PRIVATE ${LOG4CPP_INCLUDE_DIR})
+target_include_directories(CommonDataModelUnitTests PRIVATE ${LOG4CPLUS_INCLUDE_DIR})
 target_include_directories(CommonDataModelUnitTests PRIVATE ${PROTOBUF_INCLUDE_DIR})
 set_target_properties(CommonDataModelUnitTests PROPERTIES COMPILE_FLAGS "${CDM_TEST_FLAGS}" PREFIX "")
 

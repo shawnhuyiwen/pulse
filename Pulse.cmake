@@ -10,6 +10,9 @@ set(PULSE_VERSION "${PULSE_VERSION_MAJOR}.${PULSE_VERSION_MINOR}.${PULSE_VERSION
 
 # Build the core libraries as shared or static (DataModel, CDM, Engine)
 set(BUILD_SHARED_LIBS OFF)
+set(CMAKE_CXX_STANDARD 11)
+set(CONFIGURATION ${CMAKE_CFG_INTDIR})
+
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_CONFIGURATION_TYPES Debug Release RelWithDebInfo CACHE TYPE INTERNAL FORCE )
@@ -18,19 +21,18 @@ if(MSVC)
   set(CMAKE_CXX_FLAGS_DEBUG "/D_DEBUG /MDd /Zi /Ob2 /Oi /Od /RTC1" CACHE TYPE INTERNAL FORCE)
   set(CMAKE_CXX_FLAGS_RELEASE "/MD" CACHE TYPE INTERNAL FORCE)
   set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "/MDd /Zi" CACHE TYPE INTERNAL FORCE)
+  set(CONFIGURATION "$(Configuration)")
 endif()
 
 if(MINGW)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--kill-at -std=gnu++0x")#turn on C++11
-  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--kill-at")
+
 endif()
 
 if(APPLE)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++")
+
 endif()
 
 if(UNIX)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
   set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_RPATH}:\$ORIGIN")
 endif()
 
@@ -63,32 +65,40 @@ if(NOT protobuf_DIR)
   endif()
 endif()
 
-# Log4cpp src should have been download to somewhere
-if(NOT log4cpp_DIR)
+# log4cplus src should have been download to somewhere
+if(NOT log4cplus_DIR)
   # It should be here if the outer build ran
-  set(log4cpp_DIR ${CMAKE_BINARY_DIR}/../log4cpp/src/log4cpp)
-  set(log4cpp_HEADER ${log4cpp_DIR}/include/log4cpp/Category.hh)
-  if(NOT EXISTS ${log4cpp_HEADER})
-    message(FATAL_ERROR "I cannot find log4cpp header, ${log4cpp_HEADER}, make sure you make the install target of the super build")
+  set(log4cplus_DIR ${CMAKE_BINARY_DIR}/../log4cplus/src/log4cplus)
+  set(log4cplus_HEADER ${log4cplus_DIR}/include/log4cplus/log4cplus.hh)
+  if(NOT EXISTS ${log4cplus_HEADER})
+    message(FATAL_ERROR "I cannot find log4cplus header, ${log4cplus_HEADER}, make sure you make the install target of the super build")
   endif()
 endif()
-if(NOT LOG4CPP_INCLUDE_DIR)
-  set(LOG4CPP_INCLUDE_DIR ${log4cpp_DIR}/include)
+if(NOT LOG4CPLUS_INCLUDE_DIR)
+  set(LOG4CPLUS_INCLUDE_DIR ${log4cplus_DIR}/include)
 endif()
 
 
 list(APPEND CMAKE_PREFIX_PATH ${protobuf_INSTALL})
-list(APPEND CMAKE_PREFIX_PATH ${log4cpp_INSTALL})
+list(APPEND CMAKE_PREFIX_PATH ${log4cplus_INSTALL})
 
 set(SCHEMA_SRC "${CMAKE_SOURCE_DIR}/schema")
 set(SCHEMA_DST "${CMAKE_BINARY_DIR}/schema")
-
+# Settings for protobuf configuration
 set(protobuf_BUILD_SHARED_LIBS OFF CACHE TYPE INTERNAL FORCE)
 set(protobuf_MSVC_STATIC_RUNTIME OFF CACHE TYPE INTERNAL FORCE)#Use our MSVC runtime settings (/MD or /MT)
 set(protobuf_BUILD_TESTS OFF CACHE TYPE INTERNAL FORCE)
 set(protobuf_BUILD_EXAMPLES OFF CACHE TYPE INTERNAL FORCE)
 add_subdirectory("${protobuf_DIR}/cmake" "${protobuf_DIR}-build" EXCLUDE_FROM_ALL)
-add_subdirectory(${log4cpp_DIR} ${log4cpp_DIR}-build)
+# Setting for log4cplus configuration
+set(UNICODE OFF CACHE TYPE INTERNAL FORCE)
+set(LOG4CPLUS_BUILD_LOGGINGSERVER OFF CACHE TYPE INTERNAL FORCE)
+set(LOG4CPLUS_BUILD_TESTING OFF CACHE TYPE INTERNAL FORCE)
+set(LOG4CPLUS_ENABLE_DECORATED_LIBRARY_NAME OFF CACHE TYPE INTERNAL FORCE)
+set(WITH_UNIT_TESTS OFF CACHE TYPE INTERNAL FORCE)
+# Get log4cplus to install to a location so we can customize the install for Pulse
+add_subdirectory(${log4cplus_DIR} ${log4cplus_DIR}-build)
+# Include the rest of the Pulse projects
 add_subdirectory(schema)
 add_subdirectory(cdm)
 add_subdirectory(engine)
@@ -112,9 +122,9 @@ configure_file(${CMAKE_SOURCE_DIR}/cmake/PulseConfig.cmake.in ${CMAKE_INSTALL_PR
 configure_file(${CMAKE_SOURCE_DIR}/bin/Rebase.py.in ${CMAKE_INSTALL_PREFIX}/bin/Rebase.py @ONLY)
 
 # Install Eigen
-install(DIRECTORY ${Eigen_INSTALL}/include
+install(DIRECTORY ${eigen_INSTALL}/include
         DESTINATION ${CMAKE_INSTALL_PREFIX})
-install(DIRECTORY ${Eigen_INSTALL}/share/eigen3/cmake
+install(DIRECTORY ${eigen_INSTALL}/share/eigen3/cmake
         DESTINATION ${CMAKE_INSTALL_PREFIX})
 # Install Dirent
 if(WIN32)

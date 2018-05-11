@@ -4,11 +4,7 @@ project(OuterBuild)
 
 set(BUILD_SHARED_LIBS OFF)
 if(MSVC OR XCode)
-# For multi configuration IDE environments,
-# these dependent libs only need to be built in release
-# There should not be a need to debug into xerces, but if 
-# you really want to, you can go into the xerces dir and build 
-# a debug version of the library
+# For multi configuration IDE environments start with release
   set(CMAKE_CONFIGURATION_TYPES Release CACHE TYPE INTERNAL FORCE )
 endif()
 ##################################
@@ -17,62 +13,60 @@ endif()
 ##################################
 
 message( STATUS "External project - Eigen" )
-set(Eigen_VERSION "3.3.3" )
-set(Eigen_DIR "${CMAKE_BINARY_DIR}/eigen/src/eigen")
-set(Eigen_INSTALL "${CMAKE_CURRENT_BINARY_DIR}/eigen/install")
+set(eigen_VERSION "3.3.3" )
+set(eigen_DIR "${CMAKE_BINARY_DIR}/eigen/src/eigen")
+set(eigen_INSTALL "${CMAKE_CURRENT_BINARY_DIR}/eigen/install")
 
 ExternalProject_Add( eigen
   PREFIX eigen
-  URL "http://bitbucket.org/eigen/eigen/get/${Eigen_VERSION}.tar.gz"
+  URL "http://bitbucket.org/eigen/eigen/get/${eigen_VERSION}.tar.gz"
   URL_HASH MD5=f21cee193e15e55cfd15ebbc16fc00a7
-  INSTALL_DIR "${Eigen_INSTALL}"
+  INSTALL_DIR "${eigen_INSTALL}"
   CMAKE_ARGS
         -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF
-        -DCMAKE_INSTALL_PREFIX:STRING=${Eigen_INSTALL}
-        -DINCLUDE_INSTALL_DIR:STRING=${Eigen_INSTALL}/include
+        -DCMAKE_INSTALL_PREFIX:STRING=${eigen_INSTALL}
+        -DINCLUDE_INSTALL_DIR:STRING=${eigen_INSTALL}/include
 )
 list(APPEND Pulse_DEPENDENCIES eigen)
 # Install Headers
-list(APPEND CMAKE_PREFIX_PATH ${Eigen_INSTALL})
-message(STATUS "Eigen is here : ${Eigen_DIR}" )
+list(APPEND CMAKE_PREFIX_PATH ${eigen_INSTALL})
+message(STATUS "Eigen is here : ${eigen_DIR}" )
 
 ###################################################
-## LOG4CPP                                       ##
+## log4cplus                                      ##
 ## General logging utility                       ##
 ## We have our own cmake file to build as dll/so ##
 ###################################################
 
-message( STATUS "External project - Log4cpp" )
-set(log4cpp_VERSION "1.1.2" )
-set(log4cpp_DIR "${CMAKE_BINARY_DIR}/log4cpp/src/log4cpp")
-set(log4cpp_INSTALL "${CMAKE_CURRENT_BINARY_DIR}/log4cpp/install")
+message( STATUS "External project - log4cplus" )
+set(log4cplus_VERSION "1.1.2" )
+set(log4cplus_DIR "${CMAKE_BINARY_DIR}/log4cplus/src/log4cplus")
+set(log4cplus_INSTALL "${CMAKE_CURRENT_BINARY_DIR}/log4cplus/install")
 
 if(UNIX)
   set(CONFIGURE "./configure")
 endif()
 		
-ExternalProject_Add( log4cpp
-  PREFIX log4cpp
-  URL "https://sourceforge.net/projects/log4cpp/files/log4cpp-1.1.x%20%28new%29/log4cpp-1.1/log4cpp-1.1.2.tar.gz"
-  URL_HASH MD5=c70eac7334e2f3cbeac307dc78532be4
+ExternalProject_Add( log4cplus
+  PREFIX log4cplus
+  URL "https://github.com/Kitware/log4cplus/archive/1.2.x.zip"
+  URL_HASH MD5=4c0973becab54c8492204258260dcf06
   UPDATE_COMMAND 
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/cmake/log4cpp-patches/CMakeLists.txt ${log4cpp_DIR}/CMakeLists.txt
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/cmake/log4cpp-patches/config.guess ${log4cpp_DIR}/config/config.guess
-    COMMAND ${CONFIGURE}
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/cmake/log4cplus-patches/CMakeLists.txt ${log4cplus_DIR}/src/CMakeLists.txt
 # Build this in the Inner build
 # It will be easier to switch cofigurations in MSVC/XCode
-# INSTALL_DIR "${log4cpp_INSTALL}"
+# INSTALL_DIR "${log4cplus_INSTALL}"
 # CMAKE_ARGS
 #       -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF
-#       -DCMAKE_INSTALL_PREFIX:STRING=${log4cpp_INSTALL}
-#       -DINCLUDE_INSTALL_DIR:STRING=${log4cpp_INSTALL}/include
+#       -DCMAKE_INSTALL_PREFIX:STRING=${log4cplus_INSTALL}
+#       -DINCLUDE_INSTALL_DIR:STRING=${log4cplus_INSTALL}/include
 # do nothing
   CONFIGURE_COMMAND "" 
   BUILD_COMMAND ""
   INSTALL_COMMAND ""
 )
-list(APPEND Pulse_DEPENDENCIES log4cpp)
-list(APPEND CMAKE_PREFIX_PATH ${log4cpp_INSTALL})
+list(APPEND Pulse_DEPENDENCIES log4cplus)
+list(APPEND CMAKE_PREFIX_PATH ${log4cplus_INSTALL})
 
 ###################################################
 ## Google Proto Buffers                          ##
@@ -189,10 +183,9 @@ ExternalProject_Add( Pulse
     -DBUILD_SHARED_LIBS:BOOL=${shared}
     -DBUILD_TESTING:BOOL=${BUILD_TESTING}
     # Let InnerBuild build and install these
-    -DEigen_INSTALL=${Eigen_INSTALL}
-    -Dlog4cpp_DIR=${log4cpp_DIR}
-    -DLOG4CPP_INCLUDE_DIR=${log4cpp_DIR}/include
-    -Dlog4cpp_INSTALL=${log4cpp_INSTALL}
+    -Deigen_INSTALL=${eigen_INSTALL}
+    -Dlog4cplus_DIR=${log4cplus_DIR}
+    -Dlog4cplus_INSTALL=${log4cplus_INSTALL}
     -Dprotobuf_DIR=${protobuf_DIR}
     -Dprotobuf_INSTALL=${protobuf_INSTALL}
     -Ddirent_INSTALL=${dirent_INSTALL}
