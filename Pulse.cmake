@@ -69,15 +69,13 @@ endif()
 if(NOT log4cplus_DIR)
   # It should be here if the outer build ran
   set(log4cplus_DIR ${CMAKE_BINARY_DIR}/../log4cplus/src/log4cplus)
-  set(log4cplus_HEADER ${log4cplus_DIR}/include/log4cplus/log4cplus.hh)
+  set(log4cplus_HEADER ${log4cplus_DIR}/include/log4cplus/logger.h)
   if(NOT EXISTS ${log4cplus_HEADER})
     message(FATAL_ERROR "I cannot find log4cplus header, ${log4cplus_HEADER}, make sure you make the install target of the super build")
   endif()
 endif()
-if(NOT LOG4CPLUS_INCLUDE_DIR)
-  set(LOG4CPLUS_INCLUDE_DIR ${log4cplus_DIR}/include)
-endif()
-
+list(APPEND LOG4CPLUS_INCLUDE_DIR ${log4cplus_DIR}/include)
+list(APPEND LOG4CPLUS_INCLUDE_DIR ${log4cplus_DIR}-build/include)
 
 list(APPEND CMAKE_PREFIX_PATH ${protobuf_INSTALL})
 list(APPEND CMAKE_PREFIX_PATH ${log4cplus_INSTALL})
