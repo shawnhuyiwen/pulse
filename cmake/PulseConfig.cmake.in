@@ -33,9 +33,9 @@ else()#TODO XCode might need a conditional
 endif()
 
 if(MSVC)
- set(LOG4CPP_LIB "log4cpp")
+ set(LOG4CPLUS_LIB "log4cplus")
 else()
- set(LOG4CPP_LIB "liblog4cpp")
+ set(LOG4CPLUS_LIB "liblog4cplus")
 endif()
 
 if (WIN32)
@@ -51,14 +51,14 @@ set(Pulse_INSTALL "@CMAKE_INSTALL_PREFIX@")
 set(Pulse_LIBS "${Pulse_LIB_ROOT_DIR}/release/PulseEngine.${LIB_ENDING}" 
                "${Pulse_LIB_ROOT_DIR}/release/CommonDataModel.${LIB_ENDING}"
                "${Pulse_LIB_ROOT_DIR}/release/DataModelBindings.${LIB_ENDING}"
-               "${Pulse_LIB_ROOT_DIR}/release/${LOG4CPP_LIB}.${LIB_ENDING}"
+               "${Pulse_LIB_ROOT_DIR}/release/${LOG4CPLUS_LIB}.${LIB_ENDING}"
                "${Pulse_LIB_ROOT_DIR}/release/libprotobuf.${LIB_ENDING}"
 )
 
 set(Pulse_DEBUG_LIBS "${Pulse_LIB_ROOT_DIR}/debug/PulseEngine.${LIB_ENDING}"
                      "${Pulse_LIB_ROOT_DIR}/debug/CommonDataModel.${LIB_ENDING}"
                      "${Pulse_LIB_ROOT_DIR}/debug/DataModelBindings.${LIB_ENDING}"
-                     "${Pulse_LIB_ROOT_DIR}/debug/${LOG4CPP_LIB}.${LIB_ENDING}"
+                     "${Pulse_LIB_ROOT_DIR}/debug/${LOG4CPLUS_LIB}D.${LIB_ENDING}"
                      "${Pulse_LIB_ROOT_DIR}/debug/libprotobufd.${LIB_ENDING}"
 )
 

@@ -6,7 +6,11 @@
 #pragma  warning(push)
 #pragma warning(disable:4512) // assignment operator could not be generated
 #pragma warning(disable:4290) // C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
-#include "log4cpp/Category.hh"
+#include "log4cplus/logger.h"
+#include "log4cplus/loggingmacros.h"
+#include "log4cplus/configurator.h"
+#include "log4cplus/helpers/pointer.h"
+#include "log4cplus/appender.h"
 #pragma  warning(pop)
 
 class Logger;
@@ -22,26 +26,26 @@ public:
 
   virtual Logger* GetLogger() const;
 
-  virtual void Debug(const std::string&  msg, const std::string&  origin = empty) const;
-  virtual void Debug(std::stringstream &msg, const std::string&  origin = empty) const;
-  virtual void Debug(std::ostream &msg, const std::string&  origin = empty) const;
+  virtual void Debug(std::string const&  msg, std::string const&  origin = empty) const;
+  virtual void Debug(std::stringstream &msg, std::string const&  origin = empty) const;
+  virtual void Debug(std::ostream &msg, std::string const&  origin = empty) const;
 
-  virtual void Info(const std::string&  msg, const std::string&  origin = empty) const;
-  virtual void Info(std::stringstream &msg, const std::string&  origin = empty) const;
-  virtual void Info(const std::stringstream &msg, const std::string&  origin = empty) const;
-  virtual void Info(std::ostream &msg, const std::string&  origin = empty) const;
+  virtual void Info(std::string const&  msg, std::string const&  origin = empty) const;
+  virtual void Info(std::stringstream &msg, std::string const&  origin = empty) const;
+  virtual void Info(const std::stringstream &msg, std::string const&  origin = empty) const;
+  virtual void Info(std::ostream &msg, std::string const&  origin = empty) const;
 
-  virtual void Warning(const std::string&  msg, const std::string&  origin = empty) const;
-  virtual void Warning(std::stringstream &msg, const std::string&  origin = empty) const;
-  virtual void Warning(std::ostream &msg, const std::string&  origin = empty) const;
+  virtual void Warning(std::string const&  msg, std::string const&  origin = empty) const;
+  virtual void Warning(std::stringstream &msg, std::string const&  origin = empty) const;
+  virtual void Warning(std::ostream &msg, std::string const&  origin = empty) const;
 
-  virtual void Error(const std::string&  msg, const std::string&  origin = empty) const;
-  virtual void Error(std::stringstream &msg, const std::string&  origin = empty) const;
-  virtual void Error(std::ostream &msg, const std::string&  origin = empty) const;
+  virtual void Error(std::string const&  msg, std::string const&  origin = empty) const;
+  virtual void Error(std::stringstream &msg, std::string const&  origin = empty) const;
+  virtual void Error(std::ostream &msg, std::string const&  origin = empty) const;
 
-  virtual void Fatal(const std::string&  msg, const std::string&  origin = empty) const;
-  virtual void Fatal(std::stringstream &msg, const std::string&  origin = empty) const;
-  virtual void Fatal(std::ostream &msg, const std::string&  origin = empty) const;
+  virtual void Fatal(std::string const&  msg, std::string const&  origin = empty) const;
+  virtual void Fatal(std::stringstream &msg, std::string const&  origin = empty) const;
+  virtual void Fatal(std::ostream &msg, std::string const&  origin = empty) const;
 
 protected:
   Logger* m_Logger;
@@ -52,11 +56,11 @@ protected:
 class CDM_DECL LoggerForward
 {
 public:
-  virtual void ForwardDebug(const std::string&  msg, const std::string&  origin){};
-  virtual void ForwardInfo(const std::string&  msg, const std::string&  origin){};
-  virtual void ForwardWarning(const std::string&  msg, const std::string&  origin){};
-  virtual void ForwardError(const std::string&  msg, const std::string&  origin){};
-  virtual void ForwardFatal(const std::string&  msg, const std::string&  origin){};
+  virtual void ForwardDebug(std::string const&  msg, std::string const&  origin){};
+  virtual void ForwardInfo(std::string const&  msg, std::string const&  origin){};
+  virtual void ForwardWarning(std::string const&  msg, std::string const&  origin){};
+  virtual void ForwardError(std::string const&  msg, std::string const&  origin){};
+  virtual void ForwardFatal(std::string const&  msg, std::string const&  origin){};
 };
 
 #pragma warning(pop)
@@ -65,51 +69,51 @@ class CDM_DECL Logger
 {
   friend Loggable;
 public:
-  Logger(const std::string&  logFilename = Loggable::empty);
+  Logger(std::string const&  logFilename = Loggable::empty);
   virtual ~Logger();
 
   void LogToConsole(bool b);
 
-  void ResetLogFile(const std::string&  logFilename = Loggable::empty);
+  void ResetLogFile(std::string const&  logFilename = Loggable::empty);
 
-  void SetLogLevel(log4cpp::Priority::Value priority);
-  log4cpp::Priority::Value GetLogLevel();
+  void SetLogLevel(log4cplus::LogLevel  level);
+  log4cplus::LogLevel GetLogLevel();
 
   virtual void SetLogTime(const SEScalarTime* time);
 
   virtual void SetForward(LoggerForward* forward);
   virtual bool HasForward();
 
-  virtual void Debug(const std::string&  msg, const std::string&  origin = Loggable::empty);
-  virtual void Debug(std::stringstream &msg, const std::string&  origin = Loggable::empty);
-  virtual void Debug(std::ostream &msg, const std::string&  origin = Loggable::empty);
+  virtual void Debug(std::string const&  msg, std::string const&  origin = Loggable::empty);
+  virtual void Debug(std::stringstream &msg, std::string const&  origin = Loggable::empty);
+  virtual void Debug(std::ostream &msg, std::string const&  origin = Loggable::empty);
 
-  virtual void Info(const std::string&  msg, const std::string&  origin = Loggable::empty);
-  virtual void Info(std::stringstream &msg, const std::string&  origin = Loggable::empty);
-  virtual void Info(const std::stringstream &msg, const std::string&  origin = Loggable::empty);
-  virtual void Info(std::ostream &msg, const std::string&  origin = Loggable::empty);
+  virtual void Info(std::string const&  msg, std::string const&  origin = Loggable::empty);
+  virtual void Info(std::stringstream &msg, std::string const&  origin = Loggable::empty);
+  virtual void Info(const std::stringstream &msg, std::string const&  origin = Loggable::empty);
+  virtual void Info(std::ostream &msg, std::string const&  origin = Loggable::empty);
 
-  virtual void Warning(const std::string&  msg, const std::string&  origin = Loggable::empty);
-  virtual void Warning(std::stringstream &msg, const std::string&  origin = Loggable::empty);
-  virtual void Warning(std::ostream &msg, const std::string&  origin = Loggable::empty);
+  virtual void Warning(std::string const&  msg, std::string const&  origin = Loggable::empty);
+  virtual void Warning(std::stringstream &msg, std::string const&  origin = Loggable::empty);
+  virtual void Warning(std::ostream &msg, std::string const&  origin = Loggable::empty);
 
-  virtual void Error(const std::string&  msg, const std::string&  origin = Loggable::empty);
-  virtual void Error(std::stringstream &msg, const std::string&  origin = Loggable::empty);
-  virtual void Error(std::ostream &msg, const std::string&  origin = Loggable::empty);
+  virtual void Error(std::string const&  msg, std::string const&  origin = Loggable::empty);
+  virtual void Error(std::stringstream &msg, std::string const&  origin = Loggable::empty);
+  virtual void Error(std::ostream &msg, std::string const&  origin = Loggable::empty);
 
-  virtual void Fatal(const std::string&  msg, const std::string&  origin = Loggable::empty);
-  virtual void Fatal(std::stringstream &msg, const std::string&  origin = Loggable::empty);
-  virtual void Fatal(std::ostream &msg, const std::string&  origin = Loggable::empty);
+  virtual void Fatal(std::string const&  msg, std::string const&  origin = Loggable::empty);
+  virtual void Fatal(std::stringstream &msg, std::string const&  origin = Loggable::empty);
+  virtual void Fatal(std::ostream &msg, std::string const&  origin = Loggable::empty);
 
 protected:
 
-  virtual std::string FormatLogMessage(const std::string&  origin, const std::string&  msg);
+  virtual std::string FormatLogMessage(std::string const&  origin, std::string const&  msg);
 
-  LoggerForward*      m_Forward;
-  log4cpp::Category*  m_Log;
-  log4cpp::Appender*  m_FileAppender;
-  log4cpp::Appender*  m_ConsoleAppender;
-  const SEScalarTime* m_time;
-  std::stringstream   m_ss;
+  LoggerForward*                m_Forward;
+  log4cplus::Logger             m_Log;
+  log4cplus::SharedAppenderPtr  m_FileAppender;
+  log4cplus::SharedAppenderPtr  m_ConsoleAppender;
+  const SEScalarTime*           m_time;
+  std::stringstream             m_ss;
 };
 

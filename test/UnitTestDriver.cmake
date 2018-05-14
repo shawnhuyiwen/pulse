@@ -10,7 +10,7 @@ target_include_directories(UnitTestDriver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/..
 target_include_directories(UnitTestDriver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/engine/cpp)
 target_include_directories(UnitTestDriver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../engine/cpp)
 target_include_directories(UnitTestDriver PRIVATE ${EIGEN3_INCLUDE_DIR})
-target_include_directories(UnitTestDriver PRIVATE ${LOG4CPP_INCLUDE_DIR})
+target_include_directories(UnitTestDriver PRIVATE ${LOG4CPLUS_INCLUDE_DIR})
 target_include_directories(UnitTestDriver PRIVATE ${PROTOBUF_INCLUDE_DIR})
 target_link_libraries(UnitTestDriver CommonDataModelUnitTests PulseEngineUnitTests)
 
