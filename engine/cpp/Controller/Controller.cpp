@@ -4332,7 +4332,6 @@ void PulseController::SetupMechanicalVentilator()
   // Graph //
   SEGasCompartmentGraph& gCombinedMechanicalVentilator = m_Compartments->GetRespiratoryAndMechanicalVentilatorGraph();
   gCombinedMechanicalVentilator.AddGraph(gRespiratory);
-  gCombinedMechanicalVentilator.RemoveCompartment(*gAmbient);
   gCombinedMechanicalVentilator.RemoveLink(pulse::PulmonaryLink::EnvironmentToMouth);
   gCombinedMechanicalVentilator.AddCompartment(gConnection);
   gCombinedMechanicalVentilator.AddLink(gConnectionToMouth);
@@ -4354,7 +4353,6 @@ void PulseController::SetupMechanicalVentilator()
   // Graph //
   SELiquidCompartmentGraph& lCombinedMechanicalVentilator = m_Compartments->GetAerosolAndMechanicalVentilatorGraph();
   lCombinedMechanicalVentilator.AddGraph(lAerosol);
-  lCombinedMechanicalVentilator.RemoveCompartment(*lAmbient);
   lCombinedMechanicalVentilator.RemoveLink(pulse::PulmonaryLink::EnvironmentToMouth);
   lCombinedMechanicalVentilator.AddCompartment(lConnection);
   lCombinedMechanicalVentilator.AddLink(lConnectionToMouth);
