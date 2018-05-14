@@ -177,7 +177,7 @@ bool PulseController::Initialize(const PulseConfiguration* config)
   if (m_Config->IsWritingPatientBaselineFile())
   {
     std::string stableDir = "./stable/";
-    MKDIR(stableDir.c_str());
+    MakeDirectory(stableDir.c_str());
     m_Patient->SaveFile(stableDir + m_Patient->GetName() + ".pba");
   }
 

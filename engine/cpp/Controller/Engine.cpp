@@ -546,7 +546,7 @@ bool PulseEngine::ProcessAction(const SEAction& action)
       else
       {
         std::stringstream ss;
-        MKDIR("./states");
+        MakeDirectory("./states");
         ss << "./states/" << m_Patient->GetName() << "@" << GetSimulationTime(TimeUnit::s) << "s.pba";
         Info("Saving " + ss.str());
         SaveState(ss.str());
