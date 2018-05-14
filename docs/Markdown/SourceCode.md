@@ -9,7 +9,7 @@ The code base consists of:
 The source is structured as follows:
 - bin - Contains all data and configuration files needed for execution of the engine
 - data  - Contains the Microsoft Excel spreadsheets for all data sets
-- lib - Contains third party libraries used by this project (see @ref Credits for more details)
+- lib - Contains third party libraries used by this project
 - src
 	- cdm - Code associated with the @ref CDM and @ref physeng 
   - cmake - The directory where cmake will create build files
