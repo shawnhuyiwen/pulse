@@ -38,6 +38,12 @@ if(UNIX AND NOT APPLE)
   set(LINUX TRUE)
 endif()
 
+
+if(NOT CMAKE_BUILD_TYPE)
+  message(STATUS "Setting build type to 'Release' as none was specified.")
+  set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build." FORCE)
+endif()
+
 set (SUPERBUILD ON CACHE BOOL "Initial pull and build of all dependent libraries/executables")
 set (PULSE_DOWNLOAD_BASELINES OFF CACHE BOOL "Download all V&V Scenarios and their baseline result files")
 if(SUPERBUILD)

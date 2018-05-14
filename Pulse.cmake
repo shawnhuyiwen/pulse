@@ -11,11 +11,11 @@ set(PULSE_VERSION "${PULSE_VERSION_MAJOR}.${PULSE_VERSION_MINOR}.${PULSE_VERSION
 # Build the core libraries as shared or static (DataModel, CDM, Engine)
 set(BUILD_SHARED_LIBS OFF)
 set(CMAKE_CXX_STANDARD 11)
-set(CONFIGURATION ${CMAKE_CFG_INTDIR})
-
+set(CONFIGURATION ${CMAKE_BUILD_TYPE})
+string(TOLOWER ${CONFIGURATION} CONFIGURATION)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-set(CMAKE_CONFIGURATION_TYPES Debug Release RelWithDebInfo CACHE TYPE INTERNAL FORCE )
+set(CMAKE_CONFIGURATION_TYPES "Debug" "Release" "RelWithDebInfo" CACHE TYPE INTERNAL FORCE )
 if(MSVC)  
 # Using MD as that seems to be what I run into alot, you could change these to /MT and /MTd if you want...
   set(CMAKE_CXX_FLAGS_DEBUG "/D_DEBUG /MDd /Zi /Ob2 /Oi /Od /RTC1" CACHE TYPE INTERNAL FORCE)
@@ -35,6 +35,8 @@ endif()
 if(UNIX)
   set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_RPATH}:\$ORIGIN")
 endif()
+
+
 
 message(STATUS "Looking for modules here : ${CMAKE_PREFIX_PATH}")
 set(CMAKE_CXX_STANDARD_LIBRARIES "" CACHE TYPE INTERNAL FORCE)
