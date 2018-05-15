@@ -198,6 +198,7 @@ public:
   void MultiEngineTest(const std::string& sTestDirectory);
   void SerializationTest(const std::string& sTestDirectory);
   void SolverSpeedTest(const std::string& sTestDirectory);
+  void ReadScenarios(const std::string& sOutputDirectory);
 protected:
   void InhalerState(PhysiologyEngine* bg, HowToTracker& tracker);
   void InjectSuccsState(PhysiologyEngine* bg, HowToTracker& tracker, const SESubstance& succs);

@@ -28,6 +28,8 @@ int main(int argc, char* argv[])
       // Pulse Tests //
       ////////////////////
 
+      peTest.ReadScenarios(peDir);
+
       //peTest.CardiovascularCircuitAndTransportTest(peDir);
       //peTest.CardiovascularAndRenalCircuitAndTransportTest(peDir);
       //peTest.CardiovascularAndTissueCircuitAndTransportTest(peDir);
@@ -46,7 +48,7 @@ int main(int argc, char* argv[])
       //peTest.AnesthesiaMachineCircuitAndTransportTest(peDir);
       //peTest.RespiratoryWithAnesthesiaMachineCircuitAndTransportTest(peDir);  
       //peTest.RespiratoryWithInhalerCircuitAndTransportTest(peDir); 
-      peTest.RespiratoryWithMechanicalVentilatorCircuitAndTransportTest(peDir);
+      //peTest.RespiratoryWithMechanicalVentilatorCircuitAndTransportTest(peDir);
 
       //peTest.InternalTemperatureVariableBMRCircuitTest(peDir);
       //peTest.InternalTemperatureVariableSkinCircuitTest(peDir);
@@ -111,7 +113,6 @@ int main(int argc, char* argv[])
 
       // I/O Tests
       //cdmTest.ReadPatientDirectory(cdmDir);
-      //cdmTest.ReadScenarios(cdmDir);
       //cdmTest.ReadSubstanceDirectory(cdmDir);
 
       // Property Tests

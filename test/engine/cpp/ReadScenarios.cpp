@@ -1,46 +1,25 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModelTest.h"
-#include "scenario/SEAdvanceTime.h"
-#include "scenario/SEScenario.h"
-#include "scenario/SEScenarioInitialParameters.h"
-#include "patient/SEPatient.h"
-#include "patient/actions/SEHemorrhage.h"
+#include "EngineTest.h"
+#include "PulseScenario.h"
+#include "PulseConfiguration.h"
 #include "substance/SESubstanceManager.h"
 #include "properties/SEScalarTime.h"
-#include "properties/SEScalarVolumePerTime.h"
 #include "utils/testing/SETestReport.h"
 #include "utils/testing/SETestCase.h"
 #include "utils/testing/SETestSuite.h"
 #include "utils/FileUtils.h"
 #include "utils/TimingProfile.h"
-#include "compartment/SECompartmentManager.h"
-// Systems
-#include "system/physiology/SEBloodChemistrySystem.h"
-#include "system/physiology/SECardiovascularSystem.h"
-#include "system/physiology/SEEndocrineSystem.h"
-#include "system/physiology/SEEnergySystem.h"
-#include "system/physiology/SERenalSystem.h"
-#include "system/physiology/SEGastrointestinalSystem.h"
-#include "system/physiology/SERespiratorySystem.h"
-#include "system/physiology/SEDrugSystem.h"
-#include "system/physiology/SETissueSystem.h"
-#include "system/equipment/anesthesiamachine/SEAnesthesiaMachine.h"
-#include "system/equipment/electrocardiogram/SEElectroCardioGram.h"
-#include "system/equipment/inhaler/SEInhaler.h"
-#include "system/environment/SEEnvironment.h"
 
-void CommonDataModelTest::ReadScenarios(const std::string& rptDirectory)
+void PulseEngineTest::ReadScenarios(const std::string& rptDirectory)
 {
   TimingProfile pTimer;
   std::string testName = "ReadScenarios";
   m_Logger->ResetLogFile(rptDirectory + "/" + testName + ".log");
   SESubstanceManager subMgr(m_Logger);
   subMgr.LoadSubstanceDirectory();
-  SEScenario scenario(subMgr);
-
-  SECompartmentManager cmptMgr(subMgr);
+  PulseScenario scenario(subMgr);
 
   std::string dir = GetCurrentWorkingDirectory();
   dir.append("/verification/scenarios");
