@@ -28,6 +28,7 @@ public:
 
   virtual bool HasForce() const;
   virtual SEScalarForce& GetForce();
+  virtual double GetForce(const ForceUnit& unit) const;
 
   virtual void ToString(std::ostream &str) const;
 

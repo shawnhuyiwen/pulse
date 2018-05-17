@@ -223,7 +223,9 @@ public class SETestDriver
             Set<String> failures = null;
             if(new File(job.baselineFiles.get(i)).exists())
             {
-              failures = compare.compare(job.baselineFiles.get(i), job.computedFiles.get(i));
+            	try {
+            		failures = compare.compare(job.baselineFiles.get(i), job.computedFiles.get(i));
+            	}catch(Exception ex){ failures=null; }
               if(failures==null)// Something bad happened in running this test...
                 compare.createErrorSuite(job.name,"Could not compare these files for some reason: "+job.baselineFiles.get(i)+" and " + job.computedFiles.get(i));
             }
@@ -316,6 +318,25 @@ public class SETestDriver
         report.addKnownSuiteFailure(job.name);
         continue;
       }    
+      if (job.isAssessment)
+      {
+        SETestSuite ts = report.createTestSuite();
+        ts.setName(job.name);
+        ts.setPerformed(true);
+        SETestCase  tc = ts.createTestCase();
+        tc.setName(job.name);
+        if(new File(job.computedFiles.get(0)).exists())
+        {
+          ts.setPerformed(true);
+          currentGroup.add(ts.getName());
+        }
+        else
+        {
+          ts.setPerformed(false);
+          tc.AddFailure("Could not find assessment file");
+        }
+        continue;
+      }
       if(job.reportFiles.isEmpty())
       {
         report.createErrorSuite(job.name,"No reports found for "+job.name+" to summarize");

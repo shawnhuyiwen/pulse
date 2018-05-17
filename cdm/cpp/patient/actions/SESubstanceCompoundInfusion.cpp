@@ -78,6 +78,12 @@ SEScalarVolumePerTime& SESubstanceCompoundInfusion::GetRate()
     m_Rate=new SEScalarVolumePerTime();
   return *m_Rate;
 }
+double SESubstanceCompoundInfusion::GetRate(const VolumePerTimeUnit& unit) const
+{
+  if (m_Rate == nullptr)
+    return SEScalar::dNaN();
+  return m_Rate->GetValue(unit);
+}
 
 
 bool SESubstanceCompoundInfusion::HasBagVolume() const
@@ -90,8 +96,18 @@ SEScalarVolume& SESubstanceCompoundInfusion::GetBagVolume()
     m_BagVolume=new SEScalarVolume();
   return *m_BagVolume;
 }
+double SESubstanceCompoundInfusion::GetBagVolume(const VolumeUnit& unit) const
+{
+  if (m_BagVolume == nullptr)
+    return SEScalar::dNaN();
+  return m_BagVolume->GetValue(unit);
+}
 
-SESubstanceCompound& SESubstanceCompoundInfusion::GetSubstanceCompound() const
+SESubstanceCompound& SESubstanceCompoundInfusion::GetSubstanceCompound()
+{
+  return (SESubstanceCompound&)m_Compound;
+}
+const SESubstanceCompound& SESubstanceCompoundInfusion::GetSubstanceCompound() const
 {
   return (SESubstanceCompound&)m_Compound;
 }

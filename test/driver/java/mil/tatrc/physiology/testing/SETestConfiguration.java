@@ -187,8 +187,10 @@ public class SETestConfiguration
 							}
 							continue;
 						}
+						if(directive.equalsIgnoreCase("Assessment")) 
+						{ job.isAssessment = true; job.state = SETestJob.State.Complete; continue; }
 						if(directive.equalsIgnoreCase("NoCompare")) 
-						{ job.PlottableResults = false; continue; }
+            { job.PlottableResults = false; continue; }
 						if(directive.equalsIgnoreCase("FastPlot")) 
 						{ job.PlottableResults = true; job.plotType=PlotType.FastPlot; continue; }
 						if(directive.equalsIgnoreCase("FullPlot"))
@@ -224,7 +226,11 @@ public class SETestConfiguration
 				}
 				else
 				{
-					if(job.executor.getClass().getName().indexOf("Scenario")!=-1)//Is a Scenario File test
+				  if(job.executor==null)
+				  {
+            job.computedFiles.add(job.computedDirectory+"/"+job.name);
+				  }
+				  else if(job.executor.getClass().getName().indexOf("Scenario")!=-1)//Is a Scenario File test
 					{
 						deriveScenarioResultNames(job, job.name);            
 					}
@@ -293,6 +299,8 @@ public class SETestConfiguration
 	// Let's clean out everything we are about to run
     for(SETestJob job : jobs)
     {
+      if(job.isAssessment)
+        continue;
     	deleteTestResults(job.computedDirectory+"/"+job.name);
     	for(String resultFile : job.computedFiles)
     	{

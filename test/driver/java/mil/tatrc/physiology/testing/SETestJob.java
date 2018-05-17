@@ -22,6 +22,7 @@ public class SETestJob extends LogListener
   public boolean      skipPlot = false;
   public boolean      knownFailure = false;
   public SETestDriver.Executor executor = null;
+  public boolean      isAssessment = false;
   public boolean      PlottableResults = false;
   public PlotType     plotType = PlotType.FastPlot;//Only plot every nth data point
   public double       percentDifference;

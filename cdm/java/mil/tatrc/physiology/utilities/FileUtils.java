@@ -885,10 +885,8 @@ public class FileUtils
       String fileName;
       for(String file : fileNames)
       {
-        if(file.startsWith("."))
-          file = file.substring(1);
-        if(file.startsWith("/"))
-          file = file.substring(1);
+        if(file.startsWith("./"))
+          file = file.substring(2);
         
         fileName = file.substring(file.lastIndexOf("/")+1);
         if(zipPath==null||zipPath.isEmpty())

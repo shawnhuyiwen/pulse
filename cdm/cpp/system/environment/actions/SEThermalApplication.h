@@ -28,14 +28,17 @@ public:
 
   virtual bool HasActiveHeating() const;
   virtual SEActiveConditioning& GetActiveHeating();
+  virtual const SEActiveConditioning* GetActiveHeating() const;
   virtual void RemoveActiveHeating();
 
   virtual bool HasActiveCooling() const;
   virtual SEActiveConditioning& GetActiveCooling();
+  virtual const SEActiveConditioning* GetActiveCooling() const;
   virtual void RemoveActiveCooling();
 
   virtual bool HasAppliedTemperature() const;
   virtual SEAppliedTemperature& GetAppliedTemperature();
+  virtual const SEAppliedTemperature* GetAppliedTemperature() const;
   virtual void RemoveAppliedTemperature();
 
   virtual void ToString(std::ostream &str) const;

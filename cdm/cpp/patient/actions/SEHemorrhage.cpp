@@ -87,12 +87,17 @@ bool SEHemorrhage::HasRate() const
 {
   return m_Rate==nullptr?false:m_Rate->IsValid();
 }
-
 SEScalarVolumePerTime& SEHemorrhage::GetRate()
 {
   if(m_Rate==nullptr)
     m_Rate=new SEScalarVolumePerTime();
   return *m_Rate;
+}
+double SEHemorrhage::GetRate(const VolumePerTimeUnit& unit) const
+{
+  if (m_Rate == nullptr)
+    return SEScalar::dNaN();
+  return m_Rate->GetValue(unit);
 }
 
 void SEHemorrhage::ToString(std::ostream &str) const

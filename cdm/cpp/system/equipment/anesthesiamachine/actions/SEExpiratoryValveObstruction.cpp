@@ -67,6 +67,12 @@ SEScalar0To1& SEExpiratoryValveObstruction::GetSeverity()
     m_Severity = new SEScalar0To1();
   return *m_Severity;
 }
+double SEExpiratoryValveObstruction::GetSeverity() const
+{
+  if (m_Severity == nullptr)
+    return SEScalar::dNaN();
+  return m_Severity->GetValue();
+}
 
 void SEExpiratoryValveObstruction::ToString(std::ostream &str) const
 {

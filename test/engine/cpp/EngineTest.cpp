@@ -71,6 +71,9 @@ void PulseEngineTest::FillFunctionMap()
   testFunction respCTTest = &PulseEngineTest::RespiratoryCircuitAndTransportTest;
   testFunction anesthCTTest = &PulseEngineTest::AnesthesiaMachineCircuitAndTransportTest;
 
+
+  bgeMap.insert(std::make_pair("ReadScenarios", &PulseEngineTest::ReadScenarios));
+
   //Fill a map that ties unit test names to their actual functions
   bgeMap.insert(std::make_pair("CardiovascularCircuitAndTransportTest", cardioCTTest));
   bgeMap.insert(std::make_pair("CardiovascularAndRenalCircuitAndTransportTest", &PulseEngineTest::CardiovascularAndRenalCircuitAndTransportTest));

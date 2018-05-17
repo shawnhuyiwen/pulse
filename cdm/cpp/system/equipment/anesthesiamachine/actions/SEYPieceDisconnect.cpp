@@ -67,6 +67,12 @@ SEScalar0To1& SEYPieceDisconnect::GetSeverity()
     m_Severity = new SEScalar0To1();
   return *m_Severity;
 }
+double SEYPieceDisconnect::GetSeverity() const
+{
+  if (m_Severity == nullptr)
+    return SEScalar::dNaN();
+  return m_Severity->GetValue();
+}
 
 void SEYPieceDisconnect::ToString(std::ostream &str) const
 {

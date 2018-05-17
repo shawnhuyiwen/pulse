@@ -67,6 +67,12 @@ SEScalar0To1& SEExpiratoryValveLeak::GetSeverity()
     m_Severity = new SEScalar0To1();
   return *m_Severity;
 }
+double SEExpiratoryValveLeak::GetSeverity() const
+{
+  if (m_Severity == nullptr)
+    return SEScalar::dNaN();
+  return m_Severity->GetValue();
+}
 
 void SEExpiratoryValveLeak::ToString(std::ostream &str) const
 {

@@ -20,13 +20,14 @@ public:
 
   // STATE ACTION
   bool HasConfiguration() const;
-  SEInhalerConfiguration* GetConfiguration() const;
+  SEInhalerConfiguration* GetConfiguration();
+  const SEInhalerConfiguration* GetConfiguration() const;
   void RemoveConfiguration();
   
 protected:
   void Clear();
   static void Serialize(const SEInhalerActionCollection& src, cdm::ActionListData& dst);
-  bool ProcessAction(const SEInhalerAction& action, cdm::AnyInhalerActionData& any);
+  bool ProcessAction(const SEInhalerAction& action, cdm::AnyInhalerActionData* any);
 
   SEInhalerConfiguration*   m_Configuration;
   // General

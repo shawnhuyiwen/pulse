@@ -9,12 +9,15 @@ PROTO_POP
 
 const PressurePerVolumeUnit PressurePerVolumeUnit::mmHg_Per_mL("mmHg/mL");
 const PressurePerVolumeUnit PressurePerVolumeUnit::cmH2O_Per_mL("cmH2O/mL");
+const PressurePerVolumeUnit PressurePerVolumeUnit::cmH2O_Per_L("cmH2O/L");
 
 bool PressurePerVolumeUnit::IsValidUnit(const std::string& unit)
 {
   if (mmHg_Per_mL.GetString().compare(unit) == 0)
     return true;
   if (cmH2O_Per_mL.GetString().compare(unit) == 0)
+    return true;
+  if (cmH2O_Per_L.GetString().compare(unit) == 0)
     return true;
   return false;
 }
@@ -25,6 +28,8 @@ const PressurePerVolumeUnit& PressurePerVolumeUnit::GetCompoundUnit(const std::s
     return mmHg_Per_mL;
   if (cmH2O_Per_mL.GetString().compare(unit) == 0)
     return cmH2O_Per_mL;
+  if (cmH2O_Per_L.GetString().compare(unit) == 0)
+    return cmH2O_Per_L;
   std::stringstream err;
   err << unit << " is not a valid PressurePerVolume unit";
   throw CommonDataModelException(err.str());

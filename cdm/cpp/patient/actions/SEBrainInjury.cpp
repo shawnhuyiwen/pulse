@@ -73,6 +73,12 @@ SEScalar0To1& SEBrainInjury::GetSeverity()
     m_Severity=new SEScalar0To1();
   return *m_Severity;
 }
+double SEBrainInjury::GetSeverity() const
+{
+  if (m_Severity == nullptr)
+    return SEScalar::dNaN();
+  return m_Severity->GetValue();
+}
 
 cdm::eBrainInjury_Type SEBrainInjury::GetType() const
 {

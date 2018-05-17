@@ -65,12 +65,17 @@ bool SEAcuteStress::HasSeverity() const
 {
   return m_Severity==nullptr?false:m_Severity->IsValid();
 }
-
 SEScalar0To1& SEAcuteStress::GetSeverity()
 {
   if(m_Severity==nullptr)
     m_Severity=new SEScalar0To1();
   return *m_Severity;
+}
+double SEAcuteStress::GetSeverity() const
+{
+  if (m_Severity == nullptr)
+    return SEScalar::dNaN();
+  return m_Severity->GetValue();
 }
 
 void SEAcuteStress::ToString(std::ostream &str) const

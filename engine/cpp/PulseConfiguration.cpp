@@ -162,6 +162,8 @@ PulseConfiguration::PulseConfiguration(SESubstanceManager& substances) : SEEngin
   // Respiratory
   m_CentralControllerCO2PressureSetPoint = nullptr;
   m_CentralVentilatoryControllerGain = nullptr;
+  m_MinimumAllowableInpiratoryAndExpiratoryPeriod = nullptr;
+  m_MinimumAllowableTidalVolume = nullptr;
   m_PeripheralControllerCO2PressureSetPoint = nullptr;
   m_PeripheralVentilatoryControllerGain = nullptr;
   m_PleuralComplianceSensitivity = nullptr;
@@ -292,6 +294,8 @@ void PulseConfiguration::Clear()
   // Respiratory
   SAFE_DELETE(m_CentralControllerCO2PressureSetPoint);
   SAFE_DELETE(m_CentralVentilatoryControllerGain);
+  SAFE_DELETE(m_MinimumAllowableInpiratoryAndExpiratoryPeriod);
+  SAFE_DELETE(m_MinimumAllowableTidalVolume);
   SAFE_DELETE(m_PeripheralControllerCO2PressureSetPoint);
   SAFE_DELETE(m_PeripheralVentilatoryControllerGain);
   SAFE_DELETE(m_PleuralComplianceSensitivity);
@@ -422,6 +426,8 @@ void PulseConfiguration::Initialize()
   // Respiratory
   GetCentralControllerCO2PressureSetPoint().SetValue(35.5, PressureUnit::mmHg);
   GetCentralVentilatoryControllerGain().SetValue(1.44); //How much to add to the amplitude when the CO2 is off
+  GetMinimumAllowableInpiratoryAndExpiratoryPeriod().SetValue(0.25, TimeUnit::s);
+  GetMinimumAllowableTidalVolume().SetValue(0.1, VolumeUnit::L);
   GetPeripheralControllerCO2PressureSetPoint().SetValue(35.5, PressureUnit::mmHg);
   GetPeripheralVentilatoryControllerGain().SetValue(30.24); //How much to add to the amplitude when the CO2 is off
   GetPleuralComplianceSensitivity().SetValue(5.0, InverseVolumeUnit::Inverse_L);
@@ -749,6 +755,10 @@ void PulseConfiguration::Serialize(const pulse::ConfigurationData& src, PulseCon
       SEScalarPressure::Load(config.centralcontrollerco2pressuresetpoint(),dst.GetCentralControllerCO2PressureSetPoint());
     if (config.has_centralventilatorycontrollergain())
       SEScalar::Load(config.centralventilatorycontrollergain(),dst.GetCentralVentilatoryControllerGain());
+    if (config.has_minimumallowableinpiratoryandexpiratoryperiod())
+      SEScalarTime::Load(config.minimumallowableinpiratoryandexpiratoryperiod(), dst.GetMinimumAllowableInpiratoryAndExpiratoryPeriod());
+    if (config.has_minimumallowabletidalvolume())
+      SEScalarVolume::Load(config.minimumallowabletidalvolume(), dst.GetMinimumAllowableTidalVolume());
     if (config.has_peripheralcontrollerco2pressuresetpoint())
       SEScalarPressure::Load(config.peripheralcontrollerco2pressuresetpoint(),dst.GetPeripheralControllerCO2PressureSetPoint());
     if (config.has_peripheralventilatorycontrollergain())
@@ -983,6 +993,10 @@ void PulseConfiguration::Serialize(const PulseConfiguration& src, pulse::Configu
     resp->set_allocated_centralcontrollerco2pressuresetpoint(SEScalarPressure::Unload(*src.m_CentralControllerCO2PressureSetPoint));
   if (src.HasCentralVentilatoryControllerGain())
     resp->set_allocated_centralventilatorycontrollergain(SEScalar::Unload(*src.m_CentralVentilatoryControllerGain));
+  if (src.HasMinimumAllowableInpiratoryAndExpiratoryPeriod())
+    resp->set_allocated_minimumallowableinpiratoryandexpiratoryperiod(SEScalarTime::Unload(*src.m_MinimumAllowableInpiratoryAndExpiratoryPeriod));
+  if (src.HasMinimumAllowableTidalVolume())
+    resp->set_allocated_minimumallowabletidalvolume(SEScalarVolume::Unload(*src.m_MinimumAllowableTidalVolume));
   if (src.HasPeripheralControllerCO2PressureSetPoint())
     resp->set_allocated_peripheralcontrollerco2pressuresetpoint(SEScalarPressure::Unload(*src.m_PeripheralControllerCO2PressureSetPoint));
   if (src.HasPeripheralVentilatoryControllerGain())
@@ -2487,6 +2501,40 @@ double PulseConfiguration::GetCentralVentilatoryControllerGain() const
   if (m_CentralVentilatoryControllerGain == nullptr)
     return SEScalar::dNaN();
   return m_CentralVentilatoryControllerGain->GetValue();
+}
+
+bool PulseConfiguration::HasMinimumAllowableInpiratoryAndExpiratoryPeriod() const
+{
+  return m_MinimumAllowableInpiratoryAndExpiratoryPeriod == nullptr ? false : m_MinimumAllowableInpiratoryAndExpiratoryPeriod->IsValid();
+}
+SEScalarTime& PulseConfiguration::GetMinimumAllowableInpiratoryAndExpiratoryPeriod()
+{
+  if (m_MinimumAllowableInpiratoryAndExpiratoryPeriod == nullptr)
+    m_MinimumAllowableInpiratoryAndExpiratoryPeriod = new SEScalarTime();
+  return *m_MinimumAllowableInpiratoryAndExpiratoryPeriod;
+}
+double PulseConfiguration::GetMinimumAllowableInpiratoryAndExpiratoryPeriod(const TimeUnit& unit) const
+{
+  if (m_MinimumAllowableInpiratoryAndExpiratoryPeriod == nullptr)
+    return SEScalar::dNaN();
+  return m_MinimumAllowableInpiratoryAndExpiratoryPeriod->GetValue(unit);
+}
+
+bool PulseConfiguration::HasMinimumAllowableTidalVolume() const
+{
+  return m_MinimumAllowableTidalVolume == nullptr ? false : m_MinimumAllowableTidalVolume->IsValid();
+}
+SEScalarVolume& PulseConfiguration::GetMinimumAllowableTidalVolume()
+{
+  if (m_MinimumAllowableTidalVolume == nullptr)
+    m_MinimumAllowableTidalVolume = new SEScalarVolume();
+  return *m_MinimumAllowableTidalVolume;
+}
+double PulseConfiguration::GetMinimumAllowableTidalVolume(const VolumeUnit& unit) const
+{
+  if (m_MinimumAllowableTidalVolume == nullptr)
+    return SEScalar::dNaN();
+  return m_MinimumAllowableTidalVolume->GetValue(unit);
 }
 
 bool PulseConfiguration::HasPeripheralControllerCO2PressureSetPoint() const

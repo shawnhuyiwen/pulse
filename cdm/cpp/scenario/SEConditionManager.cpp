@@ -267,7 +267,11 @@ bool SEConditionManager::HasChronicAnemia() const
 {
   return m_Anemia == nullptr ? false : m_Anemia->IsValid();
 }
-SEChronicAnemia* SEConditionManager::GetChronicAnemia() const
+SEChronicAnemia* SEConditionManager::GetChronicAnemia()
+{
+  return m_Anemia;
+}
+const SEChronicAnemia* SEConditionManager::GetChronicAnemia() const
 {
   return m_Anemia;
 }
@@ -276,7 +280,11 @@ bool SEConditionManager::HasChronicObstructivePulmonaryDisease() const
 {
   return m_COPD == nullptr ? false : m_COPD->IsValid();
 }
-SEChronicObstructivePulmonaryDisease* SEConditionManager::GetChronicObstructivePulmonaryDisease() const
+SEChronicObstructivePulmonaryDisease* SEConditionManager::GetChronicObstructivePulmonaryDisease()
+{
+  return m_COPD;
+}
+const SEChronicObstructivePulmonaryDisease* SEConditionManager::GetChronicObstructivePulmonaryDisease() const
 {
   return m_COPD;
 }
@@ -289,7 +297,11 @@ bool SEConditionManager::HasChronicVentricularSystolicDysfunction() const
 {
   return m_ChronicVentricularSystolicDysfunction == nullptr ? false : m_ChronicVentricularSystolicDysfunction->IsValid();
 }
-SEChronicVentricularSystolicDysfunction* SEConditionManager::GetChronicVentricularSystolicDysfunction() const
+SEChronicVentricularSystolicDysfunction* SEConditionManager::GetChronicVentricularSystolicDysfunction()
+{
+  return m_ChronicVentricularSystolicDysfunction;
+}
+const SEChronicVentricularSystolicDysfunction* SEConditionManager::GetChronicVentricularSystolicDysfunction() const
 {
   return m_ChronicVentricularSystolicDysfunction;
 }
@@ -298,7 +310,11 @@ bool SEConditionManager::HasChronicPericardialEffusion() const
 {
   return m_PericardialEffusion == nullptr ? false : m_PericardialEffusion->IsValid();
 }
-SEChronicPericardialEffusion* SEConditionManager::GetChronicPericardialEffusion() const
+SEChronicPericardialEffusion* SEConditionManager::GetChronicPericardialEffusion()
+{
+  return m_PericardialEffusion;
+}
+const SEChronicPericardialEffusion* SEConditionManager::GetChronicPericardialEffusion() const
 {
   return m_PericardialEffusion;
 }
@@ -307,16 +323,25 @@ bool SEConditionManager::HasChronicRenalStenosis() const
 {
   return m_RenalStenosis == nullptr ? false : m_RenalStenosis->IsValid();
 }
-SEChronicRenalStenosis* SEConditionManager::GetChronicRenalStenosis() const
+SEChronicRenalStenosis* SEConditionManager::GetChronicRenalStenosis()
 {
   return m_RenalStenosis;
 }
+const SEChronicRenalStenosis* SEConditionManager::GetChronicRenalStenosis() const
+{
+  return m_RenalStenosis;
+}
+
 
 bool SEConditionManager::HasConsumeMeal() const
 {
   return m_ConsumeMeal == nullptr ? false : m_ConsumeMeal->IsValid();
 }
-SEConsumeMeal* SEConditionManager::GetConsumeMeal() const
+SEConsumeMeal* SEConditionManager::GetConsumeMeal()
+{
+  return m_ConsumeMeal;
+}
+const SEConsumeMeal* SEConditionManager::GetConsumeMeal() const
 {
   return m_ConsumeMeal;
 }
@@ -325,7 +350,11 @@ bool SEConditionManager::HasImpairedAlveolarExchange() const
 {
   return m_ImpairedAlveolarExchange == nullptr ? false : m_ImpairedAlveolarExchange->IsValid();
 }
-SEImpairedAlveolarExchange* SEConditionManager::GetImpairedAlveolarExchange() const
+SEImpairedAlveolarExchange* SEConditionManager::GetImpairedAlveolarExchange()
+{
+  return m_ImpairedAlveolarExchange;
+}
+const SEImpairedAlveolarExchange* SEConditionManager::GetImpairedAlveolarExchange() const
 {
   return m_ImpairedAlveolarExchange;
 }
@@ -334,7 +363,11 @@ bool SEConditionManager::HasLobarPneumonia() const
 {
   return m_LobarPneumonia == nullptr ? false : m_LobarPneumonia->IsValid();
 }
-SELobarPneumonia* SEConditionManager::GetLobarPneumonia() const
+SELobarPneumonia* SEConditionManager::GetLobarPneumonia()
+{
+  return m_LobarPneumonia;
+}
+const SELobarPneumonia* SEConditionManager::GetLobarPneumonia() const
 {
   return m_LobarPneumonia;
 }
@@ -343,7 +376,11 @@ bool SEConditionManager::HasInitialEnvironmentConditions() const
 {
   return m_InitialEnvironmentConditions == nullptr ? false : m_InitialEnvironmentConditions->IsValid();
 }
-SEInitialEnvironmentConditions* SEConditionManager::GetInitialEnvironmentConditions() const
+SEInitialEnvironmentConditions* SEConditionManager::GetInitialEnvironmentConditions()
+{
+  return m_InitialEnvironmentConditions;
+}
+const SEInitialEnvironmentConditions* SEConditionManager::GetInitialEnvironmentConditions() const
 {
   return m_InitialEnvironmentConditions;
 }

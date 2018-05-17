@@ -34,6 +34,11 @@ public:
   SEAnesthesiaMachineActionCollection& GetAnesthesiaMachineActions() { return *m_AnesthesiaMachineActions; }
   SEInhalerActionCollection&           GetInhalerActions()           { return *m_InhalerActions; }
 
+  const SEPatientActionCollection&           GetPatientActions()           const { return *m_PatientActions; }
+  const SEEnvironmentActionCollection&       GetEnvironmentActions()       const { return *m_EnvironmentActions; }
+  const SEAnesthesiaMachineActionCollection& GetAnesthesiaMachineActions() const { return *m_AnesthesiaMachineActions; }
+  const SEInhalerActionCollection&           GetInhalerActions()           const { return *m_InhalerActions; }
+
   // This is here in case you want to take all the actions from an engine and write them out so you can reproduce the same engine state later
   const cdm::ActionListData& GetActionList() { return *m_ProcessedActions; }// I don't really have anything that does that yet...
 

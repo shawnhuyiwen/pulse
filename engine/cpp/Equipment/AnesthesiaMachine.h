@@ -15,9 +15,9 @@ PULSE_BIND_DECL(AnesthesiaMachineData)
  * @brief 
  * Generic anesthesia machine for positive pressure ventilation.
  */    
-class PULSE_DECL AnesthesiaMachine : public SEAnesthesiaMachine, public PulseSystem
+class PULSE_DECL AnesthesiaMachine : public SEAnesthesiaMachine, public PulseAnesthesiaMachine, public PulseSystem
 {
-  friend PulseController;
+  friend class PulseController;
   friend class PulseEngineTest;
 protected:
   AnesthesiaMachine(PulseController& pc);
@@ -28,19 +28,17 @@ public:
 
   void Clear();
 
-  // Set members to a stable homeostatic state
-  void Initialize();
-
   static void Load(const pulse::AnesthesiaMachineData& src, AnesthesiaMachine& dst);
   static pulse::AnesthesiaMachineData* Unload(const AnesthesiaMachine& src);
 protected:
   static void Serialize(const pulse::AnesthesiaMachineData& src, AnesthesiaMachine& dst);
   static void Serialize(const AnesthesiaMachine& src, pulse::AnesthesiaMachineData& dst);
 
+  // Set members to a stable homeostatic state
+  void Initialize();
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
   void SetUp();
 
-public:
   void StateChange();
 
   void PreProcess();
@@ -54,7 +52,6 @@ public:
   virtual void SetConnection(cdm::eAnesthesiaMachine_Connection c);
   virtual void InvalidateConnection();
 
-private:
   void CalculateSourceStatus();
   void CalculateEquipmentLeak();
   void SetConnection();
@@ -101,8 +98,3 @@ private:
   SEFluidCircuitPath*                  m_pExpiratoryLimbToSelector;
   SEFluidCircuitPath*                  m_pSelectorToScrubber;
 };
-
-
-
-
-

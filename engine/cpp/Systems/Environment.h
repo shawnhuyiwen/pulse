@@ -15,9 +15,9 @@ PULSE_BIND_DECL(EnvironmentData)
 /**
  * @brief The %Environment class characterizes the environment and manages interactions between the body its surroundings.
  */  
-class PULSE_DECL Environment : public SEEnvironment, public PulseSystem
+class PULSE_DECL Environment : public SEEnvironment, public PulseEnvironmentSystem, public PulseSystem
 {
-  friend PulseController;
+  friend class PulseController;
   friend class PulseEngineTest;
 protected:
   Environment(PulseController& data);
@@ -28,26 +28,23 @@ public:
 
   void Clear();
 
-  // Set members to a stable homeostatic state
-  void Initialize();
-
   static void Load(const pulse::EnvironmentData& src, Environment& dst);
   static pulse::EnvironmentData* Unload(const Environment& src);
 protected:
   static void Serialize(const pulse::EnvironmentData& src, Environment& dst);
   static void Serialize(const Environment& src, pulse::EnvironmentData& dst);
 
+  // Set members to a stable homeostatic state
+  void Initialize();
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
   void SetUp();
 
-public:
   void AtSteadyState();
   void PreProcess();
   void Process();
   void PostProcess();
 
   void StateChange();
-protected:
   
   void ProcessActions();
   void CalculateSupplementalValues();
@@ -58,7 +55,6 @@ protected:
   void CalculateRespiration();
 
   // Serializable member variables (Set in Initialize and in schema)
-  
 
   // Stateless member variable (Calculated in Supplemental Method and used in other methods)
   double m_dLewisRelation;

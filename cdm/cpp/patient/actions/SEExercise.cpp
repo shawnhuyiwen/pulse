@@ -70,6 +70,12 @@ SEScalar0To1& SEExercise::GetIntensity()
     m_Intensity = new SEScalar0To1();
   return *m_Intensity;
 }
+double SEExercise::GetIntensity() const
+{
+  if (m_Intensity == nullptr)
+    return SEScalar::dNaN();
+  return m_Intensity->GetValue();
+}
 
 void SEExercise::ToString(std::ostream &str) const
 {

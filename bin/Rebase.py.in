@@ -109,9 +109,9 @@ class GirderExternalDataCli(GirderClient):
                 if idx == -1 :
                     idx = content_link.find('unit_tests')
                 sha_file = content_link[idx:]
-                full_path = self.validationFolder + "\\" + sha_file
+                full_path = self.validationFolder + "/" + sha_file
                 self.mkdir_p(os.path.dirname(full_path))
-                f = open(self.validationFolder+"\\"+sha_file+".sha512", "w+")
+                f = open(self.validationFolder+"/"+sha_file+".sha512", "w+")
                 f.write(self.item_hash)
                 self._uploadAsItem(
                     full_name,

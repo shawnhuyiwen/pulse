@@ -214,7 +214,11 @@ double GeneralMath::PercentTolerance(double expected, double calculated, double 
     else
     {
       if (std::abs(calculated) > epsilon)
-        throw CommonDataModelException("Percent Tolerance is NaN");
+      {
+        ///\todo reevaluate how to handle this - it potentially causes a problem during stabilization
+        //throw CommonDataModelException("Percent Tolerance is NaN");
+        return 100.0;
+      }
       else
         return 0.0;
     }

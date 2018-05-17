@@ -266,16 +266,17 @@ JNIEXPORT bool JNICALL Java_mil_tatrc_physiology_pulse_engine_PulseEngine_native
   }
   catch (CommonDataModelException& ex)
   {
+    std::cerr << "JNI Caught Exception " << ex.what() << std::endl;
     success = false;
-    engineJNI->GetLogger()->Error(ex.what());
   }
   catch (std::exception& ex)
   {
+    std::cerr << "JNI Caught Exception " << ex.what() << std::endl;
     success = false;
-    engineJNI->GetLogger()->Error(ex.what());
   }
   catch (...)
   {
+    std::cerr << "JNI Caught Unknown Exception " << std::endl;
     success = false;
   }
   if (success)
@@ -300,16 +301,17 @@ JNIEXPORT bool JNICALL Java_mil_tatrc_physiology_pulse_engine_PulseEngine_native
   }
   catch (CommonDataModelException& ex)
   {
+    std::cerr << "JNI Caught Exception " << ex.what() << std::endl;
     success = false;
-    engineJNI->GetLogger()->Error(ex.what());
   }
   catch (std::exception& ex)
   {
+    std::cerr << "JNI Caught Exception " << ex.what() << std::endl;
     success = false;
-    engineJNI->GetLogger()->Error(ex.what());
   }
   catch (...)
   {
+    std::cerr << "JNI Caught Unknown Exception " << std::endl;
     success = false;
   }
   if (success)

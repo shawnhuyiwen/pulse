@@ -69,6 +69,12 @@ SEScalar0To1& SEChronicRenalStenosis::GetLeftKidneySeverity()
     m_LeftKidneySeverity = new SEScalar0To1();
   return *m_LeftKidneySeverity;
 }
+double SEChronicRenalStenosis::GetLeftKidneySeverity() const
+{
+  if (m_LeftKidneySeverity == nullptr)
+    return SEScalar::dNaN();
+  return m_LeftKidneySeverity->GetValue();
+}
 
 bool SEChronicRenalStenosis::HasRightKidneySeverity() const
 {
@@ -79,6 +85,12 @@ SEScalar0To1& SEChronicRenalStenosis::GetRightKidneySeverity()
   if (m_RightKidneySeverity == nullptr)
     m_RightKidneySeverity = new SEScalar0To1();
   return *m_RightKidneySeverity;
+}
+double SEChronicRenalStenosis::GetRightKidneySeverity() const
+{
+  if (m_RightKidneySeverity == nullptr)
+    return SEScalar::dNaN();
+  return m_RightKidneySeverity->GetValue();
 }
 
 void SEChronicRenalStenosis::ToString(std::ostream &str) const

@@ -317,6 +317,7 @@ void BloodChemistry::Process()
   {
     shunt = shuntFlow_mL_Per_min / totalFlow_mL_Per_min;
   }
+  shunt = MIN(shunt, 1.0);
   GetShuntFraction().SetValue(shunt);
 
   CheckBloodGasLevels();

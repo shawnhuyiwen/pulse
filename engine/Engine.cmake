@@ -42,8 +42,6 @@ source_group("Systems" FILES ${PULSE_SYSTEMS_FILES})
 add_library(PulseEngine ${SOURCE})
 # Preprocessor Definitions and Include Paths
 set(ENG_FLAGS)
-set(ENG_FLAGS "${ENG_FLAGS} -D UNICODE")
-set(ENG_FLAGS "${ENG_FLAGS} -D _UNICODE")
 if(${BUILD_SHARED_LIBS}) 
   set(ENG_FLAGS "${ENG_FLAGS} -D SHARED_PULSE")
 endif()
@@ -56,7 +54,7 @@ target_include_directories(PulseEngine PRIVATE ${CMAKE_BINARY_DIR}/schema/cpp/bi
 target_include_directories(PulseEngine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/cpp)
 target_include_directories(PulseEngine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../cdm/cpp)
 target_include_directories(PulseEngine PRIVATE ${EIGEN3_INCLUDE_DIR})
-target_include_directories(PulseEngine PRIVATE ${LOG4CPP_INCLUDE_DIR})
+target_include_directories(PulseEngine PRIVATE ${LOG4CPLUS_INCLUDE_DIR})
 target_include_directories(PulseEngine PRIVATE ${PROTOBUF_INCLUDE_DIR})
 
 set_target_properties(PulseEngine PROPERTIES LINKER_LANGUAGE CXX)

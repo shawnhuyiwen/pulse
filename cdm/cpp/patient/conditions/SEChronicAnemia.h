@@ -27,6 +27,7 @@ public:
 
   virtual bool HasReductionFactor() const;
   virtual SEScalar0To1& GetReductionFactor();
+  virtual double GetReductionFactor() const;
 
   virtual void ToString(std::ostream &str) const;
 

@@ -28,10 +28,16 @@ public:
   virtual const SEScalar* GetScalar(const std::string& name);
 
   virtual std::string GetName() const { return m_Name; }
+  
+  virtual bool HasCompliance() const;
+  virtual double GetCompliance(const FlowComplianceUnit& unit) const;
 
   virtual bool HasFlow() const;
   virtual SEScalarVolumePerTime& GetFlow();
   virtual double GetFlow(const VolumePerTimeUnit& unit) const;
+
+  virtual bool HasResistance() const;
+  virtual double GetResistance(const FlowResistanceUnit& unit) const;
 
   virtual CompartmentType& GetSourceCompartment() { return m_SourceCmpt; }
   virtual CompartmentType& GetTargetCompartment() { return m_TargetCmpt; }
@@ -50,11 +56,11 @@ protected:
   virtual VertexType& GetSourceVertex()           { return m_SourceVertex; }
   virtual VertexType& GetTargetVertex()           { return m_TargetVertex; }
 
-  SEScalarVolumePerTime* m_Flow;
-  CompartmentType&       m_SourceCmpt;
-  CompartmentType&       m_TargetCmpt;
-  VertexType&            m_SourceVertex;
-  VertexType&            m_TargetVertex;
-  SEFluidCircuitPath*    m_Path;
+  SEScalarVolumePerTime*  m_Flow;
+  CompartmentType&        m_SourceCmpt;
+  CompartmentType&        m_TargetCmpt;
+  VertexType&             m_SourceVertex;
+  VertexType&             m_TargetVertex;
+  SEFluidCircuitPath*     m_Path;
 };
 #include "compartment/fluid/SEFluidCompartmentLink.inl"

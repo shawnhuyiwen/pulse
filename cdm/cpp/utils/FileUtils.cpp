@@ -5,6 +5,30 @@
 #include "utils/FileUtils.h"
 #include "dirent.h"
 
+
+#if defined(_MSC_VER) || defined(__MINGW64_VERSION_MAJOR)
+  #include <windows.h>
+  #define MAXPATH MAX_PATH
+  #define GETCWD _getcwd
+  #define MKDIR(x) mkdir(x)
+#else
+  #include <unistd.h>
+    #if defined(__APPLE__) && defined(__clang__)
+    #include <sys/syslimits.h>
+  #elif defined __GNUC__
+    #include <sys/types.h>
+    #include <sys/stat.h>
+  #endif
+
+  #define MAXPATH PATH_MAX
+  #define GETCWD getcwd
+  #define MKDIR(x) mkdir(x, 0755)
+
+  #if defined(__gnu_linux__)
+    #include <cstring>
+  #endif
+#endif
+
 std::string Replace(const std::string& original, const std::string& replace, const std::string& withThis)
 {
   size_t idx = 0;
@@ -90,6 +114,11 @@ void ListFiles(const std::string& dir, std::vector<std::string>& files, const st
   }
 }
 
+void MakeDirectory(std::string const& dir)
+{
+  MKDIR(dir.c_str());
+}
+
 void DeleteDirectory(const std::string &dir, bool bDeleteSubdirectories)
 {
   DIR *d;
@@ -125,7 +154,6 @@ std::string GetCurrentWorkingDirectory()
 {
   char path[MAXPATH];
   GETCWD(path, MAXPATH);
-
   return std::string(path);
 }
 

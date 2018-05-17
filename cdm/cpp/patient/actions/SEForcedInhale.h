@@ -28,12 +28,14 @@ public:
 
   virtual bool HasInspiratoryCapacityFraction() const;
   virtual SEScalar0To1& GetInspiratoryCapacityFraction();
+  virtual double GetInspiratoryCapacityFraction() const;
 
   virtual bool HasPeriod() const;
   virtual SEScalarTime& GetPeriod();
+  virtual double GetPeriod(const TimeUnit& unit) const;
 
   virtual void ToString(std::ostream &str) const;
 protected:
   SEScalar0To1* m_InspiratoryCapacityFraction;
-  SEScalarTime*     m_Period;
+  SEScalarTime* m_Period;
 };

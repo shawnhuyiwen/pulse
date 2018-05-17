@@ -12,9 +12,9 @@ PULSE_BIND_DECL(GastrointestinalSystemData)
 /**
 * @brief @copydoc Physiology_GastrointestinalSystemData
 */
-class PULSE_DECL Gastrointestinal : public SEGastrointestinalSystem, public PulseSystem
+class PULSE_DECL Gastrointestinal : public SEGastrointestinalSystem, public PulseGastrointestinalSystem, public PulseSystem
 {
-  friend PulseController;
+  friend class PulseController;
   friend class PulseEngineTest;
 protected:
   Gastrointestinal(PulseController& data);
@@ -25,25 +25,21 @@ public:
 
   void Clear();
 
-  // Set members to a stable homeostatic state
-  void Initialize();
-
   static void Load(const pulse::GastrointestinalSystemData& src, Gastrointestinal& dst);
   static pulse::GastrointestinalSystemData* Unload(const Gastrointestinal& src);
 protected:
   static void Serialize(const pulse::GastrointestinalSystemData& src, Gastrointestinal& dst);
   static void Serialize(const Gastrointestinal& src, pulse::GastrointestinalSystemData& dst);
 
+  // Set members to a stable homeostatic state
+  void Initialize();
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
   void SetUp();
 
-public:
   void AtSteadyState();
   void PreProcess();
   void Process();
   void PostProcess();
-
-protected:
 
   void   GastricSecretion(double duration_s);
   void   DefaultNutritionRates(SENutrition& n);

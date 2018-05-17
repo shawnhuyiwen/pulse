@@ -97,6 +97,10 @@ SEActiveConditioning& SEThermalApplication::GetActiveHeating()
     m_ActiveHeating = new SEActiveConditioning(GetLogger());
   return *m_ActiveHeating;
 }
+const SEActiveConditioning* SEThermalApplication::GetActiveHeating() const
+{
+  return m_ActiveHeating;
+}
 void SEThermalApplication::RemoveActiveHeating()
 {
   SAFE_DELETE(m_ActiveHeating);
@@ -111,6 +115,10 @@ SEActiveConditioning& SEThermalApplication::GetActiveCooling()
   if (m_ActiveCooling == nullptr)
     m_ActiveCooling = new SEActiveConditioning(GetLogger());
   return *m_ActiveCooling;
+}
+const SEActiveConditioning* SEThermalApplication::GetActiveCooling() const
+{
+  return m_ActiveCooling;
 }
 void SEThermalApplication::RemoveActiveCooling()
 {
@@ -127,11 +135,14 @@ SEAppliedTemperature& SEThermalApplication::GetAppliedTemperature()
     m_AppliedTemperature = new SEAppliedTemperature(GetLogger());
   return *m_AppliedTemperature;
 }
+const SEAppliedTemperature* SEThermalApplication::GetAppliedTemperature() const
+{
+  return m_AppliedTemperature;
+}
 void SEThermalApplication::RemoveAppliedTemperature()
 {
   SAFE_DELETE(m_AppliedTemperature);
 }
-
 
 void SEThermalApplication::ToString(std::ostream &str) const
 {

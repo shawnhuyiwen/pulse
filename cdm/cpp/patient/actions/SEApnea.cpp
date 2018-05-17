@@ -65,12 +65,17 @@ bool SEApnea::HasSeverity() const
 {
   return m_Severity==nullptr?false:m_Severity->IsValid();
 }
-
 SEScalar0To1& SEApnea::GetSeverity()
 {
   if(m_Severity==nullptr)
     m_Severity=new SEScalar0To1();
   return *m_Severity;
+}
+double SEApnea::GetSeverity() const
+{
+  if (m_Severity == nullptr)
+    return SEScalar::dNaN();
+  return m_Severity->GetValue();
 }
 
 void SEApnea::ToString(std::ostream &str) const

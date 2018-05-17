@@ -19,9 +19,9 @@ PULSE_BIND_DECL(RenalSystemData)
 /**
  * @brief @copydoc Physiology_RenalSystemData
  */  
-class PULSE_DECL Renal : public SERenalSystem, public PulseSystem
+class PULSE_DECL Renal : public SERenalSystem, public PulseRenalSystem, public PulseSystem
 {
-  friend PulseController;
+  friend class PulseController;
   friend class PulseEngineTest;
 protected:
   Renal(PulseController& data);
@@ -34,19 +34,17 @@ public:
 
   void Clear();
 
-  // Set members to a stable homeostatic state
-  void Initialize();
-
   static void Load(const pulse::RenalSystemData& src, Renal& dst);
   static pulse::RenalSystemData* Unload(const Renal& src);
 protected:
   static void Serialize(const pulse::RenalSystemData& src, Renal& dst);
   static void Serialize(const Renal& src, pulse::RenalSystemData& dst);
 
+  // Set members to a stable homeostatic state
+  void Initialize();
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
   void SetUp();
 
-public:
   void AtSteadyState();
   void PreProcess();
   void Process();
@@ -54,8 +52,6 @@ public:
 
   // Assessments
   bool CalculateUrinalysis(SEUrinalysis& u);
-
-protected:
 
   struct ActiveTransport
   {
@@ -65,7 +61,6 @@ protected:
     double leftLactateExcretedMass_mg;
     double rightLactateExcretedMass_mg;
   };
-
 
   // Initialization
   void CalculateFilterability(SESubstance& sub);

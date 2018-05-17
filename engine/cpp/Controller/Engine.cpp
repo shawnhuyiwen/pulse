@@ -310,6 +310,11 @@ bool PulseEngine::LoadState(const google::protobuf::Message& state, const SEScal
   m_Compartments->UpdateAirwayGraph();
   m_Compartments->GetActiveRespiratoryGraph();
   m_Compartments->GetActiveAerosolGraph();
+  
+  // If we had an event handler, reinform the listening classes
+  if (m_EventHandler != nullptr)
+    SetEventHandler(m_EventHandler);
+
 
   // It helps to unload what you just loaded and to a compare if you have issues
   //SaveState("WhatIJustLoaded.pba");
@@ -481,6 +486,13 @@ bool PulseEngine::InitializeEngine(const std::vector<const SECondition*>* condit
   return true;
 }
 
+
+const SEConditionManager&  PulseEngine::GetConditionManager()
+{
+  return *m_Conditions;
+}
+
+
 double PulseEngine::GetTimeStep(const TimeUnit& unit)
 {
   return m_Config->GetTimeStep(unit);
@@ -534,7 +546,7 @@ bool PulseEngine::ProcessAction(const SEAction& action)
       else
       {
         std::stringstream ss;
-        MKDIR("./states");
+        MakeDirectory("./states");
         ss << "./states/" << m_Patient->GetName() << "@" << GetSimulationTime(TimeUnit::s) << "s.pba";
         Info("Saving " + ss.str());
         SaveState(ss.str());
@@ -627,7 +639,10 @@ bool PulseEngine::ProcessAction(const SEAction& action)
   return GetActions().ProcessAction(action);  
 }
 
-
+const SEActionManager&  PulseEngine::GetActionManager()
+{
+  return *m_Actions;
+}
 
 bool PulseEngine::IsReady()
 {

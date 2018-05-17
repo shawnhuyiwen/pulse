@@ -152,7 +152,7 @@ void SEPatientActionCollection::Serialize(const SEPatientActionCollection& src, 
     dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_LeftOpenTensionPneumothorax));
   if (src.HasRightClosedTensionPneumothorax())
     dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_RightClosedTensionPneumothorax));
-  if (src.GetRightClosedTensionPneumothorax())
+  if (src.GetRightOpenTensionPneumothorax())
     dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_RightOpenTensionPneumothorax));
   for (auto itr : src.m_SubstanceBolus)
     dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*itr.second));
@@ -165,7 +165,7 @@ void SEPatientActionCollection::Serialize(const SEPatientActionCollection& src, 
 }
 
 
-bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action, cdm::AnyPatientActionData& any)
+bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action, cdm::AnyPatientActionData* any)
 {
   const SEPatientAssessmentRequest* patientAss = dynamic_cast<const SEPatientAssessmentRequest*>(&action);
   if (patientAss != nullptr)
@@ -194,8 +194,9 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action, cdm
   {
     if (m_AcuteStress == nullptr)
       m_AcuteStress = new SEAcuteStress();
-    any.set_allocated_acutestress(SEAcuteStress::Unload(*aStress));
-    SEAcuteStress::Load(any.acutestress(), *m_AcuteStress);
+    auto* copy = SEAcuteStress::Unload(*aStress);
+    SEAcuteStress::Load(*copy, *m_AcuteStress);
+    (any != nullptr) ? any->set_allocated_acutestress(copy) : delete copy;
     if (!m_AcuteStress->IsActive())
       RemoveAcuteStress();
     return true;
@@ -206,8 +207,9 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action, cdm
   {
     if (m_AirwayObstruction == nullptr)
       m_AirwayObstruction = new SEAirwayObstruction();
-    any.set_allocated_airwayobstruction(SEAirwayObstruction::Unload(*airwayObst));
-    SEAirwayObstruction::Load(any.airwayobstruction(), *m_AirwayObstruction);
+    auto* copy = SEAirwayObstruction::Unload(*airwayObst);
+    SEAirwayObstruction::Load(*copy, *m_AirwayObstruction);
+    (any != nullptr) ? any->set_allocated_airwayobstruction(copy) : delete copy;
     if (!m_AirwayObstruction->IsActive())
       RemoveAirwayObstruction();
     return true;
@@ -218,8 +220,9 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action, cdm
   {
     if (m_Apnea == nullptr)
       m_Apnea = new SEApnea();
-    any.set_allocated_apnea(SEApnea::Unload(*apnea));
-    SEApnea::Load(any.apnea(), *m_Apnea);
+    auto* copy = SEApnea::Unload(*apnea);
+    SEApnea::Load(*copy, *m_Apnea);
+    (any != nullptr) ? any->set_allocated_apnea(copy) : delete copy;
     if (!m_Apnea->IsActive())
       RemoveApnea();
     return true;
@@ -230,8 +233,9 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action, cdm
   {
     if (m_AsthmaAttack == nullptr)
       m_AsthmaAttack = new SEAsthmaAttack();
-    any.set_allocated_asthmaattack(SEAsthmaAttack::Unload(*asthmaattack));
-    SEAsthmaAttack::Load(any.asthmaattack(), *m_AsthmaAttack);
+    auto* copy = SEAsthmaAttack::Unload(*asthmaattack);
+    SEAsthmaAttack::Load(*copy, *m_AsthmaAttack);
+    (any != nullptr) ? any->set_allocated_asthmaattack(copy) : delete copy;
     if (!m_AsthmaAttack->IsActive())
       RemoveAsthmaAttack();
     return true;
@@ -242,8 +246,9 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action, cdm
   {
     if (m_BrainInjury == nullptr)
       m_BrainInjury = new SEBrainInjury();
-    any.set_allocated_braininjury(SEBrainInjury::Unload(*brainInjury));
-    SEBrainInjury::Load(any.braininjury(), *m_BrainInjury);
+    auto* copy = SEBrainInjury::Unload(*brainInjury);
+    SEBrainInjury::Load(*copy, *m_BrainInjury);
+    (any != nullptr) ? any->set_allocated_braininjury(copy) : delete copy;
     if (!m_BrainInjury->IsActive())
       RemoveBrainInjury();
     return true;
@@ -254,8 +259,9 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action, cdm
   {
     if (m_Bronchoconstriction == nullptr)
       m_Bronchoconstriction = new SEBronchoconstriction();
-    any.set_allocated_bronchoconstriction(SEBronchoconstriction::Unload(*bronchoconstr));
-    SEBronchoconstriction::Load(any.bronchoconstriction(), *m_Bronchoconstriction);
+    auto* copy = SEBronchoconstriction::Unload(*bronchoconstr);
+    SEBronchoconstriction::Load(*copy, *m_Bronchoconstriction);
+    (any != nullptr) ? any->set_allocated_bronchoconstriction(copy) : delete copy;
     if (!m_Bronchoconstriction->IsActive())
       RemoveBronchoconstriction();
     return true;
@@ -266,8 +272,9 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action, cdm
   {
     if (m_CardiacArrest == nullptr)
       m_CardiacArrest = new SECardiacArrest();
-    any.set_allocated_cardiacarrest(SECardiacArrest::Unload(*cardiacarrest));
-    SECardiacArrest::Load(any.cardiacarrest(), *m_CardiacArrest);
+    auto* copy = SECardiacArrest::Unload(*cardiacarrest);
+    SECardiacArrest::Load(*copy, *m_CardiacArrest);
+    (any != nullptr) ? any->set_allocated_cardiacarrest(copy) : delete copy;
     if (!m_CardiacArrest->IsActive())
       RemoveCardiacArrest();
     return true;
@@ -283,8 +290,9 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action, cdm
         RemoveChestCompression();
       if (m_ChestCompression == nullptr)
         m_ChestCompression = new SEChestCompressionForce();
-      any.set_allocated_chestcompressionforce(SEChestCompressionForce::Unload(*cprForce));
-      SEChestCompressionForce::Load(any.chestcompressionforce(), (SEChestCompressionForce&)*m_ChestCompression);
+      auto* copy = SEChestCompressionForce::Unload(*cprForce);
+      SEChestCompressionForce::Load(*copy, (SEChestCompressionForce&)*m_ChestCompression);
+      (any != nullptr) ? any->set_allocated_chestcompressionforce(copy) : delete copy;
       if (!m_ChestCompression->IsActive())
         RemoveChestCompression();
       return true;
@@ -296,8 +304,9 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action, cdm
         RemoveChestCompression();
       if (m_ChestCompression == nullptr)
         m_ChestCompression = new SEChestCompressionForceScale();
-      any.set_allocated_chestcompressionforcescale(SEChestCompressionForceScale::Unload(*cprScale));
-      SEChestCompressionForceScale::Load(any.chestcompressionforcescale(), (SEChestCompressionForceScale&)*m_ChestCompression);
+      auto* copy = SEChestCompressionForceScale::Unload(*cprScale);
+      SEChestCompressionForceScale::Load(*copy, (SEChestCompressionForceScale&)*m_ChestCompression);
+      (any != nullptr) ? any->set_allocated_chestcompressionforcescale(copy) : delete copy;
       if (!m_ChestCompression->IsActive())
         RemoveChestCompression();
       return true;
@@ -315,8 +324,9 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action, cdm
     {
       if (m_LeftChestOcclusiveDressing == nullptr)
         m_LeftChestOcclusiveDressing = new SEChestOcclusiveDressing();
-      any.set_allocated_chestocclusivedressing(SEChestOcclusiveDressing::Unload(*chestOccl));
-      SEChestOcclusiveDressing::Load(any.chestocclusivedressing(), *m_LeftChestOcclusiveDressing);
+      auto* copy = SEChestOcclusiveDressing::Unload(*chestOccl);
+      SEChestOcclusiveDressing::Load(*copy, *m_LeftChestOcclusiveDressing);
+      (any != nullptr) ? any->set_allocated_chestocclusivedressing(copy) : delete copy;
       if (!m_LeftChestOcclusiveDressing->IsActive())
         RemoveLeftChestOcclusiveDressing();
       return true;
@@ -325,8 +335,9 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action, cdm
     {
       if (m_RightChestOcclusiveDressing == nullptr)
         m_RightChestOcclusiveDressing = new SEChestOcclusiveDressing();
-      any.set_allocated_chestocclusivedressing(SEChestOcclusiveDressing::Unload(*chestOccl));
-      SEChestOcclusiveDressing::Load(any.chestocclusivedressing(), *m_RightChestOcclusiveDressing);
+      auto* copy = SEChestOcclusiveDressing::Unload(*chestOccl);
+      SEChestOcclusiveDressing::Load(*copy, *m_RightChestOcclusiveDressing);
+      (any != nullptr) ? any->set_allocated_chestocclusivedressing(copy) : delete copy;
       if (!m_RightChestOcclusiveDressing->IsActive())
         RemoveRightChestOcclusiveDressing();
       return true;
@@ -338,8 +349,9 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action, cdm
   {
     if (m_ConsciousRespiration == nullptr)
       m_ConsciousRespiration = new SEConsciousRespiration();
-    any.set_allocated_consciousrespiration(SEConsciousRespiration::Unload(*conResp));
-    SEConsciousRespiration::Load(any.consciousrespiration(), *m_ConsciousRespiration);
+    auto* copy = SEConsciousRespiration::Unload(*conResp);
+    SEConsciousRespiration::Load(*copy, *m_ConsciousRespiration);
+    (any != nullptr) ? any->set_allocated_consciousrespiration(copy) : delete copy;
     if (!m_ConsciousRespiration->IsActive())
       RemoveConsciousRespiration();
     return true;
@@ -350,8 +362,9 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action, cdm
   {
     if (m_ConsumeNutrients == nullptr)
       m_ConsumeNutrients = new SEConsumeNutrients();
-    any.set_allocated_consumenutrients(SEConsumeNutrients::Unload(*consume));
-    SEConsumeNutrients::Load(any.consumenutrients(), *m_ConsumeNutrients);
+    auto* copy = SEConsumeNutrients::Unload(*consume);
+    SEConsumeNutrients::Load(*copy, *m_ConsumeNutrients);
+    (any != nullptr) ? any->set_allocated_consumenutrients(copy) : delete copy;
     if (!m_ConsumeNutrients->IsActive())
       RemoveConsumeNutrients();
     return true;
@@ -362,8 +375,9 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action, cdm
   {
     if (m_Exercise == nullptr)
       m_Exercise = new SEExercise();
-    any.set_allocated_exercise(SEExercise::Unload(*exercise));
-    SEExercise::Load(any.exercise(), *m_Exercise);
+    auto* copy = SEExercise::Unload(*exercise);
+    SEExercise::Load(*copy, *m_Exercise);
+    (any != nullptr) ? any->set_allocated_exercise(copy) : delete copy;
     if (!m_Exercise->IsActive())
       RemoveExercise();
     return true;
@@ -378,8 +392,9 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action, cdm
       myHem = new SEHemorrhage();
       m_Hemorrhages[hem->GetCompartment()] = myHem;
     }
-    any.set_allocated_hemorrhage(SEHemorrhage::Unload(*hem));
-    SEHemorrhage::Load(any.hemorrhage(), *myHem);
+    auto* copy = SEHemorrhage::Unload(*hem);
+    SEHemorrhage::Load(*copy, *myHem);
+    (any != nullptr) ? any->set_allocated_hemorrhage(copy) : delete copy;
     if (!myHem->IsActive())
       RemoveHemorrhage(hem->GetCompartment());
     return true;
@@ -390,8 +405,9 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action, cdm
   {
     if (m_Intubation == nullptr)
       m_Intubation = new SEIntubation();
-    any.set_allocated_intubation(SEIntubation::Unload(*intubation));
-    SEIntubation::Load(any.intubation(), *m_Intubation);
+    auto* copy = SEIntubation::Unload(*intubation);
+    SEIntubation::Load(*copy, *m_Intubation);
+    (any != nullptr) ? any->set_allocated_intubation(copy) : delete copy;
     if (!m_Intubation->IsActive())
       RemoveIntubation();
     return true;
@@ -402,8 +418,9 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action, cdm
   {
     if (m_MechanicalVentilation == nullptr)
       m_MechanicalVentilation = new SEMechanicalVentilation();
-    any.set_allocated_mechanicalventilation(SEMechanicalVentilation::Unload(*mvData));
-    SEMechanicalVentilation::Load(any.mechanicalventilation(), *m_MechanicalVentilation, m_Substances);
+    auto* copy = SEMechanicalVentilation::Unload(*mvData);
+    SEMechanicalVentilation::Load(*copy, *m_MechanicalVentilation, m_Substances);
+    (any != nullptr) ? any->set_allocated_mechanicalventilation(copy) : delete copy;
     if (!m_MechanicalVentilation->IsActive())
       RemoveMechanicalVentilation();
     return true;
@@ -416,8 +433,9 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action, cdm
     {
       if (m_LeftNeedleDecompression == nullptr)
         m_LeftNeedleDecompression = new SENeedleDecompression();
-      any.set_allocated_needledecompression(SENeedleDecompression::Unload(*needleDecomp));
-      SENeedleDecompression::Load(any.needledecompression(), *m_LeftNeedleDecompression);
+      auto* copy = SENeedleDecompression::Unload(*needleDecomp);
+      SENeedleDecompression::Load(*copy, *m_LeftNeedleDecompression);
+      (any != nullptr) ? any->set_allocated_needledecompression(copy) : delete copy;
       if (!m_LeftNeedleDecompression->IsActive())
         RemoveLeftNeedleDecompression();
       return true;
@@ -426,8 +444,9 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action, cdm
     {
       if (m_RightNeedleDecompression == nullptr)
         m_RightNeedleDecompression = new SENeedleDecompression();
-      any.set_allocated_needledecompression(SENeedleDecompression::Unload(*needleDecomp));
-      SENeedleDecompression::Load(any.needledecompression(), *m_RightNeedleDecompression);
+      auto* copy = SENeedleDecompression::Unload(*needleDecomp);
+      SENeedleDecompression::Load(*copy, *m_RightNeedleDecompression);
+      (any != nullptr) ? any->set_allocated_needledecompression(copy) : delete copy;
       if (!m_RightNeedleDecompression->IsActive())
         RemoveRightNeedleDecompression();
       return true;
@@ -441,8 +460,9 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action, cdm
   {
     if (m_PericardialEffusion == nullptr)
       m_PericardialEffusion = new SEPericardialEffusion();
-    any.set_allocated_pericardialeffusion(SEPericardialEffusion::Unload(*pericardialEff));
-    SEPericardialEffusion::Load(any.pericardialeffusion(), *m_PericardialEffusion);
+    auto* copy = SEPericardialEffusion::Unload(*pericardialEff);
+    SEPericardialEffusion::Load(*copy, *m_PericardialEffusion);
+    (any != nullptr) ? any->set_allocated_pericardialeffusion(copy) : delete copy;
     if (!m_PericardialEffusion->IsActive())
       RemovePericardialEffusion();
     return true;
@@ -465,8 +485,9 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action, cdm
       m_SubstanceBolus[sub] = myBolus;
       m_Substances.AddActiveSubstance(*sub);
     }
-    any.set_allocated_substancebolus(SESubstanceBolus::Unload(*bolus));
-    SESubstanceBolus::Load(any.substancebolus(), *myBolus);
+    auto* copy = SESubstanceBolus::Unload(*bolus);
+    SESubstanceBolus::Load(*copy, *myBolus);
+    (any != nullptr) ? any->set_allocated_substancebolus(copy) : delete copy;
     if (!myBolus->IsActive())
       RemoveSubstanceBolus(*sub);
     return true;
@@ -488,8 +509,9 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action, cdm
       m_SubstanceInfusions[sub] = mySubInfuse;
       m_Substances.AddActiveSubstance(*sub);
     }
-    any.set_allocated_substanceinfusion(SESubstanceInfusion::Unload(*subInfusion));
-    SESubstanceInfusion::Load(any.substanceinfusion(), *mySubInfuse);
+    auto* copy = SESubstanceInfusion::Unload(*subInfusion);
+    SESubstanceInfusion::Load(*copy, *mySubInfuse);
+    (any != nullptr) ? any->set_allocated_substanceinfusion(copy) : delete copy;
     if (!mySubInfuse->IsActive())
       RemoveSubstanceInfusion(*sub);
     return true;
@@ -517,8 +539,9 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action, cdm
         m_Substances.AddActiveSubstance(scc->GetSubstance());
       }
     }
-    any.set_allocated_substancecompoundinfusion(SESubstanceCompoundInfusion::Unload(*cSubInfusion));
-    SESubstanceCompoundInfusion::Load(any.substancecompoundinfusion(), *mySubCompInfuse);
+    auto* copy = SESubstanceCompoundInfusion::Unload(*cSubInfusion);
+    SESubstanceCompoundInfusion::Load(*copy, *mySubCompInfuse);
+    (any != nullptr) ? any->set_allocated_substancecompoundinfusion(copy) : delete copy;
     if (!mySubCompInfuse->IsActive())
       RemoveSubstanceCompoundInfusion(*cmpd);
     return true;
@@ -531,8 +554,9 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action, cdm
     {
       if (m_LeftOpenTensionPneumothorax == nullptr)
         m_LeftOpenTensionPneumothorax = new SETensionPneumothorax();
-      any.set_allocated_tensionpneumothorax(SETensionPneumothorax::Unload(*pneumo));
-      SETensionPneumothorax::Load(any.tensionpneumothorax(), *m_LeftOpenTensionPneumothorax);
+      auto* copy = SETensionPneumothorax::Unload(*pneumo);
+      SETensionPneumothorax::Load(*copy, *m_LeftOpenTensionPneumothorax);
+      (any != nullptr) ? any->set_allocated_tensionpneumothorax(copy) : delete copy;
       if (!m_LeftOpenTensionPneumothorax->IsActive())
         RemoveLeftOpenTensionPneumothorax();
       return true;
@@ -541,8 +565,9 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action, cdm
     {
       if (m_LeftClosedTensionPneumothorax == nullptr)
         m_LeftClosedTensionPneumothorax = new SETensionPneumothorax();
-      any.set_allocated_tensionpneumothorax(SETensionPneumothorax::Unload(*pneumo));
-      SETensionPneumothorax::Load(any.tensionpneumothorax(), *m_LeftClosedTensionPneumothorax);
+      auto* copy = SETensionPneumothorax::Unload(*pneumo);
+      SETensionPneumothorax::Load(*copy, *m_LeftClosedTensionPneumothorax);
+      (any != nullptr) ? any->set_allocated_tensionpneumothorax(copy) : delete copy;
       if (!m_LeftClosedTensionPneumothorax->IsActive())
         RemoveLeftClosedTensionPneumothorax();
       return true;
@@ -551,8 +576,9 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action, cdm
     {
       if (m_RightOpenTensionPneumothorax == nullptr)
         m_RightOpenTensionPneumothorax = new SETensionPneumothorax();
-      any.set_allocated_tensionpneumothorax(SETensionPneumothorax::Unload(*pneumo));
-      SETensionPneumothorax::Load(any.tensionpneumothorax(), *m_RightOpenTensionPneumothorax);
+      auto* copy = SETensionPneumothorax::Unload(*pneumo);
+      SETensionPneumothorax::Load(*copy, *m_RightOpenTensionPneumothorax);
+      (any != nullptr) ? any->set_allocated_tensionpneumothorax(copy) : delete copy;
       if (!m_RightOpenTensionPneumothorax->IsActive())
         RemoveRightOpenTensionPneumothorax();
       return true;
@@ -561,8 +587,9 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action, cdm
     {
       if (m_RightClosedTensionPneumothorax == nullptr)
         m_RightClosedTensionPneumothorax = new SETensionPneumothorax();
-      any.set_allocated_tensionpneumothorax(SETensionPneumothorax::Unload(*pneumo));
-      SETensionPneumothorax::Load(any.tensionpneumothorax(), *m_RightClosedTensionPneumothorax);
+      auto* copy = SETensionPneumothorax::Unload(*pneumo);
+      SETensionPneumothorax::Load(*copy, *m_RightClosedTensionPneumothorax);
+      (any != nullptr) ? any->set_allocated_tensionpneumothorax(copy) : delete copy;
       if (!m_RightClosedTensionPneumothorax->IsActive())
         RemoveRightClosedTensionPneumothorax();
       return true;
@@ -576,8 +603,9 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action, cdm
   {
     if (m_Urinate == nullptr)
       m_Urinate = new SEUrinate();
-    any.set_allocated_urinate(SEUrinate::Unload(*urinate));
-    SEUrinate::Load(any.urinate(), *m_Urinate);
+    auto* copy = SEUrinate::Unload(*urinate);
+    SEUrinate::Load(*copy, *m_Urinate);
+    (any != nullptr) ? any->set_allocated_urinate(copy) : delete copy;
     if (!m_Urinate->IsActive())
       RemoveUrinate();
     return true;
@@ -592,7 +620,11 @@ bool SEPatientActionCollection::HasAcuteStress() const
 {
   return m_AcuteStress == nullptr ? false : m_AcuteStress->IsActive();
 }
-SEAcuteStress* SEPatientActionCollection::GetAcuteStress() const
+SEAcuteStress* SEPatientActionCollection::GetAcuteStress()
+{
+  return m_AcuteStress;
+}
+const SEAcuteStress* SEPatientActionCollection::GetAcuteStress() const
 {
   return m_AcuteStress;
 }
@@ -605,7 +637,11 @@ bool SEPatientActionCollection::HasAirwayObstruction() const
 {
   return m_AirwayObstruction == nullptr ? false : m_AirwayObstruction->IsActive();
 }
-SEAirwayObstruction* SEPatientActionCollection::GetAirwayObstruction() const
+SEAirwayObstruction* SEPatientActionCollection::GetAirwayObstruction()
+{
+  return m_AirwayObstruction;
+}
+const SEAirwayObstruction* SEPatientActionCollection::GetAirwayObstruction() const
 {
   return m_AirwayObstruction;
 }
@@ -618,7 +654,11 @@ bool SEPatientActionCollection::HasApnea() const
 {
   return m_Apnea == nullptr ? false : m_Apnea->IsActive();
 }
-SEApnea* SEPatientActionCollection::GetApnea() const
+SEApnea* SEPatientActionCollection::GetApnea()
+{
+  return m_Apnea;
+}
+const SEApnea* SEPatientActionCollection::GetApnea() const
 {
   return m_Apnea;
 }
@@ -631,7 +671,11 @@ bool SEPatientActionCollection::HasAsthmaAttack() const
 {
   return m_AsthmaAttack == nullptr ? false : m_AsthmaAttack->IsActive();
 }
-SEAsthmaAttack* SEPatientActionCollection::GetAsthmaAttack() const
+SEAsthmaAttack* SEPatientActionCollection::GetAsthmaAttack()
+{
+  return m_AsthmaAttack;
+}
+const SEAsthmaAttack* SEPatientActionCollection::GetAsthmaAttack() const
 {
   return m_AsthmaAttack;
 }
@@ -644,7 +688,11 @@ bool SEPatientActionCollection::HasBrainInjury() const
 {
   return m_BrainInjury == nullptr ? false : m_BrainInjury->IsActive();
 }
-SEBrainInjury* SEPatientActionCollection::GetBrainInjury() const
+SEBrainInjury* SEPatientActionCollection::GetBrainInjury()
+{
+  return m_BrainInjury;
+}
+const SEBrainInjury* SEPatientActionCollection::GetBrainInjury() const
 {
   return m_BrainInjury;
 }
@@ -657,7 +705,11 @@ bool SEPatientActionCollection::HasBronchoconstriction() const
 {
   return m_Bronchoconstriction == nullptr ? false : m_Bronchoconstriction->IsActive();
 }
-SEBronchoconstriction* SEPatientActionCollection::GetBronchoconstriction() const
+SEBronchoconstriction* SEPatientActionCollection::GetBronchoconstriction()
+{
+  return m_Bronchoconstriction;
+}
+const SEBronchoconstriction* SEPatientActionCollection::GetBronchoconstriction() const
 {
   return m_Bronchoconstriction;
 }
@@ -670,7 +722,11 @@ bool SEPatientActionCollection::HasCardiacArrest() const
 {
   return m_CardiacArrest == nullptr ? false : m_CardiacArrest->IsActive();
 }
-SECardiacArrest* SEPatientActionCollection::GetCardiacArrest() const
+SECardiacArrest* SEPatientActionCollection::GetCardiacArrest()
+{
+  return m_CardiacArrest;
+}
+const SECardiacArrest* SEPatientActionCollection::GetCardiacArrest() const
 {
   return m_CardiacArrest;
 }
@@ -695,7 +751,11 @@ bool SEPatientActionCollection::HasChestCompressionForce() const
     return false;
   return m_ChestCompression->IsActive();
 }
-SEChestCompressionForce* SEPatientActionCollection::GetChestCompressionForce() const
+SEChestCompressionForce* SEPatientActionCollection::GetChestCompressionForce()
+{
+  return dynamic_cast<SEChestCompressionForce*>(m_ChestCompression);
+}
+const SEChestCompressionForce* SEPatientActionCollection::GetChestCompressionForce() const
 {
   return dynamic_cast<SEChestCompressionForce*>(m_ChestCompression);
 }
@@ -707,7 +767,11 @@ bool SEPatientActionCollection::HasChestCompressionForceScale() const
     return false;
   return m_ChestCompression->IsActive();
 }
-SEChestCompressionForceScale* SEPatientActionCollection::GetChestCompressionForceScale() const
+SEChestCompressionForceScale* SEPatientActionCollection::GetChestCompressionForceScale()
+{
+  return dynamic_cast<SEChestCompressionForceScale*>(m_ChestCompression);
+}
+const SEChestCompressionForceScale* SEPatientActionCollection::GetChestCompressionForceScale() const
 {
   return dynamic_cast<SEChestCompressionForceScale*>(m_ChestCompression);
 }
@@ -720,7 +784,11 @@ bool SEPatientActionCollection::HasLeftChestOcclusiveDressing() const
 {
   return m_LeftChestOcclusiveDressing == nullptr ? false : m_LeftChestOcclusiveDressing->IsActive();
 }
-SEChestOcclusiveDressing* SEPatientActionCollection::GetLeftChestOcclusiveDressing() const
+SEChestOcclusiveDressing* SEPatientActionCollection::GetLeftChestOcclusiveDressing()
+{
+  return m_LeftChestOcclusiveDressing;
+}
+const SEChestOcclusiveDressing* SEPatientActionCollection::GetLeftChestOcclusiveDressing() const
 {
   return m_LeftChestOcclusiveDressing;
 }
@@ -732,7 +800,11 @@ bool SEPatientActionCollection::HasRightChestOcclusiveDressing() const
 {
   return m_RightChestOcclusiveDressing == nullptr ? false : m_RightChestOcclusiveDressing->IsActive();
 }
-SEChestOcclusiveDressing* SEPatientActionCollection::GetRightChestOcclusiveDressing() const
+SEChestOcclusiveDressing* SEPatientActionCollection::GetRightChestOcclusiveDressing()
+{
+  return m_RightChestOcclusiveDressing;
+}
+const SEChestOcclusiveDressing* SEPatientActionCollection::GetRightChestOcclusiveDressing() const
 {
   return m_RightChestOcclusiveDressing;
 }
@@ -745,7 +817,11 @@ bool SEPatientActionCollection::HasConsciousRespiration() const
 {
   return m_ConsciousRespiration == nullptr ? false : m_ConsciousRespiration->IsActive();
 }
-SEConsciousRespiration* SEPatientActionCollection::GetConsciousRespiration() const
+SEConsciousRespiration* SEPatientActionCollection::GetConsciousRespiration()
+{
+  return m_ConsciousRespiration;
+}
+const SEConsciousRespiration* SEPatientActionCollection::GetConsciousRespiration() const
 {
   return m_ConsciousRespiration;
 }
@@ -758,7 +834,11 @@ bool SEPatientActionCollection::HasConsumeNutrients() const
 {
   return m_ConsumeNutrients == nullptr ? false : m_ConsumeNutrients->IsActive();
 }
-SEConsumeNutrients* SEPatientActionCollection::GetConsumeNutrients() const
+SEConsumeNutrients* SEPatientActionCollection::GetConsumeNutrients()
+{
+  return m_ConsumeNutrients;
+}
+const SEConsumeNutrients* SEPatientActionCollection::GetConsumeNutrients() const
 {
   return m_ConsumeNutrients;
 }
@@ -771,7 +851,11 @@ bool SEPatientActionCollection::HasExercise() const
 {
   return m_Exercise == nullptr ? false : m_Exercise->IsActive();
 }
-SEExercise* SEPatientActionCollection::GetExercise() const
+SEExercise* SEPatientActionCollection::GetExercise()
+{
+  return m_Exercise;
+}
+const SEExercise* SEPatientActionCollection::GetExercise() const
 {
   return m_Exercise;
 }
@@ -799,7 +883,11 @@ bool SEPatientActionCollection::HasIntubation() const
 {
   return m_Intubation == nullptr ? false : m_Intubation->IsActive();
 }
-SEIntubation* SEPatientActionCollection::GetIntubation() const
+SEIntubation* SEPatientActionCollection::GetIntubation()
+{
+  return m_Intubation;
+}
+const SEIntubation* SEPatientActionCollection::GetIntubation() const
 {
   return m_Intubation;
 }
@@ -812,7 +900,11 @@ bool SEPatientActionCollection::HasMechanicalVentilation() const
 {
   return m_MechanicalVentilation == nullptr ? false : m_MechanicalVentilation->IsActive();
 }
-SEMechanicalVentilation* SEPatientActionCollection::GetMechanicalVentilation() const
+SEMechanicalVentilation* SEPatientActionCollection::GetMechanicalVentilation()
+{
+  return m_MechanicalVentilation;
+}
+const SEMechanicalVentilation* SEPatientActionCollection::GetMechanicalVentilation() const
 {
   return m_MechanicalVentilation;
 }
@@ -829,7 +921,11 @@ bool SEPatientActionCollection::HasLeftNeedleDecompression() const
 {
   return m_LeftNeedleDecompression == nullptr ? false : m_LeftNeedleDecompression->IsActive();
 }
-SENeedleDecompression* SEPatientActionCollection::GetLeftNeedleDecompression() const
+SENeedleDecompression* SEPatientActionCollection::GetLeftNeedleDecompression()
+{
+  return m_LeftNeedleDecompression;
+}
+const SENeedleDecompression* SEPatientActionCollection::GetLeftNeedleDecompression() const
 {
   return m_LeftNeedleDecompression;
 }
@@ -841,7 +937,11 @@ bool SEPatientActionCollection::HasRightNeedleDecompression() const
 {
   return m_RightNeedleDecompression == nullptr ? false : m_RightNeedleDecompression->IsActive();
 }
-SENeedleDecompression* SEPatientActionCollection::GetRightNeedleDecompression() const
+SENeedleDecompression* SEPatientActionCollection::GetRightNeedleDecompression()
+{
+  return m_RightNeedleDecompression;
+}
+const SENeedleDecompression* SEPatientActionCollection::GetRightNeedleDecompression() const
 {
   return m_RightNeedleDecompression;
 }
@@ -854,7 +954,11 @@ bool SEPatientActionCollection::HasPericardialEffusion() const
 {
   return m_PericardialEffusion == nullptr ? false : m_PericardialEffusion->IsActive();
 }
-SEPericardialEffusion* SEPatientActionCollection::GetPericardialEffusion() const
+SEPericardialEffusion* SEPatientActionCollection::GetPericardialEffusion()
+{
+  return m_PericardialEffusion;
+}
+const SEPericardialEffusion* SEPatientActionCollection::GetPericardialEffusion() const
 {
   return m_PericardialEffusion;
 }
@@ -881,7 +985,11 @@ bool SEPatientActionCollection::HasLeftOpenTensionPneumothorax() const
     return true;
   return false;
 }
-SETensionPneumothorax* SEPatientActionCollection::GetLeftOpenTensionPneumothorax() const
+SETensionPneumothorax* SEPatientActionCollection::GetLeftOpenTensionPneumothorax()
+{
+  return m_LeftOpenTensionPneumothorax;
+}
+const SETensionPneumothorax* SEPatientActionCollection::GetLeftOpenTensionPneumothorax() const
 {
   return m_LeftOpenTensionPneumothorax;
 }
@@ -895,7 +1003,11 @@ bool SEPatientActionCollection::HasLeftClosedTensionPneumothorax() const
     return true;
   return false;
 }
-SETensionPneumothorax* SEPatientActionCollection::GetLeftClosedTensionPneumothorax() const
+SETensionPneumothorax* SEPatientActionCollection::GetLeftClosedTensionPneumothorax()
+{
+  return m_LeftClosedTensionPneumothorax;
+}
+const SETensionPneumothorax* SEPatientActionCollection::GetLeftClosedTensionPneumothorax() const
 {
   return m_LeftClosedTensionPneumothorax;
 }
@@ -909,7 +1021,11 @@ bool SEPatientActionCollection::HasRightOpenTensionPneumothorax() const
     return true;
   return false;
 }
-SETensionPneumothorax* SEPatientActionCollection::GetRightOpenTensionPneumothorax() const
+SETensionPneumothorax* SEPatientActionCollection::GetRightOpenTensionPneumothorax()
+{
+  return m_RightOpenTensionPneumothorax;
+}
+const SETensionPneumothorax* SEPatientActionCollection::GetRightOpenTensionPneumothorax() const
 {
   return m_RightOpenTensionPneumothorax;
 }
@@ -923,7 +1039,11 @@ bool SEPatientActionCollection::HasRightClosedTensionPneumothorax() const
     return true;
   return false;
 }
-SETensionPneumothorax* SEPatientActionCollection::GetRightClosedTensionPneumothorax() const
+SETensionPneumothorax* SEPatientActionCollection::GetRightClosedTensionPneumothorax()
+{
+  return m_RightClosedTensionPneumothorax;
+}
+const SETensionPneumothorax* SEPatientActionCollection::GetRightClosedTensionPneumothorax() const
 {
   return m_RightClosedTensionPneumothorax;
 }
@@ -969,7 +1089,11 @@ bool SEPatientActionCollection::HasUrinate() const
 {
   return m_Urinate == nullptr ? false : m_Urinate->IsActive();
 }
-SEUrinate* SEPatientActionCollection::GetUrinate() const
+SEUrinate* SEPatientActionCollection::GetUrinate()
+{
+  return m_Urinate;
+}
+const SEUrinate* SEPatientActionCollection::GetUrinate() const
 {
   return m_Urinate;
 }

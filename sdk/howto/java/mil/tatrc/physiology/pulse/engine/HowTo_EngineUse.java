@@ -66,8 +66,9 @@ public class HowTo_EngineUse
  {
   public void handlePatientEvent(ePatient.Event type, boolean active, SEScalarTime time)
   {
-    if(type == ePatient.Event.StartOfCardiacCycle && active)
-      Log.info("Patient started a new heart beat at time "+time);    
+    // Here is how you test against an event of interest and do something
+    //if(type == ePatient.Event.StartOfCardiacCycle && active)
+      //Log.info("Patient started a new heart beat at time "+time);    
   }
 
   public void handleAnesthesiaMachineEvent(eAnesthesiaMachine.Event type, boolean active, SEScalarTime time)
@@ -233,23 +234,25 @@ public class HowTo_EngineUse
    // Let's do something to the patient, you can either send actions over one at a time, or pass in a List<SEAction>
    SEHemorrhage h = new SEHemorrhage();
    h.setCompartment(PulseCompartments.Vascular.RightLeg);
-   h.getRate().setValue(500,VolumePerTimeUnit.mL_Per_min);
+   h.getRate().setValue(200,VolumePerTimeUnit.mL_Per_min);// Change this to 750 if you want to see how engine failures are handled!!
    pe.processAction(h);
    // Note CDM is not updated after this call, you have to advance some time
 
-   time.setValue(5.0,TimeUnit.min);
-   if(!pe.advanceTime(time)) // Simulate one second
+   for(int i=0; i<10; i++)
    {
-     Log.error("Engine was unable to stay within modeling parameters with requested actions");
-     return;
+  	 time.setValue(i,TimeUnit.min);
+	   if(!pe.advanceTime(time)) // Simulate one second
+	   {
+	     Log.error("Engine was unable to stay within modeling parameters with requested actions");
+	     return;
+	   }
+	   // Again, the CDM is updated after this call
+	   Log.info("Heart Rate " + pe.cardiovascular.getHeartRate());
+	   Log.info("Respiration Rate " + pe.respiratory.getRespirationRate());
+	   Log.info("Total Lung Volume " + pe.respiratory.getTotalLungVolume());     
+	   Log.info("Blood Volume " + pe.cardiovascular.getBloodVolume());  
    }
-   // Again, the CDM is updated after this call
-   
-   Log.info("Heart Rate " + pe.cardiovascular.getHeartRate());
-   Log.info("Respiration Rate " + pe.respiratory.getRespirationRate());
-   Log.info("Total Lung Volume " + pe.respiratory.getTotalLungVolume());     
-   Log.info("Blood Volume " + pe.cardiovascular.getBloodVolume());    
-   
+     
    // Be nice to your memory and deallocate the native memory associated with this engine if you are done with it
    pe.cleanUp();
    // Note you can now run a static (scenario) or another dynamic engine with the pe object, it will allocate and manage a new C++ engine 

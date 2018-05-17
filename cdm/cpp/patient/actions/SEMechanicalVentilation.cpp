@@ -4,11 +4,13 @@
 #include "stdafx.h"
 #include "patient/actions/SEMechanicalVentilation.h"
 #include "substance/SESubstance.h"
+#include "substance/SESubstanceConcentration.h"
 #include "substance/SESubstanceFraction.h"
 #include "substance/SESubstanceManager.h"
 PROTO_PUSH
 #include "bind/cdm/PatientActions.pb.h"
 PROTO_POP
+#include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalar0To1.h"
@@ -35,6 +37,8 @@ void SEMechanicalVentilation::Clear()
 
   DELETE_VECTOR(m_GasFractions);
   m_cGasFractions.clear();
+  DELETE_VECTOR(m_Aerosols);
+  m_cAerosols.clear();
 }
 
 bool SEMechanicalVentilation::IsValid() const
@@ -103,6 +107,23 @@ void SEMechanicalVentilation::Serialize(const cdm::MechanicalVentilationData& sr
     }
     SESubstanceFraction::Load(sfData, dst.GetGasFraction(*sub));
   }
+
+  for (int i = 0; i < src.aerosol_size(); i++)
+  {
+    const cdm::SubstanceData_ConcentrationData& scData = src.aerosol()[i];
+    sub = subMgr.GetSubstance(scData.name());
+    if (sub == nullptr)
+    {
+      dst.Error("Ignoring an environmental conditions aerosol that was not found : " + scData.name());
+      continue;
+    }
+    if (sub->GetState() != cdm::eSubstance_State_Liquid && sub->GetState() != cdm::eSubstance_State_Solid)
+    {
+      dst.Error("Ignoring an environmental conditions aerosol that is not a gas : " + scData.name());
+      continue;
+    }
+    SESubstanceConcentration::Load(scData, dst.GetAerosol(*sub));
+  }
 }
 
 cdm::MechanicalVentilationData* SEMechanicalVentilation::Unload(const SEMechanicalVentilation& src)
@@ -121,6 +142,8 @@ void SEMechanicalVentilation::Serialize(const SEMechanicalVentilation& src, cdm:
     dst.set_allocated_pressure(SEScalarPressure::Unload(*src.m_Pressure));
   for (SESubstanceFraction *sf : src.m_GasFractions)
     dst.mutable_gasfraction()->AddAllocated(SESubstanceFraction::Unload(*sf));
+  for (SESubstanceConcentration *sc : src.m_Aerosols)
+    dst.mutable_aerosol()->AddAllocated(SESubstanceConcentration::Unload(*sc));
 }
 
 cdm::eSwitch SEMechanicalVentilation::GetState() const
@@ -231,6 +254,71 @@ void SEMechanicalVentilation::RemoveGasFractions()
   m_cGasFractions.clear();
 }
 
+bool SEMechanicalVentilation::HasAerosol() const
+{
+  return m_Aerosols.size() == 0 ? false : true;
+}
+bool SEMechanicalVentilation::HasAerosol(const SESubstance& substance) const
+{
+  for (const SESubstanceConcentration* sc : m_Aerosols)
+  {
+    if (&substance == &sc->GetSubstance())
+      return true;
+  }
+  return false;
+}
+const std::vector<SESubstanceConcentration*>& SEMechanicalVentilation::GetAerosols()
+{
+  return m_Aerosols;
+}
+const std::vector<const SESubstanceConcentration*>& SEMechanicalVentilation::GetAerosols() const
+{
+  return m_cAerosols;
+}
+SESubstanceConcentration& SEMechanicalVentilation::GetAerosol(SESubstance& substance)
+{
+  for (SESubstanceConcentration* sc : m_Aerosols)
+  {
+    if (&substance == &sc->GetSubstance())
+      return *sc;
+  }
+  SESubstanceConcentration* sc = new SESubstanceConcentration(substance);
+  sc->GetConcentration().SetValue(0, MassPerVolumeUnit::ug_Per_L);
+  m_Aerosols.push_back(sc);
+  m_cAerosols.push_back(sc);
+  return *sc;
+}
+const SESubstanceConcentration* SEMechanicalVentilation::GetAerosol(const SESubstance& substance) const
+{
+  const SESubstanceConcentration* sc = nullptr;
+  for (unsigned int i = 0; i<m_Aerosols.size(); i++)
+  {
+    sc = m_Aerosols[i];
+    if (&substance == &sc->GetSubstance())
+      return sc;
+  }
+  return sc;
+}
+void SEMechanicalVentilation::RemoveAerosol(const SESubstance& substance)
+{
+  const SESubstanceConcentration* sc;
+  for (unsigned int i = 0; i<m_Aerosols.size(); i++)
+  {
+    sc = m_Aerosols[i];
+    if (&substance == &sc->GetSubstance())
+    {
+      m_Aerosols.erase(m_Aerosols.begin() + i);
+      m_cAerosols.erase(m_cAerosols.begin() + i);
+      delete sc;
+    }
+  }
+}
+void SEMechanicalVentilation::RemoveAerosols()
+{
+  DELETE_VECTOR(m_Aerosols);
+  m_cAerosols.clear();
+}
+
 void SEMechanicalVentilation::ToString(std::ostream &str) const
 {
   str << "Patient Action : Mechanical Ventilation";
@@ -245,6 +333,13 @@ void SEMechanicalVentilation::ToString(std::ostream &str) const
     for (const SESubstanceFraction* sf : GetGasFractions())
     {
       str << "\n\tSubstance : " << sf->GetSubstance().GetName() << " Fraction Amount " << sf->GetFractionAmount();
+    }
+  }
+  if (HasAerosol())
+  {
+    for (const SESubstanceConcentration* sc : GetAerosols())
+    {
+      str << "\n\tSubstance : " << sc->GetSubstance().GetName() << " Concentration (mg_Per_L) " << sc->GetConcentration(MassPerVolumeUnit::mg_Per_L);
     }
   }
   str << std::flush;

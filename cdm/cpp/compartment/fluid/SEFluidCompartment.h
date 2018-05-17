@@ -84,8 +84,8 @@ protected:
 
   mutable SEScalarVolumePerTime* m_InFlow;
   mutable SEScalarVolumePerTime* m_OutFlow;
-  SEScalarPressure*      m_Pressure;
-  SEScalarVolume*        m_Volume;
+  SEScalarPressure*              m_Pressure;
+  SEScalarVolume*                m_Volume;
 
   std::vector<SubstanceQuantityType*>  m_SubstanceQuantities;
   std::vector<TransportSubstanceType*> m_TransportSubstances;

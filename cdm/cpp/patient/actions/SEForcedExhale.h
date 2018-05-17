@@ -30,9 +30,12 @@ public:
 
   virtual bool HasExpiratoryReserveVolumeFraction() const;
   virtual SEScalar0To1& GetExpiratoryReserveVolumeFraction();
+  virtual double GetExpiratoryReserveVolumeFraction() const;
 
   virtual bool HasPeriod() const;
   virtual SEScalarTime& GetPeriod();
+  virtual double GetPeriod(const TimeUnit& unit) const;
+
 protected:
   SEScalar0To1* m_ExpiratoryReserveVolumeFraction;
   SEScalarTime* m_Period;

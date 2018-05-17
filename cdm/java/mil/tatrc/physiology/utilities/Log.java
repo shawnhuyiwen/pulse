@@ -42,7 +42,7 @@ public class Log
         }
       }
     }
-    else if("log4cpp".equals(toLog))
+    else if("log4cplus".equals(toLog))
       output2Log4j = false;
   }
 

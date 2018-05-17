@@ -36,6 +36,7 @@ public:
   SELiquidCompartmentGraph& GetActiveAerosolGraph();
   SELiquidCompartmentGraph& GetAerosolGraph();
   SELiquidCompartmentGraph& GetAerosolAndInhalerGraph();
+  SELiquidCompartmentGraph& GetAerosolAndMechanicalVentilatorGraph();
 
   // Compartment Helpers  
   const std::vector<SELiquidCompartment*>& GetAerosolCompartments() { return m_AerosolCompartments; }
@@ -71,6 +72,9 @@ public:
   const std::vector<SEGasCompartment*>& GetMechanicalVentilatorCompartments() { return m_MechanicalVentilatorCompartments; }
   const std::vector<SEGasCompartment*>& GetMechanicalVentilatorLeafCompartments() { return m_MechanicalVentilatorCompartments; }
 
+  const std::vector<SELiquidCompartment*>& GetMechanicalVentilatorAerosolCompartments() { return m_MechanicalVentilatorAerosolCompartments; }
+  const std::vector<SELiquidCompartment*>& GetMechanicalVentilatorAerosolLeafCompartments() { return m_MechanicalVentilatorAerosolCompartments; }
+
   SELiquidCompartment& GetExtracellularFluid(SETissueCompartment& t) { return *m_ExtracellularFluid[&t]; }
   SELiquidCompartment& GetIntracellularFluid(SETissueCompartment& t) { return *m_IntracellularFluid[&t]; }
   const std::map<SETissueCompartment*, SELiquidCompartment*>& GetExtracellularFluid() { return m_ExtracellularFluid; }
@@ -91,7 +95,7 @@ protected:
 
   SELiquidCompartmentGraph*   m_CombinedCardiovascularGraph;
   SELiquidCompartmentGraph*   m_CardiovascularGraph;
-  SELiquidCompartmentGraph*  m_RenalGraph;
+  SELiquidCompartmentGraph*   m_RenalGraph;
 
   SEGasCompartmentGraph*     m_RespiratoryGraph;
   SEGasCompartmentGraph*     m_CombinedRespiratoryAnesthesiaGraph;
@@ -101,6 +105,7 @@ protected:
 
   SELiquidCompartmentGraph*  m_AerosolGraph;
   SELiquidCompartmentGraph*  m_CombinedAerosolInhalerGraph;
+  SELiquidCompartmentGraph*  m_CombinedAerosolMechanicalVentilatorGraph;
 
 
   std::vector<SELiquidCompartment*>  m_AerosolCompartments;
@@ -125,6 +130,8 @@ protected:
   std::vector<SELiquidCompartment*>  m_InhalerAerosolLeafCompartments;
   std::vector<SEGasCompartment*>     m_MechanicalVentilatorCompartments;
   std::vector<SEGasCompartment*>     m_MechanicalVentilatorLeafCompartments;
+  std::vector<SELiquidCompartment*>  m_MechanicalVentilatorAerosolCompartments;
+  std::vector<SELiquidCompartment*>  m_MechanicalVentilatorAerosolLeafCompartments;
 
   std::map<SETissueCompartment*, SELiquidCompartment*> m_ExtracellularFluid;
   std::map<SETissueCompartment*, SELiquidCompartment*> m_IntracellularFluid;

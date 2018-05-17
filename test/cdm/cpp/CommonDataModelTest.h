@@ -411,7 +411,6 @@ public:
   ///////////////
 public:
   void ReadPatientDirectory(const std::string& sOutputDirectory);
-  void ReadScenarios(const std::string& sOutputDirectory);
   void ReadSubstanceDirectory(const std::string& sOutputDirectory);
 
   //////////////////////

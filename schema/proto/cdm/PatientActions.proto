@@ -203,11 +203,11 @@ message IntubationData
 message MechanicalVentilationData
 {
   PatientActionData                         PatientAction                   = 1;
-  eSwitch                                   State                           = 2;/**<<@brief Turns action procecessing off and on*/
+  eSwitch                                   State                           = 2;/**<<@brief Turns action processing off and on*/
   ScalarVolumePerTimeData                   Flow                            = 3;/**<<@brief Flow produced */
   ScalarPressureData                        Pressure                        = 4;/**<<@brief Pressure produced */
   repeated SubstanceData.FractionAmountData GasFraction                     = 5;/**<<@brief Break down of the gasses in the equipment, fractions must add up to 1 */
-  
+  repeated SubstanceData.ConcentrationData  Aerosol                         = 6;/**<<@brief Break down of the aerosolized solid/liquid substances in the equipment. */
 }
 
 /** @brief A 14-16G intravenous caninula is inserted into the second rib-space in the mid-clavcular line. The needle is advanced until air can be aspirated into a connecting syringe. The needle is withdrawn and the caninula is left to allow air flow out of the pleural space. This effectively converts the closed pneumothorax into an open pneumothorax. */

@@ -26,7 +26,10 @@ protected:
 
 public:
   SEScalarTime& GetElapsedTime() { return *m_ElapsedTime; }
+  double GetElapsedTime(const TimeUnit& unit) const;
+
   SEScalarVolume& GetAdministeredDose() { return *m_AdministeredDose; }
+  double GetAdministeredDose(const VolumeUnit& unit) const;
 
 protected:
   const SESubstance&   m_Substance;
@@ -59,11 +62,14 @@ public:
 
   virtual bool HasConcentration() const;
   virtual SEScalarMassPerVolume& GetConcentration();
+  virtual double GetConcentration(const MassPerVolumeUnit& unit) const;
 
   virtual bool HasDose() const;
-  virtual SEScalarVolume& GetDose();  
+  virtual SEScalarVolume& GetDose();
+  virtual double GetDose(const VolumeUnit& unit) const;
 
-  virtual SESubstance& GetSubstance() const;
+  virtual SESubstance& GetSubstance();
+  virtual const SESubstance& GetSubstance() const;
 
   virtual SESubstanceBolusState& GetState() { return m_State; }
   virtual const SESubstanceBolusState& GetState() const { return m_State; }

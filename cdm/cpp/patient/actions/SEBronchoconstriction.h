@@ -26,7 +26,8 @@ protected:
 public:
 
   virtual bool HasSeverity() const;
-  virtual SEScalar0To1& GetSeverity();  
+  virtual SEScalar0To1& GetSeverity();
+  virtual double GetSeverity() const;
 
   virtual void ToString(std::ostream &str) const;
 

@@ -20,9 +20,9 @@ PULSE_BIND_DECL(TissueSystemData)
  * To capture this behavior, the System Interactions methodology was introduced. 
  * The primary function of this system is to capture the substance transport that occurs between systems.
  */  
-class PULSE_DECL Tissue : public SETissueSystem, public PulseSystem
+class PULSE_DECL Tissue : public SETissueSystem, public PulseTissueSystem, public PulseSystem
 {
-  friend PulseController;
+  friend class PulseController;
   friend class PulseEngineTest;
 protected:
   Tissue(PulseController& data);
@@ -33,25 +33,21 @@ public:
 
   void Clear();
 
-  // Set members to a stable homeostatic state
-  void Initialize();
-
   static void Load(const pulse::TissueSystemData& src, Tissue& dst);
   static pulse::TissueSystemData* Unload(const Tissue& src);
 protected:
   static void Serialize(const pulse::TissueSystemData& src, Tissue& dst);
   static void Serialize(const Tissue& src, pulse::TissueSystemData& dst);
 
+  // Set members to a stable homeostatic state
+  void Initialize();
   // Set pointers and other member variables common to both homeostatic initialization and loading a state
   void SetUp();
 
-public:
   void AtSteadyState();  
   void PreProcess();
   void Process();
   void PostProcess();
-
-protected:
 
   // Preprocess Methods
   void ProduceAlbumin(double duration_s);
@@ -64,7 +60,6 @@ protected:
   void CalculateDiffusion();
   void CalculatePulmonaryCapillarySubstanceTransfer();
   void CalculateVitals();
-  
 
   /*Postprocess Methods*/  
 
@@ -131,6 +126,3 @@ protected:
   std::map<SETissueCompartment*, SELiquidCompartment*> m_TissueToVascular;
   std::vector<SETissueCompartment*>                    m_ConsumptionProdutionTissues;
 };
-
-
-

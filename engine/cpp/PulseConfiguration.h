@@ -558,6 +558,15 @@ public:
   virtual SEScalar& GetCentralVentilatoryControllerGain();
   virtual double GetCentralVentilatoryControllerGain() const;
 
+  virtual bool HasMinimumAllowableInpiratoryAndExpiratoryPeriod() const;
+  virtual SEScalarTime& GetMinimumAllowableInpiratoryAndExpiratoryPeriod();
+  virtual double GetMinimumAllowableInpiratoryAndExpiratoryPeriod(const TimeUnit& unit) const;
+
+  virtual bool HasMinimumAllowableTidalVolume() const;
+  virtual SEScalarVolume& GetMinimumAllowableTidalVolume();
+  virtual double GetMinimumAllowableTidalVolume(const VolumeUnit& unit) const;
+
+
   virtual bool HasPeripheralControllerCO2PressureSetPoint() const;
   virtual SEScalarPressure& GetPeripheralControllerCO2PressureSetPoint();
   virtual double GetPeripheralControllerCO2PressureSetPoint(const PressureUnit& unit) const;
@@ -581,15 +590,19 @@ public:
   virtual bool HasVentilatoryOcclusionPressure() const;
   virtual SEScalarPressure& GetVentilatoryOcclusionPressure();
   virtual double GetVentilatoryOcclusionPressure(const PressureUnit& unit) const;
+
+
 protected:
   SEScalarPressure*        m_CentralControllerCO2PressureSetPoint;
   SEScalar*                m_CentralVentilatoryControllerGain;
+  SEScalarTime*            m_MinimumAllowableInpiratoryAndExpiratoryPeriod;
+  SEScalarVolume*          m_MinimumAllowableTidalVolume;
   SEScalarPressure*        m_PeripheralControllerCO2PressureSetPoint;
   SEScalar*                m_PeripheralVentilatoryControllerGain;
   SEScalarInverseVolume*   m_PleuralComplianceSensitivity;
   SEScalarVolumePerTime*   m_PulmonaryVentilationRateMaximum;
   SEScalarVolume*          m_VentilationTidalVolumeIntercept;
-  SEScalarPressure*        m_VentilatoryOcclusionPressure;
+  SEScalarPressure*        m_VentilatoryOcclusionPressure;;
 
   /////////////
   /** Tissue */

@@ -57,12 +57,17 @@ bool SEChronicPericardialEffusion::HasAccumulatedVolume() const
 {
   return m_AccumulatedVolume == nullptr ? false : m_AccumulatedVolume->IsValid();
 }
-
 SEScalarVolume& SEChronicPericardialEffusion::GetAccumulatedVolume()
 {
   if (m_AccumulatedVolume == nullptr)
     m_AccumulatedVolume = new SEScalarVolume();
   return *m_AccumulatedVolume;
+}
+double SEChronicPericardialEffusion::GetAccumulatedVolume(const VolumeUnit& unit) const
+{
+  if (m_AccumulatedVolume == nullptr)
+    return SEScalar::dNaN();
+  return m_AccumulatedVolume->GetValue(unit);
 }
 
 

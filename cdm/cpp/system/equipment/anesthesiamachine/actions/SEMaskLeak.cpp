@@ -67,6 +67,12 @@ SEScalar0To1& SEMaskLeak::GetSeverity()
     m_Severity = new SEScalar0To1();
   return *m_Severity;
 }
+double SEMaskLeak::GetSeverity() const
+{
+  if (m_Severity == nullptr)
+    return SEScalar::dNaN();
+  return m_Severity->GetValue();
+}
 
 void SEMaskLeak::ToString(std::ostream &str) const
 {

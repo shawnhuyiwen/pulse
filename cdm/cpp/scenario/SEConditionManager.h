@@ -42,36 +42,46 @@ public:
 
   // Patient Conditions
 
+
   bool HasChronicAnemia() const;
-  SEChronicAnemia* GetChronicAnemia() const;
+  SEChronicAnemia* GetChronicAnemia();
+  const SEChronicAnemia* GetChronicAnemia() const;
 
   bool HasChronicObstructivePulmonaryDisease() const;
-  SEChronicObstructivePulmonaryDisease* GetChronicObstructivePulmonaryDisease() const;
+  SEChronicObstructivePulmonaryDisease* GetChronicObstructivePulmonaryDisease();
+  const SEChronicObstructivePulmonaryDisease* GetChronicObstructivePulmonaryDisease() const;
 
   bool HasChronicHeartFailure() const;
   bool HasChronicVentricularSystolicDysfunction() const;
-  SEChronicVentricularSystolicDysfunction* GetChronicVentricularSystolicDysfunction() const;
+  SEChronicVentricularSystolicDysfunction* GetChronicVentricularSystolicDysfunction();
+  const SEChronicVentricularSystolicDysfunction* GetChronicVentricularSystolicDysfunction() const;
 
   bool HasChronicPericardialEffusion() const;
-  SEChronicPericardialEffusion* GetChronicPericardialEffusion() const;
+  SEChronicPericardialEffusion* GetChronicPericardialEffusion();
+  const SEChronicPericardialEffusion* GetChronicPericardialEffusion() const;
 
   bool HasChronicRenalStenosis() const;
-  SEChronicRenalStenosis* GetChronicRenalStenosis() const;
+  SEChronicRenalStenosis* GetChronicRenalStenosis();
+  const SEChronicRenalStenosis* GetChronicRenalStenosis() const;
 
   bool HasConsumeMeal() const;
-  SEConsumeMeal* GetConsumeMeal() const;
+  SEConsumeMeal* GetConsumeMeal();
+  const SEConsumeMeal* GetConsumeMeal() const;
 
   bool HasImpairedAlveolarExchange() const;
-  SEImpairedAlveolarExchange* GetImpairedAlveolarExchange() const;
+  SEImpairedAlveolarExchange* GetImpairedAlveolarExchange();
+  const SEImpairedAlveolarExchange* GetImpairedAlveolarExchange() const;
 
   bool HasLobarPneumonia() const;
-  SELobarPneumonia* GetLobarPneumonia() const;
+  SELobarPneumonia* GetLobarPneumonia();
+  const SELobarPneumonia* GetLobarPneumonia() const;
 
   // Environment Conditions
 
   bool HasInitialEnvironmentConditions() const;
-  SEInitialEnvironmentConditions* GetInitialEnvironmentConditions() const;
-  
+  SEInitialEnvironmentConditions* GetInitialEnvironmentConditions();
+  const SEInitialEnvironmentConditions* GetInitialEnvironmentConditions() const;
+
   // This is here in case you want to take all the conditions from an engine and write them out so you can reproduce the same engine state later
   const cdm::ConditionListData& GetConditionList() { return *m_Conditions; }// I don't really have anything that does that yet...
 

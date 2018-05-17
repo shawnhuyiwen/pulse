@@ -32,9 +32,9 @@ PULSE_BIND_DECL(RespiratorySystemData)
 * of gases in the lungs, and ensures the integration and flow of data between the
 * respiratory system and the anesthesia machine during mechanical ventilation.
 */
-class PULSE_DECL Respiratory : public SERespiratorySystem, public PulseSystem
+class PULSE_DECL Respiratory : public SERespiratorySystem, public PulseRespiratorySystem, public PulseSystem
 {
-  friend PulseController;
+  friend class PulseController;
   friend class PulseEngineTest;
 protected:
 
@@ -46,26 +46,24 @@ public:
 
   void Clear();
 
-  // Set members to a stable homeostatic state
-  void Initialize();
-
   static void Load(const pulse::RespiratorySystemData& src, Respiratory& dst);
   static pulse::RespiratorySystemData* Unload(const Respiratory& src);
 protected:
   static void Serialize(const pulse::RespiratorySystemData& src, Respiratory& dst);
   static void Serialize(const Respiratory& src, pulse::RespiratorySystemData& dst);
 
+  // Set members to a stable homeostatic state
+  void Initialize();
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
   void SetUp();
 
-public:
   void AtSteadyState();
   void PreProcess();
   void Process();
   void PostProcess();
 
   bool CalculatePulmonaryFunctionTest(SEPulmonaryFunctionTest& pft);
-private:
+
   //Tuning
   void TuneCircuit();
 
@@ -116,21 +114,28 @@ private:
   double m_InitialInspiratoryCapacity_L;
   double m_InitialResidualVolume_L;
   //   CalculateVitalSigns()
-  bool   m_bNotBreathing;
+  bool   m_BreathingCycle;
+  bool   m_NotBreathing;
   double m_TopBreathTotalVolume_L;
   double m_TopBreathAlveoliVolume_L;
   double m_TopBreathDeadSpaceVolume_L;
   double m_TopBreathPleuralPressure_cmH2O;
-  double m_LastCardiacCycleBloodPH;
-  double m_PreviousTotalLungVolume_L;
+  double m_LastCardiacCycleBloodPH; 
+  double m_TopCarinaO2;
+  double m_TopBreathElapsedTime_min;
+  double m_BottomBreathElapsedTime_min;
+  double m_BottomBreathTotalVolume_L;
+  double m_BottomBreathAlveoliVolume_L;
+  double m_BottomBreathDeadSpaceVolume_L;
+  double m_BottomBreathPleuralPressure_cmH2O;
   RunningAverage* m_BloodPHRunningAverage;
+
   //   Respiratory Driver
-  bool   m_BreathingCycle;
   double m_ArterialO2PartialPressure_mmHg;
   double m_ArterialCO2PartialPressure_mmHg;
   double m_BreathingCycleTime_s;
-  double m_BreathTimeExhale_min;
   double m_DefaultDrivePressure_cmH2O;
+  double m_DriverInspirationTime_s;
   double m_DriverPressure_cmH2O;
   double m_DriverPressureMin_cmH2O;
   double m_ElapsedBreathingCycleTime_min;
@@ -157,14 +162,16 @@ private:
   double m_dt_min;
   // Configuration parameters
   double m_CentralControlGainConstant;
-  double m_dDefaultOpenResistance_cmH2O_s_Per_L;
-  double m_dDefaultClosedResistance_cmH2O_s_Per_L;
+  double m_DefaultOpenResistance_cmH2O_s_Per_L;
+  double m_DefaultClosedResistance_cmH2O_s_Per_L;
   double m_PeripheralControlGainConstant;
   double m_PleuralComplianceSensitivity_Per_L;
-  double m_dRespOpenResistance_cmH2O_s_Per_L;
-  double m_dRespClosedResistance_cmH2O_s_Per_L;
+  double m_RespOpenResistance_cmH2O_s_Per_L;
+  double m_RespClosedResistance_cmH2O_s_Per_L;
   double m_VentilationTidalVolumeIntercept;
   double m_VentilatoryOcclusionPressure_cmH2O;
+  double m_MinimumAllowableTidalVolume_L;
+  double m_MinimumAllowableInpiratoryAndExpiratoryPeriod_s;
   // State between functions (i.e. shared between methods in preprocess, set to a default value at the start of preprocess)
   double m_AverageLocalTissueBronchodilationEffects;
 
@@ -190,6 +197,7 @@ private:
   SEGasSubstanceQuantity*    m_RightAlveoliO2;
   std::vector<SELiquidCompartment*> m_AerosolEffects;
   SEGasCompartment*          m_MechanicalVentilatorConnection;
+  SELiquidCompartment*       m_MechanicalVentilatorAerosolConnection;
   //Circuits
   SEFluidCircuit*            m_RespiratoryCircuit;
   //Nodes

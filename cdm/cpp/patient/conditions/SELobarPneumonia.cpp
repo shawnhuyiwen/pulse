@@ -75,6 +75,12 @@ SEScalar0To1& SELobarPneumonia::GetSeverity()
     m_Severity=new SEScalar0To1();
   return *m_Severity;
 }
+double SELobarPneumonia::GetSeverity() const
+{
+  if (m_Severity == nullptr)
+    return SEScalar::dNaN();
+  return m_Severity->GetValue();
+}
 
 bool SELobarPneumonia::HasLeftLungAffected() const
 {
@@ -86,6 +92,12 @@ SEScalar0To1& SELobarPneumonia::GetLeftLungAffected()
     m_LeftLungAffected = new SEScalar0To1();
   return *m_LeftLungAffected;
 }
+double SELobarPneumonia::GetLeftLungAffected() const
+{
+  if (m_LeftLungAffected == nullptr)
+    return SEScalar::dNaN();
+  return m_LeftLungAffected->GetValue();
+}
 
 bool SELobarPneumonia::HasRightLungAffected() const
 {
@@ -96,6 +108,12 @@ SEScalar0To1& SELobarPneumonia::GetRightLungAffected()
   if (m_RightLungAffected == nullptr)
     m_RightLungAffected = new SEScalar0To1();
   return *m_RightLungAffected;
+}
+double SELobarPneumonia::GetRightLungAffected() const
+{
+  if (m_RightLungAffected == nullptr)
+    return SEScalar::dNaN();
+  return m_RightLungAffected->GetValue();
 }
 
 void SELobarPneumonia::ToString(std::ostream &str) const

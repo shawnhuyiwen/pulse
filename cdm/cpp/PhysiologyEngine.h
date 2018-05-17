@@ -27,6 +27,8 @@ class SEAnesthesiaMachine;
 class SEInhaler;
 class SEElectroCardioGram;
 class SECompartmentManager;
+class SEActionManager;
+class SEConditionManager;
 
 class SEEngineTracker;
 class SEEngineConfiguration;
@@ -103,6 +105,13 @@ public:
   //--------------------------------------------------------------------------------------------------
   virtual bool InitializeEngine(const SEPatient& patient, const std::vector<const SECondition*>* conditions = nullptr, const SEEngineConfiguration* config = nullptr) = 0;
 
+  //--------------------------------------------------------------------------------------------------
+  /// \brief
+  /// Get the Condition Manager.
+  /// Allows a user to check the state of active conditions
+  ///
+  //--------------------------------------------------------------------------------------------------
+  virtual const SEConditionManager& GetConditionManager() = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -166,6 +175,14 @@ public:
   ///
   //--------------------------------------------------------------------------------------------------
   virtual bool ProcessAction(const SEAction& action) = 0;
+
+  //--------------------------------------------------------------------------------------------------
+  /// \brief
+  /// Get the Action Manager.
+  /// Allows a user to check the state of active actions
+  ///
+  //--------------------------------------------------------------------------------------------------
+  virtual const SEActionManager& GetActionManager() = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief

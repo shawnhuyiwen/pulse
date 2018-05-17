@@ -74,6 +74,12 @@ SEScalar0To1& SEForcedInhale::GetInspiratoryCapacityFraction()
     m_InspiratoryCapacityFraction = new SEScalar0To1();
   return *m_InspiratoryCapacityFraction;
 }
+double SEForcedInhale::GetInspiratoryCapacityFraction() const
+{
+  if (m_InspiratoryCapacityFraction == nullptr)
+    return SEScalar::dNaN();
+  return m_InspiratoryCapacityFraction->GetValue();
+}
 
 bool SEForcedInhale::HasPeriod() const
 {
@@ -84,6 +90,12 @@ SEScalarTime& SEForcedInhale::GetPeriod()
   if (m_Period == nullptr)
     m_Period = new SEScalarTime();
   return *m_Period;
+}
+double SEForcedInhale::GetPeriod(const TimeUnit& unit) const
+{
+  if (m_Period == nullptr)
+    return SEScalar::dNaN();
+  return m_Period->GetValue(unit);
 }
 
 void SEForcedInhale::ToString(std::ostream &str) const

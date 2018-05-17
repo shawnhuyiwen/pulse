@@ -27,9 +27,11 @@ public:
 
   virtual bool HasBronchitisSeverity() const;
   virtual SEScalar0To1& GetBronchitisSeverity();
+  virtual double GetBronchitisSeverity() const;
 
   virtual bool HasEmphysemaSeverity() const;
   virtual SEScalar0To1& GetEmphysemaSeverity();
+  virtual double GetEmphysemaSeverity() const;
 
   virtual void ToString(std::ostream &str) const;
 

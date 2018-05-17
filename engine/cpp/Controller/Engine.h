@@ -25,6 +25,8 @@ public:
   virtual bool LoadState(const google::protobuf::Message& state, const SEScalarTime* simTime = nullptr, const SEEngineConfiguration* config = nullptr);
   virtual std::unique_ptr<google::protobuf::Message> SaveState(const std::string& file = "");
 
+  virtual const SEConditionManager& GetConditionManager();
+  
   virtual Logger* GetLogger();
   virtual SEEngineTracker* GetEngineTracker();
 
@@ -36,9 +38,10 @@ public:
   virtual double GetTimeStep(const TimeUnit& unit);
   virtual double GetSimulationTime(const TimeUnit& unit);
 
-  virtual void AdvanceModelTime();
-  virtual void AdvanceModelTime(double time, const TimeUnit& unit);
-  virtual bool ProcessAction(const SEAction& action); 
+  virtual void  AdvanceModelTime();
+  virtual void  AdvanceModelTime(double time, const TimeUnit& unit);
+  virtual bool  ProcessAction(const SEAction& action); 
+  virtual const SEActionManager& GetActionManager();
 
   virtual SESubstanceManager& GetSubstanceManager();
   virtual void SetEventHandler(SEEventHandler* handler);

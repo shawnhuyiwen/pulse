@@ -70,6 +70,12 @@ SEScalar0To1& SEChronicObstructivePulmonaryDisease::GetBronchitisSeverity()
     m_BronchitisSeverity = new SEScalar0To1();
   return *m_BronchitisSeverity;
 }
+double SEChronicObstructivePulmonaryDisease::GetBronchitisSeverity() const
+{
+  if (m_BronchitisSeverity == nullptr)
+    return SEScalar::dNaN();
+  return m_BronchitisSeverity->GetValue();
+}
 
 bool SEChronicObstructivePulmonaryDisease::HasEmphysemaSeverity() const
 {
@@ -80,6 +86,12 @@ SEScalar0To1& SEChronicObstructivePulmonaryDisease::GetEmphysemaSeverity()
   if (m_EmphysemaSeverity == nullptr)
     m_EmphysemaSeverity = new SEScalar0To1();
   return *m_EmphysemaSeverity;
+}
+double SEChronicObstructivePulmonaryDisease::GetEmphysemaSeverity() const
+{
+  if (m_EmphysemaSeverity == nullptr)
+    return SEScalar::dNaN();
+  return m_EmphysemaSeverity->GetValue();
 }
 
 void SEChronicObstructivePulmonaryDisease::ToString(std::ostream &str) const

@@ -1,54 +1,33 @@
-cmake_minimum_required(VERSION 3.2)
+# If you want to build your own CMake project for your code that uses Pulse
+# Check out this wiki article to get started : 
+# https://gitlab.kitware.com/physiology/engine/wikis/how-to-connect-to-pulse
 
-set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/install CACHE PATH "Install location")
 
-# Policy to address @foo@ variable expansion
-if(POLICY CMP0053)
-  cmake_policy(SET CMP0053 NEW)
-endif()
+file(GLOB SRC_FILES
+  "howto/cpp/*.h"
+  "howto/cpp/*.cpp"
+)
+source_group("" FILES ${SRC_FILES})
+set(SOURCE ${SRC_FILES})
+add_executable(HowToDriver ${SOURCE})
 
-if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
-  message( STATUS "64 bits compiler detected" )    
-  set( EX_CONFIG "" )
-  set(FIND_LIBRARY_USE_LIB64_PATHS ON)
-else( CMAKE_SIZEOF_VOID_P EQUAL 8 ) 
-  message( STATUS "32 bits compiler detected" )
-  set( EX_CONFIG "32" )
-  set(FIND_LIBRARY_USE_LIB64_PATHS OFF)
-endif( CMAKE_SIZEOF_VOID_P EQUAL 8 )
+# Preprocessor Definitions and Include Paths
+target_include_directories(HowToDriver PRIVATE ${CMAKE_BINARY_DIR}/schema/cpp)
+target_include_directories(HowToDriver PRIVATE ${CMAKE_BINARY_DIR}/schema/cpp/bind)
+target_include_directories(HowToDriver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../engine/cpp)
+target_include_directories(HowToDriver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../cdm/cpp)
+target_include_directories(HowToDriver PRIVATE ${EIGEN3_INCLUDE_DIR})
+target_include_directories(HowToDriver PRIVATE ${LOG4CPLUS_INCLUDE_DIR})
+target_include_directories(HowToDriver PRIVATE ${PROTOBUF_INCLUDE_DIR})
 
-SET(CONFIGURATION)
-if(WIN32)
-  set(CONFIGURATION ${CMAKE_CFG_INTDIR})
-else()
-  # Set a default build type if none was specified
-  if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-    message(STATUS "Setting build type to 'Release' as none was specified.")
-    set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
-    # Set the possible values of build type for cmake-gui
-    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
-  endif()
-  set(CONFIGURATION ${CMAKE_BUILD_TYPE})
-endif()
-string(TOLOWER ${CONFIGURATION} CONFIGURATION)
+# Dependent Libraries
+target_link_libraries(HowToDriver PulseEngine)
 
-set(CMAKE_CONFIGURATION_TYPES Debug Release RelWithDebInfo CACHE TYPE INTERNAL FORCE )
-if(MSVC)  
-  set(CMAKE_CXX_FLAGS_DEBUG "/D_DEBUG /MDd /Zi /Ob2 /Oi /Od /RTC1" CACHE TYPE INTERNAL FORCE)
-endif()
 
-if(MINGW)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--kill-at -std=gnu++0x")#turn on C++11
-  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--kill-at")
-endif()
+IF(UNIX)
+    SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_RPATH}:\$ORIGIN")
+ENDIF()
 
-if(APPLE)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++")
-endif()
-
-if(UNIX)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-  set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_RPATH}:\$ORIGIN")
-endif()
-
-include(sdk.cmake)
+add_custom_command(TARGET HowToDriver POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALL_BIN}/${CONFIGURATION}
+                   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:HowToDriver> ${INSTALL_BIN}/${CONFIGURATION})
