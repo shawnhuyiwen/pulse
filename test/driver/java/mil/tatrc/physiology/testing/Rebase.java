@@ -98,8 +98,9 @@ public class Rebase
 					Log.error("A job has no expected result files!?!?");
 					continue;
 				}
-				if(!job.PlottableResults)
-					continue;// Nothing to plot/compare, nothing to zip			
+				if(!job.PlottableResults && !job.isAssessment)
+					continue;// Nothing to plot/compare, nothing to zip	
+				// We assume all pba will have something to zip...
 				
 				log_file = "";
 				scenario_file = "";
@@ -110,8 +111,9 @@ public class Rebase
 				  Log.error("Unable to find file to rebase for "+job.name+" at path "+result_path);
 				  continue;
 				}
-
-				if(job.name.endsWith(".pba"))
+				
+				// If there is no baselineDirectory, then this must be an assessment...
+				if(job.name.endsWith(".pba") && !job.isAssessment)
 				{
 					scenario_file = job.baselineDirectory+job.name;
 					if(job.computedFiles.size()>1)
@@ -123,7 +125,7 @@ public class Rebase
 					log_file = result_files.get(0).replaceAll("Results"+SETestConfiguration.ext, ".log");   
 					result_files.add(log_file);
 					result_files.add(scenario_file);
-Log.info("Adding scenario file"+scenario_file);
+          Log.info("Adding scenario file"+scenario_file);
 				}    	
 				else
 				{
@@ -149,7 +151,7 @@ Log.info("Adding scenario file"+scenario_file);
 				}
 				try
 				{
-                                        Log.info("Creating "+rPath);
+          Log.info("Creating "+rPath);
 					FileUtils.createDirectory(rPath);
 				} 
 				catch (IOException ex)
