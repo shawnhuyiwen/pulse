@@ -142,6 +142,8 @@ The Pulse repository is always changing as we add improvments and features to th
 These changes will require that you rebuild the source code when you pull the latest changes.
 Here are a few tips for keeping your source code up to date when you pull
 
+<b>Please ensure CMake is on your path!</b>
+
 ### Rebuilding the schema
 
 Pulse uses Google Protocol Buffers for data files and to communicate data between various languages and networking protocols.
@@ -151,13 +153,12 @@ From a command/terminal in your pulse/build/install/bin directory :
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
 # On Windows
 > run protoc
-# On Linux/Max
+# On Linux/Mac
 $ ./run.sh protoc
 # Note you may need to do a 
 $ chmod +x run.sh
 # To run this script on your machine
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<b>Please ensure CMake is on your path!</b>
 
 Note, if there were no changes to the protobuf files, the proto compile will not run and return this message 
 
@@ -185,13 +186,21 @@ If the state files no longer load, or you want to ensure they are up to date wit
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
 # On Windows
 > run genStates
-# On Linux/Max
+# On Linux/Mac
 $ ./run.sh genStates
-# Note you may need to do a 
-$ chmod +x run.sh
-# To run this script on your machine
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<b>Please ensure CMake is on your path!</b>
+
+### Update Baseline Data
+
+Changes to the code base can also change the Test Suite baseline files.
+You will need these new baseline files to pass any tests and ensure any changes do not affect the code base in any negative ways.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
+# On Windows
+> run updateBaselines
+# On Linux/Mac
+$ ./run.sh updateBaselines
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ## Using Pulse
 
