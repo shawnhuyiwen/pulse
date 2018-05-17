@@ -272,7 +272,7 @@ while the others can be easily added.  Possible inputs, outputs, elements,
 and parameters are all defined.  Valves (diodes) and
 switches are not shown @cite riggs1976control.</i>
 </center>
-@image html CircuitSystemAnalogies.png
+<center><img src="./Images/Circuit/CircuitSystemAnalogies.png" width="800"></center>
 <br>
 
 While we designed the generic Circuit Solver to analyze our fluid,
@@ -289,7 +289,7 @@ circuits that are used extensively inside the engine.  The Elements are
 defined by the CDM and used by the solver.  The Flow equations are
 important for solving for the unknown parameters.  @cite HydraulicAnalogy2014 </i>
 </center>
-@image html CircuitHydraulicAnalogyTable.png
+<center><img src="./Images/Circuit/CircuitHydraulicAnalogyTable.png" width="500"></center>
 <br>
 
 The Circuit Solver is equipped to use all of the element types given in the second column of Table&nbsp;2.  All three passive element types (resistor, capacitor, and inductor) have a polarized element modeling option.  When active, polarized elements will short the circuit when the target node voltage becomes greater than that of the source node.  This allows the user to model electrolytic capacitors and further ensures fluid will not be added to hydraulic systems if compliances switch polarity.
@@ -499,14 +499,14 @@ different types of elements and multiple voltage and current sources are
 included.  The same circuit was defined using the CDM for comparison.*
 </center><br>
 
-@image html ValidationComprehensive2SINCenteredPressure.png
+<center><img src="./Images/Circuit/ValidationComprehensive2SINCenteredPressure.png" width="800"></center>
 <center>
 *Figure 5.  Engine node voltage outputs for the first comprehensive
 circuit compared to LTspice baseline values, using sinusoid sources.  All
 are very tightly correlated.*
 </center><br>
 
-@image html ValidationComprehensive2SINCenteredFlow.png
+<center><img src="./Images/Circuit/ValidationComprehensive2SINCenteredFlow.png" width="800"></center>
 <center>
 *Figure 6.  Engine path current outputs for the first comprehensive
 circuit compared to LTspice baseline values.  All are very tightly
@@ -522,14 +522,14 @@ different types of elements and multiple voltage and current sources are
 included.  The same circuit was defined using the CDM for comparison.*
 </center><br>
 
-@image html ValidationComprehensive1PulsePressure.png
+<center><img src="./Images/Circuit/ValidationComprehensive1PulsePressure.png" width="800"></center>
 <center>
 *Figure 8.  Engine node voltage outputs for the second comprehensive
 circuit compared to LTspice baseline values, using pulse sources.  All
 are very tightly correlated.*
 </center><br>
 
-@image html ValidationComprehensive1PulseFlow.png
+<center><img src="./Images/Circuit/ValidationComprehensive1PulseFlow.png" width="800"></center>
 <center>
 *Figure 9.  Engine path current outputs for the second comprehensive
 circuit compared to LTspice baseline values.  All are very tightly
