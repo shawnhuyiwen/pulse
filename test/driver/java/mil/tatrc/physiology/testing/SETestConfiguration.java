@@ -188,7 +188,7 @@ public class SETestConfiguration
 							continue;
 						}
 						if(directive.equalsIgnoreCase("Assessment")) 
-						{ job.isAssessment = true; continue; }
+						{ job.isAssessment = true; job.state = SETestJob.State.Complete; continue; }
 						if(directive.equalsIgnoreCase("NoCompare")) 
             { job.PlottableResults = false; continue; }
 						if(directive.equalsIgnoreCase("FastPlot")) 
@@ -299,6 +299,8 @@ public class SETestConfiguration
 	// Let's clean out everything we are about to run
     for(SETestJob job : jobs)
     {
+      if(job.isAssessment)
+        continue;
     	deleteTestResults(job.computedDirectory+"/"+job.name);
     	for(String resultFile : job.computedFiles)
     	{
