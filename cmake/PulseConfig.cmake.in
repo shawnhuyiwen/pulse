@@ -61,6 +61,10 @@ set(Pulse_DEBUG_LIBS "${Pulse_LIB_ROOT_DIR}/debug/PulseEngine.${LIB_ENDING}"
                      "${Pulse_LIB_ROOT_DIR}/debug/${LOG4CPLUS_LIB}D.${LIB_ENDING}"
                      "${Pulse_LIB_ROOT_DIR}/debug/libprotobufd.${LIB_ENDING}"
 )
+if(WIN32)
+  list(APPEND Pulse_LIBS "ws2_32" "advapi32")
+  list(APPEND Pulse_DEBUG_LIBS "ws2_32" "advapi32")
+endif()
 
 set( Pulse_VERSION_MAJOR "@PULSE_VERSION_MAJOR@" )
 set( Pulse_VERSION_MINOR "@PULSE_VERSION_MINOR@" )

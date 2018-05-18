@@ -13,14 +13,14 @@ endif()
 ##################################
 
 message( STATUS "External project - Eigen" )
-set(eigen_VERSION "3.3.3" )
+set(eigen_VERSION "3.3.4" )
 set(eigen_DIR "${CMAKE_BINARY_DIR}/eigen/src/eigen")
 set(eigen_INSTALL "${CMAKE_CURRENT_BINARY_DIR}/eigen/install")
 
 ExternalProject_Add( eigen
   PREFIX eigen
   URL "http://bitbucket.org/eigen/eigen/get/${eigen_VERSION}.tar.gz"
-  URL_HASH MD5=f21cee193e15e55cfd15ebbc16fc00a7
+  URL_HASH MD5=1a47e78efe365a97de0c022d127607c3
   INSTALL_DIR "${eigen_INSTALL}"
   CMAKE_ARGS
         -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF
@@ -49,8 +49,13 @@ endif()
 		
 ExternalProject_Add( log4cplus
   PREFIX log4cplus
-  URL "https://github.com/Kitware/log4cplus/archive/1.2.x.zip"
-  URL_HASH MD5=4c0973becab54c8492204258260dcf06
+  #URL "https://github.com/Kitware/log4cplus/archive/1.2.x.zip"
+  #URL_HASH MD5=4c0973becab54c8492204258260dcf06
+  #URL "https://github.com/log4cplus/log4cplus/archive/2.0.x.zip"
+  #URL_HASH MD5=33940534c0aaa7902355c4fbd1e7e7f3
+  GIT_REPOSITORY "https://github.com/log4cplus/log4cplus.git"
+  GIT_TAG REL_2_0_0
+  GIT_SHALLOW TRUE
   UPDATE_COMMAND 
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/cmake/log4cplus-patches/CMakeLists.txt ${log4cplus_DIR}/src/CMakeLists.txt
 # Build this in the Inner build
@@ -74,14 +79,14 @@ list(APPEND CMAKE_PREFIX_PATH ${log4cplus_INSTALL})
 ###################################################
 
 message( STATUS "External project - protobuf" )
-set(protobuf_VERSION "3.4.0" )
-set(protobuf_MD5 "ca583ee8bfc9e23b257e8724d5aae180" )
+set(protobuf_VERSION "3.5.2" )
+set(protobuf_MD5 "7b3e7c0eaa75dcc5cdb8aba2f8c301cb" )
 set(protobuf_DIR "${CMAKE_BINARY_DIR}/protobuf/src/protobuf")
 set(protobuf_INSTALL "${CMAKE_CURRENT_BINARY_DIR}/protobuf/install")
 
 ExternalProject_Add( protobuf
-  PREFIX protobuf 
-  URL "https://github.com/google/protobuf/archive/v3.4.0rc2.zip"
+  PREFIX protobuf
+  URL "https://github.com/google/protobuf/archive/v${protobuf_VERSION}.zip"
   URL_MD5 ${protobuf_MD5}
   DOWNLOAD_DIR ${protobuf_DIR}
   INSTALL_DIR "${protobuf_INSTALL}"

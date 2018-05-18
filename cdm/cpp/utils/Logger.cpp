@@ -5,37 +5,59 @@
 #include "utils/Logger.h"
 #include "utils/FileUtils.h"
 
-#include <log4cplus/logger.h>
-#include <log4cplus/loglevel.h>
-#include <log4cplus/loggingmacros.h>
-#include <log4cplus/configurator.h>
-#include <log4cplus/consoleappender.h>
-#include <log4cplus/fileappender.h>
+//#pragma  warning(push)
+//#pragma warning(disable:4512) // assignment operator could not be generated
+//#pragma warning(disable:4290) // C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
+#include "log4cplus/logger.h"
+#include "log4cplus/loglevel.h"
+#include "log4cplus/loggingmacros.h"
+#include "log4cplus/configurator.h"
+#include "log4cplus/initializer.h"
+#include "log4cplus/helpers/pointer.h"
+#include "log4cplus/appender.h"
+#include "log4cplus/consoleappender.h"
+#include "log4cplus/fileappender.h"
+//#pragma  warning(pop)
+
 #include <iomanip>
 
 #include "properties/SEScalarTime.h"
 
 const std::string Loggable::empty("");
 
+class log_lib
+{
+public:
+  log_lib() : logger(log4cplus::Logger::getRoot())
+  {
+
+  }
+  virtual ~log_lib() { }
+  log4cplus::Initializer        initializer;
+  log4cplus::Logger             logger;
+  log4cplus::SharedAppenderPtr  fileAppender;
+  log4cplus::SharedAppenderPtr  consoleAppender;
+};
+
 //logger constructor
-Logger::Logger(const std::string& logFilename) : m_Log(log4cplus::Logger::getRoot())
+Logger::Logger(const std::string& logFilename) 
 {
   m_Forward = nullptr;
   m_time = nullptr;
-  //log4cplus::initialize();
+  _log_lib = new log_lib();
   ResetLogFile(logFilename);
 }
 
 void Logger::LogToConsole(bool b)
 {
-  (b) ? m_Log.addAppender(m_ConsoleAppender) : m_Log.removeAppender(m_ConsoleAppender);
+  (b) ? _log_lib->logger.addAppender(_log_lib->consoleAppender) : _log_lib->logger.removeAppender(_log_lib->consoleAppender);
 }
 
 void Logger::ResetLogFile(const std::string& logFilename)
 {
-  if (m_Log.getAllAppenders().empty())
-    m_Log.removeAllAppenders();
-  m_Log.setLogLevel(log4cplus::INFO_LOG_LEVEL);
+  if (_log_lib->logger.getAllAppenders().empty())
+    _log_lib->logger.removeAllAppenders();
+  _log_lib->logger.setLogLevel(log4cplus::INFO_LOG_LEVEL);
 
   if (!logFilename.empty())
   {
@@ -46,22 +68,22 @@ void Logger::ResetLogFile(const std::string& logFilename)
     if (FilePointer)
       fclose(FilePointer);
 
-    m_FileAppender = m_Log.getAppender(logFilename);
-    if (m_FileAppender == nullptr)
+    _log_lib->fileAppender = _log_lib->logger.getAppender(logFilename);
+    if (_log_lib->fileAppender == nullptr)
     {
-      m_FileAppender = new log4cplus::FileAppender(logFilename);
-      m_FileAppender->setName(logFilename);
-      m_FileAppender->setLayout(std::auto_ptr<log4cplus::Layout>(new log4cplus::PatternLayout("%d [%p] %m%n")));
-      m_Log.addAppender(m_FileAppender);
+      _log_lib->fileAppender = new log4cplus::FileAppender(logFilename);
+      _log_lib->fileAppender->setName(logFilename);
+      _log_lib->fileAppender->setLayout(std::auto_ptr<log4cplus::Layout>(new log4cplus::PatternLayout("%d [%p] %m%n")));
+      _log_lib->logger.addAppender(_log_lib->fileAppender);
     }
   }
 
-  m_ConsoleAppender = m_Log.getAppender(logFilename+"_console");
-  if (m_ConsoleAppender == nullptr)
+  _log_lib->consoleAppender = _log_lib->logger.getAppender(logFilename+"_console");
+  if (_log_lib->consoleAppender == nullptr)
   {
-    m_ConsoleAppender = new log4cplus::ConsoleAppender();
-    m_ConsoleAppender->setName(logFilename + "_console");
-    m_ConsoleAppender->setLayout(std::auto_ptr<log4cplus::Layout>(new log4cplus::PatternLayout("%d [%p] %m%n")));
+    _log_lib->consoleAppender = new log4cplus::ConsoleAppender();
+    _log_lib->consoleAppender->setName(logFilename + "_console");
+    _log_lib->consoleAppender->setLayout(std::auto_ptr<log4cplus::Layout>(new log4cplus::PatternLayout("%d [%p] %m%n")));
   }
   LogToConsole(true);
 }
@@ -80,15 +102,54 @@ void Logger::SetLogTime(const SEScalarTime* time)
 // TODO log4cpp::Priority::Value priority GetGlobalPriority()
 
 //This function will change the priority of the logger
-void Logger::SetLogLevel(log4cplus::LogLevel level)
+void Logger::SetLogLevel(Logger::level l)
 {
-  m_Log.setLogLevel(level);
+  log4cplus::LogLevel L;
+  switch (l)
+  {
+  case TRACE:
+    L = log4cplus::TRACE_LOG_LEVEL;
+    break;
+  case DEBUG:
+    L = log4cplus::DEBUG_LOG_LEVEL;
+    break;
+  case INFO:
+    L = log4cplus::INFO_LOG_LEVEL;
+    break;
+  case WARN:
+    L = log4cplus::WARN_LOG_LEVEL;
+    break;
+  case ERROR:
+    L = log4cplus::ERROR_LOG_LEVEL;
+    break;
+  case FATAL:
+    L = log4cplus::FATAL_LOG_LEVEL;
+    break;
+  default:
+    L = log4cplus::INFO_LOG_LEVEL;
+  }
+  _log_lib->logger.setLogLevel(L);
 }
 
 //This function will return the priority of the logger
-log4cplus::LogLevel Logger::GetLogLevel()
+Logger::level Logger::GetLogLevel()
 {
-  return m_Log.getLogLevel();
+  switch (_log_lib->logger.getLogLevel())
+  {
+  case log4cplus::TRACE_LOG_LEVEL:
+      return TRACE;
+  case log4cplus::DEBUG_LOG_LEVEL:
+    return DEBUG;
+  case log4cplus::INFO_LOG_LEVEL:
+    return INFO;
+  case log4cplus::WARN_LOG_LEVEL:
+    return WARN;
+  case log4cplus::ERROR_LOG_LEVEL:
+    return ERROR;
+  case log4cplus::FATAL_LOG_LEVEL:
+    return FATAL;
+  }
+  return INFO;
 }
 
 void Logger::SetForward(LoggerForward* forward)
@@ -117,7 +178,7 @@ std::string Logger::FormatLogMessage(const std::string&  msg, const std::string&
 
 void Logger::Debug(std::string const&  msg, const std::string&  origin)
 {
-  LOG4CPLUS_DEBUG(m_Log, FormatLogMessage(msg,origin));
+  LOG4CPLUS_DEBUG(_log_lib->logger, FormatLogMessage(msg,origin));
   if (m_Forward != nullptr)
     m_Forward->ForwardDebug(m_ss.str().c_str(), origin.c_str());
 }
@@ -137,7 +198,7 @@ void Logger::Debug(std::ostream &msg, const std::string&  origin)
 
 void Logger::Info(const std::string&  msg, const std::string&  origin)
 {
-  LOG4CPLUS_INFO(m_Log, FormatLogMessage(msg, origin));
+  LOG4CPLUS_INFO(_log_lib->logger, FormatLogMessage(msg, origin));
   if (m_Forward != nullptr)
     m_Forward->ForwardInfo(m_ss.str().c_str(), origin.c_str());
 }
@@ -163,7 +224,7 @@ void Logger::Info(std::ostream &msg, const std::string&  origin)
 
 void Logger::Warning(const std::string&  msg, const std::string&  origin)
 {
-  LOG4CPLUS_WARN(m_Log, FormatLogMessage(msg, origin));
+  LOG4CPLUS_WARN(_log_lib->logger, FormatLogMessage(msg, origin));
   if (m_Forward != nullptr)
     m_Forward->ForwardWarning(m_ss.str().c_str(), origin.c_str());
 }
@@ -182,7 +243,7 @@ void Logger::Warning(std::ostream &msg, const std::string&  origin)
 
 void Logger::Error(const std::string&  msg, const std::string&  origin)
 {
-  LOG4CPLUS_ERROR(m_Log, FormatLogMessage(msg, origin));
+  LOG4CPLUS_ERROR(_log_lib->logger, FormatLogMessage(msg, origin));
   if (m_Forward != nullptr)
     m_Forward->ForwardError(m_ss.str().c_str(), origin.c_str());
 }
@@ -201,7 +262,7 @@ void Logger::Error(std::ostream &msg, const std::string&  origin)
 
 void Logger::Fatal(const std::string&  msg, const std::string&  origin)
 {
-  LOG4CPLUS_FATAL(m_Log, FormatLogMessage(msg, origin));
+  LOG4CPLUS_FATAL(_log_lib->logger, FormatLogMessage(msg, origin));
   if (m_Forward != nullptr)
     m_Forward->ForwardFatal(m_ss.str().c_str(), origin.c_str());
 }

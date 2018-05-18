@@ -3,18 +3,11 @@
 
 #pragma once
 
-#pragma  warning(push)
-#pragma warning(disable:4512) // assignment operator could not be generated
-#pragma warning(disable:4290) // C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
-#include "log4cplus/logger.h"
-#include "log4cplus/loggingmacros.h"
-#include "log4cplus/configurator.h"
-#include "log4cplus/helpers/pointer.h"
-#include "log4cplus/appender.h"
-#pragma  warning(pop)
-
 class Logger;
 class SEScalarTime;
+class log_lib; // Encapsulates 3rd party logging library
+#include <sstream>
+
 class CDM_DECL Loggable
 {
 public:
@@ -76,8 +69,17 @@ public:
 
   void ResetLogFile(std::string const&  logFilename = Loggable::empty);
 
-  void SetLogLevel(log4cplus::LogLevel  level);
-  log4cplus::LogLevel GetLogLevel();
+  enum level
+  {
+    TRACE,
+    DEBUG,
+    INFO,
+    WARN,
+    ERROR,
+    FATAL
+  };
+  void SetLogLevel(level  level);
+  level GetLogLevel();
 
   virtual void SetLogTime(const SEScalarTime* time);
 
@@ -110,10 +112,10 @@ protected:
   virtual std::string FormatLogMessage(std::string const&  origin, std::string const&  msg);
 
   LoggerForward*                m_Forward;
-  log4cplus::Logger             m_Log;
-  log4cplus::SharedAppenderPtr  m_FileAppender;
-  log4cplus::SharedAppenderPtr  m_ConsoleAppender;
   const SEScalarTime*           m_time;
   std::stringstream             m_ss;
+
+private:
+   log_lib*                     _log_lib;
 };
 
