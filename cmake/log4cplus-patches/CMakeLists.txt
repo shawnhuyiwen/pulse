@@ -2,6 +2,7 @@ set (log4cplus_sources
   appenderattachableimpl.cxx
   appender.cxx
   asyncappender.cxx
+  callbackappender.cxx
   clogger.cxx
   configurator.cxx
   connectorthread.cxx
@@ -24,7 +25,6 @@ set (log4cplus_sources
   loggingmacros.cxx
   loglevel.cxx
   loglog.cxx
-  logloguser.cxx
   mdc.cxx
   ndc.cxx
   nullappender.cxx
@@ -34,7 +34,6 @@ set (log4cplus_sources
   property.cxx
   queue.cxx
   rootlogger.cxx
-  sleep.cxx
   snprintf.cxx
   socketappender.cxx
   socketbuffer.cxx
@@ -66,6 +65,8 @@ elseif (WIN32)
   #set (log4cplus_postfix "${log4cplus_postfix}S")
 endif ()
 
+# Define _GNU_SOURCE so that functions like `pipe2()` are visible.
+add_definitions (-D_GNU_SOURCE=1)
 if (UNICODE)
   add_definitions (-DUNICODE -D_UNICODE -UMBCS -U_MBCS)
 endif (UNICODE)
@@ -116,6 +117,12 @@ else ()
     COMPILE_FLAGS "-DINSIDE_LOG4CPLUS")
 endif ()
 
+if (MINGW AND LOG4CPLUS_MINGW_STATIC_RUNTIME)
+  # avoid dependency from mingw libstdc++/libgcc in resulting dll
+  set_target_properties (${log4cplus} PROPERTIES
+    LINK_FLAGS "-static -static-libgcc -static-libstdc++")
+endif ()
+
 if (WIN32)
   set_target_properties (${log4cplus} PROPERTIES
     DEBUG_POSTFIX "D")
@@ -125,7 +132,7 @@ endif ()
 ###
 # Installation (https://github.com/forexample/package-example)
 
-set(config_install_dir "lib/cmake/${PROJECT_NAME}")
+set(config_install_dir "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
 
 set(generated_dir "${CMAKE_CURRENT_BINARY_DIR}/generated")
 
@@ -146,26 +153,26 @@ write_basic_package_version_file(
 # Note: variable 'targets_export_name' used
 configure_file("cmake/Config.cmake.in" "${project_config}" @ONLY)
 
-install(TARGETS ${log4cplus} CONFIGURATIONS Release 
+install(
+    FILES "${project_config}" "${version_config}"
+    DESTINATION "${config_install_dir}"
+)
+
+install(
+    EXPORT "${targets_export_name}"
+    NAMESPACE "${namespace}"
+    DESTINATION "${config_install_dir}"
+)
+
+install(TARGETS ${log4cplus} EXPORT "${targets_export_name}"
                           INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-                          LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/release
-                          ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/release
-                          RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}/release)
-                          
-install(TARGETS ${log4cplus} CONFIGURATIONS Debug 
-                          INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-                          LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/debug
-                          ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/debug
-                          RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}/debug)
-                          
-install(TARGETS ${log4cplus} CONFIGURATIONS RelWithDebInfo 
-                          INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-                          LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/relwithdebinfo
-                          ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/relwithdebinfo
-                          RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}/relwithdebinfo)
-                          
+                          LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+                          ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+                          RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+
 install(FILES ../include/log4cplus/appender.h
               ../include/log4cplus/asyncappender.h
+              ../include/log4cplus/callbackappender.h
               ../include/log4cplus/clogger.h
               ../include/log4cplus/config.hxx
               ../include/log4cplus/configurator.h
@@ -174,7 +181,9 @@ install(FILES ../include/log4cplus/appender.h
               ../include/log4cplus/fstreams.h
               ../include/log4cplus/hierarchy.h
               ../include/log4cplus/hierarchylocker.h
+              ../include/log4cplus/initializer.h
               ../include/log4cplus/layout.h
+              ../include/log4cplus/log4cplus.h
               ../include/log4cplus/log4judpappender.h
               ../include/log4cplus/logger.h
               ../include/log4cplus/loggingmacros.h
@@ -203,11 +212,9 @@ install(FILES ../include/log4cplus/helpers/appenderattachableimpl.h
               ../include/log4cplus/helpers/fileinfo.h
               ../include/log4cplus/helpers/lockfile.h
               ../include/log4cplus/helpers/loglog.h
-              ../include/log4cplus/helpers/logloguser.h
               ../include/log4cplus/helpers/pointer.h
               ../include/log4cplus/helpers/property.h
               ../include/log4cplus/helpers/queue.h
-              ../include/log4cplus/helpers/sleep.h
               ../include/log4cplus/helpers/snprintf.h
               ../include/log4cplus/helpers/socket.h
               ../include/log4cplus/helpers/socketbuffer.h
@@ -233,9 +240,7 @@ install(FILES ../include/log4cplus/spi/appenderattachable.h
 
 install(FILES ../include/log4cplus/thread/impl/syncprims-cxx11.h
               ../include/log4cplus/thread/impl/syncprims-impl.h
-#              ../include/log4cplus/thread/impl/syncprims-pmsm.h
-              ../include/log4cplus/thread/impl/syncprims-pthreads.h
-              ../include/log4cplus/thread/impl/syncprims-win32.h
+              ../include/log4cplus/thread/impl/syncprims-pmsm.h
               ../include/log4cplus/thread/impl/threads-impl.h
               ../include/log4cplus/thread/impl/tls.h
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/log4cplus/thread/impl )
