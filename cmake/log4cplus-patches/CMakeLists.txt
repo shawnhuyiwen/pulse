@@ -153,22 +153,23 @@ write_basic_package_version_file(
 # Note: variable 'targets_export_name' used
 configure_file("cmake/Config.cmake.in" "${project_config}" @ONLY)
 
-install(
-    FILES "${project_config}" "${version_config}"
-    DESTINATION "${config_install_dir}"
-)
-
-install(
-    EXPORT "${targets_export_name}"
-    NAMESPACE "${namespace}"
-    DESTINATION "${config_install_dir}"
-)
-
-install(TARGETS ${log4cplus} EXPORT "${targets_export_name}"
+install(TARGETS ${log4cplus} CONFIGURATIONS Release 
                           INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-                          LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-                          ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-                          RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+                          LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/release
+                          ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/release
+                          RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}/release)
+                          
+install(TARGETS ${log4cplus} CONFIGURATIONS Debug 
+                          INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+                          LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/debug
+                          ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/debug
+                          RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}/debug)
+                          
+install(TARGETS ${log4cplus} CONFIGURATIONS RelWithDebInfo 
+                          INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+                          LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/relwithdebinfo
+                          ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/relwithdebinfo
+                          RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}/relwithdebinfo)
 
 install(FILES ../include/log4cplus/appender.h
               ../include/log4cplus/asyncappender.h
