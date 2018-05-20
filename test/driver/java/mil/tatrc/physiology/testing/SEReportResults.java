@@ -19,10 +19,10 @@ public class SEReportResults
       List<String> files = new ArrayList<String>();
       files.add("CDMUnitTests.html");
       files.add("EngineUnitTests.html");
-      files.add("VerificationScenarios.html");
-      files.add("ValidationDrugs.html");
-      files.add("ValidationSystems.html");
-      files.add("ValidationPatients.html");
+      files.add("ScenarioVerification.html");
+      files.add("DrugPKVerification.html");
+      files.add("SystemVerification.html");
+      files.add("PatientVerification.html");
       files.add("SystemValidation.html");
       files.add("PatientValidation.html");
       
