@@ -268,6 +268,12 @@ public class CDM2MD
 							writer.print("|"+"List of SESubstanceFractionAmount");
 							writer.print("|"+"@ref SubstanceFractionAmountTable");
 						}
+						else if(bag.propertyName.equals("Aerosol"
+						    + ""))
+            {
+              writer.print("|"+"List of SESubstanceConcentration");
+              writer.print("|"+"@ref SubstanceConcentrationTable");
+            }
 						else if(bag.propertyName.equals("AmbientGas"))
 						{
 							writer.print("|"+"List of SESubstanceFractionAmount");
