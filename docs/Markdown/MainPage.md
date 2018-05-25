@@ -29,9 +29,11 @@ Check out the @ref ExtraFAQ for more insight.
 
 - - -
 
-## What's new in Pulse v1.1 (May 17th, 2017)?
+## What's new in Pulse v1.1 (June 25th, 2018)
 
 The latest code base includes the following notable updates:
+- Updated Wiki for using Pulse in your application
+- Added C# example interface
 - Refactored respiratory system for improvements determining the transition between inhale and exhale
   - Important for determining correct vital signs (e.g., respiration rate, tidal volume, end tidal CO2)
   - Most noticeable improvement is with external sources, such as a ventilator
@@ -39,13 +41,14 @@ The latest code base includes the following notable updates:
 - Added the ability to remove the cardiac arrest action and transition from asystole to normal sinus
 - Added norepinephrine to the drug library
 - Switched the included logger from log4cpp to log4cplus
+- Updated to the latest versions of Eigen and Protobufs
 - Transitioned results file extension from .txt to .csv
 - Exposed action and condition information via the API
 - Improved exception handling
 - Discretized verification data sets for easier management
 - Cleaned up headers
 - CMake build improvements
-- Added a rudimentary C# interface
+  - Pulse builds and runs on single board pc's and all major operating systems
 
 (Interested in a previous @ref version?)
 
@@ -53,10 +56,11 @@ The latest code base includes the following notable updates:
 
 ## Planned Software Improvements
 
-- Integration with CTest
-- Public Continuous Integration Server and CDash Server for improved verification and validation
 - Offical contribution plan for pulling/merging methodology changes
 - Modularity improvements for model swapping
+- Public CDash server integration
+- Unity Game Integration Example
+
 
 - - -
 @anchor known-issues
