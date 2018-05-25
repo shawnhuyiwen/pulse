@@ -43,7 +43,7 @@ set(CMAKE_CXX_STANDARD_LIBRARIES "" CACHE TYPE INTERNAL FORCE)
 set(CMAKE_C_STANDARD_LIBRARIES "" CACHE TYPE INTERNAL FORCE)
 
 if(NOT eigen_INSTALL)
-  set(eigen_INSTALL ${CMAKE_BINARY_DIR}/../install/include)
+  set(eigen_INSTALL ${CMAKE_BINARY_DIR}/../eigen/install)
 endif()
 list(APPEND CMAKE_PREFIX_PATH ${eigen_INSTALL})
 find_package(Eigen3 REQUIRED)
@@ -66,7 +66,10 @@ if(NOT protobuf_DIR)
     message(FATAL_ERROR "I cannot find protobuf header, ${protobuf_Header}, make sure you make the install target of the super build")
   endif()
 endif()
-
+if(NOT protobuf_INSTALL)
+  set(protobuf_INSTALL ${CMAKE_BINARY_DIR}/../protobuf/install)
+endif()
+list(APPEND CMAKE_PREFIX_PATH ${protobuf_INSTALL})
 # log4cplus src should have been download to somewhere
 if(NOT log4cplus_DIR)
   # It should be here if the outer build ran
@@ -78,9 +81,6 @@ if(NOT log4cplus_DIR)
 endif()
 list(APPEND LOG4CPLUS_INCLUDE_DIR ${log4cplus_DIR}/include)
 list(APPEND LOG4CPLUS_INCLUDE_DIR ${log4cplus_DIR}-build/include)
-
-list(APPEND CMAKE_PREFIX_PATH ${protobuf_INSTALL})
-list(APPEND CMAKE_PREFIX_PATH ${log4cplus_INSTALL})
 
 set(SCHEMA_SRC "${CMAKE_SOURCE_DIR}/schema")
 set(SCHEMA_DST "${CMAKE_BINARY_DIR}/schema")
