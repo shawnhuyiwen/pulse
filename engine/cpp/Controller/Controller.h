@@ -67,7 +67,7 @@ public:
   PulseSubstances&                        GetSubstances();
 
   SEPatient&                              GetPatient();
-  bool                                    GetPatientAssessment(SEPatientAssessment& assessment);
+  bool                                    GetPatientAssessment(SEPatientAssessment& assessment) const;
 
   SEBloodChemistrySystem&                 GetBloodChemistry();
   SECardiovascularSystem&                 GetCardiovascular();

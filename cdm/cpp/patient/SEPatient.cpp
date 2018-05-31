@@ -10,7 +10,7 @@ PROTO_PUSH
 #include "bind/cdm/Patient.pb.h"
 #include "bind/cdm/PatientNutrition.pb.h"
 PROTO_POP
-#include "utils/SEEventHandler.h"
+#include "engine/SEEventHandler.h"
 
 #include "properties/SEScalarTime.h"
 #include "properties/SEScalarMass.h"

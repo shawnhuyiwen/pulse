@@ -77,7 +77,7 @@ void RunScenarioTask::Run()
     return;
   }
   SEScenarioExec exec(*Pulse);
-  exec.Execute(m_scenarioFile.c_str(), dataFile.c_str(), NULL);
+  exec.Execute(m_scenarioFile.c_str(), dataFile.c_str());
 }
 
 void PulseEngineTest::MultiEngineTest(const std::string& sTestDirectory)

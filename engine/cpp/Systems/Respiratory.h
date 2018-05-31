@@ -62,7 +62,7 @@ protected:
   void Process();
   void PostProcess();
 
-  bool CalculatePulmonaryFunctionTest(SEPulmonaryFunctionTest& pft);
+  bool CalculatePulmonaryFunctionTest(SEPulmonaryFunctionTest& pft) const;
 
   //Tuning
   void TuneCircuit();

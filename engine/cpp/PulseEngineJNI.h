@@ -6,11 +6,12 @@
 #include "PulsePhysiologyEngine.h"
 #include "Controller/Engine.h"
 #include "scenario/SEScenarioExec.h"
-#include "utils/SEEventHandler.h"
+#include "engine/SEEventHandler.h"
+#include "engine/SEAdvanceHandler.h"
 
 #include <memory>
 
-class PulseEngineJNI : public LoggerForward, public SEScenarioCustomExec, public SEEventHandler
+class PulseEngineJNI : public LoggerForward, public SEAdvanceHandler, public SEEventHandler
 {
 public:
   PulseEngineJNI(const std::string& logFile);
@@ -26,6 +27,7 @@ public:
   void CustomExec(double time_s, PhysiologyEngine* engine);
   void PushData(double time_s);
 
+  void OnAdvance(double time_s, const PhysiologyEngine& engine);
   void HandlePatientEvent(cdm::ePatient_Event type, bool active, const SEScalarTime* time = nullptr);
   void HandleAnesthesiaMachineEvent(cdm::eAnesthesiaMachine_Event type, bool active, const SEScalarTime* time = nullptr);
 

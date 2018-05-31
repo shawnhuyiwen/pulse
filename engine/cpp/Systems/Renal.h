@@ -51,7 +51,7 @@ protected:
   void PostProcess();
 
   // Assessments
-  bool CalculateUrinalysis(SEUrinalysis& u);
+  bool CalculateUrinalysis(SEUrinalysis& u) const;
 
   struct ActiveTransport
   {

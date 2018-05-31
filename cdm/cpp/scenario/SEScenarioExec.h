@@ -8,12 +8,6 @@ class SEScenario;
 class PhysiologyEngine;
 class SEEngineConfiguration;
 
-class CDM_DECL SEScenarioCustomExec
-{
-public:
-  virtual void CustomExec(double time_s, PhysiologyEngine* engine)=0;
-};
-
 class CDM_DECL SEScenarioExec : public Loggable
 {
 public:
@@ -24,8 +18,8 @@ public:
 
   virtual void Cancel();
 
-  virtual bool Execute(const std::string& scenarioFile, const std::string& resultsFile, SEScenarioCustomExec* cExec = nullptr);
-  virtual bool Execute(const SEScenario& scenario,      const std::string& resultsFile, SEScenarioCustomExec* cExec = nullptr);
+  virtual bool Execute(const std::string& scenarioFile, const std::string& resultsFile);
+  virtual bool Execute(const SEScenario& scenario,      const std::string& resultsFile);
   
 protected:
 
@@ -36,7 +30,6 @@ protected:
   virtual bool ProcessAction(const SEAction& action);
 
   bool                         m_Cancel;
-  SEScenarioCustomExec*        m_CustomExec;
   PhysiologyEngine&            m_Engine;
   const SEEngineConfiguration* m_EngineConfiguration;
 

@@ -507,14 +507,14 @@ void BloodChemistry::CheckBloodGasLevels()
 /// Sets data on the metabolic panel object to create the metabolic panel.  
 /// Uses information from the chem 14 substances that are in %Pulse (see @ref bloodchemistry-assessments)
 //--------------------------------------------------------------------------------------------------
-bool BloodChemistry::CalculateComprehensiveMetabolicPanel(SEComprehensiveMetabolicPanel& cmp)
+bool BloodChemistry::CalculateComprehensiveMetabolicPanel(SEComprehensiveMetabolicPanel& cmp) const
 {
   cmp.Clear();
   cmp.GetAlbumin().Set(m_data.GetSubstances().GetAlbumin().GetBloodConcentration());
   //cmp.GetALP().SetValue();
   //cmp.GetALT().SetValue();
   //cmp.GetAST().SetValue();
-  cmp.GetBUN().Set(GetBloodUreaNitrogenConcentration());
+  cmp.GetBUN().SetValue(GetBloodUreaNitrogenConcentration(MassPerVolumeUnit::ug_Per_mL),MassPerVolumeUnit::ug_Per_mL);
   cmp.GetCalcium().Set(m_data.GetSubstances().GetCalcium().GetBloodConcentration());
   double CL_mmol_Per_L = m_data.GetSubstances().GetChloride().GetBloodConcentration(MassPerVolumeUnit::g_Per_L) /
     m_data.GetSubstances().GetChloride().GetMolarMass(MassPerAmountUnit::g_Per_mmol);
@@ -532,7 +532,7 @@ bool BloodChemistry::CalculateComprehensiveMetabolicPanel(SEComprehensiveMetabol
     m_data.GetSubstances().GetSodium().GetMolarMass(MassPerAmountUnit::g_Per_mmol);
   cmp.GetSodium().SetValue(Sodium_mmol_Per_L, AmountPerVolumeUnit::mmol_Per_L);
   //cmp.GetTotalBelirubin().SetValue();
-  cmp.GetTotalProtein().Set(GetTotalProteinConcentration());
+  cmp.GetTotalProtein().SetValue(GetTotalProteinConcentration(MassPerVolumeUnit::ug_Per_mL),MassPerVolumeUnit::ug_Per_mL);
   return true;
 }
 
@@ -543,16 +543,16 @@ bool BloodChemistry::CalculateComprehensiveMetabolicPanel(SEComprehensiveMetabol
 /// \details
 /// Sets data on the complete blood count object to create the [CBC](@ref bloodchemistry-assessments).
 //--------------------------------------------------------------------------------------------------
-bool BloodChemistry::CalculateCompleteBloodCount(SECompleteBloodCount& cbc)
+bool BloodChemistry::CalculateCompleteBloodCount(SECompleteBloodCount& cbc) const
 {
   cbc.Clear();
-  cbc.GetHematocrit().Set(GetHematocrit());
+  cbc.GetHematocrit().SetValue(GetHematocrit());
   cbc.GetHemoglobin().Set(m_data.GetSubstances().GetHb().GetBloodConcentration());
   cbc.GetPlateletCount().SetValue(325000, AmountPerVolumeUnit::ct_Per_uL);  // Hardcoded for now, don't support PlateletCount yet
   cbc.GetMeanCorpuscularHemoglobin().SetValue(m_data.GetConfiguration().GetMeanCorpuscularHemoglobin(MassPerAmountUnit::pg_Per_ct), MassPerAmountUnit::pg_Per_ct);
-  cbc.GetMeanCorpuscularHemoglobinConcentration().SetValue(m_data.GetSubstances().GetHb().GetBloodConcentration(MassPerVolumeUnit::g_Per_dL) / GetHematocrit().GetValue(), MassPerVolumeUnit::g_Per_dL);//Average range should be 32-36 g/dL. (https://en.wikipedia.org/wiki/Mean_corpuscular_hemoglobin_concentration)
+  cbc.GetMeanCorpuscularHemoglobinConcentration().SetValue(m_data.GetSubstances().GetHb().GetBloodConcentration(MassPerVolumeUnit::g_Per_dL) / GetHematocrit(), MassPerVolumeUnit::g_Per_dL);//Average range should be 32-36 g/dL. (https://en.wikipedia.org/wiki/Mean_corpuscular_hemoglobin_concentration)
   cbc.GetMeanCorpuscularVolume().SetValue(m_data.GetConfiguration().GetMeanCorpuscularVolume(VolumeUnit::uL), VolumeUnit::uL);
-  cbc.GetRedBloodCellCount().Set(GetRedBloodCellCount());
-  cbc.GetWhiteBloodCellCount().Set(GetWhiteBloodCellCount());
+  cbc.GetRedBloodCellCount().SetValue(GetRedBloodCellCount(AmountPerVolumeUnit::ct_Per_L),AmountPerVolumeUnit::ct_Per_L);
+  cbc.GetWhiteBloodCellCount().SetValue(GetWhiteBloodCellCount(AmountPerVolumeUnit::ct_Per_L),AmountPerVolumeUnit::ct_Per_L);
   return true;
 }
