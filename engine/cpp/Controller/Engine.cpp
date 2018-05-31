@@ -105,8 +105,7 @@ bool PulseEngine::LoadStateFile(const std::string& filename, const SEScalarTime*
   google::protobuf::SetLogHandler(MyLogHandler);
   if (fmsg.empty() || !google::protobuf::TextFormat::ParseFromString(fmsg, &src))
     return false;
-  LoadState(src, simTime);
-  return true;
+  return LoadState(src, simTime);
 
   // If its a binary string in the file...
   //std::ifstream binary_istream(patientFile, std::ios::in | std::ios::binary);
