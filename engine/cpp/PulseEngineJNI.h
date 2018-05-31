@@ -24,7 +24,6 @@ public:
   void ForwardWarning(const std::string&  msg, const std::string&  origin);
   void ForwardError(const std::string&  msg, const std::string&  origin);
   void ForwardFatal(const std::string&  msg, const std::string&  origin);
-  void CustomExec(double time_s, PhysiologyEngine* engine);
   void PushData(double time_s);
 
   void OnAdvance(double time_s, const PhysiologyEngine& engine);
