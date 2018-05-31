@@ -22,6 +22,7 @@
 #include "Equipment/ECG.h"
 #include "Equipment/Inhaler.h"
 #include "PulseConfiguration.h"
+#include "engine/SEAdvanceHandler.h"
 PROTO_PUSH
 #include "bind/engine/EngineState.pb.h"
 PROTO_POP
@@ -64,6 +65,7 @@ PulseEngine::PulseEngine(Logger* logger) : PulseController(logger)
 {
   m_State = EngineState::NotReady;
   m_EventHandler = nullptr;
+  m_AdvanceHandler = nullptr;
   m_EngineTrack = new SEEngineTracker(*this);
   m_DataTrack = &m_EngineTrack->GetDataTrack();
 }
@@ -72,6 +74,7 @@ PulseEngine::PulseEngine(const std::string& logFileName) : PulseController(logFi
 {
   m_State = EngineState::NotReady;
   m_EventHandler = nullptr;
+  m_AdvanceHandler = nullptr;
   m_EngineTrack = new SEEngineTracker(*this);
   m_DataTrack = &m_EngineTrack->GetDataTrack();
 }
@@ -81,12 +84,12 @@ PulseEngine::~PulseEngine()
   
 }
 
-Logger* PulseEngine::GetLogger()
+Logger* PulseEngine::GetLogger() const
 {
   return Loggable::GetLogger();
 }
 
-SEEngineTracker* PulseEngine::GetEngineTracker()
+SEEngineTracker* PulseEngine::GetEngineTracker() const
 {
   return m_EngineTrack;
 }
@@ -311,9 +314,11 @@ bool PulseEngine::LoadState(const google::protobuf::Message& state, const SEScal
   m_Compartments->GetActiveRespiratoryGraph();
   m_Compartments->GetActiveAerosolGraph();
   
-  // If we had an event handler, reinform the listening classes
+  // If we had any handlers, reinform the listening classes
   if (m_EventHandler != nullptr)
     SetEventHandler(m_EventHandler);
+  if (m_AdvanceHandler != nullptr)
+    SetAdvanceHandler(m_AdvanceHandler);
 
 
   // It helps to unload what you just loaded and to a compare if you have issues
@@ -487,18 +492,18 @@ bool PulseEngine::InitializeEngine(const std::vector<const SECondition*>* condit
 }
 
 
-const SEConditionManager&  PulseEngine::GetConditionManager()
+const SEConditionManager&  PulseEngine::GetConditionManager() const
 {
   return *m_Conditions;
 }
 
 
-double PulseEngine::GetTimeStep(const TimeUnit& unit)
+double PulseEngine::GetTimeStep(const TimeUnit& unit) const
 {
   return m_Config->GetTimeStep(unit);
 }
 
-double PulseEngine::GetSimulationTime(const TimeUnit& unit)
+double PulseEngine::GetSimulationTime(const TimeUnit& unit) const
 {
   return m_SimulationTime->GetValue(unit);
 }
@@ -517,6 +522,9 @@ void PulseEngine::AdvanceModelTime()
   m_Patient->UpdateEvents(m_Config->GetTimeStep());
   m_CurrentTime->Increment(m_Config->GetTimeStep());
   m_SimulationTime->Increment(m_Config->GetTimeStep());
+
+  if(m_AdvanceHandler)
+    m_AdvanceHandler->OnAdvance(m_CurrentTime->GetValue(TimeUnit::s), *this);
 }
 
 void PulseEngine::AdvanceModelTime(double time, const TimeUnit& unit)
@@ -639,12 +647,12 @@ bool PulseEngine::ProcessAction(const SEAction& action)
   return GetActions().ProcessAction(action);  
 }
 
-const SEActionManager&  PulseEngine::GetActionManager()
+const SEActionManager&  PulseEngine::GetActionManager() const
 {
   return *m_Actions;
 }
 
-bool PulseEngine::IsReady()
+bool PulseEngine::IsReady() const
 {
   if (m_State == EngineState::NotReady)
   {
@@ -662,105 +670,115 @@ void PulseEngine::SetEventHandler(SEEventHandler* handler)
   m_AnesthesiaMachine->ForwardEvents(m_EventHandler);
 }
 
-const SEEngineConfiguration* PulseEngine::GetConfiguration()
+
+void PulseEngine::SetAdvanceHandler(SEAdvanceHandler* handler)
 {
-  return &PulseController::GetConfiguration();
+  m_AdvanceHandler = handler;
 }
 
-const SEPatient&  PulseEngine::GetPatient()
+const SEEngineConfiguration* PulseEngine::GetConfiguration() const
 {
-  return PulseController::GetPatient();
+  return PulseController::m_Config.get();
 }
 
-bool PulseEngine::GetPatientAssessment(SEPatientAssessment& assessment)
+const SEPatient&  PulseEngine::GetPatient() const
+{
+  return *PulseController::m_Patient.get();
+}
+
+bool PulseEngine::GetPatientAssessment(SEPatientAssessment& assessment) const
 {
   if (!IsReady())
     return false;
   return PulseController::GetPatientAssessment(assessment);
 }
 
-const SEEnvironment* PulseEngine::GetEnvironment()
+const SEEnvironment* PulseEngine::GetEnvironment() const
 {
-  return &PulseController::GetEnvironment();
+  return PulseController::m_Environment.get();
 }
 
 SESubstanceManager& PulseEngine::GetSubstanceManager()
 {
   return *m_Substances;
 }
-
-const SEBloodChemistrySystem* PulseEngine::GetBloodChemistrySystem()
+const SESubstanceManager& PulseEngine::GetSubstanceManager() const
 {
-  return &PulseController::GetBloodChemistry();
+  return *m_Substances;
 }
 
-const SECardiovascularSystem* PulseEngine::GetCardiovascularSystem()
+const SEBloodChemistrySystem* PulseEngine::GetBloodChemistrySystem() const
 {
-  return &PulseController::GetCardiovascular();
+  return PulseController::m_BloodChemistrySystem.get();
 }
 
-const SEDrugSystem* PulseEngine::GetDrugSystem()
+const SECardiovascularSystem* PulseEngine::GetCardiovascularSystem() const
 {
-  return &PulseController::GetDrugs();
+  return PulseController::m_CardiovascularSystem.get();
 }
 
-const SEEndocrineSystem* PulseEngine::GetEndocrineSystem()
+const SEDrugSystem* PulseEngine::GetDrugSystem() const
 {
-  return &PulseController::GetEndocrine();
+  return PulseController::m_DrugSystem.get();
 }
 
-const SEEnergySystem* PulseEngine::GetEnergySystem()
+const SEEndocrineSystem* PulseEngine::GetEndocrineSystem() const
 {
-  return &PulseController::GetEnergy();
+  return PulseController::m_EndocrineSystem.get();
 }
 
-const SEGastrointestinalSystem* PulseEngine::GetGastrointestinalSystem()
+const SEEnergySystem* PulseEngine::GetEnergySystem() const
 {
-  return &PulseController::GetGastrointestinal();
+  return PulseController::m_EnergySystem.get();
 }
 
-const SEHepaticSystem* PulseEngine::GetHepaticSystem()
+const SEGastrointestinalSystem* PulseEngine::GetGastrointestinalSystem() const
 {
-  return &PulseController::GetHepatic();
+  return PulseController::m_GastrointestinalSystem.get();
 }
 
-const SENervousSystem* PulseEngine::GetNervousSystem()
+const SEHepaticSystem* PulseEngine::GetHepaticSystem() const
 {
-  return &PulseController::GetNervous();
+  return PulseController::m_HepaticSystem.get();
 }
 
-const SERenalSystem* PulseEngine::GetRenalSystem()
+const SENervousSystem* PulseEngine::GetNervousSystem() const
 {
-  return &PulseController::GetRenal();
+  return PulseController::m_NervousSystem.get();
 }
 
-const SERespiratorySystem* PulseEngine::GetRespiratorySystem()
+const SERenalSystem* PulseEngine::GetRenalSystem() const
 {
-  return &PulseController::GetRespiratory();
+  return PulseController::m_RenalSystem.get();
 }
 
-const SETissueSystem* PulseEngine::GetTissueSystem()
+const SERespiratorySystem* PulseEngine::GetRespiratorySystem() const
 {
-  return &PulseController::GetTissue();
+  return PulseController::m_RespiratorySystem.get();
+}
+
+const SETissueSystem* PulseEngine::GetTissueSystem() const
+{
+  return PulseController::m_TissueSystem.get();
 }
 
 
-const SEAnesthesiaMachine* PulseEngine::GetAnesthesiaMachine()
+const SEAnesthesiaMachine* PulseEngine::GetAnesthesiaMachine() const
 {
-  return &PulseController::GetAnesthesiaMachine();
+  return PulseController::m_AnesthesiaMachine.get();
 }
 
-const SEElectroCardioGram* PulseEngine::GetElectroCardioGram()
+const SEElectroCardioGram* PulseEngine::GetElectroCardioGram() const
 {
-  return &PulseController::GetECG();
+  return PulseController::m_ECG.get();
 }
 
-const SEInhaler* PulseEngine::GetInhaler()
+const SEInhaler* PulseEngine::GetInhaler() const
 {
-  return &PulseController::GetInhaler();
+  return PulseController::m_Inhaler.get();
 }
 
-const SECompartmentManager& PulseEngine::GetCompartments()
+const SECompartmentManager& PulseEngine::GetCompartments() const
 {
-  return PulseController::GetCompartments();
+  return *PulseController::m_Compartments.get();
 }

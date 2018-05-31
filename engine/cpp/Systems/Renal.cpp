@@ -1705,7 +1705,7 @@ void Renal::CalculateColloidOsmoticPressure(SEScalarMassPerVolume& albuminConcen
 /// from the renal system data and color is derived from the osmolality system data. The others are true/false
 /// outputs that are set based on the urine concentrations of various substances.
 //--------------------------------------------------------------------------------------------------
-bool Renal::CalculateUrinalysis(SEUrinalysis& u)
+bool Renal::CalculateUrinalysis(SEUrinalysis& u) const
 {
   u.Clear();
   
@@ -1732,7 +1732,7 @@ bool Renal::CalculateUrinalysis(SEUrinalysis& u)
 
   //u.SetBilirubinResult();
 
-  u.GetSpecificGravityResult().Set(GetUrineSpecificGravity());
+  u.GetSpecificGravityResult().SetValue(GetUrineSpecificGravity());
   if (bladder_glucose_mg_Per_dL > 0.15) /// \cite roxe1990urinalysis
     u.SetBloodResult(cdm::eUrinalysis_PresenceIndicator_Positive);
   else

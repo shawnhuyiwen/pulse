@@ -966,7 +966,7 @@ void PulseController::PostProcess()
   m_ECG->PostProcess();
 }
 
-bool PulseController::GetPatientAssessment(SEPatientAssessment& assessment)
+bool PulseController::GetPatientAssessment(SEPatientAssessment& assessment) const
 {
   SEPulmonaryFunctionTest* pft = dynamic_cast<SEPulmonaryFunctionTest*>(&assessment);
   if (pft != nullptr)

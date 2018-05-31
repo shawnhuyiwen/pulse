@@ -51,7 +51,7 @@ void PulseScenarioDriver::Run()
   try
   {
     PulseScenarioExec exec(*((PulseEngine*)Pulse.get()));
-    exec.Execute(m_file.c_str(), dataFile.c_str(), nullptr);
+    exec.Execute(m_file.c_str(), dataFile.c_str());
   }
   catch (CommonDataModelException ex)
   {

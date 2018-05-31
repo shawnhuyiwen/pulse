@@ -48,8 +48,8 @@ protected:
   void Process();
   void PostProcess();
 
-  bool CalculateCompleteBloodCount(SECompleteBloodCount& cbc);
-  bool CalculateComprehensiveMetabolicPanel(SEComprehensiveMetabolicPanel& cmp);
+  bool CalculateCompleteBloodCount(SECompleteBloodCount& cbc) const;
+  bool CalculateComprehensiveMetabolicPanel(SEComprehensiveMetabolicPanel& cmp) const;
 
   void CheckBloodGasLevels();
   

@@ -2289,7 +2289,7 @@ double Respiratory::VolumeToDriverPressure(double TargetVolume_L)
 ///
 /// \return success        true, if everything worked out
 //--------------------------------------------------------------------------------------------------
-bool Respiratory::CalculatePulmonaryFunctionTest(SEPulmonaryFunctionTest& pft)
+bool Respiratory::CalculatePulmonaryFunctionTest(SEPulmonaryFunctionTest& pft) const
 {
   pft.Clear();
   pft.GetExpiratoryReserveVolume().Set(m_Patient->GetExpiratoryReserveVolume());

@@ -44,14 +44,14 @@
 #include "properties/SEScalarPressureTimePerVolumeArea.h"
 #include "properties/SEScalarLengthPerTime.h"
 #include "properties/SEScalar0To1.h"
-#include "utils/SEEventHandler.h"
+#include "engine/SEEventHandler.h"
 #include <math.h>
 
 // Make a custom event handler that you can connect to your code (See EngineUse for more info)
-class MechVentHandler : public SEEventHandler
+class MechVentHandler : public Loggable, public SEEventHandler
 {
 public:
-  MechVentHandler(Logger *logger) : SEEventHandler(logger) { }
+  MechVentHandler(Logger *logger) : Loggable(logger), SEEventHandler() { }
   virtual void HandlePatientEvent(cdm::ePatient_Event type, bool active, const SEScalarTime* time = nullptr) 
   {
     switch (type)

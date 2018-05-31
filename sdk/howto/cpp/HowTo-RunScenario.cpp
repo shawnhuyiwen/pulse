@@ -10,6 +10,7 @@
 #include "scenario/SEDataRequestManager.h"
 #include "scenario/SEAdvanceTime.h"
 #include "compartment/SECompartmentManager.h"
+#include "engine/SEAdvanceHandler.h"
 
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEScalarTime.h"
@@ -25,10 +26,11 @@
 /// The SEScenarioExecutor will process the advance time actions in a scenario and 
 /// step the engine, calling this method each time step
 //--------------------------------------------------------------------------------------------------
-class MyCustomExec : public SEScenarioCustomExec
+class MyCustomExec : public SEAdvanceHandler
 {
 public:
-  void CustomExec(double time_s, PhysiologyEngine* engine)
+  MyCustomExec() : SEAdvanceHandler(false) { } // Nix callbacks during stabilization
+  void OnAdvance(double time_s, const PhysiologyEngine& engine)
   {
     // you are given the current scenairo time and the engine, so you can do what ever you want
   }
@@ -48,6 +50,9 @@ void HowToRunScenario()
   // of the log file. If nullptr is given, the engine will only output to the console
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowToRunScenario.log");
   pe->GetLogger()->Info("HowToRunScenario");
+
+  // Let's do something everytime the engine advances
+  pe->SetAdvanceHandler(new MyCustomExec());
   
   // This PulseEngine logger is based on log4cpp (which is based on log4j)
   // PulseEngine logs to several distinct, ordered
@@ -87,5 +92,5 @@ void HowToRunScenario()
   adv.GetTime().SetValue(2, TimeUnit::min);
   sce.AddAction(adv);
 
-  executor.Execute(sce, "./HowTo-RunScenarioResults.csv", new MyCustomExec());
+  executor.Execute(sce, "./HowTo-RunScenarioResults.csv");
 }

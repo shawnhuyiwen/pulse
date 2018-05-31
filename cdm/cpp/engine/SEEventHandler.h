@@ -7,10 +7,10 @@ PROTO_PUSH
 #include "bind/cdm/AnesthesiaMachineEnums.pb.h"
 PROTO_POP
 
-class CDM_DECL SEEventHandler : public Loggable
+class CDM_DECL SEEventHandler
 {
 public:
-  SEEventHandler(Logger* logger) : Loggable(logger) {};
+  SEEventHandler() {};
   virtual ~SEEventHandler(){};
 
   virtual void HandlePatientEvent(cdm::ePatient_Event type, bool active, const SEScalarTime* time = nullptr)=0;

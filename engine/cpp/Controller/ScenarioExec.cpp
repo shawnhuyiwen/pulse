@@ -19,25 +19,24 @@ PulseScenarioExec::~PulseScenarioExec()
   
 }
 
-bool PulseScenarioExec::Execute(const PulseScenario& scenario, const std::string& resultsFile, SEScenarioCustomExec* cExec)
+bool PulseScenarioExec::Execute(const PulseScenario& scenario, const std::string& resultsFile)
 {
   // If any configuration parameters were provided, use them over what we had
   if (scenario.HasConfiguration())
     m_EngineConfiguration = scenario.GetConfiguration();
   //if (m_PulseConfiguration->HasAutoSerialization())
   //  CreateFilePath(m_PulseConfiguration->GetAutoSerialization()->GetDirectory());// Note method assumes you have a file and it ignores it
-  bool success = SEScenarioExec::Execute(scenario, resultsFile, cExec);
+  bool success = SEScenarioExec::Execute(scenario, resultsFile);
   return success;
 }
 
-bool PulseScenarioExec::Execute(const std::string& scenarioFile, const std::string& resultsFile, SEScenarioCustomExec* cExec)
+bool PulseScenarioExec::Execute(const std::string& scenarioFile, const std::string& resultsFile)
 {
   try
   {
     m_ss << "Executing scenario file : " << scenarioFile << std::endl;
     Info(m_ss);
     m_Cancel = false;
-    m_CustomExec = cExec;
 
     PulseScenario scenario(m_Engine.GetSubstanceManager());
     if (!scenario.LoadFile(scenarioFile))
@@ -51,7 +50,7 @@ bool PulseScenarioExec::Execute(const std::string& scenarioFile, const std::stri
       rFile = scenarioFile;
       rFile += ".csv";
     }
-    return Execute(scenario, rFile, cExec);
+    return Execute(scenario, rFile);
   }
   catch (CommonDataModelException& ex)
   {
