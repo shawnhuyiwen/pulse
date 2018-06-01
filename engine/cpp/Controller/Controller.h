@@ -174,7 +174,7 @@ protected:
 
   // Flag to destroy the logger or not                          
   bool                                                          myLogger;
-  SEEventHandler*                                              m_EventHandler;
-  SEAdvanceHandler*                                            m_AdvanceHandler;
+  SEEventHandler*                                               m_EventHandler;
+  SEAdvanceHandler*                                             m_AdvanceHandler;
 };
 

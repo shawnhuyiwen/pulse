@@ -108,6 +108,7 @@ void Gastrointestinal::Initialize()
                                         // TODO Should I be getting the weight here? After we digest?
   }
   // Cache off the initial Gut masses so we can reset back to them after stabilization
+  m_InitialSubstanceMasses_ug.clear();
   m_InitialSubstanceMasses_ug[m_SmallIntestineChymeGlucose]    = m_SmallIntestineChymeGlucose->GetMass(MassUnit::ug);
   m_InitialSubstanceMasses_ug[m_SmallIntestineChymeTristearin] = m_SmallIntestineChymeTristearin->GetMass(MassUnit::ug);
   m_InitialSubstanceMasses_ug[m_SmallIntestineChymeCalcium]    = m_SmallIntestineChymeCalcium->GetMass(MassUnit::ug);

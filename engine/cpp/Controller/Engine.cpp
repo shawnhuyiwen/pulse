@@ -90,7 +90,6 @@ SEEngineTracker* PulseEngine::GetEngineTracker() const
   return m_EngineTrack;
 }
 
-
 void MyLogHandler(google::protobuf::LogLevel level, const char* filename, int line, const std::string& message)
 {
   std::cout << message;
