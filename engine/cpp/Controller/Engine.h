@@ -68,13 +68,13 @@ public:
 
   virtual const SECompartmentManager&                  GetCompartments() const;
 
+
+  virtual void AdvanceCallback(double time_s);
 protected:
 
   virtual bool IsReady() const;
   virtual bool InitializeEngine(const std::vector<const SECondition*>* conditions = nullptr, const SEEngineConfiguration* config = nullptr);
 
-  SEEventHandler*                                 m_EventHandler;
-  SEAdvanceHandler*                               m_AdvanceHandler;
   SEEngineTracker*                                m_EngineTrack;
   std::stringstream                               m_ss;
 };

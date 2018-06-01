@@ -2,6 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
+class PhysiologyEngine;
 
 class CDM_DECL SEAdvanceHandler
 {
@@ -10,6 +11,7 @@ public:
   SEAdvanceHandler(bool on_stabilization) { m_OnStabilization = on_stabilization; }
   virtual ~SEAdvanceHandler(){};
 
+  bool OnForStabilization() { return m_OnStabilization; }
   virtual void SetStabilizationCallback(bool b){ m_OnStabilization = b; }
   virtual void OnAdvance(double time_s, const PhysiologyEngine& engine)=0;
 

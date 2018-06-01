@@ -22,7 +22,6 @@
 #include "Equipment/ECG.h"
 #include "Equipment/Inhaler.h"
 #include "PulseConfiguration.h"
-#include "engine/SEAdvanceHandler.h"
 PROTO_PUSH
 #include "bind/engine/EngineState.pb.h"
 PROTO_POP
@@ -38,6 +37,7 @@ PROTO_POP
 #include "compartment/SECompartmentManager.h"
 #include "engine/SEEngineStabilization.h"
 #include "engine/SEEngineTracker.h"
+#include "engine/SEAdvanceHandler.h"
 #include "scenario/SEDataRequestManager.h"
 #include "scenario/SEScenario.h"
 #include "scenario/SEAction.h"
@@ -64,8 +64,6 @@ PULSE_DECL std::unique_ptr<PhysiologyEngine> CreatePulseEngine(Logger* logger)
 PulseEngine::PulseEngine(Logger* logger) : PulseController(logger)
 {
   m_State = EngineState::NotReady;
-  m_EventHandler = nullptr;
-  m_AdvanceHandler = nullptr;
   m_EngineTrack = new SEEngineTracker(*this);
   m_DataTrack = &m_EngineTrack->GetDataTrack();
 }
@@ -73,8 +71,6 @@ PulseEngine::PulseEngine(Logger* logger) : PulseController(logger)
 PulseEngine::PulseEngine(const std::string& logFileName) : PulseController(logFileName)
 {
   m_State = EngineState::NotReady;
-  m_EventHandler = nullptr;
-  m_AdvanceHandler = nullptr;
   m_EngineTrack = new SEEngineTracker(*this);
   m_DataTrack = &m_EngineTrack->GetDataTrack();
 }
@@ -532,6 +528,15 @@ void PulseEngine::AdvanceModelTime(double time, const TimeUnit& unit)
   int count = (int)(time_s / m_Config->GetTimeStep(TimeUnit::s));
   for(int i=0;i<count;i++)
     AdvanceModelTime();
+}
+
+void PulseEngine::AdvanceCallback(double time_s)
+{
+  if (m_AdvanceHandler)
+  {
+    if(time_s >= 0 || m_AdvanceHandler->OnForStabilization())
+    m_AdvanceHandler->OnAdvance(time_s, *this);
+  }
 }
 
 bool PulseEngine::ProcessAction(const SEAction& action)
