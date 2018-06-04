@@ -4,6 +4,7 @@
 #pragma once
 
 class SEEventHandler;
+class SEAdvanceHandler;
 class SEPatient;
 class SEPatientAssessment;
 
@@ -111,13 +112,13 @@ public:
   /// Allows a user to check the state of active conditions
   ///
   //--------------------------------------------------------------------------------------------------
-  virtual const SEConditionManager& GetConditionManager() = 0;
+  virtual const SEConditionManager& GetConditionManager() const = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Retrieve the Logger associated with this engine
   //--------------------------------------------------------------------------------------------------
-  virtual Logger* GetLogger() = 0;
+  virtual Logger* GetLogger() const = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -125,26 +126,26 @@ public:
   /// The SEEngineTracker is a class set up to pull data requested from the engine (via SEDataRequest's)
   /// and provide access to the data easily (ex. to easily write data to csv files)
   //--------------------------------------------------------------------------------------------------
-  virtual SEEngineTracker* GetEngineTracker() = 0;
+  virtual SEEngineTracker* GetEngineTracker() const = 0;
   
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// returns the engine configuration.   
   //--------------------------------------------------------------------------------------------------
-  virtual const SEEngineConfiguration* GetConfiguration() = 0;
+  virtual const SEEngineConfiguration* GetConfiguration() const = 0;
   
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// returns the engine time step that is used when advancing time. 
   ///
   //--------------------------------------------------------------------------------------------------
-  virtual double GetTimeStep(const TimeUnit& unit) = 0;
+  virtual double GetTimeStep(const TimeUnit& unit) const = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// returns the current time of the simulation.   
   //--------------------------------------------------------------------------------------------------
-  virtual double GetSimulationTime(const TimeUnit& unit) = 0;
+  virtual double GetSimulationTime(const TimeUnit& unit) const = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -169,6 +170,12 @@ public:
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
+  /// Add a callback object that will be called after each timestep
+  //--------------------------------------------------------------------------------------------------
+  virtual void SetAdvanceHandler(SEAdvanceHandler* handler) = 0;
+
+  //--------------------------------------------------------------------------------------------------
+  /// \brief
   /// Execute the provided action.
   /// true will be returned if the engine supports the action
   /// false will be returned if the engine does not support the action
@@ -182,7 +189,7 @@ public:
   /// Allows a user to check the state of active actions
   ///
   //--------------------------------------------------------------------------------------------------
-  virtual const SEActionManager& GetActionManager() = 0;
+  virtual const SEActionManager& GetActionManager() const = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -190,6 +197,7 @@ public:
   ///
   //--------------------------------------------------------------------------------------------------
   virtual SESubstanceManager& GetSubstanceManager() = 0;
+  virtual const SESubstanceManager& GetSubstanceManager() const = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -202,7 +210,7 @@ public:
   /// Returns the patient object used by the engine 
   ///
   //--------------------------------------------------------------------------------------------------
-  virtual const SEPatient& GetPatient() = 0;
+  virtual const SEPatient& GetPatient() const = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -211,112 +219,112 @@ public:
   /// Assessments can be queried at any point in the calculation and as many times are desired. 
   ///
   //--------------------------------------------------------------------------------------------------
-  virtual bool GetPatientAssessment(SEPatientAssessment& assessment) = 0; 
+  virtual bool GetPatientAssessment(SEPatientAssessment& assessment) const = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Returns the environment object used by the engine 
   ///
   //--------------------------------------------------------------------------------------------------
-  virtual const SEEnvironment* GetEnvironment() = 0;
+  virtual const SEEnvironment* GetEnvironment() const = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Returns the current state of the Blood Chemistry System
   ///
   //--------------------------------------------------------------------------------------------------
-  virtual const SEBloodChemistrySystem* GetBloodChemistrySystem() = 0;
+  virtual const SEBloodChemistrySystem* GetBloodChemistrySystem() const = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Returns the current state of the Cardiovascular System
   ///
   //--------------------------------------------------------------------------------------------------
-  virtual const SECardiovascularSystem* GetCardiovascularSystem() = 0;
+  virtual const SECardiovascularSystem* GetCardiovascularSystem() const = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Returns the current state of the drug system  
   ///
   //--------------------------------------------------------------------------------------------------
-  virtual const SEDrugSystem* GetDrugSystem() = 0;
+  virtual const SEDrugSystem* GetDrugSystem() const = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Returns the current state of the Endocrine System
   ///
   //--------------------------------------------------------------------------------------------------
-  virtual const SEEndocrineSystem* GetEndocrineSystem() = 0;
+  virtual const SEEndocrineSystem* GetEndocrineSystem() const = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Returns the current state of the Energy System
   ///
   //--------------------------------------------------------------------------------------------------
-  virtual const SEEnergySystem* GetEnergySystem() = 0;
+  virtual const SEEnergySystem* GetEnergySystem() const = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Returns the current state of the Gastrointestinal System
   ///
   //--------------------------------------------------------------------------------------------------
-  virtual const SEGastrointestinalSystem* GetGastrointestinalSystem() = 0;
+  virtual const SEGastrointestinalSystem* GetGastrointestinalSystem() const = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Returns the current state of the Hepatic System
   ///
   //--------------------------------------------------------------------------------------------------
-  virtual const SEHepaticSystem* GetHepaticSystem() = 0;
+  virtual const SEHepaticSystem* GetHepaticSystem() const = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Returns the current state of the Nervous System
   ///
   //--------------------------------------------------------------------------------------------------
-  virtual const SENervousSystem* GetNervousSystem() = 0;
+  virtual const SENervousSystem* GetNervousSystem() const = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Returns the current state of the Renal System
   ///
   //--------------------------------------------------------------------------------------------------
-  virtual const SERenalSystem* GetRenalSystem() = 0;
+  virtual const SERenalSystem* GetRenalSystem() const = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Returns the current state of the Respiratory System
   ///
   //--------------------------------------------------------------------------------------------------
-  virtual const SERespiratorySystem* GetRespiratorySystem() = 0;
+  virtual const SERespiratorySystem* GetRespiratorySystem() const = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Returns the current state of the tissue system  
   ///
   //--------------------------------------------------------------------------------------------------
-  virtual const SETissueSystem* GetTissueSystem() = 0;
+  virtual const SETissueSystem* GetTissueSystem() const = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Returns the current state of the Anesthesia machine
   ///
   //--------------------------------------------------------------------------------------------------
-  virtual const SEAnesthesiaMachine* GetAnesthesiaMachine() = 0;
+  virtual const SEAnesthesiaMachine* GetAnesthesiaMachine() const = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Returns the current state of the Electrocardiogram machine
   ///
   //--------------------------------------------------------------------------------------------------
-  virtual const SEElectroCardioGram* GetElectroCardioGram() = 0;
+  virtual const SEElectroCardioGram* GetElectroCardioGram() const = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Returns the current state of the Inhaler
   ///
   //--------------------------------------------------------------------------------------------------
-  virtual const SEInhaler* GetInhaler() = 0;
+  virtual const SEInhaler* GetInhaler() const = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -324,5 +332,5 @@ public:
   /// flows, pressure, volume as well as substance volumes and volume fractions.
   ///
   //--------------------------------------------------------------------------------------------------
-  virtual const SECompartmentManager& GetCompartments() = 0;
+  virtual const SECompartmentManager& GetCompartments() const = 0;
 };

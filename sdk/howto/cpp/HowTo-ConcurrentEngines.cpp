@@ -66,7 +66,7 @@ void RunScenarioTask::Run()
 
   // Run the scenario
   SEScenarioExec exec(*pe);
-  exec.Execute(m_scenarioFile.c_str(), dataFile.c_str(), nullptr);
+  exec.Execute(m_scenarioFile.c_str(), dataFile.c_str());
 }
 
 //--------------------------------------------------------------------------------------------------

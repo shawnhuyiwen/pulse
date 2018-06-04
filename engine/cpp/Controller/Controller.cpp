@@ -66,6 +66,7 @@
 #include "properties/SEScalarMassPerMass.h"
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarTime.h"
+#include "engine/SEAdvanceHandler.h"
 #include "utils/DataTrack.h"
 #include "utils/FileUtils.h"
 #include <google/protobuf/text_format.h>
@@ -79,12 +80,16 @@ PulseController::PulseController(const std::string& logFileName) : PulseControll
 {
   myLogger = true;
   m_DataTrack = nullptr;
+  m_EventHandler = nullptr;
+  m_AdvanceHandler = nullptr;
 }
 
 PulseController::PulseController(Logger* logger) : Loggable(logger)
 {
   myLogger = false;
   m_DataTrack = nullptr;
+  m_EventHandler = nullptr;
+  m_AdvanceHandler = nullptr;
   if (!m_Logger->HasForward())// Don't override a forwarder, if there already is one there
     m_Logger->SetForward(this);
 
@@ -200,6 +205,7 @@ bool PulseController::Initialize(const PulseConfiguration* config)
   Info("Initializing Substances");
   m_Substances->InitializeSubstances(); // Sets all concentrations and such of all substances for all compartments, need to do this after we figure out what's in the environment
 
+  
   Info("Initializing Systems");
   m_CardiovascularSystem->Initialize();
   m_RespiratorySystem->Initialize();
@@ -216,6 +222,7 @@ bool PulseController::Initialize(const PulseConfiguration* config)
   m_ECG->Initialize();
   m_Inhaler->Initialize();
 
+  AdvanceCallback(-1);
   return true;
 }
 
@@ -966,7 +973,7 @@ void PulseController::PostProcess()
   m_ECG->PostProcess();
 }
 
-bool PulseController::GetPatientAssessment(SEPatientAssessment& assessment)
+bool PulseController::GetPatientAssessment(SEPatientAssessment& assessment) const
 {
   SEPulmonaryFunctionTest* pft = dynamic_cast<SEPulmonaryFunctionTest*>(&assessment);
   if (pft != nullptr)

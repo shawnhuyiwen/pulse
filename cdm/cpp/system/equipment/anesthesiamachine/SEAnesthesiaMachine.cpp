@@ -19,7 +19,7 @@ PROTO_POP
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarTime.h"
-#include "utils/SEEventHandler.h"
+#include "engine/SEEventHandler.h"
 #include <google/protobuf/text_format.h>
 
 SEAnesthesiaMachine::SEAnesthesiaMachine(SESubstanceManager& substances) : SESystem(substances.GetLogger()), m_Substances(substances)

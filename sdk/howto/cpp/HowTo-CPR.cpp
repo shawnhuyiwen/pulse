@@ -25,7 +25,7 @@
 #include "properties/SEScalarTime.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
-#include "utils/SEEventHandler.h"
+#include "engine/SEEventHandler.h"
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
@@ -37,10 +37,10 @@
 /// describing the state change is sent to the appropriate handlers.  Below is an example of a custom
 /// event handler which we use to listen for patient and anesthesia machine events.
 //--------------------------------------------------------------------------------------------------
-class MyListener : public SEEventHandler
+class MyListener : public SEEventHandler, Loggable // We want to gain easy access to the engine logger
 {
 public:
-  MyListener(Logger* logger) : SEEventHandler(logger) {};
+  MyListener(Logger* logger) : Loggable(logger) {};
   virtual void HandlePatientEvent(cdm::ePatient_Event type, bool active, const SEScalarTime* time) override
   {
     GetLogger()->Info(std::stringstream() <<"Recieved Patient Event : " << cdm::ePatient_Event_Name(type));

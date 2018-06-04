@@ -10,7 +10,7 @@ PROTO_PUSH
 #include "bind/cdm/Patient.pb.h"
 #include "bind/cdm/PatientNutrition.pb.h"
 PROTO_POP
-#include "utils/SEEventHandler.h"
+#include "engine/SEEventHandler.h"
 
 #include "properties/SEScalarTime.h"
 #include "properties/SEScalarMass.h"
@@ -167,6 +167,8 @@ const SEScalar* SEPatient::GetScalar(const std::string& name)
 bool SEPatient::Load(const std::string& str)
 {
   cdm::PatientData src;
+  if (str.empty())
+    return false;
   if (!google::protobuf::TextFormat::ParseFromString(str, &src))
     return false;
   SEPatient::Load(src, *this);
@@ -177,6 +179,8 @@ bool SEPatient::LoadFile(const std::string& patientFile)
   cdm::PatientData src;
   std::ifstream file_stream(patientFile, std::ios::in);
   std::string fmsg((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
+  if (fmsg.empty())
+    return false;
   if (!google::protobuf::TextFormat::ParseFromString(fmsg, &src))
     return false;
   SEPatient::Load(src, *this);

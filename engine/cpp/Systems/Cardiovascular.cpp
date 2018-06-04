@@ -1604,6 +1604,7 @@ void Cardiovascular::TuneCircuit()
     stableTime_s = 0;
     while (!stable)
     {
+      m_data.AdvanceCallback(-1);
       HeartDriver();
       m_circuitCalculator->Process(*m_CirculatoryCircuit, m_dT_s);
       CalculateVitalSigns();

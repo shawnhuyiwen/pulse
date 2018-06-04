@@ -23,7 +23,6 @@ PROTO_POP
 SEScenarioExec::SEScenarioExec(PhysiologyEngine& engine) : Loggable(engine.GetLogger()), m_Engine(engine)
 {
   m_Cancel     = false;
-  m_CustomExec = nullptr; 
   m_EngineConfiguration = nullptr;//Derived class will manage this pointer
 }
 
@@ -32,14 +31,13 @@ SEScenarioExec::~SEScenarioExec()
   
 }
 
-bool SEScenarioExec::Execute(const std::string& scenarioFile, const std::string& resultsFile, SEScenarioCustomExec* cExec)
+bool SEScenarioExec::Execute(const std::string& scenarioFile, const std::string& resultsFile)
 {
   try
   {
     m_ss << "Executing scenario file : " << scenarioFile << std::endl;
     Info(m_ss);
     m_Cancel = false;
-    m_CustomExec = cExec;
 
     SEScenario scenario(m_Engine.GetSubstanceManager());
     try
@@ -57,7 +55,7 @@ bool SEScenarioExec::Execute(const std::string& scenarioFile, const std::string&
       rFile = scenarioFile;
       rFile += ".out";
     }
-    bool success = Execute(scenario, rFile, cExec);
+    bool success = Execute(scenario, rFile);
     return success;
   }
   catch (CommonDataModelException& ex)
@@ -71,7 +69,7 @@ bool SEScenarioExec::Execute(const std::string& scenarioFile, const std::string&
   return false;
 }
 
-bool SEScenarioExec::Execute(const SEScenario& scenario, const std::string& resultsFile, SEScenarioCustomExec* cExec)
+bool SEScenarioExec::Execute(const SEScenario& scenario, const std::string& resultsFile)
 {
   if (!scenario.IsValid())
   {
@@ -81,8 +79,6 @@ bool SEScenarioExec::Execute(const SEScenario& scenario, const std::string& resu
   
   try
   {
-    m_CustomExec = cExec;    
-        
     // Initialize the engine with a state or initial parameters
     if (scenario.HasEngineStateFile())
     {
@@ -211,10 +207,7 @@ bool SEScenarioExec::ProcessActions(const SEScenario& scenario)
         {
           currentSampleTime_s = 0;
           m_Engine.GetEngineTracker()->TrackData(scenarioTime_s);
-        }       
-        // Call any custom callback provided
-        if (m_CustomExec!=nullptr)
-          m_CustomExec->CustomExec(scenarioTime_s, &m_Engine);
+        }
         statusTime_s += dT_s;
         // How are we running?
         if (statusTime_s>statusStep_s)

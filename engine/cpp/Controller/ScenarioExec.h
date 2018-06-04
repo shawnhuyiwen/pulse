@@ -15,8 +15,8 @@ public:
   PulseScenarioExec(PulseEngine& engine);
   virtual ~PulseScenarioExec();
 
-  virtual bool Execute(const std::string& scenarioFile, const std::string& resultsFile, SEScenarioCustomExec* cExec = nullptr);
-  virtual bool Execute(const PulseScenario& scenario, const std::string& resultsFile, SEScenarioCustomExec* cExec = nullptr);
+  virtual bool Execute(const std::string& scenarioFile, const std::string& resultsFile);
+  virtual bool Execute(const PulseScenario& scenario, const std::string& resultsFile);
 
 protected:
 

@@ -53,12 +53,10 @@ protected:
   EngineState m_State;
 public:
   
-
   PulseController(Logger* logger);
   PulseController(const std::string& logfileName);
   virtual ~PulseController();
 
- 
   EngineState                             GetState();
 
   DataTrack&                              GetDataTrack();
@@ -67,7 +65,7 @@ public:
   PulseSubstances&                        GetSubstances();
 
   SEPatient&                              GetPatient();
-  bool                                    GetPatientAssessment(SEPatientAssessment& assessment);
+  bool                                    GetPatientAssessment(SEPatientAssessment& assessment) const;
 
   SEBloodChemistrySystem&                 GetBloodChemistry();
   SECardiovascularSystem&                 GetCardiovascular();
@@ -111,6 +109,7 @@ public:
   void                                    SetIntubation(cdm::eSwitch s);
 
   bool CreateCircuitsAndCompartments();
+  virtual void AdvanceCallback(double time_s) {};
 protected:
   void SetupCardiovascular();
   void SetupRenal();
@@ -175,5 +174,7 @@ protected:
 
   // Flag to destroy the logger or not                          
   bool                                                          myLogger;
+  SEEventHandler*                                               m_EventHandler;
+  SEAdvanceHandler*                                             m_AdvanceHandler;
 };
 

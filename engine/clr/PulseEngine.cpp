@@ -79,7 +79,7 @@ See accompanying NOTICE file for details.*/
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
 
-#include "utils/SEEventHandler.h"
+#include "engine/SEEventHandler.h"
 
 #include <iostream>
 #include <fstream>
@@ -93,10 +93,10 @@ using namespace System::Threading;
 typedef void(__stdcall *fpPatientEvent)(cdm::ePatient_Event type, bool active);
 
 // This is the class to provide Pulse to call when any events are triggered in the engine
-class PulseEventHandler : public SEEventHandler
+class PulseEventHandler : public SEEventHandler, public Loggable
 {
 public:
-  PulseEventHandler(Logger *logger) : SEEventHandler(logger) {}
+  PulseEventHandler(Logger *logger) : Loggable(logger) {}
 
 public:
   virtual void SetPatientEventCallback(fpPatientEvent callback) { _on_patient_event = callback; }// Make Set methods to set up a function pointer to call for each event we are interested in

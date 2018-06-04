@@ -100,8 +100,9 @@ JNIEXPORT void JNICALL Java_mil_tatrc_physiology_pulse_engine_PulseScenarioExec_
     }
     else
     {
+      engineJNI->eng->SetAdvanceHandler(updateFreq_s <= 0 ? nullptr : engineJNI);
       engineJNI->exec = new PulseScenarioExec(*engineJNI->eng);
-      engineJNI->exec->Execute(sce, dataF, updateFreq_s <= 0 ? nullptr : engineJNI);
+      engineJNI->exec->Execute(sce, dataF);
     }
     SAFE_DELETE(engineJNI->exec);
   }
@@ -355,12 +356,12 @@ JNIEXPORT bool JNICALL Java_mil_tatrc_physiology_pulse_engine_PulseEngine_native
   catch (CommonDataModelException& ex)
   {
     success = false;
-    engineJNI->GetLogger()->Error(ex.what());
+    engineJNI->eng->GetLogger()->Error(ex.what());
   }
   catch (std::exception& ex)
   {
     success = false;
-    engineJNI->GetLogger()->Error(ex.what());
+    engineJNI->eng->GetLogger()->Error(ex.what());
   }
   catch (...)
   {
@@ -418,7 +419,7 @@ JNIEXPORT jstring JNICALL Java_mil_tatrc_physiology_pulse_engine_PulseEngine_nat
   return assessment;
 }
 
-PulseEngineJNI::PulseEngineJNI(const std::string& logFile) : SEEventHandler(nullptr)
+PulseEngineJNI::PulseEngineJNI(const std::string& logFile) : SEAdvanceHandler(), SEEventHandler()
 {// No logger needed for the event handler, at this point
   Reset(); 
   eng = std::unique_ptr<PulseEngine>((PulseEngine*)CreatePulseEngine(logFile).release());
@@ -447,7 +448,7 @@ void PulseEngineJNI::Reset()
   updateFrequency_cnt = 45;// About every half second
 }
 
-void PulseEngineJNI::CustomExec(double time_s, PhysiologyEngine* engine)
+void PulseEngineJNI::OnAdvance(double time_s, const PhysiologyEngine& engine)
 {
   if (update_cnt++ > updateFrequency_cnt)
   {    
