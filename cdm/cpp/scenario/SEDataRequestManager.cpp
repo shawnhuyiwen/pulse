@@ -141,6 +141,13 @@ void SEDataRequestManager::RemoveOverrideDecimalFormatting()
   SAFE_DELETE(m_OverrideDecimalFormatting);
 }
 
+SEDataRequest& SEDataRequestManager::CopyDataRequest(const SEDataRequest& dr)
+{
+  SEDataRequest* my_dr = new SEDataRequest(dr);
+  m_Requests.push_back(my_dr);
+  return *my_dr;
+}
+
 SEDataRequest& SEDataRequestManager::CreateDataRequest(cdm::eDataRequest_Category category, const SEDecimalFormat* dfault)
 {
   SEDataRequest* dr = new SEDataRequest(category, dfault);

@@ -12,6 +12,7 @@ class CDM_DECL SEDataRequest : public SEDecimalFormat
 {
   friend class SEDataRequestManager;
 protected:
+  SEDataRequest(const SEDataRequest& dr);
   SEDataRequest(cdm::eDataRequest_Category category, const SEDecimalFormat* dfault = nullptr);
 public:
 
@@ -68,7 +69,7 @@ public:
 
 protected:
 
-  cdm::eDataRequest_Category m_Category;
+  cdm::eDataRequest_Category     m_Category;
   std::string                    m_CompartmentName;
   std::string                    m_SubstanceName;
   std::string                    m_PropertyName;

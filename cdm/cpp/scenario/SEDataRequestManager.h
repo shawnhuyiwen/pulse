@@ -37,8 +37,8 @@ public:
   double GetSamplesPerSecond() const { return m_SamplesPerSecond; }
   void SetSamplesPerSecond(double num) { m_SamplesPerSecond = num; }
 
-  bool HasDataRequests() { return !m_Requests.empty(); }
-  const std::vector<SEDataRequest*>& GetDataRequests() { return m_Requests; }
+  bool HasDataRequests() const { return !m_Requests.empty(); }
+  const std::vector<SEDataRequest*>& GetDataRequests() const { return m_Requests; }
 
   virtual bool HasDefaultDecimalFormatting() const;
   virtual SEDecimalFormat& GetDefaultDecimalFormatting();
@@ -47,6 +47,8 @@ public:
   virtual bool HasOverrideDecimalFormatting() const;
   virtual SEDecimalFormat& GetOverrideDecimalFormatting();
   virtual void RemoveOverrideDecimalFormatting();
+
+  SEDataRequest& CopyDataRequest(const SEDataRequest& dr);
 
   SEDataRequest& CreateDataRequest(cdm::eDataRequest_Category category, const SEDecimalFormat* dfault = nullptr);
   SEDataRequest& CreatePatientDataRequest(const std::string& property, const SEDecimalFormat* dfault = nullptr);

@@ -8,6 +8,12 @@ PROTO_PUSH
 #include "bind/cdm/Scenario.pb.h"
 PROTO_POP
 
+SEDataRequest::SEDataRequest(const SEDataRequest& dr)
+{
+  m_Category = dr.m_Category;
+  CDM_COPY(SEDataRequest, &dr, this);
+}
+
 SEDataRequest::SEDataRequest(cdm::eDataRequest_Category category, const SEDecimalFormat* dfault) : SEDecimalFormat(dfault)
 {
   m_Category = category;

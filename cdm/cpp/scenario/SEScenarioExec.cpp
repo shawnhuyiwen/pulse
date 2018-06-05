@@ -93,7 +93,7 @@ bool SEScenarioExec::Execute(const SEScenario& scenario, const std::string& resu
     }
     else if (scenario.HasInitialParameters())
     {
-      // Make a copy of the data requests, not this clears out data requests from the engine
+      // Make a copy of the data requests, note this clears out data requests from the engine
       cdm::DataRequestManagerData* drData = SEDataRequestManager::Unload(scenario.GetDataRequestManager());
       SEDataRequestManager::Load(*drData, m_Engine.GetEngineTracker()->GetDataRequestManager(), m_Engine.GetSubstanceManager());
       delete drData;
