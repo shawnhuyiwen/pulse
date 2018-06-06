@@ -28,11 +28,14 @@ const std::string Loggable::empty("");
 class log_lib
 {
 public:
-  log_lib() : logger(log4cplus::Logger::getRoot())
+  log_lib(std::string const& name) : logger(log4cplus::Logger::getInstance(name))
   {
 
   }
-  virtual ~log_lib() { }
+  virtual ~log_lib() 
+  {
+
+  }
   log4cplus::Initializer        initializer;
   log4cplus::Logger             logger;
   log4cplus::SharedAppenderPtr  fileAppender;
@@ -44,7 +47,7 @@ Logger::Logger(const std::string& logFilename)
 {
   m_Forward = nullptr;
   m_time = nullptr;
-  _log_lib = new log_lib();
+  _log_lib = new log_lib(logFilename);
   ResetLogFile(logFilename);
 }
 
