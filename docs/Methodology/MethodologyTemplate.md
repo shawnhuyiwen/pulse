@@ -141,16 +141,16 @@ Future Work
 Coming Soon
 -----------
 
-What else will be included under this contract.
+What else is in the works.
 
 Improvements to existing methodology planned. Include
 a why statement. Need to know why this improvement is a good thing to
-do, what do we gain.
+do, what is gained.
 
 Recommended Improvements
 ------------------------
 
-Be careful not to give away future funding ideas.
+What should be updated and why.
 
 Appendices
 ==========
