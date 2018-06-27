@@ -50,7 +50,7 @@ public:
   virtual void InvalidateInitialParameters();
 
   virtual void AddAction(const SEAction& action);
-  virtual const std::vector<SEAction*>& GetActions() const;
+  virtual const std::vector<const SEAction*>& GetActions() const;
 
   virtual SEDataRequestManager& GetDataRequestManager() { return *m_DataRequestMgr; }
   virtual const SEDataRequestManager& GetDataRequestManager() const { return *m_DataRequestMgr; }
@@ -62,6 +62,6 @@ protected:
   std::string                                 m_EngineStateFile;
   SEScenarioInitialParameters*                m_InitialParameters;
   SEDataRequestManager*                       m_DataRequestMgr;
-  std::vector<SEAction*>                      m_Actions;
+  std::vector<const SEAction*>                m_Actions;
 
 };

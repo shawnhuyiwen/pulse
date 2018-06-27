@@ -22,11 +22,6 @@ void SEPatientCondition::Clear()
   SECondition::Clear();
 }
 
-bool SEPatientCondition::IsValid() const
-{
-  return SECondition::IsValid();
-}
-
 void SEPatientCondition::Serialize(const cdm::PatientConditionData& src, SEPatientCondition& dst)
 {
   SECondition::Serialize(src.condition(), dst);

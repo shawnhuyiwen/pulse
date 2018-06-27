@@ -14,7 +14,8 @@ public:
 
   virtual void Clear();
 
-  virtual bool IsValid() const;
+  virtual bool IsValid() const = 0;
+  virtual bool IsActive() const = 0;
 
   /** Create a new condition based on the binding object, load that data into the new condition, and return said condition */
   static SEEnvironmentCondition* Load(const cdm::AnyEnvironmentConditionData& any, SESubstanceManager& subMgr);

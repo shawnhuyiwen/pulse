@@ -18,9 +18,4 @@ void SEChronicHeartFailure::Clear()
   SEPatientCondition::Clear();
 }
 
-bool SEChronicHeartFailure::IsValid() const
-{
-  return SEPatientCondition::IsValid();
-}
-
 

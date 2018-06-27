@@ -30,7 +30,11 @@ void SEConsumeMeal::Clear()
 
 bool SEConsumeMeal::IsValid() const
 {
-  return SEPatientCondition::IsValid() && (HasMeal() || HasMealFile());
+  return (HasMeal() || HasMealFile());
+}
+bool SEConsumeMeal::IsActive() const
+{
+  return IsValid();
 }
 
 void SEConsumeMeal::Load(const cdm::ConsumeMealData& src, SEConsumeMeal& dst)

@@ -15,6 +15,7 @@ public:
   virtual void Clear();
 
   virtual bool IsValid() const;
+  virtual bool IsActive() const;
 
   static void Load(const cdm::InitialEnvironmentConditionsData& src, SEInitialEnvironmentConditions& dst);
   static cdm::InitialEnvironmentConditionsData* Unload(const SEInitialEnvironmentConditions& src);

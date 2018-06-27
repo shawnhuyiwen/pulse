@@ -30,7 +30,18 @@ void SELobarPneumonia::Clear()
 
 bool SELobarPneumonia::IsValid() const
 {
-  return SEPatientCondition::IsValid() && HasSeverity() && HasLeftLungAffected() && HasRightLungAffected();
+  return HasSeverity() && HasLeftLungAffected() && HasRightLungAffected();
+}
+
+bool SELobarPneumonia::IsActive() const
+{
+  if (!IsValid())
+    return false;
+  if (GetSeverity() <= 0)
+    return false;
+  if (GetLeftLungAffected() <= 0 && GetRightLungAffected() <= 0)
+    return false;
+  return true;
 }
 
 void SELobarPneumonia::Load(const cdm::LobarPneumoniaData& src, SELobarPneumonia& dst)

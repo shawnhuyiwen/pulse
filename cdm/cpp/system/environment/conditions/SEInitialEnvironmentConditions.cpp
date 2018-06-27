@@ -39,7 +39,12 @@ void SEInitialEnvironmentConditions::Clear()
 
 bool SEInitialEnvironmentConditions::IsValid() const
 {
-  return SEEnvironmentCondition::IsValid() && (HasConditions() || HasConditionsFile());
+  return (HasConditions() || HasConditionsFile());
+}
+
+bool SEInitialEnvironmentConditions::IsActive() const
+{
+  return IsValid();
 }
 
 void SEInitialEnvironmentConditions::Load(const cdm::InitialEnvironmentConditionsData& src, SEInitialEnvironmentConditions& dst)

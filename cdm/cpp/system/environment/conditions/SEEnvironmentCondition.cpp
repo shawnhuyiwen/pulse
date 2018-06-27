@@ -22,11 +22,6 @@ void SEEnvironmentCondition::Clear()
   SECondition::Clear();
 }
 
-bool SEEnvironmentCondition::IsValid() const
-{
-  return SECondition::IsValid();
-}
-
 void SEEnvironmentCondition::Serialize(const cdm::EnvironmentConditionData& src, SEEnvironmentCondition& dst)
 {
   SECondition::Serialize(src.condition(), dst);

@@ -24,8 +24,8 @@ protected:
   static void Serialize(const SECondition& src, cdm::ConditionData& dst);
 
 public:
-  /** Test if the Condition has all data it needs */
-  virtual bool IsValid() const { return true; }
+  virtual bool IsValid() const = 0;
+  virtual bool IsActive() const = 0;
 
   virtual std::string GetName() const = 0;
 

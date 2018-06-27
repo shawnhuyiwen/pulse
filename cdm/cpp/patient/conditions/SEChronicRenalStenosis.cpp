@@ -28,7 +28,17 @@ void SEChronicRenalStenosis::Clear()
 
 bool SEChronicRenalStenosis::IsValid() const
 {
-  return SEPatientCondition::IsValid() && (HasLeftKidneySeverity() || HasRightKidneySeverity());
+  return (HasLeftKidneySeverity() || HasRightKidneySeverity());
+}
+bool SEChronicRenalStenosis::IsActive() const
+{
+  if (!IsValid())
+    return false;
+  if (GetLeftKidneySeverity() > 0)
+    return true;
+  if (GetRightKidneySeverity() > 0)
+    return true;
+  return false;
 }
 
 void SEChronicRenalStenosis::Load(const cdm::ChronicRenalStenosisData& src, SEChronicRenalStenosis& dst)

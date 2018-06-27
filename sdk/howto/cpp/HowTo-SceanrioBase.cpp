@@ -80,12 +80,12 @@ void HowToScenarioBase()
 
   // Let's request data do be tracked that is in the scenario  
   HowToTracker tracker(*pe);
-  SEAdvanceTime* adv;
+  const SEAdvanceTime* adv;
   // Now run the scenario actions
-  for (SEAction* a : sce.GetActions())
+  for (const SEAction* a : sce.GetActions())
   {
     // We want the tracker to process an advance time action so it will write each time step of data to our track file
-    adv = dynamic_cast<SEAdvanceTime*>(a);
+    adv = dynamic_cast<const SEAdvanceTime*>(a);
     if (adv != nullptr)
       tracker.AdvanceModelTime(adv->GetTime(TimeUnit::s));// you could just do pe->AdvanceModelTime without tracking timesteps
     else

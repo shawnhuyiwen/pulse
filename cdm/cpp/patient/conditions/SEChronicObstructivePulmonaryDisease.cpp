@@ -29,7 +29,14 @@ void SEChronicObstructivePulmonaryDisease::Clear()
 
 bool SEChronicObstructivePulmonaryDisease::IsValid() const
 {
-  return SEPatientCondition::IsValid() && HasBronchitisSeverity() && HasEmphysemaSeverity();
+  return HasBronchitisSeverity() || HasEmphysemaSeverity();
+}
+
+bool SEChronicObstructivePulmonaryDisease::IsActive() const
+{
+  if (!IsValid())
+    return false;
+  return GetBronchitisSeverity() > 0 || GetEmphysemaSeverity() > 0;
 }
 
 void SEChronicObstructivePulmonaryDisease::Load(const cdm::ChronicObstructivePulmonaryDiseaseData& src, SEChronicObstructivePulmonaryDisease& dst)

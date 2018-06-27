@@ -16,6 +16,7 @@ public:
   virtual void Clear(); //clear memory
 
   virtual bool IsValid() const = 0;
+  virtual bool IsActive() const = 0;
 
   /** Create a new condition based on the binding object, load that data into the new condition, and return said condition */
   static SEPatientCondition* Load(const cdm::AnyPatientConditionData& any, SESubstanceManager& subMgr);

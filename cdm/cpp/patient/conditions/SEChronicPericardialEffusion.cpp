@@ -26,7 +26,13 @@ void SEChronicPericardialEffusion::Clear()
 
 bool SEChronicPericardialEffusion::IsValid() const
 {
-  return SEPatientCondition::IsValid() && HasAccumulatedVolume();
+  return HasAccumulatedVolume();
+}
+bool SEChronicPericardialEffusion::IsActive() const
+{
+  if (!IsValid())
+    return false;
+  return (m_AccumulatedVolume != nullptr && m_AccumulatedVolume->IsPositive());
 }
 
 void SEChronicPericardialEffusion::Load(const cdm::ChronicPericardialEffusionData& src, SEChronicPericardialEffusion& dst)

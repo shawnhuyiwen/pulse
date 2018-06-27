@@ -15,6 +15,7 @@ public:
   virtual void Clear(); //clear memory
 
   virtual bool IsValid() const;
+  virtual bool IsActive() const;
 
   static void Load(const cdm::ChronicAnemiaData& src, SEChronicAnemia& dst);
   static cdm::ChronicAnemiaData* Unload(const SEChronicAnemia& src);

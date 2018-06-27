@@ -15,6 +15,7 @@ public:
   virtual void Clear(); //clear memory
 
   virtual bool IsValid() const;
+  virtual bool IsActive() const;
 
   static void Load(const cdm::ChronicVentricularSystolicDysfunctionData& src, SEChronicVentricularSystolicDysfunction& dst);
   static cdm::ChronicVentricularSystolicDysfunctionData* Unload(const SEChronicVentricularSystolicDysfunction& src);

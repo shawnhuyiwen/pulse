@@ -180,15 +180,15 @@ bool SEScenarioExec::ProcessActions(const SEScenario& scenario)
   m_Engine.GetEngineTracker()->SetupRequests();
 
   bool err=false;
-  SEAdvanceTime* adv;
-  for (SEAction* a : scenario.GetActions())
+  const SEAdvanceTime* adv;
+  for (const SEAction* a : scenario.GetActions())
   {
     if(m_Cancel)
       break;
     // We override advance time actions in order to advance and 
     // pull requested data at each time step, all other actions 
     // will be processed by the engine
-    adv=dynamic_cast<SEAdvanceTime*>(a);
+    adv=dynamic_cast<const SEAdvanceTime*>(a);
     if(adv!=nullptr)
     {
       double time_s = adv->GetTime(TimeUnit::s);

@@ -30,6 +30,17 @@ bool SEImpairedAlveolarExchange::IsValid() const
   return HasImpairedFraction() || HasImpairedSurfaceArea();
 }
 
+bool SEImpairedAlveolarExchange::IsActive() const
+{
+  if (!IsValid())
+    return false;
+  if (GetImpairedFraction() > 0)
+    return true;
+  if (m_ImpairedSurfaceArea!=nullptr && m_ImpairedSurfaceArea->IsPositive())
+    return true;
+  return false;
+}
+
 void SEImpairedAlveolarExchange::Load(const cdm::ImpairedAlveolarExchangeData& src, SEImpairedAlveolarExchange& dst)
 {
   SEImpairedAlveolarExchange::Serialize(src, dst);

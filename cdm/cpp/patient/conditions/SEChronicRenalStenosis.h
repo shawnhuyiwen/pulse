@@ -15,6 +15,7 @@ public:
   virtual void Clear(); //clear memory
 
   virtual bool IsValid() const;
+  virtual bool IsActive() const;
 
   static void Load(const cdm::ChronicRenalStenosisData& src, SEChronicRenalStenosis& dst);
   static cdm::ChronicRenalStenosisData* Unload(const SEChronicRenalStenosis& src);

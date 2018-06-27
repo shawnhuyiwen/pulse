@@ -78,7 +78,7 @@ void SEScenario::Serialize(const SEScenario& src, cdm::ScenarioData& dst)
 
   dst.set_allocated_datarequestmanager(SEDataRequestManager::Unload(*src.m_DataRequestMgr));
 
-  for (SEAction* a :src.m_Actions)
+  for (const SEAction* a :src.m_Actions)
     dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*a));
 }
 
@@ -187,7 +187,7 @@ void SEScenario::AddAction(const SEAction& a)
   m_Actions.push_back(SEAction::Load(*any, m_SubMgr));
   delete any;
 }
-const std::vector<SEAction*>& SEScenario::GetActions() const
+const std::vector<const SEAction*>& SEScenario::GetActions() const
 {
   return m_Actions;
 }

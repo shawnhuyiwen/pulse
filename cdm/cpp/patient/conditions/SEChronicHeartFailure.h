@@ -13,7 +13,8 @@ public:
 
   virtual void Clear(); //clear memory
 
-  virtual bool IsValid() const;
+  virtual bool IsValid() const = 0;
+  virtual bool IsActive() const = 0;
 
 public:
   virtual void ToString(std::ostream &str) const = 0;

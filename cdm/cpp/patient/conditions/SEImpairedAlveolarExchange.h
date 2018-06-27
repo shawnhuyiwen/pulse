@@ -14,6 +14,7 @@ public:
   virtual void Clear();
 
   virtual bool IsValid() const;
+  virtual bool IsActive() const;
 
   static void Load(const cdm::ImpairedAlveolarExchangeData& src, SEImpairedAlveolarExchange& dst);
   static cdm::ImpairedAlveolarExchangeData* Unload(const SEImpairedAlveolarExchange& src);
@@ -36,6 +37,6 @@ public:
 
 protected:
   
-  SEScalarArea*       m_ImpairedSurfaceArea;
+  SEScalarArea*      m_ImpairedSurfaceArea;
   SEScalar0To1*      m_ImpairedFraction;  
 };

@@ -23,7 +23,12 @@ void SEChronicVentricularSystolicDysfunction::Clear()
 
 bool SEChronicVentricularSystolicDysfunction::IsValid() const
 {
-  return SEChronicHeartFailure::IsValid();
+  return true;
+}
+
+bool SEChronicVentricularSystolicDysfunction::IsActive() const
+{
+  return IsValid();
 }
 
 void SEChronicVentricularSystolicDysfunction::Load(const cdm::ChronicVentricularSystolicDysfunctionData& src, SEChronicVentricularSystolicDysfunction& dst)

@@ -16,6 +16,7 @@ public:
   virtual void Clear(); //clear memory
 
   virtual bool IsValid() const;
+  virtual bool IsActive() const;
 
   static void Load(const cdm::ConsumeMealData& src, SEConsumeMeal& dst);
   static cdm::ConsumeMealData* Unload(const SEConsumeMeal& src);

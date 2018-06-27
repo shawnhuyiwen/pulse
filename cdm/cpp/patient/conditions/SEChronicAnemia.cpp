@@ -26,7 +26,13 @@ void SEChronicAnemia::Clear()
 
 bool SEChronicAnemia::IsValid() const
 {
-  return SEPatientCondition::IsValid() && HasReductionFactor();
+  return HasReductionFactor();
+}
+bool SEChronicAnemia::IsActive() const
+{
+  if (!IsValid())
+    return false;
+  return GetReductionFactor() > 0;
 }
 
 void SEChronicAnemia::Load(const cdm::ChronicAnemiaData& src, SEChronicAnemia& dst)
