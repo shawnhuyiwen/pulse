@@ -16,13 +16,14 @@ message( STATUS "External project - Eigen" )
 set(eigen_VERSION "3.3.4" )
 set(eigen_DIR "${CMAKE_BINARY_DIR}/eigen/src/eigen")
 set(eigen_INSTALL "${CMAKE_CURRENT_BINARY_DIR}/eigen/install")
+set(eigen_patch "${CMAKE_SOURCE_DIR}/cmake/eigen-patches")
 
 ExternalProject_Add( eigen
   PREFIX eigen
   URL "http://bitbucket.org/eigen/eigen/get/${eigen_VERSION}.tar.gz"
   URL_HASH MD5=1a47e78efe365a97de0c022d127607c3
   UPDATE_COMMAND 
-    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_SOURCE_DIR}/cmake/eigen-patches/Patch.cmake
+    COMMAND ${CMAKE_COMMAND} -Deigen_source=${eigen_DIR} -Deigen_patch=${eigen_patch} -P ${CMAKE_SOURCE_DIR}/cmake/eigen-patches/Patch.cmake
   INSTALL_DIR "${eigen_INSTALL}"
   CMAKE_ARGS
         -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF
