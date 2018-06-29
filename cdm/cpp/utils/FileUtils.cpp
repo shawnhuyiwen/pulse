@@ -13,20 +13,23 @@
   #define MKDIR(x) mkdir(x)
 #else
   #include <unistd.h>
-    #if defined(__APPLE__) && defined(__clang__)
-    #include <sys/syslimits.h>
-  #elif defined __GNUC__
+  #if defined(__APPLE__)
+    #if defined(__clang__)
+      #include <sys/syslimits.h>
+    #endif
+  #endif
+  #if defined __GNUC__
     #include <sys/types.h>
     #include <sys/stat.h>
   #endif
+#endif
 
-  #define MAXPATH PATH_MAX
-  #define GETCWD getcwd
-  #define MKDIR(x) mkdir(x, 0755)
+#define MAXPATH PATH_MAX
+#define GETCWD getcwd
+#define MKDIR(x) mkdir(x, 0755)
 
-  #if defined(__gnu_linux__)
-    #include <cstring>
-  #endif
+#if defined(__gnu_linux__)
+  #include <cstring>
 #endif
 
 std::string Replace(const std::string& original, const std::string& replace, const std::string& withThis)
