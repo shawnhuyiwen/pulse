@@ -22,14 +22,14 @@
     #include <sys/types.h>
     #include <sys/stat.h>
   #endif
-#endif
 
-#define MAXPATH PATH_MAX
-#define GETCWD getcwd
-#define MKDIR(x) mkdir(x, 0755)
+  #define MAXPATH PATH_MAX
+  #define GETCWD getcwd
+  #define MKDIR(x) mkdir(x, 0755)
 
-#if defined(__gnu_linux__)
-  #include <cstring>
+  #if defined(__gnu_linux__)
+    #include <cstring>
+  #endif
 #endif
 
 std::string Replace(const std::string& original, const std::string& replace, const std::string& withThis)
