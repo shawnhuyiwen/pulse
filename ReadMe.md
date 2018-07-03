@@ -118,8 +118,9 @@ cmake -DCMAKE_BUILD_TYPE:STRING=Release -DPULSE_DOWNLOAD_BASELINES:BOOL=ON ../sr
 # On Linux/OSX/MinGW 
 make
 # For MSVC
-# Open the OuterBuild.sln and build the INSTALL project (It will build everything!)
+# Open the OuterBuild.sln and from the 'Build' menu choose 'Build Solution' (It will build everything and generate all necessary data)
 # When the build is complete, MSVC users can close the OuterBuild solution, and open the Pulse.sln located in the Pulse directory.
+# From there you can build debug and release with debug info configurations.
 # Unix based systems should also cd into this directory for building any changes to the Pulse code base
 cd Pulse
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
