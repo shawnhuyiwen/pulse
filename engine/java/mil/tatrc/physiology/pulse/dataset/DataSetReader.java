@@ -871,6 +871,7 @@ public class DataSetReader
     SESubstanceCompound compound=null;
     List<SESubstanceCompound> compounds = new ArrayList<SESubstanceCompound>();
     List<SESubstanceConcentration> currentComponent = null;
+    Set<Integer> skipColumns = new HashSet<Integer>();
     try
     {
       int rows = xlSheet.getPhysicalNumberOfRows();      
@@ -881,19 +882,29 @@ public class DataSetReader
           continue;
         int cells = row.getPhysicalNumberOfCells();
         if(r==0)
-        {// Allocate the number of compounds we have
-          for(int i=1;i<cells;i++)          
-            compounds.add(new SESubstanceCompound());
+        {
+          for (int c = 1; c < cells; c++) 
+          {
+            property = row.getCell(c).getStringCellValue().trim();
+            if(property.equals("Reference Value")||property.equals("Reference Source")||property.equals("Notes/Page"))
+              skipColumns.add(c);
+            else if(property.equals("SubstanceCompound"))
+              compounds.add(new SESubstanceCompound());
+          }        
           currentComponent = new ArrayList<SESubstanceConcentration>(cells);
         }
         property = row.getCell(0).getStringCellValue();
         if(property==null||property.isEmpty())
           continue;
-        Log.info("Processing Patient Field : "+property);
+        Log.info("Processing Compound Field : "+property);
         if(property.equals("Data Type"))
           continue;// Only one type at this point
+        int skip=-1;
         for (int c = 1; c < cells; c++) 
         {
+          if(skipColumns.contains(c))
+            continue;
+          skip++;
           String cellValue=null;
           XSSFCell cell = row.getCell(c);
           switch(cell.getCellType())
@@ -919,7 +930,7 @@ public class DataSetReader
             value = cellValue.substring(0,split);
             unit  = cellValue.substring(split+1);
           }
-          compound=compounds.get(c-1);
+          compound=compounds.get(c-(3*skip)-1);
           if(property.equals("Compound Name"))
           {
             compound.setName(value);
@@ -929,10 +940,10 @@ public class DataSetReader
           {
             s = substances.get(value);
             SESubstanceConcentration component = compound.getComponent(s);
-            currentComponent.add(c-1, component);
+            currentComponent.add(c-(3*skip)-1, component);
             continue;
           }
-          if(!setProperty(currentComponent.get(c-1),property,value,unit))
+          if(!setProperty(currentComponent.get(c-(3*skip)-1),property,value,unit))
           {
             Log.error("Error setting property");
             break;
