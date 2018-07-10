@@ -103,17 +103,29 @@ Here is the quickest way to pull and build via a cmd/bash shell:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
 mkdir physiology
 cd physiology
-git clone https://gitlab.kitware.com/physiology/engine src
+git clone https://gitlab.kitware.com/physiology/engine
+# This will put the source in an 'engine' folder
 mkdir builds
 cd builds
 # Feel free to make subfolders here, like msvc2017x64 or something
 # Generate a make file/msvc solution for the external dependencies
 # Note you need to provide cmake the source directory at the end (relative or absolute)
 # Run CMake (it will use the system default compiler if you don't provide options or use the CMake GUI)
-cmake -DCMAKE_BUILD_TYPE:STRING=Release ../src
+cmake -DCMAKE_BUILD_TYPE:STRING=Release ../engine
 # If you want the build to pull the V&V scenarios and baselines run this (or check the PULSE_DOWNLOAD_BASELINES option in the CMake GUI)
 # You can always pull these later if you want (See Running and Testing)
-cmake -DCMAKE_BUILD_TYPE:STRING=Release -DPULSE_DOWNLOAD_BASELINES:BOOL=ON ../src
+cmake -DCMAKE_BUILD_TYPE:STRING=Release -DPULSE_DOWNLOAD_BASELINES:BOOL=ON ../engine
+#
+# If you are on windows using Visual Studio, there is an example CLR project for accessing Pulse via C#
+# Note you will have to have checked the C++/CLR option when you installed Visual Studio for this to properly build
+# If you would like this project to be built automatically, add the following flag to your cmake call
+cmake -DPULSE_BUILD_CLR:BOOL=ON
+# (Or enable this option in the CMake GUI)
+# This flag will include the PulseCLR project in the build
+# If not, the PulseCLR project will be generated but you will need to manually build this project
+# (It will not part of the 'Build Solution'/Build All option)
+# Note you can always delete the PulseCLR project from the Pulse.sln if it causing you issues.
+#
 # Build the install target/project
 # On Linux/OSX/MinGW 
 make

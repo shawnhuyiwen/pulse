@@ -2,10 +2,6 @@ if(NOT MSVC)
   return()
 endif()
 
-
-set( PULSE_BUILD_CLR "ON" CACHE BOOL "Build the CLR interface" )
-
-
 add_library(PulseCLR SHARED engine/clr/PulseEngine.h
                             engine/clr/PulseEngine.cpp)
 
