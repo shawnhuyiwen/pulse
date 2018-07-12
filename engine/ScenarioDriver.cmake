@@ -18,13 +18,10 @@ IF(UNIX)
     SET(CMAKE_INSTLL_RPATH "${CMAKE_INSTALL_RPATH}:\$ORIGIN")
 ENDIF()
 
-add_custom_command(TARGET PulseScenarioDriver POST_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALL_BIN}/${CONFIGURATION}
-                   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:PulseScenarioDriver> ${INSTALL_BIN}/${CONFIGURATION})
 
-install(TARGETS PulseScenarioDriver 
-        RUNTIME CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release)
-install(TARGETS PulseScenarioDriver 
-        RUNTIME CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug)
-install(TARGETS PulseScenarioDriver 
-        RUNTIME CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo)
+set_target_properties(PulseScenarioDriver PROPERTIES
+    DEBUG_POSTFIX "${PULSE_DEBUG_POSTFIX}"
+    RELWITHDEBINFO_POSTFIX "${PULSE_RELWITHDEBINFO_POSTFIX}")
+
+add_custom_command(TARGET PulseScenarioDriver POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:PulseScenarioDriver> ${INSTALL_BIN})

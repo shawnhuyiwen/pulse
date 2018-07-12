@@ -166,6 +166,10 @@ if(WIN32)
 endif()
 
 set_target_properties(CommonDataModel PROPERTIES COMPILE_FLAGS "${CDM_FLAGS}" PREFIX "")
+set_target_properties(CommonDataModel PROPERTIES
+    OUTPUT_NAME ${LIB_PREFIX}CommonDataModel
+    DEBUG_POSTFIX "${PULSE_DEBUG_POSTFIX}"
+    RELWITHDEBINFO_POSTFIX "${PULSE_RELWITHDEBINFO_POSTFIX}")
 if(APPLE)
     set_target_properties(CommonDataModel PROPERTIES MACOSX_RPATH ON)
 endif()
@@ -174,37 +178,11 @@ target_link_libraries(CommonDataModel log4cplus)
 
 if(${BUILD_SHARED_LIBS})
   add_custom_command(TARGET CommonDataModel POST_BUILD
-                     COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALL_BIN}/${CONFIGURATION}
-                     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:CommonDataModel> ${INSTALL_BIN}/${CONFIGURATION})
-
-  if(WIN32)# Copy dll files to the bin
-    install(TARGETS CommonDataModel 
-            RUNTIME CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release
-            LIBRARY CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release)
-    install(TARGETS CommonDataModel 
-            RUNTIME CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug
-            LIBRARY CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug)
-    install(TARGETS CommonDataModel 
-            RUNTIME CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo
-            LIBRARY CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo)
-  else()# Copy so files to the bin
-    install(TARGETS CommonDataModel 
-            LIBRARY CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release)
-    install(TARGETS CommonDataModel 
-            LIBRARY CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug)
-    install(TARGETS CommonDataModel 
-            LIBRARY CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo)
-  endif()
+                     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:CommonDataModel> ${INSTALL_BIN})
 endif()
-# Copy lib/so files to the sdk/lib
-install(TARGETS CommonDataModel         
-        LIBRARY CONFIGURATIONS Release DESTINATION ${INSTALL_LIB}/release
-        ARCHIVE CONFIGURATIONS Release DESTINATION ${INSTALL_LIB}/release)
-install(TARGETS CommonDataModel 
-        LIBRARY CONFIGURATIONS Debug DESTINATION ${INSTALL_LIB}/debug
-        ARCHIVE CONFIGURATIONS Debug DESTINATION ${INSTALL_LIB}/debug)
-install(TARGETS CommonDataModel  
-        LIBRARY CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_LIB}/relwithdebinfo
-        ARCHIVE CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_LIB}/relwithdebinfo)
+install(TARGETS CommonDataModel
+        RUNTIME DESTINATION ${INSTALL_BIN}
+        LIBRARY DESTINATION ${INSTALL_LIB}
+        ARCHIVE DESTINATION ${INSTALL_LIB})
 install_headers("${CMAKE_CURRENT_SOURCE_DIR}/cpp" "cdm")
 

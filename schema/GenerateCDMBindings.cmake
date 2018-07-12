@@ -1,7 +1,7 @@
 
 set(from "${SCHEMA_SRC}/proto")
 set(to   "${SCHEMA_DST}")
-set(BINDER "${SCHEMA_DST}/../../protobuf/install/bin/protoc")
+set(BINDER "${CMAKE_INSTALL_PREFIX}/bin/protoc")
 
 message(STATUS "Generating Schema Bindings" )
 message(STATUS "Using : ${BINDER}")

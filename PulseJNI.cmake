@@ -26,33 +26,20 @@ if(APPLE)
     set_target_properties(PulseJNI PROPERTIES MACOSX_RPATH ON)
 endif()
 
+set_target_properties(PulseJNI PROPERTIES
+    DEBUG_POSTFIX "${PULSE_DEBUG_POSTFIX}"
+    RELWITHDEBINFO_POSTFIX "${PULSE_RELWITHDEBINFO_POSTFIX}")
+
 target_link_libraries(PulseJNI PulseEngineUnitTests)
 target_link_libraries(PulseJNI CommonDataModelUnitTests)
 
 add_custom_command(TARGET PulseJNI POST_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALL_BIN}/${CONFIGURATION}
-                   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:PulseJNI> ${INSTALL_BIN}/${CONFIGURATION})
-if(WIN32)# Copy dll files to the bin
-  install(TARGETS PulseJNI 
-          RUNTIME CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release
-          LIBRARY CONFIGURATIONS Release DESTINATION ${INSTALL_LIB}/release
-          ARCHIVE CONFIGURATIONS Release DESTINATION ${INSTALL_LIB}/release)
-  install(TARGETS PulseJNI 
-          RUNTIME CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug
-          LIBRARY CONFIGURATIONS Debug DESTINATION ${INSTALL_LIB}/debug
-          ARCHIVE CONFIGURATIONS Debug DESTINATION ${INSTALL_LIB}/debug)
-  install(TARGETS PulseJNI 
-          RUNTIME CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo
-          LIBRARY CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_LIB}/relwithdebinfo
-          ARCHIVE CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_LIB}/relwithdebinfo)
-else()# Copy so files to the bin
-  install(TARGETS PulseJNI 
-          LIBRARY CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release)
-  install(TARGETS PulseJNI 
-          LIBRARY CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug)
-  install(TARGETS PulseJNI 
-          LIBRARY CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo)
-endif()
+                   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:PulseJNI> ${INSTALL_BIN})
+
+install(TARGETS PulseJNI
+        RUNTIME DESTINATION ${INSTALL_BIN}
+        LIBRARY DESTINATION ${INSTALL_LIB}
+        ARCHIVE DESTINATION ${INSTALL_LIB})
 
 
 file(GLOB_RECURSE JAVA_FILES 
@@ -65,20 +52,20 @@ file(GLOB_RECURSE JAVA_FILES
   "${CMAKE_SOURCE_DIR}/test/driver/java/*.java")
 add_jar(PulseJava ${JAVA_FILES}
     INCLUDE_JARS 
-      ${CMAKE_SOURCE_DIR}/jar/jcommon-1.0.16.jar
-      ${CMAKE_SOURCE_DIR}/jar/jdom-2.0.2.jar
-      ${CMAKE_SOURCE_DIR}/jar/jfreechart-1.0.13.jar
-      ${CMAKE_SOURCE_DIR}/jar/guava-11.0.2.jar
-      ${CMAKE_SOURCE_DIR}/jar/log4j-1.2.17.jar
-      ${CMAKE_SOURCE_DIR}/jar/poi-3.13-20150929.jar
-      ${CMAKE_SOURCE_DIR}/jar/poi-ooxml-3.13-20150929.jar
-      ${CMAKE_SOURCE_DIR}/jar/poi-ooxml-schemas-3.13-20150929.jar
-      ${CMAKE_SOURCE_DIR}/jar/pdfbox-2.0.0-RC3.jar
-      ${CMAKE_SOURCE_DIR}/jar/reflections-0.9.9-RC1-uberjar.jar
-      ${CMAKE_SOURCE_DIR}/jar/zip4j-1.3.1.jar
-      ${CMAKE_SOURCE_DIR}/jar/org.eclipse.jgit-4.11.0.201803080745-r.jar
-      ${CMAKE_SOURCE_DIR}/jar/slf4j-api-1.7.25.jar
-      ${CMAKE_SOURCE_DIR}/jar/slf4j-simple-1.7.25.jar
+      "${CMAKE_SOURCE_DIR}/jar/jcommon-1.0.16.jar"
+      "${CMAKE_SOURCE_DIR}/jar/jdom-2.0.2.jar"
+      "${CMAKE_SOURCE_DIR}/jar/jfreechart-1.0.13.jar"
+      "${CMAKE_SOURCE_DIR}/jar/guava-11.0.2.jar"
+      "${CMAKE_SOURCE_DIR}/jar/log4j-1.2.17.jar"
+      "${CMAKE_SOURCE_DIR}/jar/poi-3.13-20150929.jar"
+      "${CMAKE_SOURCE_DIR}/jar/poi-ooxml-3.13-20150929.jar"
+      "${CMAKE_SOURCE_DIR}/jar/poi-ooxml-schemas-3.13-20150929.jar"
+      "${CMAKE_SOURCE_DIR}/jar/pdfbox-2.0.0-RC3.jar"
+      "${CMAKE_SOURCE_DIR}/jar/reflections-0.9.9-RC1-uberjar.jar"
+      "${CMAKE_SOURCE_DIR}/jar/zip4j-1.3.1.jar"
+      "${CMAKE_SOURCE_DIR}/jar/org.eclipse.jgit-4.11.0.201803080745-r.jar"
+      "${CMAKE_SOURCE_DIR}/jar/slf4j-api-1.7.25.jar"
+      "${CMAKE_SOURCE_DIR}/jar/slf4j-simple-1.7.25.jar"
     OUTPUT_NAME Pulse)
 get_target_property(_jarFile PulseJava JAR_FILE)
 add_custom_command(TARGET PulseJava POST_BUILD

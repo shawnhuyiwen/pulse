@@ -116,43 +116,21 @@ if(MSVC)
   target_link_libraries(DataModelBindings advapi32.lib)
 endif()
 
-add_custom_command(TARGET DataModelBindings POST_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/proto ${INSTALL_BIN}/proto)
+set_target_properties(DataModelBindings PROPERTIES
+    OUTPUT_NAME ${LIB_PREFIX}DataModelBindings
+    DEBUG_POSTFIX "${PULSE_DEBUG_POSTFIX}"
+    RELWITHDEBINFO_POSTFIX "${PULSE_RELWITHDEBINFO_POSTFIX}")
+
 add_custom_command(TARGET DataModelBindings POST_BUILD
                   COMMAND ${CMAKE_COMMAND} -E touch ${SCHEMA_DST}/schema_last_built)
                    
 if(${BUILD_SHARED_LIBS})
   add_custom_command(TARGET DataModelBindings POST_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALL_BIN}/${CONFIGURATION}
-                   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:DataModelBindings> ${INSTALL_BIN}/${CONFIGURATION})
-  if(WIN32)# Copy dll files to the bin
-    install(TARGETS DataModelBindings 
-            RUNTIME CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release
-            LIBRARY CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release)
-    install(TARGETS DataModelBindings 
-            RUNTIME CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug
-            LIBRARY CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug)
-    install(TARGETS DataModelBindings 
-            RUNTIME CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo
-            LIBRARY CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo)
-  else()# Copy so files to the bin
-    install(TARGETS DataModelBindings 
-            LIBRARY CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release)
-    install(TARGETS DataModelBindings 
-            LIBRARY CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug)
-    install(TARGETS DataModelBindings 
-            LIBRARY CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo)
-  endif()
+                   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:DataModelBindings> ${INSTALL_BIN})
 endif()
-# Copy lib/so files to the sdk/lib
-install(TARGETS DataModelBindings         
-        LIBRARY CONFIGURATIONS Release DESTINATION ${INSTALL_LIB}/release
-        ARCHIVE CONFIGURATIONS Release DESTINATION ${INSTALL_LIB}/release)
-install(TARGETS DataModelBindings 
-        LIBRARY CONFIGURATIONS Debug DESTINATION ${INSTALL_LIB}/debug
-        ARCHIVE CONFIGURATIONS Debug DESTINATION ${INSTALL_LIB}/debug)
-install(TARGETS DataModelBindings  
-        LIBRARY CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_LIB}/relwithdebinfo
-        ARCHIVE CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_LIB}/relwithdebinfo)
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/proto DESTINATION ${INSTALL_BIN})
+
+install(TARGETS DataModelBindings
+        RUNTIME DESTINATION ${INSTALL_BIN}
+        LIBRARY DESTINATION ${INSTALL_LIB}
+        ARCHIVE DESTINATION ${INSTALL_LIB})
 install_headers("${CMAKE_BINARY_DIR}/schema/cpp/bind" "bind")

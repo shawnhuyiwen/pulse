@@ -26,30 +26,20 @@ IF(APPLE)
     set_target_properties(CommonDataModelUnitTests PROPERTIES MACOSX_RPATH ON)
 ENDIF()
 
+set_target_properties(CommonDataModelUnitTests PROPERTIES
+    OUTPUT_NAME ${LIB_PREFIX}CommonDataModelUnitTests
+    DEBUG_POSTFIX "${PULSE_DEBUG_POSTFIX}"
+    RELWITHDEBINFO_POSTFIX "${PULSE_RELWITHDEBINFO_POSTFIX}")
+
 # Dependent Libraries
 target_link_libraries(CommonDataModelUnitTests CommonDataModel)
 
 if(${BUILD_SHARED_LIBS})
   add_custom_command(TARGET CommonDataModelUnitTests POST_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALL_BIN}/${CONFIGURATION}
-                   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:CommonDataModelUnitTests> ${INSTALL_BIN}/${CONFIGURATION})
-
-  if(WIN32)# Copy dll files to the bin
-    install(TARGETS CommonDataModelUnitTests 
-            RUNTIME CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release
-            LIBRARY CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release)
-    install(TARGETS CommonDataModelUnitTests 
-            RUNTIME CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug
-            LIBRARY CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug)
-    install(TARGETS CommonDataModelUnitTests 
-            RUNTIME CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo
-            LIBRARY CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo)
-  else()# Copy so files to the bin
-    install(TARGETS CommonDataModelUnitTests 
-            LIBRARY CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release)
-    install(TARGETS CommonDataModelUnitTests 
-            LIBRARY CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug)
-    install(TARGETS CommonDataModelUnitTests 
-            LIBRARY CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo)
-  endif()
+                   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:CommonDataModelUnitTests> ${INSTALL_BIN})
 endif()
+
+install(TARGETS CommonDataModelUnitTests
+        RUNTIME DESTINATION ${INSTALL_BIN}
+        LIBRARY DESTINATION ${INSTALL_LIB}
+        ARCHIVE DESTINATION ${INSTALL_LIB})

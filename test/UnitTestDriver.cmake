@@ -14,12 +14,10 @@ target_include_directories(UnitTestDriver PRIVATE ${LOG4CPLUS_INCLUDE_DIR})
 target_include_directories(UnitTestDriver PRIVATE ${PROTOBUF_INCLUDE_DIR})
 target_link_libraries(UnitTestDriver CommonDataModelUnitTests PulseEngineUnitTests)
 
+
+set_target_properties(UnitTestDriver PROPERTIES
+    DEBUG_POSTFIX "${PULSE_DEBUG_POSTFIX}"
+    RELWITHDEBINFO_POSTFIX "${PULSE_RELWITHDEBINFO_POSTFIX}")
+
 add_custom_command(TARGET UnitTestDriver POST_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALL_BIN}/${CONFIGURATION}
-                   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:UnitTestDriver> ${INSTALL_BIN}/${CONFIGURATION})
-install(TARGETS UnitTestDriver 
-        RUNTIME CONFIGURATIONS Release DESTINATION ${INSTALL_BIN}/release)
-install(TARGETS UnitTestDriver 
-        RUNTIME CONFIGURATIONS Debug DESTINATION ${INSTALL_BIN}/debug)
-install(TARGETS UnitTestDriver 
-        RUNTIME CONFIGURATIONS RelWithDebInfo DESTINATION ${INSTALL_BIN}/relwithdebinfo)
+                   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:UnitTestDriver> ${INSTALL_BIN})

@@ -23,11 +23,13 @@ target_include_directories(HowToDriver PRIVATE ${PROTOBUF_INCLUDE_DIR})
 # Dependent Libraries
 target_link_libraries(HowToDriver PulseEngine)
 
+set_target_properties(HowToDriver PROPERTIES
+    DEBUG_POSTFIX "${PULSE_DEBUG_POSTFIX}"
+    RELWITHDEBINFO_POSTFIX "${PULSE_RELWITHDEBINFO_POSTFIX}")
 
 IF(UNIX)
     SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_RPATH}:\$ORIGIN")
 ENDIF()
 
 add_custom_command(TARGET HowToDriver POST_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALL_BIN}/${CONFIGURATION}
-                   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:HowToDriver> ${INSTALL_BIN}/${CONFIGURATION})
+                   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:HowToDriver> ${INSTALL_BIN})

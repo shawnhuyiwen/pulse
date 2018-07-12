@@ -3,6 +3,7 @@ include(CMakeDetermineSystem)
 project(OuterBuild)
 
 set(BUILD_SHARED_LIBS OFF)
+list(APPEND CMAKE_PREFIX_PATH ${CMAKE_INSTALL_PREFIX})
 if(MSVC OR XCode)
 # For multi configuration IDE environments start with release
   set(CMAKE_CONFIGURATION_TYPES Release CACHE TYPE INTERNAL FORCE )
@@ -14,26 +15,24 @@ endif()
 
 message( STATUS "External project - Eigen" )
 set(eigen_VERSION "3.3.4" )
-set(eigen_DIR "${CMAKE_BINARY_DIR}/eigen/src/eigen")
-set(eigen_INSTALL "${CMAKE_CURRENT_BINARY_DIR}/eigen/install")
-set(eigen_patch "${CMAKE_SOURCE_DIR}/cmake/eigen-patches")
+set(eigen_SRC "${CMAKE_BINARY_DIR}/eigen/src/eigen")
+set(eigen_Patch "${CMAKE_SOURCE_DIR}/cmake/eigen-patches")
 
 ExternalProject_Add( eigen
   PREFIX eigen
   URL "http://bitbucket.org/eigen/eigen/get/${eigen_VERSION}.tar.gz"
   URL_HASH MD5=1a47e78efe365a97de0c022d127607c3
   UPDATE_COMMAND 
-    COMMAND ${CMAKE_COMMAND} -Deigen_source=${eigen_DIR} -Deigen_patch=${eigen_patch} -P ${CMAKE_SOURCE_DIR}/cmake/eigen-patches/Patch.cmake
-  INSTALL_DIR "${eigen_INSTALL}"
+    COMMAND ${CMAKE_COMMAND} -Deigen_source=${eigen_SRC} -Deigen_patch=${eigen_Patch} -P ${CMAKE_SOURCE_DIR}/cmake/eigen-patches/Patch.cmake
+  INSTALL_DIR "${CMAKE_INSTALL_PREFIX}"
   CMAKE_ARGS
         -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF
-        -DCMAKE_INSTALL_PREFIX:STRING=${eigen_INSTALL}
-        -DINCLUDE_INSTALL_DIR:STRING=${eigen_INSTALL}/include
+        -DCMAKE_INSTALL_PREFIX:STRING=${CMAKE_INSTALL_PREFIX}
+        -DINCLUDE_INSTALL_DIR:STRING=${CMAKE_INSTALL_PREFIX}/include
 )
 list(APPEND Pulse_DEPENDENCIES eigen)
 # Install Headers
-list(APPEND CMAKE_PREFIX_PATH ${eigen_INSTALL})
-message(STATUS "Eigen is here : ${eigen_DIR}" )
+message(STATUS "Eigen is here : ${eigen_SRC}" )
 
 ###################################################
 ## log4cplus                                      ##
@@ -43,13 +42,8 @@ message(STATUS "Eigen is here : ${eigen_DIR}" )
 
 message( STATUS "External project - log4cplus" )
 set(log4cplus_VERSION "1.1.2" )
-set(log4cplus_DIR "${CMAKE_BINARY_DIR}/log4cplus/src/log4cplus")
-set(log4cplus_INSTALL "${CMAKE_CURRENT_BINARY_DIR}/log4cplus/install")
+set(log4cplus_SRC "${CMAKE_BINARY_DIR}/log4cplus/src/log4cplus")
 
-if(UNIX)
-  set(CONFIGURE "./configure")
-endif()
-		
 ExternalProject_Add( log4cplus
   PREFIX log4cplus
   #URL "https://github.com/Kitware/log4cplus/archive/1.2.x.zip"
@@ -59,22 +53,13 @@ ExternalProject_Add( log4cplus
   GIT_REPOSITORY "https://github.com/log4cplus/log4cplus.git"
   GIT_TAG REL_2_0_0
   GIT_SHALLOW TRUE
-  UPDATE_COMMAND 
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/cmake/log4cplus-patches/CMakeLists.txt ${log4cplus_DIR}/src/CMakeLists.txt
 # Build this in the Inner build
 # It will be easier to switch cofigurations in MSVC/XCode
-# INSTALL_DIR "${log4cplus_INSTALL}"
-# CMAKE_ARGS
-#       -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF
-#       -DCMAKE_INSTALL_PREFIX:STRING=${log4cplus_INSTALL}
-#       -DINCLUDE_INSTALL_DIR:STRING=${log4cplus_INSTALL}/include
-# do nothing
   CONFIGURE_COMMAND "" 
   BUILD_COMMAND ""
   INSTALL_COMMAND ""
 )
 list(APPEND Pulse_DEPENDENCIES log4cplus)
-list(APPEND CMAKE_PREFIX_PATH ${log4cplus_INSTALL})
 
 ###################################################
 ## Google Proto Buffers                          ##
@@ -84,15 +69,14 @@ list(APPEND CMAKE_PREFIX_PATH ${log4cplus_INSTALL})
 message( STATUS "External project - protobuf" )
 set(protobuf_VERSION "3.5.2" )
 set(protobuf_MD5 "7b3e7c0eaa75dcc5cdb8aba2f8c301cb" )
-set(protobuf_DIR "${CMAKE_BINARY_DIR}/protobuf/src/protobuf")
-set(protobuf_INSTALL "${CMAKE_CURRENT_BINARY_DIR}/protobuf/install")
+set(protobuf_SRC "${CMAKE_BINARY_DIR}/protobuf/src/protobuf")
 
 ExternalProject_Add( protobuf
   PREFIX protobuf
   URL "https://github.com/google/protobuf/archive/v${protobuf_VERSION}.zip"
   URL_MD5 ${protobuf_MD5}
-  DOWNLOAD_DIR ${protobuf_DIR}
-  INSTALL_DIR "${protobuf_INSTALL}"
+  DOWNLOAD_DIR ${protobuf_SRC}
+  INSTALL_DIR "${CMAKE_INSTALL_PREFIX}"
   SOURCE_SUBDIR ./cmake
   CMAKE_ARGS 
     -Dprotobuf_BUILD_TESTS:BOOL=OFF
@@ -101,7 +85,7 @@ ExternalProject_Add( protobuf
     -Dprotobuf_MSVC_STATIC_RUNTIME:BOOL=OFF#Don't change MSVC runtime settings (/MD or /MT)
     -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
     -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-    -DCMAKE_INSTALL_PREFIX:STRING=${protobuf_INSTALL}
+    -DCMAKE_INSTALL_PREFIX:STRING=${CMAKE_INSTALL_PREFIX}
     -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
     -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
     -DCMAKE_CXX_FLAGS_DEBUG:STRING=${CMAKE_CXX_FLAGS_DEBUG}
@@ -117,9 +101,8 @@ ExternalProject_Add( protobuf
     -DADDITIONAL_CXX_FLAGS:STRING=${ADDITIONAL_CXX_FLAGS}
 )
 list(APPEND Pulse_DEPENDENCIES protobuf)
-list(APPEND CMAKE_PREFIX_PATH ${protobuf_INSTALL})
 
-message(STATUS "protobuf is here : ${protobuf_DIR}" )
+message(STATUS "protobuf is here : ${protobuf_SRC}" )
 
 if(WIN32)
   ##########################################
@@ -130,21 +113,19 @@ if(WIN32)
 
   message( STATUS "External project - dirent" )
   set(dirent_DIR "${CMAKE_BINARY_DIR}/dirent/src/dirent")
-  set(dirent_INSTALL "${CMAKE_CURRENT_BINARY_DIR}/dirent/install")
   set(dirent_MD5 "cf5b4499d163604732f4dc91654056be" )
   ExternalProject_Add( dirent
     PREFIX dirent
     URL "https://github.com/tronkko/dirent/archive/1.22.zip"
     URL_MD5 ${dirent_MD5}
-    INSTALL_DIR "${dirent_INSTALL}"
+    INSTALL_DIR "${CMAKE_INSTALL_PREFIX}"
     CMAKE_ARGS
           -DBUILD_SHARED_LIBS:BOOL=OFF
-          -DCMAKE_INSTALL_PREFIX:STRING=${dirent_INSTALL}
-          -DINCLUDE_INSTALL_DIR:STRING=${dirent_INSTALL}/include
+          -DCMAKE_INSTALL_PREFIX:STRING=${CMAKE_INSTALL_PREFIX}
+          -DINCLUDE_INSTALL_DIR:STRING=${CMAKE_INSTALL_PREFIX}/include
   )
   message(STATUS "dirent is here : ${dirent_DIR}" )
   list(APPEND Pulse_DEPENDENCIES dirent)
-  list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR}/dirent/install)
 endif()
 
 # Support ccache
@@ -174,7 +155,6 @@ ExternalProject_Add( Pulse
   LIST_SEPARATOR ::
   CMAKE_ARGS
     -DSUPERBUILD:BOOL=OFF
-    -DPULSE_BUILD_CLR:BOOL=${PULSE_BUILD_CLR}
     -DCMAKE_PREFIX_PATH:STRING=${CMAKE_PREFIX_PATH}
     -DCMAKE_INSTALL_PREFIX:STRING=${CMAKE_INSTALL_PREFIX}
     -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
@@ -192,13 +172,10 @@ ExternalProject_Add( Pulse
 
     -DBUILD_SHARED_LIBS:BOOL=${shared}
     -DBUILD_TESTING:BOOL=${BUILD_TESTING}
+    -DPULSE_BUILD_CLR:BOOL=${PULSE_BUILD_CLR}
     # Let InnerBuild build and install these
-    -Deigen_INSTALL=${eigen_INSTALL}
-    -Dlog4cplus_DIR=${log4cplus_DIR}
-    -Dlog4cplus_INSTALL=${log4cplus_INSTALL}
-    -Dprotobuf_DIR=${protobuf_DIR}
-    -Dprotobuf_INSTALL=${protobuf_INSTALL}
-    -Ddirent_INSTALL=${dirent_INSTALL}
+    -Dlog4cplus_SRC=${log4cplus_SRC}
+    -Dprotobuf_SRC=${protobuf_SRC}
   INSTALL_DIR "${CMAKE_INSTALL_PREFIX}"
 )
 

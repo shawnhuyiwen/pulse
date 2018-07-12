@@ -25,12 +25,6 @@ set(Pulse_INCLUDE_DIRS "@CMAKE_INSTALL_PREFIX@/include"
                        "@CMAKE_INSTALL_PREFIX@/include/cdm"
                        )
 set(Pulse_LIB_ROOT_DIR "@CMAKE_INSTALL_PREFIX@/lib/")
-if(MSVC)
-  set( Pulse_LIB_DIR "${Pulse_LIB_ROOT_DIR}$(Configuration)" )
-else()#TODO XCode might need a conditional
-  string(TOLOWER "${CMAKE_BUILD_TYPE}" lower_build_type)
-  set( Pulse_LIB_DIR "${Pulse_LIB_ROOT_DIR}${lower_build_type}" )
-endif()
 
 if(MSVC)
  set(LOG4CPLUS_LIB "log4cplus")
@@ -48,18 +42,25 @@ endif()
 
 set(Pulse_INSTALL "@CMAKE_INSTALL_PREFIX@")
 
-set(Pulse_LIBS "${Pulse_LIB_ROOT_DIR}/release/PulseEngine.${LIB_ENDING}" 
-               "${Pulse_LIB_ROOT_DIR}/release/CommonDataModel.${LIB_ENDING}"
-               "${Pulse_LIB_ROOT_DIR}/release/DataModelBindings.${LIB_ENDING}"
-               "${Pulse_LIB_ROOT_DIR}/release/${LOG4CPLUS_LIB}.${LIB_ENDING}"
-               "${Pulse_LIB_ROOT_DIR}/release/libprotobuf.${LIB_ENDING}"
+set(Pulse_LIBS "${Pulse_LIB_ROOT_DIR}/PulseEngine.${LIB_ENDING}" 
+               "${Pulse_LIB_ROOT_DIR}/CommonDataModel.${LIB_ENDING}"
+               "${Pulse_LIB_ROOT_DIR}/DataModelBindings.${LIB_ENDING}"
+               "${Pulse_LIB_ROOT_DIR}/${LOG4CPLUS_LIB}.${LIB_ENDING}"
+               "${Pulse_LIB_ROOT_DIR}/libprotobuf.${LIB_ENDING}"
 )
 
-set(Pulse_DEBUG_LIBS "${Pulse_LIB_ROOT_DIR}/debug/PulseEngine.${LIB_ENDING}"
-                     "${Pulse_LIB_ROOT_DIR}/debug/CommonDataModel.${LIB_ENDING}"
-                     "${Pulse_LIB_ROOT_DIR}/debug/DataModelBindings.${LIB_ENDING}"
-                     "${Pulse_LIB_ROOT_DIR}/debug/${LOG4CPLUS_LIB}D.${LIB_ENDING}"
-                     "${Pulse_LIB_ROOT_DIR}/debug/libprotobufd.${LIB_ENDING}"
+set(Pulse_RELWITHDEBINFO_LIBS "${Pulse_LIB_ROOT_DIR}/PulseEnginedi.${LIB_ENDING}" 
+                              "${Pulse_LIB_ROOT_DIR}/CommonDataModeldi.${LIB_ENDING}"
+                              "${Pulse_LIB_ROOT_DIR}/DataModelBindingsdi.${LIB_ENDING}"
+                              "${Pulse_LIB_ROOT_DIR}/${LOG4CPLUS_LIB}.${LIB_ENDING}"
+                              "${Pulse_LIB_ROOT_DIR}/libprotobuf.${LIB_ENDING}"
+)
+
+set(Pulse_DEBUG_LIBS "${Pulse_LIB_ROOT_DIR}/PulseEngined.${LIB_ENDING}"
+                     "${Pulse_LIB_ROOT_DIR}/CommonDataModeld.${LIB_ENDING}"
+                     "${Pulse_LIB_ROOT_DIR}/DataModelBindingsd.${LIB_ENDING}"
+                     "${Pulse_LIB_ROOT_DIR}/${LOG4CPLUS_LIB}D.${LIB_ENDING}"
+                     "${Pulse_LIB_ROOT_DIR}/libprotobufd.${LIB_ENDING}"
 )
 if(WIN32)
   list(APPEND Pulse_LIBS "ws2_32" "advapi32")
