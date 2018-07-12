@@ -76,7 +76,6 @@ ExternalProject_Add( protobuf
   URL "https://github.com/google/protobuf/archive/v${protobuf_VERSION}.zip"
   URL_MD5 ${protobuf_MD5}
   DOWNLOAD_DIR ${protobuf_SRC}
-  INSTALL_DIR "${CMAKE_INSTALL_PREFIX}"
   SOURCE_SUBDIR ./cmake
   CMAKE_ARGS 
     -Dprotobuf_BUILD_TESTS:BOOL=OFF
@@ -118,7 +117,6 @@ if(WIN32)
     PREFIX dirent
     URL "https://github.com/tronkko/dirent/archive/1.22.zip"
     URL_MD5 ${dirent_MD5}
-    INSTALL_DIR "${CMAKE_INSTALL_PREFIX}"
     CMAKE_ARGS
           -DBUILD_SHARED_LIBS:BOOL=OFF
           -DCMAKE_INSTALL_PREFIX:STRING=${CMAKE_INSTALL_PREFIX}
@@ -176,7 +174,6 @@ ExternalProject_Add( Pulse
     # Let InnerBuild build and install these
     -Dlog4cplus_SRC=${log4cplus_SRC}
     -Dprotobuf_SRC=${protobuf_SRC}
-  INSTALL_DIR "${CMAKE_INSTALL_PREFIX}"
 )
 
 add_custom_target(PulseData ALL)

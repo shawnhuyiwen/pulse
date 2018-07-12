@@ -20,7 +20,7 @@ public class UnitConverter
   /** Loads Unit Conversion DLL */
   static
   {
-  	String location = System.getProperty("user.dir")+"/release";
+  	String location = System.getProperty("user.dir");
     List<String>libs = new ArrayList<String>();
     libs.add("PulseJNI");
     if(!FileUtils.loadLibraries(libs,location))
