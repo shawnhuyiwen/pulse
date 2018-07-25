@@ -60,10 +60,12 @@ $ sudo make install
 The test suite and data generate tools used are written in Java.
 While there is no dependency on Java when integrating with your application, it is currently required to build/develop/contribute to the code base.
 
-Add a JAVA_HOME environment variable to point to the Java installation and add it to the system PATH.<br>
+A JAVA_HOME environment variable needs to exist pointing to the Java installation.<br>
 There are many ways to do this, here is a simple walk through to get you going with a JDK.
 
 #### Windows
+The JAVA_HOME environment variable pointing to the Java installation needs to be added to the system PATH.<br>
+
 - Download the Windows x64 JDK <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">here.</a>
 - Run the installer.
 - Goto your Control Panel->System and click Advanced system settings on the left. <br>
