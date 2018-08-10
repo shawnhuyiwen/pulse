@@ -4,9 +4,7 @@
 #include "stdafx.h"
 #include "patient/actions/SESubstanceBolus.h"
 #include "substance/SESubstance.h"
-PROTO_PUSH
 #include "bind/cdm/PatientActions.pb.h"
-PROTO_POP
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarTime.h"

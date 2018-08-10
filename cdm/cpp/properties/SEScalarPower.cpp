@@ -3,9 +3,7 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarPower.h"
-PROTO_PUSH
 #include "bind/cdm/Properties.pb.h"
-PROTO_POP
 
 const PowerUnit PowerUnit::W("W");
 const PowerUnit PowerUnit::kcal_Per_s("kcal/s");

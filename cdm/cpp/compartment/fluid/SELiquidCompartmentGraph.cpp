@@ -4,9 +4,7 @@
 #include "stdafx.h"
 #include "compartment/fluid/SELiquidCompartmentGraph.h"
 #include "compartment/SECompartmentManager.h"
-PROTO_PUSH
 #include "bind/cdm/Compartment.pb.h"
-PROTO_POP
 
 void SELiquidCompartmentGraph::Load(const cdm::LiquidCompartmentGraphData& src, SELiquidCompartmentGraph& dst, SECompartmentManager& cmptMgr)
 {

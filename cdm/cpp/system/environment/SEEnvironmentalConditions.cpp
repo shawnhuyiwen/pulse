@@ -17,9 +17,7 @@
 #include "properties/SEScalarTemperature.h"
 
 #include <google/protobuf/text_format.h>
-PROTO_PUSH
 #include "bind/cdm/EnvironmentConditions.pb.h"
-PROTO_POP
 
 
 SEEnvironmentalConditions::SEEnvironmentalConditions(SESubstanceManager& substances) : Loggable(substances.GetLogger()), m_Substances(substances)

@@ -9,9 +9,7 @@
 #include "properties/SEScalar.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarVolumePerTime.h"
-PROTO_PUSH
 #include "bind/cdm/Compartment.pb.h"
-PROTO_POP
 
 SELiquidCompartment::SELiquidCompartment(const std::string& name, Logger* logger) : SEFluidCompartment(name, logger)
 {

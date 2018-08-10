@@ -3,9 +3,7 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarAmount.h"
-PROTO_PUSH
 #include "bind/cdm/Properties.pb.h"
-PROTO_POP
 
 const AmountUnit AmountUnit::mol("mol");
 const AmountUnit AmountUnit::pmol("pmol");

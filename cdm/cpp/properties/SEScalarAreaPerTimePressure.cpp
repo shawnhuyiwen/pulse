@@ -3,9 +3,7 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarAreaPerTimePressure.h"
-PROTO_PUSH
 #include "bind/cdm/Properties.pb.h"
-PROTO_POP
 
 const AreaPerTimePressureUnit AreaPerTimePressureUnit::m2_Per_s_mmHg("m^2/s mmHg");
 const AreaPerTimePressureUnit AreaPerTimePressureUnit::cm2_Per_s_mmHg("cm^2/s mmHg");

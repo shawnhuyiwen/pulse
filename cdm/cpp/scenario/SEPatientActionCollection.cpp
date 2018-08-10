@@ -34,9 +34,7 @@
 #include "substance/SESubstanceCompound.h"
 #include "substance/SESubstanceConcentration.h"
 
-PROTO_PUSH
 #include "bind/cdm/Scenario.pb.h"
-PROTO_POP
 #include "properties/SEScalarVolumePerTime.h"
 
 SEPatientActionCollection::SEPatientActionCollection(SESubstanceManager& substances) : Loggable(substances.GetLogger()), m_Substances(substances)

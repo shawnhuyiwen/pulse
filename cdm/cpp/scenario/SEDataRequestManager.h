@@ -7,9 +7,7 @@ class SEDecimalFormat;
 class SESubstance;
 class SESubstanceManager;
 CDM_BIND_DECL(DataRequestManagerData)
-PROTO_PUSH
 #include "bind/cdm/ScenarioEnums.pb.h"
-PROTO_PUSH
 
 class CDM_DECL SEDataRequestManager : public Loggable
 {

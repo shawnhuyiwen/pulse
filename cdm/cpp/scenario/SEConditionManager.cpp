@@ -15,9 +15,7 @@
 #include "patient/conditions/SEImpairedAlveolarExchange.h"
 // Environment Conditions
 #include "system/environment/conditions/SEInitialEnvironmentConditions.h"
-PROTO_PUSH
 #include "bind/cdm/Scenario.pb.h"
-PROTO_POP
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceManager.h"
 

@@ -16,9 +16,7 @@ class SELiquidCompartmentGraph;
 class SEThermalCompartment;
 class SEThermalCompartmentLink;
 class SETissueCompartment;
-PROTO_PUSH
 #include "bind/cdm/CompartmentEnums.pb.h"
-PROTO_POP
 CDM_BIND_DECL(CompartmentManagerData)
 
 class CDM_DECL SECompartmentManager : public Loggable

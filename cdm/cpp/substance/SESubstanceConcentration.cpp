@@ -6,9 +6,7 @@
 #include "substance/SESubstanceManager.h"
 #include "substance/SESubstanceConcentration.h"
 #include "properties/SEScalarMassPerVolume.h"
-PROTO_PUSH
 #include "bind/cdm/Substance.pb.h"
-PROTO_POP
 
 SESubstanceConcentration::SESubstanceConcentration(SESubstance& substance) : Loggable(substance.GetLogger()), m_Substance(substance)
 {

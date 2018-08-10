@@ -8,9 +8,7 @@
 #include "properties/SEScalarElectricPotential.h"
 #include "properties/SEFunctionElectricPotentialVsTime.h"
 #include <google/protobuf/text_format.h>
-PROTO_PUSH
 #include "bind/cdm/ElectroCardioGram.pb.h"
-PROTO_POP
 
 SEElectroCardioGramWaveformInterpolator::SEElectroCardioGramWaveformInterpolator(Logger* logger) : Loggable(logger)
 {

@@ -6,9 +6,7 @@
 #include "properties/SEScalarTime.h"
 #include "properties/SEScalarElectricPotential.h"
 #include "properties/SEFunctionElectricPotentialVsTime.h"
-PROTO_PUSH
 #include "bind/cdm/ElectroCardioGram.pb.h"
-PROTO_POP
 
 SEElectroCardioGramWaveform::SEElectroCardioGramWaveform(Logger* logger) : Loggable(logger)
 {

@@ -2,10 +2,8 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-PROTO_PUSH
 #include "bind/cdm/PatientEnums.pb.h"
 #include "bind/cdm/AnesthesiaMachineEnums.pb.h"
-PROTO_POP
 
 class CDM_DECL SEEventHandler
 {

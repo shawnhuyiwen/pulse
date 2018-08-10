@@ -11,9 +11,7 @@
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarLength.h"
-PROTO_PUSH
 #include "bind/cdm/Physiology.pb.h"
-PROTO_POP
 
 SEDrugSystem::SEDrugSystem(Logger* logger) : SESystem(logger)
 {

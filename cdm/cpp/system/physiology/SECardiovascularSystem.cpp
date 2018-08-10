@@ -13,9 +13,7 @@
 #include "properties/SEScalarPressureTimePerArea.h"
 #include "properties/SEScalarPressureTimePerVolumeArea.h"
 #include "properties/SEScalarVolumePerTimeArea.h"
-PROTO_PUSH
 #include "bind/cdm/Physiology.pb.h"
-PROTO_POP
 
 SECardiovascularSystem::SECardiovascularSystem(Logger* logger) : SESystem(logger)
 {

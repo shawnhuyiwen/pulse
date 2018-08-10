@@ -7,9 +7,7 @@
 #include "PulseConfiguration.h"
 #include "Systems/Cardiovascular.h"
 #include "system/equipment/electrocardiogram/SEElectroCardioGramWaveformInterpolator.h"
-PROTO_PUSH
 #include "bind/engine/EngineEquipment.pb.h"
-PROTO_POP
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEFunctionElectricPotentialVsTime.h"
 #include "properties/SEScalarTime.h"

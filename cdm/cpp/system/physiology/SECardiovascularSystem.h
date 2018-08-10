@@ -4,9 +4,7 @@
 #pragma once
 #include "system/SESystem.h"
 CDM_BIND_DECL(CardiovascularSystemData)
-PROTO_PUSH
 #include "bind/cdm/PhysiologyEnums.pb.h"
-PROTO_POP
 
 class CDM_DECL SECardiovascularSystem : public SESystem
 {

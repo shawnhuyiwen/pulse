@@ -3,9 +3,7 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarFlowInertance.h"
-PROTO_PUSH
 #include "bind/cdm/Properties.pb.h"
-PROTO_POP
 
 const FlowInertanceUnit FlowInertanceUnit::mmHg_s2_Per_mL("mmHg s^2/mL");
 const FlowInertanceUnit FlowInertanceUnit::mmHg_s2_Per_L("mmHg s^2/L");

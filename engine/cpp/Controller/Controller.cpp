@@ -71,9 +71,7 @@
 #include "utils/FileUtils.h"
 #include <google/protobuf/text_format.h>
 
-PROTO_PUSH
 #include "bind/engine/Engine.pb.h"
-PROTO_POP
 
 
 PulseController::PulseController(const std::string& logFileName) : PulseController(new Logger(logFileName))

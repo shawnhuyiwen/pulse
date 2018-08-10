@@ -5,9 +5,7 @@
 #include "circuit/electrical/SEElectricalCircuitNode.h"
 #include "properties/SEScalarElectricCharge.h"
 #include "properties/SEScalarElectricPotential.h"
-PROTO_PUSH
 #include "bind/cdm/Circuit.pb.h"
-PROTO_POP
 
 SEElectricalCircuitNode::SEElectricalCircuitNode(const std::string& name, Logger* logger) : SECircuitNode<SEScalarElectricPotential, SEScalarElectricCharge>(name, logger)
 {

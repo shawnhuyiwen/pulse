@@ -3,9 +3,7 @@
 
 #pragma once
 CDM_BIND_DECL(DecimalFormatData)
-PROTO_PUSH
 #include "bind/cdm/ScenarioEnums.pb.h"
-PROTO_PUSH
 
 class CDM_DECL SEDecimalFormat
 {

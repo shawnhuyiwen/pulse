@@ -11,9 +11,7 @@
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
-PROTO_PUSH
 #include "bind/cdm/Physiology.pb.h"
-PROTO_POP
 
 SERespiratorySystem::SERespiratorySystem(Logger* logger) : SESystem(logger)
 {

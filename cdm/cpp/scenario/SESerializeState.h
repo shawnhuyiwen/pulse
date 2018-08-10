@@ -3,9 +3,7 @@
 
 #pragma once
 #include "scenario/SEAction.h"
-PROTO_PUSH
 #include "bind/cdm/ActionEnums.pb.h"
-PROTO_POP
 CDM_BIND_DECL(SerializeStateData)
 
 class CDM_DECL SESerializeState : public SEAction

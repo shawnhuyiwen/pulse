@@ -6,9 +6,7 @@
 #include "system/physiology/SEPupillaryResponse.h"
 #include "properties/SEScalarNegative1To1.h"
 #include "properties/SEScalarMassPerVolume.h"
-PROTO_PUSH
 #include "bind/cdm/Substance.pb.h"
-PROTO_POP
 
 SESubstancePharmacodynamics::SESubstancePharmacodynamics(Logger* logger) : Loggable(logger)
 {

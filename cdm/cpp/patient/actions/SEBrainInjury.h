@@ -3,9 +3,7 @@
 
 #pragma once
 #include "patient/actions/SEPatientAction.h"
-PROTO_PUSH
 #include "bind/cdm/PatientActionEnums.pb.h"
-PROTO_POP
 CDM_BIND_DECL(BrainInjuryData)
 
 class CDM_DECL SEBrainInjury : public SEPatientAction

@@ -3,9 +3,7 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarLength.h"
-PROTO_PUSH
 #include "bind/cdm/Properties.pb.h"
-PROTO_POP
 
 const LengthUnit LengthUnit::m("m");
 const LengthUnit LengthUnit::cm("cm");

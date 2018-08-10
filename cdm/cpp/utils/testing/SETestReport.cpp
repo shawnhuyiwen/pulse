@@ -7,9 +7,7 @@
 #include "utils/testing/SETestSuite.h"
 #include "utils/testing/SETestErrorStatistics.h"
 #include <google/protobuf/text_format.h>
-PROTO_PUSH
 #include "bind/cdm/TestReport.pb.h"
-PROTO_POP
 
 SETestReport::SETestReport(Logger* logger) : Loggable(logger)
 {

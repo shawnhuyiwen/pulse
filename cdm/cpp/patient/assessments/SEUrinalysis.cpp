@@ -4,9 +4,7 @@
 #include "stdafx.h"
 #include "patient/assessments/SEUrinalysis.h"
 #include "patient/assessments/SEUrinalysisMicroscopic.h"
-PROTO_PUSH
 #include "bind/cdm/PatientAssessments.pb.h"
-PROTO_POP
 #include "properties/SEScalarTime.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"

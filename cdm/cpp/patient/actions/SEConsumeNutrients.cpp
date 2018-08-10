@@ -3,9 +3,7 @@
 
 #include "stdafx.h"
 #include "patient/actions/SEConsumeNutrients.h"
-PROTO_PUSH
 #include "bind/cdm/PatientActions.pb.h"
-PROTO_POP
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarMassPerTime.h"
 #include "properties/SEScalarVolume.h"

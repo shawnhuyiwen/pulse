@@ -7,9 +7,7 @@
 #include "Controller/Controller.h"
 #include "Controller/Compartments.h"
 #include "Controller/Substances.h"
-PROTO_PUSH
 #include "bind/engine/EngineEquipment.pb.h"
-PROTO_POP
 #include "system/physiology/SERespiratorySystem.h"
 #include "circuit/SECircuit.h"
 #include "circuit/SECircuitPath.h"

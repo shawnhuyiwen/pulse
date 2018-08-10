@@ -3,9 +3,7 @@
 
 #include "stdafx.h"
 #include "utils/RunningAverage.h"
-PROTO_PUSH
 #include "bind/cdm/Properties.pb.h"
-PROTO_POP
 
 RunningAverage::RunningAverage()
 {

@@ -4,9 +4,7 @@
 #include "stdafx.h"
 #include "Systems/Saturation.h"
 #include "Controller/Substances.h"
-PROTO_PUSH
 #include "bind/engine/EnginePhysiology.pb.h"
-PROTO_POP
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceManager.h"
 #include "compartment/fluid/SELiquidCompartment.h"

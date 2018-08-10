@@ -2,9 +2,7 @@
    See accompanying NOTICE file for details.*/
 #include "stdafx.h"
 #include "system/equipment/inhaler/actions/SEInhalerAction.h"
-PROTO_PUSH
 #include "bind/cdm/InhalerActions.pb.h"
-PROTO_POP
 #include "substance/SESubstanceManager.h"
 
 SEInhalerAction::SEInhalerAction() : SEAction()

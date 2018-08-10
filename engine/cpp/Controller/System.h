@@ -2,9 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-PROTO_PUSH
 #include "bind/engine/EnginePhysiology.pb.h"
-PROTO_POP
 #include "PulsePhysiologySystems.h"
 
 /**

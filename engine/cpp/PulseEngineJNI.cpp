@@ -18,11 +18,9 @@
 #include "patient/assessments/SEComprehensiveMetabolicPanel.h"
 #include "patient/assessments/SEUrinalysis.h"
 
-PROTO_PUSH
 #include "bind/cdm/Patient.pb.h"
 #include "bind/cdm/AnesthesiaMachine.pb.h"
 #include "bind/cdm/Scenario.pb.h"
-PROTO_POP
 #include <google/protobuf/text_format.h>
 
 #include "EngineTest.h"

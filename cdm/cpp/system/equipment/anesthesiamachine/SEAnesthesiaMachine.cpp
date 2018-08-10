@@ -6,9 +6,7 @@
 #include "system/equipment/anesthesiamachine/SEAnesthesiaMachineChamber.h"
 #include "system/equipment/anesthesiamachine/SEAnesthesiaMachineOxygenBottle.h"
 #include "substance/SESubstanceManager.h"
-PROTO_PUSH
 #include "bind/cdm/AnesthesiaMachine.pb.h"
-PROTO_POP
 
 // State Actions
 #include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineConfiguration.h"

@@ -8,9 +8,7 @@
 #include "system/environment/SEEnvironmentalConditions.h"
 #include "system/environment/actions/SEChangeEnvironmentConditions.h"
 #include "system/environment/conditions/SEInitialEnvironmentConditions.h"
-PROTO_PUSH
 #include "bind/cdm/Environment.pb.h"
-PROTO_POP
 #include "substance/SESubstanceManager.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarHeatConductancePerArea.h"

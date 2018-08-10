@@ -3,9 +3,7 @@
 
 #include "stdafx.h"
 #include "scenario/SESerializeState.h"
-PROTO_PUSH
 #include "bind/cdm/Actions.pb.h"
-PROTO_POP
 
 SESerializeState::SESerializeState() : SEAction()
 {

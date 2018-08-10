@@ -3,9 +3,7 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarNegative1To1.h"
-PROTO_PUSH
 #include "bind/cdm/Properties.pb.h"
-PROTO_POP
 
 SEScalarNegative1To1::SEScalarNegative1To1() : SEScalar()
 {

@@ -3,9 +3,7 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarHeatCapacitancePerAmount.h"
-PROTO_PUSH
 #include "bind/cdm/Properties.pb.h"
-PROTO_POP
 
 const HeatCapacitancePerAmountUnit HeatCapacitancePerAmountUnit::J_Per_K_mol("J/K mol");
 

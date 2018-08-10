@@ -8,9 +8,7 @@
 #include "scenario/SEDataRequestManager.h"
 #include "scenario/SEScenarioInitialParameters.h"
 #include "substance/SESubstanceManager.h"
-PROTO_PUSH
 #include "bind/cdm/Scenario.pb.h"
-PROTO_POP
 #include <google/protobuf/text_format.h>
 
 SEScenario::SEScenario(SESubstanceManager& subMgr) : Loggable(subMgr.GetLogger()), m_SubMgr(subMgr)

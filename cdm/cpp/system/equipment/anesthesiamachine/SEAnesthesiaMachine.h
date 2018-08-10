@@ -10,9 +10,7 @@ class SEAnesthesiaMachineOxygenBottle;
 class SEAnesthesiaMachineConfiguration;
 class SEGasSubstanceQuantity;
 CDM_BIND_DECL(AnesthesiaMachineData)
-PROTO_PUSH
 #include "bind/cdm/AnesthesiaMachineEnums.pb.h"
-PROTO_POP
 
 
 class CDM_DECL SEAnesthesiaMachine : public SESystem

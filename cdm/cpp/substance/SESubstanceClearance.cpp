@@ -6,9 +6,7 @@
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarMassPerTime.h"
 #include "properties/SEScalarVolumePerTimeMass.h"
-PROTO_PUSH
 #include "bind/cdm/Substance.pb.h"
-PROTO_POP
 
 SESubstanceClearance::SESubstanceClearance(Logger* logger) : Loggable(logger)
 {

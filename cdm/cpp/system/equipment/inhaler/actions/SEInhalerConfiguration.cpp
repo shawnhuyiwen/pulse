@@ -10,9 +10,7 @@
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarVolume.h"
-PROTO_PUSH
 #include "bind/cdm/InhalerActions.pb.h"
-PROTO_POP
 
 SEInhalerConfiguration::SEInhalerConfiguration(SESubstanceManager& substances) : SEInhalerAction(), m_Substances(substances)
 {

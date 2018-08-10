@@ -6,10 +6,8 @@
 #include "patient/SEPatient.h"
 #include "patient/SENutrition.h"
 
-PROTO_PUSH
 #include "bind/cdm/Patient.pb.h"
 #include "bind/cdm/PatientNutrition.pb.h"
-PROTO_POP
 #include "engine/SEEventHandler.h"
 
 #include "properties/SEScalarTime.h"

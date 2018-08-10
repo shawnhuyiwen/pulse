@@ -17,9 +17,7 @@
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalarVolumePerTimePressure.h"
-PROTO_PUSH
 #include "bind/cdm/Substance.pb.h"
-PROTO_POP
 
 SESubstance::SESubstance(Logger* logger) : Loggable(logger)
 {

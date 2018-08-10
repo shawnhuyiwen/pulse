@@ -8,9 +8,7 @@ class SESubstanceManager;
 class SESubstanceFraction;
 class SESubstanceConcentration;
 CDM_BIND_DECL(EnvironmentData_ConditionsData)
-PROTO_PUSH
 #include "bind/cdm/EnvironmentEnums.pb.h"
-PROTO_POP
 
 class CDM_DECL SEEnvironmentalConditions : public Loggable
 {

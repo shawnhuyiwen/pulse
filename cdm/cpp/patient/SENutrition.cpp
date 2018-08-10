@@ -7,9 +7,7 @@
 #include "properties/SEScalarMassPerTime.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
-PROTO_PUSH
 #include "bind/cdm/PatientNutrition.pb.h"
-PROTO_POP
 #include <google/protobuf/text_format.h>
 
 SENutrition::SENutrition(Logger* logger) : Loggable(logger)

@@ -4,9 +4,7 @@
 #include "stdafx.h"
 #include "substance/SESubstancePhysicochemicals.h"
 #include "properties/SEScalar0To1.h"
-PROTO_PUSH
 #include "bind/cdm/Substance.pb.h"
-PROTO_POP
 
 SESubstancePhysicochemicals::SESubstancePhysicochemicals(Logger* logger) : Loggable(logger)
 {

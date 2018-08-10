@@ -6,9 +6,7 @@
 #include "utils/testing/SETestSuite.h"
 #include "utils/testing/SETestErrorStatistics.h"
 #include "properties/SEScalarTime.h"
-PROTO_PUSH
 #include "bind/cdm/TestReport.pb.h"
-PROTO_POP
 
 SETestSuite::SETestSuite(Logger* logger) : Loggable(logger)
 {

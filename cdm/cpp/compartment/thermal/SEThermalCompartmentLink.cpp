@@ -7,9 +7,7 @@
 #include "circuit/SECircuitManager.h"
 #include "circuit/thermal/SEThermalCircuitPath.h"
 #include "properties/SEScalarPower.h"
-PROTO_PUSH
 #include "bind/cdm/Compartment.pb.h"
-PROTO_POP
 
 SEThermalCompartmentLink::SEThermalCompartmentLink(SEThermalCompartment& src, SEThermalCompartment & tgt, const std::string& name) : SECompartmentLink(name,src.GetLogger()), m_SourceCmpt(src), m_TargetCmpt(tgt)
 {

@@ -3,9 +3,7 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarElectricResistance.h"
-PROTO_PUSH
 #include "bind/cdm/Properties.pb.h"
-PROTO_POP
 
 const ElectricResistanceUnit ElectricResistanceUnit::Ohm("ohm");
 

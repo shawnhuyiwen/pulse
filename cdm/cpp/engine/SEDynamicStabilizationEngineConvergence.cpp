@@ -4,9 +4,7 @@
 #include "stdafx.h"
 #include "engine/SEDynamicStabilizationEngineConvergence.h"
 #include "engine/SEDynamicStabilizationPropertyConvergence.h"
-PROTO_PUSH
 #include "bind/cdm/Engine.pb.h"
-PROTO_POP
 #include "scenario/SEDataRequest.h"
 #include "scenario/SEDataRequestManager.h"
 #include "properties/SEScalarTime.h"

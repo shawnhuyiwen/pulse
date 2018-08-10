@@ -14,9 +14,7 @@
 
 #include <google/protobuf/text_format.h>
 
-PROTO_PUSH
 #include "bind/cdm/Inhaler.pb.h"
-PROTO_POP
 
 SEInhaler::SEInhaler(SESubstanceManager& substances) : SESystem(substances.GetLogger()), m_Substances(substances)
 {

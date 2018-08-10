@@ -2,9 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-PROTO_PUSH 
 #include "bind/cdm/SubstanceEnums.pb.h"
-PROTO_POP
 CDM_BIND_DECL(SubstanceData)
 class SESubstanceAerosolization;
 class SESubstanceClearance;

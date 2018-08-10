@@ -3,9 +3,7 @@
 
 #pragma once
 #include "patient/actions/SESubstanceAdministration.h"
-PROTO_PUSH
 #include "bind/cdm/PatientActionEnums.pb.h"
-PROTO_POP
 CDM_BIND_DECL(SubstanceBolusData)
 CDM_BIND_DECL(SubstanceBolusData_StateData)
 class SESubstance;

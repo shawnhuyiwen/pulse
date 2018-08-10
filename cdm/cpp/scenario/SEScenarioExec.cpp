@@ -9,9 +9,7 @@
 #include "scenario/SEScenarioInitialParameters.h"
 #include "scenario/SEAdvanceTime.h"
 #include "scenario/SEDataRequestManager.h"
-PROTO_PUSH
 #include "bind/cdm/Scenario.pb.h"
-PROTO_POP
 #include "PhysiologyEngine.h"
 #include "engine/SEEngineTracker.h"
 #include "engine/SEEngineConfiguration.h"

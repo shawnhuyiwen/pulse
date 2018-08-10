@@ -5,9 +5,7 @@
 #include "circuit/thermal/SEThermalCircuitNode.h"
 #include "properties/SEScalarEnergy.h"
 #include "properties/SEScalarTemperature.h"
-PROTO_PUSH
 #include "bind/cdm/Circuit.pb.h"
-PROTO_POP
 
 SEThermalCircuitNode::SEThermalCircuitNode(const std::string& name, Logger* logger) : SECircuitNode<THERMAL_CIRCUIT_NODE>(name,logger)
 {

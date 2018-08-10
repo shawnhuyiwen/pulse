@@ -7,9 +7,7 @@
 #include "substance/SESubstanceConcentration.h"
 #include "substance/SESubstanceFraction.h"
 #include "substance/SESubstanceManager.h"
-PROTO_PUSH
 #include "bind/cdm/PatientActions.pb.h"
-PROTO_POP
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolumePerTime.h"

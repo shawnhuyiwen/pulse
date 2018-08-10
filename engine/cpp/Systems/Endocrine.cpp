@@ -5,9 +5,7 @@
 #include "Systems/Endocrine.h"
 #include "Controller/Compartments.h"
 #include "Controller/Substances.h"
-PROTO_PUSH
 #include "bind/engine/EnginePhysiology.pb.h"
-PROTO_POP
 // Dependent Systems
 #include "system/physiology/SEEnergySystem.h"
 // Actions

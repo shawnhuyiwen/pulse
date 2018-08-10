@@ -3,9 +3,7 @@
 #include "stdafx.h"
 #include "system/equipment/anesthesiamachine/actions/SEYPieceDisconnect.h"
 #include "properties/SEScalar0To1.h"
-PROTO_PUSH
 #include "bind/cdm/AnesthesiaMachineActions.pb.h"
-PROTO_POP
 
 SEYPieceDisconnect::SEYPieceDisconnect() : SEAnesthesiaMachineAction()
 {

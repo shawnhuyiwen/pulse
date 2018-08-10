@@ -9,9 +9,7 @@
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolume.h"
-PROTO_PUSH
 #include "bind/cdm/Circuit.pb.h"
-PROTO_POP
 
 SEFluidCircuitPath::SEFluidCircuitPath(SEFluidCircuitNode& src, SEFluidCircuitNode& tgt, const std::string& name) :
   SECircuitPath<SEScalarVolumePerTime, SEScalarFlowResistance, SEScalarFlowCompliance, SEScalarFlowInertance, SEScalarPressure, SEScalarVolume>(src, tgt, name),

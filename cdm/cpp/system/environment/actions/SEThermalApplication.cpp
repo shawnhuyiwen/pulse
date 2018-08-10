@@ -4,9 +4,7 @@
 #include "system/environment/actions/SEThermalApplication.h"
 #include "system/environment/SEActiveConditioning.h"
 #include "system/environment/SEAppliedTemperature.h"
-PROTO_PUSH
 #include "bind/cdm/EnvironmentActions.pb.h"
-PROTO_POP
 #include "properties/SEScalarArea.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarPower.h"

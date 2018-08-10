@@ -5,9 +5,7 @@
 #include "circuit/fluid/SEFluidCircuitNode.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolume.h"
-PROTO_PUSH
 #include "bind/cdm/Circuit.pb.h"
-PROTO_POP
 
 SEFluidCircuitNode::SEFluidCircuitNode(const std::string& name, Logger* logger) : SECircuitNode<SEScalarPressure,SEScalarVolume>(name,logger)
 {

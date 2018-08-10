@@ -3,9 +3,7 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarVolume.h"
-PROTO_PUSH
 #include "bind/cdm/Properties.pb.h"
-PROTO_POP
 
 const VolumeUnit VolumeUnit::L("L");
 const VolumeUnit VolumeUnit::dL("dL");

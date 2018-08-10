@@ -14,14 +14,14 @@ endif()
 ##################################
 
 message( STATUS "External project - Eigen" )
-set(eigen_VERSION "3.3.4" )
+set(eigen_VERSION "3.3.5" )
 set(eigen_SRC "${CMAKE_BINARY_DIR}/eigen/src/eigen")
 set(eigen_Patch "${CMAKE_SOURCE_DIR}/cmake/eigen-patches")
 
 ExternalProject_Add( eigen
   PREFIX eigen
   URL "http://bitbucket.org/eigen/eigen/get/${eigen_VERSION}.tar.gz"
-  URL_HASH MD5=1a47e78efe365a97de0c022d127607c3
+  URL_HASH MD5=ee48cafede2f51fe33984ff5c9f48026
   UPDATE_COMMAND 
     COMMAND ${CMAKE_COMMAND} -Deigen_source=${eigen_SRC} -Deigen_patch=${eigen_Patch} -P ${CMAKE_SOURCE_DIR}/cmake/eigen-patches/Patch.cmake
   INSTALL_DIR "${CMAKE_INSTALL_PREFIX}"
@@ -67,8 +67,8 @@ list(APPEND Pulse_DEPENDENCIES log4cplus)
 ###################################################
 
 message( STATUS "External project - protobuf" )
-set(protobuf_VERSION "3.5.2" )
-set(protobuf_MD5 "7b3e7c0eaa75dcc5cdb8aba2f8c301cb" )
+set(protobuf_VERSION "3.6.0.1" )
+set(protobuf_MD5 "0b33849480f5a469ba54b9ec10004e7b" )
 set(protobuf_SRC "${CMAKE_BINARY_DIR}/protobuf/src/protobuf")
 
 ExternalProject_Add( protobuf
@@ -77,27 +77,15 @@ ExternalProject_Add( protobuf
   URL_MD5 ${protobuf_MD5}
   DOWNLOAD_DIR ${protobuf_SRC}
   SOURCE_SUBDIR ./cmake
-  CMAKE_ARGS 
+  CMAKE_ARGS
+    -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
+    -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+    -DCMAKE_INSTALL_PREFIX:STRING=${CMAKE_INSTALL_PREFIX}
     -Dprotobuf_BUILD_TESTS:BOOL=OFF
     -Dprotobuf_BUILD_EXAMPLES:BOOL=OFF
     -Dprotobuf_BUILD_SHARED_LIBS:BOOL=OFF
     -Dprotobuf_MSVC_STATIC_RUNTIME:BOOL=OFF#Don't change MSVC runtime settings (/MD or /MT)
-    -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
-    -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-    -DCMAKE_INSTALL_PREFIX:STRING=${CMAKE_INSTALL_PREFIX}
-    -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
-    -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
-    -DCMAKE_CXX_FLAGS_DEBUG:STRING=${CMAKE_CXX_FLAGS_DEBUG}
-    -DCMAKE_CXX_FLAGS_RELEASE:STRING=${CMAKE_CXX_FLAGS_RELEASE}
-    -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
-    -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
-    ${CMAKE_CXX_COMPILER_LAUNCHER_FLAG}
-    ${CMAKE_C_COMPILER_LAUNCHER_FLAG}
-    -DCMAKE_EXE_LINKER_FLAGS:STRING=${CMAKE_EXE_LINKER_FLAGS}
-    -DCMAKE_SHARED_LINKER_FLAGS:STRING=${CMAKE_SHARED_LINKER_FLAGS}
-    -DMAKECOMMAND:STRING=${MAKECOMMAND}
-    -DADDITIONAL_C_FLAGS:STRING=${ADDITIONAL_C_FLAGS}
-    -DADDITIONAL_CXX_FLAGS:STRING=${ADDITIONAL_CXX_FLAGS}
+    -Dprotobuf_WITH_ZLIB:BOOL=OFF
 )
 list(APPEND Pulse_DEPENDENCIES protobuf)
 

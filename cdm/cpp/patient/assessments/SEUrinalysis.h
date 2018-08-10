@@ -5,9 +5,7 @@
 #include "patient/assessments/SEPatientAssessment.h"
 class SEUrinalysisMicroscopic;
 CDM_BIND_DECL(UrinalysisData)
-PROTO_PUSH
 #include "bind/cdm/PatientAssessmentEnums.pb.h"
-PROTO_POP
 
 class CDM_DECL SEUrinalysis : public SEPatientAssessment
 {

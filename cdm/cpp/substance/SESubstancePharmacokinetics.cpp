@@ -6,9 +6,7 @@
 #include "substance/SESubstancePhysicochemicals.h"
 #include "substance/SESubstanceTissuePharmacokinetics.h"
 #include "properties/SEScalar0To1.h"
-PROTO_PUSH
 #include "bind/cdm/Substance.pb.h"
-PROTO_POP
 
 SESubstancePharmacokinetics::SESubstancePharmacokinetics(Logger* logger) : Loggable(logger)
 {

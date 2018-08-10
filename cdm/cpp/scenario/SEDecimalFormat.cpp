@@ -4,9 +4,7 @@
 #include "stdafx.h"
 #include <iomanip> 
 #include "scenario/SEDecimalFormat.h"
-PROTO_PUSH
 #include "bind/cdm/Scenario.pb.h"
-PROTO_PUSH
 
 SEDecimalFormat::SEDecimalFormat(const SEDecimalFormat* dfault)
 {

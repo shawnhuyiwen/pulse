@@ -6,9 +6,7 @@
 #include "substance/SESubstanceConcentration.h"
 #include "substance/SESubstanceManager.h"
 #include "properties/SEScalarMassPerVolume.h"
-PROTO_PUSH
 #include "bind/cdm/Substance.pb.h"
-PROTO_POP
 
 SESubstanceCompound::SESubstanceCompound(Logger* logger) : Loggable(logger)
 {

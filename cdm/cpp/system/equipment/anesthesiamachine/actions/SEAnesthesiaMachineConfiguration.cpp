@@ -7,9 +7,7 @@
 #include "system/equipment/anesthesiamachine/SEAnesthesiaMachineOxygenBottle.h"
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceManager.h"
-PROTO_PUSH
 #include "bind/cdm/AnesthesiaMachineActions.pb.h"
-PROTO_POP
 
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarFrequency.h"

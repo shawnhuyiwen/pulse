@@ -5,9 +5,7 @@
 
 #include "compartment/substances/SESubstanceQuantity.h"
 #include "substance/SESubstance.h"
-PROTO_PUSH
 #include "bind/cdm/SubstanceQuantity.pb.h" 
-PROTO_POP
 
 SESubstanceQuantity::SESubstanceQuantity(SESubstance& sub) : Loggable(sub.GetLogger()), m_Substance(sub)
 {

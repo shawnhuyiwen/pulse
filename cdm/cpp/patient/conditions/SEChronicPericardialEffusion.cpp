@@ -3,9 +3,7 @@
 
 #include "stdafx.h"
 #include "patient/conditions/SEChronicPericardialEffusion.h"
-PROTO_PUSH
 #include "bind/cdm/PatientConditions.pb.h"
-PROTO_POP
 #include "properties/SEScalarVolume.h"
 
 SEChronicPericardialEffusion::SEChronicPericardialEffusion() : SEPatientCondition()

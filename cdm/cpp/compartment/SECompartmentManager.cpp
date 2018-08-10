@@ -25,9 +25,7 @@
 // Properties
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarAmountPerVolume.h"
-PROTO_PUSH
 #include "bind/cdm/Compartment.pb.h"
-PROTO_POP
 #include <google/protobuf/text_format.h>
 
 SECompartmentManager::SECompartmentManager(SESubstanceManager& subMgr) : Loggable(subMgr.GetLogger()), m_subMgr(subMgr)

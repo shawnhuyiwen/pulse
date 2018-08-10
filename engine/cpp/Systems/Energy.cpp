@@ -7,9 +7,7 @@
 #include "Controller/Compartments.h"
 #include "Controller/Substances.h"
 #include "PulseConfiguration.h"
-PROTO_PUSH
 #include "bind/engine/EnginePhysiology.pb.h"
-PROTO_POP
 // Conditions
 #include "scenario/SEConditionManager.h"
 #include "patient/conditions/SEConsumeMeal.h"

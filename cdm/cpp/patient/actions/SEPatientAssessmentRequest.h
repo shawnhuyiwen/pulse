@@ -4,9 +4,7 @@
 #pragma once
 #include "patient/actions/SEPatientAction.h"
 CDM_BIND_DECL(PatientAssessmentRequestData)
-PROTO_PUSH
 #include "bind/cdm/PatientAssessmentEnums.pb.h"
-PROTO_POP
 
 class CDM_DECL SEPatientAssessmentRequest : public SEPatientAction
 {

@@ -3,9 +3,7 @@
 
 #include "stdafx.h"
 #include "PulseConfiguration.h"
-PROTO_PUSH
 #include "bind/engine/EngineConfiguration.pb.h"
-PROTO_POP
 
 #include "patient/SENutrition.h"
 #include "substance/SESubstance.h"

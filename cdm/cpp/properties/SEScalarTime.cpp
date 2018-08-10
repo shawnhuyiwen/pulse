@@ -3,9 +3,7 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarTime.h"
-PROTO_PUSH
 #include "bind/cdm/Properties.pb.h"
-PROTO_POP
 
 #pragma push_macro("Time")
 #undef min

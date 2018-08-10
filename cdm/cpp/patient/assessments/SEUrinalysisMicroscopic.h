@@ -4,9 +4,7 @@
 #pragma once
 #include "patient/assessments/SEPatientAssessment.h"
 CDM_BIND_DECL(UrinalysisData_UrinalysisMicroscopicData)
-PROTO_PUSH
 #include "bind/cdm/PatientAssessmentEnums.pb.h"
-PROTO_POP
 
 class CDM_DECL SEUrinalysisMicroscopic : public Loggable
 {

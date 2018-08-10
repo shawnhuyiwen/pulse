@@ -3,9 +3,7 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarMass.h"
-PROTO_PUSH
 #include "bind/cdm/Properties.pb.h"
-PROTO_POP
 
 const MassUnit MassUnit::g("g");
 const MassUnit MassUnit::ug("ug");

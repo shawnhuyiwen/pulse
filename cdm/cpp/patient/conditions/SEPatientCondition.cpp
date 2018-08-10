@@ -3,9 +3,7 @@
 
 #include "stdafx.h"
 #include "SEPatientCondition.h"
-PROTO_PUSH
 #include "bind/cdm/PatientConditions.pb.h"
-PROTO_POP
 
 SEPatientCondition::SEPatientCondition() : SECondition()
 {

@@ -32,20 +32,6 @@ inline size_t _Hash_value(_InIt _Begin, _InIt _End)
     C4996 - 'function': was declared deprecated
 */
 
-#if defined(_MSC_VER)
-  #define PROTO_PUSH \
-    __pragma(warning(push)) \
-    __pragma(warning(disable:4018 4146 4244 4251 4267 4305 4800 4996))
-#else
-  #define PROTO_PUSH
-#endif
-
-#if defined(_MSC_VER)
-  #define PROTO_POP __pragma(warning(pop)) 
-#else
-  #define PROTO_POP
-#endif
-
 #define DEFINE_STATIC_STRING(name) static constexpr char const* name = #name;
 #define DEFINE_STATIC_STRING_EX(name,value) static constexpr char const* name = #value;
 

@@ -2,9 +2,7 @@
    See accompanying NOTICE file for details.*/
 #include "stdafx.h"
 #include "SEEnvironmentCondition.h"
-PROTO_PUSH
 #include "bind/cdm/EnvironmentConditions.pb.h"
-PROTO_POP
 #include "substance/SESubstanceManager.h"
 
 SEEnvironmentCondition::SEEnvironmentCondition() : SECondition()

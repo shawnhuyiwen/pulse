@@ -10,9 +10,7 @@
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarMassPerAmount.h"
 #include "properties/SEScalarMassPerVolume.h"
-PROTO_PUSH
 #include "bind/cdm/PatientAssessments.pb.h"
-PROTO_POP
 #include <google/protobuf/text_format.h>
 
 SECompleteBloodCount::SECompleteBloodCount(Logger* logger) : SEPatientAssessment(logger)

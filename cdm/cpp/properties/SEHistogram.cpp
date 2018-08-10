@@ -3,9 +3,7 @@
 
 #include "stdafx.h"
 #include "properties/SEHistogram.h"
-PROTO_PUSH
 #include "bind/cdm/Properties.pb.h"
-PROTO_POP
 
 static std::stringstream err;
 

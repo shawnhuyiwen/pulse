@@ -6,9 +6,7 @@
 #include "scenario/SEDataRequest.h"
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceManager.h"
-PROTO_PUSH
 #include "bind/cdm/Scenario.pb.h"
-PROTO_PUSH
 #include <google/protobuf/text_format.h>
 
 SEDataRequestManager::SEDataRequestManager(Logger* logger) : Loggable(logger)

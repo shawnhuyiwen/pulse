@@ -3,9 +3,7 @@
 #include "stdafx.h"
 #include "system/environment/conditions/SEInitialEnvironmentConditions.h"
 #include "system/environment/SEEnvironmentalConditions.h"
-PROTO_PUSH
 #include "bind/cdm/EnvironmentConditions.pb.h"
-PROTO_POP
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceConcentration.h"
 #include "substance/SESubstanceFraction.h"

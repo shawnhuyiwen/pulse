@@ -4,9 +4,7 @@
 #include "stdafx.h"
 #include "engine/SEAutoSerialization.h"
 #include "properties/SEScalarTime.h"
-PROTO_PUSH
 #include "bind/cdm/Engine.pb.h"
-PROTO_POP
 
 SEAutoSerialization::SEAutoSerialization(Logger* logger) : Loggable(logger)
 {

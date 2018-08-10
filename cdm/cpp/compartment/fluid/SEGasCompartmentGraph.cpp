@@ -7,9 +7,7 @@
 #include "compartment/SECompartmentManager.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalar0To1.h"
-PROTO_PUSH
 #include "bind/cdm/Compartment.pb.h"
-PROTO_POP
 
 void SEGasCompartmentGraph::Load(const cdm::GasCompartmentGraphData& src, SEGasCompartmentGraph& dst, SECompartmentManager& cmptMgr)
 {

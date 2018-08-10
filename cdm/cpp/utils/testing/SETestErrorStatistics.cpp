@@ -4,9 +4,7 @@
 #include "stdafx.h"
 #include "utils/testing/SETestErrorStatistics.h"
 #include "properties/SEFunction.h"
-PROTO_PUSH
 #include "bind/cdm/TestReport.pb.h"
-PROTO_POP
 
 SETestErrorStatistics::SETestErrorStatistics(Logger* logger) : Loggable(logger)
 {

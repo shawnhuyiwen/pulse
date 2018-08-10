@@ -2,9 +2,7 @@
    See accompanying NOTICE file for details.*/
 #include "stdafx.h"
 #include "system/environment/actions/SEEnvironmentAction.h"
-PROTO_PUSH
 #include "bind/cdm/EnvironmentActions.pb.h"
-PROTO_POP
 
 SEEnvironmentAction::SEEnvironmentAction() : SEAction()
 {

@@ -3,9 +3,7 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarPowerPerAreaTemperatureToTheFourth.h"
-PROTO_PUSH
 #include "bind/cdm/Properties.pb.h"
-PROTO_POP
 
 const PowerPerAreaTemperatureToTheFourthUnit PowerPerAreaTemperatureToTheFourthUnit::W_Per_m2_K4("W/ m^2 K^4");
 

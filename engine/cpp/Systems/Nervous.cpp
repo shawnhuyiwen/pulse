@@ -4,9 +4,7 @@
 #include "stdafx.h"
 #include "Systems/Nervous.h"
 #include "PulseConfiguration.h"
-PROTO_PUSH
 #include "bind/engine/EnginePhysiology.pb.h"
-PROTO_POP
 // Actions
 #include "scenario/SEActionManager.h"
 #include "scenario/SEPatientActionCollection.h"

@@ -5,9 +5,7 @@
 #include "substance/SESubstanceManager.h"
 #include "properties/SEScalar0To1.h"
 #include "substance/SESubstance.h"
-PROTO_PUSH
 #include "bind/cdm/Substance.pb.h"
-PROTO_POP
 
 SESubstanceFraction::SESubstanceFraction(SESubstance& substance) : m_Substance(substance)
 {

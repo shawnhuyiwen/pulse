@@ -3,9 +3,7 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarTemperature.h"
-PROTO_PUSH
 #include "bind/cdm/Properties.pb.h"
-PROTO_POP
 
 const TemperatureUnit TemperatureUnit::F("degF");
 const TemperatureUnit TemperatureUnit::C("degC");

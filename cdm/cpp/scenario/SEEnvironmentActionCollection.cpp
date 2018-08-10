@@ -8,9 +8,7 @@
 #include "system/environment/actions/SEThermalApplication.h"
 #include "substance/SESubstanceManager.h"
 #include "substance/SESubstanceFraction.h"
-PROTO_PUSH
 #include "bind/cdm/Scenario.pb.h"
-PROTO_POP
 #include "properties/SEScalarLengthPerTime.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarHeatConductancePerArea.h"

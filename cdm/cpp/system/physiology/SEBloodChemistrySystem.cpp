@@ -10,9 +10,7 @@
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarHeatCapacitancePerMass.h"
-PROTO_PUSH
 #include "bind/cdm/Physiology.pb.h"
-PROTO_POP
 
 SEBloodChemistrySystem::SEBloodChemistrySystem(Logger* logger) : SESystem(logger)
 {

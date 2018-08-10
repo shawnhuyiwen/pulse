@@ -3,9 +3,7 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarArea.h"
-PROTO_PUSH
 #include "bind/cdm/Properties.pb.h"
-PROTO_POP
 
 const AreaUnit AreaUnit::cm2("cm^2");
 const AreaUnit AreaUnit::m2("m^2");

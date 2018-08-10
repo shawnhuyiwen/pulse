@@ -4,9 +4,7 @@
 #include "stdafx.h"
 #include "properties/SEScalar.h"
 #include "utils/GeneralMath.h"
-PROTO_PUSH
 #include "bind/cdm/Properties.pb.h"
-PROTO_POP
 
 unsigned long long int SEScalar::NaN = 
   ((unsigned long long int)255 << (8*7)) + 

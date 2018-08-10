@@ -3,9 +3,7 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarElectricCharge.h"
-PROTO_PUSH
 #include "bind/cdm/Properties.pb.h"
-PROTO_POP
 
 const ElectricChargeUnit ElectricChargeUnit::C("C");
 

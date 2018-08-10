@@ -3,9 +3,7 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarHeatInductance.h"
-PROTO_PUSH
 #include "bind/cdm/Properties.pb.h"
-PROTO_POP
 
 const HeatInductanceUnit HeatInductanceUnit::K_s_Per_W("K s/W");
 

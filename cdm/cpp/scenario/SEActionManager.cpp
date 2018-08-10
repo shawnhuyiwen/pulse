@@ -12,9 +12,7 @@
 #include "scenario/SEEnvironmentActionCollection.h"
 #include "system/equipment/inhaler/actions/SEInhalerAction.h"
 #include "scenario/SEInhalerActionCollection.h"
-PROTO_PUSH
 #include "bind/cdm/Scenario.pb.h"
-PROTO_POP
 #include "substance/SESubstanceManager.h"
 
 SEActionManager::SEActionManager(SESubstanceManager& substances) : Loggable(substances.GetLogger()), 

@@ -3,9 +3,7 @@
 
 #include "stdafx.h"
 #include "patient/actions/SEPatientAssessmentRequest.h"
-PROTO_PUSH
 #include "bind/cdm/PatientActions.pb.h"
-PROTO_POP
 
 SEPatientAssessmentRequest::SEPatientAssessmentRequest() : SEPatientAction()
 {

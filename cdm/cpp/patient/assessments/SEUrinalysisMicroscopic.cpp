@@ -3,9 +3,7 @@
 
 #include "stdafx.h"
 #include "patient/assessments/SEUrinalysisMicroscopic.h"
-PROTO_PUSH
 #include "bind/cdm/PatientAssessments.pb.h"
-PROTO_POP
 #include "properties/SEScalarAmount.h"
 
 SEUrinalysisMicroscopic::SEUrinalysisMicroscopic(Logger* logger) : Loggable(logger)

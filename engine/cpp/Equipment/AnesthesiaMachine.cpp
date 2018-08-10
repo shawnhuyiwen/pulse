@@ -9,9 +9,7 @@
 #include "Controller/Circuits.h"
 #include "Controller/Compartments.h"
 #include "PulseConfiguration.h"
-PROTO_PUSH
 #include "bind/engine/EngineEquipment.pb.h"
-PROTO_POP
 #include "system/equipment/anesthesiamachine/SEAnesthesiaMachineOxygenBottle.h"
 #include "system/equipment/anesthesiamachine/SEAnesthesiaMachineChamber.h"
 #include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineConfiguration.h"

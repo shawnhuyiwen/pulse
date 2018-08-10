@@ -9,9 +9,7 @@
 #include "utils/TimingProfile.h"
 #include "properties/SEScalarTime.h"
 #include <google/protobuf/text_format.h>
-PROTO_PUSH
 #include "bind/cdm/Engine.pb.h"
-PROTO_POP
 
 bool SETimedStabilization::StabilizeRestingState(PhysiologyEngine& engine)
 {

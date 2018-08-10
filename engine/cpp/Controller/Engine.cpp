@@ -22,9 +22,7 @@
 #include "Equipment/ECG.h"
 #include "Equipment/Inhaler.h"
 #include "PulseConfiguration.h"
-PROTO_PUSH
 #include "bind/engine/EngineState.pb.h"
-PROTO_POP
 #include "patient/SEPatient.h"
 #include "patient/actions/SEPatientAssessmentRequest.h"
 #include "patient/assessments/SEPulmonaryFunctionTest.h"

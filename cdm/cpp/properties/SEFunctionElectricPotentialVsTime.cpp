@@ -7,9 +7,7 @@
 #include "properties/SEScalarElectricPotential.h"
 #include "utils/GeneralMath.h"
 #include "utils/Logger.h"
-PROTO_PUSH
 #include "bind/cdm/Properties.pb.h"
-PROTO_POP
 
 
 SEFunctionElectricPotentialVsTime::SEFunctionElectricPotentialVsTime() : SEFunction()

@@ -2,9 +2,7 @@
    See accompanying NOTICE file for details.*/
 #include "stdafx.h"
 #include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineAction.h"
-PROTO_PUSH
 #include "bind/cdm/AnesthesiaMachineActions.pb.h"
-PROTO_POP
 #include "substance/SESubstanceManager.h"
 
 SEAnesthesiaMachineAction::SEAnesthesiaMachineAction() : SEAction()

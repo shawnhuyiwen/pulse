@@ -4,9 +4,7 @@
 #include "stdafx.h"
 #include "scenario/SEDataRequest.h"
 #include "utils/unitconversion/UCCommon.h"
-PROTO_PUSH
 #include "bind/cdm/Scenario.pb.h"
-PROTO_POP
 
 SEDataRequest::SEDataRequest(const SEDataRequest& dr)
 {

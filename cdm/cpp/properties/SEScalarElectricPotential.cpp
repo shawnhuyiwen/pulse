@@ -3,9 +3,7 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarElectricPotential.h"
-PROTO_PUSH
 #include "bind/cdm/Properties.pb.h"
-PROTO_POP
 
 const ElectricPotentialUnit ElectricPotentialUnit::V("V");
 const ElectricPotentialUnit ElectricPotentialUnit::mV("mV");

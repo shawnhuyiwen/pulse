@@ -5,9 +5,7 @@
 class SEEventHandler;
 class SENutrition;
 CDM_BIND_DECL(PatientData)
-PROTO_PUSH
 #include "bind/cdm/PatientEnums.pb.h"
-PROTO_POP
 
 class CDM_DECL SEPatient : public Loggable
 {

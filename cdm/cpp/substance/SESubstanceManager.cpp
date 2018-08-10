@@ -9,9 +9,7 @@
 #include "../utils/unitconversion/UnitConversionEngine.h"
 #include "dirent.h"
 #include <google/protobuf/text_format.h>
-PROTO_PUSH
 #include "bind/cdm/Substance.pb.h"
-PROTO_POP
 
 SESubstanceManager::SESubstanceManager(Logger* logger) : Loggable(logger)
 {

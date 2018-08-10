@@ -3,9 +3,7 @@
 
 #pragma once
 #include "CommonDataModel.h"
-PROTO_PUSH
 #include "bind/engine/EngineEnums.pb.h"
-PROTO_POP
 
 class PulseConfiguration;
 class PulseCircuits;

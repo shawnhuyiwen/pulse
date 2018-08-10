@@ -8,9 +8,7 @@
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalarMassPerTime.h"
-PROTO_PUSH
 #include "bind/cdm/Physiology.pb.h"
-PROTO_POP
 
 SEGastrointestinalSystem::SEGastrointestinalSystem(Logger* logger) : SESystem(logger)
 {
