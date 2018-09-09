@@ -2,12 +2,9 @@
    See accompanying NOTICE file for details.*/
 package mil.tatrc.physiology.pulse.engine;
 
-import java.io.File;
 import java.util.*;
 
-import com.kitware.physiology.cdm.Patient.PatientData;
 import com.kitware.physiology.cdm.PatientEnums.ePatient;
-import com.kitware.physiology.cdm.AnesthesiaMachine.AnesthesiaMachineData;
 import com.kitware.physiology.cdm.AnesthesiaMachineEnums.eAnesthesiaMachine;
 
 import mil.tatrc.physiology.datamodel.compartment.*;
@@ -26,11 +23,10 @@ import mil.tatrc.physiology.datamodel.system.equipment.electrocardiogram.*;
 import mil.tatrc.physiology.datamodel.system.equipment.inhaler.*;
 import mil.tatrc.physiology.datamodel.system.physiology.*;
 import mil.tatrc.physiology.datamodel.utilities.SEEventHandler;
-import mil.tatrc.physiology.utilities.FileUtils;
+import mil.tatrc.physiology.utilities.jniBridge;
 import mil.tatrc.physiology.utilities.Log;
 import mil.tatrc.physiology.utilities.LogListener;
 import mil.tatrc.physiology.utilities.Pair;
-import mil.tatrc.physiology.utilities.UnitConverter;
 
 public class Pulse
 {
@@ -74,7 +70,7 @@ public class Pulse
   
   static
   {        
-    UnitConverter.initialize(System.getProperty("user.dir"));
+    jniBridge.initialize();
   }
 
   public Pulse()

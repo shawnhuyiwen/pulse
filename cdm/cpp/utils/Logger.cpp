@@ -36,7 +36,7 @@ public:
   {
 
   }
-  log4cplus::Initializer        initializer;
+  log4cplus::Initializer        ref_cnt;// Basically a ref manager class used to manage/destroy logging threads
   log4cplus::Logger             logger;
   log4cplus::SharedAppenderPtr  fileAppender;
   log4cplus::SharedAppenderPtr  consoleAppender;
@@ -76,7 +76,7 @@ void Logger::ResetLogFile(const std::string& logFilename)
     {
       _log_lib->fileAppender = new log4cplus::FileAppender(logFilename);
       _log_lib->fileAppender->setName(logFilename);
-      _log_lib->fileAppender->setLayout(std::auto_ptr<log4cplus::Layout>(new log4cplus::PatternLayout("%d [%p] %m%n")));
+      _log_lib->fileAppender->setLayout(std::unique_ptr<log4cplus::Layout>(new log4cplus::PatternLayout("%d [%p] %m%n")));
       _log_lib->logger.addAppender(_log_lib->fileAppender);
     }
   }
@@ -86,14 +86,14 @@ void Logger::ResetLogFile(const std::string& logFilename)
   {
     _log_lib->consoleAppender = new log4cplus::ConsoleAppender();
     _log_lib->consoleAppender->setName(logFilename + "_console");
-    _log_lib->consoleAppender->setLayout(std::auto_ptr<log4cplus::Layout>(new log4cplus::PatternLayout("%d [%p] %m%n")));
+    _log_lib->consoleAppender->setLayout(std::unique_ptr<log4cplus::Layout>(new log4cplus::PatternLayout("%d [%p] %m%n")));
   }
   LogToConsole(true);
 }
 
 Logger::~Logger()
 {
- 
+  delete _log_lib;
 }
 
 void Logger::SetLogTime(const SEScalarTime* time)
@@ -110,22 +110,22 @@ void Logger::SetLogLevel(Logger::level l)
   log4cplus::LogLevel L;
   switch (l)
   {
-  case TRACE:
+  case Logger::level::Trace:
     L = log4cplus::TRACE_LOG_LEVEL;
     break;
-  case DEBUG:
+  case Logger::level::Debug:
     L = log4cplus::DEBUG_LOG_LEVEL;
     break;
-  case INFO:
+  case Logger::level::Info:
     L = log4cplus::INFO_LOG_LEVEL;
     break;
-  case WARN:
+  case Logger::level::Warn:
     L = log4cplus::WARN_LOG_LEVEL;
     break;
-  case ERROR:
+  case Logger::level::Error:
     L = log4cplus::ERROR_LOG_LEVEL;
     break;
-  case FATAL:
+  case Logger::level::Fatal:
     L = log4cplus::FATAL_LOG_LEVEL;
     break;
   default:
@@ -140,19 +140,19 @@ Logger::level Logger::GetLogLevel()
   switch (_log_lib->logger.getLogLevel())
   {
   case log4cplus::TRACE_LOG_LEVEL:
-      return TRACE;
+      return Logger::level::Trace;
   case log4cplus::DEBUG_LOG_LEVEL:
-    return DEBUG;
+    return Logger::level::Debug;
   case log4cplus::INFO_LOG_LEVEL:
-    return INFO;
+    return Logger::level::Info;
   case log4cplus::WARN_LOG_LEVEL:
-    return WARN;
+    return Logger::level::Warn;
   case log4cplus::ERROR_LOG_LEVEL:
-    return ERROR;
+    return Logger::level::Error;
   case log4cplus::FATAL_LOG_LEVEL:
-    return FATAL;
+    return Logger::level::Fatal;
   }
-  return INFO;
+  return Logger::level::Info;
 }
 
 void Logger::SetForward(LoggerForward* forward)

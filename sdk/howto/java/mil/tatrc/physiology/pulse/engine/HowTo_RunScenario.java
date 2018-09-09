@@ -13,6 +13,7 @@ import mil.tatrc.physiology.datamodel.scenario.SEScenario;
 import mil.tatrc.physiology.utilities.FileUtils;
 import mil.tatrc.physiology.utilities.Log;
 import mil.tatrc.physiology.utilities.LogListener;
+import mil.tatrc.physiology.utilities.jniBridge;
 
 public class HowTo_RunScenario
 {
@@ -67,6 +68,22 @@ public class HowTo_RunScenario
   }
   
   public static void main(String[] args)
+  {
+    // Initialize the JNI bridge between Java and C++
+    // While not required (yet), it's recommended for program completeness
+    jniBridge.initialize();
+    example();
+    // Shutdown all C++ classes
+    // Since Pulse supports running multiple engines within the same process
+    // (Each could be on its own thread as well)
+    // deinitialize the C++ so it can properly clean up resources
+    // Generally this is not needed, but I did find it necessary on windows using mingw
+    // If not, the JVM would find itself in a threadlock condition due to threadpool deconstruction
+    // So if your Java app using Pulse has shutdown issues, use this method at your apps end of life
+    jniBridge.deinitialize();
+  }
+  
+  public static void example()
   {
     // Create a log file for this example (by default, a Pulse.log will be made)
     // NOTE the engine will have its own log, so there is a Java log and an Engine log!!

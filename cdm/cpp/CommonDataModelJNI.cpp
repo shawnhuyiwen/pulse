@@ -6,6 +6,22 @@
 #include "CommonDataModel.h" 
 #include "utils/unitconversion/UCCommon.h"
 #include "CommonDataModelTest.h"
+#include "log4cplus/config.hxx"
+
+extern "C"
+JNIEXPORT void JNICALL Java_mil_tatrc_physiology_utilities_jniBridge_nativeInitialize(JNIEnv *env, jobject obj, jstring wrkDir)
+{
+  const char* dir = env->GetStringUTFChars(wrkDir, JNI_FALSE);
+  CUnitConversionEngine::GetEngine().SetWorkingDirectory(dir);
+  env->ReleaseStringUTFChars(wrkDir, dir);
+}
+
+extern "C"
+JNIEXPORT void JNICALL Java_mil_tatrc_physiology_utilities_jniBridge_nativeDeinitialize(JNIEnv *env, jobject obj)
+{
+  CUnitConversionEngine::DestroyEngine();
+  log4cplus::deinitialize();// Free up log4cplus before the DllMain quits so we can stop threads on windows
+}
 
 extern "C"
 JNIEXPORT jlong JNICALL Java_mil_tatrc_physiology_datamodel_testing_CDMUnitTestDriver_nativeAllocate(JNIEnv *env, jobject obj)
@@ -31,14 +47,6 @@ JNIEXPORT void JNICALL Java_mil_tatrc_physiology_datamodel_testing_CDMUnitTestDr
   executor->RunTest(testName,outputDir);
   env->ReleaseStringUTFChars(test, testName);
   env->ReleaseStringUTFChars(toDir, outputDir);
-}
-
-extern "C"
-JNIEXPORT void JNICALL Java_mil_tatrc_physiology_utilities_UnitConverter_nativeInitialize(JNIEnv *env, jobject obj, jstring wrkDir)
-{ 
-  const char* dir = env->GetStringUTFChars(wrkDir,JNI_FALSE);
-  CUnitConversionEngine::GetEngine().SetWorkingDirectory(dir);
-  env->ReleaseStringUTFChars(wrkDir,dir);
 }
 
 // Tests if a value can be converted from 1 unit to another.

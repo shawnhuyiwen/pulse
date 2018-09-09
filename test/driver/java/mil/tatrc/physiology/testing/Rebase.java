@@ -10,15 +10,21 @@ import org.eclipse.jgit.internal.storage.file.FileRepository;
 import org.eclipse.jgit.lib.ObjectId;
 
 import mil.tatrc.physiology.utilities.FileUtils;
+import mil.tatrc.physiology.utilities.jniBridge;
 import mil.tatrc.physiology.utilities.Log;
 import mil.tatrc.physiology.utilities.RunConfiguration;
-import mil.tatrc.physiology.utilities.UnitConverter;
 
 public class Rebase
 {
 	public static void main(String[] args)
 	{
-	  UnitConverter.initialize("./");
+	  jniBridge.initialize();
+	  rebase();
+	  jniBridge.deinitialize();
+	}
+	
+	public static void rebase()
+	{
 		RunConfiguration cfg = new RunConfiguration();
 		Log.setFileName("Rebase.log");    
 		String toDir = "./test_results/rebase/";

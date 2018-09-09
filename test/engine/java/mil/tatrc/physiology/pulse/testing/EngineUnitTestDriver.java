@@ -2,8 +2,9 @@
    See accompanying NOTICE file for details.*/
 package mil.tatrc.physiology.pulse.testing;
 
+import mil.tatrc.physiology.utilities.jniBridge;
 import mil.tatrc.physiology.utilities.Log;
-import mil.tatrc.physiology.utilities.UnitConverter;
+
 import mil.tatrc.physiology.testing.SETestDriver;
 import mil.tatrc.physiology.testing.SETestJob;
 
@@ -12,7 +13,7 @@ public class EngineUnitTestDriver implements SETestDriver.Executor
   
   static
   {
-    UnitConverter.initialize(System.getProperty("user.dir"));
+    jniBridge.initialize(System.getProperty("user.dir"));
   }
   
   protected long nativeObj;

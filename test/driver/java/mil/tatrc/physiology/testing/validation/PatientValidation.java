@@ -5,7 +5,7 @@ package mil.tatrc.physiology.testing.validation;
 import java.io.PrintWriter;
 import java.util.Arrays;
 
-import mil.tatrc.physiology.datamodel.patient.SEPatient;
+import mil.tatrc.physiology.utilities.jniBridge;
 import mil.tatrc.physiology.utilities.Log;
 
 public class PatientValidation extends ValidationTool
@@ -21,6 +21,7 @@ public class PatientValidation extends ValidationTool
   }
   public static void main(String[] args)
   {
+    jniBridge.initialize();
     Log.setFileName("ValidationTool.log");
     Log.info("Running with agrs : "+Arrays.toString(args));
     PatientValidation me = new PatientValidation();
@@ -32,6 +33,7 @@ public class PatientValidation extends ValidationTool
     {      
       me.loadData(args[0], args[1], args[2]);
     }
+    jniBridge.deinitialize();
   }
   
   public void CustomMarkdown(String sheetName, String destinationDirectory)

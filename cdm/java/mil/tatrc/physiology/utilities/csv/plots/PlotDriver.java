@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 
 import mil.tatrc.physiology.datamodel.substance.SESubstanceManager;
+import mil.tatrc.physiology.utilities.jniBridge;
 import mil.tatrc.physiology.utilities.Log;
 import mil.tatrc.physiology.utilities.LogListener;
 import mil.tatrc.physiology.utilities.RunConfiguration;
@@ -27,51 +28,76 @@ public class PlotDriver
 
   public static void main(String[] args) 
   {    
+    jniBridge.initialize();
     PlotDriver me = new PlotDriver();
     RunConfiguration cfg = new RunConfiguration();
-    
     //invalid input
-    if(args.length == 0)
+    if(args.length > 0)
     {
-      Log.error("No files specified");
-      return;
-    }
-    //Plotting from config file
-    else if(args.length == 1)
-    {
-      if(!args[0].substring(args[0].lastIndexOf(".")+1).equalsIgnoreCase("config"))
-      {
-        Log.error("Value "+args[0]+" doesn't seem to be a valid config file");
-        return;
-      }
-      File configFile = new File(cfg.getTestConfigDirectory()+"/"+args[0]);      
-      if(!configFile.exists())
-      {
-        Log.error("ConfigFile "+configFile.getAbsolutePath()+" not found");
-        return;
-      }
-      
-      me.processConfigFile(configFile,cfg);
-    }
-    //Plotting from two results files (compare-type plotting)
-    else
-    {
-      me.expectedFilePath = args[0];
-      me.computedFilePath = args[1];
-      me.preload = args[2].equalsIgnoreCase("true") ? true : false;
-      me.onlyPlotFailures = args[3].equalsIgnoreCase("true") ? true : false;
-      me.abbreviateContents = Integer.parseInt(args[4]);
-      
-      if(me.preload)
-      {
-        if(me.preloadData(me.expectedFilePath, me.computedFilePath))
-          me.generateCompareJobs(me.expectedFilePath, me.computedFilePath, null);
+      if(args.length == 1)
+      {// Plotting from config file
+        if(args[0].substring(args[0].lastIndexOf(".")+1).equalsIgnoreCase("config"))
+        {
+          File configFile = new File(cfg.getTestConfigDirectory()+"/"+args[0]);      
+          if(configFile.exists())
+          {
+            me.processConfigFile(configFile,cfg);
+          }
+          else
+          {
+            Log.error("ConfigFile "+configFile.getAbsolutePath()+" not found");
+          } 
+        }
+        else
+        {
+          Log.error("Value "+args[0]+" doesn't seem to be a valid config file");
+        }
       }
       else
-        me.generateCompareJobs(me.expectedFilePath, me.computedFilePath, null);
+      {// Plotting from two results files (compare-type plotting)
+        me.expectedFilePath = args[0];
+        me.computedFilePath = args[1];
+        me.preload = args[2].equalsIgnoreCase("true") ? true : false;
+        me.onlyPlotFailures = args[3].equalsIgnoreCase("true") ? true : false;
+        me.abbreviateContents = Integer.parseInt(args[4]);
+
+        if(me.preload)
+        {
+          if(me.preloadData(me.expectedFilePath, me.computedFilePath))
+            me.generateCompareJobs(me.expectedFilePath, me.computedFilePath, null);
+        }
+        else
+          me.generateCompareJobs(me.expectedFilePath, me.computedFilePath, null);
+      }
+      me.execute();
     }
-    
-    me.execute();
+    else
+    {
+      Log.error("No files specified");
+    }
+    jniBridge.deinitialize();
+  }
+  
+  public void execute()
+  {
+    //now execute for each job
+    for(PlotJob job : this.jobs)
+    {
+      if(!job.ignore)
+      {
+        try
+        {
+          job.plotter.plot(job, subMgr);
+        }
+        catch(Exception e)
+        {
+          Log.error("Plotter couldn't plot job "+job.name+". Check your config file line.", e);
+          continue;
+        }
+        job.Reset();
+        System.gc();
+      }
+    }
   }
   
   protected String name;
@@ -81,8 +107,8 @@ public class PlotDriver
   protected Map<String,Map<String,List<Double>>> compareData = new HashMap<String,Map<String,List<Double>>>();
   public boolean preload = false;
   public boolean onlyPlotFailures = false;
-  protected String computedFilePath;
-  protected String expectedFilePath;
+  protected String computedFilePath = "";
+  protected String expectedFilePath = "";
   public int abbreviateContents = 0;
   public boolean isScenario = false;
   
@@ -158,6 +184,11 @@ public class PlotDriver
       Y2headers = null;
       plotter = null;
     }
+  }
+  
+  public void setupComparison()
+  {
+    
   }
 
   //Reading from config file for validation ("pretty graphs")
@@ -681,26 +712,5 @@ public class PlotDriver
     }
   }
   
-  public void execute()
-  {
-    //now execute for each job
-    for(PlotJob job : this.jobs)
-    {
-      if(!job.ignore)
-      {
-        try
-        {
-          job.plotter.plot(job, subMgr);
-        }
-        catch(Exception e)
-        {
-          Log.error("Plotter couldn't plot job "+job.name+". Check your config file line.", e);
-          continue;
-        }
-        job.Reset();
-        System.gc();
-      }
-    }
-  }
 }
 

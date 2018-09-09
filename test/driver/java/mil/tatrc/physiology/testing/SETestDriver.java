@@ -2,23 +2,15 @@
    See accompanying NOTICE file for details.*/
 package mil.tatrc.physiology.testing;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.util.*;
 
-import com.kitware.physiology.cdm.Enums.eSwitch;
-
-import mil.tatrc.physiology.datamodel.engine.SEAutoSerialization;
-import mil.tatrc.physiology.datamodel.properties.CommonUnits.TimeUnit;
 import mil.tatrc.physiology.utilities.FileUtils;
+import mil.tatrc.physiology.utilities.jniBridge;
 import mil.tatrc.physiology.utilities.Log;
-import mil.tatrc.physiology.utilities.LogListener;
 import mil.tatrc.physiology.utilities.RunConfiguration;
-import mil.tatrc.physiology.utilities.UnitConverter;
 import mil.tatrc.physiology.testing.csv.CSVComparison;
 import mil.tatrc.physiology.utilities.csv.plots.CSVComparePlotter;
 import mil.tatrc.physiology.utilities.csv.plots.CSVComparePlotter.PlotType;
@@ -26,11 +18,6 @@ import mil.tatrc.physiology.utilities.csv.plots.CSVComparePlotter.PlotType;
 public class SETestDriver
 {
 	protected SETestConfiguration cfg = new SETestConfiguration();
-	
-  static
-  {        
-    UnitConverter.initialize(System.getProperty("user.dir"));
-  }
 
   public interface Executor
   {
@@ -39,44 +26,51 @@ public class SETestDriver
 
   public static void main(String[] args)
   {
+    jniBridge.initialize();
     SETestDriver me = new SETestDriver();
-    
+    if(args.length > 0)
+    {
+      me.config = args[0];
+      if(args.length == 4)
+      {
+        me.commitHash = args[1];
+        me.environment = args[2];
+        me.architecture = args[3];
+      }
+      me.test();
+    }
+    else
+      Log.error("No configFile specified");
+    jniBridge.deinitialize();
+  }
+  
+  public void test()
+  {
     RunConfiguration rcfg = new RunConfiguration();
     
-    if(args.length == 0)
-    {
-      Log.error("No configFile specified");
-      return;
-    }
-    if(args.length == 4)
-    {
-      me.commitHash = args[1];
-      me.environment = args[2];
-      me.architecture = args[3];
-    }
-    File configFile = new File(rcfg.getTestConfigDirectory()+"/"+args[0]);
+    File configFile = new File(rcfg.getTestConfigDirectory()+"/"+this.config);
     if(!configFile.exists())
     {
       System.err.println("Config file "+configFile.getName()+" does not exist");
       return;
     }
-    me.cfg.processConfigFile(configFile, rcfg);
-    me.cfg.deleteExistingResults();
+    this.cfg.processConfigFile(configFile, rcfg);
+    this.cfg.deleteExistingResults();
     
     int     availableThreads = Runtime.getRuntime().availableProcessors();
     boolean isPlotting;
     int     activeThreads=0;
     int     engineThreads=1;
-    if(me.cfg.numThreads <= 0)
-      engineThreads = availableThreads + me.cfg.numThreads;
+    if(this.cfg.numThreads <= 0)
+      engineThreads = availableThreads + this.cfg.numThreads;
     else
-      engineThreads = me.cfg.numThreads;
+      engineThreads = this.cfg.numThreads;
     if(engineThreads<=0)
       engineThreads = 1;
     if(engineThreads > availableThreads)
     {
       engineThreads = availableThreads;
-      Log.info("You dont have " + me.cfg.numThreads + " available on your computer.");
+      Log.info("You dont have " + this.cfg.numThreads + " available on your computer.");
     }
 
     Log.info("I can run " + availableThreads + " threads, I am going to use " + engineThreads);
@@ -85,7 +79,7 @@ public class SETestDriver
     {
       activeThreads = 0;
       isPlotting = false;
-      for(SETestJob job : me.cfg.jobs)
+      for(SETestJob job : this.cfg.jobs)
       {
         if(job.state == SETestJob.State.Executing)
           activeThreads++;
@@ -97,13 +91,13 @@ public class SETestDriver
       }
       if(!isPlotting && activeThreads != engineThreads)
       {// Look for a job to compare first    
-        for(SETestJob job : me.cfg.jobs)
+        for(SETestJob job : this.cfg.jobs)
         {                      
           if(job.state == SETestJob.State.Executed)
           {
             if(job.PlottableResults && !job.skipPlot)
             {
-              CompareThread cThread = me.new CompareThread();
+              CompareThread cThread = this.new CompareThread();
               job.state = SETestJob.State.Comparing;
               cThread.job = job;
               activeThreads++;
@@ -119,11 +113,11 @@ public class SETestDriver
       }
       if(activeThreads != engineThreads)
       {
-        for(SETestJob job : me.cfg.jobs)
+        for(SETestJob job : this.cfg.jobs)
         {
           if(job.state==SETestJob.State.Provisioned)
           {
-            ExecuteThread eThread = me.new ExecuteThread();
+            ExecuteThread eThread = this.new ExecuteThread();
             eThread.job = job;
             job.state = SETestJob.State.Executing;
             eThread.start();
@@ -142,10 +136,10 @@ public class SETestDriver
       { Log.error("I have insomnia...",ex); }
     }while(true);
 
-
-    me.createReport();
+    this.createReport();
   }
-  
+
+  public String config = "";
   public String environment = "";
   public String architecture = "";
   public String commitHash = "";

@@ -14,12 +14,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.kitware.physiology.cdm.ElectroCardioGramEnums.eElectroCardioGram.WaveformLead;
 import com.kitware.physiology.cdm.EnvironmentEnums.eEnvironment.SurroundingType;
-import com.kitware.physiology.cdm.Patient.PatientData;
 import com.kitware.physiology.cdm.PatientEnums.ePatient;
 import com.kitware.physiology.cdm.PhysiologyEnums.eHeartRhythm;
 import com.kitware.physiology.cdm.Enums.eCharge;
 import com.kitware.physiology.cdm.ScenarioEnums.eDataRequest.Category;
-import com.kitware.physiology.cdm.Substance.SubstanceData;
 import com.kitware.physiology.cdm.SubstanceEnums.eSubstance;
 
 import mil.tatrc.physiology.datamodel.substance.SESubstanceTissuePharmacokinetics;
@@ -35,6 +33,7 @@ import mil.tatrc.physiology.datamodel.patient.nutrition.SENutrition;
 import mil.tatrc.physiology.datamodel.properties.SEScalarTime;
 import mil.tatrc.physiology.datamodel.substance.*;
 import mil.tatrc.physiology.utilities.FileUtils;
+import mil.tatrc.physiology.utilities.jniBridge;
 import mil.tatrc.physiology.utilities.Log;
 import mil.tatrc.physiology.utilities.RunConfiguration;
 
@@ -45,8 +44,10 @@ public class DataSetReader
 
   public static void main(String[] args)
   {
+    jniBridge.initialize();
     cfg = new RunConfiguration();
     loadData(cfg.getDataDirectory()+"/Data.xlsx");
+    jniBridge.deinitialize();
   }
 
   public static void loadData(String xlsFile)
@@ -73,6 +74,7 @@ public class DataSetReader
       Log.error("Unable to clean directories");
       return;
     }
+    
     try
     {   
       File xls = new File(xlsFile);
@@ -84,9 +86,7 @@ public class DataSetReader
       Log.info("Generating data from "+xlsFile);
       FileInputStream xlFile = new FileInputStream(xlsFile);    
       XSSFWorkbook xlWBook =  new XSSFWorkbook (xlFile);
-      evaluator = xlWBook.getCreationHelper().createFormulaEvaluator();
-      
-      String contentVersion = "6.2.0";      
+      evaluator = xlWBook.getCreationHelper().createFormulaEvaluator();   
 
       List<SEPatient> patients = readPatients(xlWBook.getSheet("Patients"));
       for(SEPatient p : patients)
@@ -204,14 +204,16 @@ public class DataSetReader
             throw new RuntimeException("Serialization is not matching, something is wrong in the load/unload for ECG Interpolator");
         }
       }
-      
+
       xlWBook.close();
+      xlFile.close();
     }
     catch(Exception ex)
     {
       Log.error("Error reading XSSF : "+xlsFile,ex);
       return;
     }
+    Log.info("Data Generation Complete");
   }
 
   protected static List<SEPatient> readPatients(XSSFSheet xlSheet)

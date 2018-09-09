@@ -51,7 +51,6 @@ CUnitConversionEngine::CUnitConversionEngine()
 CUnitConversionEngine::~CUnitConversionEngine()
 {
   // Free everything that we allocate
-
   for (auto it = m_PList->begin(); it != m_PList->end(); it++)
   {
     delete *it;

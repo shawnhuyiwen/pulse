@@ -29,6 +29,7 @@ import mil.tatrc.physiology.datamodel.properties.SEScalarTime;
 import mil.tatrc.physiology.datamodel.utilities.SEEventHandler;
 import mil.tatrc.physiology.utilities.Log;
 import mil.tatrc.physiology.utilities.LogListener;
+import mil.tatrc.physiology.utilities.jniBridge;
 
 /**
  * How to use the Java interface to the Pulse Physiology Engine
@@ -80,6 +81,22 @@ public class HowTo_EngineUse
  public enum InitializationType { PatientObject, PatientFile, StateFile };
  
  public static void main(String[] args)
+ {
+   // Initialize the JNI bridge between Java and C++
+   // While not required (yet), it's recommended for program completeness
+   jniBridge.initialize();
+   example();
+   // Shutdown all C++ classes
+   // Since Pulse supports running multiple engines within the same process
+   // (Each could be on its own thread as well)
+   // deinitialize the C++ so it can properly clean up resources
+   // Generally this is not needed, but I did find it necessary on windows using mingw
+   // If not, the JVM would find itself in a threadlock condition due to threadpool deconstruction
+   // So if your Java app using Pulse has shutdown issues, use this method at your apps end of life
+   jniBridge.deinitialize();
+ }
+ 
+ public static void example()
  {
    SEScalarTime time = new SEScalarTime(0, TimeUnit.s);
    

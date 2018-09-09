@@ -36,6 +36,15 @@ if(UNIX)
   set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_RPATH}:\$ORIGIN")
 endif()
 
+if ( CMAKE_COMPILER_IS_GNUCC )
+  # Protobuf is not using the same variable name in its swap specificiation definitions
+  # Resulting in a LOT of warnings per file that includes protobuf headers, slowing the build down
+  set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wno-attributes")
+  if(CMAKE_BUILD_TYPE EQUAL "Debug")
+    set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wa,-mbig-obj")
+  endif()
+endif()
+
 
 
 message(STATUS "Looking for modules here : ${CMAKE_PREFIX_PATH}")

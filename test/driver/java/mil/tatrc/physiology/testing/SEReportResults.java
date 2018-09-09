@@ -7,11 +7,14 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.*;
 
+import mil.tatrc.physiology.utilities.jniBridge;
+
 /** Going to gather up all the html files in the test_results directory and make one big html report */
 public class SEReportResults 
 {
   public static void main(String[] args)
   {
+    jniBridge.initialize();
     try
     {
       // Here are the files we are looking for
@@ -88,6 +91,7 @@ public class SEReportResults
     {
       System.out.println("Unable to write report file");
     }
+    jniBridge.deinitialize();
   }
 
 }

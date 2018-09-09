@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import java.util.*;
 
 import mil.tatrc.physiology.utilities.FileUtils;
+import mil.tatrc.physiology.utilities.jniBridge;
 import mil.tatrc.physiology.utilities.Log;
 
 public class Proto2Doxygen 
@@ -28,36 +29,42 @@ public class Proto2Doxygen
 
 	public static void main(String[] args) 
 	{
-		Log.setFileName("Proto2Doxygen.log");
-		try
-		{
-			if(args.length!=2)
-			{
-				Log.info("Command arguments are : <Directory of files to process> <Directory to place processed files>");
-				return;
-			}
-			File srcDir = new File(args[0]);
-			if(!srcDir.isDirectory())
-			{
-				Log.info("Cannot find Source Directory : "+args[0]);
-				return;
-			}
-			File sDir = new File(args[0]);
-			File dDir = new File(args[1]);
-			dDir.mkdir();
-			
-			List<String> found = FileUtils.findFiles(sDir.getAbsolutePath(), "proto", true);      
-			for (String fName : found)
-			{        
-				if(new File(fName).isDirectory())
-					continue;// Not making this recursive at this point
-				processFile(fName, sDir, dDir);
-			}      
+	  jniBridge.initialize();
+    Log.setFileName("Proto2Doxygen.log");
+    try
+    {
+      if(args.length==2)
+      {
+
+        File sDir = new File(args[0]);
+        File dDir = new File(args[1]);
+        if(sDir.isDirectory())
+        {
+          dDir.mkdir();
+
+          List<String> found = FileUtils.findFiles(sDir.getAbsolutePath(), "proto", true);      
+          for (String fName : found)
+          {        
+            if(new File(fName).isDirectory())
+              continue;// Not making this recursive at this point
+            processFile(fName, sDir, dDir);
+          }      
+        }
+        else
+        {
+          Log.info("Cannot find Source Directory : "+args[0]);
+        }
+      }
+      else
+      {
+        Log.info("Command arguments are : <Directory of files to process> <Directory to place processed files>");
+      }
 		}
 		catch (Exception ex)
 		{
 			Log.error("Unable to create single validation table file.",ex);
 		}
+    jniBridge.deinitialize();
 	}
 
 	protected static void processFile(String fName, File sDir, File dDir) throws IOException

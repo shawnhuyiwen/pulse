@@ -17,38 +17,6 @@ import mil.tatrc.physiology.datamodel.exceptions.InvalidUnitException;
  */
 public class UnitConverter
 {
-  /** Loads Unit Conversion DLL */
-  static
-  {
-  	String location = System.getProperty("user.dir");
-    List<String>libs = new ArrayList<String>();
-    libs.add("PulseJNI");
-    if(!FileUtils.loadLibraries(libs,location))
-      throw new RuntimeException("Could not find all dependent libraries : " + libs);
-  }
-  
-  /**
-   * Optional initialize method
-   * @param workingDirectory
-   * @return
-   */
-  public static boolean initialize(String workingDirectory)
-  {
-    File workingDirectoryFile = new File(workingDirectory).getAbsoluteFile();
-    File f = new File(workingDirectoryFile.getAbsolutePath() + "/UCEDefs.txt").getAbsoluteFile();
-    
-    if(!f.exists())
-    {
-      //fLog.error("Unable to find "+workingDirectory+"/UCEDefs.txt");
-      return false;
-    }
-
-    //nativeInitialize(workingDirectory);
-
-    return true;
-  }
-  private static native void nativeInitialize(String workingDirectory);
-  
   /**
    * Converts values from one unit to the other unit
    * 

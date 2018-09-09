@@ -6,9 +6,7 @@ import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.util.*;
 
-import com.kitware.physiology.cdm.AnesthesiaMachine.AnesthesiaMachineData;
 import com.kitware.physiology.cdm.AnesthesiaMachineEnums.eAnesthesiaMachine;
-import com.kitware.physiology.cdm.Patient.PatientData;
 import com.kitware.physiology.cdm.PatientEnums.ePatient;
 
 import mil.tatrc.physiology.datamodel.compartment.SECompartment;
@@ -26,6 +24,7 @@ import mil.tatrc.physiology.datamodel.system.equipment.inhaler.actions.SEInhaler
 import mil.tatrc.physiology.utilities.FileUtils;
 import mil.tatrc.physiology.utilities.FindObjects;
 import mil.tatrc.physiology.utilities.FindObjects.BagMethod;
+import mil.tatrc.physiology.utilities.jniBridge;
 import mil.tatrc.physiology.utilities.Log;
 import mil.tatrc.physiology.utilities.StringUtils;
 
@@ -39,11 +38,15 @@ public class CDM2MD
 
 	public static void main(String[] args)
 	{
+	  jniBridge.initialize();
+    convert(args.length> 0 ? args[0] : "./docs/markdown");
+    jniBridge.deinitialize();
+	}
+	
+	public static void convert(String destDir)
+	{
 		try
 		{
-			String destDir = "./docs/markdown";
-			if(args.length>0)
-				destDir = args[0];
 			//FileUtils.delete(destDir);//Caller should delete old contents
 			FileUtils.createDirectory(destDir);
 
@@ -138,7 +141,6 @@ public class CDM2MD
 		catch (Exception e)
 		{
 			Log.error("Could not create directory .markdown",e);
-			return;
 		}
 	}
 

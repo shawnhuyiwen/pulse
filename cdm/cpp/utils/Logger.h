@@ -69,14 +69,14 @@ public:
 
   void ResetLogFile(std::string const&  logFilename = Loggable::empty);
 
-  enum level
+  enum class level
   {
-    TRACE,
-    DEBUG,
-    INFO,
-    WARN,
-    ERROR,
-    FATAL
+    Trace,
+    Debug,
+    Info,
+    Warn,
+    Error,
+    Fatal
   };
   void SetLogLevel(level  level);
   level GetLogLevel();
