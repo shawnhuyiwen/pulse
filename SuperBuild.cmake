@@ -48,7 +48,7 @@ ExternalProject_Add( log4cplus
   #URL "https://github.com/log4cplus/log4cplus/archive/2.0.3.zip"
   #URL_HASH MD5=33940534c0aaa7902355c4fbd1e7e7f3
   GIT_REPOSITORY "https://github.com/log4cplus/log4cplus.git"
-  GIT_TAG aec47c4c07440db85a199ff82c17c8a70bc756b0
+  GIT_TAG 352f8a1209d879de2dfac92a44e47ae32d272570
   GIT_SHALLOW TRUE
 # Build this in the Inner build
 # It will be easier to switch cofigurations in MSVC/XCode
