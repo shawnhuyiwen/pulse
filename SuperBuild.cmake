@@ -1,6 +1,6 @@
+
 include(ExternalProject)
 include(CMakeDetermineSystem)
-project(OuterBuild)
 
 set(BUILD_SHARED_LIBS OFF)
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_INSTALL_PREFIX})
@@ -48,7 +48,7 @@ ExternalProject_Add( log4cplus
   #URL "https://github.com/log4cplus/log4cplus/archive/2.0.3.zip"
   #URL_HASH MD5=33940534c0aaa7902355c4fbd1e7e7f3
   GIT_REPOSITORY "https://github.com/log4cplus/log4cplus.git"
-  GIT_TAG 352f8a1209d879de2dfac92a44e47ae32d272570
+  GIT_TAG b62368c16f2d3c637583208d69bbc8e9ea65b42d
   GIT_SHALLOW TRUE
 # Build this in the Inner build
 # It will be easier to switch cofigurations in MSVC/XCode

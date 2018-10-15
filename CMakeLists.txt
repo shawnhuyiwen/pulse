@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.7)
 
 set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/install CACHE PATH "Install location")
 
-project(SuperBuild)
+project(Pulse-SuperBuild)
 
 # Policy to address @foo@ variable expansion
 if(POLICY CMP0053)
