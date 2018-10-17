@@ -11,19 +11,13 @@ enum class BalanceGasBy { Volume, VolumeFraction };
 
 class CDM_DECL SEGasCompartment : public SEFluidCompartment<SEGasCompartmentLink, SEGasTransportVertex, SEGasTransportSubstance, SEGasSubstanceQuantity>
 {
+  friend class PBCompartment;//friend the serialization class
   friend class SECompartmentManager;
 protected:
   SEGasCompartment(const std::string& name, Logger* logger);
 public:
   virtual ~SEGasCompartment();
 
-  static void Load(const cdm::GasCompartmentData& src, SEGasCompartment& dst, SESubstanceManager& subMgr, SECircuitManager* circuits = nullptr);
-  static cdm::GasCompartmentData* Unload(const SEGasCompartment& src);
-protected:
-  static void Serialize(const cdm::GasCompartmentData& src, SEGasCompartment& dst, SESubstanceManager& subMgr, SECircuitManager* circuits = nullptr);
-  static void Serialize(const SEGasCompartment& src, cdm::GasCompartmentData& dst);
-
-public:
   virtual void StateChange();
 
   virtual void Balance(BalanceGasBy e);

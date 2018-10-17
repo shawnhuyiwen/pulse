@@ -4,13 +4,13 @@
 #pragma once
 #include "compartment/substances/SESubstanceQuantity.h"
 #include "substance/SESubstanceTransport.h"
-CDM_BIND_DECL(LiquidSubstanceQuantityData)
 class SELiquidCompartment;
 
 enum class BalanceLiquidBy { Mass, Concentration, Molarity, PartialPressure };
 
 class CDM_DECL SELiquidSubstanceQuantity : public SESubstanceQuantity, public SELiquidTransportSubstance
 {
+  friend class PBCompartment;//friend the serialization class
   friend class SELiquidCompartment;
 protected:
   SELiquidSubstanceQuantity(SESubstance& sub, SELiquidCompartment& compartment);
@@ -20,13 +20,6 @@ public:
   virtual void Clear(); 
   virtual void Invalidate();
 
-  static void Load(const cdm::LiquidSubstanceQuantityData& src, SELiquidSubstanceQuantity& dst);
-  static cdm::LiquidSubstanceQuantityData* Unload(const SELiquidSubstanceQuantity& src);
-protected:
-  static void Serialize(const cdm::LiquidSubstanceQuantityData& src, SELiquidSubstanceQuantity& dst);
-  static void Serialize(const SELiquidSubstanceQuantity& src, cdm::LiquidSubstanceQuantityData& dst);
-
-public:
   virtual void SetToZero();
   virtual const SEScalar* GetScalar(const std::string& name);
 

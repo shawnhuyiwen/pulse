@@ -4,15 +4,15 @@
 #include "stdafx.h"
 #include "substance/SESubstancePhysicochemicals.h"
 #include "properties/SEScalar0To1.h"
-#include "bind/cdm/Substance.pb.h"
+
 
 SESubstancePhysicochemicals::SESubstancePhysicochemicals(Logger* logger) : Loggable(logger)
 {
   m_AcidDissociationConstant = nullptr;
-  m_BindingProtein = cdm::eSubstance_BindingProtein_NullBindingProtein;
+  m_BindingProtein = eSubstance_BindingProtein::NullBindingProtein;
   m_BloodPlasmaRatio = nullptr;
   m_FractionUnboundInPlasma = nullptr;
-  m_IonicState = cdm::eSubstance_IonicState_NullIonicState;
+  m_IonicState = eSubstance_IonicState::NullIonicState;
   m_LogP = nullptr;
   m_OralAbsorptionRateConstant = nullptr;
 }
@@ -25,10 +25,10 @@ SESubstancePhysicochemicals::~SESubstancePhysicochemicals()
 void SESubstancePhysicochemicals::Clear()
 {
   SAFE_DELETE(m_AcidDissociationConstant);
-  m_BindingProtein = cdm::eSubstance_BindingProtein_NullBindingProtein;
+  m_BindingProtein = eSubstance_BindingProtein::NullBindingProtein;
   SAFE_DELETE(m_BloodPlasmaRatio);
   SAFE_DELETE(m_FractionUnboundInPlasma);
-  m_IonicState = cdm::eSubstance_IonicState_NullIonicState;
+  m_IonicState = eSubstance_IonicState::NullIonicState;
   SAFE_DELETE(m_LogP);
   SAFE_DELETE(m_OralAbsorptionRateConstant);
 }
@@ -66,53 +66,6 @@ const SEScalar* SESubstancePhysicochemicals::GetScalar(const std::string& name)
   return nullptr;
 }
 
-void SESubstancePhysicochemicals::Load(const cdm::SubstanceData_PhysicochemicalData& src, SESubstancePhysicochemicals& dst)
-{
-  SESubstancePhysicochemicals::Serialize(src, dst);
-}
-void SESubstancePhysicochemicals::Serialize(const cdm::SubstanceData_PhysicochemicalData& src, SESubstancePhysicochemicals& dst)
-{
-  dst.Clear();
-  if (src.has_aciddissociationconstant())
-    SEScalar::Load(src.aciddissociationconstant(), dst.GetAcidDissociationConstant());
-  dst.SetBindingProtein(src.bindingprotein());
-  if (src.has_bloodplasmaratio())
-    SEScalar::Load(src.bloodplasmaratio(), dst.GetBloodPlasmaRatio());
-  if (src.has_fractionunboundinplasma())
-    SEScalar0To1::Load(src.fractionunboundinplasma(), dst.GetFractionUnboundInPlasma());
-  dst.SetIonicState(src.ionicstate());
-  if (src.has_logp())
-    SEScalar::Load(src.logp(), dst.GetLogP());
-  if (src.has_oralabsorptionrateconstant())
-    SEScalar::Load(src.oralabsorptionrateconstant(), dst.GetOralAbsorptionRateConstant());
-}
-
-cdm::SubstanceData_PhysicochemicalData* SESubstancePhysicochemicals::Unload(const SESubstancePhysicochemicals& src)
-{
-  if (!src.IsValid())
-    return nullptr;
-  cdm::SubstanceData_PhysicochemicalData* dst = new cdm::SubstanceData_PhysicochemicalData();
-  SESubstancePhysicochemicals::Serialize(src,*dst);
-  return dst;
-}
-void SESubstancePhysicochemicals::Serialize(const SESubstancePhysicochemicals& src, cdm::SubstanceData_PhysicochemicalData& dst)
-{
-  if (src.HasAcidDissociationConstant())
-    dst.set_allocated_aciddissociationconstant(SEScalar::Unload(*src.m_AcidDissociationConstant));
-  if (src.HasBindingProtein())
-    dst.set_bindingprotein(src.m_BindingProtein);
-  if (src.HasBloodPlasmaRatio())
-    dst.set_allocated_bloodplasmaratio(SEScalar::Unload(*src.m_BloodPlasmaRatio));
-  if (src.HasFractionUnboundInPlasma())
-    dst.set_allocated_fractionunboundinplasma(SEScalar0To1::Unload(*src.m_FractionUnboundInPlasma));
-  if (src.HasIonicState())
-    dst.set_ionicstate(src.m_IonicState);
-  if (src.HasLogP())
-    dst.set_allocated_logp(SEScalar::Unload(*src.m_LogP));
-  if (src.HasOralAbsorptionRateConstant())
-    dst.set_allocated_oralabsorptionrateconstant(SEScalar::Unload(*src.m_OralAbsorptionRateConstant));
-}
-
 bool SESubstancePhysicochemicals::HasAcidDissociationConstant() const
 {
   return (m_AcidDissociationConstant == nullptr) ? false : m_AcidDissociationConstant->IsValid();
@@ -130,21 +83,21 @@ double SESubstancePhysicochemicals::GetAcidDissociationConstant() const
   return m_AcidDissociationConstant->GetValue();
 }
 
-cdm::eSubstance_BindingProtein SESubstancePhysicochemicals::GetBindingProtein() const
+eSubstance_BindingProtein SESubstancePhysicochemicals::GetBindingProtein() const
 {
   return m_BindingProtein;
 }
-void SESubstancePhysicochemicals::SetBindingProtein(cdm::eSubstance_BindingProtein protein)
+void SESubstancePhysicochemicals::SetBindingProtein(eSubstance_BindingProtein protein)
 {
   m_BindingProtein = protein;
 }
 bool SESubstancePhysicochemicals::HasBindingProtein() const
 {
-  return m_BindingProtein == cdm::eSubstance_BindingProtein_NullBindingProtein ? false : true;
+  return m_BindingProtein == eSubstance_BindingProtein::NullBindingProtein ? false : true;
 }
 void SESubstancePhysicochemicals::InvalidateBindingProtein()
 {
-  m_BindingProtein = cdm::eSubstance_BindingProtein_NullBindingProtein;
+  m_BindingProtein = eSubstance_BindingProtein::NullBindingProtein;
 }
 
 bool SESubstancePhysicochemicals::HasBloodPlasmaRatio() const
@@ -182,21 +135,21 @@ double SESubstancePhysicochemicals::GetFractionUnboundInPlasma() const
 }
 
 
-cdm::eSubstance_IonicState SESubstancePhysicochemicals::GetIonicState() const
+eSubstance_IonicState SESubstancePhysicochemicals::GetIonicState() const
 {
   return m_IonicState;
 }
-void SESubstancePhysicochemicals::SetIonicState(cdm::eSubstance_IonicState state)
+void SESubstancePhysicochemicals::SetIonicState(eSubstance_IonicState state)
 {
   m_IonicState = state;
 }
 bool SESubstancePhysicochemicals::HasIonicState() const
 {
-  return m_IonicState == cdm::eSubstance_IonicState_NullIonicState ? false : true;
+  return m_IonicState == eSubstance_IonicState::NullIonicState ? false : true;
 }
 void SESubstancePhysicochemicals::InvalidateIonicState()
 {
-  m_IonicState = cdm::eSubstance_IonicState_NullIonicState;
+  m_IonicState = eSubstance_IonicState::NullIonicState;
 }
 
 bool SESubstancePhysicochemicals::HasLogP() const

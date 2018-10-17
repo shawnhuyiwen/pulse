@@ -7,7 +7,7 @@
 
 SEOxygenTankPressureLoss::SEOxygenTankPressureLoss() : SEAnesthesiaMachineAction()
 {
-  m_State = cdm::eSwitch::Off;
+  m_State = eSwitch::Off;
 }
 
 SEOxygenTankPressureLoss::~SEOxygenTankPressureLoss()
@@ -18,7 +18,7 @@ SEOxygenTankPressureLoss::~SEOxygenTankPressureLoss()
 void SEOxygenTankPressureLoss::Clear()
 {
   SEAnesthesiaMachineAction::Clear();
-  m_State = cdm::eSwitch::Off;
+  m_State = eSwitch::Off;
 }
 
 bool SEOxygenTankPressureLoss::IsValid() const
@@ -27,11 +27,11 @@ bool SEOxygenTankPressureLoss::IsValid() const
 }
 bool SEOxygenTankPressureLoss::IsActive() const
 {
-  return m_State == cdm::eSwitch::On;
+  return m_State == eSwitch::On;
 }
 void SEOxygenTankPressureLoss::SetActive(bool b)
 {
-  m_State = b ? cdm::eSwitch::On : cdm::eSwitch::Off;
+  m_State = b ? eSwitch::On : eSwitch::Off;
 }
 
 void SEOxygenTankPressureLoss::Load(const cdm::OxygenTankPressureLossData& src, SEOxygenTankPressureLoss& dst)
@@ -61,6 +61,6 @@ void SEOxygenTankPressureLoss::ToString(std::ostream &str) const
   str << "Anesthesia Machine Action : Oxygen Tank Pressure Loss"; 
   if(HasComment())
     str<<"\n\tComment: "<<m_Comment;
-  str  << "\n\tState: " << cdm::eSwitch_Name(m_State);
+  str  << "\n\tState: " << eSwitch_Name(m_State);
   str << std::flush;
 }

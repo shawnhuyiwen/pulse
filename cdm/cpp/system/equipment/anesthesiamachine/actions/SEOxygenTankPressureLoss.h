@@ -28,5 +28,5 @@ public:
 
 protected:
   
-  cdm::eSwitch m_State;
+  eSwitch m_State;
 };  

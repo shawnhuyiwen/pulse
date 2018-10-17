@@ -11,7 +11,6 @@ class SEEnvironmentalConditions;
 class SEElectroCardioGramWaveformInterpolator;
 #include "engine/SEEngineConfiguration.h"
 PULSE_BIND_DECL(ConfigurationData)
-#include "bind/engine/EngineEnums.pb.h"
 
 /**
 * @brief %Pulse specific configuration parameters for all systems/equipment
@@ -58,8 +57,8 @@ public:
   virtual const SEDynamicStabilization* GetDynamicStabilization() const;
   virtual void RemoveDynamicStabilization();
 
-  virtual bool IsWritingPatientBaselineFile() const { return m_WritePatientBaselineFile == cdm::eSwitch::On; }
-  virtual void EnableWritePatientBaselineFile(cdm::eSwitch s) { m_WritePatientBaselineFile = (s==cdm::eSwitch::NullSwitch) ? cdm::eSwitch::Off : s; }
+  virtual bool IsWritingPatientBaselineFile() const { return m_WritePatientBaselineFile == eSwitch::On; }
+  virtual void EnableWritePatientBaselineFile(eSwitch s) { m_WritePatientBaselineFile = (s==eSwitch::NullSwitch) ? eSwitch::Off : s; }
 
   virtual bool HasAutoSerialization() const;
   virtual SEAutoSerialization& GetAutoSerialization();
@@ -73,7 +72,7 @@ protected:
   SETimedStabilization*      m_TimedStabilization;
   SEDynamicStabilization*    m_DynamicStabilization;
   SEAutoSerialization*       m_AutoSerialization;
-  cdm::eSwitch               m_WritePatientBaselineFile;
+  eSwitch               m_WritePatientBaselineFile;
 
   ////////////////////
   /** Baroreceptors */
@@ -297,10 +296,10 @@ protected:
   /** Drugs */
   ////////////
 public:
-  virtual bool IsPDEnabled() const { return m_PDEnabled==cdm::eSwitch::On; }
-  virtual void UsePDModel(cdm::eSwitch s) { m_PDEnabled = (s == cdm::eSwitch::NullSwitch) ? cdm::eSwitch::On : s; }
+  virtual bool IsPDEnabled() const { return m_PDEnabled==eSwitch::On; }
+  virtual void UsePDModel(eSwitch s) { m_PDEnabled = (s == eSwitch::NullSwitch) ? eSwitch::On : s; }
 protected:
-  cdm::eSwitch m_PDEnabled;
+  eSwitch m_PDEnabled;
 
   ///////////
   /** ECG */
@@ -469,8 +468,8 @@ protected:
   /** Renal */
   ////////////
 public:
-  virtual bool IsRenalEnabled() const { return m_RenalEnabled==cdm::eSwitch::On; }
-  virtual void EnableRenal(cdm::eSwitch s) { m_RenalEnabled = (s == cdm::eSwitch::NullSwitch) ? cdm::eSwitch::On : s; }
+  virtual bool IsRenalEnabled() const { return m_RenalEnabled==eSwitch::On; }
+  virtual void EnableRenal(eSwitch s) { m_RenalEnabled = (s == eSwitch::NullSwitch) ? eSwitch::On : s; }
 
   virtual bool HasPlasmaSodiumConcentrationSetPoint() const;
   virtual SEScalarMassPerVolume& GetPlasmaSodiumConcentrationSetPoint();
@@ -523,7 +522,7 @@ public:
   virtual bool HasTargetSodiumDelivery();
   virtual SEScalarMassPerTime& GetTargetSodiumDelivery();
 protected:
-  cdm::eSwitch                         m_RenalEnabled;
+  eSwitch                         m_RenalEnabled;
 
   SEScalarMassPerVolume*               m_PlasmaSodiumConcentrationSetPoint;
   SEScalarMassPerVolume*               m_PeritubularPotassiumConcentrationSetPoint;
@@ -606,8 +605,8 @@ protected:
   /** Tissue */
   /////////////
 public:
-  virtual bool IsTissueEnabled() const { return m_TissueEnabled==cdm::eSwitch::On; }
-  virtual void EnableTissue(cdm::eSwitch s) { m_TissueEnabled = (s == cdm::eSwitch::NullSwitch) ? cdm::eSwitch::On : s; }
+  virtual bool IsTissueEnabled() const { return m_TissueEnabled==eSwitch::On; }
+  virtual void EnableTissue(eSwitch s) { m_TissueEnabled = (s == eSwitch::NullSwitch) ? eSwitch::On : s; }
 protected:
-  cdm::eSwitch m_TissueEnabled;
+  eSwitch m_TissueEnabled;
 };

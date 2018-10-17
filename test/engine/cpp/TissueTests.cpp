@@ -44,7 +44,7 @@ void PulseEngineTest::DistributeMass(SETestSuite& testSuite)
   //           /  \      /  \
   //        L2C0  L2C1 L2C2 L2C3 <-- Only these cmpts have data
 
-  pc.GetSubstances().LoadSubstanceDirectory();
+  pc.GetSubstances().LoadSubstances();
   
   SELiquidCompartment& L0C0 = pc.GetCompartments().CreateLiquidCompartment("L0C0");
   SELiquidCompartment& L1C0 = pc.GetCompartments().CreateLiquidCompartment("L1C0");
@@ -221,7 +221,7 @@ void PulseEngineTest::PerfusionLimitedDiffusionTest(SETestSuite& testSuite)
   Tissue& tsu = (Tissue&)pc.GetTissue();
   TimingProfile timer;
   double timestep_s = 1. / 90.;
-  pc.GetSubstances().LoadSubstanceDirectory();
+  pc.GetSubstances().LoadSubstances();
   SESubstance* sub = pc.GetSubstances().GetSubstance("Ketamine");
   double bFlow_mL_Per_s = 2.0;
   double PartitionCoeff = 1.52201;
@@ -283,7 +283,7 @@ void PulseEngineTest::AlveolarOxygenDiffusionTest(const std::string& rptDirector
   Tissue& tsu = (Tissue&)pc.GetTissue();
 
   double timestep_s = 1.0 / 90;
-  pc.GetSubstances().LoadSubstanceDirectory();
+  pc.GetSubstances().LoadSubstances();
   SESubstance* O2 = pc.GetSubstances().GetSubstance("Oxygen");
   SESubstance* N2 = pc.GetSubstances().GetSubstance("Nitrogen");
   pc.GetSubstances().AddActiveSubstance(*O2);
@@ -352,7 +352,7 @@ void PulseEngineTest::AlveolarCarbonDioxideDiffusionTest(const std::string& rptD
   std::string rptFile = rptDirectory + "/AlveolarCarbonDioxideDiffusionTest.csv";
   
   double timestep_s = 1.0 / 90;
-  pc.GetSubstances().LoadSubstanceDirectory();
+  pc.GetSubstances().LoadSubstances();
 
   SESubstance* CO2 = pc.GetSubstances().GetSubstance("CarbonDioxide");
   SESubstance* N2 = pc.GetSubstances().GetSubstance("Nitrogen");
@@ -419,7 +419,7 @@ void PulseEngineTest::InstantPlusSimpleDiffusionTest(const std::string& rptDirec
   PulseController pc(m_Logger);
   Tissue& tsu = (Tissue&)pc.GetTissue();
   double timestep_s = 1.0 / 90;
-  pc.GetSubstances().LoadSubstanceDirectory();
+  pc.GetSubstances().LoadSubstances();
   SESubstance* o2 = pc.GetSubstances().GetSubstance("Oxygen");
   pc.GetSubstances().AddActiveSubstance(*o2);
   SELiquidCompartment& cmpt1 = pc.GetCompartments().CreateLiquidCompartment("cmpt1");
@@ -485,7 +485,7 @@ void PulseEngineTest::InstantDiffusionTest(SETestSuite& testSuite)
   PulseController pc(testSuite.GetLogger());
   Tissue& tsu = (Tissue&)pc.GetTissue();
   double timestep_s = 1.0 / 90;
-  pc.GetSubstances().LoadSubstanceDirectory();
+  pc.GetSubstances().LoadSubstances();
   SESubstance* o2 = pc.GetSubstances().GetSubstance("Oxygen");
   pc.GetSubstances().AddActiveSubstance(*o2);
   SELiquidCompartment& cmpt1 = pc.GetCompartments().CreateLiquidCompartment("cmpt1");
@@ -530,7 +530,7 @@ void PulseEngineTest::SimpleDiffusionTwoCompartmentTest(const std::string& rptDi
   PulseController pc(m_Logger);
   Tissue& tsu = (Tissue&)pc.GetTissue();
   double timestep_s = 1.0 / 90;
-  pc.GetSubstances().LoadSubstanceDirectory();
+  pc.GetSubstances().LoadSubstances();
   SESubstance* o2 = pc.GetSubstances().GetSubstance("Oxygen");
   pc.GetSubstances().AddActiveSubstance(*o2);
   SETissueCompartment& tissue = pc.GetCompartments().CreateTissueCompartment("Tissue");
@@ -612,7 +612,7 @@ void PulseEngineTest::SimpleDiffusionFourCompartmentTest(const std::string& rptD
   PulseController pc(m_Logger);
   Tissue& tsu = (Tissue&)pc.GetTissue();
   double timestep_s = 1.0 / 90;
-  pc.GetSubstances().LoadSubstanceDirectory();
+  pc.GetSubstances().LoadSubstances();
   SESubstance* o2 = pc.GetSubstances().GetSubstance("Oxygen");
   pc.GetSubstances().AddActiveSubstance(*o2);
   SETissueCompartment& tissue = pc.GetCompartments().CreateTissueCompartment("Tissue");
@@ -710,7 +710,7 @@ void PulseEngineTest::SimpleDiffusionHierarchyTest(const std::string& rptDirecto
   PulseController pc(m_Logger);
   Tissue& tsu = (Tissue&)pc.GetTissue();
   double timestep_s = 1.0 / 90;
-  pc.GetSubstances().LoadSubstanceDirectory();
+  pc.GetSubstances().LoadSubstances();
   SESubstance* sub = pc.GetSubstances().GetSubstance("Desflurane");
   pc.GetSubstances().AddActiveSubstance(*sub);
 
@@ -839,7 +839,7 @@ void PulseEngineTest::FacilitatedDiffusionTest(const std::string& rptDirectory)
   PulseController pc(m_Logger);
   Tissue& tsu = (Tissue&)pc.GetTissue();
   double timestep_s = 1.0 / 90;
-  pc.GetSubstances().LoadSubstanceDirectory();
+  pc.GetSubstances().LoadSubstances();
   SESubstance* sub = pc.GetSubstances().GetSubstance("Glucose");
   pc.GetSubstances().AddActiveSubstance(*sub);
   SETissueCompartment& tissue = pc.GetCompartments().CreateTissueCompartment("Tissue");  
@@ -887,7 +887,7 @@ void PulseEngineTest::ActiveTransportTest(SETestSuite& testSuite)
   PulseController pc(testSuite.GetLogger());
   Tissue& tsu = (Tissue&)pc.GetTissue();
   double timestep_s = 1. / 90.;
-  pc.GetSubstances().LoadSubstanceDirectory();
+  pc.GetSubstances().LoadSubstances();
   SESubstance* sub = pc.GetSubstances().GetSubstance("Desflurane");
   pc.GetSubstances().AddActiveSubstance(*sub);
   SETissueCompartment& tissue = pc.GetCompartments().CreateTissueCompartment("Tissue");

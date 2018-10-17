@@ -5,7 +5,7 @@
 #include "circuit/thermal/SEThermalCircuit.h"
 #include "circuit/SECircuitManager.h"
 
-SEThermalCircuit::SEThermalCircuit(const std::string& name, SECircuitManager& mgr) : SECircuit<cdm::ThermalCircuitData, SEThermalCircuitNode, cdm::ThermalCircuitNodeData, SEThermalCircuitPath, cdm::ThermalCircuitPathData>(name, mgr.GetLogger()), m_Mgr(mgr)
+SEThermalCircuit::SEThermalCircuit(const std::string& name, SECircuitManager& mgr) : SECircuit<SEThermalCircuitNode, SEThermalCircuitPath>(name, mgr.GetLogger()), m_Mgr(mgr)
 {
 
 }

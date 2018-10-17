@@ -4,7 +4,10 @@
 #pragma once
 #include "patient/actions/SEPatientAction.h"
 CDM_BIND_DECL(IntubationData)
-#include "bind/cdm/PatientActionEnums.pb.h"
+
+// Keep enums in sync with appropriate schema/cdm/PatientActionEnums.proto file !!
+enum class eIntubation_Type { Off = 0, Esophageal, LeftMainstem, RightMainstem, Tracheal };
+extern const std::string& eIntubation_Type_Name(eIntubation_Type m);
 
 class CDM_DECL SEIntubation : public SEPatientAction
 {
@@ -26,10 +29,10 @@ protected:
 
 public:
     
-  virtual cdm::eIntubation_Type GetType() const;
-  virtual void SetType(cdm::eIntubation_Type t);
+  virtual eIntubation_Type GetType() const;
+  virtual void SetType(eIntubation_Type t);
 
   virtual void ToString(std::ostream &str) const;
 protected:
-  cdm::eIntubation_Type m_Type;
+  eIntubation_Type m_Type;
 };  

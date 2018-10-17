@@ -22,6 +22,7 @@
 #include "properties/SEScalarAmountPerVolume.h"
 
 #include <cmath>
+#include <iterator>
 
 DataTrack::DataTrack() : DataTrack(nullptr)
 {
@@ -119,9 +120,9 @@ void DataTrack::Probe(const SEFluidCircuit& c)
   for (SEFluidCircuitPath* p : c.GetPaths())
   {
     if (p->HasSwitch())
-      Probe(p->GetName() + "_Switch", p->GetSwitch() == cdm::eGate::Open ? 1 : 0);
+      Probe(p->GetName() + "_Switch", p->GetSwitch() == eGate::Open ? 1 : 0);
     if (p->HasValve())
-      Probe(p->GetName() + "_Valve", p->GetValve() == cdm::eGate::Closed ? 1 : 0);
+      Probe(p->GetName() + "_Valve", p->GetValve() == eGate::Closed ? 1 : 0);
 
     if (p->HasResistance())
     {
@@ -174,9 +175,9 @@ void DataTrack::Probe(const SEThermalCircuit& c)
   for (SEThermalCircuitPath* p : c.GetPaths())
   {
     if (p->HasSwitch())
-      Probe(p->GetName() + "_Switch", p->GetSwitch() ==  cdm::eGate::Open ? 1 : 0);
+      Probe(p->GetName() + "_Switch", p->GetSwitch() ==  eGate::Open ? 1 : 0);
     if (p->HasValve())
-      Probe(p->GetName() + "_Valve", p->GetValve() == cdm::eGate::Closed ? 1 : 0);
+      Probe(p->GetName() + "_Valve", p->GetValve() == eGate::Closed ? 1 : 0);
 
     if (p->HasResistance())
     {
@@ -229,9 +230,9 @@ void DataTrack::Probe(const SEElectricalCircuit& c)
   for (SEElectricalCircuitPath* p : c.GetPaths())
   {
     if (p->HasSwitch())
-      Probe(p->GetName() + "_Switch", p->GetSwitch() == cdm::eGate::Open ? 1 : 0);
+      Probe(p->GetName() + "_Switch", p->GetSwitch() == eGate::Open ? 1 : 0);
     if (p->HasValve())
-      Probe(p->GetName() + "_Valve", p->GetValve() == cdm::eGate::Closed ? 1 : 0);
+      Probe(p->GetName() + "_Valve", p->GetValve() == eGate::Closed ? 1 : 0);
 
     if (p->HasResistance())
     {
@@ -398,9 +399,9 @@ void DataTrack::Track(double time_s, const SEElectricalCircuit& c)
   for (SEElectricalCircuitPath* p : c.GetPaths())
   {
     if (p->HasSwitch())
-      Track(p->GetName() + "_Switch", time_s, p->GetSwitch() == cdm::eGate::Open ? 1 : 0);
+      Track(p->GetName() + "_Switch", time_s, p->GetSwitch() == eGate::Open ? 1 : 0);
     if (p->HasValve())
-      Track(p->GetName() + "_Valve", time_s, p->GetValve() == cdm::eGate::Closed ? 1 : 0);
+      Track(p->GetName() + "_Valve", time_s, p->GetValve() == eGate::Closed ? 1 : 0);
 
     if (p->HasResistance())
     {
@@ -452,9 +453,9 @@ void DataTrack::Track(double time_s, const SEFluidCircuit& c)
   for (SEFluidCircuitPath* p : c.GetPaths())
   {
     if (p->HasSwitch())
-      Track(p->GetName() + "_Switch", time_s, p->GetSwitch() == cdm::eGate::Open ? 1 : 0);
+      Track(p->GetName() + "_Switch", time_s, p->GetSwitch() == eGate::Open ? 1 : 0);
     if (p->HasValve())
-      Track(p->GetName() + "_Valve", time_s, p->GetValve() == cdm::eGate::Closed ? 1 : 0);
+      Track(p->GetName() + "_Valve", time_s, p->GetValve() == eGate::Closed ? 1 : 0);
 
     if (p->HasResistance())
     {
@@ -506,9 +507,9 @@ void DataTrack::Track(double time_s, const SEThermalCircuit& c)
   for (SEThermalCircuitPath* p : c.GetPaths())
   {
     if (p->HasSwitch())
-      Track(p->GetName() + "_Switch", time_s, p->GetSwitch() == cdm::eGate::Open ? 1 : 0);
+      Track(p->GetName() + "_Switch", time_s, p->GetSwitch() == eGate::Open ? 1 : 0);
     if (p->HasValve())
-      Track(p->GetName() + "_Valve", time_s, p->GetValve() == cdm::eGate::Closed ? 1 : 0);
+      Track(p->GetName() + "_Valve", time_s, p->GetValve() == eGate::Closed ? 1 : 0);
 
     if (p->HasResistance())
     {

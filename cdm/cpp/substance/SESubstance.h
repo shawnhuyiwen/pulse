@@ -2,15 +2,18 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "bind/cdm/SubstanceEnums.pb.h"
-CDM_BIND_DECL(SubstanceData)
 class SESubstanceAerosolization;
 class SESubstanceClearance;
 class SESubstancePharmacokinetics;
 class SESubstancePharmacodynamics;
 
+// Keep enums in sync with appropriate schema/cdm/SubstanceEnums.proto file !!
+enum class eSubstance_State { NullState = 0, Solid, Liquid, Gas, Molecular };
+extern const std::string& eSubstance_State_Name(eSubstance_State m);
+
 class CDM_DECL SESubstance : public Loggable
 {
+  friend class PBSubstance;//friend the serialization class
 public:
 
   SESubstance(Logger* logger);
@@ -19,22 +22,14 @@ public:
   virtual void Clear();
 
   virtual const SEScalar* GetScalar(const std::string& name);
-
-  static void Load(const cdm::SubstanceData& src, SESubstance& dst);
-  static cdm::SubstanceData* Unload(const SESubstance& src);
-protected:
-  static void Serialize(const cdm::SubstanceData& src, SESubstance& dst);
-  static void Serialize(const SESubstance& src, cdm::SubstanceData& dst);
-
-public:
   
   virtual std::string GetName() const;
   virtual void SetName(const std::string& name);
   virtual bool HasName() const;
   virtual void InvalidateName();
 
-  virtual cdm::eSubstance_State GetState() const;
-  virtual void SetState(cdm::eSubstance_State state);
+  virtual eSubstance_State GetState() const;
+  virtual void SetState(eSubstance_State state);
   virtual bool HasState() const;
   virtual void InvalidateState();
 
@@ -133,7 +128,7 @@ public:
 protected: 
 
   std::string                       m_Name;
-  cdm::eSubstance_State             m_State;
+  eSubstance_State                  m_State;
   SEScalarMassPerVolume*            m_Density;
   SEScalarMassPerAmount*            m_MolarMass;
 

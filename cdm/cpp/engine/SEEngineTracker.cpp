@@ -227,13 +227,13 @@ bool SEEngineTracker::TrackRequest(SEDataRequest& dr)
 
   switch (dr.GetCategory())
   {
-    case cdm::eDataRequest_Category_Patient:
+    case eDataRequest_Category::Patient:
       m_ss << "Patient";
-    case cdm::eDataRequest_Category_Physiology:
-    case cdm::eDataRequest_Category_Environment:
-    case cdm::eDataRequest_Category_AnesthesiaMachine:
-    case cdm::eDataRequest_Category_ECG:
-    case cdm::eDataRequest_Category_Inhaler:
+    case eDataRequest_Category::Physiology:
+    case eDataRequest_Category::Environment:
+    case eDataRequest_Category::AnesthesiaMachine:
+    case eDataRequest_Category::ECG:
+    case eDataRequest_Category::Inhaler:
     {
       if (!dr.GetUnit())
         m_ss << dr.GetPropertyName();
@@ -246,10 +246,10 @@ bool SEEngineTracker::TrackRequest(SEDataRequest& dr)
       m_DataTrack->SetFormatting(ds->Heading, dr);
       return success;
     }
-    case cdm::eDataRequest_Category_GasCompartment:
-    case cdm::eDataRequest_Category_LiquidCompartment:
-    case cdm::eDataRequest_Category_ThermalCompartment:
-    case cdm::eDataRequest_Category_TissueCompartment:
+    case eDataRequest_Category::GasCompartment:
+    case eDataRequest_Category::LiquidCompartment:
+    case eDataRequest_Category::ThermalCompartment:
+    case eDataRequest_Category::TissueCompartment:
     {
       if (dr.HasSubstanceName())
       {
@@ -271,7 +271,7 @@ bool SEEngineTracker::TrackRequest(SEDataRequest& dr)
       m_DataTrack->SetFormatting(ds->Heading, dr);
       return success;
     }
-    case cdm::eDataRequest_Category_Substance:
+    case eDataRequest_Category::Substance:
     {
       if (dr.HasCompartmentName())
       {
@@ -299,7 +299,7 @@ bool SEEngineTracker::TrackRequest(SEDataRequest& dr)
       }
     }
     default:
-      m_ss << "Unhandled data request category: " << dr.GetCategory() << std::endl;
+      m_ss << "Unhandled data request category: " << eDataRequest_Category_Name(dr.GetCategory()) << std::endl;
       Fatal(m_ss);
   }
 
@@ -313,40 +313,40 @@ bool SEEngineTracker::ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds)
   std::string propertyName = dr.GetPropertyName();
   switch (dr.GetCategory())
   {
-    case cdm::eDataRequest_Category_Patient:
+    case eDataRequest_Category::Patient:
     {
       // casting of the const to modify the patient
       ds.SetScalar(m_Patient.GetScalar(propertyName), dr);
       return true;
     }
-    case cdm::eDataRequest_Category_Physiology:
+    case eDataRequest_Category::Physiology:
     {
       // Make sure we mapped something
       ds.SetScalar(SESystem::GetScalar(propertyName, &m_PhysiologySystems), dr);
       return true;
     }    
-    case cdm::eDataRequest_Category_Environment:
+    case eDataRequest_Category::Environment:
     {
       // Make sure we mapped something
       ds.SetScalar(m_Environment->GetScalar(propertyName), dr);
       return true;
     }
-    case cdm::eDataRequest_Category_AnesthesiaMachine:
+    case eDataRequest_Category::AnesthesiaMachine:
     {
       ds.SetScalar(m_AnesthesiaMachine->GetScalar(propertyName), dr);
       return true;
     }
-    case cdm::eDataRequest_Category_ECG:
+    case eDataRequest_Category::ECG:
     {
       ds.SetScalar(m_ECG->GetScalar(propertyName), dr);
       return true;
     }
-    case cdm::eDataRequest_Category_Inhaler:
+    case eDataRequest_Category::Inhaler:
     {
       ds.SetScalar(m_Inhaler->GetScalar(propertyName), dr);
       return true;
     }
-    case cdm::eDataRequest_Category_GasCompartment:
+    case eDataRequest_Category::GasCompartment:
     {
       if (!m_CmptMgr.HasGasCompartment(dr.GetCompartmentName()))
       {
@@ -393,7 +393,7 @@ bool SEEngineTracker::ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds)
       }
       return true;
     }
-    case cdm::eDataRequest_Category_LiquidCompartment:
+    case eDataRequest_Category::LiquidCompartment:
     {
       if (!m_CmptMgr.HasLiquidCompartment(dr.GetCompartmentName()))
       {
@@ -445,7 +445,7 @@ bool SEEngineTracker::ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds)
       }
       return true;
     }
-    case cdm::eDataRequest_Category_ThermalCompartment:
+    case eDataRequest_Category::ThermalCompartment:
     {
       if (!m_CmptMgr.HasThermalCompartment(dr.GetCompartmentName()))
       {
@@ -473,7 +473,7 @@ bool SEEngineTracker::ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds)
       ds.SetScalar(thermalCmpt->GetScalar(propertyName), dr);
       return true;
     }
-    case cdm::eDataRequest_Category_TissueCompartment:
+    case eDataRequest_Category::TissueCompartment:
     {
       if (!m_CmptMgr.HasTissueCompartment(dr.GetCompartmentName()))
       {
@@ -485,7 +485,7 @@ bool SEEngineTracker::ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds)
       ds.SetScalar(tissueCmpt->GetScalar(propertyName), dr);
       return true;
     }
-    case cdm::eDataRequest_Category_Substance:
+    case eDataRequest_Category::Substance:
     {
       // Removing const because I want to allocate and grab scalars to track for later
       SESubstance* sub = m_SubMgr.GetSubstance(dr.GetSubstanceName());
@@ -506,7 +506,7 @@ bool SEEngineTracker::ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds)
       }
     }
     default:
-      m_ss << "Unhandled data request category: " << dr.GetCategory() << std::endl;
+      m_ss << "Unhandled data request category: " << eDataRequest_Category_Name(dr.GetCategory()) << std::endl;
       Fatal(m_ss);
   }
   m_ss << "Unhandled data request : " << propertyName << std::endl;

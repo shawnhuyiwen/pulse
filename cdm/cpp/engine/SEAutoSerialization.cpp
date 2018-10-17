@@ -9,9 +9,9 @@
 SEAutoSerialization::SEAutoSerialization(Logger* logger) : Loggable(logger)
 {
   m_Period = nullptr;
-  m_PeriodTimeStamps = cdm::eSwitch::Off;
-  m_AfterActions = cdm::eSwitch::Off;
-  m_ReloadState  = cdm::eSwitch::Off;
+  m_PeriodTimeStamps = eSwitch::Off;
+  m_AfterActions = eSwitch::Off;
+  m_ReloadState  = eSwitch::Off;
   m_Directory    = "";
   m_FileName     = "";
 }
@@ -24,9 +24,9 @@ SEAutoSerialization::~SEAutoSerialization()
 void SEAutoSerialization::Clear()
 {
   SAFE_DELETE(m_Period);
-  m_PeriodTimeStamps = cdm::eSwitch::Off;
-  m_AfterActions = cdm::eSwitch::Off;
-  m_AfterActions = cdm::eSwitch::Off;
+  m_PeriodTimeStamps = eSwitch::Off;
+  m_AfterActions = eSwitch::Off;
+  m_AfterActions = eSwitch::Off;
   m_Directory = "";
   m_FileName = "";
 }
@@ -54,11 +54,11 @@ void SEAutoSerialization::Serialize(const cdm::AutoSerializationData& src, SEAut
   if (src.has_period())
     SEScalarTime::Load(src.period(), dst.GetPeriod());
   if(src.periodtimestamps()!=cdm::eSwitch::NullSwitch)
-    dst.SetPeriodTimeStamps(src.periodtimestamps());
+    dst.SetPeriodTimeStamps((eSwitch)src.periodtimestamps());
   if (src.afteractions() != cdm::eSwitch::NullSwitch)
-    dst.SetAfterActions(src.afteractions());
+    dst.SetAfterActions((eSwitch)src.afteractions());
   if (src.reloadstate() != cdm::eSwitch::NullSwitch)
-    dst.SetReloadState(src.reloadstate());
+    dst.SetReloadState((eSwitch)src.reloadstate());
   dst.SetDirectory(src.directory());
   dst.SetFileName(src.filename());
 }
@@ -73,9 +73,9 @@ void SEAutoSerialization::Serialize(const SEAutoSerialization& src, cdm::AutoSer
 {
   if (src.HasPeriod())
     dst.set_allocated_period(SEScalarTime::Unload(*src.m_Period));
-  dst.set_periodtimestamps(src.m_PeriodTimeStamps);
-  dst.set_afteractions(src.m_AfterActions);
-  dst.set_reloadstate(src.m_ReloadState);
+  dst.set_periodtimestamps((cdm::eSwitch)src.m_PeriodTimeStamps);
+  dst.set_afteractions((cdm::eSwitch)src.m_AfterActions);
+  dst.set_reloadstate((cdm::eSwitch)src.m_ReloadState);
   if (src.HasDirectory())
     dst.set_directory(src.m_Directory);
   if (src.HasFileName())
@@ -99,31 +99,31 @@ double SEAutoSerialization::GetPeriod(const TimeUnit& unit) const
   return m_Period->GetValue(unit);
 }
 
-cdm::eSwitch SEAutoSerialization::GetPeriodTimeStamps() const
+eSwitch SEAutoSerialization::GetPeriodTimeStamps() const
 {
   return m_PeriodTimeStamps;
 }
-void SEAutoSerialization::SetPeriodTimeStamps(cdm::eSwitch v)
+void SEAutoSerialization::SetPeriodTimeStamps(eSwitch v)
 {
-  m_PeriodTimeStamps = (v == cdm::eSwitch::NullSwitch) ? cdm::eSwitch::Off : v;
+  m_PeriodTimeStamps = (v == eSwitch::NullSwitch) ? eSwitch::Off : v;
 }
 
-cdm::eSwitch SEAutoSerialization::GetAfterActions() const
+eSwitch SEAutoSerialization::GetAfterActions() const
 {
   return m_AfterActions;
 }
-void SEAutoSerialization::SetAfterActions(cdm::eSwitch v)
+void SEAutoSerialization::SetAfterActions(eSwitch v)
 {
-  m_AfterActions = (v == cdm::eSwitch::NullSwitch) ? cdm::eSwitch::Off : v;
+  m_AfterActions = (v == eSwitch::NullSwitch) ? eSwitch::Off : v;
 }
 
-cdm::eSwitch SEAutoSerialization::GetReloadState() const
+eSwitch SEAutoSerialization::GetReloadState() const
 {
   return m_ReloadState;
 }
-void SEAutoSerialization::SetReloadState(cdm::eSwitch v)
+void SEAutoSerialization::SetReloadState(eSwitch v)
 {
-  m_ReloadState = (v == cdm::eSwitch::NullSwitch) ? cdm::eSwitch::Off : v;
+  m_ReloadState = (v == eSwitch::NullSwitch) ? eSwitch::Off : v;
 }
 
 std::string SEAutoSerialization::GetDirectory() const

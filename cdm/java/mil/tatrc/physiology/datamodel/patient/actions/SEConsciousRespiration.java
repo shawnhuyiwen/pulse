@@ -9,7 +9,7 @@ import java.util.List;
 import com.kitware.physiology.cdm.PatientActions.ConsciousRespirationData;
 import com.kitware.physiology.cdm.PatientActions.ConsciousRespirationData.AnyCommandData;
 
-import mil.tatrc.physiology.datamodel.substance.SESubstanceFractionAmount;
+import mil.tatrc.physiology.datamodel.substance.SESubstanceFraction;
 
 public class SEConsciousRespiration extends SEPatientAction
 {

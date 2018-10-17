@@ -30,10 +30,10 @@ void CommonDataModelTest::ScalarTest(const std::string& sOutputDirectory)
 {
   std::ofstream file;
   SEDecimalFormat fixed;
-  fixed.SetNotation(cdm::eDecimalFormat_Type_FixedMantissa);
+  fixed.SetNotation(eDecimalFormat_Type::FixedMantissa);
   fixed.SetPrecision(8);
   SEDecimalFormat sci;
-  sci.SetNotation(cdm::eDecimalFormat_Type_SignificantDigits);
+  sci.SetNotation(eDecimalFormat_Type::SignificantDigits);
   sci.SetPrecision(4);
 
   DataTrack track;

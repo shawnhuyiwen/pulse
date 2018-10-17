@@ -44,7 +44,7 @@ void HowToCreateAPatient()
   //Patient sex is the only thing that is absolutely required to be set.
   //All value not explicitly set based or standard values or calculations.
   //If you do something out of bounds or set something you're not allowed to, it will alert you with a warning/error.
-  patient.SetSex(cdm::ePatient_Sex_Male);
+  patient.SetSex(ePatient_Sex::Male);
   patient.GetAge().SetValue(44, TimeUnit::yr);
   patient.GetWeight().SetValue(170, MassUnit::lb);
   patient.GetHeight().SetValue(71, LengthUnit::in);

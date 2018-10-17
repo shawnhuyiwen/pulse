@@ -15,14 +15,7 @@ public:
   virtual ~SECompartmentTransportGraph();
 
   virtual void Clear();
-/*
-  virtual bool Load(const BindType& in);
-  virtual BindType* Unload() = 0;
-protected:
-  virtual void Unload(BindType& data);
-*/
 
-public:
   virtual std::string GetName() const { return this->m_Name; }
 
   virtual void StateChange();

@@ -34,8 +34,6 @@ class SEConditionManager;
 class SEEngineTracker;
 class SEEngineConfiguration;
 
-#include <google/protobuf/message.h>
-
 /** 
  * @brief
  * Base exception class that all CDM classes throw when an error occurs
@@ -74,7 +72,7 @@ public:
   /// Engine will be in a cleared state if this method fails.
   /// Note the provided configuration will overwrite any configuration options in the state with its contents (Use with caution!)
   //--------------------------------------------------------------------------------------------------
-  virtual bool LoadState(const google::protobuf::Message& state, const SEScalarTime* simTime = nullptr, const SEEngineConfiguration* config = nullptr) = 0;
+  virtual bool LoadState(const void* state, const SEScalarTime* simTime = nullptr, const SEEngineConfiguration* config = nullptr) = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -83,7 +81,7 @@ public:
   /// State object will be returned.
   /// Engine will be in a cleared state if this method fails.
   //--------------------------------------------------------------------------------------------------
-  virtual std::unique_ptr<google::protobuf::Message> SaveState(const std::string& filename = "") = 0;
+  virtual void* SaveState(const std::string& filename = "") = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief

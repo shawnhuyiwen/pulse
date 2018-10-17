@@ -4,6 +4,7 @@
 #pragma once
 #include "Eigen/Core"
 #include "utils/SmartEnum.h"
+#include <set>
 
 #define CIRCUIT_CALCULATOR_TEMPLATE typename CircuitType, typename NodeType, typename PathType, typename CapacitanceUnit, typename FluxUnit, typename InductanceUnit, typename PotentialUnit, typename QuantityUnit, typename ResistanceUnit
 #define CIRCUIT_CALCULATOR_TYPES CircuitType,NodeType,PathType,CapacitanceUnit,FluxUnit,InductanceUnit,PotentialUnit,QuantityUnit,ResistanceUnit

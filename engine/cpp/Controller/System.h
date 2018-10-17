@@ -2,7 +2,6 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "bind/engine/EnginePhysiology.pb.h"
 #include "PulsePhysiologySystems.h"
 
 /**

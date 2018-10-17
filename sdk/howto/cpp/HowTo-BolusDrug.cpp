@@ -77,7 +77,7 @@ void HowToBolusDrug()
   SESubstanceBolus bolus(*succs);
   bolus.GetConcentration().SetValue(4820,MassPerVolumeUnit::ug_Per_mL);
   bolus.GetDose().SetValue(20,VolumeUnit::mL);
-  bolus.SetAdminRoute(cdm::eSubstanceAdministration_Route_Intravenous);
+  bolus.SetAdminRoute(eSubstanceAdministration_Route::Intravenous);
   // Pulse also supports Intramuscular as an admin route as well
   pe->ProcessAction(bolus);
   pe->GetLogger()->Info("Giving the patient Succinylcholine.");

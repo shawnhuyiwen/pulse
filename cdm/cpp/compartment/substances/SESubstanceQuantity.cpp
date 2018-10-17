@@ -5,7 +5,6 @@
 
 #include "compartment/substances/SESubstanceQuantity.h"
 #include "substance/SESubstance.h"
-#include "bind/cdm/SubstanceQuantity.pb.h" 
 
 SESubstanceQuantity::SESubstanceQuantity(SESubstance& sub) : Loggable(sub.GetLogger()), m_Substance(sub)
 {
@@ -16,12 +15,3 @@ SESubstanceQuantity::~SESubstanceQuantity()
 
 };
 
-void SESubstanceQuantity::Serialize(const cdm::SubstanceQuantityData& src, SESubstanceQuantity& dst)
-{
-  dst.Clear();
-  // Name will be used to get substance for ctor
-}
-void SESubstanceQuantity::Serialize(const SESubstanceQuantity& src, cdm::SubstanceQuantityData& dst)
-{
-  dst.set_substance(src.m_Substance.GetName());
-}

@@ -7,8 +7,8 @@
 
 SENeedleDecompression::SENeedleDecompression() : SEPatientAction()
 {
-  m_State=cdm::eSwitch::Off;
-  m_Side= cdm::eSide::NullSide;
+  m_State=eSwitch::Off;
+  m_Side= eSide::NullSide;
 }
 
 SENeedleDecompression::~SENeedleDecompression()
@@ -19,8 +19,8 @@ SENeedleDecompression::~SENeedleDecompression()
 void SENeedleDecompression::Clear()
 {
   SEPatientAction::Clear();
-  m_State = cdm::eSwitch::Off;
-  m_Side= cdm::eSide::NullSide;
+  m_State = eSwitch::Off;
+  m_Side= eSide::NullSide;
 }
 
 bool SENeedleDecompression::IsValid() const
@@ -30,12 +30,12 @@ bool SENeedleDecompression::IsValid() const
 
 bool SENeedleDecompression::IsActive() const
 {
-  return IsValid() && m_State == cdm::eSwitch::On;
+  return IsValid() && m_State == eSwitch::On;
 }
 
 void SENeedleDecompression::SetActive(bool b)
 {
-  m_State = b ? cdm::eSwitch::On : cdm::eSwitch::Off;
+  m_State = b ? eSwitch::On : eSwitch::Off;
 }
 
 void SENeedleDecompression::Load(const cdm::NeedleDecompressionData& src, SENeedleDecompression& dst)
@@ -45,9 +45,9 @@ void SENeedleDecompression::Load(const cdm::NeedleDecompressionData& src, SENeed
 void SENeedleDecompression::Serialize(const cdm::NeedleDecompressionData& src, SENeedleDecompression& dst)
 {
   SEPatientAction::Serialize(src.patientaction(), dst);
-  dst.SetSide(src.side());
+  dst.SetSide((eSide)src.side());
   if (src.state() != cdm::eSwitch::NullSwitch)
-    dst.SetState(src.state());
+    dst.SetState((eSwitch)src.state());
 }
 
 cdm::NeedleDecompressionData* SENeedleDecompression::Unload(const SENeedleDecompression& src)
@@ -60,34 +60,34 @@ void SENeedleDecompression::Serialize(const SENeedleDecompression& src, cdm::Nee
 {
   SEPatientAction::Serialize(src, *dst.mutable_patientaction());
   if (src.HasSide())
-    dst.set_side(src.m_Side);
-  dst.set_state(src.m_State);
+    dst.set_side((cdm::eSide)src.m_Side);
+  dst.set_state((cdm::eSwitch)src.m_State);
 }
 
-cdm::eSwitch SENeedleDecompression::GetState() const
+eSwitch SENeedleDecompression::GetState() const
 {
   return m_State;
 }
-void SENeedleDecompression::SetState(cdm::eSwitch state)
+void SENeedleDecompression::SetState(eSwitch state)
 {
-  m_State = (state == cdm::eSwitch::NullSwitch) ? cdm::eSwitch::Off : state;
+  m_State = (state == eSwitch::NullSwitch) ? eSwitch::Off : state;
 }
 
-cdm::eSide SENeedleDecompression::GetSide() const
+eSide SENeedleDecompression::GetSide() const
 {
   return m_Side;
 }
-void SENeedleDecompression::SetSide(cdm::eSide Side)
+void SENeedleDecompression::SetSide(eSide Side)
 {
   m_Side = Side;
 }
 bool SENeedleDecompression::HasSide() const
 {
-  return m_Side== cdm::eSide::NullSide ?false:true;
+  return m_Side== eSide::NullSide ?false:true;
 }
 void SENeedleDecompression::InvalidateSide()
 {
-  m_Side = cdm::eSide::NullSide;
+  m_Side = eSide::NullSide;
 }
 
 void SENeedleDecompression::ToString(std::ostream &str) const
@@ -95,7 +95,7 @@ void SENeedleDecompression::ToString(std::ostream &str) const
   str << "Patient Action : Needle Decompression"; 
   if(HasComment())
     str<<"\n\tComment: "<<m_Comment;
-  str << "\n\tState: " << cdm::eSwitch_Name(m_State);
-  str  << "\n\tSide: "; HasSide()? str << cdm::eSide_Name(GetSide()) : str << "No Side Set";
+  str << "\n\tState: " << eSwitch_Name(m_State);
+  str  << "\n\tSide: "; HasSide()? str << eSide_Name(GetSide()) : str << "No Side Set";
   str << std::flush;
 }

@@ -3,17 +3,14 @@
 
 #pragma once
 #include "circuit/SECircuitNode.h"
-
 #include "properties/SEScalarElectricCapacitance.h"
 #include "properties/SEScalarElectricCurrent.h"
 #include "properties/SEScalarElectricInductance.h"
 #include "properties/SEScalarElectricResistance.h"
-
 #include "properties/SEScalarFlowCompliance.h"
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalarFlowInertance.h"
 #include "properties/SEScalarFlowResistance.h"
-
 #include "properties/SEScalarHeatCapacitance.h"
 #include "properties/SEScalarPower.h"
 #include "properties/SEScalarHeatInductance.h"
@@ -28,7 +25,8 @@
 template<CIRCUIT_PATH_TEMPLATE>
 class SECircuitPath : public Loggable
 {
-  template< typename CircuitBindType, typename NodeType, typename CircuitNodeBindType, typename PathType, typename CircuitPathBindType> friend class SECircuit;
+  friend class PBCircuit;//friend the serialization class
+  template<typename NodeType, typename PathType> friend class SECircuit;
 protected:
   SECircuitPath(SECircuitNode<PotentialScalar, QuantityScalar>& src, SECircuitNode<PotentialScalar, QuantityScalar>& tgt, const std::string& name);
 public:
@@ -36,11 +34,6 @@ public:
 
   virtual void Clear();
 
-protected:
-  static void Serialize(const cdm::CircuitPathData& src, SECircuitPath& dst);
-  static void Serialize(const SECircuitPath& src, cdm::CircuitPathData& dst);
-
-public:
   virtual std::string GetName() const;
 
   virtual SECircuitNode<CIRCUIT_NODE_TYPES>& GetSourceNode() const;
@@ -91,38 +84,38 @@ public:
   virtual unsigned short NumberOfElements() const { return m_NumElements; }
   virtual unsigned short NumberOfNextElements() const { return m_NumNextElements; }
 
-  virtual cdm::eGate GetSwitch() const;
-  virtual void SetSwitch(cdm::eGate state);
+  virtual eGate GetSwitch() const;
+  virtual void SetSwitch(eGate state);
   virtual void FlipSwitch();
   virtual bool HasSwitch() const;
   virtual void InvalidateSwitch();
 
-  virtual cdm::eGate GetNextSwitch() const;
-  virtual void SetNextSwitch(cdm::eGate state);
+  virtual eGate GetNextSwitch() const;
+  virtual void SetNextSwitch(eGate state);
   virtual void FlipNextSwitch();
   virtual bool HasNextSwitch() const;
   virtual void InvalidateNextSwitch();
 
-  virtual cdm::eGate GetValve() const;
-  virtual void SetValve(cdm::eGate state);
+  virtual eGate GetValve() const;
+  virtual void SetValve(eGate state);
   virtual void FlipValve();
   virtual bool HasValve() const;
   virtual void InvalidateValve();
 
-  virtual cdm::eGate GetNextValve() const;
-  virtual void SetNextValve(cdm::eGate state);
+  virtual eGate GetNextValve() const;
+  virtual void SetNextValve(eGate state);
   virtual void FlipNextValve();
   virtual bool HasNextValve() const;
   virtual void InvalidateNextValve();
 
-  virtual cdm::eGate GetPolarizedState() const;
-  virtual void SetPolarizedState(cdm::eGate state);
+  virtual eGate GetPolarizedState() const;
+  virtual void SetPolarizedState(eGate state);
   virtual void FlipPolarizedState();
   virtual bool HasPolarizedState() const;
   virtual void InvalidatePolarizedState();
 
-  virtual cdm::eGate GetNextPolarizedState() const;
-  virtual void SetNextPolarizedState(cdm::eGate state);
+  virtual eGate GetNextPolarizedState() const;
+  virtual void SetNextPolarizedState(eGate state);
   virtual void FlipNextPolarizedState();
   virtual bool HasNextPolarizedState() const;
   virtual void InvalidateNextPolarizedState();
@@ -136,12 +129,12 @@ protected:
   /////////////////////////    
   // Valves and Switches //    
   /////////////////////////    
-  cdm::eGate                   m_Switch;
-  cdm::eGate                   m_NextSwitch;
-  cdm::eGate                   m_Valve;
-  cdm::eGate                   m_NextValve;
-  cdm::eGate                   m_PolarizedState;
-  cdm::eGate                   m_NextPolarizedState;
+  eGate                        m_Switch;
+  eGate                        m_NextSwitch;
+  eGate                        m_Valve;
+  eGate                        m_NextValve;
+  eGate                        m_PolarizedState;
+  eGate                        m_NextPolarizedState;
 
   ResistanceScalar*            m_Resistance;
   ResistanceScalar*            m_NextResistance;

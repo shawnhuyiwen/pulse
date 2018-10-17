@@ -3,10 +3,10 @@
 
 #pragma once
 class SECircuitManager;
-CDM_BIND_DECL(CompartmentLinkData);
 
 class CDM_DECL SECompartmentLink : public Loggable
 {
+  friend class PBCompartment;//friend the serialization class
 protected:
   SECompartmentLink(const std::string& nam, Logger* logger);
 public: 
@@ -14,11 +14,6 @@ public:
 
   virtual void Clear();
 
-protected:
-  static void Serialize(const cdm::CompartmentLinkData& src, SECompartmentLink& dst);
-  static void Serialize(const SECompartmentLink& src, cdm::CompartmentLinkData& dst);
-
-public:
   virtual std::string GetName() const;
 
   virtual const SEScalar* GetScalar(const std::string& name) = 0;

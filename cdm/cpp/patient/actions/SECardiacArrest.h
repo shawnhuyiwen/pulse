@@ -25,12 +25,12 @@ protected:
 
 public:
 
-  virtual cdm::eSwitch GetState() const { return m_State; }
-  virtual void SetState(cdm::eSwitch s) { m_State = (s == cdm::eSwitch::NullSwitch) ? cdm::eSwitch::Off : s; }
+  virtual eSwitch GetState() const { return m_State; }
+  virtual void SetState(eSwitch s) { m_State = (s == eSwitch::NullSwitch) ? eSwitch::Off : s; }
 
   virtual void ToString(std::ostream &str) const;
 
 protected:
-  cdm::eSwitch m_State;
+  eSwitch m_State;
 
 };

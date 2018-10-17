@@ -92,7 +92,7 @@ void Inhaler::SetUp()
   m_Mouthpiece = m_data.GetCompartments().GetGasCompartment(pulse::InhalerCompartment::Mouthpiece);
   m_AerosolMouthpiece = m_data.GetCompartments().GetLiquidCompartment(pulse::InhalerCompartment::Mouthpiece);
  
-  if (m_State == cdm::eSwitch::On)
+  if (m_State == eSwitch::On)
   {
     if (m_Substance == nullptr)
     {
@@ -126,7 +126,7 @@ void Inhaler::PreProcess()
 {
   if (m_data.GetActions().GetInhalerActions().HasConfiguration())
   {
-    cdm::eSwitch state = GetState();
+    eSwitch state = GetState();
     SEInhalerConfiguration* config = m_data.GetActions().GetInhalerActions().GetConfiguration();
     ProcessConfiguration(*config);
     m_data.GetActions().GetInhalerActions().RemoveConfiguration();    
@@ -149,7 +149,7 @@ void Inhaler::PreProcess()
   }
 
   // ### HANDLE INHALER-BASED UPDATES
-  if (m_State == cdm::eSwitch::On)
+  if (m_State == eSwitch::On)
   {
     //  Check to see if there is a substantial mass of substance on the inhaler node.
     //  If not, we'll disconnect the inhaler.    
@@ -158,8 +158,8 @@ void Inhaler::PreProcess()
     {
       Info("Inhaler removed!");
       m_InhalerDrug = nullptr;
-      m_State = cdm::eSwitch::Off;
-      m_data.SetAirwayMode(pulse::eAirwayMode::Free);
+      m_State = eSwitch::Off;
+      m_data.SetAirwayMode(eAirwayMode::Free);
     }
   }
 }
@@ -187,7 +187,7 @@ void Inhaler::Administer()
 {
   // Check to see if the inhaler is already on. We should not run this method unless the
   //  inhaler is currently off and about to be activated.
-  if (m_State == cdm::eSwitch::On)
+  if (m_State == eSwitch::On)
   {
     /// \error: Already processing a Substance Inhalation, ignoring this command.
     Error("Already processing a Substance Inhalation, ignoring this command");
@@ -196,8 +196,8 @@ void Inhaler::Administer()
 
   // Alert the user that the inhaler is actuated
   Info("Inhaler actuated!");
-  m_State = cdm::eSwitch::On;
-  m_data.SetAirwayMode(pulse::eAirwayMode::Inhaler);
+  m_State = eSwitch::On;
+  m_data.SetAirwayMode(eAirwayMode::Inhaler);
 
   // Initialize pressure in the inhaler node to ambient  
   double dAmbientPressure = m_AmbientEnv->GetPressure(PressureUnit::cmH2O);

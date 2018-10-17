@@ -7,7 +7,6 @@
 #include "circuit/SECircuitManager.h"
 #include "circuit/thermal/SEThermalCircuitPath.h"
 #include "properties/SEScalarPower.h"
-#include "bind/cdm/Compartment.pb.h"
 
 SEThermalCompartmentLink::SEThermalCompartmentLink(SEThermalCompartment& src, SEThermalCompartment & tgt, const std::string& name) : SECompartmentLink(name,src.GetLogger()), m_SourceCmpt(src), m_TargetCmpt(tgt)
 {
@@ -17,57 +16,6 @@ SEThermalCompartmentLink::SEThermalCompartmentLink(SEThermalCompartment& src, SE
 SEThermalCompartmentLink::~SEThermalCompartmentLink()
 {
 
-}
-
-void SEThermalCompartmentLink::Load(const cdm::ThermalCompartmentLinkData& src, SEThermalCompartmentLink& dst, SECircuitManager* circuits)
-{
-  SEThermalCompartmentLink::Serialize(src, dst, circuits);
-}
-void SEThermalCompartmentLink::Serialize(const cdm::ThermalCompartmentLinkData& src, SEThermalCompartmentLink& dst, SECircuitManager* circuits)
-{
-  SECompartmentLink::Serialize(src.link(), dst);
-
-  if (!src.link().path().empty())
-  {
-    if (circuits == nullptr)
-    {
-      dst.Error("Link is mapped to circuit path, " + src.link().path() + ", but no circuit manager was provided, cannot load");
-      return;
-    }
-    SEThermalCircuitPath* path = circuits->GetThermalPath(src.link().path());
-    if (path == nullptr)
-    {
-      dst.Error("Link is mapped to circuit path, " + src.link().path() + ", but provided circuit manager did not have that path");
-      return;
-    }
-    dst.MapPath(*path);
-  }
-  else
-  {
-    if (src.has_heattransferrate())
-      SEScalarPower::Load(src.heattransferrate(), dst.GetHeatTransferRate());
-  }  
-}
-
-cdm::ThermalCompartmentLinkData* SEThermalCompartmentLink::Unload(const SEThermalCompartmentLink& src)
-{
-  cdm::ThermalCompartmentLinkData* dst = new cdm::ThermalCompartmentLinkData();
-  Serialize(src,*dst);
-  return dst;
-}
-void SEThermalCompartmentLink::Serialize(const SEThermalCompartmentLink& src, cdm::ThermalCompartmentLinkData& dst)
-{
-  SECompartmentLink::Serialize(src,*dst.mutable_link());
-  dst.mutable_link()->set_sourcecompartment(src.m_SourceCmpt.GetName());
-  dst.mutable_link()->set_targetcompartment(src.m_TargetCmpt.GetName());
-  if (src.m_Path != nullptr)
-    dst.mutable_link()->set_path(src.m_Path->GetName());
-  // Yeah, I know
-  // But, these will only modify member variables if they are being used as temporary variables
-  // Even if you have a path, I am unloading everything, this makes the pba actually usefull...
-  SEThermalCompartmentLink& mutable_src = const_cast<SEThermalCompartmentLink&>(src);
-  if (src.HasHeatTransferRate())
-    dst.set_allocated_heattransferrate(SEScalarPower::Unload(mutable_src.GetHeatTransferRate()));
 }
 
 void SEThermalCompartmentLink::Clear()

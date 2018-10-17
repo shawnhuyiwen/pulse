@@ -83,7 +83,7 @@ void GeneralMath::CalculateMass(const SEScalarVolume& volume, const SEScalarMass
 void GeneralMath::CalculateHenrysLawConcentration(const SESubstance& substance, const SEScalarPressure& partialPressure, SEScalarMassPerVolume& concentration, Logger* logger)
 {
   double pp_mmHg = partialPressure.GetValue(PressureUnit::mmHg);
-  if (substance.GetState() != cdm::eSubstance_State_Gas)
+  if (substance.GetState() != eSubstance_State::Gas)
     throw CommonDataModelException("Cannot calculate a molarity by Henry's law from partial pressure of a non gaseous substance in a liquid");
   if (pp_mmHg < 0.0)
   {
@@ -142,7 +142,7 @@ void GeneralMath::CalculatePartialPressureInGas(const SEScalar0To1& volumeFracti
 //--------------------------------------------------------------------------------------------------
 void GeneralMath::CalculatePartialPressureInLiquid(const SESubstance& substance, const SEScalarMassPerVolume& concentration, SEScalarPressure& partialPressure, Logger* logger)
 {
-  if (substance.GetState() != cdm::eSubstance_State_Gas)
+  if (substance.GetState() != eSubstance_State::Gas)
     throw CommonDataModelException("Cannot calculate a partial pressure of a non gaseous substance in a liquid");
   double concentration_ug_Per_mL = concentration.GetValue(MassPerVolumeUnit::ug_Per_mL);
   if (concentration_ug_Per_mL < 0.0)

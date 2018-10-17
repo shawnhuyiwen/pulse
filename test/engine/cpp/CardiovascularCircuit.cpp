@@ -74,7 +74,7 @@ void PulseEngineTest::TuneCardiovascularCircuitTest(const std::string& sTestDire
 
   SEPatient patient(nullptr);
   patient.SetName("TuneTest");
-  patient.SetSex(cdm::ePatient_Sex_Male);
+  patient.SetSex(ePatient_Sex::Male);
 
   double HRLower = 60;
   double HRUpper = 100;
@@ -135,8 +135,8 @@ void PulseEngineTest::TuneCardiovascularCircuitTest(SETestSuite& testSuite, cons
   auto* p = SEPatient::Unload(patient);
   SEPatient::Load(*p, pc.GetPatient());
   delete p;  
-  pc.m_Config->EnableRenal(cdm::eSwitch::On);
-  pc.m_Config->EnableTissue(cdm::eSwitch::On);
+  pc.m_Config->EnableRenal(eSwitch::On);
+  pc.m_Config->EnableTissue(eSwitch::On);
   pc.SetupPatient();
   pc.CreateCircuitsAndCompartments();
 
@@ -207,8 +207,8 @@ void PulseEngineTest::CardiovascularCircuitAndTransportTest(CardiovascularDriver
     pc.GetPatient().GetHeartRateBaseline().SetValue(heartRate_bpm, FrequencyUnit::Per_min);
   }
 
-  pc.m_Config->EnableRenal(connectRenal ? cdm::eSwitch::On : cdm::eSwitch::Off);
-  pc.m_Config->EnableTissue(connectTissue? cdm::eSwitch::On :cdm::eSwitch::Off);
+  pc.m_Config->EnableRenal(connectRenal ? eSwitch::On : eSwitch::Off);
+  pc.m_Config->EnableTissue(connectTissue? eSwitch::On :eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
 
   std::vector<SESubstance*> subs2Track;

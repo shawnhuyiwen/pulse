@@ -9,7 +9,6 @@
 #include "properties/SEScalarPower.h"
 #include "properties/SEScalarEnergy.h"
 #include "properties/SEScalarTemperature.h"
-#include "bind/cdm/Compartment.pb.h"
 
 SEThermalCompartment::SEThermalCompartment(const std::string& name, Logger* logger) : SECompartment(name, logger), m_Nodes(logger)
 {
@@ -34,73 +33,6 @@ void SEThermalCompartment::Clear()
   m_Links.clear();
   m_Children.clear();
   m_Nodes.Clear();
-}
-
-void SEThermalCompartment::Load(const cdm::ThermalCompartmentData& src, SEThermalCompartment& dst, SECircuitManager* circuits)
-{
-  SEThermalCompartment::Serialize(src, dst, circuits);
-}
-void SEThermalCompartment::Serialize(const cdm::ThermalCompartmentData& src, SEThermalCompartment& dst, SECircuitManager* circuits)
-{
-  SECompartment::Serialize(src.compartment(), dst);
-  // This compartment has children
-  // We will not load any data as those are calculated on demand based on children
-  if (src.compartment().child_size()>0)
-    return;
-  // Now let's see if we are mapped to a circuit node
-  // If we are, the circuit node(s) hold the data, not us
-  else if (src.compartment().node_size()>0)
-  {
-    if (circuits == nullptr)
-    {
-      dst.Error("Compartment is mapped to circuit nodes, but no circuit manager was provided, cannot load");
-      return;
-    }
-    for (int i=0; i<src.compartment().node_size(); i++)
-    {
-      const std::string name = src.compartment().node(i);
-      SEThermalCircuitNode* node = circuits->GetThermalNode(name);
-      if (node == nullptr)
-        dst.Error("Compartment is mapped to circuit node, " + name + ", but provided circuit manager did not have that node");
-      else
-        dst.MapNode(*node);
-    }
-  }
-  else
-  {// Only load these if you don't have children or nodes
-    if (src.has_heat())
-      SEScalarEnergy::Load(src.heat(),dst.GetHeat());
-    if (src.has_temperature())
-      SEScalarTemperature::Load(src.temperature(), dst.GetTemperature());
-  }
-}
-
-cdm::ThermalCompartmentData* SEThermalCompartment::Unload(const SEThermalCompartment& src)
-{
-  cdm::ThermalCompartmentData* dst = new cdm::ThermalCompartmentData();
-  SEThermalCompartment::Serialize(src,*dst);
-  return dst;
-}
-void SEThermalCompartment::Serialize(const SEThermalCompartment& src, cdm::ThermalCompartmentData& dst)
-{
-  SECompartment::Serialize(src,*dst.mutable_compartment());
-  for (SEThermalCompartment* child : src.m_Children)
-    dst.mutable_compartment()->add_child(child->GetName());
-  for (SEThermalCircuitNode* nodes : src.m_Nodes.GetNodes())
-    dst.mutable_compartment()->add_node(nodes->GetName());
-  // Even if you have children or nodes, I am unloading everything, this makes the pba actually usefull...
-  if (src.HasHeatTransferRateIn())
-    dst.set_allocated_heattransferratein(SEScalarPower::Unload(src.GetHeatTransferRateIn()));
-  if (src.HasHeatTransferRateOut())
-    dst.set_allocated_heattransferrateout(SEScalarPower::Unload(src.GetHeatTransferRateOut()));
-
-  // Yeah, I know
-  // But, these will only modify member variables if they are being used as temporary variables
-  SEThermalCompartment& mutable_src = const_cast<SEThermalCompartment&>(src);
-  if (src.HasHeat())
-    dst.set_allocated_heat(SEScalarEnergy::Unload(mutable_src.GetHeat()));
-  if (src.HasTemperature())
-    dst.set_allocated_temperature(SEScalarTemperature::Unload(mutable_src.GetTemperature()));
 }
 
 const SEScalar* SEThermalCompartment::GetScalar(const std::string& name)

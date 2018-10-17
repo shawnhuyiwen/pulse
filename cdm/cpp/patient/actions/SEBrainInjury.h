@@ -3,8 +3,11 @@
 
 #pragma once
 #include "patient/actions/SEPatientAction.h"
-#include "bind/cdm/PatientActionEnums.pb.h"
 CDM_BIND_DECL(BrainInjuryData)
+
+// Keep enums in sync with appropriate schema/cdm/PatientActionEnums.proto file !!
+enum class eBrainInjury_Type { Diffuse = 0, LeftFocal, RightFocal };
+extern const std::string& eBrainInjury_Type_Name(eBrainInjury_Type m);
 
 class CDM_DECL SEBrainInjury : public SEPatientAction
 {
@@ -30,12 +33,12 @@ public:
   virtual SEScalar0To1& GetSeverity();
   virtual double GetSeverity() const;
 
-  virtual cdm::eBrainInjury_Type GetType() const;
-  virtual void SetType(cdm::eBrainInjury_Type t);
+  virtual eBrainInjury_Type GetType() const;
+  virtual void SetType(eBrainInjury_Type t);
 
   virtual void ToString(std::ostream &str) const;
 
 protected:
-  SEScalar0To1*               m_Severity;
-  cdm::eBrainInjury_Type      m_Type;
+  SEScalar0To1*          m_Severity;
+  eBrainInjury_Type      m_Type;
 };

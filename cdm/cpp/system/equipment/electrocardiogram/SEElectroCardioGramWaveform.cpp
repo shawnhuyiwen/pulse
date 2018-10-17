@@ -8,12 +8,18 @@
 #include "properties/SEFunctionElectricPotentialVsTime.h"
 #include "bind/cdm/ElectroCardioGram.pb.h"
 
+
+const std::string& eElectroCardioGram_WaveformLead_Name(eElectroCardioGram_WaveformLead m)
+{
+  return cdm::eElectroCardioGram_WaveformLead_Name((cdm::eElectroCardioGram_WaveformLead)m);
+}
+
 SEElectroCardioGramWaveform::SEElectroCardioGramWaveform(Logger* logger) : Loggable(logger)
 {
   m_TimeStep = nullptr;
   m_Data = nullptr;
-  m_Rhythm = cdm::eHeartRhythm::NormalSinus;
-  m_LeadNumber = cdm::eElectroCardioGram_WaveformLead_NullLead;
+  m_Rhythm = eHeartRhythm::NormalSinus;
+  m_LeadNumber = eElectroCardioGram_WaveformLead::NullLead;
 }
 
 SEElectroCardioGramWaveform::~SEElectroCardioGramWaveform()
@@ -23,8 +29,8 @@ SEElectroCardioGramWaveform::~SEElectroCardioGramWaveform()
 
 void SEElectroCardioGramWaveform::Clear()
 {
-  m_Rhythm = cdm::eHeartRhythm::NormalSinus;
-  m_LeadNumber = cdm::eElectroCardioGram_WaveformLead_NullLead;
+  m_Rhythm = eHeartRhythm::NormalSinus;
+  m_LeadNumber = eElectroCardioGram_WaveformLead::NullLead;
   SAFE_DELETE(m_TimeStep);
   SAFE_DELETE(m_Data);
   m_ActiveIndicies.clear();
@@ -37,8 +43,8 @@ void SEElectroCardioGramWaveform::Load(const cdm::ElectroCardioGramWaveformData&
 void SEElectroCardioGramWaveform::Serialize(const cdm::ElectroCardioGramWaveformData& src, SEElectroCardioGramWaveform& dst)
 {
   dst.Clear();
-  dst.m_Rhythm = src.rhythm();
-  dst.m_LeadNumber = src.lead(); 
+  dst.m_Rhythm = (eHeartRhythm)src.rhythm();
+  dst.m_LeadNumber = (eElectroCardioGram_WaveformLead)src.lead();
   if (src.has_timestep())
     SEScalarTime::Load(src.timestep(), dst.GetTimeStep());
   if(src.has_data())
@@ -55,8 +61,8 @@ cdm::ElectroCardioGramWaveformData* SEElectroCardioGramWaveform::Unload(const SE
 }
 void SEElectroCardioGramWaveform::Serialize(const SEElectroCardioGramWaveform& src, cdm::ElectroCardioGramWaveformData& dst)
 {
-  dst.set_rhythm(src.m_Rhythm);
-  dst.set_lead(src.m_LeadNumber);
+  dst.set_rhythm((cdm::eHeartRhythm)src.m_Rhythm);
+  dst.set_lead((cdm::eElectroCardioGram_WaveformLead)src.m_LeadNumber);
   if (src.HasData())
   {
     dst.set_allocated_data(SEFunctionElectricPotentialVsTime::Unload(*src.m_Data));
@@ -68,28 +74,28 @@ void SEElectroCardioGramWaveform::Serialize(const SEElectroCardioGramWaveform& s
 }
 
 
-cdm::eElectroCardioGram_WaveformLead SEElectroCardioGramWaveform::GetLeadNumber() const
+eElectroCardioGram_WaveformLead SEElectroCardioGramWaveform::GetLeadNumber() const
 {
   return m_LeadNumber;
 }
-void SEElectroCardioGramWaveform::SetLeadNumber(cdm::eElectroCardioGram_WaveformLead n)
+void SEElectroCardioGramWaveform::SetLeadNumber(eElectroCardioGram_WaveformLead n)
 {
   m_LeadNumber = n;
 }
 bool SEElectroCardioGramWaveform::HasLeadNumber() const
 {
-  return m_LeadNumber == cdm::eElectroCardioGram_WaveformLead_NullLead ? false : true;
+  return m_LeadNumber == eElectroCardioGram_WaveformLead::NullLead ? false : true;
 }
 void SEElectroCardioGramWaveform::InvalidateLeadNumber()
 {
-  m_LeadNumber = cdm::eElectroCardioGram_WaveformLead_NullLead;
+  m_LeadNumber = eElectroCardioGram_WaveformLead::NullLead;
 }
 
-cdm::eHeartRhythm SEElectroCardioGramWaveform::GetRhythm() const
+eHeartRhythm SEElectroCardioGramWaveform::GetRhythm() const
 {
   return m_Rhythm;
 }
-void SEElectroCardioGramWaveform::SetRhythm(cdm::eHeartRhythm rhythm)
+void SEElectroCardioGramWaveform::SetRhythm(eHeartRhythm rhythm)
 {
   m_Rhythm = rhythm;
 }

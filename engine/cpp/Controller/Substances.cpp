@@ -192,7 +192,7 @@ void PulseSubstances::InitializeLiquidCompartmentGases()
   SEScalarAmountPerVolume phosphate;
 
   albuminConcentration.SetValue(45.0, MassPerVolumeUnit::g_Per_L);
-  hematocrit.SetValue(m_data.GetPatient().GetSex() == cdm::ePatient_Sex_Male ? 0.45 : 0.40);
+  hematocrit.SetValue(m_data.GetPatient().GetSex() == ePatient_Sex::Male ? 0.45 : 0.40);
   bodyTemp.SetValue(37.0, TemperatureUnit::C);
   strongIonDifference.SetValue(40.5, AmountPerVolumeUnit::mmol_Per_L);
   phosphate.SetValue(1.1, AmountPerVolumeUnit::mmol_Per_L);
@@ -714,9 +714,9 @@ void PulseSubstances::InitializeLiquidCompartmentNonGases()
   SetSubstanceMolarity(*m_urea, tissue, molarity1);
 }
 
-bool PulseSubstances::LoadSubstanceDirectory()
+bool PulseSubstances::LoadSubstances()
 {
-  if (!SESubstanceManager::LoadSubstanceDirectory())
+  if (!SESubstanceManager::LoadSubstances())
     return false;
 
   m_O2 = GetSubstance("Oxygen");
@@ -824,7 +824,7 @@ void PulseSubstances::AddActiveSubstance(SESubstance& substance)
     return;// If its already active, don't do anything
   
   SESubstanceManager::AddActiveSubstance(substance);
-  if (substance.GetState() == cdm::eSubstance_State_Gas)
+  if (substance.GetState() == eSubstance_State::Gas)
     m_data.GetCompartments().AddGasCompartmentSubstance(substance);
   m_data.GetCompartments().AddLiquidCompartmentSubstance(substance);
 

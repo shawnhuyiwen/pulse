@@ -3,6 +3,7 @@
 
 package mil.tatrc.physiology.datamodel.substance;
 
+import com.kitware.physiology.cdm.Substance.SubstanceConcentrationData;
 import com.kitware.physiology.cdm.Substance.SubstanceData;
 
 import mil.tatrc.physiology.datamodel.properties.*;
@@ -25,19 +26,19 @@ public class SESubstanceConcentration
       this.concentration.invalidate();
   }
   
-  public static void load(SubstanceData.ConcentrationData src, SESubstanceConcentration dst)
+  public static void load(SubstanceConcentrationData src, SESubstanceConcentration dst)
   {
     dst.reset();
     if(src.hasConcentration())
       SEScalarMassPerVolume.load(src.getConcentration(), dst.getConcentration());
   }
-  public static SubstanceData.ConcentrationData unload(SESubstanceConcentration src)
+  public static SubstanceConcentrationData unload(SESubstanceConcentration src)
   {
-    SubstanceData.ConcentrationData.Builder dst = SubstanceData.ConcentrationData.newBuilder();
+    SubstanceConcentrationData.Builder dst = SubstanceConcentrationData.newBuilder();
     SESubstanceConcentration.unload(src,dst);
     return dst.build();
   }
-  protected static void unload(SESubstanceConcentration src, SubstanceData.ConcentrationData.Builder dst)
+  protected static void unload(SESubstanceConcentration src, SubstanceConcentrationData.Builder dst)
   {
     dst.setName(src.substance.getName());
     if(src.hasConcentration())

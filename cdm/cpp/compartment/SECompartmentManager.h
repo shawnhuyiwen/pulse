@@ -16,35 +16,28 @@ class SELiquidCompartmentGraph;
 class SEThermalCompartment;
 class SEThermalCompartmentLink;
 class SETissueCompartment;
-#include "bind/cdm/CompartmentEnums.pb.h"
-CDM_BIND_DECL(CompartmentManagerData)
+
+// Keep enums in sync with appropriate schema/cdm/CompartmentEnums.proto file !!
+enum class eCompartment_Type { Electrical = 0, Gas, Liquid, Thermal, Tissue };
+extern const std::string& eCompartment_Type_Name(eCompartment_Type m);
 
 class CDM_DECL SECompartmentManager : public Loggable
 {
+  friend class PBCompartment;//friend the serialization class
 public:
   SECompartmentManager(SESubstanceManager& subMgr);
   virtual ~SECompartmentManager();
 
   virtual void Clear(); //clear memory
 
-  bool LoadFile(const std::string& filename, SECircuitManager* circuits);
-  void SaveFile(const std::string& filename);
-
-  static void Load(const cdm::CompartmentManagerData& src, SECompartmentManager& dst, SECircuitManager* circuits = nullptr);
-  static cdm::CompartmentManagerData* Unload(const SECompartmentManager& src);
-protected:
-  static void Serialize(const cdm::CompartmentManagerData& src, SECompartmentManager& dst, SECircuitManager* circuits = nullptr);
-  static void Serialize(const SECompartmentManager& src, cdm::CompartmentManagerData& dst);
-
-public:
   virtual void                                                StateChange();// Identify leaves and other bookkeeping
   virtual void                                                UpdateLinks();
   virtual void                                                UpdateLinks(SEGasCompartmentGraph& graph);
   virtual void                                                UpdateLinks(SELiquidCompartmentGraph& graph);
 
-  virtual bool                                                HasCompartment(cdm::eCompartment_Type type, const std::string& name) const;
-  virtual SECompartment*                                      GetCompartment(cdm::eCompartment_Type type, const std::string& name);
-  virtual const SECompartment*                                GetCompartment(cdm::eCompartment_Type type, const std::string& name) const;
+  virtual bool                                                HasCompartment(eCompartment_Type type, const std::string& name) const;
+  virtual SECompartment*                                      GetCompartment(eCompartment_Type type, const std::string& name);
+  virtual const SECompartment*                                GetCompartment(eCompartment_Type type, const std::string& name) const;
 
   virtual SEGasCompartment&                                   CreateGasCompartment(const std::string& name);
   virtual void                                                DeleteGasCompartment(const std::string& name);

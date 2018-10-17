@@ -106,11 +106,11 @@ bool PulseScenarioExec::ProcessAction(const SEAction& action)
   //      serializationTime_s = 0;
   //      serializationFileName.str("");
   //      serializationFileName << serializationFileNameBase;
-  //      if (serialization->GetPeriodTimeStamps() == cdm::eSwitch::On)
+  //      if (serialization->GetPeriodTimeStamps() == eSwitch::On)
   //        serializationFileName << "@" << m_Engine.GetSimulationTime(TimeUnit::s);
   //      serializationFileName << ".pba";
   //      std::unique_ptr<google::protobuf::Message> state(m_Engine.SaveState(serializationFileName.str()));
-  //      if (serialization->GetReloadState() == cdm::eSwitch::On)
+  //      if (serialization->GetReloadState() == eSwitch::On)
   //      {
   //        m_Engine.LoadState(*state);
   //        std::unique_ptr<google::protobuf::Message> state(m_Engine.SaveState(serializationFileName.str() + ".Reloaded.pba"));
@@ -123,7 +123,7 @@ bool PulseScenarioExec::ProcessAction(const SEAction& action)
   //    serializationFileName.str("");
   //    serializationFileName << serializationFileNameBase << "-" << actionName << "-@" << m_Engine.GetSimulationTime(TimeUnit::s) << ".pba";
   //    std::unique_ptr<google::protobuf::Message> state(m_Engine.SaveState(serializationFileName.str()));
-  //    if (serialization->GetReloadState() == cdm::eSwitch::On)
+  //    if (serialization->GetReloadState() == eSwitch::On)
   //    {
   //      m_Engine.LoadState(*state);
   //      std::unique_ptr<google::protobuf::Message> state(m_Engine.SaveState(serializationFileName.str() + ".Reloaded.pba"));
@@ -131,7 +131,7 @@ bool PulseScenarioExec::ProcessAction(const SEAction& action)
   //  }
   //}
   return SEScenarioExec::ProcessAction(action);
-  //if (serialization != nullptr && serialization->GetAfterActions() == cdm::eSwitch::On)
+  //if (serialization != nullptr && serialization->GetAfterActions() == eSwitch::On)
   //{// If we are testing force serialization after any action with this
   // // Pull out the action type/name for file naming
   //  m_ss << *a;
@@ -143,7 +143,7 @@ bool PulseScenarioExec::ProcessAction(const SEAction& action)
   //  serializationFileName.str("");
   //  serializationFileName << serializationFileNameBase << "-" << actionName << "-@" << m_Engine.GetSimulationTime(TimeUnit::s) << ".pba";
   //  std::unique_ptr<google::protobuf::Message> state(m_Engine.SaveState(serializationFileName.str()));
-  //  if (serialization->GetReloadState() == cdm::eSwitch::On)
+  //  if (serialization->GetReloadState() == eSwitch::On)
   //  {
   //    m_Engine.LoadState(*state);
   //    std::unique_ptr<google::protobuf::Message> state(m_Engine.SaveState(serializationFileName.str() + ".Reloaded.pba"));

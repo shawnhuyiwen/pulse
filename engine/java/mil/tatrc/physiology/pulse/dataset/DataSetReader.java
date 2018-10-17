@@ -979,7 +979,7 @@ public class DataSetReader
   {
     public AmbientSubstance(AmbientType t){type=t;}
     public AmbientType type;
-    public SESubstanceFractionAmount subFrac;
+    public SESubstanceFraction subFrac;
     public SESubstanceConcentration subConc;
   }
   protected static Map<String,SEEnvironmentalConditions> readEnvironments(XSSFSheet xlSheet, Map<String,SESubstance> substances)

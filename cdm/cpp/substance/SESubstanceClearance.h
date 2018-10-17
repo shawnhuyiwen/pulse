@@ -3,11 +3,11 @@
 
 #pragma once
 class SESubstanceClearanceAnatomyEffect;
-CDM_BIND_DECL(SubstanceData_ClearanceData)
 
 enum class RenalDynamic{ NullDynamic, Clearance, Regulation };
 class CDM_DECL SESubstanceClearance : public Loggable
 {
+  friend class PBSubstance;//friend the serialization class
 public:
 
   SESubstanceClearance(Logger* logger);
@@ -18,18 +18,11 @@ public:
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
-  static void Load(const cdm::SubstanceData_ClearanceData& src, SESubstanceClearance& dst);
-  static cdm::SubstanceData_ClearanceData* Unload(const SESubstanceClearance& src);
-protected:
-  static void Serialize(const cdm::SubstanceData_ClearanceData& src, SESubstanceClearance& dst);
-  static void Serialize(const SESubstanceClearance& src, cdm::SubstanceData_ClearanceData& dst);
-
-public:
   virtual bool HasSystemic() const { return m_hasSystemic; }
   virtual void SetSystemic(bool b){ m_hasSystemic=b; }
 
-  virtual cdm::eCharge GetChargeInBlood() const;
-  virtual void SetChargeInBlood(cdm::eCharge type);
+  virtual eCharge GetChargeInBlood() const;
+  virtual void SetChargeInBlood(eCharge type);
   virtual bool HasChargeInBlood() const;
   virtual void InvalidateChargeInBlood();
 
@@ -93,7 +86,7 @@ public:
 protected: 
 
   bool                            m_hasSystemic;
-  cdm::eCharge          m_ChargeInBlood;
+  eCharge          m_ChargeInBlood;
   SEScalar0To1*                m_FractionExcretedInFeces;
   SEScalar0To1*                m_FractionExcretedInUrine;
   SEScalar0To1*                m_FractionMetabolizedInGut;

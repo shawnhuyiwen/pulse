@@ -49,8 +49,8 @@ public:
 
   bool LoadFile(const std::string& inhalerFile);
 
-  virtual cdm::eSwitch GetState() const;
-  virtual void SetState(cdm::eSwitch name);
+  virtual eSwitch GetState() const;
+  virtual void SetState(eSwitch name);
 
   virtual bool HasMeteredDose() const;
   virtual SEScalarMass& GetMeteredDose();
@@ -70,7 +70,7 @@ public:
 
 protected:
 
-  cdm::eSwitch          m_State;
+  eSwitch          m_State;
   SEScalarMass*         m_MeteredDose;
   SEScalar0To1*         m_NozzleLoss;
   SEScalarVolume*       m_SpacerVolume;

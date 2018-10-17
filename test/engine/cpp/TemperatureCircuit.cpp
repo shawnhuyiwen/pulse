@@ -39,8 +39,8 @@ void PulseEngineTest::InternalTemperatureVariableBMRCircuitTest(const std::strin
   PulseController pc(sTestDirectory + "/InternalTemperatureVariableBMRCircuitTest.log");
   pc.GetPatient().LoadFile("./patients/StandardMale.pba");
   pc.SetupPatient();
-  pc.m_Config->EnableRenal(cdm::eSwitch::Off);
-  pc.m_Config->EnableTissue(cdm::eSwitch::Off);
+  pc.m_Config->EnableRenal(eSwitch::Off);
+  pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
 
   SEThermalCircuit& m_TCircuit = pc.GetCircuits().GetInternalTemperatureCircuit();
@@ -113,8 +113,8 @@ void PulseEngineTest::InternalTemperatureVariableSkinCircuitTest(const std::stri
   PulseController pc(sTestDirectory + "/InternalTemperatureVariableSkinCircuitTest.log");
   pc.GetPatient().LoadFile("./patients/StandardMale.pba");
   pc.SetupPatient();
-  pc.m_Config->EnableRenal(cdm::eSwitch::Off);
-  pc.m_Config->EnableTissue(cdm::eSwitch::Off);
+  pc.m_Config->EnableRenal(eSwitch::Off);
+  pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
 
   SEThermalCircuit& m_TCircuit = pc.GetCircuits().GetInternalTemperatureCircuit();
@@ -210,8 +210,8 @@ void PulseEngineTest::InternalTemperatureVariableCoreCircuitTest(const std::stri
   PulseController pc(sTestDirectory + "/InternalTemperatureVariableCoreCircuitTest.log");
   pc.GetPatient().LoadFile("./patients/StandardMale.pba");
   pc.SetupPatient();
-  pc.m_Config->EnableRenal(cdm::eSwitch::Off);
-  pc.m_Config->EnableTissue(cdm::eSwitch::Off);
+  pc.m_Config->EnableRenal(eSwitch::Off);
+  pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
 
   SEThermalCircuit& m_TCircuit = pc.GetCircuits().GetInternalTemperatureCircuit();
@@ -306,8 +306,8 @@ void PulseEngineTest::EnvironmentVariableTemperatureCircuitTest(const std::strin
   PulseController pc(sTestDirectory + "/EnvironmentVariableTemperatureCircuitTest.log");
   pc.GetPatient().LoadFile("./patients/StandardMale.pba");
   pc.SetupPatient();
-  pc.m_Config->EnableRenal(cdm::eSwitch::Off);
-  pc.m_Config->EnableTissue(cdm::eSwitch::Off);
+  pc.m_Config->EnableRenal(eSwitch::Off);
+  pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
 
   //Grab the circuit
@@ -430,8 +430,8 @@ void PulseEngineTest::CombinedInternalAndEnvironmentVariableBMRandTemperatureCir
   PulseController pc(sTestDirectory + "/CombinedInternalAndEnvironmentVariableBMRandTemperatureCircuitTest.log");
   pc.GetPatient().LoadFile("./patients/StandardMale.pba");
   pc.SetupPatient();
-  pc.m_Config->EnableRenal(cdm::eSwitch::Off);
-  pc.m_Config->EnableTissue(cdm::eSwitch::Off);
+  pc.m_Config->EnableRenal(eSwitch::Off);
+  pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
 
   SEThermalCircuit& m_TECircuit = pc.GetCircuits().GetTemperatureCircuit();
@@ -584,8 +584,8 @@ void PulseEngineTest::CombinedInternalAndEnvironmentSkinTempDropCircuitTest(cons
   PulseController pc(sTestDirectory + "/CombinedInternalAndEnvironmentSkinTempDropCircuitTest.log");
   pc.GetPatient().LoadFile("./patients/StandardMale.pba");
   pc.SetupPatient();
-  pc.m_Config->EnableRenal(cdm::eSwitch::Off);
-  pc.m_Config->EnableTissue(cdm::eSwitch::Off);
+  pc.m_Config->EnableRenal(eSwitch::Off);
+  pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
 
   SEThermalCircuit& m_TECircuit = pc.GetCircuits().GetTemperatureCircuit();
@@ -678,8 +678,8 @@ void PulseEngineTest::EnvironmentISO7730ComparisonTest(const std::string& sTestD
   PulseController pc(sTestDirectory + "/EnvironmentTemperatureInput.log");
   pc.GetPatient().LoadFile("./patients/StandardMale.pba");
   pc.SetupPatient();
-  pc.m_Config->EnableRenal(cdm::eSwitch::Off);
-  pc.m_Config->EnableTissue(cdm::eSwitch::Off);
+  pc.m_Config->EnableRenal(eSwitch::Off);
+  pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
   Environment &env = (Environment&)pc.GetEnvironment();
   env.Initialize();

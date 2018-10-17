@@ -36,59 +36,6 @@ void SECircuit<CIRCUIT_TYPES>::Clear()
 }
 
 template<CIRCUIT_TEMPLATE>
-void SECircuit<CIRCUIT_TYPES>::Load(const CircuitBindType& src, SECircuit& dst, const std::map<std::string, NodeType*>& nodes, const std::map<std::string, PathType*>& paths)
-{
-  SECircuit::Serialize(src, dst, nodes, paths);
-  dst.StateChange();
-}
-template<CIRCUIT_TEMPLATE>
-void SECircuit<CIRCUIT_TYPES>::Serialize(const CircuitBindType& src, SECircuit& dst, const std::map<std::string, NodeType*>& nodes, const std::map<std::string, PathType*>& paths)
-{// note: not clearing here as the derived class needs to clear and call this super class Load last to get the ref node hooked up
-  dst.Clear();
-  const cdm::CircuitData& srcC = src.circuit();
-  dst.m_Name = srcC.name();
-  for (int i=0; i<srcC.node_size(); i++)
-  {
-    const std::string name = srcC.node(i);
-    auto idx = nodes.find(name);
-    if (idx == nodes.end())
-    {
-      dst.Error(dst.m_Name + " could not find node " + name.c_str());
-      return;
-    }
-    dst.AddNode(*idx->second);
-  }
-  for (int i = 0; i<srcC.path_size(); i++)
-  {
-    const std::string name = srcC.path(i);
-    auto idx = paths.find(name);
-    if (idx == paths.end())
-    {
-      dst.Error(dst.m_Name + " could not find path " + name.c_str());
-      return;
-    }
-    dst.AddPath(*idx->second);
-  }  
-}
-template<CIRCUIT_TEMPLATE>
-CircuitBindType* SECircuit<CIRCUIT_TYPES>::Unload(const SECircuit& src)
-{
-  CircuitBindType* dst = new CircuitBindType();
-  Serialize(src,*dst);
-  return dst;
-}
-template<CIRCUIT_TEMPLATE>
-void SECircuit<CIRCUIT_TYPES>::Serialize(const SECircuit& src, CircuitBindType& dst)
-{
-  cdm::CircuitData* dstC = dst.mutable_circuit();
-  dstC->set_name(src.m_Name);  
-  for (auto* n : src.m_Nodes)
-    dstC->add_node(n->GetName());
-  for (auto* p : src.m_Paths)
-    dstC->add_path(p->GetName());
-}
-
-template<CIRCUIT_TEMPLATE>
 void SECircuit<CIRCUIT_TYPES>::StateChange()
 {
   // Cache target and source paths to save lots of time later

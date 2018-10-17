@@ -3,10 +3,10 @@
 
 #pragma once
 #include "circuit/SECircuitNode.h"
-CDM_BIND_DECL(FluidCircuitNodeData)
 
 class CDM_DECL SEFluidCircuitNode : public SECircuitNode<FLUID_CIRCUIT_NODE>
 {
+  friend class PBCircuit;//friend the serialization class
   friend class SECircuitManager;  
 protected:
   SEFluidCircuitNode(const std::string& name, Logger* logger);
@@ -15,13 +15,6 @@ public:
 
   virtual void Clear(); //clear memory
 
-  static void Load(const cdm::FluidCircuitNodeData& src, SEFluidCircuitNode& dst);
-  static cdm::FluidCircuitNodeData* Unload(const SEFluidCircuitNode& src);
-protected:
-  static void Serialize(const cdm::FluidCircuitNodeData& src, SEFluidCircuitNode& dst);
-  static void Serialize(const SEFluidCircuitNode& src, cdm::FluidCircuitNodeData& dst);
-
-public:
   virtual bool HasPressure() const;
   virtual SEScalarPressure& GetPressure();
   virtual double GetPressure(const PressureUnit& unit) const;

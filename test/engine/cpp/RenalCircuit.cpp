@@ -49,8 +49,8 @@ void PulseEngineTest::RenalCircuitAndTransportTest(const std::string& sTestDirec
   PulseController pc(sTestDirectory + "/RenalCircuitAndTransportTest.log");
   pc.GetPatient().LoadFile("./patients/StandardMale.pba");
   pc.SetupPatient();
-  pc.m_Config->EnableRenal(cdm::eSwitch::On);
-  pc.m_Config->EnableTissue(cdm::eSwitch::Off);
+  pc.m_Config->EnableRenal(eSwitch::On);
+  pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
   // Renal needs these tissue compartments
   // Let's make them manually, without the tissue circuit
@@ -60,7 +60,7 @@ void PulseEngineTest::RenalCircuitAndTransportTest(const std::string& sTestDirec
   pc.GetCompartments().CreateLiquidCompartment(pulse::ExtravascularCompartment::RightKidneyExtracellular);
   pc.GetCompartments().CreateLiquidCompartment(pulse::ExtravascularCompartment::LeftKidneyIntracellular);
   pc.GetCompartments().CreateLiquidCompartment(pulse::ExtravascularCompartment::RightKidneyIntracellular);
-  pc.m_Config->EnableTissue(cdm::eSwitch::On);// This needs to be on for making the tissue to extravascular mapping
+  pc.m_Config->EnableTissue(eSwitch::On);// This needs to be on for making the tissue to extravascular mapping
   pc.GetCompartments().StateChange();
   //Add just N2
   pc.GetSubstances().AddActiveSubstance(pc.GetSubstances().GetN2());
@@ -175,8 +175,8 @@ void PulseEngineTest::RenalFeedbackTest(RenalFeedback feedback, const std::strin
   PulseController pc(sTestDirectory + "/RenalFeedbackTest.log");
   pc.GetPatient().LoadFile("./patients/StandardMale.pba");
   pc.SetupPatient();
-  pc.m_Config->EnableRenal(cdm::eSwitch::On);
-  pc.m_Config->EnableTissue(cdm::eSwitch::Off);
+  pc.m_Config->EnableRenal(eSwitch::On);
+  pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
   // Renal needs these tissue compartments
   // Let's make them manually, without the tissue circuit
@@ -186,7 +186,7 @@ void PulseEngineTest::RenalFeedbackTest(RenalFeedback feedback, const std::strin
   pc.GetCompartments().CreateLiquidCompartment(pulse::ExtravascularCompartment::RightKidneyExtracellular);
   pc.GetCompartments().CreateLiquidCompartment(pulse::ExtravascularCompartment::LeftKidneyIntracellular);
   pc.GetCompartments().CreateLiquidCompartment(pulse::ExtravascularCompartment::RightKidneyIntracellular);
-  pc.m_Config->EnableTissue(cdm::eSwitch::On);// This needs to be on for making the tissue to extravascular mapping
+  pc.m_Config->EnableTissue(eSwitch::On);// This needs to be on for making the tissue to extravascular mapping
   pc.GetCompartments().StateChange();
   SEPatient* patient = (SEPatient*)&pc.GetPatient();
 
@@ -318,7 +318,7 @@ void PulseEngineTest::RenalFeedbackTest(RenalFeedback feedback, const std::strin
     for (unsigned int i = 0; i < 3e6; i++)
     {
       //Flag beginning of cardiac cycle - this will make it just use the current value instead of a running average
-      patient->SetEvent(cdm::ePatient_Event_StartOfCardiacCycle, true, eventTime);
+      patient->SetEvent(ePatient_Event::StartOfCardiacCycle, true, eventTime);
 
       GFRSteady = false;
       RBFSteady = false;
@@ -490,8 +490,8 @@ void PulseEngineTest::RenalSystemTest(RenalSystems systemtest, const std::string
   PulseController pc(sTestDirectory + "/RenalSystemTest.log");
   pc.GetPatient().LoadFile("./patients/StandardMale.pba");
   pc.SetupPatient();
-  pc.m_Config->EnableRenal(cdm::eSwitch::On);
-  pc.m_Config->EnableTissue(cdm::eSwitch::Off);
+  pc.m_Config->EnableRenal(eSwitch::On);
+  pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
   // Renal needs these tissue compartments
   // Let's make them manually, without the tissue circuit
@@ -501,7 +501,7 @@ void PulseEngineTest::RenalSystemTest(RenalSystems systemtest, const std::string
   pc.GetCompartments().CreateLiquidCompartment(pulse::ExtravascularCompartment::RightKidneyExtracellular);
   pc.GetCompartments().CreateLiquidCompartment(pulse::ExtravascularCompartment::LeftKidneyIntracellular);
   pc.GetCompartments().CreateLiquidCompartment(pulse::ExtravascularCompartment::RightKidneyIntracellular);
-  pc.m_Config->EnableTissue(cdm::eSwitch::On);// This needs to be on for making the tissue to extravascular mapping
+  pc.m_Config->EnableTissue(eSwitch::On);// This needs to be on for making the tissue to extravascular mapping
   pc.GetCompartments().StateChange();
   SEPatient* patient = (SEPatient*)&pc.GetPatient();
   SESubstance& potassium = pc.GetSubstances().GetPotassium();

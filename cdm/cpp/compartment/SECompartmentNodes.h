@@ -12,6 +12,7 @@
 template<COMPARTMENT_NODE_TEMPLATE>
 class SECompartmentNodes : public Loggable
 {
+  friend class PBCompartment;//friend the serialization class
 public:
   
   SECompartmentNodes(Logger* logger);

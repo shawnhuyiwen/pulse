@@ -3,8 +3,25 @@
 
 #pragma once
 CDM_BIND_DECL(ElectroCardioGramWaveformData)
-#include "bind/cdm/PhysiologyEnums.pb.h"
-#include "bind/cdm/ElectroCardioGramEnums.pb.h"
+#include "system/physiology/SECardiovascularSystem.h"
+
+
+// Keep enums in sync with appropriate schema/cdm/CompartmentEnums.proto file !!
+enum class eElectroCardioGram_WaveformLead { NullLead = 0, 
+                                             Lead1, 
+                                             Lead2,
+                                             Lead3,
+                                             Lead4,
+                                             Lead5,
+                                             Lead6,
+                                             Lead7,
+                                             Lead8,
+                                             Lead9,
+                                             Lead10,
+                                             Lead11,
+                                             Lead12 };
+extern const std::string& eElectroCardioGram_WaveformLead_Name(eElectroCardioGram_WaveformLead m);
+
 
 class CDM_DECL SEElectroCardioGramWaveform : public Loggable
 {
@@ -23,12 +40,12 @@ protected:
 
 public:  
   virtual bool HasLeadNumber() const;
-  virtual cdm::eElectroCardioGram_WaveformLead  GetLeadNumber() const;
-  virtual void SetLeadNumber(cdm::eElectroCardioGram_WaveformLead n);
+  virtual eElectroCardioGram_WaveformLead  GetLeadNumber() const;
+  virtual void SetLeadNumber(eElectroCardioGram_WaveformLead n);
   virtual void InvalidateLeadNumber();
 
-  virtual cdm::eHeartRhythm GetRhythm() const;
-  virtual void SetRhythm(cdm::eHeartRhythm name);
+  virtual eHeartRhythm GetRhythm() const;
+  virtual void SetRhythm(eHeartRhythm name);
 
   virtual bool HasData() const;
   virtual SEFunctionElectricPotentialVsTime& GetData();
@@ -42,8 +59,8 @@ public:
 
 protected:
 
-  cdm::eElectroCardioGram_WaveformLead     m_LeadNumber;
-  cdm::eHeartRhythm                        m_Rhythm;
+  eElectroCardioGram_WaveformLead          m_LeadNumber;
+  eHeartRhythm                             m_Rhythm;
   SEScalarTime*                            m_TimeStep;
   SEFunctionElectricPotentialVsTime*       m_Data;
   std::vector<unsigned int>                m_ActiveIndicies;

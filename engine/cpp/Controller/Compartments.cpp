@@ -320,22 +320,22 @@ SEGasCompartmentGraph& PulseCompartments::GetActiveRespiratoryGraph()
 {
   switch (m_data.GetAirwayMode())
   {
-  case pulse::eAirwayMode::Free:
+  case eAirwayMode::Free:
     if (m_UpdateActiveAirwayGraph)
       m_data.GetCompartments().UpdateLinks(*m_RespiratoryGraph);
     m_UpdateActiveAirwayGraph = false;
     return *m_RespiratoryGraph;
-  case pulse::eAirwayMode::AnesthesiaMachine:
+  case eAirwayMode::AnesthesiaMachine:
     if (m_UpdateActiveAirwayGraph)
       m_data.GetCompartments().UpdateLinks(*m_CombinedRespiratoryAnesthesiaGraph);
     m_UpdateActiveAirwayGraph = false;
     return *m_CombinedRespiratoryAnesthesiaGraph;
-  case pulse::eAirwayMode::Inhaler:
+  case eAirwayMode::Inhaler:
     if (m_UpdateActiveAirwayGraph)
       m_data.GetCompartments().UpdateLinks(*m_CombinedRespiratoryInhalerGraph);
     m_UpdateActiveAirwayGraph = false;
     return *m_CombinedRespiratoryInhalerGraph;
-  case pulse::eAirwayMode::MechanicalVentilator:
+  case eAirwayMode::MechanicalVentilator:
     if (m_UpdateActiveAirwayGraph)
       m_data.GetCompartments().UpdateLinks(*m_CombinedRespiratoryMechanicalVentilatorGraph);
     m_UpdateActiveAirwayGraph = false;
@@ -373,18 +373,18 @@ SELiquidCompartmentGraph& PulseCompartments::GetActiveAerosolGraph()
 {
   switch (m_data.GetAirwayMode())
   {
-  case pulse::eAirwayMode::Free:
-  case pulse::eAirwayMode::AnesthesiaMachine:// Just use the regular graph
+  case eAirwayMode::Free:
+  case eAirwayMode::AnesthesiaMachine:// Just use the regular graph
     if (m_UpdateActiveAerosolGraph)
       m_data.GetCompartments().UpdateLinks(*m_AerosolGraph);
     m_UpdateActiveAerosolGraph = false;
     return *m_AerosolGraph;
-  case pulse::eAirwayMode::MechanicalVentilator:
+  case eAirwayMode::MechanicalVentilator:
     if (m_UpdateActiveAerosolGraph)
       m_data.GetCompartments().UpdateLinks(*m_CombinedAerosolMechanicalVentilatorGraph);
     m_UpdateActiveAerosolGraph = true;
     return *m_CombinedAerosolMechanicalVentilatorGraph;
-  case pulse::eAirwayMode::Inhaler:
+  case eAirwayMode::Inhaler:
     if (m_UpdateActiveAerosolGraph)
       m_data.GetCompartments().UpdateLinks(*m_CombinedAerosolInhalerGraph);
     m_UpdateActiveAerosolGraph = true;

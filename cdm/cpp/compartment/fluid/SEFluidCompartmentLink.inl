@@ -5,7 +5,6 @@
 #include "compartment/fluid/SEFluidCompartmentLink.h"
 #include "compartment/fluid/SELiquidCompartment.h"
 #include "circuit/SECircuitManager.h"
-
 #include "properties/SEScalarVolumePerTime.h"
 
 template<FLUID_COMPARTMENT_LINK_TEMPLATE>
@@ -21,47 +20,6 @@ SEFluidCompartmentLink<FLUID_COMPARTMENT_LINK_TYPES>::~SEFluidCompartmentLink()
 
 }
 
-template<FLUID_COMPARTMENT_LINK_TEMPLATE>
-void SEFluidCompartmentLink<FLUID_COMPARTMENT_LINK_TYPES>::Serialize(const cdm::FluidCompartmentLinkData& src, SEFluidCompartmentLink& dst, SECircuitManager* circuits)
-{
-  SECompartmentLink::Serialize(src.link(), dst);
-
-  if (!src.link().path().empty())
-  {
-    if (circuits == nullptr)
-    {
-      dst.Error("Link is mapped to circuit path, "+ src.link().path() +", but no circuit manager was provided, cannot load");
-      return;
-    }
-    SEFluidCircuitPath* path = circuits->GetFluidPath(src.link().path());
-    if (path == nullptr)
-    {
-      dst.Error("Link is mapped to circuit path, " + src.link().path() + ", but provided circuit manager did not have that path");
-      return;
-    }
-    dst.MapPath(*path);
-  }
-  else
-  {
-    if (src.has_flow())
-      SEScalarVolumePerTime::Load(src.flow(), dst.GetFlow());
-  }
-}
-template<FLUID_COMPARTMENT_LINK_TEMPLATE>
-void SEFluidCompartmentLink<FLUID_COMPARTMENT_LINK_TYPES>::Serialize(const SEFluidCompartmentLink& src, cdm::FluidCompartmentLinkData& dst)
-{
-  SECompartmentLink::Serialize(src,*dst.mutable_link());
-  dst.mutable_link()->set_sourcecompartment(src.m_SourceCmpt.GetName());
-  dst.mutable_link()->set_targetcompartment(src.m_TargetCmpt.GetName());
-  if (src.m_Path != nullptr)
-    dst.mutable_link()->set_path(src.m_Path->GetName());
-  // Yeah, I know
-  // But, these will only modify member variables if they are being used as temporary variables
-  // Even if you have a path, I am unloading everything, this makes the pba actually usefull...
-  SEFluidCompartmentLink& mutable_src = const_cast<SEFluidCompartmentLink&>(src);
-  if (src.HasFlow())
-    dst.set_allocated_flow(SEScalarVolumePerTime::Unload(mutable_src.GetFlow()));
-}
 
 template<FLUID_COMPARTMENT_LINK_TEMPLATE>
 void SEFluidCompartmentLink<FLUID_COMPARTMENT_LINK_TYPES>::Clear()

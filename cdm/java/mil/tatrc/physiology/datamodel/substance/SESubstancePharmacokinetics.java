@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.kitware.physiology.cdm.Substance.SubstanceData;
+import com.kitware.physiology.cdm.Substance.SubstancePharmacokineticsData;
+import com.kitware.physiology.cdm.Substance.SubstanceTissuePharmacokineticsData;
 
 public class SESubstancePharmacokinetics
 {
@@ -37,7 +39,7 @@ public class SESubstancePharmacokinetics
     return false;
   }
   
-  public static void load(SubstanceData.PharmacokineticsData src, SESubstancePharmacokinetics dst)
+  public static void load(SubstancePharmacokineticsData src, SESubstancePharmacokinetics dst)
   {
     dst.reset();
     if(src.hasPhysicochemicals())
@@ -45,23 +47,23 @@ public class SESubstancePharmacokinetics
     
     if(src.getTissueKineticsList()!=null)
     {      
-      for(SubstanceData.TissuePharmacokineticsData kData : src.getTissueKineticsList())
+      for(SubstanceTissuePharmacokineticsData kData : src.getTissueKineticsList())
       {
         SESubstanceTissuePharmacokinetics.load(kData,dst.getTissueKinetics(kData.getName()));
       }
     }
   }
   
-  public static SubstanceData.PharmacokineticsData unload(SESubstancePharmacokinetics src)
+  public static SubstancePharmacokineticsData unload(SESubstancePharmacokinetics src)
   {
     if(!src.isValid())
       return null;
-    SubstanceData.PharmacokineticsData.Builder dst = SubstanceData.PharmacokineticsData.newBuilder();
+    SubstancePharmacokineticsData.Builder dst = SubstancePharmacokineticsData.newBuilder();
     unload(src,dst);
     return dst.build();
   }
   
-  protected static void unload(SESubstancePharmacokinetics src, SubstanceData.PharmacokineticsData.Builder dst)
+  protected static void unload(SESubstancePharmacokinetics src, SubstancePharmacokineticsData.Builder dst)
   {
     if(src.hasPhysicochemicals())
       dst.setPhysicochemicals(SESubstancePhysicochemicals.unload(src.physicochemicals));

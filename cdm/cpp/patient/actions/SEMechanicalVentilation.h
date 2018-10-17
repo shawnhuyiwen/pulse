@@ -32,8 +32,8 @@ protected:
 
 public:
 
-  virtual cdm::eSwitch GetState() const;
-  virtual void SetState(cdm::eSwitch name);
+  virtual eSwitch GetState() const;
+  virtual void SetState(eSwitch name);
 
   virtual bool HasFlow() const;
   virtual SEScalarVolumePerTime& GetFlow();
@@ -66,7 +66,7 @@ protected:
 
   std::stringstream    m_ss;
 
-  cdm::eSwitch            m_State;
+  eSwitch            m_State;
   SEScalarVolumePerTime*  m_Flow;
   SEScalarPressure*       m_Pressure;
 

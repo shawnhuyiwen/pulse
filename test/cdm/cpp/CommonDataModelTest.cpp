@@ -6,6 +6,7 @@
 #include "circuit/SECircuitManager.h"
 #include "compartment/SECompartmentManager.h"
 #include "utils/FileUtils.h"
+#include "io/protobuf/PBCompartment.h"
 
 CommonDataModelTest::CommonDataModelTest() : Loggable(new Logger())
 {
@@ -254,8 +255,8 @@ void CommonDataModelTest::FillFunctionMap()
 
 void CommonDataModelTest::TestCompartmentSerialization(SECompartmentManager& mgr, const std::string& filename)
 {
-  mgr.SaveFile(filename);
-  if(!mgr.LoadFile(filename, m_Circuits))
+  PBCompartment::SaveCompartmentManagerFile(mgr,filename);
+  if(!PBCompartment::LoadCompartmentManagerFile(mgr,filename, m_Circuits))
   {
     m_Circuits->Clear();
     m_Circuits->Error("Unable to load file " + filename, "TestCompartmentSerialization");

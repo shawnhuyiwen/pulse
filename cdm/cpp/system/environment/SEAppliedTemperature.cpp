@@ -13,7 +13,7 @@ SEAppliedTemperature::SEAppliedTemperature(Logger* logger) : Loggable(logger)
   m_Temperature = nullptr;
   m_SurfaceArea = nullptr;
   m_SurfaceAreaFraction = nullptr;
-  m_State = cdm::eSwitch::Off;
+  m_State = eSwitch::Off;
 }
 
 SEAppliedTemperature::~SEAppliedTemperature()
@@ -26,7 +26,7 @@ void SEAppliedTemperature::Clear()
   SAFE_DELETE(m_Temperature);
   SAFE_DELETE(m_SurfaceArea);
   SAFE_DELETE(m_SurfaceAreaFraction);
-  m_State = cdm::eSwitch::Off;
+  m_State = eSwitch::Off;
 }
 
 const SEScalar* SEAppliedTemperature::GetScalar(const std::string& name)
@@ -48,7 +48,7 @@ void SEAppliedTemperature::Serialize(const cdm::EnvironmentData_AppliedTemperatu
 {
   dst.Clear();
   if (src.state() != cdm::eSwitch::NullSwitch)
-    dst.SetState(src.state());
+    dst.SetState((eSwitch)src.state());
   if (src.has_temperature())
     SEScalarTemperature::Load(src.temperature(), dst.GetTemperature());
   if (src.has_surfacearea())
@@ -65,7 +65,7 @@ cdm::EnvironmentData_AppliedTemperatureData* SEAppliedTemperature::Unload(const 
 }
 void SEAppliedTemperature::Serialize(const SEAppliedTemperature& src, cdm::EnvironmentData_AppliedTemperatureData& dst)
 {
-  dst.set_state(src.m_State);
+  dst.set_state((cdm::eSwitch)src.m_State);
   if (src.HasTemperature())
     dst.set_allocated_temperature(SEScalarTemperature::Unload(*src.m_Temperature));
   if (src.HasSurfaceArea())
@@ -125,13 +125,13 @@ double SEAppliedTemperature::GetSurfaceAreaFraction() const
   return m_SurfaceAreaFraction->GetValue();
 }
 
-cdm::eSwitch SEAppliedTemperature::GetState() const
+eSwitch SEAppliedTemperature::GetState() const
 {
   return m_State;
 }
-void SEAppliedTemperature::SetState(cdm::eSwitch state)
+void SEAppliedTemperature::SetState(eSwitch state)
 {
-  m_State = (state == cdm::eSwitch::NullSwitch) ? cdm::eSwitch::Off : state;
+  m_State = (state == eSwitch::NullSwitch) ? eSwitch::Off : state;
 }
 
 
@@ -142,6 +142,6 @@ void SEAppliedTemperature::ToString(std::ostream &str) const
   str << "\n\tTemperature :";         HasTemperature() ? str << *m_Temperature : str << "NaN";
   str << "\n\tSurfaceArea :";         HasSurfaceArea() ? str << *m_SurfaceArea : str << "NaN";
   str << "\n\tSurfaceAreaFraction :"; HasSurfaceAreaFraction() ? str << *m_SurfaceAreaFraction : str << "NaN";
-  str << "\n\tState :" <<  cdm::eSwitch_Name(m_State);
+  str << "\n\tState :" <<  eSwitch_Name(m_State);
   str << std::flush;
 }

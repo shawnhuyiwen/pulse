@@ -7,53 +7,6 @@
 #include "compartment/SECompartmentManager.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalar0To1.h"
-#include "bind/cdm/Compartment.pb.h"
-
-void SEGasCompartmentGraph::Load(const cdm::GasCompartmentGraphData& src, SEGasCompartmentGraph& dst, SECompartmentManager& cmptMgr)
-{
-  SEGasCompartmentGraph::Serialize(src, dst, cmptMgr);
-}
-void SEGasCompartmentGraph::Serialize(const cdm::GasCompartmentGraphData& src, SEGasCompartmentGraph& dst, SECompartmentManager& cmptMgr)
-{
-  dst.m_Name = src.fluidgraph().graph().name();
-  for (int i=0; i<src.fluidgraph().graph().compartment_size(); i++)
-  {
-    std::string name = src.fluidgraph().graph().compartment(i);
-    SEGasCompartment* cmpt = cmptMgr.GetGasCompartment(name);
-    if (cmpt == nullptr)
-    {
-      dst.Error("Could not find compartment " + name + " for graph " + dst.m_Name);
-      continue;
-    }
-    dst.AddCompartment(*cmpt);
-  }
-  for (int i = 0; i<src.fluidgraph().graph().link_size(); i++)
-  {
-    std::string name = src.fluidgraph().graph().link(i);
-    SEGasCompartmentLink* link = cmptMgr.GetGasLink(name);
-    if (link == nullptr)
-    {
-      dst.Error("Could not find link " + name + " for graph " + dst.m_Name);
-      continue;
-    }
-    dst.AddLink(*link);
-  }
-}
-
-cdm::GasCompartmentGraphData* SEGasCompartmentGraph::Unload(const SEGasCompartmentGraph& src)
-{
-  cdm::GasCompartmentGraphData* dst = new cdm::GasCompartmentGraphData();
-  SEGasCompartmentGraph::Serialize(src, *dst);
-  return dst;
-}
-void SEGasCompartmentGraph::Serialize(const SEGasCompartmentGraph& src, cdm::GasCompartmentGraphData& dst)
-{
-  dst.mutable_fluidgraph()->mutable_graph()->set_name(src.m_Name);
-  for (SEGasCompartment* cmpt : src.m_Compartments)
-    dst.mutable_fluidgraph()->mutable_graph()->add_compartment(cmpt->GetName());
-  for (SEGasCompartmentLink* link : src.m_CompartmentLinks)
-    dst.mutable_fluidgraph()->mutable_graph()->add_link(link->GetName());
-}
 
 void SEGasCompartmentGraph::BalanceByIntensive()
 {

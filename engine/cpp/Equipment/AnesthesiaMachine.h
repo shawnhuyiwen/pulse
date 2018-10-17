@@ -49,7 +49,7 @@ protected:
 
   // Extending some functionality to these base class methods
   // We will update the Pulse Airway mode when these are called
-  virtual void SetConnection(cdm::eAnesthesiaMachine_Connection c);
+  virtual void SetConnection(eAnesthesiaMachine_Connection c);
   virtual void InvalidateConnection();
 
   void CalculateSourceStatus();

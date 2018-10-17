@@ -40,7 +40,7 @@ list(APPEND SOURCE ${COMPARTMENT_TISSUE_FILES})
 # Compartment/Managers
 file(GLOB COMPARTMENT_MANAGERS_FILES "cpp/compartment/managers/*.h" "cpp/compartment/managers/*.cpp")
 source_group("Compartment\\Managers" FILES ${COMPARTMENT_MANAGERS_FILES})
-list(APPEND SOURCE ${COMPARTMENT_MANAGERS_FILES}) 
+list(APPEND SOURCE ${COMPARTMENT_MANAGERS_FILES})
 # Substance Quantity
 file(GLOB SUBSTANCE_QUANTITY_FILES "cpp/compartment/substances/*.h" "cpp/compartment/substances/*.cpp" "cpp/compartment/substances/*.inl")
 source_group("Compartment\\Substances" FILES ${SUBSTANCE_QUANTITY_FILES})
@@ -106,7 +106,6 @@ file(GLOB INHALER_FILES "cpp/system/equipment/inhaler/*.h" "cpp/system/equipment
 source_group("System\\Equipment\\Inhaler" FILES ${INHALER_FILES})
 file(GLOB INHALER_ACTION_FILES "cpp/system/equipment/inhaler/actions/*.h" "cpp/system/equipment/inhaler/actions/*.cpp")
 source_group("System\\Equipment\\Inhaler\\Actions" FILES ${INHALER_ACTION_FILES})
-
 list(APPEND SOURCE ${ANESTHESIA_FILES}) 
 list(APPEND SOURCE ${ANESTHESIA_ACTION_FILES}) 
 list(APPEND SOURCE ${ECG_FILES}) 
@@ -137,6 +136,10 @@ list(APPEND SOURCE ${UTILS_FILES})
 list(APPEND SOURCE ${UTILS_TESTING_FILES}) 
 list(APPEND SOURCE ${UTILS_UCE_FILES}) 
 #list(APPEND SOURCE ${UTILS_XPSTL_FILES}) 
+# I/O
+include(cpp/io/protobuf/CMakeLists.txt)
+source_group(${IO_GROUP} FILES ${IO_FILES})
+list(APPEND SOURCE ${IO_FILES})
 
 # The DLL we are building
 add_library(CommonDataModel ${SOURCE})

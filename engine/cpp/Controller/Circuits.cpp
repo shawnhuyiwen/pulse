@@ -126,13 +126,13 @@ SEFluidCircuit& PulseCircuits::GetActiveRespiratoryCircuit()
 {
   switch (m_data.GetAirwayMode())
   {
-  case pulse::eAirwayMode::Free:
+  case eAirwayMode::Free:
     return *m_RespiratoryCircuit;
-  case pulse::eAirwayMode::AnesthesiaMachine:
+  case eAirwayMode::AnesthesiaMachine:
     return *m_CombinedRespiratoryAnesthesiaCircuit;
-  case pulse::eAirwayMode::Inhaler:
+  case eAirwayMode::Inhaler:
     return *m_CombinedRespiratoryInhalerCircuit;
-  case pulse::eAirwayMode::MechanicalVentilator:
+  case eAirwayMode::MechanicalVentilator:
     return *m_CombinedRespiratoryMechanicalVentilatorCircuit;
   default:
     throw CommonDataModelException("Unknown airway mode");

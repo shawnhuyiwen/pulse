@@ -10,7 +10,22 @@ class SEAnesthesiaMachineOxygenBottle;
 class SEAnesthesiaMachineConfiguration;
 class SEGasSubstanceQuantity;
 CDM_BIND_DECL(AnesthesiaMachineData)
-#include "bind/cdm/AnesthesiaMachineEnums.pb.h"
+
+// Keep enums in sync with appropriate schema/cdm/AnesthesiaMachineEnums.proto file !!
+enum class eAnesthesiaMachine_Event { OxygenBottleOneExhausted = 0, OxygenBottleTwoExhausted, ReliefValveActive };
+extern const std::string& eAnesthesiaMachine_Event_Name(eAnesthesiaMachine_Event m);
+
+// Keep enums in sync with appropriate schema/cdm/AnesthesiaMachineEnums.proto file !!
+enum class eAnesthesiaMachine_OxygenSource { NullSource = 0, NoSource, Wall, BottleOne, BottleTwo };
+extern const std::string& eAnesthesiaMachine_OxygenSource_Name(eAnesthesiaMachine_OxygenSource m);
+
+// Keep enums in sync with appropriate schema/cdm/AnesthesiaMachineEnums.proto file !!
+enum class eAnesthesiaMachine_PrimaryGas { NullGas = 0, NoGas, Air, Nitrogen };
+extern const std::string& eAnesthesiaMachine_PrimaryGas_Name(eAnesthesiaMachine_PrimaryGas m);
+
+// Keep enums in sync with appropriate schema/cdm/AnesthesiaMachineEnums.proto file !!
+enum class eAnesthesiaMachine_Connection { NullConnection = 0, Off, Mask, Tube };
+extern const std::string& eAnesthesiaMachine_Connection_Name(eAnesthesiaMachine_Connection m);
 
 
 class CDM_DECL SEAnesthesiaMachine : public SESystem
@@ -44,10 +59,10 @@ public:
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
-  virtual const std::map<cdm::eAnesthesiaMachine_Event, bool>& GetEventStates() const { return m_EventState; }
-  virtual void SetEvent(cdm::eAnesthesiaMachine_Event state, bool active, const SEScalarTime& time);
-  virtual bool IsEventActive(cdm::eAnesthesiaMachine_Event state) const;
-  virtual double GetEventDuration(cdm::eAnesthesiaMachine_Event type, const TimeUnit& unit) const;
+  virtual const std::map<eAnesthesiaMachine_Event, bool>& GetEventStates() const { return m_EventState; }
+  virtual void SetEvent(eAnesthesiaMachine_Event state, bool active, const SEScalarTime& time);
+  virtual bool IsEventActive(eAnesthesiaMachine_Event state) const;
+  virtual double GetEventDuration(eAnesthesiaMachine_Event type, const TimeUnit& unit) const;
   virtual void UpdateEvents(const SEScalarTime& timeStep);
   /** @name ForwardEvents
   *  @brief - Set a callback class to invoke when any event changes
@@ -58,8 +73,8 @@ public:
   */
   virtual void ForwardEvents(SEEventHandler* handler);
 
-  virtual cdm::eAnesthesiaMachine_Connection GetConnection() const;
-  virtual void SetConnection(cdm::eAnesthesiaMachine_Connection c);
+  virtual eAnesthesiaMachine_Connection GetConnection() const;
+  virtual void SetConnection(eAnesthesiaMachine_Connection c);
 
   virtual bool HasInletFlow() const;
   virtual SEScalarVolumePerTime& GetInletFlow();
@@ -73,15 +88,15 @@ public:
   virtual SEScalar0To1& GetOxygenFraction();
   virtual double GetOxygenFraction() const;
 
-  virtual cdm::eAnesthesiaMachine_OxygenSource GetOxygenSource() const;
-  virtual void SetOxygenSource(cdm::eAnesthesiaMachine_OxygenSource name);
+  virtual eAnesthesiaMachine_OxygenSource GetOxygenSource() const;
+  virtual void SetOxygenSource(eAnesthesiaMachine_OxygenSource name);
 
   virtual bool HasPositiveEndExpiredPressure() const;
   virtual SEScalarPressure& GetPositiveEndExpiredPressure();
   virtual double GetPositiveEndExpiredPressure(const PressureUnit& unit) const;
   
-  virtual cdm::eAnesthesiaMachine_PrimaryGas GetPrimaryGas() const;
-  virtual void SetPrimaryGas(cdm::eAnesthesiaMachine_PrimaryGas name);
+  virtual eAnesthesiaMachine_PrimaryGas GetPrimaryGas() const;
+  virtual void SetPrimaryGas(eAnesthesiaMachine_PrimaryGas name);
   
   virtual bool HasRespiratoryRate() const;
   virtual SEScalarFrequency& GetRespiratoryRate();
@@ -118,16 +133,16 @@ public:
 protected:
 
   SEEventHandler*                                        m_EventHandler;
-  std::map<cdm::eAnesthesiaMachine_Event, bool>          m_EventState;
-  std::map<cdm::eAnesthesiaMachine_Event, double>        m_EventDuration_s;
+  std::map<eAnesthesiaMachine_Event, bool>               m_EventState;
+  std::map<eAnesthesiaMachine_Event, double>             m_EventDuration_s;
 
-  cdm::eAnesthesiaMachine_Connection                     m_Connection;
+  eAnesthesiaMachine_Connection                          m_Connection;
   SEScalarVolumePerTime*                                 m_InletFlow;
   SEScalar*                                              m_InspiratoryExpiratoryRatio;
   SEScalar0To1*                                          m_OxygenFraction;  
-  cdm::eAnesthesiaMachine_OxygenSource                   m_OxygenSource;
+  eAnesthesiaMachine_OxygenSource                        m_OxygenSource;
   SEScalarPressure*                                      m_PositiveEndExpiredPressure;  
-  cdm::eAnesthesiaMachine_PrimaryGas                     m_PrimaryGas;
+  eAnesthesiaMachine_PrimaryGas                          m_PrimaryGas;
   SEScalarFrequency*                                     m_RespiratoryRate;
   SEScalarPressure*                                      m_ReliefValvePressure;
 

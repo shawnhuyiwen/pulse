@@ -2,14 +2,10 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-CDM_BIND_DECL(CircuitNodeData)
-
 #include "properties/SEScalarElectricCharge.h"
 #include "properties/SEScalarElectricPotential.h"
-
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolume.h"
-
 #include "properties/SEScalarTemperature.h"
 #include "properties/SEScalarEnergy.h"
 
@@ -22,7 +18,8 @@ CDM_BIND_DECL(CircuitNodeData)
 template<CIRCUIT_NODE_TEMPLATE>
 class SECircuitNode : public Loggable
 {
-  template< typename CircuitBindType, typename NodeType, typename CircuitNodeBindType, typename PathType, typename CircuitPathBindType> friend class SECircuit;
+  friend class PBCircuit;//friend the serialization class
+  template< typename NodeType, typename PathType> friend class SECircuit;
 protected:
   SECircuitNode(const std::string& name, Logger* logger);
 public:
@@ -30,11 +27,6 @@ public:
 
   virtual void Clear(); //clear memory
 
-protected:
-  static void Serialize(const cdm::CircuitNodeData& src, SECircuitNode& dst);
-  static void Serialize(const SECircuitNode& src, cdm::CircuitNodeData& dst);
-
-public:
   virtual std::string GetName() const;
 
   virtual bool HasPotential() const;

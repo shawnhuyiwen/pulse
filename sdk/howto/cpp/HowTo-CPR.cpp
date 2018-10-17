@@ -41,14 +41,14 @@ class MyListener : public SEEventHandler, Loggable // We want to gain easy acces
 {
 public:
   MyListener(Logger* logger) : Loggable(logger) {};
-  virtual void HandlePatientEvent(cdm::ePatient_Event type, bool active, const SEScalarTime* time) override
+  virtual void HandlePatientEvent(ePatient_Event type, bool active, const SEScalarTime* time) override
   {
-    GetLogger()->Info(std::stringstream() <<"Recieved Patient Event : " << cdm::ePatient_Event_Name(type));
+    GetLogger()->Info(std::stringstream() <<"Recieved Patient Event : " << ePatient_Event_Name(type));
   }
 
-  virtual void HandleAnesthesiaMachineEvent(cdm::eAnesthesiaMachine_Event type, bool active, const SEScalarTime* time) override
+  virtual void HandleAnesthesiaMachineEvent(eAnesthesiaMachine_Event type, bool active, const SEScalarTime* time) override
   {
-    GetLogger()->Info(std::stringstream() <<"Recieved Anesthesia Machine Event : " << cdm::eAnesthesiaMachine_Event_Name(type));
+    GetLogger()->Info(std::stringstream() <<"Recieved Anesthesia Machine Event : " << eAnesthesiaMachine_Event_Name(type));
   }
 };
 
@@ -116,7 +116,7 @@ void HowToCPR()
 
   // Put the patient into cardiac arrest
   SECardiacArrest c;
-  c.SetState(cdm::eSwitch::On);
+  c.SetState(eSwitch::On);
   pe->ProcessAction(c);
   
   pe->GetLogger()->Info("Giving the patient Cardiac Arrest.");

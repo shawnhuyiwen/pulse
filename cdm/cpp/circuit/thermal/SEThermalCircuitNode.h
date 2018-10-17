@@ -3,10 +3,10 @@
 
 #pragma once
 #include "circuit/SECircuitNode.h"
-CDM_BIND_DECL(ThermalCircuitNodeData)
 
 class CDM_DECL SEThermalCircuitNode : public SECircuitNode<THERMAL_CIRCUIT_NODE>
 {
+  friend class PBCircuit;//friend the serialization class
   friend class SECircuitManager;  
 protected:
   SEThermalCircuitNode(const std::string& name, Logger* logger);
@@ -15,14 +15,6 @@ public:
 
   virtual void Clear(); //clear memory
 
-  static void Load(const cdm::ThermalCircuitNodeData& src, SEThermalCircuitNode& dst);
-  static cdm::ThermalCircuitNodeData* Unload(const SEThermalCircuitNode& src);
-protected:
-  static void Serialize(const cdm::ThermalCircuitNodeData& src, SEThermalCircuitNode& dst);
-  static void Serialize(const SEThermalCircuitNode& src, cdm::ThermalCircuitNodeData& dst);
-
-
-public:
   virtual bool HasTemperature() const;
   virtual SEScalarTemperature& GetTemperature();
   virtual double GetTemperature(const TemperatureUnit& unit) const;

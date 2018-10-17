@@ -75,12 +75,12 @@ void HowToTensionPneumothorax()
   SETensionPneumothorax pneumo;
   
   // You can have a Closed or Open Tension Pneumothorax
-  pneumo.SetType(cdm::eGate::Closed);
+  pneumo.SetType(eGate::Closed);
   //pneumo.SetType(CDM::enumPneumothoraxType::Open);
   pneumo.GetSeverity().SetValue(0.75);
   
     // It can be on the Left or right side
-  pneumo.SetSide(cdm::eSide::Right);  
+  pneumo.SetSide(eSide::Right);  
   //pneumo.SetSide(CDM::enumSide::Left);
   pneumo.SetComment("ICD-9: 860.0");
   //pneumo.SetComment('ICD-9: 860.0');
@@ -107,7 +107,7 @@ void HowToTensionPneumothorax()
   needleDecomp.SetActive(false);
   
   // It can be on the Left or right side (it's a good idea to do it on the side of the pneumothorax ;)
-  needleDecomp.SetSide(cdm::eSide::Right);
+  needleDecomp.SetSide(eSide::Right);
   //needleDecomp.SetSide(CDM::enumSide::Left);
   
   pe->ProcessAction(needleDecomp);

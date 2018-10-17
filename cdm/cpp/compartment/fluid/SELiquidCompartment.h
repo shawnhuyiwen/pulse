@@ -7,9 +7,9 @@
 #include "compartment/substances/SELiquidSubstanceQuantity.h"
 #include "substance/SESubstanceTransport.h"
 
-
 class CDM_DECL SELiquidCompartment : public SEFluidCompartment<SELiquidCompartmentLink, SELiquidTransportVertex, SELiquidTransportSubstance, SELiquidSubstanceQuantity>
 {
+  friend class PBCompartment;//friend the serialization class
   friend class SETissueCompartment;
   friend class SECompartmentManager;
   friend class SELiquidSubstanceQuantity;
@@ -20,13 +20,6 @@ public:
 
   virtual void Clear();
 
-  static void Load(const cdm::LiquidCompartmentData& src, SELiquidCompartment& dst, SESubstanceManager& subMgr, SECircuitManager* circuits = nullptr);
-  static cdm::LiquidCompartmentData* Unload(const SELiquidCompartment& src);
-protected:
-  static void Serialize(const cdm::LiquidCompartmentData& src, SELiquidCompartment& dst, SESubstanceManager& subMgr, SECircuitManager* circuits = nullptr);
-  static void Serialize(const SELiquidCompartment& src, cdm::LiquidCompartmentData& dst);
-
-public:
   virtual const SEScalar* GetScalar(const std::string& name);
 
   virtual void StateChange();

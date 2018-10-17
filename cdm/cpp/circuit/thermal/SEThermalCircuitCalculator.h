@@ -2,7 +2,6 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-//CDM_BIND_DECL(ThermalCircuitData)
 #include "circuit/SECircuitCalculator.h"
 #include "circuit/thermal/SEThermalCircuit.h"
 

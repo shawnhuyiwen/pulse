@@ -4,10 +4,16 @@
 #include "stdafx.h"
 #include "patient/actions/SEIntubation.h"
 #include "bind/cdm/PatientActions.pb.h"
+#include "bind/cdm/PatientActionEnums.pb.h"
+
+const std::string& eIntubation_Type_Name(eIntubation_Type m)
+{
+  return cdm::eIntubation_Type_Name((cdm::eIntubation_Type)m);
+}
 
 SEIntubation::SEIntubation() : SEPatientAction()
 {
-  m_Type = cdm::eIntubation_Type_Off;
+  m_Type = eIntubation_Type::Off;
 }
 
 SEIntubation::~SEIntubation()
@@ -18,7 +24,7 @@ SEIntubation::~SEIntubation()
 void SEIntubation::Clear()
 {
   SEPatientAction::Clear();
-  m_Type = cdm::eIntubation_Type_Off;
+  m_Type = eIntubation_Type::Off;
 }
 
 bool SEIntubation::IsValid() const
@@ -28,7 +34,7 @@ bool SEIntubation::IsValid() const
 
 bool SEIntubation::IsActive() const
 {
-  return GetType() != cdm::eIntubation_Type_Off;
+  return GetType() != eIntubation_Type::Off;
 }
 
 void SEIntubation::Load(const cdm::IntubationData& src, SEIntubation& dst)
@@ -38,7 +44,7 @@ void SEIntubation::Load(const cdm::IntubationData& src, SEIntubation& dst)
 void SEIntubation::Serialize(const cdm::IntubationData& src, SEIntubation& dst)
 {
   SEPatientAction::Serialize(src.patientaction(), dst);
-  dst.SetType(src.type());
+  dst.SetType((eIntubation_Type)src.type());
 }
 
 cdm::IntubationData* SEIntubation::Unload(const SEIntubation& src)
@@ -50,14 +56,14 @@ cdm::IntubationData* SEIntubation::Unload(const SEIntubation& src)
 void SEIntubation::Serialize(const SEIntubation& src, cdm::IntubationData& dst)
 {
   SEPatientAction::Serialize(src, *dst.mutable_patientaction());
-  dst.set_type(src.m_Type);
+  dst.set_type((cdm::eIntubation_Type)src.m_Type);
 }
 
-cdm::eIntubation_Type SEIntubation::GetType() const
+eIntubation_Type SEIntubation::GetType() const
 {
   return m_Type;
 }
-void SEIntubation::SetType(cdm::eIntubation_Type Type)
+void SEIntubation::SetType(eIntubation_Type Type)
 {
   m_Type = Type;
 }
@@ -67,6 +73,6 @@ void SEIntubation::ToString(std::ostream &str) const
   str << "Patient Action : Intubation";
   if (HasComment())
     str << "\n\tComment: " << m_Comment;
-  str << "\n\tType: " << cdm::eIntubation_Type_Name(GetType());
+  str << "\n\tType: " << eIntubation_Type_Name(GetType());
   str << std::flush;
 }

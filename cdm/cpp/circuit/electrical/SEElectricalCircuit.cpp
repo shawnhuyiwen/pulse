@@ -5,7 +5,7 @@
 #include "circuit/electrical/SEElectricalCircuit.h"
 #include "circuit/SECircuitManager.h"
 
-SEElectricalCircuit::SEElectricalCircuit(const std::string& name, SECircuitManager& mgr) : SECircuit<cdm::ElectricalCircuitData, SEElectricalCircuitNode, cdm::ElectricalCircuitNodeData, SEElectricalCircuitPath, cdm::ElectricalCircuitPathData>(name, mgr.GetLogger()), m_Mgr(mgr)
+SEElectricalCircuit::SEElectricalCircuit(const std::string& name, SECircuitManager& mgr) : SECircuit<SEElectricalCircuitNode, SEElectricalCircuitPath>(name, mgr.GetLogger()), m_Mgr(mgr)
 {
 
 }

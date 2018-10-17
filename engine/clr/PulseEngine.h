@@ -4,33 +4,66 @@ See accompanying NOTICE file for details.*/
 #pragma once 
 #include <string>
 
-class PhysiologyEngine;
-class PulseLogger;
-class PulseEventHandler;
+#include "PulsePhysiologyEngine.h"
+#include "engine/SEEngineConfiguration.h"
 
-class SESubstance;
-class SEGasCompartment;
-class SEGasSubstanceQuantity;
-class SELiquidCompartment;
-class SELiquidSubstanceQuantity;
+#include "system/physiology/SEBloodChemistrySystem.h"
+#include "system/physiology/SECardiovascularSystem.h"
+#include "system/physiology/SEDrugSystem.h"
+#include "system/physiology/SEEndocrineSystem.h"
+#include "system/physiology/SEEnergySystem.h"
+#include "system/physiology/SEGastrointestinalSystem.h"
+#include "system/physiology/SEHepaticSystem.h"
+#include "system/physiology/SENervousSystem.h"
+#include "system/physiology/SERenalSystem.h"
+#include "system/physiology/SERespiratorySystem.h"
+#include "system/physiology/SETissueSystem.h"
 
-class SEBloodChemistrySystem;
-class SECardiovascularSystem;
-class SEDrugSystem;
-class SEEndocrineSystem;
-class SEEnergySystem;
-class SEGastrointestinalSystem;
-class SEHepaticSystem;
-class SENervousSystem;
-class SERenalSystem;
-class SERespiratorySystem;
-class SETissueSystem;
+#include "system/environment/SEEnvironment.h"
+#include "system/environment/SEEnvironmentalConditions.h"
 
-class SEEnvironment;
+#include "system/equipment/anesthesiamachine/SEAnesthesiaMachine.h"
+#include "system/equipment/anesthesiamachine/SEAnesthesiaMachineChamber.h"
+#include "system/equipment/anesthesiamachine/SEAnesthesiaMachineOxygenBottle.h"
 
-class SEAnesthesiaMachine;
-class SEElectroCardioGram;
-class SEInhaler;
+#include "system/equipment/ElectroCardioGram/SEElectroCardioGram.h"
+
+#include "system/equipment/Inhaler/SEInhaler.h"
+
+#include "patient/SEPatient.h"
+#include "patient/actions/SEAcuteStress.h"
+#include "patient/actions/SEAirwayObstruction.h"
+#include "patient/actions/SEApnea.h"
+#include "patient/actions/SEAsthmaAttack.h"
+#include "patient/actions/SEBrainInjury.h"
+#include "patient/actions/SEBronchoconstriction.h"
+#include "patient/actions/SECardiacArrest.h"
+#include "patient/actions/SEChestCompressionForce.h"
+#include "patient/actions/SEChestCompressionForceScale.h"
+#include "patient/actions/SEChestOcclusiveDressing.h"
+#include "patient/actions/SEConsciousRespiration.h"
+#include "patient/actions/SEConsumeNutrients.h"
+#include "patient/actions/SEExercise.h"
+#include "patient/actions/SEHemorrhage.h"
+#include "patient/actions/SEIntubation.h"
+#include "patient/actions/SEMechanicalVentilation.h"
+#include "patient/actions/SENeedleDecompression.h"
+#include "patient/actions/SEPericardialEffusion.h"
+#include "patient/actions/SESubstanceBolus.h"
+#include "patient/actions/SESubstanceCompoundInfusion.h"
+#include "patient/actions/SESubstanceInfusion.h"
+#include "patient/actions/SETensionPneumothorax.h"
+#include "patient/actions/SEUrinate.h"
+
+#include "substance/SESubstance.h"
+#include "substance/SESubstanceManager.h"
+#include "compartment/SECompartmentManager.h"
+#include "compartment/fluid/SEGasCompartment.h"
+#include "compartment/fluid/SELiquidCompartment.h"
+#include "compartment/substances/SEGasSubstanceQuantity.h"
+#include "compartment/substances/SELiquidSubstanceQuantity.h"
+
+#include "engine/SEEventHandler.h"
 
 // This class is used to expose the actual patient data parameters (i.e. data in the patient file)
 // Expand this class with data you want from the patient specification
@@ -71,71 +104,58 @@ public:
   // Compartment data
 };
 
-// Keep in sync with bind/Patient.pb.h
-public enum class ePatientEvent
+typedef void(__stdcall *fpLog)(const std::string&);
+class PulseLogger : public LoggerForward
 {
-  Antidiuresis = 0,
-  Asystole = 1,
-  Bradycardia = 2,
-  Bradypnea = 3,
-  BrainOxygenDeficit = 4,
-  CardiacArrest = 5,
-  CardiogenicShock = 6,
-  CriticalBrainOxygenDeficit = 7,
-  Dehydration = 8,
-  Diuresis = 9,
-  Fasciculation = 10,
-  Fatigue = 11,
-  FunctionalIncontinence = 12,
-  Hypercapnia = 13,
-  Hyperglycemia = 14,
-  Hyperthermia = 15,
-  Hypoglycemia = 16,
-  Hypothermia = 17,
-  Hypoxia = 18,
-  HypovolemicShock = 19,
-  IntracranialHypertension = 20,
-  IntracranialHypotension = 21,
-  IrreversibleState = 22,
-  Ketoacidosis = 23,
-  LacticAcidosis = 24,
-  MaximumPulmonaryVentilationRate = 25,
-  MetabolicAcidosis = 26,
-  MetabolicAlkalosis = 27,
-  MildAcuteRespiratoryDistress = 28,
-  ModerateAcuteRespiratoryDistress = 29,
-  MyocardiumOxygenDeficit = 30,
-  Natriuresis = 31,
-  NutritionDepleted = 32,
-  PulselessRhythm = 33,
-  RenalHypoperfusion = 34,
-  RespiratoryAcidosis = 35,
-  RespiratoryAlkalosis = 36,
-  StartOfCardiacCycle = 37,
-  StartOfExhale = 38,
-  StartOfInhale = 39,
-  SevereAcuteRespiratoryDistress = 40,
-  Tachycardia = 41,
-  Tachypnea = 42
+public:
+  // Make Set methods to set up a function pointer to call for each event we are interested in
+  virtual void SetFatalCallback(fpLog callback) { _fatal = callback; }
+  virtual void SetErrorCallback(fpLog callback) { _error = callback; }
+  virtual void SetWarnCallback(fpLog callback) { _warn = callback; }
+  virtual void SetInfoCallback(fpLog callback) { _info = callback; }
+  virtual void SetDebugCallback(fpLog callback) { _debug = callback; }
+protected:
+  // Make a member variables for the function pointers we are to call
+  fpLog _fatal;
+  fpLog _error;
+  fpLog _warn;
+  fpLog _info;
+  fpLog _debug;
+
+public:// Note for my example, I am ignoring the origin (what class created this log msg)
+  virtual void ForwardFatal(const std::string& msg, const std::string& origin) { _fatal(msg); }
+  virtual void ForwardError(const std::string& msg, const std::string& origin) { _error(msg); }
+  virtual void ForwardWarning(const std::string& msg, const std::string& origin) { _warn(msg); }
+  virtual void ForwardInfo(const std::string& msg, const std::string& origin) { _info(msg); }
+  virtual void ForwardDebug(const std::string& msg, const std::string& origin) { _debug(msg); }
+};
+
+// Create function pointers to call when we get events from pulse
+// For this example, I can check activity in my handler and I don't need to propagate time
+// It's up to you what data you provide your system, just know you can!
+typedef void(__stdcall *fpPatientEvent)(ePatient_Event type, bool active);
+// This is the class to provide Pulse to call when any events are triggered in the engine
+class PulseEventHandler : public SEEventHandler, public Loggable
+{
+public:
+  PulseEventHandler(Logger *logger) : Loggable(logger) {}
+
+public:
+  virtual void SetPatientEventCallback(fpPatientEvent callback) { _on_patient_event = callback; }// Make Set methods to set up a function pointer to call for each event we are interested in
+protected:
+  fpPatientEvent _on_patient_event;// Make a member variables for the function pointers we are to call
+
+                                   //These methods need definitions and should call your callback with what ever data you made it require
+public:
+  virtual void HandlePatientEvent(ePatient_Event type, bool active, const SEScalarTime* time = nullptr);
+  virtual void HandleAnesthesiaMachineEvent(eAnesthesiaMachine_Event type, bool active, const SEScalarTime* time = nullptr) { /*Not Expecting these */ }
 };
 
 public ref class PulseEngineEventCallbacksRef abstract
 {
 public:
-  virtual void HandlePatientEvent(ePatientEvent e, bool active) abstract;// CSharp will override this, and it will be called by the Pulse Event Handler
+  virtual void HandlePatientEvent(ePatient_Event e, bool active) abstract;// CSharp will override this, and it will be called by the Pulse Event Handler
 };
-
-// Enum mappings from managed to unmanaged enums
-public enum class eSide { Left = true, Right = false };
-public enum class eState { On = true, Off = false };
-public enum class eIntubationType {
-  Off = 0,
-  Esophageal = 1,
-  LeftMainstem = 2,
-  RightMainstem = 3,
-  Tracheal = 4
-};
-public enum class eGate { Open = true, Closed = false };
 
 public ref class PulseEngineRef
 {
@@ -159,10 +179,10 @@ public:
   void Asthma(double severity);
   void CardiacArrest();
   void Hemorrhage(double flowRate_mL_per_min);
-  void Intubation(/*cdm::*/eIntubationType type);
+  void Intubation(eIntubation_Type type);
   void ChestCompression(double compressionForce_Newtons);
-  void NeedleDecompression(bool active, /*cdm::*/eSide side);
-  void Pneumothorax(/*cdm::*/eGate state, /*cdm::*/eSide side, double severity);
+  void NeedleDecompression(bool active, eSide side);
+  void Pneumothorax(eGate state, eSide side, double severity);
 
   // Outputs and State
   VitalsData^ GetVitalsData() { return _vitalsData; }
@@ -172,11 +192,11 @@ public:
 protected:
   void Init();
   void Clear();
-  delegate void PatientEventDelegate(ePatientEvent type, bool active);
-  void HandlePatientEvent(ePatientEvent type, bool active);
+  delegate void PatientEventDelegate(ePatient_Event type, bool active);
+  void HandlePatientEvent(ePatient_Event type, bool active);
   PulseEngineEventCallbacksRef^ _callback;
 private:
-  PatientEventDelegate ^ on_event;
+  PatientEventDelegate^ on_event;
 
 internal: // Should be hidden from C#, which is what we want for these.
   PhysiologyEngine *               _pulse = nullptr;

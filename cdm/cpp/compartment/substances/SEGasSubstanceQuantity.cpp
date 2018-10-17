@@ -8,7 +8,6 @@
 #include "compartment/fluid/SEGasCompartmentLink.h"
 #include "substance/SESubstanceTransport.h"
 #include "substance/SESubstance.h"
-#include "bind/cdm/SubstanceQuantity.pb.h" 
 
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolume.h"
@@ -20,7 +19,7 @@ SEGasSubstanceQuantity::SEGasSubstanceQuantity(SESubstance& sub, SEGasCompartmen
   m_Volume = nullptr;
   m_VolumeFraction = nullptr;
 
-  if (m_Substance.GetState() != cdm::eSubstance_State_Gas)
+  if (m_Substance.GetState() != eSubstance_State::Gas)
     Fatal("The substance for a Gas Substance quantity must be a gas");
 }
 
@@ -46,41 +45,6 @@ void SEGasSubstanceQuantity::Clear()
   m_Children.clear();
 }
 
-void SEGasSubstanceQuantity::Load(const cdm::GasSubstanceQuantityData& src, SEGasSubstanceQuantity& dst)
-{
-  SEGasSubstanceQuantity::Serialize(src, dst);
-}
-void SEGasSubstanceQuantity::Serialize(const cdm::GasSubstanceQuantityData& src, SEGasSubstanceQuantity& dst)
-{
-  SESubstanceQuantity::Serialize(src.substancequantity(), dst);
-  if (!dst.m_Compartment.HasChildren())
-  {
-    if (src.has_partialpressure())
-      SEScalarPressure::Load(src.partialpressure(), dst.GetPartialPressure());
-    if (src.has_volume())
-      SEScalarVolume::Load(src.volume(), dst.GetVolume());
-    if (src.has_volumefraction())
-      SEScalar0To1::Load(src.volumefraction(), dst.GetVolumeFraction());
-  }
-}
-
-cdm::GasSubstanceQuantityData* SEGasSubstanceQuantity::Unload(const SEGasSubstanceQuantity& src)
-{
-  cdm::GasSubstanceQuantityData* dst = new cdm::GasSubstanceQuantityData();
-  SEGasSubstanceQuantity::Serialize(src, *dst);
-  return dst;
-}
-void SEGasSubstanceQuantity::Serialize(const SEGasSubstanceQuantity& src, cdm::GasSubstanceQuantityData& dst)
-{
-  SESubstanceQuantity::Serialize(src, *dst.mutable_substancequantity());
-  // Even if you have children, I am unloading everything, this makes the output actually usefull...
-  if (src.HasPartialPressure())
-    dst.set_allocated_partialpressure(SEScalarPressure::Unload(*src.m_PartialPressure));
-  if (src.HasVolume())
-    dst.set_allocated_volume(SEScalarVolume::Unload(*src.m_Volume));
-  if (src.HasVolumeFraction())
-    dst.set_allocated_volumefraction(SEScalar0To1::Unload(*src.m_VolumeFraction));
-}
 
 void SEGasSubstanceQuantity::SetToZero()
 {

@@ -64,8 +64,8 @@ list(APPEND Pulse_DEPENDENCIES log4cplus)
 ###################################################
 
 message( STATUS "External project - protobuf" )
-set(protobuf_VERSION "3.6.0.1" )
-set(protobuf_MD5 "0b33849480f5a469ba54b9ec10004e7b" )
+set(protobuf_VERSION "3.6.1" )
+set(protobuf_MD5 "e09a2a7d3b34a271aedfc0b38ac2a4dc" )
 set(protobuf_SRC "${CMAKE_BINARY_DIR}/protobuf/src/protobuf")
 
 ExternalProject_Add( protobuf

@@ -2,10 +2,10 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-CDM_BIND_DECL(SubstanceData_TissuePharmacokineticsData)
 
 class CDM_DECL SESubstanceTissuePharmacokinetics : public Loggable
 {
+  friend class PBSubstance;//friend the serialization class
 public:
 
   SESubstanceTissuePharmacokinetics(const std::string& name, Logger* logger);
@@ -13,13 +13,6 @@ public:
 
   virtual void Clear();
 
-  static void Load(const cdm::SubstanceData_TissuePharmacokineticsData& src, SESubstanceTissuePharmacokinetics& dst);
-  static cdm::SubstanceData_TissuePharmacokineticsData* Unload(const SESubstanceTissuePharmacokinetics& src);
-protected:
-  static void Serialize(const cdm::SubstanceData_TissuePharmacokineticsData& src, SESubstanceTissuePharmacokinetics& dst);
-  static void Serialize(const SESubstanceTissuePharmacokinetics& src, cdm::SubstanceData_TissuePharmacokineticsData& dst);
-
-public:
   const SEScalar* GetScalar(const std::string& name);
 
   virtual std::string GetName() const;

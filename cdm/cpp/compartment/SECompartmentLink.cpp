@@ -4,8 +4,6 @@
 #include "stdafx.h"
 #include "compartment/SECompartmentLink.h"
 #include "circuit/SECircuitManager.h"
-#include "bind/cdm/Compartment.pb.h"
-
 
 SECompartmentLink::SECompartmentLink(const std::string& name, Logger* logger) : Loggable(logger), m_Name(name)
 {
@@ -20,18 +18,6 @@ SECompartmentLink::~SECompartmentLink()
 void SECompartmentLink::Clear()
 {
  
-}
-
-void SECompartmentLink::Serialize(const cdm::CompartmentLinkData& src, SECompartmentLink& dst)
-{
-  dst.Clear();
-  if (!src.name().empty())
-    dst.m_Name = src.name();
-}
-
-void SECompartmentLink::Serialize(const SECompartmentLink& src, cdm::CompartmentLinkData& dst)
-{
-  dst.set_name(src.m_Name);
 }
 
 std::string SECompartmentLink::GetName() const

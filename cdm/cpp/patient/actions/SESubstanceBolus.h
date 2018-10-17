@@ -3,10 +3,22 @@
 
 #pragma once
 #include "patient/actions/SESubstanceAdministration.h"
-#include "bind/cdm/PatientActionEnums.pb.h"
 CDM_BIND_DECL(SubstanceBolusData)
 CDM_BIND_DECL(SubstanceBolusData_StateData)
 class SESubstance;
+
+// Keep enums in sync with appropriate schema/cdm/PatientActionEnums.proto file !!
+enum class eSubstanceAdministration_Route { Intravenous = 0,
+                                            Epidural,
+                                            Intraosseous,
+                                            Intraarterial,
+                                            Intracardiac,
+                                            Intracerebral,
+                                            Intracerebroventricular,
+                                            Intradermal,
+                                            Intramuscular,
+                                            Subcutaneous };
+extern const std::string& eSubstanceAdministration_Route_Name(eSubstanceAdministration_Route m);
 
 class CDM_DECL SESubstanceBolusState
 {
@@ -55,8 +67,8 @@ protected:
 
 public:
 
-  virtual cdm::eSubstanceAdministration_Route GetAdminRoute() const;
-  virtual void SetAdminRoute(cdm::eSubstanceAdministration_Route name);
+  virtual eSubstanceAdministration_Route GetAdminRoute() const;
+  virtual void SetAdminRoute(eSubstanceAdministration_Route name);
 
   virtual bool HasConcentration() const;
   virtual SEScalarMassPerVolume& GetConcentration();
@@ -75,11 +87,11 @@ public:
   virtual void ToString(std::ostream &str) const;
 
 protected:
-  cdm::eSubstanceAdministration_Route m_AdminRoute;
-  SEScalarMassPerVolume*                       m_Concentration;
-  SEScalarVolume*                              m_Dose;
-  const SESubstance&                           m_Substance;
-  SESubstanceBolusState                        m_State;
+  eSubstanceAdministration_Route m_AdminRoute;
+  SEScalarMassPerVolume*         m_Concentration;
+  SEScalarVolume*                m_Dose;
+  const SESubstance&             m_Substance;
+  SESubstanceBolusState          m_State;
   
 };        
 

@@ -47,8 +47,8 @@ void PulseEngineTest::SolverSpeedTest(const std::string& rptDirectory)
   PulseController pc(tsSolverSpeed.GetLogger());
   pc.GetPatient().LoadFile("./patients/StandardMale.pba");
   pc.SetupPatient();
-  pc.m_Config->EnableRenal(cdm::eSwitch::On);
-  pc.m_Config->EnableTissue(cdm::eSwitch::On);
+  pc.m_Config->EnableRenal(eSwitch::On);
+  pc.m_Config->EnableTissue(eSwitch::On);
   pc.CreateCircuitsAndCompartments();
 
   SEFluidCircuitCalculator fluidCalc(tsSolverSpeed.GetLogger());

@@ -10,7 +10,7 @@
 
 SEAnesthesiaMachineChamber::SEAnesthesiaMachineChamber(SESubstanceManager& substances) : Loggable(substances.GetLogger()), m_Substances(substances)
 {
-  m_State = cdm::eSwitch::Off;
+  m_State = eSwitch::Off;
   m_SubstanceFraction = nullptr;
   m_Substance = nullptr;
 }
@@ -22,7 +22,7 @@ SEAnesthesiaMachineChamber::~SEAnesthesiaMachineChamber()
 
 void SEAnesthesiaMachineChamber::Clear()
 {
-  m_State = cdm::eSwitch::Off;
+  m_State = eSwitch::Off;
   SAFE_DELETE(m_SubstanceFraction);
   m_Substance=nullptr;
 }
@@ -35,7 +35,7 @@ void SEAnesthesiaMachineChamber::Serialize(const cdm::AnesthesiaMachineData_Cham
 {
   dst.Clear();
   if (src.state() != cdm::eSwitch::NullSwitch)
-    dst.SetState(src.state());
+    dst.SetState((eSwitch)src.state());
   if (src.has_substancefraction())
     SEScalar0To1::Load(src.substancefraction(), dst.GetSubstanceFraction());
   
@@ -57,7 +57,7 @@ cdm::AnesthesiaMachineData_ChamberData* SEAnesthesiaMachineChamber::Unload(const
 }
 void SEAnesthesiaMachineChamber::Serialize(const SEAnesthesiaMachineChamber& src, cdm::AnesthesiaMachineData_ChamberData& dst)
 {
-  dst.set_state(src.m_State);
+  dst.set_state((cdm::eSwitch)src.m_State);
   if (src.HasSubstanceFraction())
     dst.set_allocated_substancefraction(SEScalar0To1::Unload(*src.m_SubstanceFraction));
   dst.set_substance(src.m_Substance->GetName());
@@ -92,13 +92,13 @@ const SEScalar* SEAnesthesiaMachineChamber::GetScalar(const std::string& name)
   return nullptr;
 }
 
-cdm::eSwitch SEAnesthesiaMachineChamber::GetState() const
+eSwitch SEAnesthesiaMachineChamber::GetState() const
 {
   return m_State;
 }
-void SEAnesthesiaMachineChamber::SetState(cdm::eSwitch state)
+void SEAnesthesiaMachineChamber::SetState(eSwitch state)
 {
-  m_State = (state == cdm::eSwitch::NullSwitch) ? cdm::eSwitch::Off : state;
+  m_State = (state == eSwitch::NullSwitch) ? eSwitch::Off : state;
 }
 
 bool SEAnesthesiaMachineChamber::HasSubstanceFraction() const

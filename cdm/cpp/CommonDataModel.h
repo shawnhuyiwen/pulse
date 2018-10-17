@@ -26,6 +26,9 @@
 #endif
 
 #define CDM_BIND_DECL(type) namespace cdm { class type; }
+#define CDM_DECL_BIND(type) \
+  class SE##type;\
+  namespace cdm { class type##Data; }
 
 #include <memory>
 #include <stdio.h>
@@ -113,7 +116,23 @@ struct CommonDataModelException : public std::runtime_error
 #include "Macros.h"
 #include "utils/Logger.h"
 
-#include "bind/cdm/Enums.pb.h"
+// General Enums
+// Keep enums in sync with appropriate schema/cdm/Enums.proto file !!
+//
+enum class eSide { NullSide = 0, Left, Right };
+extern const std::string& eSide_Name(eSide m);
+
+enum class eGate { NullGate = 0, Open, Closed };
+extern const std::string& eGate_Name(eGate m);
+
+enum class eSwitch { NullSwitch = 0, Off, On };
+extern const std::string& eSwitch_Name(eSwitch m);
+
+enum class eCharge { NullCharge = 0, Negative, Neutral, Positive };
+extern const std::string& eCharge_Name(eCharge m);
+
+//
+// End General Enum
 
 class CCompoundUnit;
 

@@ -4,8 +4,6 @@
 #pragma once
 class SESubstance;
 class SESubstanceCompound;
-CDM_BIND_DECL(SubstanceData)
-CDM_BIND_DECL(SubstanceData_CompoundData)
 
 class CDM_DECL SESubstanceManager : public Loggable
 {
@@ -13,9 +11,8 @@ public:
   SESubstanceManager(Logger* logger);
   virtual ~SESubstanceManager();
 
-  virtual void                                     Clear();  
-  virtual void                                     Reset();
-  virtual bool                                     LoadSubstanceDirectory();
+  virtual void                                     Clear();
+  virtual bool                                     LoadSubstances();
 
   virtual const std::vector<SESubstance*>&         GetSubstances() const;
   virtual SESubstance*                             GetSubstance(const std::string& name) const;  
@@ -63,8 +60,4 @@ protected:
 
   std::vector<SESubstanceCompound*>  m_Compounds;
   std::vector<SESubstanceCompound*>  m_ActiveCompounds;
-
-private:
-  std::map<SESubstance*, const cdm::SubstanceData*> m_OriginalSubstanceData;  
-  std::map<SESubstanceCompound*, const cdm::SubstanceData_CompoundData*> m_OriginalCompoundData;
 };

@@ -28,7 +28,7 @@ void CommonDataModelTest::TissueCompartmentTest(const std::string& rptDirectory)
 
   m_Logger->ResetLogFile(rptDirectory + "/TissueCompartmentTest.log");
   SESubstanceManager subMgr(m_Logger);
-  subMgr.LoadSubstanceDirectory();
+  subMgr.LoadSubstances();
 
   m_PercentTolerance = 0.2;
   m_OutDirectory = rptDirectory;

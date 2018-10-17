@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.kitware.physiology.cdm.Substance.SubstanceData;
+import com.kitware.physiology.cdm.Substance.SubstancePhysicochemicalsData;
 import com.kitware.physiology.cdm.SubstanceEnums.eSubstance.IonicState;
 import com.kitware.physiology.cdm.SubstanceEnums.eSubstance.BindingProtein;
 
@@ -57,7 +58,7 @@ public class SESubstancePhysicochemicals
     return true;
   }
   
-  public static void load(SubstanceData.PhysicochemicalData src, SESubstancePhysicochemicals dst)
+  public static void load(SubstancePhysicochemicalsData src, SESubstancePhysicochemicals dst)
   {
     dst.reset();
     if(src.hasAcidDissociationConstant())
@@ -75,15 +76,15 @@ public class SESubstancePhysicochemicals
     if(src.hasOralAbsorptionRateConstant())
       SEScalar.load(src.getOralAbsorptionRateConstant(),dst.getOralAbsorptionRateConstant());      
   }
-  public static SubstanceData.PhysicochemicalData unload(SESubstancePhysicochemicals src)
+  public static SubstancePhysicochemicalsData unload(SESubstancePhysicochemicals src)
   {
     if(!src.isValid())
       return null;
-    SubstanceData.PhysicochemicalData.Builder dst = SubstanceData.PhysicochemicalData.newBuilder();
+    SubstancePhysicochemicalsData.Builder dst = SubstancePhysicochemicalsData.newBuilder();
     unload(src,dst);
     return dst.build();
   }
-  protected static void unload(SESubstancePhysicochemicals src, SubstanceData.PhysicochemicalData.Builder dst)
+  protected static void unload(SESubstancePhysicochemicals src, SubstancePhysicochemicalsData.Builder dst)
   {
     if(src.hasAcidDissociationConstant())
       dst.setAcidDissociationConstant(SEScalar.unload(src.acidDissociationConstant));

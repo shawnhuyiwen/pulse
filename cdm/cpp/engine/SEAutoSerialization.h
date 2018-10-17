@@ -25,14 +25,14 @@ public:
   virtual SEScalarTime& GetPeriod();
   virtual double GetPeriod(const TimeUnit& unit) const;
 
-  virtual cdm::eSwitch GetPeriodTimeStamps() const;
-  virtual void SetPeriodTimeStamps(cdm::eSwitch v);
+  virtual eSwitch GetPeriodTimeStamps() const;
+  virtual void SetPeriodTimeStamps(eSwitch v);
 
-  virtual cdm::eSwitch GetAfterActions() const;
-  virtual void SetAfterActions(cdm::eSwitch v);
+  virtual eSwitch GetAfterActions() const;
+  virtual void SetAfterActions(eSwitch v);
 
-  virtual cdm::eSwitch GetReloadState() const;
-  virtual void SetReloadState(cdm::eSwitch v);
+  virtual eSwitch GetReloadState() const;
+  virtual void SetReloadState(eSwitch v);
 
   virtual bool HasDirectory() const;
   virtual std::string GetDirectory() const;
@@ -48,9 +48,9 @@ public:
 protected:
 
   SEScalarTime*         m_Period;
-  cdm::eSwitch          m_PeriodTimeStamps;
-  cdm::eSwitch          m_AfterActions;
-  cdm::eSwitch          m_ReloadState;
+  eSwitch          m_PeriodTimeStamps;
+  eSwitch          m_AfterActions;
+  eSwitch          m_ReloadState;
   std::string           m_Directory;
   std::string           m_FileName;
 };

@@ -18,7 +18,7 @@
 
 SEInhaler::SEInhaler(SESubstanceManager& substances) : SESystem(substances.GetLogger()), m_Substances(substances)
 {
-  m_State = cdm::eSwitch::Off;
+  m_State = eSwitch::Off;
   m_MeteredDose = nullptr;
   m_NozzleLoss = nullptr;
   m_SpacerVolume = nullptr;
@@ -34,7 +34,7 @@ void SEInhaler::Clear()
 {
   SESystem::Clear();
 
-  m_State = cdm::eSwitch::Off;
+  m_State = eSwitch::Off;
   SAFE_DELETE(m_MeteredDose);
   SAFE_DELETE(m_NozzleLoss);
   SAFE_DELETE(m_SpacerVolume);
@@ -49,7 +49,7 @@ void SEInhaler::Load(const cdm::InhalerData& src, SEInhaler& dst)
 void SEInhaler::Serialize(const cdm::InhalerData& src, SEInhaler& dst)
 {
   if (src.state() != cdm::eSwitch::NullSwitch)
-    dst.SetState(src.state());
+    dst.SetState((eSwitch)src.state());
   if (src.has_metereddose())
     SEScalarMass::Load(src.metereddose(), dst.GetMeteredDose());
   if (src.has_nozzleloss())
@@ -68,7 +68,7 @@ cdm::InhalerData* SEInhaler::Unload(const SEInhaler& src)
 }
 void SEInhaler::Serialize(const SEInhaler& src, cdm::InhalerData& dst)
 {
-  dst.set_state(src.m_State);
+  dst.set_state((cdm::eSwitch)src.m_State);
   if (src.HasMeteredDose())
     dst.set_allocated_metereddose(SEScalarMass::Unload(*src.m_MeteredDose));
   if (src.HasNozzleLoss())
@@ -137,13 +137,13 @@ bool SEInhaler::LoadFile(const std::string& filename)
   //src.ParseFromIstream(&binary_istream);
 }
 
-cdm::eSwitch SEInhaler::GetState() const
+eSwitch SEInhaler::GetState() const
 {
   return m_State;
 }
-void SEInhaler::SetState(cdm::eSwitch state)
+void SEInhaler::SetState(eSwitch state)
 {
-  m_State = (state == cdm::eSwitch::NullSwitch) ? cdm::eSwitch::Off : state;
+  m_State = (state == eSwitch::NullSwitch) ? eSwitch::Off : state;
 }
 
 bool SEInhaler::HasMeteredDose() const

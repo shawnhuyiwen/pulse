@@ -25,7 +25,7 @@ public:
 
   virtual void CancelStabilization();
 
-  virtual void TrackStabilization(cdm::eSwitch state);
+  virtual void TrackStabilization(eSwitch state);
   virtual bool IsTrackingStabilization();
 
   virtual bool HasStabilizationDuration();
@@ -35,7 +35,7 @@ protected:
 
   bool m_Cancelled;
   bool m_LogProgress;
-  cdm::eSwitch m_TrackingStabilization;
+  eSwitch m_TrackingStabilization;
   double m_currentTime_s;
   std::stringstream m_ss;
 

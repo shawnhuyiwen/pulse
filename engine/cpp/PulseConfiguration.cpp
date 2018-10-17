@@ -50,7 +50,7 @@ PulseConfiguration::PulseConfiguration(SESubstanceManager& substances) : SEEngin
   m_TimedStabilization = nullptr;
   m_DynamicStabilization = nullptr;
   m_AutoSerialization = nullptr;
-  m_WritePatientBaselineFile = cdm::eSwitch::Off;
+  m_WritePatientBaselineFile = eSwitch::Off;
 
   // Barorecptors
   m_ResponseSlope = nullptr;
@@ -101,7 +101,7 @@ PulseConfiguration::PulseConfiguration(SESubstanceManager& substances) : SEEngin
   m_UniversalGasConstant = nullptr;
 
   // Drugs 
-  m_PDEnabled = cdm::eSwitch::On;
+  m_PDEnabled = eSwitch::On;
 
   // ECG
   m_ECGInterpolator = nullptr;
@@ -141,7 +141,7 @@ PulseConfiguration::PulseConfiguration(SESubstanceManager& substances) : SEEngin
   m_PupilDiameterBaseline = nullptr;
   
   // Renal
-  m_RenalEnabled = cdm::eSwitch::On;
+  m_RenalEnabled = eSwitch::On;
   m_PlasmaSodiumConcentrationSetPoint = nullptr;
   m_PeritubularPotassiumConcentrationSetPoint = nullptr;
   m_LeftGlomerularFluidPermeabilityBaseline = nullptr;
@@ -170,7 +170,7 @@ PulseConfiguration::PulseConfiguration(SESubstanceManager& substances) : SEEngin
   m_VentilatoryOcclusionPressure = nullptr;
 
   // Tissue
-  m_TissueEnabled = cdm::eSwitch::On;
+  m_TissueEnabled = eSwitch::On;
 }
 
 PulseConfiguration::~PulseConfiguration()
@@ -183,7 +183,7 @@ void PulseConfiguration::Clear()
   SAFE_DELETE(m_TimeStep);
   RemoveStabilization();
   SAFE_DELETE(m_AutoSerialization);
-  m_WritePatientBaselineFile = cdm::eSwitch::Off;
+  m_WritePatientBaselineFile = eSwitch::Off;
 
   // Barorecptors
   SAFE_DELETE(m_ResponseSlope);
@@ -234,7 +234,7 @@ void PulseConfiguration::Clear()
   SAFE_DELETE(m_UniversalGasConstant);
 
   // Drugs
-  m_PDEnabled = cdm::eSwitch::On;
+  m_PDEnabled = eSwitch::On;
 
   //  ECG
   SAFE_DELETE(m_ECGInterpolator);
@@ -274,7 +274,7 @@ void PulseConfiguration::Clear()
   SAFE_DELETE(m_PupilDiameterBaseline);
 
   // Renal
-  m_RenalEnabled = cdm::eSwitch::On;
+  m_RenalEnabled = eSwitch::On;
   SAFE_DELETE(m_PlasmaSodiumConcentrationSetPoint);
   SAFE_DELETE(m_PeritubularPotassiumConcentrationSetPoint);
   SAFE_DELETE(m_LeftGlomerularFluidPermeabilityBaseline);
@@ -302,21 +302,21 @@ void PulseConfiguration::Clear()
   SAFE_DELETE(m_VentilatoryOcclusionPressure);
 
   //Tissue
-  m_TissueEnabled = cdm::eSwitch::On;
+  m_TissueEnabled = eSwitch::On;
 }
 
 
 void PulseConfiguration::Initialize()
 {
   Clear();
-  m_WritePatientBaselineFile = cdm::eSwitch::Off;
+  m_WritePatientBaselineFile = eSwitch::Off;
 
   // Reset to default values
   GetTimeStep().SetValue(1.0 / 50.0, TimeUnit::s);
   GetECGInterpolator().LoadFile("./ecg/StandardECG.pba",&GetTimeStep());
   GetDynamicStabilization().LoadFile("./config/DynamicStabilization.pba");
   //GetTimedStabilization().LoadFile("./config/TimedStabilization.pba");
-  //GetDynamicStabilization().TrackStabilization(cdm::eSwitch::On);// Hard coded override for debugging
+  //GetDynamicStabilization().TrackStabilization(eSwitch::On);// Hard coded override for debugging
   
   // Baroreceptors
   GetResponseSlope().SetValue(12.0); //nu
@@ -367,7 +367,7 @@ void PulseConfiguration::Initialize()
   GetUniversalGasConstant().SetValue(8.3144621, HeatCapacitancePerAmountUnit::J_Per_K_mol); //http://physics.nist.gov/cuu/Constants/
 
   // Drugs 
-  m_PDEnabled = cdm::eSwitch::On;
+  m_PDEnabled = eSwitch::On;
 
   // Energy
   GetBodySpecificHeat().SetValue(0.83, HeatCapacitancePerMassUnit::kcal_Per_K_kg);
@@ -405,7 +405,7 @@ void PulseConfiguration::Initialize()
   GetPupilDiameterBaseline().SetValue(4, LengthUnit::mm);
 
   // Renal
-  m_RenalEnabled = cdm::eSwitch::On;
+  m_RenalEnabled = eSwitch::On;
   GetPlasmaSodiumConcentrationSetPoint().SetValue(3.23, MassPerVolumeUnit::mg_Per_mL);
   GetPeritubularPotassiumConcentrationSetPoint().SetValue(0.0185, MassPerVolumeUnit::g_Per_dL);
   GetLeftGlomerularFluidPermeabilityBaseline().SetValue(3.67647, VolumePerTimePressureAreaUnit::mL_Per_min_mmHg_m2);
@@ -434,7 +434,7 @@ void PulseConfiguration::Initialize()
   GetVentilatoryOcclusionPressure().SetValue(0.75, PressureUnit::cmH2O); //This increases the absolute max driver pressure
 
   // Tissue
-  m_TissueEnabled = cdm::eSwitch::On;
+  m_TissueEnabled = eSwitch::On;
 }
 
 void PulseConfiguration::Merge(const PulseConfiguration& from)
@@ -488,7 +488,7 @@ void PulseConfiguration::Serialize(const pulse::ConfigurationData& src, PulseCon
   if (src.has_autoserialization())
     SEAutoSerialization::Load(src.autoserialization(), dst.GetAutoSerialization());
   if (src.writepatientbaselinefile() != cdm::eSwitch::NullSwitch)
-    dst.EnableWritePatientBaselineFile(src.writepatientbaselinefile());
+    dst.EnableWritePatientBaselineFile((eSwitch)src.writepatientbaselinefile());
 
   //Barorecptors
   if (src.has_baroreceptorconfiguration())
@@ -601,7 +601,7 @@ void PulseConfiguration::Serialize(const pulse::ConfigurationData& src, PulseCon
   {
     const pulse::ConfigurationData_DrugsConfigurationData& config = src.drugsconfiguration();
     if(config.pdmodel()!=cdm::eSwitch::NullSwitch)
-      dst.UsePDModel(config.pdmodel());
+      dst.UsePDModel((eSwitch)config.pdmodel());
   }
   
   // Energy
@@ -713,7 +713,7 @@ void PulseConfiguration::Serialize(const pulse::ConfigurationData& src, PulseCon
     const pulse::ConfigurationData_RenalConfigurationData& config = src.renalconfiguration();
 
     if (config.enablerenal() != cdm::eSwitch::NullSwitch)
-      dst.EnableRenal(config.enablerenal());
+      dst.EnableRenal((eSwitch)config.enablerenal());
 
     if (config.has_plasmasodiumconcentrationsetpoint())
       SEScalarMassPerVolume::Load(config.plasmasodiumconcentrationsetpoint(),dst.GetPlasmaSodiumConcentrationSetPoint());
@@ -776,7 +776,7 @@ void PulseConfiguration::Serialize(const pulse::ConfigurationData& src, PulseCon
   {
     const pulse::ConfigurationData_TissueConfigurationData& config = src.tissueconfiguration();
     if (config.enabletissue() != cdm::eSwitch::NullSwitch)
-      dst.EnableTissue(config.enabletissue());
+      dst.EnableTissue((eSwitch)config.enabletissue());
   }
 }
 
@@ -796,7 +796,7 @@ void PulseConfiguration::Serialize(const PulseConfiguration& src, pulse::Configu
     dst.set_allocated_timestep(SEScalarTime::Unload(*src.m_TimeStep));
   if (src.HasAutoSerialization())
     dst.set_allocated_autoserialization(SEAutoSerialization::Unload(*src.m_AutoSerialization));
-  dst.set_writepatientbaselinefile(src.m_WritePatientBaselineFile);
+  dst.set_writepatientbaselinefile((cdm::eSwitch)src.m_WritePatientBaselineFile);
 
   // Barorecptor
   pulse::ConfigurationData_BaroreceptorConfigurationData* baro = dst.mutable_baroreceptorconfiguration();
@@ -891,7 +891,7 @@ void PulseConfiguration::Serialize(const PulseConfiguration& src, pulse::Configu
 
   // Drugs
   pulse::ConfigurationData_DrugsConfigurationData* drugs = dst.mutable_drugsconfiguration();
-  drugs->set_pdmodel(src.m_PDEnabled);
+  drugs->set_pdmodel((cdm::eSwitch)src.m_PDEnabled);
 
   // Energy
   pulse::ConfigurationData_EnergyConfigurationData* energy = dst.mutable_energyconfiguration();
@@ -959,7 +959,7 @@ void PulseConfiguration::Serialize(const PulseConfiguration& src, pulse::Configu
 
   // Renal
   pulse::ConfigurationData_RenalConfigurationData* renal = dst.mutable_renalconfiguration();
-  renal->set_enablerenal(src.m_RenalEnabled);
+  renal->set_enablerenal((cdm::eSwitch)src.m_RenalEnabled);
   if (src.HasPlasmaSodiumConcentrationSetPoint())
     renal->set_allocated_plasmasodiumconcentrationsetpoint(SEScalarMassPerVolume::Unload(*src.m_PlasmaSodiumConcentrationSetPoint));
   if (src.HasLeftGlomerularFilteringSurfaceAreaBaseline())
@@ -1010,7 +1010,7 @@ void PulseConfiguration::Serialize(const PulseConfiguration& src, pulse::Configu
 
   // Tissue
   pulse::ConfigurationData_TissueConfigurationData* tissue = dst.mutable_tissueconfiguration();
-  tissue->set_enabletissue(src.m_TissueEnabled);
+  tissue->set_enabletissue((cdm::eSwitch)src.m_TissueEnabled);
 }
 
 

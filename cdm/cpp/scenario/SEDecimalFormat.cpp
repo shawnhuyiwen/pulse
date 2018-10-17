@@ -5,6 +5,12 @@
 #include <iomanip> 
 #include "scenario/SEDecimalFormat.h"
 #include "bind/cdm/Scenario.pb.h"
+#include "bind/cdm/ScenarioEnums.pb.h"
+
+const std::string& eDecimalFormat_Type_Name(eDecimalFormat_Type m)
+{
+  return cdm::eDecimalFormat_Type_Name((cdm::eDecimalFormat_Type)m);
+}
 
 SEDecimalFormat::SEDecimalFormat(const SEDecimalFormat* dfault)
 {
@@ -21,7 +27,7 @@ SEDecimalFormat::~SEDecimalFormat()
 void SEDecimalFormat::Clear()
 {
   m_Precision = 6;
-  m_Notation = cdm::eDecimalFormat_Type_SystemFormatting;
+  m_Notation = eDecimalFormat_Type::SystemFormatting;
 }
 
 void SEDecimalFormat::Set(const SEDecimalFormat& f)
@@ -37,7 +43,7 @@ void SEDecimalFormat::Load(const cdm::DecimalFormatData& src, SEDecimalFormat& d
 void SEDecimalFormat::Serialize(const cdm::DecimalFormatData& src, SEDecimalFormat& dst)
 {
   dst.Clear();
-  dst.SetNotation(src.type());
+  dst.SetNotation((eDecimalFormat_Type)src.type());
   dst.SetPrecision(src.precision());
 }
 
@@ -49,7 +55,7 @@ cdm::DecimalFormatData* SEDecimalFormat::Unload(const SEDecimalFormat& src)
 }
 void SEDecimalFormat::Serialize(const SEDecimalFormat& src, cdm::DecimalFormatData& dst)
 {
-  dst.set_type(src.m_Notation);
+  dst.set_type((cdm::eDecimalFormat_Type)src.m_Notation);
   dst.set_precision((google::protobuf::uint32)src.m_Precision);
 }
 
@@ -62,11 +68,11 @@ std::streamsize SEDecimalFormat::GetPrecision()
   return m_Precision;
 }
 
-void SEDecimalFormat::SetNotation(cdm::eDecimalFormat_Type n)
+void SEDecimalFormat::SetNotation(eDecimalFormat_Type n)
 {
   m_Notation = n;
 }
-cdm::eDecimalFormat_Type SEDecimalFormat::GetNotation()
+eDecimalFormat_Type SEDecimalFormat::GetNotation()
 {
   return m_Notation;
 }
@@ -75,16 +81,16 @@ void SEDecimalFormat::SetStream(std::ofstream& s)
 {
   switch (m_Notation)
   {
-  case cdm::eDecimalFormat_Type_SystemFormatting:
+  case eDecimalFormat_Type::SystemFormatting:
     s << std::fixed << std::setprecision(m_Precision);
     break;
-  case cdm::eDecimalFormat_Type_DefaultFloat:
+  case eDecimalFormat_Type::DefaultFloat:
     s << std::defaultfloat << std::setprecision(m_Precision);
     break;
-  case cdm::eDecimalFormat_Type_FixedMantissa:
+  case eDecimalFormat_Type::FixedMantissa:
     s << std::fixed << std::setprecision(m_Precision);
     break;
-  case cdm::eDecimalFormat_Type_SignificantDigits:
+  case eDecimalFormat_Type::SignificantDigits:
     s << std::scientific << std::setprecision(m_Precision);
   }
 }

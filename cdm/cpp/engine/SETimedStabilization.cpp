@@ -63,10 +63,10 @@ bool SETimedStabilization::Stabilize(PhysiologyEngine& engine, const SEScalarTim
   }
   // Execute System initialization time
   SEEngineTracker* tracker = engine.GetEngineTracker();
-  cdm::eSwitch track = m_TrackingStabilization;
-  if (track&&tracker == nullptr)
+  eSwitch track = m_TrackingStabilization;
+  if (track==eSwitch::On && tracker == nullptr)
   {
-    track = cdm::eSwitch::Off;
+    track = eSwitch::Off;
     Warning("PhysiologyEngineTrack not provided by engine, not tracking data to file");
   }
 
@@ -77,7 +77,7 @@ bool SETimedStabilization::Stabilize(PhysiologyEngine& engine, const SEScalarTim
   int count = (int)(sTime_s / dT_s);
   int ProgressStep = (int)(count*.1);
   int Progress = ProgressStep;
-  if (track)
+  if (track == eSwitch::On)
     tracker->SetupRequests();
   for (int i = 0; i <= count; i++)
   {
@@ -92,7 +92,7 @@ bool SETimedStabilization::Stabilize(PhysiologyEngine& engine, const SEScalarTim
     m_currentTime_s += dT_s;
     if (m_currentTime_s == 0)
       tracker->SetupRequests();
-    if (track)
+    if (track == eSwitch::On)
       tracker->TrackData(m_currentTime_s);
     if (m_LogProgress)
     {
@@ -152,7 +152,7 @@ void SETimedStabilization::Serialize(const cdm::TimedStabilizationData& src, SET
 {
   dst.Clear();
   if (src.trackingstabilization() != cdm::eSwitch::NullSwitch)
-    dst.TrackStabilization(src.trackingstabilization());
+    dst.TrackStabilization((eSwitch)src.trackingstabilization());
   if(src.has_restingstabilizationtime())
     SEScalarTime::Load(src.restingstabilizationtime(), dst.GetRestingStabilizationTime());
   if(src.has_feedbackstabilizationtime())
@@ -173,7 +173,7 @@ cdm::TimedStabilizationData* SETimedStabilization::Unload(const SETimedStabiliza
 }
 void SETimedStabilization::Serialize(const SETimedStabilization& src, cdm::TimedStabilizationData& dst)
 {
-  dst.set_trackingstabilization(src.m_TrackingStabilization);
+  dst.set_trackingstabilization((cdm::eSwitch)src.m_TrackingStabilization);
   dst.set_allocated_restingstabilizationtime(SEScalarTime::Unload(*src.m_RestingStabilizationTime));
   if (src.HasFeedbackStabilizationTime())
     dst.set_allocated_feedbackstabilizationtime(SEScalarTime::Unload(*src.m_FeedbackStabilizationTime));

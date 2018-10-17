@@ -128,7 +128,7 @@ void PulseEngineTest::InjectSuccsState(PhysiologyEngine* pc, HowToTracker& track
   }
 
   SESubstanceBolus injection(succs);
-  injection.SetAdminRoute(cdm::eSubstanceAdministration_Route_Intravenous);
+  injection.SetAdminRoute(eSubstanceAdministration_Route::Intravenous);
   injection.GetConcentration().SetValue(4820, MassPerVolumeUnit::ug_Per_mL);
   injection.GetDose().SetValue(30, VolumeUnit::mL);
   pc->ProcessAction(injection);
@@ -149,13 +149,13 @@ void PulseEngineTest::InjectSuccsState(PhysiologyEngine* pc, HowToTracker& track
   tracker.AdvanceModelTime(15);
 
   SEAnesthesiaMachineConfiguration amConfig(pc->GetSubstanceManager());
-  amConfig.GetConfiguration().SetConnection(cdm::eAnesthesiaMachine_Connection_Mask);
+  amConfig.GetConfiguration().SetConnection(eAnesthesiaMachine_Connection::Mask);
   amConfig.GetConfiguration().GetInletFlow().SetValue(5, VolumePerTimeUnit::L_Per_min);
   amConfig.GetConfiguration().GetInspiratoryExpiratoryRatio().SetValue(0.5);
   amConfig.GetConfiguration().GetOxygenFraction().SetValue(0.4);
-  amConfig.GetConfiguration().SetOxygenSource(cdm::eAnesthesiaMachine_OxygenSource_Wall);
+  amConfig.GetConfiguration().SetOxygenSource(eAnesthesiaMachine_OxygenSource::Wall);
   amConfig.GetConfiguration().GetPositiveEndExpiredPressure().SetValue(3.0, PressureUnit::cmH2O);
-  amConfig.GetConfiguration().SetPrimaryGas(cdm::eAnesthesiaMachine_PrimaryGas_Nitrogen);
+  amConfig.GetConfiguration().SetPrimaryGas(eAnesthesiaMachine_PrimaryGas::Nitrogen);
   amConfig.GetConfiguration().GetReliefValvePressure().SetValue(20, PressureUnit::cmH2O);
   amConfig.GetConfiguration().GetRespiratoryRate().SetValue(16.0, FrequencyUnit::Per_min);
   amConfig.GetConfiguration().GetVentilatorPressure().SetValue(10, PressureUnit::cmH2O);

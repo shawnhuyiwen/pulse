@@ -318,7 +318,7 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action, cdm
   const SEChestOcclusiveDressing* chestOccl = dynamic_cast<const SEChestOcclusiveDressing*>(&action);
   if (chestOccl != nullptr)
   {
-    if (chestOccl->GetSide() == cdm::eSide::Left)
+    if (chestOccl->GetSide() == eSide::Left)
     {
       if (m_LeftChestOcclusiveDressing == nullptr)
         m_LeftChestOcclusiveDressing = new SEChestOcclusiveDressing();
@@ -329,7 +329,7 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action, cdm
         RemoveLeftChestOcclusiveDressing();
       return true;
     }
-    else if (chestOccl->GetSide() == cdm::eSide::Right)
+    else if (chestOccl->GetSide() == eSide::Right)
     {
       if (m_RightChestOcclusiveDressing == nullptr)
         m_RightChestOcclusiveDressing = new SEChestOcclusiveDressing();
@@ -427,7 +427,7 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action, cdm
   const SENeedleDecompression* needleDecomp = dynamic_cast<const SENeedleDecompression*>(&action);
   if (needleDecomp != nullptr)
   {
-    if (needleDecomp->GetSide() == cdm::eSide::Left)
+    if (needleDecomp->GetSide() == eSide::Left)
     {
       if (m_LeftNeedleDecompression == nullptr)
         m_LeftNeedleDecompression = new SENeedleDecompression();
@@ -438,7 +438,7 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action, cdm
         RemoveLeftNeedleDecompression();
       return true;
     }
-    else if (needleDecomp->GetSide() == cdm::eSide::Right)
+    else if (needleDecomp->GetSide() == eSide::Right)
     {
       if (m_RightNeedleDecompression == nullptr)
         m_RightNeedleDecompression = new SENeedleDecompression();
@@ -548,7 +548,7 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action, cdm
   const SETensionPneumothorax* pneumo = dynamic_cast<const SETensionPneumothorax*>(&action);
   if (pneumo != nullptr)
   {
-    if (pneumo->GetSide() == cdm::eSide::Left&&pneumo->GetType() == cdm::eGate::Open)
+    if (pneumo->GetSide() == eSide::Left&&pneumo->GetType() == eGate::Open)
     {
       if (m_LeftOpenTensionPneumothorax == nullptr)
         m_LeftOpenTensionPneumothorax = new SETensionPneumothorax();
@@ -559,7 +559,7 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action, cdm
         RemoveLeftOpenTensionPneumothorax();
       return true;
     }
-    else if (pneumo->GetSide() == cdm::eSide::Left&&pneumo->GetType() == cdm::eGate::Closed)
+    else if (pneumo->GetSide() == eSide::Left&&pneumo->GetType() == eGate::Closed)
     {
       if (m_LeftClosedTensionPneumothorax == nullptr)
         m_LeftClosedTensionPneumothorax = new SETensionPneumothorax();
@@ -570,7 +570,7 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action, cdm
         RemoveLeftClosedTensionPneumothorax();
       return true;
     }
-    else if (pneumo->GetSide() == cdm::eSide::Right&&pneumo->GetType() == cdm::eGate::Open)
+    else if (pneumo->GetSide() == eSide::Right&&pneumo->GetType() == eGate::Open)
     {
       if (m_RightOpenTensionPneumothorax == nullptr)
         m_RightOpenTensionPneumothorax = new SETensionPneumothorax();
@@ -581,7 +581,7 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action, cdm
         RemoveRightOpenTensionPneumothorax();
       return true;
     }
-    else if (pneumo->GetSide() == cdm::eSide::Right&&pneumo->GetType() == cdm::eGate::Closed)
+    else if (pneumo->GetSide() == eSide::Right&&pneumo->GetType() == eGate::Closed)
     {
       if (m_RightClosedTensionPneumothorax == nullptr)
         m_RightClosedTensionPneumothorax = new SETensionPneumothorax();

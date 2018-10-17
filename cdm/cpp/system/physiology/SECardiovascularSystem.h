@@ -4,7 +4,10 @@
 #pragma once
 #include "system/SESystem.h"
 CDM_BIND_DECL(CardiovascularSystemData)
-#include "bind/cdm/PhysiologyEnums.pb.h"
+
+// Keep enums in sync with appropriate schema/cdm/PhysiologyEnums.proto file !!
+enum class eHeartRhythm { NormalSinus = 0, Asystole };
+extern const std::string& eHeartRhythm_Name(eHeartRhythm m);
 
 class CDM_DECL SECardiovascularSystem : public SESystem
 {
@@ -65,8 +68,8 @@ public:
   virtual SEScalarFrequency& GetHeartRate();
   virtual double GetHeartRate(const FrequencyUnit& unit) const;
 
-  virtual cdm::eHeartRhythm GetHeartRhythm() const;
-  virtual void SetHeartRhythm(cdm::eHeartRhythm Rhythm);
+  virtual eHeartRhythm GetHeartRhythm() const;
+  virtual void SetHeartRhythm(eHeartRhythm Rhythm);
 
   virtual bool HasHeartStrokeVolume() const;
   virtual SEScalarVolume& GetHeartStrokeVolume();
@@ -156,7 +159,7 @@ protected:
   SEScalarPressure*                      m_DiastolicArterialPressure;
   SEScalar0To1*                          m_HeartEjectionFraction;
   SEScalarFrequency*                     m_HeartRate;
-  cdm::eHeartRhythm                      m_HeartRhythm;
+  eHeartRhythm                           m_HeartRhythm;
   SEScalarVolume*                        m_HeartStrokeVolume;  
   SEScalarPressure*                      m_IntracranialPressure;
   SEScalarPressure*                      m_MeanArterialPressure;

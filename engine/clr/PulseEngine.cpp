@@ -3,65 +3,6 @@ See accompanying NOTICE file for details.*/
 
 #include "PulseEngine.h"
 
-#include "PulsePhysiologyEngine.h"
-#include "engine/SEEngineConfiguration.h"
-
-#include "system/physiology/SEBloodChemistrySystem.h"
-#include "system/physiology/SECardiovascularSystem.h"
-#include "system/physiology/SEDrugSystem.h"
-#include "system/physiology/SEEndocrineSystem.h"
-#include "system/physiology/SEEnergySystem.h"
-#include "system/physiology/SEGastrointestinalSystem.h"
-#include "system/physiology/SEHepaticSystem.h"
-#include "system/physiology/SENervousSystem.h"
-#include "system/physiology/SERenalSystem.h"
-#include "system/physiology/SERespiratorySystem.h"
-#include "system/physiology/SETissueSystem.h"
-
-#include "system/environment/SEEnvironment.h"
-#include "system/environment/SEEnvironmentalConditions.h"
-
-#include "system/equipment/anesthesiamachine/SEAnesthesiaMachine.h"
-#include "system/equipment/anesthesiamachine/SEAnesthesiaMachineChamber.h"
-#include "system/equipment/anesthesiamachine/SEAnesthesiaMachineOxygenBottle.h"
-
-#include "system/equipment/ElectroCardioGram/SEElectroCardioGram.h"
-
-#include "system/equipment/Inhaler/SEInhaler.h"
-
-#include "patient/SEPatient.h"
-#include "patient/actions/SEAcuteStress.h"
-#include "patient/actions/SEAirwayObstruction.h"
-#include "patient/actions/SEApnea.h"
-#include "patient/actions/SEAsthmaAttack.h"
-#include "patient/actions/SEBrainInjury.h"
-#include "patient/actions/SEBronchoconstriction.h"
-#include "patient/actions/SECardiacArrest.h"
-#include "patient/actions/SEChestCompressionForce.h"
-#include "patient/actions/SEChestCompressionForceScale.h"
-#include "patient/actions/SEChestOcclusiveDressing.h"
-#include "patient/actions/SEConsciousRespiration.h"
-#include "patient/actions/SEConsumeNutrients.h"
-#include "patient/actions/SEExercise.h"
-#include "patient/actions/SEHemorrhage.h"
-#include "patient/actions/SEIntubation.h"
-#include "patient/actions/SEMechanicalVentilation.h"
-#include "patient/actions/SENeedleDecompression.h"
-#include "patient/actions/SEPericardialEffusion.h"
-#include "patient/actions/SESubstanceBolus.h"
-#include "patient/actions/SESubstanceCompoundInfusion.h"
-#include "patient/actions/SESubstanceInfusion.h"
-#include "patient/actions/SETensionPneumothorax.h"
-#include "patient/actions/SEUrinate.h"
-
-#include "substance/SESubstance.h"
-#include "substance/SESubstanceManager.h"
-#include "compartment/SECompartmentManager.h"
-#include "compartment/fluid/SEGasCompartment.h"
-#include "compartment/fluid/SELiquidCompartment.h"
-#include "compartment/substances/SEGasSubstanceQuantity.h"
-#include "compartment/substances/SELiquidSubstanceQuantity.h"
-
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarAmountPerVolume.h"
 #include "properties/SEScalarElectricPotential.h"
@@ -79,61 +20,11 @@ See accompanying NOTICE file for details.*/
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
 
-#include "engine/SEEventHandler.h"
-
 #include <iostream>
 #include <fstream>
 #include <ctime>
 using namespace std;
 using namespace System::Threading;
-
-// Create function pointers to call when we get events from pulse
-// For this example, I can check activity in my handler and I don't need to propagate time
-// It's up to you what data you provide your system, just know you can!
-typedef void(__stdcall *fpPatientEvent)(cdm::ePatient_Event type, bool active);
-
-// This is the class to provide Pulse to call when any events are triggered in the engine
-class PulseEventHandler : public SEEventHandler, public Loggable
-{
-public:
-  PulseEventHandler(Logger *logger) : Loggable(logger) {}
-
-public:
-  virtual void SetPatientEventCallback(fpPatientEvent callback) { _on_patient_event = callback; }// Make Set methods to set up a function pointer to call for each event we are interested in
-protected:
-  fpPatientEvent _on_patient_event;// Make a member variables for the function pointers we are to call
-
-                                   //These methods need definitions and should call your callback with what ever data you made it require
-public:
-  virtual void HandlePatientEvent(cdm::ePatient_Event type, bool active, const SEScalarTime* time = nullptr);
-  virtual void HandleAnesthesiaMachineEvent(cdm::eAnesthesiaMachine_Event type, bool active, const SEScalarTime* time = nullptr) { /*Not Expecting these */ }
-};
-
-typedef void(__stdcall *fpLog)(const std::string&);
-class PulseLogger : public LoggerForward
-{
-public:
-  // Make Set methods to set up a function pointer to call for each event we are interested in
-  virtual void SetFatalCallback(fpLog callback) { _fatal = callback; }
-  virtual void SetErrorCallback(fpLog callback) { _error = callback; }
-  virtual void SetWarnCallback(fpLog callback) { _warn = callback; }
-  virtual void SetInfoCallback(fpLog callback) { _info = callback; }
-  virtual void SetDebugCallback(fpLog callback) { _debug = callback; }
-protected:
-  // Make a member variables for the function pointers we are to call
-  fpLog _fatal;
-  fpLog _error;
-  fpLog _warn;
-  fpLog _info;
-  fpLog _debug;
-
-public:// Note for my example, I am ignoring the origin (what class created this log msg)
-  virtual void ForwardFatal(const std::string& msg, const std::string& origin) { _fatal(msg); }
-  virtual void ForwardError(const std::string& msg, const std::string& origin) { _error(msg); }
-  virtual void ForwardWarning(const std::string& msg, const std::string& origin) { _warn(msg); }
-  virtual void ForwardInfo(const std::string& msg, const std::string& origin) { _info(msg); }
-  virtual void ForwardDebug(const std::string& msg, const std::string& origin) { _debug(msg); }
-};
 
 // Doing the same thing for the logger;
 public ref class PulseLoggerRef abstract
@@ -368,7 +259,7 @@ void PulseEngineRef::CardiacArrest()
   Monitor::Enter(_lock);
   {
     SECardiacArrest arrest;
-    arrest.SetState(cdm::eSwitch::On);
+    arrest.SetState(eSwitch::On);
     _pulse->ProcessAction(arrest);
   }
   Monitor::Exit(_lock);
@@ -398,21 +289,12 @@ void PulseEngineRef::Hemorrhage(double flowRate_mL_per_min)
   Monitor::Exit(_lock);
 }
 
-void PulseEngineRef::Intubation(/*cdm::*/eIntubationType type)
+void PulseEngineRef::Intubation(eIntubation_Type type)
 {
   Monitor::Enter(_lock);
   {
     SEIntubation Intubate;
-    cdm::eIntubation_Type t;
-    switch (type)
-    {
-    case eIntubationType::Off: t = cdm::eIntubation_Type_Off; break;
-    case eIntubationType::Esophageal: t = cdm::eIntubation_Type_Esophageal; break;
-    case eIntubationType::LeftMainstem: t = cdm::eIntubation_Type_LeftMainstem; break;
-    case eIntubationType::RightMainstem: t = cdm::eIntubation_Type_RightMainstem; break;
-    case eIntubationType::Tracheal: t = cdm::eIntubation_Type_Tracheal; break;
-    }
-    Intubate.SetType(t);// type);
+    Intubate.SetType(type);
     _pulse->ProcessAction(Intubate);
   }
   Monitor::Exit(_lock);
@@ -424,7 +306,7 @@ void PulseEngineRef::NeedleDecompression(bool active, eSide side)
   {
     SENeedleDecompression needleDecomp;
     needleDecomp.SetActive(active);
-    needleDecomp.SetSide(side == eSide::Left ? cdm::eSide::Left : cdm::eSide::Right);
+    needleDecomp.SetSide(side == eSide::Left ? eSide::Left : eSide::Right);
     _pulse->ProcessAction(needleDecomp);
   }
   Monitor::Exit(_lock);
@@ -435,8 +317,8 @@ void PulseEngineRef::Pneumothorax(eGate type, eSide side, double severity)
   Monitor::Enter(_lock);
   {
     SETensionPneumothorax pneumo;
-    pneumo.SetType(type == eGate::Open ? cdm::eGate::Open : cdm::eGate::Closed);
-    pneumo.SetSide(side == eSide::Left ? cdm::eSide::Left : cdm::eSide::Right);
+    pneumo.SetType(type == eGate::Open ? eGate::Open : eGate::Closed);
+    pneumo.SetSide(side == eSide::Left ? eSide::Left : eSide::Right);
     pneumo.GetSeverity().SetValue(severity);
     _pulse->ProcessAction(pneumo);
   }
@@ -447,13 +329,13 @@ void PulseEngineRef::Pneumothorax(eGate type, eSide side, double severity)
 // Event Handler //
 ///////////////////
 
-void PulseEventHandler::HandlePatientEvent(cdm::ePatient_Event type, bool active, const SEScalarTime* time)
+void PulseEventHandler::HandlePatientEvent(ePatient_Event type, bool active, const SEScalarTime* time)
 {
   if (_on_patient_event != nullptr)
     _on_patient_event(type, active);// Call the function pointer, from where ever it came and goes
 }
 
-void PulseEngineRef::HandlePatientEvent(ePatientEvent type, bool active)
+void PulseEngineRef::HandlePatientEvent(ePatient_Event type, bool active)
 {
   if(_callback != nullptr)
     _callback->HandlePatientEvent(type, active);

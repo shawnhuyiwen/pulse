@@ -1344,7 +1344,7 @@ void CommonDataModelTest::LiquidCompartmentTest(const std::string& rptDirectory)
   SETestReport testReport(m_Logger);
 
   SESubstanceManager subMgr(m_Logger);
-  subMgr.LoadSubstanceDirectory();
+  subMgr.LoadSubstances();
 
   SETestSuite&  Flows = testReport.CreateTestSuite();
   Flows.SetName("LiquidCompartmentFlows");

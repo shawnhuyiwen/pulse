@@ -28,7 +28,7 @@ void CommonDataModelTest::ReadSubstanceDirectory(const std::string& rptDirectory
   SETestCase& testCase = testSuite.CreateTestCase();
   pTimer.Start("Case");
   SESubstanceManager subMgr(m_Logger);
-  if(!subMgr.LoadSubstanceDirectory())
+  if(!subMgr.LoadSubstances())
     testCase.AddFailure("Unable to load substances");
   testCase.GetDuration().SetValue(pTimer.GetElapsedTime_s("Case"), TimeUnit::s);
   testCase.SetName(obj.GetName());

@@ -4,10 +4,10 @@
 #include "compartment/SECompartment.h"
 class SESubstance;
 class SESubstanceManager;
-CDM_BIND_DECL(TissueCompartmentData);
 
 class CDM_DECL SETissueCompartment : public SECompartment
 {
+  friend class PBCompartment;//friend the serialization class
   friend class SECompartmentManager;
 protected:
   SETissueCompartment(const std::string& name, Logger* logger);
@@ -16,13 +16,6 @@ public:
 
   virtual void Clear();
 
-  static void Load(const cdm::TissueCompartmentData& src, SETissueCompartment& dst);
-  static cdm::TissueCompartmentData* Unload(const SETissueCompartment& src);
-protected:
-  static void Serialize(const cdm::TissueCompartmentData& src, SETissueCompartment& dst);
-  static void Serialize(const SETissueCompartment& src, cdm::TissueCompartmentData& dst);
-
-public:
   virtual const SEScalar* GetScalar(const std::string& name);
 
   virtual bool HasChildren() const { return !m_Children.empty(); }// Children on tissue is not supported at this time

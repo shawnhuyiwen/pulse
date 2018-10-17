@@ -313,7 +313,7 @@ void Environment::ProcessActions()
   //Set the temperature source to zero
   m_ActiveTemperaturePath->GetNextTemperatureSource().SetValue(0.0, TemperatureUnit::K);
   //Open the switch
-  m_ActiveSwitchPath->SetNextSwitch(cdm::eGate::Open);    
+  m_ActiveSwitchPath->SetNextSwitch(eGate::Open);    
 
   if (!m_data.GetActions().GetEnvironmentActions().HasThermalApplication())
   {
@@ -459,7 +459,7 @@ void Environment::ProcessActions()
     m_ActiveTemperaturePath->GetNextTemperatureSource().SetValue(dAppliedTemperature_K, TemperatureUnit::K);
 
     //Close the switch
-    m_ActiveSwitchPath->SetNextSwitch(cdm::eGate::Closed);
+    m_ActiveSwitchPath->SetNextSwitch(eGate::Closed);
   }
 }
 
@@ -518,7 +518,7 @@ void Environment::CalculateSupplementalValues()
 
 
   //Water convective heat transfer properties
-  if (GetConditions().GetSurroundingType() == cdm::eEnvironment_SurroundingType_Water)
+  if (GetConditions().GetSurroundingType() == eSurroundingType::Water)
   {
     double dWaterTemperature_C = GetConditions().GetAmbientTemperature(TemperatureUnit::C);
     double dT = Convert(dWaterTemperature_C, TemperatureUnit::C, TemperatureUnit::K) / 298.15;
@@ -540,7 +540,7 @@ void Environment::CalculateSupplementalValues()
 //--------------------------------------------------------------------------------------------------
 void Environment::CalculateRadiation()
 {  
-  if (GetConditions().GetSurroundingType() == cdm::eEnvironment_SurroundingType_Water)
+  if (GetConditions().GetSurroundingType() == eSurroundingType::Water)
   {
     //Submerged - therefore, no radiation
     
@@ -607,7 +607,7 @@ void Environment::CalculateConvection()
 {
   double dConvectiveHeatTransferCoefficient_WPerM2_K = 0.0;
 
-  if (GetConditions().GetSurroundingType() == cdm::eEnvironment_SurroundingType_Water)
+  if (GetConditions().GetSurroundingType() == eSurroundingType::Water)
   {
     //Submerged - therefore, convection is most important
     double dClothingTemperature_K = m_ClothingNode->GetTemperature().GetValue(TemperatureUnit::K);
@@ -671,7 +671,7 @@ void Environment::CalculateConvection()
 //--------------------------------------------------------------------------------------------------
 void Environment::CalculateEvaporation()
 {  
-  if (GetConditions().GetSurroundingType() == cdm::eEnvironment_SurroundingType_Water)
+  if (GetConditions().GetSurroundingType() == eSurroundingType::Water)
   {
     //Submerged - therefore, no evaporation
 

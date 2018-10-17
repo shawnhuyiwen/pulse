@@ -16,14 +16,14 @@ int main()
   //HowToEngineUse();
   //HowToCreateAPatient();
 
-  //HowToAirwayObstruction();
+  HowToAirwayObstruction();
   //HowToAnesthesiaMachine();
   //HowToAsthmaAttack();
   //HowToBrainInjury();
   //HowToBolusDrug();
   //HowToConsumeNutrients();
   //HowToCOPD();
-  HowToCPR(); 
+  //HowToCPR(); 
   //HowToEnvironmentChange();
   //HowToExercise();
   //HowToHemorrhage();

@@ -6,11 +6,11 @@
 #include "circuit/thermal/SEThermalCircuitNode.h"
 #include "circuit/thermal/SEThermalCircuitPath.h"
 
-CDM_BIND_DECL(ThermalCircuitData)
 class SECircuitManager;
 
-class CDM_DECL SEThermalCircuit : public SECircuit<cdm::ThermalCircuitData,SEThermalCircuitNode, cdm::ThermalCircuitNodeData,SEThermalCircuitPath, cdm::ThermalCircuitPathData>
+class CDM_DECL SEThermalCircuit : public SECircuit<SEThermalCircuitNode,SEThermalCircuitPath>
 {
+  friend class PBCircuit;//friend the serialization class
   friend class SECircuitManager;
 protected:
   SEThermalCircuit(const std::string& name, SECircuitManager& mgr);

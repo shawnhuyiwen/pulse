@@ -4,6 +4,7 @@
 package mil.tatrc.physiology.datamodel.substance;
 
 import com.kitware.physiology.cdm.Substance.SubstanceData;
+import com.kitware.physiology.cdm.Substance.SubstanceTissuePharmacokineticsData;
 
 import mil.tatrc.physiology.datamodel.properties.*;
 
@@ -24,7 +25,7 @@ public class SESubstanceTissuePharmacokinetics
       this.partitionCoefficient.invalidate();  
   }
   
-  public static void load(SubstanceData.TissuePharmacokineticsData src, SESubstanceTissuePharmacokinetics dst)
+  public static void load(SubstanceTissuePharmacokineticsData src, SESubstanceTissuePharmacokinetics dst)
   {
     if(src.getName()!=null)
       dst.setName(src.getName());
@@ -32,14 +33,14 @@ public class SESubstanceTissuePharmacokinetics
       SEScalar.load(src.getPartitionCoefficient(),dst.getPartitionCoefficient());    
   }
   
-  public static SubstanceData.TissuePharmacokineticsData unload(SESubstanceTissuePharmacokinetics src)
+  public static SubstanceTissuePharmacokineticsData unload(SESubstanceTissuePharmacokinetics src)
   {
-    SubstanceData.TissuePharmacokineticsData.Builder dst = SubstanceData.TissuePharmacokineticsData.newBuilder();
+    SubstanceTissuePharmacokineticsData.Builder dst = SubstanceTissuePharmacokineticsData.newBuilder();
     unload(src,dst);
     return dst.build();
   }
   
-  protected static void unload(SESubstanceTissuePharmacokinetics src, SubstanceData.TissuePharmacokineticsData.Builder dst)
+  protected static void unload(SESubstanceTissuePharmacokinetics src, SubstanceTissuePharmacokineticsData.Builder dst)
   {
     if(src.hasName())
       dst.setName(src.name);    

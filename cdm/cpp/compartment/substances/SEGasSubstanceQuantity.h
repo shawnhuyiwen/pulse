@@ -4,11 +4,11 @@
 #pragma once
 #include "compartment/substances/SESubstanceQuantity.h"
 #include "substance/SESubstanceTransport.h"
-CDM_BIND_DECL(GasSubstanceQuantityData)
 class SEGasCompartment;
 
 class CDM_DECL SEGasSubstanceQuantity : public SESubstanceQuantity, public SEGasTransportSubstance
 {
+  friend class PBCompartment;//friend the serialization class
   friend class SEGasCompartment;
 protected:
   SEGasSubstanceQuantity(SESubstance& sub, SEGasCompartment& compartment);
@@ -18,13 +18,6 @@ public:
   virtual void Clear();
   virtual void Invalidate();
 
-  static void Load(const cdm::GasSubstanceQuantityData& src, SEGasSubstanceQuantity& dst);
-  static cdm::GasSubstanceQuantityData* Unload(const SEGasSubstanceQuantity& src);
-protected:
-  static void Serialize(const cdm::GasSubstanceQuantityData& src, SEGasSubstanceQuantity& dst);
-  static void Serialize(const SEGasSubstanceQuantity& src, cdm::GasSubstanceQuantityData& dst);
-
-public:
   virtual void SetToZero();
   virtual const SEScalar* GetScalar(const std::string& name);
 

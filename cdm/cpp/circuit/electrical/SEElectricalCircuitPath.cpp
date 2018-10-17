@@ -9,7 +9,6 @@ See accompanying NOTICE file for details.*/
 #include "properties/SEScalarElectricCurrent.h"
 #include "properties/SEScalarElectricPotential.h"
 #include "properties/SEScalarElectricCharge.h"
-#include "bind/cdm/Circuit.pb.h"
 
 SEElectricalCircuitPath::SEElectricalCircuitPath(SEElectricalCircuitNode& src, SEElectricalCircuitNode& tgt, const std::string& name) :
   SECircuitPath<SEScalarElectricCurrent, SEScalarElectricResistance, SEScalarElectricCapacitance, SEScalarElectricInductance, SEScalarElectricPotential, SEScalarElectricCharge>(src,tgt,name),
@@ -26,101 +25,6 @@ SEElectricalCircuitPath::~SEElectricalCircuitPath()
 void SEElectricalCircuitPath::Clear()
 {
   SECircuitPath::Clear();
-}
-
-void SEElectricalCircuitPath::Load(const cdm::ElectricalCircuitPathData& src, SEElectricalCircuitPath& dst)
-{
-  SEElectricalCircuitPath::Serialize(src, dst);
-}
-void SEElectricalCircuitPath::Serialize(const cdm::ElectricalCircuitPathData& src, SEElectricalCircuitPath& dst)
-{
-  SECircuitPath::Serialize(src.circuitpath(), dst);
-  if (src.has_resistance())
-    SEScalarElectricResistance::Load(src.resistance(), dst.GetResistance());
-  if (src.has_nextresistance())
-    SEScalarElectricResistance::Load(src.nextresistance(), dst.GetNextResistance());
-  if (src.has_resistancebaseline())
-    SEScalarElectricResistance::Load(src.resistancebaseline(), dst.GetResistanceBaseline());
-  if (src.has_capacitance())
-    SEScalarElectricCapacitance::Load(src.capacitance(), dst.GetCapacitance());
-  if (src.has_nextcapacitance())
-    SEScalarElectricCapacitance::Load(src.nextcapacitance(), dst.GetNextCapacitance());
-  if (src.has_capacitancebaseline())
-    SEScalarElectricCapacitance::Load(src.capacitancebaseline(), dst.GetCapacitanceBaseline());
-  if (src.has_inductance())
-    SEScalarElectricInductance::Load(src.inductance(), dst.GetInductance());
-  if (src.has_nextinductance())
-    SEScalarElectricInductance::Load(src.nextinductance(), dst.GetNextInductance());
-  if (src.has_inductancebaseline())
-    SEScalarElectricInductance::Load(src.inductancebaseline(), dst.GetInductanceBaseline());
-  if (src.has_current())
-    SEScalarElectricCurrent::Load(src.current(), dst.GetCurrent());
-  if (src.has_nextcurrent())
-    SEScalarElectricCurrent::Load(src.nextcurrent(), dst.GetNextCurrent());
-  if (src.has_currentsource())
-    SEScalarElectricCurrent::Load(src.currentsource(), dst.GetCurrentSource());
-  if (src.has_nextcurrentsource())
-    SEScalarElectricCurrent::Load(src.nextcurrentsource(), dst.GetNextCurrentSource());
-  if (src.has_currentsourcebaseline())
-    SEScalarElectricCurrent::Load(src.currentsourcebaseline(), dst.GetCurrentSourceBaseline());
-  if (src.has_voltagesource())
-    SEScalarElectricPotential::Load(src.voltagesource(), dst.GetVoltageSource());
-  if (src.has_nextvoltagesource())
-    SEScalarElectricPotential::Load(src.nextvoltagesource(), dst.GetNextVoltageSource());
-  if (src.has_voltagesourcebaseline())
-    SEScalarElectricPotential::Load(src.voltagesourcebaseline(), dst.GetVoltageSourceBaseline());
-  if (src.has_valvebreakdownvoltage())
-    SEScalarElectricPotential::Load(src.valvebreakdownvoltage(), dst.GetValveBreakdownVoltage());
-
-  if (!dst.HasValidElements())
-    dst.Warning("Path does not have valid elements");
-}
-
-cdm::ElectricalCircuitPathData* SEElectricalCircuitPath::Unload(const SEElectricalCircuitPath& src)
-{
-  cdm::ElectricalCircuitPathData* dst = new cdm::ElectricalCircuitPathData();
-  SEElectricalCircuitPath::Serialize(src, *dst);
-  return dst;
-}
-void SEElectricalCircuitPath::Serialize(const SEElectricalCircuitPath& src, cdm::ElectricalCircuitPathData& dst)
-{
-  SECircuitPath::Serialize(src, *dst.mutable_circuitpath());
-  if (src.HasResistance())
-    dst.set_allocated_resistance(SEScalarElectricResistance::Unload(*src.m_Resistance));
-  if (src.HasNextResistance())
-    dst.set_allocated_nextresistance(SEScalarElectricResistance::Unload(*src.m_NextResistance));
-  if (src.HasResistanceBaseline())
-    dst.set_allocated_resistancebaseline(SEScalarElectricResistance::Unload(*src.m_ResistanceBaseline));
-  if (src.HasCapacitance())
-    dst.set_allocated_capacitance(SEScalarElectricCapacitance::Unload(*src.m_Capacitance));
-  if (src.HasNextCapacitance())
-    dst.set_allocated_nextcapacitance(SEScalarElectricCapacitance::Unload(*src.m_NextCapacitance));
-  if (src.HasCapacitanceBaseline())
-    dst.set_allocated_capacitancebaseline(SEScalarElectricCapacitance::Unload(*src.m_CapacitanceBaseline));
-  if (src.HasInductance())
-    dst.set_allocated_inductance(SEScalarElectricInductance::Unload(*src.m_Inductance));
-  if (src.HasNextInductance())
-    dst.set_allocated_nextinductance(SEScalarElectricInductance::Unload(*src.m_NextInductance));
-  if (src.HasInductanceBaseline())
-    dst.set_allocated_inductancebaseline(SEScalarElectricInductance::Unload(*src.m_InductanceBaseline));
-  if (src.HasCurrent())
-    dst.set_allocated_current(SEScalarElectricCurrent::Unload(*src.m_Flux));
-  if (src.HasNextCurrent())
-    dst.set_allocated_nextcurrent(SEScalarElectricCurrent::Unload(*src.m_NextFlux));
-  if (src.HasCurrentSource())
-    dst.set_allocated_currentsource(SEScalarElectricCurrent::Unload(*src.m_FluxSource));
-  if (src.HasNextCurrentSource())
-    dst.set_allocated_nextcurrentsource(SEScalarElectricCurrent::Unload(*src.m_NextFluxSource));
-  if (src.HasCurrentSourceBaseline())
-    dst.set_allocated_currentsourcebaseline(SEScalarElectricCurrent::Unload(*src.m_FluxSourceBaseline));
-  if (src.HasVoltageSource())
-    dst.set_allocated_voltagesource(SEScalarElectricPotential::Unload(*src.m_PotentialSource));
-  if (src.HasNextVoltageSource())
-    dst.set_allocated_nextvoltagesource(SEScalarElectricPotential::Unload(*src.m_NextPotentialSource));
-  if (src.HasVoltageSourceBaseline())
-    dst.set_allocated_voltagesourcebaseline(SEScalarElectricPotential::Unload(*src.m_PotentialSourceBaseline));
-  if (src.HasValveBreakdownVoltage())
-    dst.set_allocated_valvebreakdownvoltage(SEScalarElectricPotential::Unload(*src.m_ValveBreakdownPotential));
 }
 
 ////////////////////////////////

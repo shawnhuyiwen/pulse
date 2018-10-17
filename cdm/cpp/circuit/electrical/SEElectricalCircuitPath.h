@@ -4,10 +4,10 @@
 #pragma once
 #include "circuit/SECircuitPath.h"
 #include "circuit/electrical/SEElectricalCircuitNode.h"
-CDM_BIND_DECL(ElectricalCircuitPathData)
 
 class CDM_DECL SEElectricalCircuitPath : public SECircuitPath<SEScalarElectricCurrent, SEScalarElectricResistance, SEScalarElectricCapacitance, SEScalarElectricInductance, SEScalarElectricPotential, SEScalarElectricCharge>
 {
+  friend class PBCircuit;//friend the serialization class
   friend class SECircuitManager;  
 protected:
   SEElectricalCircuitPath(SEElectricalCircuitNode& src, SEElectricalCircuitNode& tgt, const std::string& name);
@@ -16,14 +16,6 @@ public:
 
   virtual void Clear(); //clear memory
 
-  static void Load(const cdm::ElectricalCircuitPathData& src, SEElectricalCircuitPath& dst);
-  static cdm::ElectricalCircuitPathData* Unload(const SEElectricalCircuitPath& src);
-protected:
-  static void Serialize(const cdm::ElectricalCircuitPathData& src, SEElectricalCircuitPath& dst);
-  static void Serialize(const SEElectricalCircuitPath& src, cdm::ElectricalCircuitPathData& dst);
-
-
-public:
   virtual SEElectricalCircuitNode& GetSourceNode() const { return m_ElectricalSourceNode; }
   virtual SEElectricalCircuitNode& GetTargetNode() const { return m_ElectricalTargetNode; }
 

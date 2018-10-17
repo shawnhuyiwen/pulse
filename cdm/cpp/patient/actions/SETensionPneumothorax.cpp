@@ -8,8 +8,8 @@
 
 SETensionPneumothorax::SETensionPneumothorax() : SEPatientAction()
 {
-  m_Type=cdm::eGate::NullGate;
-  m_Side=cdm::eSide::NullSide;
+  m_Type=eGate::NullGate;
+  m_Side=eSide::NullSide;
   m_Severity=nullptr;
 }
 
@@ -21,8 +21,8 @@ SETensionPneumothorax::~SETensionPneumothorax()
 void SETensionPneumothorax::Clear()
 {
   SEPatientAction::Clear();
-  m_Type= cdm::eGate::NullGate;
-  m_Side= cdm::eSide::NullSide;
+  m_Type= eGate::NullGate;
+  m_Side= eSide::NullSide;
   SAFE_DELETE(m_Severity);
 }
 
@@ -33,8 +33,8 @@ void SETensionPneumothorax::Load(const cdm::TensionPneumothoraxData& src, SETens
 void SETensionPneumothorax::Serialize(const cdm::TensionPneumothoraxData& src, SETensionPneumothorax& dst)
 {
   SEPatientAction::Serialize(src.patientaction(), dst);
-  dst.SetType(src.type());
-  dst.SetSide(src.side());
+  dst.SetType((eGate)src.type());
+  dst.SetSide((eSide)src.side());
   if (src.has_severity())
     SEScalar0To1::Load(src.severity(), dst.GetSeverity());
 }
@@ -49,9 +49,9 @@ void SETensionPneumothorax::Serialize(const SETensionPneumothorax& src, cdm::Ten
 {
   SEPatientAction::Serialize(src, *dst.mutable_patientaction());
   if (src.HasType())
-    dst.set_type(src.m_Type);
+    dst.set_type((cdm::eGate)src.m_Type);
   if (src.HasSide())
-    dst.set_side(src.m_Side);
+    dst.set_side((cdm::eSide)src.m_Side);
   if (src.HasSeverity())
     dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
 }
@@ -66,38 +66,38 @@ bool SETensionPneumothorax::IsActive() const
   return IsValid() ? !m_Severity->IsZero() : false;
 }
 
-cdm::eGate SETensionPneumothorax::GetType() const
+eGate SETensionPneumothorax::GetType() const
 {
   return m_Type;
 }
-void SETensionPneumothorax::SetType(cdm::eGate Type)
+void SETensionPneumothorax::SetType(eGate Type)
 {
   m_Type = Type;
 }
 bool SETensionPneumothorax::HasType() const
 {
-  return m_Type== cdm::eGate::NullGate ?false:true;
+  return m_Type== eGate::NullGate ?false:true;
 }
 void SETensionPneumothorax::InvalidateType()
 {
-  m_Type = cdm::eGate::NullGate;
+  m_Type = eGate::NullGate;
 }
 
-cdm::eSide SETensionPneumothorax::GetSide() const
+eSide SETensionPneumothorax::GetSide() const
 {
   return m_Side;
 }
-void SETensionPneumothorax::SetSide(cdm::eSide Side)
+void SETensionPneumothorax::SetSide(eSide Side)
 {
   m_Side = Side;
 }
 bool SETensionPneumothorax::HasSide() const
 {
-  return m_Side== cdm::eSide::NullSide ?false:true;
+  return m_Side== eSide::NullSide ?false:true;
 }
 void SETensionPneumothorax::InvalidateSide()
 {
-  m_Side = cdm::eSide::NullSide;
+  m_Side = eSide::NullSide;
 }
 
 bool SETensionPneumothorax::HasSeverity() const
@@ -123,7 +123,7 @@ void SETensionPneumothorax::ToString(std::ostream &str) const
   if(HasComment())
     str<<"\n\tComment: "<<m_Comment;
   str << "\n\tSeverity: "; HasSeverity() ? str << *m_Severity : str << "NaN";
-  str  << "\n\tType: "; HasType()? str << cdm::eGate_Name(GetType()) : str << "Not Set";
-  str  << "\n\tSide: "; HasSide()? str << cdm::eSide_Name(GetSide()) : str << "Not Set";
+  str  << "\n\tType: "; HasType()? str << eGate_Name(GetType()) : str << "Not Set";
+  str  << "\n\tSide: "; HasSide()? str << eSide_Name(GetSide()) : str << "Not Set";
   str  << std::flush;
 }

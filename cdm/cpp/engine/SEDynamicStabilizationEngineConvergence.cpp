@@ -54,7 +54,7 @@ void SEDynamicStabilizationEngineConvergence::Serialize(const cdm::DynamicStabil
     const cdm::DynamicStabilizationData_PropertyConvergenceData& pcData = src.propertyconvergence(i);
     if (pcData.has_datarequest())
     {
-      SEDataRequest& dr = dst.m_DataRequestMgr->CreateDataRequest(pcData.datarequest().category());
+      SEDataRequest& dr = dst.m_DataRequestMgr->CreateDataRequest((eDataRequest_Category)pcData.datarequest().category());
       SEDataRequest::Load(pcData.datarequest(), dr);
       dst.CreatePropertyConvergence(dr, pcData.percentdifference());
     }

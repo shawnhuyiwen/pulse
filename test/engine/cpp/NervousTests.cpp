@@ -70,8 +70,8 @@ void PulseEngineTest::BrainInjuryTest(const std::string& sTestDirectory)
   pc.SetupPatient();
 
   //Renal and Tissue are on
-  pc.m_Config->EnableRenal(cdm::eSwitch::On);
-  pc.m_Config->EnableTissue(cdm::eSwitch::On);
+  pc.m_Config->EnableRenal(eSwitch::On);
+  pc.m_Config->EnableTissue(eSwitch::On);
   pc.CreateCircuitsAndCompartments();
 
   Cardiovascular& cv = (Cardiovascular&)pc.GetCardiovascular();

@@ -6,7 +6,6 @@
 #include "substance/SESubstanceConcentration.h"
 #include "substance/SESubstanceManager.h"
 #include "properties/SEScalarMassPerVolume.h"
-#include "bind/cdm/Substance.pb.h"
 
 SESubstanceCompound::SESubstanceCompound(Logger* logger) : Loggable(logger)
 {
@@ -23,51 +22,6 @@ void SESubstanceCompound::Clear()
   m_Name = "";
   DELETE_VECTOR(m_Components);
   m_cComponents.clear();
-}
-
-void SESubstanceCompound::Load(const cdm::SubstanceData_CompoundData& src, SESubstanceCompound& dst, const SESubstanceManager& subMgr)
-{
-  SESubstanceCompound::Serialize(src, dst, subMgr);
-}
-void SESubstanceCompound::Serialize(const cdm::SubstanceData_CompoundData& src, SESubstanceCompound& dst, const SESubstanceManager& subMgr)
-{
-  dst.Clear();
-  dst.m_Name = src.name();
-
-  std::string err;
-
-  SESubstance* substance = nullptr;
-  SESubstanceConcentration* cc;
-  for (int i = 0; i<src.component_size(); i++)
-  {
-    const cdm::SubstanceData_ConcentrationData& cData = src.component(i);
-    substance = subMgr.GetSubstance(cData.name());
-    if (substance == nullptr)
-    {
-      /// \fatal Could not load find substance compound component for specified substance
-      dst.Fatal("Could not load find substance compound component : "+cData.name(), "SESubstanceCompound::Load");
-      continue;
-    }
-    cc = new SESubstanceConcentration(*substance);
-    SESubstanceConcentration::Load(cData, *cc);
-    dst.m_Components.push_back(cc);
-    dst.m_cComponents.push_back(cc);
-  }
-}
-
-cdm::SubstanceData_CompoundData* SESubstanceCompound::Unload(const SESubstanceCompound& src)
-{
-  cdm::SubstanceData_CompoundData* dst = new cdm::SubstanceData_CompoundData();
-  SESubstanceCompound::Serialize(src,*dst);
-  return dst;
-}
-void SESubstanceCompound::Serialize(const SESubstanceCompound& src, cdm::SubstanceData_CompoundData& dst)
-{
-  if (src.HasName())
-    dst.set_name(src.m_Name);
-
-  for (SESubstanceConcentration* c : src.m_Components)
-    dst.mutable_component()->AddAllocated(SESubstanceConcentration::Unload(*c));
 }
 
 std::string SESubstanceCompound::GetName() const

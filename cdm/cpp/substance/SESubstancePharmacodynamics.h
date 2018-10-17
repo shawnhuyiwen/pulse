@@ -3,10 +3,10 @@
 
 #pragma once
 class SEPupillaryResponse;
-CDM_BIND_DECL(SubstanceData_PharmacodynamicsData)
 
 class CDM_DECL SESubstancePharmacodynamics : Loggable
 {
+  friend class PBSubstance;//friend the serialization class
 public:
 
   SESubstancePharmacodynamics(Logger* logger);
@@ -17,13 +17,6 @@ public:
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
-  static void Load(const cdm::SubstanceData_PharmacodynamicsData& src, SESubstancePharmacodynamics& dst);
-  static cdm::SubstanceData_PharmacodynamicsData* Unload(const SESubstancePharmacodynamics& src);
-protected:
-  static void Serialize(const cdm::SubstanceData_PharmacodynamicsData& src, SESubstancePharmacodynamics& dst);
-  static void Serialize(const SESubstancePharmacodynamics& src, cdm::SubstanceData_PharmacodynamicsData& dst);
-
-public:
   virtual bool HasBronchodilation() const;
   virtual SEScalarNegative1To1& GetBronchodilation();
   virtual double GetBronchodilation() const;

@@ -9,7 +9,6 @@
 #include "properties/SEScalar.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarVolumePerTime.h"
-#include "bind/cdm/Compartment.pb.h"
 
 SELiquidCompartment::SELiquidCompartment(const std::string& name, Logger* logger) : SEFluidCompartment(name, logger)
 {
@@ -30,51 +29,6 @@ void SELiquidCompartment::Clear()
   m_Children.clear();
 }
 
-void SELiquidCompartment::Load(const cdm::LiquidCompartmentData& src, SELiquidCompartment& dst, SESubstanceManager& subMgr, SECircuitManager* circuits)
-{
-  SELiquidCompartment::Serialize(src, dst, subMgr, circuits);
-}
-void SELiquidCompartment::Serialize(const cdm::LiquidCompartmentData& src, SELiquidCompartment& dst, SESubstanceManager& subMgr, SECircuitManager* circuits)
-{
-  SEFluidCompartment::Serialize(src.fluidcompartment(), dst, circuits);
-
-  if (src.substancequantity_size() > 0)
-  {
-    for (int i = 0; i<src.substancequantity_size(); i++)
-    {
-      const cdm::LiquidSubstanceQuantityData& d = src.substancequantity(i);
-      SESubstance* sub = subMgr.GetSubstance(d.substancequantity().substance());
-      if (sub == nullptr)
-      {
-        dst.Error("Could not find a substance for " + d.substancequantity().substance());
-        continue;
-      }
-      SELiquidSubstanceQuantity::Load(d, dst.CreateSubstanceQuantity(*sub));
-    }
-  }
-  if (src.has_ph())
-    SEScalar::Load(src.ph(), dst.GetPH());
-  if (src.has_watervolumefraction())
-    SEScalar0To1::Load(src.watervolumefraction(), dst.GetWaterVolumeFraction());
-}
-
-cdm::LiquidCompartmentData* SELiquidCompartment::Unload(const SELiquidCompartment& src)
-{
-  cdm::LiquidCompartmentData* dst = new cdm::LiquidCompartmentData();
-  Serialize(src, *dst);
-  return dst;
-}
-void SELiquidCompartment::Serialize(const SELiquidCompartment& src, cdm::LiquidCompartmentData& dst)
-{
-  SEFluidCompartment::Serialize(src, *dst.mutable_fluidcompartment());
-  for (SELiquidSubstanceQuantity* subQ : src.m_SubstanceQuantities)
-    dst.mutable_substancequantity()->AddAllocated(SELiquidSubstanceQuantity::Unload(*subQ));
-
-  if (src.HasPH())
-    dst.set_allocated_ph(SEScalar::Unload(*src.m_pH));
-  if (src.HasWaterVolumeFraction())
-    dst.set_allocated_watervolumefraction(SEScalar0To1::Unload(*src.m_WaterVolumeFraction));
-}
 
 const SEScalar* SELiquidCompartment::GetScalar(const std::string& name)
 {
@@ -99,7 +53,7 @@ void SELiquidCompartment::Balance(BalanceLiquidBy by)
 {
   for (SELiquidSubstanceQuantity* subQ : m_SubstanceQuantities)
   {
-    if (by == BalanceLiquidBy::PartialPressure && subQ->GetSubstance().GetState() != cdm::eSubstance_State_Gas)
+    if (by == BalanceLiquidBy::PartialPressure && subQ->GetSubstance().GetState() != eSubstance_State::Gas)
       continue;
 
     //Partial pressures only make sense for gases in liquids

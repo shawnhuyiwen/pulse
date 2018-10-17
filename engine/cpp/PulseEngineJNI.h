@@ -27,8 +27,8 @@ public:
   void PushData(double time_s);
 
   void OnAdvance(double time_s, const PhysiologyEngine& engine);
-  void HandlePatientEvent(cdm::ePatient_Event type, bool active, const SEScalarTime* time = nullptr);
-  void HandleAnesthesiaMachineEvent(cdm::eAnesthesiaMachine_Event type, bool active, const SEScalarTime* time = nullptr);
+  void HandlePatientEvent(ePatient_Event type, bool active, const SEScalarTime* time = nullptr);
+  void HandleAnesthesiaMachineEvent(eAnesthesiaMachine_Event type, bool active, const SEScalarTime* time = nullptr);
 
   JNIEnv*    jniEnv;
   jobject    jniObj;

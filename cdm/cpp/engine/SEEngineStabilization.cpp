@@ -9,7 +9,7 @@ SEEngineStabilization::SEEngineStabilization(Logger *logger) : Loggable(logger)
 {
   m_StabilizationDuration = nullptr;
   m_currentTime_s = 0;
-  m_TrackingStabilization = cdm::Off;
+  m_TrackingStabilization = eSwitch::Off;
 }
 
 SEEngineStabilization::~SEEngineStabilization()
@@ -20,7 +20,7 @@ SEEngineStabilization::~SEEngineStabilization()
 void SEEngineStabilization::Clear()
 {
   m_LogProgress = true;
-  m_TrackingStabilization = cdm::Off;
+  m_TrackingStabilization = eSwitch::Off;
   SAFE_DELETE(m_StabilizationDuration);
 }
 
@@ -29,13 +29,13 @@ void SEEngineStabilization::LogProgress(bool b)
   m_LogProgress = b;
 }
 
-void SEEngineStabilization::TrackStabilization(cdm::eSwitch state)
+void SEEngineStabilization::TrackStabilization(eSwitch state)
 {
-  m_TrackingStabilization = (state == cdm::eSwitch::NullSwitch) ? cdm::eSwitch::Off : state;
+  m_TrackingStabilization = (state == eSwitch::NullSwitch) ? eSwitch::Off : state;
 }
 bool SEEngineStabilization::IsTrackingStabilization()
 {
-  return m_TrackingStabilization==cdm::On;
+  return m_TrackingStabilization== eSwitch::On;
 }
 
 void SEEngineStabilization::CancelStabilization()

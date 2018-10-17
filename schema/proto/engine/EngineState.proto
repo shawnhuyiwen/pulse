@@ -41,7 +41,7 @@ message StateData
   cdm.CompartmentManagerData              CompartmentManager = 22;
   cdm.CircuitManagerData                  CircuitManager     = 23;
   repeated cdm.SubstanceData              ActiveSubstance    = 24;
-  repeated cdm.SubstanceData.CompoundData ActiveCompound     = 25;
+  repeated cdm.SubstanceCompoundData      ActiveCompound     = 25;
   ConfigurationData                       Configuration      = 26;
   cdm.DataRequestManagerData              DataRequestManager = 27;
 }

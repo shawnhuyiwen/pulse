@@ -9,7 +9,7 @@ CDM_BIND_DECL(SubstanceData_ConcentrationData)
 
 class CDM_DECL SESubstanceConcentration : public Loggable
 {
-protected:
+  friend class PBSubstance;//friend the serialization class
   friend SEEnvironmentalConditions;// So it can add substances to the manager
 public:
 
@@ -18,13 +18,6 @@ public:
 
   virtual void Clear();
 
-  static void Load(const cdm::SubstanceData_ConcentrationData& src, SESubstanceConcentration& dst);
-  static cdm::SubstanceData_ConcentrationData* Unload(const SESubstanceConcentration& src);
-protected:
-  static void Serialize(const cdm::SubstanceData_ConcentrationData& src, SESubstanceConcentration& dst);
-  static void Serialize(const SESubstanceConcentration& src, cdm::SubstanceData_ConcentrationData& dst);
-
-public:
   virtual bool HasConcentration() const;
   virtual SEScalarMassPerVolume& GetConcentration();  
   virtual double GetConcentration(const MassPerVolumeUnit& unit) const;

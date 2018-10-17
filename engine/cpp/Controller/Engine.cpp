@@ -22,7 +22,6 @@
 #include "Equipment/ECG.h"
 #include "Equipment/Inhaler.h"
 #include "PulseConfiguration.h"
-#include "bind/engine/EngineState.pb.h"
 #include "patient/SEPatient.h"
 #include "patient/actions/SEPatientAssessmentRequest.h"
 #include "patient/assessments/SEPulmonaryFunctionTest.h"
@@ -47,6 +46,10 @@
 #include "utils/FileUtils.h"
 #include <google/protobuf/text_format.h>
 #include <google/protobuf/stubs/logging.h>
+#include "bind/engine/EngineState.pb.h"
+#include "io/protobuf/PBCircuit.h"
+#include "io/protobuf/PBCompartment.h"
+#include "io/protobuf/PBSubstance.h"
 #include <memory>
 
 PULSE_DECL std::unique_ptr<PhysiologyEngine> CreatePulseEngine(const std::string& logfile)
@@ -101,26 +104,32 @@ bool PulseEngine::LoadStateFile(const std::string& filename, const SEScalarTime*
   google::protobuf::SetLogHandler(MyLogHandler);
   if (fmsg.empty() || !google::protobuf::TextFormat::ParseFromString(fmsg, &src))
     return false;
-  return LoadState(src, simTime);
+  return LoadState(&src, simTime);
 
   // If its a binary string in the file...
   //std::ifstream binary_istream(patientFile, std::ios::in | std::ios::binary);
   //src.ParseFromIstream(&binary_istream);
 }
 
-bool PulseEngine::LoadState(const google::protobuf::Message& state, const SEScalarTime* simTime, const SEEngineConfiguration* config)
+bool PulseEngine::LoadState(const void* state, const SEScalarTime* simTime, const SEEngineConfiguration* config)
 {
+  if (state == nullptr)
+    return false;
   m_State = EngineState::NotReady;
-  const pulse::StateData* peState = dynamic_cast<const pulse::StateData*>(&state);
+
+  // Waiting for state to be std::any when we move to C++17
+  /*const pulse::StateData* peState = dynamic_cast<const pulse::StateData*>(state);
   if (peState == nullptr)
   {
     Error("State data is not a Pulse StateData object");
     return false;
-  }
+  }*/
+  const pulse::StateData* peState = (const pulse::StateData*)(state);
+
   m_ss.str("");
 
   // First Get the substances reset and ready
-  m_Substances->Reset();
+  m_Substances->LoadSubstances();// TODO Reset();
   // Substances //
   for (int i = 0; i<peState->activesubstance_size(); i++)
   {
@@ -131,17 +140,17 @@ bool PulseEngine::LoadState(const google::protobuf::Message& state, const SEScal
       sub = new SESubstance(GetLogger());
       m_Substances->AddSubstance(*sub);
     }
-    SESubstance::Load(subData, *sub);
+    PBSubstance::Load(subData, *sub);
     m_Substances->AddActiveSubstance(*sub);
   }
   // Compounds //
   for (int i = 0; i<peState->activecompound_size(); i++)
   {
-    const cdm::SubstanceData_CompoundData& cmpdData = peState->activecompound()[i];
+    const cdm::SubstanceCompoundData& cmpdData = peState->activecompound()[i];
     SESubstanceCompound* cmpd = m_Substances->GetCompound(cmpdData.name());
     if (cmpd == nullptr)
       cmpd = new SESubstanceCompound(GetLogger());
-    SESubstanceCompound::Load(cmpdData, *cmpd, *m_Substances);
+    PBSubstance::Load(cmpdData, *cmpd, *m_Substances);
     m_Substances->AddActiveCompound(*cmpd);
   }
 
@@ -173,10 +182,10 @@ bool PulseEngine::LoadState(const google::protobuf::Message& state, const SEScal
       m_SimulationTime->SetValue(0, TimeUnit::s);
     }
   }
-  m_AirwayMode = peState->airwaymode();
-  if (peState->intubation() == cdm::eSwitch::NullSwitch)
+  m_AirwayMode = (eAirwayMode)peState->airwaymode();
+  if (peState->intubation() == (cdm::eSwitch)eSwitch::NullSwitch)
     m_ss << "Pulse State must have none null intubation state";
-  m_Intubation = peState->intubation();
+  m_Intubation = (eSwitch)peState->intubation();
    
   /// Patient //  
   if (!peState->has_patient())
@@ -210,12 +219,12 @@ bool PulseEngine::LoadState(const google::protobuf::Message& state, const SEScal
   if (!peState->has_circuitmanager())
     m_ss << "PulseState must have a circuit manager" << std::endl;
   else
-    SECircuitManager::Load(peState->circuitmanager(), *m_Circuits);
+    PBCircuit::Load(peState->circuitmanager(), *m_Circuits);
   // Compartment Manager //
   if (!peState->has_compartmentmanager())
     m_ss << "PulseState must have a compartment manager" << std::endl;
   else
-    SECompartmentManager::Load(peState->compartmentmanager(), *m_Compartments, m_Circuits.get());
+    PBCompartment::Load(peState->compartmentmanager(), *m_Compartments, m_Circuits.get());
   // Configuration //
   if (!peState->has_configuration())
     m_ss << "PulseState must have a configuration" << std::endl;
@@ -321,12 +330,12 @@ bool PulseEngine::LoadState(const google::protobuf::Message& state, const SEScal
   return true;// return CheckDataRequirements/IsValid() or something
 }
 
-std::unique_ptr<google::protobuf::Message> PulseEngine::SaveState(const std::string& filename)
+void* PulseEngine::SaveState(const std::string& filename)
 {
   pulse::StateData* state = new pulse::StateData();
 
-  state->set_airwaymode(m_AirwayMode);
-  state->set_intubation(m_Intubation);
+  state->set_airwaymode((pulse::eAirwayMode)m_AirwayMode);
+  state->set_intubation((cdm::eSwitch)m_Intubation);
   state->set_allocated_simulationtime(SEScalarTime::Unload(*m_SimulationTime));
   if(m_EngineTrack->GetDataRequestManager().HasDataRequests())
     state->set_allocated_datarequestmanager(SEDataRequestManager::Unload(m_EngineTrack->GetDataRequestManager()));
@@ -338,9 +347,9 @@ std::unique_ptr<google::protobuf::Message> PulseEngine::SaveState(const std::str
   state->set_allocated_activeactions(SEActionManager::Unload(*m_Actions));
  // Active Substances/Compounds
   for (SESubstance* s : m_Substances->GetActiveSubstances())
-    state->mutable_activesubstance()->AddAllocated(SESubstance::Unload(*s));
+    state->mutable_activesubstance()->AddAllocated(PBSubstance::Unload(*s));
   for (SESubstanceCompound* c : m_Substances->GetActiveCompounds())
-    state->mutable_activecompound()->AddAllocated(SESubstanceCompound::Unload(*c));
+    state->mutable_activecompound()->AddAllocated(PBSubstance::Unload(*c));
   // Systems
   state->set_allocated_bloodchemistry(BloodChemistry::Unload(*m_BloodChemistrySystem));
   state->set_allocated_cardiovascular(Cardiovascular::Unload(*m_CardiovascularSystem));
@@ -358,11 +367,11 @@ std::unique_ptr<google::protobuf::Message> PulseEngine::SaveState(const std::str
   state->set_allocated_electrocardiogram(ECG::Unload(*m_ECG));
   state->set_allocated_inhaler(Inhaler::Unload(*m_Inhaler));
   // Compartments
-  state->set_allocated_compartmentmanager(SECompartmentManager::Unload(*m_Compartments));
+  state->set_allocated_compartmentmanager(PBCompartment::Unload(*m_Compartments));
   // Configuration
   state->set_allocated_configuration(PulseConfiguration::Unload(*m_Config));
   // Circuitsk
-  state->set_allocated_circuitmanager(SECircuitManager::Unload(*m_Circuits));
+  state->set_allocated_circuitmanager(PBCircuit::Unload(*m_Circuits));
 
   if (!filename.empty())
   {
@@ -375,8 +384,7 @@ std::unique_ptr<google::protobuf::Message> PulseEngine::SaveState(const std::str
     ascii_ostream.close();
   }
 
-  std::unique_ptr<google::protobuf::Message> msg(state);
-  return msg;
+  return state;
 }
 
 bool PulseEngine::InitializeEngine(const std::string& patientFile, const std::vector<const SECondition*>* conditions, const SEEngineConfiguration* config)
@@ -504,7 +512,7 @@ void PulseEngine::AdvanceModelTime()
 {
   if (!IsReady())
     return;  
-  if(m_Patient->IsEventActive(cdm::ePatient_Event_IrreversibleState))
+  if(m_Patient->IsEventActive(ePatient_Event::IrreversibleState))
     return;  
 
   PreProcess();
@@ -546,7 +554,7 @@ bool PulseEngine::ProcessAction(const SEAction& action)
   const SESerializeState* serialize = dynamic_cast<const SESerializeState*>(&action);
   if (serialize != nullptr)
   {
-    if (serialize->GetType() == cdm::eSerialization_Type_Save)
+    if (serialize->GetType() == eSerialization_Type::Save)
     {
       if (serialize->HasFilename())
       {

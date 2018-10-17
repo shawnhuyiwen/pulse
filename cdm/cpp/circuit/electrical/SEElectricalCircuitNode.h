@@ -3,10 +3,10 @@
 
 #pragma once
 #include "circuit/SECircuitNode.h"
-CDM_BIND_DECL(ElectricalCircuitNodeData)
 
 class CDM_DECL SEElectricalCircuitNode : public SECircuitNode<SEScalarElectricPotential, SEScalarElectricCharge>
 {
+  friend class PBCircuit;//friend the serialization class
   friend class SECircuitManager;
 protected:
   SEElectricalCircuitNode(const std::string& name, Logger* logger);
@@ -14,13 +14,6 @@ public:
   virtual ~SEElectricalCircuitNode();
 
   virtual void Clear(); //clear memory
-
-  static void Load(const cdm::ElectricalCircuitNodeData& src, SEElectricalCircuitNode& dst);
-  static cdm::ElectricalCircuitNodeData* Unload(const SEElectricalCircuitNode& src);
-protected:
-  static void Serialize(const cdm::ElectricalCircuitNodeData& src, SEElectricalCircuitNode& dst);
-  static void Serialize(const SEElectricalCircuitNode& src, cdm::ElectricalCircuitNodeData& dst);
-
 
 public:
   virtual bool HasVoltage() const;

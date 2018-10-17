@@ -87,8 +87,8 @@ void PulseEngineTest::FourCompartmentTest(bool usingAcidBase, bool usingProducti
   Tissue& tsu = (Tissue&)pc.GetTissue();
   pc.GetPatient().LoadFile("./patients/StandardMale.pba");
   pc.SetupPatient();
-  pc.m_Config->EnableRenal(cdm::eSwitch::Off);
-  pc.m_Config->EnableTissue(cdm::eSwitch::Off);
+  pc.m_Config->EnableRenal(eSwitch::Off);
+  pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
   pc.GetSubstances().InitializeGasCompartments();
 

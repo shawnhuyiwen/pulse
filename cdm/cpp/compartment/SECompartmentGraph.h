@@ -9,6 +9,7 @@
 template<COMPARTMENT_GRAPH_TEMPLATE>
 class SECompartmentGraph : public Loggable
 {
+  friend class PBCompartment;//friend the serialization class
 protected:
   SECompartmentGraph(const std::string& name, Logger* logger);
 public:
@@ -16,7 +17,6 @@ public:
 
   virtual void Clear();
 
-public:
   virtual std::string GetName() const;
 
   virtual void AddCompartment(CompartmentType& cmpt);

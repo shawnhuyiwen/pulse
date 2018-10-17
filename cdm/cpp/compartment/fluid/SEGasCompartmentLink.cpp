@@ -4,24 +4,4 @@
 #include "stdafx.h"
 #include "compartment/fluid/SEGasCompartment.h"
 #include "compartment/fluid/SEGasCompartmentLink.h"
-#include "bind/cdm/Compartment.pb.h"
 
-void SEGasCompartmentLink::Load(const cdm::GasCompartmentLinkData& src, SEGasCompartmentLink& dst, SECircuitManager* circuits)
-{
-  SEGasCompartmentLink::Serialize(src, dst,circuits);
-}
-void SEGasCompartmentLink::Serialize(const cdm::GasCompartmentLinkData& src, SEGasCompartmentLink& dst, SECircuitManager* circuits)
-{
-  SEFluidCompartmentLink::Serialize(src.fluidlink(), dst, circuits);
-}
-
-cdm::GasCompartmentLinkData* SEGasCompartmentLink::Unload(const SEGasCompartmentLink& src)
-{
-  cdm::GasCompartmentLinkData* dst = new cdm::GasCompartmentLinkData();
-  SEGasCompartmentLink::Serialize(src, *dst);
-  return dst;
-}
-void SEGasCompartmentLink::Serialize(const SEGasCompartmentLink& src, cdm::GasCompartmentLinkData& dst)
-{
-  SEFluidCompartmentLink::Serialize(src, *dst.mutable_fluidlink());
-}

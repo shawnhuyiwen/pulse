@@ -8,13 +8,14 @@ import java.util.List;
 import com.kitware.physiology.cdm.PatientActions.MechanicalVentilationData;
 import com.kitware.physiology.cdm.Enums.eSwitch;
 import com.kitware.physiology.cdm.Substance.SubstanceData;
+import com.kitware.physiology.cdm.Substance.SubstanceFractionData;
 import com.kitware.physiology.cdm.SubstanceEnums.eSubstance;
 
 import mil.tatrc.physiology.utilities.Log;
 import mil.tatrc.physiology.datamodel.properties.*;
 import mil.tatrc.physiology.datamodel.substance.SESubstance;
 import mil.tatrc.physiology.datamodel.substance.SESubstanceConcentration;
-import mil.tatrc.physiology.datamodel.substance.SESubstanceFractionAmount;
+import mil.tatrc.physiology.datamodel.substance.SESubstanceFraction;
 import mil.tatrc.physiology.datamodel.substance.SESubstanceManager;
 import mil.tatrc.physiology.utilities.DoubleUtils;
 
@@ -24,7 +25,7 @@ public class SEMechanicalVentilation extends SEPatientAction
   protected SEScalarPressure      pressure;
   protected eSwitch               state;
 
-  protected List<SESubstanceFractionAmount>  gasFractions;
+  protected List<SESubstanceFraction>  gasFractions;
   protected List<SESubstanceConcentration>   aerosols;
 
   public SEMechanicalVentilation()
@@ -37,7 +38,7 @@ public class SEMechanicalVentilation extends SEPatientAction
     flow = null;
     pressure = null;
     state = eSwitch.Off;
-    this.gasFractions=new ArrayList<SESubstanceFractionAmount>();
+    this.gasFractions=new ArrayList<SESubstanceFraction>();
     this.aerosols=new ArrayList<SESubstanceConcentration>();
   }
 
@@ -64,8 +65,8 @@ public class SEMechanicalVentilation extends SEPatientAction
     
     if(from.gasFractions!=null)
     {
-      SESubstanceFractionAmount mine;
-      for(SESubstanceFractionAmount sf : from.gasFractions)
+      SESubstanceFraction mine;
+      for(SESubstanceFraction sf : from.gasFractions)
       {
         mine=this.createGasFraction(sf.getSubstance());
         if(sf.hasAmount())
@@ -97,7 +98,7 @@ public class SEMechanicalVentilation extends SEPatientAction
     else
     {
       double total = 0;
-      for (SESubstanceFractionAmount sf : gasFractions)
+      for (SESubstanceFraction sf : gasFractions)
       {
         total += sf.getAmount().getValue();
       }
@@ -126,7 +127,7 @@ public class SEMechanicalVentilation extends SEPatientAction
       SEScalarPressure.load(src.getPressure(),dst.getPressure());
     
     SESubstance sub;
-    for(SubstanceData.FractionAmountData subData : src.getGasFractionList())
+    for(SubstanceFractionData subData : src.getGasFractionList())
     {
       sub = substances.getSubstance(subData.getName());
       if(sub == null)
@@ -156,8 +157,8 @@ public class SEMechanicalVentilation extends SEPatientAction
     if (src.hasPressure())
       dst.setPressure(SEScalarPressure.unload(src.pressure));
     
-    for(SESubstanceFractionAmount gf : src.gasFractions)
-      dst.addGasFraction(SESubstanceFractionAmount.unload(gf));
+    for(SESubstanceFraction gf : src.gasFractions)
+      dst.addGasFraction(SESubstanceFraction.unload(gf));
   }
 
   public eSwitch getState()
@@ -191,20 +192,20 @@ public class SEMechanicalVentilation extends SEPatientAction
     return pressure;
   }
   
-  public SESubstanceFractionAmount createGasFraction(SESubstance substance)
+  public SESubstanceFraction createGasFraction(SESubstance substance)
   {
     return getGasFraction(substance);
   }
-  public SESubstanceFractionAmount getGasFraction(SESubstance substance)
+  public SESubstanceFraction getGasFraction(SESubstance substance)
   {
-    for(SESubstanceFractionAmount sf : this.gasFractions)
+    for(SESubstanceFraction sf : this.gasFractions)
     {
       if(sf.getSubstance().getName().equals(substance.getName()))
       {        
         return sf;
       }
     }    
-    SESubstanceFractionAmount sf = new SESubstanceFractionAmount(substance);    
+    SESubstanceFraction sf = new SESubstanceFraction(substance);    
     this.gasFractions.add(sf);
     return sf;
   }
@@ -214,7 +215,7 @@ public class SEMechanicalVentilation extends SEPatientAction
   }
   public boolean hasGasFraction(SESubstance substance)
   {
-    for(SESubstanceFractionAmount sf : this.gasFractions)
+    for(SESubstanceFraction sf : this.gasFractions)
     {
       if(sf.getSubstance()==substance)
       {        
@@ -223,13 +224,13 @@ public class SEMechanicalVentilation extends SEPatientAction
     }
     return false;
   }
-  public List<SESubstanceFractionAmount> getGasFraction()
+  public List<SESubstanceFraction> getGasFraction()
   {
     return this.gasFractions;
   }
   public void removeGasFraction(SESubstance substance)
   {
-    for(SESubstanceFractionAmount sf : this.gasFractions)
+    for(SESubstanceFraction sf : this.gasFractions)
     {
       if(sf.getSubstance()==substance)
       {
@@ -293,7 +294,7 @@ public class SEMechanicalVentilation extends SEPatientAction
         + "\n\tState: " + getState()
         + "\n\tFlow: " + (hasFlow() ? getFlow() : "Not Provided")
         + "\n\tPressure: " + (hasPressure() ? getPressure() : "Not Provided");
-    for(SESubstanceFractionAmount sf : this.gasFractions)
+    for(SESubstanceFraction sf : this.gasFractions)
       cnts += "\n\tSubstanceFraction: " + sf.getSubstance().getName() + " : " + sf.getAmount();
     for(SESubstanceConcentration sc : this.aerosols)
         cnts += "\n\tSubstanceConcentration: " + sc.getSubstance().getName() + " : " + sc.getConcentration();

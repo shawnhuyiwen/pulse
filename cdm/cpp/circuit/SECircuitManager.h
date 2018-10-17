@@ -11,8 +11,6 @@ class SEThermalCircuitPath;
 class SEElectricalCircuit;
 class SEElectricalCircuitNode;
 class SEElectricalCircuitPath;
-CDM_BIND_DECL(CircuitManagerData)
-
 
 #define CIRCUIT_LEDGER_TEMPLATE typename NodeType, typename PathType, typename CircuitType
 #define CIRCUIT_LEDGER_TYPES NodeType,PathType,CircuitType
@@ -20,6 +18,7 @@ CDM_BIND_DECL(CircuitManagerData)
 template<CIRCUIT_LEDGER_TEMPLATE>
 class SECircuitLedger
 {
+  friend class PBCircuit;//friend the serialization class
   friend class SECircuitManager;
 protected:
   SECircuitLedger() {};
@@ -37,6 +36,7 @@ public:
 
 class CDM_DECL SECircuitManager : public Loggable
 {
+  friend class PBCircuit;//friend the serialization class
 public:
   SECircuitManager(Logger* logger);
   virtual ~SECircuitManager();
@@ -44,16 +44,7 @@ public:
   virtual void Clear(); //clear memory
 
   virtual void StateChange() { };
-  bool LoadFile(const std::string& filename);
-  void SaveFile(const std::string& filename);
 
-  static void Load(const cdm::CircuitManagerData& src, SECircuitManager& dst);
-  static cdm::CircuitManagerData* Unload(const SECircuitManager& src);
-protected:
-  static void Serialize(const cdm::CircuitManagerData& src, SECircuitManager& dst);
-  static void Serialize(const SECircuitManager& src, cdm::CircuitManagerData& dst);
-
-public:
   void SetReadOnly(bool b);  
 protected:
   

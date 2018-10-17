@@ -4,10 +4,10 @@
 #pragma once
 class SESubstancePhysicochemicals;
 class SESubstanceTissuePharmacokinetics;
-CDM_BIND_DECL(SubstanceData_PharmacokineticsData)
 
 class CDM_DECL SESubstancePharmacokinetics : public Loggable
 {
+  friend class PBSubstance;//friend the serialization class
 public:
 
   SESubstancePharmacokinetics(Logger* logger);
@@ -18,13 +18,6 @@ public:
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
-  static void Load(const cdm::SubstanceData_PharmacokineticsData& src, SESubstancePharmacokinetics& dst);
-  static cdm::SubstanceData_PharmacokineticsData* Unload(const SESubstancePharmacokinetics& src);
-protected:
-  static void Serialize(const cdm::SubstanceData_PharmacokineticsData& src, SESubstancePharmacokinetics& dst);
-  static void Serialize(const SESubstancePharmacokinetics& src, cdm::SubstanceData_PharmacokineticsData& dst);
-
-public:
   virtual bool HasPhysicochemicals() const;
   virtual SESubstancePhysicochemicals& GetPhysicochemicals();
   virtual const SESubstancePhysicochemicals* GetPhysicochemicals() const;

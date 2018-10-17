@@ -13,6 +13,7 @@
 template<FLUID_COMPARTMENT_LINK_TEMPLATE>
 class SEFluidCompartmentLink : public SECompartmentLink, public EdgeType
 {
+  friend class PBCompartment;//friend the serialization class
 protected:
   SEFluidCompartmentLink(CompartmentType& src, CompartmentType & tgt, const std::string& name);
 public:
@@ -20,11 +21,6 @@ public:
 
   virtual void Clear();
 
-protected:
-  static void Serialize(const cdm::FluidCompartmentLinkData& src, SEFluidCompartmentLink& dst, SECircuitManager* circuits = nullptr);
-  static void Serialize(const SEFluidCompartmentLink& src, cdm::FluidCompartmentLinkData& dst);
-  
-public:
   virtual const SEScalar* GetScalar(const std::string& name);
 
   virtual std::string GetName() const { return m_Name; }

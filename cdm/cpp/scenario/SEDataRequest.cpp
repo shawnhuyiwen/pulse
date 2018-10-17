@@ -5,6 +5,12 @@
 #include "scenario/SEDataRequest.h"
 #include "utils/unitconversion/UCCommon.h"
 #include "bind/cdm/Scenario.pb.h"
+#include "bind/cdm/ScenarioEnums.pb.h"
+
+const std::string& eDataRequest_Category_Name(eDataRequest_Category m)
+{
+  return cdm::eDataRequest_Category_Name((cdm::eDataRequest_Category)m);
+}
 
 SEDataRequest::SEDataRequest(const SEDataRequest& dr)
 {
@@ -12,7 +18,7 @@ SEDataRequest::SEDataRequest(const SEDataRequest& dr)
   CDM_COPY(SEDataRequest, &dr, this);
 }
 
-SEDataRequest::SEDataRequest(cdm::eDataRequest_Category category, const SEDecimalFormat* dfault) : SEDecimalFormat(dfault)
+SEDataRequest::SEDataRequest(eDataRequest_Category category, const SEDecimalFormat* dfault) : SEDecimalFormat(dfault)
 {
   m_Category = category;
   m_CompartmentName = "";
@@ -44,34 +50,34 @@ bool SEDataRequest::IsValid()
     return false;
   switch (m_Category)
   {
-    case cdm::eDataRequest_Category_Patient:
+    case eDataRequest_Category::Patient:
     {
       if (HasCompartmentName() || HasSubstanceName())
         std::cout << "Ignoring compartment and substance name on patient data request" << std::endl;
       return true;
     }
-    case cdm::eDataRequest_Category_Physiology:
+    case eDataRequest_Category::Physiology:
     {
       if (HasCompartmentName() || HasSubstanceName())
         std::cout << "Ignoring compartment and substance name on physiology data request" << std::endl;
       return true;
     }
-    case cdm::eDataRequest_Category_Environment:
+    case eDataRequest_Category::Environment:
     {
       if (HasCompartmentName() || HasSubstanceName())
         std::cout << "Ignoring compartment and substance name on environment data request" << std::endl;
       return true;
     }
-    case cdm::eDataRequest_Category_GasCompartment:
-    case cdm::eDataRequest_Category_LiquidCompartment:
-    case cdm::eDataRequest_Category_ThermalCompartment:
-    case cdm::eDataRequest_Category_TissueCompartment:
+    case eDataRequest_Category::GasCompartment:
+    case eDataRequest_Category::LiquidCompartment:
+    case eDataRequest_Category::ThermalCompartment:
+    case eDataRequest_Category::TissueCompartment:
     {
       if (!HasCompartmentName())
         return false;
       return true;
     }
-    case cdm::eDataRequest_Category_Substance:
+    case eDataRequest_Category::Substance:
     {
       if (!HasSubstanceName())
         return false;
@@ -110,7 +116,7 @@ cdm::DataRequestData* SEDataRequest::Unload(const SEDataRequest& src)
 void SEDataRequest::Serialize(const SEDataRequest& src, cdm::DataRequestData& dst)
 {
   SEDecimalFormat::Serialize(src,*dst.mutable_decimalformat());
-  dst.set_category(src.m_Category);
+  dst.set_category((cdm::eDataRequest_Category)src.m_Category);
   if(src.HasCompartmentName())
     dst.set_compartmentname(src.m_CompartmentName);
   if(src.HasSubstanceName())
@@ -123,7 +129,7 @@ void SEDataRequest::Serialize(const SEDataRequest& src, cdm::DataRequestData& ds
     dst.set_unit(src.m_RequestedUnit);
 }
 
-cdm::eDataRequest_Category SEDataRequest::GetCategory() const 
+eDataRequest_Category SEDataRequest::GetCategory() const 
 { 
   return m_Category; 
 }

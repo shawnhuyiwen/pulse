@@ -3,10 +3,10 @@
 
 #pragma once
 #include "system/SESystem.h"
-CDM_BIND_DECL(PupillaryResponseData)
 
 class CDM_DECL SEPupillaryResponse
 {
+  friend class PBPhysiology;//friend the serialization class
 public:
 
   SEPupillaryResponse(Logger* logger);
@@ -15,14 +15,6 @@ public:
   virtual void Clear();// Deletes all members
   
   virtual const SEScalar* GetScalar(const std::string& name);
-
-  static void Load(const cdm::PupillaryResponseData& src, SEPupillaryResponse& dst);
-  static cdm::PupillaryResponseData* Unload(const SEPupillaryResponse& src);
-protected:
-  static void Serialize(const cdm::PupillaryResponseData& src, SEPupillaryResponse& dst);
-  static void Serialize(const SEPupillaryResponse& src, cdm::PupillaryResponseData& dst);
-  
-public:
 
   virtual bool HasReactivityModifier() const;
   virtual SEScalarNegative1To1& GetReactivityModifier();

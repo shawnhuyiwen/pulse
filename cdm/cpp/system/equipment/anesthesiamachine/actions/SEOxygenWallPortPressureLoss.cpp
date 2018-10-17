@@ -7,7 +7,7 @@
 
 SEOxygenWallPortPressureLoss::SEOxygenWallPortPressureLoss() : SEAnesthesiaMachineAction()
 {
-  m_State = cdm::eSwitch::Off;
+  m_State = eSwitch::Off;
 }
 
 SEOxygenWallPortPressureLoss::~SEOxygenWallPortPressureLoss()
@@ -18,7 +18,7 @@ SEOxygenWallPortPressureLoss::~SEOxygenWallPortPressureLoss()
 void SEOxygenWallPortPressureLoss::Clear()
 {
   SEAnesthesiaMachineAction::Clear();
-  m_State = cdm::eSwitch::Off;
+  m_State = eSwitch::Off;
 }
 
 bool SEOxygenWallPortPressureLoss::IsValid() const
@@ -27,11 +27,11 @@ bool SEOxygenWallPortPressureLoss::IsValid() const
 }
 bool SEOxygenWallPortPressureLoss::IsActive() const
 {
-  return m_State == cdm::eSwitch::On;
+  return m_State == eSwitch::On;
 }
 void SEOxygenWallPortPressureLoss::SetActive(bool b)
 {
-  m_State = b ? cdm::eSwitch::On : cdm::eSwitch::Off;
+  m_State = b ? eSwitch::On : eSwitch::Off;
 }
 
 void SEOxygenWallPortPressureLoss::Load(const cdm::OxygenWallPortPressureLossData& src, SEOxygenWallPortPressureLoss& dst)
@@ -61,6 +61,6 @@ void SEOxygenWallPortPressureLoss::ToString(std::ostream &str) const
   str << "Anesthesia Machine Action : Oxygen Wall Port Pressure Loss"; 
   if(HasComment())
     str << "\n\tComment: " << m_Comment;
-  str << "\n\tState: " << cdm::eSwitch_Name(m_State);
+  str << "\n\tState: " << eSwitch_Name(m_State);
   str << std::flush;
 }

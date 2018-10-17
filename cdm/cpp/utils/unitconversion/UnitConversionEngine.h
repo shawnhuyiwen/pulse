@@ -18,6 +18,7 @@
 #include "QuantityConversionDescriptor.h"
 #include "QuantityConversionKey.h"
 #include "UnitDimension.h"
+#include <cassert>
 
 class CDM_DECL CUnitConversionEngine
 {

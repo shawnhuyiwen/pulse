@@ -6,7 +6,6 @@
 #include "substance/SESubstancePhysicochemicals.h"
 #include "substance/SESubstanceTissuePharmacokinetics.h"
 #include "properties/SEScalar0To1.h"
-#include "bind/cdm/Substance.pb.h"
 
 SESubstancePharmacokinetics::SESubstancePharmacokinetics(Logger* logger) : Loggable(logger)
 {
@@ -40,44 +39,6 @@ const SEScalar* SESubstancePharmacokinetics::GetScalar(const std::string& name)
     return GetPhysicochemicals().GetScalar(name);  
   // I did not support for getting a specific tissue kinetic scalar due to lack of coffee
   return nullptr;
-}
-
-void SESubstancePharmacokinetics::Load(const cdm::SubstanceData_PharmacokineticsData& src, SESubstancePharmacokinetics& dst)
-{
-  SESubstancePharmacokinetics::Serialize(src, dst);
-}
-void SESubstancePharmacokinetics::Serialize(const cdm::SubstanceData_PharmacokineticsData& src, SESubstancePharmacokinetics& dst)
-{
-  dst.Clear();
-
-  if (src.has_physicochemicals())
-    SESubstancePhysicochemicals::Load(src.physicochemicals(), dst.GetPhysicochemicals());
-
-  SESubstanceTissuePharmacokinetics* fx;
-  for (int i = 0; i < src.tissuekinetics_size(); i++)
-  {
-    const cdm::SubstanceData_TissuePharmacokineticsData& fxData = src.tissuekinetics(i);
-    fx = new SESubstanceTissuePharmacokinetics(fxData.name(), dst.GetLogger());
-    SESubstanceTissuePharmacokinetics::Load(fxData, *fx);
-    dst.m_TissueKinetics[fx->GetName()] = (fx);
-  }
-}
-
-cdm::SubstanceData_PharmacokineticsData* SESubstancePharmacokinetics::Unload(const SESubstancePharmacokinetics& src)
-{
-  if (!src.IsValid())
-    return nullptr;
-  cdm::SubstanceData_PharmacokineticsData* dst = new cdm::SubstanceData_PharmacokineticsData();
-  SESubstancePharmacokinetics::Serialize(src,*dst);
-  return dst;
-}
-void SESubstancePharmacokinetics::Serialize(const SESubstancePharmacokinetics& src, cdm::SubstanceData_PharmacokineticsData& dst)
-{
-  if (src.HasPhysicochemicals())
-    dst.set_allocated_physicochemicals(SESubstancePhysicochemicals::Unload(*src.m_Physicochemicals));
-
-  for (auto itr : src.m_TissueKinetics)
-    dst.mutable_tissuekinetics()->AddAllocated(SESubstanceTissuePharmacokinetics::Unload(*itr.second));
 }
 
 bool SESubstancePharmacokinetics::HasPhysicochemicals() const

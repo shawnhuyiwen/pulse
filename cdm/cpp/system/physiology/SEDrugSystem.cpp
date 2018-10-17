@@ -12,6 +12,7 @@
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarLength.h"
 #include "bind/cdm/Physiology.pb.h"
+#include "io/protobuf/PBPhysiology.h"
 
 SEDrugSystem::SEDrugSystem(Logger* logger) : SESystem(logger)
 {
@@ -66,7 +67,7 @@ void SEDrugSystem::Serialize(const cdm::DrugSystemData& src, SEDrugSystem& dst)
   if (src.has_pulsepressurechange())
     SEScalarPressure::Load(src.pulsepressurechange(), dst.GetPulsePressureChange());
   if (src.has_pupillaryresponse())
-    SEPupillaryResponse::Load(src.pupillaryresponse(), dst.GetPupillaryResponse());
+    PBPhysiology::Load(src.pupillaryresponse(), dst.GetPupillaryResponse());
   if (src.has_respirationratechange())
     SEScalarFrequency::Load(src.respirationratechange(), dst.GetRespirationRateChange());
   if (src.has_sedationlevel())
@@ -96,7 +97,7 @@ void SEDrugSystem::Serialize(const SEDrugSystem& src, cdm::DrugSystemData& dst)
   if (src.HasPulsePressureChange())
     dst.set_allocated_pulsepressurechange(SEScalarPressure::Unload(*src.m_PulsePressureChange));
   if (src.HasPupillaryResponse())
-    dst.set_allocated_pupillaryresponse(SEPupillaryResponse::Unload(*src.m_PupillaryResponse));
+    dst.set_allocated_pupillaryresponse(PBPhysiology::Unload(*src.m_PupillaryResponse));
   if (src.HasRespirationRateChange())
     dst.set_allocated_respirationratechange(SEScalarFrequency::Unload(*src.m_RespirationRateChange));
   if (src.HasSedationLevel())

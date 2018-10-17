@@ -6,7 +6,6 @@
 #include "substance/SESubstanceManager.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalar0To1.h"
-#include "bind/cdm/Compartment.pb.h"
 
 SEGasCompartment::SEGasCompartment(const std::string& name, Logger* logger) : SEFluidCompartment(name, logger)
 {
@@ -17,42 +16,6 @@ SEGasCompartment::~SEGasCompartment()
   
 }
 
-void SEGasCompartment::Load(const cdm::GasCompartmentData& src, SEGasCompartment& dst, SESubstanceManager& subMgr, SECircuitManager* circuits)
-{
-  SEGasCompartment::Serialize(src, dst, subMgr, circuits);
-}
-void SEGasCompartment::Serialize(const cdm::GasCompartmentData& src, SEGasCompartment& dst, SESubstanceManager& subMgr, SECircuitManager* circuits)
-{
-  SEFluidCompartment::Serialize(src.fluidcompartment(), dst, circuits);
-
-  if (src.substancequantity_size() > 0)
-  {
-    for (int i=0; i<src.substancequantity_size(); i++)
-    {
-      const cdm::GasSubstanceQuantityData& d = src.substancequantity(i);
-      SESubstance* sub = subMgr.GetSubstance(d.substancequantity().substance());
-      if (sub == nullptr)
-      {
-        dst.Error("Could not find a substance for " + d.substancequantity().substance());
-        continue;
-      }
-      SEGasSubstanceQuantity::Load(d,dst.CreateSubstanceQuantity(*sub));
-    }
-  }
-}
-
-cdm::GasCompartmentData* SEGasCompartment::Unload(const SEGasCompartment& src)
-{
-  cdm::GasCompartmentData* dst = new cdm::GasCompartmentData();
-  Serialize(src,*dst);
-  return dst;
-}
-void SEGasCompartment::Serialize(const SEGasCompartment& src, cdm::GasCompartmentData& dst)
-{
-  SEFluidCompartment::Serialize(src,*dst.mutable_fluidcompartment());
-  for (SEGasSubstanceQuantity* subQ : src.m_SubstanceQuantities)
-    dst.mutable_substancequantity()->AddAllocated(SEGasSubstanceQuantity::Unload(*subQ));
-}
 
 void SEGasCompartment::StateChange()
 {

@@ -4,7 +4,6 @@
 #include "stdafx.h"
 #include "system/physiology/SEPupillaryResponse.h"
 #include "properties/SEScalarNegative1To1.h"
-#include "bind/cdm/Physiology.pb.h"
 
 SEPupillaryResponse::SEPupillaryResponse(Logger* logger)
 {
@@ -34,37 +33,6 @@ const SEScalar* SEPupillaryResponse::GetScalar(const std::string& name)
   if (name.compare("SizeModifier") == 0)
     return &GetSizeModifier();
   return nullptr;
-}
-
-void SEPupillaryResponse::Load(const cdm::PupillaryResponseData& src, SEPupillaryResponse& dst)
-{
-  SEPupillaryResponse::Serialize(src, dst);
-}
-void SEPupillaryResponse::Serialize(const cdm::PupillaryResponseData& src, SEPupillaryResponse& dst)
-{
-  dst.Clear();
-  if (src.has_reactivitymodifier())
-    SEScalarNegative1To1::Load(src.reactivitymodifier(), dst.GetReactivityModifier());
-  if (src.has_shapemodifier())
-    SEScalarNegative1To1::Load(src.shapemodifier(), dst.GetShapeModifier());
-  if (src.has_sizemodifier())
-    SEScalarNegative1To1::Load(src.sizemodifier(), dst.GetSizeModifier());
-}
-
-cdm::PupillaryResponseData* SEPupillaryResponse::Unload(const SEPupillaryResponse& src)
-{
-  cdm::PupillaryResponseData* dst = new cdm::PupillaryResponseData();
-  SEPupillaryResponse::Serialize(src, *dst);
-  return dst;
-}
-void SEPupillaryResponse::Serialize(const SEPupillaryResponse& src, cdm::PupillaryResponseData& dst)
-{
-  if (src.HasReactivityModifier())
-    dst.set_allocated_reactivitymodifier(SEScalarNegative1To1::Unload(*src.m_ReactivityModifier));
-  if (src.HasShapeModifier())
-    dst.set_allocated_shapemodifier(SEScalarNegative1To1::Unload(*src.m_ShapeModifier));
-  if (src.HasSizeModifier())
-    dst.set_allocated_sizemodifier(SEScalarNegative1To1::Unload(*src.m_SizeModifier));
 }
 
 bool SEPupillaryResponse::HasReactivityModifier() const

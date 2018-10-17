@@ -6,7 +6,6 @@
 #include "circuit/fluid/SEFluidCircuitNode.h"
 #include "compartment/SECompartmentNodes.h"
 #include "substance/SESubstanceTransport.h"
-#include "bind/cdm/Compartment.pb.h"
 
 class SESubstance;
 template<typename EdgeType, typename VertexType, typename CompartmentType> class SEFluidCompartmentLink;
@@ -17,6 +16,7 @@ template<typename EdgeType, typename VertexType, typename CompartmentType> class
 template<FLUID_COMPARTMENT_TEMPLATE>
 class SEFluidCompartment : public SECompartment, public VertexType
 {
+  friend class PBCompartment;//friend the serialization class
   template<typename CompartmentType, typename CompartmentLinkType> friend class SECompartmentGraph;
 protected:
   SEFluidCompartment(const std::string& name, Logger* logger);
@@ -25,11 +25,6 @@ public:
 
   virtual void Clear();
 
-protected:
-  static void Serialize(const cdm::FluidCompartmentData& src, SEFluidCompartment& dst, SECircuitManager* circuits=nullptr);
-  static void Serialize(const SEFluidCompartment& src, cdm::FluidCompartmentData& dst);
-
-public:
   virtual std::string GetName() const { return m_Name; }
 
   virtual const SEScalar* GetScalar(const std::string& name);

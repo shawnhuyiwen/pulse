@@ -5,15 +5,16 @@ package mil.tatrc.physiology.datamodel.substance;
 
 
 import com.kitware.physiology.cdm.Substance.SubstanceData;
+import com.kitware.physiology.cdm.Substance.SubstanceFractionData;
 
 import mil.tatrc.physiology.datamodel.properties.*;
 
-public class SESubstanceFractionAmount
+public class SESubstanceFraction
 {
   protected SEScalar0To1  amount;
   protected SESubstance   substance;
   
-  public SESubstanceFractionAmount(SESubstance s)
+  public SESubstanceFraction(SESubstance s)
   {
     if(s==null)
       throw new RuntimeException("Must provide a valid substance");
@@ -26,26 +27,26 @@ public class SESubstanceFractionAmount
       this.amount.invalidate();
   }
   
-  public void copy(SESubstanceFractionAmount from)
+  public void copy(SESubstanceFraction from)
   {
     this.substance=from.substance;
     if(from.hasAmount())
       this.getAmount().set(from.getAmount());
   }
   
-  public static void load(SubstanceData.FractionAmountData src, SESubstanceFractionAmount dst)
+  public static void load(SubstanceFractionData src, SESubstanceFraction dst)
   {
     dst.reset();
     if(src.hasAmount())
       SEScalar0To1.load(src.getAmount(), dst.getAmount());
   }
-  public static SubstanceData.FractionAmountData unload(SESubstanceFractionAmount src)
+  public static SubstanceFractionData unload(SESubstanceFraction src)
   {
-    SubstanceData.FractionAmountData.Builder dst = SubstanceData.FractionAmountData.newBuilder();
-    SESubstanceFractionAmount.unload(src,dst);
+    SubstanceFractionData.Builder dst = SubstanceFractionData.newBuilder();
+    SESubstanceFraction.unload(src,dst);
     return dst.build();
   }
-  protected static void unload(SESubstanceFractionAmount src, SubstanceData.FractionAmountData.Builder dst)
+  protected static void unload(SESubstanceFraction src, SubstanceFractionData.Builder dst)
   {
     dst.setName(src.substance.getName());
     if(src.hasAmount())

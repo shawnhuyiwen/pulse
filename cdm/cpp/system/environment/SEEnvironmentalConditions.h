@@ -8,7 +8,10 @@ class SESubstanceManager;
 class SESubstanceFraction;
 class SESubstanceConcentration;
 CDM_BIND_DECL(EnvironmentData_ConditionsData)
-#include "bind/cdm/EnvironmentEnums.pb.h"
+
+// Keep enums in sync with appropriate schema/cdm/EnvironmentEnums.proto file !!
+enum class eSurroundingType { NullSurrounding = 0, Air, Water };
+extern const std::string& eSurroundingType_Name(eSurroundingType m);
 
 class CDM_DECL SEEnvironmentalConditions : public Loggable
 {
@@ -36,8 +39,8 @@ public:
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
-  virtual cdm::eEnvironment_SurroundingType GetSurroundingType() const;
-  virtual void SetSurroundingType(cdm::eEnvironment_SurroundingType name);
+  virtual eSurroundingType GetSurroundingType() const;
+  virtual void SetSurroundingType(eSurroundingType name);
 
   virtual bool HasAirDensity() const;
   virtual SEScalarMassPerVolume& GetAirDensity();
@@ -95,7 +98,7 @@ public:
 
 protected:
 
-  cdm::eEnvironment_SurroundingType            m_SurroundingType;
+  eSurroundingType                             m_SurroundingType;
   
   SEScalarMassPerVolume*                       m_AirDensity;
   SEScalarLengthPerTime*                       m_AirVelocity;

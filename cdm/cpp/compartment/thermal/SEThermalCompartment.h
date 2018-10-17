@@ -4,12 +4,12 @@
 #include "compartment/SECompartment.h"
 #include "compartment/SECompartmentNodes.h"
 #include "circuit/thermal/SEThermalCircuitNode.h"
-CDM_BIND_DECL(ThermalCompartmentData);
 class SEThermalCircuitNode;
 class SEThermalCompartmentLink;
 
 class CDM_DECL SEThermalCompartment : public SECompartment
 {
+  friend class PBCompartment;//friend the serialization class
   friend class SECompartmentManager;
   template<typename CompartmentType, typename CompartmentLinkType> friend class SECompartmentGraph;
 protected:
@@ -19,13 +19,6 @@ public:
 
   virtual void Clear();
 
-  static void Load(const cdm::ThermalCompartmentData& src, SEThermalCompartment& dst, SECircuitManager* circuits=nullptr);
-  static cdm::ThermalCompartmentData* Unload(const SEThermalCompartment& src);
-protected:
-  static void Serialize(const cdm::ThermalCompartmentData& src, SEThermalCompartment& dst, SECircuitManager* circuits = nullptr);
-  static void Serialize(const SEThermalCompartment& src, cdm::ThermalCompartmentData& dst);
-
-public:
   virtual const SEScalar* GetScalar(const std::string& name);
 
   virtual bool HasChildren() const { return !m_Children.empty(); }

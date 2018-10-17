@@ -4,6 +4,7 @@
 package mil.tatrc.physiology.datamodel.substance;
 
 import com.kitware.physiology.cdm.Substance.SubstanceData;
+import com.kitware.physiology.cdm.Substance.SubstancePharmacodynamicsData;
 
 import mil.tatrc.physiology.datamodel.properties.*;
 import mil.tatrc.physiology.datamodel.system.physiology.SEPupillaryResponse;
@@ -74,7 +75,7 @@ public class SESubstancePharmacodynamics
     return true;
   }
   
-  public static void load(SubstanceData.PharmacodynamicsData src, SESubstancePharmacodynamics dst)
+  public static void load(SubstancePharmacodynamicsData src, SESubstancePharmacodynamics dst)
   {
     dst.reset();
     
@@ -103,15 +104,15 @@ public class SESubstancePharmacodynamics
     if(src.hasTubularPermeabilityModifier())
       SEScalarNegative1To1.load(src.getTubularPermeabilityModifier(),dst.getTubularPermeabilityModifier());
   }
-  public static SubstanceData.PharmacodynamicsData unload(SESubstancePharmacodynamics src)
+  public static SubstancePharmacodynamicsData unload(SESubstancePharmacodynamics src)
   {
     if(!src.isValid())
       return null;
-    SubstanceData.PharmacodynamicsData.Builder dst = SubstanceData.PharmacodynamicsData.newBuilder();
+    SubstancePharmacodynamicsData.Builder dst = SubstancePharmacodynamicsData.newBuilder();
     unload(src,dst);
     return dst.build();
   }
-  protected static void unload(SESubstancePharmacodynamics src, SubstanceData.PharmacodynamicsData.Builder dst)
+  protected static void unload(SESubstancePharmacodynamics src, SubstancePharmacodynamicsData.Builder dst)
   {
     if(src.hasBronchodilation())
       dst.setBronchodilation(SEScalarNegative1To1.unload(src.getBronchodilation()));

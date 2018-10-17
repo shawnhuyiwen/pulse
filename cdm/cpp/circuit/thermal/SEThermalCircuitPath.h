@@ -4,10 +4,10 @@
 #pragma once
 #include "circuit/SECircuitPath.h"
 #include "circuit/thermal/SEThermalCircuitNode.h"
-CDM_BIND_DECL(ThermalCircuitPathData)
 
 class CDM_DECL SEThermalCircuitPath : public SECircuitPath<THERMAL_CIRCUIT_PATH>
 {
+  friend class PBCircuit;//friend the serialization class
   friend class SECircuitManager;  
 protected:
   SEThermalCircuitPath(SEThermalCircuitNode& src, SEThermalCircuitNode& tgt, const std::string& name);
@@ -16,14 +16,6 @@ public:
 
   virtual void Clear(); //clear memory
 
-  static void Load(const cdm::ThermalCircuitPathData& src, SEThermalCircuitPath& dst);
-  static cdm::ThermalCircuitPathData* Unload(const SEThermalCircuitPath& src);
-protected:
-  static void Serialize(const cdm::ThermalCircuitPathData& src, SEThermalCircuitPath& dst);
-  static void Serialize(const SEThermalCircuitPath& src, cdm::ThermalCircuitPathData& dst);
-
-
-public:
   virtual SEThermalCircuitNode& GetSourceNode() const;
   virtual SEThermalCircuitNode& GetTargetNode() const;
 

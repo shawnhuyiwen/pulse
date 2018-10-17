@@ -117,7 +117,7 @@ void HowToEnvironmentChange()
   // The core temperature follows the skin temperature, and the metabolic rate increases due to shivering.
   SEChangeEnvironmentConditions env(pe->GetSubstanceManager());
   SEEnvironmentalConditions& conditions = env.GetConditions();
-  conditions.SetSurroundingType(cdm::eEnvironment_SurroundingType_Water);
+  conditions.SetSurroundingType(eSurroundingType::Water);
   conditions.GetAirVelocity().SetValue(0, LengthPerTimeUnit::m_Per_s);
   conditions.GetAmbientTemperature().SetValue(10.0, TemperatureUnit::C);
   conditions.GetAtmosphericPressure().SetValue(760., PressureUnit::mmHg);
@@ -144,7 +144,7 @@ void HowToEnvironmentChange()
 
   // The patient is removed from the water and returns to the normal environment. 
   // The skin temperature rises, leading to a subsequent rise in core temperature
-  conditions.SetSurroundingType(cdm::eEnvironment_SurroundingType_Water);
+  conditions.SetSurroundingType(eSurroundingType::Water);
   conditions.GetAirVelocity().SetValue(0.1, LengthPerTimeUnit::m_Per_s);
   conditions.GetAmbientTemperature().SetValue(22.0, TemperatureUnit::C);
   conditions.GetAtmosphericPressure().SetValue(760., PressureUnit::mmHg);

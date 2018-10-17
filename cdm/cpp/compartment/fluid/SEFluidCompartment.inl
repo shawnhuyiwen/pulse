@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "compartment/fluid/SEFluidCompartment.h"
-
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolume.h"
@@ -36,65 +35,6 @@ void SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::Clear()
   DELETE_VECTOR(m_SubstanceQuantities);
   m_Nodes.Clear();
 }
-
-template<FLUID_COMPARTMENT_TEMPLATE>
-void SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::Serialize(const cdm::FluidCompartmentData& src, SEFluidCompartment& dst, SECircuitManager* circuits)
-{
-  SECompartment::Serialize(src.compartment(), dst);
-  // This compartment has children
-  // We will not load any data as those are calculated on demand based on children
-  if (src.compartment().child_size()>0)
-    return;
-  // Now let's see if we are mapped to a circuit node
-  // If we are, the circuit node(s) hold the data, not us
-  else if (src.compartment().node_size()>0)
-  {
-    if (circuits == nullptr)
-    {
-      dst.Error("Compartment is mapped to circuit nodes, but no circuit manager was provided, cannot load");
-      return;
-    }
-    for (int i = 0; i<src.compartment().node_size(); i++)
-    {
-      const std::string name = src.compartment().node(i);
-      SEFluidCircuitNode* node = circuits->GetFluidNode(name);
-      if (node == nullptr)
-        dst.Error("Compartment is mapped to circuit node, " + name + ", but provided circuit manager did not have that node");
-      else
-        dst.MapNode(*node);
-    }
-  }
-  else 
-  {// Only load these if you don't have children or nodes
-    if (src.has_pressure())
-      SEScalarPressure::Load(src.pressure(), dst.GetPressure());
-    if (src.has_volume())
-      SEScalarVolume::Load(src.volume(), dst.GetVolume());
-  }
-}
-template<FLUID_COMPARTMENT_TEMPLATE>
-void SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::Serialize(const SEFluidCompartment& src, cdm::FluidCompartmentData& dst)
-{
-  SECompartment::Serialize(src, *dst.mutable_compartment());
-  for (SEFluidCompartment* child : src.m_FluidChildren)
-    dst.mutable_compartment()->add_child(child->GetName());
-  for (SEFluidCircuitNode* nodes : src.m_Nodes.GetNodes())
-    dst.mutable_compartment()->add_node(nodes->GetName());
-  // Even if you have children or nodes, I am unloading everything, this makes the pba actually usefull...
-  if (src.HasInFlow())
-    dst.set_allocated_inflow(SEScalarVolumePerTime::Unload(src.GetInFlow()));
-  if (src.HasOutFlow())
-    dst.set_allocated_outflow(SEScalarVolumePerTime::Unload(src.GetOutFlow()));
-
-  // Yeah, I know
-  // But, these will only modify member variables if they are being used as temporary variables
-  SEFluidCompartment& mutable_src = const_cast<SEFluidCompartment&>(src);
-  if (src.HasPressure())
-    dst.set_allocated_pressure(SEScalarPressure::Unload(mutable_src.GetPressure()));
-  if (src.HasVolume())
-    dst.set_allocated_volume(SEScalarVolume::Unload(mutable_src.GetVolume()));
-  }
-
 
 template<FLUID_COMPARTMENT_TEMPLATE>
 const SEScalar* SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::GetScalar(const std::string& name)

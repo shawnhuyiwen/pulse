@@ -9,7 +9,7 @@ CDM_BIND_DECL(SubstanceData_FractionAmountData)
 
 class CDM_DECL SESubstanceFraction : public Loggable
 {
-protected:
+  friend class PBSubstance;//friend the serialization class
   friend SEEnvironmentalConditions;// So it can add substances to the manager
 public:
 
@@ -17,14 +17,6 @@ public:
   virtual ~SESubstanceFraction();
 
   virtual void Clear();
-
-  static void Load(const cdm::SubstanceData_FractionAmountData& src, SESubstanceFraction& dst);
-  static cdm::SubstanceData_FractionAmountData* Unload(const SESubstanceFraction& src);
-protected:
-  static void Serialize(const cdm::SubstanceData_FractionAmountData& src, SESubstanceFraction& dst);
-  static void Serialize(const SESubstanceFraction& src, cdm::SubstanceData_FractionAmountData& dst);
-
-public:
 
   virtual bool HasFractionAmount() const;
   virtual SEScalar0To1& GetFractionAmount();

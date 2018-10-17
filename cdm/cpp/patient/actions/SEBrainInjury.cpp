@@ -3,13 +3,19 @@
 
 #include "stdafx.h"
 #include "patient/actions/SEBrainInjury.h"
-#include "bind/cdm/PatientActions.pb.h"
 #include "properties/SEScalar0To1.h"
+#include "bind/cdm/PatientActions.pb.h"
+#include "bind/cdm/PatientActionEnums.pb.h"
+
+const std::string& eBrainInjury_Type_Name(eBrainInjury_Type m)
+{
+  return cdm::eBrainInjury_Type_Name((cdm::eBrainInjury_Type)m);
+}
 
 SEBrainInjury::SEBrainInjury() : SEPatientAction()
 {
   m_Severity=nullptr;
-  m_Type = cdm::eBrainInjury_Type_Diffuse;
+  m_Type = eBrainInjury_Type::Diffuse;
 }
 
 SEBrainInjury::~SEBrainInjury()
@@ -22,7 +28,7 @@ void SEBrainInjury::Clear()
   
   SEPatientAction::Clear();
   SAFE_DELETE(m_Severity);
-  m_Type = cdm::eBrainInjury_Type_Diffuse;
+  m_Type = eBrainInjury_Type::Diffuse;
 }
 
 bool SEBrainInjury::IsValid() const
@@ -44,7 +50,7 @@ void SEBrainInjury::Serialize(const cdm::BrainInjuryData& src, SEBrainInjury& ds
   SEPatientAction::Serialize(src.patientaction(), dst);
   if (src.has_severity())
     SEScalar0To1::Load(src.severity(), dst.GetSeverity());
-  dst.SetType(src.type());
+  dst.SetType((eBrainInjury_Type)src.type());
 }
 
 cdm::BrainInjuryData* SEBrainInjury::Unload(const SEBrainInjury& src)
@@ -58,7 +64,7 @@ void SEBrainInjury::Serialize(const SEBrainInjury& src, cdm::BrainInjuryData& ds
   SEPatientAction::Serialize(src, *dst.mutable_patientaction());
   if (src.HasSeverity())
     dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
-  dst.set_type(src.m_Type);
+  dst.set_type((cdm::eBrainInjury_Type)src.m_Type);
 }
 
 bool SEBrainInjury::HasSeverity() const
@@ -78,11 +84,11 @@ double SEBrainInjury::GetSeverity() const
   return m_Severity->GetValue();
 }
 
-cdm::eBrainInjury_Type SEBrainInjury::GetType() const
+eBrainInjury_Type SEBrainInjury::GetType() const
 {
   return m_Type;
 }
-void SEBrainInjury::SetType(cdm::eBrainInjury_Type Type)
+void SEBrainInjury::SetType(eBrainInjury_Type Type)
 {
   m_Type = Type;
 }
@@ -92,6 +98,6 @@ void SEBrainInjury::ToString(std::ostream &str) const
   if(HasComment())
     str<<"\n\tComment: "<<m_Comment;
   str << "\n\tSeverity: "; HasSeverity() ? str << *m_Severity : str << "Not Set";
-  str << "\n\tType: "<< cdm::eBrainInjury_Type_Name(GetType());
+  str << "\n\tType: "<< eBrainInjury_Type_Name(GetType());
   str << std::flush;
 }

@@ -76,7 +76,7 @@ void ECG::Initialize()
     Interpolated.Track("Interpolated_ECG", interpolated_s[i], interpolated_mV[i]);
   Interpolated.WriteTrackToFile("InterpolatedECG.csv");
 */
-  m_interpolator->SetLeadElectricPotential(cdm::eElectroCardioGram_WaveformLead_Lead3, GetLead3ElectricPotential());
+  m_interpolator->SetLeadElectricPotential(eElectroCardioGram_WaveformLead::Lead3, GetLead3ElectricPotential());
 }
 
 void ECG::Load(const pulse::ElectroCardioGramData& src, ECG& dst)
@@ -90,7 +90,7 @@ void ECG::Serialize(const pulse::ElectroCardioGramData& src, ECG& dst)
   dst.m_heartRhythmTime_s = src.heartrythmtime_s();
   dst.m_heartRhythmPeriod_s = src.heartrythmperiod_s();
   SEElectroCardioGramWaveformInterpolator::Load(src.waveforms(),*dst.m_interpolator);
-  dst.m_interpolator->SetLeadElectricPotential(cdm::eElectroCardioGram_WaveformLead_Lead3, dst.GetLead3ElectricPotential());
+  dst.m_interpolator->SetLeadElectricPotential(eElectroCardioGram_WaveformLead::Lead3, dst.GetLead3ElectricPotential());
 }
 
 pulse::ElectroCardioGramData* ECG::Unload(const ECG& src)
@@ -148,11 +148,11 @@ void ECG::Process()
     m_heartRhythmPeriod_s = 1/m_data.GetCardiovascular().GetHeartRate(FrequencyUnit::Per_s);  
     // Currently we  have one data set for all currently supported Heart Rhythms
     // Eventually we will support multiple rhythmic data
-    if(m_data.GetCardiovascular().GetHeartRhythm() == cdm::eHeartRhythm::NormalSinus)
-      m_interpolator->StartNewCycle(cdm::eHeartRhythm::NormalSinus);
+    if(m_data.GetCardiovascular().GetHeartRhythm() == eHeartRhythm::NormalSinus)
+      m_interpolator->StartNewCycle(eHeartRhythm::NormalSinus);
     else
     {
-      m_ss << m_data.GetCardiovascular().GetHeartRhythm() << " is not a supported Heart Rhythm for ECG";
+      m_ss << eHeartRhythm_Name(m_data.GetCardiovascular().GetHeartRhythm()) << " is not a supported Heart Rhythm for ECG";
       Error(m_ss);
     }
   }

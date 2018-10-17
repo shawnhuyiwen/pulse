@@ -18,7 +18,7 @@ void PulseEngineTest::ReadScenarios(const std::string& rptDirectory)
   std::string testName = "ReadScenarios";
   m_Logger->ResetLogFile(rptDirectory + "/" + testName + ".log");
   SESubstanceManager subMgr(m_Logger);
-  subMgr.LoadSubstanceDirectory();
+  subMgr.LoadSubstances();
   PulseScenario scenario(subMgr);
 
   std::string dir = GetCurrentWorkingDirectory();

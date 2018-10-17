@@ -170,12 +170,13 @@ JNIEXPORT jstring JNICALL Java_mil_tatrc_physiology_pulse_engine_PulseEngine_nat
   engineJNI->jniEnv = env; 
   engineJNI->jniObj = obj;
   const char* pStateFilename = env->GetStringUTFChars(stateFilename, JNI_FALSE);
-  std::unique_ptr<google::protobuf::Message> data = engineJNI->eng->SaveState(pStateFilename);
+  google::protobuf::Message* data = (google::protobuf::Message*)engineJNI->eng->SaveState(pStateFilename);
   env->ReleaseStringUTFChars(stateFilename, pStateFilename);
 
   std::string content;
   google::protobuf::TextFormat::PrintToString(*data, &content);
   jstring state = env->NewStringUTF(content.c_str());
+  delete data;
   return state;
 }
 
@@ -556,7 +557,7 @@ void PulseEngineJNI::ForwardFatal(const std::string&  msg, const std::string&  o
   throw PhysiologyEngineException(err);
 }
 
-void PulseEngineJNI::HandlePatientEvent(cdm::ePatient_Event type, bool active, const SEScalarTime* time)
+void PulseEngineJNI::HandlePatientEvent(ePatient_Event type, bool active, const SEScalarTime* time)
 {
   if (jniEnv != nullptr && jniObj != nullptr)
   {
@@ -566,7 +567,7 @@ void PulseEngineJNI::HandlePatientEvent(cdm::ePatient_Event type, bool active, c
     jniEnv->CallVoidMethod(jniObj, m, 0, type, active, time != nullptr ? time->GetValue(TimeUnit::s) : 0);
   }
 }
-void PulseEngineJNI::HandleAnesthesiaMachineEvent(cdm::eAnesthesiaMachine_Event type, bool active, const SEScalarTime* time)
+void PulseEngineJNI::HandleAnesthesiaMachineEvent(eAnesthesiaMachine_Event type, bool active, const SEScalarTime* time)
 {
   if (jniEnv != nullptr && jniObj != nullptr)
   {

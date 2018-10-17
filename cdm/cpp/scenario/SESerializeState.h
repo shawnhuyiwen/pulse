@@ -3,8 +3,11 @@
 
 #pragma once
 #include "scenario/SEAction.h"
-#include "bind/cdm/ActionEnums.pb.h"
 CDM_BIND_DECL(SerializeStateData)
+
+// Keep enums in sync with appropriate schema/cdm/ActionEnums.proto file !!
+enum class eSerialization_Type { Save = 0, Load };
+extern const std::string& eSerialization_Type_Name(eSerialization_Type m);
 
 class CDM_DECL SESerializeState : public SEAction
 {
@@ -27,8 +30,8 @@ public:
 
   virtual void ToString(std::ostream &str) const;
 
-  virtual cdm::eSerialization_Type GetType() const;
-  virtual void SetType(cdm::eSerialization_Type t);
+  virtual eSerialization_Type GetType() const;
+  virtual void SetType(eSerialization_Type t);
 
   virtual bool HasFilename() const;
   virtual std::string GetFilename() const;
@@ -37,6 +40,6 @@ public:
 
 protected:
 
-  std::string              m_Filename;
-  cdm::eSerialization_Type m_Type;
-};                  
+  std::string         m_Filename;
+  eSerialization_Type m_Type;
+};

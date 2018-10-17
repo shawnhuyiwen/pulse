@@ -3,12 +3,12 @@
 
 #pragma once
 #include "compartment/SECompartmentLink.h"
-CDM_BIND_DECL(ThermalCompartmentLinkData);
 class SEThermalCompartment;
 class SEThermalCircuitPath;
 
 class CDM_DECL SEThermalCompartmentLink : public SECompartmentLink
 {
+  friend class PBCompartment;//friend the serialization class
   friend class SECompartmentManager;
 protected:
   SEThermalCompartmentLink(SEThermalCompartment& src, SEThermalCompartment & tgt, const std::string& name);
@@ -17,13 +17,6 @@ public:
 
   virtual void Clear();
   
-  static void Load(const cdm::ThermalCompartmentLinkData& src, SEThermalCompartmentLink& dst, SECircuitManager* circuits=nullptr);
-  static cdm::ThermalCompartmentLinkData* Unload(const SEThermalCompartmentLink& src);
-protected:
-  static void Serialize(const cdm::ThermalCompartmentLinkData& src, SEThermalCompartmentLink& dst, SECircuitManager* circuits = nullptr);
-  static void Serialize(const SEThermalCompartmentLink& src, cdm::ThermalCompartmentLinkData& dst);
-  
-public:
   virtual const SEScalar* GetScalar(const std::string& name);
 
   virtual bool HasHeatTransferRate() const;

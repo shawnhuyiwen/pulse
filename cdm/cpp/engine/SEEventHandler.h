@@ -2,8 +2,8 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "bind/cdm/PatientEnums.pb.h"
-#include "bind/cdm/AnesthesiaMachineEnums.pb.h"
+#include "patient/SEPatient.h"
+#include "system/equipment/anesthesiamachine/SEAnesthesiaMachine.h"
 
 class CDM_DECL SEEventHandler
 {
@@ -11,6 +11,6 @@ public:
   SEEventHandler() {};
   virtual ~SEEventHandler(){};
 
-  virtual void HandlePatientEvent(cdm::ePatient_Event type, bool active, const SEScalarTime* time = nullptr)=0;
-  virtual void HandleAnesthesiaMachineEvent(cdm::eAnesthesiaMachine_Event type, bool active, const SEScalarTime* time = nullptr) = 0;
+  virtual void HandlePatientEvent(ePatient_Event type, bool active, const SEScalarTime* time = nullptr)=0;
+  virtual void HandleAnesthesiaMachineEvent(eAnesthesiaMachine_Event type, bool active, const SEScalarTime* time = nullptr) = 0;
 };

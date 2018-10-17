@@ -8,10 +8,10 @@ class SEThermalCompartment;
 class SETissueCompartment;
 class SESubstance;
 class SECircuitManager;
-CDM_BIND_DECL(CompartmentData);
 
 class CDM_DECL SECompartment : public Loggable
 {
+  friend class PBCompartment;//friend the serialization class
 protected:
   SECompartment(const std::string& name, Logger* logger);
 public: 
@@ -19,11 +19,6 @@ public:
 
   virtual void Clear();
 
-protected:
-  static void Serialize(const cdm::CompartmentData& src, SECompartment& dst);
-  static void Serialize(const SECompartment& src, cdm::CompartmentData& dst);
-
-public:
   virtual std::string GetName() const;
 
   virtual const SEScalar* GetScalar(const std::string& name) = 0;

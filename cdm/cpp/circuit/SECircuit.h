@@ -5,12 +5,13 @@
 #include "circuit/SECircuitNode.h"
 #include "circuit/SECircuitPath.h"
 
-#define CIRCUIT_TEMPLATE typename CircuitBindType, typename NodeType, typename CircuitNodeBindType, typename PathType, typename CircuitPathBindType
-#define CIRCUIT_TYPES CircuitBindType,NodeType,CircuitNodeBindType,PathType,CircuitPathBindType
+#define CIRCUIT_TEMPLATE typename NodeType, typename PathType
+#define CIRCUIT_TYPES NodeType,PathType
 
 template<CIRCUIT_TEMPLATE>
 class SECircuit : public Loggable
 {
+  friend class PBCircuit;//friend the serialization class
 public:
 
   SECircuit(const std::string& name, Logger* logger);
@@ -18,13 +19,6 @@ public:
 
   virtual void Clear(); //clear memory
 
-  static void Load(const CircuitBindType& src, SECircuit& dst, const std::map<std::string, NodeType*>& nodes, const std::map<std::string, PathType*>& paths);
-  static CircuitBindType* Unload(const SECircuit& src);
-protected:
-  static void Serialize(const CircuitBindType& src, SECircuit& dst, const std::map<std::string, NodeType*>& nodes, const std::map<std::string, PathType*>& paths);
-  static void Serialize(const SECircuit& src, CircuitBindType& dst);
-
-public:
   virtual std::string GetName() const;
 
   virtual bool HasReferenceNode() const;

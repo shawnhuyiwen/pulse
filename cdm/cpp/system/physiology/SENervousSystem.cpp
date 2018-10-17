@@ -8,6 +8,7 @@
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEScalarLength.h"
 #include "bind/cdm/Physiology.pb.h"
+#include "io/protobuf/PBPhysiology.h"
 
 SENervousSystem::SENervousSystem(Logger* logger) : SESystem(logger)
 {
@@ -87,9 +88,9 @@ void SENervousSystem::Serialize(const cdm::NervousSystemData& src, SENervousSyst
   if (src.has_chemoreceptorheartelastancescale())
     SEScalar::Load(src.chemoreceptorheartelastancescale(), dst.GetChemoreceptorHeartElastanceScale());
   if (src.has_lefteyepupillaryresponse())
-    SEPupillaryResponse::Load(src.lefteyepupillaryresponse(), dst.GetLeftEyePupillaryResponse());
+    PBPhysiology::Load(src.lefteyepupillaryresponse(), dst.GetLeftEyePupillaryResponse());
   if (src.has_righteyepupillaryresponse())
-    SEPupillaryResponse::Load(src.righteyepupillaryresponse(), dst.GetRightEyePupillaryResponse());
+    PBPhysiology::Load(src.righteyepupillaryresponse(), dst.GetRightEyePupillaryResponse());
 }
 
 cdm::NervousSystemData* SENervousSystem::Unload(const SENervousSystem& src)
@@ -113,9 +114,9 @@ void SENervousSystem::Serialize(const SENervousSystem& src, cdm::NervousSystemDa
   if (src.HasChemoreceptorHeartElastanceScale())
     dst.set_allocated_chemoreceptorheartelastancescale(SEScalar::Unload(*src.m_ChemoreceptorHeartElastanceScale));
   if (src.HasLeftEyePupillaryResponse())
-    dst.set_allocated_lefteyepupillaryresponse(SEPupillaryResponse::Unload(*src.m_LeftEyePupillaryResponse));
+    dst.set_allocated_lefteyepupillaryresponse(PBPhysiology::Unload(*src.m_LeftEyePupillaryResponse));
   if (src.HasRightEyePupillaryResponse())
-    dst.set_allocated_righteyepupillaryresponse(SEPupillaryResponse::Unload(*src.m_RightEyePupillaryResponse));
+    dst.set_allocated_righteyepupillaryresponse(PBPhysiology::Unload(*src.m_RightEyePupillaryResponse));
 }
 
 bool SENervousSystem::HasBaroreceptorHeartRateScale() const

@@ -25,18 +25,18 @@ protected:
 
 public:
 
-  virtual cdm::eSwitch GetState() const { return m_State; }
-  virtual void SetState(cdm::eSwitch s) { m_State = (s == cdm::eSwitch::NullSwitch) ? cdm::eSwitch::Off : s; }
+  virtual eSwitch GetState() const { return m_State; }
+  virtual void SetState(eSwitch s) { m_State = (s == eSwitch::NullSwitch) ? eSwitch::Off : s; }
 
-  virtual cdm::eSide GetSide() const;
-  virtual void SetSide(cdm::eSide LeftOrRight);
+  virtual eSide GetSide() const;
+  virtual void SetSide(eSide LeftOrRight);
   virtual bool HasSide() const;
   virtual void InvalidateSide();
 
   virtual void ToString(std::ostream &str) const;
 
 protected:
-  cdm::eSide m_Side;
-  cdm::eSwitch m_State;
+  eSide m_Side;
+  eSwitch m_State;
  
 };   

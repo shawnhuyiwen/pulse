@@ -7,7 +7,7 @@ import com.kitware.physiology.cdm.Enums.eSwitch;
 
 import mil.tatrc.physiology.datamodel.properties.SEScalar0To1;
 import mil.tatrc.physiology.datamodel.substance.SESubstance;
-import mil.tatrc.physiology.datamodel.substance.SESubstanceFractionAmount;
+import mil.tatrc.physiology.datamodel.substance.SESubstanceFraction;
 import mil.tatrc.physiology.datamodel.substance.SESubstanceManager;
 
 public class SEAnesthesiaMachineChamber 

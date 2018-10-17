@@ -3,7 +3,9 @@
 
 #pragma once
 CDM_BIND_DECL(DecimalFormatData)
-#include "bind/cdm/ScenarioEnums.pb.h"
+
+enum class eDecimalFormat_Type { SystemFormatting = 0, DefaultFloat, FixedMantissa, SignificantDigits };
+extern const std::string& eDecimalFormat_Type_Name(eDecimalFormat_Type m);
 
 class CDM_DECL SEDecimalFormat
 {
@@ -24,13 +26,13 @@ public:
   void SetPrecision(std::streamsize p);
   std::streamsize GetPrecision();
 
-  void SetNotation(cdm::eDecimalFormat_Type n);
-  cdm::eDecimalFormat_Type GetNotation();
+  void SetNotation(eDecimalFormat_Type n);
+  eDecimalFormat_Type GetNotation();
 
   void SetStream(std::ofstream& s);
 
 protected:
-  std::streamsize               m_Precision;
-  cdm::eDecimalFormat_Type m_Notation;
+  std::streamsize     m_Precision;
+  eDecimalFormat_Type m_Notation;
 
 };

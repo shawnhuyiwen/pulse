@@ -23,8 +23,8 @@ message EnvironmentData
     Scalar0To1Data                            RelativeHumidity                 = 9; /**<< @brief Local ambient ratio of the partial pressure of water vapor to the equilibrium vapor pressure of water at the same temperature. */
     ScalarTemperatureData                     RespirationAmbientTemperature    = 10;/**<< @brief Local ambient temperature of the surrounding air that is inhaled. */
 
-    repeated SubstanceData.FractionAmountData AmbientGas                       = 11;/**<< @brief Break down of the gasses in the environment, fractions must add up to 1. */                  
-    repeated SubstanceData.ConcentrationData  AmbientAerosol                   = 12;/**<< @brief Break down of the aerosolized solid/liquid substances in the environment. */
+    repeated SubstanceFractionData            AmbientGas                       = 11;/**<< @brief Break down of the gasses in the environment, fractions must add up to 1. */                  
+    repeated SubstanceConcentrationData       AmbientAerosol                   = 12;/**<< @brief Break down of the aerosolized solid/liquid substances in the environment. */
   }
   
   message ActiveConditioningData

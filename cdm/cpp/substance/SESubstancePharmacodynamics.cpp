@@ -6,7 +6,6 @@
 #include "system/physiology/SEPupillaryResponse.h"
 #include "properties/SEScalarNegative1To1.h"
 #include "properties/SEScalarMassPerVolume.h"
-#include "bind/cdm/Substance.pb.h"
 
 SESubstancePharmacodynamics::SESubstancePharmacodynamics(Logger* logger) : Loggable(logger)
 {
@@ -100,77 +99,6 @@ const SEScalar* SESubstancePharmacodynamics::GetScalar(const std::string& name)
     return &GetTubularPermeabilityModifier();
 
   return GetPupillaryResponse().GetScalar(name);
-}
-
-void SESubstancePharmacodynamics::Load(const cdm::SubstanceData_PharmacodynamicsData& src, SESubstancePharmacodynamics& dst)
-{
-  SESubstancePharmacodynamics::Serialize(src, dst);
-  dst.CalculateDerived();
-}
-void SESubstancePharmacodynamics::Serialize(const cdm::SubstanceData_PharmacodynamicsData& src, SESubstancePharmacodynamics& dst)
-{
-  dst.Clear();
-
-  if (src.has_bronchodilation())
-    SEScalarNegative1To1::Load(src.bronchodilation(), dst.GetBronchodilation());
-  if (src.has_diastolicpressuremodifier())
-    SEScalarNegative1To1::Load(src.diastolicpressuremodifier(), dst.GetDiastolicPressureModifier());
-  if (src.has_ec50())
-    SEScalarMassPerVolume::Load(src.ec50(), dst.GetEC50());
-  if (src.has_emaxshapeparameter())
-    SEScalar::Load(src.emaxshapeparameter(), dst.GetEMaxShapeParameter());
-  if (src.has_heartratemodifier())
-    SEScalarNegative1To1::Load(src.heartratemodifier(), dst.GetHeartRateModifier());
-  if (src.has_neuromuscularblock())
-    SEScalarNegative1To1::Load(src.neuromuscularblock(), dst.GetNeuromuscularBlock());
-  if (src.has_pupillaryresponse())
-    SEPupillaryResponse::Load(src.pupillaryresponse(), dst.GetPupillaryResponse());
-  if (src.has_respirationratemodifier())
-    SEScalarNegative1To1::Load(src.respirationratemodifier(), dst.GetRespirationRateModifier());
-  if (src.has_sedation())
-    SEScalarNegative1To1::Load(src.sedation(), dst.GetSedation());
-  if (src.has_systolicpressuremodifier())
-    SEScalarNegative1To1::Load(src.systolicpressuremodifier(), dst.GetSystolicPressureModifier());
-  if (src.has_tidalvolumemodifier())
-    SEScalarNegative1To1::Load(src.tidalvolumemodifier(), dst.GetTidalVolumeModifier());
-  if (src.has_tubularpermeabilitymodifier())
-    SEScalarNegative1To1::Load(src.tubularpermeabilitymodifier(), dst.GetTubularPermeabilityModifier());
-}
-
-cdm::SubstanceData_PharmacodynamicsData* SESubstancePharmacodynamics::Unload(const SESubstancePharmacodynamics& src)
-{
-  if (!src.IsValid())
-    return nullptr;
-  cdm::SubstanceData_PharmacodynamicsData* dst = new cdm::SubstanceData_PharmacodynamicsData();
-  SESubstancePharmacodynamics::Serialize(src,*dst);
-  return dst;
-}
-void SESubstancePharmacodynamics::Serialize(const SESubstancePharmacodynamics& src, cdm::SubstanceData_PharmacodynamicsData& dst)
-{
-  if (src.HasBronchodilation())
-    dst.set_allocated_bronchodilation(SEScalarNegative1To1::Unload(*src.m_Bronchodilation));
-  if (src.HasDiastolicPressureModifier())
-    dst.set_allocated_diastolicpressuremodifier(SEScalarNegative1To1::Unload(*src.m_DiastolicPressureModifier));
-  if (src.HasEC50())
-    dst.set_allocated_ec50(SEScalarMassPerVolume::Unload(*src.m_EC50));
-  if (src.HasEMaxShapeParameter())
-    dst.set_allocated_emaxshapeparameter(SEScalar::Unload(*src.m_EMaxShapeParameter));
-  if (src.HasHeartRateModifier())
-    dst.set_allocated_heartratemodifier(SEScalarNegative1To1::Unload(*src.m_HeartRateModifier));
-  if (src.HasNeuromuscularBlock())
-    dst.set_allocated_neuromuscularblock(SEScalarNegative1To1::Unload(*src.m_NeuromuscularBlock));
-  if (src.HasPupillaryResponse())
-    dst.set_allocated_pupillaryresponse(SEPupillaryResponse::Unload(*src.m_PupillaryResponse));
-  if (src.HasRespirationRateModifier())
-    dst.set_allocated_respirationratemodifier(SEScalarNegative1To1::Unload(*src.m_RespirationRateModifier));
-  if (src.HasSedation())
-    dst.set_allocated_sedation(SEScalarNegative1To1::Unload(*src.m_Sedation));
-  if (src.HasSystolicPressureModifier())
-    dst.set_allocated_systolicpressuremodifier(SEScalarNegative1To1::Unload(*src.m_SystolicPressureModifier));
-  if (src.HasTidalVolumeModifier())
-    dst.set_allocated_tidalvolumemodifier(SEScalarNegative1To1::Unload(*src.m_TidalVolumeModifier));
-  if (src.HasTubularPermeabilityModifier())
-    dst.set_allocated_tubularpermeabilitymodifier(SEScalarNegative1To1::Unload(*src.m_TubularPermeabilityModifier));
 }
 
 void SESubstancePharmacodynamics::CalculateDerived()

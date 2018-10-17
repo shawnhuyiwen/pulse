@@ -5,7 +5,59 @@
 class SEEventHandler;
 class SENutrition;
 CDM_BIND_DECL(PatientData)
-#include "bind/cdm/PatientEnums.pb.h"
+
+// Keep enums in sync with appropriate schema/cdm/PatientEnums.proto file !!
+enum class ePatient_Sex { Male = 0, Female };
+extern const std::string& ePatient_Sex_Name(ePatient_Sex m);
+
+// Keep enums in sync with appropriate schema/cdm/PatientEnums.proto file !!
+enum class ePatient_Event
+{
+  Antidiuresis = 0,
+  Asystole = 1,
+  Bradycardia = 2,
+  Bradypnea = 3,
+  BrainOxygenDeficit = 4,
+  CardiacArrest = 5,
+  CardiogenicShock = 6,
+  CriticalBrainOxygenDeficit = 7,
+  Dehydration = 8,
+  Diuresis = 9,
+  Fasciculation = 10,
+  Fatigue = 11,
+  FunctionalIncontinence = 12,
+  Hypercapnia = 13,
+  Hyperglycemia = 14,
+  Hyperthermia = 15,
+  Hypoglycemia = 16,
+  Hypothermia = 17,
+  Hypoxia = 18,
+  HypovolemicShock = 19,
+  IntracranialHypertension = 20,
+  IntracranialHypotension = 21,
+  IrreversibleState = 22,
+  Ketoacidosis = 23,
+  LacticAcidosis = 24,
+  MaximumPulmonaryVentilationRate = 25,
+  MetabolicAcidosis = 26,
+  MetabolicAlkalosis = 27,
+  MildAcuteRespiratoryDistress = 28,
+  ModerateAcuteRespiratoryDistress = 29,
+  MyocardiumOxygenDeficit = 30,
+  Natriuresis = 31,
+  NutritionDepleted = 32,
+  PulselessRhythm = 33,
+  RenalHypoperfusion = 34,
+  RespiratoryAcidosis = 35,
+  RespiratoryAlkalosis = 36,
+  StartOfCardiacCycle = 37,
+  StartOfExhale = 38,
+  StartOfInhale = 39,
+  SevereAcuteRespiratoryDistress = 40,
+  Tachycardia = 41,
+  Tachypnea = 42
+};
+extern const std::string& ePatient_Event_Name(ePatient_Event m);
 
 class CDM_DECL SEPatient : public Loggable
 {
@@ -37,10 +89,10 @@ public:
   */
   virtual const SEScalar* GetScalar(const std::string& name);
 
-  virtual const std::map<cdm::ePatient_Event, bool>& GetEventStates() const { return m_EventState; }
-  virtual void SetEvent(cdm::ePatient_Event type, bool active, const SEScalarTime& time);
-  virtual bool IsEventActive(cdm::ePatient_Event state) const;
-  virtual double GetEventDuration(cdm::ePatient_Event type, const TimeUnit& unit) const;
+  virtual const std::map<ePatient_Event, bool>& GetEventStates() const { return m_EventState; }
+  virtual void SetEvent(ePatient_Event type, bool active, const SEScalarTime& time);
+  virtual bool IsEventActive(ePatient_Event state) const;
+  virtual double GetEventDuration(ePatient_Event type, const TimeUnit& unit) const;
   virtual void UpdateEvents(const SEScalarTime& timeStep);
   /** @name ForwardEvents
    *  @brief - Set a callback class to invoke when any event changes
@@ -56,8 +108,8 @@ public:
   virtual bool HasName() const;
   virtual void InvalidateName();
 
-  virtual cdm::ePatient_Sex GetSex() const;
-  virtual void SetSex(cdm::ePatient_Sex sex);
+  virtual ePatient_Sex GetSex() const;
+  virtual void SetSex(ePatient_Sex sex);
   
   virtual bool HasAge() const;
   virtual SEScalarTime& GetAge();
@@ -165,13 +217,13 @@ public:
 
 protected:
 
-  std::stringstream          m_ss;
-  mutable SEEventHandler*    m_EventHandler;
-  std::map<cdm::ePatient_Event, bool>   m_EventState;
-  std::map<cdm::ePatient_Event, double> m_EventDuration_s;
+  std::stringstream                m_ss;
+  mutable SEEventHandler*          m_EventHandler;
+  std::map<ePatient_Event, bool>   m_EventState;
+  std::map<ePatient_Event, double> m_EventDuration_s;
 
   std::string                m_Name;
-  cdm::ePatient_Sex     m_Sex;
+  ePatient_Sex               m_Sex;
   SEScalarTime*              m_Age;
   SEScalarMass*              m_Weight;
   SEScalarLength*            m_Height;

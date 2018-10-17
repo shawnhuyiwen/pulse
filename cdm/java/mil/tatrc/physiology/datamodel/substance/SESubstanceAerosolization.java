@@ -6,6 +6,7 @@ package mil.tatrc.physiology.datamodel.substance;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.kitware.physiology.cdm.Substance.SubstanceAerosolizationData;
 import com.kitware.physiology.cdm.Substance.SubstanceData;
 
 import mil.tatrc.physiology.datamodel.properties.*;
@@ -39,7 +40,7 @@ public class SESubstanceAerosolization
     return true;
   }
   
-  public static void load(SubstanceData.AerosolizationData src, SESubstanceAerosolization dst)
+  public static void load(SubstanceAerosolizationData src, SESubstanceAerosolization dst)
   {
     dst.reset();
 
@@ -50,15 +51,15 @@ public class SESubstanceAerosolization
     if(src.hasParticulateSizeDistribution())
       SEHistogramFractionVsLength.load(src.getParticulateSizeDistribution(),dst.getParticulateSizeDistribution());
   }
-  public static SubstanceData.AerosolizationData unload(SESubstanceAerosolization src)
+  public static SubstanceAerosolizationData unload(SESubstanceAerosolization src)
   {
     if(!src.isValid())
       return null;
-    SubstanceData.AerosolizationData.Builder dst = SubstanceData.AerosolizationData.newBuilder();
+    SubstanceAerosolizationData.Builder dst = SubstanceAerosolizationData.newBuilder();
     unload(src,dst);
     return dst.build();
   }
-  protected static void unload(SESubstanceAerosolization src, SubstanceData.AerosolizationData.Builder dst)
+  protected static void unload(SESubstanceAerosolization src, SubstanceAerosolizationData.Builder dst)
   {
     if(src.hasBronchioleModifier())
       dst.setBronchioleModifier(SEScalarNegative1To1.unload(src.getBronchioleModifier()));

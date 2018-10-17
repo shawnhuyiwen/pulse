@@ -4,11 +4,17 @@
 #include "stdafx.h"
 #include "scenario/SESerializeState.h"
 #include "bind/cdm/Actions.pb.h"
+#include "bind/cdm/ActionEnums.pb.h"
+
+const std::string& eSerialization_Type_Name(eSerialization_Type m)
+{
+  return cdm::eSerialization_Type_Name((cdm::eSerialization_Type)m);
+}
 
 SESerializeState::SESerializeState() : SEAction()
 {
   m_Filename="";
-  m_Type = cdm::eSerialization_Type_Save;
+  m_Type = eSerialization_Type::Save;
 }
 
 SESerializeState::~SESerializeState()
@@ -20,7 +26,7 @@ void SESerializeState::Clear()
 {
   SEAction::Clear();
   m_Filename = "";
-  m_Type = cdm::eSerialization_Type_Save;
+  m_Type = eSerialization_Type::Save;
 }
 
 bool SESerializeState::IsValid() const
@@ -35,7 +41,7 @@ void SESerializeState::Load(const cdm::SerializeStateData& src, SESerializeState
 void SESerializeState::Serialize(const cdm::SerializeStateData& src, SESerializeState& dst)
 {
   dst.Clear();
-  dst.SetType(src.type());
+  dst.SetType((eSerialization_Type)src.type());
   dst.SetFilename(src.filename());
 }
 
@@ -47,7 +53,7 @@ cdm::SerializeStateData* SESerializeState::Unload(const SESerializeState& src)
 }
 void SESerializeState::Serialize(const SESerializeState& src, cdm::SerializeStateData& dst)
 {
-  dst.set_type(src.m_Type);
+  dst.set_type((cdm::eSerialization_Type)src.m_Type);
   if (src.HasFilename())
     dst.set_filename(src.m_Filename);
 }
@@ -57,15 +63,15 @@ void SESerializeState::ToString(std::ostream &str) const
 {  
   if(HasComment())
     str<<"\n\tComment : "<<m_Comment;
-  str << "\n\tType : " << cdm::eSerialization_Type_Name(m_Type);
+  str << "\n\tType : " << eSerialization_Type_Name(m_Type);
   str << "\n\tFilename : " << m_Filename;
 }
 
-cdm::eSerialization_Type SESerializeState::GetType() const
+eSerialization_Type SESerializeState::GetType() const
 {
   return m_Type;
 }
-void SESerializeState::SetType(cdm::eSerialization_Type Type)
+void SESerializeState::SetType(eSerialization_Type Type)
 {
   m_Type = Type;
 }

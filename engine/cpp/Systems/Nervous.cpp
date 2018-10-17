@@ -252,24 +252,24 @@ void Nervous::CheckBrainStatus()
   if (icp_mmHg > 25.0) // \cite steiner2006monitoring
   {
     /// \event Patient: Intracranial Hypertension. The intracranial pressure has risen above 25 mmHg.
-    m_data.GetPatient().SetEvent(cdm::ePatient_Event_IntracranialHypertension, true, m_data.GetSimulationTime());
+    m_data.GetPatient().SetEvent(ePatient_Event::IntracranialHypertension, true, m_data.GetSimulationTime());
   }
-  else if (m_data.GetPatient().IsEventActive(cdm::ePatient_Event_IntracranialHypertension) && icp_mmHg < 24.0)
+  else if (m_data.GetPatient().IsEventActive(ePatient_Event::IntracranialHypertension) && icp_mmHg < 24.0)
   {
     /// \event Patient: End Intracranial Hypertension. The intracranial pressure has fallen below 24 mmHg.
-    m_data.GetPatient().SetEvent(cdm::ePatient_Event_IntracranialHypertension, false, m_data.GetSimulationTime());
+    m_data.GetPatient().SetEvent(ePatient_Event::IntracranialHypertension, false, m_data.GetSimulationTime());
   }
 
   //Intracranial Hypotension
   if (icp_mmHg < 7.0) // \cite steiner2006monitoring
   {
     /// \event Patient: Intracranial Hypotension. The intracranial pressure has fallen below 7 mmHg.
-    m_data.GetPatient().SetEvent(cdm::ePatient_Event_IntracranialHypotension, true, m_data.GetSimulationTime());
+    m_data.GetPatient().SetEvent(ePatient_Event::IntracranialHypotension, true, m_data.GetSimulationTime());
   }
-  else if (m_data.GetPatient().IsEventActive(cdm::ePatient_Event_IntracranialHypotension) && icp_mmHg > 7.5)
+  else if (m_data.GetPatient().IsEventActive(ePatient_Event::IntracranialHypotension) && icp_mmHg > 7.5)
   {
     /// \event Patient: End Intracranial Hypotension. The intracranial pressure has risen above 7.5 mmHg.
-    m_data.GetPatient().SetEvent(cdm::ePatient_Event_IntracranialHypertension, false, m_data.GetSimulationTime());
+    m_data.GetPatient().SetEvent(ePatient_Event::IntracranialHypertension, false, m_data.GetSimulationTime());
   }
 }
 
@@ -350,19 +350,19 @@ void Nervous::SetPupilEffects()
     {
       double icp_mmHg = m_data.GetCardiovascular().GetIntracranialPressure().GetValue(PressureUnit::mmHg);
 
-      if (b->GetType() == cdm::eBrainInjury_Type_Diffuse)
+      if (b->GetType() == eBrainInjury_Type::Diffuse)
       {
         leftPupilSizeResponseLevel += (1 / (1 + exp(-2.3*(icp_mmHg - 22.5))));
         leftPupilReactivityResponseLevel += -.001*pow(10, .3*(icp_mmHg - 15));
         rightPupilSizeResponseLevel = leftPupilSizeResponseLevel;
         rightPupilReactivityResponseLevel = leftPupilReactivityResponseLevel;
       }
-      else if (b->GetType() == cdm::eBrainInjury_Type_LeftFocal)
+      else if (b->GetType() == eBrainInjury_Type::LeftFocal)
       {
         leftPupilSizeResponseLevel += (1 / (1 + exp(-2.3*(icp_mmHg - 22.5))));
         leftPupilReactivityResponseLevel += -.001*pow(10, .3*(icp_mmHg - 15));
       }
-      else if(b->GetType() == cdm::eBrainInjury_Type_RightFocal)
+      else if(b->GetType() == eBrainInjury_Type::RightFocal)
       {
         rightPupilSizeResponseLevel += (1 / (1 + exp(-2.3*(icp_mmHg - 22.5))));
         rightPupilReactivityResponseLevel += -.001*pow(10, .3*(icp_mmHg - 15));

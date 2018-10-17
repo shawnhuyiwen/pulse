@@ -5,7 +5,6 @@
 #include "circuit/thermal/SEThermalCircuitNode.h"
 #include "properties/SEScalarEnergy.h"
 #include "properties/SEScalarTemperature.h"
-#include "bind/cdm/Circuit.pb.h"
 
 SEThermalCircuitNode::SEThermalCircuitNode(const std::string& name, Logger* logger) : SECircuitNode<THERMAL_CIRCUIT_NODE>(name,logger)
 {
@@ -22,45 +21,6 @@ void SEThermalCircuitNode::Clear()
   SECircuitNode::Clear();
 }
 
-void SEThermalCircuitNode::Load(const cdm::ThermalCircuitNodeData& src, SEThermalCircuitNode& dst)
-{
-  SEThermalCircuitNode::Serialize(src, dst);
-}
-void SEThermalCircuitNode::Serialize(const cdm::ThermalCircuitNodeData& src, SEThermalCircuitNode& dst)
-{
-  SECircuitNode::Serialize(src.circuitnode(), dst);
-  if (src.has_temperature())
-    SEScalarTemperature::Load(src.temperature(), dst.GetTemperature());
-  if (src.has_nexttemperature())
-    SEScalarTemperature::Load(src.nexttemperature(), dst.GetNextTemperature());
-  if (src.has_heat())
-    SEScalarEnergy::Load(src.heat(), dst.GetHeat());
-  if (src.has_nextheat())
-    SEScalarEnergy::Load(src.nextheat(), dst.GetNextHeat());
-  if (src.has_heatbaseline())
-    SEScalarEnergy::Load(src.heatbaseline(), dst.GetHeatBaseline());
-}
-
-cdm::ThermalCircuitNodeData* SEThermalCircuitNode::Unload(const SEThermalCircuitNode& src)
-{
-  cdm::ThermalCircuitNodeData* dst = new cdm::ThermalCircuitNodeData();
-  SEThermalCircuitNode::Serialize(src, *dst);
-  return dst;
-}
-void SEThermalCircuitNode::Serialize(const SEThermalCircuitNode& src, cdm::ThermalCircuitNodeData& dst)
-{
-  SECircuitNode::Serialize(src, *dst.mutable_circuitnode());
-  if (src.HasTemperature())
-    dst.set_allocated_temperature(SEScalarTemperature::Unload(*src.m_Potential));
-  if (src.HasNextTemperature())
-    dst.set_allocated_nexttemperature(SEScalarTemperature::Unload(*src.m_NextPotential));
-  if (src.HasHeat())
-    dst.set_allocated_heat(SEScalarEnergy::Unload(*src.m_Quantity));
-  if (src.HasNextHeat())
-    dst.set_allocated_nextheat(SEScalarEnergy::Unload(*src.m_NextQuantity));
-  if (src.HasHeatBaseline())
-    dst.set_allocated_heatbaseline(SEScalarEnergy::Unload(*src.m_QuantityBaseline));
-}
 
 bool SEThermalCircuitNode::HasTemperature() const
 {

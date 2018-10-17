@@ -5,11 +5,10 @@
 class SESubstance;
 class SESubstanceManager;
 class SESubstanceConcentration;
-CDM_BIND_DECL(SubstanceData)
-CDM_BIND_DECL(SubstanceData_CompoundData)
 
 class CDM_DECL SESubstanceCompound : public Loggable
 {
+  friend class PBSubstance;//friend the serialization class
 public:
 
   SESubstanceCompound(Logger* logger);
@@ -17,13 +16,6 @@ public:
 
   virtual void Clear();
 
-  static void Load(const cdm::SubstanceData_CompoundData& src, SESubstanceCompound& dst, const SESubstanceManager& subMgr);
-  static cdm::SubstanceData_CompoundData* Unload(const SESubstanceCompound& src);
-protected:
-  static void Serialize(const cdm::SubstanceData_CompoundData& src, SESubstanceCompound& dst, const SESubstanceManager& subMgr);
-  static void Serialize(const SESubstanceCompound& src, cdm::SubstanceData_CompoundData& dst);
-
-public:
   virtual std::string GetName() const;
   virtual void SetName(const std::string& name);
   virtual bool HasName() const;

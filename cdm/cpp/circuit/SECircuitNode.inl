@@ -2,7 +2,6 @@
    See accompanying NOTICE file for details.*/
 
 #include "circuit/SECircuitNode.h"
-#include "bind/cdm/Circuit.pb.h"
 
 template<CIRCUIT_NODE_TEMPLATE>
 SECircuitNode<CIRCUIT_NODE_TYPES>::SECircuitNode(const std::string& name, Logger* logger) : Loggable(logger), m_Name(name)
@@ -28,21 +27,6 @@ void SECircuitNode<CIRCUIT_NODE_TYPES>::Clear()
   SAFE_DELETE(m_Quantity);
   SAFE_DELETE(m_NextQuantity);
   SAFE_DELETE(m_QuantityBaseline);
-}
-
-template<CIRCUIT_NODE_TEMPLATE>
-void SECircuitNode<CIRCUIT_NODE_TYPES>::Serialize(const cdm::CircuitNodeData& src, SECircuitNode<CIRCUIT_NODE_TYPES>& dst)
-{
-  dst.Clear();
-  if (!src.name().empty())
-    dst.m_Name = src.name();
-  dst.m_IsReferenceNode = src.referencenode();
-}
-template<CIRCUIT_NODE_TEMPLATE>
-void SECircuitNode<CIRCUIT_NODE_TYPES>::Serialize(const SECircuitNode<CIRCUIT_NODE_TYPES>& src, cdm::CircuitNodeData& dst)
-{
-    dst.set_name(src.m_Name);
-    dst.set_referencenode(src.m_IsReferenceNode);
 }
 
 template<CIRCUIT_NODE_TEMPLATE>

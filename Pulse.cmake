@@ -112,7 +112,7 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/PulseJNI.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/PulseCLR.cmake)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-set_target_properties (libprotobuf libprotobuf-lite libprotoc protoc js_embed PROPERTIES FOLDER protobufs)
+set_target_properties (libprotobuf libprotobuf-lite libprotoc protoc PROPERTIES FOLDER protobufs)
 
 
 file(COPY ${CMAKE_SOURCE_DIR}/bin DESTINATION ${CMAKE_INSTALL_PREFIX})

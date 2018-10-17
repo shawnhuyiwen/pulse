@@ -6,12 +6,11 @@
 #include "circuit/fluid/SEFluidCircuitNode.h"
 #include "circuit/fluid/SEFluidCircuitPath.h"
 
-CDM_BIND_DECL(FluidCircuitData)
-
 class SECircuitManager;
 
-class CDM_DECL SEFluidCircuit : public SECircuit<cdm::FluidCircuitData, SEFluidCircuitNode, cdm::FluidCircuitNodeData, SEFluidCircuitPath, cdm::FluidCircuitPathData>
+class CDM_DECL SEFluidCircuit : public SECircuit<SEFluidCircuitNode, SEFluidCircuitPath>
 {
+  friend class PBCircuit;//friend the serialization class
   friend class SECircuitManager;
 protected:
   SEFluidCircuit(const std::string& name, SECircuitManager& mgr);

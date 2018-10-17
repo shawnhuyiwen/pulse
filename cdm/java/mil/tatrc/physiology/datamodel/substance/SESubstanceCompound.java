@@ -9,8 +9,9 @@ import java.util.List;
 import com.google.protobuf.TextFormat;
 import com.google.protobuf.TextFormat.ParseException;
 import com.kitware.physiology.cdm.Patient.PatientData;
+import com.kitware.physiology.cdm.Substance.SubstanceCompoundData;
+import com.kitware.physiology.cdm.Substance.SubstanceConcentrationData;
 import com.kitware.physiology.cdm.Substance.SubstanceData;
-import com.kitware.physiology.cdm.Substance.SubstanceData.ConcentrationData;
 
 import mil.tatrc.physiology.datamodel.patient.SEPatient;
 import mil.tatrc.physiology.utilities.FileUtils;
@@ -36,7 +37,7 @@ public class SESubstanceCompound
   
   public void readFile(String fileName, SESubstanceManager mgr) throws ParseException
   {
-    SubstanceData.CompoundData.Builder builder = SubstanceData.CompoundData.newBuilder();
+    SubstanceCompoundData.Builder builder = SubstanceCompoundData.newBuilder();
     TextFormat.getParser().merge(FileUtils.readFile(fileName), builder);
     SESubstanceCompound.load(builder.build(), this, mgr);
   }
@@ -45,7 +46,7 @@ public class SESubstanceCompound
     FileUtils.writeFile(fileName, SESubstanceCompound.unload(this).toString());
   }
   
-  public static void load(SubstanceData.CompoundData src, SESubstanceCompound dst, SESubstanceManager mgr)
+  public static void load(SubstanceCompoundData src, SESubstanceCompound dst, SESubstanceManager mgr)
   {
     dst.reset();
     if(src.getName()!=null)
@@ -53,19 +54,19 @@ public class SESubstanceCompound
 
     if(src.getComponentList()!=null)
     {      
-      for(ConcentrationData cData : src.getComponentList())
+      for(SubstanceConcentrationData cData : src.getComponentList())
       {
         SESubstanceConcentration.load(cData,dst.createComponent(mgr.getSubstance(cData.getName())));
       }
     }
   } 
-  public static SubstanceData.CompoundData unload(SESubstanceCompound src)
+  public static SubstanceCompoundData unload(SESubstanceCompound src)
   {
-    SubstanceData.CompoundData.Builder dst = SubstanceData.CompoundData.newBuilder();
+    SubstanceCompoundData.Builder dst = SubstanceCompoundData.newBuilder();
     SESubstanceCompound.unload(src,dst);
     return dst.build();
   }
-  protected static void unload(SESubstanceCompound src, SubstanceData.CompoundData.Builder dst)
+  protected static void unload(SESubstanceCompound src, SubstanceCompoundData.Builder dst)
   {
     if(src.hasName())
       dst.setName(src.name);

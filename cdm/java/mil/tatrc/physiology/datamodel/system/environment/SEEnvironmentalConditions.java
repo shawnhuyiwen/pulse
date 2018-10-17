@@ -9,7 +9,9 @@ import com.google.protobuf.TextFormat;
 import com.google.protobuf.TextFormat.ParseException;
 import com.kitware.physiology.cdm.Environment.EnvironmentData;
 import com.kitware.physiology.cdm.EnvironmentEnums.eEnvironment.SurroundingType;
+import com.kitware.physiology.cdm.Substance.SubstanceConcentrationData;
 import com.kitware.physiology.cdm.Substance.SubstanceData;
+import com.kitware.physiology.cdm.Substance.SubstanceFractionData;
 import com.kitware.physiology.cdm.SubstanceEnums.eSubstance;
 
 import mil.tatrc.physiology.utilities.FileUtils;
@@ -19,7 +21,7 @@ import mil.tatrc.physiology.datamodel.properties.*;
 import mil.tatrc.physiology.datamodel.substance.SESubstance;
 import mil.tatrc.physiology.datamodel.substance.SESubstanceCompound;
 import mil.tatrc.physiology.datamodel.substance.SESubstanceConcentration;
-import mil.tatrc.physiology.datamodel.substance.SESubstanceFractionAmount;
+import mil.tatrc.physiology.datamodel.substance.SESubstanceFraction;
 import mil.tatrc.physiology.datamodel.substance.SESubstanceManager;
 
 public class SEEnvironmentalConditions
@@ -35,7 +37,7 @@ public class SEEnvironmentalConditions
   protected SEScalar0To1                    relativeHumidity;
   protected SEScalarTemperature             respirationAmbientTemperature;
 
-  protected List<SESubstanceFractionAmount> ambientGases;
+  protected List<SESubstanceFraction> ambientGases;
   protected List<SESubstanceConcentration>  ambientAerosols;
   
   
@@ -53,7 +55,7 @@ public class SEEnvironmentalConditions
     this.relativeHumidity=null;
     this.respirationAmbientTemperature=null;
 
-    this.ambientGases=new ArrayList<SESubstanceFractionAmount>();
+    this.ambientGases=new ArrayList<SESubstanceFraction>();
     this.ambientAerosols=new ArrayList<SESubstanceConcentration>();
 
   }
@@ -110,8 +112,8 @@ public class SEEnvironmentalConditions
     
     if(from.ambientGases!=null)
     {
-      SESubstanceFractionAmount mine;
-      for(SESubstanceFractionAmount sf : from.ambientGases)
+      SESubstanceFraction mine;
+      for(SESubstanceFraction sf : from.ambientGases)
       {
         mine=this.createAmbientGas(sf.getSubstance());
         if(sf.hasAmount())
@@ -169,7 +171,7 @@ public class SEEnvironmentalConditions
     SESubstance sub;
     if(src.getAmbientGasList()!=null)
     {
-      for(SubstanceData.FractionAmountData subData : src.getAmbientGasList())
+      for(SubstanceFractionData subData : src.getAmbientGasList())
       {
         sub = substances.getSubstance(subData.getName());
         if(sub == null)
@@ -188,7 +190,7 @@ public class SEEnvironmentalConditions
     
     if(src.getAmbientAerosolList()!=null)
     {
-      for(SubstanceData.ConcentrationData subData : src.getAmbientAerosolList())
+      for(SubstanceConcentrationData subData : src.getAmbientAerosolList())
       {
         sub = substances.getSubstance(subData.getName());
         if(sub == null)
@@ -234,8 +236,8 @@ public class SEEnvironmentalConditions
     if (src.hasRespirationAmbientTemperature())
       dst.setRespirationAmbientTemperature(SEScalarTemperature.unload(src.respirationAmbientTemperature));    
     
-    for(SESubstanceFractionAmount ambSub : src.ambientGases)
-      dst.addAmbientGas(SESubstanceFractionAmount.unload(ambSub));
+    for(SESubstanceFraction ambSub : src.ambientGases)
+      dst.addAmbientGas(SESubstanceFraction.unload(ambSub));
     
     for(SESubstanceConcentration ambSub : src.ambientAerosols)
       dst.addAmbientAerosol(SESubstanceConcentration.unload(ambSub));
@@ -352,20 +354,20 @@ public class SEEnvironmentalConditions
     return respirationAmbientTemperature == null ? false : respirationAmbientTemperature.isValid();
   }
   
-  public SESubstanceFractionAmount createAmbientGas(SESubstance substance)
+  public SESubstanceFraction createAmbientGas(SESubstance substance)
   {
     return getAmbientGas(substance);
   }
-  public SESubstanceFractionAmount getAmbientGas(SESubstance substance)
+  public SESubstanceFraction getAmbientGas(SESubstance substance)
   {
-    for(SESubstanceFractionAmount sf : this.ambientGases)
+    for(SESubstanceFraction sf : this.ambientGases)
     {
       if(sf.getSubstance().getName().equals(substance.getName()))
       {        
         return sf;
       }
     }    
-    SESubstanceFractionAmount sf = new SESubstanceFractionAmount(substance);    
+    SESubstanceFraction sf = new SESubstanceFraction(substance);    
     this.ambientGases.add(sf);
     return sf;
   }
@@ -375,7 +377,7 @@ public class SEEnvironmentalConditions
   }
   public boolean hasAmbientGas(SESubstance substance)
   {
-    for(SESubstanceFractionAmount sf : this.ambientGases)
+    for(SESubstanceFraction sf : this.ambientGases)
     {
       if(sf.getSubstance()==substance)
       {        
@@ -384,13 +386,13 @@ public class SEEnvironmentalConditions
     }
     return false;
   }
-  public List<SESubstanceFractionAmount> getAmbientGas()
+  public List<SESubstanceFraction> getAmbientGas()
   {
     return this.ambientGases;
   }
   public void removeAmbientGas(SESubstance substance)
   {
-    for(SESubstanceFractionAmount sf : this.ambientGases)
+    for(SESubstanceFraction sf : this.ambientGases)
     {
       if(sf.getSubstance()==substance)
       {
@@ -461,8 +463,8 @@ public class SEEnvironmentalConditions
         icon.remove();
     }    
     
-    SESubstanceFractionAmount sf;
-    Iterator<SESubstanceFractionAmount> ifrac = this.ambientGases.iterator();
+    SESubstanceFraction sf;
+    Iterator<SESubstanceFraction> ifrac = this.ambientGases.iterator();
     while(ifrac.hasNext())
     {
       sf=ifrac.next();
@@ -484,7 +486,7 @@ public class SEEnvironmentalConditions
           + "\n\tMeanRadiantTemperature: " + (hasMeanRadiantTemperature()?getMeanRadiantTemperature():"None")
           + "\n\tRelativeHumidity: " + (hasRelativeHumidity()?getRelativeHumidity():"None")
           + "\n\tRespirationAmbientTemperature: " + (hasRespirationAmbientTemperature()?getRespirationAmbientTemperature():"None");
-      for(SESubstanceFractionAmount sf : this.ambientGases)
+      for(SESubstanceFraction sf : this.ambientGases)
         str += "\n\t"+sf.toString();
       for(SESubstanceConcentration sc : this.ambientAerosols)
       str += "\n\t"+sc.toString();

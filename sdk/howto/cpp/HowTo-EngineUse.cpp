@@ -78,8 +78,8 @@ class MyEventHandler : public SEEventHandler
 {
 public:
   MyEventHandler() : SEEventHandler() {}
-  virtual void HandlePatientEvent(cdm::ePatient_Event type, bool active, const SEScalarTime* time = nullptr) {}
-  virtual void HandleAnesthesiaMachineEvent(cdm::eAnesthesiaMachine_Event type, bool active, const SEScalarTime* time = nullptr) {}
+  virtual void HandlePatientEvent(ePatient_Event type, bool active, const SEScalarTime* time = nullptr) {}
+  virtual void HandleAnesthesiaMachineEvent(eAnesthesiaMachine_Event type, bool active, const SEScalarTime* time = nullptr) {}
 };
 
 //--------------------------------------------------------------------------------------------------
@@ -142,7 +142,7 @@ void HowToEngineUse()
 
   // There are specific events that can occur while the engine runs and you submit various actions
   // You can either poll/query the patient object to see if it is in a specific state
-  pe->GetPatient().IsEventActive(cdm::ePatient_Event_CardiacArrest);
+  pe->GetPatient().IsEventActive(ePatient_Event::CardiacArrest);
   // You can also derive a callback class that will be called whenever an Event is entered or exited by the patient
   MyEventHandler myEventHandler;
   pe->SetEventHandler(&myEventHandler);

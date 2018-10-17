@@ -2,10 +2,10 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-CDM_BIND_DECL(SubstanceData_AerosolizationData)
 
 class CDM_DECL SESubstanceAerosolization : public Loggable
 {
+  friend class PBSubstance;//friend the serialization class
 public:
 
   SESubstanceAerosolization(Logger* logger);
@@ -15,14 +15,6 @@ public:
   virtual bool IsValid() const;
 
   virtual const SEScalar* GetScalar(const std::string& name);
-
-  static void Load(const cdm::SubstanceData_AerosolizationData& src, SESubstanceAerosolization& dst);
-  static cdm::SubstanceData_AerosolizationData* Unload(const SESubstanceAerosolization& src);
-protected:
-  static void Serialize(const cdm::SubstanceData_AerosolizationData& src, SESubstanceAerosolization& dst);
-  static void Serialize(const SESubstanceAerosolization& src, cdm::SubstanceData_AerosolizationData& dst);
-
-public:
 
   virtual bool HasBronchioleModifier() const;
   virtual SEScalarNegative1To1& GetBronchioleModifier();

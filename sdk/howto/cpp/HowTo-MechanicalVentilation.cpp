@@ -52,11 +52,11 @@ class MechVentHandler : public Loggable, public SEEventHandler
 {
 public:
   MechVentHandler(Logger *logger) : Loggable(logger), SEEventHandler() { }
-  virtual void HandlePatientEvent(cdm::ePatient_Event type, bool active, const SEScalarTime* time = nullptr) 
+  virtual void HandlePatientEvent(ePatient_Event type, bool active, const SEScalarTime* time = nullptr) 
   {
     switch (type)
     {     
-      case cdm::ePatient_Event_MildAcuteRespiratoryDistress:
+      case ePatient_Event::MildAcuteRespiratoryDistress:
       {
         if (active)
           m_Logger->Info("Do something for MildAcuteRespiratoryDistress");
@@ -64,7 +64,7 @@ public:
           m_Logger->Info("Stop doing something for MildAcuteRespiratoryDistress");
         break;
       }
-      case cdm::ePatient_Event_ModerateAcuteRespiratoryDistress:
+      case ePatient_Event::ModerateAcuteRespiratoryDistress:
       {
         if (active)
           m_Logger->Info("Do something for ModerateAcuteRespiratoryDistress");
@@ -72,7 +72,7 @@ public:
           m_Logger->Info("Stop doing something for ModerateAcuteRespiratoryDistress");
         break;
       }
-      case cdm::ePatient_Event_SevereAcuteRespiratoryDistress:
+      case ePatient_Event::SevereAcuteRespiratoryDistress:
       {
         if (active)
           m_Logger->Info("Do something for SevereAcuteRespiratoryDistress");
@@ -80,7 +80,7 @@ public:
           m_Logger->Info("Stop doing something for SevereAcuteRespiratoryDistress");
         break;
       }
-      case cdm::ePatient_Event_CardiogenicShock:
+      case ePatient_Event::CardiogenicShock:
       {
         if (active)
           m_Logger->Info("Do something for CardiogenicShock");
@@ -90,7 +90,7 @@ public:
       }
     }
   }
-  virtual void HandleAnesthesiaMachineEvent(cdm::eAnesthesiaMachine_Event type, bool active, const SEScalarTime* time = nullptr) 
+  virtual void HandleAnesthesiaMachineEvent(eAnesthesiaMachine_Event type, bool active, const SEScalarTime* time = nullptr) 
   {
   }
 };
@@ -264,12 +264,10 @@ void HowToMechanicalVentilation()
   // Set the severity (a fraction between 0 and 1)
   SETensionPneumothorax pneumo;
   // You can have a Closed or Open Tension Pneumothorax
-  pneumo.SetType(cdm::eGate::Open);
-  //pneumo.SetType(CDM::enumPneumothoraxType::Open);
+  pneumo.SetType(eGate::Open);
   pneumo.GetSeverity().SetValue(0.3);
   // It can be on the Left or right side
-  pneumo.SetSide(cdm::eSide::Right);
-  //pneumo.SetSide(CDM::enumSide::Left);
+  pneumo.SetSide(eSide::Right);
   pe->ProcessAction(pneumo);
 
   tracker.AdvanceModelTime(60.0);
@@ -287,7 +285,7 @@ void HowToMechanicalVentilation()
   //TBI
   //See HowTo-BrainInjury for an example of getting the Glasgow Scale
   SEBrainInjury tbi;
-  tbi.SetType(cdm::eBrainInjury_Type_Diffuse);// Can also be LeftFocal or RightFocal, and you will get pupillary effects in only one eye 
+  tbi.SetType(eBrainInjury_Type::Diffuse);// Can also be LeftFocal or RightFocal, and you will get pupillary effects in only one eye 
   tbi.GetSeverity().SetValue(0.2);
   pe->ProcessAction(tbi);
 
@@ -316,7 +314,7 @@ void HowToMechanicalVentilation()
   SESubstanceBolus bolus(*succs);
   bolus.GetConcentration().SetValue(4820, MassPerVolumeUnit::ug_Per_mL);
   bolus.GetDose().SetValue(20, VolumeUnit::mL);
-  bolus.SetAdminRoute(cdm::eSubstanceAdministration_Route_Intravenous);
+  bolus.SetAdminRoute(eSubstanceAdministration_Route::Intravenous);
   pe->ProcessAction(bolus);
 
   tracker.AdvanceModelTime(60.0);
@@ -324,7 +322,7 @@ void HowToMechanicalVentilation()
   //Mechanical Ventilation
   // Create an SEMechanicalVentilation object
   SEMechanicalVentilation mechVent;
-  mechVent.SetState(cdm::eSwitch::On);// Turn it on
+  mechVent.SetState(eSwitch::On);// Turn it on
                       // Grab the substance fractions so we can quickly modify them
   SESubstanceFraction& O2frac = mechVent.GetGasFraction(*pe->GetSubstanceManager().GetSubstance("Oxygen"));
   SESubstanceFraction& CO2frac = mechVent.GetGasFraction(*pe->GetSubstanceManager().GetSubstance("CarbonDioxide"));

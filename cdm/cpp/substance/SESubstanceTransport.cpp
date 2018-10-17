@@ -2,9 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-
 #include "substance/SESubstanceTransport.h"
-
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarVolume.h"

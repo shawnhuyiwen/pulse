@@ -4,10 +4,10 @@
 #pragma once
 #include "circuit/SECircuitPath.h"
 #include "circuit/fluid/SEFluidCircuitNode.h"
-CDM_BIND_DECL(FluidCircuitPathData)
 
 class CDM_DECL SEFluidCircuitPath : public SECircuitPath<FLUID_CIRCUIT_PATH>
 {
+  friend class PBCircuit;//friend the serialization class
   friend class SECircuitManager;  
 protected:
   SEFluidCircuitPath(SEFluidCircuitNode& src, SEFluidCircuitNode& tgt, const std::string& name);
@@ -16,13 +16,6 @@ public:
 
   virtual void Clear(); //clear memory
 
-  static void Load(const cdm::FluidCircuitPathData& src, SEFluidCircuitPath& dst);
-  static cdm::FluidCircuitPathData* Unload(const SEFluidCircuitPath& src);
-protected:
-  static void Serialize(const cdm::FluidCircuitPathData& src, SEFluidCircuitPath& dst);
-  static void Serialize(const SEFluidCircuitPath& src, cdm::FluidCircuitPathData& dst);
-
-public:
   virtual SEFluidCircuitNode& GetSourceNode() const { return m_FluidSourceNode; }
   virtual SEFluidCircuitNode& GetTargetNode() const { return m_FluidTargetNode; }
 

@@ -3,7 +3,6 @@
 
 #pragma once
 #include "CommonDataModel.h"
-#include "bind/engine/EngineEnums.pb.h"
 
 class PulseConfiguration;
 class PulseCircuits;
@@ -39,6 +38,11 @@ class SaturationCalculator;
 
 class PulseScenarioExec;
 enum class EngineState { NotReady=0, Initialization, InitialStabilization, AtInitialStableState, SecondaryStabilization, AtSecondaryStableState, Active };
+
+
+// Keep enums in sync with appropriate proto file !!
+enum class eAirwayMode{ Free=0, AnesthesiaMachine, Inhaler, MechanicalVentilator };
+extern const std::string& eAirwayMode_Name(eAirwayMode m);
 
 /**
 * @brief Manages and controls execution of all data/systems in %Pulse
@@ -100,11 +104,11 @@ public:
   const SEScalarTime&                     GetSimulationTime();
   const SEScalarTime&                     GetTimeStep();
 
-  pulse::eAirwayMode                      GetAirwayMode();
-  void                                    SetAirwayMode(pulse::eAirwayMode mode);
+  eAirwayMode                             GetAirwayMode();
+  void                                    SetAirwayMode(eAirwayMode mode);
 
-  cdm::eSwitch                            GetIntubation();
-  void                                    SetIntubation(cdm::eSwitch s);
+  eSwitch                            GetIntubation();
+  void                                    SetIntubation(eSwitch s);
 
   bool CreateCircuitsAndCompartments();
   virtual void AdvanceCallback(double time_s) {};
@@ -135,8 +139,8 @@ protected:
 
   std::unique_ptr<SEScalarTime>                                 m_CurrentTime;
   std::unique_ptr<SEScalarTime>                                 m_SimulationTime;
-  pulse::eAirwayMode                                            m_AirwayMode;
-  cdm::eSwitch                                                  m_Intubation;
+  eAirwayMode                                                   m_AirwayMode;
+  eSwitch                                                       m_Intubation;
 
   std::unique_ptr<PulseConfiguration>                           m_Config;
   std::unique_ptr<SaturationCalculator>                         m_SaturationCalculator;

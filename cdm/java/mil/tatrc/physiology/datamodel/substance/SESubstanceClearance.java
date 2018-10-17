@@ -3,8 +3,12 @@
 
 package mil.tatrc.physiology.datamodel.substance;
 import com.kitware.physiology.cdm.Enums.eCharge;
+import com.kitware.physiology.cdm.Substance.SubstanceClearanceData;
 import com.kitware.physiology.cdm.Substance.SubstanceData;
-import com.kitware.physiology.cdm.Substance.SubstanceData.RenalClearanceData.DynamicsCase;
+import com.kitware.physiology.cdm.Substance.SubstanceRenalClearanceData;
+import com.kitware.physiology.cdm.Substance.SubstanceRenalClearanceData.DynamicsCase;
+import com.kitware.physiology.cdm.Substance.SubstanceRenalRegulationData;
+import com.kitware.physiology.cdm.Substance.SubstanceSystemicClearanceData;
 
 import mil.tatrc.physiology.datamodel.properties.*;
 import mil.tatrc.physiology.utilities.Log;
@@ -87,7 +91,7 @@ public class SESubstanceClearance
     return true;
   }
   
-  public static void load(SubstanceData.ClearanceData src, SESubstanceClearance dst)
+  public static void load(SubstanceClearanceData src, SESubstanceClearance dst)
   {
     dst.reset();
     
@@ -96,7 +100,7 @@ public class SESubstanceClearance
     
     if(src.hasSystemicClearance())
     {
-      SubstanceData.SystemicClearanceData sys = src.getSystemicClearance();
+      SubstanceSystemicClearanceData sys = src.getSystemicClearance();
       if(sys.hasFractionExcretedInFeces())
         SEScalar0To1.load(sys.getFractionExcretedInFeces(),dst.getFractionExcretedInFeces());
       if(sys.hasFractionExcretedInUrine())
@@ -120,7 +124,7 @@ public class SESubstanceClearance
     }
     if(src.hasRenalClearance())
     {
-      SubstanceData.RenalClearanceData rc = src.getRenalClearance();
+      SubstanceRenalClearanceData rc = src.getRenalClearance();
       if(rc.getDynamicsCase() == DynamicsCase.CLEARANCE)
       {
         if(!Double.isNaN(sys_rc) && rc.getClearance().getScalarVolumePerTimeMass().getValue()!=sys_rc)
@@ -129,7 +133,7 @@ public class SESubstanceClearance
       }
       else if(rc.getDynamicsCase() == DynamicsCase.REGULATION)
       {
-        SubstanceData.RenalRegulationData rr = rc.getRegulation();
+        SubstanceRenalRegulationData rr = rc.getRegulation();
         dst.chargeInBlood = rr.getChargeInBlood();
         if(rr.hasReabsorptionRatio())
           SEScalar.load(rr.getReabsorptionRatio(),dst.getRenalReabsorptionRatio());
@@ -152,19 +156,19 @@ public class SESubstanceClearance
         SEScalar.load(rc.getGlomerularFilterability(),dst.getGlomerularFilterability());           
     }
   }  
-  public static SubstanceData.ClearanceData unload(SESubstanceClearance src)
+  public static SubstanceClearanceData unload(SESubstanceClearance src)
   {
     if(!src.isValid())
       return null;
-    SubstanceData.ClearanceData.Builder dst = SubstanceData.ClearanceData.newBuilder();
+    SubstanceClearanceData.Builder dst = SubstanceClearanceData.newBuilder();
     SESubstanceClearance.unload(src,dst);
     return dst.build();
   }
-  protected static void unload(SESubstanceClearance src, SubstanceData.ClearanceData.Builder dst)
+  protected static void unload(SESubstanceClearance src, SubstanceClearanceData.Builder dst)
   {    
     if(src.hasSystemic())
     {
-      SubstanceData.SystemicClearanceData.Builder sys = dst.getSystemicClearanceBuilder();
+      SubstanceSystemicClearanceData.Builder sys = dst.getSystemicClearanceBuilder();
       if(src.hasFractionExcretedInFeces())
         sys.setFractionExcretedInFeces(SEScalar0To1.unload(src.fractionExcretedInFeces));
       if(src.hasFractionExcretedInUrine())
@@ -185,11 +189,11 @@ public class SESubstanceClearance
     if(src.hasRenalClearance() || src.hasRenalRegulation())
     {  
       // Renal Dynamics
-      SubstanceData.RenalClearanceData.Builder rcd = dst.getRenalClearanceBuilder();
+      SubstanceRenalClearanceData.Builder rcd = dst.getRenalClearanceBuilder();
       
       if(src.hasRenalRegulation())
       {
-        SubstanceData.RenalRegulationData.Builder rrd = rcd.getRegulationBuilder();
+        SubstanceRenalRegulationData.Builder rrd = rcd.getRegulationBuilder();
         rrd.setChargeInBlood(src.chargeInBlood);
         if(src.hasRenalReabsorptionRatio())
           rrd.setReabsorptionRatio(SEScalar.unload(src.renalReabsorptionRatio));
