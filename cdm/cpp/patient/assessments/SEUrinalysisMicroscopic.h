@@ -4,7 +4,24 @@
 #pragma once
 #include "patient/assessments/SEPatientAssessment.h"
 CDM_BIND_DECL(UrinalysisData_UrinalysisMicroscopicData)
-#include "bind/cdm/PatientAssessmentEnums.pb.h"
+
+// Keep enums in sync with appropriate schema/cdm/PatienAssessmentEnums.proto file !!
+enum class eUrinalysis_MicroscopicObservationType {
+  NullObservationType = 0,
+  LowPowerField,
+  HighPowerField
+};
+extern const std::string& eUrinalysis_MicroscopicObservationType_Name(eUrinalysis_MicroscopicObservationType m);
+
+// Keep enums in sync with appropriate schema/cdm/PatienAssessmentEnums.proto file !!
+enum class eUrinalysis_MicroscopicObservationAmount {
+  NullObservationAmount = 0,
+  Few,
+  Moderate,
+  Many
+};
+extern const std::string& eUrinalysis_MicroscopicObservationAmount_Name(eUrinalysis_MicroscopicObservationAmount m);
+
 
 class CDM_DECL SEUrinalysisMicroscopic : public Loggable
 {
@@ -25,8 +42,8 @@ protected:
 public:
 
   virtual bool HasObservationType() const;  
-  virtual cdm::eUrinalysis_MicroscopicObservationType GetObservationType() const;
-  virtual void SetObservationType(cdm::eUrinalysis_MicroscopicObservationType p);
+  virtual eUrinalysis_MicroscopicObservationType GetObservationType() const;
+  virtual void SetObservationType(eUrinalysis_MicroscopicObservationType p);
   virtual void InvalidateObservationType();
 
   virtual bool HasRedBloodCellsResult() const;
@@ -38,8 +55,8 @@ public:
   virtual double GetWhiteBloodCellsResult(const AmountUnit& unit) const;
 
   virtual bool HasEpithelialCellsResult() const;
-  virtual cdm::eUrinalysis_MicroscopicObservationAmount GetEpithelialCellsResult() const;
-  virtual void SetEpithelialCellsResult(cdm::eUrinalysis_MicroscopicObservationAmount p);
+  virtual eUrinalysis_MicroscopicObservationAmount GetEpithelialCellsResult() const;
+  virtual void SetEpithelialCellsResult(eUrinalysis_MicroscopicObservationAmount p);
   virtual void InvalidateEpithelialCellsResult();
 
   virtual bool HasCastsResult() const;
@@ -47,34 +64,34 @@ public:
   virtual double GetCastsResult(const AmountUnit& unit) const;
 
   virtual bool HasCrystalsResult() const;
-  virtual cdm::eUrinalysis_MicroscopicObservationAmount GetCrystalsResult() const;
-  virtual void SetCrystalsResult(cdm::eUrinalysis_MicroscopicObservationAmount p);
+  virtual eUrinalysis_MicroscopicObservationAmount GetCrystalsResult() const;
+  virtual void SetCrystalsResult(eUrinalysis_MicroscopicObservationAmount p);
   virtual void InvalidateCrystalsResult();
 
   virtual bool HasBacteriaResult() const;
-  virtual cdm::eUrinalysis_MicroscopicObservationAmount GetBacteriaResult() const;
-  virtual void SetBacteriaResult(cdm::eUrinalysis_MicroscopicObservationAmount p);
+  virtual eUrinalysis_MicroscopicObservationAmount GetBacteriaResult() const;
+  virtual void SetBacteriaResult(eUrinalysis_MicroscopicObservationAmount p);
   virtual void InvalidateBacteriaResult();
 
   virtual bool HasTrichomonadsResult() const;
-  virtual cdm::eUrinalysis_MicroscopicObservationAmount GetTrichomonadsResult() const;
-  virtual void SetTrichomonadsResult(cdm::eUrinalysis_MicroscopicObservationAmount p);
+  virtual eUrinalysis_MicroscopicObservationAmount GetTrichomonadsResult() const;
+  virtual void SetTrichomonadsResult(eUrinalysis_MicroscopicObservationAmount p);
   virtual void InvalidateTrichomonadsResult();
 
   virtual bool HasYeastResult() const;
-  virtual cdm::eUrinalysis_MicroscopicObservationAmount GetYeastResult() const;
-  virtual void SetYeastResult(cdm::eUrinalysis_MicroscopicObservationAmount p);
+  virtual eUrinalysis_MicroscopicObservationAmount GetYeastResult() const;
+  virtual void SetYeastResult(eUrinalysis_MicroscopicObservationAmount p);
   virtual void InvalidateYeastResult();
 
 protected:
 
-  cdm::eUrinalysis_MicroscopicObservationType   m_ObservationType;
-  SEScalarAmount*                               m_RedBloodCells;
-  SEScalarAmount*                               m_WhiteBloodCells;
-  cdm::eUrinalysis_MicroscopicObservationAmount m_EpithelialCells;
-  SEScalarAmount*                               m_Casts;
-  cdm::eUrinalysis_MicroscopicObservationAmount m_Crystals;
-  cdm::eUrinalysis_MicroscopicObservationAmount m_Bacteria;
-  cdm::eUrinalysis_MicroscopicObservationAmount m_Trichomonads;
-  cdm::eUrinalysis_MicroscopicObservationAmount m_Yeast;
+  eUrinalysis_MicroscopicObservationType   m_ObservationType;
+  SEScalarAmount*                          m_RedBloodCells;
+  SEScalarAmount*                          m_WhiteBloodCells;
+  eUrinalysis_MicroscopicObservationAmount m_EpithelialCells;
+  SEScalarAmount*                          m_Casts;
+  eUrinalysis_MicroscopicObservationAmount m_Crystals;
+  eUrinalysis_MicroscopicObservationAmount m_Bacteria;
+  eUrinalysis_MicroscopicObservationAmount m_Trichomonads;
+  eUrinalysis_MicroscopicObservationAmount m_Yeast;
 };  

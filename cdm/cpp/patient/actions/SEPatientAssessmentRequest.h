@@ -4,7 +4,14 @@
 #pragma once
 #include "patient/actions/SEPatientAction.h"
 CDM_BIND_DECL(PatientAssessmentRequestData)
-#include "bind/cdm/PatientAssessmentEnums.pb.h"
+
+// Keep enums in sync with appropriate schema/cdm/PatienAssessmentEnums.proto file !!
+enum class ePatientAssessment_Type { CompleteBloodCount = 0, 
+                                     ComprehensiveMetabolicPanel,
+                                     PulmonaryFunctionTest,
+                                     Urinalysis };
+extern const std::string& ePatientAssessment_Type_Name(ePatientAssessment_Type m);
+
 
 class CDM_DECL SEPatientAssessmentRequest : public SEPatientAction
 {
@@ -26,12 +33,12 @@ protected:
 
 public:
 
-  virtual cdm::ePatientAssessment_Type GetType() const;
-  virtual void SetType(cdm::ePatientAssessment_Type type);
+  virtual ePatientAssessment_Type GetType() const;
+  virtual void SetType(ePatientAssessment_Type type);
 
   virtual void ToString(std::ostream &str) const;
   
 protected:
 
-  cdm::ePatientAssessment_Type m_Type;
+  ePatientAssessment_Type m_Type;
 }; 
