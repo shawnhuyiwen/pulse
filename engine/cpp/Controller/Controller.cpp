@@ -71,8 +71,8 @@
 #include "utils/FileUtils.h"
 #include <google/protobuf/text_format.h>
 
-#include "bind/engine/Engine.pb.h"
-#include "bind/engine/EngineEnums.pb.h"
+#include "bind/pulse/Pulse.pb.h"
+#include "bind/pulse/PulseEnums.pb.h"
 const std::string& eAirwayMode_Name(eAirwayMode m)
 {
   return pulse::eAirwayMode_Name( (pulse::eAirwayMode)m );

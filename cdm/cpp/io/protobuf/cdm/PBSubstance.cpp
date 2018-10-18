@@ -2,8 +2,8 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "io/protobuf/PBSubstance.h"
-#include "io/protobuf/PBPhysiology.h"
+#include "io/protobuf/cdm/PBSubstance.h"
+#include "io/protobuf/cdm/PBPhysiology.h"
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceAerosolization.h"
 #include "substance/SESubstanceClearance.h"
@@ -36,21 +36,7 @@
 #include "utils/unitconversion/UnitConversionEngine.h"
 
 #include "bind/cdm/Substance.pb.h"
-#include "bind/cdm/SubstanceEnums.pb.h"
 #include <google/protobuf/text_format.h>
-
-const std::string& eSubstance_State_Name(eSubstance_State m)
-{
-  return cdm::eSubstance_State_Name((cdm::eSubstance_State)m);
-}
-const std::string& eSubstance_IonicState_Name(eSubstance_IonicState m)
-{
-  return cdm::eSubstance_IonicState_Name((cdm::eSubstance_IonicState)m);
-}
-const std::string& eSubstance_BindingProtein_Name(eSubstance_BindingProtein m)
-{
-  return cdm::eSubstance_BindingProtein_Name((cdm::eSubstance_BindingProtein)m);
-}
 
 bool PBSubstance::LoadSubstanceDirectory(SESubstanceManager& mgr)
 {

@@ -16,7 +16,7 @@
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarTemperature.h"
 
-#include "io/protobuf/PBSubstance.h"
+#include "io/protobuf/cdm/PBSubstance.h"
 #include <google/protobuf/text_format.h>
 #include "bind/cdm/EnvironmentConditions.pb.h"
 #include "bind/cdm/EnvironmentEnums.pb.h"

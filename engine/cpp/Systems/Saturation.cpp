@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "Systems/Saturation.h"
 #include "Controller/Substances.h"
-#include "bind/engine/EnginePhysiology.pb.h"
+#include "bind/pulse/PulsePhysiology.pb.h"
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceManager.h"
 #include "compartment/fluid/SELiquidCompartment.h"

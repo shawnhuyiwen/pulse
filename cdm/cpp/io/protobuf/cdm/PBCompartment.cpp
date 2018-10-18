@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "io/protobuf/PBCompartment.h"
+#include "io/protobuf/cdm/PBCompartment.h"
 #include "compartment/SECompartment.h"
 #include "compartment/SECompartmentGraph.h"
 #include "compartment/SECompartmentLink.h"
@@ -30,13 +30,6 @@
 #include "properties/SEScalarVolume.h"
 #include <google/protobuf/text_format.h>
 #include "bind/cdm/Compartment.pb.h"
-#include "bind/cdm/CompartmentEnums.pb.h"
-
-const std::string& eCompartment_Type_Name(eCompartment_Type m)
-{
-  return cdm::eCompartment_Type_Name((cdm::eCompartment_Type)m);
-}
-
 
 void PBCompartment::Serialize(const cdm::CompartmentData& src, SECompartment& dst)
 {

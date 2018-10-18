@@ -23,7 +23,7 @@
 #include "properties/SEScalarVolumePerTime.h"
 #include "utils/DataTrack.h"
 #include "utils/FileUtils.h"
-#include "io/protobuf/PBCircuit.h"
+#include "io/protobuf/cdm/PBCircuit.h"
 
 void CommonDataModelTest::TestSetup7SeriesRCDC()
 {

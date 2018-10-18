@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "io/protobuf/PBCircuit.h"
+#include "io/protobuf/cdm/PBCircuit.h"
 #include "circuit/electrical/SEElectricalCircuit.h"
 #include "circuit/fluid/SEFluidCircuit.h"
 #include "circuit/thermal/SEThermalCircuit.h"

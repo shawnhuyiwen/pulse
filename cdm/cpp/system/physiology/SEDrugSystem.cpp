@@ -12,7 +12,7 @@
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarLength.h"
 #include "bind/cdm/Physiology.pb.h"
-#include "io/protobuf/PBPhysiology.h"
+#include "io/protobuf/cdm/PBPhysiology.h"
 
 SEDrugSystem::SEDrugSystem(Logger* logger) : SESystem(logger)
 {

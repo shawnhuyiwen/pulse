@@ -10,12 +10,11 @@ import com.google.protobuf.TextFormat.ParseException;
 import com.kitware.physiology.cdm.PatientAssessmentEnums.ePatientAssessment;
 import com.kitware.physiology.cdm.PatientAssessments.CompleteBloodCountData;
 import com.kitware.physiology.cdm.PatientAssessments.ComprehensiveMetabolicPanelData;
-import com.kitware.physiology.cdm.PatientAssessments.PatientAssessmentData;
 import com.kitware.physiology.cdm.PatientAssessments.PulmonaryFunctionTestData;
 import com.kitware.physiology.cdm.PatientAssessments.UrinalysisData;
 import com.kitware.physiology.cdm.Scenario.ActionListData;
 import com.kitware.physiology.cdm.Scenario.ConditionListData;
-import com.kitware.physiology.pulse.EngineState.StateData;
+import com.kitware.physiology.pulse.PulseState.StateData;
 
 import mil.tatrc.physiology.datamodel.actions.SEAction;
 import mil.tatrc.physiology.datamodel.conditions.SECondition;

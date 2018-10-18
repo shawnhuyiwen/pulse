@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 #include "Systems/Hepatic.h"
-#include "bind/engine/EnginePhysiology.pb.h"
+#include "bind/pulse/PulsePhysiology.pb.h"
 
 Hepatic::Hepatic(PulseController& data) : SEHepaticSystem(data.GetLogger()), m_data(data)
 {

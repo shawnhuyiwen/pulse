@@ -138,8 +138,6 @@ list(APPEND SOURCE ${UTILS_UCE_FILES})
 #list(APPEND SOURCE ${UTILS_XPSTL_FILES}) 
 # I/O
 include(cpp/io/protobuf/CMakeLists.txt)
-source_group(${IO_GROUP} FILES ${IO_FILES})
-list(APPEND SOURCE ${IO_FILES})
 
 # The DLL we are building
 add_library(CommonDataModel ${SOURCE})

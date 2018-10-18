@@ -7,7 +7,7 @@
 #include "Controller/Substances.h"
 #include "Controller/Compartments.h"
 #include "PulseConfiguration.h"
-#include "bind/engine/EnginePhysiology.pb.h"
+#include "bind/pulse/PulsePhysiology.pb.h"
 // Dependent Systems
 #include "system/physiology/SECardiovascularSystem.h"
 // Assessments

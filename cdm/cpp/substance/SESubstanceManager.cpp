@@ -5,7 +5,7 @@
 #include "substance/SESubstanceManager.h"
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceCompound.h"
-#include "io/protobuf/PBSubstance.h"
+#include "io/protobuf/cdm/PBSubstance.h"
 
 SESubstanceManager::SESubstanceManager(Logger* logger) : Loggable(logger)
 {

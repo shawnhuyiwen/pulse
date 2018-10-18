@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "PulseScenario.h"
 #include "PulseConfiguration.h"
-#include "bind/engine/Engine.pb.h"
+#include "bind/pulse/Pulse.pb.h"
 #include <google/protobuf/text_format.h>
 
 PulseScenario::PulseScenario(SESubstanceManager& subMgr) : SEScenario(subMgr)

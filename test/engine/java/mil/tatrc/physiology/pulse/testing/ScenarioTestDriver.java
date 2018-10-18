@@ -29,7 +29,7 @@ public class ScenarioTestDriver implements SETestDriver.Executor
       return false;
     }
     ScenarioData.Builder builder;
-    Engine.ScenarioData.Builder pBuilder = Engine.ScenarioData.newBuilder();
+    Pulse.ScenarioData.Builder pBuilder = Pulse.ScenarioData.newBuilder();
     try
     {
     	TextFormat.getParser().merge(pba, pBuilder);

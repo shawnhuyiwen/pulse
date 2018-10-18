@@ -3,7 +3,7 @@ package pulse;
 option java_package = "com.kitware.physiology.pulse";
 
 import "cdm/Scenario.proto";
-import "engine/EngineConfiguration.proto";
+import "pulse/PulseConfiguration.proto";
 
 message ScenarioData
 {

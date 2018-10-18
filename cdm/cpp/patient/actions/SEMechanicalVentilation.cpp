@@ -12,7 +12,7 @@
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalar0To1.h"
-#include "io/protobuf/PBSubstance.h"
+#include "io/protobuf/cdm/PBSubstance.h"
 
 SEMechanicalVentilation::SEMechanicalVentilation() : SEPatientAction()
 {

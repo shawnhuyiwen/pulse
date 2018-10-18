@@ -7,7 +7,7 @@
 #include "Controller/Circuits.h"
 #include "Controller/Substances.h"
 #include "PulseConfiguration.h"
-#include "bind/engine/EnginePhysiology.pb.h"
+#include "bind/pulse/PulsePhysiology.pb.h"
 // Dependent Systems
 #include "system/physiology/SEBloodChemistrySystem.h"
 #include "system/physiology/SECardiovascularSystem.h"

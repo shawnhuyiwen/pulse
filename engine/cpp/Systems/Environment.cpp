@@ -8,7 +8,7 @@
 #include "Controller/Compartments.h"
 #include "Controller/Substances.h"
 #include "PulseConfiguration.h"
-#include "bind/engine/EngineEnvironment.pb.h"
+#include "bind/pulse/PulseEnvironment.pb.h"
 // Conditions
 #include "scenario/SEConditionManager.h"
 #include "system/environment/conditions/SEEnvironmentCondition.h"

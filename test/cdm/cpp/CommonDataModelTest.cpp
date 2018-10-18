@@ -6,7 +6,7 @@
 #include "circuit/SECircuitManager.h"
 #include "compartment/SECompartmentManager.h"
 #include "utils/FileUtils.h"
-#include "io/protobuf/PBCompartment.h"
+#include "io/protobuf/cdm/PBCompartment.h"
 
 CommonDataModelTest::CommonDataModelTest() : Loggable(new Logger())
 {

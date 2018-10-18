@@ -15,7 +15,7 @@ import com.kitware.physiology.cdm.Enums.eSwitch;
 import com.kitware.physiology.cdm.Scenario.AnyActionData;
 import com.kitware.physiology.cdm.Scenario.ScenarioData;
 import com.kitware.physiology.cdm.ScenarioEnums.eDataRequest;
-import com.kitware.physiology.pulse.Engine;
+import com.kitware.physiology.pulse.Pulse;
 import com.kitware.physiology.cdm.AnesthesiaMachineEnums.eAnesthesiaMachine;
 import com.kitware.physiology.cdm.PatientAssessmentEnums.ePatientAssessment;
 
@@ -140,7 +140,7 @@ public class SEScenario
 				Log.error("Could not read file : "+file);
 				continue;
 			}
-			Engine.ScenarioData.Builder pBuilder = Engine.ScenarioData.newBuilder();
+			Pulse.ScenarioData.Builder pBuilder = Pulse.ScenarioData.newBuilder();
 			try
 			{
 				TextFormat.getParser().merge(pba, pBuilder);

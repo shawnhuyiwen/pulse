@@ -2,11 +2,10 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "io/protobuf/PBPhysiology.h"
+#include "io/protobuf/cdm/PBPhysiology.h"
 #include "system/physiology/SEPupillaryResponse.h"
 #include "properties/SEScalarNegative1To1.h"
 #include "bind/cdm/Physiology.pb.h"
-
 
 void PBPhysiology::Load(const cdm::PupillaryResponseData& src, SEPupillaryResponse& dst)
 {

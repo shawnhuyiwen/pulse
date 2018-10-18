@@ -46,10 +46,10 @@
 #include "utils/FileUtils.h"
 #include <google/protobuf/text_format.h>
 #include <google/protobuf/stubs/logging.h>
-#include "bind/engine/EngineState.pb.h"
-#include "io/protobuf/PBCircuit.h"
-#include "io/protobuf/PBCompartment.h"
-#include "io/protobuf/PBSubstance.h"
+#include "bind/pulse/PulseState.pb.h"
+#include "io/protobuf/cdm/PBCircuit.h"
+#include "io/protobuf/cdm/PBCompartment.h"
+#include "io/protobuf/cdm/PBSubstance.h"
 #include <memory>
 
 PULSE_DECL std::unique_ptr<PhysiologyEngine> CreatePulseEngine(const std::string& logfile)

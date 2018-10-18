@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "io/protobuf/PBCircuit.h"
-#include "io/protobuf/PBSubstance.h"
+#include "io/protobuf/cdm/PBCircuit.h"
+#include "io/protobuf/cdm/PBSubstance.h"
 // Forward Declaire SE and Protobuf Compartment Types
 CDM_DECL_BIND(Compartment)
 CDM_DECL_BIND(CompartmentLink)

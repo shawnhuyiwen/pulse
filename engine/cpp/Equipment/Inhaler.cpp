@@ -7,7 +7,7 @@
 #include "Controller/Controller.h"
 #include "Controller/Compartments.h"
 #include "Controller/Substances.h"
-#include "bind/engine/EngineEquipment.pb.h"
+#include "bind/pulse/PulseEquipment.pb.h"
 #include "system/physiology/SERespiratorySystem.h"
 #include "circuit/SECircuit.h"
 #include "circuit/SECircuitPath.h"

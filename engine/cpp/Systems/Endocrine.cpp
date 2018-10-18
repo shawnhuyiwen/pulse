@@ -5,7 +5,7 @@
 #include "Systems/Endocrine.h"
 #include "Controller/Compartments.h"
 #include "Controller/Substances.h"
-#include "bind/engine/EnginePhysiology.pb.h"
+#include "bind/pulse/PulsePhysiology.pb.h"
 // Dependent Systems
 #include "system/physiology/SEEnergySystem.h"
 // Actions
