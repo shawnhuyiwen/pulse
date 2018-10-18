@@ -87,6 +87,7 @@ list(APPEND LOG4CPLUS_INCLUDE_DIR ${log4cplus_SRC}-build/include)
 set(SCHEMA_SRC "${CMAKE_SOURCE_DIR}/schema")
 set(SCHEMA_DST "${CMAKE_BINARY_DIR}/schema")
 # Settings for protobuf configuration
+set(protobuf_BUILD_PROTOC_BINARIES OFF CACHE TYPE INTERNAL FORCE)
 set(protobuf_BUILD_SHARED_LIBS OFF CACHE TYPE INTERNAL FORCE)
 set(protobuf_MSVC_STATIC_RUNTIME OFF CACHE TYPE INTERNAL FORCE)#Use our MSVC runtime settings (/MD or /MT)
 set(protobuf_BUILD_TESTS OFF CACHE TYPE INTERNAL FORCE)
@@ -112,8 +113,7 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/PulseJNI.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/PulseCLR.cmake)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-set_target_properties (libprotobuf libprotobuf-lite libprotoc protoc PROPERTIES FOLDER protobufs)
-set_target_properties(libprotobuf-lite libprotoc protoc PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
+set_target_properties (libprotobuf libprotobuf-lite PROPERTIES FOLDER protobufs)
 
 
 file(COPY ${CMAKE_SOURCE_DIR}/bin DESTINATION ${CMAKE_INSTALL_PREFIX})
