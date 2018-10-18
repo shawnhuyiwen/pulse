@@ -118,11 +118,11 @@
     <configuration name="HowTo_EngineUse" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
-          <option name="PATTERN" value="mil.tatrc.physiology.pulse.engine.*" />
+          <option name="PATTERN" value="com.kitware.physiology.pulse.engine.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="MAIN_CLASS_NAME" value="mil.tatrc.physiology.pulse.engine.HowTo_EngineUse" />
+      <option name="MAIN_CLASS_NAME" value="com.kitware.physiology.pulse.engine.HowTo_EngineUse" />
       <option name="VM_PARAMETERS" value="" />
       <option name="PROGRAM_PARAMETERS" value="" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/../../builds/engine/install/bin" />
