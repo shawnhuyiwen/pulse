@@ -12,9 +12,9 @@ const std::string& eUrinalysis_MicroscopicObservationType_Name(eUrinalysis_Micro
   return cdm::eUrinalysis_MicroscopicObservationType_Name((cdm::eUrinalysis_MicroscopicObservationType)m);
 }
 
-const std::string& eUrinalysis_MicroscopicObservationType_Name(eUrinalysis_MicroscopicObservationType m)
+const std::string& eUrinalysis_MicroscopicObservationAmount_Name(eUrinalysis_MicroscopicObservationAmount m)
 {
-  return cdm::eUrinalysis_MicroscopicObservationType_Name((cdm::eUrinalysis_MicroscopicObservationType)m);
+  return cdm::eUrinalysis_MicroscopicObservationAmount_Name((cdm::eUrinalysis_MicroscopicObservationAmount)m);
 }
 
 SEUrinalysisMicroscopic::SEUrinalysisMicroscopic(Logger* logger) : Loggable(logger)

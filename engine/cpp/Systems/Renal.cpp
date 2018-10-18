@@ -1710,39 +1710,39 @@ bool Renal::CalculateUrinalysis(SEUrinalysis& u) const
   
   double urineOsm_Per_kg = GetUrineOsmolality(OsmolalityUnit::mOsm_Per_kg);
   if (urineOsm_Per_kg <= 400)// Need cite for this
-    u.SetColorResult(cdm::eUrinalysis_UrineColor_PaleYellow);
+    u.SetColorResult(eUrinalysis_UrineColor::PaleYellow);
   else if (urineOsm_Per_kg > 400 && urineOsm_Per_kg <= 750)
-    u.SetColorResult(cdm::eUrinalysis_UrineColor_Yellow);
+    u.SetColorResult(eUrinalysis_UrineColor::Yellow);
   else
-    u.SetColorResult(cdm::eUrinalysis_UrineColor_DarkYellow);
+    u.SetColorResult(eUrinalysis_UrineColor::DarkYellow);
 
   //u.SetApperanceResult();
   double bladder_glucose_mg_Per_dL = m_bladderGlucose->GetConcentration().GetValue(MassPerVolumeUnit::mg_Per_dL);
 
   if (bladder_glucose_mg_Per_dL >= 100.0)/// \cite roxe1990urinalysis
-    u.SetGlucoseResult(cdm::eUrinalysis_PresenceIndicator_Positive);
+    u.SetGlucoseResult(eUrinalysis_PresenceIndicator::Positive);
   else
-    u.SetGlucoseResult(cdm::eUrinalysis_PresenceIndicator_Negative);
+    u.SetGlucoseResult(eUrinalysis_PresenceIndicator::Negative);
 
   if (bladder_glucose_mg_Per_dL >= 5.0)/// \cite roxe1990urinalysis
-    u.SetKetoneResult(cdm::eUrinalysis_PresenceIndicator_Positive);
+    u.SetKetoneResult(eUrinalysis_PresenceIndicator::Positive);
   else
-    u.SetKetoneResult(cdm::eUrinalysis_PresenceIndicator_Negative);
+    u.SetKetoneResult(eUrinalysis_PresenceIndicator::Negative);
 
   //u.SetBilirubinResult();
 
   u.GetSpecificGravityResult().SetValue(GetUrineSpecificGravity());
   if (bladder_glucose_mg_Per_dL > 0.15) /// \cite roxe1990urinalysis
-    u.SetBloodResult(cdm::eUrinalysis_PresenceIndicator_Positive);
+    u.SetBloodResult(eUrinalysis_PresenceIndicator::Positive);
   else
-    u.SetBloodResult(cdm::eUrinalysis_PresenceIndicator_Negative);
+    u.SetBloodResult(eUrinalysis_PresenceIndicator::Negative);
 
   //u.GetPHResult().Set();
 
   if (bladder_glucose_mg_Per_dL > 30.0)/// \cite roxe1990urinalysis
-    u.SetProteinResult(cdm::eUrinalysis_PresenceIndicator_Positive);
+    u.SetProteinResult(eUrinalysis_PresenceIndicator::Positive);
   else
-    u.SetProteinResult(cdm::eUrinalysis_PresenceIndicator_Negative);
+    u.SetProteinResult(eUrinalysis_PresenceIndicator::Negative);
 
   //u.SetUrobilinogen();
   //u.SetNitrite();

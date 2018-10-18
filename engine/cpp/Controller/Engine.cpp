@@ -582,7 +582,7 @@ bool PulseEngine::ProcessAction(const SEAction& action)
   {
     switch (patientAss->GetType())
     {
-      case cdm::ePatientAssessment_Type_PulmonaryFunctionTest:
+      case ePatientAssessment_Type::PulmonaryFunctionTest:
       {
         SEPulmonaryFunctionTest pft(m_Logger);
         GetPatientAssessment(pft);
@@ -598,7 +598,7 @@ bool PulseEngine::ProcessAction(const SEAction& action)
         pft.SaveFile(pftFile);
         break;
       }
-      case cdm::ePatientAssessment_Type_Urinalysis:
+      case ePatientAssessment_Type::Urinalysis:
       {
         SEUrinalysis upan(m_Logger);
         GetPatientAssessment(upan);
@@ -614,7 +614,7 @@ bool PulseEngine::ProcessAction(const SEAction& action)
         break;
       }
 
-      case cdm::ePatientAssessment_Type_CompleteBloodCount:
+      case ePatientAssessment_Type::CompleteBloodCount:
       {
         SECompleteBloodCount cbc(m_Logger);
         GetPatientAssessment(cbc);
@@ -629,7 +629,7 @@ bool PulseEngine::ProcessAction(const SEAction& action)
         break;
       }
 
-      case cdm::ePatientAssessment_Type_ComprehensiveMetabolicPanel:
+      case ePatientAssessment_Type::ComprehensiveMetabolicPanel:
       {
         SEComprehensiveMetabolicPanel mp(m_Logger);
         GetPatientAssessment(mp);
@@ -645,7 +645,7 @@ bool PulseEngine::ProcessAction(const SEAction& action)
       }
       default:
       {
-        m_ss << "Unsupported assessment request " << patientAss->GetType();
+        m_ss << "Unsupported assessment request " << ePatientAssessment_Type_Name(patientAss->GetType());
         Error(m_ss);
         return false;
       }
