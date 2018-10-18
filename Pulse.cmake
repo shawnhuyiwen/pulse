@@ -113,6 +113,7 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/PulseCLR.cmake)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_target_properties (libprotobuf libprotobuf-lite libprotoc protoc PROPERTIES FOLDER protobufs)
+set_target_properties(libprotobuf-lite libprotoc protoc PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
 
 
 file(COPY ${CMAKE_SOURCE_DIR}/bin DESTINATION ${CMAKE_INSTALL_PREFIX})

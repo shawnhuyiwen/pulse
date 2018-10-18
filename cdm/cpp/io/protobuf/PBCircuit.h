@@ -41,9 +41,9 @@ protected:
   static void Serialize(const cdm::CircuitManagerData& src, SECircuitManager& dst);
   static void Serialize(const SECircuitManager& src, cdm::CircuitManagerData& dst);
   template<typename CircuitBindType, CIRCUIT_TEMPLATE>
-  static void Serialize(const CircuitBindType& src, SECircuit<CIRCUIT_TEMPLATE>& dst, const std::map<std::string, NodeType*>& nodes, const std::map<std::string, PathType*>& paths);
+  static void Serialize(const CircuitBindType& src, SECircuit<CIRCUIT_TYPES>& dst, const std::map<std::string, NodeType*>& nodes, const std::map<std::string, PathType*>& paths);
   template<typename CircuitBindType, CIRCUIT_TEMPLATE>
-  static void Serialize(const SECircuit<CIRCUIT_TEMPLATE>& src, CircuitBindType& dst);
+  static void Serialize(const SECircuit<CIRCUIT_TYPES>& src, CircuitBindType& dst);
   template<CIRCUIT_NODE_TEMPLATE>
   static void Serialize(const cdm::CircuitNodeData& src, SECircuitNode<CIRCUIT_NODE_TYPES>& dst);
   template<CIRCUIT_NODE_TEMPLATE>
