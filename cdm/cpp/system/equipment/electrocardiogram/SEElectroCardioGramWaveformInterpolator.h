@@ -3,7 +3,7 @@
 
 #pragma once
 CDM_BIND_DECL(ElectroCardioGramWaveformListData)
-#include "system/equipment/ElectroCardioGram/SEElectroCardioGramWaveform.h"
+#include "system/equipment/electrocardiogram/SEElectroCardioGramWaveform.h"
 
 class CDM_DECL SEElectroCardioGramWaveformInterpolator : public Loggable
 {
