@@ -477,7 +477,6 @@ void PBSubstance::Serialize(const SESubstanceConcentration& src, cdm::SubstanceC
     dst.set_allocated_concentration(SEScalarMassPerVolume::Unload(*src.m_Concentration));
 }
 
-
 void PBSubstance::Load(const cdm::SubstanceFractionData& src, SESubstanceFraction& dst)
 {
   PBSubstance::Serialize(src, dst);

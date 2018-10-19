@@ -5,7 +5,6 @@
 #include "substance/SESubstancePhysicochemicals.h"
 #include "properties/SEScalar0To1.h"
 
-
 SESubstancePhysicochemicals::SESubstancePhysicochemicals(Logger* logger) : Loggable(logger)
 {
   m_AcidDissociationConstant = nullptr;

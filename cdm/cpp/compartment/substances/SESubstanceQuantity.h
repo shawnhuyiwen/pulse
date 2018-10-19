@@ -6,7 +6,7 @@ class SESubstance;
 
 class CDM_DECL SESubstanceQuantity : public Loggable
 {
-  friend class PBCompartment;//friend the serialization class
+  friend class PBSubstanceQuantity;//friend the serialization class
 public:
   SESubstanceQuantity(SESubstance& sub);
   virtual ~SESubstanceQuantity();

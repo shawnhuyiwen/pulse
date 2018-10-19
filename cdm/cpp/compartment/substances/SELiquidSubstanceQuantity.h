@@ -10,7 +10,7 @@ enum class BalanceLiquidBy { Mass, Concentration, Molarity, PartialPressure };
 
 class CDM_DECL SELiquidSubstanceQuantity : public SESubstanceQuantity, public SELiquidTransportSubstance
 {
-  friend class PBCompartment;//friend the serialization class
+  friend class PBSubstanceQuantity;//friend the serialization class
   friend class SELiquidCompartment;
 protected:
   SELiquidSubstanceQuantity(SESubstance& sub, SELiquidCompartment& compartment);

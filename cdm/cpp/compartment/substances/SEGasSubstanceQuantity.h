@@ -8,7 +8,7 @@ class SEGasCompartment;
 
 class CDM_DECL SEGasSubstanceQuantity : public SESubstanceQuantity, public SEGasTransportSubstance
 {
-  friend class PBCompartment;//friend the serialization class
+  friend class PBSubstanceQuantity;//friend the serialization class
   friend class SEGasCompartment;
 protected:
   SEGasSubstanceQuantity(SESubstance& sub, SEGasCompartment& compartment);
