@@ -2,8 +2,8 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "Controller/ScenarioExec.h"
-#include "Controller/Engine.h"
+#include "controller/ScenarioExec.h"
+#include "controller/Engine.h"
 #include "engine/SEAutoSerialization.h"
 #include "PulseScenario.h"
 #include "PulseConfiguration.h"

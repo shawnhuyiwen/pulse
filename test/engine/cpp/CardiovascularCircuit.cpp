@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #include "EngineTest.h"
-#include "Controller/Controller.h"
+#include "controller/Controller.h"
 #include "controller/Substances.h"
 #include "controller/Circuits.h"
 #include "controller/Compartments.h"

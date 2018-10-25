@@ -8,6 +8,7 @@
 #include "dirent.h"
 #include "utils/FileUtils.h"
 #include "utils/unitconversion/UnitConversionEngine.h"
+#include <cstring>
 
 SESubstanceManager::SESubstanceManager(Logger* logger) : Loggable(logger)
 {

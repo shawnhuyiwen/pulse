@@ -32,7 +32,7 @@
 #pragma warning(disable:4996) // Deprecation
 
 #include "PulsePhysiologyEngine.h"
-#include "Controller/Controller.h"
+#include "controller/Controller.h"
 
 
 

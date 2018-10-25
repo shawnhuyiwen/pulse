@@ -14,8 +14,8 @@ source_group("" FILES ${PULSE_FILES})
 set(SOURCE ${PULSE_FILES})
 
 file(GLOB PULSE_CONTROLLER_FILES
-  "cpp/Controller/*.h"
-  "cpp/Controller/*.cpp"
+  "cpp/controller/*.h"
+  "cpp/controller/*.cpp"
 )
 list(APPEND SOURCE ${PULSE_CONTROLLER_FILES})
 source_group("Controller" FILES ${PULSE_CONTROLLER_FILES})

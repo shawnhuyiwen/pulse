@@ -4,7 +4,7 @@
 #include <jni.h>
 #include <iostream>
 #include "PulsePhysiologyEngine.h"
-#include "Controller/Engine.h"
+#include "controller/Engine.h"
 #include "scenario/SEScenarioExec.h"
 #include "engine/SEEventHandler.h"
 #include "engine/SEAdvanceHandler.h"

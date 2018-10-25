@@ -3,8 +3,8 @@
 
 #include "PulseScenarioDriver.h"
 #include "PulsePhysiologyEngine.h"
-#include "Controller/Controller.h"
-#include "Controller/ScenarioExec.h"
+#include "controller/Controller.h"
+#include "controller/ScenarioExec.h"
 #include "utils/FileUtils.h"
 
 bool PulseScenarioDriver::Configure(int argc, char* argv[])
