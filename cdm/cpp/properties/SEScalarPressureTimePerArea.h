@@ -3,7 +3,6 @@
 
 #pragma once
 #include "properties/SEScalar.h"
-CDM_BIND_DECL(ScalarPressureTimePerAreaData)
 
 class CDM_DECL PressureTimePerAreaUnit : public CCompoundUnit
 {
@@ -23,10 +22,4 @@ class CDM_DECL SEScalarPressureTimePerArea : public SEScalarQuantity<PressureTim
 public:
   SEScalarPressureTimePerArea() {}
   virtual ~SEScalarPressureTimePerArea() {}
-
-  static void Load(const cdm::ScalarPressureTimePerAreaData& src, SEScalarPressureTimePerArea& dst);
-  static cdm::ScalarPressureTimePerAreaData* Unload(const SEScalarPressureTimePerArea& src);
-protected:
-  static void Serialize(const cdm::ScalarPressureTimePerAreaData& src, SEScalarPressureTimePerArea& dst);
-  static void Serialize(const SEScalarPressureTimePerArea& src, cdm::ScalarPressureTimePerAreaData& dst);
 };

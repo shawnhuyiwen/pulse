@@ -2,28 +2,21 @@
    See accompanying NOTICE file for details.*/
 #pragma once
 #include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineAction.h"
-CDM_BIND_DECL(SodaLimeFailureData)
 
 class CDM_DECL SESodaLimeFailure : public SEAnesthesiaMachineAction
 {
+  friend class PBAnesthesiaMachineAction;//friend the serialization class
 public:
 
   SESodaLimeFailure();
   virtual ~SESodaLimeFailure();
 
   virtual void Clear();
+  virtual void Copy(const SESodaLimeFailure& src);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
 
-  static void Load(const cdm::SodaLimeFailureData& src, SESodaLimeFailure& dst);
-  static cdm::SodaLimeFailureData* Unload(const SESodaLimeFailure& src);
-protected:
-  static void Serialize(const cdm::SodaLimeFailureData& src, SESodaLimeFailure& dst);
-  static void Serialize(const SESodaLimeFailure& src, cdm::SodaLimeFailureData& dst);
-
-public:
-  
   virtual bool HasSeverity() const;
   virtual SEScalar0To1& GetSeverity();
   virtual double GetSeverity() const;

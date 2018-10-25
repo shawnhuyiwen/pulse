@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarAreaPerTimePressure.h"
-#include "bind/cdm/Properties.pb.h"
 
 const AreaPerTimePressureUnit AreaPerTimePressureUnit::m2_Per_s_mmHg("m^2/s mmHg");
 const AreaPerTimePressureUnit AreaPerTimePressureUnit::cm2_Per_s_mmHg("cm^2/s mmHg");
@@ -36,26 +35,4 @@ const AreaPerTimePressureUnit& AreaPerTimePressureUnit::GetCompoundUnit(const st
   std::stringstream err;
   err << unit << " is not a valid AreaPerTimePressure unit";
   throw CommonDataModelException(err.str());
-}
-
-void SEScalarAreaPerTimePressure::Load(const cdm::ScalarAreaPerTimePressureData& src, SEScalarAreaPerTimePressure& dst)
-{
-  SEScalarAreaPerTimePressure::Serialize(src, dst);
-}
-void SEScalarAreaPerTimePressure::Serialize(const cdm::ScalarAreaPerTimePressureData& src, SEScalarAreaPerTimePressure& dst)
-{
-  SEUnitScalar::Serialize(src.scalarareapertimepressure(), dst);
-}
-
-cdm::ScalarAreaPerTimePressureData* SEScalarAreaPerTimePressure::Unload(const SEScalarAreaPerTimePressure& src)
-{
-  if (!src.IsValid())
-    return nullptr;
-  cdm::ScalarAreaPerTimePressureData* dst = new cdm::ScalarAreaPerTimePressureData();
-  Serialize(src, *dst);
-  return dst;
-}
-void SEScalarAreaPerTimePressure::Serialize(const SEScalarAreaPerTimePressure& src, cdm::ScalarAreaPerTimePressureData& dst)
-{
-  SEUnitScalar::Serialize(src, *dst.mutable_scalarareapertimepressure());
 }

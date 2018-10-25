@@ -4,7 +4,6 @@
 #include "stdafx.h"
 #include "system/physiology/SEEndocrineSystem.h"
 #include "properties/SEScalarAmountPerTime.h"
-#include "bind/cdm/Physiology.pb.h"
 
 SEEndocrineSystem::SEEndocrineSystem(Logger* logger) : SESystem(logger)
 {
@@ -27,29 +26,6 @@ const SEScalar* SEEndocrineSystem::GetScalar(const std::string& name)
   if (name.compare("InsulinSynthesisRate") == 0)
     return &GetInsulinSynthesisRate();
   return nullptr;
-}
-
-void SEEndocrineSystem::Load(const cdm::EndocrineSystemData& src, SEEndocrineSystem& dst)
-{
-  SEEndocrineSystem::Serialize(src, dst);
-}
-void SEEndocrineSystem::Serialize(const cdm::EndocrineSystemData& src, SEEndocrineSystem& dst)
-{
-  dst.Clear();
-  if (src.has_insulinsynthesisrate())
-    SEScalarAmountPerTime::Load(src.insulinsynthesisrate(), dst.GetInsulinSynthesisRate());
-}
-
-cdm::EndocrineSystemData* SEEndocrineSystem::Unload(const SEEndocrineSystem& src)
-{
-  cdm::EndocrineSystemData* dst = new cdm::EndocrineSystemData();
-  SEEndocrineSystem::Serialize(src, *dst);
-  return dst;
-}
-void SEEndocrineSystem::Serialize(const SEEndocrineSystem& src, cdm::EndocrineSystemData& dst)
-{
-  if (src.HasInsulinSynthesisRate())
-    dst.set_allocated_insulinsynthesisrate(SEScalarAmountPerTime::Unload(*src.m_InsulinSynthesisRate));
 }
 
 bool SEEndocrineSystem::HasInsulinSynthesisRate() const

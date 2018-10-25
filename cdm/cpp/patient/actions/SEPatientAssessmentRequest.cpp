@@ -3,13 +3,7 @@
 
 #include "stdafx.h"
 #include "patient/actions/SEPatientAssessmentRequest.h"
-#include "bind/cdm/PatientActions.pb.h"
-#include "bind/cdm/PatientAssessmentEnums.pb.h"
-
-const std::string& ePatientAssessment_Type_Name(ePatientAssessment_Type m)
-{
-  return cdm::ePatientAssessment_Type_Name((cdm::ePatientAssessment_Type)m);
-}
+#include "io/protobuf/PBPatientActions.h"
 
 SEPatientAssessmentRequest::SEPatientAssessmentRequest() : SEPatientAction()
 {
@@ -27,6 +21,11 @@ void SEPatientAssessmentRequest::Clear()
   m_Type=ePatientAssessment_Type::CompleteBloodCount;
 }
 
+void SEPatientAssessmentRequest::Copy(const SEPatientAssessmentRequest& src)
+{
+  PBPatientAction::Copy(src, *this);
+}
+
 bool SEPatientAssessmentRequest::IsValid() const
 {
   return SEPatientAction::IsValid();
@@ -35,28 +34,6 @@ bool SEPatientAssessmentRequest::IsValid() const
 bool SEPatientAssessmentRequest::IsActive() const
 {
   return IsValid();
-}
-
-void SEPatientAssessmentRequest::Load(const cdm::PatientAssessmentRequestData& src, SEPatientAssessmentRequest& dst)
-{
-  SEPatientAssessmentRequest::Serialize(src, dst);
-}
-void SEPatientAssessmentRequest::Serialize(const cdm::PatientAssessmentRequestData& src, SEPatientAssessmentRequest& dst)
-{
-  SEPatientAction::Serialize(src.patientaction(), dst);
-  dst.SetType((ePatientAssessment_Type)src.type());
-}
-
-cdm::PatientAssessmentRequestData* SEPatientAssessmentRequest::Unload(const SEPatientAssessmentRequest& src)
-{
-  cdm::PatientAssessmentRequestData* dst = new cdm::PatientAssessmentRequestData();
-  SEPatientAssessmentRequest::Serialize(src, *dst);
-  return dst;
-}
-void SEPatientAssessmentRequest::Serialize(const SEPatientAssessmentRequest& src, cdm::PatientAssessmentRequestData& dst)
-{
-  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
-  dst.set_type((cdm::ePatientAssessment_Type)src.m_Type);
 }
 
 ePatientAssessment_Type SEPatientAssessmentRequest::GetType() const

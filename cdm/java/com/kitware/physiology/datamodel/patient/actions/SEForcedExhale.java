@@ -3,7 +3,7 @@
 
 package com.kitware.physiology.datamodel.patient.actions;
 
-import com.kitware.physiology.cdm.PatientActions.ConsciousRespirationData.ForcedExhaleData;
+import com.kitware.physiology.cdm.PatientActions.ForcedExhaleData;
 
 import com.kitware.physiology.datamodel.properties.SEScalar0To1;
 import com.kitware.physiology.datamodel.properties.SEScalarTime;

@@ -11,7 +11,6 @@
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
-#include "bind/cdm/Physiology.pb.h"
 
 SERespiratorySystem::SERespiratorySystem(Logger* logger) : SESystem(logger)
 {
@@ -106,101 +105,6 @@ const SEScalar* SERespiratorySystem::GetScalar(const std::string& name)
   if (name.compare("TranspulmonaryPressure") == 0)
     return &GetTranspulmonaryPressure();
   return nullptr;
-}
-
-void SERespiratorySystem::Load(const cdm::RespiratorySystemData& src, SERespiratorySystem& dst)
-{
-  SERespiratorySystem::Serialize(src, dst);
-}
-void SERespiratorySystem::Serialize(const cdm::RespiratorySystemData& src, SERespiratorySystem& dst)
-{
-  dst.Clear();
-  if (src.has_alveolararterialgradient())
-    SEScalarPressure::Load(src.alveolararterialgradient(), dst.GetAlveolarArterialGradient());
-  if (src.has_carricoindex())
-    SEScalarPressure::Load(src.carricoindex(), dst.GetCarricoIndex());
-  if (src.has_endtidalcarbondioxidefraction())
-    SEScalar0To1::Load(src.endtidalcarbondioxidefraction(), dst.GetEndTidalCarbonDioxideFraction());
-  if (src.has_endtidalcarbondioxidepressure())
-    SEScalarPressure::Load(src.endtidalcarbondioxidepressure(), dst.GetEndTidalCarbonDioxidePressure());
-  if (src.has_expiratoryflow())
-    SEScalarVolumePerTime::Load(src.expiratoryflow(), dst.GetExpiratoryFlow());
-  if (src.has_inspiratoryexpiratoryratio())
-    SEScalar::Load(src.inspiratoryexpiratoryratio(), dst.GetInspiratoryExpiratoryRatio());
-  if (src.has_inspiratoryflow())
-    SEScalarVolumePerTime::Load(src.inspiratoryflow(), dst.GetInspiratoryFlow());
-  if (src.has_pulmonarycompliance())
-    SEScalarFlowCompliance::Load(src.pulmonarycompliance(), dst.GetPulmonaryCompliance());
-  if (src.has_pulmonaryresistance())
-    SEScalarFlowResistance::Load(src.pulmonaryresistance(), dst.GetPulmonaryResistance());
-  if (src.has_respirationdriverpressure())
-    SEScalarPressure::Load(src.respirationdriverpressure(), dst.GetRespirationDriverPressure());
-  if (src.has_respirationmusclepressure())
-    SEScalarPressure::Load(src.respirationmusclepressure(), dst.GetRespirationMusclePressure());
-  if (src.has_respirationrate())
-    SEScalarFrequency::Load(src.respirationrate(), dst.GetRespirationRate());
-  if (src.has_specificventilation())
-    SEScalar::Load(src.specificventilation(), dst.GetSpecificVentilation());
-  if (src.has_tidalvolume())
-    SEScalarVolume::Load(src.tidalvolume(), dst.GetTidalVolume());
-  if (src.has_totalalveolarventilation())
-    SEScalarVolumePerTime::Load(src.totalalveolarventilation(), dst.GetTotalAlveolarVentilation());
-  if (src.has_totaldeadspaceventilation())
-    SEScalarVolumePerTime::Load(src.totaldeadspaceventilation(), dst.GetTotalDeadSpaceVentilation());
-  if (src.has_totallungvolume())
-    SEScalarVolume::Load(src.totallungvolume(), dst.GetTotalLungVolume());
-  if (src.has_totalpulmonaryventilation())
-    SEScalarVolumePerTime::Load(src.totalpulmonaryventilation(), dst.GetTotalPulmonaryVentilation());
-  if (src.has_transpulmonarypressure())
-    SEScalarPressure::Load(src.transpulmonarypressure(), dst.GetTranspulmonaryPressure());
-}
-
-cdm::RespiratorySystemData* SERespiratorySystem::Unload(const SERespiratorySystem& src)
-{
-  cdm::RespiratorySystemData* dst = new cdm::RespiratorySystemData();
-  SERespiratorySystem::Serialize(src, *dst);
-  return dst;
-}
-void SERespiratorySystem::Serialize(const SERespiratorySystem& src, cdm::RespiratorySystemData& dst)
-{
-  if (src.HasAlveolarArterialGradient())
-    dst.set_allocated_alveolararterialgradient(SEScalarPressure::Unload(*src.m_AlveolarArterialGradient));
-  if (src.HasCarricoIndex())
-    dst.set_allocated_carricoindex(SEScalarPressure::Unload(*src.m_CarricoIndex));
-  if (src.HasEndTidalCarbonDioxideFraction())
-    dst.set_allocated_endtidalcarbondioxidefraction(SEScalar0To1::Unload(*src.m_EndTidalCarbonDioxideFraction));
-  if (src.HasEndTidalCarbonDioxidePressure())
-    dst.set_allocated_endtidalcarbondioxidepressure(SEScalarPressure::Unload(*src.m_EndTidalCarbonDioxidePressure));
-  if (src.HasExpiratoryFlow())
-    dst.set_allocated_expiratoryflow(SEScalarVolumePerTime::Unload(*src.m_ExpiratoryFlow));
-  if (src.HasInspiratoryExpiratoryRatio())
-    dst.set_allocated_inspiratoryexpiratoryratio(SEScalar::Unload(*src.m_InspiratoryExpiratoryRatio));
-  if (src.HasInspiratoryFlow())
-    dst.set_allocated_inspiratoryflow(SEScalarVolumePerTime::Unload(*src.m_InspiratoryFlow));
-  if (src.HasPulmonaryCompliance())
-    dst.set_allocated_pulmonarycompliance(SEScalarFlowCompliance::Unload(*src.m_PulmonaryCompliance));
-  if (src.HasPulmonaryResistance())
-    dst.set_allocated_pulmonaryresistance(SEScalarFlowResistance::Unload(*src.m_PulmonaryResistance));
-  if (src.HasRespirationDriverPressure())
-    dst.set_allocated_respirationdriverpressure(SEScalarPressure::Unload(*src.m_RespirationDriverPressure));
-  if (src.HasRespirationMusclePressure())
-    dst.set_allocated_respirationmusclepressure(SEScalarPressure::Unload(*src.m_RespirationMusclePressure));
-  if (src.HasRespirationRate())
-    dst.set_allocated_respirationrate(SEScalarFrequency::Unload(*src.m_RespirationRate));
-  if (src.HasSpecificVentilation())
-    dst.set_allocated_specificventilation(SEScalar::Unload(*src.m_SpecificVentilation));
-  if (src.HasTidalVolume())
-    dst.set_allocated_tidalvolume(SEScalarVolume::Unload(*src.m_TidalVolume));
-  if (src.HasTotalAlveolarVentilation())
-    dst.set_allocated_totalalveolarventilation(SEScalarVolumePerTime::Unload(*src.m_TotalAlveolarVentilation));
-  if (src.HasTotalDeadSpaceVentilation())
-    dst.set_allocated_totaldeadspaceventilation(SEScalarVolumePerTime::Unload(*src.m_TotalDeadSpaceVentilation));
-  if (src.HasTotalLungVolume())
-    dst.set_allocated_totallungvolume(SEScalarVolume::Unload(*src.m_TotalLungVolume));
-  if (src.HasTotalPulmonaryVentilation())
-    dst.set_allocated_totalpulmonaryventilation(SEScalarVolumePerTime::Unload(*src.m_TotalPulmonaryVentilation));
-  if (src.HasTranspulmonaryPressure())
-    dst.set_allocated_transpulmonarypressure(SEScalarPressure::Unload(*src.m_TranspulmonaryPressure));
 }
 
 bool SERespiratorySystem::HasAlveolarArterialGradient() const

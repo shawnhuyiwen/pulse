@@ -3,13 +3,12 @@
 
 
 #include "stdafx.h"
-#include "Equipment/AnesthesiaMachine.h"
-#include "Controller/Controller.h"
-#include "Controller/Substances.h"
-#include "Controller/Circuits.h"
-#include "Controller/Compartments.h"
+#include "equipment/AnesthesiaMachine.h"
+#include "controller/Controller.h"
+#include "controller/Substances.h"
+#include "controller/Circuits.h"
+#include "controller/Compartments.h"
 #include "PulseConfiguration.h"
-#include "bind/pulse/PulseEquipment.pb.h"
 #include "system/equipment/anesthesiamachine/SEAnesthesiaMachineOxygenBottle.h"
 #include "system/equipment/anesthesiamachine/SEAnesthesiaMachineChamber.h"
 #include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineConfiguration.h"
@@ -110,37 +109,6 @@ void AnesthesiaMachine::Initialize()
   m_currentbreathingCycleTime_s = 0.0;
   
   StateChange();
-}
-
-void AnesthesiaMachine::Load(const pulse::AnesthesiaMachineData& src, AnesthesiaMachine& dst)
-{
-  AnesthesiaMachine::Serialize(src, dst);
-  dst.SetUp();
-}
-void AnesthesiaMachine::Serialize(const pulse::AnesthesiaMachineData& src, AnesthesiaMachine& dst)
-{
-  SEAnesthesiaMachine::Serialize(src.common(), dst);
-  dst.m_inhaling = src.inhaling();
-  dst.m_currentbreathingCycleTime_s = src.currentbreathingcycletime_s();
-  dst.m_inspirationTime_s = src.inspirationtime_s();
-  dst.m_O2InletVolumeFraction = src.oxygeninletvolumefraction();
-  dst.m_totalBreathingCycleTime_s = src.totalbreathingcycletime_s();
-}
-
-pulse::AnesthesiaMachineData* AnesthesiaMachine::Unload(const AnesthesiaMachine& src)
-{
-  pulse::AnesthesiaMachineData* dst = new pulse::AnesthesiaMachineData();
-  AnesthesiaMachine::Serialize(src, *dst);
-  return dst;
-}
-void AnesthesiaMachine::Serialize(const AnesthesiaMachine& src, pulse::AnesthesiaMachineData& dst)
-{
-  SEAnesthesiaMachine::Serialize(src, *dst.mutable_common());
-  dst.set_inhaling(src.m_inhaling);
-  dst.set_currentbreathingcycletime_s(src.m_currentbreathingCycleTime_s);
-  dst.set_inspirationtime_s(src.m_inspirationTime_s);
-  dst.set_oxygeninletvolumefraction(src.m_O2InletVolumeFraction);
-  dst.set_totalbreathingcycletime_s(src.m_totalBreathingCycleTime_s);
 }
 
 //--------------------------------------------------------------------------------------------------

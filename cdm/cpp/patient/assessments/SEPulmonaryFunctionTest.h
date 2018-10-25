@@ -5,10 +5,10 @@
 #include "patient/assessments/SEPatientAssessment.h"
 class SEPatient;
 class SERespiratorySystem;
-CDM_BIND_DECL(PulmonaryFunctionTestData)
 
 class CDM_DECL SEPulmonaryFunctionTest : public SEPatientAssessment
 {
+  friend class PBPatientAssessment;//friend the serialization class
 public:
 
   SEPulmonaryFunctionTest(Logger* logger);
@@ -16,16 +16,8 @@ public:
 
   virtual void Clear();
 
-  virtual std::string Save() const;
-  virtual void SaveFile(const std::string& filename) const;
-
-  static void Load(const cdm::PulmonaryFunctionTestData& src, SEPulmonaryFunctionTest& dst);
-  static cdm::PulmonaryFunctionTestData* Unload(const SEPulmonaryFunctionTest& src);
-protected:
-  static void Serialize(const cdm::PulmonaryFunctionTestData& src, SEPulmonaryFunctionTest& dst);
-  static void Serialize(const SEPulmonaryFunctionTest& src, cdm::PulmonaryFunctionTestData& dst);
-
-public:
+  bool SerializeToString(std::string& output, SerializationMode m) const;
+  bool SerializeToFile(const std::string& filename, SerializationMode m) const;
 
   virtual int GetNumberOfPlotPoints(){ return m_NumberOfPlotPoints; }
   virtual void SetNumberOfPlotPoints(int n){ m_NumberOfPlotPoints = n; }

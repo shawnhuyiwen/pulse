@@ -5,10 +5,10 @@
 class SETestCase;
 class SETestReport;
 class SETestErrorStatistics;
-namespace cdm { class TestReportData_TestSuiteData; }
 
 class CDM_DECL SETestSuite : public Loggable
 {
+  friend class PBTestReport;//friend the serialization class
   friend SETestReport;
 protected:
   SETestSuite(Logger* logger);
@@ -17,12 +17,6 @@ public:
 
   virtual void Reset(); //reset values
   virtual void Clear(); //clear memory
-
-  static void Load(const cdm::TestReportData_TestSuiteData& src, SETestSuite& dst);
-  static cdm::TestReportData_TestSuiteData* Unload(const SETestSuite& src);
-protected:
-  static void Serialize(const cdm::TestReportData_TestSuiteData& src, SETestSuite& dst);
-  static void Serialize(const SETestSuite& src, cdm::TestReportData_TestSuiteData& dst);
 
 public:
 

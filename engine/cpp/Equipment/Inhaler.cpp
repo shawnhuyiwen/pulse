@@ -3,11 +3,10 @@
 
 
 #include "stdafx.h"
-#include "Equipment/Inhaler.h"
-#include "Controller/Controller.h"
-#include "Controller/Compartments.h"
-#include "Controller/Substances.h"
-#include "bind/pulse/PulseEquipment.pb.h"
+#include "equipment/Inhaler.h"
+#include "controller/Controller.h"
+#include "controller/Compartments.h"
+#include "controller/Substances.h"
 #include "system/physiology/SERespiratorySystem.h"
 #include "circuit/SECircuit.h"
 #include "circuit/SECircuitPath.h"
@@ -60,27 +59,6 @@ void Inhaler::Initialize()
 {
   PulseSystem::Initialize();
   m_InhalerDrug = nullptr;
-}
-
-void Inhaler::Load(const pulse::InhalerData& src, Inhaler& dst)
-{
-  Inhaler::Serialize(src, dst);
-  dst.SetUp();
-}
-void Inhaler::Serialize(const pulse::InhalerData& src, Inhaler& dst)
-{
-  SEInhaler::Serialize(src.common(), dst);
-}
-
-pulse::InhalerData* Inhaler::Unload(const Inhaler& src)
-{
-  pulse::InhalerData* dst = new pulse::InhalerData();
-  Inhaler::Serialize(src, *dst);
-  return dst;
-}
-void Inhaler::Serialize(const Inhaler& src, pulse::InhalerData& dst)
-{
-  SEInhaler::Serialize(src, *dst.mutable_common());
 }
 
 void Inhaler::SetUp()

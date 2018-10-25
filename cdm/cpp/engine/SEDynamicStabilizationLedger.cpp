@@ -4,8 +4,6 @@
 #include "stdafx.h"
 #include "engine/SEDynamicStabilizationLedger.h"
 #include "engine/SEDynamicStabilizationEngineConvergence.h"
-
-
 #include "engine/SEEngineTracker.h"
 #include "engine/SEDynamicStabilizationPropertyConvergence.h"
 #include "properties/SEScalarTime.h"

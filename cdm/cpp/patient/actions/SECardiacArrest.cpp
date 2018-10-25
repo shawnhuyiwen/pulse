@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 #include "patient/actions/SECardiacArrest.h"
-#include "bind/cdm/PatientActions.pb.h"
+#include "io/protobuf/PBPatientActions.h"
 
 SECardiacArrest::SECardiacArrest() : SEPatientAction()
 {
@@ -21,6 +21,11 @@ void SECardiacArrest::Clear()
   m_State = eSwitch::Off;
 }
 
+void SECardiacArrest::Copy(const SECardiacArrest& src)
+{
+  PBPatientAction::Copy(src, *this);
+}
+
 bool SECardiacArrest::IsValid() const
 {
   return SEPatientAction::IsValid();
@@ -29,29 +34,6 @@ bool SECardiacArrest::IsValid() const
 bool SECardiacArrest::IsActive() const
 {
   return IsValid() && m_State == eSwitch::On;
-}
-
-void SECardiacArrest::Load(const cdm::CardiacArrestData& src, SECardiacArrest& dst)
-{
-  SECardiacArrest::Serialize(src, dst);
-}
-void SECardiacArrest::Serialize(const cdm::CardiacArrestData& src, SECardiacArrest& dst)
-{
-  SEPatientAction::Serialize(src.patientaction(), dst);
-  if (src.state() != cdm::eSwitch::NullSwitch)
-    dst.SetState((eSwitch)src.state());
-}
-
-cdm::CardiacArrestData* SECardiacArrest::Unload(const SECardiacArrest& src)
-{
-  cdm::CardiacArrestData* dst = new cdm::CardiacArrestData();
-  SECardiacArrest::Serialize(src, *dst);
-  return dst;
-}
-void SECardiacArrest::Serialize(const SECardiacArrest& src, cdm::CardiacArrestData& dst)
-{
-  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
-  dst.set_state((cdm::eSwitch)src.m_State);
 }
 
 void SECardiacArrest::ToString(std::ostream &str) const

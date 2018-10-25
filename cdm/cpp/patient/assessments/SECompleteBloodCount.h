@@ -3,10 +3,10 @@
 
 #pragma once
 #include "patient/assessments/SEPatientAssessment.h"
-CDM_BIND_DECL(CompleteBloodCountData)
 
 class CDM_DECL SECompleteBloodCount : public SEPatientAssessment
 {
+  friend class PBPatientAssessment;//friend the serialization class
 public:
 
   SECompleteBloodCount(Logger* logger);
@@ -14,17 +14,9 @@ public:
 
   virtual void Clear(); //clear memory
 
-  virtual std::string Save() const;
-  virtual void SaveFile(const std::string& filename) const;
+  bool SerializeToString(std::string& output, SerializationMode m=BINARY) const;
+  bool SerializeToFile(const std::string& filename, SerializationMode m=ASCII) const;
 
-  static void Load(const cdm::CompleteBloodCountData& src, SECompleteBloodCount& dst);
-  static cdm::CompleteBloodCountData* Unload(const SECompleteBloodCount& src);
-protected:
-  static void Serialize(const cdm::CompleteBloodCountData& src, SECompleteBloodCount& dst);
-  static void Serialize(const SECompleteBloodCount& src, cdm::CompleteBloodCountData& dst);
-
-public:
-  
   virtual bool HasHematocrit() const;
   virtual SEScalar0To1& GetHematocrit(); 
   virtual double GetHematocrit() const;

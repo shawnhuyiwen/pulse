@@ -3,27 +3,21 @@
 #pragma once
 #include "SEEnvironmentCondition.h"
 class SEEnvironmentalConditions;
-CDM_BIND_DECL(InitialEnvironmentConditionsData)
 
 class CDM_DECL SEInitialEnvironmentConditions : public SEEnvironmentCondition
 {
+  friend class PBEnvironmentCondition;//friend the serialization class
 public:
 
   SEInitialEnvironmentConditions(SESubstanceManager& substances);
   virtual ~SEInitialEnvironmentConditions();
 
   virtual void Clear();
+  virtual void Copy(const SEInitialEnvironmentConditions& src);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
 
-  static void Load(const cdm::InitialEnvironmentConditionsData& src, SEInitialEnvironmentConditions& dst);
-  static cdm::InitialEnvironmentConditionsData* Unload(const SEInitialEnvironmentConditions& src);
-protected:
-  static void Serialize(const cdm::InitialEnvironmentConditionsData& src, SEInitialEnvironmentConditions& dst);
-  static void Serialize(const SEInitialEnvironmentConditions& src, cdm::InitialEnvironmentConditionsData& dst);
-
-public:
   virtual std::string GetName() const{ return "InitialEnvironment"; }
 
   virtual bool HasConditions() const;

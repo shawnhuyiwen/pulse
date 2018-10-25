@@ -3,11 +3,11 @@
 
 #pragma once
 #include "system/SESystem.h"
-CDM_BIND_DECL(RespiratorySystemData)
 
 
 class CDM_DECL SERespiratorySystem : public SESystem
 {
+  friend class PBPhysiology;//friend the serialization class
 public:
 
   SERespiratorySystem(Logger* logger);
@@ -16,14 +16,6 @@ public:
   virtual void Clear();// Deletes all members
   
   virtual const SEScalar* GetScalar(const std::string& name);
-
-  static void Load(const cdm::RespiratorySystemData& src, SERespiratorySystem& dst);
-  static cdm::RespiratorySystemData* Unload(const SERespiratorySystem& src);
-protected:
-  static void Serialize(const cdm::RespiratorySystemData& src, SERespiratorySystem& dst);
-  static void Serialize(const SERespiratorySystem& src, cdm::RespiratorySystemData& dst);
-
-public:
 
   virtual bool HasAlveolarArterialGradient() const;
   virtual SEScalarPressure& GetAlveolarArterialGradient();

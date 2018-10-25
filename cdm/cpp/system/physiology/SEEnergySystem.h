@@ -3,10 +3,10 @@
 
 #pragma once
 #include "system/SESystem.h"
-CDM_BIND_DECL(EnergySystemData)
 
 class CDM_DECL SEEnergySystem : public SESystem
 {
+  friend class PBPhysiology;//friend the serialization class
 public:
 
   SEEnergySystem(Logger* logger);
@@ -15,14 +15,6 @@ public:
   virtual void Clear();// Deletes all members
   
   virtual const SEScalar* GetScalar(const std::string& name);
-
-  static void Load(const cdm::EnergySystemData& src, SEEnergySystem& dst);
-  static cdm::EnergySystemData* Unload(const SEEnergySystem& src);
-protected:
-  static void Serialize(const cdm::EnergySystemData& src, SEEnergySystem& dst);
-  static void Serialize(const SEEnergySystem& src, cdm::EnergySystemData& dst);
-
-public:
 
   virtual bool HasAchievedExerciseLevel() const;
   virtual SEScalar0To1& GetAchievedExerciseLevel();

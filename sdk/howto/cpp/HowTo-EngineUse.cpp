@@ -133,7 +133,7 @@ void HowToEngineUse()
   // If no time is provided, the simulation time that is in the state file will be used
   // Note the provided state files are named to include what is simulation time is
   startTime.SetValue(0, TimeUnit::s);
-  if (!pe->LoadStateFile("./states/StandardMale@0s.pba", &startTime))
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.pba", ASCII, &startTime, nullptr))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
@@ -268,7 +268,7 @@ void HowToEngineUse()
 
 
   // Save the state of the engine
-  pe->SaveState("./states/FinalEngineUseState.pba");
+  pe->SerializeToFile("./states/FinalEngineUseState.pba",ASCII);
 
   pe->GetLogger()->Info("Finished");
 }

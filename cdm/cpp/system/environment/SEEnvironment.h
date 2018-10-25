@@ -8,22 +8,16 @@ class SEAppliedTemperature;
 class SEEnvironmentalConditions;
 class SEChangeEnvironmentConditions;
 class SEInitialEnvironmentConditions;
-CDM_BIND_DECL(EnvironmentData)
 
 class CDM_DECL SEEnvironment : public SESystem
 {
+  friend class PBEnvironment;//friend the serialization class
 public:
 
   SEEnvironment(SESubstanceManager& substances);
   virtual ~SEEnvironment();
 
   virtual void Clear();
-
-  static void Load(const cdm::EnvironmentData& src, SEEnvironment& dst);
-  static cdm::EnvironmentData* Unload(const SEEnvironment& src);
-protected:
-  static void Serialize(const cdm::EnvironmentData& src, SEEnvironment& dst);
-  static void Serialize(const SEEnvironment& src, cdm::EnvironmentData& dst);
 
   /** @name ProcessChange
   * @brief - Will change this class as directed by the Action

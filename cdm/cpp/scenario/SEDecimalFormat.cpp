@@ -4,13 +4,6 @@
 #include "stdafx.h"
 #include <iomanip> 
 #include "scenario/SEDecimalFormat.h"
-#include "bind/cdm/Scenario.pb.h"
-#include "bind/cdm/ScenarioEnums.pb.h"
-
-const std::string& eDecimalFormat_Type_Name(eDecimalFormat_Type m)
-{
-  return cdm::eDecimalFormat_Type_Name((cdm::eDecimalFormat_Type)m);
-}
 
 SEDecimalFormat::SEDecimalFormat(const SEDecimalFormat* dfault)
 {
@@ -34,29 +27,6 @@ void SEDecimalFormat::Set(const SEDecimalFormat& f)
 {
   m_Precision = f.m_Precision;
   m_Notation = f.m_Notation;
-}
-
-void SEDecimalFormat::Load(const cdm::DecimalFormatData& src, SEDecimalFormat& dst)
-{
-  SEDecimalFormat::Serialize(src, dst);
-}
-void SEDecimalFormat::Serialize(const cdm::DecimalFormatData& src, SEDecimalFormat& dst)
-{
-  dst.Clear();
-  dst.SetNotation((eDecimalFormat_Type)src.type());
-  dst.SetPrecision(src.precision());
-}
-
-cdm::DecimalFormatData* SEDecimalFormat::Unload(const SEDecimalFormat& src)
-{
-  cdm::DecimalFormatData* dst = new cdm::DecimalFormatData();
-  Serialize(src, *dst);
-  return dst;
-}
-void SEDecimalFormat::Serialize(const SEDecimalFormat& src, cdm::DecimalFormatData& dst)
-{
-  dst.set_type((cdm::eDecimalFormat_Type)src.m_Notation);
-  dst.set_precision((google::protobuf::uint32)src.m_Precision);
 }
 
 void SEDecimalFormat::SetPrecision(std::streamsize p)

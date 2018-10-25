@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarAmountPerTime.h"
-#include "bind/cdm/Properties.pb.h"
 
 AmountPerTimeUnit AmountPerTimeUnit::mol_Per_day("mol/day");
 AmountPerTimeUnit AmountPerTimeUnit::mol_Per_s("mol/s");
@@ -46,26 +45,4 @@ const AmountPerTimeUnit& AmountPerTimeUnit::GetCompoundUnit(const std::string& u
   std::stringstream err;
   err << unit << " is not a valid AmountPerTime unit";
   throw CommonDataModelException(err.str());
-}
-
-void SEScalarAmountPerTime::Load(const cdm::ScalarAmountPerTimeData& src, SEScalarAmountPerTime& dst)
-{
-  SEScalarAmountPerTime::Serialize(src, dst);
-}
-void SEScalarAmountPerTime::Serialize(const cdm::ScalarAmountPerTimeData& src, SEScalarAmountPerTime& dst)
-{
-  SEUnitScalar::Serialize(src.scalaramountpertime(), dst);
-}
-
-cdm::ScalarAmountPerTimeData* SEScalarAmountPerTime::Unload(const SEScalarAmountPerTime& src)
-{
-  if (!src.IsValid())
-    return nullptr;
-  cdm::ScalarAmountPerTimeData* dst = new cdm::ScalarAmountPerTimeData();
-  Serialize(src, *dst);
-  return dst;
-}
-void SEScalarAmountPerTime::Serialize(const SEScalarAmountPerTime& src, cdm::ScalarAmountPerTimeData& dst)
-{
-  SEUnitScalar::Serialize(src, *dst.mutable_scalaramountpertime());
 }

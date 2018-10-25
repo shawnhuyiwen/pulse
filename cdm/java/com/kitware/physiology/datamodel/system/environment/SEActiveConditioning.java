@@ -4,7 +4,7 @@ package com.kitware.physiology.datamodel.system.environment;
 
 import com.kitware.physiology.datamodel.properties.SEScalarArea;
 
-import com.kitware.physiology.cdm.Environment.EnvironmentData.ActiveConditioningData;
+import com.kitware.physiology.cdm.Environment.ActiveConditioningData;
 
 import com.kitware.physiology.datamodel.properties.SEScalar0To1;
 import com.kitware.physiology.datamodel.properties.SEScalarPower;

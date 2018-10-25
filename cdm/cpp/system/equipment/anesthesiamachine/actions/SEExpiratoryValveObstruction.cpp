@@ -3,7 +3,7 @@
 #include "stdafx.h"
 #include "system/equipment/anesthesiamachine/actions/SEExpiratoryValveObstruction.h"
 #include "properties/SEScalar0To1.h"
-#include "bind/cdm/AnesthesiaMachineActions.pb.h"
+#include "io/protobuf/PBAnesthesiaMachineActions.h"
 
 SEExpiratoryValveObstruction::SEExpiratoryValveObstruction() : SEAnesthesiaMachineAction()
 {
@@ -21,6 +21,11 @@ void SEExpiratoryValveObstruction::Clear()
   SAFE_DELETE(m_Severity);
 }
 
+void SEExpiratoryValveObstruction::Copy(const SEExpiratoryValveObstruction& src)
+{// Using Bindings to make a copy
+  PBAnesthesiaMachineAction::Copy(src, *this);
+}
+
 bool SEExpiratoryValveObstruction::IsValid() const
 {
   return SEAnesthesiaMachineAction::IsValid() && HasSeverity();
@@ -29,30 +34,6 @@ bool SEExpiratoryValveObstruction::IsValid() const
 bool SEExpiratoryValveObstruction::IsActive() const
 {
   return HasSeverity() ? !m_Severity->IsZero() : false;
-}
-
-void SEExpiratoryValveObstruction::Load(const cdm::ExpiratoryValveObstructionData& src, SEExpiratoryValveObstruction& dst)
-{
-  SEExpiratoryValveObstruction::Serialize(src, dst);
-}
-void SEExpiratoryValveObstruction::Serialize(const cdm::ExpiratoryValveObstructionData& src, SEExpiratoryValveObstruction& dst)
-{
-  SEAnesthesiaMachineAction::Serialize(src.anesthesiamachineaction(), dst);
-  if (src.has_severity())
-    SEScalar0To1::Load(src.severity(), dst.GetSeverity());
-}
-
-cdm::ExpiratoryValveObstructionData* SEExpiratoryValveObstruction::Unload(const SEExpiratoryValveObstruction& src)
-{
-  cdm::ExpiratoryValveObstructionData* dst = new cdm::ExpiratoryValveObstructionData();
-  SEExpiratoryValveObstruction::Serialize(src, *dst);
-  return dst;
-}
-void SEExpiratoryValveObstruction::Serialize(const SEExpiratoryValveObstruction& src, cdm::ExpiratoryValveObstructionData& dst)
-{
-  SEAnesthesiaMachineAction::Serialize(src, *dst.mutable_anesthesiamachineaction());
-  if (src.HasSeverity())
-    dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
 }
 
 bool SEExpiratoryValveObstruction::HasSeverity() const

@@ -3,10 +3,10 @@
 #define _USE_MATH_DEFINES
 
 #include "EngineTest.h"
-#include "Controller/Controller.h"
-#include "Controller/Substances.h"
-#include "Controller/Circuits.h"
-#include "Controller/Compartments.h"
+#include "controller/Controller.h"
+#include "controller/Substances.h"
+#include "controller/Circuits.h"
+#include "controller/Compartments.h"
 #include "PulseConfiguration.h"
 
 #include "patient/SEPatient.h"
@@ -45,7 +45,7 @@ void PulseEngineTest::RespiratoryCircuitAndTransportTest(RespiratoryConfiguratio
   std::ofstream fAerosolGraph;
 
   PulseController pc(sTestDirectory + "/RespiratoryCircuitAndTransportTest.log");
-  pc.GetPatient().LoadFile("./patients/StandardMale.pba");
+  pc.GetPatient().SerializeFromFile("./patients/StandardMale.pba",ASCII);
   pc.SetupPatient();
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off); 
@@ -206,13 +206,13 @@ void PulseEngineTest::RespiratoryDriverTest(const std::string& sTestDirectory)
   TimingProfile tmr;
   tmr.Start("Test");
   PulseController pc(sTestDirectory + "/RespiratoryDriverTest.log");
-  pc.GetPatient().LoadFile("./patients/StandardMale.pba");
+  pc.GetPatient().SerializeFromFile("./patients/StandardMale.pba",ASCII);
   pc.SetupPatient();
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
   SEEnvironmentalConditions env(pc.GetSubstances());
-  env.LoadFile("./environments/Standard.pba");
+  env.SerializeFromFile("./environments/Standard.pba",ASCII);
   SEGasCompartment* cEnv = pc.GetCompartments().GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
   for (SESubstanceFraction* subFrac : env.GetAmbientGases())
   {

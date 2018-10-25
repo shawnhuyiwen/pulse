@@ -4,12 +4,12 @@
 #define _USE_MATH_DEFINES
 
 #include "EngineTest.h"
-#include "Controller/Controller.h"
-#include "Controller/Circuits.h"
-#include "Controller/Compartments.h"
-#include "Controller/Substances.h"
+#include "controller/Controller.h"
+#include "controller/Circuits.h"
+#include "controller/Compartments.h"
+#include "controller/Substances.h"
 #include "PulseConfiguration.h"
-#include "Systems/Renal.h"
+#include "physiology/Renal.h"
 
 #include "patient/SEPatient.h"
 #include "system/physiology/SEBloodChemistrySystem.h"
@@ -47,7 +47,7 @@ void PulseEngineTest::RenalCircuitAndTransportTest(const std::string& sTestDirec
   std::ofstream graphFile;
 
   PulseController pc(sTestDirectory + "/RenalCircuitAndTransportTest.log");
-  pc.GetPatient().LoadFile("./patients/StandardMale.pba");
+  pc.GetPatient().SerializeFromFile("./patients/StandardMale.pba",ASCII);
   pc.SetupPatient();
   pc.m_Config->EnableRenal(eSwitch::On);
   pc.m_Config->EnableTissue(eSwitch::Off);
@@ -173,7 +173,7 @@ void PulseEngineTest::RenalFeedbackTest(RenalFeedback feedback, const std::strin
   TimingProfile tmr;
   tmr.Start("Test");
   PulseController pc(sTestDirectory + "/RenalFeedbackTest.log");
-  pc.GetPatient().LoadFile("./patients/StandardMale.pba");
+  pc.GetPatient().SerializeFromFile("./patients/StandardMale.pba",ASCII);
   pc.SetupPatient();
   pc.m_Config->EnableRenal(eSwitch::On);
   pc.m_Config->EnableTissue(eSwitch::Off);
@@ -488,7 +488,7 @@ void PulseEngineTest::RenalSystemTest(RenalSystems systemtest, const std::string
   TimingProfile tmr;
   tmr.Start("Test");
   PulseController pc(sTestDirectory + "/RenalSystemTest.log");
-  pc.GetPatient().LoadFile("./patients/StandardMale.pba");
+  pc.GetPatient().SerializeFromFile("./patients/StandardMale.pba",ASCII);
   pc.SetupPatient();
   pc.m_Config->EnableRenal(eSwitch::On);
   pc.m_Config->EnableTissue(eSwitch::Off);

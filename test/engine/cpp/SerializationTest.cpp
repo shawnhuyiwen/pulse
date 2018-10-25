@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #include "EngineTest.h"
-#include "Controller/Controller.h"
+#include "controller/Controller.h"
 #include "utils/FileUtils.h"
 
 #include "engine/SETimedStabilization.h"
@@ -106,9 +106,10 @@ void PulseEngineTest::InhalerState(PhysiologyEngine* pc, HowToTracker& tracker)
   SEScalarTime now;// Make sure to tell the engine that we are at the same time
   // Save and Load the Engine State
   pc->GetLogger()->Info("Serializing");
-  pc->SaveState("./MidInhalerState.pba");
+  std::string state;
+  pc->SerializeToString(state,BINARY);
   now.SetValue(pc->GetSimulationTime(TimeUnit::s), TimeUnit::s);
-  pc->LoadStateFile("./MidInhalerState.pba", &now);
+  pc->SerializeFromString(state,BINARY, &now);
 
   // Change the results file
   pc->GetLogger()->ResetLogFile("InhalerSerialization.log");
@@ -142,9 +143,9 @@ void PulseEngineTest::InjectSuccsState(PhysiologyEngine* pc, HowToTracker& track
   pc->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("InjectSuccsSerialization.csv");
 
   // Save and Load the Engine State
-  pc->SaveState("./MidBolusState.pba");
+  pc->SerializeToFile("./MidBolusState.pba",ASCII);
   now.SetValue(pc->GetSimulationTime(TimeUnit::s), TimeUnit::s);
-  pc->LoadStateFile("./MidBolusState.pba",&now);
+  pc->SerializeFromFile("./MidBolusState.pba",ASCII,&now);
 
   tracker.AdvanceModelTime(15);
 
@@ -164,9 +165,9 @@ void PulseEngineTest::InjectSuccsState(PhysiologyEngine* pc, HowToTracker& track
   pc->ProcessAction(amConfig);
   tracker.AdvanceModelTime(5);
 
-  pc->SaveState("./AnesthesiaMachineState.pba");
+  pc->SerializeToFile("./AnesthesiaMachineState.pba",BINARY);
   now.SetValue(pc->GetSimulationTime(TimeUnit::s), TimeUnit::s);
-  pc->LoadStateFile("./AnesthesiaMachineState.pba", &now);
+  pc->SerializeFromFile("./AnesthesiaMachineState.pba",BINARY,&now);
 
   tracker.AdvanceModelTime(40);
 }
@@ -299,7 +300,7 @@ void PulseEngineTest::SerializationTest(const std::string& sTestDirectory)
     {
       pc->GetLogger()->ResetLogFile("BasicStandardStateResults.log");
       pc->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("BasicStandardStateResults.csv");
-      pc->LoadStateFile("./BasicStandardState@60s.pba");
+      pc->SerializeFromFile("./BasicStandardState@60s.pba",ASCII);
       tracker.AdvanceModelTime(60);
     }
   }
@@ -322,5 +323,5 @@ void PulseEngineTest::SerializationTest(const std::string& sTestDirectory)
     pc->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest("BrainTissueExtracellular", *Succs, "Concentration", MassPerVolumeUnit::ug_Per_mL);
     InjectSuccsState(pc.get(), tracker, *Succs);
   }
-  pc->SaveState("./FinalEngineState.pba");
+  pc->SerializeToFile("./FinalEngineState.pba",ASCII);
 }

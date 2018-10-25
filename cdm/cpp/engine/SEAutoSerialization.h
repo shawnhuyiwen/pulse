@@ -2,24 +2,16 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-CDM_BIND_DECL(AutoSerializationData)
 
 class CDM_DECL SEAutoSerialization : public Loggable
 {
+  friend class PBEngine;//friend the serialization class
 public:
   SEAutoSerialization(Logger* logger);
   virtual ~SEAutoSerialization();
 
   virtual void Clear();
   virtual bool IsValid() const;
-
-  static void Load(const cdm::AutoSerializationData& src, SEAutoSerialization& dst);
-  static cdm::AutoSerializationData* Unload(const SEAutoSerialization& src);
-protected:
-  static void Serialize(const cdm::AutoSerializationData& src, SEAutoSerialization& dst);
-  static void Serialize(const SEAutoSerialization& src, cdm::AutoSerializationData& dst);
-
-public:
 
   virtual bool HasPeriod() const;
   virtual SEScalarTime& GetPeriod();

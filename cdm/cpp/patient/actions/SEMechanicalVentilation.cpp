@@ -7,12 +7,11 @@
 #include "substance/SESubstanceConcentration.h"
 #include "substance/SESubstanceFraction.h"
 #include "substance/SESubstanceManager.h"
-#include "bind/cdm/PatientActions.pb.h"
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalar0To1.h"
-#include "io/protobuf/cdm/PBSubstance.h"
+#include "io/protobuf/PBPatientActions.h"
 
 SEMechanicalVentilation::SEMechanicalVentilation() : SEPatientAction()
 {
@@ -38,6 +37,11 @@ void SEMechanicalVentilation::Clear()
   m_cGasFractions.clear();
   DELETE_VECTOR(m_Aerosols);
   m_cAerosols.clear();
+}
+
+void SEMechanicalVentilation::Copy(const SEMechanicalVentilation& src, const SESubstanceManager& subMgr)
+{
+  PBPatientAction::Copy(src, *this, subMgr);
 }
 
 bool SEMechanicalVentilation::IsValid() const
@@ -71,78 +75,6 @@ bool SEMechanicalVentilation::IsValid() const
 bool SEMechanicalVentilation::IsActive() const
 {
   return GetState() == eSwitch::On;
-}
-
-void SEMechanicalVentilation::Load(const cdm::MechanicalVentilationData& src, SEMechanicalVentilation& dst, const SESubstanceManager& subMgr)
-{
-  SEMechanicalVentilation::Serialize(src, dst, subMgr);
-}
-void SEMechanicalVentilation::Serialize(const cdm::MechanicalVentilationData& src, SEMechanicalVentilation& dst, const SESubstanceManager& subMgr)
-{
-  SEPatientAction::Serialize(src.patientaction(), dst);
-  if (src.state() != cdm::eSwitch::NullSwitch)
-    dst.SetState((eSwitch)src.state());
-  if (src.has_flow())
-    SEScalarVolumePerTime::Load(src.flow(), dst.GetFlow());
-  if (src.has_pressure())
-    SEScalarPressure::Load(src.pressure(), dst.GetPressure());
-
-  dst.m_GasFractions.clear();
-  dst.m_cGasFractions.clear();
-  SESubstance* sub;
-  for (int i = 0; i < src.gasfraction_size(); i++)
-  {
-    const cdm::SubstanceFractionData& sfData = src.gasfraction()[i];
-    sub = subMgr.GetSubstance(sfData.name());
-    if (sub == nullptr)
-    {
-      dst.Error("MechanicalVentilation substance not found : " + sfData.name());
-      continue;
-    }
-    if (sub->GetState() != eSubstance_State::Gas)
-    {
-      dst.Error("MechanicalVentilation substance not gas : " + sfData.name());
-      continue;
-    }
-    PBSubstance::Load(sfData, dst.GetGasFraction(*sub));
-  }
-
-  for (int i = 0; i < src.aerosol_size(); i++)
-  {
-    const cdm::SubstanceConcentrationData& scData = src.aerosol()[i];
-    sub = subMgr.GetSubstance(scData.name());
-    if (sub == nullptr)
-    {
-      dst.Error("Ignoring an environmental conditions aerosol that was not found : " + scData.name());
-      continue;
-    }
-    if (sub->GetState() != eSubstance_State::Liquid && sub->GetState() != eSubstance_State::Solid)
-    {
-      dst.Error("Ignoring an environmental conditions aerosol that is not a gas : " + scData.name());
-      continue;
-    }
-    PBSubstance::Load(scData, dst.GetAerosol(*sub));
-  }
-}
-
-cdm::MechanicalVentilationData* SEMechanicalVentilation::Unload(const SEMechanicalVentilation& src)
-{
-  cdm::MechanicalVentilationData* dst = new cdm::MechanicalVentilationData();
-  SEMechanicalVentilation::Serialize(src, *dst);
-  return dst;
-}
-void SEMechanicalVentilation::Serialize(const SEMechanicalVentilation& src, cdm::MechanicalVentilationData& dst)
-{
-  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
-  dst.set_state((cdm::eSwitch)src.m_State);
-  if (src.HasFlow())
-    dst.set_allocated_flow(SEScalarVolumePerTime::Unload(*src.m_Flow));
-  if (src.HasPressure())
-    dst.set_allocated_pressure(SEScalarPressure::Unload(*src.m_Pressure));
-  for (SESubstanceFraction *sf : src.m_GasFractions)
-    dst.mutable_gasfraction()->AddAllocated(PBSubstance::Unload(*sf));
-  for (SESubstanceConcentration *sc : src.m_Aerosols)
-    dst.mutable_aerosol()->AddAllocated(PBSubstance::Unload(*sc));
 }
 
 eSwitch SEMechanicalVentilation::GetState() const

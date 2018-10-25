@@ -3,10 +3,10 @@
 
 #pragma once
 #include "patient/assessments/SEPatientAssessment.h"
-CDM_BIND_DECL(ComprehensiveMetabolicPanelData)
 
 class CDM_DECL SEComprehensiveMetabolicPanel : public SEPatientAssessment
 {
+  friend class PBPatientAssessment;//friend the serialization class
 public:
 
   SEComprehensiveMetabolicPanel(Logger* logger);
@@ -14,16 +14,9 @@ public:
 
   virtual void Clear(); //clear memory
 
-  virtual std::string Save() const;
-  virtual void SaveFile(const std::string& filename) const;
+  bool SerializeToString(std::string& output, SerializationMode m) const;
+  bool SerializeToFile(const std::string& filename, SerializationMode m) const;
 
-  static void Load(const cdm::ComprehensiveMetabolicPanelData& src, SEComprehensiveMetabolicPanel& dst);
-  static cdm::ComprehensiveMetabolicPanelData* Unload(const SEComprehensiveMetabolicPanel& src);
-protected:
-  static void Serialize(const cdm::ComprehensiveMetabolicPanelData& src, SEComprehensiveMetabolicPanel& dst);
-  static void Serialize(const SEComprehensiveMetabolicPanel& src, cdm::ComprehensiveMetabolicPanelData& dst);
-
-public:
   bool HasAlbumin() const;
   SEScalarMassPerVolume& GetAlbumin();
   virtual double GetAlbumin(const MassPerVolumeUnit& unit) const;

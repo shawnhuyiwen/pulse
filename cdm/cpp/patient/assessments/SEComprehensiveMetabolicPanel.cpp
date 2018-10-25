@@ -9,8 +9,7 @@
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarMass.h"
-#include "bind/cdm/PatientAssessments.pb.h"
-#include <google/protobuf/text_format.h>
+#include "io/protobuf/PBPatientAssessments.h"
 
 
 SEComprehensiveMetabolicPanel::SEComprehensiveMetabolicPanel(Logger* logger) : SEPatientAssessment(logger)
@@ -55,99 +54,13 @@ void SEComprehensiveMetabolicPanel::Clear()
   SAFE_DELETE(m_TotalProtein);
 }
 
-std::string SEComprehensiveMetabolicPanel::Save() const
+bool SEComprehensiveMetabolicPanel::SerializeToString(std::string& output, SerializationMode m) const
 {
-  std::string content;
-  cdm::ComprehensiveMetabolicPanelData* src = SEComprehensiveMetabolicPanel::Unload(*this);
-  google::protobuf::TextFormat::PrintToString(*src, &content);
-  return content;
+  return PBPatientAssessment::SerializeToString(*this, output, m);
 }
-void SEComprehensiveMetabolicPanel::SaveFile(const std::string& filename) const
+bool SEComprehensiveMetabolicPanel::SerializeToFile(const std::string& filename, SerializationMode m) const
 {
-  std::string content;
-  cdm::ComprehensiveMetabolicPanelData* src = SEComprehensiveMetabolicPanel::Unload(*this);
-  google::protobuf::TextFormat::PrintToString(*src, &content);
-  std::ofstream ascii_ostream(filename, std::ios::out | std::ios::trunc);
-  ascii_ostream << content;
-  ascii_ostream.flush();
-  ascii_ostream.close();
-  delete src;
-}
-
-void SEComprehensiveMetabolicPanel::Load(const cdm::ComprehensiveMetabolicPanelData& src, SEComprehensiveMetabolicPanel& dst)
-{
-  SEComprehensiveMetabolicPanel::Serialize(src, dst);
-}
-void SEComprehensiveMetabolicPanel::Serialize(const cdm::ComprehensiveMetabolicPanelData& src, SEComprehensiveMetabolicPanel& dst)
-{
-  SEPatientAssessment::Serialize(src.patientassessment(), dst);
-  if (src.has_albumin())
-    SEScalarMassPerVolume::Load(src.albumin(), dst.GetAlbumin());
-  if (src.has_alp())
-    SEScalarMassPerVolume::Load(src.alp(), dst.GetALP());
-  if (src.has_alt())
-    SEScalarMassPerVolume::Load(src.alt(), dst.GetALT());
-  if (src.has_ast())
-    SEScalarMassPerVolume::Load(src.ast(), dst.GetAST());
-  if (src.has_bun())
-    SEScalarMassPerVolume::Load(src.bun(), dst.GetBUN());
-  if (src.has_calcium())
-    SEScalarMassPerVolume::Load(src.calcium(), dst.GetCalcium());
-  if (src.has_chloride())
-    SEScalarAmountPerVolume::Load(src.chloride(), dst.GetChloride());
-  if (src.has_co2())
-    SEScalarAmountPerVolume::Load(src.co2(), dst.GetCO2());
-  if (src.has_creatinine())
-    SEScalarMassPerVolume::Load(src.creatinine(), dst.GetCreatinine());
-  if (src.has_glucose())
-    SEScalarMassPerVolume::Load(src.glucose(), dst.GetGlucose());
-  if (src.has_potassium())
-    SEScalarAmountPerVolume::Load(src.potassium(), dst.GetPotassium());
-  if (src.has_sodium())
-    SEScalarAmountPerVolume::Load(src.sodium(), dst.GetSodium());
-  if (src.has_totalbilirubin())
-    SEScalarMassPerVolume::Load(src.totalbilirubin(), dst.GetTotalBilirubin());
-  if (src.has_totalprotein())
-    SEScalarMassPerVolume::Load(src.totalprotein(), dst.GetTotalProtein());
-}
-
-cdm::ComprehensiveMetabolicPanelData* SEComprehensiveMetabolicPanel::Unload(const SEComprehensiveMetabolicPanel& src)
-{
-  cdm::ComprehensiveMetabolicPanelData* dst = new cdm::ComprehensiveMetabolicPanelData();
-  SEComprehensiveMetabolicPanel::Serialize(src, *dst);
-  return dst;
-}
-void SEComprehensiveMetabolicPanel::Serialize(const SEComprehensiveMetabolicPanel& src, cdm::ComprehensiveMetabolicPanelData& dst)
-{
-  SEPatientAssessment::Serialize(src, *dst.mutable_patientassessment());
-  if (src.HasAlbumin())
-    dst.set_allocated_albumin(SEScalarMassPerVolume::Unload(*src.m_Albumin));
-  if (src.HasALP())
-    dst.set_allocated_alp(SEScalarMassPerVolume::Unload(*src.m_ALP));
-  if (src.HasALT())
-      dst.set_allocated_alt(SEScalarMassPerVolume::Unload(*src.m_ALT));
-  if (src.HasAST())
-    dst.set_allocated_ast(SEScalarMassPerVolume::Unload(*src.m_AST));
-  if (src.HasBUN())
-    dst.set_allocated_bun(SEScalarMassPerVolume::Unload(*src.m_BUN));
-  if (src.HasCalcium())
-    dst.set_allocated_calcium(SEScalarMassPerVolume::Unload(*src.m_Calcium));
-  if (src.HasChloride())
-    dst.set_allocated_chloride(SEScalarAmountPerVolume::Unload(*src.m_Chloride));
-  if (src.HasCO2())
-    dst.set_allocated_co2(SEScalarAmountPerVolume::Unload(*src.m_CO2));
-  if (src.HasCreatinine())
-    dst.set_allocated_creatinine(SEScalarMassPerVolume::Unload(*src.m_Creatinine));
-  if (src.HasGlucose())
-    dst.set_allocated_glucose(SEScalarMassPerVolume::Unload(*src.m_Glucose));
-  if (src.HasPotassium())
-    dst.set_allocated_potassium(SEScalarAmountPerVolume::Unload(*src.m_Potassium));
-  if (src.HasSodium())
-    dst.set_allocated_sodium(SEScalarAmountPerVolume::Unload(*src.m_Sodium));
-  if (src.HasTotalBilirubin())
-    dst.set_allocated_totalbilirubin(SEScalarMassPerVolume::Unload(*src.m_TotalBilirubin));
-  if (src.HasTotalProtein())
-    dst.set_allocated_totalprotein(SEScalarMassPerVolume::Unload(*src.m_TotalProtein));
+  return PBPatientAssessment::SerializeToFile(*this, filename, m);
 }
 
 bool SEComprehensiveMetabolicPanel::HasAlbumin() const

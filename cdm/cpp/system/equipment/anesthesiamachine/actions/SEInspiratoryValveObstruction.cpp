@@ -3,7 +3,7 @@
 #include "stdafx.h"
 #include "system/equipment/anesthesiamachine/actions/SEInspiratoryValveObstruction.h"
 #include "properties/SEScalar0To1.h"
-#include "bind/cdm/AnesthesiaMachineActions.pb.h"
+#include "io/protobuf/PBAnesthesiaMachineActions.h"
 
 SEInspiratoryValveObstruction::SEInspiratoryValveObstruction() : SEAnesthesiaMachineAction()
 {
@@ -21,6 +21,11 @@ void SEInspiratoryValveObstruction::Clear()
   SAFE_DELETE(m_Severity);
 }
 
+void SEInspiratoryValveObstruction::Copy(const SEInspiratoryValveObstruction& src)
+{// Using Bindings to make a copy
+  PBAnesthesiaMachineAction::Copy(src, *this);
+}
+
 bool SEInspiratoryValveObstruction::IsValid() const
 {
   return SEAnesthesiaMachineAction::IsValid() && HasSeverity();
@@ -29,30 +34,6 @@ bool SEInspiratoryValveObstruction::IsValid() const
 bool SEInspiratoryValveObstruction::IsActive() const
 {
   return HasSeverity() ? !m_Severity->IsZero() : false;
-}
-
-void SEInspiratoryValveObstruction::Load(const cdm::InspiratoryValveObstructionData& src, SEInspiratoryValveObstruction& dst)
-{
-  SEInspiratoryValveObstruction::Serialize(src, dst);
-}
-void SEInspiratoryValveObstruction::Serialize(const cdm::InspiratoryValveObstructionData& src, SEInspiratoryValveObstruction& dst)
-{
-  SEAnesthesiaMachineAction::Serialize(src.anesthesiamachineaction(), dst);
-  if (src.has_severity())
-    SEScalar0To1::Load(src.severity(), dst.GetSeverity());
-}
-
-cdm::InspiratoryValveObstructionData* SEInspiratoryValveObstruction::Unload(const SEInspiratoryValveObstruction& src)
-{
-  cdm::InspiratoryValveObstructionData* dst = new cdm::InspiratoryValveObstructionData();
-  SEInspiratoryValveObstruction::Serialize(src, *dst);
-  return dst;
-}
-void SEInspiratoryValveObstruction::Serialize(const SEInspiratoryValveObstruction& src, cdm::InspiratoryValveObstructionData& dst)
-{
-  SEAnesthesiaMachineAction::Serialize(src, *dst.mutable_anesthesiamachineaction());
-  if (src.HasSeverity())
-    dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
 }
 
 bool SEInspiratoryValveObstruction::HasSeverity() const

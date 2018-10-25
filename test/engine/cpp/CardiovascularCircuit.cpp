@@ -3,11 +3,11 @@
 
 #include "EngineTest.h"
 #include "Controller/Controller.h"
-#include "Controller/Substances.h"
-#include "Controller/Circuits.h"
-#include "Controller/Compartments.h"
-#include "Systems/Cardiovascular.h"
-#include "Systems/Saturation.h"
+#include "controller/Substances.h"
+#include "controller/Circuits.h"
+#include "controller/Compartments.h"
+#include "physiology/Cardiovascular.h"
+#include "physiology/Saturation.h"
 #include "PulseConfiguration.h"
 #include "patient/SEPatient.h"
 #include "substance/SESubstanceFraction.h"
@@ -124,7 +124,7 @@ void PulseEngineTest::TuneCardiovascularCircuitTest(const std::string& sTestDire
       }
     }
   }
-  testReport.WriteFile(sTestDirectory + "/TuneCardiovascularCircuitReport.pba");
+  testReport.SerializeToFile(sTestDirectory + "/TuneCardiovascularCircuitReport.pba",ASCII);
 }
 void PulseEngineTest::TuneCardiovascularCircuitTest(SETestSuite& testSuite, const std::string& sTestDirectory, const std::string& sTestName, SEPatient& patient)
 {
@@ -132,9 +132,7 @@ void PulseEngineTest::TuneCardiovascularCircuitTest(SETestSuite& testSuite, cons
   timer.Start("TestCase");
   PulseController pc(testSuite.GetLogger());
   testSuite.GetLogger()->Info("Running " + sTestName);
-  auto* p = SEPatient::Unload(patient);
-  SEPatient::Load(*p, pc.GetPatient());
-  delete p;  
+  pc.GetPatient().Copy(patient);
   pc.m_Config->EnableRenal(eSwitch::On);
   pc.m_Config->EnableTissue(eSwitch::On);
   pc.SetupPatient();
@@ -198,7 +196,7 @@ void PulseEngineTest::CardiovascularCircuitAndTransportTest(CardiovascularDriver
   double binding_s = 0;
   PulseController pc(sTestDirectory + "/" + tName.str() + "CircuitAndTransportTest.log");
   pc.GetLogger()->Info("Running " + tName.str());
-  pc.GetPatient().LoadFile("./patients/StandardMale.pba");
+  pc.GetPatient().SerializeFromFile("./patients/StandardMale.pba",ASCII);
   pc.SetupPatient();
   if (heartRate_bpm <= 0)
     heartRate_bpm = pc.GetPatient().GetHeartRateBaseline().GetValue(FrequencyUnit::Per_min);
@@ -215,7 +213,7 @@ void PulseEngineTest::CardiovascularCircuitAndTransportTest(CardiovascularDriver
   if (balanceBloodGases)
   {
     SEEnvironmentalConditions env(pc.GetSubstances());
-    env.LoadFile("./environments/Standard.pba");
+    env.SerializeFromFile("./environments/Standard.pba",ASCII);
     SEGasCompartment* cEnv = pc.GetCompartments().GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
     for (SESubstanceFraction* subFrac : env.GetAmbientGases())
     {

@@ -4,27 +4,20 @@
 #include "system/environment/actions/SEEnvironmentAction.h"
 class SESubstanceManager;
 class SEEnvironmentalConditions;
-CDM_BIND_DECL(ChangeEnvironmentConditionsData)
 
 class CDM_DECL SEChangeEnvironmentConditions : public SEEnvironmentAction
 {
+  friend class PBEnvironmentAction;//friend the serialization class
 public:
 
   SEChangeEnvironmentConditions(SESubstanceManager& substances);
   virtual ~SEChangeEnvironmentConditions();
 
   virtual void Clear();
+  virtual void Copy(const SEChangeEnvironmentConditions& src);
 
   virtual bool IsValid() const;
 
-  static void Load(const cdm::ChangeEnvironmentConditionsData& src, SEChangeEnvironmentConditions& dst);
-  static cdm::ChangeEnvironmentConditionsData* Unload(const SEChangeEnvironmentConditions& src);
-protected:
-  static void Serialize(const cdm::ChangeEnvironmentConditionsData& src, SEChangeEnvironmentConditions& dst);
-  static void Serialize(const SEChangeEnvironmentConditions& src, cdm::ChangeEnvironmentConditionsData& dst);
-
-public:
-  
   virtual bool HasConditions() const;
   virtual SEEnvironmentalConditions& GetConditions();
   virtual const SEEnvironmentalConditions* GetConditions() const;

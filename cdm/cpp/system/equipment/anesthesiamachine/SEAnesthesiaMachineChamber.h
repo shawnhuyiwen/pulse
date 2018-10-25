@@ -5,11 +5,10 @@
 class SESubstance;
 class SESubstanceManager;
 class SEAnesthesiaMachine;
-CDM_BIND_DECL(AnesthesiaMachineData_ChamberData)
 
 class CDM_DECL SEAnesthesiaMachineChamber : Loggable
 {
-protected:
+  friend class PBAnesthesiaMachine;//friend the serialization class
   friend SEAnesthesiaMachine;
 public:
 
@@ -18,14 +17,7 @@ public:
 
   virtual void Clear();
 
-  static void Load(const cdm::AnesthesiaMachineData_ChamberData& src, SEAnesthesiaMachineChamber& dst);
-  static cdm::AnesthesiaMachineData_ChamberData* Unload(const SEAnesthesiaMachineChamber& src);
-protected:
-  static void Serialize(const cdm::AnesthesiaMachineData_ChamberData& src, SEAnesthesiaMachineChamber& dst);
-  static void Serialize(const SEAnesthesiaMachineChamber& src, cdm::AnesthesiaMachineData_ChamberData& dst);
-
   virtual void Merge(const SEAnesthesiaMachineChamber& from);
-public:
 
   virtual const SEScalar* GetScalar(const std::string& name);
 

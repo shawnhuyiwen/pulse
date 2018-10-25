@@ -4,23 +4,18 @@
 #pragma once
 #include "properties/SEProperty.h"
 #include "utils/unitconversion/UCCommon.h"
-CDM_BIND_DECL(HistogramData)
 
 class CDM_DECL SEHistogram : public SEProperty
 {
+  friend class PBProperty;//friend the serialization class
 public:
 
   SEHistogram();
   virtual ~SEHistogram();
 
   virtual void Clear(); //clear memory
+  void Copy(const SEHistogram& s);
 
-  static void Load(const cdm::HistogramData& src, SEHistogram& dst);
-  static cdm::HistogramData* Unload(const SEHistogram& src);
-protected:
-  static void Serialize(const cdm::HistogramData& src, SEHistogram& dst);
-  static void Serialize(const SEHistogram& src, cdm::HistogramData& dst);
-public:
   virtual bool                          IsValid() const;
   virtual void                          Invalidate();
 

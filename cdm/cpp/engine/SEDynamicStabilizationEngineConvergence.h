@@ -2,13 +2,13 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-CDM_BIND_DECL(DynamicStabilizationData_EngineConvergenceData)
 class SEDynamicStabilizationPropertyConvergence;
 class SEDataRequest;
 class SEDataRequestManager;
 
 class CDM_DECL SEDynamicStabilizationEngineConvergence : public Loggable
 {
+  friend class PBEngine;//friend the serialization class
   friend class SEDynamicStabilization;
 protected:
   SEDynamicStabilizationEngineConvergence(Logger* logger);
@@ -17,12 +17,6 @@ public:
   virtual ~SEDynamicStabilizationEngineConvergence();
 
   virtual void Clear();
-
-  static void Load(const cdm::DynamicStabilizationData_EngineConvergenceData& src, SEDynamicStabilizationEngineConvergence& dst);
-  static cdm::DynamicStabilizationData_EngineConvergenceData* Unload(const SEDynamicStabilizationEngineConvergence& src);
-protected:
-  static void Serialize(const cdm::DynamicStabilizationData_EngineConvergenceData& src, SEDynamicStabilizationEngineConvergence& dst);
-  static void Serialize(const SEDynamicStabilizationEngineConvergence& src, cdm::DynamicStabilizationData_EngineConvergenceData& dst);
 
 public:
 

@@ -4,7 +4,6 @@ See accompanying NOTICE file for details.*/
 #pragma once
 #include "properties/SEProperty.h"
 #include "utils/unitconversion/UCCommon.h"
-CDM_BIND_DECL(ScalarData)
 
 #define ZERO_APPROX 1e-10
 
@@ -19,6 +18,7 @@ public:
 
 class CDM_DECL SEScalar : public SEProperty
 {
+  friend class PBProperty;//friend the serialization class
 protected:
   double m_value;
 
@@ -37,13 +37,6 @@ public:
   */
   virtual void Invalidate();
 
-  static void Load(const cdm::ScalarData& src, SEScalar& dst);
-  static cdm::ScalarData* Unload(const SEScalar& src);
-protected:
-  static void Serialize(const cdm::ScalarData& src, SEScalar& dst);
-  static void Serialize(const SEScalar& src, cdm::ScalarData& dst);
-
-public:
   /**
   * Copies ONLY the value and unit
   * ONLY if the provided scalar is valid.
@@ -107,6 +100,7 @@ inline std::ostream& operator<< (std::ostream& out, const SEScalar& s)
 */
 class CDM_DECL SEUnitScalar : public SEScalar
 {
+  friend class PBProperty;//friend the serialization class
   friend SEGenericScalar;
 public:
 
@@ -127,14 +121,12 @@ public:
 
 protected:
   virtual const CCompoundUnit* GetCompoundUnit(const std::string& unit) const = 0;
-
-  static void Serialize(const cdm::ScalarData& src, SEUnitScalar& dst);
-  static void Serialize(const SEUnitScalar& src, cdm::ScalarData& dst);
 };
 
 template <typename Unit>
 class SEScalarQuantity : public SEUnitScalar
 {
+  friend class PBProperty;//friend the serialization class
 public:
   SEScalarQuantity();
   virtual ~SEScalarQuantity();
@@ -198,6 +190,7 @@ protected:
 */
 class CDM_DECL SEGenericScalar : public Loggable
 {
+  friend class PBProperty;//friend the serialization class
 public:
   SEGenericScalar(Logger* logger);
   virtual ~SEGenericScalar() {};

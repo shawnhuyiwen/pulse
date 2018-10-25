@@ -12,7 +12,6 @@
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalarAmountPerTime.h"
 #include "properties/SEScalarPressure.h"
-#include "bind/cdm/Physiology.pb.h"
 
 SEEnergySystem::SEEnergySystem(Logger* logger) : SESystem(logger)
 {
@@ -76,69 +75,6 @@ const SEScalar* SEEnergySystem::GetScalar(const std::string& name)
   if (name.compare("TotalWorkRateLevel") == 0)
     return &GetTotalWorkRateLevel();
   return nullptr;
-}
-
-void SEEnergySystem::Load(const cdm::EnergySystemData& src, SEEnergySystem& dst)
-{
-  SEEnergySystem::Serialize(src, dst);
-}
-void SEEnergySystem::Serialize(const cdm::EnergySystemData& src, SEEnergySystem& dst)
-{
-  dst.Clear();
-  if (src.has_achievedexerciselevel())
-    SEScalar0To1::Load(src.achievedexerciselevel(), dst.GetAchievedExerciseLevel());
-  if (src.has_coretemperature())
-    SEScalarTemperature::Load(src.coretemperature(), dst.GetCoreTemperature());
-  if (src.has_creatinineproductionrate())
-    SEScalarAmountPerTime::Load(src.creatinineproductionrate(), dst.GetCreatinineProductionRate());
-  if (src.has_exercisemeanarterialpressuredelta())
-    SEScalarPressure::Load(src.exercisemeanarterialpressuredelta(), dst.GetExerciseMeanArterialPressureDelta());
-  if (src.has_fatiguelevel())
-    SEScalar0To1::Load(src.fatiguelevel(), dst.GetFatigueLevel());
-  if (src.has_ketoneproductionrate())
-    SEScalarAmountPerTime::Load(src.ketoneproductionrate(), dst.GetKetoneProductionRate());
-  if (src.has_lactateproductionrate())
-    SEScalarAmountPerTime::Load(src.lactateproductionrate(), dst.GetLactateProductionRate());
-  if (src.has_skintemperature())
-    SEScalarTemperature::Load(src.skintemperature(), dst.GetSkinTemperature());
-  if (src.has_sweatrate())
-    SEScalarMassPerTime::Load(src.sweatrate(), dst.GetSweatRate());
-  if (src.has_totalmetabolicrate())
-    SEScalarPower::Load(src.totalmetabolicrate(), dst.GetTotalMetabolicRate());
-  if (src.has_totalworkratelevel())
-    SEScalar0To1::Load(src.totalworkratelevel(), dst.GetTotalWorkRateLevel());
-}
-
-cdm::EnergySystemData* SEEnergySystem::Unload(const SEEnergySystem& src)
-{
-  cdm::EnergySystemData* dst = new cdm::EnergySystemData();
-  SEEnergySystem::Serialize(src, *dst);
-  return dst;
-}
-void SEEnergySystem::Serialize(const SEEnergySystem& src, cdm::EnergySystemData& dst)
-{
-  if (src.HasAchievedExerciseLevel())
-    dst.set_allocated_achievedexerciselevel(SEScalar0To1::Unload(*src.m_AchievedExerciseLevel));
-  if (src.HasCoreTemperature())
-    dst.set_allocated_coretemperature(SEScalarTemperature::Unload(*src.m_CoreTemperature));
-  if (src.HasCreatinineProductionRate())
-    dst.set_allocated_creatinineproductionrate(SEScalarAmountPerTime::Unload(*src.m_CreatinineProductionRate));
-  if (src.HasExerciseMeanArterialPressureDelta())
-    dst.set_allocated_exercisemeanarterialpressuredelta(SEScalarPressure::Unload(*src.m_ExerciseMeanArterialPressureDelta));
-  if (src.HasFatigueLevel())
-    dst.set_allocated_fatiguelevel(SEScalar0To1::Unload(*src.m_FatigueLevel));
-  if (src.HasKetoneProductionRate())
-    dst.set_allocated_ketoneproductionrate(SEScalarAmountPerTime::Unload(*src.m_KetoneProductionRate));
-  if (src.HasLactateProductionRate())
-    dst.set_allocated_lactateproductionrate(SEScalarAmountPerTime::Unload(*src.m_LactateProductionRate));
-  if (src.HasSkinTemperature())
-    dst.set_allocated_skintemperature(SEScalarTemperature::Unload(*src.m_SkinTemperature));
-  if (src.HasSweatRate())
-    dst.set_allocated_sweatrate(SEScalarMassPerTime::Unload(*src.m_SweatRate));
-  if (src.HasTotalMetabolicRate())
-    dst.set_allocated_totalmetabolicrate(SEScalarPower::Unload(*src.m_TotalMetabolicRate));
-  if (src.HasTotalWorkRateLevel())
-    dst.set_allocated_totalworkratelevel(SEScalar0To1::Unload(*src.m_TotalWorkRateLevel));
 }
 
 bool SEEnergySystem::HasAchievedExerciseLevel() const

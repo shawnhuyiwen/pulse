@@ -1,5 +1,5 @@
 syntax = "proto3";
-package pulse;
+package pulse.proto;
 option java_package = "com.kitware.physiology.pulse";
 
 import "cdm/AnesthesiaMachine.proto";

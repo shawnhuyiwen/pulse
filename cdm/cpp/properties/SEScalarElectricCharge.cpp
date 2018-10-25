@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarElectricCharge.h"
-#include "bind/cdm/Properties.pb.h"
 
 const ElectricChargeUnit ElectricChargeUnit::C("C");
 
@@ -21,26 +20,4 @@ const ElectricChargeUnit& ElectricChargeUnit::GetCompoundUnit(const std::string&
   std::stringstream err;
   err << unit << " is not a valid ElectricCharge unit";
   throw CommonDataModelException(err.str());
-}
-
-void SEScalarElectricCharge::Load(const cdm::ScalarElectricChargeData& src, SEScalarElectricCharge& dst)
-{
-  SEScalarElectricCharge::Serialize(src, dst);
-}
-void SEScalarElectricCharge::Serialize(const cdm::ScalarElectricChargeData& src, SEScalarElectricCharge& dst)
-{
-  SEUnitScalar::Serialize(src.scalarelectriccharge(), dst);
-}
-
-cdm::ScalarElectricChargeData* SEScalarElectricCharge::Unload(const SEScalarElectricCharge& src)
-{
-  if (!src.IsValid())
-    return nullptr;
-  cdm::ScalarElectricChargeData* dst = new cdm::ScalarElectricChargeData();
-  Serialize(src, *dst);
-  return dst;
-}
-void SEScalarElectricCharge::Serialize(const SEScalarElectricCharge& src, cdm::ScalarElectricChargeData& dst)
-{
-  SEUnitScalar::Serialize(src, *dst.mutable_scalarelectriccharge());
 }

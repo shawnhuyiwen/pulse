@@ -1,10 +1,10 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 #include "EngineTest.h"
-#include "Controller/Controller.h"
-#include "Controller/Circuits.h"
-#include "Systems/Environment.h"
-#include "Systems/Energy.h"
+#include "controller/Controller.h"
+#include "controller/Circuits.h"
+#include "environment/Environment.h"
+#include "physiology/Energy.h"
 #include "PulseConfiguration.h"
 
 #include "patient/SEPatient.h"
@@ -37,7 +37,7 @@
 void PulseEngineTest::InternalTemperatureVariableBMRCircuitTest(const std::string& sTestDirectory)
 {
   PulseController pc(sTestDirectory + "/InternalTemperatureVariableBMRCircuitTest.log");
-  pc.GetPatient().LoadFile("./patients/StandardMale.pba");
+  pc.GetPatient().SerializeFromFile("./patients/StandardMale.pba",ASCII);
   pc.SetupPatient();
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);
@@ -111,7 +111,7 @@ void PulseEngineTest::InternalTemperatureVariableBMRCircuitTest(const std::strin
 void PulseEngineTest::InternalTemperatureVariableSkinCircuitTest(const std::string& sTestDirectory)
 {
   PulseController pc(sTestDirectory + "/InternalTemperatureVariableSkinCircuitTest.log");
-  pc.GetPatient().LoadFile("./patients/StandardMale.pba");
+  pc.GetPatient().SerializeFromFile("./patients/StandardMale.pba",ASCII);
   pc.SetupPatient();
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);
@@ -208,7 +208,7 @@ void PulseEngineTest::InternalTemperatureVariableSkinCircuitTest(const std::stri
 void PulseEngineTest::InternalTemperatureVariableCoreCircuitTest(const std::string& sTestDirectory)
 {
   PulseController pc(sTestDirectory + "/InternalTemperatureVariableCoreCircuitTest.log");
-  pc.GetPatient().LoadFile("./patients/StandardMale.pba");
+  pc.GetPatient().SerializeFromFile("./patients/StandardMale.pba",ASCII);
   pc.SetupPatient();
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);
@@ -304,7 +304,7 @@ void PulseEngineTest::InternalTemperatureVariableCoreCircuitTest(const std::stri
 void PulseEngineTest::EnvironmentVariableTemperatureCircuitTest(const std::string& sTestDirectory)
 {
   PulseController pc(sTestDirectory + "/EnvironmentVariableTemperatureCircuitTest.log");
-  pc.GetPatient().LoadFile("./patients/StandardMale.pba");
+  pc.GetPatient().SerializeFromFile("./patients/StandardMale.pba",ASCII);
   pc.SetupPatient();
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);
@@ -428,7 +428,7 @@ void PulseEngineTest::EnvironmentVariableTemperatureCircuitTest(const std::strin
 void PulseEngineTest::CombinedInternalAndEnvironmentVariableBMRandTemperatureCircuitTest(const std::string& sTestDirectory)
 {
   PulseController pc(sTestDirectory + "/CombinedInternalAndEnvironmentVariableBMRandTemperatureCircuitTest.log");
-  pc.GetPatient().LoadFile("./patients/StandardMale.pba");
+  pc.GetPatient().SerializeFromFile("./patients/StandardMale.pba",ASCII);
   pc.SetupPatient();
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);
@@ -582,7 +582,7 @@ void PulseEngineTest::CombinedInternalAndEnvironmentVariableBMRandTemperatureCir
 void PulseEngineTest::CombinedInternalAndEnvironmentSkinTempDropCircuitTest(const std::string& sTestDirectory)
 {
   PulseController pc(sTestDirectory + "/CombinedInternalAndEnvironmentSkinTempDropCircuitTest.log");
-  pc.GetPatient().LoadFile("./patients/StandardMale.pba");
+  pc.GetPatient().SerializeFromFile("./patients/StandardMale.pba",ASCII);
   pc.SetupPatient();
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);
@@ -676,14 +676,14 @@ void PulseEngineTest::CombinedInternalAndEnvironmentSkinTempDropCircuitTest(cons
 void PulseEngineTest::EnvironmentISO7730ComparisonTest(const std::string& sTestDirectory)
 {
   PulseController pc(sTestDirectory + "/EnvironmentTemperatureInput.log");
-  pc.GetPatient().LoadFile("./patients/StandardMale.pba");
+  pc.GetPatient().SerializeFromFile("./patients/StandardMale.pba",ASCII);
   pc.SetupPatient();
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
   Environment &env = (Environment&)pc.GetEnvironment();
   env.Initialize();
-  env.GetConditions().LoadFile("./environments/Standard.pba");
+  env.GetConditions().SerializeFromFile("./environments/Standard.pba",ASCII);
   env.StateChange();
 
   pc.GetEnergy().GetCoreTemperature().SetValue(37.0, TemperatureUnit::C);

@@ -3,8 +3,8 @@
 
 #include "stdafx.h"
 #include "patient/actions/SEAsthmaAttack.h"
-#include "bind/cdm/PatientActions.pb.h"
 #include "properties/SEScalar0To1.h"
+#include "io/protobuf/PBPatientActions.h"
 
 SEAsthmaAttack::SEAsthmaAttack() : SEPatientAction()
 {
@@ -22,6 +22,11 @@ void SEAsthmaAttack::Clear()
   SAFE_DELETE(m_Severity);
 }
 
+void SEAsthmaAttack::Copy(const SEAsthmaAttack& src)
+{
+  PBPatientAction::Copy(src, *this);
+}
+
 bool SEAsthmaAttack::IsValid() const
 {
   return SEPatientAction::IsValid() && HasSeverity();
@@ -31,31 +36,6 @@ bool SEAsthmaAttack::IsActive() const
 {
   return IsValid() ? !m_Severity->IsZero() : false;
 }
-
-void SEAsthmaAttack::Load(const cdm::AsthmaAttackData& src, SEAsthmaAttack& dst)
-{
-  SEAsthmaAttack::Serialize(src, dst);
-}
-void SEAsthmaAttack::Serialize(const cdm::AsthmaAttackData& src, SEAsthmaAttack& dst)
-{
-  SEPatientAction::Serialize(src.patientaction(), dst);
-  if (src.has_severity())
-    SEScalar0To1::Load(src.severity(), dst.GetSeverity());
-}
-
-cdm::AsthmaAttackData* SEAsthmaAttack::Unload(const SEAsthmaAttack& src)
-{
-  cdm::AsthmaAttackData* dst = new cdm::AsthmaAttackData();
-  SEAsthmaAttack::Serialize(src, *dst);
-  return dst;
-}
-void SEAsthmaAttack::Serialize(const SEAsthmaAttack& src, cdm::AsthmaAttackData& dst)
-{
-  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
-  if (src.HasSeverity())
-    dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
-}
-
 
 bool SEAsthmaAttack::HasSeverity() const
 {

@@ -1,10 +1,10 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 #include "EngineTest.h"
-#include "Controller/Controller.h"
-#include "Controller/Compartments.h"
-#include "Controller/Substances.h"
-#include "Systems/Saturation.h"
+#include "controller/Controller.h"
+#include "controller/Compartments.h"
+#include "controller/Substances.h"
+#include "physiology/Saturation.h"
 #include "substance/SESubstanceManager.h"
 #include "substance/SESubstance.h"
 #include "compartment/fluid/SELiquidCompartment.h"
@@ -1269,5 +1269,5 @@ void PulseEngineTest::AcidBaseBloodGasTests(const std::string& sOutputDirectory)
   std::string results = sOutputDirectory + "/AcidBaseBloodGasTests.csv";
   pc.GetDataTrack().WriteTrackToFile(results.c_str());
 
-  testReport.WriteFile(sOutputDirectory + "/AcidBaseBloodGasTestsReport.pba");
+  testReport.SerializeToFile(sOutputDirectory + "/AcidBaseBloodGasTestsReport.pba",ASCII);
 }

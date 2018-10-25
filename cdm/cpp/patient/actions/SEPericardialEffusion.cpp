@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "patient/actions/SEPericardialEffusion.h"
 #include "properties/SEScalarVolumePerTime.h"
-#include "bind/cdm/PatientActions.pb.h"
+#include "io/protobuf/PBPatientActions.h"
 
 SEPericardialEffusion::SEPericardialEffusion() : SEPatientAction()
 {
@@ -22,6 +22,11 @@ void SEPericardialEffusion::Clear()
   SAFE_DELETE(m_EffusionRate);
 }
 
+void SEPericardialEffusion::Copy(const SEPericardialEffusion& src)
+{
+  PBPatientAction::Copy(src, *this);
+}
+
 bool SEPericardialEffusion::IsValid() const
 {
   return SEPatientAction::IsValid() && HasEffusionRate();
@@ -30,30 +35,6 @@ bool SEPericardialEffusion::IsValid() const
 bool SEPericardialEffusion::IsActive() const
 {
   return IsValid() ? !m_EffusionRate->IsZero() : false;
-}
-
-void SEPericardialEffusion::Load(const cdm::PericardialEffusionData& src, SEPericardialEffusion& dst)
-{
-  SEPericardialEffusion::Serialize(src, dst);
-}
-void SEPericardialEffusion::Serialize(const cdm::PericardialEffusionData& src, SEPericardialEffusion& dst)
-{
-  SEPatientAction::Serialize(src.patientaction(), dst);
-  if (src.has_effusionrate())
-    SEScalarVolumePerTime::Load(src.effusionrate(), dst.GetEffusionRate());
-}
-
-cdm::PericardialEffusionData* SEPericardialEffusion::Unload(const SEPericardialEffusion& src)
-{
-  cdm::PericardialEffusionData* dst = new cdm::PericardialEffusionData();
-  SEPericardialEffusion::Serialize(src, *dst);
-  return dst;
-}
-void SEPericardialEffusion::Serialize(const SEPericardialEffusion& src, cdm::PericardialEffusionData& dst)
-{
-  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
-  if (src.HasEffusionRate())
-    dst.set_allocated_effusionrate(SEScalarVolumePerTime::Unload(*src.m_EffusionRate));
 }
 
 bool SEPericardialEffusion::HasEffusionRate() const

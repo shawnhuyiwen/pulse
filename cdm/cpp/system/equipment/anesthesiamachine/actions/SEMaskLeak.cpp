@@ -3,7 +3,7 @@
 #include "stdafx.h"
 #include "system/equipment/anesthesiamachine/actions/SEMaskLeak.h"
 #include "properties/SEScalar0To1.h"
-#include "bind/cdm/AnesthesiaMachineActions.pb.h"
+#include "io/protobuf/PBAnesthesiaMachineActions.h"
 
 SEMaskLeak::SEMaskLeak() : SEAnesthesiaMachineAction()
 {
@@ -21,6 +21,11 @@ void SEMaskLeak::Clear()
   SAFE_DELETE(m_Severity);
 }
 
+void SEMaskLeak::Copy(const SEMaskLeak& src)
+{// Using Bindings to make a copy
+  PBAnesthesiaMachineAction::Copy(src, *this);
+}
+
 bool SEMaskLeak::IsValid() const
 {
   return SEAnesthesiaMachineAction::IsValid() && HasSeverity();
@@ -29,30 +34,6 @@ bool SEMaskLeak::IsValid() const
 bool SEMaskLeak::IsActive() const
 {
   return HasSeverity() ? !m_Severity->IsZero() : false;
-}
-
-void SEMaskLeak::Load(const cdm::MaskLeakData& src, SEMaskLeak& dst)
-{
-  SEMaskLeak::Serialize(src, dst);
-}
-void SEMaskLeak::Serialize(const cdm::MaskLeakData& src, SEMaskLeak& dst)
-{
-  SEAnesthesiaMachineAction::Serialize(src.anesthesiamachineaction(), dst);
-  if (src.has_severity())
-    SEScalar0To1::Load(src.severity(), dst.GetSeverity());
-}
-
-cdm::MaskLeakData* SEMaskLeak::Unload(const SEMaskLeak& src)
-{
-  cdm::MaskLeakData* dst = new cdm::MaskLeakData();
-  SEMaskLeak::Serialize(src, *dst);
-  return dst;
-}
-void SEMaskLeak::Serialize(const SEMaskLeak& src, cdm::MaskLeakData& dst)
-{
-  SEAnesthesiaMachineAction::Serialize(src, *dst.mutable_anesthesiamachineaction());
-  if (src.HasSeverity())
-    dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
 }
 
 bool SEMaskLeak::HasSeverity() const

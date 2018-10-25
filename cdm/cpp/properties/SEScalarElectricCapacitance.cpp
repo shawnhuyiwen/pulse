@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarElectricCapacitance.h"
-#include "bind/cdm/Properties.pb.h"
 
 const ElectricCapacitanceUnit ElectricCapacitanceUnit::F("F");
 
@@ -21,26 +20,4 @@ const ElectricCapacitanceUnit& ElectricCapacitanceUnit::GetCompoundUnit(const st
   std::stringstream err;
   err << unit << " is not a valid ElectricCapacitance unit";
   throw CommonDataModelException(err.str());
-}
-
-void SEScalarElectricCapacitance::Load(const cdm::ScalarElectricCapacitanceData& src, SEScalarElectricCapacitance& dst)
-{
-  SEScalarElectricCapacitance::Serialize(src, dst);
-}
-void SEScalarElectricCapacitance::Serialize(const cdm::ScalarElectricCapacitanceData& src, SEScalarElectricCapacitance& dst)
-{
-  SEUnitScalar::Serialize(src.scalarelectriccapacitance(), dst);
-}
-
-cdm::ScalarElectricCapacitanceData* SEScalarElectricCapacitance::Unload(const SEScalarElectricCapacitance& src)
-{
-  if (!src.IsValid())
-    return nullptr;
-  cdm::ScalarElectricCapacitanceData* dst = new cdm::ScalarElectricCapacitanceData();
-  Serialize(src, *dst);
-  return dst;
-}
-void SEScalarElectricCapacitance::Serialize(const SEScalarElectricCapacitance& src, cdm::ScalarElectricCapacitanceData& dst)
-{
-  SEUnitScalar::Serialize(src, *dst.mutable_scalarelectriccapacitance());
 }

@@ -3,8 +3,7 @@
 
 package com.kitware.physiology.datamodel.patient.actions;
 
-import com.kitware.physiology.cdm.PatientActions.ConsciousRespirationData.BreathHoldData;
-
+import com.kitware.physiology.cdm.PatientActions.BreathHoldData;
 import com.kitware.physiology.datamodel.properties.SEScalarTime;
 
 public class SEBreathHold extends SEConsciousRespirationCommand

@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-
+class SEAction;
 class SESubstanceManager;
 class SEAnesthesiaMachine;
 class SEAnesthesiaMachineAction;
@@ -24,6 +24,7 @@ CDM_BIND_DECL(AnyAnesthesiaMachineActionData)
 
 class CDM_DECL SEAnesthesiaMachineActionCollection : public Loggable
 {
+  friend class PBScenario;//friend the serialization class
   friend class SEActionManager;
 protected:
   SEAnesthesiaMachineActionCollection(SESubstanceManager&);
@@ -99,11 +100,12 @@ public:
   SEYPieceDisconnect* GetYPieceDisconnect();
   const SEYPieceDisconnect* GetYPieceDisconnect() const;
   void RemoveYPieceDisconnect();
+
+  void GetActiveActions(std::vector<const SEAction*>& v) const;
   
 protected:
   void Clear();
-  static void Serialize(const SEAnesthesiaMachineActionCollection& src, cdm::ActionListData& dst);
-  bool ProcessAction(const SEAnesthesiaMachineAction& action, cdm::AnyAnesthesiaMachineActionData* any);
+  bool ProcessAction(const SEAnesthesiaMachineAction& action);
 
   SEAnesthesiaMachineConfiguration*           m_Configuration;
   //Anesthesia Machine Incidents

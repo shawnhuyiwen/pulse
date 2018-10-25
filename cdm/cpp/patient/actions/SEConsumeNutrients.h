@@ -5,27 +5,20 @@
 
 #include "patient/actions/SEPatientAction.h"
 #include "patient/SENutrition.h"
-CDM_BIND_DECL(ConsumeNutrientsData)
 
 class CDM_DECL SEConsumeNutrients : public SEPatientAction
 {
+  friend class PBPatientAction;//friend the serialization class
 public:
 
   SEConsumeNutrients();
   virtual ~SEConsumeNutrients();
 
   virtual void Clear(); //clear memory
+  virtual void Copy(const SEConsumeNutrients& src);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
-
-  static void Load(const cdm::ConsumeNutrientsData& src, SEConsumeNutrients& dst);
-  static cdm::ConsumeNutrientsData* Unload(const SEConsumeNutrients& src);
-protected:
-  static void Serialize(const cdm::ConsumeNutrientsData& src, SEConsumeNutrients& dst);
-  static void Serialize(const SEConsumeNutrients& src, cdm::ConsumeNutrientsData& dst);
-
-public:
 
   bool HasNutrition() const;
   SENutrition& GetNutrition();

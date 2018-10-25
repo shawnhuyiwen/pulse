@@ -37,7 +37,7 @@ void HowToConsumeNutrients()
   // Create the engine and load the patient
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowToConsumeNutrients.log");
   pe->GetLogger()->Info("HowToConsumeNutrients");
-  if (!pe->LoadStateFile("./states/StandardMale@0s.pba"))
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.pba", ASCII))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;

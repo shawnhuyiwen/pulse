@@ -10,34 +10,28 @@ class SETimedStabilization;
 class SEEnvironmentalConditions;
 class SEElectroCardioGramWaveformInterpolator;
 #include "engine/SEEngineConfiguration.h"
-PULSE_BIND_DECL(ConfigurationData)
 
 /**
 * @brief %Pulse specific configuration parameters for all systems/equipment
 */
 class PULSE_DECL PulseConfiguration : public SEEngineConfiguration
 {
+  friend class PBPulseConfiguration;//friend the serialization class
 public:
 
   PulseConfiguration(SESubstanceManager& substances);
   virtual ~PulseConfiguration();
   
   virtual void Clear();
+  void Merge(const PulseConfiguration&);
   virtual void Initialize();
 
-  virtual void Merge(const PulseConfiguration& from);
+  bool SerializeToString(std::string& output, SerializationMode m) const;
+  bool SerializeToFile(const std::string& filename, SerializationMode m) const;
+  bool SerializeFromString(const std::string& src, SerializationMode m);
+  bool SerializeFromFile(const std::string& filename, SerializationMode m);
+  
 
-  bool LoadFile(const std::string& file);
-
-  static void Load(const pulse::ConfigurationData& src, PulseConfiguration& dst);
-  static pulse::ConfigurationData* Unload(const PulseConfiguration& src);
-protected:
-  static void Serialize(const pulse::ConfigurationData& src, PulseConfiguration& dst);
-  static void Serialize(const PulseConfiguration& src, pulse::ConfigurationData& dst);
-
-  SESubstanceManager& m_Substances;
-
-public:
   virtual bool HasTimeStep() const;
   virtual SEScalarTime& GetTimeStep();
   virtual double GetTimeStep(const TimeUnit& unit) const;
@@ -66,13 +60,13 @@ public:
   virtual void RemoveAutoSerialization();
 
 protected:
+  SESubstanceManager& m_Substances;
 
-  bool                       m_Merge;
   SEScalarTime*              m_TimeStep;
   SETimedStabilization*      m_TimedStabilization;
   SEDynamicStabilization*    m_DynamicStabilization;
   SEAutoSerialization*       m_AutoSerialization;
-  eSwitch               m_WritePatientBaselineFile;
+  eSwitch                    m_WritePatientBaselineFile;
 
   ////////////////////
   /** Baroreceptors */

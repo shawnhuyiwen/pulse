@@ -2,27 +2,20 @@
    See accompanying NOTICE file for details.*/
 #pragma once
 #include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineAction.h"
-CDM_BIND_DECL(VentilatorPressureLossData)
 
 class CDM_DECL SEVentilatorPressureLoss : public SEAnesthesiaMachineAction
 {
+  friend class PBAnesthesiaMachineAction;//friend the serialization class
 public:
 
   SEVentilatorPressureLoss();
   virtual ~SEVentilatorPressureLoss();
 
   virtual void Clear();
+  virtual void Copy(const SEVentilatorPressureLoss& src);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
-
-  static void Load(const cdm::VentilatorPressureLossData& src, SEVentilatorPressureLoss& dst);
-  static cdm::VentilatorPressureLossData* Unload(const SEVentilatorPressureLoss& src);
-protected:
-  static void Serialize(const cdm::VentilatorPressureLossData& src, SEVentilatorPressureLoss& dst);
-  static void Serialize(const SEVentilatorPressureLoss& src, cdm::VentilatorPressureLossData& dst);
-
-public:
   
   virtual bool HasSeverity() const;
   virtual SEScalar0To1& GetSeverity();

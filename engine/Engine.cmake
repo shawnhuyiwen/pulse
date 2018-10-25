@@ -10,33 +10,46 @@ list(REMOVE_ITEM PULSE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/cpp/PulseScenarioDriver
 list(REMOVE_ITEM PULSE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/cpp/Verification.cpp)
 list(REMOVE_ITEM PULSE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/cpp/Verification.h)
 list(REMOVE_ITEM PULSE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/cpp/stdafx.cpp)#PreCompiled Header Generator, will add later
+source_group("" FILES ${PULSE_FILES})
 set(SOURCE ${PULSE_FILES})
+
 file(GLOB PULSE_CONTROLLER_FILES
   "cpp/Controller/*.h"
   "cpp/Controller/*.cpp"
 )
 list(APPEND SOURCE ${PULSE_CONTROLLER_FILES})
+source_group("Controller" FILES ${PULSE_CONTROLLER_FILES})
+
 file(GLOB PULSE_SCENARIO_FILES
-  "cpp/Controller/Scenario/*.h"
-  "cpp/Controller/Scenario/*.cpp"
+  "cpp/controller/Scenario/*.h"
+  "cpp/controller/Scenario/*.cpp"
 )
 list(APPEND SOURCE ${PULSE_SCENARIO_FILES})
+source_group("Controller\\Scenario" FILES ${PULSE_SCENARIO_FILES})
+
+file(GLOB PULSE_ENVIRONMENT_FILES
+  "cpp/environment/*.h"
+  "cpp/environment/*.cpp"
+)
+list(APPEND SOURCE ${PULSE_ENVIRONMENT_FILES})
+source_group("Environment" FILES ${PULSE_ENVIRONMENT_FILES})
+
 file(GLOB PULSE_EQUIPMENT_FILES
-  "cpp/Equipment/*.h"
-  "cpp/Equipment/*.cpp"
+  "cpp/equipment/*.h"
+  "cpp/equipment/*.cpp"
 )
 list(APPEND SOURCE ${PULSE_EQUIPMENT_FILES})
-file(GLOB PULSE_SYSTEMS_FILES
-  "cpp/Systems/*.h"
-  "cpp/Systems/*.cpp"
-)
-list(APPEND SOURCE ${PULSE_SYSTEMS_FILES})
-# Set up Filters
-source_group("" FILES ${PULSE_FILES})
-source_group("Controller" FILES ${PULSE_CONTROLLER_FILES})
-source_group("Controller\\Scenario" FILES ${PULSE_SCENARIO_FILES})
 source_group("Equipment" FILES ${PULSE_EQUIPMENT_FILES})
-source_group("Systems" FILES ${PULSE_SYSTEMS_FILES})
+
+file(GLOB PULSE_PHYSIOLOGY_FILES
+  "cpp/physiology/*.h"
+  "cpp/physiology/*.cpp"
+)
+list(APPEND SOURCE ${PULSE_PHYSIOLOGY_FILES})
+source_group("Physiology" FILES ${PULSE_PHYSIOLOGY_FILES})
+
+# I/O
+include(cpp/io/protobuf/CMakeLists.txt)
 
 # The DLL we are building
 add_library(PulseEngine ${SOURCE})

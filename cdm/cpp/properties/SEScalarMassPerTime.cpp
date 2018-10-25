@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarMassPerTime.h"
-#include "bind/cdm/Properties.pb.h"
 
 const MassPerTimeUnit MassPerTimeUnit::g_Per_s("g/s");
 const MassPerTimeUnit MassPerTimeUnit::g_Per_min("g/min");
@@ -56,26 +55,4 @@ const MassPerTimeUnit& MassPerTimeUnit::GetCompoundUnit(const std::string& unit)
   std::stringstream err;
   err << unit << " is not a valid MassPerTime unit";
   throw CommonDataModelException(err.str());
-}
-
-void SEScalarMassPerTime::Load(const cdm::ScalarMassPerTimeData& src, SEScalarMassPerTime& dst)
-{
-  SEScalarMassPerTime::Serialize(src, dst);
-}
-void SEScalarMassPerTime::Serialize(const cdm::ScalarMassPerTimeData& src, SEScalarMassPerTime& dst)
-{
-  SEUnitScalar::Serialize(src.scalarmasspertime(), dst);
-}
-
-cdm::ScalarMassPerTimeData* SEScalarMassPerTime::Unload(const SEScalarMassPerTime& src)
-{
-  if (!src.IsValid())
-    return nullptr;
-  cdm::ScalarMassPerTimeData* dst = new cdm::ScalarMassPerTimeData();
-  Serialize(src, *dst);
-  return dst;
-}
-void SEScalarMassPerTime::Serialize(const SEScalarMassPerTime& src, cdm::ScalarMassPerTimeData& dst)
-{
-  SEUnitScalar::Serialize(src, *dst.mutable_scalarmasspertime());
 }

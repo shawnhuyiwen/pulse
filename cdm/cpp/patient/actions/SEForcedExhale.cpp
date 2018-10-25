@@ -3,9 +3,9 @@
 
 #include "stdafx.h"
 #include "patient/actions/SEForcedExhale.h"
-#include "bind/cdm/PatientActions.pb.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarTime.h"
+#include "io/protobuf/PBPatientActions.h"
 
 SEForcedExhale::SEForcedExhale() : SEConsciousRespirationCommand()
 {
@@ -25,6 +25,11 @@ void SEForcedExhale::Clear()
   SAFE_DELETE(m_Period);
 }
 
+void SEForcedExhale::Copy(const SEForcedExhale& src)
+{
+  PBPatientAction::Copy(src, *this);
+}
+
 bool SEForcedExhale::IsValid() const
 {
   return SEConsciousRespirationCommand::IsValid() && HasExpiratoryReserveVolumeFraction() && HasPeriod();
@@ -33,33 +38,6 @@ bool SEForcedExhale::IsValid() const
 bool SEForcedExhale::IsActive() const
 {
   return SEConsciousRespirationCommand::IsActive();
-}
-
-void SEForcedExhale::Load(const cdm::ConsciousRespirationData_ForcedExhaleData& src, SEForcedExhale& dst)
-{
-  SEForcedExhale::Serialize(src, dst);
-}
-void SEForcedExhale::Serialize(const cdm::ConsciousRespirationData_ForcedExhaleData& src, SEForcedExhale& dst)
-{
-  dst.Clear();
-  if(src.has_expiratoryreservevolumefraction())
-    SEScalar0To1::Load(src.expiratoryreservevolumefraction(), dst.GetExpiratoryReserveVolumeFraction());
-  if (src.has_period())
-    SEScalarTime::Load(src.period(), dst.GetPeriod());
-}
-
-cdm::ConsciousRespirationData_ForcedExhaleData* SEForcedExhale::Unload(const SEForcedExhale& src)
-{
-  cdm::ConsciousRespirationData_ForcedExhaleData* dst = new cdm::ConsciousRespirationData_ForcedExhaleData();
-  SEForcedExhale::Serialize(src, *dst);
-  return dst;
-}
-void SEForcedExhale::Serialize(const SEForcedExhale& src, cdm::ConsciousRespirationData_ForcedExhaleData& dst)
-{
-  if (src.HasExpiratoryReserveVolumeFraction())
-    dst.set_allocated_expiratoryreservevolumefraction(SEScalar0To1::Unload(*src.m_ExpiratoryReserveVolumeFraction));
-  if (src.HasPeriod())
-    dst.set_allocated_period(SEScalarTime::Unload(*src.m_Period));
 }
 
 bool SEForcedExhale::HasExpiratoryReserveVolumeFraction() const

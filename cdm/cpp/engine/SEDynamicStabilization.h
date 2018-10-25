@@ -4,24 +4,20 @@
 #pragma once
 #include "engine/SEEngineStabilization.h"
 class SEDynamicStabilizationEngineConvergence;
-CDM_BIND_DECL(DynamicStabilizationData)
 
 class CDM_DECL SEDynamicStabilization : public SEEngineStabilization
 {
+  friend class PBEngine;//friend the serialization class
 public:
   SEDynamicStabilization(Logger* logger);
   virtual ~SEDynamicStabilization();
 
   virtual void Clear();
 
-  static void Load(const cdm::DynamicStabilizationData& src, SEDynamicStabilization& dst);
-  static cdm::DynamicStabilizationData* Unload(const SEDynamicStabilization& src);
-protected:
-  static void Serialize(const cdm::DynamicStabilizationData& src, SEDynamicStabilization& dst);
-  static void Serialize(const SEDynamicStabilization& src, cdm::DynamicStabilizationData& dst);
-
-public:
-  virtual bool LoadFile(const std::string& file);
+  bool SerializeToString(std::string& output, SerializationMode m) const;
+  bool SerializeToFile(const std::string& filename, SerializationMode m) const;
+  bool SerializeFromString(const std::string& src, SerializationMode m);
+  bool SerializeFromFile(const std::string& filename, SerializationMode m);
 
   virtual bool StabilizeRestingState(PhysiologyEngine& engine);
   virtual bool StabilizeFeedbackState(PhysiologyEngine& engine);

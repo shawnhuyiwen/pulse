@@ -18,7 +18,7 @@ void PulseEngineTest::ReadScenarios(const std::string& rptDirectory)
   std::string testName = "ReadScenarios";
   m_Logger->ResetLogFile(rptDirectory + "/" + testName + ".log");
   SESubstanceManager subMgr(m_Logger);
-  subMgr.LoadSubstances();
+  subMgr.LoadSubstanceDirectory();
   PulseScenario scenario(subMgr);
 
   std::string dir = GetCurrentWorkingDirectory();
@@ -45,7 +45,7 @@ void PulseEngineTest::ReadScenarios(const std::string& rptDirectory)
       Info(it->c_str());
       try
       {
-        if (scenario.LoadFile(*it))
+        if (scenario.SerializeFromFile(*it,ASCII))
         {
           if (!scenario.IsValid())
             testCase.AddFailure(*it + " is not a valid scenario!");
@@ -64,5 +64,5 @@ void PulseEngineTest::ReadScenarios(const std::string& rptDirectory)
       testCase.SetName(*it);
     }
   }
-  testReport.WriteFile(rptDirectory + "/" + testName + "Report.pba");  
+  testReport.SerializeToFile(rptDirectory + "/" + testName + "Report.pba",ASCII);  
 }

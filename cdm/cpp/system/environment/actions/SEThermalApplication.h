@@ -4,27 +4,20 @@
 #include "system/environment/actions/SEEnvironmentAction.h"
 class SEActiveConditioning;
 class SEAppliedTemperature;
-CDM_BIND_DECL(ThermalApplicationData)
 
 class CDM_DECL SEThermalApplication : public SEEnvironmentAction
 {
+  friend class PBEnvironmentAction;//friend the serialization class
 public:
 
   SEThermalApplication();
   virtual ~SEThermalApplication();
 
   virtual void Clear();
+  virtual void Copy(const SEThermalApplication& src);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
-
-  static void Load(const cdm::ThermalApplicationData& src, SEThermalApplication& dst);
-  static cdm::ThermalApplicationData* Unload(const SEThermalApplication& src);
-protected:
-  static void Serialize(const cdm::ThermalApplicationData& src, SEThermalApplication& dst);
-  static void Serialize(const SEThermalApplication& src, cdm::ThermalApplicationData& dst);
-
-public:
 
   virtual bool HasActiveHeating() const;
   virtual SEActiveConditioning& GetActiveHeating();

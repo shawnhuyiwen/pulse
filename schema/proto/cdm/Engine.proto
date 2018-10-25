@@ -19,35 +19,31 @@ message AutoSerializationData
 /** @brief Static timed stabilization lengths */
 message TimedStabilizationData
 {
-  eSwitch                                     TrackingStabilization          = 1;/**<< @brief Track data requests to the output file (if provided) during stabilization. */
-  ScalarTimeData                              RestingStabilizationTime       = 2;/**<< @brief */
-  ScalarTimeData                              FeedbackStabilizationTime      = 3;/**<< @brief */
-  map<string,ScalarTimeData>                  ConditionStabilization         = 4;/**<< @brief */
+  eSwitch                                               TrackingStabilization          = 1;/**<< @brief Track data requests to the output file (if provided) during stabilization. */
+  ScalarTimeData                                        RestingStabilizationTime       = 2;/**<< @brief */
+  ScalarTimeData                                        FeedbackStabilizationTime      = 3;/**<< @brief */
+  map<string,ScalarTimeData>                            ConditionStabilization         = 4;/**<< @brief */
 }
 
-
+/** @brief A properties target percent difference allowed */
+message DynamicStabilizationPropertyConvergenceData
+{
+  DataRequestData                                       DataRequest                     = 1;/**<< @brief */
+  double                                                PercentDifference               = 2;/**<< @brief */
+}
+/** @brief A properties convergence timing */
+message DynamicStabilizationEngineConvergenceData
+{
+  ScalarTimeData                                        ConvergenceTime                 = 1;/**<< @brief */
+  ScalarTimeData                                        MinimumReactionTime             = 2;/**<< @brief */
+  ScalarTimeData                                        MaximumAllowedStabilizationTime = 3;/**<< @brief */
+  repeated DynamicStabilizationPropertyConvergenceData  PropertyConvergence             = 4;/**<< @brief */
+}
 /** @brief Dynamic stabilization parameters */
 message DynamicStabilizationData
 {
-
-  /** @brief A properties target percent difference allowed */
-  message PropertyConvergenceData
-  {
-    DataRequestData                           DataRequest                     = 1;/**<< @brief */
-    double                                    PercentDifference               = 2;/**<< @brief */
-  }
-  
-  /** @brief A properties convergence timing */
-  message EngineConvergenceData
-  {
-    ScalarTimeData                            ConvergenceTime                 = 1;/**<< @brief */
-    ScalarTimeData                            MinimumReactionTime             = 2;/**<< @brief */
-    ScalarTimeData                            MaximumAllowedStabilizationTime = 3;/**<< @brief */
-    repeated PropertyConvergenceData          PropertyConvergence             = 4;/**<< @brief */
-  }
-
-  eSwitch                                     TrackingStabilization           = 1;/**<< @brief Track data requests to the output file (if provided) during stabilization. */
-  EngineConvergenceData                       RestingConvergence              = 2;/**<< @brief */
-  EngineConvergenceData                       FeedbackConvergence             = 3;/**<< @brief */
-  map<string,EngineConvergenceData>           ConditionConvergence            = 4;/**<< @brief */
+  eSwitch                                               TrackingStabilization           = 1;/**<< @brief Track data requests to the output file (if provided) during stabilization. */
+  DynamicStabilizationEngineConvergenceData             RestingConvergence              = 2;/**<< @brief */
+  DynamicStabilizationEngineConvergenceData             FeedbackConvergence             = 3;/**<< @brief */
+  map<string,DynamicStabilizationEngineConvergenceData> ConditionConvergence            = 4;/**<< @brief */
 }

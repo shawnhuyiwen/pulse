@@ -3,10 +3,10 @@
 
 #pragma once
 #include "system/SESystem.h"
-CDM_BIND_DECL(HepaticSystemData)
 
 class CDM_DECL SEHepaticSystem : public SESystem
 {
+  friend class PBPhysiology;//friend the serialization class
 public:
 
   SEHepaticSystem(Logger* logger);
@@ -15,15 +15,6 @@ public:
   virtual void Clear();// Deletes all members
   
   virtual const SEScalar* GetScalar(const std::string& name);
-
-  static void Load(const cdm::HepaticSystemData& src, SEHepaticSystem& dst);
-  static cdm::HepaticSystemData* Unload(const SEHepaticSystem& src);
-protected:
-  static void Serialize(const cdm::HepaticSystemData& src, SEHepaticSystem& dst);
-  static void Serialize(const SEHepaticSystem& src, cdm::HepaticSystemData& dst);
-
-public:
-
   
 protected:
 

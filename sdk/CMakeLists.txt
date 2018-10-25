@@ -3,9 +3,33 @@
 # https://gitlab.kitware.com/physiology/engine/wikis/how-to-connect-to-pulse
 
 
-file(GLOB SRC_FILES
-  "howto/cpp/*.h"
-  "howto/cpp/*.cpp"
+file(GLOB SRC_FILES howto/cpp/EngineHowTo.cpp
+                    howto/cpp/EngineHowTo.h
+                    howto/cpp/HowTo-AirwayObstruction.cpp
+                    howto/cpp/HowTo-AnesthesiaMachine.cpp
+                    howto/cpp/HowTo-Asthma.cpp
+                    howto/cpp/HowTo-BolusDrug.cpp
+                    howto/cpp/HowTo-BrainInjury.cpp
+                    howto/cpp/HowTo-ConcurrentEngines.cpp
+                    howto/cpp/HowTo-ConsumeNutrients.cpp
+                    howto/cpp/HowTo-COPD.cpp
+                    howto/cpp/HowTo-CPR.cpp
+                    howto/cpp/HowTo-CreateAPatient.cpp
+                    howto/cpp/HowTo-EngineUse.cpp
+                    howto/cpp/HowTo-EnvironmentChange.cpp
+                    howto/cpp/HowTo-Exercise.cpp
+                    howto/cpp/HowTo-Hemorrhage.cpp
+                    howto/cpp/HowTo-LobarPneumonia.cpp
+                    howto/cpp/HowTo-MechanicalVentilation.cpp
+                    howto/cpp/HowTo-PulmonaryFunctionTest.cpp
+                    howto/cpp/HowTo-RunScenario.cpp
+                    howto/cpp/HowTo-RunThreaded.cpp
+                    howto/cpp/HowTo-RunThreaded.h
+                    howto/cpp/HowTo-Sandbox.cpp
+                    howto/cpp/HowTo-SceanrioBase.cpp
+                    howto/cpp/HowTo-Serialize.cpp
+                    howto/cpp/HowTo-Smoke.cpp
+                    howto/cpp/HowTo-TensionPneumothorax.cpp
 )
 source_group("" FILES ${SRC_FILES})
 set(SOURCE ${SRC_FILES})

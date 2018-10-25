@@ -7,7 +7,6 @@ class SESubstance;
 class SESubstanceManager;
 class SESubstanceFraction;
 class SESubstanceConcentration;
-CDM_BIND_DECL(EnvironmentData_ConditionsData)
 
 // Keep enums in sync with appropriate schema/cdm/EnvironmentEnums.proto file !!
 enum class eSurroundingType { NullSurrounding = 0, Air, Water };
@@ -15,7 +14,7 @@ extern const std::string& eSurroundingType_Name(eSurroundingType m);
 
 class CDM_DECL SEEnvironmentalConditions : public Loggable
 {
-protected:
+  friend class PBEnvironment;//friend the serialization class
   friend class SEEnvironment;
   friend class SEChangeEnvironmentConditions;
   friend class SEInitialEnvironmentConditions;
@@ -25,17 +24,14 @@ public:
   virtual ~SEEnvironmentalConditions();
 
   virtual void Clear();
+  virtual void Copy(const SEEnvironmentalConditions&);
 
-  static void Load(const cdm::EnvironmentData_ConditionsData& src, SEEnvironmentalConditions& dst);
-  static cdm::EnvironmentData_ConditionsData* Unload(const SEEnvironmentalConditions& src);
-protected:
-  static void Serialize(const cdm::EnvironmentData_ConditionsData& src, SEEnvironmentalConditions& dst);
-  static void Serialize(const SEEnvironmentalConditions& src, cdm::EnvironmentData_ConditionsData& dst);
+  bool SerializeToString(std::string& output, SerializationMode m) const;
+  bool SerializeToFile(const std::string& filename, SerializationMode m) const;
+  bool SerializeFromString(const std::string& src, SerializationMode m);
+  bool SerializeFromFile(const std::string& filename, SerializationMode m);
 
    virtual void Merge(const SEEnvironmentalConditions& from);
-public:
-
-  virtual bool LoadFile(const std::string& environmentFile);
 
   virtual const SEScalar* GetScalar(const std::string& name);
 

@@ -3,27 +3,20 @@
 
 #pragma once
 #include "patient/actions/SEPatientAction.h"
-CDM_BIND_DECL(AsthmaAttackData)
 
 class CDM_DECL SEAsthmaAttack : public SEPatientAction
 {
+  friend class PBPatientAction;//friend the serialization class
 public:
 
   SEAsthmaAttack();
   virtual ~SEAsthmaAttack();
 
   virtual void Clear(); //clear memory
+  virtual void Copy(const SEAsthmaAttack& src);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
-
-  static void Load(const cdm::AsthmaAttackData& src, SEAsthmaAttack& dst);
-  static cdm::AsthmaAttackData* Unload(const SEAsthmaAttack& src);
-protected:
-  static void Serialize(const cdm::AsthmaAttackData& src, SEAsthmaAttack& dst);
-  static void Serialize(const SEAsthmaAttack& src, cdm::AsthmaAttackData& dst);
-
-public:
 
   virtual bool HasSeverity() const;
   virtual SEScalar0To1& GetSeverity();

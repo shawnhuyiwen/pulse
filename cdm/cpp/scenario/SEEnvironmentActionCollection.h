@@ -1,6 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 #pragma once
+class SEAction;
 class SEEnvironmentAction;
 class SESubstanceManager;
 class SEThermalApplication;
@@ -10,6 +11,7 @@ CDM_BIND_DECL(AnyEnvironmentActionData)
 
 class CDM_DECL SEEnvironmentActionCollection : public Loggable
 {
+  friend class PBScenario;//friend the serialization class
   friend class SEActionManager;
 protected:
   SEEnvironmentActionCollection(SESubstanceManager&);
@@ -26,10 +28,11 @@ public:
   const SEThermalApplication* GetThermalApplication() const;
   void RemoveThermalApplication();
 
+  void GetActiveActions(std::vector<const SEAction*>& v) const;
+
 protected:
   void Clear();
-  static void Serialize(const SEEnvironmentActionCollection& src, cdm::ActionListData& dst);
-  bool ProcessAction(const SEEnvironmentAction& action, cdm::AnyEnvironmentActionData* any);
+  bool ProcessAction(const SEEnvironmentAction& action);
   
   SEChangeEnvironmentConditions*  m_Change;
   SEThermalApplication*           m_ThermalApplication;

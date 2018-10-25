@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "patient/actions/SETensionPneumothorax.h"
 #include "properties/SEScalar0To1.h"
-#include "bind/cdm/PatientActions.pb.h"
+#include "io/protobuf/PBPatientActions.h"
 
 SETensionPneumothorax::SETensionPneumothorax() : SEPatientAction()
 {
@@ -26,34 +26,9 @@ void SETensionPneumothorax::Clear()
   SAFE_DELETE(m_Severity);
 }
 
-void SETensionPneumothorax::Load(const cdm::TensionPneumothoraxData& src, SETensionPneumothorax& dst)
+void SETensionPneumothorax::Copy(const SETensionPneumothorax& src)
 {
-  SETensionPneumothorax::Serialize(src, dst);
-}
-void SETensionPneumothorax::Serialize(const cdm::TensionPneumothoraxData& src, SETensionPneumothorax& dst)
-{
-  SEPatientAction::Serialize(src.patientaction(), dst);
-  dst.SetType((eGate)src.type());
-  dst.SetSide((eSide)src.side());
-  if (src.has_severity())
-    SEScalar0To1::Load(src.severity(), dst.GetSeverity());
-}
-
-cdm::TensionPneumothoraxData* SETensionPneumothorax::Unload(const SETensionPneumothorax& src)
-{
-  cdm::TensionPneumothoraxData* dst = new cdm::TensionPneumothoraxData();
-  SETensionPneumothorax::Serialize(src, *dst);
-  return dst;
-}
-void SETensionPneumothorax::Serialize(const SETensionPneumothorax& src, cdm::TensionPneumothoraxData& dst)
-{
-  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
-  if (src.HasType())
-    dst.set_type((cdm::eGate)src.m_Type);
-  if (src.HasSide())
-    dst.set_side((cdm::eSide)src.m_Side);
-  if (src.HasSeverity())
-    dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
+  PBPatientAction::Copy(src, *this);
 }
 
 bool SETensionPneumothorax::IsValid() const

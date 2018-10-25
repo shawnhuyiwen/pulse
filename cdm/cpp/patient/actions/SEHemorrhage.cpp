@@ -3,8 +3,8 @@
 
 #include "stdafx.h"
 #include "patient/actions/SEHemorrhage.h"
-#include "bind/cdm/PatientActions.pb.h"
 #include "properties/SEScalarVolumePerTime.h"
+#include "io/protobuf/PBPatientActions.h"
 
 SEHemorrhage::SEHemorrhage() : SEPatientAction()
 {
@@ -24,6 +24,11 @@ void SEHemorrhage::Clear()
   SAFE_DELETE(m_Rate);
 }
 
+void SEHemorrhage::Copy(const SEHemorrhage& src)
+{
+  PBPatientAction::Copy(src, *this);
+}
+
 bool SEHemorrhage::IsValid() const
 {
   return SEPatientAction::IsValid() && HasCompartment() && HasRate();
@@ -32,33 +37,6 @@ bool SEHemorrhage::IsValid() const
 bool SEHemorrhage::IsActive() const
 {
   return IsValid() ? !m_Rate->IsZero() : false;
-}
-
-void SEHemorrhage::Load(const cdm::HemorrhageData& src, SEHemorrhage& dst)
-{
-  SEHemorrhage::Serialize(src, dst);
-}
-void SEHemorrhage::Serialize(const cdm::HemorrhageData& src, SEHemorrhage& dst)
-{
-  SEPatientAction::Serialize(src.patientaction(), dst);
-  if (src.has_rate())
-    SEScalarVolumePerTime::Load(src.rate(), dst.GetRate());
-  dst.m_Compartment = src.compartment();
-}
-
-cdm::HemorrhageData* SEHemorrhage::Unload(const SEHemorrhage& src)
-{
-  cdm::HemorrhageData* dst = new cdm::HemorrhageData();
-  SEHemorrhage::Serialize(src, *dst);
-  return dst;
-}
-void SEHemorrhage::Serialize(const SEHemorrhage& src, cdm::HemorrhageData& dst)
-{
-  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
-  if (src.HasRate())
-    dst.set_allocated_rate(SEScalarVolumePerTime::Unload(*src.m_Rate));
-  if (src.HasCompartment())
-    dst.set_compartment(src.m_Compartment);
 }
 
 std::string SEHemorrhage::GetCompartment() const

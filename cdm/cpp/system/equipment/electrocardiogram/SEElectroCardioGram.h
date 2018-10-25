@@ -3,10 +3,10 @@
 
 #pragma once
 #include "system/SESystem.h"
-CDM_BIND_DECL(ElectroCardioGramData)
 
 class CDM_DECL SEElectroCardioGram : public SESystem
 {
+  friend class PBElectroCardioGram;//friend the serialization class
 protected:
 
 public:
@@ -18,13 +18,6 @@ public:
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
-  static void Load(const cdm::ElectroCardioGramData& src, SEElectroCardioGram& dst);
-  static cdm::ElectroCardioGramData* Unload(const SEElectroCardioGram& src);
-protected:
-  static void Serialize(const cdm::ElectroCardioGramData& src, SEElectroCardioGram& dst);
-  static void Serialize(const SEElectroCardioGram& src, cdm::ElectroCardioGramData& dst);
-
-public:
   virtual bool HasLead1ElectricPotential() const;
   virtual SEScalarElectricPotential& GetLead1ElectricPotential();
   virtual double GetLead1ElectricPotential(const ElectricPotentialUnit& unit) const;

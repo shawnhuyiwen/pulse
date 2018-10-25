@@ -3,7 +3,6 @@
 
 #pragma once
 #include "properties/SEScalar.h"
-CDM_BIND_DECL(ScalarOsmolarityData)
 
 class CDM_DECL OsmolarityUnit : public CCompoundUnit
 {
@@ -23,10 +22,4 @@ class CDM_DECL SEScalarOsmolarity : public SEScalarQuantity<OsmolarityUnit>
 public:
   SEScalarOsmolarity() {}
   virtual ~SEScalarOsmolarity() {}
-
-  static void Load(const cdm::ScalarOsmolarityData& src, SEScalarOsmolarity& dst);
-  static cdm::ScalarOsmolarityData* Unload(const SEScalarOsmolarity& src);
-protected:
-  static void Serialize(const cdm::ScalarOsmolarityData& src, SEScalarOsmolarity& dst);
-  static void Serialize(const SEScalarOsmolarity& src, cdm::ScalarOsmolarityData& dst);
 };

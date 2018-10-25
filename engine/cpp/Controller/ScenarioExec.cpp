@@ -39,7 +39,7 @@ bool PulseScenarioExec::Execute(const std::string& scenarioFile, const std::stri
     m_Cancel = false;
 
     PulseScenario scenario(m_Engine.GetSubstanceManager());
-    if (!scenario.LoadFile(scenarioFile))
+    if (!scenario.SerializeFromFile(scenarioFile,ASCII))
     {
         Error("Unable to load scenario file : " + scenarioFile);
         return false;

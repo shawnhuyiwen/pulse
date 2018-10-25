@@ -4,7 +4,6 @@
 #include "stdafx.h"
 #include "properties/SEFunction.h"
 #include "properties/SEScalar.h"//Utils
-#include "bind/cdm/Properties.pb.h"
 
 static std::stringstream err;
 
@@ -36,47 +35,6 @@ bool SEFunction::IsValid() const
 void SEFunction::Invalidate()
 {
   Clear();
-}
-
-void SEFunction::Load(const cdm::FunctionData& src, SEFunction& dst)
-{
-  SEFunction::Serialize(src, dst);
-
-  if (!src.dependentunit().empty())
-  {
-    if (src.dependentunit() != "unitless")
-      throw CommonDataModelException("CDM::Function API is intended to be unitless, You are trying to load a dependent axis with a unit defined");
-  }
-  if (!src.independentunit().empty())
-  {
-    if (src.independentunit() != "unitless")
-      throw CommonDataModelException("CDM::Function API is intended to be unitless, You are trying to load an independent axis with a unit defined");
-  }
-}
-void SEFunction::Serialize(const cdm::FunctionData& src, SEFunction& dst)
-{
-  dst.Clear();
-  for (int i = 0; i<src.dependent().value_size(); i++)
-    dst.m_Dependent.push_back(src.dependent().value(i));
-  for (int i = 0; i<src.independent().value_size(); i++)
-    dst.m_Independent.push_back(src.independent().value(i));
-}
-
-cdm::FunctionData* SEFunction::Unload(const SEFunction& src)
-{
-  if (!src.IsValid())
-    return nullptr;
-  cdm::FunctionData* dst = new cdm::FunctionData();
-  SEFunction::Serialize(src, *dst);
-  return dst;
-}
-void SEFunction::Serialize(const SEFunction& src, cdm::FunctionData& dst)
-{
-  for (size_t i = 0; i<src.m_Dependent.size(); i++)
-  {
-    dst.mutable_dependent()->add_value(src.m_Dependent[i]);
-    dst.mutable_independent()->add_value(src.m_Independent[i]);
-  }
 }
 
 size_t SEFunction::Length()

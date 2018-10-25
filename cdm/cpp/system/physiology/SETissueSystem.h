@@ -3,10 +3,10 @@
 
 #pragma once
 #include "system/SESystem.h"
-CDM_BIND_DECL(TissueSystemData)
 
 class CDM_DECL SETissueSystem : public SESystem
 {
+  friend class PBPhysiology;//friend the serialization class
 public:
 
   SETissueSystem(Logger* logger);
@@ -15,14 +15,6 @@ public:
   virtual void Clear();// Deletes all members
   
   virtual const SEScalar* GetScalar(const std::string& name);
-  
-  static void Load(const cdm::TissueSystemData& src, SETissueSystem& dst);
-  static cdm::TissueSystemData* Unload(const SETissueSystem& src);
-protected:
-  static void Serialize(const cdm::TissueSystemData& src, SETissueSystem& dst);
-  static void Serialize(const SETissueSystem& src, cdm::TissueSystemData& dst);
-
-public:
 
   virtual bool HasCarbonDioxideProductionRate() const;
   virtual SEScalarVolumePerTime& GetCarbonDioxideProductionRate();

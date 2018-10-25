@@ -40,7 +40,7 @@ bool SEScenarioExec::Execute(const std::string& scenarioFile, const std::string&
     SEScenario scenario(m_Engine.GetSubstanceManager());
     try
     {
-      scenario.LoadFile(scenarioFile);
+      scenario.SerializeFromFile(scenarioFile,ASCII);
     }
     catch (CommonDataModelException& ex)
     {
@@ -80,21 +80,17 @@ bool SEScenarioExec::Execute(const SEScenario& scenario, const std::string& resu
     // Initialize the engine with a state or initial parameters
     if (scenario.HasEngineStateFile())
     {
-      m_Engine.LoadStateFile(scenario.GetEngineStateFile());
+      m_Engine.SerializeFromFile(scenario.GetEngineStateFile(),ASCII);
       // WE ARE OVERWRITING ANY DATA REQUESTS IN THE STATE WITH WHATS IN THE SCENARIO!!!
       // Make a copy of the data requests, note this clears out data requests from the engine
-      cdm::DataRequestManagerData* drData = SEDataRequestManager::Unload(scenario.GetDataRequestManager());
-      SEDataRequestManager::Load(*drData, m_Engine.GetEngineTracker()->GetDataRequestManager(), m_Engine.GetSubstanceManager());
-      delete drData;
+      m_Engine.GetEngineTracker()->GetDataRequestManager().Copy(scenario.GetDataRequestManager(), m_Engine.GetSubstanceManager());
       if (!m_Engine.GetEngineTracker()->GetDataRequestManager().HasResultsFilename())
         m_Engine.GetEngineTracker()->GetDataRequestManager().SetResultsFilename(resultsFile);
     }
     else if (scenario.HasInitialParameters())
     {
       // Make a copy of the data requests, note this clears out data requests from the engine
-      cdm::DataRequestManagerData* drData = SEDataRequestManager::Unload(scenario.GetDataRequestManager());
-      SEDataRequestManager::Load(*drData, m_Engine.GetEngineTracker()->GetDataRequestManager(), m_Engine.GetSubstanceManager());
-      delete drData;
+      m_Engine.GetEngineTracker()->GetDataRequestManager().Copy(scenario.GetDataRequestManager(), m_Engine.GetSubstanceManager());
       if (!m_Engine.GetEngineTracker()->GetDataRequestManager().HasResultsFilename())
         m_Engine.GetEngineTracker()->GetDataRequestManager().SetResultsFilename(resultsFile);
 
@@ -102,7 +98,7 @@ bool SEScenarioExec::Execute(const SEScenario& scenario, const std::string& resu
       // Do we have any conditions
       std::vector<const SECondition*> conditions;
       for (SECondition* c : params->GetConditions())
-        conditions.push_back(c);      
+        conditions.push_back(c);
 
       if (params->HasPatientFile())
       {

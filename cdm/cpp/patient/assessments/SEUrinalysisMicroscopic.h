@@ -3,7 +3,6 @@
 
 #pragma once
 #include "patient/assessments/SEPatientAssessment.h"
-CDM_BIND_DECL(UrinalysisData_UrinalysisMicroscopicData)
 
 // Keep enums in sync with appropriate schema/cdm/PatienAssessmentEnums.proto file !!
 enum class eUrinalysis_MicroscopicObservationType {
@@ -25,6 +24,7 @@ extern const std::string& eUrinalysis_MicroscopicObservationAmount_Name(eUrinaly
 
 class CDM_DECL SEUrinalysisMicroscopic : public Loggable
 {
+  friend class PBPatientAssessment;//friend the serialization class
   friend class SEUrinalysis;
 protected:
   SEUrinalysisMicroscopic(Logger* logger);
@@ -32,14 +32,6 @@ public:
   virtual ~SEUrinalysisMicroscopic();
 
   virtual void Clear();
-
-  static void Load(const cdm::UrinalysisData_UrinalysisMicroscopicData& src, SEUrinalysisMicroscopic& dst);
-  static cdm::UrinalysisData_UrinalysisMicroscopicData* Unload(const SEUrinalysisMicroscopic& src);
-protected:
-  static void Serialize(const cdm::UrinalysisData_UrinalysisMicroscopicData& src, SEUrinalysisMicroscopic& dst);
-  static void Serialize(const SEUrinalysisMicroscopic& src, cdm::UrinalysisData_UrinalysisMicroscopicData& dst);
-
-public:
 
   virtual bool HasObservationType() const;  
   virtual eUrinalysis_MicroscopicObservationType GetObservationType() const;

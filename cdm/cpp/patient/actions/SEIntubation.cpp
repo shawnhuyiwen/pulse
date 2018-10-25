@@ -3,13 +3,7 @@
 
 #include "stdafx.h"
 #include "patient/actions/SEIntubation.h"
-#include "bind/cdm/PatientActions.pb.h"
-#include "bind/cdm/PatientActionEnums.pb.h"
-
-const std::string& eIntubation_Type_Name(eIntubation_Type m)
-{
-  return cdm::eIntubation_Type_Name((cdm::eIntubation_Type)m);
-}
+#include "io/protobuf/PBPatientActions.h"
 
 SEIntubation::SEIntubation() : SEPatientAction()
 {
@@ -27,6 +21,11 @@ void SEIntubation::Clear()
   m_Type = eIntubation_Type::Off;
 }
 
+void SEIntubation::Copy(const SEIntubation& src)
+{
+  PBPatientAction::Copy(src, *this);
+}
+
 bool SEIntubation::IsValid() const
 {
   return true;
@@ -35,28 +34,6 @@ bool SEIntubation::IsValid() const
 bool SEIntubation::IsActive() const
 {
   return GetType() != eIntubation_Type::Off;
-}
-
-void SEIntubation::Load(const cdm::IntubationData& src, SEIntubation& dst)
-{
-  SEIntubation::Serialize(src, dst);
-}
-void SEIntubation::Serialize(const cdm::IntubationData& src, SEIntubation& dst)
-{
-  SEPatientAction::Serialize(src.patientaction(), dst);
-  dst.SetType((eIntubation_Type)src.type());
-}
-
-cdm::IntubationData* SEIntubation::Unload(const SEIntubation& src)
-{
-  cdm::IntubationData* dst = new cdm::IntubationData();
-  SEIntubation::Serialize(src, *dst);
-  return dst;
-}
-void SEIntubation::Serialize(const SEIntubation& src, cdm::IntubationData& dst)
-{
-  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
-  dst.set_type((cdm::eIntubation_Type)src.m_Type);
 }
 
 eIntubation_Type SEIntubation::GetType() const

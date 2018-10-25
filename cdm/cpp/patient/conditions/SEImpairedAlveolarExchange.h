@@ -2,27 +2,21 @@
    See accompanying NOTICE file for details.*/
 #pragma once
 #include "patient/conditions/SEPatientCondition.h"
-CDM_BIND_DECL(ImpairedAlveolarExchangeData)
 
 class CDM_DECL SEImpairedAlveolarExchange : public SEPatientCondition
 {
+  friend class PBPatientCondition;//friend the serialization class
 public:
 
   SEImpairedAlveolarExchange();
   virtual ~SEImpairedAlveolarExchange();
   
   virtual void Clear();
+  virtual void Copy(const SEImpairedAlveolarExchange& src);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
 
-  static void Load(const cdm::ImpairedAlveolarExchangeData& src, SEImpairedAlveolarExchange& dst);
-  static cdm::ImpairedAlveolarExchangeData* Unload(const SEImpairedAlveolarExchange& src);
-protected:
-  static void Serialize(const cdm::ImpairedAlveolarExchangeData& src, SEImpairedAlveolarExchange& dst);
-  static void Serialize(const SEImpairedAlveolarExchange& src, cdm::ImpairedAlveolarExchangeData& dst);
-
-public:
   virtual std::string GetName() const { return "ImpairedAlveolarExchange"; }
 
   virtual bool HasImpairedSurfaceArea() const;

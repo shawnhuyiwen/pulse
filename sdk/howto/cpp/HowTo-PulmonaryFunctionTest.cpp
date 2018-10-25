@@ -34,7 +34,7 @@ void HowToPulmonaryFunctionTest()
   // Create the engine and load the patient
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowToPulmonaryFunctionTest.log");
   pe->GetLogger()->Info("HowToPulmonaryFunctionTest");
-  if (!pe->LoadStateFile("./states/StandardMale@0s.pba"))
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.pba", ASCII))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;

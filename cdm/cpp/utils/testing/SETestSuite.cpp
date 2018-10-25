@@ -6,7 +6,6 @@
 #include "utils/testing/SETestSuite.h"
 #include "utils/testing/SETestErrorStatistics.h"
 #include "properties/SEScalarTime.h"
-#include "bind/cdm/TestReport.pb.h"
 
 SETestSuite::SETestSuite(Logger* logger) : Loggable(logger)
 {
@@ -35,60 +34,6 @@ void SETestSuite::Reset()
   }
   m_Performed = true;
   m_Name = "";
-}
-
-void SETestSuite::Load(const cdm::TestReportData_TestSuiteData& src, SETestSuite& dst)
-{
-  SETestSuite::Serialize(src, dst);
-}
-void SETestSuite::Serialize(const cdm::TestReportData_TestSuiteData& src, SETestSuite& dst)
-{
-  dst.Clear();
-
-  dst.m_Name = src.name();
-  dst.m_Performed = src.performed();  
-
-  for (int i = 0; i<src.requirement_size(); i++)
-    dst.m_Requirements.push_back(src.requirement(i));
-
-  SETestErrorStatistics* ex;
-  for (int i = 0; i < src.errorstats_size(); i++)
-  {
-    ex = new SETestErrorStatistics(dst.GetLogger());
-    SETestErrorStatistics::Load(src.errorstats(i), *ex);
-    dst.m_SuiteEqualError.push_back(ex);
-  }
-
-  SETestCase* tx;
-  for (int i = 0; i < src.testcase_size(); i++)
-  {
-    tx = new SETestCase(dst.GetLogger());
-    SETestCase::Load(src.testcase(i), *tx);
-    dst.m_TestCase.push_back(tx);
-  }
-}
-
-cdm::TestReportData_TestSuiteData* SETestSuite::Unload(const SETestSuite& src)
-{
-  cdm::TestReportData_TestSuiteData* dst = new cdm::TestReportData_TestSuiteData();
-  SETestSuite::Serialize(src,*dst);
-  return dst;
-}
-void SETestSuite::Serialize(const SETestSuite& src, cdm::TestReportData_TestSuiteData& dst)
-{
-  dst.set_name(src.m_Name);
-  dst.set_performed(src.m_Performed);
-  dst.set_errors((google::protobuf::uint32)src.GetNumberOfErrors());
-  dst.set_tests((google::protobuf::uint32)src.GetTestCases().size());
-
-  for (std::string s : src.m_Requirements)
-    dst.mutable_requirement()->Add(s.c_str());
-
-  for (auto er : src.m_SuiteEqualError)
-    dst.mutable_errorstats()->AddAllocated(SETestErrorStatistics::Unload(*er));
-
-  for (auto tc : src.m_TestCase)
-    dst.mutable_testcase()->AddAllocated(SETestCase::Unload(*tc));
 }
 
 void SETestSuite::SetName(const std::string& Name)

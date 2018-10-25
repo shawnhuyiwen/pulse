@@ -67,18 +67,18 @@ message ActionListData
   repeated AnyActionData           AnyAction                 = 1;
 }
 
+message ScenarioInitialParametersData
+{
+  oneof PatientType
+  {
+    PatientData                  Patient                   = 1;
+    string                       PatientFile               = 2;
+  }
+  repeated AnyConditionData      AnyCondition              = 3;
+}
+
 message ScenarioData
 {
-  message InitialParametersData
-  {
-    oneof PatientType
-    {
-      PatientData                  Patient                   = 1;
-      string                       PatientFile               = 2;
-    }
-    repeated AnyConditionData      AnyCondition              = 3;
-  }
-  
   
   
   string                           Name                      = 1;
@@ -86,7 +86,7 @@ message ScenarioData
   oneof                            StartType
   {
     string                         EngineStateFile           = 3;
-    InitialParametersData          InitialParameters         = 4;
+    ScenarioInitialParametersData  InitialParameters         = 4;
   }
   DataRequestManagerData           DataRequestManager        = 5;
   repeated AnyActionData           AnyAction                 = 6;

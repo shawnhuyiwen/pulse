@@ -15,16 +15,8 @@
 #include "properties/SEScalarPower.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarTemperature.h"
+#include "io/protobuf/PBEnvironment.h"
 
-#include "io/protobuf/cdm/PBSubstance.h"
-#include <google/protobuf/text_format.h>
-#include "bind/cdm/EnvironmentConditions.pb.h"
-#include "bind/cdm/EnvironmentEnums.pb.h"
-
-const std::string& eSurroundingType_Name(eSurroundingType m)
-{
-  return cdm::eEnvironment_SurroundingType_Name((cdm::eEnvironment_SurroundingType)m);
-}
 
 SEEnvironmentalConditions::SEEnvironmentalConditions(SESubstanceManager& substances) : Loggable(substances.GetLogger()), m_Substances(substances)
 {
@@ -66,6 +58,28 @@ void SEEnvironmentalConditions::Clear()
   m_cAmbientAerosols.clear();
 }
 
+void SEEnvironmentalConditions::Copy(const SEEnvironmentalConditions& src)
+{
+  PBEnvironment::Copy(src, *this);
+}
+
+bool SEEnvironmentalConditions::SerializeToString(std::string& output, SerializationMode m) const
+{
+  return PBEnvironment::SerializeToString(*this, output, m);
+}
+bool SEEnvironmentalConditions::SerializeToFile(const std::string& filename, SerializationMode m) const
+{
+  return PBEnvironment::SerializeToFile(*this, filename, m);
+}
+bool SEEnvironmentalConditions::SerializeFromString(const std::string& src, SerializationMode m)
+{
+  return PBEnvironment::SerializeFromString(src, *this, m);
+}
+bool SEEnvironmentalConditions::SerializeFromFile(const std::string& filename, SerializationMode m)
+{
+  return PBEnvironment::SerializeFromFile(filename, *this, m);
+}
+
 const SEScalar* SEEnvironmentalConditions::GetScalar(const std::string& name)
 {
   if (name.compare("AirDensity") == 0)
@@ -88,105 +102,6 @@ const SEScalar* SEEnvironmentalConditions::GetScalar(const std::string& name)
     return &GetRespirationAmbientTemperature();
   // I did not support for getting a specific gas/aerosol scalars due to lack of coffee
   return nullptr;
-}
-
-void SEEnvironmentalConditions::Load(const cdm::EnvironmentData_ConditionsData& src, SEEnvironmentalConditions& dst)
-{
-  SEEnvironmentalConditions::Serialize(src, dst);
-}
-void SEEnvironmentalConditions::Serialize(const cdm::EnvironmentData_ConditionsData& src, SEEnvironmentalConditions& dst)
-{
-  dst.Clear();
-  dst.SetSurroundingType((eSurroundingType)src.surroundingtype());
-  if (src.has_airdensity())
-    SEScalarMassPerVolume::Load(src.airdensity(), dst.GetAirDensity());
-  if (src.has_airvelocity())
-    SEScalarLengthPerTime::Load(src.airvelocity(), dst.GetAirVelocity());
-  if (src.has_ambienttemperature())
-    SEScalarTemperature::Load(src.ambienttemperature(), dst.GetAmbientTemperature());
-  if (src.has_atmosphericpressure())
-    SEScalarPressure::Load(src.atmosphericpressure(), dst.GetAtmosphericPressure());
-  if (src.has_clothingresistance())
-    SEScalarHeatResistanceArea::Load(src.clothingresistance(), dst.GetClothingResistance());
-  if (src.has_emissivity())
-    SEScalar0To1::Load(src.emissivity(), dst.GetEmissivity());
-  if (src.has_meanradianttemperature())
-    SEScalarTemperature::Load(src.meanradianttemperature(), dst.GetMeanRadiantTemperature());
-  if (src.has_relativehumidity())
-    SEScalar0To1::Load(src.relativehumidity(), dst.GetRelativeHumidity());
-  if (src.has_respirationambienttemperature())
-    SEScalarTemperature::Load(src.respirationambienttemperature(), dst.GetRespirationAmbientTemperature());
-
-  SESubstance* sub;
-  for (int i = 0; i < src.ambientgas_size(); i++)
-  {
-    const cdm::SubstanceFractionData& sfData = src.ambientgas()[i];
-    sub = dst.m_Substances.GetSubstance(sfData.name());
-    if (sub == nullptr)
-    {
-      dst.Error("Ignoring an environmental conditions ambient gas that was not found : " + sfData.name());
-      continue;
-    }
-    if (sub->GetState() != eSubstance_State::Gas)
-    {
-      dst.Error("Ignoring an environmental conditions ambient gas that is not a gas : " + sfData.name());
-      continue;
-    }
-    PBSubstance::Load(sfData, dst.GetAmbientGas(*sub));
-  }
-
-  for (int i = 0; i < src.ambientaerosol_size(); i++)
-  {
-    const cdm::SubstanceConcentrationData& scData = src.ambientaerosol()[i];
-    sub = dst.m_Substances.GetSubstance(scData.name());
-    if (sub == nullptr)
-    {
-      dst.Error("Ignoring an environmental conditions ambient aerosol that was not found : " + scData.name());
-      continue;
-    }
-    if (sub->GetState() != eSubstance_State::Liquid && sub->GetState() != eSubstance_State::Solid)
-    {
-      dst.Error("Ignoring an environmental conditions ambient aerosol that is not a gas : " + scData.name());
-      continue;
-    }
-    PBSubstance::Load(scData, dst.GetAmbientAerosol(*sub));
-  }
-}
-
-cdm::EnvironmentData_ConditionsData* SEEnvironmentalConditions::Unload(const SEEnvironmentalConditions& src)
-{
-  cdm::EnvironmentData_ConditionsData* dst = new cdm::EnvironmentData_ConditionsData();
-  SEEnvironmentalConditions::Serialize(src, *dst);
-  return dst;
-}
-
-void SEEnvironmentalConditions::Serialize(const SEEnvironmentalConditions& src, cdm::EnvironmentData_ConditionsData& dst)
-{
-  dst.set_surroundingtype((cdm::eEnvironment_SurroundingType)src.m_SurroundingType);
-  if (src.HasAirDensity())
-    dst.set_allocated_airdensity(SEScalarMassPerVolume::Unload(*src.m_AirDensity));
-  if (src.HasAirVelocity())
-    dst.set_allocated_airvelocity(SEScalarLengthPerTime::Unload(*src.m_AirVelocity));
-  if (src.HasAmbientTemperature())
-    dst.set_allocated_ambienttemperature(SEScalarTemperature::Unload(*src.m_AmbientTemperature));
-  if (src.HasAtmosphericPressure())
-    dst.set_allocated_atmosphericpressure(SEScalarPressure::Unload(*src.m_AtmosphericPressure));
-  if (src.HasClothingResistance())
-    dst.set_allocated_clothingresistance(SEScalarHeatResistanceArea::Unload(*src.m_ClothingResistance));
-  if (src.HasEmissivity())
-    dst.set_allocated_emissivity(SEScalar0To1::Unload(*src.m_Emissivity));
-  if (src.HasMeanRadiantTemperature())
-    dst.set_allocated_meanradianttemperature(SEScalarTemperature::Unload(*src.m_MeanRadiantTemperature));
-  if (src.HasRelativeHumidity())
-    dst.set_allocated_relativehumidity(SEScalar0To1::Unload(*src.m_RelativeHumidity));
-  if (src.HasRespirationAmbientTemperature())
-    dst.set_allocated_respirationambienttemperature(SEScalarTemperature::Unload(*src.m_RespirationAmbientTemperature));
-
-  for (SESubstanceFraction *sf : src.m_AmbientGases)
-    dst.mutable_ambientgas()->AddAllocated(PBSubstance::Unload(*sf));
-
-  for (SESubstanceConcentration *sc : src.m_AmbientAerosols)
-    dst.mutable_ambientaerosol()->AddAllocated(PBSubstance::Unload(*sc));
 }
 
 void SEEnvironmentalConditions::Merge(const SEEnvironmentalConditions& from)
@@ -246,21 +161,6 @@ void SEEnvironmentalConditions::Merge(const SEEnvironmentalConditions& from)
       mine.GetConcentration().Set(sc->GetConcentration());
     }
   }
-}
-
-bool SEEnvironmentalConditions::LoadFile(const std::string& filename)
-{
-  cdm::EnvironmentData_ConditionsData src;
-  std::ifstream file_stream(filename, std::ios::in);
-  std::string fmsg((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
-  if (!google::protobuf::TextFormat::ParseFromString(fmsg, &src))
-    return false;
-  SEEnvironmentalConditions::Load(src, *this);
-  return true;
-
-  // If its a binary string in the file...
-  //std::ifstream binary_istream(patientFile, std::ios::in | std::ios::binary);
-  //src.ParseFromIstream(&binary_istream);
 }
 
 eSurroundingType SEEnvironmentalConditions::GetSurroundingType() const

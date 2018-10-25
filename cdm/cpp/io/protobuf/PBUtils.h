@@ -2,3 +2,12 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
+namespace google { namespace protobuf { class Message; } }
+
+class CDM_DECL PBUtils
+{
+public:
+
+  static bool SerializeFromString(const std::string& src, google::protobuf::Message& dst, SerializationMode m);
+  static bool SerializeToString(const google::protobuf::Message& src, std::string& output, SerializationMode m);
+};

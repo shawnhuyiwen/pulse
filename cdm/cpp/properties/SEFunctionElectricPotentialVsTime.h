@@ -3,23 +3,16 @@
 
 #pragma once
 #include "properties/SEFunction.h"
-CDM_BIND_DECL(FunctionElectricPotentialVsTimeData)
 
 class CDM_DECL SEFunctionElectricPotentialVsTime : public SEFunction
 {
+  friend class PBProperty;//friend the serialization class
 public:
 
   SEFunctionElectricPotentialVsTime();
   virtual ~SEFunctionElectricPotentialVsTime();
 
   virtual void Clear();
-
-  static void Load(const cdm::FunctionElectricPotentialVsTimeData& src, SEFunctionElectricPotentialVsTime& dst);
-  static cdm::FunctionElectricPotentialVsTimeData* Unload(const SEFunctionElectricPotentialVsTime& src);
-protected:
-  static void Serialize(const cdm::FunctionElectricPotentialVsTimeData& src, SEFunctionElectricPotentialVsTime& dst);
-  static void Serialize(const SEFunctionElectricPotentialVsTime& src, cdm::FunctionElectricPotentialVsTimeData& dst);
-public:
 
   double                               GetIndependentValue(size_t index) = delete;
   virtual double                       GetTimeValue(size_t index, const TimeUnit& unit);
@@ -32,8 +25,6 @@ public:
   virtual std::vector<double>&         GetElectricPotential();
   virtual const ElectricPotentialUnit* GetElectricPotentialUnit();
   virtual void                         SetElectricPotentialUnit(const ElectricPotentialUnit& unit);
-
-  virtual SEFunctionElectricPotentialVsTime* InterpolateToTime(std::vector<double>& Independent, const TimeUnit& unit);
 
 protected:
 

@@ -4,11 +4,10 @@
 #pragma once
 class SEAnesthesiaMachine;
 class SESubstanceManager;
-CDM_BIND_DECL(AnesthesiaMachineData_OxygenBottleData)
 
 class CDM_DECL SEAnesthesiaMachineOxygenBottle : Loggable
 {
-protected:
+  friend class PBAnesthesiaMachine;//friend the serialization class
   friend SEAnesthesiaMachine;
 public:
 
@@ -17,14 +16,7 @@ public:
 
   virtual void Clear();
 
-  static void Load(const cdm::AnesthesiaMachineData_OxygenBottleData& src, SEAnesthesiaMachineOxygenBottle& dst);
-  static cdm::AnesthesiaMachineData_OxygenBottleData* Unload(const SEAnesthesiaMachineOxygenBottle& src);
-protected:
-  static void Serialize(const cdm::AnesthesiaMachineData_OxygenBottleData& src, SEAnesthesiaMachineOxygenBottle& dst);
-  static void Serialize(const SEAnesthesiaMachineOxygenBottle& src, cdm::AnesthesiaMachineData_OxygenBottleData& dst);
-
   virtual void Merge(const SEAnesthesiaMachineOxygenBottle& from);
-public:
 
   virtual const SEScalar* GetScalar(const std::string& name);
 

@@ -4,7 +4,6 @@
 #pragma once
 class SEEventHandler;
 class SENutrition;
-CDM_BIND_DECL(PatientData)
 
 // Keep enums in sync with appropriate schema/cdm/PatientEnums.proto file !!
 enum class ePatient_Sex { Male = 0, Female };
@@ -61,24 +60,20 @@ extern const std::string& ePatient_Event_Name(ePatient_Event m);
 
 class CDM_DECL SEPatient : public Loggable
 {
+  friend class PBPatient;//friend the serialization class
 public:
 
   SEPatient(Logger* logger);
   virtual ~SEPatient();
 
   virtual void Clear();
+  virtual void Copy(const SEPatient& src);
 
-  bool Load(const std::string& str);
-  bool LoadFile(const std::string& patientFile);
-  void SaveFile(const std::string& filename);
+  bool SerializeToString(std::string& output, SerializationMode m) const;
+  bool SerializeToFile(const std::string& filename, SerializationMode m) const;
+  bool SerializeFromString(const std::string& src, SerializationMode m);
+  bool SerializeFromFile(const std::string& filename, SerializationMode m);
 
-  static void Load(const cdm::PatientData& src, SEPatient& dst);
-  static cdm::PatientData* Unload(const SEPatient& src);
-protected:
-  static void Serialize(const cdm::PatientData& src, SEPatient& dst);
-  static void Serialize(const SEPatient& src, cdm::PatientData& dst);
-
-public:
   /** @name GetScalar
   *   @brief - A reflextion type call that will return the Scalar associated
   *            with the string. ex. GetScalar("Hematocrit") will return the

@@ -3,8 +3,8 @@
 
 #include "stdafx.h"
 #include "patient/actions/SEChestCompressionForce.h"
-#include "bind/cdm/PatientActions.pb.h"
 #include "properties/SEScalarForce.h"
+#include "io/protobuf/PBPatientActions.h"
 
 SEChestCompressionForce::SEChestCompressionForce() : SEChestCompression()
 {
@@ -22,6 +22,11 @@ void SEChestCompressionForce::Clear()
   SAFE_DELETE(m_Force);
 }
 
+void SEChestCompressionForce::Copy(const SEChestCompressionForce& src)
+{
+  PBPatientAction::Copy(src, *this);
+}
+
 bool SEChestCompressionForce::IsValid() const
 {
   return SEChestCompression::IsValid() && HasForce();
@@ -30,30 +35,6 @@ bool SEChestCompressionForce::IsValid() const
 bool SEChestCompressionForce::IsActive() const
 {
   return IsValid() ? !m_Force->IsZero() : false;
-}
-
-void SEChestCompressionForce::Load(const cdm::ChestCompressionForceData& src, SEChestCompressionForce& dst)
-{
-  SEChestCompressionForce::Serialize(src, dst);
-}
-void SEChestCompressionForce::Serialize(const cdm::ChestCompressionForceData& src, SEChestCompressionForce& dst)
-{
-  SEPatientAction::Serialize(src.patientaction(), dst);
-  if (src.has_force())
-    SEScalarForce::Load(src.force(), dst.GetForce());
-}
-
-cdm::ChestCompressionForceData* SEChestCompressionForce::Unload(const SEChestCompressionForce& src)
-{
-  cdm::ChestCompressionForceData* dst = new cdm::ChestCompressionForceData();
-  SEChestCompressionForce::Serialize(src, *dst);
-  return dst;
-}
-void SEChestCompressionForce::Serialize(const SEChestCompressionForce& src, cdm::ChestCompressionForceData& dst)
-{
-  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
-  if (src.HasForce())
-    dst.set_allocated_force(SEScalarForce::Unload(*src.m_Force));
 }
 
 bool SEChestCompressionForce::HasForce() const

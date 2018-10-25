@@ -3,9 +3,8 @@
 
 #include "stdafx.h"
 #include "patient/conditions/SEChronicObstructivePulmonaryDisease.h"
-#include "bind/cdm/PatientConditions.pb.h"
 #include "properties/SEScalar0To1.h"
-
+#include "io/protobuf/PBPatientConditions.h"
 
 SEChronicObstructivePulmonaryDisease::SEChronicObstructivePulmonaryDisease() : SEPatientCondition()
 {
@@ -25,6 +24,11 @@ void SEChronicObstructivePulmonaryDisease::Clear()
   SAFE_DELETE(m_EmphysemaSeverity);
 }
 
+void SEChronicObstructivePulmonaryDisease::Copy(const SEChronicObstructivePulmonaryDisease& src)
+{
+  PBPatientCondition::Copy(src, *this);
+}
+
 bool SEChronicObstructivePulmonaryDisease::IsValid() const
 {
   return HasBronchitisSeverity() || HasEmphysemaSeverity();
@@ -35,34 +39,6 @@ bool SEChronicObstructivePulmonaryDisease::IsActive() const
   if (!IsValid())
     return false;
   return GetBronchitisSeverity() > 0 || GetEmphysemaSeverity() > 0;
-}
-
-void SEChronicObstructivePulmonaryDisease::Load(const cdm::ChronicObstructivePulmonaryDiseaseData& src, SEChronicObstructivePulmonaryDisease& dst)
-{
-  SEChronicObstructivePulmonaryDisease::Serialize(src, dst);
-}
-void SEChronicObstructivePulmonaryDisease::Serialize(const cdm::ChronicObstructivePulmonaryDiseaseData& src, SEChronicObstructivePulmonaryDisease& dst)
-{
-  SEPatientCondition::Serialize(src.patientcondition(), dst);
-  if (src.has_bronchitisseverity())
-    SEScalar0To1::Load(src.bronchitisseverity(), dst.GetBronchitisSeverity());
-  if (src.has_emphysemaseverity())
-    SEScalar0To1::Load(src.emphysemaseverity(), dst.GetEmphysemaSeverity());
-}
-
-cdm::ChronicObstructivePulmonaryDiseaseData* SEChronicObstructivePulmonaryDisease::Unload(const SEChronicObstructivePulmonaryDisease& src)
-{
-  cdm::ChronicObstructivePulmonaryDiseaseData* dst = new cdm::ChronicObstructivePulmonaryDiseaseData();
-  SEChronicObstructivePulmonaryDisease::Serialize(src, *dst);
-  return dst;
-}
-void SEChronicObstructivePulmonaryDisease::Serialize(const SEChronicObstructivePulmonaryDisease& src, cdm::ChronicObstructivePulmonaryDiseaseData& dst)
-{
-  SEPatientCondition::Serialize(src, *dst.mutable_patientcondition());
-  if (src.HasBronchitisSeverity())
-    dst.set_allocated_bronchitisseverity(SEScalar0To1::Unload(*src.m_BronchitisSeverity));
-  if (src.HasEmphysemaSeverity())
-    dst.set_allocated_emphysemaseverity(SEScalar0To1::Unload(*src.m_EmphysemaSeverity));
 }
 
 bool SEChronicObstructivePulmonaryDisease::HasBronchitisSeverity() const

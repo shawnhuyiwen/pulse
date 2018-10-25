@@ -2,6 +2,7 @@
    See accompanying NOTICE file for details.*/
 package com.kitware.physiology.datamodel.system.equipment.anesthesia;
 
+import com.kitware.physiology.cdm.AnesthesiaMachine.AnesthesiaMachineChamberData;
 import com.kitware.physiology.cdm.AnesthesiaMachine.AnesthesiaMachineData;
 import com.kitware.physiology.cdm.Enums.eSwitch;
 
@@ -39,7 +40,7 @@ public class SEAnesthesiaMachineChamber
       this.getSubstanceFraction().set(from.substanceFraction);      
   }
 
-  public static void load( AnesthesiaMachineData.ChamberData src, SEAnesthesiaMachineChamber dst, SESubstanceManager subMgr)
+  public static void load( AnesthesiaMachineChamberData src, SEAnesthesiaMachineChamber dst, SESubstanceManager subMgr)
   {
     dst.reset();
     if (src.getState() != eSwitch.UNRECOGNIZED && src.getState()!=eSwitch.NullSwitch)
@@ -49,13 +50,13 @@ public class SEAnesthesiaMachineChamber
     if (src.hasSubstanceFraction())
       SEScalar0To1.load(src.getSubstanceFraction(),dst.getSubstanceFraction());
   }
-  public static AnesthesiaMachineData.ChamberData unload(SEAnesthesiaMachineChamber src)
+  public static AnesthesiaMachineChamberData unload(SEAnesthesiaMachineChamber src)
   {
-    AnesthesiaMachineData.ChamberData.Builder dst =  AnesthesiaMachineData.ChamberData.newBuilder();
+    AnesthesiaMachineChamberData.Builder dst =  AnesthesiaMachineChamberData.newBuilder();
     unload(src,dst);
     return dst.build();
   }
-  protected static void unload(SEAnesthesiaMachineChamber src, AnesthesiaMachineData.ChamberData.Builder dst)
+  protected static void unload(SEAnesthesiaMachineChamber src, AnesthesiaMachineChamberData.Builder dst)
   {
     if(src.hasSubstance())
       dst.setSubstance(src.substance.getName());

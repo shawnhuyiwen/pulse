@@ -693,7 +693,7 @@ void CommonDataModelTest::ThermalCompartmentTest(const std::string& rptDirectory
   SETestReport testReport(m_Logger);
 
   SESubstanceManager subMgr(m_Logger);
-  subMgr.LoadSubstances();
+  subMgr.LoadSubstanceDirectory();
 
   SETestSuite&  Flows = testReport.CreateTestSuite();
   Flows.SetName("ThermalCompartmentFlows");
@@ -711,5 +711,5 @@ void CommonDataModelTest::ThermalCompartmentTest(const std::string& rptDirectory
   CircuitHeatTemperatureAndFlows.SetName("ThermalCompartmentHeatTemperatureAndFlows");
   TestCircuitHeatTemperatureAndFlows(CircuitHeatTemperatureAndFlows, subMgr);
 
-  testReport.WriteFile(rptDirectory + "/ThermalCompartmentTestReport.pba");
+  testReport.SerializeToFile(rptDirectory + "/ThermalCompartmentTestReport.pba",ASCII);
 }

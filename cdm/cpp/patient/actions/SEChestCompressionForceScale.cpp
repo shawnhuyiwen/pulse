@@ -3,9 +3,9 @@
 
 #include "stdafx.h"
 #include "patient/actions/SEChestCompressionForceScale.h"
-#include "bind/cdm/PatientActions.pb.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarTime.h"
+#include "io/protobuf/PBPatientActions.h"
 
 SEChestCompressionForceScale::SEChestCompressionForceScale() : SEChestCompression()
 {
@@ -25,6 +25,11 @@ void SEChestCompressionForceScale::Clear()
   SAFE_DELETE(m_ForcePeriod);
 }
 
+void SEChestCompressionForceScale::Copy(const SEChestCompressionForceScale& src)
+{
+  PBPatientAction::Copy(src, *this);
+}
+
 bool SEChestCompressionForceScale::IsValid() const
 {
   return SEChestCompression::IsValid() && HasForceScale();
@@ -33,34 +38,6 @@ bool SEChestCompressionForceScale::IsValid() const
 bool SEChestCompressionForceScale::IsActive() const
 {
   return IsValid() ? !m_ForceScale->IsZero() : false;
-}
-
-void SEChestCompressionForceScale::Load(const cdm::ChestCompressionForceScaleData& src, SEChestCompressionForceScale& dst)
-{
-  SEChestCompressionForceScale::Serialize(src, dst);
-}
-void SEChestCompressionForceScale::Serialize(const cdm::ChestCompressionForceScaleData& src, SEChestCompressionForceScale& dst)
-{
-  SEPatientAction::Serialize(src.patientaction(), dst);
-  if (src.has_forcescale())
-    SEScalar0To1::Load(src.forcescale(), dst.GetForceScale());
-  if (src.has_forceperiod())
-    SEScalarTime::Load(src.forceperiod(), dst.GetForcePeriod());
-}
-
-cdm::ChestCompressionForceScaleData* SEChestCompressionForceScale::Unload(const SEChestCompressionForceScale& src)
-{
-  cdm::ChestCompressionForceScaleData* dst = new cdm::ChestCompressionForceScaleData();
-  SEChestCompressionForceScale::Serialize(src, *dst);
-  return dst;
-}
-void SEChestCompressionForceScale::Serialize(const SEChestCompressionForceScale& src, cdm::ChestCompressionForceScaleData& dst)
-{
-  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
-  if (src.HasForceScale())
-    dst.set_allocated_forcescale(SEScalar0To1::Unload(*src.m_ForceScale));
-  if (src.HasForcePeriod())
-    dst.set_allocated_forceperiod(SEScalarTime::Unload(*src.m_ForcePeriod));
 }
 
 bool SEChestCompressionForceScale::HasForceScale() const

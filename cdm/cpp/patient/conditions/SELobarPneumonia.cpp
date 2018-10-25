@@ -3,8 +3,8 @@
 
 #include "stdafx.h"
 #include "patient/conditions/SELobarPneumonia.h"
-#include "bind/cdm/PatientConditions.pb.h"
 #include "properties/SEScalar0To1.h"
+#include "io/protobuf/PBPatientConditions.h"
 
 SELobarPneumonia::SELobarPneumonia() : SEPatientCondition()
 {
@@ -26,6 +26,11 @@ void SELobarPneumonia::Clear()
   SAFE_DELETE(m_RightLungAffected);
 }
 
+void SELobarPneumonia::Copy(const SELobarPneumonia& src)
+{
+  PBPatientCondition::Copy(src, *this);
+}
+
 bool SELobarPneumonia::IsValid() const
 {
   return HasSeverity() && HasLeftLungAffected() && HasRightLungAffected();
@@ -40,38 +45,6 @@ bool SELobarPneumonia::IsActive() const
   if (GetLeftLungAffected() <= 0 && GetRightLungAffected() <= 0)
     return false;
   return true;
-}
-
-void SELobarPneumonia::Load(const cdm::LobarPneumoniaData& src, SELobarPneumonia& dst)
-{
-  SELobarPneumonia::Serialize(src, dst);
-}
-void SELobarPneumonia::Serialize(const cdm::LobarPneumoniaData& src, SELobarPneumonia& dst)
-{
-  SEPatientCondition::Serialize(src.patientcondition(), dst);
-  if (src.has_severity())
-    SEScalar0To1::Load(src.severity(), dst.GetSeverity());
-  if (src.has_leftlungaffected())
-    SEScalar0To1::Load(src.leftlungaffected(), dst.GetLeftLungAffected());
-  if (src.has_rightlungaffected())
-    SEScalar0To1::Load(src.rightlungaffected(), dst.GetRightLungAffected());
-}
-
-cdm::LobarPneumoniaData* SELobarPneumonia::Unload(const SELobarPneumonia& src)
-{
-  cdm::LobarPneumoniaData* dst = new cdm::LobarPneumoniaData();
-  SELobarPneumonia::Serialize(src, *dst);
-  return dst;
-}
-void SELobarPneumonia::Serialize(const SELobarPneumonia& src, cdm::LobarPneumoniaData& dst)
-{
-  SEPatientCondition::Serialize(src, *dst.mutable_patientcondition());
-  if (src.HasSeverity())
-    dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
-  if (src.HasRightLungAffected())
-    dst.set_allocated_rightlungaffected(SEScalar0To1::Unload(*src.m_RightLungAffected));
-  if (src.HasLeftLungAffected())
-    dst.set_allocated_leftlungaffected(SEScalar0To1::Unload(*src.m_LeftLungAffected));
 }
 
 bool SELobarPneumonia::HasSeverity() const

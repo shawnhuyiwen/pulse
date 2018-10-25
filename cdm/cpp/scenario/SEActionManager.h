@@ -8,39 +8,35 @@ class SEAnesthesiaMachineActionCollection;
 class SEEnvironmentActionCollection;
 class SEInhalerActionCollection;
 class SESubstanceManager;
-CDM_BIND_DECL(ActionListData)
 
 class CDM_DECL SEActionManager : public Loggable
 {
+  friend class PBScenario;//friend the serialization class
 public:
 
   SEActionManager(SESubstanceManager&);
   ~SEActionManager();
 
   void Clear();
-
-  static void Load(const cdm::ActionListData& src, SEActionManager& dst);
-  static cdm::ActionListData* Unload(const SEActionManager& src);
-protected:
-  static void Serialize(const cdm::ActionListData& src, SEActionManager& dst);
-  static void Serialize(const SEActionManager& src, cdm::ActionListData& dst);
-
-public:
+  
+  bool SerializeToString(std::string& output, SerializationMode m) const;
+  bool SerializeToFile(const std::string& filename, SerializationMode m) const;
+  bool SerializeFromString(const std::string& src, SerializationMode m);
+  bool SerializeFromFile(const std::string& filename, SerializationMode m);
 
   bool ProcessAction(const SEAction& action);// Will make a copy
 
-  SEPatientActionCollection&           GetPatientActions()           { return *m_PatientActions; }
-  SEEnvironmentActionCollection&       GetEnvironmentActions()       { return *m_EnvironmentActions; }
-  SEAnesthesiaMachineActionCollection& GetAnesthesiaMachineActions() { return *m_AnesthesiaMachineActions; }
-  SEInhalerActionCollection&           GetInhalerActions()           { return *m_InhalerActions; }
+  SEPatientActionCollection&                 GetPatientActions()           { return *m_PatientActions; }
+  SEEnvironmentActionCollection&             GetEnvironmentActions()       { return *m_EnvironmentActions; }
+  SEAnesthesiaMachineActionCollection&       GetAnesthesiaMachineActions() { return *m_AnesthesiaMachineActions; }
+  SEInhalerActionCollection&                 GetInhalerActions()           { return *m_InhalerActions; }
 
   const SEPatientActionCollection&           GetPatientActions()           const { return *m_PatientActions; }
   const SEEnvironmentActionCollection&       GetEnvironmentActions()       const { return *m_EnvironmentActions; }
   const SEAnesthesiaMachineActionCollection& GetAnesthesiaMachineActions() const { return *m_AnesthesiaMachineActions; }
   const SEInhalerActionCollection&           GetInhalerActions()           const { return *m_InhalerActions; }
 
-  // This is here in case you want to take all the actions from an engine and write them out so you can reproduce the same engine state later
-  const cdm::ActionListData& GetActionList() { return *m_ProcessedActions; }// I don't really have anything that does that yet...
+  void GetActiveActions(std::vector<const SEAction*>& v) const;
 
 protected:
 
@@ -50,7 +46,5 @@ protected:
   SEAnesthesiaMachineActionCollection* m_AnesthesiaMachineActions;
   SEInhalerActionCollection*           m_InhalerActions;
 
-  cdm::ActionListData*                 m_ProcessedActions;
-  
   std::stringstream m_ss;
 };

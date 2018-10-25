@@ -6,8 +6,8 @@ package com.kitware.physiology.datamodel.patient.actions;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.kitware.physiology.cdm.PatientActions.AnyConsciousRespirationCommandData;
 import com.kitware.physiology.cdm.PatientActions.ConsciousRespirationData;
-import com.kitware.physiology.cdm.PatientActions.ConsciousRespirationData.AnyCommandData;
 
 import com.kitware.physiology.datamodel.substance.SESubstanceFraction;
 
@@ -60,7 +60,7 @@ public class SEConsciousRespiration extends SEPatientAction
     SEPatientAction.load(src.getPatientAction(), dst);
     dst.appendToPrevious = src.getAppendToPrevious();
     dst.commands.clear();
-    for (AnyCommandData cmd : src.getCommandList())
+    for (AnyConsciousRespirationCommandData cmd : src.getCommandList())
     {
       switch(cmd.getCommandCase())
       {
@@ -110,7 +110,7 @@ public class SEConsciousRespiration extends SEPatientAction
       dst.setAppendToPrevious(src.appendToPrevious);
     for (SEConsciousRespirationCommand command : src.commands)
     {
-      AnyCommandData.Builder cmd = dst.addCommandBuilder();
+      AnyConsciousRespirationCommandData.Builder cmd = dst.addCommandBuilder();
       if (command instanceof SEBreathHold)
       {
         cmd.setBreathHold(SEBreathHold.unload((SEBreathHold)command));

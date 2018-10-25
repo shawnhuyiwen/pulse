@@ -3,7 +3,6 @@
 
 #pragma once
 #include "patient/actions/SEPatientAction.h"
-CDM_BIND_DECL(MechanicalVentilationData)
 class Serializer;
 class SESubstance;
 class SESubstanceFraction;
@@ -12,6 +11,7 @@ class SEMechanicalVentilationConfiguration;
 
 class CDM_DECL SEMechanicalVentilation : public SEPatientAction
 {
+  friend class PBPatientAction;//friend the serialization class
 protected:
 
 public:
@@ -20,17 +20,10 @@ public:
   virtual ~SEMechanicalVentilation();
 
   virtual void Clear();
+  virtual void Copy(const SEMechanicalVentilation& src, const SESubstanceManager& subMgr);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
-
-  static void Load(const cdm::MechanicalVentilationData& src, SEMechanicalVentilation& dst, const SESubstanceManager& subMgr);
-  static cdm::MechanicalVentilationData* Unload(const SEMechanicalVentilation& src);
-protected:
-  static void Serialize(const cdm::MechanicalVentilationData& src, SEMechanicalVentilation& dst, const SESubstanceManager& subMgr);
-  static void Serialize(const SEMechanicalVentilation& src, cdm::MechanicalVentilationData& dst);
-
-public:
 
   virtual eSwitch GetState() const;
   virtual void SetState(eSwitch name);

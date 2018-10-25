@@ -2,10 +2,10 @@
    See accompanying NOTICE file for details.*/
 
 #include "EngineTest.h"
-#include "Controller/Controller.h"
-#include "Controller/Substances.h"
-#include "Controller/Circuits.h"
-#include "Controller/Compartments.h"
+#include "controller/Controller.h"
+#include "controller/Substances.h"
+#include "controller/Circuits.h"
+#include "controller/Compartments.h"
 #include "PulseConfiguration.h"
 #include "utils/TimingProfile.h"
 #include "utils/testing/SETestReport.h"
@@ -204,7 +204,7 @@ void PulseEngineTest::AerosolTest(const std::string& sOutputDirectory)
   SizeIndependentDepositionEfficencyCoefficientsTest(zhangDispersion, zhangSubstance, 0.25368, 0.3399, 0.00013825, 0.00022882);
   DepositionFractionTest(zhangDispersion, zhangSubstance, 0.353503, 0.478626, 0.000102784, 8.27909e-05);
 
-  testReport.WriteFile(sOutputDirectory + "/AerosolTestReport.pba");
+  testReport.SerializeToFile(sOutputDirectory + "/AerosolTestReport.pba",ASCII);
 }
 
 void PulseEngineTest::SizeIndependentDepositionEfficencyCoefficientsTest(SETestSuite& suite, SESubstance& substance, 
@@ -260,7 +260,7 @@ void PulseEngineTest::DepositionFractionTest(SETestSuite& suite, SESubstance& su
   tc.SetName(substance.GetName()+"DepositionFraction");
 
   PulseController pc(m_Logger);
-  pc.GetPatient().LoadFile("./patients/StandardMale.pba");
+  pc.GetPatient().SerializeFromFile("./patients/StandardMale.pba",ASCII);
   pc.SetupPatient();
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);

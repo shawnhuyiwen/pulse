@@ -2,27 +2,20 @@
    See accompanying NOTICE file for details.*/
 #pragma once
 #include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineAction.h"
-CDM_BIND_DECL(ExpiratoryValveLeakData)
 
 class CDM_DECL SEExpiratoryValveLeak : public SEAnesthesiaMachineAction
 {
+  friend class PBAnesthesiaMachineAction;//friend the serialization class
 public:
 
   SEExpiratoryValveLeak();
   virtual ~SEExpiratoryValveLeak();
 
   virtual void Clear();
+  virtual void Copy(const SEExpiratoryValveLeak& src);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
-
-  static void Load(const cdm::ExpiratoryValveLeakData& src, SEExpiratoryValveLeak& dst);
-  static cdm::ExpiratoryValveLeakData* Unload(const SEExpiratoryValveLeak& src);
-protected:
-  static void Serialize(const cdm::ExpiratoryValveLeakData& src, SEExpiratoryValveLeak& dst);
-  static void Serialize(const SEExpiratoryValveLeak& src, cdm::ExpiratoryValveLeakData& dst);
-
-public:
 
   virtual bool HasSeverity() const;
   virtual SEScalar0To1& GetSeverity();

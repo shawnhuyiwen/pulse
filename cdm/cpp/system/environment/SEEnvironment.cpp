@@ -8,7 +8,6 @@
 #include "system/environment/SEEnvironmentalConditions.h"
 #include "system/environment/actions/SEChangeEnvironmentConditions.h"
 #include "system/environment/conditions/SEInitialEnvironmentConditions.h"
-#include "bind/cdm/Environment.pb.h"
 #include "substance/SESubstanceManager.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarHeatConductancePerArea.h"
@@ -18,10 +17,6 @@
 #include "properties/SEScalarPower.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarTemperature.h"
-
-
-
-
 
 SEEnvironment::SEEnvironment(SESubstanceManager& substances) : SESystem(substances.GetLogger()), m_Substances(substances)
 {
@@ -97,78 +92,6 @@ const SEScalar* SEEnvironment::GetScalar(const std::string& name)
   return nullptr;
 }
 
-
-void SEEnvironment::Load(const cdm::EnvironmentData& src, SEEnvironment& dst)
-{
-  SEEnvironment::Serialize(src, dst);
-  dst.StateChange();
-}
-void SEEnvironment::Serialize(const cdm::EnvironmentData& src, SEEnvironment& dst)
-{
-  if (src.has_convectiveheatloss())
-    SEScalarPower::Load(src.convectiveheatloss(), dst.GetConvectiveHeatLoss());
-  if (src.has_convectiveheattranfercoefficient())
-    SEScalarHeatConductancePerArea::Load(src.convectiveheattranfercoefficient(), dst.GetConvectiveHeatTranferCoefficient());
-  if (src.has_evaporativeheatloss())
-    SEScalarPower::Load(src.evaporativeheatloss(), dst.GetEvaporativeHeatLoss());
-  if (src.has_evaporativeheattranfercoefficient())
-    SEScalarHeatConductancePerArea::Load(src.evaporativeheattranfercoefficient(), dst.GetEvaporativeHeatTranferCoefficient());
-  if (src.has_radiativeheatloss())
-    SEScalarPower::Load(src.radiativeheatloss(), dst.GetRadiativeHeatLoss());
-  if (src.has_radiativeheattranfercoefficient())
-    SEScalarHeatConductancePerArea::Load(src.radiativeheattranfercoefficient(), dst.GetRadiativeHeatTranferCoefficient());
-  if (src.has_respirationheatloss())
-    SEScalarPower::Load(src.respirationheatloss(), dst.GetRespirationHeatLoss());
-  if (src.has_skinheatloss())
-    SEScalarPower::Load(src.skinheatloss(), dst.GetSkinHeatLoss());
-
-  if (src.has_conditions())
-    SEEnvironmentalConditions::Load(src.conditions(), dst.GetConditions());
-  if (src.has_activeheating())
-    SEActiveConditioning::Load(src.activeheating(), dst.GetActiveHeating());
-  if (src.has_activecooling())
-    SEActiveConditioning::Load(src.activecooling(), dst.GetActiveCooling());
-  if (src.has_appliedtemperature())
-    SEAppliedTemperature::Load(src.appliedtemperature(), dst.GetAppliedTemperature());
-
-}
-
-cdm::EnvironmentData* SEEnvironment::Unload(const SEEnvironment& src)
-{
-  cdm::EnvironmentData* dst = new cdm::EnvironmentData();
-  SEEnvironment::Serialize(src,*dst);
-  return dst;
-}
-void SEEnvironment::Serialize(const SEEnvironment& src, cdm::EnvironmentData& dst)
-{
-  if (src.HasConvectiveHeatLoss())
-    dst.set_allocated_convectiveheatloss(SEScalarPower::Unload(*src.m_ConvectiveHeatLoss));
-  if (src.HasConvectiveHeatTranferCoefficient())
-    dst.set_allocated_convectiveheattranfercoefficient(SEScalarHeatConductancePerArea::Unload(*src.m_ConvectiveHeatTranferCoefficient));
-  if (src.HasEvaporativeHeatLoss())
-    dst.set_allocated_evaporativeheatloss(SEScalarPower::Unload(*src.m_EvaporativeHeatLoss));
-  if (src.HasEvaporativeHeatTranferCoefficient())
-    dst.set_allocated_evaporativeheattranfercoefficient(SEScalarHeatConductancePerArea::Unload(*src.m_EvaporativeHeatTranferCoefficient));
-  if (src.HasRadiativeHeatLoss())
-    dst.set_allocated_radiativeheatloss(SEScalarPower::Unload(*src.m_RadiativeHeatLoss));
-  if (src.HasRadiativeHeatTranferCoefficient())
-    dst.set_allocated_radiativeheattranfercoefficient(SEScalarHeatConductancePerArea::Unload(*src.m_RadiativeHeatTranferCoefficient));
-  if (src.HasRespirationHeatLoss())
-    dst.set_allocated_respirationheatloss(SEScalarPower::Unload(*src.m_RespirationHeatLoss));
-  if (src.HasSkinHeatLoss())
-    dst.set_allocated_skinheatloss(SEScalarPower::Unload(*src.m_SkinHeatLoss));
-
-
-  if (src.HasActiveHeating() && src.m_ActiveHeating->GetPower().IsPositive())
-    dst.set_allocated_activeheating(SEActiveConditioning::Unload(*src.m_ActiveHeating));
-  if (src.HasActiveCooling() && src.m_ActiveCooling->GetPower().IsPositive())
-    dst.set_allocated_activecooling(SEActiveConditioning::Unload(*src.m_ActiveCooling));
-  if (src.HasAppliedTemperature())
-    dst.set_allocated_appliedtemperature(SEAppliedTemperature::Unload(*src.m_AppliedTemperature));
-  if (src.HasConditions())
-    dst.set_allocated_conditions(SEEnvironmentalConditions::Unload(*src.m_Conditions));
-}
-
 bool SEEnvironment::ProcessChange(const SEInitialEnvironmentConditions& change)
 {
   // If we have data then we merge it, if a file was provided
@@ -177,7 +100,7 @@ bool SEEnvironment::ProcessChange(const SEInitialEnvironmentConditions& change)
     GetConditions().Merge(*change.GetConditions());
   else if (change.HasConditionsFile())
   {
-    if (!GetConditions().LoadFile(change.GetConditionsFile()))// Does NOT merge file in data, Should we?
+    if (!GetConditions().SerializeFromFile(change.GetConditionsFile(),ASCII))// Does NOT merge file in data, Should we?
     {
       /// \error Unable to read Configuration Action file
       Error("Could not read provided SEInitialEnvironment file", "SEEnvironment::ProcessChange");
@@ -196,7 +119,7 @@ bool SEEnvironment::ProcessChange(const SEChangeEnvironmentConditions& change)
     GetConditions().Merge(*change.GetConditions());
   else if (change.HasConditionsFile())
   {
-    if (!GetConditions().LoadFile(change.GetConditionsFile()))// Does NOT merge file in data, Should we?
+    if (!GetConditions().SerializeFromFile(change.GetConditionsFile(),ASCII))// Does NOT merge file in data, Should we?
     {
       /// \error Unable to read Configuration Action file
       Error("Could not read provided SEEnvironmentChange file", "SEEnvironment::ProcessChange");

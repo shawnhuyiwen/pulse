@@ -4,27 +4,21 @@
 #pragma once
 #include "patient/conditions/SEPatientCondition.h"
 #include "patient/SEMeal.h"
-CDM_BIND_DECL(ConsumeMealData)
 
 class CDM_DECL SEConsumeMeal : public SEPatientCondition
 {
+  friend class PBPatientCondition;//friend the serialization class
 public:
 
   SEConsumeMeal();
   virtual ~SEConsumeMeal();
 
   virtual void Clear(); //clear memory
+  virtual void Copy(const SEConsumeMeal& src);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
 
-  static void Load(const cdm::ConsumeMealData& src, SEConsumeMeal& dst);
-  static cdm::ConsumeMealData* Unload(const SEConsumeMeal& src);
-protected:
-  static void Serialize(const cdm::ConsumeMealData& src, SEConsumeMeal& dst);
-  static void Serialize(const SEConsumeMeal& src, cdm::ConsumeMealData& dst);
-
-public:
   virtual std::string GetName() const { return "ConsumeMeal"; }
 
   bool HasMeal() const;

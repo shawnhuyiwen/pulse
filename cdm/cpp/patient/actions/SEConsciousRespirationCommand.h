@@ -6,6 +6,7 @@
 
 class CDM_DECL SEConsciousRespirationCommand
 {
+  friend class PBPatientAction;//friend the serialization class
 public:
 
   SEConsciousRespirationCommand();

@@ -3,27 +3,20 @@
 
 #pragma once
 #include "patient/actions/SEPatientAction.h"
-CDM_BIND_DECL(CardiacArrestData)
 
 class CDM_DECL SECardiacArrest : public SEPatientAction
 {
+  friend class PBPatientAction;//friend the serialization class
 public:
 
   SECardiacArrest();
   virtual ~SECardiacArrest();
 
   virtual void Clear(); //clear memory
+  virtual void Copy(const SECardiacArrest& src);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
-
-  static void Load(const cdm::CardiacArrestData& src, SECardiacArrest& dst);
-  static cdm::CardiacArrestData* Unload(const SECardiacArrest& src);
-protected:
-  static void Serialize(const cdm::CardiacArrestData& src, SECardiacArrest& dst);
-  static void Serialize(const SECardiacArrest& src, cdm::CardiacArrestData& dst);
-
-public:
 
   virtual eSwitch GetState() const { return m_State; }
   virtual void SetState(eSwitch s) { m_State = (s == eSwitch::NullSwitch) ? eSwitch::Off : s; }

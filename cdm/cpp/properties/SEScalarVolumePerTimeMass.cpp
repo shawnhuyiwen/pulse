@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarVolumePerTimeMass.h"
-#include "bind/cdm/Properties.pb.h"
 
 const VolumePerTimeMassUnit VolumePerTimeMassUnit::L_Per_s_g("L/s g");
 const VolumePerTimeMassUnit VolumePerTimeMassUnit::mL_Per_s_g("mL / s g");
@@ -41,26 +40,4 @@ const VolumePerTimeMassUnit& VolumePerTimeMassUnit::GetCompoundUnit(const std::s
   std::stringstream err;
   err << unit << " is not a valid VolumePerTimeMass unit";
   throw CommonDataModelException(err.str());
-}
-
-void SEScalarVolumePerTimeMass::Load(const cdm::ScalarVolumePerTimeMassData& src, SEScalarVolumePerTimeMass& dst)
-{
-  SEScalarVolumePerTimeMass::Serialize(src, dst);
-}
-void SEScalarVolumePerTimeMass::Serialize(const cdm::ScalarVolumePerTimeMassData& src, SEScalarVolumePerTimeMass& dst)
-{
-  SEUnitScalar::Serialize(src.scalarvolumepertimemass(), dst);
-}
-
-cdm::ScalarVolumePerTimeMassData* SEScalarVolumePerTimeMass::Unload(const SEScalarVolumePerTimeMass& src)
-{
-  if (!src.IsValid())
-    return nullptr;
-  cdm::ScalarVolumePerTimeMassData* dst = new cdm::ScalarVolumePerTimeMassData();
-  Serialize(src, *dst);
-  return dst;
-}
-void SEScalarVolumePerTimeMass::Serialize(const SEScalarVolumePerTimeMass& src, cdm::ScalarVolumePerTimeMassData& dst)
-{
-  SEUnitScalar::Serialize(src, *dst.mutable_scalarvolumepertimemass());
 }

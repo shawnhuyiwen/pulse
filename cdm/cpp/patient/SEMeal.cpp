@@ -4,8 +4,7 @@
 #include "stdafx.h"
 #include "patient/SEMeal.h"
 #include "properties/SEScalarTime.h"
-#include "bind/cdm/PatientNutrition.pb.h"
-#include <google/protobuf/text_format.h>
+#include "io/protobuf/PBPatientNutrition.h"
 
 SEMeal::SEMeal(Logger* logger) : SENutrition(logger)
 {
@@ -23,44 +22,21 @@ void SEMeal::Clear()
   SAFE_DELETE(m_ElapsedTime);
 }
 
-void SEMeal::Load(const cdm::MealData& src, SEMeal& dst)
+bool SEMeal::SerializeToString(std::string& output, SerializationMode m) const
 {
-  SEMeal::Serialize(src, dst);
+  return PBPatientNutrition::SerializeToString(*this, output, m);
 }
-void SEMeal::Serialize(const cdm::MealData& src, SEMeal& dst)
+bool SEMeal::SerializeToFile(const std::string& filename, SerializationMode m) const
 {
-  SENutrition::Serialize(src.nutrition(), dst);
-  dst.Clear();
-  if (src.has_elapsedtime())
-    SEScalarTime::Load(src.elapsedtime(), dst.GetElapsedTime());
+  return PBPatientNutrition::SerializeToFile(*this, filename, m);
 }
-
-cdm::MealData* SEMeal::Unload(const SEMeal& src)
+bool SEMeal::SerializeFromString(const std::string& src, SerializationMode m)
 {
-  cdm::MealData* dst = new cdm::MealData();
-  SEMeal::Serialize(src, *dst);
-  return dst;
+  return PBPatientNutrition::SerializeFromString(src, *this, m);
 }
-void SEMeal::Serialize(const SEMeal& src, cdm::MealData& dst)
+bool SEMeal::SerializeFromFile(const std::string& filename, SerializationMode m)
 {
-  SENutrition::Serialize(src, *dst.mutable_nutrition());
-  if (src.HasElapsedTime())
-    dst.set_allocated_elapsedtime(SEScalarTime::Unload(*src.m_ElapsedTime));
-}
-
-bool SEMeal::LoadFile(const std::string& mealFile)
-{
-  cdm::MealData src;
-  std::ifstream file_stream(mealFile, std::ios::in);
-  std::string fmsg((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
-  if (!google::protobuf::TextFormat::ParseFromString(fmsg, &src))
-    return false;
-  SEMeal::Load(src, *this);
-  return true;
-
-  // If its a binary string in the file...
-  //std::ifstream binary_istream(mealFile, std::ios::in | std::ios::binary);
-  //src.ParseFromIstream(&binary_istream);
+  return PBPatientNutrition::SerializeFromFile(filename, *this, m);
 }
 
 bool SEMeal::HasElapsedTime() const

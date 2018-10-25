@@ -3,7 +3,6 @@
 
 #pragma once
 #include "properties/SEScalar.h"
-CDM_BIND_DECL(ScalarPowerPerAreaTemperatureToTheFourthData)
 
 class CDM_DECL PowerPerAreaTemperatureToTheFourthUnit : public CCompoundUnit
 {
@@ -22,10 +21,4 @@ class CDM_DECL SEScalarPowerPerAreaTemperatureToTheFourth : public SEScalarQuant
 public:
   SEScalarPowerPerAreaTemperatureToTheFourth() {}
   virtual ~SEScalarPowerPerAreaTemperatureToTheFourth() {}
-
-  static void Load(const cdm::ScalarPowerPerAreaTemperatureToTheFourthData& src, SEScalarPowerPerAreaTemperatureToTheFourth& dst);
-  static cdm::ScalarPowerPerAreaTemperatureToTheFourthData* Unload(const SEScalarPowerPerAreaTemperatureToTheFourth& src);
-protected:
-  static void Serialize(const cdm::ScalarPowerPerAreaTemperatureToTheFourthData& src, SEScalarPowerPerAreaTemperatureToTheFourth& dst);
-  static void Serialize(const SEScalarPowerPerAreaTemperatureToTheFourth& src, cdm::ScalarPowerPerAreaTemperatureToTheFourthData& dst);
 };

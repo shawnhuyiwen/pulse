@@ -3,8 +3,8 @@
 
 #include "stdafx.h"
 #include "patient/actions/SEAirwayObstruction.h"
-#include "bind/cdm/PatientActions.pb.h"
 #include "properties/SEScalar0To1.h"
+#include "io/protobuf/PBPatientActions.h"
 
 SEAirwayObstruction::SEAirwayObstruction() : SEPatientAction()
 {
@@ -18,10 +18,13 @@ SEAirwayObstruction::~SEAirwayObstruction()
 
 void SEAirwayObstruction::Clear()
 {
-  
   SEPatientAction::Clear();
   SAFE_DELETE(m_Severity);
-  
+}
+
+void SEAirwayObstruction::Copy(const SEAirwayObstruction& src)
+{
+  PBPatientAction::Copy(src, *this);
 }
 
 bool SEAirwayObstruction::IsValid() const
@@ -33,31 +36,6 @@ bool SEAirwayObstruction::IsActive() const
 {
   return IsValid() ? !m_Severity->IsZero() : false;
 }
-
-void SEAirwayObstruction::Load(const cdm::AirwayObstructionData& src, SEAirwayObstruction& dst)
-{
-  SEAirwayObstruction::Serialize(src, dst);
-}
-void SEAirwayObstruction::Serialize(const cdm::AirwayObstructionData& src, SEAirwayObstruction& dst)
-{
-  SEPatientAction::Serialize(src.patientaction(), dst);
-  if (src.has_severity())
-    SEScalar0To1::Load(src.severity(), dst.GetSeverity());
-}
-
-cdm::AirwayObstructionData* SEAirwayObstruction::Unload(const SEAirwayObstruction& src)
-{
-  cdm::AirwayObstructionData* dst = new cdm::AirwayObstructionData();
-  SEAirwayObstruction::Serialize(src, *dst);
-  return dst;
-}
-void SEAirwayObstruction::Serialize(const SEAirwayObstruction& src, cdm::AirwayObstructionData& dst)
-{
-  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
-  if (src.HasSeverity())
-    dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
-}
-
 
 bool SEAirwayObstruction::HasSeverity() const
 {

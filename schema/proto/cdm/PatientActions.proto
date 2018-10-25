@@ -125,45 +125,45 @@ message ChestOcclusiveDressingData
   eSide                                     Side                            = 3;/**<<@brief */
 }
 
+/** @brief Force air out of the lungs. */
+message ForcedInhaleData
+{
+  Scalar0To1Data                          InspiratoryCapacityFraction     = 1;/**<<@brief The fraction of the Inspiratory capacity that will be filled by the breath. */
+  ScalarTimeData                          Period                          = 2;/**<<@brief Duration of the inhale. */
+}
+/** @brief Force air into the lungs. */
+message ForcedExhaleData
+{
+  Scalar0To1Data                          ExpiratoryReserveVolumeFraction = 1;/**<<@brief The fraction of the Expiratory Reserve Volume that is forced out of the body. */
+  ScalarTimeData                          Period                          = 2;/**<<@brief Duration of the exhale.*/
+}
+/** @brief Hold the patients breath. There will be no inflow or out flow of air during the specified period */
+message BreathHoldData
+{
+  ScalarTimeData                          Period                          = 1;/**<<@brief Duration of the breath hold. */
+}
+/** @brief Administer a substance through an Inhaler. This command will represent a single press of an Inhaler. */
+message UseInhalerData
+{
+}
+message AnyConsciousRespirationCommandData
+{
+  string                                  Comment                         = 1;
+  oneof Command
+  {
+    ForcedInhaleData                      ForcedInhale                    = 2;
+    ForcedExhaleData                      ForcedExhale                    = 3;
+    BreathHoldData                        BreathHold                      = 4;
+    UseInhalerData                        UseInhaler                      = 5;
+  }
+}
 /** @brief An ordered list of concious breath commands for the patient to preform. */
 message ConsciousRespirationData
 {
-  /** @brief Force air out of the lungs. */
-  message ForcedInhaleData
-  {
-    Scalar0To1Data                          InspiratoryCapacityFraction     = 1;/**<<@brief The fraction of the Inspiratory capacity that will be filled by the breath. */
-    ScalarTimeData                          Period                          = 2;/**<<@brief Duration of the inhale. */
-  }
-  /** @brief Force air into the lungs. */
-  message ForcedExhaleData
-  {
-    Scalar0To1Data                          ExpiratoryReserveVolumeFraction = 1;/**<<@brief The fraction of the Expiratory Reserve Volume that is forced out of the body. */
-    ScalarTimeData                          Period                          = 2;/**<<@brief Duration of the exhale.*/
-  }
-  /** @brief Hold the patients breath. There will be no inflow or out flow of air during the specified period */
-  message BreathHoldData
-  {
-    ScalarTimeData                          Period                          = 1;/**<<@brief Duration of the breath hold. */
-  }
-  /** @brief Administer a substance through an Inhaler. This command will represent a single press of an Inhaler. */
-  message UseInhalerData
-  {
-  }
-  message AnyCommandData
-  {
-    string                                  Comment                         = 1;
-    oneof Command
-    {
-      ForcedInhaleData                      ForcedInhale                    = 2;
-      ForcedExhaleData                      ForcedExhale                    = 3;
-      BreathHoldData                        BreathHold                      = 4;
-      UseInhalerData                        UseInhaler                      = 5;
-    }
-    
-  }
-  PatientActionData                         PatientAction                   = 1;
-  bool                                      AppendToPrevious                = 2;
-  repeated AnyCommandData                   Command                         = 3;
+  
+  PatientActionData                           PatientAction                   = 1;
+  bool                                        AppendToPrevious                = 2;
+  repeated AnyConsciousRespirationCommandData Command                         = 3;
 }
 
 /** @brief Consume nutrients into the body. */
@@ -225,23 +225,24 @@ message PericardialEffusionData
   ScalarVolumePerTimeData                   EffusionRate                    = 2;/**<<@brief */
 }
 
+message SubstanceBolusStateData
+{
+  string                                  Substance                       = 1;
+  ScalarTimeData                          ElapsedTime                     = 2;
+  ScalarVolumeData                        AdministeredDose                = 3;
+}
 /** @brief An administration of a substance that is given all at one time to raise its concentration in blood to an effective level. */
 message SubstanceBolusData
 {
   
-  message StateData
-  {
-    string                                  Substance                       = 1;
-    ScalarTimeData                          ElapsedTime                     = 2;
-    ScalarVolumeData                        AdministeredDose                = 3;
-  }
+  
  
   PatientActionData                         PatientAction                   = 1;
   eSubstanceAdministration.Route            AdministrationRoute             = 2;
   string                                    Substance                       = 3;/**<<@brief */
   ScalarMassPerVolumeData                   Concentration                   = 4;/**<<@brief */
   ScalarVolumeData                          Dose                            = 5;/**<<@brief */
-  StateData                                 State                           = 6;
+  SubstanceBolusStateData                   State                           = 6;
 }
 
 /** @brief Continuous injection of a compound. */

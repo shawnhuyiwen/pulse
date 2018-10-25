@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarTemperature.h"
-#include "bind/cdm/Properties.pb.h"
 
 const TemperatureUnit TemperatureUnit::F("degF");
 const TemperatureUnit TemperatureUnit::C("degC");
@@ -47,26 +46,4 @@ double SEScalarTemperature::GetValue(const TemperatureUnit& unit) const
   if (m_unit == &unit)
     return m_value;
   return Convert(m_value, *m_unit, unit);
-}
-
-void SEScalarTemperature::Load(const cdm::ScalarTemperatureData& src, SEScalarTemperature& dst)
-{
-  SEScalarTemperature::Serialize(src, dst);
-}
-void SEScalarTemperature::Serialize(const cdm::ScalarTemperatureData& src, SEScalarTemperature& dst)
-{
-  SEUnitScalar::Serialize(src.scalartemperature(), dst);
-}
-
-cdm::ScalarTemperatureData* SEScalarTemperature::Unload(const SEScalarTemperature& src)
-{
-  if (!src.IsValid())
-    return nullptr;
-  cdm::ScalarTemperatureData* dst = new cdm::ScalarTemperatureData();
-  Serialize(src, *dst);
-  return dst;
-}
-void SEScalarTemperature::Serialize(const SEScalarTemperature& src, cdm::ScalarTemperatureData& dst)
-{
-  SEUnitScalar::Serialize(src, *dst.mutable_scalartemperature());
 }

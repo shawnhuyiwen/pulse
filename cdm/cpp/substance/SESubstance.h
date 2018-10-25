@@ -21,6 +21,11 @@ public:
 
   virtual void Clear();
 
+  bool SerializeToString(std::string& output, SerializationMode m) const;
+  bool SerializeToFile(const std::string& filename, SerializationMode m) const;
+  bool SerializeFromString(const std::string& src, SerializationMode m);
+  bool SerializeFromFile(const std::string& filename, SerializationMode m);
+
   virtual const SEScalar* GetScalar(const std::string& name);
   
   virtual std::string GetName() const;

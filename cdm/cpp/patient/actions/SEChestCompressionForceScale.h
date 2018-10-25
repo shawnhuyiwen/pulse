@@ -3,26 +3,19 @@
 
 #pragma once
 #include "patient/actions/SEChestCompression.h"
-CDM_BIND_DECL(ChestCompressionForceScaleData)
 
 class CDM_DECL SEChestCompressionForceScale : public SEChestCompression
 {
+  friend class PBPatientAction;//friend the serialization class
 public:
   SEChestCompressionForceScale();
   virtual ~SEChestCompressionForceScale();
 
   virtual void Clear(); //clear memory
+  virtual void Copy(const SEChestCompressionForceScale& src);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
-
-  static void Load(const cdm::ChestCompressionForceScaleData& src, SEChestCompressionForceScale& dst);
-  static cdm::ChestCompressionForceScaleData* Unload(const SEChestCompressionForceScale& src);
-protected:
-  static void Serialize(const cdm::ChestCompressionForceScaleData& src, SEChestCompressionForceScale& dst);
-  static void Serialize(const SEChestCompressionForceScale& src, cdm::ChestCompressionForceScaleData& dst);
-
-public:
 
   virtual bool HasForceScale() const;
   virtual SEScalar0To1& GetForceScale();

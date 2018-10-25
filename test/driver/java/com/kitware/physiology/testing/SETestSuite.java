@@ -1,8 +1,8 @@
 package com.kitware.physiology.testing;
 
 import java.util.*;
-import com.kitware.physiology.cdm.TestReport.TestReportData.TestCaseData;
-import com.kitware.physiology.cdm.TestReport.TestReportData.TestSuiteData;
+import com.kitware.physiology.cdm.TestReport.TestCaseData;
+import com.kitware.physiology.cdm.TestReport.TestSuiteData;
 
 import com.kitware.physiology.datamodel.SEEqualOptions;
 import com.kitware.physiology.datamodel.properties.CommonUnits.TimeUnit;

@@ -3,8 +3,8 @@ See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "patient/actions/SEBreathHold.h"
-#include "bind/cdm/PatientActions.pb.h"
 #include "properties/SEScalarTime.h"
+#include "io/protobuf/PBPatientActions.h"
 
 SEBreathHold::SEBreathHold() : SEConsciousRespirationCommand()
 {
@@ -22,6 +22,11 @@ void SEBreathHold::Clear()
   SAFE_DELETE(m_Period);
 }
 
+void SEBreathHold::Copy(const SEBreathHold& src)
+{
+  PBPatientAction::Copy(src, *this);
+}
+
 bool SEBreathHold::IsValid() const
 {
   return SEConsciousRespirationCommand::IsValid() && HasPeriod();
@@ -30,29 +35,6 @@ bool SEBreathHold::IsValid() const
 bool SEBreathHold::IsActive() const
 {
   return SEConsciousRespirationCommand::IsActive();
-}
-
-void SEBreathHold::Load(const cdm::ConsciousRespirationData_BreathHoldData& src, SEBreathHold& dst)
-{
-  SEBreathHold::Serialize(src, dst);
-}
-void SEBreathHold::Serialize(const cdm::ConsciousRespirationData_BreathHoldData& src, SEBreathHold& dst)
-{
-  dst.Clear();
-  if (src.has_period())
-    SEScalarTime::Load(src.period(), dst.GetPeriod());
-}
-
-cdm::ConsciousRespirationData_BreathHoldData* SEBreathHold::Unload(const SEBreathHold& src)
-{
-  cdm::ConsciousRespirationData_BreathHoldData* dst = new cdm::ConsciousRespirationData_BreathHoldData();
-  SEBreathHold::Serialize(src, *dst);
-  return dst;
-}
-void SEBreathHold::Serialize(const SEBreathHold& src, cdm::ConsciousRespirationData_BreathHoldData& dst)
-{
-  if (src.HasPeriod())
-    dst.set_allocated_period(SEScalarTime::Unload(*src.m_Period));
 }
 
 bool SEBreathHold::HasPeriod() const

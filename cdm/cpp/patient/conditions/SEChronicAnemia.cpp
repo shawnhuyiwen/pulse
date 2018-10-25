@@ -3,8 +3,8 @@
 
 #include "stdafx.h"
 #include "patient/conditions/SEChronicAnemia.h"
-#include "bind/cdm/PatientConditions.pb.h"
 #include "properties/SEScalar0To1.h"
+#include "io/protobuf/PBPatientConditions.h"
 
 SEChronicAnemia::SEChronicAnemia() : SEPatientCondition()
 {
@@ -22,6 +22,11 @@ void SEChronicAnemia::Clear()
   SAFE_DELETE(m_ReductionFactor);
 }
 
+void SEChronicAnemia::Copy(const SEChronicAnemia& src)
+{
+  PBPatientCondition::Copy(src, *this);
+}
+
 bool SEChronicAnemia::IsValid() const
 {
   return HasReductionFactor();
@@ -31,30 +36,6 @@ bool SEChronicAnemia::IsActive() const
   if (!IsValid())
     return false;
   return GetReductionFactor() > 0;
-}
-
-void SEChronicAnemia::Load(const cdm::ChronicAnemiaData& src, SEChronicAnemia& dst)
-{
-  SEChronicAnemia::Serialize(src, dst);
-}
-void SEChronicAnemia::Serialize(const cdm::ChronicAnemiaData& src, SEChronicAnemia& dst)
-{
-  SEPatientCondition::Serialize(src.patientcondition(), dst);
-  if (src.has_reductionfactor())
-    SEScalar0To1::Load(src.reductionfactor(), dst.GetReductionFactor());
-}
-
-cdm::ChronicAnemiaData* SEChronicAnemia::Unload(const SEChronicAnemia& src)
-{
-  cdm::ChronicAnemiaData* dst = new cdm::ChronicAnemiaData();
-  SEChronicAnemia::Serialize(src, *dst);
-  return dst;
-}
-void SEChronicAnemia::Serialize(const SEChronicAnemia& src, cdm::ChronicAnemiaData& dst)
-{
-  SEPatientCondition::Serialize(src, *dst.mutable_patientcondition());
-  if (src.HasReductionFactor())
-    dst.set_allocated_reductionfactor(SEScalar0To1::Unload(*src.m_ReductionFactor));
 }
 
 bool SEChronicAnemia::HasReductionFactor() const

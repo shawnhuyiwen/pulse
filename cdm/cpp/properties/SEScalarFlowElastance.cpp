@@ -3,7 +3,6 @@ See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "properties/SEScalarFlowElastance.h"
-#include "bind/cdm/Properties.pb.h"
 
 const FlowElastanceUnit FlowElastanceUnit::cmH2O_Per_L("cmH2O/L");
 const FlowElastanceUnit FlowElastanceUnit::mmHg_Per_mL("mmHg/mL");
@@ -31,26 +30,4 @@ const FlowElastanceUnit& FlowElastanceUnit::GetCompoundUnit(const std::string& u
   std::stringstream err;
   err << unit << " is not a valid FlowElastance unit";
   throw CommonDataModelException(err.str());
-}
-
-void SEScalarFlowElastance::Load(const cdm::ScalarFlowElastanceData& src, SEScalarFlowElastance& dst)
-{
-  SEScalarFlowElastance::Serialize(src, dst);
-}
-void SEScalarFlowElastance::Serialize(const cdm::ScalarFlowElastanceData& src, SEScalarFlowElastance& dst)
-{
-  SEUnitScalar::Serialize(src.scalarflowelastance(), dst);
-}
-
-cdm::ScalarFlowElastanceData* SEScalarFlowElastance::Unload(const SEScalarFlowElastance& src)
-{
-  if (!src.IsValid())
-    return nullptr;
-  cdm::ScalarFlowElastanceData* dst = new cdm::ScalarFlowElastanceData();
-  Serialize(src, *dst);
-  return dst;
-}
-void SEScalarFlowElastance::Serialize(const SEScalarFlowElastance& src, cdm::ScalarFlowElastanceData& dst)
-{
-  SEUnitScalar::Serialize(src, *dst.mutable_scalarflowelastance());
 }

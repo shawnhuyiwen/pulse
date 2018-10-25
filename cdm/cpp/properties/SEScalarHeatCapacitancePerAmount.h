@@ -3,7 +3,6 @@
 
 #pragma once
 #include "properties/SEScalar.h"
-CDM_BIND_DECL(ScalarHeatCapacitancePerAmountData)
 
 class CDM_DECL HeatCapacitancePerAmountUnit : public CCompoundUnit
 {
@@ -22,10 +21,4 @@ class CDM_DECL SEScalarHeatCapacitancePerAmount : public SEScalarQuantity<HeatCa
 public:
   SEScalarHeatCapacitancePerAmount() {}
   virtual ~SEScalarHeatCapacitancePerAmount() {}
-
-  static void Load(const cdm::ScalarHeatCapacitancePerAmountData& src, SEScalarHeatCapacitancePerAmount& dst);
-  static cdm::ScalarHeatCapacitancePerAmountData* Unload(const SEScalarHeatCapacitancePerAmount& src);
-protected:
-  static void Serialize(const cdm::ScalarHeatCapacitancePerAmountData& src, SEScalarHeatCapacitancePerAmount& dst);
-  static void Serialize(const SEScalarHeatCapacitancePerAmount& src, cdm::ScalarHeatCapacitancePerAmountData& dst);
 };

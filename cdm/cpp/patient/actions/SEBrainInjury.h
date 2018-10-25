@@ -3,7 +3,6 @@
 
 #pragma once
 #include "patient/actions/SEPatientAction.h"
-CDM_BIND_DECL(BrainInjuryData)
 
 // Keep enums in sync with appropriate schema/cdm/PatientActionEnums.proto file !!
 enum class eBrainInjury_Type { Diffuse = 0, LeftFocal, RightFocal };
@@ -11,23 +10,17 @@ extern const std::string& eBrainInjury_Type_Name(eBrainInjury_Type m);
 
 class CDM_DECL SEBrainInjury : public SEPatientAction
 {
+  friend class PBPatientAction;//friend the serialization class
 public:
 
   SEBrainInjury();
   virtual ~SEBrainInjury();
 
   virtual void Clear();
+  virtual void Copy(const SEBrainInjury& src);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
-
-  static void Load(const cdm::BrainInjuryData& src, SEBrainInjury& dst);
-  static cdm::BrainInjuryData* Unload(const SEBrainInjury& src);
-protected:
-  static void Serialize(const cdm::BrainInjuryData& src, SEBrainInjury& dst);
-  static void Serialize(const SEBrainInjury& src, cdm::BrainInjuryData& dst);
-
-public:
 
   virtual bool HasSeverity() const;
   virtual SEScalar0To1& GetSeverity();

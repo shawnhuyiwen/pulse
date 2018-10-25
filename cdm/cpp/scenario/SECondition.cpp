@@ -6,8 +6,6 @@
 #include "substance/SESubstanceManager.h"
 #include "patient/conditions/SEPatientCondition.h"
 #include "system/environment/conditions/SEEnvironmentCondition.h"
-#include "bind/cdm/Conditions.pb.h"
-#include "bind/cdm/Scenario.pb.h"
 
 SECondition::SECondition() : Loggable()
 {
@@ -23,50 +21,6 @@ void SECondition::Clear()
 {
   m_Comment = "";
 }
-
-SECondition* SECondition::Load(const cdm::AnyConditionData& condition, SESubstanceManager& subMgr)
-{
-  switch (condition.Condition_case())
-  {
-  case cdm::AnyConditionData::kPatientCondition:
-    return SEPatientCondition::Load(condition.patientcondition(), subMgr);
-  case cdm::AnyConditionData::kEnvironmentCondition:
-    return SEEnvironmentCondition::Load(condition.environmentcondition(), subMgr);
-  }
-  subMgr.Error("Unknown Condition");
-  return nullptr;
-}
-cdm::AnyConditionData* SECondition::Unload(const SECondition& condition)
-{
-  cdm::AnyConditionData* any = new cdm::AnyConditionData();
-  const SEPatientCondition* pc = dynamic_cast<const SEPatientCondition*>(&condition);
-  if (pc != nullptr)
-  {
-    any->set_allocated_patientcondition(SEPatientCondition::Unload(*pc));
-    return any;
-  }
-  const SEEnvironmentCondition* ec = dynamic_cast<const SEEnvironmentCondition*>(&condition);
-  if (ec != nullptr)
-  {
-    any->set_allocated_environmentcondition(SEEnvironmentCondition::Unload(*ec));
-    return any;
-  }
-  condition.Error("Unsupported Condition");
-  delete any;
-  return nullptr;
-}
-
-void SECondition::Serialize(const cdm::ConditionData& src, SECondition& dst)
-{
-  dst.Clear();
-  dst.SetComment(src.comment());
-}
-
-void SECondition::Serialize(const SECondition& src, cdm::ConditionData& dst)
-{
-  dst.set_comment(src.m_Comment);
-}
-
 
 std::string SECondition::GetComment() const
 {

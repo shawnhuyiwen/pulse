@@ -8,8 +8,8 @@
 #include "scenario/SEDataRequestManager.h"
 #include "scenario/SEScenarioInitialParameters.h"
 #include "substance/SESubstanceManager.h"
-#include "bind/cdm/Scenario.pb.h"
-#include <google/protobuf/text_format.h>
+#include "io/protobuf/PBScenario.h"
+#include "io/protobuf/PBActions.h"
 
 SEScenario::SEScenario(SESubstanceManager& subMgr) : Loggable(subMgr.GetLogger()), m_SubMgr(subMgr)
 {
@@ -34,65 +34,21 @@ void SEScenario::Clear()
   m_DataRequestMgr->Clear();
 }
 
-void SEScenario::Load(const cdm::ScenarioData& src, SEScenario& dst)
+bool SEScenario::SerializeToString(std::string& output, SerializationMode m) const
 {
-  SEScenario::Serialize(src, dst);
+  return PBScenario::SerializeToString(*this, output, m);
 }
-void SEScenario::Serialize(const cdm::ScenarioData& src, SEScenario& dst)
+bool SEScenario::SerializeToFile(const std::string& filename, SerializationMode m) const
 {
-  dst.Clear();
-  dst.SetName(src.name());
-  dst.SetDescription(src.description());
-
-  if (src.has_initialparameters())
-    SEScenarioInitialParameters::Load(src.initialparameters(), dst.GetInitialParameters());
-  else
-  {
-    dst.SetEngineStateFile(src.enginestatefile());
-  }
-  
-  if (src.has_datarequestmanager())
-    SEDataRequestManager::Load(src.datarequestmanager(), dst.GetDataRequestManager(), dst.m_SubMgr);
-
-  for (int i = 0; i<src.anyaction_size(); i++)
-      dst.m_Actions.push_back(SEAction::Load(src.anyaction()[i], dst.m_SubMgr));
+  return PBScenario::SerializeToFile(*this, filename, m);
 }
-
-cdm::ScenarioData* SEScenario::Unload(const SEScenario& src)
+bool SEScenario::SerializeFromString(const std::string& src, SerializationMode m)
 {
-  cdm::ScenarioData* dst = new cdm::ScenarioData();
-  SEScenario::Serialize(src,*dst);
-  return dst;
+  return PBScenario::SerializeFromString(src, *this, m);
 }
-void SEScenario::Serialize(const SEScenario& src, cdm::ScenarioData& dst)
+bool SEScenario::SerializeFromFile(const std::string& filename, SerializationMode m)
 {
-  dst.set_name(src.m_Name);
-  dst.set_description(src.m_Description);
-
-  if (src.HasEngineStateFile())
-    dst.set_enginestatefile(src.m_EngineStateFile);
-  else if (src.HasInitialParameters())
-    dst.set_allocated_initialparameters(SEScenarioInitialParameters::Unload(*src.m_InitialParameters));
-
-  dst.set_allocated_datarequestmanager(SEDataRequestManager::Unload(*src.m_DataRequestMgr));
-
-  for (const SEAction* a :src.m_Actions)
-    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*a));
-}
-
-bool SEScenario::LoadFile(const std::string& scenarioFile)
-{
-  cdm::ScenarioData src;
-  std::ifstream file_stream(scenarioFile, std::ios::in);
-  std::string fmsg((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
-  if (!google::protobuf::TextFormat::ParseFromString(fmsg, &src))
-    return false;
-  SEScenario::Load(src, *this);
-  return true;
-
-  // If its a binary string in the file...
-  //std::ifstream binary_istream(patientFile, std::ios::in | std::ios::binary);
-  //src.ParseFromIstream(&binary_istream);
+  return PBScenario::SerializeFromFile(filename, *this, m);
 }
 
 bool SEScenario::IsValid() const
@@ -181,9 +137,8 @@ void SEScenario::InvalidateInitialParameters()
 
 void SEScenario::AddAction(const SEAction& a)
 {
-  cdm::AnyActionData* any = SEAction::Unload(a);
-  m_Actions.push_back(SEAction::Load(*any, m_SubMgr));
-  delete any;
+  // Make a copy using the bindings
+  m_Actions.push_back(PBAction::Copy(a,m_SubMgr));
 }
 const std::vector<const SEAction*>& SEScenario::GetActions() const
 {

@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarInversePressure.h"
-#include "bind/cdm/Properties.pb.h"
 
 const InversePressureUnit InversePressureUnit::Inverse_Pa("1/Pa");
 const InversePressureUnit InversePressureUnit::Inverse_mmHg("1/mmHg");
@@ -36,26 +35,4 @@ const InversePressureUnit& InversePressureUnit::GetCompoundUnit(const std::strin
   std::stringstream err;
   err << unit << " is not a valid InversePressure unit";
   throw CommonDataModelException(err.str());
-}
-
-void SEScalarInversePressure::Load(const cdm::ScalarInversePressureData& src, SEScalarInversePressure& dst)
-{
-  SEScalarInversePressure::Serialize(src, dst);
-}
-void SEScalarInversePressure::Serialize(const cdm::ScalarInversePressureData& src, SEScalarInversePressure& dst)
-{
-  SEUnitScalar::Serialize(src.scalarinversepressure(), dst);
-}
-
-cdm::ScalarInversePressureData* SEScalarInversePressure::Unload(const SEScalarInversePressure& src)
-{
-  if (!src.IsValid())
-    return nullptr;
-  cdm::ScalarInversePressureData* dst = new cdm::ScalarInversePressureData();
-  Serialize(src, *dst);
-  return dst;
-}
-void SEScalarInversePressure::Serialize(const SEScalarInversePressure& src, cdm::ScalarInversePressureData& dst)
-{
-  SEUnitScalar::Serialize(src, *dst.mutable_scalarinversepressure());
 }

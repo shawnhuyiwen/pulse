@@ -3,10 +3,10 @@
 
 #pragma once
 #include "system/SESystem.h"
-CDM_BIND_DECL(RenalSystemData)
 
 class CDM_DECL SERenalSystem : public SESystem
 {
+  friend class PBPhysiology;//friend the serialization class
 public:
 
   SERenalSystem(Logger* logger);
@@ -15,14 +15,6 @@ public:
   virtual void Clear();// Deletes all members
   
   virtual const SEScalar* GetScalar(const std::string& name);
-
-  static void Load(const cdm::RenalSystemData& src, SERenalSystem& dst);
-  static cdm::RenalSystemData* Unload(const SERenalSystem& src);
-protected:
-  static void Serialize(const cdm::RenalSystemData& src, SERenalSystem& dst);
-  static void Serialize(const SERenalSystem& src, cdm::RenalSystemData& dst);
-
-public:
 
   virtual bool HasGlomerularFiltrationRate() const;
   virtual SEScalarVolumePerTime& GetGlomerularFiltrationRate();

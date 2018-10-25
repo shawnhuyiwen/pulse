@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarTime.h"
-#include "bind/cdm/Properties.pb.h"
 
 #pragma push_macro("Time")
 #undef min
@@ -44,26 +43,4 @@ const TimeUnit& TimeUnit::GetCompoundUnit(const std::string& unit)
   std::stringstream err;
   err << unit << " is not a valid Amount unit";
   throw CommonDataModelException(err.str());
-}
-
-void SEScalarTime::Load(const cdm::ScalarTimeData& src, SEScalarTime& dst)
-{
-  SEScalarTime::Serialize(src, dst);
-}
-void SEScalarTime::Serialize(const cdm::ScalarTimeData& src, SEScalarTime& dst)
-{
-  SEUnitScalar::Serialize(src.scalartime(), dst);
-}
-
-cdm::ScalarTimeData* SEScalarTime::Unload(const SEScalarTime& src)
-{
-  if (!src.IsValid())
-    return nullptr;
-  cdm::ScalarTimeData* dst = new cdm::ScalarTimeData();
-  Serialize(src, *dst);
-  return dst;
-}
-void SEScalarTime::Serialize(const SEScalarTime& src, cdm::ScalarTimeData& dst)
-{
-  SEUnitScalar::Serialize(src, *dst.mutable_scalartime());
 }

@@ -12,8 +12,7 @@
 #include "scenario/SEDataRequest.h"
 #include "properties/SEScalarTime.h"
 #include "utils/TimingProfile.h"
-#include <google/protobuf/text_format.h>
-#include "bind/cdm/Engine.pb.h"
+#include "io/protobuf/PBEngine.h"
 
 
 SEDynamicStabilization::SEDynamicStabilization(Logger *logger) : SEEngineStabilization(logger)
@@ -31,7 +30,6 @@ SEDynamicStabilization::~SEDynamicStabilization()
   delete m_FeedbackConvergence;
 }
 
-
 void SEDynamicStabilization::Clear()
 {
   SEEngineStabilization::Clear();
@@ -43,66 +41,21 @@ void SEDynamicStabilization::Clear()
   DELETE_MAP_SECOND(m_ConditionConvergence);
 }
 
-void SEDynamicStabilization::Load(const cdm::DynamicStabilizationData& src, SEDynamicStabilization& dst)
+bool SEDynamicStabilization::SerializeToString(std::string& output, SerializationMode m) const
 {
-  SEDynamicStabilization::Serialize(src, dst);
+  return PBEngine::SerializeToString(*this, output, m);
 }
-void SEDynamicStabilization::Serialize(const cdm::DynamicStabilizationData& src, SEDynamicStabilization& dst)
+bool SEDynamicStabilization::SerializeToFile(const std::string& filename, SerializationMode m) const
 {
-  dst.Clear();
-  if (src.trackingstabilization() != cdm::eSwitch::NullSwitch)
-    dst.TrackStabilization((eSwitch)src.trackingstabilization());
-  if(src.has_restingconvergence())
-    SEDynamicStabilizationEngineConvergence::Load(src.restingconvergence(), dst.GetRestingConvergence());
-  if (src.has_feedbackconvergence())
-    SEDynamicStabilizationEngineConvergence::Load(src.feedbackconvergence(), dst.GetFeedbackConvergence());
-
-  for (auto itr : src.conditionconvergence())
-  {
-    SEDynamicStabilizationEngineConvergence* c = new SEDynamicStabilizationEngineConvergence(dst.GetLogger());
-    SEDynamicStabilizationEngineConvergence::Load(itr.second,*c);
-    dst.m_ConditionConvergence[itr.first] = c;
-  }
+  return PBEngine::SerializeToFile(*this, filename, m);
 }
-
-cdm::DynamicStabilizationData* SEDynamicStabilization::Unload(const SEDynamicStabilization& src)
+bool SEDynamicStabilization::SerializeFromString(const std::string& src, SerializationMode m)
 {
-  cdm::DynamicStabilizationData* dst(new cdm::DynamicStabilizationData());
-  SEDynamicStabilization::Serialize(src,*dst);
-  return dst;
+  return PBEngine::SerializeFromString(src, *this, m);
 }
-void SEDynamicStabilization::Serialize(const SEDynamicStabilization& src, cdm::DynamicStabilizationData& dst)
+bool SEDynamicStabilization::SerializeFromFile(const std::string& filename, SerializationMode m)
 {
-  dst.set_trackingstabilization((cdm::eSwitch)src.m_TrackingStabilization);
-  dst.set_allocated_restingconvergence(SEDynamicStabilizationEngineConvergence::Unload(*src.m_RestingConvergence));
-  if (src.HasFeedbackConvergence())
-    dst.set_allocated_feedbackconvergence(SEDynamicStabilizationEngineConvergence::Unload(*src.m_FeedbackConvergence));
-  for (auto &c : src.m_ConditionConvergence)
-  {
-    cdm::DynamicStabilizationData_EngineConvergenceData* cData = SEDynamicStabilizationEngineConvergence::Unload(*c.second);
-    (*dst.mutable_conditionconvergence())[c.first] = *cData;
-    delete cData;
-  }
-}
-
-bool SEDynamicStabilization::LoadFile(const std::string& file)
-{
-  try
-  {
-    Clear();
-    std::ifstream input(file);
-    std::string fmsg((std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());
-    cdm::DynamicStabilizationData ds;
-    if (!google::protobuf::TextFormat::ParseFromString(fmsg, &ds))
-      return false;
-    SEDynamicStabilization::Load(ds, *this);
-    return true;
-  }
-  catch (std::exception ex)
-  {
-    Error("Unable to read file : " + file);
-  }
-  return false;
+  return PBEngine::SerializeFromFile(filename, *this, m);
 }
 
 SEDynamicStabilizationEngineConvergence& SEDynamicStabilization::GetRestingConvergence()

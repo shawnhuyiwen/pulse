@@ -5,7 +5,9 @@
 #include "substance/SESubstanceManager.h"
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceCompound.h"
-#include "io/protobuf/cdm/PBSubstance.h"
+#include "dirent.h"
+#include "utils/FileUtils.h"
+#include "utils/unitconversion/UnitConversionEngine.h"
 
 SESubstanceManager::SESubstanceManager(Logger* logger) : Loggable(logger)
 {
@@ -25,14 +27,20 @@ void SESubstanceManager::Clear()
   m_ActiveCompounds.clear();
   m_ActiveGases.clear();
   m_ActiveLiquids.clear();
+  m_OriginalCompoundData.clear();
+  m_OriginalSubstanceData.clear();
 }
 
-bool SESubstanceManager::LoadSubstances()
+void SESubstanceManager::Reset()
 {
-  if (!m_Substances.empty())
-    return true; // TODO keep pointers when loading
-  Clear();
-  return PBSubstance::LoadSubstanceDirectory(*this);
+  m_ActiveCompounds.clear();
+  m_ActiveSubstances.clear();
+  m_ActiveGases.clear();
+  m_ActiveLiquids.clear();
+  for (auto itr : m_OriginalSubstanceData)
+    itr.first->SerializeFromString(itr.second, BINARY);
+  for (auto itr : m_OriginalCompoundData)
+    itr.first->SerializeFromString(itr.second, *this, BINARY);
 }
 
 /**
@@ -229,5 +237,103 @@ void SESubstanceManager::RemoveActiveCompounds(const std::vector<SESubstanceComp
     RemoveActiveCompound(*c);
 }
 
+bool SESubstanceManager::LoadSubstanceDirectory()
+{
+  bool succeed = true;
+  Clear();
+  std::stringstream ss;
+  DIR *sdir;
+  DIR *cdir;
+  struct dirent *ent;
 
+  std::string workingDirectory = GetCurrentWorkingDirectory();
 
+#if defined(_WIN32)
+  sdir = opendir("./substances/");
+  cdir = opendir("./substances/compounds");
+#else
+  sdir = opendir(std::string(workingDirectory + std::string("/substances/")).c_str());
+  cdir = opendir(std::string(workingDirectory + std::string("/substances/compounds/")).c_str());
+#endif
+
+  if (sdir != nullptr)
+  {
+    while ((ent = readdir(sdir)) != nullptr)
+    {
+      ss.str("");
+      ss << workingDirectory << "/substances/" << ent->d_name;
+      if (!IsDirectory(ent) && strlen(ent->d_name) > 2)
+      {
+        try
+        {
+          SESubstance* sub = new SESubstance(GetLogger());
+          if (!sub->SerializeFromFile(ss.str(), ASCII))
+          {
+            delete sub;
+            Error("Unable to read substance " + ss.str());
+            continue;
+          }
+          else
+          {
+            std::string binary;
+            if (!sub->SerializeToString(binary, BINARY))
+            {
+              delete sub;
+              Error("Unable to serialize substance " + ss.str());
+              continue;
+            }
+            m_OriginalSubstanceData[sub] = binary;
+            AddSubstance(*sub);
+          }
+        }
+        catch (...)
+        {
+          Info("I caught something in " + ss.str());
+          continue;
+        }
+      }
+    }
+  }
+  closedir(sdir);
+
+  if (cdir != nullptr)
+  {
+    while ((ent = readdir(cdir)) != nullptr)
+    {
+      ss.str("");
+      ss << workingDirectory << "/substances/compounds/" << ent->d_name;
+      if (!IsDirectory(ent) && strlen(ent->d_name) > 2)
+      {
+        try
+        {
+          SESubstanceCompound* cmpd = new SESubstanceCompound(GetLogger());
+          if (!cmpd->SerializeFromFile(ss.str(), *this, ASCII))
+          {
+            delete cmpd;
+            Error("Unable to read substance compound " + ss.str());
+            continue;
+          }
+          else
+          {
+            std::string binary;
+            if (!cmpd->SerializeToString(binary, BINARY))
+            {
+              delete cmpd;
+              Error("Unable to serialize substance compound " + ss.str());
+              continue;
+            }
+            m_OriginalCompoundData[cmpd] = binary;
+            AddCompound(*cmpd);
+          }
+        }
+        catch (...)
+        {
+          Info("I caught something in " + ss.str());
+          continue;
+        }
+      }
+    }
+  }
+  closedir(cdir);
+  return succeed;
+}

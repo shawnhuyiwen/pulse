@@ -3,7 +3,6 @@
 
 #pragma once
 #include "properties/SEScalar.h"
-CDM_BIND_DECL(ScalarMassPerAmountData)
 
 class CDM_DECL MassPerAmountUnit : public CCompoundUnit
 {
@@ -32,11 +31,5 @@ class CDM_DECL SEScalarMassPerAmount : public SEScalarQuantity<MassPerAmountUnit
 public:
   SEScalarMassPerAmount() {}
   virtual ~SEScalarMassPerAmount() {}
-
-  static void Load(const cdm::ScalarMassPerAmountData& src, SEScalarMassPerAmount& dst);
-  static cdm::ScalarMassPerAmountData* Unload(const SEScalarMassPerAmount& src);
-protected:
-  static void Serialize(const cdm::ScalarMassPerAmountData& src, SEScalarMassPerAmount& dst);
-  static void Serialize(const SEScalarMassPerAmount& src, cdm::ScalarMassPerAmountData& dst);
 };
 

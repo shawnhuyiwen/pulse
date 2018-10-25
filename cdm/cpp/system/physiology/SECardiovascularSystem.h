@@ -3,7 +3,6 @@
 
 #pragma once
 #include "system/SESystem.h"
-CDM_BIND_DECL(CardiovascularSystemData)
 
 // Keep enums in sync with appropriate schema/cdm/PhysiologyEnums.proto file !!
 enum class eHeartRhythm { NormalSinus = 0, Asystole };
@@ -11,6 +10,7 @@ extern const std::string& eHeartRhythm_Name(eHeartRhythm m);
 
 class CDM_DECL SECardiovascularSystem : public SESystem
 {
+  friend class PBPhysiology;//friend the serialization class
 public:
 
   SECardiovascularSystem(Logger* logger);
@@ -19,14 +19,6 @@ public:
   virtual void Clear();// Deletes all members
   
   virtual const SEScalar* GetScalar(const std::string& name);
-  
-  static void Load(const cdm::CardiovascularSystemData& src, SECardiovascularSystem& dst);    
-  static cdm::CardiovascularSystemData* Unload(const SECardiovascularSystem& src);            
-protected:                                                                                    
-  static void Serialize(const cdm::CardiovascularSystemData& src, SECardiovascularSystem& dst);
-  static void Serialize(const SECardiovascularSystem& src, cdm::CardiovascularSystemData& dst);
-
-public:
 
   virtual bool HasArterialPressure() const;
   virtual SEScalarPressure& GetArterialPressure();

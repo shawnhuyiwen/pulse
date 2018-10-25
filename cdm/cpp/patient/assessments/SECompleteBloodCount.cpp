@@ -10,8 +10,7 @@
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarMassPerAmount.h"
 #include "properties/SEScalarMassPerVolume.h"
-#include "bind/cdm/PatientAssessments.pb.h"
-#include <google/protobuf/text_format.h>
+#include "io/protobuf/PBPatientAssessments.h"
 
 SECompleteBloodCount::SECompleteBloodCount(Logger* logger) : SEPatientAssessment(logger)
 {
@@ -43,76 +42,13 @@ void SECompleteBloodCount::Clear()
   SAFE_DELETE(m_WhiteBloodCellCount);
 }
 
-
-std::string SECompleteBloodCount::Save() const
+bool SECompleteBloodCount::SerializeToString(std::string& output, SerializationMode m) const
 {
-  std::string content;
-  cdm::CompleteBloodCountData* src = SECompleteBloodCount::Unload(*this);
-  google::protobuf::TextFormat::PrintToString(*src, &content);
-  return content;
+  return PBPatientAssessment::SerializeToString(*this, output, m);
 }
-void SECompleteBloodCount::SaveFile(const std::string& filename) const
+bool SECompleteBloodCount::SerializeToFile(const std::string& filename, SerializationMode m) const
 {
-  std::string content;
-  cdm::CompleteBloodCountData* src = SECompleteBloodCount::Unload(*this);
-  google::protobuf::TextFormat::PrintToString(*src, &content);
-  std::ofstream ascii_ostream(filename, std::ios::out | std::ios::trunc);
-  ascii_ostream << content;
-  ascii_ostream.flush();
-  ascii_ostream.close();
-  delete src;
-}
-
-void SECompleteBloodCount::Load(const cdm::CompleteBloodCountData& src, SECompleteBloodCount& dst)
-{
-  SECompleteBloodCount::Serialize(src, dst);
-}
-void SECompleteBloodCount::Serialize(const cdm::CompleteBloodCountData& src, SECompleteBloodCount& dst)
-{
-  SEPatientAssessment::Serialize(src.patientassessment(), dst);
-  if (src.has_hematocrit())
-    SEScalar0To1::Load(src.hematocrit(), dst.GetHematocrit());
-  if (src.has_hemoglobin())
-    SEScalarMassPerVolume::Load(src.hemoglobin(), dst.GetHemoglobin());
-  if (src.has_plateletcount())
-    SEScalarAmountPerVolume::Load(src.plateletcount(), dst.GetPlateletCount());
-  if (src.has_meancorpuscularhemoglobin())
-    SEScalarMassPerAmount::Load(src.meancorpuscularhemoglobin(), dst.GetMeanCorpuscularHemoglobin());
-  if (src.has_meancorpuscularhemoglobinconcentration())
-    SEScalarMassPerVolume::Load(src.meancorpuscularhemoglobinconcentration(), dst.GetMeanCorpuscularHemoglobinConcentration());
-  if (src.has_meancorpuscularvolume())
-    SEScalarVolume::Load(src.meancorpuscularvolume(), dst.GetMeanCorpuscularVolume());
-  if (src.has_redbloodcellcount())
-    SEScalarAmountPerVolume::Load(src.redbloodcellcount(), dst.GetRedBloodCellCount());
-  if (src.has_whitebloodcellcount())
-    SEScalarAmountPerVolume::Load(src.whitebloodcellcount(), dst.GetWhiteBloodCellCount());
-}
-
-cdm::CompleteBloodCountData* SECompleteBloodCount::Unload(const SECompleteBloodCount& src)
-{
-  cdm::CompleteBloodCountData* dst = new cdm::CompleteBloodCountData();
-  SECompleteBloodCount::Serialize(src, *dst);
-  return dst;
-}
-void SECompleteBloodCount::Serialize(const SECompleteBloodCount& src, cdm::CompleteBloodCountData& dst)
-{
-  SEPatientAssessment::Serialize(src, *dst.mutable_patientassessment());
-  if (src.HasHematocrit())
-    dst.set_allocated_hematocrit(SEScalar0To1::Unload(*src.m_Hematocrit));
-  if (src.HasHemoglobin())
-    dst.set_allocated_hemoglobin(SEScalarMassPerVolume::Unload(*src.m_Hemoglobin));
-  if (src.HasPlateletCount())
-    dst.set_allocated_plateletcount(SEScalarAmountPerVolume::Unload(*src.m_PlateletCount));
-  if (src.HasMeanCorpuscularHemoglobin())
-    dst.set_allocated_meancorpuscularhemoglobin(SEScalarMassPerAmount::Unload(*src.m_MeanCorpuscularHemoglobin));
-  if (src.HasMeanCorpuscularHemoglobinConcentration())
-    dst.set_allocated_meancorpuscularhemoglobinconcentration(SEScalarMassPerVolume::Unload(*src.m_MeanCorpuscularHemoglobinConcentration));
-  if (src.HasMeanCorpuscularVolume())
-    dst.set_allocated_meancorpuscularvolume(SEScalarVolume::Unload(*src.m_MeanCorpuscularVolume));
-  if (src.HasRedBloodCellCount())
-    dst.set_allocated_redbloodcellcount(SEScalarAmountPerVolume::Unload(*src.m_RedBloodCellCount));
-  if (src.HasWhiteBloodCellCount())
-    dst.set_allocated_whitebloodcellcount(SEScalarAmountPerVolume::Unload(*src.m_WhiteBloodCellCount));
+  return PBPatientAssessment::SerializeToFile(*this, filename, m);
 }
 
 bool SECompleteBloodCount::HasHematocrit() const

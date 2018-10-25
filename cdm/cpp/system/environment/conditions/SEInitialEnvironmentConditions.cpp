@@ -3,7 +3,6 @@
 #include "stdafx.h"
 #include "system/environment/conditions/SEInitialEnvironmentConditions.h"
 #include "system/environment/SEEnvironmentalConditions.h"
-#include "bind/cdm/EnvironmentConditions.pb.h"
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceConcentration.h"
 #include "substance/SESubstanceFraction.h"
@@ -16,6 +15,7 @@
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarTemperature.h"
 #include "properties/SEScalarHeatResistanceArea.h"
+#include "io/protobuf/PBEnvironmentConditions.h"
 
 SEInitialEnvironmentConditions::SEInitialEnvironmentConditions(SESubstanceManager& substances) : SEEnvironmentCondition(), m_Substances(substances)
 {
@@ -35,6 +35,11 @@ void SEInitialEnvironmentConditions::Clear()
   SAFE_DELETE(m_Conditions);
 }
 
+void SEInitialEnvironmentConditions::Copy(const SEInitialEnvironmentConditions& src)
+{// Using Bindings to make a copy
+  PBEnvironmentCondition::Copy(src, *this);
+}
+
 bool SEInitialEnvironmentConditions::IsValid() const
 {
   return (HasConditions() || HasConditionsFile());
@@ -43,34 +48,6 @@ bool SEInitialEnvironmentConditions::IsValid() const
 bool SEInitialEnvironmentConditions::IsActive() const
 {
   return IsValid();
-}
-
-void SEInitialEnvironmentConditions::Load(const cdm::InitialEnvironmentConditionsData& src, SEInitialEnvironmentConditions& dst)
-{
-  SEInitialEnvironmentConditions::Serialize(src, dst);
-}
-void SEInitialEnvironmentConditions::Serialize(const cdm::InitialEnvironmentConditionsData& src, SEInitialEnvironmentConditions& dst)
-{
-  SEEnvironmentCondition::Serialize(src.environmentcondition(), dst);
-  if (src.has_conditions())
-    SEEnvironmentalConditions::Load(src.conditions(), dst.GetConditions());
-  else
-    dst.SetConditionsFile(src.conditionsfile());
-}
-
-cdm::InitialEnvironmentConditionsData* SEInitialEnvironmentConditions::Unload(const SEInitialEnvironmentConditions& src)
-{
-  cdm::InitialEnvironmentConditionsData* dst = new cdm::InitialEnvironmentConditionsData();
-  SEInitialEnvironmentConditions::Serialize(src, *dst);
-  return dst;
-}
-void SEInitialEnvironmentConditions::Serialize(const SEInitialEnvironmentConditions& src, cdm::InitialEnvironmentConditionsData& dst)
-{
-  SEEnvironmentCondition::Serialize(src, *dst.mutable_environmentcondition());
-  if (src.HasConditions())
-    dst.set_allocated_conditions(SEEnvironmentalConditions::Unload(*src.m_Conditions));
-  else if (src.HasConditionsFile())
-    dst.set_conditionsfile(src.m_ConditionsFile);
 }
 
 bool SEInitialEnvironmentConditions::HasConditions() const

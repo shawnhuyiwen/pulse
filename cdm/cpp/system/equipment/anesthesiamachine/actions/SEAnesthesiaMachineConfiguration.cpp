@@ -7,13 +7,12 @@
 #include "system/equipment/anesthesiamachine/SEAnesthesiaMachineOxygenBottle.h"
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceManager.h"
-#include "bind/cdm/AnesthesiaMachineActions.pb.h"
-
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
+#include "io/protobuf/PBAnesthesiaMachineActions.h"
 
 SEAnesthesiaMachineConfiguration::SEAnesthesiaMachineConfiguration(SESubstanceManager& substances) : SEAnesthesiaMachineAction(), m_Substances(substances)
 {
@@ -33,37 +32,14 @@ void SEAnesthesiaMachineConfiguration::Clear()
   SAFE_DELETE(m_Configuration);
 }
 
+void SEAnesthesiaMachineConfiguration::Copy(const SEAnesthesiaMachineConfiguration& src)
+{// Using Bindings to make a copy
+  PBAnesthesiaMachineAction::Copy(src, *this);
+}
+
 bool SEAnesthesiaMachineConfiguration::IsValid() const
 {
   return SEAnesthesiaMachineAction::IsValid() && (HasConfiguration() || HasConfigurationFile());
-}
-
-void SEAnesthesiaMachineConfiguration::Load(const cdm::AnesthesiaMachineConfigurationData& src, SEAnesthesiaMachineConfiguration& dst)
-{
-  SEAnesthesiaMachineConfiguration::Serialize(src, dst);
-}
-void SEAnesthesiaMachineConfiguration::Serialize(const cdm::AnesthesiaMachineConfigurationData& src, SEAnesthesiaMachineConfiguration& dst)
-{
-  SEAnesthesiaMachineAction::Serialize(src.anesthesiamachineaction(), dst);
-  if (src.has_configuration())
-    SEAnesthesiaMachine::Load(src.configuration(), dst.GetConfiguration());
-  else
-    dst.SetConfigurationFile(src.configurationfile());
-}
-
-cdm::AnesthesiaMachineConfigurationData* SEAnesthesiaMachineConfiguration::Unload(const SEAnesthesiaMachineConfiguration& src)
-{
-  cdm::AnesthesiaMachineConfigurationData* dst = new cdm::AnesthesiaMachineConfigurationData();
-  SEAnesthesiaMachineConfiguration::Serialize(src, *dst);
-  return dst;
-}
-void SEAnesthesiaMachineConfiguration::Serialize(const SEAnesthesiaMachineConfiguration& src, cdm::AnesthesiaMachineConfigurationData& dst)
-{
-  SEAnesthesiaMachineAction::Serialize(src, *dst.mutable_anesthesiamachineaction());
-  if (src.HasConfiguration())
-    dst.set_allocated_configuration(SEAnesthesiaMachine::Unload(*src.m_Configuration));
-  else if (src.HasConfigurationFile())
-    dst.set_configurationfile(src.m_ConfigurationFile);
 }
 
 bool SEAnesthesiaMachineConfiguration::HasConfiguration() const

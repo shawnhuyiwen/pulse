@@ -4,18 +4,16 @@
 #include "stdafx.h"
 #include "scenario/SEDataRequest.h"
 #include "utils/unitconversion/UCCommon.h"
-#include "bind/cdm/Scenario.pb.h"
-#include "bind/cdm/ScenarioEnums.pb.h"
-
-const std::string& eDataRequest_Category_Name(eDataRequest_Category m)
-{
-  return cdm::eDataRequest_Category_Name((cdm::eDataRequest_Category)m);
-}
+#include "io/protobuf/PBScenario.h"
 
 SEDataRequest::SEDataRequest(const SEDataRequest& dr)
 {
   m_Category = dr.m_Category;
-  CDM_COPY(SEDataRequest, &dr, this);
+  m_CompartmentName = dr.m_CompartmentName;
+  m_SubstanceName = dr.m_SubstanceName;
+  m_PropertyName = dr.m_PropertyName;
+  m_RequestedUnit = dr.m_RequestedUnit;
+  m_Unit = dr.m_Unit;
 }
 
 SEDataRequest::SEDataRequest(eDataRequest_Category category, const SEDecimalFormat* dfault) : SEDecimalFormat(dfault)
@@ -40,6 +38,11 @@ void SEDataRequest::Clear()
   m_PropertyName="";
   m_RequestedUnit="";
   m_Unit = nullptr;
+}
+
+void SEDataRequest::Copy(const SEDataRequest& src)
+{
+  PBScenario::Copy(src, *this);
 }
 
 bool SEDataRequest::IsValid()
@@ -92,41 +95,6 @@ size_t SEDataRequest::HashCode() const
 {
   size_t h = std::hash<std::string>()(m_PropertyName);
   return h;
-}
-
-void SEDataRequest::Load(const cdm::DataRequestData& src, SEDataRequest& dst)
-{
-  SEDataRequest::Serialize(src, dst);
-}
-void SEDataRequest::Serialize(const cdm::DataRequestData& src, SEDataRequest& dst)
-{
-  SEDecimalFormat::Serialize(src.decimalformat(),dst);
-  dst.m_CompartmentName = src.compartmentname();
-  dst.m_SubstanceName = src.substancename();
-  dst.m_PropertyName = src.propertyname();
-  dst.m_RequestedUnit = src.unit();
-}
-
-cdm::DataRequestData* SEDataRequest::Unload(const SEDataRequest& src)
-{
-  cdm::DataRequestData* dst = new cdm::DataRequestData();
-  SEDataRequest::Serialize(src,*dst);
-  return dst;
-}
-void SEDataRequest::Serialize(const SEDataRequest& src, cdm::DataRequestData& dst)
-{
-  SEDecimalFormat::Serialize(src,*dst.mutable_decimalformat());
-  dst.set_category((cdm::eDataRequest_Category)src.m_Category);
-  if(src.HasCompartmentName())
-    dst.set_compartmentname(src.m_CompartmentName);
-  if(src.HasSubstanceName())
-    dst.set_substancename(src.m_SubstanceName);
-
-  dst.set_propertyname(src.m_PropertyName);
-  if (src.HasUnit())
-    dst.set_unit(src.m_Unit->GetString());
-  else if (src.HasRequestedUnit())
-    dst.set_unit(src.m_RequestedUnit);
 }
 
 eDataRequest_Category SEDataRequest::GetCategory() const 

@@ -3,7 +3,7 @@
 #include "stdafx.h"
 #include "system/equipment/anesthesiamachine/actions/SEVaporizerFailure.h"
 #include "properties/SEScalar0To1.h"
-#include "bind/cdm/AnesthesiaMachineActions.pb.h"
+#include "io/protobuf/PBAnesthesiaMachineActions.h"
 
 SEVaporizerFailure::SEVaporizerFailure() : SEAnesthesiaMachineAction()
 {
@@ -21,6 +21,11 @@ void SEVaporizerFailure::Clear()
   SAFE_DELETE(m_Severity);
 }
 
+void SEVaporizerFailure::Copy(const SEVaporizerFailure& src)
+{// Using Bindings to make a copy
+  PBAnesthesiaMachineAction::Copy(src, *this);
+}
+
 bool SEVaporizerFailure::IsValid() const
 {
   return SEAnesthesiaMachineAction::IsValid() && HasSeverity();
@@ -29,30 +34,6 @@ bool SEVaporizerFailure::IsValid() const
 bool SEVaporizerFailure::IsActive() const
 {
   return HasSeverity() ? !m_Severity->IsZero() : false;
-}
-
-void SEVaporizerFailure::Load(const cdm::VaporizerFailureData& src, SEVaporizerFailure& dst)
-{
-  SEVaporizerFailure::Serialize(src, dst);
-}
-void SEVaporizerFailure::Serialize(const cdm::VaporizerFailureData& src, SEVaporizerFailure& dst)
-{
-  SEAnesthesiaMachineAction::Serialize(src.anesthesiamachineaction(), dst);
-  if (src.has_severity())
-    SEScalar0To1::Load(src.severity(), dst.GetSeverity());
-}
-
-cdm::VaporizerFailureData* SEVaporizerFailure::Unload(const SEVaporizerFailure& src)
-{
-  cdm::VaporizerFailureData* dst = new cdm::VaporizerFailureData();
-  SEVaporizerFailure::Serialize(src, *dst);
-  return dst;
-}
-void SEVaporizerFailure::Serialize(const SEVaporizerFailure& src, cdm::VaporizerFailureData& dst)
-{
-  SEAnesthesiaMachineAction::Serialize(src, *dst.mutable_anesthesiamachineaction());
-  if (src.HasSeverity())
-    dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
 }
 
 bool SEVaporizerFailure::HasSeverity() const

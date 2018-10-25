@@ -3,8 +3,8 @@
 
 #include "stdafx.h"
 #include "patient/actions/SEBronchoconstriction.h"
-#include "bind/cdm/PatientActions.pb.h"
 #include "properties/SEScalar0To1.h"
+#include "io/protobuf/PBPatientActions.h"
 
 SEBronchoconstriction::SEBronchoconstriction() : SEPatientAction()
 {
@@ -22,6 +22,11 @@ void SEBronchoconstriction::Clear()
   SAFE_DELETE(m_Severity);
 }
 
+void SEBronchoconstriction::Copy(const SEBronchoconstriction& src)
+{
+  PBPatientAction::Copy(src, *this);
+}
+
 bool SEBronchoconstriction::IsValid() const
 {
   return SEPatientAction::IsValid() && HasSeverity();
@@ -31,31 +36,6 @@ bool SEBronchoconstriction::IsActive() const
 {
   return IsValid() ? !m_Severity->IsZero() : false;
 }
-
-void SEBronchoconstriction::Load(const cdm::BronchoconstrictionData& src, SEBronchoconstriction& dst)
-{
-  SEBronchoconstriction::Serialize(src, dst);
-}
-void SEBronchoconstriction::Serialize(const cdm::BronchoconstrictionData& src, SEBronchoconstriction& dst)
-{
-  SEPatientAction::Serialize(src.patientaction(), dst);
-  if (src.has_severity())
-    SEScalar0To1::Load(src.severity(), dst.GetSeverity());
-}
-
-cdm::BronchoconstrictionData* SEBronchoconstriction::Unload(const SEBronchoconstriction& src)
-{
-  cdm::BronchoconstrictionData* dst = new cdm::BronchoconstrictionData();
-  SEBronchoconstriction::Serialize(src, *dst);
-  return dst;
-}
-void SEBronchoconstriction::Serialize(const SEBronchoconstriction& src, cdm::BronchoconstrictionData& dst)
-{
-  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
-  if (src.HasSeverity())
-    dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
-}
-
 
 bool SEBronchoconstriction::HasSeverity() const
 {

@@ -49,7 +49,7 @@ void CommonDataModelTest::LargeFlowTransportTest(const std::string& sTestDirecto
   circuit.StateChange();
 
   SESubstanceManager subMgr(m_Logger);
-  subMgr.LoadSubstances();
+  subMgr.LoadSubstanceDirectory();
   SESubstance* CO2 = subMgr.GetSubstance("CarbonDioxide");
 
   SECompartmentManager cmptMgr(subMgr);
@@ -222,7 +222,7 @@ void CommonDataModelTest::LiquidTransportTest(const std::string& rptDirectory)
   circuit.StateChange();
 
   SESubstanceManager subMgr(&logger);
-  subMgr.LoadSubstances();
+  subMgr.LoadSubstanceDirectory();
   SESubstance* CO2 = subMgr.GetSubstance("CarbonDioxide");
   SESubstance* Hb = subMgr.GetSubstance("Hemoglobin");
 
@@ -405,7 +405,7 @@ void CommonDataModelTest::GasTransportTest(const std::string& rptDirectory)
   circuit.StateChange();
 
   SESubstanceManager subMgr(&logger);
-  subMgr.LoadSubstances();
+  subMgr.LoadSubstanceDirectory();
   SESubstance* O2 = subMgr.GetSubstance("Oxygen");
   SESubstance* CO2 = subMgr.GetSubstance("CarbonDioxide");
 

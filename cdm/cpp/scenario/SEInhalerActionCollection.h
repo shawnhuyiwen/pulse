@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-
+class SEAction;
 class SEInhalerAction;
 class SESubstanceManager;
 class SEInhaler;
@@ -12,6 +12,7 @@ CDM_BIND_DECL(AnyInhalerActionData)
 
 class CDM_DECL SEInhalerActionCollection : public Loggable
 {
+  friend class PBScenario;//friend the serialization class
   friend class SEActionManager;
 protected:
   SEInhalerActionCollection(SESubstanceManager&);
@@ -23,11 +24,12 @@ public:
   SEInhalerConfiguration* GetConfiguration();
   const SEInhalerConfiguration* GetConfiguration() const;
   void RemoveConfiguration();
+
+  void GetActiveActions(std::vector<const SEAction*>& v) const;
   
 protected:
   void Clear();
-  static void Serialize(const SEInhalerActionCollection& src, cdm::ActionListData& dst);
-  bool ProcessAction(const SEInhalerAction& action, cdm::AnyInhalerActionData* any);
+  bool ProcessAction(const SEInhalerAction& action);
 
   SEInhalerConfiguration*   m_Configuration;
   // General

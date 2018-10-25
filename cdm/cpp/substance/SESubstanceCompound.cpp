@@ -6,6 +6,7 @@
 #include "substance/SESubstanceConcentration.h"
 #include "substance/SESubstanceManager.h"
 #include "properties/SEScalarMassPerVolume.h"
+#include "io/protobuf/PBSubstance.h"
 
 SESubstanceCompound::SESubstanceCompound(Logger* logger) : Loggable(logger)
 {
@@ -22,6 +23,23 @@ void SESubstanceCompound::Clear()
   m_Name = "";
   DELETE_VECTOR(m_Components);
   m_cComponents.clear();
+}
+
+bool SESubstanceCompound::SerializeToString(std::string& output, SerializationMode m) const
+{
+  return PBSubstance::SerializeToString(*this, output, m);
+}
+bool SESubstanceCompound::SerializeToFile(const std::string& filename, SerializationMode m) const
+{
+  return PBSubstance::SerializeToFile(*this, filename, m);
+}
+bool SESubstanceCompound::SerializeFromString(const std::string& src, const SESubstanceManager& subMgr, SerializationMode m)
+{
+  return PBSubstance::SerializeFromString(src, *this, subMgr, m);
+}
+bool SESubstanceCompound::SerializeFromFile(const std::string& filename, const SESubstanceManager& subMgr, SerializationMode m)
+{
+  return PBSubstance::SerializeFromFile(filename, *this, subMgr, m);
 }
 
 std::string SESubstanceCompound::GetName() const

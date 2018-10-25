@@ -2,7 +2,7 @@ package com.kitware.physiology.testing;
 
 import java.util.*;
 
-import com.kitware.physiology.cdm.TestReport.TestReportData.TestCaseData;
+import com.kitware.physiology.cdm.TestReport.TestCaseData;
 
 import com.kitware.physiology.datamodel.SEEqualOptions;
 import com.kitware.physiology.datamodel.properties.SEScalarTime;

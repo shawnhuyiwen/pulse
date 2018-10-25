@@ -20,12 +20,12 @@
 #include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineConfiguration.h"
 #include "system/equipment/anesthesiamachine/SEAnesthesiaMachineChamber.h"
 #include "system/equipment/anesthesiamachine/SEAnesthesiaMachineOxygenBottle.h"
-#include "bind/cdm/Scenario.pb.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolumePerTime.h"
+#include "io/protobuf/PBAnesthesiaMachineActions.h"
 
 SEAnesthesiaMachineActionCollection::SEAnesthesiaMachineActionCollection(SESubstanceManager& substances) : Loggable(substances.GetLogger()), m_Substances(substances)
 {
@@ -71,49 +71,14 @@ void SEAnesthesiaMachineActionCollection::Clear()
   RemoveYPieceDisconnect();
 }
 
-void SEAnesthesiaMachineActionCollection::Serialize(const SEAnesthesiaMachineActionCollection& src, cdm::ActionListData& dst)
-{
-  if (src.HasConfiguration())
-    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_Configuration));
-
-  if (src.HasOxygenTankPressureLoss())
-    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_OxygenTankPressureLoss));
-  if (src.HasOxygenWallPortPressureLoss())
-    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_OxygenWallPortPressureLoss));
-
-  if (src.HasExpiratoryValveLeak())
-    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_ExpiratoryValveLeak));
-  if (src.HasExpiratoryValveObstruction())
-    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_ExpiratoryValveObstruction));
-  if (src.HasInspiratoryValveLeak())
-    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_InspiratoryValveLeak));
-  if (src.HasInspiratoryValveObstruction())
-    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_InspiratoryValveObstruction));
-  if (src.HasMaskLeak())
-    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_MaskLeak));
-  if (src.HasSodaLimeFailure())
-    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_SodaLimeFailure));
-  if (src.HasTubeCuffLeak())
-    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_TubeCuffLeak));
-  if (src.HasVaporizerFailure())
-    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_VaporizerFailure));
-  if (src.HasVentilatorPressureLoss())
-    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_VentilatorPressureLoss));
-  if (src.HasYPieceDisconnect())
-    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_YPieceDisconnect));
-}
-
-
-bool SEAnesthesiaMachineActionCollection::ProcessAction(const SEAnesthesiaMachineAction& action, cdm::AnyAnesthesiaMachineActionData* any)
+bool SEAnesthesiaMachineActionCollection::ProcessAction(const SEAnesthesiaMachineAction& action)
 {
   const SEAnesthesiaMachineConfiguration* config = dynamic_cast<const SEAnesthesiaMachineConfiguration*>(&action);
   if (config != nullptr)
   {
     if (m_Configuration == nullptr)
       m_Configuration = new SEAnesthesiaMachineConfiguration(m_Substances);
-    auto* copy = SEAnesthesiaMachineConfiguration::Unload(*config);
-    SEAnesthesiaMachineConfiguration::Load(*copy, *m_Configuration);
-    (any != nullptr) ? any->set_allocated_configuration(copy) : delete copy;
+    m_Configuration->Copy(*config);
     if (!m_Configuration->IsActive())
       RemoveConfiguration();
     return true;
@@ -124,9 +89,7 @@ bool SEAnesthesiaMachineActionCollection::ProcessAction(const SEAnesthesiaMachin
   {
     if (m_OxygenTankPressureLoss == nullptr)
       m_OxygenTankPressureLoss = new SEOxygenTankPressureLoss();
-    auto* copy = SEOxygenTankPressureLoss::Unload(*O2Tank);
-    SEOxygenTankPressureLoss::Load(*copy, *m_OxygenTankPressureLoss);
-    (any != nullptr) ? any->set_allocated_oxygentankpressureloss(copy) : delete copy;
+    m_OxygenTankPressureLoss->Copy(*O2Tank);
     if (!m_OxygenTankPressureLoss->IsActive())
       RemoveOxygenTankPressureLoss();
     return true;
@@ -137,9 +100,7 @@ bool SEAnesthesiaMachineActionCollection::ProcessAction(const SEAnesthesiaMachin
   {
     if (m_OxygenWallPortPressureLoss == nullptr)
       m_OxygenWallPortPressureLoss = new SEOxygenWallPortPressureLoss();
-    auto* copy = SEOxygenWallPortPressureLoss::Unload(*O2Wall);
-    SEOxygenWallPortPressureLoss::Load(*copy, *m_OxygenWallPortPressureLoss);
-    (any != nullptr) ? any->set_allocated_oxygenwallportpressureloss(copy) : delete copy;
+    m_OxygenWallPortPressureLoss->Copy(*O2Wall);
     if (!m_OxygenWallPortPressureLoss->IsActive())
       RemoveOxygenWallPortPressureLoss();
     return true;
@@ -150,9 +111,7 @@ bool SEAnesthesiaMachineActionCollection::ProcessAction(const SEAnesthesiaMachin
   {
     if (m_ExpiratoryValveLeak == nullptr)
       m_ExpiratoryValveLeak = new SEExpiratoryValveLeak();
-    auto* copy = SEExpiratoryValveLeak::Unload(*eLeak);
-    SEExpiratoryValveLeak::Load(*copy, *m_ExpiratoryValveLeak);
-    (any != nullptr) ? any->set_allocated_expiratoryvalveleak(copy) : delete copy;
+    m_ExpiratoryValveLeak->Copy(*eLeak);
     if (!m_ExpiratoryValveLeak->IsActive())
       RemoveExpiratoryValveLeak();
     return true;
@@ -163,9 +122,7 @@ bool SEAnesthesiaMachineActionCollection::ProcessAction(const SEAnesthesiaMachin
   {
     if (m_ExpiratoryValveObstruction == nullptr)
       m_ExpiratoryValveObstruction = new SEExpiratoryValveObstruction();
-    auto* copy = SEExpiratoryValveObstruction::Unload(*eOb);
-    SEExpiratoryValveObstruction::Load(*copy, *m_ExpiratoryValveObstruction);
-    (any != nullptr) ? any->set_allocated_expiratoryvalveobstruction(copy) : delete copy;
+    m_ExpiratoryValveObstruction->Copy(*eOb);
     if (!m_ExpiratoryValveObstruction->IsActive())
       RemoveExpiratoryValveObstruction();
     return true;
@@ -176,9 +133,7 @@ bool SEAnesthesiaMachineActionCollection::ProcessAction(const SEAnesthesiaMachin
   {
     if (m_InspiratoryValveLeak == nullptr)
       m_InspiratoryValveLeak = new SEInspiratoryValveLeak();
-    auto* copy = SEInspiratoryValveLeak::Unload(*iLeak);
-    SEInspiratoryValveLeak::Load(*copy, *m_InspiratoryValveLeak);
-    (any != nullptr) ? any->set_allocated_inspiratoryvalveleak(copy) : delete copy;
+    m_InspiratoryValveLeak->Copy(*iLeak);
     if (!m_InspiratoryValveLeak->IsActive())
       RemoveInspiratoryValveLeak();
     return true;
@@ -189,9 +144,7 @@ bool SEAnesthesiaMachineActionCollection::ProcessAction(const SEAnesthesiaMachin
   {
     if (m_InspiratoryValveObstruction == nullptr)
       m_InspiratoryValveObstruction = new SEInspiratoryValveObstruction();
-    auto* copy = SEInspiratoryValveObstruction::Unload(*iOb);
-    SEInspiratoryValveObstruction::Load(*copy, *m_InspiratoryValveObstruction);
-    (any != nullptr) ? any->set_allocated_inspiratoryvalveobstruction(copy) : delete copy;
+    m_InspiratoryValveObstruction->Copy(*iOb);
     if (!m_InspiratoryValveObstruction->IsActive())
       RemoveInspiratoryValveObstruction();
     return true;
@@ -202,9 +155,7 @@ bool SEAnesthesiaMachineActionCollection::ProcessAction(const SEAnesthesiaMachin
   {
     if (m_MaskLeak == nullptr)
       m_MaskLeak = new SEMaskLeak();
-    auto* copy = SEMaskLeak::Unload(*mask);
-    SEMaskLeak::Load(*copy, *m_MaskLeak);
-    (any != nullptr) ? any->set_allocated_maskleak(copy) : delete copy;
+    m_MaskLeak->Copy(*mask);
     if (!m_MaskLeak->IsActive())
       RemoveMaskLeak();
     return true;
@@ -215,9 +166,7 @@ bool SEAnesthesiaMachineActionCollection::ProcessAction(const SEAnesthesiaMachin
   {
     if (m_SodaLimeFailure == nullptr)
       m_SodaLimeFailure = new SESodaLimeFailure();
-    auto* copy = SESodaLimeFailure::Unload(*soda);
-    SESodaLimeFailure::Load(*copy, *m_SodaLimeFailure);
-    (any != nullptr) ? any->set_allocated_sodalimefailure(copy) : delete copy;
+    m_SodaLimeFailure->Copy(*soda);
     if (!m_SodaLimeFailure->IsActive())
       RemoveSodaLimeFailure();
     return true;
@@ -228,9 +177,7 @@ bool SEAnesthesiaMachineActionCollection::ProcessAction(const SEAnesthesiaMachin
   {
     if (m_TubeCuffLeak == nullptr)
       m_TubeCuffLeak = new SETubeCuffLeak();
-    auto* copy = SETubeCuffLeak::Unload(*tube);
-    SETubeCuffLeak::Load(*copy, *m_TubeCuffLeak);
-    (any != nullptr) ? any->set_allocated_tubecuffleak(copy) : delete copy;
+    m_TubeCuffLeak->Copy(*tube);
     if (!m_TubeCuffLeak->IsActive())
       RemoveTubeCuffLeak();
     return true;
@@ -241,9 +188,7 @@ bool SEAnesthesiaMachineActionCollection::ProcessAction(const SEAnesthesiaMachin
   {
     if (m_VaporizerFailure == nullptr)
       m_VaporizerFailure = new SEVaporizerFailure();
-    auto* copy = SEVaporizerFailure::Unload(*vFail);
-    SEVaporizerFailure::Load(*copy, *m_VaporizerFailure);
-    (any != nullptr) ? any->set_allocated_vaporizerfailure(copy) : delete copy;
+    m_VaporizerFailure->Copy(*vFail);
     if (!m_VaporizerFailure->IsActive())
       RemoveVaporizerFailure();
     return true;
@@ -254,9 +199,7 @@ bool SEAnesthesiaMachineActionCollection::ProcessAction(const SEAnesthesiaMachin
   {
     if (m_VentilatorPressureLoss == nullptr)
       m_VentilatorPressureLoss = new SEVentilatorPressureLoss();
-    auto* copy = SEVentilatorPressureLoss::Unload(*vLoss);
-    SEVentilatorPressureLoss::Load(*copy, *m_VentilatorPressureLoss);
-    (any != nullptr) ? any->set_allocated_ventilatorpressureloss(copy) : delete copy;
+    m_VentilatorPressureLoss->Copy(*vLoss);
     if (!m_VentilatorPressureLoss->IsActive())
       RemoveVentilatorPressureLoss();
     return true;
@@ -267,9 +210,7 @@ bool SEAnesthesiaMachineActionCollection::ProcessAction(const SEAnesthesiaMachin
   {
     if (m_YPieceDisconnect == nullptr)
       m_YPieceDisconnect = new SEYPieceDisconnect();
-    auto* copy = SEYPieceDisconnect::Unload(*Y);
-    SEYPieceDisconnect::Load(*copy, *m_YPieceDisconnect);
-    (any != nullptr) ? any->set_allocated_ypiecedisconnect(copy) : delete copy;
+    m_YPieceDisconnect->Copy(*Y);
     if (!m_YPieceDisconnect->IsActive())
       RemoveYPieceDisconnect();
     return true;
@@ -498,4 +439,34 @@ const SEYPieceDisconnect* SEAnesthesiaMachineActionCollection::GetYPieceDisconne
 void SEAnesthesiaMachineActionCollection::RemoveYPieceDisconnect()
 {
   SAFE_DELETE(m_YPieceDisconnect);
+}
+
+void SEAnesthesiaMachineActionCollection::GetActiveActions(std::vector<const SEAction*>& actions) const
+{
+  if (HasConfiguration())
+    actions.push_back(GetConfiguration());
+  if (HasOxygenTankPressureLoss())
+    actions.push_back(GetOxygenTankPressureLoss());
+  if (HasOxygenWallPortPressureLoss())
+    actions.push_back(GetOxygenWallPortPressureLoss());
+  if (HasExpiratoryValveLeak())
+    actions.push_back(GetExpiratoryValveLeak());
+  if (HasExpiratoryValveObstruction())
+    actions.push_back(GetExpiratoryValveObstruction());
+  if (HasInspiratoryValveLeak())
+    actions.push_back(GetInspiratoryValveLeak());
+  if (HasInspiratoryValveObstruction())
+    actions.push_back(GetInspiratoryValveObstruction());
+  if (HasMaskLeak())
+    actions.push_back(GetMaskLeak());
+  if (HasSodaLimeFailure())
+    actions.push_back(GetSodaLimeFailure());
+  if (HasTubeCuffLeak())
+    actions.push_back(GetTubeCuffLeak());
+  if (HasVaporizerFailure())
+    actions.push_back(GetVaporizerFailure());
+  if (HasVentilatorPressureLoss())
+    actions.push_back(GetVentilatorPressureLoss());
+  if (HasYPieceDisconnect())
+    actions.push_back(GetYPieceDisconnect());
 }

@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarMassPerVolume.h"
-#include "bind/cdm/Properties.pb.h"
 
 const MassPerVolumeUnit MassPerVolumeUnit::g_Per_dL("g/dL");
 const MassPerVolumeUnit MassPerVolumeUnit::g_Per_cm3("g/cm^3");
@@ -86,26 +85,4 @@ const MassPerVolumeUnit& MassPerVolumeUnit::GetCompoundUnit(const std::string& u
   std::stringstream err;
   err << unit << " is not a valid MassPerVolume unit";
   throw CommonDataModelException(err.str());
-}
-
-void SEScalarMassPerVolume::Load(const cdm::ScalarMassPerVolumeData& src, SEScalarMassPerVolume& dst)
-{
-  SEScalarMassPerVolume::Serialize(src, dst);
-}
-void SEScalarMassPerVolume::Serialize(const cdm::ScalarMassPerVolumeData& src, SEScalarMassPerVolume& dst)
-{
-  SEUnitScalar::Serialize(src.scalarmasspervolume(), dst);
-}
-
-cdm::ScalarMassPerVolumeData* SEScalarMassPerVolume::Unload(const SEScalarMassPerVolume& src)
-{
-  if (!src.IsValid())
-    return nullptr;
-  cdm::ScalarMassPerVolumeData* dst = new cdm::ScalarMassPerVolumeData();
-  Serialize(src, *dst);
-  return dst;
-}
-void SEScalarMassPerVolume::Serialize(const SEScalarMassPerVolume& src, cdm::ScalarMassPerVolumeData& dst)
-{
-  SEUnitScalar::Serialize(src, *dst.mutable_scalarmasspervolume());
 }

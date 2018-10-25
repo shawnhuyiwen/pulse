@@ -3,7 +3,6 @@
 
 #pragma once
 #include "properties/SEScalar.h"
-CDM_BIND_DECL(ScalarEnergyPerAmountData)
 
 class CDM_DECL EnergyPerAmountUnit : public CCompoundUnit
 {
@@ -23,10 +22,4 @@ class CDM_DECL SEScalarEnergyPerAmount : public SEScalarQuantity<EnergyPerAmount
 public:
   SEScalarEnergyPerAmount() {}
   virtual ~SEScalarEnergyPerAmount() {}
-
-  static void Load(const cdm::ScalarEnergyPerAmountData& src, SEScalarEnergyPerAmount& dst);
-  static cdm::ScalarEnergyPerAmountData* Unload(const SEScalarEnergyPerAmount& src);
-protected:
-  static void Serialize(const cdm::ScalarEnergyPerAmountData& src, SEScalarEnergyPerAmount& dst);
-  static void Serialize(const SEScalarEnergyPerAmount& src, cdm::ScalarEnergyPerAmountData& dst);
 };

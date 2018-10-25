@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 #include "patient/actions/SEUrinate.h"
-#include "bind/cdm/PatientActions.pb.h"
+#include "io/protobuf/PBPatientActions.h"
 
 SEUrinate::SEUrinate() : SEPatientAction()
 {
@@ -20,6 +20,11 @@ void SEUrinate::Clear()
   SEPatientAction::Clear();
 }
 
+void SEUrinate::Copy(const SEUrinate& src)
+{
+  PBPatientAction::Copy(src, *this);
+}
+
 bool SEUrinate::IsValid() const
 {
   return SEPatientAction::IsValid();
@@ -28,26 +33,6 @@ bool SEUrinate::IsValid() const
 bool SEUrinate::IsActive() const
 {
   return IsValid();
-}
-
-void SEUrinate::Load(const cdm::UrinateData& src, SEUrinate& dst)
-{
-  SEUrinate::Serialize(src, dst);
-}
-void SEUrinate::Serialize(const cdm::UrinateData& src, SEUrinate& dst)
-{
-  SEPatientAction::Serialize(src.patientaction(), dst);
-}
-
-cdm::UrinateData* SEUrinate::Unload(const SEUrinate& src)
-{
-  cdm::UrinateData* dst = new cdm::UrinateData();
-  SEUrinate::Serialize(src, *dst);
-  return dst;
-}
-void SEUrinate::Serialize(const SEUrinate& src, cdm::UrinateData& dst)
-{
-  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
 }
 
 void SEUrinate::ToString(std::ostream &str) const

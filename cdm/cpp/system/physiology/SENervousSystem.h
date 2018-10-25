@@ -3,11 +3,11 @@
 
 #pragma once
 #include "system/SESystem.h"
-CDM_BIND_DECL(NervousSystemData)
 class SEPupillaryResponse;
 
 class CDM_DECL SENervousSystem : public SESystem
 {
+  friend class PBPhysiology;//friend the serialization class
 public:
 
   SENervousSystem(Logger* logger);
@@ -16,14 +16,6 @@ public:
   virtual void Clear();// Deletes all members
   
   virtual const SEScalar* GetScalar(const std::string& name);
-
-  static void Load(const cdm::NervousSystemData& src, SENervousSystem& dst);
-  static cdm::NervousSystemData* Unload(const SENervousSystem& src);
-protected:
-  static void Serialize(const cdm::NervousSystemData& src, SENervousSystem& dst);
-  static void Serialize(const SENervousSystem& src, cdm::NervousSystemData& dst);
-
-public:
 
   virtual bool HasBaroreceptorHeartRateScale() const;
   virtual SEScalar& GetBaroreceptorHeartRateScale();

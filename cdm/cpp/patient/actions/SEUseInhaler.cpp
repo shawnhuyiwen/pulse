@@ -6,7 +6,7 @@
 #include "substance/SESubstance.h"
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarVolume.h"
-#include "bind/cdm/PatientActions.pb.h"
+#include "io/protobuf/PBPatientActions.h"
 
 SEUseInhaler::SEUseInhaler() : SEConsciousRespirationCommand()
 {
@@ -23,6 +23,11 @@ void SEUseInhaler::Clear()
   SEConsciousRespirationCommand::Clear();
 }
 
+void SEUseInhaler::Copy(const SEUseInhaler& src)
+{
+  PBPatientAction::Copy(src, *this);
+}
+
 bool SEUseInhaler::IsValid() const
 {
   return SEConsciousRespirationCommand::IsValid();
@@ -31,26 +36,6 @@ bool SEUseInhaler::IsValid() const
 bool SEUseInhaler::IsActive() const
 {
   return SEConsciousRespirationCommand::IsActive();
-}
-
-void SEUseInhaler::Load(const cdm::ConsciousRespirationData_UseInhalerData& src, SEUseInhaler& dst)
-{
-  SEUseInhaler::Serialize(src, dst);
-}
-void SEUseInhaler::Serialize(const cdm::ConsciousRespirationData_UseInhalerData& src, SEUseInhaler& dst)
-{
-  dst.Clear();
-}
-
-cdm::ConsciousRespirationData_UseInhalerData* SEUseInhaler::Unload(const SEUseInhaler& src)
-{
-  cdm::ConsciousRespirationData_UseInhalerData* dst = new cdm::ConsciousRespirationData_UseInhalerData();
-  SEUseInhaler::Serialize(src, *dst);
-  return dst;
-}
-void SEUseInhaler::Serialize(const SEUseInhaler& src, cdm::ConsciousRespirationData_UseInhalerData& dst)
-{
-
 }
 
 void SEUseInhaler::ToString(std::ostream &str) const

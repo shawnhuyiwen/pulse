@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarMassPerAreaTime.h"
-#include "bind/cdm/Properties.pb.h"
 
 const MassPerAreaTimeUnit MassPerAreaTimeUnit::g_Per_cm2_s("g/cm^2 s");
 
@@ -21,26 +20,4 @@ const MassPerAreaTimeUnit& MassPerAreaTimeUnit::GetCompoundUnit(const std::strin
   std::stringstream err;
   err << unit << " is not a valid MassPerAreaTime unit";
   throw CommonDataModelException(err.str());
-}
-
-void SEScalarMassPerAreaTime::Load(const cdm::ScalarMassPerAreaTimeData& src, SEScalarMassPerAreaTime& dst)
-{
-  SEScalarMassPerAreaTime::Serialize(src, dst);
-}
-void SEScalarMassPerAreaTime::Serialize(const cdm::ScalarMassPerAreaTimeData& src, SEScalarMassPerAreaTime& dst)
-{
-  SEUnitScalar::Serialize(src.scalarmassperareatime(), dst);
-}
-
-cdm::ScalarMassPerAreaTimeData* SEScalarMassPerAreaTime::Unload(const SEScalarMassPerAreaTime& src)
-{
-  if (!src.IsValid())
-    return nullptr;
-  cdm::ScalarMassPerAreaTimeData* dst = new cdm::ScalarMassPerAreaTimeData();
-  Serialize(src, *dst);
-  return dst;
-}
-void SEScalarMassPerAreaTime::Serialize(const SEScalarMassPerAreaTime& src, cdm::ScalarMassPerAreaTimeData& dst)
-{
-  SEUnitScalar::Serialize(src, *dst.mutable_scalarmassperareatime());
 }

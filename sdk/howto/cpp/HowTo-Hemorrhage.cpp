@@ -39,7 +39,7 @@ void HowToHemorrhage()
   // Create the engine and load the patient
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowToHemorrhage.log");
   pe->GetLogger()->Info("HowToHemorrhage");
-  if (!pe->LoadStateFile("./states/StandardMale@0s.pba"))
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.pba", ASCII))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;

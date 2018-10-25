@@ -2,27 +2,24 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-CDM_BIND_DECL(NutritionData)
 
 class CDM_DECL SENutrition : public Loggable
 {
+  friend class PBPatientNutrition;//friend the serialization class
 public:
 
   SENutrition(Logger* logger);
   virtual ~SENutrition();
 
   virtual void Clear();
+  virtual void Copy(const SENutrition& src);
 
- static void Load(const cdm::NutritionData& src, SENutrition& dst);
-  static cdm::NutritionData* Unload(const SENutrition& src);
-protected:
-  static void Serialize(const cdm::NutritionData& src, SENutrition& dst);
-  static void Serialize(const SENutrition& src, cdm::NutritionData& dst);
-
-public:
   const SEScalar* GetScalar(const std::string& name);
-  
-  bool LoadFile(const std::string& nutritionFile);
+
+  bool SerializeToString(std::string& output, SerializationMode m) const;
+  bool SerializeToFile(const std::string& filename, SerializationMode m) const;
+  bool SerializeFromString(const std::string& src, SerializationMode m);
+  bool SerializeFromFile(const std::string& filename, SerializationMode m);
 
   void Increment(const SENutrition& from);
   

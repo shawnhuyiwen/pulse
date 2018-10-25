@@ -3,7 +3,6 @@
 
 #pragma once
 #include "properties/SEScalar.h"
-CDM_BIND_DECL(ScalarElectricInductanceData)
 
 class CDM_DECL ElectricInductanceUnit : public CCompoundUnit
 {
@@ -22,10 +21,4 @@ class CDM_DECL SEScalarElectricInductance : public SEScalarQuantity<ElectricIndu
 public:
   SEScalarElectricInductance() {}
   virtual ~SEScalarElectricInductance() {}
-
-  static void Load(const cdm::ScalarElectricInductanceData& src, SEScalarElectricInductance& dst);
-  static cdm::ScalarElectricInductanceData* Unload(const SEScalarElectricInductance& src);
-protected:
-  static void Serialize(const cdm::ScalarElectricInductanceData& src, SEScalarElectricInductance& dst);
-  static void Serialize(const SEScalarElectricInductance& src, cdm::ScalarElectricInductanceData& dst);
 };

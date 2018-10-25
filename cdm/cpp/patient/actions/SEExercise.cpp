@@ -3,8 +3,8 @@
 
 #include "stdafx.h"
 #include "patient/actions/SEExercise.h"
-#include "bind/cdm/PatientActions.pb.h"
 #include "properties/SEScalar0To1.h"
+#include "io/protobuf/PBPatientActions.h"
 
 SEExercise::SEExercise() : SEPatientAction()
 {
@@ -22,6 +22,11 @@ void SEExercise::Clear()
   SAFE_DELETE(m_Intensity);
 }
 
+void SEExercise::Copy(const SEExercise& src)
+{
+  PBPatientAction::Copy(src, *this);
+}
+
 bool SEExercise::IsValid() const
 {
   return SEPatientAction::IsValid() && HasIntensity();
@@ -32,30 +37,6 @@ bool SEExercise::IsActive() const
   if (HasIntensity())
     return m_Intensity->IsPositive();
   return false;  
-}
-
-void SEExercise::Load(const cdm::ExerciseData& src, SEExercise& dst)
-{
-  SEExercise::Serialize(src, dst);
-}
-void SEExercise::Serialize(const cdm::ExerciseData& src, SEExercise& dst)
-{
-  SEPatientAction::Serialize(src.patientaction(), dst);
-  if (src.has_intensity())
-    SEScalar0To1::Load(src.intensity(), dst.GetIntensity());
-}
-
-cdm::ExerciseData* SEExercise::Unload(const SEExercise& src)
-{
-  cdm::ExerciseData* dst = new cdm::ExerciseData();
-  SEExercise::Serialize(src, *dst);
-  return dst;
-}
-void SEExercise::Serialize(const SEExercise& src, cdm::ExerciseData& dst)
-{
-  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
-  if (src.HasIntensity())
-    dst.set_allocated_intensity(SEScalar0To1::Unload(*src.m_Intensity));
 }
 
 bool SEExercise::HasIntensity() const

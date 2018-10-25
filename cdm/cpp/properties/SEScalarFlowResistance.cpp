@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarFlowResistance.h"
-#include "bind/cdm/Properties.pb.h"
 
 const FlowResistanceUnit FlowResistanceUnit::cmH2O_s_Per_L("cmH2O s/L");
 const FlowResistanceUnit FlowResistanceUnit::mmHg_s_Per_mL("mmHg s/mL");
@@ -41,26 +40,4 @@ const FlowResistanceUnit& FlowResistanceUnit::GetCompoundUnit(const std::string&
   std::stringstream err;
   err << unit << " is not a valid FlowResistance unit";
   throw CommonDataModelException(err.str());
-}
-
-void SEScalarFlowResistance::Load(const cdm::ScalarFlowResistanceData& src, SEScalarFlowResistance& dst)
-{
-  SEScalarFlowResistance::Serialize(src, dst);
-}
-void SEScalarFlowResistance::Serialize(const cdm::ScalarFlowResistanceData& src, SEScalarFlowResistance& dst)
-{
-  SEUnitScalar::Serialize(src.scalarflowresistance(), dst);
-}
-
-cdm::ScalarFlowResistanceData* SEScalarFlowResistance::Unload(const SEScalarFlowResistance& src)
-{
-  if (!src.IsValid())
-    return nullptr;
-  cdm::ScalarFlowResistanceData* dst = new cdm::ScalarFlowResistanceData();
-  Serialize(src, *dst);
-  return dst;
-}
-void SEScalarFlowResistance::Serialize(const SEScalarFlowResistance& src, cdm::ScalarFlowResistanceData& dst)
-{
-  SEUnitScalar::Serialize(src, *dst.mutable_scalarflowresistance());
 }

@@ -3,7 +3,6 @@
 
 #pragma once
 #include "properties/SEScalar.h"
-CDM_BIND_DECL(ScalarElectricResistanceData)
 
 class CDM_DECL ElectricResistanceUnit : public CCompoundUnit
 {
@@ -22,10 +21,4 @@ class CDM_DECL SEScalarElectricResistance : public SEScalarQuantity<ElectricResi
 public:
   SEScalarElectricResistance() {}
   virtual ~SEScalarElectricResistance() {}
-
-  static void Load(const cdm::ScalarElectricResistanceData& src, SEScalarElectricResistance& dst);
-  static cdm::ScalarElectricResistanceData* Unload(const SEScalarElectricResistance& src);
-protected:
-  static void Serialize(const cdm::ScalarElectricResistanceData& src, SEScalarElectricResistance& dst);
-  static void Serialize(const SEScalarElectricResistance& src, cdm::ScalarElectricResistanceData& dst);
 };

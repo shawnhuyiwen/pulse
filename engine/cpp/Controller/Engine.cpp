@@ -1,26 +1,26 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 #include "stdafx.h"
-#include "Controller/Engine.h"
-#include "Controller/Circuits.h"
-#include "Controller/Compartments.h"
-#include "Controller/Substances.h"
-#include "Systems/BloodChemistry.h"
-#include "Systems/Cardiovascular.h"
-#include "Systems/Drugs.h"
-#include "Systems/Endocrine.h"
-#include "Systems/Energy.h"
-#include "Systems/Environment.h"
-#include "Systems/Gastrointestinal.h"
-#include "Systems/Hepatic.h"
-#include "Systems/Nervous.h"
-#include "Systems/Renal.h"
-#include "Systems/Respiratory.h"
-#include "Systems/Saturation.h"
-#include "Systems/Tissue.h"
-#include "Equipment/AnesthesiaMachine.h"
-#include "Equipment/ECG.h"
-#include "Equipment/Inhaler.h"
+#include "controller/Engine.h"
+#include "controller/Circuits.h"
+#include "controller/Compartments.h"
+#include "controller/Substances.h"
+#include "physiology/BloodChemistry.h"
+#include "physiology/Cardiovascular.h"
+#include "physiology/Drugs.h"
+#include "physiology/Endocrine.h"
+#include "physiology/Energy.h"
+#include "physiology/Gastrointestinal.h"
+#include "physiology/Hepatic.h"
+#include "physiology/Nervous.h"
+#include "physiology/Renal.h"
+#include "physiology/Respiratory.h"
+#include "physiology/Saturation.h"
+#include "physiology/Tissue.h"
+#include "environment/Environment.h"
+#include "equipment/AnesthesiaMachine.h"
+#include "equipment/ECG.h"
+#include "equipment/Inhaler.h"
 #include "PulseConfiguration.h"
 #include "patient/SEPatient.h"
 #include "patient/actions/SEPatientAssessmentRequest.h"
@@ -44,12 +44,7 @@
 #include "scenario/SESerializeState.h"
 #include "properties/SEScalarTime.h"
 #include "utils/FileUtils.h"
-#include <google/protobuf/text_format.h>
-#include <google/protobuf/stubs/logging.h>
-#include "bind/pulse/PulseState.pb.h"
-#include "io/protobuf/cdm/PBCircuit.h"
-#include "io/protobuf/cdm/PBCompartment.h"
-#include "io/protobuf/cdm/PBSubstance.h"
+#include "io/protobuf/PBPulseState.h"
 #include <memory>
 
 PULSE_DECL std::unique_ptr<PhysiologyEngine> CreatePulseEngine(const std::string& logfile)
@@ -81,6 +76,31 @@ PulseEngine::~PulseEngine()
   
 }
 
+bool PulseEngine::SerializeToString(std::string& output, SerializationMode m) const
+{
+  return PBPulseState::SerializeToString(*this, output, m);
+}
+bool PulseEngine::SerializeToFile(const std::string& filename, SerializationMode m) const
+{
+  return PBPulseState::SerializeToFile(*this, filename, m);
+}
+bool PulseEngine::SerializeFromString(const std::string& src, SerializationMode m)
+{
+  return SerializeFromString(src, m, nullptr, nullptr);
+}
+bool PulseEngine::SerializeFromString(const std::string& src, SerializationMode m, const SEScalarTime* simTime, const SEEngineConfiguration* config)
+{
+  return PBPulseState::SerializeFromString(src, *this, m, simTime, config);
+}
+bool PulseEngine::SerializeFromFile(const std::string& filename, SerializationMode m)
+{
+  return SerializeFromFile(filename, m, nullptr, nullptr);
+}
+bool PulseEngine::SerializeFromFile(const std::string& filename, SerializationMode m, const SEScalarTime* simTime, const SEEngineConfiguration* config)
+{
+  return PBPulseState::SerializeFromFile(filename, *this, m, simTime, config);
+}
+
 Logger* PulseEngine::GetLogger() const
 {
   return Loggable::GetLogger();
@@ -91,302 +111,6 @@ SEEngineTracker* PulseEngine::GetEngineTracker() const
   return m_EngineTrack;
 }
 
-void MyLogHandler(google::protobuf::LogLevel level, const char* filename, int line, const std::string& message)
-{
-  std::cout << message;
-}
-
-bool PulseEngine::LoadStateFile(const std::string& filename, const SEScalarTime* simTime, const SEEngineConfiguration* config)
-{
-  pulse::StateData src;
-  std::ifstream file_stream(filename, std::ios::in);
-  std::string fmsg((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
-  google::protobuf::SetLogHandler(MyLogHandler);
-  if (fmsg.empty() || !google::protobuf::TextFormat::ParseFromString(fmsg, &src))
-    return false;
-  return LoadState(&src, simTime);
-
-  // If its a binary string in the file...
-  //std::ifstream binary_istream(patientFile, std::ios::in | std::ios::binary);
-  //src.ParseFromIstream(&binary_istream);
-}
-
-bool PulseEngine::LoadState(const void* state, const SEScalarTime* simTime, const SEEngineConfiguration* config)
-{
-  if (state == nullptr)
-    return false;
-  m_State = EngineState::NotReady;
-
-  // Waiting for state to be std::any when we move to C++17
-  /*const pulse::StateData* peState = dynamic_cast<const pulse::StateData*>(state);
-  if (peState == nullptr)
-  {
-    Error("State data is not a Pulse StateData object");
-    return false;
-  }*/
-  const pulse::StateData* peState = (const pulse::StateData*)(state);
-
-  m_ss.str("");
-
-  // First Get the substances reset and ready
-  m_Substances->LoadSubstances();// TODO Reset();
-  // Substances //
-  for (int i = 0; i<peState->activesubstance_size(); i++)
-  {
-    const cdm::SubstanceData& subData = peState->activesubstance()[i];
-    SESubstance* sub = m_Substances->GetSubstance(subData.name());
-    if (sub == nullptr)
-    {
-      sub = new SESubstance(GetLogger());
-      m_Substances->AddSubstance(*sub);
-    }
-    PBSubstance::Load(subData, *sub);
-    m_Substances->AddActiveSubstance(*sub);
-  }
-  // Compounds //
-  for (int i = 0; i<peState->activecompound_size(); i++)
-  {
-    const cdm::SubstanceCompoundData& cmpdData = peState->activecompound()[i];
-    SESubstanceCompound* cmpd = m_Substances->GetCompound(cmpdData.name());
-    if (cmpd == nullptr)
-      cmpd = new SESubstanceCompound(GetLogger());
-    PBSubstance::Load(cmpdData, *cmpd, *m_Substances);
-    m_Substances->AddActiveCompound(*cmpd);
-  }
-
-  // We could preserve the tracker, but I think I want to force the user to set it up
-  // again, they should have the data tracks (or easily get them), and they should
-  // Set it back up, and set or reset the results file they are using
-  if (peState->has_datarequestmanager())
-  {
-    m_EngineTrack->GetDataRequestManager().Clear();
-    SEDataRequestManager::Load(peState->datarequestmanager(), m_EngineTrack->GetDataRequestManager(), *m_Substances);
-    m_EngineTrack->ForceConnection();// I don't want to rest the file because I would loose all my data      
-  }
-
-  if (simTime != nullptr)
-  {
-    m_CurrentTime->Set(*simTime);
-    m_SimulationTime->Set(*simTime);
-  }
-  else
-  {
-    if (peState->has_simulationtime())
-    {
-      SEScalarTime::Load(peState->simulationtime(), *m_CurrentTime);
-      SEScalarTime::Load(peState->simulationtime(), *m_SimulationTime);
-    }
-    else
-    {
-      m_CurrentTime->SetValue(0, TimeUnit::s);
-      m_SimulationTime->SetValue(0, TimeUnit::s);
-    }
-  }
-  m_AirwayMode = (eAirwayMode)peState->airwaymode();
-  if (peState->intubation() == (cdm::eSwitch)eSwitch::NullSwitch)
-    m_ss << "Pulse State must have none null intubation state";
-  m_Intubation = (eSwitch)peState->intubation();
-   
-  /// Patient //  
-  if (!peState->has_patient())
-    m_ss << "PulseState must have a patient" << std::endl;
-  else
-    SEPatient::Load(peState->patient(), *m_Patient);
-  // Conditions //
-  m_Conditions->Clear();
-  if (peState->has_conditions())
-  {
-    for (int i=0; i<peState->conditions().anycondition_size(); i++)
-    {
-      SECondition* c = SECondition::Load(peState->conditions().anycondition()[i],*m_Substances);
-      m_Conditions->ProcessCondition(*c);
-      delete c;
-    }
-  }
-  // Actions //
-  m_Actions->Clear();
-  if (peState->has_activeactions())
-  {
-    for (int i = 0; i<peState->activeactions().anyaction_size(); i++)
-    {
-      SEAction* a = SEAction::Load(peState->activeactions().anyaction()[i], *m_Substances);
-      m_Actions->ProcessAction(*a);
-      delete a;
-    }
-  }
-  
-  // Circuit Manager //
-  if (!peState->has_circuitmanager())
-    m_ss << "PulseState must have a circuit manager" << std::endl;
-  else
-    PBCircuit::Load(peState->circuitmanager(), *m_Circuits);
-  // Compartment Manager //
-  if (!peState->has_compartmentmanager())
-    m_ss << "PulseState must have a compartment manager" << std::endl;
-  else
-    PBCompartment::Load(peState->compartmentmanager(), *m_Compartments, m_Circuits.get());
-  // Configuration //
-  if (!peState->has_configuration())
-    m_ss << "PulseState must have a configuration" << std::endl;
-  else
-    PulseConfiguration::Load(peState->configuration(), *m_Config);
-  if (config != nullptr)
-  {// Merge in any provided configuration parameters, I hope you know what you are doing....
-    const PulseConfiguration* peConfig = dynamic_cast<const PulseConfiguration*>(config);
-    if (peState == nullptr)
-    {
-      Error("Configuration is not a Pulse configuration object");
-      return false;
-    }
-    m_Config->Merge(*peConfig);
-  }
-
-  /////////////
-  // Systems //
-  /////////////
-  if (!peState->has_bloodchemistry())
-    m_ss << "Missing Blood Chemistry State" << std::endl;
-  else
-    BloodChemistry::Load(peState->bloodchemistry(), *m_BloodChemistrySystem);
-  if (!peState->has_cardiovascular())
-    m_ss << "Missing Cardiovascular State" << std::endl;
-  else
-    Cardiovascular::Load(peState->cardiovascular(), *m_CardiovascularSystem);
-  if (!peState->has_drug())
-    m_ss << "Missing Drug State" << std::endl;
-  else
-    Drugs::Load(peState->drug(), *m_DrugSystem);
-  if (!peState->has_endocrine())
-    m_ss << "Missing Endocrine State" << std::endl;
-  else
-    Endocrine::Load(peState->endocrine(), *m_EndocrineSystem);
-  if (!peState->has_energy())
-    m_ss << "Missing Energy State" << std::endl;
-  else
-    Energy::Load(peState->energy(), *m_EnergySystem);
-  if (!peState->has_gastrointestinal())
-    m_ss << "Missing Gastrointestinal State" << std::endl;
-  else
-    Gastrointestinal::Load(peState->gastrointestinal(), *m_GastrointestinalSystem);
-  if (!peState->has_hepatic())
-    m_ss << "Missing Hepatic State" << std::endl;
-  else
-    Hepatic::Load(peState->hepatic(), *m_HepaticSystem);
-  if (!peState->has_nervous())
-    m_ss << "Missing Nervous State" << std::endl;
-  else
-    Nervous::Load(peState->nervous(), *m_NervousSystem);
-  if (!peState->has_renal())
-    m_ss << "Missing Renal State" << std::endl;
-  else
-    Renal::Load(peState->renal(), *m_RenalSystem);
-  if (!peState->has_respiratory())
-    m_ss << "Missing Respiratory State" << std::endl;
-  else
-    Respiratory::Load(peState->respiratory(), *m_RespiratorySystem);
-  if (!peState->has_tissue())
-    m_ss << "Missing Tissue State" << std::endl;
-  else
-    Tissue::Load(peState->tissue(), *m_TissueSystem);
-  if (!peState->has_environment())
-    m_ss << "Missing Environment State" << std::endl;
-  else
-    Environment::Load(peState->environment(), *m_Environment);
-  if (!peState->has_anesthesiamachine())
-    m_ss << "Missing Anesthesia Machine State" << std::endl;
-  else
-    AnesthesiaMachine::Load(peState->anesthesiamachine(), *m_AnesthesiaMachine);
-  if (!peState->has_electrocardiogram())
-    m_ss << "Missing ECG State" << std::endl;
-  else
-    ECG::Load(peState->electrocardiogram(), *m_ECG);
-  if (!peState->has_inhaler())
-    m_ss << "Missing Inhaler State" << std::endl;
-  else
-    Inhaler::Load(peState->inhaler(), *m_Inhaler);
-
-  if (!m_ss.str().empty())
-  {
-    Error(m_ss);
-    return false;
-  }
-  // Make sure links are correct with our modes
-  m_Compartments->UpdateAirwayGraph();
-  m_Compartments->GetActiveRespiratoryGraph();
-  m_Compartments->GetActiveAerosolGraph();
-  
-  // If we had any handlers, reinform the listening classes
-  if (m_EventHandler != nullptr)
-    SetEventHandler(m_EventHandler);
-  if (m_AdvanceHandler != nullptr)
-    SetAdvanceHandler(m_AdvanceHandler);
-
-
-  // It helps to unload what you just loaded and to a compare if you have issues
-  //SaveState("WhatIJustLoaded.pba");
-
-  // Good to go, save it off and carry on!
-  m_State = EngineState::Active;
-  return true;// return CheckDataRequirements/IsValid() or something
-}
-
-void* PulseEngine::SaveState(const std::string& filename)
-{
-  pulse::StateData* state = new pulse::StateData();
-
-  state->set_airwaymode((pulse::eAirwayMode)m_AirwayMode);
-  state->set_intubation((cdm::eSwitch)m_Intubation);
-  state->set_allocated_simulationtime(SEScalarTime::Unload(*m_SimulationTime));
-  if(m_EngineTrack->GetDataRequestManager().HasDataRequests())
-    state->set_allocated_datarequestmanager(SEDataRequestManager::Unload(m_EngineTrack->GetDataRequestManager()));
-  // Patient
-  state->set_allocated_patient(SEPatient::Unload(*m_Patient));
-  // Conditions
-  state->set_allocated_conditions(SEConditionManager::Unload(*m_Conditions));
-  // Actions
-  state->set_allocated_activeactions(SEActionManager::Unload(*m_Actions));
- // Active Substances/Compounds
-  for (SESubstance* s : m_Substances->GetActiveSubstances())
-    state->mutable_activesubstance()->AddAllocated(PBSubstance::Unload(*s));
-  for (SESubstanceCompound* c : m_Substances->GetActiveCompounds())
-    state->mutable_activecompound()->AddAllocated(PBSubstance::Unload(*c));
-  // Systems
-  state->set_allocated_bloodchemistry(BloodChemistry::Unload(*m_BloodChemistrySystem));
-  state->set_allocated_cardiovascular(Cardiovascular::Unload(*m_CardiovascularSystem));
-  state->set_allocated_drug(Drugs::Unload(*m_DrugSystem));
-  state->set_allocated_endocrine(Endocrine::Unload(*m_EndocrineSystem));
-  state->set_allocated_energy(Energy::Unload(*m_EnergySystem));
-  state->set_allocated_gastrointestinal(Gastrointestinal::Unload(*m_GastrointestinalSystem));
-  state->set_allocated_hepatic(Hepatic::Unload(*m_HepaticSystem));
-  state->set_allocated_nervous(Nervous::Unload(*m_NervousSystem));
-  state->set_allocated_renal(Renal::Unload(*m_RenalSystem));
-  state->set_allocated_respiratory(Respiratory::Unload(*m_RespiratorySystem));
-  state->set_allocated_tissue(Tissue::Unload(*m_TissueSystem));
-  state->set_allocated_environment(Environment::Unload(*m_Environment));
-  state->set_allocated_anesthesiamachine(AnesthesiaMachine::Unload(*m_AnesthesiaMachine));
-  state->set_allocated_electrocardiogram(ECG::Unload(*m_ECG));
-  state->set_allocated_inhaler(Inhaler::Unload(*m_Inhaler));
-  // Compartments
-  state->set_allocated_compartmentmanager(PBCompartment::Unload(*m_Compartments));
-  // Configuration
-  state->set_allocated_configuration(PulseConfiguration::Unload(*m_Config));
-  // Circuitsk
-  state->set_allocated_circuitmanager(PBCircuit::Unload(*m_Circuits));
-
-  if (!filename.empty())
-  {
-    CreateFilePath(filename);
-    std::string content;
-    google::protobuf::TextFormat::PrintToString(*state, &content);
-    std::ofstream ascii_ostream(filename, std::ios::out | std::ios::trunc);
-    ascii_ostream << content;
-    ascii_ostream.flush();
-    ascii_ostream.close();
-  }
-
-  return state;
-}
-
 bool PulseEngine::InitializeEngine(const std::string& patientFile, const std::vector<const SECondition*>* conditions, const SEEngineConfiguration* config)
 {
   std::string pFile = patientFile;
@@ -395,16 +119,14 @@ bool PulseEngine::InitializeEngine(const std::string& patientFile, const std::ve
     pFile = "./patients/";
     pFile += patientFile;
   }
-  if (!m_Patient->LoadFile(pFile))
+  if (!m_Patient->SerializeFromFile(pFile,ASCII))
     return false;
   return InitializeEngine(conditions,config);
 }
 
 bool PulseEngine::InitializeEngine(const SEPatient& patient, const std::vector<const SECondition*>* conditions, const SEEngineConfiguration* config)
 { 
-  auto* p = SEPatient::Unload(patient);
-  SEPatient::Load(*p, *m_Patient);
-  delete p;  
+  m_Patient->Copy(patient);
   // We need logic here that makes sure we have what we need
   // and notify we are ignoring anything provided we won't use
   return InitializeEngine(conditions,config);
@@ -558,7 +280,7 @@ bool PulseEngine::ProcessAction(const SEAction& action)
     {
       if (serialize->HasFilename())
       {
-        SaveState(serialize->GetFilename());
+        SerializeToFile(serialize->GetFilename(), ASCII);
       }
       else
       {
@@ -566,14 +288,14 @@ bool PulseEngine::ProcessAction(const SEAction& action)
         MakeDirectory("./states");
         ss << "./states/" << m_Patient->GetName() << "@" << GetSimulationTime(TimeUnit::s) << "s.pba";
         Info("Saving " + ss.str());
-        SaveState(ss.str());
+        SerializeToFile(ss.str(), ASCII);
         // Debug code to make sure things are consistent
-        //LoadStateFile(ss.str());
-        //SaveState("./states/AfterSave.pba");
+        //SerializeFomFile(ss.str(),ASCII);
+        //SerializeToFile("./states/AfterSave.pba",ASCII);
       }     
     }
     else
-      return LoadStateFile(serialize->GetFilename());
+      return SerializeFromFile(serialize->GetFilename(),ASCII);
     return true;
   }
 
@@ -595,7 +317,7 @@ bool PulseEngine::ProcessAction(const SEAction& action)
         pftFile = Replace(pftFile, "Results", m_ss.str());
         pftFile = Replace(pftFile, ".csv", ".pba");
         m_ss << "PulmonaryFunctionTest@" << GetSimulationTime(TimeUnit::s) << "s.pba";
-        pft.SaveFile(pftFile);
+        pft.SerializeToFile(pftFile,ASCII);
         break;
       }
       case ePatientAssessment_Type::Urinalysis:
@@ -610,7 +332,7 @@ bool PulseEngine::ProcessAction(const SEAction& action)
         upanFile = Replace(upanFile, "Results", m_ss.str());
         upanFile = Replace(upanFile, ".csv", ".pba");
         m_ss << "Urinalysis@" << GetSimulationTime(TimeUnit::s) << "s.pba";
-        upan.SaveFile(upanFile);
+        upan.SerializeToFile(upanFile,ASCII);
         break;
       }
 
@@ -625,7 +347,7 @@ bool PulseEngine::ProcessAction(const SEAction& action)
         cbcFile = Replace(cbcFile, "Results", m_ss.str());
         cbcFile = Replace(cbcFile, ".csv", ".pba");
         m_ss << "CompleteBloodCount@" << GetSimulationTime(TimeUnit::s) << "s.pba";
-        cbc.SaveFile(cbcFile);
+        cbc.SerializeToFile(cbcFile,ASCII);
         break;
       }
 
@@ -640,7 +362,7 @@ bool PulseEngine::ProcessAction(const SEAction& action)
         mpFile = Replace(mpFile, "Results", m_ss.str());
         mpFile = Replace(mpFile, ".csv", ".pba");
         m_ss << "ComprehensiveMetabolicPanel@" << GetSimulationTime(TimeUnit::s) << "s.pba";
-        mp.SaveFile(mpFile);
+        mp.SerializeToFile(mpFile,ASCII);
         break;
       }
       default:

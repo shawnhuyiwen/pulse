@@ -3,8 +3,8 @@
 
 #include "stdafx.h"
 #include "patient/actions/SEAcuteStress.h"
-#include "bind/cdm/PatientActions.pb.h"
 #include "properties/SEScalar0To1.h"
+#include "io/protobuf/PBPatientActions.h"
 
 SEAcuteStress::SEAcuteStress() : SEPatientAction()
 {
@@ -21,7 +21,11 @@ void SEAcuteStress::Clear()
   
   SEPatientAction::Clear();
   SAFE_DELETE(m_Severity);
-  
+}
+
+void SEAcuteStress::Copy(const SEAcuteStress& src)
+{
+  PBPatientAction::Copy(src, *this);
 }
 
 bool SEAcuteStress::IsValid() const
@@ -33,31 +37,6 @@ bool SEAcuteStress::IsActive() const
 {
   return IsValid() ? !m_Severity->IsZero() : false;
 }
-
-void SEAcuteStress::Load(const cdm::AcuteStressData& src, SEAcuteStress& dst)
-{
-  SEAcuteStress::Serialize(src, dst);
-}
-void SEAcuteStress::Serialize(const cdm::AcuteStressData& src, SEAcuteStress& dst)
-{
-  SEPatientAction::Serialize(src.patientaction(),dst);
-  if (src.has_severity())
-    SEScalar0To1::Load(src.severity(), dst.GetSeverity());
-}
-
-cdm::AcuteStressData* SEAcuteStress::Unload(const SEAcuteStress& src)
-{
-  cdm::AcuteStressData* dst = new cdm::AcuteStressData();
-  SEAcuteStress::Serialize(src, *dst);
-  return dst;
-}
-void SEAcuteStress::Serialize(const SEAcuteStress& src, cdm::AcuteStressData& dst)
-{
-  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
-  if (src.HasSeverity())
-    dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
-}
-
 
 bool SEAcuteStress::HasSeverity() const
 {

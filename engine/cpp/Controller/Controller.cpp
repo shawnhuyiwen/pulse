@@ -2,26 +2,26 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "Controller/Controller.h"
-#include "Controller/Circuits.h"
-#include "Controller/Compartments.h"
-#include "Controller/Substances.h"
-#include "Systems/BloodChemistry.h"
-#include "Systems/Cardiovascular.h"
-#include "Systems/Drugs.h"
-#include "Systems/Endocrine.h"
-#include "Systems/Energy.h"
-#include "Systems/Environment.h"
-#include "Systems/Gastrointestinal.h"
-#include "Systems/Hepatic.h"
-#include "Systems/Nervous.h"
-#include "Systems/Renal.h"
-#include "Systems/Respiratory.h"
-#include "Systems/Saturation.h"
-#include "Systems/Tissue.h"
-#include "Equipment/AnesthesiaMachine.h"
-#include "Equipment/ECG.h"
-#include "Equipment/Inhaler.h"
+#include "controller/Controller.h"
+#include "controller/Circuits.h"
+#include "controller/Compartments.h"
+#include "controller/Substances.h"
+#include "physiology/BloodChemistry.h"
+#include "physiology/Cardiovascular.h"
+#include "physiology/Drugs.h"
+#include "physiology/Endocrine.h"
+#include "physiology/Energy.h"
+#include "physiology/Gastrointestinal.h"
+#include "physiology/Hepatic.h"
+#include "physiology/Nervous.h"
+#include "physiology/Renal.h"
+#include "physiology/Respiratory.h"
+#include "physiology/Saturation.h"
+#include "physiology/Tissue.h"
+#include "equipment/AnesthesiaMachine.h"
+#include "environment/Environment.h"
+#include "equipment/ECG.h"
+#include "equipment/Inhaler.h"
 #include "PulseConfiguration.h"
 
 #include "scenario/SEConditionManager.h"
@@ -69,14 +69,7 @@
 #include "engine/SEAdvanceHandler.h"
 #include "utils/DataTrack.h"
 #include "utils/FileUtils.h"
-#include <google/protobuf/text_format.h>
 
-#include "bind/pulse/Pulse.pb.h"
-#include "bind/pulse/PulseEnums.pb.h"
-const std::string& eAirwayMode_Name(eAirwayMode m)
-{
-  return pulse::eAirwayMode_Name( (pulse::eAirwayMode)m );
-}
 
 PulseController::PulseController(const std::string& logFileName) : PulseController(new Logger(logFileName))
 {
@@ -102,7 +95,7 @@ PulseController::PulseController(Logger* logger) : Loggable(logger)
   m_Logger->SetLogTime(m_SimulationTime.get());
 
   m_Substances = std::unique_ptr<PulseSubstances>(new PulseSubstances(*this));
-  m_Substances->LoadSubstances();
+  m_Substances->LoadSubstanceDirectory();
 
   m_Patient = std::unique_ptr<SEPatient>(new SEPatient(GetLogger()));
 
@@ -154,7 +147,7 @@ bool PulseController::Initialize(const PulseConfiguration* config)
     return false;
 
   Info("Resetting Substances");
-  m_Substances->LoadSubstances();// TODO Reset();
+  m_Substances->Reset();
 
   // Clear all substances and reload the original data
   // This clears out all engine specific data stored in the substance
@@ -167,7 +160,7 @@ bool PulseController::Initialize(const PulseConfiguration* config)
   // Now, Let's see if there is anything to merge into our base configuration
   Info("Merging OnDisk Configuration");
   PulseConfiguration cFile(*m_Substances);
-  cFile.LoadFile("PulseConfiguration.pba");
+  cFile.SerializeFromFile("PulseConfiguration.pba",ASCII);
   m_Config->Merge(cFile);
 
   // Now, override anything with a configuration provided by the user or scenario
@@ -185,7 +178,7 @@ bool PulseController::Initialize(const PulseConfiguration* config)
   {
     std::string stableDir = "./stable/";
     MakeDirectory(stableDir.c_str());
-    m_Patient->SaveFile(stableDir + m_Patient->GetName() + ".pba");
+    m_Patient->SerializeToFile(stableDir + m_Patient->GetName() + ".pba",ASCII);
   }
 
   m_SaturationCalculator->Initialize(*m_Substances);
@@ -1059,9 +1052,7 @@ bool PulseController::CreateCircuitsAndCompartments()
   Ambient.SetAsReferenceNode();
 
   m_Environment->Initialize();
-  auto* d = SEEnvironmentalConditions::Unload(m_Config->GetInitialEnvironmentalConditions());
-  SEEnvironmentalConditions::Load(*d, m_Environment->GetConditions());
-  delete d;
+  m_Environment->GetConditions().Copy(m_Config->GetInitialEnvironmentalConditions());
   m_Environment->StateChange();
   // Update the environment pressures on all the 'air' circuits to match what the environment was set to
   gEnvironment.GetPressure().Set(m_Environment->GetConditions().GetAtmosphericPressure());

@@ -17,5 +17,3 @@ void SEChronicHeartFailure::Clear()
 {
   SEPatientCondition::Clear();
 }
-
-

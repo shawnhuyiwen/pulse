@@ -4,7 +4,6 @@
 #include "stdafx.h"
 #include "engine/SEAutoSerialization.h"
 #include "properties/SEScalarTime.h"
-#include "bind/cdm/Engine.pb.h"
 
 SEAutoSerialization::SEAutoSerialization(Logger* logger) : Loggable(logger)
 {
@@ -42,44 +41,6 @@ bool SEAutoSerialization::IsValid() const
   if (!HasFileName())
     return false;
   return true;
-}
-
-void SEAutoSerialization::Load(const cdm::AutoSerializationData& src, SEAutoSerialization& dst)
-{
-  SEAutoSerialization::Serialize(src, dst);
-}
-void SEAutoSerialization::Serialize(const cdm::AutoSerializationData& src, SEAutoSerialization& dst)
-{
-  dst.Clear();
-  if (src.has_period())
-    SEScalarTime::Load(src.period(), dst.GetPeriod());
-  if(src.periodtimestamps()!=cdm::eSwitch::NullSwitch)
-    dst.SetPeriodTimeStamps((eSwitch)src.periodtimestamps());
-  if (src.afteractions() != cdm::eSwitch::NullSwitch)
-    dst.SetAfterActions((eSwitch)src.afteractions());
-  if (src.reloadstate() != cdm::eSwitch::NullSwitch)
-    dst.SetReloadState((eSwitch)src.reloadstate());
-  dst.SetDirectory(src.directory());
-  dst.SetFileName(src.filename());
-}
-
-cdm::AutoSerializationData* SEAutoSerialization::Unload(const SEAutoSerialization& src)
-{
-  cdm::AutoSerializationData *dst = new cdm::AutoSerializationData();
-  SEAutoSerialization::Serialize(src,*dst);
-  return dst;
-}
-void SEAutoSerialization::Serialize(const SEAutoSerialization& src, cdm::AutoSerializationData& dst)
-{
-  if (src.HasPeriod())
-    dst.set_allocated_period(SEScalarTime::Unload(*src.m_Period));
-  dst.set_periodtimestamps((cdm::eSwitch)src.m_PeriodTimeStamps);
-  dst.set_afteractions((cdm::eSwitch)src.m_AfterActions);
-  dst.set_reloadstate((cdm::eSwitch)src.m_ReloadState);
-  if (src.HasDirectory())
-    dst.set_directory(src.m_Directory);
-  if (src.HasFileName())
-    dst.set_filename(src.m_FileName);
 }
 
 bool SEAutoSerialization::HasPeriod() const

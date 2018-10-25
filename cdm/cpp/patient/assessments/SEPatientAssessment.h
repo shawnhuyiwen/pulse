@@ -2,7 +2,15 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-CDM_BIND_DECL(PatientAssessmentData)
+
+// Keep enums in sync with appropriate schema/cdm/PatienAssessmentEnums.proto file !!
+enum class ePatientAssessment_Type {
+  CompleteBloodCount = 0,
+  ComprehensiveMetabolicPanel,
+  PulmonaryFunctionTest,
+  Urinalysis
+};
+extern const std::string& ePatientAssessment_Type_Name(ePatientAssessment_Type m);
 
 /**
  * @brief
@@ -12,6 +20,7 @@ CDM_BIND_DECL(PatientAssessmentData)
  */
 class CDM_DECL SEPatientAssessment : public Loggable
 {
+  friend class PBPatientAssesment;//friend the serialization class
 public:
 
   SEPatientAssessment(Logger* logger);
@@ -19,13 +28,6 @@ public:
 
   virtual void Clear();
 
-  virtual std::string Save() const = 0;
-  virtual void SaveFile(const std::string& filename) const = 0;
-
-protected:
-  static void Serialize(const cdm::PatientAssessmentData& src, SEPatientAssessment& dst);
-  static void Serialize(const SEPatientAssessment& src, cdm::PatientAssessmentData& dst);
-
-public:
-  
+  virtual bool SerializeToString(std::string& output, SerializationMode m) const=0;
+  virtual bool SerializeToFile(const std::string& filename, SerializationMode m) const=0;
 };  

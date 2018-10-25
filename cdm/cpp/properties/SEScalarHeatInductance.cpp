@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarHeatInductance.h"
-#include "bind/cdm/Properties.pb.h"
 
 const HeatInductanceUnit HeatInductanceUnit::K_s_Per_W("K s/W");
 
@@ -21,26 +20,4 @@ const HeatInductanceUnit& HeatInductanceUnit::GetCompoundUnit(const std::string&
   std::stringstream err;
   err << unit << " is not a valid HeatInductance unit";
   throw CommonDataModelException(err.str());
-}
-
-void SEScalarHeatInductance::Load(const cdm::ScalarHeatInductanceData& src, SEScalarHeatInductance& dst)
-{
-  SEScalarHeatInductance::Serialize(src, dst);
-}
-void SEScalarHeatInductance::Serialize(const cdm::ScalarHeatInductanceData& src, SEScalarHeatInductance& dst)
-{
-  SEUnitScalar::Serialize(src.scalarheatinductance(), dst);
-}
-
-cdm::ScalarHeatInductanceData* SEScalarHeatInductance::Unload(const SEScalarHeatInductance& src)
-{
-  if (!src.IsValid())
-    return nullptr;
-  cdm::ScalarHeatInductanceData* dst = new cdm::ScalarHeatInductanceData();
-  Serialize(src, *dst);
-  return dst;
-}
-void SEScalarHeatInductance::Serialize(const SEScalarHeatInductance& src, cdm::ScalarHeatInductanceData& dst)
-{
-  SEUnitScalar::Serialize(src, *dst.mutable_scalarheatinductance());
 }

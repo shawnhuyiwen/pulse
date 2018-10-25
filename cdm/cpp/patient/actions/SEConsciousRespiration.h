@@ -3,7 +3,6 @@
 
 #pragma once
 #include "patient/actions/SEPatientAction.h"
-CDM_BIND_DECL(ConsciousRespirationData)
 class SEConsciousRespirationCommand;
 class SEForcedExhale;
 class SEForcedInhale;
@@ -12,23 +11,18 @@ class SEUseInhaler;
 
 class CDM_DECL SEConsciousRespiration : public SEPatientAction
 {
+  friend class PBPatientAction;//friend the serialization class
 public:
 
   SEConsciousRespiration();
   virtual ~SEConsciousRespiration();
 
   virtual void Clear(); //clear memory
+  virtual void Copy(const SEConsciousRespiration& src);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
 
-  static void Load(const cdm::ConsciousRespirationData& src, SEConsciousRespiration& dst);
-  static cdm::ConsciousRespirationData* Unload(const SEConsciousRespiration& src);
-protected:
-  static void Serialize(const cdm::ConsciousRespirationData& src, SEConsciousRespiration& dst);
-  static void Serialize(const SEConsciousRespiration& src, cdm::ConsciousRespirationData& dst);
-
-public:
   // Get the active command
   virtual SEConsciousRespirationCommand* GetActiveCommand();
   /// When the active command has been processed, remove it

@@ -8,7 +8,7 @@ import java.util.List;
 
 import com.kitware.physiology.cdm.Scenario.AnyConditionData;
 import com.kitware.physiology.cdm.Scenario.ScenarioData;
-
+import com.kitware.physiology.cdm.Scenario.ScenarioInitialParametersData;
 import com.kitware.physiology.datamodel.conditions.SECondition;
 import com.kitware.physiology.datamodel.patient.SEPatient;
 import com.kitware.physiology.datamodel.substance.SESubstanceManager;
@@ -33,7 +33,7 @@ public class SEScenarioInitialParameters
     conditions.clear();
   }
   
-  public static void load(ScenarioData.InitialParametersData src, SEScenarioInitialParameters dst, SESubstanceManager subMgr)
+  public static void load(ScenarioInitialParametersData src, SEScenarioInitialParameters dst, SESubstanceManager subMgr)
   {
     dst.reset();
     
@@ -54,13 +54,13 @@ public class SEScenarioInitialParameters
       dst.conditions.add(SECondition.ANY2CDM(cData, subMgr));
   }
   
-  public static ScenarioData.InitialParametersData unload(SEScenarioInitialParameters src)
+  public static ScenarioInitialParametersData unload(SEScenarioInitialParameters src)
   {
-    ScenarioData.InitialParametersData.Builder dst = ScenarioData.InitialParametersData.newBuilder();
+    ScenarioInitialParametersData.Builder dst = ScenarioInitialParametersData.newBuilder();
     unload(src,dst);
     return dst.build();
   }
-  protected static void unload(SEScenarioInitialParameters src, ScenarioData.InitialParametersData.Builder dst)
+  protected static void unload(SEScenarioInitialParameters src, ScenarioInitialParametersData.Builder dst)
   {
     if(src.hasPatient())
       dst.setPatient(SEPatient.unload(src.patient));

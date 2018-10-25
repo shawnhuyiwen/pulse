@@ -3,27 +3,21 @@
 
 #pragma once
 #include "patient/conditions/SEPatientCondition.h"
-CDM_BIND_DECL(ChronicAnemiaData)
 
 class CDM_DECL SEChronicAnemia : public SEPatientCondition
 {
+  friend class PBPatientCondition;//friend the serialization class
 public:
 
   SEChronicAnemia();
   virtual ~SEChronicAnemia();
 
   virtual void Clear(); //clear memory
+  virtual void Copy(const SEChronicAnemia& src);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
 
-  static void Load(const cdm::ChronicAnemiaData& src, SEChronicAnemia& dst);
-  static cdm::ChronicAnemiaData* Unload(const SEChronicAnemia& src);
-protected:
-  static void Serialize(const cdm::ChronicAnemiaData& src, SEChronicAnemia& dst);
-  static void Serialize(const SEChronicAnemia& src, cdm::ChronicAnemiaData& dst);
-
-public:
   virtual std::string GetName() const{ return "ChronicAnemia"; }
 
   virtual bool HasReductionFactor() const;

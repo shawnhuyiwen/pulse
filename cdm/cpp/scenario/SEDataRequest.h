@@ -5,7 +5,6 @@
 class SESubstanceManager;
 class CCompoundUnit;
 class SEDataRequestManager;
-CDM_BIND_DECL(DataRequestData)
 #include "scenario/SEDecimalFormat.h"
 
 enum class eDataRequest_Category {
@@ -17,6 +16,7 @@ extern const std::string& eDataRequest_Category_Name(eDataRequest_Category m);
 
 class CDM_DECL SEDataRequest : public SEDecimalFormat
 {
+  friend class PBScenario;//friend the serialization class
   friend class SEDataRequestManager;
 protected:
   SEDataRequest(const SEDataRequest& dr);
@@ -27,14 +27,7 @@ public:
 
   virtual void Clear(); //clear memory
   virtual bool IsValid();
-
-  static void Load(const cdm::DataRequestData& src, SEDataRequest& dst);
-  static cdm::DataRequestData* Unload(const SEDataRequest& src);
-protected:
-  static void Serialize(const cdm::DataRequestData& src, SEDataRequest& dst);
-  static void Serialize(const SEDataRequest& src, cdm::DataRequestData& dst);
-
-public:
+  virtual void Copy(const SEDataRequest& src);
 
   virtual size_t HashCode() const;
 

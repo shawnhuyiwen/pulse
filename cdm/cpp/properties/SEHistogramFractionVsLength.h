@@ -3,10 +3,10 @@
 
 #pragma once
 #include "properties/SEHistogram.h"
-CDM_BIND_DECL(HistogramFractionVsLengthData)
 
 class CDM_DECL SEHistogramFractionVsLength : public SEHistogram
 {
+  friend class PBProperty;//friend the serialization class
 public:
 
   SEHistogramFractionVsLength();
@@ -15,13 +15,6 @@ public:
   virtual void Clear();
 
   virtual bool IsVaild() const;
-
-  static void Load(const cdm::HistogramFractionVsLengthData& src, SEHistogramFractionVsLength& dst);
-  static cdm::HistogramFractionVsLengthData* Unload(const SEHistogramFractionVsLength& src);
-protected:
-  static void Serialize(const cdm::HistogramFractionVsLengthData& src, SEHistogramFractionVsLength& dst);
-  static void Serialize(const SEHistogramFractionVsLength& src, cdm::HistogramFractionVsLengthData& dst);
-public:
 
   virtual double                     GetFractionValue(size_t index) const;
   virtual std::vector<double>&       GetFraction();

@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarArea.h"
-#include "bind/cdm/Properties.pb.h"
 
 const AreaUnit AreaUnit::cm2("cm^2");
 const AreaUnit AreaUnit::m2("m^2");
@@ -26,26 +25,4 @@ const AreaUnit& AreaUnit::GetCompoundUnit(const std::string& unit)
   std::stringstream err;
   err << unit << " is not a valid Area unit";
   throw CommonDataModelException(err.str());
-}
-
-void SEScalarArea::Load(const cdm::ScalarAreaData& src, SEScalarArea& dst)
-{
-  SEScalarArea::Serialize(src, dst);
-}
-void SEScalarArea::Serialize(const cdm::ScalarAreaData& src, SEScalarArea& dst)
-{
-  SEUnitScalar::Serialize(src.scalararea(), dst);
-}
-
-cdm::ScalarAreaData* SEScalarArea::Unload(const SEScalarArea& src)
-{
-  if (!src.IsValid())
-    return nullptr;
-  cdm::ScalarAreaData* dst = new cdm::ScalarAreaData();
-  Serialize(src, *dst);
-  return dst;
-}
-void SEScalarArea::Serialize(const SEScalarArea& src, cdm::ScalarAreaData& dst)
-{
-  SEUnitScalar::Serialize(src, *dst.mutable_scalararea());
 }

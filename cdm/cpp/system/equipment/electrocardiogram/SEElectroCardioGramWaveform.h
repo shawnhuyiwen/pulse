@@ -2,9 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-CDM_BIND_DECL(ElectroCardioGramWaveformData)
 #include "system/physiology/SECardiovascularSystem.h"
-
 
 // Keep enums in sync with appropriate schema/cdm/CompartmentEnums.proto file !!
 enum class eElectroCardioGram_WaveformLead { NullLead = 0, 
@@ -25,6 +23,7 @@ extern const std::string& eElectroCardioGram_WaveformLead_Name(eElectroCardioGra
 
 class CDM_DECL SEElectroCardioGramWaveform : public Loggable
 {
+  friend class PBElectroCardioGram;//friend the serialization class
 public:
 
   SEElectroCardioGramWaveform(Logger* logger);
@@ -32,13 +31,6 @@ public:
 
   virtual void Clear();// Deletes all members
 
-  static void Load(const cdm::ElectroCardioGramWaveformData& src, SEElectroCardioGramWaveform& dst);
-  static cdm::ElectroCardioGramWaveformData* Unload(const SEElectroCardioGramWaveform& src);
-protected:
-  static void Serialize(const cdm::ElectroCardioGramWaveformData& src, SEElectroCardioGramWaveform& dst);
-  static void Serialize(const SEElectroCardioGramWaveform& src, cdm::ElectroCardioGramWaveformData& dst);
-
-public:  
   virtual bool HasLeadNumber() const;
   virtual eElectroCardioGram_WaveformLead  GetLeadNumber() const;
   virtual void SetLeadNumber(eElectroCardioGram_WaveformLead n);

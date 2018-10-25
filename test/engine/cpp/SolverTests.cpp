@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 #include "EngineTest.h"
-#include "Controller/Controller.h"
-#include "Controller/Circuits.h"
+#include "controller/Controller.h"
+#include "controller/Circuits.h"
 #include "PulseConfiguration.h"
 
 #include "patient/SEPatient.h"
@@ -45,7 +45,7 @@ void PulseEngineTest::SolverSpeedTest(const std::string& rptDirectory)
   bool showAllOutput = true; //toggle this to show all Info outputs for all circuits, which will show first-pass solve times and fail rates
 
   PulseController pc(tsSolverSpeed.GetLogger());
-  pc.GetPatient().LoadFile("./patients/StandardMale.pba");
+  pc.GetPatient().SerializeFromFile("./patients/StandardMale.pba",ASCII);
   pc.SetupPatient();
   pc.m_Config->EnableRenal(eSwitch::On);
   pc.m_Config->EnableTissue(eSwitch::On);

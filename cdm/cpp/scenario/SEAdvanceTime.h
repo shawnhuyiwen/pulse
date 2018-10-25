@@ -3,10 +3,10 @@
 
 #pragma once
 #include "scenario/SEAction.h"
-CDM_BIND_DECL(AdvanceTimeData)
 
 class CDM_DECL SEAdvanceTime : public SEAction
 {
+  friend class PBAction;//friend the serialization class
 public:
 
   SEAdvanceTime();
@@ -15,14 +15,6 @@ public:
   virtual void Clear(); //clear memory
 
   virtual bool IsValid() const;
-
-  static void Load(const cdm::AdvanceTimeData& src, SEAdvanceTime& dst);
-  static cdm::AdvanceTimeData* Unload(const SEAdvanceTime& src);
-protected:
-  static void Serialize(const cdm::AdvanceTimeData& src, SEAdvanceTime& dst);
-  static void Serialize(const SEAdvanceTime& src, cdm::AdvanceTimeData& dst);
-
-public:
 
   virtual void ToString(std::ostream &str) const;
 
@@ -33,4 +25,4 @@ public:
 protected:
 
   SEScalarTime *m_Time;
-};                  
+};

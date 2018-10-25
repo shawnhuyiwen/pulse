@@ -4,6 +4,8 @@
 #pragma once
 
 
+bool CDM_DECL WriteFile(const std::string& content, const std::string& filename, SerializationMode m);
+std::string CDM_DECL ReadFile(const std::string& filename, SerializationMode m);
 bool CDM_DECL CreateFilePath(const std::string&);
 std::string CDM_DECL Replace(const std::string& original, const std::string& replace, const std::string& withThis);
 void CDM_DECL ListFiles(const std::string& dir, std::vector<std::string>& files, const std::string& mask = "");

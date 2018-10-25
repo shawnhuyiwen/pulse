@@ -1,10 +1,10 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 #pragma once
-CDM_BIND_DECL(EnvironmentData_ActiveConditioningData)
 
 class CDM_DECL SEActiveConditioning : public Loggable
 {
+  friend class PBEnvironment;//friend the serialization class
 public:
 
   SEActiveConditioning(Logger* logger);
@@ -12,14 +12,6 @@ public:
 
   virtual void Clear();
   virtual void Reset();
-
-  static void Load(const cdm::EnvironmentData_ActiveConditioningData& src, SEActiveConditioning& dst);
-  static cdm::EnvironmentData_ActiveConditioningData* Unload(const SEActiveConditioning& src);
-protected:
-  static void Serialize(const cdm::EnvironmentData_ActiveConditioningData& src, SEActiveConditioning& dst);
-  static void Serialize(const SEActiveConditioning& src, cdm::EnvironmentData_ActiveConditioningData& dst);
-
-public:
 
   virtual const SEScalar* GetScalar(const std::string& name);
 

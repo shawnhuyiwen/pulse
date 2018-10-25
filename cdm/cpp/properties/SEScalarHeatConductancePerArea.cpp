@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarHeatConductancePerArea.h"
-#include "bind/cdm/Properties.pb.h"
 
 const HeatConductancePerAreaUnit HeatConductancePerAreaUnit::W_Per_m2_K("W/m^2 K");
 const HeatConductancePerAreaUnit HeatConductancePerAreaUnit::W_Per_m2_C("W/m^2 degC");
@@ -31,26 +30,4 @@ const HeatConductancePerAreaUnit& HeatConductancePerAreaUnit::GetCompoundUnit(co
   std::stringstream err;
   err << unit << " is not a valid HeatConductancePerArea unit";
   throw CommonDataModelException(err.str());
-}
-
-void SEScalarHeatConductancePerArea::Load(const cdm::ScalarHeatConductancePerAreaData& src, SEScalarHeatConductancePerArea& dst)
-{
-  SEScalarHeatConductancePerArea::Serialize(src, dst);
-}
-void SEScalarHeatConductancePerArea::Serialize(const cdm::ScalarHeatConductancePerAreaData& src, SEScalarHeatConductancePerArea& dst)
-{
-  SEUnitScalar::Serialize(src.scalarheatconductanceperarea(), dst);
-}
-
-cdm::ScalarHeatConductancePerAreaData* SEScalarHeatConductancePerArea::Unload(const SEScalarHeatConductancePerArea& src)
-{
-  if (!src.IsValid())
-    return nullptr;
-  cdm::ScalarHeatConductancePerAreaData* dst = new cdm::ScalarHeatConductancePerAreaData();
-  Serialize(src, *dst);
-  return dst;
-}
-void SEScalarHeatConductancePerArea::Serialize(const SEScalarHeatConductancePerArea& src, cdm::ScalarHeatConductancePerAreaData& dst)
-{
-  SEUnitScalar::Serialize(src, *dst.mutable_scalarheatconductanceperarea());
 }

@@ -119,7 +119,7 @@ void HowToMechanicalVentilation()
   std::vector<const SECondition*> conditions;
   if (true) //Healthy - i.e., no chronic conditions
   {
-    if (!pe->LoadStateFile("./states/StandardMale@0s.pba")) //Select which patient
+    if (!pe->SerializeFromFile("./states/StandardMale@0s.pba", ASCII))// Select patient
     {
       pe->GetLogger()->Error("Could not load state, check the error");
       return;

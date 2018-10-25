@@ -4,7 +4,6 @@
 #pragma once
 class SETestCase;
 class SETestSuite;
-namespace cdm { class TestReportData_TestErrorStatisticsData;  }
 
 // This data class is intended for use in array based data
 // Each value in the array is compared and can be tracked
@@ -12,6 +11,7 @@ namespace cdm { class TestReportData_TestErrorStatisticsData;  }
 // were wrong and some statistics to go along with all of those errors
 class CDM_DECL SETestErrorStatistics : public Loggable
 {
+  friend class PBTestReport;//friend the serialization class
   friend SETestCase;
   friend SETestSuite;
 protected:
@@ -21,14 +21,6 @@ public:
 
   virtual void Reset(); //reset values
   virtual void Clear(); //clear memory
-
-  static void Load(const cdm::TestReportData_TestErrorStatisticsData& src, SETestErrorStatistics& dst);
-  static cdm::TestReportData_TestErrorStatisticsData* Unload(const SETestErrorStatistics& src);
-protected:
-  static void Serialize(const cdm::TestReportData_TestErrorStatisticsData& src, SETestErrorStatistics& dst);
-  static void Serialize(const SETestErrorStatistics& src, cdm::TestReportData_TestErrorStatisticsData& dst);
-
-public:
 
   void             SetPropertyName(const std::string& PropertyName);              
   std::string      GetPropertyName() const;

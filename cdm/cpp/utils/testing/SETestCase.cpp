@@ -5,7 +5,6 @@
 #include "utils/testing/SETestCase.h"
 #include "utils/testing/SETestErrorStatistics.h"
 #include "properties/SEScalarTime.h"
-#include "bind/cdm/TestReport.pb.h"
 
 SETestCase::SETestCase(Logger* logger) : SETestCase("default", logger)
 {
@@ -35,50 +34,6 @@ void SETestCase::Reset()
   m_Failure.clear();
   m_Duration->SetValue(0,TimeUnit::s);
   DELETE_VECTOR(m_CaseEqualsErrors);
-}
-
-void SETestCase::Load(const cdm::TestReportData_TestCaseData& src, SETestCase& dst)
-{
-  SETestCase::Serialize(src, dst);
-}
-void SETestCase::Serialize(const cdm::TestReportData_TestCaseData& src, SETestCase& dst)
-{
-  dst.Clear();
-
-  dst.m_Name = src.name();
-  if(src.has_duration())
-    SEScalarTime::Load(src.duration(), dst.GetDuration());
-
-  SETestErrorStatistics* ex;
-  for (int i = 0; i<src.errorstats_size(); i++)
-  {
-    auto eData = src.errorstats(i);
-    ex = new SETestErrorStatistics(dst.GetLogger());
-    SETestErrorStatistics::Load(eData, *ex);
-    dst.m_CaseEqualsErrors.push_back(ex);
-  }
-
-  for (int i=0; i<src.failure_size(); i++)
-    dst.m_Failure.push_back(src.failure(i));
-}
-
-cdm::TestReportData_TestCaseData* SETestCase::Unload(const SETestCase& src)
-{
-  cdm::TestReportData_TestCaseData* dst = new cdm::TestReportData_TestCaseData();
-  SETestCase::Serialize(src,*dst);
-  return dst;
-}
-void SETestCase::Serialize(const SETestCase& src, cdm::TestReportData_TestCaseData& dst)
-{
-  dst.set_name(src.m_Name);
-
-  dst.set_allocated_duration(SEScalarTime::Unload(*src.m_Duration));
-
-  for (std::string s : src.m_Failure)
-    dst.mutable_failure()->Add(s.c_str());
-
-  for (auto s : src.m_CaseEqualsErrors)
-    dst.mutable_errorstats()->AddAllocated(SETestErrorStatistics::Unload(*s));
 }
 
 void SETestCase::SetName(const std::string& Name)

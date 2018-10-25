@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarForce.h"
-#include "bind/cdm/Properties.pb.h"
 
 const ForceUnit ForceUnit::N("N");
 const ForceUnit ForceUnit::lbf("lbf");
@@ -31,26 +30,4 @@ const ForceUnit& ForceUnit::GetCompoundUnit(const std::string& unit)
   std::stringstream err;
   err << unit << " is not a valid Force unit";
   throw CommonDataModelException(err.str());
-}
-
-void SEScalarForce::Load(const cdm::ScalarForceData& src, SEScalarForce& dst)
-{
-  SEScalarForce::Serialize(src, dst);
-}
-void SEScalarForce::Serialize(const cdm::ScalarForceData& src, SEScalarForce& dst)
-{
-  SEUnitScalar::Serialize(src.scalarforce(), dst);
-}
-
-cdm::ScalarForceData* SEScalarForce::Unload(const SEScalarForce& src)
-{
-  if (!src.IsValid())
-    return nullptr;
-  cdm::ScalarForceData* dst = new cdm::ScalarForceData();
-  Serialize(src, *dst);
-  return dst;
-}
-void SEScalarForce::Serialize(const SEScalarForce& src, cdm::ScalarForceData& dst)
-{
-  SEUnitScalar::Serialize(src, *dst.mutable_scalarforce());
 }

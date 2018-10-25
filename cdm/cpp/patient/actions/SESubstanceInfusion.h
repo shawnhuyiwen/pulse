@@ -3,28 +3,21 @@
 
 #pragma once
 #include "patient/actions/SESubstanceAdministration.h"
-CDM_BIND_DECL(SubstanceInfusionData)
 class SESubstance;
 
 class CDM_DECL SESubstanceInfusion : public SESubstanceAdministration
 {
+  friend class PBPatientAction;//friend the serialization class
 public:
 
   SESubstanceInfusion(const SESubstance& substance);
   virtual ~SESubstanceInfusion();
 
   virtual void Clear(); //clear memory
+  virtual void Copy(const SESubstanceInfusion& src);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
-
-  static void Load(const cdm::SubstanceInfusionData& src, SESubstanceInfusion& dst);
-  static cdm::SubstanceInfusionData* Unload(const SESubstanceInfusion& src);
-protected:
-  static void Serialize(const cdm::SubstanceInfusionData& src, SESubstanceInfusion& dst);
-  static void Serialize(const SESubstanceInfusion& src, cdm::SubstanceInfusionData& dst);
-
-public:
 
   virtual bool HasConcentration() const;
   virtual SEScalarMassPerVolume& GetConcentration();

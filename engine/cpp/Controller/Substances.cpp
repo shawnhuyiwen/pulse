@@ -2,10 +2,10 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "Controller/Substances.h"
-#include "Controller/Compartments.h"
-#include "Controller/Controller.h"
-#include "Systems/Saturation.h"
+#include "controller/Substances.h"
+#include "controller/Compartments.h"
+#include "controller/Controller.h"
+#include "physiology/Saturation.h"
 
 #include "patient/SEPatient.h"
 #include "substance/SESubstance.h"
@@ -714,9 +714,9 @@ void PulseSubstances::InitializeLiquidCompartmentNonGases()
   SetSubstanceMolarity(*m_urea, tissue, molarity1);
 }
 
-bool PulseSubstances::LoadSubstances()
+bool PulseSubstances::LoadSubstanceDirectory()
 {
-  if (!SESubstanceManager::LoadSubstances())
+  if (!SESubstanceManager::LoadSubstanceDirectory())
     return false;
 
   m_O2 = GetSubstance("Oxygen");

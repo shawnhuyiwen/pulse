@@ -7,8 +7,7 @@
 #include "properties/SEScalarTime.h"
 #include "properties/SEScalarElectricPotential.h"
 #include "properties/SEFunctionElectricPotentialVsTime.h"
-#include <google/protobuf/text_format.h>
-#include "bind/cdm/ElectroCardioGram.pb.h"
+#include "io/protobuf/PBElectroCardioGram.h"
 
 SEElectroCardioGramWaveformInterpolator::SEElectroCardioGramWaveformInterpolator(Logger* logger) : Loggable(logger)
 {
@@ -29,48 +28,31 @@ void SEElectroCardioGramWaveformInterpolator::Clear()
   m_Leads.clear();
 }
 
-void SEElectroCardioGramWaveformInterpolator::Load(const cdm::ElectroCardioGramWaveformListData& src, SEElectroCardioGramWaveformInterpolator& dst)
+void SEElectroCardioGramWaveformInterpolator::Copy(const SEElectroCardioGramWaveformInterpolator& src)
 {
-  SEElectroCardioGramWaveformInterpolator::Serialize(src, dst);
-}
-void SEElectroCardioGramWaveformInterpolator::Serialize(const cdm::ElectroCardioGramWaveformListData& src, SEElectroCardioGramWaveformInterpolator& dst)
-{
-  dst.Clear();
-  for (int i = 0; i < src.waveform_size(); i++)
-  {
-    SEElectroCardioGramWaveform* waveform = new SEElectroCardioGramWaveform(dst.GetLogger());
-    SEElectroCardioGramWaveform::Load(src.waveform()[i], *waveform);
-    dst.m_Waveforms[waveform->GetLeadNumber()][waveform->GetRhythm()] = waveform;
-  }
+  PBElectroCardioGram::Copy(src, *this);
 }
 
-cdm::ElectroCardioGramWaveformListData* SEElectroCardioGramWaveformInterpolator::Unload(const SEElectroCardioGramWaveformInterpolator& src)
+bool SEElectroCardioGramWaveformInterpolator::SerializeToString(std::string& output, SerializationMode m) const
 {
-  cdm::ElectroCardioGramWaveformListData* dst = new cdm::ElectroCardioGramWaveformListData();
-  SEElectroCardioGramWaveformInterpolator::Serialize(src, *dst);
-  return dst;
+  return PBElectroCardioGram::SerializeToString(*this, output, m);
 }
-void SEElectroCardioGramWaveformInterpolator::Serialize(const SEElectroCardioGramWaveformInterpolator& src, cdm::ElectroCardioGramWaveformListData& dst)
+bool SEElectroCardioGramWaveformInterpolator::SerializeToFile(const std::string& filename, SerializationMode m) const
 {
-  for (auto i : src.m_Waveforms)
-    for (auto j : i.second)
-      dst.mutable_waveform()->AddAllocated(SEElectroCardioGramWaveform::Unload(*j.second));
+  return PBElectroCardioGram::SerializeToFile(*this, filename, m);
 }
-
-bool SEElectroCardioGramWaveformInterpolator::LoadFile(const std::string& file, const SEScalarTime* timeStep)
+bool SEElectroCardioGramWaveformInterpolator::SerializeFromString(const std::string& src, SerializationMode m, const SEScalarTime* timeStep)
 {
-  Clear();
-  cdm::ElectroCardioGramWaveformListData src;
-  std::ifstream file_stream(file, std::ios::in);
-  std::string fmsg((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
-  if (!google::protobuf::TextFormat::ParseFromString(fmsg, &src))
+  if (!PBElectroCardioGram::SerializeFromString(src, *this, m))
     return false;
-  SEElectroCardioGramWaveformInterpolator::Load(src, *this);
-
-  // If its a binary string in the file...
-  //std::ifstream binary_istream(patientFile, std::ios::in | std::ios::binary);
-  //src.ParseFromIstream(&binary_istream);
-
+  if (timeStep != nullptr)
+    Interpolate(*timeStep);
+  return true;
+}
+bool SEElectroCardioGramWaveformInterpolator::SerializeFromFile(const std::string& filename, SerializationMode m, const SEScalarTime* timeStep)
+{
+  if (!PBElectroCardioGram::SerializeFromFile(filename, *this, m))
+    return false;
   if (timeStep != nullptr)
     Interpolate(*timeStep);
   return true;
@@ -112,12 +94,72 @@ void SEElectroCardioGramWaveformInterpolator::Interpolate(SEElectroCardioGramWav
       iTime.push_back(currentTime_s);
       currentTime_s += timeStep_s;
     }
-    SEFunctionElectricPotentialVsTime* iWaveForm = data.InterpolateToTime(iTime, TimeUnit::s); // creates the new waveform data
-    cdm::FunctionElectricPotentialVsTimeData* wfData = SEFunctionElectricPotentialVsTime::Unload(*iWaveForm);
-    SEFunctionElectricPotentialVsTime::Load(*wfData, data);
-    delete wfData;
-    delete iWaveForm;
+    if (!InterpolateToTime(data, iTime, TimeUnit::s)) // sets new wavefor based on the old waveform data
+      throw new CommonDataModelException("Could not Interpolate to provided time");
   }
+}
+
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Interpolates the original data to match the provided time series
+///
+/// \param  newTime  vector of the new time values
+/// \param  unit    the unit to use when creating the output
+///
+/// \return the new waveform data
+///
+/// \details
+/// This function creates the new waveform data for the ECG output by interpolating the data from the
+/// original file. It inherits m_Independent and m_Dependent from the original data and calls
+/// GeneralMath::LinearInterpolator to create the new vector of voltage points that correspond to the 
+/// time points in newTime. It is then assigned the unit of the original data and output as the new
+/// waveform.
+//--------------------------------------------------------------------------------------------------
+bool SEElectroCardioGramWaveformInterpolator::InterpolateToTime(SEFunctionElectricPotentialVsTime& waveform, std::vector<double>& newTime, const TimeUnit& unit)
+{
+  if (!waveform.IsValid())
+    return false;
+  std::vector<double> newElectricPotential;
+
+  //m_Independent;// Original X (Time)
+  //m_Dependent;// Original Y (ElectricPotential)
+  double x1, x2, y1, y2, xPrime, yPrime;
+  unsigned int x1Index = 0;
+
+  for (unsigned int newTimeIterator = 0; newTimeIterator < newTime.size(); newTimeIterator++)
+  {
+    xPrime = newTime[newTimeIterator]; // new time point
+
+    //find x1
+    while (x1Index < newTime.size() - 2 &&
+      waveform.GetTimeValue(x1Index + 1, unit) <= xPrime)
+    {
+      x1Index++;
+    }
+
+    const ElectricPotentialUnit& epUnit = *waveform.GetElectricPotentialUnit();
+    // get the points needed for interpolation.
+    x1 = waveform.GetTimeValue(x1Index, unit);
+    x2 = waveform.GetTimeValue(x1Index + 1, unit);
+    y1 = waveform.GetElectricPotentialValue(x1Index, epUnit);
+    y2 = waveform.GetElectricPotentialValue(x1Index + 1, epUnit);
+
+    //Shouldn't need this, but just to be sure we don't go beyond the data
+    if (xPrime > x2)
+    {
+      xPrime = x2;
+    }
+
+    // call general math function LinearInterpolator to find yPrime at xPrime, xPrime must be between x1 and x2
+    yPrime = GeneralMath::LinearInterpolator(x1, x2, y1, y2, xPrime);
+    // populate the voltage vector
+    newElectricPotential.push_back(yPrime);
+  }
+  waveform.GetTime() = newTime;
+  waveform.GetElectricPotential() = newElectricPotential;
+  if (!waveform.IsValid())
+    return false;
+  return true;
 }
 
 bool SEElectroCardioGramWaveformInterpolator::CanInterpolateLeadPotential(eElectroCardioGram_WaveformLead lead, eHeartRhythm rhythm) const

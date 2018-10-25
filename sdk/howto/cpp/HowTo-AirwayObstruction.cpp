@@ -35,7 +35,7 @@ void HowToAirwayObstruction()
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowToAirwayObstruction.log");
   
   pe->GetLogger()->Info("HowToAirwayObstruction");
-  if (!pe->LoadStateFile("./states/StandardMale@0s.pba"))
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.pba", ASCII))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
@@ -45,7 +45,7 @@ void HowToAirwayObstruction()
   HowToTracker tracker(*pe);
 
   // Create data requests for each value that should be written to the output log as the engine is executing
-  // Physiology System Names are defined on the System Objects 
+  // Physiology System Names are defined on the System Objects
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);

@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarVolumePerTimeArea.h"
-#include "bind/cdm/Properties.pb.h"
 
 const VolumePerTimeAreaUnit VolumePerTimeAreaUnit::mL_Per_min_m2("mL/min m^2");
 const VolumePerTimeAreaUnit VolumePerTimeAreaUnit::mL_Per_s_m2("mL/s m^2");
@@ -31,26 +30,4 @@ const VolumePerTimeAreaUnit& VolumePerTimeAreaUnit::GetCompoundUnit(const std::s
   std::stringstream err;
   err << unit << " is not a valid VolumePerTimeArea unit";
   throw CommonDataModelException(err.str());
-}
-
-void SEScalarVolumePerTimeArea::Load(const cdm::ScalarVolumePerTimeAreaData& src, SEScalarVolumePerTimeArea& dst)
-{
-  SEScalarVolumePerTimeArea::Serialize(src, dst);
-}
-void SEScalarVolumePerTimeArea::Serialize(const cdm::ScalarVolumePerTimeAreaData& src, SEScalarVolumePerTimeArea& dst)
-{
-  SEUnitScalar::Serialize(src.scalarvolumepertimearea(), dst);
-}
-
-cdm::ScalarVolumePerTimeAreaData* SEScalarVolumePerTimeArea::Unload(const SEScalarVolumePerTimeArea& src)
-{
-  if (!src.IsValid())
-    return nullptr;
-  cdm::ScalarVolumePerTimeAreaData* dst = new cdm::ScalarVolumePerTimeAreaData();
-  Serialize(src, *dst);
-  return dst;
-}
-void SEScalarVolumePerTimeArea::Serialize(const SEScalarVolumePerTimeArea& src, cdm::ScalarVolumePerTimeAreaData& dst)
-{
-  SEUnitScalar::Serialize(src, *dst.mutable_scalarvolumepertimearea());
 }

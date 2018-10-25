@@ -3,7 +3,6 @@
 
 #pragma once
 #include "properties/SEScalar.h"
-CDM_BIND_DECL(ScalarInverseVolumeData)
 
 class CDM_DECL InverseVolumeUnit : public CCompoundUnit
 {
@@ -23,10 +22,4 @@ class CDM_DECL SEScalarInverseVolume : public SEScalarQuantity<InverseVolumeUnit
 public:
   SEScalarInverseVolume() {}
   virtual ~SEScalarInverseVolume() {}
-
-  static void Load(const cdm::ScalarInverseVolumeData& src, SEScalarInverseVolume& dst);
-  static cdm::ScalarInverseVolumeData* Unload(const SEScalarInverseVolume& src);
-protected:
-  static void Serialize(const cdm::ScalarInverseVolumeData& src, SEScalarInverseVolume& dst);
-  static void Serialize(const SEScalarInverseVolume& src, cdm::ScalarInverseVolumeData& dst);
 };

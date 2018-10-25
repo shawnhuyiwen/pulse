@@ -4,10 +4,10 @@
 
 
 #include "EngineTest.h"
-#include "Controller/Controller.h"
-#include "Controller/Substances.h"
-#include "Controller/Circuits.h"
-#include "Controller/Compartments.h"
+#include "controller/Controller.h"
+#include "controller/Substances.h"
+#include "controller/Circuits.h"
+#include "controller/Compartments.h"
 #include "PulseConfiguration.h"
 #include "patient/SEPatient.h"
 #include "substance/SESubstanceFraction.h"
@@ -50,13 +50,13 @@ void PulseEngineTest::AnesthesiaMachineCircuitAndTransportTest(RespiratoryConfig
   std::ofstream fileGraph;
   
   PulseController pc(sTestDirectory + "/AnesthesiaMachineCircuitAndTransportTest.log");
-  pc.GetPatient().LoadFile("./patients/StandardMale.pba");
+  pc.GetPatient().SerializeFromFile("./patients/StandardMale.pba",ASCII);
   pc.SetupPatient();
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
   SEEnvironmentalConditions env(pc.GetSubstances());
-  env.LoadFile("./environments/Standard.pba");
+  env.SerializeFromFile("./environments/Standard.pba",ASCII);
   SEGasCompartment* cEnv = pc.GetCompartments().GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
   for (SESubstanceFraction* subFrac : env.GetAmbientGases())
   {

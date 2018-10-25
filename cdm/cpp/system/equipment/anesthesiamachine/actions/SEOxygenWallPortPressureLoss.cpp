@@ -3,7 +3,7 @@
 #include "stdafx.h"
 #include "system/equipment/anesthesiamachine/actions/SEOxygenWallPortPressureLoss.h"
 #include "properties/SEScalar0To1.h"
-#include "bind/cdm/AnesthesiaMachineActions.pb.h"
+#include "io/protobuf/PBAnesthesiaMachineActions.h"
 
 SEOxygenWallPortPressureLoss::SEOxygenWallPortPressureLoss() : SEAnesthesiaMachineAction()
 {
@@ -21,6 +21,11 @@ void SEOxygenWallPortPressureLoss::Clear()
   m_State = eSwitch::Off;
 }
 
+void SEOxygenWallPortPressureLoss::Copy(const SEOxygenWallPortPressureLoss& src)
+{// Using Bindings to make a copy
+  PBAnesthesiaMachineAction::Copy(src, *this);
+}
+
 bool SEOxygenWallPortPressureLoss::IsValid() const
 {
   return SEAnesthesiaMachineAction::IsValid();
@@ -32,28 +37,6 @@ bool SEOxygenWallPortPressureLoss::IsActive() const
 void SEOxygenWallPortPressureLoss::SetActive(bool b)
 {
   m_State = b ? eSwitch::On : eSwitch::Off;
-}
-
-void SEOxygenWallPortPressureLoss::Load(const cdm::OxygenWallPortPressureLossData& src, SEOxygenWallPortPressureLoss& dst)
-{
-  SEOxygenWallPortPressureLoss::Serialize(src, dst);
-}
-void SEOxygenWallPortPressureLoss::Serialize(const cdm::OxygenWallPortPressureLossData& src, SEOxygenWallPortPressureLoss& dst)
-{
-  SEAnesthesiaMachineAction::Serialize(src.anesthesiamachineaction(), dst);
-  dst.SetActive(src.state() == cdm::eSwitch::On ? true : false);
-}
-
-cdm::OxygenWallPortPressureLossData* SEOxygenWallPortPressureLoss::Unload(const SEOxygenWallPortPressureLoss& src)
-{
-  cdm::OxygenWallPortPressureLossData* dst = new cdm::OxygenWallPortPressureLossData();
-  SEOxygenWallPortPressureLoss::Serialize(src, *dst);
-  return dst;
-}
-void SEOxygenWallPortPressureLoss::Serialize(const SEOxygenWallPortPressureLoss& src, cdm::OxygenWallPortPressureLossData& dst)
-{
-  SEAnesthesiaMachineAction::Serialize(src, *dst.mutable_anesthesiamachineaction());
-  dst.set_state(src.IsActive() ? cdm::eSwitch::On : cdm::eSwitch::Off);
 }
 
 void SEOxygenWallPortPressureLoss::ToString(std::ostream &str) const

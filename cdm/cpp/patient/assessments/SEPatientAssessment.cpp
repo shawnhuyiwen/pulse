@@ -19,13 +19,3 @@ void SEPatientAssessment::Clear()
 {
   
 }
-
-void SEPatientAssessment::Serialize(const cdm::PatientAssessmentData& src, SEPatientAssessment& dst)
-{
-  dst.Clear();
-}
-
-void SEPatientAssessment::Serialize(const SEPatientAssessment& src, cdm::PatientAssessmentData& dst)
-{
-
-}

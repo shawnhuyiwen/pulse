@@ -7,18 +7,21 @@ class Serializer;
 class SESubstance;
 class SESubstanceManager;
 class SEInhalerConfiguration;
-CDM_BIND_DECL(InhalerData)
 
 class CDM_DECL SEInhaler : public SESystem
 {
-protected:
-
+  friend class PBInhaler;//friend the serialization class
 public:
 
   SEInhaler(SESubstanceManager& substances);
   virtual ~SEInhaler();
 
   virtual void Clear();
+
+  bool SerializeToString(std::string& output, SerializationMode m) const;
+  bool SerializeToFile(const std::string& filename, SerializationMode m) const;
+  bool SerializeFromString(const std::string& src, SerializationMode m);
+  bool SerializeFromFile(const std::string& filename, SerializationMode m);
 
   /** @name GetScalar
   *   @brief - A reflextion type call that will return the Scalar associated
@@ -30,12 +33,7 @@ public:
   */
   virtual const SEScalar* GetScalar(const std::string& name);
 
-  static void Load(const cdm::InhalerData& src, SEInhaler& dst);
-  static cdm::InhalerData* Unload(const SEInhaler& src);
 protected:
-  static void Serialize(const cdm::InhalerData& src, SEInhaler& dst);
-  static void Serialize(const SEInhaler& src, cdm::InhalerData& dst);
-
   /** @name StateChange
   *   @brief - This method is called when ever there is a state change
   *            Specically a new file has been loaded, configuration action, or the system reset
@@ -46,8 +44,6 @@ protected:
   virtual void ProcessConfiguration(const SEInhalerConfiguration& config);
 
 public:
-
-  bool LoadFile(const std::string& inhalerFile);
 
   virtual eSwitch GetState() const;
   virtual void SetState(eSwitch name);

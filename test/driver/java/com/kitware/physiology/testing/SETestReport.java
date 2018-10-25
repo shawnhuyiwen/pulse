@@ -7,7 +7,7 @@ import java.util.*;
 import com.google.protobuf.TextFormat;
 import com.google.protobuf.TextFormat.ParseException;
 import com.kitware.physiology.cdm.TestReport.TestReportData;
-import com.kitware.physiology.cdm.TestReport.TestReportData.TestSuiteData;
+import com.kitware.physiology.cdm.TestReport.TestSuiteData;
 import com.kitware.physiology.datamodel.properties.CommonUnits.TimeUnit;
 import com.kitware.physiology.utilities.FileUtils;
 import com.kitware.physiology.utilities.Log;

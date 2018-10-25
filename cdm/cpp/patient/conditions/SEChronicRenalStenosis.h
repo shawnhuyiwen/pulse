@@ -3,27 +3,21 @@
 
 #pragma once
 #include "patient/conditions/SEPatientCondition.h"
-CDM_BIND_DECL(ChronicRenalStenosisData)
 
 class CDM_DECL SEChronicRenalStenosis : public SEPatientCondition
 {
+  friend class PBPatientCondition;//friend the serialization class
 public:
 
   SEChronicRenalStenosis();
   virtual ~SEChronicRenalStenosis();
 
   virtual void Clear(); //clear memory
+  virtual void Copy(const SEChronicRenalStenosis& src);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
 
-  static void Load(const cdm::ChronicRenalStenosisData& src, SEChronicRenalStenosis& dst);
-  static cdm::ChronicRenalStenosisData* Unload(const SEChronicRenalStenosis& src);
-protected:
-  static void Serialize(const cdm::ChronicRenalStenosisData& src, SEChronicRenalStenosis& dst);
-  static void Serialize(const SEChronicRenalStenosis& src, cdm::ChronicRenalStenosisData& dst);
-
-public:
   virtual std::string GetName() const { return "ChronicRenalStenosis"; }
 
   virtual bool HasLeftKidneySeverity() const;

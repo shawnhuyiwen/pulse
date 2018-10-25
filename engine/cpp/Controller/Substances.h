@@ -36,7 +36,7 @@ public:
   virtual ~PulseSubstances() = default;
 
   virtual void Clear();
-  virtual bool LoadSubstances();
+  virtual bool LoadSubstanceDirectory();
 
   virtual void InitializeSubstances();
 

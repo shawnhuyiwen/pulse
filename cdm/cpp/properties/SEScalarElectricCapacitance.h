@@ -3,7 +3,6 @@
 
 #pragma once
 #include "properties/SEScalar.h"
-CDM_BIND_DECL(ScalarElectricCapacitanceData)
 
 class CDM_DECL ElectricCapacitanceUnit : public CCompoundUnit
 {
@@ -22,10 +21,4 @@ class CDM_DECL SEScalarElectricCapacitance : public SEScalarQuantity<ElectricCap
 public:
   SEScalarElectricCapacitance(){}
   virtual ~SEScalarElectricCapacitance() {}
-
-  static void Load(const cdm::ScalarElectricCapacitanceData& src, SEScalarElectricCapacitance& dst);
-  static cdm::ScalarElectricCapacitanceData* Unload(const SEScalarElectricCapacitance& src);
-protected:
-  static void Serialize(const cdm::ScalarElectricCapacitanceData& src, SEScalarElectricCapacitance& dst);
-  static void Serialize(const SEScalarElectricCapacitance& src, cdm::ScalarElectricCapacitanceData& dst);
 };

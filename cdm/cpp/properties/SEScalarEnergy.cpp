@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarEnergy.h"
-#include "bind/cdm/Properties.pb.h"
 
 const EnergyUnit EnergyUnit::J("J");
 const EnergyUnit EnergyUnit::mJ("mJ");
@@ -36,26 +35,4 @@ const EnergyUnit& EnergyUnit::GetCompoundUnit(const std::string& unit)
   std::stringstream err;
   err << unit << " is not a valid Energy unit";
   throw CommonDataModelException(err.str());
-}
-
-void SEScalarEnergy::Load(const cdm::ScalarEnergyData& src, SEScalarEnergy& dst)
-{
-  SEScalarEnergy::Serialize(src, dst);
-}
-void SEScalarEnergy::Serialize(const cdm::ScalarEnergyData& src, SEScalarEnergy& dst)
-{
-  SEUnitScalar::Serialize(src.scalarenergy(), dst);
-}
-
-cdm::ScalarEnergyData* SEScalarEnergy::Unload(const SEScalarEnergy& src)
-{
-  if (!src.IsValid())
-    return nullptr;
-  cdm::ScalarEnergyData* dst = new cdm::ScalarEnergyData();
-  Serialize(src, *dst);
-  return dst;
-}
-void SEScalarEnergy::Serialize(const SEScalarEnergy& src, cdm::ScalarEnergyData& dst)
-{
-  SEUnitScalar::Serialize(src, *dst.mutable_scalarenergy());
 }

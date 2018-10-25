@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarAmountPerVolume.h"
-#include "bind/cdm/Properties.pb.h"
 
 AmountPerVolumeUnit AmountPerVolumeUnit::mol_Per_L("mol/L");
 AmountPerVolumeUnit AmountPerVolumeUnit::mol_Per_mL("mol/mL");
@@ -46,26 +45,4 @@ const AmountPerVolumeUnit& AmountPerVolumeUnit::GetCompoundUnit(const std::strin
   std::stringstream err;
   err << unit << " is not a valid AmountPerVolume unit";
   throw CommonDataModelException(err.str());
-}
-
-void SEScalarAmountPerVolume::Load(const cdm::ScalarAmountPerVolumeData& src, SEScalarAmountPerVolume& dst)
-{
-  SEScalarAmountPerVolume::Serialize(src, dst);
-}
-void SEScalarAmountPerVolume::Serialize(const cdm::ScalarAmountPerVolumeData& src, SEScalarAmountPerVolume& dst)
-{
-  SEUnitScalar::Serialize(src.scalaramountpervolume(), dst);
-}
-
-cdm::ScalarAmountPerVolumeData* SEScalarAmountPerVolume::Unload(const SEScalarAmountPerVolume& src)
-{
-  if (!src.IsValid())
-    return nullptr;
-  cdm::ScalarAmountPerVolumeData* dst = new cdm::ScalarAmountPerVolumeData();
-  Serialize(src, *dst);
-  return dst;
-}
-void SEScalarAmountPerVolume::Serialize(const SEScalarAmountPerVolume& src, cdm::ScalarAmountPerVolumeData& dst)
-{
-  SEUnitScalar::Serialize(src, *dst.mutable_scalaramountpervolume());
 }

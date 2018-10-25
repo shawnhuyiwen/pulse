@@ -2,7 +2,6 @@
    See accompanying NOTICE file for details.*/
 #include "stdafx.h"
 #include "system/environment/SEActiveConditioning.h"
-#include "bind/cdm/Environment.pb.h"
 #include "properties/SEScalarArea.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarPower.h"
@@ -41,36 +40,6 @@ const SEScalar* SEActiveConditioning::GetScalar(const std::string& name)
   if (name.compare("SurfaceAreaFraction") == 0)
     return &GetSurfaceAreaFraction();
   return nullptr;
-}
-
-void SEActiveConditioning::Load(const cdm::EnvironmentData_ActiveConditioningData& src, SEActiveConditioning& dst)
-{
-  SEActiveConditioning::Serialize(src, dst);
-}
-void SEActiveConditioning::Serialize(const cdm::EnvironmentData_ActiveConditioningData& src, SEActiveConditioning& dst)
-{
-  dst.Clear();
-  if(src.has_power())
-    SEScalarPower::Load(src.power(),dst.GetPower());
-  if (src.has_surfacearea())
-    SEScalarArea::Load(src.surfacearea(),dst.GetSurfaceArea());
-  if (src.has_surfaceareafraction())
-    SEScalar0To1::Load(src.surfaceareafraction(),dst.GetSurfaceAreaFraction());
-}
-cdm::EnvironmentData_ActiveConditioningData* SEActiveConditioning::Unload(const SEActiveConditioning& src)
-{
-  cdm::EnvironmentData_ActiveConditioningData* dst = new cdm::EnvironmentData_ActiveConditioningData();
-  SEActiveConditioning::Serialize(src,*dst);
-  return dst;
-}
-void SEActiveConditioning::Serialize(const SEActiveConditioning& src, cdm::EnvironmentData_ActiveConditioningData& dst)
-{
-  if(src.HasPower())
-   dst.set_allocated_power(SEScalarPower::Unload(*src.m_Power));
-  if (src.HasSurfaceArea())
-    dst.set_allocated_surfacearea(SEScalarArea::Unload(*src.m_SurfaceArea));
-  if (src.HasSurfaceAreaFraction())
-    dst.set_allocated_surfaceareafraction(SEScalar0To1::Unload(*src.m_SurfaceAreaFraction));
 }
 
 bool SEActiveConditioning::HasPower() const

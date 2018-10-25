@@ -3,8 +3,8 @@
 
 #include "stdafx.h"
 #include "patient/actions/SEApnea.h"
-#include "bind/cdm/PatientActions.pb.h"
 #include "properties/SEScalar0To1.h"
+#include "io/protobuf/PBPatientActions.h"
 
 SEApnea::SEApnea() : SEPatientAction()
 {
@@ -18,10 +18,13 @@ SEApnea::~SEApnea()
 
 void SEApnea::Clear()
 {
-  
   SEPatientAction::Clear();
   SAFE_DELETE(m_Severity);
-  
+}
+
+void SEApnea::Copy(const SEApnea& src)
+{
+  PBPatientAction::Copy(src, *this);
 }
 
 bool SEApnea::IsValid() const
@@ -33,31 +36,6 @@ bool SEApnea::IsActive() const
 {
   return IsValid() ? !m_Severity->IsZero() : false;
 }
-
-void SEApnea::Load(const cdm::ApneaData& src, SEApnea& dst)
-{
-  SEApnea::Serialize(src, dst);
-}
-void SEApnea::Serialize(const cdm::ApneaData& src, SEApnea& dst)
-{
-  SEPatientAction::Serialize(src.patientaction(), dst);
-  if (src.has_severity())
-    SEScalar0To1::Load(src.severity(), dst.GetSeverity());
-}
-
-cdm::ApneaData* SEApnea::Unload(const SEApnea& src)
-{
-  cdm::ApneaData* dst = new cdm::ApneaData();
-  SEApnea::Serialize(src, *dst);
-  return dst;
-}
-void SEApnea::Serialize(const SEApnea& src, cdm::ApneaData& dst)
-{
-  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
-  if (src.HasSeverity())
-    dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
-}
-
 
 bool SEApnea::HasSeverity() const
 {

@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarPressure.h"
-#include "bind/cdm/Properties.pb.h"
 
 const PressureUnit PressureUnit::Pa("Pa");
 const PressureUnit PressureUnit::mmHg("mmHg");
@@ -41,26 +40,4 @@ const PressureUnit& PressureUnit::GetCompoundUnit(const std::string& unit)
   std::stringstream err;
   err << unit << " is not a valid Pressure unit";
   throw CommonDataModelException(err.str());
-}
-
-void SEScalarPressure::Load(const cdm::ScalarPressureData& src, SEScalarPressure& dst)
-{
-  SEScalarPressure::Serialize(src, dst);
-}
-void SEScalarPressure::Serialize(const cdm::ScalarPressureData& src, SEScalarPressure& dst)
-{
-  SEUnitScalar::Serialize(src.scalarpressure(), dst);
-}
-
-cdm::ScalarPressureData* SEScalarPressure::Unload(const SEScalarPressure& src)
-{
-  if (!src.IsValid())
-    return nullptr;
-  cdm::ScalarPressureData* dst = new cdm::ScalarPressureData();
-  Serialize(src, *dst);
-  return dst;
-}
-void SEScalarPressure::Serialize(const SEScalarPressure& src, cdm::ScalarPressureData& dst)
-{
-  SEUnitScalar::Serialize(src, *dst.mutable_scalarpressure());
 }

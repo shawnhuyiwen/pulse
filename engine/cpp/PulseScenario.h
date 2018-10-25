@@ -11,6 +11,7 @@ PULSE_BIND_DECL(ScenarioData)
 */
 class PULSE_DECL PulseScenario : public SEScenario
 {
+  friend class PBPulse;//friend the serialization class
 public:
 
   PulseScenario(SESubstanceManager& subMgr);
@@ -18,17 +19,11 @@ public:
 
   virtual void Clear();
 
+  bool SerializeToString(std::string& output, SerializationMode m) const;
+  bool SerializeToFile(const std::string& filename, SerializationMode m) const;
+  bool SerializeFromString(const std::string& src, SerializationMode m);
+  bool SerializeFromFile(const std::string& filename, SerializationMode m);
 
-  bool LoadFile(const std::string& scenarioFile);
-  bool Load(const std::string& str);
-
-  static void Load(const pulse::ScenarioData& src, PulseScenario& dst);
-  static pulse::ScenarioData* Unload(const PulseScenario& src);
-protected:
-  static void Serialize(const pulse::ScenarioData& src, PulseScenario& dst);
-  static void Serialize(const PulseScenario& src, pulse::ScenarioData& dst);
-  
-public:
   virtual PulseConfiguration& GetConfiguration();
   virtual const PulseConfiguration* GetConfiguration() const;
   virtual bool HasConfiguration() const;

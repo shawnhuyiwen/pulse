@@ -16,24 +16,21 @@ class SEImpairedAlveolarExchange;
 // Environment Conditions
 class SEInitialEnvironmentConditions;
 class SESubstanceManager;
-CDM_BIND_DECL(ConditionListData)
 
 class CDM_DECL SEConditionManager : public Loggable
 {
+  friend class PBScenario;//friend the serialization class
 public:
 
   SEConditionManager(SESubstanceManager&);
   ~SEConditionManager();
 
   void Clear();
-
-  static void Load(const cdm::ConditionListData& src, SEConditionManager& dst);
-  static cdm::ConditionListData* Unload(const SEConditionManager& src);
-protected:
-  static void Serialize(const cdm::ConditionListData& src, SEConditionManager& dst);
-  static void Serialize(const SEConditionManager& src, cdm::ConditionListData& dst);
-
-public:
+  
+  bool SerializeToString(std::string& output, SerializationMode m) const;
+  bool SerializeToFile(const std::string& filename, SerializationMode m) const;
+  bool SerializeFromString(const std::string& src, SerializationMode m);
+  bool SerializeFromFile(const std::string& filename, SerializationMode m);
 
   bool ProcessCondition(const SECondition& condition);// Will make a copy
 
@@ -41,7 +38,6 @@ public:
   // If we start getting alot, I will make patient/environment/equipment condition managers, like the action managers
 
   // Patient Conditions
-
 
   bool HasChronicAnemia() const;
   SEChronicAnemia* GetChronicAnemia();
@@ -82,8 +78,8 @@ public:
   SEInitialEnvironmentConditions* GetInitialEnvironmentConditions();
   const SEInitialEnvironmentConditions* GetInitialEnvironmentConditions() const;
 
-  // This is here in case you want to take all the conditions from an engine and write them out so you can reproduce the same engine state later
-  const cdm::ConditionListData& GetConditionList() { return *m_Conditions; }// I don't really have anything that does that yet...
+  // Helper to get a list of the active conditions
+  void GetActiveConditions(std::vector<const SECondition*>& v) const;
 
 protected:
 
@@ -99,6 +95,5 @@ protected:
 
   SEInitialEnvironmentConditions*          m_InitialEnvironmentConditions;
 
-  cdm::ConditionListData*                  m_Conditions;
   std::stringstream m_ss;
 };

@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarMass.h"
-#include "bind/cdm/Properties.pb.h"
 
 const MassUnit MassUnit::g("g");
 const MassUnit MassUnit::ug("ug");
@@ -41,26 +40,4 @@ const MassUnit& MassUnit::GetCompoundUnit(const std::string& unit)
   std::stringstream err;
   err << unit << " is not a valid Mass unit";
   throw CommonDataModelException(err.str());
-}
-
-void SEScalarMass::Load(const cdm::ScalarMassData& src, SEScalarMass& dst)
-{
-  SEScalarMass::Serialize(src, dst);
-}
-void SEScalarMass::Serialize(const cdm::ScalarMassData& src, SEScalarMass& dst)
-{
-  SEUnitScalar::Serialize(src.scalarmass(), dst);
-}
-
-cdm::ScalarMassData* SEScalarMass::Unload(const SEScalarMass& src)
-{
-  if (!src.IsValid())
-    return nullptr;
-  cdm::ScalarMassData* dst = new cdm::ScalarMassData();
-  Serialize(src, *dst);
-  return dst;
-}
-void SEScalarMass::Serialize(const SEScalarMass& src, cdm::ScalarMassData& dst)
-{
-  SEUnitScalar::Serialize(src, *dst.mutable_scalarmass());
 }

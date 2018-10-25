@@ -4,7 +4,6 @@
 #include "stdafx.h"
 #include "properties/SEScalar.h"
 #include "utils/GeneralMath.h"
-#include "bind/cdm/Properties.pb.h"
 
 unsigned long long int SEScalar::NaN = 
   ((unsigned long long int)255 << (8*7)) + 
@@ -40,57 +39,6 @@ void SEScalar::Clear()
   SEProperty::Clear();  
   m_readOnly = false;
   Invalidate();
-}
-
-void SEScalar::Load(const cdm::ScalarData& src, SEScalar& dst)
-{
-  SEScalar::Serialize(src, dst);
-}
-void SEScalar::Serialize(const cdm::ScalarData& src, SEScalar& dst)
-{
-  dst.Clear();
-  dst.SetValue(src.value());
-  if (!src.unit().empty())
-  {
-    if (src.unit() != "unitless")
-      throw CommonDataModelException("CDM::Scalar API is intended to be unitless, You are trying to load a ScalarData with a unit defined");
-  }
-  dst.m_readOnly = src.readonly();
-}
-
-cdm::ScalarData* SEScalar::Unload(const SEScalar& src)
-{
-  if(!src.IsValid())
-    return nullptr;
-  cdm::ScalarData* dst =new cdm::ScalarData();
-  Serialize(src,*dst);
-  return dst;
-}
-void SEScalar::Serialize(const SEScalar& src, cdm::ScalarData& dst)
-{
-  dst.set_value(src.m_value);
-  dst.set_readonly(src.m_readOnly);
-}
-
-void SEUnitScalar::Serialize(const cdm::ScalarData& src, SEUnitScalar& dst)
-{
-  dst.Clear();
-  if (!src.unit().empty())
-    dst.SetValue(src.value(), *dst.GetCompoundUnit(src.unit()));
-  else
-    throw CommonDataModelException("ScalarQuantity attempted to load a ScalarData with no unit, must have a unit.");
-  dst.m_readOnly = src.readonly();
-}
-
-
-void SEUnitScalar::Serialize(const SEUnitScalar& src, cdm::ScalarData& dst)
-{
-  dst.set_value(src.m_value);
-  if (src.HasUnit())
-    dst.set_unit(src.GetUnit()->GetString());
-  else
-    throw CommonDataModelException("ScalarQuantity attempted to unload a ScalarData with no unit, must have a unit.");
-  dst.set_readonly(src.m_readOnly);
 }
 
 bool SEScalar::Set(const SEScalar& s)

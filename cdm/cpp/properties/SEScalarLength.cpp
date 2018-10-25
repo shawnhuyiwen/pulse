@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarLength.h"
-#include "bind/cdm/Properties.pb.h"
 
 const LengthUnit LengthUnit::m("m");
 const LengthUnit LengthUnit::cm("cm");
@@ -46,26 +45,4 @@ const LengthUnit& LengthUnit::GetCompoundUnit(const std::string& unit)
   std::stringstream err;
   err << unit << " is not a valid Length unit";
   throw CommonDataModelException(err.str());
-}
-
-void SEScalarLength::Load(const cdm::ScalarLengthData& src, SEScalarLength& dst)
-{
-  SEScalarLength::Serialize(src, dst);
-}
-void SEScalarLength::Serialize(const cdm::ScalarLengthData& src, SEScalarLength& dst)
-{
-  SEUnitScalar::Serialize(src.scalarlength(), dst);
-}
-
-cdm::ScalarLengthData* SEScalarLength::Unload(const SEScalarLength& src)
-{
-  if (!src.IsValid())
-    return nullptr;
-  cdm::ScalarLengthData* dst = new cdm::ScalarLengthData();
-  Serialize(src, *dst);
-  return dst;
-}
-void SEScalarLength::Serialize(const SEScalarLength& src, cdm::ScalarLengthData& dst)
-{
-  SEUnitScalar::Serialize(src, *dst.mutable_scalarlength());
 }

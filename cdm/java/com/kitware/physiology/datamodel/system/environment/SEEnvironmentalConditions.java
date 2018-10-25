@@ -8,6 +8,7 @@ import java.util.*;
 import com.google.protobuf.TextFormat;
 import com.google.protobuf.TextFormat.ParseException;
 import com.kitware.physiology.cdm.Environment.EnvironmentData;
+import com.kitware.physiology.cdm.Environment.EnvironmentalConditionsData;
 import com.kitware.physiology.cdm.EnvironmentEnums.eEnvironment.SurroundingType;
 import com.kitware.physiology.cdm.Substance.SubstanceConcentrationData;
 import com.kitware.physiology.cdm.Substance.SubstanceData;
@@ -135,7 +136,7 @@ public class SEEnvironmentalConditions
   
   public void readFile(String fileName, SESubstanceManager mgr) throws ParseException
   {
-    EnvironmentData.ConditionsData.Builder builder = EnvironmentData.ConditionsData.newBuilder();
+    EnvironmentalConditionsData.Builder builder = EnvironmentalConditionsData.newBuilder();
     TextFormat.getParser().merge(FileUtils.readFile(fileName), builder);
     SEEnvironmentalConditions.load(builder.build(), this, mgr);
   }
@@ -144,7 +145,7 @@ public class SEEnvironmentalConditions
     FileUtils.writeFile(fileName, SEEnvironmentalConditions.unload(this).toString());
   }
   
-  public static void load(EnvironmentData.ConditionsData src, SEEnvironmentalConditions dst, SESubstanceManager substances)
+  public static void load(EnvironmentalConditionsData src, SEEnvironmentalConditions dst, SESubstanceManager substances)
   {
     dst.reset();
     if (src.getSurroundingType() != SurroundingType.UNRECOGNIZED)
@@ -207,13 +208,13 @@ public class SEEnvironmentalConditions
       }
     }
   }
-  public static EnvironmentData.ConditionsData unload(SEEnvironmentalConditions src)
+  public static EnvironmentalConditionsData unload(SEEnvironmentalConditions src)
   {
-    EnvironmentData.ConditionsData.Builder dst = EnvironmentData.ConditionsData.newBuilder();
+    EnvironmentalConditionsData.Builder dst = EnvironmentalConditionsData.newBuilder();
     unload(src,dst);
     return dst.build();
   }
-  protected static void unload(SEEnvironmentalConditions src, EnvironmentData.ConditionsData.Builder dst)
+  protected static void unload(SEEnvironmentalConditions src, EnvironmentalConditionsData.Builder dst)
   {
   	if(src.hasSurroundingType())
   		dst.setSurroundingType(src.surroundingType);

@@ -1,5 +1,5 @@
 syntax = "proto3";
-package pulse;
+package pulse.proto;
 option java_package = "com.kitware.physiology.pulse";
 
 import "cdm/Enums.proto";
@@ -17,31 +17,31 @@ import "pulse/PulseConfiguration.proto";
 
 message StateData
 {
-  eAirwayMode                             AirwayMode         = 1;
-  cdm.eSwitch                             Intubation         = 2;
-  cdm.ScalarTimeData                      SimulationTime     = 3;
-  cdm.PatientData                         Patient            = 4;
-  cdm.ConditionListData                   Conditions         = 5;
-  cdm.ActionListData                      ActiveActions      = 6;
-  BloodChemistrySystemData                BloodChemistry     = 7;
-  CardiovascularSystemData                Cardiovascular     = 8;
-  DrugSystemData                          Drug               = 9;
-  EndocrineSystemData                     Endocrine          = 10;
-  EnergySystemData                        Energy             = 11;
-  GastrointestinalSystemData              Gastrointestinal   = 12;
-  HepaticSystemData                       Hepatic            = 13;
-  NervousSystemData                       Nervous            = 14;
-  RenalSystemData                         Renal              = 15;
-  RespiratorySystemData                   Respiratory        = 16;
-  TissueSystemData                        Tissue             = 17;
-  EnvironmentData                         Environment        = 18;
-  AnesthesiaMachineData                   AnesthesiaMachine  = 19;
-  ElectroCardioGramData                   ElectroCardioGram  = 20;
-  InhalerData                             Inhaler            = 21;
-  cdm.CompartmentManagerData              CompartmentManager = 22;
-  cdm.CircuitManagerData                  CircuitManager     = 23;
-  repeated cdm.SubstanceData              ActiveSubstance    = 24;
-  repeated cdm.SubstanceCompoundData      ActiveCompound     = 25;
-  ConfigurationData                       Configuration      = 26;
-  cdm.DataRequestManagerData              DataRequestManager = 27;
+  eAirwayMode                        AirwayMode         = 1;
+  cdm.eSwitch                        Intubation         = 2;
+  cdm.ScalarTimeData                 SimulationTime     = 3;
+  cdm.PatientData                    Patient            = 4;
+  cdm.ConditionListData              Conditions         = 5;
+  cdm.ActionListData                 ActiveActions      = 6;
+  BloodChemistryData                 BloodChemistry     = 7;
+  CardiovascularData                 Cardiovascular     = 8;
+  DrugData                           Drug               = 9;
+  EndocrineData                      Endocrine          = 10;
+  EnergyData                         Energy             = 11;
+  GastrointestinalData               Gastrointestinal   = 12;
+  HepaticData                        Hepatic            = 13;
+  NervousData                        Nervous            = 14;
+  RenalData                          Renal              = 15;
+  RespiratoryData                    Respiratory        = 16;
+  TissueData                         Tissue             = 17;
+  EnvironmentData                    Environment        = 18;
+  AnesthesiaMachineData              AnesthesiaMachine  = 19;
+  ElectroCardioGramData              ElectroCardioGram  = 20;
+  InhalerData                        Inhaler            = 21;
+  cdm.CompartmentManagerData         CompartmentManager = 22;
+  cdm.CircuitManagerData             CircuitManager     = 23;
+  repeated cdm.SubstanceData         ActiveSubstance    = 24;
+  repeated cdm.SubstanceCompoundData ActiveCompound     = 25;
+  ConfigurationData                  Configuration      = 26;
+  cdm.DataRequestManagerData         DataRequestManager = 27;
 }

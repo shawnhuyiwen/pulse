@@ -3,7 +3,7 @@
 #include "stdafx.h"
 #include "system/equipment/anesthesiamachine/actions/SEVentilatorPressureLoss.h"
 #include "properties/SEScalar0To1.h"
-#include "bind/cdm/AnesthesiaMachineActions.pb.h"
+#include "io/protobuf/PBAnesthesiaMachineActions.h"
 
 SEVentilatorPressureLoss::SEVentilatorPressureLoss() : SEAnesthesiaMachineAction()
 {
@@ -21,6 +21,11 @@ void SEVentilatorPressureLoss::Clear()
   SAFE_DELETE(m_Severity);
 }
 
+void SEVentilatorPressureLoss::Copy(const SEVentilatorPressureLoss& src)
+{// Using Bindings to make a copy
+  PBAnesthesiaMachineAction::Copy(src, *this);
+}
+
 bool SEVentilatorPressureLoss::IsValid() const
 {
   return SEAnesthesiaMachineAction::IsValid() && HasSeverity();
@@ -29,30 +34,6 @@ bool SEVentilatorPressureLoss::IsValid() const
 bool SEVentilatorPressureLoss::IsActive() const
 {
   return HasSeverity() ? !m_Severity->IsZero() : false;
-}
-
-void SEVentilatorPressureLoss::Load(const cdm::VentilatorPressureLossData& src, SEVentilatorPressureLoss& dst)
-{
-  SEVentilatorPressureLoss::Serialize(src, dst);
-}
-void SEVentilatorPressureLoss::Serialize(const cdm::VentilatorPressureLossData& src, SEVentilatorPressureLoss& dst)
-{
-  SEAnesthesiaMachineAction::Serialize(src.anesthesiamachineaction(), dst);
-  if (src.has_severity())
-    SEScalar0To1::Load(src.severity(), dst.GetSeverity());
-}
-
-cdm::VentilatorPressureLossData* SEVentilatorPressureLoss::Unload(const SEVentilatorPressureLoss& src)
-{
-  cdm::VentilatorPressureLossData* dst = new cdm::VentilatorPressureLossData();
-  SEVentilatorPressureLoss::Serialize(src, *dst);
-  return dst;
-}
-void SEVentilatorPressureLoss::Serialize(const SEVentilatorPressureLoss& src, cdm::VentilatorPressureLossData& dst)
-{
-  SEAnesthesiaMachineAction::Serialize(src, *dst.mutable_anesthesiamachineaction());
-  if (src.HasSeverity())
-    dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
 }
 
 bool SEVentilatorPressureLoss::HasSeverity() const

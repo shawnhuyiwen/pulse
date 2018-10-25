@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarPower.h"
-#include "bind/cdm/Properties.pb.h"
 
 const PowerUnit PowerUnit::W("W");
 const PowerUnit PowerUnit::kcal_Per_s("kcal/s");
@@ -46,26 +45,4 @@ const PowerUnit& PowerUnit::GetCompoundUnit(const std::string& unit)
   std::stringstream err;
   err << unit << " is not a valid Power unit";
   throw CommonDataModelException(err.str());
-}
-
-void SEScalarPower::Load(const cdm::ScalarPowerData& src, SEScalarPower& dst)
-{
-  SEScalarPower::Serialize(src, dst);
-}
-void SEScalarPower::Serialize(const cdm::ScalarPowerData& src, SEScalarPower& dst)
-{
-  SEUnitScalar::Serialize(src.scalarpower(), dst);
-}
-
-cdm::ScalarPowerData* SEScalarPower::Unload(const SEScalarPower& src)
-{
-  if (!src.IsValid())
-    return nullptr;
-  cdm::ScalarPowerData* dst = new cdm::ScalarPowerData();
-  Serialize(src, *dst);
-  return dst;
-}
-void SEScalarPower::Serialize(const SEScalarPower& src, cdm::ScalarPowerData& dst)
-{
-  SEUnitScalar::Serialize(src, *dst.mutable_scalarpower());
 }

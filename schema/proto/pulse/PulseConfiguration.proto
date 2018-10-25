@@ -1,5 +1,5 @@
 syntax = "proto3";
-package pulse;
+package pulse.proto;
 option java_package = "com.kitware.physiology.pulse";
 
 import "cdm/Enums.proto";
@@ -101,7 +101,7 @@ message ConfigurationData
   {
     oneof Option
     {
-      cdm.EnvironmentData.ConditionsData               InitialConditions                                    = 1;/**<< @brief An environment conditions object with properties to set in the system environmental conditions. */
+      cdm.EnvironmentalConditionsData                  InitialConditions                                    = 1;/**<< @brief An environment conditions object with properties to set in the system environmental conditions. */
       string                                           InitialConditionsFile                                = 2;/**<< @brief File containing an environment conditions objet with properties to set in the environmental conditions. */
     }
     cdm.ScalarMassPerVolumeData                        AirDensity                                           = 3;

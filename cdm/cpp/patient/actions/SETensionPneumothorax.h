@@ -3,27 +3,20 @@
 
 #pragma once
 #include "patient/actions/SEPatientAction.h"
-CDM_BIND_DECL(TensionPneumothoraxData)
 
 class CDM_DECL SETensionPneumothorax : public SEPatientAction
 {
+  friend class PBPatientAction;//friend the serialization class
 public:
 
   SETensionPneumothorax();
   virtual ~SETensionPneumothorax();
 
   virtual void Clear(); //clear memory
+  virtual void Copy(const SETensionPneumothorax& src);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
-
-  static void Load(const cdm::TensionPneumothoraxData& src, SETensionPneumothorax& dst);
-  static cdm::TensionPneumothoraxData* Unload(const SETensionPneumothorax& src);
-protected:
-  static void Serialize(const cdm::TensionPneumothoraxData& src, SETensionPneumothorax& dst);
-  static void Serialize(const SETensionPneumothorax& src, cdm::TensionPneumothoraxData& dst);
-
-public:
 
   virtual eGate GetType() const;
   virtual void SetType(eGate name);

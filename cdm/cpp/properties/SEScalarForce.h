@@ -3,7 +3,6 @@
 
 #pragma once
 #include "properties/SEScalar.h"
-CDM_BIND_DECL(ScalarForceData)
 
 class CDM_DECL ForceUnit : public CCompoundUnit
 {
@@ -24,10 +23,4 @@ class CDM_DECL SEScalarForce : public SEScalarQuantity<ForceUnit>
 public:
   SEScalarForce() {}
   virtual ~SEScalarForce() {}
-
-  static void Load(const cdm::ScalarForceData& src, SEScalarForce& dst);
-  static cdm::ScalarForceData* Unload(const SEScalarForce& src);
-protected:
-  static void Serialize(const cdm::ScalarForceData& src, SEScalarForce& dst);
-  static void Serialize(const SEScalarForce& src, cdm::ScalarForceData& dst);
 };

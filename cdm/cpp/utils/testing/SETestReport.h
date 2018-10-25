@@ -5,10 +5,10 @@
 class SETestCase;
 class SETestSuite;
 class SETestErrorStatistics;
-CDM_BIND_DECL(TestReportData)
 
 class CDM_DECL SETestReport : public Loggable
 {
+  friend class PBTestReport;//friend the serialization class
 public:
 
   SETestReport(Logger* logger);
@@ -17,15 +17,10 @@ public:
   virtual void Reset(); //reset values
   virtual void Clear(); //clear memory
 
-  static void Load(const cdm::TestReportData& src, SETestReport& dst);
-  static cdm::TestReportData* Unload(const SETestReport& src);
-protected:
-  static void Serialize(const cdm::TestReportData& src, SETestReport& dst);
-  static void Serialize(const SETestReport& src, cdm::TestReportData& dst);
-
-public:
-
-  bool WriteFile(const std::string& filename);
+  bool SerializeToString(std::string& output, SerializationMode m) const;
+  bool SerializeToFile(const std::string& filename, SerializationMode m) const;
+  bool SerializeFromString(const std::string& src, SerializationMode m);
+  bool SerializeFromFile(const std::string& filename, SerializationMode m);
 
   SETestSuite& CreateTestSuite();
   const std::vector<SETestSuite*>&  GetTestSuites() const;

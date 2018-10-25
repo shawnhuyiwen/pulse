@@ -6,8 +6,6 @@
 #include "system/equipment/anesthesiamachine/SEAnesthesiaMachineChamber.h"
 #include "system/equipment/anesthesiamachine/SEAnesthesiaMachineOxygenBottle.h"
 #include "substance/SESubstanceManager.h"
-#include "bind/cdm/AnesthesiaMachine.pb.h"
-#include "bind/cdm/AnesthesiaMachineEnums.pb.h"
 
 // State Actions
 #include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineConfiguration.h"
@@ -19,27 +17,7 @@
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarTime.h"
 #include "engine/SEEventHandler.h"
-#include <google/protobuf/text_format.h>
-
-const std::string& eAnesthesiaMachine_Event_Name(eAnesthesiaMachine_Event m)
-{
-  return cdm::eAnesthesiaMachine_Event_Name((cdm::eAnesthesiaMachine_Event)m);
-}
-
-const std::string& eAnesthesiaMachine_OxygenSource_Name(eAnesthesiaMachine_OxygenSource m)
-{
-  return cdm::eAnesthesiaMachine_OxygenSource_Name((cdm::eAnesthesiaMachine_OxygenSource)m);
-}
-
-const std::string& eAnesthesiaMachine_PrimaryGas_Name(eAnesthesiaMachine_PrimaryGas m)
-{
-  return cdm::eAnesthesiaMachine_PrimaryGas_Name((cdm::eAnesthesiaMachine_PrimaryGas)m);
-}
-
-const std::string& eAnesthesiaMachine_Connection_Name(eAnesthesiaMachine_Connection m)
-{
-  return cdm::eAnesthesiaMachine_Connection_Name((cdm::eAnesthesiaMachine_Connection)m);
-}
+#include "io/protobuf/PBAnesthesiaMachine.h"
 
 SEAnesthesiaMachine::SEAnesthesiaMachine(SESubstanceManager& substances) : SESystem(substances.GetLogger()), m_Substances(substances)
 {
@@ -116,137 +94,31 @@ void SEAnesthesiaMachine::Merge(const SEAnesthesiaMachine& from)
   MERGE_CHILD(OxygenBottleTwo);
 }
 
+bool SEAnesthesiaMachine::SerializeToString(std::string& output, SerializationMode m) const
+{
+  return PBAnesthesiaMachine::SerializeToString(*this, output, m);
+}
+bool SEAnesthesiaMachine::SerializeToFile(const std::string& filename, SerializationMode m) const
+{
+  return PBAnesthesiaMachine::SerializeToFile(*this, filename, m);
+}
+bool SEAnesthesiaMachine::SerializeFromString(const std::string& src, SerializationMode m)
+{
+  return PBAnesthesiaMachine::SerializeFromString(src, *this, m);
+}
+bool SEAnesthesiaMachine::SerializeFromFile(const std::string& filename, SerializationMode m)
+{
+  return PBAnesthesiaMachine::SerializeFromFile(filename, *this, m);
+}
+
 void SEAnesthesiaMachine::ProcessConfiguration(const SEAnesthesiaMachineConfiguration& config)
 {
   if (config.HasConfiguration())
     Merge(*config.GetConfiguration());
   else if (config.HasConfigurationFile())
-    if (!LoadFile(config.GetConfigurationFile())) // Does NOT merge file in data, Should we ?
+    if (!SerializeFromFile(config.GetConfigurationFile(),ASCII)) // Does NOT merge file in data, Should we ?
       Error("Unable to load configuration file", "SEAnesthesiaMachine::ProcessConfiguration");
   StateChange();
-}
-
-bool SEAnesthesiaMachine::LoadFile(const std::string& anesthesiaMachineFile)
-{
-  cdm::AnesthesiaMachineData src;
-  std::ifstream file_stream(anesthesiaMachineFile, std::ios::in);
-  std::string fmsg((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
-  if (!google::protobuf::TextFormat::ParseFromString(fmsg, &src))
-    return false;
-  SEAnesthesiaMachine::Load(src, *this);
-  return true;
-
-  // If its a binary string in the file...
-  //std::ifstream binary_istream(AnesthesiaMachineFile, std::ios::in | std::ios::binary);
-  //src.ParseFromIstream(&binary_istream);
-}
-
-void SEAnesthesiaMachine::Load(const cdm::AnesthesiaMachineData& src, SEAnesthesiaMachine& dst)
-{
-  SEAnesthesiaMachine::Serialize(src, dst);
-}
-void SEAnesthesiaMachine::Serialize(const cdm::AnesthesiaMachineData& src, SEAnesthesiaMachine& dst)
-{
-  dst.Clear();
-  dst.SetConnection((eAnesthesiaMachine_Connection)src.connection());
-  if(src.has_inletflow())
-    SEScalarVolumePerTime::Load(src.inletflow(), dst.GetInletFlow());
-  if (src.has_inspiratoryexpiratoryratio())
-    SEScalar::Load(src.inspiratoryexpiratoryratio(), dst.GetInspiratoryExpiratoryRatio());
-  if (src.has_oxygenfraction())
-    SEScalar0To1::Load(src.oxygenfraction(), dst.GetOxygenFraction());
-
-  dst.SetOxygenSource((eAnesthesiaMachine_OxygenSource)src.oxygensource());
-  if (src.has_positiveendexpiredpressure())
-    SEScalarPressure::Load(src.positiveendexpiredpressure(), dst.GetPositiveEndExpiredPressure());
-  dst.SetPrimaryGas((eAnesthesiaMachine_PrimaryGas)src.primarygas());
-
-  if (src.has_respiratoryrate())
-    SEScalarFrequency::Load(src.respiratoryrate(), dst.GetRespiratoryRate());
-  if (src.has_reliefvalvepressure())
-    SEScalarPressure::Load(src.reliefvalvepressure(), dst.GetReliefValvePressure());
-  if (src.has_ventilatorpressure())
-    SEScalarPressure::Load(src.ventilatorpressure(), dst.GetVentilatorPressure());
-  if (src.has_leftchamber())
-    SEAnesthesiaMachineChamber::Load(src.leftchamber(), dst.GetLeftChamber());
-  if (src.has_rightchamber())
-    SEAnesthesiaMachineChamber::Load(src.rightchamber(), dst.GetRightChamber());
-  if (src.has_oxygenbottleone())
-    SEAnesthesiaMachineOxygenBottle::Load(src.oxygenbottleone(), dst.GetOxygenBottleOne());
-  if (src.has_oxygenbottletwo())
-    SEAnesthesiaMachineOxygenBottle::Load(src.oxygenbottletwo(), dst.GetOxygenBottleTwo());
-
-  SEScalarTime time;
-  for (int i = 0; i < src.activeevent_size(); i++)
-  {
-    const cdm::AnesthesiaMachineData::ActiveEventData& e = src.activeevent(i);
-    if (e.has_duration())
-      SEScalarTime::Load(e.duration(), time);
-    {
-      dst.m_ss << "Active AnesthesiaMachine event " << e.event() << " does not have time associated with it";
-      dst.Warning(dst.m_ss);
-      time.SetValue(0, TimeUnit::s);
-    }
-    dst.m_EventState[(eAnesthesiaMachine_Event)e.event()] = true;
-    dst.m_EventDuration_s[(eAnesthesiaMachine_Event)e.event()] = time.GetValue(TimeUnit::s);
-  }
-
-  dst.StateChange();
-}
-
-cdm::AnesthesiaMachineData* SEAnesthesiaMachine::Unload(const SEAnesthesiaMachine& src)
-{
-  cdm::AnesthesiaMachineData* dst = new cdm::AnesthesiaMachineData();
-  SEAnesthesiaMachine::Serialize(src, *dst);
-  return dst;
-}
-void SEAnesthesiaMachine::Serialize(const SEAnesthesiaMachine& src, cdm::AnesthesiaMachineData& dst)
-{
-  dst.set_connection((cdm::eAnesthesiaMachine_Connection)src.m_Connection);
-  if (src.HasInletFlow())
-    dst.set_allocated_inletflow(SEScalarVolumePerTime::Unload(*src.m_InletFlow));
-  if (src.HasInspiratoryExpiratoryRatio())
-    dst.set_allocated_inspiratoryexpiratoryratio(SEScalar::Unload(*src.m_InspiratoryExpiratoryRatio));
-  if (src.HasOxygenFraction())
-    dst.set_allocated_oxygenfraction(SEScalar0To1::Unload(*src.m_OxygenFraction));
-
-  dst.set_oxygensource((cdm::eAnesthesiaMachine_OxygenSource)src.m_OxygenSource);
-  if (src.HasPositiveEndExpiredPressure())
-    dst.set_allocated_positiveendexpiredpressure(SEScalarPressure::Unload(*src.m_PositiveEndExpiredPressure));
-  dst.set_primarygas((cdm::eAnesthesiaMachine_PrimaryGas)src.m_PrimaryGas);
-
-  if (src.HasRespiratoryRate())
-    dst.set_allocated_respiratoryrate(SEScalarFrequency::Unload(*src.m_RespiratoryRate));
-  if (src.HasReliefValvePressure())
-    dst.set_allocated_reliefvalvepressure(SEScalarPressure::Unload(*src.m_ReliefValvePressure));
-  if (src.HasVentilatorPressure())
-    dst.set_allocated_ventilatorpressure(SEScalarPressure::Unload(*src.m_VentilatorPressure));
-  if (src.HasLeftChamber())
-    dst.set_allocated_leftchamber(SEAnesthesiaMachineChamber::Unload(*src.m_LeftChamber));
-  if (src.HasRightChamber())
-    dst.set_allocated_rightchamber(SEAnesthesiaMachineChamber::Unload(*src.m_RightChamber));
-  if (src.HasOxygenBottleOne())
-    dst.set_allocated_oxygenbottleone(SEAnesthesiaMachineOxygenBottle::Unload(*src.m_OxygenBottleOne));
-  if (src.HasOxygenBottleTwo())
-    dst.set_allocated_oxygenbottletwo(SEAnesthesiaMachineOxygenBottle::Unload(*src.m_OxygenBottleTwo));
-
-  SEScalarTime time;
-  for (auto itr : src.m_EventState)
-  {
-    if (!itr.second)
-      continue;
-
-    auto it2 = src.m_EventDuration_s.find(itr.first);
-    if (it2 == src.m_EventDuration_s.end())// This should not happen... 
-      time.SetValue(0, TimeUnit::s);
-    else
-      time.SetValue(it2->second, TimeUnit::s);
-
-    cdm::AnesthesiaMachineData_ActiveEventData* eData = dst.add_activeevent();
-
-    eData->set_event((cdm::eAnesthesiaMachine_Event)itr.first);
-    eData->set_allocated_duration(SEScalarTime::Unload(time));
-  }
 }
 
 const SEScalar* SEAnesthesiaMachine::GetScalar(const std::string& name)

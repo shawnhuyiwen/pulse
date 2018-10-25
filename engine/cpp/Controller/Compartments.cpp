@@ -3,9 +3,9 @@
 
 #include "stdafx.h"
 #include "PulseConfiguration.h"
-#include "Controller/Controller.h"
-#include "Controller/Compartments.h"
-#include "Controller/Substances.h"
+#include "controller/Controller.h"
+#include "controller/Compartments.h"
+#include "controller/Substances.h"
 #include "compartment/fluid/SEGasCompartment.h"
 #include "compartment/fluid/SEGasCompartmentLink.h"
 #include "compartment/fluid/SEGasCompartmentGraph.h"

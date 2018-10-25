@@ -1,19 +1,19 @@
 syntax = "proto3";
-package pulse;
+package pulse.proto;
 option java_package = "com.kitware.physiology.pulse";
 
 import "cdm/Properties.proto";
 import "cdm/Physiology.proto";
 
 
-message BloodChemistrySystemData
+message BloodChemistryData
 {
   cdm.BloodChemistrySystemData   Common                                              = 1;
   cdm.RunningAverageData         ArterialOxygenAverage_mmHg                          = 2;
   cdm.RunningAverageData         ArterialCarbonDioxideAverage_mmHg                   = 3;
 }
 
-message CardiovascularSystemData
+message CardiovascularData
 {
   cdm.CardiovascularSystemData   Common                                              = 1;
   bool                           StartSystole                                        = 2;
@@ -52,17 +52,17 @@ message CardiovascularSystemData
   cdm.RunningAverageData         CardiacCycleSkinFlow_mL_Per_s                       = 32;
 }
 
-message DrugSystemData
+message DrugData
 {
   cdm.DrugSystemData             Common                                              = 1;
 }
 
-message EndocrineSystemData
+message EndocrineData
 {
   cdm.EndocrineSystemData        Common                                              = 1;
 }
 
-message EnergySystemData
+message EnergyData
 {
   cdm.EnergySystemData           Common                                              = 1;
   double                         EnduranceEnergyStore_J                              = 2;
@@ -74,24 +74,24 @@ message EnergySystemData
   cdm.RunningAverageData         BicarbonateMolarity_mmol_Per_L                      = 7;
 }
 
-message GastrointestinalSystemData
+message GastrointestinalData
 {
   cdm.GastrointestinalSystemData Common                                              = 1;
 }
 
-message HepaticSystemData
+message HepaticData
 {
   cdm.HepaticSystemData          Common                                              = 1;
 }
 
-message NervousSystemData
+message NervousData
 {
   cdm.NervousSystemData          Common                                              = 1;
   double                         ArterialOxygenSetPoint_mmHg                         = 2;
   double                         ArterialCarbonDioxideSetPoint_mmHg                  = 3;
 }
 
-message RenalSystemData
+message RenalData
 {
   cdm.RenalSystemData            Common                                              = 1;
   bool                           Urinating                                           = 2;
@@ -110,7 +110,7 @@ message RenalSystemData
   cdm.RunningAverageData         RightRenalArterialPressure_mmHg                     = 14;
 }
 
-message RespiratorySystemData
+message RespiratoryData
 {// Next value : 45
   cdm.RespiratorySystemData      Common                                              = 1;
   double                         InitialExpiratoryReserveVolume_L                    = 2;
@@ -161,7 +161,7 @@ message RespiratorySystemData
   double                         ConsciousEndPressure_cmH2O                          = 44;
 }
 
-message TissueSystemData
+message TissueData
 {
   cdm.TissueSystemData           Common                                              = 1;
   double                         RestingTissueGlucose_g                              = 2;

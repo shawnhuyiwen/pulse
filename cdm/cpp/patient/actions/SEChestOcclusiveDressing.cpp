@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 #include "patient/actions/SEChestOcclusiveDressing.h"
-#include "bind/cdm/PatientActions.pb.h"
+#include "io/protobuf/PBPatientActions.h"
 
 SEChestOcclusiveDressing::SEChestOcclusiveDressing() : SEPatientAction()
 {
@@ -23,6 +23,11 @@ void SEChestOcclusiveDressing::Clear()
   m_Side= eSide::NullSide;
 }
 
+void SEChestOcclusiveDressing::Copy(const SEChestOcclusiveDressing& src)
+{
+  PBPatientAction::Copy(src, *this);
+}
+
 bool SEChestOcclusiveDressing::IsValid() const
 {
   return SEPatientAction::IsValid() && HasSide();
@@ -31,32 +36,6 @@ bool SEChestOcclusiveDressing::IsValid() const
 bool SEChestOcclusiveDressing::IsActive() const
 {
   return IsValid() && m_State == eSwitch::On;
-}
-
-void SEChestOcclusiveDressing::Load(const cdm::ChestOcclusiveDressingData& src, SEChestOcclusiveDressing& dst)
-{
-  SEChestOcclusiveDressing::Serialize(src, dst);
-}
-void SEChestOcclusiveDressing::Serialize(const cdm::ChestOcclusiveDressingData& src, SEChestOcclusiveDressing& dst)
-{
-  SEPatientAction::Serialize(src.patientaction(), dst);
-  dst.SetSide((eSide)src.side());
-  if (src.state() != cdm::eSwitch::NullSwitch)
-    dst.SetState((eSwitch)src.state());
-}
-
-cdm::ChestOcclusiveDressingData* SEChestOcclusiveDressing::Unload(const SEChestOcclusiveDressing& src)
-{
-  cdm::ChestOcclusiveDressingData* dst = new cdm::ChestOcclusiveDressingData();
-  SEChestOcclusiveDressing::Serialize(src, *dst);
-  return dst;
-}
-void SEChestOcclusiveDressing::Serialize(const SEChestOcclusiveDressing& src, cdm::ChestOcclusiveDressingData& dst)
-{
-  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
-  dst.set_state((cdm::eSwitch)src.m_State);
-  if (src.HasSide())
-    dst.set_side((cdm::eSide)src.m_Side);
 }
 
 eSide SEChestOcclusiveDressing::GetSide() const

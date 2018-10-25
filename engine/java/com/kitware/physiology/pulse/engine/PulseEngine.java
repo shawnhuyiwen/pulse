@@ -54,11 +54,11 @@ public class PulseEngine extends Pulse
 
   // TODO Set a callback for patient events
   
-  public synchronized boolean loadState(String logFile, String stateFile, SEDataRequestManager dataRequests)
+  public synchronized boolean serializeFromFile(String logFile, String stateFile, SEDataRequestManager dataRequests)
   {    
     return loadStateContents(logFile, stateFile, -1.0, dataRequests);
   }  
-  public synchronized boolean loadState(String logFile, String stateFile, SEScalarTime simTime, SEDataRequestManager dataRequests)
+  public synchronized boolean serializeFromFile(String logFile, String stateFile, SEScalarTime simTime, SEDataRequestManager dataRequests)
   {        
     return loadStateContents(logFile, stateFile, simTime.getValue(TimeUnit.s), dataRequests);
   }  
@@ -75,12 +75,12 @@ public class PulseEngine extends Pulse
     }
     this.requestData(dataRequests);
     this.nativeObj = nativeAllocate(logFile);
-    return nativeLoadState(this.nativeObj, stateFile, simTime_s, dataRequestsStr);
+    return nativeSerializeFromFile(this.nativeObj, stateFile, simTime_s, dataRequestsStr);
   }
   
-  public synchronized StateData saveState(String stateFile) throws ParseException
+  public synchronized StateData serializeToFile(String stateFile) throws ParseException
   {
-    String str = nativeSaveState(this.nativeObj, stateFile);
+    String str = nativeSerializeToFile(this.nativeObj, stateFile);
     StateData.Builder sd = StateData.newBuilder();
     TextFormat.getParser().merge(str, sd);
     return sd.build();
@@ -256,8 +256,8 @@ public class PulseEngine extends Pulse
   protected native void nativeReset(long nativeObj);
   
   protected native boolean nativeInitializeEngine(long nativeObj, String patient, String conditions, String dataRequests);
-  protected native boolean nativeLoadState(long nativeObj, String stateFile, double simTime_s, String dataRequests);// pass <0 as simTime to use the time in the file
-  protected native String  nativeSaveState(long nativeObj, String stateFile);
+  protected native boolean nativeSerializeFromFile(long nativeObj, String stateFile, double simTime_s, String dataRequests);// pass <0 as simTime to use the time in the file
+  protected native String  nativeSerializeToFile(long nativeObj, String stateFile);
   protected native boolean nativeAdvanceTimeStep(long nativeObj);
   protected native boolean nativeAdvanceTime(long nativeObj, double time_s);
   protected native boolean nativeProcessActions(long nativeObj, String actions);

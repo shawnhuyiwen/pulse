@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "patient/actions/SESubstanceAdministration.h"
+#include "io/protobuf/PBPatientActions.h"
 
 SESubstanceAdministration::SESubstanceAdministration() : SEPatientAction()
 {

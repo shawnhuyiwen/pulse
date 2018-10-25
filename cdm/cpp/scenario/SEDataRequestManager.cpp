@@ -5,8 +5,8 @@
 #include "SEDataRequestManager.h"
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceManager.h"
-#include "bind/cdm/Scenario.pb.h"
-#include <google/protobuf/text_format.h>
+#include "io/protobuf/PBScenario.h"
+#include "io/protobuf/PBScenario.h"
 
 SEDataRequestManager::SEDataRequestManager(Logger* logger) : Loggable(logger)
 {
@@ -28,84 +28,26 @@ void SEDataRequestManager::Clear()
   SAFE_DELETE(m_OverrideDecimalFormatting);
 }
 
-bool SEDataRequestManager::Load(const std::string& str, SESubstanceManager& subMgr)
+void SEDataRequestManager::Copy(const SEDataRequestManager& src, const SESubstanceManager& subMgr)
 {
-  cdm::DataRequestManagerData src;
-  if (!google::protobuf::TextFormat::ParseFromString(str, &src))
-    return false;
-  SEDataRequestManager::Load(src, *this, subMgr);
-  return true;
+  PBScenario::Copy(src, *this, subMgr);
 }
 
-bool SEDataRequestManager::LoadFile(const std::string& filename, SESubstanceManager& subMgr)
+bool SEDataRequestManager::SerializeToString(std::string& output, SerializationMode m) const
 {
-  cdm::DataRequestManagerData src;
-  std::ifstream file_stream(filename, std::ios::in);
-  std::string fmsg((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
-  if (!google::protobuf::TextFormat::ParseFromString(fmsg, &src))
-    return false;
-  SEDataRequestManager::Load(src, *this, subMgr);
-  return true;
-
-  // If its a binary string in the file...
-  //std::ifstream binary_istream(patientFile, std::ios::in | std::ios::binary);
-  //src.ParseFromIstream(&binary_istream);
+  return PBScenario::SerializeToString(*this, output, m);
 }
-
-void SEDataRequestManager::SaveFile(const std::string& filename) const
+bool SEDataRequestManager::SerializeToFile(const std::string& filename, SerializationMode m) const
 {
-  std::string content;
-  cdm::DataRequestManagerData* src = SEDataRequestManager::Unload(*this);
-  google::protobuf::TextFormat::PrintToString(*src, &content);
-  std::ofstream ascii_ostream(filename, std::ios::out | std::ios::trunc);
-  ascii_ostream << content;
-  ascii_ostream.flush();
-  ascii_ostream.close();
-  delete src;
+  return PBScenario::SerializeToFile(*this, filename, m);
 }
-
-void SEDataRequestManager::Load(const cdm::DataRequestManagerData& src, SEDataRequestManager& dst, SESubstanceManager& subMgr)
+bool SEDataRequestManager::SerializeFromString(const std::string& src, SerializationMode m, const SESubstanceManager& subMgr)
 {
-  SEDataRequestManager::Serialize(src, dst,subMgr);
+  return PBScenario::SerializeFromString(src, *this, m, subMgr);
 }
-void SEDataRequestManager::Serialize(const cdm::DataRequestManagerData& src, SEDataRequestManager& dst, SESubstanceManager& subMgr)
+bool SEDataRequestManager::SerializeFromFile(const std::string& filename, SerializationMode m, const SESubstanceManager& subMgr)
 {
-  dst.Clear();
-  dst.m_ResultsFilename = src.resultsfilename();
-  dst.m_SamplesPerSecond = src.samplespersecond();
-  if (src.has_defaultdecimalformatting())
-    SEDecimalFormat::Load(src.defaultdecimalformatting(),dst.GetDefaultDecimalFormatting());
-  if (src.has_overridedecimalformatting())
-    SEDecimalFormat::Load(src.overridedecimalformatting(), dst.GetOverrideDecimalFormatting());
-
-  for (int i=0; i<src.datarequest_size(); i++)
-  {
-    const cdm::DataRequestData& drData = src.datarequest(i);
-    SEDataRequest* dr = new SEDataRequest((eDataRequest_Category)drData.category(), dst.HasOverrideDecimalFormatting() ? dst.m_OverrideDecimalFormatting : dst.m_DefaultDecimalFormatting);
-    SEDataRequest::Load(drData, *dr);
-    if (!dr->IsValid())
-      dst.Error("Ignoring invalid DataRequest for property " + dr->m_PropertyName);
-    else
-      dst.m_Requests.push_back(dr);
-  }
-}
-
-cdm::DataRequestManagerData* SEDataRequestManager::Unload(const SEDataRequestManager& src)
-{
-  cdm::DataRequestManagerData* dst = new cdm::DataRequestManagerData();
-  SEDataRequestManager::Serialize(src,*dst);
-  return dst;
-}
-void SEDataRequestManager::Serialize(const SEDataRequestManager& src, cdm::DataRequestManagerData& dst)
-{
-  dst.set_resultsfilename(src.m_ResultsFilename);
-  dst.set_samplespersecond(src.m_SamplesPerSecond);
-  if (src.HasDefaultDecimalFormatting())
-    dst.set_allocated_defaultdecimalformatting(SEDecimalFormat::Unload(*src.m_DefaultDecimalFormatting));
-  if (src.HasOverrideDecimalFormatting())
-    dst.set_allocated_overridedecimalformatting(SEDecimalFormat::Unload(*src.m_OverrideDecimalFormatting));
-  for (SEDataRequest* dr : src.m_Requests)
-    dst.mutable_datarequest()->AddAllocated(SEDataRequest::Unload(*dr));
+  return PBScenario::SerializeFromFile(filename, *this, m, subMgr);
 }
 
 bool SEDataRequestManager::HasDefaultDecimalFormatting() const

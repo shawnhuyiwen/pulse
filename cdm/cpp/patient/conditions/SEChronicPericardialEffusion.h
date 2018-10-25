@@ -3,27 +3,21 @@
 
 #pragma once
 #include "patient/conditions/SEPatientCondition.h"
-CDM_BIND_DECL(ChronicPericardialEffusionData)
 
 class CDM_DECL SEChronicPericardialEffusion : public SEPatientCondition
 {
+  friend class PBPatientCondition;//friend the serialization class
 public:
 
   SEChronicPericardialEffusion();
   virtual ~SEChronicPericardialEffusion();
 
   virtual void Clear();
+  virtual void Copy(const SEChronicPericardialEffusion& src);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
 
-  static void Load(const cdm::ChronicPericardialEffusionData& src, SEChronicPericardialEffusion& dst);
-  static cdm::ChronicPericardialEffusionData* Unload(const SEChronicPericardialEffusion& src);
-protected:
-  static void Serialize(const cdm::ChronicPericardialEffusionData& src, SEChronicPericardialEffusion& dst);
-  static void Serialize(const SEChronicPericardialEffusion& src, cdm::ChronicPericardialEffusionData& dst);
-
-public:
   virtual std::string GetName() const { return "ChronicPericardialEffusion"; }
 
   virtual bool HasAccumulatedVolume() const;

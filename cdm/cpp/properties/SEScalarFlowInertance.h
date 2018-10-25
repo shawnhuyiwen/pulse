@@ -3,7 +3,6 @@
 
 #pragma once
 #include "properties/SEScalar.h"
-CDM_BIND_DECL(ScalarFlowInertanceData)
 
 class CDM_DECL FlowInertanceUnit : public CCompoundUnit
 {
@@ -26,10 +25,4 @@ class CDM_DECL SEScalarFlowInertance : public SEScalarQuantity<FlowInertanceUnit
 public:
   SEScalarFlowInertance() {}
   virtual ~SEScalarFlowInertance() {}
-
-  static void Load(const cdm::ScalarFlowInertanceData& src, SEScalarFlowInertance& dst);
-  static cdm::ScalarFlowInertanceData* Unload(const SEScalarFlowInertance& src);
-protected:
-  static void Serialize(const cdm::ScalarFlowInertanceData& src, SEScalarFlowInertance& dst);
-  static void Serialize(const SEScalarFlowInertance& src, cdm::ScalarFlowInertanceData& dst);
 };

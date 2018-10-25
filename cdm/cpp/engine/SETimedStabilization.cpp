@@ -8,8 +8,7 @@
 #include "scenario/SECondition.h"
 #include "utils/TimingProfile.h"
 #include "properties/SEScalarTime.h"
-#include <google/protobuf/text_format.h>
-#include "bind/cdm/Engine.pb.h"
+#include "io/protobuf/PBEngine.h"
 
 bool SETimedStabilization::StabilizeRestingState(PhysiologyEngine& engine)
 {
@@ -144,67 +143,21 @@ void SETimedStabilization::Clear()
   DELETE_MAP_SECOND(m_ConditionTimes);
 }
 
-void SETimedStabilization::Load(const cdm::TimedStabilizationData& src, SETimedStabilization& dst)
+bool SETimedStabilization::SerializeToString(std::string& output, SerializationMode m) const
 {
-  SETimedStabilization::Serialize(src, dst);
+  return PBEngine::SerializeToString(*this, output, m);
 }
-void SETimedStabilization::Serialize(const cdm::TimedStabilizationData& src, SETimedStabilization& dst)
+bool SETimedStabilization::SerializeToFile(const std::string& filename, SerializationMode m) const
 {
-  dst.Clear();
-  if (src.trackingstabilization() != cdm::eSwitch::NullSwitch)
-    dst.TrackStabilization((eSwitch)src.trackingstabilization());
-  if(src.has_restingstabilizationtime())
-    SEScalarTime::Load(src.restingstabilizationtime(), dst.GetRestingStabilizationTime());
-  if(src.has_feedbackstabilizationtime())
-    SEScalarTime::Load(src.feedbackstabilizationtime(), dst.GetFeedbackStabilizationTime());
-  for (auto itr : src.conditionstabilization())
-  {
-    SEScalarTime* time = new SEScalarTime();
-    SEScalarTime::Load(itr.second, *time);
-    dst.m_ConditionTimes[itr.first] = time;
-  }
+  return PBEngine::SerializeToFile(*this, filename, m);
 }
-
-cdm::TimedStabilizationData* SETimedStabilization::Unload(const SETimedStabilization& src)
+bool SETimedStabilization::SerializeFromString(const std::string& src, SerializationMode m)
 {
-  cdm::TimedStabilizationData* dst(new cdm::TimedStabilizationData());
-  SETimedStabilization::Serialize(src,*dst);
-  return dst;
+  return PBEngine::SerializeFromString(src, *this, m);
 }
-void SETimedStabilization::Serialize(const SETimedStabilization& src, cdm::TimedStabilizationData& dst)
+bool SETimedStabilization::SerializeFromFile(const std::string& filename, SerializationMode m)
 {
-  dst.set_trackingstabilization((cdm::eSwitch)src.m_TrackingStabilization);
-  dst.set_allocated_restingstabilizationtime(SEScalarTime::Unload(*src.m_RestingStabilizationTime));
-  if (src.HasFeedbackStabilizationTime())
-    dst.set_allocated_feedbackstabilizationtime(SEScalarTime::Unload(*src.m_FeedbackStabilizationTime));
-  for (auto cc : src.m_ConditionTimes)
-  {
-    if (cc.second == nullptr)
-      continue;
-    cdm::ScalarTimeData* time = SEScalarTime::Unload(*cc.second);
-    (*dst.mutable_conditionstabilization())[cc.first] = *time;
-    delete time;
-  }
-}
-
-bool SETimedStabilization::LoadFile(const std::string& file)
-{
-  try
-  {
-    Clear();
-    std::ifstream input(file);
-    std::string fmsg((std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());
-    cdm::TimedStabilizationData ts;
-    if (!google::protobuf::TextFormat::ParseFromString(fmsg, &ts))
-      return false;
-    SETimedStabilization::Load(ts, *this);
-    return true;
-  }
-  catch (std::exception ex)
-  {
-    Error("Unable to read file : " + file);
-  }
-  return false;
+  return PBEngine::SerializeFromFile(filename, *this, m);
 }
 
 SEScalarTime& SETimedStabilization::GetRestingStabilizationTime()

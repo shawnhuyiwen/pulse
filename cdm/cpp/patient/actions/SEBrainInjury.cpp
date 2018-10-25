@@ -4,13 +4,7 @@
 #include "stdafx.h"
 #include "patient/actions/SEBrainInjury.h"
 #include "properties/SEScalar0To1.h"
-#include "bind/cdm/PatientActions.pb.h"
-#include "bind/cdm/PatientActionEnums.pb.h"
-
-const std::string& eBrainInjury_Type_Name(eBrainInjury_Type m)
-{
-  return cdm::eBrainInjury_Type_Name((cdm::eBrainInjury_Type)m);
-}
+#include "io/protobuf/PBPatientActions.h"
 
 SEBrainInjury::SEBrainInjury() : SEPatientAction()
 {
@@ -25,10 +19,14 @@ SEBrainInjury::~SEBrainInjury()
 
 void SEBrainInjury::Clear()
 {
-  
   SEPatientAction::Clear();
   SAFE_DELETE(m_Severity);
   m_Type = eBrainInjury_Type::Diffuse;
+}
+
+void SEBrainInjury::Copy(const SEBrainInjury& src)
+{
+  PBPatientAction::Copy(src, *this);
 }
 
 bool SEBrainInjury::IsValid() const
@@ -39,32 +37,6 @@ bool SEBrainInjury::IsValid() const
 bool SEBrainInjury::IsActive() const
 {
   return IsValid() ? !m_Severity->IsZero() : false;
-}
-
-void SEBrainInjury::Load(const cdm::BrainInjuryData& src, SEBrainInjury& dst)
-{
-  SEBrainInjury::Serialize(src, dst);
-}
-void SEBrainInjury::Serialize(const cdm::BrainInjuryData& src, SEBrainInjury& dst)
-{
-  SEPatientAction::Serialize(src.patientaction(), dst);
-  if (src.has_severity())
-    SEScalar0To1::Load(src.severity(), dst.GetSeverity());
-  dst.SetType((eBrainInjury_Type)src.type());
-}
-
-cdm::BrainInjuryData* SEBrainInjury::Unload(const SEBrainInjury& src)
-{
-  cdm::BrainInjuryData* dst = new cdm::BrainInjuryData();
-  SEBrainInjury::Serialize(src, *dst);
-  return dst;
-}
-void SEBrainInjury::Serialize(const SEBrainInjury& src, cdm::BrainInjuryData& dst)
-{
-  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
-  if (src.HasSeverity())
-    dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
-  dst.set_type((cdm::eBrainInjury_Type)src.m_Type);
 }
 
 bool SEBrainInjury::HasSeverity() const

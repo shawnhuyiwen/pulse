@@ -3,10 +3,7 @@
 
 package com.kitware.physiology.datamodel.patient.actions;
 
-import com.kitware.physiology.cdm.PatientActions.ConsciousRespirationData.UseInhalerData;
-
-import com.kitware.physiology.datamodel.properties.SEScalarMass;
-import com.kitware.physiology.datamodel.properties.SEScalarVolume;
+import com.kitware.physiology.cdm.PatientActions.UseInhalerData;
 
 public class SEUseInhaler extends SEConsciousRespirationCommand
 {  

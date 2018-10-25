@@ -3,7 +3,7 @@
 #include "stdafx.h"
 #include "system/equipment/anesthesiamachine/actions/SESodaLimeFailure.h"
 #include "properties/SEScalar0To1.h"
-#include "bind/cdm/AnesthesiaMachineActions.pb.h"
+#include "io/protobuf/PBAnesthesiaMachineActions.h"
 
 SESodaLimeFailure::SESodaLimeFailure() : SEAnesthesiaMachineAction()
 {
@@ -21,6 +21,11 @@ void SESodaLimeFailure::Clear()
   SAFE_DELETE(m_Severity);
 }
 
+void SESodaLimeFailure::Copy(const SESodaLimeFailure& src)
+{// Using Bindings to make a copy
+  PBAnesthesiaMachineAction::Copy(src, *this);
+}
+
 bool SESodaLimeFailure::IsValid() const
 {
   return SEAnesthesiaMachineAction::IsValid() && HasSeverity();
@@ -29,30 +34,6 @@ bool SESodaLimeFailure::IsValid() const
 bool SESodaLimeFailure::IsActive() const
 {
   return HasSeverity() ? !m_Severity->IsZero() : false;
-}
-
-void SESodaLimeFailure::Load(const cdm::SodaLimeFailureData& src, SESodaLimeFailure& dst)
-{
-  SESodaLimeFailure::Serialize(src, dst);
-}
-void SESodaLimeFailure::Serialize(const cdm::SodaLimeFailureData& src, SESodaLimeFailure& dst)
-{
-  SEAnesthesiaMachineAction::Serialize(src.anesthesiamachineaction(), dst);
-  if (src.has_severity())
-    SEScalar0To1::Load(src.severity(), dst.GetSeverity());
-}
-
-cdm::SodaLimeFailureData* SESodaLimeFailure::Unload(const SESodaLimeFailure& src)
-{
-  cdm::SodaLimeFailureData* dst = new cdm::SodaLimeFailureData();
-  SESodaLimeFailure::Serialize(src, *dst);
-  return dst;
-}
-void SESodaLimeFailure::Serialize(const SESodaLimeFailure& src, cdm::SodaLimeFailureData& dst)
-{
-  SEAnesthesiaMachineAction::Serialize(src, *dst.mutable_anesthesiamachineaction());
-  if (src.HasSeverity())
-    dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
 }
 
 bool SESodaLimeFailure::HasSeverity() const

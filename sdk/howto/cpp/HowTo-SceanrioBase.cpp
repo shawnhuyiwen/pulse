@@ -27,11 +27,11 @@ void HowToScenarioBase()
   
   //Let's read the scenario we want to base this engine on
   SEScenario sce(pe->GetSubstanceManager());
-  sce.LoadFile("YourScenario.pba");
+  sce.SerializeFromFile("YourScenario.pba",ASCII);
 
   if (sce.HasEngineStateFile())
   {
-    if (!pe->LoadStateFile(sce.GetEngineStateFile()))
+    if (!pe->SerializeFromFile("./states/StandardMale@0s.pba", ASCII))
     {
       pe->GetLogger()->Error("Could not load state, check the error");
       return;
@@ -66,12 +66,12 @@ void HowToScenarioBase()
 
   // Make a copy of the data requests, note this clears out data requests from the engine
   // This will clear out the data requests if any exist in the DataRequestManager
-  pe->GetEngineTracker()->GetDataRequestManager().SaveFile("YourDataRequestsFile.pba");
+  pe->GetEngineTracker()->GetDataRequestManager().SerializeToFile("YourDataRequestsFile.pba", ASCII);
 
   // NOTE : You can just make a DataRequests file that holds only data requests
   // And serialize that in instead of a sceanrio file, if all you want is a consistent
   // This will clear out any requests already in the object
-  pe->GetEngineTracker()->GetDataRequestManager().LoadFile("YourDataRequestsFile.pba", pe->GetSubstanceManager());
+  pe->GetEngineTracker()->GetDataRequestManager().SerializeFromFile("YourDataRequestsFile.pba", ASCII, pe->GetSubstanceManager());
   // Don't need to delete drData as obj is wrapped in a unique_ptr
  
 

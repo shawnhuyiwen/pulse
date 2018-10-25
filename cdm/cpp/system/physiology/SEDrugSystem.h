@@ -3,11 +3,11 @@
 
 #pragma once
 #include "system/SESystem.h"
-CDM_BIND_DECL(DrugSystemData)
 class SEPupillaryResponse;
 
 class CDM_DECL SEDrugSystem : public SESystem
 {
+  friend class PBPhysiology;//friend the serialization class
 public:
   SEDrugSystem(Logger* logger);
   virtual ~SEDrugSystem();
@@ -15,14 +15,6 @@ public:
   virtual void Clear();// Deletes all members
   
   virtual const SEScalar* GetScalar(const std::string& name);
-
-  static void Load(const cdm::DrugSystemData& src, SEDrugSystem& dst);
-  static cdm::DrugSystemData* Unload(const SEDrugSystem& src);
-protected:
-  static void Serialize(const cdm::DrugSystemData& src, SEDrugSystem& dst);
-  static void Serialize(const SEDrugSystem& src, cdm::DrugSystemData& dst);
-
-public:
 
   virtual bool HasBronchodilationLevel() const;
   virtual SEScalarNegative1To1& GetBronchodilationLevel();

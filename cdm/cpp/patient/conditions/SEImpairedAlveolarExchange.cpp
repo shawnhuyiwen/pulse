@@ -2,9 +2,9 @@
    See accompanying NOTICE file for details.*/
 #include "stdafx.h"
 #include "patient/conditions/SEImpairedAlveolarExchange.h"
-#include "bind/cdm/PatientConditions.pb.h"
 #include "properties/SEScalarArea.h"
 #include "properties/SEScalar0To1.h"
+#include "io/protobuf/PBPatientConditions.h"
 
 SEImpairedAlveolarExchange::SEImpairedAlveolarExchange() : SEPatientCondition()
 {
@@ -23,6 +23,11 @@ void SEImpairedAlveolarExchange::Clear()
   SAFE_DELETE(m_ImpairedFraction);
 }
 
+void SEImpairedAlveolarExchange::Copy(const SEImpairedAlveolarExchange& src)
+{
+  PBPatientCondition::Copy(src, *this);
+}
+
 bool SEImpairedAlveolarExchange::IsValid() const
 {
   return HasImpairedFraction() || HasImpairedSurfaceArea();
@@ -37,34 +42,6 @@ bool SEImpairedAlveolarExchange::IsActive() const
   if (m_ImpairedSurfaceArea!=nullptr && m_ImpairedSurfaceArea->IsPositive())
     return true;
   return false;
-}
-
-void SEImpairedAlveolarExchange::Load(const cdm::ImpairedAlveolarExchangeData& src, SEImpairedAlveolarExchange& dst)
-{
-  SEImpairedAlveolarExchange::Serialize(src, dst);
-}
-void SEImpairedAlveolarExchange::Serialize(const cdm::ImpairedAlveolarExchangeData& src, SEImpairedAlveolarExchange& dst)
-{
-  SEPatientCondition::Serialize(src.patientcondition(), dst);
-  if (src.has_impairedfraction())
-    SEScalar0To1::Load(src.impairedfraction(), dst.GetImpairedFraction());
-  if (src.has_impairedsurfacearea())
-    SEScalarArea::Load(src.impairedsurfacearea(), dst.GetImpairedSurfaceArea());
-}
-
-cdm::ImpairedAlveolarExchangeData* SEImpairedAlveolarExchange::Unload(const SEImpairedAlveolarExchange& src)
-{
-  cdm::ImpairedAlveolarExchangeData* dst = new cdm::ImpairedAlveolarExchangeData();
-  SEImpairedAlveolarExchange::Serialize(src, *dst);
-  return dst;
-}
-void SEImpairedAlveolarExchange::Serialize(const SEImpairedAlveolarExchange& src, cdm::ImpairedAlveolarExchangeData& dst)
-{
-  SEPatientCondition::Serialize(src, *dst.mutable_patientcondition());
-  if (src.HasImpairedFraction())
-    dst.set_allocated_impairedfraction(SEScalar0To1::Unload(*src.m_ImpairedFraction));
-  if (src.HasImpairedSurfaceArea())
-    dst.set_allocated_impairedsurfacearea(SEScalarArea::Unload(*src.m_ImpairedSurfaceArea));
 }
 
 bool SEImpairedAlveolarExchange::HasImpairedSurfaceArea() const

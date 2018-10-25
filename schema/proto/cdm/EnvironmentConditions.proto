@@ -24,7 +24,7 @@ message InitialEnvironmentConditionsData
   EnvironmentConditionData              EnvironmentCondition            = 1;
   oneof Option
   {
-    EnvironmentData.ConditionsData      Conditions                      = 2;/**<< @brief An environment conditions object with properties to set in the system environmental conditions. */
+    EnvironmentalConditionsData         Conditions                      = 2;/**<< @brief An environment conditions object with properties to set in the system environmental conditions. */
     string                              ConditionsFile                  = 3;/**<< @brief File containing an environment conditions objet with properties to set in the environmental conditions. */
   }
 }

@@ -3,10 +3,10 @@
 
 #pragma once
 #include "system/SESystem.h"
-CDM_BIND_DECL(EndocrineSystemData)
 
 class CDM_DECL SEEndocrineSystem : public SESystem
 {
+  friend class PBPhysiology;//friend the serialization class
 public:
 
   SEEndocrineSystem(Logger* logger);
@@ -16,12 +16,6 @@ public:
   
   virtual const SEScalar* GetScalar(const std::string& name);
   
-  static void Load(const cdm::EndocrineSystemData& src, SEEndocrineSystem& dst);
-  static cdm::EndocrineSystemData* Unload(const SEEndocrineSystem& src);
-protected:
-  static void Serialize(const cdm::EndocrineSystemData& src, SEEndocrineSystem& dst);
-  static void Serialize(const SEEndocrineSystem& src, cdm::EndocrineSystemData& dst);
-
 public:
 
   virtual bool HasInsulinSynthesisRate() const;

@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarLengthPerTime.h"
-#include "bind/cdm/Properties.pb.h"
 
 const LengthPerTimeUnit LengthPerTimeUnit::m_Per_s("m/s");
 const LengthPerTimeUnit LengthPerTimeUnit::cm_Per_s("cm/s");
@@ -46,26 +45,4 @@ const LengthPerTimeUnit& LengthPerTimeUnit::GetCompoundUnit(const std::string& u
   std::stringstream err;
   err << unit << " is not a valid LengthPerTime unit";
   throw CommonDataModelException(err.str());
-}
-
-void SEScalarLengthPerTime::Load(const cdm::ScalarLengthPerTimeData& src, SEScalarLengthPerTime& dst)
-{
-  SEScalarLengthPerTime::Serialize(src, dst);
-}
-void SEScalarLengthPerTime::Serialize(const cdm::ScalarLengthPerTimeData& src, SEScalarLengthPerTime& dst)
-{
-  SEUnitScalar::Serialize(src.scalarlengthpertime(), dst);
-}
-
-cdm::ScalarLengthPerTimeData* SEScalarLengthPerTime::Unload(const SEScalarLengthPerTime& src)
-{
-  if (!src.IsValid())
-    return nullptr;
-  cdm::ScalarLengthPerTimeData* dst = new cdm::ScalarLengthPerTimeData();
-  Serialize(src, *dst);
-  return dst;
-}
-void SEScalarLengthPerTime::Serialize(const SEScalarLengthPerTime& src, cdm::ScalarLengthPerTimeData& dst)
-{
-  SEUnitScalar::Serialize(src, *dst.mutable_scalarlengthpertime());
 }

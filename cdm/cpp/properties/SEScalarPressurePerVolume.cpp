@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarPressurePerVolume.h"
-#include "bind/cdm/Properties.pb.h"
 
 const PressurePerVolumeUnit PressurePerVolumeUnit::mmHg_Per_mL("mmHg/mL");
 const PressurePerVolumeUnit PressurePerVolumeUnit::cmH2O_Per_mL("cmH2O/mL");
@@ -31,26 +30,4 @@ const PressurePerVolumeUnit& PressurePerVolumeUnit::GetCompoundUnit(const std::s
   std::stringstream err;
   err << unit << " is not a valid PressurePerVolume unit";
   throw CommonDataModelException(err.str());
-}
-
-void SEScalarPressurePerVolume::Load(const cdm::ScalarPressurePerVolumeData& src, SEScalarPressurePerVolume& dst)
-{
-  SEScalarPressurePerVolume::Serialize(src, dst);
-}
-void SEScalarPressurePerVolume::Serialize(const cdm::ScalarPressurePerVolumeData& src, SEScalarPressurePerVolume& dst)
-{
-  SEUnitScalar::Serialize(src.scalarpressurepervolume(), dst);
-}
-
-cdm::ScalarPressurePerVolumeData* SEScalarPressurePerVolume::Unload(const SEScalarPressurePerVolume& src)
-{
-  if (!src.IsValid())
-    return nullptr;
-  cdm::ScalarPressurePerVolumeData* dst = new cdm::ScalarPressurePerVolumeData();
-  Serialize(src, *dst);
-  return dst;
-}
-void SEScalarPressurePerVolume::Serialize(const SEScalarPressurePerVolume& src, cdm::ScalarPressurePerVolumeData& dst)
-{
-  SEUnitScalar::Serialize(src, *dst.mutable_scalarpressurepervolume());
 }

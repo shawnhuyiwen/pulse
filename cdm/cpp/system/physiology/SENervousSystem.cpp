@@ -7,8 +7,6 @@
 #include "properties/SEScalarPressurePerVolume.h"
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEScalarLength.h"
-#include "bind/cdm/Physiology.pb.h"
-#include "io/protobuf/cdm/PBPhysiology.h"
 
 SENervousSystem::SENervousSystem(Logger* logger) : SESystem(logger)
 {
@@ -66,57 +64,6 @@ const SEScalar* SENervousSystem::GetScalar(const std::string& name)
       return GetRightEyePupillaryResponse().GetScalar(prop);
   }
   return nullptr;
-}
-
-void SENervousSystem::Load(const cdm::NervousSystemData& src, SENervousSystem& dst)
-{
-  SENervousSystem::Serialize(src, dst);
-}
-void SENervousSystem::Serialize(const cdm::NervousSystemData& src, SENervousSystem& dst)
-{
-  dst.Clear();
-  if (src.has_baroreceptorheartratescale())
-    SEScalar::Load(src.baroreceptorheartratescale(), dst.GetBaroreceptorHeartRateScale());
-  if (src.has_baroreceptorheartelastancescale())
-    SEScalar::Load(src.baroreceptorheartelastancescale(), dst.GetBaroreceptorHeartElastanceScale());
-  if (src.has_baroreceptorresistancescale())
-    SEScalar::Load(src.baroreceptorresistancescale(), dst.GetBaroreceptorResistanceScale());
-  if (src.has_baroreceptorcompliancescale())
-    SEScalar::Load(src.baroreceptorcompliancescale(), dst.GetBaroreceptorComplianceScale());
-  if (src.has_chemoreceptorheartratescale())
-    SEScalar::Load(src.chemoreceptorheartratescale(), dst.GetChemoreceptorHeartRateScale());
-  if (src.has_chemoreceptorheartelastancescale())
-    SEScalar::Load(src.chemoreceptorheartelastancescale(), dst.GetChemoreceptorHeartElastanceScale());
-  if (src.has_lefteyepupillaryresponse())
-    PBPhysiology::Load(src.lefteyepupillaryresponse(), dst.GetLeftEyePupillaryResponse());
-  if (src.has_righteyepupillaryresponse())
-    PBPhysiology::Load(src.righteyepupillaryresponse(), dst.GetRightEyePupillaryResponse());
-}
-
-cdm::NervousSystemData* SENervousSystem::Unload(const SENervousSystem& src)
-{
-  cdm::NervousSystemData* dst = new cdm::NervousSystemData();
-  SENervousSystem::Serialize(src, *dst);
-  return dst;
-}
-void SENervousSystem::Serialize(const SENervousSystem& src, cdm::NervousSystemData& dst)
-{
-  if (src.HasBaroreceptorHeartRateScale())
-    dst.set_allocated_baroreceptorheartratescale(SEScalar::Unload(*src.m_BaroreceptorHeartRateScale));
-  if (src.HasBaroreceptorHeartElastanceScale())
-    dst.set_allocated_baroreceptorheartelastancescale(SEScalar::Unload(*src.m_BaroreceptorHeartElastanceScale));
-  if (src.HasBaroreceptorResistanceScale())
-    dst.set_allocated_baroreceptorresistancescale(SEScalar::Unload(*src.m_BaroreceptorResistanceScale));
-  if (src.HasBaroreceptorComplianceScale())
-    dst.set_allocated_baroreceptorcompliancescale(SEScalar::Unload(*src.m_BaroreceptorComplianceScale));
-  if (src.HasChemoreceptorHeartRateScale())
-    dst.set_allocated_chemoreceptorheartratescale(SEScalar::Unload(*src.m_ChemoreceptorHeartRateScale));
-  if (src.HasChemoreceptorHeartElastanceScale())
-    dst.set_allocated_chemoreceptorheartelastancescale(SEScalar::Unload(*src.m_ChemoreceptorHeartElastanceScale));
-  if (src.HasLeftEyePupillaryResponse())
-    dst.set_allocated_lefteyepupillaryresponse(PBPhysiology::Unload(*src.m_LeftEyePupillaryResponse));
-  if (src.HasRightEyePupillaryResponse())
-    dst.set_allocated_righteyepupillaryresponse(PBPhysiology::Unload(*src.m_RightEyePupillaryResponse));
 }
 
 bool SENervousSystem::HasBaroreceptorHeartRateScale() const

@@ -3,27 +3,20 @@
 
 #pragma once
 #include "patient/actions/SEPatientAction.h"
-CDM_BIND_DECL(HemorrhageData)
 
 class CDM_DECL SEHemorrhage : public SEPatientAction
 {
+  friend class PBPatientAction;//friend the serialization class
 public:
 
   SEHemorrhage();
   virtual ~SEHemorrhage();
 
   virtual void Clear(); //clear memory
+  virtual void Copy(const SEHemorrhage& src);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
-
-  static void Load(const cdm::HemorrhageData& src, SEHemorrhage& dst);
-  static cdm::HemorrhageData* Unload(const SEHemorrhage& src);
-protected:
-  static void Serialize(const cdm::HemorrhageData& src, SEHemorrhage& dst);
-  static void Serialize(const SEHemorrhage& src, cdm::HemorrhageData& dst);
-
-public:
 
   virtual std::string GetCompartment() const;
   virtual void SetCompartment(const std::string& name);

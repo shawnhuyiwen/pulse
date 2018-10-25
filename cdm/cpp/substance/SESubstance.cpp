@@ -17,6 +17,7 @@
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalarVolumePerTimePressure.h"
+#include "io/protobuf/PBSubstance.h"
 
 SESubstance::SESubstance(Logger* logger) : Loggable(logger)
 {
@@ -83,9 +84,24 @@ void SESubstance::Clear()
   SAFE_DELETE(m_Clearance);
   SAFE_DELETE(m_PK);
   SAFE_DELETE(m_PD);
-  
 }
 
+bool SESubstance::SerializeToString(std::string& output, SerializationMode m) const
+{
+  return PBSubstance::SerializeToString(*this, output, m);
+}
+bool SESubstance::SerializeToFile(const std::string& filename, SerializationMode m) const
+{
+  return PBSubstance::SerializeToFile(*this, filename, m);
+}
+bool SESubstance::SerializeFromString(const std::string& src, SerializationMode m)
+{
+  return PBSubstance::SerializeFromString(src, *this, m);
+}
+bool SESubstance::SerializeFromFile(const std::string& filename, SerializationMode m)
+{
+  return PBSubstance::SerializeFromFile(filename, *this, m);
+}
 
 const SEScalar* SESubstance::GetScalar(const std::string& name)
 {

@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarFlowCompliance.h"
-#include "bind/cdm/Properties.pb.h"
 
 const FlowComplianceUnit FlowComplianceUnit::L_Per_cmH2O("L/cmH2O");
 const FlowComplianceUnit FlowComplianceUnit::mL_Per_mmHg("mL/mmHg");
@@ -36,26 +35,4 @@ const FlowComplianceUnit& FlowComplianceUnit::GetCompoundUnit(const std::string&
  std::stringstream err;
   err << unit << " is not a valid FlowCompliance unit";
   throw CommonDataModelException(err.str());
-}
-
-void SEScalarFlowCompliance::Load(const cdm::ScalarFlowComplianceData& src, SEScalarFlowCompliance& dst)
-{
-  SEScalarFlowCompliance::Serialize(src, dst);
-}
-void SEScalarFlowCompliance::Serialize(const cdm::ScalarFlowComplianceData& src, SEScalarFlowCompliance& dst)
-{
-  SEUnitScalar::Serialize(src.scalarflowcompliance(), dst);
-}
-
-cdm::ScalarFlowComplianceData* SEScalarFlowCompliance::Unload(const SEScalarFlowCompliance& src)
-{
-  if (!src.IsValid())
-    return nullptr;
-  cdm::ScalarFlowComplianceData* dst = new cdm::ScalarFlowComplianceData();
-  Serialize(src, *dst);
-  return dst;
-}
-void SEScalarFlowCompliance::Serialize(const SEScalarFlowCompliance& src, cdm::ScalarFlowComplianceData& dst)
-{
-  SEUnitScalar::Serialize(src, *dst.mutable_scalarflowcompliance());
 }

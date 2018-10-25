@@ -4,7 +4,6 @@
 #include "stdafx.h"
 #include "patient/assessments/SEUrinalysis.h"
 #include "patient/assessments/SEUrinalysisMicroscopic.h"
-#include "bind/cdm/PatientAssessments.pb.h"
 #include "properties/SEScalarTime.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
@@ -14,7 +13,7 @@
 #include "properties/SEScalarAmountPerVolume.h"
 #include "properties/SEScalarOsmolarity.h"
 #include "properties/SEScalarOsmolality.h"
-#include <google/protobuf/text_format.h>
+#include "io/protobuf/PBPatientAssessments.h"
 
 SEUrinalysis::SEUrinalysis(Logger* logger) : SEPatientAssessment(logger)
 {
@@ -58,85 +57,13 @@ void SEUrinalysis::Clear()
   SAFE_DELETE(m_Microscopic);
 }
 
-std::string SEUrinalysis::Save() const
+bool SEUrinalysis::SerializeToString(std::string& output, SerializationMode m) const
 {
-  std::string content;
-  cdm::UrinalysisData* src = SEUrinalysis::Unload(*this);
-  google::protobuf::TextFormat::PrintToString(*src, &content);
-  return content;
+  return PBPatientAssessment::SerializeToString(*this, output, m);
 }
-void SEUrinalysis::SaveFile(const std::string& filename) const
+bool SEUrinalysis::SerializeToFile(const std::string& filename, SerializationMode m) const
 {
-  std::string content;
-  cdm::UrinalysisData* src = SEUrinalysis::Unload(*this);
-  google::protobuf::TextFormat::PrintToString(*src, &content);
-  std::ofstream ascii_ostream(filename, std::ios::out | std::ios::trunc);
-  ascii_ostream << content;
-  ascii_ostream.flush();
-  ascii_ostream.close();
-  delete src;
-}
-
-void SEUrinalysis::Load(const cdm::UrinalysisData& src, SEUrinalysis& dst)
-{
-  SEUrinalysis::Serialize(src, dst);
-}
-void SEUrinalysis::Serialize(const cdm::UrinalysisData& src, SEUrinalysis& dst)
-{
-  SEPatientAssessment::Serialize(src.patientassessment(), dst);
-  dst.SetColorResult((eUrinalysis_UrineColor)src.color());
-  dst.SetAppearanceResult((eUrinalysis_ClarityIndicator)src.appearance());
-  dst.SetGlucoseResult((eUrinalysis_PresenceIndicator)src.glucose());
-  dst.SetKetoneResult((eUrinalysis_PresenceIndicator)src.ketone());
-  dst.SetBloodResult((eUrinalysis_PresenceIndicator)src.blood());
-  dst.SetProteinResult((eUrinalysis_PresenceIndicator)src.protein());
-  dst.SetNitriteResult((eUrinalysis_PresenceIndicator)src.nitrite());
-  dst.SetLeukocyteEsteraseResult((eUrinalysis_PresenceIndicator)src.leukocyteesterase());
-  if (src.has_bilirubin())
-    SEScalar::Load(src.bilirubin(), dst.GetBilirubinResult());
-  if (src.has_specificgravity())
-    SEScalar::Load(src.specificgravity(), dst.GetSpecificGravityResult());
-  if (src.has_ph())
-    SEScalar::Load(src.ph(), dst.GetPHResult());
-  if (src.has_urobilinogen())
-    SEScalarMassPerVolume::Load(src.urobilinogen(), dst.GetUrobilinogenResult());
-  if (src.has_microscopic())
-    SEUrinalysisMicroscopic::Load(src.microscopic(), dst.GetMicroscopicResult());
-}
-
-cdm::UrinalysisData* SEUrinalysis::Unload(const SEUrinalysis& src)
-{
-  cdm::UrinalysisData* dst = new cdm::UrinalysisData();
-  SEUrinalysis::Serialize(src, *dst);
-  return dst;
-}
-void SEUrinalysis::Serialize(const SEUrinalysis& src, cdm::UrinalysisData& dst)
-{
-  SEPatientAssessment::Serialize(src, *dst.mutable_patientassessment());
-  if (src.HasColorResult())
-    dst.set_color((cdm::eUrinalysis_UrineColor)src.m_Color);
-  if (src.HasAppearanceResult())
-    dst.set_appearance((cdm::eUrinalysis_ClarityIndicator)src.m_Appearance);
-  if (src.HasGlucoseResult())
-    dst.set_glucose((cdm::eUrinalysis_PresenceIndicator)src.m_Glucose);
-  if (src.HasKetoneResult())
-    dst.set_ketone((cdm::eUrinalysis_PresenceIndicator)src.m_Ketone);
-  if (src.HasBloodResult())
-    dst.set_blood((cdm::eUrinalysis_PresenceIndicator)src.m_Blood);
-  if (src.HasProteinResult())
-    dst.set_protein((cdm::eUrinalysis_PresenceIndicator)src.m_Protein);
-  if (src.HasNitriteResult())
-    dst.set_nitrite((cdm::eUrinalysis_PresenceIndicator)src.m_Nitrite);
-  if (src.HasBilirubinResult())
-    dst.set_allocated_bilirubin(SEScalar::Unload(*src.m_Bilirubin));
-  if (src.HasSpecificGravityResult())
-    dst.set_allocated_specificgravity(SEScalar::Unload(*src.m_SpecificGravity));
-  if (src.HasPHResult())
-    dst.set_allocated_ph(SEScalar::Unload(*src.m_pH));
-  if (src.HasUrobilinogenResult())
-    dst.set_allocated_urobilinogen(SEScalarMassPerVolume::Unload(*src.m_Urobilinogen));
-  if (src.HasMicroscopicResult())
-    dst.set_allocated_microscopic(SEUrinalysisMicroscopic::Unload(*src.m_Microscopic));
+  return PBPatientAssessment::SerializeToFile(*this, filename, m);
 }
 
 bool SEUrinalysis::HasColorResult() const

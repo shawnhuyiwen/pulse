@@ -111,7 +111,7 @@ bool PulseEngineRef::LoadStateFile(System::String^ filename, double sim_start_ti
       sim_start_time.SetValue(sim_start_time_s, TimeUnit::s);
     else
       sim_start_time.SetValue(0, TimeUnit::s);
-    if (!_pulse->LoadStateFile(MarshalString(filename), &sim_start_time))
+    if (!_pulse->SerializeFromFile(MarshalString(filename), ASCII, &sim_start_time))
       return false;
     _pulse->SetEventHandler(_events);
 
@@ -164,7 +164,7 @@ void PulseEngineRef::SaveStateFile(System::String^ filename)
 {
   Monitor::Enter(_lock);
   {
-    _pulse->SaveState(MarshalString(filename));
+    _pulse->SerializeToFile(MarshalString(filename),ASCII);
   }
   Monitor::Exit(_lock);
 }

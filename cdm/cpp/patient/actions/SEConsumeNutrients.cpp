@@ -3,10 +3,10 @@
 
 #include "stdafx.h"
 #include "patient/actions/SEConsumeNutrients.h"
-#include "bind/cdm/PatientActions.pb.h"
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarMassPerTime.h"
 #include "properties/SEScalarVolume.h"
+#include "io/protobuf/PBPatientActions.h"
 
 SEConsumeNutrients::SEConsumeNutrients() : SEPatientAction()
 {
@@ -26,6 +26,11 @@ void SEConsumeNutrients::Clear()
   InvalidateNutritionFile();
 }
 
+void SEConsumeNutrients::Copy(const SEConsumeNutrients& src)
+{
+  PBPatientAction::Copy(src, *this);
+}
+
 bool SEConsumeNutrients::IsValid() const
 {
   return SEPatientAction::IsValid() && (HasNutrition() || HasNutritionFile());
@@ -34,34 +39,6 @@ bool SEConsumeNutrients::IsValid() const
 bool SEConsumeNutrients::IsActive() const
 {
   return IsValid();
-}
-
-void SEConsumeNutrients::Load(const cdm::ConsumeNutrientsData& src, SEConsumeNutrients& dst)
-{
-  SEConsumeNutrients::Serialize(src, dst);
-}
-void SEConsumeNutrients::Serialize(const cdm::ConsumeNutrientsData& src, SEConsumeNutrients& dst)
-{
-  SEPatientAction::Serialize(src.patientaction(), dst);
-  if (src.has_nutrition())
-    SENutrition::Load(src.nutrition(), dst.GetNutrition());
-  else
-    dst.SetNutritionFile(src.nutritionfile());
-}
-
-cdm::ConsumeNutrientsData* SEConsumeNutrients::Unload(const SEConsumeNutrients& src)
-{
-  cdm::ConsumeNutrientsData* dst = new cdm::ConsumeNutrientsData();
-  SEConsumeNutrients::Serialize(src, *dst);
-  return dst;
-}
-void SEConsumeNutrients::Serialize(const SEConsumeNutrients& src, cdm::ConsumeNutrientsData& dst)
-{
-  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
-  if (src.HasNutrition())
-    dst.set_allocated_nutrition(SENutrition::Unload(*src.m_Nutrition));
-  else if (src.HasNutritionFile())
-    dst.set_nutritionfile(src.m_NutritionFile);
 }
 
 bool SEConsumeNutrients::HasNutrition() const

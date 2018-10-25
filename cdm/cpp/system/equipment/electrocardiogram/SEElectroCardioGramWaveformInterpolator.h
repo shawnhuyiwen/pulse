@@ -2,27 +2,24 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-CDM_BIND_DECL(ElectroCardioGramWaveformListData)
 #include "system/equipment/electrocardiogram/SEElectroCardioGramWaveform.h"
 
 class CDM_DECL SEElectroCardioGramWaveformInterpolator : public Loggable
 {
+  friend class PBElectroCardioGram;//friend the serialization class
 public:
 
   SEElectroCardioGramWaveformInterpolator(Logger* logger);
   virtual ~SEElectroCardioGramWaveformInterpolator();
 
   virtual void Clear();// Deletes all members
+  virtual void Copy(const SEElectroCardioGramWaveformInterpolator& src);
 
-  virtual bool LoadFile(const std::string& file, const SEScalarTime* timeStep = nullptr);
+  bool SerializeToString(std::string& output, SerializationMode m) const;
+  bool SerializeToFile(const std::string& filename, SerializationMode m) const;
+  bool SerializeFromString(const std::string& src, SerializationMode m, const SEScalarTime* timeStep = nullptr);
+  bool SerializeFromFile(const std::string& filename, SerializationMode m, const SEScalarTime* timeStep = nullptr);
 
-  static void Load(const cdm::ElectroCardioGramWaveformListData& src, SEElectroCardioGramWaveformInterpolator& dst);
-  static cdm::ElectroCardioGramWaveformListData* Unload(const SEElectroCardioGramWaveformInterpolator& src);
-protected:
-  static void Serialize(const cdm::ElectroCardioGramWaveformListData& src, SEElectroCardioGramWaveformInterpolator& dst);
-  static void Serialize(const SEElectroCardioGramWaveformInterpolator& src, cdm::ElectroCardioGramWaveformListData& dst);
-
-public: 
   virtual void Interpolate(const SEScalarTime& timeStep);
   virtual bool StartNewCycle(eHeartRhythm rhythm);
   virtual void CalculateWaveformsElectricPotential();
@@ -41,6 +38,7 @@ public:
 protected:
 
   virtual void Interpolate(SEElectroCardioGramWaveform& waveform, const SEScalarTime& timeStep);
+  virtual bool InterpolateToTime(SEFunctionElectricPotentialVsTime& waveform, std::vector<double>& newTime, const TimeUnit& unit);
   
   std::map<eElectroCardioGram_WaveformLead, SEScalarElectricPotential*> m_Leads;
   std::map<eElectroCardioGram_WaveformLead, std::map<eHeartRhythm, SEElectroCardioGramWaveform*>> m_Waveforms;

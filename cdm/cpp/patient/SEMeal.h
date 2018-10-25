@@ -3,10 +3,10 @@
 
 #pragma once
 #include "patient/SENutrition.h"
-CDM_BIND_DECL(MealData)
 
 class CDM_DECL SEMeal : public SENutrition
 {
+  friend class PBPatientNutrition;//friend the serialization class
 public:
 
   SEMeal(Logger* logger);
@@ -14,16 +14,13 @@ public:
 
   virtual void Clear();
 
-  static void Load(const cdm::MealData& src, SEMeal& dst);
-  static cdm::MealData* Unload(const SEMeal& src);
-protected:
-  static void Serialize(const cdm::MealData& src, SEMeal& dst);
-  static void Serialize(const SEMeal& src, cdm::MealData& dst);
+  bool SerializeToString(std::string& output, SerializationMode m) const;
+  bool SerializeToFile(const std::string& filename, SerializationMode m) const;
+  bool SerializeFromString(const std::string& src, SerializationMode m);
+  bool SerializeFromFile(const std::string& filename, SerializationMode m);
 
 public:
 
-  bool LoadFile(const std::string& MealFile);
-  
   virtual bool HasElapsedTime() const;
   virtual SEScalarTime& GetElapsedTime();
   virtual double GetElapsedTime(const TimeUnit& unit) const;

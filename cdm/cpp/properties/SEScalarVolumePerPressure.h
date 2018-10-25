@@ -3,7 +3,6 @@
 
 #pragma once
 #include "properties/SEScalar.h"
-CDM_BIND_DECL(ScalarVolumePerPressureData)
 
 class CDM_DECL VolumePerPressureUnit : public CCompoundUnit
 {
@@ -23,10 +22,4 @@ class CDM_DECL SEScalarVolumePerPressure : public SEScalarQuantity<VolumePerPres
 public:
   SEScalarVolumePerPressure() {}
   virtual ~SEScalarVolumePerPressure() {}
-
-  static void Load(const cdm::ScalarVolumePerPressureData& src, SEScalarVolumePerPressure& dst);
-  static cdm::ScalarVolumePerPressureData* Unload(const SEScalarVolumePerPressure& src);
-protected:
-  static void Serialize(const cdm::ScalarVolumePerPressureData& src, SEScalarVolumePerPressure& dst);
-  static void Serialize(const SEScalarVolumePerPressure& src, cdm::ScalarVolumePerPressureData& dst);
 };

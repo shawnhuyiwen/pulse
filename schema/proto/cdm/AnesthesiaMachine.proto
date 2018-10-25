@@ -6,45 +6,45 @@ import "cdm/Enums.proto";
 import "cdm/Properties.proto";
 import "cdm/AnesthesiaMachineEnums.proto";
 
+/** @brief A vaporization chamber that can be filled with a particular substance for inhalation. */
+message AnesthesiaMachineChamberData
+{
+  eSwitch                           State                         = 1; /**<< @brief If the chamber is being used or not. */
+  Scalar0To1Data                    SubstanceFraction             = 2; /**<< @brief The fraction of the substance supplied by the vaporizer chamber. */
+  string                            Substance                     = 3; /**<< @brief The name of the substance. */
+}
+
+/** @brief A bottle of Oxygen */
+message AnesthesiaMachineOxygenBottleData
+{
+  ScalarVolumeData                  Volume                        = 1; /**<< @brief Amount of oxygen in the bottle. */
+}
+
 message AnesthesiaMachineData
 {
   /** @brief An active machine event, and how long it has been active */
   message ActiveEventData
   {
-    eAnesthesiaMachine.Event      Event                         = 1; /**<< @brief The active event. */
-    ScalarTimeData                Duration                      = 2; /**<< @brief The duration since last activated. */
-  }
-  
-  /** @brief A vaporization chamber that can be filled with a particular substance for inhalation. */
-  message ChamberData
-  {
-    eSwitch                       State                         = 1; /**<< @brief If the chamber is being used or not. */
-    Scalar0To1Data                SubstanceFraction             = 2; /**<< @brief The fraction of the substance supplied by the vaporizer chamber. */
-    string                        Substance                     = 3; /**<< @brief The name of the substance. */
-  }
-  
-  /** @brief A bottle of Oxygen */
-  message OxygenBottleData
-  {
-    ScalarVolumeData              Volume                        = 1; /**<< @brief Amount of oxygen in the bottle. */
+    eAnesthesiaMachine.Event        Event                         = 1; /**<< @brief The active event. */
+    ScalarTimeData                  Duration                      = 2; /**<< @brief The duration since last activated. */
   }
 
-  eAnesthesiaMachine.Connection   Connection                    = 1; /**<< @copybrief eAnesthesiaMachineConnection */
-  ScalarVolumePerTimeData         InletFlow                     = 2; /**<< @brief The total fresh gas inlet flow. */      
-  ScalarData                      InspiratoryExpiratoryRatio    = 3; /**<< @brief The ratio of time spent in the inspiratory phase vs the expiratory phase of respiration. */
-  Scalar0To1Data                  OxygenFraction                = 4; /**<< @brief The fraction of the fresh gas inlet flow that is oxygen. */
-  eAnesthesiaMachine.OxygenSource OxygenSource                  = 5; /**<< @brief @copybrief eAnesthesiaMachineOxygenSource */
-  ScalarPressureData              PositiveEndExpiredPressure    = 6; /**<< @brief The pressure above atmospheric pressure that exists in the lungs at the end of expiration.*/
-  eAnesthesiaMachine.PrimaryGas   PrimaryGas                    = 7; /**<< @brief @copybrief eAnesthesiaMachinePrimaryGas */      
-  ScalarPressureData              ReliefValvePressure           = 8; /**<< @brief Pressure at while the valve opens to prevent a build up of pressure in the system. */
-  ScalarFrequencyData             RespiratoryRate               = 9; /**<< @brief The prescribed rate of positive-pressure ventilation. */
-  ScalarPressureData              VentilatorPressure            = 10;/**<< @brief The pressure of the ventilator. */
+  eAnesthesiaMachine.Connection     Connection                    = 1; /**<< @copybrief eAnesthesiaMachineConnection */
+  ScalarVolumePerTimeData           InletFlow                     = 2; /**<< @brief The total fresh gas inlet flow. */      
+  ScalarData                        InspiratoryExpiratoryRatio    = 3; /**<< @brief The ratio of time spent in the inspiratory phase vs the expiratory phase of respiration. */
+  Scalar0To1Data                    OxygenFraction                = 4; /**<< @brief The fraction of the fresh gas inlet flow that is oxygen. */
+  eAnesthesiaMachine.OxygenSource   OxygenSource                  = 5; /**<< @brief @copybrief eAnesthesiaMachineOxygenSource */
+  ScalarPressureData                PositiveEndExpiredPressure    = 6; /**<< @brief The pressure above atmospheric pressure that exists in the lungs at the end of expiration.*/
+  eAnesthesiaMachine.PrimaryGas     PrimaryGas                    = 7; /**<< @brief @copybrief eAnesthesiaMachinePrimaryGas */      
+  ScalarPressureData                ReliefValvePressure           = 8; /**<< @brief Pressure at while the valve opens to prevent a build up of pressure in the system. */
+  ScalarFrequencyData               RespiratoryRate               = 9; /**<< @brief The prescribed rate of positive-pressure ventilation. */
+  ScalarPressureData                VentilatorPressure            = 10;/**<< @brief The pressure of the ventilator. */
   
-  ChamberData                     LeftChamber                   = 11;/**<< @brief The left chamber of the machine. */  
-  ChamberData                     RightChamber                  = 12;/**<< @brief The right chamber of the machine. */    
+  AnesthesiaMachineChamberData      LeftChamber                   = 11;/**<< @brief The left chamber of the machine. */  
+  AnesthesiaMachineChamberData      RightChamber                  = 12;/**<< @brief The right chamber of the machine. */    
   
-  OxygenBottleData                OxygenBottleOne               = 13;/**<< @brief The first bottle attached to the machine. */  
-  OxygenBottleData                OxygenBottleTwo               = 14;/**<< @brief The second bottle attached to the machine. */
+  AnesthesiaMachineOxygenBottleData OxygenBottleOne               = 13;/**<< @brief The first bottle attached to the machine. */  
+  AnesthesiaMachineOxygenBottleData OxygenBottleTwo               = 14;/**<< @brief The second bottle attached to the machine. */
 
-  repeated ActiveEventData        ActiveEvent                   = 15;/**<< @brief Active events and their duration. */
+  repeated ActiveEventData          ActiveEvent                   = 15;/**<< @brief Active events and their duration. */
 }

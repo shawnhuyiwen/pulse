@@ -5,7 +5,6 @@
 #include "properties/SEFunctionVolumeVsTime.h"
 #include "properties/SEScalarTime.h"
 #include "properties/SEScalarVolume.h"
-#include "bind/cdm/Properties.pb.h"
 
 
 SEFunctionVolumeVsTime::SEFunctionVolumeVsTime() : SEFunction()
@@ -23,32 +22,6 @@ void SEFunctionVolumeVsTime::Clear()
   SEFunction::Clear();
   m_TimeUnit = nullptr;
   m_VolumeUnit = nullptr;
-}
-
-void SEFunctionVolumeVsTime::Load(const cdm::FunctionVolumeVsTimeData& src, SEFunctionVolumeVsTime& dst)
-{
-  SEFunctionVolumeVsTime::Serialize(src, dst);
-}
-void SEFunctionVolumeVsTime::Serialize(const cdm::FunctionVolumeVsTimeData& src, SEFunctionVolumeVsTime& dst)
-{
-  SEFunction::Serialize(src.functionvolumevstime(), dst);
-  dst.m_TimeUnit = &TimeUnit::GetCompoundUnit(src.functionvolumevstime().independentunit());
-  dst.m_VolumeUnit = &VolumeUnit::GetCompoundUnit(src.functionvolumevstime().dependentunit());
-}
-
-cdm::FunctionVolumeVsTimeData* SEFunctionVolumeVsTime::Unload(const SEFunctionVolumeVsTime& src)
-{
-  if (!src.IsValid())
-    return nullptr;
-  cdm::FunctionVolumeVsTimeData* dst = new cdm::FunctionVolumeVsTimeData();
-  Serialize(src, *dst);
-  return dst;
-}
-void SEFunctionVolumeVsTime::Serialize(const SEFunctionVolumeVsTime& src, cdm::FunctionVolumeVsTimeData& dst)
-{
-  SEFunction::Serialize(src, *dst.mutable_functionvolumevstime());
-  dst.mutable_functionvolumevstime()->set_independentunit(src.m_TimeUnit->GetString());
-  dst.mutable_functionvolumevstime()->set_dependentunit(src.m_VolumeUnit->GetString());
 }
 
 double SEFunctionVolumeVsTime::GetTimeValue(size_t index, const TimeUnit& unit)

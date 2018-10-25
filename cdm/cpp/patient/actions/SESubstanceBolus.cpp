@@ -4,16 +4,10 @@
 #include "stdafx.h"
 #include "patient/actions/SESubstanceBolus.h"
 #include "substance/SESubstance.h"
-#include "bind/cdm/PatientActions.pb.h"
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarTime.h"
-#include "bind/cdm/PatientActionEnums.pb.h"
-
-const std::string& eSubstanceAdministration_Route_Name(eSubstanceAdministration_Route m)
-{
-  return cdm::eSubstanceAdministration_Route_Name((cdm::eSubstanceAdministration_Route)m);
-}
+#include "io/protobuf/PBPatientActions.h"
 
 SESubstanceBolus::SESubstanceBolus(const SESubstance& substance) : SESubstanceAdministration(), m_Substance(substance), m_State(substance)
 {
@@ -37,6 +31,11 @@ void SESubstanceBolus::Clear()
   m_State.Clear();
 }
 
+void SESubstanceBolus::Copy(const SESubstanceBolus& src)
+{
+  PBPatientAction::Copy(src, *this);
+}
+
 bool SESubstanceBolus::IsValid() const
 {
   return SESubstanceAdministration::IsValid() && HasDose() && HasConcentration();
@@ -45,40 +44,6 @@ bool SESubstanceBolus::IsValid() const
 bool SESubstanceBolus::IsActive() const
 {
   return IsValid();
-}
-
-void SESubstanceBolus::Load(const cdm::SubstanceBolusData& src, SESubstanceBolus& dst)
-{
-  SESubstanceBolus::Serialize(src, dst);
-}
-void SESubstanceBolus::Serialize(const cdm::SubstanceBolusData& src, SESubstanceBolus& dst)
-{
-  SEPatientAction::Serialize(src.patientaction(), dst);
-  dst.SetAdminRoute((eSubstanceAdministration_Route)src.administrationroute());
-  if (src.has_dose())
-    SEScalarVolume::Load(src.dose(), dst.GetDose());
-  if (src.has_concentration())
-    SEScalarMassPerVolume::Load(src.concentration(), dst.GetConcentration());
-  if (src.has_state())
-    SESubstanceBolusState::Load(src.state(), dst.m_State);
-}
-
-cdm::SubstanceBolusData* SESubstanceBolus::Unload(const SESubstanceBolus& src)
-{
-  cdm::SubstanceBolusData* dst = new cdm::SubstanceBolusData();
-  SESubstanceBolus::Serialize(src, *dst);
-  return dst;
-}
-void SESubstanceBolus::Serialize(const SESubstanceBolus& src, cdm::SubstanceBolusData& dst)
-{
-  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
-  dst.set_substance(src.m_Substance.GetName());
-  dst.set_administrationroute((cdm::eSubstanceAdministration_Route)src.m_AdminRoute);
-  if(src.HasDose())
-    dst.set_allocated_dose(SEScalarVolume::Unload(*src.m_Dose));
-  if (src.HasConcentration())
-    dst.set_allocated_concentration(SEScalarMassPerVolume::Unload(*src.m_Concentration));
-  dst.set_allocated_state(SESubstanceBolusState::Unload(src.m_State));
 }
 
 eSubstanceAdministration_Route SESubstanceBolus::GetAdminRoute() const
@@ -163,28 +128,16 @@ void SESubstanceBolusState::Clear()
   m_AdministeredDose->SetValue(0, VolumeUnit::mL);
 }
 
-void SESubstanceBolusState::Load(const cdm::SubstanceBolusData_StateData& src, SESubstanceBolusState& dst)
+double SESubstanceBolusState::GetElapsedTime(const TimeUnit& unit) const
 {
-  SESubstanceBolusState::Serialize(src, dst);
-}
-void SESubstanceBolusState::Serialize(const cdm::SubstanceBolusData_StateData& src, SESubstanceBolusState& dst)
-{
-  if (src.has_elapsedtime())
-    SEScalarTime::Load(src.elapsedtime(), dst.GetElapsedTime());
-  if (src.has_administereddose())
-    SEScalarVolume::Load(src.administereddose(), dst.GetAdministeredDose());
+  if (m_ElapsedTime == nullptr)
+    return SEScalar::dNaN();
+  return m_ElapsedTime->GetValue(unit);
 }
 
-cdm::SubstanceBolusData_StateData* SESubstanceBolusState::Unload(const SESubstanceBolusState& src)
+double SESubstanceBolusState::GetAdministeredDose(const VolumeUnit& unit) const
 {
-  cdm::SubstanceBolusData_StateData* dst = new cdm::SubstanceBolusData_StateData();
-  SESubstanceBolusState::Serialize(src, *dst);
-  return dst;
-}
-
-void SESubstanceBolusState::Serialize(const SESubstanceBolusState& src, cdm::SubstanceBolusData_StateData& dst)
-{
-  dst.set_substance(src.m_Substance.GetName());
-  dst.set_allocated_elapsedtime(SEScalarTime::Unload(*src.m_ElapsedTime));
-  dst.set_allocated_administereddose(SEScalarVolume::Unload(*src.m_AdministeredDose));
+  if (m_AdministeredDose == nullptr)
+    return SEScalar::dNaN();
+  return m_AdministeredDose->GetValue(unit);
 }

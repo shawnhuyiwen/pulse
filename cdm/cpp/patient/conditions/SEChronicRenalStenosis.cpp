@@ -3,8 +3,8 @@
 
 #include "stdafx.h"
 #include "patient/conditions/SEChronicRenalStenosis.h"
-#include "bind/cdm/PatientConditions.pb.h"
 #include "properties/SEScalar0To1.h"
+#include "io/protobuf/PBPatientConditions.h"
 
 SEChronicRenalStenosis::SEChronicRenalStenosis() : SEPatientCondition()
 {
@@ -24,6 +24,11 @@ void SEChronicRenalStenosis::Clear()
   SAFE_DELETE(m_RightKidneySeverity);
 }
 
+void SEChronicRenalStenosis::Copy(const SEChronicRenalStenosis& src)
+{
+  PBPatientCondition::Copy(src, *this);
+}
+
 bool SEChronicRenalStenosis::IsValid() const
 {
   return (HasLeftKidneySeverity() || HasRightKidneySeverity());
@@ -37,34 +42,6 @@ bool SEChronicRenalStenosis::IsActive() const
   if (GetRightKidneySeverity() > 0)
     return true;
   return false;
-}
-
-void SEChronicRenalStenosis::Load(const cdm::ChronicRenalStenosisData& src, SEChronicRenalStenosis& dst)
-{
-  SEChronicRenalStenosis::Serialize(src, dst);
-}
-void SEChronicRenalStenosis::Serialize(const cdm::ChronicRenalStenosisData& src, SEChronicRenalStenosis& dst)
-{
-  SEPatientCondition::Serialize(src.patientcondition(), dst);
-  if (src.has_leftkidneyseverity())
-    SEScalar0To1::Load(src.leftkidneyseverity(), dst.GetLeftKidneySeverity());
-  if (src.has_rightkidneyseverity())
-    SEScalar0To1::Load(src.rightkidneyseverity(), dst.GetRightKidneySeverity());
-}
-
-cdm::ChronicRenalStenosisData* SEChronicRenalStenosis::Unload(const SEChronicRenalStenosis& src)
-{
-  cdm::ChronicRenalStenosisData* dst = new cdm::ChronicRenalStenosisData();
-  SEChronicRenalStenosis::Serialize(src, *dst);
-  return dst;
-}
-void SEChronicRenalStenosis::Serialize(const SEChronicRenalStenosis& src, cdm::ChronicRenalStenosisData& dst)
-{
-  SEPatientCondition::Serialize(src, *dst.mutable_patientcondition());
-  if (src.HasLeftKidneySeverity())
-    dst.set_allocated_leftkidneyseverity(SEScalar0To1::Unload(*src.m_LeftKidneySeverity));
-  if (src.HasRightKidneySeverity())
-    dst.set_allocated_rightkidneyseverity(SEScalar0To1::Unload(*src.m_RightKidneySeverity));
 }
 
 bool SEChronicRenalStenosis::HasLeftKidneySeverity() const

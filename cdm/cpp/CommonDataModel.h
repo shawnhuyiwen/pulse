@@ -26,7 +26,7 @@
 #endif
 
 #define CDM_BIND_DECL(type) namespace cdm { class type; }
-#define CDM_DECL_BIND(type) \
+#define CDM_BIND_DECL2(type) \
   class SE##type;\
   namespace cdm { class type##Data; }
 
@@ -116,6 +116,8 @@ struct CommonDataModelException : public std::runtime_error
 #include "Macros.h"
 #include "utils/Logger.h"
 
+enum SerializationMode { BINARY = 0, ASCII };
+
 // General Enums
 // Keep enums in sync with appropriate schema/cdm/Enums.proto file !!
 //
@@ -136,6 +138,7 @@ extern const std::string& eCharge_Name(eCharge m);
 
 class CCompoundUnit;
 
+class SERunningAverage;
 class SEScalar; class SEUnitScalar; class SEGenericScalar; class NoUnit;
 class SEScalar0To1; 
 class SEScalarNegative1To1;

@@ -1344,7 +1344,7 @@ void CommonDataModelTest::LiquidCompartmentTest(const std::string& rptDirectory)
   SETestReport testReport(m_Logger);
 
   SESubstanceManager subMgr(m_Logger);
-  subMgr.LoadSubstances();
+  subMgr.LoadSubstanceDirectory();
 
   SETestSuite&  Flows = testReport.CreateTestSuite();
   Flows.SetName("LiquidCompartmentFlows");
@@ -1370,5 +1370,5 @@ void CommonDataModelTest::LiquidCompartmentTest(const std::string& rptDirectory)
   UpdateLiquidLinks.SetName("UpdateLiquidLinks");
   TestUpdateLiquidLinks(UpdateLiquidLinks, subMgr);
 
-  testReport.WriteFile(rptDirectory + "/LiquidCompartmentTestReport.pba");
+  testReport.SerializeToFile(rptDirectory + "/LiquidCompartmentTestReport.pba",ASCII);
 }

@@ -3,7 +3,6 @@
 
 #pragma once
 #include "properties/SEScalar.h"
-CDM_BIND_DECL(ScalarFrequencyData)
 
 class CDM_DECL FrequencyUnit : public CCompoundUnit
 {
@@ -24,10 +23,4 @@ class CDM_DECL SEScalarFrequency : public SEScalarQuantity<FrequencyUnit>
 public:
   SEScalarFrequency() {}
   virtual ~SEScalarFrequency() {}
-
-  static void Load(const cdm::ScalarFrequencyData& src, SEScalarFrequency& dst);
-  static cdm::ScalarFrequencyData* Unload(const SEScalarFrequency& src);
-protected:
-  static void Serialize(const cdm::ScalarFrequencyData& src, SEScalarFrequency& dst);
-  static void Serialize(const SEScalarFrequency& src, cdm::ScalarFrequencyData& dst);
 };

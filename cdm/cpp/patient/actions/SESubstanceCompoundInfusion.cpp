@@ -6,7 +6,7 @@
 #include "substance/SESubstanceCompound.h"
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalarVolume.h"
-#include "bind/cdm/PatientActions.pb.h"
+#include "io/protobuf/PBPatientActions.h"
 
 SESubstanceCompoundInfusion::SESubstanceCompoundInfusion(const SESubstanceCompound& compound) : SESubstanceAdministration(), m_Compound(compound)
 {
@@ -27,6 +27,11 @@ void SESubstanceCompoundInfusion::Clear()
   // m_Compound=nullptr; Keeping mapping!!
 }
 
+void SESubstanceCompoundInfusion::Copy(const SESubstanceCompoundInfusion& src)
+{
+  PBPatientAction::Copy(src, *this);
+}
+
 bool SESubstanceCompoundInfusion::IsValid() const
 {
   return SESubstanceAdministration::IsValid() && HasRate() && HasBagVolume();
@@ -35,35 +40,6 @@ bool SESubstanceCompoundInfusion::IsValid() const
 bool SESubstanceCompoundInfusion::IsActive() const
 {
   return IsValid() ? !m_Rate->IsZero() : false;
-}
-
-void SESubstanceCompoundInfusion::Load(const cdm::SubstanceCompoundInfusionData& src, SESubstanceCompoundInfusion& dst)
-{
-  SESubstanceCompoundInfusion::Serialize(src, dst);
-}
-void SESubstanceCompoundInfusion::Serialize(const cdm::SubstanceCompoundInfusionData& src, SESubstanceCompoundInfusion& dst)
-{
-  SEPatientAction::Serialize(src.patientaction(), dst);
-  if (src.has_rate())
-    SEScalarVolumePerTime::Load(src.rate(), dst.GetRate());
-  if (src.has_bagvolume())
-    SEScalarVolume::Load(src.bagvolume(), dst.GetBagVolume());
-}
-
-cdm::SubstanceCompoundInfusionData* SESubstanceCompoundInfusion::Unload(const SESubstanceCompoundInfusion& src)
-{
-  cdm::SubstanceCompoundInfusionData* dst = new cdm::SubstanceCompoundInfusionData();
-  SESubstanceCompoundInfusion::Serialize(src, *dst);
-  return dst;
-}
-void SESubstanceCompoundInfusion::Serialize(const SESubstanceCompoundInfusion& src, cdm::SubstanceCompoundInfusionData& dst)
-{
-  SEPatientAction::Serialize(src, *dst.mutable_patientaction());
-  dst.set_substancecompound(src.m_Compound.GetName());
-  if (src.HasRate())
-    dst.set_allocated_rate(SEScalarVolumePerTime::Unload(*src.m_Rate));
-  if (src.HasBagVolume())
-    dst.set_allocated_bagvolume(SEScalarVolume::Unload(*src.m_BagVolume));
 }
 
 bool SESubstanceCompoundInfusion::HasRate() const

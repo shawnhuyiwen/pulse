@@ -11,8 +11,6 @@
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarLength.h"
-#include "bind/cdm/Physiology.pb.h"
-#include "io/protobuf/cdm/PBPhysiology.h"
 
 SEDrugSystem::SEDrugSystem(Logger* logger) : SESystem(logger)
 {
@@ -47,65 +45,6 @@ void SEDrugSystem::Clear()
   SAFE_DELETE(m_SedationLevel);
   SAFE_DELETE(m_TidalVolumeChange);
   SAFE_DELETE(m_TubularPermeabilityChange);
-}
-
-void SEDrugSystem::Load(const cdm::DrugSystemData& src, SEDrugSystem& dst)
-{
-  SEDrugSystem::Serialize(src, dst);
-}
-void SEDrugSystem::Serialize(const cdm::DrugSystemData& src, SEDrugSystem& dst)
-{
-  dst.Clear();
-  if (src.has_bronchodilationlevel())
-    SEScalarNegative1To1::Load(src.bronchodilationlevel(), dst.GetBronchodilationLevel());
-  if (src.has_heartratechange())
-    SEScalarFrequency::Load(src.heartratechange(), dst.GetHeartRateChange());
-  if (src.has_meanbloodpressurechange())
-    SEScalarPressure::Load(src.meanbloodpressurechange(), dst.GetMeanBloodPressureChange());
-  if (src.has_neuromuscularblocklevel())
-    SEScalar0To1::Load(src.neuromuscularblocklevel(), dst.GetNeuromuscularBlockLevel());
-  if (src.has_pulsepressurechange())
-    SEScalarPressure::Load(src.pulsepressurechange(), dst.GetPulsePressureChange());
-  if (src.has_pupillaryresponse())
-    PBPhysiology::Load(src.pupillaryresponse(), dst.GetPupillaryResponse());
-  if (src.has_respirationratechange())
-    SEScalarFrequency::Load(src.respirationratechange(), dst.GetRespirationRateChange());
-  if (src.has_sedationlevel())
-    SEScalar0To1::Load(src.sedationlevel(), dst.GetSedationLevel());
-  if (src.has_tidalvolumechange())
-    SEScalarVolume::Load(src.tidalvolumechange(), dst.GetTidalVolumeChange());
-  if (src.has_tubularpermeabilitychange())
-    SEScalarNegative1To1::Load(src.tubularpermeabilitychange(), dst.GetTubularPermeabilityChange());
-}
-
-cdm::DrugSystemData* SEDrugSystem::Unload(const SEDrugSystem& src)
-{
-  cdm::DrugSystemData* dst = new cdm::DrugSystemData();
-  SEDrugSystem::Serialize(src, *dst);
-  return dst;
-}
-void SEDrugSystem::Serialize(const SEDrugSystem& src, cdm::DrugSystemData& dst)
-{
-  if (src.HasBronchodilationLevel())
-    dst.set_allocated_bronchodilationlevel(SEScalarNegative1To1::Unload(*src.m_BronchodilationLevel));
-  if (src.HasHeartRateChange())
-    dst.set_allocated_heartratechange(SEScalarFrequency::Unload(*src.m_HeartRateChange));
-  if (src.HasMeanBloodPressureChange())
-    dst.set_allocated_meanbloodpressurechange(SEScalarPressure::Unload(*src.m_MeanBloodPressureChange));
-  if (src.HasNeuromuscularBlockLevel())
-    dst.set_allocated_neuromuscularblocklevel(SEScalar0To1::Unload(*src.m_NeuromuscularBlockLevel));
-  if (src.HasPulsePressureChange())
-    dst.set_allocated_pulsepressurechange(SEScalarPressure::Unload(*src.m_PulsePressureChange));
-  if (src.HasPupillaryResponse())
-    dst.set_allocated_pupillaryresponse(PBPhysiology::Unload(*src.m_PupillaryResponse));
-  if (src.HasRespirationRateChange())
-    dst.set_allocated_respirationratechange(SEScalarFrequency::Unload(*src.m_RespirationRateChange));
-  if (src.HasSedationLevel())
-    dst.set_allocated_sedationlevel(SEScalar0To1::Unload(*src.m_SedationLevel));
-  if (src.HasTidalVolumeChange())
-    dst.set_allocated_tidalvolumechange(SEScalarVolume::Unload(*src.m_TidalVolumeChange));
-  if (src.HasTubularPermeabilityChange())
-    dst.set_allocated_tubularpermeabilitychange(SEScalarNegative1To1::Unload(*src.m_TubularPermeabilityChange));
 }
 
 const SEScalar* SEDrugSystem::GetScalar(const std::string& name)

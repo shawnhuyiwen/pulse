@@ -5,7 +5,6 @@
 #include "system/physiology/SETissueSystem.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
-#include "bind/cdm/Physiology.pb.h"
 
 SETissueSystem::SETissueSystem(Logger* logger) : SESystem(logger)
 {
@@ -51,53 +50,6 @@ const SEScalar* SETissueSystem::GetScalar(const std::string& name)
   if (name.compare("RespiratoryExchangeRatio") == 0)
     return &GetRespiratoryExchangeRatio();
   return nullptr;
-}
-
-void SETissueSystem::Load(const cdm::TissueSystemData& src, SETissueSystem& dst)
-{
-  SETissueSystem::Serialize(src, dst);
-}
-void SETissueSystem::Serialize(const cdm::TissueSystemData& src, SETissueSystem& dst)
-{
-  dst.Clear();
-  if (src.has_carbondioxideproductionrate())
-    SEScalarVolumePerTime::Load(src.carbondioxideproductionrate(), dst.GetCarbonDioxideProductionRate());
-  if (src.has_extracellularfluidvolume())
-    SEScalarVolume::Load(src.extracellularfluidvolume(), dst.GetExtracellularFluidVolume());
-  if (src.has_extravascularfluidvolume())
-    SEScalarVolume::Load(src.extravascularfluidvolume(), dst.GetExtravascularFluidVolume());
-  if (src.has_intracellularfluidph())
-    SEScalar::Load(src.intracellularfluidph(), dst.GetIntracellularFluidPH());
-  if (src.has_intracellularfluidvolume())
-    SEScalarVolume::Load(src.intracellularfluidvolume(), dst.GetIntracellularFluidVolume());
-  if (src.has_oxygenconsumptionrate())
-    SEScalarVolumePerTime::Load(src.oxygenconsumptionrate(), dst.GetOxygenConsumptionRate());
-  if (src.has_respiratoryexchangeratio())
-    SEScalar::Load(src.respiratoryexchangeratio(), dst.GetRespiratoryExchangeRatio());
-}
-
-cdm::TissueSystemData* SETissueSystem::Unload(const SETissueSystem& src)
-{
-  cdm::TissueSystemData* dst = new cdm::TissueSystemData();
-  SETissueSystem::Serialize(src, *dst);
-  return dst;
-}
-void SETissueSystem::Serialize(const SETissueSystem& src, cdm::TissueSystemData& dst)
-{
-  if (src.HasCarbonDioxideProductionRate())
-    dst.set_allocated_carbondioxideproductionrate(SEScalarVolumePerTime::Unload(*src.m_CarbonDioxideProductionRate));
-  if (src.HasExtracellularFluidVolume())
-    dst.set_allocated_extracellularfluidvolume(SEScalarVolume::Unload(*src.m_ExtracellularFluidVolume));
-  if (src.HasExtravascularFluidVolume())
-    dst.set_allocated_extravascularfluidvolume(SEScalarVolume::Unload(*src.m_ExtravascularFluidVolume));
-  if (src.HasIntracellularFluidPH())
-    dst.set_allocated_intracellularfluidph(SEScalar::Unload(*src.m_IntracellularFluidPH));
-  if (src.HasIntracellularFluidVolume())
-    dst.set_allocated_intracellularfluidvolume(SEScalarVolume::Unload(*src.m_IntracellularFluidVolume));
-  if (src.HasOxygenConsumptionRate())
-    dst.set_allocated_oxygenconsumptionrate(SEScalarVolumePerTime::Unload(*src.m_OxygenConsumptionRate));
-  if (src.HasRespiratoryExchangeRatio())
-    dst.set_allocated_respiratoryexchangeratio(SEScalar::Unload(*src.m_RespiratoryExchangeRatio));
 }
 
 bool SETissueSystem::HasCarbonDioxideProductionRate() const

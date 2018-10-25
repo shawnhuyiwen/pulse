@@ -1,12 +1,10 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-
 #pragma once
-#include "Controller/System.h"
+#include "controller/System.h"
 #include "system/equipment/electrocardiogram/SEElectroCardioGram.h"
 class SEElectroCardioGramWaveformInterpolator;
-PULSE_BIND_DECL(ElectroCardioGramData)
 
 /**
 * @brief 
@@ -14,6 +12,7 @@ PULSE_BIND_DECL(ElectroCardioGramData)
 */
 class PULSE_DECL ECG : public SEElectroCardioGram, public PulseElectroCardioGram, public PulseSystem
 {
+  friend class PBPulseEquipment;//friend the serialization class
   friend class PulseController;
   friend class PulseEngineTest;
 protected:
@@ -25,12 +24,7 @@ public:
 
   void Clear();
 
-  static void Load(const pulse::ElectroCardioGramData& src, ECG& dst);
-  static pulse::ElectroCardioGramData* Unload(const ECG& src);
 protected:
-  static void Serialize(const pulse::ElectroCardioGramData& src, ECG& dst);
-  static void Serialize(const ECG& src, pulse::ElectroCardioGramData& dst);
-
   // Set members to a stable homeostatic state
   void Initialize();
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state

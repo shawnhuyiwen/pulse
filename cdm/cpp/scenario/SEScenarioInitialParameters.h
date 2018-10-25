@@ -6,22 +6,16 @@ class SEEngineConfiguration;
 class SEPatient;
 class SECondition;
 class SESubstanceManager;
-CDM_BIND_DECL(ScenarioData_InitialParametersData)
 
 class CDM_DECL SEScenarioInitialParameters : public Loggable
 {
+  friend class PBScenario;//friend the serialization class
   friend class SEScenario;
 protected:
   SEScenarioInitialParameters(SESubstanceManager& subMgr);
 public:
   virtual ~SEScenarioInitialParameters();
   virtual void Clear(); //clear memory
-
-  static void Load(const cdm::ScenarioData_InitialParametersData& src, SEScenarioInitialParameters& dst);
-  static cdm::ScenarioData_InitialParametersData* Unload(const SEScenarioInitialParameters& src);
-protected:
-  static void Serialize(const cdm::ScenarioData_InitialParametersData& src, SEScenarioInitialParameters& dst);
-  static void Serialize(const SEScenarioInitialParameters& src, cdm::ScenarioData_InitialParametersData& dst);
 
 public:
 
@@ -34,11 +28,9 @@ public:
 
   virtual SEPatient& GetPatient();
   virtual const SEPatient* GetPatient() const;
-  virtual void CopyPatient(const SEPatient& patient);
   virtual bool HasPatient() const;
   virtual void InvalidatePatient();
 
-  virtual void CopyCondition(const SECondition& c);
   virtual const std::vector<SECondition*>& GetConditions() const;
 
 protected:

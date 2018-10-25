@@ -6,8 +6,7 @@
 #include "utils/testing/SETestCase.h"
 #include "utils/testing/SETestSuite.h"
 #include "utils/testing/SETestErrorStatistics.h"
-#include <google/protobuf/text_format.h>
-#include "bind/cdm/TestReport.pb.h"
+#include "io/protobuf/PBTestReport.h"
 
 SETestReport::SETestReport(Logger* logger) : Loggable(logger)
 {
@@ -27,54 +26,21 @@ void SETestReport::Reset()
 {
 }
 
-void SETestReport::Load(const cdm::TestReportData& src, SETestReport& dst)
+bool SETestReport::SerializeToString(std::string& output, SerializationMode m) const
 {
-  SETestReport::Serialize(src, dst);
+  return PBTestReport::SerializeToString(*this, output, m);
 }
-void SETestReport::Serialize(const cdm::TestReportData& src, SETestReport& dst)
+bool SETestReport::SerializeToFile(const std::string& filename, SerializationMode m) const
 {
-  dst.Clear();
-
-  SETestSuite* sx;
-  for (int i = 0; i < src.testsuite_size(); i++)
-  {
-    sx = new SETestSuite(dst.GetLogger());
-    SETestSuite::Load(src.testsuite(i), *sx);
-    dst.m_testSuite.push_back(sx);
-  }
+  return PBTestReport::SerializeToFile(*this, filename, m);
 }
-
-cdm::TestReportData* SETestReport::Unload(const SETestReport& src)
+bool SETestReport::SerializeFromString(const std::string& src, SerializationMode m)
 {
-  cdm::TestReportData* dst = new cdm::TestReportData();
-  SETestReport::Serialize(src,*dst);
-  return dst;
+  return PBTestReport::SerializeFromString(src, *this, m);
 }
-void SETestReport::Serialize(const SETestReport& src, cdm::TestReportData& dst)
+bool SETestReport::SerializeFromFile(const std::string& filename, SerializationMode m)
 {
-  for (auto ts : src.m_testSuite)
-    dst.mutable_testsuite()->AddAllocated(SETestSuite::Unload(*ts));
-}
-
-bool SETestReport::WriteFile(const std::string& fileName)
-{ 
-  try
-  {
-    std::string content;
-    cdm::TestReportData* pbuff = SETestReport::Unload(*this);
-    google::protobuf::TextFormat::PrintToString(*pbuff, &content);
-    std::ofstream ascii_ostream(fileName, std::ios::out | std::ios::trunc);
-    ascii_ostream << content;
-    ascii_ostream.flush();
-    ascii_ostream.close();
-    delete pbuff;
-  }
-  catch (std::exception e)
-  {
-    Error(e.what());
-    return false;
-  }
-  return true;
+  return PBTestReport::SerializeFromFile(filename, *this, m);
 }
 
 SETestSuite& SETestReport::CreateTestSuite()

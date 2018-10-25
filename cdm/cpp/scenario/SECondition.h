@@ -3,27 +3,17 @@
 
 #pragma once
 class SESubstanceManager;
-CDM_BIND_DECL(ConditionData)
-CDM_BIND_DECL(AnyConditionData)
 
 class CDM_DECL SECondition : public Loggable
 {
+  friend class PBCondition;//friend the serialization class
 public:
 
   SECondition();
   virtual ~SECondition();
   
   virtual void Clear();// Deletes all members
- 
-  /** Create a new action based on the binding object, load that data into the new action, and return said action */
-  static SECondition* Load(const cdm::AnyConditionData& condition, SESubstanceManager& subMgr);
-  /** Create a new bind object, unload the action, put that in the bind object, and return said bind object */
-  static cdm::AnyConditionData* Unload(const SECondition& condition);
-protected:
-  static void Serialize(const cdm::ConditionData& src, SECondition& dst);
-  static void Serialize(const SECondition& src, cdm::ConditionData& dst);
 
-public:
   virtual bool IsValid() const = 0;
   virtual bool IsActive() const = 0;
 

@@ -6,9 +6,6 @@
 #include "patient/SEPatient.h"
 #include "patient/SENutrition.h"
 
-#include "bind/cdm/Patient.pb.h"
-#include "bind/cdm/PatientNutrition.pb.h"
-#include "bind/cdm/PatientEnums.pb.h"
 #include "engine/SEEventHandler.h"
 
 #include "properties/SEScalarTime.h"
@@ -24,18 +21,9 @@
 #include "properties/SEScalarArea.h"
 #include "properties/SEScalarPower.h"
 #include "properties/SEScalarFlowElastance.h"
+#include "io/protobuf/PBPatient.h"
 
-#include <google/protobuf/text_format.h>
 
-const std::string& ePatient_Sex_Name(ePatient_Sex m)
-{
-  return cdm::ePatient_Sex_Name((cdm::ePatient_Sex)m);
-}
-
-const std::string& ePatient_Event_Name(ePatient_Event m)
-{
-  return cdm::ePatient_Event_Name((cdm::ePatient_Event)m);
-}
 SEPatient::SEPatient(Logger* logger) : Loggable(logger)
 {
   m_EventHandler = nullptr;
@@ -112,6 +100,28 @@ void SEPatient::Clear()
   SAFE_DELETE(m_VitalCapacity);
 }
 
+void SEPatient::Copy(const SEPatient& src)
+{
+  PBPatient::Copy(src, *this);
+}
+
+bool SEPatient::SerializeToString(std::string& output, SerializationMode m) const
+{
+  return PBPatient::SerializeToString(*this, output, m);
+}
+bool SEPatient::SerializeToFile(const std::string& filename, SerializationMode m) const
+{
+  return PBPatient::SerializeToFile(*this, filename, m);
+}
+bool SEPatient::SerializeFromString(const std::string& src, SerializationMode m)
+{
+  return PBPatient::SerializeFromString(src, *this, m);
+}
+bool SEPatient::SerializeFromFile(const std::string& filename, SerializationMode m)
+{
+  return PBPatient::SerializeFromFile(filename, *this, m);
+}
+
 const SEScalar* SEPatient::GetScalar(const std::string& name)
 {
   if (name.compare("Age") == 0)
@@ -169,215 +179,6 @@ const SEScalar* SEPatient::GetScalar(const std::string& name)
     return &GetVitalCapacity();
 
   return nullptr;
-}
-
-
-bool SEPatient::Load(const std::string& str)
-{
-  cdm::PatientData src;
-  if (str.empty())
-    return false;
-  if (!google::protobuf::TextFormat::ParseFromString(str, &src))
-    return false;
-  SEPatient::Load(src, *this);
-  return true;
-}
-bool SEPatient::LoadFile(const std::string& patientFile)
-{
-  cdm::PatientData src;
-  std::ifstream file_stream(patientFile, std::ios::in);
-  std::string fmsg((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
-  if (fmsg.empty())
-    return false;
-  if (!google::protobuf::TextFormat::ParseFromString(fmsg, &src))
-    return false;
-  SEPatient::Load(src, *this);
-  return true;
-
-  // If its a binary string in the file...
-  //std::ifstream binary_istream(patientFile, std::ios::in | std::ios::binary);
-  //src.ParseFromIstream(&binary_istream);
-}
-
-void SEPatient::SaveFile(const std::string& filename)
-{
-  std::string content;
-  cdm::PatientData* src = SEPatient::Unload(*this);
-  google::protobuf::TextFormat::PrintToString(*src, &content);
-  std::ofstream ascii_ostream(filename, std::ios::out | std::ios::trunc);
-  ascii_ostream << content;
-  ascii_ostream.flush();
-  ascii_ostream.close();
-  delete src;
-}
-
-
-void SEPatient::Load(const cdm::PatientData& src, SEPatient& dst)
-{
-  SEPatient::Serialize(src, dst);
-}
-void SEPatient::Serialize(const cdm::PatientData& src, SEPatient& dst)
-{
-  dst.Clear();
-  dst.SetName(src.name());
-  dst.SetSex((ePatient_Sex)src.sex());
-  if (src.has_age())
-    SEScalarTime::Load(src.age(), dst.GetAge());
-  if (src.has_weight())
-    SEScalarMass::Load(src.weight(), dst.GetWeight());
-  if (src.has_height())
-    SEScalarLength::Load(src.height(), dst.GetHeight());
-  if (src.has_bodydensity())
-    SEScalarMassPerVolume::Load(src.bodydensity(), dst.GetBodyDensity());
-  if (src.has_bodyfatfraction())
-    SEScalar0To1::Load(src.bodyfatfraction(), dst.GetBodyFatFraction());
-  if (src.has_leanbodymass())
-    SEScalarMass::Load(src.leanbodymass(), dst.GetLeanBodyMass());
-
-  if (src.has_alveolisurfacearea())
-    SEScalarArea::Load(src.alveolisurfacearea(), dst.GetAlveoliSurfaceArea());
-  if (src.has_rightlungratio())
-    SEScalar0To1::Load(src.rightlungratio(), dst.GetRightLungRatio());
-  if (src.has_skinsurfacearea())
-    SEScalarArea::Load(src.skinsurfacearea(), dst.GetSkinSurfaceArea());
-
-  if (src.has_basalmetabolicrate())
-    SEScalarPower::Load(src.basalmetabolicrate(), dst.GetBasalMetabolicRate());
-  if (src.has_bloodvolumebaseline())
-    SEScalarVolume::Load(src.bloodvolumebaseline(), dst.GetBloodVolumeBaseline());
-  if (src.has_diastolicarterialpressurebaseline())
-    SEScalarPressure::Load(src.diastolicarterialpressurebaseline(), dst.GetDiastolicArterialPressureBaseline());
-  if (src.has_heartratebaseline())
-    SEScalarFrequency::Load(src.heartratebaseline(), dst.GetHeartRateBaseline());
-  if (src.has_meanarterialpressurebaseline())
-    SEScalarPressure::Load(src.meanarterialpressurebaseline(), dst.GetMeanArterialPressureBaseline());
-  if (src.has_respirationratebaseline())
-    SEScalarFrequency::Load(src.respirationratebaseline(), dst.GetRespirationRateBaseline());
-  if (src.has_systolicarterialpressurebaseline())
-    SEScalarPressure::Load(src.systolicarterialpressurebaseline(), dst.GetSystolicArterialPressureBaseline());
-  if (src.has_tidalvolumebaseline())
-    SEScalarVolume::Load(src.tidalvolumebaseline(), dst.GetTidalVolumeBaseline());
-
-  if (src.has_heartratemaximum())
-    SEScalarFrequency::Load(src.heartratemaximum(), dst.GetHeartRateMaximum());
-  if (src.has_heartrateminimum())
-    SEScalarFrequency::Load(src.heartrateminimum(), dst.GetHeartRateMinimum());
-  if (src.has_expiratoryreservevolume())
-    SEScalarVolume::Load(src.expiratoryreservevolume(), dst.GetExpiratoryReserveVolume());
-  if (src.has_functionalresidualcapacity())
-    SEScalarVolume::Load(src.functionalresidualcapacity(), dst.GetFunctionalResidualCapacity());
-  if (src.has_inspiratorycapacity())
-    SEScalarVolume::Load(src.inspiratorycapacity(), dst.GetInspiratoryCapacity());
-  if (src.has_inspiratoryreservevolume())
-    SEScalarVolume::Load(src.inspiratoryreservevolume(), dst.GetInspiratoryReserveVolume());
-  if (src.has_residualvolume())
-    SEScalarVolume::Load(src.residualvolume(), dst.GetResidualVolume());
-  if (src.has_totallungcapacity())
-    SEScalarVolume::Load(src.totallungcapacity(), dst.GetTotalLungCapacity());
-  if (src.has_vitalcapacity())
-    SEScalarVolume::Load(src.vitalcapacity(), dst.GetVitalCapacity());
-
-  SEScalarTime time;
-  for (int i = 0; i < src.activeevent_size(); i++)
-  {
-    const cdm::PatientData::ActiveEventData& e = src.activeevent(i);
-    if(e.has_duration())
-      SEScalarTime::Load(e.duration(),time);
-    {
-      dst.m_ss << "Active Patient event " << cdm::ePatient_Event_Name(e.event()) << " does not have time associated with it";
-      dst.Warning(dst.m_ss);
-      time.SetValue(0, TimeUnit::s);
-    }
-    dst.m_EventState[(ePatient_Event)e.event()] = true;
-    dst.m_EventDuration_s[(ePatient_Event)e.event()] = time.GetValue(TimeUnit::s);
-  }
-}
-
-cdm::PatientData* SEPatient::Unload(const SEPatient& src)
-{
-  cdm::PatientData* dst = new cdm::PatientData();
-  SEPatient::Serialize(src, *dst);
-  return dst;
-}
-void SEPatient::Serialize(const SEPatient& src, cdm::PatientData& dst)
-{
-  if (src.HasName())
-    dst.set_name(src.m_Name);
-  dst.set_sex((cdm::ePatient_Sex)src.m_Sex);
-  if (src.HasAge())
-    dst.set_allocated_age(SEScalarTime::Unload(*src.m_Age));
-  if (src.HasWeight())
-    dst.set_allocated_weight(SEScalarMass::Unload(*src.m_Weight));
-  if (src.HasHeight())
-    dst.set_allocated_height(SEScalarLength::Unload(*src.m_Height));
-  if (src.HasBodyDensity())
-    dst.set_allocated_bodydensity(SEScalarMassPerVolume::Unload(*src.m_BodyDensity));
-  if (src.HasBodyFatFraction())
-    dst.set_allocated_bodyfatfraction(SEScalar0To1::Unload(*src.m_BodyFatFraction));
-  if (src.HasLeanBodyMass())
-    dst.set_allocated_leanbodymass(SEScalarMass::Unload(*src.m_LeanBodyMass));
-
-  if (src.HasAlveoliSurfaceArea())
-    dst.set_allocated_alveolisurfacearea(SEScalarArea::Unload(*src.m_AlveoliSurfaceArea));
-  if (src.HasRightLungRatio())
-    dst.set_allocated_rightlungratio(SEScalar0To1::Unload(*src.m_RightLungRatio));
-  if (src.HasSkinSurfaceArea())
-    dst.set_allocated_skinsurfacearea(SEScalarArea::Unload(*src.m_SkinSurfaceArea));
-
-  if (src.HasBasalMetabolicRate())
-    dst.set_allocated_basalmetabolicrate(SEScalarPower::Unload(*src.m_BasalMetabolicRate));
-  if (src.HasBloodVolumeBaseline())
-    dst.set_allocated_bloodvolumebaseline(SEScalarVolume::Unload(*src.m_BloodVolumeBaseline));
-  if (src.HasDiastolicArterialPressureBaseline())
-    dst.set_allocated_diastolicarterialpressurebaseline(SEScalarPressure::Unload(*src.m_DiastolicArterialPressureBaseline));
-  if (src.HasHeartRateBaseline())
-    dst.set_allocated_heartratebaseline(SEScalarFrequency::Unload(*src.m_HeartRateBaseline));
-  if (src.HasMeanArterialPressureBaseline())
-    dst.set_allocated_meanarterialpressurebaseline(SEScalarPressure::Unload(*src.m_MeanArterialPressureBaseline));
-  if (src.HasRespirationRateBaseline())
-    dst.set_allocated_respirationratebaseline(SEScalarFrequency::Unload(*src.m_RespirationRateBaseline));
-  if (src.HasSystolicArterialPressureBaseline())
-    dst.set_allocated_systolicarterialpressurebaseline(SEScalarPressure::Unload(*src.m_SystolicArterialPressureBaseline));
-  if (src.HasTidalVolumeBaseline())
-    dst.set_allocated_tidalvolumebaseline(SEScalarVolume::Unload(*src.m_TidalVolumeBaseline));
-
-  if (src.HasHeartRateMaximum())
-    dst.set_allocated_heartratemaximum(SEScalarFrequency::Unload(*src.m_HeartRateMaximum));
-  if (src.HasHeartRateMinimum())
-    dst.set_allocated_heartrateminimum(SEScalarFrequency::Unload(*src.m_HeartRateMinimum));
-  
-  if (src.HasExpiratoryReserveVolume())
-    dst.set_allocated_expiratoryreservevolume(SEScalarVolume::Unload(*src.m_ExpiratoryReserveVolume));
-  if (src.HasFunctionalResidualCapacity())
-    dst.set_allocated_functionalresidualcapacity(SEScalarVolume::Unload(*src.m_FunctionalResidualCapacity));
-  if (src.HasInspiratoryCapacity())
-    dst.set_allocated_inspiratorycapacity(SEScalarVolume::Unload(*src.m_InspiratoryCapacity));
-  if (src.HasInspiratoryReserveVolume())
-    dst.set_allocated_inspiratoryreservevolume(SEScalarVolume::Unload(*src.m_InspiratoryReserveVolume));
-  if (src.HasResidualVolume())
-    dst.set_allocated_residualvolume(SEScalarVolume::Unload(*src.m_ResidualVolume));
-  if (src.HasTotalLungCapacity())
-    dst.set_allocated_totallungcapacity(SEScalarVolume::Unload(*src.m_TotalLungCapacity));
-  if (src.HasVitalCapacity())
-    dst.set_allocated_vitalcapacity(SEScalarVolume::Unload(*src.m_VitalCapacity));
-
-  SEScalarTime time;
-  for (auto itr : src.m_EventState)
-  {
-    if (!itr.second)
-      continue;
-
-    auto it2 = src.m_EventDuration_s.find(itr.first);
-    if (it2 == src.m_EventDuration_s.end())// This should not happen... 
-      time.SetValue(0, TimeUnit::s);
-    else
-      time.SetValue(it2->second, TimeUnit::s);
-
-    cdm::PatientData_ActiveEventData* eData = dst.add_activeevent();
-
-    eData->set_event((cdm::ePatient_Event)itr.first);
-    eData->set_allocated_duration(SEScalarTime::Unload(time));
-  }
 }
 
 void SEPatient::SetEvent(ePatient_Event type, bool active, const SEScalarTime& time)

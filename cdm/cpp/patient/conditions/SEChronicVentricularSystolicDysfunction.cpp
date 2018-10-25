@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 #include "patient/conditions/SEChronicVentricularSystolicDysfunction.h"
-#include "bind/cdm/PatientConditions.pb.h"
+#include "io/protobuf/PBPatientConditions.h"
 
 SEChronicVentricularSystolicDysfunction::SEChronicVentricularSystolicDysfunction() : SEChronicHeartFailure()
 {
@@ -19,6 +19,11 @@ void SEChronicVentricularSystolicDysfunction::Clear()
   SEChronicHeartFailure::Clear();
 }
 
+void SEChronicVentricularSystolicDysfunction::Copy(const SEChronicVentricularSystolicDysfunction& src)
+{
+  PBPatientCondition::Copy(src, *this);
+}
+
 bool SEChronicVentricularSystolicDysfunction::IsValid() const
 {
   return true;
@@ -27,26 +32,6 @@ bool SEChronicVentricularSystolicDysfunction::IsValid() const
 bool SEChronicVentricularSystolicDysfunction::IsActive() const
 {
   return IsValid();
-}
-
-void SEChronicVentricularSystolicDysfunction::Load(const cdm::ChronicVentricularSystolicDysfunctionData& src, SEChronicVentricularSystolicDysfunction& dst)
-{
-  SEChronicVentricularSystolicDysfunction::Serialize(src, dst);
-}
-void SEChronicVentricularSystolicDysfunction::Serialize(const cdm::ChronicVentricularSystolicDysfunctionData& src, SEChronicVentricularSystolicDysfunction& dst)
-{
-  SEPatientCondition::Serialize(src.patientcondition(), dst);
-}
-
-cdm::ChronicVentricularSystolicDysfunctionData* SEChronicVentricularSystolicDysfunction::Unload(const SEChronicVentricularSystolicDysfunction& src)
-{
-  cdm::ChronicVentricularSystolicDysfunctionData* dst = new cdm::ChronicVentricularSystolicDysfunctionData();
-  SEChronicVentricularSystolicDysfunction::Serialize(src, *dst);
-  return dst;
-}
-void SEChronicVentricularSystolicDysfunction::Serialize(const SEChronicVentricularSystolicDysfunction& src, cdm::ChronicVentricularSystolicDysfunctionData& dst)
-{
-  SEPatientCondition::Serialize(src, *dst.mutable_patientcondition());
 }
 
 void SEChronicVentricularSystolicDysfunction::ToString(std::ostream &str) const

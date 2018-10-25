@@ -3,10 +3,10 @@
 
 #include "stdafx.h"
 #include "SEConsumeMeal.h"
-#include "bind/cdm/PatientConditions.pb.h"
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarMassPerTime.h"
 #include "properties/SEScalarVolume.h"
+#include "io/protobuf/PBPatientConditions.h"
 
 SEConsumeMeal::SEConsumeMeal() : SEPatientCondition()
 {
@@ -26,6 +26,11 @@ void SEConsumeMeal::Clear()
   InvalidateMealFile();
 }
 
+void SEConsumeMeal::Copy(const SEConsumeMeal& src)
+{
+  PBPatientCondition::Copy(src, *this);
+}
+
 bool SEConsumeMeal::IsValid() const
 {
   return (HasMeal() || HasMealFile());
@@ -33,34 +38,6 @@ bool SEConsumeMeal::IsValid() const
 bool SEConsumeMeal::IsActive() const
 {
   return IsValid();
-}
-
-void SEConsumeMeal::Load(const cdm::ConsumeMealData& src, SEConsumeMeal& dst)
-{
-  SEConsumeMeal::Serialize(src, dst);
-}
-void SEConsumeMeal::Serialize(const cdm::ConsumeMealData& src, SEConsumeMeal& dst)
-{
-  SEPatientCondition::Serialize(src.patientcondition(), dst);
-  if (src.has_meal())
-    SEMeal::Load(src.meal(), dst.GetMeal());
-  else
-    dst.SetMealFile(src.mealfile());
-}
-
-cdm::ConsumeMealData* SEConsumeMeal::Unload(const SEConsumeMeal& src)
-{
-  cdm::ConsumeMealData* dst = new cdm::ConsumeMealData();
-  SEConsumeMeal::Serialize(src, *dst);
-  return dst;
-}
-void SEConsumeMeal::Serialize(const SEConsumeMeal& src, cdm::ConsumeMealData& dst)
-{
-  SEPatientCondition::Serialize(src, *dst.mutable_patientcondition());
-  if (src.HasMeal())
-    dst.set_allocated_meal(SEMeal::Unload(*src.m_Meal));
-  else if (src.HasMealFile())
-    dst.set_mealfile(src.m_MealFile);
 }
 
 bool SEConsumeMeal::HasMeal() const

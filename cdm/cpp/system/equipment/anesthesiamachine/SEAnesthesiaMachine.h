@@ -9,7 +9,6 @@ class SEAnesthesiaMachineChamber;
 class SEAnesthesiaMachineOxygenBottle;
 class SEAnesthesiaMachineConfiguration;
 class SEGasSubstanceQuantity;
-CDM_BIND_DECL(AnesthesiaMachineData)
 
 // Keep enums in sync with appropriate schema/cdm/AnesthesiaMachineEnums.proto file !!
 enum class eAnesthesiaMachine_Event { OxygenBottleOneExhausted = 0, OxygenBottleTwoExhausted, ReliefValveActive };
@@ -30,6 +29,7 @@ extern const std::string& eAnesthesiaMachine_Connection_Name(eAnesthesiaMachine_
 
 class CDM_DECL SEAnesthesiaMachine : public SESystem
 {
+  friend class PBAnesthesiaMachine;//friend the serialization class
 protected:
   friend SEAnesthesiaMachineConfiguration;
 public:
@@ -39,11 +39,12 @@ public:
 
   virtual void Clear();
 
-  static void Load(const cdm::AnesthesiaMachineData& src, SEAnesthesiaMachine& dst);
-  static cdm::AnesthesiaMachineData* Unload(const SEAnesthesiaMachine& src);
+  bool SerializeToString(std::string& output, SerializationMode m) const;
+  bool SerializeToFile(const std::string& filename, SerializationMode m) const;
+  bool SerializeFromString(const std::string& src, SerializationMode m);
+  bool SerializeFromFile(const std::string& filename, SerializationMode m);
+
 protected:
-  static void Serialize(const cdm::AnesthesiaMachineData& src, SEAnesthesiaMachine& dst);
-  static void Serialize(const SEAnesthesiaMachine& src, cdm::AnesthesiaMachineData& dst);
 
   /** @name StateChange
   *   @brief - This method is called when ever there is a state change
@@ -53,9 +54,8 @@ protected:
   virtual void StateChange(){};
   virtual void Merge(const SEAnesthesiaMachine& from);
   virtual void ProcessConfiguration(const SEAnesthesiaMachineConfiguration& config);
-public:
 
-  bool LoadFile(const std::string& anesthesiaMachineFile);
+public:
 
   virtual const SEScalar* GetScalar(const std::string& name);
 

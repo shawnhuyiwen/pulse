@@ -3,7 +3,6 @@
 
 #pragma once
 #include "properties/SEScalar.h"
-CDM_BIND_DECL(ScalarLengthPerTimeData)
 
 class CDM_DECL LengthPerTimeUnit : public CCompoundUnit
 {
@@ -27,10 +26,4 @@ class CDM_DECL SEScalarLengthPerTime : public SEScalarQuantity<LengthPerTimeUnit
 public:
   SEScalarLengthPerTime() {}
   virtual ~SEScalarLengthPerTime() {}
-
-  static void Load(const cdm::ScalarLengthPerTimeData& src, SEScalarLengthPerTime& dst);
-  static cdm::ScalarLengthPerTimeData* Unload(const SEScalarLengthPerTime& src);
-protected:
-  static void Serialize(const cdm::ScalarLengthPerTimeData& src, SEScalarLengthPerTime& dst);
-  static void Serialize(const SEScalarLengthPerTime& src, cdm::ScalarLengthPerTimeData& dst);
 };

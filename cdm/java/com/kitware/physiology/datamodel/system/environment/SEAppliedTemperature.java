@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 package com.kitware.physiology.datamodel.system.environment;
 
-import com.kitware.physiology.cdm.Environment.EnvironmentData.AppliedTemperatureData;
+import com.kitware.physiology.cdm.Environment.AppliedTemperatureData;
 import com.kitware.physiology.cdm.Enums.eSwitch;
 
 import com.kitware.physiology.datamodel.properties.SEScalar0To1;

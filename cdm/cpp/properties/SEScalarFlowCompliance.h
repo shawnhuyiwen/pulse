@@ -3,7 +3,6 @@
 
 #pragma once
 #include "properties/SEScalar.h"
-CDM_BIND_DECL(ScalarFlowComplianceData)
 
 class CDM_DECL FlowComplianceUnit : public CCompoundUnit
 {
@@ -25,10 +24,4 @@ class CDM_DECL SEScalarFlowCompliance : public SEScalarQuantity<FlowComplianceUn
 public:
   SEScalarFlowCompliance() {}
   virtual ~SEScalarFlowCompliance() {}
-
-  static void Load(const cdm::ScalarFlowComplianceData& src, SEScalarFlowCompliance& dst);
-  static cdm::ScalarFlowComplianceData* Unload(const SEScalarFlowCompliance& src);
-protected:
-  static void Serialize(const cdm::ScalarFlowComplianceData& src, SEScalarFlowCompliance& dst);
-  static void Serialize(const SEScalarFlowCompliance& src, cdm::ScalarFlowComplianceData& dst);
 };

@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarElectricPotential.h"
-#include "bind/cdm/Properties.pb.h"
 
 const ElectricPotentialUnit ElectricPotentialUnit::V("V");
 const ElectricPotentialUnit ElectricPotentialUnit::mV("mV");
@@ -26,26 +25,4 @@ const ElectricPotentialUnit& ElectricPotentialUnit::GetCompoundUnit(const std::s
   std::stringstream err;
   err << unit << " is not a valid Electric Potential unit";
   throw CommonDataModelException(err.str());
-}
-
-void SEScalarElectricPotential::Load(const cdm::ScalarElectricPotentialData& src, SEScalarElectricPotential& dst)
-{
-  SEScalarElectricPotential::Serialize(src, dst);
-}
-void SEScalarElectricPotential::Serialize(const cdm::ScalarElectricPotentialData& src, SEScalarElectricPotential& dst)
-{
-  SEUnitScalar::Serialize(src.scalarelectricpotential(), dst);
-}
-
-cdm::ScalarElectricPotentialData* SEScalarElectricPotential::Unload(const SEScalarElectricPotential& src)
-{
-  if (!src.IsValid())
-    return nullptr;
-  cdm::ScalarElectricPotentialData* dst = new cdm::ScalarElectricPotentialData();
-  Serialize(src, *dst);
-  return dst;
-}
-void SEScalarElectricPotential::Serialize(const SEScalarElectricPotential& src, cdm::ScalarElectricPotentialData& dst)
-{
-  SEUnitScalar::Serialize(src, *dst.mutable_scalarelectricpotential());
 }

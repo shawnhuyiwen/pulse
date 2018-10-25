@@ -3,7 +3,6 @@
 
 #pragma once
 #include "properties/SEScalar.h"
-CDM_BIND_DECL(ScalarMassPerTimeData)
 
 class CDM_DECL MassPerTimeUnit : public CCompoundUnit
 {
@@ -29,10 +28,4 @@ class CDM_DECL SEScalarMassPerTime : public SEScalarQuantity<MassPerTimeUnit>
 public:
   SEScalarMassPerTime() {}
   virtual ~SEScalarMassPerTime() {}
-
-  static void Load(const cdm::ScalarMassPerTimeData& src, SEScalarMassPerTime& dst);
-  static cdm::ScalarMassPerTimeData* Unload(const SEScalarMassPerTime& src);
-protected:
-  static void Serialize(const cdm::ScalarMassPerTimeData& src, SEScalarMassPerTime& dst);
-  static void Serialize(const SEScalarMassPerTime& src, cdm::ScalarMassPerTimeData& dst);
 };

@@ -3,7 +3,7 @@
 
 #include "EngineTest.h"
 
-#include "Controller/Controller.h"
+#include "controller/Controller.h"
 #include "utils/taskrunner/TaskRunner.h"
 #include "utils/FileUtils.h"
 #include "utils/TimingProfile.h"

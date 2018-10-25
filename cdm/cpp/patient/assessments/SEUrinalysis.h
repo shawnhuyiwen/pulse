@@ -4,7 +4,6 @@
 #pragma once
 #include "patient/assessments/SEPatientAssessment.h"
 class SEUrinalysisMicroscopic;
-CDM_BIND_DECL(UrinalysisData)
 
 // Keep enums in sync with appropriate schema/cdm/PatienAssessmentEnums.proto file !!
 enum class eUrinalysis_PresenceIndicator {
@@ -36,6 +35,7 @@ extern const std::string& eUrinalysis_UrineColor_Name(eUrinalysis_UrineColor m);
 
 class CDM_DECL SEUrinalysis : public SEPatientAssessment
 {
+  friend class PBPatientAssessment;//friend the serialization class
 public:
 
   SEUrinalysis(Logger* logger);
@@ -43,16 +43,8 @@ public:
 
   virtual void Clear();
 
-  virtual std::string Save() const;
-  virtual void SaveFile(const std::string& filename) const;
-
-  static void Load(const cdm::UrinalysisData& src, SEUrinalysis& dst);
-  static cdm::UrinalysisData* Unload(const SEUrinalysis& src);
-protected:
-  static void Serialize(const cdm::UrinalysisData& src, SEUrinalysis& dst);
-  static void Serialize(const SEUrinalysis& src, cdm::UrinalysisData& dst);
-
-public:
+  bool SerializeToString(std::string& output, SerializationMode m) const;
+  bool SerializeToFile(const std::string& filename, SerializationMode m) const;
 
   virtual bool HasColorResult() const;
   virtual eUrinalysis_UrineColor GetColorResult() const;

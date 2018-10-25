@@ -3,7 +3,6 @@
 
 #pragma once
 #include "properties/SEScalar.h"
-CDM_BIND_DECL(ScalarLengthData)
 
 class CDM_DECL LengthUnit : public CCompoundUnit
 {
@@ -27,10 +26,4 @@ class CDM_DECL SEScalarLength : public SEScalarQuantity<LengthUnit>
 public:
   SEScalarLength() {}
   virtual ~SEScalarLength() {}
-
-  static void Load(const cdm::ScalarLengthData& src, SEScalarLength& dst);
-  static cdm::ScalarLengthData* Unload(const SEScalarLength& src);
-protected:
-  static void Serialize(const cdm::ScalarLengthData& src, SEScalarLength& dst);
-  static void Serialize(const SEScalarLength& src, cdm::ScalarLengthData& dst);
 };

@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "scenario/SEAdvanceTime.h"
-#include "bind/cdm/Actions.pb.h"
 #include "properties/SEScalarTime.h"
 
 SEAdvanceTime::SEAdvanceTime() : SEAction()
@@ -27,36 +26,12 @@ bool SEAdvanceTime::IsValid() const
   return HasTime() && m_Time->IsValid();
 }
 
-void SEAdvanceTime::Load(const cdm::AdvanceTimeData& src, SEAdvanceTime& dst)
-{
-  SEAdvanceTime::Serialize(src, dst);
-}
-void SEAdvanceTime::Serialize(const cdm::AdvanceTimeData& src, SEAdvanceTime& dst)
-{
-  dst.Clear();
-  if (src.has_time())
-    SEScalarTime::Load(src.time(), dst.GetTime());
-}
-
-cdm::AdvanceTimeData* SEAdvanceTime::Unload(const SEAdvanceTime& src)
-{
-  cdm::AdvanceTimeData* dst = new cdm::AdvanceTimeData();
-  SEAdvanceTime::Serialize(src, *dst);
-  return dst;
-}
-void SEAdvanceTime::Serialize(const SEAdvanceTime& src, cdm::AdvanceTimeData& dst)
-{
-  if (src.HasTime())
-    dst.set_allocated_time(SEScalarTime::Unload(*src.m_Time));
-}
-
 void SEAdvanceTime::ToString(std::ostream &str) const
 {  
   if(HasComment())
     str<<"\n\tComment : "<<m_Comment;
   str << "Advance Time : " << m_Time;
 }
-
 
 bool SEAdvanceTime::HasTime() const
 {

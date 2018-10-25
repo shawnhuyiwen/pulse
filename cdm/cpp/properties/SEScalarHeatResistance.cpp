@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarHeatResistance.h"
-#include "bind/cdm/Properties.pb.h"
 
 const HeatResistanceUnit HeatResistanceUnit::K_Per_W("K/W");
 const HeatResistanceUnit HeatResistanceUnit::C_Per_W("degC/W");
@@ -36,26 +35,4 @@ const HeatResistanceUnit& HeatResistanceUnit::GetCompoundUnit(const std::string&
   std::stringstream err;
   err << unit << " is not a valid HeatResistance unit";
   throw CommonDataModelException(err.str());
-}
-
-void SEScalarHeatResistance::Load(const cdm::ScalarHeatResistanceData& src, SEScalarHeatResistance& dst)
-{
-  SEScalarHeatResistance::Serialize(src, dst);
-}
-void SEScalarHeatResistance::Serialize(const cdm::ScalarHeatResistanceData& src, SEScalarHeatResistance& dst)
-{
-  SEUnitScalar::Serialize(src.scalarheatresistance(), dst);
-}
-
-cdm::ScalarHeatResistanceData* SEScalarHeatResistance::Unload(const SEScalarHeatResistance& src)
-{
-  if (!src.IsValid())
-    return nullptr;
-  cdm::ScalarHeatResistanceData* dst = new cdm::ScalarHeatResistanceData();
-  Serialize(src, *dst);
-  return dst;
-}
-void SEScalarHeatResistance::Serialize(const SEScalarHeatResistance& src, cdm::ScalarHeatResistanceData& dst)
-{
-  SEUnitScalar::Serialize(src, *dst.mutable_scalarheatresistance());
 }

@@ -55,7 +55,7 @@ void HowToCreateAPatient()
   patient.GetSystolicArterialPressureBaseline().SetValue(114, PressureUnit::mmHg);
 
   // You can save off the patient if you want to use it later
-  patient.SaveFile("./patients/HowToCreateAPatient.pba");
+  patient.SerializeToFile("./patients/HowToCreateAPatient.pba",ASCII);
 
   if (!pe->InitializeEngine(patient))
   {
@@ -64,5 +64,5 @@ void HowToCreateAPatient()
   }
 
   // You can save off the initial patient state if you want to use it later
-  pe->SaveState("./states/HowToCreateAPatient@0s.pba");  
+  pe->SerializeToFile("./states/HowToCreateAPatient@0s.pba",ASCII);
 }

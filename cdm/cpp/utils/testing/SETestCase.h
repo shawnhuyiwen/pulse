@@ -4,10 +4,10 @@
 #pragma once
 class SETestSuite;
 class SETestErrorStatistics;
-namespace cdm { class TestReportData_TestCaseData; }
 
 class CDM_DECL SETestCase : public Loggable
 {
+  friend class PBTestReport;//friend the serialization class
   friend SETestSuite;
 protected:
   SETestCase(Logger* logger);
@@ -17,14 +17,6 @@ public:
 
   virtual void Reset(); //reset values
   virtual void Clear(); //clear memory
-
-  static void Load(const cdm::TestReportData_TestCaseData& src, SETestCase& dst);
-  static cdm::TestReportData_TestCaseData* Unload(const SETestCase& src);
-protected:
-  static void Serialize(const cdm::TestReportData_TestCaseData& src, SETestCase& dst);
-  static void Serialize(const SETestCase& src, cdm::TestReportData_TestCaseData& dst);
-
-public:
 
   void                                 SetName(const std::string& name);
   std::string                          GetName() const;

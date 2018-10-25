@@ -12,9 +12,7 @@
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarVolume.h"
 
-#include <google/protobuf/text_format.h>
-
-#include "bind/cdm/Inhaler.pb.h"
+#include "io/protobuf/PBInhaler.h"
 
 SEInhaler::SEInhaler(SESubstanceManager& substances) : SESystem(substances.GetLogger()), m_Substances(substances)
 {
@@ -41,42 +39,21 @@ void SEInhaler::Clear()
   m_Substance = nullptr;
 }
 
-void SEInhaler::Load(const cdm::InhalerData& src, SEInhaler& dst)
+bool SEInhaler::SerializeToString(std::string& output, SerializationMode m) const
 {
-  SEInhaler::Serialize(src, dst);
-  dst.StateChange();
+  return PBInhaler::SerializeToString(*this, output, m);
 }
-void SEInhaler::Serialize(const cdm::InhalerData& src, SEInhaler& dst)
+bool SEInhaler::SerializeToFile(const std::string& filename, SerializationMode m) const
 {
-  if (src.state() != cdm::eSwitch::NullSwitch)
-    dst.SetState((eSwitch)src.state());
-  if (src.has_metereddose())
-    SEScalarMass::Load(src.metereddose(), dst.GetMeteredDose());
-  if (src.has_nozzleloss())
-    SEScalar0To1::Load(src.nozzleloss(), dst.GetNozzleLoss());
-  if (src.has_spacervolume())
-    SEScalarVolume::Load(src.spacervolume(), dst.GetSpacerVolume());
-  if (!src.substance().empty())
-    dst.SetSubstance(dst.m_Substances.GetSubstance(src.substance()));
+  return PBInhaler::SerializeToFile(*this, filename, m);
 }
-
-cdm::InhalerData* SEInhaler::Unload(const SEInhaler& src)
+bool SEInhaler::SerializeFromString(const std::string& src, SerializationMode m)
 {
-  cdm::InhalerData* dst = new cdm::InhalerData();
-  SEInhaler::Serialize(src,*dst);
-  return dst;
+  return PBInhaler::SerializeFromString(src, *this, m);
 }
-void SEInhaler::Serialize(const SEInhaler& src, cdm::InhalerData& dst)
+bool SEInhaler::SerializeFromFile(const std::string& filename, SerializationMode m)
 {
-  dst.set_state((cdm::eSwitch)src.m_State);
-  if (src.HasMeteredDose())
-    dst.set_allocated_metereddose(SEScalarMass::Unload(*src.m_MeteredDose));
-  if (src.HasNozzleLoss())
-    dst.set_allocated_nozzleloss(SEScalar0To1::Unload(*src.m_NozzleLoss));
-  if (src.HasSpacerVolume())
-    dst.set_allocated_spacervolume(SEScalarVolume::Unload(*src.m_SpacerVolume));
-  if (src.HasSubstance())
-    dst.set_substance(src.m_Substance->GetName());
+  return PBInhaler::SerializeFromFile(filename, *this, m);
 }
 
 const SEScalar* SEInhaler::GetScalar(const std::string& name)
@@ -117,24 +94,9 @@ void SEInhaler::ProcessConfiguration(const SEInhalerConfiguration& config)
   if (config.HasConfiguration())
     Merge(*config.GetConfiguration());
   else if (config.HasConfigurationFile())
-    if (!LoadFile(config.GetConfigurationFile()))// Does NOT merge file in data, Should we?
+    if (!SerializeFromFile(config.GetConfigurationFile(),ASCII))// Does NOT merge file in data, Should we?
       Error("Unable to load configuration file", "SEInhaler::ProcessConfiguration");
   StateChange();
-}
-
-bool SEInhaler::LoadFile(const std::string& filename)
-{
-  cdm::InhalerData src;
-  std::ifstream file_stream(filename, std::ios::in);
-  std::string fmsg((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
-  if (!google::protobuf::TextFormat::ParseFromString(fmsg, &src))
-    return false;
-  SEInhaler::Load(src, *this);
-  return true;
-
-  // If its a binary string in the file...
-  //std::ifstream binary_istream(patientFile, std::ios::in | std::ios::binary);
-  //src.ParseFromIstream(&binary_istream);
 }
 
 eSwitch SEInhaler::GetState() const

@@ -10,8 +10,7 @@
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEFunctionVolumeVsTime.h"
-#include "bind/cdm/PatientAssessments.pb.h"
-#include <google/protobuf/text_format.h>
+#include "io/protobuf/PBPatientAssessments.h"
 
 SEPulmonaryFunctionTest::SEPulmonaryFunctionTest(Logger* logger) : SEPatientAssessment(logger)
 {
@@ -58,97 +57,13 @@ void SEPulmonaryFunctionTest::Clear()
   SAFE_DELETE(m_LungVolumePlot);
 }
 
-std::string SEPulmonaryFunctionTest::Save() const
+bool SEPulmonaryFunctionTest::SerializeToString(std::string& output, SerializationMode m) const
 {
-  std::string content;
-  cdm::PulmonaryFunctionTestData* src = SEPulmonaryFunctionTest::Unload(*this);
-  google::protobuf::TextFormat::PrintToString(*src, &content);
-  return content;
+  return PBPatientAssessment::SerializeToString(*this, output, m);
 }
-void SEPulmonaryFunctionTest::SaveFile(const std::string& filename) const
+bool SEPulmonaryFunctionTest::SerializeToFile(const std::string& filename, SerializationMode m) const
 {
-  std::string content;
-  cdm::PulmonaryFunctionTestData* src = SEPulmonaryFunctionTest::Unload(*this);
-  google::protobuf::TextFormat::PrintToString(*src, &content);
-  std::ofstream ascii_ostream(filename, std::ios::out | std::ios::trunc);
-  ascii_ostream << content;
-  ascii_ostream.flush();
-  ascii_ostream.close();
-  delete src;
-}
-
-void SEPulmonaryFunctionTest::Load(const cdm::PulmonaryFunctionTestData& src, SEPulmonaryFunctionTest& dst)
-{
-  SEPulmonaryFunctionTest::Serialize(src, dst);
-}
-void SEPulmonaryFunctionTest::Serialize(const cdm::PulmonaryFunctionTestData& src, SEPulmonaryFunctionTest& dst)
-{
-  SEPatientAssessment::Serialize(src.patientassessment(), dst);
-  if (src.has_expiratoryreservevolume())
-    SEScalarVolume::Load(src.expiratoryreservevolume(), dst.GetExpiratoryReserveVolume());
-  if (src.has_forcedvitalcapacity())
-    SEScalarVolume::Load(src.forcedvitalcapacity(), dst.GetForcedVitalCapacity());
-  if (src.has_forcedexpiratoryvolume())
-    SEScalarVolume::Load(src.forcedexpiratoryvolume(), dst.GetForcedExpiratoryVolume());
-  if (src.has_forcedexpiratoryflow())
-    SEScalarVolumePerTime::Load(src.forcedexpiratoryflow(), dst.GetForcedExpiratoryFlow());
-  if (src.has_functionalresidualcapacity())
-    SEScalarVolume::Load(src.functionalresidualcapacity(), dst.GetFunctionalResidualCapacity());
-  if (src.has_inspiratorycapacity())
-    SEScalarVolume::Load(src.inspiratorycapacity(), dst.GetInspiratoryCapacity());
-  if (src.has_maximumvoluntaryventilation())
-    SEScalarVolume::Load(src.maximumvoluntaryventilation(), dst.GetMaximumVoluntaryVentilation());
-  if (src.has_peakexpiratoryflow())
-    SEScalarVolumePerTime::Load(src.peakexpiratoryflow(), dst.GetPeakExpiratoryFlow());
-  if (src.has_residualvolume())
-    SEScalarVolume::Load(src.residualvolume(), dst.GetResidualVolume());
-  if (src.has_slowvitalcapacity())
-    SEScalarVolume::Load(src.slowvitalcapacity(), dst.GetSlowVitalCapacity());
-  if (src.has_totallungcapacity())
-    SEScalarVolume::Load(src.totallungcapacity(), dst.GetTotalLungCapacity());
-  if (src.has_vitalcapacity())
-    SEScalarVolume::Load(src.vitalcapacity(), dst.GetVitalCapacity());
-  if (src.has_lungvolumeplot())
-    SEFunctionVolumeVsTime::Load(src.lungvolumeplot(), dst.GetLungVolumePlot());
-}
-
-cdm::PulmonaryFunctionTestData* SEPulmonaryFunctionTest::Unload(const SEPulmonaryFunctionTest& src)
-{
-  cdm::PulmonaryFunctionTestData* dst = new cdm::PulmonaryFunctionTestData();
-  SEPulmonaryFunctionTest::Serialize(src, *dst);
-  return dst;
-}
-void SEPulmonaryFunctionTest::Serialize(const SEPulmonaryFunctionTest& src, cdm::PulmonaryFunctionTestData& dst)
-{
-  SEPatientAssessment::Serialize(src, *dst.mutable_patientassessment());
-  if (src.HasExpiratoryReserveVolume())
-    dst.set_allocated_expiratoryreservevolume(SEScalarVolume::Unload(*src.m_ExpiratoryReserveVolume));
-  if (src.HasForcedVitalCapacity())
-    dst.set_allocated_forcedvitalcapacity(SEScalarVolume::Unload(*src.m_ForcedVitalCapacity));
-  if (src.HasForcedExpiratoryVolume())
-    dst.set_allocated_forcedexpiratoryvolume(SEScalarVolume::Unload(*src.m_ForcedExpiratoryVolume));
-  if (src.HasForcedExpiratoryFlow())
-    dst.set_allocated_forcedexpiratoryflow(SEScalarVolumePerTime::Unload(*src.m_ForcedExpiratoryFlow));
-  if (src.HasFunctionalResidualCapacity())
-    dst.set_allocated_functionalresidualcapacity(SEScalarVolume::Unload(*src.m_FunctionalResidualCapacity));
-  if (src.HasInspiratoryCapacity())
-    dst.set_allocated_inspiratorycapacity(SEScalarVolume::Unload(*src.m_InspiratoryCapacity));
-  if (src.HasInspiratoryReserveVolume())
-    dst.set_allocated_inspiratoryreservevolume(SEScalarVolume::Unload(*src.m_InspiratoryReserveVolume));
-  if (src.HasMaximumVoluntaryVentilation())
-    dst.set_allocated_maximumvoluntaryventilation(SEScalarVolume::Unload(*src.m_MaximumVoluntaryVentilation));
-  if (src.HasPeakExpiratoryFlow())
-    dst.set_allocated_peakexpiratoryflow(SEScalarVolumePerTime::Unload(*src.m_PeakExpiratoryFlow));
-  if (src.HasResidualVolume())
-    dst.set_allocated_residualvolume(SEScalarVolume::Unload(*src.m_ResidualVolume));
-  if (src.HasSlowVitalCapacity())
-    dst.set_allocated_slowvitalcapacity(SEScalarVolume::Unload(*src.m_SlowVitalCapacity));
-  if (src.HasTotalLungCapacity())
-    dst.set_allocated_totallungcapacity(SEScalarVolume::Unload(*src.m_TotalLungCapacity));
-  if (src.HasVitalCapacity())
-    dst.set_allocated_vitalcapacity(SEScalarVolume::Unload(*src.m_VitalCapacity));
-  if (src.HasLungVolumePlot())
-    dst.set_allocated_lungvolumeplot(SEFunctionVolumeVsTime::Unload(*src.m_LungVolumePlot));
+  return PBPatientAssessment::SerializeToFile(*this, filename, m);
 }
 
 bool SEPulmonaryFunctionTest::HasExpiratoryReserveVolume() const

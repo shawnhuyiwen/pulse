@@ -3,9 +3,9 @@
 
 
 #include "stdafx.h"
-#include "Equipment/ECG.h"
+#include "equipment/ECG.h"
 #include "PulseConfiguration.h"
-#include "Systems/Cardiovascular.h"
+#include "physiology/Cardiovascular.h"
 #include "system/equipment/electrocardiogram/SEElectroCardioGramWaveformInterpolator.h"
 #include "bind/pulse/PulseEquipment.pb.h"
 #include "properties/SEScalarFrequency.h"
@@ -55,9 +55,7 @@ void ECG::Initialize()
 
   m_heartRhythmTime_s = 0;
   m_heartRhythmPeriod_s = 0;
-  auto* d = SEElectroCardioGramWaveformInterpolator::Unload(*m_data.GetConfiguration().GetECGInterpolator());
-  SEElectroCardioGramWaveformInterpolator::Load(*d, *m_interpolator);
-  delete d;
+  m_interpolator->Copy(*m_data.GetConfiguration().GetECGInterpolator());
   // You can uncomment this code to compare the original waveform to the interpolated waveform and make sure you are capturing the data properly
 /* Code to write out the ECG data in a format easy to view in plotting tools 
   std::vector<double> original_s = m_interpolator.GetWaveform(3, CDM::enumHeartRhythm::NormalSinus).GetData().GetTime();
@@ -77,34 +75,6 @@ void ECG::Initialize()
   Interpolated.WriteTrackToFile("InterpolatedECG.csv");
 */
   m_interpolator->SetLeadElectricPotential(eElectroCardioGram_WaveformLead::Lead3, GetLead3ElectricPotential());
-}
-
-void ECG::Load(const pulse::ElectroCardioGramData& src, ECG& dst)
-{
-  ECG::Serialize(src, dst);
-  dst.SetUp();
-}
-void ECG::Serialize(const pulse::ElectroCardioGramData& src, ECG& dst)
-{
-  SEElectroCardioGram::Serialize(src.common(), dst);
-  dst.m_heartRhythmTime_s = src.heartrythmtime_s();
-  dst.m_heartRhythmPeriod_s = src.heartrythmperiod_s();
-  SEElectroCardioGramWaveformInterpolator::Load(src.waveforms(),*dst.m_interpolator);
-  dst.m_interpolator->SetLeadElectricPotential(eElectroCardioGram_WaveformLead::Lead3, dst.GetLead3ElectricPotential());
-}
-
-pulse::ElectroCardioGramData* ECG::Unload(const ECG& src)
-{
-  pulse::ElectroCardioGramData* dst = new pulse::ElectroCardioGramData();
-  ECG::Serialize(src,*dst);
-  return dst;
-}
-void ECG::Serialize(const ECG& src, pulse::ElectroCardioGramData& dst)
-{
-  SEElectroCardioGram::Serialize(src, *dst.mutable_common());
-  dst.set_heartrythmtime_s(src.m_heartRhythmTime_s);
-  dst.set_heartrythmperiod_s(src.m_heartRhythmPeriod_s);
-  dst.set_allocated_waveforms(SEElectroCardioGramWaveformInterpolator::Unload(*src.m_interpolator));
 }
 
 void ECG::SetUp()

@@ -2,26 +2,23 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-CDM_BIND_DECL(TimedStabilizationData)
 #include "engine/SEEngineStabilization.h"
 
 class CDM_DECL SETimedStabilization : public SEEngineStabilization
 {
+  friend class PBEngine;//friend the serialization class
 public:
   SETimedStabilization(Logger* logger);
   virtual ~SETimedStabilization();
 
   virtual void Clear();
 
-  static void Load(const cdm::TimedStabilizationData& src, SETimedStabilization& dst);
-  static cdm::TimedStabilizationData* Unload(const SETimedStabilization& src);
-protected:
-  static void Serialize(const cdm::TimedStabilizationData& src, SETimedStabilization& dst);
-  static void Serialize(const SETimedStabilization& src, cdm::TimedStabilizationData& dst);
-
 public:
 
-  virtual bool LoadFile(const std::string& file);
+  bool SerializeToString(std::string& output, SerializationMode m) const;
+  bool SerializeToFile(const std::string& filename, SerializationMode m) const;
+  bool SerializeFromString(const std::string& src, SerializationMode m);
+  bool SerializeFromFile(const std::string& filename, SerializationMode m);
 
   virtual bool StabilizeRestingState(PhysiologyEngine& engine);
   virtual bool StabilizeFeedbackState(PhysiologyEngine& engine);

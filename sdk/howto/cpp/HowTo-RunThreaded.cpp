@@ -62,7 +62,7 @@ PulseThread::PulseThread(const std::string& logfile) : m_thread()
   m_pe = CreatePulseEngine(logfile);
   SESubstanceCompound* saline = m_pe->GetSubstanceManager().GetCompound("Saline");
 
-  if (!m_pe->LoadStateFile("./states/StandardMale@0s.pba"))
+  if (!m_pe->SerializeFromFile("./states/StandardMale@0s.pba", ASCII))
   {
     m_pe->GetLogger()->Error("Could not load state, check the error");
     return;

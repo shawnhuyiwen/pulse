@@ -1098,7 +1098,7 @@ void CommonDataModelTest::GasCompartmentTest(const std::string& rptDirectory)
   SETestReport testReport(m_Logger);
 
   SESubstanceManager subMgr(m_Logger);
-  subMgr.LoadSubstances();
+  subMgr.LoadSubstanceDirectory();
 
   SETestSuite&  Flows = testReport.CreateTestSuite();
   Flows.SetName("GasCompartmentFlows");
@@ -1120,5 +1120,5 @@ void CommonDataModelTest::GasCompartmentTest(const std::string& rptDirectory)
   UpdateGasLinks.SetName("UpdateGasLinks");
   TestUpdateGasLinks(UpdateGasLinks, subMgr);
 
-  testReport.WriteFile(rptDirectory + "/GasCompartmentTestReport.pba");
+  testReport.SerializeToFile(rptDirectory + "/GasCompartmentTestReport.pba",ASCII);
 }

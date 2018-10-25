@@ -3,23 +3,16 @@
 
 #pragma once
 #include "properties/SEFunction.h"
-CDM_BIND_DECL(FunctionVolumeVsTimeData)
 
 class CDM_DECL SEFunctionVolumeVsTime : public SEFunction
 {
+  friend class PBProperty;//friend the serialization class
 public:
 
   SEFunctionVolumeVsTime();
   virtual ~SEFunctionVolumeVsTime();
 
   virtual void Clear();
-
-  static void Load(const cdm::FunctionVolumeVsTimeData& src, SEFunctionVolumeVsTime& dst);
-  static cdm::FunctionVolumeVsTimeData* Unload(const SEFunctionVolumeVsTime& src);
-protected:
-  static void Serialize(const cdm::FunctionVolumeVsTimeData& src, SEFunctionVolumeVsTime& dst);
-  static void Serialize(const SEFunctionVolumeVsTime& src, cdm::FunctionVolumeVsTimeData& dst);
-public:
 
   double                       GetIndependentValue(size_t index) = delete;
   virtual double               GetTimeValue(size_t index, const TimeUnit& unit);

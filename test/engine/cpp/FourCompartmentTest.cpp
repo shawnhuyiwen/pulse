@@ -2,12 +2,12 @@
    See accompanying NOTICE file for details.*/
 #include "EngineTest.h"
 #include "CommonDataModel.h"
-#include "Controller/Controller.h"
-#include "Controller/Substances.h"
-#include "Controller/Circuits.h"
-#include "Controller/Compartments.h"
-#include "Systems/Tissue.h"
-#include "Systems/Saturation.h"
+#include "controller/Controller.h"
+#include "controller/Substances.h"
+#include "controller/Circuits.h"
+#include "controller/Compartments.h"
+#include "physiology/Tissue.h"
+#include "physiology/Saturation.h"
 #include "PulseConfiguration.h"
 
 #include "patient/SEPatient.h"
@@ -85,7 +85,7 @@ void PulseEngineTest::FourCompartmentTest(bool usingAcidBase, bool usingProducti
   SEFluidCircuitCalculator calc(FlowComplianceUnit::mL_Per_mmHg, VolumePerTimeUnit::mL_Per_s, FlowInertanceUnit::mmHg_s2_Per_mL, PressureUnit::mmHg, VolumeUnit::mL, FlowResistanceUnit::mmHg_s_Per_mL, m_Logger);
   PulseController pc(m_Logger);
   Tissue& tsu = (Tissue&)pc.GetTissue();
-  pc.GetPatient().LoadFile("./patients/StandardMale.pba");
+  pc.GetPatient().SerializeFromFile("./patients/StandardMale.pba",ASCII);
   pc.SetupPatient();
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);

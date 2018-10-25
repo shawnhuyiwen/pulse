@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarAmount.h"
-#include "bind/cdm/Properties.pb.h"
 
 const AmountUnit AmountUnit::mol("mol");
 const AmountUnit AmountUnit::pmol("pmol");
@@ -25,26 +24,4 @@ const AmountUnit& AmountUnit::GetCompoundUnit(const std::string& unit)
   std::stringstream err;
   err << unit << " is not a valid Amount unit";
   throw CommonDataModelException(err.str());
-}
-
-void SEScalarAmount::Load(const cdm::ScalarAmountData& src, SEScalarAmount& dst)
-{
-  SEScalarAmount::Serialize(src, dst);
-}
-void SEScalarAmount::Serialize(const cdm::ScalarAmountData& src, SEScalarAmount& dst)
-{
-  SEUnitScalar::Serialize(src.scalaramount(), dst);
-}
-
-cdm::ScalarAmountData* SEScalarAmount::Unload(const SEScalarAmount& src)
-{
-  if (!src.IsValid())
-    return nullptr;
-  cdm::ScalarAmountData* dst = new cdm::ScalarAmountData();
-  Serialize(src, *dst);
-  return dst;
-}
-void SEScalarAmount::Serialize(const SEScalarAmount& src, cdm::ScalarAmountData& dst)
-{
-  SEUnitScalar::Serialize(src, *dst.mutable_scalaramount());
 }

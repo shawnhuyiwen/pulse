@@ -3,27 +3,21 @@
 
 #pragma once
 #include "patient/conditions/SEPatientCondition.h"
-CDM_BIND_DECL(ChronicObstructivePulmonaryDiseaseData)
 
 class CDM_DECL SEChronicObstructivePulmonaryDisease : public SEPatientCondition
 {
+  friend class PBPatientCondition;//friend the serialization class
 public:
 
   SEChronicObstructivePulmonaryDisease();
   virtual ~SEChronicObstructivePulmonaryDisease();
 
   virtual void Clear(); //clear memory
+  virtual void Copy(const SEChronicObstructivePulmonaryDisease& src);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
 
-  static void Load(const cdm::ChronicObstructivePulmonaryDiseaseData& src, SEChronicObstructivePulmonaryDisease& dst);
-  static cdm::ChronicObstructivePulmonaryDiseaseData* Unload(const SEChronicObstructivePulmonaryDisease& src);
-protected:
-  static void Serialize(const cdm::ChronicObstructivePulmonaryDiseaseData& src, SEChronicObstructivePulmonaryDisease& dst);
-  static void Serialize(const SEChronicObstructivePulmonaryDisease& src, cdm::ChronicObstructivePulmonaryDiseaseData& dst);
-
-public:
   virtual std::string GetName() const { return "ChronicObstructivePulmonaryDisease"; }
 
   virtual bool HasBronchitisSeverity() const;

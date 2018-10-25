@@ -58,6 +58,6 @@ void PulseEngineTest::ConditionCombinations(const std::string& rptDirectory)
       }  
     }
   }
-  testReport.WriteFile("ConditionsPermutationsReport.pba");
+  testReport.SerializeToFile("ConditionsPermutationsReport.pba",ASCII);
   DELETE_VECTOR(testConditions);
 }

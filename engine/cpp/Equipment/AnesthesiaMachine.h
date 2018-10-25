@@ -2,14 +2,13 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "Controller/System.h"
+#include "controller/System.h"
 #include "system/equipment/anesthesiamachine/SEAnesthesiaMachine.h"
 class SEAnesthesiaMachineActionCollection;
 class SEGasCompartment;
 class SEGasSubstanceQuantity;
 class SEFluidCircuitNode;
 class SEFluidCircuitPath;
-PULSE_BIND_DECL(AnesthesiaMachineData)
 
 /**
  * @brief 
@@ -17,6 +16,7 @@ PULSE_BIND_DECL(AnesthesiaMachineData)
  */    
 class PULSE_DECL AnesthesiaMachine : public SEAnesthesiaMachine, public PulseAnesthesiaMachine, public PulseSystem
 {
+  friend class PBPulseEquipment;//friend the serialization class
   friend class PulseController;
   friend class PulseEngineTest;
 protected:
@@ -27,12 +27,6 @@ public:
   virtual ~AnesthesiaMachine();
 
   void Clear();
-
-  static void Load(const pulse::AnesthesiaMachineData& src, AnesthesiaMachine& dst);
-  static pulse::AnesthesiaMachineData* Unload(const AnesthesiaMachine& src);
-protected:
-  static void Serialize(const pulse::AnesthesiaMachineData& src, AnesthesiaMachine& dst);
-  static void Serialize(const AnesthesiaMachine& src, pulse::AnesthesiaMachineData& dst);
 
   // Set members to a stable homeostatic state
   void Initialize();

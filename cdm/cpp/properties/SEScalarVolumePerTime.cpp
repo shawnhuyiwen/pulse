@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarVolumePerTime.h"
-#include "bind/cdm/Properties.pb.h"
 
 const VolumePerTimeUnit VolumePerTimeUnit::L_Per_s("L/s");
 const VolumePerTimeUnit VolumePerTimeUnit::mL_Per_s("mL/s");
@@ -56,26 +55,4 @@ const VolumePerTimeUnit& VolumePerTimeUnit::GetCompoundUnit(const std::string& u
   std::stringstream err;
   err << unit << " is not a valid VolumePerTime unit";
   throw CommonDataModelException(err.str());
-}
-
-void SEScalarVolumePerTime::Load(const cdm::ScalarVolumePerTimeData& src, SEScalarVolumePerTime& dst)
-{
-  SEScalarVolumePerTime::Serialize(src, dst);
-}
-void SEScalarVolumePerTime::Serialize(const cdm::ScalarVolumePerTimeData& src, SEScalarVolumePerTime& dst)
-{
-  SEUnitScalar::Serialize(src.scalarvolumepertime(), dst);
-}
-
-cdm::ScalarVolumePerTimeData* SEScalarVolumePerTime::Unload(const SEScalarVolumePerTime& src)
-{
-  if (!src.IsValid())
-    return nullptr;
-  cdm::ScalarVolumePerTimeData* dst = new cdm::ScalarVolumePerTimeData();
-  Serialize(src, *dst);
-  return dst;
-}
-void SEScalarVolumePerTime::Serialize(const SEScalarVolumePerTime& src, cdm::ScalarVolumePerTimeData& dst)
-{
-  SEUnitScalar::Serialize(src, *dst.mutable_scalarvolumepertime());
 }

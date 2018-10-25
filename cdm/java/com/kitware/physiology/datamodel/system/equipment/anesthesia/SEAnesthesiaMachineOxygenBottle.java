@@ -3,7 +3,7 @@
 package com.kitware.physiology.datamodel.system.equipment.anesthesia;
 
 import com.kitware.physiology.cdm.AnesthesiaMachine.AnesthesiaMachineData;
-
+import com.kitware.physiology.cdm.AnesthesiaMachine.AnesthesiaMachineOxygenBottleData;
 import com.kitware.physiology.datamodel.properties.SEScalarVolume;
 
 public class SEAnesthesiaMachineOxygenBottle
@@ -28,19 +28,18 @@ public class SEAnesthesiaMachineOxygenBottle
       this.getVolume().set(from.getVolume());
   }
 
-  public static void load(AnesthesiaMachineData.OxygenBottleData src, SEAnesthesiaMachineOxygenBottle dst)
+  public static void load(AnesthesiaMachineOxygenBottleData src, SEAnesthesiaMachineOxygenBottle dst)
   {
     if (src.hasVolume())
       SEScalarVolume.load(src.getVolume(),dst.getVolume());        
   }
-  public static AnesthesiaMachineData.OxygenBottleData unload(SEAnesthesiaMachineOxygenBottle src)
+  public static AnesthesiaMachineOxygenBottleData unload(SEAnesthesiaMachineOxygenBottle src)
   {
-    AnesthesiaMachineData.OxygenBottleData.Builder dst
-      = AnesthesiaMachineData.OxygenBottleData.newBuilder();
+    AnesthesiaMachineOxygenBottleData.Builder dst = AnesthesiaMachineOxygenBottleData.newBuilder();
     unload(src,dst);
     return dst.build();
   }
-  protected static void unload(SEAnesthesiaMachineOxygenBottle src, AnesthesiaMachineData.OxygenBottleData.Builder dst)
+  protected static void unload(SEAnesthesiaMachineOxygenBottle src, AnesthesiaMachineOxygenBottleData.Builder dst)
   {
     if (src.hasVolume())
       dst.setVolume(SEScalarVolume.unload(src.volume));

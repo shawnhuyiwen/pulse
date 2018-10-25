@@ -2,6 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
+class SEAction;
 class SEPatientAction;
 class SEAcuteStress;
 class SEAirwayObstruction;
@@ -31,11 +32,10 @@ class SEPatientAssessmentRequest;
 class SESubstance;
 class SESubstanceCompound;
 class SESubstanceManager;
-CDM_BIND_DECL(ActionListData)
-CDM_BIND_DECL(AnyPatientActionData)
 
 class CDM_DECL SEPatientActionCollection : public Loggable
 {
+  friend class PBScenario;//friend the serialization class
   friend class SEActionManager;
 protected:
   SEPatientActionCollection(SESubstanceManager&);
@@ -178,10 +178,11 @@ public:
   const SEUrinate* GetUrinate() const;
   void RemoveUrinate();
 
+  void GetActiveActions(std::vector<const SEAction*>& v) const;
+
 protected:
   void Clear();
-  static void Serialize(const SEPatientActionCollection& src, cdm::ActionListData& dst);
-  bool ProcessAction(const SEPatientAction& action, cdm::AnyPatientActionData* any);
+  bool ProcessAction(const SEPatientAction& action);
 
   SEAcuteStress*                m_AcuteStress;
   SEAirwayObstruction*          m_AirwayObstruction;

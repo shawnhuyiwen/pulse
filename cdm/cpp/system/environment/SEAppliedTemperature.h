@@ -1,24 +1,16 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 #pragma once
-CDM_BIND_DECL(EnvironmentData_AppliedTemperatureData)
 
 class CDM_DECL SEAppliedTemperature : public Loggable
 {
+  friend class PBEnvironment;//friend the serialization class
 public:
 
   SEAppliedTemperature(Logger* logger);
   virtual ~SEAppliedTemperature();
   
   virtual void Clear();
-
-  static void Load(const cdm::EnvironmentData_AppliedTemperatureData& src, SEAppliedTemperature& dst);
-  static cdm::EnvironmentData_AppliedTemperatureData* Unload(const SEAppliedTemperature& src);
-protected:
-  static void Serialize(const cdm::EnvironmentData_AppliedTemperatureData& src, SEAppliedTemperature& dst);
-  static void Serialize(const SEAppliedTemperature& src, cdm::EnvironmentData_AppliedTemperatureData& dst);
-
-public:
 
   virtual const SEScalar* GetScalar(const std::string& name);
 

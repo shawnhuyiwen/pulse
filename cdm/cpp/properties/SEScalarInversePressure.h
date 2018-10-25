@@ -3,7 +3,6 @@
 
 #pragma once
 #include "properties/SEScalar.h"
-CDM_BIND_DECL(ScalarInversePressureData)
 
 class CDM_DECL InversePressureUnit : public CCompoundUnit
 {
@@ -25,10 +24,4 @@ class CDM_DECL SEScalarInversePressure : public SEScalarQuantity<InversePressure
 public:
   SEScalarInversePressure() {}
   virtual ~SEScalarInversePressure() {}
-
-  static void Load(const cdm::ScalarInversePressureData& src, SEScalarInversePressure& dst);
-  static cdm::ScalarInversePressureData* Unload(const SEScalarInversePressure& src);
-protected:
-  static void Serialize(const cdm::ScalarInversePressureData& src, SEScalarInversePressure& dst);
-  static void Serialize(const SEScalarInversePressure& src, cdm::ScalarInversePressureData& dst);
 };

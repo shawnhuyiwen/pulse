@@ -71,21 +71,21 @@ message ComprehensiveMetabolicPanelData
 /** @brief Urinalysis is the physical, chemical, and microscopic examination of urine. It involves a number of tests to detect and measure various compounds that pass through the urine.
     @details References<br>
     https://labtestsonline.org/understanding/analytes/urinalysis/ui-exams/start/1/ */
+
+message UrinalysisMicroscopicData
+{
+  eUrinalysis.MicroscopicObservationType      ObservationType    = 1;/**<< @brief Microscope power used in observation */
+  ScalarAmountData                            RedBloodCells      = 2;/**<< @brief Number of red blood cells viewed. */
+  ScalarAmountData                            WhiteBloodCells    = 3;/**<< @brief Number of white blood cells viewed. */
+  eUrinalysis.MicroscopicObservationAmount    EpithelialCells    = 4;/**<< @brief Amount of epithelial cells viewed. */
+  ScalarAmountData                            Casts              = 5;/**<< @brief Casts are cylindrical particles sometimes found in urine that are formed from coagulated protein secreted by kidney cells. .  */
+  eUrinalysis.MicroscopicObservationAmount    Crystals           = 6;/**<< @brief Amount of crystals viewed. */
+  eUrinalysis.MicroscopicObservationAmount    Bacteria           = 7;/**<< @brief Amount of bacteria viewed. */
+  eUrinalysis.MicroscopicObservationAmount    Trichomonads       = 8;/**<< @brief Trichomonads are parasites that may be found in the urine of women or men (rarely).*/
+  eUrinalysis.MicroscopicObservationAmount    Yeast              = 9;/**<< @brief Amount of yeasts viewed. */                         
+}
 message UrinalysisData
 {
-  message UrinalysisMicroscopicData
-  {
-    eUrinalysis.MicroscopicObservationType      ObservationType    = 1;/**<< @brief Microscope power used in observation */
-    ScalarAmountData                            RedBloodCells      = 2;/**<< @brief Number of red blood cells viewed. */
-    ScalarAmountData                            WhiteBloodCells    = 3;/**<< @brief Number of white blood cells viewed. */
-    eUrinalysis.MicroscopicObservationAmount    EpithelialCells    = 4;/**<< @brief Amount of epithelial cells viewed. */
-    ScalarAmountData                            Casts              = 5;/**<< @brief Casts are cylindrical particles sometimes found in urine that are formed from coagulated protein secreted by kidney cells. .  */
-    eUrinalysis.MicroscopicObservationAmount    Crystals           = 6;/**<< @brief Amount of crystals viewed. */
-    eUrinalysis.MicroscopicObservationAmount    Bacteria           = 7;/**<< @brief Amount of bacteria viewed. */
-    eUrinalysis.MicroscopicObservationAmount    Trichomonads       = 8;/**<< @brief Trichomonads are parasites that may be found in the urine of women or men (rarely).*/
-    eUrinalysis.MicroscopicObservationAmount    Yeast              = 9;/**<< @brief Amount of yeasts viewed. */                         
-  }
-
   PatientAssessmentData                         PatientAssessment  = 1;
   eUrinalysis.UrineColor                        Color              = 2; /**<< @brief Color of the urine. */
   eUrinalysis.ClarityIndicator                  Appearance         = 3; /**<< @brief Clarity of the urine. */
@@ -100,5 +100,5 @@ message UrinalysisData
   eUrinalysis.PresenceIndicator                 Nitrite            = 12;/**<< @brief This test detects nitrite and is based upon the fact that many bacteria can convert nitrate to nitrite in the urine. */
   eUrinalysis.PresenceIndicator                 LeukocyteEsterase  = 13;/**<< @brief Leukocyte esterase is an enzyme present in most white blood cells (WBCs). Normally, a few white blood cells (see microscopic examination) are present in urine and this test is negative. When the number of WBCs in urine increases significantly, this screening test will become positive.*/
   
-  UrinalysisMicroscopicData          Microscopic        = 14;
+  UrinalysisMicroscopicData                     Microscopic        = 14;
 }

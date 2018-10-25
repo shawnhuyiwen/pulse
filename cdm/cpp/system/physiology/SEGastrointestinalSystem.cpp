@@ -8,7 +8,6 @@
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalarMassPerTime.h"
-#include "bind/cdm/Physiology.pb.h"
 
 SEGastrointestinalSystem::SEGastrointestinalSystem(Logger* logger) : SESystem(logger)
 {
@@ -43,33 +42,6 @@ const SEScalar* SEGastrointestinalSystem::GetScalar(const std::string& name)
       return GetStomachContents().GetScalar(prop);
   }
   return nullptr;
-}
-
-void SEGastrointestinalSystem::Load(const cdm::GastrointestinalSystemData& src, SEGastrointestinalSystem& dst)
-{
-  SEGastrointestinalSystem::Serialize(src, dst);
-}
-void SEGastrointestinalSystem::Serialize(const cdm::GastrointestinalSystemData& src, SEGastrointestinalSystem& dst)
-{
-  dst.Clear();
-  if (src.has_chymeabsorptionrate())
-    SEScalarVolumePerTime::Load(src.chymeabsorptionrate(), dst.GetChymeAbsorptionRate());
-  if (src.has_stomachcontents())
-    SENutrition::Load(src.stomachcontents(), dst.GetStomachContents());
-}
-
-cdm::GastrointestinalSystemData* SEGastrointestinalSystem::Unload(const SEGastrointestinalSystem& src)
-{
-  cdm::GastrointestinalSystemData* dst = new cdm::GastrointestinalSystemData();
-  SEGastrointestinalSystem::Serialize(src, *dst);
-  return dst;
-}
-void SEGastrointestinalSystem::Serialize(const SEGastrointestinalSystem& src, cdm::GastrointestinalSystemData& dst)
-{
-  if (src.HasChymeAbsorptionRate())
-    dst.set_allocated_chymeabsorptionrate(SEScalarVolumePerTime::Unload(*src.m_ChymeAbsorptionRate));
-  if (src.HasStomachContents())
-    dst.set_allocated_stomachcontents(SENutrition::Unload(*src.m_StomachContents));
 }
 
 bool SEGastrointestinalSystem::HasChymeAbsorptionRate() const

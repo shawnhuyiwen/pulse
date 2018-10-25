@@ -7,10 +7,10 @@ class SECondition;
 class SEDataRequestManager;
 class SEScenarioInitialParameters;
 class SESubstanceManager;
-CDM_BIND_DECL(ScenarioData)
 
 class CDM_DECL SEScenario : public Loggable
 {
+  friend class PBScenario;//friend the serialization class
 public:
 
   SEScenario(SESubstanceManager& subMgr);
@@ -18,15 +18,11 @@ public:
   
   virtual void Clear(); //clear memory
 
-  bool LoadFile(const std::string& scenarioFile);
+  bool SerializeToString(std::string& output, SerializationMode m) const;
+  bool SerializeToFile(const std::string& filename, SerializationMode m) const;
+  bool SerializeFromString(const std::string& src, SerializationMode m);
+  bool SerializeFromFile(const std::string& filename, SerializationMode m);
 
-  static void Load(const cdm::ScenarioData& src, SEScenario& dst);
-  static cdm::ScenarioData* Unload(const SEScenario& src);
-protected:
-  static void Serialize(const cdm::ScenarioData& src, SEScenario& dst);
-  static void Serialize(const SEScenario& src, cdm::ScenarioData& dst);
-
-public:
   bool IsValid() const;
 
   virtual std::string GetName() const;

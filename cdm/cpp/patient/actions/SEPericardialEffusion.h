@@ -3,27 +3,20 @@
 
 #pragma once
 #include "patient/actions/SEPatientAction.h"
-CDM_BIND_DECL(PericardialEffusionData)
 
 class CDM_DECL SEPericardialEffusion : public SEPatientAction
 {
+  friend class PBPatientAction;//friend the serialization class
 public:
 
   SEPericardialEffusion();
   virtual ~SEPericardialEffusion();
 
   virtual void Clear(); //clear memory
+  virtual void Copy(const SEPericardialEffusion& src);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
-
-  static void Load(const cdm::PericardialEffusionData& src, SEPericardialEffusion& dst);
-  static cdm::PericardialEffusionData* Unload(const SEPericardialEffusion& src);
-protected:
-  static void Serialize(const cdm::PericardialEffusionData& src, SEPericardialEffusion& dst);
-  static void Serialize(const SEPericardialEffusion& src, cdm::PericardialEffusionData& dst);
-
-public:
 
   virtual bool HasEffusionRate() const;
   virtual SEScalarVolumePerTime& GetEffusionRate();

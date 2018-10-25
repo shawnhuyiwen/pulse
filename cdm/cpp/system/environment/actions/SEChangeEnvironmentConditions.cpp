@@ -3,7 +3,6 @@
 #include "stdafx.h"
 #include "system/environment/actions/SEChangeEnvironmentConditions.h"
 #include "system/environment/SEEnvironmentalConditions.h"
-#include "bind/cdm/EnvironmentActions.pb.h"
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceFraction.h"
 #include "substance/SESubstanceConcentration.h"
@@ -17,6 +16,7 @@
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarTemperature.h"
 #include "properties/SEScalarHeatResistanceArea.h"
+#include "io/protobuf/PBEnvironmentActions.h"
 
 
 SEChangeEnvironmentConditions::SEChangeEnvironmentConditions(SESubstanceManager& substances) : SEEnvironmentAction(), m_Substances(substances)
@@ -37,37 +37,14 @@ void SEChangeEnvironmentConditions::Clear()
   SAFE_DELETE(m_Conditions);
 }
 
+void SEChangeEnvironmentConditions::Copy(const SEChangeEnvironmentConditions& src)
+{// Using Bindings to make a copy
+  PBEnvironmentAction::Copy(src, *this);
+}
+
 bool SEChangeEnvironmentConditions::IsValid() const
 {
   return SEEnvironmentAction::IsValid() && (HasConditions() || HasConditionsFile());
-}
-
-void SEChangeEnvironmentConditions::Load(const cdm::ChangeEnvironmentConditionsData& src, SEChangeEnvironmentConditions& dst)
-{
-  SEChangeEnvironmentConditions::Serialize(src, dst);
-}
-void SEChangeEnvironmentConditions::Serialize(const cdm::ChangeEnvironmentConditionsData& src, SEChangeEnvironmentConditions& dst)
-{
-  SEEnvironmentAction::Serialize(src.environmentaction(),dst);
-  if (src.has_conditions())
-    SEEnvironmentalConditions::Load(src.conditions(), dst.GetConditions());
-  else
-    dst.SetConditionsFile(src.conditionsfile());
-}
-
-cdm::ChangeEnvironmentConditionsData* SEChangeEnvironmentConditions::Unload(const SEChangeEnvironmentConditions& src)
-{
-  cdm::ChangeEnvironmentConditionsData* dst = new cdm::ChangeEnvironmentConditionsData();
-  SEChangeEnvironmentConditions::Serialize(src, *dst);
-  return dst;
-}
-void SEChangeEnvironmentConditions::Serialize(const SEChangeEnvironmentConditions& src, cdm::ChangeEnvironmentConditionsData& dst)
-{
-  SEEnvironmentAction::Serialize(src,*dst.mutable_environmentaction());
-  if (src.HasConditions())
-    dst.set_allocated_conditions(SEEnvironmentalConditions::Unload(*src.m_Conditions));
-  else if (src.HasConditionsFile())
-    dst.set_conditionsfile(src.m_ConditionsFile);
 }
 
 bool SEChangeEnvironmentConditions::HasConditions() const

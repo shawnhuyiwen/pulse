@@ -25,66 +25,6 @@ void SETestErrorStatistics::Reset()
 {
 }
 
-void SETestErrorStatistics::Load(const cdm::TestReportData_TestErrorStatisticsData& src, SETestErrorStatistics& dst)
-{
-  SETestErrorStatistics::Serialize(src, dst);
-}
-void SETestErrorStatistics::Serialize(const cdm::TestReportData_TestErrorStatisticsData& src, SETestErrorStatistics& dst)
-{
-  dst.Clear();
-
-  dst.m_PropertyName = src.propertyname();
-  dst.m_PercentTolerance = src.percenttolerance();
-  dst.m_NumberOfErrors = src.numberoferrors();
-  dst.m_ComputedPropertyID = src.computedpropertyid();
-  dst.m_ExpectedPropertyID = src.expectedpropertyid();
-
-  dst.m_MinimumError = src.minimumerror();
-  dst.m_MaximumError = src.maximumerror();
-  dst.m_AverageError = src.averageerror();
-  dst.m_StandardDeviation = src.standarddeviation();
-
-  if (src.has_percenttolerancevsnumerrors())
-    SEFunction::Load(src.percenttolerancevsnumerrors(), dst.GetPercentToleranceVsNumErrorsHistogram());
-
-  for (int i=0; i<src.differences_size(); i++)
-    dst.m_Differences.push_back(src.differences(i));
-}
-
-cdm::TestReportData_TestErrorStatisticsData* SETestErrorStatistics::Unload(const SETestErrorStatistics& src)
-{
-  cdm::TestReportData_TestErrorStatisticsData* dst = new cdm::TestReportData_TestErrorStatisticsData();
-  SETestErrorStatistics::Serialize(src,*dst);
-  return dst;
-}
-void SETestErrorStatistics::Serialize(const SETestErrorStatistics& src, cdm::TestReportData_TestErrorStatisticsData& dst)
-{
-  if (!src.m_PropertyName.empty())
-    dst.set_propertyname(src.m_PropertyName);
-  dst.set_percenttolerance(src.m_PercentTolerance);
-  dst.set_numberoferrors(src.m_NumberOfErrors);
-  if (!src.m_ComputedPropertyID.empty())
-    dst.set_computedpropertyid(src.m_ComputedPropertyID);
-  if (!src.m_ExpectedPropertyID.empty())
-    dst.set_expectedpropertyid(src.m_ExpectedPropertyID);
-   
-  if (!std::isnan(src.m_MinimumError))
-    dst.set_minimumerror(src.m_MinimumError);
-  if (!std::isnan(src.m_MaximumError))
-    dst.set_maximumerror(src.m_MaximumError);
-  if (!std::isnan(src.m_AverageError))
-    dst.set_averageerror(src.m_AverageError);
-  if (!std::isnan(src.m_StandardDeviation))
-    dst.set_standarddeviation(src.m_StandardDeviation);
-
-  std::string dData;
-  for (auto s : src.m_Differences)
-      dst.mutable_differences()->Add(s.c_str());
-
-  if (src.m_PercentToleranceVsNumErrorsHistogram != nullptr)
-    dst.set_allocated_percenttolerancevsnumerrors(SEFunction::Unload(*src.m_PercentToleranceVsNumErrorsHistogram));
-}
-
 void SETestErrorStatistics::SetMinimumError(double MinimumError)
 {
   m_MinimumError = MinimumError;

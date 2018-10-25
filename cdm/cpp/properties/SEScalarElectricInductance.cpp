@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarElectricInductance.h"
-#include "bind/cdm/Properties.pb.h"
 
 const ElectricInductanceUnit ElectricInductanceUnit::H("H");
 
@@ -21,26 +20,4 @@ const ElectricInductanceUnit& ElectricInductanceUnit::GetCompoundUnit(const std:
   std::stringstream err;
   err << unit << " is not a valid ElectricInductance unit";
   throw CommonDataModelException(err.str());
-}
-
-void SEScalarElectricInductance::Load(const cdm::ScalarElectricInductanceData& src, SEScalarElectricInductance& dst)
-{
-  SEScalarElectricInductance::Serialize(src, dst);
-}
-void SEScalarElectricInductance::Serialize(const cdm::ScalarElectricInductanceData& src, SEScalarElectricInductance& dst)
-{
-  SEUnitScalar::Serialize(src.scalarelectricinductance(), dst);
-}
-
-cdm::ScalarElectricInductanceData* SEScalarElectricInductance::Unload(const SEScalarElectricInductance& src)
-{
-  if (!src.IsValid())
-    return nullptr;
-  cdm::ScalarElectricInductanceData* dst = new cdm::ScalarElectricInductanceData();
-  Serialize(src, *dst);
-  return dst;
-}
-void SEScalarElectricInductance::Serialize(const SEScalarElectricInductance& src, cdm::ScalarElectricInductanceData& dst)
-{
-  SEUnitScalar::Serialize(src, *dst.mutable_scalarelectricinductance());
 }

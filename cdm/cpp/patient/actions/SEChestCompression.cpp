@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "patient/actions/SEChestCompression.h"
+#include "io/protobuf/PBPatientActions.h"
 
 SEChestCompression::SEChestCompression() : SEPatientAction()
 {

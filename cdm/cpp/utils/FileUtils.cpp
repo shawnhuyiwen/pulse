@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "utils/FileUtils.h"
 #include "dirent.h"
+#include <iterator>
 
 
 #if defined(_MSC_VER) || defined(__MINGW64_VERSION_MAJOR)
@@ -84,6 +85,34 @@ bool CreateFilePath(const std::string& path)
     MKDIR(destDir.c_str());
   }
   return true;
+}
+
+bool WriteFile(const std::string& content, const std::string& filename, SerializationMode m)
+{
+  if (!CreateFilePath(filename))
+    return false;
+  if (m == ASCII)
+  {
+    std::ofstream ascii_ostream(filename, std::ios::out | std::ios::trunc);
+    ascii_ostream << content;
+    ascii_ostream.flush();
+    ascii_ostream.close();
+  }
+  else
+  {
+    std::ofstream ascii_ostream(filename, std::ios::out | std::ios::trunc | std::ios::binary);
+    ascii_ostream << content;
+    ascii_ostream.flush();
+    ascii_ostream.close();
+  }
+  return true;
+}
+
+std::string ReadFile(const std::string& filename, SerializationMode m)
+{
+  std::ifstream input(filename);
+  std::string content((std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());
+  return content;
 }
 
 void ListFiles(const std::string& dir, std::vector<std::string>& files, const std::string& mask)

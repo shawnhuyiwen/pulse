@@ -2,27 +2,20 @@
    See accompanying NOTICE file for details.*/
 #pragma once
 #include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineAction.h"
-CDM_BIND_DECL(OxygenWallPortPressureLossData)
 
 class CDM_DECL SEOxygenWallPortPressureLoss : public SEAnesthesiaMachineAction
 {
+  friend class PBAnesthesiaMachineAction;//friend the serialization class
 public:
   SEOxygenWallPortPressureLoss();
   virtual ~SEOxygenWallPortPressureLoss();
 
   virtual void Clear();
+  virtual void Copy(const SEOxygenWallPortPressureLoss& src);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
   virtual void SetActive(bool b);
-
-  static void Load(const cdm::OxygenWallPortPressureLossData& src, SEOxygenWallPortPressureLoss& dst);
-  static cdm::OxygenWallPortPressureLossData* Unload(const SEOxygenWallPortPressureLoss& src);
-protected:
-  static void Serialize(const cdm::OxygenWallPortPressureLossData& src, SEOxygenWallPortPressureLoss& dst);
-  static void Serialize(const SEOxygenWallPortPressureLoss& src, cdm::OxygenWallPortPressureLossData& dst);
-
-public:
 
   virtual void ToString(std::ostream &str) const;
 

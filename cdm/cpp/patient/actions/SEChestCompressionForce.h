@@ -3,28 +3,20 @@
 
 #pragma once
 #include "patient/actions/SEChestCompression.h"
-CDM_BIND_DECL(ChestCompressionForceData)
 
 class CDM_DECL SEChestCompressionForce : public SEChestCompression
 {
+  friend class PBPatientAction;//friend the serialization class
 public:
 
   SEChestCompressionForce();
   virtual ~SEChestCompressionForce();
 
   virtual void Clear(); //clear memory
+  virtual void Copy(const SEChestCompressionForce& src);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
-
-
-  static void Load(const cdm::ChestCompressionForceData& src, SEChestCompressionForce& dst);
-  static cdm::ChestCompressionForceData* Unload(const SEChestCompressionForce& src);
-protected:
-  static void Serialize(const cdm::ChestCompressionForceData& src, SEChestCompressionForce& dst);
-  static void Serialize(const SEChestCompressionForce& src, cdm::ChestCompressionForceData& dst);
-
-public:
 
   virtual bool HasForce() const;
   virtual SEScalarForce& GetForce();

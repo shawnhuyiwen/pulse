@@ -4,8 +4,7 @@
 #include "stdafx.h"
 #include "PulseScenario.h"
 #include "PulseConfiguration.h"
-#include "bind/pulse/Pulse.pb.h"
-#include <google/protobuf/text_format.h>
+#include "io/protobuf/PBPulse.h"
 
 PulseScenario::PulseScenario(SESubstanceManager& subMgr) : SEScenario(subMgr)
 {
@@ -23,70 +22,23 @@ void PulseScenario::Clear()
   SAFE_DELETE(m_Configuration);
 }
 
-void PulseScenario::Load(const pulse::ScenarioData& src, PulseScenario& dst)
+bool PulseScenario::SerializeToString(std::string& output, SerializationMode m) const
 {
-  PulseScenario::Serialize(src, dst);
+  return PBPulse::SerializeToString(*this, output, m);
 }
-void PulseScenario::Serialize(const pulse::ScenarioData& src, PulseScenario& dst)
+bool PulseScenario::SerializeToFile(const std::string& filename, SerializationMode m) const
 {
-  dst.Clear();
-  SEScenario::Serialize(src.scenario(), dst);
-
-  if (src.has_configuration())
-    PulseConfiguration::Load(src.configuration(), dst.GetConfiguration());
+  return PBPulse::SerializeToFile(*this, filename, m);
 }
-
-pulse::ScenarioData* PulseScenario::Unload(const PulseScenario& src)
+bool PulseScenario::SerializeFromString(const std::string& src, SerializationMode m)
 {
-  pulse::ScenarioData* dst = new pulse::ScenarioData();
-  PulseScenario::Serialize(src, *dst);
-  return dst;
+  return PBPulse::SerializeFromString(src, *this, m);
 }
-void PulseScenario::Serialize(const PulseScenario& src, pulse::ScenarioData& dst)
+bool PulseScenario::SerializeFromFile(const std::string& filename, SerializationMode m)
 {
-  SEScenario::Serialize(src, *dst.mutable_scenario());
-  if (src.HasConfiguration())
-    dst.set_allocated_configuration(PulseConfiguration::Unload(*src.GetConfiguration()));
+  return PBPulse::SerializeFromFile(filename, *this, m);
 }
 
-bool PulseScenario::LoadFile(const std::string& scenarioFile)
-{
-  pulse::ScenarioData src;
-  std::ifstream file_stream(scenarioFile, std::ios::in);
-  std::string fmsg((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
-  if (google::protobuf::TextFormat::ParseFromString(fmsg, &src))
-    PulseScenario::Load(src, *this);
-  else // Let's see if this is a cdm scenario
-  {
-    cdm::ScenarioData sce;
-    if (!google::protobuf::TextFormat::ParseFromString(fmsg, &sce))
-      return false;//nope
-    SEScenario::Load(sce, *this);
-  }
-  return true;
-
-  // If its a binary string in the file...
-  //std::ifstream binary_istream(patientFile, std::ios::in | std::ios::binary);
-  //src.ParseFromIstream(&binary_istream);
-}
-bool PulseScenario::Load(const std::string& str)
-{
-  pulse::ScenarioData src;
-  if (google::protobuf::TextFormat::ParseFromString(str, &src))
-    PulseScenario::Load(src, *this);
-  else // Let's see if this is a cdm scenario
-  {
-    cdm::ScenarioData sce;
-    if (!google::protobuf::TextFormat::ParseFromString(str, &sce))
-      return false;//nope
-    SEScenario::Load(sce, *this);
-  }
-  return true;
-
-  // If its a binary string in the file...
-  //std::ifstream binary_istream(patientFile, std::ios::in | std::ios::binary);
-  //src.ParseFromIstream(&binary_istream);
-}
 
 bool PulseScenario::HasConfiguration() const
 {

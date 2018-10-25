@@ -145,6 +145,11 @@ public class HowTo_EngineUse
    bv.setUnit(VolumeUnit.mL.toString());
    dataRequests.getRequestedData().add(bv);
    
+   ////////////////////////////////////////////////////
+   // NOTE All serialization is assumed to be ASCII  //
+   // Binary is available, but the JAVA API does not //
+   // currently support it.                          //
+   ////////////////////////////////////////////////////
    
    InitializationType initType = InitializationType.StateFile;
    // INITIALIZE THE ENGINE WITH A PATIENT
@@ -189,7 +194,7 @@ public class HowTo_EngineUse
      }
    case StateFile:
      {
-       pe.loadState("./Scenarios/HowToDynamicEngine.log", "./states/StandardMale@0s.pba", dataRequests);
+       pe.serializeFromFile("./Scenarios/HowToDynamicEngine.log", "./states/StandardMale@0s.pba", dataRequests);
        // This method method sets the engine to the provided state instantaneously and you are ready to process actions/advance time
        // You can alternatively specify the starting simTime of the engine       
        //pe.loadState("./Scenarios/HowToDynamicEngine.log", "./states/StandardMale@0s.pba", time, dataRequests);

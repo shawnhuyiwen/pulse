@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarPressureTimePerVolumeArea.h"
-#include "bind/cdm/Properties.pb.h"
 
 const PressureTimePerVolumeAreaUnit PressureTimePerVolumeAreaUnit::mmHg_min_Per_mL_m2("mmHg min/mL m^2");
 const PressureTimePerVolumeAreaUnit PressureTimePerVolumeAreaUnit::mmHg_s_Per_mL_m2("mmHg s/mL m^2");
@@ -31,26 +30,4 @@ const PressureTimePerVolumeAreaUnit& PressureTimePerVolumeAreaUnit::GetCompoundU
   std::stringstream err;
   err << unit << " is not a valid PressureTimePerVolumeArea unit";
   throw CommonDataModelException(err.str());
-}
-
-void SEScalarPressureTimePerVolumeArea::Load(const cdm::ScalarPressureTimePerVolumeAreaData& src, SEScalarPressureTimePerVolumeArea& dst)
-{
-  SEScalarPressureTimePerVolumeArea::Serialize(src, dst);
-}
-void SEScalarPressureTimePerVolumeArea::Serialize(const cdm::ScalarPressureTimePerVolumeAreaData& src, SEScalarPressureTimePerVolumeArea& dst)
-{
-  SEUnitScalar::Serialize(src.scalarpressuretimepervolumearea(), dst);
-}
-
-cdm::ScalarPressureTimePerVolumeAreaData* SEScalarPressureTimePerVolumeArea::Unload(const SEScalarPressureTimePerVolumeArea& src)
-{
-  if (!src.IsValid())
-    return nullptr;
-  cdm::ScalarPressureTimePerVolumeAreaData* dst = new cdm::ScalarPressureTimePerVolumeAreaData();
-  Serialize(src, *dst);
-  return dst;
-}
-void SEScalarPressureTimePerVolumeArea::Serialize(const SEScalarPressureTimePerVolumeArea& src, cdm::ScalarPressureTimePerVolumeAreaData& dst)
-{
-  SEUnitScalar::Serialize(src, *dst.mutable_scalarpressuretimepervolumearea());
 }

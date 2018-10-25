@@ -7,6 +7,7 @@ class SEDataRequestScalar;
 
 class CDM_DECL SEDynamicStabilizationPropertyConvergence : public Loggable
 {
+  friend class PBEngine;//friend the serialization class
   friend class SEDynamicStabilizationEngineConvergence;
 protected:
   SEDynamicStabilizationPropertyConvergence(SEDataRequest& dr, Logger* logger);

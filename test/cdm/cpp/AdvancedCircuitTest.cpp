@@ -1395,8 +1395,6 @@ void CommonDataModelTest::CircuitLockingTest(const std::string& sOutputDirectory
       type = " Unlocked";
     }
   }
-
-  std::string sOutputFile = sOutputDirectory + "/CircuitLockingTestReport.pba";
-  testReport.WriteFile(sOutputFile);
+  testReport.SerializeToFile(sOutputDirectory + "/CircuitLockingTestReport.pba",ASCII);
   m_Circuits->Clear();
 }

@@ -2,7 +2,6 @@
    See accompanying NOTICE file for details.*/
 #include "stdafx.h"
 #include "system/environment/SEAppliedTemperature.h"
-#include "bind/cdm/Environment.pb.h"
 #include "properties/SEScalarArea.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarPower.h"
@@ -38,40 +37,6 @@ const SEScalar* SEAppliedTemperature::GetScalar(const std::string& name)
   if (name.compare("SurfaceAreaFraction") == 0)
     return &GetSurfaceAreaFraction();
   return nullptr;
-}
-
-void SEAppliedTemperature::Load(const cdm::EnvironmentData_AppliedTemperatureData& src, SEAppliedTemperature& dst)
-{
-  SEAppliedTemperature::Serialize(src, dst);
-}
-void SEAppliedTemperature::Serialize(const cdm::EnvironmentData_AppliedTemperatureData& src, SEAppliedTemperature& dst)
-{
-  dst.Clear();
-  if (src.state() != cdm::eSwitch::NullSwitch)
-    dst.SetState((eSwitch)src.state());
-  if (src.has_temperature())
-    SEScalarTemperature::Load(src.temperature(), dst.GetTemperature());
-  if (src.has_surfacearea())
-    SEScalarArea::Load(src.surfacearea(), dst.GetSurfaceArea());
-  if (src.has_surfaceareafraction())
-    SEScalar0To1::Load(src.surfaceareafraction(), dst.GetSurfaceAreaFraction());
-}
-
-cdm::EnvironmentData_AppliedTemperatureData* SEAppliedTemperature::Unload(const SEAppliedTemperature& src)
-{
-  cdm::EnvironmentData_AppliedTemperatureData* dst = new cdm::EnvironmentData_AppliedTemperatureData();
-  SEAppliedTemperature::Serialize(src, *dst);
-  return dst;
-}
-void SEAppliedTemperature::Serialize(const SEAppliedTemperature& src, cdm::EnvironmentData_AppliedTemperatureData& dst)
-{
-  dst.set_state((cdm::eSwitch)src.m_State);
-  if (src.HasTemperature())
-    dst.set_allocated_temperature(SEScalarTemperature::Unload(*src.m_Temperature));
-  if (src.HasSurfaceArea())
-    dst.set_allocated_surfacearea(SEScalarArea::Unload(*src.m_SurfaceArea));
-  if (src.HasSurfaceAreaFraction())
-    dst.set_allocated_surfaceareafraction(SEScalar0To1::Unload(*src.m_SurfaceAreaFraction));
 }
 
 bool SEAppliedTemperature::HasTemperature() const

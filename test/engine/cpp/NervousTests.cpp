@@ -2,9 +2,9 @@
    See accompanying NOTICE file for details.*/
 
 #include "EngineTest.h"
-#include "Controller/Controller.h"
-#include "Controller/Circuits.h"
-#include "Systems/Cardiovascular.h"
+#include "controller/Controller.h"
+#include "controller/Circuits.h"
+#include "physiology/Cardiovascular.h"
 #include "PulseConfiguration.h"
 
 #include "patient/SEPatient.h"
@@ -66,7 +66,7 @@ void PulseEngineTest::BrainInjuryTest(const std::string& sTestDirectory)
 
   PulseController pc(sTestDirectory + "/" + tName + ".log");
   pc.GetLogger()->Info("Running " + tName);
-  pc.GetPatient().LoadFile("./patients/StandardMale.pba");
+  pc.GetPatient().SerializeFromFile("./patients/StandardMale.pba",ASCII);
   pc.SetupPatient();
 
   //Renal and Tissue are on

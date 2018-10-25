@@ -1,14 +1,12 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-
 #pragma once
-#include "Controller/System.h"
+#include "controller/System.h"
 #include "system/equipment/inhaler/SEInhaler.h"
 class SEGasCompartment;
 class SELiquidCompartment;
 class SELiquidSubstanceQuantity;
-PULSE_BIND_DECL(InhalerData)
 
 /**
 * @brief 
@@ -16,6 +14,7 @@ PULSE_BIND_DECL(InhalerData)
 */
 class PULSE_DECL Inhaler : public SEInhaler, public PulseInhaler, public PulseSystem
 {
+  friend class PBPulseEquipment;//friend the serialization class
   friend class PulseController;
   friend class PulseEngineTest;
 protected:
@@ -27,12 +26,7 @@ public:
 
   void Clear();
 
-  static void Load(const pulse::InhalerData& src, Inhaler& dst);
-  static pulse::InhalerData* Unload(const Inhaler& src);
 protected:
-  static void Serialize(const pulse::InhalerData& src, Inhaler& dst);
-  static void Serialize(const Inhaler& src, pulse::InhalerData& dst);
-
   // Set members to a stable homeostatic state
   void Initialize();
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state

@@ -3,7 +3,7 @@
 #include "stdafx.h"
 #include "system/equipment/anesthesiamachine/actions/SEInspiratoryValveLeak.h"
 #include "properties/SEScalar0To1.h"
-#include "bind/cdm/AnesthesiaMachineActions.pb.h"
+#include "io/protobuf/PBAnesthesiaMachineActions.h"
 
 SEInspiratoryValveLeak::SEInspiratoryValveLeak() : SEAnesthesiaMachineAction()
 {
@@ -21,6 +21,11 @@ void SEInspiratoryValveLeak::Clear()
   SAFE_DELETE(m_Severity);
 }
 
+void SEInspiratoryValveLeak::Copy(const SEInspiratoryValveLeak& src)
+{// Using Bindings to make a copy
+  PBAnesthesiaMachineAction::Copy(src, *this);
+}
+
 bool SEInspiratoryValveLeak::IsValid() const
 {
   return SEAnesthesiaMachineAction::IsValid() && HasSeverity();
@@ -29,30 +34,6 @@ bool SEInspiratoryValveLeak::IsValid() const
 bool SEInspiratoryValveLeak::IsActive() const
 {
   return HasSeverity() ? !m_Severity->IsZero() : false;
-}
-
-void SEInspiratoryValveLeak::Load(const cdm::InspiratoryValveLeakData& src, SEInspiratoryValveLeak& dst)
-{
-  SEInspiratoryValveLeak::Serialize(src, dst);
-}
-void SEInspiratoryValveLeak::Serialize(const cdm::InspiratoryValveLeakData& src, SEInspiratoryValveLeak& dst)
-{
-  SEAnesthesiaMachineAction::Serialize(src.anesthesiamachineaction(), dst);
-  if (src.has_severity())
-    SEScalar0To1::Load(src.severity(), dst.GetSeverity());
-}
-
-cdm::InspiratoryValveLeakData* SEInspiratoryValveLeak::Unload(const SEInspiratoryValveLeak& src)
-{
-  cdm::InspiratoryValveLeakData* dst = new cdm::InspiratoryValveLeakData();
-  SEInspiratoryValveLeak::Serialize(src, *dst);
-  return dst;
-}
-void SEInspiratoryValveLeak::Serialize(const SEInspiratoryValveLeak& src, cdm::InspiratoryValveLeakData& dst)
-{
-  SEAnesthesiaMachineAction::Serialize(src, *dst.mutable_anesthesiamachineaction());
-  if (src.HasSeverity())
-    dst.set_allocated_severity(SEScalar0To1::Unload(*src.m_Severity));
 }
 
 bool SEInspiratoryValveLeak::HasSeverity() const

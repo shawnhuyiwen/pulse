@@ -33,24 +33,14 @@ void SEEnvironmentActionCollection::Clear()
   RemoveThermalApplication();
 }
 
-void SEEnvironmentActionCollection::Serialize(const SEEnvironmentActionCollection& src, cdm::ActionListData& dst)
-{
-  if (src.HasChange())
-    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_Change));
-  if (src.HasThermalApplication())
-    dst.mutable_anyaction()->AddAllocated(SEAction::Unload(*src.m_ThermalApplication));
-}
-
-bool SEEnvironmentActionCollection::ProcessAction(const SEEnvironmentAction& action, cdm::AnyEnvironmentActionData* any)
+bool SEEnvironmentActionCollection::ProcessAction(const SEEnvironmentAction& action)
 {
   const SEChangeEnvironmentConditions* conditions = dynamic_cast<const SEChangeEnvironmentConditions*>(&action);
   if (conditions != nullptr)
   {
     if (m_Change == nullptr)
       m_Change = new SEChangeEnvironmentConditions(m_Substances);
-    auto* copy = SEChangeEnvironmentConditions::Unload(*conditions);
-    SEChangeEnvironmentConditions::Load(*copy, *m_Change);
-    (any != nullptr) ? any->set_allocated_conditions(copy) : delete copy;
+    m_Change->Copy(*conditions);
     if (!m_Change->IsActive())
       RemoveChange();
     return true;
@@ -61,9 +51,7 @@ bool SEEnvironmentActionCollection::ProcessAction(const SEEnvironmentAction& act
   {
     if (m_ThermalApplication == nullptr)
       m_ThermalApplication = new SEThermalApplication();
-    auto* copy = SEThermalApplication::Unload(*thermal);
-    SEThermalApplication::Load(*copy, *m_ThermalApplication);
-    (any != nullptr) ? any->set_allocated_thermalapplication(copy) : delete copy;
+    m_ThermalApplication->Copy(*thermal);
     if (!m_ThermalApplication->IsActive())
       RemoveThermalApplication();
     return true;
@@ -106,4 +94,12 @@ const SEThermalApplication* SEEnvironmentActionCollection::GetThermalApplication
 void SEEnvironmentActionCollection::RemoveThermalApplication()
 {
   SAFE_DELETE(m_ThermalApplication);
+}
+
+void SEEnvironmentActionCollection::GetActiveActions(std::vector<const SEAction*>& actions) const
+{
+  if (HasChange())
+    actions.push_back(GetChange());
+  if (HasThermalApplication())
+    actions.push_back(GetThermalApplication());
 }

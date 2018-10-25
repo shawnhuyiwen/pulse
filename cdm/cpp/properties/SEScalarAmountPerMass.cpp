@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "properties/SEScalarAmountPerMass.h"
-#include "bind/cdm/Properties.pb.h"
 
 AmountPerMassUnit AmountPerMassUnit::ct_Per_g("ct/g");
 AmountPerMassUnit AmountPerMassUnit::ct_Per_ug("ct/ug");
@@ -25,26 +24,4 @@ const AmountPerMassUnit& AmountPerMassUnit::GetCompoundUnit(const std::string& u
   std::stringstream err;
   err << unit << " is not a valid AmountPerMass unit";
   throw CommonDataModelException(err.str());
-}
-
-void SEScalarAmountPerMass::Load(const cdm::ScalarAmountPerMassData& src, SEScalarAmountPerMass& dst)
-{
-  SEScalarAmountPerMass::Serialize(src, dst);
-}
-void SEScalarAmountPerMass::Serialize(const cdm::ScalarAmountPerMassData& src, SEScalarAmountPerMass& dst)
-{
-  SEUnitScalar::Serialize(src.scalaramountpermass(), dst);
-}
-
-cdm::ScalarAmountPerMassData* SEScalarAmountPerMass::Unload(const SEScalarAmountPerMass& src)
-{
-  if (!src.IsValid())
-    return nullptr;
-  cdm::ScalarAmountPerMassData* dst = new cdm::ScalarAmountPerMassData();
-  Serialize(src, *dst);
-  return dst;
-}
-void SEScalarAmountPerMass::Serialize(const SEScalarAmountPerMass& src, cdm::ScalarAmountPerMassData& dst)
-{
-  SEUnitScalar::Serialize(src, *dst.mutable_scalaramountpermass());
 }

@@ -3,12 +3,12 @@
 
 #pragma once
 #include "system/SESystem.h"
-CDM_BIND_DECL(BloodChemistrySystemData)
 
 /** @copydoc Physiology_BloodChemistrySystemData
   @nosubgrouping */
 class CDM_DECL SEBloodChemistrySystem : public SESystem
 {
+  friend class PBPhysiology;//friend the serialization class
 public:
 
   SEBloodChemistrySystem(Logger* logger);
@@ -18,14 +18,6 @@ public:
 
   virtual const SEScalar* GetScalar(const std::string& name);                                         /**< @copydoc DOXY_CDM_GET_SCALAR */
 
-                                                                                                      /**  @name Serialization *///@{
-  static void Load(const cdm::BloodChemistrySystemData& src, SEBloodChemistrySystem& dst);            /**< @copydoc DOXY_CDM_LOAD    */
-  static cdm::BloodChemistrySystemData* Unload(const SEBloodChemistrySystem& src);                    /**< @copydoc DOXY_CDM_UNLLOAD */
-protected:
-  static void Serialize(const cdm::BloodChemistrySystemData& src, SEBloodChemistrySystem& dst);       /**< @copydoc DOXY_CDM_SERIALIZE_IN  */
-  static void Serialize(const SEBloodChemistrySystem& src, cdm::BloodChemistrySystemData& dst);       /**< @copydoc DOXY_CDM_SERIALIZE_OUT *///@}
-  
-public:
   /**  @name BloodDensity *///@{ @copybrief Physiology_BloodChemistrySystemData_BloodDensity
   virtual bool HasBloodDensity() const;                                                               /**< @copydoc DOXY_CDM_HAS */
   virtual SEScalarMassPerVolume& GetBloodDensity();                                                   /**< @copydoc DOXY_CDM_GET */

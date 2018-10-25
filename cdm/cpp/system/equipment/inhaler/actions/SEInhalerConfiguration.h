@@ -5,26 +5,19 @@
 #include "SEInhalerAction.h"
 class SEInhaler;
 class SESubstanceManager;
-CDM_BIND_DECL(InhalerConfigurationData)
 
 class CDM_DECL SEInhalerConfiguration : public SEInhalerAction
 {
+  friend class PBInhalerAction;//friend the serialization class
 public:
 
   SEInhalerConfiguration(SESubstanceManager& substances);
   virtual ~SEInhalerConfiguration();
 
   virtual void Clear();
+  virtual void Copy(const SEInhalerConfiguration& src);
   
   virtual bool IsValid() const;
-
-  static void Load(const cdm::InhalerConfigurationData& src, SEInhalerConfiguration& dst);
-  static cdm::InhalerConfigurationData* Unload(const SEInhalerConfiguration& src);
-protected:
-  static void Serialize(const cdm::InhalerConfigurationData& src, SEInhalerConfiguration& dst);
-  static void Serialize(const SEInhalerConfiguration& src, cdm::InhalerConfigurationData& dst);
-
-public:
 
   bool HasConfiguration() const;
   SEInhaler& GetConfiguration();

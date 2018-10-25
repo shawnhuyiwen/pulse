@@ -6,6 +6,7 @@
 
 class CDM_DECL SEChronicHeartFailure : public SEPatientCondition
 {
+  friend class PBPatientCondition;//friend the serialization class
 public:
 
   SEChronicHeartFailure();
@@ -20,4 +21,4 @@ public:
   virtual void ToString(std::ostream &str) const = 0;
 
 protected:
-};    
+};

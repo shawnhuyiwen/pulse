@@ -5,27 +5,22 @@
 #include "scenario/SEDataRequest.h"
 class SESubstance;
 class SESubstanceManager;
-CDM_BIND_DECL(DataRequestManagerData)
 
 class CDM_DECL SEDataRequestManager : public Loggable
 {
+  friend class PBScenario;//friend the serialization class
 public:
   SEDataRequestManager(Logger* logger);
   ~SEDataRequestManager();
 
   void Clear();
+  void Copy(const SEDataRequestManager& src, const SESubstanceManager& subMgr);
 
-  bool Load(const std::string& str, SESubstanceManager& subMgr);
-  bool LoadFile(const std::string& filename, SESubstanceManager& subMgr);
-  void SaveFile(const std::string& filename) const;
+  bool SerializeToString(std::string& output, SerializationMode m) const;
+  bool SerializeToFile(const std::string& filename, SerializationMode m) const;
+  bool SerializeFromString(const std::string& src, SerializationMode m, const SESubstanceManager& subMgr);
+  bool SerializeFromFile(const std::string& filename, SerializationMode m, const SESubstanceManager& subMgr);
 
-  static void Load(const cdm::DataRequestManagerData& src, SEDataRequestManager& dst, SESubstanceManager& subMgr);
-  static cdm::DataRequestManagerData* Unload(const SEDataRequestManager& src);
-protected:
-  static void Serialize(const cdm::DataRequestManagerData& src, SEDataRequestManager& dst, SESubstanceManager& subMgr);
-  static void Serialize(const SEDataRequestManager& src, cdm::DataRequestManagerData& dst);
-
-public:
   bool HasResultsFilename() const { return !m_ResultsFilename.empty(); }
   std::string GetResultFilename() const { return m_ResultsFilename; }
   void SetResultsFilename(const std::string& name) { m_ResultsFilename = name; }

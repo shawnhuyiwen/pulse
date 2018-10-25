@@ -3,8 +3,8 @@
 #pragma once
 
 #include "PhysiologyEngine.h"
-#include "Controller/Controller.h"
-
+#include "controller/Controller.h"
+PULSE_BIND_DECL(StateData)
 //--------------------------------------------------------------------------------------------------
 /// @brief  
 /// This is the implementation of the PhysiologyEngine interface for the this engines.
@@ -15,15 +15,20 @@
 //--------------------------------------------------------------------------------------------------
 class PULSE_DECL PulseEngine : public PhysiologyEngine, public PulseController
 {
+  friend class PBPulseState;//friend the serialization class
 public:
 
   PulseEngine(Logger* logger);
   PulseEngine(const std::string&);
   virtual ~PulseEngine();
 
-  virtual bool LoadStateFile(const std::string& file, const SEScalarTime* simTime = nullptr, const SEEngineConfiguration* config = nullptr);
-  virtual bool LoadState(const void* state, const SEScalarTime* simTime = nullptr, const SEEngineConfiguration* config = nullptr);
-  virtual void* SaveState(const std::string& file = "");
+  virtual bool SerializeFromFile(const std::string& file, SerializationMode m);
+  virtual bool SerializeFromFile(const std::string& file, SerializationMode m, const SEScalarTime* simTime, const SEEngineConfiguration* config);
+  virtual bool SerializeToFile(const std::string& file, SerializationMode m) const;
+
+  virtual bool SerializeFromString(const std::string& state, SerializationMode m);
+  virtual bool SerializeFromString(const std::string& state, SerializationMode m, const SEScalarTime* simTime, const SEEngineConfiguration* config);
+  virtual bool SerializeToString(std::string& state, SerializationMode m) const;
 
   virtual const SEConditionManager& GetConditionManager() const;
   

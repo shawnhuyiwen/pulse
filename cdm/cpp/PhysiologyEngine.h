@@ -47,6 +47,7 @@ struct PhysiologyEngineException : public CommonDataModelException
     : CommonDataModelException(_Message) {}
 };
 
+
 class CDM_DECL PhysiologyEngine
 {
 public:
@@ -61,27 +62,36 @@ public:
   /// Engine will be in a cleared state if this method fails.
   /// Note the provided configuration will overwrite any configuration options in the state with its contents (Use with caution!)
   //--------------------------------------------------------------------------------------------------
-  virtual bool LoadStateFile(const std::string& filename, const SEScalarTime* simTime=nullptr, const SEEngineConfiguration* config = nullptr) = 0;
+  virtual bool SerializeFromFile(const std::string& filename, SerializationMode m=ASCII, const SEScalarTime* simTime=nullptr, const SEEngineConfiguration* config = nullptr) = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
-  /// Reset engine and set it to the state in the provided file.
+  /// Save the current state of the engine to provided filename.
+  /// Engine will be in a cleared state if this method fails.
+  //--------------------------------------------------------------------------------------------------
+  virtual bool SerializeToFile(const std::string& filename="engine.state", SerializationMode m=ASCII) const = 0;
+
+  //--------------------------------------------------------------------------------------------------
+  /// \brief
+  /// Reset engine and set it to the state in the provided string.
+  /// The state is saved as bytes in the given string.
+  /// Note that the bytes are binary, not text; we only use the string class as a convenient container.
   /// You may provided a Simulation Time to be used if desired.
   /// It will be reflected in the GetSimulationTime method.
   /// Return value indicates engine was able to load provided state file.
   /// Engine will be in a cleared state if this method fails.
   /// Note the provided configuration will overwrite any configuration options in the state with its contents (Use with caution!)
   //--------------------------------------------------------------------------------------------------
-  virtual bool LoadState(const void* state, const SEScalarTime* simTime = nullptr, const SEEngineConfiguration* config = nullptr) = 0;
+  virtual bool SerializeFromString(const std::string& state, SerializationMode m=BINARY, const SEScalarTime* simTime = nullptr, const SEEngineConfiguration* config = nullptr) = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Save the current state of the engine.
-  /// State will be written to a file if provided.
-  /// State object will be returned.
+  /// The state is saved as bytes in the given string.
+  /// Note that the bytes are binary, not text; we only use the string class as a convenient container.
   /// Engine will be in a cleared state if this method fails.
   //--------------------------------------------------------------------------------------------------
-  virtual void* SaveState(const std::string& filename = "") = 0;
+  virtual bool SerializeToString(std::string& state, SerializationMode m=BINARY) const = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief

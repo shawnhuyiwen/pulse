@@ -3,43 +3,22 @@
 
 #pragma once
 #include "patient/actions/SESubstanceAdministration.h"
-CDM_BIND_DECL(SubstanceBolusData)
-CDM_BIND_DECL(SubstanceBolusData_StateData)
 class SESubstance;
-
-// Keep enums in sync with appropriate schema/cdm/PatientActionEnums.proto file !!
-enum class eSubstanceAdministration_Route { Intravenous = 0,
-                                            Epidural,
-                                            Intraosseous,
-                                            Intraarterial,
-                                            Intracardiac,
-                                            Intracerebral,
-                                            Intracerebroventricular,
-                                            Intradermal,
-                                            Intramuscular,
-                                            Subcutaneous };
-extern const std::string& eSubstanceAdministration_Route_Name(eSubstanceAdministration_Route m);
 
 class CDM_DECL SESubstanceBolusState
 {
+  friend class PBPatientAction;//friend the serialization class
 public:
   SESubstanceBolusState(const SESubstance& sub);
   ~SESubstanceBolusState();
 
-  void Clear();
+  virtual void Clear();
 
-  static void Load(const cdm::SubstanceBolusData_StateData& src, SESubstanceBolusState& dst);
-  static cdm::SubstanceBolusData_StateData* Unload(const SESubstanceBolusState& src);
-protected:
-  static void Serialize(const cdm::SubstanceBolusData_StateData& src, SESubstanceBolusState& dst);
-  static void Serialize(const SESubstanceBolusState& src, cdm::SubstanceBolusData_StateData& dst);
-
-public:
   SEScalarTime& GetElapsedTime() { return *m_ElapsedTime; }
   double GetElapsedTime(const TimeUnit& unit) const;
 
-  SEScalarVolume& GetAdministeredDose() { return *m_AdministeredDose; }
-  double GetAdministeredDose(const VolumeUnit& unit) const;
+  virtual SEScalarVolume& GetAdministeredDose() { return *m_AdministeredDose; }
+  virtual double GetAdministeredDose(const VolumeUnit& unit) const;
 
 protected:
   const SESubstance&   m_Substance;
@@ -49,23 +28,17 @@ protected:
 
 class CDM_DECL SESubstanceBolus : public SESubstanceAdministration
 {
+  friend class PBPatientAction;//friend the serialization class
 public:
 
   SESubstanceBolus(const SESubstance& substance);
   virtual ~SESubstanceBolus();
 
   virtual void Clear(); //clear memory
+  virtual void Copy(const SESubstanceBolus& src);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
-
-  static void Load(const cdm::SubstanceBolusData& src, SESubstanceBolus& dst);
-  static cdm::SubstanceBolusData* Unload(const SESubstanceBolus& src);
-protected:
-  static void Serialize(const cdm::SubstanceBolusData& src, SESubstanceBolus& dst);
-  static void Serialize(const SESubstanceBolus& src, cdm::SubstanceBolusData& dst);
-
-public:
 
   virtual eSubstanceAdministration_Route GetAdminRoute() const;
   virtual void SetAdminRoute(eSubstanceAdministration_Route name);
