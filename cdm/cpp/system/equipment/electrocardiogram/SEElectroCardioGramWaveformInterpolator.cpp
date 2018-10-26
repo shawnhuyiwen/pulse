@@ -96,6 +96,7 @@ void SEElectroCardioGramWaveformInterpolator::Interpolate(SEElectroCardioGramWav
     }
     if (!InterpolateToTime(data, iTime, TimeUnit::s)) // sets new wavefor based on the old waveform data
       throw new CommonDataModelException("Could not Interpolate to provided time");
+    w.GetTimeStep().Set(timeStep);
   }
 }
 
@@ -131,7 +132,7 @@ bool SEElectroCardioGramWaveformInterpolator::InterpolateToTime(SEFunctionElectr
     xPrime = newTime[newTimeIterator]; // new time point
 
     //find x1
-    while (x1Index < newTime.size() - 2 &&
+    while (x1Index < waveform.GetTime().size() - 2 &&
       waveform.GetTimeValue(x1Index + 1, unit) <= xPrime)
     {
       x1Index++;
