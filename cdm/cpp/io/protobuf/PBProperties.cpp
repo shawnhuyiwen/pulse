@@ -1523,10 +1523,9 @@ cdm::HistogramFractionVsLengthData* PBProperty::Unload(const SEHistogramFraction
 void PBProperty::Serialize(const SEHistogramFractionVsLength& src, cdm::HistogramFractionVsLengthData& dst)
 {
   for (size_t i = 0; i < src.m_Dependent.size(); i++)
-  {
     dst.mutable_histogramfractionvslength()->mutable_histogram()->mutable_dependent()->add_value(src.m_Dependent[i]);
+  for (size_t i = 0; i < src.m_Independent.size(); i++)
     dst.mutable_histogramfractionvslength()->mutable_histogram()->mutable_independent()->add_value(src.m_Independent[i]);
-  }
 }
 
 void PBProperty::Load(const cdm::RunningAverageData& src, SERunningAverage& dst)
