@@ -527,7 +527,6 @@ namespace pulse {
     DEFINE_STATIC_STRING(SpleenToLiver);
 
     // Hemorrhage and IV
-    DEFINE_STATIC_STRING(VenaCavaHemorrhage);
     DEFINE_STATIC_STRING(VenaCavaIV);
 
     // Vascular To Tissue Links

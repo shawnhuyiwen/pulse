@@ -1525,8 +1525,6 @@ void PulseController::SetupCardiovascular()
 
   SEFluidCircuitPath& VenaCavaToGround = cCardiovascular.CreatePath(VenaCava, Ground, pulse::CardiovascularPath::VenaCavaToGround);
   VenaCavaToGround.GetComplianceBaseline().SetValue(0.0, FlowComplianceUnit::mL_Per_mmHg);
-  SEFluidCircuitPath& VenaCavaBleed = cCardiovascular.CreatePath(VenaCava, Ground, pulse::CardiovascularPath::VenaCavaBleed);
-  VenaCavaBleed.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);
   SEFluidCircuitPath& IVToVenaCava = cCardiovascular.CreatePath(Ground, VenaCava, pulse::CardiovascularPath::IVToVenaCava);
   IVToVenaCava.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);
 
@@ -1931,8 +1929,6 @@ void PulseController::SetupCardiovascular()
 
   /////////////////////
   // Bleeds and IV's //
-  SELiquidCompartmentLink& vVenaCavaHemorrhage = m_Compartments->CreateLiquidLink(vVenaCava, vGround, pulse::VascularLink::VenaCavaHemorrhage);
-  vVenaCavaHemorrhage.MapPath(VenaCavaBleed);
   SELiquidCompartmentLink& vVenaCavaIV = m_Compartments->CreateLiquidLink(vGround, vVenaCava, pulse::VascularLink::VenaCavaIV);
   vVenaCavaIV.MapPath(IVToVenaCava);
 
@@ -2010,7 +2006,6 @@ void PulseController::SetupCardiovascular()
   gCardiovascular.AddLink(vSplanchnicToLiver);
   gCardiovascular.AddLink(vAortaToSpleen);
   gCardiovascular.AddLink(vSpleenToLiver);
-  gCardiovascular.AddLink(vVenaCavaHemorrhage);
   gCardiovascular.AddLink(vVenaCavaIV);
   gCardiovascular.StateChange();
 

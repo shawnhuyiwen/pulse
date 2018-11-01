@@ -539,7 +539,6 @@ DEFINE_STATIC_STRING_EX(GroundToConnection, MechanicalVentilatorGroundToConnecti
     DEFINE_STATIC_STRING(SpleenToPortalVein);
     // Vena Cava
     DEFINE_STATIC_STRING(VenaCavaToGround);
-    DEFINE_STATIC_STRING(VenaCavaBleed);
     DEFINE_STATIC_STRING(IVToVenaCava);
   };
 

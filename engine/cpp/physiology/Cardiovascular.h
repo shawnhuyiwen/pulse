@@ -8,6 +8,7 @@ class SEPatient;
 class SELiquidCompartment;
 class SELiquidSubstanceQuantity;
 class SELiquidCompartmentGraph;
+class SELiquidCompartmentLink;
 class SELiquidTransporter;
 class SEFluidCircuit;
 class SEFluidCircuitNode;
@@ -101,6 +102,10 @@ protected:
   double m_CompressionTime_s;
   double m_CompressionRatio;
   double m_CompressionPeriod_s;
+  //Hemorrhage
+  //jbw - add to serialization
+  std::vector<SEFluidCircuitPath*> m_hemorrhagePaths;
+  std::vector<SELiquidCompartmentLink*> m_hemorrhageLinks;
   // Vitals and Averages
   double m_CurrentCardiacCycleTime_s;
   double m_CardiacCycleDiastolicVolume_mL; // Maximum left heart volume for the current cardiac cycle
@@ -131,11 +136,12 @@ protected:
 
   SEPatient*                       m_patient;
 
-  SEFluidCircuit*                   m_CirculatoryCircuit;
+  SEFluidCircuit*                  m_CirculatoryCircuit;
   SELiquidCompartmentGraph*        m_CirculatoryGraph;
 
   SEFluidCircuitNode*              m_MainPulmonaryArteries;
   SEFluidCircuitNode*              m_LeftHeart2;
+  SEFluidCircuitNode*              m_Ground;
 
   SEFluidCircuitPath*              m_AortaCompliance;
   SEFluidCircuitPath*              m_AortaResistance;
@@ -163,7 +169,6 @@ protected:
   SEFluidCircuitPath*              m_pAortaToSplanchnic;
   SEFluidCircuitPath*              m_pAortaToSpleen;
 
-  SEFluidCircuitPath*              m_pVenaCavaHemorrhage;
   SEFluidCircuitPath*              m_pGndToPericardium;
   SEFluidCircuitPath*              m_pPericardiumToGnd;
   SEFluidCircuitPath*              m_pRightHeartToGnd;
@@ -178,6 +183,7 @@ protected:
   SEFluidCircuitPath*               m_leftRenalArteryPath;
   SEFluidCircuitPath*               m_rightRenalArteryPath;
   
+  SELiquidCompartment*             m_Groundcmpt; //jbw - Add?
   SELiquidCompartment*             m_Aorta;
   SELiquidSubstanceQuantity*       m_AortaCO2;
   SELiquidCompartment*             m_Brain;
