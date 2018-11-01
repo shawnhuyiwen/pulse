@@ -103,9 +103,8 @@ protected:
   double m_CompressionRatio;
   double m_CompressionPeriod_s;
   //Hemorrhage
-  //jbw - add to serialization
-  std::vector<SEFluidCircuitPath*> m_hemorrhagePaths;
-  std::vector<SELiquidCompartmentLink*> m_hemorrhageLinks;
+  std::vector<SEFluidCircuitPath*> m_hemorrhagePaths;      //jbw - add to serialization
+  std::vector<SELiquidCompartmentLink*> m_hemorrhageLinks; //jbw - add to serialization
   // Vitals and Averages
   double m_CurrentCardiacCycleTime_s;
   double m_CardiacCycleDiastolicVolume_mL; // Maximum left heart volume for the current cardiac cycle
@@ -183,10 +182,10 @@ protected:
   SEFluidCircuitPath*               m_leftRenalArteryPath;
   SEFluidCircuitPath*               m_rightRenalArteryPath;
   
-  SELiquidCompartment*             m_Groundcmpt; //jbw - Add?
   SELiquidCompartment*             m_Aorta;
   SELiquidSubstanceQuantity*       m_AortaCO2;
   SELiquidCompartment*             m_Brain;
+  SELiquidCompartment*             m_Groundcmpt;
   SELiquidCompartment*             m_LeftHeart;
   SELiquidCompartment*             m_LeftPulmonaryCapillaries;
   SELiquidCompartment*             m_LeftPulmonaryArteries;

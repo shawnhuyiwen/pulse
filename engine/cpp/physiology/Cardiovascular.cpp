@@ -140,6 +140,7 @@ void Cardiovascular::Clear()
 
   m_Aorta = nullptr;
   m_AortaCO2 = nullptr;
+  m_Groundcmpt = nullptr;
   m_LeftHeart = nullptr;
   m_LeftPulmonaryCapillaries = nullptr;
   m_LeftPulmonaryArteries = nullptr;
@@ -256,10 +257,10 @@ void Cardiovascular::SetUp()
   m_CirculatoryCircuit = &m_data.GetCircuits().GetActiveCardiovascularCircuit();
   m_CirculatoryGraph = &m_data.GetCompartments().GetActiveCardiovascularGraph();
   //Compartments
-  m_Groundcmpt = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Ground);
   m_Aorta = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta);
   m_AortaCO2 = m_Aorta->GetSubstanceQuantity(m_data.GetSubstances().GetCO2());
   m_Brain = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain);
+  m_Groundcmpt = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Ground);
   m_LeftPulmonaryArteries = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftPulmonaryArteries);
   m_RightPulmonaryArteries = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightPulmonaryArteries);
   m_LeftPulmonaryVeins = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftPulmonaryVeins);
@@ -936,28 +937,31 @@ void Cardiovascular::TraumaticBrainInjury()
 ///
 /// \details
 /// The user may specify multiple bleeds across the anatomical compartments. The Model creates a 
-/// separate bleeding path for each anatomical compartment. Hemorrhage calls for a compartment that 
-/// already contains a hemorrhage will be overwritten with the new value.
+/// separate bleeding path for each node in each anatomical compartment by volume-weighting the 
+/// flow. Hemorrhage calls for a compartment that already contains a hemorrhage will be overwritten 
+/// with the new value. Compartments can overlap.
 //--------------------------------------------------------------------------------------------------
 void Cardiovascular::Hemorrhage()
 {
   /// \todo Enforce limits and remove fatal errors.
-  //jbw - Ensure it's a vascular compartment
-  //jbw - Do vectors keep order when serialized?
 
-  //Set all hemorrhage flows to zero, so we know to remove the ones that aren't overwritten
+  //Set all hemorrhage flows to zero, so:
+  // - We can increment for overlapping compartments
+  // - We know to remove ones that are turned off
   for (unsigned int hIter = 0; hIter < m_hemorrhagePaths.size(); hIter++)
   {
     m_hemorrhagePaths.at(hIter)->GetNextFlowSource().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);
   }
   
   SEHemorrhage* h;
-  double TotalLossRate_mL_Per_s = 0;
+  double TotalLossRate_mL_Per_s = 0.0;
   const std::map <std::string, SEHemorrhage*> & hems = m_data.GetActions().GetPatientActions().GetHemorrhages();
   for (auto hem : hems)
   {
     h = hem.second;
     double rate_mL_Per_s = h->GetRate().GetValue(VolumePerTimeUnit::mL_Per_s);
+    SELiquidCompartment* compartment = m_data.GetCompartments().GetLiquidCompartment(h->GetCompartment());
+
     /// \error Fatal: Bleeding rate cannot exceed cardiac output
     if (rate_mL_Per_s > GetCardiacOutput().GetValue(VolumePerTimeUnit::mL_Per_s))
     {      
@@ -973,21 +977,57 @@ void Cardiovascular::Hemorrhage()
       Fatal(m_ss);
       return;
     }
+    /// \error Fatal: Bleeding must be from a vascular compartment
+    if (!compartment)
+    {
+      m_ss << "Cannot hemorrhage from a non-vascular compartment";
+      Fatal(m_ss);
+      return;
+    }
+
     TotalLossRate_mL_Per_s += rate_mL_Per_s;
 
-    //Update the circuit to remove blood from the specified compartment
-    SELiquidCompartment* compartment = m_data.GetCompartments().GetLiquidCompartment(h->GetCompartment());
-    const std::vector<SEFluidCircuitNode*>& nodes = compartment->GetNodeMapping().GetNodes();
+    //Get all circuit nodes in this compartment
+    std::vector<SEFluidCircuitNode*> nodes;
+    nodes.insert(nodes.end(), compartment->GetNodeMapping().GetNodes().begin(), compartment->GetNodeMapping().GetNodes().end());
+    for (unsigned int leafIter = 0; leafIter < compartment->GetLeaves().size(); leafIter++)
+    {
+      SELiquidCompartment* leaf = compartment->GetLeaves().at(leafIter);
+      nodes.insert(nodes.end(), leaf->GetNodeMapping().GetNodes().begin(), leaf->GetNodeMapping().GetNodes().end());
+    }
+
+    unsigned int nodesIter = 0;
     unsigned int nodesWithVolume = 0;
     double totalVolume_mL = 0.0;
-    for (auto node : nodes)
+    while (nodesIter < nodes.size())
     {
+      SEFluidCircuitNode* node = nodes.at(nodesIter);
+      //Only use nodes that are part of the Circulatory circuit      
+      if (std::find(m_CirculatoryCircuit->GetNodes().begin(), m_CirculatoryCircuit->GetNodes().end(), node) == m_CirculatoryCircuit->GetNodes().end())
+      {
+        //Not in circuit
+        nodes.erase(nodes.begin() + nodesIter);
+        continue;
+      }
+
       if (node->HasNextVolume())
       {
         nodesWithVolume++;
         totalVolume_mL += node->GetNextVolume(VolumeUnit::mL);
       }
+
+      nodesIter++;
     }
+
+    /// \error Fatal: Bleeding must come from nodes in the circultatory circuit
+    if (nodes.size() == 0)
+    {
+      m_ss << "Hemorrhage compartments must have nodes in the circulatory circuit";
+      Fatal(m_ss);
+      return;
+    }
+
+    //Update the circuit to remove blood from the specified compartment
     for (auto node : nodes)
     {
       //Weight the flow sink value by node volume
@@ -1024,17 +1064,38 @@ void Cardiovascular::Hemorrhage()
       if (pathFound)
       {
         //Update the existing bleed path
-        hemorrhagePath->GetNextFlowSource().SetValue(thisNodeRate_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+        //Increment value to allow overlapping compartments
+        hemorrhagePath->GetNextFlowSource().IncrementValue(thisNodeRate_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
       }
       else
       {
         //Add bleed path for fluid mechanics
         SEFluidCircuitPath& newHemorrhagePath = m_CirculatoryCircuit->CreatePath(*node, *m_Ground, node->GetName() + "Hemorrhage");
-        newHemorrhagePath.GetNextFlowSource().SetValue(thisNodeRate_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+        //Increment value to allow overlapping compartments
+        newHemorrhagePath.GetNextFlowSource().IncrementValue(thisNodeRate_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
         m_CirculatoryCircuit->StateChange();
 
         //Add bleed link for transport
-        SELiquidCompartmentLink& newHemorrhageLink = m_data.GetCompartments().CreateLiquidLink(*compartment, *m_Groundcmpt, compartment->GetName() + "Hemorrhage");
+        //Find the source compartment (may be a leaf) to make the graph work (i.e., to transport)
+        SELiquidCompartment* sourceCompartment;
+        if (std::find(compartment->GetNodeMapping().GetNodes().begin(), compartment->GetNodeMapping().GetNodes().end(), node) != compartment->GetNodeMapping().GetNodes().end())
+        {
+          sourceCompartment = compartment;
+        }
+        else
+        {
+          for (unsigned int leafIter = 0; leafIter < compartment->GetLeaves().size(); leafIter++)
+          {
+            SELiquidCompartment* leaf = compartment->GetLeaves().at(leafIter);
+            if (std::find(leaf->GetNodeMapping().GetNodes().begin(), leaf->GetNodeMapping().GetNodes().end(), node) != leaf->GetNodeMapping().GetNodes().end())
+            {
+              sourceCompartment = leaf;
+              break;
+            }
+          }
+        }        
+
+        SELiquidCompartmentLink& newHemorrhageLink = m_data.GetCompartments().CreateLiquidLink(*sourceCompartment, *m_Groundcmpt, compartment->GetName() + "Hemorrhage");
         newHemorrhageLink.MapPath(newHemorrhagePath);
         m_CirculatoryGraph->AddLink(newHemorrhageLink);
         m_CirculatoryGraph->StateChange();
