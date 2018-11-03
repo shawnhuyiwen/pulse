@@ -25,7 +25,7 @@ public:
   const SEInhalerConfiguration* GetConfiguration() const;
   void RemoveConfiguration();
 
-  void GetActiveActions(std::vector<const SEAction*>& v) const;
+  void GetAllActions(std::vector<const SEAction*>& v) const;
   
 protected:
   void Clear();

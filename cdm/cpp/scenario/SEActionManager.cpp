@@ -58,6 +58,19 @@ bool SEActionManager::SerializeFromFile(const std::string& filename, Serializati
   return PBScenario::SerializeFromFile(filename, *this, m);
 }
 
+// A raw serialize method
+// The caller is the owner of these actions in the provided vector
+// Actions will not be processed into an action manager, only inserted into the list
+// Which could result in an invalid action being in the list
+// This was created to support passing invalid actions over socket or languages (specifically PulseJNI)
+// A hemorrhage with no flow rate isinvalid and used to turn off an existing hemorrhage
+// So we need to serialize that invalid action in, and have it processed by the engine action manager
+// So this method is intended to be a middle man between the socket/language client and an engine.
+bool SEActionManager::SerializeFromString(const std::string& src, std::vector<SEAction*>& dst, SerializationMode m, SESubstanceManager& subMgr)
+{
+  return PBScenario::SerializeFromString(src, dst, m, subMgr);
+}
+
 bool SEActionManager::ProcessAction(const SEAction& action)
 {
   if (!action.IsValid())
@@ -92,12 +105,12 @@ bool SEActionManager::ProcessAction(const SEAction& action)
   return bRet;
 }
 
-void SEActionManager::GetActiveActions(std::vector<const SEAction*>& actions) const
+void SEActionManager::GetAllActions(std::vector<const SEAction*>& actions) const
 {
-  m_PatientActions->GetActiveActions(actions);
-  m_EnvironmentActions->GetActiveActions(actions);
-  m_AnesthesiaMachineActions->GetActiveActions(actions);
-  m_InhalerActions->GetActiveActions(actions);
+  m_PatientActions->GetAllActions(actions);
+  m_EnvironmentActions->GetAllActions(actions);
+  m_AnesthesiaMachineActions->GetAllActions(actions);
+  m_InhalerActions->GetAllActions(actions);
 }
 
 

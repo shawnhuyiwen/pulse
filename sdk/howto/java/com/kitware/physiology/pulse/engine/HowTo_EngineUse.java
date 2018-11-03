@@ -16,6 +16,8 @@ import com.kitware.physiology.datamodel.datarequests.SEDataRequest;
 import com.kitware.physiology.datamodel.datarequests.SEDataRequestManager;
 import com.kitware.physiology.datamodel.patient.SEPatient;
 import com.kitware.physiology.datamodel.patient.actions.SEHemorrhage;
+import com.kitware.physiology.datamodel.patient.actions.SESubstanceCompoundInfusion;
+import com.kitware.physiology.datamodel.patient.actions.SESubstanceInfusion;
 import com.kitware.physiology.datamodel.patient.assessments.SECompleteBloodCount;
 import com.kitware.physiology.datamodel.patient.conditions.SEChronicAnemia;
 import com.kitware.physiology.datamodel.properties.CommonUnits.FrequencyUnit;
@@ -26,6 +28,7 @@ import com.kitware.physiology.datamodel.properties.CommonUnits.TimeUnit;
 import com.kitware.physiology.datamodel.properties.CommonUnits.VolumePerTimeUnit;
 import com.kitware.physiology.datamodel.properties.CommonUnits.VolumeUnit;
 import com.kitware.physiology.datamodel.properties.SEScalarTime;
+import com.kitware.physiology.datamodel.substance.SESubstanceCompound;
 import com.kitware.physiology.datamodel.utilities.SEEventHandler;
 import com.kitware.physiology.utilities.Log;
 import com.kitware.physiology.utilities.LogListener;
@@ -257,10 +260,14 @@ public class HowTo_EngineUse
    SEHemorrhage h = new SEHemorrhage();
    h.setCompartment(PulseCompartments.Vascular.RightLeg);
    h.getRate().setValue(200,VolumePerTimeUnit.mL_Per_min);// Change this to 750 if you want to see how engine failures are handled!!
-   pe.processAction(h);
+   if(!pe.processAction(h))
+   {
+     Log.error("Engine was unable to process requested actions");
+     return;
+   }
    // Note CDM is not updated after this call, you have to advance some time
 
-   for(int i=0; i<10; i++)
+   for(int i=1; i<=2; i++)
    {
   	 time.setValue(i,TimeUnit.min);
 	   if(!pe.advanceTime(time)) // Simulate one second
@@ -273,6 +280,55 @@ public class HowTo_EngineUse
 	   Log.info("Respiration Rate " + pe.respiratory.getRespirationRate());
 	   Log.info("Total Lung Volume " + pe.respiratory.getTotalLungVolume());     
 	   Log.info("Blood Volume " + pe.cardiovascular.getBloodVolume());  
+   }
+   
+   // Stop the hemorrhage
+   h.getRate().setValue(0,VolumePerTimeUnit.mL_Per_min);
+   if(!pe.processAction(h))
+   {
+     Log.error("Engine was unable to process requested actions");
+     return;
+   }
+   
+   for(int i=1; i<=1; i++)
+   {
+     time.setValue(i,TimeUnit.min);
+     if(!pe.advanceTime(time)) // Simulate one second
+     {
+       Log.error("Engine was unable to stay within modeling parameters with requested actions");
+       return;
+     }
+     // Again, the CDM is updated after this call
+     Log.info("Heart Rate " + pe.cardiovascular.getHeartRate());
+     Log.info("Respiration Rate " + pe.respiratory.getRespirationRate());
+     Log.info("Total Lung Volume " + pe.respiratory.getTotalLungVolume());     
+     Log.info("Blood Volume " + pe.cardiovascular.getBloodVolume());  
+   }
+   
+   // Infuse some fluids
+   SESubstanceCompound saline = pe.substanceManager.getCompound("Saline");
+   SESubstanceCompoundInfusion ivFluids= new SESubstanceCompoundInfusion(saline);
+   ivFluids.getBagVolume().setValue(500,VolumeUnit.mL);
+   ivFluids.getRate().setValue(100,VolumePerTimeUnit.mL_Per_min);
+   if(!pe.processAction(ivFluids))
+   {
+     Log.error("Engine was unable to process requested actions");
+     return;
+   }
+   
+   for(int i=1; i<=5; i++)
+   {
+     time.setValue(i,TimeUnit.min);
+     if(!pe.advanceTime(time)) // Simulate one second
+     {
+       Log.error("Engine was unable to stay within modeling parameters with requested actions");
+       return;
+     }
+     // Again, the CDM is updated after this call
+     Log.info("Heart Rate " + pe.cardiovascular.getHeartRate());
+     Log.info("Respiration Rate " + pe.respiratory.getRespirationRate());
+     Log.info("Total Lung Volume " + pe.respiratory.getTotalLungVolume());     
+     Log.info("Blood Volume " + pe.cardiovascular.getBloodVolume());  
    }
      
    // Be nice to your memory and deallocate the native memory associated with this engine if you are done with it

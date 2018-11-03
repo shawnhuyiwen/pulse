@@ -28,7 +28,7 @@ public:
   const SEThermalApplication* GetThermalApplication() const;
   void RemoveThermalApplication();
 
-  void GetActiveActions(std::vector<const SEAction*>& v) const;
+  void GetAllActions(std::vector<const SEAction*>& v) const;
 
 protected:
   void Clear();

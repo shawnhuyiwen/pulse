@@ -269,17 +269,18 @@ Actions
 @anchor drugs-interventions
 ### Interventions
 
-#### Bolus Administration
+#### Substance Bolus
 
 A bolus administration represents an injection of a substance in a single dose. The substance, concentration, and amount are specified by the user. The total mass for the dose is calculated by multiplying the concentration and the amount. The total mass is then incrementally added to the vena cava compartment over the course of two seconds to represent the slow depression of a plunger. Once added to the vena cava, the substance will circulate through the %Cardiovascular System as part of the blood flow. The effects of the substance on the physiologic output will vary with the substance.
 
-#### IV Administration
+#### Substance IV Infusion
+
+Titration represents the administration of a single substance at a specified rate and concentration over time into the venous system. The user selects a single substance and specifies the concentration and rate with titration. As with intravenous administration, the mass of the substance is incremented based on the amount of the substance entering the system. The mass is calculated by taking the flow entering the system at each time step multiplied by the known concentration of each substance within the compound substance. This mass is then added to the vena cava at each time step until the intravenous administration is stopped. The added substances then circulate through the %Cardiovascular System as part of the blood flow. The effect on the physiologic output will vary based on the compound substance selected.
+
+#### Compound IV Infusion
 
 Intravenous administration represents administration of a compound substance (a single entity with multiple substances, i.e., saline) at a specified rate over time into the venous system. The compound substance, the rate, and the bag volume are specified by the user. At each time step, the mass of the substances are incremented based on the amount of compound substance entering the system. The mass is calculated by taking the flow entering the system at each time step multiplied by the known concentration of each substance within the compound substance. This mass is then added to the vena cava at each time step until the intravenous administration is stopped. The added substances will then circulate through the %Cardiovascular System as part of the blood flow. The effect on the physiologic output will vary based on the compound substance selected.
 
-#### IV Infusion
-
-Titration represents the administration of a single substance at a specified rate and concentration over time into the venous system. The user selects a single substance and specifies the concentration and rate with titration. As with intravenous administration, the mass of the substance is incremented based on the amount of the substance entering the system. The mass is calculated by taking the flow entering the system at each time step multiplied by the known concentration of each substance within the compound substance. This mass is then added to the vena cava at each time step until the intravenous administration is stopped. The added substances then circulate through the %Cardiovascular System as part of the blood flow. The effect on the physiologic output will vary based on the compound substance selected.
 
 @anchor drugs-results
 Results and Conclusions

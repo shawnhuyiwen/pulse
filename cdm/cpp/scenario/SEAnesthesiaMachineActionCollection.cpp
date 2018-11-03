@@ -441,7 +441,7 @@ void SEAnesthesiaMachineActionCollection::RemoveYPieceDisconnect()
   SAFE_DELETE(m_YPieceDisconnect);
 }
 
-void SEAnesthesiaMachineActionCollection::GetActiveActions(std::vector<const SEAction*>& actions) const
+void SEAnesthesiaMachineActionCollection::GetAllActions(std::vector<const SEAction*>& actions) const
 {
   if (HasConfiguration())
     actions.push_back(GetConfiguration());

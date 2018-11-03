@@ -79,7 +79,7 @@ public:
   const SEInitialEnvironmentConditions* GetInitialEnvironmentConditions() const;
 
   // Helper to get a list of the active conditions
-  void GetActiveConditions(std::vector<const SECondition*>& v) const;
+  void GetAllConditions(std::vector<const SECondition*>& v) const;
 
 protected:
 

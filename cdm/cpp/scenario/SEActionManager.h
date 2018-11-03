@@ -24,6 +24,8 @@ public:
   bool SerializeFromString(const std::string& src, SerializationMode m);
   bool SerializeFromFile(const std::string& filename, SerializationMode m);
 
+  static bool SerializeFromString(const std::string& src, std::vector<SEAction*>& dst, SerializationMode m, SESubstanceManager& subMgr);
+
   bool ProcessAction(const SEAction& action);// Will make a copy
 
   SEPatientActionCollection&                 GetPatientActions()           { return *m_PatientActions; }
@@ -36,7 +38,7 @@ public:
   const SEAnesthesiaMachineActionCollection& GetAnesthesiaMachineActions() const { return *m_AnesthesiaMachineActions; }
   const SEInhalerActionCollection&           GetInhalerActions()           const { return *m_InhalerActions; }
 
-  void GetActiveActions(std::vector<const SEAction*>& v) const;
+  void GetAllActions(std::vector<const SEAction*>& v) const;
 
 protected:
 

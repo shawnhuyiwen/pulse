@@ -150,6 +150,7 @@ void PBScenario::Serialize(const SEActionManager& src, cdm::ActionListData& dst)
   PBScenario::Serialize(*src.m_AnesthesiaMachineActions, dst);
   PBScenario::Serialize(*src.m_InhalerActions, dst);
 }
+
 void PBScenario::Serialize(const SEAnesthesiaMachineActionCollection& src, cdm::ActionListData& dst)
 {
   if (src.HasConfiguration())
@@ -536,6 +537,27 @@ bool PBScenario::SerializeFromFile(const std::string& filename, SEActionManager&
   if (content.empty())
     return false;
   return PBScenario::SerializeFromString(content, dst, m);
+}
+
+bool PBScenario::SerializeFromString(const std::string& src, std::vector<SEAction*>& dst, SerializationMode m, SESubstanceManager& subMgr)
+{
+  cdm::ActionListData data;
+  if (!PBUtils::SerializeFromString(src, data, m))
+    return false;
+  PBScenario::Load(data, dst, subMgr);
+  return true;
+}
+void PBScenario::Load(const cdm::ActionListData& src, std::vector<SEAction*>& dst, SESubstanceManager& subMgr)
+{
+  PBScenario::Serialize(src, dst, subMgr);
+}
+void PBScenario::Serialize(const cdm::ActionListData& src, std::vector<SEAction*>& dst, SESubstanceManager& subMgr)
+{
+  for (int i = 0; i < src.anyaction_size(); i++)
+  {
+    SEAction* a = PBAction::Load(src.anyaction()[i], subMgr);
+    dst.push_back(a);
+  }
 }
 
 bool PBScenario::SerializeToString(const SEDataRequestManager& src, std::string& output, SerializationMode m)

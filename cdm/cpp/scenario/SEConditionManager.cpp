@@ -333,7 +333,7 @@ const SEInitialEnvironmentConditions* SEConditionManager::GetInitialEnvironmentC
   return m_InitialEnvironmentConditions;
 }
 
-void SEConditionManager::GetActiveConditions(std::vector<const SECondition*>& conditions) const
+void SEConditionManager::GetAllConditions(std::vector<const SECondition*>& conditions) const
 {
   if (HasChronicAnemia())
     conditions.push_back(GetChronicAnemia());

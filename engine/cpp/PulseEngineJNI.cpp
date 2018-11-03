@@ -205,7 +205,7 @@ JNIEXPORT jboolean JNICALL Java_com_kitware_physiology_pulse_engine_PulseEngine_
         return false;
       }
       env->ReleaseStringUTFChars(dataRequests, cStr);
-      cMgr.GetActiveConditions(c);
+      cMgr.GetAllConditions(c);
     }
       
     // Load up the data requests
@@ -318,20 +318,19 @@ JNIEXPORT bool JNICALL Java_com_kitware_physiology_pulse_engine_PulseEngine_nati
 
   try
   {
-    SEActionManager aMgr(engineJNI->eng->GetSubstanceManager());
-    if (!aMgr.SerializeFromString(aStr, ASCII))
+    std::vector<SEAction*> vActions;
+    if (!SEActionManager::SerializeFromString(aStr, vActions, ASCII, engineJNI->eng->GetSubstanceManager()))
     {
       env->ReleaseStringUTFChars(actions, aStr);
       return false;
     }
     env->ReleaseStringUTFChars(actions, aStr);
-    std::vector<const SEAction*> vActions;
-    aMgr.GetActiveActions(vActions);
 
     for (const SEAction* a : vActions)
     {
       if (!engineJNI->eng->ProcessAction(*a))
         success = false;
+      delete a;
     }
   }
   catch (CommonDataModelException& ex)

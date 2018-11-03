@@ -982,7 +982,7 @@ void SEPatientActionCollection::RemoveUrinate()
   SAFE_DELETE(m_Urinate);
 }
 
-void SEPatientActionCollection::GetActiveActions(std::vector<const SEAction*>& actions) const
+void SEPatientActionCollection::GetAllActions(std::vector<const SEAction*>& actions) const
 {
   if (HasAcuteStress())
     actions.push_back(GetAcuteStress());
@@ -1036,7 +1036,7 @@ void SEPatientActionCollection::GetActiveActions(std::vector<const SEAction*>& a
     actions.push_back(itr.second);
   for (auto itr : m_SubstanceInfusions)
     actions.push_back(itr.second);
-  for (auto itr : m_SubstanceInfusions)
+  for (auto itr : m_SubstanceCompoundInfusions)
     actions.push_back(itr.second);
   if (HasUrinate())
     actions.push_back(GetUrinate());

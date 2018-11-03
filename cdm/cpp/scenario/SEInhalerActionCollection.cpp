@@ -59,7 +59,7 @@ void SEInhalerActionCollection::RemoveConfiguration()
   SAFE_DELETE(m_Configuration);
 }
 
-void SEInhalerActionCollection::GetActiveActions(std::vector<const SEAction*>& actions) const
+void SEInhalerActionCollection::GetAllActions(std::vector<const SEAction*>& actions) const
 {
   if (HasConfiguration())
     actions.push_back(GetConfiguration());

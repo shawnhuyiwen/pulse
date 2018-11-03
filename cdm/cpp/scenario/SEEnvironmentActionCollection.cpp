@@ -96,7 +96,7 @@ void SEEnvironmentActionCollection::RemoveThermalApplication()
   SAFE_DELETE(m_ThermalApplication);
 }
 
-void SEEnvironmentActionCollection::GetActiveActions(std::vector<const SEAction*>& actions) const
+void SEEnvironmentActionCollection::GetAllActions(std::vector<const SEAction*>& actions) const
 {
   if (HasChange())
     actions.push_back(GetChange());
