@@ -2,11 +2,10 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "scenario/SEInhalerActionCollection.h"
+#include "engine/SEInhalerActionCollection.h"
 #include "substance/SESubstanceManager.h"
 #include "system/equipment/inhaler/SEInhaler.h"
 #include "system/equipment/inhaler/actions/SEInhalerConfiguration.h"
-#include "bind/cdm/Scenario.pb.h"
 
 SEInhalerActionCollection::SEInhalerActionCollection(SESubstanceManager& substances) : Loggable(substances.GetLogger()), m_Substances(substances)
 {

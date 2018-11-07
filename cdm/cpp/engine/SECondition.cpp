@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "scenario/SECondition.h"
+#include "engine/SECondition.h"
 #include "substance/SESubstanceManager.h"
 #include "patient/conditions/SEPatientCondition.h"
 #include "system/environment/conditions/SEEnvironmentCondition.h"

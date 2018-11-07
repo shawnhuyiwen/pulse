@@ -2,13 +2,13 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "scenario/SEDataRequest.h"
+#include "engine/SEDataRequest.h"
 class SESubstance;
 class SESubstanceManager;
 
 class CDM_DECL SEDataRequestManager : public Loggable
 {
-  friend class PBScenario;//friend the serialization class
+  friend class PBEngine;//friend the serialization class
 public:
   SEDataRequestManager(Logger* logger);
   ~SEDataRequestManager();

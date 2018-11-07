@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 #include <iomanip> 
-#include "scenario/SEDecimalFormat.h"
+#include "engine/SEDecimalFormat.h"
 
 SEDecimalFormat::SEDecimalFormat(const SEDecimalFormat* dfault)
 {

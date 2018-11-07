@@ -4,7 +4,7 @@
 #include "EngineHowTo.h"
 
 // Include the various types you will be using in your code
-#include "scenario/SEDataRequestManager.h"
+#include "engine/SEDataRequestManager.h"
 #include "engine/SEEngineTracker.h"
 #include "engine/SEEventHandler.h"
 #include "compartment/SECompartmentManager.h"

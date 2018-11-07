@@ -2,9 +2,9 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "scenario/SEDataRequest.h"
+#include "engine/SEDataRequest.h"
 #include "utils/unitconversion/UCCommon.h"
-#include "io/protobuf/PBScenario.h"
+#include "io/protobuf/PBEngine.h"
 
 SEDataRequest::SEDataRequest(const SEDataRequest& dr)
 {
@@ -42,7 +42,7 @@ void SEDataRequest::Clear()
 
 void SEDataRequest::Copy(const SEDataRequest& src)
 {
-  PBScenario::Copy(src, *this);
+  PBEngine::Copy(src, *this);
 }
 
 bool SEDataRequest::IsValid()

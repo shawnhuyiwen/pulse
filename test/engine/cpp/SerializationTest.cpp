@@ -7,7 +7,7 @@
 
 #include "engine/SETimedStabilization.h"
 #include "engine/SEEngineTracker.h"
-#include "scenario/SEDataRequestManager.h"
+#include "engine/SEDataRequestManager.h"
 
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceManager.h"

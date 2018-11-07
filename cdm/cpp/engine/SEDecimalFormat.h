@@ -8,7 +8,7 @@ extern const std::string& eDecimalFormat_Type_Name(eDecimalFormat_Type m);
 
 class CDM_DECL SEDecimalFormat
 {
-  friend class PBScenario;//friend the serialization class
+  friend class PBEngine;//friend the serialization class
 public:
   SEDecimalFormat(const SEDecimalFormat* dfault = nullptr);
   virtual ~SEDecimalFormat();

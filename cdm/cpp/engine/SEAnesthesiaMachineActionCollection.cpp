@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "scenario/SEAnesthesiaMachineActionCollection.h"
+#include "engine/SEAnesthesiaMachineActionCollection.h"
 #include "substance/SESubstanceManager.h"
 #include "system/equipment/anesthesiamachine/SEAnesthesiaMachine.h"
 #include "system/equipment/anesthesiamachine/actions/SEOxygenTankPressureLoss.h"

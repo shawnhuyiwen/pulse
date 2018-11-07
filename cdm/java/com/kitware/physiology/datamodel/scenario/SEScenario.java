@@ -12,9 +12,9 @@ import com.google.protobuf.TextFormat;
 import com.google.protobuf.TextFormat.ParseException;
 import com.kitware.physiology.cdm.Enums.eSide;
 import com.kitware.physiology.cdm.Enums.eSwitch;
-import com.kitware.physiology.cdm.Scenario.AnyActionData;
+import com.kitware.physiology.cdm.Engine.AnyActionData;
 import com.kitware.physiology.cdm.Scenario.ScenarioData;
-import com.kitware.physiology.cdm.ScenarioEnums.eDataRequest;
+import com.kitware.physiology.cdm.EngineEnums.eDataRequest;
 import com.kitware.physiology.pulse.Pulse;
 import com.kitware.physiology.cdm.AnesthesiaMachineEnums.eAnesthesiaMachine;
 import com.kitware.physiology.cdm.PatientAssessmentEnums.ePatientAssessment;
@@ -22,6 +22,7 @@ import com.kitware.physiology.cdm.PatientAssessmentEnums.ePatientAssessment;
 import com.kitware.physiology.datamodel.actions.SEAction;
 import com.kitware.physiology.datamodel.actions.SEAdvanceTime;
 import com.kitware.physiology.datamodel.datarequests.*;
+import com.kitware.physiology.datamodel.engine.SEPatientConfiguration;
 import com.kitware.physiology.datamodel.patient.actions.SEBronchoconstriction;
 import com.kitware.physiology.datamodel.patient.actions.SENeedleDecompression;
 import com.kitware.physiology.datamodel.patient.actions.SEPatientAssessmentRequest;
@@ -223,7 +224,7 @@ public class SEScenario
 
 	protected String                        name;
 	protected String                        description;
-	protected SEScenarioInitialParameters   params;
+	protected SEPatientConfiguration   params;
 	protected String                        engineStateFile;
 	protected SEDataRequestManager          drMgr = new SEDataRequestManager();
 	protected List<SEAction>                actions = new ArrayList<SEAction>();
@@ -264,13 +265,12 @@ public class SEScenario
 		dst.name = src.getName();
 		dst.description = src.getDescription();
 
-		switch(src.getStartTypeCase())
+		if(src.hasStartType())
 		{
-		case ENGINESTATEFILE:
-			dst.engineStateFile = src.getEngineStateFile();
-			break;
-		case INITIALPARAMETERS:
-			SEScenarioInitialParameters.load(src.getInitialParameters(),dst.getInitialParameters(),dst.subMgr);
+		  if(src.getStartType().hasInitialParameters())
+		    SEPatientConfiguration.load(src.getStartType().getInitialParameters(),dst.getInitialParameters(),dst.subMgr);
+		  else 
+			  dst.engineStateFile = src.getStartType().getEngineStateFile();
 		}
 
 		if(src.hasDataRequestManager())
@@ -297,9 +297,9 @@ public class SEScenario
 			dst.setDescription(src.description);
 
 		if(src.hasInitialParameters())
-			dst.setInitialParameters(SEScenarioInitialParameters.unload(src.params));
+		  dst.getStartTypeBuilder().setInitialParameters(SEPatientConfiguration.unload(src.params));
 		else if(src.hasEngineState())
-			dst.setEngineStateFile(src.engineStateFile);
+			dst.getStartTypeBuilder().setEngineStateFile(src.engineStateFile);
 
 		if(!src.drMgr.getRequestedData().isEmpty())
 			dst.setDataRequestManager(SEDataRequestManager.unload(src.drMgr));
@@ -372,10 +372,10 @@ public class SEScenario
 	{
 		return params!=null && params.isValid();
 	}
-	public SEScenarioInitialParameters getInitialParameters()
+	public SEPatientConfiguration getInitialParameters()
 	{
 		if(this.params==null)
-			this.params=new SEScenarioInitialParameters();
+			this.params=new SEPatientConfiguration();
 		return this.params;
 	}
 	public void invalidateInitialParameters()

@@ -5,8 +5,7 @@
 #include "SEDataRequestManager.h"
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceManager.h"
-#include "io/protobuf/PBScenario.h"
-#include "io/protobuf/PBScenario.h"
+#include "io/protobuf/PBEngine.h"
 
 SEDataRequestManager::SEDataRequestManager(Logger* logger) : Loggable(logger)
 {
@@ -30,24 +29,24 @@ void SEDataRequestManager::Clear()
 
 void SEDataRequestManager::Copy(const SEDataRequestManager& src, const SESubstanceManager& subMgr)
 {
-  PBScenario::Copy(src, *this, subMgr);
+  PBEngine::Copy(src, *this, subMgr);
 }
 
 bool SEDataRequestManager::SerializeToString(std::string& output, SerializationMode m) const
 {
-  return PBScenario::SerializeToString(*this, output, m);
+  return PBEngine::SerializeToString(*this, output, m);
 }
 bool SEDataRequestManager::SerializeToFile(const std::string& filename, SerializationMode m) const
 {
-  return PBScenario::SerializeToFile(*this, filename, m);
+  return PBEngine::SerializeToFile(*this, filename, m);
 }
 bool SEDataRequestManager::SerializeFromString(const std::string& src, SerializationMode m, const SESubstanceManager& subMgr)
 {
-  return PBScenario::SerializeFromString(src, *this, m, subMgr);
+  return PBEngine::SerializeFromString(src, *this, m, subMgr);
 }
 bool SEDataRequestManager::SerializeFromFile(const std::string& filename, SerializationMode m, const SESubstanceManager& subMgr)
 {
-  return PBScenario::SerializeFromFile(filename, *this, m, subMgr);
+  return PBEngine::SerializeFromFile(filename, *this, m, subMgr);
 }
 
 bool SEDataRequestManager::HasDefaultDecimalFormatting() const

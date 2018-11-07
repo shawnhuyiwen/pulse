@@ -7,14 +7,14 @@ class SEPatient;
 class SECondition;
 class SESubstanceManager;
 
-class CDM_DECL SEScenarioInitialParameters : public Loggable
+class CDM_DECL SEPatientConfiguration : public Loggable
 {
-  friend class PBScenario;//friend the serialization class
+  friend class PBEngine;//friend the serialization class
   friend class SEScenario;
 protected:
-  SEScenarioInitialParameters(SESubstanceManager& subMgr);
+  SEPatientConfiguration(SESubstanceManager& subMgr);
 public:
-  virtual ~SEScenarioInitialParameters();
+  virtual ~SEPatientConfiguration();
   virtual void Clear(); //clear memory
 
 public:

@@ -12,7 +12,7 @@ CDM_BIND_DECL(AnyInhalerActionData)
 
 class CDM_DECL SEInhalerActionCollection : public Loggable
 {
-  friend class PBScenario;//friend the serialization class
+  friend class PBEngine;//friend the serialization class
   friend class SEActionManager;
 protected:
   SEInhalerActionCollection(SESubstanceManager&);

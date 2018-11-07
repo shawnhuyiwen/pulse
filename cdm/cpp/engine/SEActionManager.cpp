@@ -2,18 +2,18 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "scenario/SEAction.h"
-#include "scenario/SEActionManager.h"
+#include "engine/SEAction.h"
+#include "engine/SEActionManager.h"
 #include "patient/actions/SEPatientAction.h"
-#include "scenario/SEPatientActionCollection.h"
+#include "engine/SEPatientActionCollection.h"
 #include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineAction.h"
-#include "scenario/SEAnesthesiaMachineActionCollection.h"
+#include "engine/SEAnesthesiaMachineActionCollection.h"
 #include "system/environment/actions/SEEnvironmentAction.h"
-#include "scenario/SEEnvironmentActionCollection.h"
+#include "engine/SEEnvironmentActionCollection.h"
 #include "system/equipment/inhaler/actions/SEInhalerAction.h"
-#include "scenario/SEInhalerActionCollection.h"
+#include "engine/SEInhalerActionCollection.h"
 #include "substance/SESubstanceManager.h"
-#include "io/protobuf/PBScenario.h"
+#include "io/protobuf/PBEngine.h"
 
 SEActionManager::SEActionManager(SESubstanceManager& substances) : Loggable(substances.GetLogger()), 
                                                                    m_Substances(substances)
@@ -43,19 +43,19 @@ void SEActionManager::Clear()
 
 bool SEActionManager::SerializeToString(std::string& output, SerializationMode m) const
 {
-  return PBScenario::SerializeToString(*this, output, m);
+  return PBEngine::SerializeToString(*this, output, m);
 }
 bool SEActionManager::SerializeToFile(const std::string& filename, SerializationMode m) const
 {
-  return PBScenario::SerializeToFile(*this, filename, m);
+  return PBEngine::SerializeToFile(*this, filename, m);
 }
 bool SEActionManager::SerializeFromString(const std::string& src, SerializationMode m)
 {
-  return PBScenario::SerializeFromString(src, *this, m);
+  return PBEngine::SerializeFromString(src, *this, m);
 }
 bool SEActionManager::SerializeFromFile(const std::string& filename, SerializationMode m)
 {
-  return PBScenario::SerializeFromFile(filename, *this, m);
+  return PBEngine::SerializeFromFile(filename, *this, m);
 }
 
 // A raw serialize method
@@ -68,7 +68,7 @@ bool SEActionManager::SerializeFromFile(const std::string& filename, Serializati
 // So this method is intended to be a middle man between the socket/language client and an engine.
 bool SEActionManager::SerializeFromString(const std::string& src, std::vector<SEAction*>& dst, SerializationMode m, SESubstanceManager& subMgr)
 {
-  return PBScenario::SerializeFromString(src, dst, m, subMgr);
+  return PBEngine::SerializeFromString(src, dst, m, subMgr);
 }
 
 bool SEActionManager::ProcessAction(const SEAction& action)

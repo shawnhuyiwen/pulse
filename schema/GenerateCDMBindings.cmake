@@ -1,7 +1,11 @@
 
 set(from "${SCHEMA_SRC}/proto")
 set(to   "${SCHEMA_DST}")
-set(BINDER "${CMAKE_INSTALL_PREFIX}/bin/protoc")
+if( CMAKE_INSTALL_PREFIX )
+  set(BINDER "${CMAKE_INSTALL_PREFIX}/bin/protoc")
+else()
+  set(BINDER "protoc")
+endif()
 
 message(STATUS "Generating Schema Bindings" )
 message(STATUS "Using : ${BINDER}")
@@ -65,3 +69,18 @@ foreach(f ${_FILES})
                                     ${f})
 endforeach()
 message(STATUS "java bindings are here : ${java_bindings_DIR}" )
+
+
+set(csharp_bindings_DIR "${to}/csharp")
+file(MAKE_DIRECTORY "${csharp_bindings_DIR}/bind")
+file(GLOB_RECURSE _OLD_CSHARP_FILES "${csharp_bindings_DIR}/*.*")
+if(_OLD_CSHARP_FILES)
+  file(REMOVE ${_OLD_CSHARP_FILES})
+endif() 
+foreach(f ${_FILES})
+  message(STATUS "Binding file ${f}")
+  execute_process(COMMAND ${BINDER} --proto_path=${from}
+                                    --csharp_out=${csharp_bindings_DIR}/bind
+                                    ${f})
+endforeach()
+message(STATUS "csharp bindings are here : ${csharp_bindings_DIR}" )

@@ -2,10 +2,10 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
+#include "PhysiologyEngine.h"
 #include "engine/SETimedStabilization.h"
 #include "engine/SEEngineTracker.h"
-#include "PhysiologyEngine.h"
-#include "scenario/SECondition.h"
+#include "engine/SECondition.h"
 #include "utils/TimingProfile.h"
 #include "properties/SEScalarTime.h"
 #include "io/protobuf/PBEngine.h"

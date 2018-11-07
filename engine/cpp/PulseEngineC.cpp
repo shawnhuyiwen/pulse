@@ -1,11 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "PulseEngineJNI.h"
-#include "PulseScenario.h"
-#include "controller/ScenarioExec.h"
+#include "PulseEngineC.h"
 #include "patient/SEPatient.h"
-#include "engine/SEAction.h"
 #include "engine/SEDataRequest.h"
 #include "engine/SEDataRequestManager.h"
 #include "engine/SEActionManager.h"
@@ -13,38 +10,6 @@
 #include "engine/SEEngineTracker.h"
 #include "properties/SEScalarTime.h"
 #include "utils/DataTrack.h"
-
-#include "patient/assessments/SEPulmonaryFunctionTest.h"
-#include "patient/assessments/SECompleteBloodCount.h"
-#include "patient/assessments/SEComprehensiveMetabolicPanel.h"
-#include "patient/assessments/SEUrinalysis.h"
-
-#include "EngineTest.h"
-
-extern "C"
-JNIEXPORT jlong JNICALL Java_com_kitware_physiology_pulse_testing_EngineUnitTestDriver_nativeAllocate(JNIEnv *env, jobject obj)
-{
-  PulseEngineTest *executor = new PulseEngineTest();
-  return reinterpret_cast<jlong>(executor);
-}
-
-extern "C"
-JNIEXPORT void JNICALL Java_com_kitware_physiology_pulse_testing_EngineUnitTestDriver_nativeDelete(JNIEnv *env, jobject obj, jlong ptr)
-{
-  PulseEngineTest *executor = reinterpret_cast<PulseEngineTest*>(ptr);
-  SAFE_DELETE(executor);
-}
-
-extern "C"
-JNIEXPORT void JNICALL Java_com_kitware_physiology_pulse_testing_EngineUnitTestDriver_nativeExecute(JNIEnv *env, jobject obj, jlong ptr, jstring test, jstring toDir)
-{
-  const char* testName = env->GetStringUTFChars(test, JNI_FALSE);
-  const char* outputDir = env->GetStringUTFChars(toDir, JNI_FALSE);
-  PulseEngineTest *executor = reinterpret_cast<PulseEngineTest*>(ptr);
-  executor->RunTest(testName, outputDir);
-  env->ReleaseStringUTFChars(test, testName);
-  env->ReleaseStringUTFChars(toDir, outputDir);
-}
 
 extern "C"
 JNIEXPORT jlong JNICALL Java_com_kitware_physiology_pulse_engine_Pulse_nativeAllocate(JNIEnv *env, jobject obj, jstring logFile)
@@ -73,49 +38,6 @@ JNIEXPORT void JNICALL Java_com_kitware_physiology_pulse_engine_PulseEngine_nati
   engineJNI->jniEnv = env;
   engineJNI->jniObj = obj;
   engineJNI->Reset();
-}
-
-extern "C"
-JNIEXPORT void JNICALL Java_com_kitware_physiology_pulse_engine_PulseScenarioExec_nativeExecuteScenario(JNIEnv *env, jobject obj, jlong ptr, jstring scenario, jstring outputFile, double updateFreq_s)
-{
-  const char* sceStr = env->GetStringUTFChars(scenario, JNI_FALSE);
-  const char* dataF = env->GetStringUTFChars(outputFile,JNI_FALSE);
-  try
-  {
-    PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr); 
-    engineJNI->updateFrequency_cnt = (int)(updateFreq_s /engineJNI->eng->GetTimeStep(TimeUnit::s));
-    engineJNI->jniEnv = env;
-    engineJNI->jniObj = obj;
-    // Load up the pba and run the scenario
-    PulseScenario sce(engineJNI->eng->GetSubstanceManager());
-    if (!sce.SerializeFromString(sceStr,ASCII))
-    {
-      std::cerr << "The scenario string is bad " << std::endl;
-    }
-    else
-    {
-      engineJNI->eng->SetAdvanceHandler(updateFreq_s <= 0 ? nullptr : engineJNI);
-      engineJNI->exec = new PulseScenarioExec(*engineJNI->eng);
-      engineJNI->exec->Execute(sce, dataF);
-    }
-    SAFE_DELETE(engineJNI->exec);
-  }
-  catch (...)
-  {
-    std::cerr << "Unable to execute scenario " << std::endl;
-  }
-  env->ReleaseStringUTFChars(scenario, sceStr);
-  env->ReleaseStringUTFChars(outputFile,dataF);
-}
-
-extern "C"
-JNIEXPORT void JNICALL Java_com_kitware_physiology_pulse_engine_PulseScenarioExec_nativeCancelScenario(JNIEnv *env, jobject obj, jlong ptr)
-{
-  PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr); 
-  //engineJNI->jniEnv = env; I am not doing this because the cancel comes in on another thread
-  //engineJNI->jniObj = obj; and it has valid copies of the env and obj for its context
-  if (engineJNI->exec != nullptr)
-    engineJNI->exec->Cancel();// This will not do anything with JNI
 }
 
 extern "C"
@@ -350,54 +272,6 @@ JNIEXPORT bool JNICALL Java_com_kitware_physiology_pulse_engine_PulseEngine_nati
   }
 
   return success;
-}
-
-extern "C"
-JNIEXPORT jstring JNICALL Java_com_kitware_physiology_pulse_engine_PulseEngine_nativeGetAssessment(JNIEnv *env, jobject obj, jlong ptr, jint type)
-{
-  PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
-  engineJNI->jniEnv = env;
-  engineJNI->jniObj = obj;
-  
-  jstring assessment;
-
-  std::string stream;
-  switch (type)
-  {
-    case 0: // CBC
-    {
-      SECompleteBloodCount cbc(engineJNI->eng->GetLogger());
-      engineJNI->eng->GetPatientAssessment(cbc);
-      cbc.SerializeToString(stream, ASCII);
-      break;
-    }
-    case 1: // CMP
-    {
-      SEComprehensiveMetabolicPanel cmp(engineJNI->eng->GetLogger());
-      engineJNI->eng->GetPatientAssessment(cmp);
-      cmp.SerializeToString(stream, ASCII);
-      break;
-    }
-    case 2:// PFT
-    {
-      SEPulmonaryFunctionTest pft(engineJNI->eng->GetLogger());
-      engineJNI->eng->GetPatientAssessment(pft);
-      pft.SerializeToString(stream, ASCII);
-      break;
-    }
-    case 3: // U
-    {
-      SEUrinalysis u(engineJNI->eng->GetLogger());
-      engineJNI->eng->GetPatientAssessment(u);
-      u.SerializeToString(stream, ASCII);
-      break;
-    }
-    default:
-      stream = "Unsupported assessment type";
-  };
-
-  assessment = env->NewStringUTF(stream.c_str());
-  return assessment;
 }
 
 PulseEngineJNI::PulseEngineJNI(const std::string& logFile) : SEAdvanceHandler(), SEEventHandler()

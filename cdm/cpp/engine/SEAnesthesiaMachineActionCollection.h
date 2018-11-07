@@ -24,7 +24,7 @@ CDM_BIND_DECL(AnyAnesthesiaMachineActionData)
 
 class CDM_DECL SEAnesthesiaMachineActionCollection : public Loggable
 {
-  friend class PBScenario;//friend the serialization class
+  friend class PBEngine;//friend the serialization class
   friend class SEActionManager;
 protected:
   SEAnesthesiaMachineActionCollection(SESubstanceManager&);

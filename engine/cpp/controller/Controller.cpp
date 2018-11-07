@@ -24,8 +24,8 @@
 #include "equipment/Inhaler.h"
 #include "PulseConfiguration.h"
 
-#include "scenario/SEConditionManager.h"
-#include "scenario/SEActionManager.h"
+#include "engine/SEConditionManager.h"
+#include "engine/SEActionManager.h"
 
 #include "substance/SESubstance.h"
 

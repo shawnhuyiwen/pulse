@@ -13,7 +13,7 @@
 #include "io/protobuf/PBPatient.h"
 #include "io/protobuf/PBConditions.h"
 #include "io/protobuf/PBActions.h"
-#include "io/protobuf/PBScenario.h"
+#include "io/protobuf/PBEngine.h"
 #include "io/protobuf/PBCircuit.h"
 #include "io/protobuf/PBCompartment.h"
 #include "io/protobuf/PBProperties.h"
@@ -27,11 +27,11 @@
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceCompound.h"
 #include "engine/SEEngineTracker.h"
-#include "scenario/SECondition.h"
-#include "scenario/SEConditionManager.h"
-#include "scenario/SEAction.h"
-#include "scenario/SEActionManager.h"
-#include "scenario/SEDataRequestManager.h"
+#include "engine/SECondition.h"
+#include "engine/SEConditionManager.h"
+#include "engine/SEAction.h"
+#include "engine/SEActionManager.h"
+#include "engine/SEDataRequestManager.h"
 #include "properties/SEScalarTime.h"
 #include "utils/FileUtils.h"
 
@@ -76,8 +76,8 @@ bool PBPulseState::Serialize(const pulse::proto::StateData& src, PulseEngine& ds
   if (src.has_datarequestmanager())
   {
     dst.m_EngineTrack->GetDataRequestManager().Clear();
-    PBScenario::Load(src.datarequestmanager(), dst.m_EngineTrack->GetDataRequestManager(), *dst.m_Substances);
-    dst.m_EngineTrack->ForceConnection();// I don't want to rest the file because I would loose all my data      
+    PBEngine::Load(src.datarequestmanager(), dst.m_EngineTrack->GetDataRequestManager(), *dst.m_Substances);
+    dst.m_EngineTrack->ForceConnection();// I don't want to rest the file because I would loose all my data
   }
 
   if (simTime != nullptr)
@@ -261,13 +261,13 @@ bool PBPulseState::Serialize(const PulseEngine& src, pulse::proto::StateData& ds
   dst.set_intubation((cdm::eSwitch)src.m_Intubation);
   dst.set_allocated_simulationtime(PBProperty::Unload(*src.m_SimulationTime));
   if (src.m_EngineTrack->GetDataRequestManager().HasDataRequests())
-    dst.set_allocated_datarequestmanager(PBScenario::Unload(src.m_EngineTrack->GetDataRequestManager()));
+    dst.set_allocated_datarequestmanager(PBEngine::Unload(src.m_EngineTrack->GetDataRequestManager()));
   // Patient
   dst.set_allocated_patient(PBPatient::Unload(*src.m_Patient));
   // Conditions
-  dst.set_allocated_conditions(PBScenario::Unload(*src.m_Conditions));
+  dst.set_allocated_conditions(PBEngine::Unload(*src.m_Conditions));
   // Actions
-  dst.set_allocated_activeactions(PBScenario::Unload(*src.m_Actions));
+  dst.set_allocated_activeactions(PBEngine::Unload(*src.m_Actions));
   // Active Substances/Compounds
   for (SESubstance* s : src.m_Substances->GetActiveSubstances())
     dst.mutable_activesubstance()->AddAllocated(PBSubstance::Unload(*s));

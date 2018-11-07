@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "scenario/SEConditionManager.h"
+#include "engine/SEConditionManager.h"
 //Patient Conditions
 #include "patient/conditions/SEChronicAnemia.h"
 #include "patient/conditions/SEChronicObstructivePulmonaryDisease.h"
@@ -17,7 +17,7 @@
 #include "system/environment/conditions/SEInitialEnvironmentConditions.h"
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceManager.h"
-#include "io/protobuf/PBScenario.h"
+#include "io/protobuf/PBEngine.h"
 
 SEConditionManager::SEConditionManager(SESubstanceManager& substances) : Loggable(substances.GetLogger()), m_Substances(substances)
 {
@@ -52,19 +52,19 @@ void SEConditionManager::Clear()
 
 bool SEConditionManager::SerializeToString(std::string& output, SerializationMode m) const
 {
-  return PBScenario::SerializeToString(*this, output, m);
+  return PBEngine::SerializeToString(*this, output, m);
 }
 bool SEConditionManager::SerializeToFile(const std::string& filename, SerializationMode m) const
 {
-  return PBScenario::SerializeToFile(*this, filename, m);
+  return PBEngine::SerializeToFile(*this, filename, m);
 }
 bool SEConditionManager::SerializeFromString(const std::string& src, SerializationMode m)
 {
-  return PBScenario::SerializeFromString(src, *this, m);
+  return PBEngine::SerializeFromString(src, *this, m);
 }
 bool SEConditionManager::SerializeFromFile(const std::string& filename, SerializationMode m)
 {
-  return PBScenario::SerializeFromFile(filename, *this, m);
+  return PBEngine::SerializeFromFile(filename, *this, m);
 }
 
 bool SEConditionManager::ProcessCondition(const SECondition& condition)

@@ -2,14 +2,14 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
+#include "PhysiologyEngine.h"
 #include "engine/SEDynamicStabilization.h"
 #include "engine/SEDynamicStabilizationLedger.h"
 #include "engine/SEDynamicStabilizationEngineConvergence.h"
 #include "engine/SEDynamicStabilizationPropertyConvergence.h"
 #include "engine/SEEngineTracker.h"
-#include "PhysiologyEngine.h"
-#include "scenario/SECondition.h"
-#include "scenario/SEDataRequest.h"
+#include "engine/SECondition.h"
+#include "engine/SEDataRequest.h"
 #include "properties/SEScalarTime.h"
 #include "utils/TimingProfile.h"
 #include "io/protobuf/PBEngine.h"

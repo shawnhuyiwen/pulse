@@ -11,7 +11,7 @@ CDM_BIND_DECL(AnyEnvironmentActionData)
 
 class CDM_DECL SEEnvironmentActionCollection : public Loggable
 {
-  friend class PBScenario;//friend the serialization class
+  friend class PBEngine;//friend the serialization class
   friend class SEActionManager;
 protected:
   SEEnvironmentActionCollection(SESubstanceManager&);

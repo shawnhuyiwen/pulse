@@ -6,9 +6,9 @@
 // Include the various types you will be using in your code
 #include "engine/SEEngineTracker.h"
 #include "scenario/SEScenario.h"
-#include "scenario/SEScenarioInitialParameters.h"
-#include "scenario/SEAdvanceTime.h"
-#include "scenario/SEDataRequestManager.h"
+#include "engine/SEPatientConfiguration.h"
+#include "engine/SEAdvanceTime.h"
+#include "engine/SEDataRequestManager.h"
 #include "properties/SEScalarTime.h"
 
 //--------------------------------------------------------------------------------------------------
@@ -37,9 +37,9 @@ void HowToScenarioBase()
       return;
     }
   }
-  else if (sce.HasInitialParameters())
+  else if (sce.HasPatientConfiguration())
   {
-    SEScenarioInitialParameters& sip = sce.GetInitialParameters();
+    SEPatientConfiguration& sip = sce.GetPatientConfiguration();
     if (sip.HasPatientFile())
     {
       std::vector<const SECondition*> conditions;

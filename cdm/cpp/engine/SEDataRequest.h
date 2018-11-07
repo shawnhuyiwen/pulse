@@ -5,7 +5,7 @@
 class SESubstanceManager;
 class CCompoundUnit;
 class SEDataRequestManager;
-#include "scenario/SEDecimalFormat.h"
+#include "engine/SEDecimalFormat.h"
 
 enum class eDataRequest_Category {
   Patient = 0, Physiology, Environment, GasCompartment,
@@ -16,7 +16,7 @@ extern const std::string& eDataRequest_Category_Name(eDataRequest_Category m);
 
 class CDM_DECL SEDataRequest : public SEDecimalFormat
 {
-  friend class PBScenario;//friend the serialization class
+  friend class PBEngine;//friend the serialization class
   friend class SEDataRequestManager;
 protected:
   SEDataRequest(const SEDataRequest& dr);

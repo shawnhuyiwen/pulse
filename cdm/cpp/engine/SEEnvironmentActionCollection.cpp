@@ -2,13 +2,12 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "scenario/SEEnvironmentActionCollection.h"
+#include "engine/SEEnvironmentActionCollection.h"
 #include "system/environment/SEEnvironment.h"
 #include "system/environment/actions/SEChangeEnvironmentConditions.h"
 #include "system/environment/actions/SEThermalApplication.h"
 #include "substance/SESubstanceManager.h"
 #include "substance/SESubstanceFraction.h"
-#include "bind/cdm/Scenario.pb.h"
 #include "properties/SEScalarLengthPerTime.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarHeatConductancePerArea.h"

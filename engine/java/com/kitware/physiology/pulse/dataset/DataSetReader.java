@@ -17,7 +17,7 @@ import com.kitware.physiology.cdm.EnvironmentEnums.eEnvironment.SurroundingType;
 import com.kitware.physiology.cdm.PatientEnums.ePatient;
 import com.kitware.physiology.cdm.PhysiologyEnums.eHeartRhythm;
 import com.kitware.physiology.cdm.Enums.eCharge;
-import com.kitware.physiology.cdm.ScenarioEnums.eDataRequest.Category;
+import com.kitware.physiology.cdm.EngineEnums.eDataRequest.Category;
 import com.kitware.physiology.cdm.SubstanceEnums.eSubstance;
 
 import com.kitware.physiology.datamodel.substance.SESubstanceTissuePharmacokinetics;

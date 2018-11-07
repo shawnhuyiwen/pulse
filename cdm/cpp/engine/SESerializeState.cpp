@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "scenario/SESerializeState.h"
+#include "engine/SESerializeState.h"
 
 SESerializeState::SESerializeState() : SEAction()
 {

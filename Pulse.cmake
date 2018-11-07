@@ -109,8 +109,10 @@ add_subdirectory(engine)
 add_subdirectory(test)
 add_subdirectory(sdk)
 add_subdirectory(verification)
-include(${CMAKE_CURRENT_SOURCE_DIR}/PulseJNI.cmake)
+# Various interfaces for different languages
+#include(${CMAKE_CURRENT_SOURCE_DIR}/PulseC.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/PulseCLR.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/PulseJNI.cmake)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_target_properties (libprotobuf libprotobuf-lite PROPERTIES FOLDER protobufs)

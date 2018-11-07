@@ -11,7 +11,7 @@ class SESubstanceManager;
 
 class CDM_DECL SEActionManager : public Loggable
 {
-  friend class PBScenario;//friend the serialization class
+  friend class PBEngine;//friend the serialization class
 public:
 
   SEActionManager(SESubstanceManager&);

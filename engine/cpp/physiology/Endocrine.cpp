@@ -8,8 +8,8 @@
 // Dependent Systems
 #include "system/physiology/SEEnergySystem.h"
 // Actions
-#include "scenario/SEActionManager.h"
-#include "scenario/SEPatientActionCollection.h"
+#include "engine/SEActionManager.h"
+#include "engine/SEPatientActionCollection.h"
 #include "patient/actions/SEAcuteStress.h"
 // CDM
 #include "patient/SEPatient.h"

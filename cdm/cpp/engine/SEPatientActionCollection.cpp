@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "scenario/SEPatientActionCollection.h"
+#include "engine/SEPatientActionCollection.h"
 #include "patient/SEPatient.h"
 #include "patient/actions/SEAcuteStress.h"
 #include "patient/actions/SEAirwayObstruction.h"
@@ -34,7 +34,6 @@
 #include "substance/SESubstanceCompound.h"
 #include "substance/SESubstanceConcentration.h"
 
-#include "bind/cdm/Scenario.pb.h"
 #include "properties/SEScalarVolumePerTime.h"
 
 SEPatientActionCollection::SEPatientActionCollection(SESubstanceManager& substances) : Loggable(substances.GetLogger()), m_Substances(substances)

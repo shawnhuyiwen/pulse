@@ -1,25 +1,25 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-package com.kitware.physiology.datamodel.scenario;
+package com.kitware.physiology.datamodel.engine;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.kitware.physiology.cdm.Scenario.AnyConditionData;
+import com.kitware.physiology.cdm.Engine.AnyConditionData;
 import com.kitware.physiology.cdm.Scenario.ScenarioData;
-import com.kitware.physiology.cdm.Scenario.ScenarioInitialParametersData;
+import com.kitware.physiology.cdm.Engine.PatientConfigurationData;
 import com.kitware.physiology.datamodel.conditions.SECondition;
 import com.kitware.physiology.datamodel.patient.SEPatient;
 import com.kitware.physiology.datamodel.substance.SESubstanceManager;
 
-public class SEScenarioInitialParameters 
+public class SEPatientConfiguration 
 {
   protected SEPatient                     patient;
   protected String                        patientFile;
   protected List<SECondition>             conditions;
   
-  public SEScenarioInitialParameters()
+  public SEPatientConfiguration()
   {
     this.patient = null;
     this.patientFile = "";
@@ -33,7 +33,7 @@ public class SEScenarioInitialParameters
     conditions.clear();
   }
   
-  public static void load(ScenarioInitialParametersData src, SEScenarioInitialParameters dst, SESubstanceManager subMgr)
+  public static void load(PatientConfigurationData src, SEPatientConfiguration dst, SESubstanceManager subMgr)
   {
     dst.reset();
     
@@ -54,13 +54,13 @@ public class SEScenarioInitialParameters
       dst.conditions.add(SECondition.ANY2CDM(cData, subMgr));
   }
   
-  public static ScenarioInitialParametersData unload(SEScenarioInitialParameters src)
+  public static PatientConfigurationData unload(SEPatientConfiguration src)
   {
-    ScenarioInitialParametersData.Builder dst = ScenarioInitialParametersData.newBuilder();
+    PatientConfigurationData.Builder dst = PatientConfigurationData.newBuilder();
     unload(src,dst);
     return dst.build();
   }
-  protected static void unload(SEScenarioInitialParameters src, ScenarioInitialParametersData.Builder dst)
+  protected static void unload(SEPatientConfiguration src, PatientConfigurationData.Builder dst)
   {
     if(src.hasPatient())
       dst.setPatient(SEPatient.unload(src.patient));

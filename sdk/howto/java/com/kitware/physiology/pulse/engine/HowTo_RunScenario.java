@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 package com.kitware.physiology.pulse.engine;
 
-import com.kitware.physiology.cdm.ScenarioEnums.eDataRequest;
+import com.kitware.physiology.cdm.EngineEnums.eDataRequest;
 
 import com.kitware.physiology.datamodel.actions.SEAdvanceTime;
 import com.kitware.physiology.datamodel.datarequests.SEDataRequest;

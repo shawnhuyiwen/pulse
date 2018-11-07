@@ -2,11 +2,10 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "scenario/SEAction.h"
+#include "engine/SEAction.h"
+#include "engine/SEAdvanceTime.h"
+#include "engine/SESerializeState.h"
 #include "substance/SESubstanceManager.h"
-
-#include "scenario/SEAdvanceTime.h"
-#include "scenario/SESerializeState.h"
 
 
 SEAction::SEAction() : Loggable()

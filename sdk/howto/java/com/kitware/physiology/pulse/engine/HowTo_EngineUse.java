@@ -5,11 +5,9 @@ package com.kitware.physiology.pulse.engine;
 import java.util.*;
 
 import com.google.protobuf.TextFormat.ParseException;
-import com.kitware.physiology.cdm.AnesthesiaMachine.AnesthesiaMachineData;
 import com.kitware.physiology.cdm.AnesthesiaMachineEnums.eAnesthesiaMachine;
-import com.kitware.physiology.cdm.Patient.PatientData;
 import com.kitware.physiology.cdm.PatientEnums.ePatient;
-import com.kitware.physiology.cdm.ScenarioEnums.eDataRequest.*;
+import com.kitware.physiology.cdm.EngineEnums.eDataRequest.*;
 
 import com.kitware.physiology.datamodel.conditions.SECondition;
 import com.kitware.physiology.datamodel.datarequests.SEDataRequest;
@@ -17,7 +15,6 @@ import com.kitware.physiology.datamodel.datarequests.SEDataRequestManager;
 import com.kitware.physiology.datamodel.patient.SEPatient;
 import com.kitware.physiology.datamodel.patient.actions.SEHemorrhage;
 import com.kitware.physiology.datamodel.patient.actions.SESubstanceCompoundInfusion;
-import com.kitware.physiology.datamodel.patient.actions.SESubstanceInfusion;
 import com.kitware.physiology.datamodel.patient.assessments.SECompleteBloodCount;
 import com.kitware.physiology.datamodel.patient.conditions.SEChronicAnemia;
 import com.kitware.physiology.datamodel.properties.CommonUnits.FrequencyUnit;

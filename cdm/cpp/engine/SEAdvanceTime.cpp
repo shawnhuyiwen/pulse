@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "scenario/SEAdvanceTime.h"
+#include "engine/SEAdvanceTime.h"
 #include "properties/SEScalarTime.h"
 
 SEAdvanceTime::SEAdvanceTime() : SEAction()

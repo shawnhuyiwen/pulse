@@ -35,7 +35,7 @@ class SESubstanceManager;
 
 class CDM_DECL SEPatientActionCollection : public Loggable
 {
-  friend class PBScenario;//friend the serialization class
+  friend class PBEngine;//friend the serialization class
   friend class SEActionManager;
 protected:
   SEPatientActionCollection(SESubstanceManager&);
