@@ -23,8 +23,8 @@ void PBScenario::Serialize(const cdm::ScenarioData& src, SEScenario& dst)
 
   if (src.has_starttype())
   {
-    if (src.starttype().has_initialparameters())
-      PBEngine::Load(src.starttype().initialparameters(), dst.GetPatientConfiguration());
+    if (src.starttype().has_patientconfiguration())
+      PBEngine::Load(src.starttype().patientconfiguration(), dst.GetPatientConfiguration());
     else
     {
       dst.SetEngineStateFile(src.starttype().enginestatefile());
@@ -54,7 +54,7 @@ void PBScenario::Serialize(const SEScenario& src, cdm::ScenarioData& dst)
     dst.mutable_starttype()->set_enginestatefile(src.m_EngineStateFile);
   }
   else if (src.HasPatientConfiguration())
-    dst.mutable_starttype()->set_allocated_initialparameters(PBEngine::Unload(*src.m_PatientConfiguration));
+    dst.mutable_starttype()->set_allocated_patientconfiguration(PBEngine::Unload(*src.m_PatientConfiguration));
 
   dst.set_allocated_datarequestmanager(PBEngine::Unload(*src.m_DataRequestMgr));
 

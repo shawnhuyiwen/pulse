@@ -73,7 +73,7 @@ message EngineInitializationData
   oneof StartType
   {
     string                                              EngineStateFile           = 1;
-    PatientConfigurationData                            PatientStabilization      = 2;
+    PatientConfigurationData                            PatientConfiguration      = 2;
   }
   string                                                LogFile                   = 3;
 }

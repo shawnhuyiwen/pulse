@@ -50,12 +50,12 @@ public class SEScenario
 			SEScenario s = new SEScenario(mgr);
 			s.setName("Test");
 			s.setDescription("Description");
-			s.getInitialParameters().setPatientFile("StandardMale.pba");
+			s.getPatientConfiguration().setPatientFile("StandardMale.pba");
 
 
 			SEChronicAnemia cond = new SEChronicAnemia();
 			cond.getReductionFactor().setValue(0.5);
-			s.getInitialParameters().getConditions().add(cond);
+			s.getPatientConfiguration().getConditions().add(cond);
 
 			SEDataRequest dr = new SEDataRequest();
 			dr.setCategory(eDataRequest.Category.Physiology);
@@ -267,8 +267,8 @@ public class SEScenario
 
 		if(src.hasStartType())
 		{
-		  if(src.getStartType().hasInitialParameters())
-		    SEPatientConfiguration.load(src.getStartType().getInitialParameters(),dst.getInitialParameters(),dst.subMgr);
+		  if(src.getStartType().hasPatientConfiguration())
+		    SEPatientConfiguration.load(src.getStartType().getPatientConfiguration(),dst.getPatientConfiguration(),dst.subMgr);
 		  else 
 			  dst.engineStateFile = src.getStartType().getEngineStateFile();
 		}
@@ -296,8 +296,8 @@ public class SEScenario
 		if(src.hasDescription())
 			dst.setDescription(src.description);
 
-		if(src.hasInitialParameters())
-		  dst.getStartTypeBuilder().setInitialParameters(SEPatientConfiguration.unload(src.params));
+		if(src.hasPatientConfiguration())
+		  dst.getStartTypeBuilder().setPatientConfiguration(SEPatientConfiguration.unload(src.params));
 		else if(src.hasEngineState())
 			dst.getStartTypeBuilder().setEngineStateFile(src.engineStateFile);
 
@@ -312,7 +312,7 @@ public class SEScenario
 	{
 		if (actions.size() == 0)
 			return false;
-		if(!hasInitialParameters() && !hasEngineState())
+		if(!hasPatientConfiguration() && !hasEngineState())
 			return false;
 		return true;
 	}
@@ -353,13 +353,13 @@ public class SEScenario
 
 	public boolean hasEngineState()
 	{
-		if(hasInitialParameters())
+		if(hasPatientConfiguration())
 			return false;
 		return this.engineStateFile != null && !this.engineStateFile.isEmpty();
 	}
 	public void setEngineState(String stateFile)
 	{
-		invalidateInitialParameters();
+		invalidatePatientConfiguration();
 		this.engineStateFile = stateFile;
 	}
 	public String getEngineState(){ return this.engineStateFile; }
@@ -368,17 +368,17 @@ public class SEScenario
 		this.engineStateFile = null;
 	}
 
-	public boolean hasInitialParameters()
+	public boolean hasPatientConfiguration()
 	{
 		return params!=null && params.isValid();
 	}
-	public SEPatientConfiguration getInitialParameters()
+	public SEPatientConfiguration getPatientConfiguration()
 	{
 		if(this.params==null)
 			this.params=new SEPatientConfiguration();
 		return this.params;
 	}
-	public void invalidateInitialParameters()
+	public void invalidatePatientConfiguration()
 	{
 		this.params = null;
 	}

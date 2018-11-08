@@ -65,23 +65,23 @@ public class ScenarioTestDriver implements SETestDriver.Executor
       log = outputFile.replaceAll(".pba", "-"+patientName+".log");
       results = outputFile.replaceAll(".pba", "-"+patientName+"Results.csv");
       
-      if(builder.getStartType().hasInitialParameters())      
+      if(builder.getStartType().hasPatientConfiguration())      
       {
-      	  builder.getStartTypeBuilder().getInitialParametersBuilder().clearPatient();
-          builder.getStartTypeBuilder().getInitialParametersBuilder().setPatientFile(job.patientFile);
+      	  builder.getStartTypeBuilder().getPatientConfigurationBuilder().clearPatient();
+          builder.getStartTypeBuilder().getPatientConfigurationBuilder().setPatientFile(job.patientFile);
       }
       else
       {
       		builder.getStartTypeBuilder().clearEngineStateFile();
-          builder.getStartTypeBuilder().getInitialParametersBuilder().setPatientFile(job.patientFile);
+          builder.getStartTypeBuilder().getPatientConfigurationBuilder().setPatientFile(job.patientFile);
       }      
     }
-    if(job.useState && builder.getStartType().hasInitialParameters())      
+    if(job.useState && builder.getStartType().hasPatientConfiguration())      
     {
-      	String pFile = pBuilder.getScenario().getStartType().getInitialParameters().getPatientFile();
+      	String pFile = pBuilder.getScenario().getStartType().getPatientConfiguration().getPatientFile();
       	pFile =  pFile.substring(0, pFile.indexOf(".pba"));
       	pFile = "./states/"+pFile+"@0s.pba";
-      	builder.getStartTypeBuilder().clearInitialParameters();
+      	builder.getStartTypeBuilder().clearPatientConfiguration();
       	builder.getStartTypeBuilder().setEngineStateFile(pFile);
     }
 

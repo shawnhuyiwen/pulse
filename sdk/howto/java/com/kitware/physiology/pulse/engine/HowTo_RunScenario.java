@@ -114,7 +114,7 @@ public class HowTo_RunScenario
     SEScenario sce = new SEScenario(pe.substanceManager);
     sce.setName("HowTo_StaticEngine");
     sce.setDescription("Simple Scenario to demonstraight building a scenario by the CDM API");
-    sce.getInitialParameters().setPatientFile("Standard.pba");
+    sce.getPatientConfiguration().setPatientFile("Standard.pba");
     // When filling out a data request, units are optional
     // The units will be set to whatever units the engine uses.
     SEDataRequest hr = new SEDataRequest();

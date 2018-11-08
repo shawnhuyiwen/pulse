@@ -17,6 +17,8 @@ if(APPLE)
     set_target_properties(PulseC PROPERTIES MACOSX_RPATH ON)
 endif()
 
+target_link_libraries(PulseC PulseEngine)
+
 set_target_properties(PulseC PROPERTIES
     DEBUG_POSTFIX "${PULSE_DEBUG_POSTFIX}"
     RELWITHDEBINFO_POSTFIX "${PULSE_RELWITHDEBINFO_POSTFIX}")

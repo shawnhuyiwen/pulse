@@ -110,7 +110,7 @@ add_subdirectory(test)
 add_subdirectory(sdk)
 add_subdirectory(verification)
 # Various interfaces for different languages
-#include(${CMAKE_CURRENT_SOURCE_DIR}/PulseC.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/PulseC.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/PulseCLR.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/PulseJNI.cmake)
 
