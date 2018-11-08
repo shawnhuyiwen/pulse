@@ -19,8 +19,16 @@
 #include "properties/SEScalarTime.h"
 #include "utils/DataTrack.h"
 
-#define C_EXPORT __declspec(dllexport)
-#define C_CALL __stdcall
+#if defined (__clang__)
+  #define C_EXPORT
+  #define C_CALL __attribute__((stdcall))
+#elif defined(__gnu_linux__)
+  #define C_EXPORT __attribute__ ((visibility ("default")))
+  #define C_CALL __attribute__((stdcall))
+#else
+  #define C_EXPORT __declspec(dllexport)
+  #define C_CALL __stdcall
+#endif
 
 extern "C"
 C_EXPORT PulseEngineC* C_CALL Allocate(const char* logFile)
