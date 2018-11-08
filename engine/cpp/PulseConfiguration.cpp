@@ -307,19 +307,19 @@ void PulseConfiguration::Merge(const PulseConfiguration& src)
   PBPulseConfiguration::Merge(src, *this);
 }
 
-bool PulseConfiguration::SerializeToString(std::string& output, SerializationMode m) const
+bool PulseConfiguration::SerializeToString(std::string& output, SerializationFormat m) const
 {
   return PBPulseConfiguration::SerializeToString(*this, output, m);
 }
-bool PulseConfiguration::SerializeToFile(const std::string& filename, SerializationMode m) const
+bool PulseConfiguration::SerializeToFile(const std::string& filename, SerializationFormat m) const
 {
   return PBPulseConfiguration::SerializeToFile(*this, filename, m);
 }
-bool PulseConfiguration::SerializeFromString(const std::string& src, SerializationMode m)
+bool PulseConfiguration::SerializeFromString(const std::string& src, SerializationFormat m)
 {
   return PBPulseConfiguration::SerializeFromString(src, *this, m);
 }
-bool PulseConfiguration::SerializeFromFile(const std::string& filename, SerializationMode m)
+bool PulseConfiguration::SerializeFromFile(const std::string& filename, SerializationFormat m)
 {
   return PBPulseConfiguration::SerializeFromFile(filename, *this, m);
 }

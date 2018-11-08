@@ -87,7 +87,7 @@ bool CreateFilePath(const std::string& path)
   return true;
 }
 
-bool WriteFile(const std::string& content, const std::string& filename, SerializationMode m)
+bool WriteFile(const std::string& content, const std::string& filename, SerializationFormat m)
 {
   if (!CreateFilePath(filename))
     return false;
@@ -108,7 +108,7 @@ bool WriteFile(const std::string& content, const std::string& filename, Serializ
   return true;
 }
 
-std::string ReadFile(const std::string& filename, SerializationMode m)
+std::string ReadFile(const std::string& filename, SerializationFormat m)
 {
   std::ifstream input(filename);
   std::string content((std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());

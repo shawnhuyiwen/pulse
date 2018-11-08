@@ -10,7 +10,7 @@ void MyLogHandler(google::protobuf::LogLevel level, const char* filename, int li
   std::cout << message;
 }
 
-bool PBUtils::SerializeToString(const google::protobuf::Message& data, std::string& output, SerializationMode m)
+bool PBUtils::SerializeToString(const google::protobuf::Message& data, std::string& output, SerializationFormat m)
 {
   if (m == ASCII)
   {
@@ -21,7 +21,7 @@ bool PBUtils::SerializeToString(const google::protobuf::Message& data, std::stri
     return data.SerializeToString(&output);
 }
 
-bool PBUtils::SerializeFromString(const std::string& src, google::protobuf::Message& dst, SerializationMode m)
+bool PBUtils::SerializeFromString(const std::string& src, google::protobuf::Message& dst, SerializationFormat m)
 {
   if (m == ASCII)
   {

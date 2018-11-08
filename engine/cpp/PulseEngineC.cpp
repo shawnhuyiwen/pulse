@@ -3,11 +3,19 @@
 
 #include "PulseEngineC.h"
 #include "patient/SEPatient.h"
+#include "engine/SEAction.h"
 #include "engine/SEDataRequest.h"
 #include "engine/SEDataRequestManager.h"
 #include "engine/SEActionManager.h"
 #include "engine/SEConditionManager.h"
 #include "engine/SEEngineTracker.h"
+#include "engine/SEPatientConfiguration.h"
+#include "substance/SESubstance.h"
+#include "substance/SESubstanceManager.h"
+#include "properties/SEScalarElectricPotential.h"
+#include "properties/SEScalarFrequency.h"
+#include "properties/SEScalarPressure.h"
+#include "properties/SEScalarTemperature.h"
 #include "properties/SEScalarTime.h"
 #include "utils/DataTrack.h"
 
@@ -15,232 +23,173 @@
 #define C_CALL __stdcall
 
 extern "C"
-C_EXPORT PulseEngineC* C_CALL PulseAllocate(const char* logFile, int len)
-{ 
+C_EXPORT PulseEngineC* C_CALL Allocate(const char* logFile)
+{
   std::string str(logFile);
-  PulseEngineC *engineC = new PulseEngineC(str);
-  return engineC;
+  PulseEngineC *pulseC = new PulseEngineC(str);
+  return pulseC;
 }
 
 extern "C"
-C_EXPORT void C_CALL PulseDelete(PulseEngineC* ptr)
+C_EXPORT void C_CALL Deallocate(PulseEngineC* pulseC)
 {
-  SAFE_DELETE(ptr);
+  SAFE_DELETE(pulseC);
 }
 
-/*
 extern "C"
-C_EXPORT bool C_CALL PulseSerializeFromFile(JNIEnv *env, jobject obj, jlong ptr, jstring stateFilename, jdouble simTime_s, jstring dataRequests)
+C_EXPORT bool C_CALL SerializeFromFile(PulseEngineC* pulseC, const char* filename, const char* data_requests, int format, double sim_time_s)
 {
-  PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
-  engineJNI->jniEnv = env;
-  engineJNI->jniObj = obj;
-  
+  SEScalarTime simTime;
+  simTime.SetValue(sim_time_s, TimeUnit::s);
+  if (!pulseC->eng->SerializeFromFile(filename, (SerializationFormat)format, &simTime, nullptr))
+    return false;
+  pulseC->eng->SetEventHandler(pulseC);
 
   // Load up the data requests
-  if (dataRequests != nullptr)
+  if (data_requests != nullptr)
   {
-    const char* drmStr = env->GetStringUTFChars(dataRequests, JNI_FALSE);
-    if (!engineJNI->eng->GetEngineTracker()->GetDataRequestManager().SerializeFromString(drmStr, ASCII, engineJNI->eng->GetSubstanceManager()))
+    if (!pulseC->eng->GetEngineTracker()->GetDataRequestManager().SerializeFromString(data_requests, (SerializationFormat)format, pulseC->eng->GetSubstanceManager()))
     {
-      env->ReleaseStringUTFChars(dataRequests, drmStr);
-      std::cerr << "Unable to load datarequest string" << std::endl;
+      pulseC->eng->GetLogger()->Error("Unable to load data requests string");
       return false;
     }
-    env->ReleaseStringUTFChars(dataRequests, drmStr);
-  }
-
-  // Ok, crank 'er up!
-  const char* pStateFilename = env->GetStringUTFChars(stateFilename, JNI_FALSE);
-  jboolean bRet;
-  SEScalarTime simTime;
-  if (simTime_s >= 0)
-  {
-    simTime.SetValue(simTime_s, TimeUnit::s);
-    bRet = engineJNI->eng->SerializeFromFile(pStateFilename, ASCII, &simTime, nullptr);
   }
   else
-  {
-    std::cout << "Loading... " << std::endl;
-    bRet = engineJNI->eng->SerializeFromFile(pStateFilename, ASCII);
-  }  
-  engineJNI->eng->SetEventHandler(engineJNI);
+    pulseC->SetupDefaultDataRequests();
 
-  env->ReleaseStringUTFChars(stateFilename, pStateFilename);
-  return bRet;
+  return true;
 }
 
 extern "C"
-C_EXPORT void C_CALL Java_com_kitware_physiology_pulse_engine_PulseEngine_nativeSerializeToFile(JNIEnv *env, jobject obj, jlong ptr, jstring stateFilename)
+C_EXPORT void C_CALL SerializeToFile(PulseEngineC* pulseC, const char* filename, int format)
 {
-  PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
-  engineJNI->jniEnv = env; 
-  engineJNI->jniObj = obj;
-  const char* pStateFilename = env->GetStringUTFChars(stateFilename, JNI_FALSE);
-  engineJNI->eng->SerializeToFile(pStateFilename,ASCII);
-  env->ReleaseStringUTFChars(stateFilename, pStateFilename);
+  pulseC->eng->SerializeToFile(filename, (SerializationFormat)format);
 }
 
-extern "C"
-C_EXPORT jboolean C_CALL Java_com_kitware_physiology_pulse_engine_PulseEngine_nativeInitializeEngine(JNIEnv *env, jobject obj, jlong ptr, jstring patient, jstring conditions, jstring dataRequests)
-{
-  bool ret = false;
-  
-  
-  const char* drStr = env->GetStringUTFChars(dataRequests, JNI_FALSE);
-  try
-  {
-    PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
-    engineJNI->jniEnv = env;
-    engineJNI->jniObj = obj;
 
-    // Load up the patient
-    const char* pStr = env->GetStringUTFChars(patient, JNI_FALSE);
-    SEPatient p(engineJNI->eng->GetLogger());
-    if (!p.SerializeFromString(pStr,ASCII))
+extern "C"
+C_EXPORT bool C_CALL SerializeFromString(PulseEngineC* pulseC, const char* state, const char* data_requests, int format, double sim_time_s)
+{
+  SEScalarTime simTime;
+  simTime.SetValue(sim_time_s, TimeUnit::s);
+  if (!pulseC->eng->SerializeFromString(state, (SerializationFormat)format, &simTime, nullptr))
+    return false;
+  pulseC->eng->SetEventHandler(pulseC);
+
+  // Load up the data requests
+  if (data_requests != nullptr)
+  {
+    if (!pulseC->eng->GetEngineTracker()->GetDataRequestManager().SerializeFromString(data_requests, (SerializationFormat)format, pulseC->eng->GetSubstanceManager()))
     {
-      env->ReleaseStringUTFChars(patient, pStr);
-      std::cerr << "Unable to load patient string" << std::endl;
+      pulseC->eng->GetLogger()->Error("Unable to load data requests string");
       return false;
     }
-    env->ReleaseStringUTFChars(patient, pStr);
-
-    // Load up the conditions
-    std::vector<const SECondition*> c;
-    if (conditions != nullptr)
-    {
-      const char* cStr = env->GetStringUTFChars(conditions, JNI_FALSE);
-      SEConditionManager cMgr(engineJNI->eng->GetSubstanceManager());
-      if (!cMgr.SerializeFromString(cStr, ASCII))
-      {
-        env->ReleaseStringUTFChars(dataRequests, cStr);
-        return false;
-      }
-      env->ReleaseStringUTFChars(dataRequests, cStr);
-      cMgr.GetAllConditions(c);
-    }
-      
-    // Load up the data requests
-    if (dataRequests != nullptr)
-    {
-      const char* drmStr = env->GetStringUTFChars(dataRequests, JNI_FALSE);
-      if (!engineJNI->eng->GetEngineTracker()->GetDataRequestManager().SerializeFromString(drmStr, ASCII, engineJNI->eng->GetSubstanceManager()))
-      {
-        env->ReleaseStringUTFChars(dataRequests, drmStr);
-        std::cerr << "Unable to load datarequest string" << std::endl;
-        return false;
-      }
-      env->ReleaseStringUTFChars(dataRequests, drmStr);
-    }
-
-    // Ok, crank 'er up!
-    ret = engineJNI->eng->InitializeEngine(p, &c);
-    engineJNI->eng->SetEventHandler(engineJNI);
   }
+  else
+    pulseC->SetupDefaultDataRequests();
 
-  catch (std::exception& ex)
-  {
-    ret = false;
-    std::cerr << "TODO Handle this Failure : " << ex.what() << std::endl;
-  }
-  
-  return ret;
+  return true;
 }
 
 extern "C"
-C_EXPORT bool C_CALL Java_com_kitware_physiology_pulse_engine_PulseEngine_nativeAdvanceTimeStep(JNIEnv *env, jobject obj, jlong ptr)
+C_EXPORT const char* C_CALL SerializeToString(PulseEngineC* pulseC, int format)
+{
+  std::string state;
+  pulseC->eng->SerializeToString(state, (SerializationFormat)format);
+  return state.c_str();
+}
+
+extern "C"
+C_EXPORT bool C_CALL InitializeEngine(PulseEngineC* pulseC, const char* patient_configuration, const char* data_requests, int format)
+{
+  SEPatientConfiguration pc(pulseC->eng->GetLogger());
+  if (!pc.SerializeFromString(patient_configuration, (SerializationFormat)format, pulseC->eng->GetSubstanceManager()))
+  {
+    pulseC->eng->GetLogger()->Error("Unable to load patient configuration string");
+    return false;
+  }
+
+  // Load up the data requests
+  if (data_requests != nullptr)
+  {
+    if (!pulseC->eng->GetEngineTracker()->GetDataRequestManager().SerializeFromString(data_requests, (SerializationFormat)format, pulseC->eng->GetSubstanceManager()))
+    {
+      pulseC->eng->GetLogger()->Error("Unable to load data request string");
+      return false;
+    }
+  }
+  else
+    pulseC->SetupDefaultDataRequests();
+
+  // Ok, crank 'er up!
+  if (!pulseC->eng->InitializeEngine(pc))
+    return false;
+  pulseC->eng->SetEventHandler(pulseC);
+  return true;
+}
+
+extern "C"
+C_EXPORT bool C_CALL AdvanceTime_s(PulseEngineC* pulseC, double time_s)
 {
   bool success = true;
-  PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
-  engineJNI->jniEnv = env;
-  engineJNI->jniObj = obj;
   try
   {
-    engineJNI->eng->AdvanceModelTime();
+    pulseC->eng->AdvanceModelTime(time_s, TimeUnit::s);
   }
   catch (CommonDataModelException& ex)
   {
-    std::cerr << "JNI Caught Exception " << ex.what() << std::endl;
+    pulseC->eng->GetLogger()->Error(ex.what());
     success = false;
   }
   catch (std::exception& ex)
   {
-    std::cerr << "JNI Caught Exception " << ex.what() << std::endl;
+    pulseC->eng->GetLogger()->Error(ex.what());
     success = false;
   }
   catch (...)
   {
-    std::cerr << "JNI Caught Unknown Exception " << std::endl;
+    pulseC->eng->GetLogger()->Error("Caught Unknown Exception");
     success = false;
-  }
-  if (success)
-  {
-    double currentTime_s = engineJNI->eng->GetSimulationTime(TimeUnit::s);
-    engineJNI->eng->GetEngineTracker()->TrackData(currentTime_s);
-    engineJNI->PushData(currentTime_s);
   }
   return success;
 }
 
 extern "C"
-C_EXPORT bool C_CALL Java_com_kitware_physiology_pulse_engine_PulseEngine_nativeAdvanceTime(JNIEnv *env, jobject obj, jlong ptr, jdouble time_s)
+C_EXPORT double* C_CALL PullData(PulseEngineC* pulseC)
 {
-  bool success = true;
-  PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
-  engineJNI->jniEnv = env;
-  engineJNI->jniObj = obj;
-  try
+  double currentTime_s = pulseC->eng->GetSimulationTime(TimeUnit::s);
+  pulseC->eng->GetEngineTracker()->TrackData(currentTime_s);
+  if (pulseC->requestedData == nullptr)
   {
-    engineJNI->eng->AdvanceModelTime(time_s, TimeUnit::s);
+    // +1 for the sim time
+    pulseC->requestedData = new double[pulseC->eng->GetEngineTracker()->GetDataTrack().GetHeadings().size() + 1];
   }
-  catch (CommonDataModelException& ex)
-  {
-    std::cerr << "JNI Caught Exception " << ex.what() << std::endl;
-    success = false;
-  }
-  catch (std::exception& ex)
-  {
-    std::cerr << "JNI Caught Exception " << ex.what() << std::endl;
-    success = false;
-  }
-  catch (...)
-  {
-    std::cerr << "JNI Caught Unknown Exception " << std::endl;
-    success = false;
-  }
-  if (success)
-  {
-    double currentTime_s = engineJNI->eng->GetSimulationTime(TimeUnit::s);
-    engineJNI->eng->GetEngineTracker()->TrackData(currentTime_s);
-    engineJNI->PushData(currentTime_s);
-  }
-  return success;
+  // Always put the sim time in index 0 as seconds
+  pulseC->requestedData[0] = currentTime_s;
+  // Pull all data we requested and pack into our array for return to the caller
+  int i = 0;
+  for (std::string& heading : pulseC->eng->GetEngineTracker()->GetDataTrack().GetHeadings())
+    pulseC->requestedData[++i] = pulseC->eng->GetEngineTracker()->GetDataTrack().GetProbe(heading);
+ 
+  return pulseC->requestedData;
 }
 
 extern "C"
-C_EXPORT bool C_CALL Java_com_kitware_physiology_pulse_engine_PulseEngine_nativeProcessActions(JNIEnv *env, jobject obj, jlong ptr, jstring actions)
+C_EXPORT bool C_CALL ProcessActions(PulseEngineC* pulseC, const char* actions, int format)
 {
   bool success = true;
   if (actions == nullptr)
     return success;
-  PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
-  engineJNI->jniEnv = env;
-  engineJNI->jniObj = obj;
-  const char* aStr = env->GetStringUTFChars(actions, JNI_FALSE);
 
   try
   {
     std::vector<SEAction*> vActions;
-    if (!SEActionManager::SerializeFromString(aStr, vActions, ASCII, engineJNI->eng->GetSubstanceManager()))
-    {
-      env->ReleaseStringUTFChars(actions, aStr);
+    if (!SEActionManager::SerializeFromString(actions, vActions, (SerializationFormat)format, pulseC->eng->GetSubstanceManager()))
       return false;
-    }
-    env->ReleaseStringUTFChars(actions, aStr);
 
     for (const SEAction* a : vActions)
     {
-      if (!engineJNI->eng->ProcessAction(*a))
+      if (!pulseC->eng->ProcessAction(*a))
         success = false;
       delete a;
     }
@@ -248,12 +197,12 @@ C_EXPORT bool C_CALL Java_com_kitware_physiology_pulse_engine_PulseEngine_native
   catch (CommonDataModelException& ex)
   {
     success = false;
-    engineJNI->eng->GetLogger()->Error(ex.what());
+    pulseC->eng->GetLogger()->Error(ex.what());
   }
   catch (std::exception& ex)
   {
     success = false;
-    engineJNI->eng->GetLogger()->Error(ex.what());
+    pulseC->eng->GetLogger()->Error(ex.what());
   }
   catch (...)
   {
@@ -262,14 +211,12 @@ C_EXPORT bool C_CALL Java_com_kitware_physiology_pulse_engine_PulseEngine_native
 
   return success;
 }
-*/
 
 PulseEngineC::PulseEngineC(const std::string& logFile) : SEEventHandler()
 {// No logger needed for the event handler, at this point
   eng = std::unique_ptr<PulseEngine>((PulseEngine*)CreatePulseEngine(logFile).release());
   eng->GetLogger()->SetForward(this);
   eng->GetLogger()->LogToConsole(false);
-  trk=&eng->GetEngineTracker()->GetDataTrack();
 }
 
 PulseEngineC::~PulseEngineC()
@@ -277,52 +224,22 @@ PulseEngineC::~PulseEngineC()
   
 }
 
-/*
-void PulseEngineC::OnAdvance(double time_s, const PhysiologyEngine& engine)
-{
-  if (update_cnt++ > updateFrequency_cnt)
-  {    
-    PushData(time_s);
-    update_cnt = 0;
-  }
+void PulseEngineC::SetupDefaultDataRequests()
+{// Default to vitals data
+  //eng->GetLogger()->Info("No data requests provided, setting up default data requests");
+  eng->GetEngineTracker()->GetDataRequestManager().CreateECGDataRequest("Lead3ElectricPotential", ElectricPotentialUnit::mV);
+  eng->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
+  eng->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("ArterialPressure", PressureUnit::mmHg);
+  eng->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
+  eng->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
+  eng->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
+  eng->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("OxygenSaturation");
+  eng->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("EndTidalCarbonDioxidePressure", PressureUnit::mmHg);
+  eng->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
+  eng->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SkinTemperature", TemperatureUnit::C);
+  SESubstance* CO2 = eng->GetSubstanceManager().GetSubstance("CarbonDioxide");
+  eng->GetEngineTracker()->GetDataRequestManager().CreateGasCompartmentDataRequest("Carina",*CO2,"PartialPressure", PressureUnit::mmHg);
 }
-void PulseEngineJNI::PushData(double time_s)
-{
-  if (jniEnv != nullptr && jniObj != nullptr)
-  {
-    jmethodID m;
-    std::vector<std::string>& headings = trk->GetHeadings();
-
-    if (firstUpdate)
-    {
-      firstUpdate = false;
-      jobjectArray sary = jniEnv->NewObjectArray(headings.size(), jniEnv->FindClass("java/lang/String"), jniEnv->NewStringUTF(""));
-      for (unsigned int i = 0; i < headings.size(); i++)
-        jniEnv->SetObjectArrayElement(sary, i, jniEnv->NewStringUTF(headings[i].c_str()));
-      m = jniEnv->GetMethodID(jniEnv->GetObjectClass(jniObj), "setCDMHeadings", "([Ljava/lang/String;)V");
-      if (m == nullptr)
-        std::cerr << "Can't find setCDMHeadings method in Java" << std::endl;
-      jniEnv->CallVoidMethod(jniObj, m, sary);
-    }
-
-    // Gather up the requested data into an array and pass it over to java
-    // The order is set in the header order
-    jdoubleArray ary = jniEnv->NewDoubleArray(trk->GetProbes()->size());
-
-    jboolean isCopy = JNI_FALSE;
-    jdouble* reqData = jniEnv->GetDoubleArrayElements(ary, &isCopy);
-    for (unsigned int i = 0; i < headings.size(); i++)
-      reqData[i] = trk->GetProbe(headings[i]);
-    if (isCopy == JNI_TRUE)
-      jniEnv->ReleaseDoubleArrayElements(ary, reqData, JNI_COMMIT);
-
-    m = jniEnv->GetMethodID(jniEnv->GetObjectClass(jniObj), "updateCDM", "(D[D)V");
-    if (m == nullptr)
-      std::cerr << "Can't find updateCDM method in Java" << std::endl;
-    jniEnv->CallVoidMethod(jniObj, m, time_s, ary);
-  }
-}
-*/
 
 void PulseEngineC::ForwardDebug(const std::string&  msg, const std::string&  origin)
 {
@@ -331,7 +248,7 @@ void PulseEngineC::ForwardDebug(const std::string&  msg, const std::string&  ori
 
 void PulseEngineC::ForwardInfo(const std::string&  msg, const std::string&  origin)
 {
- 
+  std::cout << msg << std::endl;
 }
 
 void PulseEngineC::ForwardWarning(const std::string&  msg, const std::string&  origin)

@@ -41,19 +41,19 @@ void SEActionManager::Clear()
   m_InhalerActions->Clear();
 }
 
-bool SEActionManager::SerializeToString(std::string& output, SerializationMode m) const
+bool SEActionManager::SerializeToString(std::string& output, SerializationFormat m) const
 {
   return PBEngine::SerializeToString(*this, output, m);
 }
-bool SEActionManager::SerializeToFile(const std::string& filename, SerializationMode m) const
+bool SEActionManager::SerializeToFile(const std::string& filename, SerializationFormat m) const
 {
   return PBEngine::SerializeToFile(*this, filename, m);
 }
-bool SEActionManager::SerializeFromString(const std::string& src, SerializationMode m)
+bool SEActionManager::SerializeFromString(const std::string& src, SerializationFormat m)
 {
   return PBEngine::SerializeFromString(src, *this, m);
 }
-bool SEActionManager::SerializeFromFile(const std::string& filename, SerializationMode m)
+bool SEActionManager::SerializeFromFile(const std::string& filename, SerializationFormat m)
 {
   return PBEngine::SerializeFromFile(filename, *this, m);
 }
@@ -66,7 +66,7 @@ bool SEActionManager::SerializeFromFile(const std::string& filename, Serializati
 // A hemorrhage with no flow rate isinvalid and used to turn off an existing hemorrhage
 // So we need to serialize that invalid action in, and have it processed by the engine action manager
 // So this method is intended to be a middle man between the socket/language client and an engine.
-bool SEActionManager::SerializeFromString(const std::string& src, std::vector<SEAction*>& dst, SerializationMode m, SESubstanceManager& subMgr)
+bool SEActionManager::SerializeFromString(const std::string& src, std::vector<SEAction*>& dst, SerializationFormat m, SESubstanceManager& subMgr)
 {
   return PBEngine::SerializeFromString(src, dst, m, subMgr);
 }

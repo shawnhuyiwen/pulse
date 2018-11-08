@@ -7,8 +7,9 @@
 #include "engine/SEEngineConfiguration.h"
 #include "patient/SEPatient.h"
 #include "substance/SESubstanceManager.h"
+#include "io/protobuf/PBEngine.h"
 
-SEPatientConfiguration::SEPatientConfiguration(SESubstanceManager& subMgr) : Loggable(subMgr.GetLogger()), m_SubMgr(subMgr)
+SEPatientConfiguration::SEPatientConfiguration(Logger* logger) : Loggable(logger)
 {
   m_Patient = nullptr;
   Clear();
@@ -17,6 +18,23 @@ SEPatientConfiguration::SEPatientConfiguration(SESubstanceManager& subMgr) : Log
 SEPatientConfiguration::~SEPatientConfiguration()
 {
   Clear();
+}
+
+bool SEPatientConfiguration::SerializeToString(std::string& output, SerializationFormat m) const
+{
+  return PBEngine::SerializeToString(*this, output, m);
+}
+bool SEPatientConfiguration::SerializeToFile(const std::string& filename, SerializationFormat m) const
+{
+  return PBEngine::SerializeToFile(*this, filename, m);
+}
+bool SEPatientConfiguration::SerializeFromString(const std::string& src, SerializationFormat m, SESubstanceManager& subMgr)
+{
+  return PBEngine::SerializeFromString(src, *this, m, subMgr);
+}
+bool SEPatientConfiguration::SerializeFromFile(const std::string& filename, SerializationFormat m, SESubstanceManager& subMgr)
+{
+  return PBEngine::SerializeFromFile(filename, *this, m, subMgr);
 }
 
 void SEPatientConfiguration::Clear()
@@ -72,7 +90,15 @@ void SEPatientConfiguration::InvalidatePatient()
     SAFE_DELETE(m_Patient);
 }
 
-const std::vector<SECondition*>& SEPatientConfiguration::GetConditions() const
+std::vector<SECondition*>& SEPatientConfiguration::GetConditions()
 {
   return m_Conditions;
+}
+
+const std::vector<const SECondition*>& SEPatientConfiguration::GetConditions() const
+{
+  m_cConditions.clear();
+  for (SECondition* c : m_Conditions)
+    m_cConditions.push_back(c);
+  return m_cConditions;
 }

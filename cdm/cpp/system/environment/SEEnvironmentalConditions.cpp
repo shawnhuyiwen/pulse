@@ -63,19 +63,19 @@ void SEEnvironmentalConditions::Copy(const SEEnvironmentalConditions& src)
   PBEnvironment::Copy(src, *this);
 }
 
-bool SEEnvironmentalConditions::SerializeToString(std::string& output, SerializationMode m) const
+bool SEEnvironmentalConditions::SerializeToString(std::string& output, SerializationFormat m) const
 {
   return PBEnvironment::SerializeToString(*this, output, m);
 }
-bool SEEnvironmentalConditions::SerializeToFile(const std::string& filename, SerializationMode m) const
+bool SEEnvironmentalConditions::SerializeToFile(const std::string& filename, SerializationFormat m) const
 {
   return PBEnvironment::SerializeToFile(*this, filename, m);
 }
-bool SEEnvironmentalConditions::SerializeFromString(const std::string& src, SerializationMode m)
+bool SEEnvironmentalConditions::SerializeFromString(const std::string& src, SerializationFormat m)
 {
   return PBEnvironment::SerializeFromString(src, *this, m);
 }
-bool SEEnvironmentalConditions::SerializeFromFile(const std::string& filename, SerializationMode m)
+bool SEEnvironmentalConditions::SerializeFromFile(const std::string& filename, SerializationFormat m)
 {
   return PBEnvironment::SerializeFromFile(filename, *this, m);
 }

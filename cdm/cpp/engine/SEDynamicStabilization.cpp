@@ -41,19 +41,19 @@ void SEDynamicStabilization::Clear()
   DELETE_MAP_SECOND(m_ConditionConvergence);
 }
 
-bool SEDynamicStabilization::SerializeToString(std::string& output, SerializationMode m) const
+bool SEDynamicStabilization::SerializeToString(std::string& output, SerializationFormat m) const
 {
   return PBEngine::SerializeToString(*this, output, m);
 }
-bool SEDynamicStabilization::SerializeToFile(const std::string& filename, SerializationMode m) const
+bool SEDynamicStabilization::SerializeToFile(const std::string& filename, SerializationFormat m) const
 {
   return PBEngine::SerializeToFile(*this, filename, m);
 }
-bool SEDynamicStabilization::SerializeFromString(const std::string& src, SerializationMode m)
+bool SEDynamicStabilization::SerializeFromString(const std::string& src, SerializationFormat m)
 {
   return PBEngine::SerializeFromString(src, *this, m);
 }
-bool SEDynamicStabilization::SerializeFromFile(const std::string& filename, SerializationMode m)
+bool SEDynamicStabilization::SerializeFromFile(const std::string& filename, SerializationFormat m)
 {
   return PBEngine::SerializeFromFile(filename, *this, m);
 }

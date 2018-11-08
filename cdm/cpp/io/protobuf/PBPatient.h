@@ -14,8 +14,8 @@ public:
   static void Serialize(const SEPatient& src, cdm::PatientData& dst);
   static void Copy(const SEPatient& src, SEPatient& dst);
 
-  static bool SerializeToString(const SEPatient& src, std::string& output, SerializationMode m);
-  static bool SerializeToFile(const SEPatient& src, const std::string& filename, SerializationMode m);
-  static bool SerializeFromString(const std::string& src, SEPatient& dst, SerializationMode m);
-  static bool SerializeFromFile(const std::string& filename, SEPatient& dst, SerializationMode m);
+  static bool SerializeToString(const SEPatient& src, std::string& output, SerializationFormat m);
+  static bool SerializeToFile(const SEPatient& src, const std::string& filename, SerializationFormat m);
+  static bool SerializeFromString(const std::string& src, SEPatient& dst, SerializationFormat m);
+  static bool SerializeFromFile(const std::string& filename, SEPatient& dst, SerializationFormat m);
 };

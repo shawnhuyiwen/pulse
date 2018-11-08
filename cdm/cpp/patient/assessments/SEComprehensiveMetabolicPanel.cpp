@@ -54,11 +54,11 @@ void SEComprehensiveMetabolicPanel::Clear()
   SAFE_DELETE(m_TotalProtein);
 }
 
-bool SEComprehensiveMetabolicPanel::SerializeToString(std::string& output, SerializationMode m) const
+bool SEComprehensiveMetabolicPanel::SerializeToString(std::string& output, SerializationFormat m) const
 {
   return PBPatientAssessment::SerializeToString(*this, output, m);
 }
-bool SEComprehensiveMetabolicPanel::SerializeToFile(const std::string& filename, SerializationMode m) const
+bool SEComprehensiveMetabolicPanel::SerializeToFile(const std::string& filename, SerializationFormat m) const
 {
   return PBPatientAssessment::SerializeToFile(*this, filename, m);
 }

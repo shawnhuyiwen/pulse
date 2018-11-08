@@ -298,13 +298,13 @@ bool PBPulseState::Serialize(const PulseEngine& src, pulse::proto::StateData& ds
   return true;
 }
 
-bool PBPulseState::SerializeToString(const PulseEngine& src, std::string& output, SerializationMode m)
+bool PBPulseState::SerializeToString(const PulseEngine& src, std::string& output, SerializationFormat m)
 {
   pulse::proto::StateData data;
   PBPulseState::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m);
 }
-bool PBPulseState::SerializeToFile(const PulseEngine& src, const std::string& filename, SerializationMode m)
+bool PBPulseState::SerializeToFile(const PulseEngine& src, const std::string& filename, SerializationFormat m)
 {
   pulse::proto::StateData data;
   PBPulseState::Serialize(src, data);
@@ -312,7 +312,7 @@ bool PBPulseState::SerializeToFile(const PulseEngine& src, const std::string& fi
   PBPulseState::SerializeToString(src, content, m);
   return WriteFile(content, filename, m);
 }
-bool PBPulseState::SerializeFromString(const std::string& src, PulseEngine& dst, SerializationMode m, const SEScalarTime* simTime, const SEEngineConfiguration* config)
+bool PBPulseState::SerializeFromString(const std::string& src, PulseEngine& dst, SerializationFormat m, const SEScalarTime* simTime, const SEEngineConfiguration* config)
 {
   pulse::proto::StateData data;
   if (!PBUtils::SerializeFromString(src, data, m))
@@ -320,7 +320,7 @@ bool PBPulseState::SerializeFromString(const std::string& src, PulseEngine& dst,
   PBPulseState::Load(data, dst, simTime, config);
   return true;
 }
-bool PBPulseState::SerializeFromFile(const std::string& filename, PulseEngine& dst, SerializationMode m, const SEScalarTime* simTime, const SEEngineConfiguration* config)
+bool PBPulseState::SerializeFromFile(const std::string& filename, PulseEngine& dst, SerializationFormat m, const SEScalarTime* simTime, const SEEngineConfiguration* config)
 {
   std::string content = ReadFile(filename, m);
   if (content.empty())

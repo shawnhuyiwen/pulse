@@ -45,6 +45,7 @@
 #include "properties/SEScalarLengthPerTime.h"
 #include "properties/SEScalar0To1.h"
 #include "engine/SEEventHandler.h"
+#include "engine/SEPatientConfiguration.h"
 #include <math.h>
 
 // Make a custom event handler that you can connect to your code (See EngineUse for more info)
@@ -116,7 +117,6 @@ void HowToMechanicalVentilation()
   //Initialize the patient with any conditions
   //Change the following true/false flags to give the patient different conditions
   //If no conditions, just load the serialized healthy state
-  std::vector<const SECondition*> conditions;
   if (true) //Healthy - i.e., no chronic conditions
   {
     if (!pe->SerializeFromFile("./states/StandardMale@0s.pba", ASCII))// Select patient
@@ -127,12 +127,15 @@ void HowToMechanicalVentilation()
   }
   else
   {
+    SEPatientConfiguration pc(pe->GetLogger());
+    pc.SetPatientFile("StandardMale.pba");
+
     if (false) //COPD
     {
       SEChronicObstructivePulmonaryDisease COPD;
       COPD.GetBronchitisSeverity().SetValue(0.5);
       COPD.GetEmphysemaSeverity().SetValue(0.7);
-      conditions.push_back(&COPD);
+      pc.GetConditions().push_back(&COPD);
     }
     if (false) //LobarPneumonia
     {      
@@ -140,18 +143,18 @@ void HowToMechanicalVentilation()
       lobarPneumonia.GetSeverity().SetValue(0.2);
       lobarPneumonia.GetLeftLungAffected().SetValue(1.0);
       lobarPneumonia.GetRightLungAffected().SetValue(1.0);
-      conditions.push_back(&lobarPneumonia);
+      pc.GetConditions().push_back(&lobarPneumonia);
     }
     if (false) //Generic ImpairedAlveolarExchange (no specified reason)
     {      
       SEImpairedAlveolarExchange ImpairedAlveolarExchange;
       ImpairedAlveolarExchange.GetImpairedFraction().SetValue(0.5);
-      conditions.push_back(&ImpairedAlveolarExchange);
+      pc.GetConditions().push_back(&ImpairedAlveolarExchange);
     }
 
     //Select the patient and initialize with conditions
     //You can optionally define the patient here - see HowTo-CreateAPatient.cpp
-    if (!pe->InitializeEngine("StandardMale.pba", &conditions))
+    if (!pe->InitializeEngine(pc))
     {
       pe->GetLogger()->Error("Could not load initialize engine, check the error");
       return;

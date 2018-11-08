@@ -32,19 +32,19 @@ void SEDataRequestManager::Copy(const SEDataRequestManager& src, const SESubstan
   PBEngine::Copy(src, *this, subMgr);
 }
 
-bool SEDataRequestManager::SerializeToString(std::string& output, SerializationMode m) const
+bool SEDataRequestManager::SerializeToString(std::string& output, SerializationFormat m) const
 {
   return PBEngine::SerializeToString(*this, output, m);
 }
-bool SEDataRequestManager::SerializeToFile(const std::string& filename, SerializationMode m) const
+bool SEDataRequestManager::SerializeToFile(const std::string& filename, SerializationFormat m) const
 {
   return PBEngine::SerializeToFile(*this, filename, m);
 }
-bool SEDataRequestManager::SerializeFromString(const std::string& src, SerializationMode m, const SESubstanceManager& subMgr)
+bool SEDataRequestManager::SerializeFromString(const std::string& src, SerializationFormat m, const SESubstanceManager& subMgr)
 {
   return PBEngine::SerializeFromString(src, *this, m, subMgr);
 }
-bool SEDataRequestManager::SerializeFromFile(const std::string& filename, SerializationMode m, const SESubstanceManager& subMgr)
+bool SEDataRequestManager::SerializeFromFile(const std::string& filename, SerializationFormat m, const SESubstanceManager& subMgr)
 {
   return PBEngine::SerializeFromFile(filename, *this, m, subMgr);
 }

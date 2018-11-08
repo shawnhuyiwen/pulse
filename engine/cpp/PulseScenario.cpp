@@ -22,19 +22,19 @@ void PulseScenario::Clear()
   SAFE_DELETE(m_Configuration);
 }
 
-bool PulseScenario::SerializeToString(std::string& output, SerializationMode m) const
+bool PulseScenario::SerializeToString(std::string& output, SerializationFormat m) const
 {
   return PBPulse::SerializeToString(*this, output, m);
 }
-bool PulseScenario::SerializeToFile(const std::string& filename, SerializationMode m) const
+bool PulseScenario::SerializeToFile(const std::string& filename, SerializationFormat m) const
 {
   return PBPulse::SerializeToFile(*this, filename, m);
 }
-bool PulseScenario::SerializeFromString(const std::string& src, SerializationMode m)
+bool PulseScenario::SerializeFromString(const std::string& src, SerializationFormat m)
 {
   return PBPulse::SerializeFromString(src, *this, m);
 }
-bool PulseScenario::SerializeFromFile(const std::string& filename, SerializationMode m)
+bool PulseScenario::SerializeFromFile(const std::string& filename, SerializationFormat m)
 {
   return PBPulse::SerializeFromFile(filename, *this, m);
 }

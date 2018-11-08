@@ -86,19 +86,19 @@ void SESubstance::Clear()
   SAFE_DELETE(m_PD);
 }
 
-bool SESubstance::SerializeToString(std::string& output, SerializationMode m) const
+bool SESubstance::SerializeToString(std::string& output, SerializationFormat m) const
 {
   return PBSubstance::SerializeToString(*this, output, m);
 }
-bool SESubstance::SerializeToFile(const std::string& filename, SerializationMode m) const
+bool SESubstance::SerializeToFile(const std::string& filename, SerializationFormat m) const
 {
   return PBSubstance::SerializeToFile(*this, filename, m);
 }
-bool SESubstance::SerializeFromString(const std::string& src, SerializationMode m)
+bool SESubstance::SerializeFromString(const std::string& src, SerializationFormat m)
 {
   return PBSubstance::SerializeFromString(src, *this, m);
 }
-bool SESubstance::SerializeFromFile(const std::string& filename, SerializationMode m)
+bool SESubstance::SerializeFromFile(const std::string& filename, SerializationFormat m)
 {
   return PBSubstance::SerializeFromFile(filename, *this, m);
 }

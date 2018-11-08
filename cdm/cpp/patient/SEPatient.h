@@ -69,10 +69,10 @@ public:
   virtual void Clear();
   virtual void Copy(const SEPatient& src);
 
-  bool SerializeToString(std::string& output, SerializationMode m) const;
-  bool SerializeToFile(const std::string& filename, SerializationMode m) const;
-  bool SerializeFromString(const std::string& src, SerializationMode m);
-  bool SerializeFromFile(const std::string& filename, SerializationMode m);
+  bool SerializeToString(std::string& output, SerializationFormat m) const;
+  bool SerializeToFile(const std::string& filename, SerializationFormat m) const;
+  bool SerializeFromString(const std::string& src, SerializationFormat m);
+  bool SerializeFromFile(const std::string& filename, SerializationFormat m);
 
   /** @name GetScalar
   *   @brief - A reflextion type call that will return the Scalar associated

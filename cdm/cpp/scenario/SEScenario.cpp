@@ -34,19 +34,19 @@ void SEScenario::Clear()
   m_DataRequestMgr->Clear();
 }
 
-bool SEScenario::SerializeToString(std::string& output, SerializationMode m) const
+bool SEScenario::SerializeToString(std::string& output, SerializationFormat m) const
 {
   return PBScenario::SerializeToString(*this, output, m);
 }
-bool SEScenario::SerializeToFile(const std::string& filename, SerializationMode m) const
+bool SEScenario::SerializeToFile(const std::string& filename, SerializationFormat m) const
 {
   return PBScenario::SerializeToFile(*this, filename, m);
 }
-bool SEScenario::SerializeFromString(const std::string& src, SerializationMode m)
+bool SEScenario::SerializeFromString(const std::string& src, SerializationFormat m)
 {
   return PBScenario::SerializeFromString(src, *this, m);
 }
-bool SEScenario::SerializeFromFile(const std::string& filename, SerializationMode m)
+bool SEScenario::SerializeFromFile(const std::string& filename, SerializationFormat m)
 {
   return PBScenario::SerializeFromFile(filename, *this, m);
 }
@@ -119,7 +119,7 @@ SEPatientConfiguration& SEScenario::GetPatientConfiguration()
 {
   InvalidateEngineStateFile();
   if (m_PatientConfiguration == nullptr)
-    m_PatientConfiguration = new SEPatientConfiguration(m_SubMgr);
+    m_PatientConfiguration = new SEPatientConfiguration(GetLogger());
   return *m_PatientConfiguration;
 }
 const SEPatientConfiguration* SEScenario::GetPatientConfiguration() const

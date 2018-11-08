@@ -13,9 +13,9 @@ public:
   static void Serialize(const cdm::ScenarioData& src, SEScenario& dst);
   static void Serialize(const SEScenario& src, cdm::ScenarioData& dst);
 
-  static bool SerializeToString(const SEScenario& src, std::string& output, SerializationMode m);
-  static bool SerializeToFile(const SEScenario& src, const std::string& filename, SerializationMode m);
-  static bool SerializeFromString(const std::string& src, SEScenario& dst, SerializationMode m);
-  static bool SerializeFromFile(const std::string& filename, SEScenario& dst, SerializationMode m);
+  static bool SerializeToString(const SEScenario& src, std::string& output, SerializationFormat m);
+  static bool SerializeToFile(const SEScenario& src, const std::string& filename, SerializationFormat m);
+  static bool SerializeFromString(const std::string& src, SEScenario& dst, SerializationFormat m);
+  static bool SerializeFromFile(const std::string& filename, SEScenario& dst, SerializationFormat m);
 
 };

@@ -42,11 +42,11 @@ void SECompleteBloodCount::Clear()
   SAFE_DELETE(m_WhiteBloodCellCount);
 }
 
-bool SECompleteBloodCount::SerializeToString(std::string& output, SerializationMode m) const
+bool SECompleteBloodCount::SerializeToString(std::string& output, SerializationFormat m) const
 {
   return PBPatientAssessment::SerializeToString(*this, output, m);
 }
-bool SECompleteBloodCount::SerializeToFile(const std::string& filename, SerializationMode m) const
+bool SECompleteBloodCount::SerializeToFile(const std::string& filename, SerializationFormat m) const
 {
   return PBPatientAssessment::SerializeToFile(*this, filename, m);
 }

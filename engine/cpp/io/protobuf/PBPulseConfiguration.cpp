@@ -580,13 +580,13 @@ void PBPulseConfiguration::Serialize(const PulseConfiguration& src, Configuratio
   tissue->set_enabletissue((cdm::eSwitch)src.m_TissueEnabled);
 }
 
-bool PBPulseConfiguration::SerializeToString(const PulseConfiguration& src, std::string& output, SerializationMode m)
+bool PBPulseConfiguration::SerializeToString(const PulseConfiguration& src, std::string& output, SerializationFormat m)
 {
   pulse::proto::ConfigurationData data;
   PBPulseConfiguration::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m);
 }
-bool PBPulseConfiguration::SerializeToFile(const PulseConfiguration& src, const std::string& filename, SerializationMode m)
+bool PBPulseConfiguration::SerializeToFile(const PulseConfiguration& src, const std::string& filename, SerializationFormat m)
 {
   pulse::proto::ConfigurationData data;
   PBPulseConfiguration::Serialize(src, data);
@@ -595,7 +595,7 @@ bool PBPulseConfiguration::SerializeToFile(const PulseConfiguration& src, const 
   return WriteFile(content, filename, m);
 }
 
-bool PBPulseConfiguration::SerializeFromString(const std::string& src, PulseConfiguration& dst, SerializationMode m)
+bool PBPulseConfiguration::SerializeFromString(const std::string& src, PulseConfiguration& dst, SerializationFormat m)
 {
   pulse::proto::ConfigurationData data;
   if (!PBUtils::SerializeFromString(src, data, m))
@@ -603,7 +603,7 @@ bool PBPulseConfiguration::SerializeFromString(const std::string& src, PulseConf
   PBPulseConfiguration::Load(data, dst);
   return true;
 }
-bool PBPulseConfiguration::SerializeFromFile(const std::string& filename, PulseConfiguration& dst, SerializationMode m)
+bool PBPulseConfiguration::SerializeFromFile(const std::string& filename, PulseConfiguration& dst, SerializationFormat m)
 {
   std::string content = ReadFile(filename, m);
   if (content.empty())

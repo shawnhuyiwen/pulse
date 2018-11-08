@@ -6,6 +6,7 @@
 // Include the various types you will be using in your code
 #include "engine/SEDataRequestManager.h"
 #include "engine/SEEngineTracker.h"
+#include "engine/SEPatientConfiguration.h"
 #include "compartment/SECompartmentManager.h"
 #include "compartment/fluid/SEGasCompartment.h"
 #include "patient/conditions/SELobarPneumonia.h"
@@ -44,10 +45,12 @@ void HowToLobarPneumonia()
   lobarPneumonia.GetSeverity().SetValue(0.2);
   lobarPneumonia.GetLeftLungAffected().SetValue(1.0);
   lobarPneumonia.GetRightLungAffected().SetValue(1.0);
-  std::vector<const SECondition*> conditions;
-  conditions.push_back(&lobarPneumonia);
 
-  if (!pe->InitializeEngine("StandardMale.pba", &conditions))
+  SEPatientConfiguration pc(pe->GetLogger());
+  pc.SetPatientFile("StandardMale.pba");
+  pc.GetConditions().push_back(&lobarPneumonia);
+
+  if (!pe->InitializeEngine(pc))
   {
     pe->GetLogger()->Error("Could not load initialize engine, check the error");
     return;

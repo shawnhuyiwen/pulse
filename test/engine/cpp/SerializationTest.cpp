@@ -8,6 +8,7 @@
 #include "engine/SETimedStabilization.h"
 #include "engine/SEEngineTracker.h"
 #include "engine/SEDataRequestManager.h"
+#include "engine/SEPatientConfiguration.h"
 
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceManager.h"
@@ -71,7 +72,9 @@ public:
 void PulseEngineTest::InhalerState(PhysiologyEngine* pc, HowToTracker& tracker)
 {
   pc->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("InhalerResults.csv");
-  if (!pc->InitializeEngine("StandardMale.pba"))
+  SEPatientConfiguration pconfig(pc->GetLogger());
+  pconfig.SetPatientFile("StandardMale.pba");
+  if (!pc->InitializeEngine(pconfig))
   {
     std::cerr << "Could not load initialize engine, check the error" << std::endl;
     return;
@@ -122,7 +125,9 @@ void PulseEngineTest::InhalerState(PhysiologyEngine* pc, HowToTracker& tracker)
 void PulseEngineTest::InjectSuccsState(PhysiologyEngine* pc, HowToTracker& tracker, const SESubstance& succs)
 {
   pc->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("InjectSuccsResults.csv");
-  if (!pc->InitializeEngine("StandardMale.pba"))
+  SEPatientConfiguration pconfig(pc->GetLogger());
+  pconfig.SetPatientFile("StandardMale.pba");
+  if (!pc->InitializeEngine(pconfig))
   {
     std::cerr << "Could not load initialize engine, check the error" << std::endl;
     return;

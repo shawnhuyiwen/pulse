@@ -182,13 +182,13 @@ void PBAnesthesiaMachine::Serialize(const SEAnesthesiaMachineOxygenBottle& src, 
     dst.set_allocated_volume(PBProperty::Unload(*src.m_Volume));
 }
 
-bool PBAnesthesiaMachine::SerializeToString(const SEAnesthesiaMachine& src, std::string& output, SerializationMode m)
+bool PBAnesthesiaMachine::SerializeToString(const SEAnesthesiaMachine& src, std::string& output, SerializationFormat m)
 {
   cdm::AnesthesiaMachineData data;
   PBAnesthesiaMachine::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m);
 }
-bool PBAnesthesiaMachine::SerializeToFile(const SEAnesthesiaMachine& src, const std::string& filename, SerializationMode m)
+bool PBAnesthesiaMachine::SerializeToFile(const SEAnesthesiaMachine& src, const std::string& filename, SerializationFormat m)
 {
   cdm::AnesthesiaMachineData data;
   PBAnesthesiaMachine::Serialize(src, data);
@@ -197,7 +197,7 @@ bool PBAnesthesiaMachine::SerializeToFile(const SEAnesthesiaMachine& src, const 
   return WriteFile(content, filename, m);
 }
 
-bool PBAnesthesiaMachine::SerializeFromString(const std::string& src, SEAnesthesiaMachine& dst, SerializationMode m)
+bool PBAnesthesiaMachine::SerializeFromString(const std::string& src, SEAnesthesiaMachine& dst, SerializationFormat m)
 {
   cdm::AnesthesiaMachineData data;
   if (!PBUtils::SerializeFromString(src, data, m))
@@ -205,7 +205,7 @@ bool PBAnesthesiaMachine::SerializeFromString(const std::string& src, SEAnesthes
   PBAnesthesiaMachine::Load(data, dst);
   return true;
 }
-bool PBAnesthesiaMachine::SerializeFromFile(const std::string& filename, SEAnesthesiaMachine& dst, SerializationMode m)
+bool PBAnesthesiaMachine::SerializeFromFile(const std::string& filename, SEAnesthesiaMachine& dst, SerializationFormat m)
 {
   std::string content = ReadFile(filename, m);
   if (content.empty())

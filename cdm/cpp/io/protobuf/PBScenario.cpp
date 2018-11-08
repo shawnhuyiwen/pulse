@@ -24,7 +24,7 @@ void PBScenario::Serialize(const cdm::ScenarioData& src, SEScenario& dst)
   if (src.has_starttype())
   {
     if (src.starttype().has_patientconfiguration())
-      PBEngine::Load(src.starttype().patientconfiguration(), dst.GetPatientConfiguration());
+      PBEngine::Load(src.starttype().patientconfiguration(), dst.GetPatientConfiguration(), dst.m_SubMgr);
     else
     {
       dst.SetEngineStateFile(src.starttype().enginestatefile());
@@ -62,13 +62,13 @@ void PBScenario::Serialize(const SEScenario& src, cdm::ScenarioData& dst)
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*a));
 }
 
-bool PBScenario::SerializeToString(const SEScenario& src, std::string& output, SerializationMode m)
+bool PBScenario::SerializeToString(const SEScenario& src, std::string& output, SerializationFormat m)
 {
   cdm::ScenarioData data;
   PBScenario::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m);
 }
-bool PBScenario::SerializeToFile(const SEScenario& src, const std::string& filename, SerializationMode m)
+bool PBScenario::SerializeToFile(const SEScenario& src, const std::string& filename, SerializationFormat m)
 {
   cdm::ScenarioData data;
   PBScenario::Serialize(src, data);
@@ -76,7 +76,7 @@ bool PBScenario::SerializeToFile(const SEScenario& src, const std::string& filen
   PBScenario::SerializeToString(src, content, m);
   return WriteFile(content, filename, m);
 }
-bool PBScenario::SerializeFromString(const std::string& src, SEScenario& dst, SerializationMode m)
+bool PBScenario::SerializeFromString(const std::string& src, SEScenario& dst, SerializationFormat m)
 {
   cdm::ScenarioData data;
   if (!PBUtils::SerializeFromString(src, data, m))
@@ -84,7 +84,7 @@ bool PBScenario::SerializeFromString(const std::string& src, SEScenario& dst, Se
   PBScenario::Load(data, dst);
   return true;
 }
-bool PBScenario::SerializeFromFile(const std::string& filename, SEScenario& dst, SerializationMode m)
+bool PBScenario::SerializeFromFile(const std::string& filename, SEScenario& dst, SerializationFormat m)
 {
   std::string content = ReadFile(filename, m);
   if (content.empty())

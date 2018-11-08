@@ -25,6 +25,8 @@ public:
   void HandlePatientEvent(ePatient_Event type, bool active, const SEScalarTime* time = nullptr);
   void HandleAnesthesiaMachineEvent(eAnesthesiaMachine_Event type, bool active, const SEScalarTime* time = nullptr);
 
-  DataTrack* trk;
+  void SetupDefaultDataRequests();
+
   std::unique_ptr<PulseEngine> eng;
+  double* requestedData = nullptr;
 };

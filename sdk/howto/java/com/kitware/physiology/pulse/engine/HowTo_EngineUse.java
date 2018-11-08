@@ -12,6 +12,7 @@ import com.kitware.physiology.cdm.EngineEnums.eDataRequest.*;
 import com.kitware.physiology.datamodel.conditions.SECondition;
 import com.kitware.physiology.datamodel.datarequests.SEDataRequest;
 import com.kitware.physiology.datamodel.datarequests.SEDataRequestManager;
+import com.kitware.physiology.datamodel.engine.SEPatientConfiguration;
 import com.kitware.physiology.datamodel.patient.SEPatient;
 import com.kitware.physiology.datamodel.patient.actions.SEHemorrhage;
 import com.kitware.physiology.datamodel.patient.actions.SESubstanceCompoundInfusion;
@@ -172,6 +173,11 @@ public class HowTo_EngineUse
       patient.getSystolicArterialPressureBaseline().setValue(114.,PressureUnit.mmHg);
       patient.getRespirationRateBaseline().setValue(16,FrequencyUnit.Per_min);
       
+      SEPatientConfiguration patient_configuration = new SEPatientConfiguration();
+      patient_configuration.setPatient(patient);
+      // Optionally add conditions to the patient_configuration
+      
+      
       // If I wanted to make set a condition on the patient
       // Note that while you can have multiple conditions on a patient
       // It is more than likely not tested and the engine may or may not converge
@@ -181,14 +187,18 @@ public class HowTo_EngineUse
       conditions.add(anemia);
       
       // Allocate an engine
-      pe.initializeEngine("./Scenarios/HowToDynamicEngine.log", patient, null/*optionally, pass in our conditions list*/, dataRequests);
+      pe.initializeEngine("./Scenarios/HowToDynamicEngine.log", patient_configuration, dataRequests);
        // This method will block while the engine stabilizes to meet the defined patient parameters
        break;
      }
    case PatientFile:
      {
+    	 SEPatientConfiguration patient_configuration = new SEPatientConfiguration();
+       patient_configuration.setPatientFile("./patient/StandardMale.pba");
+       // Optionally add conditions to the patient_configuration
+       
        // Allocate an engine
-       pe.initializeEngine("./Scenarios/HowToDynamicEngine.log", "./patient/StandardMale.pba", null/*optionally, pass in a conditions list*/, dataRequests);       
+       pe.initializeEngine("./Scenarios/HowToDynamicEngine.log", patient_configuration, dataRequests);       
        // This method will block while the engine stabilizes to meet the defined patient parameters
        break;
      }

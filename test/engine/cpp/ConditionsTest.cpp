@@ -6,6 +6,7 @@
 #include "utils/testing/SETestCase.h"
 #include "utils/testing/SETestSuite.h"
 #include "patient/conditions/SEChronicAnemia.h"
+#include "engine/SEPatientConfiguration.h"
 
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalar0To1.h"
@@ -13,13 +14,17 @@
 void PulseEngineTest::ConditionCombinations(const std::string& rptDirectory)
 {
   Logger log("ConditionsPermutationsReport.log");
-  std::vector<SECondition*> testConditions;
   SEChronicAnemia cAnem;
   cAnem.GetReductionFactor().SetValue(0.1);
-  testConditions.push_back(&cAnem);
+  
+  SEPatientConfiguration pc(&log);
+  pc.GetConditions().push_back(&cAnem);
+
+  SEPatientConfiguration sceConfig(&log);
+  sceConfig.SetPatientFile("StandardMale.pba");
 
   std::vector<int> conditionSwitches;
-  for (unsigned int i = 0; i < testConditions.size(); i++)
+  for (unsigned int i = 0; i < pc.GetConditions().size(); i++)
     conditionSwitches.push_back(1);
   // Conditions will either be on or off when we run
   // Now calculate all the permutations with our conditions
@@ -30,7 +35,6 @@ void PulseEngineTest::ConditionCombinations(const std::string& rptDirectory)
   SETestReport testReport(&log);
   SETestSuite& testSuite = testReport.CreateTestSuite();
   testSuite.SetName("ConditionPermutations");
-  std::vector<const SECondition*> sceConditions;
 
   //for (int i = 0; i < 3; i++)
   {
@@ -38,13 +42,13 @@ void PulseEngineTest::ConditionCombinations(const std::string& rptDirectory)
     for (std::vector<int> combo : permutations)
     {
       ss.clear();
-      sceConditions.clear();
-      for (unsigned int c = 0; c < testConditions.size(); c++)
+      sceConfig.GetConditions().clear();
+      for (unsigned int c = 0; c < pc.GetConditions().size(); c++)
       {
         if (combo[c] == 1)
         {
-          sceConditions.push_back(testConditions[c]);
-          ss << testConditions[c]->GetName() << "-";
+          sceConfig.GetConditions().push_back(pc.GetConditions()[c]);
+          ss << pc.GetConditions()[c]->GetName() << "-";
         }
       }
       if (ss.str().empty())
@@ -52,12 +56,12 @@ void PulseEngineTest::ConditionCombinations(const std::string& rptDirectory)
       SETestCase& testCase = testSuite.CreateTestCase();
       log.Info(ss);
       std::unique_ptr<PhysiologyEngine> physEng = CreatePulseEngine(&log);
-      if (!physEng->InitializeEngine("StandardMale.pba",&sceConditions))
+      if (!physEng->InitializeEngine(sceConfig))
       {
         testCase.AddFailure("Unable to stabilize condition permutation");
       }  
     }
   }
   testReport.SerializeToFile("ConditionsPermutationsReport.pba",ASCII);
-  DELETE_VECTOR(testConditions);
+
 }

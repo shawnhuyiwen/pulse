@@ -39,28 +39,10 @@ void HowToScenarioBase()
   }
   else if (sce.HasPatientConfiguration())
   {
-    SEPatientConfiguration& sip = sce.GetPatientConfiguration();
-    if (sip.HasPatientFile())
+    if (!pe->InitializeEngine(sce.GetPatientConfiguration()))
     {
-      std::vector<const SECondition*> conditions;
-      for (SECondition* c : sip.GetConditions())
-        conditions.push_back(c);// Copy to const
-      if (!pe->InitializeEngine(sip.GetPatientFile(), &conditions))
-      {
-        pe->GetLogger()->Error("Could not load state, check the error");
-        return;
-      }
-    }
-    else if (sip.HasPatient())
-    {
-      std::vector<const SECondition*> conditions;
-      for (SECondition* c : sip.GetConditions())
-        conditions.push_back(c);// Copy to const
-      if (!pe->InitializeEngine(sip.GetPatient(), &conditions))
-      {
-        pe->GetLogger()->Error("Could not load state, check the error");
-        return;
-      }
+      pe->GetLogger()->Error("Could not load patient configuration, check the error");
+      return;
     }
   }
 

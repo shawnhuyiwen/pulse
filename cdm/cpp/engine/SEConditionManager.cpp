@@ -50,19 +50,19 @@ void SEConditionManager::Clear()
   SAFE_DELETE(m_InitialEnvironmentConditions);
 }
 
-bool SEConditionManager::SerializeToString(std::string& output, SerializationMode m) const
+bool SEConditionManager::SerializeToString(std::string& output, SerializationFormat m) const
 {
   return PBEngine::SerializeToString(*this, output, m);
 }
-bool SEConditionManager::SerializeToFile(const std::string& filename, SerializationMode m) const
+bool SEConditionManager::SerializeToFile(const std::string& filename, SerializationFormat m) const
 {
   return PBEngine::SerializeToFile(*this, filename, m);
 }
-bool SEConditionManager::SerializeFromString(const std::string& src, SerializationMode m)
+bool SEConditionManager::SerializeFromString(const std::string& src, SerializationFormat m)
 {
   return PBEngine::SerializeFromString(src, *this, m);
 }
-bool SEConditionManager::SerializeFromFile(const std::string& filename, SerializationMode m)
+bool SEConditionManager::SerializeFromFile(const std::string& filename, SerializationFormat m)
 {
   return PBEngine::SerializeFromFile(filename, *this, m);
 }

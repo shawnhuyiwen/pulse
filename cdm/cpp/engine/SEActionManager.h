@@ -19,12 +19,12 @@ public:
 
   void Clear();
   
-  bool SerializeToString(std::string& output, SerializationMode m) const;
-  bool SerializeToFile(const std::string& filename, SerializationMode m) const;
-  bool SerializeFromString(const std::string& src, SerializationMode m);
-  bool SerializeFromFile(const std::string& filename, SerializationMode m);
+  bool SerializeToString(std::string& output, SerializationFormat m) const;
+  bool SerializeToFile(const std::string& filename, SerializationFormat m) const;
+  bool SerializeFromString(const std::string& src, SerializationFormat m);
+  bool SerializeFromFile(const std::string& filename, SerializationFormat m);
 
-  static bool SerializeFromString(const std::string& src, std::vector<SEAction*>& dst, SerializationMode m, SESubstanceManager& subMgr);
+  static bool SerializeFromString(const std::string& src, std::vector<SEAction*>& dst, SerializationFormat m, SESubstanceManager& subMgr);
 
   bool ProcessAction(const SEAction& action);// Will make a copy
 

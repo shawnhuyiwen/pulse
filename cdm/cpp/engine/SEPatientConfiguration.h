@@ -10,14 +10,15 @@ class SESubstanceManager;
 class CDM_DECL SEPatientConfiguration : public Loggable
 {
   friend class PBEngine;//friend the serialization class
-  friend class SEScenario;
-protected:
-  SEPatientConfiguration(SESubstanceManager& subMgr);
 public:
+  SEPatientConfiguration(Logger* logger);
   virtual ~SEPatientConfiguration();
   virtual void Clear(); //clear memory
 
-public:
+  bool SerializeToString(std::string& output, SerializationFormat m) const;
+  bool SerializeToFile(const std::string& filename, SerializationFormat m) const;
+  bool SerializeFromString(const std::string& src, SerializationFormat m, SESubstanceManager& subMgr);
+  bool SerializeFromFile(const std::string& filename, SerializationFormat m, SESubstanceManager& subMgr);
 
   virtual bool IsValid()const;
 
@@ -31,11 +32,12 @@ public:
   virtual bool HasPatient() const;
   virtual void InvalidatePatient();
 
-  virtual const std::vector<SECondition*>& GetConditions() const;
+  virtual std::vector<SECondition*>& GetConditions();
+  virtual const std::vector<const SECondition*>& GetConditions() const;
 
 protected:
-  SESubstanceManager&            m_SubMgr;
-  SEPatient*                     m_Patient;
-  std::string                    m_PatientFile;
-  std::vector<SECondition*>      m_Conditions;
+  SEPatient*                      m_Patient;
+  std::string                     m_PatientFile;
+  std::vector<SECondition*>       m_Conditions;
+  mutable std::vector<const SECondition*> m_cConditions;
 };

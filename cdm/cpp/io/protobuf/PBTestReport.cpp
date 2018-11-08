@@ -200,13 +200,13 @@ void PBTestReport::Serialize(const SETestSuite& src, cdm::TestSuiteData& dst)
 }
 
 
-bool PBTestReport::SerializeToString(const SETestReport& src, std::string& output, SerializationMode m)
+bool PBTestReport::SerializeToString(const SETestReport& src, std::string& output, SerializationFormat m)
 {
   cdm::TestReportData data;
   PBTestReport::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m);
 }
-bool PBTestReport::SerializeToFile(const SETestReport& src, const std::string& filename, SerializationMode m)
+bool PBTestReport::SerializeToFile(const SETestReport& src, const std::string& filename, SerializationFormat m)
 {
   cdm::TestReportData data;
   PBTestReport::Serialize(src, data);
@@ -214,7 +214,7 @@ bool PBTestReport::SerializeToFile(const SETestReport& src, const std::string& f
   PBTestReport::SerializeToString(src, content, m);
   return WriteFile(content, filename, m);
 }
-bool PBTestReport::SerializeFromString(const std::string& src, SETestReport& dst, SerializationMode m)
+bool PBTestReport::SerializeFromString(const std::string& src, SETestReport& dst, SerializationFormat m)
 {
   cdm::TestReportData data;
   if (!PBUtils::SerializeFromString(src, data, m))
@@ -222,7 +222,7 @@ bool PBTestReport::SerializeFromString(const std::string& src, SETestReport& dst
   PBTestReport::Load(data, dst);
   return true;
 }
-bool PBTestReport::SerializeFromFile(const std::string& filename, SETestReport& dst, SerializationMode m)
+bool PBTestReport::SerializeFromFile(const std::string& filename, SETestReport& dst, SerializationFormat m)
 {
   std::string content = ReadFile(filename, m);
   if (content.empty())

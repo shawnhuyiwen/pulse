@@ -93,34 +93,9 @@ bool SEScenarioExec::Execute(const SEScenario& scenario, const std::string& resu
       if (!m_Engine.GetEngineTracker()->GetDataRequestManager().HasResultsFilename())
         m_Engine.GetEngineTracker()->GetDataRequestManager().SetResultsFilename(resultsFile);
 
-      const SEPatientConfiguration* params = scenario.GetPatientConfiguration();
-      // Do we have any conditions
-      std::vector<const SECondition*> conditions;
-      for (SECondition* c : params->GetConditions())
-        conditions.push_back(c);
-
-      if (params->HasPatientFile())
+      if (!m_Engine.InitializeEngine(*scenario.GetPatientConfiguration()))
       {
-        // Set up the patient
-        std::string pFile = "./patients/";
-        pFile += params->GetPatientFile();
-        if (!m_Engine.InitializeEngine(pFile.c_str(), &conditions, m_EngineConfiguration))
-        {
-          Error("Unable to initialize engine");
-          return false;
-        }
-      }
-      else if (params->HasPatient())
-      {
-        if (!m_Engine.InitializeEngine(*params->GetPatient(), &conditions, m_EngineConfiguration))
-        {
-          Error("Unable to initialize engine");
-          return false;
-        }
-      }
-      else
-      {
-        Error("No patient provided");
+        Error("Unable to initialize engine");
         return false;
       }
     }
