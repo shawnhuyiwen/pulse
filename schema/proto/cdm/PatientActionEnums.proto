@@ -13,6 +13,17 @@ message eBrainInjury
   }
 }
 
+
+message eHemorrhage
+{
+  /** @brief Types of Brain Injury that provided different nervous responses.*/
+  enum Type
+  {
+    Internal                                                                = 0;
+    External                                                                = 1;
+  }
+}
+
 message eIntubation
 {
   enum Type

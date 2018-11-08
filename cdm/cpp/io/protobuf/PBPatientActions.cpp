@@ -595,6 +595,7 @@ void PBPatientAction::Serialize(const cdm::HemorrhageData& src, SEHemorrhage& ds
   if (src.has_rate())
     PBProperty::Load(src.rate(), dst.GetRate());
   dst.m_Compartment = src.compartment();
+  dst.SetType((eHemorrhage_Type)src.type());
 }
 cdm::HemorrhageData* PBPatientAction::Unload(const SEHemorrhage& src)
 {
@@ -609,6 +610,7 @@ void PBPatientAction::Serialize(const SEHemorrhage& src, cdm::HemorrhageData& ds
     dst.set_allocated_rate(PBProperty::Unload(*src.m_Rate));
   if (src.HasCompartment())
     dst.set_compartment(src.m_Compartment);
+  dst.set_type((cdm::eHemorrhage_Type)src.m_Type);
 }
 void PBPatientAction::Copy(const SEHemorrhage& src, SEHemorrhage& dst)
 {

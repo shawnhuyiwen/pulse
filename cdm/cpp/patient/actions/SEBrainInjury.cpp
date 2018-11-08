@@ -64,6 +64,7 @@ void SEBrainInjury::SetType(eBrainInjury_Type Type)
 {
   m_Type = Type;
 }
+
 void SEBrainInjury::ToString(std::ostream &str) const
 {
   str << "Patient Action : Brain Injury"; 
