@@ -25,7 +25,7 @@ namespace Pulse
         public static extern bool SerializeToFile(IntPtr pulse, string filename, int format);
 
         [DllImport("PulseC", CharSet = CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
-        public static extern bool SerializeFromString(IntPtr pulse, string state, string data_requests, int format);
+        public static extern bool SerializeFromString(IntPtr pulse, string state, string data_requests, int format, double sim_time_s);
 
         [DllImport("PulseC", CharSet = CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
         public static extern string SerializeToString(IntPtr pulse, int format);

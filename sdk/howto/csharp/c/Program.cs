@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.InteropServices;
 using Pulse;
 
@@ -28,7 +29,10 @@ namespace HowTo_UseC
             // Instatiate a Pulse engine
             IntPtr pulse = PulseCS2C.Allocate("pulse.log");
             // Load a state file
-            if(!PulseCS2C.SerializeFromFile(pulse, "./states/Soldier@0s.pba", null, (int)SerializationFormat.ASCII, 0))
+            //if(!PulseCS2C.SerializeFromFile(pulse, "./states/Soldier@0s.pba", null, (int)SerializationFormat.ASCII, 0))
+            //    Console.WriteLine("Error Initializing Pulse!");
+            string file_content = File.ReadAllText("./states/Soldier@0s.pba");
+            if (!PulseCS2C.SerializeFromString(pulse, file_content, null, (int)SerializationFormat.ASCII, 0))
                 Console.WriteLine("Error Initializing Pulse!");
             // Advance time and print out values
             for (int i = 1; i <= 10; i++)
