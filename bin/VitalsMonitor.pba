@@ -1,6 +1,6 @@
 Name: "Vitals Monitor"
 Description: "Data associated with a vitals monitor."
-InitialParameters { PatientFile:"StandardMale.pba" }
+StartType { PatientConfiguration { PatientFile:"StandardMale.pba" } }
 
 DataRequestManager
 {
