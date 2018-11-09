@@ -17,6 +17,11 @@
 #include "physiology/Renal.h"
 #include "physiology/Respiratory.h"
 #include "physiology/Tissue.h"
+#include "compartment/fluid/SELiquidCompartmentGraph.h"
+#include "compartment/fluid/SELiquidCompartment.h"
+#include "circuit/fluid/SEFluidCircuitPath.h"
+#include "controller/Circuits.h"
+#include "controller/Compartments.h"
 
 using namespace pulse::proto;
 
@@ -88,6 +93,11 @@ void PBPulsePhysiology::Serialize(const CardiovascularData& src, Cardiovascular&
   PBProperty::Load(src.cardiaccyclepulmonaryarterypressure_mmhg(), *dst.m_CardiacCyclePulmonaryArteryPressure_mmHg);
   PBProperty::Load(src.cardiaccyclecentralvenouspressure_mmhg(), *dst.m_CardiacCycleCentralVenousPressure_mmHg);
   PBProperty::Load(src.cardiaccycleskinflow_ml_per_s(), *dst.m_CardiacCycleSkinFlow_mL_Per_s);
+
+  for (auto name : src.hemorrhagelinks())
+    dst.m_HemorrhageLinks.push_back(dst.m_data.GetCompartments().GetCardiovascularGraph().GetLink(name));
+  for (auto name : src.hemorrhagepaths())
+    dst.m_HemorrhagePaths.push_back(dst.m_data.GetCircuits().GetCardiovascularCircuit().GetPath(name));
 }
 CardiovascularData* PBPulsePhysiology::Unload(const Cardiovascular& src)
 {
@@ -132,6 +142,11 @@ void PBPulsePhysiology::Serialize(const Cardiovascular& src, CardiovascularData&
   dst.set_allocated_cardiaccyclepulmonaryarterypressure_mmhg(PBProperty::Unload(*src.m_CardiacCyclePulmonaryArteryPressure_mmHg));
   dst.set_allocated_cardiaccyclecentralvenouspressure_mmhg(PBProperty::Unload(*src.m_CardiacCycleCentralVenousPressure_mmHg));
   dst.set_allocated_cardiaccycleskinflow_ml_per_s(PBProperty::Unload(*src.m_CardiacCycleSkinFlow_mL_Per_s));
+
+  for (auto* l : src.m_HemorrhageLinks)
+    dst.add_hemorrhagelinks(l->GetName());
+  for (auto* p : src.m_HemorrhagePaths)
+    dst.add_hemorrhagepaths(p->GetName());
 }
 
 void PBPulsePhysiology::Load(const DrugData& src, Drugs& dst)

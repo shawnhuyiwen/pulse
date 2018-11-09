@@ -948,13 +948,14 @@ void Cardiovascular::Hemorrhage()
   //Set all hemorrhage flows to zero, so:
   // - We can increment for overlapping compartments
   // - We know to remove ones that are turned off
-  for (unsigned int hIter = 0; hIter < m_hemorrhagePaths.size(); hIter++)
+  for (unsigned int hIter = 0; hIter < m_HemorrhagePaths.size(); hIter++)
   {
-    m_hemorrhagePaths.at(hIter)->GetNextFlowSource().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);
+    m_HemorrhagePaths.at(hIter)->GetNextFlowSource().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);
   }
   
   SEHemorrhage* h;
   double TotalLossRate_mL_Per_s = 0.0;
+  std::vector<SEHemorrhage*> invalid_hemorrhages;
   const std::map <std::string, SEHemorrhage*> & hems = m_data.GetActions().GetPatientActions().GetHemorrhages();
   for (auto hem : hems)
   {
@@ -967,22 +968,25 @@ void Cardiovascular::Hemorrhage()
     {      
       m_ss << "Cannot have bleeding rate greater than cardiac output. \n\tCurrent cardiac output is: " << GetCardiacOutput()
         << "\n\tAnd specified bleeding rate is: " << h->GetRate();
-      Fatal(m_ss);
-      return;
+      Error(m_ss);
+      invalid_hemorrhages.push_back(h);
+      continue;
     }
     /// \error Fatal: Bleeding rate cannot be less than zero
     if (rate_mL_Per_s < 0)
     {
       m_ss << "Cannot specify bleeding less than 0";
-      Fatal(m_ss);
-      return;
+      Error(m_ss);
+      invalid_hemorrhages.push_back(h);
+      continue;
     }
     /// \error Fatal: Bleeding must be from a vascular compartment
     if (!compartment)
     {
-      m_ss << "Cannot hemorrhage from a non-vascular compartment";
-      Fatal(m_ss);
-      return;
+      m_ss << "Cannot hemorrhage from compartment "+h->GetComment()+", must be a valid vascular compartment";
+      Error(m_ss);
+      invalid_hemorrhages.push_back(h);
+      continue;
     }
 
     TotalLossRate_mL_Per_s += rate_mL_Per_s;
@@ -1002,7 +1006,7 @@ void Cardiovascular::Hemorrhage()
     while (nodesIter < nodes.size())
     {
       SEFluidCircuitNode* node = nodes.at(nodesIter);
-      //Only use nodes that are part of the Circulatory circuit      
+      //Only use nodes that are part of the Circulatory circuit
       if (std::find(m_CirculatoryCircuit->GetNodes().begin(), m_CirculatoryCircuit->GetNodes().end(), node) == m_CirculatoryCircuit->GetNodes().end())
       {
         //Not in circuit
@@ -1023,8 +1027,9 @@ void Cardiovascular::Hemorrhage()
     if (nodes.size() == 0)
     {
       m_ss << "Hemorrhage compartments must have nodes in the circulatory circuit";
-      Fatal(m_ss);
-      return;
+      Error(m_ss);
+      invalid_hemorrhages.push_back(h);
+      continue;
     }
 
     //Update the circuit to remove blood from the specified compartment
@@ -1051,9 +1056,9 @@ void Cardiovascular::Hemorrhage()
       //Check if we've already been hemorrhaging here
       SEFluidCircuitPath* hemorrhagePath;
       bool pathFound = false;
-      for (unsigned int hIter = 0; hIter < m_hemorrhagePaths.size(); hIter++)
+      for (unsigned int hIter = 0; hIter < m_HemorrhagePaths.size(); hIter++)
       {
-        hemorrhagePath = m_hemorrhagePaths.at(hIter);
+        hemorrhagePath = m_HemorrhagePaths.at(hIter);
         if (&(hemorrhagePath->GetSourceNode()) == node)
         {
           pathFound = true;
@@ -1101,25 +1106,29 @@ void Cardiovascular::Hemorrhage()
         m_CirculatoryGraph->StateChange();
 
         //Add to local lists
-        m_hemorrhagePaths.push_back(&newHemorrhagePath);
-        m_hemorrhageLinks.push_back(&newHemorrhageLink);
+        m_HemorrhagePaths.push_back(&newHemorrhagePath);
+        m_HemorrhageLinks.push_back(&newHemorrhageLink);
       }
     }
   }
 
+  // Remove any invalid hemorrhages
+  for (SEHemorrhage* h : invalid_hemorrhages)
+    m_data.GetActions().GetPatientActions().RemoveHemorrhage(h->GetCompartment());
+
   //Remove hemorrhage elements that aren't being used
   //Make sure to do this even if no hemorrhage action, since it's needed when removed
   unsigned int hIter = 0;
-  while (hIter < m_hemorrhagePaths.size())
+  while (hIter < m_HemorrhagePaths.size())
   {
-    if (m_hemorrhagePaths.at(hIter)->GetNextFlowSource(VolumePerTimeUnit::mL_Per_s) == 0.0)
+    if (m_HemorrhagePaths.at(hIter)->GetNextFlowSource(VolumePerTimeUnit::mL_Per_s) == 0.0)
     {
-      m_CirculatoryCircuit->RemovePath(*m_hemorrhagePaths.at(hIter));      
-      m_hemorrhagePaths.erase(m_hemorrhagePaths.begin() + hIter);
+      m_CirculatoryCircuit->RemovePath(*m_HemorrhagePaths.at(hIter));      
+      m_HemorrhagePaths.erase(m_HemorrhagePaths.begin() + hIter);
       m_CirculatoryCircuit->StateChange();
 
-      m_CirculatoryGraph->RemoveLink(*m_hemorrhageLinks.at(hIter));
-      m_hemorrhageLinks.erase(m_hemorrhageLinks.begin() + hIter);
+      m_CirculatoryGraph->RemoveLink(*m_HemorrhageLinks.at(hIter));
+      m_HemorrhageLinks.erase(m_HemorrhageLinks.begin() + hIter);
       m_CirculatoryGraph->StateChange();
       
       continue;
