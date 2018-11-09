@@ -1,7 +1,12 @@
 
 set(from "${SCHEMA_SRC}/proto")
 set(to   "${SCHEMA_DST}")
-set(BINDER "${CMAKE_INSTALL_PREFIX}/bin/protoc")
+if( CMAKE_INSTALL_PREFIX )
+  set(BINDER "${CMAKE_INSTALL_PREFIX}/bin/protoc")
+else()
+  set(BINDER "protoc")
+endif()
+
 
 message(STATUS "Generating Schema Bindings" )
 message(STATUS "Using : ${BINDER}")
