@@ -961,9 +961,12 @@ void Cardiovascular::Hemorrhage()
   {
     h = hem.second;
     double rate_mL_Per_s = h->GetRate().GetValue(VolumePerTimeUnit::mL_Per_s);
-    SELiquidCompartment* compartment = m_data.GetCompartments().GetLiquidCompartment(h->GetCompartment());
+    // Allow shorthand naming
+    if(h->GetCompartment().find("Vasculature") == std::string::npos)
+      h->SetCompartment(h->GetCompartment() + "Vasculature");
+    SELiquidCompartment* compartment = m_data.GetCompartments().GetCardiovascularGraph().GetCompartment(h->GetCompartment());
 
-    /// \error Fatal: Bleeding rate cannot exceed cardiac output
+    /// \error Error: Bleeding rate cannot exceed cardiac output
     if (rate_mL_Per_s > GetCardiacOutput().GetValue(VolumePerTimeUnit::mL_Per_s))
     {      
       m_ss << "Cannot have bleeding rate greater than cardiac output. \n\tCurrent cardiac output is: " << GetCardiacOutput()
@@ -972,7 +975,7 @@ void Cardiovascular::Hemorrhage()
       invalid_hemorrhages.push_back(h);
       continue;
     }
-    /// \error Fatal: Bleeding rate cannot be less than zero
+    /// \error Error: Bleeding rate cannot be less than zero
     if (rate_mL_Per_s < 0)
     {
       m_ss << "Cannot specify bleeding less than 0";
@@ -980,7 +983,7 @@ void Cardiovascular::Hemorrhage()
       invalid_hemorrhages.push_back(h);
       continue;
     }
-    /// \error Fatal: Bleeding must be from a vascular compartment
+    /// \error Error: Bleeding must be from a vascular compartment
     if (!compartment)
     {
       m_ss << "Cannot hemorrhage from compartment "+h->GetComment()+", must be a valid vascular compartment";
@@ -1026,6 +1029,7 @@ void Cardiovascular::Hemorrhage()
     /// \error Fatal: Bleeding must come from nodes in the circultatory circuit
     if (nodes.size() == 0)
     {
+      /// \error Error: Hemorrhage compartments must have nodes in the circulatory circuit
       m_ss << "Hemorrhage compartments must have nodes in the circulatory circuit";
       Error(m_ss);
       invalid_hemorrhages.push_back(h);

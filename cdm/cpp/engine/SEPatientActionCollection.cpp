@@ -361,7 +361,6 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
     if (!m_PericardialEffusion->IsActive())
       RemovePericardialEffusion();
     return true;
-
   }
 
   const SESubstanceBolus* bolus = dynamic_cast<const SESubstanceBolus*>(&action);
