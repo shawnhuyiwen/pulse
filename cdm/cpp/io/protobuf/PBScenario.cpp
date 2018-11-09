@@ -277,7 +277,11 @@ void PBScenario::Serialize(const cdm::ScenarioData& src, SEScenario& dst)
     PBScenario::Load(src.datarequestmanager(), dst.GetDataRequestManager(), dst.m_SubMgr);
 
   for (int i = 0; i < src.anyaction_size(); i++)
-    dst.m_Actions.push_back(PBAction::Load(src.anyaction()[i], dst.m_SubMgr));
+  {
+    SEAction* a = PBAction::Load(src.anyaction()[i], dst.m_SubMgr);
+    if(a != nullptr)
+      dst.m_Actions.push_back(a);
+  }
 }
 
 cdm::ScenarioData* PBScenario::Unload(const SEScenario& src)

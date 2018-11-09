@@ -107,6 +107,7 @@ void CUnitConversionEngine::LoadDefinitionsFlatFile(const std::string &FileName)
   if (! defs.is_open())
   {
     std::cerr << "Could not open " << FileName << std::endl;
+    throw std::runtime_error("Unable to load unit convertion engine data file "+FileName);
   }
   std::string curLine;
   CQuantityTypeDescriptor *qtd = nullptr;
