@@ -9,11 +9,9 @@
 #include "log4cplus/config.hxx"
 
 extern "C"
-JNIEXPORT void JNICALL Java_com_kitware_physiology_utilities_jniBridge_nativeInitialize(JNIEnv *env, jobject obj, jstring wrkDir)
+JNIEXPORT void JNICALL Java_com_kitware_physiology_utilities_jniBridge_nativeInitialize(JNIEnv *env, jobject obj)
 {
-  const char* dir = env->GetStringUTFChars(wrkDir, JNI_FALSE);
-  CUnitConversionEngine::GetEngine().SetWorkingDirectory(dir);
-  env->ReleaseStringUTFChars(wrkDir, dir);
+
 }
 
 extern "C"

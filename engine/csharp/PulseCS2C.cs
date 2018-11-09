@@ -13,7 +13,7 @@ namespace Pulse
     public class PulseCS2C
     {
         [DllImport("PulseC", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
-        public static extern IntPtr Allocate(string logfile);
+        public static extern IntPtr Allocate(string logfile, string data_dir);
 
         [DllImport("PulseC", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
         public static extern void Deallocate(IntPtr pulse);

@@ -27,7 +27,7 @@ namespace HowTo_UseC
             headings.Add("Carina-CarbonDioxide-PartialPressure(mmHg)");
 
             // Instatiate a Pulse engine
-            IntPtr pulse = PulseCS2C.Allocate("pulse.log");
+            IntPtr pulse = PulseCS2C.Allocate("pulse.log",".");
             // Load a state file
             //if(!PulseCS2C.SerializeFromFile(pulse, "./states/Soldier@0s.pba", null, (int)SerializationFormat.ASCII, 0))
             //    Console.WriteLine("Error Initializing Pulse!");

@@ -13,7 +13,7 @@ public:
 
   virtual void                                     Clear();
   virtual void                                     Reset();
-  virtual bool                                     LoadSubstanceDirectory();
+  virtual bool                                     LoadSubstanceDirectory(const std::string& data_dir=".");
 
   virtual const std::vector<SESubstance*>&         GetSubstances() const;
   virtual SESubstance*                             GetSubstance(const std::string& name) const;  

@@ -10,10 +10,9 @@ import com.kitware.physiology.testing.SETestJob;
 
 public class EngineUnitTestDriver implements SETestDriver.Executor
 {
-  
   static
   {
-    jniBridge.initialize(System.getProperty("user.dir"));
+    jniBridge.initialize();
   }
   
   protected long nativeObj;

@@ -18,8 +18,8 @@ class PULSE_DECL PulseEngine : public PhysiologyEngine, public PulseController
   friend class PBPulseState;//friend the serialization class
 public:
 
-  PulseEngine(Logger* logger);
-  PulseEngine(const std::string&);
+  PulseEngine(Logger* logger, const std::string& data_dir=".");
+  PulseEngine(const std::string&, const std::string& data_dir=".");
   virtual ~PulseEngine();
 
   virtual bool SerializeFromFile(const std::string& file, SerializationFormat m);

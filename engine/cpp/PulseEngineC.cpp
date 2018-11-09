@@ -18,6 +18,7 @@
 #include "properties/SEScalarTemperature.h"
 #include "properties/SEScalarTime.h"
 #include "utils/DataTrack.h"
+#include "log4cplus/config.hxx"
 
 #if defined (__clang__)
   #define C_EXPORT
@@ -31,10 +32,10 @@
 #endif
 
 extern "C"
-C_EXPORT PulseEngineC* C_CALL Allocate(const char* logFile)
+C_EXPORT PulseEngineC* C_CALL Allocate(const char* logFile, const char* data_dir=".")
 {
   std::string str(logFile);
-  PulseEngineC *pulseC = new PulseEngineC(str);
+  PulseEngineC *pulseC = new PulseEngineC(str,data_dir);
   return pulseC;
 }
 
@@ -42,6 +43,7 @@ extern "C"
 C_EXPORT void C_CALL Deallocate(PulseEngineC* pulseC)
 {
   SAFE_DELETE(pulseC);
+  log4cplus::deinitialize();
 }
 
 extern "C"
@@ -220,9 +222,9 @@ C_EXPORT bool C_CALL ProcessActions(PulseEngineC* pulseC, const char* actions, i
   return success;
 }
 
-PulseEngineC::PulseEngineC(const std::string& logFile) : SEEventHandler()
+PulseEngineC::PulseEngineC(const std::string& logFile, const std::string& data_dir) : SEEventHandler()
 {// No logger needed for the event handler, at this point
-  eng = std::unique_ptr<PulseEngine>((PulseEngine*)CreatePulseEngine(logFile).release());
+  eng = std::unique_ptr<PulseEngine>((PulseEngine*)CreatePulseEngine(logFile,data_dir).release());
   eng->GetLogger()->SetForward(this);
   eng->GetLogger()->LogToConsole(false);
 }

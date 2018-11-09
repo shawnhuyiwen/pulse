@@ -48,24 +48,24 @@
 #include "io/protobuf/PBPulseState.h"
 #include <memory>
 
-PULSE_DECL std::unique_ptr<PhysiologyEngine> CreatePulseEngine(const std::string& logfile)
+PULSE_DECL std::unique_ptr<PhysiologyEngine> CreatePulseEngine(const std::string& logfile, const std::string& data_dir)
 {
-  return std::unique_ptr<PulseEngine>(new PulseEngine(logfile));
+  return std::unique_ptr<PulseEngine>(new PulseEngine(logfile, data_dir));
 }
 
-PULSE_DECL std::unique_ptr<PhysiologyEngine> CreatePulseEngine(Logger* logger)
+PULSE_DECL std::unique_ptr<PhysiologyEngine> CreatePulseEngine(Logger* logger, const std::string& data_dir)
 {
-  return std::unique_ptr<PulseEngine>(new PulseEngine(logger));
+  return std::unique_ptr<PulseEngine>(new PulseEngine(logger, data_dir));
 }
 
-PulseEngine::PulseEngine(Logger* logger) : PulseController(logger)
+PulseEngine::PulseEngine(Logger* logger, const std::string& data_dir) : PulseController(logger, data_dir)
 {
   m_State = EngineState::NotReady;
   m_EngineTrack = new SEEngineTracker(*this);
   m_DataTrack = &m_EngineTrack->GetDataTrack();
 }
 
-PulseEngine::PulseEngine(const std::string& logFileName) : PulseController(logFileName)
+PulseEngine::PulseEngine(const std::string& logFileName, const std::string& data_dir) : PulseController(logFileName, data_dir)
 {
   m_State = EngineState::NotReady;
   m_EngineTrack = new SEEngineTracker(*this);

@@ -12,7 +12,7 @@
 class PulseEngineC : public LoggerForward, public SEEventHandler
 {
 public:
-  PulseEngineC(const std::string& logFile);
+  PulseEngineC(const std::string& logFile, const std::string& data_dir);
   ~PulseEngineC();
 
   void ForwardDebug(const std::string&  msg, const std::string&  origin);

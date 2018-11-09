@@ -714,9 +714,9 @@ void PulseSubstances::InitializeLiquidCompartmentNonGases()
   SetSubstanceMolarity(*m_urea, tissue, molarity1);
 }
 
-bool PulseSubstances::LoadSubstanceDirectory()
+bool PulseSubstances::LoadSubstanceDirectory(const std::string& data_dir)
 {
-  if (!SESubstanceManager::LoadSubstanceDirectory())
+  if (!SESubstanceManager::LoadSubstanceDirectory(data_dir))
     return false;
 
   m_O2 = GetSubstance("Oxygen");

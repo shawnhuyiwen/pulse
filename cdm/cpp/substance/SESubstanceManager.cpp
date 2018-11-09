@@ -238,7 +238,7 @@ void SESubstanceManager::RemoveActiveCompounds(const std::vector<SESubstanceComp
     RemoveActiveCompound(*c);
 }
 
-bool SESubstanceManager::LoadSubstanceDirectory()
+bool SESubstanceManager::LoadSubstanceDirectory(const std::string& data_dir)
 {
   bool succeed = true;
   Clear();
@@ -247,14 +247,13 @@ bool SESubstanceManager::LoadSubstanceDirectory()
   DIR *cdir;
   struct dirent *ent;
 
-  std::string workingDirectory = GetCurrentWorkingDirectory();
-
 #if defined(_WIN32)
-  sdir = opendir("./substances/");
-  cdir = opendir("./substances/compounds");
+  sdir = opendir(std::string(data_dir + "/substances/").c_str());
+  cdir = opendir(std::string(data_dir + "/substances/compounds/").c_str());
 #else
-  sdir = opendir(std::string(workingDirectory + std::string("/substances/")).c_str());
-  cdir = opendir(std::string(workingDirectory + std::string("/substances/compounds/")).c_str());
+  // Find the absolute dir?
+  sdir = opendir(std::string(data_dir + "/substances/").c_str());
+  cdir = opendir(std::string(data_dir + "/substances/compounds/").c_str());
 #endif
 
   if (sdir != nullptr)
@@ -262,7 +261,7 @@ bool SESubstanceManager::LoadSubstanceDirectory()
     while ((ent = readdir(sdir)) != nullptr)
     {
       ss.str("");
-      ss << workingDirectory << "/substances/" << ent->d_name;
+      ss << data_dir << "/substances/" << ent->d_name;
       if (!IsDirectory(ent) && strlen(ent->d_name) > 2)
       {
         try
@@ -302,7 +301,7 @@ bool SESubstanceManager::LoadSubstanceDirectory()
     while ((ent = readdir(cdir)) != nullptr)
     {
       ss.str("");
-      ss << workingDirectory << "/substances/compounds/" << ent->d_name;
+      ss << data_dir << "/substances/compounds/" << ent->d_name;
       if (!IsDirectory(ent) && strlen(ent->d_name) > 2)
       {
         try
