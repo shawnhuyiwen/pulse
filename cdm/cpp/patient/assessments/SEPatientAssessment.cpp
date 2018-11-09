@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "patient/assessments/SEPatientAssessment.h"
-#include "bind/cdm/PatientAssessments.pb.h"
 
 SEPatientAssessment::SEPatientAssessment(Logger* logger) : Loggable(logger)
 {

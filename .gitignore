@@ -7,11 +7,27 @@
 # The IntelliJ build dir
 /.idea/out
 
-# This is for the C# how to
-/sdk/howto/csharp/.vs
-/sdk/howto/csharp/bin
-/sdk/howto/csharp/obj
-/sdk/howto/csharp/HowToCSharp.csproj.user
-/sdk/howto/csharp/HowToCSharp.sdf
-sdk/howto/csharp/*.db
-sdk/howto/csharp/*.opendb
+# This is for the C# projects
+/engine/csharp/.vs
+/engine/csharp/bin
+/engine/csharp/obj
+/engine/csharp/HowToCSharp.csproj.user
+/engine/csharp/HowToCSharp.sdf
+/engine/csharp/*.db
+/engine/csharp/*.opendb
+
+/sdk/howto/csharp/clr/.vs
+/sdk/howto/csharp/clr/bin
+/sdk/howto/csharp/clr/obj
+/sdk/howto/csharp/clr/HowToCSharp.csproj.user
+/sdk/howto/csharp/clr/HowToCSharp.sdf
+/sdk/howto/csharp/clr/*.db
+/sdk/howto/csharp/clr/*.opendb
+
+/sdk/howto/csharp/c/.vs
+/sdk/howto/csharp/c/bin
+/sdk/howto/csharp/c/obj
+/sdk/howto/csharp/c/HowToCSharp.csproj.user
+/sdk/howto/csharp/c/HowToCSharp.sdf
+/sdk/howto/csharp/c/*.db
+/sdk/howto/csharp/c/*.opendb

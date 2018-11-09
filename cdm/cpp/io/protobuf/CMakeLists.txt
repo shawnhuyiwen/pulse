@@ -22,6 +22,7 @@ set( IO_PB_CDM_FILES ${_cur_dir}/PBUtils.h
                      ${_cur_dir}/PBElectroCardioGramEnums.cpp
                      ${_cur_dir}/PBEngine.h
                      ${_cur_dir}/PBEngine.cpp
+                     ${_cur_dir}/PBEngineEnums.cpp
                      ${_cur_dir}/PBEnums.cpp
                      ${_cur_dir}/PBEnvironment.h
                      ${_cur_dir}/PBEnvironment.cpp
@@ -54,7 +55,6 @@ set( IO_PB_CDM_FILES ${_cur_dir}/PBUtils.h
                      ${_cur_dir}/PBProperties.cpp
                      ${_cur_dir}/PBScenario.h
                      ${_cur_dir}/PBScenario.cpp
-                     ${_cur_dir}/PBScenarioEnums.cpp
                      ${_cur_dir}/PBSubstance.h
                      ${_cur_dir}/PBSubstance.cpp
                      ${_cur_dir}/PBSubstanceEnums.cpp

@@ -25,19 +25,19 @@ void SESubstanceCompound::Clear()
   m_cComponents.clear();
 }
 
-bool SESubstanceCompound::SerializeToString(std::string& output, SerializationMode m) const
+bool SESubstanceCompound::SerializeToString(std::string& output, SerializationFormat m) const
 {
   return PBSubstance::SerializeToString(*this, output, m);
 }
-bool SESubstanceCompound::SerializeToFile(const std::string& filename, SerializationMode m) const
+bool SESubstanceCompound::SerializeToFile(const std::string& filename, SerializationFormat m) const
 {
   return PBSubstance::SerializeToFile(*this, filename, m);
 }
-bool SESubstanceCompound::SerializeFromString(const std::string& src, const SESubstanceManager& subMgr, SerializationMode m)
+bool SESubstanceCompound::SerializeFromString(const std::string& src, const SESubstanceManager& subMgr, SerializationFormat m)
 {
   return PBSubstance::SerializeFromString(src, *this, subMgr, m);
 }
-bool SESubstanceCompound::SerializeFromFile(const std::string& filename, const SESubstanceManager& subMgr, SerializationMode m)
+bool SESubstanceCompound::SerializeFromFile(const std::string& filename, const SESubstanceManager& subMgr, SerializationFormat m)
 {
   return PBSubstance::SerializeFromFile(filename, *this, subMgr, m);
 }

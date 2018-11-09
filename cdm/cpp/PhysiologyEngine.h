@@ -6,6 +6,7 @@
 class SEEventHandler;
 class SEAdvanceHandler;
 class SEPatient;
+class SEPatientConfiguration;
 class SEPatientAssessment;
 
 class SECondition;
@@ -62,14 +63,14 @@ public:
   /// Engine will be in a cleared state if this method fails.
   /// Note the provided configuration will overwrite any configuration options in the state with its contents (Use with caution!)
   //--------------------------------------------------------------------------------------------------
-  virtual bool SerializeFromFile(const std::string& filename, SerializationMode m=ASCII, const SEScalarTime* simTime=nullptr, const SEEngineConfiguration* config = nullptr) = 0;
+  virtual bool SerializeFromFile(const std::string& filename, SerializationFormat m, const SEScalarTime* simTime=nullptr, const SEEngineConfiguration* config = nullptr) = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Save the current state of the engine to provided filename.
   /// Engine will be in a cleared state if this method fails.
   //--------------------------------------------------------------------------------------------------
-  virtual bool SerializeToFile(const std::string& filename="engine.state", SerializationMode m=ASCII) const = 0;
+  virtual bool SerializeToFile(const std::string& filename, SerializationFormat m) const = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -82,7 +83,7 @@ public:
   /// Engine will be in a cleared state if this method fails.
   /// Note the provided configuration will overwrite any configuration options in the state with its contents (Use with caution!)
   //--------------------------------------------------------------------------------------------------
-  virtual bool SerializeFromString(const std::string& state, SerializationMode m=BINARY, const SEScalarTime* simTime = nullptr, const SEEngineConfiguration* config = nullptr) = 0;
+  virtual bool SerializeFromString(const std::string& state, SerializationFormat m, const SEScalarTime* simTime = nullptr, const SEEngineConfiguration* config = nullptr) = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -91,7 +92,7 @@ public:
   /// Note that the bytes are binary, not text; we only use the string class as a convenient container.
   /// Engine will be in a cleared state if this method fails.
   //--------------------------------------------------------------------------------------------------
-  virtual bool SerializeToString(std::string& state, SerializationMode m=BINARY) const = 0;
+  virtual bool SerializeToString(std::string& state, SerializationFormat m) const = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -102,7 +103,7 @@ public:
   /// Some combinations of patients and conditions may prevent the engine from stabilizing
   ///
   //--------------------------------------------------------------------------------------------------
-  virtual bool InitializeEngine(const std::string& patientFile, const std::vector<const SECondition*>* conditions = nullptr, const SEEngineConfiguration* config = nullptr) = 0;
+  virtual bool InitializeEngine(const std::string& patient_configuration, SerializationFormat m, const SEEngineConfiguration* config = nullptr) = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -112,7 +113,7 @@ public:
   /// Some combinations of patients and conditions may prevent the engine from stabilizing
   ///
   //--------------------------------------------------------------------------------------------------
-  virtual bool InitializeEngine(const SEPatient& patient, const std::vector<const SECondition*>* conditions = nullptr, const SEEngineConfiguration* config = nullptr) = 0;
+  virtual bool InitializeEngine(const SEPatientConfiguration& patient_configuration, const SEEngineConfiguration* config = nullptr) = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief

@@ -2,10 +2,10 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
+#include "PhysiologyEngine.h"
 #include "engine/SETimedStabilization.h"
 #include "engine/SEEngineTracker.h"
-#include "PhysiologyEngine.h"
-#include "scenario/SECondition.h"
+#include "engine/SECondition.h"
 #include "utils/TimingProfile.h"
 #include "properties/SEScalarTime.h"
 #include "io/protobuf/PBEngine.h"
@@ -143,19 +143,19 @@ void SETimedStabilization::Clear()
   DELETE_MAP_SECOND(m_ConditionTimes);
 }
 
-bool SETimedStabilization::SerializeToString(std::string& output, SerializationMode m) const
+bool SETimedStabilization::SerializeToString(std::string& output, SerializationFormat m) const
 {
   return PBEngine::SerializeToString(*this, output, m);
 }
-bool SETimedStabilization::SerializeToFile(const std::string& filename, SerializationMode m) const
+bool SETimedStabilization::SerializeToFile(const std::string& filename, SerializationFormat m) const
 {
   return PBEngine::SerializeToFile(*this, filename, m);
 }
-bool SETimedStabilization::SerializeFromString(const std::string& src, SerializationMode m)
+bool SETimedStabilization::SerializeFromString(const std::string& src, SerializationFormat m)
 {
   return PBEngine::SerializeFromString(src, *this, m);
 }
-bool SETimedStabilization::SerializeFromFile(const std::string& filename, SerializationMode m)
+bool SETimedStabilization::SerializeFromFile(const std::string& filename, SerializationFormat m)
 {
   return PBEngine::SerializeFromFile(filename, *this, m);
 }

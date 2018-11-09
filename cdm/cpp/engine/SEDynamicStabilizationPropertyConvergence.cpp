@@ -3,9 +3,9 @@
 
 #include "stdafx.h"
 #include "engine/SEDynamicStabilizationPropertyConvergence.h"
-#include "properties/SEScalar.h"
-#include "scenario/SEDataRequest.h"
+#include "engine/SEDataRequest.h"
 #include "engine/SEEngineTracker.h"
+#include "properties/SEScalar.h"
 
 SEDynamicStabilizationPropertyConvergence::SEDynamicStabilizationPropertyConvergence(SEDataRequest& dr, Logger* logger) : Loggable(logger), m_DataRequest(dr)
 {

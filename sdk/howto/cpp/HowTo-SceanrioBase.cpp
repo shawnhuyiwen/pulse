@@ -6,9 +6,9 @@
 // Include the various types you will be using in your code
 #include "engine/SEEngineTracker.h"
 #include "scenario/SEScenario.h"
-#include "scenario/SEScenarioInitialParameters.h"
-#include "scenario/SEAdvanceTime.h"
-#include "scenario/SEDataRequestManager.h"
+#include "engine/SEPatientConfiguration.h"
+#include "engine/SEAdvanceTime.h"
+#include "engine/SEDataRequestManager.h"
 #include "properties/SEScalarTime.h"
 
 //--------------------------------------------------------------------------------------------------
@@ -37,30 +37,12 @@ void HowToScenarioBase()
       return;
     }
   }
-  else if (sce.HasInitialParameters())
+  else if (sce.HasPatientConfiguration())
   {
-    SEScenarioInitialParameters& sip = sce.GetInitialParameters();
-    if (sip.HasPatientFile())
+    if (!pe->InitializeEngine(sce.GetPatientConfiguration()))
     {
-      std::vector<const SECondition*> conditions;
-      for (SECondition* c : sip.GetConditions())
-        conditions.push_back(c);// Copy to const
-      if (!pe->InitializeEngine(sip.GetPatientFile(), &conditions))
-      {
-        pe->GetLogger()->Error("Could not load state, check the error");
-        return;
-      }
-    }
-    else if (sip.HasPatient())
-    {
-      std::vector<const SECondition*> conditions;
-      for (SECondition* c : sip.GetConditions())
-        conditions.push_back(c);// Copy to const
-      if (!pe->InitializeEngine(sip.GetPatient(), &conditions))
-      {
-        pe->GetLogger()->Error("Could not load state, check the error");
-        return;
-      }
+      pe->GetLogger()->Error("Could not load patient configuration, check the error");
+      return;
     }
   }
 

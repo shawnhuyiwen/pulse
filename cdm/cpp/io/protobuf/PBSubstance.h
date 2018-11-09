@@ -24,10 +24,10 @@ public:
   static void Serialize(const cdm::SubstanceData& src, SESubstance& dst);
   static void Serialize(const SESubstance& src, cdm::SubstanceData& dst);
 
-  static bool SerializeToString(const SESubstance& src, std::string& output, SerializationMode m);
-  static bool SerializeToFile(const SESubstance& src, const std::string& filename, SerializationMode m);
-  static bool SerializeFromString(const std::string& src, SESubstance& dst, SerializationMode m);
-  static bool SerializeFromFile(const std::string& filename, SESubstance& dst, SerializationMode m);
+  static bool SerializeToString(const SESubstance& src, std::string& output, SerializationFormat m);
+  static bool SerializeToFile(const SESubstance& src, const std::string& filename, SerializationFormat m);
+  static bool SerializeFromString(const std::string& src, SESubstance& dst, SerializationFormat m);
+  static bool SerializeFromFile(const std::string& filename, SESubstance& dst, SerializationFormat m);
 
   static void Load(const cdm::SubstanceAerosolizationData& src, SESubstanceAerosolization& dst);
   static cdm::SubstanceAerosolizationData* Unload(const SESubstanceAerosolization& src);
@@ -44,10 +44,10 @@ public:
   static void Serialize(const cdm::SubstanceCompoundData& src, SESubstanceCompound& dst, const SESubstanceManager& subMgr);
   static void Serialize(const SESubstanceCompound& src, cdm::SubstanceCompoundData& dst);
 
-  static bool SerializeToString(const SESubstanceCompound& src, std::string& output, SerializationMode m);
-  static bool SerializeToFile(const SESubstanceCompound& src, const std::string& filename, SerializationMode m);
-  static bool SerializeFromString(const std::string& src, SESubstanceCompound& dst, const SESubstanceManager& subMgr, SerializationMode m);
-  static bool SerializeFromFile(const std::string& filename, SESubstanceCompound& dst, const SESubstanceManager& subMgr, SerializationMode m);
+  static bool SerializeToString(const SESubstanceCompound& src, std::string& output, SerializationFormat m);
+  static bool SerializeToFile(const SESubstanceCompound& src, const std::string& filename, SerializationFormat m);
+  static bool SerializeFromString(const std::string& src, SESubstanceCompound& dst, const SESubstanceManager& subMgr, SerializationFormat m);
+  static bool SerializeFromFile(const std::string& filename, SESubstanceCompound& dst, const SESubstanceManager& subMgr, SerializationFormat m);
 
   static void Load(const cdm::SubstanceConcentrationData& src, SESubstanceConcentration& dst);
   static cdm::SubstanceConcentrationData* Unload(const SESubstanceConcentration& src);

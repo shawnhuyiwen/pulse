@@ -94,19 +94,19 @@ void SEAnesthesiaMachine::Merge(const SEAnesthesiaMachine& from)
   MERGE_CHILD(OxygenBottleTwo);
 }
 
-bool SEAnesthesiaMachine::SerializeToString(std::string& output, SerializationMode m) const
+bool SEAnesthesiaMachine::SerializeToString(std::string& output, SerializationFormat m) const
 {
   return PBAnesthesiaMachine::SerializeToString(*this, output, m);
 }
-bool SEAnesthesiaMachine::SerializeToFile(const std::string& filename, SerializationMode m) const
+bool SEAnesthesiaMachine::SerializeToFile(const std::string& filename, SerializationFormat m) const
 {
   return PBAnesthesiaMachine::SerializeToFile(*this, filename, m);
 }
-bool SEAnesthesiaMachine::SerializeFromString(const std::string& src, SerializationMode m)
+bool SEAnesthesiaMachine::SerializeFromString(const std::string& src, SerializationFormat m)
 {
   return PBAnesthesiaMachine::SerializeFromString(src, *this, m);
 }
-bool SEAnesthesiaMachine::SerializeFromFile(const std::string& filename, SerializationMode m)
+bool SEAnesthesiaMachine::SerializeFromFile(const std::string& filename, SerializationFormat m)
 {
   return PBAnesthesiaMachine::SerializeFromFile(filename, *this, m);
 }

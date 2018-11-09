@@ -1,6 +1,6 @@
 Name: "BasicStandard"
 Description: "Basic scenario measuring patient vitals with no insults or interventions"
-EngineStateFile :"./states/StandardMale@0s.pba" 
+StartType { EngineStateFile :"./states/StandardMale@0s.pba" }
 
 # Base system data required for all scenario verification
 DataRequestManager
@@ -65,7 +65,7 @@ DataRequestManager
   # Specific to this scenario
   DataRequest { Category:Substance  SubstanceName:"Epinephrine"    PropertyName:"SystemicMassCleared" Unit:"ug"   DecimalFormat{Precision:8} }		
 
-  DataRequest { Category:Physiology PropertyName:"ChymeAbsorbtionRate"          Unit:"mL/min" DecimalFormat{Precision:2} }
+  DataRequest { Category:Physiology PropertyName:"ChymeAbsorptionRate"          Unit:"mL/min" DecimalFormat{Precision:2} }
   DataRequest { Category:Physiology PropertyName:"StomachContents-Carbohydrate" Unit:"g"      DecimalFormat{Precision:2} }
   DataRequest { Category:Physiology PropertyName:"StomachContents-Fat"          Unit:"g"      DecimalFormat{Precision:2} }
   DataRequest { Category:Physiology PropertyName:"StomachContents-Protein"      Unit:"g"      DecimalFormat{Precision:2} }

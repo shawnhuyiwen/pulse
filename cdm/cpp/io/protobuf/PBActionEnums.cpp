@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 #include "bind/cdm/ActionEnums.pb.h"
-#include "scenario/SESerializeState.h"
+#include "engine/SESerializeState.h"
 
 const std::string& eSerialization_Type_Name(eSerialization_Type m)
 {

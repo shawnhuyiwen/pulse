@@ -3,13 +3,12 @@
 
 #include "stdafx.h"
 #include "scenario/SEScenarioExec.h"
-#include "scenario/SEAction.h"
-#include "scenario/SECondition.h"
 #include "scenario/SEScenario.h"
-#include "scenario/SEScenarioInitialParameters.h"
-#include "scenario/SEAdvanceTime.h"
-#include "scenario/SEDataRequestManager.h"
-#include "bind/cdm/Scenario.pb.h"
+#include "engine/SEAction.h"
+#include "engine/SECondition.h"
+#include "engine/SEPatientConfiguration.h"
+#include "engine/SEAdvanceTime.h"
+#include "engine/SEDataRequestManager.h"
 #include "PhysiologyEngine.h"
 #include "engine/SEEngineTracker.h"
 #include "engine/SEEngineConfiguration.h"
@@ -87,41 +86,16 @@ bool SEScenarioExec::Execute(const SEScenario& scenario, const std::string& resu
       if (!m_Engine.GetEngineTracker()->GetDataRequestManager().HasResultsFilename())
         m_Engine.GetEngineTracker()->GetDataRequestManager().SetResultsFilename(resultsFile);
     }
-    else if (scenario.HasInitialParameters())
+    else if (scenario.HasPatientConfiguration())
     {
       // Make a copy of the data requests, note this clears out data requests from the engine
       m_Engine.GetEngineTracker()->GetDataRequestManager().Copy(scenario.GetDataRequestManager(), m_Engine.GetSubstanceManager());
       if (!m_Engine.GetEngineTracker()->GetDataRequestManager().HasResultsFilename())
         m_Engine.GetEngineTracker()->GetDataRequestManager().SetResultsFilename(resultsFile);
 
-      const SEScenarioInitialParameters* params = scenario.GetInitialParameters();
-      // Do we have any conditions
-      std::vector<const SECondition*> conditions;
-      for (SECondition* c : params->GetConditions())
-        conditions.push_back(c);
-
-      if (params->HasPatientFile())
+      if (!m_Engine.InitializeEngine(*scenario.GetPatientConfiguration()))
       {
-        // Set up the patient
-        std::string pFile = "./patients/";
-        pFile += params->GetPatientFile();
-        if (!m_Engine.InitializeEngine(pFile.c_str(), &conditions, m_EngineConfiguration))
-        {
-          Error("Unable to initialize engine");
-          return false;
-        }
-      }
-      else if (params->HasPatient())
-      {
-        if (!m_Engine.InitializeEngine(*params->GetPatient(), &conditions, m_EngineConfiguration))
-        {
-          Error("Unable to initialize engine");
-          return false;
-        }
-      }
-      else
-      {
-        Error("No patient provided");
+        Error("Unable to initialize engine");
         return false;
       }
     }

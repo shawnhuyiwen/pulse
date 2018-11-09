@@ -7,6 +7,7 @@
 #include "utils/taskrunner/TaskRunner.h"
 #include "utils/FileUtils.h"
 #include "utils/TimingProfile.h"
+#include "engine/SEPatientConfiguration.h"
 #include "scenario/SEScenarioExec.h"
 #include "properties/SEScalarTime.h"
 #include <iomanip>
@@ -21,7 +22,9 @@ public:
 
   virtual void Run() override
   {
-    m_pEngine->InitializeEngine("StandardMale.pba");
+    SEPatientConfiguration pc(m_pEngine->GetLogger());
+    pc.SetPatientFile("StandardMale.pba");
+    m_pEngine->InitializeEngine(pc);
 
     double dT_s = m_pEngine->GetTimeStep(TimeUnit::s);
 

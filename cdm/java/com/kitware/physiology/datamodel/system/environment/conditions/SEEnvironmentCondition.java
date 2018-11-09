@@ -7,7 +7,7 @@ import org.jfree.util.Log;
 
 import com.kitware.physiology.cdm.EnvironmentConditions.AnyEnvironmentConditionData;
 import com.kitware.physiology.cdm.EnvironmentConditions.EnvironmentConditionData;
-import com.kitware.physiology.cdm.Scenario.AnyConditionData;
+import com.kitware.physiology.cdm.Engine.AnyConditionData;
 
 import com.kitware.physiology.datamodel.conditions.SECondition;
 import com.kitware.physiology.datamodel.substance.SESubstanceManager;

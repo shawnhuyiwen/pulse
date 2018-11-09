@@ -6,7 +6,7 @@ package com.kitware.physiology.datamodel.actions;
 import java.io.Serializable;
 
 import com.kitware.physiology.cdm.Actions.ActionData;
-import com.kitware.physiology.cdm.Scenario.AnyActionData;
+import com.kitware.physiology.cdm.Engine.AnyActionData;
 
 import com.kitware.physiology.datamodel.patient.actions.SEPatientAction;
 import com.kitware.physiology.datamodel.properties.SEScalarTime;

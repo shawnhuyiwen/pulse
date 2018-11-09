@@ -5,7 +5,7 @@
 class SEAction;
 class SECondition;
 class SEDataRequestManager;
-class SEScenarioInitialParameters;
+class SEPatientConfiguration;
 class SESubstanceManager;
 
 class CDM_DECL SEScenario : public Loggable
@@ -18,10 +18,10 @@ public:
   
   virtual void Clear(); //clear memory
 
-  bool SerializeToString(std::string& output, SerializationMode m) const;
-  bool SerializeToFile(const std::string& filename, SerializationMode m) const;
-  bool SerializeFromString(const std::string& src, SerializationMode m);
-  bool SerializeFromFile(const std::string& filename, SerializationMode m);
+  bool SerializeToString(std::string& output, SerializationFormat m) const;
+  bool SerializeToFile(const std::string& filename, SerializationFormat m) const;
+  bool SerializeFromString(const std::string& src, SerializationFormat m);
+  bool SerializeFromFile(const std::string& filename, SerializationFormat m);
 
   bool IsValid() const;
 
@@ -40,10 +40,10 @@ public:
   virtual bool HasEngineStateFile() const;
   virtual void InvalidateEngineStateFile();
   
-  virtual SEScenarioInitialParameters& GetInitialParameters();
-  virtual const SEScenarioInitialParameters* GetInitialParameters() const;
-  virtual bool HasInitialParameters() const;
-  virtual void InvalidateInitialParameters();
+  virtual SEPatientConfiguration& GetPatientConfiguration();
+  virtual const SEPatientConfiguration* GetPatientConfiguration() const;
+  virtual bool HasPatientConfiguration() const;
+  virtual void InvalidatePatientConfiguration();
 
   virtual void AddAction(const SEAction& action);
   virtual const std::vector<const SEAction*>& GetActions() const;
@@ -56,7 +56,7 @@ protected:
   std::string                                 m_Name;
   std::string                                 m_Description;
   std::string                                 m_EngineStateFile;
-  SEScenarioInitialParameters*                m_InitialParameters;
+  SEPatientConfiguration*                     m_PatientConfiguration;
   SEDataRequestManager*                       m_DataRequestMgr;
   std::vector<const SEAction*>                m_Actions;
 

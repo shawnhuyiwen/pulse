@@ -185,13 +185,13 @@ void PBPatient::Copy(const SEPatient& src, SEPatient& dst)
   PBPatient::Serialize(data, dst);
 }
 
-bool PBPatient::SerializeToString(const SEPatient& src, std::string& output, SerializationMode m)
+bool PBPatient::SerializeToString(const SEPatient& src, std::string& output, SerializationFormat m)
 {
   cdm::PatientData data;
   PBPatient::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m);
 }
-bool PBPatient::SerializeToFile(const SEPatient& src, const std::string& filename, SerializationMode m)
+bool PBPatient::SerializeToFile(const SEPatient& src, const std::string& filename, SerializationFormat m)
 {
   cdm::PatientData data;
   PBPatient::Serialize(src, data);
@@ -200,7 +200,7 @@ bool PBPatient::SerializeToFile(const SEPatient& src, const std::string& filenam
   return WriteFile(content, filename, m);
 }
 
-bool PBPatient::SerializeFromString(const std::string& src, SEPatient& dst, SerializationMode m)
+bool PBPatient::SerializeFromString(const std::string& src, SEPatient& dst, SerializationFormat m)
 {
   cdm::PatientData data;
   if (!PBUtils::SerializeFromString(src, data, m))
@@ -208,7 +208,7 @@ bool PBPatient::SerializeFromString(const std::string& src, SEPatient& dst, Seri
   PBPatient::Load(data, dst);
   return true;
 }
-bool PBPatient::SerializeFromFile(const std::string& filename, SEPatient& dst, SerializationMode m)
+bool PBPatient::SerializeFromFile(const std::string& filename, SEPatient& dst, SerializationFormat m)
 {
   std::string content = ReadFile(filename, m);
   if (content.empty())

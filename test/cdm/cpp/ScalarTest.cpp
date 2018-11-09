@@ -24,7 +24,7 @@
 #include "properties/SEScalarVolumePerTime.h"
 
 #include "utils/DataTrack.h"
-#include "scenario/SEDecimalFormat.h"
+#include "engine/SEDecimalFormat.h"
 
 void CommonDataModelTest::ScalarTest(const std::string& sOutputDirectory)
 {

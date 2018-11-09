@@ -5,17 +5,17 @@ package com.kitware.physiology.pulse.engine;
 import java.util.*;
 
 import com.google.protobuf.TextFormat.ParseException;
-import com.kitware.physiology.cdm.AnesthesiaMachine.AnesthesiaMachineData;
 import com.kitware.physiology.cdm.AnesthesiaMachineEnums.eAnesthesiaMachine;
-import com.kitware.physiology.cdm.Patient.PatientData;
 import com.kitware.physiology.cdm.PatientEnums.ePatient;
-import com.kitware.physiology.cdm.ScenarioEnums.eDataRequest.*;
+import com.kitware.physiology.cdm.EngineEnums.eDataRequest.*;
 
 import com.kitware.physiology.datamodel.conditions.SECondition;
 import com.kitware.physiology.datamodel.datarequests.SEDataRequest;
 import com.kitware.physiology.datamodel.datarequests.SEDataRequestManager;
+import com.kitware.physiology.datamodel.engine.SEPatientConfiguration;
 import com.kitware.physiology.datamodel.patient.SEPatient;
 import com.kitware.physiology.datamodel.patient.actions.SEHemorrhage;
+import com.kitware.physiology.datamodel.patient.actions.SESubstanceCompoundInfusion;
 import com.kitware.physiology.datamodel.patient.assessments.SECompleteBloodCount;
 import com.kitware.physiology.datamodel.patient.conditions.SEChronicAnemia;
 import com.kitware.physiology.datamodel.properties.CommonUnits.FrequencyUnit;
@@ -26,6 +26,7 @@ import com.kitware.physiology.datamodel.properties.CommonUnits.TimeUnit;
 import com.kitware.physiology.datamodel.properties.CommonUnits.VolumePerTimeUnit;
 import com.kitware.physiology.datamodel.properties.CommonUnits.VolumeUnit;
 import com.kitware.physiology.datamodel.properties.SEScalarTime;
+import com.kitware.physiology.datamodel.substance.SESubstanceCompound;
 import com.kitware.physiology.datamodel.utilities.SEEventHandler;
 import com.kitware.physiology.utilities.Log;
 import com.kitware.physiology.utilities.LogListener;
@@ -172,6 +173,11 @@ public class HowTo_EngineUse
       patient.getSystolicArterialPressureBaseline().setValue(114.,PressureUnit.mmHg);
       patient.getRespirationRateBaseline().setValue(16,FrequencyUnit.Per_min);
       
+      SEPatientConfiguration patient_configuration = new SEPatientConfiguration();
+      patient_configuration.setPatient(patient);
+      // Optionally add conditions to the patient_configuration
+      
+      
       // If I wanted to make set a condition on the patient
       // Note that while you can have multiple conditions on a patient
       // It is more than likely not tested and the engine may or may not converge
@@ -181,14 +187,18 @@ public class HowTo_EngineUse
       conditions.add(anemia);
       
       // Allocate an engine
-      pe.initializeEngine("./Scenarios/HowToDynamicEngine.log", patient, null/*optionally, pass in our conditions list*/, dataRequests);
+      pe.initializeEngine("./Scenarios/HowToDynamicEngine.log", patient_configuration, dataRequests);
        // This method will block while the engine stabilizes to meet the defined patient parameters
        break;
      }
    case PatientFile:
      {
+    	 SEPatientConfiguration patient_configuration = new SEPatientConfiguration();
+       patient_configuration.setPatientFile("./patient/StandardMale.pba");
+       // Optionally add conditions to the patient_configuration
+       
        // Allocate an engine
-       pe.initializeEngine("./Scenarios/HowToDynamicEngine.log", "./patient/StandardMale.pba", null/*optionally, pass in a conditions list*/, dataRequests);       
+       pe.initializeEngine("./Scenarios/HowToDynamicEngine.log", patient_configuration, dataRequests);       
        // This method will block while the engine stabilizes to meet the defined patient parameters
        break;
      }
@@ -257,10 +267,14 @@ public class HowTo_EngineUse
    SEHemorrhage h = new SEHemorrhage();
    h.setCompartment(PulseCompartments.Vascular.RightLeg);
    h.getRate().setValue(200,VolumePerTimeUnit.mL_Per_min);// Change this to 750 if you want to see how engine failures are handled!!
-   pe.processAction(h);
+   if(!pe.processAction(h))
+   {
+     Log.error("Engine was unable to process requested actions");
+     return;
+   }
    // Note CDM is not updated after this call, you have to advance some time
 
-   for(int i=0; i<10; i++)
+   for(int i=1; i<=2; i++)
    {
   	 time.setValue(i,TimeUnit.min);
 	   if(!pe.advanceTime(time)) // Simulate one second
@@ -273,6 +287,55 @@ public class HowTo_EngineUse
 	   Log.info("Respiration Rate " + pe.respiratory.getRespirationRate());
 	   Log.info("Total Lung Volume " + pe.respiratory.getTotalLungVolume());     
 	   Log.info("Blood Volume " + pe.cardiovascular.getBloodVolume());  
+   }
+   
+   // Stop the hemorrhage
+   h.getRate().setValue(0,VolumePerTimeUnit.mL_Per_min);
+   if(!pe.processAction(h))
+   {
+     Log.error("Engine was unable to process requested actions");
+     return;
+   }
+   
+   for(int i=1; i<=1; i++)
+   {
+     time.setValue(i,TimeUnit.min);
+     if(!pe.advanceTime(time)) // Simulate one second
+     {
+       Log.error("Engine was unable to stay within modeling parameters with requested actions");
+       return;
+     }
+     // Again, the CDM is updated after this call
+     Log.info("Heart Rate " + pe.cardiovascular.getHeartRate());
+     Log.info("Respiration Rate " + pe.respiratory.getRespirationRate());
+     Log.info("Total Lung Volume " + pe.respiratory.getTotalLungVolume());     
+     Log.info("Blood Volume " + pe.cardiovascular.getBloodVolume());  
+   }
+   
+   // Infuse some fluids
+   SESubstanceCompound saline = pe.substanceManager.getCompound("Saline");
+   SESubstanceCompoundInfusion ivFluids= new SESubstanceCompoundInfusion(saline);
+   ivFluids.getBagVolume().setValue(500,VolumeUnit.mL);
+   ivFluids.getRate().setValue(100,VolumePerTimeUnit.mL_Per_min);
+   if(!pe.processAction(ivFluids))
+   {
+     Log.error("Engine was unable to process requested actions");
+     return;
+   }
+   
+   for(int i=1; i<=5; i++)
+   {
+     time.setValue(i,TimeUnit.min);
+     if(!pe.advanceTime(time)) // Simulate one second
+     {
+       Log.error("Engine was unable to stay within modeling parameters with requested actions");
+       return;
+     }
+     // Again, the CDM is updated after this call
+     Log.info("Heart Rate " + pe.cardiovascular.getHeartRate());
+     Log.info("Respiration Rate " + pe.respiratory.getRespirationRate());
+     Log.info("Total Lung Volume " + pe.respiratory.getTotalLungVolume());     
+     Log.info("Blood Volume " + pe.cardiovascular.getBloodVolume());  
    }
      
    // Be nice to your memory and deallocate the native memory associated with this engine if you are done with it

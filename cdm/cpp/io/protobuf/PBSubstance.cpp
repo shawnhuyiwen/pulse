@@ -592,13 +592,13 @@ void PBSubstance::Serialize(const SESubstanceTissuePharmacokinetics& src, cdm::S
     dst.set_allocated_partitioncoefficient(PBProperty::Unload(*src.m_PartitionCoefficient));
 }
 
-bool PBSubstance::SerializeToString(const SESubstance& src, std::string& output, SerializationMode m)
+bool PBSubstance::SerializeToString(const SESubstance& src, std::string& output, SerializationFormat m)
 {
   cdm::SubstanceData data;
   PBSubstance::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m);
 }
-bool PBSubstance::SerializeToFile(const SESubstance& src, const std::string& filename, SerializationMode m)
+bool PBSubstance::SerializeToFile(const SESubstance& src, const std::string& filename, SerializationFormat m)
 {
   cdm::SubstanceData data;
   PBSubstance::Serialize(src, data);
@@ -607,7 +607,7 @@ bool PBSubstance::SerializeToFile(const SESubstance& src, const std::string& fil
   return WriteFile(content, filename, m);
 }
 
-bool PBSubstance::SerializeFromString(const std::string& src, SESubstance& dst, SerializationMode m)
+bool PBSubstance::SerializeFromString(const std::string& src, SESubstance& dst, SerializationFormat m)
 {
   cdm::SubstanceData data;
   if (!PBUtils::SerializeFromString(src, data, m))
@@ -615,7 +615,7 @@ bool PBSubstance::SerializeFromString(const std::string& src, SESubstance& dst, 
   PBSubstance::Load(data, dst);
   return true;
 }
-bool PBSubstance::SerializeFromFile(const std::string& filename, SESubstance& dst, SerializationMode m)
+bool PBSubstance::SerializeFromFile(const std::string& filename, SESubstance& dst, SerializationFormat m)
 {
   std::string content = ReadFile(filename, m);
   if (content.empty())
@@ -623,13 +623,13 @@ bool PBSubstance::SerializeFromFile(const std::string& filename, SESubstance& ds
   return PBSubstance::SerializeFromString(content, dst, m);
 }
 
-bool PBSubstance::SerializeToString(const SESubstanceCompound& src, std::string& output, SerializationMode m)
+bool PBSubstance::SerializeToString(const SESubstanceCompound& src, std::string& output, SerializationFormat m)
 {
   cdm::SubstanceCompoundData data;
   PBSubstance::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m);
 }
-bool PBSubstance::SerializeToFile(const SESubstanceCompound& src, const std::string& filename, SerializationMode m)
+bool PBSubstance::SerializeToFile(const SESubstanceCompound& src, const std::string& filename, SerializationFormat m)
 {
   cdm::SubstanceCompoundData data;
   PBSubstance::Serialize(src, data);
@@ -638,7 +638,7 @@ bool PBSubstance::SerializeToFile(const SESubstanceCompound& src, const std::str
   return WriteFile(content, filename, m);
 }
 
-bool PBSubstance::SerializeFromString(const std::string& src, SESubstanceCompound& dst, const SESubstanceManager& subMgr, SerializationMode m)
+bool PBSubstance::SerializeFromString(const std::string& src, SESubstanceCompound& dst, const SESubstanceManager& subMgr, SerializationFormat m)
 {
   cdm::SubstanceCompoundData data;
   if (!PBUtils::SerializeFromString(src, data, m))
@@ -646,7 +646,7 @@ bool PBSubstance::SerializeFromString(const std::string& src, SESubstanceCompoun
   PBSubstance::Load(data, dst, subMgr);
   return true;
 }
-bool PBSubstance::SerializeFromFile(const std::string& filename, SESubstanceCompound& dst, const SESubstanceManager& subMgr, SerializationMode m)
+bool PBSubstance::SerializeFromFile(const std::string& filename, SESubstanceCompound& dst, const SESubstanceManager& subMgr, SerializationFormat m)
 {
   std::string content = ReadFile(filename, m);
   if (content.empty())

@@ -105,19 +105,19 @@ void SEPatient::Copy(const SEPatient& src)
   PBPatient::Copy(src, *this);
 }
 
-bool SEPatient::SerializeToString(std::string& output, SerializationMode m) const
+bool SEPatient::SerializeToString(std::string& output, SerializationFormat m) const
 {
   return PBPatient::SerializeToString(*this, output, m);
 }
-bool SEPatient::SerializeToFile(const std::string& filename, SerializationMode m) const
+bool SEPatient::SerializeToFile(const std::string& filename, SerializationFormat m) const
 {
   return PBPatient::SerializeToFile(*this, filename, m);
 }
-bool SEPatient::SerializeFromString(const std::string& src, SerializationMode m)
+bool SEPatient::SerializeFromString(const std::string& src, SerializationFormat m)
 {
   return PBPatient::SerializeFromString(src, *this, m);
 }
-bool SEPatient::SerializeFromFile(const std::string& filename, SerializationMode m)
+bool SEPatient::SerializeFromFile(const std::string& filename, SerializationFormat m)
 {
   return PBPatient::SerializeFromFile(filename, *this, m);
 }

@@ -41,7 +41,7 @@ message(STATUS "Eigen is here : ${eigen_SRC}" )
 ###################################################
 
 message( STATUS "External project - log4cplus" )
-set(log4cplus_SRC "${CMAKE_BINARY_DIR}/log4cplus/src/log4cplus")
+set(log4cplus_SRC "${CMAKE_BINARY_DIR}/log4cplus/src/log4cplus" CACHE PATH "Log4cplus Source")
 
 ExternalProject_Add( log4cplus
   PREFIX log4cplus

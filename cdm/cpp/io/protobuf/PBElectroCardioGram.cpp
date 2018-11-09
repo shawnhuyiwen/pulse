@@ -146,13 +146,13 @@ void PBElectroCardioGram::Copy(const SEElectroCardioGramWaveformInterpolator& sr
   PBElectroCardioGram::Serialize(data, dst);
 }
 
-bool PBElectroCardioGram::SerializeToString(const SEElectroCardioGramWaveformInterpolator& src, std::string& output, SerializationMode m)
+bool PBElectroCardioGram::SerializeToString(const SEElectroCardioGramWaveformInterpolator& src, std::string& output, SerializationFormat m)
 {
   cdm::ElectroCardioGramWaveformListData data;
   PBElectroCardioGram::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m);
 }
-bool PBElectroCardioGram::SerializeToFile(const SEElectroCardioGramWaveformInterpolator& src, const std::string& filename, SerializationMode m)
+bool PBElectroCardioGram::SerializeToFile(const SEElectroCardioGramWaveformInterpolator& src, const std::string& filename, SerializationFormat m)
 {
   cdm::ElectroCardioGramWaveformListData data;
   PBElectroCardioGram::Serialize(src, data);
@@ -160,7 +160,7 @@ bool PBElectroCardioGram::SerializeToFile(const SEElectroCardioGramWaveformInter
   PBElectroCardioGram::SerializeToString(src, content, m);
   return WriteFile(content, filename, m);
 }
-bool PBElectroCardioGram::SerializeFromString(const std::string& src, SEElectroCardioGramWaveformInterpolator& dst, SerializationMode m)
+bool PBElectroCardioGram::SerializeFromString(const std::string& src, SEElectroCardioGramWaveformInterpolator& dst, SerializationFormat m)
 {
   cdm::ElectroCardioGramWaveformListData data;
   if (!PBUtils::SerializeFromString(src, data, m))
@@ -168,7 +168,7 @@ bool PBElectroCardioGram::SerializeFromString(const std::string& src, SEElectroC
   PBElectroCardioGram::Load(data, dst);
   return true;
 }
-bool PBElectroCardioGram::SerializeFromFile(const std::string& filename, SEElectroCardioGramWaveformInterpolator& dst, SerializationMode m)
+bool PBElectroCardioGram::SerializeFromFile(const std::string& filename, SEElectroCardioGramWaveformInterpolator& dst, SerializationFormat m)
 {
   std::string content = ReadFile(filename, m);
   if (content.empty())

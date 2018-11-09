@@ -9,11 +9,11 @@
 #include "controller/Substances.h"
 #include "PulseConfiguration.h"
 // Conditions
-#include "scenario/SEConditionManager.h"
+#include "engine/SEConditionManager.h"
 #include "system/environment/conditions/SEEnvironmentCondition.h"
 // Actions
-#include "scenario/SEActionManager.h"
-#include "scenario/SEEnvironmentActionCollection.h"
+#include "engine/SEActionManager.h"
+#include "engine/SEEnvironmentActionCollection.h"
 #include "system/environment/actions/SEThermalApplication.h"
 #include "system/environment/actions/SEChangeEnvironmentConditions.h"
 // Dependent Systems

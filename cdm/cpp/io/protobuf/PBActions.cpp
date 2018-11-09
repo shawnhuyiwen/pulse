@@ -14,8 +14,8 @@
 #include "system/environment/actions/SEEnvironmentAction.h"
 #include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineAction.h"
 #include "system/equipment/inhaler/actions/SEInhalerAction.h"
-#include "scenario/SEAdvanceTime.h"
-#include "scenario/SESerializeState.h"
+#include "engine/SEAdvanceTime.h"
+#include "engine/SESerializeState.h"
 #include "substance/SESubstanceManager.h"
 #include "properties/SEScalarTime.h"
 

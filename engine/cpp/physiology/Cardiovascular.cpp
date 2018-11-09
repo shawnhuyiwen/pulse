@@ -9,14 +9,14 @@
 #include "controller/Substances.h"
 #include "PulseConfiguration.h"
 // Conditions
-#include "scenario/SEConditionManager.h"
+#include "engine/SEConditionManager.h"
 #include "patient/conditions/SEChronicAnemia.h"
 #include "patient/conditions/SEChronicHeartFailure.h"
 #include "patient/conditions/SEChronicPericardialEffusion.h"
 #include "patient/conditions/SEChronicRenalStenosis.h"
 // Actions
-#include "scenario/SEActionManager.h"
-#include "scenario/SEPatientActionCollection.h"
+#include "engine/SEActionManager.h"
+#include "engine/SEPatientActionCollection.h"
 #include "patient/actions/SEBrainInjury.h"
 #include "patient/actions/SEChestCompressionForce.h"
 #include "patient/actions/SEChestCompressionForceScale.h"

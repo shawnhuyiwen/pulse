@@ -34,7 +34,6 @@
 #include "utils/testing/SETestReport.h"
 #include "utils/testing/SETestCase.h"
 #include "utils/testing/SETestSuite.h"
-#include "bind/cdm/Patient.pb.h"
 
 enum Driver { Sinusoid = 0, Heart };
 

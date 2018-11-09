@@ -35,13 +35,14 @@
 #include "engine/SEEngineStabilization.h"
 #include "engine/SEEngineTracker.h"
 #include "engine/SEAdvanceHandler.h"
-#include "scenario/SEDataRequestManager.h"
+#include "engine/SEDataRequestManager.h"
+#include "engine/SEPatientConfiguration.h"
 #include "scenario/SEScenario.h"
-#include "scenario/SEAction.h"
-#include "scenario/SEActionManager.h"
-#include "scenario/SECondition.h"
-#include "scenario/SEConditionManager.h"
-#include "scenario/SESerializeState.h"
+#include "engine/SEAction.h"
+#include "engine/SEActionManager.h"
+#include "engine/SECondition.h"
+#include "engine/SEConditionManager.h"
+#include "engine/SESerializeState.h"
 #include "properties/SEScalarTime.h"
 #include "utils/FileUtils.h"
 #include "io/protobuf/PBPulseState.h"
@@ -76,27 +77,27 @@ PulseEngine::~PulseEngine()
   
 }
 
-bool PulseEngine::SerializeToString(std::string& output, SerializationMode m) const
+bool PulseEngine::SerializeToString(std::string& output, SerializationFormat m) const
 {
   return PBPulseState::SerializeToString(*this, output, m);
 }
-bool PulseEngine::SerializeToFile(const std::string& filename, SerializationMode m) const
+bool PulseEngine::SerializeToFile(const std::string& filename, SerializationFormat m) const
 {
   return PBPulseState::SerializeToFile(*this, filename, m);
 }
-bool PulseEngine::SerializeFromString(const std::string& src, SerializationMode m)
+bool PulseEngine::SerializeFromString(const std::string& src, SerializationFormat m)
 {
   return SerializeFromString(src, m, nullptr, nullptr);
 }
-bool PulseEngine::SerializeFromString(const std::string& src, SerializationMode m, const SEScalarTime* simTime, const SEEngineConfiguration* config)
+bool PulseEngine::SerializeFromString(const std::string& src, SerializationFormat m, const SEScalarTime* simTime, const SEEngineConfiguration* config)
 {
   return PBPulseState::SerializeFromString(src, *this, m, simTime, config);
 }
-bool PulseEngine::SerializeFromFile(const std::string& filename, SerializationMode m)
+bool PulseEngine::SerializeFromFile(const std::string& filename, SerializationFormat m)
 {
   return SerializeFromFile(filename, m, nullptr, nullptr);
 }
-bool PulseEngine::SerializeFromFile(const std::string& filename, SerializationMode m, const SEScalarTime* simTime, const SEEngineConfiguration* config)
+bool PulseEngine::SerializeFromFile(const std::string& filename, SerializationFormat m, const SEScalarTime* simTime, const SEEngineConfiguration* config)
 {
   return PBPulseState::SerializeFromFile(filename, *this, m, simTime, config);
 }
@@ -111,29 +112,31 @@ SEEngineTracker* PulseEngine::GetEngineTracker() const
   return m_EngineTrack;
 }
 
-bool PulseEngine::InitializeEngine(const std::string& patientFile, const std::vector<const SECondition*>* conditions, const SEEngineConfiguration* config)
+bool PulseEngine::InitializeEngine(const std::string& patient_configuration, SerializationFormat m, const SEEngineConfiguration* config)
 {
-  std::string pFile = patientFile;
-  if (pFile.find("/patients") == std::string::npos)
-  {// Prepend the patient directory if it's not there
-    pFile = "./patients/";
-    pFile += patientFile;
+  SEPatientConfiguration pc(GetLogger());
+  pc.SerializeFromString(patient_configuration, m, *m_Substances);
+  return InitializeEngine(pc, config);
+}
+
+bool PulseEngine::InitializeEngine(const SEPatientConfiguration& patient_configuration, const SEEngineConfiguration* config)
+{
+  if (patient_configuration.HasPatient())
+    m_Patient->Copy(*patient_configuration.GetPatient());
+  else if (patient_configuration.HasPatientFile())
+  {
+    std::string pFile = patient_configuration.GetPatientFile();
+    if (pFile.find("/patients") == std::string::npos)
+    {// Prepend the patient directory if it's not there
+      pFile = "./patients/";
+      pFile += patient_configuration.GetPatientFile();
+    }
+    if (!m_Patient->SerializeFromFile(pFile, ASCII))// TODO Support all serialization formats
+      return false;
   }
-  if (!m_Patient->SerializeFromFile(pFile,ASCII))
+  else
     return false;
-  return InitializeEngine(conditions,config);
-}
 
-bool PulseEngine::InitializeEngine(const SEPatient& patient, const std::vector<const SECondition*>* conditions, const SEEngineConfiguration* config)
-{ 
-  m_Patient->Copy(patient);
-  // We need logic here that makes sure we have what we need
-  // and notify we are ignoring anything provided we won't use
-  return InitializeEngine(conditions,config);
-}
-
-bool PulseEngine::InitializeEngine(const std::vector<const SECondition*>* conditions, const SEEngineConfiguration* config)
-{
   const PulseConfiguration* pConfig = nullptr;
   if (config != nullptr)
   {
@@ -162,27 +165,25 @@ bool PulseEngine::InitializeEngine(const std::vector<const SECondition*>* condit
 
   m_State = EngineState::InitialStabilization;
   if (!m_Config->GetStabilization()->StabilizeRestingState(*this))
-    return false;  
+    return false;
+
   // We need to process conditions here, so systems can prepare for them in their AtSteadyState method
-  if (conditions != nullptr && !conditions->empty())
+  for (const SECondition* c : patient_configuration.GetConditions())
   {
-    for (const SECondition* c : *conditions)
-    {
-      m_ss << "[Condition] " << *c;
-      Info(m_ss);
-      if (!m_Conditions->ProcessCondition(*c))
-        return false;
-    }
+    m_ss << "[Condition] " << *c;
+    Info(m_ss);
+    if (!m_Conditions->ProcessCondition(*c))
+      return false;
   }
   AtSteadyState(EngineState::AtInitialStableState);
 
   m_State = EngineState::SecondaryStabilization;
   // Apply conditions and anything else to the physiology
   // now that it's steady with provided patient, environment, and feedback
-  if (conditions != nullptr && !conditions->empty())
+  if (!patient_configuration.GetConditions().empty())
   {// Now restabilize the patient with any conditions that were applied
    // Push conditions into condition manager
-    if (!m_Config->GetStabilization()->StabilizeConditions(*this, *conditions))
+    if (!m_Config->GetStabilization()->StabilizeConditions(*this, patient_configuration.GetConditions()))
       return false;
   }
   else

@@ -39,19 +39,19 @@ void SEInhaler::Clear()
   m_Substance = nullptr;
 }
 
-bool SEInhaler::SerializeToString(std::string& output, SerializationMode m) const
+bool SEInhaler::SerializeToString(std::string& output, SerializationFormat m) const
 {
   return PBInhaler::SerializeToString(*this, output, m);
 }
-bool SEInhaler::SerializeToFile(const std::string& filename, SerializationMode m) const
+bool SEInhaler::SerializeToFile(const std::string& filename, SerializationFormat m) const
 {
   return PBInhaler::SerializeToFile(*this, filename, m);
 }
-bool SEInhaler::SerializeFromString(const std::string& src, SerializationMode m)
+bool SEInhaler::SerializeFromString(const std::string& src, SerializationFormat m)
 {
   return PBInhaler::SerializeFromString(src, *this, m);
 }
-bool SEInhaler::SerializeFromFile(const std::string& filename, SerializationMode m)
+bool SEInhaler::SerializeFromFile(const std::string& filename, SerializationFormat m)
 {
   return PBInhaler::SerializeFromFile(filename, *this, m);
 }

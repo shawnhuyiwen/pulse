@@ -3,8 +3,8 @@
 package com.kitware.physiology.pulse.testing;
 
 import com.google.protobuf.TextFormat;
+import com.kitware.physiology.cdm.Engine.EngineInitializationData.Builder;
 import com.kitware.physiology.cdm.Scenario.ScenarioData;
-import com.kitware.physiology.cdm.Scenario.ScenarioData.StartTypeCase;
 import com.kitware.physiology.pulse.*;
 
 import com.kitware.physiology.datamodel.engine.SEAutoSerialization;
@@ -48,7 +48,7 @@ public class ScenarioTestDriver implements SETestDriver.Executor
 	    	return false;
 	    }
     }
-    if(builder.getStartTypeCase()==StartTypeCase.STARTTYPE_NOT_SET)
+    if(!builder.hasStartType())
     {
     	Log.error("Scenario does not have a start type");
     	return false;
@@ -65,25 +65,24 @@ public class ScenarioTestDriver implements SETestDriver.Executor
       log = outputFile.replaceAll(".pba", "-"+patientName+".log");
       results = outputFile.replaceAll(".pba", "-"+patientName+"Results.csv");
       
-      switch(builder.getStartTypeCase())      
+      if(builder.getStartType().hasPatientConfiguration())      
       {
-      	case INITIALPARAMETERS:
-      		builder.getInitialParametersBuilder().clearPatient();
-      		builder.getInitialParametersBuilder().setPatientFile(job.patientFile);
-      		break;
-      	case ENGINESTATEFILE:
-      		builder.clearEngineStateFile();
-      		builder.getInitialParametersBuilder().setPatientFile(job.patientFile);
-        	break;
+      	  builder.getStartTypeBuilder().getPatientConfigurationBuilder().clearPatient();
+          builder.getStartTypeBuilder().getPatientConfigurationBuilder().setPatientFile(job.patientFile);
+      }
+      else
+      {
+      		builder.getStartTypeBuilder().clearEngineStateFile();
+          builder.getStartTypeBuilder().getPatientConfigurationBuilder().setPatientFile(job.patientFile);
       }      
     }
-    if(job.useState && builder.getStartTypeCase()==StartTypeCase.INITIALPARAMETERS)      
+    if(job.useState && builder.getStartType().hasPatientConfiguration())      
     {
-      	String pFile = pBuilder.getScenario().getInitialParameters().getPatientFile();
+      	String pFile = pBuilder.getScenario().getStartType().getPatientConfiguration().getPatientFile();
       	pFile =  pFile.substring(0, pFile.indexOf(".pba"));
       	pFile = "./states/"+pFile+"@0s.pba";
-      	builder.clearInitialParameters();
-      	builder.setEngineStateFile(pFile);
+      	builder.getStartTypeBuilder().clearPatientConfiguration();
+      	builder.getStartTypeBuilder().setEngineStateFile(pFile);
     }
 
     if(job.autoSerialization!=null)

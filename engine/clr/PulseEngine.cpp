@@ -58,9 +58,10 @@ private:
 };
 
 
-PulseEngineRef::PulseEngineRef() : _pulse(CreatePulseEngine("").release())
+PulseEngineRef::PulseEngineRef() : _pulse(CreatePulseEngine("default.log").release())
 {
   Init();
+  LoadStateFile("./states/StandardMale@0s.pba", 0);
 }
 PulseEngineRef::PulseEngineRef(System::String^ log) : _pulse(CreatePulseEngine(MarshalString(log)).release())
 {
@@ -96,11 +97,14 @@ void PulseEngineRef::Init()
 
 void PulseEngineRef::Clear()
 {
-  delete _vitalsData;
-  _vitalsData = gcnew VitalsData();
+
 }
 
 bool PulseEngineRef::LoadStateFile(System::String^ filename, double sim_start_time_s)
+{
+  return LoadStateFile(filename, sim_start_time_s, nullptr);
+}
+bool PulseEngineRef::LoadStateFile(System::String^ filename, double sim_start_time_s, PatientDataRef^ d)
 {
   Monitor::Enter(_lock);
   {
@@ -134,9 +138,12 @@ bool PulseEngineRef::LoadStateFile(System::String^ filename, double sim_start_ti
     _ecg = _pulse->GetElectroCardioGram();
     _inh = _pulse->GetInhaler();
 
-    const SEPatient& p = _pulse->GetPatient();
-    // Pull any data you extended the Patient Data class to hold
-    _patientData->TotalLungCapacity_mL = p.GetTotalLungCapacity(VolumeUnit::mL);
+    if (d != nullptr)
+    {
+      const SEPatient& p = _pulse->GetPatient();
+      // Pull any data you extended the Patient Data class to hold
+      d->TotalLungCapacity_mL = p.GetTotalLungCapacity(VolumeUnit::mL);
+    }
 
     
     // Grab any substances you will be interested in
@@ -169,33 +176,35 @@ void PulseEngineRef::SaveStateFile(System::String^ filename)
   Monitor::Exit(_lock);
 }
 
-void PulseEngineRef::AdvanceModelTime_s(double time_s)
+void PulseEngineRef::AdvanceModelTime_s(double time_s, PulseDataRef^ output)
 {
   Monitor::Enter(_lock);
   {
     _pulse->AdvanceModelTime(time_s, TimeUnit::s);
     // Here is where we pull data from Pulse and put it into our VitalsData class for our application to access
-    _vitalsData->HeartRate_per_min = _pulse->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min);
-    _vitalsData->CardiacOutput_mL_Per_s = _pulse->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_s);
-    _vitalsData->ArterialBloodPressure_mmHg = _pulse->GetCardiovascularSystem()->GetArterialPressure(PressureUnit::mmHg);
-    _vitalsData->CentralVenousPressure_mmHg = _pulse->GetCardiovascularSystem()->GetCentralVenousPressure(PressureUnit::mmHg);
-    _vitalsData->DiastolicArterialPressure_mmHg = _pulse->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg);
-    _vitalsData->SystolicArterialPressure_mmHg = _pulse->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg);
-    _vitalsData->MeanArterialPressure_mmHg = _pulse->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg);
+    output->HeartRate_per_min = _pulse->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min);
+    output->CardiacOutput_mL_Per_s = _pulse->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_s);
+    output->ArterialBloodPressure_mmHg = _pulse->GetCardiovascularSystem()->GetArterialPressure(PressureUnit::mmHg);
+    output->CentralVenousPressure_mmHg = _pulse->GetCardiovascularSystem()->GetCentralVenousPressure(PressureUnit::mmHg);
+    output->DiastolicArterialPressure_mmHg = _pulse->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg);
+    output->SystolicArterialPressure_mmHg = _pulse->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg);
+    output->MeanArterialPressure_mmHg = _pulse->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg);
 
-    _vitalsData->EndTidalCarbonDioxidePressure_cmH2O = _pulse->GetRespiratorySystem()->GetEndTidalCarbonDioxidePressure(PressureUnit::cmH2O);
-    _vitalsData->RespiratoryRate_per_min = _pulse->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min);
-    _vitalsData->TidalVolume_mL = _pulse->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL);
-    _vitalsData->TotalLungVolume_mL = _pulse->GetRespiratorySystem()->GetTotalLungVolume(VolumeUnit::mL);
-    _vitalsData->LeftLungVolume_mL = _leftLung->GetVolume(VolumeUnit::mL);
-    _vitalsData->RightLungVolume_mL = _rightLung->GetVolume(VolumeUnit::mL);
+    output->EndTidalCarbonDioxidePressure_cmH2O = _pulse->GetRespiratorySystem()->GetEndTidalCarbonDioxidePressure(PressureUnit::cmH2O);
+    output->RespiratoryRate_per_min = _pulse->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min);
+    output->TidalVolume_mL = _pulse->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL);
+    output->TotalLungVolume_mL = _pulse->GetRespiratorySystem()->GetTotalLungVolume(VolumeUnit::mL);
+    output->LeftLungVolume_mL = _leftLung->GetVolume(VolumeUnit::mL);
+    output->RightLungVolume_mL = _rightLung->GetVolume(VolumeUnit::mL);
 
-    _vitalsData->SkinTemperature_F = _pulse->GetEnergySystem()->GetSkinTemperature(TemperatureUnit::F); 
-    _vitalsData->CoreTemperature_F = _pulse->GetEnergySystem()->GetCoreTemperature(TemperatureUnit::F);
+    output->SkinTemperature_F = _pulse->GetEnergySystem()->GetSkinTemperature(TemperatureUnit::F);
+    output->CoreTemperature_F = _pulse->GetEnergySystem()->GetCoreTemperature(TemperatureUnit::F);
 
-    _vitalsData->SpO2 = _pulse->GetBloodChemistrySystem()->GetOxygenSaturation();
+    output->SpO2 = _pulse->GetBloodChemistrySystem()->GetOxygenSaturation();
 
-    _vitalsData->ECG_Lead3_mV = _pulse->GetElectroCardioGram()->GetLead3ElectricPotential(ElectricPotentialUnit::mV);
+    output->ECG_Lead3_mV = _pulse->GetElectroCardioGram()->GetLead3ElectricPotential(ElectricPotentialUnit::mV);
+
+    output->CarinaCO2PartialPressure_mmHg = _carina_CO2->GetPartialPressure(PressureUnit::mmHg);
   }
   Monitor::Exit(_lock);
 }
