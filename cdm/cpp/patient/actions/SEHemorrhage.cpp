@@ -10,7 +10,7 @@ SEHemorrhage::SEHemorrhage() : SEPatientAction()
 {
   m_Compartment = "";
   m_Rate=nullptr;
-  m_Type = eHemorrhage_Type::Internal;
+  m_Type = eHemorrhage_Type::External;
 }
 
 SEHemorrhage::~SEHemorrhage()
@@ -23,7 +23,7 @@ void SEHemorrhage::Clear()
   SEPatientAction::Clear();
   m_Compartment = "";
   SAFE_DELETE(m_Rate);
-  m_Type = eHemorrhage_Type::Internal;
+  m_Type = eHemorrhage_Type::External;
 }
 
 void SEHemorrhage::Copy(const SEHemorrhage& src)

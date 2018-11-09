@@ -5,7 +5,7 @@
 #include "patient/actions/SEPatientAction.h"
 
 // Keep enums in sync with appropriate schema/cdm/PatientActionEnums.proto file !!
-enum class eHemorrhage_Type { Internal = 0, External };
+enum class eHemorrhage_Type { External = 0, Internal };
 extern const std::string& eHemorrhage_Type_Name(eHemorrhage_Type m);
 
 class CDM_DECL SEHemorrhage : public SEPatientAction
