@@ -9,9 +9,9 @@
 // So its better to get this file off disk and into code
 // Yes, I am just stringifying the file.
 // But, there is something to be said to preserving
-// the cofiguration format as it was for editing units
+// the configuration format as it was for editing units
 
-#define UCE(entry) m_UCEdefs << ##entry << std::endl;
+#define UCE(entry) m_UCEdefs << #entry << std::endl;
 
 void CUnitConversionEngine::GetUCEdefs()
 {
