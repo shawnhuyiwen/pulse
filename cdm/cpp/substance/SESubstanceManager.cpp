@@ -246,6 +246,7 @@ bool SESubstanceManager::LoadSubstanceDirectory(const std::string& data_dir)
   DIR *sdir;
   DIR *cdir;
   struct dirent *ent;
+  std::string ext = ".pba";
 
 #if defined(_WIN32)
   sdir = opendir(std::string(data_dir + "/substances/").c_str());
@@ -262,7 +263,7 @@ bool SESubstanceManager::LoadSubstanceDirectory(const std::string& data_dir)
     {
       ss.str("");
       ss << data_dir << "/substances/" << ent->d_name;
-      if (!IsDirectory(ent) && strlen(ent->d_name) > 2)
+      if (!IsDirectory(ent) && strlen(ent->d_name) > 2 && ss.str().find_last_of(ext) == (ss.str().length()-1))
       {
         try
         {
@@ -302,7 +303,7 @@ bool SESubstanceManager::LoadSubstanceDirectory(const std::string& data_dir)
     {
       ss.str("");
       ss << data_dir << "/substances/compounds/" << ent->d_name;
-      if (!IsDirectory(ent) && strlen(ent->d_name) > 2)
+      if (!IsDirectory(ent) && strlen(ent->d_name) > 2 && ss.str().find_last_of(ext) == (ss.str().length()-1))
       {
         try
         {

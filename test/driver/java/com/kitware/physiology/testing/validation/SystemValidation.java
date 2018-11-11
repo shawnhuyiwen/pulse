@@ -25,7 +25,7 @@ public class SystemValidation extends ValidationTool
     SystemValidation me = new SystemValidation();
     if(args.length!=3)
     {
-      me.loadData("Local","MSVC","x86");
+      me.loadData("Local","MSVC","x64");
     }
     else
     {      

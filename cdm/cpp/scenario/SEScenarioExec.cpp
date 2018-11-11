@@ -93,7 +93,7 @@ bool SEScenarioExec::Execute(const SEScenario& scenario, const std::string& resu
       if (!m_Engine.GetEngineTracker()->GetDataRequestManager().HasResultsFilename())
         m_Engine.GetEngineTracker()->GetDataRequestManager().SetResultsFilename(resultsFile);
 
-      if (!m_Engine.InitializeEngine(*scenario.GetPatientConfiguration()))
+      if (!m_Engine.InitializeEngine(*scenario.GetPatientConfiguration(), m_EngineConfiguration))
       {
         Error("Unable to initialize engine");
         return false;
