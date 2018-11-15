@@ -8,8 +8,6 @@ source_group("" FILES ${PULSE_TEST_FILES})
 # The DLL we are building
 add_library(PulseEngineUnitTests ${SOURCE})
 # Preprocessor Definitions and Include Paths
-target_include_directories(PulseEngineUnitTests PRIVATE ${CMAKE_BINARY_DIR}/schema/cpp)
-target_include_directories(PulseEngineUnitTests PRIVATE ${CMAKE_BINARY_DIR}/schema/cpp/bind)
 target_include_directories(PulseEngineUnitTests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/cdm/cpp)
 target_include_directories(PulseEngineUnitTests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../cdm/cpp)
 target_include_directories(PulseEngineUnitTests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/engine/cpp)

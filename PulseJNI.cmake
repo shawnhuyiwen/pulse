@@ -9,8 +9,6 @@ add_library(PulseJNI SHARED cdm/cpp/CommonDataModelJNI.cpp
                             engine/cpp/PulseEngineJNI.cpp)
 find_package(JNI REQUIRED)
 target_include_directories(PulseJNI PRIVATE ${JNI_INCLUDE_DIRS})
-target_include_directories(PulseJNI PRIVATE ${CMAKE_BINARY_DIR}/schema/cpp/)
-target_include_directories(PulseJNI PRIVATE ${CMAKE_BINARY_DIR}/schema/cpp/bind/)
 target_include_directories(PulseJNI PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/engine/cpp)
 target_include_directories(PulseJNI PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/cdm/cpp)
 target_include_directories(PulseJNI PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test/engine/cpp)

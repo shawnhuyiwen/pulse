@@ -3,8 +3,6 @@ source_group("" FILES driver/cpp/main.cpp)
 # The DLL we are building
 add_executable(UnitTestDriver driver/cpp/main.cpp)
 
-target_include_directories(UnitTestDriver PRIVATE ${CMAKE_BINARY_DIR}/schema/cpp)
-target_include_directories(UnitTestDriver PRIVATE ${CMAKE_BINARY_DIR}/schema/cpp/bind)
 target_include_directories(UnitTestDriver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/cdm/cpp)
 target_include_directories(UnitTestDriver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../cdm/cpp)
 target_include_directories(UnitTestDriver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/engine/cpp)
