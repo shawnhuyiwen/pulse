@@ -8,9 +8,9 @@ public abstract class SEPatientAction : SEAction
     
   }
   
-  public override void Reset()
+  public override void Clear()
   {
-    base.Reset();
+    base.Clear();
   }
   
 }

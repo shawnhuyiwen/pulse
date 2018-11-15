@@ -10,9 +10,9 @@ public class SEAirwayObstruction : SEPatientAction
     severity = null;
   }
   
-  public override void Reset()
+  public override void Clear()
   {
-    base.Reset();
+    base.Clear();
     if (severity != null)
       severity.Invalidate();
   }

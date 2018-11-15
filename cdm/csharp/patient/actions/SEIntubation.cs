@@ -2,16 +2,13 @@
    See accompanying NOTICE file for details.*/
 
 
-public class IntubationType
+public enum IntubationType : int
 {
-    private IntubationType(string v) { Value = v; }
-    protected string Value { get; }
-
-    public static IntubationType Off { get { return new IntubationType("Off"); } }
-    public static IntubationType Esophageal { get { return new IntubationType("Esophageal"); } }
-    public static IntubationType LeftMainstem { get { return new IntubationType("LeftMainstem"); } }
-    public static IntubationType RightMainstem { get { return new IntubationType("RightMainstem"); } }
-    public static IntubationType Tracheal { get { return new IntubationType("Tracheal"); } }
+    Off = 0,
+    Esophageal,
+    LeftMainstem,
+    RightMainstem,
+    Tracheal
 }
 
 public class SEIntubation : SEPatientAction
@@ -20,18 +17,18 @@ public class SEIntubation : SEPatientAction
   
   public SEIntubation()
   {
-    type = null;
+    type = IntubationType.Off;
   }
   
-  public override void Reset()
+  public override void Clear()
   {
-    base.Reset();
-    type = null;
+    base.Clear();
+    type = IntubationType.Off;
   }
   
   public override bool IsValid()
   {
-    return HasType();
+    return type != IntubationType.Off;
   }
   
   public new IntubationType GetType()
@@ -42,8 +39,5 @@ public class SEIntubation : SEPatientAction
   {
     type = t;
   }
-  public bool HasType()
-  {
-    return type == null ? false : true;
-  }
+
 }

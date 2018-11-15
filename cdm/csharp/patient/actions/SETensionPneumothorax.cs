@@ -9,16 +9,16 @@ public class SETensionPneumothorax : SEPatientAction
 
     public SETensionPneumothorax()
     {
-        type = null;
-        side = null;
+        type = eGate.NullGate;
+        side = eSide.NullSide;
         severity = null;
     }
 
-    public override void Reset()
+    public override void Clear()
     {
-        base.Reset();
-        type = null;
-        side = null;
+        base.Clear();
+        type = eGate.NullGate;
+        side = eSide.NullSide;
         if (severity != null)
             severity.Invalidate();
     }
@@ -32,26 +32,26 @@ public class SETensionPneumothorax : SEPatientAction
     {
         return type;
     }
-    public void setType(eGate type)
+    public void SetType(eGate type)
     {
         this.type = type;
     }
     public bool HasType()
     {
-        return type == null ? false : true;
+        return type == eGate.NullGate ? false : true;
     }
 
     public eSide GetSide()
     {
         return side;
     }
-    public void setSide(eSide side)
+    public void SetSide(eSide side)
     {
         this.side = side;
     }
     public bool HasSide()
     {
-        return side == null ? false : true;
+        return side == eSide.NullSide ? false : true;
     }
 
     public bool HasSeverity()

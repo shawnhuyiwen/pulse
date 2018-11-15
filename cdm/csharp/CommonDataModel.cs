@@ -7,43 +7,31 @@ public enum SerializationFormat : int   // State file serialization format
     ASCII
 }
 
-public class eSide
+public enum eSide : int
 {
-    private eSide(string v) { Value = v; }
-    protected string Value { get; }
-
-    public static eSide NullSide { get { return new eSide("NullSide"); } }
-    public static eSide Left { get { return new eSide("Left"); } }
-    public static eSide Right { get { return new eSide("Right"); } }
+    NullSide = 0,
+    Left,
+    Right
 }
 
-public class eGate
+public enum eGate : int
 {
-    private eGate(string v) { Value = v; }
-    protected string Value { get; }
-
-    public static eGate NullGate { get { return new eGate("NullGate"); } }
-    public static eGate Open { get { return new eGate("Open"); } }
-    public static eGate Closed { get { return new eGate("Closed"); } }
+    NullGate= 0,
+    Open,
+    Closed
 }
 
-public class eSwitch
+public enum eSwitch : int
 {
-    private eSwitch(string v) { Value = v; }
-    protected string Value { get; }
-
-    public static eSwitch NullSwitch { get { return new eSwitch("NullSwitch"); } }
-    public static eSwitch Off { get { return new eSwitch("Off"); } }
-    public static eSwitch On { get { return new eSwitch("On"); } }
+    NullSwitch = 0,
+    Off,
+    On
 }
 
-public class eCharge
+public enum eCharge : int
 {
-    private eCharge(string v) { Value = v; }
-    protected string Value { get; }
-
-    public static eCharge NullCharge { get { return new eCharge("NullCharge"); } }
-    public static eCharge Negative { get { return new eCharge("Negative"); } }
-    public static eCharge Neutral { get { return new eCharge("Neutral"); } }
-    public static eCharge Positive { get { return new eCharge("Positive"); } }
+    NullCharge = 0,
+    Negative,
+    Neutral,
+    Positive
 }

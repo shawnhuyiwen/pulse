@@ -12,9 +12,9 @@ public class SEHemorrhage : SEPatientAction
     rate = null;
   }
   
-  public override void Reset()
+  public override void Clear()
   {
-    base.Reset();
+    base.Clear();
     compartment = null;
     if (rate != null)
       rate.Invalidate();

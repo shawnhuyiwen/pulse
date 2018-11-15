@@ -9,14 +9,14 @@ public class SENeedleDecompression : SEPatientAction
     public SENeedleDecompression()
     {
         state = eSwitch.Off;
-        side = null;
+        side = eSide.NullSide;
     }
 
-    public override void Reset()
+    public override void Clear()
     {
-        base.Reset();
+        base.Clear();
         state = eSwitch.Off;
-        side = null;
+        side = eSide.NullSide;
     }
 
     public override bool IsValid()
