@@ -1,121 +1,58 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-package com.kitware.physiology.datamodel.patient.actions;
-
-import com.kitware.physiology.cdm.PatientActions.SubstanceInfusionData;
-
-import com.kitware.physiology.datamodel.properties.SEScalarMassPerVolume;
-import com.kitware.physiology.datamodel.properties.SEScalarVolumePerTime;
-import com.kitware.physiology.datamodel.substance.SESubstance;
-
-public class SESubstanceInfusion extends SEPatientAction
+public class SESubstanceInfusion : SEPatientAction
 {
   protected SEScalarMassPerVolume concentration;
   protected SEScalarVolumePerTime rate;
-  protected SESubstance substance;
+  protected string substance;
   
-  public SESubstanceInfusion(SESubstance substance)
+  public SESubstanceInfusion(string substance)
   {
     this.rate = null;
     this.concentration = null;
     this.substance = substance;
   }
   
-  public void copy(SESubstanceInfusion other)
+  public override void Reset()
   {
-    if(this==other)
-      return;
-    super.copy(other);
-    substance = other.substance;
-    
-    if (other.rate != null)
-      getRate().set(other.rate);
-    else if (rate != null)
-      rate.invalidate();
-    
-    if (other.concentration != null)
-      getConcentration().set(other.concentration);
-    else if (concentration != null)
-      concentration.invalidate();
-  }
-  
-  public void reset()
-  {
-    super.reset();
+    base.Reset();
     if (rate != null)
-      rate.invalidate();
+      rate.Invalidate();
     if (concentration != null)
-      concentration.invalidate();
+      concentration.Invalidate();
   }
   
-  public boolean isValid()
+  public override bool IsValid()
   {
-    return hasRate() && hasConcentration() && hasSubstance();
+    return HasRate() && HasConcentration() && HasSubstance();
   }
   
-  public static void load(SubstanceInfusionData src, SESubstanceInfusion dst)
+  public bool HasConcentration()
   {
-    SEPatientAction.load(src.getPatientAction(), dst);
-    if(src.hasRate())
-      SEScalarVolumePerTime.load(src.getRate(),dst.getRate());
-    if(src.hasConcentration())
-      SEScalarMassPerVolume.load(src.getConcentration(),dst.getConcentration());
+    return concentration == null ? false : concentration.IsValid();
   }
-  
-  public static SubstanceInfusionData unload(SESubstanceInfusion src)
-  {
-    SubstanceInfusionData.Builder dst = SubstanceInfusionData.newBuilder();
-    unload(src,dst);
-    return dst.build();
-  }
-  
-  protected static void unload(SESubstanceInfusion src, SubstanceInfusionData.Builder dst)
-  {
-    SEPatientAction.unload(src,dst.getPatientActionBuilder());
-    if (src.hasRate())
-      dst.setRate(SEScalarVolumePerTime.unload(src.rate));
-    if (src.hasConcentration())
-      dst.setConcentration(SEScalarMassPerVolume.unload(src.concentration));
-    dst.setSubstance(src.substance.getName());
-  }
-  
-  public boolean hasConcentration()
-  {
-    return concentration == null ? false : concentration.isValid();
-  }
-  public SEScalarMassPerVolume getConcentration()
+  public SEScalarMassPerVolume GetConcentration()
   {
     if (concentration == null)
       concentration = new SEScalarMassPerVolume();
     return concentration;
   }
   
-  public boolean hasRate()
+  public bool HasRate()
   {
-    return rate ==  null ? false : rate.isValid();
+    return rate ==  null ? false : rate.IsValid();
   }
-  public SEScalarVolumePerTime getRate()
+  public SEScalarVolumePerTime GetRate()
   {
     if (rate == null)
       rate = new SEScalarVolumePerTime();
     return rate;
   }
   
-  public boolean hasSubstance() { return substance != null; }
-  public SESubstance getSubstance()
+  public bool HasSubstance() { return !string.IsNullOrEmpty(substance); }
+  public string GetSubstance()
   {
     return substance;
-  }
-  
-  public String toString()
-  {
-    if (rate != null || concentration != null)  
-      return "Substance Infusion" 
-          + "\n\tRate: " + getRate() 
-          + "\n\tConcentration: " + getConcentration() 
-          + "\n\tSubstance: " + getSubstance().getName() ;
-    else
-      return "Action not specified properly";
   }
 }

@@ -2,17 +2,12 @@
    See accompanying NOTICE file for details.*/
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 // C# class that wraps the PulseC API
 public class PulseEngine
 {
-    public enum SerializationFormat : int   // State file serialization format
-    {
-        BINARY = 0,
-        ASCII
-    }
-
     readonly IntPtr pulseEngineCPtr;        // Pointer to the pulse engine in C
 
     [DllImport("PulseC", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
@@ -89,6 +84,7 @@ public class PulseEngine
     }
     public bool ProcessActions(List<SEAction> actions)
     {
-        return ProcessAction(pulseEngineCPtr, any_action_list_str);
+        string any_action_list_str = "";
+        return ProcessAction(pulseEngineCPtr, any_action_list_str, (int)SerializationFormat.ASCII);
     }
 }

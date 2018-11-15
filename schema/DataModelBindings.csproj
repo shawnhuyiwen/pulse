@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="bind\cpp\**" />
+    <Compile Remove="bind\java\**" />
+    <Compile Remove="build\**" />
+    <Compile Remove="proto\**" />
+    <EmbeddedResource Remove="bind\cpp\**" />
+    <EmbeddedResource Remove="bind\java\**" />
+    <EmbeddedResource Remove="build\**" />
+    <EmbeddedResource Remove="proto\**" />
+    <None Remove="bind\cpp\**" />
+    <None Remove="bind\java\**" />
+    <None Remove="build\**" />
+    <None Remove="proto\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove=".classpath" />
+    <None Remove=".project" />
+    <None Remove="CMakeLists.txt" />
+    <None Remove="GenerateCDMBindings.cmake" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Google.Protobuf">
+      <HintPath>..\..\..\builds\pulse-engine\protobuf\src\protobuf\csharp\src\Google.Protobuf\bin\Debug\netstandard1.0\Google.Protobuf.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

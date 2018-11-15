@@ -43,8 +43,7 @@ install(TARGETS PulseJNI
 
 
 file(GLOB_RECURSE JAVA_FILES 
-  "${CMAKE_BINARY_DIR}/schema/java/*.java"
-  "${CMAKE_BINARY_DIR}/../protobuf/src/protobuf/java/core/src/main/java/*.java"
+  "${CMAKE_SOURCE_DIR}/schema/bind/java/*.java"
   "${CMAKE_SOURCE_DIR}/cdm/java/*.java"
   "${CMAKE_SOURCE_DIR}/engine/java/*.java"
   "${CMAKE_SOURCE_DIR}/test/cdm/java/*.java"

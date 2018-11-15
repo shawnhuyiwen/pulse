@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\cdm\csharp\CommonDataModel.csproj" />
+    <ProjectReference Include="..\..\schema\DataModelBindings.csproj" />
+  </ItemGroup>
+
+</Project>

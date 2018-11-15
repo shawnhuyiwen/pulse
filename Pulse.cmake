@@ -85,7 +85,7 @@ list(APPEND LOG4CPLUS_INCLUDE_DIR ${log4cplus_SRC}/include)
 list(APPEND LOG4CPLUS_INCLUDE_DIR ${log4cplus_SRC}-build/include)
 
 set(SCHEMA_SRC "${CMAKE_SOURCE_DIR}/schema")
-set(SCHEMA_DST "${CMAKE_BINARY_DIR}/schema")
+set(SCHEMA_DST "${CMAKE_SOURCE_DIR}/schema/bind")
 # Settings for protobuf configuration
 set(protobuf_BUILD_PROTOC_BINARIES OFF CACHE TYPE INTERNAL FORCE)
 set(protobuf_BUILD_SHARED_LIBS OFF CACHE TYPE INTERNAL FORCE)

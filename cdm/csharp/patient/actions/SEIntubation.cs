@@ -1,76 +1,49 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-package com.kitware.physiology.datamodel.patient.actions;
 
-import com.kitware.physiology.cdm.PatientActions.IntubationData;
-import com.kitware.physiology.cdm.PatientActionEnums.eIntubation.Type;
-
-public  class SEIntubation extends SEPatientAction
+public class IntubationType
 {
-  protected Type type;
+    private IntubationType(string v) { Value = v; }
+    protected string Value { get; }
+
+    public static IntubationType Off { get { return new IntubationType("Off"); } }
+    public static IntubationType Esophageal { get { return new IntubationType("Esophageal"); } }
+    public static IntubationType LeftMainstem { get { return new IntubationType("LeftMainstem"); } }
+    public static IntubationType RightMainstem { get { return new IntubationType("RightMainstem"); } }
+    public static IntubationType Tracheal { get { return new IntubationType("Tracheal"); } }
+}
+
+public class SEIntubation : SEPatientAction
+{
+  protected IntubationType type;
   
   public SEIntubation()
   {
     type = null;
   }
   
-  public void copy(SEIntubation other)
+  public override void Reset()
   {
-    if(this==other)
-      return;
-    super.copy(other);
-    type = other.type;
-  }  
-  
-  public void reset()
-  {
-    super.reset();
+    base.Reset();
     type = null;
   }
   
-  public boolean isValid()
+  public override bool IsValid()
   {
-    return hasType();
+    return HasType();
   }
   
-  public static void load(IntubationData src, SEIntubation dst)
-  {
-    SEPatientAction.load(src.getPatientAction(), dst);
-    if(src.getType()!=Type.UNRECOGNIZED)
-    	dst.type = src.getType();
-  }
-  
-  public static IntubationData unload(SEIntubation src)
-  {
-    IntubationData.Builder dst = IntubationData.newBuilder();
-    unload(src,dst);
-    return dst.build();
-  }
-  
-  protected static void unload(SEIntubation src, IntubationData.Builder dst)
-  {
-    SEPatientAction.unload(src,dst.getPatientActionBuilder());
-    if (src.hasType())
-      dst.setType(src.type);
-  }
-  
-  public Type getType()
+  public new IntubationType GetType()
   {
     return type;
   }
-  public void setType(Type t)
+  public void SetType(IntubationType t)
   {
     type = t;
   }
-  public boolean hasType()
+  public bool HasType()
   {
     return type == null ? false : true;
-  }
-  
-  public String toString() 
-  {
-    return "Intubation"
-        + "\n\tType: " + getType();
   }
 }

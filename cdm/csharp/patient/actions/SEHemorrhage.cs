@@ -1,15 +1,9 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-package com.kitware.physiology.datamodel.patient.actions;
-
-import com.kitware.physiology.cdm.PatientActions.HemorrhageData;
-
-import com.kitware.physiology.datamodel.properties.SEScalarVolumePerTime;
-
-public class SEHemorrhage extends SEPatientAction
+public class SEHemorrhage : SEPatientAction
 {
-  protected String compartment;
+  protected string compartment;
   protected SEScalarVolumePerTime rate;
   
   public SEHemorrhage()
@@ -18,91 +12,41 @@ public class SEHemorrhage extends SEPatientAction
     rate = null;
   }
   
-  public void copy(SEHemorrhage other)
+  public override void Reset()
   {
-    if(this==other)
-      return;
-    super.copy(other);
-    compartment = other.compartment;
-    if (other.rate != null)
-      getRate().set(other.getRate());
-    else if (rate != null)
-      rate.invalidate();
-  }
-  
-  public void reset()
-  {
-    super.reset();
+    base.Reset();
     compartment = null;
     if (rate != null)
-      rate.invalidate();
+      rate.Invalidate();
   }
   
-  public boolean isValid()
+  public override bool IsValid()
   {
-    return hasRate() && hasCompartment();
+    return HasRate() && HasCompartment();
   }
   
-  public static void load(HemorrhageData src, SEHemorrhage dst)
-  {
-    SEPatientAction.load(src.getPatientAction(), dst);
-    dst.compartment = src.getCompartment();
-    if(src.hasRate())
-      SEScalarVolumePerTime.load(src.getRate(),dst.getRate());
-  }
-  
-  public static HemorrhageData unload(SEHemorrhage src)
-  {
-    HemorrhageData.Builder dst = HemorrhageData.newBuilder();
-    unload(src,dst);
-    return dst.build();
-  }
-  
-  protected static void unload(SEHemorrhage src, HemorrhageData.Builder dst)
-  {
-    SEPatientAction.unload(src,dst.getPatientActionBuilder());
-    if (src.hasCompartment())
-      dst.setCompartment(src.compartment);
-    if (src.hasRate())
-      dst.setRate(SEScalarVolumePerTime.unload(src.rate));
-  }
-  
-  public String getCompartment()
+  public string GetCompartment()
   {
     return compartment;
   }
-  public void setCompartment(Enum<?> compartment)
+  public void SetCompartment(string name)
   {
-    this.compartment = compartment.name();
+    compartment = name;
   }
-  public void setCompartment(String compartment)
+  public bool HasCompartment()
   {
-    this.compartment = compartment;
-  }
-  public boolean hasCompartment()
-  {
-    return compartment == null ? false : !compartment.isEmpty();
+    return !string.IsNullOrEmpty(compartment);
   }
   
-  public boolean hasRate()
+  public bool HasRate()
   {
-    return rate == null ? false : rate.isValid();
+    return rate == null ? false : rate.IsValid();
   }
-  public SEScalarVolumePerTime getRate()
+  public SEScalarVolumePerTime GetRate()
   {
     if (rate == null)
       rate = new SEScalarVolumePerTime();
     return rate;
-  }
-  
-  public String toString()
-  {
-    if (rate != null)
-      return "Hemorrhage" 
-          + "\n\tRate: " + getRate() 
-          + "\n\tCompartment: " + getCompartment();
-    else
-      return "Action not specified properly";
   }
 }
 

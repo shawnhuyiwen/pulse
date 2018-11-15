@@ -277,7 +277,7 @@ public class HowTo_EngineUse
    for(int i=1; i<=2; i++)
    {
   	 time.setValue(i,TimeUnit.min);
-	   if(!pe.advanceTime(time)) // Simulate one second
+	   if(!pe.advanceTime(time)) // Simulate one minute
 	   {
 	     Log.error("Engine was unable to stay within modeling parameters with requested actions");
 	     return;
@@ -300,7 +300,7 @@ public class HowTo_EngineUse
    for(int i=1; i<=1; i++)
    {
      time.setValue(i,TimeUnit.min);
-     if(!pe.advanceTime(time)) // Simulate one second
+     if(!pe.advanceTime(time)) // Simulate one minute
      {
        Log.error("Engine was unable to stay within modeling parameters with requested actions");
        return;
@@ -326,7 +326,7 @@ public class HowTo_EngineUse
    for(int i=1; i<=5; i++)
    {
      time.setValue(i,TimeUnit.min);
-     if(!pe.advanceTime(time)) // Simulate one second
+     if(!pe.advanceTime(time)) // Simulate one minute
      {
        Log.error("Engine was unable to stay within modeling parameters with requested actions");
        return;

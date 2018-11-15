@@ -1,23 +1,31 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-package com.kitware.physiology.datamodel.patient.actions;
-
-import com.kitware.physiology.cdm.PatientActions.SubstanceBolusData;
-import com.kitware.physiology.cdm.PatientActionEnums.eSubstanceAdministration.Route;
-
-import com.kitware.physiology.datamodel.properties.SEScalarMassPerVolume;
-import com.kitware.physiology.datamodel.properties.SEScalarVolume;
-import com.kitware.physiology.datamodel.substance.SESubstance;
-
-public class SESubstanceBolus extends SEPatientAction
+public class eSubstanceAdministration
 {
-  protected Route adminRoute;
+    private eSubstanceAdministration(string v) { Value = v; }
+    protected string Value { get; }
+
+    public static eSubstanceAdministration Intravenous { get { return new eSubstanceAdministration("Intravenous"); } }
+    public static eSubstanceAdministration Epidural { get { return new eSubstanceAdministration("Epidural"); } }
+    public static eSubstanceAdministration Intraosseous { get { return new eSubstanceAdministration("Intraosseous"); } }
+    public static eSubstanceAdministration Intraarterial { get { return new eSubstanceAdministration("Intraarterial"); } }
+    public static eSubstanceAdministration Intracardiac { get { return new eSubstanceAdministration("Intracardiac"); } }
+    public static eSubstanceAdministration Intracerebral { get { return new eSubstanceAdministration("Intracerebral"); } }
+    public static eSubstanceAdministration Intracerebroventricular { get { return new eSubstanceAdministration("Intracerebroventricular"); } }
+    public static eSubstanceAdministration Intradermal { get { return new eSubstanceAdministration("Intradermal"); } }
+    public static eSubstanceAdministration Intramuscular { get { return new eSubstanceAdministration("Intramuscular"); } }
+    public static eSubstanceAdministration Subcutaneous { get { return new eSubstanceAdministration("Subcutaneous"); } }
+}
+
+public class SESubstanceBolus : SEPatientAction
+{
+  protected eSubstanceAdministration adminRoute;
   protected SEScalarMassPerVolume concentration;
   protected SEScalarVolume dose;
-  protected SESubstance substance;
+  protected string substance;
   
-  public SESubstanceBolus(SESubstance substance)
+  public SESubstanceBolus(string substance)
   {
     this.adminRoute = null;
     this.dose = null;
@@ -25,122 +33,60 @@ public class SESubstanceBolus extends SEPatientAction
     this.substance = substance;
   }
   
-  public void copy(SESubstanceBolus other)
+  public override void Reset()
   {
-    if(this==other)
-      return;
-    super.copy(other);
-    adminRoute = other.adminRoute;
-    substance = other.substance;
-    
-    if (other.dose != null)
-      getDose().set(other.getDose());
-    else if (dose != null)
-      dose.invalidate();
-    
-    if (other.concentration != null)
-      getConcentration().set(other.getConcentration());
-    else if (concentration != null)
-      concentration.invalidate();
-  }
-  
-  public void reset()
-  {
-    super.reset();
+    base.Reset();
     adminRoute = null;
     if (dose != null)
-      dose.invalidate();
+      dose.Invalidate();
     if (concentration != null)
-      concentration.invalidate();
+      concentration.Invalidate();
   }
   
-  public boolean isValid()
+  public override bool IsValid()
   {
-    return hasAdminRoute() && hasDose() && hasConcentration() && hasSubstance();
-  }
-  
-  public static void load(SubstanceBolusData src, SESubstanceBolus dst)
-  {
-    SEPatientAction.load(src.getPatientAction(), dst);
-    if(src.hasDose())
-      SEScalarVolume.load(src.getDose(),dst.getDose());
-    if(src.hasConcentration())
-      SEScalarMassPerVolume.load(src.getConcentration(),dst.getConcentration());
-    if(src.getAdministrationRoute()!=Route.UNRECOGNIZED)
-    	dst.adminRoute = src.getAdministrationRoute();
-  }
-  
-  public static SubstanceBolusData unload(SESubstanceBolus src)
-  {
-    SubstanceBolusData.Builder dst = SubstanceBolusData.newBuilder();
-    unload(src,dst);
-    return dst.build();
-  }
-  
-  protected static void unload(SESubstanceBolus src, SubstanceBolusData.Builder dst)
-  {
-    SEPatientAction.unload(src,dst.getPatientActionBuilder());
-    if (src.hasDose())
-      dst.setDose(SEScalarVolume.unload(src.dose));
-    if (src.hasConcentration())
-      dst.setConcentration(SEScalarMassPerVolume.unload(src.concentration));
-    if (src.hasAdminRoute())
-      dst.setAdministrationRoute(src.adminRoute);
-    if (src.hasSubstance())
-      dst.setSubstance(src.substance.getName());
+    return HasAdminRoute() && HasDose() && HasConcentration() && HasSubstance();
   }
 
-  public Route getAdminRoute()
+  public eSubstanceAdministration GetAdminRoute()
   {
     return adminRoute;
   }
-  public void setAdminRoute(Route adminRoute)
+  public void SetAdminRoute(eSubstanceAdministration adminRoute)
   {
     this.adminRoute = adminRoute;
   }
-  public boolean hasAdminRoute()
+  public bool HasAdminRoute()
   {
     return adminRoute == null ? false : true;
   }
   
-  public boolean hasConcentration()
+  public bool HasConcentration()
   {
-    return concentration == null ? false : concentration.isValid();
+    return concentration == null ? false : concentration.IsValid();
   }
-  public SEScalarMassPerVolume getConcentration()
+  public SEScalarMassPerVolume GetConcentration()
   {
     if (concentration == null)
       concentration = new SEScalarMassPerVolume();
     return concentration;
   }
   
-  public boolean hasDose()
+  public bool HasDose()
   {
-    return dose == null ? false : dose.isValid();
+    return dose == null ? false : dose.IsValid();
   }
   
-  public SEScalarVolume getDose()
+  public SEScalarVolume GetDose()
   {
     if (dose == null)
       dose = new SEScalarVolume();
     return dose;
   }
   
-  public SESubstance getSubstance()
+  public string GetSubstance()
   {
     return substance;
   }
-  public boolean hasSubstance() { return substance != null; }
-  
-  public String toString()
-  {
-    if (dose != null || concentration != null)
-      return "Substance Bolus" 
-          + "\n\tDose: " + getDose()
-          + "\n\tConcentration: " + getConcentration()
-          + "\n\tSubstance: " + getSubstance().getName() 
-          + "\n\tAdministration Route: " + getAdminRoute();
-    else
-      return "Action not specified properly";
-  }
+  public bool HasSubstance() { return substance != null; }
 }

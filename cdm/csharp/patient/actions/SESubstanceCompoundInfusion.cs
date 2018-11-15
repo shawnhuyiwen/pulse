@@ -1,121 +1,58 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-package com.kitware.physiology.datamodel.patient.actions;
-
-import com.kitware.physiology.cdm.PatientActions.SubstanceCompoundInfusionData;
-
-import com.kitware.physiology.datamodel.properties.SEScalarVolume;
-import com.kitware.physiology.datamodel.properties.SEScalarVolumePerTime;
-import com.kitware.physiology.datamodel.substance.SESubstanceCompound;
-
-public class SESubstanceCompoundInfusion extends SEPatientAction
+public class SESubstanceCompoundInfusion : SEPatientAction
 {
   protected SEScalarVolume bagVolume;
   protected SEScalarVolumePerTime rate;
-  protected SESubstanceCompound compound;
+  protected string compound;
   
-  public SESubstanceCompoundInfusion(SESubstanceCompound compound)
+  public SESubstanceCompoundInfusion(string compound)
   {
     this.rate = null;
     this.bagVolume = null;
     this.compound = compound;
   }
 
-  public void copy(SESubstanceCompoundInfusion other)
+  public override void Reset()
   {
-    if(this==other)
-      return;
-    super.copy(other);
-    compound = other.compound;
-    
-    if (other.rate != null)
-      getRate().set(other.rate);
-    else if (rate != null)
-      rate.invalidate();
-    
-    if (other.bagVolume != null)
-      getBagVolume().set(other.bagVolume);
-    else if (bagVolume != null)
-      bagVolume.invalidate();
-  }
-  
-  public void reset()
-  {
-    super.reset();
+    base.Reset();
     if (rate != null)
-      rate.invalidate();
+      rate.Invalidate();
     if (bagVolume != null)
-      bagVolume.invalidate();
+      bagVolume.Invalidate();
   }
   
-  public boolean isValid()
+  public override bool IsValid()
   {
-    return hasRate() && hasBagVolume() && hasSubstanceCompound();
+    return HasRate() && HasBagVolume() && HasSubstanceCompound();
   }
   
-  public static void load(SubstanceCompoundInfusionData src, SESubstanceCompoundInfusion dst)
+  public bool HasBagVolume()
   {
-    SEPatientAction.load(src.getPatientAction(), dst);
-    if(src.hasRate())
-      SEScalarVolumePerTime.load(src.getRate(),dst.getRate());
-    if(src.hasBagVolume())
-      SEScalarVolume.load(src.getBagVolume(),dst.getBagVolume());
+    return bagVolume == null ? false : bagVolume.IsValid();
   }
-  
-  public static SubstanceCompoundInfusionData unload(SESubstanceCompoundInfusion src)
-  {
-    SubstanceCompoundInfusionData.Builder dst = SubstanceCompoundInfusionData.newBuilder();
-    unload(src,dst);
-    return dst.build();
-  }
-  
-  protected static void unload(SESubstanceCompoundInfusion src, SubstanceCompoundInfusionData.Builder dst)
-  {
-    SEPatientAction.unload(src,dst.getPatientActionBuilder());
-    if (src.hasRate())
-      dst.setRate(SEScalarVolumePerTime.unload(src.rate));
-    if (src.hasBagVolume())
-      dst.setBagVolume(SEScalarVolume.unload(src.bagVolume));
-    dst.setSubstanceCompound(src.getSubstanceCompound().getName());
-  }
-  
-  public boolean hasBagVolume()
-  {
-    return bagVolume == null ? false : bagVolume.isValid();
-  }
-  public SEScalarVolume getBagVolume()
+  public SEScalarVolume GetBagVolume()
   {
     if (bagVolume == null)
       bagVolume = new SEScalarVolume();
     return bagVolume;
   }
   
-  public boolean hasRate()
+  public bool HasRate()
   {
-    return rate == null ? false : rate.isValid();
+    return rate == null ? false : rate.IsValid();
   }
-  public SEScalarVolumePerTime getRate()
+  public SEScalarVolumePerTime GetRate()
   {
     if (rate == null)
       rate = new SEScalarVolumePerTime();
     return rate;
   }
   
-  public boolean hasSubstanceCompound(){return true;}
-  public SESubstanceCompound getSubstanceCompound()
+  public bool HasSubstanceCompound(){return true;}
+  public string GetSubstanceCompound()
   {
     return compound;
-  }
-  
-  public String toString()
-  {
-    if (rate != null || compound != null)
-      return "Compound Infusion "
-          + "\n\tRate: " + getRate() 
-          + "\n\tBag Volume: " + getBagVolume() 
-          + "\n\tSubstance Compound: " + getSubstanceCompound().getName();
-    else
-      return "Action not specified properly";
   }
 }
