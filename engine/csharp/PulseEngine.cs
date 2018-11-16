@@ -75,7 +75,7 @@ public class PulseEngine
     }
     
     [DllImport("PulseC", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-    static extern bool ProcessAction(IntPtr pulse, string any_action_list, int format);
+    static extern bool ProcessActions(IntPtr pulse, string any_action_list, int format);
     public bool ProcessAction(SEAction action)
     {
         List<SEAction> actions = new List<SEAction>();
@@ -84,7 +84,9 @@ public class PulseEngine
     }
     public bool ProcessActions(List<SEAction> actions)
     {
-        string any_action_list_str = "";
-        return ProcessAction(pulseEngineCPtr, any_action_list_str, (int)SerializationFormat.ASCII);
+        var pb = PBAction.Unload(actions);
+        string any_action_list_str = pb.ToString();
+        Console.WriteLine(any_action_list_str);
+        return ProcessActions(pulseEngineCPtr, any_action_list_str, (int)SerializationFormat.ASCII);
     }
 }

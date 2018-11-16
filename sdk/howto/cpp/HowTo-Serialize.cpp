@@ -3,6 +3,7 @@
 #include "EngineHowTo.h"
 
 #include "properties/SEScalarTime.h"
+#include "engine/SEActionManager.h"
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
@@ -13,6 +14,7 @@
 //--------------------------------------------------------------------------------------------------
 void HowToSerialize()
 {
+  
   std::stringstream ss;
   // Create a Pulse Engine and load the standard patient
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("Sandbox.log");
@@ -21,5 +23,19 @@ void HowToSerialize()
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
   }
+
+  //std::string action_list = "AnyAction: [ { PatientAction: { Hemorrhage: { PatientAction: { Action: { } }, Compartment: \"RightLeg\", Rate: { ScalarVolumePerTime: { Value: 200, Unit: \"mL/min\" } } } } } ]";
+  std::string action_list = "{ \"AnyAction\": [ { \"PatientAction\": { \"Hemorrhage\": { \"PatientAction\": { \"Action\": { } }, \"Compartment\": \"RightLeg\", \"Rate\": { \"ScalarVolumePerTime\": { \"Value\": 200, \"Unit\": \"mL/min\" } } } } } ] }";
+
+  std::vector<SEAction*> vActions;
+  if (!SEActionManager::SerializeFromString(action_list, vActions, SerializationFormat::ASCII, pe->GetSubstanceManager()))
+    std::cout << "Dang..." << std::endl;
+
+  SEActionManager am(pe->GetSubstanceManager());
+  am.SerializeFromString(action_list, SerializationFormat::ASCII);
+  am.SerializeToString(action_list, SerializationFormat::ASCII);
+  std::cout << action_list << std::endl;
+
+
   pe->AdvanceModelTime(5, TimeUnit::s);
 }

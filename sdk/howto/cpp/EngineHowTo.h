@@ -10,6 +10,7 @@
 // The following how-to functions are defined in their own file
 void HowToEngineUse();
 void HowToCreateAPatient();
+void HowToSerialize();
 
 void HowToAirwayObstruction();
 void HowToAnesthesiaMachine();

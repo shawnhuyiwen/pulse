@@ -15,8 +15,9 @@ int main()
 
   //HowToEngineUse();
   //HowToCreateAPatient();
+  HowToSerialize();
 
-  HowToAirwayObstruction();
+  //HowToAirwayObstruction();
   //HowToAnesthesiaMachine();
   //HowToAsthmaAttack();
   //HowToBrainInjury();

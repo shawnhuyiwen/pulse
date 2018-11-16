@@ -1,8 +1,112 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-class PBPatientActions
+public class PBPatientAction
 {
+    #region Any Patient Action
+    /** Create a new action based on the binding object, load that data into the new action, and return said action */
+    public static SEPatientAction Load(Cdm.AnyPatientActionData any)
+    {
+        if (any.AirwayObstruction != null)
+        {
+            SEAirwayObstruction ao = new SEAirwayObstruction();
+            Serialize(any.AirwayObstruction,ao);
+            return ao;
+        }
+        if (any.Hemorrhage != null)
+        {
+            SEHemorrhage h = new SEHemorrhage();
+            Serialize(any.Hemorrhage, h);
+            return h;
+        }
+        if (any.Intubation != null)
+        {
+            SEIntubation i = new SEIntubation();
+            Serialize(any.Intubation, i);
+            return i;
+        }
+        if (any.NeedleDecompression != null)
+        {
+            SENeedleDecompression n = new SENeedleDecompression();
+            Serialize(any.NeedleDecompression, n);
+            return n;
+        }
+        if (any.SubstanceBolus != null)
+        {
+            SESubstanceBolus sb = new SESubstanceBolus();
+            Serialize(any.SubstanceBolus, sb);
+            return sb;
+        }
+        if (any.SubstanceCompoundInfusion != null)
+        {
+            SESubstanceCompoundInfusion sci = new SESubstanceCompoundInfusion();
+            Serialize(any.SubstanceCompoundInfusion, sci);
+            return sci;
+        }
+        if (any.SubstanceInfusion != null)
+        {
+            SESubstanceInfusion si = new SESubstanceInfusion();
+            Serialize(any.SubstanceInfusion, si);
+            return si;
+        }
+        if (any.TensionPneumothorax != null)
+        {
+            SETensionPneumothorax tp = new SETensionPneumothorax();
+            Serialize(any.TensionPneumothorax, tp);
+            return tp;
+        }
+        return null;
+    }
+    /** Create a new bind object, unload the action, put that in the bind object, and return said bind object */
+    public static Cdm.AnyPatientActionData Unload(SEPatientAction action)
+    {
+        Cdm.AnyPatientActionData any = new Cdm.AnyPatientActionData();
+
+        if (action.GetType().IsAssignableFrom(typeof(SEAirwayObstruction)))
+        {
+            any.AirwayObstruction = Unload((SEAirwayObstruction)action);
+            return any;
+        }
+        if (action.GetType().IsAssignableFrom(typeof(SEHemorrhage)))
+        {
+            any.Hemorrhage = Unload((SEHemorrhage)action);
+            return any;
+        }
+        if (action.GetType().IsAssignableFrom(typeof(SEIntubation)))
+        {
+            any.Intubation = Unload((SEIntubation)action);
+            return any;
+        }
+        if (action.GetType().IsAssignableFrom(typeof(SENeedleDecompression)))
+        {
+            any.NeedleDecompression = Unload((SENeedleDecompression)action);
+            return any;
+        }
+        if (action.GetType().IsAssignableFrom(typeof(SESubstanceBolus)))
+        {
+            any.SubstanceBolus = Unload((SESubstanceBolus)action);
+            return any;
+        }
+        if (action.GetType().IsAssignableFrom(typeof(SESubstanceCompoundInfusion)))
+        {
+            any.SubstanceCompoundInfusion = Unload((SESubstanceCompoundInfusion)action);
+            return any;
+        }
+        if (action.GetType().IsAssignableFrom(typeof(SESubstanceInfusion)))
+        {
+            any.SubstanceInfusion = Unload((SESubstanceInfusion)action);
+            return any;
+        }
+        if (action.GetType().IsAssignableFrom(typeof(SETensionPneumothorax)))
+        {
+            any.TensionPneumothorax = Unload((SETensionPneumothorax)action);
+            return any;
+        }
+
+        return any;
+    }
+    #endregion
+
     #region SEPatientAction
     public static void Serialize(Cdm.PatientActionData src, SEPatientAction dst)
     {
@@ -34,6 +138,7 @@ class PBPatientActions
     }
     public static void Serialize(SEAirwayObstruction src, Cdm.AirwayObstructionData dst)
     {
+        dst.PatientAction = new Cdm.PatientActionData();
         Serialize(src, dst.PatientAction);
         if (src.HasSeverity())
             dst.Severity = PBProperty.Unload(src.GetSeverity());
@@ -61,6 +166,7 @@ class PBPatientActions
     }
     public static void Serialize(SEHemorrhage src, Cdm.HemorrhageData dst)
     {
+        dst.PatientAction = new Cdm.PatientActionData();
         Serialize(src, dst.PatientAction);
         if (src.HasCompartment())
             dst.Compartment = src.GetCompartment();
@@ -87,6 +193,7 @@ class PBPatientActions
     }
     public static void Serialize(SEIntubation src, Cdm.IntubationData dst)
     {
+        dst.PatientAction = new Cdm.PatientActionData();
         Serialize(src, dst.PatientAction);
         dst.Type = (Cdm.eIntubation.Types.Type)(int)src.GetType();
     }
@@ -111,6 +218,7 @@ class PBPatientActions
     }
     public static void Serialize(SENeedleDecompression src, Cdm.NeedleDecompressionData dst)
     {
+        dst.PatientAction = new Cdm.PatientActionData();
         Serialize(src, dst.PatientAction);
         if (src.HasSide())
         dst.Side = (Cdm.eSide)(int)src.GetSide();
@@ -144,6 +252,7 @@ class PBPatientActions
     }
     public static void Serialize(SESubstanceBolus src, Cdm.SubstanceBolusData dst)
     {
+        dst.PatientAction = new Cdm.PatientActionData();
         Serialize(src, dst.PatientAction);
         if (src.HasSubstance())
             dst.Substance = src.GetSubstance();
@@ -178,6 +287,7 @@ class PBPatientActions
     }
     public static void Serialize(SESubstanceCompoundInfusion src, Cdm.SubstanceCompoundInfusionData dst)
     {
+        dst.PatientAction = new Cdm.PatientActionData();
         Serialize(src, dst.PatientAction);
         if (src.HasSubstanceCompound())
             dst.SubstanceCompound = src.GetSubstanceCompound();
@@ -211,6 +321,7 @@ class PBPatientActions
     }
     public static void Serialize(SESubstanceInfusion src, Cdm.SubstanceInfusionData dst)
     {
+        dst.PatientAction = new Cdm.PatientActionData();
         Serialize(src, dst.PatientAction);
         dst.Substance = src.GetSubstance();
         if (src.HasConcentration())
@@ -241,6 +352,7 @@ class PBPatientActions
     }
     public static void Serialize(SETensionPneumothorax src, Cdm.TensionPneumothoraxData dst)
     {
+        dst.PatientAction = new Cdm.PatientActionData();
         Serialize(src, dst.PatientAction);
         dst.Type = (Cdm.eGate)(int)src.GetType();
         dst.Side = (Cdm.eSide)(int)src.GetSide();

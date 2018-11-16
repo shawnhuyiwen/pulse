@@ -1,7 +1,10 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-class PBProperty
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
+
+   public class PBProperty
 {
     #region SEScalar
     public static void Load(Cdm.ScalarData src, SEScalar dst)
@@ -71,7 +74,7 @@ class PBProperty
     {
         dst.ScalarMassPerVolume = new Cdm.ScalarData();
         dst.ScalarMassPerVolume.Value = src.GetValue();
-        dst.ScalarMassPerVolume.Unit = "";
+        dst.ScalarMassPerVolume.Unit = src.GetUnit().ToString();
     }
     #endregion
 
@@ -95,7 +98,7 @@ class PBProperty
     {
         dst.ScalarTime = new Cdm.ScalarData();
         dst.ScalarTime.Value = src.GetValue();
-        dst.ScalarTime.Unit = "";
+        dst.ScalarTime.Unit = src.GetUnit().ToString();
     }
     #endregion
 
@@ -119,7 +122,7 @@ class PBProperty
     {
         dst.ScalarVolume = new Cdm.ScalarData();
         dst.ScalarVolume.Value = src.GetValue();
-        dst.ScalarVolume.Unit = "";
+        dst.ScalarVolume.Unit = src.GetUnit().ToString();
     }
     #endregion
 
@@ -144,7 +147,7 @@ class PBProperty
     {
         dst.ScalarVolumePerTime = new Cdm.ScalarData();
         dst.ScalarVolumePerTime.Value = src.GetValue();
-        dst.ScalarVolumePerTime.Unit = "";
+        dst.ScalarVolumePerTime.Unit = src.GetUnit().ToString();
     }
     #endregion
 }

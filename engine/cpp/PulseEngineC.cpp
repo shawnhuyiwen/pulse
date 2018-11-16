@@ -17,6 +17,7 @@
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarTemperature.h"
 #include "properties/SEScalarTime.h"
+#include "properties/SEScalarVolume.h"
 #include "utils/DataTrack.h"
 #include "log4cplus/config.hxx"
 
@@ -250,6 +251,7 @@ void PulseEngineC::SetupDefaultDataRequests()
   eng->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SkinTemperature", TemperatureUnit::C);
   SESubstance* CO2 = eng->GetSubstanceManager().GetSubstance("CarbonDioxide");
   eng->GetEngineTracker()->GetDataRequestManager().CreateGasCompartmentDataRequest("Carina",*CO2,"PartialPressure", PressureUnit::mmHg);
+  eng->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
 }
 
 void PulseEngineC::ForwardDebug(const std::string&  msg, const std::string&  origin)

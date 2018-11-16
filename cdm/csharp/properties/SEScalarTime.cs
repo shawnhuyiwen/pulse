@@ -6,6 +6,8 @@ public class TimeUnit
     private TimeUnit(string v) { Value = v; }
     protected string Value { get; }
 
+    public new string ToString() { return Value; }
+
     public static TimeUnit s { get { return new TimeUnit("s"); } }
     public static TimeUnit min { get { return new TimeUnit("min"); } }
     public static TimeUnit hr { get { return new TimeUnit("hr"); } }

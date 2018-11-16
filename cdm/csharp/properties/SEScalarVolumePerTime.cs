@@ -6,6 +6,8 @@ public class VolumePerTimeUnit
     private VolumePerTimeUnit(string v) { Value = v; }
     protected string Value { get; }
 
+    public new string ToString() { return Value; }
+
     public static VolumePerTimeUnit L_Per_s { get { return new VolumePerTimeUnit("L/s"); } }
     public static VolumePerTimeUnit mL_Per_s { get { return new VolumePerTimeUnit("mL/s"); } }
     public static VolumePerTimeUnit L_Per_min { get { return new VolumePerTimeUnit("L/min"); } }

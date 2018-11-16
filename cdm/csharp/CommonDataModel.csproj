@@ -28,4 +28,10 @@
     <ProjectReference Include="..\..\schema\DataModelBindings.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="Google.Protobuf">
+      <HintPath>..\..\engine\csharp\bin\Debug\netstandard2.0\Google.Protobuf.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

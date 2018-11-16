@@ -6,6 +6,8 @@ public class MassPerVolumeUnit
     private MassPerVolumeUnit(string v) { Value = v; }
     protected string Value { get; }
 
+    public new string ToString() { return Value; }
+
     public static MassPerVolumeUnit ug_Per_mL { get { return new MassPerVolumeUnit("ug/mL"); } }
     public static MassPerVolumeUnit mg_Per_mL { get { return new MassPerVolumeUnit("mg/mL"); } }
     public static MassPerVolumeUnit ug_Per_L { get { return new MassPerVolumeUnit("ug/L"); } }

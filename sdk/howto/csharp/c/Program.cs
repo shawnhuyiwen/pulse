@@ -13,7 +13,7 @@ namespace HowTo_UseC
         static void Main(string[] args)
         {
             // We are not providing data requests, so this will default to vitals data
-            double[] result = new double[12];
+            
             List<string> headings = new List<string>();
             headings.Add("SimTime(s)");
             headings.Add("Lead3ElectricPotential(mV)");
@@ -27,6 +27,8 @@ namespace HowTo_UseC
             headings.Add("RespirationRate(1 / min)");
             headings.Add("SkinTemperature(degC)");
             headings.Add("Carina-CarbonDioxide-PartialPressure(mmHg)");
+            headings.Add("BloodVolume(mL)");
+            double[] result = new double[headings.Count];
 
             // Instatiate a Pulse engine
             PulseEngine pulse = new PulseEngine("pulse.log",".");
@@ -63,8 +65,8 @@ namespace HowTo_UseC
                 {
                     // Pull data from pulse
                     IntPtr data = pulse.PullData();
-                    Marshal.Copy(data, result, 0, 12);
-                    for (int d = 0; d < 12; d++)
+                    Marshal.Copy(data, result, 0, headings.Count);
+                    for (int d = 0; d < headings.Count; d++)
                         Console.WriteLine(headings[d]+" " + result[d]);
                 }
             }
@@ -88,8 +90,8 @@ namespace HowTo_UseC
                 }
                 // Again, the CDM is updated after this call
                 IntPtr data = pulse.PullData();
-                Marshal.Copy(data, result, 0, 12);
-                for (int d = 0; d < 12; d++)
+                Marshal.Copy(data, result, 0, headings.Count);
+                for (int d = 0; d < headings.Count; d++)
                     Console.WriteLine(headings[d] + " " + result[d]);
             }
 
@@ -110,13 +112,14 @@ namespace HowTo_UseC
                 }
                 // Pull data from pulse
                 IntPtr data = pulse.PullData();
-                Marshal.Copy(data, result, 0, 12);
-                for (int d = 0; d < 12; d++)
+                Marshal.Copy(data, result, 0, headings.Count);
+                for (int d = 0; d < headings.Count; d++)
                     Console.WriteLine(headings[d] + " " + result[d]);
             }
 
             // Infuse some fluids
-            SESubstanceCompoundInfusion ivFluids = new SESubstanceCompoundInfusion("Saline");
+            SESubstanceCompoundInfusion ivFluids = new SESubstanceCompoundInfusion();
+            ivFluids.SetSubstanceCompound("Saline");
             ivFluids.GetBagVolume().SetValue(500, VolumeUnit.mL);
             ivFluids.GetRate().SetValue(100, VolumePerTimeUnit.mL_Per_min);
             if (!pulse.ProcessAction(ivFluids))
@@ -134,8 +137,8 @@ namespace HowTo_UseC
                 }
                 // Pull data from pulse
                 IntPtr data = pulse.PullData();
-                Marshal.Copy(data, result, 0, 12);
-                for (int d = 0; d < 12; d++)
+                Marshal.Copy(data, result, 0, headings.Count);
+                for (int d = 0; d < headings.Count; d++)
                     Console.WriteLine(headings[d] + " " + result[d]);
             }
         }

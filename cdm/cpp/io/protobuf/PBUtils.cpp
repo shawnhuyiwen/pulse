@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "io/protobuf/PBUtils.h"
 #include <google/protobuf/text_format.h>
+#include <google/protobuf/util/json_util.h>
 
 void MyLogHandler(google::protobuf::LogLevel level, const char* filename, int line, const std::string& message)
 {
@@ -27,7 +28,8 @@ bool PBUtils::SerializeFromString(const std::string& src, google::protobuf::Mess
   {
     google::protobuf::SetLogHandler(MyLogHandler);
     if (!google::protobuf::TextFormat::ParseFromString(src, &dst))
-      return false;
+      if (!google::protobuf::util::JsonStringToMessage(src, &dst).ok())
+        return false;
     return true;
   }
   else

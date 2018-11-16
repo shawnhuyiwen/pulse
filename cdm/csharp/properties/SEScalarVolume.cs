@@ -6,6 +6,8 @@ public class VolumeUnit
     private VolumeUnit(string v) { Value = v; }
     protected string Value { get; }
 
+    public new string ToString() { return Value; }
+
     public static VolumeUnit L { get { return new VolumeUnit("L"); } }
     public static VolumeUnit mL { get { return new VolumeUnit("mL"); } }
     public static VolumeUnit dL { get { return new VolumeUnit("dL"); } }
