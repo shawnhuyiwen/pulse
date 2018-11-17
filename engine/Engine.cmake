@@ -105,6 +105,7 @@ if(MSVC)
   set(ENG_FLAGS "${ENG_FLAGS} -Zm120")
 endif(MSVC)
 
+target_include_directories(PulseEngine PRIVATE ${CMAKE_SOURCE_DIR}/schema)
 target_include_directories(PulseEngine PRIVATE ${CMAKE_SOURCE_DIR}/schema/bind/cpp)
 target_include_directories(PulseEngine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/cpp)
 target_include_directories(PulseEngine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../cdm/cpp)

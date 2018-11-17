@@ -23,7 +23,7 @@
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceManager.h"
 #include <google/protobuf/text_format.h>
-#include "bind/cdm/Compartment.pb.h"
+#include "bind/cpp/cdm/Compartment.pb.h"
 
 void PBCompartment::Serialize(const cdm::CompartmentData& src, SECompartment& dst)
 {

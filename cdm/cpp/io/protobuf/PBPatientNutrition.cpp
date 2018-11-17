@@ -5,7 +5,7 @@
 #include "io/protobuf/PBPatientNutrition.h"
 #include "io/protobuf/PBProperties.h"
 #include "io/protobuf/PBUtils.h"
-#include "bind/cdm/PatientNutrition.pb.h"
+#include "bind/cpp/cdm/PatientNutrition.pb.h"
 #include "patient/SEMeal.h"
 #include "utils/FileUtils.h"
 

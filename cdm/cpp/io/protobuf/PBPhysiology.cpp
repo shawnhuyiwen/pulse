@@ -17,7 +17,7 @@
 #include "system/physiology/SERenalSystem.h"
 #include "system/physiology/SERespiratorySystem.h"
 #include "system/physiology/SETissueSystem.h"
-#include "bind/cdm/Physiology.pb.h"
+#include "bind/cpp/cdm/Physiology.pb.h"
 
 void PBPhysiology::Load(const cdm::BloodChemistrySystemData& src, SEBloodChemistrySystem& dst)
 {

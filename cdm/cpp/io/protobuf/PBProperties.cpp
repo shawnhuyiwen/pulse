@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 #include "io/protobuf/PBProperties.h"
-#include "bind/cdm/Properties.pb.h"
+#include "bind/cpp/cdm/Properties.pb.h"
 
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarAmount.h"

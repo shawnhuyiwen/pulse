@@ -8,7 +8,7 @@
 #include "io/protobuf/PBPatientNutrition.h"
 #include "io/protobuf/PBProperties.h"
 #include "io/protobuf/PBUtils.h"
-#include "bind/pulse/PulseConfiguration.pb.h"
+#include "bind/cpp/pulse/PulseConfiguration.pb.h"
 #include "PulseConfiguration.h"
 #include "patient/SENutrition.h"
 #include "engine/SEDynamicStabilization.h"

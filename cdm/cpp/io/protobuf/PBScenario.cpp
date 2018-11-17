@@ -7,7 +7,7 @@
 #include "io/protobuf/PBEngine.h"
 #include "io/protobuf/PBUtils.h"
 #include <google/protobuf/text_format.h>
-#include "bind/cdm/Scenario.pb.h"
+#include "bind/cpp/cdm/Scenario.pb.h"
 #include "scenario/SEScenario.h"
 #include "utils/FileUtils.h"
 

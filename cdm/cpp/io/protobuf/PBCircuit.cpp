@@ -8,7 +8,7 @@
 #include "circuit/fluid/SEFluidCircuit.h"
 #include "circuit/thermal/SEThermalCircuit.h"
 #include "circuit/SECircuitManager.h"
-#include "bind/cdm/Circuit.pb.h"
+#include "bind/cpp/cdm/Circuit.pb.h"
 #include <google/protobuf/text_format.h>
 
 

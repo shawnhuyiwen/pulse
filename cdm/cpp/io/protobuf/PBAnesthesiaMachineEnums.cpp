@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "bind/cdm/AnesthesiaMachineEnums.pb.h"
+#include "bind/cpp/cdm/AnesthesiaMachineEnums.pb.h"
 #include "system/equipment/anesthesiamachine/SEAnesthesiaMachine.h"
 
 const std::string& eAnesthesiaMachine_Event_Name(eAnesthesiaMachine_Event m)

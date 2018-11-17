@@ -3,8 +3,8 @@
 
 #include "stdafx.h"
 
-#include "bind/pulse/Pulse.pb.h"
-#include "bind/pulse/PulseEnums.pb.h"
+#include "bind/cpp/pulse/Pulse.pb.h"
+#include "bind/cpp/pulse/PulseEnums.pb.h"
 #include "controller/Controller.h"
 
 const std::string& eAirwayMode_Name(eAirwayMode m)

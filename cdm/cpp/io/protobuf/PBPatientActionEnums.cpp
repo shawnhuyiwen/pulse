@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 #include "io/protobuf/PBUtils.h"
-#include "bind/cdm/PatientActionEnums.pb.h"
+#include "bind/cpp/cdm/PatientActionEnums.pb.h"
 #include "patient/actions/SEBrainInjury.h"
 #include "patient/actions/SEIntubation.h"
 #include "patient/actions/SESubstanceAdministration.h"

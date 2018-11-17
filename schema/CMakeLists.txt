@@ -102,7 +102,9 @@ endif()
 # The DLL we are building
 add_library(DataModelBindings ${SOURCE})
 # Preprocessor Definitions and Include Paths
+
 target_include_directories(DataModelBindings PRIVATE ${CMAKE_SOURCE_DIR}/schema/bind/cpp)
+target_include_directories(DataModelBindings PRIVATE ${CMAKE_SOURCE_DIR}/schema)
 target_include_directories(DataModelBindings PRIVATE ${PROTOBUF_INCLUDE_DIR})
 set(FLAGS)
 set_target_properties(DataModelBindings PROPERTIES COMPILE_FLAGS "${FLAGS}" PREFIX "")

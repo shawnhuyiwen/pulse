@@ -6,7 +6,7 @@
 #include "io/protobuf/PBPhysiology.h"
 #include "io/protobuf/PBProperties.h"
 #include "io/protobuf/PBUtils.h"
-#include "bind/cdm/Substance.pb.h"
+#include "bind/cpp/cdm/Substance.pb.h"
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceAerosolization.h"
 #include "substance/SESubstanceClearance.h"

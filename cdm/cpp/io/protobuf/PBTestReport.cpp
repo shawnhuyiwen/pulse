@@ -5,7 +5,7 @@
 #include "io/protobuf/PBTestReport.h"
 #include "io/protobuf/PBProperties.h"
 #include "io/protobuf/PBUtils.h"
-#include "bind/cdm/TestReport.pb.h"
+#include "bind/cpp/cdm/TestReport.pb.h"
 #include "utils/testing/SETestCase.h"
 #include "utils/testing/SETestErrorStatistics.h"
 #include "utils/testing/SETestReport.h"

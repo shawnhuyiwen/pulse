@@ -5,7 +5,7 @@
 #include "io/protobuf/PBEnvironmentConditions.h"
 #include "io/protobuf/PBEnvironment.h"
 #include "io/protobuf/PBConditions.h"
-#include "bind/cdm/EnvironmentConditions.pb.h"
+#include "bind/cpp/cdm/EnvironmentConditions.pb.h"
 #include "system/environment/SEEnvironment.h"
 #include "system/environment/conditions/SEInitialEnvironmentConditions.h"
 #include "substance/SESubstanceManager.h"

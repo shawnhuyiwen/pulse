@@ -18,7 +18,7 @@
 #include "io/protobuf/PBCompartment.h"
 #include "io/protobuf/PBProperties.h"
 #include "io/protobuf/PBUtils.h"
-#include "bind/pulse/PulseState.pb.h"
+#include "bind/cpp/pulse/PulseState.pb.h"
 #include "PulseConfiguration.h"
 #include "controller/Engine.h"
 #include "controller/Substances.h"
