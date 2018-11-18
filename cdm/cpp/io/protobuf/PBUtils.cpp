@@ -8,7 +8,7 @@
 
 void MyLogHandler(google::protobuf::LogLevel level, const char* filename, int line, const std::string& message)
 {
-  std::cout << message;
+  std::cout << message << std::endl;
 }
 
 bool PBUtils::SerializeToString(const google::protobuf::Message& src, std::string& output, SerializationFormat m)
@@ -28,9 +28,14 @@ bool PBUtils::SerializeFromString(const std::string& src, google::protobuf::Mess
   if (m == JSON)
   {
     google::protobuf::SetLogHandler(MyLogHandler);
-    if (!google::protobuf::util::JsonStringToMessage(src, &dst).ok())
+    google::protobuf::util::JsonParseOptions opts;
+    google::protobuf::util::Status stat = google::protobuf::util::JsonStringToMessage(src, &dst, opts);
+    if (!stat.ok())
+    {
+      std::cerr << stat.ToString() << std::endl;
       if (!google::protobuf::TextFormat::ParseFromString(src, &dst))
         return false;
+    }
     return true;
   }
   else

@@ -1,9 +1,9 @@
 {
   "Name": "Vitals Monitor",
   "Description": "Data associated with a vitals monitor.",
-  "StartType": { "PatientConfiguration": { "PatientFile": "StandardMale.pba" } },
+  "StartType": { "PatientConfiguration": { "PatientFile": "StandardMale.json" } },
   "DataRequestManager": {
-    "DataRequest": [{
+    "DataRequest": [
       
       {"DecimalFormat":{"Precision":2}, "Category":"Physiology",  "PropertyName":"HeartRate",                         "Unit":"1/min"},
       {"DecimalFormat":{"Precision":1}, "Category":"Physiology",  "PropertyName":"ArterialPressure",                  "Unit":"mmHg"},
@@ -16,7 +16,7 @@
       {"DecimalFormat":{"Precision":1}, "Category":"Physiology",  "PropertyName":"SkinTemperature",                   "Unit":"degC"},
       
       {"DecimalFormat":{}             , "Category":"GasCompartment", "CompartmentName":"Carina", "SubstanceName":"Oxygen", "PropertyName":"PartialPressure", "Unit":"cmH2O"},
-    }]}
+    ]},
     
   "AnyAction": [{
     "AdvanceTime": {

@@ -60,6 +60,7 @@ bool PBPulse::SerializeFromString(const std::string& src, PulseScenario& dst, Se
     cdm::ScenarioData cdm_data;
     if (!PBUtils::SerializeFromString(src, cdm_data, m))
       return false;
+    dst.GetLogger()->Info("Successfully loaded Scenario as base SEScenario");
     PBScenario::Load(cdm_data, dst);
     return true;
   }
