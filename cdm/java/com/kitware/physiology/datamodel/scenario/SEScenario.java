@@ -46,22 +46,6 @@ public class SEScenario
 	  
 		SESubstanceManager mgr = new SESubstanceManager();
 		mgr.loadSubstanceDirectory();
-		
-		// Convert pba to json
-		for(String pba_filename : FileUtils.findFiles(".", ".pba", false))
-		{
-		  ScenarioData.Builder builder = ScenarioData.newBuilder();
-		  try
-		  {
-		    TextFormat.getParser().merge(FileUtils.readFile(pba_filename), builder);
-		    String json_filename = pba_filename.replace(".pba", ".json");
-		    FileUtils.writeFile(json_filename, JsonFormat.printer().print(builder));
-		  }
-		  catch(InvalidProtocolBufferException | ParseException ex)
-		  {
-		    Log.error("Unable to convert file "+pba_filename, ex);
-		  }
-		}
 
 		{
 			SEScenario s = new SEScenario(mgr);
