@@ -39,7 +39,7 @@ bool SEScenarioExec::Execute(const std::string& scenarioFile, const std::string&
     SEScenario scenario(m_Engine.GetSubstanceManager());
     try
     {
-      scenario.SerializeFromFile(scenarioFile,ASCII);
+      scenario.SerializeFromFile(scenarioFile,JSON);
     }
     catch (CommonDataModelException& ex)
     {
@@ -79,7 +79,7 @@ bool SEScenarioExec::Execute(const SEScenario& scenario, const std::string& resu
     // Initialize the engine with a state or initial parameters
     if (scenario.HasEngineStateFile())
     {
-      m_Engine.SerializeFromFile(scenario.GetEngineStateFile(),ASCII);
+      m_Engine.SerializeFromFile(scenario.GetEngineStateFile(),JSON);
       // WE ARE OVERWRITING ANY DATA REQUESTS IN THE STATE WITH WHATS IN THE SCENARIO!!!
       // Make a copy of the data requests, note this clears out data requests from the engine
       m_Engine.GetEngineTracker()->GetDataRequestManager().Copy(scenario.GetDataRequestManager(), m_Engine.GetSubstanceManager());

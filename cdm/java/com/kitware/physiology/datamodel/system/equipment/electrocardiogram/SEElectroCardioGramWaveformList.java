@@ -4,8 +4,8 @@ package com.kitware.physiology.datamodel.system.equipment.electrocardiogram;
 
 import java.util.*;
 
-import com.google.protobuf.TextFormat;
-import com.google.protobuf.TextFormat.ParseException;
+import com.google.protobuf.*;
+import com.google.protobuf.util.*;
 import com.kitware.physiology.cdm.ElectroCardioGram.ElectroCardioGramWaveformData;
 import com.kitware.physiology.cdm.ElectroCardioGramEnums.eElectroCardioGram.WaveformLead;
 import com.kitware.physiology.cdm.ElectroCardioGram.ElectroCardioGramWaveformListData;
@@ -27,15 +27,15 @@ public class SEElectroCardioGramWaveformList
     waveforms.clear();
   }
   
-  public void readFile(String fileName) throws ParseException
+  public void readFile(String fileName) throws InvalidProtocolBufferException
   {
     ElectroCardioGramWaveformListData.Builder builder = ElectroCardioGramWaveformListData.newBuilder();
-    TextFormat.getParser().merge(FileUtils.readFile(fileName), builder);
+    JsonFormat.parser().merge(FileUtils.readFile(fileName), builder);
     SEElectroCardioGramWaveformList.load(builder.build(), this);
   }
-  public void writeFile(String fileName)
+  public void writeFile(String fileName) throws InvalidProtocolBufferException
   {
-    FileUtils.writeFile(fileName, SEElectroCardioGramWaveformList.unload(this).toString());
+    FileUtils.writeFile(fileName, JsonFormat.printer().print(SEElectroCardioGramWaveformList.unload(this)));
   }
   
   public static void load(ElectroCardioGramWaveformListData src, SEElectroCardioGramWaveformList dst)

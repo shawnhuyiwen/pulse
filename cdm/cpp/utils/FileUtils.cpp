@@ -91,7 +91,7 @@ bool WriteFile(const std::string& content, const std::string& filename, Serializ
 {
   if (!CreateFilePath(filename))
     return false;
-  if (m == ASCII)
+  if (m == JSON)
   {
     std::ofstream ascii_ostream(filename, std::ios::out | std::ios::trunc);
     ascii_ostream << content;

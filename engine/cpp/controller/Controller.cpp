@@ -161,7 +161,7 @@ bool PulseController::Initialize(const PulseConfiguration* config)
   // Now, Let's see if there is anything to merge into our base configuration
   Info("Merging OnDisk Configuration");
   PulseConfiguration cFile(*m_Substances);
-  cFile.SerializeFromFile("PulseConfiguration.pba",ASCII);
+  cFile.SerializeFromFile("PulseConfiguration.json",JSON);
   m_Config->Merge(cFile);
 
   // Now, override anything with a configuration provided by the user or scenario
@@ -179,7 +179,7 @@ bool PulseController::Initialize(const PulseConfiguration* config)
   {
     std::string stableDir = "./stable/";
     MakeDirectory(stableDir.c_str());
-    m_Patient->SerializeToFile(stableDir + m_Patient->GetName() + ".pba",ASCII);
+    m_Patient->SerializeToFile(stableDir + m_Patient->GetName() + ".json",JSON);
   }
 
   m_SaturationCalculator->Initialize(*m_Substances);

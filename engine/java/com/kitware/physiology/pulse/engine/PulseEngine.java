@@ -5,8 +5,8 @@ package com.kitware.physiology.pulse.engine;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.protobuf.TextFormat;
-import com.google.protobuf.TextFormat.ParseException;
+import com.google.protobuf.*;
+import com.google.protobuf.util.*;
 import com.kitware.physiology.cdm.PatientAssessmentEnums.ePatientAssessment;
 import com.kitware.physiology.cdm.PatientAssessments.CompleteBloodCountData;
 import com.kitware.physiology.cdm.PatientAssessments.ComprehensiveMetabolicPanelData;
@@ -75,11 +75,11 @@ public class PulseEngine extends Pulse
     return nativeSerializeFromFile(this.nativeObj, stateFile, simTime_s, dataRequestsStr);
   }
   
-  public synchronized StateData serializeToFile(String stateFile) throws ParseException
+  public synchronized StateData serializeToFile(String stateFile) throws InvalidProtocolBufferException
   {
     String str = nativeSerializeToFile(this.nativeObj, stateFile);
     StateData.Builder sd = StateData.newBuilder();
-    TextFormat.getParser().merge(str, sd);
+    JsonFormat.parser().merge(str, sd);
     return sd.build();
   }
 
@@ -159,7 +159,7 @@ public class PulseEngine extends Pulse
     return true;
   }
   
-  public synchronized boolean getPatientAssessment(SEPatientAssessment assessment) throws ParseException
+  public synchronized boolean getPatientAssessment(SEPatientAssessment assessment) throws InvalidProtocolBufferException
   {
     if(this.deadEngine)
     {
@@ -170,7 +170,7 @@ public class PulseEngine extends Pulse
     {
     	PulmonaryFunctionTestData.Builder b = PulmonaryFunctionTestData.newBuilder();
       String str = nativeGetAssessment(this.nativeObj, ePatientAssessment.Type.PulmonaryFunctionTest.ordinal());
-      TextFormat.getParser().merge(str, b);
+      JsonFormat.parser().merge(str, b);
       SEPulmonaryFunctionTest.load(b.build(),((SEPulmonaryFunctionTest)assessment));
       return true;
     }
@@ -179,7 +179,7 @@ public class PulseEngine extends Pulse
     {
     	CompleteBloodCountData.Builder b = CompleteBloodCountData.newBuilder();
       String str = nativeGetAssessment(this.nativeObj, ePatientAssessment.Type.CompleteBloodCount.ordinal());
-      TextFormat.getParser().merge(str, b);
+      JsonFormat.parser().merge(str, b);
       SECompleteBloodCount.load(b.build(),((SECompleteBloodCount)assessment));
       return true;
     }
@@ -188,7 +188,7 @@ public class PulseEngine extends Pulse
     {
     	ComprehensiveMetabolicPanelData.Builder b = ComprehensiveMetabolicPanelData.newBuilder();
       String str = nativeGetAssessment(this.nativeObj, ePatientAssessment.Type.ComprehensiveMetabolicPanel.ordinal());
-      TextFormat.getParser().merge(str, b);
+      JsonFormat.parser().merge(str, b);
       SEComprehensiveMetabolicPanel.load(b.build(),((SEComprehensiveMetabolicPanel)assessment));
       return true;
     }
@@ -197,7 +197,7 @@ public class PulseEngine extends Pulse
     {
     	UrinalysisData.Builder b = UrinalysisData.newBuilder();
       String str = nativeGetAssessment(this.nativeObj, ePatientAssessment.Type.Urinalysis.ordinal());
-      TextFormat.getParser().merge(str, b);
+      JsonFormat.parser().merge(str, b);
       SEUrinalysis.load(b.build(),((SEUrinalysis)assessment));
       return true;
     }

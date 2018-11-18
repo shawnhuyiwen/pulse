@@ -100,7 +100,7 @@ bool SEEnvironment::ProcessChange(const SEInitialEnvironmentConditions& change)
     GetConditions().Merge(*change.GetConditions());
   else if (change.HasConditionsFile())
   {
-    if (!GetConditions().SerializeFromFile(change.GetConditionsFile(),ASCII))// Does NOT merge file in data, Should we?
+    if (!GetConditions().SerializeFromFile(change.GetConditionsFile(),JSON))// Does NOT merge file in data, Should we?
     {
       /// \error Unable to read Configuration Action file
       Error("Could not read provided SEInitialEnvironment file", "SEEnvironment::ProcessChange");
@@ -119,7 +119,7 @@ bool SEEnvironment::ProcessChange(const SEChangeEnvironmentConditions& change)
     GetConditions().Merge(*change.GetConditions());
   else if (change.HasConditionsFile())
   {
-    if (!GetConditions().SerializeFromFile(change.GetConditionsFile(),ASCII))// Does NOT merge file in data, Should we?
+    if (!GetConditions().SerializeFromFile(change.GetConditionsFile(),JSON))// Does NOT merge file in data, Should we?
     {
       /// \error Unable to read Configuration Action file
       Error("Could not read provided SEEnvironmentChange file", "SEEnvironment::ProcessChange");

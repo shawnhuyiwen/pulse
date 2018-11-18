@@ -45,8 +45,8 @@ void PBPulseConfiguration::Serialize(const ConfigurationData& src, PulseConfigur
     PBEngine::Load(src.dynamicstabilization(), dst.GetDynamicStabilization());
   else if (!src.stabilizationfilename().empty())
   {
-    if (!dst.GetTimedStabilization().SerializeFromFile(src.stabilizationfilename(),ASCII))
-      if (!dst.GetDynamicStabilization().SerializeFromFile(src.stabilizationfilename(),ASCII))
+    if (!dst.GetTimedStabilization().SerializeFromFile(src.stabilizationfilename(),JSON))
+      if (!dst.GetDynamicStabilization().SerializeFromFile(src.stabilizationfilename(),JSON))
       {
         dst.Error("Unable to load stabilization file");
         dst.RemoveStabilization();
@@ -209,7 +209,7 @@ void PBPulseConfiguration::Serialize(const ConfigurationData& src, PulseConfigur
       PBProperty::Load(config.molarmassofwatervapor(), dst.GetMolarMassOfWaterVapor());
     if (!config.initialconditionsfile().empty())
     {
-      if (!dst.GetInitialEnvironmentalConditions().SerializeFromFile(config.initialconditionsfile(),ASCII))
+      if (!dst.GetInitialEnvironmentalConditions().SerializeFromFile(config.initialconditionsfile(),JSON))
       {
         dst.Error("Unable to load InitialEnvironmentalConditions file");
       }
@@ -240,7 +240,7 @@ void PBPulseConfiguration::Serialize(const ConfigurationData& src, PulseConfigur
       PBProperty::Load(config.defaultproteindigestionrate(), dst.GetDefaultProteinDigestionRate());
     if (!config.initialstomachcontentsfile().empty())
     {
-      if (!dst.GetDefaultStomachContents().SerializeFromFile(config.initialstomachcontentsfile(),ASCII))
+      if (!dst.GetDefaultStomachContents().SerializeFromFile(config.initialstomachcontentsfile(),JSON))
       {
         dst.Error("Unable to load Standard Stomach Contents file");
       }

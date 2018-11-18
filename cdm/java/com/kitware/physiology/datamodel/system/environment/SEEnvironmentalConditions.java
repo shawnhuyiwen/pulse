@@ -5,8 +5,8 @@ package com.kitware.physiology.datamodel.system.environment;
 
 import java.util.*;
 
-import com.google.protobuf.TextFormat;
-import com.google.protobuf.TextFormat.ParseException;
+import com.google.protobuf.*;
+import com.google.protobuf.util.*;
 import com.kitware.physiology.cdm.Environment.EnvironmentData;
 import com.kitware.physiology.cdm.Environment.EnvironmentalConditionsData;
 import com.kitware.physiology.cdm.EnvironmentEnums.eEnvironment.SurroundingType;
@@ -134,15 +134,15 @@ public class SEEnvironmentalConditions
     }    
   }
   
-  public void readFile(String fileName, SESubstanceManager mgr) throws ParseException
+  public void readFile(String fileName, SESubstanceManager mgr) throws InvalidProtocolBufferException
   {
     EnvironmentalConditionsData.Builder builder = EnvironmentalConditionsData.newBuilder();
-    TextFormat.getParser().merge(FileUtils.readFile(fileName), builder);
+    JsonFormat.parser().merge(FileUtils.readFile(fileName), builder);
     SEEnvironmentalConditions.load(builder.build(), this, mgr);
   }
-  public void writeFile(String fileName)
+  public void writeFile(String fileName) throws InvalidProtocolBufferException
   {
-    FileUtils.writeFile(fileName, SEEnvironmentalConditions.unload(this).toString());
+    FileUtils.writeFile(fileName, JsonFormat.printer().print(SEEnvironmentalConditions.unload(this)));
   }
   
   public static void load(EnvironmentalConditionsData src, SEEnvironmentalConditions dst, SESubstanceManager substances)

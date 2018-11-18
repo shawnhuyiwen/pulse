@@ -4,14 +4,10 @@ package com.kitware.physiology.datamodel.engine;
 
 import java.util.*;
 
-import com.google.protobuf.TextFormat;
-import com.google.protobuf.TextFormat.ParseException;
+import com.google.protobuf.*;
+import com.google.protobuf.util.*;
 import com.kitware.physiology.cdm.Engine.DynamicStabilizationData;
-import com.kitware.physiology.cdm.PatientNutrition.NutritionData;
 import com.kitware.physiology.cdm.Enums.eSwitch;
-
-import com.kitware.physiology.datamodel.patient.nutrition.SENutrition;
-import com.kitware.physiology.datamodel.properties.SEScalarTime;
 import com.kitware.physiology.utilities.FileUtils;
 
 public class SEDynamicStabilization
@@ -34,15 +30,15 @@ public class SEDynamicStabilization
     this.conditionConvergence.clear();
   }
   
-  public void readFile(String fileName) throws ParseException
+  public void readFile(String fileName) throws InvalidProtocolBufferException
   {
     DynamicStabilizationData.Builder builder = DynamicStabilizationData.newBuilder();
-    TextFormat.getParser().merge(FileUtils.readFile(fileName), builder);
+    JsonFormat.parser().merge(FileUtils.readFile(fileName), builder);
     SEDynamicStabilization.load(builder.build(), this);
   }
-  public void writeFile(String fileName)
+  public void writeFile(String fileName) throws InvalidProtocolBufferException
   {
-    FileUtils.writeFile(fileName, SEDynamicStabilization.unload(this).toString());
+    FileUtils.writeFile(fileName, JsonFormat.printer().print(SEDynamicStabilization.unload(this)));
   }
   
   public static void load(DynamicStabilizationData src, SEDynamicStabilization dst) 

@@ -7,7 +7,6 @@
 #include "io/protobuf/PBScenario.h"
 #include "io/protobuf/PBUtils.h"
 #include "bind/cpp/pulse/Pulse.pb.h"
-#include <google/protobuf/text_format.h>
 #include "PulseScenario.h"
 #include "utils/FileUtils.h"
 

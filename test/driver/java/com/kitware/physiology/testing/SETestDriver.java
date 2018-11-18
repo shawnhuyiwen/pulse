@@ -153,21 +153,21 @@ public class SETestDriver
       {
         if(job.PlottableResults)
         {
-          if(job.name.endsWith(".pba"))//This should be a scenario file, different naming convention
+          if(job.name.endsWith(".json"))//This should be a scenario file, different naming convention
           {
             String[] dirs = toCompute.substring(0,toCompute.indexOf(".csv")).split("[/\\\\]");
-            String report = toCompute.substring(0,toCompute.indexOf(".csv"))+"/"+dirs[dirs.length-1]+"Report.pba";
+            String report = toCompute.substring(0,toCompute.indexOf(".csv"))+"/"+dirs[dirs.length-1]+"Report.json";
             job.reportFiles.add(report);
           }
           else
           {
             String path = toCompute.substring(0, toCompute.lastIndexOf("."));
-            path = path + path.substring(path.lastIndexOf("/")) + "Report.pba";
+            path = path + path.substring(path.lastIndexOf("/")) + "Report.json";
             job.reportFiles.add(path);
           }
         }
         else
-          job.reportFiles.add(toCompute.substring(0, toCompute.lastIndexOf("."))+"Report.pba");
+          job.reportFiles.add(toCompute.substring(0, toCompute.lastIndexOf("."))+"Report.json");
       }
 
       if(!job.skipExecution)
@@ -299,7 +299,7 @@ public class SETestDriver
   {
     List<String> currentGroup;
     SETestReport report = new SETestReport();    
-    report.setFullReportPath("./test_results/"+cfg.testName+"Report.pba");    
+    report.setFullReportPath("./test_results/"+cfg.testName+"Report.json");    
     for(SETestJob job : cfg.jobs)
     {
       String group = cfg.job2groups.get(job);

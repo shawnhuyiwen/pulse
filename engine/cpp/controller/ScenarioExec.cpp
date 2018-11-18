@@ -39,7 +39,7 @@ bool PulseScenarioExec::Execute(const std::string& scenarioFile, const std::stri
     m_Cancel = false;
 
     PulseScenario scenario(m_Engine.GetSubstanceManager());
-    if (!scenario.SerializeFromFile(scenarioFile,ASCII))
+    if (!scenario.SerializeFromFile(scenarioFile,JSON))
     {
         Error("Unable to load scenario file : " + scenarioFile);
         return false;
@@ -80,8 +80,8 @@ bool PulseScenarioExec::ProcessActions(const SEScenario& scenario)
   //  else
   //  {
   //    serializationFileNameBase = serialization->GetFileName();
-  //    // Strip off the pba if it's there
-  //    size_t split = serializationFileNameBase.find(".pba");
+  //    // Strip off the json if it's there
+  //    size_t split = serializationFileNameBase.find(".json");
   //    if (split != serializationFileNameBase.npos)
   //      serializationFileNameBase = serializationFileNameBase.substr(0, split);
 
@@ -108,12 +108,12 @@ bool PulseScenarioExec::ProcessAction(const SEAction& action)
   //      serializationFileName << serializationFileNameBase;
   //      if (serialization->GetPeriodTimeStamps() == eSwitch::On)
   //        serializationFileName << "@" << m_Engine.GetSimulationTime(TimeUnit::s);
-  //      serializationFileName << ".pba";
+  //      serializationFileName << ".json";
   //      std::unique_ptr<google::protobuf::Message> state(m_Engine.SaveState(serializationFileName.str()));
   //      if (serialization->GetReloadState() == eSwitch::On)
   //      {
   //        m_Engine.LoadState(*state);
-  //        std::unique_ptr<google::protobuf::Message> state(m_Engine.SaveState(serializationFileName.str() + ".Reloaded.pba"));
+  //        std::unique_ptr<google::protobuf::Message> state(m_Engine.SaveState(serializationFileName.str() + ".Reloaded.json"));
   //      }
   //    }
   //  }
@@ -121,12 +121,12 @@ bool PulseScenarioExec::ProcessAction(const SEAction& action)
   //  {
   //    serializeAction = false;
   //    serializationFileName.str("");
-  //    serializationFileName << serializationFileNameBase << "-" << actionName << "-@" << m_Engine.GetSimulationTime(TimeUnit::s) << ".pba";
+  //    serializationFileName << serializationFileNameBase << "-" << actionName << "-@" << m_Engine.GetSimulationTime(TimeUnit::s) << ".json";
   //    std::unique_ptr<google::protobuf::Message> state(m_Engine.SaveState(serializationFileName.str()));
   //    if (serialization->GetReloadState() == eSwitch::On)
   //    {
   //      m_Engine.LoadState(*state);
-  //      std::unique_ptr<google::protobuf::Message> state(m_Engine.SaveState(serializationFileName.str() + ".Reloaded.pba"));
+  //      std::unique_ptr<google::protobuf::Message> state(m_Engine.SaveState(serializationFileName.str() + ".Reloaded.json"));
   //    }
   //  }
   //}
@@ -141,12 +141,12 @@ bool PulseScenarioExec::ProcessAction(const SEAction& action)
   //  m_ss.str("");
 
   //  serializationFileName.str("");
-  //  serializationFileName << serializationFileNameBase << "-" << actionName << "-@" << m_Engine.GetSimulationTime(TimeUnit::s) << ".pba";
+  //  serializationFileName << serializationFileNameBase << "-" << actionName << "-@" << m_Engine.GetSimulationTime(TimeUnit::s) << ".json";
   //  std::unique_ptr<google::protobuf::Message> state(m_Engine.SaveState(serializationFileName.str()));
   //  if (serialization->GetReloadState() == eSwitch::On)
   //  {
   //    m_Engine.LoadState(*state);
-  //    std::unique_ptr<google::protobuf::Message> state(m_Engine.SaveState(serializationFileName.str() + ".Reloaded.pba"));
+  //    std::unique_ptr<google::protobuf::Message> state(m_Engine.SaveState(serializationFileName.str() + ".Reloaded.json"));
   //  }
   //  serializeAction = true;// Serialize after the next time step
   //}

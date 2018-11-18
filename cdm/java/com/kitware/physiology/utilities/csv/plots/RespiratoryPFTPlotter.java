@@ -35,8 +35,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleEdge;
 import org.jfree.ui.RectangleInsets;
 
-import com.google.protobuf.TextFormat.ParseException;
-import com.kitware.physiology.cdm.PatientAssessments.PulmonaryFunctionTestData;
+import com.google.protobuf.InvalidProtocolBufferException;
 
 import com.kitware.physiology.datamodel.actions.SEAction;
 import com.kitware.physiology.datamodel.patient.assessments.SEPulmonaryFunctionTest;
@@ -81,7 +80,7 @@ public class RespiratoryPFTPlotter implements Plotter
     if(job.logFile == null || job.logFile.isEmpty())
     {job.logFile = job.name + ".log";}
     if(job.scenarioFile == null || job.scenarioFile.isEmpty())
-    {job.scenarioFile = job.name + ".pba";}
+    {job.scenarioFile = job.name + ".json";}
     
     //get all events from Log file
     if(!job.skipAllEvents)
@@ -97,7 +96,7 @@ public class RespiratoryPFTPlotter implements Plotter
         this.scenario.readFile(job.scenarioPath + job.scenarioFile);
         actions = scenario.getActions();
       } 
-      catch(ParseException ex)
+      catch(InvalidProtocolBufferException ex)
       {
         Log.error("Could not analyze scenario file " + job.scenarioPath + job.scenarioFile);
       }
@@ -132,7 +131,7 @@ public class RespiratoryPFTPlotter implements Plotter
           PFTData.put("Time", timeValues);
           PFTData.put("Volume", volumeValues);
         }
-        catch(ParseException ex)
+        catch(InvalidProtocolBufferException ex)
         {
           Log.error("Couldn't read PFT file.",ex);
         }

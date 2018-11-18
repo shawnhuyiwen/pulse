@@ -66,7 +66,7 @@ void PulseEngineTest::BrainInjuryTest(const std::string& sTestDirectory)
 
   PulseController pc(sTestDirectory + "/" + tName + ".log");
   pc.GetLogger()->Info("Running " + tName);
-  pc.GetPatient().SerializeFromFile("./patients/StandardMale.pba",ASCII);
+  pc.GetPatient().SerializeFromFile("./patients/StandardMale.json",JSON);
   pc.SetupPatient();
 
   //Renal and Tissue are on

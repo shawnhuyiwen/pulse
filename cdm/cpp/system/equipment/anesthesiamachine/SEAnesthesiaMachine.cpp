@@ -116,7 +116,7 @@ void SEAnesthesiaMachine::ProcessConfiguration(const SEAnesthesiaMachineConfigur
   if (config.HasConfiguration())
     Merge(*config.GetConfiguration());
   else if (config.HasConfigurationFile())
-    if (!SerializeFromFile(config.GetConfigurationFile(),ASCII)) // Does NOT merge file in data, Should we ?
+    if (!SerializeFromFile(config.GetConfigurationFile(),JSON)) // Does NOT merge file in data, Should we ?
       Error("Unable to load configuration file", "SEAnesthesiaMachine::ProcessConfiguration");
   StateChange();
 }

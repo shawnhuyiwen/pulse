@@ -107,14 +107,14 @@ public class HowTo_RunScenario
     // the scenario file, 
     // the name and location of a results file
     // an optional callback that will be called so you can get the latest data values and do some custom logic
-    String pba = FileUtils.readFile("./verification/scenarios/patient/BasicStandard.pba");
-    pe.runScenario("./test_results/scenarios/patient/BasicStandard.log", pba,"./test_results/scenarios/patient/BasicStandardResults.csv", null);// No Callback, just write out the file
+    String json = FileUtils.readFile("./verification/scenarios/patient/BasicStandard.json");
+    pe.runScenario("./test_results/scenarios/patient/BasicStandard.log", json,"./test_results/scenarios/patient/BasicStandardResults.csv", null);// No Callback, just write out the file
     
     // You could create and provide an SEScenario object as well
     SEScenario sce = new SEScenario(pe.substanceManager);
     sce.setName("HowTo_StaticEngine");
     sce.setDescription("Simple Scenario to demonstraight building a scenario by the CDM API");
-    sce.getPatientConfiguration().setPatientFile("Standard.pba");
+    sce.getPatientConfiguration().setPatientFile("Standard.json");
     // When filling out a data request, units are optional
     // The units will be set to whatever units the engine uses.
     SEDataRequest hr = new SEDataRequest();
@@ -136,7 +136,7 @@ public class HowTo_RunScenario
     SEAdvanceTime adv = new SEAdvanceTime();
     adv.getTime().setValue(2,TimeUnit.min);
     sce.getActions().add(adv);
-    pe.runScenario("./test_results/scenarios/HowToStaticEngine.log",sce,"./test_results/scenarios/HowToStaticEngineResults.pba", new MyCallback(pe,1.0));// Callback with new data every simulated second
+    pe.runScenario("./test_results/scenarios/HowToStaticEngine.log",sce,"./test_results/scenarios/HowToStaticEngineResults.json", new MyCallback(pe,1.0));// Callback with new data every simulated second
     
     // Note if your engine is running in another thread, you can call pe.cancelScenario to halt the engine
     

@@ -5,10 +5,9 @@ package com.kitware.physiology.datamodel.patient.assessments;
 
 import org.jfree.util.Log;
 
-import com.google.protobuf.TextFormat;
-import com.google.protobuf.TextFormat.ParseException;
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.util.JsonFormat;
 import com.kitware.physiology.cdm.PatientAssessments.PatientAssessmentData;
-import com.kitware.physiology.cdm.PatientAssessments.PulmonaryFunctionTestData;
 
 import com.kitware.physiology.utilities.FileUtils;
 
@@ -38,7 +37,7 @@ public abstract class SEPatientAssessment
 
   }
   
-  public static SEPatientAssessment readAssessment(String fileName) throws ParseException
+  public static SEPatientAssessment readAssessment(String fileName) throws InvalidProtocolBufferException
   {
     try
     {
@@ -46,7 +45,7 @@ public abstract class SEPatientAssessment
       cbc.readFile(fileName);
       return cbc;
     }
-    catch(ParseException ex){}
+    catch(InvalidProtocolBufferException ex){}
     
     try
     {
@@ -54,7 +53,7 @@ public abstract class SEPatientAssessment
       cmp.readFile(fileName);
       return cmp;
     }
-    catch(ParseException ex){}
+    catch(InvalidProtocolBufferException ex){}
     
     try
     {
@@ -62,22 +61,22 @@ public abstract class SEPatientAssessment
       pft.readFile(fileName);
       return pft;
     }
-    catch(ParseException ex){}
+    catch(InvalidProtocolBufferException ex){}
     
     SEUrinalysis u = new SEUrinalysis();
     u.readFile(fileName);
     return u;
   }
-  public static boolean writeAssement(String fileName, SEPatientAssessment ass)
+  public static boolean writeAssement(String fileName, SEPatientAssessment ass) throws InvalidProtocolBufferException
   {
     if(ass instanceof SECompleteBloodCount)
-      return FileUtils.writeFile(fileName, SECompleteBloodCount.unload((SECompleteBloodCount)ass).toString());
+      return FileUtils.writeFile(fileName, JsonFormat.printer().print(SECompleteBloodCount.unload((SECompleteBloodCount)ass)));
     if(ass instanceof SEComprehensiveMetabolicPanel)
-      return FileUtils.writeFile(fileName, SEComprehensiveMetabolicPanel.unload((SEComprehensiveMetabolicPanel)ass).toString());
+      return FileUtils.writeFile(fileName, JsonFormat.printer().print(SEComprehensiveMetabolicPanel.unload((SEComprehensiveMetabolicPanel)ass)));
     if(ass instanceof SEPulmonaryFunctionTest)
-      return FileUtils.writeFile(fileName, SEPulmonaryFunctionTest.unload((SEPulmonaryFunctionTest)ass).toString());
+      return FileUtils.writeFile(fileName, JsonFormat.printer().print(SEPulmonaryFunctionTest.unload((SEPulmonaryFunctionTest)ass)));
     if(ass instanceof SEUrinalysis)
-      return FileUtils.writeFile(fileName, SEUrinalysis.unload((SEUrinalysis)ass).toString());
+      return FileUtils.writeFile(fileName, JsonFormat.printer().print(SEUrinalysis.unload((SEUrinalysis)ass)));
     Log.error("No write support for assesment of class "+ass.getClass().getName());
     return false;
   }

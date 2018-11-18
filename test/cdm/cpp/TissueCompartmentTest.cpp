@@ -70,7 +70,7 @@ void CommonDataModelTest::TissueCompartmentTest(const std::string& rptDirectory)
   tissue->GetTissueToPlasmaLipoproteinRatio().SetValue(TissueToPlasmaLipoproteinRatio);
   cmptMgr.StateChange();
 
-  TestCompartmentSerialization(cmptMgr, m_OutDirectory + "/TestTissueSerialization.pba");
+  TestCompartmentSerialization(cmptMgr, m_OutDirectory + "/TestTissueSerialization.json");
   tissue = cmptMgr.GetTissueCompartment("Tissue");
   const SETissueCompartment* cTissue = cmptMgr.GetTissueCompartment("Tissue");
 
@@ -153,5 +153,5 @@ void CommonDataModelTest::TissueCompartmentTest(const std::string& rptDirectory)
 
   testCase.GetDuration().SetValue(pTimer.GetElapsedTime_s("Serialization"), TimeUnit::s);
 
-  testReport.SerializeToFile(rptDirectory + "/TissueCompartmentTestReport.pba",ASCII);
+  testReport.SerializeToFile(rptDirectory + "/TissueCompartmentTestReport.json",JSON);
 }

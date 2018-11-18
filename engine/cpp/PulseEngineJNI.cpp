@@ -86,9 +86,9 @@ JNIEXPORT void JNICALL Java_com_kitware_physiology_pulse_engine_PulseScenarioExe
     engineJNI->updateFrequency_cnt = (int)(updateFreq_s /engineJNI->eng->GetTimeStep(TimeUnit::s));
     engineJNI->jniEnv = env;
     engineJNI->jniObj = obj;
-    // Load up the pba and run the scenario
+    // Load up the json and run the scenario
     PulseScenario sce(engineJNI->eng->GetSubstanceManager());
-    if (!sce.SerializeFromString(sceStr,ASCII))
+    if (!sce.SerializeFromString(sceStr,JSON))
     {
       std::cerr << "The scenario string is bad " << std::endl;
     }
@@ -130,7 +130,7 @@ JNIEXPORT jboolean JNICALL Java_com_kitware_physiology_pulse_engine_PulseEngine_
   if (dataRequests != nullptr)
   {
     const char* drmStr = env->GetStringUTFChars(dataRequests, JNI_FALSE);
-    if (!engineJNI->eng->GetEngineTracker()->GetDataRequestManager().SerializeFromString(drmStr, ASCII, engineJNI->eng->GetSubstanceManager()))
+    if (!engineJNI->eng->GetEngineTracker()->GetDataRequestManager().SerializeFromString(drmStr, JSON, engineJNI->eng->GetSubstanceManager()))
     {
       env->ReleaseStringUTFChars(dataRequests, drmStr);
       std::cerr << "Unable to load datarequest string" << std::endl;
@@ -146,12 +146,12 @@ JNIEXPORT jboolean JNICALL Java_com_kitware_physiology_pulse_engine_PulseEngine_
   if (simTime_s >= 0)
   {
     simTime.SetValue(simTime_s, TimeUnit::s);
-    bRet = engineJNI->eng->SerializeFromFile(pStateFilename, ASCII, &simTime, nullptr);
+    bRet = engineJNI->eng->SerializeFromFile(pStateFilename, JSON, &simTime, nullptr);
   }
   else
   {
     std::cout << "Loading... " << std::endl;
-    bRet = engineJNI->eng->SerializeFromFile(pStateFilename, ASCII);
+    bRet = engineJNI->eng->SerializeFromFile(pStateFilename, JSON);
   }  
   engineJNI->eng->SetEventHandler(engineJNI);
 
@@ -166,7 +166,7 @@ JNIEXPORT void JNICALL Java_com_kitware_physiology_pulse_engine_PulseEngine_nati
   engineJNI->jniEnv = env; 
   engineJNI->jniObj = obj;
   const char* pStateFilename = env->GetStringUTFChars(stateFilename, JNI_FALSE);
-  engineJNI->eng->SerializeToFile(pStateFilename,ASCII);
+  engineJNI->eng->SerializeToFile(pStateFilename,JSON);
   env->ReleaseStringUTFChars(stateFilename, pStateFilename);
 }
 
@@ -186,7 +186,7 @@ JNIEXPORT jboolean JNICALL Java_com_kitware_physiology_pulse_engine_PulseEngine_
     // Load up the patient
     const char* pStr = env->GetStringUTFChars(patient_configuration, JNI_FALSE);
     SEPatientConfiguration p(engineJNI->eng->GetLogger());
-    if (!p.SerializeFromString(pStr,ASCII,engineJNI->eng->GetSubstanceManager()))
+    if (!p.SerializeFromString(pStr,JSON,engineJNI->eng->GetSubstanceManager()))
     {
       env->ReleaseStringUTFChars(patient_configuration, pStr);
       std::cerr << "Unable to load patient configuration string" << std::endl;
@@ -198,7 +198,7 @@ JNIEXPORT jboolean JNICALL Java_com_kitware_physiology_pulse_engine_PulseEngine_
     if (dataRequests != nullptr)
     {
       const char* drmStr = env->GetStringUTFChars(dataRequests, JNI_FALSE);
-      if (!engineJNI->eng->GetEngineTracker()->GetDataRequestManager().SerializeFromString(drmStr, ASCII, engineJNI->eng->GetSubstanceManager()))
+      if (!engineJNI->eng->GetEngineTracker()->GetDataRequestManager().SerializeFromString(drmStr, JSON, engineJNI->eng->GetSubstanceManager()))
       {
         env->ReleaseStringUTFChars(dataRequests, drmStr);
         std::cerr << "Unable to load datarequest string" << std::endl;
@@ -305,7 +305,7 @@ JNIEXPORT bool JNICALL Java_com_kitware_physiology_pulse_engine_PulseEngine_nati
   try
   {
     std::vector<SEAction*> vActions;
-    if (!SEActionManager::SerializeFromString(aStr, vActions, ASCII, engineJNI->eng->GetSubstanceManager()))
+    if (!SEActionManager::SerializeFromString(aStr, vActions, JSON, engineJNI->eng->GetSubstanceManager()))
     {
       env->ReleaseStringUTFChars(actions, aStr);
       return false;
@@ -353,28 +353,28 @@ JNIEXPORT jstring JNICALL Java_com_kitware_physiology_pulse_engine_PulseEngine_n
     {
       SECompleteBloodCount cbc(engineJNI->eng->GetLogger());
       engineJNI->eng->GetPatientAssessment(cbc);
-      cbc.SerializeToString(stream, ASCII);
+      cbc.SerializeToString(stream, JSON);
       break;
     }
     case 1: // CMP
     {
       SEComprehensiveMetabolicPanel cmp(engineJNI->eng->GetLogger());
       engineJNI->eng->GetPatientAssessment(cmp);
-      cmp.SerializeToString(stream, ASCII);
+      cmp.SerializeToString(stream, JSON);
       break;
     }
     case 2:// PFT
     {
       SEPulmonaryFunctionTest pft(engineJNI->eng->GetLogger());
       engineJNI->eng->GetPatientAssessment(pft);
-      pft.SerializeToString(stream, ASCII);
+      pft.SerializeToString(stream, JSON);
       break;
     }
     case 3: // U
     {
       SEUrinalysis u(engineJNI->eng->GetLogger());
       engineJNI->eng->GetPatientAssessment(u);
-      u.SerializeToString(stream, ASCII);
+      u.SerializeToString(stream, JSON);
       break;
     }
     default:
