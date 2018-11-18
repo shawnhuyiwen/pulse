@@ -11,6 +11,7 @@ import com.kitware.physiology.utilities.FileUtils;
 import com.kitware.physiology.utilities.jniBridge;
 import com.kitware.physiology.utilities.Log;
 import com.kitware.physiology.utilities.RunConfiguration;
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.kitware.physiology.testing.csv.CSVComparison;
 import com.kitware.physiology.utilities.csv.plots.CSVComparePlotter;
 import com.kitware.physiology.utilities.csv.plots.CSVComparePlotter.PlotType;
@@ -228,7 +229,11 @@ public class SETestDriver
               compare.createErrorSuite(job.name,"Basline file not found : "+job.baselineFiles.get(i)+" and " + job.computedFiles.get(i));
             }
             
-            compare.write();
+            try {
+              compare.write();
+            } catch (InvalidProtocolBufferException e) {
+              Log.error("Unable to write comparison report", e);
+            }
            
             if((job.plotType == PlotType.FastPlotErrors || job.plotType == PlotType.FullPlotErrors) && (failures==null || failures.isEmpty()))
             {
@@ -356,11 +361,15 @@ public class SETestDriver
         catch(Exception ex)
         {
         	report.createErrorSuite(job.name,reportFile);
-        	Log.error("Need file with TestReportData object");
+        	Log.error("Need file with TestReportData object, not in "+reportFile, ex);
         }
       }
     }    
-    report.write();
+    try {
+      report.write();
+    } catch (InvalidProtocolBufferException e) {
+      Log.error("Unable to write test report", e);
+    }
     // Write the HTML to a file
     try
     {

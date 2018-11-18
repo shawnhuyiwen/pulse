@@ -111,9 +111,9 @@ public class SETestReport
     JsonFormat.parser().merge(FileUtils.readFile(fileName), builder);
     SETestReport.load(builder.build(), this);
   }
-  public void writeFile(String fileName)
+  public void writeFile(String fileName) throws InvalidProtocolBufferException
   {
-    FileUtils.writeFile(fileName, SETestReport.unload(this).toString());
+    FileUtils.writeFile(fileName, JsonFormat.printer().print(SETestReport.unload(this)));
   }
   public static void load(TestReportData src, SETestReport dst)
   {
@@ -171,12 +171,12 @@ public class SETestReport
     this.testSuites.add(ts);
   }
 
-  public void write()
+  public void write() throws InvalidProtocolBufferException
   {
     write(this.reportDir);
   }
 
-  public void write(String toDirectory)
+  public void write(String toDirectory) throws InvalidProtocolBufferException
   {
     if(toDirectory==null||toDirectory.isEmpty())
       toDirectory="./";

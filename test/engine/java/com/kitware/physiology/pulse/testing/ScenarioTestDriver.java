@@ -88,7 +88,15 @@ public class ScenarioTestDriver implements SETestDriver.Executor
     if(job.autoSerialization!=null)
     	pBuilder.getConfigurationBuilder().setAutoSerialization(SEAutoSerialization.unload(job.autoSerialization)); 
 
-    json = pBuilder.toString();
+    try 
+    {
+      json = JsonFormat.printer().print(pBuilder);
+    } 
+    catch (InvalidProtocolBufferException ex) 
+    {
+      Log.error("Unable to refactor the scenario",ex);
+      return false;
+    }
     //System.out.println(json);
     PulseScenarioExec pse = new PulseScenarioExec();
     pse.setListener(job);      
