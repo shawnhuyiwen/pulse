@@ -962,7 +962,7 @@ void Cardiovascular::Hemorrhage()
   {
     m_HemorrhagePaths.at(hIter)->GetNextFlowSource().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);
   }
-  
+
   SEHemorrhage* h;
   double TotalLossRate_mL_Per_s = 0.0;
   double internal_rate_mL_Per_s = 0.0;
@@ -988,7 +988,7 @@ void Cardiovascular::Hemorrhage()
 
     /// \error Error: Bleeding rate cannot exceed cardiac output
     if (rate_mL_Per_s > GetCardiacOutput().GetValue(VolumePerTimeUnit::mL_Per_s))
-    {      
+    {
       m_ss << "Cannot have bleeding rate greater than cardiac output. \n\tCurrent cardiac output is: " << GetCardiacOutput()
         << "\n\tAnd specified bleeding rate is: " << h->GetRate();
       Error(m_ss);
@@ -1011,18 +1011,18 @@ void Cardiovascular::Hemorrhage()
       invalid_hemorrhages.push_back(h);
       continue;
     }
-	if (h->GetType() == eHemorrhage_Type::Internal)
-	{
-		SELiquidCompartment* abdomenCompartment = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Abdomen);
-		//SELiquidCompartment* abdomenCompartment = m_data.GetCompartments().GetCardiovascularGraph().GetCompartment(pulse::VascularCompartment::Abdomen);
-		if (!abdomenCompartment->HasChild(compartment->GetName()))
-		{
-			m_ss << "Internal Hemorrhage is only supported for the abdominal region, including the right and left kidneys, liver, spleen, splanchnic, and small and large intestine vascular compartments.";
-			Error(m_ss);
-			invalid_hemorrhages.push_back(h);
-			continue;
-		}
-	}
+    if (h->GetType() == eHemorrhage_Type::Internal)
+    {
+      SELiquidCompartment* abdomenCompartment = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Abdomen);
+      //SELiquidCompartment* abdomenCompartment = m_data.GetCompartments().GetCardiovascularGraph().GetCompartment(pulse::VascularCompartment::Abdomen);
+      if (!abdomenCompartment->HasChild(compartment->GetName()))
+      {
+        m_ss << "Internal Hemorrhage is only supported for the abdominal region, including the right and left kidneys, liver, spleen, splanchnic, and small and large intestine vascular compartments.";
+        Error(m_ss);
+        invalid_hemorrhages.push_back(h);
+        continue;
+      }
+    }
 
     TotalLossRate_mL_Per_s += rate_mL_Per_s;
 
@@ -1134,7 +1134,7 @@ void Cardiovascular::Hemorrhage()
               break;
             }
           }
-        }        
+        }
 
         SELiquidCompartmentLink& newHemorrhageLink = m_data.GetCompartments().CreateLiquidLink(*sourceCompartment, *m_Groundcmpt, compartment->GetName() + "Hemorrhage");
         newHemorrhageLink.MapPath(newHemorrhagePath);
@@ -1144,38 +1144,38 @@ void Cardiovascular::Hemorrhage()
         //Add to local lists
         m_HemorrhagePaths.push_back(&newHemorrhagePath);
         m_HemorrhageLinks.push_back(&newHemorrhageLink);
-		if (h->GetType() == eHemorrhage_Type::Internal)
-		{
-			m_InternalHemorrhagePaths.push_back(&newHemorrhagePath);
-			m_InternalHemorrhageLinks.push_back(&newHemorrhageLink);
-		}
+        if (h->GetType() == eHemorrhage_Type::Internal)
+        {
+          m_InternalHemorrhagePaths.push_back(&newHemorrhagePath);
+          m_InternalHemorrhageLinks.push_back(&newHemorrhageLink);
+        }
       }
     }
 
-	//total the internal hemorrhage flow rate and apply it to the abdominal cavity path
-	for (auto hemorrhage : m_InternalHemorrhagePaths)
-	{
-		internal_rate_mL_Per_s += hemorrhage->GetNextFlowSource().GetValue(VolumePerTimeUnit::mL_Per_s);
-	}
-	m_pGndToAbdominalCavity->GetNextFlowSource().SetValue(internal_rate_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+    //total the internal hemorrhage flow rate and apply it to the abdominal cavity path
+    for (auto hemorrhage : m_InternalHemorrhagePaths)
+    {
+      internal_rate_mL_Per_s += hemorrhage->GetNextFlowSource().GetValue(VolumePerTimeUnit::mL_Per_s);
+    }
+    m_pGndToAbdominalCavity->GetNextFlowSource().SetValue(internal_rate_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
 
-	double abdominalBloodVolume = m_AbdominalCavity->GetVolume().GetValue(VolumeUnit::mL);
-	double compliance_mL_Per_mmHg = 0;
-	double complianceSlopeParameter = 0.4;
-	double complianceCurveParameter = 0.55;
-	//Variable compliance calculation
-	if (internal_rate_mL_Per_s < 0.0001)
-	{
-		compliance_mL_Per_mmHg = m_pAbdominalCavityToGnd->GetNextCompliance().GetValue(FlowComplianceUnit::mL_Per_mmHg);
-	}
-	else
-	{
-		compliance_mL_Per_mmHg = complianceSlopeParameter /  complianceCurveParameter*abdominalBloodVolume;
-	}
+    double abdominalBloodVolume = m_AbdominalCavity->GetVolume().GetValue(VolumeUnit::mL);
+    double compliance_mL_Per_mmHg = 0;
+    double complianceSlopeParameter = 0.4;
+    double complianceCurveParameter = 0.55;
+    //Variable compliance calculation
+    if (internal_rate_mL_Per_s < 0.0001)
+    {
+      compliance_mL_Per_mmHg = m_pAbdominalCavityToGnd->GetNextCompliance().GetValue(FlowComplianceUnit::mL_Per_mmHg);
+    }
+    else
+    {
+      compliance_mL_Per_mmHg = complianceSlopeParameter / complianceCurveParameter * abdominalBloodVolume;
+    }
 
-	m_pAbdominalCavityToGnd->GetNextCompliance().SetValue(compliance_mL_Per_mmHg, FlowComplianceUnit::mL_Per_mmHg);
+    m_pAbdominalCavityToGnd->GetNextCompliance().SetValue(compliance_mL_Per_mmHg, FlowComplianceUnit::mL_Per_mmHg);
 
-	InternalHemorrhagePressureApplication();
+    InternalHemorrhagePressureApplication();
 
   }
 
@@ -1190,14 +1190,14 @@ void Cardiovascular::Hemorrhage()
   {
     if (m_HemorrhagePaths.at(hIter)->GetNextFlowSource(VolumePerTimeUnit::mL_Per_s) == 0.0)
     {
-      m_CirculatoryCircuit->RemovePath(*m_HemorrhagePaths.at(hIter));      
+      m_CirculatoryCircuit->RemovePath(*m_HemorrhagePaths.at(hIter));
       m_HemorrhagePaths.erase(m_HemorrhagePaths.begin() + hIter);
       m_CirculatoryCircuit->StateChange();
 
       m_CirculatoryGraph->RemoveLink(*m_HemorrhageLinks.at(hIter));
       m_HemorrhageLinks.erase(m_HemorrhageLinks.begin() + hIter);
       m_CirculatoryGraph->StateChange();
-      
+
       continue;
     }
     hIter++;
