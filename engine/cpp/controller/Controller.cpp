@@ -1207,9 +1207,9 @@ void PulseController::SetupCardiovascular()
   SEFluidCircuitNode& Aorta2 = cCardiovascular.CreateNode(pulse::CardiovascularNode::Aorta2);
   SEFluidCircuitNode& Aorta3 = cCardiovascular.CreateNode(pulse::CardiovascularNode::Aorta3);
   SEFluidCircuitNode& Aorta4 = cCardiovascular.CreateNode(pulse::CardiovascularNode::Aorta4);
+  Aorta4.GetPressure().SetValue(0.0, PressureUnit::mmHg);
   Aorta1.GetVolumeBaseline().SetValue(VolumeFractionAorta*bloodVolume_mL, VolumeUnit::mL);
   Aorta1.GetPressure().SetValue(VascularPressureTargetAorta, PressureUnit::mmHg);
-  //SEFluidCircuitNode& Aorta4 = cCardiovascular.CreateNode(pulse::CardiovascularNode::Aorta4);
 
   SEFluidCircuitNode& Brain1 = cCardiovascular.CreateNode(pulse::CardiovascularNode::Brain1);
   SEFluidCircuitNode& Brain2 = cCardiovascular.CreateNode(pulse::CardiovascularNode::Brain2);
