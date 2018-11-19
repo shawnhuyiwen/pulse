@@ -61,7 +61,7 @@ public class ScenarioTestDriver implements SETestDriver.Executor
     }
     else
     {
-      String patientName = job.patientFile.substring(0,job.patientFile.length()-4);
+      String patientName = job.patientFile.substring(0,job.patientFile.length()-5);
       log = outputFile.replaceAll(".json", "-"+patientName+".log");
       results = outputFile.replaceAll(".json", "-"+patientName+"Results.csv");
       
