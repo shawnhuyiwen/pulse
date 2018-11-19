@@ -111,6 +111,7 @@ void Cardiovascular::Clear()
   m_RightPulmonaryArteriesToVeins = nullptr;
   m_RightPulmonaryArteriesToCapillaries = nullptr;
 
+  m_InternalHemorrhageToAorta = nullptr;
   m_pAortaToBone = nullptr;
   m_pAortaToBrain = nullptr;
   m_pBrainToVenaCava = nullptr;
@@ -126,6 +127,9 @@ void Cardiovascular::Clear()
   m_pAortaToSmallIntestine = nullptr;
   m_pAortaToSplanchnic = nullptr;
   m_pAortaToSpleen = nullptr;
+
+  m_pGndToAbdominalCavity = nullptr;
+  m_pAbdominalCavityToGnd = nullptr;
 
   m_pGndToPericardium = nullptr;
   m_pPericardiumToGnd = nullptr;
@@ -151,6 +155,7 @@ void Cardiovascular::Clear()
   m_RightPulmonaryArteries = nullptr;
   m_RightPulmonaryVeins = nullptr;
   m_VenaCava = nullptr;
+  m_AbdominalCavity = nullptr;
 
   m_CardiacCycleArterialPressure_mmHg->Clear();
   m_CardiacCycleArterialCO2PartialPressure_mmHg->Clear();
@@ -271,6 +276,7 @@ void Cardiovascular::SetUp()
   m_Pericardium = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Pericardium);
   m_LeftHeart = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftHeart);
   m_RightHeart = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightHeart);
+  m_AbdominalCavity = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::AbdominalCavity);
   //Nodes
   m_MainPulmonaryArteries = m_CirculatoryCircuit->GetNode(pulse::CardiovascularNode::MainPulmonaryArteries);
   m_LeftHeart2 = m_CirculatoryCircuit->GetNode(pulse::CardiovascularNode::LeftHeart2);
@@ -281,6 +287,7 @@ void Cardiovascular::SetUp()
   m_RightPulmonaryArteriesToVeins = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryArteriesToRightPulmonaryVeins);
   m_RightPulmonaryArteriesToCapillaries = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryArteriesToRightPulmonaryCapillaries);
 
+  m_InternalHemorrhageToAorta = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta3ToAorta1);
   m_pAortaToBone = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToBone1);
   m_pAortaToBrain = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToBrain1);
   m_pBrainToVenaCava = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Brain1ToBrain2);
@@ -299,6 +306,9 @@ void Cardiovascular::SetUp()
 
   m_pBrainResistanceDownstream = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Brain1ToBrain2);
   m_pBrainResistanceUpstream = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToBrain1);
+
+  m_pGndToAbdominalCavity = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::GroundToAbdominalCavity1);
+  m_pAbdominalCavityToGnd = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::AbdominalCavity1ToGround);
 
   m_pGndToPericardium = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::GroundToPericardium1);
   m_pPericardiumToGnd = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Pericardium1ToGround);
@@ -955,6 +965,7 @@ void Cardiovascular::Hemorrhage()
   
   SEHemorrhage* h;
   double TotalLossRate_mL_Per_s = 0.0;
+  double internal_rate_mL_Per_s = 0.0;
   std::vector<SEHemorrhage*> invalid_hemorrhages;
   const std::map <std::string, SEHemorrhage*> & hems = m_data.GetActions().GetPatientActions().GetHemorrhages();
   for (auto hem : hems)
@@ -991,6 +1002,18 @@ void Cardiovascular::Hemorrhage()
       invalid_hemorrhages.push_back(h);
       continue;
     }
+	if (h->GetType() == eHemorrhage_Type::Internal)
+	{
+		SELiquidCompartment* abdomenCompartment = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Abdomen);
+		//SELiquidCompartment* abdomenCompartment = m_data.GetCompartments().GetCardiovascularGraph().GetCompartment(pulse::VascularCompartment::Abdomen);
+		if (!abdomenCompartment->HasChild(compartment->GetName()))
+		{
+			m_ss << "Internal Hemorrhage is only supported for the abdominal region, including the right and left kidneys, liver, spleen, splanchnic, and small and large intestine vascular compartments.";
+			Error(m_ss);
+			invalid_hemorrhages.push_back(h);
+			continue;
+		}
+	}
 
     TotalLossRate_mL_Per_s += rate_mL_Per_s;
 
@@ -1112,8 +1135,38 @@ void Cardiovascular::Hemorrhage()
         //Add to local lists
         m_HemorrhagePaths.push_back(&newHemorrhagePath);
         m_HemorrhageLinks.push_back(&newHemorrhageLink);
+		if (h->GetType() == eHemorrhage_Type::Internal)
+		{
+			m_InternalHemorrhagePaths.push_back(&newHemorrhagePath);
+			m_InternalHemorrhageLinks.push_back(&newHemorrhageLink);
+		}
       }
     }
+	//total the internal hemorrhage flow rate and apply it to the abdominal cavity path
+	for (auto hemorrhage : m_InternalHemorrhagePaths)
+	{
+		internal_rate_mL_Per_s = +hemorrhage->GetNextFlowSource().GetValue(VolumePerTimeUnit::mL_Per_s);
+	}
+	m_pGndToAbdominalCavity->GetNextFlowSource().SetValue(internal_rate_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+
+	double abdominalBloodVolume = m_AbdominalCavity->GetVolume().GetValue(VolumeUnit::mL);
+	double compliance_mL_Per_mmHg = 0;
+	double complianceSlopeParameter = 0.4;
+	double complianceCurveParameter = 0.55;
+	//Variable compliance calculation
+	if (internal_rate_mL_Per_s < 0.0001)
+	{
+		compliance_mL_Per_mmHg = m_pAbdominalCavityToGnd->GetNextCompliance().GetValue(FlowComplianceUnit::mL_Per_mmHg);
+	}
+	else
+	{
+		compliance_mL_Per_mmHg = complianceSlopeParameter /  complianceCurveParameter*abdominalBloodVolume;
+	}
+
+	m_pAbdominalCavityToGnd->GetNextCompliance().SetValue(compliance_mL_Per_mmHg, FlowComplianceUnit::mL_Per_mmHg);
+
+	InternalHemorrhagePressureApplication();
+
   }
 
   // Remove any invalid hemorrhages
@@ -1145,7 +1198,7 @@ void Cardiovascular::Hemorrhage()
 
   //Update the patient's mass
   double bloodDensity_kg_Per_mL = m_data.GetBloodChemistry().GetBloodDensity(MassPerVolumeUnit::kg_Per_mL);
-  double massLost_kg = TotalLossRate_mL_Per_s*bloodDensity_kg_Per_mL*m_dT_s;
+  double massLost_kg = (TotalLossRate_mL_Per_s - internal_rate_mL_Per_s)*bloodDensity_kg_Per_mL*m_dT_s;
   double patientMass_kg = m_patient->GetWeight(MassUnit::kg);
   patientMass_kg -= massLost_kg;
 
@@ -1414,6 +1467,26 @@ void Cardiovascular::PericardialEffusionPressureApplication()
   //Set the pressure on the right and left heart from the pericardium pressure
   m_pRightHeartToGnd->GetPressureSourceBaseline().SetValue(pressureResponseFraction*intrapericardialPressure_mmHg, PressureUnit::mmHg);
   m_pLeftHeartToGnd->GetPressureSourceBaseline().SetValue(pressureResponseFraction*intrapericardialPressure_mmHg, PressureUnit::mmHg);
+}
+
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// The internal pressure application function calculates the pressure applied to the aorta due to blood pooling in the abdominal cavity.
+///
+/// \details
+/// The pressure applied to the aorta is dictated by the pressure in the abdominal cavity. The response is tuned to 40% of this value
+/// to achieve the correct physiologic response. (Unvalidated at this time).
+//--------------------------------------------------------------------------------------------------
+void Cardiovascular::InternalHemorrhagePressureApplication()
+{
+	double abdominalCavityPressureChange_mmHg = m_AbdominalCavity->GetPressure(PressureUnit::mmHg);
+
+	double pressureResponseFraction = 0.45; //Tuning the pressure applied to the aorta
+
+	//Set the resistance on the aorta based on the abdominal cavity pressure
+	double aortaBaselineResistance_mmHg_s_Per_mL = m_InternalHemorrhageToAorta->GetResistanceBaseline().GetValue(FlowResistanceUnit::mmHg_s_Per_mL);
+	m_InternalHemorrhageToAorta->GetNextResistance().SetValue(pressureResponseFraction*aortaBaselineResistance_mmHg_s_Per_mL*abdominalCavityPressureChange_mmHg, FlowResistanceUnit::mmHg_s_Per_mL);
+
 }
 
 //--------------------------------------------------------------------------------------------------

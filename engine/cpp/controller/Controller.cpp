@@ -1203,11 +1203,16 @@ void PulseController::SetupCardiovascular()
   LeftHeart3.GetPressure().SetValue(0.0, PressureUnit::mmHg);
   LeftHeart1.GetVolumeBaseline().SetValue(VolumeFractionHeartLeft*bloodVolume_mL, VolumeUnit::mL);
 
+  SEFluidCircuitNode& AbdominalCavity = cCardiovascular.CreateNode(pulse::CardiovascularNode::AbdominalCavity1);
+  AbdominalCavity.GetVolumeBaseline().SetValue(10.0, VolumeUnit::mL);
+  AbdominalCavity.GetPressure().SetValue(1.0, PressureUnit::mmHg);
+ 
   SEFluidCircuitNode& Aorta1 = cCardiovascular.CreateNode(pulse::CardiovascularNode::Aorta1);
   SEFluidCircuitNode& Aorta2 = cCardiovascular.CreateNode(pulse::CardiovascularNode::Aorta2);
   SEFluidCircuitNode& Aorta3 = cCardiovascular.CreateNode(pulse::CardiovascularNode::Aorta3);
   Aorta1.GetVolumeBaseline().SetValue(VolumeFractionAorta*bloodVolume_mL, VolumeUnit::mL);
   Aorta1.GetPressure().SetValue(VascularPressureTargetAorta, PressureUnit::mmHg);
+  //SEFluidCircuitNode& Aorta4 = cCardiovascular.CreateNode(pulse::CardiovascularNode::Aorta4);
 
   SEFluidCircuitNode& Brain1 = cCardiovascular.CreateNode(pulse::CardiovascularNode::Brain1);
   SEFluidCircuitNode& Brain2 = cCardiovascular.CreateNode(pulse::CardiovascularNode::Brain2);
@@ -1523,6 +1528,14 @@ void PulseController::SetupCardiovascular()
   SEFluidCircuitPath& SpleenToPortalVein = cCardiovascular.CreatePath(Spleen, PortalVein, pulse::CardiovascularPath::SpleenToPortalVein);
   SpleenToPortalVein.GetResistanceBaseline().SetValue(systemicResistanceModifier*ResistanceSpleenVenous, FlowResistanceUnit::mmHg_s_Per_mL);
 
+  SEFluidCircuitPath& AbdominalCavityToGround = cCardiovascular.CreatePath(AbdominalCavity, Ground, pulse::CardiovascularPath::AbdominalCavity1ToGround);
+  SEFluidCircuitPath& GroundToAbdominalCavity = cCardiovascular.CreatePath(Ground, AbdominalCavity, pulse::CardiovascularPath::GroundToAbdominalCavity1);
+  GroundToAbdominalCavity.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);
+
+  //SEFluidCircuitPath& Aorta1ToAorta4 = cCardiovascular.CreatePath(Aorta1, Aorta4, pulse::CardiovascularPath::Aorta1ToAorta4);
+  //SEFluidCircuitPath& InternalHemorrhageToAorta = cCardiovascular.CreatePath(Ground, Spleen, pulse::CardiovascularPath::InternalHemorrhageToAorta);
+  //InternalHemorrhageToAorta.GetPressureSourceBaseline().SetValue(0.0, PressureUnit::mmHg);
+
   SEFluidCircuitPath& VenaCavaToGround = cCardiovascular.CreatePath(VenaCava, Ground, pulse::CardiovascularPath::VenaCavaToGround);
   VenaCavaToGround.GetComplianceBaseline().SetValue(0.0, FlowComplianceUnit::mL_Per_mmHg);
   SEFluidCircuitPath& IVToVenaCava = cCardiovascular.CreatePath(Ground, VenaCava, pulse::CardiovascularPath::IVToVenaCava);
@@ -1571,6 +1584,8 @@ void PulseController::SetupCardiovascular()
   //And also modify the compliances
   Aorta1ToGround.GetComplianceBaseline().SetValue(largeArteriesComplianceModifier*Aorta1ToGround.GetComplianceBaseline(FlowComplianceUnit::mL_Per_mmHg), FlowComplianceUnit::mL_Per_mmHg);
 
+  //For Internal Hemorrhage
+  AbdominalCavityToGround.GetComplianceBaseline().SetValue(100.0, FlowComplianceUnit::mL_Per_mmHg);
 
   RightPulmonaryArteries.GetVolumeBaseline().SetValue(VolumeModifierPulmArtR * RightPulmonaryArteries.GetVolumeBaseline(VolumeUnit::mL), VolumeUnit::mL);
   LeftPulmonaryArteries.GetVolumeBaseline().SetValue(VolumeModifierPulmArtL * LeftPulmonaryArteries.GetVolumeBaseline(VolumeUnit::mL), VolumeUnit::mL);
@@ -1671,7 +1686,11 @@ void PulseController::SetupCardiovascular()
   vAorta.MapNode(Aorta1);
   vAorta.MapNode(Aorta2);
   vAorta.MapNode(Aorta3);
+  //vAorta.MapNode(Aorta4);
   ///////////
+  // Abdominal Cavity //
+  SELiquidCompartment& vAbdominalCavity = m_Compartments->CreateLiquidCompartment(pulse::VascularCompartment::AbdominalCavity);
+  vAbdominalCavity.MapNode(AbdominalCavity);
   // Brain //
   SELiquidCompartment& vBrain = m_Compartments->CreateLiquidCompartment(pulse::VascularCompartment::Brain);
   vBrain.MapNode(Brain1);
@@ -1792,6 +1811,15 @@ void PulseController::SetupCardiovascular()
   vGut.AddChild(vSplanchnic);
   vGut.AddChild(vSmallIntestine);
   vGut.AddChild(vLargeIntestine);
+  SELiquidCompartment& vAbdomen = m_Compartments->CreateLiquidCompartment(pulse::VascularCompartment::Abdomen);
+  vAbdomen.AddChild(vSplanchnic);
+  vAbdomen.AddChild(vSmallIntestine);
+  vAbdomen.AddChild(vLargeIntestine);
+  vAbdomen.AddChild(vLeftKidney);
+  vAbdomen.AddChild(vRightKidney);
+  vAbdomen.AddChild(vSpleen);
+  vAbdomen.AddChild(vLiver);
+  vAbdomen.AddChild(vAbdominalCavity);
 
 
   //////////////////

@@ -74,6 +74,7 @@ protected:
   /**/void CPR();
   /****/void CalculateAndSetCPRcompressionForce();
   /**/void Hemorrhage();
+  /**/void InternalHemorrhagePressureApplication();
   /**/void PericardialEffusion();
   /**/void PericardialEffusionPressureApplication();
   /**/void CardiacArrest();
@@ -104,7 +105,9 @@ protected:
   double m_CompressionPeriod_s;
   //Hemorrhage
   std::vector<SEFluidCircuitPath*> m_HemorrhagePaths;
+  std::vector<SEFluidCircuitPath*> m_InternalHemorrhagePaths;
   std::vector<SELiquidCompartmentLink*> m_HemorrhageLinks;
+  std::vector<SELiquidCompartmentLink*> m_InternalHemorrhageLinks;
   // Vitals and Averages
   double m_CurrentCardiacCycleTime_s;
   double m_CardiacCycleDiastolicVolume_mL; // Maximum left heart volume for the current cardiac cycle
@@ -152,6 +155,7 @@ protected:
   SEFluidCircuitPath*              m_RightPulmonaryArteriesToVeins;
   SEFluidCircuitPath*              m_RightPulmonaryArteriesToCapillaries;
 
+  SEFluidCircuitPath*              m_InternalHemorrhageToAorta;
   SEFluidCircuitPath*              m_pAortaToBone;
   SEFluidCircuitPath*              m_pAortaToBrain;
   SEFluidCircuitPath*              m_pBrainToVenaCava;
@@ -181,6 +185,9 @@ protected:
 
   SEFluidCircuitPath*               m_leftRenalArteryPath;
   SEFluidCircuitPath*               m_rightRenalArteryPath;
+
+  SEFluidCircuitPath*              m_pGndToAbdominalCavity;
+  SEFluidCircuitPath*              m_pAbdominalCavityToGnd;
   
   SELiquidCompartment*             m_Aorta;
   SELiquidSubstanceQuantity*       m_AortaCO2;
@@ -196,6 +203,7 @@ protected:
   SELiquidCompartment*             m_RightPulmonaryArteries;
   SELiquidCompartment*             m_RightPulmonaryVeins;
   SELiquidCompartment*             m_VenaCava;
+  SELiquidCompartment*             m_AbdominalCavity;
 
   std::vector<SEFluidCircuitPath*> m_systemicResistancePaths;
   std::vector<SEFluidCircuitPath*> m_systemicCompliancePaths;
