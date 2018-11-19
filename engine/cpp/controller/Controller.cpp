@@ -1819,6 +1819,8 @@ void PulseController::SetupCardiovascular()
   vAbdomen.AddChild(vRightKidney);
   vAbdomen.AddChild(vSpleen);
   vAbdomen.AddChild(vLiver);
+  vAbdomen.AddChild(vVenaCava);
+  vAbdomen.AddChild(vAorta);
   vAbdomen.AddChild(vAbdominalCavity);
 
 
