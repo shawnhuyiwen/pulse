@@ -27,7 +27,7 @@ public class CSVAnalysis
       return;
     }
     String fileName = args[0];
-    Log.setFileName(fileName.substring(0,fileName.length()-4)+"Analysis.log");
+    Log.setFileName(fileName.substring(0,fileName.length()-5)+"Analysis.log");
     
     CSVAnalysis me = new CSVAnalysis();
     try

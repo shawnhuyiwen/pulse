@@ -97,7 +97,7 @@ public class JAXBSerializer
         args[0] = data;
         spec[0] = data.getClass();
         rootName = data.getClass().getName();
-        rootName = rootName.substring(rootName.lastIndexOf('.')+1,rootName.length()-4);
+        rootName = rootName.substring(rootName.lastIndexOf('.')+1,rootName.length()-5);
         Method method = objFac.getClass().getMethod("create"+rootName, spec);
         out = (JAXBElement<?>)method.invoke(objFac, args);
         marshaller.marshal(out, stream);

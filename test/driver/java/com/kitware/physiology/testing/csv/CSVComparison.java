@@ -92,8 +92,8 @@ public class CSVComparison extends SETestReport
       return null;
     }
     
-    String report = computedFilePath.substring(0,computedFilePath.length()-4)+"/"+computedFile.getName();
-    report=report.substring(0, report.length()-4)+"Report.json";    
+    String report = computedFilePath.substring(0,computedFilePath.length()-5)+"/"+computedFile.getName();
+    report=report.substring(0, report.length()-5)+"Report.json";    
     this.setFullReportPath(report);
         
     Set<String> failures = new HashSet<String>();

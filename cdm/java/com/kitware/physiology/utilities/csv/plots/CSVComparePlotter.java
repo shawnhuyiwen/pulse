@@ -73,7 +73,7 @@ public class CSVComparePlotter
    */
   public void plot(String expectedFilePath, String computedFilePath, Set<String> failures)
   {    
-    String plotDir = computedFilePath.substring(0,computedFilePath.length()-4); 
+    String plotDir = computedFilePath.substring(0,computedFilePath.length()-5); 
   
     try
     {
