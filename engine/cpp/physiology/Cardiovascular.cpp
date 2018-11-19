@@ -287,7 +287,7 @@ void Cardiovascular::SetUp()
   m_RightPulmonaryArteriesToVeins = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryArteriesToRightPulmonaryVeins);
   m_RightPulmonaryArteriesToCapillaries = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryArteriesToRightPulmonaryCapillaries);
 
-  m_InternalHemorrhageToAorta = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta3ToAorta1);
+  m_InternalHemorrhageToAorta = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::GroundToAorta4);
   m_pAortaToBone = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToBone1);
   m_pAortaToBrain = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToBrain1);
   m_pBrainToVenaCava = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Brain1ToBrain2);
@@ -352,7 +352,7 @@ void Cardiovascular::SetUp()
   SEFluidCircuitPath* p = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::PortalVeinToLiver1);
   if (!Contains(m_systemicResistancePaths, (*p)))
     m_systemicResistancePaths.push_back(p);
-  m_AortaCompliance = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToGround);
+  m_AortaCompliance = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToAorta4);
   m_AortaResistance = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta3ToAorta1);
   m_VenaCavaCompliance = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::VenaCavaToGround);
   m_RightHeartResistance = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::VenaCavaToRightHeart2);
@@ -1024,7 +1024,11 @@ void Cardiovascular::Hemorrhage()
       }
     }
 
-    TotalLossRate_mL_Per_s += rate_mL_Per_s;
+    if (h->GetType() == eHemorrhage_Type::External)
+    {
+      //Only mass is merely transfered if it is an internal bleed
+      TotalLossRate_mL_Per_s += rate_mL_Per_s;
+    }    
 
     //Get all circuit nodes in this compartment
     std::vector<SEFluidCircuitNode*> nodes;
@@ -1174,9 +1178,6 @@ void Cardiovascular::Hemorrhage()
     }
 
     m_pAbdominalCavityToGnd->GetNextCompliance().SetValue(compliance_mL_Per_mmHg, FlowComplianceUnit::mL_Per_mmHg);
-
-    InternalHemorrhagePressureApplication();
-
   }
 
   // Remove any invalid hemorrhages
@@ -1202,6 +1203,9 @@ void Cardiovascular::Hemorrhage()
     }
     hIter++;
   }
+
+  //Effect the Aorta with internal hemorrhages
+  InternalHemorrhagePressureApplication();
 
   if (TotalLossRate_mL_Per_s == 0)
     return;
@@ -1484,18 +1488,17 @@ void Cardiovascular::PericardialEffusionPressureApplication()
 /// The internal pressure application function calculates the pressure applied to the aorta due to blood pooling in the abdominal cavity.
 ///
 /// \details
-/// The pressure applied to the aorta is dictated by the pressure in the abdominal cavity. The response is tuned to 40% of this value
-/// to achieve the correct physiologic response. (Unvalidated at this time).
+/// The pressure applied to the aorta is dictated by the pressure in the abdominal cavity. The response is tuned to 45% of this value
+/// to achieve the correct physiologic response.
 //--------------------------------------------------------------------------------------------------
 void Cardiovascular::InternalHemorrhagePressureApplication()
 {
-	double abdominalCavityPressureChange_mmHg = m_AbdominalCavity->GetPressure(PressureUnit::mmHg);
+	double abdominalCavityPressure_mmHg = m_AbdominalCavity->GetPressure(PressureUnit::mmHg);
 
 	double pressureResponseFraction = 0.45; //Tuning the pressure applied to the aorta
 
-	//Set the resistance on the aorta based on the abdominal cavity pressure
-	double aortaBaselineResistance_mmHg_s_Per_mL = m_InternalHemorrhageToAorta->GetResistanceBaseline().GetValue(FlowResistanceUnit::mmHg_s_Per_mL);
-	m_InternalHemorrhageToAorta->GetNextResistance().SetValue(pressureResponseFraction*aortaBaselineResistance_mmHg_s_Per_mL*abdominalCavityPressureChange_mmHg, FlowResistanceUnit::mmHg_s_Per_mL);
+	//Set the pressure on the aorta based on the abdominal cavity pressure
+	m_InternalHemorrhageToAorta->GetPressureSourceBaseline().SetValue(pressureResponseFraction*abdominalCavityPressure_mmHg, PressureUnit::mmHg);
 
 }
 
