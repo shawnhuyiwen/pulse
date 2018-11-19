@@ -973,9 +973,18 @@ void Cardiovascular::Hemorrhage()
     h = hem.second;
     double rate_mL_Per_s = h->GetRate().GetValue(VolumePerTimeUnit::mL_Per_s);
     // Allow shorthand naming
-    if(h->GetCompartment().find("Vasculature") == std::string::npos)
-      h->SetCompartment(h->GetCompartment() + "Vasculature");
     SELiquidCompartment* compartment = m_data.GetCompartments().GetCardiovascularGraph().GetCompartment(h->GetCompartment());
+    if (compartment == nullptr)
+    {
+      h->SetCompartment(h->GetCompartment() + "Vasculature");
+      compartment = m_data.GetCompartments().GetCardiovascularGraph().GetCompartment(h->GetCompartment());
+    }
+    if (compartment == nullptr)
+    {
+      Error("Removing invalid Hemorrhage due to unsupported compartment : " + h->GetCompartment());
+      invalid_hemorrhages.push_back(h);
+      continue;
+    }
 
     /// \error Error: Bleeding rate cannot exceed cardiac output
     if (rate_mL_Per_s > GetCardiacOutput().GetValue(VolumePerTimeUnit::mL_Per_s))
