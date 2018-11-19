@@ -1202,10 +1202,6 @@ void PulseController::SetupCardiovascular()
   SEFluidCircuitNode& LeftHeart3 = cCardiovascular.CreateNode(pulse::CardiovascularNode::LeftHeart3);
   LeftHeart3.GetPressure().SetValue(0.0, PressureUnit::mmHg);
   LeftHeart1.GetVolumeBaseline().SetValue(VolumeFractionHeartLeft*bloodVolume_mL, VolumeUnit::mL);
-
-  SEFluidCircuitNode& AbdominalCavity = cCardiovascular.CreateNode(pulse::CardiovascularNode::AbdominalCavity1);
-  AbdominalCavity.GetVolumeBaseline().SetValue(10.0, VolumeUnit::mL);
-  AbdominalCavity.GetPressure().SetValue(1.0, PressureUnit::mmHg);
  
   SEFluidCircuitNode& Aorta1 = cCardiovascular.CreateNode(pulse::CardiovascularNode::Aorta1);
   SEFluidCircuitNode& Aorta2 = cCardiovascular.CreateNode(pulse::CardiovascularNode::Aorta2);
@@ -1318,6 +1314,10 @@ void PulseController::SetupCardiovascular()
   SEFluidCircuitNode& Pericardium = cCardiovascular.CreateNode(pulse::CardiovascularNode::Pericardium1);
   Pericardium.GetVolumeBaseline().SetValue(15.0, VolumeUnit::mL);
   Pericardium.GetPressure().SetValue(1.0, PressureUnit::mmHg);
+
+  SEFluidCircuitNode& AbdominalCavity = cCardiovascular.CreateNode(pulse::CardiovascularNode::AbdominalCavity1);
+  AbdominalCavity.GetVolumeBaseline().SetValue(10.0, VolumeUnit::mL);
+  AbdominalCavity.GetPressure().SetValue(1.0, PressureUnit::mmHg);
 
   // Create Paths, set switch (diodes), compliances, and resistances where appropriate
   SEFluidCircuitPath& VenaCavaToRightHeart2 = cCardiovascular.CreatePath(VenaCava, RightHeart2, pulse::CardiovascularPath::VenaCavaToRightHeart2);
