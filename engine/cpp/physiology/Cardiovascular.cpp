@@ -1142,10 +1142,11 @@ void Cardiovascular::Hemorrhage()
 		}
       }
     }
+
 	//total the internal hemorrhage flow rate and apply it to the abdominal cavity path
 	for (auto hemorrhage : m_InternalHemorrhagePaths)
 	{
-		internal_rate_mL_Per_s = +hemorrhage->GetNextFlowSource().GetValue(VolumePerTimeUnit::mL_Per_s);
+		internal_rate_mL_Per_s += hemorrhage->GetNextFlowSource().GetValue(VolumePerTimeUnit::mL_Per_s);
 	}
 	m_pGndToAbdominalCavity->GetNextFlowSource().SetValue(internal_rate_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
 
