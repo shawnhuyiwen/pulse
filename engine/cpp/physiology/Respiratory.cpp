@@ -1726,7 +1726,7 @@ void Respiratory::CalculateVitalSigns()
   GetAlveolarArterialGradient().SetValue(avgAlveoliO2PP_mmHg - m_AortaO2->GetPartialPressure(PressureUnit::mmHg), PressureUnit::mmHg);
 
   //It's a pain to figure out how to hold onto this data, so let's just set it at a sensitive transition point
-  if (GetInspiratoryFlow(VolumePerTimeUnit::L_Per_s) >= 0.0 //We're inhaling
+  if (GetInspiratoryFlow(VolumePerTimeUnit::L_Per_s) > 0.0 //We're inhaling
     && previousInspiratoryFlow_L_Per_s <= 0.0) //We were exhaling
   {
     //Transition from exhale to inhale
@@ -1745,7 +1745,7 @@ void Respiratory::CalculateVitalSigns()
   m_ElapsedBreathingCycleTime_min += m_dt_min;
   if (m_BreathingCycle) //Exhaling
   {    
-    if (totalLungVolume_L < m_BottomBreathTotalVolume_L)
+    if (totalLungVolume_L <= m_BottomBreathTotalVolume_L)
     {
       m_BottomBreathTotalVolume_L = totalLungVolume_L;
       m_BottomBreathElapsedTime_min = m_ElapsedBreathingCycleTime_min - m_TopBreathElapsedTime_min;
@@ -1795,7 +1795,7 @@ void Respiratory::CalculateVitalSigns()
   }
   else //Inhaling
   {
-    if (totalLungVolume_L > m_TopBreathTotalVolume_L)
+    if (totalLungVolume_L >= m_TopBreathTotalVolume_L)
     {
       m_TopBreathTotalVolume_L = totalLungVolume_L;
       m_TopBreathElapsedTime_min = m_ElapsedBreathingCycleTime_min;
