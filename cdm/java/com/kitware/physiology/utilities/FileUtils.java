@@ -965,7 +965,7 @@ public class FileUtils
       {
         if(s.getAbsolutePath().endsWith(extension))
         {
-          String zipTo = t.getAbsolutePath().substring(0, t.getAbsolutePath().length()-5);          
+          String zipTo = t.getAbsolutePath().substring(0, t.getAbsolutePath().length()-4);          
           FileUtils.zipFiles(new String[]{s.getAbsolutePath()}, zipTo);
         }
       }
