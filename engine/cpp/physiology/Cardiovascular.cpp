@@ -1498,7 +1498,7 @@ void Cardiovascular::InternalHemorrhagePressureApplication()
 	double pressureResponseFraction = 0.45; //Tuning the pressure applied to the aorta
 
 	//Set the pressure on the aorta based on the abdominal cavity pressure
-	m_InternalHemorrhageToAorta->GetPressureSourceBaseline().SetValue(pressureResponseFraction*abdominalCavityPressure_mmHg, PressureUnit::mmHg);
+	m_InternalHemorrhageToAorta->GetNextPressureSource().SetValue(pressureResponseFraction*abdominalCavityPressure_mmHg, PressureUnit::mmHg);
 
 }
 
