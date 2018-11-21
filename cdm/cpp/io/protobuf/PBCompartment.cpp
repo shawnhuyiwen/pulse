@@ -5,6 +5,7 @@
 #include "io/protobuf/PBCompartment.h"
 #include "io/protobuf/PBSubstanceQuantity.h"
 #include "io/protobuf/PBProperties.h"
+#include "io/protobuf/PBUtils.h"
 #include "compartment/SECompartment.h"
 #include "compartment/SECompartmentGraph.h"
 #include "compartment/SECompartmentLink.h"
@@ -22,7 +23,6 @@
 #include "circuit/thermal/SEThermalCircuitPath.h"
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceManager.h"
-#include <google/protobuf/text_format.h>
 #include "bind/cpp/cdm/Compartment.pb.h"
 
 void PBCompartment::Serialize(const cdm::CompartmentData& src, SECompartment& dst)
@@ -51,7 +51,7 @@ bool PBCompartment::LoadCompartmentManagerFile(SECompartmentManager& mgr, const 
   cdm::CompartmentManagerData src;
   std::ifstream file_stream(filename, std::ios::in);
   std::string fmsg((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
-  if (!google::protobuf::TextFormat::ParseFromString(fmsg, &src))
+  if (!PBUtils::SerializeFromString(fmsg, src, JSON))
     return false;
   PBCompartment::Load(src, mgr, circuits);
   return true;
@@ -65,7 +65,7 @@ void PBCompartment::SaveCompartmentManagerFile(const SECompartmentManager& mgr, 
 {
   std::string content;
   cdm::CompartmentManagerData* src = PBCompartment::Unload(mgr);
-  google::protobuf::TextFormat::PrintToString(*src, &content);
+  PBUtils::SerializeToString(*src, content,JSON);
   std::ofstream ascii_ostream(filename, std::ios::out | std::ios::trunc);
   ascii_ostream << content;
   ascii_ostream.flush();
@@ -320,7 +320,7 @@ void PBCompartment::Serialize(const SEFluidCompartment<FLUID_COMPARTMENT_TYPES>&
     dst.mutable_compartment()->add_child(child->GetName());
   for (SEFluidCircuitNode* nodes : src.m_Nodes.GetNodes())
     dst.mutable_compartment()->add_node(nodes->GetName());
-  // Even if you have children or nodes, I am unloading everything, this makes the pba actually usefull...
+  // Even if you have children or nodes, I am unloading everything, this makes the json actually usefull...
   if (src.HasInFlow())
     dst.set_allocated_inflow(PBProperty::Unload(src.GetInFlow()));
   if (src.HasOutFlow())
@@ -372,7 +372,7 @@ void PBCompartment::Serialize(const SEFluidCompartmentLink<FLUID_COMPARTMENT_LIN
     dst.mutable_link()->set_path(src.m_Path->GetName());
   // Yeah, I know
   // But, these will only modify member variables if they are being used as temporary variables
-  // Even if you have a path, I am unloading everything, this makes the pba actually usefull...
+  // Even if you have a path, I am unloading everything, this makes the json actually usefull...
   SEFluidCompartmentLink<FLUID_COMPARTMENT_LINK_TYPES>& mutable_src = const_cast<SEFluidCompartmentLink<FLUID_COMPARTMENT_LINK_TYPES>&>(src);
   if (src.HasFlow())
     dst.set_allocated_flow(PBProperty::Unload(mutable_src.GetFlow()));
@@ -654,7 +654,7 @@ void PBCompartment::Serialize(const SEThermalCompartment& src, cdm::ThermalCompa
     dst.mutable_compartment()->add_child(child->GetName());
   for (SEThermalCircuitNode* nodes : src.m_Nodes.GetNodes())
     dst.mutable_compartment()->add_node(nodes->GetName());
-  // Even if you have children or nodes, I am unloading everything, this makes the pba actually usefull...
+  // Even if you have children or nodes, I am unloading everything, this makes the json actually usefull...
   if (src.HasHeatTransferRateIn())
     dst.set_allocated_heattransferratein(PBProperty::Unload(src.GetHeatTransferRateIn()));
   if (src.HasHeatTransferRateOut())
@@ -715,7 +715,7 @@ void PBCompartment::Serialize(const SEThermalCompartmentLink& src, cdm::ThermalC
     dst.mutable_link()->set_path(src.m_Path->GetName());
   // Yeah, I know
   // But, these will only modify member variables if they are being used as temporary variables
-  // Even if you have a path, I am unloading everything, this makes the pba actually usefull...
+  // Even if you have a path, I am unloading everything, this makes the json actually usefull...
   SEThermalCompartmentLink& mutable_src = const_cast<SEThermalCompartmentLink&>(src);
   if (src.HasHeatTransferRate())
     dst.set_allocated_heattransferrate(PBProperty::Unload(mutable_src.GetHeatTransferRate()));

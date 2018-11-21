@@ -21,7 +21,7 @@ void PulseEngineTest::ConditionCombinations(const std::string& rptDirectory)
   pc.GetConditions().push_back(&cAnem);
 
   SEPatientConfiguration sceConfig(&log);
-  sceConfig.SetPatientFile("StandardMale.pba");
+  sceConfig.SetPatientFile("StandardMale.json");
 
   std::vector<int> conditionSwitches;
   for (unsigned int i = 0; i < pc.GetConditions().size(); i++)
@@ -62,6 +62,6 @@ void PulseEngineTest::ConditionCombinations(const std::string& rptDirectory)
       }  
     }
   }
-  testReport.SerializeToFile("ConditionsPermutationsReport.pba",ASCII);
+  testReport.SerializeToFile("ConditionsPermutationsReport.json",JSON);
 
 }

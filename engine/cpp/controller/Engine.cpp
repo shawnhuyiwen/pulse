@@ -131,7 +131,7 @@ bool PulseEngine::InitializeEngine(const SEPatientConfiguration& patient_configu
       pFile = "./patients/";
       pFile += patient_configuration.GetPatientFile();
     }
-    if (!m_Patient->SerializeFromFile(pFile, ASCII))// TODO Support all serialization formats
+    if (!m_Patient->SerializeFromFile(pFile, JSON))// TODO Support all serialization formats
       return false;
   }
   else
@@ -281,22 +281,22 @@ bool PulseEngine::ProcessAction(const SEAction& action)
     {
       if (serialize->HasFilename())
       {
-        SerializeToFile(serialize->GetFilename(), ASCII);
+        SerializeToFile(serialize->GetFilename(), JSON);
       }
       else
       {
         std::stringstream ss;
         MakeDirectory("./states");
-        ss << "./states/" << m_Patient->GetName() << "@" << GetSimulationTime(TimeUnit::s) << "s.pba";
+        ss << "./states/" << m_Patient->GetName() << "@" << GetSimulationTime(TimeUnit::s) << "s.json";
         Info("Saving " + ss.str());
-        SerializeToFile(ss.str(), ASCII);
+        SerializeToFile(ss.str(), JSON);
         // Debug code to make sure things are consistent
-        //SerializeFomFile(ss.str(),ASCII);
-        //SerializeToFile("./states/AfterSave.pba",ASCII);
+        //SerializeFomFile(ss.str(),JSON);
+        //SerializeToFile("./states/AfterSave.json",JSON);
       }     
     }
     else
-      return SerializeFromFile(serialize->GetFilename(),ASCII);
+      return SerializeFromFile(serialize->GetFilename(),JSON);
     return true;
   }
 
@@ -316,9 +316,9 @@ bool PulseEngine::ProcessAction(const SEAction& action)
           pftFile = "PulmonaryFunctionTest";
         m_ss << "PFT@" << GetSimulationTime(TimeUnit::s) << "s";
         pftFile = Replace(pftFile, "Results", m_ss.str());
-        pftFile = Replace(pftFile, ".csv", ".pba");
-        m_ss << "PulmonaryFunctionTest@" << GetSimulationTime(TimeUnit::s) << "s.pba";
-        pft.SerializeToFile(pftFile,ASCII);
+        pftFile = Replace(pftFile, ".csv", ".json");
+        m_ss << "PulmonaryFunctionTest@" << GetSimulationTime(TimeUnit::s) << "s.json";
+        pft.SerializeToFile(pftFile,JSON);
         break;
       }
       case ePatientAssessment_Type::Urinalysis:
@@ -331,9 +331,9 @@ bool PulseEngine::ProcessAction(const SEAction& action)
           upanFile = "Urinalysis";
         m_ss << "Urinalysis@" << GetSimulationTime(TimeUnit::s) << "s";
         upanFile = Replace(upanFile, "Results", m_ss.str());
-        upanFile = Replace(upanFile, ".csv", ".pba");
-        m_ss << "Urinalysis@" << GetSimulationTime(TimeUnit::s) << "s.pba";
-        upan.SerializeToFile(upanFile,ASCII);
+        upanFile = Replace(upanFile, ".csv", ".json");
+        m_ss << "Urinalysis@" << GetSimulationTime(TimeUnit::s) << "s.json";
+        upan.SerializeToFile(upanFile,JSON);
         break;
       }
 
@@ -346,9 +346,9 @@ bool PulseEngine::ProcessAction(const SEAction& action)
           cbcFile = "CompleteBloodCount";
         m_ss << "CBC@" << GetSimulationTime(TimeUnit::s) << "s";
         cbcFile = Replace(cbcFile, "Results", m_ss.str());
-        cbcFile = Replace(cbcFile, ".csv", ".pba");
-        m_ss << "CompleteBloodCount@" << GetSimulationTime(TimeUnit::s) << "s.pba";
-        cbc.SerializeToFile(cbcFile,ASCII);
+        cbcFile = Replace(cbcFile, ".csv", ".json");
+        m_ss << "CompleteBloodCount@" << GetSimulationTime(TimeUnit::s) << "s.json";
+        cbc.SerializeToFile(cbcFile,JSON);
         break;
       }
 
@@ -361,9 +361,9 @@ bool PulseEngine::ProcessAction(const SEAction& action)
           mpFile = "ComprehensiveMetabolicPanel";
         m_ss << "CMP@" << GetSimulationTime(TimeUnit::s) << "s";
         mpFile = Replace(mpFile, "Results", m_ss.str());
-        mpFile = Replace(mpFile, ".csv", ".pba");
-        m_ss << "ComprehensiveMetabolicPanel@" << GetSimulationTime(TimeUnit::s) << "s.pba";
-        mp.SerializeToFile(mpFile,ASCII);
+        mpFile = Replace(mpFile, ".csv", ".json");
+        m_ss << "ComprehensiveMetabolicPanel@" << GetSimulationTime(TimeUnit::s) << "s.json";
+        mp.SerializeToFile(mpFile,JSON);
         break;
       }
       default:

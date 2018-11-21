@@ -96,7 +96,7 @@ public:
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
-  /// locates the pba patient file and reads in the values. 
+  /// locates the json patient file and reads in the values. 
   ///
   /// This will create an engine that you can send instructions (patient,actions,conditions) to dynamically.
   /// The return value will indicate success failure of the creation of the engine.  

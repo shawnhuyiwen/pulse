@@ -246,7 +246,7 @@ bool SESubstanceManager::LoadSubstanceDirectory(const std::string& data_dir)
   DIR *sdir;
   DIR *cdir;
   struct dirent *ent;
-  std::string ext = ".pba";
+  std::string ext = ".json";
 
 #if defined(_WIN32)
   sdir = opendir(std::string(data_dir + "/substances/").c_str());
@@ -268,7 +268,7 @@ bool SESubstanceManager::LoadSubstanceDirectory(const std::string& data_dir)
         try
         {
           SESubstance* sub = new SESubstance(GetLogger());
-          if (!sub->SerializeFromFile(ss.str(), ASCII))
+          if (!sub->SerializeFromFile(ss.str(), JSON))
           {
             delete sub;
             Error("Unable to read substance " + ss.str());
@@ -308,7 +308,7 @@ bool SESubstanceManager::LoadSubstanceDirectory(const std::string& data_dir)
         try
         {
           SESubstanceCompound* cmpd = new SESubstanceCompound(GetLogger());
-          if (!cmpd->SerializeFromFile(ss.str(), *this, ASCII))
+          if (!cmpd->SerializeFromFile(ss.str(), *this, JSON))
           {
             delete cmpd;
             Error("Unable to read substance compound " + ss.str());

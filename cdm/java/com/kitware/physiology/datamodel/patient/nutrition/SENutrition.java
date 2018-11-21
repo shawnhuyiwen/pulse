@@ -2,8 +2,8 @@
    See accompanying NOTICE file for details.*/
 package com.kitware.physiology.datamodel.patient.nutrition;
 
-import com.google.protobuf.TextFormat;
-import com.google.protobuf.TextFormat.ParseException;
+import com.google.protobuf.*;
+import com.google.protobuf.util.*;
 import com.kitware.physiology.cdm.Environment.EnvironmentData;
 import com.kitware.physiology.cdm.PatientNutrition.NutritionData;
 
@@ -62,15 +62,15 @@ public class SENutrition
       water.invalidate();    
   }
   
-  public void readFile(String fileName) throws ParseException
+  public void readFile(String fileName) throws InvalidProtocolBufferException
   {
     NutritionData.Builder builder = NutritionData.newBuilder();
-    TextFormat.getParser().merge(FileUtils.readFile(fileName), builder);
+    JsonFormat.parser().merge(FileUtils.readFile(fileName), builder);
     SENutrition.load(builder.build(), this);
   }
-  public void writeFile(String fileName)
+  public void writeFile(String fileName) throws InvalidProtocolBufferException
   {
-    FileUtils.writeFile(fileName, SENutrition.unload(this).toString());
+    FileUtils.writeFile(fileName, JsonFormat.printer().print(SENutrition.unload(this)));
   }
   
   public void copy(SENutrition from)

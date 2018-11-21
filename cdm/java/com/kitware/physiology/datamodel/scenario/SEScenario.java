@@ -4,12 +4,11 @@
 package com.kitware.physiology.datamodel.scenario;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import com.google.protobuf.TextFormat;
+import com.google.protobuf.*;
 import com.google.protobuf.TextFormat.ParseException;
+import com.google.protobuf.util.*;
 import com.kitware.physiology.cdm.Enums.eSide;
 import com.kitware.physiology.cdm.Enums.eSwitch;
 import com.kitware.physiology.cdm.Engine.AnyActionData;
@@ -37,12 +36,14 @@ import com.kitware.physiology.datamodel.substance.SESubstanceManager;
 import com.kitware.physiology.datamodel.system.equipment.anesthesia.actions.SEAnesthesiaMachineConfiguration;
 import com.kitware.physiology.utilities.FileUtils;
 import com.kitware.physiology.utilities.Log;
-import com.kitware.physiology.utilities.SimpleEquals;
+import com.kitware.physiology.utilities.jniBridge;
 
 public class SEScenario 
 {
 	public static void main(String[] args)
 	{
+	  jniBridge.initialize();
+	  
 		SESubstanceManager mgr = new SESubstanceManager();
 		mgr.loadSubstanceDirectory();
 
@@ -50,7 +51,7 @@ public class SEScenario
 			SEScenario s = new SEScenario(mgr);
 			s.setName("Test");
 			s.setDescription("Description");
-			s.getPatientConfiguration().setPatientFile("StandardMale.pba");
+			s.getPatientConfiguration().setPatientFile("StandardMale.json");
 
 
 			SEChronicAnemia cond = new SEChronicAnemia();
@@ -103,16 +104,22 @@ public class SEScenario
 			nd.setSide(eSide.Left);
 			s.getActions().add(nd);
 			System.out.println(SEScenario.unload(s).toString());
-			s.writeFile("TestScenario.pba");
+			try 
+			{
+        s.writeFile("TestScenario.json");
+      } 
+			catch (InvalidProtocolBufferException e1)
+			{
+        e1.printStackTrace();
+      }
 
 			SEScenario s2 = new SEScenario(mgr);
 			try 
 			{
-				s2.readFile("TestScenario.pba");
+				s2.readFile("TestScenario.json");
 			} 
-			catch (ParseException e) 
+			catch (InvalidProtocolBufferException e) 
 			{
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			for(SEAction a : s2.getActions())
@@ -122,21 +129,19 @@ public class SEScenario
 			}
 		}
 
-		boolean onlyCheckSchema=true;
-
 		String searchDir;
 		if(args.length==0)
 			searchDir="./verification/scenarios/";
 		else
 			searchDir=args[0];
-		List<String> files=FileUtils.findFiles(searchDir, ".pba", true);
+		List<String> files=FileUtils.findFiles(searchDir, ".json", true);
 		for(String file : files)
 		{
 			if(file.indexOf("@")>-1)
 				continue; // An assessment
 			
-			String pba = FileUtils.readFile(file);
-			if(pba==null)
+			String json = FileUtils.readFile(file);
+			if(json==null)
 			{
 				Log.error("Could not read file : "+file);
 				continue;
@@ -144,7 +149,7 @@ public class SEScenario
 			Pulse.ScenarioData.Builder pBuilder = Pulse.ScenarioData.newBuilder();
 			try
 			{
-				TextFormat.getParser().merge(pba, pBuilder);
+				JsonFormat.parser().merge(json, pBuilder);
 				Log.info(file+" is a good Pulse scenario");
 				continue;
 			}
@@ -157,7 +162,7 @@ public class SEScenario
 					sce1.readFile(file);
 					continue;
 				}
-				catch(ParseException ex1)
+				catch(InvalidProtocolBufferException ex1)
 				{
 					Log.error("Unable to read file "+file,ex1);
 				}
@@ -247,15 +252,15 @@ public class SEScenario
 		this.drMgr.reset();
 	}
 
-	public void readFile(String fileName) throws ParseException
+	public void readFile(String fileName) throws InvalidProtocolBufferException
 	{
 		ScenarioData.Builder builder = ScenarioData.newBuilder();
-		TextFormat.getParser().merge(FileUtils.readFile(fileName), builder);
+		JsonFormat.parser().merge(FileUtils.readFile(fileName), builder);
 		SEScenario.load(builder.build(), this);
 	}
-	public void writeFile(String fileName)
+	public void writeFile(String fileName) throws InvalidProtocolBufferException
 	{
-		FileUtils.writeFile(fileName, SEScenario.unload(this).toString());
+		FileUtils.writeFile(fileName, JsonFormat.printer().print(SEScenario.unload(this)));
 	}
 
 	public static void load(ScenarioData src, SEScenario dst)

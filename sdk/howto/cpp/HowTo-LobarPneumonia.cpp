@@ -47,7 +47,7 @@ void HowToLobarPneumonia()
   lobarPneumonia.GetRightLungAffected().SetValue(1.0);
 
   SEPatientConfiguration pc(pe->GetLogger());
-  pc.SetPatientFile("StandardMale.pba");
+  pc.SetPatientFile("StandardMale.json");
   pc.GetConditions().push_back(&lobarPneumonia);
 
   if (!pe->InitializeEngine(pc))

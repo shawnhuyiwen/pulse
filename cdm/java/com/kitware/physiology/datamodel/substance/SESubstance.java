@@ -3,8 +3,8 @@
 
 package com.kitware.physiology.datamodel.substance;
 
-import com.google.protobuf.TextFormat;
-import com.google.protobuf.TextFormat.ParseException;
+import com.google.protobuf.*;
+import com.google.protobuf.util.*;
 import com.kitware.physiology.cdm.Substance.SubstanceData;
 import com.kitware.physiology.cdm.SubstanceEnums.eSubstance.State;
 
@@ -99,15 +99,15 @@ public class SESubstance
       this.pd.reset();    
   }
   
-  public void readFile(String fileName) throws ParseException
+  public void readFile(String fileName) throws InvalidProtocolBufferException
   {
     SubstanceData.Builder builder = SubstanceData.newBuilder();
-    TextFormat.getParser().merge(FileUtils.readFile(fileName), builder);
+    JsonFormat.parser().merge(FileUtils.readFile(fileName), builder);
     SESubstance.load(builder.build(), this);
   }
-  public void writeFile(String fileName)
+  public void writeFile(String fileName) throws InvalidProtocolBufferException
   {
-    FileUtils.writeFile(fileName, SESubstance.unload(this).toString());
+    FileUtils.writeFile(fileName, JsonFormat.printer().print(SESubstance.unload(this)));
   }
   
   public static void load(SubstanceData src, SESubstance dst)

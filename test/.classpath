@@ -8,7 +8,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/DataModelBindings"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Engine"/>
 	<classpathentry kind="var" path="SOURCE_DIR/jar/commons-logging-1.2.jar"/>
-	<classpathentry kind="var" path="SOURCE_DIR/jar/guava-11.0.2.jar"/>
 	<classpathentry kind="var" path="SOURCE_DIR/jar/javassist-3.16.1-GA.jar"/>
 	<classpathentry kind="var" path="SOURCE_DIR/jar/jcommon-1.0.16.jar"/>
 	<classpathentry kind="var" path="SOURCE_DIR/jar/jdom-2.0.2.jar"/>
@@ -24,5 +23,7 @@
 	<classpathentry kind="var" path="SOURCE_DIR/jar/org.eclipse.jgit-4.11.0.201803080745-r.jar"/>
 	<classpathentry kind="var" path="SOURCE_DIR/jar/slf4j-api-1.7.25.jar"/>
 	<classpathentry kind="var" path="SOURCE_DIR/jar/slf4j-simple-1.7.25.jar"/>
+	<classpathentry kind="var" path="SOURCE_DIR/jar/gson-2.8.5.jar"/>
+	<classpathentry kind="var" path="SOURCE_DIR/jar/guava-26.0-jre.jar"/>
 	<classpathentry kind="output" path="build/java"/>
 </classpath>

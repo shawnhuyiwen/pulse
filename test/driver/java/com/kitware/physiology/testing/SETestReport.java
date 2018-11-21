@@ -4,8 +4,8 @@ package com.kitware.physiology.testing;
 
 import java.util.*;
 
-import com.google.protobuf.TextFormat;
-import com.google.protobuf.TextFormat.ParseException;
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.util.JsonFormat;
 import com.kitware.physiology.cdm.TestReport.TestReportData;
 import com.kitware.physiology.cdm.TestReport.TestSuiteData;
 import com.kitware.physiology.datamodel.properties.CommonUnits.TimeUnit;
@@ -46,7 +46,7 @@ public class SETestReport
   public SETestReport()
   {
     this.reportDir="./";
-    setFileName("TestReport.pba");
+    setFileName("TestReport.json");
     testSuites = new ArrayList<SETestSuite>();
     knownFailingSuites = new ArrayList<String>();
   }
@@ -101,19 +101,19 @@ public class SETestReport
     else
     {
       this.name = fileName;
-      this.fileName=fileName+".pba";// make it an pba file
+      this.fileName=fileName+".json";// make it an json file
     }
   }
 
-  public void readFile(String fileName) throws ParseException
+  public void readFile(String fileName) throws InvalidProtocolBufferException
   {
   	TestReportData.Builder builder = TestReportData.newBuilder();
-    TextFormat.getParser().merge(FileUtils.readFile(fileName), builder);
+    JsonFormat.parser().merge(FileUtils.readFile(fileName), builder);
     SETestReport.load(builder.build(), this);
   }
-  public void writeFile(String fileName)
+  public void writeFile(String fileName) throws InvalidProtocolBufferException
   {
-    FileUtils.writeFile(fileName, SETestReport.unload(this).toString());
+    FileUtils.writeFile(fileName, JsonFormat.printer().print(SETestReport.unload(this)));
   }
   public static void load(TestReportData src, SETestReport dst)
   {
@@ -171,12 +171,12 @@ public class SETestReport
     this.testSuites.add(ts);
   }
 
-  public void write()
+  public void write() throws InvalidProtocolBufferException
   {
     write(this.reportDir);
   }
 
-  public void write(String toDirectory)
+  public void write(String toDirectory) throws InvalidProtocolBufferException
   {
     if(toDirectory==null||toDirectory.isEmpty())
       toDirectory="./";

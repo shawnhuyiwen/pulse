@@ -241,7 +241,7 @@ bool PBPulseState::Serialize(const pulse::proto::StateData& src, PulseEngine& ds
 
 
   // It helps to unload what you just loaded and to a compare if you have issues
-  //SaveState("WhatIJustLoaded.pba");
+  //SaveState("WhatIJustLoaded.json");
 
   // Good to go, save it off and carry on!
   dst.m_State = EngineState::Active;

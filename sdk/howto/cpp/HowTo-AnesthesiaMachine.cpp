@@ -41,7 +41,7 @@ void HowToAnesthesiaMachine()
   // Create the engine and load the patient
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowToAnesthesiaMachine.log");
   pe->GetLogger()->Info("HowToAnesthesiaMachine");
-  if (!pe->SerializeFromFile("./states/StandardMale@0s.pba", ASCII))
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.json", JSON))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
@@ -80,9 +80,9 @@ void HowToAnesthesiaMachine()
   SEAnesthesiaMachineConfiguration AMConfig(pe->GetSubstanceManager());
 
   // You can set configuration by modifing the configuration class directly
-  // Or you can point to an pba with configuration data.
+  // Or you can point to an json with configuration data.
   // Modifying the class will keep any old settings that are not provided in the config
-  // Using a pba will set the anesthesia machine to only the property states specified in the file
+  // Using a json will set the anesthesia machine to only the property states specified in the file
   SEAnesthesiaMachine& config = AMConfig.GetConfiguration();
   config.SetConnection(eAnesthesiaMachine_Connection::Mask);
   config.GetInletFlow().SetValue(2.0, VolumePerTimeUnit::L_Per_min);

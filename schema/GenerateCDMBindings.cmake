@@ -56,22 +56,75 @@ if(_OLD_FILES)
   file(REMOVE ${_OLD_FILES})
 endif()
 
-if(NOT EXISTS "${CMAKE_BINARY_DIR}/../protobuf/src/protobuf/java/core/src/main/java/com/google/protobuf/Any.java")
+#if(NOT EXISTS "${CMAKE_BINARY_DIR}/../protobuf/src/protobuf/java/core/src/main/java/com/google/protobuf/Any.java")
   message(STATUS "Generating Java Protobuf files")
-  #Generate the java descriptor file for protobufs
-  execute_process(COMMAND ${BINDER} --proto_path=${CMAKE_BINARY_DIR}/../protobuf/src/protobuf/src/
-                                    --java_out=${CMAKE_BINARY_DIR}/../protobuf/src/protobuf/java/core/src/main/java/
-                                      ${CMAKE_BINARY_DIR}/../protobuf/src/protobuf/src/google/protobuf/descriptor.proto)
-  execute_process(COMMAND ${BINDER} --proto_path=${CMAKE_BINARY_DIR}/../protobuf/src/protobuf/src/
-                                    --java_out=${CMAKE_BINARY_DIR}/../protobuf/src/protobuf/java/core/src/main/java/
-                                      ${CMAKE_BINARY_DIR}/../protobuf/src/protobuf/src/google/protobuf/any.proto)
-else()
-  message(STATUS "Java Protobuf source files found")
-endif()
+  set(__API_PROTO_FILES any.proto
+                        any_test.proto
+                        api.proto
+                        descriptor.proto
+                        duration.proto
+                        empty.proto
+                        field_mask.proto
+                        #map_lite_unittest.proto
+                        map_proto2_unittest.proto
+                        map_unittest.proto
+                        source_context.proto
+                        struct.proto
+                        test_messages_proto2.proto
+                        test_messages_proto3.proto
+                        timestamp.proto
+                        type.proto
+                        unittest.proto
+                        unittest_arena.proto
+                        unittest_custom_options.proto
+                        unittest_drop_unknown_fields.proto
+                        unittest_embed_optimize_for.proto
+                        unittest_empty.proto
+                        unittest_enormous_descriptor.proto
+                        unittest_import.proto
+                        #unittest_import_lite.proto
+                        unittest_import_public.proto
+                        #unittest_import_public_lite.proto
+                        unittest_lazy_dependencies.proto
+                        unittest_lazy_dependencies_custom_option.proto
+                        unittest_lazy_dependencies_enum.proto
+                        #unittest_lite.proto
+                        #unittest_lite_imports_nonlite.proto
+                        unittest_mset.proto
+                        unittest_mset_wire_format.proto
+                        unittest_no_arena.proto
+                        unittest_no_arena_import.proto
+                        #unittest_no_arena_lite.proto
+                        unittest_no_field_presence.proto
+                        unittest_no_generic_services.proto
+                        unittest_optimize_for.proto
+                        unittest_preserve_unknown_enum.proto
+                        unittest_preserve_unknown_enum2.proto
+                        unittest_proto3.proto
+                        unittest_proto3_arena.proto
+                        #unittest_proto3_arena_lite.proto
+                        #unittest_proto3_lite.proto
+                        unittest_well_known_types.proto
+                        wrappers.proto
+                        )
+  #Generate the java API files from their proto files
+  foreach(f ${__API_PROTO_FILES})
+    execute_process(COMMAND ${BINDER} --proto_path=${CMAKE_BINARY_DIR}/../protobuf/src/protobuf/src/
+                                      --java_out=${CMAKE_BINARY_DIR}/../protobuf/src/protobuf/java/core/src/main/java/
+                                        "${CMAKE_BINARY_DIR}/../protobuf/src/protobuf/src/google/protobuf/${f}")
+    message(STATUS "Java Binding file ${CMAKE_BINARY_DIR}/../protobuf/src/protobuf/src/google/protobuf/${f}")
+  endforeach()
+#else()
+#  message(STATUS "Java Protobuf source files found")
+#endif()
 # Copy these files to our source directory
 file(COPY "${CMAKE_BINARY_DIR}/../protobuf/src/protobuf/java/core/src/main/java/com"
      DESTINATION ${java_bindings_DIR}
 )
+file(COPY "${CMAKE_BINARY_DIR}/../protobuf/src/protobuf/java/util/src/main/java/com"
+     DESTINATION ${java_bindings_DIR}
+)
+
 foreach(f ${_FILES})
   message(STATUS "Java Binding file ${f}")
   execute_process(COMMAND ${BINDER} --proto_path=${from}

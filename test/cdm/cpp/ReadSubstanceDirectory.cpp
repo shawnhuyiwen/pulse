@@ -34,5 +34,5 @@ void CommonDataModelTest::ReadSubstanceDirectory(const std::string& rptDirectory
   testCase.SetName(obj.GetName());
   // TODO would be nice to listen to errors on the logger and add them to the testCase failures...
 
-  testReport.SerializeToFile(rptDirectory +"/"+testName+"Report.pba",ASCII);
+  testReport.SerializeToFile(rptDirectory +"/"+testName+"Report.json",JSON);
 }

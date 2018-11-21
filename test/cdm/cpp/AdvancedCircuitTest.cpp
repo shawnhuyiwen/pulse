@@ -154,8 +154,8 @@ void CommonDataModelTest::ElectricalCircuitTest(const std::string& sTestDirector
     if (!serialized && dT > 80)
     {
       serialized = true;
-      std::string pbaDir = sTestDirectory + "/ElectricalCircuit.pba";
-      TestCircuitSerialization(pbaDir);      
+      std::string jsonDir = sTestDirectory + "/ElectricalCircuit.json";
+      TestCircuitSerialization(jsonDir);      
       ElectricalCircuit = m_Circuits->GetElectricalCircuit("Electric");
     }
   }
@@ -220,8 +220,8 @@ void CommonDataModelTest::FluidCircuitTest(const std::string& sTestDirectory)
     if (!serialized && dT > 80)
     {
       serialized = true;
-      std::string pbaDir = sTestDirectory + "/FluidCircuit.pba";
-      TestCircuitSerialization(pbaDir);
+      std::string jsonDir = sTestDirectory + "/FluidCircuit.json";
+      TestCircuitSerialization(jsonDir);
       fluidCircuit = m_Circuits->GetFluidCircuit("Fluid");
     }
   }
@@ -298,8 +298,8 @@ void CommonDataModelTest::ThermalCircuitTest(const std::string& sTestDirectory)
     if (!serialized && dT > 80)
     {
       serialized = true;
-      std::string pbaDir = sTestDirectory + "/ThermalCircuit.pba"; 
-      TestCircuitSerialization(pbaDir);
+      std::string jsonDir = sTestDirectory + "/ThermalCircuit.json"; 
+      TestCircuitSerialization(jsonDir);
       ThermalCircuit = m_Circuits->GetThermalCircuit("Thermal");
     }
   }
@@ -406,8 +406,8 @@ void CommonDataModelTest::CombinedCircuitTest(const std::string& sTestDirectory)
     if (!serialized && currentTime_s > 80)
     {
       serialized = true;
-      std::string pbaDir = sTestDirectory + "/CombinedCircuitTest.pba"; 
-      TestCircuitSerialization(pbaDir);
+      std::string jsonDir = sTestDirectory + "/CombinedCircuitTest.json"; 
+      TestCircuitSerialization(jsonDir);
       // Loading will create a new circuit, so we need to delete our old ones
       // And hook up to the new ones
       MasterCircuit = m_Circuits->GetFluidCircuit("Master");
@@ -479,8 +479,8 @@ void CommonDataModelTest::InterCircuitComparisonTest(const std::string& sTestDir
     if (!serialized && currentTime_s > 80)
     {
       serialized = true;
-      std::string pbaDir = sTestDirectory + "/InterCircuitComparison.pba";
-      TestCircuitSerialization(pbaDir);
+      std::string jsonDir = sTestDirectory + "/InterCircuitComparison.json";
+      TestCircuitSerialization(jsonDir);
       fluidCircuit = m_Circuits->GetFluidCircuit("Fluid");
     }
   }
@@ -563,8 +563,8 @@ void CommonDataModelTest::InterCircuitIndividualTest(const std::string& sTestDir
     if (!serialized && currentTime_s > 80)
     {
       serialized = true;
-      std::string pbaDir = sTestDirectory + "/InterCircuitIndividual.pba";
-      TestCircuitSerialization(pbaDir);
+      std::string jsonDir = sTestDirectory + "/InterCircuitIndividual.json";
+      TestCircuitSerialization(jsonDir);
       fluidCircuit1 = m_Circuits->GetFluidCircuit("Fluid1");
       fluidCircuit2 = m_Circuits->GetFluidCircuit("Fluid2");
     }
@@ -799,8 +799,8 @@ void CommonDataModelTest::DynamicallyChangingCircuitTest(const std::string& sTes
     if (!serialized && dT > 80)
     {
       serialized = true;
-      std::string pbaDir = sTestDirectory + "/DynamicallyChangingCircuit.pba";
-      TestCircuitSerialization(pbaDir);
+      std::string jsonDir = sTestDirectory + "/DynamicallyChangingCircuit.json";
+      TestCircuitSerialization(jsonDir);
       fluidCircuit = m_Circuits->GetFluidCircuit("Fluid");
     }
   }
@@ -874,8 +874,8 @@ void CommonDataModelTest::NonZeroReferencePositive(const std::string& sTestDirec
     if (!serialized && dT > 80)
     {
       serialized = true;
-      std::string pbaDir = sTestDirectory + "/NonZeroReferencePositive.pba";
-      TestCircuitSerialization(pbaDir);
+      std::string jsonDir = sTestDirectory + "/NonZeroReferencePositive.json";
+      TestCircuitSerialization(jsonDir);
       fluidCircuit = m_Circuits->GetFluidCircuit("Fluid");
     }
   }
@@ -948,8 +948,8 @@ void CommonDataModelTest::NonZeroReferenceNegative(const std::string& sTestDirec
     if (!serialized && dT > 80)
     {
       serialized = true;
-      std::string pbaDir = sTestDirectory + "/NonZeroReferenceNegative.pba";
-      TestCircuitSerialization(pbaDir);
+      std::string jsonDir = sTestDirectory + "/NonZeroReferenceNegative.json";
+      TestCircuitSerialization(jsonDir);
       fluidCircuit = m_Circuits->GetFluidCircuit("Fluid");
     }
   }
@@ -1027,8 +1027,8 @@ void CommonDataModelTest::PolarizedCapacitorTest(const std::string& sTestDirecto
     if (!serialized && currentTime_s > 130)
     {
       serialized = true;
-      std::string pbaDir = sTestDirectory + "/NonZeroReferenceNegative.pba";
-      TestCircuitSerialization(pbaDir);
+      std::string jsonDir = sTestDirectory + "/NonZeroReferenceNegative.json";
+      TestCircuitSerialization(jsonDir);
       fluidCircuit = m_Circuits->GetFluidCircuit("Fluid");
     }
   }
@@ -1075,8 +1075,8 @@ void CommonDataModelTest::PreChargeComplianceZeroVolume(const std::string& sTest
     if (!serialized && currentTime_s > 0.8)
     {
       serialized = true;
-      std::string pbaDir = sTestDirectory + "/PreChargeComplianceZeroVolume.pba"; 
-      TestCircuitSerialization(pbaDir);
+      std::string jsonDir = sTestDirectory + "/PreChargeComplianceZeroVolume.json"; 
+      TestCircuitSerialization(jsonDir);
       fluidCircuit = m_Circuits->GetFluidCircuit("Fluid");
     }
   }
@@ -1123,8 +1123,8 @@ void CommonDataModelTest::PreChargeComplianceNonZeroVolume(const std::string& sT
     if (!serialized && currentTime_s > 0.8)
     {
       serialized = true;
-      std::string pbaDir = sTestDirectory + "/PreChargeComplianceNonZeroVolume.pba"; 
-      TestCircuitSerialization(pbaDir);
+      std::string jsonDir = sTestDirectory + "/PreChargeComplianceNonZeroVolume.json"; 
+      TestCircuitSerialization(jsonDir);
       fluidCircuit = m_Circuits->GetFluidCircuit("Fluid");
     }
   }
@@ -1384,8 +1384,8 @@ void CommonDataModelTest::CircuitLockingTest(const std::string& sOutputDirectory
     if (i == 0)
     {
       // Serialize and try again
-      std::string pbaDir = sOutputDirectory + "/CircuitLockingCircuit.pba";
-      TestCircuitSerialization(pbaDir);
+      std::string jsonDir = sOutputDirectory + "/CircuitLockingCircuit.json";
+      TestCircuitSerialization(jsonDir);
       fluidCircuit = m_Circuits->GetFluidCircuit("Fluid");
       type = " Locked After Serialization";
     }
@@ -1395,6 +1395,6 @@ void CommonDataModelTest::CircuitLockingTest(const std::string& sOutputDirectory
       type = " Unlocked";
     }
   }
-  testReport.SerializeToFile(sOutputDirectory + "/CircuitLockingTestReport.pba",ASCII);
+  testReport.SerializeToFile(sOutputDirectory + "/CircuitLockingTestReport.json",JSON);
   m_Circuits->Clear();
 }

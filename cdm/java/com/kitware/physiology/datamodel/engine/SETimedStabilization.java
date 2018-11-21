@@ -4,8 +4,8 @@ package com.kitware.physiology.datamodel.engine;
 
 import java.util.*;
 
-import com.google.protobuf.TextFormat;
-import com.google.protobuf.TextFormat.ParseException;
+import com.google.protobuf.*;
+import com.google.protobuf.util.*;
 import com.kitware.physiology.cdm.Engine.TimedStabilizationData;
 import com.kitware.physiology.cdm.Enums.eSwitch;
 
@@ -34,15 +34,15 @@ public class SETimedStabilization
     this.conditionStabilizationTimes.clear();
   }
   
-  public void readFile(String fileName) throws ParseException
+  public void readFile(String fileName) throws InvalidProtocolBufferException
   {
     TimedStabilizationData.Builder builder = TimedStabilizationData.newBuilder();
-    TextFormat.getParser().merge(FileUtils.readFile(fileName), builder);
+    JsonFormat.parser().merge(FileUtils.readFile(fileName), builder);
     SETimedStabilization.load(builder.build(), this);
   }
-  public void writeFile(String fileName)
+  public void writeFile(String fileName) throws InvalidProtocolBufferException
   {
-    FileUtils.writeFile(fileName, SETimedStabilization.unload(this).toString());
+    FileUtils.writeFile(fileName, JsonFormat.printer().print(SETimedStabilization.unload(this)));
   }
   
   public static void load(TimedStabilizationData src, SETimedStabilization dst) 

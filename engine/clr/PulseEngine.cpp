@@ -61,7 +61,7 @@ private:
 PulseEngineRef::PulseEngineRef() : _pulse(CreatePulseEngine("default.log").release())
 {
   Init();
-  LoadStateFile("./states/StandardMale@0s.pba", 0);
+  LoadStateFile("./states/StandardMale@0s.json", 0);
 }
 PulseEngineRef::PulseEngineRef(System::String^ log) : _pulse(CreatePulseEngine(MarshalString(log)).release())
 {
@@ -115,7 +115,7 @@ bool PulseEngineRef::LoadStateFile(System::String^ filename, double sim_start_ti
       sim_start_time.SetValue(sim_start_time_s, TimeUnit::s);
     else
       sim_start_time.SetValue(0, TimeUnit::s);
-    if (!_pulse->SerializeFromFile(MarshalString(filename), ASCII, &sim_start_time))
+    if (!_pulse->SerializeFromFile(MarshalString(filename), JSON, &sim_start_time))
       return false;
     _pulse->SetEventHandler(_events);
 
@@ -171,7 +171,7 @@ void PulseEngineRef::SaveStateFile(System::String^ filename)
 {
   Monitor::Enter(_lock);
   {
-    _pulse->SerializeToFile(MarshalString(filename),ASCII);
+    _pulse->SerializeToFile(MarshalString(filename),JSON);
   }
   Monitor::Exit(_lock);
 }
