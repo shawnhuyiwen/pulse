@@ -287,7 +287,7 @@ void Cardiovascular::SetUp()
   m_RightPulmonaryArteriesToVeins = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryArteriesToRightPulmonaryVeins);
   m_RightPulmonaryArteriesToCapillaries = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryArteriesToRightPulmonaryCapillaries);
 
-  m_InternalHemorrhageToAorta = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta3ToAorta1);
+  m_InternalHemorrhageToAorta = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::GroundToAorta4);
   m_pAortaToBone = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToBone1);
   m_pAortaToBrain = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToBrain1);
   m_pBrainToVenaCava = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Brain1ToBrain2);
@@ -352,7 +352,7 @@ void Cardiovascular::SetUp()
   SEFluidCircuitPath* p = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::PortalVeinToLiver1);
   if (!Contains(m_systemicResistancePaths, (*p)))
     m_systemicResistancePaths.push_back(p);
-  m_AortaCompliance = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToGround);
+  m_AortaCompliance = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToAorta4);
   m_AortaResistance = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta3ToAorta1);
   m_VenaCavaCompliance = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::VenaCavaToGround);
   m_RightHeartResistance = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::VenaCavaToRightHeart2);
@@ -962,7 +962,7 @@ void Cardiovascular::Hemorrhage()
   {
     m_HemorrhagePaths.at(hIter)->GetNextFlowSource().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);
   }
-  
+
   SEHemorrhage* h;
   double TotalLossRate_mL_Per_s = 0.0;
   double internal_rate_mL_Per_s = 0.0;
@@ -988,7 +988,7 @@ void Cardiovascular::Hemorrhage()
 
     /// \error Error: Bleeding rate cannot exceed cardiac output
     if (rate_mL_Per_s > GetCardiacOutput().GetValue(VolumePerTimeUnit::mL_Per_s))
-    {      
+    {
       m_ss << "Cannot have bleeding rate greater than cardiac output. \n\tCurrent cardiac output is: " << GetCardiacOutput()
         << "\n\tAnd specified bleeding rate is: " << h->GetRate();
       Error(m_ss);
@@ -1011,20 +1011,24 @@ void Cardiovascular::Hemorrhage()
       invalid_hemorrhages.push_back(h);
       continue;
     }
-	if (h->GetType() == eHemorrhage_Type::Internal)
-	{
-		SELiquidCompartment* abdomenCompartment = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Abdomen);
-		//SELiquidCompartment* abdomenCompartment = m_data.GetCompartments().GetCardiovascularGraph().GetCompartment(pulse::VascularCompartment::Abdomen);
-		if (!abdomenCompartment->HasChild(compartment->GetName()))
-		{
-			m_ss << "Internal Hemorrhage is only supported for the abdominal region, including the right and left kidneys, liver, spleen, splanchnic, and small and large intestine vascular compartments.";
-			Error(m_ss);
-			invalid_hemorrhages.push_back(h);
-			continue;
-		}
-	}
+    if (h->GetType() == eHemorrhage_Type::Internal)
+    {
+      SELiquidCompartment* abdomenCompartment = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Abdomen);
+      //SELiquidCompartment* abdomenCompartment = m_data.GetCompartments().GetCardiovascularGraph().GetCompartment(pulse::VascularCompartment::Abdomen);
+      if (!abdomenCompartment->HasChild(compartment->GetName()))
+      {
+        m_ss << "Internal Hemorrhage is only supported for the abdominal region, including the right and left kidneys, liver, spleen, splanchnic, and small and large intestine vascular compartments.";
+        Error(m_ss);
+        invalid_hemorrhages.push_back(h);
+        continue;
+      }
+    }
 
-    TotalLossRate_mL_Per_s += rate_mL_Per_s;
+    if (h->GetType() == eHemorrhage_Type::External)
+    {
+      //Only mass is merely transfered if it is an internal bleed
+      TotalLossRate_mL_Per_s += rate_mL_Per_s;
+    }    
 
     //Get all circuit nodes in this compartment
     std::vector<SEFluidCircuitNode*> nodes;
@@ -1134,7 +1138,7 @@ void Cardiovascular::Hemorrhage()
               break;
             }
           }
-        }        
+        }
 
         SELiquidCompartmentLink& newHemorrhageLink = m_data.GetCompartments().CreateLiquidLink(*sourceCompartment, *m_Groundcmpt, compartment->GetName() + "Hemorrhage");
         newHemorrhageLink.MapPath(newHemorrhagePath);
@@ -1144,13 +1148,14 @@ void Cardiovascular::Hemorrhage()
         //Add to local lists
         m_HemorrhagePaths.push_back(&newHemorrhagePath);
         m_HemorrhageLinks.push_back(&newHemorrhageLink);
-		if (h->GetType() == eHemorrhage_Type::Internal)
-		{
-			m_InternalHemorrhagePaths.push_back(&newHemorrhagePath);
-			m_InternalHemorrhageLinks.push_back(&newHemorrhageLink);
-		}
+        if (h->GetType() == eHemorrhage_Type::Internal)
+        {
+          m_InternalHemorrhagePaths.push_back(&newHemorrhagePath);
+          m_InternalHemorrhageLinks.push_back(&newHemorrhageLink);
+        }
       }
     }
+<<<<<<< HEAD
 	//total the internal hemorrhage flow rate and apply it to the abdominal cavity path
 	for (auto hemorrhage : m_InternalHemorrhagePaths)
 	{
@@ -1175,7 +1180,15 @@ void Cardiovascular::Hemorrhage()
 	m_pAbdominalCavityToGnd->GetNextCompliance().SetValue(compliance_mL_Per_mmHg, FlowComplianceUnit::mL_Per_mmHg);
 
 	InternalHemorrhagePressureApplication();
+=======
+>>>>>>> c92321c9b909155ff27c2ed01e4998b38515b50e
 
+    //total the internal hemorrhage flow rate and apply it to the abdominal cavity path
+    for (auto hemorrhage : m_InternalHemorrhagePaths)
+    {
+      internal_rate_mL_Per_s += hemorrhage->GetNextFlowSource().GetValue(VolumePerTimeUnit::mL_Per_s);
+    }
+    m_pGndToAbdominalCavity->GetNextFlowSource().SetValue(internal_rate_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
   }
 
   // Remove any invalid hemorrhages
@@ -1189,18 +1202,30 @@ void Cardiovascular::Hemorrhage()
   {
     if (m_HemorrhagePaths.at(hIter)->GetNextFlowSource(VolumePerTimeUnit::mL_Per_s) == 0.0)
     {
-      m_CirculatoryCircuit->RemovePath(*m_HemorrhagePaths.at(hIter));      
+      m_CirculatoryCircuit->RemovePath(*m_HemorrhagePaths.at(hIter));
       m_HemorrhagePaths.erase(m_HemorrhagePaths.begin() + hIter);
       m_CirculatoryCircuit->StateChange();
 
       m_CirculatoryGraph->RemoveLink(*m_HemorrhageLinks.at(hIter));
       m_HemorrhageLinks.erase(m_HemorrhageLinks.begin() + hIter);
       m_CirculatoryGraph->StateChange();
-      
+
       continue;
     }
     hIter++;
   }
+
+  //Update abdominal cavity compliance
+  double abdominalBloodVolume = m_AbdominalCavity->GetVolume().GetValue(VolumeUnit::mL);
+  double compliance_mL_Per_mmHg = 0;
+  double complianceSlopeParameter = 0.4;
+  double complianceCurveParameter = 0.55;
+  //Variable compliance calculation
+  compliance_mL_Per_mmHg = complianceSlopeParameter / complianceCurveParameter * abdominalBloodVolume;
+  m_pAbdominalCavityToGnd->GetComplianceBaseline().SetValue(compliance_mL_Per_mmHg, FlowComplianceUnit::mL_Per_mmHg);
+
+  //Effect the Aorta with internal hemorrhages
+  InternalHemorrhagePressureApplication();
 
   if (TotalLossRate_mL_Per_s == 0)
     return;
@@ -1483,18 +1508,17 @@ void Cardiovascular::PericardialEffusionPressureApplication()
 /// The internal pressure application function calculates the pressure applied to the aorta due to blood pooling in the abdominal cavity.
 ///
 /// \details
-/// The pressure applied to the aorta is dictated by the pressure in the abdominal cavity. The response is tuned to 40% of this value
-/// to achieve the correct physiologic response. (Unvalidated at this time).
+/// The pressure applied to the aorta is dictated by the pressure in the abdominal cavity. The response is tuned to 45% of this value
+/// to achieve the correct physiologic response.
 //--------------------------------------------------------------------------------------------------
 void Cardiovascular::InternalHemorrhagePressureApplication()
 {
-	double abdominalCavityPressureChange_mmHg = m_AbdominalCavity->GetPressure(PressureUnit::mmHg);
+	double abdominalCavityPressure_mmHg = m_AbdominalCavity->GetPressure(PressureUnit::mmHg);
 
 	double pressureResponseFraction = 0.45; //Tuning the pressure applied to the aorta
 
-	//Set the resistance on the aorta based on the abdominal cavity pressure
-	double aortaBaselineResistance_mmHg_s_Per_mL = m_InternalHemorrhageToAorta->GetResistanceBaseline().GetValue(FlowResistanceUnit::mmHg_s_Per_mL);
-	m_InternalHemorrhageToAorta->GetNextResistance().SetValue(pressureResponseFraction*aortaBaselineResistance_mmHg_s_Per_mL*abdominalCavityPressureChange_mmHg, FlowResistanceUnit::mmHg_s_Per_mL);
+	//Set the pressure on the aorta based on the abdominal cavity pressure
+	m_InternalHemorrhageToAorta->GetNextPressureSource().SetValue(pressureResponseFraction*abdominalCavityPressure_mmHg, PressureUnit::mmHg);
 
 }
 

@@ -183,12 +183,13 @@ protected:
   SEFluidCircuitPath*              m_pBrainResistanceUpstream;
   SEFluidCircuitPath*              m_pBrainResistanceDownstream;
 
-  SEFluidCircuitPath*               m_leftRenalArteryPath;
-  SEFluidCircuitPath*               m_rightRenalArteryPath;
+  SEFluidCircuitPath*              m_leftRenalArteryPath;
+  SEFluidCircuitPath*              m_rightRenalArteryPath;
 
   SEFluidCircuitPath*              m_pGndToAbdominalCavity;
   SEFluidCircuitPath*              m_pAbdominalCavityToGnd;
   
+  SELiquidCompartment*             m_AbdominalCavity;
   SELiquidCompartment*             m_Aorta;
   SELiquidSubstanceQuantity*       m_AortaCO2;
   SELiquidCompartment*             m_Brain;
@@ -203,7 +204,6 @@ protected:
   SELiquidCompartment*             m_RightPulmonaryArteries;
   SELiquidCompartment*             m_RightPulmonaryVeins;
   SELiquidCompartment*             m_VenaCava;
-  SELiquidCompartment*             m_AbdominalCavity;
 
   std::vector<SEFluidCircuitPath*> m_systemicResistancePaths;
   std::vector<SEFluidCircuitPath*> m_systemicCompliancePaths;
