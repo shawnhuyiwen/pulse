@@ -2,8 +2,8 @@
    See accompanying NOTICE file for details.*/
 package com.kitware.physiology.datamodel.patient.assessments;
 
-import com.google.protobuf.TextFormat;
-import com.google.protobuf.TextFormat.ParseException;
+import com.google.protobuf.*;
+import com.google.protobuf.util.*;
 import com.kitware.physiology.cdm.PatientAssessments.PulmonaryFunctionTestData;
 
 import com.kitware.physiology.datamodel.properties.*;
@@ -78,15 +78,15 @@ public class SEPulmonaryFunctionTest extends SEPatientAssessment
       this.lungVolumePlot.invalidate();
   }
   
-  public void readFile(String fileName) throws ParseException
+  public void readFile(String fileName) throws InvalidProtocolBufferException
   {
     PulmonaryFunctionTestData.Builder builder = PulmonaryFunctionTestData.newBuilder();
-    TextFormat.getParser().merge(FileUtils.readFile(fileName), builder);
+    JsonFormat.parser().merge(FileUtils.readFile(fileName), builder);
     SEPulmonaryFunctionTest.load(builder.build(), this);
   }
-  public void writeFile(String fileName)
+  public void writeFile(String fileName) throws InvalidProtocolBufferException
   {
-    FileUtils.writeFile(fileName, SEPulmonaryFunctionTest.unload(this).toString());
+    FileUtils.writeFile(fileName, JsonFormat.printer().print(SEPulmonaryFunctionTest.unload(this)));
   }
   
   public static void load(PulmonaryFunctionTestData src, SEPulmonaryFunctionTest dst)

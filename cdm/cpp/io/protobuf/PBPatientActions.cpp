@@ -7,7 +7,7 @@
 #include "io/protobuf/PBActions.h"
 #include "io/protobuf/PBSubstance.h"
 #include "io/protobuf/PBProperties.h"
-#include "bind/cdm/PatientActions.pb.h"
+#include "bind/cpp/cdm/PatientActions.pb.h"
 
 #include "substance/SESubstanceManager.h"
 #include "patient/actions/SEPatientAssessmentRequest.h"

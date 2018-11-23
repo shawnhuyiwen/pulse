@@ -55,8 +55,8 @@ protected:
   EngineState m_State;
 public:
   
-  PulseController(Logger* logger);
-  PulseController(const std::string& logfileName);
+  PulseController(Logger* logger, const std::string& data_dir=".");
+  PulseController(const std::string& logfileName, const std::string& data_dir=".");
   virtual ~PulseController();
 
   EngineState                             GetState();
@@ -107,7 +107,7 @@ public:
   eAirwayMode                             GetAirwayMode();
   void                                    SetAirwayMode(eAirwayMode mode);
 
-  eSwitch                            GetIntubation();
+  eSwitch                                 GetIntubation();
   void                                    SetIntubation(eSwitch s);
 
   bool CreateCircuitsAndCompartments();
@@ -178,5 +178,7 @@ protected:
   bool                                                          myLogger;
   SEEventHandler*                                               m_EventHandler;
   SEAdvanceHandler*                                             m_AdvanceHandler;
+
+  std::string                                                   m_DataDir;
 };
 

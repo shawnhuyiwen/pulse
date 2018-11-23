@@ -56,19 +56,19 @@ void HowToEnvironmentChange()
   // You could then save out your own state and use it in the future
 
   SEInitialEnvironment ienv(pe->GetSubstanceManager());
-  ienv.SetConditionsFile("./environments/AnchorageDecember.pba");
+  ienv.SetConditionsFile("./environments/AnchorageDecember.json");
   // You can set a file or the conditions object just like is shown below
   std::vector<const SECondition*> conditions;
   conditions.push_back(&ienv);
 
-  if (!pe->InitializeEngine("StandardMale.pba", &conditions))
+  if (!pe->InitializeEngine("StandardMale.json", &conditions))
   {
     pe->GetLogger()->Error("Could not load initialize engine, check the error");
     return;
   }
   */
 
-  if (!pe->SerializeFromFile("./states/StandardMale@0s.pba", ASCII))
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.json", JSON))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;

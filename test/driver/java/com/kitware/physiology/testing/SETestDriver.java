@@ -11,6 +11,7 @@ import com.kitware.physiology.utilities.FileUtils;
 import com.kitware.physiology.utilities.jniBridge;
 import com.kitware.physiology.utilities.Log;
 import com.kitware.physiology.utilities.RunConfiguration;
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.kitware.physiology.testing.csv.CSVComparison;
 import com.kitware.physiology.utilities.csv.plots.CSVComparePlotter;
 import com.kitware.physiology.utilities.csv.plots.CSVComparePlotter.PlotType;
@@ -153,21 +154,21 @@ public class SETestDriver
       {
         if(job.PlottableResults)
         {
-          if(job.name.endsWith(".pba"))//This should be a scenario file, different naming convention
+          if(job.name.endsWith(".json"))//This should be a scenario file, different naming convention
           {
             String[] dirs = toCompute.substring(0,toCompute.indexOf(".csv")).split("[/\\\\]");
-            String report = toCompute.substring(0,toCompute.indexOf(".csv"))+"/"+dirs[dirs.length-1]+"Report.pba";
+            String report = toCompute.substring(0,toCompute.indexOf(".csv"))+"/"+dirs[dirs.length-1]+"Report.json";
             job.reportFiles.add(report);
           }
           else
           {
             String path = toCompute.substring(0, toCompute.lastIndexOf("."));
-            path = path + path.substring(path.lastIndexOf("/")) + "Report.pba";
+            path = path + path.substring(path.lastIndexOf("/")) + "Report.json";
             job.reportFiles.add(path);
           }
         }
         else
-          job.reportFiles.add(toCompute.substring(0, toCompute.lastIndexOf("."))+"Report.pba");
+          job.reportFiles.add(toCompute.substring(0, toCompute.lastIndexOf("."))+"Report.json");
       }
 
       if(!job.skipExecution)
@@ -228,7 +229,11 @@ public class SETestDriver
               compare.createErrorSuite(job.name,"Basline file not found : "+job.baselineFiles.get(i)+" and " + job.computedFiles.get(i));
             }
             
-            compare.write();
+            try {
+              compare.write();
+            } catch (InvalidProtocolBufferException e) {
+              Log.error("Unable to write comparison report", e);
+            }
            
             if((job.plotType == PlotType.FastPlotErrors || job.plotType == PlotType.FullPlotErrors) && (failures==null || failures.isEmpty()))
             {
@@ -299,7 +304,7 @@ public class SETestDriver
   {
     List<String> currentGroup;
     SETestReport report = new SETestReport();    
-    report.setFullReportPath("./test_results/"+cfg.testName+"Report.pba");    
+    report.setFullReportPath("./test_results/"+cfg.testName+"Report.json");    
     for(SETestJob job : cfg.jobs)
     {
       String group = cfg.job2groups.get(job);
@@ -356,11 +361,15 @@ public class SETestDriver
         catch(Exception ex)
         {
         	report.createErrorSuite(job.name,reportFile);
-        	Log.error("Need file with TestReportData object");
+        	Log.error("Need file with TestReportData object, not in "+reportFile, ex);
         }
       }
     }    
-    report.write();
+    try {
+      report.write();
+    } catch (InvalidProtocolBufferException e) {
+      Log.error("Unable to write test report", e);
+    }
     // Write the HTML to a file
     try
     {

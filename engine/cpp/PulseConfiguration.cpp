@@ -324,16 +324,16 @@ bool PulseConfiguration::SerializeFromFile(const std::string& filename, Serializ
   return PBPulseConfiguration::SerializeFromFile(filename, *this, m);
 }
 
-void PulseConfiguration::Initialize()
+void PulseConfiguration::Initialize(const std::string& data_dir)
 {
   Clear();
   m_WritePatientBaselineFile = eSwitch::Off;
 
   // Reset to default values
   GetTimeStep().SetValue(1.0 / 50.0, TimeUnit::s);
-  GetECGInterpolator().SerializeFromFile("./ecg/StandardECG.pba",ASCII,&GetTimeStep());
-  GetDynamicStabilization().SerializeFromFile("./config/DynamicStabilization.pba",ASCII);
-  //GetTimedStabilization().SerializeFromFile("./config/TimedStabilization.pba",ASCII);
+  GetECGInterpolator().SerializeFromFile(data_dir+"/ecg/StandardECG.json",JSON,&GetTimeStep());
+  GetDynamicStabilization().SerializeFromFile(data_dir+"/config/DynamicStabilization.json",JSON);
+  //GetTimedStabilization().SerializeFromFile(data_dir+"/config/TimedStabilization.json",JSON);
   //GetDynamicStabilization().TrackStabilization(eSwitch::On);// Hard coded override for debugging
   
   // Baroreceptors
@@ -403,7 +403,7 @@ void PulseConfiguration::Initialize()
   GetAirSpecificHeat().SetValue(1.0035, HeatCapacitancePerMassUnit::kJ_Per_K_kg);
   GetMolarMassOfDryAir().SetValue(0.028964, MassPerAmountUnit::kg_Per_mol);
   GetMolarMassOfWaterVapor().SetValue(0.018016, MassPerAmountUnit::kg_Per_mol);
-  GetInitialEnvironmentalConditions().SerializeFromFile("./environments/Standard.pba",ASCII);
+  GetInitialEnvironmentalConditions().SerializeFromFile(data_dir+"/environments/Standard.json",JSON);
   GetWaterDensity().SetValue(1000, MassPerVolumeUnit::kg_Per_m3);
 
   // Gastrointestinal
@@ -413,7 +413,7 @@ void PulseConfiguration::Initialize()
   GetDefaultCarbohydrateDigestionRate().SetValue(0.5, MassPerTimeUnit::g_Per_min);// Guyton (About 4.25hr to digest the carbs in default meal)
   GetDefaultFatDigestionRate().SetValue(0.055, MassPerTimeUnit::g_Per_min);// Guyton (About 8hr to digest the fat in the default meal)
   GetDefaultProteinDigestionRate().SetValue(0.071, MassPerTimeUnit::g_Per_min);// Dangin2001Digestion (About 5hr to digest the protein in the default meal)
-  GetDefaultStomachContents().SerializeFromFile("./nutrition/Standard.pba",ASCII);// Refs are in the data spreadsheet
+  GetDefaultStomachContents().SerializeFromFile(data_dir+"/nutrition/Standard.json",JSON);// Refs are in the data spreadsheet
   GetFatAbsorptionFraction().SetValue(0.248);// Guyton p797 and the recommended daily value for saturated fat intake according to the AHA //TODO: Add this reference
   // We should be making 30 grams of urea per 100 grams of protein haussinger1990nitrogen
   GetProteinToUreaFraction().SetValue(0.405);// BUT, We should excrete 24.3 g/day on average. Guyton p 328. With an average intake of 60 g/day, that works out to approximately 40%. 

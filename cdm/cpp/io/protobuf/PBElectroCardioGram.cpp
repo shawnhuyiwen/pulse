@@ -5,7 +5,7 @@
 #include "io/protobuf/PBElectroCardioGram.h"
 #include "io/protobuf/PBProperties.h"
 #include "io/protobuf/PBUtils.h"
-#include "bind/cdm/ElectroCardioGram.pb.h"
+#include "bind/cpp/cdm/ElectroCardioGram.pb.h"
 #include "system/equipment/electrocardiogram/SEElectroCardioGram.h"
 #include "system/equipment/electrocardiogram/SEElectroCardioGramWaveform.h"
 #include "system/equipment/electrocardiogram/SEElectroCardioGramWaveformInterpolator.h"

@@ -41,12 +41,12 @@ void RunScenarioTask::Run()
   // Set up the log file
   std::string logFile = m_scenarioFile;
   logFile = Replace(logFile, "verification", "");
-  logFile = Replace(logFile, ".pba", ".log");
+  logFile = Replace(logFile, ".json", ".log");
 
   // Set up the verification output file
   std::string dataFile = m_scenarioFile;
   dataFile = Replace(dataFile, "verification", "");
-  dataFile = Replace(dataFile, ".pba", "Results.csv");
+  dataFile = Replace(dataFile, ".json", "Results.csv");
 
   // Delete any results file that may be there
   remove(dataFile.c_str());
@@ -82,9 +82,9 @@ void HowToConcurrentEngines()
     TaskRunner runner;
 
     // Create tasks to be run and give them to the task runner
-    runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("verification/Scenarios/Patient/BasicStandard.pba")));
-    runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("verification/Scenarios/Patient/BasicStandard.pba")));
-    runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("verification/Scenarios/Patient/BasicStandard.pba")));
+    runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("verification/Scenarios/Patient/BasicStandard.json")));
+    runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("verification/Scenarios/Patient/BasicStandard.json")));
+    runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("verification/Scenarios/Patient/BasicStandard.json")));
 
     // Run the tasks.  This will launch the desired number of threads which will pull and execute tasks
     // until there are none left.  Run() blocks until all task threads are finished executing.

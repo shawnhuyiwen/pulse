@@ -5,7 +5,7 @@
 #include "io/protobuf/PBEnvironmentActions.h"
 #include "io/protobuf/PBEnvironment.h"
 #include "io/protobuf/PBActions.h"
-#include "bind/cdm/EnvironmentActions.pb.h"
+#include "bind/cpp/cdm/EnvironmentActions.pb.h"
 #include "system/environment/actions/SEChangeEnvironmentConditions.h"
 #include "system/environment/actions/SEThermalApplication.h"
 #include "substance/SESubstanceManager.h"

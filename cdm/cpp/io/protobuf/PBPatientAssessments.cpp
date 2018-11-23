@@ -5,7 +5,7 @@
 #include "io/protobuf/PBUtils.h"
 #include "io/protobuf/PBPatientAssessments.h"
 #include "io/protobuf/PBProperties.h"
-#include "bind/cdm/PatientAssessments.pb.h"
+#include "bind/cpp/cdm/PatientAssessments.pb.h"
 #include "patient/assessments/SECompleteBloodCount.h"
 #include "patient/assessments/SEComprehensiveMetabolicPanel.h"
 #include "patient/assessments/SEPulmonaryFunctionTest.h"

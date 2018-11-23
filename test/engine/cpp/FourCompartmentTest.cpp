@@ -85,7 +85,7 @@ void PulseEngineTest::FourCompartmentTest(bool usingAcidBase, bool usingProducti
   SEFluidCircuitCalculator calc(FlowComplianceUnit::mL_Per_mmHg, VolumePerTimeUnit::mL_Per_s, FlowInertanceUnit::mmHg_s2_Per_mL, PressureUnit::mmHg, VolumeUnit::mL, FlowResistanceUnit::mmHg_s_Per_mL, m_Logger);
   PulseController pc(m_Logger);
   Tissue& tsu = (Tissue&)pc.GetTissue();
-  pc.GetPatient().SerializeFromFile("./patients/StandardMale.pba",ASCII);
+  pc.GetPatient().SerializeFromFile("./patients/StandardMale.json",JSON);
   pc.SetupPatient();
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);

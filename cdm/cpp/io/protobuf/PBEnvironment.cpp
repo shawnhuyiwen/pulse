@@ -6,7 +6,7 @@
 #include "io/protobuf/PBSubstance.h"
 #include "io/protobuf/PBProperties.h"
 #include "io/protobuf/PBUtils.h"
-#include "bind/cdm/Environment.pb.h"
+#include "bind/cpp/cdm/Environment.pb.h"
 #include "system/environment/SEEnvironment.h"
 #include "system/environment/SEActiveConditioning.h"
 #include "system/environment/SEAppliedTemperature.h"

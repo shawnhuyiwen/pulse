@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="bind"/>
-	<classpathentry kind="src" path="protobuf"/>
+	<classpathentry kind="src" path="bind/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="var" path="SOURCE_DIR/jar/guava-26.0-jre.jar"/>
+	<classpathentry kind="var" path="SOURCE_DIR/jar/gson-2.8.5.jar"/>
 	<classpathentry kind="output" path="build/java"/>
 </classpath>

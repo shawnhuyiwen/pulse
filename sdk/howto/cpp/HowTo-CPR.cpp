@@ -67,7 +67,7 @@ void HowToCPR()
   // Create the engine and load the patient
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowToCPR.log");
   pe->GetLogger()->Info("HowToCPR");
-  if (!pe->SerializeFromFile("./states/StandardMale@0s.pba", ASCII))
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.json", JSON))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;

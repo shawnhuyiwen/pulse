@@ -6,8 +6,7 @@
 #include "io/protobuf/PBActions.h"
 #include "io/protobuf/PBEngine.h"
 #include "io/protobuf/PBUtils.h"
-#include <google/protobuf/text_format.h>
-#include "bind/cdm/Scenario.pb.h"
+#include "bind/cpp/cdm/Scenario.pb.h"
 #include "scenario/SEScenario.h"
 #include "utils/FileUtils.h"
 
@@ -35,7 +34,11 @@ void PBScenario::Serialize(const cdm::ScenarioData& src, SEScenario& dst)
     PBEngine::Load(src.datarequestmanager(), dst.GetDataRequestManager(), dst.m_SubMgr);
 
   for (int i = 0; i < src.anyaction_size(); i++)
-    dst.m_Actions.push_back(PBAction::Load(src.anyaction()[i], dst.m_SubMgr));
+  {
+    SEAction* a = PBAction::Load(src.anyaction()[i], dst.m_SubMgr);
+    if(a != nullptr)
+      dst.m_Actions.push_back(a);
+  }
 }
 
 cdm::ScenarioData* PBScenario::Unload(const SEScenario& src)

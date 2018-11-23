@@ -9,7 +9,7 @@
 #include "compartment/substances/SELiquidSubstanceQuantity.h"
 #include "compartment/fluid/SEGasCompartment.h"
 #include "compartment/fluid/SELiquidCompartment.h"
-#include "bind/cdm/SubstanceQuantity.pb.h"
+#include "bind/cpp/cdm/SubstanceQuantity.pb.h"
 
 void PBSubstanceQuantity::Serialize(const cdm::SubstanceQuantityData& src, SESubstanceQuantity& dst)
 {

@@ -4559,8 +4559,8 @@ void CommonDataModelTest::BasicCircuitTest(const std::string& outputDirectory)
     if (currentTime_s > 80 && !serialized)
     {
       serialized = true;
-      std::string pbaDir = outputDirectory + "/BasicCircuit.pba";
-      TestCircuitSerialization(pbaDir);
+      std::string jsonDir = outputDirectory + "/BasicCircuit.json";
+      TestCircuitSerialization(jsonDir);
       fluidCircuit = m_Circuits->GetFluidCircuit("Fluid");
     }
   }
@@ -5288,8 +5288,8 @@ void CommonDataModelTest::RunTest(const std::string& outputDirectory, const std:
     if (!serialized && currentTime_s > 8)
     {
       serialized = true;
-      std::string pbaDir = outputDirectory + "/" + testName + ".pba";
-      TestCircuitSerialization(pbaDir); 
+      std::string jsonDir = outputDirectory + "/" + testName + ".json";
+      TestCircuitSerialization(jsonDir); 
       fluidCircuit = m_Circuits->GetFluidCircuit("Fluid");
     }
 

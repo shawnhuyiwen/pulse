@@ -6,8 +6,7 @@
 #include "io/protobuf/PBPulseConfiguration.h"
 #include "io/protobuf/PBScenario.h"
 #include "io/protobuf/PBUtils.h"
-#include "bind/pulse/Pulse.pb.h"
-#include <google/protobuf/text_format.h>
+#include "bind/cpp/pulse/Pulse.pb.h"
 #include "PulseScenario.h"
 #include "utils/FileUtils.h"
 
@@ -61,6 +60,7 @@ bool PBPulse::SerializeFromString(const std::string& src, PulseScenario& dst, Se
     cdm::ScenarioData cdm_data;
     if (!PBUtils::SerializeFromString(src, cdm_data, m))
       return false;
+    dst.GetLogger()->Info("Successfully loaded Scenario as base SEScenario");
     PBScenario::Load(cdm_data, dst);
     return true;
   }

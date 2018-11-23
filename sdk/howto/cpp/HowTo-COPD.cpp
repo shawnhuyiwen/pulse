@@ -46,7 +46,7 @@ void HowToCOPD()
   COPD.GetEmphysemaSeverity().SetValue(0.7);
 
   SEPatientConfiguration pc(pe->GetLogger());
-  pc.SetPatientFile("StandardMale.pba");
+  pc.SetPatientFile("StandardMale.json");
   pc.GetConditions().push_back(&COPD);
 
   if (!pe->InitializeEngine(pc))

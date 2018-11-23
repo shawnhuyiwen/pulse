@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "bind/cdm/EngineEnums.pb.h"
+#include "bind/cpp/cdm/EngineEnums.pb.h"
 #include "engine/SEDataRequest.h"
 
 const std::string& eDataRequest_Category_Name(eDataRequest_Category m)

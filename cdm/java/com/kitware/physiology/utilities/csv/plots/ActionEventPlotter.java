@@ -42,7 +42,7 @@ import org.jfree.ui.RectangleEdge;
 import org.jfree.ui.RectangleInsets;
 import org.jfree.util.ShapeUtilities;
 
-import com.google.protobuf.TextFormat.ParseException;
+import com.google.protobuf.InvalidProtocolBufferException;
 
 import com.kitware.physiology.datamodel.actions.SEAction;
 import com.kitware.physiology.datamodel.scenario.SEScenario;
@@ -82,7 +82,7 @@ public class ActionEventPlotter implements Plotter
     if(job.logFile == null || job.logFile.isEmpty())
     {job.logFile = job.name + ".log";}
     if(job.scenarioFile == null || job.scenarioFile.isEmpty())
-    {job.scenarioFile = job.name + ".pba";}
+    {job.scenarioFile = job.name + ".json";}
     
     //get all events from Log file
     if(!job.skipAllEvents)
@@ -99,7 +99,7 @@ public class ActionEventPlotter implements Plotter
         this.scenario.readFile(job.scenarioPath+"/"+job.scenarioFile);
         actions = scenario.getActions();
       } 
-      catch(ParseException ex)
+      catch(InvalidProtocolBufferException ex)
       {
         Log.error("Could not analyze scenario file " + job.scenarioPath + job.scenarioFile);
       }

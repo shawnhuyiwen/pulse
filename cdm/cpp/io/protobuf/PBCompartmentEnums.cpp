@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 #include "compartment/SECompartmentManager.h"
-#include "bind/cdm/CompartmentEnums.pb.h"
+#include "bind/cpp/cdm/CompartmentEnums.pb.h"
 
 const std::string& eCompartment_Type_Name(eCompartment_Type m)
 {

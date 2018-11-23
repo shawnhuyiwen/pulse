@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "bind/cdm/EnvironmentEnums.pb.h"
+#include "bind/cpp/cdm/EnvironmentEnums.pb.h"
 #include "system/environment/SEEnvironmentalConditions.h"
 
 const std::string& eSurroundingType_Name(eSurroundingType m)

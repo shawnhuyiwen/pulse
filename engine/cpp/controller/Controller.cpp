@@ -71,7 +71,7 @@
 #include "utils/FileUtils.h"
 
 
-PulseController::PulseController(const std::string& logFileName) : PulseController(new Logger(logFileName))
+PulseController::PulseController(const std::string& logFileName, const std::string& data_dir) : PulseController(new Logger(logFileName), data_dir)
 {
   myLogger = true;
   m_DataTrack = nullptr;
@@ -79,8 +79,9 @@ PulseController::PulseController(const std::string& logFileName) : PulseControll
   m_AdvanceHandler = nullptr;
 }
 
-PulseController::PulseController(Logger* logger) : Loggable(logger)
+PulseController::PulseController(Logger* logger, const std::string& data_dir) : Loggable(logger)
 {
+  m_DataDir = data_dir;
   myLogger = false;
   m_DataTrack = nullptr;
   m_EventHandler = nullptr;
@@ -95,12 +96,12 @@ PulseController::PulseController(Logger* logger) : Loggable(logger)
   m_Logger->SetLogTime(m_SimulationTime.get());
 
   m_Substances = std::unique_ptr<PulseSubstances>(new PulseSubstances(*this));
-  m_Substances->LoadSubstanceDirectory();
+  m_Substances->LoadSubstanceDirectory(m_DataDir);
 
   m_Patient = std::unique_ptr<SEPatient>(new SEPatient(GetLogger()));
 
-  m_Config = std::unique_ptr<PulseConfiguration>(new PulseConfiguration(*m_Substances));  
-  m_Config->Initialize();
+  m_Config = std::unique_ptr<PulseConfiguration>(new PulseConfiguration(*m_Substances));
+  m_Config->Initialize(m_DataDir);
  
   m_SaturationCalculator = std::unique_ptr<SaturationCalculator>(new SaturationCalculator(*this));
 
@@ -155,12 +156,12 @@ bool PulseController::Initialize(const PulseConfiguration* config)
   // to any substance child objects, those will need to be fixed up, if they exist
 
   Info("Initializing Configuration");
-  m_Config->Initialize(); // Load up Defaults
+  m_Config->Initialize(m_DataDir); // Reset to Defaults
 
   // Now, Let's see if there is anything to merge into our base configuration
   Info("Merging OnDisk Configuration");
   PulseConfiguration cFile(*m_Substances);
-  cFile.SerializeFromFile("PulseConfiguration.pba",ASCII);
+  cFile.SerializeFromFile("PulseConfiguration.json",JSON);
   m_Config->Merge(cFile);
 
   // Now, override anything with a configuration provided by the user or scenario
@@ -178,7 +179,7 @@ bool PulseController::Initialize(const PulseConfiguration* config)
   {
     std::string stableDir = "./stable/";
     MakeDirectory(stableDir.c_str());
-    m_Patient->SerializeToFile(stableDir + m_Patient->GetName() + ".pba",ASCII);
+    m_Patient->SerializeToFile(stableDir + m_Patient->GetName() + ".json",JSON);
   }
 
   m_SaturationCalculator->Initialize(*m_Substances);

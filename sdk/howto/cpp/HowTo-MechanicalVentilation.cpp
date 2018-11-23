@@ -119,7 +119,7 @@ void HowToMechanicalVentilation()
   //If no conditions, just load the serialized healthy state
   if (true) //Healthy - i.e., no chronic conditions
   {
-    if (!pe->SerializeFromFile("./states/StandardMale@0s.pba", ASCII))// Select patient
+    if (!pe->SerializeFromFile("./states/StandardMale@0s.json", JSON))// Select patient
     {
       pe->GetLogger()->Error("Could not load state, check the error");
       return;
@@ -128,7 +128,7 @@ void HowToMechanicalVentilation()
   else
   {
     SEPatientConfiguration pc(pe->GetLogger());
-    pc.SetPatientFile("StandardMale.pba");
+    pc.SetPatientFile("StandardMale.json");
 
     if (false) //COPD
     {

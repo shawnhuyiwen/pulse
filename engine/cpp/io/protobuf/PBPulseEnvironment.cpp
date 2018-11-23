@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "io/protobuf/PBPulseEnvironment.h"
 #include "io/protobuf/PBEnvironment.h"
-#include "bind/pulse/PulseEnvironment.pb.h"
+#include "bind/cpp/pulse/PulseEnvironment.pb.h"
 #include "environment/Environment.h"
 
 using namespace pulse::proto;

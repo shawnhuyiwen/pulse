@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "substance/SESubstance.h"
 #include "substance/SESubstancePhysicochemicals.h"
-#include "bind/cdm/SubstanceEnums.pb.h"
+#include "bind/cpp/cdm/SubstanceEnums.pb.h"
 
 const std::string& eSubstance_State_Name(eSubstance_State m)
 {

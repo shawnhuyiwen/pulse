@@ -2,8 +2,8 @@
    See accompanying NOTICE file for details.*/
 package com.kitware.physiology.pulse.testing;
 
-import com.google.protobuf.TextFormat;
-import com.kitware.physiology.cdm.Engine.EngineInitializationData.Builder;
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.util.JsonFormat;
 import com.kitware.physiology.cdm.Scenario.ScenarioData;
 import com.kitware.physiology.pulse.*;
 
@@ -22,8 +22,8 @@ public class ScenarioTestDriver implements SETestDriver.Executor
     String outputFile = job.computedDirectory+"/"+job.name;
     String log;
     String results;
-    String pba = FileUtils.readFile(job.baselineDirectory+"/"+job.name);
-    if(pba==null)
+    String json = FileUtils.readFile(job.baselineDirectory+"/"+job.name);
+    if(json==null)
     {
       Log.error("Could not read file : "+job.baselineDirectory+"/"+job.name);
       return false;
@@ -32,17 +32,17 @@ public class ScenarioTestDriver implements SETestDriver.Executor
     Pulse.ScenarioData.Builder pBuilder = Pulse.ScenarioData.newBuilder();
     try
     {
-    	TextFormat.getParser().merge(pba, pBuilder);
+    	JsonFormat.parser().merge(json, pBuilder);
     	builder = pBuilder.getScenarioBuilder();
     }
-    catch(Exception ex)
+    catch(InvalidProtocolBufferException ex)
     {
 	    try
 	    {
 	    	builder = pBuilder.getScenarioBuilder();
-	    	TextFormat.getParser().merge(pba, builder);
+	    	JsonFormat.parser().merge(json, builder);
 	    }
-	    catch(Exception ex2)
+	    catch(InvalidProtocolBufferException ex2)
 	    {
 	    	Log.error("Unable to read scenario"+job.baselineDirectory+"/"+job.name,ex2);
 	    	return false;
@@ -56,14 +56,14 @@ public class ScenarioTestDriver implements SETestDriver.Executor
     
     if(job.patientFile==null)
     {
-      log = outputFile.replaceAll("pba", "log");
-      results = outputFile.replaceAll(".pba", "Results.csv");
+      log = outputFile.replaceAll("json", "log");
+      results = outputFile.replaceAll(".json", "Results.csv");
     }
     else
     {
-      String patientName = job.patientFile.substring(0,job.patientFile.length()-4);
-      log = outputFile.replaceAll(".pba", "-"+patientName+".log");
-      results = outputFile.replaceAll(".pba", "-"+patientName+"Results.csv");
+      String patientName = job.patientFile.substring(0,job.patientFile.length()-5);
+      log = outputFile.replaceAll(".json", "-"+patientName+".log");
+      results = outputFile.replaceAll(".json", "-"+patientName+"Results.csv");
       
       if(builder.getStartType().hasPatientConfiguration())      
       {
@@ -79,8 +79,8 @@ public class ScenarioTestDriver implements SETestDriver.Executor
     if(job.useState && builder.getStartType().hasPatientConfiguration())      
     {
       	String pFile = pBuilder.getScenario().getStartType().getPatientConfiguration().getPatientFile();
-      	pFile =  pFile.substring(0, pFile.indexOf(".pba"));
-      	pFile = "./states/"+pFile+"@0s.pba";
+      	pFile =  pFile.substring(0, pFile.indexOf(".json"));
+      	pFile = "./states/"+pFile+"@0s.json";
       	builder.getStartTypeBuilder().clearPatientConfiguration();
       	builder.getStartTypeBuilder().setEngineStateFile(pFile);
     }
@@ -88,11 +88,19 @@ public class ScenarioTestDriver implements SETestDriver.Executor
     if(job.autoSerialization!=null)
     	pBuilder.getConfigurationBuilder().setAutoSerialization(SEAutoSerialization.unload(job.autoSerialization)); 
 
-    pba = pBuilder.toString();
-    //System.out.println(pba);
+    try 
+    {
+      json = JsonFormat.printer().print(pBuilder);
+    } 
+    catch (InvalidProtocolBufferException ex) 
+    {
+      Log.error("Unable to refactor the scenario",ex);
+      return false;
+    }
+    //System.out.println(json);
     PulseScenarioExec pse = new PulseScenarioExec();
     pse.setListener(job);      
-    pse.runScenario(log, pba, results);
+    pse.runScenario(log, json, results);
     Log.info("Completed running "+job.name);
     pse=null;
     return true;

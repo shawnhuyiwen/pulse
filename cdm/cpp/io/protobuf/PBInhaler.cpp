@@ -5,7 +5,7 @@
 #include "io/protobuf/PBInhaler.h"
 #include "io/protobuf/PBProperties.h"
 #include "io/protobuf/PBUtils.h"
-#include "bind/cdm/Inhaler.pb.h"
+#include "bind/cpp/cdm/Inhaler.pb.h"
 #include "system/equipment/inhaler/SEInhaler.h"
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceManager.h"

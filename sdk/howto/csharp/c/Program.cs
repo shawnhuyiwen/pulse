@@ -8,10 +8,12 @@ namespace HowTo_UseC
 {
     class Program
     {
+        protected enum InitializationType { PatientObject, PatientFile, StateFileName, StateString };
+
         static void Main(string[] args)
         {
-            // We are not providing data requests, so this will default to vitals dta
-            double[] result = new double[12];
+            // We are not providing data requests, so this will default to vitals data
+            
             List<string> headings = new List<string>();
             headings.Add("SimTime(s)");
             headings.Add("Lead3ElectricPotential(mV)");
@@ -25,28 +27,119 @@ namespace HowTo_UseC
             headings.Add("RespirationRate(1 / min)");
             headings.Add("SkinTemperature(degC)");
             headings.Add("Carina-CarbonDioxide-PartialPressure(mmHg)");
+            headings.Add("BloodVolume(mL)");
+            double[] result = new double[headings.Count];
 
             // Instatiate a Pulse engine
-            IntPtr pulse = PulseCS2C.Allocate("pulse.log");
-            // Load a state file
-            //if(!PulseCS2C.SerializeFromFile(pulse, "./states/Soldier@0s.pba", null, (int)SerializationFormat.ASCII, 0))
-            //    Console.WriteLine("Error Initializing Pulse!");
-            string file_content = File.ReadAllText("./states/Soldier@0s.pba");
-            if (!PulseCS2C.SerializeFromString(pulse, file_content, null, (int)SerializationFormat.ASCII, 0))
-                Console.WriteLine("Error Initializing Pulse!");
+            PulseEngine pulse = new PulseEngine("pulse.log",".");
+
+            InitializationType initType = InitializationType.StateFileName;
+            // INITIALIZE THE ENGINE WITH A PATIENT
+            switch (initType)
+            {
+                case InitializationType.StateFileName:
+                {
+                    // Load a state file
+                    if (!pulse.SerializeFromFile("./states/Soldier@0s.pba", null, SerializationFormat.ASCII, 0))
+                        Console.WriteLine("Error Initializing Pulse!");
+                    break;
+                }
+                case InitializationType.StateString:
+                {
+                    string file_content = File.ReadAllText("./states/Soldier@0s.pba");
+                    if (!pulse.SerializeFromString(file_content, null, SerializationFormat.ASCII, 0))
+                        Console.WriteLine("Error Initializing Pulse!");
+                    break;
+                }
+            }
+
+            // Now we can start telling the engine what to do
+            // All the same concepts apply from the C++ HowTo files, so look there if you want to see more examples
+
             // Advance time and print out values
             for (int i = 1; i <= 10; i++)
             {
-                if (!PulseCS2C.AdvanceTime_s(pulse, 1))
+                if (!pulse.AdvanceTime_s(1))
                     Console.WriteLine("Error Advancing Time!");
                 else
                 {
                     // Pull data from pulse
-                    IntPtr data = PulseCS2C.PullData(pulse);
-                    Marshal.Copy(data, result, 0, 12);
-                    for (int d = 0; d < 12; d++)
+                    IntPtr data = pulse.PullData();
+                    Marshal.Copy(data, result, 0, headings.Count);
+                    for (int d = 0; d < headings.Count; d++)
                         Console.WriteLine(headings[d]+" " + result[d]);
                 }
+            }
+
+            // Let's do something to the patient, you can either send actions over one at a time, or pass in a List<SEAction>
+            SEHemorrhage h = new SEHemorrhage();
+            h.SetCompartment("RightLeg");
+            h.GetRate().SetValue(200, VolumePerTimeUnit.mL_Per_min);// Change this to 750 if you want to see how engine failures are handled!!
+            if (!pulse.ProcessAction(h))
+            {
+                Console.WriteLine("Engine was unable to process requested actions");
+                return;
+            }
+            // Note CDM is not updated after this call, you have to advance some time
+            for (int i = 1; i <= 2; i++)
+            {
+                if (!pulse.AdvanceTime_s(60)) // Simulate one minute
+                {
+                    Console.WriteLine("Engine was unable to stay within modeling parameters with requested actions");
+                    return;
+                }
+                // Again, the CDM is updated after this call
+                IntPtr data = pulse.PullData();
+                Marshal.Copy(data, result, 0, headings.Count);
+                for (int d = 0; d < headings.Count; d++)
+                    Console.WriteLine(headings[d] + " " + result[d]);
+            }
+
+            // Stop the hemorrhage
+            h.GetRate().SetValue(0, VolumePerTimeUnit.mL_Per_min);
+            if (!pulse.ProcessAction(h))
+            {
+                Console.WriteLine("Engine was unable to process requested actions");
+                return;
+            }
+
+            for (int i = 1; i <= 1; i++)
+            {
+                if (!pulse.AdvanceTime_s(60)) // Simulate one minute
+                {
+                    Console.WriteLine("Engine was unable to stay within modeling parameters with requested actions");
+                    return;
+                }
+                // Pull data from pulse
+                IntPtr data = pulse.PullData();
+                Marshal.Copy(data, result, 0, headings.Count);
+                for (int d = 0; d < headings.Count; d++)
+                    Console.WriteLine(headings[d] + " " + result[d]);
+            }
+
+            // Infuse some fluids
+            SESubstanceCompoundInfusion ivFluids = new SESubstanceCompoundInfusion();
+            ivFluids.SetSubstanceCompound("Saline");
+            ivFluids.GetBagVolume().SetValue(500, VolumeUnit.mL);
+            ivFluids.GetRate().SetValue(100, VolumePerTimeUnit.mL_Per_min);
+            if (!pulse.ProcessAction(ivFluids))
+            {
+                Console.WriteLine("Engine was unable to process requested actions");
+                return;
+            }
+
+            for (int i = 1; i <= 5; i++)
+            {
+                if (!pulse.AdvanceTime_s(60)) // Simulate one minute
+                {
+                    Console.WriteLine("Engine was unable to stay within modeling parameters with requested actions");
+                    return;
+                }
+                // Pull data from pulse
+                IntPtr data = pulse.PullData();
+                Marshal.Copy(data, result, 0, headings.Count);
+                for (int d = 0; d < headings.Count; d++)
+                    Console.WriteLine(headings[d] + " " + result[d]);
             }
         }
     }

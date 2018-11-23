@@ -4,30 +4,38 @@
 #include "stdafx.h"
 #include "io/protobuf/PBUtils.h"
 #include <google/protobuf/text_format.h>
+#include <google/protobuf/util/json_util.h>
 
 void MyLogHandler(google::protobuf::LogLevel level, const char* filename, int line, const std::string& message)
 {
-  std::cout << message;
+  std::cout << message << std::endl;
 }
 
-bool PBUtils::SerializeToString(const google::protobuf::Message& data, std::string& output, SerializationFormat m)
+bool PBUtils::SerializeToString(const google::protobuf::Message& src, std::string& output, SerializationFormat m)
 {
-  if (m == ASCII)
+  if (m == JSON)
   {
     google::protobuf::SetLogHandler(MyLogHandler);
-    return google::protobuf::TextFormat::PrintToString(data, &output);
+    return google::protobuf::util::MessageToJsonString(src, &output).ok();
+    //return google::protobuf::TextFormat::PrintToString(data, &output);
   }
   else
-    return data.SerializeToString(&output);
+    return src.SerializeToString(&output);
 }
 
 bool PBUtils::SerializeFromString(const std::string& src, google::protobuf::Message& dst, SerializationFormat m)
 {
-  if (m == ASCII)
+  if (m == JSON)
   {
     google::protobuf::SetLogHandler(MyLogHandler);
-    if (!google::protobuf::TextFormat::ParseFromString(src, &dst))
-      return false;
+    google::protobuf::util::JsonParseOptions opts;
+    google::protobuf::util::Status stat = google::protobuf::util::JsonStringToMessage(src, &dst, opts);
+    if (!stat.ok())
+    {
+      std::cerr << stat.ToString() << std::endl;
+      if (!google::protobuf::TextFormat::ParseFromString(src, &dst))
+        return false;
+    }
     return true;
   }
   else

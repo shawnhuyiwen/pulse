@@ -22,12 +22,11 @@ import com.kitware.physiology.utilities.Log;
 import com.kitware.physiology.utilities.RunConfiguration;
 import com.kitware.physiology.utilities.StringUtils;
 import com.kitware.physiology.utilities.UnitConverter;
-import com.kitware.physiology.cdm.Physiology.*;
 
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.xssf.usermodel.*;
 
-import com.google.protobuf.TextFormat.ParseException;
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.kitware.physiology.cdm.Properties.ScalarData;
 
 public abstract class ValidationTool
@@ -198,7 +197,7 @@ public abstract class ValidationTool
                   SEPatientAssessment ass = SEPatientAssessment.readAssessment("./test_results/scenarios/validation/"+VALIDATION_FOLDER+"/"+vFile);
                   assessments.put(vFile,ass);
                 }
-                catch(ParseException ex)
+                catch(InvalidProtocolBufferException ex)
                 {
                   Log.error(vFile+" is named like a patient assessment, but its not?");
                 }
@@ -220,7 +219,7 @@ public abstract class ValidationTool
             // Patient Name is encoded in the naming convention (or else it needs to be)
             String patientName = resultsName.substring(resultsName.lastIndexOf("-")+1,resultsName.indexOf("Results"));            
             patient = new SEPatient();
-            patient.readFile("./stable/"+patientName+".pba");
+            patient.readFile("./stable/"+patientName+".json");
           }
 
           allRows.clear();

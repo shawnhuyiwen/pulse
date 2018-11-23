@@ -7,7 +7,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.google.protobuf.TextFormat.ParseException;
+import com.google.protobuf.*;
+import com.google.protobuf.util.*;
 
 import com.kitware.physiology.utilities.Log;
 
@@ -144,7 +145,7 @@ public class SESubstanceManager
 		File sdir = new File("./substances").getAbsoluteFile();
 		for(File sFile : sdir.listFiles())
 		{
-			if(sFile.getName().endsWith(".pba"))
+			if(sFile.getName().endsWith(".json"))
 			{
 				//Log.info("Processing file "+sFile.getName());
 				try
@@ -153,7 +154,7 @@ public class SESubstanceManager
 					s.readFile(sFile.getAbsolutePath());
 					addSubstance(s);
 				}
-				catch(ParseException ex)
+				catch(InvalidProtocolBufferException ex)
 				{
 					Log.error("Unsupport file contents in "+sFile.getAbsolutePath());
 				}      
@@ -172,7 +173,7 @@ public class SESubstanceManager
 					c.readFile(cFile.getAbsolutePath(),this);
 					addCompound(c);
 				}
-				catch(ParseException ex)
+				catch(InvalidProtocolBufferException ex)
 				{
 					Log.error("Unsupport file contents in "+cFile.getAbsolutePath());
 				}

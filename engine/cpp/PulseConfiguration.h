@@ -24,7 +24,7 @@ public:
   
   virtual void Clear();
   void Merge(const PulseConfiguration&);
-  virtual void Initialize();
+  virtual void Initialize(const std::string& data_dir);
 
   bool SerializeToString(std::string& output, SerializationFormat m) const;
   bool SerializeToFile(const std::string& filename, SerializationFormat m) const;

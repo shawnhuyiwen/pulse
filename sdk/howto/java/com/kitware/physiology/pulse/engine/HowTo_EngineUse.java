@@ -4,7 +4,7 @@ package com.kitware.physiology.pulse.engine;
 
 import java.util.*;
 
-import com.google.protobuf.TextFormat.ParseException;
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.kitware.physiology.cdm.AnesthesiaMachineEnums.eAnesthesiaMachine;
 import com.kitware.physiology.cdm.PatientEnums.ePatient;
 import com.kitware.physiology.cdm.EngineEnums.eDataRequest.*;
@@ -194,7 +194,7 @@ public class HowTo_EngineUse
    case PatientFile:
      {
     	 SEPatientConfiguration patient_configuration = new SEPatientConfiguration();
-       patient_configuration.setPatientFile("./patient/StandardMale.pba");
+       patient_configuration.setPatientFile("./patient/StandardMale.json");
        // Optionally add conditions to the patient_configuration
        
        // Allocate an engine
@@ -204,10 +204,10 @@ public class HowTo_EngineUse
      }
    case StateFile:
      {
-       pe.serializeFromFile("./Scenarios/HowToDynamicEngine.log", "./states/StandardMale@0s.pba", dataRequests);
+       pe.serializeFromFile("./Scenarios/HowToDynamicEngine.log", "./states/StandardMale@0s.json", dataRequests);
        // This method method sets the engine to the provided state instantaneously and you are ready to process actions/advance time
        // You can alternatively specify the starting simTime of the engine       
-       //pe.loadState("./Scenarios/HowToDynamicEngine.log", "./states/StandardMale@0s.pba", time, dataRequests);
+       //pe.loadState("./Scenarios/HowToDynamicEngine.log", "./states/StandardMale@0s.json", time, dataRequests);
        break;
      }
    }
@@ -239,7 +239,7 @@ public class HowTo_EngineUse
    {
   	 pe.getPatientAssessment(cbc);
    }
-   catch(ParseException ex)
+   catch(InvalidProtocolBufferException ex)
    {
   	 Log.error("Failed to get patient assessment",ex);
    }
@@ -277,7 +277,7 @@ public class HowTo_EngineUse
    for(int i=1; i<=2; i++)
    {
   	 time.setValue(i,TimeUnit.min);
-	   if(!pe.advanceTime(time)) // Simulate one second
+	   if(!pe.advanceTime(time)) // Simulate one minute
 	   {
 	     Log.error("Engine was unable to stay within modeling parameters with requested actions");
 	     return;
@@ -300,7 +300,7 @@ public class HowTo_EngineUse
    for(int i=1; i<=1; i++)
    {
      time.setValue(i,TimeUnit.min);
-     if(!pe.advanceTime(time)) // Simulate one second
+     if(!pe.advanceTime(time)) // Simulate one minute
      {
        Log.error("Engine was unable to stay within modeling parameters with requested actions");
        return;
@@ -326,7 +326,7 @@ public class HowTo_EngineUse
    for(int i=1; i<=5; i++)
    {
      time.setValue(i,TimeUnit.min);
-     if(!pe.advanceTime(time)) // Simulate one second
+     if(!pe.advanceTime(time)) // Simulate one minute
      {
        Log.error("Engine was unable to stay within modeling parameters with requested actions");
        return;

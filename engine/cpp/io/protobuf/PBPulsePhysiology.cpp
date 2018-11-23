@@ -5,7 +5,7 @@
 #include "io/protobuf/PBPulsePhysiology.h"
 #include "io/protobuf/PBPhysiology.h"
 #include "io/protobuf/PBProperties.h"
-#include "bind/pulse/PulsePhysiology.pb.h"
+#include "bind/cpp/pulse/PulsePhysiology.pb.h"
 #include "physiology/BloodChemistry.h"
 #include "physiology/Cardiovascular.h"
 #include "physiology/Drugs.h"

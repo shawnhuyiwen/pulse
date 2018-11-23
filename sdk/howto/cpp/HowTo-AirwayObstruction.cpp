@@ -35,7 +35,7 @@ void HowToAirwayObstruction()
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowToAirwayObstruction.log");
   
   pe->GetLogger()->Info("HowToAirwayObstruction");
-  if (!pe->SerializeFromFile("./states/StandardMale@0s.pba", ASCII))
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.json", JSON))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;

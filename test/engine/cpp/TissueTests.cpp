@@ -992,5 +992,5 @@ void PulseEngineTest::DiffusionClearanceExcretionTests(const std::string& rptDir
   //ts7.SetName("GenericExcretionTest");
   //GenericExcretionTest(ts8);
 
-  //testReport.WriteFile(rptDirectory + "/GasCompartmentTest.pba");
+  //testReport.WriteFile(rptDirectory + "/GasCompartmentTest.json");
 }
