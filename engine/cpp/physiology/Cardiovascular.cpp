@@ -1155,33 +1155,6 @@ void Cardiovascular::Hemorrhage()
         }
       }
     }
-<<<<<<< HEAD
-	//total the internal hemorrhage flow rate and apply it to the abdominal cavity path
-	for (auto hemorrhage : m_InternalHemorrhagePaths)
-	{
-		internal_rate_mL_Per_s += hemorrhage->GetNextFlowSource().GetValue(VolumePerTimeUnit::mL_Per_s);
-	}
-	m_pGndToAbdominalCavity->GetNextFlowSource().SetValue(internal_rate_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
-
-	double abdominalBloodVolume = m_AbdominalCavity->GetVolume().GetValue(VolumeUnit::mL);
-	double compliance_mL_Per_mmHg = 0;
-	double complianceSlopeParameter = 0.4;
-	double complianceCurveParameter = 0.55;
-	//Variable compliance calculation
-	if (internal_rate_mL_Per_s < 0.0001)
-	{
-		compliance_mL_Per_mmHg = m_pAbdominalCavityToGnd->GetNextCompliance().GetValue(FlowComplianceUnit::mL_Per_mmHg);
-	}
-	else
-	{
-		compliance_mL_Per_mmHg = complianceSlopeParameter /  complianceCurveParameter*abdominalBloodVolume;
-	}
-
-	m_pAbdominalCavityToGnd->GetNextCompliance().SetValue(compliance_mL_Per_mmHg, FlowComplianceUnit::mL_Per_mmHg);
-
-	InternalHemorrhagePressureApplication();
-=======
->>>>>>> c92321c9b909155ff27c2ed01e4998b38515b50e
 
     //total the internal hemorrhage flow rate and apply it to the abdominal cavity path
     for (auto hemorrhage : m_InternalHemorrhagePaths)
@@ -1218,10 +1191,9 @@ void Cardiovascular::Hemorrhage()
   //Update abdominal cavity compliance
   double abdominalBloodVolume = m_AbdominalCavity->GetVolume().GetValue(VolumeUnit::mL);
   double compliance_mL_Per_mmHg = 0;
-  double complianceSlopeParameter = 0.4;
-  double complianceCurveParameter = 0.55;
+  double complianceCurveExponent = 0.55;
   //Variable compliance calculation
-  compliance_mL_Per_mmHg = complianceSlopeParameter / complianceCurveParameter * abdominalBloodVolume;
+  compliance_mL_Per_mmHg = pow(abdominalBloodVolume, complianceCurveExponent);
   m_pAbdominalCavityToGnd->GetComplianceBaseline().SetValue(compliance_mL_Per_mmHg, FlowComplianceUnit::mL_Per_mmHg);
 
   //Effect the Aorta with internal hemorrhages
@@ -1515,7 +1487,7 @@ void Cardiovascular::InternalHemorrhagePressureApplication()
 {
 	double abdominalCavityPressure_mmHg = m_AbdominalCavity->GetPressure(PressureUnit::mmHg);
 
-	double pressureResponseFraction = 0.45; //Tuning the pressure applied to the aorta
+	double pressureResponseFraction = 5.0; //Tuning the pressure applied to the aorta
 
 	//Set the pressure on the aorta based on the abdominal cavity pressure
 	m_InternalHemorrhageToAorta->GetNextPressureSource().SetValue(pressureResponseFraction*abdominalCavityPressure_mmHg, PressureUnit::mmHg);
