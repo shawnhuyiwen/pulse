@@ -362,7 +362,7 @@ DEFINE_STATIC_STRING_EX(GroundToConnection, MechanicalVentilatorGroundToConnecti
     DEFINE_STATIC_STRING(Aorta3);
     DEFINE_STATIC_STRING(Aorta4);
 
-	  DEFINE_STATIC_STRING(AbdominalCavity1);
+    DEFINE_STATIC_STRING(AbdominalCavity1);
 
     DEFINE_STATIC_STRING(Bone1);
     DEFINE_STATIC_STRING(Bone2);

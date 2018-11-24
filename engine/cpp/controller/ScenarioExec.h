@@ -3,8 +3,10 @@
 
 #pragma once
 #include "scenario/SEScenarioExec.h"
+#include "PulseConfiguration.h"
 class PulseEngine;
 class PulseScenario;
+class SEAutoSerialization;
 
 /**
 * @brief Overloaded scenario exector to run a %Pulse specific scenario
@@ -19,7 +21,19 @@ public:
   virtual bool Execute(const PulseScenario& scenario, const std::string& resultsFile);
 
 protected:
+  PulseConfiguration         m_PulseConfiguration;
+
+  double                     m_AutoSerializationPeriod_s;
+  double                     m_AutoSerializationTime_s;
+  eSwitch                    m_AutoSerializationTimeStamps;
+  eSwitch                    m_AutoSerializationAfterActions;
+  eSwitch                    m_AutoSerializationReload;
+  std::string                m_AutoSerializationFileName;
+  std::string                m_AutoSerializationDirectory;
+  std::stringstream          m_AutoSerializationOutput;
+  std::stringstream          m_AutoSerializationActions;
 
   virtual bool ProcessActions(const SEScenario& scenario);
   virtual bool ProcessAction(const SEAction& action);
+  virtual void AdvanceEngine();
 };

@@ -165,6 +165,12 @@ void Cardiovascular::Clear()
   m_CardiacCyclePulmonaryArteryPressure_mmHg->Clear();
   m_CardiacCycleCentralVenousPressure_mmHg->Clear();
   m_CardiacCycleSkinFlow_mL_Per_s->Clear();
+
+  m_HemorrhageLinks.clear();
+  m_HemorrhagePaths.clear();
+
+  m_InternalHemorrhageLinks.clear();
+  m_InternalHemorrhagePaths.clear();
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -1485,12 +1491,12 @@ void Cardiovascular::PericardialEffusionPressureApplication()
 //--------------------------------------------------------------------------------------------------
 void Cardiovascular::InternalHemorrhagePressureApplication()
 {
-	double abdominalCavityPressure_mmHg = m_AbdominalCavity->GetPressure(PressureUnit::mmHg);
+  double abdominalCavityPressure_mmHg = m_AbdominalCavity->GetPressure(PressureUnit::mmHg);
 
-	double pressureResponseFraction = 5.0; //Tuning the pressure applied to the aorta
+  double pressureResponseFraction = 5.0; //Tuning the pressure applied to the aorta
 
-	//Set the pressure on the aorta based on the abdominal cavity pressure
-	m_InternalHemorrhageToAorta->GetNextPressureSource().SetValue(pressureResponseFraction*abdominalCavityPressure_mmHg, PressureUnit::mmHg);
+  //Set the pressure on the aorta based on the abdominal cavity pressure
+  m_InternalHemorrhageToAorta->GetNextPressureSource().SetValue(pressureResponseFraction*abdominalCavityPressure_mmHg, PressureUnit::mmHg);
 
 }
 

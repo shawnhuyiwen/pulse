@@ -386,7 +386,7 @@ namespace pulse {
     DEFINE_STATIC_STRING_EX(LeftLeg, LeftLegVasculature);
     DEFINE_STATIC_STRING_EX(RightArm, RightArmVasculature);
     DEFINE_STATIC_STRING_EX(RightLeg, RightLegVasculature);
-	  DEFINE_STATIC_STRING(Abdomen);
+    DEFINE_STATIC_STRING(Abdomen);
     /**/DEFINE_STATIC_STRING(AbdominalCavity);
 
     DEFINE_STATIC_STRING(Ground);
@@ -398,7 +398,7 @@ namespace pulse {
       if (_values.empty())
       {
         _values.push_back(Aorta);
-		_values.push_back(Abdomen);
+        _values.push_back(Abdomen);
         _values.push_back(Heart);
         _values.push_back(Myocardium);
         _values.push_back(LeftHeart);

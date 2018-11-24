@@ -28,6 +28,7 @@ protected:
   /// To override default functionality with those 
   /// actions override the ProcessActions method
   virtual bool ProcessAction(const SEAction& action);
+  virtual void AdvanceEngine();
 
   bool                         m_Cancel;
   PhysiologyEngine&            m_Engine;

@@ -4,30 +4,27 @@
 #include "stdafx.h"
 #include "controller/ScenarioExec.h"
 #include "controller/Engine.h"
+#include "engine/SEAction.h"
 #include "engine/SEAutoSerialization.h"
 #include "PulseScenario.h"
 #include "PulseConfiguration.h"
+#include "properties/SEScalarTime.h"
 #include "utils/FileUtils.h"
 
-PulseScenarioExec::PulseScenarioExec(PulseEngine& engine) : SEScenarioExec(engine)
+PulseScenarioExec::PulseScenarioExec(PulseEngine& engine) : SEScenarioExec(engine), m_PulseConfiguration(engine.GetSubstanceManager())
 {
-  m_EngineConfiguration = engine.GetConfiguration();
+  m_EngineConfiguration = &m_PulseConfiguration;
+  m_AutoSerializationTime_s = 0;
+  m_AutoSerializationPeriod_s = 0;
+  m_AutoSerializationTimeStamps = eSwitch::Off;
+  m_AutoSerializationAfterActions = eSwitch::Off;
+  m_AutoSerializationReload = eSwitch::Off;
+  m_AutoSerializationFileName = "";
 }
 
 PulseScenarioExec::~PulseScenarioExec()
 {
   
-}
-
-bool PulseScenarioExec::Execute(const PulseScenario& scenario, const std::string& resultsFile)
-{
-  // If any configuration parameters were provided, use them over what we had
-  if (scenario.HasConfiguration())
-    m_EngineConfiguration = scenario.GetConfiguration();
-  //if (m_PulseConfiguration->HasAutoSerialization())
-  //  CreateFilePath(m_PulseConfiguration->GetAutoSerialization()->GetDirectory());// Note method assumes you have a file and it ignores it
-  bool success = SEScenarioExec::Execute(scenario, resultsFile);
-  return success;
 }
 
 bool PulseScenarioExec::Execute(const std::string& scenarioFile, const std::string& resultsFile)
@@ -62,92 +59,80 @@ bool PulseScenarioExec::Execute(const std::string& scenarioFile, const std::stri
   }
   return false;
 }
+bool PulseScenarioExec::Execute(const PulseScenario& scenario, const std::string& resultsFile)
+{
+  // If any configuration parameters were provided, use them over what we had
+  if (scenario.HasConfiguration())
+  {
+    m_PulseConfiguration.Merge(*scenario.GetConfiguration());
+    if (m_PulseConfiguration.HasAutoSerialization())
+    {
+      m_AutoSerializationPeriod_s     = m_PulseConfiguration.GetAutoSerialization().GetPeriod(TimeUnit::s);
+      m_AutoSerializationTimeStamps   = m_PulseConfiguration.GetAutoSerialization().GetPeriodTimeStamps();
+      m_AutoSerializationAfterActions = m_PulseConfiguration.GetAutoSerialization().GetAfterActions();
+      m_AutoSerializationReload       = m_PulseConfiguration.GetAutoSerialization().GetReloadState();
+      m_AutoSerializationFileName     = m_PulseConfiguration.GetAutoSerialization().GetFileName();
+      m_AutoSerializationDirectory    = m_PulseConfiguration.GetAutoSerialization().GetDirectory();
+      CreateFilePath(m_AutoSerializationDirectory);
+      Info("Exeucting Scenario with AutoSerialization");
+    }
+  }
+  bool success = SEScenarioExec::Execute(scenario, resultsFile);
+  return success;
+}
 
 bool PulseScenarioExec::ProcessActions(const SEScenario& scenario)
 {
-  //// Auto serialization
-  //bool serializeAction = false;
-  //double serializationTime_s = 0;
-  //double serializationPeriod_s = 0;
-  //std::string actionName;
-  //std::string serializationFileNameBase;
-  //std::stringstream serializationFileName;
-  //const SEScenarioAutoSerialization* serialization = scenario.GetAutoSerialization();
-  //if (serialization != nullptr)
-  //{
-  //  if (!serialization->IsValid())
-  //    serialization = nullptr;//ignore it
-  //  else
-  //  {
-  //    serializationFileNameBase = serialization->GetFileName();
-  //    // Strip off the json if it's there
-  //    size_t split = serializationFileNameBase.find(".json");
-  //    if (split != serializationFileNameBase.npos)
-  //      serializationFileNameBase = serializationFileNameBase.substr(0, split);
-
-  //    serializationPeriod_s = serialization->GetPeriod(TimeUnit::s);
-  //    serializationFileName << serialization->GetDirectory() << "/" << serializationFileNameBase;
-  //    serializationFileNameBase = serializationFileName.str();
-  //  }
-  //}
   return SEScenarioExec::ProcessActions(scenario);
 }
-
-
 bool PulseScenarioExec::ProcessAction(const SEAction& action)
 {
-  //if (serialization != nullptr)
-  //{// Auto Serialize
-  //  if (serializationPeriod_s > 0)
-  //  {
-  //    serializationTime_s += dT_s;
-  //    if (serializationTime_s > serializationPeriod_s)
-  //    {
-  //      serializationTime_s = 0;
-  //      serializationFileName.str("");
-  //      serializationFileName << serializationFileNameBase;
-  //      if (serialization->GetPeriodTimeStamps() == eSwitch::On)
-  //        serializationFileName << "@" << m_Engine.GetSimulationTime(TimeUnit::s);
-  //      serializationFileName << ".json";
-  //      std::unique_ptr<google::protobuf::Message> state(m_Engine.SaveState(serializationFileName.str()));
-  //      if (serialization->GetReloadState() == eSwitch::On)
-  //      {
-  //        m_Engine.LoadState(*state);
-  //        std::unique_ptr<google::protobuf::Message> state(m_Engine.SaveState(serializationFileName.str() + ".Reloaded.json"));
-  //      }
-  //    }
-  //  }
-  //  if (serializeAction)
-  //  {
-  //    serializeAction = false;
-  //    serializationFileName.str("");
-  //    serializationFileName << serializationFileNameBase << "-" << actionName << "-@" << m_Engine.GetSimulationTime(TimeUnit::s) << ".json";
-  //    std::unique_ptr<google::protobuf::Message> state(m_Engine.SaveState(serializationFileName.str()));
-  //    if (serialization->GetReloadState() == eSwitch::On)
-  //    {
-  //      m_Engine.LoadState(*state);
-  //      std::unique_ptr<google::protobuf::Message> state(m_Engine.SaveState(serializationFileName.str() + ".Reloaded.json"));
-  //    }
-  //  }
-  //}
+  if (m_AutoSerializationAfterActions == eSwitch::On)
+  {
+     m_ss << action;
+     size_t start = m_ss.str().find(": ") + 2;
+     size_t end = m_ss.str().find('\n');
+     m_AutoSerializationActions << "-" << m_ss.str().substr(start, end - start);
+     m_ss.str("");
+  }
   return SEScenarioExec::ProcessAction(action);
-  //if (serialization != nullptr && serialization->GetAfterActions() == eSwitch::On)
-  //{// If we are testing force serialization after any action with this
-  // // Pull out the action type/name for file naming
-  //  m_ss << *a;
-  //  size_t start = m_ss.str().find(": ") + 2;
-  //  size_t end = m_ss.str().find('\n');
-  //  actionName = m_ss.str().substr(start, end - start);
-  //  m_ss.str("");
+}
 
-  //  serializationFileName.str("");
-  //  serializationFileName << serializationFileNameBase << "-" << actionName << "-@" << m_Engine.GetSimulationTime(TimeUnit::s) << ".json";
-  //  std::unique_ptr<google::protobuf::Message> state(m_Engine.SaveState(serializationFileName.str()));
-  //  if (serialization->GetReloadState() == eSwitch::On)
-  //  {
-  //    m_Engine.LoadState(*state);
-  //    std::unique_ptr<google::protobuf::Message> state(m_Engine.SaveState(serializationFileName.str() + ".Reloaded.json"));
-  //  }
-  //  serializeAction = true;// Serialize after the next time step
-  //}
+void PulseScenarioExec::AdvanceEngine()
+{
+  if (m_AutoSerializationPeriod_s > 0)
+  {
+    m_AutoSerializationTime_s += m_Engine.GetTimeStep(TimeUnit::s);
+    if (m_AutoSerializationTime_s >= m_AutoSerializationPeriod_s)
+    {
+      Info("Serializing state after requested period : " + m_AutoSerializationActions.str());
+      m_AutoSerializationTime_s = 0;
+      m_AutoSerializationOutput.str("");
+      m_AutoSerializationOutput << m_AutoSerializationDirectory <<"/"<< m_AutoSerializationFileName;
+      if (m_AutoSerializationTimeStamps == eSwitch::On)
+        m_AutoSerializationOutput << "@" << m_Engine.GetSimulationTime(TimeUnit::s);
+      m_Engine.SerializeToFile(m_AutoSerializationOutput.str() + ".json", SerializationFormat::JSON);
+      if (m_AutoSerializationReload == eSwitch::On)
+      {
+        m_Engine.SerializeFromFile(m_AutoSerializationOutput.str() + ".json", SerializationFormat::JSON);
+        m_Engine.SerializeToFile(m_AutoSerializationOutput.str() + ".Reloaded.json", SerializationFormat::JSON);
+      }
+    }
+  }
+  m_Engine.AdvanceModelTime();
+  if (m_AutoSerializationActions.str().length() > 0)
+  {
+    Info("Serializing state after actions : " + m_AutoSerializationActions.str());
+    m_AutoSerializationOutput.str("");
+    m_AutoSerializationOutput << m_AutoSerializationDirectory <<"/"<< m_AutoSerializationFileName<<m_AutoSerializationActions.str();
+    if (m_AutoSerializationTimeStamps == eSwitch::On)
+      m_AutoSerializationOutput << "@" << m_Engine.GetSimulationTime(TimeUnit::s);
+    m_Engine.SerializeToFile(m_AutoSerializationOutput.str() + ".json", SerializationFormat::JSON);
+    if (m_AutoSerializationReload == eSwitch::On)
+    {
+      m_Engine.SerializeFromFile(m_AutoSerializationOutput.str() + ".json", SerializationFormat::JSON);
+      m_Engine.SerializeToFile(m_AutoSerializationOutput.str() + ".Reloaded.json", SerializationFormat::JSON);
+    }
+    m_AutoSerializationActions.str("");
+  }
 }

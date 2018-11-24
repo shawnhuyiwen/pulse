@@ -166,7 +166,7 @@ bool SEScenarioExec::ProcessActions(const SEScenario& scenario)
         if(m_Cancel)
           break;
 
-        m_Engine.AdvanceModelTime();
+        AdvanceEngine();
 
         // Pull data from the engine
         scenarioTime_s = m_Engine.GetSimulationTime(TimeUnit::s);
@@ -209,4 +209,9 @@ bool SEScenarioExec::ProcessActions(const SEScenario& scenario)
 bool SEScenarioExec::ProcessAction(const SEAction& action)
 {
   return m_Engine.ProcessAction(action);
+}
+
+void SEScenarioExec::AdvanceEngine()
+{
+  m_Engine.AdvanceModelTime();
 }

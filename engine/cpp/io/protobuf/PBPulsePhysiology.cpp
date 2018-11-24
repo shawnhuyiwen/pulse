@@ -98,6 +98,11 @@ void PBPulsePhysiology::Serialize(const CardiovascularData& src, Cardiovascular&
     dst.m_HemorrhageLinks.push_back(dst.m_data.GetCompartments().GetCardiovascularGraph().GetLink(name));
   for (auto name : src.hemorrhagepaths())
     dst.m_HemorrhagePaths.push_back(dst.m_data.GetCircuits().GetCardiovascularCircuit().GetPath(name));
+
+  for (auto name : src.internalhemorrhagelinks())
+    dst.m_InternalHemorrhageLinks.push_back(dst.m_data.GetCompartments().GetCardiovascularGraph().GetLink(name));
+  for (auto name : src.internalhemorrhagepaths())
+    dst.m_InternalHemorrhagePaths.push_back(dst.m_data.GetCircuits().GetCardiovascularCircuit().GetPath(name));
 }
 CardiovascularData* PBPulsePhysiology::Unload(const Cardiovascular& src)
 {
@@ -147,6 +152,11 @@ void PBPulsePhysiology::Serialize(const Cardiovascular& src, CardiovascularData&
     dst.add_hemorrhagelinks(l->GetName());
   for (auto* p : src.m_HemorrhagePaths)
     dst.add_hemorrhagepaths(p->GetName());
+
+  for (auto* l : src.m_InternalHemorrhageLinks)
+    dst.add_internalhemorrhagelinks(l->GetName());
+  for (auto* p : src.m_InternalHemorrhagePaths)
+    dst.add_internalhemorrhagepaths(p->GetName());
 }
 
 void PBPulsePhysiology::Load(const DrugData& src, Drugs& dst)

@@ -250,6 +250,7 @@ void PBPulseConfiguration::Serialize(const ConfigurationData& src, PulseConfigur
       PBPatientNutrition::Load(config.initialstomachcontents(), dst.GetDefaultStomachContents());
     }
     // Use default rate if they are not set
+    if(dst.m_DefaultStomachContents != nullptr)
     {
       if (dst.m_DefaultStomachContents->HasCarbohydrate() && !dst.m_DefaultStomachContents->HasCarbohydrateDigestionRate())
         dst.m_DefaultStomachContents->GetCarbohydrateDigestionRate().Set(dst.GetDefaultCarbohydrateDigestionRate());
