@@ -1149,7 +1149,7 @@ void Cardiovascular::Hemorrhage()
         SELiquidCompartmentLink& newHemorrhageLink = m_data.GetCompartments().CreateLiquidLink(*sourceCompartment, *m_Groundcmpt, compartment->GetName() + "Hemorrhage");
         newHemorrhageLink.MapPath(newHemorrhagePath);
         m_CirculatoryGraph->AddLink(newHemorrhageLink);
-        m_CirculatoryGraph->StateChange();
+        m_data.GetCompartments().StateChange();
 
         //Add to local lists
         m_HemorrhagePaths.push_back(&newHemorrhagePath);

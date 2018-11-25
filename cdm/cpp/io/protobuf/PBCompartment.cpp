@@ -236,6 +236,7 @@ void PBCompartment::Serialize(const cdm::CompartmentManagerData& src, SECompartm
     auto& cData = src.tissuecompartment(i);
     PBCompartment::Load(cData, dst.CreateTissueCompartment(cData.compartment().name()));
   }
+  dst.StateChange();
 }
 
 cdm::CompartmentManagerData* PBCompartment::Unload(const SECompartmentManager& src)

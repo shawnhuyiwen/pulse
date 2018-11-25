@@ -37,7 +37,7 @@
       {"PatientAction": {
         "Hemorrhage": {
           "Compartment": "RightArmVasculature",
-          "Rate": { "ScalarVolumePerTime": { "Unit": "mL/min" } }
+          "Rate": { "ScalarVolumePerTime": { "Value": 60.0, "Unit": "mL/min" } }
         }
       }},
       {"AdvanceTime":{"Time":{"ScalarTime":{"Value":20.0,"Unit":"s"}}}},

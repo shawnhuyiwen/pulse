@@ -94,15 +94,49 @@ void PBPulsePhysiology::Serialize(const CardiovascularData& src, Cardiovascular&
   PBProperty::Load(src.cardiaccyclecentralvenouspressure_mmhg(), *dst.m_CardiacCycleCentralVenousPressure_mmHg);
   PBProperty::Load(src.cardiaccycleskinflow_ml_per_s(), *dst.m_CardiacCycleSkinFlow_mL_Per_s);
 
+  // As these are dynamically added to the system during run time,
+  // We will need to make the association within the system here
+  // Currently, there is no PulseCompartmentManager Load/Unload to do that for us
+  // It looks for the static cmpt/circuit memebers and adds those to the associated system
+  // As these were dynamically created, these will not be handled in that code
+  // (It probably should)
+  // But, anything that is dynamically created needs to be associated by the System Load
+  // So we are doing that here.
+  // Also, Internal Hemorrhage is a subset of Hemorrhage, so internal is associated via
+  // This regular hemorrhage links/paths getting associated properly
   for (auto name : src.hemorrhagelinks())
-    dst.m_HemorrhageLinks.push_back(dst.m_data.GetCompartments().GetCardiovascularGraph().GetLink(name));
+  {
+    SELiquidCompartmentLink* hLink = dst.m_data.GetCompartments().GetLiquidLink(name);
+    dst.m_data.GetCompartments().GetCardiovascularGraph().AddLink(*hLink);
+    dst.m_HemorrhageLinks.push_back(hLink);
+  }
+  if(!dst.m_HemorrhageLinks.empty())
+    dst.m_data.GetCompartments().GetCardiovascularGraph().StateChange();
   for (auto name : src.hemorrhagepaths())
-    dst.m_HemorrhagePaths.push_back(dst.m_data.GetCircuits().GetCardiovascularCircuit().GetPath(name));
-
+  {
+    SEFluidCircuitPath* hPath = dst.m_data.GetCircuits().GetFluidPath(name);
+    dst.m_data.GetCircuits().GetCardiovascularCircuit().AddPath(*hPath);
+    dst.m_HemorrhagePaths.push_back(hPath);
+  }
+  if (!dst.m_HemorrhagePaths.empty())
+    dst.m_data.GetCircuits().GetCardiovascularCircuit().StateChange();
+  // Only associating references here, as these are a subset of the hemorrhage links/paths we just processed
   for (auto name : src.internalhemorrhagelinks())
-    dst.m_InternalHemorrhageLinks.push_back(dst.m_data.GetCompartments().GetCardiovascularGraph().GetLink(name));
+  {
+    SELiquidCompartmentLink* hLink = dst.m_data.GetCompartments().GetCardiovascularGraph().GetLink(name);
+    if (hLink == nullptr)
+      dst.Fatal("Unable to find Internal Hemorrhage Link " + name);
+    else
+      dst.m_InternalHemorrhageLinks.push_back(hLink);
+  }
   for (auto name : src.internalhemorrhagepaths())
-    dst.m_InternalHemorrhagePaths.push_back(dst.m_data.GetCircuits().GetCardiovascularCircuit().GetPath(name));
+  {
+    SEFluidCircuitPath* hPath = dst.m_data.GetCircuits().GetCardiovascularCircuit().GetPath(name);
+    if (hPath == nullptr)
+      dst.Fatal("Unable to find Internal Hemorrhage path " + name);
+    else
+      dst.m_InternalHemorrhagePaths.push_back(hPath);
+  }
 }
 CardiovascularData* PBPulsePhysiology::Unload(const Cardiovascular& src)
 {
