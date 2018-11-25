@@ -151,9 +151,12 @@ public class SETestConfiguration
 
 				SETestJob job = new SETestJob();
 				job.useState = this.useStates;
-				job.autoSerialization = new SEAutoSerialization();
-				SEAutoSerialization.load(SEAutoSerialization.unload(this.autoSerialization), job.autoSerialization);
-				job.autoSerialization.setFilename(key.trim().substring(0, key.trim().length()-sce_ext.length()));
+				if(this.autoSerialization != null)
+				{
+					job.autoSerialization = new SEAutoSerialization();
+					SEAutoSerialization.load(SEAutoSerialization.unload(this.autoSerialization), job.autoSerialization);
+					job.autoSerialization.setFilename(key.trim().substring(0, key.trim().length()-sce_ext.length()));
+				}
 				if(!executeJobs)
 					job.skipExecution = true;
 				if(!plotResults)
