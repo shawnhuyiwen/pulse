@@ -157,6 +157,7 @@ public class PBPatientAction
             dst.SetCompartment(src.Compartment);
         if (src.Rate != null)
             PBProperty.Load(src.Rate, dst.GetRate());
+        dst.SetType((HemorrhageType)(int)src.Type);
     }
     public static Cdm.HemorrhageData Unload(SEHemorrhage src)
     {
@@ -172,6 +173,7 @@ public class PBPatientAction
             dst.Compartment = src.GetCompartment();
         if (src.HasRate())
             dst.Rate = PBProperty.Unload(src.GetRate());
+        dst.Type = (Cdm.eHemorrhage.Types.Type)(int)src.GetType();
     }
     #endregion
 
