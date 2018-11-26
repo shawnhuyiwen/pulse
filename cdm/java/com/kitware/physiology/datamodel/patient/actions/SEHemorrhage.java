@@ -4,18 +4,21 @@
 package com.kitware.physiology.datamodel.patient.actions;
 
 import com.kitware.physiology.cdm.PatientActions.HemorrhageData;
-
+import com.kitware.physiology.cdm.PatientActionEnums.eHemorrhage;
+import com.kitware.physiology.cdm.PatientActionEnums.eIntubation.Type;
 import com.kitware.physiology.datamodel.properties.SEScalarVolumePerTime;
 
 public class SEHemorrhage extends SEPatientAction
 {
   protected String compartment;
+  protected eHemorrhage.Type type;
   protected SEScalarVolumePerTime rate;
   
   public SEHemorrhage()
   {
     compartment = null;
     rate = null;
+    type = eHemorrhage.Type.External;
   }
   
   public void copy(SEHemorrhage other)
@@ -28,6 +31,7 @@ public class SEHemorrhage extends SEPatientAction
       getRate().set(other.getRate());
     else if (rate != null)
       rate.invalidate();
+    type = other.type;
   }
   
   public void reset()
@@ -36,6 +40,7 @@ public class SEHemorrhage extends SEPatientAction
     compartment = null;
     if (rate != null)
       rate.invalidate();
+    type = eHemorrhage.Type.External;
   }
   
   public boolean isValid()
@@ -49,6 +54,7 @@ public class SEHemorrhage extends SEPatientAction
     dst.compartment = src.getCompartment();
     if(src.hasRate())
       SEScalarVolumePerTime.load(src.getRate(),dst.getRate());
+    dst.type = src.getType();
   }
   
   public static HemorrhageData unload(SEHemorrhage src)
@@ -65,6 +71,7 @@ public class SEHemorrhage extends SEPatientAction
       dst.setCompartment(src.compartment);
     if (src.hasRate())
       dst.setRate(SEScalarVolumePerTime.unload(src.rate));
+    dst.setType(src.type);
   }
   
   public String getCompartment()
@@ -95,12 +102,22 @@ public class SEHemorrhage extends SEPatientAction
     return rate;
   }
   
+  public eHemorrhage.Type getType()
+  {
+    return type;
+  }
+  public void setType(eHemorrhage.Type t)
+  {
+    type = t;
+  }
+  
   public String toString()
   {
     if (rate != null)
       return "Hemorrhage" 
           + "\n\tRate: " + getRate() 
-          + "\n\tCompartment: " + getCompartment();
+          + "\n\tCompartment: " + getCompartment()
+          + "\n\tType: " + getType();
     else
       return "Action not specified properly";
   }

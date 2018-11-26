@@ -8,7 +8,7 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.kitware.physiology.cdm.AnesthesiaMachineEnums.eAnesthesiaMachine;
 import com.kitware.physiology.cdm.PatientEnums.ePatient;
 import com.kitware.physiology.cdm.EngineEnums.eDataRequest.*;
-
+import com.kitware.physiology.cdm.PatientActionEnums.eHemorrhage;
 import com.kitware.physiology.datamodel.conditions.SECondition;
 import com.kitware.physiology.datamodel.datarequests.SEDataRequest;
 import com.kitware.physiology.datamodel.datarequests.SEDataRequestManager;
@@ -265,6 +265,7 @@ public class HowTo_EngineUse
    
    // Let's do something to the patient, you can either send actions over one at a time, or pass in a List<SEAction>
    SEHemorrhage h = new SEHemorrhage();
+   h.setType(eHemorrhage.Type.External);
    h.setCompartment(PulseCompartments.Vascular.RightLeg);
    h.getRate().setValue(200,VolumePerTimeUnit.mL_Per_min);// Change this to 750 if you want to see how engine failures are handled!!
    if(!pe.processAction(h))
