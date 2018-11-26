@@ -72,6 +72,7 @@ void HowToHemorrhage()
 
   // Hemorrhage Starts - instantiate a hemorrhage action and have the engine process it
   SEHemorrhage hemorrhageLeg;
+  hemorrhageLeg.SetType(eHemorrhage_Type::External);
   hemorrhageLeg.SetCompartment(pulse::VascularCompartment::RightLeg);//the location of the hemorrhage
   hemorrhageLeg.GetRate().SetValue(250,VolumePerTimeUnit::mL_Per_min);//the rate of hemorrhage
   pe->ProcessAction(hemorrhageLeg);
@@ -89,6 +90,7 @@ void HowToHemorrhage()
   pe->GetLogger()->Info(std::stringstream() <<"Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");;
 
   // Hemorrhage is sealed
+  hemorrhageLeg.SetType(eHemorrhage_Type::External);
   hemorrhageLeg.SetCompartment(pulse::VascularCompartment::RightLeg);//location of hemorrhage
   hemorrhageLeg.GetRate().SetValue(0,VolumePerTimeUnit::mL_Per_min);//rate is set to 0 to close the bleed
   pe->ProcessAction(hemorrhageLeg);

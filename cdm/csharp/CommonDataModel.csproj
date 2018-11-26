@@ -30,7 +30,7 @@
 
   <ItemGroup>
     <Reference Include="Google.Protobuf">
-      <HintPath>..\..\engine\csharp\bin\Debug\netstandard2.0\Google.Protobuf.dll</HintPath>
+      <HintPath>N:\Programming\builds\pulse-engine\protobuf\src\protobuf\csharp\src\Google.Protobuf\bin\Release\net45\Google.Protobuf.dll</HintPath>
     </Reference>
   </ItemGroup>
 
