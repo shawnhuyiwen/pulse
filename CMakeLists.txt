@@ -43,8 +43,6 @@ endif()
 
 set (SUPERBUILD ON CACHE BOOL "Initial pull and build of all dependent libraries/executables")
 set (PULSE_DOWNLOAD_BASELINES OFF CACHE BOOL "Download all V&V Scenarios and their baseline result files")
-set (PULSE_SINGLE_THREADED_LOGGING OFF CACHE BOOL "Use single threaded logging rather than multi-threaded. Multiple logs will result in mixed content.")
-mark_as_advanced(PULSE_SINGLE_THREADED_LOGGING)
 if(MSVC)
   set(PULSE_BUILD_CLR OFF CACHE BOOL "Build the CLR interface, ensure visual studio was installed with the C++/CLR option enabled")
 else()

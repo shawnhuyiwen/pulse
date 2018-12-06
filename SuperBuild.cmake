@@ -156,7 +156,6 @@ ExternalProject_Add( Pulse
     -DBUILD_SHARED_LIBS:BOOL=${shared}
     -DBUILD_TESTING:BOOL=${BUILD_TESTING}
     -DPULSE_BUILD_CLR:BOOL=${PULSE_BUILD_CLR}
-    -DPULSE_SINGLE_THREADED_LOGGING:BOOL=${PULSE_SINGLE_THREADED_LOGGING}
     # Let InnerBuild build and install these
     -Dlog4cplus_SRC=${log4cplus_SRC}
     -Dprotobuf_SRC=${protobuf_SRC}
