@@ -5,7 +5,7 @@ public class PBPatientAction
 {
     #region Any Patient Action
     /** Create a new action based on the binding object, load that data into the new action, and return said action */
-    public static SEPatientAction Load(Cdm.AnyPatientActionData any)
+    public static SEPatientAction Load(Cdm.AnyPatientActionData any/*, SESubstanceManager subMgr*/)
     {
         if (any.AirwayObstruction != null)
         {
@@ -157,7 +157,7 @@ public class PBPatientAction
             dst.SetCompartment(src.Compartment);
         if (src.Rate != null)
             PBProperty.Load(src.Rate, dst.GetRate());
-        dst.SetType((HemorrhageType)(int)src.Type);
+        dst.SetType((SEHemorrhage.eType)(int)src.Type);
     }
     public static Cdm.HemorrhageData Unload(SEHemorrhage src)
     {
@@ -185,7 +185,7 @@ public class PBPatientAction
     public static void Serialize(Cdm.IntubationData src, SEIntubation dst)
     {
         Serialize(src.PatientAction, dst);
-        dst.SetType((IntubationType)(int)src.Type);
+        dst.SetType((SEIntubation.eType)(int)src.Type);
     }
     public static Cdm.IntubationData Unload(SEIntubation src)
     {
@@ -238,7 +238,7 @@ public class PBPatientAction
         Serialize(src.PatientAction, dst);
         if (src.Substance != null)
             dst.SetSubstance(src.Substance);
-        dst.SetAdminRoute((eSubstanceAdministration)(int)src.AdministrationRoute);
+        dst.SetAdminRoute((SESubstanceBolus.eAdministration)(int)src.AdministrationRoute);
 
         if (src.Concentration != null)
             PBProperty.Load(src.Concentration, dst.GetConcentration());

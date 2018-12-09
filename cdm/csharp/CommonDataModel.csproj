@@ -29,8 +29,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="system\equipment\anesthesia_machine\" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="Google.Protobuf">
-      <HintPath>N:\Programming\builds\pulse-engine\protobuf\src\protobuf\csharp\src\Google.Protobuf\bin\Release\net45\Google.Protobuf.dll</HintPath>
+      <HintPath>..\..\..\..\builds\pulse-engine\protobuf\src\protobuf\csharp\src\Google.Protobuf\bin\Release\net45\Google.Protobuf.dll</HintPath>
     </Reference>
   </ItemGroup>
 

@@ -1,23 +1,23 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-public enum HemorrhageType : int
-{
-  External = 0,
-  Internal
-}
-
 public class SEHemorrhage : SEPatientAction
 {
+  public enum eType : int
+  {
+    External = 0,
+    Internal
+  }
+
   protected string compartment;
   protected SEScalarVolumePerTime rate;
-  protected HemorrhageType type;
+  protected eType type;
   
   public SEHemorrhage()
   {
     compartment = null;
     rate = null;
-    type = HemorrhageType.External;
+    type = eType.External;
   }
   
   public override void Clear()
@@ -26,7 +26,7 @@ public class SEHemorrhage : SEPatientAction
     compartment = null;
     if (rate != null)
       rate.Invalidate();
-    type = HemorrhageType.External;
+    type = eType.External;
   }
   
   public override bool IsValid()
@@ -58,11 +58,11 @@ public class SEHemorrhage : SEPatientAction
     return rate;
   }
 
-  public new HemorrhageType GetType()
+  public new eType GetType()
   {
     return type;
   }
-  public void SetType(HemorrhageType t)
+  public void SetType(eType t)
   {
     type = t;
   }

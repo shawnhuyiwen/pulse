@@ -1,41 +1,40 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-
-public enum IntubationType : int
+public class SEIntubation : SEPatientAction
 {
+  public enum eType : int
+  {
     Off = 0,
     Esophageal,
     LeftMainstem,
     RightMainstem,
     Tracheal
-}
+  }
 
-public class SEIntubation : SEPatientAction
-{
-  protected IntubationType type;
+  protected eType type;
   
   public SEIntubation()
   {
-    type = IntubationType.Off;
+    type = eType.Off;
   }
   
   public override void Clear()
   {
     base.Clear();
-    type = IntubationType.Off;
+    type = eType.Off;
   }
   
   public override bool IsValid()
   {
-    return type != IntubationType.Off;
+    return type != eType.Off;
   }
   
-  public new IntubationType GetType()
+  public new eType GetType()
   {
     return type;
   }
-  public void SetType(IntubationType t)
+  public void SetType(eType t)
   {
     type = t;
   }

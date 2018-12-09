@@ -51,7 +51,7 @@ public class SESubstanceCompoundInfusion : SEPatientAction
         return rate;
     }
 
-    public bool HasSubstanceCompound() { return true; }
+    public bool HasSubstanceCompound() { return !string.IsNullOrEmpty(this.compound); }
     public string GetSubstanceCompound()
     {
         return compound;

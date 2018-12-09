@@ -1,8 +1,10 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-public enum eSubstanceAdministration : int
+public class SESubstanceBolus : SEPatientAction
 {
+  public enum eAdministration : int
+  {
     Intravenous = 0,
     Epidural,
     Intraosseous,
@@ -13,18 +15,16 @@ public enum eSubstanceAdministration : int
     Intradermal,
     Intramuscular,
     Subcutaneous
-}
+  }
 
-public class SESubstanceBolus : SEPatientAction
-{
-    protected eSubstanceAdministration adminRoute;
+    protected eAdministration adminRoute;
     protected SEScalarMassPerVolume concentration;
     protected SEScalarVolume dose;
     protected string substance;
 
     public SESubstanceBolus()
     {
-        this.adminRoute = eSubstanceAdministration.Intravenous;
+        this.adminRoute = eAdministration.Intravenous;
         this.dose = null;
         this.concentration = null;
         this.substance = null;
@@ -34,7 +34,7 @@ public class SESubstanceBolus : SEPatientAction
     {
         base.Clear();
         substance = null;
-        adminRoute = eSubstanceAdministration.Intravenous;
+        adminRoute = eAdministration.Intravenous;
         if (dose != null)
             dose.Invalidate();
         if (concentration != null)
@@ -46,11 +46,11 @@ public class SESubstanceBolus : SEPatientAction
         return HasDose() && HasConcentration() && HasSubstance();
     }
 
-    public eSubstanceAdministration GetAdminRoute()
+    public eAdministration GetAdminRoute()
     {
         return adminRoute;
     }
-    public void SetAdminRoute(eSubstanceAdministration adminRoute)
+    public void SetAdminRoute(eAdministration adminRoute)
     {
         this.adminRoute = adminRoute;
     }
@@ -82,7 +82,7 @@ public class SESubstanceBolus : SEPatientAction
     {
         return substance;
     }
-    public bool HasSubstance() { return substance != null; }
+    public bool HasSubstance() { return !string.IsNullOrEmpty(substance); }
     public void SetSubstance(string s)
     {
         substance = s;
