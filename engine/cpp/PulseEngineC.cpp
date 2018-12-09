@@ -35,7 +35,6 @@
 extern "C"
 C_EXPORT PulseEngineC* C_CALL Allocate(const char* logFile, const char* data_dir=".")
 {
-  log4cplus::initialize();
   std::string str(logFile);
   PulseEngineC *pulseC = new PulseEngineC(str,data_dir);
   return pulseC;
@@ -45,7 +44,6 @@ extern "C"
 C_EXPORT void C_CALL Deallocate(PulseEngineC* pulseC)
 {
   SAFE_DELETE(pulseC);
-  log4cplus::deinitialize();
 }
 
 extern "C"
