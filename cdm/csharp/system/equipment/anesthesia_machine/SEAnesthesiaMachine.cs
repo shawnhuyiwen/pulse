@@ -13,7 +13,6 @@ public class SEAnesthesiaMachine // : SESystem
     Mask,
     Tube
   }
-  extern string Connection_Name(Connection c);
   // Keep enums in sync with appropriate schema/cdm/AnesthesiaMachineEnums.proto file !!
   public enum OxygenSource : int
   {
@@ -23,7 +22,6 @@ public class SEAnesthesiaMachine // : SESystem
     BottleOne,
     BottleTwo
   }
-  extern string OxygenSource_Name(OxygenSource os);
   // Keep enums in sync with appropriate schema/cdm/AnesthesiaMachineEnums.proto file !!
   public enum PrimaryGas : int
   {
@@ -32,7 +30,6 @@ public class SEAnesthesiaMachine // : SESystem
     Air,
     Nitrogen
   }
-  extern string PrimaryGas_Name(PrimaryGas pg);
 
   protected Connection                        connection;
   protected SEScalarVolumePerTime             inletFlow;
@@ -324,7 +321,7 @@ public class SEAnesthesiaMachine // : SESystem
   //  return oxygenBottleTwo == null ? false : true;
   //}
   
-  public string ToString()
+  public override string ToString()
   {
     string leftChamber = "Left Chamber: NotProvided";
     //if(HasLeftChamber())
@@ -352,13 +349,13 @@ public class SEAnesthesiaMachine // : SESystem
     //}
     
       return "Anesthesia Machine"
-      + "\n\tConnection: " + (HasConnection()? Connection_Name(GetConnection()):"NotProvided")
+      + "\n\tConnection: " + (HasConnection()? PBAnesthesiaMachine.Connection_Name(GetConnection()):"NotProvided")
       + "\n\tInletFlow: " + GetInletFlow()
       + "\n\tInspiratoryExpiratoryRatio: " + GetInspiratoryExpiratoryRatio()
       + "\n\tOxygenFraction: " + GetOxygenFraction()
-      + "\n\tOxygenSource: " + (HasOxygenSource()? OxygenSource_Name(GetOxygenSource()):"NotProvided")
+      + "\n\tOxygenSource: " + (HasOxygenSource()? PBAnesthesiaMachine.OxygenSource_Name(GetOxygenSource()):"NotProvided")
       + "\n\tPositiveEndExpiredPressure: " + GetPositiveEndExpiredPressure()
-      + "\n\tPrimaryGas: " + (HasPrimaryGas()? PrimaryGas_Name(GetPrimaryGas()):"NotProvided")
+      + "\n\tPrimaryGas: " + (HasPrimaryGas()? PBAnesthesiaMachine.PrimaryGas_Name(GetPrimaryGas()):"NotProvided")
       + "\n\tRespiratoryRate: " + GetRespiratoryRate()
       + "\n\tReliefValvePressure: " + GetReliefValvePressure()
       + "\n\tVentilatorPressure: " + GetVentilatorPressure()

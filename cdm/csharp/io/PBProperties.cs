@@ -179,27 +179,27 @@ public class PBProperty
   #endregion
 
   #region SEScalar MassPerTime
-  public static void Load(Cdm.Scalar MassPerTimeData src, SEScalar MassPerTime dst)
+  public static void Load(Cdm.ScalarMassPerTimeData src, SEScalarMassPerTime dst)
   {
     Serialize(src, dst);
   }
-  public static void Serialize(Cdm.Scalar MassPerTimeData src, SEScalar MassPerTime dst)
+  public static void Serialize(Cdm.ScalarMassPerTimeData src, SEScalarMassPerTime dst)
   {
     dst.Invalidate();
-    dst.SetValue(src.Scalar MassPerTime.Value);
+    dst.SetValue(src.ScalarMassPerTime.Value);
   }
-  public static Cdm.Scalar MassPerTimeData Unload(SEScalar MassPerTime src)
+  public static Cdm.ScalarMassPerTimeData Unload(SEScalarMassPerTime src)
   {
-    Cdm.Scalar MassPerTimeData dst = new Cdm.Scalar MassPerTimeData();
+    Cdm.ScalarMassPerTimeData dst = new Cdm.ScalarMassPerTimeData();
     Serialize(src, dst);
     return dst;
   }
 
-  public static void Serialize(SEScalar MassPerTime src, Cdm.Scalar MassPerTimeData dst)
+  public static void Serialize(SEScalarMassPerTime src, Cdm.ScalarMassPerTimeData dst)
   {
-    dst.Scalar MassPerTime = new Cdm.ScalarData();
-    dst.Scalar MassPerTime.Value = src.GetValue();
-    dst.Scalar MassPerTime.Unit = src.GetUnit().ToString();
+    dst.ScalarMassPerTime = new Cdm.ScalarData();
+    dst.ScalarMassPerTime.Value = src.GetValue();
+    dst.ScalarMassPerTime.Unit = src.GetUnit().ToString();
   }
   #endregion
 

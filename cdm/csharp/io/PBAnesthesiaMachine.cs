@@ -3,6 +3,19 @@
 
 public class PBAnesthesiaMachine
 {
+  public static string Connection_Name(SEAnesthesiaMachine.Connection c)
+  {
+    return ((Cdm.eAnesthesiaMachine.Types.Connection)(int)c).ToString();
+  }
+  public static string OxygenSource_Name(SEAnesthesiaMachine.OxygenSource os)
+  {
+    return ((Cdm.eAnesthesiaMachine.Types.OxygenSource)(int)os).ToString();
+  }
+  public static string PrimaryGas_Name(SEAnesthesiaMachine.PrimaryGas pg)
+  {
+    return ((Cdm.eAnesthesiaMachine.Types.PrimaryGas)(int)pg).ToString();
+  }
+
   #region SEAnesthesiaMachine
   public static void Load(Cdm.AnesthesiaMachineData src, SEAnesthesiaMachine dst/*, SESubstanceManager subMgr*/)
   {

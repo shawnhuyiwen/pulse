@@ -4,13 +4,13 @@
 public class SEAnesthesiaMachineChamber 
 {
   protected eSwitch state;
-  protected SESubstance substance;
+  //protected SESubstance substance;
   protected SEScalar0To1 substanceFraction;
 
   public SEAnesthesiaMachineChamber()
   {
     this.state = eSwitch.Off;
-    this.substance = null;
+    //this.substance = null;
     this.substanceFraction = null;
   }
 
@@ -50,24 +50,24 @@ public class SEAnesthesiaMachineChamber
     return substanceFraction;
   }
 
-  public bool HasSubstance()
-  {
-    return this.substance!=null;
-  }
-  public SESubstance GetSubstance()
-  {
-    return substance;
-  }
-  public void SetSubstance(SESubstance substance)
-  {
-    this.substance = substance;
-  }
+  //public bool HasSubstance()
+  //{
+  //  return this.substance!=null;
+  //}
+  //public SESubstance GetSubstance()
+  //{
+  //  return substance;
+  //}
+  //public void SetSubstance(SESubstance substance)
+  //{
+  //  this.substance = substance;
+  //}
 
   public string toString()
   {
-      return "Anesthesia Machine Chamber"
-      + "\n\tState: " + GetState()
-      + "\n\tSubstance Fraction: " + GetSubstanceFraction()
-      + "\n\tSubstance: " + (HasSubstance()?GetSubstance().GetName():"NotProvided");
+    return "Anesthesia Machine Chamber"
+    + "\n\tState: " + GetState()
+    + "\n\tSubstance Fraction: " + GetSubstanceFraction()
+    ;// + "\n\tSubstance: " + (HasSubstance()?GetSubstance().GetName():"NotProvided");
   }
 }

@@ -43,6 +43,6 @@ public class SENeedleDecompression : SEPatientAction
     }
     public bool HasSide()
     {
-        return side == null ? false : true;
+        return side == eSide.NullSide ? false : true;
     }
 }
