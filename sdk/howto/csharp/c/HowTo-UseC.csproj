@@ -17,12 +17,6 @@
     <Reference Include="Google.Protobuf">
       <HintPath>..\..\..\..\engine\csharp\bin\Debug\netstandard2.0\Google.Protobuf.dll</HintPath>
     </Reference>
-    <Reference Include="PulseCS2C">
-      <HintPath>..\..\..\..\engine\csharp\bin\Debug\netstandard2.0\PulseCS2C.dll</HintPath>
-    </Reference>
-    <Reference Include="PulseCSharp">
-      <HintPath>..\..\..\..\vs\bin\Debug\netstandard2.0\PulseCSharp.dll</HintPath>
-    </Reference>
     <Reference Include="PulseEngine">
       <HintPath>..\..\..\..\engine\csharp\bin\Debug\netstandard2.0\PulseEngine.dll</HintPath>
     </Reference>

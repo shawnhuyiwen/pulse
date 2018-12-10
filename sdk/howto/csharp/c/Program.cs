@@ -40,14 +40,14 @@ namespace HowTo_UseC
                 case InitializationType.StateFileName:
                 {
                     // Load a state file
-                    if (!pulse.SerializeFromFile("./states/Soldier@0s.pba", null, SerializationFormat.ASCII, 0))
+                    if (!pulse.SerializeFromFile("./states/Soldier@0s.json", null, SerializationFormat.JSON, 0))
                         Console.WriteLine("Error Initializing Pulse!");
                     break;
                 }
                 case InitializationType.StateString:
                 {
-                    string file_content = File.ReadAllText("./states/Soldier@0s.pba");
-                    if (!pulse.SerializeFromString(file_content, null, SerializationFormat.ASCII, 0))
+                    string file_content = File.ReadAllText("./states/Soldier@0s.json");
+                    if (!pulse.SerializeFromString(file_content, null, SerializationFormat.JSON, 0))
                         Console.WriteLine("Error Initializing Pulse!");
                     break;
                 }
@@ -72,10 +72,14 @@ namespace HowTo_UseC
             }
 
             // Let's do something to the patient, you can either send actions over one at a time, or pass in a List<SEAction>
+            List<SEAction> actions = new List<SEAction>();
+
             SEHemorrhage h = new SEHemorrhage();
+            h.SetType(SEHemorrhage.eType.External);
             h.SetCompartment("RightLeg");
-            h.GetRate().SetValue(200, VolumePerTimeUnit.mL_Per_min);// Change this to 750 if you want to see how engine failures are handled!!
-            if (!pulse.ProcessAction(h))
+            h.GetRate().SetValue(50, VolumePerTimeUnit.mL_Per_min);// Change this to 750 if you want to see how engine failures are handled!!
+            actions.Add(h);
+            if (!pulse.ProcessActions(actions))
             {
                 Console.WriteLine("Engine was unable to process requested actions");
                 return;
@@ -102,6 +106,7 @@ namespace HowTo_UseC
                 Console.WriteLine("Engine was unable to process requested actions");
                 return;
             }
+            
 
             for (int i = 1; i <= 1; i++)
             {
@@ -115,6 +120,37 @@ namespace HowTo_UseC
                 Marshal.Copy(data, result, 0, headings.Count);
                 for (int d = 0; d < headings.Count; d++)
                     Console.WriteLine(headings[d] + " " + result[d]);
+            }
+
+            // Administer Drugs
+            SESubstanceInfusion paralytic = new SESubstanceInfusion();
+            paralytic.SetSubstance("Succinylcholine");
+            paralytic.GetConcentration().SetValue(5000, MassPerVolumeUnit.ug_Per_mL);
+            paralytic.GetRate().SetValue(100, VolumePerTimeUnit.mL_Per_min);
+            if (!pulse.ProcessAction(paralytic))
+            {
+                Console.WriteLine("Engine was unable to process requested actions");
+                return;
+            }
+            //Let's use the anesthesia machine to simulate an ambu bag for ventilation
+            // We could use the mechanical ventilation action, but you have to provide a changing pressure per squeeze
+            // And I just want things automatic for this demo
+            // But if you want to interact with a haptic device, use that action with data from your device
+            // Or program up a sinusoidal or square wave for applying pressure
+            SEAnesthesiaMachineConfiguration am = new SEAnesthesiaMachineConfiguration();
+            am.GetConfiguration().SetConnection(SEAnesthesiaMachine.Connection.Tube);
+            am.GetConfiguration().GetInletFlow().SetValue(5, VolumePerTimeUnit.L_Per_min);
+            am.GetConfiguration().GetInspiratoryExpiratoryRatio().SetValue(0.5);
+            am.GetConfiguration().GetOxygenFraction().SetValue(0.23);
+            am.GetConfiguration().SetOxygenSource(SEAnesthesiaMachine.OxygenSource.Wall);
+            am.GetConfiguration().GetPositiveEndExpiredPressure().SetValue(1, PressureUnit.cmH2O);
+            am.GetConfiguration().SetPrimaryGas(SEAnesthesiaMachine.PrimaryGas.Nitrogen);
+            am.GetConfiguration().GetRespiratoryRate().SetValue(16, FrequencyUnit.Per_min);
+            am.GetConfiguration().GetVentilatorPressure().SetValue(10.5, PressureUnit.cmH2O);
+            if (!pulse.ProcessAction(am))
+            {
+                Console.WriteLine("Engine was unable to process requested actions");
+                return;
             }
 
             // Infuse some fluids

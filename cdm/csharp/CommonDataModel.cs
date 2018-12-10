@@ -4,7 +4,7 @@
 public enum SerializationFormat : int   // State file serialization format
 {
     BINARY = 0,
-    ASCII
+    JSON
 }
 
 public enum eSide : int

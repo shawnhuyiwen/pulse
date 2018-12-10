@@ -36,6 +36,8 @@ public class PBAction
         {
             case Cdm.AnyActionData.ActionOneofCase.PatientAction:
                 return PBPatientAction.Load(action.PatientAction);
+            case Cdm.AnyActionData.ActionOneofCase.AnesthesiaMachineAction:
+                return PBAnesthesiaMachineAction.Load(action.AnesthesiaMachineAction);
         }
         return null;
     }
@@ -46,6 +48,8 @@ public class PBAction
         Cdm.AnyActionData any = new Cdm.AnyActionData();
         if( action.GetType().IsSubclassOf(typeof(SEPatientAction)) )
             any.PatientAction = PBPatientAction.Unload((SEPatientAction)action);
+        if (action.GetType().IsSubclassOf(typeof(SEAnesthesiaMachineAction)))
+            any.AnesthesiaMachineAction = PBAnesthesiaMachineAction.Unload((SEAnesthesiaMachineAction)action);
         return any;
     }
     #endregion

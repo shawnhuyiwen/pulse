@@ -87,6 +87,6 @@ public class PulseEngine
         var pb = PBAction.Unload(actions);
         string any_action_list_str = pb.ToString();
         Console.WriteLine(any_action_list_str);
-        return ProcessActions(pulseEngineCPtr, any_action_list_str, (int)SerializationFormat.ASCII);
+        return ProcessActions(pulseEngineCPtr, any_action_list_str, (int)SerializationFormat.JSON);
     }
 }

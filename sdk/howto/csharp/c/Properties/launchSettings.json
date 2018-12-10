@@ -2,7 +2,7 @@
   "profiles": {
     "HowTo-UseC": {
       "commandName": "Project",
-      "workingDirectory": "C:\\Programming\\builds\\pulse-engine\\install\\bin",
+      "workingDirectory": "N:\\Programming\\builds\\pulse-engine\\install\\bin\\",
       "nativeDebugging": true
     }
   }
