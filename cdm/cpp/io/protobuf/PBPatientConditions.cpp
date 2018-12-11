@@ -6,7 +6,7 @@
 #include "io/protobuf/PBPatientNutrition.h"
 #include "io/protobuf/PBConditions.h"
 #include "io/protobuf/PBProperties.h"
-#include "bind/cdm/PatientConditions.pb.h"
+#include "bind/cpp/cdm/PatientConditions.pb.h"
 
 #include "substance/SESubstanceManager.h"
 #include "patient/conditions/SEChronicAnemia.h"

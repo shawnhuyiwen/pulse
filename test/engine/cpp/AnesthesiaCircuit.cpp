@@ -50,13 +50,13 @@ void PulseEngineTest::AnesthesiaMachineCircuitAndTransportTest(RespiratoryConfig
   std::ofstream fileGraph;
   
   PulseController pc(sTestDirectory + "/AnesthesiaMachineCircuitAndTransportTest.log");
-  pc.GetPatient().SerializeFromFile("./patients/StandardMale.pba",ASCII);
+  pc.GetPatient().SerializeFromFile("./patients/StandardMale.json",JSON);
   pc.SetupPatient();
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
   SEEnvironmentalConditions env(pc.GetSubstances());
-  env.SerializeFromFile("./environments/Standard.pba",ASCII);
+  env.SerializeFromFile("./environments/Standard.json",JSON);
   SEGasCompartment* cEnv = pc.GetCompartments().GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
   for (SESubstanceFraction* subFrac : env.GetAmbientGases())
   {

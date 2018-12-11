@@ -106,7 +106,7 @@ public class Rebase
 				}
 				if(!job.PlottableResults && !job.isAssessment)
 					continue;// Nothing to plot/compare, nothing to zip	
-				// We assume all pba will have something to zip...
+				// We assume all json will have something to zip...
 				
 				log_file = "";
 				scenario_file = "";
@@ -119,7 +119,7 @@ public class Rebase
 				}
 				
 				// If there is no baselineDirectory, then this must be an assessment...
-				if(job.name.endsWith(".pba") && !job.isAssessment)
+				if(job.name.endsWith(".json") && !job.isAssessment)
 				{
 					scenario_file = job.baselineDirectory+job.name;
 					if(job.computedFiles.size()>1)

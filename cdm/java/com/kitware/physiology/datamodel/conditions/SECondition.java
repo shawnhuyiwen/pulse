@@ -4,23 +4,13 @@
 package com.kitware.physiology.datamodel.conditions;
 
 import java.io.Serializable;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 
-import com.kitware.physiology.cdm.Actions.ActionData;
 import com.kitware.physiology.cdm.Conditions.ConditionData;
-import com.kitware.physiology.cdm.EnvironmentConditions.AnyEnvironmentConditionData;
-import com.kitware.physiology.cdm.Scenario.AnyConditionData;
+import com.kitware.physiology.cdm.Engine.AnyConditionData;
 
-import com.kitware.physiology.datamodel.actions.SEAction;
 import com.kitware.physiology.datamodel.patient.conditions.SEPatientCondition;
-import com.kitware.physiology.datamodel.substance.SESubstance;
-import com.kitware.physiology.datamodel.substance.SESubstanceCompound;
 import com.kitware.physiology.datamodel.substance.SESubstanceManager;
 import com.kitware.physiology.datamodel.system.environment.conditions.SEEnvironmentCondition;
-import com.kitware.physiology.datamodel.system.environment.conditions.SEInitialEnvironmentConditions;
 import com.kitware.physiology.utilities.Log;
 
 public abstract class SECondition implements Serializable

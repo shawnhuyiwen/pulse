@@ -7,6 +7,7 @@
 #include "utils/taskrunner/TaskRunner.h"
 #include "utils/FileUtils.h"
 #include "utils/TimingProfile.h"
+#include "engine/SEPatientConfiguration.h"
 #include "scenario/SEScenarioExec.h"
 #include "properties/SEScalarTime.h"
 #include <iomanip>
@@ -21,7 +22,9 @@ public:
 
   virtual void Run() override
   {
-    m_pEngine->InitializeEngine("StandardMale.pba");
+    SEPatientConfiguration pc(m_pEngine->GetLogger());
+    pc.SetPatientFile("StandardMale.json");
+    m_pEngine->InitializeEngine(pc);
 
     double dT_s = m_pEngine->GetTimeStep(TimeUnit::s);
 
@@ -59,11 +62,11 @@ void RunScenarioTask::Run()
   // Set up the log file
   std::string logFile = m_scenarioFile;
   logFile = Replace(logFile, "verification", "bin");
-  logFile = Replace(logFile, ".pba", ".log");
+  logFile = Replace(logFile, ".json", ".log");
   // Set up the verification output file  
   std::string dataFile = m_scenarioFile;
   dataFile = Replace(dataFile, "verification", "bin");
-  dataFile = Replace(dataFile, ".pba", "Results.csv");
+  dataFile = Replace(dataFile, ".json", "Results.csv");
   // Delete any results file that may be there
   remove(dataFile.c_str());
 
@@ -88,17 +91,17 @@ void PulseEngineTest::MultiEngineTest(const std::string& sTestDirectory)
   {
     TaskRunner runner(1);
 
-    runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("../verification/Scenarios/Basic/Basic1.pba")));
-    runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("../verification/Scenarios/Basic/Basic2.pba")));
-    runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("../verification/Scenarios/Basic/Basic3.pba")));
-    runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("../verification/Scenarios/Basic/BasicCynthia.pba")));
-    runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("../verification/Scenarios/Basic/BasicGus.pba")));
-    runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("../verification/Scenarios/Basic/BasicHassan.pba")));
-    runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("../verification/Scenarios/Basic/BasicJoel.pba")));
-    runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("../verification/Scenarios/Basic/BasicNathan.pba")));
-    runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("../verification/Scenarios/Basic/BasicSoldier.pba")));
-    runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("../verification/Scenarios/Basic/BasicStandardHeavy.pba")));
-    runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("../verification/Scenarios/Basic/BasicStandardLight.pba")));
+    runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("../verification/Scenarios/Basic/Basic1.json")));
+    runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("../verification/Scenarios/Basic/Basic2.json")));
+    runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("../verification/Scenarios/Basic/Basic3.json")));
+    runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("../verification/Scenarios/Basic/BasicCynthia.json")));
+    runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("../verification/Scenarios/Basic/BasicGus.json")));
+    runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("../verification/Scenarios/Basic/BasicHassan.json")));
+    runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("../verification/Scenarios/Basic/BasicJoel.json")));
+    runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("../verification/Scenarios/Basic/BasicNathan.json")));
+    runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("../verification/Scenarios/Basic/BasicSoldier.json")));
+    runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("../verification/Scenarios/Basic/BasicStandardHeavy.json")));
+    runner.AddTask(std::unique_ptr<RunScenarioTask>(new RunScenarioTask("../verification/Scenarios/Basic/BasicStandardLight.json")));
 
     std::cout << " *** Running single-threaded ***" << "\n";
 

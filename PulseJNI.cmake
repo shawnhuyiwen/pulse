@@ -9,8 +9,6 @@ add_library(PulseJNI SHARED cdm/cpp/CommonDataModelJNI.cpp
                             engine/cpp/PulseEngineJNI.cpp)
 find_package(JNI REQUIRED)
 target_include_directories(PulseJNI PRIVATE ${JNI_INCLUDE_DIRS})
-target_include_directories(PulseJNI PRIVATE ${CMAKE_BINARY_DIR}/schema/cpp/)
-target_include_directories(PulseJNI PRIVATE ${CMAKE_BINARY_DIR}/schema/cpp/bind/)
 target_include_directories(PulseJNI PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/engine/cpp)
 target_include_directories(PulseJNI PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/cdm/cpp)
 target_include_directories(PulseJNI PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test/engine/cpp)
@@ -43,8 +41,7 @@ install(TARGETS PulseJNI
 
 
 file(GLOB_RECURSE JAVA_FILES 
-  "${CMAKE_BINARY_DIR}/schema/java/*.java"
-  "${CMAKE_BINARY_DIR}/../protobuf/src/protobuf/java/core/src/main/java/*.java"
+  "${CMAKE_SOURCE_DIR}/schema/bind/java/*.java"
   "${CMAKE_SOURCE_DIR}/cdm/java/*.java"
   "${CMAKE_SOURCE_DIR}/engine/java/*.java"
   "${CMAKE_SOURCE_DIR}/test/cdm/java/*.java"
@@ -55,7 +52,8 @@ add_jar(PulseJava ${JAVA_FILES}
       "${CMAKE_SOURCE_DIR}/jar/jcommon-1.0.16.jar"
       "${CMAKE_SOURCE_DIR}/jar/jdom-2.0.2.jar"
       "${CMAKE_SOURCE_DIR}/jar/jfreechart-1.0.13.jar"
-      "${CMAKE_SOURCE_DIR}/jar/guava-11.0.2.jar"
+      "${CMAKE_SOURCE_DIR}/jar/gson-2.8.5.jar"
+      "${CMAKE_SOURCE_DIR}/jar/guava-26.0-jre.jar"
       "${CMAKE_SOURCE_DIR}/jar/log4j-1.2.17.jar"
       "${CMAKE_SOURCE_DIR}/jar/poi-3.13-20150929.jar"
       "${CMAKE_SOURCE_DIR}/jar/poi-ooxml-3.13-20150929.jar"

@@ -8,6 +8,7 @@ class SEPatient;
 class SELiquidCompartment;
 class SELiquidSubstanceQuantity;
 class SELiquidCompartmentGraph;
+class SELiquidCompartmentLink;
 class SELiquidTransporter;
 class SEFluidCircuit;
 class SEFluidCircuitNode;
@@ -73,6 +74,7 @@ protected:
   /**/void CPR();
   /****/void CalculateAndSetCPRcompressionForce();
   /**/void Hemorrhage();
+  /**/void InternalHemorrhagePressureApplication();
   /**/void PericardialEffusion();
   /**/void PericardialEffusionPressureApplication();
   /**/void CardiacArrest();
@@ -101,6 +103,11 @@ protected:
   double m_CompressionTime_s;
   double m_CompressionRatio;
   double m_CompressionPeriod_s;
+  //Hemorrhage
+  std::vector<SEFluidCircuitPath*> m_HemorrhagePaths;
+  std::vector<SEFluidCircuitPath*> m_InternalHemorrhagePaths;
+  std::vector<SELiquidCompartmentLink*> m_HemorrhageLinks;
+  std::vector<SELiquidCompartmentLink*> m_InternalHemorrhageLinks;
   // Vitals and Averages
   double m_CurrentCardiacCycleTime_s;
   double m_CardiacCycleDiastolicVolume_mL; // Maximum left heart volume for the current cardiac cycle
@@ -131,11 +138,12 @@ protected:
 
   SEPatient*                       m_patient;
 
-  SEFluidCircuit*                   m_CirculatoryCircuit;
+  SEFluidCircuit*                  m_CirculatoryCircuit;
   SELiquidCompartmentGraph*        m_CirculatoryGraph;
 
   SEFluidCircuitNode*              m_MainPulmonaryArteries;
   SEFluidCircuitNode*              m_LeftHeart2;
+  SEFluidCircuitNode*              m_Ground;
 
   SEFluidCircuitPath*              m_AortaCompliance;
   SEFluidCircuitPath*              m_AortaResistance;
@@ -147,6 +155,7 @@ protected:
   SEFluidCircuitPath*              m_RightPulmonaryArteriesToVeins;
   SEFluidCircuitPath*              m_RightPulmonaryArteriesToCapillaries;
 
+  SEFluidCircuitPath*              m_InternalHemorrhageToAorta;
   SEFluidCircuitPath*              m_pAortaToBone;
   SEFluidCircuitPath*              m_pAortaToBrain;
   SEFluidCircuitPath*              m_pBrainToVenaCava;
@@ -163,7 +172,6 @@ protected:
   SEFluidCircuitPath*              m_pAortaToSplanchnic;
   SEFluidCircuitPath*              m_pAortaToSpleen;
 
-  SEFluidCircuitPath*              m_pVenaCavaHemorrhage;
   SEFluidCircuitPath*              m_pGndToPericardium;
   SEFluidCircuitPath*              m_pPericardiumToGnd;
   SEFluidCircuitPath*              m_pRightHeartToGnd;
@@ -175,12 +183,17 @@ protected:
   SEFluidCircuitPath*              m_pBrainResistanceUpstream;
   SEFluidCircuitPath*              m_pBrainResistanceDownstream;
 
-  SEFluidCircuitPath*               m_leftRenalArteryPath;
-  SEFluidCircuitPath*               m_rightRenalArteryPath;
+  SEFluidCircuitPath*              m_leftRenalArteryPath;
+  SEFluidCircuitPath*              m_rightRenalArteryPath;
+
+  SEFluidCircuitPath*              m_pGndToAbdominalCavity;
+  SEFluidCircuitPath*              m_pAbdominalCavityToGnd;
   
+  SELiquidCompartment*             m_AbdominalCavity;
   SELiquidCompartment*             m_Aorta;
   SELiquidSubstanceQuantity*       m_AortaCO2;
   SELiquidCompartment*             m_Brain;
+  SELiquidCompartment*             m_Groundcmpt;
   SELiquidCompartment*             m_LeftHeart;
   SELiquidCompartment*             m_LeftPulmonaryCapillaries;
   SELiquidCompartment*             m_LeftPulmonaryArteries;

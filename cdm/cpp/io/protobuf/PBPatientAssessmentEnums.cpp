@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "bind/cdm/PatientAssessmentEnums.pb.h"
+#include "bind/cpp/cdm/PatientAssessmentEnums.pb.h"
 #include "patient/assessments/SEPatientAssessment.h"
 #include "patient/assessments/SEUrinalysisMicroscopic.h"
 

@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 #include "io/protobuf/PBUtils.h"
-#include "bind/cdm/PatientEnums.pb.h"
+#include "bind/cpp/cdm/PatientEnums.pb.h"
 #include "patient/SEPatient.h"
 
 const std::string& ePatient_Sex_Name(ePatient_Sex m)

@@ -16,10 +16,10 @@ public:
 
   virtual void Clear();
 
-  bool SerializeToString(std::string& output, SerializationMode m) const;
-  bool SerializeToFile(const std::string& filename, SerializationMode m) const;
-  bool SerializeFromString(const std::string& src, const SESubstanceManager& subMgr, SerializationMode m);
-  bool SerializeFromFile(const std::string& filename, const SESubstanceManager& subMgr, SerializationMode m);
+  bool SerializeToString(std::string& output, SerializationFormat m) const;
+  bool SerializeToFile(const std::string& filename, SerializationFormat m) const;
+  bool SerializeFromString(const std::string& src, const SESubstanceManager& subMgr, SerializationFormat m);
+  bool SerializeFromFile(const std::string& filename, const SESubstanceManager& subMgr, SerializationFormat m);
 
   virtual std::string GetName() const;
   virtual void SetName(const std::string& name);

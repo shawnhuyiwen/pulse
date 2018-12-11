@@ -6,7 +6,7 @@
 #include "io/protobuf/PBAnesthesiaMachine.h"
 #include "io/protobuf/PBActions.h"
 #include "io/protobuf/PBProperties.h"
-#include "bind/cdm/AnesthesiaMachineActions.pb.h"
+#include "bind/cpp/cdm/AnesthesiaMachineActions.pb.h"
 #include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineAction.h"
 #include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineConfiguration.h"
 #include "system/equipment/anesthesiamachine/actions/SEOxygenWallPortPressureLoss.h"

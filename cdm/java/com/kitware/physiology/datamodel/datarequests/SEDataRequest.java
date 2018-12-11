@@ -5,10 +5,9 @@ package com.kitware.physiology.datamodel.datarequests;
 
 import java.io.Serializable;
 
-import com.kitware.physiology.cdm.Scenario.DataRequestData;
-import com.kitware.physiology.cdm.Scenario.DecimalFormatData;
-import com.kitware.physiology.cdm.ScenarioEnums.eDataRequest;
-import com.kitware.physiology.cdm.ScenarioEnums.eDecimalFormat;
+import com.kitware.physiology.cdm.Engine.DataRequestData;
+import com.kitware.physiology.cdm.EngineEnums.eDataRequest;
+import com.kitware.physiology.cdm.EngineEnums.eDecimalFormat;
 
 public class SEDataRequest implements Serializable
 {

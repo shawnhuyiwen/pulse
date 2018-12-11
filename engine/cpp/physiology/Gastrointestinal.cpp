@@ -8,11 +8,11 @@
 #include "controller/Substances.h"
 #include "PulseConfiguration.h"
 // Conditions
-#include "scenario/SEConditionManager.h"
+#include "engine/SEConditionManager.h"
 #include "patient/conditions/SEConsumeMeal.h"
 // Actions
-#include "scenario/SEActionManager.h"
-#include "scenario/SEPatientActionCollection.h"
+#include "engine/SEActionManager.h"
+#include "engine/SEPatientActionCollection.h"
 #include "patient/actions/SEConsumeNutrients.h"
 // Dependent Systems
 #include "system/physiology/SEBloodChemistrySystem.h"
@@ -263,7 +263,7 @@ void Gastrointestinal::PreProcess()
       if (c->HasNutritionFile())
       {// Grab file, then load it (note GetNutrition will remove the file name, so get it first)
         std::string file = c->GetNutritionFile();
-        if (!c->GetNutrition().SerializeFromFile(file,ASCII))
+        if (!c->GetNutrition().SerializeFromFile(file,JSON))
         {
           /// \error Unable to read consume meal action file
           Error("Could not read provided nutrition file", "Gastrointestinal::PreProcess");

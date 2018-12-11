@@ -26,19 +26,19 @@ void SETestReport::Reset()
 {
 }
 
-bool SETestReport::SerializeToString(std::string& output, SerializationMode m) const
+bool SETestReport::SerializeToString(std::string& output, SerializationFormat m) const
 {
   return PBTestReport::SerializeToString(*this, output, m);
 }
-bool SETestReport::SerializeToFile(const std::string& filename, SerializationMode m) const
+bool SETestReport::SerializeToFile(const std::string& filename, SerializationFormat m) const
 {
   return PBTestReport::SerializeToFile(*this, filename, m);
 }
-bool SETestReport::SerializeFromString(const std::string& src, SerializationMode m)
+bool SETestReport::SerializeFromString(const std::string& src, SerializationFormat m)
 {
   return PBTestReport::SerializeFromString(src, *this, m);
 }
-bool SETestReport::SerializeFromFile(const std::string& filename, SerializationMode m)
+bool SETestReport::SerializeFromFile(const std::string& filename, SerializationFormat m)
 {
   return PBTestReport::SerializeFromFile(filename, *this, m);
 }

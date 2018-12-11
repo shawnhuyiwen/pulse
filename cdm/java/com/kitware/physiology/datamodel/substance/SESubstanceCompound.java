@@ -6,8 +6,8 @@ package com.kitware.physiology.datamodel.substance;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.protobuf.TextFormat;
-import com.google.protobuf.TextFormat.ParseException;
+import com.google.protobuf.*;
+import com.google.protobuf.util.*;
 import com.kitware.physiology.cdm.Patient.PatientData;
 import com.kitware.physiology.cdm.Substance.SubstanceCompoundData;
 import com.kitware.physiology.cdm.Substance.SubstanceConcentrationData;
@@ -35,15 +35,15 @@ public class SESubstanceCompound
       this.components.clear();
   }
   
-  public void readFile(String fileName, SESubstanceManager mgr) throws ParseException
+  public void readFile(String fileName, SESubstanceManager mgr) throws InvalidProtocolBufferException
   {
     SubstanceCompoundData.Builder builder = SubstanceCompoundData.newBuilder();
-    TextFormat.getParser().merge(FileUtils.readFile(fileName), builder);
+    JsonFormat.parser().merge(FileUtils.readFile(fileName), builder);
     SESubstanceCompound.load(builder.build(), this, mgr);
   }
-  public void writeFile(String fileName)
+  public void writeFile(String fileName) throws InvalidProtocolBufferException
   {
-    FileUtils.writeFile(fileName, SESubstanceCompound.unload(this).toString());
+    FileUtils.writeFile(fileName, JsonFormat.printer().print(SESubstanceCompound.unload(this)));
   }
   
   public static void load(SubstanceCompoundData src, SESubstanceCompound dst, SESubstanceManager mgr)

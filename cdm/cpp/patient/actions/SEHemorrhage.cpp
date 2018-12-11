@@ -10,6 +10,7 @@ SEHemorrhage::SEHemorrhage() : SEPatientAction()
 {
   m_Compartment = "";
   m_Rate=nullptr;
+  m_Type = eHemorrhage_Type::External;
 }
 
 SEHemorrhage::~SEHemorrhage()
@@ -22,6 +23,7 @@ void SEHemorrhage::Clear()
   SEPatientAction::Clear();
   m_Compartment = "";
   SAFE_DELETE(m_Rate);
+  m_Type = eHemorrhage_Type::External;
 }
 
 void SEHemorrhage::Copy(const SEHemorrhage& src)
@@ -76,12 +78,22 @@ double SEHemorrhage::GetRate(const VolumePerTimeUnit& unit) const
   return m_Rate->GetValue(unit);
 }
 
+eHemorrhage_Type SEHemorrhage::GetType() const
+{
+  return m_Type;
+}
+void SEHemorrhage::SetType(eHemorrhage_Type Type)
+{
+  m_Type = Type;
+}
+
 void SEHemorrhage::ToString(std::ostream &str) const
 {
   str << "Patient Action : Hemorrhage"; 
   if(HasComment())
     str<<"\n\tComment: "<<m_Comment;
   str << "\n\tRate: "; HasRate() ? str << *m_Rate : str << "NaN";
-  str << "\n\tFor Compartment: "; HasCompartment()? str << GetCompartment() : str << "No Compartment Set"; 
+  str << "\n\tFor Compartment: "; HasCompartment()? str << GetCompartment() : str << "No Compartment Set";
+  str << "\n\tType: " << eHemorrhage_Type_Name(GetType());
   str << std::flush;
 }

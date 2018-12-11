@@ -28,6 +28,6 @@ public:
 
   virtual void Clear();
 
-  virtual bool SerializeToString(std::string& output, SerializationMode m) const=0;
-  virtual bool SerializeToFile(const std::string& filename, SerializationMode m) const=0;
+  virtual bool SerializeToString(std::string& output, SerializationFormat m) const=0;
+  virtual bool SerializeToFile(const std::string& filename, SerializationFormat m) const=0;
 };  

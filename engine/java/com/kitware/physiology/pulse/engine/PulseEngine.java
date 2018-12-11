@@ -5,21 +5,19 @@ package com.kitware.physiology.pulse.engine;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.protobuf.TextFormat;
-import com.google.protobuf.TextFormat.ParseException;
+import com.google.protobuf.*;
+import com.google.protobuf.util.*;
 import com.kitware.physiology.cdm.PatientAssessmentEnums.ePatientAssessment;
 import com.kitware.physiology.cdm.PatientAssessments.CompleteBloodCountData;
 import com.kitware.physiology.cdm.PatientAssessments.ComprehensiveMetabolicPanelData;
 import com.kitware.physiology.cdm.PatientAssessments.PulmonaryFunctionTestData;
 import com.kitware.physiology.cdm.PatientAssessments.UrinalysisData;
-import com.kitware.physiology.cdm.Scenario.ActionListData;
-import com.kitware.physiology.cdm.Scenario.ConditionListData;
+import com.kitware.physiology.cdm.Engine.ActionListData;
 import com.kitware.physiology.pulse.PulseState.StateData;
 
 import com.kitware.physiology.datamodel.actions.SEAction;
-import com.kitware.physiology.datamodel.conditions.SECondition;
 import com.kitware.physiology.datamodel.datarequests.SEDataRequestManager;
-import com.kitware.physiology.datamodel.patient.SEPatient;
+import com.kitware.physiology.datamodel.engine.SEPatientConfiguration;
 import com.kitware.physiology.datamodel.patient.assessments.SECompleteBloodCount;
 import com.kitware.physiology.datamodel.patient.assessments.SEComprehensiveMetabolicPanel;
 import com.kitware.physiology.datamodel.patient.assessments.SEPatientAssessment;
@@ -27,7 +25,6 @@ import com.kitware.physiology.datamodel.patient.assessments.SEPulmonaryFunctionT
 import com.kitware.physiology.datamodel.patient.assessments.SEUrinalysis;
 import com.kitware.physiology.datamodel.properties.CommonUnits.TimeUnit;
 import com.kitware.physiology.datamodel.properties.SEScalarTime;
-import com.kitware.physiology.utilities.FileUtils;
 import com.kitware.physiology.utilities.Log;
 
 public class PulseEngine extends Pulse
@@ -78,30 +75,22 @@ public class PulseEngine extends Pulse
     return nativeSerializeFromFile(this.nativeObj, stateFile, simTime_s, dataRequestsStr);
   }
   
-  public synchronized StateData serializeToFile(String stateFile) throws ParseException
+  public synchronized StateData serializeToFile(String stateFile) throws InvalidProtocolBufferException
   {
     String str = nativeSerializeToFile(this.nativeObj, stateFile);
     StateData.Builder sd = StateData.newBuilder();
-    TextFormat.getParser().merge(str, sd);
+    JsonFormat.parser().merge(str, sd);
     return sd.build();
   }
 
-  public synchronized boolean initializeEngine(String logFile, SEPatient patient, List<SECondition> conditions, SEDataRequestManager dataRequests)
+  public synchronized boolean initializeEngine(String logFile, SEPatientConfiguration patient_configuration, SEDataRequestManager dataRequests)
   {    
     this.reset();
-    String patientStr = SEPatient.unload(patient).toString();
-    if(patientStr == null || patientStr.isEmpty())
+    String patient_configurationStr = SEPatientConfiguration.unload(patient_configuration).toString();
+    if(patient_configurationStr == null || patient_configurationStr.isEmpty())
     {
-      Log.error("Invalid/No patient provided");
+      Log.error("Invalid/No patient configuration provided");
       return false;
-    }
-    String conditionsStr = null;
-    if(conditions !=null && !conditions.isEmpty())
-    {
-      ConditionListData.Builder cData = ConditionListData.newBuilder();
-      for(SECondition c : conditions)
-      	cData.addAnyCondition(SECondition.CDM2ANY(c));
-      conditionsStr = cData.toString();
     }
     String dataRequestsStr = null;
     if(dataRequests !=null && !dataRequests.getRequestedData().isEmpty())
@@ -113,40 +102,7 @@ public class PulseEngine extends Pulse
     }
     this.requestData(dataRequests);
     this.nativeObj = nativeAllocate(logFile);
-    this.deadEngine = !nativeInitializeEngine(this.nativeObj, patientStr, conditionsStr, dataRequestsStr);
-    if(this.deadEngine)
-      Log.error("Unable to initialize engine");
-    return !this.deadEngine;
-  }
-  
-  public synchronized boolean initializeEngine(String logFile, String patientFile, List<SECondition> conditions, SEDataRequestManager dataRequests)
-  {    
-    this.reset();
-    String patientStr = FileUtils.readFile(patientFile);
-    if(patientStr == null || patientStr.isEmpty())
-    {
-      Log.error("Invalid/No patient provided");
-      return false;
-    }
-    String conditionsStr = null;
-    if(conditions !=null && !conditions.isEmpty())
-    {
-      ConditionListData.Builder cData = ConditionListData.newBuilder();
-      for(SECondition c : conditions)
-      	cData.addAnyCondition(SECondition.CDM2ANY(c));
-      conditionsStr = cData.toString();
-    }
-    String dataRequestsStr = null;
-    if(dataRequests !=null && !dataRequests.getRequestedData().isEmpty())
-    	dataRequestsStr = SEDataRequestManager.unload(dataRequests).toString();
-    if(dataRequestsStr == null)
-    {
-      Log.error("Invalid/No data requests provided");
-      return false;
-    }
-    this.requestData(dataRequests);
-    this.nativeObj = nativeAllocate(logFile);
-    this.deadEngine = !nativeInitializeEngine(this.nativeObj, patientStr, conditionsStr, dataRequestsStr);
+    this.deadEngine = !nativeInitializeEngine(this.nativeObj, patient_configurationStr, dataRequestsStr);
     if(this.deadEngine)
       Log.error("Unable to initialize engine");
     return !this.deadEngine;
@@ -203,7 +159,7 @@ public class PulseEngine extends Pulse
     return true;
   }
   
-  public synchronized boolean getPatientAssessment(SEPatientAssessment assessment) throws ParseException
+  public synchronized boolean getPatientAssessment(SEPatientAssessment assessment) throws InvalidProtocolBufferException
   {
     if(this.deadEngine)
     {
@@ -214,7 +170,7 @@ public class PulseEngine extends Pulse
     {
     	PulmonaryFunctionTestData.Builder b = PulmonaryFunctionTestData.newBuilder();
       String str = nativeGetAssessment(this.nativeObj, ePatientAssessment.Type.PulmonaryFunctionTest.ordinal());
-      TextFormat.getParser().merge(str, b);
+      JsonFormat.parser().merge(str, b);
       SEPulmonaryFunctionTest.load(b.build(),((SEPulmonaryFunctionTest)assessment));
       return true;
     }
@@ -223,7 +179,7 @@ public class PulseEngine extends Pulse
     {
     	CompleteBloodCountData.Builder b = CompleteBloodCountData.newBuilder();
       String str = nativeGetAssessment(this.nativeObj, ePatientAssessment.Type.CompleteBloodCount.ordinal());
-      TextFormat.getParser().merge(str, b);
+      JsonFormat.parser().merge(str, b);
       SECompleteBloodCount.load(b.build(),((SECompleteBloodCount)assessment));
       return true;
     }
@@ -232,7 +188,7 @@ public class PulseEngine extends Pulse
     {
     	ComprehensiveMetabolicPanelData.Builder b = ComprehensiveMetabolicPanelData.newBuilder();
       String str = nativeGetAssessment(this.nativeObj, ePatientAssessment.Type.ComprehensiveMetabolicPanel.ordinal());
-      TextFormat.getParser().merge(str, b);
+      JsonFormat.parser().merge(str, b);
       SEComprehensiveMetabolicPanel.load(b.build(),((SEComprehensiveMetabolicPanel)assessment));
       return true;
     }
@@ -241,7 +197,7 @@ public class PulseEngine extends Pulse
     {
     	UrinalysisData.Builder b = UrinalysisData.newBuilder();
       String str = nativeGetAssessment(this.nativeObj, ePatientAssessment.Type.Urinalysis.ordinal());
-      TextFormat.getParser().merge(str, b);
+      JsonFormat.parser().merge(str, b);
       SEUrinalysis.load(b.build(),((SEUrinalysis)assessment));
       return true;
     }
@@ -255,7 +211,7 @@ public class PulseEngine extends Pulse
    */
   protected native void nativeReset(long nativeObj);
   
-  protected native boolean nativeInitializeEngine(long nativeObj, String patient, String conditions, String dataRequests);
+  protected native boolean nativeInitializeEngine(long nativeObj, String patient_configuration, String dataRequests);
   protected native boolean nativeSerializeFromFile(long nativeObj, String stateFile, double simTime_s, String dataRequests);// pass <0 as simTime to use the time in the file
   protected native String  nativeSerializeToFile(long nativeObj, String stateFile);
   protected native boolean nativeAdvanceTimeStep(long nativeObj);

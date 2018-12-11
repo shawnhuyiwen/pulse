@@ -21,8 +21,8 @@
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceFraction.h"
 #include "substance/SESubstanceClearance.h"
-#include "scenario/SEActionManager.h"
-#include "scenario/SEPatientActionCollection.h"
+#include "engine/SEActionManager.h"
+#include "engine/SEPatientActionCollection.h"
 #include "patient/actions/SEUrinate.h"
 #include "properties/SEScalarFlowResistance.h"
 #include "properties/SEScalarMass.h"
@@ -47,7 +47,7 @@ void PulseEngineTest::RenalCircuitAndTransportTest(const std::string& sTestDirec
   std::ofstream graphFile;
 
   PulseController pc(sTestDirectory + "/RenalCircuitAndTransportTest.log");
-  pc.GetPatient().SerializeFromFile("./patients/StandardMale.pba",ASCII);
+  pc.GetPatient().SerializeFromFile("./patients/StandardMale.json",JSON);
   pc.SetupPatient();
   pc.m_Config->EnableRenal(eSwitch::On);
   pc.m_Config->EnableTissue(eSwitch::Off);
@@ -173,7 +173,7 @@ void PulseEngineTest::RenalFeedbackTest(RenalFeedback feedback, const std::strin
   TimingProfile tmr;
   tmr.Start("Test");
   PulseController pc(sTestDirectory + "/RenalFeedbackTest.log");
-  pc.GetPatient().SerializeFromFile("./patients/StandardMale.pba",ASCII);
+  pc.GetPatient().SerializeFromFile("./patients/StandardMale.json",JSON);
   pc.SetupPatient();
   pc.m_Config->EnableRenal(eSwitch::On);
   pc.m_Config->EnableTissue(eSwitch::Off);
@@ -488,7 +488,7 @@ void PulseEngineTest::RenalSystemTest(RenalSystems systemtest, const std::string
   TimingProfile tmr;
   tmr.Start("Test");
   PulseController pc(sTestDirectory + "/RenalSystemTest.log");
-  pc.GetPatient().SerializeFromFile("./patients/StandardMale.pba",ASCII);
+  pc.GetPatient().SerializeFromFile("./patients/StandardMale.json",JSON);
   pc.SetupPatient();
   pc.m_Config->EnableRenal(eSwitch::On);
   pc.m_Config->EnableTissue(eSwitch::Off);

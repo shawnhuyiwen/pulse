@@ -3,7 +3,7 @@
 
 #include "EngineHowTo.h"
 // Include the various types you will be using in your code
-#include "scenario/SEDataRequestManager.h"
+#include "engine/SEDataRequestManager.h"
 #include "patient/assessments/SEPulmonaryFunctionTest.h"
 #include "system/physiology/SEBloodChemistrySystem.h"
 #include "system/physiology/SECardiovascularSystem.h"
@@ -34,7 +34,7 @@ void HowToPulmonaryFunctionTest()
   // Create the engine and load the patient
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowToPulmonaryFunctionTest.log");
   pe->GetLogger()->Info("HowToPulmonaryFunctionTest");
-  if (!pe->SerializeFromFile("./states/StandardMale@0s.pba", ASCII))
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.json", JSON))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;

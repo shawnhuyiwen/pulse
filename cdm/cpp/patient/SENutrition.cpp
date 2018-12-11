@@ -45,19 +45,19 @@ void SENutrition::Copy(const SENutrition& src)
   PBPatientNutrition::Copy(src, *this);
 }
 
-bool SENutrition::SerializeToString(std::string& output, SerializationMode m) const
+bool SENutrition::SerializeToString(std::string& output, SerializationFormat m) const
 {
   return PBPatientNutrition::SerializeToString(*this, output, m);
 }
-bool SENutrition::SerializeToFile(const std::string& filename, SerializationMode m) const
+bool SENutrition::SerializeToFile(const std::string& filename, SerializationFormat m) const
 {
   return PBPatientNutrition::SerializeToFile(*this, filename, m);
 }
-bool SENutrition::SerializeFromString(const std::string& src, SerializationMode m)
+bool SENutrition::SerializeFromString(const std::string& src, SerializationFormat m)
 {
   return PBPatientNutrition::SerializeFromString(src, *this, m);
 }
-bool SENutrition::SerializeFromFile(const std::string& filename, SerializationMode m)
+bool SENutrition::SerializeFromFile(const std::string& filename, SerializationFormat m)
 {
   return PBPatientNutrition::SerializeFromFile(filename, *this, m);
 }

@@ -6,7 +6,7 @@
 #include "io/protobuf/PBAnesthesiaMachine.h"
 #include "io/protobuf/PBElectroCardioGram.h"
 #include "io/protobuf/PBInhaler.h"
-#include "bind/pulse/PulseEquipment.pb.h"
+#include "bind/cpp/pulse/PulseEquipment.pb.h"
 #include "equipment/AnesthesiaMachine.h"
 #include "equipment/ECG.h"
 #include "equipment/Inhaler.h"

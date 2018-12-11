@@ -4,7 +4,7 @@
 // The following how-to functions demonstrate various ways of interacting with the Pulse engine
 #include "EngineHowTo.h"
 #include "engine/SEEngineTracker.h"
-#include "scenario/SEDataRequest.h"
+#include "engine/SEDataRequest.h"
 #include "properties/SEScalarTime.h"
 
 int main()
@@ -15,8 +15,9 @@ int main()
 
   //HowToEngineUse();
   //HowToCreateAPatient();
+  HowToSerialize();
 
-  HowToAirwayObstruction();
+  //HowToAirwayObstruction();
   //HowToAnesthesiaMachine();
   //HowToAsthmaAttack();
   //HowToBrainInjury();

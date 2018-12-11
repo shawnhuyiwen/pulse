@@ -6,9 +6,8 @@ import java.util.*;
 
 import com.kitware.physiology.datamodel.properties.*;
 import com.kitware.physiology.utilities.FileUtils;
-
-import com.google.protobuf.TextFormat;
-import com.google.protobuf.TextFormat.ParseException;
+import com.google.protobuf.util.*;
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.kitware.physiology.cdm.PatientEnums.ePatient.*;
 import com.kitware.physiology.cdm.Patient.PatientData;
 
@@ -117,15 +116,15 @@ public class SEPatient
     events.clear();
   }
   
-  public void readFile(String fileName) throws ParseException
+  public void readFile(String fileName) throws InvalidProtocolBufferException
   {
     PatientData.Builder builder = PatientData.newBuilder();
-    TextFormat.getParser().merge(FileUtils.readFile(fileName), builder);
+    JsonFormat.parser().merge(FileUtils.readFile(fileName), builder);
     SEPatient.load(builder.build(), this);
   }
-  public void writeFile(String fileName)
+  public void writeFile(String fileName) throws InvalidProtocolBufferException
   {
-    FileUtils.writeFile(fileName, SEPatient.unload(this).toString());
+    FileUtils.writeFile(fileName, JsonFormat.printer().print(SEPatient.unload(this)));
   }
 
   public static void load(PatientData src, SEPatient dst)

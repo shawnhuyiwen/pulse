@@ -15,8 +15,8 @@ public:
   static void Serialize(const pulse::proto::ScenarioData& src, PulseScenario& dst);
   static void Serialize(const PulseScenario& src, pulse::proto::ScenarioData& dst);
 
-  static bool SerializeToString(const PulseScenario& src, std::string& output, SerializationMode m);
-  static bool SerializeToFile(const PulseScenario& src, const std::string& filename, SerializationMode m);
-  static bool SerializeFromString(const std::string& src, PulseScenario& dst, SerializationMode m);
-  static bool SerializeFromFile(const std::string& filename, PulseScenario& dst, SerializationMode m);
+  static bool SerializeToString(const PulseScenario& src, std::string& output, SerializationFormat m);
+  static bool SerializeToFile(const PulseScenario& src, const std::string& filename, SerializationFormat m);
+  static bool SerializeFromString(const std::string& src, PulseScenario& dst, SerializationFormat m);
+  static bool SerializeFromFile(const std::string& filename, PulseScenario& dst, SerializationFormat m);
 };

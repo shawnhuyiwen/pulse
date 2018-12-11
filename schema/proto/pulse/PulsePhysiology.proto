@@ -50,6 +50,11 @@ message CardiovascularData
   cdm.RunningAverageData         CardiacCyclePulmonaryArteryPressure_mmHg            = 30;
   cdm.RunningAverageData         CardiacCycleCentralVenousPressure_mmHg              = 31;
   cdm.RunningAverageData         CardiacCycleSkinFlow_mL_Per_s                       = 32;
+  
+  repeated string                HemorrhageLinks                                     = 33;
+  repeated string                HemorrhagePaths                                     = 34;
+  repeated string                InternalHemorrhageLinks                             = 35;
+  repeated string                InternalHemorrhagePaths                             = 36;
 }
 
 message DrugData

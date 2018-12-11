@@ -8,6 +8,6 @@ class CDM_DECL PBUtils
 {
 public:
 
-  static bool SerializeFromString(const std::string& src, google::protobuf::Message& dst, SerializationMode m);
-  static bool SerializeToString(const google::protobuf::Message& src, std::string& output, SerializationMode m);
+  static bool SerializeFromString(const std::string& src, google::protobuf::Message& dst, SerializationFormat m);
+  static bool SerializeToString(const google::protobuf::Message& src, std::string& output, SerializationFormat m);
 };

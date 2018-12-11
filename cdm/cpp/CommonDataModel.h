@@ -116,7 +116,7 @@ struct CommonDataModelException : public std::runtime_error
 #include "Macros.h"
 #include "utils/Logger.h"
 
-enum SerializationMode { BINARY = 0, ASCII };
+enum SerializationFormat { BINARY = 0, JSON };
 
 // General Enums
 // Keep enums in sync with appropriate schema/cdm/Enums.proto file !!

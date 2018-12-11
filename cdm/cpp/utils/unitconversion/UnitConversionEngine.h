@@ -43,24 +43,14 @@ public:
     if (uce == nullptr)
     {
       uce = new CUnitConversionEngine();
-      uce->LoadDefinitionsFlatFile(uce->GetWorkingDirectory() + "/UCEDefs.txt");
+      uce->LoadDefinitions();
     }
     return *uce;
   }
 
   static void DestroyEngine()
   {
-    SAFE_DELETE(uce);  
-  }
-
-  void SetWorkingDirectory(const std::string& wrkDir)
-  {
-    m_wrkDir = wrkDir;
-  }
-
-  const std::string& GetWorkingDirectory() const
-  {
-      return m_wrkDir;
+    SAFE_DELETE(uce);
   }
 
   // Do conversion, using either string or CCompoundUnit specifications, and
@@ -163,7 +153,7 @@ public:
     return m_iNumFundamentalQuantities;
   }
 
-  void LoadDefinitionsFlatFile(const std::string &FileNamne);
+  void LoadDefinitions();
 
   // These are the methods that the LoadDefinitions methods call to build up the 
   // internal database of units information
@@ -200,5 +190,6 @@ private:
   int m_iNumFundamentalQuantities;
   int m_iNumQuantities;
 
-  std::string m_wrkDir;// I made this static and accessable for another project, so this is legacy and could be removed if causing issues
+  std::stringstream m_UCEdefs;
+  void GetUCEdefs();
 };

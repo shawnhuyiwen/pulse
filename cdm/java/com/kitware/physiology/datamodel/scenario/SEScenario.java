@@ -4,17 +4,16 @@
 package com.kitware.physiology.datamodel.scenario;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import com.google.protobuf.TextFormat;
+import com.google.protobuf.*;
 import com.google.protobuf.TextFormat.ParseException;
+import com.google.protobuf.util.*;
 import com.kitware.physiology.cdm.Enums.eSide;
 import com.kitware.physiology.cdm.Enums.eSwitch;
-import com.kitware.physiology.cdm.Scenario.AnyActionData;
+import com.kitware.physiology.cdm.Engine.AnyActionData;
 import com.kitware.physiology.cdm.Scenario.ScenarioData;
-import com.kitware.physiology.cdm.ScenarioEnums.eDataRequest;
+import com.kitware.physiology.cdm.EngineEnums.eDataRequest;
 import com.kitware.physiology.pulse.Pulse;
 import com.kitware.physiology.cdm.AnesthesiaMachineEnums.eAnesthesiaMachine;
 import com.kitware.physiology.cdm.PatientAssessmentEnums.ePatientAssessment;
@@ -22,6 +21,7 @@ import com.kitware.physiology.cdm.PatientAssessmentEnums.ePatientAssessment;
 import com.kitware.physiology.datamodel.actions.SEAction;
 import com.kitware.physiology.datamodel.actions.SEAdvanceTime;
 import com.kitware.physiology.datamodel.datarequests.*;
+import com.kitware.physiology.datamodel.engine.SEPatientConfiguration;
 import com.kitware.physiology.datamodel.patient.actions.SEBronchoconstriction;
 import com.kitware.physiology.datamodel.patient.actions.SENeedleDecompression;
 import com.kitware.physiology.datamodel.patient.actions.SEPatientAssessmentRequest;
@@ -36,12 +36,14 @@ import com.kitware.physiology.datamodel.substance.SESubstanceManager;
 import com.kitware.physiology.datamodel.system.equipment.anesthesia.actions.SEAnesthesiaMachineConfiguration;
 import com.kitware.physiology.utilities.FileUtils;
 import com.kitware.physiology.utilities.Log;
-import com.kitware.physiology.utilities.SimpleEquals;
+import com.kitware.physiology.utilities.jniBridge;
 
 public class SEScenario 
 {
 	public static void main(String[] args)
 	{
+	  jniBridge.initialize();
+	  
 		SESubstanceManager mgr = new SESubstanceManager();
 		mgr.loadSubstanceDirectory();
 
@@ -49,12 +51,12 @@ public class SEScenario
 			SEScenario s = new SEScenario(mgr);
 			s.setName("Test");
 			s.setDescription("Description");
-			s.getInitialParameters().setPatientFile("StandardMale.pba");
+			s.getPatientConfiguration().setPatientFile("StandardMale.json");
 
 
 			SEChronicAnemia cond = new SEChronicAnemia();
 			cond.getReductionFactor().setValue(0.5);
-			s.getInitialParameters().getConditions().add(cond);
+			s.getPatientConfiguration().getConditions().add(cond);
 
 			SEDataRequest dr = new SEDataRequest();
 			dr.setCategory(eDataRequest.Category.Physiology);
@@ -102,16 +104,22 @@ public class SEScenario
 			nd.setSide(eSide.Left);
 			s.getActions().add(nd);
 			System.out.println(SEScenario.unload(s).toString());
-			s.writeFile("TestScenario.pba");
+			try 
+			{
+        s.writeFile("TestScenario.json");
+      } 
+			catch (InvalidProtocolBufferException e1)
+			{
+        e1.printStackTrace();
+      }
 
 			SEScenario s2 = new SEScenario(mgr);
 			try 
 			{
-				s2.readFile("TestScenario.pba");
+				s2.readFile("TestScenario.json");
 			} 
-			catch (ParseException e) 
+			catch (InvalidProtocolBufferException e) 
 			{
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			for(SEAction a : s2.getActions())
@@ -121,21 +129,19 @@ public class SEScenario
 			}
 		}
 
-		boolean onlyCheckSchema=true;
-
 		String searchDir;
 		if(args.length==0)
 			searchDir="./verification/scenarios/";
 		else
 			searchDir=args[0];
-		List<String> files=FileUtils.findFiles(searchDir, ".pba", true);
+		List<String> files=FileUtils.findFiles(searchDir, ".json", true);
 		for(String file : files)
 		{
 			if(file.indexOf("@")>-1)
 				continue; // An assessment
 			
-			String pba = FileUtils.readFile(file);
-			if(pba==null)
+			String json = FileUtils.readFile(file);
+			if(json==null)
 			{
 				Log.error("Could not read file : "+file);
 				continue;
@@ -143,7 +149,7 @@ public class SEScenario
 			Pulse.ScenarioData.Builder pBuilder = Pulse.ScenarioData.newBuilder();
 			try
 			{
-				TextFormat.getParser().merge(pba, pBuilder);
+				JsonFormat.parser().merge(json, pBuilder);
 				Log.info(file+" is a good Pulse scenario");
 				continue;
 			}
@@ -156,7 +162,7 @@ public class SEScenario
 					sce1.readFile(file);
 					continue;
 				}
-				catch(ParseException ex1)
+				catch(InvalidProtocolBufferException ex1)
 				{
 					Log.error("Unable to read file "+file,ex1);
 				}
@@ -223,7 +229,7 @@ public class SEScenario
 
 	protected String                        name;
 	protected String                        description;
-	protected SEScenarioInitialParameters   params;
+	protected SEPatientConfiguration   params;
 	protected String                        engineStateFile;
 	protected SEDataRequestManager          drMgr = new SEDataRequestManager();
 	protected List<SEAction>                actions = new ArrayList<SEAction>();
@@ -246,15 +252,15 @@ public class SEScenario
 		this.drMgr.reset();
 	}
 
-	public void readFile(String fileName) throws ParseException
+	public void readFile(String fileName) throws InvalidProtocolBufferException
 	{
 		ScenarioData.Builder builder = ScenarioData.newBuilder();
-		TextFormat.getParser().merge(FileUtils.readFile(fileName), builder);
+		JsonFormat.parser().merge(FileUtils.readFile(fileName), builder);
 		SEScenario.load(builder.build(), this);
 	}
-	public void writeFile(String fileName)
+	public void writeFile(String fileName) throws InvalidProtocolBufferException
 	{
-		FileUtils.writeFile(fileName, SEScenario.unload(this).toString());
+		FileUtils.writeFile(fileName, JsonFormat.printer().print(SEScenario.unload(this)));
 	}
 
 	public static void load(ScenarioData src, SEScenario dst)
@@ -264,13 +270,12 @@ public class SEScenario
 		dst.name = src.getName();
 		dst.description = src.getDescription();
 
-		switch(src.getStartTypeCase())
+		if(src.hasStartType())
 		{
-		case ENGINESTATEFILE:
-			dst.engineStateFile = src.getEngineStateFile();
-			break;
-		case INITIALPARAMETERS:
-			SEScenarioInitialParameters.load(src.getInitialParameters(),dst.getInitialParameters(),dst.subMgr);
+		  if(src.getStartType().hasPatientConfiguration())
+		    SEPatientConfiguration.load(src.getStartType().getPatientConfiguration(),dst.getPatientConfiguration(),dst.subMgr);
+		  else 
+			  dst.engineStateFile = src.getStartType().getEngineStateFile();
 		}
 
 		if(src.hasDataRequestManager())
@@ -296,10 +301,10 @@ public class SEScenario
 		if(src.hasDescription())
 			dst.setDescription(src.description);
 
-		if(src.hasInitialParameters())
-			dst.setInitialParameters(SEScenarioInitialParameters.unload(src.params));
+		if(src.hasPatientConfiguration())
+		  dst.getStartTypeBuilder().setPatientConfiguration(SEPatientConfiguration.unload(src.params));
 		else if(src.hasEngineState())
-			dst.setEngineStateFile(src.engineStateFile);
+			dst.getStartTypeBuilder().setEngineStateFile(src.engineStateFile);
 
 		if(!src.drMgr.getRequestedData().isEmpty())
 			dst.setDataRequestManager(SEDataRequestManager.unload(src.drMgr));
@@ -312,7 +317,7 @@ public class SEScenario
 	{
 		if (actions.size() == 0)
 			return false;
-		if(!hasInitialParameters() && !hasEngineState())
+		if(!hasPatientConfiguration() && !hasEngineState())
 			return false;
 		return true;
 	}
@@ -353,13 +358,13 @@ public class SEScenario
 
 	public boolean hasEngineState()
 	{
-		if(hasInitialParameters())
+		if(hasPatientConfiguration())
 			return false;
 		return this.engineStateFile != null && !this.engineStateFile.isEmpty();
 	}
 	public void setEngineState(String stateFile)
 	{
-		invalidateInitialParameters();
+		invalidatePatientConfiguration();
 		this.engineStateFile = stateFile;
 	}
 	public String getEngineState(){ return this.engineStateFile; }
@@ -368,17 +373,17 @@ public class SEScenario
 		this.engineStateFile = null;
 	}
 
-	public boolean hasInitialParameters()
+	public boolean hasPatientConfiguration()
 	{
 		return params!=null && params.isValid();
 	}
-	public SEScenarioInitialParameters getInitialParameters()
+	public SEPatientConfiguration getPatientConfiguration()
 	{
 		if(this.params==null)
-			this.params=new SEScenarioInitialParameters();
+			this.params=new SEPatientConfiguration();
 		return this.params;
 	}
-	public void invalidateInitialParameters()
+	public void invalidatePatientConfiguration()
 	{
 		this.params = null;
 	}

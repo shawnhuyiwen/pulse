@@ -5,7 +5,7 @@
 #include "io/protobuf/PBPatientNutrition.h"
 #include "io/protobuf/PBProperties.h"
 #include "io/protobuf/PBUtils.h"
-#include "bind/cdm/PatientNutrition.pb.h"
+#include "bind/cpp/cdm/PatientNutrition.pb.h"
 #include "patient/SEMeal.h"
 #include "utils/FileUtils.h"
 
@@ -71,13 +71,13 @@ void PBPatientNutrition::Copy(const SENutrition& src, SENutrition& dst)
   PBPatientNutrition::Serialize(data, dst);
 }
 
-bool PBPatientNutrition::SerializeToString(const SENutrition& src, std::string& output, SerializationMode m)
+bool PBPatientNutrition::SerializeToString(const SENutrition& src, std::string& output, SerializationFormat m)
 {
   cdm::NutritionData data;
   PBPatientNutrition::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m);
 }
-bool PBPatientNutrition::SerializeToFile(const SENutrition& src, const std::string& filename, SerializationMode m)
+bool PBPatientNutrition::SerializeToFile(const SENutrition& src, const std::string& filename, SerializationFormat m)
 {
   cdm::NutritionData data;
   PBPatientNutrition::Serialize(src, data);
@@ -86,7 +86,7 @@ bool PBPatientNutrition::SerializeToFile(const SENutrition& src, const std::stri
   return WriteFile(content, filename, m);
 }
 
-bool PBPatientNutrition::SerializeFromString(const std::string& src, SENutrition& dst, SerializationMode m)
+bool PBPatientNutrition::SerializeFromString(const std::string& src, SENutrition& dst, SerializationFormat m)
 {
   cdm::NutritionData data;
   if (!PBUtils::SerializeFromString(src, data, m))
@@ -94,7 +94,7 @@ bool PBPatientNutrition::SerializeFromString(const std::string& src, SENutrition
   PBPatientNutrition::Load(data, dst);
   return true;
 }
-bool PBPatientNutrition::SerializeFromFile(const std::string& filename, SENutrition& dst, SerializationMode m)
+bool PBPatientNutrition::SerializeFromFile(const std::string& filename, SENutrition& dst, SerializationFormat m)
 {
   std::string content = ReadFile(filename, m);
   if (content.empty())
@@ -132,13 +132,13 @@ void PBPatientNutrition::Copy(const SEMeal& src, SEMeal& dst)
   PBPatientNutrition::Serialize(data, dst);
 }
 
-bool PBPatientNutrition::SerializeToString(const SEMeal& src, std::string& output, SerializationMode m)
+bool PBPatientNutrition::SerializeToString(const SEMeal& src, std::string& output, SerializationFormat m)
 {
   cdm::MealData data;
   PBPatientNutrition::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m);
 }
-bool PBPatientNutrition::SerializeToFile(const SEMeal& src, const std::string& filename, SerializationMode m)
+bool PBPatientNutrition::SerializeToFile(const SEMeal& src, const std::string& filename, SerializationFormat m)
 {
   cdm::MealData data;
   PBPatientNutrition::Serialize(src, data);
@@ -147,7 +147,7 @@ bool PBPatientNutrition::SerializeToFile(const SEMeal& src, const std::string& f
   return WriteFile(content, filename, m);
 }
 
-bool PBPatientNutrition::SerializeFromString(const std::string& src, SEMeal& dst, SerializationMode m)
+bool PBPatientNutrition::SerializeFromString(const std::string& src, SEMeal& dst, SerializationFormat m)
 {
   cdm::MealData data;
   if (!PBUtils::SerializeFromString(src, data, m))
@@ -155,7 +155,7 @@ bool PBPatientNutrition::SerializeFromString(const std::string& src, SEMeal& dst
   PBPatientNutrition::Load(data, dst);
   return true;
 }
-bool PBPatientNutrition::SerializeFromFile(const std::string& filename, SEMeal& dst, SerializationMode m)
+bool PBPatientNutrition::SerializeFromFile(const std::string& filename, SEMeal& dst, SerializationFormat m)
 {
   std::string content = ReadFile(filename, m);
   if (content.empty())

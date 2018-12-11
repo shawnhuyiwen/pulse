@@ -25,19 +25,19 @@ void CommonDataModelTest::ReadPatientDirectory(const std::string& rptDirectory)
   testSuite.SetName(testName);
 
   std::vector<std::string> files;
-  ListFiles(dir, files, ".pba");
+  ListFiles(dir, files, ".json");
   for (std::vector<std::string>::iterator it = files.begin(); it != files.end(); ++it) 
   {
-    if(it->find("pba")!=std::string::npos)
+    if(it->find("json")!=std::string::npos)
     {
       pTimer.Start(*it);
       SETestCase& testCase = testSuite.CreateTestCase();
       logger.Info(it->c_str());        
-      if(!obj.SerializeFromFile(*it,ASCII))        
+      if(!obj.SerializeFromFile(*it,JSON))
         testCase.AddFailure("Unable to load patient "+*it);
       testCase.GetDuration().SetValue(pTimer.GetElapsedTime_s("Case"), TimeUnit::s);
       testCase.SetName(obj.GetName());
     }
   }
-  testReport.SerializeToFile(rptDirectory +"/"+testName+"Report.pba",ASCII);
+  testReport.SerializeToFile(rptDirectory +"/"+testName+"Report.json",JSON);
 }

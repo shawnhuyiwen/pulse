@@ -5,7 +5,7 @@
 #include "io/protobuf/PBUtils.h"
 #include "io/protobuf/PBPatientAssessments.h"
 #include "io/protobuf/PBProperties.h"
-#include "bind/cdm/PatientAssessments.pb.h"
+#include "bind/cpp/cdm/PatientAssessments.pb.h"
 #include "patient/assessments/SECompleteBloodCount.h"
 #include "patient/assessments/SEComprehensiveMetabolicPanel.h"
 #include "patient/assessments/SEPulmonaryFunctionTest.h"
@@ -24,13 +24,13 @@ void PBPatientAssessment::Serialize(const SEPatientAssessment& src, cdm::Patient
 
 }
 
-bool PBPatientAssessment::SerializeToString(const SECompleteBloodCount& src, std::string& output, SerializationMode m)
+bool PBPatientAssessment::SerializeToString(const SECompleteBloodCount& src, std::string& output, SerializationFormat m)
 {
   cdm::CompleteBloodCountData data;
   PBPatientAssessment::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m);
 }
-bool PBPatientAssessment::SerializeToFile(const SECompleteBloodCount& src, const std::string& filename, SerializationMode m)
+bool PBPatientAssessment::SerializeToFile(const SECompleteBloodCount& src, const std::string& filename, SerializationFormat m)
 {
   cdm::CompleteBloodCountData data;
   PBPatientAssessment::Serialize(src, data);
@@ -91,13 +91,13 @@ void PBPatientAssessment::Serialize(const SECompleteBloodCount& src, cdm::Comple
     dst.set_allocated_whitebloodcellcount(PBProperty::Unload(*src.m_WhiteBloodCellCount));
 }
 
-bool PBPatientAssessment::SerializeToString(const SEComprehensiveMetabolicPanel& src, std::string& output, SerializationMode m)
+bool PBPatientAssessment::SerializeToString(const SEComprehensiveMetabolicPanel& src, std::string& output, SerializationFormat m)
 {
   cdm::ComprehensiveMetabolicPanelData data;
   PBPatientAssessment::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m);
 }
-bool PBPatientAssessment::SerializeToFile(const SEComprehensiveMetabolicPanel& src, const std::string& filename, SerializationMode m)
+bool PBPatientAssessment::SerializeToFile(const SEComprehensiveMetabolicPanel& src, const std::string& filename, SerializationFormat m)
 {
   cdm::ComprehensiveMetabolicPanelData data;
   PBPatientAssessment::Serialize(src, data);
@@ -183,13 +183,13 @@ void PBPatientAssessment::Serialize(const SEComprehensiveMetabolicPanel& src, cd
 }
 
 
-bool PBPatientAssessment::SerializeToString(const SEPulmonaryFunctionTest& src, std::string& output, SerializationMode m)
+bool PBPatientAssessment::SerializeToString(const SEPulmonaryFunctionTest& src, std::string& output, SerializationFormat m)
 {
   cdm::PulmonaryFunctionTestData data;
   PBPatientAssessment::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m);
 }
-bool PBPatientAssessment::SerializeToFile(const SEPulmonaryFunctionTest& src, const std::string& filename, SerializationMode m)
+bool PBPatientAssessment::SerializeToFile(const SEPulmonaryFunctionTest& src, const std::string& filename, SerializationFormat m)
 {
   cdm::PulmonaryFunctionTestData data;
   PBPatientAssessment::Serialize(src, data);
@@ -273,13 +273,13 @@ void PBPatientAssessment::Serialize(const SEPulmonaryFunctionTest& src, cdm::Pul
     dst.set_allocated_lungvolumeplot(PBProperty::Unload(*src.m_LungVolumePlot));
 }
 
-bool PBPatientAssessment::SerializeToString(const SEUrinalysis& src, std::string& output, SerializationMode m)
+bool PBPatientAssessment::SerializeToString(const SEUrinalysis& src, std::string& output, SerializationFormat m)
 {
   cdm::UrinalysisData data;
   PBPatientAssessment::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m);
 }
-bool PBPatientAssessment::SerializeToFile(const SEUrinalysis& src, const std::string& filename, SerializationMode m)
+bool PBPatientAssessment::SerializeToFile(const SEUrinalysis& src, const std::string& filename, SerializationFormat m)
 {
   cdm::UrinalysisData data;
   PBPatientAssessment::Serialize(src, data);

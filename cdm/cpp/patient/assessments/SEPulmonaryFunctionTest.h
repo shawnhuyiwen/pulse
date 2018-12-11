@@ -16,8 +16,8 @@ public:
 
   virtual void Clear();
 
-  bool SerializeToString(std::string& output, SerializationMode m) const;
-  bool SerializeToFile(const std::string& filename, SerializationMode m) const;
+  bool SerializeToString(std::string& output, SerializationFormat m) const;
+  bool SerializeToFile(const std::string& filename, SerializationFormat m) const;
 
   virtual int GetNumberOfPlotPoints(){ return m_NumberOfPlotPoints; }
   virtual void SetNumberOfPlotPoints(int n){ m_NumberOfPlotPoints = n; }

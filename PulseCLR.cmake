@@ -15,10 +15,10 @@ target_include_directories(PulseCLR PRIVATE ${EIGEN3_INCLUDE_DIR})
 target_include_directories(PulseCLR PRIVATE ${LOG4CPLUS_INCLUDE_DIR})
 target_include_directories(PulseCLR PRIVATE ${PROTOBUF_INCLUDE_DIR})
 
-set(PulseCLR_FLAGS "/EHa")
+set(PulseCLR_FLAGS "/clr /EHa")
 string( REPLACE "/RTC1" "" CMAKE_CXX_FLAGS_DEBUG ${CMAKE_CXX_FLAGS_DEBUG} )
 set_target_properties(PulseCLR PROPERTIES COMPILE_FLAGS "${PulseCLR_FLAGS}" PREFIX "")
-set_target_properties(PulseCLR PROPERTIES COMMON_LANGUAGE_RUNTIME "") # Also turn on CLR
+#set_target_properties(PulseCLR PROPERTIES COMMON_LANGUAGE_RUNTIME "") # CMake > 3.12 only
 message(STATUS "PulseCLR COMPILE_FLAGS : ${CMAKE_CXX_FLAGS_DEBUG}")
 
 set_target_properties(PulseCLR PROPERTIES

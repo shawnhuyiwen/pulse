@@ -29,10 +29,10 @@ void PulseEngineTest::ReadScenarios(const std::string& rptDirectory)
   testSuite.SetName(testName);
 
   std::vector<std::string> files;
-  ListFiles(dir, files, ".pba");
+  ListFiles(dir, files, ".json");
   for (std::vector<std::string>::iterator it = files.begin(); it != files.end(); ++it)
   {
-    if (it->find("pba") != std::string::npos)
+    if (it->find("json") != std::string::npos)
     {
       if (it->find("PFT@") != std::string::npos ||
           it->find("CBC@") != std::string::npos ||
@@ -45,7 +45,7 @@ void PulseEngineTest::ReadScenarios(const std::string& rptDirectory)
       Info(it->c_str());
       try
       {
-        if (scenario.SerializeFromFile(*it,ASCII))
+        if (scenario.SerializeFromFile(*it,JSON))
         {
           if (!scenario.IsValid())
             testCase.AddFailure(*it + " is not a valid scenario!");
@@ -64,5 +64,5 @@ void PulseEngineTest::ReadScenarios(const std::string& rptDirectory)
       testCase.SetName(*it);
     }
   }
-  testReport.SerializeToFile(rptDirectory + "/" + testName + "Report.pba",ASCII);  
+  testReport.SerializeToFile(rptDirectory + "/" + testName + "Report.json",JSON);  
 }

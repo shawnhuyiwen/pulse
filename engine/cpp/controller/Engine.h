@@ -18,26 +18,27 @@ class PULSE_DECL PulseEngine : public PhysiologyEngine, public PulseController
   friend class PBPulseState;//friend the serialization class
 public:
 
-  PulseEngine(Logger* logger);
-  PulseEngine(const std::string&);
+  PulseEngine(Logger* logger, const std::string& data_dir=".");
+  PulseEngine(const std::string&, const std::string& data_dir=".");
   virtual ~PulseEngine();
 
-  virtual bool SerializeFromFile(const std::string& file, SerializationMode m);
-  virtual bool SerializeFromFile(const std::string& file, SerializationMode m, const SEScalarTime* simTime, const SEEngineConfiguration* config);
-  virtual bool SerializeToFile(const std::string& file, SerializationMode m) const;
+  virtual bool SerializeFromFile(const std::string& file, SerializationFormat m);
+  virtual bool SerializeFromFile(const std::string& file, SerializationFormat m, const SEScalarTime* simTime, const SEEngineConfiguration* config);
+  virtual bool SerializeToFile(const std::string& file, SerializationFormat m) const;
 
-  virtual bool SerializeFromString(const std::string& state, SerializationMode m);
-  virtual bool SerializeFromString(const std::string& state, SerializationMode m, const SEScalarTime* simTime, const SEEngineConfiguration* config);
-  virtual bool SerializeToString(std::string& state, SerializationMode m) const;
+  virtual bool SerializeFromString(const std::string& state, SerializationFormat m);
+  virtual bool SerializeFromString(const std::string& state, SerializationFormat m, const SEScalarTime* simTime, const SEEngineConfiguration* config);
+  virtual bool SerializeToString(std::string& state, SerializationFormat m) const;
 
   virtual const SEConditionManager& GetConditionManager() const;
   
   virtual Logger* GetLogger() const;
   virtual SEEngineTracker* GetEngineTracker() const;
 
-  virtual bool InitializeEngine(const std::string& patientFile, const std::vector<const SECondition*>* conditions = nullptr, const SEEngineConfiguration* config = nullptr);
-  virtual bool InitializeEngine(const SEPatient& patient, const std::vector<const SECondition*>* conditions = nullptr, const SEEngineConfiguration* config = nullptr);
+  virtual bool InitializeEngine(const std::string& patient_configuration, SerializationFormat m, const SEEngineConfiguration* config = nullptr);
 
+  virtual bool InitializeEngine(const SEPatientConfiguration& patient_configuration, const SEEngineConfiguration* config = nullptr);
+  
   virtual const SEEngineConfiguration* GetConfiguration() const;
 
   virtual double GetTimeStep(const TimeUnit& unit) const;
@@ -78,7 +79,6 @@ public:
 protected:
 
   virtual bool IsReady() const;
-  virtual bool InitializeEngine(const std::vector<const SECondition*>* conditions = nullptr, const SEEngineConfiguration* config = nullptr);
 
   SEEngineTracker*                                m_EngineTrack;
   std::stringstream                               m_ss;

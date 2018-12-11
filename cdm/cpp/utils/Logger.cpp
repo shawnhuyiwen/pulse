@@ -36,7 +36,6 @@ public:
   {
 
   }
-  log4cplus::Initializer        ref_cnt;// Basically a ref manager class used to manage/destroy logging threads
   log4cplus::Logger             logger;
   log4cplus::SharedAppenderPtr  fileAppender;
   log4cplus::SharedAppenderPtr  consoleAppender;

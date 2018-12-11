@@ -34,7 +34,6 @@
 #include "utils/testing/SETestReport.h"
 #include "utils/testing/SETestCase.h"
 #include "utils/testing/SETestSuite.h"
-#include "bind/cdm/Patient.pb.h"
 
 enum Driver { Sinusoid = 0, Heart };
 
@@ -124,7 +123,7 @@ void PulseEngineTest::TuneCardiovascularCircuitTest(const std::string& sTestDire
       }
     }
   }
-  testReport.SerializeToFile(sTestDirectory + "/TuneCardiovascularCircuitReport.pba",ASCII);
+  testReport.SerializeToFile(sTestDirectory + "/TuneCardiovascularCircuitReport.json",JSON);
 }
 void PulseEngineTest::TuneCardiovascularCircuitTest(SETestSuite& testSuite, const std::string& sTestDirectory, const std::string& sTestName, SEPatient& patient)
 {
@@ -196,7 +195,7 @@ void PulseEngineTest::CardiovascularCircuitAndTransportTest(CardiovascularDriver
   double binding_s = 0;
   PulseController pc(sTestDirectory + "/" + tName.str() + "CircuitAndTransportTest.log");
   pc.GetLogger()->Info("Running " + tName.str());
-  pc.GetPatient().SerializeFromFile("./patients/StandardMale.pba",ASCII);
+  pc.GetPatient().SerializeFromFile("./patients/StandardMale.json",JSON);
   pc.SetupPatient();
   if (heartRate_bpm <= 0)
     heartRate_bpm = pc.GetPatient().GetHeartRateBaseline().GetValue(FrequencyUnit::Per_min);
@@ -213,7 +212,7 @@ void PulseEngineTest::CardiovascularCircuitAndTransportTest(CardiovascularDriver
   if (balanceBloodGases)
   {
     SEEnvironmentalConditions env(pc.GetSubstances());
-    env.SerializeFromFile("./environments/Standard.pba",ASCII);
+    env.SerializeFromFile("./environments/Standard.json",JSON);
     SEGasCompartment* cEnv = pc.GetCompartments().GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
     for (SESubstanceFraction* subFrac : env.GetAmbientGases())
     {

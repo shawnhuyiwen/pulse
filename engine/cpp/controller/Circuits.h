@@ -360,6 +360,9 @@ DEFINE_STATIC_STRING_EX(GroundToConnection, MechanicalVentilatorGroundToConnecti
     DEFINE_STATIC_STRING(Aorta1);
     DEFINE_STATIC_STRING(Aorta2);
     DEFINE_STATIC_STRING(Aorta3);
+    DEFINE_STATIC_STRING(Aorta4);
+
+    DEFINE_STATIC_STRING(AbdominalCavity1);
 
     DEFINE_STATIC_STRING(Bone1);
     DEFINE_STATIC_STRING(Bone2);
@@ -445,13 +448,19 @@ DEFINE_STATIC_STRING_EX(GroundToConnection, MechanicalVentilatorGroundToConnecti
     DEFINE_STATIC_STRING(LeftPulmonaryVeinsToLeftIntermediatePulmonaryVeins);
     DEFINE_STATIC_STRING(LeftPulmonaryVeinsToGround);
     DEFINE_STATIC_STRING(LeftIntermediatePulmonaryVeinsToLeftHeart2)
-      DEFINE_STATIC_STRING(LeftHeart2ToLeftHeart1);
+    DEFINE_STATIC_STRING(LeftHeart2ToLeftHeart1);
     DEFINE_STATIC_STRING(LeftHeart1ToLeftHeart3);
     DEFINE_STATIC_STRING(LeftHeart3ToGround);
     DEFINE_STATIC_STRING(LeftHeart1ToAorta2);
     DEFINE_STATIC_STRING(Aorta2ToAorta3);
     DEFINE_STATIC_STRING(Aorta3ToAorta1);
-    DEFINE_STATIC_STRING(Aorta1ToGround);
+    DEFINE_STATIC_STRING(Aorta1ToAorta4);
+
+    // Abdominal Cavity
+    DEFINE_STATIC_STRING(GroundToAorta4);
+    DEFINE_STATIC_STRING(AbdominalCavity1ToGround);
+    DEFINE_STATIC_STRING(GroundToAbdominalCavity1);
+
     // Brain
     DEFINE_STATIC_STRING(Aorta1ToBrain1);
     DEFINE_STATIC_STRING(Brain1ToGround);
@@ -539,7 +548,6 @@ DEFINE_STATIC_STRING_EX(GroundToConnection, MechanicalVentilatorGroundToConnecti
     DEFINE_STATIC_STRING(SpleenToPortalVein);
     // Vena Cava
     DEFINE_STATIC_STRING(VenaCavaToGround);
-    DEFINE_STATIC_STRING(VenaCavaBleed);
     DEFINE_STATIC_STRING(IVToVenaCava);
   };
 

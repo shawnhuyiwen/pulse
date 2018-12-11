@@ -2,8 +2,8 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "bind/cdm/ActionEnums.pb.h"
-#include "scenario/SESerializeState.h"
+#include "bind/cpp/cdm/ActionEnums.pb.h"
+#include "engine/SESerializeState.h"
 
 const std::string& eSerialization_Type_Name(eSerialization_Type m)
 {

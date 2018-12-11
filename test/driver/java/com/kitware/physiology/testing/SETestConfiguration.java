@@ -22,6 +22,7 @@ import com.kitware.physiology.utilities.csv.plots.CSVComparePlotter.PlotType;
 public class SETestConfiguration 
 {
 	public static final String ext=".csv";
+	public static final String sce_ext=".json";
 	protected String testName;
 	protected String reportName;
 	protected int    numThreads=0;
@@ -150,7 +151,12 @@ public class SETestConfiguration
 
 				SETestJob job = new SETestJob();
 				job.useState = this.useStates;
-				job.autoSerialization = this.autoSerialization;
+				if(this.autoSerialization != null)
+				{
+					job.autoSerialization = new SEAutoSerialization();
+					SEAutoSerialization.load(SEAutoSerialization.unload(this.autoSerialization), job.autoSerialization);
+					job.autoSerialization.setFilename(key.trim().substring(0, key.trim().length()-sce_ext.length()));
+				}
 				if(!executeJobs)
 					job.skipExecution = true;
 				if(!plotResults)
@@ -248,7 +254,7 @@ public class SETestConfiguration
 				List<String> patientFileNames;
 
 				if(patientFiles.equalsIgnoreCase("all"))
-					patientFileNames = FileUtils.findFiles("./patients", ".pba", true);        
+					patientFileNames = FileUtils.findFiles("./patients", sce_ext, true);        
 				else
 				{
 					String[] patientFiles = this.patientFiles.split(",");
@@ -256,8 +262,8 @@ public class SETestConfiguration
 					for(String patientFile : patientFiles)
 					{
 						patientFile = patientFile.trim();
-						if(!patientFile.endsWith(".pba"))
-							patientFile += ".pba";
+						if(!patientFile.endsWith(sce_ext))
+							patientFile += sce_ext;
 						patientFileNames.add(patientFile);
 					}
 				}
@@ -280,7 +286,7 @@ public class SETestConfiguration
 						}
 						copy = job.clone();                              
 						copy.patientFile = pFileName;
-						deriveScenarioResultNames(copy, copy.name.replaceAll(".pba", "-"+pFileName));  
+						deriveScenarioResultNames(copy, copy.name.replaceAll(sce_ext, "-"+pFileName));  
 						jobs.add(copy);
 					}
 				}
@@ -314,7 +320,7 @@ public class SETestConfiguration
 		job.baselineFiles.clear();
 		job.computedFiles.clear();
 
-		String[] dirs = baseName.substring(0, baseName.indexOf(".pba")).split("[/\\\\]");
+		String[] dirs = baseName.substring(0, baseName.indexOf(sce_ext)).split("[/\\\\]");
 		String baseline = job.baselineDirectory;
 		for(int i=0; i<dirs.length-1; i++)
 			baseline+="/"+dirs[i];
@@ -333,7 +339,7 @@ public class SETestConfiguration
 		// There are lots of various naming conventions, and this should support all of them
 
 		// Get rid of any extensions
-		hint = hint.replaceAll(".pba", "");
+		hint = hint.replaceAll(sce_ext, "");
 		hint = hint.replaceAll(ext, "");
 
 		File file;
@@ -349,13 +355,13 @@ public class SETestConfiguration
 			file = new File(hint+ext);
 			FileUtils.delete(file);
 
-			file = new File(hint+".pba");
+			file = new File(hint+sce_ext);
 			FileUtils.delete(file);
 
-			file = new File(hint+"Test.pba");
+			file = new File(hint+"Test.json");
 			FileUtils.delete(file);
 
-			file = new File(hint+"Report.pba");
+			file = new File(hint+"Report.json");
 			FileUtils.delete(file);
 
 			file = new File(hint+"Results"+ext);

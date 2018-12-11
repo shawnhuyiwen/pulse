@@ -6,8 +6,7 @@
 #include "io/protobuf/PBPulseConfiguration.h"
 #include "io/protobuf/PBScenario.h"
 #include "io/protobuf/PBUtils.h"
-#include "bind/pulse/Pulse.pb.h"
-#include <google/protobuf/text_format.h>
+#include "bind/cpp/pulse/Pulse.pb.h"
 #include "PulseScenario.h"
 #include "utils/FileUtils.h"
 
@@ -36,13 +35,13 @@ void PBPulse::Serialize(const PulseScenario& src, pulse::proto::ScenarioData& ds
     dst.set_allocated_configuration(PBPulseConfiguration::Unload(*src.GetConfiguration()));
 }
 
-bool PBPulse::SerializeToString(const PulseScenario& src, std::string& output, SerializationMode m)
+bool PBPulse::SerializeToString(const PulseScenario& src, std::string& output, SerializationFormat m)
 {
   pulse::proto::ScenarioData data;
   PBPulse::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m);
 }
-bool PBPulse::SerializeToFile(const PulseScenario& src, const std::string& filename, SerializationMode m)
+bool PBPulse::SerializeToFile(const PulseScenario& src, const std::string& filename, SerializationFormat m)
 {
   pulse::proto::ScenarioData data;
   PBPulse::Serialize(src, data);
@@ -51,7 +50,7 @@ bool PBPulse::SerializeToFile(const PulseScenario& src, const std::string& filen
   return WriteFile(content, filename, m);
 }
 
-bool PBPulse::SerializeFromString(const std::string& src, PulseScenario& dst, SerializationMode m)
+bool PBPulse::SerializeFromString(const std::string& src, PulseScenario& dst, SerializationFormat m)
 {
   pulse::proto::ScenarioData data;
   if (!PBUtils::SerializeFromString(src, data, m))
@@ -61,13 +60,14 @@ bool PBPulse::SerializeFromString(const std::string& src, PulseScenario& dst, Se
     cdm::ScenarioData cdm_data;
     if (!PBUtils::SerializeFromString(src, cdm_data, m))
       return false;
+    dst.GetLogger()->Info("Successfully loaded Scenario as base SEScenario");
     PBScenario::Load(cdm_data, dst);
     return true;
   }
   PBPulse::Load(data, dst);
   return true;
 }
-bool PBPulse::SerializeFromFile(const std::string& filename, PulseScenario& dst, SerializationMode m)
+bool PBPulse::SerializeFromFile(const std::string& filename, PulseScenario& dst, SerializationFormat m)
 {
   std::string content = ReadFile(filename, m);
   if (content.empty())

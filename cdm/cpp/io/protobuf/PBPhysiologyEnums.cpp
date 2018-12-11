@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "bind/cdm/PhysiologyEnums.pb.h"
+#include "bind/cpp/cdm/PhysiologyEnums.pb.h"
 #include "system/physiology/SECardiovascularSystem.h"
 
 const std::string& eHeartRhythm_Name(eHeartRhythm m)

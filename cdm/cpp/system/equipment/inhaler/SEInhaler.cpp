@@ -39,19 +39,19 @@ void SEInhaler::Clear()
   m_Substance = nullptr;
 }
 
-bool SEInhaler::SerializeToString(std::string& output, SerializationMode m) const
+bool SEInhaler::SerializeToString(std::string& output, SerializationFormat m) const
 {
   return PBInhaler::SerializeToString(*this, output, m);
 }
-bool SEInhaler::SerializeToFile(const std::string& filename, SerializationMode m) const
+bool SEInhaler::SerializeToFile(const std::string& filename, SerializationFormat m) const
 {
   return PBInhaler::SerializeToFile(*this, filename, m);
 }
-bool SEInhaler::SerializeFromString(const std::string& src, SerializationMode m)
+bool SEInhaler::SerializeFromString(const std::string& src, SerializationFormat m)
 {
   return PBInhaler::SerializeFromString(src, *this, m);
 }
-bool SEInhaler::SerializeFromFile(const std::string& filename, SerializationMode m)
+bool SEInhaler::SerializeFromFile(const std::string& filename, SerializationFormat m)
 {
   return PBInhaler::SerializeFromFile(filename, *this, m);
 }
@@ -94,7 +94,7 @@ void SEInhaler::ProcessConfiguration(const SEInhalerConfiguration& config)
   if (config.HasConfiguration())
     Merge(*config.GetConfiguration());
   else if (config.HasConfigurationFile())
-    if (!SerializeFromFile(config.GetConfigurationFile(),ASCII))// Does NOT merge file in data, Should we?
+    if (!SerializeFromFile(config.GetConfigurationFile(),JSON))// Does NOT merge file in data, Should we?
       Error("Unable to load configuration file", "SEInhaler::ProcessConfiguration");
   StateChange();
 }

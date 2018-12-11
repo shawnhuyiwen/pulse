@@ -31,8 +31,8 @@ public:
   static void Serialize(const cdm::TestSuiteData& src, SETestSuite& dst);
   static void Serialize(const SETestSuite& src, cdm::TestSuiteData& dst);
 
-  static bool SerializeToString(const SETestReport& src, std::string& output, SerializationMode m);
-  static bool SerializeToFile(const SETestReport& src, const std::string& filename, SerializationMode m);
-  static bool SerializeFromString(const std::string& src, SETestReport& dst, SerializationMode m);
-  static bool SerializeFromFile(const std::string& filename, SETestReport& dst, SerializationMode m);
+  static bool SerializeToString(const SETestReport& src, std::string& output, SerializationFormat m);
+  static bool SerializeToFile(const SETestReport& src, const std::string& filename, SerializationFormat m);
+  static bool SerializeFromString(const std::string& src, SETestReport& dst, SerializationFormat m);
+  static bool SerializeFromFile(const std::string& filename, SETestReport& dst, SerializationFormat m);
 };

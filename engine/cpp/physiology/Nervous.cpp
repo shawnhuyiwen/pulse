@@ -5,8 +5,8 @@
 #include "physiology/Nervous.h"
 #include "PulseConfiguration.h"
 // Actions
-#include "scenario/SEActionManager.h"
-#include "scenario/SEPatientActionCollection.h"
+#include "engine/SEActionManager.h"
+#include "engine/SEPatientActionCollection.h"
 #include "patient/actions/SEBrainInjury.h"
 // Dependent Systems
 #include "patient/SEPatient.h"

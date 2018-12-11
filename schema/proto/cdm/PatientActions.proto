@@ -190,6 +190,7 @@ message HemorrhageData
   PatientActionData                         PatientAction                   = 1;
   string                                    Compartment                     = 2;/**<<@brief Compartment where the bleeding is occuring */
   ScalarVolumePerTimeData                   Rate                            = 3;/**<<@brief The flow rate of blood exiting the specified compartment. Set to zero to stop the bleeding rate. */
+  eHemorrhage.Type                          Type                            = 4;/**<<@brief Internal or External bleed*/
 }
 
 /** @brief Insertion of tube into the patient's airway */

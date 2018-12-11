@@ -14,26 +14,10 @@
 
 CUnitConversionEngine* CUnitConversionEngine::uce=nullptr;
 
-class InitializeUnitConversionEngine
-{
-public:
-  InitializeUnitConversionEngine()
-  {
-    CUnitConversionEngine::GetEngine();
-  }
-  InitializeUnitConversionEngine(std::string wrkDir)
-  {
-    CUnitConversionEngine::GetEngine().SetWorkingDirectory(wrkDir);
-  }
-};
-// Commented out so one can set the working directory if needed
-// Other clients of this library may want to do this in their own code
-//static InitializeUnitConversionEngine init;
 
 //----------------------------------------------------------------------------
 CUnitConversionEngine::CUnitConversionEngine()
 {
-  m_wrkDir = ".";
   m_iNumFundamentalQuantities = 0;
   m_iNumQuantities = 0;
   m_QTList = new QuantityTypeList();
@@ -99,22 +83,16 @@ inline bool CIEQUAL(std::string strA, std::string strB)
 }
 
 //----------------------------------------------------------------------------
-void CUnitConversionEngine::LoadDefinitionsFlatFile(const std::string &FileName)
+void CUnitConversionEngine::LoadDefinitions()
 {
-  std::ifstream defs;
+  GetUCEdefs();
   DEBUGOUT(cerr << "Loading definitions...\n";)
-  defs.open(FileName.c_str());
-  if (! defs.is_open())
-  {
-    std::cerr << "Could not open " << FileName << std::endl;
-    throw std::runtime_error("Unable to load unit convertion engine data file "+FileName);
-  }
   std::string curLine;
   CQuantityTypeDescriptor *qtd = nullptr;
 
-  while (! defs.eof())
+  while (!m_UCEdefs.eof())
   {
-    getline(defs, curLine);
+    getline(m_UCEdefs, curLine);
     DEBUGOUT(cerr << "Got [" << curLine << "]\n";)
 
     if (curLine.empty())
@@ -283,7 +261,6 @@ void CUnitConversionEngine::LoadDefinitionsFlatFile(const std::string &FileName)
 
     }
   } // while not EOF
-  defs.close();
 }
 
 //----------------------------------------------------------------------------

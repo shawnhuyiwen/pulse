@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 #include "utils/DataTrack.h"
-#include "scenario/SEDecimalFormat.h"
+#include "engine/SEDecimalFormat.h"
 #include "circuit/electrical/SEElectricalCircuit.h"
 #include "circuit/fluid/SEFluidCircuit.h"
 #include "circuit/thermal/SEThermalCircuit.h"

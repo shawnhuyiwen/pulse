@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <RootNamespace>HowTo_UseC</RootNamespace>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="CommonDataModel">
+      <HintPath>..\..\..\..\engine\csharp\bin\Debug\netstandard2.0\CommonDataModel.dll</HintPath>
+    </Reference>
+    <Reference Include="DataModelBindings">
+      <HintPath>..\..\..\..\engine\csharp\bin\Debug\netstandard2.0\DataModelBindings.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Protobuf">
+      <HintPath>..\..\..\..\engine\csharp\bin\Debug\netstandard2.0\Google.Protobuf.dll</HintPath>
+    </Reference>
+    <Reference Include="PulseEngine">
+      <HintPath>..\..\..\..\engine\csharp\bin\Debug\netstandard2.0\PulseEngine.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

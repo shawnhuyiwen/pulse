@@ -4,7 +4,7 @@
 #include "EngineHowTo.h"
 
 // Include the various types you will be using in your code
-#include "scenario/SEDataRequestManager.h"
+#include "engine/SEDataRequestManager.h"
 #include "engine/SEEngineTracker.h"
 #include "compartment/SECompartmentManager.h"
 #include "patient/actions/SEHemorrhage.h"
@@ -39,7 +39,7 @@ void HowToHemorrhage()
   // Create the engine and load the patient
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowToHemorrhage.log");
   pe->GetLogger()->Info("HowToHemorrhage");
-  if (!pe->SerializeFromFile("./states/StandardMale@0s.pba", ASCII))
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.json", JSON))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
@@ -72,6 +72,7 @@ void HowToHemorrhage()
 
   // Hemorrhage Starts - instantiate a hemorrhage action and have the engine process it
   SEHemorrhage hemorrhageLeg;
+  hemorrhageLeg.SetType(eHemorrhage_Type::External);
   hemorrhageLeg.SetCompartment(pulse::VascularCompartment::RightLeg);//the location of the hemorrhage
   hemorrhageLeg.GetRate().SetValue(250,VolumePerTimeUnit::mL_Per_min);//the rate of hemorrhage
   pe->ProcessAction(hemorrhageLeg);
@@ -89,6 +90,7 @@ void HowToHemorrhage()
   pe->GetLogger()->Info(std::stringstream() <<"Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");;
 
   // Hemorrhage is sealed
+  hemorrhageLeg.SetType(eHemorrhage_Type::External);
   hemorrhageLeg.SetCompartment(pulse::VascularCompartment::RightLeg);//location of hemorrhage
   hemorrhageLeg.GetRate().SetValue(0,VolumePerTimeUnit::mL_Per_min);//rate is set to 0 to close the bleed
   pe->ProcessAction(hemorrhageLeg);

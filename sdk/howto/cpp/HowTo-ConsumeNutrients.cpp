@@ -4,7 +4,7 @@
 #include "EngineHowTo.h"
 
 // Include the various types you will be using in your code
-#include "scenario/SEDataRequestManager.h"
+#include "engine/SEDataRequestManager.h"
 #include "engine/SEEngineTracker.h"
 #include "compartment/SECompartmentManager.h"
 #include "patient/actions/SEConsumeNutrients.h"
@@ -37,7 +37,7 @@ void HowToConsumeNutrients()
   // Create the engine and load the patient
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowToConsumeNutrients.log");
   pe->GetLogger()->Info("HowToConsumeNutrients");
-  if (!pe->SerializeFromFile("./states/StandardMale@0s.pba", ASCII))
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.json", JSON))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;

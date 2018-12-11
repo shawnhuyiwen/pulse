@@ -204,7 +204,7 @@ void PulseEngineTest::AerosolTest(const std::string& sOutputDirectory)
   SizeIndependentDepositionEfficencyCoefficientsTest(zhangDispersion, zhangSubstance, 0.25368, 0.3399, 0.00013825, 0.00022882);
   DepositionFractionTest(zhangDispersion, zhangSubstance, 0.353503, 0.478626, 0.000102784, 8.27909e-05);
 
-  testReport.SerializeToFile(sOutputDirectory + "/AerosolTestReport.pba",ASCII);
+  testReport.SerializeToFile(sOutputDirectory + "/AerosolTestReport.json",JSON);
 }
 
 void PulseEngineTest::SizeIndependentDepositionEfficencyCoefficientsTest(SETestSuite& suite, SESubstance& substance, 
@@ -260,7 +260,7 @@ void PulseEngineTest::DepositionFractionTest(SETestSuite& suite, SESubstance& su
   tc.SetName(substance.GetName()+"DepositionFraction");
 
   PulseController pc(m_Logger);
-  pc.GetPatient().SerializeFromFile("./patients/StandardMale.pba",ASCII);
+  pc.GetPatient().SerializeFromFile("./patients/StandardMale.json",JSON);
   pc.SetupPatient();
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);

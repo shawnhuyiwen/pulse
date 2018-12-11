@@ -6,7 +6,7 @@
 #include "io/protobuf/PBSubstance.h"
 #include "io/protobuf/PBProperties.h"
 #include "io/protobuf/PBUtils.h"
-#include "bind/cdm/Environment.pb.h"
+#include "bind/cpp/cdm/Environment.pb.h"
 #include "system/environment/SEEnvironment.h"
 #include "system/environment/SEActiveConditioning.h"
 #include "system/environment/SEAppliedTemperature.h"
@@ -268,13 +268,13 @@ void PBEnvironment::Copy(const SEActiveConditioning& src, SEActiveConditioning& 
   PBEnvironment::Serialize(data, dst);
 }
 
-bool PBEnvironment::SerializeToString(const SEEnvironmentalConditions& src, std::string& output, SerializationMode m)
+bool PBEnvironment::SerializeToString(const SEEnvironmentalConditions& src, std::string& output, SerializationFormat m)
 {
   cdm::EnvironmentalConditionsData data;
   PBEnvironment::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m);
 }
-bool PBEnvironment::SerializeToFile(const SEEnvironmentalConditions& src, const std::string& filename, SerializationMode m)
+bool PBEnvironment::SerializeToFile(const SEEnvironmentalConditions& src, const std::string& filename, SerializationFormat m)
 {
   cdm::EnvironmentalConditionsData data;
   PBEnvironment::Serialize(src, data);
@@ -283,7 +283,7 @@ bool PBEnvironment::SerializeToFile(const SEEnvironmentalConditions& src, const 
   return WriteFile(content, filename, m);
 }
 
-bool PBEnvironment::SerializeFromString(const std::string& src, SEEnvironmentalConditions& dst, SerializationMode m)
+bool PBEnvironment::SerializeFromString(const std::string& src, SEEnvironmentalConditions& dst, SerializationFormat m)
 {
   cdm::EnvironmentalConditionsData data;
   if (!PBUtils::SerializeFromString(src, data, m))
@@ -291,7 +291,7 @@ bool PBEnvironment::SerializeFromString(const std::string& src, SEEnvironmentalC
   PBEnvironment::Load(data, dst);
   return true;
 }
-bool PBEnvironment::SerializeFromFile(const std::string& filename, SEEnvironmentalConditions& dst, SerializationMode m)
+bool PBEnvironment::SerializeFromFile(const std::string& filename, SEEnvironmentalConditions& dst, SerializationFormat m)
 {
   std::string content = ReadFile(filename, m);
   if (content.empty())

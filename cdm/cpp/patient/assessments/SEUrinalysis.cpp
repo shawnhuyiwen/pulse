@@ -57,11 +57,11 @@ void SEUrinalysis::Clear()
   SAFE_DELETE(m_Microscopic);
 }
 
-bool SEUrinalysis::SerializeToString(std::string& output, SerializationMode m) const
+bool SEUrinalysis::SerializeToString(std::string& output, SerializationFormat m) const
 {
   return PBPatientAssessment::SerializeToString(*this, output, m);
 }
-bool SEUrinalysis::SerializeToFile(const std::string& filename, SerializationMode m) const
+bool SEUrinalysis::SerializeToFile(const std::string& filename, SerializationFormat m) const
 {
   return PBPatientAssessment::SerializeToFile(*this, filename, m);
 }

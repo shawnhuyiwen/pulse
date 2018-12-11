@@ -17,7 +17,7 @@ import com.kitware.physiology.cdm.EnvironmentEnums.eEnvironment.SurroundingType;
 import com.kitware.physiology.cdm.PatientEnums.ePatient;
 import com.kitware.physiology.cdm.PhysiologyEnums.eHeartRhythm;
 import com.kitware.physiology.cdm.Enums.eCharge;
-import com.kitware.physiology.cdm.ScenarioEnums.eDataRequest.Category;
+import com.kitware.physiology.cdm.EngineEnums.eDataRequest.Category;
 import com.kitware.physiology.cdm.SubstanceEnums.eSubstance;
 
 import com.kitware.physiology.datamodel.substance.SESubstanceTissuePharmacokinetics;
@@ -91,7 +91,7 @@ public class DataSetReader
       List<SEPatient> patients = readPatients(xlWBook.getSheet("Patients"));
       for(SEPatient p : patients)
       {
-        String fileName = "./patients/"+p.getName()+".pba";
+        String fileName = "./patients/"+p.getName()+".json";
         Log.info("Writing : "+fileName);
         p.writeFile(fileName);
         SEPatient check = new SEPatient();
@@ -105,7 +105,7 @@ public class DataSetReader
       Map<String,SESubstance> substances=readSubstances(xlWBook.getSheet("Substances"));
       for(SESubstance s : substances.values())  
       {
-        String fileName = "./substances/"+s.getName()+".pba";
+        String fileName = "./substances/"+s.getName()+".json";
         Log.info("Writing : "+fileName);
         s.writeFile(fileName);
         SESubstance check = new SESubstance();
@@ -121,7 +121,7 @@ public class DataSetReader
       List<SESubstanceCompound> compounds = readCompounds(xlWBook.getSheet("Compounds"), substances);
       for(SESubstanceCompound c : compounds)
       {
-        String fileName = "./substances/compounds/"+c.getName()+".pba";
+        String fileName = "./substances/compounds/"+c.getName()+".json";
         Log.info("Writing : "+fileName);
         c.writeFile(fileName);  
         SESubstanceCompound check = new SESubstanceCompound();
@@ -136,7 +136,7 @@ public class DataSetReader
       Map<String,SEEnvironmentalConditions> environments = readEnvironments(xlWBook.getSheet("Environment"), substances);
       for(String name : environments.keySet())
       {
-        String fileName = "./environments/"+name+".pba";
+        String fileName = "./environments/"+name+".json";
         Log.info("Writing : "+fileName);
         SEEnvironmentalConditions e = environments.get(name);
         e.writeFile(fileName);  
@@ -151,7 +151,7 @@ public class DataSetReader
       for(String name : meals.keySet())
       {
         SENutrition n = meals.get(name);
-        String fileName = "./nutrition/"+name+".pba";
+        String fileName = "./nutrition/"+name+".json";
         Log.info("Writing : "+fileName);
         n.writeFile(fileName);
         SENutrition check = new SENutrition();
@@ -166,7 +166,7 @@ public class DataSetReader
       SEDynamicStabilization dynamic = new SEDynamicStabilization();
       if(readStabilization(xlWBook.getSheet("Stabilization"),timed,dynamic))
       {
-        String fileName = "./config/TimedStabilization.pba";
+        String fileName = "./config/TimedStabilization.json";
         Log.info("Writing : "+fileName);
         timed.writeFile(fileName);
         SETimedStabilization checkTimed = new SETimedStabilization();
@@ -176,7 +176,7 @@ public class DataSetReader
         if(!SETimedStabilization.unload(timed).toString().equals(SETimedStabilization.unload(checkTimed).toString()))
           throw new RuntimeException("Serialization is not matching, something is wrong in the load/unload for timed stabilization");
         
-        fileName = "./config/DynamicStabilization.pba";
+        fileName = "./config/DynamicStabilization.json";
         Log.info("Writing : "+fileName);
         dynamic.writeFile(fileName);
         SEDynamicStabilization checkDynamic = new SEDynamicStabilization();
@@ -193,7 +193,7 @@ public class DataSetReader
         for(String name : ecg.keySet())
         {
           SEElectroCardioGramWaveformList i = ecg.get(name);
-          String fileName = "./ecg/"+name+".pba";
+          String fileName = "./ecg/"+name+".json";
           Log.info("Writing : "+fileName);
           i.writeFile(fileName);
           SEElectroCardioGramWaveformList check = new SEElectroCardioGramWaveformList();

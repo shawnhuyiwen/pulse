@@ -8,7 +8,7 @@
 #include "io/protobuf/PBPatientNutrition.h"
 #include "io/protobuf/PBProperties.h"
 #include "io/protobuf/PBUtils.h"
-#include "bind/pulse/PulseConfiguration.pb.h"
+#include "bind/cpp/pulse/PulseConfiguration.pb.h"
 #include "PulseConfiguration.h"
 #include "patient/SENutrition.h"
 #include "engine/SEDynamicStabilization.h"
@@ -45,8 +45,8 @@ void PBPulseConfiguration::Serialize(const ConfigurationData& src, PulseConfigur
     PBEngine::Load(src.dynamicstabilization(), dst.GetDynamicStabilization());
   else if (!src.stabilizationfilename().empty())
   {
-    if (!dst.GetTimedStabilization().SerializeFromFile(src.stabilizationfilename(),ASCII))
-      if (!dst.GetDynamicStabilization().SerializeFromFile(src.stabilizationfilename(),ASCII))
+    if (!dst.GetTimedStabilization().SerializeFromFile(src.stabilizationfilename(),JSON))
+      if (!dst.GetDynamicStabilization().SerializeFromFile(src.stabilizationfilename(),JSON))
       {
         dst.Error("Unable to load stabilization file");
         dst.RemoveStabilization();
@@ -209,7 +209,7 @@ void PBPulseConfiguration::Serialize(const ConfigurationData& src, PulseConfigur
       PBProperty::Load(config.molarmassofwatervapor(), dst.GetMolarMassOfWaterVapor());
     if (!config.initialconditionsfile().empty())
     {
-      if (!dst.GetInitialEnvironmentalConditions().SerializeFromFile(config.initialconditionsfile(),ASCII))
+      if (!dst.GetInitialEnvironmentalConditions().SerializeFromFile(config.initialconditionsfile(),JSON))
       {
         dst.Error("Unable to load InitialEnvironmentalConditions file");
       }
@@ -240,7 +240,7 @@ void PBPulseConfiguration::Serialize(const ConfigurationData& src, PulseConfigur
       PBProperty::Load(config.defaultproteindigestionrate(), dst.GetDefaultProteinDigestionRate());
     if (!config.initialstomachcontentsfile().empty())
     {
-      if (!dst.GetDefaultStomachContents().SerializeFromFile(config.initialstomachcontentsfile(),ASCII))
+      if (!dst.GetDefaultStomachContents().SerializeFromFile(config.initialstomachcontentsfile(),JSON))
       {
         dst.Error("Unable to load Standard Stomach Contents file");
       }
@@ -250,6 +250,7 @@ void PBPulseConfiguration::Serialize(const ConfigurationData& src, PulseConfigur
       PBPatientNutrition::Load(config.initialstomachcontents(), dst.GetDefaultStomachContents());
     }
     // Use default rate if they are not set
+    if(dst.m_DefaultStomachContents != nullptr)
     {
       if (dst.m_DefaultStomachContents->HasCarbohydrate() && !dst.m_DefaultStomachContents->HasCarbohydrateDigestionRate())
         dst.m_DefaultStomachContents->GetCarbohydrateDigestionRate().Set(dst.GetDefaultCarbohydrateDigestionRate());
@@ -580,13 +581,13 @@ void PBPulseConfiguration::Serialize(const PulseConfiguration& src, Configuratio
   tissue->set_enabletissue((cdm::eSwitch)src.m_TissueEnabled);
 }
 
-bool PBPulseConfiguration::SerializeToString(const PulseConfiguration& src, std::string& output, SerializationMode m)
+bool PBPulseConfiguration::SerializeToString(const PulseConfiguration& src, std::string& output, SerializationFormat m)
 {
   pulse::proto::ConfigurationData data;
   PBPulseConfiguration::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m);
 }
-bool PBPulseConfiguration::SerializeToFile(const PulseConfiguration& src, const std::string& filename, SerializationMode m)
+bool PBPulseConfiguration::SerializeToFile(const PulseConfiguration& src, const std::string& filename, SerializationFormat m)
 {
   pulse::proto::ConfigurationData data;
   PBPulseConfiguration::Serialize(src, data);
@@ -595,7 +596,7 @@ bool PBPulseConfiguration::SerializeToFile(const PulseConfiguration& src, const 
   return WriteFile(content, filename, m);
 }
 
-bool PBPulseConfiguration::SerializeFromString(const std::string& src, PulseConfiguration& dst, SerializationMode m)
+bool PBPulseConfiguration::SerializeFromString(const std::string& src, PulseConfiguration& dst, SerializationFormat m)
 {
   pulse::proto::ConfigurationData data;
   if (!PBUtils::SerializeFromString(src, data, m))
@@ -603,7 +604,7 @@ bool PBPulseConfiguration::SerializeFromString(const std::string& src, PulseConf
   PBPulseConfiguration::Load(data, dst);
   return true;
 }
-bool PBPulseConfiguration::SerializeFromFile(const std::string& filename, PulseConfiguration& dst, SerializationMode m)
+bool PBPulseConfiguration::SerializeFromFile(const std::string& filename, PulseConfiguration& dst, SerializationFormat m)
 {
   std::string content = ReadFile(filename, m);
   if (content.empty())

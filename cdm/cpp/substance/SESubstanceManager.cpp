@@ -238,7 +238,7 @@ void SESubstanceManager::RemoveActiveCompounds(const std::vector<SESubstanceComp
     RemoveActiveCompound(*c);
 }
 
-bool SESubstanceManager::LoadSubstanceDirectory()
+bool SESubstanceManager::LoadSubstanceDirectory(const std::string& data_dir)
 {
   bool succeed = true;
   Clear();
@@ -246,15 +246,15 @@ bool SESubstanceManager::LoadSubstanceDirectory()
   DIR *sdir;
   DIR *cdir;
   struct dirent *ent;
-
-  std::string workingDirectory = GetCurrentWorkingDirectory();
+  std::string ext = ".json";
 
 #if defined(_WIN32)
-  sdir = opendir("./substances/");
-  cdir = opendir("./substances/compounds");
+  sdir = opendir(std::string(data_dir + "/substances/").c_str());
+  cdir = opendir(std::string(data_dir + "/substances/compounds/").c_str());
 #else
-  sdir = opendir(std::string(workingDirectory + std::string("/substances/")).c_str());
-  cdir = opendir(std::string(workingDirectory + std::string("/substances/compounds/")).c_str());
+  // Find the absolute dir?
+  sdir = opendir(std::string(data_dir + "/substances/").c_str());
+  cdir = opendir(std::string(data_dir + "/substances/compounds/").c_str());
 #endif
 
   if (sdir != nullptr)
@@ -262,13 +262,13 @@ bool SESubstanceManager::LoadSubstanceDirectory()
     while ((ent = readdir(sdir)) != nullptr)
     {
       ss.str("");
-      ss << workingDirectory << "/substances/" << ent->d_name;
-      if (!IsDirectory(ent) && strlen(ent->d_name) > 2)
+      ss << data_dir << "/substances/" << ent->d_name;
+      if (!IsDirectory(ent) && strlen(ent->d_name) > 2 && ss.str().find_last_of(ext) == (ss.str().length()-1))
       {
         try
         {
           SESubstance* sub = new SESubstance(GetLogger());
-          if (!sub->SerializeFromFile(ss.str(), ASCII))
+          if (!sub->SerializeFromFile(ss.str(), JSON))
           {
             delete sub;
             Error("Unable to read substance " + ss.str());
@@ -302,13 +302,13 @@ bool SESubstanceManager::LoadSubstanceDirectory()
     while ((ent = readdir(cdir)) != nullptr)
     {
       ss.str("");
-      ss << workingDirectory << "/substances/compounds/" << ent->d_name;
-      if (!IsDirectory(ent) && strlen(ent->d_name) > 2)
+      ss << data_dir << "/substances/compounds/" << ent->d_name;
+      if (!IsDirectory(ent) && strlen(ent->d_name) > 2 && ss.str().find_last_of(ext) == (ss.str().length()-1))
       {
         try
         {
           SESubstanceCompound* cmpd = new SESubstanceCompound(GetLogger());
-          if (!cmpd->SerializeFromFile(ss.str(), *this, ASCII))
+          if (!cmpd->SerializeFromFile(ss.str(), *this, JSON))
           {
             delete cmpd;
             Error("Unable to read substance compound " + ss.str());

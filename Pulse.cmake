@@ -85,7 +85,7 @@ list(APPEND LOG4CPLUS_INCLUDE_DIR ${log4cplus_SRC}/include)
 list(APPEND LOG4CPLUS_INCLUDE_DIR ${log4cplus_SRC}-build/include)
 
 set(SCHEMA_SRC "${CMAKE_SOURCE_DIR}/schema")
-set(SCHEMA_DST "${CMAKE_BINARY_DIR}/schema")
+set(SCHEMA_DST "${CMAKE_SOURCE_DIR}/schema/bind")
 # Settings for protobuf configuration
 set(protobuf_BUILD_PROTOC_BINARIES OFF CACHE TYPE INTERNAL FORCE)
 set(protobuf_BUILD_SHARED_LIBS OFF CACHE TYPE INTERNAL FORCE)
@@ -109,8 +109,10 @@ add_subdirectory(engine)
 add_subdirectory(test)
 add_subdirectory(sdk)
 add_subdirectory(verification)
-include(${CMAKE_CURRENT_SOURCE_DIR}/PulseJNI.cmake)
+# Various interfaces for different languages
+include(${CMAKE_CURRENT_SOURCE_DIR}/PulseC.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/PulseCLR.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/PulseJNI.cmake)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_target_properties (libprotobuf libprotobuf-lite PROPERTIES FOLDER protobufs)

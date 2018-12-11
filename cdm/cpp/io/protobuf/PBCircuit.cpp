@@ -4,12 +4,12 @@
 #include "stdafx.h"
 #include "io/protobuf/PBCircuit.h"
 #include "io/protobuf/PBProperties.h"
+#include "io/protobuf/PBUtils.h"
 #include "circuit/electrical/SEElectricalCircuit.h"
 #include "circuit/fluid/SEFluidCircuit.h"
 #include "circuit/thermal/SEThermalCircuit.h"
 #include "circuit/SECircuitManager.h"
-#include "bind/cdm/Circuit.pb.h"
-#include <google/protobuf/text_format.h>
+#include "bind/cpp/cdm/Circuit.pb.h"
 
 
 template<CIRCUIT_PATH_TEMPLATE>
@@ -122,7 +122,7 @@ bool PBCircuit::LoadCircuitManagerFile(SECircuitManager& mgr, const std::string&
   cdm::CircuitManagerData src;
   std::ifstream file_stream(filename, std::ios::in);
   std::string fmsg((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
-  if (!google::protobuf::TextFormat::ParseFromString(fmsg, &src))
+  if (!PBUtils::SerializeFromString(fmsg, src, JSON))
     return false;
   PBCircuit::Load(src, mgr);
   return true;
@@ -136,7 +136,7 @@ void PBCircuit::SaveCircuitManagerFile(const SECircuitManager& mgr, const std::s
 {
   std::string content;
   cdm::CircuitManagerData* src = PBCircuit::Unload(mgr);
-  google::protobuf::TextFormat::PrintToString(*src, &content);
+  PBUtils::SerializeToString(*src, content, JSON);
   std::ofstream ascii_ostream(filename, std::ios::out | std::ios::trunc);
   ascii_ostream << content;
   ascii_ostream.flush();

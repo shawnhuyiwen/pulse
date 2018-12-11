@@ -15,10 +15,10 @@ public:
   virtual void Clear();// Deletes all members
   virtual void Copy(const SEElectroCardioGramWaveformInterpolator& src);
 
-  bool SerializeToString(std::string& output, SerializationMode m) const;
-  bool SerializeToFile(const std::string& filename, SerializationMode m) const;
-  bool SerializeFromString(const std::string& src, SerializationMode m, const SEScalarTime* timeStep = nullptr);
-  bool SerializeFromFile(const std::string& filename, SerializationMode m, const SEScalarTime* timeStep = nullptr);
+  bool SerializeToString(std::string& output, SerializationFormat m) const;
+  bool SerializeToFile(const std::string& filename, SerializationFormat m) const;
+  bool SerializeFromString(const std::string& src, SerializationFormat m, const SEScalarTime* timeStep = nullptr);
+  bool SerializeFromFile(const std::string& filename, SerializationFormat m, const SEScalarTime* timeStep = nullptr);
 
   virtual void Interpolate(const SEScalarTime& timeStep);
   virtual bool StartNewCycle(eHeartRhythm rhythm);

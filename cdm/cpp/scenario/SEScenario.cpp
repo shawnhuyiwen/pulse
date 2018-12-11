@@ -3,17 +3,17 @@
 
 #include "stdafx.h"
 #include "scenario/SEScenario.h"
-#include "scenario/SEAction.h"
-#include "scenario/SECondition.h"
-#include "scenario/SEDataRequestManager.h"
-#include "scenario/SEScenarioInitialParameters.h"
+#include "engine/SEAction.h"
+#include "engine/SECondition.h"
+#include "engine/SEDataRequestManager.h"
+#include "engine/SEPatientConfiguration.h"
 #include "substance/SESubstanceManager.h"
 #include "io/protobuf/PBScenario.h"
 #include "io/protobuf/PBActions.h"
 
 SEScenario::SEScenario(SESubstanceManager& subMgr) : Loggable(subMgr.GetLogger()), m_SubMgr(subMgr)
 {
-  m_InitialParameters = nullptr;
+  m_PatientConfiguration = nullptr;
   m_DataRequestMgr = new SEDataRequestManager(subMgr.GetLogger());
   Clear();
 }
@@ -29,33 +29,33 @@ void SEScenario::Clear()
   m_Name = "";
   m_Description = "";
   m_EngineStateFile = "";
-  SAFE_DELETE(m_InitialParameters);
+  SAFE_DELETE(m_PatientConfiguration);
   DELETE_VECTOR(m_Actions);
   m_DataRequestMgr->Clear();
 }
 
-bool SEScenario::SerializeToString(std::string& output, SerializationMode m) const
+bool SEScenario::SerializeToString(std::string& output, SerializationFormat m) const
 {
   return PBScenario::SerializeToString(*this, output, m);
 }
-bool SEScenario::SerializeToFile(const std::string& filename, SerializationMode m) const
+bool SEScenario::SerializeToFile(const std::string& filename, SerializationFormat m) const
 {
   return PBScenario::SerializeToFile(*this, filename, m);
 }
-bool SEScenario::SerializeFromString(const std::string& src, SerializationMode m)
+bool SEScenario::SerializeFromString(const std::string& src, SerializationFormat m)
 {
   return PBScenario::SerializeFromString(src, *this, m);
 }
-bool SEScenario::SerializeFromFile(const std::string& filename, SerializationMode m)
+bool SEScenario::SerializeFromFile(const std::string& filename, SerializationFormat m)
 {
   return PBScenario::SerializeFromFile(filename, *this, m);
 }
 
 bool SEScenario::IsValid() const
 {
-  if (HasInitialParameters())
+  if (HasPatientConfiguration())
   {
-    if (!m_InitialParameters->IsValid())
+    if (!m_PatientConfiguration->IsValid())
       return false;
   }
   if(m_Actions.size()==0)
@@ -103,7 +103,7 @@ std::string SEScenario::GetEngineStateFile() const
 }
 void SEScenario::SetEngineStateFile(const std::string& file)
 {
-  InvalidateInitialParameters();
+  InvalidatePatientConfiguration();
   m_EngineStateFile = file;
 }
 bool SEScenario::HasEngineStateFile() const
@@ -115,24 +115,24 @@ void SEScenario::InvalidateEngineStateFile()
   m_EngineStateFile = "";
 }
 
-SEScenarioInitialParameters& SEScenario::GetInitialParameters()
+SEPatientConfiguration& SEScenario::GetPatientConfiguration()
 {
   InvalidateEngineStateFile();
-  if (m_InitialParameters == nullptr)
-    m_InitialParameters = new SEScenarioInitialParameters(m_SubMgr);
-  return *m_InitialParameters;
+  if (m_PatientConfiguration == nullptr)
+    m_PatientConfiguration = new SEPatientConfiguration(GetLogger());
+  return *m_PatientConfiguration;
 }
-const SEScenarioInitialParameters* SEScenario::GetInitialParameters() const
+const SEPatientConfiguration* SEScenario::GetPatientConfiguration() const
 {
-  return m_InitialParameters;
+  return m_PatientConfiguration;
 }
-bool SEScenario::HasInitialParameters() const
+bool SEScenario::HasPatientConfiguration() const
 {
-  return m_InitialParameters != nullptr;
+  return m_PatientConfiguration != nullptr;
 }
-void SEScenario::InvalidateInitialParameters()
+void SEScenario::InvalidatePatientConfiguration()
 {
-  SAFE_DELETE(m_InitialParameters);
+  SAFE_DELETE(m_PatientConfiguration);
 }
 
 void SEScenario::AddAction(const SEAction& a)

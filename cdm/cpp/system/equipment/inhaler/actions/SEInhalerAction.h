@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 #pragma once
-#include "scenario/SEAction.h"
+#include "engine/SEAction.h"
 class SESubstanceManager;
 
 class CDM_DECL SEInhalerAction : public SEAction

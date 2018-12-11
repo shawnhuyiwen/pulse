@@ -4,8 +4,9 @@
 #include "EngineHowTo.h"
 
 // Include the various types you will be using in your code
-#include "scenario/SEDataRequestManager.h"
+#include "engine/SEDataRequestManager.h"
 #include "engine/SEEngineTracker.h"
+#include "engine/SEPatientConfiguration.h"
 #include "compartment/SECompartmentManager.h"
 #include "compartment/fluid/SEGasCompartment.h"
 #include "patient/conditions/SEChronicObstructivePulmonaryDisease.h"
@@ -43,10 +44,12 @@ void HowToCOPD()
   SEChronicObstructivePulmonaryDisease COPD;
   COPD.GetBronchitisSeverity().SetValue(0.5);
   COPD.GetEmphysemaSeverity().SetValue(0.7);
-  std::vector<const SECondition*> conditions;
-  conditions.push_back(&COPD);
 
-  if (!pe->InitializeEngine("StandardMale.pba", &conditions))
+  SEPatientConfiguration pc(pe->GetLogger());
+  pc.SetPatientFile("StandardMale.json");
+  pc.GetConditions().push_back(&COPD);
+
+  if (!pe->InitializeEngine(pc))
   {
     pe->GetLogger()->Error("Could not load initialize engine, check the error");
     return;

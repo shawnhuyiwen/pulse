@@ -5,7 +5,7 @@
 #include "io/protobuf/PBInhaler.h"
 #include "io/protobuf/PBProperties.h"
 #include "io/protobuf/PBUtils.h"
-#include "bind/cdm/Inhaler.pb.h"
+#include "bind/cpp/cdm/Inhaler.pb.h"
 #include "system/equipment/inhaler/SEInhaler.h"
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceManager.h"
@@ -49,13 +49,13 @@ void PBInhaler::Serialize(const SEInhaler& src, cdm::InhalerData& dst)
     dst.set_substance(src.m_Substance->GetName());
 }
 
-bool PBInhaler::SerializeToString(const SEInhaler& src, std::string& output, SerializationMode m)
+bool PBInhaler::SerializeToString(const SEInhaler& src, std::string& output, SerializationFormat m)
 {
   cdm::InhalerData data;
   PBInhaler::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m);
 }
-bool PBInhaler::SerializeToFile(const SEInhaler& src, const std::string& filename, SerializationMode m)
+bool PBInhaler::SerializeToFile(const SEInhaler& src, const std::string& filename, SerializationFormat m)
 {
   cdm::InhalerData data;
   PBInhaler::Serialize(src, data);
@@ -64,7 +64,7 @@ bool PBInhaler::SerializeToFile(const SEInhaler& src, const std::string& filenam
   return WriteFile(content, filename, m);
 }
 
-bool PBInhaler::SerializeFromString(const std::string& src, SEInhaler& dst, SerializationMode m)
+bool PBInhaler::SerializeFromString(const std::string& src, SEInhaler& dst, SerializationFormat m)
 {
   cdm::InhalerData data;
   if (!PBUtils::SerializeFromString(src, data, m))
@@ -72,7 +72,7 @@ bool PBInhaler::SerializeFromString(const std::string& src, SEInhaler& dst, Seri
   PBInhaler::Load(data, dst);
   return true;
 }
-bool PBInhaler::SerializeFromFile(const std::string& filename, SEInhaler& dst, SerializationMode m)
+bool PBInhaler::SerializeFromFile(const std::string& filename, SEInhaler& dst, SerializationFormat m)
 {
   std::string content = ReadFile(filename, m);
   if (content.empty())

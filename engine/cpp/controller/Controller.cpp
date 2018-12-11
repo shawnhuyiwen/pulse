@@ -24,8 +24,8 @@
 #include "equipment/Inhaler.h"
 #include "PulseConfiguration.h"
 
-#include "scenario/SEConditionManager.h"
-#include "scenario/SEActionManager.h"
+#include "engine/SEConditionManager.h"
+#include "engine/SEActionManager.h"
 
 #include "substance/SESubstance.h"
 
@@ -71,7 +71,7 @@
 #include "utils/FileUtils.h"
 
 
-PulseController::PulseController(const std::string& logFileName) : PulseController(new Logger(logFileName))
+PulseController::PulseController(const std::string& logFileName, const std::string& data_dir) : PulseController(new Logger(logFileName), data_dir)
 {
   myLogger = true;
   m_DataTrack = nullptr;
@@ -79,8 +79,9 @@ PulseController::PulseController(const std::string& logFileName) : PulseControll
   m_AdvanceHandler = nullptr;
 }
 
-PulseController::PulseController(Logger* logger) : Loggable(logger)
+PulseController::PulseController(Logger* logger, const std::string& data_dir) : Loggable(logger)
 {
+  m_DataDir = data_dir;
   myLogger = false;
   m_DataTrack = nullptr;
   m_EventHandler = nullptr;
@@ -95,12 +96,12 @@ PulseController::PulseController(Logger* logger) : Loggable(logger)
   m_Logger->SetLogTime(m_SimulationTime.get());
 
   m_Substances = std::unique_ptr<PulseSubstances>(new PulseSubstances(*this));
-  m_Substances->LoadSubstanceDirectory();
+  m_Substances->LoadSubstanceDirectory(m_DataDir);
 
   m_Patient = std::unique_ptr<SEPatient>(new SEPatient(GetLogger()));
 
-  m_Config = std::unique_ptr<PulseConfiguration>(new PulseConfiguration(*m_Substances));  
-  m_Config->Initialize();
+  m_Config = std::unique_ptr<PulseConfiguration>(new PulseConfiguration(*m_Substances));
+  m_Config->Initialize(m_DataDir);
  
   m_SaturationCalculator = std::unique_ptr<SaturationCalculator>(new SaturationCalculator(*this));
 
@@ -155,12 +156,12 @@ bool PulseController::Initialize(const PulseConfiguration* config)
   // to any substance child objects, those will need to be fixed up, if they exist
 
   Info("Initializing Configuration");
-  m_Config->Initialize(); // Load up Defaults
+  m_Config->Initialize(m_DataDir); // Reset to Defaults
 
   // Now, Let's see if there is anything to merge into our base configuration
   Info("Merging OnDisk Configuration");
   PulseConfiguration cFile(*m_Substances);
-  cFile.SerializeFromFile("PulseConfiguration.pba",ASCII);
+  cFile.SerializeFromFile("PulseConfiguration.json",JSON);
   m_Config->Merge(cFile);
 
   // Now, override anything with a configuration provided by the user or scenario
@@ -178,7 +179,7 @@ bool PulseController::Initialize(const PulseConfiguration* config)
   {
     std::string stableDir = "./stable/";
     MakeDirectory(stableDir.c_str());
-    m_Patient->SerializeToFile(stableDir + m_Patient->GetName() + ".pba",ASCII);
+    m_Patient->SerializeToFile(stableDir + m_Patient->GetName() + ".json",JSON);
   }
 
   m_SaturationCalculator->Initialize(*m_Substances);
@@ -1202,10 +1203,12 @@ void PulseController::SetupCardiovascular()
   SEFluidCircuitNode& LeftHeart3 = cCardiovascular.CreateNode(pulse::CardiovascularNode::LeftHeart3);
   LeftHeart3.GetPressure().SetValue(0.0, PressureUnit::mmHg);
   LeftHeart1.GetVolumeBaseline().SetValue(VolumeFractionHeartLeft*bloodVolume_mL, VolumeUnit::mL);
-
+ 
   SEFluidCircuitNode& Aorta1 = cCardiovascular.CreateNode(pulse::CardiovascularNode::Aorta1);
   SEFluidCircuitNode& Aorta2 = cCardiovascular.CreateNode(pulse::CardiovascularNode::Aorta2);
   SEFluidCircuitNode& Aorta3 = cCardiovascular.CreateNode(pulse::CardiovascularNode::Aorta3);
+  SEFluidCircuitNode& Aorta4 = cCardiovascular.CreateNode(pulse::CardiovascularNode::Aorta4);
+  Aorta4.GetPressure().SetValue(0.0, PressureUnit::mmHg);
   Aorta1.GetVolumeBaseline().SetValue(VolumeFractionAorta*bloodVolume_mL, VolumeUnit::mL);
   Aorta1.GetPressure().SetValue(VascularPressureTargetAorta, PressureUnit::mmHg);
 
@@ -1314,6 +1317,10 @@ void PulseController::SetupCardiovascular()
   Pericardium.GetVolumeBaseline().SetValue(15.0, VolumeUnit::mL);
   Pericardium.GetPressure().SetValue(1.0, PressureUnit::mmHg);
 
+  SEFluidCircuitNode& AbdominalCavity = cCardiovascular.CreateNode(pulse::CardiovascularNode::AbdominalCavity1);
+  AbdominalCavity.GetVolumeBaseline().SetValue(10.0, VolumeUnit::mL);
+  AbdominalCavity.GetPressure().SetValue(0.0, PressureUnit::mmHg);
+
   // Create Paths, set switch (diodes), compliances, and resistances where appropriate
   SEFluidCircuitPath& VenaCavaToRightHeart2 = cCardiovascular.CreatePath(VenaCava, RightHeart2, pulse::CardiovascularPath::VenaCavaToRightHeart2);
   VenaCavaToRightHeart2.GetResistanceBaseline().SetValue(ResistanceHeartRight, FlowResistanceUnit::mmHg_s_Per_mL);
@@ -1382,8 +1389,8 @@ void PulseController::SetupCardiovascular()
   SEFluidCircuitPath& Aorta2ToAorta3 = cCardiovascular.CreatePath(Aorta2, Aorta3, pulse::CardiovascularPath::Aorta2ToAorta3);
   SEFluidCircuitPath& Aorta3ToAorta1 = cCardiovascular.CreatePath(Aorta3, Aorta1, pulse::CardiovascularPath::Aorta3ToAorta1);
   Aorta3ToAorta1.GetResistanceBaseline().SetValue(ResistanceAorta, FlowResistanceUnit::mmHg_s_Per_mL);
-  SEFluidCircuitPath& Aorta1ToGround = cCardiovascular.CreatePath(Aorta1, Ground, pulse::CardiovascularPath::Aorta1ToGround);
-  Aorta1ToGround.GetComplianceBaseline().SetValue(0.0, FlowComplianceUnit::mL_Per_mmHg);
+  SEFluidCircuitPath& Aorta1ToAorta4 = cCardiovascular.CreatePath(Aorta1, Aorta4, pulse::CardiovascularPath::Aorta1ToAorta4);
+  Aorta1ToAorta4.GetComplianceBaseline().SetValue(0.0, FlowComplianceUnit::mL_Per_mmHg);
 
   SEFluidCircuitPath& Aorta1ToBrain1 = cCardiovascular.CreatePath(Aorta1, Brain1, pulse::CardiovascularPath::Aorta1ToBrain1);
   Aorta1ToBrain1.GetResistanceBaseline().SetValue(systemicResistanceModifier*ResistanceBrain, FlowResistanceUnit::mmHg_s_Per_mL);
@@ -1523,10 +1530,15 @@ void PulseController::SetupCardiovascular()
   SEFluidCircuitPath& SpleenToPortalVein = cCardiovascular.CreatePath(Spleen, PortalVein, pulse::CardiovascularPath::SpleenToPortalVein);
   SpleenToPortalVein.GetResistanceBaseline().SetValue(systemicResistanceModifier*ResistanceSpleenVenous, FlowResistanceUnit::mmHg_s_Per_mL);
 
+  SEFluidCircuitPath& AbdominalCavityToGround = cCardiovascular.CreatePath(AbdominalCavity, Ground, pulse::CardiovascularPath::AbdominalCavity1ToGround);
+  SEFluidCircuitPath& GroundToAbdominalCavity = cCardiovascular.CreatePath(Ground, AbdominalCavity, pulse::CardiovascularPath::GroundToAbdominalCavity1);
+  GroundToAbdominalCavity.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);
+
+  SEFluidCircuitPath& GroundToAorta4 = cCardiovascular.CreatePath(Ground, Aorta4, pulse::CardiovascularPath::GroundToAorta4);
+  GroundToAorta4.GetPressureSourceBaseline().SetValue(0.0, PressureUnit::mmHg);
+
   SEFluidCircuitPath& VenaCavaToGround = cCardiovascular.CreatePath(VenaCava, Ground, pulse::CardiovascularPath::VenaCavaToGround);
   VenaCavaToGround.GetComplianceBaseline().SetValue(0.0, FlowComplianceUnit::mL_Per_mmHg);
-  SEFluidCircuitPath& VenaCavaBleed = cCardiovascular.CreatePath(VenaCava, Ground, pulse::CardiovascularPath::VenaCavaBleed);
-  VenaCavaBleed.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);
   SEFluidCircuitPath& IVToVenaCava = cCardiovascular.CreatePath(Ground, VenaCava, pulse::CardiovascularPath::IVToVenaCava);
   IVToVenaCava.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);
 
@@ -1571,8 +1583,10 @@ void PulseController::SetupCardiovascular()
   double VolumeModifierVenaCava = 0.66932*1.134447;
 
   //And also modify the compliances
-  Aorta1ToGround.GetComplianceBaseline().SetValue(largeArteriesComplianceModifier*Aorta1ToGround.GetComplianceBaseline(FlowComplianceUnit::mL_Per_mmHg), FlowComplianceUnit::mL_Per_mmHg);
+  Aorta1ToAorta4.GetComplianceBaseline().SetValue(largeArteriesComplianceModifier*Aorta1ToAorta4.GetComplianceBaseline(FlowComplianceUnit::mL_Per_mmHg), FlowComplianceUnit::mL_Per_mmHg);
 
+  //For Internal Hemorrhage
+  AbdominalCavityToGround.GetComplianceBaseline().SetValue(100.0, FlowComplianceUnit::mL_Per_mmHg);
 
   RightPulmonaryArteries.GetVolumeBaseline().SetValue(VolumeModifierPulmArtR * RightPulmonaryArteries.GetVolumeBaseline(VolumeUnit::mL), VolumeUnit::mL);
   LeftPulmonaryArteries.GetVolumeBaseline().SetValue(VolumeModifierPulmArtL * LeftPulmonaryArteries.GetVolumeBaseline(VolumeUnit::mL), VolumeUnit::mL);
@@ -1673,7 +1687,11 @@ void PulseController::SetupCardiovascular()
   vAorta.MapNode(Aorta1);
   vAorta.MapNode(Aorta2);
   vAorta.MapNode(Aorta3);
+  vAorta.MapNode(Aorta4);
   ///////////
+  // Abdominal Cavity //
+  SELiquidCompartment& vAbdominalCavity = m_Compartments->CreateLiquidCompartment(pulse::VascularCompartment::AbdominalCavity);
+  vAbdominalCavity.MapNode(AbdominalCavity);
   // Brain //
   SELiquidCompartment& vBrain = m_Compartments->CreateLiquidCompartment(pulse::VascularCompartment::Brain);
   vBrain.MapNode(Brain1);
@@ -1794,6 +1812,17 @@ void PulseController::SetupCardiovascular()
   vGut.AddChild(vSplanchnic);
   vGut.AddChild(vSmallIntestine);
   vGut.AddChild(vLargeIntestine);
+  SELiquidCompartment& vAbdomen = m_Compartments->CreateLiquidCompartment(pulse::VascularCompartment::Abdomen);
+  vAbdomen.AddChild(vSplanchnic);
+  vAbdomen.AddChild(vSmallIntestine);
+  vAbdomen.AddChild(vLargeIntestine);
+  vAbdomen.AddChild(vLeftKidney);
+  vAbdomen.AddChild(vRightKidney);
+  vAbdomen.AddChild(vSpleen);
+  vAbdomen.AddChild(vLiver);
+  vAbdomen.AddChild(vVenaCava);
+  vAbdomen.AddChild(vAorta);
+  vAbdomen.AddChild(vAbdominalCavity);
 
 
   //////////////////
@@ -1931,8 +1960,6 @@ void PulseController::SetupCardiovascular()
 
   /////////////////////
   // Bleeds and IV's //
-  SELiquidCompartmentLink& vVenaCavaHemorrhage = m_Compartments->CreateLiquidLink(vVenaCava, vGround, pulse::VascularLink::VenaCavaHemorrhage);
-  vVenaCavaHemorrhage.MapPath(VenaCavaBleed);
   SELiquidCompartmentLink& vVenaCavaIV = m_Compartments->CreateLiquidLink(vGround, vVenaCava, pulse::VascularLink::VenaCavaIV);
   vVenaCavaIV.MapPath(IVToVenaCava);
 
@@ -2010,7 +2037,6 @@ void PulseController::SetupCardiovascular()
   gCardiovascular.AddLink(vSplanchnicToLiver);
   gCardiovascular.AddLink(vAortaToSpleen);
   gCardiovascular.AddLink(vSpleenToLiver);
-  gCardiovascular.AddLink(vVenaCavaHemorrhage);
   gCardiovascular.AddLink(vVenaCavaIV);
   gCardiovascular.StateChange();
 

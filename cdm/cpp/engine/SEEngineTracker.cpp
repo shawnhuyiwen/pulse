@@ -3,10 +3,10 @@
 
 #include "stdafx.h"
 #include "engine/SEEngineTracker.h"
+#include "engine/SEDataRequest.h"
+#include "engine/SEDataRequestManager.h"
 #include "PhysiologyEngine.h"
 #include "patient/SEPatient.h"
-#include "scenario/SEDataRequest.h"
-#include "scenario/SEDataRequestManager.h"
 // Compartments
 #include "compartment/SECompartmentManager.h"
 #include "compartment/fluid/SEGasCompartment.h"

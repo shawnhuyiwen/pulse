@@ -4,7 +4,7 @@
 #include "EngineHowTo.h"
 
 // Include the various types you will be using in your code
-#include "scenario/SEDataRequestManager.h"
+#include "engine/SEDataRequestManager.h"
 #include "compartment/SECompartmentManager.h"
 #include "compartment/fluid/SEGasCompartment.h"
 #include "patient/SEPatient.h"
@@ -133,7 +133,7 @@ void HowToEngineUse()
   // If no time is provided, the simulation time that is in the state file will be used
   // Note the provided state files are named to include what is simulation time is
   startTime.SetValue(0, TimeUnit::s);
-  if (!pe->SerializeFromFile("./states/StandardMale@0s.pba", ASCII, &startTime, nullptr))
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.json", JSON, &startTime, nullptr))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
@@ -150,8 +150,8 @@ void HowToEngineUse()
   // We are interested in 2 substances and their amounts in compartments
   // Let's grab the substance via name from the substance manager, string look ups are slow
   // So it's a good idea to cache this pointer so you can reuse it when asking at various time steps
-  // You can find all substances defined in pba files in the substances directory of your working directory
-  // Names are in those pba files. ALL substance pba files are loaded into a substance managers when the engine is created
+  // You can find all substances defined in json files in the substances directory of your working directory
+  // Names are in those json files. ALL substance json files are loaded into a substance managers when the engine is created
   SESubstance* O2 = pe->GetSubstanceManager().GetSubstance("Oxygen");
   SESubstance* CO2 = pe->GetSubstanceManager().GetSubstance("CarbonDioxide");
 
@@ -268,7 +268,7 @@ void HowToEngineUse()
 
 
   // Save the state of the engine
-  pe->SerializeToFile("./states/FinalEngineUseState.pba",ASCII);
+  pe->SerializeToFile("./states/FinalEngineUseState.json",JSON);
 
   pe->GetLogger()->Info("Finished");
 }

@@ -25,8 +25,8 @@
   #endif
 #endif
 
-PULSE_DECL std::unique_ptr<PhysiologyEngine> CreatePulseEngine(const std::string& logfile = "");
-PULSE_DECL std::unique_ptr<PhysiologyEngine> CreatePulseEngine(Logger* logger = nullptr);
+PULSE_DECL std::unique_ptr<PhysiologyEngine> CreatePulseEngine(const std::string& logfile = "", const std::string& data_dir = ".");
+PULSE_DECL std::unique_ptr<PhysiologyEngine> CreatePulseEngine(Logger* logger = nullptr, const std::string& data_dir =".");
 
 #define PULSE_BIND_DECL(type) \
   class type;\
@@ -386,6 +386,8 @@ namespace pulse {
     DEFINE_STATIC_STRING_EX(LeftLeg, LeftLegVasculature);
     DEFINE_STATIC_STRING_EX(RightArm, RightArmVasculature);
     DEFINE_STATIC_STRING_EX(RightLeg, RightLegVasculature);
+    DEFINE_STATIC_STRING(Abdomen);
+    /**/DEFINE_STATIC_STRING(AbdominalCavity);
 
     DEFINE_STATIC_STRING(Ground);
 
@@ -396,6 +398,7 @@ namespace pulse {
       if (_values.empty())
       {
         _values.push_back(Aorta);
+        _values.push_back(Abdomen);
         _values.push_back(Heart);
         _values.push_back(Myocardium);
         _values.push_back(LeftHeart);
@@ -527,7 +530,6 @@ namespace pulse {
     DEFINE_STATIC_STRING(SpleenToLiver);
 
     // Hemorrhage and IV
-    DEFINE_STATIC_STRING(VenaCavaHemorrhage);
     DEFINE_STATIC_STRING(VenaCavaIV);
 
     // Vascular To Tissue Links

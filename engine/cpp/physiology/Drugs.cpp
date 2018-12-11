@@ -13,8 +13,8 @@
 #include "system/physiology/SETissueSystem.h"
 #include "system/physiology/SEPupillaryResponse.h"
 // Actions
-#include "scenario/SEActionManager.h"
-#include "scenario/SEPatientActionCollection.h"
+#include "engine/SEActionManager.h"
+#include "engine/SEPatientActionCollection.h"
 #include "patient/actions/SESubstanceBolus.h"
 #include "patient/actions/SESubstanceInfusion.h"
 #include "patient/actions/SESubstanceCompoundInfusion.h"

@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "scenario/SEAction.h"
+#include "engine/SEAction.h"
 
 class CDM_DECL SEPatientAction : public SEAction
 {

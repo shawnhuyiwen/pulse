@@ -5,10 +5,10 @@
 
 // Include the various types you will be using in your code
 #include "scenario/SEScenario.h"
-#include "scenario/SEScenarioInitialParameters.h"
 #include "scenario/SEScenarioExec.h"
-#include "scenario/SEDataRequestManager.h"
-#include "scenario/SEAdvanceTime.h"
+#include "engine/SEPatientConfiguration.h"
+#include "engine/SEDataRequestManager.h"
+#include "engine/SEAdvanceTime.h"
 #include "compartment/SECompartmentManager.h"
 #include "engine/SEAdvanceHandler.h"
 
@@ -67,11 +67,11 @@ void HowToRunScenario()
 
   // Create a Scenario Executor
   SEScenarioExec executor(*pe);
-  // Let's make a scenario (you could just point the executor to a scenario pba file on disk as well)
+  // Let's make a scenario (you could just point the executor to a scenario json file on disk as well)
   SEScenario sce(pe->GetSubstanceManager());
   sce.SetName("HowToRunScenario");
   sce.SetDescription("Simple Scenario to demonstraight building a scenario by the CDM API");
-  sce.GetInitialParameters().SetPatientFile("StandardMale.pba");
+  sce.GetPatientConfiguration().SetPatientFile("StandardMale.json");
   // Note you can set an Engine state, or create your own SEPatient object (see HowTo-CreateAPatient)
   // When filling out a data request, units are optional
   // The units will be set to whatever units the engine uses.

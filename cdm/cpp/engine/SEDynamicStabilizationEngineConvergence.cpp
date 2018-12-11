@@ -4,8 +4,8 @@
 #include "stdafx.h"
 #include "engine/SEDynamicStabilizationEngineConvergence.h"
 #include "engine/SEDynamicStabilizationPropertyConvergence.h"
-#include "scenario/SEDataRequest.h"
-#include "scenario/SEDataRequestManager.h"
+#include "engine/SEDataRequest.h"
+#include "engine/SEDataRequestManager.h"
 #include "properties/SEScalarTime.h"
 
 SEDynamicStabilizationEngineConvergence::SEDynamicStabilizationEngineConvergence(Logger *logger) : Loggable(logger)

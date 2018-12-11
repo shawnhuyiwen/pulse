@@ -68,14 +68,14 @@ See accompanying NOTICE file for details.*/
 // This class is used to expose the actual patient data parameters (i.e. data in the patient file)
 // Expand this class with data you want from the patient specification
 // It gets pulled once (at engine startup) as this data never changes
-public ref class PatientData
+public ref class PatientDataRef
 {
 public:
   double TotalLungCapacity_mL;
 };
 
-// Extend this class with data you want from the engine
-public ref class VitalsData
+// Modify this class with data you want from the engine
+public ref class PulseDataRef
 {
 public:
   // Cardiovascular
@@ -100,8 +100,8 @@ public:
   double SpO2;
   // ECG
   double ECG_Lead3_mV;
-
   // Compartment data
+  double CarinaCO2PartialPressure_mmHg;
 };
 
 typedef void(__stdcall *fpLog)(const std::string&);
@@ -167,10 +167,11 @@ public:
   virtual ~PulseEngineRef();
 
   bool LoadStateFile(System::String^ filename, double sim_start_time_s);
+  bool LoadStateFile(System::String^ filename, double sim_start_time_s, PatientDataRef^ d);
   void SaveStateFile(System::String^ filename);
 
   double GetSimTime_s();
-  void AdvanceModelTime_s(double time_s);
+  void AdvanceModelTime_s(double time_s, PulseDataRef^ output);
 
   // Action Methods
   void AcuteStress(double severity);
@@ -185,8 +186,6 @@ public:
   void Pneumothorax(eGate state, eSide side, double severity);
 
   // Outputs and State
-  VitalsData^ GetVitalsData() { return _vitalsData; }
-  PatientData^ GetPatientData() { return _patientData; }
   void SetPulseEventCallback(PulseEngineEventCallbacksRef^ callback) { _callback = callback; }
 
 protected:
@@ -203,9 +202,6 @@ internal: // Should be hidden from C#, which is what we want for these.
   PulseLogger*                     _logger = nullptr;
   PulseEventHandler*               _events = nullptr;
   Object^                          _lock = gcnew System::Object();
-
-  VitalsData^                      _vitalsData = gcnew VitalsData();
-  PatientData^                     _patientData = gcnew PatientData();
 
   // Utility to convert C# strings to C++ Strings
   std::string MarshalString(System::String^ s);

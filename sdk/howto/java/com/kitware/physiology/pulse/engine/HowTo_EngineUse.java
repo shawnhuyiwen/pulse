@@ -4,20 +4,18 @@ package com.kitware.physiology.pulse.engine;
 
 import java.util.*;
 
-import com.google.protobuf.TextFormat.ParseException;
-import com.kitware.physiology.cdm.AnesthesiaMachine.AnesthesiaMachineData;
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.kitware.physiology.cdm.AnesthesiaMachineEnums.eAnesthesiaMachine;
-import com.kitware.physiology.cdm.Patient.PatientData;
 import com.kitware.physiology.cdm.PatientEnums.ePatient;
-import com.kitware.physiology.cdm.ScenarioEnums.eDataRequest.*;
-
+import com.kitware.physiology.cdm.EngineEnums.eDataRequest.*;
+import com.kitware.physiology.cdm.PatientActionEnums.eHemorrhage;
 import com.kitware.physiology.datamodel.conditions.SECondition;
 import com.kitware.physiology.datamodel.datarequests.SEDataRequest;
 import com.kitware.physiology.datamodel.datarequests.SEDataRequestManager;
+import com.kitware.physiology.datamodel.engine.SEPatientConfiguration;
 import com.kitware.physiology.datamodel.patient.SEPatient;
 import com.kitware.physiology.datamodel.patient.actions.SEHemorrhage;
 import com.kitware.physiology.datamodel.patient.actions.SESubstanceCompoundInfusion;
-import com.kitware.physiology.datamodel.patient.actions.SESubstanceInfusion;
 import com.kitware.physiology.datamodel.patient.assessments.SECompleteBloodCount;
 import com.kitware.physiology.datamodel.patient.conditions.SEChronicAnemia;
 import com.kitware.physiology.datamodel.properties.CommonUnits.FrequencyUnit;
@@ -175,6 +173,11 @@ public class HowTo_EngineUse
       patient.getSystolicArterialPressureBaseline().setValue(114.,PressureUnit.mmHg);
       patient.getRespirationRateBaseline().setValue(16,FrequencyUnit.Per_min);
       
+      SEPatientConfiguration patient_configuration = new SEPatientConfiguration();
+      patient_configuration.setPatient(patient);
+      // Optionally add conditions to the patient_configuration
+      
+      
       // If I wanted to make set a condition on the patient
       // Note that while you can have multiple conditions on a patient
       // It is more than likely not tested and the engine may or may not converge
@@ -184,23 +187,27 @@ public class HowTo_EngineUse
       conditions.add(anemia);
       
       // Allocate an engine
-      pe.initializeEngine("./Scenarios/HowToDynamicEngine.log", patient, null/*optionally, pass in our conditions list*/, dataRequests);
+      pe.initializeEngine("./Scenarios/HowToDynamicEngine.log", patient_configuration, dataRequests);
        // This method will block while the engine stabilizes to meet the defined patient parameters
        break;
      }
    case PatientFile:
      {
+    	 SEPatientConfiguration patient_configuration = new SEPatientConfiguration();
+       patient_configuration.setPatientFile("./patient/StandardMale.json");
+       // Optionally add conditions to the patient_configuration
+       
        // Allocate an engine
-       pe.initializeEngine("./Scenarios/HowToDynamicEngine.log", "./patient/StandardMale.pba", null/*optionally, pass in a conditions list*/, dataRequests);       
+       pe.initializeEngine("./Scenarios/HowToDynamicEngine.log", patient_configuration, dataRequests);       
        // This method will block while the engine stabilizes to meet the defined patient parameters
        break;
      }
    case StateFile:
      {
-       pe.serializeFromFile("./Scenarios/HowToDynamicEngine.log", "./states/StandardMale@0s.pba", dataRequests);
+       pe.serializeFromFile("./Scenarios/HowToDynamicEngine.log", "./states/StandardMale@0s.json", dataRequests);
        // This method method sets the engine to the provided state instantaneously and you are ready to process actions/advance time
        // You can alternatively specify the starting simTime of the engine       
-       //pe.loadState("./Scenarios/HowToDynamicEngine.log", "./states/StandardMale@0s.pba", time, dataRequests);
+       //pe.loadState("./Scenarios/HowToDynamicEngine.log", "./states/StandardMale@0s.json", time, dataRequests);
        break;
      }
    }
@@ -232,7 +239,7 @@ public class HowTo_EngineUse
    {
   	 pe.getPatientAssessment(cbc);
    }
-   catch(ParseException ex)
+   catch(InvalidProtocolBufferException ex)
    {
   	 Log.error("Failed to get patient assessment",ex);
    }
@@ -258,6 +265,7 @@ public class HowTo_EngineUse
    
    // Let's do something to the patient, you can either send actions over one at a time, or pass in a List<SEAction>
    SEHemorrhage h = new SEHemorrhage();
+   h.setType(eHemorrhage.Type.External);
    h.setCompartment(PulseCompartments.Vascular.RightLeg);
    h.getRate().setValue(200,VolumePerTimeUnit.mL_Per_min);// Change this to 750 if you want to see how engine failures are handled!!
    if(!pe.processAction(h))
@@ -270,7 +278,7 @@ public class HowTo_EngineUse
    for(int i=1; i<=2; i++)
    {
   	 time.setValue(i,TimeUnit.min);
-	   if(!pe.advanceTime(time)) // Simulate one second
+	   if(!pe.advanceTime(time)) // Simulate one minute
 	   {
 	     Log.error("Engine was unable to stay within modeling parameters with requested actions");
 	     return;
@@ -293,7 +301,7 @@ public class HowTo_EngineUse
    for(int i=1; i<=1; i++)
    {
      time.setValue(i,TimeUnit.min);
-     if(!pe.advanceTime(time)) // Simulate one second
+     if(!pe.advanceTime(time)) // Simulate one minute
      {
        Log.error("Engine was unable to stay within modeling parameters with requested actions");
        return;
@@ -319,7 +327,7 @@ public class HowTo_EngineUse
    for(int i=1; i<=5; i++)
    {
      time.setValue(i,TimeUnit.min);
-     if(!pe.advanceTime(time)) // Simulate one second
+     if(!pe.advanceTime(time)) // Simulate one minute
      {
        Log.error("Engine was unable to stay within modeling parameters with requested actions");
        return;

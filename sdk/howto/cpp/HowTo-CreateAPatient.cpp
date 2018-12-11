@@ -15,6 +15,7 @@
 #include "substance/SESubstance.h"
 #include "engine/SEEngineTracker.h"
 #include "engine/SEEventHandler.h"
+#include "engine/SEPatientConfiguration.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEScalarMassPerVolume.h"
@@ -39,7 +40,8 @@ void HowToCreateAPatient()
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowToEngineUse.log");
   pe->GetLogger()->Info("HowToCreateAPatient");
 
-  SEPatient patient(pe->GetLogger());
+  SEPatientConfiguration pc(pe->GetLogger());
+  SEPatient& patient = pc.GetPatient();
   patient.SetName("HowToCreateAPatient");
   //Patient sex is the only thing that is absolutely required to be set.
   //All value not explicitly set based or standard values or calculations.
@@ -55,14 +57,15 @@ void HowToCreateAPatient()
   patient.GetSystolicArterialPressureBaseline().SetValue(114, PressureUnit::mmHg);
 
   // You can save off the patient if you want to use it later
-  patient.SerializeToFile("./patients/HowToCreateAPatient.pba",ASCII);
+  patient.SerializeToFile("./patients/HowToCreateAPatient.json",JSON);
 
-  if (!pe->InitializeEngine(patient))
+
+  if (!pe->InitializeEngine(pc))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
   }
 
   // You can save off the initial patient state if you want to use it later
-  pe->SerializeToFile("./states/HowToCreateAPatient@0s.pba",ASCII);
+  pe->SerializeToFile("./states/HowToCreateAPatient@0s.json",JSON);
 }
