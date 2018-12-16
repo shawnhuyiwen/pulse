@@ -1,6 +1,7 @@
 syntax = "proto3";
 package cdm;
 option java_package = "com.kitware.physiology.cdm";
+option optimize_for = SPEED;
 
 import "cdm/Properties.proto";
 import "cdm/ElectroCardioGramEnums.proto";

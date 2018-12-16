@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{1194CEC1-6AE7-48E4-B214-90C72DD6C90B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DataModelBindings</RootNamespace>
+    <AssemblyName>DataModelBindings</AssemblyName>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Google.Protobuf, Version=3.6.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\protobuf\csharp\src\Google.Protobuf\bin\Release\net45\Google.Protobuf.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="bind\csharp\ActionEnums.cs" />
+    <Compile Include="bind\csharp\Actions.cs" />
+    <Compile Include="bind\csharp\AnesthesiaMachine.cs" />
+    <Compile Include="bind\csharp\AnesthesiaMachineActions.cs" />
+    <Compile Include="bind\csharp\AnesthesiaMachineEnums.cs" />
+    <Compile Include="bind\csharp\Circuit.cs" />
+    <Compile Include="bind\csharp\Compartment.cs" />
+    <Compile Include="bind\csharp\CompartmentEnums.cs" />
+    <Compile Include="bind\csharp\Conditions.cs" />
+    <Compile Include="bind\csharp\ElectroCardioGram.cs" />
+    <Compile Include="bind\csharp\ElectroCardioGramEnums.cs" />
+    <Compile Include="bind\csharp\Engine.cs" />
+    <Compile Include="bind\csharp\EngineEnums.cs" />
+    <Compile Include="bind\csharp\Enums.cs" />
+    <Compile Include="bind\csharp\Environment.cs" />
+    <Compile Include="bind\csharp\EnvironmentActions.cs" />
+    <Compile Include="bind\csharp\EnvironmentConditions.cs" />
+    <Compile Include="bind\csharp\EnvironmentEnums.cs" />
+    <Compile Include="bind\csharp\Inhaler.cs" />
+    <Compile Include="bind\csharp\InhalerActions.cs" />
+    <Compile Include="bind\csharp\Patient.cs" />
+    <Compile Include="bind\csharp\PatientActionEnums.cs" />
+    <Compile Include="bind\csharp\PatientActions.cs" />
+    <Compile Include="bind\csharp\PatientAssessmentEnums.cs" />
+    <Compile Include="bind\csharp\PatientAssessments.cs" />
+    <Compile Include="bind\csharp\PatientConditions.cs" />
+    <Compile Include="bind\csharp\PatientEnums.cs" />
+    <Compile Include="bind\csharp\PatientNutrition.cs" />
+    <Compile Include="bind\csharp\Physiology.cs" />
+    <Compile Include="bind\csharp\PhysiologyEnums.cs" />
+    <Compile Include="bind\csharp\Properties.cs" />
+    <Compile Include="bind\csharp\Pulse.cs" />
+    <Compile Include="bind\csharp\PulseConfiguration.cs" />
+    <Compile Include="bind\csharp\PulseEnums.cs" />
+    <Compile Include="bind\csharp\PulseEnvironment.cs" />
+    <Compile Include="bind\csharp\PulseEquipment.cs" />
+    <Compile Include="bind\csharp\PulsePhysiology.cs" />
+    <Compile Include="bind\csharp\PulseState.cs" />
+    <Compile Include="bind\csharp\Scenario.cs" />
+    <Compile Include="bind\csharp\Substance.cs" />
+    <Compile Include="bind\csharp\SubstanceEnums.cs" />
+    <Compile Include="bind\csharp\SubstanceQuantity.cs" />
+    <Compile Include="bind\csharp\TestReport.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
