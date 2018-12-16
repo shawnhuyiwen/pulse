@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{DC674C38-20D9-4195-8D33-D6F9452B6FCA}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CommonDataModel</RootNamespace>
+    <AssemblyName>CommonDataModel</AssemblyName>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Google.Protobuf, Version=3.6.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\protobuf\csharp\src\Google.Protobuf\bin\Release\net45\Google.Protobuf.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\schema\DataModelBindings.nf.csproj">
+      <Project>{1194cec1-6ae7-48e4-b214-90c72dd6c90b}</Project>
+      <Name>DataModelBindings.nf</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CommonDataModel.cs" />
+    <Compile Include="engine\SEAction.cs" />
+    <Compile Include="io\PBActions.cs" />
+    <Compile Include="io\PBAnesthesiaMachine.cs" />
+    <Compile Include="io\PBAnesthesiaMachineActions.cs" />
+    <Compile Include="io\PBPatientActions.cs" />
+    <Compile Include="io\PBProperties.cs" />
+    <Compile Include="patient\actions\SEAirwayObstruction.cs" />
+    <Compile Include="patient\actions\SEHemorrhage.cs" />
+    <Compile Include="patient\actions\SEIntubation.cs" />
+    <Compile Include="patient\actions\SENeedleDecompression.cs" />
+    <Compile Include="patient\actions\SEPatientAction.cs" />
+    <Compile Include="patient\actions\SESubstanceBolus.cs" />
+    <Compile Include="patient\actions\SESubstanceCompoundInfusion.cs" />
+    <Compile Include="patient\actions\SESubstanceInfusion.cs" />
+    <Compile Include="patient\actions\SETensionPneumothorax.cs" />
+    <Compile Include="Properties\SEProperty.cs" />
+    <Compile Include="Properties\SEScalar.cs" />
+    <Compile Include="Properties\SEScalar0To1.cs" />
+    <Compile Include="Properties\SEScalarFrequency.cs" />
+    <Compile Include="Properties\SEScalarInversePressure.cs" />
+    <Compile Include="Properties\SEScalarMass.cs" />
+    <Compile Include="Properties\SEScalarMassPerAmount.cs" />
+    <Compile Include="Properties\SEScalarMassPerAreaTime.cs" />
+    <Compile Include="Properties\SEScalarMassPerTime.cs" />
+    <Compile Include="Properties\SEScalarMassPerVolume.cs" />
+    <Compile Include="Properties\SEScalarNegative1To1.cs" />
+    <Compile Include="Properties\SEScalarPressure.cs" />
+    <Compile Include="Properties\SEScalarTime.cs" />
+    <Compile Include="Properties\SEScalarVolume.cs" />
+    <Compile Include="Properties\SEScalarVolumePerTime.cs" />
+    <Compile Include="Properties\SEScalarVolumePerTimeMass.cs" />
+    <Compile Include="Properties\SEScalarVolumePerTimePressure.cs" />
+    <Compile Include="system\equipment\anesthesia_machine\actions\SEAnesthesiaMachineAction.cs" />
+    <Compile Include="system\equipment\anesthesia_machine\actions\SEAnesthesiaMachineConfiguration.cs" />
+    <Compile Include="system\equipment\anesthesia_machine\actions\SEExpiratoryValveLeak.cs" />
+    <Compile Include="system\equipment\anesthesia_machine\actions\SEExpiratoryValveObstruction.cs" />
+    <Compile Include="system\equipment\anesthesia_machine\actions\SEInspiratoryValveLeak.cs" />
+    <Compile Include="system\equipment\anesthesia_machine\actions\SEInspiratoryValveObstruction.cs" />
+    <Compile Include="system\equipment\anesthesia_machine\actions\SEMaskLeak.cs" />
+    <Compile Include="system\equipment\anesthesia_machine\actions\SEOxygenTankPressureLoss.cs" />
+    <Compile Include="system\equipment\anesthesia_machine\actions\SEOxygenWallPortPressureLoss.cs" />
+    <Compile Include="system\equipment\anesthesia_machine\actions\SESodaLimeFailure.cs" />
+    <Compile Include="system\equipment\anesthesia_machine\actions\SETubeCuffLeak.cs" />
+    <Compile Include="system\equipment\anesthesia_machine\actions\SEVaporizerFailure.cs" />
+    <Compile Include="system\equipment\anesthesia_machine\actions\SEVentilatorPressureLoss.cs" />
+    <Compile Include="system\equipment\anesthesia_machine\actions\SEYPieceDisconnect.cs" />
+    <Compile Include="system\equipment\anesthesia_machine\SEAnesthesiaMachine.cs" />
+    <Compile Include="system\equipment\anesthesia_machine\SEAnesthesiaMachineChamber.cs" />
+    <Compile Include="system\equipment\anesthesia_machine\SEAnesthesiaMachineOxygenBottle.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
