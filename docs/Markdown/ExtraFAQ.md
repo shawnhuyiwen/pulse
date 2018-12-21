@@ -4,7 +4,7 @@ ExtraFAQ {#ExtraFAQ}
 ## Why does it take so long to initialize the physiology engine?
 The engine represents a single, @ref PatientMethodology "variable patient". 
 Patient variability requires that the engine analyze the provided patient baseline values and stabilize the physiology to those values. 
-This initialization can take several minutes, but once complete, the engine state can be saved to a protobuf ascii (pba) file.
+This initialization can take several minutes, but once complete, the engine state can be saved to a file as protobuf binary or json.
 You can then load this state and instantaneously start execution of the simulation without any initialization time.
 Please consult the example in the SDK for how to take advantage of this feature and eliminate any initialization time in your application.
 
