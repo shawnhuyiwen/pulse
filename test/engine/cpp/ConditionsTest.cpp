@@ -7,6 +7,7 @@
 #include "utils/testing/SETestSuite.h"
 #include "patient/conditions/SEChronicAnemia.h"
 #include "engine/SEPatientConfiguration.h"
+#include "engine/SEConditionManager.h"
 
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalar0To1.h"
@@ -14,17 +15,20 @@
 void PulseEngineTest::ConditionCombinations(const std::string& rptDirectory)
 {
   Logger log("ConditionsPermutationsReport.log");
+
+  std::unique_ptr<PhysiologyEngine> physEng = CreatePulseEngine(&log);
+  SEPatientConfiguration pc(physEng->GetSubstanceManager());
+
+  std::vector<SECondition*> conditions;
   SEChronicAnemia cAnem;
   cAnem.GetReductionFactor().SetValue(0.1);
-  
-  SEPatientConfiguration pc(&log);
-  pc.GetConditions().push_back(&cAnem);
+  conditions.push_back(&cAnem);
 
-  SEPatientConfiguration sceConfig(&log);
-  sceConfig.SetPatientFile("StandardMale.json");
+  SEPatientConfiguration sceConfig(physEng->GetSubstanceManager());
+  pc.SetPatientFile("StandardMale.json");
 
   std::vector<int> conditionSwitches;
-  for (unsigned int i = 0; i < pc.GetConditions().size(); i++)
+  for (unsigned int i = 0; i < conditions.size(); i++)
     conditionSwitches.push_back(1);
   // Conditions will either be on or off when we run
   // Now calculate all the permutations with our conditions
@@ -42,20 +46,19 @@ void PulseEngineTest::ConditionCombinations(const std::string& rptDirectory)
     for (std::vector<int> combo : permutations)
     {
       ss.clear();
-      sceConfig.GetConditions().clear();
-      for (unsigned int c = 0; c < pc.GetConditions().size(); c++)
+      sceConfig.GetConditions().Clear();
+      for (unsigned int c = 0; c < conditions.size(); c++)
       {
         if (combo[c] == 1)
         {
-          sceConfig.GetConditions().push_back(pc.GetConditions()[c]);
-          ss << pc.GetConditions()[c]->GetName() << "-";
+          sceConfig.GetConditions().ProcessCondition(*conditions[c]);
+          ss << conditions[c]->GetName() << "-";
         }
       }
       if (ss.str().empty())
          ss << "NoConditions";
       SETestCase& testCase = testSuite.CreateTestCase();
       log.Info(ss);
-      std::unique_ptr<PhysiologyEngine> physEng = CreatePulseEngine(&log);
       if (!physEng->InitializeEngine(sceConfig))
       {
         testCase.AddFailure("Unable to stabilize condition permutation");

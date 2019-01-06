@@ -7,6 +7,7 @@
 #include "engine/SEDataRequestManager.h"
 #include "engine/SEEngineTracker.h"
 #include "engine/SEPatientConfiguration.h"
+#include "engine/SEConditionManager.h"
 #include "compartment/SECompartmentManager.h"
 #include "compartment/fluid/SEGasCompartment.h"
 #include "patient/conditions/SEChronicObstructivePulmonaryDisease.h"
@@ -38,16 +39,15 @@ void HowToCOPD()
   pe->GetLogger()->Info("HowToCOPD");
   
   // Since this is a condition, we do not provide a starting state
-  // You will need to initialize the engine to this condition
+  // You will need to initialize the engine to this patient configuration
   // You could then save out your own state and use it in the future
+  SEPatientConfiguration pc(pe->GetSubstanceManager());
+  pc.SetPatientFile("StandardMale.json");
 
   SEChronicObstructivePulmonaryDisease COPD;
   COPD.GetBronchitisSeverity().SetValue(0.5);
   COPD.GetEmphysemaSeverity().SetValue(0.7);
-
-  SEPatientConfiguration pc(pe->GetLogger());
-  pc.SetPatientFile("StandardMale.json");
-  pc.GetConditions().push_back(&COPD);
+  pc.GetConditions().ProcessCondition(COPD);
 
   if (!pe->InitializeEngine(pc))
   {

@@ -9,6 +9,7 @@
 #include "engine/SEDynamicStabilizationPropertyConvergence.h"
 #include "engine/SEEngineTracker.h"
 #include "engine/SECondition.h"
+#include "engine/SEConditionManager.h"
 #include "engine/SEDataRequest.h"
 #include "properties/SEScalarTime.h"
 #include "utils/TimingProfile.h"
@@ -134,13 +135,14 @@ bool SEDynamicStabilization::StabilizeFeedbackState(PhysiologyEngine& engine)
   Info("Converging feedback to a steady state");
   return Stabilize(engine, *m_FeedbackConvergence);
 }
-bool SEDynamicStabilization::StabilizeConditions(PhysiologyEngine& engine, const std::vector<const SECondition*>& conditions)
+bool SEDynamicStabilization::StabilizeConditions(PhysiologyEngine& engine, const SEConditionManager& conditions)
 {
-  if (conditions.empty())
+  if (conditions.IsEmpty())
     return true;
+  conditions.GetAllConditions(m_Conditions);
   // Grab the Convergence based on the conditions we have
   m_ActiveConditions.clear();
-  for (auto c : conditions)
+  for (auto c : m_Conditions)
   {
     if (!HasConditionConvergence(c->GetName()))
     {
@@ -148,7 +150,11 @@ bool SEDynamicStabilization::StabilizeConditions(PhysiologyEngine& engine, const
       return false;
     }
     else
-      m_ActiveConditions[c->GetName()]=&GetConditionConvergence(c->GetName());
+    {
+      m_ss << "Stabilizing Condition : " << *c;
+      Info(m_ss);
+      m_ActiveConditions[c->GetName()] = &GetConditionConvergence(c->GetName());
+    }
   }
   if (m_ActiveConditions.size() == 1)
   {

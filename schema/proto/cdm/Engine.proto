@@ -85,7 +85,7 @@ message PatientConfigurationData
     PatientData                                         Patient                   = 1;
     string                                              PatientFile               = 2;
   }
-  repeated AnyConditionData                             AnyCondition              = 3;
+  ConditionListData                                     Conditions                = 3;
 }
 
 message AutoSerializationData

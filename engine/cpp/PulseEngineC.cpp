@@ -112,8 +112,8 @@ C_EXPORT const char* C_CALL SerializeToString(PulseEngineC* pulseC, int format)
 extern "C"
 C_EXPORT bool C_CALL InitializeEngine(PulseEngineC* pulseC, const char* patient_configuration, const char* data_requests, int format)
 {
-  SEPatientConfiguration pc(pulseC->eng->GetLogger());
-  if (!pc.SerializeFromString(patient_configuration, (SerializationFormat)format, pulseC->eng->GetSubstanceManager()))
+  SEPatientConfiguration pc(pulseC->eng->GetSubstanceManager());
+  if (!pc.SerializeFromString(patient_configuration, (SerializationFormat)format))
   {
     pulseC->eng->GetLogger()->Error("Unable to load patient configuration string");
     return false;

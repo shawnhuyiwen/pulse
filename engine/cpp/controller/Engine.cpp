@@ -114,8 +114,8 @@ SEEngineTracker* PulseEngine::GetEngineTracker() const
 
 bool PulseEngine::InitializeEngine(const std::string& patient_configuration, SerializationFormat m, const SEEngineConfiguration* config)
 {
-  SEPatientConfiguration pc(GetLogger());
-  pc.SerializeFromString(patient_configuration, m, *m_Substances);
+  SEPatientConfiguration pc(*m_Substances);
+  pc.SerializeFromString(patient_configuration, m);
   return InitializeEngine(pc, config);
 }
 
@@ -167,23 +167,18 @@ bool PulseEngine::InitializeEngine(const SEPatientConfiguration& patient_configu
   if (!m_Config->GetStabilization()->StabilizeRestingState(*this))
     return false;
 
-  // We need to process conditions here, so systems can prepare for them in their AtSteadyState method
-  for (const SECondition* c : patient_configuration.GetConditions())
-  {
-    m_ss << "[Condition] " << *c;
-    Info(m_ss);
-    if (!m_Conditions->ProcessCondition(*c))
-      return false;
-  }
-  AtSteadyState(EngineState::AtInitialStableState);
+  // We need to copy conditions here, so systems can prepare for them in their AtSteadyState method
+  if(patient_configuration.HasConditions())
+    m_Conditions->Copy(*patient_configuration.GetConditions());
+  AtSteadyState(EngineState::AtInitialStableState);// This will peek at conditions
 
   m_State = EngineState::SecondaryStabilization;
   // Apply conditions and anything else to the physiology
   // now that it's steady with provided patient, environment, and feedback
-  if (!patient_configuration.GetConditions().empty())
+  if (!m_Conditions->IsEmpty())
   {// Now restabilize the patient with any conditions that were applied
    // Push conditions into condition manager
-    if (!m_Config->GetStabilization()->StabilizeConditions(*this, patient_configuration.GetConditions()))
+    if (!m_Config->GetStabilization()->StabilizeConditions(*this, *m_Conditions))
       return false;
   }
   else

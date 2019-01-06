@@ -6,6 +6,7 @@
 #include "engine/SETimedStabilization.h"
 #include "engine/SEEngineTracker.h"
 #include "engine/SECondition.h"
+#include "engine/SEConditionManager.h"
 #include "utils/TimingProfile.h"
 #include "properties/SEScalarTime.h"
 #include "io/protobuf/PBEngine.h"
@@ -23,13 +24,14 @@ bool SETimedStabilization::StabilizeFeedbackState(PhysiologyEngine& engine)
     return true;//No stabilization time requested
   return Stabilize(engine, GetFeedbackStabilizationTime());
 }
-bool SETimedStabilization::StabilizeConditions(PhysiologyEngine& engine, const std::vector<const SECondition*>& conditions)
+bool SETimedStabilization::StabilizeConditions(PhysiologyEngine& engine, const SEConditionManager& conditions)
 {
-  if (conditions.empty())
+  if (conditions.IsEmpty())
     return true;
+  conditions.GetAllConditions(m_Conditions);
   double cTime_s;
   double maxTime_s = 0;
-  for (const SECondition* c : conditions)
+  for (const SECondition* c : m_Conditions)
   {
     if(!HasConditionTime(c->GetName()))
     {

@@ -185,8 +185,8 @@ JNIEXPORT jboolean JNICALL Java_com_kitware_physiology_pulse_engine_PulseEngine_
 
     // Load up the patient
     const char* pStr = env->GetStringUTFChars(patient_configuration, JNI_FALSE);
-    SEPatientConfiguration p(engineJNI->eng->GetLogger());
-    if (!p.SerializeFromString(pStr,JSON,engineJNI->eng->GetSubstanceManager()))
+    SEPatientConfiguration p(engineJNI->eng->GetSubstanceManager());
+    if (!p.SerializeFromString(pStr,JSON))
     {
       env->ReleaseStringUTFChars(patient_configuration, pStr);
       std::cerr << "Unable to load patient configuration string" << std::endl;

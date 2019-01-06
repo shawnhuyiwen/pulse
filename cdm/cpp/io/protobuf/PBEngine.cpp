@@ -277,13 +277,9 @@ void PBEngine::Serialize(const cdm::PatientConfigurationData& src, SEPatientConf
     PBPatient::Load(src.patient(), dst.GetPatient());
   else
     dst.SetPatientFile(src.patientfile());
-
-  for (int i = 0; i < src.anycondition_size(); i++)
-  {
-    SECondition* c = PBCondition::Load(src.anycondition()[i], subMgr);
-    if (c != nullptr)
-      dst.m_Conditions.push_back(c);
-  }
+  
+  if (src.has_conditions())
+    PBEngine::Load(src.conditions(), dst.GetConditions());
 }
 cdm::PatientConfigurationData* PBEngine::Unload(const SEPatientConfiguration& src)
 {
@@ -297,8 +293,8 @@ void PBEngine::Serialize(const SEPatientConfiguration& src, cdm::PatientConfigur
     dst.set_patientfile(src.m_PatientFile);
   else if (src.HasPatient())
     dst.set_allocated_patient(PBPatient::Unload(*src.m_Patient));
-  for (SECondition* c : src.m_Conditions)
-    dst.mutable_anycondition()->AddAllocated(PBCondition::Unload(*c));
+
+  dst.set_allocated_conditions(PBEngine::Unload(*src.GetConditions()));
 }
 
 

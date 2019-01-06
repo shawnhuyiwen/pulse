@@ -3,6 +3,7 @@
 
 #pragma once
 class SECondition;
+class SEConditionManager;
 class SEEngineTrack;
 class PhysiologyEngine;
 class SEEngineConfiguration;
@@ -22,7 +23,7 @@ public:
 
   virtual bool StabilizeRestingState(PhysiologyEngine& engine)=0;
   virtual bool StabilizeFeedbackState(PhysiologyEngine& engine) = 0;
-  virtual bool StabilizeConditions(PhysiologyEngine& engine, const std::vector<const SECondition*>& conditions)=0;
+  virtual bool StabilizeConditions(PhysiologyEngine& engine, const SEConditionManager& conditions)=0;
   
   virtual void LogProgress(bool b);
 
@@ -43,4 +44,5 @@ protected:
   std::stringstream m_ss;
 
   SEScalarTime* m_StabilizationDuration;
+  std::vector<const SECondition*> m_Conditions;
 };

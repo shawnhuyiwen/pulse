@@ -3,15 +3,16 @@
 
 #include "stdafx.h"
 #include "engine/SEPatientConfiguration.h"
-#include "engine/SECondition.h"
+#include "engine/SEConditionManager.h"
 #include "engine/SEEngineConfiguration.h"
 #include "patient/SEPatient.h"
 #include "substance/SESubstanceManager.h"
 #include "io/protobuf/PBEngine.h"
 
-SEPatientConfiguration::SEPatientConfiguration(Logger* logger) : Loggable(logger)
+SEPatientConfiguration::SEPatientConfiguration(SESubstanceManager& subMgr) : Loggable(subMgr.GetLogger()), m_SubMgr(subMgr)
 {
   m_Patient = nullptr;
+  m_Conditions = nullptr;
   Clear();
 }
 
@@ -28,20 +29,20 @@ bool SEPatientConfiguration::SerializeToFile(const std::string& filename, Serial
 {
   return PBEngine::SerializeToFile(*this, filename, m);
 }
-bool SEPatientConfiguration::SerializeFromString(const std::string& src, SerializationFormat m, SESubstanceManager& subMgr)
+bool SEPatientConfiguration::SerializeFromString(const std::string& src, SerializationFormat m)
 {
-  return PBEngine::SerializeFromString(src, *this, m, subMgr);
+  return PBEngine::SerializeFromString(src, *this, m, m_SubMgr);
 }
-bool SEPatientConfiguration::SerializeFromFile(const std::string& filename, SerializationFormat m, SESubstanceManager& subMgr)
+bool SEPatientConfiguration::SerializeFromFile(const std::string& filename, SerializationFormat m)
 {
-  return PBEngine::SerializeFromFile(filename, *this, m, subMgr);
+  return PBEngine::SerializeFromFile(filename, *this, m, m_SubMgr);
 }
 
 void SEPatientConfiguration::Clear()
 {
   m_PatientFile = "";
   SAFE_DELETE(m_Patient);
-  DELETE_VECTOR(m_Conditions);
+  SAFE_DELETE(m_Conditions);
 }
 
 bool SEPatientConfiguration::IsValid() const
@@ -90,15 +91,21 @@ void SEPatientConfiguration::InvalidatePatient()
     SAFE_DELETE(m_Patient);
 }
 
-std::vector<SECondition*>& SEPatientConfiguration::GetConditions()
+SEConditionManager& SEPatientConfiguration::GetConditions()
+{
+  if (m_Conditions == nullptr)
+    m_Conditions = new SEConditionManager(m_SubMgr);
+  return *m_Conditions;
+}
+const SEConditionManager* SEPatientConfiguration::GetConditions() const
 {
   return m_Conditions;
 }
-
-const std::vector<const SECondition*>& SEPatientConfiguration::GetConditions() const
+bool SEPatientConfiguration::HasConditions() const
 {
-  m_cConditions.clear();
-  for (SECondition* c : m_Conditions)
-    m_cConditions.push_back(c);
-  return m_cConditions;
+  return m_Conditions != nullptr;
+}
+void SEPatientConfiguration::InvalidateConditions()
+{
+  SAFE_DELETE(m_Conditions);
 }

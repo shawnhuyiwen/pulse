@@ -7,6 +7,7 @@
 #include "engine/SEDataRequestManager.h"
 #include "engine/SEEngineTracker.h"
 #include "engine/SEPatientConfiguration.h"
+#include "engine/SEConditionManager.h"
 #include "compartment/SECompartmentManager.h"
 #include "compartment/fluid/SEGasCompartment.h"
 #include "patient/conditions/SELobarPneumonia.h"
@@ -46,9 +47,9 @@ void HowToLobarPneumonia()
   lobarPneumonia.GetLeftLungAffected().SetValue(1.0);
   lobarPneumonia.GetRightLungAffected().SetValue(1.0);
 
-  SEPatientConfiguration pc(pe->GetLogger());
+  SEPatientConfiguration pc(pe->GetSubstanceManager());
   pc.SetPatientFile("StandardMale.json");
-  pc.GetConditions().push_back(&lobarPneumonia);
+  pc.GetConditions().ProcessCondition(lobarPneumonia);
 
   if (!pe->InitializeEngine(pc))
   {

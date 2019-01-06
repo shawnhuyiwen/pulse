@@ -119,7 +119,7 @@ SEPatientConfiguration& SEScenario::GetPatientConfiguration()
 {
   InvalidateEngineStateFile();
   if (m_PatientConfiguration == nullptr)
-    m_PatientConfiguration = new SEPatientConfiguration(GetLogger());
+    m_PatientConfiguration = new SEPatientConfiguration(m_SubMgr);
   return *m_PatientConfiguration;
 }
 const SEPatientConfiguration* SEScenario::GetPatientConfiguration() const

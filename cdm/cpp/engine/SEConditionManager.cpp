@@ -50,6 +50,21 @@ void SEConditionManager::Clear()
   SAFE_DELETE(m_InitialEnvironmentConditions);
 }
 
+void SEConditionManager::Copy(const SEConditionManager& src)
+{
+  Clear();
+  if (src.IsEmpty())
+    return;
+
+  std::vector<const SECondition*> conditions;
+  src.GetAllConditions(conditions);
+  for (const SECondition* c : conditions)
+  {
+    if (!ProcessCondition(*c))
+      Error("Could not process " + c->GetName());
+  }
+}
+
 bool SEConditionManager::SerializeToString(std::string& output, SerializationFormat m) const
 {
   return PBEngine::SerializeToString(*this, output, m);
@@ -353,4 +368,27 @@ void SEConditionManager::GetAllConditions(std::vector<const SECondition*>& condi
     conditions.push_back(GetLobarPneumonia());
   if (HasInitialEnvironmentConditions())
     conditions.push_back(GetInitialEnvironmentConditions());
+}
+
+bool SEConditionManager::IsEmpty() const
+{
+  if (HasChronicAnemia())
+    return false;
+  if (HasChronicObstructivePulmonaryDisease())
+    return false;
+  if (HasChronicVentricularSystolicDysfunction())
+    return false;
+  if (HasChronicPericardialEffusion())
+    return false;
+  if (HasChronicRenalStenosis())
+    return false;
+  if (HasConsumeMeal())
+    return false;
+  if (HasImpairedAlveolarExchange())
+    return false;
+  if (HasLobarPneumonia())
+    return false;
+  if (HasInitialEnvironmentConditions())
+    return false;
+  return true;
 }

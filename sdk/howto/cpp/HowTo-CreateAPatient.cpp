@@ -40,7 +40,7 @@ void HowToCreateAPatient()
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowToEngineUse.log");
   pe->GetLogger()->Info("HowToCreateAPatient");
 
-  SEPatientConfiguration pc(pe->GetLogger());
+  SEPatientConfiguration pc(pe->GetSubstanceManager());
   SEPatient& patient = pc.GetPatient();
   patient.SetName("HowToCreateAPatient");
   //Patient sex is the only thing that is absolutely required to be set.

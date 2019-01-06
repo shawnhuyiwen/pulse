@@ -7,6 +7,7 @@
 // Include the various types you will be using in your code
 #include "engine/SEDataRequestManager.h"
 #include "engine/SEEngineTracker.h"
+#include "engine/SEConditionManager.h"
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceFraction.h"
 #include "substance/SESubstanceManager.h"
@@ -127,7 +128,7 @@ void HowToMechanicalVentilation()
   }
   else
   {
-    SEPatientConfiguration pc(pe->GetLogger());
+    SEPatientConfiguration pc(pe->GetSubstanceManager());
     pc.SetPatientFile("StandardMale.json");
 
     if (false) //COPD
@@ -135,21 +136,21 @@ void HowToMechanicalVentilation()
       SEChronicObstructivePulmonaryDisease COPD;
       COPD.GetBronchitisSeverity().SetValue(0.5);
       COPD.GetEmphysemaSeverity().SetValue(0.7);
-      pc.GetConditions().push_back(&COPD);
+      pc.GetConditions().ProcessCondition(COPD);
     }
     if (false) //LobarPneumonia
     {      
-      SELobarPneumonia lobarPneumonia;
-      lobarPneumonia.GetSeverity().SetValue(0.2);
-      lobarPneumonia.GetLeftLungAffected().SetValue(1.0);
-      lobarPneumonia.GetRightLungAffected().SetValue(1.0);
-      pc.GetConditions().push_back(&lobarPneumonia);
+      SELobarPneumonia LobarPneumonia;
+      LobarPneumonia.GetSeverity().SetValue(0.2);
+      LobarPneumonia.GetLeftLungAffected().SetValue(1.0);
+      LobarPneumonia.GetRightLungAffected().SetValue(1.0);
+      pc.GetConditions().ProcessCondition(LobarPneumonia);
     }
     if (false) //Generic ImpairedAlveolarExchange (no specified reason)
     {      
       SEImpairedAlveolarExchange ImpairedAlveolarExchange;
       ImpairedAlveolarExchange.GetImpairedFraction().SetValue(0.5);
-      pc.GetConditions().push_back(&ImpairedAlveolarExchange);
+      pc.GetConditions().ProcessCondition(ImpairedAlveolarExchange);
     }
 
     //Select the patient and initialize with conditions

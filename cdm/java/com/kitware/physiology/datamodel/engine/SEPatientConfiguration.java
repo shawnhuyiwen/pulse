@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.kitware.physiology.cdm.Engine.AnyConditionData;
-import com.kitware.physiology.cdm.Scenario.ScenarioData;
 import com.kitware.physiology.cdm.Engine.PatientConfigurationData;
 import com.kitware.physiology.datamodel.conditions.SECondition;
 import com.kitware.physiology.datamodel.patient.SEPatient;
@@ -50,7 +49,7 @@ public class SEPatientConfiguration
       dst.setPatientFile(src.getPatientFile());
     }
     
-    for(AnyConditionData cData : src.getAnyConditionList())
+    for(AnyConditionData cData : src.getConditions().getAnyConditionList())
       dst.conditions.add(SECondition.ANY2CDM(cData, subMgr));
   }
   
@@ -66,8 +65,11 @@ public class SEPatientConfiguration
       dst.setPatient(SEPatient.unload(src.patient));
     if(src.hasPatientFile())
       dst.setPatientFile(src.patientFile);
-    for(SECondition c : src.conditions)
-      dst.addAnyCondition(SECondition.CDM2ANY(c));    
+    if(src.conditions.size()>0)
+    {
+      for(SECondition c : src.conditions)
+        dst.getConditionsBuilder().addAnyCondition(SECondition.CDM2ANY(c));    
+    }
   }
   
   public boolean isValid()

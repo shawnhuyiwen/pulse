@@ -26,6 +26,7 @@ public:
   ~SEConditionManager();
 
   void Clear();
+  void Copy(const SEConditionManager& src);
   
   bool SerializeToString(std::string& output, SerializationFormat m) const;
   bool SerializeToFile(const std::string& filename, SerializationFormat m) const;
@@ -36,6 +37,8 @@ public:
 
   // Not too many conditions, so just have one manager
   // If we start getting alot, I will make patient/environment/equipment condition managers, like the action managers
+
+  bool IsEmpty() const;
 
   // Patient Conditions
 

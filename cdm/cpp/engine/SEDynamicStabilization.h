@@ -21,7 +21,7 @@ public:
 
   virtual bool StabilizeRestingState(PhysiologyEngine& engine);
   virtual bool StabilizeFeedbackState(PhysiologyEngine& engine);
-  virtual bool StabilizeConditions(PhysiologyEngine& engine, const std::vector<const SECondition*>& conditions);
+  virtual bool StabilizeConditions(PhysiologyEngine& engine, const SEConditionManager& conditions);
 
   virtual SEDynamicStabilizationEngineConvergence& GetRestingConvergence();
   virtual const SEDynamicStabilizationEngineConvergence& GetRestingConvergence() const;
