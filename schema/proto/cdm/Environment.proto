@@ -8,6 +8,7 @@ import "cdm/EnvironmentEnums.proto";
 import "cdm/Properties.proto";
 import "cdm/Substance.proto";
 
+/** @brief The environmental conditions surrounding the patient. */
 message EnvironmentalConditionsData
 {
   eEnvironment.SurroundingType              SurroundingType                  = 1; /**<< @brief @copybrief Environment_eSurroundingType */
@@ -26,6 +27,7 @@ message EnvironmentalConditionsData
   repeated SubstanceConcentrationData       AmbientAerosol                   = 12;/**<< @brief Break down of the aerosolized solid/liquid substances in the environment. */
 }
 
+/** @brief Equipment or clothing activly changing the surounding environment of the patient. */
 message ActiveConditioningData
 {
   ScalarPowerData                           Power                            = 1; /**<< @brief Heat sink/source power. Set to zero to turn off conditioning. */
@@ -33,6 +35,7 @@ message ActiveConditioningData
   Scalar0To1Data                            SurfaceAreaFraction              = 3; /**<< @brief SurfaceArea Fraction of the body that is being affected. */
 }
 
+/** @brief Equipment or clothing activly changing the skin temperature of the patient. */
 message AppliedTemperatureData
 {
   eSwitch                                   State                             = 1; /**<< @brief Use Off to remove the applied object from the patient. */
@@ -41,6 +44,7 @@ message AppliedTemperatureData
   Scalar0To1Data                            SurfaceAreaFraction               = 4; /**<< @brief SurfaceArea Fraction of the body that the temperature is being appllied to */            
 }
 
+/** @brief The overall environment of the patient. */
 message EnvironmentData
 {
   EnvironmentalConditionsData               Conditions                        = 1; /**<< @brief @copybrief Environment_EnvironmentalConditionsData */
@@ -55,6 +59,6 @@ message EnvironmentData
   ScalarPowerData                           RadiativeHeatLoss                 = 9; /**<< @brief Total patient heat loss due to radiation.*/
   ScalarHeatConductancePerAreaData          RadiativeHeatTranferCoefficient   = 10;/**<< @brief The proportionality coefficient between the heat flux and the thermodynamic driving force for the flow of heat due to radiation. */
   ScalarPowerData                           RespirationHeatLoss               = 11;/**<< @brief Total heat loss from the Respiratory System. */
-  ScalarPowerData                             SkinHeatLoss                      = 12;/**<< @brief Total heat loss from the Respiratory skin. */      
+  ScalarPowerData                           SkinHeatLoss                      = 12;/**<< @brief Total heat loss from the Respiratory skin. */      
 
 }

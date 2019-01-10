@@ -3,53 +3,55 @@ package cdm;
 option java_package = "com.kitware.physiology.cdm";
 option optimize_for = SPEED;
 
+/** @brief Types of Brain Injury that provided different nervous responses.*/
 message eBrainInjury
 {
-  /** @brief Types of Brain Injury that provided different nervous responses.*/
   enum Type
   {
-    Diffuse                                                                 = 0;
-    LeftFocal                                                               = 1;
-    RightFocal                                                              = 2;
+    Diffuse                                                                 = 0; /**<< @brief A brain injury dialating both eye pupils */
+    LeftFocal                                                               = 1; /**<< @brief A brain injury dialating the left eye pupil */
+    RightFocal                                                              = 2; /**<< @brief A brain injury dialating the right eye pupil */
   }
 }
 
 
+/** @brief Types of Hemorrhages.*/
 message eHemorrhage
 {
-  /** @brief Types of Brain Injury that provided different nervous responses.*/
   enum Type
   {
-    External                                                                = 0;
-    Internal                                                                = 1;
+    External                                                                = 0; /**<< @brief Hemorrhage blood of the body */
+    Internal                                                                = 1; /**<< @brief Hemorrhage blood into a body cavity*/
   }
 }
 
+/** @brief Types of Intubation.*/
 message eIntubation
 {
   enum Type
   {
-   Off                                                                     = 0;
-   Esophageal                                                              = 1;
-   LeftMainstem                                                            = 2;
-   RightMainstem                                                           = 3;
-   Tracheal                                                                = 4;
+   Off                                                                     = 0; /**<< @brief Remove intubation */
+   Esophageal                                                              = 1; /**<< @brief Insert into the Esophagus */
+   LeftMainstem                                                            = 2; /**<< @brief Insert into the left main stem inflating only the left lung */
+   RightMainstem                                                           = 3; /**<< @brief Insert into the right main stem inflating only the right lung  */
+   Tracheal                                                                = 4; /**<< @brief Insert into the Trachea */
   }
 }
 
+/** @brief Types of Substance Administration means.*/
 message eSubstanceAdministration
 {
   enum Route
   {
-    Intravenous                                                             = 0;/** @brief Injection into a vein */          
-    Epidural                                                                = 1;/** @brief Injection into a epidural space */
-    Intraosseous                                                            = 2;/** @brief Injection into the bone marrow */
-    Intraarterial                                                           = 3;/** @brief Injection into an artery */
-    Intracardiac                                                            = 4;/** @brief Injection into the heart */
-    Intracerebral                                                           = 5;/** @brief Injection into the brain */
-    Intracerebroventricular                                                 = 6;/** @brief Injection into the cerebral ventricles */
-    Intradermal                                                             = 7;/** @brief Injection into the skin */
-    Intramuscular                                                           = 8;/** @brief Injection into the muscle */      
-    Subcutaneous                                                            = 9;/** @brief Injection under the skin */      
+    Intravenous                                                             = 0; /**<< @brief Injection into a vein */
+    Epidural                                                                = 1; /**<< @brief Injection into a epidural space */
+    Intraosseous                                                            = 2; /**<< @brief Injection into the bone marrow */
+    Intraarterial                                                           = 3; /**<< @brief Injection into an artery */
+    Intracardiac                                                            = 4; /**<< @brief Injection into the heart */
+    Intracerebral                                                           = 5; /**<< @brief Injection into the brain */
+    Intracerebroventricular                                                 = 6; /**<< @brief Injection into the cerebral ventricles */
+    Intradermal                                                             = 7; /**<< @brief Injection into the skin */
+    Intramuscular                                                           = 8; /**<< @brief Injection into the muscle */      
+    Subcutaneous                                                            = 9; /**<< @brief Injection under the skin */      
   }
 }

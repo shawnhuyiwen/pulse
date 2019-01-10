@@ -7,7 +7,8 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 import com.kitware.physiology.cdm.AnesthesiaMachineEnums.eAnesthesiaMachine;
-import com.kitware.physiology.cdm.PatientEnums.ePatient;
+import com.kitware.physiology.cdm.PatientActionEnums.*;
+import com.kitware.physiology.cdm.PatientEnums.*;
 
 import com.kitware.physiology.datamodel.compartment.SECompartment;
 import com.kitware.physiology.datamodel.patient.SEPatient;
@@ -39,9 +40,15 @@ public class CDM2MD
 	public static void main(String[] args)
 	{
 	  jniBridge.initialize();
+    // Table names that link to classes (and we don't want them to)
+    tableNameLinks.add("Environment");
+    tableNameLinks.add("Inhaler");
+    tableNameLinks.add("AnesthesiaMachine");
     convert(args.length> 0 ? args[0] : "./docs/markdown");
     jniBridge.deinitialize();
 	}
+	
+	protected static Set<String> tableNameLinks = new HashSet<String>();
 	
 	public static void convert(String destDir)
 	{
@@ -61,7 +68,11 @@ public class CDM2MD
 
 			// PATIENT
 			WriteDoxyTable(SEPatient.class, "", writer, skipProperties);    
-			WriteDoxyTable(ePatient.Event.class, "PatientData_", writer, skipProperties);  
+			WriteDoxyTable(ePatient.Event.class, "ePatient_", writer, skipProperties);  
+      WriteDoxyTable(eBrainInjury.Type.class, "eBrainInjury_", writer, skipProperties);  
+      WriteDoxyTable(eHemorrhage.Type.class, "eHemorrhage_", writer, skipProperties);  
+      WriteDoxyTable(eIntubation.Type.class, "eIntubation_", writer, skipProperties);  
+      WriteDoxyTable(eSubstanceAdministration.Route.class, "eSubstanceAdministration", writer, skipProperties);  
 			Set<Class<? extends SEPatientAction>> pActions = FindObjects.findClassSubTypes("com.kitware.physiology.datamodel.patient.actions", SEPatientAction.class);
 			for(Class<?> c : pActions)
 				WriteDoxyTable(c, "", writer, skipProperties);
@@ -90,7 +101,6 @@ public class CDM2MD
 				WriteDoxyTable(c, "", writer, skipProperties);
 
 			// ANESTHESIA MACHINE
-
 			WriteDoxyTable(eAnesthesiaMachine.Event.class, "Anesthesia", writer, skipProperties);  
 			Set<Class<? extends Object>> anes = FindObjects.findAllClasses("com.kitware.physiology.datamodel.system.equipment.anesthesia");
 			for(Class<?> c : anes)
@@ -149,11 +159,12 @@ public class CDM2MD
 		String tableName = c.getSimpleName();
 		if(tableName.startsWith("SE"))
 			tableName = tableName.substring(2);
-		if(tableName.startsWith("Enum"))
-			tableName = tableName.substring(4);
 		String descPrepend;
 		if(c.isEnum())
-			descPrepend = "@copybrief "+prefix+tableName;
+		{
+      tableName = prefix+tableName;
+			descPrepend = "@copybrief "+tableName;
+		}
 		else
 			descPrepend = "@copybrief "+prefix+tableName+"Data";
 
@@ -173,7 +184,9 @@ public class CDM2MD
 				Method m;
 				//Enum<?> e = (Enum<?>)o;
 				try
-				{
+				{ 
+				  if(o.toString().equals("UNRECOGNIZED"))
+				    continue;
 					BagMethod bag = new BagMethod();
 					bag.propertyName = o.toString();
 					bag.returnType = c;
@@ -203,11 +216,16 @@ public class CDM2MD
 			writer.println("");
 			writer.println("@anchor "+StringUtils.removeSpaces(tableName)+"Table");
 			if(c.isEnum())
-				writer.println("## "+prefix+tableName);
+				writer.println("## "+tableName);
 			else
 			{
+			  if (tableNameLinks.contains(tableName))
+			    writer.println("## %"+tableName);
+			  else
+				  writer.println("## "+tableName);
+				/*
 				String tName = StringUtils.spaceCamelCase(tableName);
-				
+        
 				String[] words = tName.split(" ");
 				if(words.length>0)
 				{
@@ -219,8 +237,12 @@ public class CDM2MD
 				{
 					tName = "%"+tName;
 				}
-				// Put a % before each word, so it does not link to classes
-				writer.println("## "+tName);
+				if (tName.trim().length()>1)
+				  // Put a % before each word, so it does not link to classes
+				  writer.println("## "+tName);
+				else
+				  tName = "";
+				  */
 			}
 			writer.println(descPrepend+"");
 
