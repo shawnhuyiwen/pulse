@@ -44,8 +44,8 @@ message ChronicVentricularSystolicDysfunctionData
 message ChronicObstructivePulmonaryDiseaseData
 {
   PatientConditionData                        PatientCondition                      = 1;
-  Scalar0To1Data                              BronchitisSeverity                    = 2;/**<< @brief */
-  Scalar0To1Data                              EmphysemaSeverity                     = 3;/**<< @brief */
+  Scalar0To1Data                              BronchitisSeverity                    = 2;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
+  Scalar0To1Data                              EmphysemaSeverity                     = 3;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
 }
 
 /** @brief Pericardial effusion ("fluid around the heart") is an abnormal accumulation of fluid in the pericardial cavity. Because of the limited amount of space in the pericardial cavity, fluid accumulation leads to an increased intrapericardial pressure which can negatively affect heart function. A pericardial effusion with enough pressure to adversely affect heart function is called cardiac tamponade. Pericardial effusion usually results from a disturbed equilibrium between the production andre-absorption of pericardial fluid, or from a structural abnormality that allows fluid to enter the pericardial cavity. Normal levels of pericardial fluid are from 15 to 50 mL. */
@@ -59,8 +59,8 @@ message ChronicPericardialEffusionData
 message ChronicRenalStenosisData
 {
   PatientConditionData                        PatientCondition                      = 1;
-  Scalar0To1Data                              LeftKidneySeverity                    = 2;/**<< @brief Fraction of the Left kidney artery stenosed.*/
-  Scalar0To1Data                              RightKidneySeverity                   = 3;/**<< @brief Fraction of the Right kidney artery stenosed.*/
+  Scalar0To1Data                              LeftKidneySeverity                    = 2;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
+  Scalar0To1Data                              RightKidneySeverity                   = 3;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
 }
 
 /** @brief Consume nutrients into the body along with a time elapsed since this meal. */
@@ -86,7 +86,7 @@ message ImpairedAlveolarExchangeData
 message LobarPneumoniaData
 {
   PatientConditionData                        PatientCondition                      = 1;
-  Scalar0To1Data                              Severity                              = 2;/**<< @brief */
+  Scalar0To1Data                              Severity                              = 2;/**<< @brief Scale of affect, 0 being none, 1 being the highest possible. */
   Scalar0To1Data                              LeftLungAffected                      = 3;/**<< @brief Fraction of the Left Lung Affected*/
   Scalar0To1Data                              RightLungAffected                     = 4;/**<< @brief Fraction of the Left Lung Affected */
 }

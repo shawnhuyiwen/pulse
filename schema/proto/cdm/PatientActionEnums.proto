@@ -3,31 +3,33 @@ package cdm;
 option java_package = "com.kitware.physiology.cdm";
 option optimize_for = SPEED;
 
-/** @brief Types of Brain Injury that provided different nervous responses.*/
 message eBrainInjury
 {
+  /** @brief Types of Brain Injury that provided different nervous responses.*/
   enum Type
   {
-    Diffuse                                                                 = 0; /**<< @brief A brain injury dialating both eye pupils */
-    LeftFocal                                                               = 1; /**<< @brief A brain injury dialating the left eye pupil */
-    RightFocal                                                              = 2; /**<< @brief A brain injury dialating the right eye pupil */
+    Diffuse                                                                 = 0; /**<< @brief A brain injury dilating both eye pupils */
+    LeftFocal                                                               = 1; /**<< @brief A brain injury dilating the left eye pupil */
+    RightFocal                                                              = 2; /**<< @brief A brain injury dilating the right eye pupil */
   }
 }
 
 
-/** @brief Types of Hemorrhages.*/
+
 message eHemorrhage
 {
+  /** @brief Types of Hemorrhages.*/
   enum Type
   {
-    External                                                                = 0; /**<< @brief Hemorrhage blood of the body */
-    Internal                                                                = 1; /**<< @brief Hemorrhage blood into a body cavity*/
+    External                                                                = 0; /**<< @brief A loss of blood from the vascular system out of the body */
+    Internal                                                                = 1; /**<< @brief A loss of blood from the vascular system into a body cavity or space. */
   }
 }
 
-/** @brief Types of Intubation.*/
+
 message eIntubation
 {
+  /** @brief Enumeration Types of Intubation.*/
   enum Type
   {
    Off                                                                     = 0; /**<< @brief Remove intubation */
@@ -38,9 +40,10 @@ message eIntubation
   }
 }
 
-/** @brief Types of Substance Administration means.*/
+
 message eSubstanceAdministration
 {
+  /** @brief Types of Substance Administration means.*/
   enum Route
   {
     Intravenous                                                             = 0; /**<< @brief Injection into a vein */

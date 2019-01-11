@@ -62,6 +62,10 @@ public class SECardiacArrest extends SEPatientAction
   {
   	this.state = (s==eSwitch.NullSwitch) ? eSwitch.Off : s;
   }
+  public boolean hasState()
+  {
+    return this.state==null || this.state==eSwitch.NullSwitch ? false : true;
+  }
   
   public String toString()
   {

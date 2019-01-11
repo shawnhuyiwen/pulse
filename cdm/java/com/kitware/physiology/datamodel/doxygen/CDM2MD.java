@@ -5,9 +5,13 @@ package com.kitware.physiology.datamodel.doxygen;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import com.kitware.physiology.cdm.AnesthesiaMachineEnums.eAnesthesiaMachine;
+import com.kitware.physiology.cdm.Enums.*;
 import com.kitware.physiology.cdm.PatientActionEnums.*;
+import com.kitware.physiology.cdm.PatientAssessmentEnums.ePatientAssessment;
+import com.kitware.physiology.cdm.PatientAssessmentEnums.eUrinalysis;
 import com.kitware.physiology.cdm.PatientEnums.*;
 
 import com.kitware.physiology.datamodel.compartment.SECompartment;
@@ -67,30 +71,60 @@ public class CDM2MD
 			skipProperties.add("ScenarioTime");
 
 			// PATIENT
+			writer.append("#### The following tables describe the patient to Pulse.\n\n");
 			WriteDoxyTable(SEPatient.class, "", writer, skipProperties);    
-			WriteDoxyTable(ePatient.Event.class, "ePatient_", writer, skipProperties);  
-      WriteDoxyTable(eBrainInjury.Type.class, "eBrainInjury_", writer, skipProperties);  
-      WriteDoxyTable(eHemorrhage.Type.class, "eHemorrhage_", writer, skipProperties);  
-      WriteDoxyTable(eIntubation.Type.class, "eIntubation_", writer, skipProperties);  
-      WriteDoxyTable(eSubstanceAdministration.Route.class, "eSubstanceAdministration", writer, skipProperties);  
-			Set<Class<? extends SEPatientAction>> pActions = FindObjects.findClassSubTypes("com.kitware.physiology.datamodel.patient.actions", SEPatientAction.class);
-			for(Class<?> c : pActions)
+      WriteDoxyTable(ePatient.Sex.class, "ePatient_", writer, skipProperties);  
+			writer.append("#### The following tables describe the states of the patient Pulse supports.\n\n");
+      WriteDoxyTable(ePatient.Event.class, "ePatient_", writer, skipProperties);
+			
+		  // PATIENT CONDITIONS
+      writer.append("#### The following tables describe the conditions that can be applied to the patient before starting the simulation.\n\n");
+      Set<Class<? extends SEPatientCondition>> pConditions = FindObjects.findClassSubTypes("com.kitware.physiology.datamodel.patient.conditions", SEPatientCondition.class);
+      List<Class<? extends Object>> pConditionsSorted = pConditions.stream().collect(Collectors.toList());
+      Collections.sort(pConditionsSorted, (o1, o2) -> o1.getName().compareTo(o2.getName()));
+      for(Class<?> c : pConditionsSorted)
+        WriteDoxyTable(c, "", writer, skipProperties);
+      
+		  // PHYSIOLOGY
+      writer.append("#### The following tables describe the system data that is calculated each time step.\n\n");
+      Set<Class<? extends Object>> phys = FindObjects.findAllClasses("com.kitware.physiology.datamodel.system.physiology");
+      List<Class<? extends Object>> physSorted = phys.stream().collect(Collectors.toList());
+      Collections.sort(physSorted, (o1, o2) -> o1.getName().compareTo(o2.getName()));
+      for(Class<?> c : physSorted)
+        WriteDoxyTable(c, "", writer, skipProperties);
+      
+      // PATIENT ACTIONS/CONDITIONS/ASSESSMENTS
+      writer.append("#### The following tables describe the are actions that may be performed on the patient\n\n");
+      Set<Class<? extends SEPatientAction>> pActions = FindObjects.findClassSubTypes("com.kitware.physiology.datamodel.patient.actions", SEPatientAction.class);
+			List<Class<? extends SEPatientAction>> pActionsSorted = pActions.stream().collect(Collectors.toList());
+			Collections.sort(pActionsSorted, (o1, o2) -> o1.getName().compareTo(o2.getName()));
+			for(Class<?> c : pActionsSorted)
 				WriteDoxyTable(c, "", writer, skipProperties);
 			Set<Class<? extends SEConsciousRespirationCommand>> cmds = FindObjects.findClassSubTypes("com.kitware.physiology.datamodel.patient.actions", SEConsciousRespirationCommand.class);
 			for(Class<?> c : cmds)
 				WriteDoxyTable(c, "", writer, skipProperties);
-			Set<Class<? extends SEPatientCondition>> pConditions = FindObjects.findClassSubTypes("com.kitware.physiology.datamodel.patient.conditions", SEPatientCondition.class);
-			for(Class<?> c : pConditions)
-				WriteDoxyTable(c, "", writer, skipProperties);
-			Set<Class<? extends SEPatientAssessment>> pAsses = FindObjects.findClassSubTypes("com.kitware.physiology.datamodel.patient.assessments", SEPatientAssessment.class);
+			WriteDoxyTable(eBrainInjury.Type.class, "eBrainInjury_", writer, skipProperties);  
+      WriteDoxyTable(eHemorrhage.Type.class, "eHemorrhage_", writer, skipProperties);  
+      WriteDoxyTable(eIntubation.Type.class, "eIntubation_", writer, skipProperties);  
+      WriteDoxyTable(eSubstanceAdministration.Route.class, "eSubstanceAdministration_", writer, skipProperties);  
+      Set<Class<? extends Object>> pNutrition = FindObjects.findAllClasses("com.kitware.physiology.datamodel.patient.nutrition");
+      for(Class<?> c : pNutrition)
+        WriteDoxyTable(c, "", writer, skipProperties);
+      
+			writer.append("#### The following tables describe the assessments that may be performed on the patient\n\n");
+      Set<Class<? extends SEPatientAssessment>> pAsses = FindObjects.findClassSubTypes("com.kitware.physiology.datamodel.patient.assessments", SEPatientAssessment.class);
 			for(Class<?> c : pAsses)
 				WriteDoxyTable(c, "", writer, skipProperties);
-			Set<Class<? extends Object>> pNutrition = FindObjects.findAllClasses("com.kitware.physiology.datamodel.patient.nutrition");
-			for(Class<?> c : pNutrition)
-				WriteDoxyTable(c, "", writer, skipProperties);
-
+			WriteDoxyTable(ePatientAssessment.Type.class, "ePatientAssessment_", writer, skipProperties);
+      WriteDoxyTable(eUrinalysis.PresenceIndicator.class, "eUrinalysis_", writer, skipProperties);
+      WriteDoxyTable(eUrinalysis.ClarityIndicator.class, "eUrinalysis_", writer, skipProperties);
+      WriteDoxyTable(eUrinalysis.UrineColor.class, "eUrinalysis_", writer, skipProperties);
+      WriteDoxyTable(eUrinalysis.MicroscopicObservationType.class, "eUrinalysis_", writer, skipProperties);
+      WriteDoxyTable(eUrinalysis.MicroscopicObservationAmount.class, "eUrinalysis_", writer, skipProperties);
+      
 			// ENVIRONMENT
-			Set<Class<? extends Object>> env = FindObjects.findAllClasses("com.kitware.physiology.datamodel.system.environment");
+      writer.append("#### The following tables describe the external environment that surrounds the patient\n\n");
+      Set<Class<? extends Object>> env = FindObjects.findAllClasses("com.kitware.physiology.datamodel.system.environment");
 			for(Class<?> c : env)
 				WriteDoxyTable(c, "", writer, skipProperties);
 			Set<Class<? extends SEEnvironmentAction>> eActions = FindObjects.findClassSubTypes("com.kitware.physiology.datamodel.system.environment.actions", SEEnvironmentAction.class);
@@ -101,7 +135,8 @@ public class CDM2MD
 				WriteDoxyTable(c, "", writer, skipProperties);
 
 			// ANESTHESIA MACHINE
-			WriteDoxyTable(eAnesthesiaMachine.Event.class, "Anesthesia", writer, skipProperties);  
+			writer.append("#### The following tables describe the anesthesia machine\n\n");
+      WriteDoxyTable(eAnesthesiaMachine.Event.class, "Anesthesia", writer, skipProperties);  
 			Set<Class<? extends Object>> anes = FindObjects.findAllClasses("com.kitware.physiology.datamodel.system.equipment.anesthesia");
 			for(Class<?> c : anes)
 				WriteDoxyTable(c, "", writer, skipProperties);
@@ -110,25 +145,23 @@ public class CDM2MD
 				WriteDoxyTable(c, "", writer, skipProperties);
 
 			// ECG
-			Set<Class<? extends Object>> ecg = FindObjects.findAllClasses("com.kitware.physiology.datamodel.system.equipment.electrocardiogram");
+			writer.append("#### The following tables describe the ECG\n\n");
+      Set<Class<? extends Object>> ecg = FindObjects.findAllClasses("com.kitware.physiology.datamodel.system.equipment.electrocardiogram");
 			for(Class<?> c : ecg)
 				WriteDoxyTable(c, "", writer, skipProperties);
 
 			// INHALER
-			Set<Class<? extends Object>> inhaler = FindObjects.findAllClasses("com.kitware.physiology.datamodel.system.equipment.inhaler");
+			writer.append("#### The following tables describe the inhaler\n\n");
+      Set<Class<? extends Object>> inhaler = FindObjects.findAllClasses("com.kitware.physiology.datamodel.system.equipment.inhaler");
 			for(Class<?> c : inhaler)
 				WriteDoxyTable(c, "", writer, skipProperties);
 			Set<Class<? extends SEInhalerAction>> iActions = FindObjects.findClassSubTypes("com.kitware.physiology.datamodel.system.equipment.inhaler.actions", SEInhalerAction.class);
 			for(Class<?> c : iActions)
 				WriteDoxyTable(c, "", writer, skipProperties);
 
-			// PHYSIOLOGY
-			Set<Class<? extends Object>> phys = FindObjects.findAllClasses("com.kitware.physiology.datamodel.system.physiology");
-			for(Class<?> c : phys)
-				WriteDoxyTable(c, "", writer, skipProperties);
-
 			// SUBSTSANCE
-			Set<Class<? extends Object>> subs = FindObjects.findAllClasses("com.kitware.physiology.datamodel.substance");
+			writer.append("#### The following tables describe substances used in Pulse\n\n");
+      Set<Class<? extends Object>> subs = FindObjects.findAllClasses("com.kitware.physiology.datamodel.substance");
 			for(Class<?> c : subs)
 				WriteDoxyTable(c, "", writer, skipProperties);
 			Set<Class<? extends Object>> subQs = FindObjects.findAllClasses("com.kitware.physiology.datamodel.substance.quantity");
@@ -136,15 +169,24 @@ public class CDM2MD
 				WriteDoxyTable(c, "", writer, skipProperties);
 
 			// COMPARTMENT
-			Set<Class<? extends SECompartment>> cmpts = FindObjects.findClassSubTypes("com.kitware.physiology.datamodel.compartment",SECompartment.class);
+			writer.append("#### The following tables describe anatomical compartments\n\n");
+      Set<Class<? extends SECompartment>> cmpts = FindObjects.findClassSubTypes("com.kitware.physiology.datamodel.compartment",SECompartment.class);
 			for(Class<?> c : cmpts)
 				WriteDoxyTable(c, "", writer, skipProperties);
 
 			// SCENARIO
-			Set<Class<? extends Object>> sce = FindObjects.findAllClasses("com.kitware.physiology.datamodel.scenario");
+			writer.append("#### The following tables describe a simulation scenario\n\n");
+      Set<Class<? extends Object>> sce = FindObjects.findAllClasses("com.kitware.physiology.datamodel.scenario");
 			for(Class<?> c : sce)
 				WriteDoxyTable(c, "", writer, skipProperties);
-
+			
+			// General Enums
+			writer.append("#### The following tables describe general enumerations\n\n");
+      WriteDoxyTable(eSide.class, "", writer, skipProperties);
+      WriteDoxyTable(eGate.class, "", writer, skipProperties);
+      WriteDoxyTable(eSwitch.class, "", writer, skipProperties);
+      WriteDoxyTable(eCharge.class, "", writer, skipProperties);
+      
 			writer.close();
 
 		} 
@@ -216,33 +258,13 @@ public class CDM2MD
 			writer.println("");
 			writer.println("@anchor "+StringUtils.removeSpaces(tableName)+"Table");
 			if(c.isEnum())
-				writer.println("## "+tableName);
+				writer.println("##### "+tableName);
 			else
 			{
 			  if (tableNameLinks.contains(tableName))
-			    writer.println("## %"+tableName);
+			    writer.println("##### %"+tableName);
 			  else
-				  writer.println("## "+tableName);
-				/*
-				String tName = StringUtils.spaceCamelCase(tableName);
-        
-				String[] words = tName.split(" ");
-				if(words.length>0)
-				{
-					tName = "";
-					for(String word : words)
-						tName += "%"+word+" ";
-				}
-				else if(!tName.trim().isEmpty())
-				{
-					tName = "%"+tName;
-				}
-				if (tName.trim().length()>1)
-				  // Put a % before each word, so it does not link to classes
-				  writer.println("## "+tName);
-				else
-				  tName = "";
-				  */
+				  writer.println("##### "+tableName);
 			}
 			writer.println(descPrepend+"");
 
@@ -289,8 +311,8 @@ public class CDM2MD
 						}
 						else if(bag.propertyName.equals("GasFraction"))
 						{
-							writer.print("|"+"List of SESubstanceFractionAmount");
-							writer.print("|"+"@ref SubstanceFractionAmountTable");
+							writer.print("|"+"List of SESubstanceFraction");
+							writer.print("|"+"@ref SubstanceFractionTable");
 						}
 						else if(bag.propertyName.equals("Aerosol"
 						    + ""))
@@ -337,6 +359,7 @@ public class CDM2MD
 		{
 			Log.error("Error writing cdm table for "+tableName,ex);      
 		}
+    writer.print("\n<hr>\n");
 	}
 	protected static String pad(String s, int max)
 	{

@@ -56,7 +56,7 @@ public class SESubstanceBolus extends SEPatientAction
   
   public boolean isValid()
   {
-    return hasAdminRoute() && hasDose() && hasConcentration() && hasSubstance();
+    return hasAdministrationRoute() && hasDose() && hasConcentration() && hasSubstance();
   }
   
   public static void load(SubstanceBolusData src, SESubstanceBolus dst)
@@ -84,21 +84,21 @@ public class SESubstanceBolus extends SEPatientAction
       dst.setDose(SEScalarVolume.unload(src.dose));
     if (src.hasConcentration())
       dst.setConcentration(SEScalarMassPerVolume.unload(src.concentration));
-    if (src.hasAdminRoute())
+    if (src.hasAdministrationRoute())
       dst.setAdministrationRoute(src.adminRoute);
     if (src.hasSubstance())
       dst.setSubstance(src.substance.getName());
   }
 
-  public Route getAdminRoute()
+  public Route getAdministrationRoute()
   {
     return adminRoute;
   }
-  public void setAdminRoute(Route adminRoute)
+  public void setAdministrationRoute(Route adminRoute)
   {
     this.adminRoute = adminRoute;
   }
-  public boolean hasAdminRoute()
+  public boolean hasAdministrationRoute()
   {
     return adminRoute == null ? false : true;
   }
@@ -139,7 +139,7 @@ public class SESubstanceBolus extends SEPatientAction
           + "\n\tDose: " + getDose()
           + "\n\tConcentration: " + getConcentration()
           + "\n\tSubstance: " + getSubstance().getName() 
-          + "\n\tAdministration Route: " + getAdminRoute();
+          + "\n\tAdministration Route: " + getAdministrationRoute();
     else
       return "Action not specified properly";
   }

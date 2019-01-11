@@ -1,5 +1,8 @@
 
+<center>
 <img src="./Images/PulseLogo.png" alt="Pulse Physiology Engine">
+</center>
+
 
 Distributed under the <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0.</a>
 See accompanying <a href="https://gitlab.kitware.com/physiology/engine/blob/master/NOTICE">NOTICE</a> file for details.
@@ -29,26 +32,24 @@ Check out the @ref ExtraFAQ for more insight.
 
 - - -
 
-## What's new in Pulse v1.1 (June 25th, 2018)
+## What's new in Pulse v2.0 (Jan 20th, 2018)
 
 The latest code base includes the following notable updates:
-- Updated Wiki for using Pulse in your application
-- Added C# example interface
-- Refactored respiratory system for improvements determining the transition between inhale and exhale
-  - Important for determining correct vital signs (e.g., respiration rate, tidal volume, end tidal CO2)
-  - Most noticeable improvement is with external sources, such as a ventilator
-- Added aerosols (e.g., albuterol) to the mechanical ventilator
-- Added the ability to remove the cardiac arrest action and transition from asystole to normal sinus
-- Added norepinephrine to the drug library
-- Switched the included logger from log4cpp to log4cplus
-- Updated to the latest versions of Eigen and Protobufs
-- Transitioned results file extension from .txt to .csv
-- Exposed action and condition information via the API
-- Improved exception handling
-- Discretized verification data sets for easier management
-- Cleaned up headers
-- CMake build improvements
-  - Pulse builds and runs on single board pc's and all major operating systems
+
+- Software Architecture
+  - Converted ASCII file I/O to JSON (Compliant to Protobuf IDLs)
+  - Updated Engine Interface to support Both ASCII and Binary serialization
+  - Started a formal C# CDM Library for use in .NET applications
+  - Created a C interface to Pulse for external application integration
+  - Updated to the latest versions of Eigen/Protobufs/log4cplus
+  - Unity integration support and examples
+- Physiology Models
+  - Internal Hemorrhage Support
+  - External hemorrhage from specific compartments (only Vena Cava before)
+  - Added support for Packed Red Blood Cells infusion
+  - Added dissolved oxygen and carbon dioxide to IV fluids to resolve issues with fluid resuscitation
+
+
 
 (Interested in a previous @ref version?)
 
@@ -56,10 +57,8 @@ The latest code base includes the following notable updates:
 
 ## Planned Software Improvements
 
-- Offical contribution plan for pulling/merging methodology changes
+- Official contribution plan for pulling/merging methodology changes
 - Modularity improvements for model swapping
-- Public CDash server integration
-- Unity Game Integration Example
 
 
 - - -
