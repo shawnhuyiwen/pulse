@@ -585,7 +585,7 @@ bool PBPulseConfiguration::SerializeToString(const PulseConfiguration& src, std:
 {
   pulse::proto::ConfigurationData data;
   PBPulseConfiguration::Serialize(src, data);
-  return PBUtils::SerializeToString(data, output, m);
+  return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
 bool PBPulseConfiguration::SerializeToFile(const PulseConfiguration& src, const std::string& filename, SerializationFormat m)
 {
@@ -599,7 +599,7 @@ bool PBPulseConfiguration::SerializeToFile(const PulseConfiguration& src, const 
 bool PBPulseConfiguration::SerializeFromString(const std::string& src, PulseConfiguration& dst, SerializationFormat m)
 {
   pulse::proto::ConfigurationData data;
-  if (!PBUtils::SerializeFromString(src, data, m))
+  if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
     return false;
   PBPulseConfiguration::Load(data, dst);
   return true;

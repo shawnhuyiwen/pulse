@@ -69,7 +69,7 @@ bool PBScenario::SerializeToString(const SEScenario& src, std::string& output, S
 {
   cdm::ScenarioData data;
   PBScenario::Serialize(src, data);
-  return PBUtils::SerializeToString(data, output, m);
+  return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
 bool PBScenario::SerializeToFile(const SEScenario& src, const std::string& filename, SerializationFormat m)
 {
@@ -82,7 +82,7 @@ bool PBScenario::SerializeToFile(const SEScenario& src, const std::string& filen
 bool PBScenario::SerializeFromString(const std::string& src, SEScenario& dst, SerializationFormat m)
 {
   cdm::ScenarioData data;
-  if (!PBUtils::SerializeFromString(src, data, m))
+  if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
     return false;
   PBScenario::Load(data, dst);
   return true;

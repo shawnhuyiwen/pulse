@@ -53,7 +53,7 @@ bool PBInhaler::SerializeToString(const SEInhaler& src, std::string& output, Ser
 {
   cdm::InhalerData data;
   PBInhaler::Serialize(src, data);
-  return PBUtils::SerializeToString(data, output, m);
+  return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
 bool PBInhaler::SerializeToFile(const SEInhaler& src, const std::string& filename, SerializationFormat m)
 {
@@ -67,7 +67,7 @@ bool PBInhaler::SerializeToFile(const SEInhaler& src, const std::string& filenam
 bool PBInhaler::SerializeFromString(const std::string& src, SEInhaler& dst, SerializationFormat m)
 {
   cdm::InhalerData data;
-  if (!PBUtils::SerializeFromString(src, data, m))
+  if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
     return false;
   PBInhaler::Load(data, dst);
   return true;

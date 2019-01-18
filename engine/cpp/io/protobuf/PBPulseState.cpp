@@ -302,7 +302,7 @@ bool PBPulseState::SerializeToString(const PulseEngine& src, std::string& output
 {
   pulse::proto::StateData data;
   PBPulseState::Serialize(src, data);
-  return PBUtils::SerializeToString(data, output, m);
+  return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
 bool PBPulseState::SerializeToFile(const PulseEngine& src, const std::string& filename, SerializationFormat m)
 {
@@ -315,7 +315,7 @@ bool PBPulseState::SerializeToFile(const PulseEngine& src, const std::string& fi
 bool PBPulseState::SerializeFromString(const std::string& src, PulseEngine& dst, SerializationFormat m, const SEScalarTime* simTime, const SEEngineConfiguration* config)
 {
   pulse::proto::StateData data;
-  if (!PBUtils::SerializeFromString(src, data, m))
+  if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
     return false;
   PBPulseState::Load(data, dst, simTime, config);
   return true;

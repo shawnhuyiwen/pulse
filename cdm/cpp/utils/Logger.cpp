@@ -57,6 +57,7 @@ void Logger::LogToConsole(bool b)
 
 void Logger::ResetLogFile(const std::string& logFilename)
 {
+
   if (_log_lib->logger.getAllAppenders().empty())
     _log_lib->logger.removeAllAppenders();
   _log_lib->logger.setLogLevel(log4cplus::INFO_LOG_LEVEL);

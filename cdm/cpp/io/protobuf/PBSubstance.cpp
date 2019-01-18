@@ -596,7 +596,7 @@ bool PBSubstance::SerializeToString(const SESubstance& src, std::string& output,
 {
   cdm::SubstanceData data;
   PBSubstance::Serialize(src, data);
-  return PBUtils::SerializeToString(data, output, m);
+  return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
 bool PBSubstance::SerializeToFile(const SESubstance& src, const std::string& filename, SerializationFormat m)
 {
@@ -610,7 +610,7 @@ bool PBSubstance::SerializeToFile(const SESubstance& src, const std::string& fil
 bool PBSubstance::SerializeFromString(const std::string& src, SESubstance& dst, SerializationFormat m)
 {
   cdm::SubstanceData data;
-  if (!PBUtils::SerializeFromString(src, data, m))
+  if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
     return false;
   PBSubstance::Load(data, dst);
   return true;
@@ -627,7 +627,7 @@ bool PBSubstance::SerializeToString(const SESubstanceCompound& src, std::string&
 {
   cdm::SubstanceCompoundData data;
   PBSubstance::Serialize(src, data);
-  return PBUtils::SerializeToString(data, output, m);
+  return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
 bool PBSubstance::SerializeToFile(const SESubstanceCompound& src, const std::string& filename, SerializationFormat m)
 {
@@ -641,7 +641,7 @@ bool PBSubstance::SerializeToFile(const SESubstanceCompound& src, const std::str
 bool PBSubstance::SerializeFromString(const std::string& src, SESubstanceCompound& dst, const SESubstanceManager& subMgr, SerializationFormat m)
 {
   cdm::SubstanceCompoundData data;
-  if (!PBUtils::SerializeFromString(src, data, m))
+  if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
     return false;
   PBSubstance::Load(data, dst, subMgr);
   return true;

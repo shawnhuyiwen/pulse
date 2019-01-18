@@ -28,7 +28,7 @@ bool PBPatientAssessment::SerializeToString(const SECompleteBloodCount& src, std
 {
   cdm::CompleteBloodCountData data;
   PBPatientAssessment::Serialize(src, data);
-  return PBUtils::SerializeToString(data, output, m);
+  return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
 bool PBPatientAssessment::SerializeToFile(const SECompleteBloodCount& src, const std::string& filename, SerializationFormat m)
 {
@@ -95,7 +95,7 @@ bool PBPatientAssessment::SerializeToString(const SEComprehensiveMetabolicPanel&
 {
   cdm::ComprehensiveMetabolicPanelData data;
   PBPatientAssessment::Serialize(src, data);
-  return PBUtils::SerializeToString(data, output, m);
+  return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
 bool PBPatientAssessment::SerializeToFile(const SEComprehensiveMetabolicPanel& src, const std::string& filename, SerializationFormat m)
 {
@@ -187,7 +187,7 @@ bool PBPatientAssessment::SerializeToString(const SEPulmonaryFunctionTest& src, 
 {
   cdm::PulmonaryFunctionTestData data;
   PBPatientAssessment::Serialize(src, data);
-  return PBUtils::SerializeToString(data, output, m);
+  return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
 bool PBPatientAssessment::SerializeToFile(const SEPulmonaryFunctionTest& src, const std::string& filename, SerializationFormat m)
 {
@@ -277,7 +277,7 @@ bool PBPatientAssessment::SerializeToString(const SEUrinalysis& src, std::string
 {
   cdm::UrinalysisData data;
   PBPatientAssessment::Serialize(src, data);
-  return PBUtils::SerializeToString(data, output, m);
+  return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
 bool PBPatientAssessment::SerializeToFile(const SEUrinalysis& src, const std::string& filename, SerializationFormat m)
 {

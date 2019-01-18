@@ -186,7 +186,7 @@ bool PBAnesthesiaMachine::SerializeToString(const SEAnesthesiaMachine& src, std:
 {
   cdm::AnesthesiaMachineData data;
   PBAnesthesiaMachine::Serialize(src, data);
-  return PBUtils::SerializeToString(data, output, m);
+  return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
 bool PBAnesthesiaMachine::SerializeToFile(const SEAnesthesiaMachine& src, const std::string& filename, SerializationFormat m)
 {
@@ -200,7 +200,7 @@ bool PBAnesthesiaMachine::SerializeToFile(const SEAnesthesiaMachine& src, const 
 bool PBAnesthesiaMachine::SerializeFromString(const std::string& src, SEAnesthesiaMachine& dst, SerializationFormat m)
 {
   cdm::AnesthesiaMachineData data;
-  if (!PBUtils::SerializeFromString(src, data, m))
+  if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
     return false;
   PBAnesthesiaMachine::Load(data, dst);
   return true;
