@@ -57,8 +57,14 @@ The latest code base includes the following notable updates:
 
 ## Planned Software Improvements
 
-- Official contribution plan for pulling/merging methodology changes
-- Modularity improvements for model swapping
+- Pulse asset in the Unity Asset Store
+- Pediatric physiology prototype
+- Respiratory fatigue and chronic condition exacerbation
+- Surface area and efficiency parameters for the gas diffusion model
+- A more accurate pneumothorax model
+- A second order baroreceptor model
+- Modularity improvements for system/model/circuit swapping
+- Official contribution plan for merge requests for methodology/model changes
 
 
 - - -
