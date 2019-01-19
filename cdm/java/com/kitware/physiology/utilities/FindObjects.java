@@ -23,6 +23,7 @@ import org.reflections.util.*;
  */
 public class FindObjects
 {
+  
   /**
    * Examine the system and find all classes of a specific type
    * Instantiate all modules and put them in a list.

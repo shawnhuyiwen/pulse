@@ -12,13 +12,13 @@ message PatientData
   /** @brief An active patient event, and how long it has been active */
   message ActiveEventData
   {
-    ePatient.Event         Event                                                 = 1; /**<< @brief The active event. */
+    ePatient.Event         Event                                                 = 1; /**<< @ref ePatient_EventTable. */
     ScalarTimeData         Duration                              = 2; /**<< @brief The duration since last activated. */
   }
   
   /** Physical Characteristics */
   string                   Name                                  = 1; /**<< @brief Patient Identifier. */
-  ePatient.Sex             Sex                                   = 2; /**<< @brief @copybrief PatientData_eSex */
+  ePatient.Sex             Sex                                   = 2; /**<< @brief @ref ePatient_SexTable */
   ScalarTimeData           Age                                   = 3; /**<< @brief Patient age. */
   ScalarMassData           Weight                                = 4; /**<< @brief Patient weight. */
   ScalarLengthData         Height                                = 5; /**<< @brief Patient height. */

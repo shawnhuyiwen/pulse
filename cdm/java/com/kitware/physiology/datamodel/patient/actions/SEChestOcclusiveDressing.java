@@ -73,7 +73,7 @@ public class SEChestOcclusiveDressing extends SEPatientAction
   }
   public boolean hasSide()
   {
-    return side == null ? false : true;
+    return side == null ? false : side!=eSide.NullSide;
   }
   
   public eSwitch getState()
@@ -83,6 +83,10 @@ public class SEChestOcclusiveDressing extends SEPatientAction
   public void setState(eSwitch s)
   {
   	this.state = (s==eSwitch.NullSwitch) ? eSwitch.Off : s;
+  }
+  public boolean hasState()
+  {
+    return state == null ? false : state!=eSwitch.NullSwitch;
   }
   
   public String toString()

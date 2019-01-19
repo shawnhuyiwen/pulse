@@ -5,9 +5,13 @@ package com.kitware.physiology.datamodel.doxygen;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import com.kitware.physiology.cdm.AnesthesiaMachineEnums.eAnesthesiaMachine;
+import com.kitware.physiology.cdm.Enums.*;
 import com.kitware.physiology.cdm.PatientActionEnums.*;
+import com.kitware.physiology.cdm.PatientAssessmentEnums.ePatientAssessment;
+import com.kitware.physiology.cdm.PatientAssessmentEnums.eUrinalysis;
 import com.kitware.physiology.cdm.PatientEnums.*;
 
 import com.kitware.physiology.datamodel.compartment.SECompartment;
@@ -37,322 +41,345 @@ import com.kitware.physiology.utilities.StringUtils;
 public class CDM2MD
 {
 
-	public static void main(String[] args)
-	{
-	  jniBridge.initialize();
+  public static void main(String[] args)
+  {
+    jniBridge.initialize();
     // Table names that link to classes (and we don't want them to)
     tableNameLinks.add("Environment");
     tableNameLinks.add("Inhaler");
     tableNameLinks.add("AnesthesiaMachine");
     convert(args.length> 0 ? args[0] : "./docs/markdown");
     jniBridge.deinitialize();
-	}
-	
-	protected static Set<String> tableNameLinks = new HashSet<String>();
-	
-	public static void convert(String destDir)
-	{
-		try
-		{
-			//FileUtils.delete(destDir);//Caller should delete old contents
-			FileUtils.createDirectory(destDir);
+  }
+  
+  protected static Set<String> tableNameLinks = new HashSet<String>();
+  
+  public static void convert(String destDir)
+  {
+    try
+    {
+      //FileUtils.delete(destDir);//Caller should delete old contents
+      FileUtils.createDirectory(destDir);
 
-			PrintWriter writer=new PrintWriter(destDir+"/CDMTable.md", "UTF-8");
+      PrintWriter writer=new PrintWriter(destDir+"/CDMTable.md", "UTF-8");
 
-			writer.append("CDM Tables {#CDMTables}\n");
-			writer.append("=======================\n");
+      writer.append("CDM Tables {#CDMTables}\n");
+      writer.append("=======================\n");
 
-			List<String> skipProperties = new ArrayList<String>();
-			skipProperties.add("Comment");
-			skipProperties.add("ScenarioTime");
+      List<String> skipProperties = new ArrayList<String>();
+      skipProperties.add("Comment");
+      skipProperties.add("ScenarioTime");
 
-			// PATIENT
-			WriteDoxyTable(SEPatient.class, "", writer, skipProperties);    
-			WriteDoxyTable(ePatient.Event.class, "ePatient_", writer, skipProperties);  
+      // PATIENT
+      writer.append("#### The following tables describe a patient for Pulse to simulate\n<hr>\n");
+      WriteDoxyTable(SEPatient.class, "", writer, skipProperties);    
+      WriteDoxyTable(ePatient.Sex.class, "ePatient_", writer, skipProperties);  
+      
+      writer.append("#### The following tables describe the physiological states of a patient Pulse supports.\n<hr>\n");
+      WriteDoxyTable(ePatient.Event.class, "ePatient_", writer, skipProperties);
+      
+      // PATIENT CONDITIONS
+      writer.append("#### The following tables describe the conditions that can be applied to the patient before starting the simulation\n<hr>\n");
+      Set<Class<? extends SEPatientCondition>> pConditions = FindObjects.findClassSubTypes("com.kitware.physiology.datamodel.patient.conditions", SEPatientCondition.class);
+      List<Class<? extends Object>> pConditionsSorted = pConditions.stream().collect(Collectors.toList());
+      Collections.sort(pConditionsSorted, (o1, o2) -> o1.getName().compareTo(o2.getName()));
+      for(Class<?> c : pConditionsSorted)
+        WriteDoxyTable(c, "", writer, skipProperties);
+      
+      // PHYSIOLOGY
+      writer.append("#### The following tables describe the system data that is calculated each time step\n<hr>\n");
+      Set<Class<? extends Object>> phys = FindObjects.findAllClasses("com.kitware.physiology.datamodel.system.physiology");
+      List<Class<? extends Object>> physSorted = phys.stream().collect(Collectors.toList());
+      Collections.sort(physSorted, (o1, o2) -> o1.getName().compareTo(o2.getName()));
+      for(Class<?> c : physSorted)
+        WriteDoxyTable(c, "", writer, skipProperties);
+      
+      // PATIENT ACTIONS/CONDITIONS/ASSESSMENTS
+      writer.append("#### The following tables describe the are actions that may be performed on the patient\n<hr>\n");
+      Set<Class<? extends SEPatientAction>> pActions = FindObjects.findClassSubTypes("com.kitware.physiology.datamodel.patient.actions", SEPatientAction.class);
+      List<Class<? extends SEPatientAction>> pActionsSorted = pActions.stream().collect(Collectors.toList());
+      Collections.sort(pActionsSorted, (o1, o2) -> o1.getName().compareTo(o2.getName()));
+      for(Class<?> c : pActionsSorted)
+        WriteDoxyTable(c, "", writer, skipProperties);
+      Set<Class<? extends SEConsciousRespirationCommand>> cmds = FindObjects.findClassSubTypes("com.kitware.physiology.datamodel.patient.actions", SEConsciousRespirationCommand.class);
+      for(Class<?> c : cmds)
+        WriteDoxyTable(c, "", writer, skipProperties);
       WriteDoxyTable(eBrainInjury.Type.class, "eBrainInjury_", writer, skipProperties);  
       WriteDoxyTable(eHemorrhage.Type.class, "eHemorrhage_", writer, skipProperties);  
       WriteDoxyTable(eIntubation.Type.class, "eIntubation_", writer, skipProperties);  
-      WriteDoxyTable(eSubstanceAdministration.Route.class, "eSubstanceAdministration", writer, skipProperties);  
-			Set<Class<? extends SEPatientAction>> pActions = FindObjects.findClassSubTypes("com.kitware.physiology.datamodel.patient.actions", SEPatientAction.class);
-			for(Class<?> c : pActions)
-				WriteDoxyTable(c, "", writer, skipProperties);
-			Set<Class<? extends SEConsciousRespirationCommand>> cmds = FindObjects.findClassSubTypes("com.kitware.physiology.datamodel.patient.actions", SEConsciousRespirationCommand.class);
-			for(Class<?> c : cmds)
-				WriteDoxyTable(c, "", writer, skipProperties);
-			Set<Class<? extends SEPatientCondition>> pConditions = FindObjects.findClassSubTypes("com.kitware.physiology.datamodel.patient.conditions", SEPatientCondition.class);
-			for(Class<?> c : pConditions)
-				WriteDoxyTable(c, "", writer, skipProperties);
-			Set<Class<? extends SEPatientAssessment>> pAsses = FindObjects.findClassSubTypes("com.kitware.physiology.datamodel.patient.assessments", SEPatientAssessment.class);
-			for(Class<?> c : pAsses)
-				WriteDoxyTable(c, "", writer, skipProperties);
-			Set<Class<? extends Object>> pNutrition = FindObjects.findAllClasses("com.kitware.physiology.datamodel.patient.nutrition");
-			for(Class<?> c : pNutrition)
-				WriteDoxyTable(c, "", writer, skipProperties);
+      WriteDoxyTable(eSubstanceAdministration.Route.class, "eSubstanceAdministration_", writer, skipProperties);  
+      Set<Class<? extends Object>> pNutrition = FindObjects.findAllClasses("com.kitware.physiology.datamodel.patient.nutrition");
+      for(Class<?> c : pNutrition)
+        WriteDoxyTable(c, "", writer, skipProperties);
+      
+      writer.append("#### The following tables describe the assessments that may be performed on the patient\n<hr>\n");
+      Set<Class<? extends SEPatientAssessment>> pAsses = FindObjects.findClassSubTypes("com.kitware.physiology.datamodel.patient.assessments", SEPatientAssessment.class);
+      for(Class<?> c : pAsses)
+        WriteDoxyTable(c, "", writer, skipProperties);
+      WriteDoxyTable(ePatientAssessment.Type.class, "ePatientAssessment_", writer, skipProperties);
+      WriteDoxyTable(eUrinalysis.PresenceIndicator.class, "eUrinalysis_", writer, skipProperties);
+      WriteDoxyTable(eUrinalysis.ClarityIndicator.class, "eUrinalysis_", writer, skipProperties);
+      WriteDoxyTable(eUrinalysis.UrineColor.class, "eUrinalysis_", writer, skipProperties);
+      WriteDoxyTable(eUrinalysis.MicroscopicObservationType.class, "eUrinalysis_", writer, skipProperties);
+      WriteDoxyTable(eUrinalysis.MicroscopicObservationAmount.class, "eUrinalysis_", writer, skipProperties);
+      
+      // ENVIRONMENT
+      writer.append("#### The following tables describe the external environment that surrounds the patient\n<hr>\n");
+      Set<Class<? extends Object>> env = FindObjects.findAllClasses("com.kitware.physiology.datamodel.system.environment");
+      for(Class<?> c : env)
+        WriteDoxyTable(c, "", writer, skipProperties);
+      Set<Class<? extends SEEnvironmentAction>> eActions = FindObjects.findClassSubTypes("com.kitware.physiology.datamodel.system.environment.actions", SEEnvironmentAction.class);
+      for(Class<?> c : eActions)
+        WriteDoxyTable(c, "", writer, skipProperties);
+      Set<Class<? extends SEEnvironmentCondition>> eConditions = FindObjects.findClassSubTypes("com.kitware.physiology.datamodel.system.environment.conditions", SEEnvironmentCondition.class);
+      for(Class<?> c : eConditions)
+        WriteDoxyTable(c, "", writer, skipProperties);
 
-			// ENVIRONMENT
-			Set<Class<? extends Object>> env = FindObjects.findAllClasses("com.kitware.physiology.datamodel.system.environment");
-			for(Class<?> c : env)
-				WriteDoxyTable(c, "", writer, skipProperties);
-			Set<Class<? extends SEEnvironmentAction>> eActions = FindObjects.findClassSubTypes("com.kitware.physiology.datamodel.system.environment.actions", SEEnvironmentAction.class);
-			for(Class<?> c : eActions)
-				WriteDoxyTable(c, "", writer, skipProperties);
-			Set<Class<? extends SEEnvironmentCondition>> eConditions = FindObjects.findClassSubTypes("com.kitware.physiology.datamodel.system.environment.conditions", SEEnvironmentCondition.class);
-			for(Class<?> c : eConditions)
-				WriteDoxyTable(c, "", writer, skipProperties);
+      // ANESTHESIA MACHINE
+      writer.append("#### The following tables describe the anesthesia machine\n<hr>\n");
+      WriteDoxyTable(eAnesthesiaMachine.Event.class, "Anesthesia", writer, skipProperties);  
+      Set<Class<? extends Object>> anes = FindObjects.findAllClasses("com.kitware.physiology.datamodel.system.equipment.anesthesia");
+      for(Class<?> c : anes)
+        WriteDoxyTable(c, "", writer, skipProperties);
+      Set<Class<? extends SEAnesthesiaMachineAction>> aActions = FindObjects.findClassSubTypes("com.kitware.physiology.datamodel.system.equipment.anesthesia.actions", SEAnesthesiaMachineAction.class);
+      for(Class<?> c : aActions)
+        WriteDoxyTable(c, "", writer, skipProperties);
 
-			// ANESTHESIA MACHINE
-			WriteDoxyTable(eAnesthesiaMachine.Event.class, "Anesthesia", writer, skipProperties);  
-			Set<Class<? extends Object>> anes = FindObjects.findAllClasses("com.kitware.physiology.datamodel.system.equipment.anesthesia");
-			for(Class<?> c : anes)
-				WriteDoxyTable(c, "", writer, skipProperties);
-			Set<Class<? extends SEAnesthesiaMachineAction>> aActions = FindObjects.findClassSubTypes("com.kitware.physiology.datamodel.system.equipment.anesthesia.actions", SEAnesthesiaMachineAction.class);
-			for(Class<?> c : aActions)
-				WriteDoxyTable(c, "", writer, skipProperties);
+      // ECG
+      writer.append("#### The following tables describe the %ECG\n<hr>\n");
+      Set<Class<? extends Object>> ecg = FindObjects.findAllClasses("com.kitware.physiology.datamodel.system.equipment.electrocardiogram");
+      for(Class<?> c : ecg)
+        WriteDoxyTable(c, "", writer, skipProperties);
 
-			// ECG
-			Set<Class<? extends Object>> ecg = FindObjects.findAllClasses("com.kitware.physiology.datamodel.system.equipment.electrocardiogram");
-			for(Class<?> c : ecg)
-				WriteDoxyTable(c, "", writer, skipProperties);
+      // INHALER
+      writer.append("#### The following tables describe the inhaler\n<hr>\n");
+      Set<Class<? extends Object>> inhaler = FindObjects.findAllClasses("com.kitware.physiology.datamodel.system.equipment.inhaler");
+      for(Class<?> c : inhaler)
+        WriteDoxyTable(c, "", writer, skipProperties);
+      Set<Class<? extends SEInhalerAction>> iActions = FindObjects.findClassSubTypes("com.kitware.physiology.datamodel.system.equipment.inhaler.actions", SEInhalerAction.class);
+      for(Class<?> c : iActions)
+        WriteDoxyTable(c, "", writer, skipProperties);
 
-			// INHALER
-			Set<Class<? extends Object>> inhaler = FindObjects.findAllClasses("com.kitware.physiology.datamodel.system.equipment.inhaler");
-			for(Class<?> c : inhaler)
-				WriteDoxyTable(c, "", writer, skipProperties);
-			Set<Class<? extends SEInhalerAction>> iActions = FindObjects.findClassSubTypes("com.kitware.physiology.datamodel.system.equipment.inhaler.actions", SEInhalerAction.class);
-			for(Class<?> c : iActions)
-				WriteDoxyTable(c, "", writer, skipProperties);
+      // SUBSTSANCE
+      writer.append("#### The following tables describe substances used in Pulse\n<hr>\n");
+      Set<Class<? extends Object>> subs = FindObjects.findAllClasses("com.kitware.physiology.datamodel.substance");
+      for(Class<?> c : subs)
+        WriteDoxyTable(c, "", writer, skipProperties);
+      Set<Class<? extends Object>> subQs = FindObjects.findAllClasses("com.kitware.physiology.datamodel.substance.quantity");
+      for(Class<?> c : subQs)
+        WriteDoxyTable(c, "", writer, skipProperties);
 
-			// PHYSIOLOGY
-			Set<Class<? extends Object>> phys = FindObjects.findAllClasses("com.kitware.physiology.datamodel.system.physiology");
-			for(Class<?> c : phys)
-				WriteDoxyTable(c, "", writer, skipProperties);
+      // COMPARTMENT
+      writer.append("#### The following tables describe anatomical compartments\n<hr>\n");
+      Set<Class<? extends SECompartment>> cmpts = FindObjects.findClassSubTypes("com.kitware.physiology.datamodel.compartment",SECompartment.class);
+      for(Class<?> c : cmpts)
+        WriteDoxyTable(c, "", writer, skipProperties);
 
-			// SUBSTSANCE
-			Set<Class<? extends Object>> subs = FindObjects.findAllClasses("com.kitware.physiology.datamodel.substance");
-			for(Class<?> c : subs)
-				WriteDoxyTable(c, "", writer, skipProperties);
-			Set<Class<? extends Object>> subQs = FindObjects.findAllClasses("com.kitware.physiology.datamodel.substance.quantity");
-			for(Class<?> c : subQs)
-				WriteDoxyTable(c, "", writer, skipProperties);
+      // SCENARIO
+      writer.append("#### The following tables describe a simulation scenario\n<hr>\n");
+      Set<Class<? extends Object>> sce = FindObjects.findAllClasses("com.kitware.physiology.datamodel.scenario");
+      for(Class<?> c : sce)
+        WriteDoxyTable(c, "", writer, skipProperties);
+      
+      // General Enums
+      writer.append("#### The following tables describe general enumerations\n<hr>\n");
+      WriteDoxyTable(eSide.class, "", writer, skipProperties);
+      WriteDoxyTable(eGate.class, "", writer, skipProperties);
+      WriteDoxyTable(eSwitch.class, "", writer, skipProperties);
+      WriteDoxyTable(eCharge.class, "", writer, skipProperties);
+      
+      writer.close();
 
-			// COMPARTMENT
-			Set<Class<? extends SECompartment>> cmpts = FindObjects.findClassSubTypes("com.kitware.physiology.datamodel.compartment",SECompartment.class);
-			for(Class<?> c : cmpts)
-				WriteDoxyTable(c, "", writer, skipProperties);
+    } 
+    catch (Exception e)
+    {
+      Log.error("Could not create directory .markdown",e);
+    }
+  }
 
-			// SCENARIO
-			Set<Class<? extends Object>> sce = FindObjects.findAllClasses("com.kitware.physiology.datamodel.scenario");
-			for(Class<?> c : sce)
-				WriteDoxyTable(c, "", writer, skipProperties);
-
-			writer.close();
-
-		} 
-		catch (Exception e)
-		{
-			Log.error("Could not create directory .markdown",e);
-		}
-	}
-
-	protected static void WriteDoxyTable(Class<?> c, String prefix, PrintWriter writer, List<String> skipProperties)
-	{    
-		String tableName = c.getSimpleName();
-		if(tableName.startsWith("SE"))
-			tableName = tableName.substring(2);
-		String descPrepend;
-		if(c.isEnum())
-		{
+  protected static void WriteDoxyTable(Class<?> c, String prefix, PrintWriter writer, List<String> skipProperties)
+  {    
+    String tableName = c.getSimpleName();
+    if(tableName.startsWith("SE"))
+      tableName = tableName.substring(2);
+    String descPrepend;
+    if(c.isEnum())
+    {
       tableName = prefix+tableName;
-			descPrepend = "@copybrief "+tableName;
-		}
-		else
-			descPrepend = "@copybrief "+prefix+tableName+"Data";
+      descPrepend = "@copybrief "+tableName;
+    }
+    else
+      descPrepend = "@copybrief "+prefix+tableName+"Data";
 
-		String columnHeaders[] = new String[3];
-		int maxColumnLength[] = new int[columnHeaders.length];
-		columnHeaders[0] = "Property Name";
-		columnHeaders[1] = "Type";
-		columnHeaders[2] = "Definition";
-		for(int i=0; i<maxColumnLength.length; i++)
-			maxColumnLength[i] = columnHeaders[i].length();
+    String columnHeaders[] = new String[3];
+    int maxColumnLength[] = new int[columnHeaders.length];
+    columnHeaders[0] = "Property Name";
+    columnHeaders[1] = "Type";
+    columnHeaders[2] = "Definition";
+    for(int i=0; i<maxColumnLength.length; i++)
+      maxColumnLength[i] = columnHeaders[i].length();
 
-		List<BagMethod> bagMethods = FindObjects.getBagMethods(c,skipProperties);
-		if(c.isEnum())
-		{
-			for(Object o : c.getEnumConstants())
-			{
-				Method m;
-				//Enum<?> e = (Enum<?>)o;
-				try
-				{ 
-				  if(o.toString().equals("UNRECOGNIZED"))
-				    continue;
-					BagMethod bag = new BagMethod();
-					bag.propertyName = o.toString();
-					bag.returnType = c;
-					bagMethods.add(bag);
-				} 
-				catch (Exception ex)
-				{
-					Log.info("Enum is not happy",ex);
-				}
-			}
-		}
+    List<BagMethod> bagMethods = FindObjects.getBagMethods(c,skipProperties);
+    if(c.isEnum())
+    {
+      for(Object o : c.getEnumConstants())
+      {
+        Method m;
+        //Enum<?> e = (Enum<?>)o;
+        try
+        { 
+          if(o.toString().equals("UNRECOGNIZED"))
+            continue;
+          BagMethod bag = new BagMethod();
+          bag.propertyName = o.toString();
+          bag.returnType = c;
+          bagMethods.add(bag);
+        } 
+        catch (Exception ex)
+        {
+          Log.info("Enum is not happy",ex);
+        }
+      }
+    }
 
-		// Compute all of our header values and sizes
-		for(BagMethod bag : bagMethods)
-		{
-			// Header (was built when we had to pull data out of the results file)
-			if(bag.propertyName.length()>maxColumnLength[0])
-				maxColumnLength[0] = bag.propertyName.length();
-			if(bag.returnType.getSimpleName().length()>maxColumnLength[1])
-				maxColumnLength[1] = bag.returnType.getSimpleName().length();           
-		}
-		maxColumnLength[2] = descPrepend.length()+maxColumnLength[0];
+    // Compute all of our header values and sizes
+    for(BagMethod bag : bagMethods)
+    {
+      // Header (was built when we had to pull data out of the results file)
+      if(bag.propertyName.length()>maxColumnLength[0])
+        maxColumnLength[0] = bag.propertyName.length();
+      if(bag.returnType.getSimpleName().length()>maxColumnLength[1])
+        maxColumnLength[1] = bag.returnType.getSimpleName().length();           
+    }
+    maxColumnLength[2] = descPrepend.length()+maxColumnLength[0];
 
-		try
-		{
-			// Create file and start the table      
-			writer.println("");
-			writer.println("@anchor "+StringUtils.removeSpaces(tableName)+"Table");
-			if(c.isEnum())
-				writer.println("## "+tableName);
-			else
-			{
-			  if (tableNameLinks.contains(tableName))
-			    writer.println("## %"+tableName);
-			  else
-				  writer.println("## "+tableName);
-				/*
-				String tName = StringUtils.spaceCamelCase(tableName);
-        
-				String[] words = tName.split(" ");
-				if(words.length>0)
-				{
-					tName = "";
-					for(String word : words)
-						tName += "%"+word+" ";
-				}
-				else if(!tName.trim().isEmpty())
-				{
-					tName = "%"+tName;
-				}
-				if (tName.trim().length()>1)
-				  // Put a % before each word, so it does not link to classes
-				  writer.println("## "+tName);
-				else
-				  tName = "";
-				  */
-			}
-			writer.println(descPrepend+"");
+    try
+    {
+      // Create file and start the table      
+      writer.println("");
+      writer.println("@anchor "+StringUtils.removeSpaces(tableName)+"Table");
+      if(c.isEnum())
+        writer.println("##### "+tableName);
+      else
+      {
+        if (tableNameLinks.contains(tableName))
+          writer.println("##### %"+tableName);
+        else
+          writer.println("##### "+tableName);
+      }
+      writer.println(descPrepend+"");
 
-			if(!bagMethods.isEmpty())
-			{
-				for(int i=0; i<columnHeaders.length; i++)
-					writer.print("|"+pad(columnHeaders[i],maxColumnLength[i]));
-				writer.println("|");
-				for(int i=0; i<columnHeaders.length; i++)
-					writer.print("|"+pad("---",maxColumnLength[i]));
-				writer.println("|");
-				// Now loop the vData and write out table rows
-				for(BagMethod bag : bagMethods)
-				{
-					writer.print("|"+pad(bag.propertyName,maxColumnLength[0]));
-					if(bag.returnType.getSimpleName().equals("List"))
-					{
-						// If it is a list, I am doing this special code, not generic smart yet
-						if(bag.propertyName.equals("AmbientSubstance"))
-						{
-							writer.print("|"+"List of SubstanceFractions");
-							writer.print("|"+"@ref SubstanceFractionTable");
-						}
-						else if(bag.propertyName.equals("Commands"))
-						{
-							writer.print("|"+"List of Commands");
-							String tables = "@ref BreathHoldTable <br> @ref ForcedExhaleTable <br> @ref ForcedInhaleTable <br> @ref UseInhalerTable";
-							writer.print("|"+tables);
-						}
-						else if(bag.propertyName.equals("SubstanceQuantities") && tableName.startsWith("Gas"))
-						{
-							writer.print("|"+"List of SEGasSubstanceQuantity");
-							writer.print("|"+"@ref GasSubstanceQuantityTable");
-						}
-						else if(bag.propertyName.equals("SubstanceQuantities") && tableName.startsWith("Liquid"))
-						{
-							writer.print("|"+"List of SELiquidSubstanceQuantity");
-							writer.print("|"+"@ref LiquidSubstanceQuantityTable");
-						}
-						else if(bag.propertyName.equals("Components"))
-						{
-							writer.print("|"+"List of SESubstanceCompoundComponent");
-							writer.print("|"+"@ref SubstanceCompoundComponentTable");
-						}
-						else if(bag.propertyName.equals("GasFraction"))
-						{
-							writer.print("|"+"List of SESubstanceFractionAmount");
-							writer.print("|"+"@ref SubstanceFractionAmountTable");
-						}
-						else if(bag.propertyName.equals("Aerosol"
-						    + ""))
+      if(!bagMethods.isEmpty())
+      {
+        for(int i=0; i<columnHeaders.length; i++)
+          writer.print("|"+pad(columnHeaders[i],maxColumnLength[i]));
+        writer.println("|");
+        for(int i=0; i<columnHeaders.length; i++)
+          writer.print("|"+pad("---",maxColumnLength[i]));
+        writer.println("|");
+        // Now loop the vData and write out table rows
+        for(BagMethod bag : bagMethods)
+        {
+          writer.print("|"+pad(bag.propertyName,maxColumnLength[0]));
+          if(bag.returnType.getSimpleName().equals("List"))
+          {
+            // If it is a list, I am doing this special code, not generic smart yet
+            if(bag.propertyName.equals("AmbientSubstance"))
+            {
+              writer.print("|"+"List of SubstanceFractions");
+              writer.print("|"+"@ref SubstanceFractionTable");
+            }
+            else if(bag.propertyName.equals("Commands"))
+            {
+              writer.print("|"+"List of Commands");
+              String tables = "@ref BreathHoldTable <br> @ref ForcedExhaleTable <br> @ref ForcedInhaleTable <br> @ref UseInhalerTable";
+              writer.print("|"+tables);
+            }
+            else if(bag.propertyName.equals("SubstanceQuantities") && tableName.startsWith("Gas"))
+            {
+              writer.print("|"+"List of SEGasSubstanceQuantity");
+              writer.print("|"+"@ref GasSubstanceQuantityTable");
+            }
+            else if(bag.propertyName.equals("SubstanceQuantities") && tableName.startsWith("Liquid"))
+            {
+              writer.print("|"+"List of SELiquidSubstanceQuantity");
+              writer.print("|"+"@ref LiquidSubstanceQuantityTable");
+            }
+            else if(bag.propertyName.equals("Components"))
+            {
+              writer.print("|"+"List of SESubstanceCompoundComponent");
+              writer.print("|"+"@ref SubstanceCompoundComponentTable");
+            }
+            else if(bag.propertyName.equals("GasFraction"))
+            {
+              writer.print("|"+"List of SESubstanceFraction");
+              writer.print("|"+"@ref SubstanceFractionTable");
+            }
+            else if(bag.propertyName.equals("Aerosol"
+                + ""))
             {
               writer.print("|"+"List of SESubstanceConcentration");
               writer.print("|"+"@ref SubstanceConcentrationTable");
             }
-						else if(bag.propertyName.equals("AmbientGas"))
-						{
-							writer.print("|"+"List of SESubstanceFractionAmount");
-							writer.print("|"+"@ref SubstanceFractionAmountTable");
-						}
-						else if(bag.propertyName.equals("AmbientAerosol"))
-						{
-							writer.print("|"+"List of SESubstanceConcentration");
-							writer.print("|"+"@ref SubstanceConcentrationTable");
-						}
-						else
-							Log.error("Unsupported List type for :"+bag.propertyName+" on table "+tableName);
+            else if(bag.propertyName.equals("AmbientGas"))
+            {
+              writer.print("|"+"List of SESubstanceFractionAmount");
+              writer.print("|"+"@ref SubstanceFractionAmountTable");
+            }
+            else if(bag.propertyName.equals("AmbientAerosol"))
+            {
+              writer.print("|"+"List of SESubstanceConcentration");
+              writer.print("|"+"@ref SubstanceConcentrationTable");
+            }
+            else
+              Log.error("Unsupported List type for :"+bag.propertyName+" on table "+tableName);
 
-					}
-					else
-					{
-						writer.print("|"+pad(bag.returnType.getSimpleName(),maxColumnLength[1]));
-						if(SEScalar.class.isAssignableFrom(bag.returnType) || 
-								Enum.class.isAssignableFrom(bag.returnType) ||
-								String.class.isAssignableFrom(bag.returnType) ||
-								SEFunction.class.isAssignableFrom(bag.returnType))
-							writer.print("|"+pad(descPrepend+"_"+bag.propertyName,maxColumnLength[2]));
-						else
-						{
-							String refTable = bag.returnType.getSimpleName();
-							if(refTable.startsWith("SE"))
-								refTable = refTable.substring(2);
-							writer.print("|"+pad("@ref "+refTable+"Table",maxColumnLength[2]));
-						}
-					}
-					writer.println("|");
-				}   
-			}
-			writer.println("");
-		}
-		catch(Exception ex)
-		{
-			Log.error("Error writing cdm table for "+tableName,ex);      
-		}
-	}
-	protected static String pad(String s, int max)
-	{
-		if(s==null)
-			return new String(new char[(max+5)]).replace('\0',' ');
-		// Using a pad of 5 between columns
-		try
-		{
-			String ret =  s + new String(new char[(max-s.length())+5]).replace('\0',' ');
-			return ret;
-		}
-		catch(Exception ex)
-		{
-			Log.error("Could not pad "+s+" with a max of "+max,ex);
-			return "";
-		}
-	}
+          }
+          else
+          {
+            if(Enum.class.isAssignableFrom(bag.returnType))
+               writer.print("|"+pad("Enum",maxColumnLength[1]));
+            else
+              writer.print("|"+pad(bag.returnType.getSimpleName(),maxColumnLength[1]));
+            if(SEScalar.class.isAssignableFrom(bag.returnType) || 
+                Enum.class.isAssignableFrom(bag.returnType) ||
+                String.class.isAssignableFrom(bag.returnType) ||
+                SEFunction.class.isAssignableFrom(bag.returnType))
+              writer.print("|"+pad(descPrepend+"_"+bag.propertyName,maxColumnLength[2]));
+            else
+            {
+              String refTable = bag.returnType.getSimpleName();
+              if(refTable.startsWith("SE"))
+                refTable = refTable.substring(2);
+              writer.print("|"+pad("@ref "+refTable+"Table",maxColumnLength[2]));
+            }
+          }
+          writer.println("|");
+        }   
+      }
+      writer.println("");
+    }
+    catch(Exception ex)
+    {
+      Log.error("Error writing cdm table for "+tableName,ex);      
+    }
+    writer.print("\n<hr>\n");
+  }
+  protected static String pad(String s, int max)
+  {
+    if(s==null)
+      return new String(new char[(max+5)]).replace('\0',' ');
+    // Using a pad of 5 between columns
+    try
+    {
+      String ret =  s + new String(new char[(max-s.length())+5]).replace('\0',' ');
+      return ret;
+    }
+    catch(Exception ex)
+    {
+      Log.error("Could not pad "+s+" with a max of "+max,ex);
+      return "";
+    }
+  }
 
 }

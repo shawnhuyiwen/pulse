@@ -13,6 +13,27 @@ This versioning follows the <a href="http://semver.org">Semantic Versioning 2.0.
 
 ## Pulse Version History
 
+### Pulse v1.1 (June 25th, 2018)
+
+The latest code base includes the following notable updates:
+- Updated Wiki for using Pulse in your application
+- Added C# example interface
+- Refactored respiratory system for improvements determining the transition between inhale and exhale
+  - Important for determining correct vital signs (e.g., respiration rate, tidal volume, end tidal CO2)
+  - Most noticeable improvement is with external sources, such as a ventilator
+- Added aerosols (e.g., albuterol) to the mechanical ventilator
+- Added the ability to remove the cardiac arrest action and transition from asystole to normal sinus
+- Added norepinephrine to the drug library
+- Switched the included logger from log4cpp to log4cplus
+- Updated to the latest versions of Eigen and Protobufs
+- Transitioned results file extension from .txt to .csv
+- Exposed action and condition information via the API
+- Improved exception handling
+- Discretized verification data sets for easier management
+- Cleaned up headers
+- CMake build improvements
+  - Pulse builds and runs on single board pc's and all major operating systems
+
 ### Pulse v1.0 (September 1st, 2017) included the following notable updates:
 - Fixed multi-platform compiling bugs
 - Moved from an in-source to out-of-source build

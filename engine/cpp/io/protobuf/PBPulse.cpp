@@ -39,7 +39,7 @@ bool PBPulse::SerializeToString(const PulseScenario& src, std::string& output, S
 {
   pulse::proto::ScenarioData data;
   PBPulse::Serialize(src, data);
-  return PBUtils::SerializeToString(data, output, m);
+  return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
 bool PBPulse::SerializeToFile(const PulseScenario& src, const std::string& filename, SerializationFormat m)
 {
@@ -53,18 +53,20 @@ bool PBPulse::SerializeToFile(const PulseScenario& src, const std::string& filen
 bool PBPulse::SerializeFromString(const std::string& src, PulseScenario& dst, SerializationFormat m)
 {
   pulse::proto::ScenarioData data;
-  if (!PBUtils::SerializeFromString(src, data, m))
+  dst.GetLogger()->Info("Loading scenario...");
+  if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
   {
-    dst.GetLogger()->Info("Trying to load with base SEScenario");
+    dst.GetLogger()->Info("Attempting to resolve errors...");
     // Try our base class
     cdm::ScenarioData cdm_data;
-    if (!PBUtils::SerializeFromString(src, cdm_data, m))
+    if (!PBUtils::SerializeFromString(src, cdm_data, m, dst.GetLogger()))
       return false;
-    dst.GetLogger()->Info("Successfully loaded Scenario as base SEScenario");
+    dst.GetLogger()->Info("Successfully loaded scenario as a base SEScenario");
     PBScenario::Load(cdm_data, dst);
     return true;
   }
   PBPulse::Load(data, dst);
+  dst.GetLogger()->Info("Successfully loaded scenario");
   return true;
 }
 bool PBPulse::SerializeFromFile(const std::string& filename, PulseScenario& dst, SerializationFormat m)

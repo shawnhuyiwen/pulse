@@ -51,7 +51,7 @@ bool PBCompartment::LoadCompartmentManagerFile(SECompartmentManager& mgr, const 
   cdm::CompartmentManagerData src;
   std::ifstream file_stream(filename, std::ios::in);
   std::string fmsg((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
-  if (!PBUtils::SerializeFromString(fmsg, src, JSON))
+  if (!PBUtils::SerializeFromString(fmsg, src, JSON, mgr.GetLogger()))
     return false;
   PBCompartment::Load(src, mgr, circuits);
   return true;
@@ -65,7 +65,7 @@ void PBCompartment::SaveCompartmentManagerFile(const SECompartmentManager& mgr, 
 {
   std::string content;
   cdm::CompartmentManagerData* src = PBCompartment::Unload(mgr);
-  PBUtils::SerializeToString(*src, content,JSON);
+  PBUtils::SerializeToString(*src, content,JSON, mgr.GetLogger());
   std::ofstream ascii_ostream(filename, std::ios::out | std::ios::trunc);
   ascii_ostream << content;
   ascii_ostream.flush();

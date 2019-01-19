@@ -144,7 +144,7 @@ Due to the current lack of a hepatic model, the %Gastrointestinal System breaks 
 Many of the small ions like sodium are quickly absorbed with active transport in a manner similar to the %Renal system @cite hall2011guyton.
 An exception to this is calcium, which is carefully regulated by parathyroid hormone to ensure that the body's requirements are met @cite hall2011guyton.
 Water is absorbed via the osmotic gradient that either naturally exists between the gut chyme and the blood or that is created by the active transport of substances across the intestinal wall @cite hall2011guyton.
-
+<center>
 | Macronutrient	| Resultant Substance |                       Digestion Rate (R)                         | Absorption Fraction (A<sub>frac</sub>) | Gut Substance Mass(M<sub>g</sub>) Stomach Nutrient Mass (M<sub>s</sub>)|
 |:---:	        |:---:                |:---:                                                             |:---:                                   |:---:                                                                   |
 | Carbohydrate  | Glucose             | 0.5 - 0.625 g/min @cite hall2011guyton @cite wolever1991glycemic | 0.800 @cite hall2011guyton             | M<sub>g</sub> = R*&Delta;T*A<sub>frac</sub>                            |
@@ -153,7 +153,7 @@ Water is absorbed via the osmotic gradient that either naturally exists between 
 | Calcium       | Calcium             | 2.7 mg/min @cite gallagher1979intestinal                         | 0.25  @cite haussinger1990nitrogen     | M<sub>g</sub> = R*&Delta;T*A<sub>frac</sub>                            |
 | Sodium        | Sodium              | N/A                                                              | 1.0                                    | M<sub>g</sub> = M<sub>s</sub>/V<sub>H2O</sub>*R<sub>H2O</sub>*&Delta;T |
 | Water         | Water               | 0.417 mL/s @cite Peronnet2012Pharmacokinetic                     | 1.0                                    | V<sub>H2O</sub> = R*&Delta;T                                           |
-<center>
+
 *Table 1. How macronutrients are converted into substances.*
 </center>
 
@@ -183,7 +183,6 @@ Concentrations are not solely a function of GI; other systems are potentially us
 
 <center>
 *Table 2. Macronutrient mass in the stomach, gut, and blood as a function of time.*
-</center>
 
 |  Macronutrient/Substance |                           Stomach Mass(g) vs. Time(s)                            |                               Gut Mass(g) vs. Time(s)                                  |                     Blood Concentration (ug/mL) vs. Time (s)                         |
 |:---:                     |:---:                                                                             |:---:                                                                                   |:---:                                                                                 |
@@ -193,7 +192,7 @@ Concentrations are not solely a function of GI; other systems are potentially us
 | Calcium                  | <img src="./plots/GI/12hr_StomachCalcium.jpg" height="100" width="200">      | <img src="./plots/GI/12hr_IntestineCalcium.jpg" height="100" width="200">    | <img src="./plots/GI/12hr_BloodCalcium.jpg" height="100" width="200">    |
 | Sodium                   | <img src="./plots/GI/12hr_StomachSodium.jpg" height="100" width="200">       | <img src="./plots/GI/12hr_IntestineSodium.jpg" height="100" width="200">     | <img src="./plots/GI/12hr_BloodSodium.jpg" height="100" width="200">     |
 | Water                    | <img src="./plots/GI/12hr_StomachWater.jpg" height="100" width="200">        | <img src="./plots/GI/12hr_IntestineVolume.jpg" height="100" width="200">          | <img src="./plots/GI/12hr_BV.jpg" height="100" width="200">             |
-
+</center>
 
 As seen in Table 2, the macronutrient masses in the stomach are depleted based on different digestion rates and eventually reach zero. 
 The center column of plots shows the associated mass of substances in the gut chyme increase as the nutrients are removed from the stomach.

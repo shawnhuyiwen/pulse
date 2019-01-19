@@ -272,7 +272,7 @@ bool PBEnvironment::SerializeToString(const SEEnvironmentalConditions& src, std:
 {
   cdm::EnvironmentalConditionsData data;
   PBEnvironment::Serialize(src, data);
-  return PBUtils::SerializeToString(data, output, m);
+  return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
 bool PBEnvironment::SerializeToFile(const SEEnvironmentalConditions& src, const std::string& filename, SerializationFormat m)
 {
@@ -286,7 +286,7 @@ bool PBEnvironment::SerializeToFile(const SEEnvironmentalConditions& src, const 
 bool PBEnvironment::SerializeFromString(const std::string& src, SEEnvironmentalConditions& dst, SerializationFormat m)
 {
   cdm::EnvironmentalConditionsData data;
-  if (!PBUtils::SerializeFromString(src, data, m))
+  if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
     return false;
   PBEnvironment::Load(data, dst);
   return true;

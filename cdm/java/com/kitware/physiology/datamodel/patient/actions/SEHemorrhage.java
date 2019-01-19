@@ -110,6 +110,10 @@ public class SEHemorrhage extends SEPatientAction
   {
     type = t;
   }
+  public boolean hasType()
+  {
+    return type != null;
+  }
   
   public String toString()
   {

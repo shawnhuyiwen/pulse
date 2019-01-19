@@ -9,8 +9,8 @@ message ePatient
   /** @brief Enumeration for patient sex */
   enum Sex
   {
-    Male=0;
-    Female=1;
+    Male=0;   /**<< @brief Male patient. */
+    Female=1; /**<< @brief Female patient. */
   }
   
   /* @brief Enumeration for states the patient can enter and exit out of. */

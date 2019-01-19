@@ -204,7 +204,7 @@ bool PBTestReport::SerializeToString(const SETestReport& src, std::string& outpu
 {
   cdm::TestReportData data;
   PBTestReport::Serialize(src, data);
-  return PBUtils::SerializeToString(data, output, m);
+  return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
 bool PBTestReport::SerializeToFile(const SETestReport& src, const std::string& filename, SerializationFormat m)
 {
@@ -217,7 +217,7 @@ bool PBTestReport::SerializeToFile(const SETestReport& src, const std::string& f
 bool PBTestReport::SerializeFromString(const std::string& src, SETestReport& dst, SerializationFormat m)
 {
   cdm::TestReportData data;
-  if (!PBUtils::SerializeFromString(src, data, m))
+  if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
     return false;
   PBTestReport::Load(data, dst);
   return true;

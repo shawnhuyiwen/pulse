@@ -32,7 +32,7 @@ bool SEScenarioExec::Execute(const std::string& scenarioFile, const std::string&
 {
   try
   {
-    m_ss << "Executing scenario file : " << scenarioFile << std::endl;
+    m_ss << "Executing scenario file : " << scenarioFile;
     Info(m_ss);
     m_Cancel = false;
 

@@ -189,7 +189,7 @@ bool PBPatient::SerializeToString(const SEPatient& src, std::string& output, Ser
 {
   cdm::PatientData data;
   PBPatient::Serialize(src, data);
-  return PBUtils::SerializeToString(data, output, m);
+  return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
 bool PBPatient::SerializeToFile(const SEPatient& src, const std::string& filename, SerializationFormat m)
 {
@@ -203,7 +203,7 @@ bool PBPatient::SerializeToFile(const SEPatient& src, const std::string& filenam
 bool PBPatient::SerializeFromString(const std::string& src, SEPatient& dst, SerializationFormat m)
 {
   cdm::PatientData data;
-  if (!PBUtils::SerializeFromString(src, data, m))
+  if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
     return false;
   PBPatient::Load(data, dst);
   return true;

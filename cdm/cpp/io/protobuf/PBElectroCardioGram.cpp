@@ -150,7 +150,7 @@ bool PBElectroCardioGram::SerializeToString(const SEElectroCardioGramWaveformInt
 {
   cdm::ElectroCardioGramWaveformListData data;
   PBElectroCardioGram::Serialize(src, data);
-  return PBUtils::SerializeToString(data, output, m);
+  return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
 bool PBElectroCardioGram::SerializeToFile(const SEElectroCardioGramWaveformInterpolator& src, const std::string& filename, SerializationFormat m)
 {
@@ -163,7 +163,7 @@ bool PBElectroCardioGram::SerializeToFile(const SEElectroCardioGramWaveformInter
 bool PBElectroCardioGram::SerializeFromString(const std::string& src, SEElectroCardioGramWaveformInterpolator& dst, SerializationFormat m)
 {
   cdm::ElectroCardioGramWaveformListData data;
-  if (!PBUtils::SerializeFromString(src, data, m))
+  if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
     return false;
   PBElectroCardioGram::Load(data, dst);
   return true;
