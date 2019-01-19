@@ -23,7 +23,7 @@ message EnvironmentalConditionsData
   Scalar0To1Data                            RelativeHumidity                 = 9; /**<< @brief Local ambient ratio of the partial pressure of water vapor to the equilibrium vapor pressure of water at the same temperature. */
   ScalarTemperatureData                     RespirationAmbientTemperature    = 10;/**<< @brief Local ambient temperature of the surrounding air that is inhaled. */
 
-  repeated SubstanceFractionData            AmbientGas                       = 11;/**<< @brief Break down of the gasses in the environment, fractions must add up to 1. */                  
+  repeated SubstanceFractionData            AmbientGas                       = 11;/**<< @brief Break down of the gasses in the environment, fractions must add up to 1. */
   repeated SubstanceConcentrationData       AmbientAerosol                   = 12;/**<< @brief Break down of the aerosolized solid/liquid substances in the environment. */
 }
 
@@ -41,7 +41,7 @@ message AppliedTemperatureData
   eSwitch                                   State                             = 1; /**<< @brief Use Off to remove the applied object from the patient. */
   ScalarTemperatureData                     Temperature                       = 2; /**<< @brief Temperature of an object held on the patient. */
   ScalarAreaData                            SurfaceArea                       = 3; /**<< @brief SurfaceArea of the patient that the temperature is being appllied to. */
-  Scalar0To1Data                            SurfaceAreaFraction               = 4; /**<< @brief SurfaceArea Fraction of the body that the temperature is being appllied to */            
+  Scalar0To1Data                            SurfaceAreaFraction               = 4; /**<< @brief SurfaceArea Fraction of the body that the temperature is being appllied to */
 }
 
 /** @brief The overall environment of the patient. */

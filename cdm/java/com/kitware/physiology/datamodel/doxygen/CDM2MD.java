@@ -323,8 +323,8 @@ public class CDM2MD
             }
             else if(bag.propertyName.equals("AmbientGas"))
             {
-              writer.print("|"+"List of SESubstanceFractionAmount");
-              writer.print("|"+"@ref SubstanceFractionAmountTable");
+              writer.print("|"+"List of SESubstanceFraction");
+              writer.print("|"+"@ref SubstanceFractionTable");
             }
             else if(bag.propertyName.equals("AmbientAerosol"))
             {

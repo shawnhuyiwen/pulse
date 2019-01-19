@@ -124,7 +124,7 @@ This initialization method is also the only way to specify any conditions (chron
 
 #### %Environment Conditions
 @secreflist
-  @refitem InitialEnvironmentTable "Initial Environment"
+  @refitem InitialEnvironmentConditionsTable "Initial Environment"
 @endsecreflist
 
 <br>
@@ -270,7 +270,7 @@ You will need to create an instance of an action class, fill it out with the nec
 
 #### %Environment Actions
 @secreflist
-  @refitem EnvironmentChangeTable "Environment Change"
+  @refitem ChangeEnvironmentConditionsTable "Environment Change"
   @refitem ThermalApplicationTable "Thermal Application"
 @endsecreflist
 

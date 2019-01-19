@@ -59,7 +59,7 @@ The latest code base includes the following notable updates:
 
 - Pulse asset in the Unity Asset Store
 - Pediatric physiology prototype
-- Respiratory fatigue and chronic condition exacerbation
+- %Respiratory fatigue and chronic condition exacerbation
 - Surface area and efficiency parameters for the gas diffusion model
 - A more accurate pneumothorax model
 - A second order baroreceptor model
