@@ -7,7 +7,7 @@
 Distributed under the <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0.</a>
 See accompanying <a href="https://gitlab.kitware.com/physiology/engine/blob/master/NOTICE">NOTICE</a> file for details.
 
-For the latest new visit our <a href="https://blog.kitware.com/tag/pulse/">blog</a>
+For the latest news visit our <a href="https://blog.kitware.com/tag/pulse/">blog</a>
 
 There are @ref published on several systems and clinical scenarios. 
 
