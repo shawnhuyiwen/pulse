@@ -1,6 +1,6 @@
 
-add_library(PulseC SHARED engine/cpp/PulseEngineC.h
-                          engine/cpp/PulseEngineC.cpp)
+add_library(PulseC SHARED engine/c/PulseEngineC.h
+                          engine/c/PulseEngineC.cpp)
 
 target_include_directories(PulseC PRIVATE ${CMAKE_BINARY_DIR}/schema/cpp/)
 target_include_directories(PulseC PRIVATE ${CMAKE_BINARY_DIR}/schema/cpp/bind/)
