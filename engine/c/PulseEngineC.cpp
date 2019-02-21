@@ -246,7 +246,7 @@ void PulseEngineC::SetupDefaultDataRequests()
   eng->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("OxygenSaturation");
   eng->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("EndTidalCarbonDioxidePressure", PressureUnit::mmHg);
   eng->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
-  eng->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SkinTemperature", TemperatureUnit::C);
+  eng->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CoreTemperature", TemperatureUnit::C);
   SESubstance* CO2 = eng->GetSubstanceManager().GetSubstance("CarbonDioxide");
   eng->GetEngineTracker()->GetDataRequestManager().CreateGasCompartmentDataRequest("Carina",*CO2,"PartialPressure", PressureUnit::mmHg);
   eng->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
