@@ -2,15 +2,13 @@
 #    FIND_PACKAGE(Pulse REQUIRED)
 #
 #    This file will define the following variables:
-#      - Pulse_LIBS                     : The list of libraries to link against.
-#      - Pulse_DEBUG_LIBS               : The list of debug libraries to link against.
-#      - Pulse_LIB_ROOT_DIR             : The root library directory, libraries will be under a configuration
-#                                       : directory : 'release','debug','relwithdebinfo'
-#                                       : Use to link to pulse library builds of your choosing. 
-#      - Pulse_LIB_DIR                  : The directory where lib files are of the same build type
-#                                       : as the including project.
-#                                       : Calling LINK_DIRECTORIES
-#                                         with this path is NOT needed.
+#      - Pulse_LIB_ROOT_DIR             : The root library directory
+#      - PULSE_LIBRARIES                : The list of both debug and release libraries.
+                                        : It is recommended to use this variable in your CMake file
+                                        : It will configure both debug and release build types for you.
+                                        : target_link_libraries(YourProject ${PULSE_LIBRARIES})
+#      - Pulse_RELEASE_LIBS             : The list of release libraries.
+#      - Pulse_DEBUG_LIBS               : The list of debug libraries.
 #      - Pulse_INCLUDE_DIRS             : The Pulse include directories.
 #      - Pulse_VERSION                  : The version of this Pulse build. Example: "2.4.0"
 #      - Pulse_VERSION_MAJOR            : Major version part of Pulse_VERSION. Example: "2"
@@ -19,12 +17,13 @@
 #
 # ===================================================================================
 
+set(Pulse_INSTALL "${Pulse_DIR}")
 
-set(Pulse_INCLUDE_DIRS "@CMAKE_INSTALL_PREFIX@/include"
-                       "@CMAKE_INSTALL_PREFIX@/include/bind"
-                       "@CMAKE_INSTALL_PREFIX@/include/cdm"
+set(Pulse_INCLUDE_DIRS "${Pulse_INSTALL}/include"
+                       "${Pulse_INSTALL}/include/bind"
+                       "${Pulse_INSTALL}/include/cdm"
                        )
-set(Pulse_LIB_ROOT_DIR "@CMAKE_INSTALL_PREFIX@/lib/")
+set(Pulse_LIB_ROOT_DIR "${Pulse_INSTALL}/lib")
 
 if(MSVC)
  set(LOG4CPLUS_LIB "log4cplus")
@@ -40,32 +39,35 @@ else()
   set(LIB_ENDING "a")
 endif()
 
-set(Pulse_INSTALL "@CMAKE_INSTALL_PREFIX@")
+set (WIN32_LIBS "")
+if(WIN32)
+  list(APPEND WIN32_LIBS "ws2_32" "advapi32")
+endif()
 
-set(Pulse_LIBS "${Pulse_LIB_ROOT_DIR}/PulseEngine.${LIB_ENDING}" 
+set (PULSE_LIBRARIES "")
+
+set(Pulse_RELEASE_LIBS "${Pulse_LIB_ROOT_DIR}/PulseEngine.${LIB_ENDING}" 
                "${Pulse_LIB_ROOT_DIR}/CommonDataModel.${LIB_ENDING}"
                "${Pulse_LIB_ROOT_DIR}/DataModelBindings.${LIB_ENDING}"
                "${Pulse_LIB_ROOT_DIR}/${LOG4CPLUS_LIB}.${LIB_ENDING}"
                "${Pulse_LIB_ROOT_DIR}/libprotobuf.${LIB_ENDING}"
+               "${WIN32_LIBS}
 )
-
-set(Pulse_RELWITHDEBINFO_LIBS "${Pulse_LIB_ROOT_DIR}/PulseEnginedi.${LIB_ENDING}" 
-                              "${Pulse_LIB_ROOT_DIR}/CommonDataModeldi.${LIB_ENDING}"
-                              "${Pulse_LIB_ROOT_DIR}/DataModelBindingsdi.${LIB_ENDING}"
-                              "${Pulse_LIB_ROOT_DIR}/${LOG4CPLUS_LIB}.${LIB_ENDING}"
-                              "${Pulse_LIB_ROOT_DIR}/libprotobuf.${LIB_ENDING}"
-)
+foreach(lib ${Pulse_RELEASE_LIBS})
+  list (APPEND PULSE_LIBRARIES optimized ${lib})
+endforeach(lib)
 
 set(Pulse_DEBUG_LIBS "${Pulse_LIB_ROOT_DIR}/PulseEngined.${LIB_ENDING}"
                      "${Pulse_LIB_ROOT_DIR}/CommonDataModeld.${LIB_ENDING}"
                      "${Pulse_LIB_ROOT_DIR}/DataModelBindingsd.${LIB_ENDING}"
                      "${Pulse_LIB_ROOT_DIR}/${LOG4CPLUS_LIB}D.${LIB_ENDING}"
                      "${Pulse_LIB_ROOT_DIR}/libprotobufd.${LIB_ENDING}"
+                     "${WIN32_LIBS}
 )
-if(WIN32)
-  list(APPEND Pulse_LIBS "ws2_32" "advapi32")
-  list(APPEND Pulse_DEBUG_LIBS "ws2_32" "advapi32")
-endif()
+foreach(lib ${Pulse_DEBUG_LIBS})
+  list (APPEND PULSE_LIBRARIES debug ${lib})
+endforeach(lib)
+
 
 set( Pulse_VERSION_MAJOR "@PULSE_VERSION_MAJOR@" )
 set( Pulse_VERSION_MINOR "@PULSE_VERSION_MINOR@" )

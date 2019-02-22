@@ -14,16 +14,16 @@ endif()
 ##################################
 
 message( STATUS "External project - Eigen" )
-set(eigen_VERSION "3.3.5" )
+set(eigen_VERSION "3.3.7" )
 set(eigen_SRC "${CMAKE_BINARY_DIR}/eigen/src/eigen")
 set(eigen_Patch "${CMAKE_SOURCE_DIR}/cmake/eigen-patches")
 
 ExternalProject_Add( eigen
   PREFIX eigen
   URL "http://bitbucket.org/eigen/eigen/get/${eigen_VERSION}.tar.gz"
-  URL_HASH MD5=ee48cafede2f51fe33984ff5c9f48026
-  UPDATE_COMMAND 
-    COMMAND ${CMAKE_COMMAND} -Deigen_source=${eigen_SRC} -Deigen_patch=${eigen_Patch} -P ${CMAKE_SOURCE_DIR}/cmake/eigen-patches/Patch.cmake
+  URL_HASH MD5=f2a417d083fe8ca4b8ed2bc613d20f07
+  #UPDATE_COMMAND 
+  #  COMMAND ${CMAKE_COMMAND} -Deigen_source=${eigen_SRC} -Deigen_patch=${eigen_Patch} -P ${eigen_Patch}/Patch.cmake
   INSTALL_DIR "${CMAKE_INSTALL_PREFIX}"
   CMAKE_ARGS
         -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF
@@ -64,16 +64,21 @@ list(APPEND Pulse_DEPENDENCIES log4cplus)
 ###################################################
 
 message( STATUS "External project - protobuf" )
-set(protobuf_VERSION "3.6.1" )
-set(protobuf_MD5 "e09a2a7d3b34a271aedfc0b38ac2a4dc" )
+#This is a working 3.7.0-rc2 hash, the tag is bunk :(
+set(protobuf_VERSION "9e381c05f525ae7623573cdb0536a18904dab451" )#"v3.7.0-rc.2")
+set(protobuf_MD5 "a5cf79b455ddb13e3001be89143b2bdd" )
 set(protobuf_SRC "${CMAKE_BINARY_DIR}/protobuf/src/protobuf")
+set(protobuf_Patch "${CMAKE_SOURCE_DIR}/cmake/protobuf-patches")
 
+message(STATUS "Patching protobuf ${PULSE_IL2CPP_PATCH}")
 ExternalProject_Add( protobuf
   PREFIX protobuf
-  URL "https://github.com/google/protobuf/archive/v${protobuf_VERSION}.zip"
+  URL "https://github.com/google/protobuf/archive/${protobuf_VERSION}.zip"
   URL_MD5 ${protobuf_MD5}
   DOWNLOAD_DIR ${protobuf_SRC}
   SOURCE_SUBDIR ./cmake
+  UPDATE_COMMAND 
+    COMMAND ${CMAKE_COMMAND} -DPULSE_IL2CPP_PATCH=${PULSE_IL2CPP_PATCH} -Dprotobuf_source=${protobuf_SRC} -Dprotobuf_patch=${protobuf_Patch} -P ${protobuf_Patch}/Patch.cmake
   CMAKE_ARGS
     -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
     -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
