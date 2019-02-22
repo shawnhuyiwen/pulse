@@ -64,7 +64,9 @@ public class PulseEngine extends Pulse
     this.reset();
     String dataRequestsStr = null;
     if(dataRequests !=null && !dataRequests.getRequestedData().isEmpty())
-    	dataRequestsStr = SEDataRequestManager.unload(dataRequests).toString();
+      try {
+        dataRequestsStr = JsonFormat.printer().print(SEDataRequestManager.unload(dataRequests));
+       } catch (Exception ex) { Log.error("Could not convert Data Requests provided to json",ex); return false; }
     if(dataRequestsStr == null)
     {
       Log.error("Invalid/No data requests provided");
@@ -86,7 +88,11 @@ public class PulseEngine extends Pulse
   public synchronized boolean initializeEngine(String logFile, SEPatientConfiguration patient_configuration, SEDataRequestManager dataRequests)
   {    
     this.reset();
-    String patient_configurationStr = SEPatientConfiguration.unload(patient_configuration).toString();
+    
+    String patient_configurationStr;
+    try { 
+      patient_configurationStr =  JsonFormat.printer().print(SEPatientConfiguration.unload(patient_configuration));
+    } catch (Exception ex) { Log.error("Could not convert configuration provided to json",ex); return false; }
     if(patient_configurationStr == null || patient_configurationStr.isEmpty())
     {
       Log.error("Invalid/No patient configuration provided");
@@ -94,7 +100,9 @@ public class PulseEngine extends Pulse
     }
     String dataRequestsStr = null;
     if(dataRequests !=null && !dataRequests.getRequestedData().isEmpty())
-    	dataRequestsStr = SEDataRequestManager.unload(dataRequests).toString();
+      try {
+    	 dataRequestsStr = JsonFormat.printer().print(SEDataRequestManager.unload(dataRequests));
+      } catch (Exception ex) { Log.error("Could not convert Data Requests provided to json",ex); return false; }
     if(dataRequestsStr == null)
     {
       Log.error("Invalid/No data requests provided");
@@ -151,10 +159,19 @@ public class PulseEngine extends Pulse
       ActionListData.Builder aData = ActionListData.newBuilder();
       for(SEAction a : actions)
       	aData.addAnyAction(SEAction.CDM2ANY(a));
-      String actionsStr = aData.toString();
-      if(!nativeProcessActions(this.nativeObj,actionsStr))
-        deadEngine=true;
-      return !deadEngine;
+      try 
+      {
+        String actionsStr = JsonFormat.printer().print(aData);
+        if(!nativeProcessActions(this.nativeObj,actionsStr))
+          deadEngine=true;
+        return !deadEngine;
+      }
+      catch(Exception ex)
+      {
+        Log.error("Unable to convert action to json",ex);
+        return false;
+      }
+      
     }
     return true;
   }
