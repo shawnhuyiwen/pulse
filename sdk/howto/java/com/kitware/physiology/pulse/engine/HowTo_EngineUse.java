@@ -152,7 +152,7 @@ public class HowTo_EngineUse
    // currently support it.                          //
    ////////////////////////////////////////////////////
    
-   InitializationType initType = InitializationType.StateFile;
+   InitializationType initType = InitializationType.PatientObject;
    // INITIALIZE THE ENGINE WITH A PATIENT
    switch(initType)
    {
