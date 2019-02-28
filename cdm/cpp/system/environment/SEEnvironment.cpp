@@ -92,39 +92,45 @@ const SEScalar* SEEnvironment::GetScalar(const std::string& name)
   return nullptr;
 }
 
-bool SEEnvironment::ProcessChange(const SEInitialEnvironmentConditions& change)
+bool SEEnvironment::ProcessChange(SEInitialEnvironmentConditions& change)
 {
   // If we have data then we merge it, if a file was provided
   // we reset and set the environment to the file, so we only have the file data
   if (change.HasConditions())
-    GetConditions().Merge(*change.GetConditions());
+    GetConditions().Merge(change.GetConditions());
   else if (change.HasConditionsFile())
   {
-    if (!GetConditions().SerializeFromFile(change.GetConditionsFile(),JSON))// Does NOT merge file in data, Should we?
+    // Update the condition with the file contents
+    std::string cfg_file = change.GetConditionsFile();
+    if (!change.GetConditions().SerializeFromFile(cfg_file,JSON))
     {
       /// \error Unable to read Configuration Action file
       Error("Could not read provided SEInitialEnvironment file", "SEEnvironment::ProcessChange");
       return false;
     }
+    GetConditions().Merge(change.GetConditions());
   }
   StateChange();
   return true;
 }
 
-bool SEEnvironment::ProcessChange(const SEChangeEnvironmentConditions& change)
+bool SEEnvironment::ProcessChange(SEChangeEnvironmentConditions& change)
 {
   // If we have data then we merge it, if a file was provided
   // we reset and set the environment to the file, so we only have the file data
   if (change.HasConditions())
-    GetConditions().Merge(*change.GetConditions());
+    GetConditions().Merge(change.GetConditions());
   else if (change.HasConditionsFile())
   {
-    if (!GetConditions().SerializeFromFile(change.GetConditionsFile(),JSON))// Does NOT merge file in data, Should we?
+    // Update the action with the file contents
+    std::string cfg_file = change.GetConditionsFile();
+    if (!change.GetConditions().SerializeFromFile(cfg_file,JSON))
     {
       /// \error Unable to read Configuration Action file
       Error("Could not read provided SEEnvironmentChange file", "SEEnvironment::ProcessChange");
       return false;
     }
+    GetConditions().Merge(change.GetConditions());
   }
   StateChange();
   return true;

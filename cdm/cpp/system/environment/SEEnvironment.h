@@ -19,15 +19,16 @@ public:
 
   virtual void Clear();
 
+protected:
   /** @name ProcessChange
   * @brief - Will change this class as directed by the Action
   */
-  virtual bool ProcessChange(const SEChangeEnvironmentConditions& action);
+  virtual bool ProcessChange(SEChangeEnvironmentConditions& action);
 
   /** @name ProcessChange
   * @brief - Will change this class as directed by the Condition
   */
-  virtual bool ProcessChange(const SEInitialEnvironmentConditions& change);
+  virtual bool ProcessChange(SEInitialEnvironmentConditions& change);
 
   /** @name StateChange
   *   @brief - This method is called when ever there is a state change
