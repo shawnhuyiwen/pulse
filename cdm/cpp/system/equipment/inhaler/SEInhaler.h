@@ -41,7 +41,7 @@ protected:
   */
   virtual void StateChange(){};
   virtual void Merge(const SEInhaler& from);
-  virtual void ProcessConfiguration(const SEInhalerConfiguration& config);
+  virtual void ProcessConfiguration(SEInhalerConfiguration& config);
 
 public:
 
