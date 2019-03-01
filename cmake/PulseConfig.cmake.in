@@ -4,9 +4,9 @@
 #    This file will define the following variables:
 #      - Pulse_LIB_ROOT_DIR             : The root library directory
 #      - PULSE_LIBRARIES                : The list of both debug and release libraries.
-                                        : It is recommended to use this variable in your CMake file
-                                        : It will configure both debug and release build types for you.
-                                        : target_link_libraries(YourProject ${PULSE_LIBRARIES})
+#                                        : It is recommended to use this variable in your CMake file
+#                                       : It will configure both debug and release build types for you.
+#                                       : target_link_libraries(YourProject ${PULSE_LIBRARIES})
 #      - Pulse_RELEASE_LIBS             : The list of release libraries.
 #      - Pulse_DEBUG_LIBS               : The list of debug libraries.
 #      - Pulse_INCLUDE_DIRS             : The Pulse include directories.
