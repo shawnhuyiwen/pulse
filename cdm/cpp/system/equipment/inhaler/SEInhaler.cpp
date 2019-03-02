@@ -89,13 +89,18 @@ void SEInhaler::Merge(const SEInhaler& from)
   }
 }
 
-void SEInhaler::ProcessConfiguration(const SEInhalerConfiguration& config)
+void SEInhaler::ProcessConfiguration(SEInhalerConfiguration& config)
 {
   if (config.HasConfiguration())
-    Merge(*config.GetConfiguration());
+    Merge(config.GetConfiguration());
   else if (config.HasConfigurationFile())
-    if (!SerializeFromFile(config.GetConfigurationFile(),JSON))// Does NOT merge file in data, Should we?
+  {
+    // Update the action with the file contents
+    std::string cfg_file = config.GetConfigurationFile();
+    if (!config.GetConfiguration().SerializeFromFile(cfg_file, JSON))
       Error("Unable to load configuration file", "SEInhaler::ProcessConfiguration");
+    Merge(config.GetConfiguration());// Preserve our pointers!
+  }
   StateChange();
 }
 

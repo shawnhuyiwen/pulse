@@ -53,7 +53,7 @@ protected:
   */
   virtual void StateChange(){};
   virtual void Merge(const SEAnesthesiaMachine& from);
-  virtual void ProcessConfiguration(const SEAnesthesiaMachineConfiguration& config);
+  virtual void ProcessConfiguration(SEAnesthesiaMachineConfiguration& config);
 
 public:
 

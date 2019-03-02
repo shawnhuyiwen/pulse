@@ -4,9 +4,9 @@
 #    This file will define the following variables:
 #      - Pulse_LIB_ROOT_DIR             : The root library directory
 #      - PULSE_LIBRARIES                : The list of both debug and release libraries.
-                                        : It is recommended to use this variable in your CMake file
-                                        : It will configure both debug and release build types for you.
-                                        : target_link_libraries(YourProject ${PULSE_LIBRARIES})
+#                                       : It is recommended to use this variable in your CMake file
+#                                       : It will configure both debug and release build types for you.
+#                                       : target_link_libraries(YourProject ${PULSE_LIBRARIES})
 #      - Pulse_RELEASE_LIBS             : The list of release libraries.
 #      - Pulse_DEBUG_LIBS               : The list of debug libraries.
 #      - Pulse_INCLUDE_DIRS             : The Pulse include directories.
@@ -51,7 +51,7 @@ set(Pulse_RELEASE_LIBS "${Pulse_LIB_ROOT_DIR}/PulseEngine.${LIB_ENDING}"
                "${Pulse_LIB_ROOT_DIR}/DataModelBindings.${LIB_ENDING}"
                "${Pulse_LIB_ROOT_DIR}/${LOG4CPLUS_LIB}.${LIB_ENDING}"
                "${Pulse_LIB_ROOT_DIR}/libprotobuf.${LIB_ENDING}"
-               "${WIN32_LIBS}
+               "${WIN32_LIBS}"
 )
 foreach(lib ${Pulse_RELEASE_LIBS})
   list (APPEND PULSE_LIBRARIES optimized ${lib})
@@ -62,7 +62,7 @@ set(Pulse_DEBUG_LIBS "${Pulse_LIB_ROOT_DIR}/PulseEngined.${LIB_ENDING}"
                      "${Pulse_LIB_ROOT_DIR}/DataModelBindingsd.${LIB_ENDING}"
                      "${Pulse_LIB_ROOT_DIR}/${LOG4CPLUS_LIB}D.${LIB_ENDING}"
                      "${Pulse_LIB_ROOT_DIR}/libprotobufd.${LIB_ENDING}"
-                     "${WIN32_LIBS}
+                     "${WIN32_LIBS}"
 )
 foreach(lib ${Pulse_DEBUG_LIBS})
   list (APPEND PULSE_LIBRARIES debug ${lib})
