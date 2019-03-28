@@ -34,6 +34,7 @@ void HowToRunScenario();
 void HowToDynamicHemorrhage();
 
 void HowToSandbox();
+void HowToTestSystemCapability();
 
 class SEDataRequest;
 

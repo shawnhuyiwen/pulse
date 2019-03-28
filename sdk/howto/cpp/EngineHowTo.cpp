@@ -15,7 +15,7 @@ int main()
 
   //HowToEngineUse();
   //HowToCreateAPatient();
-  HowToSerialize();
+  //HowToSerialize();
 
   //HowToAirwayObstruction();
   //HowToAnesthesiaMachine();
@@ -40,6 +40,8 @@ int main()
   // More complicated examples that do run
   //HowToConcurrentEngines();
   //HowToDynamicHemorrhage();
+
+  HowToTestSystemCapability();
 }
 
 HowToTracker::HowToTracker(PhysiologyEngine& engine) : m_Engine(engine)
