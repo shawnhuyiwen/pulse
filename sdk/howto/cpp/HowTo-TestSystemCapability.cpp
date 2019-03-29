@@ -24,9 +24,9 @@ public:
   size_t engine_count = 4;
   std::thread thread;
   std::vector<PhysiologyEngine*> engines;
-  std::atomic<bool> data_ready = false;
-  std::atomic<bool> wait = false;
-  std::atomic<bool> active = true;
+  std::atomic<bool> data_ready{ false };
+  std::atomic<bool> wait{ false };
+  std::atomic<bool> active{ true };
 
   void allocate_engines()
   {
