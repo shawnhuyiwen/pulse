@@ -25,3 +25,7 @@ set_target_properties(PulseScenarioDriver PROPERTIES
 
 add_custom_command(TARGET PulseScenarioDriver POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:PulseScenarioDriver> ${INSTALL_BIN})
+                   
+if(MSVC) # Configure running executable out of MSVC
+  set_property(TARGET PulseScenarioDriver PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${INSTALL_BIN}")
+endif()

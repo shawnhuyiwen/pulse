@@ -19,3 +19,7 @@ set_target_properties(UnitTestDriver PROPERTIES
 
 add_custom_command(TARGET UnitTestDriver POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:UnitTestDriver> ${INSTALL_BIN})
+                   
+if(MSVC) # Configure running executable out of MSVC
+  set_property(TARGET UnitTestDriver PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${INSTALL_BIN}")
+endif()

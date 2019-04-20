@@ -26,6 +26,7 @@ enum class CompartmentUpdate {None,
                               Mass, Concentration, 
                               pH, Molarity,
                               PartialPressure, Saturation};
+enum class TrackMode { CSV, Dynamic };
 class SEDataRequestScalar : public SEGenericScalar
 {
 public:
@@ -74,12 +75,16 @@ public:
   const SEDataRequestScalar* GetScalar(const SEDataRequest& dr) const;
 
   virtual void SetupRequests();
-  virtual void TrackData(double currentTime_s);
+  virtual void TrackData(double currentTime_s=0);
   virtual void PullData();
   virtual bool TrackRequest(SEDataRequest& dr);
   virtual void ForceConnection() { m_ForceConnection = true; }
+
+  void SetTrackMode(TrackMode m) { m_Mode = m; }
+  TrackMode GetTrackMode() { return m_Mode; }
   
 protected:
+  TrackMode                    m_Mode= TrackMode::CSV;
   bool                         m_ForceConnection;
   DataTrack*                   m_DataTrack;
 

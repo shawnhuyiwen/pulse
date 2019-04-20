@@ -19,6 +19,8 @@ set(PULSE_CONTROLLER_FILES
   "cpp/controller/Controller.cpp"
   "cpp/controller/Engine.h"
   "cpp/controller/Engine.cpp"
+  "cpp/controller/PatientSetup.h"
+  "cpp/controller/PatientSetup.cpp"
   "cpp/controller/ScenarioExec.h"
   "cpp/controller/ScenarioExec.cpp"
   "cpp/controller/Substances.h"

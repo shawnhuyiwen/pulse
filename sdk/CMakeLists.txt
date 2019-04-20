@@ -57,3 +57,7 @@ ENDIF()
 
 add_custom_command(TARGET HowToDriver POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:HowToDriver> ${INSTALL_BIN})
+                   
+if(MSVC) # Configure running executable out of MSVC
+  set_property(TARGET HowToDriver PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${INSTALL_BIN}")
+endif()
