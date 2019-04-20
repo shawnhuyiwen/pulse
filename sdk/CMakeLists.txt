@@ -30,6 +30,8 @@ file(GLOB SRC_FILES howto/cpp/EngineHowTo.cpp
                     howto/cpp/HowTo-Serialize.cpp
                     howto/cpp/HowTo-Smoke.cpp
                     howto/cpp/HowTo-TensionPneumothorax.cpp
+                    
+                    howto/cpp/HowTo-TestSystemCapability.cpp
 )
 source_group("" FILES ${SRC_FILES})
 set(SOURCE ${SRC_FILES})
