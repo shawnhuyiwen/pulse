@@ -35,7 +35,7 @@ Check out the @ref ExtraFAQ for more insight.
 
 - - -
 
-## What's new in Pulse v2.0 (Jan 20th, 2018)
+## What's new in Pulse v2.0 (Jan 20th, 2019)
 
 The latest code base includes the following notable updates:
 
