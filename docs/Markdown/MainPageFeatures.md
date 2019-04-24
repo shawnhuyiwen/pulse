@@ -73,7 +73,7 @@
 </tr>
 <tr>
     <td width="30%">
-		An augmented reality training system to improve the realism of Combat Medics (68W) and Combat Lifesavers scenario-based training. C3ARESYS provides trainees the opportunities to train on wounds and casualties that respond to their treatments while providing feedback to the trainee adapted to the trainees skill level. C3ARESYS offloads work from the instructor, enabling focus on teaching rather than fixing shortcomings in casualty simulation.
+		An augmented reality system to improve the realism of Combat Medics (68W) and Combat Lifesavers scenario-based training. C3ARESYS provides the opportunity to train on wounds and casualties that respond to treatments with feedback adapted to the trainee's skill level. C3ARESYS offloads work from the instructor, enabling focus on teaching rather than fixing shortcomings in casualty simulation.
 		<img src="./Images/Features/C3ARESYS.png" width="300">
 	</td>
 	<td width="30%">
@@ -182,7 +182,7 @@
 </tr>
 <tr>
     <td width="30%">
-		Simulating three valvular conditions: aortic stenosis, aortic regurgitation, and mitral stenosis.  Pulse virtual physiology software has the potential to transform medical education by allowing medical students to learn in a consequence free environment. Medically accurate physiology models are required to ensure that lessons learned virtually translate to the real world.
+		Simulating three valvular conditions: aortic stenosis, aortic regurgitation, and mitral stenosis.  Pulse virtual physiology software has the potential to transform medical education by allowing medical students to learn in a consequence-free environment. Medically accurate physiology models are required to ensure that lessons learned virtually translate to the real world.
 		<img src="./Images/Features/UIUCSimulation.png" width="300">
 	</td>
 	<td width="30%">
