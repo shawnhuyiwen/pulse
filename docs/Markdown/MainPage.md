@@ -29,6 +29,9 @@ And welcome to our community!!
 
 Check out the @ref ExtraFAQ for more insight.
 
+- - -
+
+@insert ./docs/markdown/MainPageFeatures.md
 
 - - -
 
@@ -57,7 +60,6 @@ The latest code base includes the following notable updates:
 
 ## Planned Software Improvements
 
-- Pulse asset in the Unity Asset Store
 - Pediatric physiology prototype
 - %Respiratory fatigue and chronic condition exacerbation
 - Surface area and efficiency parameters for the gas diffusion model

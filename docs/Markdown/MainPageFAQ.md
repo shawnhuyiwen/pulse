@@ -103,6 +103,27 @@ For more information on getting and using this tool, visit [the Explorer Wiki](h
 </em>
 </center>
 
+### Pulse Unity Asset
+
+The Pulse Unity Asset is available for free download on the <a href="https://assetstore.unity.com/packages/tools/integration/pulse-physiology-engine-139773">Unity Asset Store</a> and the <a href="https://gitlab.kitware.com/physiology/PulseUnityAsset/releases">release page</a> of the open-source project on <a href="https://gitlab.kitware.com/physiology/PulseUnityAsset">Gitlab</a>. The Pulse Unity Asset enables the integration of the Pulse Physiology Engine into Unity applications targeting Windows, Linux and MacOS platforms. The asset provides the following features:
+
+- <b>Initializing the simulation</b> using an initial patient state file. A number of state files representing different patients are included to get started.
+- <b>Automatically advancing the simulation time</b> to keep it synced with the Unity game clock.
+- <b>Retrieving vitals data</b>, including simulation time, %ECG signal, heart rate, arterial, systolic, and diastolic blood pressures, oxygen saturation, end-tidal carbon dioxide, respiration rate, temperature, airway carbon dioxide partial pressure, and blood volume.
+- <b>Displaying vitals data</b> with customizable & reusable Unity components to draw a vital graph or number on a canvas which can be placed in the 3D world or overlaid on the camera screen.
+- <b>Interacting with the patient</b> by applying actions to the physiology engine through a public API, including injuries and treatments such as hemorrhage, airway obstruction, intubation, tension pneumothorax, needle decompression, substance injection/infusion, and anesthesia machine configuration.
+- <b>Example scenes and scripts</b> demonstrating how to leverage all the Pulse asset components in Unity.
+
+<center>
+<table border="0">
+<tr>
+    <td><img src="./Images/Unity1.jpg" width="365"></td>
+    <td><img src="./Images/Unity2.jpg" width="365"></td>
+</tr>
+</table>
+</center>
+
+Our user manual offers in-depth details of all the Pulse asset functionality. It is included in the unity package and can be found on our <a href="https://gitlab.kitware.com/physiology/PulseUnityAsset/releases">release page</a>.
 
 ## What kind of data can I get from the physiology engine?
 
