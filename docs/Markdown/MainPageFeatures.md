@@ -183,7 +183,7 @@
 <tr>
     <td width="30%">
 		Simulating three valvular conditions: aortic stenosis, aortic regurgitation, and mitral stenosis.  Pulse virtual physiology software has the potential to transform medical education by allowing medical students to learn in a consequence-free environment. Medically accurate physiology models are required to ensure that lessons learned virtually translate to the real world.
-		<img src="./Images/Features/UIUCSimulation.png" width="300">
+		<img src="./Images/Features/UIUCSimulation.png" width="400">
 	</td>
 	<td width="30%">
 		<img src="./Images/Features/UIUCLogo.png" width="200">

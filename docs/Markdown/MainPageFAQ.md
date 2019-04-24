@@ -56,7 +56,7 @@ while maintaining a historical associations with the large data set needed for t
 <center>
 <table border="0">
 <tr>
-    <td><center><b>Virtual Environments</b></center></td>
+    <td><center><b>Virtual/Augmented Environments</b></center></td>
     <td><center><b>Manikin-Based Simulations</b></center></td>
 	<td><center><b>Clinical Explorations</b></center></td>
 </tr>
