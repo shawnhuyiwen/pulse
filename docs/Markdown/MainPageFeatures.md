@@ -187,6 +187,7 @@
 	</td>
 	<td width="30%">
 		<img src="./Images/Features/UIUCLogo.png" width="200">
+		<img src="./Images/Features/UICOMPLogo.png" width="300">		
 		<img src="./Images/Features/KitwareLogo.png" width="200">
 	</td>
     <td width="40%">
