@@ -136,6 +136,9 @@ extern const std::string& eCharge_Name(eCharge m);
 //
 // End General Enum
 
+// IF YOU ADD A NEW SCALAR TYPE
+// PLEASE UPDATE THE METHOD IN SEProperty.cpp
+
 class CCompoundUnit;
 
 class SERunningAverage;

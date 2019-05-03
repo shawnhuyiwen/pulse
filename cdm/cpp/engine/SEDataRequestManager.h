@@ -61,23 +61,23 @@ public:
   SEDataRequest& CreateLiquidCompartmentDataRequest(const std::string& cmptName, const SESubstance& sub, const std::string& property, const SEDecimalFormat* dfault = nullptr);
   SEDataRequest& CreateLiquidCompartmentDataRequest(const std::string& cmptName, const SESubstance& sub, const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault = nullptr);
 
-  SEDataRequest& CreateThermalCompartmentDataRequest(const std::string& property, const SEDecimalFormat* dfault = nullptr);
-  SEDataRequest& CreateThermalCompartmentDataRequest(const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault = nullptr);
+  SEDataRequest& CreateThermalCompartmentDataRequest(const std::string& cmptName, const std::string& property, const SEDecimalFormat* dfault = nullptr);
+  SEDataRequest& CreateThermalCompartmentDataRequest(const std::string& cmptName, const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault = nullptr);
 
-  SEDataRequest& CreateTissueCompartmentDataRequest(const std::string& property, const SEDecimalFormat* dfault = nullptr);
-  SEDataRequest& CreateTissueCompartmentDataRequest(const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault = nullptr);
+  SEDataRequest& CreateTissueCompartmentDataRequest(const std::string& cmptName, const std::string& property, const SEDecimalFormat* dfault = nullptr);
+  SEDataRequest& CreateTissueCompartmentDataRequest(const std::string& cmptName, const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault = nullptr);
 
   SEDataRequest& CreateSubstanceDataRequest(const SESubstance& sub, const std::string& property, const SEDecimalFormat* dfault = nullptr);
   SEDataRequest& CreateSubstanceDataRequest(const SESubstance& sub, const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault = nullptr);
 
-  SEDataRequest& CreateAnesthesiaMachineDataRequest(const std::string& property, const SEDecimalFormat* dfault = nullptr);
-  SEDataRequest& CreateAnesthesiaMachineDataRequest(const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault = nullptr);
+  SEDataRequest& CreateAnesthesiaMachineDataRequest(const std::string& cmptName, const std::string& property, const SEDecimalFormat* dfault = nullptr);
+  SEDataRequest& CreateAnesthesiaMachineDataRequest(const std::string& cmptName, const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault = nullptr);
 
   SEDataRequest& CreateECGDataRequest(const std::string& property, const SEDecimalFormat* dfault = nullptr);
   SEDataRequest& CreateECGDataRequest(const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault = nullptr);
 
-  SEDataRequest& CreateInhalerDataRequest(const std::string& property, const SEDecimalFormat* dfault = nullptr);
-  SEDataRequest& CreateInhalerDataRequest(const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault = nullptr);
+  SEDataRequest& CreateInhalerDataRequest(const std::string& cmptName, const std::string& property, const SEDecimalFormat* dfault = nullptr);
+  SEDataRequest& CreateInhalerDataRequest(const std::string& cmptName, const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault = nullptr);
   
 protected:
   // Methods to find data requests so we don't keep making the same one
@@ -88,12 +88,12 @@ protected:
   SEDataRequest* FindGasCompartmentDataRequest(const std::string& cmptName, const SESubstance& sub, const std::string property);
   SEDataRequest* FindLiquidCompartmentDataRequest(const std::string& cmptName, const std::string& property);
   SEDataRequest* FindLiquidCompartmentDataRequest(const std::string& cmptName, const SESubstance& sub, const std::string property);
-  SEDataRequest* FindThermalCompartmentDataRequest(const std::string& property);
-  SEDataRequest* FindTissueCompartmentDataRequest(const std::string& property);
+  SEDataRequest* FindThermalCompartmentDataRequest(const std::string& cmptName, const std::string& property);
+  SEDataRequest* FindTissueCompartmentDataRequest(const std::string& cmptName, const std::string& property);
   SEDataRequest* FindSubstanceDataRequest(const SESubstance& sub, const std::string& property);
-  SEDataRequest* FindAnesthesiaMachineDataRequest(const std::string& property);
+  SEDataRequest* FindAnesthesiaMachineDataRequest(const std::string& cmptName, const std::string& property);
   SEDataRequest* FindECGDataRequest(const std::string& property);
-  SEDataRequest* FindInhalerDataRequest(const std::string& property);
+  SEDataRequest* FindInhalerDataRequest(const std::string& cmptName, const std::string& property);
 
   std::string                  m_ResultsFilename;
   double                       m_SamplesPerSecond;

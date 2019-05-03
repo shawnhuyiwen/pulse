@@ -6,7 +6,7 @@ set(BUILD_SHARED_LIBS OFF)
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_INSTALL_PREFIX})
 if(MSVC OR XCode)
 # For multi configuration IDE environments start with release
-  set(CMAKE_CONFIGURATION_TYPES Release CACHE TYPE INTERNAL FORCE )
+  set(CMAKE_CONFIGURATION_TYPES Release CACHE STRING INTERNAL FORCE )
 endif()
 ##################################
 ## EIGEN                        ##

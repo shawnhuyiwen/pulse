@@ -3,7 +3,6 @@ See accompanying NOTICE file for details.*/
 
 #pragma once
 #include "properties/SEProperty.h"
-#include "utils/unitconversion/UCCommon.h"
 
 #define ZERO_APPROX 1e-10
 
@@ -214,9 +213,6 @@ protected:
   const SEScalar*     m_Scalar;
   const SEUnitScalar* m_UnitScalar;
 };
-
-CDM_DECL double Convert(double d, const CCompoundUnit& from, const CCompoundUnit& to);
-CDM_DECL bool   CompatibleUnits(const CCompoundUnit& u1, const CCompoundUnit& u2);
 
 inline void Override(const SEScalar& from, SEScalar& to)
 {

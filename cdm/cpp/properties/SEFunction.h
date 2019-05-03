@@ -3,7 +3,6 @@
 
 #pragma once
 #include "properties/SEProperty.h"
-#include "utils/unitconversion/UCCommon.h"
 
 class CDM_DECL SEFunction : public SEProperty
 {
