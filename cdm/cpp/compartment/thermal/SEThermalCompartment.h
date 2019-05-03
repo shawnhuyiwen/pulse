@@ -61,8 +61,8 @@ protected:
 
   mutable SEScalarPower*       m_HeatTransferRateIn;
   mutable SEScalarPower*       m_HeatTransferRateOut;
-  SEScalarEnergy*      m_Heat;
-  SEScalarTemperature* m_Temperature;
+  SEScalarEnergy*              m_Heat;
+  SEScalarTemperature*         m_Temperature;
 
   std::vector<SEThermalCompartmentLink*> m_Links;
   std::vector<SEThermalCompartmentLink*> m_IncomingLinks;

@@ -143,6 +143,16 @@ DataTrack& SEEngineTracker::GetDataTrack()
   return *m_DataTrack;
 }
 
+double SEEngineTracker::GetValue(const SEDataRequest& dr) const
+{
+  auto drs = GetScalar(dr);
+  if (drs == nullptr)
+    return SEScalar::dNaN();
+  if (dr.HasUnit())
+    return drs->GetValue(*dr.GetUnit());
+  return drs->GetValue();
+}
+
 const SEDataRequestScalar* SEEngineTracker::GetScalar(const SEDataRequest& dr) const
 {
   auto found = m_Request2Scalar.find(&dr);
