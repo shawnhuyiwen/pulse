@@ -10,6 +10,7 @@ const LengthPerTimeUnit LengthPerTimeUnit::m_Per_min("m/min");
 const LengthPerTimeUnit LengthPerTimeUnit::cm_Per_min("cm/min");
 const LengthPerTimeUnit LengthPerTimeUnit::ft_Per_s("ft/s");
 const LengthPerTimeUnit LengthPerTimeUnit::ft_Per_min("ft/min");
+const LengthPerTimeUnit LengthPerTimeUnit::km_Per_hr("km/hr");
 
 bool LengthPerTimeUnit::IsValidUnit(const std::string& unit)
 {
@@ -24,6 +25,8 @@ bool LengthPerTimeUnit::IsValidUnit(const std::string& unit)
   if (ft_Per_s.GetString().compare(unit) == 0)
     return true;
   if (ft_Per_min.GetString().compare(unit) == 0)
+    return true;
+  if (km_Per_hr.GetString().compare(unit) == 0)
     return true;
   return false;
 }
@@ -42,6 +45,8 @@ const LengthPerTimeUnit& LengthPerTimeUnit::GetCompoundUnit(const std::string& u
     return ft_Per_s;
   if (ft_Per_min.GetString().compare(unit) == 0)
     return ft_Per_min;
+  if (km_Per_hr.GetString().compare(unit) == 0)
+    return km_Per_hr;
   std::stringstream err;
   err << unit << " is not a valid LengthPerTime unit";
   throw CommonDataModelException(err.str());

@@ -47,7 +47,7 @@ void SEPatientConfiguration::Clear()
 
 bool SEPatientConfiguration::IsValid() const
 {
-  if(!HasPatientFile() && HasPatient())
+  if(!HasPatientFile() && !HasPatient())
     return false;
   return true;
 }

@@ -1028,7 +1028,6 @@ void Cardiovascular::Hemorrhage()
     if (h->GetType() == eHemorrhage_Type::Internal)
     {
       SELiquidCompartment* abdomenCompartment = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Abdomen);
-      //SELiquidCompartment* abdomenCompartment = m_data.GetCompartments().GetCardiovascularGraph().GetCompartment(pulse::VascularCompartment::Abdomen);
       if (!abdomenCompartment->HasChild(compartment->GetName()))
       {
         m_ss << "Internal Hemorrhage is only supported for the abdominal region, including the right and left kidneys, liver, spleen, splanchnic, and small and large intestine vascular compartments.";
@@ -1037,12 +1036,11 @@ void Cardiovascular::Hemorrhage()
         continue;
       }
     }
-
-    if (h->GetType() == eHemorrhage_Type::External)
+    else //(h->GetType() == eHemorrhage_Type::External)
     {
       //Only mass is merely transfered if it is an internal bleed
       TotalLossRate_mL_Per_s += rate_mL_Per_s;
-    }    
+    }
 
     //Get all circuit nodes in this compartment
     std::vector<SEFluidCircuitNode*> nodes;

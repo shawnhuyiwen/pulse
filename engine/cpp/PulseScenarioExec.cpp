@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "controller/ScenarioExec.h"
+#include "PulseScenarioExec.h"
 #include "controller/Engine.h"
 #include "engine/SEAction.h"
 #include "engine/SEAutoSerialization.h"
@@ -10,6 +10,46 @@
 #include "PulseConfiguration.h"
 #include "properties/SEScalarTime.h"
 #include "utils/FileUtils.h"
+
+void PulseScenarioExec::Run(const std::string& scenarioFile)
+{
+  // Set up the log file
+  std::string logFile = scenarioFile;
+  logFile = Replace(logFile, "verification", "test_results");
+  logFile = Replace(logFile, ".json", ".log");
+  // Set up the verification output file  
+  std::string dataFile = scenarioFile;
+  dataFile = Replace(dataFile, "verification", "test_results");
+  dataFile = Replace(dataFile, ".json", "Results.csv");
+  // What are we creating?
+  std::cout << "Log File : " << logFile << std::endl;
+  std::cout << "Results File : " << dataFile << std::endl;
+  // Delete any results file that may be there
+  remove(dataFile.c_str());
+  std::unique_ptr<PhysiologyEngine> Pulse = CreatePulseEngine(logFile.c_str());
+  if (!Pulse)
+  {
+    std::cerr << "Unable to create PulseEngine" << std::endl;
+    return;
+  }
+  try
+  {
+    PulseScenarioExec exec(*((PulseEngine*)Pulse.get()));
+    exec.Execute(scenarioFile.c_str(), dataFile.c_str());
+  }
+  catch (CommonDataModelException ex)
+  {
+    std::cerr << ex.what() << std::endl;
+  }
+  catch (std::exception ex)
+  {
+    std::cerr << ex.what() << std::endl;
+  }
+  catch (...)
+  {
+    std::cerr << "Unable to run scenario " << scenarioFile << std::endl;
+  }
+}
 
 PulseScenarioExec::PulseScenarioExec(PulseEngine& engine) : SEScenarioExec(engine), m_PulseConfiguration(engine.GetSubstanceManager())
 {
