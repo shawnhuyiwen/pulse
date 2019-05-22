@@ -31,6 +31,9 @@ public:
   SEFluidCircuit&           GetRespiratoryCircuit();
   SEFluidCircuit&           GetRespiratoryAndAnesthesiaMachineCircuit();
   SEFluidCircuit&           GetRespiratoryAndInhalerCircuit();
+  SEFluidCircuit&           GetRespiratoryAndNasalCannulaCircuit();
+  SEFluidCircuit&           GetRespiratoryAndSimpleMaskCircuit();
+  SEFluidCircuit&           GetRespiratoryAndNonRebreatherMaskCircuit();
   SEFluidCircuit&           GetRespiratoryAndMechanicalVentilatorCircuit();
 
   SEThermalCircuit&         GetTemperatureCircuit();
@@ -65,6 +68,9 @@ protected:
   // It's quicker and easier to test these combiniation circuits
   SEFluidCircuit*            m_CombinedRespiratoryAnesthesiaCircuit;
   SEFluidCircuit*            m_CombinedRespiratoryInhalerCircuit;
+  SEFluidCircuit*            m_CombinedRespiratoryNasalCannulaCircuit;
+  SEFluidCircuit*            m_CombinedRespiratorySimpleMaskCircuit;
+  SEFluidCircuit*            m_CombinedRespiratoryNonRebreatherMaskCircuit;
   SEFluidCircuit*            m_CombinedRespiratoryMechanicalVentilatorCircuit;
 
   SEThermalCircuit*          m_TemperatureCircuit;
@@ -88,6 +94,9 @@ namespace pulse {
     DEFINE_STATIC_STRING(AnesthesiaMachine);
     DEFINE_STATIC_STRING(RespiratoryAnesthesia);
     DEFINE_STATIC_STRING(RespiratoryInhaler);
+    DEFINE_STATIC_STRING(RespiratoryNasalCannula);
+    DEFINE_STATIC_STRING(RespiratorySimpleMask);
+    DEFINE_STATIC_STRING(RespiratoryNonRebreatherMask);
     DEFINE_STATIC_STRING(RespiratoryMechanicalVentilator);
     DEFINE_STATIC_STRING(Temperature);
     DEFINE_STATIC_STRING(InternalTemperature);
@@ -239,6 +248,70 @@ namespace pulse {
   public:
     DEFINE_STATIC_STRING(EnvironmentToMouthpiece);
     DEFINE_STATIC_STRING(MouthpieceToMouth);
+  };
+
+  /////////////////////////////////
+  // Nasal Cannula Circuit Enums //
+  /////////////////////////////////
+
+  class NasalCannulaNode
+  {
+  public:
+    DEFINE_STATIC_STRING(NasalCannula);
+    DEFINE_STATIC_STRING(OxygenSource);
+  };
+
+  class NasalCannulaPath
+  {
+  public:
+    DEFINE_STATIC_STRING(GroundToOxygenSource);
+    DEFINE_STATIC_STRING(OxygenInlet);
+    DEFINE_STATIC_STRING(Seal);
+    DEFINE_STATIC_STRING(NasalCannulaToMouth);
+  };
+
+  ////////////////////////////////
+  // Simple Mask Circuit Enums //
+  ////////////////////////////////
+
+  class SimpleMaskNode
+  {
+  public:
+    DEFINE_STATIC_STRING(Mask);
+    DEFINE_STATIC_STRING(OxygenSource);
+  };
+
+  class SimpleMaskPath
+  {
+  public:
+    DEFINE_STATIC_STRING(GroundToOxygenSource);
+    DEFINE_STATIC_STRING(OxygenInlet);
+    DEFINE_STATIC_STRING(Seal);
+    DEFINE_STATIC_STRING(Ports);
+    DEFINE_STATIC_STRING(MaskToMouth);
+  };
+
+  ///////////////////////////////////
+  // NonRebreather Mask Circuit Enums //
+  ///////////////////////////////////
+
+  class NonRebreatherMaskNode
+  {
+  public:
+    DEFINE_STATIC_STRING(Mask);
+    DEFINE_STATIC_STRING(OxygenSource);
+    DEFINE_STATIC_STRING(Bag);
+  };
+
+  class NonRebreatherMaskPath
+  {
+  public:
+    DEFINE_STATIC_STRING(GroundToOxygenSource);
+    DEFINE_STATIC_STRING(OxygenInlet);
+    DEFINE_STATIC_STRING(ReservoirValve);
+    DEFINE_STATIC_STRING(Seal);
+    DEFINE_STATIC_STRING(ExhalationValves);
+    DEFINE_STATIC_STRING(MaskToMouth);
   };
 
   //////////////////////////////////////////

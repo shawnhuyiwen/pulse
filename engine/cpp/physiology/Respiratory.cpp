@@ -426,6 +426,7 @@ void Respiratory::PreProcess()
   ConsciousRespiration();
 
   MechanicalVentilation();
+  SupplementalOxygen();
 
   RespiratoryDriver();
 }
@@ -805,6 +806,44 @@ void Respiratory::MechanicalVentilation()
       m_data.GetCircuits().GetRespiratoryAndMechanicalVentilatorCircuit().StateChange();
     }
   }
+}
+
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Applys supplemental oxygen equipment
+///
+/// \details
+/// jbw - update 
+//--------------------------------------------------------------------------------------------------
+void Respiratory::SupplementalOxygen()
+{
+  //jbw - Maybe this and mechanical ventilator should be broken out to their own class, like anesthesia machine?
+  //jbw - Replace these when the equipment/action is added to the CDM
+  //jbw - Set defaults based on device type for things that are not explicitly set
+  bool hasNasalCannula = false;
+  bool hasSimpleMask = false;
+  bool hasNonRebreatherMask = true;
+  double flow_L_Per_min = 7.5;
+  int source = 1; //0 = wall, 1 = tank
+
+  int numDevices = int(hasNasalCannula) + int(hasSimpleMask) + int(hasNonRebreatherMask);
+
+  if (numDevices < 1)
+  {
+    return;
+  }
+
+  if (numDevices > 1)
+  {
+    //jbw - error
+  }
+
+  //Apply flow
+
+  //Decrement volume from the tank
+
+  //Check if the tank is depleated
+
 }
 
 //--------------------------------------------------------------------------------------------------

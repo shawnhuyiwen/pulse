@@ -29,6 +29,9 @@ public:
   SEGasCompartmentGraph&    GetRespiratoryGraph();
   SEGasCompartmentGraph&    GetRespiratoryAndAnesthesiaMachineGraph();
   SEGasCompartmentGraph&    GetRespiratoryAndInhalerGraph();
+  SEGasCompartmentGraph&    GetRespiratoryAndNasalCannulaGraph();
+  SEGasCompartmentGraph&    GetRespiratoryAndSimpleMaskGraph();
+  SEGasCompartmentGraph&    GetRespiratoryAndNonRebreatherMaskGraph();
   SEGasCompartmentGraph&    GetRespiratoryAndMechanicalVentilatorGraph();
 
   SEGasCompartmentGraph&    GetAnesthesiaMachineGraph();
@@ -100,6 +103,9 @@ protected:
   SEGasCompartmentGraph*     m_RespiratoryGraph;
   SEGasCompartmentGraph*     m_CombinedRespiratoryAnesthesiaGraph;
   SEGasCompartmentGraph*     m_CombinedRespiratoryInhalerGraph;
+  SEGasCompartmentGraph*     m_CombinedRespiratoryNasalCannulaGraph;
+  SEGasCompartmentGraph*     m_CombinedRespiratorySimpleMaskGraph;
+  SEGasCompartmentGraph*     m_CombinedRespiratoryNonRebreatherMaskGraph;
   SEGasCompartmentGraph*     m_CombinedRespiratoryMechanicalVentilatorGraph;
   SEGasCompartmentGraph*     m_AnesthesiaMachineGraph;
 

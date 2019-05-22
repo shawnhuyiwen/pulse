@@ -406,6 +406,27 @@ SELiquidCompartmentGraph& PulseCompartments::GetAerosolAndInhalerGraph()
   return *m_CombinedAerosolInhalerGraph;
 }
 
+SEGasCompartmentGraph& PulseCompartments::GetRespiratoryAndNasalCannulaGraph()
+{
+  if (m_CombinedRespiratoryNasalCannulaGraph == nullptr)
+    m_CombinedRespiratoryNasalCannulaGraph = &CreateGasGraph(pulse::Graph::RespiratoryAndNasalCannula);
+  return *m_CombinedRespiratoryNasalCannulaGraph;
+}
+
+SEGasCompartmentGraph& PulseCompartments::GetRespiratoryAndSimpleMaskGraph()
+{
+  if (m_CombinedRespiratorySimpleMaskGraph == nullptr)
+    m_CombinedRespiratorySimpleMaskGraph = &CreateGasGraph(pulse::Graph::RespiratoryAndSimpleMask);
+  return *m_CombinedRespiratorySimpleMaskGraph;
+}
+
+SEGasCompartmentGraph& PulseCompartments::GetRespiratoryAndNonRebreatherMaskGraph()
+{
+  if (m_CombinedRespiratoryNonRebreatherMaskGraph == nullptr)
+    m_CombinedRespiratoryNonRebreatherMaskGraph = &CreateGasGraph(pulse::Graph::RespiratoryAndNonRebreatherMask);
+  return *m_CombinedRespiratoryNonRebreatherMaskGraph;
+}
+
 SEGasCompartmentGraph& PulseCompartments::GetRespiratoryAndMechanicalVentilatorGraph()
 {
   if (m_CombinedRespiratoryMechanicalVentilatorGraph == nullptr)

@@ -46,6 +46,9 @@ namespace pulse {
     DEFINE_STATIC_STRING(Respiratory);
     DEFINE_STATIC_STRING(RespiratoryAndAnesthesiaMachine);
     DEFINE_STATIC_STRING(RespiratoryAndInhaler);
+    DEFINE_STATIC_STRING(RespiratoryAndNasalCannula);
+    DEFINE_STATIC_STRING(RespiratoryAndSimpleMask);
+    DEFINE_STATIC_STRING(RespiratoryAndNonRebreatherMask);
     DEFINE_STATIC_STRING(RespiratoryAndMechanicalVentilator);
     DEFINE_STATIC_STRING(Aerosol);
     DEFINE_STATIC_STRING(AerosolAndInhaler);
@@ -63,6 +66,9 @@ namespace pulse {
         _values.push_back(Respiratory);
         _values.push_back(RespiratoryAndAnesthesiaMachine);
         _values.push_back(RespiratoryAndInhaler);
+        _values.push_back(RespiratoryAndNasalCannula);
+        _values.push_back(RespiratoryAndSimpleMask);
+        _values.push_back(RespiratoryAndNonRebreatherMask);
         _values.push_back(RespiratoryAndMechanicalVentilator);
         _values.push_back(Aerosol);
         _values.push_back(AerosolAndInhaler);
@@ -995,6 +1001,140 @@ namespace pulse {
       {
         _values.push_back(EnvironmentToMouthpiece);
         _values.push_back(MouthpieceToMouth);
+      }
+      return _values;
+    }
+  protected:
+    static std::vector<std::string> _values;
+  };
+
+  class NasalCannulaCompartment
+  {
+  public:
+    DEFINE_STATIC_STRING(OxygenSource);
+    DEFINE_STATIC_STRING(NasalCannula);
+
+    static const std::vector<std::string>& GetValues()
+    {
+      ScopedMutex lock;
+      if (_values.empty())
+      {
+        _values.push_back(OxygenSource);
+        _values.push_back(NasalCannula);
+      }
+      return _values;
+    }
+  protected:
+    static std::vector<std::string> _values;
+  };
+
+  class NasalCannulaLink
+  {
+  public:
+    DEFINE_STATIC_STRING(OxygenInlet);
+    DEFINE_STATIC_STRING(Seal);
+    DEFINE_STATIC_STRING(NasalCannulaToMouth);
+
+    static const std::vector<std::string>& GetValues()
+    {
+      ScopedMutex lock;
+      if (_values.empty())
+      {
+        _values.push_back(OxygenInlet);
+        _values.push_back(Seal);
+        _values.push_back(NasalCannulaToMouth);
+      }
+      return _values;
+    }
+  protected:
+    static std::vector<std::string> _values;
+  };
+
+  class SimpleMaskCompartment
+  {
+  public:
+    DEFINE_STATIC_STRING(OxygenSource);
+    DEFINE_STATIC_STRING(Mask);
+
+    static const std::vector<std::string>& GetValues()
+    {
+      ScopedMutex lock;
+      if (_values.empty())
+      {
+        _values.push_back(OxygenSource);
+        _values.push_back(Mask);
+      }
+      return _values;
+    }
+  protected:
+    static std::vector<std::string> _values;
+  };
+
+  class SimpleMaskLink
+  {
+  public:
+    DEFINE_STATIC_STRING(OxygenInlet);
+    DEFINE_STATIC_STRING(Seal);
+    DEFINE_STATIC_STRING(Ports);
+    DEFINE_STATIC_STRING(MaskToMouth);
+
+    static const std::vector<std::string>& GetValues()
+    {
+      ScopedMutex lock;
+      if (_values.empty())
+      {
+        _values.push_back(OxygenInlet);
+        _values.push_back(Seal);
+        _values.push_back(Ports);
+        _values.push_back(MaskToMouth);
+      }
+      return _values;
+    }
+  protected:
+    static std::vector<std::string> _values;
+  };
+
+  class NonRebreatherMaskCompartment
+  {
+  public:
+    DEFINE_STATIC_STRING(OxygenSource);
+    DEFINE_STATIC_STRING(Bag);
+    DEFINE_STATIC_STRING(Mask);
+
+    static const std::vector<std::string>& GetValues()
+    {
+      ScopedMutex lock;
+      if (_values.empty())
+      {
+        _values.push_back(OxygenSource);
+        _values.push_back(Bag);
+        _values.push_back(Mask);
+      }
+      return _values;
+    }
+  protected:
+    static std::vector<std::string> _values;
+  };
+
+  class NonRebreatherMaskLink
+  {
+  public:
+    DEFINE_STATIC_STRING(OxygenInlet);
+    DEFINE_STATIC_STRING(ReservoirValve);
+    DEFINE_STATIC_STRING(Seal);
+    DEFINE_STATIC_STRING(ExhalationValves);
+    DEFINE_STATIC_STRING(MaskToMouth);
+
+    static const std::vector<std::string>& GetValues()
+    {
+      ScopedMutex lock;
+      if (_values.empty())
+      {
+        _values.push_back(OxygenInlet);
+        _values.push_back(ReservoirValve);
+        _values.push_back(Seal);
+        _values.push_back(ExhalationValves);
+        _values.push_back(MaskToMouth);
       }
       return _values;
     }

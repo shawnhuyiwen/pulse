@@ -120,6 +120,9 @@ protected:
   void SetupRespiratory();
   void SetupAnesthesiaMachine();
   void SetupInhaler();
+  void SetupNasalCannula();
+  void SetupSimpleMask();
+  void SetupNonRebreatherMask();
   void SetupMechanicalVentilator();
   void SetupExternalTemperature();
   void SetupInternalTemperature();

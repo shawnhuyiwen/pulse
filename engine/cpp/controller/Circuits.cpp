@@ -162,6 +162,25 @@ SEFluidCircuit& PulseCircuits::GetRespiratoryAndInhalerCircuit()
     m_CombinedRespiratoryInhalerCircuit = &CreateFluidCircuit(pulse::Circuits::RespiratoryInhaler);
   return *m_CombinedRespiratoryInhalerCircuit;
 }
+SEFluidCircuit& PulseCircuits::GetRespiratoryAndNasalCannulaCircuit()
+{
+  if (m_CombinedRespiratoryNasalCannulaCircuit == nullptr)
+    m_CombinedRespiratoryNasalCannulaCircuit = &CreateFluidCircuit(pulse::Circuits::RespiratoryNasalCannula);
+  return *m_CombinedRespiratoryNasalCannulaCircuit;
+}
+SEFluidCircuit& PulseCircuits::GetRespiratoryAndSimpleMaskCircuit()
+{
+  if (m_CombinedRespiratorySimpleMaskCircuit == nullptr)
+    m_CombinedRespiratorySimpleMaskCircuit = &CreateFluidCircuit(pulse::Circuits::RespiratorySimpleMask);
+  return *m_CombinedRespiratorySimpleMaskCircuit;
+}
+SEFluidCircuit& PulseCircuits::GetRespiratoryAndNonRebreatherMaskCircuit()
+{
+  if (m_CombinedRespiratoryNonRebreatherMaskCircuit == nullptr)
+    m_CombinedRespiratoryNonRebreatherMaskCircuit = &CreateFluidCircuit(pulse::Circuits::RespiratoryNonRebreatherMask);
+  return *m_CombinedRespiratoryNonRebreatherMaskCircuit;
+}
+
 SEFluidCircuit& PulseCircuits::GetRespiratoryAndMechanicalVentilatorCircuit()
 {
   if (m_CombinedRespiratoryMechanicalVentilatorCircuit == nullptr)
