@@ -49,7 +49,7 @@ public:
   {
     while (active)
     {
-      wait = true;
+      wait = true;// Sleep until something flips wait to false
       do { std::this_thread::sleep_for(std::chrono::microseconds(20)); } while (wait);
       if (!active) break;
       wait = true;
@@ -104,7 +104,7 @@ void HowToTestSystemCapability()
 
     profiler.Start("s");
     do
-    {
+    {// Wait for all threads to be ready
       ready = true;
       for(auto slt : slts)
         ready &= slt->wait;

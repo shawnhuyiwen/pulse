@@ -3,7 +3,7 @@
 
 #include "PulseEngineJNI.h"
 #include "PulseScenario.h"
-#include "controller/ScenarioExec.h"
+#include "PulseScenarioExec.h"
 #include "engine/SEAction.h"
 #include "engine/SEDataRequest.h"
 #include "engine/SEDataRequestManager.h"
@@ -150,7 +150,6 @@ JNIEXPORT jboolean JNICALL Java_com_kitware_physiology_pulse_engine_PulseEngine_
   }
   else
   {
-    std::cout << "Loading... " << std::endl;
     bRet = engineJNI->eng->SerializeFromFile(pStateFilename, JSON);
   }  
   engineJNI->eng->SetEventHandler(engineJNI);

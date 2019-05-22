@@ -9,6 +9,7 @@ const PressureUnit PressureUnit::mmHg("mmHg");
 const PressureUnit PressureUnit::cmH2O("cmH2O");
 const PressureUnit PressureUnit::psi("psi");
 const PressureUnit PressureUnit::atm("atm");
+const PressureUnit PressureUnit::mbar("mbar");
 
 bool PressureUnit::IsValidUnit(const std::string& unit)
 {
@@ -21,6 +22,8 @@ bool PressureUnit::IsValidUnit(const std::string& unit)
   if (psi.GetString().compare(unit) == 0)
     return true;
   if (atm.GetString().compare(unit) == 0)
+    return true;
+  if (mbar.GetString().compare(unit) == 0)
     return true;
   return false;
 }
@@ -37,6 +40,8 @@ const PressureUnit& PressureUnit::GetCompoundUnit(const std::string& unit)
     return psi;
   if (atm.GetString().compare(unit) == 0)
     return atm;
+  if (mbar.GetString().compare(unit) == 0)
+    return mbar;
   std::stringstream err;
   err << unit << " is not a valid Pressure unit";
   throw CommonDataModelException(err.str());
