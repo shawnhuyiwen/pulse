@@ -57,9 +57,7 @@ public:
   virtual void ToString(std::ostream &str) const;
 protected:
 
-  std::stringstream    m_ss;
-
-  eSwitch            m_State;
+  eSwitch                 m_State;
   SEScalarVolumePerTime*  m_Flow;
   SEScalarPressure*       m_Pressure;
 

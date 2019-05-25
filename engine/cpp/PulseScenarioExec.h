@@ -20,6 +20,8 @@ public:
   virtual bool Execute(const std::string& scenarioFile, const std::string& resultsFile);
   virtual bool Execute(const PulseScenario& scenario, const std::string& resultsFile);
 
+  static void Run(const std::string& scenarioFile);
+
 protected:
   PulseConfiguration         m_PulseConfiguration;
 
