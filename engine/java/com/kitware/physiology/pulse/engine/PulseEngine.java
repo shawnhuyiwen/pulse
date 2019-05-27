@@ -7,11 +7,11 @@ import java.util.List;
 
 import com.google.protobuf.*;
 import com.google.protobuf.util.*;
-import com.kitware.physiology.cdm.PatientAssessmentEnums.ePatientAssessment;
 import com.kitware.physiology.cdm.PatientAssessments.CompleteBloodCountData;
 import com.kitware.physiology.cdm.PatientAssessments.ComprehensiveMetabolicPanelData;
 import com.kitware.physiology.cdm.PatientAssessments.PulmonaryFunctionTestData;
 import com.kitware.physiology.cdm.PatientAssessments.UrinalysisData;
+import com.kitware.physiology.cdm.PatientAssessments.ePatientAssessmentType;
 import com.kitware.physiology.cdm.Engine.ActionListData;
 import com.kitware.physiology.pulse.PulseState.StateData;
 
@@ -186,7 +186,7 @@ public class PulseEngine extends Pulse
     if(assessment instanceof SEPulmonaryFunctionTest)
     {
     	PulmonaryFunctionTestData.Builder b = PulmonaryFunctionTestData.newBuilder();
-      String str = nativeGetAssessment(this.nativeObj, ePatientAssessment.Type.PulmonaryFunctionTest.ordinal());
+      String str = nativeGetAssessment(this.nativeObj, ePatientAssessmentType.PulmonaryFunctionTest.ordinal());
       JsonFormat.parser().merge(str, b);
       SEPulmonaryFunctionTest.load(b.build(),((SEPulmonaryFunctionTest)assessment));
       return true;
@@ -195,7 +195,7 @@ public class PulseEngine extends Pulse
     if(assessment instanceof SECompleteBloodCount)
     {
     	CompleteBloodCountData.Builder b = CompleteBloodCountData.newBuilder();
-      String str = nativeGetAssessment(this.nativeObj, ePatientAssessment.Type.CompleteBloodCount.ordinal());
+      String str = nativeGetAssessment(this.nativeObj, ePatientAssessmentType.CompleteBloodCount.ordinal());
       JsonFormat.parser().merge(str, b);
       SECompleteBloodCount.load(b.build(),((SECompleteBloodCount)assessment));
       return true;
@@ -204,7 +204,7 @@ public class PulseEngine extends Pulse
     if(assessment instanceof SEComprehensiveMetabolicPanel)
     {
     	ComprehensiveMetabolicPanelData.Builder b = ComprehensiveMetabolicPanelData.newBuilder();
-      String str = nativeGetAssessment(this.nativeObj, ePatientAssessment.Type.ComprehensiveMetabolicPanel.ordinal());
+      String str = nativeGetAssessment(this.nativeObj, ePatientAssessmentType.ComprehensiveMetabolicPanel.ordinal());
       JsonFormat.parser().merge(str, b);
       SEComprehensiveMetabolicPanel.load(b.build(),((SEComprehensiveMetabolicPanel)assessment));
       return true;
@@ -213,7 +213,7 @@ public class PulseEngine extends Pulse
     if(assessment instanceof SEUrinalysis)
     {
     	UrinalysisData.Builder b = UrinalysisData.newBuilder();
-      String str = nativeGetAssessment(this.nativeObj, ePatientAssessment.Type.Urinalysis.ordinal());
+      String str = nativeGetAssessment(this.nativeObj, ePatientAssessmentType.Urinalysis.ordinal());
       JsonFormat.parser().merge(str, b);
       SEUrinalysis.load(b.build(),((SEUrinalysis)assessment));
       return true;

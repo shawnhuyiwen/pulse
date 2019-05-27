@@ -4,7 +4,6 @@ option java_package = "com.kitware.physiology.cdm";
 option optimize_for = SPEED;
 
 import "cdm/Properties.proto";
-import "cdm/ActionEnums.proto";
 
 message ActionData
 {
@@ -19,7 +18,12 @@ message AdvanceTimeData
 
 message SerializeStateData
 {
+  enum eType
+  {
+    Save = 0;
+    Load = 1;
+  }
   ActionData            Action   = 1;
-  eSerialization.Type   Type     = 2;
+  eType                 Type     = 2;
   string                Filename = 3;
 }

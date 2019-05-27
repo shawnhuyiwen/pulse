@@ -2,9 +2,8 @@
    See accompanying NOTICE file for details.*/
 package com.kitware.physiology.datamodel.utilities;
 
-import com.kitware.physiology.cdm.AnesthesiaMachineEnums.eAnesthesiaMachine;
-import com.kitware.physiology.cdm.PatientEnums.ePatient;
-
+import com.kitware.physiology.cdm.AnesthesiaMachine.eAnesthesiaMachine;
+import com.kitware.physiology.cdm.Patient.ePatient;
 import com.kitware.physiology.datamodel.properties.SEScalarTime;
 
 public interface SEEventHandler

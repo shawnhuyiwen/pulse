@@ -8,13 +8,14 @@ import com.kitware.physiology.datamodel.properties.*;
 import com.kitware.physiology.utilities.FileUtils;
 import com.google.protobuf.util.*;
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.kitware.physiology.cdm.PatientEnums.ePatient.*;
 import com.kitware.physiology.cdm.Patient.PatientData;
+import com.kitware.physiology.cdm.Patient.PatientData.eSex;
+import com.kitware.physiology.cdm.Patient.ePatient.Event;
 
 public class SEPatient
 {
   protected String                    name;
-  protected Sex                       sex;
+  protected eSex                      sex;
   protected SEScalarTime              age;
   protected SEScalarMass              weight;
   protected SEScalarLength            height;
@@ -131,7 +132,7 @@ public class SEPatient
   {
     dst.reset();
     dst.setName(src.getName());
-    if(src.getSex()!=Sex.UNRECOGNIZED)
+    if(src.getSex()!=eSex.UNRECOGNIZED)
     	dst.setSex(src.getSex());
     if(src.hasAge())
       SEScalarTime.load(src.getAge(),dst.getAge());
@@ -272,8 +273,8 @@ public class SEPatient
   public void    setName(String name){this.name=name;}
   public boolean hasName(){return this.name==null?false:true;}
 
-  public Sex     getSex() { return this.sex;}
-  public void    setSex(Sex name){this.sex=name;}
+  public eSex    getSex() { return this.sex;}
+  public void    setSex(eSex name){this.sex=name;}
   public boolean hasSex(){return this.sex==null?false:true;}
 
   public SEScalarTime getAge() 

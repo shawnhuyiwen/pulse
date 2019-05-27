@@ -102,7 +102,7 @@ void PBPatient::Serialize(const SEPatient& src, cdm::PatientData& dst)
 {
   if (src.HasName())
     dst.set_name(src.m_Name);
-  dst.set_sex((cdm::ePatient_Sex)src.m_Sex);
+  dst.set_sex((cdm::PatientData::eSex)src.m_Sex);
   if (src.HasAge())
     dst.set_allocated_age(PBProperty::Unload(*src.m_Age));
   if (src.HasWeight())

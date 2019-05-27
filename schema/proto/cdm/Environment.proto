@@ -4,14 +4,19 @@ option java_package = "com.kitware.physiology.cdm";
 option optimize_for = SPEED;
 
 import "cdm/Enums.proto";
-import "cdm/EnvironmentEnums.proto";
 import "cdm/Properties.proto";
 import "cdm/Substance.proto";
 
 /** @brief The environmental conditions surrounding the patient. */
 message EnvironmentalConditionsData
 {
-  eEnvironment.SurroundingType              SurroundingType                  = 1; /**<< @brief @copybrief Environment_eSurroundingType */
+  enum eSurroundingType
+  {
+    NullSurrounding = 0;
+    Air             = 1;
+    Water           = 2;
+  }
+  eSurroundingType                          SurroundingType                  = 1; /**<< @brief @copybrief Environment_eSurroundingType */
 
   ScalarMassPerVolumeData                   AirDensity                       = 2; /**<< @brief Local ambient density of the surrounding atmosphere. */
   ScalarLengthPerTimeData                   AirVelocity                      = 3; /**<< @brief Velocity of the surrounding air relative to the patient. */

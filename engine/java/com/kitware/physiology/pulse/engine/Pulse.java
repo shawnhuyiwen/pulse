@@ -4,9 +4,8 @@ package com.kitware.physiology.pulse.engine;
 
 import java.util.*;
 
-import com.kitware.physiology.cdm.PatientEnums.ePatient;
-import com.kitware.physiology.cdm.AnesthesiaMachineEnums.eAnesthesiaMachine;
-
+import com.kitware.physiology.cdm.Patient.ePatient;
+import com.kitware.physiology.cdm.AnesthesiaMachine.eAnesthesiaMachine;
 import com.kitware.physiology.datamodel.compartment.*;
 import com.kitware.physiology.datamodel.datarequests.*;
 import com.kitware.physiology.datamodel.patient.SEPatient;

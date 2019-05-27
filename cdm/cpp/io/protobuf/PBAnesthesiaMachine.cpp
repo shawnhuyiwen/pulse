@@ -76,7 +76,7 @@ cdm::AnesthesiaMachineData* PBAnesthesiaMachine::Unload(const SEAnesthesiaMachin
 }
 void PBAnesthesiaMachine::Serialize(const SEAnesthesiaMachine& src, cdm::AnesthesiaMachineData& dst)
 {
-  dst.set_connection((cdm::eAnesthesiaMachine_Connection)src.m_Connection);
+  dst.set_connection((cdm::AnesthesiaMachineData::eConnection)src.m_Connection);
   if (src.HasInletFlow())
     dst.set_allocated_inletflow(PBProperty::Unload(*src.m_InletFlow));
   if (src.HasInspiratoryExpiratoryRatio())
@@ -84,10 +84,10 @@ void PBAnesthesiaMachine::Serialize(const SEAnesthesiaMachine& src, cdm::Anesthe
   if (src.HasOxygenFraction())
     dst.set_allocated_oxygenfraction(PBProperty::Unload(*src.m_OxygenFraction));
 
-  dst.set_oxygensource((cdm::eAnesthesiaMachine_OxygenSource)src.m_OxygenSource);
+  dst.set_oxygensource((cdm::AnesthesiaMachineData::eOxygenSource)src.m_OxygenSource);
   if (src.HasPositiveEndExpiredPressure())
     dst.set_allocated_positiveendexpiredpressure(PBProperty::Unload(*src.m_PositiveEndExpiredPressure));
-  dst.set_primarygas((cdm::eAnesthesiaMachine_PrimaryGas)src.m_PrimaryGas);
+  dst.set_primarygas((cdm::AnesthesiaMachineData::ePrimaryGas)src.m_PrimaryGas);
 
   if (src.HasRespiratoryRate())
     dst.set_allocated_respiratoryrate(PBProperty::Unload(*src.m_RespiratoryRate));

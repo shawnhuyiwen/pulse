@@ -12,14 +12,15 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import com.kitware.physiology.cdm.ElectroCardioGramEnums.eElectroCardioGram.WaveformLead;
-import com.kitware.physiology.cdm.EnvironmentEnums.eEnvironment.SurroundingType;
-import com.kitware.physiology.cdm.PatientEnums.ePatient;
-import com.kitware.physiology.cdm.PhysiologyEnums.eHeartRhythm;
+import com.kitware.physiology.cdm.ElectroCardioGram.ElectroCardioGramWaveformData.eWaveformLead;
+import com.kitware.physiology.cdm.Engine.DataRequestData.eCategory;
 import com.kitware.physiology.cdm.Enums.eCharge;
-import com.kitware.physiology.cdm.EngineEnums.eDataRequest.Category;
-import com.kitware.physiology.cdm.SubstanceEnums.eSubstance;
-
+import com.kitware.physiology.cdm.Environment.EnvironmentalConditionsData.eSurroundingType;
+import com.kitware.physiology.cdm.Patient.PatientData.eSex;
+import com.kitware.physiology.cdm.Physiology.eHeartRhythm;
+import com.kitware.physiology.cdm.Substance.SubstanceData.eState;
+import com.kitware.physiology.cdm.Substance.SubstancePhysicochemicalsData.eBindingProtein;
+import com.kitware.physiology.cdm.Substance.SubstancePhysicochemicalsData.eIonicState;
 import com.kitware.physiology.datamodel.substance.SESubstanceTissuePharmacokinetics;
 import com.kitware.physiology.datamodel.datarequests.SEDataRequest;
 import com.kitware.physiology.datamodel.engine.SEDynamicStabilization;
@@ -295,7 +296,7 @@ public class DataSetReader
     }
     if(property.equals("Sex"))
     {
-      patient.setSex(ePatient.Sex.valueOf(value));
+      patient.setSex(eSex.valueOf(value));
       return true;
     }
     if(property.equals("Age"))
@@ -564,7 +565,7 @@ public class DataSetReader
     }
     if(property.equals("State"))
     {
-      substance.setState(eSubstance.State.valueOf(value));
+      substance.setState(eState.valueOf(value));
       return true;
     }
     if(property.equals("Density"))
@@ -766,7 +767,7 @@ public class DataSetReader
     }
     if(property.equals("BindingProtein"))
     {
-      substance.getPK().getPhysicochemicals().setBindingProtein(eSubstance.BindingProtein.valueOf(value));
+      substance.getPK().getPhysicochemicals().setBindingProtein(eBindingProtein.valueOf(value));
       return true;
     }
     if(property.equals("BloodPlasmaRatio"))
@@ -776,7 +777,7 @@ public class DataSetReader
     }
     if(property.equals("IonicState"))
     {
-      substance.getPK().getPhysicochemicals().setIonicState(eSubstance.IonicState.valueOf(value));
+      substance.getPK().getPhysicochemicals().setIonicState(eIonicState.valueOf(value));
       return true;
     }
     if(property.equals("LogP"))
@@ -1085,7 +1086,7 @@ public class DataSetReader
 
     if(property.equals("SurroundingType"))
     {
-      env.setSurroundingType(SurroundingType.valueOf(value));
+      env.setSurroundingType(eSurroundingType.valueOf(value));
       return true;
     }
     if(property.equals("AirDensity"))
@@ -1327,7 +1328,7 @@ public class DataSetReader
         	// Note it is assumed that the all criteria are physiology requests
         	SEDataRequest dr = new SEDataRequest();
         	dr.setPropertyName(row.getCell(2).getStringCellValue());
-        	dr.setCategory(Category.Physiology);
+        	dr.setCategory(eCategory.Physiology);
           criteria.createProperty(row.getCell(1).getNumericCellValue(),dr);
         }
         else if(property.equals("ConvergenceTime"))
@@ -1383,7 +1384,7 @@ public class DataSetReader
     fields.add("ElectricPotential");
     fields.add("Time");
     String property,value,unit,cellValue;
-    WaveformLead lead=WaveformLead.NullLead;
+    eWaveformLead lead=eWaveformLead.NullLead;
     eHeartRhythm rhythm=eHeartRhythm.NormalSinus;
        
     SEElectroCardioGramWaveformList ecg=null;
@@ -1407,7 +1408,7 @@ public class DataSetReader
         }         
         else if(property.equals("Lead"))
         {          
-          lead = WaveformLead.values()[((int)(row.getCell(1).getNumericCellValue()))];
+          lead = eWaveformLead.values()[((int)(row.getCell(1).getNumericCellValue()))];
         }
         else if(property.equals("Rhythm"))
         {

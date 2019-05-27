@@ -10,11 +10,18 @@ import "cdm/Engine.proto";
 import "cdm/Substance.proto";
 import "cdm/Compartment.proto";
 import "cdm/Circuit.proto";
-import "pulse/PulseEnums.proto";
 import "pulse/PulsePhysiology.proto";
 import "pulse/PulseEnvironment.proto";
 import "pulse/PulseEquipment.proto";
 import "pulse/PulseConfiguration.proto";
+
+enum eAirwayMode
+{
+  Free                                                     = 0;
+  AnesthesiaMachine                                        = 1;
+  Inhaler                                                  = 2;
+  MechanicalVentilator                                     = 3;
+}
 
 message StateData
 {

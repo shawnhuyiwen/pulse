@@ -6,18 +6,18 @@ package com.kitware.physiology.datamodel.datarequests;
 import java.io.Serializable;
 
 import com.kitware.physiology.cdm.Engine.DataRequestData;
-import com.kitware.physiology.cdm.EngineEnums.eDataRequest;
-import com.kitware.physiology.cdm.EngineEnums.eDecimalFormat;
+import com.kitware.physiology.cdm.Engine.DataRequestData.eCategory;
+import com.kitware.physiology.cdm.Engine.DecimalFormatData.eType;
 
 public class SEDataRequest implements Serializable
 {
   protected String                  propertyName;
   protected String                  unit;
-  protected eDataRequest.Category   category;
+  protected eCategory               category;
   protected String                  compartmentName;
   protected String                  substanceName;
   protected Integer                 precision;
-  protected eDecimalFormat.Type     format;
+  protected eType                   format;
   
   public SEDataRequest() 
   {
@@ -40,7 +40,7 @@ public class SEDataRequest implements Serializable
     dst.reset();    
     dst.propertyName = src.getPropertyName();
     dst.unit = src.getUnit();
-    if(src.getCategory()!=eDataRequest.Category.UNRECOGNIZED)
+    if(src.getCategory()!=eCategory.UNRECOGNIZED)
     	dst.category = src.getCategory();
     dst.compartmentName = src.getCompartmentName();
     dst.substanceName = src.getSubstanceName();
@@ -102,9 +102,9 @@ public class SEDataRequest implements Serializable
   public void setUnit(String unit){ this.unit = unit; }
   public boolean hasUnit(){ return unit==null||unit.isEmpty() ? false : true; }
   
-  public eDataRequest.Category getCategory(){ return category; }
-  public void setCategory(eDataRequest.Category c){ this.category = c; }
-  public boolean hasCategory(){ return category==null||category==eDataRequest.Category.UNRECOGNIZED ? false : true; }
+  public eCategory getCategory(){ return category; }
+  public void setCategory(eCategory c){ this.category = c; }
+  public boolean hasCategory(){ return category==null||category==eCategory.UNRECOGNIZED ? false : true; }
   
   public String getCompartmentName(){ return compartmentName; }
   public void setCompartmentName(String c){ this.compartmentName = c; }
@@ -114,9 +114,9 @@ public class SEDataRequest implements Serializable
   public void setSubstanceName(String s){ this.substanceName = s; }
   public boolean hasSubstanceName(){ return substanceName==null||substanceName.isEmpty() ? false : true; }
   
-  public eDecimalFormat.Type getFormat(){ return format; }
-  public void setFormat(eDecimalFormat.Type f){ this.format = f; }
-  public boolean hasFormat(){ return format==null||format==eDecimalFormat.Type.UNRECOGNIZED ? false : true; }
+  public eType getFormat(){ return format; }
+  public void setFormat(eType f){ this.format = f; }
+  public boolean hasFormat(){ return format==null||format==eType.UNRECOGNIZED ? false : true; }
   
   public Integer getPrecision(){ return precision; }
   public void setPrecision(Integer p){ this.precision = p; }

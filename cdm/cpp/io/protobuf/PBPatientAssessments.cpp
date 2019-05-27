@@ -325,19 +325,19 @@ void PBPatientAssessment::Serialize(const SEUrinalysis& src, cdm::UrinalysisData
 {
   PBPatientAssessment::Serialize(src, *dst.mutable_patientassessment());
   if (src.HasColorResult())
-    dst.set_color((cdm::eUrinalysis_UrineColor)src.m_Color);
+    dst.set_color((cdm::UrinalysisData::eUrineColor)src.m_Color);
   if (src.HasAppearanceResult())
-    dst.set_appearance((cdm::eUrinalysis_ClarityIndicator)src.m_Appearance);
+    dst.set_appearance((cdm::UrinalysisData::eClarityIndicator)src.m_Appearance);
   if (src.HasGlucoseResult())
-    dst.set_glucose((cdm::eUrinalysis_PresenceIndicator)src.m_Glucose);
+    dst.set_glucose((cdm::UrinalysisData::ePresenceIndicator)src.m_Glucose);
   if (src.HasKetoneResult())
-    dst.set_ketone((cdm::eUrinalysis_PresenceIndicator)src.m_Ketone);
+    dst.set_ketone((cdm::UrinalysisData::ePresenceIndicator)src.m_Ketone);
   if (src.HasBloodResult())
-    dst.set_blood((cdm::eUrinalysis_PresenceIndicator)src.m_Blood);
+    dst.set_blood((cdm::UrinalysisData::ePresenceIndicator)src.m_Blood);
   if (src.HasProteinResult())
-    dst.set_protein((cdm::eUrinalysis_PresenceIndicator)src.m_Protein);
+    dst.set_protein((cdm::UrinalysisData::ePresenceIndicator)src.m_Protein);
   if (src.HasNitriteResult())
-    dst.set_nitrite((cdm::eUrinalysis_PresenceIndicator)src.m_Nitrite);
+    dst.set_nitrite((cdm::UrinalysisData::ePresenceIndicator)src.m_Nitrite);
   if (src.HasBilirubinResult())
     dst.set_allocated_bilirubin(PBProperty::Unload(*src.m_Bilirubin));
   if (src.HasSpecificGravityResult())
@@ -380,17 +380,17 @@ cdm::UrinalysisMicroscopicData* PBPatientAssessment::Unload(const SEUrinalysisMi
 void PBPatientAssessment::Serialize(const SEUrinalysisMicroscopic& src, cdm::UrinalysisMicroscopicData& dst)
 {
   if (src.HasObservationType())
-    dst.set_observationtype((cdm::eUrinalysis_MicroscopicObservationType)src.m_ObservationType);
+    dst.set_observationtype((cdm::UrinalysisMicroscopicData::eObservationType)src.m_ObservationType);
   if (src.HasEpithelialCellsResult())
-    dst.set_epithelialcells((cdm::eUrinalysis_MicroscopicObservationAmount)src.m_EpithelialCells);
+    dst.set_epithelialcells((cdm::UrinalysisMicroscopicData::eObservationAmount)src.m_EpithelialCells);
   if (src.HasCrystalsResult())
-    dst.set_crystals((cdm::eUrinalysis_MicroscopicObservationAmount)src.m_Crystals);
+    dst.set_crystals((cdm::UrinalysisMicroscopicData::eObservationAmount)src.m_Crystals);
   if (src.HasBacteriaResult())
-    dst.set_bacteria((cdm::eUrinalysis_MicroscopicObservationAmount)src.m_Bacteria);
+    dst.set_bacteria((cdm::UrinalysisMicroscopicData::eObservationAmount)src.m_Bacteria);
   if (src.HasTrichomonadsResult())
-    dst.set_trichomonads((cdm::eUrinalysis_MicroscopicObservationAmount)src.m_Trichomonads);
+    dst.set_trichomonads((cdm::UrinalysisMicroscopicData::eObservationAmount)src.m_Trichomonads);
   if (src.HasYeastResult())
-    dst.set_yeast((cdm::eUrinalysis_MicroscopicObservationAmount)src.m_Yeast);
+    dst.set_yeast((cdm::UrinalysisMicroscopicData::eObservationAmount)src.m_Yeast);
   if (src.HasRedBloodCellsResult())
     dst.set_allocated_redbloodcells(PBProperty::Unload(*src.m_RedBloodCells));
   if (src.HasWhiteBloodCellsResult())

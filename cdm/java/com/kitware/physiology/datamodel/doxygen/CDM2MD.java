@@ -7,13 +7,20 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.kitware.physiology.cdm.AnesthesiaMachineEnums.eAnesthesiaMachine;
+import com.kitware.physiology.cdm.AnesthesiaMachine.eAnesthesiaMachine;
 import com.kitware.physiology.cdm.Enums.*;
-import com.kitware.physiology.cdm.PatientActionEnums.*;
-import com.kitware.physiology.cdm.PatientAssessmentEnums.ePatientAssessment;
-import com.kitware.physiology.cdm.PatientAssessmentEnums.eUrinalysis;
-import com.kitware.physiology.cdm.PatientEnums.*;
-
+import com.kitware.physiology.cdm.Patient.PatientData.eSex;
+import com.kitware.physiology.cdm.Patient.ePatient;
+import com.kitware.physiology.cdm.PatientActions.BrainInjuryData;
+import com.kitware.physiology.cdm.PatientActions.HemorrhageData;
+import com.kitware.physiology.cdm.PatientActions.IntubationData;
+import com.kitware.physiology.cdm.PatientActions.SubstanceBolusData;
+import com.kitware.physiology.cdm.PatientAssessments.UrinalysisData.eClarityIndicator;
+import com.kitware.physiology.cdm.PatientAssessments.UrinalysisData.ePresenceIndicator;
+import com.kitware.physiology.cdm.PatientAssessments.UrinalysisData.eUrineColor;
+import com.kitware.physiology.cdm.PatientAssessments.UrinalysisMicroscopicData.eObservationAmount;
+import com.kitware.physiology.cdm.PatientAssessments.UrinalysisMicroscopicData.eObservationType;
+import com.kitware.physiology.cdm.PatientAssessments.ePatientAssessmentType;
 import com.kitware.physiology.datamodel.compartment.SECompartment;
 import com.kitware.physiology.datamodel.patient.SEPatient;
 import com.kitware.physiology.datamodel.patient.actions.SEConsciousRespirationCommand;
@@ -73,7 +80,7 @@ public class CDM2MD
       // PATIENT
       writer.append("#### The following tables describe a patient for Pulse to simulate\n<hr>\n");
       WriteDoxyTable(SEPatient.class, "", writer, skipProperties);    
-      WriteDoxyTable(ePatient.Sex.class, "ePatient_", writer, skipProperties);  
+      WriteDoxyTable(eSex.class, "ePatient_", writer, skipProperties);  
       
       writer.append("#### The following tables describe the physiological states of a patient Pulse supports.\n<hr>\n");
       WriteDoxyTable(ePatient.Event.class, "ePatient_", writer, skipProperties);
@@ -104,10 +111,10 @@ public class CDM2MD
       Set<Class<? extends SEConsciousRespirationCommand>> cmds = FindObjects.findClassSubTypes("com.kitware.physiology.datamodel.patient.actions", SEConsciousRespirationCommand.class);
       for(Class<?> c : cmds)
         WriteDoxyTable(c, "", writer, skipProperties);
-      WriteDoxyTable(eBrainInjury.Type.class, "eBrainInjury_", writer, skipProperties);  
-      WriteDoxyTable(eHemorrhage.Type.class, "eHemorrhage_", writer, skipProperties);  
-      WriteDoxyTable(eIntubation.Type.class, "eIntubation_", writer, skipProperties);  
-      WriteDoxyTable(eSubstanceAdministration.Route.class, "eSubstanceAdministration_", writer, skipProperties);  
+      WriteDoxyTable(BrainInjuryData.eType.class, "BrainInjuryType", writer, skipProperties);  
+      WriteDoxyTable(HemorrhageData.eType.class, "HemorrhageType", writer, skipProperties);  
+      WriteDoxyTable(IntubationData.eType.class, "IntubationType", writer, skipProperties);  
+      WriteDoxyTable(SubstanceBolusData.eRoute.class, "SubstanceBolusType", writer, skipProperties);  
       Set<Class<? extends Object>> pNutrition = FindObjects.findAllClasses("com.kitware.physiology.datamodel.patient.nutrition");
       for(Class<?> c : pNutrition)
         WriteDoxyTable(c, "", writer, skipProperties);
@@ -116,12 +123,12 @@ public class CDM2MD
       Set<Class<? extends SEPatientAssessment>> pAsses = FindObjects.findClassSubTypes("com.kitware.physiology.datamodel.patient.assessments", SEPatientAssessment.class);
       for(Class<?> c : pAsses)
         WriteDoxyTable(c, "", writer, skipProperties);
-      WriteDoxyTable(ePatientAssessment.Type.class, "ePatientAssessment_", writer, skipProperties);
-      WriteDoxyTable(eUrinalysis.PresenceIndicator.class, "eUrinalysis_", writer, skipProperties);
-      WriteDoxyTable(eUrinalysis.ClarityIndicator.class, "eUrinalysis_", writer, skipProperties);
-      WriteDoxyTable(eUrinalysis.UrineColor.class, "eUrinalysis_", writer, skipProperties);
-      WriteDoxyTable(eUrinalysis.MicroscopicObservationType.class, "eUrinalysis_", writer, skipProperties);
-      WriteDoxyTable(eUrinalysis.MicroscopicObservationAmount.class, "eUrinalysis_", writer, skipProperties);
+      WriteDoxyTable(ePatientAssessmentType.class, "PatientAssessmentType", writer, skipProperties);
+      WriteDoxyTable(ePresenceIndicator.class, "eUrinalysis_", writer, skipProperties);
+      WriteDoxyTable(eClarityIndicator.class, "eUrinalysis_", writer, skipProperties);
+      WriteDoxyTable(eUrineColor.class, "eUrinalysis_", writer, skipProperties);
+      WriteDoxyTable(eObservationType.class, "eUrinalysis_", writer, skipProperties);
+      WriteDoxyTable(eObservationAmount.class, "eUrinalysis_", writer, skipProperties);
       
       // ENVIRONMENT
       writer.append("#### The following tables describe the external environment that surrounds the patient\n<hr>\n");

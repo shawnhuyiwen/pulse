@@ -2,15 +2,15 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "bind/cpp/cdm/EngineEnums.pb.h"
+#include "bind/cpp/cdm/Engine.pb.h"
 #include "engine/SEDataRequest.h"
 
 const std::string& eDataRequest_Category_Name(eDataRequest_Category m)
 {
-  return cdm::eDataRequest_Category_Name((cdm::eDataRequest_Category)m);
+  return cdm::DataRequestData::eCategory_Name((cdm::DataRequestData::eCategory)m);
 }
 
 const std::string& eDecimalFormat_Type_Name(eDecimalFormat_Type m)
 {
-  return cdm::eDecimalFormat_Type_Name((cdm::eDecimalFormat_Type)m);
+  return cdm::DecimalFormatData::eType_Name((cdm::DecimalFormatData::eType)m);
 }

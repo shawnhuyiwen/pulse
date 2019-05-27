@@ -4,11 +4,11 @@
 package com.kitware.physiology.datamodel.patient.actions;
 
 import com.kitware.physiology.cdm.PatientActions.PatientAssessmentRequestData;
-import com.kitware.physiology.cdm.PatientAssessmentEnums.ePatientAssessment.Type;
+import com.kitware.physiology.cdm.PatientAssessments.ePatientAssessmentType;
 
 public class SEPatientAssessmentRequest extends SEPatientAction
 {
-  protected Type type;
+  protected ePatientAssessmentType type;
   
   public SEPatientAssessmentRequest()
   {
@@ -37,7 +37,7 @@ public class SEPatientAssessmentRequest extends SEPatientAction
   public static void load(PatientAssessmentRequestData src, SEPatientAssessmentRequest dst)
   {
     SEPatientAction.load(src.getPatientAction(), dst);
-    if(src.getType()!=Type.UNRECOGNIZED)
+    if(src.getType()!=ePatientAssessmentType.UNRECOGNIZED)
     	dst.type = src.getType();
   }
   
@@ -55,11 +55,11 @@ public class SEPatientAssessmentRequest extends SEPatientAction
       dst.setType(src.type);
   }
   
-  public Type getType()
+  public ePatientAssessmentType getType()
   {
     return type;
   }
-  public void setType(Type type)
+  public void setType(ePatientAssessmentType type)
   {
     this.type = type;
   }

@@ -4,12 +4,11 @@ option java_package = "com.kitware.physiology.cdm";
 option optimize_for = SPEED;
 
 import "cdm/Enums.proto";
-import "cdm/PatientActionEnums.proto";
 import "cdm/Properties.proto";
 import "cdm/Substance.proto";
 import "cdm/PatientNutrition.proto";
 import "cdm/Actions.proto";
-import "cdm/PatientAssessmentEnums.proto";
+import "cdm/PatientAssessments.proto";
 
 message AnyPatientActionData
 {
@@ -50,7 +49,7 @@ message PatientActionData
 message PatientAssessmentRequestData
 {
   PatientActionData                         PatientAction                   = 1;
-  ePatientAssessment.Type                   Type                            = 2;/**<<@brief @ref ePatientAssessment_TypeTable */
+  ePatientAssessmentType                    Type                            = 2;/**<<@brief @ref ePatientAssessment_TypeTable */
 }
 
 /** @brief Fight or flight.  The body prepares to defend itself. */
@@ -85,8 +84,16 @@ message AsthmaAttackData
 /** @brief A non-localized traumatic brain injury. */
 message BrainInjuryData
 {
+  /** @brief Types of Brain Injury that provided different nervous responses.*/
+  enum eType
+  {
+    Diffuse                                                                 = 0; /**<< @brief A brain injury dilating both eye pupils */
+    LeftFocal                                                               = 1; /**<< @brief A brain injury dilating the left eye pupil */
+    RightFocal                                                              = 2; /**<< @brief A brain injury dilating the right eye pupil */
+  }
+
   PatientActionData                         PatientAction                   = 1;
-  eBrainInjury.Type                         Type                            = 2;/**<<@brief @ref eBrainInjury_TypeTable */
+  eType                                     Type                            = 2;/**<<@brief @ref eBrainInjury_TypeTable */
   Scalar0To1Data                            Severity                        = 3;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
 }
 
@@ -188,17 +195,33 @@ message ExerciseData
 /** @brief A hemorrhage is the loss of blood escaping from the circulatory system. Typically, a healthy person can endure a loss of 10 to 15 percent of the total blood volume without serious medical difficulties. */
 message HemorrhageData
 {
+  /** @brief Types of Hemorrhages.*/
+  enum eType
+  {
+    External                                                                = 0; /**<< @brief A loss of blood from the vascular system out of the body */
+    Internal                                                                = 1; /**<< @brief A loss of blood from the vascular system into a body cavity or space. */
+  }
+  
   PatientActionData                         PatientAction                   = 1;
   string                                    Compartment                     = 2;/**<<@brief Compartment where the bleeding is occurring */
   ScalarVolumePerTimeData                   Rate                            = 3;/**<<@brief The flow rate of blood exiting the specified compartment. Set to zero to stop the bleeding rate. */
-  eHemorrhage.Type                          Type                            = 4;/**<<@brief @ref eHemorrhage_TypeTable*/
+  eType                                     Type                            = 4;/**<<@brief @ref eHemorrhage_TypeTable*/
 }
 
 /** @brief Insertion of tube into the patient's airway */
 message IntubationData
 {
+  /** @brief Enumeration Types of Intubation.*/
+  enum eType
+  {
+   Off                                                                     = 0; /**<< @brief Remove intubation */
+   Esophageal                                                              = 1; /**<< @brief Insert into the Esophagus */
+   LeftMainstem                                                            = 2; /**<< @brief Insert into the left main stem inflating only the left lung */
+   RightMainstem                                                           = 3; /**<< @brief Insert into the right main stem inflating only the right lung  */
+   Tracheal                                                                = 4; /**<< @brief Insert into the Trachea */
+  }
   PatientActionData                         PatientAction                   = 1;
-  eIntubation.Type                          Type                            = 2;/**<<@brief @ref eIntubation_TypeTable*/
+  eType                                     Type                            = 2;/**<<@brief @ref eIntubation_TypeTable*/
 }
 
 /** @brief Mechanically breathing for the patient, such as with a squeeze bag or other equipment. */
@@ -236,11 +259,23 @@ message SubstanceBolusStateData
 /** @brief An administration of a substance that is given all at one time to raise its concentration in blood to an effective level. */
 message SubstanceBolusData
 {
-  
-  
+  /** @brief Types of Substance Administration means.*/
+  enum eRoute
+  {
+    Intravenous                                                             = 0; /**<< @brief Injection into a vein */
+    Epidural                                                                = 1; /**<< @brief Injection into a epidural space */
+    Intraosseous                                                            = 2; /**<< @brief Injection into the bone marrow */
+    Intraarterial                                                           = 3; /**<< @brief Injection into an artery */
+    Intracardiac                                                            = 4; /**<< @brief Injection into the heart */
+    Intracerebral                                                           = 5; /**<< @brief Injection into the brain */
+    Intracerebroventricular                                                 = 6; /**<< @brief Injection into the cerebral ventricles */
+    Intradermal                                                             = 7; /**<< @brief Injection into the skin */
+    Intramuscular                                                           = 8; /**<< @brief Injection into the muscle */      
+    Subcutaneous                                                            = 9; /**<< @brief Injection under the skin */      
+  }
  
   PatientActionData                         PatientAction                   = 1;
-  eSubstanceAdministration.Route            AdministrationRoute             = 2;/**<<@brief @ref eSubstanceAdministration_RouteTable */
+  eRoute                                    AdministrationRoute             = 2;/**<<@brief @ref eSubstanceAdministration_RouteTable */
   string                                    Substance                       = 3;/**<<@brief @ref SubstanceTable */
   ScalarMassPerVolumeData                   Concentration                   = 4;/**<<@brief Concentration of the dose to administer. */
   ScalarVolumeData                          Dose                            = 5;/**<<@brief Volume of dose to administer. */

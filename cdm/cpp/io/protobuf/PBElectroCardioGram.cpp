@@ -102,7 +102,7 @@ cdm::ElectroCardioGramWaveformData* PBElectroCardioGram::Unload(const SEElectroC
 void PBElectroCardioGram::Serialize(const SEElectroCardioGramWaveform& src, cdm::ElectroCardioGramWaveformData& dst)
 {
   dst.set_rhythm((cdm::eHeartRhythm)src.m_Rhythm);
-  dst.set_lead((cdm::eElectroCardioGram_WaveformLead)src.m_LeadNumber);
+  dst.set_lead((cdm::ElectroCardioGramWaveformData::eWaveformLead)src.m_LeadNumber);
   if (src.HasData())
   {
     dst.set_allocated_data(PBProperty::Unload(*src.m_Data));

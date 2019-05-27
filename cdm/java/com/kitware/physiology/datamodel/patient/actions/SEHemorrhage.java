@@ -4,21 +4,20 @@
 package com.kitware.physiology.datamodel.patient.actions;
 
 import com.kitware.physiology.cdm.PatientActions.HemorrhageData;
-import com.kitware.physiology.cdm.PatientActionEnums.eHemorrhage;
-import com.kitware.physiology.cdm.PatientActionEnums.eIntubation.Type;
+import com.kitware.physiology.cdm.PatientActions.HemorrhageData.eType;
 import com.kitware.physiology.datamodel.properties.SEScalarVolumePerTime;
 
 public class SEHemorrhage extends SEPatientAction
 {
   protected String compartment;
-  protected eHemorrhage.Type type;
+  protected eType type;
   protected SEScalarVolumePerTime rate;
   
   public SEHemorrhage()
   {
     compartment = null;
     rate = null;
-    type = eHemorrhage.Type.External;
+    type = eType.External;
   }
   
   public void copy(SEHemorrhage other)
@@ -40,7 +39,7 @@ public class SEHemorrhage extends SEPatientAction
     compartment = null;
     if (rate != null)
       rate.invalidate();
-    type = eHemorrhage.Type.External;
+    type = eType.External;
   }
   
   public boolean isValid()
@@ -102,11 +101,11 @@ public class SEHemorrhage extends SEPatientAction
     return rate;
   }
   
-  public eHemorrhage.Type getType()
+  public eType getType()
   {
     return type;
   }
-  public void setType(eHemorrhage.Type t)
+  public void setType(eType t)
   {
     type = t;
   }

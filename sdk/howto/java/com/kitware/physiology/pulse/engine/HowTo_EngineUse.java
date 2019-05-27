@@ -4,11 +4,12 @@ package com.kitware.physiology.pulse.engine;
 
 import java.util.*;
 
+import com.kitware.physiology.cdm.Patient.PatientData.eSex;
+import com.kitware.physiology.cdm.Patient.ePatient;
+import com.kitware.physiology.cdm.AnesthesiaMachine.eAnesthesiaMachine;
+import com.kitware.physiology.cdm.Engine.DataRequestData.eCategory;
+import com.kitware.physiology.cdm.PatientActions.HemorrhageData;
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.kitware.physiology.cdm.AnesthesiaMachineEnums.eAnesthesiaMachine;
-import com.kitware.physiology.cdm.PatientEnums.ePatient;
-import com.kitware.physiology.cdm.EngineEnums.eDataRequest.*;
-import com.kitware.physiology.cdm.PatientActionEnums.eHemorrhage;
 import com.kitware.physiology.datamodel.conditions.SECondition;
 import com.kitware.physiology.datamodel.datarequests.SEDataRequest;
 import com.kitware.physiology.datamodel.datarequests.SEDataRequestManager;
@@ -126,22 +127,22 @@ public class HowTo_EngineUse
    // No other data values will have data in Java classes
    SEDataRequestManager dataRequests = new SEDataRequestManager();
    SEDataRequest hr = new SEDataRequest();
-   hr.setCategory(Category.Physiology);
+   hr.setCategory(eCategory.Physiology);
    hr.setPropertyName("HeartRate");
    hr.setUnit(FrequencyUnit.Per_min.toString());
    dataRequests.getRequestedData().add(hr);
    SEDataRequest rr = new SEDataRequest();
-   rr.setCategory(Category.Physiology);
+   rr.setCategory(eCategory.Physiology);
    rr.setPropertyName("RespirationRate");
    rr.setUnit(FrequencyUnit.Per_min.toString());
    dataRequests.getRequestedData().add(rr);
    SEDataRequest tlv = new SEDataRequest(); 
-   tlv.setCategory(Category.Physiology);   
+   tlv.setCategory(eCategory.Physiology);   
    tlv.setPropertyName("TotalLungVolume");
    tlv.setUnit(VolumeUnit.mL.toString());
    dataRequests.getRequestedData().add(tlv);
    SEDataRequest bv = new SEDataRequest();  
-   bv.setCategory(Category.Physiology);  
+   bv.setCategory(eCategory.Physiology);  
    bv.setPropertyName("BloodVolume");
    bv.setUnit(VolumeUnit.mL.toString());
    dataRequests.getRequestedData().add(bv);
@@ -163,7 +164,7 @@ public class HowTo_EngineUse
       // But you can get more complicated, consult our Patient Variability Documentation for more details
       SEPatient patient = new SEPatient();
       patient.setName("Standard");
-      patient.setSex(ePatient.Sex.Male);
+      patient.setSex(eSex.Male);
       patient.getAge().setValue(44,TimeUnit.yr);
       patient.getWeight().setValue(170,MassUnit.lb);
       patient.getHeight().setValue(71,LengthUnit.in);
@@ -265,7 +266,7 @@ public class HowTo_EngineUse
    
    // Let's do something to the patient, you can either send actions over one at a time, or pass in a List<SEAction>
    SEHemorrhage h = new SEHemorrhage();
-   h.setType(eHemorrhage.Type.External);
+   h.setType(HemorrhageData.eType.External);
    h.setCompartment(PulseCompartments.Vascular.RightLeg);
    h.getRate().setValue(200,VolumePerTimeUnit.mL_Per_min);// Change this to 750 if you want to see how engine failures are handled!!
    if(!pe.processAction(h))
