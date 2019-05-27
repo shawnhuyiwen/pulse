@@ -255,13 +255,9 @@ void PulseController::SetAirwayMode(eAirwayMode mode)
 {
   if (mode == m_AirwayMode)
     return;// do nazing!
-  if (mode == eAirwayMode::Inhaler && m_AirwayMode != eAirwayMode::Free)
-    throw CommonDataModelException("Can only change airway mode to Inhaler from the Free mode, Disable other equipment first.");
-  if (mode == eAirwayMode::AnesthesiaMachine && m_AirwayMode != eAirwayMode::Free)
-    throw CommonDataModelException("Can only change airway mode to Anesthesia Machine from the Free mode, Disable other equipment first.");
-  if (mode == eAirwayMode::MechanicalVentilator && m_AirwayMode != eAirwayMode::Free)
-    throw CommonDataModelException("Can only change airway mode to Mechanical Ventilator from the Free mode, Disable other equipment first.");
-  if (mode != m_AirwayMode)  
+  if (mode != eAirwayMode::Free && m_AirwayMode != eAirwayMode::Free)
+    throw CommonDataModelException("Can only change airway mode from the Free mode, Disable other equipment first.");
+  if (mode != m_AirwayMode)
     m_Compartments->UpdateAirwayGraph();
   m_AirwayMode = mode;
   std::stringstream ss;

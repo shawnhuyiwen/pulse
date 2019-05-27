@@ -41,7 +41,8 @@ enum class EngineState { NotReady=0, Initialization, InitialStabilization, AtIni
 
 
 // Keep enums in sync with appropriate proto file !!
-enum class eAirwayMode{ Free=0, AnesthesiaMachine, Inhaler, MechanicalVentilator };
+enum class eAirwayMode{ Free=0, AnesthesiaMachine, Inhaler, MechanicalVentilator,
+                        NasalCannula, SimpleMask, NonRebreatherMask };
 extern const std::string& eAirwayMode_Name(eAirwayMode m);
 
 /**

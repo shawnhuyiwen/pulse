@@ -134,6 +134,12 @@ SEFluidCircuit& PulseCircuits::GetActiveRespiratoryCircuit()
     return *m_CombinedRespiratoryInhalerCircuit;
   case eAirwayMode::MechanicalVentilator:
     return *m_CombinedRespiratoryMechanicalVentilatorCircuit;
+  case eAirwayMode::NasalCannula:
+    return *m_CombinedRespiratoryNasalCannulaCircuit;
+  case eAirwayMode::SimpleMask:
+    return *m_CombinedRespiratorySimpleMaskCircuit;
+  case eAirwayMode::NonRebreatherMask:
+    return *m_CombinedRespiratoryNonRebreatherMaskCircuit;
   default:
     throw CommonDataModelException("Unknown airway mode");
   }

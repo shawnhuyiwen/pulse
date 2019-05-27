@@ -8,7 +8,7 @@
 #include "patient/actions/SEHemorrhage.h"
 #include "patient/actions/SEIntubation.h"
 #include "patient/actions/SESubstanceAdministration.h"
-
+#include "patient/actions/SESupplementalOxygen.h"
 
 const std::string& eBrainInjury_Type_Name(eBrainInjury_Type m)
 {
@@ -28,4 +28,9 @@ const std::string& eIntubation_Type_Name(eIntubation_Type m)
 const std::string& eSubstanceAdministration_Route_Name(eSubstanceAdministration_Route m)
 {
   return cdm::SubstanceBolusData::eRoute_Name((cdm::SubstanceBolusData::eRoute)m);
+}
+
+const std::string& eSupplementalOxygen_Device_Name(eSupplementalOxygen_Device m)
+{
+  return cdm::SupplementalOxygenData::eDevice_Name((cdm::SupplementalOxygenData::eDevice)m);
 }

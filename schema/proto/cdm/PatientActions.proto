@@ -33,11 +33,12 @@ message AnyPatientActionData
     MechanicalVentilationData               MechanicalVentilation           = 17;
     NeedleDecompressionData                 NeedleDecompression             = 18;
     PericardialEffusionData                 PericardialEffusion             = 19;
-    TensionPneumothoraxData                 TensionPneumothorax             = 20;
-    SubstanceBolusData                      SubstanceBolus                  = 21;
-    SubstanceCompoundInfusionData           SubstanceCompoundInfusion       = 22;
-    SubstanceInfusionData                   SubstanceInfusion               = 23;
-    UrinateData                             Urinate                         = 24;
+    SubstanceBolusData                      SubstanceBolus                  = 20;
+    SubstanceCompoundInfusionData           SubstanceCompoundInfusion       = 21;
+    SubstanceInfusionData                   SubstanceInfusion               = 22;
+    SupplementalOxygenData                  SupplementalOxygenData          = 23;
+    TensionPneumothoraxData                 TensionPneumothorax             = 24;
+    UrinateData                             Urinate                         = 25;
   }
 }
 
@@ -298,6 +299,22 @@ message SubstanceInfusionData
   string                                    Substance                       = 2;/**<<@brief @ref SubstanceTable */
   ScalarMassPerVolumeData                   Concentration                   = 3;/**<<@brief Concentration of the dose to administer. */
   ScalarVolumePerTimeData                   Rate                            = 4;/**<<@brief Flow rate of the infusion into the body. */
+}
+
+/** @brief Extra Oxygen provided to the patient. */
+message SupplementalOxygenData
+{
+  enum eDevice
+  {
+    None                                                                    = 0;/**<<@brief device is removed. */
+    NasalCannula                                                            = 1;/**<<@brief Nasal Cannula. */
+    SimpleMask                                                              = 2;/**<<@brief Simple Mask. */
+    NonRebreatherMask                                                       = 3;/**<<@brief Non-Rebreather Mask. */
+  }
+  PatientActionData                         PatientAction                   = 1;
+  eDevice                                   Device                          = 2;/**<<@brief Device type. */
+  ScalarVolumePerTimeData                   Flow                            = 3;/**<<@brief Flow rate through the device. */
+  ScalarVolumeData                          Volume                          = 4;/**<<@brief The amount of Oxygen to supplement */
 }
 
 /** @brief A pneumothorax is an abnormal collection of air or gas in the pleural space that separates the lung from the chest wall. Like pleural effusion (liquid buildup in that space), pneumothorax may interfere with normal breathing. */

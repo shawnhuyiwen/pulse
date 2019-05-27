@@ -23,10 +23,11 @@ class SEIntubation;
 class SEMechanicalVentilation;
 class SENeedleDecompression;
 class SEPericardialEffusion;
-class SETensionPneumothorax;
 class SESubstanceBolus;
 class SESubstanceCompoundInfusion;
 class SESubstanceInfusion;
+class SESupplementalOxygen;
+class SETensionPneumothorax;
 class SEUrinate;
 class SEPatientAssessmentRequest;
 class SESubstance;
@@ -142,6 +143,20 @@ public:
   const SEPericardialEffusion* GetPericardialEffusion() const;
   void RemovePericardialEffusion();
 
+  const std::map<const SESubstance*, SESubstanceBolus*>&  GetSubstanceBoluses() const;
+  void RemoveSubstanceBolus(const SESubstance& sub);
+
+  const std::map<const SESubstance*, SESubstanceInfusion*>& GetSubstanceInfusions() const;
+  void RemoveSubstanceInfusion(const SESubstance& sub);
+
+  const std::map<const SESubstanceCompound*, SESubstanceCompoundInfusion*>&  GetSubstanceCompoundInfusions() const;
+  void RemoveSubstanceCompoundInfusion(const SESubstanceCompound& sub);
+
+  bool HasSupplementalOxygen() const;
+  SESupplementalOxygen* GetSupplementalOxygen();
+  const SESupplementalOxygen* GetSupplementalOxygen() const;
+  void RemoveSupplementalOxygen();
+
   bool HasTensionPneumothorax() const;
 
   bool HasLeftClosedTensionPneumothorax() const;
@@ -163,15 +178,6 @@ public:
   SETensionPneumothorax* GetRightOpenTensionPneumothorax();
   const SETensionPneumothorax* GetRightOpenTensionPneumothorax() const;
   void RemoveRightOpenTensionPneumothorax();
-
-  const std::map<const SESubstance*, SESubstanceBolus*>&  GetSubstanceBoluses() const;
-  void RemoveSubstanceBolus(const SESubstance& sub);
-
-  const std::map<const SESubstance*, SESubstanceInfusion*>& GetSubstanceInfusions() const;
-  void RemoveSubstanceInfusion(const SESubstance& sub);
-
-  const std::map<const SESubstanceCompound*, SESubstanceCompoundInfusion*>&  GetSubstanceCompoundInfusions() const;
-  void RemoveSubstanceCompoundInfusion(const SESubstanceCompound& sub);
 
   bool HasUrinate() const;
   SEUrinate* GetUrinate();
@@ -202,6 +208,7 @@ protected:
   SENeedleDecompression*        m_LeftNeedleDecompression;
   SENeedleDecompression*        m_RightNeedleDecompression;
   SEPericardialEffusion*        m_PericardialEffusion;
+  SESupplementalOxygen*         m_SupplementalOxygen;
   SETensionPneumothorax*        m_LeftClosedTensionPneumothorax;
   SETensionPneumothorax*        m_LeftOpenTensionPneumothorax;
   SETensionPneumothorax*        m_RightClosedTensionPneumothorax;

@@ -339,6 +339,18 @@ SEGasCompartmentGraph& PulseCompartments::GetActiveRespiratoryGraph()
     if (m_UpdateActiveAirwayGraph)
       m_data.GetCompartments().UpdateLinks(*m_CombinedRespiratoryMechanicalVentilatorGraph);
     m_UpdateActiveAirwayGraph = false;
+  case eAirwayMode::NasalCannula:
+    if (m_UpdateActiveAirwayGraph)
+      m_data.GetCompartments().UpdateLinks(*m_CombinedRespiratoryNasalCannulaGraph);
+    m_UpdateActiveAirwayGraph = false;
+  case eAirwayMode::SimpleMask:
+    if (m_UpdateActiveAirwayGraph)
+      m_data.GetCompartments().UpdateLinks(*m_CombinedRespiratorySimpleMaskGraph);
+    m_UpdateActiveAirwayGraph = false;
+  case eAirwayMode::NonRebreatherMask:
+    if (m_UpdateActiveAirwayGraph)
+      m_data.GetCompartments().UpdateLinks(*m_CombinedRespiratoryNonRebreatherMaskGraph);
+    m_UpdateActiveAirwayGraph = false;
     return *m_CombinedRespiratoryMechanicalVentilatorGraph;
   default:
     throw CommonDataModelException("Unknown airway mode");

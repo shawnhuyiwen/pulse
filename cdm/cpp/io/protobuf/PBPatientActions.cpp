@@ -36,6 +36,7 @@
 #include "patient/actions/SESubstanceBolus.h"
 #include "patient/actions/SESubstanceInfusion.h"
 #include "patient/actions/SESubstanceCompoundInfusion.h"
+#include "patient/actions/SESupplementalOxygen.h"
 #include "patient/actions/SETensionPneumothorax.h"
 #include "patient/actions/SEUrinate.h"
 #include "substance/SESubstance.h"
@@ -943,6 +944,41 @@ void PBPatientAction::Serialize(const SESubstanceInfusion& src, cdm::SubstanceIn
 void PBPatientAction::Copy(const SESubstanceInfusion& src, SESubstanceInfusion& dst)
 {
   cdm::SubstanceInfusionData data;
+  PBPatientAction::Serialize(src, data);
+  PBPatientAction::Serialize(data, dst);
+}
+
+void PBPatientAction::Load(const cdm::SupplementalOxygenData& src, SESupplementalOxygen& dst)
+{
+  PBPatientAction::Serialize(src, dst);
+}
+void PBPatientAction::Serialize(const cdm::SupplementalOxygenData& src, SESupplementalOxygen& dst)
+{
+  PBPatientAction::Serialize(src.patientaction(), dst);
+  dst.SetDevice((eSupplementalOxygen_Device)src.device());
+  if (src.has_flow())
+    PBProperty::Load(src.flow(), dst.GetFlow());
+  if (src.has_volume())
+    PBProperty::Load(src.volume(), dst.GetVolume());
+}
+cdm::SupplementalOxygenData* PBPatientAction::Unload(const SESupplementalOxygen& src)
+{
+  cdm::SupplementalOxygenData* dst = new cdm::SupplementalOxygenData();
+  PBPatientAction::Serialize(src, *dst);
+  return dst;
+}
+void PBPatientAction::Serialize(const SESupplementalOxygen& src, cdm::SupplementalOxygenData& dst)
+{
+  PBPatientAction::Serialize(src, *dst.mutable_patientaction());
+  dst.set_device((cdm::SupplementalOxygenData::eDevice)src.m_Device);
+  if (src.HasFlow())
+    dst.set_allocated_flow(PBProperty::Unload(*src.m_Flow));
+  if (src.HasVolume())
+    dst.set_allocated_volume(PBProperty::Unload(*src.m_Volume));
+}
+void PBPatientAction::Copy(const SESupplementalOxygen& src, SESupplementalOxygen& dst)
+{
+  cdm::SupplementalOxygenData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }

@@ -21,6 +21,9 @@ enum eAirwayMode
   AnesthesiaMachine                                        = 1;
   Inhaler                                                  = 2;
   MechanicalVentilator                                     = 3;
+  NasalCannula                                             = 4;
+  SimpleMask                                               = 5;
+  NonRebreatherMask                                        = 6;
 }
 
 message StateData
