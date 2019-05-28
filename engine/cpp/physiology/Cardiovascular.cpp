@@ -34,6 +34,7 @@
 #include "circuit/fluid/SEFluidCircuit.h"
 #include "circuit/fluid/SEFluidCircuitCalculator.h"
 #include "compartment/fluid/SELiquidCompartmentGraph.h"
+#include "compartment/fluid/SEGasCompartment.h"
 #include "compartment/substances/SELiquidSubstanceQuantity.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarPressure.h"
@@ -156,6 +157,9 @@ void Cardiovascular::Clear()
   m_RightPulmonaryVeins = nullptr;
   m_VenaCava = nullptr;
   m_AbdominalCavity = nullptr;
+
+  m_leftPleuralCavity = nullptr;
+  m_rightPleuralCavity = nullptr;
 
   m_CardiacCycleArterialPressure_mmHg->Clear();
   m_CardiacCycleArterialCO2PartialPressure_mmHg->Clear();
@@ -283,6 +287,9 @@ void Cardiovascular::SetUp()
   m_LeftHeart = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftHeart);
   m_RightHeart = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightHeart);
   m_AbdominalCavity = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::AbdominalCavity);
+  //Respiratory Compartments
+  m_leftPleuralCavity = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::LeftPleuralCavity);
+  m_rightPleuralCavity = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::RightPleuralCavity);
   //Nodes
   m_MainPulmonaryArteries = m_CirculatoryCircuit->GetNode(pulse::CardiovascularNode::MainPulmonaryArteries);
   m_LeftHeart2 = m_CirculatoryCircuit->GetNode(pulse::CardiovascularNode::LeftHeart2);
@@ -596,6 +603,7 @@ void Cardiovascular::PreProcess()
   HeartDriver();
   ProcessActions();
   UpdateHeartRhythm();
+  CalculatePleuralCavityVenousEffects();
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -2104,4 +2112,39 @@ void Cardiovascular::UpdateHeartRhythm()
   {
     SetHeartRhythm(eHeartRhythm::NormalSinus);
   }
+}
+
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Increased pleural cavity pressures hinders venous return through increased resistance.
+///
+/// \details
+/// When a lung collapses (as with pneumothorax), increased pleural cavity pressure pushes on the 
+/// mediastinum and great veins. As an effect, the mediastinum is displaced and the great veins 
+/// become kinked, leading to decreased venous return to the heart. This leads to increasing cardiac
+/// and respiratory embarrasment. http://medind.nic.in/jac/t08/i1/jact08i1p42.pdf
+//--------------------------------------------------------------------------------------------------
+void Cardiovascular::CalculatePleuralCavityVenousEffects()
+{
+  //The left and right pleural pressures are likely to have large differences only due to a pneumothorax
+  //Pressure difference causes a mediastinum shift
+  double pleuralCavityPressureDiff_cmH2O = abs(m_leftPleuralCavity->GetPressure(PressureUnit::cmH2O) - m_rightPleuralCavity->GetPressure(PressureUnit::cmH2O));
+  
+  double maxPressureDiff_cmH2O = 40.0;
+  double maxResistanceMultiplier = 10.0;
+  pleuralCavityPressureDiff_cmH2O = min(pleuralCavityPressureDiff_cmH2O, maxPressureDiff_cmH2O);
+
+  //Interpolate into a parabola to effect things much more at larger differences
+  double min = 1.0;
+  double max = maxResistanceMultiplier;
+  double a = max - min;
+  double factor = pleuralCavityPressureDiff_cmH2O / maxPressureDiff_cmH2O;
+  double resistanceMultiplier = a * factor * factor + min;
+
+  double rightHeartResistance_mmHg_s_Per_mL = m_RightHeartResistance->GetNextResistance(FlowResistanceUnit::mmHg_s_Per_mL);
+  m_RightHeartResistance->GetNextResistance().SetValue(rightHeartResistance_mmHg_s_Per_mL * resistanceMultiplier, FlowResistanceUnit::mmHg_s_Per_mL);
+
+  //For tuning
+  //m_data.GetDataTrack().Probe("pleuralCavityPressureDiff_cmH2O", pleuralCavityPressureDiff_cmH2O);
+  //m_data.GetDataTrack().Probe("resistanceMultiplier", resistanceMultiplier);
 }
