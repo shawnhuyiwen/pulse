@@ -6,6 +6,7 @@
 #include "system/physiology/SECardiovascularSystem.h"
 class SEPatient;
 class SELiquidCompartment;
+class SEGasCompartment;
 class SELiquidSubstanceQuantity;
 class SELiquidCompartmentGraph;
 class SELiquidCompartmentLink;
@@ -79,6 +80,8 @@ protected:
   /**/void PericardialEffusionPressureApplication();
   /**/void CardiacArrest();
   /**/void TraumaticBrainInjury();
+  //Respiratory effects
+  void CalculatePleuralCavityVenousEffects();
 
   // Process:
   void CalculateVitalSigns();
@@ -204,6 +207,9 @@ protected:
   SELiquidCompartment*             m_RightPulmonaryArteries;
   SELiquidCompartment*             m_RightPulmonaryVeins;
   SELiquidCompartment*             m_VenaCava;
+
+  SEGasCompartment*                m_leftPleuralCavity;
+  SEGasCompartment*                m_rightPleuralCavity;
 
   std::vector<SEFluidCircuitPath*> m_systemicResistancePaths;
   std::vector<SEFluidCircuitPath*> m_systemicCompliancePaths;
