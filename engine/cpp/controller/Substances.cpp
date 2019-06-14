@@ -179,7 +179,36 @@ void PulseSubstances::InitializeGasCompartments()
       cmpt->Balance(BalanceGasBy::VolumeFraction);
     }
   }
-}
+
+  //jbw - update these to just loop over leaf compartments
+
+  SEGasCompartment* NasalCannulaOxygenSource = m_data.GetCompartments().GetGasCompartment(pulse::NasalCannulaCompartment::NasalCannulaOxygenSource);
+  NasalCannulaOxygenSource->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetVolumeFraction().SetValue(1.0);
+  NasalCannulaOxygenSource->Balance(BalanceGasBy::VolumeFraction);
+  NasalCannulaOxygenSource->Balance(BalanceGasBy::VolumeFraction);
+  SEGasCompartment* NasalCannula = m_data.GetCompartments().GetGasCompartment(pulse::NasalCannulaCompartment::NasalCannula);
+  NasalCannula->GetSubstanceQuantity(*m_O2)->GetVolumeFraction().SetValue(AmbientO2VF);
+  NasalCannula->GetSubstanceQuantity(*m_CO2)->GetVolumeFraction().SetValue(AmbientCO2VF);
+  NasalCannula->GetSubstanceQuantity(*m_N2)->GetVolumeFraction().SetValue(AmbientN2VF);
+  NasalCannula->Balance(BalanceGasBy::VolumeFraction);
+
+  SEGasCompartment* SimpleMaskOxygenSource = m_data.GetCompartments().GetGasCompartment(pulse::SimpleMaskCompartment::SimpleMaskOxygenSource);
+  SimpleMaskOxygenSource->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetVolumeFraction().SetValue(1.0);
+  SimpleMaskOxygenSource->Balance(BalanceGasBy::VolumeFraction);
+  SEGasCompartment* SimpleMaskMask = m_data.GetCompartments().GetGasCompartment(pulse::SimpleMaskCompartment::SimpleMask);
+  SimpleMaskMask->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetVolumeFraction().SetValue(1.0);
+  SimpleMaskMask->Balance(BalanceGasBy::VolumeFraction);
+
+  SEGasCompartment* NonRebreatherMaskOxygenSource = m_data.GetCompartments().GetGasCompartment(pulse::NonRebreatherMaskCompartment::NonRebreatherMaskOxygenSource);
+  NonRebreatherMaskOxygenSource->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetVolumeFraction().SetValue(1.0);
+  NonRebreatherMaskOxygenSource->Balance(BalanceGasBy::VolumeFraction);
+  SEGasCompartment* NonRebreatherMaskMask = m_data.GetCompartments().GetGasCompartment(pulse::NonRebreatherMaskCompartment::NonRebreatherMask);
+  NonRebreatherMaskMask->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetVolumeFraction().SetValue(1.0);
+  NonRebreatherMaskMask->Balance(BalanceGasBy::VolumeFraction);
+  SEGasCompartment* NonRebreatherMaskBag = m_data.GetCompartments().GetGasCompartment(pulse::NonRebreatherMaskCompartment::NonRebreatherMaskBag);
+  NonRebreatherMaskBag->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetVolumeFraction().SetValue(1.0);
+  NonRebreatherMaskBag->Balance(BalanceGasBy::VolumeFraction);
+ }
 
 void PulseSubstances::InitializeLiquidCompartmentGases()
 {

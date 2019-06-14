@@ -62,6 +62,9 @@ void PulseCompartments::Clear()
   m_AnesthesiaMachineGraph = nullptr;
   m_CombinedRespiratoryAnesthesiaGraph = nullptr;
   m_CombinedRespiratoryInhalerGraph = nullptr;
+  m_CombinedRespiratoryNasalCannulaGraph = nullptr;
+  m_CombinedRespiratorySimpleMaskGraph = nullptr;
+  m_CombinedRespiratoryNonRebreatherMaskGraph = nullptr;
   m_CombinedAerosolMechanicalVentilatorGraph = nullptr;
   m_CombinedRespiratoryMechanicalVentilatorGraph = nullptr;
   m_AerosolGraph = nullptr;
@@ -91,6 +94,12 @@ void PulseCompartments::Clear()
   m_MechanicalVentilatorLeafCompartments.clear();
   m_MechanicalVentilatorAerosolCompartments.clear();
   m_MechanicalVentilatorAerosolLeafCompartments.clear();
+  m_NasalCannulaCompartments.clear();
+  m_NasalCannulaLeafCompartments.clear();
+  m_SimpleMaskCompartments.clear();
+  m_SimpleMaskLeafCompartments.clear();
+  m_NonRebreatherMaskCompartments.clear();
+  m_NonRebreatherMaskLeafCompartments.clear();
 
   m_ExtracellularFluid.clear();
   m_IntracellularFluid.clear();
@@ -339,19 +348,22 @@ SEGasCompartmentGraph& PulseCompartments::GetActiveRespiratoryGraph()
     if (m_UpdateActiveAirwayGraph)
       m_data.GetCompartments().UpdateLinks(*m_CombinedRespiratoryMechanicalVentilatorGraph);
     m_UpdateActiveAirwayGraph = false;
+    return *m_CombinedRespiratoryMechanicalVentilatorGraph;
   case eAirwayMode::NasalCannula:
     if (m_UpdateActiveAirwayGraph)
       m_data.GetCompartments().UpdateLinks(*m_CombinedRespiratoryNasalCannulaGraph);
     m_UpdateActiveAirwayGraph = false;
+    return *m_CombinedRespiratoryNasalCannulaGraph;
   case eAirwayMode::SimpleMask:
     if (m_UpdateActiveAirwayGraph)
       m_data.GetCompartments().UpdateLinks(*m_CombinedRespiratorySimpleMaskGraph);
     m_UpdateActiveAirwayGraph = false;
+    return *m_CombinedRespiratorySimpleMaskGraph;
   case eAirwayMode::NonRebreatherMask:
     if (m_UpdateActiveAirwayGraph)
       m_data.GetCompartments().UpdateLinks(*m_CombinedRespiratoryNonRebreatherMaskGraph);
     m_UpdateActiveAirwayGraph = false;
-    return *m_CombinedRespiratoryMechanicalVentilatorGraph;
+    return *m_CombinedRespiratoryNonRebreatherMaskGraph;
   default:
     throw CommonDataModelException("Unknown airway mode");
   }
@@ -386,6 +398,10 @@ SELiquidCompartmentGraph& PulseCompartments::GetActiveAerosolGraph()
   switch (m_data.GetAirwayMode())
   {
   case eAirwayMode::Free:
+    if (m_UpdateActiveAerosolGraph)
+      m_data.GetCompartments().UpdateLinks(*m_AerosolGraph);
+    m_UpdateActiveAerosolGraph = false;
+    return *m_AerosolGraph;
   case eAirwayMode::AnesthesiaMachine:// Just use the regular graph
     if (m_UpdateActiveAerosolGraph)
       m_data.GetCompartments().UpdateLinks(*m_AerosolGraph);
@@ -400,7 +416,22 @@ SELiquidCompartmentGraph& PulseCompartments::GetActiveAerosolGraph()
     if (m_UpdateActiveAerosolGraph)
       m_data.GetCompartments().UpdateLinks(*m_CombinedAerosolInhalerGraph);
     m_UpdateActiveAerosolGraph = true;
-    return *m_CombinedAerosolInhalerGraph;  
+    return *m_CombinedAerosolInhalerGraph;
+  case eAirwayMode::NasalCannula:// Just use the regular graph
+    if (m_UpdateActiveAerosolGraph)
+      m_data.GetCompartments().UpdateLinks(*m_AerosolGraph);
+    m_UpdateActiveAerosolGraph = false;
+    return *m_AerosolGraph;
+  case eAirwayMode::SimpleMask:// Just use the regular graph
+    if (m_UpdateActiveAerosolGraph)
+      m_data.GetCompartments().UpdateLinks(*m_AerosolGraph);
+    m_UpdateActiveAerosolGraph = false;
+    return *m_AerosolGraph;
+  case eAirwayMode::NonRebreatherMask:// Just use the regular graph
+    if (m_UpdateActiveAerosolGraph)
+      m_data.GetCompartments().UpdateLinks(*m_AerosolGraph);
+    m_UpdateActiveAerosolGraph = false;
+    return *m_AerosolGraph;
   default:
     throw CommonDataModelException("Unknown airway mode");
   }

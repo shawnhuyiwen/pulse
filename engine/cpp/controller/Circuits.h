@@ -258,15 +258,15 @@ namespace pulse {
   {
   public:
     DEFINE_STATIC_STRING(NasalCannula);
-    DEFINE_STATIC_STRING(OxygenSource);
+    DEFINE_STATIC_STRING(NasalCannulaOxygenSource);
   };
 
   class NasalCannulaPath
   {
   public:
-    DEFINE_STATIC_STRING(GroundToOxygenSource);
-    DEFINE_STATIC_STRING(OxygenInlet);
-    DEFINE_STATIC_STRING(Seal);
+    DEFINE_STATIC_STRING(NasalCannulaPressure);
+    DEFINE_STATIC_STRING(NasalCannulaOxygenInlet);
+    DEFINE_STATIC_STRING(NasalCannulaSeal);
     DEFINE_STATIC_STRING(NasalCannulaToMouth);
   };
 
@@ -277,18 +277,18 @@ namespace pulse {
   class SimpleMaskNode
   {
   public:
-    DEFINE_STATIC_STRING(Mask);
-    DEFINE_STATIC_STRING(OxygenSource);
+    DEFINE_STATIC_STRING(SimpleMask);
+    DEFINE_STATIC_STRING(SimpleMaskOxygenSource);
   };
 
   class SimpleMaskPath
   {
   public:
-    DEFINE_STATIC_STRING(GroundToOxygenSource);
-    DEFINE_STATIC_STRING(OxygenInlet);
-    DEFINE_STATIC_STRING(Seal);
-    DEFINE_STATIC_STRING(Ports);
-    DEFINE_STATIC_STRING(MaskToMouth);
+    DEFINE_STATIC_STRING(SimpleMaskPressure);
+    DEFINE_STATIC_STRING(SimpleMaskOxygenInlet);
+    DEFINE_STATIC_STRING(SimpleMaskSeal);
+    DEFINE_STATIC_STRING(SimpleMaskPorts);
+    DEFINE_STATIC_STRING(SimpleMaskToMouth);
   };
 
   ///////////////////////////////////
@@ -298,20 +298,20 @@ namespace pulse {
   class NonRebreatherMaskNode
   {
   public:
-    DEFINE_STATIC_STRING(Mask);
-    DEFINE_STATIC_STRING(OxygenSource);
-    DEFINE_STATIC_STRING(Bag);
+    DEFINE_STATIC_STRING(NonRebreatherMask);
+    DEFINE_STATIC_STRING(NonRebreatherMaskOxygenSource);
+    DEFINE_STATIC_STRING(NonRebreatherMaskBag);
   };
 
   class NonRebreatherMaskPath
   {
   public:
-    DEFINE_STATIC_STRING(GroundToOxygenSource);
-    DEFINE_STATIC_STRING(OxygenInlet);
-    DEFINE_STATIC_STRING(ReservoirValve);
-    DEFINE_STATIC_STRING(Seal);
-    DEFINE_STATIC_STRING(ExhalationValves);
-    DEFINE_STATIC_STRING(MaskToMouth);
+    DEFINE_STATIC_STRING(NonRebreatherMaskPressure);
+    DEFINE_STATIC_STRING(NonRebreatherMaskOxygenInlet);
+    DEFINE_STATIC_STRING(NonRebreatherMaskReservoirValve);
+    DEFINE_STATIC_STRING(NonRebreatherMaskSeal);
+    DEFINE_STATIC_STRING(NonRebreatherMaskExhalationValves);
+    DEFINE_STATIC_STRING(NonRebreatherMaskToMouth);
   };
 
   //////////////////////////////////////////
@@ -328,7 +328,7 @@ namespace pulse {
   {
   public:
     DEFINE_STATIC_STRING_EX(ConnectionToMouth,MechanicalVentilatorConnectionToMouth);
-DEFINE_STATIC_STRING_EX(GroundToConnection, MechanicalVentilatorGroundToConnection);
+    DEFINE_STATIC_STRING_EX(GroundToConnection, MechanicalVentilatorGroundToConnection);
   };
 
 

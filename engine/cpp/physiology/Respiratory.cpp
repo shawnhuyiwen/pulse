@@ -28,6 +28,7 @@
 #include "patient/actions/SEIntubation.h"
 #include "patient/actions/SEMechanicalVentilation.h"
 #include "patient/actions/SENeedleDecompression.h"
+#include "patient/actions/SESupplementalOxygen.h"
 #include "patient/actions/SETensionPneumothorax.h"
 // Assessments
 #include "patient/assessments/SEPulmonaryFunctionTest.h"
@@ -68,6 +69,7 @@
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEFunctionVolumeVsTime.h"
 #include "properties/SERunningAverage.h"
+#include "utils/DataTrack.h"
 
 
 #ifdef _MSC_VER 
@@ -813,37 +815,138 @@ void Respiratory::MechanicalVentilation()
 /// Applys supplemental oxygen equipment
 ///
 /// \details
-/// jbw - update 
+/// This will provide supplemental oxygen by connecting and updating the circuit and graph for nasal
+/// cannula, simple mask, or nonrebreather mask
 //--------------------------------------------------------------------------------------------------
 void Respiratory::SupplementalOxygen()
 {
-  //jbw - Maybe this and mechanical ventilator should be broken out to their own class, like anesthesia machine?
-  //jbw - Replace these when the equipment/action is added to the CDM
-  //jbw - Set defaults based on device type for things that are not explicitly set
-  bool hasNasalCannula = false;
-  bool hasSimpleMask = false;
-  bool hasNonRebreatherMask = true;
-  double flow_L_Per_min = 7.5;
-  int source = 1; //0 = wall, 1 = tank
+  ///\todo - Maybe this and mechanical ventilator should be broken out to their own class, like anesthesia machine?
 
-  int numDevices = int(hasNasalCannula) + int(hasSimpleMask) + int(hasNonRebreatherMask);
+  //jbw - Make sure this can be turned off
 
-  if (numDevices < 1)
+  if (!m_data.GetActions().GetPatientActions().HasSupplementalOxygen())
   {
+    if (m_data.GetAirwayMode() == eAirwayMode::NasalCannula ||
+      m_data.GetAirwayMode() == eAirwayMode::SimpleMask ||
+      m_data.GetAirwayMode() == eAirwayMode::NonRebreatherMask)
+    {
+      // Was just turned off
+      m_data.SetAirwayMode(eAirwayMode::Free);
+    }
+
     return;
   }
 
+  SESupplementalOxygen* so = m_data.GetActions().GetPatientActions().GetSupplementalOxygen();
+
+  bool hasNasalCannula = so->GetDevice() == eSupplementalOxygen_Device::NasalCannula;
+  bool hasSimpleMask = so->GetDevice() == eSupplementalOxygen_Device::SimpleMask;
+  bool hasNonRebreatherMask = so->GetDevice() == eSupplementalOxygen_Device::NonRebreatherMask;
+
+  int numDevices = int(hasNasalCannula) + int(hasSimpleMask) + int(hasNonRebreatherMask);
+
   if (numDevices > 1)
   {
-    //jbw - error
+    /// \error Fatal: Only one supplemental oxygen device can be used at a time.
+    Fatal("Only one supplemental oxygen device can be used at a time.");
   }
 
-  //Apply flow
+  if (hasNasalCannula)
+  {
+    m_data.SetAirwayMode(eAirwayMode::NasalCannula);
+  }
+  else if (hasSimpleMask)
+  {
+    m_data.SetAirwayMode(eAirwayMode::SimpleMask);
+  }
+  else if (hasNonRebreatherMask)
+  {
+    m_data.SetAirwayMode(eAirwayMode::NonRebreatherMask);
+  }
+
+  double flow_L_Per_min = 0.0;
+  if (so->HasFlow())
+  {
+    flow_L_Per_min = so->GetFlow(VolumePerTimeUnit::L_Per_min);
+  }
+  else
+  {
+    //Set defaults based on device type for things that are not explicitly set
+    if (hasNasalCannula)
+    {
+      flow_L_Per_min = 3.5;
+    }
+    else if (hasSimpleMask)
+    {
+      flow_L_Per_min = 7.5;
+    }
+    else if (hasNonRebreatherMask)
+    {
+      flow_L_Per_min = 8.0;
+    }
+    else
+    {
+      /// \error Fatal: No supplemental oxygen device set.
+      Fatal("No supplemental oxygen device set.");
+    }
+  }
+
+  //Get tank pressure node and flow control resistor path
+  SEFluidCircuitPath* OxygenInlet;
+  SEFluidCircuitPath* Tank;
+  SEFluidCircuit& RespirationCircuit = m_data.GetCircuits().GetActiveRespiratoryCircuit();
+  if (hasNasalCannula)
+  {
+    OxygenInlet = RespirationCircuit.GetPath(pulse::NasalCannulaPath::NasalCannulaOxygenInlet);
+    Tank = RespirationCircuit.GetPath(pulse::NasalCannulaPath::NasalCannulaPressure);
+  }
+  else if (hasSimpleMask)
+  {
+    OxygenInlet = RespirationCircuit.GetPath(pulse::SimpleMaskPath::SimpleMaskOxygenInlet);
+    Tank = RespirationCircuit.GetPath(pulse::SimpleMaskPath::SimpleMaskPressure);
+  }
+  else if (hasNonRebreatherMask)
+  {
+    OxygenInlet = RespirationCircuit.GetPath(pulse::NonRebreatherMaskPath::NonRebreatherMaskOxygenInlet);
+    Tank = RespirationCircuit.GetPath(pulse::NonRebreatherMaskPath::NonRebreatherMaskPressure);
+  }
+  else
+  {
+    /// \error Fatal: No supplemental oxygen device set.
+    Fatal("No supplemental oxygen device set.");
+  }  
+
+  //Use a default tank volume if it wasn't explicity set
+  if (!so->HasVolume())
+  {
+    so->GetVolume().SetValue(425.0, VolumeUnit::L);
+  }
 
   //Decrement volume from the tank
+  //Inf volume is assumed to be a wall connection that will never run out
+  if (so->GetVolume(VolumeUnit::L) != std::numeric_limits<double>::infinity())
+  {
+    so->GetVolume().IncrementValue(-flow_L_Per_min * m_dt_min, VolumeUnit::L);
 
-  //Check if the tank is depleated
+    //Check if the tank is depleated
+    if (so->GetVolume(VolumeUnit::L) <= 0.0)
+    {
+      so->GetVolume().SetValue(0.0, VolumeUnit::L);
+      flow_L_Per_min = 0.0;
+      //jbw - Add depleted tank event
+      /// \event Supplemental Oxygen: Oxygen bottle is exhausted. There is no longer any oxygen to provide.
+      //SetEvent(eSupplementalOxygen_Event::SupplementalOxygenBottleExhausted, true, m_data.GetSimulationTime());
+    }
+  }
 
+  //Determine flow control resistance
+  //Assume pressure outside tank is comparatively approximately ambient
+  double tankPressure_cmH2O = Tank->GetNextPressureSource(PressureUnit::cmH2O);
+  double resistance_cmH2O_s_Per_L = tankPressure_cmH2O / (flow_L_Per_min / 60.0); //convert from min to s
+  resistance_cmH2O_s_Per_L = LIMIT(resistance_cmH2O_s_Per_L, m_DefaultClosedResistance_cmH2O_s_Per_L, m_DefaultOpenResistance_cmH2O_s_Per_L);
+
+  //Apply flow
+  OxygenInlet->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, FlowResistanceUnit::cmH2O_s_Per_L);
 }
 
 //--------------------------------------------------------------------------------------------------

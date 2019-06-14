@@ -1223,6 +1223,12 @@ SEPatientAction* PBPatientAction::Load(const cdm::AnyPatientActionData& any, SES
     PBPatientAction::Load(any.substancecompoundinfusion(), *a);
     return a;
   }
+  case cdm::AnyPatientActionData::ActionCase::kSupplementalOxygenData:
+  {
+    SESupplementalOxygen* a = new SESupplementalOxygen();
+    PBPatientAction::Load(any.supplementaloxygendata(), *a);
+    return a;
+  }
   case cdm::AnyPatientActionData::ActionCase::kTensionPneumothorax:
   {
     SETensionPneumothorax* a = new SETensionPneumothorax();
