@@ -180,7 +180,7 @@ void PulseSubstances::InitializeGasCompartments()
     }
   }
 
-  //jbw - update these to just loop over leaf compartments
+  //jbw - Update these to just loop over leaf compartments... Why aren't leaf compartments defined for these?
 
   SEGasCompartment* NasalCannulaOxygenSource = m_data.GetCompartments().GetGasCompartment(pulse::NasalCannulaCompartment::NasalCannulaOxygenSource);
   NasalCannulaOxygenSource->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetVolumeFraction().SetValue(1.0);

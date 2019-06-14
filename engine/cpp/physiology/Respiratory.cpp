@@ -476,8 +476,7 @@ void Respiratory::PostProcess()
   // Respiration circuit changes based on if Anesthesia Machine is on or off
   // When dynamic intercircuit connections work, we can stash off the respiration circuit in a member variable
   SEFluidCircuit& RespirationCircuit = m_data.GetCircuits().GetActiveRespiratoryCircuit();  
-  m_Calculator->PostProcess(RespirationCircuit);
-  
+  m_Calculator->PostProcess(RespirationCircuit);  
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -822,7 +821,7 @@ void Respiratory::SupplementalOxygen()
 {
   ///\todo - Maybe this and mechanical ventilator should be broken out to their own class, like anesthesia machine?
 
-  //jbw - Make sure this can be turned off
+  //jbw - Make sure this can be turned off... How are these turned off?
 
   if (!m_data.GetActions().GetPatientActions().HasSupplementalOxygen())
   {
@@ -882,13 +881,19 @@ void Respiratory::SupplementalOxygen()
     }
     else if (hasNonRebreatherMask)
     {
-      flow_L_Per_min = 8.0;
+      flow_L_Per_min = 10.0;
     }
     else
     {
       /// \error Fatal: No supplemental oxygen device set.
       Fatal("No supplemental oxygen device set.");
     }
+
+    so->GetFlow().SetValue(flow_L_Per_min, VolumePerTimeUnit::L_Per_min);
+
+    std::stringstream ss;
+    ss << "Supplemental oxygen flow not set. Using default value of " << flow_L_Per_min << " L/min.";
+    Info(ss);
   }
 
   //Get tank pressure node and flow control resistor path
@@ -920,6 +925,8 @@ void Respiratory::SupplementalOxygen()
   if (!so->HasVolume())
   {
     so->GetVolume().SetValue(425.0, VolumeUnit::L);
+
+    Info("Supplemental oxygen initial tank volume not set. Using default value of 425 L.");
   }
 
   //Decrement volume from the tank
@@ -933,20 +940,53 @@ void Respiratory::SupplementalOxygen()
     {
       so->GetVolume().SetValue(0.0, VolumeUnit::L);
       flow_L_Per_min = 0.0;
-      //jbw - Add depleted tank event
+      //jbw - Add depleted tank event and set back to false when replaced.
       /// \event Supplemental Oxygen: Oxygen bottle is exhausted. There is no longer any oxygen to provide.
       //SetEvent(eSupplementalOxygen_Event::SupplementalOxygenBottleExhausted, true, m_data.GetSimulationTime());
     }
   }
+  
+  //Nonrebreather mask works differently wiht the bag and doesn't have a pressure source for the tank
+  if (!hasNonRebreatherMask)
+  {
+    //Determine flow control resistance
+    //Assume pressure outside tank is comparatively approximately ambient
+    double tankPressure_cmH2O = Tank->GetNextPressureSource(PressureUnit::cmH2O);
+    double resistance_cmH2O_s_Per_L = tankPressure_cmH2O / (flow_L_Per_min / 60.0); //convert from min to s
+    resistance_cmH2O_s_Per_L = LIMIT(resistance_cmH2O_s_Per_L, m_DefaultClosedResistance_cmH2O_s_Per_L, m_DefaultOpenResistance_cmH2O_s_Per_L);
+    
+    //Apply flow
+    OxygenInlet->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, FlowResistanceUnit::cmH2O_s_Per_L);
+  }
+  else
+  {
+    //Handle nonrebreather mask bag
+    double bagVolume_L = RespirationCircuit.GetNode(pulse::NonRebreatherMaskNode::NonRebreatherMaskBag)->GetNextVolume(VolumeUnit::L);
+    double flowOut_L_Per_min = 0.0;
+    if (RespirationCircuit.GetPath(pulse::NonRebreatherMaskPath::NonRebreatherMaskReservoirValve)->HasNextFlow())
+    {
+      flowOut_L_Per_min = RespirationCircuit.GetPath(pulse::NonRebreatherMaskPath::NonRebreatherMaskReservoirValve)->GetNextFlow(VolumePerTimeUnit::L_Per_min);
+    }
+    bagVolume_L = bagVolume_L + (flow_L_Per_min - flowOut_L_Per_min) * m_dt_min;
 
-  //Determine flow control resistance
-  //Assume pressure outside tank is comparatively approximately ambient
-  double tankPressure_cmH2O = Tank->GetNextPressureSource(PressureUnit::cmH2O);
-  double resistance_cmH2O_s_Per_L = tankPressure_cmH2O / (flow_L_Per_min / 60.0); //convert from min to s
-  resistance_cmH2O_s_Per_L = LIMIT(resistance_cmH2O_s_Per_L, m_DefaultClosedResistance_cmH2O_s_Per_L, m_DefaultOpenResistance_cmH2O_s_Per_L);
+    if (bagVolume_L < 0.0)
+    {
+      bagVolume_L = 0.0;
 
-  //Apply flow
-  OxygenInlet->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, FlowResistanceUnit::cmH2O_s_Per_L);
+      //No air can come from the bag
+      OxygenInlet->GetNextResistance().SetValue(m_RespOpenResistance_cmH2O_s_Per_L, FlowResistanceUnit::cmH2O_s_Per_L);
+
+      //jbw - Add empty bag event. Trigger only once until it's not exhausted again.
+      /// \event Supplemental Oxygen: The nonrebreather mask is empty. Oxygen may need to be provided at a faster rate.
+      //SetEvent(eSupplementalOxygen_Event::SupplementalOxygenBagEmpty, true, m_data.GetSimulationTime());
+    }
+    else if (bagVolume_L > 1.0)
+    {
+      bagVolume_L = 1.0;
+    }
+    
+    RespirationCircuit.GetNode(pulse::NonRebreatherMaskNode::NonRebreatherMaskBag)->GetNextVolume().SetValue(bagVolume_L, VolumeUnit::L);
+  }
 }
 
 //--------------------------------------------------------------------------------------------------

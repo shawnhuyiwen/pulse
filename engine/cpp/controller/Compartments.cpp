@@ -247,6 +247,21 @@ void PulseCompartments::StateChange()
   {
     Error("Could not find required Graph " + std::string(pulse::Graph::RespiratoryAndInhaler));
   }
+  m_CombinedRespiratoryNasalCannulaGraph = GetGasGraph(pulse::Graph::RespiratoryAndNasalCannula);
+  if (m_CombinedRespiratoryNasalCannulaGraph == nullptr)
+  {
+    Error("Could not find required Graph " + std::string(pulse::Graph::RespiratoryAndNasalCannula));
+  }
+  m_CombinedRespiratorySimpleMaskGraph = GetGasGraph(pulse::Graph::RespiratoryAndSimpleMask);
+  if (m_CombinedRespiratorySimpleMaskGraph == nullptr)
+  {
+    Error("Could not find required Graph " + std::string(pulse::Graph::RespiratoryAndSimpleMask));
+  }
+  m_CombinedRespiratoryNonRebreatherMaskGraph = GetGasGraph(pulse::Graph::RespiratoryAndNonRebreatherMask);
+  if (m_CombinedRespiratoryNonRebreatherMaskGraph == nullptr)
+  {
+    Error("Could not find required Graph " + std::string(pulse::Graph::RespiratoryAndNonRebreatherMask));
+  }
   m_AerosolGraph = GetLiquidGraph(pulse::Graph::Aerosol);
   if (m_AerosolGraph == nullptr)
   {
@@ -410,12 +425,12 @@ SELiquidCompartmentGraph& PulseCompartments::GetActiveAerosolGraph()
   case eAirwayMode::MechanicalVentilator:
     if (m_UpdateActiveAerosolGraph)
       m_data.GetCompartments().UpdateLinks(*m_CombinedAerosolMechanicalVentilatorGraph);
-    m_UpdateActiveAerosolGraph = true;
+    m_UpdateActiveAerosolGraph = false;
     return *m_CombinedAerosolMechanicalVentilatorGraph;
   case eAirwayMode::Inhaler:
     if (m_UpdateActiveAerosolGraph)
       m_data.GetCompartments().UpdateLinks(*m_CombinedAerosolInhalerGraph);
-    m_UpdateActiveAerosolGraph = true;
+    m_UpdateActiveAerosolGraph = false;
     return *m_CombinedAerosolInhalerGraph;
   case eAirwayMode::NasalCannula:// Just use the regular graph
     if (m_UpdateActiveAerosolGraph)

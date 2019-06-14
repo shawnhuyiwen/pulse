@@ -1098,6 +1098,7 @@ namespace pulse {
   {
   public:
     DEFINE_STATIC_STRING(NonRebreatherMaskOxygenSource);
+    DEFINE_STATIC_STRING(NonRebreatherMaskPorts);
     DEFINE_STATIC_STRING(NonRebreatherMaskBag);
     DEFINE_STATIC_STRING(NonRebreatherMask);
 
@@ -1107,6 +1108,7 @@ namespace pulse {
       if (_values.empty())
       {
         _values.push_back(NonRebreatherMaskOxygenSource);
+        _values.push_back(NonRebreatherMaskPorts);
         _values.push_back(NonRebreatherMaskBag);
         _values.push_back(NonRebreatherMask);
       }
@@ -1123,6 +1125,7 @@ namespace pulse {
     DEFINE_STATIC_STRING(NonRebreatherMaskReservoirValve);
     DEFINE_STATIC_STRING(NonRebreatherMaskSeal);
     DEFINE_STATIC_STRING(NonRebreatherMaskExhalationValves);
+    DEFINE_STATIC_STRING(NonRebreatherMaskExhalation);
     DEFINE_STATIC_STRING(NonRebreatherMaskToMouth);
 
     static const std::vector<std::string>& GetValues()
@@ -1134,6 +1137,7 @@ namespace pulse {
         _values.push_back(NonRebreatherMaskReservoirValve);
         _values.push_back(NonRebreatherMaskSeal);
         _values.push_back(NonRebreatherMaskExhalationValves);
+        _values.push_back(NonRebreatherMaskExhalation);
         _values.push_back(NonRebreatherMaskToMouth);
       }
       return _values;

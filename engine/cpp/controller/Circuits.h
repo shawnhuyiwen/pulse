@@ -298,9 +298,10 @@ namespace pulse {
   class NonRebreatherMaskNode
   {
   public:
-    DEFINE_STATIC_STRING(NonRebreatherMask);
     DEFINE_STATIC_STRING(NonRebreatherMaskOxygenSource);
+    DEFINE_STATIC_STRING(NonRebreatherMask);
     DEFINE_STATIC_STRING(NonRebreatherMaskBag);
+    DEFINE_STATIC_STRING(NonRebreatherMaskPorts);
   };
 
   class NonRebreatherMaskPath
@@ -308,9 +309,11 @@ namespace pulse {
   public:
     DEFINE_STATIC_STRING(NonRebreatherMaskPressure);
     DEFINE_STATIC_STRING(NonRebreatherMaskOxygenInlet);
+    DEFINE_STATIC_STRING(NonRebreatherMaskBag);
     DEFINE_STATIC_STRING(NonRebreatherMaskReservoirValve);
     DEFINE_STATIC_STRING(NonRebreatherMaskSeal);
     DEFINE_STATIC_STRING(NonRebreatherMaskExhalationValves);
+    DEFINE_STATIC_STRING(NonRebreatherMaskExhalation);
     DEFINE_STATIC_STRING(NonRebreatherMaskToMouth);
   };
 
