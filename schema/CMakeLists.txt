@@ -28,6 +28,8 @@ set(BIND_FILES
   "${SCHEMA_DST}/cpp/cdm/EnvironmentActions.pb.h"
   "${SCHEMA_DST}/cpp/cdm/EnvironmentConditions.pb.cc"
   "${SCHEMA_DST}/cpp/cdm/EnvironmentConditions.pb.h"
+  "${SCHEMA_DST}/cpp/cdm/Events.pb.cc"
+  "${SCHEMA_DST}/cpp/cdm/Events.pb.h"
   "${SCHEMA_DST}/cpp/cdm/Inhaler.pb.cc"
   "${SCHEMA_DST}/cpp/cdm/Inhaler.pb.h"
   "${SCHEMA_DST}/cpp/cdm/InhalerActions.pb.cc"

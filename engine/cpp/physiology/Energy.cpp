@@ -21,6 +21,7 @@
 #include "patient/SEPatient.h"
 #include "patient/SEMeal.h"
 #include "patient/SENutrition.h"
+#include "engine/SEEventManager.h"
 #include "circuit/fluid/SEFluidCircuit.h"
 #include "circuit/thermal/SEThermalCircuit.h"
 #include "circuit/thermal/SEThermalCircuitNode.h"
@@ -283,7 +284,7 @@ void Energy::Exercise()
   // Any exercise action will reduce energy stores and induce some fatigue, setting the fatigue event.
   // While the fatigue event is active, the exercise method will execute even if there is no exercise action.
   // This allows the energy stores to refill post-exercise.
-  if (!m_data.GetActions().GetPatientActions().HasExercise() && !m_Patient->IsEventActive(ePatient_Event::Fatigue))
+  if (!m_data.GetActions().GetPatientActions().HasExercise() && !m_data.GetEvents().IsEventActive(eEvent::Fatigue))
     return;
 
   double exerciseIntensity = 0.0;
@@ -421,10 +422,10 @@ void Energy::Exercise()
   double fatigue = (normalizedEnduranceEnergyDeficit + normalizedMediumEnergyDeficit + normalizedPeakEnergyDeficit + normalizedUsableEnergyDeficit) / 4.0;
   /// \event Patient: Fatigue - Energy stores are sub-maximal.
   if (fatigue > 0.0){
-    m_Patient->SetEvent(ePatient_Event::Fatigue, true, m_data.GetSimulationTime());
+    m_data.GetEvents().SetEvent(eEvent::Fatigue, true, m_data.GetSimulationTime());
   }
   else {
-    m_Patient->SetEvent(ePatient_Event::Fatigue, false, m_data.GetSimulationTime());
+    m_data.GetEvents().SetEvent(eEvent::Fatigue, false, m_data.GetSimulationTime());
   }
   GetFatigueLevel().SetValue(fatigue);
 
@@ -505,30 +506,30 @@ void Energy::CalculateVitalSigns()
   if (coreTemperature_degC < 35.0) /// \cite mallet2001hypothermia
   {
     /// \event Patient: Core temperature has fallen below 35 degrees Celsius. Patient is hypothermic.
-    m_Patient->SetEvent(ePatient_Event::Hypothermia, true, m_data.GetSimulationTime());
+    m_data.GetEvents().SetEvent(eEvent::Hypothermia, true, m_data.GetSimulationTime());
 
     /// \irreversible State: Core temperature has fallen below 20 degrees Celsius.
     if (coreTemperature_degC < coreTempIrreversible_degC)
     {
       ss << "Core temperature is " << coreTemperature_degC << ". This is below 20 degrees C, patient is experiencing extreme hypothermia and is in an irreversible state.";
       Warning(ss);
-      m_Patient->SetEvent(ePatient_Event::IrreversibleState, true, m_data.GetSimulationTime());
+      m_data.GetEvents().SetEvent(eEvent::IrreversibleState, true, m_data.GetSimulationTime());
     }
 
   }
-  else if (m_Patient->IsEventActive(ePatient_Event::Hypothermia) && coreTemperature_degC>35.2)
+  else if (m_data.GetEvents().IsEventActive(eEvent::Hypothermia) && coreTemperature_degC>35.2)
   {
-    m_Patient->SetEvent(ePatient_Event::Hypothermia, false, m_data.GetSimulationTime());
+    m_data.GetEvents().SetEvent(eEvent::Hypothermia, false, m_data.GetSimulationTime());
   }
   //Hyperthermia check
   if (coreTemperature_degC > 38.8) /// \cite mallet2001hypothermia
   {
     /// \event Patient: Core temperature has exceeded 38.3 degrees Celsius. Patient is hyperthermic.
-    m_Patient->SetEvent(ePatient_Event::Hyperthermia, true, m_data.GetSimulationTime());
+    m_data.GetEvents().SetEvent(eEvent::Hyperthermia, true, m_data.GetSimulationTime());
   }
-  else if (m_Patient->IsEventActive(ePatient_Event::Hyperthermia) && coreTemperature_degC < 38.0)
+  else if (m_data.GetEvents().IsEventActive(eEvent::Hyperthermia) && coreTemperature_degC < 38.0)
   {
-    m_Patient->SetEvent(ePatient_Event::Hyperthermia, false, m_data.GetSimulationTime());
+    m_data.GetEvents().SetEvent(eEvent::Hyperthermia, false, m_data.GetSimulationTime());
   }
 
   /// \todo Move to blood chemistry
@@ -541,7 +542,7 @@ void Energy::CalculateVitalSigns()
   m_BloodpH->Sample(m_data.GetBloodChemistry().GetBloodPH().GetValue());
   m_BicarbonateMolarity_mmol_Per_L->Sample(m_AortaHCO3->GetMolarity(AmountPerVolumeUnit::mmol_Per_L));
   //Only check these at the end of a cardiac cycle and reset at start of cardiac cycle 
-  if (m_Patient->IsEventActive(ePatient_Event::StartOfCardiacCycle))
+  if (m_data.GetEvents().IsEventActive(eEvent::StartOfCardiacCycle))
   {
     double bloodPH = m_BloodpH->Value();
     double bloodBicarbonate_mmol_Per_L = m_BicarbonateMolarity_mmol_Per_L->Value();
@@ -550,34 +551,34 @@ void Energy::CalculateVitalSigns()
     {// Don't throw events if we are initializing
       if (bloodPH < 7.35 && bloodBicarbonate_mmol_Per_L < 22.0)
         /// \event The patient is in a state of metabolic acidosis
-        m_Patient->SetEvent(ePatient_Event::MetabolicAcidosis, true, m_data.GetSimulationTime());
+        m_data.GetEvents().SetEvent(eEvent::MetabolicAcidosis, true, m_data.GetSimulationTime());
 
       /// \irreversible State: arterial blood pH has dropped below 6.5.
       if (bloodPH < lowPh)
       {
         ss << " Arterial blood PH is " << bloodPH << ". This is below 6.5, patient is experiencing extreme metabolic acidosis and is in an irreversible state.";
         Warning(ss);
-        m_Patient->SetEvent(ePatient_Event::IrreversibleState, true, m_data.GetSimulationTime());
+        m_data.GetEvents().SetEvent(eEvent::IrreversibleState, true, m_data.GetSimulationTime());
       }
       else if (bloodPH > 7.38 && bloodBicarbonate_mmol_Per_L > 23.0)
         /// \event The patient has exited the state state of metabolic acidosis
-        m_Patient->SetEvent(ePatient_Event::MetabolicAcidosis, false, m_data.GetSimulationTime());
+        m_data.GetEvents().SetEvent(eEvent::MetabolicAcidosis, false, m_data.GetSimulationTime());
 
       if (bloodPH > 7.45 && bloodBicarbonate_mmol_Per_L > 26.0)
         /// \event The patient is in a state of metabolic alkalosis
-        m_Patient->SetEvent(ePatient_Event::MetabolicAlkalosis, true, m_data.GetSimulationTime());
+        m_data.GetEvents().SetEvent(eEvent::MetabolicAlkalosis, true, m_data.GetSimulationTime());
 
       /// \irreversible State: arterial blood pH has increased above 8.5.
       if (bloodPH > highPh)
       {
         ss << " Arterial blood PH is " << bloodPH << ". This is above 8.5, patient is experiencing extreme metabolic Alkalosis and is in an irreversible state.";
         Warning(ss);
-        m_Patient->SetEvent(ePatient_Event::IrreversibleState, true, m_data.GetSimulationTime());
+        m_data.GetEvents().SetEvent(eEvent::IrreversibleState, true, m_data.GetSimulationTime());
       }
 
       else if (bloodPH < 7.42 && bloodBicarbonate_mmol_Per_L < 25.0)
         /// \event The patient has exited the state of metabolic alkalosis
-        m_Patient->SetEvent(ePatient_Event::MetabolicAlkalosis, false, m_data.GetSimulationTime());
+        m_data.GetEvents().SetEvent(eEvent::MetabolicAlkalosis, false, m_data.GetSimulationTime());
     }
     // Reset the running averages. Why do we need running averages here? Does the aorta pH fluctuate that much? 
     m_BloodpH->Clear();

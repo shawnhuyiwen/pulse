@@ -29,6 +29,7 @@
 #include "system/physiology/SENervousSystem.h"
 // CDM
 #include "patient/SEPatient.h"
+#include "engine/SEEventManager.h"
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceTransport.h"
 #include "circuit/fluid/SEFluidCircuit.h"
@@ -747,7 +748,7 @@ void Cardiovascular::CalculateVitalSigns()
   /// \event Patient: Hypovolemic Shock: blood volume below 65% of its normal value
     if (GetBloodVolume().GetValue(VolumeUnit::mL) <= (m_data.GetConfiguration().GetMinimumBloodVolumeFraction()*m_patient->GetBloodVolumeBaseline(VolumeUnit::mL)))
     {
-      m_patient->SetEvent(ePatient_Event::HypovolemicShock, true, m_data.GetSimulationTime());
+      m_data.GetEvents().SetEvent(eEvent::HypovolemicShock, true, m_data.GetSimulationTime());
 
       /// \event Patient: blood loss below 50%, irreversible state enacted 
       // @cite Gutierrez2004HemorrhagicShock
@@ -757,12 +758,12 @@ void Cardiovascular::CalculateVitalSigns()
         m_ss << "Over half the patients blood volume has been lost. The patient is now in an irreversible state.";
         Warning(m_ss);
         /// \irreversible Over half the patients blood volume has been lost.
-        m_patient->SetEvent(ePatient_Event::IrreversibleState, true, m_data.GetSimulationTime());
+        m_data.GetEvents().SetEvent(eEvent::IrreversibleState, true, m_data.GetSimulationTime());
       }
     }
     else
     {
-      m_patient->SetEvent(ePatient_Event::HypovolemicShock, false, m_data.GetSimulationTime());
+      m_data.GetEvents().SetEvent(eEvent::HypovolemicShock, false, m_data.GetSimulationTime());
     }
 
     //Check for cardiogenic shock
@@ -772,44 +773,44 @@ void Cardiovascular::CalculateVitalSigns()
     {
       /// \event Patient: Cardiogenic Shock: Cardiac Index has fallen below 2.2 L/min-m^2, Systolic Arterial Pressure is below 90 mmHg, and Pulmonary Capillary Wedge Pressure is above 15.0.
       /// \cite dhakam2008review
-      m_patient->SetEvent(ePatient_Event::CardiogenicShock, true, m_data.GetSimulationTime());
+      m_data.GetEvents().SetEvent(eEvent::CardiogenicShock, true, m_data.GetSimulationTime());
     }
     else
     {
-      m_patient->SetEvent(ePatient_Event::CardiogenicShock, false, m_data.GetSimulationTime());
+      m_data.GetEvents().SetEvent(eEvent::CardiogenicShock, false, m_data.GetSimulationTime());
     }
 
     //Check for Tachycardia, Bradycardia, and asystole
     /// \event Patient: Tachycardia: heart rate exceeds 100 beats per minute.  This state is alleviated if it decreases below 90.
     if (GetHeartRate().GetValue(FrequencyUnit::Per_min) < 90)
-      m_patient->SetEvent(ePatient_Event::Tachycardia, false, m_data.GetSimulationTime());
+      m_data.GetEvents().SetEvent(eEvent::Tachycardia, false, m_data.GetSimulationTime());
     if (GetHeartRate().GetValue(FrequencyUnit::Per_min) > 100)
-      m_patient->SetEvent(ePatient_Event::Tachycardia, true, m_data.GetSimulationTime());
+      m_data.GetEvents().SetEvent(eEvent::Tachycardia, true, m_data.GetSimulationTime());
     /// \event Patient: Bradycardia: heart rate falls below 60 beats per minute.  This state is alleviated if it increases above 65.
     if (GetHeartRate().GetValue(FrequencyUnit::Per_min) < 60)
-      m_patient->SetEvent(ePatient_Event::Bradycardia, true, m_data.GetSimulationTime());
+      m_data.GetEvents().SetEvent(eEvent::Bradycardia, true, m_data.GetSimulationTime());
     if (GetHeartRate().GetValue(FrequencyUnit::Per_min) > 65)
-      m_patient->SetEvent(ePatient_Event::Bradycardia, false, m_data.GetSimulationTime());
+      m_data.GetEvents().SetEvent(eEvent::Bradycardia, false, m_data.GetSimulationTime());
     if (GetHeartRate().GetValue(FrequencyUnit::Per_min) == 0 || m_data.GetActions().GetPatientActions().HasCardiacArrest())
     {
-      m_patient->SetEvent(ePatient_Event::Asystole, true, m_data.GetSimulationTime());
+      m_data.GetEvents().SetEvent(eEvent::Asystole, true, m_data.GetSimulationTime());
     }
     else
     {
-      m_patient->SetEvent(ePatient_Event::Asystole, false, m_data.GetSimulationTime());
+      m_data.GetEvents().SetEvent(eEvent::Asystole, false, m_data.GetSimulationTime());
     }
   }
 
   // Irreversible state if asystole persists.
-  if (GetHeartRhythm() == eHeartRhythm::Asystole)
+  if (GetHeartRhythm() == eHeartRhythm::Asystolic)
   {
     /// \event Patient: Irreversible State: heart has been in asystole for over 45 min:
-    if (m_patient->GetEventDuration(ePatient_Event::Asystole, TimeUnit::s) > 2700.0) // \cite: Zijlmans2002EpilepticSeizuresAsystole
+    if (m_data.GetEvents().GetEventDuration(eEvent::Asystole, TimeUnit::s) > 2700.0) // \cite: Zijlmans2002EpilepticSeizuresAsystole
     {
-      m_ss << "Asystole has occurred for " << m_patient->GetEventDuration(ePatient_Event::Asystole, TimeUnit::s) << " seconds, patient is in irreversible state.";
+      m_ss << "Asystole has occurred for " << m_data.GetEvents().GetEventDuration(eEvent::Asystole, TimeUnit::s) << " seconds, patient is in irreversible state.";
       Warning(m_ss);
       /// \irreversible Heart has been in asystole for over 45 min
-      m_patient->SetEvent(ePatient_Event::IrreversibleState, true, m_data.GetSimulationTime());
+      m_data.GetEvents().SetEvent(eEvent::IrreversibleState, true, m_data.GetSimulationTime());
     }
   }
 
@@ -1342,7 +1343,7 @@ void Cardiovascular::CPR()
   // Call for chest compression with an effective heart rhythm
   // In the future we may allow compressions on a beating heart, but that will require extensive testing
   // to evaluate the hemodynamic stability.
-  if (!m_patient->IsEventActive(ePatient_Event::CardiacArrest))
+  if (!m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
   {
     Warning("CPR attempted on beating heart. Action ignored.");
     m_data.GetActions().GetPatientActions().RemoveChestCompression();
@@ -1464,7 +1465,7 @@ void Cardiovascular::CardiacArrest()
   else
   {
     m_EnterCardiacArrest = false;
-    m_patient->SetEvent(ePatient_Event::CardiacArrest, false, m_data.GetSimulationTime());
+    m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
   }
 }
 
@@ -1526,15 +1527,15 @@ void Cardiovascular::InternalHemorrhagePressureApplication()
 void Cardiovascular::HeartDriver()
 {
   // Reset start cardiac cycle event if it was activated by BeginCardiacCycle() last time step
-  if (m_patient->IsEventActive(ePatient_Event::StartOfCardiacCycle))
-    m_patient->SetEvent(ePatient_Event::StartOfCardiacCycle, false, m_data.GetSimulationTime());
+  if (m_data.GetEvents().IsEventActive(eEvent::StartOfCardiacCycle))
+    m_data.GetEvents().SetEvent(eEvent::StartOfCardiacCycle, false, m_data.GetSimulationTime());
 
   // m_StartSystole is set to true at the end of a cardiac cycle in order to setup the next cardiac cycle.
   // After the next cycle is prepared in BeginCardiacCycle, m_StartSystole is seet back to false.
   if (m_StartSystole)
     BeginCardiacCycle();
 
-  if (!m_patient->IsEventActive(ePatient_Event::CardiacArrest))
+  if (!m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
   {
     if (m_CurrentCardiacCycleTime_s >= m_CardiacCyclePeriod_s - m_dT_s)
       m_StartSystole = true; // A new cardiac cycle will begin next time step
@@ -1565,7 +1566,7 @@ void Cardiovascular::HeartDriver()
 //--------------------------------------------------------------------------------------------------
 void Cardiovascular::BeginCardiacCycle()
 {
-  m_patient->SetEvent(ePatient_Event::StartOfCardiacCycle, true, m_data.GetSimulationTime());
+  m_data.GetEvents().SetEvent(eEvent::StartOfCardiacCycle, true, m_data.GetSimulationTime());
 
   // Changes to the heart rate and other hemodynamic parameters are applied at the top of the cardiac cycle.
   // Parameters cannot change during the cardiac cycle because the heart beat is modeled as a changing compliance.
@@ -1600,7 +1601,7 @@ void Cardiovascular::BeginCardiacCycle()
   // Now set the cardiac cycle period and the cardiac arrest event if applicable
   if (m_EnterCardiacArrest)
   {
-    m_patient->SetEvent(ePatient_Event::CardiacArrest, true, m_data.GetSimulationTime());
+    m_data.GetEvents().SetEvent(eEvent::CardiacArrest, true, m_data.GetSimulationTime());
     m_CardiacCyclePeriod_s = 1.0e9; // Not beating, so set the period to a large number (1.0e9 sec = 31.7 years) 
     RecordAndResetCardiacCycle();
     GetHeartRate().SetValue(0.0, FrequencyUnit::Per_min);
@@ -2104,9 +2105,9 @@ void Cardiovascular::CalculateHeartRate()
 void Cardiovascular::UpdateHeartRhythm()
 {
   if (m_data.GetActions().GetPatientActions().HasCardiacArrest() ||
-    m_patient->IsEventActive(ePatient_Event::Asystole))
+    m_data.GetEvents().IsEventActive(eEvent::Asystole))
   {
-    SetHeartRhythm(eHeartRhythm::Asystole);
+    SetHeartRhythm(eHeartRhythm::Asystolic);
   }
   else
   {

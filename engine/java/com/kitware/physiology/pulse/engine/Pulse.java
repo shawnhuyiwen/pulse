@@ -4,10 +4,11 @@ package com.kitware.physiology.pulse.engine;
 
 import java.util.*;
 
-import com.kitware.physiology.cdm.Patient.ePatient;
-import com.kitware.physiology.cdm.AnesthesiaMachine.eAnesthesiaMachine;
+import com.kitware.physiology.cdm.Events.eEvent;
 import com.kitware.physiology.datamodel.compartment.*;
 import com.kitware.physiology.datamodel.datarequests.*;
+import com.kitware.physiology.datamodel.engine.SEEventHandler;
+import com.kitware.physiology.datamodel.engine.SEEventManager;
 import com.kitware.physiology.datamodel.patient.SEPatient;
 import com.kitware.physiology.datamodel.patient.nutrition.SENutrition;
 import com.kitware.physiology.datamodel.properties.*;
@@ -21,7 +22,6 @@ import com.kitware.physiology.datamodel.system.equipment.anesthesia.*;
 import com.kitware.physiology.datamodel.system.equipment.electrocardiogram.*;
 import com.kitware.physiology.datamodel.system.equipment.inhaler.*;
 import com.kitware.physiology.datamodel.system.physiology.*;
-import com.kitware.physiology.datamodel.utilities.SEEventHandler;
 import com.kitware.physiology.utilities.jniBridge;
 import com.kitware.physiology.utilities.Log;
 import com.kitware.physiology.utilities.LogListener;
@@ -59,7 +59,7 @@ public class Pulse
   
   protected CDMUpdatedCallback            cdmCallback;
   protected LogListener                   listener;
-  protected SEEventHandler                eventHandler;
+  protected SEEventManager                eventManager;
   
   protected long nativeObj;
   protected synchronized native long nativeAllocate(String logFile);
@@ -158,9 +158,9 @@ public class Pulse
     this.listener = listener;
   }
   
-  public void setEventHandler(SEEventHandler handler)
+  public SEEventManager getEventManager()
   {
-    eventHandler = handler;
+    return this.eventManager;
   }
   
   /**
@@ -182,21 +182,7 @@ public class Pulse
    */
   protected void handleEvent(int type, int event, boolean active, double time_s)
   {
-    switch(type)
-    {
-      case 0:
-        if(eventHandler!=null)
-          eventHandler.handlePatientEvent(ePatient.Event.values()[event],active,new SEScalarTime(time_s,TimeUnit.s));
-        this.patient.setEvent(ePatient.Event.values()[event],active);
-        break;
-      case 1:
-        if(eventHandler!=null)
-          eventHandler.handleAnesthesiaMachineEvent(eAnesthesiaMachine.Event.values()[event],active,new SEScalarTime(time_s,TimeUnit.s));
-        this.anesthesiaMachine.setEvent(eAnesthesiaMachine.Event.values()[event],active);
-        break;
-      default:
-          Log.error("Unsupported event type "+type);
-    }
+    this.getEventManager().setEvent(eEvent.values()[event],active,new SEScalarTime(time_s,TimeUnit.s));
   }
   
   public List<Pair<SEDataRequest,SEScalar>> getDataRequestPairs()

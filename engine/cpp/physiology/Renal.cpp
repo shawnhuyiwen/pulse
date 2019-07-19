@@ -24,6 +24,7 @@
 // CDM
 #include "patient/SEPatient.h"
 #include "patient/SEMeal.h"
+#include "engine/SEEventManager.h"
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceClearance.h"
 #include "circuit/SECircuit.h"
@@ -1462,7 +1463,7 @@ void Renal::CalculateVitalSigns()
 
   //Only check these once each cardiac cycle (using running average for entire cycle)
   //Otherwise, they could turn on and off like crazy as the flows fluctuate throughout the cycle
-  if (m_data.GetPatient().IsEventActive(ePatient_Event::StartOfCardiacCycle) && m_Urinating == false)
+  if (m_data.GetEvents().IsEventActive(eEvent::StartOfCardiacCycle) && m_Urinating == false)
   {
     if (m_data.GetState() > EngineState::InitialStabilization)
     {// Don't throw events if we are initializing
@@ -1472,12 +1473,12 @@ void Renal::CalculateVitalSigns()
       if (m_urineProductionRate_mL_Per_min_runningAvg->Value() > 2.5)
       {
         /// \event Patient: Diuresis. Occurs when the urine production rate double to around 2.5 ml/min. \cite lahav1992intermittent
-        m_patient->SetEvent(ePatient_Event::Diuresis, true, m_data.GetSimulationTime());
+        m_data.GetEvents().SetEvent(eEvent::Diuresis, true, m_data.GetSimulationTime());
       }
       else if (m_urineProductionRate_mL_Per_min_runningAvg->Value() < 1.0)
       {
         /// \event Patient: Ends when the urine production rate falls below 1.0 mL/min (near normal urine production). \cite lahav1992intermittent
-        m_patient->SetEvent(ePatient_Event::Diuresis, false, m_data.GetSimulationTime());
+        m_data.GetEvents().SetEvent(eEvent::Diuresis, false, m_data.GetSimulationTime());
       }
 
       /// \cite valtin1995renal
@@ -1486,12 +1487,12 @@ void Renal::CalculateVitalSigns()
       if (m_urineProductionRate_mL_Per_min_runningAvg->Value() < 0.5 && m_urineOsmolarity_mOsm_Per_L_runningAvg->Value() > 280)
       {
         /// \event Patient: Antidiuresis occurs when urine production rate is less than 0.5 mL/min and the urine osmolarity is hyperosmotic to the plasma \cite valtin1995renal
-        m_patient->SetEvent(ePatient_Event::Antidiuresis, true, m_data.GetSimulationTime());
+        m_data.GetEvents().SetEvent(eEvent::Antidiuresis, true, m_data.GetSimulationTime());
       }
       else if ((m_urineProductionRate_mL_Per_min_runningAvg->Value() > 0.55 || m_urineOsmolarity_mOsm_Per_L_runningAvg->Value() < 275))
       {
         /// \event Patient: Antidiuresis. Ends when urine production rate rises back above 0.55 mL/min or the urine osmolarity falls below that of the plasma \cite valtin1995renal
-        m_patient->SetEvent(ePatient_Event::Antidiuresis, false, m_data.GetSimulationTime());
+        m_data.GetEvents().SetEvent(eEvent::Antidiuresis, false, m_data.GetSimulationTime());
       }
 
       /// \cite Zager1988HypoperfusionRate
@@ -1499,12 +1500,12 @@ void Renal::CalculateVitalSigns()
       if (renalBloodFlow_mL_Per_s < 3.0)
       {
         /// \event Patient: hypoperfusion occurs when renal blood flow decreases below 3 ml/s 
-        m_patient->SetEvent(ePatient_Event::RenalHypoperfusion, true, m_data.GetSimulationTime());
+        m_data.GetEvents().SetEvent(eEvent::RenalHypoperfusion, true, m_data.GetSimulationTime());
       }
       else if (renalBloodFlow_mL_Per_s > 4.0)
       {
         /// \event Patient: hypoperfusion ends when blood flow recovers above 4 ml/s
-        m_patient->SetEvent(ePatient_Event::RenalHypoperfusion, false, m_data.GetSimulationTime());
+        m_data.GetEvents().SetEvent(eEvent::RenalHypoperfusion, false, m_data.GetSimulationTime());
       }
 
       /// \cite moss2014hormonal
@@ -1514,12 +1515,12 @@ void Renal::CalculateVitalSigns()
       if (m_sodiumExcretionRate_mg_Per_min_runningAvg->Value() > 14.4)
       {
         /// \event Patient: Natriuresis. Occurs when the sodium excretion rate rises above 14.4 mg/min \cite moss2013hormonal
-        m_patient->SetEvent(ePatient_Event::Natriuresis, true, m_data.GetSimulationTime());
+        m_data.GetEvents().SetEvent(eEvent::Natriuresis, true, m_data.GetSimulationTime());
       }
       else if (m_sodiumExcretionRate_mg_Per_min_runningAvg->Value() < 14.0)
       {
         /// \event Patient: Ends when the sodium excretion rate falls below 14.0 mg/min \cite moss2013hormonal
-        m_patient->SetEvent(ePatient_Event::Natriuresis, false, m_data.GetSimulationTime());
+        m_data.GetEvents().SetEvent(eEvent::Natriuresis, false, m_data.GetSimulationTime());
       }
     }
 
@@ -1551,7 +1552,7 @@ void Renal::Urinate()
   if (m_bladderNode->GetNextVolume().GetValue(VolumeUnit::mL) > bladderMaxVolume_mL)
   {
     /// \event Patient: FunctionalIncontinence: The patient's bladder has reached a maximum
-    m_patient->SetEvent(ePatient_Event::FunctionalIncontinence, true, m_data.GetSimulationTime());
+    m_data.GetEvents().SetEvent(eEvent::FunctionalIncontinence, true, m_data.GetSimulationTime());
     m_Urinating = true;
   }
 
@@ -1571,9 +1572,9 @@ void Renal::Urinate()
       //The urethra resistances will use the baselines value of an open switch to stop the flow
 
       //Turn off the event
-      if (m_patient->IsEventActive(ePatient_Event::FunctionalIncontinence))
+      if (m_data.GetEvents().IsEventActive(eEvent::FunctionalIncontinence))
       {
-        m_patient->SetEvent(ePatient_Event::FunctionalIncontinence, false, m_data.GetSimulationTime());
+        m_data.GetEvents().SetEvent(eEvent::FunctionalIncontinence, false, m_data.GetSimulationTime());
       }      
     }
     else
@@ -1772,7 +1773,7 @@ void Renal::CalculateOsmoreceptorFeedback()
       
         m_leftReabsorptionPermeabilityModificationFactor = pow(sodiumConcentration_mg_Per_mL, sodiumSensitivity) / pow(m_sodiumPlasmaConcentrationSetpoint_mg_Per_mL, sodiumSensitivity);
 
-        if (m_patient->IsEventActive(ePatient_Event::StartOfCardiacCycle))
+        if (m_data.GetEvents().IsEventActive(eEvent::StartOfCardiacCycle))
         {
           permeability_mL_Per_s_Per_mmHg_Per_m2 *= m_leftReabsorptionPermeabilityModificationFactor;
 
@@ -1787,7 +1788,7 @@ void Renal::CalculateOsmoreceptorFeedback()
 
       
         m_rightReabsorptionPermeabilityModificationFactor = pow(sodiumConcentration_mg_Per_mL, sodiumSensitivity) / pow(m_sodiumPlasmaConcentrationSetpoint_mg_Per_mL, sodiumSensitivity);
-        if (m_patient->IsEventActive(ePatient_Event::StartOfCardiacCycle))
+        if (m_data.GetEvents().IsEventActive(eEvent::StartOfCardiacCycle))
         {
           permeability_mL_Per_s_Per_mmHg_Per_m2 *= m_rightReabsorptionPermeabilityModificationFactor;
 
@@ -1796,7 +1797,7 @@ void Renal::CalculateOsmoreceptorFeedback()
         }
     }
   }
-  if (m_patient->IsEventActive(ePatient_Event::StartOfCardiacCycle))
+  if (m_data.GetEvents().IsEventActive(eEvent::StartOfCardiacCycle))
   {
     m_sodiumConcentration_mg_Per_mL_runningAvg->Clear();
   }
@@ -1861,7 +1862,7 @@ void Renal::CalculateTubuloglomerularFeedback()
 
       // Save off the last set point from initial stabilization for use after stabilization
       if (m_data.GetState() == EngineState::InitialStabilization &&
-        m_patient->IsEventActive(ePatient_Event::StartOfCardiacCycle))
+        m_data.GetEvents().IsEventActive(eEvent::StartOfCardiacCycle))
       {
         //Don't change the resistance - just figure out what it is
         m_leftSodiumFlowSetPoint_mg_Per_s = sodiumFlow_mg_Per_s;
@@ -1895,7 +1896,7 @@ void Renal::CalculateTubuloglomerularFeedback()
 
       // Save off the last set point from initial stabilization for use after stabilization
       if (m_data.GetState() == EngineState::InitialStabilization &&
-        m_patient->IsEventActive(ePatient_Event::StartOfCardiacCycle))
+        m_data.GetEvents().IsEventActive(eEvent::StartOfCardiacCycle))
       {
         //Don't change the resistance - just figure out what it is
         m_rightSodiumFlowSetPoint_mg_Per_s = sodiumFlow_mg_Per_s;
@@ -1903,7 +1904,7 @@ void Renal::CalculateTubuloglomerularFeedback()
       sodiumFlowSetPoint_mg_Per_s = m_rightSodiumFlowSetPoint_mg_Per_s;
     }
     
-    if (m_patient->IsEventActive(ePatient_Event::StartOfCardiacCycle))
+    if (m_data.GetEvents().IsEventActive(eEvent::StartOfCardiacCycle))
     {
       //Us the "current" resistance, to continually drive towards the response we want - the next value is overwritten by the baseline during postprocess
       double currentAfferentResistance_mmHg_s_Per_mL = afferentResistancePath->GetResistance().GetValue(FlowResistanceUnit::mmHg_s_Per_mL);
@@ -1954,7 +1955,7 @@ void Renal::CalculateTubuloglomerularFeedback()
     }
   }
   //reset sodium flow at start of cardiac cycle 
-  if (m_patient->IsEventActive(ePatient_Event::StartOfCardiacCycle))
+  if (m_data.GetEvents().IsEventActive(eEvent::StartOfCardiacCycle))
   {
     m_leftSodiumFlow_mg_Per_s_runningAvg->Clear();
     m_rightSodiumFlow_mg_Per_s_runningAvg->Clear();
@@ -1999,7 +2000,7 @@ void Renal::CalculateFluidPermeability()
       leftArterialPressure_mmHg = m_leftRenalArterialPressure_mmHg_runningAvg->Sample(leftArterialPressure_mmHg);
 
       //compute desired permeability as a function of arterial pressure, else set as baseline
-      if (m_patient->IsEventActive(ePatient_Event::StartOfCardiacCycle))
+      if (m_data.GetEvents().IsEventActive(eEvent::StartOfCardiacCycle))
       {
         if (round(leftArterialPressure_mmHg) >= 80.0)
         {
@@ -2032,7 +2033,7 @@ void Renal::CalculateFluidPermeability()
       rightArterialPressure_mmHg = m_rightRenalArterialPressure_mmHg_runningAvg->Sample(rightArterialPressure_mmHg);
 
       //compute desired permeability as a function of arterial pressure, else set as baseline
-      if (m_patient->IsEventActive(ePatient_Event::StartOfCardiacCycle))
+      if (m_data.GetEvents().IsEventActive(eEvent::StartOfCardiacCycle))
       {
         if (round(rightArterialPressure_mmHg) >= 80.0)
         {
@@ -2056,7 +2057,7 @@ void Renal::CalculateFluidPermeability()
     
   }
   //reset average at start of cardiac cycle
-  if (m_patient->IsEventActive(ePatient_Event::StartOfCardiacCycle))
+  if (m_data.GetEvents().IsEventActive(eEvent::StartOfCardiacCycle))
   {
     m_leftRenalArterialPressure_mmHg_runningAvg->Clear();
     m_rightRenalArterialPressure_mmHg_runningAvg->Clear();

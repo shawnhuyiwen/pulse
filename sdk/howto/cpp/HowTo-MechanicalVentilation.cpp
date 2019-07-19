@@ -45,7 +45,7 @@
 #include "properties/SEScalarPressureTimePerVolumeArea.h"
 #include "properties/SEScalarLengthPerTime.h"
 #include "properties/SEScalar0To1.h"
-#include "engine/SEEventHandler.h"
+#include "engine/SEEventManager.h"
 #include "engine/SEPatientConfiguration.h"
 #include <math.h>
 
@@ -54,11 +54,11 @@ class MechVentHandler : public Loggable, public SEEventHandler
 {
 public:
   MechVentHandler(Logger *logger) : Loggable(logger), SEEventHandler() { }
-  virtual void HandlePatientEvent(ePatient_Event type, bool active, const SEScalarTime* time = nullptr) 
+  virtual void HandleEvent(eEvent type, bool active, const SEScalarTime* time = nullptr) 
   {
     switch (type)
     {     
-      case ePatient_Event::MildAcuteRespiratoryDistress:
+      case eEvent::MildAcuteRespiratoryDistress:
       {
         if (active)
           m_Logger->Info("Do something for MildAcuteRespiratoryDistress");
@@ -66,7 +66,7 @@ public:
           m_Logger->Info("Stop doing something for MildAcuteRespiratoryDistress");
         break;
       }
-      case ePatient_Event::ModerateAcuteRespiratoryDistress:
+      case eEvent::ModerateAcuteRespiratoryDistress:
       {
         if (active)
           m_Logger->Info("Do something for ModerateAcuteRespiratoryDistress");
@@ -74,7 +74,7 @@ public:
           m_Logger->Info("Stop doing something for ModerateAcuteRespiratoryDistress");
         break;
       }
-      case ePatient_Event::SevereAcuteRespiratoryDistress:
+      case eEvent::SevereAcuteRespiratoryDistress:
       {
         if (active)
           m_Logger->Info("Do something for SevereAcuteRespiratoryDistress");
@@ -82,7 +82,7 @@ public:
           m_Logger->Info("Stop doing something for SevereAcuteRespiratoryDistress");
         break;
       }
-      case ePatient_Event::CardiogenicShock:
+      case eEvent::CardiogenicShock:
       {
         if (active)
           m_Logger->Info("Do something for CardiogenicShock");
@@ -91,9 +91,6 @@ public:
         break;
       }
     }
-  }
-  virtual void HandleAnesthesiaMachineEvent(eAnesthesiaMachine_Event type, bool active, const SEScalarTime* time = nullptr) 
-  {
   }
 };
 
@@ -164,7 +161,7 @@ void HowToMechanicalVentilation()
 
   // Let's add our event listener callback
   MechVentHandler myEventHandler(pe->GetLogger());
-  pe->SetEventHandler(&myEventHandler);
+  pe->GetEventManager().ForwardEvents(&myEventHandler);
 
   // The tracker is responsible for advancing the engine time and outputting the data requests below at each time step
   HowToTracker tracker(*pe);

@@ -7,7 +7,6 @@ import java.util.Map;
 
 import com.kitware.physiology.cdm.AnesthesiaMachine.AnesthesiaMachineData;
 import com.kitware.physiology.cdm.AnesthesiaMachine.AnesthesiaMachineData.*;
-import com.kitware.physiology.cdm.AnesthesiaMachine.eAnesthesiaMachine.Event;
 import com.kitware.physiology.datamodel.properties.SEScalar;
 import com.kitware.physiology.datamodel.properties.SEScalar0To1;
 import com.kitware.physiology.datamodel.properties.SEScalarFrequency;
@@ -37,7 +36,6 @@ public class SEAnesthesiaMachine implements SESystem
   protected SEAnesthesiaMachineOxygenBottle   oxygenBottleTwo;
 
 
-  protected Map<Event,Boolean> events = new HashMap<Event,Boolean>();
 
   public SEAnesthesiaMachine()
   {
@@ -89,7 +87,6 @@ public class SEAnesthesiaMachine implements SESystem
     if (hasOxygenBottleTwo())
       oxygenBottleTwo.reset();
 
-    events.clear();
   }
 
   public void copy(SEAnesthesiaMachine from)
@@ -124,8 +121,6 @@ public class SEAnesthesiaMachine implements SESystem
       getOxygenBottleOne().copy(from.getOxygenBottleOne());
     if(from.hasOxygenBottleTwo())
       getOxygenBottleTwo().copy(from.getOxygenBottleTwo());
-
-    events.putAll(from.events);
   }
 
   public static void load(AnesthesiaMachineData src, SEAnesthesiaMachine dst, SESubstanceManager subMgr)
@@ -197,17 +192,6 @@ public class SEAnesthesiaMachine implements SESystem
       dst.setOxygenBottleOne(SEAnesthesiaMachineOxygenBottle.unload(src.oxygenBottleOne));
     if (src.hasOxygenBottleTwo())
       dst.setOxygenBottleTwo(SEAnesthesiaMachineOxygenBottle.unload(src.oxygenBottleTwo));
-  }
-
-  public void setEvent(Event type, boolean active)
-  {
-    this.events.put(type, active);
-  }
-  public boolean isEventActive(Event type)
-  {
-    if(!this.events.containsKey(type))
-      return false;
-    return this.events.get(type);
   }
   
   public eConnection getConnection()

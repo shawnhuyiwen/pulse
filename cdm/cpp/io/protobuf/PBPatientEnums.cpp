@@ -11,7 +11,3 @@ const std::string& ePatient_Sex_Name(ePatient_Sex m)
   return cdm::PatientData::eSex_Name((cdm::PatientData::eSex)m);
 }
 
-const std::string& ePatient_Event_Name(ePatient_Event m)
-{
-  return cdm::ePatient_Event_Name((cdm::ePatient_Event)m);
-}

@@ -38,6 +38,7 @@
 #include "system/physiology/SEEnergySystem.h"
 // CDM
 #include "patient/SEPatient.h"
+#include "engine/SEEventManager.h"
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceAerosolization.h"
 #include "substance/SESubstanceConcentration.h"
@@ -1003,10 +1004,10 @@ void Respiratory::SupplementalOxygen()
 void Respiratory::RespiratoryDriver()
 {
   /// \event Patient: Start of exhale/inhale
-  if (m_Patient->IsEventActive(ePatient_Event::StartOfExhale))
-    m_Patient->SetEvent(ePatient_Event::StartOfExhale, false, m_data.GetSimulationTime());
-  if (m_Patient->IsEventActive(ePatient_Event::StartOfInhale))
-    m_Patient->SetEvent(ePatient_Event::StartOfInhale, false, m_data.GetSimulationTime());
+  if (m_data.GetEvents().IsEventActive(eEvent::StartOfExhale))
+    m_data.GetEvents().SetEvent(eEvent::StartOfExhale, false, m_data.GetSimulationTime());
+  if (m_data.GetEvents().IsEventActive(eEvent::StartOfInhale))
+    m_data.GetEvents().SetEvent(eEvent::StartOfInhale, false, m_data.GetSimulationTime());
 
   m_BreathingCycleTime_s += m_dt_s;
 
@@ -1014,7 +1015,7 @@ void Respiratory::RespiratoryDriver()
   m_ArterialO2RunningAverage_mmHg->Sample(m_AortaO2->GetPartialPressure(PressureUnit::mmHg));
   m_ArterialCO2RunningAverage_mmHg->Sample(m_AortaCO2->GetPartialPressure(PressureUnit::mmHg));
   //Reset at start of cardiac cycle 
-  if (m_Patient->IsEventActive(ePatient_Event::StartOfCardiacCycle))
+  if (m_data.GetEvents().IsEventActive(eEvent::StartOfCardiacCycle))
   {
     m_ArterialO2PartialPressure_mmHg = m_ArterialO2RunningAverage_mmHg->Value();
     m_ArterialCO2PartialPressure_mmHg = m_ArterialCO2RunningAverage_mmHg->Value();
@@ -1076,7 +1077,7 @@ void Respiratory::RespiratoryDriver()
       // Make a cardicArrestEffect that is 1.0 unless cardiac arrest is true
       double cardiacArrestEffect = 1.0;
       // If the cv system parameter is true, then make the cardicArrestEffect = 0
-      if (m_Patient->IsEventActive(ePatient_Event::CardiacArrest))
+      if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
       {
         cardiacArrestEffect = 0.0;
       }
@@ -1155,12 +1156,12 @@ void Respiratory::RespiratoryDriver()
       if (dTargetPulmonaryVentilation_L_Per_min > dMaximumPulmonaryVentilationRate)
       {
         dTargetPulmonaryVentilation_L_Per_min = dMaximumPulmonaryVentilationRate;
-        m_Patient->SetEvent(ePatient_Event::MaximumPulmonaryVentilationRate, true, m_data.GetSimulationTime());
+        m_data.GetEvents().SetEvent(eEvent::MaximumPulmonaryVentilationRate, true, m_data.GetSimulationTime());
       }
 
-      if (dTargetPulmonaryVentilation_L_Per_min < dMaximumPulmonaryVentilationRate && m_Patient->IsEventActive(ePatient_Event::MaximumPulmonaryVentilationRate))
+      if (dTargetPulmonaryVentilation_L_Per_min < dMaximumPulmonaryVentilationRate && m_data.GetEvents().IsEventActive(eEvent::MaximumPulmonaryVentilationRate))
       {
-        m_Patient->SetEvent(ePatient_Event::MaximumPulmonaryVentilationRate, false, m_data.GetSimulationTime());
+        m_data.GetEvents().SetEvent(eEvent::MaximumPulmonaryVentilationRate, false, m_data.GetSimulationTime());
       }
 
       //Calculate the target Tidal Volume based on the calculated target pulmonary ventilation, plot slope (determined during initialization), and x-intercept
@@ -1232,7 +1233,7 @@ void Respiratory::RespiratoryDriver()
       //m_VentilationFrequency_Per_min = 16.0;
       //m_PeakRespiratoryDrivePressure = -11.3;
 
-      m_Patient->SetEvent(ePatient_Event::StartOfInhale, true, m_data.GetSimulationTime()); ///\todo rename "StartOfConsiousInhale"
+      m_data.GetEvents().SetEvent(eEvent::StartOfInhale, true, m_data.GetSimulationTime()); ///\todo rename "StartOfConsiousInhale"
     }
 
 
@@ -1247,7 +1248,7 @@ void Respiratory::RespiratoryDriver()
     else if (m_BreathingCycleTime_s >= driverInspirationTime_s &&  m_BreathingCycleTime_s < driverInspirationTime_s + m_dt_s) //Transition - only called once per cycle
     {
       m_DriverPressureMin_cmH2O = m_PeakRespiratoryDrivePressure_cmH2O*(1 - exp(-((m_VentilationFrequency_Per_min + 4.0 * m_VentilatoryOcclusionPressure_cmH2O) / 10.0)*driverInspirationTime_s));
-      m_Patient->SetEvent(ePatient_Event::StartOfExhale, true, m_data.GetSimulationTime());
+      m_data.GetEvents().SetEvent(eEvent::StartOfExhale, true, m_data.GetSimulationTime());
     }
     else //Expiration
     {
@@ -2003,30 +2004,30 @@ void Respiratory::CalculateVitalSigns()
         if (GetCarricoIndex().GetValue(PressureUnit::mmHg) < 100.0)
         {
           /// \event Patient: Severe ARDS: Carrico Index is below 100 mmHg
-          m_Patient->SetEvent(ePatient_Event::SevereAcuteRespiratoryDistress, true, m_data.GetSimulationTime());  /// \cite ranieriacute
-          m_Patient->SetEvent(ePatient_Event::ModerateAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
-          m_Patient->SetEvent(ePatient_Event::MildAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
+          m_data.GetEvents().SetEvent(eEvent::SevereAcuteRespiratoryDistress, true, m_data.GetSimulationTime());  /// \cite ranieriacute
+          m_data.GetEvents().SetEvent(eEvent::ModerateAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
+          m_data.GetEvents().SetEvent(eEvent::MildAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
         }
         else if (GetCarricoIndex().GetValue(PressureUnit::mmHg) < 200.0)
         {
           /// \event Patient: Moderate ARDS: Carrico Index is below 200 mmHg
-          m_Patient->SetEvent(ePatient_Event::ModerateAcuteRespiratoryDistress, true, m_data.GetSimulationTime());  /// \cite ranieriacute
-          m_Patient->SetEvent(ePatient_Event::SevereAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
-          m_Patient->SetEvent(ePatient_Event::MildAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
+          m_data.GetEvents().SetEvent(eEvent::ModerateAcuteRespiratoryDistress, true, m_data.GetSimulationTime());  /// \cite ranieriacute
+          m_data.GetEvents().SetEvent(eEvent::SevereAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
+          m_data.GetEvents().SetEvent(eEvent::MildAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
         }
         else if (GetCarricoIndex().GetValue(PressureUnit::mmHg) < 300.0)
         {
           /// \event Patient: Mild ARDS: Carrico Index is below 300 mmHg
-          m_Patient->SetEvent(ePatient_Event::MildAcuteRespiratoryDistress, true, m_data.GetSimulationTime());  /// \cite ranieriacute
-          m_Patient->SetEvent(ePatient_Event::SevereAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
-          m_Patient->SetEvent(ePatient_Event::ModerateAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
+          m_data.GetEvents().SetEvent(eEvent::MildAcuteRespiratoryDistress, true, m_data.GetSimulationTime());  /// \cite ranieriacute
+          m_data.GetEvents().SetEvent(eEvent::SevereAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
+          m_data.GetEvents().SetEvent(eEvent::ModerateAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
         }
         else
         {
           /// \event Patient: End ARDS: Carrico Index is above 305 mmHg
-          m_Patient->SetEvent(ePatient_Event::SevereAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
-          m_Patient->SetEvent(ePatient_Event::ModerateAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
-          m_Patient->SetEvent(ePatient_Event::MildAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
+          m_data.GetEvents().SetEvent(eEvent::SevereAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
+          m_data.GetEvents().SetEvent(eEvent::ModerateAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
+          m_data.GetEvents().SetEvent(eEvent::MildAcuteRespiratoryDistress, false, m_data.GetSimulationTime());
         }
       }
 
@@ -2052,7 +2053,7 @@ void Respiratory::CalculateVitalSigns()
   //Keep a running average of the pH
   m_BloodPHRunningAverage->Sample(m_data.GetBloodChemistry().GetBloodPH().GetValue());
   //Reset at start of cardiac cycle 
-  if (m_Patient->IsEventActive(ePatient_Event::StartOfCardiacCycle))
+  if (m_data.GetEvents().IsEventActive(eEvent::StartOfCardiacCycle))
   {
     m_LastCardiacCycleBloodPH = m_BloodPHRunningAverage->Value();
     m_BloodPHRunningAverage->Clear();
@@ -2066,13 +2067,13 @@ void Respiratory::CalculateVitalSigns()
     {
       /// \event Patient: Bradypnea: Respiration rate is below 10 breaths per minute
       /// The patient has bradypnea.
-      m_Patient->SetEvent(ePatient_Event::Bradypnea, true, m_data.GetSimulationTime());  /// \cite overdyk2007continuous
+      m_data.GetEvents().SetEvent(eEvent::Bradypnea, true, m_data.GetSimulationTime());  /// \cite overdyk2007continuous
     }
     else if (GetRespirationRate().GetValue(FrequencyUnit::Per_min) >= 10.5)  // offset by .5 
     {
       /// \event Patient: End Bradypnea Event. The respiration rate has risen above 10. 
       /// The patient is no longer considered to have bradypnea.
-      m_Patient->SetEvent(ePatient_Event::Bradypnea, false, m_data.GetSimulationTime());
+      m_data.GetEvents().SetEvent(eEvent::Bradypnea, false, m_data.GetSimulationTime());
     }
 
     //Tachypnea
@@ -2080,13 +2081,13 @@ void Respiratory::CalculateVitalSigns()
     {
       /// \event Patient: Tachypnea: Respiration rate is above 20 breaths per minute.
       /// The patient has tachypnea.
-      m_Patient->SetEvent(ePatient_Event::Tachypnea, true, m_data.GetSimulationTime());  /// \cite 
+      m_data.GetEvents().SetEvent(eEvent::Tachypnea, true, m_data.GetSimulationTime());  /// \cite 
     }
     else if (GetRespirationRate().GetValue(FrequencyUnit::Per_min) <= 19.5) // offset by .5 
     {
       /// \event Patient: End Tachypnea Event. The respiration rate has fallen below 19.5. 
       /// The patient is no longer considered to have tachypnea.
-      m_Patient->SetEvent(ePatient_Event::Tachypnea, false, m_data.GetSimulationTime());
+      m_data.GetEvents().SetEvent(eEvent::Tachypnea, false, m_data.GetSimulationTime());
     }
 
     double highPh = 8.5;
@@ -2096,7 +2097,7 @@ void Respiratory::CalculateVitalSigns()
     {
       /// \event Patient: Respiratory Acidosis: event is triggered when blood pH is below 7.36
       /// The patient has respiratory acidosis.
-      m_Patient->SetEvent(ePatient_Event::RespiratoryAcidosis, true, m_data.GetSimulationTime());
+      m_data.GetEvents().SetEvent(eEvent::RespiratoryAcidosis, true, m_data.GetSimulationTime());
 
       /// \event Patient: arterial blood ph has dropped below 6.5.
       if (m_LastCardiacCycleBloodPH < lowPh)
@@ -2104,14 +2105,14 @@ void Respiratory::CalculateVitalSigns()
         ss << "Arterial blood pH is  " << m_LastCardiacCycleBloodPH << ". This is below 6.5, Patient is experiencing extreme respiratory Acidosis and is in an irreversible state.";
         Warning(ss);
         /// \irreversible Extreme respiratory Acidosis: blood pH below 6.5.
-        m_Patient->SetEvent(ePatient_Event::IrreversibleState, true, m_data.GetSimulationTime());
+        m_data.GetEvents().SetEvent(eEvent::IrreversibleState, true, m_data.GetSimulationTime());
       }
     }
     else if (m_LastCardiacCycleBloodPH >= 7.38 && m_ArterialCO2PartialPressure_mmHg < 44.0)
     {
       /// \event Patient: End Respiratory Acidosis Event. The pH value has risen above 7.38. 
       /// The patient is no longer considered to have respiratory acidosis.
-      m_Patient->SetEvent(ePatient_Event::RespiratoryAcidosis, false, m_data.GetSimulationTime());
+      m_data.GetEvents().SetEvent(eEvent::RespiratoryAcidosis, false, m_data.GetSimulationTime());
     }
 
     ////Respiratory Alkalosis
@@ -2119,7 +2120,7 @@ void Respiratory::CalculateVitalSigns()
     {
       /// \event Patient: Respiratory Alkalosis: event is triggered when blood pH is above 7.45
       /// The patient has respiratory alkalosis.
-      m_Patient->SetEvent(ePatient_Event::RespiratoryAlkalosis, true, m_data.GetSimulationTime());
+      m_data.GetEvents().SetEvent(eEvent::RespiratoryAlkalosis, true, m_data.GetSimulationTime());
 
       /// \event Patient: arterial blood ph has gotten above 8.5.
       if (m_LastCardiacCycleBloodPH > highPh)
@@ -2127,14 +2128,14 @@ void Respiratory::CalculateVitalSigns()
         ss << "Arterial blood pH is  " << m_LastCardiacCycleBloodPH << ". This is above 8.5, Patient is experiencing extreme respiratory Alkalosis and is in an irreversible state.";
         Warning(ss);
         /// \irreversible Extreme respiratory Alkalosis: blood pH above 8.5.
-        m_Patient->SetEvent(ePatient_Event::IrreversibleState, true, m_data.GetSimulationTime());
+        m_data.GetEvents().SetEvent(eEvent::IrreversibleState, true, m_data.GetSimulationTime());
       }
     }
     else if (m_LastCardiacCycleBloodPH <= 7.43 && m_ArterialCO2PartialPressure_mmHg > 39.0)
     {
       /// \event Patient: End Respiratory Alkalosis Event. The pH value has has fallen below 7.45. 
       /// The patient is no longer considered to have respiratory alkalosis.
-      m_Patient->SetEvent(ePatient_Event::RespiratoryAlkalosis, false, m_data.GetSimulationTime());
+      m_data.GetEvents().SetEvent(eEvent::RespiratoryAlkalosis, false, m_data.GetSimulationTime());
     }
   }
 }

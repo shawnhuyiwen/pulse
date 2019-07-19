@@ -3,7 +3,6 @@
 
 #pragma once
 
-class SEEventHandler;
 class SEAdvanceHandler;
 class SEPatient;
 class SEPatientConfiguration;
@@ -31,6 +30,7 @@ class SEElectroCardioGram;
 class SECompartmentManager;
 class SEActionManager;
 class SEConditionManager;
+class SEEventManager;
 
 class SEEngineTracker;
 class SEEngineConfiguration;
@@ -210,9 +210,10 @@ public:
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
-  /// Add a callback object that will be called whenever a pateint or anesthesia machine event changes state
+  /// Retrieves the associated event manager.
+  ///
   //--------------------------------------------------------------------------------------------------
-  virtual void SetEventHandler(SEEventHandler* handler) = 0;
+  virtual const SEEventManager& GetEventManager() const = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief

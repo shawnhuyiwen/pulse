@@ -6,7 +6,7 @@
 #include "PulsePhysiologyEngine.h"
 #include "controller/Engine.h"
 #include "scenario/SEScenarioExec.h"
-#include "engine/SEEventHandler.h"
+#include "engine/SEEventManager.h"
 #include "engine/SEAdvanceHandler.h"
 
 #include <memory>
@@ -27,8 +27,7 @@ public:
   void PushData(double time_s);
 
   void OnAdvance(double time_s, const PhysiologyEngine& engine);
-  void HandlePatientEvent(ePatient_Event type, bool active, const SEScalarTime* time = nullptr);
-  void HandleAnesthesiaMachineEvent(eAnesthesiaMachine_Event type, bool active, const SEScalarTime* time = nullptr);
+  void HandleEvent(eEvent type, bool active, const SEScalarTime* time = nullptr);
 
   JNIEnv*    jniEnv;
   jobject    jniObj;

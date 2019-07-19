@@ -14,7 +14,6 @@
 #include "substance/SESubstanceManager.h"
 #include "substance/SESubstance.h"
 #include "engine/SEEngineTracker.h"
-#include "engine/SEEventHandler.h"
 #include "engine/SEPatientConfiguration.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarFrequency.h"

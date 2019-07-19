@@ -5,11 +5,6 @@
 #include "bind/cpp/cdm/AnesthesiaMachine.pb.h"
 #include "system/equipment/anesthesiamachine/SEAnesthesiaMachine.h"
 
-const std::string& eAnesthesiaMachine_Event_Name(eAnesthesiaMachine_Event m)
-{
-  return cdm::eAnesthesiaMachine_Event_Name((cdm::eAnesthesiaMachine_Event)m);
-}
-
 const std::string& eAnesthesiaMachine_OxygenSource_Name(eAnesthesiaMachine_OxygenSource m)
 {
   return cdm::AnesthesiaMachineData::eOxygenSource_Name((cdm::AnesthesiaMachineData::eOxygenSource)m);

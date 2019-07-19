@@ -5,7 +5,7 @@
 #include "system/SESystem.h"
 
 // Keep enums in sync with appropriate schema/cdm/PhysiologyEnums.proto file !!
-enum class eHeartRhythm { NormalSinus = 0, Asystole };
+enum class eHeartRhythm { NormalSinus = 0, Asystolic };
 extern const std::string& eHeartRhythm_Name(eHeartRhythm m);
 
 class CDM_DECL SECardiovascularSystem : public SESystem
