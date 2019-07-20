@@ -821,111 +821,77 @@ void Respiratory::SupplementalOxygen()
 {
   ///\todo - Maybe this and mechanical ventilator should be broken out to their own class, like anesthesia machine?
 
-  //jbw - Make sure this can be turned off... How are these turned off?
-
   if (!m_data.GetActions().GetPatientActions().HasSupplementalOxygen())
-  {
-    if (m_data.GetAirwayMode() == eAirwayMode::NasalCannula ||
-      m_data.GetAirwayMode() == eAirwayMode::SimpleMask ||
-      m_data.GetAirwayMode() == eAirwayMode::NonRebreatherMask)
-    {
-      // Was just turned off
-      m_data.SetAirwayMode(eAirwayMode::Free);
-    }
-
     return;
-  }
-
   SESupplementalOxygen* so = m_data.GetActions().GetPatientActions().GetSupplementalOxygen();
 
-  bool hasNasalCannula = so->GetDevice() == eSupplementalOxygen_Device::NasalCannula;
-  bool hasSimpleMask = so->GetDevice() == eSupplementalOxygen_Device::SimpleMask;
-  bool hasNonRebreatherMask = so->GetDevice() == eSupplementalOxygen_Device::NonRebreatherMask;
-
-  int numDevices = int(hasNasalCannula) + int(hasSimpleMask) + int(hasNonRebreatherMask);
-
-  if (numDevices > 1)
-  {
-    /// \error Fatal: Only one supplemental oxygen device can be used at a time.
-    Fatal("Only one supplemental oxygen device can be used at a time.");
-  }
-
-  if (hasNasalCannula)
-  {
-    m_data.SetAirwayMode(eAirwayMode::NasalCannula);
-  }
-  else if (hasSimpleMask)
-  {
-    m_data.SetAirwayMode(eAirwayMode::SimpleMask);
-  }
-  else if (hasNonRebreatherMask)
-  {
-    m_data.SetAirwayMode(eAirwayMode::NonRebreatherMask);
-  }
-
-  double flow_L_Per_min = 0.0;
-  if (so->HasFlow())
-  {
-    flow_L_Per_min = so->GetFlow(VolumePerTimeUnit::L_Per_min);
-  }
-  else
-  {
-    //Set defaults based on device type for things that are not explicitly set
-    if (hasNasalCannula)
-    {
-      flow_L_Per_min = 3.5;
-    }
-    else if (hasSimpleMask)
-    {
-      flow_L_Per_min = 7.5;
-    }
-    else if (hasNonRebreatherMask)
-    {
-      flow_L_Per_min = 10.0;
-    }
-    else
-    {
-      /// \error Fatal: No supplemental oxygen device set.
-      Fatal("No supplemental oxygen device set.");
-    }
-
-    so->GetFlow().SetValue(flow_L_Per_min, VolumePerTimeUnit::L_Per_min);
-
-    std::stringstream ss;
-    ss << "Supplemental oxygen flow not set. Using default value of " << flow_L_Per_min << " L/min.";
-    Info(ss);
-  }
-
+  // Get flow
+  double flow_L_Per_min = so->GetFlow(VolumePerTimeUnit::L_Per_min);
   //Get tank pressure node and flow control resistor path
-  SEFluidCircuitPath* OxygenInlet;
-  SEFluidCircuitPath* Tank;
-  SEFluidCircuit& RespirationCircuit = m_data.GetCircuits().GetActiveRespiratoryCircuit();
-  if (hasNasalCannula)
+  SEFluidCircuitPath* Tank = nullptr;
+  SEFluidCircuitPath* OxygenInlet = nullptr;
+  SEFluidCircuit* RespirationCircuit = nullptr;
+  switch (so->GetDevice())
   {
-    OxygenInlet = RespirationCircuit.GetPath(pulse::NasalCannulaPath::NasalCannulaOxygenInlet);
-    Tank = RespirationCircuit.GetPath(pulse::NasalCannulaPath::NasalCannulaPressure);
+    case eSupplementalOxygen_Device::None:
+    {
+      m_data.SetAirwayMode(eAirwayMode::Free);
+      m_data.GetActions().GetPatientActions().RemoveSupplementalOxygen();
+      return;
+    }
+    case eSupplementalOxygen_Device::NasalCannula:
+    {
+      m_data.SetAirwayMode(eAirwayMode::NasalCannula);
+      if (!so->HasFlow())
+      {
+        flow_L_Per_min = 3.5;
+        so->GetFlow().SetValue(flow_L_Per_min, VolumePerTimeUnit::L_Per_min);
+        Info("Supplemental oxygen flow not set. Using default value of " + std::to_string(flow_L_Per_min) + " L/min.");
+      }
+      RespirationCircuit = &m_data.GetCircuits().GetActiveRespiratoryCircuit();
+      OxygenInlet = RespirationCircuit->GetPath(pulse::NasalCannulaPath::NasalCannulaOxygenInlet);
+      Tank = RespirationCircuit->GetPath(pulse::NasalCannulaPath::NasalCannulaPressure);
+      break;
+    }
+    case eSupplementalOxygen_Device::NonRebreatherMask:
+    {
+      m_data.SetAirwayMode(eAirwayMode::NonRebreatherMask);
+      if (!so->HasFlow())
+      {
+        flow_L_Per_min = 10.0;
+        so->GetFlow().SetValue(flow_L_Per_min, VolumePerTimeUnit::L_Per_min);
+        Info("Supplemental oxygen flow not set. Using default value of " + std::to_string(flow_L_Per_min) + " L/min.");
+      }
+      RespirationCircuit = &m_data.GetCircuits().GetActiveRespiratoryCircuit();
+      OxygenInlet = RespirationCircuit->GetPath(pulse::NonRebreatherMaskPath::NonRebreatherMaskOxygenInlet);
+      Tank = RespirationCircuit->GetPath(pulse::NonRebreatherMaskPath::NonRebreatherMaskPressure);
+      break;
+    }
+    case eSupplementalOxygen_Device::SimpleMask:
+    {
+      m_data.SetAirwayMode(eAirwayMode::SimpleMask);
+      if (!so->HasFlow())
+      {
+        flow_L_Per_min = 7.5;
+        so->GetFlow().SetValue(flow_L_Per_min, VolumePerTimeUnit::L_Per_min);
+        Info("Supplemental oxygen flow not set. Using default value of " + std::to_string(flow_L_Per_min) + " L/min.");
+      }
+      RespirationCircuit = &m_data.GetCircuits().GetActiveRespiratoryCircuit();
+      OxygenInlet = RespirationCircuit->GetPath(pulse::SimpleMaskPath::SimpleMaskOxygenInlet);
+      Tank = RespirationCircuit->GetPath(pulse::SimpleMaskPath::SimpleMaskPressure);
+      break;
+    }
+    default:
+    {
+      Error("Ignoring unsupported supplemental oxygen type : " + eSupplementalOxygen_Device_Name(so->GetDevice()));
+      return;
+    }
   }
-  else if (hasSimpleMask)
-  {
-    OxygenInlet = RespirationCircuit.GetPath(pulse::SimpleMaskPath::SimpleMaskOxygenInlet);
-    Tank = RespirationCircuit.GetPath(pulse::SimpleMaskPath::SimpleMaskPressure);
-  }
-  else if (hasNonRebreatherMask)
-  {
-    OxygenInlet = RespirationCircuit.GetPath(pulse::NonRebreatherMaskPath::NonRebreatherMaskOxygenInlet);
-    Tank = RespirationCircuit.GetPath(pulse::NonRebreatherMaskPath::NonRebreatherMaskPressure);
-  }
-  else
-  {
-    /// \error Fatal: No supplemental oxygen device set.
-    Fatal("No supplemental oxygen device set.");
-  }  
 
   //Use a default tank volume if it wasn't explicity set
   if (!so->HasVolume())
   {
     so->GetVolume().SetValue(425.0, VolumeUnit::L);
-
     Info("Supplemental oxygen initial tank volume not set. Using default value of 425 L.");
   }
 
@@ -946,8 +912,8 @@ void Respiratory::SupplementalOxygen()
     }
   }
   
-  //Nonrebreather mask works differently wiht the bag and doesn't have a pressure source for the tank
-  if (!hasNonRebreatherMask)
+  //Nonrebreather mask works differently with the bag and doesn't have a pressure source for the tank
+  if (so->GetDevice() != eSupplementalOxygen_Device::NonRebreatherMask)
   {
     //Determine flow control resistance
     //Assume pressure outside tank is comparatively approximately ambient
@@ -961,14 +927,17 @@ void Respiratory::SupplementalOxygen()
   else
   {
     //Handle nonrebreather mask bag
-    double bagVolume_L = RespirationCircuit.GetNode(pulse::NonRebreatherMaskNode::NonRebreatherMaskBag)->GetNextVolume(VolumeUnit::L);
-    double flowOut_L_Per_min = 0.0;
-    if (RespirationCircuit.GetPath(pulse::NonRebreatherMaskPath::NonRebreatherMaskReservoirValve)->HasNextFlow())
-    {
-      flowOut_L_Per_min = RespirationCircuit.GetPath(pulse::NonRebreatherMaskPath::NonRebreatherMaskReservoirValve)->GetNextFlow(VolumePerTimeUnit::L_Per_min);
-    }
-    bagVolume_L = bagVolume_L + (flow_L_Per_min - flowOut_L_Per_min) * m_dt_min;
+    SEFluidCircuitNode* NonRebreatherMaskBag = RespirationCircuit->GetNode(pulse::NonRebreatherMaskNode::NonRebreatherMaskBag);
+    SEFluidCircuitPath* NonRebreatherMaskReservoirValve = RespirationCircuit->GetPath(pulse::NonRebreatherMaskPath::NonRebreatherMaskReservoirValve);
 
+    double flowOut_L_Per_min = 0.0;
+    if (NonRebreatherMaskReservoirValve->HasNextFlow())
+    {
+      flowOut_L_Per_min = NonRebreatherMaskReservoirValve->GetNextFlow(VolumePerTimeUnit::L_Per_min);
+    }
+
+    double bagVolume_L = NonRebreatherMaskBag->GetNextVolume(VolumeUnit::L);
+    bagVolume_L = bagVolume_L + (flow_L_Per_min - flowOut_L_Per_min) * m_dt_min;
     if (bagVolume_L < 0.0)
     {
       bagVolume_L = 0.0;
@@ -985,7 +954,7 @@ void Respiratory::SupplementalOxygen()
       bagVolume_L = 1.0;
     }
     
-    RespirationCircuit.GetNode(pulse::NonRebreatherMaskNode::NonRebreatherMaskBag)->GetNextVolume().SetValue(bagVolume_L, VolumeUnit::L);
+    NonRebreatherMaskBag->GetNextVolume().SetValue(bagVolume_L, VolumeUnit::L);
   }
 }
 

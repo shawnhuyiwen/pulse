@@ -293,7 +293,7 @@ bool PBPulseState::Serialize(const PulseEngine& src, pulse::proto::StateData& ds
   dst.set_allocated_compartmentmanager(PBCompartment::Unload(*src.m_Compartments));
   // Configuration
   dst.set_allocated_configuration(PBPulseConfiguration::Unload(*src.m_Config));
-  // Circuitsk
+  // Circuits
   dst.set_allocated_circuitmanager(PBCircuit::Unload(*src.m_Circuits));
   return true;
 }

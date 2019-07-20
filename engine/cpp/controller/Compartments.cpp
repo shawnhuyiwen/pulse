@@ -41,6 +41,12 @@ std::vector<std::string> pulse::InhalerCompartment::_values;
 std::vector<std::string> pulse::InhalerLink::_values;
 std::vector<std::string> pulse::MechanicalVentilatorCompartment::_values;
 std::vector<std::string> pulse::MechanicalVentilatorLink::_values;
+std::vector<std::string> pulse::NasalCannulaCompartment::_values;
+std::vector<std::string> pulse::NasalCannulaLink::_values;
+std::vector<std::string> pulse::NonRebreatherMaskCompartment::_values;
+std::vector<std::string> pulse::NonRebreatherMaskLink::_values;
+std::vector<std::string> pulse::SimpleMaskCompartment::_values;
+std::vector<std::string> pulse::SimpleMaskLink::_values;
 
 PulseCompartments::PulseCompartments(PulseController& data) : SECompartmentManager(data.GetSubstances()), m_data(data)
 {
@@ -204,6 +210,51 @@ void PulseCompartments::StateChange()
     m_MechanicalVentilatorAerosolCompartments.push_back(cmpt);
     if (!cmpt->HasChildren())
       m_MechanicalVentilatorAerosolLeafCompartments.push_back(cmpt);
+  }
+
+  m_NasalCannulaCompartments.clear();
+  m_NasalCannulaLeafCompartments.clear();
+  for (const std::string& name : pulse::NasalCannulaCompartment::GetValues())
+  {
+    SEGasCompartment* cmpt = GetGasCompartment(name);
+    if (cmpt == nullptr)
+    {
+      Warning("Could not find expected Nasal Cannula compartment, " + name + " in compartment manager");
+      continue;
+    }
+    m_NasalCannulaCompartments.push_back(cmpt);
+    if (!cmpt->HasChildren())
+      m_NasalCannulaLeafCompartments.push_back(cmpt);
+  }
+
+  m_NonRebreatherMaskCompartments.clear();
+  m_NonRebreatherMaskLeafCompartments.clear();
+  for (const std::string& name : pulse::NonRebreatherMaskCompartment::GetValues())
+  {
+    SEGasCompartment* cmpt = GetGasCompartment(name);
+    if (cmpt == nullptr)
+    {
+      Warning("Could not find expected Non Rebreather Mask compartment, " + name + " in compartment manager");
+      continue;
+    }
+    m_NonRebreatherMaskCompartments.push_back(cmpt);
+    if (!cmpt->HasChildren())
+      m_NonRebreatherMaskLeafCompartments.push_back(cmpt);
+  }
+
+  m_SimpleMaskCompartments.clear();
+  m_SimpleMaskLeafCompartments.clear();
+  for (const std::string& name : pulse::SimpleMaskCompartment::GetValues())
+  {
+    SEGasCompartment* cmpt = GetGasCompartment(name);
+    if (cmpt == nullptr)
+    {
+      Warning("Could not find expected Simple Mask compartment, " + name + " in compartment manager");
+      continue;
+    }
+    m_SimpleMaskCompartments.push_back(cmpt);
+    if (!cmpt->HasChildren())
+      m_SimpleMaskLeafCompartments.push_back(cmpt);
   }
 
   // \todo Write some code to cross check compartments between what we have and what we should have
