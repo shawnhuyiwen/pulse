@@ -6,18 +6,6 @@ option optimize_for = SPEED;
 import "cdm/Enums.proto";
 import "cdm/Properties.proto";
 
-
-message eAnesthesiaMachine
-{
-  /** @brief An enumeration for the source of oxygen for the machine. */
-  enum Event
-  {
-    OxygenBottleOneExhausted  = 0;
-    OxygenBottleTwoExhausted  = 1;
-    ReliefValveActive         = 2;
-  }
-}
-
 /** @brief A vaporization chamber that can be filled with a particular substance for inhalation. */
 message AnesthesiaMachineChamberData
 {
@@ -34,12 +22,6 @@ message AnesthesiaMachineOxygenBottleData
 
 message AnesthesiaMachineData
 {
-  /** @brief An active machine event, and how long it has been active */
-  message ActiveEventData
-  {
-    eAnesthesiaMachine.Event        Event                         = 1; /**<< @brief The active event. */
-    ScalarTimeData                  Duration                      = 2; /**<< @brief The duration since last activated. */
-  }
 
   enum eConnection
   {
@@ -82,6 +64,4 @@ message AnesthesiaMachineData
   
   AnesthesiaMachineOxygenBottleData OxygenBottleOne               = 13;/**<< @brief The first bottle attached to the machine. */  
   AnesthesiaMachineOxygenBottleData OxygenBottleTwo               = 14;/**<< @brief The second bottle attached to the machine. */
-
-  repeated ActiveEventData          ActiveEvent                   = 15;/**<< @brief Active events and their duration. */
 }

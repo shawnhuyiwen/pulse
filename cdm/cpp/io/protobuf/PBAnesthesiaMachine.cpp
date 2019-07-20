@@ -50,21 +50,6 @@ void PBAnesthesiaMachine::Serialize(const cdm::AnesthesiaMachineData& src, SEAne
   if (src.has_oxygenbottletwo())
     PBAnesthesiaMachine::Load(src.oxygenbottletwo(), dst.GetOxygenBottleTwo());
 
-  SEScalarTime time;
-  for (int i = 0; i < src.activeevent_size(); i++)
-  {
-    const cdm::AnesthesiaMachineData::ActiveEventData& e = src.activeevent(i);
-    if (e.has_duration())
-      PBProperty::Load(e.duration(), time);
-    {
-      dst.m_ss << "Active AnesthesiaMachine event " << e.event() << " does not have time associated with it";
-      dst.Warning(dst.m_ss);
-      time.SetValue(0, TimeUnit::s);
-    }
-    dst.m_EventState[(eAnesthesiaMachine_Event)e.event()] = true;
-    dst.m_EventDuration_s[(eAnesthesiaMachine_Event)e.event()] = time.GetValue(TimeUnit::s);
-  }
-
   dst.StateChange();
 }
 
@@ -103,24 +88,6 @@ void PBAnesthesiaMachine::Serialize(const SEAnesthesiaMachine& src, cdm::Anesthe
     dst.set_allocated_oxygenbottleone(PBAnesthesiaMachine::Unload(*src.m_OxygenBottleOne));
   if (src.HasOxygenBottleTwo())
     dst.set_allocated_oxygenbottletwo(PBAnesthesiaMachine::Unload(*src.m_OxygenBottleTwo));
-
-  SEScalarTime time;
-  for (auto itr : src.m_EventState)
-  {
-    if (!itr.second)
-      continue;
-
-    auto it2 = src.m_EventDuration_s.find(itr.first);
-    if (it2 == src.m_EventDuration_s.end())// This should not happen... 
-      time.SetValue(0, TimeUnit::s);
-    else
-      time.SetValue(it2->second, TimeUnit::s);
-
-    cdm::AnesthesiaMachineData_ActiveEventData* eData = dst.add_activeevent();
-
-    eData->set_event((cdm::eAnesthesiaMachine_Event)itr.first);
-    eData->set_allocated_duration(PBProperty::Unload(time));
-  }
 }
 
 void PBAnesthesiaMachine::Load(const cdm::AnesthesiaMachineChamberData& src, SEAnesthesiaMachineChamber& dst)

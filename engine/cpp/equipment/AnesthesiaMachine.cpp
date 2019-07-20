@@ -27,6 +27,7 @@
 #include "engine/SEActionManager.h"
 #include "engine/SEAnesthesiaMachineActionCollection.h"
 #include "engine/SEPatientActionCollection.h"
+#include "engine/SEEventManager.h"
 #include "circuit/fluid/SEFluidCircuit.h"
 #include "compartment/fluid/SEGasCompartment.h"
 #include "compartment/substances/SEGasSubstanceQuantity.h"
@@ -328,7 +329,7 @@ void AnesthesiaMachine::Process()
 //--------------------------------------------------------------------------------------------------
 void AnesthesiaMachine::PostProcess()
 {
-  UpdateEvents(m_data.GetTimeStep());
+
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -493,7 +494,7 @@ void AnesthesiaMachine::CalculateSourceStatus()
     else if (dBottle1Volume_L <= 0.0) //Empty
     {
       /// \event %AnesthesiaMachine: Oxygen bottle 1 is exhausted. There is no longer any oxygen to provide via the anesthesia machine.
-      SetEvent(eAnesthesiaMachine_Event::OxygenBottleOneExhausted, true, m_data.GetSimulationTime());
+      m_data.GetEvents().SetEvent(eEvent::AnesthesiaMachineOxygenBottleOneExhausted, true, m_data.GetSimulationTime());
       dBottle1Volume_L = 0.0;
     }
     GetOxygenBottleOne().GetVolume().SetValue(dBottle1Volume_L, VolumeUnit::L);
@@ -508,7 +509,7 @@ void AnesthesiaMachine::CalculateSourceStatus()
     else if (dBottle2Volume_L <= 0.0)
     {
       /// \event %AnesthesiaMachine: Oxygen bottle 2 is exhausted. There is no longer any oxygen to provide via the anesthesia machine.
-      SetEvent(eAnesthesiaMachine_Event::OxygenBottleTwoExhausted, true, m_data.GetSimulationTime());
+      m_data.GetEvents().SetEvent(eEvent::AnesthesiaMachineOxygenBottleTwoExhausted, true, m_data.GetSimulationTime());
       dBottle2Volume_L = 0.0;
     }
     GetOxygenBottleTwo().GetVolume().SetValue(dBottle2Volume_L, VolumeUnit::L);
@@ -736,14 +737,14 @@ void AnesthesiaMachine::CheckReliefValve()
   m_pEnvironmentToReliefValve->GetNextPressureSource().SetValue(dValvePressure_cmH2O, PressureUnit::cmH2O);
 
   //Check to see if it reached the pressure threshold  
-  if (!IsEventActive(eAnesthesiaMachine_Event::ReliefValveActive) && m_pSelectorToReliefValve->GetNextValve() == eGate::Closed)
+  if (!m_data.GetEvents().IsEventActive(eEvent::AnesthesiaMachineReliefValveActive) && m_pSelectorToReliefValve->GetNextValve() == eGate::Closed)
   {
     /// \event %AnesthesiaMachine: Relief Valve is active. The pressure setting has been exceeded.
-    SetEvent(eAnesthesiaMachine_Event::ReliefValveActive, true, m_data.GetSimulationTime());
+    m_data.GetEvents().SetEvent(eEvent::AnesthesiaMachineReliefValveActive, true, m_data.GetSimulationTime());
   }
-  else if (IsEventActive(eAnesthesiaMachine_Event::ReliefValveActive) && m_pSelectorToReliefValve->GetNextValve() == eGate::Open)
+  else if (m_data.GetEvents().IsEventActive(eEvent::AnesthesiaMachineReliefValveActive) && m_pSelectorToReliefValve->GetNextValve() == eGate::Open)
   {
-    SetEvent(eAnesthesiaMachine_Event::ReliefValveActive, false, m_data.GetSimulationTime());
+    m_data.GetEvents().SetEvent(eEvent::AnesthesiaMachineReliefValveActive, false, m_data.GetSimulationTime());
   }
 
   //Always try to let it run without the relief valve operational (i.e. closed (i.e. allowing flow)), otherwise it will always stay shorted

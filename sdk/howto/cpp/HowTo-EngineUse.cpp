@@ -16,7 +16,7 @@
 #include "substance/SESubstanceManager.h"
 #include "substance/SESubstance.h"
 #include "engine/SEEngineTracker.h"
-#include "engine/SEEventHandler.h"
+#include "engine/SEEventManager.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEScalarMassPerVolume.h"
@@ -28,7 +28,6 @@
 #include "properties/SEFunctionVolumeVsTime.h"
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarLength.h"
-#include "engine/SEEventHandler.h"
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
@@ -78,8 +77,7 @@ class MyEventHandler : public SEEventHandler
 {
 public:
   MyEventHandler() : SEEventHandler() {}
-  virtual void HandlePatientEvent(ePatient_Event type, bool active, const SEScalarTime* time = nullptr) {}
-  virtual void HandleAnesthesiaMachineEvent(eAnesthesiaMachine_Event type, bool active, const SEScalarTime* time = nullptr) {}
+  virtual void HandleEvent(eEvent type, bool active, const SEScalarTime* time = nullptr) {}
 };
 
 //--------------------------------------------------------------------------------------------------
@@ -142,10 +140,10 @@ void HowToEngineUse()
 
   // There are specific events that can occur while the engine runs and you submit various actions
   // You can either poll/query the patient object to see if it is in a specific state
-  pe->GetPatient().IsEventActive(ePatient_Event::CardiacArrest);
-  // You can also derive a callback class that will be called whenever an Event is entered or exited by the patient
+  pe->GetEventManager().IsEventActive(eEvent::CardiacArrest);
+  // You can also derive a callback class that will be called whenever an Event is entered or exited by the engine
   MyEventHandler myEventHandler;
-  pe->SetEventHandler(&myEventHandler);
+  pe->GetEventManager().ForwardEvents(&myEventHandler);
 
   // We are interested in 2 substances and their amounts in compartments
   // Let's grab the substance via name from the substance manager, string look ups are slow

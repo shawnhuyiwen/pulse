@@ -63,7 +63,7 @@ See accompanying NOTICE file for details.*/
 #include "compartment/substances/SEGasSubstanceQuantity.h"
 #include "compartment/substances/SELiquidSubstanceQuantity.h"
 
-#include "engine/SEEventHandler.h"
+#include "engine/SEEventManager.h"
 
 // This class is used to expose the actual patient data parameters (i.e. data in the patient file)
 // Expand this class with data you want from the patient specification
@@ -133,7 +133,7 @@ public:// Note for my example, I am ignoring the origin (what class created this
 // Create function pointers to call when we get events from pulse
 // For this example, I can check activity in my handler and I don't need to propagate time
 // It's up to you what data you provide your system, just know you can!
-typedef void(__stdcall *fpPatientEvent)(ePatient_Event type, bool active);
+typedef void(__stdcall *fpEvent)(eEvent type, bool active);
 // This is the class to provide Pulse to call when any events are triggered in the engine
 class PulseEventHandler : public SEEventHandler, public Loggable
 {
@@ -141,20 +141,19 @@ public:
   PulseEventHandler(Logger *logger) : Loggable(logger) {}
 
 public:
-  virtual void SetPatientEventCallback(fpPatientEvent callback) { _on_patient_event = callback; }// Make Set methods to set up a function pointer to call for each event we are interested in
+  virtual void SetEventCallback(fpEvent callback) { _on_event = callback; }// Make Set methods to set up a function pointer to call for each event we are interested in
 protected:
-  fpPatientEvent _on_patient_event;// Make a member variables for the function pointers we are to call
+  fpEvent _on_event;// Make a member variables for the function pointers we are to call
 
                                    //These methods need definitions and should call your callback with what ever data you made it require
 public:
-  virtual void HandlePatientEvent(ePatient_Event type, bool active, const SEScalarTime* time = nullptr);
-  virtual void HandleAnesthesiaMachineEvent(eAnesthesiaMachine_Event type, bool active, const SEScalarTime* time = nullptr) { /*Not Expecting these */ }
+  virtual void HandleEvent(eEvent type, bool active, const SEScalarTime* time = nullptr);
 };
 
 public ref class PulseEngineEventCallbacksRef abstract
 {
 public:
-  virtual void HandlePatientEvent(ePatient_Event e, bool active) abstract;// CSharp will override this, and it will be called by the Pulse Event Handler
+  virtual void HandleEvent(eEvent e, bool active) abstract;// CSharp will override this, and it will be called by the Pulse Event Handler
 };
 
 public ref class PulseEngineRef
@@ -186,16 +185,16 @@ public:
   void Pneumothorax(eGate state, eSide side, double severity);
 
   // Outputs and State
-  void SetPulseEventCallback(PulseEngineEventCallbacksRef^ callback) { _callback = callback; }
+  void SetEventCallback(PulseEngineEventCallbacksRef^ callback) { _callback = callback; }
 
 protected:
   void Init();
   void Clear();
-  delegate void PatientEventDelegate(ePatient_Event type, bool active);
-  void HandlePatientEvent(ePatient_Event type, bool active);
+  delegate void EventDelegate(eEvent type, bool active);
+  void HandleEvent(eEvent type, bool active);
   PulseEngineEventCallbacksRef^ _callback;
 private:
-  PatientEventDelegate^ on_event;
+  EventDelegate^ on_event;
 
 internal: // Should be hidden from C#, which is what we want for these.
   PhysiologyEngine *               _pulse = nullptr;

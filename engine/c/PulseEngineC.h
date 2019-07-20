@@ -5,7 +5,7 @@
 #include "PulsePhysiologyEngine.h"
 #include "controller/Engine.h"
 #include "scenario/SEScenarioExec.h"
-#include "engine/SEEventHandler.h"
+#include "engine/SEEventManager.h"
 
 #include <memory>
 
@@ -22,8 +22,7 @@ public:
   void ForwardFatal(const std::string&  msg, const std::string&  origin);
   //void PullData(double time_s);
 
-  void HandlePatientEvent(ePatient_Event type, bool active, const SEScalarTime* time = nullptr);
-  void HandleAnesthesiaMachineEvent(eAnesthesiaMachine_Event type, bool active, const SEScalarTime* time = nullptr);
+  void HandleEvent(eEvent type, bool active, const SEScalarTime* time = nullptr);
 
   void SetupDefaultDataRequests();
 

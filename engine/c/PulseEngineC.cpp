@@ -53,7 +53,7 @@ C_EXPORT bool C_CALL SerializeFromFile(PulseEngineC* pulseC, const char* filenam
   simTime.SetValue(sim_time_s, TimeUnit::s);
   if (!pulseC->eng->SerializeFromFile(filename, (SerializationFormat)format, &simTime, nullptr))
     return false;
-  pulseC->eng->SetEventHandler(pulseC);
+  pulseC->eng->GetEventManager().ForwardEvents(pulseC);
 
   // Load up the data requests
   if (data_requests != nullptr)
@@ -84,7 +84,7 @@ C_EXPORT bool C_CALL SerializeFromString(PulseEngineC* pulseC, const char* state
   simTime.SetValue(sim_time_s, TimeUnit::s);
   if (!pulseC->eng->SerializeFromString(state, (SerializationFormat)format, &simTime, nullptr))
     return false;
-  pulseC->eng->SetEventHandler(pulseC);
+  pulseC->eng->GetEventManager().ForwardEvents(pulseC);
 
   // Load up the data requests
   if (data_requests != nullptr)
@@ -134,7 +134,7 @@ C_EXPORT bool C_CALL InitializeEngine(PulseEngineC* pulseC, const char* patient_
   // Ok, crank 'er up!
   if (!pulseC->eng->InitializeEngine(pc))
     return false;
-  pulseC->eng->SetEventHandler(pulseC);
+  pulseC->eng->GetEventManager().ForwardEvents(pulseC);
   return true;
 }
 
@@ -277,11 +277,7 @@ void PulseEngineC::ForwardFatal(const std::string&  msg, const std::string&  ori
   
 }
 
-void PulseEngineC::HandlePatientEvent(ePatient_Event type, bool active, const SEScalarTime* time)
-{
-  
-}
-void PulseEngineC::HandleAnesthesiaMachineEvent(eAnesthesiaMachine_Event type, bool active, const SEScalarTime* time)
+void PulseEngineC::HandleEvent(eEvent type, bool active, const SEScalarTime* time)
 {
   
 }

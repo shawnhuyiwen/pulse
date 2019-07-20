@@ -66,6 +66,7 @@
 #include "properties/SEScalarMassPerMass.h"
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarTime.h"
+#include "engine/SEEventManager.h"
 #include "engine/SEAdvanceHandler.h"
 #include "utils/DataTrack.h"
 #include "utils/FileUtils.h"
@@ -75,7 +76,6 @@ PulseController::PulseController(const std::string& logFileName, const std::stri
 {
   myLogger = true;
   m_DataTrack = nullptr;
-  m_EventHandler = nullptr;
   m_AdvanceHandler = nullptr;
 }
 
@@ -84,7 +84,6 @@ PulseController::PulseController(Logger* logger, const std::string& data_dir) : 
   m_DataDir = data_dir;
   myLogger = false;
   m_DataTrack = nullptr;
-  m_EventHandler = nullptr;
   m_AdvanceHandler = nullptr;
   if (!m_Logger->HasForward())// Don't override a forwarder, if there already is one there
     m_Logger->SetForward(this);
@@ -127,6 +126,8 @@ PulseController::PulseController(Logger* logger, const std::string& data_dir) : 
   m_AnesthesiaMachine = std::unique_ptr<AnesthesiaMachine>(new AnesthesiaMachine(*this));
 
   m_Inhaler = std::unique_ptr<Inhaler>(new Inhaler(*this));
+
+  m_EventManager = std::unique_ptr<SEEventManager>(new SEEventManager(GetLogger()));
 
   m_Compartments = std::unique_ptr<PulseCompartments>(new PulseCompartments(*this));
 
@@ -243,6 +244,7 @@ SEElectroCardioGram&      PulseController::GetECG() { return *m_ECG; }
 SEInhaler&                PulseController::GetInhaler() { return *m_Inhaler; }
 SEActionManager&          PulseController::GetActions() { return *m_Actions; }
 SEConditionManager&       PulseController::GetConditions() { return *m_Conditions; }
+SEEventManager&           PulseController::GetEvents() { return *m_EventManager; }
 PulseCircuits&            PulseController::GetCircuits() { return *m_Circuits; }
 PulseCompartments&        PulseController::GetCompartments() { return *m_Compartments; }
 const PulseConfiguration& PulseController::GetConfiguration() { return *m_Config; }

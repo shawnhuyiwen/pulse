@@ -7,10 +7,9 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.kitware.physiology.cdm.AnesthesiaMachine.eAnesthesiaMachine;
 import com.kitware.physiology.cdm.Enums.*;
 import com.kitware.physiology.cdm.Patient.PatientData.eSex;
-import com.kitware.physiology.cdm.Patient.ePatient;
+import com.kitware.physiology.cdm.Events.eEvent;
 import com.kitware.physiology.cdm.PatientActions.BrainInjuryData;
 import com.kitware.physiology.cdm.PatientActions.HemorrhageData;
 import com.kitware.physiology.cdm.PatientActions.IntubationData;
@@ -82,8 +81,8 @@ public class CDM2MD
       WriteDoxyTable(SEPatient.class, "", writer, skipProperties);    
       WriteDoxyTable(eSex.class, "ePatient_", writer, skipProperties);  
       
-      writer.append("#### The following tables describe the physiological states of a patient Pulse supports.\n<hr>\n");
-      WriteDoxyTable(ePatient.Event.class, "ePatient_", writer, skipProperties);
+      writer.append("#### The following tables describe the physiologic and equipment states Pulse supports.\n<hr>\n");
+      WriteDoxyTable(eEvent.class, "ePatient_", writer, skipProperties);
       
       // PATIENT CONDITIONS
       writer.append("#### The following tables describe the conditions that can be applied to the patient before starting the simulation\n<hr>\n");
@@ -143,8 +142,7 @@ public class CDM2MD
         WriteDoxyTable(c, "", writer, skipProperties);
 
       // ANESTHESIA MACHINE
-      writer.append("#### The following tables describe the anesthesia machine\n<hr>\n");
-      WriteDoxyTable(eAnesthesiaMachine.Event.class, "Anesthesia", writer, skipProperties);  
+      writer.append("#### The following tables describe the anesthesia machine\n<hr>\n"); 
       Set<Class<? extends Object>> anes = FindObjects.findAllClasses("com.kitware.physiology.datamodel.system.equipment.anesthesia");
       for(Class<?> c : anes)
         WriteDoxyTable(c, "", writer, skipProperties);

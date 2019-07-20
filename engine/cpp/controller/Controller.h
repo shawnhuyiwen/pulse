@@ -94,6 +94,8 @@ public:
 
   SEConditionManager&                     GetConditions();
 
+  SEEventManager&                         GetEvents();
+
   PulseCircuits&                          GetCircuits();
 
 
@@ -178,9 +180,10 @@ protected:
 
   std::unique_ptr<SEPatient>                                    m_Patient;
 
-  // Flag to destroy the logger or not                          
-  bool                                                          myLogger;
-  SEEventHandler*                                               m_EventHandler;
+  std::unique_ptr<SEEventManager>                               m_EventManager;
+
+  // Flag to destroy the logger or not
+  bool                                                          myLogger;  
   SEAdvanceHandler*                                             m_AdvanceHandler;
 
   std::string                                                   m_DataDir;

@@ -10,7 +10,6 @@ import com.google.protobuf.util.*;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.kitware.physiology.cdm.Patient.PatientData;
 import com.kitware.physiology.cdm.Patient.PatientData.eSex;
-import com.kitware.physiology.cdm.Patient.ePatient.Event;
 
 public class SEPatient
 {
@@ -45,8 +44,6 @@ public class SEPatient
   protected SEScalarVolume            residualVolume;
   protected SEScalarVolume            totalLungCapacity;
   protected SEScalarVolume            vitalCapacity;
-
-  protected Map<Event,Boolean> events = new HashMap<Event,Boolean>();
 
   public SEPatient()
   {
@@ -113,8 +110,6 @@ public class SEPatient
       this.totalLungCapacity.invalidate();
     if(vitalCapacity != null)
       this.vitalCapacity.invalidate();
-
-    events.clear();
   }
   
   public void readFile(String fileName) throws InvalidProtocolBufferException
@@ -256,17 +251,6 @@ public class SEPatient
       dst.setBloodVolumeBaseline(SEScalarVolume.unload(src.bloodVolumeBaseline));
     if(src.hasVitalCapacity())
       dst.setVitalCapacity(SEScalarVolume.unload(src.vitalCapacity));
-  }
-
-  public void setEvent(Event type, boolean active)
-  {
-    this.events.put(type, active);
-  }
-  public boolean isEventActive(Event type)
-  {
-    if(!this.events.containsKey(type))
-      return false;
-    return this.events.get(type);
   }
 
   public String  getName() { return this.name;}

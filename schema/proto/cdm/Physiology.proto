@@ -10,7 +10,7 @@ import "cdm/PatientNutrition.proto";
 enum eHeartRhythm
 {
   NormalSinus = 0;
-  Asystole    = 1;
+  Asystolic   = 1;
 }
 
 /** @brief 
