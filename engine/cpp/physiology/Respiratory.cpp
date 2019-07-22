@@ -907,9 +907,8 @@ void Respiratory::SupplementalOxygen()
     {
       so->GetVolume().SetValue(0.0, VolumeUnit::L);
       flow_L_Per_min = 0.0;
-      //jbw - Add depleted tank event and set back to false when replaced.
       /// \event Supplemental Oxygen: Oxygen bottle is exhausted. There is no longer any oxygen to provide.
-      //SetEvent(eSupplementalOxygen_Event::SupplementalOxygenBottleExhausted, true, m_data.GetSimulationTime());
+      m_data.GetEvents().SetEvent(eEvent::SupplementalOxygenBottleExhausted, true, m_data.GetSimulationTime());
     }
   }
   
@@ -946,9 +945,8 @@ void Respiratory::SupplementalOxygen()
       //No air can come from the bag
       OxygenInlet->GetNextResistance().SetValue(m_RespOpenResistance_cmH2O_s_Per_L, FlowResistanceUnit::cmH2O_s_Per_L);
 
-      //jbw - Add empty bag event. Trigger only once until it's not exhausted again.
       /// \event Supplemental Oxygen: The nonrebreather mask is empty. Oxygen may need to be provided at a faster rate.
-      //SetEvent(eSupplementalOxygen_Event::SupplementalOxygenBagEmpty, true, m_data.GetSimulationTime());
+      m_data.GetEvents().SetEvent(eEvent::NonRebreatherMaskOxygenBagEmpty, true, m_data.GetSimulationTime());
     }
     else if (bagVolume_L > 1.0)
     {

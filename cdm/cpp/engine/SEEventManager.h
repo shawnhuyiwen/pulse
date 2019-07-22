@@ -52,7 +52,9 @@ enum class eEvent
   // Equipment
   AnesthesiaMachineOxygenBottleOneExhausted = 1000, 
   AnesthesiaMachineOxygenBottleTwoExhausted = 1001,
-  AnesthesiaMachineReliefValveActive = 1002
+  AnesthesiaMachineReliefValveActive = 1002,
+  SupplementalOxygenBottleExhausted = 1003,
+  NonRebreatherMaskOxygenBagEmpty = 1004
 };
 extern const std::string& eEvent_Name(eEvent m);
 

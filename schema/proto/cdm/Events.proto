@@ -68,4 +68,6 @@ enum eEvent
   AnesthesiaMachineOxygenBottleOneExhausted  = 1000;
   AnesthesiaMachineOxygenBottleTwoExhausted  = 1001;
   AnesthesiaMachineReliefValveActive         = 1002;
+  SupplementalOxygenBottleExhausted          = 1003;/**<< @brief The supplemental oxygen bottle is exhausted. There is no longer any oxygen to provide. */
+  NonRebreatherMaskOxygenBagEmpty            = 1004;/**<< @brief The non rebreather mask oxygen bag is empty. Oxygen may need to be provided at a faster rate. */
 }
