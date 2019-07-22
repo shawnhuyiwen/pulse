@@ -3,8 +3,7 @@
 package com.kitware.physiology.datamodel.system.physiology;
 
 import com.kitware.physiology.cdm.Physiology.CardiovascularSystemData;
-import com.kitware.physiology.cdm.PhysiologyEnums.eHeartRhythm;
-
+import com.kitware.physiology.cdm.Physiology.eHeartRhythm;
 import com.kitware.physiology.datamodel.properties.*;
 import com.kitware.physiology.datamodel.system.SESystem;
 

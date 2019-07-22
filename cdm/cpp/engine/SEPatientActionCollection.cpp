@@ -22,10 +22,11 @@
 #include "patient/actions/SEMechanicalVentilation.h"
 #include "patient/actions/SENeedleDecompression.h"
 #include "patient/actions/SEPericardialEffusion.h"
-#include "patient/actions/SETensionPneumothorax.h"
 #include "patient/actions/SESubstanceBolus.h"
 #include "patient/actions/SESubstanceCompoundInfusion.h"
 #include "patient/actions/SESubstanceInfusion.h"
+#include "patient/actions/SESupplementalOxygen.h"
+#include "patient/actions/SETensionPneumothorax.h"
 #include "patient/actions/SEUrinate.h"
 #include "patient/actions/SEPatientAssessmentRequest.h"
 
@@ -56,6 +57,7 @@ SEPatientActionCollection::SEPatientActionCollection(SESubstanceManager& substan
   m_LeftNeedleDecompression = nullptr;
   m_RightNeedleDecompression = nullptr;
   m_PericardialEffusion = nullptr;
+  m_SupplementalOxygen = nullptr;
   m_LeftOpenTensionPneumothorax = nullptr;
   m_LeftClosedTensionPneumothorax = nullptr;
   m_RightOpenTensionPneumothorax = nullptr;
@@ -432,6 +434,17 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
     mySubCompInfuse->Copy(*cSubInfusion);
     if (!mySubCompInfuse->IsActive())
       RemoveSubstanceCompoundInfusion(*cmpd);
+    return true;
+  }
+
+  const SESupplementalOxygen* supplementalO2 = dynamic_cast<const SESupplementalOxygen*>(&action);
+  if (supplementalO2 != nullptr)
+  {
+    if (m_SupplementalOxygen == nullptr)
+      m_SupplementalOxygen = new SESupplementalOxygen();
+    m_SupplementalOxygen->Copy(*supplementalO2);
+    if (!m_SupplementalOxygen->IsActive())
+      RemoveSupplementalOxygen();
     return true;
   }
 
@@ -845,6 +858,56 @@ void SEPatientActionCollection::RemovePericardialEffusion()
   SAFE_DELETE(m_PericardialEffusion);
 }
 
+bool SEPatientActionCollection::HasSupplementalOxygen() const
+{
+  return m_SupplementalOxygen == nullptr ? false : m_SupplementalOxygen->IsActive();
+}
+SESupplementalOxygen* SEPatientActionCollection::GetSupplementalOxygen()
+{
+  return m_SupplementalOxygen;
+}
+const SESupplementalOxygen* SEPatientActionCollection::GetSupplementalOxygen() const
+{
+  return m_SupplementalOxygen;
+}
+void SEPatientActionCollection::RemoveSupplementalOxygen()
+{
+  SAFE_DELETE(m_SupplementalOxygen);
+}
+
+const std::map<const SESubstance*, SESubstanceBolus*>& SEPatientActionCollection::GetSubstanceBoluses() const
+{
+  return m_SubstanceBolus;
+}
+void SEPatientActionCollection::RemoveSubstanceBolus(const SESubstance& sub)
+{
+  SESubstanceBolus* b = m_SubstanceBolus[&sub];
+  m_SubstanceBolus.erase(&sub);
+  SAFE_DELETE(b);
+}
+
+const std::map<const SESubstance*, SESubstanceInfusion*>& SEPatientActionCollection::GetSubstanceInfusions() const
+{
+  return m_SubstanceInfusions;
+}
+void SEPatientActionCollection::RemoveSubstanceInfusion(const SESubstance& sub)
+{
+  SESubstanceInfusion* si = m_SubstanceInfusions[&sub];
+  m_SubstanceInfusions.erase(&sub);
+  SAFE_DELETE(si);
+}
+
+const std::map<const SESubstanceCompound*, SESubstanceCompoundInfusion*>& SEPatientActionCollection::GetSubstanceCompoundInfusions() const
+{
+  return m_SubstanceCompoundInfusions;
+}
+void SEPatientActionCollection::RemoveSubstanceCompoundInfusion(const SESubstanceCompound& cSub)
+{
+  SESubstanceCompoundInfusion* sci = m_SubstanceCompoundInfusions[&cSub];
+  m_SubstanceCompoundInfusions.erase(&cSub);
+  SAFE_DELETE(sci);
+}
+
 bool SEPatientActionCollection::HasTensionPneumothorax() const
 {
   if (m_LeftOpenTensionPneumothorax != nullptr&&m_LeftOpenTensionPneumothorax->IsActive())
@@ -928,39 +991,6 @@ const SETensionPneumothorax* SEPatientActionCollection::GetRightClosedTensionPne
 void SEPatientActionCollection::RemoveRightClosedTensionPneumothorax()
 {
   SAFE_DELETE(m_RightClosedTensionPneumothorax);
-}
-
-const std::map<const SESubstance*, SESubstanceBolus*>& SEPatientActionCollection::GetSubstanceBoluses() const
-{
-  return m_SubstanceBolus;
-}
-void SEPatientActionCollection::RemoveSubstanceBolus(const SESubstance& sub)
-{
-  SESubstanceBolus* b = m_SubstanceBolus[&sub];
-  m_SubstanceBolus.erase(&sub);
-  SAFE_DELETE(b);
-}
-
-const std::map<const SESubstance*, SESubstanceInfusion*>& SEPatientActionCollection::GetSubstanceInfusions() const
-{
-  return m_SubstanceInfusions;
-}
-void SEPatientActionCollection::RemoveSubstanceInfusion(const SESubstance& sub)
-{
-  SESubstanceInfusion* si = m_SubstanceInfusions[&sub];
-  m_SubstanceInfusions.erase(&sub);
-  SAFE_DELETE(si);
-}
-
-const std::map<const SESubstanceCompound*, SESubstanceCompoundInfusion*>& SEPatientActionCollection::GetSubstanceCompoundInfusions() const
-{
-  return m_SubstanceCompoundInfusions;
-}
-void SEPatientActionCollection::RemoveSubstanceCompoundInfusion(const SESubstanceCompound& cSub)
-{
-  SESubstanceCompoundInfusion* sci = m_SubstanceCompoundInfusions[&cSub];
-  m_SubstanceCompoundInfusions.erase(&cSub);
-  SAFE_DELETE(sci);
 }
 
 bool SEPatientActionCollection::HasUrinate() const

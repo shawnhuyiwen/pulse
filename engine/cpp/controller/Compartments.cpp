@@ -41,6 +41,12 @@ std::vector<std::string> pulse::InhalerCompartment::_values;
 std::vector<std::string> pulse::InhalerLink::_values;
 std::vector<std::string> pulse::MechanicalVentilatorCompartment::_values;
 std::vector<std::string> pulse::MechanicalVentilatorLink::_values;
+std::vector<std::string> pulse::NasalCannulaCompartment::_values;
+std::vector<std::string> pulse::NasalCannulaLink::_values;
+std::vector<std::string> pulse::NonRebreatherMaskCompartment::_values;
+std::vector<std::string> pulse::NonRebreatherMaskLink::_values;
+std::vector<std::string> pulse::SimpleMaskCompartment::_values;
+std::vector<std::string> pulse::SimpleMaskLink::_values;
 
 PulseCompartments::PulseCompartments(PulseController& data) : SECompartmentManager(data.GetSubstances()), m_data(data)
 {
@@ -62,6 +68,9 @@ void PulseCompartments::Clear()
   m_AnesthesiaMachineGraph = nullptr;
   m_CombinedRespiratoryAnesthesiaGraph = nullptr;
   m_CombinedRespiratoryInhalerGraph = nullptr;
+  m_CombinedRespiratoryNasalCannulaGraph = nullptr;
+  m_CombinedRespiratorySimpleMaskGraph = nullptr;
+  m_CombinedRespiratoryNonRebreatherMaskGraph = nullptr;
   m_CombinedAerosolMechanicalVentilatorGraph = nullptr;
   m_CombinedRespiratoryMechanicalVentilatorGraph = nullptr;
   m_AerosolGraph = nullptr;
@@ -91,6 +100,12 @@ void PulseCompartments::Clear()
   m_MechanicalVentilatorLeafCompartments.clear();
   m_MechanicalVentilatorAerosolCompartments.clear();
   m_MechanicalVentilatorAerosolLeafCompartments.clear();
+  m_NasalCannulaCompartments.clear();
+  m_NasalCannulaLeafCompartments.clear();
+  m_SimpleMaskCompartments.clear();
+  m_SimpleMaskLeafCompartments.clear();
+  m_NonRebreatherMaskCompartments.clear();
+  m_NonRebreatherMaskLeafCompartments.clear();
 
   m_ExtracellularFluid.clear();
   m_IntracellularFluid.clear();
@@ -197,6 +212,51 @@ void PulseCompartments::StateChange()
       m_MechanicalVentilatorAerosolLeafCompartments.push_back(cmpt);
   }
 
+  m_NasalCannulaCompartments.clear();
+  m_NasalCannulaLeafCompartments.clear();
+  for (const std::string& name : pulse::NasalCannulaCompartment::GetValues())
+  {
+    SEGasCompartment* cmpt = GetGasCompartment(name);
+    if (cmpt == nullptr)
+    {
+      Warning("Could not find expected Nasal Cannula compartment, " + name + " in compartment manager");
+      continue;
+    }
+    m_NasalCannulaCompartments.push_back(cmpt);
+    if (!cmpt->HasChildren())
+      m_NasalCannulaLeafCompartments.push_back(cmpt);
+  }
+
+  m_NonRebreatherMaskCompartments.clear();
+  m_NonRebreatherMaskLeafCompartments.clear();
+  for (const std::string& name : pulse::NonRebreatherMaskCompartment::GetValues())
+  {
+    SEGasCompartment* cmpt = GetGasCompartment(name);
+    if (cmpt == nullptr)
+    {
+      Warning("Could not find expected Non Rebreather Mask compartment, " + name + " in compartment manager");
+      continue;
+    }
+    m_NonRebreatherMaskCompartments.push_back(cmpt);
+    if (!cmpt->HasChildren())
+      m_NonRebreatherMaskLeafCompartments.push_back(cmpt);
+  }
+
+  m_SimpleMaskCompartments.clear();
+  m_SimpleMaskLeafCompartments.clear();
+  for (const std::string& name : pulse::SimpleMaskCompartment::GetValues())
+  {
+    SEGasCompartment* cmpt = GetGasCompartment(name);
+    if (cmpt == nullptr)
+    {
+      Warning("Could not find expected Simple Mask compartment, " + name + " in compartment manager");
+      continue;
+    }
+    m_SimpleMaskCompartments.push_back(cmpt);
+    if (!cmpt->HasChildren())
+      m_SimpleMaskLeafCompartments.push_back(cmpt);
+  }
+
   // \todo Write some code to cross check compartments between what we have and what we should have
   // Here is some code to make sure all created compartments are in an enum
   // (We could have removed it from the enum, but not deleted the code that makes it)
@@ -237,6 +297,21 @@ void PulseCompartments::StateChange()
   if (m_CombinedRespiratoryInhalerGraph == nullptr)
   {
     Error("Could not find required Graph " + std::string(pulse::Graph::RespiratoryAndInhaler));
+  }
+  m_CombinedRespiratoryNasalCannulaGraph = GetGasGraph(pulse::Graph::RespiratoryAndNasalCannula);
+  if (m_CombinedRespiratoryNasalCannulaGraph == nullptr)
+  {
+    Error("Could not find required Graph " + std::string(pulse::Graph::RespiratoryAndNasalCannula));
+  }
+  m_CombinedRespiratorySimpleMaskGraph = GetGasGraph(pulse::Graph::RespiratoryAndSimpleMask);
+  if (m_CombinedRespiratorySimpleMaskGraph == nullptr)
+  {
+    Error("Could not find required Graph " + std::string(pulse::Graph::RespiratoryAndSimpleMask));
+  }
+  m_CombinedRespiratoryNonRebreatherMaskGraph = GetGasGraph(pulse::Graph::RespiratoryAndNonRebreatherMask);
+  if (m_CombinedRespiratoryNonRebreatherMaskGraph == nullptr)
+  {
+    Error("Could not find required Graph " + std::string(pulse::Graph::RespiratoryAndNonRebreatherMask));
   }
   m_AerosolGraph = GetLiquidGraph(pulse::Graph::Aerosol);
   if (m_AerosolGraph == nullptr)
@@ -340,6 +415,21 @@ SEGasCompartmentGraph& PulseCompartments::GetActiveRespiratoryGraph()
       m_data.GetCompartments().UpdateLinks(*m_CombinedRespiratoryMechanicalVentilatorGraph);
     m_UpdateActiveAirwayGraph = false;
     return *m_CombinedRespiratoryMechanicalVentilatorGraph;
+  case eAirwayMode::NasalCannula:
+    if (m_UpdateActiveAirwayGraph)
+      m_data.GetCompartments().UpdateLinks(*m_CombinedRespiratoryNasalCannulaGraph);
+    m_UpdateActiveAirwayGraph = false;
+    return *m_CombinedRespiratoryNasalCannulaGraph;
+  case eAirwayMode::SimpleMask:
+    if (m_UpdateActiveAirwayGraph)
+      m_data.GetCompartments().UpdateLinks(*m_CombinedRespiratorySimpleMaskGraph);
+    m_UpdateActiveAirwayGraph = false;
+    return *m_CombinedRespiratorySimpleMaskGraph;
+  case eAirwayMode::NonRebreatherMask:
+    if (m_UpdateActiveAirwayGraph)
+      m_data.GetCompartments().UpdateLinks(*m_CombinedRespiratoryNonRebreatherMaskGraph);
+    m_UpdateActiveAirwayGraph = false;
+    return *m_CombinedRespiratoryNonRebreatherMaskGraph;
   default:
     throw CommonDataModelException("Unknown airway mode");
   }
@@ -374,6 +464,10 @@ SELiquidCompartmentGraph& PulseCompartments::GetActiveAerosolGraph()
   switch (m_data.GetAirwayMode())
   {
   case eAirwayMode::Free:
+    if (m_UpdateActiveAerosolGraph)
+      m_data.GetCompartments().UpdateLinks(*m_AerosolGraph);
+    m_UpdateActiveAerosolGraph = false;
+    return *m_AerosolGraph;
   case eAirwayMode::AnesthesiaMachine:// Just use the regular graph
     if (m_UpdateActiveAerosolGraph)
       m_data.GetCompartments().UpdateLinks(*m_AerosolGraph);
@@ -382,13 +476,28 @@ SELiquidCompartmentGraph& PulseCompartments::GetActiveAerosolGraph()
   case eAirwayMode::MechanicalVentilator:
     if (m_UpdateActiveAerosolGraph)
       m_data.GetCompartments().UpdateLinks(*m_CombinedAerosolMechanicalVentilatorGraph);
-    m_UpdateActiveAerosolGraph = true;
+    m_UpdateActiveAerosolGraph = false;
     return *m_CombinedAerosolMechanicalVentilatorGraph;
   case eAirwayMode::Inhaler:
     if (m_UpdateActiveAerosolGraph)
       m_data.GetCompartments().UpdateLinks(*m_CombinedAerosolInhalerGraph);
-    m_UpdateActiveAerosolGraph = true;
-    return *m_CombinedAerosolInhalerGraph;  
+    m_UpdateActiveAerosolGraph = false;
+    return *m_CombinedAerosolInhalerGraph;
+  case eAirwayMode::NasalCannula:// Just use the regular graph
+    if (m_UpdateActiveAerosolGraph)
+      m_data.GetCompartments().UpdateLinks(*m_AerosolGraph);
+    m_UpdateActiveAerosolGraph = false;
+    return *m_AerosolGraph;
+  case eAirwayMode::SimpleMask:// Just use the regular graph
+    if (m_UpdateActiveAerosolGraph)
+      m_data.GetCompartments().UpdateLinks(*m_AerosolGraph);
+    m_UpdateActiveAerosolGraph = false;
+    return *m_AerosolGraph;
+  case eAirwayMode::NonRebreatherMask:// Just use the regular graph
+    if (m_UpdateActiveAerosolGraph)
+      m_data.GetCompartments().UpdateLinks(*m_AerosolGraph);
+    m_UpdateActiveAerosolGraph = false;
+    return *m_AerosolGraph;
   default:
     throw CommonDataModelException("Unknown airway mode");
   }
@@ -404,6 +513,27 @@ SELiquidCompartmentGraph& PulseCompartments::GetAerosolAndInhalerGraph()
   if (m_CombinedAerosolInhalerGraph == nullptr)
     m_CombinedAerosolInhalerGraph = &CreateLiquidGraph(pulse::Graph::AerosolAndInhaler);
   return *m_CombinedAerosolInhalerGraph;
+}
+
+SEGasCompartmentGraph& PulseCompartments::GetRespiratoryAndNasalCannulaGraph()
+{
+  if (m_CombinedRespiratoryNasalCannulaGraph == nullptr)
+    m_CombinedRespiratoryNasalCannulaGraph = &CreateGasGraph(pulse::Graph::RespiratoryAndNasalCannula);
+  return *m_CombinedRespiratoryNasalCannulaGraph;
+}
+
+SEGasCompartmentGraph& PulseCompartments::GetRespiratoryAndSimpleMaskGraph()
+{
+  if (m_CombinedRespiratorySimpleMaskGraph == nullptr)
+    m_CombinedRespiratorySimpleMaskGraph = &CreateGasGraph(pulse::Graph::RespiratoryAndSimpleMask);
+  return *m_CombinedRespiratorySimpleMaskGraph;
+}
+
+SEGasCompartmentGraph& PulseCompartments::GetRespiratoryAndNonRebreatherMaskGraph()
+{
+  if (m_CombinedRespiratoryNonRebreatherMaskGraph == nullptr)
+    m_CombinedRespiratoryNonRebreatherMaskGraph = &CreateGasGraph(pulse::Graph::RespiratoryAndNonRebreatherMask);
+  return *m_CombinedRespiratoryNonRebreatherMaskGraph;
 }
 
 SEGasCompartmentGraph& PulseCompartments::GetRespiratoryAndMechanicalVentilatorGraph()

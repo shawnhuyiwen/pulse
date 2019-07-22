@@ -4,7 +4,6 @@ option java_package = "com.kitware.physiology.cdm";
 option optimize_for = SPEED;
 
 import "cdm/Enums.proto";
-import "cdm/EngineEnums.proto";
 import "cdm/Actions.proto";
 import "cdm/Patient.proto";
 import "cdm/PatientActions.proto";
@@ -17,14 +16,37 @@ import "cdm/Properties.proto";
 
 message DecimalFormatData
 {
-  eDecimalFormat.Type                                  Type                      = 1;
+enum eType
+{
+  SystemFormatting  = 0;/*<<@brief Not provided, let the system do what it wants */
+  DefaultFloat      = 1;
+  FixedMantissa     = 2;
+  SignificantDigits = 3;
+}
+
+  eType                                                Type                      = 1;
   uint32                                               Precision                 = 2;
 }
 
 message DataRequestData
 {
+  enum eCategory
+  {
+    Patient            = 0;
+    Physiology         = 1;
+    Environment        = 2;
+    GasCompartment     = 3;
+    LiquidCompartment  = 4;
+    ThermalCompartment = 5;
+    TissueCompartment  = 6;
+    Substance          = 7;
+    AnesthesiaMachine  = 8;
+    ECG                = 9;
+    Inhaler            = 10;
+  }
+  
   DecimalFormatData                                    DecimalFormat             = 1;/**<<@brief If writing to a file, specify the decimal formatting */
-  eDataRequest.Category                                Category                  = 2;/**<<@brief A category assocated with the Name */
+  eCategory                                            Category                  = 2;/**<<@brief A category assocated with the Name */
   string                                               CompartmentName           = 3;/**<<@brief The compartment name the property could be associated with */
   string                                               SubstanceName             = 4;/**<<@brief The substance name the property could be associated with */
   string                                               PropertyName              = 5;/**<<@brief The name of the property requested */

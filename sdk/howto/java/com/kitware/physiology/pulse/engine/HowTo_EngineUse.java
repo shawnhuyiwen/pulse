@@ -4,14 +4,15 @@ package com.kitware.physiology.pulse.engine;
 
 import java.util.*;
 
+import com.kitware.physiology.cdm.Events.eEvent;
+import com.kitware.physiology.cdm.Patient.PatientData.eSex;
+import com.kitware.physiology.cdm.Engine.DataRequestData.eCategory;
+import com.kitware.physiology.cdm.PatientActions.HemorrhageData;
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.kitware.physiology.cdm.AnesthesiaMachineEnums.eAnesthesiaMachine;
-import com.kitware.physiology.cdm.PatientEnums.ePatient;
-import com.kitware.physiology.cdm.EngineEnums.eDataRequest.*;
-import com.kitware.physiology.cdm.PatientActionEnums.eHemorrhage;
 import com.kitware.physiology.datamodel.conditions.SECondition;
 import com.kitware.physiology.datamodel.datarequests.SEDataRequest;
 import com.kitware.physiology.datamodel.datarequests.SEDataRequestManager;
+import com.kitware.physiology.datamodel.engine.SEEventHandler;
 import com.kitware.physiology.datamodel.engine.SEPatientConfiguration;
 import com.kitware.physiology.datamodel.patient.SEPatient;
 import com.kitware.physiology.datamodel.patient.actions.SEHemorrhage;
@@ -27,7 +28,6 @@ import com.kitware.physiology.datamodel.properties.CommonUnits.VolumePerTimeUnit
 import com.kitware.physiology.datamodel.properties.CommonUnits.VolumeUnit;
 import com.kitware.physiology.datamodel.properties.SEScalarTime;
 import com.kitware.physiology.datamodel.substance.SESubstanceCompound;
-import com.kitware.physiology.datamodel.utilities.SEEventHandler;
 import com.kitware.physiology.utilities.Log;
 import com.kitware.physiology.utilities.LogListener;
 import com.kitware.physiology.utilities.jniBridge;
@@ -66,17 +66,12 @@ public class HowTo_EngineUse
  
  protected static class MyEventHandler implements SEEventHandler
  {
-  public void handlePatientEvent(ePatient.Event type, boolean active, SEScalarTime time)
+  public void handleEvent(eEvent e, boolean active, SEScalarTime time)
   {
     // Here is how you test against an event of interest and do something
     //if(type == ePatient.Event.StartOfCardiacCycle && active)
       //Log.info("Patient started a new heart beat at time "+time);    
   }
-
-  public void handleAnesthesiaMachineEvent(eAnesthesiaMachine.Event type, boolean active, SEScalarTime time)
-  {
-    
-  } 
  }
  
  public enum InitializationType { PatientObject, PatientFile, StateFile };
@@ -118,7 +113,7 @@ public class HowTo_EngineUse
    pe.setListener(new MyListener());
    
    // I want to know when ever the patient and anesthesia machine(if used) enters and exits a particular state
-   pe.setEventHandler(new MyEventHandler());
+   pe.getEventManager().forwardEvents(new MyEventHandler());
    
    // Here are the data I want back from the engine
    // The CDM objects on the pe object will be updated 
@@ -126,22 +121,22 @@ public class HowTo_EngineUse
    // No other data values will have data in Java classes
    SEDataRequestManager dataRequests = new SEDataRequestManager();
    SEDataRequest hr = new SEDataRequest();
-   hr.setCategory(Category.Physiology);
+   hr.setCategory(eCategory.Physiology);
    hr.setPropertyName("HeartRate");
    hr.setUnit(FrequencyUnit.Per_min.toString());
    dataRequests.getRequestedData().add(hr);
    SEDataRequest rr = new SEDataRequest();
-   rr.setCategory(Category.Physiology);
+   rr.setCategory(eCategory.Physiology);
    rr.setPropertyName("RespirationRate");
    rr.setUnit(FrequencyUnit.Per_min.toString());
    dataRequests.getRequestedData().add(rr);
    SEDataRequest tlv = new SEDataRequest(); 
-   tlv.setCategory(Category.Physiology);   
+   tlv.setCategory(eCategory.Physiology);   
    tlv.setPropertyName("TotalLungVolume");
    tlv.setUnit(VolumeUnit.mL.toString());
    dataRequests.getRequestedData().add(tlv);
    SEDataRequest bv = new SEDataRequest();  
-   bv.setCategory(Category.Physiology);  
+   bv.setCategory(eCategory.Physiology);  
    bv.setPropertyName("BloodVolume");
    bv.setUnit(VolumeUnit.mL.toString());
    dataRequests.getRequestedData().add(bv);
@@ -163,7 +158,7 @@ public class HowTo_EngineUse
       // But you can get more complicated, consult our Patient Variability Documentation for more details
       SEPatient patient = new SEPatient();
       patient.setName("Standard");
-      patient.setSex(ePatient.Sex.Male);
+      patient.setSex(eSex.Male);
       patient.getAge().setValue(44,TimeUnit.yr);
       patient.getWeight().setValue(170,MassUnit.lb);
       patient.getHeight().setValue(71,LengthUnit.in);
@@ -247,7 +242,7 @@ public class HowTo_EngineUse
    Log.info("White Blood Count "+cbc.getWhiteBloodCellCount());
    
    // You can check if the patient is in a specific state/event
-   if(pe.patient.isEventActive(ePatient.Event.CardiacArrest))
+   if(pe.getEventManager().isEventActive(eEvent.CardiacArrest))
      Log.info("CODE BLUE!");
    
    time.setValue(1, TimeUnit.s);
@@ -265,7 +260,7 @@ public class HowTo_EngineUse
    
    // Let's do something to the patient, you can either send actions over one at a time, or pass in a List<SEAction>
    SEHemorrhage h = new SEHemorrhage();
-   h.setType(eHemorrhage.Type.External);
+   h.setType(HemorrhageData.eType.External);
    h.setCompartment(PulseCompartments.Vascular.RightLeg);
    h.getRate().setValue(200,VolumePerTimeUnit.mL_Per_min);// Change this to 750 if you want to see how engine failures are handled!!
    if(!pe.processAction(h))

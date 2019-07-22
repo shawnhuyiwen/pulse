@@ -86,13 +86,13 @@ void PulseEngineRef::Init()
   using System::IntPtr;
   using System::Runtime::InteropServices::Marshal;
 
-  on_event = gcnew PatientEventDelegate(
+  on_event = gcnew EventDelegate(
     this,
-    &PulseEngineRef::HandlePatientEvent
+    &PulseEngineRef::HandleEvent
   );
   IntPtr cbPtr = Marshal::GetFunctionPointerForDelegate(on_event);
-  _events->SetPatientEventCallback(static_cast<fpPatientEvent>(cbPtr.ToPointer()));
-  _pulse->SetEventHandler(_events);
+  _events->SetEventCallback(static_cast<fpEvent>(cbPtr.ToPointer()));
+  _pulse->GetEventManager().ForwardEvents(_events);
 }
 
 void PulseEngineRef::Clear()
@@ -117,7 +117,7 @@ bool PulseEngineRef::LoadStateFile(System::String^ filename, double sim_start_ti
       sim_start_time.SetValue(0, TimeUnit::s);
     if (!_pulse->SerializeFromFile(MarshalString(filename), JSON, &sim_start_time))
       return false;
-    _pulse->SetEventHandler(_events);
+    _pulse->GetEventManager().ForwardEvents(_events);
 
     // Get all the systems so we have access to them
     _bldChem = _pulse->GetBloodChemistrySystem();
@@ -338,16 +338,16 @@ void PulseEngineRef::Pneumothorax(eGate type, eSide side, double severity)
 // Event Handler //
 ///////////////////
 
-void PulseEventHandler::HandlePatientEvent(ePatient_Event type, bool active, const SEScalarTime* time)
+void PulseEventHandler::HandleEvent(eEvent type, bool active, const SEScalarTime* time)
 {
-  if (_on_patient_event != nullptr)
-    _on_patient_event(type, active);// Call the function pointer, from where ever it came and goes
+  if (_on_event != nullptr)
+    _on_event(type, active);// Call the function pointer, from where ever it came and goes
 }
 
-void PulseEngineRef::HandlePatientEvent(ePatient_Event type, bool active)
+void PulseEngineRef::HandleEvent(eEvent type, bool active)
 {
-  if(_callback != nullptr)
-    _callback->HandlePatientEvent(type, active);
+  if (_callback != nullptr)
+    _callback->HandleEvent(type, active);
 }
 
 ////////////////////

@@ -7,15 +7,14 @@ import java.util.*;
 import com.google.protobuf.*;
 import com.google.protobuf.util.*;
 import com.kitware.physiology.cdm.ElectroCardioGram.ElectroCardioGramWaveformData;
-import com.kitware.physiology.cdm.ElectroCardioGramEnums.eElectroCardioGram.WaveformLead;
+import com.kitware.physiology.cdm.ElectroCardioGram.ElectroCardioGramWaveformData.eWaveformLead;
 import com.kitware.physiology.cdm.ElectroCardioGram.ElectroCardioGramWaveformListData;
-import com.kitware.physiology.cdm.PhysiologyEnums.eHeartRhythm;
-
+import com.kitware.physiology.cdm.Physiology.eHeartRhythm;
 import com.kitware.physiology.utilities.FileUtils;
 
 public class SEElectroCardioGramWaveformList
 {
-  Map<WaveformLead,Map<eHeartRhythm,SEElectroCardioGramWaveform>> waveforms = new HashMap<WaveformLead, Map<eHeartRhythm,SEElectroCardioGramWaveform>>();
+  Map<eWaveformLead,Map<eHeartRhythm,SEElectroCardioGramWaveform>> waveforms = new HashMap<eWaveformLead, Map<eHeartRhythm,SEElectroCardioGramWaveform>>();
  
   public SEElectroCardioGramWaveformList()
   {
@@ -69,7 +68,7 @@ public class SEElectroCardioGramWaveformList
     }
   }
   
-  public SEElectroCardioGramWaveform getWaveform(WaveformLead lead, eHeartRhythm rhythm)
+  public SEElectroCardioGramWaveform getWaveform(eWaveformLead lead, eHeartRhythm rhythm)
   {
     Map<eHeartRhythm, SEElectroCardioGramWaveform> leads = this.waveforms.get(lead);
     if(leads == null)

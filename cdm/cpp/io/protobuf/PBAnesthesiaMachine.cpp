@@ -50,21 +50,6 @@ void PBAnesthesiaMachine::Serialize(const cdm::AnesthesiaMachineData& src, SEAne
   if (src.has_oxygenbottletwo())
     PBAnesthesiaMachine::Load(src.oxygenbottletwo(), dst.GetOxygenBottleTwo());
 
-  SEScalarTime time;
-  for (int i = 0; i < src.activeevent_size(); i++)
-  {
-    const cdm::AnesthesiaMachineData::ActiveEventData& e = src.activeevent(i);
-    if (e.has_duration())
-      PBProperty::Load(e.duration(), time);
-    {
-      dst.m_ss << "Active AnesthesiaMachine event " << e.event() << " does not have time associated with it";
-      dst.Warning(dst.m_ss);
-      time.SetValue(0, TimeUnit::s);
-    }
-    dst.m_EventState[(eAnesthesiaMachine_Event)e.event()] = true;
-    dst.m_EventDuration_s[(eAnesthesiaMachine_Event)e.event()] = time.GetValue(TimeUnit::s);
-  }
-
   dst.StateChange();
 }
 
@@ -76,7 +61,7 @@ cdm::AnesthesiaMachineData* PBAnesthesiaMachine::Unload(const SEAnesthesiaMachin
 }
 void PBAnesthesiaMachine::Serialize(const SEAnesthesiaMachine& src, cdm::AnesthesiaMachineData& dst)
 {
-  dst.set_connection((cdm::eAnesthesiaMachine_Connection)src.m_Connection);
+  dst.set_connection((cdm::AnesthesiaMachineData::eConnection)src.m_Connection);
   if (src.HasInletFlow())
     dst.set_allocated_inletflow(PBProperty::Unload(*src.m_InletFlow));
   if (src.HasInspiratoryExpiratoryRatio())
@@ -84,10 +69,10 @@ void PBAnesthesiaMachine::Serialize(const SEAnesthesiaMachine& src, cdm::Anesthe
   if (src.HasOxygenFraction())
     dst.set_allocated_oxygenfraction(PBProperty::Unload(*src.m_OxygenFraction));
 
-  dst.set_oxygensource((cdm::eAnesthesiaMachine_OxygenSource)src.m_OxygenSource);
+  dst.set_oxygensource((cdm::AnesthesiaMachineData::eOxygenSource)src.m_OxygenSource);
   if (src.HasPositiveEndExpiredPressure())
     dst.set_allocated_positiveendexpiredpressure(PBProperty::Unload(*src.m_PositiveEndExpiredPressure));
-  dst.set_primarygas((cdm::eAnesthesiaMachine_PrimaryGas)src.m_PrimaryGas);
+  dst.set_primarygas((cdm::AnesthesiaMachineData::ePrimaryGas)src.m_PrimaryGas);
 
   if (src.HasRespiratoryRate())
     dst.set_allocated_respiratoryrate(PBProperty::Unload(*src.m_RespiratoryRate));
@@ -103,24 +88,6 @@ void PBAnesthesiaMachine::Serialize(const SEAnesthesiaMachine& src, cdm::Anesthe
     dst.set_allocated_oxygenbottleone(PBAnesthesiaMachine::Unload(*src.m_OxygenBottleOne));
   if (src.HasOxygenBottleTwo())
     dst.set_allocated_oxygenbottletwo(PBAnesthesiaMachine::Unload(*src.m_OxygenBottleTwo));
-
-  SEScalarTime time;
-  for (auto itr : src.m_EventState)
-  {
-    if (!itr.second)
-      continue;
-
-    auto it2 = src.m_EventDuration_s.find(itr.first);
-    if (it2 == src.m_EventDuration_s.end())// This should not happen... 
-      time.SetValue(0, TimeUnit::s);
-    else
-      time.SetValue(it2->second, TimeUnit::s);
-
-    cdm::AnesthesiaMachineData_ActiveEventData* eData = dst.add_activeevent();
-
-    eData->set_event((cdm::eAnesthesiaMachine_Event)itr.first);
-    eData->set_allocated_duration(PBProperty::Unload(time));
-  }
 }
 
 void PBAnesthesiaMachine::Load(const cdm::AnesthesiaMachineChamberData& src, SEAnesthesiaMachineChamber& dst)

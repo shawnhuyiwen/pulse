@@ -5,7 +5,6 @@ option optimize_for = SPEED;
 
 import "cdm/Enums.proto";
 import "cdm/Properties.proto";
-import "cdm/AnesthesiaMachineEnums.proto";
 
 /** @brief A vaporization chamber that can be filled with a particular substance for inhalation. */
 message AnesthesiaMachineChamberData
@@ -23,20 +22,39 @@ message AnesthesiaMachineOxygenBottleData
 
 message AnesthesiaMachineData
 {
-  /** @brief An active machine event, and how long it has been active */
-  message ActiveEventData
-  {
-    eAnesthesiaMachine.Event        Event                         = 1; /**<< @brief The active event. */
-    ScalarTimeData                  Duration                      = 2; /**<< @brief The duration since last activated. */
-  }
 
-  eAnesthesiaMachine.Connection     Connection                    = 1; /**<< @copybrief eAnesthesiaMachineConnection */
+  enum eConnection
+  {
+    NullConnection = 0;/**<< Signals not provided, or no change */
+    Off            = 1;
+    Mask           = 2;
+    Tube           = 3;
+  }
+  
+  enum eOxygenSource
+  {
+    NullSource   = 0;/**<< Signals not provided, or no change */
+    NoSource     = 1;
+    Wall         = 2;
+    BottleOne    = 3;
+    BottleTwo    = 4;
+  }
+  
+  enum ePrimaryGas
+  {
+    NullGas  = 0;/**<< Signals not provided, or no change */
+    NoGas    = 1;
+    Air      = 2;
+    Nitrogen = 3;
+  }
+  
+  eConnection                       Connection                    = 1; /**<< @copybrief eAnesthesiaMachineConnection */
   ScalarVolumePerTimeData           InletFlow                     = 2; /**<< @brief The total fresh gas inlet flow. */      
   ScalarData                        InspiratoryExpiratoryRatio    = 3; /**<< @brief The ratio of time spent in the inspiratory phase vs the expiratory phase of respiration. */
   Scalar0To1Data                    OxygenFraction                = 4; /**<< @brief The fraction of the fresh gas inlet flow that is oxygen. */
-  eAnesthesiaMachine.OxygenSource   OxygenSource                  = 5; /**<< @brief @copybrief eAnesthesiaMachineOxygenSource */
+  eOxygenSource                     OxygenSource                  = 5; /**<< @brief @copybrief eAnesthesiaMachineOxygenSource */
   ScalarPressureData                PositiveEndExpiredPressure    = 6; /**<< @brief The pressure above atmospheric pressure that exists in the lungs at the end of expiration.*/
-  eAnesthesiaMachine.PrimaryGas     PrimaryGas                    = 7; /**<< @brief @copybrief eAnesthesiaMachinePrimaryGas */      
+  ePrimaryGas                       PrimaryGas                    = 7; /**<< @brief @copybrief eAnesthesiaMachinePrimaryGas */      
   ScalarPressureData                ReliefValvePressure           = 8; /**<< @brief Pressure at while the valve opens to prevent a build up of pressure in the system. */
   ScalarFrequencyData               RespiratoryRate               = 9; /**<< @brief The prescribed rate of positive-pressure ventilation. */
   ScalarPressureData                VentilatorPressure            = 10;/**<< @brief The pressure of the ventilator. */
@@ -46,6 +64,4 @@ message AnesthesiaMachineData
   
   AnesthesiaMachineOxygenBottleData OxygenBottleOne               = 13;/**<< @brief The first bottle attached to the machine. */  
   AnesthesiaMachineOxygenBottleData OxygenBottleTwo               = 14;/**<< @brief The second bottle attached to the machine. */
-
-  repeated ActiveEventData          ActiveEvent                   = 15;/**<< @brief Active events and their duration. */
 }

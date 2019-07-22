@@ -25,7 +25,7 @@
 #include "properties/SEScalarTime.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
-#include "engine/SEEventHandler.h"
+#include "engine/SEEventManager.h"
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
@@ -41,14 +41,9 @@ class MyListener : public SEEventHandler, Loggable // We want to gain easy acces
 {
 public:
   MyListener(Logger* logger) : Loggable(logger) {};
-  virtual void HandlePatientEvent(ePatient_Event type, bool active, const SEScalarTime* time) override
+  virtual void HandleEvent(eEvent type, bool active, const SEScalarTime* time) override
   {
-    GetLogger()->Info(std::stringstream() <<"Recieved Patient Event : " << ePatient_Event_Name(type));
-  }
-
-  virtual void HandleAnesthesiaMachineEvent(eAnesthesiaMachine_Event type, bool active, const SEScalarTime* time) override
-  {
-    GetLogger()->Info(std::stringstream() <<"Recieved Anesthesia Machine Event : " << eAnesthesiaMachine_Event_Name(type));
+    GetLogger()->Info(std::stringstream() <<"Recieved Event : " << eEvent_Name(type));
   }
 };
 
@@ -123,7 +118,7 @@ void HowToCPR()
 
   // Let's add a listener which will print any state changes that patient undergoes
   MyListener l(pe->GetLogger());
-  pe->GetPatient().ForwardEvents(&l);
+  pe->GetEventManager().ForwardEvents(&l);
   
   tracker.AdvanceModelTime(10);
 

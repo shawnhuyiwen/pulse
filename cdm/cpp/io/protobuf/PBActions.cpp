@@ -150,7 +150,7 @@ cdm::SerializeStateData* PBAction::Unload(const SESerializeState& src)
 }
 void PBAction::Serialize(const SESerializeState& src, cdm::SerializeStateData& dst)
 {
-  dst.set_type((cdm::eSerialization_Type)src.m_Type);
+  dst.set_type((cdm::SerializeStateData::eType)src.m_Type);
   if (src.HasFilename())
     dst.set_filename(src.m_Filename);
 }

@@ -46,6 +46,9 @@ namespace pulse {
     DEFINE_STATIC_STRING(Respiratory);
     DEFINE_STATIC_STRING(RespiratoryAndAnesthesiaMachine);
     DEFINE_STATIC_STRING(RespiratoryAndInhaler);
+    DEFINE_STATIC_STRING(RespiratoryAndNasalCannula);
+    DEFINE_STATIC_STRING(RespiratoryAndSimpleMask);
+    DEFINE_STATIC_STRING(RespiratoryAndNonRebreatherMask);
     DEFINE_STATIC_STRING(RespiratoryAndMechanicalVentilator);
     DEFINE_STATIC_STRING(Aerosol);
     DEFINE_STATIC_STRING(AerosolAndInhaler);
@@ -63,6 +66,9 @@ namespace pulse {
         _values.push_back(Respiratory);
         _values.push_back(RespiratoryAndAnesthesiaMachine);
         _values.push_back(RespiratoryAndInhaler);
+        _values.push_back(RespiratoryAndNasalCannula);
+        _values.push_back(RespiratoryAndSimpleMask);
+        _values.push_back(RespiratoryAndNonRebreatherMask);
         _values.push_back(RespiratoryAndMechanicalVentilator);
         _values.push_back(Aerosol);
         _values.push_back(AerosolAndInhaler);
@@ -995,6 +1001,144 @@ namespace pulse {
       {
         _values.push_back(EnvironmentToMouthpiece);
         _values.push_back(MouthpieceToMouth);
+      }
+      return _values;
+    }
+  protected:
+    static std::vector<std::string> _values;
+  };
+
+  class NasalCannulaCompartment
+  {
+  public:
+    DEFINE_STATIC_STRING(NasalCannulaOxygenSource);
+    DEFINE_STATIC_STRING(NasalCannula);
+
+    static const std::vector<std::string>& GetValues()
+    {
+      ScopedMutex lock;
+      if (_values.empty())
+      {
+        _values.push_back(NasalCannulaOxygenSource);
+        _values.push_back(NasalCannula);
+      }
+      return _values;
+    }
+  protected:
+    static std::vector<std::string> _values;
+  };
+
+  class NasalCannulaLink
+  {
+  public:
+    DEFINE_STATIC_STRING(NasalCannulaOxygenInlet);
+    DEFINE_STATIC_STRING(NasalCannulaSeal);
+    DEFINE_STATIC_STRING(NasalCannulaToMouth);
+
+    static const std::vector<std::string>& GetValues()
+    {
+      ScopedMutex lock;
+      if (_values.empty())
+      {
+        _values.push_back(NasalCannulaOxygenInlet);
+        _values.push_back(NasalCannulaSeal);
+        _values.push_back(NasalCannulaToMouth);
+      }
+      return _values;
+    }
+  protected:
+    static std::vector<std::string> _values;
+  };
+
+  class SimpleMaskCompartment
+  {
+  public:
+    DEFINE_STATIC_STRING(SimpleMaskOxygenSource);
+    DEFINE_STATIC_STRING(SimpleMask);
+
+    static const std::vector<std::string>& GetValues()
+    {
+      ScopedMutex lock;
+      if (_values.empty())
+      {
+        _values.push_back(SimpleMaskOxygenSource);
+        _values.push_back(SimpleMask);
+      }
+      return _values;
+    }
+  protected:
+    static std::vector<std::string> _values;
+  };
+
+  class SimpleMaskLink
+  {
+  public:
+    DEFINE_STATIC_STRING(SimpleMaskOxygenInlet);
+    DEFINE_STATIC_STRING(SimpleMaskSeal);
+    DEFINE_STATIC_STRING(SimpleMaskPorts);
+    DEFINE_STATIC_STRING(SimpleMaskToMouth);
+
+    static const std::vector<std::string>& GetValues()
+    {
+      ScopedMutex lock;
+      if (_values.empty())
+      {
+        _values.push_back(SimpleMaskOxygenInlet);
+        _values.push_back(SimpleMaskSeal);
+        _values.push_back(SimpleMaskPorts);
+        _values.push_back(SimpleMaskToMouth);
+      }
+      return _values;
+    }
+  protected:
+    static std::vector<std::string> _values;
+  };
+
+  class NonRebreatherMaskCompartment
+  {
+  public:
+    DEFINE_STATIC_STRING(NonRebreatherMaskOxygenSource);
+    DEFINE_STATIC_STRING(NonRebreatherMaskPorts);
+    DEFINE_STATIC_STRING(NonRebreatherMaskBag);
+    DEFINE_STATIC_STRING(NonRebreatherMask);
+
+    static const std::vector<std::string>& GetValues()
+    {
+      ScopedMutex lock;
+      if (_values.empty())
+      {
+        _values.push_back(NonRebreatherMaskOxygenSource);
+        _values.push_back(NonRebreatherMaskPorts);
+        _values.push_back(NonRebreatherMaskBag);
+        _values.push_back(NonRebreatherMask);
+      }
+      return _values;
+    }
+  protected:
+    static std::vector<std::string> _values;
+  };
+
+  class NonRebreatherMaskLink
+  {
+  public:
+    DEFINE_STATIC_STRING(NonRebreatherMaskOxygenInlet);
+    DEFINE_STATIC_STRING(NonRebreatherMaskReservoirValve);
+    DEFINE_STATIC_STRING(NonRebreatherMaskSeal);
+    DEFINE_STATIC_STRING(NonRebreatherMaskExhalationValves);
+    DEFINE_STATIC_STRING(NonRebreatherMaskExhalation);
+    DEFINE_STATIC_STRING(NonRebreatherMaskToMouth);
+
+    static const std::vector<std::string>& GetValues()
+    {
+      ScopedMutex lock;
+      if (_values.empty())
+      {
+        _values.push_back(NonRebreatherMaskOxygenInlet);
+        _values.push_back(NonRebreatherMaskReservoirValve);
+        _values.push_back(NonRebreatherMaskSeal);
+        _values.push_back(NonRebreatherMaskExhalationValves);
+        _values.push_back(NonRebreatherMaskExhalation);
+        _values.push_back(NonRebreatherMaskToMouth);
       }
       return _values;
     }

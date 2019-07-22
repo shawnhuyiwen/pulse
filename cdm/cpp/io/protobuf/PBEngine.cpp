@@ -9,7 +9,6 @@
 #include "io/protobuf/PBProperties.h"
 #include "io/protobuf/PBUtils.h"
 #include "bind/cpp/cdm/Engine.pb.h"
-#include "bind/cpp/cdm/EngineEnums.pb.h"
 #include "engine/SEDataRequest.h"
 #include "engine/SEDataRequestManager.h"
 #include "engine/SEDecimalFormat.h"
@@ -349,7 +348,7 @@ cdm::DataRequestData* PBEngine::Unload(const SEDataRequest& src)
 void PBEngine::Serialize(const SEDataRequest& src, cdm::DataRequestData& dst)
 {
   PBEngine::Serialize(src, *dst.mutable_decimalformat());
-  dst.set_category((cdm::eDataRequest_Category)src.m_Category);
+  dst.set_category((cdm::DataRequestData::eCategory)src.m_Category);
   if (src.HasCompartmentName())
     dst.set_compartmentname(src.m_CompartmentName);
   if (src.HasSubstanceName())
@@ -435,7 +434,7 @@ cdm::DecimalFormatData* PBEngine::Unload(const SEDecimalFormat& src)
 }
 void PBEngine::Serialize(const SEDecimalFormat& src, cdm::DecimalFormatData& dst)
 {
-  dst.set_type((cdm::eDecimalFormat_Type)src.m_Notation);
+  dst.set_type((cdm::DecimalFormatData::eType)src.m_Notation);
   dst.set_precision((google::protobuf::uint32)src.m_Precision);
 }
 

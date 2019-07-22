@@ -4,7 +4,7 @@
 #include "stdafx.h"
 
 #include "bind/cpp/pulse/Pulse.pb.h"
-#include "bind/cpp/pulse/PulseEnums.pb.h"
+#include "bind/cpp/pulse/PulseState.pb.h"
 #include "controller/Controller.h"
 
 const std::string& eAirwayMode_Name(eAirwayMode m)

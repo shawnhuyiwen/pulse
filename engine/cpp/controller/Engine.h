@@ -52,7 +52,6 @@ public:
   virtual SESubstanceManager& GetSubstanceManager();
   virtual const SESubstanceManager& GetSubstanceManager() const;
   virtual void SetAdvanceHandler(SEAdvanceHandler* handler);
-  virtual void SetEventHandler(SEEventHandler* handler);
   virtual const SEPatient& GetPatient() const;
   virtual bool GetPatientAssessment(SEPatientAssessment& assessment) const;
 
@@ -73,6 +72,8 @@ public:
   virtual const SEInhaler*                             GetInhaler() const;
 
   virtual const SECompartmentManager&                  GetCompartments() const;
+
+  virtual const SEEventManager&                        GetEventManager() const;
 
 
   virtual void AdvanceCallback(double time_s);

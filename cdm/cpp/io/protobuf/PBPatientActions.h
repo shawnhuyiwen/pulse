@@ -29,6 +29,7 @@ CDM_BIND_DECL2(SubstanceBolus)
 CDM_BIND_DECL2(SubstanceBolusState)
 CDM_BIND_DECL2(SubstanceCompoundInfusion)
 CDM_BIND_DECL2(SubstanceInfusion)
+CDM_BIND_DECL2(SupplementalOxygen)
 CDM_BIND_DECL2(TensionPneumothorax)
 CDM_BIND_DECL2(Urinate)
 CDM_BIND_DECL2(UseInhaler)
@@ -200,6 +201,12 @@ public:
   static void Serialize(const cdm::SubstanceInfusionData& src, SESubstanceInfusion& dst);
   static void Serialize(const SESubstanceInfusion& src, cdm::SubstanceInfusionData& dst);
   static void Copy(const SESubstanceInfusion& src, SESubstanceInfusion& dst);
+
+  static void Load(const cdm::SupplementalOxygenData& src, SESupplementalOxygen& dst);
+  static cdm::SupplementalOxygenData* Unload(const SESupplementalOxygen& src);
+  static void Serialize(const cdm::SupplementalOxygenData& src, SESupplementalOxygen& dst);
+  static void Serialize(const SESupplementalOxygen& src, cdm::SupplementalOxygenData& dst);
+  static void Copy(const SESupplementalOxygen& src, SESupplementalOxygen& dst);
 
   static void Load(const cdm::TensionPneumothoraxData& src, SETensionPneumothorax& dst);
   static cdm::TensionPneumothoraxData* Unload(const SETensionPneumothorax& src);

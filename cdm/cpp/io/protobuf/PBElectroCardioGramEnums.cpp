@@ -7,5 +7,5 @@
 
 const std::string& eElectroCardioGram_WaveformLead_Name(eElectroCardioGram_WaveformLead m)
 {
-  return cdm::eElectroCardioGram_WaveformLead_Name((cdm::eElectroCardioGram_WaveformLead)m);
+  return cdm::ElectroCardioGramWaveformData::eWaveformLead_Name((cdm::ElectroCardioGramWaveformData::eWaveformLead)m);
 }

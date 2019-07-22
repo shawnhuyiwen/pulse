@@ -16,6 +16,7 @@
 #include "system/physiology/SEPupillaryResponse.h"
 #include "system/physiology/SEDrugSystem.h"
 // CDM
+#include "engine/SEEventManager.h"
 #include "properties/SEScalarFlowCompliance.h"
 #include "properties/SEScalarFlowElastance.h"
 #include "properties/SEScalarFlowResistance.h"
@@ -224,24 +225,24 @@ void Nervous::CheckBrainStatus()
   if (icp_mmHg > 25.0) // \cite steiner2006monitoring
   {
     /// \event Patient: Intracranial Hypertension. The intracranial pressure has risen above 25 mmHg.
-    m_data.GetPatient().SetEvent(ePatient_Event::IntracranialHypertension, true, m_data.GetSimulationTime());
+    m_data.GetEvents().SetEvent(eEvent::IntracranialHypertension, true, m_data.GetSimulationTime());
   }
-  else if (m_data.GetPatient().IsEventActive(ePatient_Event::IntracranialHypertension) && icp_mmHg < 24.0)
+  else if (m_data.GetEvents().IsEventActive(eEvent::IntracranialHypertension) && icp_mmHg < 24.0)
   {
     /// \event Patient: End Intracranial Hypertension. The intracranial pressure has fallen below 24 mmHg.
-    m_data.GetPatient().SetEvent(ePatient_Event::IntracranialHypertension, false, m_data.GetSimulationTime());
+    m_data.GetEvents().SetEvent(eEvent::IntracranialHypertension, false, m_data.GetSimulationTime());
   }
 
   //Intracranial Hypotension
   if (icp_mmHg < 7.0) // \cite steiner2006monitoring
   {
     /// \event Patient: Intracranial Hypotension. The intracranial pressure has fallen below 7 mmHg.
-    m_data.GetPatient().SetEvent(ePatient_Event::IntracranialHypotension, true, m_data.GetSimulationTime());
+    m_data.GetEvents().SetEvent(eEvent::IntracranialHypotension, true, m_data.GetSimulationTime());
   }
-  else if (m_data.GetPatient().IsEventActive(ePatient_Event::IntracranialHypotension) && icp_mmHg > 7.5)
+  else if (m_data.GetEvents().IsEventActive(eEvent::IntracranialHypotension) && icp_mmHg > 7.5)
   {
     /// \event Patient: End Intracranial Hypotension. The intracranial pressure has risen above 7.5 mmHg.
-    m_data.GetPatient().SetEvent(ePatient_Event::IntracranialHypertension, false, m_data.GetSimulationTime());
+    m_data.GetEvents().SetEvent(eEvent::IntracranialHypertension, false, m_data.GetSimulationTime());
   }
 }
 

@@ -1,9 +1,11 @@
 
 set(from "${SCHEMA_SRC}/proto")
 set(to   "${SCHEMA_DST}")
-if( CMAKE_INSTALL_PREFIX )
+if( CMAKE_INSTALL_PREFIX )# Running as part of the build
   set(BINDER "${CMAKE_INSTALL_PREFIX}/bin/protoc")
-else()
+else()# Running via run.cmake script from install/bin
+  # Reform to be consistent with relative paths below
+  set(CMAKE_BINARY_DIR "${CMAKE_BINARY_DIR}/../")
   set(BINDER "protoc")
 endif()
 
@@ -148,3 +150,6 @@ foreach(f ${_FILES})
                                     ${f})
 endforeach()
 message(STATUS "csharp bindings are here : ${csharp_bindings_DIR}" )
+
+file(TOUCH ${to}/schema_last_built)
+message(STATUS "Touch file ${to}/schema_last_built")

@@ -1155,6 +1155,8 @@ intrapleural pressure and leakage in the airflow of the respiratory circuit.
 <i>Figure 24. An exponential function is used to map pnemothorax action severity to leak resistance.  This same function is used for both the open and the closed tension pneumothorax.</i>
 </center><br>
 
+When a lung collapses (as with pneumothorax), increased pleural cavity pressure pushes on the mediastinum and great veins. As an effect, the mediastinum is displaced and the great veins become kinked, leading to decreased venous return to the heart. This leads to increasing cardiac and respiratory embarrasment @cite jain2008understanding . The %Cardiovascular model includes a model that maps the pleural cavity pressure difference between the right and left lungs to an increased venous return resistance.  This causes the blood pressure to decrease when a pneumothorax is present.
+
 #### Acute Asthma
 
 Asthma is a common inflammatory disease of the airways (bronchi and bronchioles) where air flow into the lungs is partially obstructed. Acute asthma is an exacerbation of asthma that does not respond to standard treatments. Symptoms include elevated respiration rate, labored breathing, and a reduction in oxygen saturation, among others.  It is generally considered a life-threatening obstruction of the airway requiring immediate medical attention. During an acute asthma attack, airflow is partially obstructed during exhalation, and flow resistance is 5 to 15 times normal @cite papiris2002asthma . The engine simulates this by increasing the airway flow resistance in the circuit model. The function used to determine the airway flow resistance multiplier is shown in the figure below. The asthma attack severity is governed by a specified severity value. The higher the severity, the more severe the asthma attack, and the higher the resistance values are set.
@@ -1183,6 +1185,23 @@ The management of an open tension pneumothorax requires sealing the open chest w
 
 Tension pneumothorax is a life-threatening condition that requires immediate intervention to relieve the air trapped in the pleural space and reduce the intrapleural pressure to the subatmospheric level. Needle decompression is a procedure that allows air to escape from the pleural space into the environment. This procedure relieves the accumulated air, allowing full expansion of the affected lung. The %Respiratory Model is capable of simulating needle decompression by incorporating a circuit element that permits airflow based on pressure differential between the pleural space and the environment. The model then evaluates physiological responses to the intervention.
 
+#### Mechanical Ventilation
+
+Mechanical ventilation allows the user to specify an instantaneous pressure and/or flow value at the respiratory connection point (i.e., mouth).  The substance volume fractions at the connection can also be specified.  If no volume fractions are given, the ambient values set in the %Environment system will be used by default (see @ref EnvironmentMethodology).  All settings will remain constant during the simulation, unless removed or modified.  This action is likely to be most beneficial implemented in combination with real-world sensors.  Manikin or task trainer values can be fed into the the engine to synchronize in real-time.
+
+#### Supplemental Oxygen
+
+The supplemental oxygen action allows the user to provide a higher fraction of inspired oxygen (FiO2) to the patient by selecting one of three different oxygen therapy devices: nasal cannula, simple mask, or non-rebreather mask. The action includes optional settings for oxygen flow rate and bottle volume. If the flow is not explicitly set a default value is applied: nasal cannula = 3.5 L/min, simple mask = 7.5 L/min, non-rebreather mask = 10.0 L/min. The oxygen tank volume is set to a standard value of 425 L, if one is not set. The volume of oxygen is the value that can be provided when depressurized leaving the tank, often referred to as "capacity." The supplemental oxygen action decrements the volume able to be delivered that is remaining in the tank every time-step during simulation. The volume remaining in the tank can be updated by the user anytime while the action is applied.
+
+Each of the three supplemental oxygen devices is modeled using a different lumped parameter circuit that connects directly with the respiratory system - see Figure 27. The nasal cannula and simple mask both have a high pressure source with a high resistance to provide the requested flow of oxygen gas.  Replacing this section of the circuit with a flow source proved to be problematic due to ideal circuit laws that dictate the pressure across a current source can be any value. Since the non-rebreather mask uses a very high compliance bag that is continuously filled with oxygen, a pressure source is not needed. The volume of the bag is updated every time-step based on the flow in from the tank and out from inhalation. There is a maximum bag volume of 1 L. A volume below 0 L stops oxygen from flowing out of the bag.
+
+The seal resistance in each circuit dictates how much air escapes due to be secured imperfectly. The nasal cannula has a low seal value to realistically represent the prongs in the patient's nostrils.
+
+<img src="./Images/Respiratory/SupplementalOxygenCirucits.png" width="1000">
+<center>
+<i>Figure 27. Each supplemental oxygen device has a different circuit to mimic the air mixing nuances of each.</i>
+</center><br>
+
 ### Conscious Respiration 
 
 Conscious respiration consists of a set of commands that model forced exhalation, forced inhalation, holding breath, and inhaler actuation. Collectively, they allow the engine to model coordinated use of an inhaler.  It should be noted that the conscious respiration action begins immediately when called, and will continue until completed while the simulation continues.  Users will likely want to advance time for the duration of the conscious respiration command before attempting other actions or completing a scenario.  The following commands can be used in any order and will wait until the completion of the previous command to begin:
@@ -1192,7 +1211,7 @@ Conscious respiration consists of a set of commands that model forced exhalation
 - <b>Breath Hold</b>: The time period to hold breath is determined by the period. 
 - <b>Use %Inhaler</b>: The %Inhaler command is interpreted by the inhaler equipment (@ref InhalerMethodology).
 
-Conscious respiration has any number of potential applications and is likely to be implemented to attain proper breathing while using an inhaler, generate a spirometry curve, or simulate coughing.  Figure 27 shows the results for a cough scenario that leverages the conscious respiration action compared to empirical data.
+Conscious respiration has any number of potential applications and is likely to be implemented to attain proper breathing while using an inhaler, generate a spirometry curve, or simulate coughing.  Figure 28 shows the results for a cough scenario that leverages the conscious respiration action compared to empirical data.
 
 <center>
 <table border="0">
@@ -1203,13 +1222,9 @@ Conscious respiration has any number of potential applications and is likely to 
 </table>
 </center>
 <center>
-<i>Figure 27. The airflow curve of a simulated cough in engine generated from a conscious respiration with quick forced inhale and exhale in series. For comparison, the figure includes a plot reproduced from 
+<i>Figure 28. The airflow curve of a simulated cough in engine generated from a conscious respiration with quick forced inhale and exhale in series. For comparison, the figure includes a plot reproduced from 
 literature determined by a voluntary cough immediately following office-based vocal fold medialization injections @cite ruddy2014improved.</i>
 </center><br>
-
-### Mechanical ventilation
-
-Mechanical ventilation allows the user to specify an instantaneous pressure and/or flow value at the respiratory connection point (i.e., mouth).  The substance volume fractions at the connection can also be specified.  If no volume fractions are given, the ambient values set in the %Environment system will be used by default (see @ref EnvironmentMethodology).  All settings will remain constant during the simulation, unless removed or modified.  This action is likely to be most beneficial implemented in combination with real-world sensors.  Manikin or task trainer values can be fed into the the engine to synchronize in real-time.
 
 @anchor respiratory-events
 Events
@@ -1297,15 +1312,16 @@ The actions and interventions associated with the %Respiratory System were valid
 |	LobarPneumoniaSevereLeftLobe	|	Severe Lobar Pneumonia in one lobe in the left lung	|<span class="success">	5	</span>|<span class="warning">	2	</span>|<span class="danger">	2	</span>|
 |	LobarPneumoniaSevereRightLung	|	Severe Lobar Pneumonia in two lobes of right lung	|<span class="success">	7	</span>|<span class="warning">	0	</span>|<span class="danger">	2	</span>|
 |	LobarPneumoniaModerateBothLungs	|	Moderate Lobar Pneumonia in both lungs	|<span class="success">	6	</span>|<span class="warning">	1	</span>|<span class="danger">	2	</span>|
-|	TensionPneumothoraxOpenVaried	|	Varied open pneumothorax severities and interventions	|<span class="success">	31	</span>|<span class="warning">	4	</span>|<span class="danger">	7	</span>|
-|	TensionPneumothoraxClosedVaried	|	Varied closed pneumothorax severities and interventions	|<span class="success">	24	</span>|<span class="warning">	4	</span>|<span class="danger">	7	</span>|
+|	TensionPneumothoraxOpenVaried	|	Varied open pneumothorax severities and interventions	|<span class="success">	39	</span>|<span class="warning">	1	</span>|<span class="danger">	2	</span>|
+|	TensionPneumothoraxClosedVaried	|	Varied closed pneumothorax severities and interventions	|<span class="success">	32	</span>|<span class="warning">	1	</span>|<span class="danger">	2	</span>|
 |	TensionPneumothoraxBilateral	|	Open and closed bilateral pneumothorax and interventions	|<span class="success">	18	</span>|<span class="warning">	6	</span>|<span class="danger">	4	</span>|
 |	AirwayObstructionVaried	|	Airway Obstruction with varying severities	|<span class="success">	27	</span>|<span class="warning">	0	</span>|<span class="danger">	3	</span>|
 |	Bronchoconstriction	|	Bronchoconstriction with varying severities	|<span class="success">	25	</span>|<span class="warning">	0	</span>|<span class="danger">	5	</span>|
 |	MainstemIntubation	|	Right and left mainstem intubation and correction (with Succs)	|<span class="success">	22	</span>|<span class="warning">	3	</span>|<span class="danger">	0	</span>|
 |	EsophagealIntubation	|	Esophageal intubation and correction (with Succs)	|<span class="success">	15	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	Apnea	|	Varied severities of respiratory apnea	|<span class="success">	6	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|		|	Total	|<span class="success">	239	</span>|<span class="warning">	34	</span>|<span class="danger">	37	</span>|
+|	Supplemental Oxygen	|	Nasal cannula, simple mask, and non-rebreather mask	|<span class="success">	3	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
+|		|	Total	|<span class="success">	258	</span>|<span class="warning">	28	</span>|<span class="danger">	27	</span>|
 
 @anchor respiratory-conditionvalidation
 Validation - Conditions
@@ -1383,7 +1399,7 @@ The resulting outputs from the engine are shown in Table 11 for common clinical 
 </tr>
 </table>
 </center>
-<center><i>Figure 28. Select outputs from the airway obstruction scenario.</i></center>
+<center><i>Figure 29. Select outputs from the airway obstruction scenario.</i></center>
  
 <center><br>
 <i>Table 11. Validation matrix for physiological responses due to varying severities of airway obstruction.</i>
@@ -1417,7 +1433,7 @@ The bronchoconstriction action was validated with a scenario that applies a seri
 </tr>
 </table>
 </center>
-<center><i>Figure 29. Select outputs from the bronchoconstriction scenario.</i></center>
+<center><i>Figure 30. Select outputs from the bronchoconstriction scenario.</i></center>
 
 <center><br>
 <i>Table 12. Validation matrix for physiological responses due to varying severities of bronchoconstriction.</i>
@@ -1434,7 +1450,7 @@ The bronchoconstriction action was validated with a scenario that applies a seri
 
 ### Pneumothorax
 
-Three scenarios were used to validate tension pneuomthorax and its associated interventions, occlusive dressing, and needle decompression. Table 13 demonstrates the open tension pneumothorax on the left side of the chest at increasing severities treated with an occlusive dressing and needle decompression. The engine output for relevant parameters was compared to the validation data. The blood pressures (systolic, diastolic, and mean arterial pressure) do not show hypotension during the open wound pneumothorax incidence. Other respiratory and cardiovascular outputs show good agreement with published data. Vital signs become more dire the longer the pneumothorax is applied without intervention and as the severity (i.e. hole size) is increased. Evidence suggests that patients have progressive respiratory deterioration with final respiratory arrest @cite leigh2005tension. However, the current model does not include a definition for respiratory arrest and will continue to run until another irreversible state is reached.
+Three scenarios were used to validate tension pneuomthorax and its associated interventions, occlusive dressing, and needle decompression. Table 13 demonstrates the open tension pneumothorax on the left side of the chest at increasing severities treated with an occlusive dressing and needle decompression. The engine output for relevant parameters was compared to the validation data. The blood pressures (systolic, diastolic, and mean arterial pressure) shows hypotension during the open wound pneumothorax incidences on a single lung due to the mediastinum shift, but not with the bilateral scenario that does not cause the same left/right pleural cavity pressure difference. Other respiratory and cardiovascular outputs show good agreement with published data. Vital signs become more dire the longer the pneumothorax is applied without intervention and as the severity (i.e. hole size) is increased. Evidence suggests that patients have progressive respiratory deterioration with final respiratory arrest @cite leigh2005tension. However, the current model does not include a definition for respiratory arrest and will continue to run until another irreversible state is reached.
 
 After an occlusive dressing is added to seal the hole and needle decompression is applied, the patient's condition improves and vitals begin returning toward normal.  This is as expected compared to the validation data. 
 
@@ -1455,7 +1471,7 @@ It is important to note nervous system responses of a conscious patient due to p
 </tr>
 </table>
 </center>
-<center><i>Figure 30. Select outputs from the open tension pneumothorax scenario.</i></center>
+<center><i>Figure 31. Select outputs from the open tension pneumothorax scenario.</i></center>
 
 <center><br>
 <i>Table 13. Validation matrix for physiological responses due to varying severities of open tension pneumothorax, as well as occlusive dressing and needle decompression interventions.</i>
@@ -1465,10 +1481,10 @@ It is important to note nervous system responses of a conscious patient due to p
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
 |	Tension Pneumothorax;  severity = 0.0	|	A severity of zero should not change the leak resistance from the defualt open switch value.	|	0	|	15	|<span class="success">	No Change 	</span>|<span class="success">	No Change 	</span>|<span class="success">	No Change 	</span>|<span class="success">	No Change 	</span>|<span class="success">	No Change 	</span>|<span class="success">	No Change 	</span>|<span class="success">	No Change 	</span>|
 |	Tension Pneumothorax;  severity = 0.3	|	Represents a "sucking" chest wound on the left lung side with a mild severity (medium size hole).	|	30	|	300	|<span class="success">	 No change or Increase  @cite bond200968w, @cite leigh2005tension 	</span>|<span class="danger">	 Increase  @cite bond200968w, @cite leigh2005tension 	</span>|<span class="success">	 No change or Increase  @cite bond200968w, @cite leigh2005tension 	</span>|<span class="success">	 No change or Decrease  @cite bond200968w, @cite leigh2005tension 	</span>|<span class="success">	 No change or Decrease  @cite bond200968w, @cite leigh2005tension 	</span>|<span class="success">	 No change or Decrease  @cite bond200968w, @cite leigh2005tension 	</span>|<span class="success">	 No change or Decrease  @cite bond200968w, @cite leigh2005tension 	</span>|
-|	Tension Pneumothorax;  severity = 0.6	|	Represents a "sucking" chest wound on the left lung side with a moderate severity (large size hole).	|	360	|	600	|<span class="success">	 Increase @cite bond200968w, @cite leigh2005tension 	</span>|<span class="success">	Increase @cite leigh2005tension	</span>|<span class="success">	Increase @cite bond200968w, @cite leigh2005tension	</span>|<span class="danger">	Decrease @cite bond200968w, @cite leigh2005tension	</span>|<span class="danger">	Decrease @cite bond200968w, @cite leigh2005tension	</span>|<span class="danger">	Decrease @cite bond200968w, @cite leigh2005tension	</span>|<span class="success">	Decrease @cite bond200968w, @cite leigh2005tension	</span>|
-|	Tension Pneumothorax;  severity = 1.0	|	Represents a "sucking" chest wound on the left lung side with the severe severity (maximum size hole).  Should lead to full collapse.	|	660	|	900	|<span class="success">	 Clinical sign: Tachypnea  @cite bond200968w, @cite leigh2005tension 	</span>|<span class="success">	Increase @cite leigh2005tension	</span>|<span class="success">	Clinical sign: Tachycardia  @cite bond200968w, @cite leigh2005tension	</span>|<span class="danger">	Clinical sign: Hypotension @cite bond200968w, @cite leigh2005tension	</span>|<span class="danger">	Clinical sign: Hypotension @cite bond200968w, @cite leigh2005tension	</span>|<span class="danger">	Clinical sign: Hypotension @cite bond200968w, @cite leigh2005tension	</span>|<span class="success">	Clinical sign: Hypoxia  @cite bond200968w, @cite leigh2005tension	</span>|
+|	Tension Pneumothorax;  severity = 0.6	|	Represents a "sucking" chest wound on the left lung side with a moderate severity (large size hole).	|	360	|	600	|<span class="success">	 Increase @cite bond200968w, @cite leigh2005tension 	</span>|<span class="success">	Increase @cite leigh2005tension	</span>|<span class="success">	Increase @cite bond200968w, @cite leigh2005tension	</span>|<span class="success">	Decrease @cite bond200968w, @cite leigh2005tension	</span>|<span class="danger">	Decrease @cite bond200968w, @cite leigh2005tension	</span>|<span class="success">	Decrease @cite bond200968w, @cite leigh2005tension	</span>|<span class="success">	Decrease @cite bond200968w, @cite leigh2005tension	</span>|
+|	Tension Pneumothorax;  severity = 1.0	|	Represents a "sucking" chest wound on the left lung side with the severe severity (maximum size hole).  Should lead to full collapse.	|	660	|	900	|<span class="success">	 Clinical sign: Tachypnea  @cite bond200968w, @cite leigh2005tension 	</span>|<span class="success">	Increase @cite leigh2005tension	</span>|<span class="success">	Clinical sign: Tachycardia  @cite bond200968w, @cite leigh2005tension	</span>|<span class="success">	Clinical sign: Hypotension @cite bond200968w, @cite leigh2005tension	</span>|<span class="warning">	Clinical sign: Hypotension @cite bond200968w, @cite leigh2005tension	</span>|<span class="success">	Clinical sign: Hypotension @cite bond200968w, @cite leigh2005tension	</span>|<span class="success">	Clinical sign: Hypoxia  @cite bond200968w, @cite leigh2005tension	</span>|
 |	Apply Chest Occlusive dressing on the left side 	|	Represents the closing of chest wound on the left side	|	960	|	1000	|<span class="success">	No Change or Increased  @cite bergeronSME	</span>|<span class="success">	No Change 	</span>|<span class="success">	Tachycardia > 120 @cite bergeronSME	</span>|<span class="success">	Slightly improved to no change  @cite bergeronSME	</span>|<span class="success">	Slightly improved to no change  @cite bergeronSME	</span>|<span class="success">	Slightly improved to no change  @cite bergeronSME	</span>|<span class="success">	Modest decrease to no change  @cite bergeronSME	</span>|
-|	Apply needle decompression	|	Needle decompression is applied on the left side of the chest	|	1020	|	1320	|<span class="success">	Returning toward normal @cite bergeronSME	</span>|<span class="warning">	Returning toward normal @cite bergeronSME	</span>|<span class="success">	Returning toward normal @cite bergeronSME	</span>|<span class="warning">	Slightly diminished from normal @cite bergeronSME	</span>|<span class="warning">	Slightly diminished from normal @cite bergeronSME	</span>|<span class="warning">	Slightly diminished from normal @cite bergeronSME	</span>|<span class="success">	Normal @cite bergeronSME	</span>|
+|	Apply needle decompression	|	Needle decompression is applied on the left side of the chest	|	1020	|	1320	|<span class="success">	Returning toward normal @cite bergeronSME	</span>|<span class="success">	Returning toward normal @cite bergeronSME	</span>|<span class="success">	Returning toward normal @cite bergeronSME	</span>|<span class="success">	Slightly diminished from normal @cite bergeronSME	</span>|<span class="success">	Slightly diminished from normal @cite bergeronSME	</span>|<span class="success">	Slightly diminished from normal @cite bergeronSME	</span>|<span class="success">	Normal @cite bergeronSME	</span>|
 
 <center>
 <table border="0">
@@ -1485,7 +1501,7 @@ It is important to note nervous system responses of a conscious patient due to p
 </tr>
 </table>
 </center>
-<center><i>Figure 31. Select outputs from the closed tension pneumothorax scenario.</i></center>
+<center><i>Figure 32. Select outputs from the closed tension pneumothorax scenario.</i></center>
 
 <center><br>
 <i>Table 14. Validation matrix for physiological responses due to varying severities of closed tension pneumothorax, as well as needle decompression interventions.</i>
@@ -1495,9 +1511,9 @@ It is important to note nervous system responses of a conscious patient due to p
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
 |	Tension Pneumothorax;  severity = 0.0	|	A severity of zero should not change the leak resistance from the defualt open switch value.	|	0	|	15	|<span class="success">	No Change 	</span>|<span class="success">	No Change 	</span>|<span class="success">	No Change 	</span>|<span class="success">	No Change 	</span>|<span class="success">	No Change 	</span>|<span class="success">	No Change 	</span>|<span class="success">	No Change 	</span>|
 |	Tension Pneumothorax;  severity = 0.3	|	Represents a leak on the right lung side with a mild severity (medium size hole).	|	30	|	300	|<span class="success">	 No change or Increase  @cite bond200968w, @cite leigh2005tension 	</span>|<span class="danger">	 Increase  @cite bond200968w, @cite leigh2005tension 	</span>|<span class="success">	 No change or Increase  @cite bond200968w, @cite leigh2005tension 	</span>|<span class="success">	 No change or Decrease  @cite bond200968w, @cite leigh2005tension 	</span>|<span class="success">	 No change or Decrease  @cite bond200968w, @cite leigh2005tension 	</span>|<span class="success">	 No change or Decrease  @cite bond200968w, @cite leigh2005tension 	</span>|<span class="success">	 No change or Decrease  @cite bond200968w, @cite leigh2005tension 	</span>|
-|	Tension Pneumothorax;  severity = 0.6	|	Represents a leak on the right lung side with a moderate severity (large size hole).	|	360	|	600	|<span class="success">	 Increase @cite bond200968w, @cite leigh2005tension 	</span>|<span class="success">	Increase @cite leigh2005tension	</span>|<span class="success">	Increase  @cite bond200968w, @cite leigh2005tension	</span>|<span class="danger">	Decrease  @cite bond200968w, @cite leigh2005tension	</span>|<span class="danger">	Decrease @cite bond200968w, @cite leigh2005tension	</span>|<span class="danger">	Decrease @cite bond200968w, @cite leigh2005tension	</span>|<span class="success">	Decrease @cite bond200968w, @cite leigh2005tension	</span>|
-|	Tension Pneumothorax;  severity = 1.0	|	Represents a leak on the right lung side with the severe severity (maximum size hole).  Should lead to full collapse.	|	660	|	900	|<span class="success">	 Clinical sign: Tachypnea      @cite bond200968w, @cite leigh2005tension 	</span>|<span class="success">	Increase @cite leigh2005tension	</span>|<span class="success">	Clinical sign: Tachycardia   @cite bond200968w, @cite leigh2005tension	</span>|<span class="danger">	Clinical sign: Hypotension  @cite bond200968w, @cite leigh2005tension	</span>|<span class="danger">	Clinical sign: Hypotension  @cite bond200968w, @cite leigh2005tension	</span>|<span class="danger">	Clinical sign: Hypotension  @cite bond200968w, @cite leigh2005tension	</span>|<span class="success">	Clinical sign: Hypoxia   @cite bond200968w, @cite leigh2005tension	</span>|
-|	Apply needle decompression	|	Needle decompression is applied on the right side of the chest	|	960	|	1260	|<span class="success">	Slightly lower tachypnea  @cite bergeronSME	</span>|<span class="warning">	Returning toward normal @cite bergeronSME	</span>|<span class="success">	Tachycardia, but may be lower value  @cite bergeronSME	</span>|<span class="warning">	Slightly diminished from normal @cite bergeronSME	</span>|<span class="warning">	Slightly diminished from normal @cite bergeronSME	</span>|<span class="warning">	Slightly diminished from normal @cite bergeronSME	</span>|<span class="success">	Normal @cite bergeronSME	</span>|
+|	Tension Pneumothorax;  severity = 0.6	|	Represents a leak on the right lung side with a moderate severity (large size hole).	|	360	|	600	|<span class="success">	 Increase @cite bond200968w, @cite leigh2005tension 	</span>|<span class="success">	Increase @cite leigh2005tension	</span>|<span class="success">	Increase  @cite bond200968w, @cite leigh2005tension	</span>|<span class="success">	Decrease  @cite bond200968w, @cite leigh2005tension	</span>|<span class="danger">	Decrease @cite bond200968w, @cite leigh2005tension	</span>|<span class="success">	Decrease @cite bond200968w, @cite leigh2005tension	</span>|<span class="success">	Decrease @cite bond200968w, @cite leigh2005tension	</span>|
+|	Tension Pneumothorax;  severity = 1.0	|	Represents a leak on the right lung side with the severe severity (maximum size hole).  Should lead to full collapse.	|	660	|	900	|<span class="success">	 Clinical sign: Tachypnea      @cite bond200968w, @cite leigh2005tension 	</span>|<span class="success">	Increase @cite leigh2005tension	</span>|<span class="success">	Clinical sign: Tachycardia   @cite bond200968w, @cite leigh2005tension	</span>|<span class="success">	Clinical sign: Hypotension  @cite bond200968w, @cite leigh2005tension	</span>|<span class="warning">	Clinical sign: Hypotension  @cite bond200968w, @cite leigh2005tension	</span>|<span class="success">	Clinical sign: Hypotension  @cite bond200968w, @cite leigh2005tension	</span>|<span class="success">	Clinical sign: Hypoxia   @cite bond200968w, @cite leigh2005tension	</span>|
+|	Apply needle decompression	|	Needle decompression is applied on the right side of the chest	|	960	|	1260	|<span class="success">	Slightly lower tachypnea  @cite bergeronSME	</span>|<span class="success">	Returning toward normal @cite bergeronSME	</span>|<span class="success">	Tachycardia, but may be lower value  @cite bergeronSME	</span>|<span class="success">	Slightly diminished from normal @cite bergeronSME	</span>|<span class="success">	Slightly diminished from normal @cite bergeronSME	</span>|<span class="warning">	Slightly diminished from normal @cite bergeronSME	</span>|<span class="success">	Normal @cite bergeronSME	</span>|
 
 <center>
 <table border="0">
@@ -1514,7 +1530,7 @@ It is important to note nervous system responses of a conscious patient due to p
 </tr>
 </table>
 </center>
-<center><i>Figure 32. Select outputs from the bilateral tension pnemothorax scenario.</i></center>
+<center><i>Figure 33. Select outputs from the bilateral tension pnemothorax scenario.</i></center>
 
 <center><br>
 <i>Table 15. Validation matrix for physiological responses due to open tension pneumothorax on one side in combination with closed tension pneumothorax on the other side, as well as occlusive dressing for the open side and needle decompression interventions for both sides.</i>
@@ -1548,7 +1564,7 @@ Common clinical vital signs were compared to validation data, as shown in Table 
 </tr>
 </table>
 </center>
-<center><i>Figure 33. Select outputs from the right mainstem intubation scenario.</i></center>
+<center><i>Figure 34. Select outputs from the right mainstem intubation scenario.</i></center>
 
 <center><br>
 <i>Table 16. Validation matrix for physiological responses due to varying severities of right mainstem intubation and correction.</i>
@@ -1583,7 +1599,7 @@ All clinical outputs validated agreed with expected trends. As previously mentio
 </tr>
 </table>
 </center>
-<center><i>Figure 34. Select outputs from the esophageal intubation scenario.</i></center>
+<center><i>Figure 36. Select outputs from the esophageal intubation scenario.</i></center>
 
 <center><br>
 <i>Table 17. Validation matrix for physiological responses due esophageal intubation and correction.</i>
@@ -1614,7 +1630,7 @@ The acute asthma action was validated against three scenarios: moderate (severit
 </tr>
 </table>
 </center>
-<center><i>Figure 35. Select outputs from the moderate airway obstruction scenario.</i></center>
+<center><i>Figure 37. Select outputs from the moderate airway obstruction scenario.</i></center>
 
 <center><br>
 <i>Table 18. Validation matrix for physiological responses due to moderate acute asthma and correction.</i>
@@ -1640,7 +1656,7 @@ The acute asthma action was validated against three scenarios: moderate (severit
 </tr>
 </table>
 </center>
-<center><i>Figure 36. Select outputs from the severe asthma attack scenario.</i></center>
+<center><i>Figure 38. Select outputs from the severe asthma attack scenario.</i></center>
 
 <center><br>
 <i>Table 19. Validation matrix for physiological responses due to severe acute asthma and correction.</i>
@@ -1666,7 +1682,7 @@ The acute asthma action was validated against three scenarios: moderate (severit
 </tr>
 </table>
 </center>
-<center><i>Figure 37. Select outputs from the life threatening asthma attack scenario.</i></center>
+<center><i>Figure 39. Select outputs from the life threatening asthma attack scenario.</i></center>
 
 <center><br>
 <i>Table 20. Validation matrix for physiological responses due to life threatening acute asthma and correction.</i>
@@ -1681,6 +1697,10 @@ The acute asthma action was validated against three scenarios: moderate (severit
 
 Apnea directly effects the achieved respiratory driver (breathing muscles) pressure amplitude.  The more severe the apnea, the lower the tidal volume.
 
+<center><br>
+<i>Table 21. Validation matrix for physiological responses due to varying severities of apnea.</i>
+</center>
+
 |	Segment	|	Notes	|	Action Occurance Time (s)	|	Sampled Scenario Time (s)	|	Tidal Volume (mL)	|
 |	---	|	---	|	---	|	---	|	---	|
 |	Apnea: Severity = 0.3	|	Mild	|	30	|	210	|<span class="success">	Decrease to ~70% of healthy	</span>|
@@ -1689,6 +1709,34 @@ Apnea directly effects the achieved respiratory driver (breathing muscles) press
 |	Apnea: Severity = 0.0	|	Healthy	|	690	|	990	|<span class="success">	Normal	</span>|
 |	Apnea: Severity = 1.0	|	Severe	|	990	|	1170	|<span class="success">	Decrease to 0	</span>|
 |	Apnea: Severity = 0.0	|	Healthy	|	1170	|	1650	|<span class="success">	Normal	</span>|
+
+### Supplemental Oxygen
+
+The nasal cannula, simple mask, and non-rebreather mask are validated by applying the standard/default oxygen flow for each to the healthy standard male patient and looking at the oxygen fraction in the carina. All three supplemental oxygen devices match the expected fraction of inspired oxygen (FiO2).
+
+<center><br>
+<i>Table 22. Validation matrix for application of a nasal cannula.</i>
+</center>
+
+|	Segment	|	Notes	|	Action Occurance Time (s)	|	Sampled Scenario Time (s)	|	Fraction of Inspired Oxygen (FiO2)	|
+|	---	|	---	|	---	|	---	|	---	|
+|	SupplementalOxygen: Nasal Cannula	|	Default flow = 3.5 L/min	|	30	|	330	|<span class="success">	Increase to ~0.4 @cite korupolu2009early, @cite bailey2007early	</span>|
+
+<center><br>
+<i>Table 23. Validation matrix for application of a simple mask.</i>
+</center>
+
+|	Segment	|	Notes	|	Action Occurance Time (s)	|	Sampled Scenario Time (s)	|	Fraction of Inspired Oxygen (FiO2)	|
+|	---	|	---	|	---	|	---	|	---	|
+|	SupplementalOxygen: Simple Mask	|	Default flow = 7.5 L/min	|	30	|	330	|<span class="success">	Increase to ~0.5 @cite korupolu2009early, @cite bailey2007early	</span>|
+
+<center><br>
+<i>Table 24. Validation matrix for application of a non-rebreather mask.</i>
+</center>
+
+|	Segment	|	Notes	|	Action Occurance Time (s)	|	Sampled Scenario Time (s)	|	Fraction of Inspired Oxygen (FiO2)	|
+|	---	|	---	|	---	|	---	|	---	|
+|	SupplementalOxygen: Non-Rebreather Mask	|	Default flow = 10.0 L/min	|	30	|	330	|<span class="success">	Increase to ~0.9 @cite korupolu2009early, @cite bailey2007early	</span>|
 
 ### Conscious Respiration 
 
@@ -1700,11 +1748,11 @@ Validation - Assessments
 
 ### Pulmonary Function Test
 
-Validation of the pulmonary function test may be concluded from the validation of the resting physiologic quantities. The collection of values produced from the pulmonary function test were validated above. Additional validation comes by comparing the general shape of the produced waveform to an expected waveform. The plot shown in Figure 38 presents a way of representing the engine pulmonary function test visually. There is excellent agreement with the plot produced from the engine and the plot found in the literature @cite Kapwatt2014Lungvolumes.
+Validation of the pulmonary function test may be concluded from the validation of the resting physiologic quantities. The collection of values produced from the pulmonary function test were validated above. Additional validation comes by comparing the general shape of the produced waveform to an expected waveform. The plot shown in Figure 40 presents a way of representing the engine pulmonary function test visually. There is excellent agreement with the plot produced from the engine and the plot found in the literature @cite Kapwatt2014Lungvolumes.
 
 <center><img src="./plots/Respiratory/Pulmonary_Function_Test_Results.jpg" width="1000"></center>
 <center>
-<i>Figure 38. The lung volume plot from the pulmonary function test displays the lung volume waveform. The waveform has a frequency associated with the respiration rate of the patient at the time of the pulmonary function test. The inspiratory and expiratory reserve volumes are shown with a dilated period to represent a forced component of the inspiration and expiration. The lung volume plot shown is presented with 100 data points.</i>
+<i>Figure 40. The lung volume plot from the pulmonary function test displays the lung volume waveform. The waveform has a frequency associated with the respiration rate of the patient at the time of the pulmonary function test. The inspiratory and expiratory reserve volumes are shown with a dilated period to represent a forced component of the inspiration and expiration. The lung volume plot shown is presented with 100 data points.</i>
 </center><br>
 
 @anchor respiratory-conclusion

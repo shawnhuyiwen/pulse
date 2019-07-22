@@ -37,12 +37,13 @@
 #include "engine/SEAdvanceHandler.h"
 #include "engine/SEDataRequestManager.h"
 #include "engine/SEPatientConfiguration.h"
-#include "scenario/SEScenario.h"
 #include "engine/SEAction.h"
 #include "engine/SEActionManager.h"
 #include "engine/SECondition.h"
 #include "engine/SEConditionManager.h"
 #include "engine/SESerializeState.h"
+#include "engine/SEEventManager.h"
+#include "scenario/SEScenario.h"
 #include "properties/SEScalarTime.h"
 #include "utils/FileUtils.h"
 #include "io/protobuf/PBPulseState.h"
@@ -153,8 +154,8 @@ bool PulseEngine::InitializeEngine(const SEPatientConfiguration& patient_configu
     return false;
 
   // We don't capture events during initialization
-  m_Patient->ForwardEvents(nullptr);
-  m_AnesthesiaMachine->ForwardEvents(nullptr);
+  SEEventHandler* event_handler = m_EventManager->GetEventHandler();
+  m_EventManager->ForwardEvents(nullptr);
 
   // Stabilize the engine to a resting state (with a standard meal and environment)
   if (!m_Config->HasStabilization())
@@ -190,8 +191,7 @@ bool PulseEngine::InitializeEngine(const SEPatientConfiguration& patient_configu
 
   m_State = EngineState::Active;
   // Hook up the handlers (Note events will still be in the log)
-  m_Patient->ForwardEvents(m_EventHandler);
-  m_AnesthesiaMachine->ForwardEvents(m_EventHandler);
+  m_EventManager->ForwardEvents(event_handler);  
   Info("Finalizing homeostasis");
 
   // Run this again to clear out any bumps from systems resetting baselines in the last AtSteadyState call
@@ -230,14 +230,14 @@ void PulseEngine::AdvanceModelTime()
 {
   if (!IsReady())
     return;  
-  if(m_Patient->IsEventActive(ePatient_Event::IrreversibleState))
+  if(m_EventManager->IsEventActive(eEvent::IrreversibleState))
     return;  
 
   PreProcess();
   Process();
   PostProcess();
 
-  m_Patient->UpdateEvents(m_Config->GetTimeStep());
+  m_EventManager->UpdateEvents(m_Config->GetTimeStep());
   m_CurrentTime->Increment(m_Config->GetTimeStep());
   m_SimulationTime->Increment(m_Config->GetTimeStep());
 
@@ -389,12 +389,9 @@ bool PulseEngine::IsReady() const
   return true;
 }
 
-void PulseEngine::SetEventHandler(SEEventHandler* handler)
+const SEEventManager& PulseEngine::GetEventManager() const
 {
-  m_EventHandler = handler;
-  if (m_Patient != nullptr)
-    m_Patient->ForwardEvents(m_EventHandler);
-  m_AnesthesiaMachine->ForwardEvents(m_EventHandler);
+  return *m_EventManager;
 }
 
 

@@ -2,8 +2,8 @@
    See accompanying NOTICE file for details.*/
 package com.kitware.physiology.pulse.engine;
 
+import com.kitware.physiology.datamodel.engine.SEEventHandler;
 import com.kitware.physiology.datamodel.scenario.SEScenario;
-import com.kitware.physiology.datamodel.utilities.SEEventHandler;
 import com.kitware.physiology.utilities.Log;
 import com.kitware.physiology.utilities.LogListener;
 
@@ -34,10 +34,10 @@ public class PulseScenarioExec extends Pulse
     if(callback!=null)
     { 
       LogListener l = this.listener;
-      SEEventHandler eh = this.eventHandler;
+      SEEventHandler eh = this.eventManager.getHandler();
       reset();// Only create our CDM objects if we have a callback to fill data out (also save off listener and event handler)
       this.listener = l;
-      this.eventHandler = eh;
+      this.eventManager.forwardEvents(eh);
       this.cdmCallback = callback;
       callbackFreq_s = callback.callbackFrequency_s;
       this.requestData(callback.drMgr);

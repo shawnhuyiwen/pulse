@@ -2,8 +2,7 @@
    See accompanying NOTICE file for details.*/
 package com.kitware.physiology.pulse.engine;
 
-import com.kitware.physiology.cdm.EngineEnums.eDataRequest;
-
+import com.kitware.physiology.cdm.Engine.DataRequestData.eCategory;
 import com.kitware.physiology.datamodel.actions.SEAdvanceTime;
 import com.kitware.physiology.datamodel.datarequests.SEDataRequest;
 import com.kitware.physiology.datamodel.properties.CommonUnits.FrequencyUnit;
@@ -118,17 +117,17 @@ public class HowTo_RunScenario
     // When filling out a data request, units are optional
     // The units will be set to whatever units the engine uses.
     SEDataRequest hr = new SEDataRequest();
-    hr.setCategory(eDataRequest.Category.Physiology);
+    hr.setCategory(eCategory.Physiology);
     hr.setPropertyName("HeartRate");
     hr.setUnit(FrequencyUnit.Per_min.toString());
     sce.getDataRequestManager().getRequestedData().add(hr);
     SEDataRequest rr = new SEDataRequest();
-    rr.setCategory(eDataRequest.Category.Physiology);
+    rr.setCategory(eCategory.Physiology);
     rr.setPropertyName("RespirationRate");
     rr.setUnit(FrequencyUnit.Per_min.toString());
     sce.getDataRequestManager().getRequestedData().add(rr);
     SEDataRequest tlv = new SEDataRequest();   
-    tlv.setCategory(eDataRequest.Category.Physiology); 
+    tlv.setCategory(eCategory.Physiology); 
     tlv.setPropertyName("TotalLungVolume");
     tlv.setUnit(VolumeUnit.mL.toString());
     sce.getDataRequestManager().getRequestedData().add(tlv);

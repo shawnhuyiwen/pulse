@@ -36,6 +36,7 @@
 #include "patient/actions/SESubstanceBolus.h"
 #include "patient/actions/SESubstanceInfusion.h"
 #include "patient/actions/SESubstanceCompoundInfusion.h"
+#include "patient/actions/SESupplementalOxygen.h"
 #include "patient/actions/SETensionPneumothorax.h"
 #include "patient/actions/SEUrinate.h"
 #include "substance/SESubstance.h"
@@ -190,7 +191,7 @@ void PBPatientAction::Serialize(const SEBrainInjury& src, cdm::BrainInjuryData& 
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
   if (src.HasSeverity())
     dst.set_allocated_severity(PBProperty::Unload(*src.m_Severity));
-  dst.set_type((cdm::eBrainInjury_Type)src.m_Type);
+  dst.set_type((cdm::BrainInjuryData::eType)src.m_Type);
 }
 void PBPatientAction::Copy(const SEBrainInjury& src, SEBrainInjury& dst)
 {
@@ -610,7 +611,7 @@ void PBPatientAction::Serialize(const SEHemorrhage& src, cdm::HemorrhageData& ds
     dst.set_allocated_rate(PBProperty::Unload(*src.m_Rate));
   if (src.HasCompartment())
     dst.set_compartment(src.m_Compartment);
-  dst.set_type((cdm::eHemorrhage_Type)src.m_Type);
+  dst.set_type((cdm::HemorrhageData::eType)src.m_Type);
 }
 void PBPatientAction::Copy(const SEHemorrhage& src, SEHemorrhage& dst)
 {
@@ -637,7 +638,7 @@ cdm::IntubationData* PBPatientAction::Unload(const SEIntubation& src)
 void PBPatientAction::Serialize(const SEIntubation& src, cdm::IntubationData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
-  dst.set_type((cdm::eIntubation_Type)src.m_Type);
+  dst.set_type((cdm::IntubationData::eType)src.m_Type);
 }
 void PBPatientAction::Copy(const SEIntubation& src, SEIntubation& dst)
 {
@@ -772,7 +773,7 @@ cdm::PatientAssessmentRequestData* PBPatientAction::Unload(const SEPatientAssess
 void PBPatientAction::Serialize(const SEPatientAssessmentRequest& src, cdm::PatientAssessmentRequestData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
-  dst.set_type((cdm::ePatientAssessment_Type)src.m_Type);
+  dst.set_type((cdm::ePatientAssessmentType)src.m_Type);
 }
 void PBPatientAction::Copy(const SEPatientAssessmentRequest& src, SEPatientAssessmentRequest& dst)
 {
@@ -835,7 +836,7 @@ void PBPatientAction::Serialize(const SESubstanceBolus& src, cdm::SubstanceBolus
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
   dst.set_substance(src.m_Substance.GetName());
-  dst.set_administrationroute((cdm::eSubstanceAdministration_Route)src.m_AdminRoute);
+  dst.set_administrationroute((cdm::SubstanceBolusData::eRoute)src.m_AdminRoute);
   if (src.HasDose())
     dst.set_allocated_dose(PBProperty::Unload(*src.m_Dose));
   if (src.HasConcentration())
@@ -943,6 +944,41 @@ void PBPatientAction::Serialize(const SESubstanceInfusion& src, cdm::SubstanceIn
 void PBPatientAction::Copy(const SESubstanceInfusion& src, SESubstanceInfusion& dst)
 {
   cdm::SubstanceInfusionData data;
+  PBPatientAction::Serialize(src, data);
+  PBPatientAction::Serialize(data, dst);
+}
+
+void PBPatientAction::Load(const cdm::SupplementalOxygenData& src, SESupplementalOxygen& dst)
+{
+  PBPatientAction::Serialize(src, dst);
+}
+void PBPatientAction::Serialize(const cdm::SupplementalOxygenData& src, SESupplementalOxygen& dst)
+{
+  PBPatientAction::Serialize(src.patientaction(), dst);
+  dst.SetDevice((eSupplementalOxygen_Device)src.device());
+  if (src.has_flow())
+    PBProperty::Load(src.flow(), dst.GetFlow());
+  if (src.has_volume())
+    PBProperty::Load(src.volume(), dst.GetVolume());
+}
+cdm::SupplementalOxygenData* PBPatientAction::Unload(const SESupplementalOxygen& src)
+{
+  cdm::SupplementalOxygenData* dst = new cdm::SupplementalOxygenData();
+  PBPatientAction::Serialize(src, *dst);
+  return dst;
+}
+void PBPatientAction::Serialize(const SESupplementalOxygen& src, cdm::SupplementalOxygenData& dst)
+{
+  PBPatientAction::Serialize(src, *dst.mutable_patientaction());
+  dst.set_device((cdm::SupplementalOxygenData::eDevice)src.m_Device);
+  if (src.HasFlow())
+    dst.set_allocated_flow(PBProperty::Unload(*src.m_Flow));
+  if (src.HasVolume())
+    dst.set_allocated_volume(PBProperty::Unload(*src.m_Volume));
+}
+void PBPatientAction::Copy(const SESupplementalOxygen& src, SESupplementalOxygen& dst)
+{
+  cdm::SupplementalOxygenData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
@@ -1185,6 +1221,12 @@ SEPatientAction* PBPatientAction::Load(const cdm::AnyPatientActionData& any, SES
     }
     SESubstanceCompoundInfusion* a = new SESubstanceCompoundInfusion(*subC);
     PBPatientAction::Load(any.substancecompoundinfusion(), *a);
+    return a;
+  }
+  case cdm::AnyPatientActionData::ActionCase::kSupplementalOxygenData:
+  {
+    SESupplementalOxygen* a = new SESupplementalOxygen();
+    PBPatientAction::Load(any.supplementaloxygendata(), *a);
     return a;
   }
   case cdm::AnyPatientActionData::ActionCase::kTensionPneumothorax:

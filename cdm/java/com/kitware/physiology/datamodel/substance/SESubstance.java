@@ -6,7 +6,7 @@ package com.kitware.physiology.datamodel.substance;
 import com.google.protobuf.*;
 import com.google.protobuf.util.*;
 import com.kitware.physiology.cdm.Substance.SubstanceData;
-import com.kitware.physiology.cdm.SubstanceEnums.eSubstance.State;
+import com.kitware.physiology.cdm.Substance.SubstanceData.eState;
 
 import com.kitware.physiology.datamodel.properties.*;
 import com.kitware.physiology.utilities.FileUtils;
@@ -14,7 +14,7 @@ import com.kitware.physiology.utilities.StringUtils;
 
 public class SESubstance
 {
-  protected State                            state;
+  protected eState                           state;
   protected String                           name;
   protected SEScalarMassPerVolume            density;
   protected SEScalarMassPerAmount            molarMass;
@@ -115,7 +115,7 @@ public class SESubstance
     dst.reset();
     if(src.getName()!=null)
       dst.setName(src.getName());
-    if(src.getState()!=State.UNRECOGNIZED)
+    if(src.getState()!=eState.UNRECOGNIZED)
       dst.setState(src.getState());
     if(src.hasDensity())
       SEScalarMassPerVolume.load(src.getDensity(), dst.getDensity());    
@@ -229,8 +229,8 @@ public class SESubstance
   public void    setName(String name){this.name=name;}
   public boolean hasName(){return StringUtils.exists(this.name);}
   
-  public State   getState() { return this.state;}
-  public void    setState(State state){this.state=state;}
+  public eState  getState() { return this.state;}
+  public void    setState(eState state){this.state=state;}
   public boolean hasState(){return this.state==null?false:state!=state.NullState;}
   
   public SEScalarMassPerVolume getDensity() 

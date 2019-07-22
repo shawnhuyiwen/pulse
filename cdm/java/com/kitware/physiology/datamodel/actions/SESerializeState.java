@@ -4,12 +4,11 @@
 package com.kitware.physiology.datamodel.actions;
 
 import com.kitware.physiology.cdm.Actions.SerializeStateData;
-import com.kitware.physiology.cdm.ActionEnums.eSerialization;
 
 public class SESerializeState extends SEAction 
 {
   protected String              filename;
-  protected eSerialization.Type type;
+  protected SerializeStateData.eType type;
   
   public SESerializeState() 
   {
@@ -41,7 +40,7 @@ public class SESerializeState extends SEAction
   public static void load(SerializeStateData src, SESerializeState dst) 
   {
     SEAction.load(src.getAction(), dst);
-    if(src.getType()!=eSerialization.Type.UNRECOGNIZED)
+    if(src.getType()!=SerializeStateData.eType.UNRECOGNIZED)
       dst.type = src.getType();
     if(src.getFilename()!=null)
       dst.setFilename(src.getFilename());
@@ -82,11 +81,11 @@ public class SESerializeState extends SEAction
   {
     return type!=null;
   }
-  public eSerialization.Type getType() 
+  public SerializeStateData.eType getType() 
   {
     return type;
   }
-  public void setType(eSerialization.Type t)
+  public void setType(SerializeStateData.eType t)
   {
     this.type = t;
   }

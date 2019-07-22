@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--This file was written by TinyCAD Version 2.90.00 Build #686 Production Release
+If you wish to view this file go to http://tinycad.sourceforge.net to
+download the executable.-->
+<TinyCADSheets>
+	<TinyCAD>
+		<NAME>Sheet 1</NAME>
+		<DETAILS>
+			<Size width='1485' height='1050'/>
+			<GUIDES horiz='7' vert='5'/>
+			<TITLE></TITLE>
+			<AUTHOR></AUTHOR>
+			<REVISION>1.0</REVISION>
+			<DOCNUMBER></DOCNUMBER>
+			<ORGANISATION></ORGANISATION>
+			<SHEETS>1 of 1</SHEETS>
+			<SHOWS>1</SHOWS>
+			<DATE></DATE>
+			<GRID spacing='100.00000' snap='0'/>
+		</DETAILS>
+		<FONT id='1'>
+			<HEIGHT>-10</HEIGHT>
+			<WIDTH>0</WIDTH>
+			<WEIGHT>400</WEIGHT>
+			<ITALIC>0</ITALIC>
+			<UNDERLINE>0</UNDERLINE>
+			<STRIKEOUT>0</STRIKEOUT>
+			<CHARSET>0</CHARSET>
+			<FACENAME>Arial</FACENAME>
+		</FONT>
+		<FONT id='3'>
+			<HEIGHT>-9</HEIGHT>
+			<WIDTH>4</WIDTH>
+			<WEIGHT>400</WEIGHT>
+			<ITALIC>0</ITALIC>
+			<UNDERLINE>0</UNDERLINE>
+			<STRIKEOUT>0</STRIKEOUT>
+			<CHARSET>0</CHARSET>
+			<FACENAME>Arial</FACENAME>
+		</FONT>
+		<FONT id='5'>
+			<HEIGHT>-9</HEIGHT>
+			<WIDTH>4</WIDTH>
+			<WEIGHT>400</WEIGHT>
+			<ITALIC>0</ITALIC>
+			<UNDERLINE>0</UNDERLINE>
+			<STRIKEOUT>0</STRIKEOUT>
+			<CHARSET>0</CHARSET>
+			<FACENAME>Arial</FACENAME>
+		</FONT>
+		<FONT id='6'>
+			<HEIGHT>-9</HEIGHT>
+			<WIDTH>4</WIDTH>
+			<WEIGHT>400</WEIGHT>
+			<ITALIC>0</ITALIC>
+			<UNDERLINE>0</UNDERLINE>
+			<STRIKEOUT>0</STRIKEOUT>
+			<CHARSET>0</CHARSET>
+			<FACENAME>Arial</FACENAME>
+		</FONT>
+		<FONT id='7'>
+			<HEIGHT>-9</HEIGHT>
+			<WIDTH>4</WIDTH>
+			<WEIGHT>400</WEIGHT>
+			<ITALIC>0</ITALIC>
+			<UNDERLINE>0</UNDERLINE>
+			<STRIKEOUT>0</STRIKEOUT>
+			<CHARSET>0</CHARSET>
+			<FACENAME>Arial</FACENAME>
+		</FONT>
+		<FONT id='8'>
+			<HEIGHT>-9</HEIGHT>
+			<WIDTH>4</WIDTH>
+			<WEIGHT>700</WEIGHT>
+			<ITALIC>255</ITALIC>
+			<UNDERLINE>0</UNDERLINE>
+			<STRIKEOUT>0</STRIKEOUT>
+			<CHARSET>0</CHARSET>
+			<FACENAME>Arial</FACENAME>
+		</FONT>
+		<STYLE id='2'>
+			<STYLE>2</STYLE>
+			<COLOR>000000</COLOR>
+			<THICKNESS>1</THICKNESS>
+		</STYLE>
+		<STYLE id='3'>
+			<STYLE>0</STYLE>
+			<COLOR>000000</COLOR>
+			<THICKNESS>1</THICKNESS>
+		</STYLE>
+		<FILL id='0'>
+			<INDEX>-1</INDEX>
+			<COLOR>000000</COLOR>
+		</FILL>
+		<FILL id='1'>
+			<INDEX>0</INDEX>
+			<COLOR>000000</COLOR>
+		</FILL>
+		<FILL id='2'>
+			<INDEX>0</INDEX>
+			<COLOR>000000</COLOR>
+		</FILL>
+		<FILL id='5'>
+			<INDEX>0</INDEX>
+			<COLOR>000000</COLOR>
+		</FILL>
+		<FILL id='6'>
+			<INDEX>0</INDEX>
+			<COLOR>000000</COLOR>
+		</FILL>
+		<FILL id='7'>
+			<INDEX>0</INDEX>
+			<COLOR>000000</COLOR>
+		</FILL>
+		<FILL id='8'>
+			<INDEX>0</INDEX>
+			<COLOR>000000</COLOR>
+		</FILL>
+		<FILL id='9'>
+			<INDEX>0</INDEX>
+			<COLOR>000000</COLOR>
+		</FILL>
+		<SYMBOLDEF id='1'>
+			<NAME type='0'>RE</NAME>
+			<REF type='0'>R?</REF>
+			<DESCRIPTION>Resistor (USA Style)</DESCRIPTION>
+			<PPP>1</PPP>
+			<REF_POINT power='0' part='0' pos='72.00000,54.00000'/>
+			<TinyCAD>
+				<PIN pos='70.00000,34.00000' which='0' elec='4' direction='1' part='0' number='2' show='0' length='30' number_pos='0' centre_name='0'></PIN>
+				<PIN pos='70.00000,54.00000' which='0' elec='4' direction='0' part='0' number='1' show='0' length='30' number_pos='0' centre_name='0'></PIN>
+				<POLYGON pos='68.00000,40.60000' style='3' fill='0'>
+					<POINT pos='0.00000,1.00000' arc='0'/>
+					<POINT pos='2.00000,0.00000' arc='0'/>
+				</POLYGON>
+				<POLYGON pos='68.00000,41.60000' style='3' fill='0'>
+					<POINT pos='4.00000,1.00000' arc='0'/>
+					<POINT pos='0.00000,0.00000' arc='0'/>
+				</POLYGON>
+				<POLYGON pos='68.00000,42.60000' style='3' fill='0'>
+					<POINT pos='0.00000,1.00000' arc='0'/>
+					<POINT pos='4.00000,0.00000' arc='0'/>
+				</POLYGON>
+				<POLYGON pos='68.00000,43.60000' style='3' fill='0'>
+					<POINT pos='4.00000,1.00000' arc='0'/>
+					<POINT pos='0.00000,0.00000' arc='0'/>
+				</POLYGON>
+				<POLYGON pos='68.00000,44.60000' style='3' fill='0'>
+					<POINT pos='0.00000,1.00000' arc='0'/>
+					<POINT pos='4.00000,0.00000' arc='0'/>
+				</POLYGON>
+				<POLYGON pos='68.00000,45.60000' style='3' fill='0'>
+					<POINT pos='4.00000,1.00000' arc='0'/>
+					<POINT pos='0.00000,0.00000' arc='0'/>
+				</POLYGON>
+				<POLYGON pos='70.00000,46.60000' style='3' fill='0'>
+					<POINT pos='0.00000,1.00000' arc='0'/>
+					<POINT pos='2.00000,0.00000' arc='0'/>
+				</POLYGON>
+				<POLYGON pos='70.00000,47.60000' style='3' fill='0'>
+					<POINT pos='0.00000,0.00000' arc='0'/>
+					<POINT pos='0.00000,0.40000' arc='0'/>
+				</POLYGON>
+				<POLYGON pos='70.00000,40.00000' style='3' fill='0'>
+					<POINT pos='0.00000,0.60000' arc='0'/>
+					<POINT pos='0.00000,0.00000' arc='0'/>
+				</POLYGON>
+			</TinyCAD>
+		</SYMBOLDEF>
+		<SYMBOLDEF id='2'>
+			<NAME type='0'>RE</NAME>
+			<REF type='0'>R?</REF>
+			<DESCRIPTION>Resistor (USA Style)</DESCRIPTION>
+			<PPP>1</PPP>
+			<REF_POINT power='0' part='0' pos='72.00000,54.00000'/>
+			<REF_POINT power='1' part='0' pos='72.00000,54.00000'/>
+			<TinyCAD>
+				<PIN pos='70.00000,34.00000' which='0' elec='4' direction='1' part='0' number='2' show='0' length='30' number_pos='0' centre_name='0'></PIN>
+				<PIN pos='70.00000,54.00000' which='0' elec='4' direction='0' part='0' number='1' show='0' length='30' number_pos='0' centre_name='0'></PIN>
+				<POLYGON pos='68.00000,40.60000' style='3' fill='0'>
+					<POINT pos='0.00000,1.00000' arc='0'/>
+					<POINT pos='2.00000,0.00000' arc='0'/>
+				</POLYGON>
+				<POLYGON pos='68.00000,41.60000' style='3' fill='0'>
+					<POINT pos='4.00000,1.00000' arc='0'/>
+					<POINT pos='0.00000,0.00000' arc='0'/>
+				</POLYGON>
+				<POLYGON pos='68.00000,42.60000' style='3' fill='0'>
+					<POINT pos='0.00000,1.00000' arc='0'/>
+					<POINT pos='4.00000,0.00000' arc='0'/>
+				</POLYGON>
+				<POLYGON pos='68.00000,43.60000' style='3' fill='0'>
+					<POINT pos='4.00000,1.00000' arc='0'/>
+					<POINT pos='0.00000,0.00000' arc='0'/>
+				</POLYGON>
+				<POLYGON pos='68.00000,44.60000' style='3' fill='0'>
+					<POINT pos='0.00000,1.00000' arc='0'/>
+					<POINT pos='4.00000,0.00000' arc='0'/>
+				</POLYGON>
+				<POLYGON pos='68.00000,45.60000' style='3' fill='0'>
+					<POINT pos='4.00000,1.00000' arc='0'/>
+					<POINT pos='0.00000,0.00000' arc='0'/>
+				</POLYGON>
+				<POLYGON pos='70.00000,46.60000' style='3' fill='0'>
+					<POINT pos='0.00000,1.00000' arc='0'/>
+					<POINT pos='2.00000,0.00000' arc='0'/>
+				</POLYGON>
+				<POLYGON pos='70.00000,47.60000' style='3' fill='0'>
+					<POINT pos='0.00000,0.00000' arc='0'/>
+					<POINT pos='0.00000,0.40000' arc='0'/>
+				</POLYGON>
+				<POLYGON pos='70.00000,40.00000' style='3' fill='0'>
+					<POINT pos='0.00000,0.60000' arc='0'/>
+					<POINT pos='0.00000,0.00000' arc='0'/>
+				</POLYGON>
+			</TinyCAD>
+		</SYMBOLDEF>
+		<SYMBOLDEF id='3'>
+			<NAME type='0'>D2</NAME>
+			<REF type='0'>D?</REF>
+			<DESCRIPTION>small diode</DESCRIPTION>
+			<PPP>1</PPP>
+			<REF_POINT power='0' part='0' pos='42.00000,26.00000'/>
+			<TinyCAD>
+				<PIN pos='40.00000,26.00000' which='0' elec='0' direction='0' part='0' number='1' show='1' length='30' number_pos='0' centre_name='0'></PIN>
+				<PIN pos='40.00000,12.00000' which='0' elec='0' direction='1' part='0' number='2' show='1' length='30' number_pos='0' centre_name='0'></PIN>
+				<POLYGON pos='38.00000,20.00000' style='3' fill='0'>
+					<POINT pos='0.00000,0.00000' arc='0'/>
+					<POINT pos='4.00000,0.00000' arc='0'/>
+				</POLYGON>
+				<POLYGON pos='40.00000,18.00000' style='3' fill='0'>
+					<POINT pos='2.00000,2.00000' arc='0'/>
+					<POINT pos='0.00000,0.00000' arc='0'/>
+				</POLYGON>
+				<POLYGON pos='38.00000,18.00000' style='3' fill='0'>
+					<POINT pos='2.00000,0.00000' arc='0'/>
+					<POINT pos='0.00000,2.00000' arc='0'/>
+				</POLYGON>
+				<POLYGON pos='38.00000,18.00000' style='3' fill='0'>
+					<POINT pos='0.00000,0.00000' arc='0'/>
+					<POINT pos='4.00000,0.00000' arc='0'/>
+				</POLYGON>
+				<POLYGON pos='40.00000,20.00000' style='3' fill='0'>
+					<POINT pos='0.00000,0.00000' arc='0'/>
+					<POINT pos='0.00000,1.00000' arc='0'/>
+				</POLYGON>
+				<POLYGON pos='40.00000,17.00000' style='3' fill='0'>
+					<POINT pos='0.00000,1.00000' arc='0'/>
+					<POINT pos='0.00000,0.00000' arc='0'/>
+				</POLYGON>
+			</TinyCAD>
+		</SYMBOLDEF>
+		<SYMBOLDEF id='14'>
+			<NAME type='0'>BATTERY</NAME>
+			<REF type='0'>B?</REF>
+			<DESCRIPTION>Single Cell Battery</DESCRIPTION>
+			<PPP>1</PPP>
+			<REF_POINT power='0' part='0' pos='122.20000,64.00000'/>
+			<TinyCAD>
+				<POLYGON pos='120.00000,61.00000' style='3' fill='0'>
+					<POINT pos='0.00000,0.00000' arc='0'/>
+					<POINT pos='0.00000,3.00000' arc='0'/>
+				</POLYGON>
+				<POLYGON pos='120.00000,57.00000' style='3' fill='0'>
+					<POINT pos='0.00000,3.00000' arc='0'/>
+					<POINT pos='0.00000,0.00000' arc='0'/>
+				</POLYGON>
+				<POLYGON pos='121.00000,58.60000' style='3' fill='0'>
+					<POINT pos='0.00000,0.00000' arc='0'/>
+					<POINT pos='1.20000,0.00000' arc='0'/>
+				</POLYGON>
+				<POLYGON pos='119.00000,61.00000' style='3' fill='0'>
+					<POINT pos='0.00000,0.00000' arc='0'/>
+					<POINT pos='2.00000,0.00000' arc='0'/>
+				</POLYGON>
+				<POLYGON pos='118.00000,60.00000' style='3' fill='0'>
+					<POINT pos='0.00000,0.00000' arc='0'/>
+					<POINT pos='4.00000,0.00000' arc='0'/>
+				</POLYGON>
+				<POLYGON pos='121.60000,58.00000' style='3' fill='0'>
+					<POINT pos='0.00000,0.00000' arc='0'/>
+					<POINT pos='0.00000,1.20000' arc='0'/>
+				</POLYGON>
+				<PIN pos='120.00000,64.00000' which='5' elec='4' direction='0' part='0' number='2' show='0' length='30' number_pos='0' centre_name='0'></PIN>
+				<PIN pos='120.00000,57.00000' which='5' elec='4' direction='1' part='0' number='1' show='0' length='30' number_pos='0' centre_name='0'></PIN>
+			</TinyCAD>
+		</SYMBOLDEF>
+		<OPTIONS>
+			<GRID>0</GRID>
+			<UNITS>1</UNITS>
+			<COLOR_WIRE>000000</COLOR_WIRE>
+			<COLOR_BUS>000000</COLOR_BUS>
+			<COLOR_JUNCTION>000000</COLOR_JUNCTION>
+			<COLOR_NOCONNECT>000000</COLOR_NOCONNECT>
+			<COLOR_LABEL>208000</COLOR_LABEL>
+			<COLOR_POWER>000000</COLOR_POWER>
+			<COLOR_PIN>000000</COLOR_PIN>
+			<COLOR_HIDDEN_PIN>208020</COLOR_HIDDEN_PIN>
+			<COLOR_BACKGROUND>FFFFFF</COLOR_BACKGROUND>
+			<COLOR_NOTETEXT_FILL>AFFFFF</COLOR_NOTETEXT_FILL>
+			<COLOR_NOTETEXT_LINE>FF0000</COLOR_NOTETEXT_LINE>
+			<COLOR_NOTETEXT_TEXT>FF0000</COLOR_NOTETEXT_TEXT>
+		</OPTIONS>
+		<SYMBOL id='2' pos='76.49267,62.86254' part='0' rotate='4' can_scale='1' show_power='0' scale_x='1.00000' scale_y='0.70000'>
+			<FIELD type='0' description='Ref' value='R10v' show='0' pos='1.00000,-9.60000'/>
+			<FIELD type='0' description='Name' value='' show='1' pos='1.00000,-12.00000'/>
+		</SYMBOL>
+		<SYMBOL id='2' pos='74.28000,64.34000' part='0' rotate='2' can_scale='1' show_power='0' scale_x='1.00000' scale_y='0.70000'>
+			<FIELD type='0' description='Ref' value='R10v' show='0' pos='-12.00000,2.00000'/>
+			<FIELD type='0' description='Name' value='Seal' show='1' pos='-8.60000,-4.80000'/>
+		</SYMBOL>
+		<POWER pos='60.40000,62.40000' which='3' direction='2'></POWER>
+		<POWER pos='74.58207,41.75594' which='3' direction='0'></POWER>
+		<SYMBOL id='3' pos='173.69103,93.30897' part='0' rotate='5' can_scale='0' show_power='0' scale_x='1.00000' scale_y='1.00000'>
+			<FIELD type='0' description='Ref' value='D1' show='0' pos='1.00000,-9.60000'/>
+			<FIELD type='0' description='Name' value='Reservoir Valve' show='1' pos='1.80000,-5.60000'/>
+		</SYMBOL>
+		<TEXT pos='76.40000,74.00000' direction='3' font='8' color='000000'>Mouth (Respiratory System)</TEXT>
+		<TEXT pos='76.60000,63.40000' direction='3' font='5' color='000000'>Nasal Cannula</TEXT>
+		<WIRE style='2' a='74.47310,72.85517' b='74.47310,62.79517'/>
+		<WIRE a='74.47310,62.79517' b='74.28000,62.34000'/>
+		<TEXT pos='79.20000,56.60000' direction='3' font='7' color='000000'>Oxygen Inlet</TEXT>
+		<TEXT pos='75.53538,69.15385' direction='3' font='5' color='000000'>Connection</TEXT>
+		<ELLIPSE a='73.80000,48.40000' b='75.20000,49.80000' style='3' fill='6'/>
+		<ELLIPSE a='59.80000,61.80000' b='61.20000,63.20000' style='3' fill='1'/>
+		<ELLIPSE a='73.80000,62.00000' b='75.20000,63.40000' style='3' fill='2'/>
+		<ELLIPSE a='73.78207,72.20000' b='75.18207,73.60000' style='3' fill='9'/>
+		<SYMBOL id='1' pos='74.72000,127.14000' part='0' rotate='2' can_scale='1' show_power='0' scale_x='1.00000' scale_y='0.70000'>
+			<FIELD type='0' description='Ref' value='R10v' show='0' pos='-12.00000,2.00000'/>
+			<FIELD type='0' description='Name' value='Seal' show='1' pos='-8.87310,-4.16277'/>
+		</SYMBOL>
+		<POWER pos='60.84000,125.20000' which='3' direction='2'></POWER>
+		<TEXT pos='76.84000,136.80000' direction='3' font='8' color='000000'>Mouth (Respiratory System)</TEXT>
+		<TEXT pos='75.60277,127.94893' direction='3' font='3' color='000000'>Mask</TEXT>
+		<WIRE style='2' a='74.82207,135.20000' b='74.82207,125.14000'/>
+		<WIRE a='74.82207,125.14000' b='74.72000,125.14000'/>
+		<TEXT pos='76.08553,132.61930' direction='3' font='3' color='000000'>Connection</TEXT>
+		<ELLIPSE a='60.24000,124.60000' b='61.64000,126.00000' style='3' fill='1'/>
+		<ELLIPSE a='74.13103,134.81793' b='75.53103,136.21793' style='3' fill='9'/>
+		<SYMBOL id='1' pos='171.26613,95.95546' part='0' rotate='2' can_scale='1' show_power='0' scale_x='1.00000' scale_y='0.70000'>
+			<FIELD type='0' description='Ref' value='R10v' show='0' pos='-12.00000,2.00000'/>
+			<FIELD type='0' description='Name' value='Seal' show='1' pos='-8.60000,-4.80000'/>
+		</SYMBOL>
+		<POWER pos='157.33227,93.96160' which='3' direction='2'></POWER>
+		<TEXT pos='173.44000,105.40000' direction='3' font='8' color='000000'>Mouth (Respiratory System)</TEXT>
+		<TEXT pos='172.25538,96.80000' direction='3' font='3' color='000000'>Mask</TEXT>
+		<WIRE style='2' a='171.51310,104.07310' b='171.51310,94.01310'/>
+		<WIRE a='171.51310,94.01310' b='171.26613,93.95546'/>
+		<TEXT pos='172.72923,101.32308' direction='3' font='3' color='000000'>Connection</TEXT>
+		<ELLIPSE a='156.84000,93.20000' b='158.24000,94.60000' style='3' fill='5'/>
+		<ELLIPSE a='170.82207,103.69103' b='172.22207,105.09103' style='3' fill='9'/>
+		<TEXT pos='174.44000,82.20000' direction='3' font='3' color='000000'>Bag</TEXT>
+		<SYMBOL id='1' pos='88.80000,127.03587' part='0' rotate='2' can_scale='1' show_power='0' scale_x='1.00000' scale_y='0.70000'>
+			<FIELD type='0' description='Ref' value='R10v' show='0' pos='-12.00000,2.00000'/>
+			<FIELD type='0' description='Name' value='Ports' show='1' pos='-9.14620,-4.07173'/>
+		</SYMBOL>
+		<POWER pos='88.77380,125.02277' which='3' direction='3'></POWER>
+		<ELLIPSE a='88.17380,124.42277' b='89.57380,125.82277' style='3' fill='1'/>
+		<SYMBOL id='3' pos='185.96923,96.00125' part='0' rotate='3' can_scale='0' show_power='0' scale_x='1.00000' scale_y='1.00000'>
+			<FIELD type='0' description='Ref' value='D1' show='0' pos='-14.00000,2.00000'/>
+			<FIELD type='0' description='Name' value='Exhalation Valves' show='1' pos='-14.00000,-4.00000'/>
+		</SYMBOL>
+		<POWER pos='200.42165,94.09864' which='3' direction='3'></POWER>
+		<ELLIPSE a='170.84000,93.40000' b='172.24000,94.80000' style='3' fill='6'/>
+		<ELLIPSE a='73.83490,40.88078' b='75.23490,42.28078' style='3' fill='7'/>
+		<TEXT pos='77.99478,50.02862' direction='3' font='6' color='000000'>Oxygen Source</TEXT>
+		<SYMBOL id='14' pos='76.48584,48.66818' part='0' rotate='5' can_scale='0' show_power='0' scale_x='1.00000' scale_y='1.00000'>
+			<FIELD type='0' description='Ref' value='B?' show='0' pos='1.00000,-2.60000'/>
+			<FIELD type='0' description='Name' value='' show='1' pos='2.27447,-2.26900'/>
+		</SYMBOL>
+		<TEXT pos='78.20703,45.93719' direction='3' font='6' color='000000'>Pressure</TEXT>
+		<SYMBOL id='2' pos='76.79595,125.04506' part='0' rotate='4' can_scale='1' show_power='0' scale_x='1.00000' scale_y='0.70000'>
+			<FIELD type='0' description='Ref' value='R10v' show='0' pos='1.00000,-9.60000'/>
+			<FIELD type='0' description='Name' value='' show='1' pos='1.00000,-12.00000'/>
+		</SYMBOL>
+		<POWER pos='74.88535,103.93846' which='3' direction='0'></POWER>
+		<TEXT pos='79.50328,118.78252' direction='3' font='7' color='000000'>Oxygen Inlet</TEXT>
+		<ELLIPSE a='74.10328,110.58252' b='75.50328,111.98252' style='3' fill='6'/>
+		<ELLIPSE a='74.13818,103.06330' b='75.53818,104.46330' style='3' fill='7'/>
+		<TEXT pos='78.29806,112.21114' direction='3' font='6' color='000000'>Oxygen Source</TEXT>
+		<SYMBOL id='14' pos='76.78912,110.85070' part='0' rotate='5' can_scale='0' show_power='0' scale_x='1.00000' scale_y='1.00000'>
+			<FIELD type='0' description='Ref' value='B?' show='0' pos='1.00000,-2.60000'/>
+			<FIELD type='0' description='Name' value='' show='1' pos='2.27447,-2.26900'/>
+		</SYMBOL>
+		<TEXT pos='78.51031,108.11971' direction='3' font='6' color='000000'>Pressure</TEXT>
+		<ELLIPSE a='74.14897,124.52690' b='75.54897,125.92690' style='3' fill='8'/>
+		<SYMBOL id='2' pos='173.65530,81.02858' part='0' rotate='4' can_scale='1' show_power='0' scale_x='1.00000' scale_y='0.70000'>
+			<FIELD type='0' description='Ref' value='R10v' show='0' pos='1.00000,-9.60000'/>
+			<FIELD type='0' description='Name' value='' show='1' pos='1.00000,-12.00000'/>
+		</SYMBOL>
+		<POWER pos='171.74470,59.55785' which='3' direction='0'></POWER>
+		<TEXT pos='176.36263,74.76604' direction='3' font='6' color='000000'>Oxygen Inlet</TEXT>
+		<ELLIPSE a='170.96263,66.56604' b='172.36263,67.96604' style='3' fill='8'/>
+		<ELLIPSE a='171.00000,80.58207' b='172.40000,81.98207' style='3' fill='9'/>
+		<SYMBOL id='1' pos='200.10897,96.14010' part='0' rotate='2' can_scale='1' show_power='0' scale_x='1.00000' scale_y='0.70000'>
+			<FIELD type='0' description='Ref' value='R10v' show='0' pos='-12.00000,2.00000'/>
+			<FIELD type='0' description='Name' value='Exhalation' show='1' pos='-10.14756,-4.52690'/>
+		</SYMBOL>
+		<ELLIPSE a='199.71033,93.46563' b='201.11033,94.86563' style='3' fill='8'/>
+		<ELLIPSE a='185.46925,93.47681' b='186.86925,94.87681' style='3' fill='9'/>
+		<TEXT pos='183.56071,97.42230' direction='3' font='3' color='000000'>Ports</TEXT>
+		<ELLIPSE a='171.04506,59.33591' b='172.44506,60.73591' style='3' fill='8'/>
+		<WIRE style='3' a='171.70660,67.29030' b='171.70660,60.41647'/>
+		<TEXT pos='173.60985,68.29167' direction='3' font='5' color='000000'>Oxygen Source</TEXT>
+	</TinyCAD>
+</TinyCADSheets>

@@ -21,6 +21,7 @@
 // CDM
 #include "patient/SEPatient.h"
 #include "patient/SEMeal.h"
+#include "engine/SEEventManager.h"
 #include "patient/conditions/SEConsumeMeal.h"
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceClearance.h"
@@ -1079,11 +1080,11 @@ void Tissue::CalculateVitals()
   if ((m_RestingFluidMass_kg - currentFluidMass_kg) / m_RestingPatientMass_kg > 0.03)
   {
     /// \event Patient: Patient is dehydrated when 3% of body mass is lost due to fluid reduction
-    m_data.GetPatient().SetEvent(ePatient_Event::Dehydration, true, m_data.GetSimulationTime()); /// \cite who2005dehydration
+    m_data.GetEvents().SetEvent(eEvent::Dehydration, true, m_data.GetSimulationTime()); /// \cite who2005dehydration
   }
   else if ((m_RestingFluidMass_kg - currentFluidMass_kg) / m_RestingPatientMass_kg < 0.02)
   {
-    m_data.GetPatient().SetEvent(ePatient_Event::Dehydration, false, m_data.GetSimulationTime());
+    m_data.GetEvents().SetEvent(eEvent::Dehydration, false, m_data.GetSimulationTime());
   }
 
   // Total tissue volume

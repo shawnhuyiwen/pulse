@@ -22,6 +22,7 @@
 #include "substance/SESubstanceFraction.h"
 #include "substance/SESubstanceClearance.h"
 #include "engine/SEActionManager.h"
+#include "engine/SEEventManager.h"
 #include "engine/SEPatientActionCollection.h"
 #include "patient/actions/SEUrinate.h"
 #include "properties/SEScalarFlowResistance.h"
@@ -318,7 +319,7 @@ void PulseEngineTest::RenalFeedbackTest(RenalFeedback feedback, const std::strin
     for (unsigned int i = 0; i < 3e6; i++)
     {
       //Flag beginning of cardiac cycle - this will make it just use the current value instead of a running average
-      patient->SetEvent(ePatient_Event::StartOfCardiacCycle, true, eventTime);
+      pc.GetEvents().SetEvent(eEvent::StartOfCardiacCycle, true, eventTime);
 
       GFRSteady = false;
       RBFSteady = false;
