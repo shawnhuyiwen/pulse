@@ -70,6 +70,8 @@
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEFunctionVolumeVsTime.h"
 #include "properties/SERunningAverage.h"
+
+//jbw - remove
 #include "utils/DataTrack.h"
 
 
@@ -126,6 +128,7 @@ void Respiratory::Clear()
   m_AortaCO2 = nullptr;
   m_MechanicalVentilatorConnection = nullptr;
   m_MechanicalVentilatorAerosolConnection = nullptr;
+  m_PleuralCavity = nullptr;
 
   m_RespiratoryCircuit = nullptr;
 
@@ -179,7 +182,10 @@ void Respiratory::Initialize()
   m_TopBreathTotalVolume_L = 0.0;
   m_TopBreathAlveoliVolume_L = 0.0;
   m_TopBreathDeadSpaceVolume_L = 0.0;
+  m_TopBreathPleuralVolume_L = 0.0;
   m_TopBreathPleuralPressure_cmH2O = 0.0;
+  m_TopBreathAlveoliPressure_cmH2O = 0.0;
+  m_TopBreathDriverPressure_cmH2O = 0.0;
   m_LastCardiacCycleBloodPH = 7.4;
   m_TopCarinaO2 = 0.2;
   m_TopBreathElapsedTime_min = 0.0;
@@ -187,24 +193,25 @@ void Respiratory::Initialize()
   m_BottomBreathTotalVolume_L = 0.0;
   m_BottomBreathAlveoliVolume_L = m_BottomBreathTotalVolume_L;
   m_BottomBreathDeadSpaceVolume_L = 0.0;
+  m_BottomBreathPleuralVolume_L = 0.0;
   m_BottomBreathPleuralPressure_cmH2O = 0.0;
+  m_TopBreathAlveoliPressure_cmH2O = 0.0;
+  m_TopBreathDriverPressure_cmH2O = 0.0;
 
   //Driver
   //Basically a Y-shift for the driver
-  m_DefaultDrivePressure_cmH2O = VolumeToDriverPressure(m_Patient->GetFunctionalResidualCapacity(VolumeUnit::L));
   m_MaxDriverPressure_cmH2O = VolumeToDriverPressure(m_Patient->GetTotalLungCapacity(VolumeUnit::L));
   m_ElapsedBreathingCycleTime_min = 0.0;
   m_TopBreathElapsedTime_min = 0.0;
   m_BreathingCycle = false;
   m_BreathingCycleTime_s = 0.0;
   m_VentilationFrequency_Per_min = m_Patient->GetRespirationRateBaseline(FrequencyUnit::Per_min);
-  m_DriverPressure_cmH2O = m_DefaultDrivePressure_cmH2O;
-  m_DriverPressureMin_cmH2O = m_DefaultDrivePressure_cmH2O;
+  m_DriverPressure_cmH2O = 0.0;
+  m_DriverPressureMin_cmH2O = 0.0;
   m_VentilationToTidalVolumeSlope = 30.0;
   //The peak driver pressure is the pressure above the default pressure
   m_PeakRespiratoryDrivePressure_cmH2O = VolumeToDriverPressure(m_Patient->GetTotalLungCapacity(VolumeUnit::L) -
-    m_Patient->GetInspiratoryReserveVolume(VolumeUnit::L)) -
-    m_DefaultDrivePressure_cmH2O;
+    m_Patient->GetFunctionalResidualCapacity(VolumeUnit::L));
   m_ArterialO2PartialPressure_mmHg = m_AortaO2->GetPartialPressure(PressureUnit::mmHg);
   m_ArterialCO2PartialPressure_mmHg = m_AortaCO2->GetPartialPressure(PressureUnit::mmHg);
   m_PreviousTargetAlveolarVentilation_L_Per_min = m_Patient->GetTidalVolumeBaseline(VolumeUnit::L) * m_VentilationFrequency_Per_min;
@@ -239,11 +246,21 @@ void Respiratory::Initialize()
   double DeadSpace_L = m_LeftDeadSpace->GetVolumeBaseline(VolumeUnit::L) + m_RightDeadSpace->GetVolumeBaseline(VolumeUnit::L);
   GetTotalAlveolarVentilation().SetValue(RespirationRate_Per_min * (TidalVolume_L - DeadSpace_L), VolumePerTimeUnit::L_Per_min);
   GetTotalPulmonaryVentilation().SetValue(RespirationRate_Per_min * TidalVolume_L, VolumePerTimeUnit::L_Per_min);
-  GetTotalDeadSpaceVentilation().SetValue(0.15 * RespirationRate_Per_min, VolumePerTimeUnit::L_Per_min);
-  GetPulmonaryCompliance().SetValue(1.6, FlowComplianceUnit::L_Per_cmH2O);
+  GetTotalDeadSpaceVentilation().SetValue(DeadSpace_L * RespirationRate_Per_min, VolumePerTimeUnit::L_Per_min);
+  GetPulmonaryCompliance().SetValue(0.1, FlowComplianceUnit::L_Per_cmH2O);
   GetSpecificVentilation().SetValue(0.21);
   GetEndTidalCarbonDioxideFraction().SetValue(0.0827);
   GetEndTidalCarbonDioxidePressure().SetValue(0.0, PressureUnit::mmHg);
+
+  // Muscle Pressure Waveform
+  m_InspiratoryRiseFraction = 0;
+  m_InspiratoryHoldFraction = 0;
+  m_InspiratoryReleaseFraction = 0;
+  m_InspiratoryToExpiratoryPauseFraction = 0;
+  m_ExpiratoryRiseFraction = 0;
+  m_ExpiratoryHoldFraction = 0;
+  m_ExpiratoryReleaseFraction = 0;
+  m_ResidueFraction = 0;
 
   //Get the fluid mechanics to a good starting point
   TuneCircuit();
@@ -285,6 +302,7 @@ void Respiratory::SetUp()
   m_AerosolRightDeadSpace = m_data.GetCompartments().GetLiquidCompartment(pulse::PulmonaryCompartment::RightDeadSpace);
   m_AerosolRightAlveoli = m_data.GetCompartments().GetLiquidCompartment(pulse::PulmonaryCompartment::RightAlveoli);
   m_Lungs = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Lungs);
+  m_PleuralCavity = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::PleuralCavity);
   m_LeftLungExtravascular = m_data.GetCompartments().GetLiquidCompartment(pulse::ExtravascularCompartment::LeftLungIntracellular);
   m_RightLungExtravascular = m_data.GetCompartments().GetLiquidCompartment(pulse::ExtravascularCompartment::RightLungIntracellular);
   m_Carina = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Carina);
@@ -418,7 +436,7 @@ void Respiratory::AtSteadyState()
 //--------------------------------------------------------------------------------------------------
 void Respiratory::PreProcess()
 {
-  UpdatePleuralCompliance();
+  UpdateCompliances();
   ProcessAerosolSubstances();
   AirwayObstruction();
   UpdateObstructiveResistance();
@@ -432,6 +450,18 @@ void Respiratory::PreProcess()
   SupplementalOxygen();
 
   RespiratoryDriver();
+
+  //jbw - remove
+  double leftNeedleFlow = m_LeftPleuralToEnvironment->GetFlow(VolumePerTimeUnit::L_Per_s);
+  double rightNeedleFlow = m_RightPleuralToEnvironment->GetFlow(VolumePerTimeUnit::L_Per_s);
+  m_data.GetDataTrack().Probe("LeftNeedleFlow_L_Per_s", leftNeedleFlow);
+  m_data.GetDataTrack().Probe("RightNeedleFlow_L_Per_s", rightNeedleFlow);
+
+  double AmbientPresure = 1033.23; // = 1 atm
+  double leftPleuralPressure = m_LeftPleural->GetPressure(PressureUnit::cmH2O);
+  double rightPleuralPressure = m_RightPleural->GetPressure(PressureUnit::cmH2O);
+  m_data.GetDataTrack().Probe("LeftRelativePleuralPressure_cmH2O", leftPleuralPressure - AmbientPresure);
+  m_data.GetDataTrack().Probe("RightRelativePleuralPressure_cmH2O", rightPleuralPressure - AmbientPresure);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -506,6 +536,85 @@ void Respiratory::UpdatePleuralCompliance()
 
   m_RightPleuralToRespiratoryMuscle->GetNextCompliance().SetValue(dRightPleuralCompliance, FlowComplianceUnit::L_Per_cmH2O);
   m_LeftPleuralToRespiratoryMuscle->GetNextCompliance().SetValue(dLeftPleuralCompliance, FlowComplianceUnit::L_Per_cmH2O);
+}
+
+void Respiratory::UpdateCompliances()
+{
+  if (m_data.GetEvents().IsEventActive(eEvent::StartOfInhale))
+  {
+    //Only do this at the end of a breath, otherwise it won't be at the correct spot on the curve and will shift everything
+    //It should really be right at FRC (reference 0 for pressure - volume curve... but good enough for now
+    //SetComplianceCoefficients();
+  }
+
+  double RightVolume_L = m_RightAlveoli->GetNextVolume(VolumeUnit::L);
+  double LeftVolume_L = m_RightAlveoli->GetNextVolume(VolumeUnit::L);
+
+  double rightLungRatio = m_Patient->GetRightLungRatio().GetValue();
+  double leftLungRatio = 1.0 - rightLungRatio;
+
+  double RightTotalLungCapacity_L = m_Patient->GetTotalLungCapacity(VolumeUnit::L) * rightLungRatio;
+  double LeftTotalLungCapacity_L = m_Patient->GetTotalLungCapacity(VolumeUnit::L) * leftLungRatio;
+
+  double RightVolumeTotalLungCapacityPercentage = RightVolume_L / RightTotalLungCapacity_L * 100;
+  double LightVolumeTotalLungCapacityPercentage = LeftVolume_L / LeftTotalLungCapacity_L * 100;
+
+  double RightCompliance_L_Per_cmH2O = m_RightAlveoliToRightPleuralConnection->GetComplianceBaseline(FlowComplianceUnit::L_Per_cmH2O);
+  double LeftCompliance_L_Per_cmH2O = m_RightAlveoliToRightPleuralConnection->GetComplianceBaseline(FlowComplianceUnit::L_Per_cmH2O);
+
+  //RightCompliance_L_Per_cmH2O = CalculateCompliance(RightCompliance_L_Per_cmH2O, );
+  //jbw - make member variables (there are a bunch around)
+  double rightLungVolume_L = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::RightLung)->GetVolume(VolumeUnit::L);
+  double LeftLungVolume_L = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::LeftLung)->GetVolume(VolumeUnit::L);
+  
+  double residualVolume_L = m_Patient->GetResidualVolume(VolumeUnit::L);
+  if (rightLungVolume_L <= residualVolume_L * rightLungRatio)
+  {
+    m_RightPleuralToRespiratoryMuscle->GetNextCompliance().SetValue(0.0, FlowComplianceUnit::L_Per_cmH2O);
+    
+  }
+  if (LeftLungVolume_L <= residualVolume_L * leftLungRatio)
+  {
+    m_LeftPleuralToRespiratoryMuscle->GetNextCompliance().SetValue(0.0, FlowComplianceUnit::L_Per_cmH2O);
+  }
+
+  double totalLungCapacity_L = m_Patient->GetTotalLungCapacity(VolumeUnit::L);
+  if (rightLungVolume_L >= totalLungCapacity_L * rightLungRatio)
+  {
+    m_RightAlveoliToRightPleuralConnection->GetNextCompliance().SetValue(0.0, FlowComplianceUnit::L_Per_cmH2O);
+
+  }
+  if (LeftLungVolume_L >= totalLungCapacity_L * leftLungRatio)
+  {
+    m_LeftAlveoliToLeftPleuralConnection->GetNextCompliance().SetValue(0.0, FlowComplianceUnit::L_Per_cmH2O);
+  }
+}
+
+void Respiratory::CalculateCompliance()
+{
+  //double epsilon = 1e-6;
+
+  //if (RightVolumeAboveFRC_L > 0)
+  //{
+
+  //  double rightUpstreamVolume_L = RightVolumeAboveFRC_L + epsilon;
+  //  double rightDownstreamVolume_L = RightVolumeAboveFRC_L - epsilon;
+
+  //  double rightUpstreamPressure_cmH2O = CalculatePressureFromComplianceCurve(rightUpstreamVolume_L, cdm::eSide::Right);
+  //  double rightDownstreamPressure_cmH2O = CalculatePressureFromComplianceCurve(rightDownstreamVolume_L, cdm::eSide::Right);
+
+  //  //These replace, not a multiplier - can do modifications on coefficients
+  //  if (rightUpstreamPressure_cmH2O - rightDownstreamPressure_cmH2O != 0)
+  //  {
+  //    RightCompliance_L_Per_cmH2O = (rightUpstreamVolume_L - rightDownstreamVolume_L) / (rightUpstreamPressure_cmH2O - rightDownstreamPressure_cmH2O);
+  //  }
+  //  else
+  //  {
+  //    RightCompliance_L_Per_cmH2O = 1e-15; //~0
+  //  }
+  //}
+
+  //return 0
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -991,7 +1100,6 @@ void Respiratory::RespiratoryDriver()
     m_ArterialCO2RunningAverage_mmHg->Clear();
   }
 
-
 #ifdef TUNING
   m_ArterialO2PartialPressure_mmHg = 95.0;
   m_ArterialCO2PartialPressure_mmHg = 40.0;
@@ -1011,7 +1119,7 @@ void Respiratory::RespiratoryDriver()
     else
     {
       //Just increase/decrease the driver pressure linearly to achieve the desired 
-    //pressure (attempting to reach a specific volume) at the end of the user specified period
+      //pressure (attempting to reach a specific volume) at the end of the user specified period
       double Time_s = m_ConsciousRespirationPeriod_s - m_ConsciousRespirationRemainingPeriod_s;
       double Slope = (m_ConsciousEndPressure_cmH2O - m_ConsciousStartPressure_cmH2O) / m_ConsciousRespirationPeriod_s;
       //Form of y=mx+b
@@ -1020,7 +1128,7 @@ void Respiratory::RespiratoryDriver()
       //Make it so we start a fresh cycle when we go back to spontaneous breathing
       //Adding 2.0 * timestamp just makes it greater than the TotalBreathingCycleTime_s
       m_VentilationFrequency_Per_min = m_Patient->GetRespirationRateBaseline(FrequencyUnit::Per_min);
-      m_BreathingCycleTime_s = 60.0 / m_VentilationFrequency_Per_min + 2.0;
+      m_BreathingCycleTime_s = 60.0 / m_VentilationFrequency_Per_min + 2.0 * m_dt_s;
     }
   }
   else //Spontaneous (i.e. not conscious) breathing
@@ -1038,8 +1146,9 @@ void Respiratory::RespiratoryDriver()
     //Prepare for the next cycle -------------------------------------------------------------------------------
     if (m_BreathingCycleTime_s > TotalBreathingCycleTime_s) //End of the cycle or currently not breathing
     {
- 
-    UpdateIERatio();
+
+      //jbw - Figure out how to update IE ratio appropriately
+      //UpdateIERatio();
 
       // Make a cardicArrestEffect that is 1.0 unless cardiac arrest is true
       double cardiacArrestEffect = 1.0;
@@ -1085,14 +1194,14 @@ void Respiratory::RespiratoryDriver()
       }
 
       //Calculate the target Alveolar Ventilation based on the Arterial O2 and CO2 concentrations
-      double dTargetAlveolarVentilation_L_Per_min = m_PeripheralControlGainConstant*exp(-0.05*m_ArterialO2PartialPressure_mmHg)*MAX(0., m_ArterialCO2PartialPressure_mmHg - PeripheralCO2PartialPressureSetPoint); //Peripheral portion
-      dTargetAlveolarVentilation_L_Per_min += m_CentralControlGainConstant*MAX(0., m_ArterialCO2PartialPressure_mmHg - CentralCO2PartialPressureSetPoint); //Central portion
+      double dTargetAlveolarVentilation_L_Per_min = m_PeripheralControlGainConstant * exp(-0.05*m_ArterialO2PartialPressure_mmHg)*MAX(0., m_ArterialCO2PartialPressure_mmHg - PeripheralCO2PartialPressureSetPoint); //Peripheral portion
+      dTargetAlveolarVentilation_L_Per_min += m_CentralControlGainConstant * MAX(0., m_ArterialCO2PartialPressure_mmHg - CentralCO2PartialPressureSetPoint); //Central portion
 
-    //Metabolic modifier is used to drive the system to reasonable levels achievable during increased metabolic exertion
-    //The modifier is tuned to achieve the correct respiratory response for near maximal exercise. A linear relationship is assumed
-    // for the respiratory effects due to increased metabolic exertion    
+      //Metabolic modifier is used to drive the system to reasonable levels achievable during increased metabolic exertion
+      //The modifier is tuned to achieve the correct respiratory response for near maximal exercise. A linear relationship is assumed
+      // for the respiratory effects due to increased metabolic exertion    
       double tunedVolumeMetabolicSlope = 0.2; //Tuned fractional increase of the tidal volume due to increased metabolic rate
-      metabolicModifier = 1.0 + tunedVolumeMetabolicSlope*(metabolicFraction - 1.0);
+      metabolicModifier = 1.0 + tunedVolumeMetabolicSlope * (metabolicFraction - 1.0);
       dTargetAlveolarVentilation_L_Per_min *= metabolicModifier;
 
       //Only move it part way to where it wants to be.
@@ -1111,6 +1220,11 @@ void Respiratory::RespiratoryDriver()
         changeFraction = std::abs(m_ArterialCO2PartialPressure_mmHg - targetCO2PP_mmHg) / targetCO2PP_mmHg * 0.5;
       }
       changeFraction = MIN(changeFraction, 1.0);
+
+#ifdef TUNING
+      changeFraction = 1.0;
+#endif
+
       dTargetAlveolarVentilation_L_Per_min = m_PreviousTargetAlveolarVentilation_L_Per_min + (dTargetAlveolarVentilation_L_Per_min - m_PreviousTargetAlveolarVentilation_L_Per_min) * changeFraction;
       m_PreviousTargetAlveolarVentilation_L_Per_min = dTargetAlveolarVentilation_L_Per_min;
 
@@ -1135,7 +1249,7 @@ void Respiratory::RespiratoryDriver()
       double dTargetTidalVolume_L = dTargetPulmonaryVentilation_L_Per_min / m_VentilationToTidalVolumeSlope + m_VentilationTidalVolumeIntercept;
 
       //Modify the target tidal volume due to other external effects - probably eventually replaced by the Nervous system
-      dTargetTidalVolume_L *= cardiacArrestEffect*NMBModifier;
+      dTargetTidalVolume_L *= cardiacArrestEffect * NMBModifier;
 
       //Apply Drug Effects to the target tidal volume
       dTargetTidalVolume_L += DrugsTVChange_L;
@@ -1150,8 +1264,7 @@ void Respiratory::RespiratoryDriver()
       m_PeakRespiratoryDrivePressure_cmH2O = VolumeToDriverPressure(TargetVolume_L);
       //There's a maximum force the driver can try to achieve
       m_PeakRespiratoryDrivePressure_cmH2O = MAX(m_PeakRespiratoryDrivePressure_cmH2O, m_MaxDriverPressure_cmH2O);
-      //The peak driver pressure is the pressure above the default pressure.  Therefore, we subtract it from the base pressure.
-      m_PeakRespiratoryDrivePressure_cmH2O -= m_DefaultDrivePressure_cmH2O;
+
 
       //Respiration Rate (i.e. Driver frequency) *************************************************************************
       //Calculate the Respiration Rate given the Alveolar Ventilation and the Target Tidal Volume
@@ -1190,9 +1303,11 @@ void Respiratory::RespiratoryDriver()
       }
 
 #ifdef TUNING
-      m_VentilationToTidalVolumeSlope = 22.0;
+      m_VentilationToTidalVolumeSlope = 40.0;
       m_VentilationFrequency_Per_min = 16.0;
 #endif
+
+      SetBreathCycleFractions();
 
       m_BreathingCycleTime_s = 0.0;
 
@@ -1203,37 +1318,99 @@ void Respiratory::RespiratoryDriver()
       m_data.GetEvents().SetEvent(eEvent::StartOfInhale, true, m_data.GetSimulationTime()); ///\todo rename "StartOfConsiousInhale"
     }
 
-
     //Run the driver based on the waveform -------------------------------------------------------------------------------
-    double driverInspirationTime_s = m_IEscaleFactor*(0.0125*m_VentilationFrequency_Per_min + 0.125)*TotalBreathingCycleTime_s; //Inspiration time
+    TotalBreathingCycleTime_s = 60.0 / m_VentilationFrequency_Per_min; //Recalculate, in case we just calculated a new breath
 
-    if (m_BreathingCycleTime_s < driverInspirationTime_s) //Inspiration
+    double PeakExpiratoryPressure = 0.0; //For potential future implementation
+
+    double InspiratoryRiseTimeStart_s = 0.0;
+    double InspiratoryHoldTimeStart_s = InspiratoryRiseTimeStart_s + m_InspiratoryRiseFraction * TotalBreathingCycleTime_s;
+    double InspiratoryReleaseTimeStart_s = InspiratoryHoldTimeStart_s + m_InspiratoryHoldFraction * TotalBreathingCycleTime_s;
+    double InspiratoryToExpiratoryPauseTimeStart_s = InspiratoryReleaseTimeStart_s + m_InspiratoryReleaseFraction * TotalBreathingCycleTime_s;
+    double ExpiratoryRiseTimeStart_s = InspiratoryToExpiratoryPauseTimeStart_s + m_InspiratoryToExpiratoryPauseFraction * TotalBreathingCycleTime_s;
+    double ExpiratoryHoldTimeStart_s = ExpiratoryRiseTimeStart_s + m_ExpiratoryRiseFraction * TotalBreathingCycleTime_s;
+    double ExpiratoryReleaseTimeStart_s = ExpiratoryHoldTimeStart_s + m_ExpiratoryHoldFraction * TotalBreathingCycleTime_s;
+    double ResidueFractionTimeStart_s = ExpiratoryReleaseTimeStart_s + m_ExpiratoryReleaseFraction * TotalBreathingCycleTime_s;
+
+    m_DriverInspirationTime_s = ExpiratoryRiseTimeStart_s;
+
+
+    if (m_BreathingCycleTime_s >= InspiratoryReleaseTimeStart_s &&
+      m_BreathingCycleTime_s < InspiratoryReleaseTimeStart_s + m_dt_s) //Only call this once per cycle
     {
-      double driverPressure_cmH2O = m_DefaultDrivePressure_cmH2O + m_PeakRespiratoryDrivePressure_cmH2O*(1.0 - exp(-((m_VentilationFrequency_Per_min + 4.0 * m_VentilatoryOcclusionPressure_cmH2O) / 10.0)*m_BreathingCycleTime_s));
-      m_DriverPressure_cmH2O = driverPressure_cmH2O;
-    }
-    else if (m_BreathingCycleTime_s >= driverInspirationTime_s &&  m_BreathingCycleTime_s < driverInspirationTime_s + m_dt_s) //Transition - only called once per cycle
-    {
-      m_DriverPressureMin_cmH2O = m_PeakRespiratoryDrivePressure_cmH2O*(1 - exp(-((m_VentilationFrequency_Per_min + 4.0 * m_VentilatoryOcclusionPressure_cmH2O) / 10.0)*driverInspirationTime_s));
       m_data.GetEvents().SetEvent(eEvent::StartOfExhale, true, m_data.GetSimulationTime());
     }
-    else //Expiration
+
+    double tau = 0.0;
+    double tauDenominator = 5.0; //lower = "rounder"... too low (e.g., <5) starts creating incontenuities
+    if (m_BreathingCycleTime_s >= ResidueFractionTimeStart_s)
     {
-      double driverPressure_cmH2O = m_DefaultDrivePressure_cmH2O + m_DriverPressureMin_cmH2O*(exp(-((m_VentilationFrequency_Per_min + m_VentilatoryOcclusionPressure_cmH2O / 2.0) / 10.0)*(m_BreathingCycleTime_s - driverInspirationTime_s)));
-      m_DriverPressure_cmH2O = driverPressure_cmH2O;
+      m_DriverPressure_cmH2O = 0.0;
     }
+    else if (m_BreathingCycleTime_s >= ExpiratoryReleaseTimeStart_s)
+    {
+      tau = m_ExpiratoryReleaseFraction * TotalBreathingCycleTime_s / tauDenominator;
+      m_DriverPressure_cmH2O = exp(-(m_BreathingCycleTime_s - ExpiratoryReleaseTimeStart_s) / tau) * PeakExpiratoryPressure;
+    }
+    else if (m_BreathingCycleTime_s >= ExpiratoryHoldTimeStart_s)
+    {
+      m_DriverPressure_cmH2O = PeakExpiratoryPressure;
+    }
+    else if (m_BreathingCycleTime_s >= ExpiratoryRiseTimeStart_s)
+    {
+      tau = m_ExpiratoryRiseFraction * TotalBreathingCycleTime_s / tauDenominator;
+      m_DriverPressure_cmH2O = 1.0 - (exp(-(m_BreathingCycleTime_s - ExpiratoryRiseTimeStart_s) / tau)) * PeakExpiratoryPressure;
+    }
+    else if (m_BreathingCycleTime_s >= InspiratoryToExpiratoryPauseTimeStart_s)
+    {
+      m_DriverPressure_cmH2O = 0.0;
+    }
+    else if (m_BreathingCycleTime_s >= InspiratoryReleaseTimeStart_s)
+    {
+      tau = m_InspiratoryReleaseFraction * TotalBreathingCycleTime_s / tauDenominator;
+      m_DriverPressure_cmH2O = exp(-(m_BreathingCycleTime_s - InspiratoryReleaseTimeStart_s) / tau) * m_PeakRespiratoryDrivePressure_cmH2O;
+    }
+    else if (m_BreathingCycleTime_s >= InspiratoryHoldTimeStart_s)
+    {
+      tau = m_InspiratoryHoldFraction * TotalBreathingCycleTime_s / tauDenominator;
+      m_DriverPressure_cmH2O = m_PeakRespiratoryDrivePressure_cmH2O;
+    }
+    else //(m_BreathingCycleTime_s >= InspiratoryRiseTimeStart_s)
+    {
+      tau = m_InspiratoryRiseFraction * TotalBreathingCycleTime_s / tauDenominator;
+      m_DriverPressure_cmH2O = -(exp(-m_BreathingCycleTime_s / tau) - 1) * m_PeakRespiratoryDrivePressure_cmH2O;
+    }
+
+    /// \todo Remove this: m_IEscaleFactor
 
     Apnea();
 
     if (m_NotBreathing)
     {
-      m_DriverPressure_cmH2O = m_DefaultDrivePressure_cmH2O;
+      m_DriverPressure_cmH2O = 0.0;
     }
   }
 
   //Push Driving Data to the Circuit -------------------------------------------------------------------------------
   m_DriverPressurePath->GetNextPressureSource().SetValue(m_DriverPressure_cmH2O, PressureUnit::cmH2O);
 }
+
+//jbw - Add description
+void Respiratory::SetBreathCycleFractions()
+{
+  //Healthy - Does not change with frequency
+  m_InspiratoryRiseFraction = 0.33;
+  m_InspiratoryHoldFraction = 0.0;
+  m_InspiratoryReleaseFraction = 0.33;
+  m_InspiratoryToExpiratoryPauseFraction = 0.0;
+  m_ExpiratoryRiseFraction = 0.0;
+  m_ExpiratoryHoldFraction = 0.0;
+  m_ExpiratoryReleaseFraction = 0.0;
+  //0.34 remaining, giving 1:2 IE Ratio
+
+  //jbw - Add changes for conditions/actions
+ }
+
 //--------------------------------------------------------------------------------------------------
 /// \brief
 /// Airway obstruction 
@@ -1563,8 +1740,7 @@ void Respiratory::ConsciousRespiration()
       SEConsciousRespiration* cr = m_PatientActions->GetConsciousRespiration();
       m_ss << "Completed Conscious Respiration Command : " << *cr->GetActiveCommand();
       Info(m_ss);
-      cr->RemoveActiveCommand();
-      
+      cr->RemoveActiveCommand();      
     }
   }
 
@@ -1573,7 +1749,7 @@ void Respiratory::ConsciousRespiration()
   {
     SEConsciousRespiration* cr = m_PatientActions->GetConsciousRespiration();
     SEConsciousRespirationCommand* cmd = cr->GetActiveCommand();
-  ProcessConsciousRespiration(*cmd);
+    ProcessConsciousRespiration(*cmd);
   }
 }
 
@@ -1759,7 +1935,7 @@ void Respiratory::ImpairedAlveolarExchange()
     alveoliDiffusionArea_cm2 = (1.0 - m_data.GetConditions().GetImpairedAlveolarExchange()->GetImpairedFraction().GetValue()) * alveoliDiffusionArea_cm2;
   }
 
-  //This is a conditions, so we change it pertinently
+  //This is a conditions, so we change it perminently
   m_Patient->GetAlveoliSurfaceArea().SetValue(alveoliDiffusionArea_cm2, AreaUnit::cm2);
 }
 
@@ -1827,7 +2003,7 @@ void Respiratory::Apnea()
     }
 
     //Just reduce the tidal volume by the percentage given
-    m_DriverPressure_cmH2O = m_DefaultDrivePressure_cmH2O + (m_DriverPressure_cmH2O - m_DefaultDrivePressure_cmH2O) * (1 - apneaSeverity);
+    m_DriverPressure_cmH2O = m_DriverPressure_cmH2O * (1 - apneaSeverity);
   }
 }
 
@@ -1846,34 +2022,36 @@ void Respiratory::Apnea()
 //--------------------------------------------------------------------------------------------------
 void Respiratory::CalculateVitalSigns()
 { 
+  //Record values each time-step
   std::stringstream ss;
 
   //Total Respiratory Volume - this should not include the Pleural Space
   double totalLungVolume_L = m_Lungs->GetVolume(VolumeUnit::L);
   GetTotalLungVolume().Set(m_Lungs->GetVolume());
 
-  //Record values each time-step
   double tracheaFlow_L_Per_s = m_MouthToCarina->GetNextFlow().GetValue(VolumePerTimeUnit::L_Per_s);
   double previousInspiratoryFlow_L_Per_s = GetInspiratoryFlow(VolumePerTimeUnit::L_Per_s);
   GetInspiratoryFlow().SetValue(tracheaFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);
   GetExpiratoryFlow().SetValue(-tracheaFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);  
 
-  double dMouthPressure = m_Mouth->GetPressure(PressureUnit::cmH2O);
-  double dAlveolarPressure = (m_LeftAlveoli->GetNextPressure().GetValue(PressureUnit::cmH2O) + m_RightAlveoli->GetNextPressure().GetValue(PressureUnit::cmH2O)) / 2.0; //Average of L and R
+  GetRespirationDriverPressure().Set(m_RespiratoryMuscle->GetNextPressure());
+  GetRespirationMusclePressure().Set(m_RespiratoryMuscle->GetNextPressure());
+  double mouthPressure_cmH2O = m_Mouth->GetPressure(PressureUnit::cmH2O);
+  double alveoliPressure_cmH2O = (m_LeftAlveoli->GetNextPressure().GetValue(PressureUnit::cmH2O) + m_RightAlveoli->GetNextPressure().GetValue(PressureUnit::cmH2O)) / 2.0; //Average of L and R
+  double pleuralPressure_cmH2O = (m_LeftPleural->GetNextPressure().GetValue(PressureUnit::cmH2O) + m_RightPleural->GetNextPressure().GetValue(PressureUnit::cmH2O)) / 2.0; //Average of L and R
+  double transpulmonaryPressure_cmH2O = alveoliPressure_cmH2O - pleuralPressure_cmH2O;
+  GetTranspulmonaryPressure().SetValue(transpulmonaryPressure_cmH2O, PressureUnit::cmH2O);
+  double chestWallTransmuralPressure_cmH2O = pleuralPressure_cmH2O - m_Ambient->GetPressure(PressureUnit::cmH2O);
+  //jbw - add to system data
+  m_data.GetDataTrack().Probe("chestWallTransmuralPressure_cmH2O", chestWallTransmuralPressure_cmH2O);
 
   if(SEScalar::IsZero(tracheaFlow_L_Per_s, ZERO_APPROX))
     GetPulmonaryResistance().SetValue(std::numeric_limits<double>::infinity(), FlowResistanceUnit::cmH2O_s_Per_L);
   else
-    GetPulmonaryResistance().SetValue((dMouthPressure - dAlveolarPressure) / tracheaFlow_L_Per_s, FlowResistanceUnit::cmH2O_s_Per_L);
+    GetPulmonaryResistance().SetValue((mouthPressure_cmH2O - alveoliPressure_cmH2O) / tracheaFlow_L_Per_s, FlowResistanceUnit::cmH2O_s_Per_L);
 
-  double dPleuralPressure_cmH2O = (m_LeftPleural->GetNextPressure().GetValue(PressureUnit::cmH2O) + m_RightPleural->GetNextPressure().GetValue(PressureUnit::cmH2O)) / 2.0; //Average of L and R
-  GetTranspulmonaryPressure().SetValue(dAlveolarPressure - dPleuralPressure_cmH2O, PressureUnit::cmH2O);
-
-  GetRespirationDriverPressure().Set(m_RespiratoryMuscle->GetNextPressure());
-  GetRespirationMusclePressure().Set(m_RespiratoryMuscle->GetNextPressure());
-
-  double avgAlveoliO2PP_mmHg = (m_LeftAlveoliO2->GetPartialPressure(PressureUnit::mmHg) + m_RightAlveoliO2->GetPartialPressure(PressureUnit::mmHg)) / 2.0;
-  GetAlveolarArterialGradient().SetValue(avgAlveoliO2PP_mmHg - m_AortaO2->GetPartialPressure(PressureUnit::mmHg), PressureUnit::mmHg);
+  double averageAlveoliO2PartialPressure_mmHg = (m_LeftAlveoliO2->GetPartialPressure(PressureUnit::mmHg) + m_RightAlveoliO2->GetPartialPressure(PressureUnit::mmHg)) / 2.0;
+  GetAlveolarArterialGradient().SetValue(averageAlveoliO2PartialPressure_mmHg - m_AortaO2->GetPartialPressure(PressureUnit::mmHg), PressureUnit::mmHg);
 
   //It's a pain to figure out how to hold onto this data, so let's just set it at a sensitive transition point
   if (GetInspiratoryFlow(VolumePerTimeUnit::L_Per_s) > 0.0 //We're inhaling
@@ -1893,6 +2071,7 @@ void Respiratory::CalculateVitalSigns()
   //Record values at the breathing inflection points (i.e. switch between inhale and exhale)  
   // Temporal tolerance to avoid accidental entry in the the inhalation and exhalation code blocks 
   m_ElapsedBreathingCycleTime_min += m_dt_min;
+
   if (m_BreathingCycle) //Exhaling
   {    
     if (totalLungVolume_L <= m_BottomBreathTotalVolume_L)
@@ -1901,7 +2080,10 @@ void Respiratory::CalculateVitalSigns()
       m_BottomBreathElapsedTime_min = m_ElapsedBreathingCycleTime_min - m_TopBreathElapsedTime_min;
       m_BottomBreathAlveoliVolume_L = m_RightAlveoli->GetNextVolume().GetValue(VolumeUnit::L) + m_LeftAlveoli->GetNextVolume().GetValue(VolumeUnit::L);
       m_BottomBreathDeadSpaceVolume_L = m_RightDeadSpace->GetNextVolume().GetValue(VolumeUnit::L) + m_LeftDeadSpace->GetNextVolume().GetValue(VolumeUnit::L);
-      m_BottomBreathPleuralPressure_cmH2O = dPleuralPressure_cmH2O;
+      m_BottomBreathPleuralVolume_L = m_RightPleural->GetNextVolume().GetValue(VolumeUnit::L) + m_LeftPleural->GetNextVolume().GetValue(VolumeUnit::L);
+      m_BottomBreathPleuralPressure_cmH2O = pleuralPressure_cmH2O;
+      m_BottomBreathAlveoliPressure_cmH2O = alveoliPressure_cmH2O;
+      m_BottomBreathDriverPressure_cmH2O = m_RespiratoryMuscle->GetNextPressure(PressureUnit::cmH2O);
     }
 
     if (totalLungVolume_L - m_BottomBreathTotalVolume_L > m_MinimumAllowableTidalVolume_L //Volume has transitioned sufficiently
@@ -1910,14 +2092,13 @@ void Respiratory::CalculateVitalSigns()
       //Transition to inhale
 
       // Calculate Respiration Rate and track time and update cycle flag
-      double dExpirationTime = m_BottomBreathElapsedTime_min;
-      double dInspirationTime = m_TopBreathElapsedTime_min;
-      double RespirationRate_Per_min = 1.0 / (dExpirationTime + dInspirationTime);
+      double expirationTime_min = m_BottomBreathElapsedTime_min;
+      double inspirationTime_min = m_TopBreathElapsedTime_min;
+      double RespirationRate_Per_min = 1.0 / (expirationTime_min + inspirationTime_min);
       GetRespirationRate().SetValue(RespirationRate_Per_min, FrequencyUnit::Per_min);
-      double dieratio = dInspirationTime / dExpirationTime;
-      GetInspiratoryExpiratoryRatio().SetValue(dieratio);
+      GetInspiratoryExpiratoryRatio().SetValue(inspirationTime_min / expirationTime_min);
 
-      m_ElapsedBreathingCycleTime_min -= (dExpirationTime + dInspirationTime);
+      m_ElapsedBreathingCycleTime_min -= (expirationTime_min + inspirationTime_min);
       m_BreathingCycle = false;
 
       // Calculate the Tidal Volume from the last peak
@@ -1926,18 +2107,27 @@ void Respiratory::CalculateVitalSigns()
       double TidalVolume_L = std::abs(m_TopBreathTotalVolume_L - m_BottomBreathTotalVolume_L);
       double AlveoliDeltaVolume_L = std::abs(m_TopBreathAlveoliVolume_L - m_BottomBreathAlveoliVolume_L);
       double DeadSpaceDeltaVolume_L = std::abs(m_TopBreathDeadSpaceVolume_L - m_BottomBreathDeadSpaceVolume_L);
-      double PleuralDeltaPressure_cmH2O = std::abs(m_BottomBreathPleuralPressure_cmH2O - m_TopBreathPleuralPressure_cmH2O);
+      double PleuralDeltaVolume_L = std::abs(m_TopBreathPleuralVolume_L - m_BottomBreathPleuralVolume_L);
+      double PleuralDeltaPressure_cmH2O = std::abs((m_BottomBreathPleuralPressure_cmH2O - m_BottomBreathDriverPressure_cmH2O) - (m_TopBreathPleuralPressure_cmH2O - m_TopBreathDriverPressure_cmH2O));
+      double AlveoliDeltaPressure_cmH2O = std::abs((m_BottomBreathAlveoliPressure_cmH2O - m_BottomBreathPleuralPressure_cmH2O) - (m_TopBreathAlveoliPressure_cmH2O - m_TopBreathPleuralPressure_cmH2O));
+      double LungDeltaPressure_cmH2O = std::abs((m_BottomBreathAlveoliPressure_cmH2O - m_BottomBreathDriverPressure_cmH2O) - (m_TopBreathAlveoliPressure_cmH2O - m_TopBreathDriverPressure_cmH2O));
 
       GetTidalVolume().SetValue(TidalVolume_L, VolumeUnit::L);
 
-      // Calculate Ventilations
-      GetTotalAlveolarVentilation().SetValue(AlveoliDeltaVolume_L * RespirationRate_Per_min, VolumePerTimeUnit::L_Per_min);
-      GetTotalPulmonaryVentilation().SetValue(TidalVolume_L * RespirationRate_Per_min, VolumePerTimeUnit::L_Per_min);
-      GetTotalDeadSpaceVentilation().SetValue(DeadSpaceDeltaVolume_L * RespirationRate_Per_min, VolumePerTimeUnit::L_Per_min);
-      GetSpecificVentilation().SetValue(TidalVolume_L / m_InstantaneousFunctionalResidualCapacity_L);
+      double pulmonaryCompiance_L_Per_cmH2O = TidalVolume_L / LungDeltaPressure_cmH2O;
+      double lungCompliance_L_Per_cmH2O = AlveoliDeltaVolume_L / AlveoliDeltaPressure_cmH2O;
+      double chestWallCompliance_L_Per_cmH2O = PleuralDeltaVolume_L / PleuralDeltaPressure_cmH2O;
+      GetPulmonaryCompliance().SetValue(pulmonaryCompiance_L_Per_cmH2O, FlowComplianceUnit::L_Per_cmH2O);
+      //jbw - add to system data
+      //m_data.GetDataTrack().Probe("lungCompliance_L_Per_cmH2O", lungCompliance_L_Per_cmH2O);
+      //m_data.GetDataTrack().Probe("chestWallCompliance_L_Per_cmH2O", chestWallCompliance_L_Per_cmH2O);
 
-      // Calculate Total Circuit Values
-      GetPulmonaryCompliance().SetValue(TidalVolume_L / PleuralDeltaPressure_cmH2O, FlowComplianceUnit::L_Per_cmH2O);
+      // Calculate Ventilations
+      GetTotalPulmonaryVentilation().SetValue(TidalVolume_L * RespirationRate_Per_min, VolumePerTimeUnit::L_Per_min);
+      GetSpecificVentilation().SetValue(TidalVolume_L / m_InstantaneousFunctionalResidualCapacity_L);
+      double deadspaceVolume_L = m_RightDeadSpace->GetNextVolume().GetValue(VolumeUnit::L) + m_LeftDeadSpace->GetNextVolume().GetValue(VolumeUnit::L);
+      GetTotalAlveolarVentilation().SetValue((TidalVolume_L - deadspaceVolume_L) * RespirationRate_Per_min, VolumePerTimeUnit::L_Per_min);
+      GetTotalDeadSpaceVentilation().SetValue(deadspaceVolume_L * RespirationRate_Per_min, VolumePerTimeUnit::L_Per_min);
 
       m_TopBreathTotalVolume_L = totalLungVolume_L;
       m_TopBreathElapsedTime_min = m_ElapsedBreathingCycleTime_min;
@@ -1952,7 +2142,10 @@ void Respiratory::CalculateVitalSigns()
       m_TopBreathTotalVolume_L = totalLungVolume_L;
       m_TopBreathAlveoliVolume_L = m_RightAlveoli->GetNextVolume().GetValue(VolumeUnit::L) + m_LeftAlveoli->GetNextVolume().GetValue(VolumeUnit::L);
       m_TopBreathDeadSpaceVolume_L = m_RightDeadSpace->GetNextVolume().GetValue(VolumeUnit::L) + m_LeftDeadSpace->GetNextVolume().GetValue(VolumeUnit::L);
-      m_TopBreathPleuralPressure_cmH2O = dPleuralPressure_cmH2O;
+      m_TopBreathPleuralVolume_L = m_RightPleural->GetNextVolume().GetValue(VolumeUnit::L) + m_LeftPleural->GetNextVolume().GetValue(VolumeUnit::L);
+      m_TopBreathPleuralPressure_cmH2O = pleuralPressure_cmH2O;
+      m_TopBreathAlveoliPressure_cmH2O = alveoliPressure_cmH2O;
+      m_TopBreathDriverPressure_cmH2O = m_RespiratoryMuscle->GetNextPressure(PressureUnit::cmH2O);
       m_TopCarinaO2 = m_CarinaO2->GetVolumeFraction().GetValue();
     }
 
@@ -2313,7 +2506,7 @@ void Respiratory::UpdateGasDiffusionSurfaceArea(double dFractionArea, double dLe
 //--------------------------------------------------------------------------------------------------
 double Respiratory::VolumeToDriverPressure(double TargetVolume_L)
 {
-  return -0.3743 * pow(TargetVolume_L, 5.0) + 7.4105 * pow(TargetVolume_L, 4.0) - 57.076 * pow(TargetVolume_L, 3.0) + 214.11 * pow(TargetVolume_L, 2.0) - 404.97 * TargetVolume_L + 262.22;
+  return -10.0 * TargetVolume_L + 23.133;
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -2415,7 +2608,7 @@ void Respiratory::TuneCircuit()
   for (unsigned int loops = 0; loops < static_cast<unsigned int>(5.0 / m_dt_s); loops++)
   {
     //Set the starting/default driver pressure
-    m_DriverPressurePath->GetNextPressureSource().SetValue(m_DefaultDrivePressure_cmH2O, PressureUnit::cmH2O);
+    m_DriverPressurePath->GetNextPressureSource().SetValue(0.0, PressureUnit::cmH2O);
     m_Calculator->Process(RespiratoryCircuit, m_dt_s);
     m_Calculator->PostProcess(RespiratoryCircuit);
   }

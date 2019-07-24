@@ -416,7 +416,6 @@ void PBPulsePhysiology::Serialize(const RespiratoryData& src, Respiratory& dst)
   dst.m_ArterialO2PartialPressure_mmHg = src.arterialo2partialpressure_mmhg();
   dst.m_ArterialCO2PartialPressure_mmHg = src.arterialco2partialpressure_mmhg();
   dst.m_BreathingCycleTime_s = src.breathingcycletime_s();
-  dst.m_DefaultDrivePressure_cmH2O = src.defaultdrivepressure_cmh2o();
   dst.m_DriverInspirationTime_s = src.driverinspirationtime_s();
   dst.m_DriverPressure_cmH2O = src.driverpressure_cmh2o();
   dst.m_DriverPressureMin_cmH2O = src.driverpressuremin_cmh2o();
@@ -472,7 +471,6 @@ void PBPulsePhysiology::Serialize(const Respiratory& src, RespiratoryData& dst)
   dst.set_arterialo2partialpressure_mmhg(src.m_ArterialO2PartialPressure_mmHg);
   dst.set_arterialco2partialpressure_mmhg(src.m_ArterialCO2PartialPressure_mmHg);
   dst.set_breathingcycletime_s(src.m_BreathingCycleTime_s);
-  dst.set_defaultdrivepressure_cmh2o(src.m_DefaultDrivePressure_cmH2O);
   dst.set_driverinspirationtime_s(src.m_DriverInspirationTime_s);
   dst.set_driverpressure_cmh2o(src.m_DriverPressure_cmH2O);
   dst.set_driverpressuremin_cmh2o(src.m_DriverPressureMin_cmH2O);

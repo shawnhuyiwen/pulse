@@ -68,6 +68,8 @@ protected:
 
   //PreProcess
   void UpdatePleuralCompliance();
+  void UpdateCompliances();
+  /**/void CalculateCompliance();
   //Actions
   void AirwayObstruction();
   void BronchoConstriction();
@@ -81,6 +83,7 @@ protected:
   void Apnea();
   // Driver
   void RespiratoryDriver();
+  /**/void SetBreathCycleFractions();
 
   // Shared Utility Methods for Actions/Driver
   // Asthma/COPD
@@ -114,7 +117,10 @@ protected:
   double m_TopBreathTotalVolume_L;
   double m_TopBreathAlveoliVolume_L;
   double m_TopBreathDeadSpaceVolume_L;
+  double m_TopBreathPleuralVolume_L; //jbw - serialize
   double m_TopBreathPleuralPressure_cmH2O;
+  double m_TopBreathAlveoliPressure_cmH2O; //jbw - serialize
+  double m_TopBreathDriverPressure_cmH2O; //jbw - serialize
   double m_LastCardiacCycleBloodPH; 
   double m_TopCarinaO2;
   double m_TopBreathElapsedTime_min;
@@ -122,14 +128,16 @@ protected:
   double m_BottomBreathTotalVolume_L;
   double m_BottomBreathAlveoliVolume_L;
   double m_BottomBreathDeadSpaceVolume_L;
+  double m_BottomBreathPleuralVolume_L; //jbw - serialize
   double m_BottomBreathPleuralPressure_cmH2O;
+  double m_BottomBreathAlveoliPressure_cmH2O; //jbw - serialize
+  double m_BottomBreathDriverPressure_cmH2O; //jbw - serialize
   SERunningAverage* m_BloodPHRunningAverage;
 
   //   Respiratory Driver
   double m_ArterialO2PartialPressure_mmHg;
   double m_ArterialCO2PartialPressure_mmHg;
   double m_BreathingCycleTime_s;
-  double m_DefaultDrivePressure_cmH2O;
   double m_DriverInspirationTime_s;
   double m_DriverPressure_cmH2O;
   double m_DriverPressureMin_cmH2O;
@@ -151,6 +159,15 @@ protected:
   double m_InspiratoryCapacityFraction;
   double m_ConsciousStartPressure_cmH2O;
   double m_ConsciousEndPressure_cmH2O;
+  // Muscle Pressure Waveform - jbw: add these to serialization
+  double m_InspiratoryRiseFraction;
+  double m_InspiratoryHoldFraction;
+  double m_InspiratoryReleaseFraction;
+  double m_InspiratoryToExpiratoryPauseFraction;
+  double m_ExpiratoryRiseFraction;
+  double m_ExpiratoryHoldFraction;
+  double m_ExpiratoryReleaseFraction;
+  double m_ResidueFraction;
 
   // Stateless member variable (Set in SetUp())
   double m_dt_s;
@@ -193,6 +210,7 @@ protected:
   std::vector<SELiquidCompartment*> m_AerosolEffects;
   SEGasCompartment*          m_MechanicalVentilatorConnection;
   SELiquidCompartment*       m_MechanicalVentilatorAerosolConnection;
+  SEGasCompartment*          m_PleuralCavity;
   //Circuits
   SEFluidCircuit*            m_RespiratoryCircuit;
   //Nodes
