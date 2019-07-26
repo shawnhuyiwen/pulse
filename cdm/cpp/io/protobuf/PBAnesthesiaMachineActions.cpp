@@ -9,18 +9,18 @@
 #include "bind/cpp/cdm/AnesthesiaMachineActions.pb.h"
 #include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineAction.h"
 #include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineConfiguration.h"
-#include "system/equipment/anesthesiamachine/actions/SEOxygenWallPortPressureLoss.h"
-#include "system/equipment/anesthesiamachine/actions/SEOxygenTankPressureLoss.h"
-#include "system/equipment/anesthesiamachine/actions/SEExpiratoryValveLeak.h"
-#include "system/equipment/anesthesiamachine/actions/SEExpiratoryValveObstruction.h"
-#include "system/equipment/anesthesiamachine/actions/SEInspiratoryValveLeak.h"
-#include "system/equipment/anesthesiamachine/actions/SEInspiratoryValveObstruction.h"
-#include "system/equipment/anesthesiamachine/actions/SEMaskLeak.h"
-#include "system/equipment/anesthesiamachine/actions/SESodaLimeFailure.h"
-#include "system/equipment/anesthesiamachine/actions/SETubeCuffLeak.h"
-#include "system/equipment/anesthesiamachine/actions/SEVaporizerFailure.h"
-#include "system/equipment/anesthesiamachine/actions/SEVentilatorPressureLoss.h"
-#include "system/equipment/anesthesiamachine/actions/SEYPieceDisconnect.h"
+#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineOxygenWallPortPressureLoss.h"
+#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineOxygenTankPressureLoss.h"
+#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineExpiratoryValveLeak.h"
+#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineExpiratoryValveObstruction.h"
+#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineInspiratoryValveLeak.h"
+#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineInspiratoryValveObstruction.h"
+#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineMaskLeak.h"
+#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineSodaLimeFailure.h"
+#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineTubeCuffLeak.h"
+#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineVaporizerFailure.h"
+#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineVentilatorPressureLoss.h"
+#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineYPieceDisconnect.h"
 #include "substance/SESubstanceManager.h"
 
 void PBAnesthesiaMachineAction::Serialize(const cdm::AnesthesiaMachineActionData& src, SEAnesthesiaMachineAction& dst)
@@ -65,346 +65,346 @@ void PBAnesthesiaMachineAction::Copy(const SEAnesthesiaMachineConfiguration& src
   PBAnesthesiaMachineAction::Serialize(data, dst);
 }
 
-void PBAnesthesiaMachineAction::Load(const cdm::ExpiratoryValveLeakData& src, SEExpiratoryValveLeak& dst)
+void PBAnesthesiaMachineAction::Load(const cdm::AnesthesiaMachineExpiratoryValveLeakData& src, SEAnesthesiaMachineExpiratoryValveLeak& dst)
 {
   PBAnesthesiaMachineAction::Serialize(src, dst);
 }
-void PBAnesthesiaMachineAction::Serialize(const cdm::ExpiratoryValveLeakData& src, SEExpiratoryValveLeak& dst)
+void PBAnesthesiaMachineAction::Serialize(const cdm::AnesthesiaMachineExpiratoryValveLeakData& src, SEAnesthesiaMachineExpiratoryValveLeak& dst)
 {
   PBAnesthesiaMachineAction::Serialize(src.anesthesiamachineaction(), dst);
   if (src.has_severity())
     PBProperty::Load(src.severity(), dst.GetSeverity());
 }
-cdm::ExpiratoryValveLeakData* PBAnesthesiaMachineAction::Unload(const SEExpiratoryValveLeak& src)
+cdm::AnesthesiaMachineExpiratoryValveLeakData* PBAnesthesiaMachineAction::Unload(const SEAnesthesiaMachineExpiratoryValveLeak& src)
 {
-  cdm::ExpiratoryValveLeakData* dst = new cdm::ExpiratoryValveLeakData();
+  cdm::AnesthesiaMachineExpiratoryValveLeakData* dst = new cdm::AnesthesiaMachineExpiratoryValveLeakData();
   PBAnesthesiaMachineAction::Serialize(src, *dst);
   return dst;
 }
-void PBAnesthesiaMachineAction::Serialize(const SEExpiratoryValveLeak& src, cdm::ExpiratoryValveLeakData& dst)
+void PBAnesthesiaMachineAction::Serialize(const SEAnesthesiaMachineExpiratoryValveLeak& src, cdm::AnesthesiaMachineExpiratoryValveLeakData& dst)
 {
   PBAnesthesiaMachineAction::Serialize(src, *dst.mutable_anesthesiamachineaction());
   if (src.HasSeverity())
     dst.set_allocated_severity(PBProperty::Unload(*src.m_Severity));
 }
-void PBAnesthesiaMachineAction::Copy(const SEExpiratoryValveLeak& src, SEExpiratoryValveLeak& dst)
+void PBAnesthesiaMachineAction::Copy(const SEAnesthesiaMachineExpiratoryValveLeak& src, SEAnesthesiaMachineExpiratoryValveLeak& dst)
 {
-  cdm::ExpiratoryValveLeakData data;
+  cdm::AnesthesiaMachineExpiratoryValveLeakData data;
   PBAnesthesiaMachineAction::Serialize(src, data);
   PBAnesthesiaMachineAction::Serialize(data, dst);
 }
 
-void PBAnesthesiaMachineAction::Load(const cdm::ExpiratoryValveObstructionData& src, SEExpiratoryValveObstruction& dst)
+void PBAnesthesiaMachineAction::Load(const cdm::AnesthesiaMachineExpiratoryValveObstructionData& src, SEAnesthesiaMachineExpiratoryValveObstruction& dst)
 {
   PBAnesthesiaMachineAction::Serialize(src, dst);
 }
-void PBAnesthesiaMachineAction::Serialize(const cdm::ExpiratoryValveObstructionData& src, SEExpiratoryValveObstruction& dst)
+void PBAnesthesiaMachineAction::Serialize(const cdm::AnesthesiaMachineExpiratoryValveObstructionData& src, SEAnesthesiaMachineExpiratoryValveObstruction& dst)
 {
   PBAnesthesiaMachineAction::Serialize(src.anesthesiamachineaction(), dst);
   if (src.has_severity())
     PBProperty::Load(src.severity(), dst.GetSeverity());
 }
-cdm::ExpiratoryValveObstructionData* PBAnesthesiaMachineAction::Unload(const SEExpiratoryValveObstruction& src)
+cdm::AnesthesiaMachineExpiratoryValveObstructionData* PBAnesthesiaMachineAction::Unload(const SEAnesthesiaMachineExpiratoryValveObstruction& src)
 {
-  cdm::ExpiratoryValveObstructionData* dst = new cdm::ExpiratoryValveObstructionData();
+  cdm::AnesthesiaMachineExpiratoryValveObstructionData* dst = new cdm::AnesthesiaMachineExpiratoryValveObstructionData();
   PBAnesthesiaMachineAction::Serialize(src, *dst);
   return dst;
 }
-void PBAnesthesiaMachineAction::Serialize(const SEExpiratoryValveObstruction& src, cdm::ExpiratoryValveObstructionData& dst)
+void PBAnesthesiaMachineAction::Serialize(const SEAnesthesiaMachineExpiratoryValveObstruction& src, cdm::AnesthesiaMachineExpiratoryValveObstructionData& dst)
 {
   PBAnesthesiaMachineAction::Serialize(src, *dst.mutable_anesthesiamachineaction());
   if (src.HasSeverity())
     dst.set_allocated_severity(PBProperty::Unload(*src.m_Severity));
 }
-void PBAnesthesiaMachineAction::Copy(const SEExpiratoryValveObstruction& src, SEExpiratoryValveObstruction& dst)
+void PBAnesthesiaMachineAction::Copy(const SEAnesthesiaMachineExpiratoryValveObstruction& src, SEAnesthesiaMachineExpiratoryValveObstruction& dst)
 {
-  cdm::ExpiratoryValveObstructionData data;
+  cdm::AnesthesiaMachineExpiratoryValveObstructionData data;
   PBAnesthesiaMachineAction::Serialize(src, data);
   PBAnesthesiaMachineAction::Serialize(data, dst);
 }
 
-void PBAnesthesiaMachineAction::Load(const cdm::InspiratoryValveLeakData& src, SEInspiratoryValveLeak& dst)
+void PBAnesthesiaMachineAction::Load(const cdm::AnesthesiaMachineInspiratoryValveLeakData& src, SEAnesthesiaMachineInspiratoryValveLeak& dst)
 {
   PBAnesthesiaMachineAction::Serialize(src, dst);
 }
-void PBAnesthesiaMachineAction::Serialize(const cdm::InspiratoryValveLeakData& src, SEInspiratoryValveLeak& dst)
+void PBAnesthesiaMachineAction::Serialize(const cdm::AnesthesiaMachineInspiratoryValveLeakData& src, SEAnesthesiaMachineInspiratoryValveLeak& dst)
 {
   PBAnesthesiaMachineAction::Serialize(src.anesthesiamachineaction(), dst);
   if (src.has_severity())
     PBProperty::Load(src.severity(), dst.GetSeverity());
 }
-cdm::InspiratoryValveLeakData* PBAnesthesiaMachineAction::Unload(const SEInspiratoryValveLeak& src)
+cdm::AnesthesiaMachineInspiratoryValveLeakData* PBAnesthesiaMachineAction::Unload(const SEAnesthesiaMachineInspiratoryValveLeak& src)
 {
-  cdm::InspiratoryValveLeakData* dst = new cdm::InspiratoryValveLeakData();
+  cdm::AnesthesiaMachineInspiratoryValveLeakData* dst = new cdm::AnesthesiaMachineInspiratoryValveLeakData();
   PBAnesthesiaMachineAction::Serialize(src, *dst);
   return dst;
 }
-void PBAnesthesiaMachineAction::Serialize(const SEInspiratoryValveLeak& src, cdm::InspiratoryValveLeakData& dst)
+void PBAnesthesiaMachineAction::Serialize(const SEAnesthesiaMachineInspiratoryValveLeak& src, cdm::AnesthesiaMachineInspiratoryValveLeakData& dst)
 {
   PBAnesthesiaMachineAction::Serialize(src, *dst.mutable_anesthesiamachineaction());
   if (src.HasSeverity())
     dst.set_allocated_severity(PBProperty::Unload(*src.m_Severity));
 }
-void PBAnesthesiaMachineAction::Copy(const SEInspiratoryValveLeak& src, SEInspiratoryValveLeak& dst)
+void PBAnesthesiaMachineAction::Copy(const SEAnesthesiaMachineInspiratoryValveLeak& src, SEAnesthesiaMachineInspiratoryValveLeak& dst)
 {
-  cdm::InspiratoryValveLeakData data;
+  cdm::AnesthesiaMachineInspiratoryValveLeakData data;
   PBAnesthesiaMachineAction::Serialize(src, data);
   PBAnesthesiaMachineAction::Serialize(data, dst);
 }
 
-void PBAnesthesiaMachineAction::Load(const cdm::InspiratoryValveObstructionData& src, SEInspiratoryValveObstruction& dst)
+void PBAnesthesiaMachineAction::Load(const cdm::AnesthesiaMachineInspiratoryValveObstructionData& src, SEAnesthesiaMachineInspiratoryValveObstruction& dst)
 {
   PBAnesthesiaMachineAction::Serialize(src, dst);
 }
-void PBAnesthesiaMachineAction::Serialize(const cdm::InspiratoryValveObstructionData& src, SEInspiratoryValveObstruction& dst)
+void PBAnesthesiaMachineAction::Serialize(const cdm::AnesthesiaMachineInspiratoryValveObstructionData& src, SEAnesthesiaMachineInspiratoryValveObstruction& dst)
 {
   PBAnesthesiaMachineAction::Serialize(src.anesthesiamachineaction(), dst);
   if (src.has_severity())
     PBProperty::Load(src.severity(), dst.GetSeverity());
 }
-cdm::InspiratoryValveObstructionData* PBAnesthesiaMachineAction::Unload(const SEInspiratoryValveObstruction& src)
+cdm::AnesthesiaMachineInspiratoryValveObstructionData* PBAnesthesiaMachineAction::Unload(const SEAnesthesiaMachineInspiratoryValveObstruction& src)
 {
-  cdm::InspiratoryValveObstructionData* dst = new cdm::InspiratoryValveObstructionData();
+  cdm::AnesthesiaMachineInspiratoryValveObstructionData* dst = new cdm::AnesthesiaMachineInspiratoryValveObstructionData();
   PBAnesthesiaMachineAction::Serialize(src, *dst);
   return dst;
 }
-void PBAnesthesiaMachineAction::Serialize(const SEInspiratoryValveObstruction& src, cdm::InspiratoryValveObstructionData& dst)
+void PBAnesthesiaMachineAction::Serialize(const SEAnesthesiaMachineInspiratoryValveObstruction& src, cdm::AnesthesiaMachineInspiratoryValveObstructionData& dst)
 {
   PBAnesthesiaMachineAction::Serialize(src, *dst.mutable_anesthesiamachineaction());
   if (src.HasSeverity())
     dst.set_allocated_severity(PBProperty::Unload(*src.m_Severity));
 }
-void PBAnesthesiaMachineAction::Copy(const SEInspiratoryValveObstruction& src, SEInspiratoryValveObstruction& dst)
+void PBAnesthesiaMachineAction::Copy(const SEAnesthesiaMachineInspiratoryValveObstruction& src, SEAnesthesiaMachineInspiratoryValveObstruction& dst)
 {
-  cdm::InspiratoryValveObstructionData data;
+  cdm::AnesthesiaMachineInspiratoryValveObstructionData data;
   PBAnesthesiaMachineAction::Serialize(src, data);
   PBAnesthesiaMachineAction::Serialize(data, dst);
 }
 
-void PBAnesthesiaMachineAction::Load(const cdm::MaskLeakData& src, SEMaskLeak& dst)
+void PBAnesthesiaMachineAction::Load(const cdm::AnesthesiaMachineMaskLeakData& src, SEAnesthesiaMachineMaskLeak& dst)
 {
   PBAnesthesiaMachineAction::Serialize(src, dst);
 }
-void PBAnesthesiaMachineAction::Serialize(const cdm::MaskLeakData& src, SEMaskLeak& dst)
+void PBAnesthesiaMachineAction::Serialize(const cdm::AnesthesiaMachineMaskLeakData& src, SEAnesthesiaMachineMaskLeak& dst)
 {
   PBAnesthesiaMachineAction::Serialize(src.anesthesiamachineaction(), dst);
   if (src.has_severity())
     PBProperty::Load(src.severity(), dst.GetSeverity());
 }
-cdm::MaskLeakData* PBAnesthesiaMachineAction::Unload(const SEMaskLeak& src)
+cdm::AnesthesiaMachineMaskLeakData* PBAnesthesiaMachineAction::Unload(const SEAnesthesiaMachineMaskLeak& src)
 {
-  cdm::MaskLeakData* dst = new cdm::MaskLeakData();
+  cdm::AnesthesiaMachineMaskLeakData* dst = new cdm::AnesthesiaMachineMaskLeakData();
   PBAnesthesiaMachineAction::Serialize(src, *dst);
   return dst;
 }
-void PBAnesthesiaMachineAction::Serialize(const SEMaskLeak& src, cdm::MaskLeakData& dst)
+void PBAnesthesiaMachineAction::Serialize(const SEAnesthesiaMachineMaskLeak& src, cdm::AnesthesiaMachineMaskLeakData& dst)
 {
   PBAnesthesiaMachineAction::Serialize(src, *dst.mutable_anesthesiamachineaction());
   if (src.HasSeverity())
     dst.set_allocated_severity(PBProperty::Unload(*src.m_Severity));
 }
-void PBAnesthesiaMachineAction::Copy(const SEMaskLeak& src, SEMaskLeak& dst)
+void PBAnesthesiaMachineAction::Copy(const SEAnesthesiaMachineMaskLeak& src, SEAnesthesiaMachineMaskLeak& dst)
 {
-  cdm::MaskLeakData data;
+  cdm::AnesthesiaMachineMaskLeakData data;
   PBAnesthesiaMachineAction::Serialize(src, data);
   PBAnesthesiaMachineAction::Serialize(data, dst);
 }
 
-void PBAnesthesiaMachineAction::Load(const cdm::OxygenTankPressureLossData& src, SEOxygenTankPressureLoss& dst)
+void PBAnesthesiaMachineAction::Load(const cdm::AnesthesiaMachineOxygenTankPressureLossData& src, SEAnesthesiaMachineOxygenTankPressureLoss& dst)
 {
   PBAnesthesiaMachineAction::Serialize(src, dst);
 }
-void PBAnesthesiaMachineAction::Serialize(const cdm::OxygenTankPressureLossData& src, SEOxygenTankPressureLoss& dst)
+void PBAnesthesiaMachineAction::Serialize(const cdm::AnesthesiaMachineOxygenTankPressureLossData& src, SEAnesthesiaMachineOxygenTankPressureLoss& dst)
 {
   PBAnesthesiaMachineAction::Serialize(src.anesthesiamachineaction(), dst);
   dst.SetActive(src.state() == cdm::eSwitch::On ? true : false);
 }
-cdm::OxygenTankPressureLossData* PBAnesthesiaMachineAction::Unload(const SEOxygenTankPressureLoss& src)
+cdm::AnesthesiaMachineOxygenTankPressureLossData* PBAnesthesiaMachineAction::Unload(const SEAnesthesiaMachineOxygenTankPressureLoss& src)
 {
-  cdm::OxygenTankPressureLossData* dst = new cdm::OxygenTankPressureLossData();
+  cdm::AnesthesiaMachineOxygenTankPressureLossData* dst = new cdm::AnesthesiaMachineOxygenTankPressureLossData();
   PBAnesthesiaMachineAction::Serialize(src, *dst);
   return dst;
 }
-void PBAnesthesiaMachineAction::Serialize(const SEOxygenTankPressureLoss& src, cdm::OxygenTankPressureLossData& dst)
+void PBAnesthesiaMachineAction::Serialize(const SEAnesthesiaMachineOxygenTankPressureLoss& src, cdm::AnesthesiaMachineOxygenTankPressureLossData& dst)
 {
   PBAnesthesiaMachineAction::Serialize(src, *dst.mutable_anesthesiamachineaction());
   dst.set_state(src.IsActive() ? cdm::eSwitch::On : cdm::eSwitch::Off);
 }
-void PBAnesthesiaMachineAction::Copy(const SEOxygenTankPressureLoss& src, SEOxygenTankPressureLoss& dst)
+void PBAnesthesiaMachineAction::Copy(const SEAnesthesiaMachineOxygenTankPressureLoss& src, SEAnesthesiaMachineOxygenTankPressureLoss& dst)
 {
-  cdm::OxygenTankPressureLossData data;
+  cdm::AnesthesiaMachineOxygenTankPressureLossData data;
   PBAnesthesiaMachineAction::Serialize(src, data);
   PBAnesthesiaMachineAction::Serialize(data, dst);
 }
 
-void PBAnesthesiaMachineAction::Load(const cdm::OxygenWallPortPressureLossData& src, SEOxygenWallPortPressureLoss& dst)
+void PBAnesthesiaMachineAction::Load(const cdm::AnesthesiaMachineOxygenWallPortPressureLossData& src, SEAnesthesiaMachineOxygenWallPortPressureLoss& dst)
 {
   PBAnesthesiaMachineAction::Serialize(src, dst);
 }
-void PBAnesthesiaMachineAction::Serialize(const cdm::OxygenWallPortPressureLossData& src, SEOxygenWallPortPressureLoss& dst)
+void PBAnesthesiaMachineAction::Serialize(const cdm::AnesthesiaMachineOxygenWallPortPressureLossData& src, SEAnesthesiaMachineOxygenWallPortPressureLoss& dst)
 {
   PBAnesthesiaMachineAction::Serialize(src.anesthesiamachineaction(), dst);
   dst.SetActive(src.state() == cdm::eSwitch::On ? true : false);
 }
-cdm::OxygenWallPortPressureLossData* PBAnesthesiaMachineAction::Unload(const SEOxygenWallPortPressureLoss& src)
+cdm::AnesthesiaMachineOxygenWallPortPressureLossData* PBAnesthesiaMachineAction::Unload(const SEAnesthesiaMachineOxygenWallPortPressureLoss& src)
 {
-  cdm::OxygenWallPortPressureLossData* dst = new cdm::OxygenWallPortPressureLossData();
+  cdm::AnesthesiaMachineOxygenWallPortPressureLossData* dst = new cdm::AnesthesiaMachineOxygenWallPortPressureLossData();
   PBAnesthesiaMachineAction::Serialize(src, *dst);
   return dst;
 }
-void PBAnesthesiaMachineAction::Serialize(const SEOxygenWallPortPressureLoss& src, cdm::OxygenWallPortPressureLossData& dst)
+void PBAnesthesiaMachineAction::Serialize(const SEAnesthesiaMachineOxygenWallPortPressureLoss& src, cdm::AnesthesiaMachineOxygenWallPortPressureLossData& dst)
 {
   PBAnesthesiaMachineAction::Serialize(src, *dst.mutable_anesthesiamachineaction());
   dst.set_state(src.IsActive() ? cdm::eSwitch::On : cdm::eSwitch::Off);
 }
-void PBAnesthesiaMachineAction::Copy(const SEOxygenWallPortPressureLoss& src, SEOxygenWallPortPressureLoss& dst)
+void PBAnesthesiaMachineAction::Copy(const SEAnesthesiaMachineOxygenWallPortPressureLoss& src, SEAnesthesiaMachineOxygenWallPortPressureLoss& dst)
 {
-  cdm::OxygenWallPortPressureLossData data;
+  cdm::AnesthesiaMachineOxygenWallPortPressureLossData data;
   PBAnesthesiaMachineAction::Serialize(src, data);
   PBAnesthesiaMachineAction::Serialize(data, dst);
 }
 
-void PBAnesthesiaMachineAction::Load(const cdm::SodaLimeFailureData& src, SESodaLimeFailure& dst)
+void PBAnesthesiaMachineAction::Load(const cdm::AnesthesiaMachineSodaLimeFailureData& src, SEAnesthesiaMachineSodaLimeFailure& dst)
 {
   PBAnesthesiaMachineAction::Serialize(src, dst);
 }
-void PBAnesthesiaMachineAction::Serialize(const cdm::SodaLimeFailureData& src, SESodaLimeFailure& dst)
+void PBAnesthesiaMachineAction::Serialize(const cdm::AnesthesiaMachineSodaLimeFailureData& src, SEAnesthesiaMachineSodaLimeFailure& dst)
 {
   PBAnesthesiaMachineAction::Serialize(src.anesthesiamachineaction(), dst);
   if (src.has_severity())
     PBProperty::Load(src.severity(), dst.GetSeverity());
 }
-cdm::SodaLimeFailureData* PBAnesthesiaMachineAction::Unload(const SESodaLimeFailure& src)
+cdm::AnesthesiaMachineSodaLimeFailureData* PBAnesthesiaMachineAction::Unload(const SEAnesthesiaMachineSodaLimeFailure& src)
 {
-  cdm::SodaLimeFailureData* dst = new cdm::SodaLimeFailureData();
+  cdm::AnesthesiaMachineSodaLimeFailureData* dst = new cdm::AnesthesiaMachineSodaLimeFailureData();
   PBAnesthesiaMachineAction::Serialize(src, *dst);
   return dst;
 }
-void PBAnesthesiaMachineAction::Serialize(const SESodaLimeFailure& src, cdm::SodaLimeFailureData& dst)
+void PBAnesthesiaMachineAction::Serialize(const SEAnesthesiaMachineSodaLimeFailure& src, cdm::AnesthesiaMachineSodaLimeFailureData& dst)
 {
   PBAnesthesiaMachineAction::Serialize(src, *dst.mutable_anesthesiamachineaction());
   if (src.HasSeverity())
     dst.set_allocated_severity(PBProperty::Unload(*src.m_Severity));
 }
-void PBAnesthesiaMachineAction::Copy(const SESodaLimeFailure& src, SESodaLimeFailure& dst)
+void PBAnesthesiaMachineAction::Copy(const SEAnesthesiaMachineSodaLimeFailure& src, SEAnesthesiaMachineSodaLimeFailure& dst)
 {
-  cdm::SodaLimeFailureData data;
+  cdm::AnesthesiaMachineSodaLimeFailureData data;
   PBAnesthesiaMachineAction::Serialize(src, data);
   PBAnesthesiaMachineAction::Serialize(data, dst);
 }
 
-void PBAnesthesiaMachineAction::Load(const cdm::TubeCuffLeakData& src, SETubeCuffLeak& dst)
+void PBAnesthesiaMachineAction::Load(const cdm::AnesthesiaMachineTubeCuffLeakData& src, SEAnesthesiaMachineTubeCuffLeak& dst)
 {
   PBAnesthesiaMachineAction::Serialize(src, dst);
 }
-void PBAnesthesiaMachineAction::Serialize(const cdm::TubeCuffLeakData& src, SETubeCuffLeak& dst)
+void PBAnesthesiaMachineAction::Serialize(const cdm::AnesthesiaMachineTubeCuffLeakData& src, SEAnesthesiaMachineTubeCuffLeak& dst)
 {
   PBAnesthesiaMachineAction::Serialize(src.anesthesiamachineaction(), dst);
   if (src.has_severity())
     PBProperty::Load(src.severity(), dst.GetSeverity());
 }
-cdm::TubeCuffLeakData* PBAnesthesiaMachineAction::Unload(const SETubeCuffLeak& src)
+cdm::AnesthesiaMachineTubeCuffLeakData* PBAnesthesiaMachineAction::Unload(const SEAnesthesiaMachineTubeCuffLeak& src)
 {
-  cdm::TubeCuffLeakData* dst = new cdm::TubeCuffLeakData();
+  cdm::AnesthesiaMachineTubeCuffLeakData* dst = new cdm::AnesthesiaMachineTubeCuffLeakData();
   PBAnesthesiaMachineAction::Serialize(src, *dst);
   return dst;
 }
-void PBAnesthesiaMachineAction::Serialize(const SETubeCuffLeak& src, cdm::TubeCuffLeakData& dst)
+void PBAnesthesiaMachineAction::Serialize(const SEAnesthesiaMachineTubeCuffLeak& src, cdm::AnesthesiaMachineTubeCuffLeakData& dst)
 {
   PBAnesthesiaMachineAction::Serialize(src, *dst.mutable_anesthesiamachineaction());
   if (src.HasSeverity())
     dst.set_allocated_severity(PBProperty::Unload(*src.m_Severity));
 }
-void PBAnesthesiaMachineAction::Copy(const SETubeCuffLeak& src, SETubeCuffLeak& dst)
+void PBAnesthesiaMachineAction::Copy(const SEAnesthesiaMachineTubeCuffLeak& src, SEAnesthesiaMachineTubeCuffLeak& dst)
 {
-  cdm::TubeCuffLeakData data;
+  cdm::AnesthesiaMachineTubeCuffLeakData data;
   PBAnesthesiaMachineAction::Serialize(src, data);
   PBAnesthesiaMachineAction::Serialize(data, dst);
 }
 
-void PBAnesthesiaMachineAction::Load(const cdm::VaporizerFailureData& src, SEVaporizerFailure& dst)
+void PBAnesthesiaMachineAction::Load(const cdm::AnesthesiaMachineVaporizerFailureData& src, SEAnesthesiaMachineVaporizerFailure& dst)
 {
   PBAnesthesiaMachineAction::Serialize(src, dst);
 }
-void PBAnesthesiaMachineAction::Serialize(const cdm::VaporizerFailureData& src, SEVaporizerFailure& dst)
+void PBAnesthesiaMachineAction::Serialize(const cdm::AnesthesiaMachineVaporizerFailureData& src, SEAnesthesiaMachineVaporizerFailure& dst)
 {
   PBAnesthesiaMachineAction::Serialize(src.anesthesiamachineaction(), dst);
   if (src.has_severity())
     PBProperty::Load(src.severity(), dst.GetSeverity());
 }
-cdm::VaporizerFailureData* PBAnesthesiaMachineAction::Unload(const SEVaporizerFailure& src)
+cdm::AnesthesiaMachineVaporizerFailureData* PBAnesthesiaMachineAction::Unload(const SEAnesthesiaMachineVaporizerFailure& src)
 {
-  cdm::VaporizerFailureData* dst = new cdm::VaporizerFailureData();
+  cdm::AnesthesiaMachineVaporizerFailureData* dst = new cdm::AnesthesiaMachineVaporizerFailureData();
   PBAnesthesiaMachineAction::Serialize(src, *dst);
   return dst;
 }
-void PBAnesthesiaMachineAction::Serialize(const SEVaporizerFailure& src, cdm::VaporizerFailureData& dst)
+void PBAnesthesiaMachineAction::Serialize(const SEAnesthesiaMachineVaporizerFailure& src, cdm::AnesthesiaMachineVaporizerFailureData& dst)
 {
   PBAnesthesiaMachineAction::Serialize(src, *dst.mutable_anesthesiamachineaction());
   if (src.HasSeverity())
     dst.set_allocated_severity(PBProperty::Unload(*src.m_Severity));
 }
-void PBAnesthesiaMachineAction::Copy(const SEVaporizerFailure& src, SEVaporizerFailure& dst)
+void PBAnesthesiaMachineAction::Copy(const SEAnesthesiaMachineVaporizerFailure& src, SEAnesthesiaMachineVaporizerFailure& dst)
 {
-  cdm::VaporizerFailureData data;
+  cdm::AnesthesiaMachineVaporizerFailureData data;
   PBAnesthesiaMachineAction::Serialize(src, data);
   PBAnesthesiaMachineAction::Serialize(data, dst);
 }
 
-void PBAnesthesiaMachineAction::Load(const cdm::VentilatorPressureLossData& src, SEVentilatorPressureLoss& dst)
+void PBAnesthesiaMachineAction::Load(const cdm::AnesthesiaMachineVentilatorPressureLossData& src, SEAnesthesiaMachineVentilatorPressureLoss& dst)
 {
   PBAnesthesiaMachineAction::Serialize(src, dst);
 }
-void PBAnesthesiaMachineAction::Serialize(const cdm::VentilatorPressureLossData& src, SEVentilatorPressureLoss& dst)
+void PBAnesthesiaMachineAction::Serialize(const cdm::AnesthesiaMachineVentilatorPressureLossData& src, SEAnesthesiaMachineVentilatorPressureLoss& dst)
 {
   PBAnesthesiaMachineAction::Serialize(src.anesthesiamachineaction(), dst);
   if (src.has_severity())
     PBProperty::Load(src.severity(), dst.GetSeverity());
 }
-cdm::VentilatorPressureLossData* PBAnesthesiaMachineAction::Unload(const SEVentilatorPressureLoss& src)
+cdm::AnesthesiaMachineVentilatorPressureLossData* PBAnesthesiaMachineAction::Unload(const SEAnesthesiaMachineVentilatorPressureLoss& src)
 {
-  cdm::VentilatorPressureLossData* dst = new cdm::VentilatorPressureLossData();
+  cdm::AnesthesiaMachineVentilatorPressureLossData* dst = new cdm::AnesthesiaMachineVentilatorPressureLossData();
   PBAnesthesiaMachineAction::Serialize(src, *dst);
   return dst;
 }
-void PBAnesthesiaMachineAction::Serialize(const SEVentilatorPressureLoss& src, cdm::VentilatorPressureLossData& dst)
+void PBAnesthesiaMachineAction::Serialize(const SEAnesthesiaMachineVentilatorPressureLoss& src, cdm::AnesthesiaMachineVentilatorPressureLossData& dst)
 {
   PBAnesthesiaMachineAction::Serialize(src, *dst.mutable_anesthesiamachineaction());
   if (src.HasSeverity())
     dst.set_allocated_severity(PBProperty::Unload(*src.m_Severity));
 }
-void PBAnesthesiaMachineAction::Copy(const SEVentilatorPressureLoss& src, SEVentilatorPressureLoss& dst)
+void PBAnesthesiaMachineAction::Copy(const SEAnesthesiaMachineVentilatorPressureLoss& src, SEAnesthesiaMachineVentilatorPressureLoss& dst)
 {
-  cdm::VentilatorPressureLossData data;
+  cdm::AnesthesiaMachineVentilatorPressureLossData data;
   PBAnesthesiaMachineAction::Serialize(src, data);
   PBAnesthesiaMachineAction::Serialize(data, dst);
 }
 
-void PBAnesthesiaMachineAction::Load(const cdm::YPieceDisconnectData& src, SEYPieceDisconnect& dst)
+void PBAnesthesiaMachineAction::Load(const cdm::AnesthesiaMachineYPieceDisconnectData& src, SEAnesthesiaMachineYPieceDisconnect& dst)
 {
   PBAnesthesiaMachineAction::Serialize(src, dst);
 }
-void PBAnesthesiaMachineAction::Serialize(const cdm::YPieceDisconnectData& src, SEYPieceDisconnect& dst)
+void PBAnesthesiaMachineAction::Serialize(const cdm::AnesthesiaMachineYPieceDisconnectData& src, SEAnesthesiaMachineYPieceDisconnect& dst)
 {
   PBAnesthesiaMachineAction::Serialize(src.anesthesiamachineaction(), dst);
   if (src.has_severity())
     PBProperty::Load(src.severity(), dst.GetSeverity());
 }
-cdm::YPieceDisconnectData* PBAnesthesiaMachineAction::Unload(const SEYPieceDisconnect& src)
+cdm::AnesthesiaMachineYPieceDisconnectData* PBAnesthesiaMachineAction::Unload(const SEAnesthesiaMachineYPieceDisconnect& src)
 {
-  cdm::YPieceDisconnectData* dst = new cdm::YPieceDisconnectData();
+  cdm::AnesthesiaMachineYPieceDisconnectData* dst = new cdm::AnesthesiaMachineYPieceDisconnectData();
   PBAnesthesiaMachineAction::Serialize(src, *dst);
   return dst;
 }
-void PBAnesthesiaMachineAction::Serialize(const SEYPieceDisconnect& src, cdm::YPieceDisconnectData& dst)
+void PBAnesthesiaMachineAction::Serialize(const SEAnesthesiaMachineYPieceDisconnect& src, cdm::AnesthesiaMachineYPieceDisconnectData& dst)
 {
   PBAnesthesiaMachineAction::Serialize(src, *dst.mutable_anesthesiamachineaction());
   if (src.HasSeverity())
     dst.set_allocated_severity(PBProperty::Unload(*src.m_Severity));
 }
-void PBAnesthesiaMachineAction::Copy(const SEYPieceDisconnect& src, SEYPieceDisconnect& dst)
+void PBAnesthesiaMachineAction::Copy(const SEAnesthesiaMachineYPieceDisconnect& src, SEAnesthesiaMachineYPieceDisconnect& dst)
 {
-  cdm::YPieceDisconnectData data;
+  cdm::AnesthesiaMachineYPieceDisconnectData data;
   PBAnesthesiaMachineAction::Serialize(src, data);
   PBAnesthesiaMachineAction::Serialize(data, dst);
 }
@@ -421,73 +421,73 @@ SEAnesthesiaMachineAction* PBAnesthesiaMachineAction::Load(const cdm::AnyAnesthe
   }
   case cdm::AnyAnesthesiaMachineActionData::ActionCase::kOxygenTankPressureLoss:
   {
-    SEOxygenTankPressureLoss* a = new SEOxygenTankPressureLoss();
+    SEAnesthesiaMachineOxygenTankPressureLoss* a = new SEAnesthesiaMachineOxygenTankPressureLoss();
     PBAnesthesiaMachineAction::Load(any.oxygentankpressureloss(), *a);
     return a;
   }
   case cdm::AnyAnesthesiaMachineActionData::ActionCase::kOxygenWallPortPressureLoss:
   {
-    SEOxygenWallPortPressureLoss* a = new SEOxygenWallPortPressureLoss();
+    SEAnesthesiaMachineOxygenWallPortPressureLoss* a = new SEAnesthesiaMachineOxygenWallPortPressureLoss();
     PBAnesthesiaMachineAction::Load(any.oxygenwallportpressureloss(), *a);
     return a;
   }
   case cdm::AnyAnesthesiaMachineActionData::ActionCase::kExpiratoryValveLeak:
   {
-    SEExpiratoryValveLeak* a = new SEExpiratoryValveLeak();
+    SEAnesthesiaMachineExpiratoryValveLeak* a = new SEAnesthesiaMachineExpiratoryValveLeak();
     PBAnesthesiaMachineAction::Load(any.expiratoryvalveleak(), *a);
     return a;
   }
   case cdm::AnyAnesthesiaMachineActionData::ActionCase::kExpiratoryValveObstruction:
   {
-    SEExpiratoryValveObstruction* a = new SEExpiratoryValveObstruction();
+    SEAnesthesiaMachineExpiratoryValveObstruction* a = new SEAnesthesiaMachineExpiratoryValveObstruction();
     PBAnesthesiaMachineAction::Load(any.expiratoryvalveobstruction(), *a);
     return a;
   }
   case cdm::AnyAnesthesiaMachineActionData::ActionCase::kInspiratoryValveLeak:
   {
-    SEInspiratoryValveLeak* a = new SEInspiratoryValveLeak();
+    SEAnesthesiaMachineInspiratoryValveLeak* a = new SEAnesthesiaMachineInspiratoryValveLeak();
     PBAnesthesiaMachineAction::Load(any.inspiratoryvalveleak(), *a);
     return a;
   }
   case cdm::AnyAnesthesiaMachineActionData::ActionCase::kInspiratoryValveObstruction:
   {
-    SEInspiratoryValveObstruction* a = new SEInspiratoryValveObstruction();
+    SEAnesthesiaMachineInspiratoryValveObstruction* a = new SEAnesthesiaMachineInspiratoryValveObstruction();
     PBAnesthesiaMachineAction::Load(any.inspiratoryvalveobstruction(), *a);
     return a;
   }
   case cdm::AnyAnesthesiaMachineActionData::ActionCase::kMaskLeak:
   {
-    SEMaskLeak* a = new SEMaskLeak();
+    SEAnesthesiaMachineMaskLeak* a = new SEAnesthesiaMachineMaskLeak();
     PBAnesthesiaMachineAction::Load(any.maskleak(), *a);
     return a;
   }
   case cdm::AnyAnesthesiaMachineActionData::ActionCase::kSodaLimeFailure:
   {
-    SESodaLimeFailure* a = new SESodaLimeFailure();
+    SEAnesthesiaMachineSodaLimeFailure* a = new SEAnesthesiaMachineSodaLimeFailure();
     PBAnesthesiaMachineAction::Load(any.sodalimefailure(), *a);
     return a;
   }
   case cdm::AnyAnesthesiaMachineActionData::ActionCase::kTubeCuffLeak:
   {
-    SETubeCuffLeak* a = new SETubeCuffLeak();
+    SEAnesthesiaMachineTubeCuffLeak* a = new SEAnesthesiaMachineTubeCuffLeak();
     PBAnesthesiaMachineAction::Load(any.tubecuffleak(), *a);
     return a;
   }
   case cdm::AnyAnesthesiaMachineActionData::ActionCase::kVaporizerFailure:
   {
-    SEVaporizerFailure* a = new SEVaporizerFailure();
+    SEAnesthesiaMachineVaporizerFailure* a = new SEAnesthesiaMachineVaporizerFailure();
     PBAnesthesiaMachineAction::Load(any.vaporizerfailure(), *a);
     return a;
   }
   case cdm::AnyAnesthesiaMachineActionData::ActionCase::kVentilatorPressureLoss:
   {
-    SEVentilatorPressureLoss* a = new SEVentilatorPressureLoss();
+    SEAnesthesiaMachineVentilatorPressureLoss* a = new SEAnesthesiaMachineVentilatorPressureLoss();
     PBAnesthesiaMachineAction::Load(any.ventilatorpressureloss(), *a);
     return a;
   }
   case cdm::AnyAnesthesiaMachineActionData::ActionCase::kYPieceDisconnect:
   {
-    SEYPieceDisconnect* a = new SEYPieceDisconnect();
+    SEAnesthesiaMachineYPieceDisconnect* a = new SEAnesthesiaMachineYPieceDisconnect();
     PBAnesthesiaMachineAction::Load(any.ypiecedisconnect(), *a);
     return a;
   }
@@ -505,84 +505,84 @@ cdm::AnyAnesthesiaMachineActionData* PBAnesthesiaMachineAction::Unload(const SEA
     return any;
   }
 
-  const SEOxygenWallPortPressureLoss* owppl = dynamic_cast<const SEOxygenWallPortPressureLoss*>(&action);
+  const SEAnesthesiaMachineOxygenWallPortPressureLoss* owppl = dynamic_cast<const SEAnesthesiaMachineOxygenWallPortPressureLoss*>(&action);
   if (owppl != nullptr)
   {
     any->set_allocated_oxygenwallportpressureloss(PBAnesthesiaMachineAction::Unload(*owppl));
     return any;
   }
 
-  const SEOxygenTankPressureLoss* otpl = dynamic_cast<const SEOxygenTankPressureLoss*>(&action);
+  const SEAnesthesiaMachineOxygenTankPressureLoss* otpl = dynamic_cast<const SEAnesthesiaMachineOxygenTankPressureLoss*>(&action);
   if (otpl != nullptr)
   {
     any->set_allocated_oxygentankpressureloss(PBAnesthesiaMachineAction::Unload(*otpl));
     return any;
   }
 
-  const SEExpiratoryValveLeak* evl = dynamic_cast<const SEExpiratoryValveLeak*>(&action);
+  const SEAnesthesiaMachineExpiratoryValveLeak* evl = dynamic_cast<const SEAnesthesiaMachineExpiratoryValveLeak*>(&action);
   if (evl != nullptr)
   {
     any->set_allocated_expiratoryvalveleak(PBAnesthesiaMachineAction::Unload(*evl));
     return any;
   }
 
-  const SEExpiratoryValveObstruction* evo = dynamic_cast<const SEExpiratoryValveObstruction*>(&action);
+  const SEAnesthesiaMachineExpiratoryValveObstruction* evo = dynamic_cast<const SEAnesthesiaMachineExpiratoryValveObstruction*>(&action);
   if (evo != nullptr)
   {
     any->set_allocated_expiratoryvalveobstruction(PBAnesthesiaMachineAction::Unload(*evo));
     return any;
   }
 
-  const SEInspiratoryValveLeak* ivl = dynamic_cast<const SEInspiratoryValveLeak*>(&action);
+  const SEAnesthesiaMachineInspiratoryValveLeak* ivl = dynamic_cast<const SEAnesthesiaMachineInspiratoryValveLeak*>(&action);
   if (ivl != nullptr)
   {
     any->set_allocated_inspiratoryvalveleak(PBAnesthesiaMachineAction::Unload(*ivl));
     return any;
   }
 
-  const SEInspiratoryValveObstruction* ivo = dynamic_cast<const SEInspiratoryValveObstruction*>(&action);
+  const SEAnesthesiaMachineInspiratoryValveObstruction* ivo = dynamic_cast<const SEAnesthesiaMachineInspiratoryValveObstruction*>(&action);
   if (ivo != nullptr)
   {
     any->set_allocated_inspiratoryvalveobstruction(PBAnesthesiaMachineAction::Unload(*ivo));
     return any;
   }
 
-  const SEMaskLeak* ml = dynamic_cast<const SEMaskLeak*>(&action);
+  const SEAnesthesiaMachineMaskLeak* ml = dynamic_cast<const SEAnesthesiaMachineMaskLeak*>(&action);
   if (ml != nullptr)
   {
     any->set_allocated_maskleak(PBAnesthesiaMachineAction::Unload(*ml));
     return any;
   }
 
-  const SESodaLimeFailure* slf = dynamic_cast<const SESodaLimeFailure*>(&action);
+  const SEAnesthesiaMachineSodaLimeFailure* slf = dynamic_cast<const SEAnesthesiaMachineSodaLimeFailure*>(&action);
   if (slf != nullptr)
   {
     any->set_allocated_sodalimefailure(PBAnesthesiaMachineAction::Unload(*slf));
     return any;
   }
 
-  const SETubeCuffLeak* tcl = dynamic_cast<const SETubeCuffLeak*>(&action);
+  const SEAnesthesiaMachineTubeCuffLeak* tcl = dynamic_cast<const SEAnesthesiaMachineTubeCuffLeak*>(&action);
   if (tcl != nullptr)
   {
     any->set_allocated_tubecuffleak(PBAnesthesiaMachineAction::Unload(*tcl));
     return any;
   }
 
-  const SEVaporizerFailure* vf = dynamic_cast<const SEVaporizerFailure*>(&action);
+  const SEAnesthesiaMachineVaporizerFailure* vf = dynamic_cast<const SEAnesthesiaMachineVaporizerFailure*>(&action);
   if (vf != nullptr)
   {
     any->set_allocated_vaporizerfailure(PBAnesthesiaMachineAction::Unload(*vf));
     return any;
   }
 
-  const SEVentilatorPressureLoss* vpl = dynamic_cast<const SEVentilatorPressureLoss*>(&action);
+  const SEAnesthesiaMachineVentilatorPressureLoss* vpl = dynamic_cast<const SEAnesthesiaMachineVentilatorPressureLoss*>(&action);
   if (vpl != nullptr)
   {
     any->set_allocated_ventilatorpressureloss(PBAnesthesiaMachineAction::Unload(*vpl));
     return any;
   }
 
-  const SEYPieceDisconnect* ypd = dynamic_cast<const SEYPieceDisconnect*>(&action);
+  const SEAnesthesiaMachineYPieceDisconnect* ypd = dynamic_cast<const SEAnesthesiaMachineYPieceDisconnect*>(&action);
   if (ypd != nullptr)
   {
     any->set_allocated_ypiecedisconnect(PBAnesthesiaMachineAction::Unload(*ypd));

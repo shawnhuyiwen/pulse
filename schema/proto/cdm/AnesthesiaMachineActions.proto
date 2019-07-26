@@ -13,19 +13,19 @@ message AnyAnesthesiaMachineActionData
 {
   oneof Action
   {
-    AnesthesiaMachineConfigurationData     Configuration               = 1;
-    ExpiratoryValveLeakData                ExpiratoryValveLeak         = 2;
-    ExpiratoryValveObstructionData         ExpiratoryValveObstruction  = 3;
-    InspiratoryValveLeakData               InspiratoryValveLeak        = 4;
-    InspiratoryValveObstructionData        InspiratoryValveObstruction = 5;
-    MaskLeakData                           MaskLeak                    = 6;
-    SodaLimeFailureData                    SodaLimeFailure             = 7;
-    TubeCuffLeakData                       TubeCuffLeak                = 8;
-    VaporizerFailureData                   VaporizerFailure            = 9;
-    VentilatorPressureLossData             VentilatorPressureLoss      = 10;
-    YPieceDisconnectData                   YPieceDisconnect            = 11;
-    OxygenWallPortPressureLossData         OxygenWallPortPressureLoss  = 12;
-    OxygenTankPressureLossData             OxygenTankPressureLoss      = 13;
+    AnesthesiaMachineConfigurationData                      Configuration               = 1;
+    AnesthesiaMachineExpiratoryValveLeakData                ExpiratoryValveLeak         = 2;
+    AnesthesiaMachineExpiratoryValveObstructionData         ExpiratoryValveObstruction  = 3;
+    AnesthesiaMachineInspiratoryValveLeakData               InspiratoryValveLeak        = 4;
+    AnesthesiaMachineInspiratoryValveObstructionData        InspiratoryValveObstruction = 5;
+    AnesthesiaMachineMaskLeakData                           MaskLeak                    = 6;
+    AnesthesiaMachineSodaLimeFailureData                    SodaLimeFailure             = 7;
+    AnesthesiaMachineTubeCuffLeakData                       TubeCuffLeak                = 8;
+    AnesthesiaMachineVaporizerFailureData                   VaporizerFailure            = 9;
+    AnesthesiaMachineVentilatorPressureLossData             VentilatorPressureLoss      = 10;
+    AnesthesiaMachineYPieceDisconnectData                   YPieceDisconnect            = 11;
+    AnesthesiaMachineOxygenWallPortPressureLossData         OxygenWallPortPressureLoss  = 12;
+    AnesthesiaMachineOxygenTankPressureLossData             OxygenTankPressureLoss      = 13;
   }
 }
 
@@ -46,84 +46,84 @@ message AnesthesiaMachineConfigurationData
 }
 
 /** @brief A leak in the expiritory valve. */
-message ExpiratoryValveLeakData
+message AnesthesiaMachineExpiratoryValveLeakData
 {
   AnesthesiaMachineActionData              AnesthesiaMachineAction     = 1;
   Scalar0To1Data                           Severity                    = 2;/**<< @brief Severity of the leak from 0 to 1. */
 }
 
 /** @brief An obstruction in the expiritory valve.  */
-message ExpiratoryValveObstructionData
+message AnesthesiaMachineExpiratoryValveObstructionData
 {
   AnesthesiaMachineActionData              AnesthesiaMachineAction     = 1;
   Scalar0To1Data                           Severity                    = 2;/**<< @brief Severity of the obstruction from 0 to 1. */
 }
 
 /** @brief A leak in the inspiratory valve.  */
-message InspiratoryValveLeakData
+message AnesthesiaMachineInspiratoryValveLeakData
 {
   AnesthesiaMachineActionData              AnesthesiaMachineAction     = 1;
   Scalar0To1Data                           Severity                    = 2;/**<< @brief Severity of the leak from 0 to 1. */
 }
 
 /** @brief An obstruction in the inspiritory valve. */
-message InspiratoryValveObstructionData
+message AnesthesiaMachineInspiratoryValveObstructionData
 {
   AnesthesiaMachineActionData              AnesthesiaMachineAction     = 1;
   Scalar0To1Data                           Severity                    = 2;/**<< @brief Severity of the obstruction from 0 to 1. */
 }
 
 /** @brief A leak in the mask. */
-message MaskLeakData
+message AnesthesiaMachineMaskLeakData
 {
   AnesthesiaMachineActionData              AnesthesiaMachineAction     = 1;
   Scalar0To1Data                           Severity                    = 2;/**<< @brief Severity of the leak from 0 to 1. */
 }
 
 /** @brief A soda lime failure. */
-message SodaLimeFailureData
+message AnesthesiaMachineSodaLimeFailureData
 {
   AnesthesiaMachineActionData              AnesthesiaMachineAction     = 1;
   Scalar0To1Data                           Severity                    = 2;/**<< @brief Severity of the failure from 0 to 1. */
 }
 
 /** @brief A leak in the tube cuff. */
-message TubeCuffLeakData
+message AnesthesiaMachineTubeCuffLeakData
 {
   AnesthesiaMachineActionData              AnesthesiaMachineAction     = 1;
   Scalar0To1Data                           Severity                    = 2;/**<< @brief Severity of the leak from 0 to 1. */
 }
 
 /** @brief The vaporizer fails. */
-message VaporizerFailureData
+message AnesthesiaMachineVaporizerFailureData
 {
   AnesthesiaMachineActionData              AnesthesiaMachineAction     = 1;
   Scalar0To1Data                           Severity                    = 2;/**<< @brief Severity of the failure from 0 to 1. */
 }
 
 /** @brief The ventilator losses pressure. */
-message VentilatorPressureLossData
+message AnesthesiaMachineVentilatorPressureLossData
 {
   AnesthesiaMachineActionData              AnesthesiaMachineAction     = 1;
   Scalar0To1Data                           Severity                    = 2;/**<< @brief Severity of the loss from 0 to 1. */
 }
 
 /** @brief The Y Piece becomes disconnected. */
-message YPieceDisconnectData
+message AnesthesiaMachineYPieceDisconnectData
 {
   AnesthesiaMachineActionData              AnesthesiaMachineAction     = 1;
   Scalar0To1Data                           Severity                    = 2;/**<< @brief Severity of the leak from 0 to 1. */
 }
 
 /** @brief The wall port losses oxygen pressure. */
-message OxygenWallPortPressureLossData
+message AnesthesiaMachineOxygenWallPortPressureLossData
 {
   AnesthesiaMachineActionData              AnesthesiaMachineAction     = 1;
   eSwitch                                  State                       = 2;/**<< @brief Turn the action on or off. */
 }
 
 /** @brief The active oxygen tank losses pressure. */
-message OxygenTankPressureLossData
+message AnesthesiaMachineOxygenTankPressureLossData
 {
   AnesthesiaMachineActionData              AnesthesiaMachineAction     = 1;
   eSwitch                                  State                       = 2;/**<< @brief Turn the action on or off. */

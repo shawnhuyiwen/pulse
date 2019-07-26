@@ -10,8 +10,8 @@
 #include "system/equipment/anesthesiamachine/SEAnesthesiaMachine.h"
 #include "system/equipment/anesthesiamachine/SEAnesthesiaMachineOxygenBottle.h"
 #include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineConfiguration.h"
-#include "system/equipment/anesthesiamachine/actions/SEMaskLeak.h"
-#include "system/equipment/anesthesiamachine/actions/SEOxygenWallPortPressureLoss.h"
+#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineMaskLeak.h"
+#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineOxygenWallPortPressureLoss.h"
 #include "system/physiology/SEBloodChemistrySystem.h"
 #include "system/physiology/SECardiovascularSystem.h"
 #include "system/physiology/SERespiratorySystem.h"
@@ -166,7 +166,7 @@ void HowToAnesthesiaMachine()
   pe->GetLogger()->Info(std::stringstream() <<"Respiration Rate : " << pe->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min) << "bpm");
   pe->GetLogger()->Info(std::stringstream() <<"Oxygen Saturation : " << pe->GetBloodChemistrySystem()->GetOxygenSaturation());;
 
-  SEMaskLeak AMleak;
+  SEAnesthesiaMachineMaskLeak AMleak;
   AMleak.GetSeverity().SetValue(0.5);
   pe->ProcessAction(AMleak);
   pe->GetLogger()->Info("Testing an anesthesia machine failure mode. The mask is leaking with a severity of 0.5.");
@@ -187,7 +187,7 @@ void HowToAnesthesiaMachine()
 
   tracker.AdvanceModelTime(60);
 
-  SEOxygenWallPortPressureLoss AMpressureloss;
+  SEAnesthesiaMachineOxygenWallPortPressureLoss AMpressureloss;
   AMpressureloss.SetActive(true);
   pe->ProcessAction(AMpressureloss);
   pe->GetLogger()->Info("Testing the oxygen pressure loss failure mode. The oxygen pressure from the wall source is dropping.");

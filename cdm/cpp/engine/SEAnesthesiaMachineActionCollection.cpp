@@ -5,18 +5,18 @@
 #include "engine/SEAnesthesiaMachineActionCollection.h"
 #include "substance/SESubstanceManager.h"
 #include "system/equipment/anesthesiamachine/SEAnesthesiaMachine.h"
-#include "system/equipment/anesthesiamachine/actions/SEOxygenTankPressureLoss.h"
-#include "system/equipment/anesthesiamachine/actions/SEOxygenWallPortPressureLoss.h"
-#include "system/equipment/anesthesiamachine/actions/SEExpiratoryValveLeak.h"
-#include "system/equipment/anesthesiamachine/actions/SEExpiratoryValveObstruction.h"
-#include "system/equipment/anesthesiamachine/actions/SEInspiratoryValveLeak.h"
-#include "system/equipment/anesthesiamachine/actions/SEInspiratoryValveObstruction.h"
-#include "system/equipment/anesthesiamachine/actions/SEMaskLeak.h"
-#include "system/equipment/anesthesiamachine/actions/SESodaLimeFailure.h"
-#include "system/equipment/anesthesiamachine/actions/SETubeCuffLeak.h"
-#include "system/equipment/anesthesiamachine/actions/SEVaporizerFailure.h"
-#include "system/equipment/anesthesiamachine/actions/SEVentilatorPressureLoss.h"
-#include "system/equipment/anesthesiamachine/actions/SEYPieceDisconnect.h"
+#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineOxygenTankPressureLoss.h"
+#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineOxygenWallPortPressureLoss.h"
+#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineExpiratoryValveLeak.h"
+#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineExpiratoryValveObstruction.h"
+#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineInspiratoryValveLeak.h"
+#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineInspiratoryValveObstruction.h"
+#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineMaskLeak.h"
+#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineSodaLimeFailure.h"
+#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineTubeCuffLeak.h"
+#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineVaporizerFailure.h"
+#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineVentilatorPressureLoss.h"
+#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineYPieceDisconnect.h"
 #include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineConfiguration.h"
 #include "system/equipment/anesthesiamachine/SEAnesthesiaMachineChamber.h"
 #include "system/equipment/anesthesiamachine/SEAnesthesiaMachineOxygenBottle.h"
@@ -84,132 +84,132 @@ bool SEAnesthesiaMachineActionCollection::ProcessAction(const SEAnesthesiaMachin
     return true;
   }
 
-  const SEOxygenTankPressureLoss* O2Tank = dynamic_cast<const SEOxygenTankPressureLoss*>(&action);
+  const SEAnesthesiaMachineOxygenTankPressureLoss* O2Tank = dynamic_cast<const SEAnesthesiaMachineOxygenTankPressureLoss*>(&action);
   if (O2Tank != nullptr)
   {
     if (m_OxygenTankPressureLoss == nullptr)
-      m_OxygenTankPressureLoss = new SEOxygenTankPressureLoss();
+      m_OxygenTankPressureLoss = new SEAnesthesiaMachineOxygenTankPressureLoss();
     m_OxygenTankPressureLoss->Copy(*O2Tank);
     if (!m_OxygenTankPressureLoss->IsActive())
       RemoveOxygenTankPressureLoss();
     return true;
   }
 
-  const SEOxygenWallPortPressureLoss* O2Wall = dynamic_cast<const SEOxygenWallPortPressureLoss*>(&action);
+  const SEAnesthesiaMachineOxygenWallPortPressureLoss* O2Wall = dynamic_cast<const SEAnesthesiaMachineOxygenWallPortPressureLoss*>(&action);
   if (O2Wall != nullptr)
   {
     if (m_OxygenWallPortPressureLoss == nullptr)
-      m_OxygenWallPortPressureLoss = new SEOxygenWallPortPressureLoss();
+      m_OxygenWallPortPressureLoss = new SEAnesthesiaMachineOxygenWallPortPressureLoss();
     m_OxygenWallPortPressureLoss->Copy(*O2Wall);
     if (!m_OxygenWallPortPressureLoss->IsActive())
       RemoveOxygenWallPortPressureLoss();
     return true;
   }
 
-  const SEExpiratoryValveLeak* eLeak = dynamic_cast<const SEExpiratoryValveLeak*>(&action);
+  const SEAnesthesiaMachineExpiratoryValveLeak* eLeak = dynamic_cast<const SEAnesthesiaMachineExpiratoryValveLeak*>(&action);
   if (eLeak != nullptr)
   {
     if (m_ExpiratoryValveLeak == nullptr)
-      m_ExpiratoryValveLeak = new SEExpiratoryValveLeak();
+      m_ExpiratoryValveLeak = new SEAnesthesiaMachineExpiratoryValveLeak();
     m_ExpiratoryValveLeak->Copy(*eLeak);
     if (!m_ExpiratoryValveLeak->IsActive())
       RemoveExpiratoryValveLeak();
     return true;
   }
 
-  const SEExpiratoryValveObstruction* eOb = dynamic_cast<const SEExpiratoryValveObstruction*>(&action);
+  const SEAnesthesiaMachineExpiratoryValveObstruction* eOb = dynamic_cast<const SEAnesthesiaMachineExpiratoryValveObstruction*>(&action);
   if (eOb != nullptr)
   {
     if (m_ExpiratoryValveObstruction == nullptr)
-      m_ExpiratoryValveObstruction = new SEExpiratoryValveObstruction();
+      m_ExpiratoryValveObstruction = new SEAnesthesiaMachineExpiratoryValveObstruction();
     m_ExpiratoryValveObstruction->Copy(*eOb);
     if (!m_ExpiratoryValveObstruction->IsActive())
       RemoveExpiratoryValveObstruction();
     return true;
   }
 
-  const SEInspiratoryValveLeak* iLeak = dynamic_cast<const SEInspiratoryValveLeak*>(&action);
+  const SEAnesthesiaMachineInspiratoryValveLeak* iLeak = dynamic_cast<const SEAnesthesiaMachineInspiratoryValveLeak*>(&action);
   if (iLeak != nullptr)
   {
     if (m_InspiratoryValveLeak == nullptr)
-      m_InspiratoryValveLeak = new SEInspiratoryValveLeak();
+      m_InspiratoryValveLeak = new SEAnesthesiaMachineInspiratoryValveLeak();
     m_InspiratoryValveLeak->Copy(*iLeak);
     if (!m_InspiratoryValveLeak->IsActive())
       RemoveInspiratoryValveLeak();
     return true;
   }
 
-  const SEInspiratoryValveObstruction* iOb = dynamic_cast<const SEInspiratoryValveObstruction*>(&action);
+  const SEAnesthesiaMachineInspiratoryValveObstruction* iOb = dynamic_cast<const SEAnesthesiaMachineInspiratoryValveObstruction*>(&action);
   if (iOb != nullptr)
   {
     if (m_InspiratoryValveObstruction == nullptr)
-      m_InspiratoryValveObstruction = new SEInspiratoryValveObstruction();
+      m_InspiratoryValveObstruction = new SEAnesthesiaMachineInspiratoryValveObstruction();
     m_InspiratoryValveObstruction->Copy(*iOb);
     if (!m_InspiratoryValveObstruction->IsActive())
       RemoveInspiratoryValveObstruction();
     return true;
   }
 
-  const SEMaskLeak* mask = dynamic_cast<const SEMaskLeak*>(&action);
+  const SEAnesthesiaMachineMaskLeak* mask = dynamic_cast<const SEAnesthesiaMachineMaskLeak*>(&action);
   if (mask != nullptr)
   {
     if (m_MaskLeak == nullptr)
-      m_MaskLeak = new SEMaskLeak();
+      m_MaskLeak = new SEAnesthesiaMachineMaskLeak();
     m_MaskLeak->Copy(*mask);
     if (!m_MaskLeak->IsActive())
       RemoveMaskLeak();
     return true;
   }
 
-  const SESodaLimeFailure* soda = dynamic_cast<const SESodaLimeFailure*>(&action);
+  const SEAnesthesiaMachineSodaLimeFailure* soda = dynamic_cast<const SEAnesthesiaMachineSodaLimeFailure*>(&action);
   if (soda != nullptr)
   {
     if (m_SodaLimeFailure == nullptr)
-      m_SodaLimeFailure = new SESodaLimeFailure();
+      m_SodaLimeFailure = new SEAnesthesiaMachineSodaLimeFailure();
     m_SodaLimeFailure->Copy(*soda);
     if (!m_SodaLimeFailure->IsActive())
       RemoveSodaLimeFailure();
     return true;
   }
 
-  const SETubeCuffLeak* tube = dynamic_cast<const SETubeCuffLeak*>(&action);
+  const SEAnesthesiaMachineTubeCuffLeak* tube = dynamic_cast<const SEAnesthesiaMachineTubeCuffLeak*>(&action);
   if (tube != nullptr)
   {
     if (m_TubeCuffLeak == nullptr)
-      m_TubeCuffLeak = new SETubeCuffLeak();
+      m_TubeCuffLeak = new SEAnesthesiaMachineTubeCuffLeak();
     m_TubeCuffLeak->Copy(*tube);
     if (!m_TubeCuffLeak->IsActive())
       RemoveTubeCuffLeak();
     return true;
   }
 
-  const SEVaporizerFailure* vFail = dynamic_cast<const SEVaporizerFailure*>(&action);
+  const SEAnesthesiaMachineVaporizerFailure* vFail = dynamic_cast<const SEAnesthesiaMachineVaporizerFailure*>(&action);
   if (vFail != nullptr)
   {
     if (m_VaporizerFailure == nullptr)
-      m_VaporizerFailure = new SEVaporizerFailure();
+      m_VaporizerFailure = new SEAnesthesiaMachineVaporizerFailure();
     m_VaporizerFailure->Copy(*vFail);
     if (!m_VaporizerFailure->IsActive())
       RemoveVaporizerFailure();
     return true;
   }
 
-  const SEVentilatorPressureLoss* vLoss = dynamic_cast<const SEVentilatorPressureLoss*>(&action);
+  const SEAnesthesiaMachineVentilatorPressureLoss* vLoss = dynamic_cast<const SEAnesthesiaMachineVentilatorPressureLoss*>(&action);
   if (vLoss != nullptr)
   {
     if (m_VentilatorPressureLoss == nullptr)
-      m_VentilatorPressureLoss = new SEVentilatorPressureLoss();
+      m_VentilatorPressureLoss = new SEAnesthesiaMachineVentilatorPressureLoss();
     m_VentilatorPressureLoss->Copy(*vLoss);
     if (!m_VentilatorPressureLoss->IsActive())
       RemoveVentilatorPressureLoss();
     return true;
   }
 
-  const SEYPieceDisconnect* Y = dynamic_cast<const SEYPieceDisconnect*>(&action);
+  const SEAnesthesiaMachineYPieceDisconnect* Y = dynamic_cast<const SEAnesthesiaMachineYPieceDisconnect*>(&action);
   if (Y != nullptr)
   {
     if (m_YPieceDisconnect == nullptr)
-      m_YPieceDisconnect = new SEYPieceDisconnect();
+      m_YPieceDisconnect = new SEAnesthesiaMachineYPieceDisconnect();
     m_YPieceDisconnect->Copy(*Y);
     if (!m_YPieceDisconnect->IsActive())
       RemoveYPieceDisconnect();
@@ -241,11 +241,11 @@ bool SEAnesthesiaMachineActionCollection::HasOxygenTankPressureLoss() const
 {
   return m_OxygenTankPressureLoss == nullptr ? false : true;
 }
-SEOxygenTankPressureLoss* SEAnesthesiaMachineActionCollection::GetOxygenTankPressureLoss()
+SEAnesthesiaMachineOxygenTankPressureLoss* SEAnesthesiaMachineActionCollection::GetOxygenTankPressureLoss()
 {
   return m_OxygenTankPressureLoss;
 }
-const SEOxygenTankPressureLoss* SEAnesthesiaMachineActionCollection::GetOxygenTankPressureLoss() const
+const SEAnesthesiaMachineOxygenTankPressureLoss* SEAnesthesiaMachineActionCollection::GetOxygenTankPressureLoss() const
 {
   return m_OxygenTankPressureLoss;
 }
@@ -258,11 +258,11 @@ bool SEAnesthesiaMachineActionCollection::HasOxygenWallPortPressureLoss() const
 {
   return m_OxygenWallPortPressureLoss == nullptr ? false : true;
 }
-SEOxygenWallPortPressureLoss* SEAnesthesiaMachineActionCollection::GetOxygenWallPortPressureLoss()
+SEAnesthesiaMachineOxygenWallPortPressureLoss* SEAnesthesiaMachineActionCollection::GetOxygenWallPortPressureLoss()
 {
   return m_OxygenWallPortPressureLoss;
 }
-const SEOxygenWallPortPressureLoss* SEAnesthesiaMachineActionCollection::GetOxygenWallPortPressureLoss() const
+const SEAnesthesiaMachineOxygenWallPortPressureLoss* SEAnesthesiaMachineActionCollection::GetOxygenWallPortPressureLoss() const
 {
   return m_OxygenWallPortPressureLoss;
 }
@@ -275,11 +275,11 @@ bool SEAnesthesiaMachineActionCollection::HasExpiratoryValveLeak() const
 {
   return m_ExpiratoryValveLeak == nullptr ? false : true;
 }
-SEExpiratoryValveLeak* SEAnesthesiaMachineActionCollection::GetExpiratoryValveLeak()
+SEAnesthesiaMachineExpiratoryValveLeak* SEAnesthesiaMachineActionCollection::GetExpiratoryValveLeak()
 {
   return m_ExpiratoryValveLeak;
 }
-const SEExpiratoryValveLeak* SEAnesthesiaMachineActionCollection::GetExpiratoryValveLeak() const
+const SEAnesthesiaMachineExpiratoryValveLeak* SEAnesthesiaMachineActionCollection::GetExpiratoryValveLeak() const
 {
   return m_ExpiratoryValveLeak;
 }
@@ -292,11 +292,11 @@ bool SEAnesthesiaMachineActionCollection::HasExpiratoryValveObstruction() const
 {
   return m_ExpiratoryValveObstruction == nullptr ? false : true;
 }
-SEExpiratoryValveObstruction* SEAnesthesiaMachineActionCollection::GetExpiratoryValveObstruction()
+SEAnesthesiaMachineExpiratoryValveObstruction* SEAnesthesiaMachineActionCollection::GetExpiratoryValveObstruction()
 {
   return m_ExpiratoryValveObstruction;
 }
-const SEExpiratoryValveObstruction* SEAnesthesiaMachineActionCollection::GetExpiratoryValveObstruction() const
+const SEAnesthesiaMachineExpiratoryValveObstruction* SEAnesthesiaMachineActionCollection::GetExpiratoryValveObstruction() const
 {
   return m_ExpiratoryValveObstruction;
 }
@@ -309,11 +309,11 @@ bool SEAnesthesiaMachineActionCollection::HasInspiratoryValveLeak() const
 {
   return m_InspiratoryValveLeak == nullptr ? false : true;
 }
-SEInspiratoryValveLeak* SEAnesthesiaMachineActionCollection::GetInspiratoryValveLeak()
+SEAnesthesiaMachineInspiratoryValveLeak* SEAnesthesiaMachineActionCollection::GetInspiratoryValveLeak()
 {
   return m_InspiratoryValveLeak;
 }
-const SEInspiratoryValveLeak* SEAnesthesiaMachineActionCollection::GetInspiratoryValveLeak() const
+const SEAnesthesiaMachineInspiratoryValveLeak* SEAnesthesiaMachineActionCollection::GetInspiratoryValveLeak() const
 {
   return m_InspiratoryValveLeak;
 }
@@ -326,11 +326,11 @@ bool SEAnesthesiaMachineActionCollection::HasInspiratoryValveObstruction() const
 {
   return m_InspiratoryValveObstruction == nullptr ? false : true;
 }
-SEInspiratoryValveObstruction* SEAnesthesiaMachineActionCollection::GetInspiratoryValveObstruction()
+SEAnesthesiaMachineInspiratoryValveObstruction* SEAnesthesiaMachineActionCollection::GetInspiratoryValveObstruction()
 {
   return m_InspiratoryValveObstruction;
 }
-const SEInspiratoryValveObstruction* SEAnesthesiaMachineActionCollection::GetInspiratoryValveObstruction() const
+const SEAnesthesiaMachineInspiratoryValveObstruction* SEAnesthesiaMachineActionCollection::GetInspiratoryValveObstruction() const
 {
   return m_InspiratoryValveObstruction;
 }
@@ -343,11 +343,11 @@ bool SEAnesthesiaMachineActionCollection::HasMaskLeak() const
 {
   return m_MaskLeak == nullptr ? false : true;
 }
-SEMaskLeak* SEAnesthesiaMachineActionCollection::GetMaskLeak()
+SEAnesthesiaMachineMaskLeak* SEAnesthesiaMachineActionCollection::GetMaskLeak()
 {
   return m_MaskLeak;
 }
-const SEMaskLeak* SEAnesthesiaMachineActionCollection::GetMaskLeak() const
+const SEAnesthesiaMachineMaskLeak* SEAnesthesiaMachineActionCollection::GetMaskLeak() const
 {
   return m_MaskLeak;
 }
@@ -360,11 +360,11 @@ bool SEAnesthesiaMachineActionCollection::HasSodaLimeFailure() const
 {
   return m_SodaLimeFailure == nullptr ? false : true;
 }
-SESodaLimeFailure* SEAnesthesiaMachineActionCollection::GetSodaLimeFailure()
+SEAnesthesiaMachineSodaLimeFailure* SEAnesthesiaMachineActionCollection::GetSodaLimeFailure()
 {
   return m_SodaLimeFailure;
 }
-const SESodaLimeFailure* SEAnesthesiaMachineActionCollection::GetSodaLimeFailure() const
+const SEAnesthesiaMachineSodaLimeFailure* SEAnesthesiaMachineActionCollection::GetSodaLimeFailure() const
 {
   return m_SodaLimeFailure;
 }
@@ -377,11 +377,11 @@ bool SEAnesthesiaMachineActionCollection::HasTubeCuffLeak() const
 {
   return m_TubeCuffLeak == nullptr ? false : true;
 }
-SETubeCuffLeak* SEAnesthesiaMachineActionCollection::GetTubeCuffLeak()
+SEAnesthesiaMachineTubeCuffLeak* SEAnesthesiaMachineActionCollection::GetTubeCuffLeak()
 {
   return m_TubeCuffLeak;
 }
-const SETubeCuffLeak* SEAnesthesiaMachineActionCollection::GetTubeCuffLeak() const
+const SEAnesthesiaMachineTubeCuffLeak* SEAnesthesiaMachineActionCollection::GetTubeCuffLeak() const
 {
   return m_TubeCuffLeak;
 }
@@ -394,11 +394,11 @@ bool SEAnesthesiaMachineActionCollection::HasVaporizerFailure() const
 {
   return m_VaporizerFailure == nullptr ? false : true;
 }
-SEVaporizerFailure* SEAnesthesiaMachineActionCollection::GetVaporizerFailure()
+SEAnesthesiaMachineVaporizerFailure* SEAnesthesiaMachineActionCollection::GetVaporizerFailure()
 {
   return m_VaporizerFailure;
 }
-const SEVaporizerFailure* SEAnesthesiaMachineActionCollection::GetVaporizerFailure() const
+const SEAnesthesiaMachineVaporizerFailure* SEAnesthesiaMachineActionCollection::GetVaporizerFailure() const
 {
   return m_VaporizerFailure;
 }
@@ -411,11 +411,11 @@ bool SEAnesthesiaMachineActionCollection::HasVentilatorPressureLoss() const
 {
   return m_VentilatorPressureLoss == nullptr ? false : true;
 }
-SEVentilatorPressureLoss* SEAnesthesiaMachineActionCollection::GetVentilatorPressureLoss()
+SEAnesthesiaMachineVentilatorPressureLoss* SEAnesthesiaMachineActionCollection::GetVentilatorPressureLoss()
 {
   return m_VentilatorPressureLoss;
 }
-const SEVentilatorPressureLoss* SEAnesthesiaMachineActionCollection::GetVentilatorPressureLoss() const
+const SEAnesthesiaMachineVentilatorPressureLoss* SEAnesthesiaMachineActionCollection::GetVentilatorPressureLoss() const
 {
   return m_VentilatorPressureLoss;
 }
@@ -428,11 +428,11 @@ bool SEAnesthesiaMachineActionCollection::HasYPieceDisconnect() const
 {
   return m_YPieceDisconnect == nullptr ? false : true;
 }
-SEYPieceDisconnect* SEAnesthesiaMachineActionCollection::GetYPieceDisconnect()
+SEAnesthesiaMachineYPieceDisconnect* SEAnesthesiaMachineActionCollection::GetYPieceDisconnect()
 {
   return m_YPieceDisconnect;
 }
-const SEYPieceDisconnect* SEAnesthesiaMachineActionCollection::GetYPieceDisconnect() const
+const SEAnesthesiaMachineYPieceDisconnect* SEAnesthesiaMachineActionCollection::GetYPieceDisconnect() const
 {
   return m_YPieceDisconnect;
 }

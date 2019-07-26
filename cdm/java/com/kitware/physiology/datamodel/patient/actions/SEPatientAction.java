@@ -12,7 +12,6 @@ import com.kitware.physiology.datamodel.actions.SEAction;
 import com.kitware.physiology.datamodel.substance.SESubstance;
 import com.kitware.physiology.datamodel.substance.SESubstanceCompound;
 import com.kitware.physiology.datamodel.substance.SESubstanceManager;
-import com.kitware.physiology.datamodel.system.equipment.anesthesia.actions.SEOxygenWallPortPressureLoss;
 
 public abstract class SEPatientAction extends SEAction
 {

@@ -53,74 +53,74 @@ public abstract class SEAnesthesiaMachineAction extends SEAction
     }
     case EXPIRATORYVALVELEAK:
     {
-      SEExpiratoryValveLeak dst = new SEExpiratoryValveLeak();
-      SEExpiratoryValveLeak.load(c.getExpiratoryValveLeak(), dst);
+      SEAnesthesiaMachineExpiratoryValveLeak dst = new SEAnesthesiaMachineExpiratoryValveLeak();
+      SEAnesthesiaMachineExpiratoryValveLeak.load(c.getExpiratoryValveLeak(), dst);
       return dst;
     }
     case EXPIRATORYVALVEOBSTRUCTION:
     {
-      SEExpiratoryValveObstruction dst = new SEExpiratoryValveObstruction();
-      SEExpiratoryValveObstruction.load(c.getExpiratoryValveObstruction(), dst);
+      SEAnesthesiaMachineExpiratoryValveObstruction dst = new SEAnesthesiaMachineExpiratoryValveObstruction();
+      SEAnesthesiaMachineExpiratoryValveObstruction.load(c.getExpiratoryValveObstruction(), dst);
       return dst;
     }
     case INSPIRATORYVALVELEAK:
     {
-      SEInspiratoryValveLeak dst = new SEInspiratoryValveLeak();
-      SEInspiratoryValveLeak.load(c.getInspiratoryValveLeak(), dst);
+      SEAnesthesiaMachineInspiratoryValveLeak dst = new SEAnesthesiaMachineInspiratoryValveLeak();
+      SEAnesthesiaMachineInspiratoryValveLeak.load(c.getInspiratoryValveLeak(), dst);
       return dst;
     }
     case INSPIRATORYVALVEOBSTRUCTION:
     {
-      SEInspiratoryValveObstruction dst = new SEInspiratoryValveObstruction();
-      SEInspiratoryValveObstruction.load(c.getInspiratoryValveObstruction(), dst);
+      SEAnesthesiaMachineInspiratoryValveObstruction dst = new SEAnesthesiaMachineInspiratoryValveObstruction();
+      SEAnesthesiaMachineInspiratoryValveObstruction.load(c.getInspiratoryValveObstruction(), dst);
       return dst;
     }
     case MASKLEAK:
     {
-      SEMaskLeak dst = new SEMaskLeak();
-      SEMaskLeak.load(c.getMaskLeak(), dst);
+      SEAnesthesiaMachineMaskLeak dst = new SEAnesthesiaMachineMaskLeak();
+      SEAnesthesiaMachineMaskLeak.load(c.getMaskLeak(), dst);
       return dst;
     }
     case SODALIMEFAILURE:
     {
-      SESodaLimeFailure dst = new SESodaLimeFailure();
-      SESodaLimeFailure.load(c.getSodaLimeFailure(), dst);
+      SEAnesthesiaMachineSodaLimeFailure dst = new SEAnesthesiaMachineSodaLimeFailure();
+      SEAnesthesiaMachineSodaLimeFailure.load(c.getSodaLimeFailure(), dst);
       return dst;
     }
     case TUBECUFFLEAK:
     {
-      SETubeCuffLeak dst = new SETubeCuffLeak();
-      SETubeCuffLeak.load(c.getTubeCuffLeak(), dst);
+      SEAnesthesiaMachineTubeCuffLeak dst = new SEAnesthesiaMachineTubeCuffLeak();
+      SEAnesthesiaMachineTubeCuffLeak.load(c.getTubeCuffLeak(), dst);
       return dst;
     }
     case VAPORIZERFAILURE:
     {
-      SEVaporizerFailure dst = new SEVaporizerFailure();
-      SEVaporizerFailure.load(c.getVaporizerFailure(), dst);
+      SEAnesthesiaMachineVaporizerFailure dst = new SEAnesthesiaMachineVaporizerFailure();
+      SEAnesthesiaMachineVaporizerFailure.load(c.getVaporizerFailure(), dst);
       return dst;
     }
     case VENTILATORPRESSURELOSS:
     {
-      SEVentilatorPressureLoss dst = new SEVentilatorPressureLoss();
-      SEVentilatorPressureLoss.load(c.getVentilatorPressureLoss(), dst);
+      SEAnesthesiaMachineVentilatorPressureLoss dst = new SEAnesthesiaMachineVentilatorPressureLoss();
+      SEAnesthesiaMachineVentilatorPressureLoss.load(c.getVentilatorPressureLoss(), dst);
       return dst;
     }
     case YPIECEDISCONNECT:
     {
-      SEYPieceDisconnect dst = new SEYPieceDisconnect();
-      SEYPieceDisconnect.load(c.getYPieceDisconnect(), dst);
+      SEAnesthesiaMachineYPieceDisconnect dst = new SEAnesthesiaMachineYPieceDisconnect();
+      SEAnesthesiaMachineYPieceDisconnect.load(c.getYPieceDisconnect(), dst);
       return dst;
     }
     case OXYGENTANKPRESSURELOSS:
     {
-      SEOxygenTankPressureLoss dst = new SEOxygenTankPressureLoss();
-      SEOxygenTankPressureLoss.load(c.getOxygenTankPressureLoss(), dst);
+      SEAnesthesiaMachineOxygenTankPressureLoss dst = new SEAnesthesiaMachineOxygenTankPressureLoss();
+      SEAnesthesiaMachineOxygenTankPressureLoss.load(c.getOxygenTankPressureLoss(), dst);
       return dst;
     }
     case OXYGENWALLPORTPRESSURELOSS:
     {
-      SEOxygenWallPortPressureLoss dst = new SEOxygenWallPortPressureLoss();
-      SEOxygenWallPortPressureLoss.load(c.getOxygenWallPortPressureLoss(), dst);
+      SEAnesthesiaMachineOxygenWallPortPressureLoss dst = new SEAnesthesiaMachineOxygenWallPortPressureLoss();
+      SEAnesthesiaMachineOxygenWallPortPressureLoss.load(c.getOxygenWallPortPressureLoss(), dst);
       return dst;
     }
     case ACTION_NOT_SET:
@@ -138,64 +138,64 @@ public abstract class SEAnesthesiaMachineAction extends SEAction
       dst.setConfiguration(SEAnesthesiaMachineConfiguration.unload((SEAnesthesiaMachineConfiguration)c));
       return dst.build();
     }
-    if(c instanceof SEExpiratoryValveLeak)
+    if(c instanceof SEAnesthesiaMachineExpiratoryValveLeak)
     {
-      dst.setExpiratoryValveLeak(SEExpiratoryValveLeak.unload((SEExpiratoryValveLeak)c));
+      dst.setExpiratoryValveLeak(SEAnesthesiaMachineExpiratoryValveLeak.unload((SEAnesthesiaMachineExpiratoryValveLeak)c));
       return dst.build();
     }
-    if(c instanceof SEExpiratoryValveObstruction)
+    if(c instanceof SEAnesthesiaMachineExpiratoryValveObstruction)
     {
-      dst.setExpiratoryValveObstruction(SEExpiratoryValveObstruction.unload((SEExpiratoryValveObstruction)c));
+      dst.setExpiratoryValveObstruction(SEAnesthesiaMachineExpiratoryValveObstruction.unload((SEAnesthesiaMachineExpiratoryValveObstruction)c));
       return dst.build();
     }
-    if(c instanceof SEInspiratoryValveLeak)
+    if(c instanceof SEAnesthesiaMachineInspiratoryValveLeak)
     {
-      dst.setInspiratoryValveLeak(SEInspiratoryValveLeak.unload((SEInspiratoryValveLeak)c));
+      dst.setInspiratoryValveLeak(SEAnesthesiaMachineInspiratoryValveLeak.unload((SEAnesthesiaMachineInspiratoryValveLeak)c));
       return dst.build();
     }
-    if(c instanceof SEInspiratoryValveObstruction)
+    if(c instanceof SEAnesthesiaMachineInspiratoryValveObstruction)
     {
-      dst.setInspiratoryValveObstruction(SEInspiratoryValveObstruction.unload((SEInspiratoryValveObstruction)c));
+      dst.setInspiratoryValveObstruction(SEAnesthesiaMachineInspiratoryValveObstruction.unload((SEAnesthesiaMachineInspiratoryValveObstruction)c));
       return dst.build();
     }
-    if(c instanceof SEMaskLeak)
+    if(c instanceof SEAnesthesiaMachineMaskLeak)
     {
-      dst.setMaskLeak(SEMaskLeak.unload((SEMaskLeak)c));
+      dst.setMaskLeak(SEAnesthesiaMachineMaskLeak.unload((SEAnesthesiaMachineMaskLeak)c));
       return dst.build();
     }
-    if(c instanceof SESodaLimeFailure)
+    if(c instanceof SEAnesthesiaMachineSodaLimeFailure)
     {
-      dst.setSodaLimeFailure(SESodaLimeFailure.unload((SESodaLimeFailure)c));
+      dst.setSodaLimeFailure(SEAnesthesiaMachineSodaLimeFailure.unload((SEAnesthesiaMachineSodaLimeFailure)c));
       return dst.build();
     }
-    if(c instanceof SETubeCuffLeak)
+    if(c instanceof SEAnesthesiaMachineTubeCuffLeak)
     {
-      dst.setTubeCuffLeak(SETubeCuffLeak.unload((SETubeCuffLeak)c));
+      dst.setTubeCuffLeak(SEAnesthesiaMachineTubeCuffLeak.unload((SEAnesthesiaMachineTubeCuffLeak)c));
       return dst.build();
     }
-    if(c instanceof SEVaporizerFailure)
+    if(c instanceof SEAnesthesiaMachineVaporizerFailure)
     {
-      dst.setVaporizerFailure(SEVaporizerFailure.unload((SEVaporizerFailure)c));
+      dst.setVaporizerFailure(SEAnesthesiaMachineVaporizerFailure.unload((SEAnesthesiaMachineVaporizerFailure)c));
       return dst.build();
     }
-    if(c instanceof SEVentilatorPressureLoss)
+    if(c instanceof SEAnesthesiaMachineVentilatorPressureLoss)
     {
-      dst.setVentilatorPressureLoss(SEVentilatorPressureLoss.unload((SEVentilatorPressureLoss)c));
+      dst.setVentilatorPressureLoss(SEAnesthesiaMachineVentilatorPressureLoss.unload((SEAnesthesiaMachineVentilatorPressureLoss)c));
       return dst.build();
     }
-    if(c instanceof SEYPieceDisconnect)
+    if(c instanceof SEAnesthesiaMachineYPieceDisconnect)
     {
-      dst.setYPieceDisconnect(SEYPieceDisconnect.unload((SEYPieceDisconnect)c));
+      dst.setYPieceDisconnect(SEAnesthesiaMachineYPieceDisconnect.unload((SEAnesthesiaMachineYPieceDisconnect)c));
       return dst.build();
     }
-    if(c instanceof SEOxygenTankPressureLoss)
+    if(c instanceof SEAnesthesiaMachineOxygenTankPressureLoss)
     {
-      dst.setOxygenTankPressureLoss(SEOxygenTankPressureLoss.unload((SEOxygenTankPressureLoss)c));
+      dst.setOxygenTankPressureLoss(SEAnesthesiaMachineOxygenTankPressureLoss.unload((SEAnesthesiaMachineOxygenTankPressureLoss)c));
       return dst.build();
     }
-    if(c instanceof SEOxygenWallPortPressureLoss)
+    if(c instanceof SEAnesthesiaMachineOxygenWallPortPressureLoss)
     {
-      dst.setOxygenWallPortPressureLoss(SEOxygenWallPortPressureLoss.unload((SEOxygenWallPortPressureLoss)c));
+      dst.setOxygenWallPortPressureLoss(SEAnesthesiaMachineOxygenWallPortPressureLoss.unload((SEAnesthesiaMachineOxygenWallPortPressureLoss)c));
       return dst.build();
     }
     Log.error("Unsupported AnesthesiaMachine Action type "+c);

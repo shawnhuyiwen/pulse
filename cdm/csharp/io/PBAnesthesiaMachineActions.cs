@@ -15,73 +15,73 @@ public class PBAnesthesiaMachineAction
     }
     if (any.ExpiratoryValveLeak != null)
     {
-      SEExpiratoryValveLeak dst = new SEExpiratoryValveLeak();
+      SEAnesthesiaMachineExpiratoryValveLeak dst = new SEAnesthesiaMachineExpiratoryValveLeak();
       PBAnesthesiaMachineAction.Load(any.ExpiratoryValveLeak, dst);
       return dst;
     }
     if (any.ExpiratoryValveObstruction != null)
     {
-      SEExpiratoryValveObstruction dst = new SEExpiratoryValveObstruction();
+      SEAnesthesiaMachineExpiratoryValveObstruction dst = new SEAnesthesiaMachineExpiratoryValveObstruction();
       PBAnesthesiaMachineAction.Load(any.ExpiratoryValveObstruction, dst);
       return dst;
     }
     if (any.InspiratoryValveLeak != null)
     {
-      SEInspiratoryValveLeak dst = new SEInspiratoryValveLeak();
+      SEAnesthesiaMachineInspiratoryValveLeak dst = new SEAnesthesiaMachineInspiratoryValveLeak();
       PBAnesthesiaMachineAction.Load(any.InspiratoryValveLeak, dst);
       return dst;
     }
     if (any.InspiratoryValveObstruction != null)
     {
-      SEInspiratoryValveObstruction dst = new SEInspiratoryValveObstruction();
+      SEAnesthesiaMachineInspiratoryValveObstruction dst = new SEAnesthesiaMachineInspiratoryValveObstruction();
       PBAnesthesiaMachineAction.Load(any.InspiratoryValveObstruction, dst);
       return dst;
     }
     if (any.MaskLeak != null)
     {
-      SEMaskLeak dst = new SEMaskLeak();
+      SEAnesthesiaMachineMaskLeak dst = new SEAnesthesiaMachineMaskLeak();
       PBAnesthesiaMachineAction.Load(any.MaskLeak, dst);
       return dst;
     }
     if (any.SodaLimeFailure != null)
     {
-      SESodaLimeFailure dst = new SESodaLimeFailure();
+      SEAnesthesiaMachineSodaLimeFailure dst = new SEAnesthesiaMachineSodaLimeFailure();
       PBAnesthesiaMachineAction.Load(any.SodaLimeFailure, dst);
       return dst;
     }
     if (any.TubeCuffLeak != null)
     {
-      SETubeCuffLeak dst = new SETubeCuffLeak();
+      SEAnesthesiaMachineTubeCuffLeak dst = new SEAnesthesiaMachineTubeCuffLeak();
       PBAnesthesiaMachineAction.Load(any.TubeCuffLeak, dst);
       return dst;
     }
     if (any.VaporizerFailure != null)
     {
-      SEVaporizerFailure dst = new SEVaporizerFailure();
+      SEAnesthesiaMachineVaporizerFailure dst = new SEAnesthesiaMachineVaporizerFailure();
       PBAnesthesiaMachineAction.Load(any.VaporizerFailure, dst);
       return dst;
     }
     if (any.VentilatorPressureLoss != null)
     {
-      SEVentilatorPressureLoss dst = new SEVentilatorPressureLoss();
+      SEAnesthesiaMachineVentilatorPressureLoss dst = new SEAnesthesiaMachineVentilatorPressureLoss();
       PBAnesthesiaMachineAction.Load(any.VentilatorPressureLoss, dst);
       return dst;
     }
     if (any.YPieceDisconnect != null)
     {
-      SEYPieceDisconnect dst = new SEYPieceDisconnect();
+      SEAnesthesiaMachineYPieceDisconnect dst = new SEAnesthesiaMachineYPieceDisconnect();
       PBAnesthesiaMachineAction.Load(any.YPieceDisconnect, dst);
       return dst;
     }
     if (any.OxygenTankPressureLoss != null)
     {
-      SEOxygenTankPressureLoss dst = new SEOxygenTankPressureLoss();
+      SEAnesthesiaMachineOxygenTankPressureLoss dst = new SEAnesthesiaMachineOxygenTankPressureLoss();
       PBAnesthesiaMachineAction.Load(any.OxygenTankPressureLoss, dst);
       return dst;
     }
     if (any.OxygenWallPortPressureLoss != null)
     {
-      SEOxygenWallPortPressureLoss dst = new SEOxygenWallPortPressureLoss();
+      SEAnesthesiaMachineOxygenWallPortPressureLoss dst = new SEAnesthesiaMachineOxygenWallPortPressureLoss();
       PBAnesthesiaMachineAction.Load(any.OxygenWallPortPressureLoss, dst);
       return dst;
     }
@@ -99,64 +99,64 @@ public class PBAnesthesiaMachineAction
       any.Configuration = Unload((SEAnesthesiaMachineConfiguration)action);
       return any;
     }
-    if (action.GetType().IsAssignableFrom(typeof(SEExpiratoryValveLeak)))
+    if (action.GetType().IsAssignableFrom(typeof(SEAnesthesiaMachineExpiratoryValveLeak)))
     {
-      any.ExpiratoryValveLeak = Unload((SEExpiratoryValveLeak)action);
+      any.ExpiratoryValveLeak = Unload((SEAnesthesiaMachineExpiratoryValveLeak)action);
       return any;
     }
-    if (action.GetType().IsAssignableFrom(typeof(SEExpiratoryValveObstruction)))
+    if (action.GetType().IsAssignableFrom(typeof(SEAnesthesiaMachineExpiratoryValveObstruction)))
     {
-      any.ExpiratoryValveObstruction = Unload((SEExpiratoryValveObstruction)action);
+      any.ExpiratoryValveObstruction = Unload((SEAnesthesiaMachineExpiratoryValveObstruction)action);
       return any;
     }
-    if (action.GetType().IsAssignableFrom(typeof(SEInspiratoryValveLeak)))
+    if (action.GetType().IsAssignableFrom(typeof(SEAnesthesiaMachineInspiratoryValveLeak)))
     {
-      any.InspiratoryValveLeak = Unload((SEInspiratoryValveLeak)action);
+      any.InspiratoryValveLeak = Unload((SEAnesthesiaMachineInspiratoryValveLeak)action);
       return any;
     }
-    if (action.GetType().IsAssignableFrom(typeof(SEInspiratoryValveObstruction)))
+    if (action.GetType().IsAssignableFrom(typeof(SEAnesthesiaMachineInspiratoryValveObstruction)))
     {
-      any.InspiratoryValveObstruction = Unload((SEInspiratoryValveObstruction)action);
+      any.InspiratoryValveObstruction = Unload((SEAnesthesiaMachineInspiratoryValveObstruction)action);
       return any;
     }
-    if (action.GetType().IsAssignableFrom(typeof(SEMaskLeak)))
+    if (action.GetType().IsAssignableFrom(typeof(SEAnesthesiaMachineMaskLeak)))
     {
-      any.MaskLeak = Unload((SEMaskLeak)action);
+      any.MaskLeak = Unload((SEAnesthesiaMachineMaskLeak)action);
       return any;
     }
-    if (action.GetType().IsAssignableFrom(typeof(SEOxygenTankPressureLoss)))
+    if (action.GetType().IsAssignableFrom(typeof(SEAnesthesiaMachineOxygenTankPressureLoss)))
     {
-      any.OxygenTankPressureLoss = Unload((SEOxygenTankPressureLoss)action);
+      any.OxygenTankPressureLoss = Unload((SEAnesthesiaMachineOxygenTankPressureLoss)action);
       return any;
     }
-    if (action.GetType().IsAssignableFrom(typeof(SEOxygenWallPortPressureLoss)))
+    if (action.GetType().IsAssignableFrom(typeof(SEAnesthesiaMachineOxygenWallPortPressureLoss)))
     {
-      any.OxygenWallPortPressureLoss = Unload((SEOxygenWallPortPressureLoss)action);
+      any.OxygenWallPortPressureLoss = Unload((SEAnesthesiaMachineOxygenWallPortPressureLoss)action);
       return any;
     }
-    if (action.GetType().IsAssignableFrom(typeof(SESodaLimeFailure)))
+    if (action.GetType().IsAssignableFrom(typeof(SEAnesthesiaMachineSodaLimeFailure)))
     {
-      any.SodaLimeFailure = Unload((SESodaLimeFailure)action);
+      any.SodaLimeFailure = Unload((SEAnesthesiaMachineSodaLimeFailure)action);
       return any;
     }
-    if (action.GetType().IsAssignableFrom(typeof(SETubeCuffLeak)))
+    if (action.GetType().IsAssignableFrom(typeof(SEAnesthesiaMachineTubeCuffLeak)))
     {
-      any.TubeCuffLeak = Unload((SETubeCuffLeak)action);
+      any.TubeCuffLeak = Unload((SEAnesthesiaMachineTubeCuffLeak)action);
       return any;
     }
-    if (action.GetType().IsAssignableFrom(typeof(SEVaporizerFailure)))
+    if (action.GetType().IsAssignableFrom(typeof(SEAnesthesiaMachineVaporizerFailure)))
     {
-      any.VaporizerFailure = Unload((SEVaporizerFailure)action);
+      any.VaporizerFailure = Unload((SEAnesthesiaMachineVaporizerFailure)action);
       return any;
     }
-    if (action.GetType().IsAssignableFrom(typeof(SEVentilatorPressureLoss)))
+    if (action.GetType().IsAssignableFrom(typeof(SEAnesthesiaMachineVentilatorPressureLoss)))
     {
-      any.VentilatorPressureLoss = Unload((SEVentilatorPressureLoss)action);
+      any.VentilatorPressureLoss = Unload((SEAnesthesiaMachineVentilatorPressureLoss)action);
       return any;
     }
-    if (action.GetType().IsAssignableFrom(typeof(SEYPieceDisconnect)))
+    if (action.GetType().IsAssignableFrom(typeof(SEAnesthesiaMachineYPieceDisconnect)))
     {
-      any.YPieceDisconnect = Unload((SEYPieceDisconnect)action);
+      any.YPieceDisconnect = Unload((SEAnesthesiaMachineYPieceDisconnect)action);
       return any;
     }
     //Log.error("Unsupported AnesthesiaMachine Action type " + c);
@@ -207,24 +207,24 @@ public class PBAnesthesiaMachineAction
   #endregion
 
   #region SEExpiratoryValveLeak
-  public static void Load(Cdm.ExpiratoryValveLeakData src, SEExpiratoryValveLeak dst)
+  public static void Load(Cdm.AnesthesiaMachineExpiratoryValveLeakData src, SEAnesthesiaMachineExpiratoryValveLeak dst)
   {
     Serialize(src, dst);
   }
-  public static void Serialize(Cdm.ExpiratoryValveLeakData src, SEExpiratoryValveLeak dst)
+  public static void Serialize(Cdm.AnesthesiaMachineExpiratoryValveLeakData src, SEAnesthesiaMachineExpiratoryValveLeak dst)
   {
     Serialize(src.AnesthesiaMachineAction, dst);
     if (src.Severity != null)
       PBProperty.Load(src.Severity, dst.GetSeverity());
   }
 
-  public static Cdm.ExpiratoryValveLeakData Unload(SEExpiratoryValveLeak src)
+  public static Cdm.AnesthesiaMachineExpiratoryValveLeakData Unload(SEAnesthesiaMachineExpiratoryValveLeak src)
   {
-    Cdm.ExpiratoryValveLeakData dst = new Cdm.ExpiratoryValveLeakData();
+    Cdm.AnesthesiaMachineExpiratoryValveLeakData dst = new Cdm.AnesthesiaMachineExpiratoryValveLeakData();
     Serialize(src, dst);
     return dst;
   }
-  protected static void Serialize(SEExpiratoryValveLeak src, Cdm.ExpiratoryValveLeakData dst)
+  protected static void Serialize(SEAnesthesiaMachineExpiratoryValveLeak src, Cdm.AnesthesiaMachineExpiratoryValveLeakData dst)
   {
     dst.AnesthesiaMachineAction = new Cdm.AnesthesiaMachineActionData();
     Serialize(src, dst.AnesthesiaMachineAction);
@@ -234,24 +234,24 @@ public class PBAnesthesiaMachineAction
   #endregion
 
   #region SEExpiratoryValveObstruction
-  public static void Load(Cdm.ExpiratoryValveObstructionData src, SEExpiratoryValveObstruction dst)
+  public static void Load(Cdm.AnesthesiaMachineExpiratoryValveObstructionData src, SEAnesthesiaMachineExpiratoryValveObstruction dst)
   {
     Serialize(src, dst);
   }
-  public static void Serialize(Cdm.ExpiratoryValveObstructionData src, SEExpiratoryValveObstruction dst)
+  public static void Serialize(Cdm.AnesthesiaMachineExpiratoryValveObstructionData src, SEAnesthesiaMachineExpiratoryValveObstruction dst)
   {
     Serialize(src.AnesthesiaMachineAction, dst);
     if (src.Severity != null)
       PBProperty.Load(src.Severity, dst.GetSeverity());
   }
 
-  public static Cdm.ExpiratoryValveObstructionData Unload(SEExpiratoryValveObstruction src)
+  public static Cdm.AnesthesiaMachineExpiratoryValveObstructionData Unload(SEAnesthesiaMachineExpiratoryValveObstruction src)
   {
-    Cdm.ExpiratoryValveObstructionData dst = new Cdm.ExpiratoryValveObstructionData();
+    Cdm.AnesthesiaMachineExpiratoryValveObstructionData dst = new Cdm.AnesthesiaMachineExpiratoryValveObstructionData();
     Serialize(src, dst);
     return dst;
   }
-  protected static void Serialize(SEExpiratoryValveObstruction src, Cdm.ExpiratoryValveObstructionData dst)
+  protected static void Serialize(SEAnesthesiaMachineExpiratoryValveObstruction src, Cdm.AnesthesiaMachineExpiratoryValveObstructionData dst)
   {
     dst.AnesthesiaMachineAction = new Cdm.AnesthesiaMachineActionData();
     Serialize(src, dst.AnesthesiaMachineAction);
@@ -261,24 +261,24 @@ public class PBAnesthesiaMachineAction
   #endregion
 
   #region SEInspiratoryValveLeak
-  public static void Load(Cdm.InspiratoryValveLeakData src, SEInspiratoryValveLeak dst)
+  public static void Load(Cdm.AnesthesiaMachineInspiratoryValveLeakData src, SEAnesthesiaMachineInspiratoryValveLeak dst)
   {
     Serialize(src, dst);
   }
-  public static void Serialize(Cdm.InspiratoryValveLeakData src, SEInspiratoryValveLeak dst)
+  public static void Serialize(Cdm.AnesthesiaMachineInspiratoryValveLeakData src, SEAnesthesiaMachineInspiratoryValveLeak dst)
   {
     Serialize(src.AnesthesiaMachineAction, dst);
     if (src.Severity != null)
       PBProperty.Load(src.Severity, dst.GetSeverity());
   }
 
-  public static Cdm.InspiratoryValveLeakData Unload(SEInspiratoryValveLeak src)
+  public static Cdm.AnesthesiaMachineInspiratoryValveLeakData Unload(SEAnesthesiaMachineInspiratoryValveLeak src)
   {
-    Cdm.InspiratoryValveLeakData dst = new Cdm.InspiratoryValveLeakData();
+    Cdm.AnesthesiaMachineInspiratoryValveLeakData dst = new Cdm.AnesthesiaMachineInspiratoryValveLeakData();
     Serialize(src, dst);
     return dst;
   }
-  protected static void Serialize(SEInspiratoryValveLeak src, Cdm.InspiratoryValveLeakData dst)
+  protected static void Serialize(SEAnesthesiaMachineInspiratoryValveLeak src, Cdm.AnesthesiaMachineInspiratoryValveLeakData dst)
   {
     dst.AnesthesiaMachineAction = new Cdm.AnesthesiaMachineActionData();
     Serialize(src, dst.AnesthesiaMachineAction);
@@ -288,24 +288,24 @@ public class PBAnesthesiaMachineAction
   #endregion
 
   #region SEInspiratoryValveObstruction
-  public static void Load(Cdm.InspiratoryValveObstructionData src, SEInspiratoryValveObstruction dst)
+  public static void Load(Cdm.AnesthesiaMachineInspiratoryValveObstructionData src, SEAnesthesiaMachineInspiratoryValveObstruction dst)
   {
     Serialize(src, dst);
   }
-  public static void Serialize(Cdm.InspiratoryValveObstructionData src, SEInspiratoryValveObstruction dst)
+  public static void Serialize(Cdm.AnesthesiaMachineInspiratoryValveObstructionData src, SEAnesthesiaMachineInspiratoryValveObstruction dst)
   {
     Serialize(src.AnesthesiaMachineAction, dst);
     if (src.Severity != null)
       PBProperty.Load(src.Severity, dst.GetSeverity());
   }
 
-  public static Cdm.InspiratoryValveObstructionData Unload(SEInspiratoryValveObstruction src)
+  public static Cdm.AnesthesiaMachineInspiratoryValveObstructionData Unload(SEAnesthesiaMachineInspiratoryValveObstruction src)
   {
-    Cdm.InspiratoryValveObstructionData dst = new Cdm.InspiratoryValveObstructionData();
+    Cdm.AnesthesiaMachineInspiratoryValveObstructionData dst = new Cdm.AnesthesiaMachineInspiratoryValveObstructionData();
     Serialize(src, dst);
     return dst;
   }
-  protected static void Serialize(SEInspiratoryValveObstruction src, Cdm.InspiratoryValveObstructionData dst)
+  protected static void Serialize(SEAnesthesiaMachineInspiratoryValveObstruction src, Cdm.AnesthesiaMachineInspiratoryValveObstructionData dst)
   {
     dst.AnesthesiaMachineAction = new Cdm.AnesthesiaMachineActionData();
     Serialize(src, dst.AnesthesiaMachineAction);
@@ -315,24 +315,24 @@ public class PBAnesthesiaMachineAction
   #endregion
 
   #region SEMaskLeak
-  public static void Load(Cdm.MaskLeakData src, SEMaskLeak dst)
+  public static void Load(Cdm.AnesthesiaMachineMaskLeakData src, SEAnesthesiaMachineMaskLeak dst)
   {
     Serialize(src, dst);
   }
-  public static void Serialize(Cdm.MaskLeakData src, SEMaskLeak dst)
+  public static void Serialize(Cdm.AnesthesiaMachineMaskLeakData src, SEAnesthesiaMachineMaskLeak dst)
   {
     Serialize(src.AnesthesiaMachineAction, dst);
     if (src.Severity != null)
       PBProperty.Load(src.Severity, dst.GetSeverity());
   }
 
-  public static Cdm.MaskLeakData Unload(SEMaskLeak src)
+  public static Cdm.AnesthesiaMachineMaskLeakData Unload(SEAnesthesiaMachineMaskLeak src)
   {
-    Cdm.MaskLeakData dst = new Cdm.MaskLeakData();
+    Cdm.AnesthesiaMachineMaskLeakData dst = new Cdm.AnesthesiaMachineMaskLeakData();
     Serialize(src, dst);
     return dst;
   }
-  protected static void Serialize(SEMaskLeak src, Cdm.MaskLeakData dst)
+  protected static void Serialize(SEAnesthesiaMachineMaskLeak src, Cdm.AnesthesiaMachineMaskLeakData dst)
   {
     dst.AnesthesiaMachineAction = new Cdm.AnesthesiaMachineActionData();
     Serialize(src, dst.AnesthesiaMachineAction);
@@ -342,23 +342,23 @@ public class PBAnesthesiaMachineAction
   #endregion
 
   #region SEOxygenTankPressureLoss
-  public static void Load(Cdm.OxygenTankPressureLossData src, SEOxygenTankPressureLoss dst)
+  public static void Load(Cdm.AnesthesiaMachineOxygenTankPressureLossData src, SEAnesthesiaMachineOxygenTankPressureLoss dst)
   {
     Serialize(src, dst);
   }
-  public static void Serialize(Cdm.OxygenTankPressureLossData src, SEOxygenTankPressureLoss dst)
+  public static void Serialize(Cdm.AnesthesiaMachineOxygenTankPressureLossData src, SEAnesthesiaMachineOxygenTankPressureLoss dst)
   {
     Serialize(src.AnesthesiaMachineAction, dst);
     dst.SetState((eSwitch)(int)src.State);
   }
 
-  public static Cdm.OxygenTankPressureLossData Unload(SEOxygenTankPressureLoss src)
+  public static Cdm.AnesthesiaMachineOxygenTankPressureLossData Unload(SEAnesthesiaMachineOxygenTankPressureLoss src)
   {
-    Cdm.OxygenTankPressureLossData dst = new Cdm.OxygenTankPressureLossData();
+    Cdm.AnesthesiaMachineOxygenTankPressureLossData dst = new Cdm.AnesthesiaMachineOxygenTankPressureLossData();
     Serialize(src, dst);
     return dst;
   }
-  protected static void Serialize(SEOxygenTankPressureLoss src, Cdm.OxygenTankPressureLossData dst)
+  protected static void Serialize(SEAnesthesiaMachineOxygenTankPressureLoss src, Cdm.AnesthesiaMachineOxygenTankPressureLossData dst)
   {
     dst.AnesthesiaMachineAction = new Cdm.AnesthesiaMachineActionData();
     Serialize(src, dst.AnesthesiaMachineAction);
@@ -367,23 +367,23 @@ public class PBAnesthesiaMachineAction
   #endregion
 
   #region SEOxygenWallPortPressureLoss
-  public static void Load(Cdm.OxygenWallPortPressureLossData src, SEOxygenWallPortPressureLoss dst)
+  public static void Load(Cdm.AnesthesiaMachineOxygenWallPortPressureLossData src, SEAnesthesiaMachineOxygenWallPortPressureLoss dst)
   {
     Serialize(src, dst);
   }
-  public static void Serialize(Cdm.OxygenWallPortPressureLossData src, SEOxygenWallPortPressureLoss dst)
+  public static void Serialize(Cdm.AnesthesiaMachineOxygenWallPortPressureLossData src, SEAnesthesiaMachineOxygenWallPortPressureLoss dst)
   {
     Serialize(src.AnesthesiaMachineAction, dst);
     dst.SetState((eSwitch)(int)src.State);
   }
 
-  public static Cdm.OxygenWallPortPressureLossData Unload(SEOxygenWallPortPressureLoss src)
+  public static Cdm.AnesthesiaMachineOxygenWallPortPressureLossData Unload(SEAnesthesiaMachineOxygenWallPortPressureLoss src)
   {
-    Cdm.OxygenWallPortPressureLossData dst = new Cdm.OxygenWallPortPressureLossData();
+    Cdm.AnesthesiaMachineOxygenWallPortPressureLossData dst = new Cdm.AnesthesiaMachineOxygenWallPortPressureLossData();
     Serialize(src, dst);
     return dst;
   }
-  protected static void Serialize(SEOxygenWallPortPressureLoss src, Cdm.OxygenWallPortPressureLossData dst)
+  protected static void Serialize(SEAnesthesiaMachineOxygenWallPortPressureLoss src, Cdm.AnesthesiaMachineOxygenWallPortPressureLossData dst)
   {
     dst.AnesthesiaMachineAction = new Cdm.AnesthesiaMachineActionData();
     Serialize(src, dst.AnesthesiaMachineAction);
@@ -392,24 +392,24 @@ public class PBAnesthesiaMachineAction
   #endregion
 
   #region SESodaLimeFailure
-  public static void Load(Cdm.SodaLimeFailureData src, SESodaLimeFailure dst)
+  public static void Load(Cdm.AnesthesiaMachineSodaLimeFailureData src, SEAnesthesiaMachineSodaLimeFailure dst)
   {
     Serialize(src, dst);
   }
-  public static void Serialize(Cdm.SodaLimeFailureData src, SESodaLimeFailure dst)
+  public static void Serialize(Cdm.AnesthesiaMachineSodaLimeFailureData src, SEAnesthesiaMachineSodaLimeFailure dst)
   {
     Serialize(src.AnesthesiaMachineAction, dst);
     if (src.Severity != null)
       PBProperty.Load(src.Severity, dst.GetSeverity());
   }
 
-  public static Cdm.SodaLimeFailureData Unload(SESodaLimeFailure src)
+  public static Cdm.AnesthesiaMachineSodaLimeFailureData Unload(SEAnesthesiaMachineSodaLimeFailure src)
   {
-    Cdm.SodaLimeFailureData dst = new Cdm.SodaLimeFailureData();
+    Cdm.AnesthesiaMachineSodaLimeFailureData dst = new Cdm.AnesthesiaMachineSodaLimeFailureData();
     Serialize(src, dst);
     return dst;
   }
-  protected static void Serialize(SESodaLimeFailure src, Cdm.SodaLimeFailureData dst)
+  protected static void Serialize(SEAnesthesiaMachineSodaLimeFailure src, Cdm.AnesthesiaMachineSodaLimeFailureData dst)
   {
     dst.AnesthesiaMachineAction = new Cdm.AnesthesiaMachineActionData();
     Serialize(src, dst.AnesthesiaMachineAction);
@@ -419,24 +419,24 @@ public class PBAnesthesiaMachineAction
   #endregion
 
   #region SETubeCuffLeak
-  public static void Load(Cdm.TubeCuffLeakData src, SETubeCuffLeak dst)
+  public static void Load(Cdm.AnesthesiaMachineTubeCuffLeakData src, SEAnesthesiaMachineTubeCuffLeak dst)
   {
     Serialize(src, dst);
   }
-  public static void Serialize(Cdm.TubeCuffLeakData src, SETubeCuffLeak dst)
+  public static void Serialize(Cdm.AnesthesiaMachineTubeCuffLeakData src, SEAnesthesiaMachineTubeCuffLeak dst)
   {
     Serialize(src.AnesthesiaMachineAction, dst);
     if (src.Severity != null)
       PBProperty.Load(src.Severity, dst.GetSeverity());
   }
 
-  public static Cdm.TubeCuffLeakData Unload(SETubeCuffLeak src)
+  public static Cdm.AnesthesiaMachineTubeCuffLeakData Unload(SEAnesthesiaMachineTubeCuffLeak src)
   {
-    Cdm.TubeCuffLeakData dst = new Cdm.TubeCuffLeakData();
+    Cdm.AnesthesiaMachineTubeCuffLeakData dst = new Cdm.AnesthesiaMachineTubeCuffLeakData();
     Serialize(src, dst);
     return dst;
   }
-  protected static void Serialize(SETubeCuffLeak src, Cdm.TubeCuffLeakData dst)
+  protected static void Serialize(SEAnesthesiaMachineTubeCuffLeak src, Cdm.AnesthesiaMachineTubeCuffLeakData dst)
   {
     dst.AnesthesiaMachineAction = new Cdm.AnesthesiaMachineActionData();
     Serialize(src, dst.AnesthesiaMachineAction);
@@ -446,24 +446,24 @@ public class PBAnesthesiaMachineAction
   #endregion
 
   #region SEVaporizerFailure
-  public static void Load(Cdm.VaporizerFailureData src, SEVaporizerFailure dst)
+  public static void Load(Cdm.AnesthesiaMachineVaporizerFailureData src, SEAnesthesiaMachineVaporizerFailure dst)
   {
     Serialize(src, dst);
   }
-  public static void Serialize(Cdm.VaporizerFailureData src, SEVaporizerFailure dst)
+  public static void Serialize(Cdm.AnesthesiaMachineVaporizerFailureData src, SEAnesthesiaMachineVaporizerFailure dst)
   {
     Serialize(src.AnesthesiaMachineAction, dst);
     if (src.Severity != null)
       PBProperty.Load(src.Severity, dst.GetSeverity());
   }
 
-  public static Cdm.VaporizerFailureData Unload(SEVaporizerFailure src)
+  public static Cdm.AnesthesiaMachineVaporizerFailureData Unload(SEAnesthesiaMachineVaporizerFailure src)
   {
-    Cdm.VaporizerFailureData dst = new Cdm.VaporizerFailureData();
+    Cdm.AnesthesiaMachineVaporizerFailureData dst = new Cdm.AnesthesiaMachineVaporizerFailureData();
     Serialize(src, dst);
     return dst;
   }
-  protected static void Serialize(SEVaporizerFailure src, Cdm.VaporizerFailureData dst)
+  protected static void Serialize(SEAnesthesiaMachineVaporizerFailure src, Cdm.AnesthesiaMachineVaporizerFailureData dst)
   {
     dst.AnesthesiaMachineAction = new Cdm.AnesthesiaMachineActionData();
     Serialize(src, dst.AnesthesiaMachineAction);
@@ -473,24 +473,24 @@ public class PBAnesthesiaMachineAction
   #endregion
 
   #region SEVentilatorPressureLoss
-  public static void Load(Cdm.VentilatorPressureLossData src, SEVentilatorPressureLoss dst)
+  public static void Load(Cdm.AnesthesiaMachineVentilatorPressureLossData src, SEAnesthesiaMachineVentilatorPressureLoss dst)
   {
     Serialize(src, dst);
   }
-  public static void Serialize(Cdm.VentilatorPressureLossData src, SEVentilatorPressureLoss dst)
+  public static void Serialize(Cdm.AnesthesiaMachineVentilatorPressureLossData src, SEAnesthesiaMachineVentilatorPressureLoss dst)
   {
     Serialize(src.AnesthesiaMachineAction, dst);
     if (src.Severity != null)
       PBProperty.Load(src.Severity, dst.GetSeverity());
   }
 
-  public static Cdm.VentilatorPressureLossData Unload(SEVentilatorPressureLoss src)
+  public static Cdm.AnesthesiaMachineVentilatorPressureLossData Unload(SEAnesthesiaMachineVentilatorPressureLoss src)
   {
-    Cdm.VentilatorPressureLossData dst = new Cdm.VentilatorPressureLossData();
+    Cdm.AnesthesiaMachineVentilatorPressureLossData dst = new Cdm.AnesthesiaMachineVentilatorPressureLossData();
     Serialize(src, dst);
     return dst;
   }
-  protected static void Serialize(SEVentilatorPressureLoss src, Cdm.VentilatorPressureLossData dst)
+  protected static void Serialize(SEAnesthesiaMachineVentilatorPressureLoss src, Cdm.AnesthesiaMachineVentilatorPressureLossData dst)
   {
     dst.AnesthesiaMachineAction = new Cdm.AnesthesiaMachineActionData();
     Serialize(src, dst.AnesthesiaMachineAction);
@@ -500,24 +500,24 @@ public class PBAnesthesiaMachineAction
   #endregion
 
   #region SEYPieceDisconnect
-  public static void Load(Cdm.YPieceDisconnectData src, SEYPieceDisconnect dst)
+  public static void Load(Cdm.AnesthesiaMachineYPieceDisconnectData src, SEAnesthesiaMachineYPieceDisconnect dst)
   {
     Serialize(src, dst);
   }
-  public static void Serialize(Cdm.YPieceDisconnectData src, SEYPieceDisconnect dst)
+  public static void Serialize(Cdm.AnesthesiaMachineYPieceDisconnectData src, SEAnesthesiaMachineYPieceDisconnect dst)
   {
     Serialize(src.AnesthesiaMachineAction, dst);
     if (src.Severity != null)
       PBProperty.Load(src.Severity, dst.GetSeverity());
   }
 
-  public static Cdm.YPieceDisconnectData Unload(SEYPieceDisconnect src)
+  public static Cdm.AnesthesiaMachineYPieceDisconnectData Unload(SEAnesthesiaMachineYPieceDisconnect src)
   {
-    Cdm.YPieceDisconnectData dst = new Cdm.YPieceDisconnectData();
+    Cdm.AnesthesiaMachineYPieceDisconnectData dst = new Cdm.AnesthesiaMachineYPieceDisconnectData();
     Serialize(src, dst);
     return dst;
   }
-  protected static void Serialize(SEYPieceDisconnect src, Cdm.YPieceDisconnectData dst)
+  protected static void Serialize(SEAnesthesiaMachineYPieceDisconnect src, Cdm.AnesthesiaMachineYPieceDisconnectData dst)
   {
     dst.AnesthesiaMachineAction = new Cdm.AnesthesiaMachineActionData();
     Serialize(src, dst.AnesthesiaMachineAction);
