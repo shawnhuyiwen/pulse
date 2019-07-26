@@ -17,7 +17,7 @@ message PatientData
   
   /** Physical Characteristics */
   string                   Name                                  = 1; /**<< @brief Patient Identifier. */
-  eSex                     Sex                                   = 2; /**<< @brief @ref ePatient_SexTable */
+  eSex                     Sex                                   = 2; /**<< @brief @ref PatientData_eSexTable */
   ScalarTimeData           Age                                   = 3; /**<< @brief Patient age. */
   ScalarMassData           Weight                                = 4; /**<< @brief Patient weight. */
   ScalarLengthData         Height                                = 5; /**<< @brief Patient height. */

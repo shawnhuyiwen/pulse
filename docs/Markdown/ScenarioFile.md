@@ -103,7 +103,7 @@ Conditions give instructions to the engine to apply certain changes to the engin
 The following are links to the Condition class specification along with XML examples of conditions that can be used in making your own scenarios.
 
 #### Chronic Anemia
-@copybrief PatientConditions_ChronicAnemiaData
+@copybrief ChronicAnemiaData
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 "AnyCondition": [{
   "PatientCondition": {
@@ -115,7 +115,7 @@ The following are links to the Condition class specification along with XML exam
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #### COPD
-@copybrief PatientConditions_ChronicObstructivePulmonaryDiseaseData
+@copybrief ChronicObstructivePulmonaryDiseaseData
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 "AnyCondition": [{
   "PatientCondition": {
@@ -127,7 +127,7 @@ The following are links to the Condition class specification along with XML exam
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #### Chronic Pericardial Effusion
-@copybrief PatientConditions_ChronicPericardialEffusionData
+@copybrief ChronicPericardialEffusionData
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 "AnyCondition": [{
   "PatientCondition": {
@@ -138,7 +138,7 @@ The following are links to the Condition class specification along with XML exam
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #### Chronic %Renal Stenosis
-@copybrief PatientConditions_ChronicRenalStenosisData
+@copybrief ChronicRenalStenosisData
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 "AnyCondition": [{
   "PatientCondition": {
@@ -151,7 +151,7 @@ The following are links to the Condition class specification along with XML exam
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #### Chronic Ventricular Systolic Dysfunction
-@copybrief PatientConditions_ChronicVentricularSystolicDysfunctionData
+@copybrief ChronicVentricularSystolicDysfunctionData
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 "AnyCondition": [{
   "PatientCondition": {
@@ -161,7 +161,7 @@ The following are links to the Condition class specification along with XML exam
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #### Consume Meal
-@copybrief PatientConditions_ConsumeMealData
+@copybrief ConsumeMealData
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 "AnyCondition": [{
   "PatientCondition": {
@@ -200,7 +200,7 @@ The following are links to the Condition class specification along with XML exam
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #### Impaired Alveolar Exchange
-@copybrief PatientConditions_ImpairedAlveolarExchangeData
+@copybrief ImpairedAlveolarExchangeData
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 "AnyCondition": [{
   "PatientCondition": {
@@ -223,7 +223,7 @@ or
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #### Lobar Pneumonia
-@copybrief PatientConditions_LobarPneumoniaData
+@copybrief LobarPneumoniaData
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 "AnyCondition": [{
   "PatientCondition": {
@@ -238,7 +238,7 @@ or
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #### Initial %Environment
-@copybrief EnvironmentConditions_InitialEnvironmentData
+@copybrief InitialEnvironmentData
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 "AnyCondition": [{
   "EnvironmentCondition": {
@@ -364,7 +364,7 @@ The following are links to the Action class specification along with XML example
 
 #### Advance Time
 
-@copybrief Scenario_AdvanceTimeData
+@copybrief AdvanceTimeData
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 "AnyAction": [{
   "AdvanceTime": {
@@ -374,7 +374,7 @@ The following are links to the Action class specification along with XML example
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #### Serialize State
-@copybrief Scenario_SerializeStateData
+@copybrief SerializeStateData
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 "AnyAction": [{
   "Serialize": {
@@ -398,7 +398,7 @@ Patient Insults
 - - -
 
 #### Acute Stress
-@copybrief PatientActions_AcuteStressData <br>
+@copybrief AcuteStressData <br>
 Severity value must be >=0.0 and <=1.0 <br>
 A severity of 0 removes the action completely.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -414,7 +414,7 @@ A severity of 0 removes the action completely.
 - - -
 
 #### Apnea
-@copybrief PatientActions_ApneaData <br>
+@copybrief ApneaData <br>
 Severity value must be >=0.0 and <=1.0 <br>
 A severity of 0 removes the action completely.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -430,7 +430,7 @@ A severity of 0 removes the action completely.
 - - -
 
 #### Airway Obstruction 
-@copybrief PatientActions_AirwayObstructionData <br>
+@copybrief AirwayObstructionData <br>
 Severity value must be >=0.0 and <=1.0 <br>
 A severity of 0 removes the action completely.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -446,7 +446,7 @@ A severity of 0 removes the action completely.
 - - -
 
 #### Asthma Attack
-@copybrief PatientActions_AsthmaAttackData <br>
+@copybrief AsthmaAttackData <br>
 Severity value must be >=0.0 and <=1.0 <br>
 A severity of 0 removes the action completely.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -462,7 +462,7 @@ A severity of 0 removes the action completely.
 - - -
 
 #### Brain Injury
-@copybrief PatientActions_BrainInjuryData <br>
+@copybrief BrainInjuryData <br>
 Severity value must be >=0.0 and <=1.0 <br>
 A severity of 0 removes the action completely.<br>
 Types : Diffuse, LeftFocal, RightFocal
@@ -480,7 +480,7 @@ Types : Diffuse, LeftFocal, RightFocal
 - - -
 		
 #### Bronchoconstriction 
-@copybrief PatientActions_BronchoconstrictionData <br>
+@copybrief BronchoconstrictionData <br>
 Severity value must be >=0.0 and <=1.0 <br>
 A severity of 0 removes the action completely.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -496,7 +496,7 @@ A severity of 0 removes the action completely.
 - - -
 
 #### Consume Nutrients 
-@copybrief PatientActions_ConsumeNutrientsData
+@copybrief ConsumeNutrientsData
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 "AnyAction": [{
   "PatientAction": {
@@ -533,7 +533,7 @@ A severity of 0 removes the action completely.
 - - -
 
 #### Cardiac Arrest 
-@copybrief PatientActions_CardiacArrestData
+@copybrief CardiacArrestData
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 "AnyAction": [{
   "PatientAction": {
@@ -545,7 +545,7 @@ A severity of 0 removes the action completely.
 - - -
 
 #### Exercise 
-@copybrief PatientActions_ExerciseData <br>
+@copybrief ExerciseData <br>
 An intensity of 0 removes the action completely.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 "AnyAction": [{
@@ -560,7 +560,7 @@ An intensity of 0 removes the action completely.
 - - -
 
 #### Hemorrhage 
-@copybrief PatientActions_HemorrhageData <br>
+@copybrief HemorrhageData <br>
 The Compartment attribute can be any of the enumerations defined in the enumAnatomy enumeration.<br>
 Type can be Internal or External
 FATAL: Cannot have bleeding rate greater than cardiac output or less than 0
@@ -579,7 +579,7 @@ FATAL: Cannot have bleeding rate greater than cardiac output or less than 0
 - - -
 
 #### Pericardial Effusion
-@copybrief PatientActions_PericardialEffusionData <br>
+@copybrief PericardialEffusionData <br>
 EffusionRate of the liquid
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 "AnyAction": [{
@@ -592,9 +592,9 @@ EffusionRate of the liquid
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
-	
+
 #### Tension Pneumothorax 
-@copybrief PatientActions_TensionPneumothoraxData <br>
+@copybrief TensionPneumothoraxData <br>
 The Type attribute can be "Open" or "Closed"<br>
 The Side attribute can be "Left" or "Right"<br>
 Severity value must be >=0.0 and <=1.0 <br>
@@ -619,7 +619,7 @@ Patient Interventions
 - - -
 	
 #### Chest Compression Force 
-@copybrief PatientActions_ChestCompressionForceData <br>
+@copybrief ChestCompressionForceData <br>
 Force is the specific magnitude to perform a compression with.<br>
 Note, that patient should be in Cardiac Arrest before performing CPR
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -635,7 +635,7 @@ Note, that patient should be in Cardiac Arrest before performing CPR
 - - -
 		
 #### Chest Compression Force Scale 
-@copybrief PatientActions_ChestCompressionForceScaleData <br>
+@copybrief ChestCompressionForceScaleData <br>
 ForceScale value must be >=0.0 and <=1.0<br>
 Note, that patient should be in Cardiac Arrest before performing CPR
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -652,7 +652,7 @@ Note, that patient should be in Cardiac Arrest before performing CPR
 - - -
 
 #### Chest Occlusive Dressing 
-@copybrief PatientActions_ChestOcclusiveDressingData <br>
+@copybrief ChestOcclusiveDressingData <br>
 The State attribute can be "On" or "Off" <br>
 Side is either Left or Right<br>
 FATAL: If the side specified does not have a pneumothorax 
@@ -670,12 +670,12 @@ FATAL: If the side specified does not have a pneumothorax
 - - -
 
 #### Conscious Respiration 
-@copybrief PatientActions_ConsciousRespirationData <br>
+@copybrief ConsciousRespirationData <br>
 This action can contain 1 or more commands :
-- @copybrief PatientActions_ForcedInhaleData
-- @copybrief PatientActions_ForcedExhaleData
-- @copybrief PatientActions_BreathHoldData
-- @copybrief PatientActions_UseInhalerData
+- @copybrief ForcedInhaleData
+- @copybrief ForcedExhaleData
+- @copybrief BreathHoldData
+- @copybrief UseInhalerData
 
 <br>
 Commands will be processed in order.
@@ -720,7 +720,7 @@ the system to react.
 - - -
 
 #### Intubation 
-@copybrief PatientActions_IntubationData <br>
+@copybrief IntubationData <br>
 Note: In order to 'turn off' an intubation, use'Off' as the Type  <br>
 Types : Off, Esophageal, LeftMainstem, RightMainstem, Tracheal
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -734,7 +734,7 @@ Types : Off, Esophageal, LeftMainstem, RightMainstem, Tracheal
 - - -
 
 #### Mechanical Ventilation 
-@copybrief PatientActions_MechanicalVentilationData <br>
+@copybrief MechanicalVentilationData <br>
 You may provide Pressure and/or Flow. <br>
 If you do not provide GasFractions, the environment gas fractions will be used. <br>
 If you do provide Gas Fractions, they must add up to 1.
@@ -758,7 +758,7 @@ If you do provide Gas Fractions, they must add up to 1.
 - - -
 
 #### Needle Decompression 
-@copybrief PatientActions_NeedleDecompressionData <br>
+@copybrief NeedleDecompressionData <br>
 The Side attribute can be "Left" or "Right"<br>
 The State attribute can be "On" or "Off"
 FATAL: If the side specified does not have a pneumothorax 
@@ -773,22 +773,10 @@ FATAL: If the side specified does not have a pneumothorax
 }]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#### Urinate 
-@copybrief PatientActions_UrinateData <br>
-Action to empty the bladder. if not emptied, 
-it will empty and throw an event.
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-"AnyAction": [{
-  "PatientAction": {
-    "Urinate": {}
-  }
-}]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 - - -
 
 #### Substance Bolus  
-@copybrief PatientActions_SubstanceBolusData
+@copybrief SubstanceBolusData
 
 The AdminRoute can be one of:
 - "Intravenous"
@@ -815,7 +803,7 @@ The Substance element should be set to a name of any of the %Substances.
 - - -
 
 #### Substance Compound Infusion Fluids 
-@copybrief PatientActions_SubstanceCompoundInfusionData <br>
+@copybrief SubstanceCompoundInfusionData <br>
 The Substance Compound element should be set to a name of any of the %Substances Compounds. <br>
 Set Rate to 0 to remove Action
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -833,7 +821,7 @@ Set Rate to 0 to remove Action
 - - -
 
 #### Substance Infusion 
-@copybrief PatientActions_SubstanceInfusionData <br>
+@copybrief SubstanceInfusionData <br>
 The Substance element should be set to a name of any of the %Substances. <br>
 Set Rate to 0 to remove Action
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -850,12 +838,52 @@ Set Rate to 0 to remove Action
 
 - - -
 
+#### Supplemental Oxygen 
+@copybrief SupplementalOxygenData <br>
+You must provide a Device <br>
+Default Flow and Volume will be used depending on device type if not provided<br>
+A Volume of "Infinity" may be used for something like a wall port
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"AnyAction": [{
+  "PatientAction": {
+      "SupplementalOxygenData": {
+        "Device": "SimpleMask"
+      }
+    }
+}]
+
+"AnyAction": [{
+  "PatientAction": {
+      "SupplementalOxygenData": {
+        "Device": "SimpleMask",
+        "Flow": { "ScalarVolumePerTime": { "Value": 5.0, "Unit": "L/s" }},
+        "Volume": { "ScalarVolume": { "Value": "Infinity", "Unit": "L" }}
+      }
+    }
+}]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- - -
+
+#### Urinate 
+@copybrief UrinateData <br>
+Action to empty the bladder. if not emptied, 
+it will empty and throw an event.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"AnyAction": [{
+  "PatientAction": {
+    "Urinate": {}
+  }
+}]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- - -
+
 Anesthesia Machine State
 ------------------------
 
 - - -
 #### Anesthesia Machine Configuration 
-@copybrief AnesthesiaActions_AnesthesiaMachineConfigurationData <br>
+@copybrief AnesthesiaMachineConfigurationData <br>
 NOTE: Each field is optional. <br>
 Connection can be one of : Off, Mask, Tube <br>
 Patient must be intubated to be connected as Tube <br>
@@ -938,7 +966,7 @@ Anesthesia Machine Incidents
 - - -
 
 #### Oxygen TankPressure Loss 
-@copybrief AnesthesiaActions_OxygenTankPressureLossData <br>
+@copybrief OxygenTankPressureLossData <br>
 The State attribute can be "On" or "Off"
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 "AnyAction": [{
@@ -951,7 +979,7 @@ The State attribute can be "On" or "Off"
 - - -
 
 #### Oxygen Wall Port Pressure Loss 
-@copybrief AnesthesiaActions_OxygenWallPortPressureLossData <br>
+@copybrief OxygenWallPortPressureLossData <br>
 The State attribute can be "On" or "Off"
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 "AnyAction": [{
@@ -969,7 +997,7 @@ Anesthesia Machine Failures
 - - -
 
 #### Expiratory Valve Leak 
-@copybrief AnesthesiaActions_ExpiratoryValveLeakData <br>
+@copybrief ExpiratoryValveLeakData <br>
 The State attribute can be "On" or "Off"<br>
 Severity value must be >=0.0 and <=1.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -985,7 +1013,7 @@ Severity value must be >=0.0 and <=1.0
 - - -
 
 #### Expiratory Valve Obstruction 
-@copybrief AnesthesiaActions_ExpiratoryValveObstructionData <br>
+@copybrief ExpiratoryValveObstructionData <br>
 The State attribute can be "On" or "Off"<br>
 Severity value must be >=0.0 and <=1.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1001,7 +1029,7 @@ Severity value must be >=0.0 and <=1.0
 - - -
 
 #### Inspiratory Valve Leak 
-@copybrief AnesthesiaActions_InspiratoryValveLeakData <br>
+@copybrief InspiratoryValveLeakData <br>
 The State attribute can be "On" or "Off"<br>
 Severity value must be >=0.0 and <=1.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1017,7 +1045,7 @@ Severity value must be >=0.0 and <=1.0
 - - -
 
 #### Inspiratory Valve Obstruction 
-@copybrief AnesthesiaActions_InspiratoryValveObstructionData <br>
+@copybrief InspiratoryValveObstructionData <br>
 The State attribute can be "On" or "Off"<br>
 Severity value must be >=0.0 and <=1.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1033,7 +1061,7 @@ Severity value must be >=0.0 and <=1.0
 - - -
 
 #### Mask Leak 
-@copybrief AnesthesiaActions_MaskLeakData <br>
+@copybrief MaskLeakData <br>
 The State attribute can be "On" or "Off"<br>
 Severity value must be >=0.0 and <=1.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1049,7 +1077,7 @@ Severity value must be >=0.0 and <=1.0
 - - -
 
 #### Soda Lime Failure 
-@copybrief AnesthesiaActions_SodaLimeFailureData <br>
+@copybrief SodaLimeFailureData <br>
 The State attribute can be "On" or "Off"<br>
 Severity value must be >=0.0 and <=1.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1065,7 +1093,7 @@ Severity value must be >=0.0 and <=1.0
 - - -
 
 #### Tube Cuff Leak 
-@copybrief AnesthesiaActions_TubeCuffLeakData <br>
+@copybrief TubeCuffLeakData <br>
 The State attribute can be "On" or "Off"<br>
 Severity value must be >=0.0 and <=1.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1081,7 +1109,7 @@ Severity value must be >=0.0 and <=1.0
 - - -
 
 #### Vaporizer Failure 
-@copybrief AnesthesiaActions_VaporizerFailureData <br>
+@copybrief VaporizerFailureData <br>
 The State attribute can be "On" or "Off"<br>
 Severity value must be >=0.0 and <=1.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1097,7 +1125,7 @@ Severity value must be >=0.0 and <=1.0
 - - -
 
 #### Ventilator Pressure Loss 
-@copybrief AnesthesiaActions_VentilatorPressureLossData <br>
+@copybrief VentilatorPressureLossData <br>
 The State attribute can be "On" or "Off"<br>
 Severity value must be >=0.0 and <=1.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1113,7 +1141,7 @@ Severity value must be >=0.0 and <=1.0
 - - -
 
 #### Y Piece Disconnect 
-@copybrief AnesthesiaActions_YPieceDisconnectData <br>
+@copybrief YPieceDisconnectData <br>
 The State attribute can be "On" or "Off"<br>
 Severity value must be >=0.0 and <=1.0 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1132,7 +1160,7 @@ Severity value must be >=0.0 and <=1.0
 ------------------------
 
 #### %Inhaler Configuration 
-@copybrief InhalerActions_InhalerConfigurationData <br>
+@copybrief InhalerConfigurationData <br>
 FATAL: Cannot have inhaler and anesthesia machine on at the same time
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 "AnyAction": [{
@@ -1157,7 +1185,7 @@ FATAL: Cannot have inhaler and anesthesia machine on at the same time
 - - -
 
 #### %Environment Configuration State <br>
-@copybrief EnvironmentActions_EnvironmentChangeData <br>
+@copybrief EnvironmentChangeData <br>
 NOTE: Each field is optional.
 You can also add particulates to the surrounding atmosphere
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1197,7 +1225,7 @@ or
 - - -
 
 #### Thermal Application <br>
-@copybrief EnvironmentActions_ThermalApplicationData <br>
+@copybrief ThermalApplicationData <br>
 You must provide at least 1 activity, but up can also 
 apply up-to all 3 in one action.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

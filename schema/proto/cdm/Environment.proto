@@ -16,7 +16,7 @@ message EnvironmentalConditionsData
     Air             = 1;
     Water           = 2;
   }
-  eSurroundingType                          SurroundingType                  = 1; /**<< @brief @copybrief Environment_eSurroundingType */
+  eSurroundingType                          SurroundingType                  = 1; /**<< @brief @ref EnvironmentalConditionsData_eSurroundingTypeTable */
 
   ScalarMassPerVolumeData                   AirDensity                       = 2; /**<< @brief Local ambient density of the surrounding atmosphere. */
   ScalarLengthPerTimeData                   AirVelocity                      = 3; /**<< @brief Velocity of the surrounding air relative to the patient. */

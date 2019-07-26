@@ -49,10 +49,10 @@ message SubstancePhysicochemicalsData
   }
   
   ScalarData                                   AcidDissociationConstant       = 1; /**<< @brief A quantitative measure of the strength of an acid in solution .*/
-  eBindingProtein                              BindingProtein                 = 2; /**<< @brief @copybrief eSubstanceBindingProtein. */
+  eBindingProtein                              BindingProtein                 = 2; /**<< @brief @ref SubstancePhysicochemicalsData_eBindingProteinTable. */
   ScalarData                                   BloodPlasmaRatio               = 3; /**<< @brief The ratio of the substance in the blood versus the plasma. */
   Scalar0To1Data                               FractionUnboundInPlasma        = 4; /**<< @brief Fraction of the substance in the plasma that is unbound. */
-  eIonicState                                  IonicState                     = 5; /**<< @brief @copybrief eSubstanceIonicState */
+  eIonicState                                  IonicState                     = 5; /**<< @brief @ref SubstancePhysicochemicalsData_eIonicStateTable */
   ScalarData                                   LogP                           = 6; /**<< @brief The octanol-water partition coefficient. */
   ScalarData                                   OralAbsorptionRateConstant     = 7; /**<< @brief Rate at which an orally administered drug leaves the GI tract. */
 }
@@ -67,8 +67,8 @@ message SubstanceTissuePharmacokineticsData
 /** @brief Data associated with movement of drugs within the body. */
 message SubstancePharmacokineticsData
 {
-  SubstancePhysicochemicalsData                Physicochemicals               = 1; /**<<@copybrief SubstanceData_PhysicochemicalData */
-  repeated SubstanceTissuePharmacokineticsData TissueKinetics                 = 2; /**<<@copybrief SubstanceData_TissuePharmacokineticsData */
+  SubstancePhysicochemicalsData                Physicochemicals               = 1; /**<<@brief @ref SubstanceData_PhysicochemicalData */
+  repeated SubstanceTissuePharmacokineticsData TissueKinetics                 = 2; /**<<@brief @ref SubstanceData_TissuePharmacokineticsData */
 }
 
 /** @brief  */
@@ -103,7 +103,7 @@ message SubstanceSystemicClearanceData
 /** @brief  */
 message SubstanceRenalRegulationData
 {
-  eCharge                                      ChargeInBlood                  = 1; /**<< @brief */
+  eCharge                                      ChargeInBlood                  = 1; /**<< @brief @ref eChargeTable */
   Scalar0To1Data                               FractionUnboundInPlasma        = 2; /**<< @brief Fraction of the substance in the plasma that is unbound. */
   ScalarData                                   ReabsorptionRatio              = 3; /**<< @brief */
   ScalarMassPerTimeData                        TransportMaximum               = 4; /**<< @brief */
@@ -161,7 +161,7 @@ message SubstanceData
   string                                       Name                           = 1; /**<< @brief The unique name of the substance. */
   ScalarMassPerVolumeData                      Density                        = 2; /**<< @brief Mass density of a substance */                   
   ScalarMassPerAmountData                      MolarMass                      = 3; /**<< @brief Molar mass of the substance. */
-  eState                                       State                          = 4; /**<< @brief @copybrief eSubstanceState. */
+  eState                                       State                          = 4; /**<< @brief @ref SubstanceData_eStateTable */
   /** Diffusion */
   ScalarMassPerAreaTimeData                    MaximumDiffusionFlux           = 5; /**<< @brief Maximum mass flux of a substance when diffusing across a membrane. */
   ScalarData                                   MichaelisCoefficient           = 6; /**<< @brief The concentration gradient at which the flux is half of the MaxDiffusionFlux. */             
@@ -183,9 +183,9 @@ message SubstanceData
   ScalarData                                   RelativeDiffusionCoefficient   = 19;/**<< @brief Represents the ability of the substance to diffuse across a membrane. A proportionality of the solubility and the square root of the molecular weight as defined relative to oxygen.*/
   ScalarInversePressureData                    SolubilityCoefficient          = 20;/**<< @brief Represents the ability of a substance to dissolve in a solution. */
   /** More complex Objects */
-  SubstanceClearanceData                       Clearance                      = 21;/**<< @brief @copybrief SubstanceClearanceData */
-  SubstancePharmacokineticsData                Pharmacokinetics               = 22;/**<< @brief @copybrief SubstancePharmacokineticsData */
-  SubstancePharmacodynamicsData                Pharmacodynamics               = 23;/**<< @brief @copybrief SubstancePharmacodynamicsData */
+  SubstanceClearanceData                       Clearance                      = 21;/**<< @brief @ref SubstanceClearanceDataTable */
+  SubstancePharmacokineticsData                Pharmacokinetics               = 22;/**<< @brief @ref SubstancePharmacokineticsDataTable */
+  SubstancePharmacodynamicsData                Pharmacodynamics               = 23;/**<< @brief @ref SubstancePharmacodynamicsDataTable */
   
 }
 

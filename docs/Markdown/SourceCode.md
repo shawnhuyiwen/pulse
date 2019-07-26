@@ -25,22 +25,22 @@ The source is structured as follows:
       - Substances - @copybrief PulseSubstances
       - System - @copybrief PulseSystem
     - systems - These classes implement the methodology for modeling and simulating
-      - BloodChemistry - @copybrief BloodChemistry
-      - Cardiovascular - @copybrief Cardiovascular
-      - Drugs - @copybrief Drugs
-      - Endocrine - @copybrief Endocrine
-      - Energy - @copybrief Energy
-      - Environment - @copybrief Environment
-      - Gastrointestinal - @copybrief Gastrointestinal
-      - Nervous - @copybrief Nervous
-      - Renal - @copybrief Renal
-      - Respiratory - @copybrief Respiratory		
-      - SaturationCalculator - @copybrief SaturationCalculator	
-      - Tissue - @copybrief Tissue
+      - BloodChemistry - @copybrief BloodChemistrySystemData
+      - Cardiovascular - @copybrief CardiovascularSystemData
+      - Drugs - @copybrief DrugsSystemData
+      - Endocrine - @copybrief EndocrineSystemData
+      - Energy - @copybrief EnergySystemData
+      - Environment - @copybrief EnvironmentData
+      - Gastrointestinal - @copybrief GastrointestinalSystemData
+      - Nervous - @copybrief NervousSystemData
+      - Renal - @copybrief RenalSystemData
+      - Respiratory - @copybrief RespiratorySystemData
+      - SaturationCalculator - @copybrief SaturationCalculator
+      - Tissue - @copybrief TissueSystemData
     - equipment
       - AnesthesiaMachine - @copybrief AnesthesiaMachineData
       - ECG - @copybrief ElectrocardiogramData
-      - Inhaler - @copybrief InhalerData    
+      - Inhaler - @copybrief InhalerData
 	- gui - Code associated with the @ref Toolkit GUI
   - schema - The xsd data definitions used by the CDM
 	- sdk - Example code and scripts for the @ref Toolkit and @ref SDK

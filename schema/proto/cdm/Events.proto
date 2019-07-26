@@ -65,9 +65,9 @@ enum eEvent
   Tachypnea                                  = 41;/**<< @brief A breathing rate above 20 breaths per minute. */
   
   // Equipment
-  AnesthesiaMachineOxygenBottleOneExhausted  = 1000;
-  AnesthesiaMachineOxygenBottleTwoExhausted  = 1001;
-  AnesthesiaMachineReliefValveActive         = 1002;
+  AnesthesiaMachineOxygenBottleOneExhausted  = 1000;/**<< @brief Anesthesia machine oxygen bottle one has been exhausted. */
+  AnesthesiaMachineOxygenBottleTwoExhausted  = 1001;/**<< @brief Anesthesia machine oxygen bottle two has been exhausted. */
+  AnesthesiaMachineReliefValveActive         = 1002;/**<< @brief Anesthesia machine relief valve is active. */
   SupplementalOxygenBottleExhausted          = 1003;/**<< @brief The supplemental oxygen bottle is exhausted. There is no longer any oxygen to provide. */
   NonRebreatherMaskOxygenBagEmpty            = 1004;/**<< @brief The non rebreather mask oxygen bag is empty. Oxygen may need to be provided at a faster rate. */
 }
