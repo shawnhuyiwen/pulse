@@ -81,17 +81,24 @@ PulseController::PulseController(const std::string& logFileName, const std::stri
 
 PulseController::PulseController(Logger* logger, const std::string& data_dir) : Loggable(logger)
 {
+
   m_DataDir = data_dir;
-  myLogger = false;
   m_DataTrack = nullptr;
   m_AdvanceHandler = nullptr;
-  if (!m_Logger->HasForward())// Don't override a forwarder, if there already is one there
-    m_Logger->SetForward(this);
 
   m_CurrentTime = std::unique_ptr<SEScalarTime>(new SEScalarTime());
   m_SimulationTime = std::unique_ptr<SEScalarTime>(new SEScalarTime());
   m_CurrentTime->SetValue(0, TimeUnit::s);
   m_SimulationTime->SetValue(0, TimeUnit::s);
+
+  myLogger = false;
+  if (m_Logger == nullptr)
+  {
+    myLogger = true;
+    m_Logger = new Logger();
+  }
+  if (!m_Logger->HasForward())// Don't override a forwarder, if there already is one there
+    m_Logger->SetForward(this);
   m_Logger->SetLogTime(m_SimulationTime.get());
 
   m_Substances = std::unique_ptr<PulseSubstances>(new PulseSubstances(*this));
