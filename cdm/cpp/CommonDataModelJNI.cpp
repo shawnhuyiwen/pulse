@@ -11,7 +11,7 @@
 extern "C"
 JNIEXPORT void JNICALL Java_com_kitware_physiology_utilities_jniBridge_nativeInitialize(JNIEnv *env, jobject obj)
 {
-
+  log4cplus::initialize();
 }
 
 extern "C"
