@@ -25,7 +25,6 @@ The Pulse Physiology Engine is a C++ based, open source, multi-platform (Windows
 simulator that will drive medical education, research, and training technologies. 
 The engine enables accurate and consistent physiology simulation across the medical community. 
 The engine can be used as a standalone application or integrated with simulators, sensor interfaces, and models of all fidelities.
-The Pulse Physiology Engine started as a fork of the BioGears 6.1.1 Physiology Engine by members of its original team.
 We are advancing the engine and exploring new avenues of research, such as pediatrics, patient-specific modeling and virtual surgery planning/rehearsal. 
 
 <center>

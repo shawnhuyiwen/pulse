@@ -100,7 +100,7 @@ Our user manual offers in-depth details of all the Pulse asset functionality. It
 <tr>
   <td width="30%" style="border-top:2px solid Gainsboro; padding:3px">
     A system for investigating closed-loop physiology management for critical care with in-silico patients. Closed-Loop Assistants (CLAs) are designed to leverage medical device interfaces to add computers/algorithms to the clinical care loop to aid indecision-making and to implement the automatic application of interventions. 
-    <br><img src="./Images/Features/CLA.jpg" width="300">
+    <br><img src="./Images/Features/CLA.jpg" width="400">
   </td>
   <td width="30%" style="border-top:2px solid Gainsboro; padding:3px" valign="top">
     <center>
@@ -168,7 +168,7 @@ Our user manual offers in-depth details of all the Pulse asset functionality. It
 <tr>
   <td width="30%" style="border-top:2px solid Gainsboro; padding:3px">
     An augmented reality system to improve the realism of Combat Medics (68W) and Combat Lifesavers scenario-based training. C3ARESYS provides the opportunity to train on wounds and casualties that respond to treatments with feedback adapted to the trainee's skill level. C3ARESYS offloads work from the instructor, enabling focus on teaching rather than fixing shortcomings in casualty simulation.
-    <br><img src="./Images/Features/C3ARESYS.png" width="300">
+    <br><img src="./Images/Features/C3ARESYS.png" width="400">
   </td>
   <td width="30%" style="border-top:2px solid Gainsboro; padding:3px" valign="top">
     <center>
@@ -185,7 +185,7 @@ Our user manual offers in-depth details of all the Pulse asset functionality. It
 </center>
 \endhtmlonly
 
-### Virtual Patient
+### The BioMojo Virtual Patient Experience (VPE)
 
 \htmlonly
 <center>
@@ -197,13 +197,13 @@ Our user manual offers in-depth details of all the Pulse asset functionality. It
 </tr>
 <tr>
   <td width="30%" style="border-top:2px solid Gainsboro; padding:3px">
-    Description
-    <img src="./Images/Features/nXhuman.png" width="400">
+    An interactive, multiplayer 3D healthcare and medicine themed, STEM science education product. BioMojo VPE is designed to inspire and educate youth towards careers in healthcare, clinical research and biomedical engineering through fun, challenging virtual role play, teamwork, and problem-solving. Themes include emergency medicine, preventable chronic diseases, physiology, anatomy, genomics, and pharmacotherapy.
+    <img src="./Images/Features/vpe_pharmacy.png" width="400">
   </td>
   <td width="30%" style="border-top:2px solid Gainsboro; padding:3px" valign="top">
     <center>
-      <a href="https://www.biomojo.com/"><img src="./Images/Features/BioMojoLogo.png" width="200"></a><br><br><br>
-      <a href="https://www.kitware.com/"><img src="./Images/Features/KitwareLogo.png" width="200"></a><br><br><br>
+      <a href="https://www.biomojo.com/"><img src="./Images/Features/BioMojoLogo.png" width="200"></a><br>
+      <a href="https://www.kitware.com/"><img src="./Images/Features/KitwareLogo.png" width="200"></a><br>
       <a href="https://www.nih.gov/"><img src="./Images/Features/NIHLogo.jpg" width="200"></a>
     </center>
   </td>
@@ -228,8 +228,10 @@ Our user manual offers in-depth details of all the Pulse asset functionality. It
 </tr>
 <tr>
   <td width="30%" style="border-top:2px solid Gainsboro; padding:3px">
-    A surgical planning tool for subglottic stenosis that incorporates three major components. First, VPAW initiates with a CT scan of the patient and obtains a geometrical model through segmentation and surface reconstruction. Second, it employs a computational fluid dynamics (CFD) engine based on a Lattice-Boltzmann formulation. Finally, it also provides a real-time geometric authoring tools that allow surgeons to edit the tracheal geometry using a haptic device as part of the surgical planning.
-    <br><img src="./Images/Features/VPAW.png" width="300">
+    A surgical planning tool for subglottic stenosis that incorporates three major components. First, VPAW initiates with a CT scan of the patient and obtains a geometrical model through segmentation and surface reconstruction.
+    Second, it employs a computational fluid dynamics (CFD) engine based on a Lattice-Boltzmann formulation.
+    Finally, it also provides a real-time geometric authoring tools that allow surgeons to edit the tracheal geometry using a haptic device as part of the surgical planning.
+    <br><img src="./Images/Features/VPAW.png" width="400">
   </td>
   <td width="30%" style="border-top:2px solid Gainsboro; padding:3px" valign="top">
     <center>
@@ -260,6 +262,8 @@ Our user manual offers in-depth details of all the Pulse asset functionality. It
 <tr>
   <td width="30%" style="border-top:2px solid Gainsboro; padding:3px">
     A high-fidelity computational surrogate head model focused on the ventricular system to optimize the performance of ventriculoperitoneal shunts. The cerebrospinal fluid model is being coupled with the cerebrovascular system using the PulsePhysiology Platform. In addition to globally quantifying the essential cerebrovascular parameters for the local high-fidelity analysis of shunt function, the Pulse PhysiologyPlatform also provides an invaluable training capability to teach students about the effects of elevated ICP due to hydro-cephalus on the entire body.
+    
+    <img src="./Images/Features/spacer.jpg" width="400">
   </td>
   <td width="30%" style="border-top:2px solid Gainsboro; padding:3px" valign="top">
     <center>
@@ -319,7 +323,7 @@ Our user manual offers in-depth details of all the Pulse asset functionality. It
 <tr>
   <td width="30%" style="border-top:1px Gainsboro; padding:3px">
     Created an interface plugin within the SOFA multi-physics simulation framework to link with the Pulse physiology engine.
-    <img src="./Images/Features/GSoC.png" width="300">
+    <img src="./Images/Features/GSoC.png" width="400">
   </td>
   <td width="30%" style="border-top:2px solid Gainsboro; padding:3px" valign="top">
     <center>
