@@ -648,7 +648,7 @@ bool PulseController::SetupPatient()
   //Respiration Rate ---------------------------------------------------------------
   //Note: This is overwritten after stabilization
   double respirationRate_bpm;
-  double respirationRateStandard_bpm = 16.0;
+  double respirationRateStandard_bpm = 12.0;
   double respirationRateMax_bpm = 20.0;
   double respirationRateMin_bpm = 12.0;
   if (!m_Patient->HasRespirationRateBaseline())
@@ -3632,11 +3632,11 @@ void PulseController::SetupRespiratory()
   double RespiratorySideCompliance_L_Per_cmH2O = RespiratorySystemCompliance_L_Per_cmH20 / 2.0; //compliances in parallel sum, so divide by 2 for each lung
   double LungCompliance_L_Per_cmH2O = 2.0 * RespiratorySideCompliance_L_Per_cmH2O; //compliances in series, so multiply by 2 for equal split
   double ChestWallCompliance_L_Per_cmH2O = LungCompliance_L_Per_cmH2O;
-  double IntrapleuralPressure_cmH2O = -5; ///cite Levitzky2013pulmonary
+  double IntrapleuralPressure_cmH2O = -5.0; ///cite Levitzky2013pulmonary
   double TotalAirwayResistance_cmH2O_s_Per_L = 1.5; ///cite Levitzky2013pulmonary
 
   //Should add up to 100% of total airway resistance
-  double TracheaResistancePercent = 0.6;
+  double TracheaResistancePercent = 0.6; //About 35% to 50% of total resitance to airflow is in the upper airways  ///cite Levitzky2013pulmonary
   double BronchiResistancePercent = 0.3;
   double AlveoliDuctResistancePercent = 0.1;
 
@@ -3646,9 +3646,11 @@ void PulseController::SetupRespiratory()
   double AlveoliDuctResistance = 2 * (TotalAirwayResistance_cmH2O_s_Per_L - TracheaResistance) - BronchiResistance;
 
   double FunctionalResidualCapacity_L = m_Patient->GetFunctionalResidualCapacity(VolumeUnit::L);
-  double DeadSpaceVolume_L = 0.002 * m_Patient->GetWeight(MassUnit::kg); ///cite Levitzky2013pulmonary
+  double anatomicDeadSpaceVolume_L = 0.002 * m_Patient->GetWeight(MassUnit::kg); //Should not change with diseases ///cite Levitzky2013pulmonary
+  double alveolarDeadSpaceVolume_L = 0.0;  //Should change with certain diseases ///cite Levitzky2013pulmonary
+  double physiologicDeadSpaceVolume_L = anatomicDeadSpaceVolume_L + alveolarDeadSpaceVolume_L;
   //double PleuralVolume_L = 20.0 / 1000.0; //this is a liquid volume  ///cite Levitzky2013pulmonary
-  double PleuralVolume_L = FunctionalResidualCapacity_L;
+  double PleuralVolume_L = FunctionalResidualCapacity_L; //Make this an gas volume to mimic the liquid volume
 
   double AmbientPresure = 1033.23; // = 1 atm
   double OpenResistance_cmH2O_s_Per_L = m_Config->GetDefaultOpenFlowResistance(FlowResistanceUnit::cmH2O_s_Per_L);
@@ -3665,19 +3667,19 @@ void PulseController::SetupRespiratory()
   // Right Dead Space
   SEFluidCircuitNode& RightAnatomicDeadSpace = cRespiratory.CreateNode(pulse::RespiratoryNode::RightAnatomicDeadSpace);
   RightAnatomicDeadSpace.GetPressure().SetValue(AmbientPresure, PressureUnit::cmH2O);
-  RightAnatomicDeadSpace.GetVolumeBaseline().SetValue(RightLungRatio*DeadSpaceVolume_L, VolumeUnit::L);
+  RightAnatomicDeadSpace.GetVolumeBaseline().SetValue(RightLungRatio*physiologicDeadSpaceVolume_L, VolumeUnit::L);
   // Left Dead Space
   SEFluidCircuitNode& LeftAnatomicDeadSpace = cRespiratory.CreateNode(pulse::RespiratoryNode::LeftAnatomicDeadSpace);
   LeftAnatomicDeadSpace.GetPressure().SetValue(AmbientPresure, PressureUnit::cmH2O);
-  LeftAnatomicDeadSpace.GetVolumeBaseline().SetValue(LeftLungRatio*DeadSpaceVolume_L, VolumeUnit::L);
+  LeftAnatomicDeadSpace.GetVolumeBaseline().SetValue(LeftLungRatio*physiologicDeadSpaceVolume_L, VolumeUnit::L);
   // Right Alveoli
   SEFluidCircuitNode& RightAlveoli = cRespiratory.CreateNode(pulse::RespiratoryNode::RightAlveoli);
   RightAlveoli.GetPressure().SetValue(AmbientPresure, PressureUnit::cmH2O);
-  RightAlveoli.GetVolumeBaseline().SetValue(RightLungRatio * (FunctionalResidualCapacity_L - DeadSpaceVolume_L), VolumeUnit::L);
+  RightAlveoli.GetVolumeBaseline().SetValue(RightLungRatio * FunctionalResidualCapacity_L, VolumeUnit::L);
   // Left Alveoli
   SEFluidCircuitNode& LeftAlveoli = cRespiratory.CreateNode(pulse::RespiratoryNode::LeftAlveoli);
   LeftAlveoli.GetPressure().SetValue(AmbientPresure, PressureUnit::cmH2O);
-  LeftAlveoli.GetVolumeBaseline().SetValue(LeftLungRatio * (FunctionalResidualCapacity_L - DeadSpaceVolume_L), VolumeUnit::L);
+  LeftAlveoli.GetVolumeBaseline().SetValue(LeftLungRatio * FunctionalResidualCapacity_L, VolumeUnit::L);
   // Node for right alveoli leak
   SEFluidCircuitNode& RightAlveoliLeak = cRespiratory.CreateNode(pulse::RespiratoryNode::RightAlveoliLeak);
   RightAlveoliLeak.GetPressure().SetValue(AmbientPresure, PressureUnit::cmH2O);
@@ -3818,10 +3820,8 @@ void PulseController::SetupRespiratory()
 
   // Set up hierarchy
   SEGasCompartment& pLeftLung = m_Compartments->CreateGasCompartment(pulse::PulmonaryCompartment::LeftLung);
-  pLeftLung.AddChild(pLeftDeadSpace);
   pLeftLung.AddChild(pLeftAlveoli);
   SEGasCompartment& pRightLung = m_Compartments->CreateGasCompartment(pulse::PulmonaryCompartment::RightLung);
-  pRightLung.AddChild(pRightDeadSpace);
   pRightLung.AddChild(pRightAlveoli);
   SEGasCompartment& pLungs = m_Compartments->CreateGasCompartment(pulse::PulmonaryCompartment::Lungs);
   pLungs.AddChild(pLeftLung);

@@ -662,6 +662,10 @@ public abstract class ValidationTool
     {
       return false;
     }
+    // NOTE (AB) Waveform dTypes are changed to a simple min/max from the local average of all min/max
+    // This is due to sub min/max skewing results (ex. Expiratory Flow)
+    // We also assume that all waveforms are of a constant amplitude (validation is on all resting waveforms)
+    // If we do find we need the Waveform utils, we should seriously consider new types for simple min/max
     switch(vRow.dType)
     {
       case Mean:
@@ -673,7 +677,8 @@ public abstract class ValidationTool
       }      
       case WaveformMin:
       {
-        vRow.result = WaveformUtils.getMin(vRow.results);
+    	vRow.result = DoubleUtils.getMin(vRow.results);
+        //vRow.result = WaveformUtils.getMin(vRow.results);
         vRow.engine = "Minimum of " + String.format("%."+vRow.doubleFormat, vRow.result); //StringUtils.toString(vRow.mean,3);
         break;
       }
@@ -685,7 +690,8 @@ public abstract class ValidationTool
       }      
       case WaveformMax:
       {
-        vRow.result = WaveformUtils.getMax(vRow.results);
+      	vRow.result = DoubleUtils.getMax(vRow.results);
+        //vRow.result = WaveformUtils.getMax(vRow.results);
         vRow.engine = "Maximum of " + String.format("%."+vRow.doubleFormat, vRow.result); //StringUtils.toString(vRow.mean,3);
         break;
       }
@@ -713,6 +719,7 @@ public abstract class ValidationTool
       }
       case WaveformMinPerWeight:
       {
+    	/*
         List<Double> xMin = new ArrayList<Double>();
         List<Double> yMin = new ArrayList<Double>();
         List<Double> xMax = new ArrayList<Double>();
@@ -724,11 +731,14 @@ public abstract class ValidationTool
           resultPerWeight.add(yMin.get(i) / xMin.get(i));
         }
         vRow.result = DoubleUtils.getMin(resultPerWeight);
+        */
+        vRow.result = DoubleUtils.getMin(vRow.results) / DoubleUtils.getAverage(vRow.weight);
         vRow.engine = "Minimum of " + String.format("%."+3+"g", vRow.result); //StringUtils.toString(vRow.mean,3);
         break;
       }
       case WaveformMaxPerWeight:
       {
+    	/*  
         List<Double> xMin = new ArrayList<Double>();
         List<Double> yMin = new ArrayList<Double>();
         List<Double> xMax = new ArrayList<Double>();
@@ -740,6 +750,8 @@ public abstract class ValidationTool
           resultPerWeight.add(yMax.get(i) / xMax.get(i));
         }
         vRow.result = DoubleUtils.getMax(resultPerWeight);
+        */
+        vRow.result = DoubleUtils.getMax(vRow.results) / DoubleUtils.getAverage(vRow.weight);
         vRow.engine = "Maximum of " + String.format("%."+3+"g", vRow.result); //StringUtils.toString(vRow.mean,3);
         break;
       }

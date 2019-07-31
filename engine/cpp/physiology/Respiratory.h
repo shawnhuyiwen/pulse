@@ -67,7 +67,6 @@ protected:
   void LobarPneumonia();
 
   //PreProcess
-  void UpdatePleuralCompliance();
   void UpdateCompliances();
   /**/void CalculateCompliance();
   //Actions
@@ -111,16 +110,17 @@ protected:
   double m_InitialFunctionalResidualCapacity_L;
   double m_InitialInspiratoryCapacity_L;
   double m_InitialResidualVolume_L;
+  double m_InitialTotalLungCapacity_L; //Aaron -serialize
   //   CalculateVitalSigns()
   bool   m_BreathingCycle;
   bool   m_NotBreathing;
   double m_TopBreathTotalVolume_L;
   double m_TopBreathAlveoliVolume_L;
   double m_TopBreathDeadSpaceVolume_L;
-  double m_TopBreathPleuralVolume_L; //jbw - serialize
+  double m_TopBreathPleuralVolume_L; //Aaron - serialize
   double m_TopBreathPleuralPressure_cmH2O;
-  double m_TopBreathAlveoliPressure_cmH2O; //jbw - serialize
-  double m_TopBreathDriverPressure_cmH2O; //jbw - serialize
+  double m_TopBreathAlveoliPressure_cmH2O; //Aaron - serialize
+  double m_TopBreathDriverPressure_cmH2O; //Aaron - serialize
   double m_LastCardiacCycleBloodPH; 
   double m_TopCarinaO2;
   double m_TopBreathElapsedTime_min;
@@ -128,10 +128,10 @@ protected:
   double m_BottomBreathTotalVolume_L;
   double m_BottomBreathAlveoliVolume_L;
   double m_BottomBreathDeadSpaceVolume_L;
-  double m_BottomBreathPleuralVolume_L; //jbw - serialize
+  double m_BottomBreathPleuralVolume_L; //Aaron - serialize
   double m_BottomBreathPleuralPressure_cmH2O;
-  double m_BottomBreathAlveoliPressure_cmH2O; //jbw - serialize
-  double m_BottomBreathDriverPressure_cmH2O; //jbw - serialize
+  double m_BottomBreathAlveoliPressure_cmH2O; //Aaron - serialize
+  double m_BottomBreathDriverPressure_cmH2O; //Aaron - serialize
   SERunningAverage* m_BloodPHRunningAverage;
 
   //   Respiratory Driver
@@ -159,7 +159,7 @@ protected:
   double m_InspiratoryCapacityFraction;
   double m_ConsciousStartPressure_cmH2O;
   double m_ConsciousEndPressure_cmH2O;
-  // Muscle Pressure Waveform - jbw: add these to serialization
+  // Muscle Pressure Waveform - Aaron serialize all of these
   double m_InspiratoryRiseFraction;
   double m_InspiratoryHoldFraction;
   double m_InspiratoryReleaseFraction;
