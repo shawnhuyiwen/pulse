@@ -53,10 +53,6 @@ public:
   virtual SEScalarFlowResistance& GetPulmonaryResistance();
   virtual double GetPulmonaryResistance(const FlowResistanceUnit& unit) const;
 
-  virtual bool HasRespirationDriverPressure() const;
-  virtual SEScalarPressure& GetRespirationDriverPressure();
-  virtual double GetRespirationDriverPressure(const PressureUnit& unit) const;
-
   virtual bool HasRespirationMusclePressure() const;
   virtual SEScalarPressure& GetRespirationMusclePressure();
   virtual double GetRespirationMusclePressure(const PressureUnit& unit) const;
@@ -105,7 +101,6 @@ protected:
   SEScalarVolumePerTime*     m_InspiratoryFlow;
   SEScalarFlowCompliance*    m_PulmonaryCompliance;
   SEScalarFlowResistance*    m_PulmonaryResistance;
-  SEScalarPressure*          m_RespirationDriverPressure;
   SEScalarPressure*          m_RespirationMusclePressure;
   SEScalarFrequency*         m_RespirationRate;
   SEScalar*                  m_SpecificVentilation;

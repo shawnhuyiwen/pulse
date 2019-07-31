@@ -1869,7 +1869,6 @@ void Respiratory::CalculateVitalSigns()
   double dPleuralPressure_cmH2O = (m_LeftPleural->GetNextPressure().GetValue(PressureUnit::cmH2O) + m_RightPleural->GetNextPressure().GetValue(PressureUnit::cmH2O)) / 2.0; //Average of L and R
   GetTranspulmonaryPressure().SetValue(dAlveolarPressure - dPleuralPressure_cmH2O, PressureUnit::cmH2O);
 
-  GetRespirationDriverPressure().Set(m_RespiratoryMuscle->GetNextPressure());
   GetRespirationMusclePressure().Set(m_RespiratoryMuscle->GetNextPressure());
 
   double avgAlveoliO2PP_mmHg = (m_LeftAlveoliO2->GetPartialPressure(PressureUnit::mmHg) + m_RightAlveoliO2->GetPartialPressure(PressureUnit::mmHg)) / 2.0;
