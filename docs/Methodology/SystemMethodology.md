@@ -84,8 +84,9 @@ Equipment:
 - @ref AnesthesiaMachineMethodology
 - @ref InhalerMethodology
 - Electrocardiogram (%ECG) Methodology (see @ref CardiovascularMethodology)
+- Supplemental Oxygen Methodology (see @ref RespiratoryMethodology)
 
-Environment:
+%Environment:
 - @ref EnvironmentMethodology
 
 ### Solvers
