@@ -356,6 +356,33 @@ bool PulseController::SetupPatient()
     Warning(ss);
   }
 
+  //jbw - When it's added to the CDM, use this for lung volumes... update validation to use instead of weight.
+  ////IDEAL BODY WEIGHT ----------------------------------------------------
+  ///// \cite green2017green
+  ////page 295
+  //if (m_Patient->HasIdealBodyWeight())
+  //{
+  //  ss << "Patient ideal body weight cannot be set. It is determined by weight and body fat fraction.";
+  //  Error(ss);
+  //  err = true;
+  //}
+  //double height_in = m_Patient->GetHeight().GetValue(LengthUnit::in);
+  //double idealWeight_kg = 0.0;
+  //if (m_Patient->GetSex() == ePatient_Sex::Female)
+  //{
+  //  //Female
+  //  idealWeight_kg = 45.5 + 2.3 * (height_in - 60.0);
+  //}
+  //else
+  //{
+  //  //Male
+  //  idealWeight_kg = 50.0 + 2.3 * (height_in - 60.0);
+  //}
+  //
+  //m_Patient->GetIdealBodyWeight().SetValue(idealWeight_kg, MassUnit::kg);
+  //ss << "Patient ideal body weight computed and set to " << idealWeight_kg << " kg.";
+  //Info(ss);
+
   //WEIGHT ---------------------------------------------------------------
   /// \cite World2006bmi
   double weight_kg;
@@ -647,10 +674,11 @@ bool PulseController::SetupPatient()
 
   //Respiration Rate ---------------------------------------------------------------
   //Note: This is overwritten after stabilization
+  ///cite green2017green
   double respirationRate_bpm;
   double respirationRateStandard_bpm = 12.0;
-  double respirationRateMax_bpm = 20.0;
-  double respirationRateMin_bpm = 12.0;
+  double respirationRateMax_bpm = 20.0; 
+  double respirationRateMin_bpm = 8.0;
   if (!m_Patient->HasRespirationRateBaseline())
   {
     respirationRate_bpm = respirationRateStandard_bpm;
@@ -3636,9 +3664,10 @@ void PulseController::SetupRespiratory()
   double TotalAirwayResistance_cmH2O_s_Per_L = 1.5; ///cite Levitzky2013pulmonary
 
   //Should add up to 100% of total airway resistance
-  double TracheaResistancePercent = 0.6; //About 35% to 50% of total resitance to airflow is in the upper airways  ///cite Levitzky2013pulmonary
+  ///cite kacmarek2016egan
+  double TracheaResistancePercent = 0.5;
   double BronchiResistancePercent = 0.3;
-  double AlveoliDuctResistancePercent = 0.1;
+  double AlveoliDuctResistancePercent = 0.2;
 
   //Based on equivalent resistance circuit math
   double TracheaResistance = TotalAirwayResistance_cmH2O_s_Per_L - (BronchiResistancePercent * TotalAirwayResistance_cmH2O_s_Per_L + AlveoliDuctResistancePercent *TotalAirwayResistance_cmH2O_s_Per_L) / 2;
