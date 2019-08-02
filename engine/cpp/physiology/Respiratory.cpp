@@ -1995,19 +1995,33 @@ void Respiratory::CalculateVitalSigns()
 
   GetRespirationDriverPressure().Set(m_RespiratoryMuscle->GetNextPressure());
   GetRespirationMusclePressure().Set(m_RespiratoryMuscle->GetNextPressure());
-  double mouthPressure_cmH2O = m_Mouth->GetPressure(PressureUnit::cmH2O);
-  double alveoliPressure_cmH2O = (m_LeftAlveoli->GetNextPressure().GetValue(PressureUnit::cmH2O) + m_RightAlveoli->GetNextPressure().GetValue(PressureUnit::cmH2O)) / 2.0; //Average of L and R
+
+  /// \cite kacmarek2016egan page 227-228 ---------------------------------------------------
+  double airwayOpeningPressure_cmH2O = m_Mouth->GetPressure(PressureUnit::cmH2O);
+  double alveolarPressure_cmH2O = (m_LeftAlveoli->GetNextPressure().GetValue(PressureUnit::cmH2O) + m_RightAlveoli->GetNextPressure().GetValue(PressureUnit::cmH2O)) / 2.0; //Average of L and R
   double pleuralPressure_cmH2O = (m_LeftPleural->GetNextPressure().GetValue(PressureUnit::cmH2O) + m_RightPleural->GetNextPressure().GetValue(PressureUnit::cmH2O)) / 2.0; //Average of L and R
-  double transpulmonaryPressure_cmH2O = alveoliPressure_cmH2O - pleuralPressure_cmH2O;
+  double bodySurfacePressure_cmH2O = m_Ambient->GetPressure(PressureUnit::cmH2O);
+
+  double transrespiratoryPressure_cmH2O = airwayOpeningPressure_cmH2O - bodySurfacePressure_cmH2O;
+  double transairwayPressure_cmH2O = airwayOpeningPressure_cmH2O - alveolarPressure_cmH2O;
+  double transpulmonaryPressure_cmH2O = airwayOpeningPressure_cmH2O - pleuralPressure_cmH2O;
+  double transalveolarPressure_cmH2O = alveolarPressure_cmH2O - pleuralPressure_cmH2O;
+  double transthoracicPressure_cmH2O = alveolarPressure_cmH2O - bodySurfacePressure_cmH2O;
+  double transChestWallPressure_cmH2O = pleuralPressure_cmH2O - bodySurfacePressure_cmH2O;
+  
+  //jbw - Add these once they're in the CDM
+  //GetTransrespiratoryPressure().SetValue(transrespiratoryPressure_cmH2O, PressureUnit::cmH2O);
+  //GetTransairwayPressure().SetValue(transairwayPressure_cmH2O, PressureUnit::cmH2O);
   GetTranspulmonaryPressure().SetValue(transpulmonaryPressure_cmH2O, PressureUnit::cmH2O);
-  double chestWallTransmuralPressure_cmH2O = pleuralPressure_cmH2O - m_Ambient->GetPressure(PressureUnit::cmH2O);
-  //jbw - add to system data
-  //m_data.GetDataTrack().Probe("chestWallTransmuralPressure_cmH2O", chestWallTransmuralPressure_cmH2O);
+  //GetTransalveolarPressure().SetValue(transalveolarPressure_cmH2O, PressureUnit::cmH2O);
+  //GetTransthoracicPressure().SetValue(transthoracicPressure_cmH2O, PressureUnit::cmH2O);
+  //GetTransChestWallPressure().SetValue(transChestWallPressure_cmH2O, PressureUnit::cmH2O);
+  //----------------------------------------------------------------------------------------
 
   if(SEScalar::IsZero(tracheaFlow_L_Per_s, ZERO_APPROX))
     GetPulmonaryResistance().SetValue(std::numeric_limits<double>::infinity(), FlowResistanceUnit::cmH2O_s_Per_L);
   else
-    GetPulmonaryResistance().SetValue((mouthPressure_cmH2O - alveoliPressure_cmH2O) / tracheaFlow_L_Per_s, FlowResistanceUnit::cmH2O_s_Per_L);
+    GetPulmonaryResistance().SetValue((airwayOpeningPressure_cmH2O - alveolarPressure_cmH2O) / tracheaFlow_L_Per_s, FlowResistanceUnit::cmH2O_s_Per_L);
 
   double averageAlveoliO2PartialPressure_mmHg = (m_LeftAlveoliO2->GetPartialPressure(PressureUnit::mmHg) + m_RightAlveoliO2->GetPartialPressure(PressureUnit::mmHg)) / 2.0;
   GetAlveolarArterialGradient().SetValue(averageAlveoliO2PartialPressure_mmHg - m_AortaO2->GetPartialPressure(PressureUnit::mmHg), PressureUnit::mmHg);
@@ -2041,7 +2055,7 @@ void Respiratory::CalculateVitalSigns()
       m_BottomBreathDeadSpaceVolume_L = m_RightDeadSpace->GetNextVolume().GetValue(VolumeUnit::L) + m_LeftDeadSpace->GetNextVolume().GetValue(VolumeUnit::L);
       m_BottomBreathPleuralVolume_L = m_RightPleural->GetNextVolume().GetValue(VolumeUnit::L) + m_LeftPleural->GetNextVolume().GetValue(VolumeUnit::L);
       m_BottomBreathPleuralPressure_cmH2O = pleuralPressure_cmH2O;
-      m_BottomBreathAlveoliPressure_cmH2O = alveoliPressure_cmH2O;
+      m_BottomBreathAlveoliPressure_cmH2O = alveolarPressure_cmH2O;
       m_BottomBreathDriverPressure_cmH2O = m_RespiratoryMuscle->GetNextPressure(PressureUnit::cmH2O);
     }
 
@@ -2103,7 +2117,7 @@ void Respiratory::CalculateVitalSigns()
       m_TopBreathDeadSpaceVolume_L = m_RightDeadSpace->GetNextVolume().GetValue(VolumeUnit::L) + m_LeftDeadSpace->GetNextVolume().GetValue(VolumeUnit::L);
       m_TopBreathPleuralVolume_L = m_RightPleural->GetNextVolume().GetValue(VolumeUnit::L) + m_LeftPleural->GetNextVolume().GetValue(VolumeUnit::L);
       m_TopBreathPleuralPressure_cmH2O = pleuralPressure_cmH2O;
-      m_TopBreathAlveoliPressure_cmH2O = alveoliPressure_cmH2O;
+      m_TopBreathAlveoliPressure_cmH2O = alveolarPressure_cmH2O;
       m_TopBreathDriverPressure_cmH2O = m_RespiratoryMuscle->GetNextPressure(PressureUnit::cmH2O);
       m_TopCarinaO2 = m_CarinaO2->GetVolumeFraction().GetValue();
     }

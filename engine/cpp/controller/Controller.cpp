@@ -674,7 +674,7 @@ bool PulseController::SetupPatient()
 
   //Respiration Rate ---------------------------------------------------------------
   //Note: This is overwritten after stabilization
-  ///cite green2017green
+  /// \cite green2017green
   double respirationRate_bpm;
   double respirationRateStandard_bpm = 12.0;
   double respirationRateMax_bpm = 20.0; 
@@ -808,7 +808,7 @@ bool PulseController::SetupPatient()
     err = true;
   }
 
-  double tidalVolume_L = 37.0 * weight_kg / 1000.0 - functionalResidualCapacity_L;
+  double tidalVolume_L = 37.0 * weight_kg / 1000.0 - functionalResidualCapacity_L; 
   double vitalCapacity = totalLungCapacity_L - residualVolume_L;
   double expiratoryReserveVolume = functionalResidualCapacity_L - residualVolume_L;
   double inspiratoryReserveVolume = totalLungCapacity_L - functionalResidualCapacity_L - tidalVolume_L;
@@ -846,7 +846,7 @@ bool PulseController::SetupPatient()
   double standardAlveoliSurfaceArea_m2 = 70.0;
   double alveoliSurfaceArea_m2;
   //Scale the alveoli surface area based on the size of the patient�s lungs  
-  /// cite ganong1995review
+  /// \cite ganong1995review
   double standardTotalLungCapacity_L = 6.17; //This is the Total Lung Capacity of our standard patient  
   double computedAlveoliSurfaceArea_m2 = totalLungCapacity_L / standardTotalLungCapacity_L * standardAlveoliSurfaceArea_m2;
   if (!m_Patient->HasAlveoliSurfaceArea())
@@ -3656,15 +3656,15 @@ void PulseController::SetupRespiratory()
   cRespiratory.AddNode(*Ambient);  
                                      
   //Input parameters
-  double RespiratorySystemCompliance_L_Per_cmH20 = 0.1; ///cite Levitzky2013pulmonary
+  double RespiratorySystemCompliance_L_Per_cmH20 = 0.1; /// \cite Levitzky2013pulmonary
   double RespiratorySideCompliance_L_Per_cmH2O = RespiratorySystemCompliance_L_Per_cmH20 / 2.0; //compliances in parallel sum, so divide by 2 for each lung
   double LungCompliance_L_Per_cmH2O = 2.0 * RespiratorySideCompliance_L_Per_cmH2O; //compliances in series, so multiply by 2 for equal split
-  double ChestWallCompliance_L_Per_cmH2O = LungCompliance_L_Per_cmH2O;
-  double IntrapleuralPressure_cmH2O = -5.0; ///cite Levitzky2013pulmonary
-  double TotalAirwayResistance_cmH2O_s_Per_L = 1.5; ///cite Levitzky2013pulmonary
+  double ChestWallCompliance_L_Per_cmH2O = LungCompliance_L_Per_cmH2O; // =0.1 L/cmH2O each /// \cite kacmarek2016egan p233
+  double IntrapleuralPressure_cmH2O = -5.0; /// \cite Levitzky2013pulmonary
+  double TotalAirwayResistance_cmH2O_s_Per_L = 1.5; /// \cite Levitzky2013pulmonary
 
   //Should add up to 100% of total airway resistance
-  ///cite kacmarek2016egan
+  /// \cite kacmarek2016egan
   double TracheaResistancePercent = 0.5;
   double BronchiResistancePercent = 0.3;
   double AlveoliDuctResistancePercent = 0.2;
@@ -3675,10 +3675,10 @@ void PulseController::SetupRespiratory()
   double AlveoliDuctResistance = 2 * (TotalAirwayResistance_cmH2O_s_Per_L - TracheaResistance) - BronchiResistance;
 
   double FunctionalResidualCapacity_L = m_Patient->GetFunctionalResidualCapacity(VolumeUnit::L);
-  double anatomicDeadSpaceVolume_L = 0.002 * m_Patient->GetWeight(MassUnit::kg); //Should not change with diseases ///cite Levitzky2013pulmonary
-  double alveolarDeadSpaceVolume_L = 0.0;  //Should change with certain diseases ///cite Levitzky2013pulmonary
+  double anatomicDeadSpaceVolume_L = 0.002 * m_Patient->GetWeight(MassUnit::kg); //Should not change with diseases /// \cite Levitzky2013pulmonary
+  double alveolarDeadSpaceVolume_L = 0.0;  //Should change with certain diseases /// \cite Levitzky2013pulmonary
   double physiologicDeadSpaceVolume_L = anatomicDeadSpaceVolume_L + alveolarDeadSpaceVolume_L;
-  //double PleuralVolume_L = 20.0 / 1000.0; //this is a liquid volume  ///cite Levitzky2013pulmonary
+  //double PleuralVolume_L = 20.0 / 1000.0; //this is a liquid volume  /// \cite Levitzky2013pulmonary
   double PleuralVolume_L = FunctionalResidualCapacity_L; //Make this an gas volume to mimic the liquid volume
 
   double AmbientPresure = 1033.23; // = 1 atm
@@ -4766,7 +4766,7 @@ void PulseController::SetupInternalTemperature()
   SEThermalCircuitPath& CoreToSkin = cIntemperature.CreatePath(Core, Skin, pulse::InternalTemperaturePath::InternalCoreToInternalSkin);
   CoreToSkin.GetResistanceBaseline().SetValue(0.056, HeatResistanceUnit::K_Per_W);
 
-  double skinMassFraction = 0.09; //0.09 is fraction of mass that the skin takes up in a typical human /cite herman2006physics
+  double skinMassFraction = 0.09; //0.09 is fraction of mass that the skin takes up in a typical human \cite herman2006physics
   SEThermalCircuitPath& CoreToTemperatureGround = cIntemperature.CreatePath(Core, Ground, pulse::InternalTemperaturePath::InternalCoreToGround);
   CoreToTemperatureGround.GetCapacitanceBaseline().SetValue((1.0 - skinMassFraction)*m_Patient->GetWeight(MassUnit::kg) * GetConfiguration().GetBodySpecificHeat(HeatCapacitancePerMassUnit::J_Per_K_kg), HeatCapacitanceUnit::J_Per_K);
   Core.GetHeatBaseline().SetValue(CoreToTemperatureGround.GetCapacitanceBaseline().GetValue(HeatCapacitanceUnit::J_Per_K) * Core.GetTemperature().GetValue(TemperatureUnit::K), EnergyUnit::J);
