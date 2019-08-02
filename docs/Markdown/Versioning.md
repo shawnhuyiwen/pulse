@@ -9,7 +9,7 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
 - PATCH changes when we make backwards-compatible bug fixes.
 - Release Stage - We have extended this versioning with a <a href="http://en.wikipedia.org/wiki/Software_release_life_cycle">release stage</a>
 
-## Pulse v2.2.0 (August 2nd, 2019)
+## Pulse v2.2.0 (August 2019)
 
 - Software Architecture
   - CMake integration improvements
@@ -46,11 +46,11 @@ The following are known issues with the current version of the software:
   - Limited conversion and use within the engine
 - Oxygen saturation drops too sharply
 
-## Pulse v2.1.0 (Feb 22nd, 2019)
+## Pulse v2.1.0 (Feb 2019)
 
 - Software updates necessary for integration with Unity
 
-## Pulse v2.0.0 (Jan 20th, 2019)
+## Pulse v2.0.0 (Jan 2019)
 
 - Software Architecture
   - Converted ASCII file I/O to JSON (Compliant to Protobuf IDLs)
@@ -66,7 +66,7 @@ The following are known issues with the current version of the software:
   - Added dissolved oxygen and carbon dioxide to IV fluids to resolve issues with fluid resuscitation
 
 
-### Pulse v1.1.0 (June 25th, 2018)
+### Pulse v1.1.0 (June 2018)
 
 - Updated Wiki for using Pulse in your application
 - Added C# example interface
@@ -86,7 +86,7 @@ The following are known issues with the current version of the software:
 - CMake build improvements
   - Pulse builds and runs on single board pc's and all major operating systems
 
-### Pulse v1.0.0 (September 1st, 2017) :
+### Pulse v1.0.0 (September 2017) :
 
 - Fixed multi-platform compiling bugs
 - Moved from an in-source to out-of-source build
