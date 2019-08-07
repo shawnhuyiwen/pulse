@@ -5,15 +5,15 @@ public class PBAnesthesiaMachine
 {
   public static string Connection_Name(SEAnesthesiaMachine.Connection c)
   {
-    return ((Cdm.eAnesthesiaMachine.Types.Connection)(int)c).ToString();
+    return ((Cdm.AnesthesiaMachineData.Types.eConnection)(int)c).ToString();
   }
   public static string OxygenSource_Name(SEAnesthesiaMachine.OxygenSource os)
   {
-    return ((Cdm.eAnesthesiaMachine.Types.OxygenSource)(int)os).ToString();
+    return ((Cdm.AnesthesiaMachineData.Types.eOxygenSource)(int)os).ToString();
   }
   public static string PrimaryGas_Name(SEAnesthesiaMachine.PrimaryGas pg)
   {
-    return ((Cdm.eAnesthesiaMachine.Types.PrimaryGas)(int)pg).ToString();
+    return ((Cdm.AnesthesiaMachineData.Types.ePrimaryGas)(int)pg).ToString();
   }
 
   #region SEAnesthesiaMachine
@@ -59,17 +59,17 @@ public class PBAnesthesiaMachine
   }
   protected static void Unload(SEAnesthesiaMachine src, Cdm.AnesthesiaMachineData dst)
   {
-    dst.Connection = (Cdm.eAnesthesiaMachine.Types.Connection)(int)src.GetConnection();
+    dst.Connection = (Cdm.AnesthesiaMachineData.Types.eConnection)(int)src.GetConnection();
     if (src.HasInletFlow())
       dst.InletFlow = PBProperty.Unload(src.GetInletFlow());
     if (src.HasInspiratoryExpiratoryRatio())
       dst.InspiratoryExpiratoryRatio = PBProperty.Unload(src.GetInspiratoryExpiratoryRatio());
     if (src.HasOxygenFraction())
       dst.OxygenFraction = PBProperty.Unload(src.GetOxygenFraction());
-    dst.OxygenSource = (Cdm.eAnesthesiaMachine.Types.OxygenSource)(int)src.GetOxygenSource();
+    dst.OxygenSource = (Cdm.AnesthesiaMachineData.Types.eOxygenSource)(int)src.GetOxygenSource();
     if (src.HasPositiveEndExpiredPressure())
       dst.PositiveEndExpiredPressure = PBProperty.Unload(src.GetPositiveEndExpiredPressure());
-    dst.PrimaryGas = (Cdm.eAnesthesiaMachine.Types.PrimaryGas)(int)src.GetPrimaryGas();
+    dst.PrimaryGas = (Cdm.AnesthesiaMachineData.Types.ePrimaryGas)(int)src.GetPrimaryGas();
     if (src.HasRespiratoryRate())
       dst.RespiratoryRate = PBProperty.Unload(src.GetRespiratoryRate());
     if (src.HasReliefValvePressure())

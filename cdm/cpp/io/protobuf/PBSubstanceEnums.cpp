@@ -4,17 +4,17 @@
 #include "stdafx.h"
 #include "substance/SESubstance.h"
 #include "substance/SESubstancePhysicochemicals.h"
-#include "bind/cpp/cdm/SubstanceEnums.pb.h"
+#include "bind/cpp/cdm/Substance.pb.h"
 
 const std::string& eSubstance_State_Name(eSubstance_State m)
 {
-  return cdm::eSubstance_State_Name((cdm::eSubstance_State)m);
+  return cdm::SubstanceData::eState_Name((cdm::SubstanceData::eState)m);
 }
 const std::string& eSubstance_IonicState_Name(eSubstance_IonicState m)
 {
-  return cdm::eSubstance_IonicState_Name((cdm::eSubstance_IonicState)m);
+  return cdm::SubstancePhysicochemicalsData::eIonicState_Name((cdm::SubstancePhysicochemicalsData::eIonicState)m);
 }
 const std::string& eSubstance_BindingProtein_Name(eSubstance_BindingProtein m)
 {
-  return cdm::eSubstance_BindingProtein_Name((cdm::eSubstance_BindingProtein)m);
+  return cdm::SubstancePhysicochemicalsData::eBindingProtein_Name((cdm::SubstancePhysicochemicalsData::eBindingProtein)m);
 }

@@ -75,21 +75,6 @@ void PBPatient::Serialize(const cdm::PatientData& src, SEPatient& dst)
     PBProperty::Load(src.totallungcapacity(), dst.GetTotalLungCapacity());
   if (src.has_vitalcapacity())
     PBProperty::Load(src.vitalcapacity(), dst.GetVitalCapacity());
-
-  SEScalarTime time;
-  for (int i = 0; i < src.activeevent_size(); i++)
-  {
-    const cdm::PatientData::ActiveEventData& e = src.activeevent(i);
-    if (e.has_duration())
-      PBProperty::Load(e.duration(), time);
-    {
-      dst.m_ss << "Active Patient event " << cdm::ePatient_Event_Name(e.event()) << " does not have time associated with it";
-      dst.Warning(dst.m_ss);
-      time.SetValue(0, TimeUnit::s);
-    }
-    dst.m_EventState[(ePatient_Event)e.event()] = true;
-    dst.m_EventDuration_s[(ePatient_Event)e.event()] = time.GetValue(TimeUnit::s);
-  }
 }
 
 cdm::PatientData* PBPatient::Unload(const SEPatient& src)
@@ -102,7 +87,7 @@ void PBPatient::Serialize(const SEPatient& src, cdm::PatientData& dst)
 {
   if (src.HasName())
     dst.set_name(src.m_Name);
-  dst.set_sex((cdm::ePatient_Sex)src.m_Sex);
+  dst.set_sex((cdm::PatientData::eSex)src.m_Sex);
   if (src.HasAge())
     dst.set_allocated_age(PBProperty::Unload(*src.m_Age));
   if (src.HasWeight())
@@ -159,24 +144,6 @@ void PBPatient::Serialize(const SEPatient& src, cdm::PatientData& dst)
     dst.set_allocated_totallungcapacity(PBProperty::Unload(*src.m_TotalLungCapacity));
   if (src.HasVitalCapacity())
     dst.set_allocated_vitalcapacity(PBProperty::Unload(*src.m_VitalCapacity));
-
-  SEScalarTime time;
-  for (auto itr : src.m_EventState)
-  {
-    if (!itr.second)
-      continue;
-
-    auto it2 = src.m_EventDuration_s.find(itr.first);
-    if (it2 == src.m_EventDuration_s.end())// This should not happen... 
-      time.SetValue(0, TimeUnit::s);
-    else
-      time.SetValue(it2->second, TimeUnit::s);
-
-    cdm::PatientData_ActiveEventData* eData = dst.add_activeevent();
-
-    eData->set_event((cdm::ePatient_Event)itr.first);
-    eData->set_allocated_duration(PBProperty::Unload(time));
-  }
 }
 void PBPatient::Copy(const SEPatient& src, SEPatient& dst)
 {

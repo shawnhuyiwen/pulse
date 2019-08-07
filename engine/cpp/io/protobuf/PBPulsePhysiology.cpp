@@ -320,8 +320,8 @@ void PBPulsePhysiology::Serialize(const NervousData& src, Nervous& dst)
   PBPhysiology::Serialize(src.common(), dst);
   // We assume state have to be after all stabilization
   dst.m_FeedbackActive = true;
-  dst.m_ArterialOxygenSetPoint_mmHg = src.arterialoxygensetpoint_mmhg();
-  dst.m_ArterialCarbonDioxideSetPoint_mmHg = src.arterialcarbondioxidesetpoint_mmhg();
+  dst.m_ArterialOxygenBaseline_mmHg = src.arterialoxygenbaseline_mmhg();
+  dst.m_ArterialCarbonDioxideBaseline_mmHg = src.arterialcarbondioxidebaseline_mmhg();
 }
 NervousData* PBPulsePhysiology::Unload(const Nervous& src)
 {
@@ -332,8 +332,8 @@ NervousData* PBPulsePhysiology::Unload(const Nervous& src)
 void PBPulsePhysiology::Serialize(const Nervous& src, NervousData& dst)
 {
   PBPhysiology::Serialize(src, *dst.mutable_common());
-  dst.set_arterialoxygensetpoint_mmhg(src.m_ArterialOxygenSetPoint_mmHg);
-  dst.set_arterialcarbondioxidesetpoint_mmhg(src.m_ArterialCarbonDioxideSetPoint_mmHg);
+  dst.set_arterialoxygenbaseline_mmhg(src.m_ArterialOxygenBaseline_mmHg);
+  dst.set_arterialcarbondioxidebaseline_mmhg(src.m_ArterialCarbonDioxideBaseline_mmHg);
 }
 
 void PBPulsePhysiology::Load(const RenalData& src, Renal& dst)

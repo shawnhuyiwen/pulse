@@ -18,6 +18,7 @@ public:
   static const PressureUnit cmH2O;
   static const PressureUnit psi;
   static const PressureUnit atm;
+  static const PressureUnit mbar;
 };
 
 class CDM_DECL SEScalarPressure : public SEScalarQuantity<PressureUnit>

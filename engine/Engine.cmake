@@ -6,6 +6,8 @@ set(PULSE_FILES
   "cpp/PulsePhysiologySystems.h"
   "cpp/PulseScenario.h"
   "cpp/PulseScenario.cpp"
+  "cpp/PulseScenarioExec.h"
+  "cpp/PulseScenarioExec.cpp"
 )
 source_group("" FILES ${PULSE_FILES})
 set(SOURCE ${PULSE_FILES})
@@ -19,8 +21,8 @@ set(PULSE_CONTROLLER_FILES
   "cpp/controller/Controller.cpp"
   "cpp/controller/Engine.h"
   "cpp/controller/Engine.cpp"
-  "cpp/controller/ScenarioExec.h"
-  "cpp/controller/ScenarioExec.cpp"
+  "cpp/controller/PatientSetup.h"
+  "cpp/controller/PatientSetup.cpp"
   "cpp/controller/Substances.h"
   "cpp/controller/Substances.cpp"
   "cpp/controller/System.h"
@@ -138,4 +140,5 @@ install(TARGETS PulseEngine
         ARCHIVE DESTINATION ${INSTALL_LIB})
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/cpp/PulsePhysiologyEngine.h DESTINATION ${CMAKE_INSTALL_PREFIX}/include)
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/cpp/PulseConfiguration.h DESTINATION ${CMAKE_INSTALL_PREFIX}/include)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/cpp/PulseScenarioExec.h DESTINATION ${CMAKE_INSTALL_PREFIX}/include)
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/cpp/PulseScenario.h DESTINATION ${CMAKE_INSTALL_PREFIX}/include)

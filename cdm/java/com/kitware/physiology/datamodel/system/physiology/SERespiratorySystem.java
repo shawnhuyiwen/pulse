@@ -19,7 +19,6 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
   protected SEScalarVolumePerTime   inspiratoryFlow;
   protected SEScalarFlowCompliance  pulmonaryCompliance;
   protected SEScalarFlowResistance  pulmonaryResistance;
-  protected SEScalarPressure        respirationDriverPressure;
   protected SEScalarPressure        respirationMusclePressure;
   protected SEScalarFrequency       respirationRate;
   protected SEScalar                specificVentilation;
@@ -42,7 +41,6 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
     inspiratoryFlow = null;
     pulmonaryCompliance = null;
     pulmonaryResistance = null;
-    respirationDriverPressure = null;
     respirationMusclePressure = null;
     respirationRate = null;
     specificVentilation = null;
@@ -74,8 +72,6 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
       pulmonaryCompliance.invalidate();
     if (pulmonaryResistance != null)
       pulmonaryResistance.invalidate();
-    if (respirationDriverPressure != null)
-      respirationDriverPressure.invalidate();
     if (respirationMusclePressure != null)
       respirationMusclePressure.invalidate();
     if (respirationRate != null)
@@ -116,8 +112,6 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
       SEScalarFlowCompliance.load(src.getPulmonaryCompliance(),dst.getPulmonaryCompliance()); 
     if (src.hasPulmonaryResistance())
       SEScalarFlowResistance.load(src.getPulmonaryResistance(),dst.getPulmonaryResistance()); 
-    if (src.hasRespirationDriverPressure())
-      SEScalarPressure.load(src.getRespirationDriverPressure(),dst.getRespirationDriverPressure());
     if (src.hasRespirationMusclePressure())
       SEScalarPressure.load(src.getRespirationMusclePressure(),dst.getRespirationMusclePressure());
     if (src.hasRespirationRate())
@@ -165,8 +159,6 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
       dst.setPulmonaryCompliance(SEScalarFlowCompliance.unload(src.getPulmonaryCompliance()));
     if (src.hasPulmonaryResistance())
       dst.setPulmonaryResistance(SEScalarFlowResistance.unload(src.getPulmonaryResistance()));  
-    if (src.hasRespirationDriverPressure())
-      dst.setRespirationDriverPressure(SEScalarPressure.unload(src.getRespirationDriverPressure()));
     if (src.hasRespirationMusclePressure())
       dst.setRespirationMusclePressure(SEScalarPressure.unload(src.getRespirationMusclePressure()));
     if (src.hasRespirationRate())
@@ -296,20 +288,6 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
     if (pulmonaryResistance == null)
       pulmonaryResistance = new SEScalarFlowResistance();
     return pulmonaryResistance;
-  }
-  
-  /*
-   * Respiration Rate
-   */
-  public boolean hasRespirationDriverPressure()
-  {
-    return respirationDriverPressure == null ? false : respirationDriverPressure.isValid();
-  }
-  public SEScalarPressure getRespirationDriverPressure()
-  {
-    if (respirationDriverPressure == null)
-      respirationDriverPressure = new SEScalarPressure();
-    return respirationDriverPressure;
   }
   
   public boolean hasRespirationMusclePressure()

@@ -26,9 +26,12 @@ enum class CompartmentUpdate {None,
                               Mass, Concentration, 
                               pH, Molarity,
                               PartialPressure, Saturation};
+enum class TrackMode { CSV, Dynamic };
 class SEDataRequestScalar : public SEGenericScalar
 {
-public:
+  friend class SEEngineTracker;
+  friend class SEDynamicStabilizationPropertyConvergence;
+protected:
   SEDataRequestScalar(Logger* logger) : SEGenericScalar(logger)
   {
     Heading.clear();
@@ -71,15 +74,21 @@ public:
 
   bool ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds);
 
-  const SEDataRequestScalar* GetScalar(const SEDataRequest& dr) const;
-
   virtual void SetupRequests();
-  virtual void TrackData(double currentTime_s);
+  virtual void TrackData(double currentTime_s=0);
   virtual void PullData();
   virtual bool TrackRequest(SEDataRequest& dr);
   virtual void ForceConnection() { m_ForceConnection = true; }
+
+  void SetTrackMode(TrackMode m) { m_Mode = m; }
+  TrackMode GetTrackMode() { return m_Mode; }
+
+  double GetValue(const SEDataRequest& dr) const;
   
 protected:
+  const SEDataRequestScalar* GetScalar(const SEDataRequest& dr) const;
+
+  TrackMode                    m_Mode= TrackMode::CSV;
   bool                         m_ForceConnection;
   DataTrack*                   m_DataTrack;
 

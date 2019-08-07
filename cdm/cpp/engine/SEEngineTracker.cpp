@@ -143,6 +143,16 @@ DataTrack& SEEngineTracker::GetDataTrack()
   return *m_DataTrack;
 }
 
+double SEEngineTracker::GetValue(const SEDataRequest& dr) const
+{
+  auto drs = GetScalar(dr);
+  if (drs == nullptr)
+    return SEScalar::dNaN();
+  if (dr.HasUnit())
+    return drs->GetValue(*dr.GetUnit());
+  return drs->GetValue();
+}
+
 const SEDataRequestScalar* SEEngineTracker::GetScalar(const SEDataRequest& dr) const
 {
   auto found = m_Request2Scalar.find(&dr);
@@ -153,9 +163,28 @@ const SEDataRequestScalar* SEEngineTracker::GetScalar(const SEDataRequest& dr) c
 
 void SEEngineTracker::SetupRequests()
 {
-  bool isOpen = m_ResultsStream.is_open();
-  if (!isOpen || m_ForceConnection)
-  {// Process/Hook up all requests with their associated scalers
+  if (m_Mode == TrackMode::CSV)
+  {
+    bool isOpen = m_ResultsStream.is_open();
+    if (!isOpen || m_ForceConnection)
+    {// Process/Hook up all requests with their associated scalers
+      for (SEDataRequest* dr : m_DataRequestMgr->GetDataRequests())
+      {
+        if (!TrackRequest(*dr))
+        {// Could not hook this up, get rid of it
+          m_ss << "Unable to find data for " << m_Request2Scalar[dr]->Heading;
+          Error(m_ss);
+        }
+      }
+      m_ForceConnection = false;
+    }
+    // Create the file now that all probes and requests have been added to the track
+    // So we get columns for all of our data
+    if (!isOpen)
+      m_DataTrack->CreateFile(m_DataRequestMgr->GetResultFilename().c_str(), m_ResultsStream);
+  }
+  else
+  {
     for (SEDataRequest* dr : m_DataRequestMgr->GetDataRequests())
     {
       if (!TrackRequest(*dr))
@@ -164,12 +193,7 @@ void SEEngineTracker::SetupRequests()
         Error(m_ss);
       }
     }
-    m_ForceConnection = false;
   }
-  // Create the file now that all probes and requests have been added to the track
-  // So we get columns for all of our data
-  if (!isOpen)
-    m_DataTrack->CreateFile(m_DataRequestMgr->GetResultFilename().c_str(), m_ResultsStream);
 }
 
 void SEEngineTracker::TrackData(double time_s)
@@ -179,7 +203,9 @@ void SEEngineTracker::TrackData(double time_s)
 
   SetupRequests();
   PullData();
-  m_DataTrack->StreamProbesToFile(time_s, m_ResultsStream);
+
+  if(m_Mode == TrackMode::CSV)
+    m_DataTrack->StreamProbesToFile(time_s, m_ResultsStream);
 }
 void SEEngineTracker::PullData()
 {
@@ -219,7 +245,10 @@ void SEEngineTracker::PullData()
 
 
 bool SEEngineTracker::TrackRequest(SEDataRequest& dr)
-{  
+{
+  if (m_Request2Scalar.find(&dr) != m_Request2Scalar.end())
+    return true; // We have this connected already
+
   SEDataRequestScalar* ds=new SEDataRequestScalar(GetLogger());  
   m_Request2Scalar[&dr]=ds;
 

@@ -8,6 +8,14 @@ import "cdm/SubstanceQuantity.proto";
 
 message CompartmentData
 {
+  enum eType
+  {
+    Electrical = 0;
+    Gas        = 1;
+    Liquid     = 2;
+    Thermal    = 3;
+    Tissue     = 4;
+  }
   string                                 Name                                     = 1;
   repeated string                        Node                                     = 2;
   repeated string                        Child                                    = 3;

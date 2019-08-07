@@ -29,11 +29,13 @@
 #include "system/physiology/SENervousSystem.h"
 // CDM
 #include "patient/SEPatient.h"
+#include "engine/SEEventManager.h"
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceTransport.h"
 #include "circuit/fluid/SEFluidCircuit.h"
 #include "circuit/fluid/SEFluidCircuitCalculator.h"
 #include "compartment/fluid/SELiquidCompartmentGraph.h"
+#include "compartment/fluid/SEGasCompartment.h"
 #include "compartment/substances/SELiquidSubstanceQuantity.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarPressure.h"
@@ -156,6 +158,9 @@ void Cardiovascular::Clear()
   m_RightPulmonaryVeins = nullptr;
   m_VenaCava = nullptr;
   m_AbdominalCavity = nullptr;
+
+  m_leftPleuralCavity = nullptr;
+  m_rightPleuralCavity = nullptr;
 
   m_CardiacCycleArterialPressure_mmHg->Clear();
   m_CardiacCycleArterialCO2PartialPressure_mmHg->Clear();
@@ -283,6 +288,9 @@ void Cardiovascular::SetUp()
   m_LeftHeart = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftHeart);
   m_RightHeart = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightHeart);
   m_AbdominalCavity = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::AbdominalCavity);
+  //Respiratory Compartments
+  m_leftPleuralCavity = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::LeftPleuralCavity);
+  m_rightPleuralCavity = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::RightPleuralCavity);
   //Nodes
   m_MainPulmonaryArteries = m_CirculatoryCircuit->GetNode(pulse::CardiovascularNode::MainPulmonaryArteries);
   m_LeftHeart2 = m_CirculatoryCircuit->GetNode(pulse::CardiovascularNode::LeftHeart2);
@@ -596,6 +604,7 @@ void Cardiovascular::PreProcess()
   HeartDriver();
   ProcessActions();
   UpdateHeartRhythm();
+  CalculatePleuralCavityVenousEffects();
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -739,7 +748,7 @@ void Cardiovascular::CalculateVitalSigns()
   /// \event Patient: Hypovolemic Shock: blood volume below 65% of its normal value
     if (GetBloodVolume().GetValue(VolumeUnit::mL) <= (m_data.GetConfiguration().GetMinimumBloodVolumeFraction()*m_patient->GetBloodVolumeBaseline(VolumeUnit::mL)))
     {
-      m_patient->SetEvent(ePatient_Event::HypovolemicShock, true, m_data.GetSimulationTime());
+      m_data.GetEvents().SetEvent(eEvent::HypovolemicShock, true, m_data.GetSimulationTime());
 
       /// \event Patient: blood loss below 50%, irreversible state enacted 
       // @cite Gutierrez2004HemorrhagicShock
@@ -749,12 +758,12 @@ void Cardiovascular::CalculateVitalSigns()
         m_ss << "Over half the patients blood volume has been lost. The patient is now in an irreversible state.";
         Warning(m_ss);
         /// \irreversible Over half the patients blood volume has been lost.
-        m_patient->SetEvent(ePatient_Event::IrreversibleState, true, m_data.GetSimulationTime());
+        m_data.GetEvents().SetEvent(eEvent::IrreversibleState, true, m_data.GetSimulationTime());
       }
     }
     else
     {
-      m_patient->SetEvent(ePatient_Event::HypovolemicShock, false, m_data.GetSimulationTime());
+      m_data.GetEvents().SetEvent(eEvent::HypovolemicShock, false, m_data.GetSimulationTime());
     }
 
     //Check for cardiogenic shock
@@ -764,44 +773,44 @@ void Cardiovascular::CalculateVitalSigns()
     {
       /// \event Patient: Cardiogenic Shock: Cardiac Index has fallen below 2.2 L/min-m^2, Systolic Arterial Pressure is below 90 mmHg, and Pulmonary Capillary Wedge Pressure is above 15.0.
       /// \cite dhakam2008review
-      m_patient->SetEvent(ePatient_Event::CardiogenicShock, true, m_data.GetSimulationTime());
+      m_data.GetEvents().SetEvent(eEvent::CardiogenicShock, true, m_data.GetSimulationTime());
     }
     else
     {
-      m_patient->SetEvent(ePatient_Event::CardiogenicShock, false, m_data.GetSimulationTime());
+      m_data.GetEvents().SetEvent(eEvent::CardiogenicShock, false, m_data.GetSimulationTime());
     }
 
     //Check for Tachycardia, Bradycardia, and asystole
     /// \event Patient: Tachycardia: heart rate exceeds 100 beats per minute.  This state is alleviated if it decreases below 90.
     if (GetHeartRate().GetValue(FrequencyUnit::Per_min) < 90)
-      m_patient->SetEvent(ePatient_Event::Tachycardia, false, m_data.GetSimulationTime());
+      m_data.GetEvents().SetEvent(eEvent::Tachycardia, false, m_data.GetSimulationTime());
     if (GetHeartRate().GetValue(FrequencyUnit::Per_min) > 100)
-      m_patient->SetEvent(ePatient_Event::Tachycardia, true, m_data.GetSimulationTime());
+      m_data.GetEvents().SetEvent(eEvent::Tachycardia, true, m_data.GetSimulationTime());
     /// \event Patient: Bradycardia: heart rate falls below 60 beats per minute.  This state is alleviated if it increases above 65.
     if (GetHeartRate().GetValue(FrequencyUnit::Per_min) < 60)
-      m_patient->SetEvent(ePatient_Event::Bradycardia, true, m_data.GetSimulationTime());
+      m_data.GetEvents().SetEvent(eEvent::Bradycardia, true, m_data.GetSimulationTime());
     if (GetHeartRate().GetValue(FrequencyUnit::Per_min) > 65)
-      m_patient->SetEvent(ePatient_Event::Bradycardia, false, m_data.GetSimulationTime());
+      m_data.GetEvents().SetEvent(eEvent::Bradycardia, false, m_data.GetSimulationTime());
     if (GetHeartRate().GetValue(FrequencyUnit::Per_min) == 0 || m_data.GetActions().GetPatientActions().HasCardiacArrest())
     {
-      m_patient->SetEvent(ePatient_Event::Asystole, true, m_data.GetSimulationTime());
+      m_data.GetEvents().SetEvent(eEvent::Asystole, true, m_data.GetSimulationTime());
     }
     else
     {
-      m_patient->SetEvent(ePatient_Event::Asystole, false, m_data.GetSimulationTime());
+      m_data.GetEvents().SetEvent(eEvent::Asystole, false, m_data.GetSimulationTime());
     }
   }
 
   // Irreversible state if asystole persists.
-  if (GetHeartRhythm() == eHeartRhythm::Asystole)
+  if (GetHeartRhythm() == eHeartRhythm::Asystolic)
   {
     /// \event Patient: Irreversible State: heart has been in asystole for over 45 min:
-    if (m_patient->GetEventDuration(ePatient_Event::Asystole, TimeUnit::s) > 2700.0) // \cite: Zijlmans2002EpilepticSeizuresAsystole
+    if (m_data.GetEvents().GetEventDuration(eEvent::Asystole, TimeUnit::s) > 2700.0) // \cite: Zijlmans2002EpilepticSeizuresAsystole
     {
-      m_ss << "Asystole has occurred for " << m_patient->GetEventDuration(ePatient_Event::Asystole, TimeUnit::s) << " seconds, patient is in irreversible state.";
+      m_ss << "Asystole has occurred for " << m_data.GetEvents().GetEventDuration(eEvent::Asystole, TimeUnit::s) << " seconds, patient is in irreversible state.";
       Warning(m_ss);
       /// \irreversible Heart has been in asystole for over 45 min
-      m_patient->SetEvent(ePatient_Event::IrreversibleState, true, m_data.GetSimulationTime());
+      m_data.GetEvents().SetEvent(eEvent::IrreversibleState, true, m_data.GetSimulationTime());
     }
   }
 
@@ -871,22 +880,26 @@ void Cardiovascular::RecordAndResetCardiacCycle()
   m_CardiacCycleSkinFlow_mL_Per_s->Clear();
 
   // Computed systemic Vascular Resistance
-  double cardiacOutput_mL_Per_min = GetCardiacOutput().GetValue(VolumePerTimeUnit::mL_Per_s);
+  double cardiacOutput_mL_Per_s = GetCardiacOutput().GetValue(VolumePerTimeUnit::mL_Per_s);
   double systemicVascularResistance_mmHg_s_Per_mL = 0.0;
-  if (cardiacOutput_mL_Per_min > ZERO_APPROX)
-    systemicVascularResistance_mmHg_s_Per_mL = (GetMeanArterialPressure().GetValue(PressureUnit::mmHg) - GetMeanCentralVenousPressure().GetValue(PressureUnit::mmHg)) / cardiacOutput_mL_Per_min;
+  if (cardiacOutput_mL_Per_s > ZERO_APPROX)
+    systemicVascularResistance_mmHg_s_Per_mL = (GetMeanArterialPressure().GetValue(PressureUnit::mmHg) - GetMeanCentralVenousPressure().GetValue(PressureUnit::mmHg)) / cardiacOutput_mL_Per_s;
   GetSystemicVascularResistance().SetValue(systemicVascularResistance_mmHg_s_Per_mL, FlowResistanceUnit::mmHg_s_Per_mL);
 
   // Computed pulmonary Vascular Resistances
-  if (cardiacOutput_mL_Per_min == 0.0)
+  if (cardiacOutput_mL_Per_s == 0.0)
   {
     GetPulmonaryVascularResistance().SetValue(0.0, FlowResistanceUnit::mmHg_min_Per_mL);
     GetPulmonaryVascularResistanceIndex().SetValue(0.0, PressureTimePerVolumeAreaUnit::mmHg_min_Per_mL_m2);
   }
   else
   {
-    GetPulmonaryVascularResistance().SetValue((m_MainPulmonaryArteries->GetNextPressure(PressureUnit::mmHg) - m_LeftHeart2->GetNextPressure(PressureUnit::mmHg)) / cardiacOutput_mL_Per_min, FlowResistanceUnit::mmHg_min_Per_mL);
-    GetPulmonaryVascularResistanceIndex().SetValue(GetPulmonaryVascularResistance(FlowResistanceUnit::mmHg_min_Per_mL) / m_patient->GetSkinSurfaceArea(AreaUnit::m2), PressureTimePerVolumeAreaUnit::mmHg_min_Per_mL_m2);
+	//(Mean arteral pressure - mean pulmonary wedge pressure)/Cardiac output
+	  double PulmonaryPressureDrop_mmHg = GetPulmonaryMeanArterialPressure(PressureUnit::mmHg) - GetPulmonaryCapillariesWedgePressure(PressureUnit::mmHg);
+    GetPulmonaryVascularResistance().SetValue(PulmonaryPressureDrop_mmHg / cardiacOutput_mL_Per_s, FlowResistanceUnit::mmHg_s_Per_mL);
+	
+    //Mean arteral pressure - mean pulmonary wedge pressure)/Cardiac index where cardiac index is cardiac output / body surface area
+	GetPulmonaryVascularResistanceIndex().SetValue(PulmonaryPressureDrop_mmHg / GetCardiacIndex(VolumePerTimeAreaUnit::mL_Per_s_m2), PressureTimePerVolumeAreaUnit::mmHg_s_Per_mL_m2);
   }  
   
   m_CardiacCycleAortaPressureHigh_mmHg = 0.0;
@@ -1020,7 +1033,6 @@ void Cardiovascular::Hemorrhage()
     if (h->GetType() == eHemorrhage_Type::Internal)
     {
       SELiquidCompartment* abdomenCompartment = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Abdomen);
-      //SELiquidCompartment* abdomenCompartment = m_data.GetCompartments().GetCardiovascularGraph().GetCompartment(pulse::VascularCompartment::Abdomen);
       if (!abdomenCompartment->HasChild(compartment->GetName()))
       {
         m_ss << "Internal Hemorrhage is only supported for the abdominal region, including the right and left kidneys, liver, spleen, splanchnic, and small and large intestine vascular compartments.";
@@ -1029,12 +1041,11 @@ void Cardiovascular::Hemorrhage()
         continue;
       }
     }
-
-    if (h->GetType() == eHemorrhage_Type::External)
+    else //(h->GetType() == eHemorrhage_Type::External)
     {
       //Only mass is merely transfered if it is an internal bleed
       TotalLossRate_mL_Per_s += rate_mL_Per_s;
-    }    
+    }
 
     //Get all circuit nodes in this compartment
     std::vector<SEFluidCircuitNode*> nodes;
@@ -1336,7 +1347,7 @@ void Cardiovascular::CPR()
   // Call for chest compression with an effective heart rhythm
   // In the future we may allow compressions on a beating heart, but that will require extensive testing
   // to evaluate the hemodynamic stability.
-  if (!m_patient->IsEventActive(ePatient_Event::CardiacArrest))
+  if (!m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
   {
     Warning("CPR attempted on beating heart. Action ignored.");
     m_data.GetActions().GetPatientActions().RemoveChestCompression();
@@ -1458,7 +1469,7 @@ void Cardiovascular::CardiacArrest()
   else
   {
     m_EnterCardiacArrest = false;
-    m_patient->SetEvent(ePatient_Event::CardiacArrest, false, m_data.GetSimulationTime());
+    m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
   }
 }
 
@@ -1520,15 +1531,15 @@ void Cardiovascular::InternalHemorrhagePressureApplication()
 void Cardiovascular::HeartDriver()
 {
   // Reset start cardiac cycle event if it was activated by BeginCardiacCycle() last time step
-  if (m_patient->IsEventActive(ePatient_Event::StartOfCardiacCycle))
-    m_patient->SetEvent(ePatient_Event::StartOfCardiacCycle, false, m_data.GetSimulationTime());
+  if (m_data.GetEvents().IsEventActive(eEvent::StartOfCardiacCycle))
+    m_data.GetEvents().SetEvent(eEvent::StartOfCardiacCycle, false, m_data.GetSimulationTime());
 
   // m_StartSystole is set to true at the end of a cardiac cycle in order to setup the next cardiac cycle.
   // After the next cycle is prepared in BeginCardiacCycle, m_StartSystole is seet back to false.
   if (m_StartSystole)
     BeginCardiacCycle();
 
-  if (!m_patient->IsEventActive(ePatient_Event::CardiacArrest))
+  if (!m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
   {
     if (m_CurrentCardiacCycleTime_s >= m_CardiacCyclePeriod_s - m_dT_s)
       m_StartSystole = true; // A new cardiac cycle will begin next time step
@@ -1559,7 +1570,7 @@ void Cardiovascular::HeartDriver()
 //--------------------------------------------------------------------------------------------------
 void Cardiovascular::BeginCardiacCycle()
 {
-  m_patient->SetEvent(ePatient_Event::StartOfCardiacCycle, true, m_data.GetSimulationTime());
+  m_data.GetEvents().SetEvent(eEvent::StartOfCardiacCycle, true, m_data.GetSimulationTime());
 
   // Changes to the heart rate and other hemodynamic parameters are applied at the top of the cardiac cycle.
   // Parameters cannot change during the cardiac cycle because the heart beat is modeled as a changing compliance.
@@ -1594,7 +1605,7 @@ void Cardiovascular::BeginCardiacCycle()
   // Now set the cardiac cycle period and the cardiac arrest event if applicable
   if (m_EnterCardiacArrest)
   {
-    m_patient->SetEvent(ePatient_Event::CardiacArrest, true, m_data.GetSimulationTime());
+    m_data.GetEvents().SetEvent(eEvent::CardiacArrest, true, m_data.GetSimulationTime());
     m_CardiacCyclePeriod_s = 1.0e9; // Not beating, so set the period to a large number (1.0e9 sec = 31.7 years) 
     RecordAndResetCardiacCycle();
     GetHeartRate().SetValue(0.0, FrequencyUnit::Per_min);
@@ -2098,12 +2109,47 @@ void Cardiovascular::CalculateHeartRate()
 void Cardiovascular::UpdateHeartRhythm()
 {
   if (m_data.GetActions().GetPatientActions().HasCardiacArrest() ||
-    m_patient->IsEventActive(ePatient_Event::Asystole))
+    m_data.GetEvents().IsEventActive(eEvent::Asystole))
   {
-    SetHeartRhythm(eHeartRhythm::Asystole);
+    SetHeartRhythm(eHeartRhythm::Asystolic);
   }
   else
   {
     SetHeartRhythm(eHeartRhythm::NormalSinus);
   }
+}
+
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Increased pleural cavity pressures hinders venous return through increased resistance.
+///
+/// \details
+/// When a lung collapses (as with pneumothorax), increased pleural cavity pressure pushes on the 
+/// mediastinum and great veins. As an effect, the mediastinum is displaced and the great veins 
+/// become kinked, leading to decreased venous return to the heart. This leads to increasing cardiac
+/// and respiratory embarrasment. http://medind.nic.in/jac/t08/i1/jact08i1p42.pdf
+//--------------------------------------------------------------------------------------------------
+void Cardiovascular::CalculatePleuralCavityVenousEffects()
+{
+  //The left and right pleural pressures are likely to have large differences only due to a pneumothorax
+  //Pressure difference causes a mediastinum shift
+  double pleuralCavityPressureDiff_cmH2O = abs(m_leftPleuralCavity->GetPressure(PressureUnit::cmH2O) - m_rightPleuralCavity->GetPressure(PressureUnit::cmH2O));
+  
+  double maxPressureDiff_cmH2O = 40.0;
+  double maxResistanceMultiplier = 10.0;
+  pleuralCavityPressureDiff_cmH2O = min(pleuralCavityPressureDiff_cmH2O, maxPressureDiff_cmH2O);
+
+  //Interpolate into a parabola to effect things much more at larger differences
+  double min = 1.0;
+  double max = maxResistanceMultiplier;
+  double a = max - min;
+  double factor = pleuralCavityPressureDiff_cmH2O / maxPressureDiff_cmH2O;
+  double resistanceMultiplier = a * factor * factor + min;
+
+  double rightHeartResistance_mmHg_s_Per_mL = m_RightHeartResistance->GetNextResistance(FlowResistanceUnit::mmHg_s_Per_mL);
+  m_RightHeartResistance->GetNextResistance().SetValue(rightHeartResistance_mmHg_s_Per_mL * resistanceMultiplier, FlowResistanceUnit::mmHg_s_Per_mL);
+
+  //For tuning
+  //m_data.GetDataTrack().Probe("pleuralCavityPressureDiff_cmH2O", pleuralCavityPressureDiff_cmH2O);
+  //m_data.GetDataTrack().Probe("resistanceMultiplier", resistanceMultiplier);
 }

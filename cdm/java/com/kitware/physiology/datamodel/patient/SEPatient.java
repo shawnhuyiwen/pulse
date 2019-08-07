@@ -8,13 +8,13 @@ import com.kitware.physiology.datamodel.properties.*;
 import com.kitware.physiology.utilities.FileUtils;
 import com.google.protobuf.util.*;
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.kitware.physiology.cdm.PatientEnums.ePatient.*;
 import com.kitware.physiology.cdm.Patient.PatientData;
+import com.kitware.physiology.cdm.Patient.PatientData.eSex;
 
 public class SEPatient
 {
   protected String                    name;
-  protected Sex                       sex;
+  protected eSex                      sex;
   protected SEScalarTime              age;
   protected SEScalarMass              weight;
   protected SEScalarLength            height;
@@ -44,8 +44,6 @@ public class SEPatient
   protected SEScalarVolume            residualVolume;
   protected SEScalarVolume            totalLungCapacity;
   protected SEScalarVolume            vitalCapacity;
-
-  protected Map<Event,Boolean> events = new HashMap<Event,Boolean>();
 
   public SEPatient()
   {
@@ -112,8 +110,6 @@ public class SEPatient
       this.totalLungCapacity.invalidate();
     if(vitalCapacity != null)
       this.vitalCapacity.invalidate();
-
-    events.clear();
   }
   
   public void readFile(String fileName) throws InvalidProtocolBufferException
@@ -131,7 +127,7 @@ public class SEPatient
   {
     dst.reset();
     dst.setName(src.getName());
-    if(src.getSex()!=Sex.UNRECOGNIZED)
+    if(src.getSex()!=eSex.UNRECOGNIZED)
     	dst.setSex(src.getSex());
     if(src.hasAge())
       SEScalarTime.load(src.getAge(),dst.getAge());
@@ -257,23 +253,12 @@ public class SEPatient
       dst.setVitalCapacity(SEScalarVolume.unload(src.vitalCapacity));
   }
 
-  public void setEvent(Event type, boolean active)
-  {
-    this.events.put(type, active);
-  }
-  public boolean isEventActive(Event type)
-  {
-    if(!this.events.containsKey(type))
-      return false;
-    return this.events.get(type);
-  }
-
   public String  getName() { return this.name;}
   public void    setName(String name){this.name=name;}
   public boolean hasName(){return this.name==null?false:true;}
 
-  public Sex     getSex() { return this.sex;}
-  public void    setSex(Sex name){this.sex=name;}
+  public eSex    getSex() { return this.sex;}
+  public void    setSex(eSex name){this.sex=name;}
   public boolean hasSex(){return this.sex==null?false:true;}
 
   public SEScalarTime getAge() 

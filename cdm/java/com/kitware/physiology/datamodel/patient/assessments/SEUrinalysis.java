@@ -5,25 +5,25 @@ package com.kitware.physiology.datamodel.patient.assessments;
 import com.google.protobuf.*;
 import com.google.protobuf.util.*;
 import com.kitware.physiology.cdm.PatientAssessments.UrinalysisData;
-import com.kitware.physiology.cdm.PatientAssessmentEnums.eUrinalysis.*;
+import com.kitware.physiology.cdm.PatientAssessments.UrinalysisData.*;
 
 import com.kitware.physiology.datamodel.properties.*;
 import com.kitware.physiology.utilities.FileUtils;
 
 public class SEUrinalysis extends SEPatientAssessment
 {
-  protected UrineColor            color;
-  protected ClarityIndicator      appearance;
-  protected PresenceIndicator     glucose;
-  protected PresenceIndicator     ketone;
-  protected SEScalar              bilirubin;
-  protected SEScalar              specificGravity;
-  protected PresenceIndicator     blood;
-  protected SEScalar              pH;  
-  protected PresenceIndicator     protein;
-  protected SEScalarMassPerVolume urobilinogen;
-  protected PresenceIndicator     nitrite;
-  protected PresenceIndicator     leukocyteEsterase;
+  protected eUrineColor            color;
+  protected eClarityIndicator      appearance;
+  protected ePresenceIndicator     glucose;
+  protected ePresenceIndicator     ketone;
+  protected SEScalar               bilirubin;
+  protected SEScalar               specificGravity;
+  protected ePresenceIndicator     blood;
+  protected SEScalar               pH;  
+  protected ePresenceIndicator     protein;
+  protected SEScalarMassPerVolume  urobilinogen;
+  protected ePresenceIndicator     nitrite;
+  protected ePresenceIndicator     leukocyteEsterase;
   
   public void clear()
   {
@@ -77,29 +77,29 @@ public class SEUrinalysis extends SEPatientAssessment
   public static void load(UrinalysisData src, SEUrinalysis dst)
   {
     SEPatientAssessment.load(src.getPatientAssessment(), dst);
-    if(src.getColor()!=UrineColor.UNRECOGNIZED)
+    if(src.getColor()!=eUrineColor.UNRECOGNIZED)
       dst.setColor(src.getColor());
-    if(src.getAppearance()!=ClarityIndicator.UNRECOGNIZED)
+    if(src.getAppearance()!=eClarityIndicator.UNRECOGNIZED)
       dst.setAppearance(src.getAppearance());
-    if(src.getGlucose()!=PresenceIndicator.UNRECOGNIZED)
+    if(src.getGlucose()!=ePresenceIndicator.UNRECOGNIZED)
       dst.setGlucose(src.getGlucose());
-    if(src.getKetone()!=PresenceIndicator.UNRECOGNIZED)
+    if(src.getKetone()!=ePresenceIndicator.UNRECOGNIZED)
       dst.setKetone(src.getKetone());
     if(src.hasBilirubin())
       SEScalar.load(src.getBilirubin(),dst.getBilirubin());
     if(src.hasSpecificGravity())
       SEScalar.load(src.getSpecificGravity(),dst.getSpecificGravity());
-    if(src.getBlood()!=PresenceIndicator.UNRECOGNIZED)
+    if(src.getBlood()!=ePresenceIndicator.UNRECOGNIZED)
       dst.setBlood(src.getBlood());
     if(src.hasPH())
       SEScalar.load(src.getPH(),dst.getPH());
-    if(src.getProtein()!=PresenceIndicator.UNRECOGNIZED)
+    if(src.getProtein()!=ePresenceIndicator.UNRECOGNIZED)
       dst.setProtein(src.getProtein());
     if(src.hasUrobilinogen())
       SEScalarMassPerVolume.load(src.getUrobilinogen(),dst.getUrobilinogen());
-    if(src.getNitrite()!=PresenceIndicator.UNRECOGNIZED)
+    if(src.getNitrite()!=ePresenceIndicator.UNRECOGNIZED)
       dst.setNitrite(src.getNitrite());
-    if(src.getLeukocyteEsterase()!=PresenceIndicator.UNRECOGNIZED)
+    if(src.getLeukocyteEsterase()!=ePresenceIndicator.UNRECOGNIZED)
       dst.setLeukocyteEsterase(src.getLeukocyteEsterase());
   }
   
@@ -139,21 +139,21 @@ public class SEUrinalysis extends SEPatientAssessment
       dst.setLeukocyteEsterase(src.leukocyteEsterase);
   }
   
-  public UrineColor getColor() { return this.color;}
-  public void    setColor(UrineColor color){this.color=color;}
-  public boolean hasColor(){return this.color==null?false:color!=UrineColor.NullColor;}
+  public eUrineColor getColor() { return this.color;}
+  public void    setColor(eUrineColor color){this.color=color;}
+  public boolean hasColor(){return this.color==null?false:color!=eUrineColor.NullColor;}
   
-  public ClarityIndicator  getAppearance() { return this.appearance;}
-  public void    setAppearance(ClarityIndicator a){this.appearance=a;}
-  public boolean hasAppearance(){return this.appearance==null?false:appearance!=ClarityIndicator.NullClarity;}
+  public eClarityIndicator  getAppearance() { return this.appearance;}
+  public void    setAppearance(eClarityIndicator a){this.appearance=a;}
+  public boolean hasAppearance(){return this.appearance==null?false:appearance!=eClarityIndicator.NullClarity;}
   
-  public PresenceIndicator  getGlucose() { return this.glucose;}
-  public void    setGlucose(PresenceIndicator g){this.glucose=g;}
-  public boolean hasGlucose(){return this.glucose==null?false:glucose!=PresenceIndicator.NullPresence;}
+  public ePresenceIndicator  getGlucose() { return this.glucose;}
+  public void    setGlucose(ePresenceIndicator g){this.glucose=g;}
+  public boolean hasGlucose(){return this.glucose==null?false:glucose!=ePresenceIndicator.NullPresence;}
   
-  public PresenceIndicator  getKetone() { return this.ketone;}
-  public void    setKetone(PresenceIndicator k){this.ketone=k;}
-  public boolean hasKetone(){return this.ketone==null?false:ketone!=PresenceIndicator.NullPresence;}
+  public ePresenceIndicator  getKetone() { return this.ketone;}
+  public void    setKetone(ePresenceIndicator k){this.ketone=k;}
+  public boolean hasKetone(){return this.ketone==null?false:ketone!=ePresenceIndicator.NullPresence;}
   
   public boolean hasBilirubin()
   {
@@ -177,9 +177,9 @@ public class SEUrinalysis extends SEPatientAssessment
     return specificGravity;
   }
   
-  public PresenceIndicator  getBlood() { return this.blood;}
-  public void    setBlood(PresenceIndicator b){this.blood=b;}
-  public boolean hasBlood(){return this.blood==null?false:blood!=PresenceIndicator.NullPresence;}
+  public ePresenceIndicator  getBlood() { return this.blood;}
+  public void    setBlood(ePresenceIndicator b){this.blood=b;}
+  public boolean hasBlood(){return this.blood==null?false:blood!=ePresenceIndicator.NullPresence;}
   
   public boolean hasPH()
   {
@@ -192,9 +192,9 @@ public class SEUrinalysis extends SEPatientAssessment
     return pH;
   }
   
-  public PresenceIndicator  getProtein() { return this.protein;}
-  public void    setProtein(PresenceIndicator p){this.protein=p;}
-  public boolean hasProtein(){return this.protein==null?false:protein!=PresenceIndicator.NullPresence;}
+  public ePresenceIndicator  getProtein() { return this.protein;}
+  public void    setProtein(ePresenceIndicator p){this.protein=p;}
+  public boolean hasProtein(){return this.protein==null?false:protein!=ePresenceIndicator.NullPresence;}
  
   
   public boolean hasUrobilinogen()
@@ -208,11 +208,11 @@ public class SEUrinalysis extends SEPatientAssessment
     return urobilinogen;
   }
   
-  public PresenceIndicator  getNitrite() { return this.nitrite;}
-  public void    setNitrite(PresenceIndicator n){this.nitrite=n;}
-  public boolean hasNitrite(){return this.nitrite==null?false:nitrite!=PresenceIndicator.NullPresence;}
+  public ePresenceIndicator  getNitrite() { return this.nitrite;}
+  public void    setNitrite(ePresenceIndicator n){this.nitrite=n;}
+  public boolean hasNitrite(){return this.nitrite==null?false:nitrite!=ePresenceIndicator.NullPresence;}
   
-  public PresenceIndicator  getLeukocyteEsterase() { return this.leukocyteEsterase;}
-  public void    setLeukocyteEsterase(PresenceIndicator l){this.leukocyteEsterase=l;}
-  public boolean hasLeukocyteEsterase(){return this.leukocyteEsterase==null?false:leukocyteEsterase!=PresenceIndicator.NullPresence;}
+  public ePresenceIndicator  getLeukocyteEsterase() { return this.leukocyteEsterase;}
+  public void    setLeukocyteEsterase(ePresenceIndicator l){this.leukocyteEsterase=l;}
+  public boolean hasLeukocyteEsterase(){return this.leukocyteEsterase==null?false:leukocyteEsterase!=ePresenceIndicator.NullPresence;}
 }

@@ -3,7 +3,7 @@
 
 #include "PulseEngineJNI.h"
 #include "PulseScenario.h"
-#include "controller/ScenarioExec.h"
+#include "PulseScenarioExec.h"
 #include "engine/SEAction.h"
 #include "engine/SEDataRequest.h"
 #include "engine/SEDataRequestManager.h"
@@ -150,10 +150,9 @@ JNIEXPORT jboolean JNICALL Java_com_kitware_physiology_pulse_engine_PulseEngine_
   }
   else
   {
-    std::cout << "Loading... " << std::endl;
     bRet = engineJNI->eng->SerializeFromFile(pStateFilename, JSON);
   }  
-  engineJNI->eng->SetEventHandler(engineJNI);
+  engineJNI->eng->GetEventManager().ForwardEvents(engineJNI);
 
   env->ReleaseStringUTFChars(stateFilename, pStateFilename);
   return bRet;
@@ -209,7 +208,7 @@ JNIEXPORT jboolean JNICALL Java_com_kitware_physiology_pulse_engine_PulseEngine_
 
     // Ok, crank 'er up!
     ret = engineJNI->eng->InitializeEngine(p);
-    engineJNI->eng->SetEventHandler(engineJNI);
+    engineJNI->eng->GetEventManager().ForwardEvents(engineJNI);
   }
 
   catch (std::exception& ex)
@@ -524,7 +523,7 @@ void PulseEngineJNI::ForwardFatal(const std::string&  msg, const std::string&  o
   throw PhysiologyEngineException(err);
 }
 
-void PulseEngineJNI::HandlePatientEvent(ePatient_Event type, bool active, const SEScalarTime* time)
+void PulseEngineJNI::HandleEvent(eEvent type, bool active, const SEScalarTime* time)
 {
   if (jniEnv != nullptr && jniObj != nullptr)
   {
@@ -532,15 +531,5 @@ void PulseEngineJNI::HandlePatientEvent(ePatient_Event type, bool active, const 
     if (m == nullptr)
       std::cerr << "Can't find handleEvent method in Java" << std::endl;
     jniEnv->CallVoidMethod(jniObj, m, 0, type, active, time != nullptr ? time->GetValue(TimeUnit::s) : 0);
-  }
-}
-void PulseEngineJNI::HandleAnesthesiaMachineEvent(eAnesthesiaMachine_Event type, bool active, const SEScalarTime* time)
-{
-  if (jniEnv != nullptr && jniObj != nullptr)
-  {
-    jmethodID m = jniEnv->GetMethodID(jniEnv->GetObjectClass(jniObj), "handleEvent", "(IIZD)V");
-    if (m == nullptr)
-      std::cerr << "Can't find handleEvent method in Java" << std::endl;
-    jniEnv->CallVoidMethod(jniObj, m, 1, type, active, time != nullptr ? time->GetValue(TimeUnit::s) : 0);
   }
 }

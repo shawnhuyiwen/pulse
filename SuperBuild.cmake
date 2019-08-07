@@ -6,7 +6,7 @@ set(BUILD_SHARED_LIBS OFF)
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_INSTALL_PREFIX})
 if(MSVC OR XCode)
 # For multi configuration IDE environments start with release
-  set(CMAKE_CONFIGURATION_TYPES Release CACHE TYPE INTERNAL FORCE )
+  set(CMAKE_CONFIGURATION_TYPES Release CACHE STRING INTERNAL FORCE )
 endif()
 ##################################
 ## EIGEN                        ##
@@ -45,10 +45,10 @@ set(log4cplus_SRC "${CMAKE_BINARY_DIR}/log4cplus/src/log4cplus" CACHE PATH "Log4
 
 ExternalProject_Add( log4cplus
   PREFIX log4cplus
-  #URL "https://github.com/log4cplus/log4cplus/archive/2.0.3.zip"
-  #URL_HASH MD5=33940534c0aaa7902355c4fbd1e7e7f3
-  GIT_REPOSITORY "https://github.com/log4cplus/log4cplus.git"
-  GIT_TAG 411a262b92a7bdc26348d6ae6b15f76763c21b44
+  URL "https://github.com/log4cplus/log4cplus/releases/download/REL_2_0_4/log4cplus-2.0.4.zip"
+  URL_HASH MD5=cb075cd19ce561273b1c74907cc66b6a
+  #GIT_REPOSITORY "https://github.com/log4cplus/log4cplus.git"
+  #GIT_TAG 411a262b92a7bdc26348d6ae6b15f76763c21b44
 #  GIT_SHALLOW TRUE
 # Build this in the Inner build
 # It will be easier to switch cofigurations in MSVC/XCode
@@ -65,15 +65,15 @@ list(APPEND Pulse_DEPENDENCIES log4cplus)
 
 message( STATUS "External project - protobuf" )
 #This is a working 3.7.0-rc2 hash, the tag is bunk :(
-set(protobuf_VERSION "9e381c05f525ae7623573cdb0536a18904dab451" )#"v3.7.0-rc.2")
-set(protobuf_MD5 "a5cf79b455ddb13e3001be89143b2bdd" )
+set(protobuf_URL "https://github.com/protocolbuffers/protobuf/releases/download/v3.9.0/protobuf-all-3.9.0.zip")
+set(protobuf_MD5 "4f042c8b46823a69db3dcbc7381b73f4" )
 set(protobuf_SRC "${CMAKE_BINARY_DIR}/protobuf/src/protobuf")
 set(protobuf_Patch "${CMAKE_SOURCE_DIR}/cmake/protobuf-patches")
 
 message(STATUS "Patching protobuf ${PULSE_IL2CPP_PATCH}")
 ExternalProject_Add( protobuf
   PREFIX protobuf
-  URL "https://github.com/google/protobuf/archive/${protobuf_VERSION}.zip"
+  URL ${protobuf_URL}
   URL_MD5 ${protobuf_MD5}
   DOWNLOAD_DIR ${protobuf_SRC}
   SOURCE_SUBDIR ./cmake

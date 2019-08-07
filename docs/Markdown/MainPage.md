@@ -3,7 +3,6 @@
 <img src="./Images/PulseLogo.png" alt="Pulse Physiology Engine">
 </center>
 
-
 Distributed under the <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0.</a>
 See accompanying <a href="https://gitlab.kitware.com/physiology/engine/blob/master/NOTICE">NOTICE</a> file for details.
 
@@ -11,77 +10,54 @@ For the latest news visit our <a href="https://blog.kitware.com/tag/pulse/">blog
 
 There are @ref published on several systems and clinical scenarios. 
 
-You can get Pulse from the <a href="https://gitlab.kitware.com/physiology/engine">GitLab repository</a>.
+Pulse @ref version is available from our <a href="https://gitlab.kitware.com/physiology/engine">GitLab repository</a>.
 
 Use this <a href="https://discourse.kitware.com/c/pulse-physiology-engine">discourse channel</a> 
-to ask or share anything and everything about building, using, or understanding the Pulse engine.
+to discuss anything and everything about building, using, or understanding the Pulse engine.
 
 Visit and post an <a href="https://gitlab.kitware.com/physiology/engine/issues">issue</a> at the repository if you have any problems with the codebase.
 
 If you have any other questions or concerns, email: kitware@kitware.com
 
-And welcome to our community!!
+## What is the Pulse Physiology Engine?
 
+The Pulse Physiology Engine is a C++ based, open source, multi-platform (Windows, Mac, and Linux), comprehensive human physiology
+simulator that will drive medical education, research, and training technologies. 
+The engine enables accurate and consistent physiology simulation across the medical community. 
+The engine can be used as a standalone application or integrated with simulators, sensor interfaces, and models of all fidelities.
+We are advancing the engine and exploring new avenues of research, such as pediatrics, patient-specific modeling and virtual surgery planning/rehearsal. 
 
-@insert ./docs/markdown/MainPageFAQ.md
+<center>
+<img src="./Images/PulseRunner.png" width="550" align="middle">
+</center>
 
-## Have more questions?
+## What kind of data can I get from the physiology engine?
 
-Check out the @ref ExtraFAQ for more insight.
+An instance of an engine models a single patient's physiology.
+- The patient is defined by parameters, such as height, weight, systolic and diastolic pressure.
+- You can initialize the patient with specific chronic and/or disease states via conditions.
+- You can modify the patients external environmental conditions (weather, submerge in water, etc.)
+- You can apply various actions (acute insults/injuries, interventions, conscious breathing, exercise, etc.) to be applied to the patient.
+- The patient can also interact with equipment models, such as an Anesthesia and/or an %ECG Machine as well as an %Inhaler via actions.
+- You can integrate the engine into your applications.
 
+Available data is defined within the engine in three major ways:
+-	System data, such as %Cardiovascular, %Respiratory, etc.
+	-	Analogous to system vitals
+	  -	Examples: heart rate, oxygen consumption, mean arterial pressure, etc.
+-	Compartment data
+	-	Flow, pressure, and volume related to specific region of the body or component of equipment
+	  - Examples: Cerebral Blood Flow, Right Lung Volume, Right Heart Pressure
+	- Substance specific data related to a specific part of the body or component of equipment
+	  -	Examples: The Extracellular concentration of succinylcholine in the brain tissue, anesthesia machine gas inlet oxygen volume fraction
+-	Assessments
+	-	Formed at the level of a clinician's report, Intended to mimic test results
+	  -	Example: Pulmonary Function Test
 
+Want to learn more about @ref techdeets?
+
+Check out the @ref FAQ for more about Pulse.
 - - -
 
-## What's new in Pulse v2.0 (Jan 20th, 2018)
-
-The latest code base includes the following notable updates:
-
-- Software Architecture
-  - Converted ASCII file I/O to JSON (Compliant to Protobuf IDLs)
-  - Updated Engine Interface to support Both ASCII and Binary serialization
-  - Started a formal C# CDM Library for use in .NET applications
-  - Created a C interface to Pulse for external application integration
-  - Updated to the latest versions of Eigen/Protobufs/log4cplus
-  - Unity integration support and examples
-- Physiology Models
-  - Internal Hemorrhage Support
-  - External hemorrhage from specific compartments (only Vena Cava before)
-  - Added support for Packed Red Blood Cells infusion
-  - Added dissolved oxygen and carbon dioxide to IV fluids to resolve issues with fluid resuscitation
-
-
-
-(Interested in a previous @ref version?)
-
-- - -
-
-## Planned Software Improvements
-
-- Pulse asset in the Unity Asset Store
-- Pediatric physiology prototype
-- %Respiratory fatigue and chronic condition exacerbation
-- Surface area and efficiency parameters for the gas diffusion model
-- A more accurate pneumothorax model
-- A second order baroreceptor model
-- Modularity improvements for system/model/circuit swapping
-- Official contribution plan for merge requests for methodology/model changes
-
-
-- - -
-@anchor known-issues
-## Known Physiology Model Issues and Limitations
-The following are known issues with the current version of the software:
-- Lack of a full sympathetic/parasympathetic nervous system
-- Extravascular fluid exchange model is incomplete
-- Peripheral resistance currently does not scale with core temperature
-- Only tested a simulation up to 12 hours in length (No sleep model)
-- Limited Consumption model
-  - Limited number of macronutrients available
-  - Limited conversion and use within the engine
-- Oxygen saturation drops too sharply
-
-
-@page errors Errors
-
-@page events Events
+@insert ./docs/markdown/MainPageFeatures.md
 

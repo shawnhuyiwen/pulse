@@ -4,18 +4,18 @@
 #pragma once
 CDM_BIND_DECL2(AnesthesiaMachineAction)
 CDM_BIND_DECL2(AnesthesiaMachineConfiguration)
-CDM_BIND_DECL2(ExpiratoryValveLeak)
-CDM_BIND_DECL2(ExpiratoryValveObstruction)
-CDM_BIND_DECL2(InspiratoryValveLeak)
-CDM_BIND_DECL2(InspiratoryValveObstruction)
-CDM_BIND_DECL2(MaskLeak)
-CDM_BIND_DECL2(OxygenTankPressureLoss)
-CDM_BIND_DECL2(OxygenWallPortPressureLoss)
-CDM_BIND_DECL2(SodaLimeFailure)
-CDM_BIND_DECL2(TubeCuffLeak)
-CDM_BIND_DECL2(VaporizerFailure)
-CDM_BIND_DECL2(VentilatorPressureLoss)
-CDM_BIND_DECL2(YPieceDisconnect)
+CDM_BIND_DECL2(AnesthesiaMachineExpiratoryValveLeak)
+CDM_BIND_DECL2(AnesthesiaMachineExpiratoryValveObstruction)
+CDM_BIND_DECL2(AnesthesiaMachineInspiratoryValveLeak)
+CDM_BIND_DECL2(AnesthesiaMachineInspiratoryValveObstruction)
+CDM_BIND_DECL2(AnesthesiaMachineMaskLeak)
+CDM_BIND_DECL2(AnesthesiaMachineOxygenTankPressureLoss)
+CDM_BIND_DECL2(AnesthesiaMachineOxygenWallPortPressureLoss)
+CDM_BIND_DECL2(AnesthesiaMachineSodaLimeFailure)
+CDM_BIND_DECL2(AnesthesiaMachineTubeCuffLeak)
+CDM_BIND_DECL2(AnesthesiaMachineVaporizerFailure)
+CDM_BIND_DECL2(AnesthesiaMachineVentilatorPressureLoss)
+CDM_BIND_DECL2(AnesthesiaMachineYPieceDisconnect)
 CDM_BIND_DECL(AnyAnesthesiaMachineActionData)
 class SESubstanceManager;
 
@@ -36,75 +36,75 @@ public:
   static void Serialize(const SEAnesthesiaMachineConfiguration& src, cdm::AnesthesiaMachineConfigurationData& dst);
   static void Copy(const SEAnesthesiaMachineConfiguration& src, SEAnesthesiaMachineConfiguration& dst);
 
-  static void Load(const cdm::ExpiratoryValveLeakData& src, SEExpiratoryValveLeak& dst);
-  static cdm::ExpiratoryValveLeakData* Unload(const SEExpiratoryValveLeak& src);
-  static void Serialize(const cdm::ExpiratoryValveLeakData& src, SEExpiratoryValveLeak& dst);
-  static void Serialize(const SEExpiratoryValveLeak& src, cdm::ExpiratoryValveLeakData& dst);
-  static void Copy(const SEExpiratoryValveLeak& src, SEExpiratoryValveLeak& dst);
+  static void Load(const cdm::AnesthesiaMachineExpiratoryValveLeakData& src, SEAnesthesiaMachineExpiratoryValveLeak& dst);
+  static cdm::AnesthesiaMachineExpiratoryValveLeakData* Unload(const SEAnesthesiaMachineExpiratoryValveLeak& src);
+  static void Serialize(const cdm::AnesthesiaMachineExpiratoryValveLeakData& src, SEAnesthesiaMachineExpiratoryValveLeak& dst);
+  static void Serialize(const SEAnesthesiaMachineExpiratoryValveLeak& src, cdm::AnesthesiaMachineExpiratoryValveLeakData& dst);
+  static void Copy(const SEAnesthesiaMachineExpiratoryValveLeak& src, SEAnesthesiaMachineExpiratoryValveLeak& dst);
 
-  static void Load(const cdm::ExpiratoryValveObstructionData& src, SEExpiratoryValveObstruction& dst);
-  static cdm::ExpiratoryValveObstructionData* Unload(const SEExpiratoryValveObstruction& src);
-  static void Serialize(const cdm::ExpiratoryValveObstructionData& src, SEExpiratoryValveObstruction& dst);
-  static void Serialize(const SEExpiratoryValveObstruction& src, cdm::ExpiratoryValveObstructionData& dst);
-  static void Copy(const SEExpiratoryValveObstruction& src, SEExpiratoryValveObstruction& dst);
+  static void Load(const cdm::AnesthesiaMachineExpiratoryValveObstructionData& src, SEAnesthesiaMachineExpiratoryValveObstruction& dst);
+  static cdm::AnesthesiaMachineExpiratoryValveObstructionData* Unload(const SEAnesthesiaMachineExpiratoryValveObstruction& src);
+  static void Serialize(const cdm::AnesthesiaMachineExpiratoryValveObstructionData& src, SEAnesthesiaMachineExpiratoryValveObstruction& dst);
+  static void Serialize(const SEAnesthesiaMachineExpiratoryValveObstruction& src, cdm::AnesthesiaMachineExpiratoryValveObstructionData& dst);
+  static void Copy(const SEAnesthesiaMachineExpiratoryValveObstruction& src, SEAnesthesiaMachineExpiratoryValveObstruction& dst);
 
-  static void Load(const cdm::InspiratoryValveLeakData& src, SEInspiratoryValveLeak& dst);
-  static cdm::InspiratoryValveLeakData* Unload(const SEInspiratoryValveLeak& src);
-  static void Serialize(const cdm::InspiratoryValveLeakData& src, SEInspiratoryValveLeak& dst);
-  static void Serialize(const SEInspiratoryValveLeak& src, cdm::InspiratoryValveLeakData& dst);
-  static void Copy(const SEInspiratoryValveLeak& src, SEInspiratoryValveLeak& dst);
+  static void Load(const cdm::AnesthesiaMachineInspiratoryValveLeakData& src, SEAnesthesiaMachineInspiratoryValveLeak& dst);
+  static cdm::AnesthesiaMachineInspiratoryValveLeakData* Unload(const SEAnesthesiaMachineInspiratoryValveLeak& src);
+  static void Serialize(const cdm::AnesthesiaMachineInspiratoryValveLeakData& src, SEAnesthesiaMachineInspiratoryValveLeak& dst);
+  static void Serialize(const SEAnesthesiaMachineInspiratoryValveLeak& src, cdm::AnesthesiaMachineInspiratoryValveLeakData& dst);
+  static void Copy(const SEAnesthesiaMachineInspiratoryValveLeak& src, SEAnesthesiaMachineInspiratoryValveLeak& dst);
 
-  static void Load(const cdm::InspiratoryValveObstructionData& src, SEInspiratoryValveObstruction& dst);
-  static cdm::InspiratoryValveObstructionData* Unload(const SEInspiratoryValveObstruction& src);
-  static void Serialize(const cdm::InspiratoryValveObstructionData& src, SEInspiratoryValveObstruction& dst);
-  static void Serialize(const SEInspiratoryValveObstruction& src, cdm::InspiratoryValveObstructionData& dst);
-  static void Copy(const SEInspiratoryValveObstruction& src, SEInspiratoryValveObstruction& dst);
+  static void Load(const cdm::AnesthesiaMachineInspiratoryValveObstructionData& src, SEAnesthesiaMachineInspiratoryValveObstruction& dst);
+  static cdm::AnesthesiaMachineInspiratoryValveObstructionData* Unload(const SEAnesthesiaMachineInspiratoryValveObstruction& src);
+  static void Serialize(const cdm::AnesthesiaMachineInspiratoryValveObstructionData& src, SEAnesthesiaMachineInspiratoryValveObstruction& dst);
+  static void Serialize(const SEAnesthesiaMachineInspiratoryValveObstruction& src, cdm::AnesthesiaMachineInspiratoryValveObstructionData& dst);
+  static void Copy(const SEAnesthesiaMachineInspiratoryValveObstruction& src, SEAnesthesiaMachineInspiratoryValveObstruction& dst);
 
-  static void Load(const cdm::MaskLeakData& src, SEMaskLeak& dst);
-  static cdm::MaskLeakData* Unload(const SEMaskLeak& src);
-  static void Serialize(const cdm::MaskLeakData& src, SEMaskLeak& dst);
-  static void Serialize(const SEMaskLeak& src, cdm::MaskLeakData& dst);
-  static void Copy(const SEMaskLeak& src, SEMaskLeak& dst);
+  static void Load(const cdm::AnesthesiaMachineMaskLeakData& src, SEAnesthesiaMachineMaskLeak& dst);
+  static cdm::AnesthesiaMachineMaskLeakData* Unload(const SEAnesthesiaMachineMaskLeak& src);
+  static void Serialize(const cdm::AnesthesiaMachineMaskLeakData& src, SEAnesthesiaMachineMaskLeak& dst);
+  static void Serialize(const SEAnesthesiaMachineMaskLeak& src, cdm::AnesthesiaMachineMaskLeakData& dst);
+  static void Copy(const SEAnesthesiaMachineMaskLeak& src, SEAnesthesiaMachineMaskLeak& dst);
 
-  static void Load(const cdm::OxygenTankPressureLossData& src, SEOxygenTankPressureLoss& dst);
-  static cdm::OxygenTankPressureLossData* Unload(const SEOxygenTankPressureLoss& src);
-  static void Serialize(const cdm::OxygenTankPressureLossData& src, SEOxygenTankPressureLoss& dst);
-  static void Serialize(const SEOxygenTankPressureLoss& src, cdm::OxygenTankPressureLossData& dst);
-  static void Copy(const SEOxygenTankPressureLoss& src, SEOxygenTankPressureLoss& dst);
+  static void Load(const cdm::AnesthesiaMachineOxygenTankPressureLossData& src, SEAnesthesiaMachineOxygenTankPressureLoss& dst);
+  static cdm::AnesthesiaMachineOxygenTankPressureLossData* Unload(const SEAnesthesiaMachineOxygenTankPressureLoss& src);
+  static void Serialize(const cdm::AnesthesiaMachineOxygenTankPressureLossData& src, SEAnesthesiaMachineOxygenTankPressureLoss& dst);
+  static void Serialize(const SEAnesthesiaMachineOxygenTankPressureLoss& src, cdm::AnesthesiaMachineOxygenTankPressureLossData& dst);
+  static void Copy(const SEAnesthesiaMachineOxygenTankPressureLoss& src, SEAnesthesiaMachineOxygenTankPressureLoss& dst);
 
-  static void Load(const cdm::OxygenWallPortPressureLossData& src, SEOxygenWallPortPressureLoss& dst);
-  static cdm::OxygenWallPortPressureLossData* Unload(const SEOxygenWallPortPressureLoss& src);
-  static void Serialize(const cdm::OxygenWallPortPressureLossData& src, SEOxygenWallPortPressureLoss& dst);
-  static void Serialize(const SEOxygenWallPortPressureLoss& src, cdm::OxygenWallPortPressureLossData& dst);
-  static void Copy(const SEOxygenWallPortPressureLoss& src, SEOxygenWallPortPressureLoss& dst);
+  static void Load(const cdm::AnesthesiaMachineOxygenWallPortPressureLossData& src, SEAnesthesiaMachineOxygenWallPortPressureLoss& dst);
+  static cdm::AnesthesiaMachineOxygenWallPortPressureLossData* Unload(const SEAnesthesiaMachineOxygenWallPortPressureLoss& src);
+  static void Serialize(const cdm::AnesthesiaMachineOxygenWallPortPressureLossData& src, SEAnesthesiaMachineOxygenWallPortPressureLoss& dst);
+  static void Serialize(const SEAnesthesiaMachineOxygenWallPortPressureLoss& src, cdm::AnesthesiaMachineOxygenWallPortPressureLossData& dst);
+  static void Copy(const SEAnesthesiaMachineOxygenWallPortPressureLoss& src, SEAnesthesiaMachineOxygenWallPortPressureLoss& dst);
 
-  static void Load(const cdm::SodaLimeFailureData& src, SESodaLimeFailure& dst);
-  static cdm::SodaLimeFailureData* Unload(const SESodaLimeFailure& src);
-  static void Serialize(const cdm::SodaLimeFailureData& src, SESodaLimeFailure& dst);
-  static void Serialize(const SESodaLimeFailure& src, cdm::SodaLimeFailureData& dst);
-  static void Copy(const SESodaLimeFailure& src, SESodaLimeFailure& dst);
+  static void Load(const cdm::AnesthesiaMachineSodaLimeFailureData& src, SEAnesthesiaMachineSodaLimeFailure& dst);
+  static cdm::AnesthesiaMachineSodaLimeFailureData* Unload(const SEAnesthesiaMachineSodaLimeFailure& src);
+  static void Serialize(const cdm::AnesthesiaMachineSodaLimeFailureData& src, SEAnesthesiaMachineSodaLimeFailure& dst);
+  static void Serialize(const SEAnesthesiaMachineSodaLimeFailure& src, cdm::AnesthesiaMachineSodaLimeFailureData& dst);
+  static void Copy(const SEAnesthesiaMachineSodaLimeFailure& src, SEAnesthesiaMachineSodaLimeFailure& dst);
 
-  static void Load(const cdm::TubeCuffLeakData& src, SETubeCuffLeak& dst);
-  static cdm::TubeCuffLeakData* Unload(const SETubeCuffLeak& src);
-  static void Serialize(const cdm::TubeCuffLeakData& src, SETubeCuffLeak& dst);
-  static void Serialize(const SETubeCuffLeak& src, cdm::TubeCuffLeakData& dst);
-  static void Copy(const SETubeCuffLeak& src, SETubeCuffLeak& dst);
+  static void Load(const cdm::AnesthesiaMachineTubeCuffLeakData& src, SEAnesthesiaMachineTubeCuffLeak& dst);
+  static cdm::AnesthesiaMachineTubeCuffLeakData* Unload(const SEAnesthesiaMachineTubeCuffLeak& src);
+  static void Serialize(const cdm::AnesthesiaMachineTubeCuffLeakData& src, SEAnesthesiaMachineTubeCuffLeak& dst);
+  static void Serialize(const SEAnesthesiaMachineTubeCuffLeak& src, cdm::AnesthesiaMachineTubeCuffLeakData& dst);
+  static void Copy(const SEAnesthesiaMachineTubeCuffLeak& src, SEAnesthesiaMachineTubeCuffLeak& dst);
 
-  static void Load(const cdm::VaporizerFailureData& src, SEVaporizerFailure& dst);
-  static cdm::VaporizerFailureData* Unload(const SEVaporizerFailure& src);
-  static void Serialize(const cdm::VaporizerFailureData& src, SEVaporizerFailure& dst);
-  static void Serialize(const SEVaporizerFailure& src, cdm::VaporizerFailureData& dst);
-  static void Copy(const SEVaporizerFailure& src, SEVaporizerFailure& dst);
+  static void Load(const cdm::AnesthesiaMachineVaporizerFailureData& src, SEAnesthesiaMachineVaporizerFailure& dst);
+  static cdm::AnesthesiaMachineVaporizerFailureData* Unload(const SEAnesthesiaMachineVaporizerFailure& src);
+  static void Serialize(const cdm::AnesthesiaMachineVaporizerFailureData& src, SEAnesthesiaMachineVaporizerFailure& dst);
+  static void Serialize(const SEAnesthesiaMachineVaporizerFailure& src, cdm::AnesthesiaMachineVaporizerFailureData& dst);
+  static void Copy(const SEAnesthesiaMachineVaporizerFailure& src, SEAnesthesiaMachineVaporizerFailure& dst);
 
-  static void Load(const cdm::VentilatorPressureLossData& src, SEVentilatorPressureLoss& dst);
-  static cdm::VentilatorPressureLossData* Unload(const SEVentilatorPressureLoss& src);
-  static void Serialize(const cdm::VentilatorPressureLossData& src, SEVentilatorPressureLoss& dst);
-  static void Serialize(const SEVentilatorPressureLoss& src, cdm::VentilatorPressureLossData& dst);
-  static void Copy(const SEVentilatorPressureLoss& src, SEVentilatorPressureLoss& dst);
+  static void Load(const cdm::AnesthesiaMachineVentilatorPressureLossData& src, SEAnesthesiaMachineVentilatorPressureLoss& dst);
+  static cdm::AnesthesiaMachineVentilatorPressureLossData* Unload(const SEAnesthesiaMachineVentilatorPressureLoss& src);
+  static void Serialize(const cdm::AnesthesiaMachineVentilatorPressureLossData& src, SEAnesthesiaMachineVentilatorPressureLoss& dst);
+  static void Serialize(const SEAnesthesiaMachineVentilatorPressureLoss& src, cdm::AnesthesiaMachineVentilatorPressureLossData& dst);
+  static void Copy(const SEAnesthesiaMachineVentilatorPressureLoss& src, SEAnesthesiaMachineVentilatorPressureLoss& dst);
 
-  static void Load(const cdm::YPieceDisconnectData& src, SEYPieceDisconnect& dst);
-  static cdm::YPieceDisconnectData* Unload(const SEYPieceDisconnect& src);
-  static void Serialize(const cdm::YPieceDisconnectData& src, SEYPieceDisconnect& dst);
-  static void Serialize(const SEYPieceDisconnect& src, cdm::YPieceDisconnectData& dst);
-  static void Copy(const SEYPieceDisconnect& src, SEYPieceDisconnect& dst);
+  static void Load(const cdm::AnesthesiaMachineYPieceDisconnectData& src, SEAnesthesiaMachineYPieceDisconnect& dst);
+  static cdm::AnesthesiaMachineYPieceDisconnectData* Unload(const SEAnesthesiaMachineYPieceDisconnect& src);
+  static void Serialize(const cdm::AnesthesiaMachineYPieceDisconnectData& src, SEAnesthesiaMachineYPieceDisconnect& dst);
+  static void Serialize(const SEAnesthesiaMachineYPieceDisconnect& src, cdm::AnesthesiaMachineYPieceDisconnectData& dst);
+  static void Copy(const SEAnesthesiaMachineYPieceDisconnect& src, SEAnesthesiaMachineYPieceDisconnect& dst);
 };

@@ -4,11 +4,18 @@ option java_package = "com.kitware.physiology.cdm";
 option optimize_for = SPEED;
 
 import "cdm/Properties.proto";
-import "cdm/PatientAssessmentEnums.proto";
+
+enum ePatientAssessmentType
+{
+  CompleteBloodCount                                                      = 0;/**<< @brief @ref CompleteBloodCountTable */
+  ComprehensiveMetabolicPanel                                             = 1;/**<< @brief @ref ComprehensiveMetabolicPanelTable */
+  PulmonaryFunctionTest                                                   = 2;/**<< @brief @ref PulmonaryFunctionTestTable */
+  Urinalysis                                                              = 3;/**<< @brief @ref UrinalysisTable */
+}
 
 message PatientAssessmentData
 {
- 
+
 }
 
 /** @brief A group of tests that measure how well the lungs take in and release air, and how well they move gases from the atmosphere into the body's circulation. */
@@ -75,31 +82,76 @@ message ComprehensiveMetabolicPanelData
 
 message UrinalysisMicroscopicData
 {
-  eUrinalysis.MicroscopicObservationType      ObservationType    = 1;/**<< @brief Microscope power used in observation */
-  ScalarAmountData                            RedBloodCells      = 2;/**<< @brief Number of red blood cells viewed. */
-  ScalarAmountData                            WhiteBloodCells    = 3;/**<< @brief Number of white blood cells viewed. */
-  eUrinalysis.MicroscopicObservationAmount    EpithelialCells    = 4;/**<< @brief Amount of epithelial cells viewed. */
-  ScalarAmountData                            Casts              = 5;/**<< @brief Casts are cylindrical particles sometimes found in urine that are formed from coagulated protein secreted by kidney cells. .  */
-  eUrinalysis.MicroscopicObservationAmount    Crystals           = 6;/**<< @brief Amount of crystals viewed. */
-  eUrinalysis.MicroscopicObservationAmount    Bacteria           = 7;/**<< @brief Amount of bacteria viewed. */
-  eUrinalysis.MicroscopicObservationAmount    Trichomonads       = 8;/**<< @brief Trichomonads are parasites that may be found in the urine of women or men (rarely).*/
-  eUrinalysis.MicroscopicObservationAmount    Yeast              = 9;/**<< @brief Amount of yeasts viewed. */                         
+  /** @brief Enumeration for the observation type */
+  enum eObservationType
+  {
+    NullObservationType = 0;/**<< @brief Not provided in the assessment */
+    LowPowerField       = 1;/**<< @brief */
+    HighPowerField      = 2;/**<< @brief */
+  }
+
+
+  /** @brief Enumeration for the observation amount */
+  enum eObservationAmount
+  {
+    NullObservationAmount = 0;/**<< @brief Not provided in the assessment */
+    Few                   = 1;/**<< @brief */
+    Moderate              = 2;/**<< @brief */
+    Many                  = 3;/**<< @brief */
+  }
+  
+  eObservationType          ObservationType    = 1;/**<< @brief Microscope power used in observation */
+  ScalarAmountData          RedBloodCells      = 2;/**<< @brief Number of red blood cells viewed. */
+  ScalarAmountData          WhiteBloodCells    = 3;/**<< @brief Number of white blood cells viewed. */
+  eObservationAmount        EpithelialCells    = 4;/**<< @brief Amount of epithelial cells viewed. */
+  ScalarAmountData          Casts              = 5;/**<< @brief Casts are cylindrical particles sometimes found in urine that are formed from coagulated protein secreted by kidney cells. .  */
+  eObservationAmount        Crystals           = 6;/**<< @brief Amount of crystals viewed. */
+  eObservationAmount        Bacteria           = 7;/**<< @brief Amount of bacteria viewed. */
+  eObservationAmount        Trichomonads       = 8;/**<< @brief Trichomonads are parasites that may be found in the urine of women or men (rarely).*/
+  eObservationAmount        Yeast              = 9;/**<< @brief Amount of yeasts viewed. */                         
 }
 message UrinalysisData
 {
+  /** @brief Enumeration for presence of a substance */
+  enum ePresenceIndicator
+  {
+    NullPresence    = 0;/**<< @brief Not provided in the assessment */
+    Positive        = 1;/**<< @brief */
+    Negative        = 2;/**<< @brief */
+  }
+  
+  /** @brief Enumeration for clarity of a substance */
+  enum eClarityIndicator
+  {
+    NullClarity     = 0;/**<< @brief Not provided in the assessment */
+    Translucent     = 1;/**<< @brief */
+    SlightlyCloudy  = 2;/**<< @brief */
+    Cloudy          = 3;/**<< @brief */
+    Turbid          = 4;/**<< @brief */
+  }
+  
+  /** @brief Enumeration for color of urine */
+  enum eUrineColor
+  {
+    NullColor       = 0;/**<< @brief Not provided in the assessment */
+    PaleYellow      = 1;/**<< @brief */
+    Yellow          = 2;/**<< @brief */
+    DarkYellow      = 3;/**<< @brief */
+  }
+  
   PatientAssessmentData                         PatientAssessment  = 1;
-  eUrinalysis.UrineColor                        Color              = 2; /**<< @brief Color of the urine. */
-  eUrinalysis.ClarityIndicator                  Appearance         = 3; /**<< @brief Clarity of the urine. */
-  eUrinalysis.PresenceIndicator                 Glucose            = 4; /**<< @brief Glucose is normally not present in urine. When glucose is present, the condition is called glucosuria. */
-  eUrinalysis.PresenceIndicator                 Ketone             = 5; /**<< @brief  Ketones are not normally found in the urine. They are intermediate products of fat metabolism. They can form when a person does process enough carbohydrates. */
+  eUrineColor                                   Color              = 2; /**<< @brief Color of the urine. */
+  eClarityIndicator                             Appearance         = 3; /**<< @brief Clarity of the urine. */
+  ePresenceIndicator                            Glucose            = 4; /**<< @brief Glucose is normally not present in urine. When glucose is present, the condition is called glucosuria. */
+  ePresenceIndicator                            Ketone             = 5; /**<< @brief  Ketones are not normally found in the urine. They are intermediate products of fat metabolism. They can form when a person does process enough carbohydrates. */
   ScalarData                                    Bilirubin          = 6; /**<< @brief Bilirubin is not present in the urine of normal, healthy individuals. Bilirubin is a waste product that is produced by the liver from the hemoglobin of RBCs that are removed from circulation. */
   ScalarData                                    SpecificGravity    = 7; /**<< @brief A measure of urine concentration that can be determined using a chemical test. */
-  eUrinalysis.PresenceIndicator                 Blood              = 8; /**<< @brief This test is used to detect hemoglobin in the urine (hemoglobinuria). Hemoglobin is an oxygen-transporting protein found inside red blood cells (RBCs). Its presence in the urine indicates blood in the urine (known as hematuria).*/
+  ePresenceIndicator                            Blood              = 8; /**<< @brief This test is used to detect hemoglobin in the urine (hemoglobinuria). Hemoglobin is an oxygen-transporting protein found inside red blood cells (RBCs). Its presence in the urine indicates blood in the urine (known as hematuria).*/
   ScalarData                                    pH                 = 9; /**<< @brief As with specific gravity, there are typical but not "abnormal" pH values. The kidneys play an important role in maintaining the acid-base balance of the body.  */
-  eUrinalysis.PresenceIndicator                 Protein            = 10;/**<< @brief The protein test pad measures the amount of albumin in the urine. Normally, there will not be detectable quantities. */
+  ePresenceIndicator                            Protein            = 10;/**<< @brief The protein test pad measures the amount of albumin in the urine. Normally, there will not be detectable quantities. */
   ScalarMassPerVolumeData                       Urobilinogen       = 11;/**<< @brief Urobilinogen is normally present in urine in low concentrations. It is formed in the intestine from bilirubin, and a portion of it is absorbed back into the bloodstream. */
-  eUrinalysis.PresenceIndicator                 Nitrite            = 12;/**<< @brief This test detects nitrite and is based upon the fact that many bacteria can convert nitrate to nitrite in the urine. */
-  eUrinalysis.PresenceIndicator                 LeukocyteEsterase  = 13;/**<< @brief Leukocyte esterase is an enzyme present in most white blood cells (WBCs). Normally, a few white blood cells (see microscopic examination) are present in urine and this test is negative. When the number of WBCs in urine increases significantly, this screening test will become positive.*/
+  ePresenceIndicator                            Nitrite            = 12;/**<< @brief This test detects nitrite and is based upon the fact that many bacteria can convert nitrate to nitrite in the urine. */
+  ePresenceIndicator                            LeukocyteEsterase  = 13;/**<< @brief Leukocyte esterase is an enzyme present in most white blood cells (WBCs). Normally, a few white blood cells (see microscopic examination) are present in urine and this test is negative. When the number of WBCs in urine increases significantly, this screening test will become positive.*/
   
   UrinalysisMicroscopicData                     Microscopic        = 14;
 }

@@ -35,9 +35,9 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Google.Protobuf, Version=3.6.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
+    <Reference Include="Google.Protobuf, Version=3.5.2.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\protobuf\csharp\src\Google.Protobuf\bin\Release\net45\Google.Protobuf.dll</HintPath>
+      <HintPath>..\..\..\builds\pulse-engine\protobuf\src\protobuf\csharp\src\Google.Protobuf\bin\Release\net45\Google.Protobuf.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -52,47 +52,36 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="bind\csharp\ActionEnums.cs" />
     <Compile Include="bind\csharp\Actions.cs" />
     <Compile Include="bind\csharp\AnesthesiaMachine.cs" />
     <Compile Include="bind\csharp\AnesthesiaMachineActions.cs" />
-    <Compile Include="bind\csharp\AnesthesiaMachineEnums.cs" />
     <Compile Include="bind\csharp\Circuit.cs" />
     <Compile Include="bind\csharp\Compartment.cs" />
-    <Compile Include="bind\csharp\CompartmentEnums.cs" />
     <Compile Include="bind\csharp\Conditions.cs" />
     <Compile Include="bind\csharp\ElectroCardioGram.cs" />
-    <Compile Include="bind\csharp\ElectroCardioGramEnums.cs" />
     <Compile Include="bind\csharp\Engine.cs" />
-    <Compile Include="bind\csharp\EngineEnums.cs" />
     <Compile Include="bind\csharp\Enums.cs" />
     <Compile Include="bind\csharp\Environment.cs" />
     <Compile Include="bind\csharp\EnvironmentActions.cs" />
     <Compile Include="bind\csharp\EnvironmentConditions.cs" />
-    <Compile Include="bind\csharp\EnvironmentEnums.cs" />
+    <Compile Include="bind\csharp\Events.cs" />
     <Compile Include="bind\csharp\Inhaler.cs" />
     <Compile Include="bind\csharp\InhalerActions.cs" />
     <Compile Include="bind\csharp\Patient.cs" />
-    <Compile Include="bind\csharp\PatientActionEnums.cs" />
     <Compile Include="bind\csharp\PatientActions.cs" />
-    <Compile Include="bind\csharp\PatientAssessmentEnums.cs" />
     <Compile Include="bind\csharp\PatientAssessments.cs" />
     <Compile Include="bind\csharp\PatientConditions.cs" />
-    <Compile Include="bind\csharp\PatientEnums.cs" />
     <Compile Include="bind\csharp\PatientNutrition.cs" />
     <Compile Include="bind\csharp\Physiology.cs" />
-    <Compile Include="bind\csharp\PhysiologyEnums.cs" />
     <Compile Include="bind\csharp\Properties.cs" />
     <Compile Include="bind\csharp\Pulse.cs" />
     <Compile Include="bind\csharp\PulseConfiguration.cs" />
-    <Compile Include="bind\csharp\PulseEnums.cs" />
     <Compile Include="bind\csharp\PulseEnvironment.cs" />
     <Compile Include="bind\csharp\PulseEquipment.cs" />
     <Compile Include="bind\csharp\PulsePhysiology.cs" />
     <Compile Include="bind\csharp\PulseState.cs" />
     <Compile Include="bind\csharp\Scenario.cs" />
     <Compile Include="bind\csharp\Substance.cs" />
-    <Compile Include="bind\csharp\SubstanceEnums.cs" />
     <Compile Include="bind\csharp\SubstanceQuantity.cs" />
     <Compile Include="bind\csharp\TestReport.cs" />
   </ItemGroup>

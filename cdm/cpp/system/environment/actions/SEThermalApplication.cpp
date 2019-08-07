@@ -57,7 +57,11 @@ bool SEThermalApplication::IsActive() const
 
 bool SEThermalApplication::HasActiveHeating() const
 {
-  return m_ActiveHeating != nullptr;
+  if (m_ActiveHeating == nullptr)
+    return false;
+  if (!m_ActiveHeating->HasPower() || m_ActiveHeating->GetPower().IsZero())
+    return false;
+  return true;
 }
 SEActiveConditioning& SEThermalApplication::GetActiveHeating()
 {
@@ -76,7 +80,11 @@ void SEThermalApplication::RemoveActiveHeating()
 
 bool SEThermalApplication::HasActiveCooling() const
 {
-  return m_ActiveCooling != nullptr;
+  if (m_ActiveCooling == nullptr)
+    return false;
+  if (!m_ActiveCooling->HasPower() || m_ActiveCooling->GetPower().IsZero())
+    return false;
+  return true;
 }
 SEActiveConditioning& SEThermalApplication::GetActiveCooling()
 {
@@ -95,7 +103,13 @@ void SEThermalApplication::RemoveActiveCooling()
 
 bool SEThermalApplication::HasAppliedTemperature() const
 {
-  return m_AppliedTemperature != nullptr;
+  if (m_AppliedTemperature == nullptr)
+    return false;
+  if (m_AppliedTemperature->GetState() == eSwitch::Off)
+    return false;
+  if (!m_AppliedTemperature->HasTemperature())
+    return false;
+  return true;
 }
 SEAppliedTemperature& SEThermalApplication::GetAppliedTemperature()
 {

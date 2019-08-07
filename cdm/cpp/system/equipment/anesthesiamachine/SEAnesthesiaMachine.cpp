@@ -16,7 +16,6 @@
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarTime.h"
-#include "engine/SEEventHandler.h"
 #include "io/protobuf/PBAnesthesiaMachine.h"
 
 SEAnesthesiaMachine::SEAnesthesiaMachine(SESubstanceManager& substances) : SESystem(substances.GetLogger()), m_Substances(substances)
@@ -35,7 +34,6 @@ SEAnesthesiaMachine::SEAnesthesiaMachine(SESubstanceManager& substances) : SESys
   m_RightChamber = nullptr;
   m_OxygenBottleOne = nullptr;
   m_OxygenBottleTwo = nullptr;
-  m_EventHandler = nullptr;
 }
 
 SEAnesthesiaMachine::~SEAnesthesiaMachine()
@@ -47,9 +45,6 @@ void SEAnesthesiaMachine::Clear()
 {
   SESystem::Clear();
 
-  m_EventHandler = nullptr;
-  m_EventState.clear();
-  m_EventDuration_s.clear();
   m_Connection = eAnesthesiaMachine_Connection::NullConnection;
   SAFE_DELETE(m_InletFlow);
   SAFE_DELETE(m_InspiratoryExpiratoryRatio);
@@ -70,11 +65,6 @@ void SEAnesthesiaMachine::Merge(const SEAnesthesiaMachine& from)
 {
   if(from.m_Connection!=eAnesthesiaMachine_Connection::NullConnection)
     SetConnection(from.m_Connection);
-  // Copy EventHandler? I don't think so...
-  for (auto e : from.m_EventState)
-      m_EventState[e.first] = e.second;
-  for (auto e : from.m_EventDuration_s)
-      m_EventDuration_s[e.first] = e.second;
   COPY_PROPERTY(InletFlow);
   COPY_PROPERTY(InspiratoryExpiratoryRatio);
   COPY_PROPERTY(OxygenFraction);
@@ -159,86 +149,6 @@ const SEScalar* SEAnesthesiaMachine::GetScalar(const std::string& name)
   }
 
   return nullptr;
-}
-
-void SEAnesthesiaMachine::SetEvent(eAnesthesiaMachine_Event type, bool active, const SEScalarTime& time)
-{
-  bool b = false;// Default is off
-  if (m_EventState.find(type) != m_EventState.end())
-    b = m_EventState[type];
-  if (b == active)
-    return;//No Change
-  if (active != b)
-  {
-    m_ss.str("");
-    m_ss << "[Event] " << time << ", ";
-    if (active)
-    {
-      switch (type)
-      {        
-      case eAnesthesiaMachine_Event::OxygenBottleOneExhausted:
-        m_ss << "Oxygen Bottle 1 has been exhausted";
-        break;
-      case eAnesthesiaMachine_Event::OxygenBottleTwoExhausted:
-        m_ss << "Oxygen Bottle 2 has been exhausted";
-        break;
-      case eAnesthesiaMachine_Event::ReliefValveActive:
-        m_ss << "Relief valve active - pressure exceeded";
-        break;
-      default:
-        m_ss << "Anesthesia Machine Event On : " << eAnesthesiaMachine_Event_Name(type);
-      }
-    }
-    else
-    {
-      switch (type)
-      {
-      case eAnesthesiaMachine_Event::OxygenBottleOneExhausted:
-        m_ss << "Oxygen Bottle 1 has been replenished";
-        break;
-      case eAnesthesiaMachine_Event::OxygenBottleTwoExhausted:
-        m_ss << "Oxygen Bottle 2 has been replenished";
-        break;
-      case eAnesthesiaMachine_Event::ReliefValveActive:
-        m_ss << "Relief valve inactive - pressure below setting";
-        break;
-      default:
-        m_ss << "Anesthesia Machine Event Off : " << eAnesthesiaMachine_Event_Name(type);
-      }
-    }
-    Info(m_ss);
-  }
-  m_EventState[type] = active;
-  m_EventDuration_s[type] = 0;
-  if (m_EventHandler != nullptr)
-    m_EventHandler->HandleAnesthesiaMachineEvent(type, active, &time);
-}
-
-bool SEAnesthesiaMachine::IsEventActive(eAnesthesiaMachine_Event type) const
-{
-  auto b = m_EventState.find(type);
-  if (b == m_EventState.end())
-    return false;
-  return b->second;
-}
-
-double SEAnesthesiaMachine::GetEventDuration(eAnesthesiaMachine_Event type, const TimeUnit& unit) const
-{
-  auto i = m_EventDuration_s.find(type);
-  if (i == m_EventDuration_s.end())
-    return 0;
-  return Convert(i->second, TimeUnit::s, unit);
-}
-
-void SEAnesthesiaMachine::UpdateEvents(const SEScalarTime& timeStep)
-{
-  for (auto itr : m_EventDuration_s)
-    itr.second += timeStep.GetValue(TimeUnit::s);
-}
-
-void SEAnesthesiaMachine::ForwardEvents(SEEventHandler* handler)
-{
-  m_EventHandler = handler;
 }
 
 void SEAnesthesiaMachine::SetConnection(eAnesthesiaMachine_Connection c)

@@ -60,8 +60,8 @@ protected:
   
   SEScalarMassPerMass*   m_AcidicPhospohlipidConcentration;
   SEScalarVolume*        m_MatrixVolume;
-  SEScalar0To1*      m_NeutralLipidsVolumeFraction;
-  SEScalar0To1*      m_NeutralPhospholipidsVolumeFraction;
+  SEScalar0To1*          m_NeutralLipidsVolumeFraction;
+  SEScalar0To1*          m_NeutralPhospholipidsVolumeFraction;
   SEScalar*              m_TissueToPlasmaAlbuminRatio;
   SEScalar*              m_TissueToPlasmaAlphaAcidGlycoproteinRatio;
   SEScalar*              m_TissueToPlasmaLipoproteinRatio;

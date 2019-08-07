@@ -830,8 +830,6 @@ void PBPhysiology::Serialize(const cdm::RespiratorySystemData& src, SERespirator
     PBProperty::Load(src.pulmonarycompliance(), dst.GetPulmonaryCompliance());
   if (src.has_pulmonaryresistance())
     PBProperty::Load(src.pulmonaryresistance(), dst.GetPulmonaryResistance());
-  if (src.has_respirationdriverpressure())
-    PBProperty::Load(src.respirationdriverpressure(), dst.GetRespirationDriverPressure());
   if (src.has_respirationmusclepressure())
     PBProperty::Load(src.respirationmusclepressure(), dst.GetRespirationMusclePressure());
   if (src.has_respirationrate())
@@ -878,8 +876,6 @@ void PBPhysiology::Serialize(const SERespiratorySystem& src, cdm::RespiratorySys
     dst.set_allocated_pulmonarycompliance(PBProperty::Unload(*src.m_PulmonaryCompliance));
   if (src.HasPulmonaryResistance())
     dst.set_allocated_pulmonaryresistance(PBProperty::Unload(*src.m_PulmonaryResistance));
-  if (src.HasRespirationDriverPressure())
-    dst.set_allocated_respirationdriverpressure(PBProperty::Unload(*src.m_RespirationDriverPressure));
   if (src.HasRespirationMusclePressure())
     dst.set_allocated_respirationmusclepressure(PBProperty::Unload(*src.m_RespirationMusclePressure));
   if (src.HasRespirationRate())

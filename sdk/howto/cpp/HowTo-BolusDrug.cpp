@@ -6,7 +6,6 @@
 // Include the various types you will be using in your code
 #include "engine/SEDataRequestManager.h"
 #include "engine/SEEngineTracker.h"
-#include "engine/SEEventHandler.h"
 #include "compartment/SECompartmentManager.h"
 #include "patient/actions/SESubstanceBolus.h"
 #include "system/physiology/SEBloodChemistrySystem.h"

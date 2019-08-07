@@ -110,7 +110,7 @@ void PBSubstance::Serialize(const SESubstance& src, cdm::SubstanceData& dst)
   if (src.HasName())
     dst.set_name(src.m_Name);
   if (src.HasState())
-    dst.set_state((cdm::eSubstance_State)src.m_State);
+    dst.set_state((cdm::SubstanceData::eState)src.m_State);
   if (src.HasDensity())
     dst.set_allocated_density(PBProperty::Unload(*src.m_Density));
   if (src.HasMolarMass())
@@ -554,13 +554,13 @@ void PBSubstance::Serialize(const SESubstancePhysicochemicals& src, cdm::Substan
   if (src.HasAcidDissociationConstant())
     dst.set_allocated_aciddissociationconstant(PBProperty::Unload(*src.m_AcidDissociationConstant));
   if (src.HasBindingProtein())
-    dst.set_bindingprotein((cdm::eSubstance_BindingProtein)src.m_BindingProtein);
+    dst.set_bindingprotein((cdm::SubstancePhysicochemicalsData::eBindingProtein)src.m_BindingProtein);
   if (src.HasBloodPlasmaRatio())
     dst.set_allocated_bloodplasmaratio(PBProperty::Unload(*src.m_BloodPlasmaRatio));
   if (src.HasFractionUnboundInPlasma())
     dst.set_allocated_fractionunboundinplasma(PBProperty::Unload(*src.m_FractionUnboundInPlasma));
   if (src.HasIonicState())
-    dst.set_ionicstate((cdm::eSubstance_IonicState)src.m_IonicState);
+    dst.set_ionicstate((cdm::SubstancePhysicochemicalsData::eIonicState)src.m_IonicState);
   if (src.HasLogP())
     dst.set_allocated_logp(PBProperty::Unload(*src.m_LogP));
   if (src.HasOralAbsorptionRateConstant())

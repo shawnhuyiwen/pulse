@@ -9,7 +9,6 @@
 #include "io/protobuf/PBProperties.h"
 #include "io/protobuf/PBUtils.h"
 #include "bind/cpp/cdm/Engine.pb.h"
-#include "bind/cpp/cdm/EngineEnums.pb.h"
 #include "engine/SEDataRequest.h"
 #include "engine/SEDataRequestManager.h"
 #include "engine/SEDecimalFormat.h"
@@ -40,18 +39,18 @@
 #include "engine/SEPatientActionCollection.h"
 #include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineAction.h"
 #include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineConfiguration.h"
-#include "system/equipment/anesthesiamachine/actions/SEOxygenWallPortPressureLoss.h"
-#include "system/equipment/anesthesiamachine/actions/SEOxygenTankPressureLoss.h"
-#include "system/equipment/anesthesiamachine/actions/SEExpiratoryValveLeak.h"
-#include "system/equipment/anesthesiamachine/actions/SEExpiratoryValveObstruction.h"
-#include "system/equipment/anesthesiamachine/actions/SEInspiratoryValveLeak.h"
-#include "system/equipment/anesthesiamachine/actions/SEInspiratoryValveObstruction.h"
-#include "system/equipment/anesthesiamachine/actions/SEMaskLeak.h"
-#include "system/equipment/anesthesiamachine/actions/SESodaLimeFailure.h"
-#include "system/equipment/anesthesiamachine/actions/SETubeCuffLeak.h"
-#include "system/equipment/anesthesiamachine/actions/SEVaporizerFailure.h"
-#include "system/equipment/anesthesiamachine/actions/SEVentilatorPressureLoss.h"
-#include "system/equipment/anesthesiamachine/actions/SEYPieceDisconnect.h"
+#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineOxygenWallPortPressureLoss.h"
+#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineOxygenTankPressureLoss.h"
+#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineExpiratoryValveLeak.h"
+#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineExpiratoryValveObstruction.h"
+#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineInspiratoryValveLeak.h"
+#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineInspiratoryValveObstruction.h"
+#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineMaskLeak.h"
+#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineSodaLimeFailure.h"
+#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineTubeCuffLeak.h"
+#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineVaporizerFailure.h"
+#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineVentilatorPressureLoss.h"
+#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineYPieceDisconnect.h"
 #include "system/environment/actions/SEChangeEnvironmentConditions.h"
 #include "system/environment/actions/SEThermalApplication.h"
 #include "system/equipment/inhaler/actions/SEInhalerConfiguration.h"
@@ -349,7 +348,7 @@ cdm::DataRequestData* PBEngine::Unload(const SEDataRequest& src)
 void PBEngine::Serialize(const SEDataRequest& src, cdm::DataRequestData& dst)
 {
   PBEngine::Serialize(src, *dst.mutable_decimalformat());
-  dst.set_category((cdm::eDataRequest_Category)src.m_Category);
+  dst.set_category((cdm::DataRequestData::eCategory)src.m_Category);
   if (src.HasCompartmentName())
     dst.set_compartmentname(src.m_CompartmentName);
   if (src.HasSubstanceName())
@@ -435,7 +434,7 @@ cdm::DecimalFormatData* PBEngine::Unload(const SEDecimalFormat& src)
 }
 void PBEngine::Serialize(const SEDecimalFormat& src, cdm::DecimalFormatData& dst)
 {
-  dst.set_type((cdm::eDecimalFormat_Type)src.m_Notation);
+  dst.set_type((cdm::DecimalFormatData::eType)src.m_Notation);
   dst.set_precision((google::protobuf::uint32)src.m_Precision);
 }
 

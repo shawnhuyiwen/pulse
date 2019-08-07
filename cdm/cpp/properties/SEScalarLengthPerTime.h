@@ -19,6 +19,7 @@ public:
   static const LengthPerTimeUnit cm_Per_min;
   static const LengthPerTimeUnit ft_Per_s;
   static const LengthPerTimeUnit ft_Per_min;
+  static const LengthPerTimeUnit km_Per_hr;
 };
 
 class CDM_DECL SEScalarLengthPerTime : public SEScalarQuantity<LengthPerTimeUnit>

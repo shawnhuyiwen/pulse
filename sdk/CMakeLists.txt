@@ -30,6 +30,8 @@ file(GLOB SRC_FILES howto/cpp/EngineHowTo.cpp
                     howto/cpp/HowTo-Serialize.cpp
                     howto/cpp/HowTo-Smoke.cpp
                     howto/cpp/HowTo-TensionPneumothorax.cpp
+                    
+                    howto/cpp/HowTo-TestSystemCapability.cpp
 )
 source_group("" FILES ${SRC_FILES})
 set(SOURCE ${SRC_FILES})
@@ -57,3 +59,7 @@ ENDIF()
 
 add_custom_command(TARGET HowToDriver POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:HowToDriver> ${INSTALL_BIN})
+                   
+if(MSVC) # Configure running executable out of MSVC
+  set_property(TARGET HowToDriver PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${INSTALL_BIN}")
+endif()

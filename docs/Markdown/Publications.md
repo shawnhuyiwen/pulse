@@ -1,10 +1,12 @@
 Publications {#published}
 =======
 
-Note that many of these publications focus on the physiology engine precursor, %BioGears.
-The authors Clipp, Webb, and Bray are now at Kitware focusing their efforts to further expand the physiology engine.
+Note that some of these publications focus on the physiology engine precursor, %BioGears.
+The authors Clipp, Webb, and Bray have transitioned to the Pulse team.
 
 Team Publications:
+- Bray, Aaron, Jeffrey B. Webb, Andinet Enquobahrie, Jared Vicory, Jerry Heneghan, Robert Hubal, Stephanie TerMaath, Philip Asare, and Rachel B. Clipp. "Pulse Physiology Engine: an Open-Source Software Platform for Computational Modeling of Human Medical Simulation." SN Comprehensive Clinical Medicine. 2019.
+- Jeffrey B. Webb, Rodney Metoyer, Aaron Bray, and Rachel B. Clipp. "Simulation of Asthma Attack and Inhaler Actuation using the Pulse Physiology Engine." BMES Frontiers in Medical Devices. March 2019.
 - Paul Ruales Rosero, Pavithra Rajeswaran, Jeffrey Webb, Aaron Bray, Thenkurussi Kesavadas. "Modelling Valvular Diseases Using a Virtual Physiology Engine." 40th Annual International Conference of the IEEE Engineering in Medicine and Biology Society. Honolulu, Hawaii. 2018.
 - Farooq Gessa, Philip Asare, Aaron Bray, Rachel Clipp, S. Mark Poler. "Towards A Test and Validation Framework for Closed-Loop Physiology Management Systems for Critical and Perioperative." Medical Cyber Physical Systems Workshop. Porto, Portugal. 2018.
 - Potter, Lucas, Arikatla, Sreekanth, Bray, Aaron, Webb, Jeff, and Enquobahrie, Andinet. "Physiology informed virtual surgical planning: a case study with a virtual airway surgical planner and BioGears." SPIE Medical Imaging Conference on Image-Guided Procedures, Robotic Interventions, and Modeling. Orlando, FL. 2017.

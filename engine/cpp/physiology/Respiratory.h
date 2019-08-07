@@ -77,6 +77,7 @@ protected:
   void ConsciousRespiration();
   /**/void ProcessConsciousRespiration(SEConsciousRespirationCommand& cmd);
   void MechanicalVentilation();
+  void SupplementalOxygen();
   void Apnea();
   // Driver
   void RespiratoryDriver();

@@ -179,7 +179,43 @@ void PulseSubstances::InitializeGasCompartments()
       cmpt->Balance(BalanceGasBy::VolumeFraction);
     }
   }
-}
+
+  for (SEGasCompartment* cmpt : m_data.GetCompartments().GetNasalCannulaLeafCompartments())
+  {
+    if (cmpt->HasVolume())
+    {
+      if (cmpt->GetName() == pulse::NasalCannulaCompartment::NasalCannula)
+      {
+        cmpt->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetVolumeFraction().SetValue(AmbientO2VF);
+        cmpt->GetSubstanceQuantity(m_data.GetSubstances().GetCO2())->GetVolumeFraction().SetValue(AmbientCO2VF);
+        cmpt->GetSubstanceQuantity(m_data.GetSubstances().GetN2())->GetVolumeFraction().SetValue(AmbientN2VF);
+      }
+      else
+      {
+        cmpt->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetVolumeFraction().SetValue(1.0);
+      }
+      cmpt->Balance(BalanceGasBy::VolumeFraction);
+    }
+  }
+
+  for (SEGasCompartment* cmpt : m_data.GetCompartments().GetNonRebreatherMaskLeafCompartments())
+  {
+    if (cmpt->HasVolume())
+    {
+      cmpt->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetVolumeFraction().SetValue(1.0);
+      cmpt->Balance(BalanceGasBy::VolumeFraction);
+    }
+  }
+
+  for (SEGasCompartment* cmpt : m_data.GetCompartments().GetSimpleMaskLeafCompartments())
+  {
+    if (cmpt->HasVolume())
+    {
+      cmpt->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetVolumeFraction().SetValue(1.0);
+      cmpt->Balance(BalanceGasBy::VolumeFraction);
+    }
+  }
+ }
 
 void PulseSubstances::InitializeLiquidCompartmentGases()
 {

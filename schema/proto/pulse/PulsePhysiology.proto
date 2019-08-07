@@ -93,8 +93,8 @@ message HepaticData
 message NervousData
 {
   cdm.NervousSystemData          Common                                              = 1;
-  double                         ArterialOxygenSetPoint_mmHg                         = 2;
-  double                         ArterialCarbonDioxideSetPoint_mmHg                  = 3;
+  double                         ArterialOxygenBaseline_mmHg                         = 2;
+  double                         ArterialCarbonDioxideBaseline_mmHg                  = 3;
 }
 
 message RenalData

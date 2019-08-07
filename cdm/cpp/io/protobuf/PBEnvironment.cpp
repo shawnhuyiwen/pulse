@@ -160,7 +160,7 @@ cdm::EnvironmentalConditionsData* PBEnvironment::Unload(const SEEnvironmentalCon
 }
 void PBEnvironment::Serialize(const SEEnvironmentalConditions& src, cdm::EnvironmentalConditionsData& dst)
 {
-  dst.set_surroundingtype((cdm::eEnvironment_SurroundingType)src.m_SurroundingType);
+  dst.set_surroundingtype((cdm::EnvironmentalConditionsData::eSurroundingType)src.m_SurroundingType);
   if (src.HasAirDensity())
     dst.set_allocated_airdensity(PBProperty::Unload(*src.m_AirDensity));
   if (src.HasAirVelocity())

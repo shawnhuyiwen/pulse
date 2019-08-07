@@ -4,11 +4,11 @@
 package com.kitware.physiology.datamodel.patient.actions;
 
 import com.kitware.physiology.cdm.PatientActions.IntubationData;
-import com.kitware.physiology.cdm.PatientActionEnums.eIntubation.Type;
+import com.kitware.physiology.cdm.PatientActions.IntubationData.eType;
 
 public  class SEIntubation extends SEPatientAction
 {
-  protected Type type;
+  protected eType type;
   
   public SEIntubation()
   {
@@ -37,7 +37,7 @@ public  class SEIntubation extends SEPatientAction
   public static void load(IntubationData src, SEIntubation dst)
   {
     SEPatientAction.load(src.getPatientAction(), dst);
-    if(src.getType()!=Type.UNRECOGNIZED)
+    if(src.getType()!=eType.UNRECOGNIZED)
     	dst.type = src.getType();
   }
   
@@ -55,11 +55,11 @@ public  class SEIntubation extends SEPatientAction
       dst.setType(src.type);
   }
   
-  public Type getType()
+  public eType getType()
   {
     return type;
   }
-  public void setType(Type t)
+  public void setType(eType t)
   {
     type = t;
   }

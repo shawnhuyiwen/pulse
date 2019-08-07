@@ -16,6 +16,7 @@
 #include "system/physiology/SEPupillaryResponse.h"
 #include "system/physiology/SEDrugSystem.h"
 // CDM
+#include "engine/SEEventManager.h"
 #include "properties/SEScalarFlowCompliance.h"
 #include "properties/SEScalarFlowElastance.h"
 #include "properties/SEScalarFlowResistance.h"
@@ -68,8 +69,8 @@ void Nervous::Initialize()
   GetRightEyePupillaryResponse().GetReactivityModifier().SetValue(0);
 
   // Set when feedback is turned on
-  m_ArterialOxygenSetPoint_mmHg = 0;
-  m_ArterialCarbonDioxideSetPoint_mmHg = 0;
+  m_ArterialOxygenBaseline_mmHg = 0;
+  m_ArterialCarbonDioxideBaseline_mmHg = 0;
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -99,8 +100,8 @@ void Nervous::AtSteadyState()
     m_FeedbackActive = true;
 
   // The set-points (Baselines) get reset at the end of each stabilization period.
-  m_ArterialOxygenSetPoint_mmHg = m_data.GetBloodChemistry().GetArterialOxygenPressure(PressureUnit::mmHg);
-  m_ArterialCarbonDioxideSetPoint_mmHg = m_data.GetBloodChemistry().GetArterialCarbonDioxidePressure(PressureUnit::mmHg);
+  m_ArterialOxygenBaseline_mmHg = m_data.GetBloodChemistry().GetArterialOxygenPressure(PressureUnit::mmHg);
+  m_ArterialCarbonDioxideBaseline_mmHg = m_data.GetBloodChemistry().GetArterialCarbonDioxidePressure(PressureUnit::mmHg);
   // The baroreceptor scales need to be reset any time the baselines are reset.
   GetBaroreceptorHeartRateScale().SetValue(1.0);
   GetBaroreceptorHeartElastanceScale().SetValue(1.0);
@@ -166,12 +167,12 @@ void Nervous::BaroreceptorFeedback()
   double nu = m_data.GetConfiguration().GetResponseSlope();
   double meanArterialPressure_mmHg = m_data.GetCardiovascular().GetMeanArterialPressure(PressureUnit::mmHg);
   //Adjusting the mean arterial pressure set-point to account for cardiovascular drug effects
-  double meanArterialPressureSetPoint_mmHg = m_data.GetPatient().GetMeanArterialPressureBaseline(PressureUnit::mmHg) //m_MeanArterialPressureNoFeedbackBaseline_mmHg
+  double meanArterialPressureBaseline_mmHg = m_data.GetPatient().GetMeanArterialPressureBaseline(PressureUnit::mmHg) //m_MeanArterialPressureNoFeedbackBaseline_mmHg
     + m_data.GetDrugs().GetMeanBloodPressureChange(PressureUnit::mmHg)
     + m_data.GetEnergy().GetExerciseMeanArterialPressureDelta(PressureUnit::mmHg);  
 
-  double sympatheticFraction = 1.0 / (1.0 + pow(meanArterialPressure_mmHg / meanArterialPressureSetPoint_mmHg, nu));
-  double parasympatheticFraction = 1.0 / (1.0 + pow(meanArterialPressure_mmHg / meanArterialPressureSetPoint_mmHg, -nu));
+  double sympatheticFraction = 1.0 / (1.0 + pow(meanArterialPressure_mmHg / meanArterialPressureBaseline_mmHg, nu));
+  double parasympatheticFraction = 1.0 / (1.0 + pow(meanArterialPressure_mmHg / meanArterialPressureBaseline_mmHg, -nu));
 
   //Calculate the normalized change in heart rate
   double normalizedHeartRate = GetBaroreceptorHeartRateScale().GetValue();
@@ -205,7 +206,7 @@ void Nervous::BaroreceptorFeedback()
   m_data.GetDataTrack().Probe("normalizedHeartElastance", normalizedHeartElastance);
   m_data.GetDataTrack().Probe("normalizedResistance", normalizedResistance);
   m_data.GetDataTrack().Probe("normalizedCompliance", normalizedCompliance);
-  m_data.GetDataTrack().Probe("meanArterialPressureSetPoint_mmHg", meanArterialPressureSetPoint_mmHg);
+  m_data.GetDataTrack().Probe("meanArterialPressureBaseline_mmHg", meanArterialPressureBaseline_mmHg);
 #endif
 }
 
@@ -224,24 +225,24 @@ void Nervous::CheckBrainStatus()
   if (icp_mmHg > 25.0) // \cite steiner2006monitoring
   {
     /// \event Patient: Intracranial Hypertension. The intracranial pressure has risen above 25 mmHg.
-    m_data.GetPatient().SetEvent(ePatient_Event::IntracranialHypertension, true, m_data.GetSimulationTime());
+    m_data.GetEvents().SetEvent(eEvent::IntracranialHypertension, true, m_data.GetSimulationTime());
   }
-  else if (m_data.GetPatient().IsEventActive(ePatient_Event::IntracranialHypertension) && icp_mmHg < 24.0)
+  else if (m_data.GetEvents().IsEventActive(eEvent::IntracranialHypertension) && icp_mmHg < 24.0)
   {
     /// \event Patient: End Intracranial Hypertension. The intracranial pressure has fallen below 24 mmHg.
-    m_data.GetPatient().SetEvent(ePatient_Event::IntracranialHypertension, false, m_data.GetSimulationTime());
+    m_data.GetEvents().SetEvent(eEvent::IntracranialHypertension, false, m_data.GetSimulationTime());
   }
 
   //Intracranial Hypotension
   if (icp_mmHg < 7.0) // \cite steiner2006monitoring
   {
     /// \event Patient: Intracranial Hypotension. The intracranial pressure has fallen below 7 mmHg.
-    m_data.GetPatient().SetEvent(ePatient_Event::IntracranialHypotension, true, m_data.GetSimulationTime());
+    m_data.GetEvents().SetEvent(eEvent::IntracranialHypotension, true, m_data.GetSimulationTime());
   }
-  else if (m_data.GetPatient().IsEventActive(ePatient_Event::IntracranialHypotension) && icp_mmHg > 7.5)
+  else if (m_data.GetEvents().IsEventActive(eEvent::IntracranialHypotension) && icp_mmHg > 7.5)
   {
     /// \event Patient: End Intracranial Hypotension. The intracranial pressure has risen above 7.5 mmHg.
-    m_data.GetPatient().SetEvent(ePatient_Event::IntracranialHypertension, false, m_data.GetSimulationTime());
+    m_data.GetEvents().SetEvent(eEvent::IntracranialHypertension, false, m_data.GetSimulationTime());
   }
 }
 
@@ -260,8 +261,8 @@ void Nervous::ChemoreceptorFeedback()
   if (!m_FeedbackActive)
     return;
 
-  double normalized_pO2 = m_data.GetBloodChemistry().GetArterialOxygenPressure(PressureUnit::mmHg) / m_ArterialOxygenSetPoint_mmHg;
-  double normalized_pCO2 = m_data.GetBloodChemistry().GetArterialCarbonDioxidePressure(PressureUnit::mmHg) / m_ArterialCarbonDioxideSetPoint_mmHg;
+  double normalized_pO2 = m_data.GetBloodChemistry().GetArterialOxygenPressure(PressureUnit::mmHg) / m_ArterialOxygenBaseline_mmHg;
+  double normalized_pCO2 = m_data.GetBloodChemistry().GetArterialCarbonDioxidePressure(PressureUnit::mmHg) / m_ArterialCarbonDioxideBaseline_mmHg;
 
   // The chemoreceptor heart rate modification function shape parameters.
   // See NervousMethodology documentation for details.

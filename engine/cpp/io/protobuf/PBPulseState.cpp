@@ -32,6 +32,7 @@
 #include "engine/SEAction.h"
 #include "engine/SEActionManager.h"
 #include "engine/SEDataRequestManager.h"
+#include "engine/SEEventManager.h"
 #include "properties/SEScalarTime.h"
 #include "utils/FileUtils.h"
 
@@ -128,6 +129,24 @@ bool PBPulseState::Serialize(const pulse::proto::StateData& src, PulseEngine& ds
       SEAction* a = PBAction::Load(src.activeactions().anyaction()[i], *dst.m_Substances);
       dst.m_Actions->ProcessAction(*a);
       delete a;
+    }
+  }
+  // Active Events //
+  dst.m_EventManager->Clear();
+  if (src.has_activeevents())
+  {
+    SEScalarTime time;
+    for (int i = 0; i < src.activeevents().activeevent_size(); i++)
+    {
+      const cdm::ActiveEventData& e = src.activeevents().activeevent()[i];
+      if (e.has_duration())
+        PBProperty::Load(e.duration(), time);
+      {
+        dst.m_ss << "Active event " << cdm::eEvent_Name(e.event()) << " does not have time associated with it";
+        dst.Debug(dst.m_ss);
+        time.SetValue(0, TimeUnit::s);
+      }
+      dst.m_EventManager->OverrideActiveState((eEvent)e.event(), time);
     }
   }
 
@@ -234,8 +253,6 @@ bool PBPulseState::Serialize(const pulse::proto::StateData& src, PulseEngine& ds
   dst.m_Compartments->GetActiveAerosolGraph();
 
   // If we had any handlers, reinform the listening classes
-  if (dst.m_EventHandler != nullptr)
-    dst.SetEventHandler(dst.m_EventHandler);
   if (dst.m_AdvanceHandler != nullptr)
     dst.SetAdvanceHandler(dst.m_AdvanceHandler);
 
@@ -268,6 +285,18 @@ bool PBPulseState::Serialize(const PulseEngine& src, pulse::proto::StateData& ds
   dst.set_allocated_conditions(PBEngine::Unload(*src.m_Conditions));
   // Actions
   dst.set_allocated_activeactions(PBEngine::Unload(*src.m_Actions));
+  // Active Events
+  SEScalarTime time;
+  for (auto itr : src.m_EventManager->GetEventStates())
+  {
+    if (!itr.second)
+      continue;
+
+    cdm::ActiveEventData* eData = dst.mutable_activeevents()->add_activeevent();
+    eData->set_event((cdm::eEvent)itr.first);
+    time.SetValue(src.m_EventManager->GetEventDuration(itr.first, TimeUnit::s), TimeUnit::s);
+    eData->set_allocated_duration(PBProperty::Unload(time));
+  }
   // Active Substances/Compounds
   for (SESubstance* s : src.m_Substances->GetActiveSubstances())
     dst.mutable_activesubstance()->AddAllocated(PBSubstance::Unload(*s));
@@ -293,7 +322,7 @@ bool PBPulseState::Serialize(const PulseEngine& src, pulse::proto::StateData& ds
   dst.set_allocated_compartmentmanager(PBCompartment::Unload(*src.m_Compartments));
   // Configuration
   dst.set_allocated_configuration(PBPulseConfiguration::Unload(*src.m_Config));
-  // Circuitsk
+  // Circuits
   dst.set_allocated_circuitmanager(PBCircuit::Unload(*src.m_Circuits));
   return true;
 }

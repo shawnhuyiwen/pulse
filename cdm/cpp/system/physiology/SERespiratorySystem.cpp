@@ -23,7 +23,6 @@ SERespiratorySystem::SERespiratorySystem(Logger* logger) : SESystem(logger)
   m_InspiratoryFlow = nullptr;
   m_PulmonaryCompliance = nullptr;
   m_PulmonaryResistance = nullptr;
-  m_RespirationDriverPressure = nullptr;
   m_RespirationMusclePressure = nullptr;
   m_RespirationRate = nullptr;
   m_SpecificVentilation = nullptr;
@@ -53,7 +52,6 @@ void SERespiratorySystem::Clear()
   SAFE_DELETE(m_InspiratoryFlow);
   SAFE_DELETE(m_PulmonaryCompliance);
   SAFE_DELETE(m_PulmonaryResistance);
-  SAFE_DELETE(m_RespirationDriverPressure);
   SAFE_DELETE(m_RespirationMusclePressure);
   SAFE_DELETE(m_RespirationRate);
   SAFE_DELETE(m_TidalVolume);
@@ -84,8 +82,6 @@ const SEScalar* SERespiratorySystem::GetScalar(const std::string& name)
     return &GetPulmonaryCompliance();
   if (name.compare("PulmonaryResistance") == 0)
     return &GetPulmonaryResistance();
-  if (name.compare("RespirationDriverPressure") == 0)
-    return &GetRespirationDriverPressure();
   if (name.compare("RespirationMusclePressure") == 0)
     return &GetRespirationMusclePressure();
   if (name.compare("RespirationRate") == 0)
@@ -258,23 +254,6 @@ double SERespiratorySystem::GetPulmonaryResistance(const FlowResistanceUnit& uni
   if (m_PulmonaryResistance == nullptr)
     return SEScalar::dNaN();
   return m_PulmonaryResistance->GetValue(unit);
-}
-
-bool SERespiratorySystem::HasRespirationDriverPressure() const
-{
-  return m_RespirationDriverPressure == nullptr ? false : m_RespirationDriverPressure->IsValid();
-}
-SEScalarPressure& SERespiratorySystem::GetRespirationDriverPressure()
-{
-  if (m_RespirationDriverPressure == nullptr)
-    m_RespirationDriverPressure = new SEScalarPressure();
-  return *m_RespirationDriverPressure;
-}
-double SERespiratorySystem::GetRespirationDriverPressure(const PressureUnit& unit) const
-{
-  if (m_RespirationDriverPressure == nullptr)
-    return SEScalar::dNaN();
-  return m_RespirationDriverPressure->GetValue(unit);
 }
 
 bool SERespiratorySystem::HasRespirationMusclePressure() const
