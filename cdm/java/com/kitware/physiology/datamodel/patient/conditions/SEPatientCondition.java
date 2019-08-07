@@ -44,6 +44,12 @@ public abstract class SEPatientCondition extends SECondition
   {
     switch(c.getConditionCase())
     {
+    case ACUTERESPIRATORYDISTRESSSYNDROME:
+    {
+      SEAcuteRespiratoryDistressSyndrome newC = new SEAcuteRespiratoryDistressSyndrome();
+      SEAcuteRespiratoryDistressSyndrome.load(c.getAcuteRespiratoryDistressSyndrome(), newC);
+      return newC;
+    }
     case CHRONICANEMIA:
     {
       SEChronicAnemia newC = new SEChronicAnemia();
@@ -92,6 +98,12 @@ public abstract class SEPatientCondition extends SECondition
       SELobarPneumonia.load(c.getLobarPneumonia(), newC);
       return newC;
     }
+    case SEPSIS:
+    {
+      SESepsis newC = new SESepsis();
+      SESepsis.load(c.getSepsis(), newC);
+      return newC;
+    }
     case CONDITION_NOT_SET:
       Log.warn("AnyPatientConditionData was empty...was that intended?");
       return null;
@@ -102,6 +114,11 @@ public abstract class SEPatientCondition extends SECondition
   public static AnyPatientConditionData CDM2ANY(SEPatientCondition c)
   {
     AnyPatientConditionData.Builder dst = AnyPatientConditionData.newBuilder();
+    if(c instanceof SEAcuteRespiratoryDistressSyndrome)
+    {
+      dst.setAcuteRespiratoryDistressSyndrome(SEAcuteRespiratoryDistressSyndrome.unload((SEAcuteRespiratoryDistressSyndrome)c));    
+      return dst.build();
+    }
     if(c instanceof SEChronicAnemia)
     {
       dst.setChronicAnemia(SEChronicAnemia.unload((SEChronicAnemia)c));    
@@ -140,6 +157,11 @@ public abstract class SEPatientCondition extends SECondition
     if(c instanceof SELobarPneumonia)
     {
       dst.setLobarPneumonia(SELobarPneumonia.unload((SELobarPneumonia)c));    
+      return dst.build();
+    }
+    if(c instanceof SESepsis)
+    {
+      dst.setSepsis(SESepsis.unload((SESepsis)c));    
       return dst.build();
     }
     Log.error("Unsupported Patient condition type "+c);

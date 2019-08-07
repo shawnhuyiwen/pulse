@@ -49,6 +49,12 @@ public abstract class SEPatientAction extends SEAction
       SEPatientAssessmentRequest.load(c.getAssessment(), dst);
       return dst;
     }
+    case ACUTERESPIRATORYDISTRESSSYNDROMEEXACERBATION:
+    {
+      SEAcuteRespiratoryDistressSyndromeExacerbation dst = new SEAcuteRespiratoryDistressSyndromeExacerbation();
+      SEAcuteRespiratoryDistressSyndromeExacerbation.load(c.getAcuteRespiratoryDistressSyndromeExacerbation(), dst);
+      return dst;
+    }
     case ACUTESTRESS:
     {
       SEAcuteStress dst = new SEAcuteStress();
@@ -103,6 +109,12 @@ public abstract class SEPatientAction extends SEAction
       SEChestOcclusiveDressing.load(c.getChestOcclusiveDressing(), dst);
       return dst;
     }
+    case CHRONICOBSTRUCTIVEPULMONARYDISEASEEXACERBATION:
+    {
+      SEChronicObstructivePulmonaryDiseaseExacerbation dst = new SEChronicObstructivePulmonaryDiseaseExacerbation();
+      SEChronicObstructivePulmonaryDiseaseExacerbation.load(c.getChronicObstructivePulmonaryDiseaseExacerbation(), dst);
+      return dst;
+    }
     case CONSCIOUSRESPIRATION:
     {
       SEConsciousRespiration dst = new SEConsciousRespiration();
@@ -137,6 +149,12 @@ public abstract class SEPatientAction extends SEAction
     {
       SEIntubation dst = new SEIntubation();
       SEIntubation.load(c.getIntubation(), dst);
+      return dst;
+    }
+    case LOBARPNEUMONIAEXACERBATION:
+    {
+      SELobarPneumoniaExacerbation dst = new SELobarPneumoniaExacerbation();
+      SELobarPneumoniaExacerbation.load(c.getLobarPneumoniaExacerbation(), dst);
       return dst;
     }
     case MECHANICALVENTILATION:
@@ -205,6 +223,11 @@ public abstract class SEPatientAction extends SEAction
       dst.setAssessment(SEPatientAssessmentRequest.unload((SEPatientAssessmentRequest)c));
       return dst.build();
     }
+    if(c instanceof SEAcuteRespiratoryDistressSyndromeExacerbation)
+    {
+      dst.setAcuteRespiratoryDistressSyndromeExacerbation(SEAcuteRespiratoryDistressSyndromeExacerbation.unload((SEAcuteRespiratoryDistressSyndromeExacerbation)c));
+      return dst.build();
+    }
     if(c instanceof SEAcuteStress)
     {
       dst.setAcuteStress(SEAcuteStress.unload((SEAcuteStress)c));
@@ -250,6 +273,11 @@ public abstract class SEPatientAction extends SEAction
       dst.setChestOcclusiveDressing(SEChestOcclusiveDressing.unload((SEChestOcclusiveDressing)c));
       return dst.build();
     }
+    if(c instanceof SEChronicObstructivePulmonaryDiseaseExacerbation)
+    {
+      dst.setChronicObstructivePulmonaryDiseaseExacerbation(SEChronicObstructivePulmonaryDiseaseExacerbation.unload((SEChronicObstructivePulmonaryDiseaseExacerbation)c));
+      return dst.build();
+    }
     if(c instanceof SEConsciousRespiration)
     {
       dst.setConsciousRespiration(SEConsciousRespiration.unload((SEConsciousRespiration)c));
@@ -278,6 +306,11 @@ public abstract class SEPatientAction extends SEAction
     if(c instanceof SEIntubation)
     {
       dst.setIntubation(SEIntubation.unload((SEIntubation)c));
+      return dst.build();
+    }
+    if(c instanceof SELobarPneumoniaExacerbation)
+    {
+      dst.setLobarPneumoniaExacerbation(SELobarPneumoniaExacerbation.unload((SELobarPneumoniaExacerbation)c));
       return dst.build();
     }
     if(c instanceof SEMechanicalVentilation)
