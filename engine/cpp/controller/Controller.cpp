@@ -356,32 +356,27 @@ bool PulseController::SetupPatient()
     Warning(ss);
   }
 
-  //jbw - When it's added to the CDM, use this for lung volumes... update validation to use instead of weight.
-  ////IDEAL BODY WEIGHT ----------------------------------------------------
-  ///// \cite green2017green
-  ////page 295
-  //if (m_Patient->HasIdealBodyWeight())
-  //{
-  //  ss << "Patient ideal body weight cannot be set. It is determined by weight and body fat fraction.";
-  //  Error(ss);
-  //  err = true;
-  //}
-  //double height_in = m_Patient->GetHeight().GetValue(LengthUnit::in);
-  //double idealWeight_kg = 0.0;
-  //if (m_Patient->GetSex() == ePatient_Sex::Female)
-  //{
-  //  //Female
-  //  idealWeight_kg = 45.5 + 2.3 * (height_in - 60.0);
-  //}
-  //else
-  //{
-  //  //Male
-  //  idealWeight_kg = 50.0 + 2.3 * (height_in - 60.0);
-  //}
-  //
-  //m_Patient->GetIdealBodyWeight().SetValue(idealWeight_kg, MassUnit::kg);
-  //ss << "Patient ideal body weight computed and set to " << idealWeight_kg << " kg.";
-  //Info(ss);
+  //jbw - update validation to use instead of weight.
+  //IDEAL BODY WEIGHT ----------------------------------------------------
+  /// \cite green2017green
+  //page 295
+  if (m_Patient->HasIdealBodyWeight())
+    Warning("Ignorning provided patient ideal body weight. It is determined by weight and body fat fraction.");
+  double height_in = m_Patient->GetHeight().GetValue(LengthUnit::in);
+  double idealWeight_kg = 0.0;
+  if (m_Patient->GetSex() == ePatient_Sex::Female)
+  {
+    //Female
+    idealWeight_kg = 45.5 + 2.3 * (height_in - 60.0);
+  }
+  else
+  {
+    //Male
+    idealWeight_kg = 50.0 + 2.3 * (height_in - 60.0);
+  }
+  m_Patient->GetIdealBodyWeight().SetValue(idealWeight_kg, MassUnit::kg);
+  ss << "Patient ideal body weight computed and set to " << idealWeight_kg << " kg.";
+  Info(ss);
 
   //WEIGHT ---------------------------------------------------------------
   /// \cite World2006bmi

@@ -21,6 +21,7 @@ public class SEPatient
   protected SEScalarMassPerVolume     bodyDensity;
   protected SEScalar0To1              bodyFatFraction;
   protected SEScalarMass              leanBodyMass;
+  protected SEScalarMass              idealBodyWeight;
 
   protected SEScalarArea              alveoliSurfaceArea;
   protected SEScalar0To1              rightLungRatio;
@@ -66,6 +67,8 @@ public class SEPatient
       this.bodyFatFraction.invalidate();
     if(leanBodyMass != null)
       this.leanBodyMass.invalidate();
+    if(idealBodyWeight != null)
+        this.idealBodyWeight.invalidate();
     
     if(alveoliSurfaceArea != null)
       alveoliSurfaceArea.invalidate();
@@ -141,6 +144,8 @@ public class SEPatient
       SEScalar0To1.load(src.getBodyFatFraction(),dst.getBodyFatFraction());
     if(src.hasLeanBodyMass())
       SEScalarMass.load(src.getLeanBodyMass(),dst.getLeanBodyMass());
+    if(src.hasIdealBodyWeight())
+      SEScalarMass.load(src.getIdealBodyWeight(),dst.getIdealBodyWeight());
     
     if(src.hasAlveoliSurfaceArea())
       SEScalarArea.load(src.getAlveoliSurfaceArea(),dst.getAlveoliSurfaceArea());    
@@ -210,6 +215,8 @@ public class SEPatient
       dst.setBodyFatFraction(SEScalar0To1.unload(src.bodyFatFraction));
     if(src.hasLeanBodyMass())
       dst.setLeanBodyMass(SEScalarMass.unload(src.leanBodyMass));
+    if(src.hasIdealBodyWeight())
+      dst.setIdealBodyWeight(SEScalarMass.unload(src.idealBodyWeight));
     
     if(src.hasAlveoliSurfaceArea())
       dst.setAlveoliSurfaceArea(SEScalarArea.unload(src.alveoliSurfaceArea));    
@@ -388,6 +395,14 @@ public class SEPatient
     return this.inspiratoryReserveVolume;
   }
   public boolean                hasInspiratoryReserveVolume() {return this.inspiratoryReserveVolume==null?false:this.inspiratoryReserveVolume.isValid();}
+  
+  public SEScalarMass getIdealBodyWeight() 
+  { 
+    if(this.idealBodyWeight==null)
+      this.idealBodyWeight=new SEScalarMass();
+    return this.idealBodyWeight;
+  }
+  public boolean      hasIdealBodyWeight() {return this.idealBodyWeight==null?false:this.idealBodyWeight.isValid();}
 
   public SEScalarMass getLeanBodyMass()
   {

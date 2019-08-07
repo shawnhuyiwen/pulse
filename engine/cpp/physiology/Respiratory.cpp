@@ -68,11 +68,9 @@
 #include "properties/SEScalarTime.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
+#include "properties/SEScalarVolumePerPressure.h"
 #include "properties/SEFunctionVolumeVsTime.h"
 #include "properties/SERunningAverage.h"
-
-//jbw - remove
-#include "utils/DataTrack.h"
 
 
 #ifdef _MSC_VER 
@@ -1993,8 +1991,7 @@ void Respiratory::CalculateVitalSigns()
   GetInspiratoryFlow().SetValue(tracheaFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);
   GetExpiratoryFlow().SetValue(-tracheaFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);  
 
-  GetRespirationDriverPressure().Set(m_RespiratoryMuscle->GetNextPressure());
-  GetRespirationMusclePressure().Set(m_RespiratoryMuscle->GetNextPressure());
+  GetRespiratoryMusclePressure().Set(m_RespiratoryMuscle->GetNextPressure());
 
   /// \cite kacmarek2016egan page 227-228 ---------------------------------------------------
   double airwayOpeningPressure_cmH2O = m_Mouth->GetPressure(PressureUnit::cmH2O);
@@ -2008,15 +2005,13 @@ void Respiratory::CalculateVitalSigns()
   double transalveolarPressure_cmH2O = alveolarPressure_cmH2O - pleuralPressure_cmH2O;
   double transthoracicPressure_cmH2O = alveolarPressure_cmH2O - bodySurfacePressure_cmH2O;
   double transChestWallPressure_cmH2O = pleuralPressure_cmH2O - bodySurfacePressure_cmH2O;
-  
-  //jbw - Add these once they're in the CDM
-  //GetTransrespiratoryPressure().SetValue(transrespiratoryPressure_cmH2O, PressureUnit::cmH2O);
-  //GetTransairwayPressure().SetValue(transairwayPressure_cmH2O, PressureUnit::cmH2O);
+
+  GetTransrespiratoryPressure().SetValue(transrespiratoryPressure_cmH2O, PressureUnit::cmH2O);
+  GetTransairwayPressure().SetValue(transairwayPressure_cmH2O, PressureUnit::cmH2O);
   GetTranspulmonaryPressure().SetValue(transpulmonaryPressure_cmH2O, PressureUnit::cmH2O);
-  //GetTransalveolarPressure().SetValue(transalveolarPressure_cmH2O, PressureUnit::cmH2O);
-  //GetTransthoracicPressure().SetValue(transthoracicPressure_cmH2O, PressureUnit::cmH2O);
-  //GetTransChestWallPressure().SetValue(transChestWallPressure_cmH2O, PressureUnit::cmH2O);
-  //----------------------------------------------------------------------------------------
+  GetTransalveolarPressure().SetValue(transalveolarPressure_cmH2O, PressureUnit::cmH2O);
+  GetTransthoracicPressure().SetValue(transthoracicPressure_cmH2O, PressureUnit::cmH2O);
+  GetTransChestWallPressure().SetValue(transChestWallPressure_cmH2O, PressureUnit::cmH2O);
 
   if(SEScalar::IsZero(tracheaFlow_L_Per_s, ZERO_APPROX))
     GetPulmonaryResistance().SetValue(std::numeric_limits<double>::infinity(), FlowResistanceUnit::cmH2O_s_Per_L);
@@ -2091,9 +2086,8 @@ void Respiratory::CalculateVitalSigns()
       double lungCompliance_L_Per_cmH2O = AlveoliDeltaVolume_L / AlveoliDeltaPressure_cmH2O;
       double chestWallCompliance_L_Per_cmH2O = PleuralDeltaVolume_L / PleuralDeltaPressure_cmH2O;
       GetPulmonaryCompliance().SetValue(pulmonaryCompiance_L_Per_cmH2O, FlowComplianceUnit::L_Per_cmH2O);
-      //jbw - add to system data
-      //m_data.GetDataTrack().Probe("lungCompliance_L_Per_cmH2O", lungCompliance_L_Per_cmH2O);
-      //m_data.GetDataTrack().Probe("chestWallCompliance_L_Per_cmH2O", chestWallCompliance_L_Per_cmH2O);
+      GetLungCompliance().SetValue(lungCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
+      GetChestWallCompliance().SetValue(chestWallCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
 
       // Calculate Ventilations
       GetTotalPulmonaryVentilation().SetValue(TidalVolume_L * RespirationRate_Per_min, VolumePerTimeUnit::L_Per_min);

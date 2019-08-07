@@ -21,9 +21,10 @@ message PatientData
   ScalarTimeData           Age                                   = 3; /**<< @brief Patient age. */
   ScalarMassData           Weight                                = 4; /**<< @brief Patient weight. */
   ScalarLengthData         Height                                = 5; /**<< @brief Patient height. */
-  ScalarMassPerVolumeData  BodyDensity                           = 6; /**<< @brief  The mass of the body divided by the volume of the body. */
+  ScalarMassPerVolumeData  BodyDensity                           = 6; /**<< @brief The mass of the body divided by the volume of the body. */
   Scalar0To1Data           BodyFatFraction                       = 7; /**<< @brief Total mass of fat divided by total body mass; body fat includes essential body fat and storage body fat. */
   ScalarMassData           LeanBodyMass                          = 8; /**<< @brief Component of body composition after subtracting body fat weight. */
+  ScalarMassData           IdealBodyWeight                       = 29;/**<< @brief Ideal patient weight based only on sex and height. */
   /** Physical Characteristics that can change and should be change due to a condition */
   ScalarAreaData           AlveoliSurfaceArea                    = 9; /**<< @brief The surface area of the alveoli for gas diffusion */
   Scalar0To1Data           RightLungRatio                        = 10;/**<< @brief The ratio of total lung surface area that is associated with the right lung. */

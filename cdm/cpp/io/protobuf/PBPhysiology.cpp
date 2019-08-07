@@ -814,28 +814,66 @@ void PBPhysiology::Serialize(const cdm::RespiratorySystemData& src, SERespirator
   dst.Clear();
   if (src.has_alveolararterialgradient())
     PBProperty::Load(src.alveolararterialgradient(), dst.GetAlveolarArterialGradient());
+  if (src.has_alveolardeadspace())
+    PBProperty::Load(src.alveolardeadspace(), dst.GetAlveolarDeadSpace());
+  if (src.has_anatomicdeadspace())
+    PBProperty::Load(src.anatomicdeadspace(), dst.GetAnatomicDeadSpace());
   if (src.has_carricoindex())
     PBProperty::Load(src.carricoindex(), dst.GetCarricoIndex());
+  if (src.has_chestwallcompliance())
+    PBProperty::Load(src.chestwallcompliance(), dst.GetChestWallCompliance());
+  if (src.has_elasticworkofbreathing())
+    PBProperty::Load(src.elasticworkofbreathing(), dst.GetElasticWorkOfBreathing());
   if (src.has_endtidalcarbondioxidefraction())
     PBProperty::Load(src.endtidalcarbondioxidefraction(), dst.GetEndTidalCarbonDioxideFraction());
   if (src.has_endtidalcarbondioxidepressure())
     PBProperty::Load(src.endtidalcarbondioxidepressure(), dst.GetEndTidalCarbonDioxidePressure());
+  if (src.has_endtidaloxygenfraction())
+    PBProperty::Load(src.endtidaloxygenfraction(), dst.GetEndTidalOxygenFraction());
+  if (src.has_endtidaloxygenpressure())
+    PBProperty::Load(src.endtidaloxygenpressure(), dst.GetEndTidalOxygenPressure());
   if (src.has_expiratoryflow())
     PBProperty::Load(src.expiratoryflow(), dst.GetExpiratoryFlow());
+  if (src.has_imposedpowerofbreathing())
+    PBProperty::Load(src.imposedpowerofbreathing(), dst.GetImposedPowerOfBreathing());
+  if (src.has_imposedworkofbreathing())
+    PBProperty::Load(src.imposedworkofbreathing(), dst.GetImposedWorkOfBreathing());
   if (src.has_inspiratoryexpiratoryratio())
     PBProperty::Load(src.inspiratoryexpiratoryratio(), dst.GetInspiratoryExpiratoryRatio());
   if (src.has_inspiratoryflow())
     PBProperty::Load(src.inspiratoryflow(), dst.GetInspiratoryFlow());
+  if (src.has_intrapleuralpressure())
+    PBProperty::Load(src.intrapleuralpressure(), dst.GetIntrapleuralPressure());
+  if (src.has_lungcompliance())
+    PBProperty::Load(src.lungcompliance(), dst.GetLungCompliance());
+  if (src.has_maximalinspiratorypressure())
+    PBProperty::Load(src.maximalinspiratorypressure(), dst.GetMaximalInspiratoryPressure());
+  if (src.has_patientpowerofbreathing())
+    PBProperty::Load(src.patientpowerofbreathing(), dst.GetPatientPowerOfBreathing());
+  if (src.has_patientworkofbreathing())
+    PBProperty::Load(src.patientworkofbreathing(), dst.GetPatientWorkOfBreathing());
+  if (src.has_peakinspiratorypressure())
+    PBProperty::Load(src.peakinspiratorypressure(), dst.GetPeakInspiratoryPressure());
+  if (src.has_physiologicdeadspace())
+    PBProperty::Load(src.physiologicdeadspace(), dst.GetPhysiologicDeadSpace());
+  if (src.has_positiveendexpiratorypressure())
+    PBProperty::Load(src.positiveendexpiratorypressure(), dst.GetPositiveEndExpiratoryPressure());
   if (src.has_pulmonarycompliance())
     PBProperty::Load(src.pulmonarycompliance(), dst.GetPulmonaryCompliance());
+  if (src.has_pulmonaryelastance())
+    PBProperty::Load(src.pulmonaryelastance(), dst.GetPulmonaryElastance());
   if (src.has_pulmonaryresistance())
     PBProperty::Load(src.pulmonaryresistance(), dst.GetPulmonaryResistance());
-  if (src.has_respirationdriverpressure())
-    PBProperty::Load(src.respirationdriverpressure(), dst.GetRespirationDriverPressure());
-  if (src.has_respirationmusclepressure())
-    PBProperty::Load(src.respirationmusclepressure(), dst.GetRespirationMusclePressure());
+  if (src.has_resistiveexpiratoryworkofbreathing())
+    PBProperty::Load(src.resistiveexpiratoryworkofbreathing(), dst.GetResistiveExpiratoryWorkOfBreathing());
+  if (src.has_resistiveinspiratoryworkofbreathing())
+    PBProperty::Load(src.resistiveinspiratoryworkofbreathing(), dst.GetResistiveInspiratoryWorkOfBreathing());
   if (src.has_respirationrate())
     PBProperty::Load(src.respirationrate(), dst.GetRespirationRate());
+  if (src.has_respiratorymusclefatigue())
+    PBProperty::Load(src.respiratorymusclefatigue(), dst.GetRespiratoryMuscleFatigue());
+  if (src.has_respiratorymusclepressure())
+    PBProperty::Load(src.respiratorymusclepressure(), dst.GetRespiratoryMusclePressure());
   if (src.has_specificventilation())
     PBProperty::Load(src.specificventilation(), dst.GetSpecificVentilation());
   if (src.has_tidalvolume())
@@ -846,10 +884,26 @@ void PBPhysiology::Serialize(const cdm::RespiratorySystemData& src, SERespirator
     PBProperty::Load(src.totaldeadspaceventilation(), dst.GetTotalDeadSpaceVentilation());
   if (src.has_totallungvolume())
     PBProperty::Load(src.totallungvolume(), dst.GetTotalLungVolume());
+  if (src.has_totalpowerofbreathing())
+    PBProperty::Load(src.totalpowerofbreathing(), dst.GetTotalPowerOfBreathing());
+  if (src.has_totalpulmonaryventilation())
+    PBProperty::Load(src.totalpulmonaryventilation(), dst.GetTotalPulmonaryVentilation());
+  if (src.has_totalworkofbreathing())
+    PBProperty::Load(src.totalworkofbreathing(), dst.GetTotalWorkOfBreathing());
+  if (src.has_transairwaypressure())
+    PBProperty::Load(src.transairwaypressure(), dst.GetTransairwayPressure());
+  if (src.has_transalveolarpressure())
+    PBProperty::Load(src.transalveolarpressure(), dst.GetTransalveolarPressure());
+  if (src.has_transchestwallpressure())
+    PBProperty::Load(src.transchestwallpressure(), dst.GetTransChestWallPressure());
   if (src.has_totalpulmonaryventilation())
     PBProperty::Load(src.totalpulmonaryventilation(), dst.GetTotalPulmonaryVentilation());
   if (src.has_transpulmonarypressure())
     PBProperty::Load(src.transpulmonarypressure(), dst.GetTranspulmonaryPressure());
+  if (src.has_transrespiratorypressure())
+    PBProperty::Load(src.transrespiratorypressure(), dst.GetTransrespiratoryPressure());
+  if (src.has_transthoracicpressure())
+    PBProperty::Load(src.transthoracicpressure(), dst.GetTransthoracicPressure());
 }
 
 cdm::RespiratorySystemData* PBPhysiology::Unload(const SERespiratorySystem& src)
@@ -862,28 +916,66 @@ void PBPhysiology::Serialize(const SERespiratorySystem& src, cdm::RespiratorySys
 {
   if (src.HasAlveolarArterialGradient())
     dst.set_allocated_alveolararterialgradient(PBProperty::Unload(*src.m_AlveolarArterialGradient));
+  if (src.HasAlveolarDeadSpace())
+    dst.set_allocated_alveolardeadspace(PBProperty::Unload(*src.m_AlveolarDeadSpace));
+  if (src.HasAnatomicDeadSpace())
+    dst.set_allocated_anatomicdeadspace(PBProperty::Unload(*src.m_AnatomicDeadSpace));
   if (src.HasCarricoIndex())
     dst.set_allocated_carricoindex(PBProperty::Unload(*src.m_CarricoIndex));
+  if (src.HasChestWallCompliance())
+    dst.set_allocated_chestwallcompliance(PBProperty::Unload(*src.m_ChestWallCompliance));
+  if (src.HasElasticWorkOfBreathing())
+    dst.set_allocated_elasticworkofbreathing(PBProperty::Unload(*src.m_ElasticWorkOfBreathing));
   if (src.HasEndTidalCarbonDioxideFraction())
     dst.set_allocated_endtidalcarbondioxidefraction(PBProperty::Unload(*src.m_EndTidalCarbonDioxideFraction));
   if (src.HasEndTidalCarbonDioxidePressure())
     dst.set_allocated_endtidalcarbondioxidepressure(PBProperty::Unload(*src.m_EndTidalCarbonDioxidePressure));
+  if (src.HasEndTidalOxygenFraction())
+    dst.set_allocated_endtidaloxygenfraction(PBProperty::Unload(*src.m_EndTidalOxygenFraction));
+  if (src.HasEndTidalOxygenPressure())
+    dst.set_allocated_endtidaloxygenpressure(PBProperty::Unload(*src.m_EndTidalOxygenPressure));
   if (src.HasExpiratoryFlow())
     dst.set_allocated_expiratoryflow(PBProperty::Unload(*src.m_ExpiratoryFlow));
+  if (src.HasImposedPowerOfBreathing())
+    dst.set_allocated_imposedpowerofbreathing(PBProperty::Unload(*src.m_ImposedPowerOfBreathing));
+  if (src.HasImposedWorkOfBreathing())
+    dst.set_allocated_imposedworkofbreathing(PBProperty::Unload(*src.m_ImposedWorkOfBreathing));
   if (src.HasInspiratoryExpiratoryRatio())
     dst.set_allocated_inspiratoryexpiratoryratio(PBProperty::Unload(*src.m_InspiratoryExpiratoryRatio));
   if (src.HasInspiratoryFlow())
     dst.set_allocated_inspiratoryflow(PBProperty::Unload(*src.m_InspiratoryFlow));
+  if (src.HasIntrapleuralPressure())
+    dst.set_allocated_intrapleuralpressure(PBProperty::Unload(*src.m_IntrapleuralPressure));
+  if (src.HasLungCompliance())
+    dst.set_allocated_lungcompliance(PBProperty::Unload(*src.m_LungCompliance));
+  if (src.HasMaximalInspiratoryPressure())
+    dst.set_allocated_maximalinspiratorypressure(PBProperty::Unload(*src.m_MaximalInspiratoryPressure));
+  if (src.HasPatientPowerOfBreathing())
+    dst.set_allocated_patientpowerofbreathing(PBProperty::Unload(*src.m_PatientPowerOfBreathing));
+  if (src.HasPatientWorkOfBreathing())
+    dst.set_allocated_patientworkofbreathing(PBProperty::Unload(*src.m_PatientWorkOfBreathing));
+  if (src.HasPeakInspiratoryPressure())
+    dst.set_allocated_peakinspiratorypressure(PBProperty::Unload(*src.m_PeakInspiratoryPressure));
+  if (src.HasPhysiologicDeadSpace())
+    dst.set_allocated_physiologicdeadspace(PBProperty::Unload(*src.m_PhysiologicDeadSpace));
+  if (src.HasPositiveEndExpiratoryPressure())
+    dst.set_allocated_positiveendexpiratorypressure(PBProperty::Unload(*src.m_PositiveEndExpiratoryPressure));
   if (src.HasPulmonaryCompliance())
     dst.set_allocated_pulmonarycompliance(PBProperty::Unload(*src.m_PulmonaryCompliance));
+  if (src.HasPulmonaryElastance())
+    dst.set_allocated_pulmonaryelastance(PBProperty::Unload(*src.m_PulmonaryElastance));
   if (src.HasPulmonaryResistance())
     dst.set_allocated_pulmonaryresistance(PBProperty::Unload(*src.m_PulmonaryResistance));
-  if (src.HasRespirationDriverPressure())
-    dst.set_allocated_respirationdriverpressure(PBProperty::Unload(*src.m_RespirationDriverPressure));
-  if (src.HasRespirationMusclePressure())
-    dst.set_allocated_respirationmusclepressure(PBProperty::Unload(*src.m_RespirationMusclePressure));
+  if (src.HasResistiveExpiratoryWorkOfBreathing())
+    dst.set_allocated_resistiveexpiratoryworkofbreathing(PBProperty::Unload(*src.m_ResistiveExpiratoryWorkOfBreathing));
+  if (src.HasResistiveInspiratoryWorkOfBreathing())
+    dst.set_allocated_resistiveinspiratoryworkofbreathing(PBProperty::Unload(*src.m_ResistiveInspiratoryWorkOfBreathing));
   if (src.HasRespirationRate())
     dst.set_allocated_respirationrate(PBProperty::Unload(*src.m_RespirationRate));
+  if (src.HasRespiratoryMuscleFatigue())
+    dst.set_allocated_respiratorymusclefatigue(PBProperty::Unload(*src.m_RespiratoryMuscleFatigue));
+  if (src.HasRespiratoryMusclePressure())
+    dst.set_allocated_respiratorymusclepressure(PBProperty::Unload(*src.m_RespiratoryMusclePressure));
   if (src.HasSpecificVentilation())
     dst.set_allocated_specificventilation(PBProperty::Unload(*src.m_SpecificVentilation));
   if (src.HasTidalVolume())
@@ -894,10 +986,24 @@ void PBPhysiology::Serialize(const SERespiratorySystem& src, cdm::RespiratorySys
     dst.set_allocated_totaldeadspaceventilation(PBProperty::Unload(*src.m_TotalDeadSpaceVentilation));
   if (src.HasTotalLungVolume())
     dst.set_allocated_totallungvolume(PBProperty::Unload(*src.m_TotalLungVolume));
+  if (src.HasTotalPowerOfBreathing())
+    dst.set_allocated_totalpowerofbreathing(PBProperty::Unload(*src.m_TotalPowerOfBreathing));
   if (src.HasTotalPulmonaryVentilation())
     dst.set_allocated_totalpulmonaryventilation(PBProperty::Unload(*src.m_TotalPulmonaryVentilation));
+  if (src.HasTotalWorkOfBreathing())
+    dst.set_allocated_totalworkofbreathing(PBProperty::Unload(*src.m_TotalWorkOfBreathing));
+  if (src.HasTransairwayPressure())
+    dst.set_allocated_transairwaypressure(PBProperty::Unload(*src.m_TransairwayPressure));
+  if (src.HasTransalveolarPressure())
+    dst.set_allocated_transalveolarpressure(PBProperty::Unload(*src.m_TransalveolarPressure));
+  if (src.HasTransChestWallPressure())
+    dst.set_allocated_transchestwallpressure(PBProperty::Unload(*src.m_TransChestWallPressure));
   if (src.HasTranspulmonaryPressure())
     dst.set_allocated_transpulmonarypressure(PBProperty::Unload(*src.m_TranspulmonaryPressure));
+  if (src.HasTransrespiratoryPressure())
+    dst.set_allocated_transrespiratorypressure(PBProperty::Unload(*src.m_TransrespiratoryPressure));
+  if (src.HasTransthoracicPressure())
+    dst.set_allocated_transthoracicpressure(PBProperty::Unload(*src.m_TransthoracicPressure));
 }
 
 

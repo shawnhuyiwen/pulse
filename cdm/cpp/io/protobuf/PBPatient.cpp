@@ -32,6 +32,8 @@ void PBPatient::Serialize(const cdm::PatientData& src, SEPatient& dst)
     PBProperty::Load(src.bodyfatfraction(), dst.GetBodyFatFraction());
   if (src.has_leanbodymass())
     PBProperty::Load(src.leanbodymass(), dst.GetLeanBodyMass());
+  if (src.has_idealbodyweight())
+    PBProperty::Load(src.idealbodyweight(), dst.GetIdealBodyWeight());
 
   if (src.has_alveolisurfacearea())
     PBProperty::Load(src.alveolisurfacearea(), dst.GetAlveoliSurfaceArea());
@@ -100,6 +102,8 @@ void PBPatient::Serialize(const SEPatient& src, cdm::PatientData& dst)
     dst.set_allocated_bodyfatfraction(PBProperty::Unload(*src.m_BodyFatFraction));
   if (src.HasLeanBodyMass())
     dst.set_allocated_leanbodymass(PBProperty::Unload(*src.m_LeanBodyMass));
+  if (src.HasIdealBodyWeight())
+    dst.set_allocated_idealbodyweight(PBProperty::Unload(*src.m_IdealBodyWeight));
 
   if (src.HasAlveoliSurfaceArea())
     dst.set_allocated_alveolisurfacearea(PBProperty::Unload(*src.m_AlveoliSurfaceArea));
