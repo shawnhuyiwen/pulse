@@ -13,7 +13,7 @@ int main()
 
   //HowToSandbox();
 
-  //HowToEngineUse();
+  HowToEngineUse();
   //HowToCreateAPatient();
   //HowToSerialize();
 
@@ -41,7 +41,7 @@ int main()
   //HowToConcurrentEngines();
   //HowToDynamicHemorrhage();
 
-  HowToTestSystemCapability();
+  //HowToTestSystemCapability();
 }
 
 HowToTracker::HowToTracker(PhysiologyEngine& engine) : m_Engine(engine)

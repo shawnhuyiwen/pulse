@@ -190,6 +190,9 @@ public class FindObjects
         }
       }
     }
+    Comparator<BagMethod> compareByPropertyName = (BagMethod b1, BagMethod b2) ->
+                        b1.propertyName.compareTo( b2.propertyName );
+    Collections.sort(bagMethods, compareByPropertyName);
     return bagMethods;
   }
 }

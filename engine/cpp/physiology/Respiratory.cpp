@@ -968,13 +968,13 @@ void Respiratory::SupplementalOxygen()
     so->GetVolume().SetValue(425.0, VolumeUnit::L);
     Info("Supplemental oxygen initial tank volume not set. Using default value of 425 L.");
   }
+  
 
   //Decrement volume from the tank
   //Inf volume is assumed to be a wall connection that will never run out
   if (so->GetVolume(VolumeUnit::L) != std::numeric_limits<double>::infinity())
   {
     so->GetVolume().IncrementValue(-flow_L_Per_min * m_dt_min, VolumeUnit::L);
-
     //Check if the tank is depleated
     if (so->GetVolume(VolumeUnit::L) <= 0.0)
     {
@@ -983,8 +983,12 @@ void Respiratory::SupplementalOxygen()
       /// \event Supplemental Oxygen: Oxygen bottle is exhausted. There is no longer any oxygen to provide.
       m_data.GetEvents().SetEvent(eEvent::SupplementalOxygenBottleExhausted, true, m_data.GetSimulationTime());
     }
+    else
+      m_data.GetEvents().SetEvent(eEvent::SupplementalOxygenBottleExhausted, false, m_data.GetSimulationTime());
   }
-  
+  else
+    m_data.GetEvents().SetEvent(eEvent::SupplementalOxygenBottleExhausted, false, m_data.GetSimulationTime());
+
   //Nonrebreather mask works differently with the bag and doesn't have a pressure source for the tank
   if (so->GetDevice() != eSupplementalOxygen_Device::NonRebreatherMask)
   {
@@ -1021,9 +1025,13 @@ void Respiratory::SupplementalOxygen()
       /// \event Supplemental Oxygen: The nonrebreather mask is empty. Oxygen may need to be provided at a faster rate.
       m_data.GetEvents().SetEvent(eEvent::NonRebreatherMaskOxygenBagEmpty, true, m_data.GetSimulationTime());
     }
-    else if (bagVolume_L > 1.0)
+    else
     {
-      bagVolume_L = 1.0;
+      if (bagVolume_L > 1.0)
+      {
+        bagVolume_L = 1.0;
+      }
+      m_data.GetEvents().SetEvent(eEvent::NonRebreatherMaskOxygenBagEmpty, false, m_data.GetSimulationTime());
     }
     
     NonRebreatherMaskBag->GetNextVolume().SetValue(bagVolume_L, VolumeUnit::L);
@@ -2020,6 +2028,11 @@ void Respiratory::CalculateVitalSigns()
 
   double averageAlveoliO2PartialPressure_mmHg = (m_LeftAlveoliO2->GetPartialPressure(PressureUnit::mmHg) + m_RightAlveoliO2->GetPartialPressure(PressureUnit::mmHg)) / 2.0;
   GetAlveolarArterialGradient().SetValue(averageAlveoliO2PartialPressure_mmHg - m_AortaO2->GetPartialPressure(PressureUnit::mmHg), PressureUnit::mmHg);
+
+  GetRespirationMusclePressure().Set(m_RespiratoryMuscle->GetNextPressure());
+
+  double avgAlveoliO2PP_mmHg = (m_LeftAlveoliO2->GetPartialPressure(PressureUnit::mmHg) + m_RightAlveoliO2->GetPartialPressure(PressureUnit::mmHg)) / 2.0;
+  GetAlveolarArterialGradient().SetValue(avgAlveoliO2PP_mmHg - m_AortaO2->GetPartialPressure(PressureUnit::mmHg), PressureUnit::mmHg);
 
   //It's a pain to figure out how to hold onto this data, so let's just set it at a sensitive transition point
   if (GetInspiratoryFlow(VolumePerTimeUnit::L_Per_s) > 0.0 //We're inhaling

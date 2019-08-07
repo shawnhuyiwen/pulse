@@ -34,7 +34,7 @@ public:
 protected:
   
   SEScalarTemperature*   m_Temperature;
-  SEScalarArea*           m_SurfaceArea;
-  SEScalar0To1*      m_SurfaceAreaFraction;
+  SEScalarArea*          m_SurfaceArea;
+  SEScalar0To1*          m_SurfaceAreaFraction;
   eSwitch  m_State;
 };

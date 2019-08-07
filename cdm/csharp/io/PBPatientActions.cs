@@ -173,7 +173,7 @@ public class PBPatientAction
             dst.Compartment = src.GetCompartment();
         if (src.HasRate())
             dst.Rate = PBProperty.Unload(src.GetRate());
-        dst.Type = (Cdm.eHemorrhage.Types.Type)(int)src.GetType();
+        dst.Type = (Cdm.HemorrhageData.Types.eType)(int)src.GetType();
     }
     #endregion
 
@@ -197,7 +197,7 @@ public class PBPatientAction
     {
         dst.PatientAction = new Cdm.PatientActionData();
         Serialize(src, dst.PatientAction);
-        dst.Type = (Cdm.eIntubation.Types.Type)(int)src.GetType();
+        dst.Type = (Cdm.IntubationData.Types.eType)(int)src.GetType();
     }
     #endregion
 
@@ -258,7 +258,7 @@ public class PBPatientAction
         Serialize(src, dst.PatientAction);
         if (src.HasSubstance())
             dst.Substance = src.GetSubstance();
-        dst.AdministrationRoute = (Cdm.eSubstanceAdministration.Types.Route)(int)src.GetAdminRoute();
+        dst.AdministrationRoute = (Cdm.SubstanceBolusData.Types.eRoute)(int)src.GetAdminRoute();
         if (src.HasConcentration())
             dst.Concentration = PBProperty.Unload(src.GetConcentration());
         if (src.HasDose())

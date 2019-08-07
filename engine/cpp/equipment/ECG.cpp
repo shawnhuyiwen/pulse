@@ -114,11 +114,18 @@ void ECG::Process()
   if (m_heartRhythmTime_s >= m_heartRhythmPeriod_s)
   {
     m_heartRhythmTime_s = 0;
-    m_heartRhythmPeriod_s = 1/m_data.GetCardiovascular().GetHeartRate(FrequencyUnit::Per_s);  
+    m_heartRhythmPeriod_s = 0;
     // Currently we  have one data set for all currently supported Heart Rhythms
     // Eventually we will support multiple rhythmic data
-    if(m_data.GetCardiovascular().GetHeartRhythm() == eHeartRhythm::NormalSinus)
+    if (m_data.GetCardiovascular().GetHeartRhythm() == eHeartRhythm::NormalSinus)
+    {
       m_interpolator->StartNewCycle(eHeartRhythm::NormalSinus);
+      m_heartRhythmPeriod_s = 1 / m_data.GetCardiovascular().GetHeartRate(FrequencyUnit::Per_s);
+    }
+    else if (m_data.GetCardiovascular().GetHeartRhythm() == eHeartRhythm::Asystolic)
+    {
+      // Nothing to do here but be zero
+    }
     else
     {
       m_ss << eHeartRhythm_Name(m_data.GetCardiovascular().GetHeartRhythm()) << " is not a supported Heart Rhythm for ECG";

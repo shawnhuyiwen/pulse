@@ -39,8 +39,8 @@ protected:
   void SetPupilEffects();
 
   // Serializable member variables (Set in Initialize and in schema)    
-  double m_ArterialOxygenSetPoint_mmHg; /// \todo Aaron these should be baselines.
-  double m_ArterialCarbonDioxideSetPoint_mmHg;
+  double m_ArterialOxygenBaseline_mmHg;
+  double m_ArterialCarbonDioxideBaseline_mmHg;
 
   // Stateless member variable (Set in SetUp())
   bool m_FeedbackActive;

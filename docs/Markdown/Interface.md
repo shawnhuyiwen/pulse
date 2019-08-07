@@ -264,6 +264,7 @@ You will need to create an instance of an action class, fill it out with the nec
   @refitem SubstanceBolusTable "Substance Bolus"
   @refitem SubstanceCompoundInfusionTable "Substance Compound Infusion"
   @refitem SubstanceInfusionTable "Substance Infusion"
+  @refitem SupplementalOxygenTable "Supplemental Oxygen"
   @refitem TensionPneumothoraxTable "Tension Pneumothorax"
   @refitem UrinateTable "Urinate"
 @endsecreflist
@@ -326,7 +327,6 @@ Set the callback method with this method
 	//--------------------------------------------------------------------------------------------------
 	virtual void SetEventHandler(SEEventHandler* handler) = 0;
 @endcode
-
 Event State is primarily associated with the patient, but there are events associated with @ref AnesthesiaMachineEventTable "Anesthesia Machine".
 
 Look at the SDK HowTo-UseEngine.cpp for a full example in using both of these methods.

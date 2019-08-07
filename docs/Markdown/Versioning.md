@@ -1,21 +1,73 @@
-Version {#version}
-=======
+Version 2.2.0 {#version}
+=============
 
-We have taken the following approach to versioning our products : Major.Minor.Patch-ReleaseStage
+Our versioning follows the <a href="http://semver.org">Semantic Versioning 2.0.0</a> format.
 
-Our version number sematic is MAJOR.MINOR.PATCH, where :
+Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
 - MAJOR changes when we make incompatible API changes,
 - MINOR changes when we add functionality in a backwards-compatible manner, and
 - PATCH changes when we make backwards-compatible bug fixes.
 - Release Stage - We have extended this versioning with a <a href="http://en.wikipedia.org/wiki/Software_release_life_cycle">release stage</a>
 
-This versioning follows the <a href="http://semver.org">Semantic Versioning 2.0.0</a> format.
+## Pulse v2.2.0 (August 2019)
 
-## Pulse Version History
+- Software Architecture
+  - CMake integration improvements
+  - Improved Data Request API
+  - Scenario Execution Improvements
+  - Unified API for Engine Events
+  - MSVC Build Sped up
+- Physiology Models
+  - Added the ability to provide supplemental oxygen through a nasal cannula, simple mask, and nonrebreather mask.
+  - Updated vascular effects caused by respiratory pleural cavity imbalances, mainly to increased venous return resistance when the patient has a pneumothorax / collapsed lungs.
 
-### Pulse v1.1 (June 25th, 2018)
+## Planned Improvements
 
-The latest code base includes the following notable updates:
+- Sepsis
+- Hemorrhagic Shock
+- %Respiratory fatigue and chronic condition exacerbation
+- Surface area and efficiency parameters for the gas diffusion model
+- A second order baroreceptor model
+- Modularity improvements for system/model/circuit swapping
+- Pediatric physiology prototype
+- Official contribution plan for merge requests for methodology/model changes
+
+
+- - -
+@anchor known-issues
+## Known Physiology Model Issues and Limitations
+The following are known issues with the current version of the software:
+- Lack of a full sympathetic/parasympathetic nervous system
+- Extravascular fluid exchange model is incomplete
+- Peripheral resistance currently does not scale with core temperature
+- Only tested a simulation up to 12 hours in length (No sleep model)
+- Limited Consumption model
+  - Limited number of macronutrients available
+  - Limited conversion and use within the engine
+- Oxygen saturation drops too sharply
+
+## Pulse v2.1.0 (Feb 2019)
+
+- Software updates necessary for integration with Unity
+
+## Pulse v2.0.0 (Jan 2019)
+
+- Software Architecture
+  - Converted ASCII file I/O to JSON (Compliant to Protobuf IDLs)
+  - Updated Engine Interface to support Both ASCII and Binary serialization
+  - Started a formal C# CDM Library for use in .NET applications
+  - Created a C interface to Pulse for external application integration
+  - Updated to the latest versions of Eigen/Protobufs/log4cplus
+  - Unity integration support and examples
+- Physiology Models
+  - Internal Hemorrhage Support
+  - External hemorrhage from specific compartments (only Vena Cava before)
+  - Added support for Packed Red Blood Cells infusion
+  - Added dissolved oxygen and carbon dioxide to IV fluids to resolve issues with fluid resuscitation
+
+
+### Pulse v1.1.0 (June 2018)
+
 - Updated Wiki for using Pulse in your application
 - Added C# example interface
 - Refactored respiratory system for improvements determining the transition between inhale and exhale
@@ -34,7 +86,8 @@ The latest code base includes the following notable updates:
 - CMake build improvements
   - Pulse builds and runs on single board pc's and all major operating systems
 
-### Pulse v1.0 (September 1st, 2017) included the following notable updates:
+### Pulse v1.0.0 (September 2017) :
+
 - Fixed multi-platform compiling bugs
 - Moved from an in-source to out-of-source build
   - src tree is treated as read only

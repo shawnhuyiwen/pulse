@@ -75,7 +75,7 @@ message CardiovascularSystemData
   ScalarPressureData                  DiastolicArterialPressure                      = 8; /**<< @brief The minimum pressure in the aorta over the course of a cardiac cycle.*/
   Scalar0To1Data                      HeartEjectionFraction                          = 9; /**<< @brief The current pressure in the aorta.*/
   ScalarFrequencyData                 HeartRate                                      = 10;/**<< @brief The fraction of the blood that is pumped out of the ventricle during a cardiac cycle.*/
-  eHeartRhythm                        HeartRhythm                                    = 11;/**<< @brief Current heart rhythm */      
+  eHeartRhythm                        HeartRhythm                                    = 11;/**<< @brief @ref eHeartRhythmTable */
   ScalarVolumeData                    HeartStrokeVolume                              = 12;/**<< @brief The volume of blood pumped from the left ventricle in one contraction.*/
   ScalarPressureData                  IntracranialPressure                           = 13;/**<< @brief The pressure inside the skull. Equal to the cerebral blood pressure with the cerebrospinal fluid pressure being assumed equal.*/
   ScalarPressureData                  MeanArterialPressure                           = 14;/**<< @brief The average arterial pressure throughout each cardiac cycle.*/
@@ -164,8 +164,8 @@ message NervousSystemData
 {
   ScalarData                          BaroreceptorHeartRateScale                     = 1;/**<< @brief Heart rate multiplier used to scale the heart rate due to baroreceptor feedback*/
   ScalarData                          BaroreceptorHeartElastanceScale                = 2;/**<< @brief Heart elastance multiplier used to scale the heart rate due to baroreceptor feedback*/
-  ScalarData                          BaroreceptorResistanceScale                    = 3;/**<< @brief Cardiovascular resistance multiplier used to scale the heart rate due to baroreceptor feedback*/
-  ScalarData                          BaroreceptorComplianceScale                    = 4;/**<< @brief Cardiovascular compliance multiplier used to scale the heart rate due to baroreceptor feedback*/
+  ScalarData                          BaroreceptorResistanceScale                    = 3;/**<< @brief %Cardiovascular resistance multiplier used to scale the heart rate due to baroreceptor feedback*/
+  ScalarData                          BaroreceptorComplianceScale                    = 4;/**<< @brief %Cardiovascular compliance multiplier used to scale the heart rate due to baroreceptor feedback*/  
   PupillaryResponseData               LeftEyePupillaryResponse                       = 5;/**<< @brief */  
   PupillaryResponseData               RightEyePupillaryResponse                      = 6;/**<< @brief */                    
   ScalarData                          ChemoreceptorHeartRateScale                    = 7;/**<< @brief Heart rate multiplier used to scale the heart rate due to baroreceptor feedback*/

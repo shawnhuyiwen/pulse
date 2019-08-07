@@ -50,7 +50,7 @@ message PatientActionData
 message PatientAssessmentRequestData
 {
   PatientActionData                         PatientAction                   = 1;
-  ePatientAssessmentType                    Type                            = 2;/**<<@brief @ref ePatientAssessment_TypeTable */
+  ePatientAssessmentType                    Type                            = 2;/**<<@brief @ref ePatientAssessmentTypeTable */
 }
 
 /** @brief Fight or flight.  The body prepares to defend itself. */
@@ -94,7 +94,7 @@ message BrainInjuryData
   }
 
   PatientActionData                         PatientAction                   = 1;
-  eType                                     Type                            = 2;/**<<@brief @ref eBrainInjury_TypeTable */
+  eType                                     Type                            = 2;/**<<@brief @ref BrainInjuryData_eTypeTable */
   Scalar0To1Data                            Severity                        = 3;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
 }
 
@@ -206,7 +206,7 @@ message HemorrhageData
   PatientActionData                         PatientAction                   = 1;
   string                                    Compartment                     = 2;/**<<@brief Compartment where the bleeding is occurring */
   ScalarVolumePerTimeData                   Rate                            = 3;/**<<@brief The flow rate of blood exiting the specified compartment. Set to zero to stop the bleeding rate. */
-  eType                                     Type                            = 4;/**<<@brief @ref eHemorrhage_TypeTable*/
+  eType                                     Type                            = 4;/**<<@brief @ref HemorrhageData_eTypeTable*/
 }
 
 /** @brief Insertion of tube into the patient's airway */
@@ -222,7 +222,7 @@ message IntubationData
    Tracheal                                                                = 4; /**<< @brief Insert into the Trachea */
   }
   PatientActionData                         PatientAction                   = 1;
-  eType                                     Type                            = 2;/**<<@brief @ref eIntubation_TypeTable*/
+  eType                                     Type                            = 2;/**<<@brief @ref IntubationData_eTypeTable*/
 }
 
 /** @brief Mechanically breathing for the patient, such as with a squeeze bag or other equipment. */
@@ -276,7 +276,7 @@ message SubstanceBolusData
   }
  
   PatientActionData                         PatientAction                   = 1;
-  eRoute                                    AdministrationRoute             = 2;/**<<@brief @ref eSubstanceAdministration_RouteTable */
+  eRoute                                    AdministrationRoute             = 2;/**<<@brief @ref SubstanceBolusData_eRouteTable */
   string                                    Substance                       = 3;/**<<@brief @ref SubstanceTable */
   ScalarMassPerVolumeData                   Concentration                   = 4;/**<<@brief Concentration of the dose to administer. */
   ScalarVolumeData                          Dose                            = 5;/**<<@brief Volume of dose to administer. */
@@ -312,7 +312,7 @@ message SupplementalOxygenData
     NonRebreatherMask                                                       = 3;/**<<@brief Non-Rebreather Mask. */
   }
   PatientActionData                         PatientAction                   = 1;
-  eDevice                                   Device                          = 2;/**<<@brief Device type. */
+  eDevice                                   Device                          = 2;/**<<@brief @ref SupplementalOxygenData_eDeviceTable */
   ScalarVolumePerTimeData                   Flow                            = 3;/**<<@brief Flow rate through the device. */
   ScalarVolumeData                          Volume                          = 4;/**<<@brief The amount of Oxygen to supplement */
 }

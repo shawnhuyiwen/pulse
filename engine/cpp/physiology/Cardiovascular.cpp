@@ -880,22 +880,26 @@ void Cardiovascular::RecordAndResetCardiacCycle()
   m_CardiacCycleSkinFlow_mL_Per_s->Clear();
 
   // Computed systemic Vascular Resistance
-  double cardiacOutput_mL_Per_min = GetCardiacOutput().GetValue(VolumePerTimeUnit::mL_Per_s);
+  double cardiacOutput_mL_Per_s = GetCardiacOutput().GetValue(VolumePerTimeUnit::mL_Per_s);
   double systemicVascularResistance_mmHg_s_Per_mL = 0.0;
-  if (cardiacOutput_mL_Per_min > ZERO_APPROX)
-    systemicVascularResistance_mmHg_s_Per_mL = (GetMeanArterialPressure().GetValue(PressureUnit::mmHg) - GetMeanCentralVenousPressure().GetValue(PressureUnit::mmHg)) / cardiacOutput_mL_Per_min;
+  if (cardiacOutput_mL_Per_s > ZERO_APPROX)
+    systemicVascularResistance_mmHg_s_Per_mL = (GetMeanArterialPressure().GetValue(PressureUnit::mmHg) - GetMeanCentralVenousPressure().GetValue(PressureUnit::mmHg)) / cardiacOutput_mL_Per_s;
   GetSystemicVascularResistance().SetValue(systemicVascularResistance_mmHg_s_Per_mL, FlowResistanceUnit::mmHg_s_Per_mL);
 
   // Computed pulmonary Vascular Resistances
-  if (cardiacOutput_mL_Per_min == 0.0)
+  if (cardiacOutput_mL_Per_s == 0.0)
   {
     GetPulmonaryVascularResistance().SetValue(0.0, FlowResistanceUnit::mmHg_min_Per_mL);
     GetPulmonaryVascularResistanceIndex().SetValue(0.0, PressureTimePerVolumeAreaUnit::mmHg_min_Per_mL_m2);
   }
   else
   {
-    GetPulmonaryVascularResistance().SetValue((m_MainPulmonaryArteries->GetNextPressure(PressureUnit::mmHg) - m_LeftHeart2->GetNextPressure(PressureUnit::mmHg)) / cardiacOutput_mL_Per_min, FlowResistanceUnit::mmHg_min_Per_mL);
-    GetPulmonaryVascularResistanceIndex().SetValue(GetPulmonaryVascularResistance(FlowResistanceUnit::mmHg_min_Per_mL) / m_patient->GetSkinSurfaceArea(AreaUnit::m2), PressureTimePerVolumeAreaUnit::mmHg_min_Per_mL_m2);
+	//(Mean arteral pressure - mean pulmonary wedge pressure)/Cardiac output
+	  double PulmonaryPressureDrop_mmHg = GetPulmonaryMeanArterialPressure(PressureUnit::mmHg) - GetPulmonaryCapillariesWedgePressure(PressureUnit::mmHg);
+    GetPulmonaryVascularResistance().SetValue(PulmonaryPressureDrop_mmHg / cardiacOutput_mL_Per_s, FlowResistanceUnit::mmHg_s_Per_mL);
+	
+    //Mean arteral pressure - mean pulmonary wedge pressure)/Cardiac index where cardiac index is cardiac output / body surface area
+	GetPulmonaryVascularResistanceIndex().SetValue(PulmonaryPressureDrop_mmHg / GetCardiacIndex(VolumePerTimeAreaUnit::mL_Per_s_m2), PressureTimePerVolumeAreaUnit::mmHg_s_Per_mL_m2);
   }  
   
   m_CardiacCycleAortaPressureHigh_mmHg = 0.0;
