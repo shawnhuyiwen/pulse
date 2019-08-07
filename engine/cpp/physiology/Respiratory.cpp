@@ -16,7 +16,6 @@
 #include "engine/SEActionManager.h"
 #include "engine/SEPatientActionCollection.h"
 #include "patient/actions/SEAirwayObstruction.h"
-#include "patient/actions/SEApnea.h"
 #include "patient/actions/SEAsthmaAttack.h"
 #include "patient/actions/SEBronchoconstriction.h"
 #include "patient/actions/SEChestOcclusiveDressing.h"
@@ -25,6 +24,7 @@
 #include "patient/actions/SEForcedExhale.h"
 #include "patient/actions/SEForcedInhale.h"
 #include "patient/actions/SEUseInhaler.h"
+#include "patient/actions/SEDyspnea.h"
 #include "patient/actions/SEIntubation.h"
 #include "patient/actions/SEMechanicalVentilation.h"
 #include "patient/actions/SENeedleDecompression.h"
@@ -1295,7 +1295,7 @@ void Respiratory::RespiratoryDriver()
       m_DriverPressure_cmH2O = -(exp(-m_BreathingCycleTime_s / tau) - 1) * m_PeakRespiratoryDrivePressure_cmH2O;
     }
 
-    Apnea();
+    Dyspnea();
 
     if (m_NotBreathing)
     {
@@ -1890,7 +1890,7 @@ void Respiratory::LobarPneumonia()
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
-/// Apply apnea action.
+/// Apply Dyspnea action.
 ///
 /// \param  None
 ///
@@ -1900,19 +1900,19 @@ void Respiratory::LobarPneumonia()
 /// This reduces the respiratory driver pressure source amplitude by the percentage defined by the
 /// action severity.
 //--------------------------------------------------------------------------------------------------
-void Respiratory::Apnea()
+void Respiratory::Dyspnea()
 {
-  if (m_PatientActions->HasApnea())
+  if (m_PatientActions->HasDyspnea())
   {
-    double apneaSeverity = m_PatientActions->GetApnea()->GetSeverity().GetValue();
+    double DyspneaSeverity = m_PatientActions->GetDyspnea()->GetSeverity().GetValue();
 
-    if (apneaSeverity == 1.0)
+    if (DyspneaSeverity == 1.0)
     {
       m_NotBreathing = true;
     }
 
     //Just reduce the tidal volume by the percentage given
-    m_DriverPressure_cmH2O = m_DriverPressure_cmH2O * (1 - apneaSeverity);
+    m_DriverPressure_cmH2O = m_DriverPressure_cmH2O * (1 - DyspneaSeverity);
   }
 }
 

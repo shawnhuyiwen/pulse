@@ -3,15 +3,15 @@
 
 package com.kitware.physiology.datamodel.patient.actions;
 
-import com.kitware.physiology.cdm.PatientActions.ApneaData;
+import com.kitware.physiology.cdm.PatientActions.DyspneaData;
 
 import com.kitware.physiology.datamodel.properties.SEScalar0To1;
 
-public class SEApnea extends SEPatientAction
+public class SEDyspnea extends SEPatientAction
 {
   protected SEScalar0To1 severity;
   
-  public SEApnea()
+  public SEDyspnea()
   {
     severity = null;
   }
@@ -23,7 +23,7 @@ public class SEApnea extends SEPatientAction
       severity.invalidate();
   }
   
-  public void copy(SEApnea other)
+  public void copy(SEDyspnea other)
   {
     if(this==other)
       return;
@@ -39,21 +39,21 @@ public class SEApnea extends SEPatientAction
     return hasSeverity();
   }
   
-  public static void load(ApneaData src, SEApnea dst) 
+  public static void load(DyspneaData src, SEDyspnea dst) 
   {
     SEPatientAction.load(src.getPatientAction(), dst);
     if(src.hasSeverity())
       SEScalar0To1.load(src.getSeverity(),dst.getSeverity());
   }
   
-  public static ApneaData unload(SEApnea src)
+  public static DyspneaData unload(SEDyspnea src)
   {
-    ApneaData.Builder dst = ApneaData.newBuilder();
+    DyspneaData.Builder dst = DyspneaData.newBuilder();
     unload(src,dst);
     return dst.build();
   }
   
-  protected static void unload(SEApnea src, ApneaData.Builder dst)
+  protected static void unload(SEDyspnea src, DyspneaData.Builder dst)
   {
     SEPatientAction.unload(src,dst.getPatientActionBuilder());
     if (src.hasSeverity())

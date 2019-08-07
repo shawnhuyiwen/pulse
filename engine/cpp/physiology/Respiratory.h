@@ -76,9 +76,9 @@ protected:
   void Pneumothorax();
   void ConsciousRespiration();
   /**/void ProcessConsciousRespiration(SEConsciousRespirationCommand& cmd);
+  void Dyspnea();
   void MechanicalVentilation();
   void SupplementalOxygen();
-  void Apnea();
   // Driver
   void RespiratoryDriver();
   /**/void SetBreathCycleFractions();

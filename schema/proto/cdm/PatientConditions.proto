@@ -11,20 +11,30 @@ message AnyPatientConditionData
 {
   oneof Condition
   {
-    ChronicAnemiaData                         ChronicAnemia                         = 1;
-    ChronicObstructivePulmonaryDiseaseData    ChronicObstructivePulmonaryDisease    = 2;
-    ChronicPericardialEffusionData            ChronicPericardialEffusion            = 3;
-    ChronicRenalStenosisData                  ChronicRenalStenosis                  = 4;
-    ChronicVentricularSystolicDysfunctionData ChronicVentricularSystolicDysfunction = 5;
-    ConsumeMealData                           ConsumeMeal                           = 6;
-    ImpairedAlveolarExchangeData              ImpairedAlveolarExchange              = 7;
-    LobarPneumoniaData                        LobarPneumonia                        = 8;
+  
+    AcuteRespiratoryDistressSyndromeData      AcuteRespiratoryDistressSyndrome      = 1;
+    ChronicAnemiaData                         ChronicAnemia                         = 2;
+    ChronicObstructivePulmonaryDiseaseData    ChronicObstructivePulmonaryDisease    = 3;
+    ChronicPericardialEffusionData            ChronicPericardialEffusion            = 4;
+    ChronicRenalStenosisData                  ChronicRenalStenosis                  = 5;
+    ChronicVentricularSystolicDysfunctionData ChronicVentricularSystolicDysfunction = 6;
+    ConsumeMealData                           ConsumeMeal                           = 7;
+    ImpairedAlveolarExchangeData              ImpairedAlveolarExchange              = 8;
+    LobarPneumoniaData                        LobarPneumonia                        = 9;
+    SepsisData                                Sepsis                                = 10;
   }
 }
 
 message PatientConditionData
 {
   ConditionData                               Condition                             = 1;
+}
+
+/** @brief A type of respiratory failure characterized by rapid onset of widespread inflammation in the lungs. */
+message AcuteRespiratoryDistressSyndromeData
+{
+  PatientConditionData                        PatientCondition                      = 1;
+  Scalar0To1Data                              Severity                              = 2;/**<< @brief Scale of affect, 0 being none, 1 being the highest possible. */
 }
 
 /** @brief Condition characterized by reduced red blood cells, which leads to reduced oxygen carrying capacity. Implemented by reducing the amount of hemoglobin in the blood. */
@@ -89,4 +99,11 @@ message LobarPneumoniaData
   Scalar0To1Data                              Severity                              = 2;/**<< @brief Scale of affect, 0 being none, 1 being the highest possible. */
   Scalar0To1Data                              LeftLungAffected                      = 3;/**<< @brief Fraction of the Left Lung Affected*/
   Scalar0To1Data                              RightLungAffected                     = 4;/**<< @brief Fraction of the Left Lung Affected */
+}
+
+/** @brief A potentially life-threatening condition caused by the body's response to an infection. */
+message SepsisData
+{
+  PatientConditionData                        PatientCondition                      = 1;
+  Scalar0To1Data                              Severity                              = 2;/**<< @brief Scale of affect, 0 being none, 1 being the highest possible. */
 }

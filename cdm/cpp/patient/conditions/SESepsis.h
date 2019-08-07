@@ -2,21 +2,23 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "patient/actions/SEPatientAction.h"
+#include "patient/conditions/SEPatientCondition.h"
 
-class CDM_DECL SEApnea : public SEPatientAction
+class CDM_DECL SESepsis : public SEPatientCondition
 {
-  friend class PBPatientAction;//friend the serialization class
+  friend class PBPatientCondition;//friend the serialization class
 public:
 
-  SEApnea();
-  virtual ~SEApnea();
+  SESepsis();
+  virtual ~SESepsis();
 
-  virtual void Clear();
-  virtual void Copy(const SEApnea& src);
+  virtual void Clear(); //clear memory
+  virtual void Copy(const SESepsis& src);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
+
+  virtual std::string GetName() const{ return "Sepsis"; }
 
   virtual bool HasSeverity() const;
   virtual SEScalar0To1& GetSeverity();
@@ -26,4 +28,4 @@ public:
 
 protected:
   SEScalar0To1*           m_Severity;
-};
+};      

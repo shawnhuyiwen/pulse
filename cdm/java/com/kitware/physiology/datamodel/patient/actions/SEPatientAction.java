@@ -61,12 +61,6 @@ public abstract class SEPatientAction extends SEAction
       SEAirwayObstruction.load(c.getAirwayObstruction(), dst);
       return dst;
     }
-    case APNEA:
-    {
-      SEApnea dst = new SEApnea();
-      SEApnea.load(c.getApnea(), dst);
-      return dst;
-    }
     case ASTHMAATTACK:
     {
       SEAsthmaAttack dst = new SEAsthmaAttack();
@@ -119,6 +113,12 @@ public abstract class SEPatientAction extends SEAction
     {
       SEConsumeNutrients dst = new SEConsumeNutrients();
       SEConsumeNutrients.load(c.getConsumeNutrients(), dst);;
+      return dst;
+    }
+    case DYSPNEA:
+    {
+      SEDyspnea dst = new SEDyspnea();
+      SEDyspnea.load(c.getDyspnea(), dst);
       return dst;
     }
     case EXERCISE:
@@ -215,11 +215,6 @@ public abstract class SEPatientAction extends SEAction
       dst.setAirwayObstruction(SEAirwayObstruction.unload((SEAirwayObstruction)c));
       return dst.build();
     }
-    if(c instanceof SEApnea)
-    {
-      dst.setApnea(SEApnea.unload((SEApnea)c));
-      return dst.build();
-    }
     if(c instanceof SEAsthmaAttack)
     {
       dst.setAsthmaAttack(SEAsthmaAttack.unload((SEAsthmaAttack)c));
@@ -263,6 +258,11 @@ public abstract class SEPatientAction extends SEAction
     if(c instanceof SEConsumeNutrients)
     {
       dst.setConsumeNutrients(SEConsumeNutrients.unload((SEConsumeNutrients)c));
+      return dst.build();
+    }
+    if(c instanceof SEDyspnea)
+    {
+      dst.setDyspnea(SEDyspnea.unload((SEDyspnea)c));
       return dst.build();
     }
     if(c instanceof SEExercise)

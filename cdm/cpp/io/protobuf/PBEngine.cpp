@@ -23,6 +23,7 @@
 #include "engine/SECondition.h"
 #include "engine/SEConditionManager.h"
 #include "system/environment/conditions/SEInitialEnvironmentConditions.h"
+#include "patient/conditions/SEAcuteRespiratoryDistressSyndrome.h"
 #include "patient/conditions/SEChronicAnemia.h"
 #include "patient/conditions/SEChronicObstructivePulmonaryDisease.h"
 #include "patient/conditions/SEChronicPericardialEffusion.h"
@@ -31,6 +32,7 @@
 #include "patient/conditions/SEConsumeMeal.h"
 #include "patient/conditions/SEImpairedAlveolarExchange.h"
 #include "patient/conditions/SELobarPneumonia.h"
+#include "patient/conditions/SESepsis.h"
 #include "engine/SEAction.h"
 #include "engine/SEActionManager.h"
 #include "engine/SEAnesthesiaMachineActionCollection.h"
@@ -55,9 +57,9 @@
 #include "system/environment/actions/SEThermalApplication.h"
 #include "system/equipment/inhaler/actions/SEInhalerConfiguration.h"
 #include "patient/actions/SEPatientAssessmentRequest.h"
+#include "patient/actions/SEAcuteRespiratoryDistressSyndromeExacerbation.h"
 #include "patient/actions/SEAcuteStress.h"
 #include "patient/actions/SEAirwayObstruction.h"
-#include "patient/actions/SEApnea.h"
 #include "patient/actions/SEAsthmaAttack.h"
 #include "patient/actions/SEBrainInjury.h"
 #include "patient/actions/SEBronchoconstriction.h"
@@ -65,15 +67,18 @@
 #include "patient/actions/SEChestCompressionForce.h"
 #include "patient/actions/SEChestCompressionForceScale.h"
 #include "patient/actions/SEChestOcclusiveDressing.h"
+#include "patient/actions/SEChronicObstructivePulmonaryDiseaseExacerbation.h"
 #include "patient/actions/SEConsciousRespiration.h"
 /**/#include "patient/actions/SEBreathHold.h"
 /**/#include "patient/actions/SEForcedExhale.h"
 /**/#include "patient/actions/SEForcedInhale.h"
 /**/#include "patient/actions/SEUseInhaler.h"
 #include "patient/actions/SEConsumeNutrients.h"
+#include "patient/actions/SEDyspnea.h"
 #include "patient/actions/SEExercise.h"
 #include "patient/actions/SEHemorrhage.h"
 #include "patient/actions/SEIntubation.h"
+#include "patient/actions/SELobarPneumoniaExacerbation.h"
 #include "patient/actions/SEMechanicalVentilation.h"
 #include "patient/actions/SENeedleDecompression.h"
 #include "patient/actions/SEPericardialEffusion.h"
@@ -87,8 +92,6 @@
 #include "properties/SEScalarTime.h"
 #include "utils/unitconversion/UCCommon.h"
 #include "utils/FileUtils.h"
-
-
 
 void PBEngine::Load(const cdm::ConditionListData& src, SEConditionManager& dst)
 {
@@ -111,6 +114,8 @@ cdm::ConditionListData* PBEngine::Unload(const SEConditionManager& src)
 }
 void PBEngine::Serialize(const SEConditionManager& src, cdm::ConditionListData& dst)
 {
+  if (src.HasAcuteRespiratoryDistressSyndrome())
+    dst.mutable_anycondition()->AddAllocated(PBCondition::Unload(*src.m_ARDS));
   if (src.HasChronicAnemia())
     dst.mutable_anycondition()->AddAllocated(PBCondition::Unload(*src.m_Anemia));
   if (src.HasConsumeMeal())
@@ -127,6 +132,8 @@ void PBEngine::Serialize(const SEConditionManager& src, cdm::ConditionListData& 
     dst.mutable_anycondition()->AddAllocated(PBCondition::Unload(*src.m_LobarPneumonia));
   if (src.HasChronicRenalStenosis())
     dst.mutable_anycondition()->AddAllocated(PBCondition::Unload(*src.m_RenalStenosis));
+  if (src.HasSepsis())
+    dst.mutable_anycondition()->AddAllocated(PBCondition::Unload(*src.m_Sepsis));
   if (src.HasInitialEnvironmentConditions())
     dst.mutable_anycondition()->AddAllocated(PBCondition::Unload(*src.m_InitialEnvironmentConditions));
 }
@@ -204,12 +211,12 @@ void PBEngine::Serialize(const SEInhalerActionCollection& src, cdm::ActionListDa
 
 void PBEngine::Serialize(const SEPatientActionCollection& src, cdm::ActionListData& dst)
 {
+  if (src.HasAcuteRespiratoryDistressSyndromeExacerbation())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_ARDSExacerbation));
   if (src.HasAcuteStress())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_AcuteStress));
   if (src.HasAirwayObstruction())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_AirwayObstruction));
-  if (src.HasApnea())
-    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_Apnea));
   if (src.HasAsthmaAttack())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_AsthmaAttack));
   if (src.HasBrainInjury())
@@ -224,10 +231,14 @@ void PBEngine::Serialize(const SEPatientActionCollection& src, cdm::ActionListDa
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_LeftChestOcclusiveDressing));
   if (src.HasRightChestOcclusiveDressing())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_RightChestOcclusiveDressing));
+  if (src.HasChronicObstructivePulmonaryDiseaseExacerbation())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_COPDExacerbation));
   if (src.HasConsciousRespiration())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_ConsciousRespiration));
   if (src.HasConsumeNutrients())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_ConsumeNutrients));
+  if (src.HasDyspnea())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_Dyspnea));
   if (src.HasExercise())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_Exercise));
   if (src.HasHemorrhage())
@@ -237,6 +248,8 @@ void PBEngine::Serialize(const SEPatientActionCollection& src, cdm::ActionListDa
   }
   if (src.HasIntubation())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_Intubation));
+  if (src.HasLobarPneumoniaExacerbation())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_LobarPneumoniaExacerbation));
   if (src.HasMechanicalVentilation())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_MechanicalVentilation));
   if (src.HasLeftNeedleDecompression())

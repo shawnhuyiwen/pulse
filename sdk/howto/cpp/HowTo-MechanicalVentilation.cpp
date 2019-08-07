@@ -23,7 +23,7 @@
 #include "patient/actions/SEAirwayObstruction.h"
 #include "patient/actions/SEAsthmaAttack.h"
 #include "patient/actions/SEAcuteStress.h"
-#include "patient/actions/SEApnea.h"
+#include "patient/actions/SEDyspnea.h"
 #include "patient/actions/SETensionPneumothorax.h"
 #include "patient/actions/SEBrainInjury.h"
 #include "patient/actions/SESubstanceBolus.h"
@@ -301,11 +301,11 @@ void HowToMechanicalVentilation()
 
   tracker.AdvanceModelTime(60.0);
   
-  //Apnea
+  //Dyspnea
   //Maybe the muscles are getting weak?
-  SEApnea apnea;
-  apnea.GetSeverity().SetValue(0.3);
-  pe->ProcessAction(apnea);
+  SEDyspnea Dyspnea;
+  Dyspnea.GetSeverity().SetValue(0.3);
+  pe->ProcessAction(Dyspnea);
 
   //Succs
   //Make the patient stop breathing

@@ -33,7 +33,7 @@ See accompanying NOTICE file for details.*/
 #include "patient/SEPatient.h"
 #include "patient/actions/SEAcuteStress.h"
 #include "patient/actions/SEAirwayObstruction.h"
-#include "patient/actions/SEApnea.h"
+#include "patient/actions/SEDyspnea.h"
 #include "patient/actions/SEAsthmaAttack.h"
 #include "patient/actions/SEBrainInjury.h"
 #include "patient/actions/SEBronchoconstriction.h"
@@ -175,7 +175,7 @@ public:
   // Action Methods
   void AcuteStress(double severity);
   void AirwayObstruction(double severity);
-  void Apnea(double severity);
+  void Dyspnea(double severity);
   void Asthma(double severity);
   void CardiacArrest();
   void Hemorrhage(double flowRate_mL_per_min);

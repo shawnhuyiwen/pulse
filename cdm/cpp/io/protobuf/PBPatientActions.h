@@ -3,9 +3,9 @@
 
 #pragma once
 CDM_BIND_DECL2(PatientAction)
+CDM_BIND_DECL2(AcuteRespiratoryDistressSyndromeExacerbation)
 CDM_BIND_DECL2(AcuteStress)
 CDM_BIND_DECL2(AirwayObstruction)
-CDM_BIND_DECL2(Apnea)
 CDM_BIND_DECL2(AsthmaAttack)
 CDM_BIND_DECL2(BrainInjury)
 CDM_BIND_DECL2(BreathHold)
@@ -14,13 +14,16 @@ CDM_BIND_DECL2(CardiacArrest)
 CDM_BIND_DECL2(ChestCompressionForce)
 CDM_BIND_DECL2(ChestCompressionForceScale)
 CDM_BIND_DECL2(ChestOcclusiveDressing)
+CDM_BIND_DECL2(ChronicObstructivePulmonaryDiseaseExacerbation)
 CDM_BIND_DECL2(ConsciousRespiration)
 CDM_BIND_DECL2(ConsumeNutrients)
+CDM_BIND_DECL2(Dyspnea)
 CDM_BIND_DECL2(Exercise)
 CDM_BIND_DECL2(ForcedExhale)
 CDM_BIND_DECL2(ForcedInhale)
 CDM_BIND_DECL2(Hemorrhage)
 CDM_BIND_DECL2(Intubation)
+CDM_BIND_DECL2(LobarPneumoniaExacerbation)
 CDM_BIND_DECL2(MechanicalVentilation)
 CDM_BIND_DECL2(NeedleDecompression)
 CDM_BIND_DECL2(PatientAssessmentRequest)
@@ -46,6 +49,12 @@ public:
   static void Serialize(const cdm::PatientActionData& src, SEPatientAction& dst);
   static void Serialize(const SEPatientAction& src, cdm::PatientActionData& dst);
 
+  static void Load(const cdm::AcuteRespiratoryDistressSyndromeExacerbationData& src, SEAcuteRespiratoryDistressSyndromeExacerbation& dst);
+  static cdm::AcuteRespiratoryDistressSyndromeExacerbationData* Unload(const SEAcuteRespiratoryDistressSyndromeExacerbation& src);
+  static void Serialize(const cdm::AcuteRespiratoryDistressSyndromeExacerbationData& src, SEAcuteRespiratoryDistressSyndromeExacerbation& dst);
+  static void Serialize(const SEAcuteRespiratoryDistressSyndromeExacerbation& src, cdm::AcuteRespiratoryDistressSyndromeExacerbationData& dst);
+  static void Copy(const SEAcuteRespiratoryDistressSyndromeExacerbation& src, SEAcuteRespiratoryDistressSyndromeExacerbation& dst);
+
   static void Load(const cdm::AcuteStressData& src, SEAcuteStress& dst);
   static cdm::AcuteStressData* Unload(const SEAcuteStress& src);
   static void Serialize(const cdm::AcuteStressData& src, SEAcuteStress& dst);
@@ -57,12 +66,6 @@ public:
   static void Serialize(const cdm::AirwayObstructionData& src, SEAirwayObstruction& dst);
   static void Serialize(const SEAirwayObstruction& src, cdm::AirwayObstructionData& dst);
   static void Copy(const SEAirwayObstruction& src, SEAirwayObstruction& dst);
-
-  static void Load(const cdm::ApneaData& src, SEApnea& dst);
-  static cdm::ApneaData* Unload(const SEApnea& src);
-  static void Serialize(const cdm::ApneaData& src, SEApnea& dst);
-  static void Serialize(const SEApnea& src, cdm::ApneaData& dst);
-  static void Copy(const SEApnea& src, SEApnea& dst);
 
   static void Load(const cdm::AsthmaAttackData& src, SEAsthmaAttack& dst);
   static cdm::AsthmaAttackData* Unload(const SEAsthmaAttack& src);
@@ -112,6 +115,12 @@ public:
   static void Serialize(const SEChestOcclusiveDressing& src, cdm::ChestOcclusiveDressingData& dst);
   static void Copy(const SEChestOcclusiveDressing& src, SEChestOcclusiveDressing& dst);
 
+  static void Load(const cdm::ChronicObstructivePulmonaryDiseaseExacerbationData& src, SEChronicObstructivePulmonaryDiseaseExacerbation& dst);
+  static cdm::ChronicObstructivePulmonaryDiseaseExacerbationData* Unload(const SEChronicObstructivePulmonaryDiseaseExacerbation& src);
+  static void Serialize(const cdm::ChronicObstructivePulmonaryDiseaseExacerbationData& src, SEChronicObstructivePulmonaryDiseaseExacerbation& dst);
+  static void Serialize(const SEChronicObstructivePulmonaryDiseaseExacerbation& src, cdm::ChronicObstructivePulmonaryDiseaseExacerbationData& dst);
+  static void Copy(const SEChronicObstructivePulmonaryDiseaseExacerbation& src, SEChronicObstructivePulmonaryDiseaseExacerbation& dst);
+
   static void Load(const cdm::ConsciousRespirationData& src, SEConsciousRespiration& dst);
   static cdm::ConsciousRespirationData* Unload(const SEConsciousRespiration& src);
   static void Serialize(const cdm::ConsciousRespirationData& src, SEConsciousRespiration& dst);
@@ -123,6 +132,12 @@ public:
   static void Serialize(const cdm::ConsumeNutrientsData& src, SEConsumeNutrients& dst);
   static void Serialize(const SEConsumeNutrients& src, cdm::ConsumeNutrientsData& dst);
   static void Copy(const SEConsumeNutrients& src, SEConsumeNutrients& dst);
+
+  static void Load(const cdm::DyspneaData& src, SEDyspnea& dst);
+  static cdm::DyspneaData* Unload(const SEDyspnea& src);
+  static void Serialize(const cdm::DyspneaData& src, SEDyspnea& dst);
+  static void Serialize(const SEDyspnea& src, cdm::DyspneaData& dst);
+  static void Copy(const SEDyspnea& src, SEDyspnea& dst);
 
   static void Load(const cdm::ExerciseData& src, SEExercise& dst);
   static cdm::ExerciseData* Unload(const SEExercise& src);
@@ -153,6 +168,12 @@ public:
   static void Serialize(const cdm::IntubationData& src, SEIntubation& dst);
   static void Serialize(const SEIntubation& src, cdm::IntubationData& dst);
   static void Copy(const SEIntubation& src, SEIntubation& dst);
+
+  static void Load(const cdm::LobarPneumoniaExacerbationData& src, SELobarPneumoniaExacerbation& dst);
+  static cdm::LobarPneumoniaExacerbationData* Unload(const SELobarPneumoniaExacerbation& src);
+  static void Serialize(const cdm::LobarPneumoniaExacerbationData& src, SELobarPneumoniaExacerbation& dst);
+  static void Serialize(const SELobarPneumoniaExacerbation& src, cdm::LobarPneumoniaExacerbationData& dst);
+  static void Copy(const SELobarPneumoniaExacerbation& src, SELobarPneumoniaExacerbation& dst);
 
   static void Load(const cdm::MechanicalVentilationData& src, SEMechanicalVentilation& dst, const SESubstanceManager& subMgr);
   static cdm::MechanicalVentilationData* Unload(const SEMechanicalVentilation& src);
