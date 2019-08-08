@@ -59,7 +59,7 @@ public abstract class ValidationTool
   
   protected StringBuilder html = new StringBuilder();
   
-  protected enum DataType { Mean, WaveformMin, WaveformMax, Enum, Patient2SystemMean, Patient2SystemMin, Patient2SystemMax, MeanPerWeight, WaveformMinPerWeight, WaveformMaxPerWeight }
+  protected enum DataType { Mean, WaveformMin, WaveformMax, Enum, Patient2SystemMean, Patient2SystemMin, Patient2SystemMax, MeanPerWeight, MeanPerIdealWeight, WaveformMinPerWeight, WaveformMaxPerWeight }
   // Patient2System variables take the value from the patient file and compare it to a system property
   // PerWeight calculates the expected value based on the patient weight
   
@@ -95,6 +95,7 @@ public abstract class ValidationTool
     public String       resultFile = "";
     public List<Double> results;
     public List<Double> weight;
+    public List<Double> idealWeight;
     
     public String doubleFormat="3f";
     public double successTolerance = 10;
@@ -310,6 +311,7 @@ public abstract class ValidationTool
                       }
                       vRow.dType = DataType.valueOf(cellValue);
                       if(vRow.dType == DataType.MeanPerWeight || 
+                         vRow.dType == DataType.MeanPerIdealWeight ||
                          vRow.dType == DataType.WaveformMinPerWeight || 
                          vRow.dType == DataType.WaveformMaxPerWeight)
                       {
@@ -518,7 +520,7 @@ public abstract class ValidationTool
       String cite = "@cite ";
       if(vRow.refCites.contains("["))
         cite = "";// This is an equation, not a cite
-      if(vRow.dType==DataType.Mean        ||  vRow.dType == DataType.MeanPerWeight ||
+      if(vRow.dType==DataType.Mean        ||  vRow.dType == DataType.MeanPerWeight || vRow.dType == DataType.MeanPerIdealWeight ||
          vRow.dType==DataType.WaveformMin ||  vRow.dType == DataType.WaveformMinPerWeight ||
          vRow.dType==DataType.WaveformMax ||  vRow.dType == DataType.WaveformMaxPerWeight)
       {
@@ -532,7 +534,8 @@ public abstract class ValidationTool
         else
           vRow.expected = String.format("%."+vRow.doubleFormat, vRow.refValue)+" "+cite+vRow.refCites;
         
-        if(vRow.dType==DataType.MeanPerWeight || vRow.dType==DataType.WaveformMinPerWeight || vRow.dType==DataType.WaveformMaxPerWeight)
+        if(vRow.dType==DataType.MeanPerWeight || vRow.dType==DataType.MeanPerIdealWeight ||
+           vRow.dType==DataType.WaveformMinPerWeight || vRow.dType==DataType.WaveformMaxPerWeight)
         {
           if(vRow.header.endsWith(")"))
             vRow.header = vRow.header.substring(0, vRow.header.length()-1) + "/" +vRow.weightUnit + ")";
@@ -717,6 +720,17 @@ public abstract class ValidationTool
         vRow.engine = "Mean of " + String.format("%."+3+"g", vRow.result); //StringUtils.toString(vRow.mean,3);
         break;
       }
+      case MeanPerIdealWeight:
+      {
+        List<Double> resultPerWeight = new ArrayList<Double>();
+        for(int i=0; i<vRow.results.size(); i++)
+        {
+          resultPerWeight.add(vRow.results.get(i) / vRow.idealWeight.get(i));
+        }
+        vRow.result = DoubleUtils.getAverage(resultPerWeight);
+        vRow.engine = "Mean of " + String.format("%."+3+"g", vRow.result); //StringUtils.toString(vRow.mean,3);
+        break;
+      }
       case WaveformMinPerWeight:
       {
     	/*
@@ -845,7 +859,43 @@ public abstract class ValidationTool
     if(vRow.name.startsWith("Carina-CarbonDioxide"))
       Log.info("Here");
     
-    if(vRow.dType == DataType.MeanPerWeight || vRow.dType == DataType.WaveformMinPerWeight || vRow.dType == DataType.WaveformMaxPerWeight)
+    if(vRow.dType == DataType.MeanPerIdealWeight)
+     {// Take off the weight unit from the header and unit we got from the spreadsheet
+       String weightHeader = "PatientIdealBodyWeight("+vRow.weightUnit+")";
+       vRow.idealWeight = resultData.get(weightHeader);
+       if(vRow.idealWeight==null)
+       {// Maybe the result is in a different unit than our reference value
+         String newUnit=null;
+         String[] split;
+         for(String result : resultData.keySet())
+         {
+           split = result.split("[(]");
+           if(split.length==2&&split[0].equals("PatientIdealBodyWeight"))
+           {
+             newUnit = split[1].substring(0, split[1].indexOf(')'));
+             vRow.idealWeight = resultData.get(result);
+             for(int i=0; i<vRow.idealWeight.size(); i++)
+             {
+               double newValue = UnitConverter.convert(vRow.idealWeight.get(i), newUnit, vRow.weightUnit);
+               vRow.idealWeight.set(i, newValue);
+             }
+             // Since we did a conversion, let's update the key
+             resultData.remove(result);
+             result = split[0]+"("+vRow.weightUnit+")";
+             resultData.put(result,vRow.idealWeight);
+             break;
+           }
+         }
+         if(newUnit==null)// Nope, I don't think the result is there
+         {
+           vRow.error = danger+"PatientIdealWeight, Not In Results!"+endSpan;
+           return false;
+         }
+       } 
+     }
+    
+    if(vRow.dType == DataType.MeanPerWeight || 
+       vRow.dType == DataType.WaveformMinPerWeight || vRow.dType == DataType.WaveformMaxPerWeight)
     {// Take off the weight unit from the header and unit we got from the spreadsheet
       String weightHeader = "PatientWeight("+vRow.weightUnit+")";
       vRow.weight = resultData.get(weightHeader);
