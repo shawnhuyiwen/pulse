@@ -58,6 +58,10 @@
     <Compile Include="io\PBAnesthesiaMachineActions.cs" />
     <Compile Include="io\PBPatientActions.cs" />
     <Compile Include="io\PBProperties.cs" />
+    <Compile Include="patient\actions\SERespiratoryFatigue.cs" />
+    <Compile Include="patient\actions\SEAcuteRespiratoryDistressSyndromeExacerbation.cs" />
+    <Compile Include="patient\actions\SEChronicObstructivePulmonaryDiseaseExacerbation.cs" />
+    <Compile Include="patient\actions\SELobarPneumoniaExacerbation.cs" />
     <Compile Include="patient\actions\SEAirwayObstruction.cs" />
     <Compile Include="patient\actions\SEHemorrhage.cs" />
     <Compile Include="patient\actions\SEIntubation.cs" />

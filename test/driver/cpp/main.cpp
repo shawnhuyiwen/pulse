@@ -135,6 +135,7 @@ int main(int argc, char* argv[])
       //cdmTest.PreChargeComplianceNonZeroVolume(cdmDir);
       //cdmTest.ComplianceVolumeChange(cdmDir);
       //cdmTest.CircuitLockingTest(cdmDir);
+      cdmTest.ComplianceVolumeChange(cdmDir);
 
       // Basic Circuit Tests
       //cdmTest.BasicCircuitTest(cdmDir);

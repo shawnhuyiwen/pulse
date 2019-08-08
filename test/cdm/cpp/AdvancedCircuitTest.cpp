@@ -1145,22 +1145,22 @@ void CommonDataModelTest::ComplianceVolumeChange(const std::string& sTestDirecto
   SEFluidCircuitCalculator fluidCalculator(m_Logger);
   SEFluidCircuit* fluidCircuit = &m_Circuits->CreateFluidCircuit("Fluid");
 
-  SEFluidCircuitNode& ground = fluidCircuit->CreateNode("node1");
-  fluidCircuit->AddNode(ground);
-  ground.SetAsReferenceNode();
-  ground.GetNextPressure().SetValue(0.0, PressureUnit::cmH2O);
-  ground.GetVolumeBaseline().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::L);
-  SEFluidCircuitNode& node2 = fluidCircuit->CreateNode("node2");
-  node2.GetPressure().SetValue(0.0, PressureUnit::cmH2O);
-  node2.GetVolumeBaseline().SetValue(10.0, VolumeUnit::L);
-  SEFluidCircuitNode& node3 = fluidCircuit->CreateNode("node3");
-  node3.GetPressure().SetValue(10.0, PressureUnit::cmH2O);
-  node3.GetVolumeBaseline().SetValue(5.0, VolumeUnit::L);
-  SEFluidCircuitPath& groundTonode2 = fluidCircuit->CreatePath(ground, node2, "groundTonode2");
-  groundTonode2.GetPressureSourceBaseline().SetValue(0.0, PressureUnit::cmH2O);
-  SEFluidCircuitPath& node2Tonode3 = fluidCircuit->CreatePath(node2, node3, "node2Tonode3");
-  SEFluidCircuitPath& node3Toground = fluidCircuit->CreatePath(node3, ground, "node3Toground");
-  node2Tonode3.GetComplianceBaseline().SetValue(1.0, VolumePerPressureUnit::L_Per_cmH2O);
+  SEFluidCircuitNode* ground = &fluidCircuit->CreateNode("node1");
+  fluidCircuit->AddNode(*ground);
+  ground->SetAsReferenceNode();
+  ground->GetNextPressure().SetValue(0.0, PressureUnit::cmH2O);
+  ground->GetVolumeBaseline().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::L);
+  SEFluidCircuitNode* node2 = &fluidCircuit->CreateNode("node2");
+  node2->GetPressure().SetValue(0.0, PressureUnit::cmH2O);
+  node2->GetVolumeBaseline().SetValue(10.0, VolumeUnit::L);
+  SEFluidCircuitNode* node3 = &fluidCircuit->CreateNode("node3");
+  node3->GetPressure().SetValue(10.0, PressureUnit::cmH2O);
+  node3->GetVolumeBaseline().SetValue(5.0, VolumeUnit::L);
+  SEFluidCircuitPath* groundTonode2 = &fluidCircuit->CreatePath(*ground, *node2, "groundTonode2");
+  groundTonode2->GetPressureSourceBaseline().SetValue(0.0, PressureUnit::cmH2O);
+  SEFluidCircuitPath* node2Tonode3 = &fluidCircuit->CreatePath(*node2, *node3, "node2Tonode3");
+  SEFluidCircuitPath* node3Toground = &fluidCircuit->CreatePath(*node3, *ground, "node3Toground");
+  node2Tonode3->GetComplianceBaseline().SetValue(1.0, VolumePerPressureUnit::L_Per_cmH2O);
   fluidCircuit->SetNextAndCurrentFromBaselines();
   fluidCircuit->StateChange();
 
@@ -1171,18 +1171,18 @@ void CommonDataModelTest::ComplianceVolumeChange(const std::string& sTestDirecto
   {    
     if (currentTime_s > 1.0)
     {
-      groundTonode2.GetNextPressureSource().SetValue(10.0, PressureUnit::cmH2O);
+      groundTonode2->GetNextPressureSource().SetValue(10.0, PressureUnit::cmH2O);
     }
     
     if (currentTime_s > 5.0 && !volumeChanged)
     {
       volumeChanged = true;
-      node2.GetNextVolume().IncrementValue(10.0, VolumeUnit::L);
+      node2->GetNextVolume().IncrementValue(10.0, VolumeUnit::L);
     }
     if (currentTime_s > 8.0 && !pressureChanged)
     {
       pressureChanged = true;
-      node2.GetNextPressure().IncrementValue(10.0, PressureUnit::cmH2O);
+      node2->GetNextPressure().IncrementValue(10.0, PressureUnit::cmH2O);
     }
     //Process
     fluidCalculator.Process(*fluidCircuit, timeStep_s);
@@ -1190,12 +1190,14 @@ void CommonDataModelTest::ComplianceVolumeChange(const std::string& sTestDirecto
     fluidCalculator.PostProcess(*fluidCircuit);
     currentTime_s += timeStep_s;
     trk1.Track(currentTime_s, *fluidCircuit);
-    if (!serialized && currentTime_s > 11.0) //jbw - Reduce time to actually happen. This is screwing up my testing. What's the deal?
+    if (!serialized && currentTime_s > 1.0)
     {
       serialized = true;
       std::string jsonDir = sTestDirectory + "/ComplianceVolumeChange.json";
       TestCircuitSerialization(jsonDir);
       fluidCircuit = m_Circuits->GetFluidCircuit("Fluid");
+      groundTonode2 = fluidCircuit->GetPath("groundTonode2");
+      node2 = fluidCircuit->GetNode("node2");
     }
   }
   std::string sOutputFile2 = sTestDirectory + "/ComplianceVolumeChange.csv";
