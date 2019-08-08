@@ -25,6 +25,7 @@
 #include "patient/actions/SEMechanicalVentilation.h"
 #include "patient/actions/SENeedleDecompression.h"
 #include "patient/actions/SEPericardialEffusion.h"
+#include "patient/actions/SERespiratoryFatigue.h"
 #include "patient/actions/SESubstanceBolus.h"
 #include "patient/actions/SESubstanceCompoundInfusion.h"
 #include "patient/actions/SESubstanceInfusion.h"
@@ -62,6 +63,7 @@ SEPatientActionCollection::SEPatientActionCollection(SESubstanceManager& substan
   m_MechanicalVentilation = nullptr;
   m_LeftNeedleDecompression = nullptr;
   m_RightNeedleDecompression = nullptr;
+  m_RespiratoryFatigue = nullptr;
   m_PericardialEffusion = nullptr;
   m_SupplementalOxygen = nullptr;
   m_LeftOpenTensionPneumothorax = nullptr;
@@ -99,6 +101,7 @@ void SEPatientActionCollection::Clear()
   RemoveLeftNeedleDecompression();
   RemoveRightNeedleDecompression();
   RemovePericardialEffusion();
+  RemoveRespiratoryFatigue();
   RemoveLeftOpenTensionPneumothorax();
   RemoveLeftClosedTensionPneumothorax();
   RemoveRightOpenTensionPneumothorax();
@@ -403,6 +406,17 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
     m_PericardialEffusion->Copy(*pericardialEff);
     if (!m_PericardialEffusion->IsActive())
       RemovePericardialEffusion();
+    return true;
+  }
+
+  const SERespiratoryFatigue* rf = dynamic_cast<const SERespiratoryFatigue*>(&action);
+  if (rf != nullptr)
+  {
+    if (m_RespiratoryFatigue == nullptr)
+      m_RespiratoryFatigue = new SERespiratoryFatigue();
+    m_RespiratoryFatigue->Copy(*rf);
+    if (!m_RespiratoryFatigue->IsActive())
+      RemoveRespiratoryFatigue();
     return true;
   }
 
@@ -950,6 +964,23 @@ void SEPatientActionCollection::RemovePericardialEffusion()
   SAFE_DELETE(m_PericardialEffusion);
 }
 
+bool SEPatientActionCollection::HasRespiratoryFatigue() const
+{
+  return m_RespiratoryFatigue == nullptr ? false : m_RespiratoryFatigue->IsActive();
+}
+SERespiratoryFatigue* SEPatientActionCollection::GetRespiratoryFatigue()
+{
+  return m_RespiratoryFatigue;
+}
+const SERespiratoryFatigue* SEPatientActionCollection::GetRespiratoryFatigue() const
+{
+  return m_RespiratoryFatigue;
+}
+void SEPatientActionCollection::RemoveRespiratoryFatigue()
+{
+  SAFE_DELETE(m_RespiratoryFatigue);
+}
+
 bool SEPatientActionCollection::HasSupplementalOxygen() const
 {
   return m_SupplementalOxygen == nullptr ? false : m_SupplementalOxygen->IsActive();
@@ -1150,6 +1181,8 @@ void SEPatientActionCollection::GetAllActions(std::vector<const SEAction*>& acti
     actions.push_back(GetRightNeedleDecompression());
   if (HasPericardialEffusion())
     actions.push_back(GetPericardialEffusion());
+  if (HasRespiratoryFatigue())
+    actions.push_back(GetRespiratoryFatigue());
   if (HasLeftClosedTensionPneumothorax())
     actions.push_back(GetLeftClosedTensionPneumothorax());
   if (HasLeftOpenTensionPneumothorax())

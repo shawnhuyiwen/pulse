@@ -82,6 +82,7 @@
 #include "patient/actions/SEMechanicalVentilation.h"
 #include "patient/actions/SENeedleDecompression.h"
 #include "patient/actions/SEPericardialEffusion.h"
+#include "patient/actions/SERespiratoryFatigue.h"
 #include "patient/actions/SESubstanceBolus.h"
 #include "patient/actions/SESubstanceInfusion.h"
 #include "patient/actions/SESubstanceCompoundInfusion.h"
@@ -258,6 +259,8 @@ void PBEngine::Serialize(const SEPatientActionCollection& src, cdm::ActionListDa
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_RightNeedleDecompression));
   if (src.HasPericardialEffusion())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_PericardialEffusion));
+  if (src.HasRespiratoryFatigue())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_RespiratoryFatigue));
   if (src.HasLeftClosedTensionPneumothorax())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_LeftClosedTensionPneumothorax));
   if (src.HasLeftOpenTensionPneumothorax())

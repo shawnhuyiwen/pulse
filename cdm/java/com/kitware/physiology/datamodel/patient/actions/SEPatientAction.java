@@ -175,10 +175,10 @@ public abstract class SEPatientAction extends SEAction
       SEPericardialEffusion.load(c.getPericardialEffusion(), dst);
       return dst;
     }
-    case TENSIONPNEUMOTHORAX:
+    case RESPIRATORYFATIGUE:
     {
-      SETensionPneumothorax dst = new SETensionPneumothorax();
-      SETensionPneumothorax.load(c.getTensionPneumothorax(), dst);
+      SERespiratoryFatigue dst = new SERespiratoryFatigue();
+      SERespiratoryFatigue.load(c.getRespiratoryFatigue(), dst);
       return dst;
     }
     case SUBSTANCEBOLUS:
@@ -200,6 +200,12 @@ public abstract class SEPatientAction extends SEAction
       SESubstance sub = subMgr.getSubstance(c.getSubstanceInfusion().getSubstance());
       SESubstanceInfusion dst = new SESubstanceInfusion(sub);
       SESubstanceInfusion.load(c.getSubstanceInfusion(), dst);
+      return dst;
+    }
+    case TENSIONPNEUMOTHORAX:
+    {
+      SETensionPneumothorax dst = new SETensionPneumothorax();
+      SETensionPneumothorax.load(c.getTensionPneumothorax(), dst);
       return dst;
     }
     case URINATE:
@@ -328,9 +334,9 @@ public abstract class SEPatientAction extends SEAction
       dst.setPericardialEffusion(SEPericardialEffusion.unload((SEPericardialEffusion)c));
       return dst.build();
     }
-    if(c instanceof SETensionPneumothorax)
+    if(c instanceof SERespiratoryFatigue)
     {
-      dst.setTensionPneumothorax(SETensionPneumothorax.unload((SETensionPneumothorax)c));
+      dst.setRespiratoryFatigue(SERespiratoryFatigue.unload((SERespiratoryFatigue)c));
       return dst.build();
     }
     if(c instanceof SESubstanceBolus)
@@ -346,6 +352,11 @@ public abstract class SEPatientAction extends SEAction
     if(c instanceof SESubstanceInfusion)
     {
       dst.setSubstanceInfusion(SESubstanceInfusion.unload((SESubstanceInfusion)c));
+      return dst.build();
+    }
+    if(c instanceof SETensionPneumothorax)
+    {
+      dst.setTensionPneumothorax(SETensionPneumothorax.unload((SETensionPneumothorax)c));
       return dst.build();
     }
     if(c instanceof SEUrinate)

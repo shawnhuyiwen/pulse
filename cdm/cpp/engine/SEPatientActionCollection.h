@@ -26,6 +26,7 @@ class SELobarPneumoniaExacerbation;
 class SEMechanicalVentilation;
 class SENeedleDecompression;
 class SEPericardialEffusion;
+class SERespiratoryFatigue;
 class SESubstanceBolus;
 class SESubstanceCompoundInfusion;
 class SESubstanceInfusion;
@@ -160,6 +161,11 @@ public:
   const SEPericardialEffusion* GetPericardialEffusion() const;
   void RemovePericardialEffusion();
 
+  bool HasRespiratoryFatigue() const;
+  SERespiratoryFatigue* GetRespiratoryFatigue();
+  const SERespiratoryFatigue* GetRespiratoryFatigue() const;
+  void RemoveRespiratoryFatigue();
+
   const std::map<const SESubstance*, SESubstanceBolus*>&  GetSubstanceBoluses() const;
   void RemoveSubstanceBolus(const SESubstance& sub);
 
@@ -228,6 +234,7 @@ protected:
   SENeedleDecompression*                            m_LeftNeedleDecompression;
   SENeedleDecompression*                            m_RightNeedleDecompression;
   SEPericardialEffusion*                            m_PericardialEffusion;
+  SERespiratoryFatigue*                             m_RespiratoryFatigue;
   SESupplementalOxygen*                             m_SupplementalOxygen;
   SETensionPneumothorax*                            m_LeftClosedTensionPneumothorax;
   SETensionPneumothorax*                            m_LeftOpenTensionPneumothorax;

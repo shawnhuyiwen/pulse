@@ -36,6 +36,7 @@
 #include "patient/actions/SEMechanicalVentilation.h"
 #include "patient/actions/SENeedleDecompression.h"
 #include "patient/actions/SEPericardialEffusion.h"
+#include "patient/actions/SERespiratoryFatigue.h"
 #include "patient/actions/SESubstanceBolus.h"
 #include "patient/actions/SESubstanceInfusion.h"
 #include "patient/actions/SESubstanceCompoundInfusion.h"
@@ -913,6 +914,35 @@ void PBPatientAction::Copy(const SEPericardialEffusion& src, SEPericardialEffusi
   PBPatientAction::Serialize(data, dst);
 }
 
+void PBPatientAction::Load(const cdm::RespiratoryFatigueData& src, SERespiratoryFatigue& dst)
+{
+  PBPatientAction::Serialize(src, dst);
+}
+void PBPatientAction::Serialize(const cdm::RespiratoryFatigueData& src, SERespiratoryFatigue& dst)
+{
+  PBPatientAction::Serialize(src.patientaction(), dst);
+  if (src.has_severity())
+    PBProperty::Load(src.severity(), dst.GetSeverity());
+}
+cdm::RespiratoryFatigueData* PBPatientAction::Unload(const SERespiratoryFatigue& src)
+{
+  cdm::RespiratoryFatigueData* dst = new cdm::RespiratoryFatigueData();
+  PBPatientAction::Serialize(src, *dst);
+  return dst;
+}
+void PBPatientAction::Serialize(const SERespiratoryFatigue& src, cdm::RespiratoryFatigueData& dst)
+{
+  PBPatientAction::Serialize(src, *dst.mutable_patientaction());
+  if (src.HasSeverity())
+    dst.set_allocated_severity(PBProperty::Unload(*src.m_Severity));
+}
+void PBPatientAction::Copy(const SERespiratoryFatigue& src, SERespiratoryFatigue& dst)
+{
+  cdm::RespiratoryFatigueData data;
+  PBPatientAction::Serialize(src, data);
+  PBPatientAction::Serialize(data, dst);
+}
+
 void PBPatientAction::Load(const cdm::SubstanceBolusData& src, SESubstanceBolus& dst)
 {
   PBPatientAction::Serialize(src, dst);
@@ -1307,6 +1337,12 @@ SEPatientAction* PBPatientAction::Load(const cdm::AnyPatientActionData& any, SES
     PBPatientAction::Load(any.pericardialeffusion(), *a);
     return a;
   }
+  case cdm::AnyPatientActionData::ActionCase::kRespiratoryFatigue:
+  {
+    SERespiratoryFatigue* a = new SERespiratoryFatigue();
+    PBPatientAction::Load(any.respiratoryfatigue(), *a);
+    return a;
+  }
   case cdm::AnyPatientActionData::ActionCase::kSubstanceBolus:
   {
     SESubstance* sub = subMgr.GetSubstance(any.substancebolus().substance());
@@ -1498,6 +1534,12 @@ cdm::AnyPatientActionData* PBPatientAction::Unload(const SEPatientAction& action
   if (pe != nullptr)
   {
     any->set_allocated_pericardialeffusion(PBPatientAction::Unload(*pe));
+    return any;
+  }
+  const SERespiratoryFatigue* rf = dynamic_cast<const SERespiratoryFatigue*>(&action);
+  if (rf != nullptr)
+  {
+    any->set_allocated_respiratoryfatigue(PBPatientAction::Unload(*rf));
     return any;
   }
   const SESubstanceBolus* sb = dynamic_cast<const SESubstanceBolus*>(&action);

@@ -28,6 +28,7 @@ CDM_BIND_DECL2(MechanicalVentilation)
 CDM_BIND_DECL2(NeedleDecompression)
 CDM_BIND_DECL2(PatientAssessmentRequest)
 CDM_BIND_DECL2(PericardialEffusion)
+CDM_BIND_DECL2(RespiratoryFatigue)
 CDM_BIND_DECL2(SubstanceBolus)
 CDM_BIND_DECL2(SubstanceBolusState)
 CDM_BIND_DECL2(SubstanceCompoundInfusion)
@@ -198,6 +199,12 @@ public:
   static void Serialize(const cdm::PericardialEffusionData& src, SEPericardialEffusion& dst);
   static void Serialize(const SEPericardialEffusion& src, cdm::PericardialEffusionData& dst);
   static void Copy(const SEPericardialEffusion& src, SEPericardialEffusion& dst);
+
+  static void Load(const cdm::RespiratoryFatigueData& src, SERespiratoryFatigue& dst);
+  static cdm::RespiratoryFatigueData* Unload(const SERespiratoryFatigue& src);
+  static void Serialize(const cdm::RespiratoryFatigueData& src, SERespiratoryFatigue& dst);
+  static void Serialize(const SERespiratoryFatigue& src, cdm::RespiratoryFatigueData& dst);
+  static void Copy(const SERespiratoryFatigue& src, SERespiratoryFatigue& dst);
 
   static void Load(const cdm::SubstanceBolusStateData& src, SESubstanceBolusState& dst);
   static cdm::SubstanceBolusStateData* Unload(const SESubstanceBolusState& src);
