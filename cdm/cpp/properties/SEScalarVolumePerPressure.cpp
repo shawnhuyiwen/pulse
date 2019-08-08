@@ -6,6 +6,8 @@
 
 const VolumePerPressureUnit VolumePerPressureUnit::L_Per_Pa("L/Pa");
 const VolumePerPressureUnit VolumePerPressureUnit::L_Per_cmH2O("L/cmH2O");
+const VolumePerPressureUnit VolumePerPressureUnit::m3_Per_Pa("m^3/Pa");
+const VolumePerPressureUnit VolumePerPressureUnit::mL_Per_mmHg("mL/mmHg");
 
 bool VolumePerPressureUnit::IsValidUnit(const std::string& unit)
 {

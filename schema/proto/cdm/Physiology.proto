@@ -90,10 +90,10 @@ message CardiovascularSystemData
   ScalarVolumePerTimeData             PulmonaryMeanCapillaryFlow                     = 23;/**<< @brief The average blood flow in the pulmonary capillaries over the course of a cardiac cycle.*/
   ScalarVolumePerTimeData             PulmonaryMeanShuntFlow                         = 24;/**<< @brief The average blood flow diverted from the pulmonary capillaries (not oxygenated) over the course of a cardiac cycle.*/
   ScalarPressureData                  PulmonarySystolicArterialPressure              = 25;/**<< @brief The maximum pressure in the pulmonary arteries over the course of a cardiac cycle.*/
-  ScalarFlowResistanceData            PulmonaryVascularResistance                    = 26;/**<< @brief The resistance offered by the pulmonary circulation.*/
+  ScalarPressureTimePerVolumeData     PulmonaryVascularResistance                    = 26;/**<< @brief The resistance offered by the pulmonary circulation.*/
   ScalarPressureTimePerVolumeAreaData PulmonaryVascularResistanceIndex               = 27;/**<< @brief Relates pulmonary circulation performance to the size of the individual. */
   ScalarPressureData                  PulsePressure                                  = 28;/**<< @brief The difference between the systolic and diastolic pressures.*/
-  ScalarFlowResistanceData            SystemicVascularResistance                     = 29;/**<< @brief The resistance to blood flow through the entire systemic vasculature, not including the pulmonary circulation.*/
+  ScalarPressureTimePerVolumeData     SystemicVascularResistance                     = 29;/**<< @brief The resistance to blood flow through the entire systemic vasculature, not including the pulmonary circulation.*/
   ScalarPressureData                  SystolicArterialPressure                       = 30;/**<< @brief The maximum pressure in the aorta over the course of a cardiac cycle.*/
 }
 
@@ -180,10 +180,10 @@ message RenalSystemData
   Scalar0To1Data                      FiltrationFraction                             = 1; /**<< @brief Scalar used to compute reabsorption for substances*/
   ScalarVolumePerTimeData             GlomerularFiltrationRate                       = 2; /**<< @brief Flow rate of filtrate into the tubules */
   
-  ScalarFlowResistanceData            LeftAfferentArterioleResistance                = 3; /**<< @brief resistance to flow going into the glomerular capillaries in the left Kidney*/
+  ScalarPressureTimePerVolumeData     LeftAfferentArterioleResistance                = 3; /**<< @brief resistance to flow going into the glomerular capillaries in the left Kidney*/
   ScalarPressureData                  LeftBowmansCapsulesHydrostaticPressure         = 4; /**<< @brief Pressure generated from fluid in the bowmans capsules in the left Kidney */
   ScalarPressureData                  LeftBowmansCapsulesOsmoticPressure             = 5; /**<< @brief Pressure generated from substances in the bowmans capsules in the left Kidney*/
-  ScalarFlowResistanceData            LeftEfferentArterioleResistance                = 6; /**<< @brief Resistance to flow into the peritubular capillaries in the left Kidney */
+  ScalarPressureTimePerVolumeData     LeftEfferentArterioleResistance                = 6; /**<< @brief Resistance to flow into the peritubular capillaries in the left Kidney */
   ScalarPressureData                  LeftGlomerularCapillariesHydrostaticPressure   = 7; /**<< @brief Pressure generated from fluid in the glomerular capillaries in the left Kidney */
   ScalarPressureData                  LeftGlomerularCapillariesOsmoticPressure       = 8; /**<< @brief Pressure generated from substances in the capillaries in the left Kidney */
   ScalarVolumePerTimePressureData     LeftGlomerularFiltrationCoefficient            = 9; /**<< @brief Calculated for each substance to determine ease of transport into the tubules in the left Kidney */
@@ -204,12 +204,12 @@ message RenalSystemData
 
   ScalarVolumePerTimeData             RenalBloodFlow                                 = 24;/**<< @brief Blood flow into the kidney that is not filtered into the tubules */
   ScalarVolumePerTimeData             RenalPlasmaFlow                                = 25;/**<< @brief Plasma flow into the kidney that is not filtered into the tubules */  
-  ScalarFlowResistanceData            RenalVascularResistance                        = 26;/**<< @brief Total resistance o f the kidney vasculature  */
+  ScalarPressureTimePerVolumeData     RenalVascularResistance                        = 26;/**<< @brief Total resistance o f the kidney vasculature  */
 
-  ScalarFlowResistanceData            RightAfferentArterioleResistance               = 27;/**<< @brief resistance to flow going into the glomerular capillaries in the right Kidney */
+  ScalarPressureTimePerVolumeData     RightAfferentArterioleResistance               = 27;/**<< @brief resistance to flow going into the glomerular capillaries in the right Kidney */
   ScalarPressureData                  RightBowmansCapsulesHydrostaticPressure        = 28;/**<< @brief Pressure generated from fluid in the bowmans capsules in the right Kidney  */
   ScalarPressureData                  RightBowmansCapsulesOsmoticPressure            = 29;/**<< @brief Pressure generated from substances in the bowmans capsules in the right Kidney  */
-  ScalarFlowResistanceData            RightEfferentArterioleResistance               = 30;/**<< @brief Resistance to flow into the peritubular capillaries in the left Kidney */
+  ScalarPressureTimePerVolumeData     RightEfferentArterioleResistance               = 30;/**<< @brief Resistance to flow into the peritubular capillaries in the left Kidney */
   ScalarPressureData                  RightGlomerularCapillariesHydrostaticPressure  = 31;/**<< @brief Pressure generated from fluid in the glomerular capillaries in the left Kidney */
   ScalarPressureData                  RightGlomerularCapillariesOsmoticPressure      = 32;/**<< @brief Pressure generated from substances in the capillaries in the left Kidney */
   ScalarVolumePerTimePressureData     RightGlomerularFiltrationCoefficient           = 33;/**<< @brief Calculated for each substance to determine ease of transport into the tubules in the left Kidney */
@@ -265,9 +265,9 @@ message RespiratorySystemData
   ScalarPressureData                  PeakInspiratoryPressure                        = 21;/**<< @brief The highest pressure applied to the lungs (alveolar pressure) above atmospheric pressure during inhalation.*/
   ScalarVolumeData                    PhysiologicDeadSpace                           = 22;/**<< @brief The sum of the anatomic and alveolar dead space.*/
   ScalarPressureData                  PositiveEndExpiratoryPressure                  = 23;/**<< @brief The pressure in the lungs (alveolar pressure) above atmospheric pressure at the end of expiration.*/
-  ScalarFlowComplianceData            PulmonaryCompliance                            = 24;/**<< @brief The total compliance of the lungs.*/
+  ScalarVolumePerPressureData         PulmonaryCompliance                            = 24;/**<< @brief The total compliance of the lungs.*/
   ScalarPressurePerVolumeData         PulmonaryElastance                             = 25;/**<< @brief The inverse of lung compliance.*/
-  ScalarFlowResistanceData            PulmonaryResistance                            = 26;/**<< @brief The total resistance to airflow through the lungs.*/
+  ScalarPressureTimePerVolumeData     PulmonaryResistance                            = 26;/**<< @brief The total resistance to airflow through the lungs.*/
   ScalarEnergyData                    ResistiveExpiratoryWorkOfBreathing             = 27;/**<< @brief The work to overcome the frictional resistance to gas flow due to viscosity during exhalation.*/
   ScalarEnergyData                    ResistiveInspiratoryWorkOfBreathing            = 28;/**<< @brief The work to overcome the frictional resistance to gas flow due to viscosity during inhalation.*/
   ScalarFrequencyData                 RespirationRate                                = 29;/**<< @brief The frequency of the respiratory cycle.*/

@@ -110,16 +110,16 @@ public:
   virtual double GetPositiveEndExpiratoryPressure(const PressureUnit& unit) const;
 
   virtual bool HasPulmonaryCompliance() const;
-  virtual SEScalarFlowCompliance& GetPulmonaryCompliance();
-  virtual double GetPulmonaryCompliance(const FlowComplianceUnit& unit) const;
+  virtual SEScalarVolumePerPressure& GetPulmonaryCompliance();
+  virtual double GetPulmonaryCompliance(const VolumePerPressureUnit& unit) const;
 
   virtual bool HasPulmonaryElastance() const;
   virtual SEScalarPressurePerVolume& GetPulmonaryElastance();
   virtual double GetPulmonaryElastance(const PressurePerVolumeUnit& unit) const;
 
   virtual bool HasPulmonaryResistance() const;
-  virtual SEScalarFlowResistance& GetPulmonaryResistance();
-  virtual double GetPulmonaryResistance(const FlowResistanceUnit& unit) const;
+  virtual SEScalarPressureTimePerVolume& GetPulmonaryResistance();
+  virtual double GetPulmonaryResistance(const PressureTimePerVolumeUnit& unit) const;
 
   virtual bool HasResistiveExpiratoryWorkOfBreathing() const;
   virtual SEScalarEnergy& GetResistiveExpiratoryWorkOfBreathing();
@@ -223,9 +223,9 @@ protected:
   SEScalarPressure*          m_PeakInspiratoryPressure;
   SEScalarVolume*            m_PhysiologicDeadSpace;
   SEScalarPressure*          m_PositiveEndExpiratoryPressure;
-  SEScalarFlowCompliance*    m_PulmonaryCompliance;
+  SEScalarVolumePerPressure*    m_PulmonaryCompliance;
   SEScalarPressurePerVolume* m_PulmonaryElastance;
-  SEScalarFlowResistance*    m_PulmonaryResistance;
+  SEScalarPressureTimePerVolume*    m_PulmonaryResistance;
   SEScalarEnergy*            m_ResistiveExpiratoryWorkOfBreathing;
   SEScalarEnergy*            m_ResistiveInspiratoryWorkOfBreathing;
   SEScalarFrequency*         m_RespirationRate;

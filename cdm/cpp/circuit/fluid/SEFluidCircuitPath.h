@@ -20,34 +20,34 @@ public:
   virtual SEFluidCircuitNode& GetTargetNode() const { return m_FluidTargetNode; }
 
   virtual bool HasResistance() const;
-  virtual SEScalarFlowResistance& GetResistance();
-  virtual double GetResistance(const FlowResistanceUnit& unit) const;
+  virtual SEScalarPressureTimePerVolume& GetResistance();
+  virtual double GetResistance(const PressureTimePerVolumeUnit& unit) const;
   virtual bool HasNextResistance() const;
-  virtual SEScalarFlowResistance& GetNextResistance();
-  virtual double GetNextResistance(const FlowResistanceUnit& unit) const;
+  virtual SEScalarPressureTimePerVolume& GetNextResistance();
+  virtual double GetNextResistance(const PressureTimePerVolumeUnit& unit) const;
   virtual bool HasResistanceBaseline() const;
-  virtual SEScalarFlowResistance& GetResistanceBaseline();
-  virtual double GetResistanceBaseline(const FlowResistanceUnit& unit) const;
+  virtual SEScalarPressureTimePerVolume& GetResistanceBaseline();
+  virtual double GetResistanceBaseline(const PressureTimePerVolumeUnit& unit) const;
 
   virtual bool HasCompliance() const;
-  virtual SEScalarFlowCompliance& GetCompliance();
-  virtual double GetCompliance(const FlowComplianceUnit& unit) const;
+  virtual SEScalarVolumePerPressure& GetCompliance();
+  virtual double GetCompliance(const VolumePerPressureUnit& unit) const;
   virtual bool HasNextCompliance() const;
-  virtual SEScalarFlowCompliance& GetNextCompliance();
-  virtual double GetNextCompliance(const FlowComplianceUnit& unit) const;
+  virtual SEScalarVolumePerPressure& GetNextCompliance();
+  virtual double GetNextCompliance(const VolumePerPressureUnit& unit) const;
   virtual bool HasComplianceBaseline() const;
-  virtual SEScalarFlowCompliance& GetComplianceBaseline();
-  virtual double GetComplianceBaseline(const FlowComplianceUnit& unit) const;
+  virtual SEScalarVolumePerPressure& GetComplianceBaseline();
+  virtual double GetComplianceBaseline(const VolumePerPressureUnit& unit) const;
 
   virtual bool HasInertance() const;
-  virtual SEScalarFlowInertance& GetInertance();
-  virtual double GetInertance(const FlowInertanceUnit& unit) const;
+  virtual SEScalarPressureTimeSquaredPerVolume& GetInertance();
+  virtual double GetInertance(const PressureTimeSquaredPerVolumeUnit& unit) const;
   virtual bool HasNextInertance() const;
-  virtual SEScalarFlowInertance& GetNextInertance();
-  virtual double GetNextInertance(const FlowInertanceUnit& unit) const;
+  virtual SEScalarPressureTimeSquaredPerVolume& GetNextInertance();
+  virtual double GetNextInertance(const PressureTimeSquaredPerVolumeUnit& unit) const;
   virtual bool HasInertanceBaseline() const;
-  virtual SEScalarFlowInertance& GetInertanceBaseline();
-  virtual double GetInertanceBaseline(const FlowInertanceUnit& unit) const;
+  virtual SEScalarPressureTimeSquaredPerVolume& GetInertanceBaseline();
+  virtual double GetInertanceBaseline(const PressureTimeSquaredPerVolumeUnit& unit) const;
 
   virtual bool HasFlow() const;
   virtual SEScalarVolumePerTime& GetFlow();

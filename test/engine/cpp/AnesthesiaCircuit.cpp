@@ -17,9 +17,9 @@
 #include "compartment/fluid/SEGasCompartmentGraph.h"
 #include "compartment/fluid/SEFluidCompartmentLink.h"
 #include "system/environment/SEEnvironmentalConditions.h"
-#include "properties/SEScalarFlowCompliance.h"
-#include "properties/SEScalarFlowResistance.h"
+#include "properties/SEScalarVolumePerPressure.h"
 #include "properties/SEScalarPressure.h"
+#include "properties/SEScalarPressureTimePerVolume.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalar0To1.h"
@@ -85,8 +85,8 @@ void PulseEngineTest::AnesthesiaMachineCircuitAndTransportTest(RespiratoryConfig
     //Allow things to flow to ground, since the respiratory circuit isn't here
     //This approximates the total respiratory system resistance
     SEFluidCircuitPath* AnesthesiaConnectionToEnvironment = amCircuit->GetPath(pulse::AnesthesiaMachinePath::AnesthesiaConnectionToEnvironment);
-    AnesthesiaConnectionToEnvironment->GetResistanceBaseline().SetValue(1.5, FlowResistanceUnit::cmH2O_s_Per_L);
-    AnesthesiaConnectionToEnvironment->GetNextResistance().SetValue(1.5, FlowResistanceUnit::cmH2O_s_Per_L);
+    AnesthesiaConnectionToEnvironment->GetResistanceBaseline().SetValue(1.5, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    AnesthesiaConnectionToEnvironment->GetNextResistance().SetValue(1.5, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   }
   else if (config == RespiratoryWithAnesthesiaMachine)
   {
@@ -118,7 +118,7 @@ void PulseEngineTest::AnesthesiaMachineCircuitAndTransportTest(RespiratoryConfig
   SEFluidCircuitPath* EnvironmentToGasSource = amCircuit->GetPath(pulse::AnesthesiaMachinePath::EnvironmentToGasSource);
 
   SEGasTransporter txpt(VolumePerTimeUnit::L_Per_s, VolumeUnit::L, VolumeUnit::L, pc.GetLogger());
-  SEFluidCircuitCalculator calc(FlowComplianceUnit::L_Per_cmH2O, VolumePerTimeUnit::L_Per_s, FlowInertanceUnit::cmH2O_s2_Per_L, PressureUnit::cmH2O, VolumeUnit::L, FlowResistanceUnit::cmH2O_s_Per_L, pc.GetLogger());
+  SEFluidCircuitCalculator calc(VolumePerPressureUnit::L_Per_cmH2O, VolumePerTimeUnit::L_Per_s, PressureTimeSquaredPerVolumeUnit::cmH2O_s2_Per_L, PressureUnit::cmH2O, VolumeUnit::L, PressureTimePerVolumeUnit::cmH2O_s_Per_L, pc.GetLogger());
   
   //Execution parameters
   double time = 0;

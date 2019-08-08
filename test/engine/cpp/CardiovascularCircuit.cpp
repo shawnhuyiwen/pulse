@@ -17,9 +17,9 @@
 #include "compartment/fluid/SELiquidCompartmentGraph.h"
 #include "system/environment/SEEnvironment.h"
 #include "system/environment/SEEnvironmentalConditions.h"
-#include "properties/SEScalarFlowCompliance.h"
-#include "properties/SEScalarFlowResistance.h"
+#include "properties/SEScalarVolumePerPressure.h"
 #include "properties/SEScalarPressure.h"
+#include "properties/SEScalarPressureTimePerVolume.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalarTime.h"
@@ -357,7 +357,7 @@ void PulseEngineTest::CardiovascularCircuitAndTransportTest(CardiovascularDriver
   SELiquidSubstanceQuantity* rightPulmonaryCapillariesN2 = cvGraph.GetCompartment(pulse::VascularCompartment::LeftPulmonaryCapillaries)->GetSubstanceQuantity(pc.GetSubstances().GetN2());
 
   SELiquidTransporter txpt(VolumePerTimeUnit::mL_Per_s, VolumeUnit::mL, MassUnit::ug, MassPerVolumeUnit::ug_Per_mL, pc.GetLogger());
-  SEFluidCircuitCalculator calc(FlowComplianceUnit::mL_Per_mmHg, VolumePerTimeUnit::mL_Per_s, FlowInertanceUnit::mmHg_s2_Per_mL, PressureUnit::mmHg, VolumeUnit::mL, FlowResistanceUnit::mmHg_s_Per_mL, pc.GetLogger());
+  SEFluidCircuitCalculator calc(VolumePerPressureUnit::mL_Per_mmHg, VolumePerTimeUnit::mL_Per_s, PressureTimeSquaredPerVolumeUnit::mmHg_s2_Per_mL, PressureUnit::mmHg, VolumeUnit::mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL, pc.GetLogger());
 
   for (unsigned int i = 0; i < (testTime_s / timeStep_s); i++)
   {
@@ -369,8 +369,8 @@ void PulseEngineTest::CardiovascularCircuitAndTransportTest(CardiovascularDriver
       double rHeartElastance;
       double lHeartElastance;
       SinusoidHeartDriver(time_s, heartFreq_Per_s, lHeartElastance, rHeartElastance);
-      RightCompliance->GetNextCompliance().SetValue(1.0 / rHeartElastance, FlowComplianceUnit::mL_Per_mmHg);
-      LeftCompliance->GetNextCompliance().SetValue(1.0 / lHeartElastance, FlowComplianceUnit::mL_Per_mmHg);
+      RightCompliance->GetNextCompliance().SetValue(1.0 / rHeartElastance, VolumePerPressureUnit::mL_Per_mmHg);
+      LeftCompliance->GetNextCompliance().SetValue(1.0 / lHeartElastance, VolumePerPressureUnit::mL_Per_mmHg);
       break;
     case Heart:
       cv.HeartDriver();
@@ -423,8 +423,8 @@ void PulseEngineTest::CardiovascularCircuitAndTransportTest(CardiovascularDriver
       }
       cvGraphTrk.Track(time_s, cvGraph, &subs2Track);
     }
-    circiutTrk.Track("LeftHeartCompliance_mL_Per_mmHg", time_s, LeftCompliance->GetCompliance().GetValue(FlowComplianceUnit::mL_Per_mmHg));
-    circiutTrk.Track("LeftHeartElastance_mmHg_Per_mL", time_s, 1 / LeftCompliance->GetCompliance().GetValue(FlowComplianceUnit::mL_Per_mmHg));
+    circiutTrk.Track("LeftHeartCompliance_mL_Per_mmHg", time_s, LeftCompliance->GetCompliance().GetValue(VolumePerPressureUnit::mL_Per_mmHg));
+    circiutTrk.Track("LeftHeartElastance_mmHg_Per_mL", time_s, 1 / LeftCompliance->GetCompliance().GetValue(VolumePerPressureUnit::mL_Per_mmHg));
 
     cv.CalculateVitalSigns();
     calc.PostProcess(cvCircuit);//convert 'Next' values to current 

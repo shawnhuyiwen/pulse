@@ -54,9 +54,6 @@
 // Properties
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarArea.h"
-#include "properties/SEScalarFlowCompliance.h"
-#include "properties/SEScalarFlowElastance.h"
-#include "properties/SEScalarFlowResistance.h"
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEScalarInversePressure.h"
 #include "properties/SEScalarInverseVolume.h"
@@ -67,6 +64,7 @@
 #include "properties/SEScalarPower.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarPressurePerVolume.h"
+#include "properties/SEScalarPressureTimePerVolume.h"
 #include "properties/SEScalarTime.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
@@ -89,7 +87,7 @@ Respiratory::Respiratory(PulseController& data) : SERespiratorySystem(data.GetLo
   m_ArterialO2RunningAverage_mmHg = new SERunningAverage();
   m_ArterialCO2RunningAverage_mmHg = new SERunningAverage();
 
-  m_Calculator = new SEFluidCircuitCalculator(FlowComplianceUnit::L_Per_cmH2O, VolumePerTimeUnit::L_Per_s, FlowInertanceUnit::cmH2O_s2_Per_L, PressureUnit::cmH2O, VolumeUnit::L, FlowResistanceUnit::cmH2O_s_Per_L, GetLogger());
+  m_Calculator = new SEFluidCircuitCalculator(VolumePerPressureUnit::L_Per_cmH2O, VolumePerTimeUnit::L_Per_s, PressureTimeSquaredPerVolumeUnit::cmH2O_s2_Per_L, PressureUnit::cmH2O, VolumeUnit::L, PressureTimePerVolumeUnit::cmH2O_s_Per_L, GetLogger());
   m_GasTransporter = new SEGasTransporter(VolumePerTimeUnit::L_Per_s, VolumeUnit::L, VolumeUnit::L, GetLogger());
   m_AerosolTransporter = new SELiquidTransporter(VolumePerTimeUnit::mL_Per_s, VolumeUnit::mL, MassUnit::ug, MassPerVolumeUnit::ug_Per_mL, GetLogger());
   Clear();
@@ -266,10 +264,10 @@ void Respiratory::Initialize()
   GetTransthoracicPressure().SetValue(0.0, PressureUnit::cmH2O);
   GetTransChestWallPressure().SetValue(0.0, PressureUnit::cmH2O);
 
-  GetPulmonaryCompliance().SetValue(0.1, FlowComplianceUnit::L_Per_cmH2O);
+  GetPulmonaryCompliance().SetValue(0.1, VolumePerPressureUnit::L_Per_cmH2O);
   GetLungCompliance().SetValue(0.1, VolumePerPressureUnit::L_Per_cmH2O);
   GetChestWallCompliance().SetValue(0.1, VolumePerPressureUnit::L_Per_cmH2O);
-  //Aaron: What's the deal with this not working?:  GetPulmonaryElastance().SetValue(1.0 / 0.1, FlowElastanceUnit::cmH2O_Per_L);
+  GetPulmonaryElastance().SetValue(1.0 / 0.1, PressurePerVolumeUnit::cmH2O_Per_L);
 
   // Muscle Pressure Waveform
   m_InspiratoryRiseFraction = 0;
@@ -301,10 +299,10 @@ void Respiratory::SetUp()
   m_Patient = &m_data.GetPatient();
   m_PatientActions = &m_data.GetActions().GetPatientActions();
   //Configuration parameters
-  m_DefaultOpenResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetDefaultOpenFlowResistance(FlowResistanceUnit::cmH2O_s_Per_L);
-  m_DefaultClosedResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetDefaultClosedFlowResistance(FlowResistanceUnit::cmH2O_s_Per_L);
-  m_RespOpenResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetRespiratoryOpenResistance(FlowResistanceUnit::cmH2O_s_Per_L);
-  m_RespClosedResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetRespiratoryClosedResistance(FlowResistanceUnit::cmH2O_s_Per_L);
+  m_DefaultOpenResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetDefaultOpenFlowResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  m_DefaultClosedResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetDefaultClosedFlowResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  m_RespOpenResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetRespiratoryOpenResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  m_RespClosedResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetRespiratoryClosedResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   m_PeripheralControlGainConstant = m_data.GetConfiguration().GetPeripheralVentilatoryControllerGain();
   m_CentralControlGainConstant = m_data.GetConfiguration().GetCentralVentilatoryControllerGain();
   m_VentilationTidalVolumeIntercept = m_data.GetConfiguration().GetVentilationTidalVolumeIntercept(VolumeUnit::L);
@@ -695,22 +693,22 @@ void Respiratory::ProcessAerosolSubstances()
   combinedRightBronchodilationEffects = exp(-32894.0 * combinedRightBronchodilationEffects);  
 
     // Change resistances due to deposition
-  double dTracheaResistance = m_MouthToCarina->GetNextResistance(FlowResistanceUnit::cmH2O_s_Per_L)*carinaResistanceModifier;
-  double dLeftAlveoliResistance = m_LeftAnatomicDeadSpaceToLeftAlveoli->GetNextResistance(FlowResistanceUnit::cmH2O_s_Per_L)*leftAlveoliResistanceModifier;
-  double dRightAlveoliResistance = m_RightAnatomicDeadSpaceToRightAlveoli->GetNextResistance(FlowResistanceUnit::cmH2O_s_Per_L)*rightAlveoliResistanceModifier;
+  double dTracheaResistance = m_MouthToCarina->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L)*carinaResistanceModifier;
+  double dLeftAlveoliResistance = m_LeftAnatomicDeadSpaceToLeftAlveoli->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L)*leftAlveoliResistanceModifier;
+  double dRightAlveoliResistance = m_RightAnatomicDeadSpaceToRightAlveoli->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L)*rightAlveoliResistanceModifier;
 
-  double dLeftBronchiResistance = m_CarinaToLeftAnatomicDeadSpace->GetNextResistance(FlowResistanceUnit::cmH2O_s_Per_L);
-  double dRightBronchiResistance = m_CarinaToRightAnatomicDeadSpace->GetNextResistance(FlowResistanceUnit::cmH2O_s_Per_L);
+  double dLeftBronchiResistance = m_CarinaToLeftAnatomicDeadSpace->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  double dRightBronchiResistance = m_CarinaToRightAnatomicDeadSpace->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   dLeftBronchiResistance *= leftDeadSpaceResistanceModifier * combinedLeftBronchodilationEffects;
   dRightBronchiResistance *= rightDeadSpaceResistanceModifier * combinedRightBronchodilationEffects;
   dLeftBronchiResistance = LIMIT(dLeftBronchiResistance, m_RespClosedResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
   dRightBronchiResistance = LIMIT(dRightBronchiResistance, m_RespClosedResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
 
-  m_MouthToCarina->GetNextResistance().SetValue(dTracheaResistance, FlowResistanceUnit::cmH2O_s_Per_L);
-  m_CarinaToLeftAnatomicDeadSpace->GetNextResistance().SetValue(dLeftBronchiResistance, FlowResistanceUnit::cmH2O_s_Per_L);
-  m_CarinaToRightAnatomicDeadSpace->GetNextResistance().SetValue(dRightBronchiResistance, FlowResistanceUnit::cmH2O_s_Per_L);
-  m_LeftAnatomicDeadSpaceToLeftAlveoli->GetNextResistance().SetValue(dLeftAlveoliResistance, FlowResistanceUnit::cmH2O_s_Per_L);
-  m_RightAnatomicDeadSpaceToRightAlveoli->GetNextResistance().SetValue(dRightAlveoliResistance, FlowResistanceUnit::cmH2O_s_Per_L);
+  m_MouthToCarina->GetNextResistance().SetValue(dTracheaResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  m_CarinaToLeftAnatomicDeadSpace->GetNextResistance().SetValue(dLeftBronchiResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  m_CarinaToRightAnatomicDeadSpace->GetNextResistance().SetValue(dRightBronchiResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  m_LeftAnatomicDeadSpaceToLeftAlveoli->GetNextResistance().SetValue(dLeftAlveoliResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  m_RightAnatomicDeadSpaceToRightAlveoli->GetNextResistance().SetValue(dRightAlveoliResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -945,7 +943,7 @@ void Respiratory::SupplementalOxygen()
     resistance_cmH2O_s_Per_L = LIMIT(resistance_cmH2O_s_Per_L, m_DefaultClosedResistance_cmH2O_s_Per_L, m_DefaultOpenResistance_cmH2O_s_Per_L);
     
     //Apply flow
-    OxygenInlet->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, FlowResistanceUnit::cmH2O_s_Per_L);
+    OxygenInlet->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   }
   else
   {
@@ -966,7 +964,7 @@ void Respiratory::SupplementalOxygen()
       bagVolume_L = 0.0;
 
       //No air can come from the bag
-      OxygenInlet->GetNextResistance().SetValue(m_RespOpenResistance_cmH2O_s_Per_L, FlowResistanceUnit::cmH2O_s_Per_L);
+      OxygenInlet->GetNextResistance().SetValue(m_RespOpenResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 
       /// \event Supplemental Oxygen: The nonrebreather mask is empty. Oxygen may need to be provided at a faster rate.
       m_data.GetEvents().SetEvent(eEvent::NonRebreatherMaskOxygenBagEmpty, true, m_data.GetSimulationTime());
@@ -1338,10 +1336,10 @@ void Respiratory::AirwayObstruction()
     return;
 
   double Severity = m_PatientActions->GetAirwayObstruction()->GetSeverity().GetValue();
-  double AirwayResistance = m_MouthToCarina->GetNextResistance().GetValue(FlowResistanceUnit::cmH2O_s_Per_L);
+  double AirwayResistance = m_MouthToCarina->GetNextResistance().GetValue(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   double dClosedResistance = AirwayResistance;
   AirwayResistance = GeneralMath::ResistanceFunction(20.0, m_RespOpenResistance_cmH2O_s_Per_L, dClosedResistance, Severity);
-  m_MouthToCarina->GetNextResistance().SetValue(AirwayResistance, FlowResistanceUnit::cmH2O_s_Per_L);
+  m_MouthToCarina->GetNextResistance().SetValue(AirwayResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -1359,16 +1357,16 @@ void Respiratory::BronchoConstriction()
   if (!m_PatientActions->HasBronchoconstriction())
     return;
 
-  double LeftBronchiResistance = m_CarinaToLeftAnatomicDeadSpace->GetNextResistance().GetValue(FlowResistanceUnit::cmH2O_s_Per_L);
-  double RightBronchiResistance = m_CarinaToRightAnatomicDeadSpace->GetNextResistance().GetValue(FlowResistanceUnit::cmH2O_s_Per_L);
+  double LeftBronchiResistance = m_CarinaToLeftAnatomicDeadSpace->GetNextResistance().GetValue(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  double RightBronchiResistance = m_CarinaToRightAnatomicDeadSpace->GetNextResistance().GetValue(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   double dSeverity = m_PatientActions->GetBronchoconstriction()->GetSeverity().GetValue();
   double dClosedResistance = LeftBronchiResistance;
   LeftBronchiResistance = GeneralMath::ResistanceFunction(70.0, m_RespOpenResistance_cmH2O_s_Per_L, dClosedResistance, dSeverity);
   dClosedResistance = RightBronchiResistance;
   RightBronchiResistance = GeneralMath::ResistanceFunction(70.0, m_RespOpenResistance_cmH2O_s_Per_L, dClosedResistance, dSeverity);
 
-  m_CarinaToLeftAnatomicDeadSpace->GetNextResistance().SetValue(LeftBronchiResistance, FlowResistanceUnit::cmH2O_s_Per_L);
-  m_CarinaToRightAnatomicDeadSpace->GetNextResistance().SetValue(RightBronchiResistance, FlowResistanceUnit::cmH2O_s_Per_L);
+  m_CarinaToLeftAnatomicDeadSpace->GetNextResistance().SetValue(LeftBronchiResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  m_CarinaToRightAnatomicDeadSpace->GetNextResistance().SetValue(RightBronchiResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -1392,8 +1390,8 @@ void Respiratory::BronchoDilation()
   {
     //Note: It'll pretty much always get in here because there's epinephrine present
     // Get the path resistances 
-    double dLeftBronchiResistance = m_CarinaToLeftAnatomicDeadSpace->GetNextResistance().GetValue(FlowResistanceUnit::cmH2O_s_Per_L);
-    double dRightBronchiResistance = m_CarinaToRightAnatomicDeadSpace->GetNextResistance().GetValue(FlowResistanceUnit::cmH2O_s_Per_L);
+    double dLeftBronchiResistance = m_CarinaToLeftAnatomicDeadSpace->GetNextResistance().GetValue(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    double dRightBronchiResistance = m_CarinaToRightAnatomicDeadSpace->GetNextResistance().GetValue(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     if (bronchoDilationEffect >= 0.0)// positive, therefore dilation
     {
       bronchoDilationEffect = MIN(bronchoDilationEffect, 1.0);
@@ -1406,8 +1404,8 @@ void Respiratory::BronchoDilation()
       dLeftBronchiResistance = GeneralMath::ResistanceFunction(10.0, dLeftBronchiResistance, m_RespOpenResistance_cmH2O_s_Per_L, bronchoDilationEffect);
       dRightBronchiResistance = GeneralMath::ResistanceFunction(10.0, dRightBronchiResistance, m_RespOpenResistance_cmH2O_s_Per_L, bronchoDilationEffect);
     }
-    m_CarinaToLeftAnatomicDeadSpace->GetNextResistance().SetValue(dLeftBronchiResistance, FlowResistanceUnit::cmH2O_s_Per_L);
-    m_CarinaToRightAnatomicDeadSpace->GetNextResistance().SetValue(dRightBronchiResistance, FlowResistanceUnit::cmH2O_s_Per_L);
+    m_CarinaToLeftAnatomicDeadSpace->GetNextResistance().SetValue(dLeftBronchiResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    m_CarinaToRightAnatomicDeadSpace->GetNextResistance().SetValue(dRightBronchiResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   }
 }
 
@@ -1448,20 +1446,20 @@ void Respiratory::Intubation()
       {        
         // Allow air flow between Airway and Stomach
         ///\todo Make this a modifier (i.e. multiplier), instead of setting it directly
-        m_MouthToStomach->GetNextResistance().SetValue(1.2, FlowResistanceUnit::cmH2O_s_Per_L);
+        m_MouthToStomach->GetNextResistance().SetValue(1.2, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
         // Stop air flow between the Airway and Carina
         //This is basically an open switch.  We don't need to worry about anyone else modifying it if this action is on.
-        m_MouthToCarina->GetNextResistance().SetValue(m_DefaultOpenResistance_cmH2O_s_Per_L, FlowResistanceUnit::cmH2O_s_Per_L);
+        m_MouthToCarina->GetNextResistance().SetValue(m_DefaultOpenResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
         break;
       }      
     case eIntubation_Type::RightMainstem:
       {
-        m_CarinaToLeftAnatomicDeadSpace->GetNextResistance().SetValue(m_RespOpenResistance_cmH2O_s_Per_L, FlowResistanceUnit::cmH2O_s_Per_L);
+        m_CarinaToLeftAnatomicDeadSpace->GetNextResistance().SetValue(m_RespOpenResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
         break;
       }
     case eIntubation_Type::LeftMainstem:
       {
-        m_CarinaToRightAnatomicDeadSpace->GetNextResistance().SetValue(m_RespOpenResistance_cmH2O_s_Per_L, FlowResistanceUnit::cmH2O_s_Per_L);
+        m_CarinaToRightAnatomicDeadSpace->GetNextResistance().SetValue(m_RespOpenResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
         break;
       }
     }
@@ -1494,27 +1492,27 @@ void Respiratory::Pneumothorax()
   if (m_PatientActions->HasTensionPneumothorax())
   {
     // Minimum flow resistance for the chest cavity or alveoli leak 
-    double dPneumoMinFlowResistance_cmH2O_s_Per_L = 30.0;
+    double dPneumoMinPressureTimePerVolume_cmH2O_s_Per_L = 30.0;
     // Maximum flow resistance for the chest cavity or alveoli leak
-    double dPneumoMaxFlowResistance_cmH2O_s_Per_L = m_DefaultOpenResistance_cmH2O_s_Per_L;
+    double dPneumoMaxPressureTimePerVolume_cmH2O_s_Per_L = m_DefaultOpenResistance_cmH2O_s_Per_L;
     // Flow resistance for the decompression needle, if used
-    double dNeedleFlowResistance_cmH2O_s_Per_L = 15.0;
+    double dNeedlePressureTimePerVolume_cmH2O_s_Per_L = 15.0;
 
     if (m_PatientActions->HasLeftOpenTensionPneumothorax())
     {
       // Scale the flow resistance through the chest opening based on severity
       double severity = m_PatientActions->GetLeftOpenTensionPneumothorax()->GetSeverity().GetValue();
-    double resistance_cmH2O_s_Per_L = dPneumoMaxFlowResistance_cmH2O_s_Per_L;
+    double resistance_cmH2O_s_Per_L = dPneumoMaxPressureTimePerVolume_cmH2O_s_Per_L;
     if (severity > 0.0 && !m_PatientActions->HasLeftChestOcclusiveDressing())
     {
-    resistance_cmH2O_s_Per_L = dPneumoMinFlowResistance_cmH2O_s_Per_L / pow(severity, 2.0);
+    resistance_cmH2O_s_Per_L = dPneumoMinPressureTimePerVolume_cmH2O_s_Per_L / pow(severity, 2.0);
     }    
-    resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, dPneumoMaxFlowResistance_cmH2O_s_Per_L);
-      m_EnvironmentToLeftChestLeak->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, FlowResistanceUnit::cmH2O_s_Per_L);
+    resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, dPneumoMaxPressureTimePerVolume_cmH2O_s_Per_L);
+      m_EnvironmentToLeftChestLeak->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
       
     if (m_PatientActions->HasLeftNeedleDecompression())
       {
-        DoLeftNeedleDecompression(dNeedleFlowResistance_cmH2O_s_Per_L);
+        DoLeftNeedleDecompression(dNeedlePressureTimePerVolume_cmH2O_s_Per_L);
       }
     }
 
@@ -1522,36 +1520,36 @@ void Respiratory::Pneumothorax()
     {
     // Scale the flow resistance through the chest opening based on severity
     double severity = m_PatientActions->GetRightOpenTensionPneumothorax()->GetSeverity().GetValue();
-    double resistance_cmH2O_s_Per_L = dPneumoMaxFlowResistance_cmH2O_s_Per_L;
+    double resistance_cmH2O_s_Per_L = dPneumoMaxPressureTimePerVolume_cmH2O_s_Per_L;
     if (severity > 0.0 && !m_PatientActions->HasRightChestOcclusiveDressing())
     {
-      resistance_cmH2O_s_Per_L = dPneumoMinFlowResistance_cmH2O_s_Per_L / pow(severity, 2.0);
+      resistance_cmH2O_s_Per_L = dPneumoMinPressureTimePerVolume_cmH2O_s_Per_L / pow(severity, 2.0);
     }
-    resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, dPneumoMaxFlowResistance_cmH2O_s_Per_L);
-    m_EnvironmentToRightChestLeak->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, FlowResistanceUnit::cmH2O_s_Per_L);
+    resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, dPneumoMaxPressureTimePerVolume_cmH2O_s_Per_L);
+    m_EnvironmentToRightChestLeak->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 
       if (m_PatientActions->HasRightNeedleDecompression())
       {
-        DoRightNeedleDecompression(dNeedleFlowResistance_cmH2O_s_Per_L);
+        DoRightNeedleDecompression(dNeedlePressureTimePerVolume_cmH2O_s_Per_L);
       }
-      m_EnvironmentToRightChestLeak->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, FlowResistanceUnit::cmH2O_s_Per_L);
+      m_EnvironmentToRightChestLeak->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     }
 
     if (m_PatientActions->HasLeftClosedTensionPneumothorax())
     {
     // Scale the flow resistance through the chest opening based on severity
     double severity = m_PatientActions->GetLeftClosedTensionPneumothorax()->GetSeverity().GetValue();
-    double resistance_cmH2O_s_Per_L = dPneumoMaxFlowResistance_cmH2O_s_Per_L;
+    double resistance_cmH2O_s_Per_L = dPneumoMaxPressureTimePerVolume_cmH2O_s_Per_L;
     if (severity > 0.0)
     {
-      resistance_cmH2O_s_Per_L = dPneumoMinFlowResistance_cmH2O_s_Per_L / pow(severity, 2.0);
+      resistance_cmH2O_s_Per_L = dPneumoMinPressureTimePerVolume_cmH2O_s_Per_L / pow(severity, 2.0);
     }
-    resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, dPneumoMaxFlowResistance_cmH2O_s_Per_L);
-    m_LeftAlveoliLeakToLeftPleural->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, FlowResistanceUnit::cmH2O_s_Per_L);
+    resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, dPneumoMaxPressureTimePerVolume_cmH2O_s_Per_L);
+    m_LeftAlveoliLeakToLeftPleural->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 
       if (m_PatientActions->HasLeftNeedleDecompression())
       {
-        DoLeftNeedleDecompression(dNeedleFlowResistance_cmH2O_s_Per_L);
+        DoLeftNeedleDecompression(dNeedlePressureTimePerVolume_cmH2O_s_Per_L);
       }
     }
 
@@ -1559,17 +1557,17 @@ void Respiratory::Pneumothorax()
     {
     // Scale the flow resistance through the chest opening based on severity
     double severity = m_PatientActions->GetRightClosedTensionPneumothorax()->GetSeverity().GetValue();
-    double resistance_cmH2O_s_Per_L = dPneumoMaxFlowResistance_cmH2O_s_Per_L;
+    double resistance_cmH2O_s_Per_L = dPneumoMaxPressureTimePerVolume_cmH2O_s_Per_L;
     if (severity > 0.0)
     {
-      resistance_cmH2O_s_Per_L = dPneumoMinFlowResistance_cmH2O_s_Per_L / pow(severity, 2.0);
+      resistance_cmH2O_s_Per_L = dPneumoMinPressureTimePerVolume_cmH2O_s_Per_L / pow(severity, 2.0);
     }
-    resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, dPneumoMaxFlowResistance_cmH2O_s_Per_L);
-    m_RightAlveoliLeakToRightPleural->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, FlowResistanceUnit::cmH2O_s_Per_L);
+    resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, dPneumoMaxPressureTimePerVolume_cmH2O_s_Per_L);
+    m_RightAlveoliLeakToRightPleural->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 
       if (m_PatientActions->HasRightNeedleDecompression())
       {
-        DoRightNeedleDecompression(dNeedleFlowResistance_cmH2O_s_Per_L);
+        DoRightNeedleDecompression(dNeedlePressureTimePerVolume_cmH2O_s_Per_L);
       }
     }
 
@@ -1726,36 +1724,36 @@ void Respiratory::ProcessConsciousRespiration(SEConsciousRespirationCommand& cmd
 /// \brief
 /// Left Side Needle Decompression
 ///
-/// \param  dFlowResistance - Resistance value for air flow through the needle
+/// \param  dPressureTimePerVolume - Resistance value for air flow through the needle
 ///
 /// \details
 /// Used for left side needle decompression. this is an intervention (action) used to treat left 
 /// side tension pneumothorax
 //--------------------------------------------------------------------------------------------------
-void Respiratory::DoLeftNeedleDecompression(double dFlowResistance)
+void Respiratory::DoLeftNeedleDecompression(double dPressureTimePerVolume)
 {
   //Leak flow resistance that is scaled in proportion to Lung resistance, depending on severity
   double dScalingFactor = 0.5; //Tuning parameter to allow gas flow due to needle decompression using lung resistance as reference
-  double dFlowResistanceLeftNeedle = dScalingFactor * dFlowResistance;
-  m_LeftPleuralToEnvironment->GetNextResistance().SetValue(dFlowResistanceLeftNeedle, FlowResistanceUnit::cmH2O_s_Per_L);
+  double dPressureTimePerVolumeLeftNeedle = dScalingFactor * dPressureTimePerVolume;
+  m_LeftPleuralToEnvironment->GetNextResistance().SetValue(dPressureTimePerVolumeLeftNeedle, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 }
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
 /// Right Side Needle Decompression
 ///
-/// \param  dFlowResistance - Resistance value for air flow through the needle
+/// \param  dPressureTimePerVolume - Resistance value for air flow through the needle
 ///
 /// \details
 /// Used for right side needle decompression. this is an intervention (action) used to treat right
 /// side tension pneumothorax
 //--------------------------------------------------------------------------------------------------
-void Respiratory::DoRightNeedleDecompression(double dFlowResistance)
+void Respiratory::DoRightNeedleDecompression(double dPressureTimePerVolume)
 {
   //Leak flow resistance that is scaled in proportion to Lung resistance, depending on severity
   double dScalingFactor = 0.5; //Tuning parameter to allow gas flow due to needle decompression using lung resistance as reference
-  double dFlowResistanceRightNeedle = dScalingFactor * dFlowResistance;
-  m_RightPleuralToEnvironment->GetNextResistance().SetValue(dFlowResistanceRightNeedle, FlowResistanceUnit::cmH2O_s_Per_L);
+  double dPressureTimePerVolumeRightNeedle = dScalingFactor * dPressureTimePerVolume;
+  m_RightPleuralToEnvironment->GetNextResistance().SetValue(dPressureTimePerVolumeRightNeedle, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -1975,9 +1973,9 @@ void Respiratory::CalculateVitalSigns()
   GetTransChestWallPressure().SetValue(transChestWallPressure_cmH2O, PressureUnit::cmH2O);
 
   if(SEScalar::IsZero(tracheaFlow_L_Per_s, ZERO_APPROX))
-    GetPulmonaryResistance().SetValue(std::numeric_limits<double>::infinity(), FlowResistanceUnit::cmH2O_s_Per_L);
+    GetPulmonaryResistance().SetValue(std::numeric_limits<double>::infinity(), PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   else
-    GetPulmonaryResistance().SetValue((airwayOpeningPressure_cmH2O - alveolarPressure_cmH2O) / tracheaFlow_L_Per_s, FlowResistanceUnit::cmH2O_s_Per_L);
+    GetPulmonaryResistance().SetValue((airwayOpeningPressure_cmH2O - alveolarPressure_cmH2O) / tracheaFlow_L_Per_s, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 
   double averageAlveoliO2PartialPressure_mmHg = (m_LeftAlveoliO2->GetPartialPressure(PressureUnit::mmHg) + m_RightAlveoliO2->GetPartialPressure(PressureUnit::mmHg)) / 2.0;
   GetAlveolarArterialGradient().SetValue(averageAlveoliO2PartialPressure_mmHg - m_AortaO2->GetPartialPressure(PressureUnit::mmHg), PressureUnit::mmHg);
@@ -2053,10 +2051,10 @@ void Respiratory::CalculateVitalSigns()
       double pulmonaryCompiance_L_Per_cmH2O = TidalVolume_L / LungDeltaPressure_cmH2O;
       double lungCompliance_L_Per_cmH2O = AlveoliDeltaVolume_L / AlveoliDeltaPressure_cmH2O;
       double chestWallCompliance_L_Per_cmH2O = PleuralDeltaVolume_L / PleuralDeltaPressure_cmH2O;
-      GetPulmonaryCompliance().SetValue(pulmonaryCompiance_L_Per_cmH2O, FlowComplianceUnit::L_Per_cmH2O);
+      GetPulmonaryCompliance().SetValue(pulmonaryCompiance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
       GetLungCompliance().SetValue(lungCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
       GetChestWallCompliance().SetValue(chestWallCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
-      //Aaron: What's the deal with this not working?: GetPulmonaryElastance().SetValue(1.0 / pulmonaryCompiance_L_Per_cmH2O, FlowElastanceUnit::cmH2O_Per_L);
+      GetPulmonaryElastance().SetValue(1.0 / pulmonaryCompiance_L_Per_cmH2O, PressurePerVolumeUnit::cmH2O_Per_L);
 
       // Calculate Ventilations
       GetTotalPulmonaryVentilation().SetValue(TidalVolume_L * RespirationRate_Per_min, VolumePerTimeUnit::L_Per_min);
@@ -2275,13 +2273,13 @@ void Respiratory::UpdateObstructiveResistance()
   }
   
   // Get the path resistances 
-  double dLeftBronchiResistance = m_CarinaToLeftAnatomicDeadSpace->GetNextResistance().GetValue(FlowResistanceUnit::cmH2O_s_Per_L);
-  double dRightBronchiResistance = m_CarinaToRightAnatomicDeadSpace->GetNextResistance().GetValue(FlowResistanceUnit::cmH2O_s_Per_L);
+  double dLeftBronchiResistance = m_CarinaToLeftAnatomicDeadSpace->GetNextResistance().GetValue(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  double dRightBronchiResistance = m_CarinaToRightAnatomicDeadSpace->GetNextResistance().GetValue(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 
   dLeftBronchiResistance *= combinedResistanceScalingFactor;
-  m_CarinaToLeftAnatomicDeadSpace->GetNextResistance().SetValue(dLeftBronchiResistance, FlowResistanceUnit::cmH2O_s_Per_L);
+  m_CarinaToLeftAnatomicDeadSpace->GetNextResistance().SetValue(dLeftBronchiResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   dRightBronchiResistance *= combinedResistanceScalingFactor;
-  m_CarinaToRightAnatomicDeadSpace->GetNextResistance().SetValue(dRightBronchiResistance, FlowResistanceUnit::cmH2O_s_Per_L);
+  m_CarinaToRightAnatomicDeadSpace->GetNextResistance().SetValue(dRightBronchiResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -2357,16 +2355,16 @@ void Respiratory::UpdateIERatio()
 void Respiratory::UpdateLungCompliance(double dCompilanceScalingFactor, double dLeftLungFraction, double dRightLungFraction)
 {
   // Get path compliances
-  double dRightAlveoliBaselineCompliance = m_RightAlveoliToRightPleuralConnection->GetComplianceBaseline().GetValue(FlowComplianceUnit::L_Per_cmH2O);
-  double dLeftAlveoliBaselineCompliance = m_LeftAlveoliToLeftPleuralConnection->GetComplianceBaseline().GetValue(FlowComplianceUnit::L_Per_cmH2O);
+  double dRightAlveoliBaselineCompliance = m_RightAlveoliToRightPleuralConnection->GetComplianceBaseline().GetValue(VolumePerPressureUnit::L_Per_cmH2O);
+  double dLeftAlveoliBaselineCompliance = m_LeftAlveoliToLeftPleuralConnection->GetComplianceBaseline().GetValue(VolumePerPressureUnit::L_Per_cmH2O);
 
   // Left lung alveoli
   dLeftAlveoliBaselineCompliance = (dLeftAlveoliBaselineCompliance*(1.0 - dLeftLungFraction)) + (dLeftAlveoliBaselineCompliance*dCompilanceScalingFactor*dLeftLungFraction);
-  m_LeftAlveoliToLeftPleuralConnection->GetComplianceBaseline().SetValue(dLeftAlveoliBaselineCompliance, FlowComplianceUnit::L_Per_cmH2O);
+  m_LeftAlveoliToLeftPleuralConnection->GetComplianceBaseline().SetValue(dLeftAlveoliBaselineCompliance, VolumePerPressureUnit::L_Per_cmH2O);
 
   // Right lung alveoli
   dRightAlveoliBaselineCompliance = (dRightAlveoliBaselineCompliance*(1.0 - dRightLungFraction)) + (dRightAlveoliBaselineCompliance*dCompilanceScalingFactor*dRightLungFraction);
-  m_RightAlveoliToRightPleuralConnection->GetComplianceBaseline().SetValue(dRightAlveoliBaselineCompliance, FlowComplianceUnit::L_Per_cmH2O);
+  m_RightAlveoliToRightPleuralConnection->GetComplianceBaseline().SetValue(dRightAlveoliBaselineCompliance, VolumePerPressureUnit::L_Per_cmH2O);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -2387,13 +2385,13 @@ void Respiratory::UpdateLungCompliance(double dCompilanceScalingFactor, double d
 void Respiratory::UpdatePulmonaryCapillaryResistance(double dResistanceScalingFactor, double dLeftLungPercent, double dRightLungPercent)
 {
   // Get path resistances
-  double dRightPulmonaryCapillaryResistance = m_RightPulmonaryCapillary->GetResistanceBaseline().GetValue(FlowResistanceUnit::cmH2O_s_Per_L);
-  double dLeftPulmonaryCapillaryResistance = m_LeftPulmonaryCapillary->GetResistanceBaseline().GetValue(FlowResistanceUnit::cmH2O_s_Per_L);
+  double dRightPulmonaryCapillaryResistance = m_RightPulmonaryCapillary->GetResistanceBaseline().GetValue(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  double dLeftPulmonaryCapillaryResistance = m_LeftPulmonaryCapillary->GetResistanceBaseline().GetValue(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 
   dLeftPulmonaryCapillaryResistance = (dLeftPulmonaryCapillaryResistance*(1.0 - dLeftLungPercent)) + (dLeftPulmonaryCapillaryResistance*dResistanceScalingFactor*dLeftLungPercent);
-  m_LeftPulmonaryCapillary->GetResistanceBaseline().SetValue(dLeftPulmonaryCapillaryResistance, FlowResistanceUnit::cmH2O_s_Per_L);
+  m_LeftPulmonaryCapillary->GetResistanceBaseline().SetValue(dLeftPulmonaryCapillaryResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   dRightPulmonaryCapillaryResistance = (dRightPulmonaryCapillaryResistance*(1.0 - dRightLungPercent)) + (dRightPulmonaryCapillaryResistance*dResistanceScalingFactor*dRightLungPercent);
-  m_RightPulmonaryCapillary->GetResistanceBaseline().SetValue(dRightPulmonaryCapillaryResistance, FlowResistanceUnit::cmH2O_s_Per_L);
+  m_RightPulmonaryCapillary->GetResistanceBaseline().SetValue(dRightPulmonaryCapillaryResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -2444,11 +2442,11 @@ void Respiratory::UpdateGasDiffusionSurfaceArea(double dFractionArea, double dLe
 double Respiratory::VolumeToDriverPressure(double TargetVolume_L)
 {
   //Calculate as if constant compliances
-  double leftHealthyLungCompliance_L_Per_cmH2O = m_LeftAlveoliToLeftPleuralConnection->GetComplianceBaseline(FlowComplianceUnit::L_Per_cmH2O);
-  double rightHealthyLungCompliance_L_Per_cmH2O = m_RightAlveoliToRightPleuralConnection->GetComplianceBaseline(FlowComplianceUnit::L_Per_cmH2O);
+  double leftHealthyLungCompliance_L_Per_cmH2O = m_LeftAlveoliToLeftPleuralConnection->GetComplianceBaseline(VolumePerPressureUnit::L_Per_cmH2O);
+  double rightHealthyLungCompliance_L_Per_cmH2O = m_RightAlveoliToRightPleuralConnection->GetComplianceBaseline(VolumePerPressureUnit::L_Per_cmH2O);
 
-  double leftHealthyChestWallCompliance_L_Per_cmH2O = m_LeftPleuralToRespiratoryMuscle->GetComplianceBaseline(FlowComplianceUnit::L_Per_cmH2O);
-  double rightHealthyChestWallCompliance_L_Per_cmH2O = m_RightPleuralToRespiratoryMuscle->GetComplianceBaseline(FlowComplianceUnit::L_Per_cmH2O);
+  double leftHealthyChestWallCompliance_L_Per_cmH2O = m_LeftPleuralToRespiratoryMuscle->GetComplianceBaseline(VolumePerPressureUnit::L_Per_cmH2O);
+  double rightHealthyChestWallCompliance_L_Per_cmH2O = m_RightPleuralToRespiratoryMuscle->GetComplianceBaseline(VolumePerPressureUnit::L_Per_cmH2O);
   
   double totalCompliance_L_Per_cmH2O = 1.0 / (1.0 / leftHealthyChestWallCompliance_L_Per_cmH2O + 1.0 / leftHealthyLungCompliance_L_Per_cmH2O) +
     1.0 / (1.0 / rightHealthyChestWallCompliance_L_Per_cmH2O + 1.0 / rightHealthyLungCompliance_L_Per_cmH2O);
@@ -2623,8 +2621,8 @@ void Respiratory::UpdateChestWallCompliances()
   }
 
   //Assume lung compliance is a constant value
-  double leftHealthyLungCompliance_L_Per_cmH2O = m_LeftAlveoliToLeftPleuralConnection->GetComplianceBaseline(FlowComplianceUnit::L_Per_cmH2O);
-  double rightHealthyLungCompliance_L_Per_cmH2O = m_RightAlveoliToRightPleuralConnection->GetComplianceBaseline(FlowComplianceUnit::L_Per_cmH2O);
+  double leftHealthyLungCompliance_L_Per_cmH2O = m_LeftAlveoliToLeftPleuralConnection->GetComplianceBaseline(VolumePerPressureUnit::L_Per_cmH2O);
+  double rightHealthyLungCompliance_L_Per_cmH2O = m_RightAlveoliToRightPleuralConnection->GetComplianceBaseline(VolumePerPressureUnit::L_Per_cmH2O);
 
   double leftChestWallCompliance_L_Per_cmH2O = 0.0001;
   double rightChestWallCompliance_L_Per_cmH2O = 0.0001;
@@ -2638,8 +2636,8 @@ void Respiratory::UpdateChestWallCompliances()
     rightChestWallCompliance_L_Per_cmH2O = 1.0 / (1.0 / rightSideCompliance_L_Per_cmH2O - 1.0 / rightHealthyLungCompliance_L_Per_cmH2O);
   }
 
-  m_RightPleuralToRespiratoryMuscle->GetNextCompliance().SetValue(rightChestWallCompliance_L_Per_cmH2O, FlowComplianceUnit::L_Per_cmH2O);
-  m_LeftPleuralToRespiratoryMuscle->GetNextCompliance().SetValue(leftChestWallCompliance_L_Per_cmH2O, FlowComplianceUnit::L_Per_cmH2O);
+  m_RightPleuralToRespiratoryMuscle->GetNextCompliance().SetValue(rightChestWallCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
+  m_LeftPleuralToRespiratoryMuscle->GetNextCompliance().SetValue(leftChestWallCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
 }
 
 /*

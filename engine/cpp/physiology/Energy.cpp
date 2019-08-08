@@ -50,8 +50,6 @@
 #include "properties/SEScalarAmountPerVolume.h"
 #include "properties/SEScalarAmountPerTime.h"
 #include "properties/SEScalarPressure.h"
-#include "properties/SEScalarFlowResistance.h"
-#include "properties/SEScalarFlowCompliance.h"
 #include "properties/SEScalarAmountPerTime.h"
 #include "properties/SEScalarTime.h"
 #include "properties/SEScalarVolumePerTimeMass.h"

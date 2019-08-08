@@ -3,18 +3,18 @@
 
 package com.kitware.physiology.datamodel.properties;
 
-import com.kitware.physiology.cdm.Properties.ScalarFlowComplianceData;
+import com.kitware.physiology.cdm.Properties.ScalarPressureTimeSquaredPerVolumeData;
 
-import com.kitware.physiology.datamodel.properties.CommonUnits.FlowComplianceUnit;
+import com.kitware.physiology.datamodel.properties.CommonUnits.PressureTimeSquaredPerVolumeUnit;
 
 /**
  * @author abray
- * FlowCompliance Scalar Class, will enforce that units are proper to FlowCompliances
+ * PressureTimeSquaredPerVolume Scalar Class, will enforce that units are proper to PressureTimeSquaredPerVolumes
  */
 
-public class SEScalarFlowCompliance extends SEScalar
+public class SEScalarPressureTimeSquaredPerVolume extends SEScalar
 {
-  public SEScalarFlowCompliance()
+  public SEScalarPressureTimeSquaredPerVolume()
   {
     super();
   }
@@ -24,7 +24,7 @@ public class SEScalarFlowCompliance extends SEScalar
    * @param unit - specific any valid standard unit abbreviation
    * http://www.bipm.org/en/si/ for this quantity type
    */
-  public SEScalarFlowCompliance(double value, String unit)
+  public SEScalarPressureTimeSquaredPerVolume(double value, String unit)
   {
     this();
     this.setValue(value, unit);
@@ -38,27 +38,27 @@ public class SEScalarFlowCompliance extends SEScalar
    * and specify any valid standard unit abbreviation sting for this type
    * Unit Abbreviation Standards: http://www.bipm.org/en/si/
    */
-  public SEScalarFlowCompliance(double value, FlowComplianceUnit unit)
+  public SEScalarPressureTimeSquaredPerVolume(double value, PressureTimeSquaredPerVolumeUnit unit)
   {
     this();
     this.setValue(value,unit);
   }
   
-  public static void load(ScalarFlowComplianceData src, SEScalarFlowCompliance dst)
+  public static void load(ScalarPressureTimeSquaredPerVolumeData src, SEScalarPressureTimeSquaredPerVolume dst)
   {
-    SEScalar.load(src.getScalarFlowCompliance(),dst);
+    SEScalar.load(src.getScalarPressureTimeSquaredPerVolume(),dst);
   }
-  public static ScalarFlowComplianceData unload(SEScalarFlowCompliance src)
+  public static ScalarPressureTimeSquaredPerVolumeData unload(SEScalarPressureTimeSquaredPerVolume src)
   {
     if(!src.isValid())
       return null;
-    ScalarFlowComplianceData.Builder dst = ScalarFlowComplianceData.newBuilder();
+    ScalarPressureTimeSquaredPerVolumeData.Builder dst = ScalarPressureTimeSquaredPerVolumeData.newBuilder();
     unload(src,dst);
     return dst.build();
   }
-  protected static void unload(SEScalarFlowCompliance src, ScalarFlowComplianceData.Builder dst)
+  protected static void unload(SEScalarPressureTimeSquaredPerVolume src, ScalarPressureTimeSquaredPerVolumeData.Builder dst)
   {
-    SEScalar.unload(src,dst.getScalarFlowComplianceBuilder());
+    SEScalar.unload(src,dst.getScalarPressureTimeSquaredPerVolumeBuilder());
   }
   
   /**
@@ -69,7 +69,7 @@ public class SEScalarFlowCompliance extends SEScalar
    * and specify any valid standard unit abbreviation sting for this type
    * Unit Abbreviation Standards: http://www.bipm.org/en/si/
    */
-  public void setValue(double value, FlowComplianceUnit unit)
+  public void setValue(double value, PressureTimeSquaredPerVolumeUnit unit)
   {
     this.setValue(value,unit.toString());
   }
@@ -82,15 +82,14 @@ public class SEScalarFlowCompliance extends SEScalar
    * and specify any valid standard unit abbreviation sting for this type
    * Unit Abbreviation Standards: http://www.bipm.org/en/si/
    */
-  public double getValue(FlowComplianceUnit unit)
+  public double getValue(PressureTimeSquaredPerVolumeUnit unit)
   {
     return this.getValue(unit.toString());
   }
-  
 
   public boolean validUnit(String unit)
   {
-    if(FlowComplianceUnit.validUnit(unit))
+    if(PressureTimeSquaredPerVolumeUnit.validUnit(unit))
       return true;
     return false;
   }

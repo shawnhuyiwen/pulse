@@ -24,7 +24,7 @@
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
-#include "properties/SEScalarFlowCompliance.h"
+#include "properties/SEScalarVolumePerPressure.h"
 #include "properties/SEScalarTime.h"
 #include "properties/SEScalarInverseVolume.h"
 #include "properties/SEScalarMassPerVolume.h"
@@ -122,7 +122,7 @@ void PulseEngineTest::RespiratoryCircuitAndTransportTest(RespiratoryConfiguratio
   SEFluidCircuitPath *driverPath = rCircuit->GetPath(pulse::RespiratoryPath::EnvironmentToRespiratoryMuscle);
   SEGasTransporter    gtxpt(VolumePerTimeUnit::L_Per_s, VolumeUnit::L, VolumeUnit::L, pc.GetLogger());
   SELiquidTransporter ltxpt(VolumePerTimeUnit::mL_Per_s, VolumeUnit::mL, MassUnit::ug, MassPerVolumeUnit::ug_Per_mL, pc.GetLogger());
-  SEFluidCircuitCalculator calc(FlowComplianceUnit::L_Per_cmH2O, VolumePerTimeUnit::L_Per_s, FlowInertanceUnit::cmH2O_s2_Per_L, PressureUnit::cmH2O, VolumeUnit::L, FlowResistanceUnit::cmH2O_s_Per_L, pc.GetLogger());
+  SEFluidCircuitCalculator calc(VolumePerPressureUnit::L_Per_cmH2O, VolumePerTimeUnit::L_Per_s, PressureTimeSquaredPerVolumeUnit::cmH2O_s2_Per_L, PressureUnit::cmH2O, VolumeUnit::L, PressureTimePerVolumeUnit::cmH2O_s_Per_L, pc.GetLogger());
   
   //Set the reference not pressure to the standard environment
   //This is needed because we're not setting the Environment during initialization in this unit test
@@ -223,7 +223,7 @@ void PulseEngineTest::RespiratoryDriverTest(const std::string& sTestDirectory)
 
   DataTrack trk1;  
   SEFluidCircuit& RespCircuit = pc.GetCircuits().GetRespiratoryCircuit();
-  SEFluidCircuitCalculator calc(FlowComplianceUnit::L_Per_cmH2O, VolumePerTimeUnit::L_Per_s, FlowInertanceUnit::cmH2O_s2_Per_L, PressureUnit::cmH2O, VolumeUnit::L, FlowResistanceUnit::cmH2O_s_Per_L, pc.GetLogger());
+  SEFluidCircuitCalculator calc(VolumePerPressureUnit::L_Per_cmH2O, VolumePerTimeUnit::L_Per_s, PressureTimeSquaredPerVolumeUnit::cmH2O_s2_Per_L, PressureUnit::cmH2O, VolumeUnit::L, PressureTimePerVolumeUnit::cmH2O_s_Per_L, pc.GetLogger());
 
   double deltaT_s = 1.0 / 90.0;
 
@@ -288,7 +288,7 @@ void PulseEngineTest::RespiratoryDriverTest(const std::string& sTestDirectory)
           trk1.Track("DriverPressure_cmH2O", iTime, driverPressurePath->GetPressureSource(PressureUnit::cmH2O));
 
           //Plug the mouth and relax the muscles (just like the real life test)
-          mouthToCarina->GetNextResistance().SetValue(10e100, FlowResistanceUnit::cmH2O_s_Per_L);
+          mouthToCarina->GetNextResistance().SetValue(10e100, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
           driverPressurePath->GetNextPressureSource().SetValue(0.0, PressureUnit::cmH2O);
           //Process the circuit
           calc.Process(RespCircuit, deltaT_s);

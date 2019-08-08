@@ -2,15 +2,15 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "properties/SEScalarFlowResistance.h"
+#include "properties/SEScalarPressureTimePerVolume.h"
 
-const FlowResistanceUnit FlowResistanceUnit::cmH2O_s_Per_L("cmH2O s/L");
-const FlowResistanceUnit FlowResistanceUnit::mmHg_s_Per_mL("mmHg s/mL");
-const FlowResistanceUnit FlowResistanceUnit::mmHg_min_Per_mL("mmHg min/mL");
-const FlowResistanceUnit FlowResistanceUnit::mmHg_min_Per_L("mmHg min/L");
-const FlowResistanceUnit FlowResistanceUnit::Pa_s_Per_m3("Pa s/m^3");
+const PressureTimePerVolumeUnit PressureTimePerVolumeUnit::cmH2O_s_Per_L("cmH2O s/L");
+const PressureTimePerVolumeUnit PressureTimePerVolumeUnit::mmHg_s_Per_mL("mmHg s/mL");
+const PressureTimePerVolumeUnit PressureTimePerVolumeUnit::mmHg_min_Per_mL("mmHg min/mL");
+const PressureTimePerVolumeUnit PressureTimePerVolumeUnit::mmHg_min_Per_L("mmHg min/L");
+const PressureTimePerVolumeUnit PressureTimePerVolumeUnit::Pa_s_Per_m3("Pa s/m^3");
 
-bool FlowResistanceUnit::IsValidUnit(const std::string& unit)
+bool PressureTimePerVolumeUnit::IsValidUnit(const std::string& unit)
 {
   if (cmH2O_s_Per_L.GetString().compare(unit) == 0)
     return true;
@@ -25,7 +25,7 @@ bool FlowResistanceUnit::IsValidUnit(const std::string& unit)
   return false;
 }
 
-const FlowResistanceUnit& FlowResistanceUnit::GetCompoundUnit(const std::string& unit)
+const PressureTimePerVolumeUnit& PressureTimePerVolumeUnit::GetCompoundUnit(const std::string& unit)
 {
   if (cmH2O_s_Per_L.GetString().compare(unit) == 0)
     return cmH2O_s_Per_L;
@@ -38,6 +38,6 @@ const FlowResistanceUnit& FlowResistanceUnit::GetCompoundUnit(const std::string&
   if (Pa_s_Per_m3.GetString().compare(unit) == 0)
     return Pa_s_Per_m3;
   std::stringstream err;
-  err << unit << " is not a valid FlowResistance unit";
+  err << unit << " is not a valid PressureTimePerVolume unit";
   throw CommonDataModelException(err.str());
 }

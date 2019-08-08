@@ -17,9 +17,6 @@
 #include "system/physiology/SEDrugSystem.h"
 // CDM
 #include "engine/SEEventManager.h"
-#include "properties/SEScalarFlowCompliance.h"
-#include "properties/SEScalarFlowElastance.h"
-#include "properties/SEScalarFlowResistance.h"
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarPressurePerVolume.h"

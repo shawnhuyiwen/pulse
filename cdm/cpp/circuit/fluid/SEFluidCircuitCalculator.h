@@ -6,11 +6,11 @@
 #include "circuit/SECircuitCalculator.h"
 #include "circuit/fluid/SEFluidCircuit.h"
 
-class CDM_DECL SEFluidCircuitCalculator : public SECircuitCalculator<SEFluidCircuit, SEFluidCircuitNode, SEFluidCircuitPath, FlowComplianceUnit, VolumePerTimeUnit, FlowInertanceUnit, PressureUnit, VolumeUnit, FlowResistanceUnit>
+class CDM_DECL SEFluidCircuitCalculator : public SECircuitCalculator<SEFluidCircuit, SEFluidCircuitNode, SEFluidCircuitPath, VolumePerPressureUnit, VolumePerTimeUnit, PressureTimeSquaredPerVolumeUnit, PressureUnit, VolumeUnit, PressureTimePerVolumeUnit>
 {
 public:
 
   SEFluidCircuitCalculator(Logger* logger);
-  SEFluidCircuitCalculator(const FlowComplianceUnit&, const VolumePerTimeUnit&, const FlowInertanceUnit&, const PressureUnit&, const VolumeUnit&, const FlowResistanceUnit&, Logger* logger);
+  SEFluidCircuitCalculator(const VolumePerPressureUnit&, const VolumePerTimeUnit&, const PressureTimeSquaredPerVolumeUnit&, const PressureUnit&, const VolumeUnit&, const PressureTimePerVolumeUnit&, Logger* logger);
   virtual ~SEFluidCircuitCalculator();
 };

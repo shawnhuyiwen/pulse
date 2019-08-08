@@ -36,8 +36,6 @@
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarArea.h"
 #include "properties/SEScalarAmountPerTime.h"
-#include "properties/SEScalarFlowResistance.h"
-#include "properties/SEScalarPressure.h"
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarMassPerTime.h"
 #include "properties/SEScalarMassPerVolume.h"
@@ -45,6 +43,8 @@
 #include "properties/SEScalarNegative1To1.h"
 #include "properties/SEScalarOsmolality.h"
 #include "properties/SEScalarOsmolarity.h"
+#include "properties/SEScalarPressure.h"
+#include "properties/SEScalarPressureTimePerVolume.h"
 #include "properties/SEScalarTime.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
@@ -192,8 +192,8 @@ void Renal::Initialize()
   PulseSystem::Initialize();
 
   m_Urinating = false;  
-  m_leftAfferentResistance_mmHg_s_Per_mL = m_leftAfferentArteriolePath->GetResistanceBaseline(FlowResistanceUnit::mmHg_s_Per_mL);
-  m_rightAfferentResistance_mmHg_s_Per_mL = m_rightAfferentArteriolePath->GetResistanceBaseline(FlowResistanceUnit::mmHg_s_Per_mL);
+  m_leftAfferentResistance_mmHg_s_Per_mL = m_leftAfferentArteriolePath->GetResistanceBaseline(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+  m_rightAfferentResistance_mmHg_s_Per_mL = m_rightAfferentArteriolePath->GetResistanceBaseline(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
   m_leftSodiumFlowSetPoint_mg_Per_s = 4.7;
   m_rightSodiumFlowSetPoint_mg_Per_s = 4.7;
 
@@ -252,7 +252,7 @@ void Renal::Initialize()
 
   GetRenalBloodFlow().SetValue(1132.0, VolumePerTimeUnit::mL_Per_min);
   GetRenalPlasmaFlow().SetValue(660.0, VolumePerTimeUnit::mL_Per_min);
-  GetRenalVascularResistance().SetValue(0.081, FlowResistanceUnit::mmHg_min_Per_mL); //  (100-8)/1132
+  GetRenalVascularResistance().SetValue(0.081, PressureTimePerVolumeUnit::mmHg_min_Per_mL); //  (100-8)/1132
   GetUrinationRate().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);
   GetUrineOsmolality().SetValue(625.0, OsmolalityUnit::mOsm_Per_kg);
   GetUrineOsmolarity().SetValue(625.0, OsmolarityUnit::mOsm_Per_L);
@@ -318,14 +318,14 @@ void Renal::SetUp()
   m_rightUreter = m_data.GetCompartments().GetLiquidCompartment(pulse::UrineCompartment::RightUreter);
 
   //Configuration parameters
-  m_defaultOpenResistance_mmHg_s_Per_mL = m_data.GetConfiguration().GetDefaultOpenFlowResistance(FlowResistanceUnit::mmHg_s_Per_mL);
-  m_defaultClosedResistance_mmHg_s_Per_mL = m_data.GetConfiguration().GetDefaultClosedFlowResistance(FlowResistanceUnit::mmHg_s_Per_mL);
-  m_maxLeftAfferentResistance_mmHg_s_Per_mL = m_data.GetConfiguration().GetMaximumAfferentResistance(FlowResistanceUnit::mmHg_s_Per_mL);
-  m_minLeftAfferentResistance_mmHg_s_Per_mL = m_data.GetConfiguration().GetMinimumAfferentResistance(FlowResistanceUnit::mmHg_s_Per_mL);
-  m_maxRightAfferentResistance_mmHg_s_Per_mL = m_data.GetConfiguration().GetMaximumAfferentResistance(FlowResistanceUnit::mmHg_s_Per_mL);
-  m_minRightAfferentResistance_mmHg_s_Per_mL = m_data.GetConfiguration().GetMinimumAfferentResistance(FlowResistanceUnit::mmHg_s_Per_mL);
+  m_defaultOpenResistance_mmHg_s_Per_mL = m_data.GetConfiguration().GetDefaultOpenFlowResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+  m_defaultClosedResistance_mmHg_s_Per_mL = m_data.GetConfiguration().GetDefaultClosedFlowResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+  m_maxLeftAfferentResistance_mmHg_s_Per_mL = m_data.GetConfiguration().GetMaximumAfferentResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+  m_minLeftAfferentResistance_mmHg_s_Per_mL = m_data.GetConfiguration().GetMinimumAfferentResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+  m_maxRightAfferentResistance_mmHg_s_Per_mL = m_data.GetConfiguration().GetMaximumAfferentResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+  m_minRightAfferentResistance_mmHg_s_Per_mL = m_data.GetConfiguration().GetMinimumAfferentResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
   m_sodiumPlasmaConcentrationSetpoint_mg_Per_mL = m_data.GetConfiguration().GetPlasmaSodiumConcentrationSetPoint(MassPerVolumeUnit::mg_Per_mL);
-  m_CVOpenResistance_mmHg_s_Per_mL = m_data.GetConfiguration().GetCardiovascularOpenResistance(FlowResistanceUnit::mmHg_s_Per_mL);
+  m_CVOpenResistance_mmHg_s_Per_mL = m_data.GetConfiguration().GetCardiovascularOpenResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
   m_baselinePotassiumConcentration_g_Per_dL = m_data.GetConfiguration().GetPeritubularPotassiumConcentrationSetPoint(MassPerVolumeUnit::g_Per_dL);
   m_leftReabsorptionPermeabilitySetpoint_mL_Per_s_mmHg_m2 = m_data.GetConfiguration().GetLeftTubularReabsorptionFluidPermeabilityBaseline(VolumePerTimePressureAreaUnit::mL_Per_s_mmHg_m2);
   m_rightReabsorptionPermeabilitySetpoint_mL_Per_s_mmHg_m2 = m_data.GetConfiguration().GetRightTubularReabsorptionFluidPermeabilityBaseline(VolumePerTimePressureAreaUnit::mL_Per_s_mmHg_m2);
@@ -536,7 +536,7 @@ void Renal::CalculateUltrafiltrationFeedback()
 
     //Set the filter resistance based on its physical properties
     //This is the Capillary Filtration Coefficient
-    double filterResistance_mmHg_s_Per_mL = filterResistancePath->GetNextResistance().GetValue(FlowResistanceUnit::mmHg_s_Per_mL);
+    double filterResistance_mmHg_s_Per_mL = filterResistancePath->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
     if (permeability_mL_Per_s_Per_mmHg_Per_m2 != 0 && surfaceArea_m2 != 0)
       filterResistance_mmHg_s_Per_mL = 1 / (permeability_mL_Per_s_Per_mmHg_Per_m2 * surfaceArea_m2);
     else
@@ -545,7 +545,7 @@ void Renal::CalculateUltrafiltrationFeedback()
     // Bounding the resistance in case the math starts to shoot the value above feasible resistances.
     filterResistance_mmHg_s_Per_mL = MIN(filterResistance_mmHg_s_Per_mL, m_CVOpenResistance_mmHg_s_Per_mL);
 
-    filterResistancePath->GetNextResistance().SetValue(filterResistance_mmHg_s_Per_mL, FlowResistanceUnit::mmHg_s_Per_mL);
+    filterResistancePath->GetNextResistance().SetValue(filterResistance_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
 
     //Modify the pressure on both sides of the filter based on the protein (Albumin) concentration
     //This is the osmotic pressure effect
@@ -614,12 +614,12 @@ void Renal::CalculateReabsorptionFeedback()
     //Set the filter resistance based on its physical properties
     //This is the Capillary Filtration Coefficient
     //We'll just assume this linear relationship for now
-    double filterResistance_mmHg_s_Per_mL = filterResistancePath->GetNextResistance().GetValue(FlowResistanceUnit::mmHg_s_Per_mL);
+    double filterResistance_mmHg_s_Per_mL = filterResistancePath->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
     if (permeability_mL_Per_s_Per_mmHg_Per_m2 != 0 && surfaceArea_m2 != 0)
       filterResistance_mmHg_s_Per_mL = 1 / (permeability_mL_Per_s_Per_mmHg_Per_m2 * surfaceArea_m2);
     else
       filterResistance_mmHg_s_Per_mL = m_CVOpenResistance_mmHg_s_Per_mL;
-    filterResistancePath->GetNextResistance().SetValue(filterResistance_mmHg_s_Per_mL, FlowResistanceUnit::mmHg_s_Per_mL);
+    filterResistancePath->GetNextResistance().SetValue(filterResistance_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
 
     //Modify the pressure on both sides of the filter based on the protein (Albumin) concentration
     //This is the osmotic pressure effect
@@ -1415,9 +1415,9 @@ void Renal::CalculateVitalSigns()
 
   double pressureDiff_mmHg = m_aorta->GetPressure(PressureUnit::mmHg) - m_venaCava->GetPressure(PressureUnit::mmHg);
   if (renalBloodFlow_mL_Per_s != 0.0)
-    GetRenalVascularResistance().SetValue(pressureDiff_mmHg / renalBloodFlow_mL_Per_s, FlowResistanceUnit::mmHg_s_Per_mL);
+    GetRenalVascularResistance().SetValue(pressureDiff_mmHg / renalBloodFlow_mL_Per_s, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
   else
-    GetRenalVascularResistance().SetValue(m_CVOpenResistance_mmHg_s_Per_mL, FlowResistanceUnit::mmHg_s_Per_mL);
+    GetRenalVascularResistance().SetValue(m_CVOpenResistance_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
   
   //Do the urine specific values
   GetUrineVolume().SetValue(m_bladderNode->GetNextVolume().GetValue(VolumeUnit::mL), VolumeUnit::mL);
@@ -1580,13 +1580,13 @@ void Renal::Urinate()
     else
     {
       //Prevent anything from leaving except for what's in the bladder
-      m_leftUreterPath->GetNextResistance().SetValue(m_defaultOpenResistance_mmHg_s_Per_mL, FlowResistanceUnit::mmHg_s_Per_mL);
-      m_rightUreterPath->GetNextResistance().SetValue(m_defaultOpenResistance_mmHg_s_Per_mL, FlowResistanceUnit::mmHg_s_Per_mL);
+      m_leftUreterPath->GetNextResistance().SetValue(m_defaultOpenResistance_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+      m_rightUreterPath->GetNextResistance().SetValue(m_defaultOpenResistance_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
 
       //Reduce the urethra resistance to urinate
       //Use a urethra resistance based on the validated urination flow
       //R = (4 mmHg - 0 mmHg) / 22 mL/s = 0.182
-      m_urethraPath->GetNextResistance().SetValue(0.182, FlowResistanceUnit::mmHg_s_Per_mL);
+      m_urethraPath->GetNextResistance().SetValue(0.182, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
     }
 
     GetUrinationRate().Set(m_urethraPath->GetNextFlow());
@@ -1907,8 +1907,8 @@ void Renal::CalculateTubuloglomerularFeedback()
     if (m_data.GetEvents().IsEventActive(eEvent::StartOfCardiacCycle))
     {
       //Us the "current" resistance, to continually drive towards the response we want - the next value is overwritten by the baseline during postprocess
-      double currentAfferentResistance_mmHg_s_Per_mL = afferentResistancePath->GetResistance().GetValue(FlowResistanceUnit::mmHg_s_Per_mL);
-      double nextAfferentResistance_mmHg_s_Per_mL = afferentResistancePath->GetNextResistance().GetValue(FlowResistanceUnit::mmHg_s_Per_mL);
+      double currentAfferentResistance_mmHg_s_Per_mL = afferentResistancePath->GetResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+      double nextAfferentResistance_mmHg_s_Per_mL = afferentResistancePath->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
 
       //Get the amount off we are from normal
       double sodiumChange = sodiumFlow_mg_Per_s - sodiumFlowSetPoint_mg_Per_s;
@@ -1946,12 +1946,12 @@ void Renal::CalculateTubuloglomerularFeedback()
     if (kidney == 0)
     {
       //LEFT    
-      afferentResistancePath->GetNextResistance().SetValue(m_leftAfferentResistance_mmHg_s_Per_mL, FlowResistanceUnit::mmHg_s_Per_mL);
+      afferentResistancePath->GetNextResistance().SetValue(m_leftAfferentResistance_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
     }
     else
     {
       //RIGHT
-      afferentResistancePath->GetNextResistance().SetValue(m_rightAfferentResistance_mmHg_s_Per_mL, FlowResistanceUnit::mmHg_s_Per_mL);
+      afferentResistancePath->GetNextResistance().SetValue(m_rightAfferentResistance_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
     }
   }
   //reset sodium flow at start of cardiac cycle 

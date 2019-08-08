@@ -18,7 +18,7 @@
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalarArea.h"
 #include "properties/SEScalarPower.h"
-#include "properties/SEScalarFlowElastance.h"
+#include "properties/SEScalarPressurePerVolume.h"
 #include "io/protobuf/PBPatient.h"
 
 

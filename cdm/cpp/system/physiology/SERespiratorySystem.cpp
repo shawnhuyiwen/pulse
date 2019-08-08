@@ -5,8 +5,8 @@
 #include "system/physiology/SERespiratorySystem.h"
 #include "properties/SEScalarArea.h"
 #include "properties/SEScalarEnergy.h"
-#include "properties/SEScalarFlowCompliance.h"
-#include "properties/SEScalarFlowResistance.h"
+#include "properties/SEScalarVolumePerPressure.h"
+#include "properties/SEScalarPressureTimePerVolume.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEScalarPower.h"
@@ -612,13 +612,13 @@ bool SERespiratorySystem::HasPulmonaryCompliance() const
 {
   return m_PulmonaryCompliance == nullptr ? false : m_PulmonaryCompliance->IsValid();
 }
-SEScalarFlowCompliance& SERespiratorySystem::GetPulmonaryCompliance()
+SEScalarVolumePerPressure& SERespiratorySystem::GetPulmonaryCompliance()
 {
   if (m_PulmonaryCompliance== nullptr)
-    m_PulmonaryCompliance = new SEScalarFlowCompliance();
+    m_PulmonaryCompliance = new SEScalarVolumePerPressure();
   return *m_PulmonaryCompliance;
 }
-double SERespiratorySystem::GetPulmonaryCompliance(const FlowComplianceUnit& unit) const
+double SERespiratorySystem::GetPulmonaryCompliance(const VolumePerPressureUnit& unit) const
 {
   if (m_PulmonaryCompliance == nullptr)
     return SEScalar::dNaN();
@@ -646,13 +646,13 @@ bool SERespiratorySystem::HasPulmonaryResistance() const
 {
   return m_PulmonaryResistance == nullptr ? false : m_PulmonaryResistance->IsValid();
 }
-SEScalarFlowResistance& SERespiratorySystem::GetPulmonaryResistance()
+SEScalarPressureTimePerVolume& SERespiratorySystem::GetPulmonaryResistance()
 {
   if (m_PulmonaryResistance== nullptr)
-    m_PulmonaryResistance = new SEScalarFlowResistance();
+    m_PulmonaryResistance = new SEScalarPressureTimePerVolume();
   return *m_PulmonaryResistance;
 }
-double SERespiratorySystem::GetPulmonaryResistance(const FlowResistanceUnit& unit) const
+double SERespiratorySystem::GetPulmonaryResistance(const PressureTimePerVolumeUnit& unit) const
 {
   if (m_PulmonaryResistance == nullptr)
     return SEScalar::dNaN();

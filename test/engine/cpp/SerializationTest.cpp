@@ -41,7 +41,6 @@
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEFunctionVolumeVsTime.h"
 #include "properties/SEScalarPower.h"
-#include "properties/SEScalarFlowResistance.h"
 
 class HowToTracker
 {

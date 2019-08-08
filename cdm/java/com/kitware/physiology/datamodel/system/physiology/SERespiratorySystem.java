@@ -10,51 +10,51 @@ import com.kitware.physiology.datamodel.system.SESystem;
 
 public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
 {
-  protected SEScalarPressure          alveolarArterialGradient;
-  protected SEScalarVolume            alveolarDeadSpace;
-  protected SEScalarVolume            anatomicDeadSpace;
-  protected SEScalarPressure          carricoIndex;
-  protected SEScalarVolumePerPressure chestWallCompliance;
-  protected SEScalarEnergy            elasticWorkOfBreathing;
-  protected SEScalar0To1              endTidalCarbonDioxideFraction;
-  protected SEScalarPressure          endTidalCarbonDioxidePressure;
-  protected SEScalar0To1              endTidalOxygenFraction;
-  protected SEScalarPressure          endTidalOxygenPressure;
-  protected SEScalarVolumePerTime     expiratoryFlow;
-  protected SEScalarPower             imposedPowerOfBreathing;
-  protected SEScalarEnergy            imposedWorkOfBreathing;
-  protected SEScalar                  inspiratoryExpiratoryRatio;
-  protected SEScalarVolumePerTime     inspiratoryFlow;
-  protected SEScalarPressure          intrapleuralPressure;
-  protected SEScalarVolumePerPressure lungCompliance;
-  protected SEScalarPressure          maximalInspiratoryPressure;
-  protected SEScalarPower             patientPowerOfBreathing;
-  protected SEScalarEnergy            patientWorkOfBreathing;
-  protected SEScalarPressure          peakInspiratoryPressure;
-  protected SEScalarVolume            physiologicDeadSpace;
-  protected SEScalarPressure          positiveEndExpiratoryPressure;
-  protected SEScalarFlowCompliance    pulmonaryCompliance;
-  protected SEScalarPressurePerVolume pulmonaryElastance;
-  protected SEScalarFlowResistance    pulmonaryResistance;
-  protected SEScalarEnergy            resistiveExpiratoryWorkOfBreathing;
-  protected SEScalarEnergy            resistiveInspiratoryWorkOfBreathing;
-  protected SEScalarFrequency         respirationRate;
-  protected SEScalar0To1              respiratoryMuscleFatigue;
-  protected SEScalarPressure          respiratoryMusclePressure;
-  protected SEScalar                  specificVentilation;
-  protected SEScalarVolume            tidalVolume;
-  protected SEScalarVolumePerTime     totalAlveolarVentilation;
-  protected SEScalarVolumePerTime     totalDeadSpaceVentilation;
-  protected SEScalarVolume            totalLungVolume;
-  protected SEScalarPower             totalPowerOfBreathing;
-  protected SEScalarVolumePerTime     totalPulmonaryVentilation;
-  protected SEScalarEnergy            totalWorkOfBreathing;
-  protected SEScalarPressure          transairwayPressure;
-  protected SEScalarPressure          transalveolarPressure;
-  protected SEScalarPressure          transChestWallPressure;
-  protected SEScalarPressure          transpulmonaryPressure;
-  protected SEScalarPressure          transrespiratoryPressure;
-  protected SEScalarPressure          transthoracicPressure;
+  protected SEScalarPressure              alveolarArterialGradient;
+  protected SEScalarVolume                alveolarDeadSpace;
+  protected SEScalarVolume                anatomicDeadSpace;
+  protected SEScalarPressure              carricoIndex;
+  protected SEScalarVolumePerPressure     chestWallCompliance;
+  protected SEScalarEnergy                elasticWorkOfBreathing;
+  protected SEScalar0To1                  endTidalCarbonDioxideFraction;
+  protected SEScalarPressure              endTidalCarbonDioxidePressure;
+  protected SEScalar0To1                  endTidalOxygenFraction;
+  protected SEScalarPressure              endTidalOxygenPressure;
+  protected SEScalarVolumePerTime         expiratoryFlow;
+  protected SEScalarPower                 imposedPowerOfBreathing;
+  protected SEScalarEnergy                imposedWorkOfBreathing;
+  protected SEScalar                      inspiratoryExpiratoryRatio;
+  protected SEScalarVolumePerTime         inspiratoryFlow;
+  protected SEScalarPressure              intrapleuralPressure;
+  protected SEScalarVolumePerPressure     lungCompliance;
+  protected SEScalarPressure              maximalInspiratoryPressure;
+  protected SEScalarPower                 patientPowerOfBreathing;
+  protected SEScalarEnergy                patientWorkOfBreathing;
+  protected SEScalarPressure              peakInspiratoryPressure;
+  protected SEScalarVolume                physiologicDeadSpace;
+  protected SEScalarPressure              positiveEndExpiratoryPressure;
+  protected SEScalarVolumePerPressure     pulmonaryCompliance;
+  protected SEScalarPressurePerVolume     pulmonaryElastance;
+  protected SEScalarPressureTimePerVolume pulmonaryResistance;
+  protected SEScalarEnergy                resistiveExpiratoryWorkOfBreathing;
+  protected SEScalarEnergy                resistiveInspiratoryWorkOfBreathing;
+  protected SEScalarFrequency             respirationRate;
+  protected SEScalar0To1                  respiratoryMuscleFatigue;
+  protected SEScalarPressure              respiratoryMusclePressure;
+  protected SEScalar                      specificVentilation;
+  protected SEScalarVolume                tidalVolume;
+  protected SEScalarVolumePerTime         totalAlveolarVentilation;
+  protected SEScalarVolumePerTime         totalDeadSpaceVentilation;
+  protected SEScalarVolume                totalLungVolume;
+  protected SEScalarPower                 totalPowerOfBreathing;
+  protected SEScalarVolumePerTime         totalPulmonaryVentilation;
+  protected SEScalarEnergy                totalWorkOfBreathing;
+  protected SEScalarPressure              transairwayPressure;
+  protected SEScalarPressure              transalveolarPressure;
+  protected SEScalarPressure              transChestWallPressure;
+  protected SEScalarPressure              transpulmonaryPressure;
+  protected SEScalarPressure              transrespiratoryPressure;
+  protected SEScalarPressure              transthoracicPressure;
 
 
   public SERespiratorySystem()
@@ -249,11 +249,11 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
     if (src.hasPositiveEndExpiratoryPressure())
       SEScalarPressure.load(src.getPositiveEndExpiratoryPressure(),dst.getPositiveEndExpiratoryPressure()); 
     if (src.hasPulmonaryCompliance())
-      SEScalarFlowCompliance.load(src.getPulmonaryCompliance(),dst.getPulmonaryCompliance()); 
+      SEScalarVolumePerPressure.load(src.getPulmonaryCompliance(),dst.getPulmonaryCompliance()); 
     if (src.hasPulmonaryElastance())
       SEScalarPressurePerVolume.load(src.getPulmonaryElastance(),dst.getPulmonaryElastance()); 
     if (src.hasPulmonaryResistance())
-      SEScalarFlowResistance.load(src.getPulmonaryResistance(),dst.getPulmonaryResistance()); 
+      SEScalarPressureTimePerVolume.load(src.getPulmonaryResistance(),dst.getPulmonaryResistance()); 
     if (src.hasResistiveExpiratoryWorkOfBreathing())
       SEScalarEnergy.load(src.getResistiveExpiratoryWorkOfBreathing(),dst.getResistiveExpiratoryWorkOfBreathing()); 
     if (src.hasResistiveInspiratoryWorkOfBreathing())
@@ -350,11 +350,11 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
     if (src.hasPositiveEndExpiratoryPressure())
       dst.setPositiveEndExpiratoryPressure(SEScalarPressure.unload(src.getPositiveEndExpiratoryPressure()));
     if (src.hasPulmonaryCompliance())
-      dst.setPulmonaryCompliance(SEScalarFlowCompliance.unload(src.getPulmonaryCompliance()));
+      dst.setPulmonaryCompliance(SEScalarVolumePerPressure.unload(src.getPulmonaryCompliance()));
     if (src.hasPulmonaryElastance())
         dst.setPulmonaryElastance(SEScalarPressurePerVolume.unload(src.getPulmonaryElastance()));
     if (src.hasPulmonaryResistance())
-      dst.setPulmonaryResistance(SEScalarFlowResistance.unload(src.getPulmonaryResistance()));
+      dst.setPulmonaryResistance(SEScalarPressureTimePerVolume.unload(src.getPulmonaryResistance()));
     if (src.hasResistiveExpiratoryWorkOfBreathing())
       dst.setResistiveExpiratoryWorkOfBreathing(SEScalarEnergy.unload(src.getResistiveExpiratoryWorkOfBreathing()));
     if (src.hasResistiveInspiratoryWorkOfBreathing())
@@ -652,10 +652,10 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
   {
     return pulmonaryCompliance == null ? false : pulmonaryCompliance.isValid();
   }
-  public SEScalarFlowCompliance getPulmonaryCompliance()
+  public SEScalarVolumePerPressure getPulmonaryCompliance()
   {
     if (pulmonaryCompliance == null)
-      pulmonaryCompliance = new SEScalarFlowCompliance();
+      pulmonaryCompliance = new SEScalarVolumePerPressure();
     return pulmonaryCompliance;
   }
 
@@ -674,10 +674,10 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
   {
     return pulmonaryResistance == null ? false : pulmonaryResistance.isValid();
   }
-  public SEScalarFlowResistance getPulmonaryResistance()
+  public SEScalarPressureTimePerVolume getPulmonaryResistance()
   {
     if (pulmonaryResistance == null)
-      pulmonaryResistance = new SEScalarFlowResistance();
+      pulmonaryResistance = new SEScalarPressureTimePerVolume();
     return pulmonaryResistance;
   }
   

@@ -36,9 +36,9 @@
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEScalarPressure.h"
+#include "properties/SEScalarPressureTimePerVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalar0To1.h"
-#include "properties/SEScalarFlowResistance.h"
 #include "properties/SEScalarTime.h"
 
 /*
@@ -123,10 +123,10 @@ void AnesthesiaMachine::SetUp()
 {
   m_dt_s = m_data.GetTimeStep().GetValue(TimeUnit::s);
   m_actions = &m_data.GetActions().GetAnesthesiaMachineActions();
-  m_dValveOpenResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetMachineOpenResistance(FlowResistanceUnit::cmH2O_s_Per_L);
-  m_dValveClosedResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetMachineClosedResistance(FlowResistanceUnit::cmH2O_s_Per_L);
-  m_dSwitchOpenResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetDefaultOpenFlowResistance(FlowResistanceUnit::cmH2O_s_Per_L);
-  m_dSwitchClosedResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetDefaultClosedFlowResistance(FlowResistanceUnit::cmH2O_s_Per_L);
+  m_dValveOpenResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetMachineOpenResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  m_dValveClosedResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetMachineClosedResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  m_dSwitchOpenResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetDefaultOpenFlowResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  m_dSwitchClosedResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetDefaultClosedFlowResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 
   // Compartments
   m_ambient = m_data.GetCompartments().GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
@@ -233,7 +233,7 @@ void AnesthesiaMachine::SetConnection()
   {
   case eAirwayMode::Free:
     //Basically a full leak to ground
-    m_pAnesthesiaConnectionToEnvironment->GetNextResistance().SetValue(m_dSwitchClosedResistance_cmH2O_s_Per_L, FlowResistanceUnit::cmH2O_s_Per_L);
+    m_pAnesthesiaConnectionToEnvironment->GetNextResistance().SetValue(m_dSwitchClosedResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     break;
   case eAirwayMode::AnesthesiaMachine:
     if (m_Connection == eAnesthesiaMachine_Connection::Mask)
@@ -561,7 +561,7 @@ void AnesthesiaMachine::CalculateEquipmentLeak()
         }
 
         double dResistance = GeneralMath::ResistanceFunction(10.0, m_dValveClosedResistance_cmH2O_s_Per_L, m_dValveOpenResistance_cmH2O_s_Per_L, TotalSeverity);
-        m_pAnesthesiaConnectionToEnvironment->GetNextResistance().SetValue(dResistance, FlowResistanceUnit::cmH2O_s_Per_L);
+        m_pAnesthesiaConnectionToEnvironment->GetNextResistance().SetValue(dResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
       }
     }
   else if (m_Connection == eAnesthesiaMachine_Connection::Mask)
@@ -589,7 +589,7 @@ void AnesthesiaMachine::CalculateEquipmentLeak()
       }
 
       double dResistance = GeneralMath::ResistanceFunction(10.0, m_dValveClosedResistance_cmH2O_s_Per_L, m_dValveOpenResistance_cmH2O_s_Per_L, TotalSeverity);
-      m_pAnesthesiaConnectionToEnvironment->GetNextResistance().SetValue(dResistance, FlowResistanceUnit::cmH2O_s_Per_L);
+      m_pAnesthesiaConnectionToEnvironment->GetNextResistance().SetValue(dResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     }
   }
   }
@@ -613,9 +613,9 @@ void AnesthesiaMachine::CalculateValveResistances()
 {  
   //Assume there's no leak or obstruction
   double dInspValveOpenResistance = m_dValveOpenResistance_cmH2O_s_Per_L;
-  double dInspValveClosedResistance = m_pInspiratoryLimbToYPiece->GetNextResistance(FlowResistanceUnit::cmH2O_s_Per_L);
+  double dInspValveClosedResistance = m_pInspiratoryLimbToYPiece->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   double dExpValveOpenResistance = m_dValveOpenResistance_cmH2O_s_Per_L;
-  double dExpValveClosedResistance = m_pYPieceToExpiratoryLimb->GetNextResistance(FlowResistanceUnit::cmH2O_s_Per_L);
+  double dExpValveClosedResistance = m_pYPieceToExpiratoryLimb->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 
   //Handle leaks and obstructions
   if (m_actions->HasInspiratoryValveLeak())
@@ -643,13 +643,13 @@ void AnesthesiaMachine::CalculateValveResistances()
   //Set the value based on where we are in the cycle
   if (m_inhaling)
   {
-    m_pInspiratoryLimbToYPiece->GetNextResistance().SetValue(dInspValveClosedResistance, FlowResistanceUnit::cmH2O_s_Per_L);
-    m_pYPieceToExpiratoryLimb->GetNextResistance().SetValue(dExpValveOpenResistance, FlowResistanceUnit::cmH2O_s_Per_L);
+    m_pInspiratoryLimbToYPiece->GetNextResistance().SetValue(dInspValveClosedResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    m_pYPieceToExpiratoryLimb->GetNextResistance().SetValue(dExpValveOpenResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   }
   else
   {
-    m_pInspiratoryLimbToYPiece->GetNextResistance().SetValue(dInspValveOpenResistance, FlowResistanceUnit::cmH2O_s_Per_L);
-    m_pYPieceToExpiratoryLimb->GetNextResistance().SetValue(dExpValveClosedResistance, FlowResistanceUnit::cmH2O_s_Per_L);
+    m_pInspiratoryLimbToYPiece->GetNextResistance().SetValue(dInspValveOpenResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    m_pYPieceToExpiratoryLimb->GetNextResistance().SetValue(dExpValveClosedResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   }
 }
 

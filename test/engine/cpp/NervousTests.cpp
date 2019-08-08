@@ -12,9 +12,9 @@
 #include "circuit/fluid/SEFluidCircuitCalculator.h"
 #include "substance/SESubstanceFraction.h"
 #include "compartment/fluid/SELiquidCompartmentGraph.h"
-#include "properties/SEScalarFlowCompliance.h"
-#include "properties/SEScalarFlowResistance.h"
+#include "properties/SEScalarVolumePerPressure.h"
 #include "properties/SEScalarPressure.h"
+#include "properties/SEScalarPressureTimePerVolume.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalarTime.h"
@@ -47,8 +47,8 @@ void CalculateMultipliers(double& dsResistanceMultiplier, double& usResistanceMu
   double i = 1.8; //The desired CBF for highest injury
   double v2 = 22; //The desired ICP for highest injury (we really want 25, but it tends to overshoot a bit)
   double v1 = totalPressure - v2;
-  double r1 = brainResistanceUpstream->GetResistanceBaseline(FlowResistanceUnit::mmHg_s_Per_mL);
-  double r2 = brainResistanceDownstream->GetResistanceBaseline(FlowResistanceUnit::mmHg_s_Per_mL);
+  double r1 = brainResistanceUpstream->GetResistanceBaseline(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+  double r2 = brainResistanceDownstream->GetResistanceBaseline(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
   double newr1 = v1 / i;
   double newr2 = v2 / i;
 
@@ -101,7 +101,7 @@ void PulseEngineTest::BrainInjuryTest(const std::string& sTestDirectory)
   ss << "Downstream brain resistance multiplier is: " << dsResistanceMultiplier << ". Upstream resistance multiplier is: " << usResistanceMultiplier;
   pc.GetLogger()->Info(ss);
 
-  SEFluidCircuitCalculator calc(FlowComplianceUnit::mL_Per_mmHg, VolumePerTimeUnit::mL_Per_s, FlowInertanceUnit::mmHg_s2_Per_mL, PressureUnit::mmHg, VolumeUnit::mL, FlowResistanceUnit::mmHg_s_Per_mL, pc.GetLogger());
+  SEFluidCircuitCalculator calc(VolumePerPressureUnit::mL_Per_mmHg, VolumePerTimeUnit::mL_Per_s, PressureTimeSquaredPerVolumeUnit::mmHg_s2_Per_mL, PressureUnit::mmHg, VolumeUnit::mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL, pc.GetLogger());
 
   for (unsigned int i = 0; i < (testTime_s / timeStep_s); i++)
   {
@@ -109,9 +109,9 @@ void PulseEngineTest::BrainInjuryTest(const std::string& sTestDirectory)
 
     if (time_s > 1 * 60)
     {
-      brainResistanceDownstream->GetNextResistance().SetValue(dsResistanceMultiplier * brainResistanceDownstream->GetResistanceBaseline().GetValue(FlowResistanceUnit::mmHg_s_Per_mL), FlowResistanceUnit::mmHg_s_Per_mL);
-      brainResistanceUpstream->GetNextResistance().SetValue(usResistanceMultiplier * brainResistanceUpstream->GetResistanceBaseline().GetValue(FlowResistanceUnit::mmHg_s_Per_mL), FlowResistanceUnit::mmHg_s_Per_mL);
-      brainCompliance->GetNextCompliance().SetValue(complianceMultiplier * brainCompliance->GetComplianceBaseline().GetValue(FlowComplianceUnit::mL_Per_mmHg), FlowComplianceUnit::mL_Per_mmHg);
+      brainResistanceDownstream->GetNextResistance().SetValue(dsResistanceMultiplier * brainResistanceDownstream->GetResistanceBaseline().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL), PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+      brainResistanceUpstream->GetNextResistance().SetValue(usResistanceMultiplier * brainResistanceUpstream->GetResistanceBaseline().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL), PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+      brainCompliance->GetNextCompliance().SetValue(complianceMultiplier * brainCompliance->GetComplianceBaseline().GetValue(VolumePerPressureUnit::mL_Per_mmHg), VolumePerPressureUnit::mL_Per_mmHg);
     }
 
     calc.Process(cvCircuit, timeStep_s);//Process - Execute the circuit  
@@ -128,9 +128,9 @@ void PulseEngineTest::BrainInjuryTest(const std::string& sTestDirectory)
     outTrk.Track("SystolicArterialPressure(mmHg)", time_s, sys_mmHg);
     outTrk.Track("DiastolicArterialPressure(mmHg)", time_s, dia_mmHg);
     outTrk.Track("HeartRate(Per_Min)", time_s, hr);
-    outTrk.Track("BrainResistanceDownstream(mmHg_s_Per_mL)", time_s, brainResistanceDownstream->GetResistance(FlowResistanceUnit::mmHg_s_Per_mL));
-    outTrk.Track("BrainResistanceUpstream(mmHg_s_Per_mL)", time_s, brainResistanceUpstream->GetResistance(FlowResistanceUnit::mmHg_s_Per_mL));
-    outTrk.Track("BrainCompliance(mL_Per_mmHg)", time_s, brainCompliance->GetCompliance(FlowComplianceUnit::mL_Per_mmHg));
+    outTrk.Track("BrainResistanceDownstream(mmHg_s_Per_mL)", time_s, brainResistanceDownstream->GetResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL));
+    outTrk.Track("BrainResistanceUpstream(mmHg_s_Per_mL)", time_s, brainResistanceUpstream->GetResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL));
+    outTrk.Track("BrainCompliance(mL_Per_mmHg)", time_s, brainCompliance->GetCompliance(VolumePerPressureUnit::mL_Per_mmHg));
     outTrk.Track("BrainVolume(mL)", time_s, brain->GetVolume(VolumeUnit::mL));
     outTrk.Track("IntracranialPressure(mmHg)", time_s, brain->GetPressure(PressureUnit::mmHg));
     outTrk.Track("CerebralBloodFlow(mL_Per_s)", time_s, brainResistanceDownstream->GetFlow(VolumePerTimeUnit::mL_Per_s));
