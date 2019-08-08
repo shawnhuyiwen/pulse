@@ -24,8 +24,18 @@ public:
   virtual SEScalar0To1& GetSeverity();
   virtual double GetSeverity() const;
 
+  virtual bool HasLeftLungAffected() const;
+  virtual SEScalar0To1& GetLeftLungAffected();
+  virtual double GetLeftLungAffected() const;
+
+  virtual bool HasRightLungAffected() const;
+  virtual SEScalar0To1& GetRightLungAffected();
+  virtual double GetRightLungAffected() const;
+
   virtual void ToString(std::ostream &str) const;
 
 protected:
   SEScalar0To1*           m_Severity;
-};      
+  SEScalar0To1* m_LeftLungAffected;
+  SEScalar0To1* m_RightLungAffected;
+};

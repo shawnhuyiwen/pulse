@@ -62,6 +62,8 @@ message AcuteRespiratoryDistressSyndromeExacerbationData
 {
   PatientActionData                         PatientAction                   = 1;
   Scalar0To1Data                            Severity                        = 2;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
+  Scalar0To1Data                            LeftLungAffected                = 3;/**<< @brief Fraction of the Left Lung Affected*/
+  Scalar0To1Data                            RightLungAffected               = 4;/**<< @brief Fraction of the Left Lung Affected */
 }
 
 /** @brief Fight or flight.  The body prepares to defend itself. */

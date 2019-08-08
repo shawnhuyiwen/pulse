@@ -108,7 +108,9 @@ The following are links to the Condition class specification along with XML exam
 "AnyCondition": [{
   "PatientCondition": {
     "AcuteRespiratoryDistressSyndrome": {
-      "Severity": { "Scalar0To1": { "Value": 0.3 } } 
+      "Severity": { "Scalar0To1": { "Value": 0.3 } },
+      "LeftLungAffected": { "Scalar0To1": { "Value": 1.0  },
+      "RightLungAffected": { "Scalar0To1": { "Value": 1.0 }
     }
   }
 }]
@@ -427,7 +429,9 @@ Patient Insults
 "AnyAction": [{
   "PatientAction": {
     "AcuteRespiratoryDistressSyndromeExacerbation": {
-      "Severity": { "Scalar0To1": { "Value":0.3 } }
+      "Severity": { "Scalar0To1": { "Value":0.3 } },
+      "LeftLungAffected": { "Scalar0To1": { "Value": 1.0  },
+      "RightLungAffected": { "Scalar0To1": { "Value": 1.0 }
     }
   }
 }]

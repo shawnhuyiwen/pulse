@@ -8,6 +8,8 @@ public class SEAcuteRespiratoryDistressSyndromeExacerbation : SEPatientAction
   public SEAcuteRespiratoryDistressSyndromeExacerbation()
   {
     severity = null;
+    leftLungAffected = null;
+    rightLungAffected = null;
   }
   
   public override void Clear()
@@ -15,11 +17,15 @@ public class SEAcuteRespiratoryDistressSyndromeExacerbation : SEPatientAction
     base.Clear();
     if (severity != null)
       severity.Invalidate();
+    if (leftLungAffected != null)
+      leftLungAffected.Invalidate();
+    if (rightLungAffected != null)
+      rightLungAffected.Invalidate();
   }
   
   public override bool IsValid()
   {
-    return HasSeverity();
+    return HasSeverity() && HasLeftLungAffected() && HasRightLungAffected()
   }
   
   public bool HasSeverity()
@@ -31,5 +37,28 @@ public class SEAcuteRespiratoryDistressSyndromeExacerbation : SEPatientAction
     if (severity == null)
       severity = new SEScalar0To1();
     return severity;
+  }
+  
+  public bool HasLeftLungAffected()
+  {
+    return leftLungAffected == null ? false : leftLungAffected.IsValid();
+  }
+  public SEScalar0To1 GetLeftLungAffected()
+  {
+    if (leftLungAffected == null)
+      leftLungAffected = new SEScalar0To1();
+    return leftLungAffected;
+  }
+
+    
+  public bool HasRightLungAffected()
+  {
+    return rightLungAffected == null ? false : rightLungAffected.IsValid();
+  }
+  public SEScalar0To1 GetRightLungAffected()
+  {
+    if (rightLungAffected == null)
+      rightLungAffected = new SEScalar0To1();
+    return rightLungAffected;
   }
 }

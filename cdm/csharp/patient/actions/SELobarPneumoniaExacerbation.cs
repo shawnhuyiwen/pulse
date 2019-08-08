@@ -41,7 +41,6 @@ public class SELobarPneumoniaExacerbation : SEPatientAction
     return severity;
   }
 
-
   public bool HasLeftLungAffected()
   {
     return leftLungAffected == null ? false : leftLungAffected.IsValid();

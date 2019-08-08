@@ -38,6 +38,10 @@ void PBPatientCondition::Serialize(const cdm::AcuteRespiratoryDistressSyndromeDa
   PBPatientCondition::Serialize(src.patientcondition(), dst);
   if (src.has_severity())
     PBProperty::Load(src.severity(), dst.GetSeverity());
+  if (src.has_leftlungaffected())
+    PBProperty::Load(src.leftlungaffected(), dst.GetLeftLungAffected());
+  if (src.has_rightlungaffected())
+    PBProperty::Load(src.rightlungaffected(), dst.GetRightLungAffected());
 }
 cdm::AcuteRespiratoryDistressSyndromeData* PBPatientCondition::Unload(const SEAcuteRespiratoryDistressSyndrome& src)
 {
@@ -50,6 +54,10 @@ void PBPatientCondition::Serialize(const SEAcuteRespiratoryDistressSyndrome& src
   PBPatientCondition::Serialize(src, *dst.mutable_patientcondition());
   if (src.HasSeverity())
     dst.set_allocated_severity(PBProperty::Unload(*src.m_Severity));
+  if (src.HasRightLungAffected())
+    dst.set_allocated_rightlungaffected(PBProperty::Unload(*src.m_RightLungAffected));
+  if (src.HasLeftLungAffected())
+    dst.set_allocated_leftlungaffected(PBProperty::Unload(*src.m_LeftLungAffected));
 }
 void PBPatientCondition::Copy(const SEAcuteRespiratoryDistressSyndrome& src, SEAcuteRespiratoryDistressSyndrome& dst)
 {
