@@ -261,24 +261,6 @@ void PulseEngineTest::RespiratoryDriverTest(const std::string& sTestDirectory)
       //Note: the driver pressure should be negative for inhaling
       driverPressurePath->GetNextPressureSource().SetValue(DriverPressure_cmH2O, PressureUnit::cmH2O);
       
-      ////Variable compliance feedback
-      ////TODO: Figure out how to use that actual Respiratory function.  For now we'll just copy and paste it in.
-      //double dRightPleuralCompliance = rightPleuralToRespiratoryMuscle->GetNextCompliance().GetValue(FlowComplianceUnit::L_Per_cmH2O);
-      //double dLeftPleuralCompliance = leftPleuralToRespiratoryMuscle->GetNextCompliance().GetValue(FlowComplianceUnit::L_Per_cmH2O);
-      //double dRightPleuralVolumeBaseline = rightPleuralNode->GetVolumeBaseline().GetValue(VolumeUnit::L);
-      //double dLeftPleuralVolumeBaseline = leftPleuralNode->GetVolumeBaseline().GetValue(VolumeUnit::L);
-      //double dRightPleuralVolume = rightPleuralNode->GetNextVolume().GetValue(VolumeUnit::L);
-      //double dLeftPleuralVolume = leftPleuralNode->GetNextVolume().GetValue(VolumeUnit::L);
-      //
-      //dRightPleuralCompliance = (dRightPleuralVolume - dRightPleuralVolumeBaseline) * 5.0 * dRightPleuralCompliance + dRightPleuralCompliance;
-      //dLeftPleuralCompliance = (dLeftPleuralVolume - dLeftPleuralVolumeBaseline) * 5.0 * dLeftPleuralCompliance + dLeftPleuralCompliance;
-      //
-      //dRightPleuralCompliance = LIMIT(dRightPleuralCompliance, 1e-6, 0.05);
-      //dLeftPleuralCompliance = LIMIT(dLeftPleuralCompliance, 1e-6, 0.05);
-      //
-      //rightPleuralToRespiratoryMuscle->GetNextCompliance().SetValue(dRightPleuralCompliance, FlowComplianceUnit::L_Per_cmH2O);
-      //leftPleuralToRespiratoryMuscle->GetNextCompliance().SetValue(dLeftPleuralCompliance, FlowComplianceUnit::L_Per_cmH2O);
-      
       //Process the circuit
       calc.Process(RespCircuit, deltaT_s);
       //Advance time

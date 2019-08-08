@@ -67,8 +67,7 @@ protected:
   void LobarPneumonia();
 
   //PreProcess
-  void UpdateCompliances();
-  /**/void CalculateCompliance();
+  void UpdateChestWallCompliances();
   //Actions
   void AirwayObstruction();
   void BronchoConstriction();
@@ -89,7 +88,7 @@ protected:
   /**/void UpdateObstructiveResistance();
   /**/void UpdateIERatio();
   // LobarPneumonia/COPD
-  /**/void UpdateAlveoliCompliance(double dCompilanceScalingFactor, double dLeftLungFraction, double dRightLungFraction);
+  /**/void UpdateLungCompliance(double dCompilanceScalingFactor, double dLeftLungFraction, double dRightLungFraction);
   /**/void UpdateGasDiffusionSurfaceArea(double dFractionalArea, double dLeftLungFraction, double dRightLungFraction);
   // COPD
   /**/void UpdatePulmonaryCapillaryResistance(double dResistanceScalingFactor, double dLeftLungFraction, double dRightLungFraction);
@@ -110,17 +109,17 @@ protected:
   double m_InitialFunctionalResidualCapacity_L;
   double m_InitialInspiratoryCapacity_L;
   double m_InitialResidualVolume_L;
-  double m_InitialTotalLungCapacity_L; //Aaron -serialize
+  double m_InitialTotalLungCapacity_L;
   //   CalculateVitalSigns()
   bool   m_BreathingCycle;
   bool   m_NotBreathing;
   double m_TopBreathTotalVolume_L;
   double m_TopBreathAlveoliVolume_L;
   double m_TopBreathDeadSpaceVolume_L;
-  double m_TopBreathPleuralVolume_L; //Aaron - serialize
+  double m_TopBreathPleuralVolume_L;
   double m_TopBreathPleuralPressure_cmH2O;
-  double m_TopBreathAlveoliPressure_cmH2O; //Aaron - serialize
-  double m_TopBreathDriverPressure_cmH2O; //Aaron - serialize
+  double m_TopBreathAlveoliPressure_cmH2O;
+  double m_TopBreathDriverPressure_cmH2O;
   double m_LastCardiacCycleBloodPH; 
   double m_TopCarinaO2;
   double m_TopBreathElapsedTime_min;
@@ -128,10 +127,10 @@ protected:
   double m_BottomBreathTotalVolume_L;
   double m_BottomBreathAlveoliVolume_L;
   double m_BottomBreathDeadSpaceVolume_L;
-  double m_BottomBreathPleuralVolume_L; //Aaron - serialize
+  double m_BottomBreathPleuralVolume_L;
   double m_BottomBreathPleuralPressure_cmH2O;
-  double m_BottomBreathAlveoliPressure_cmH2O; //Aaron - serialize
-  double m_BottomBreathDriverPressure_cmH2O; //Aaron - serialize
+  double m_BottomBreathAlveoliPressure_cmH2O;
+  double m_BottomBreathDriverPressure_cmH2O;
   SERunningAverage* m_BloodPHRunningAverage;
 
   //   Respiratory Driver
@@ -159,7 +158,7 @@ protected:
   double m_InspiratoryCapacityFraction;
   double m_ConsciousStartPressure_cmH2O;
   double m_ConsciousEndPressure_cmH2O;
-  // Muscle Pressure Waveform - Aaron serialize all of these
+  // Muscle Pressure Waveform
   double m_InspiratoryRiseFraction;
   double m_InspiratoryHoldFraction;
   double m_InspiratoryReleaseFraction;

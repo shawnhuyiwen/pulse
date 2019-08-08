@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
       // Pulse Tests //
       ////////////////////
 
-      peTest.ReadScenarios(peDir);
+      //peTest.ReadScenarios(peDir);
 
       //peTest.CardiovascularCircuitAndTransportTest(peDir);
       //peTest.CardiovascularAndRenalCircuitAndTransportTest(peDir);
@@ -133,6 +133,7 @@ int main(int argc, char* argv[])
       //cdmTest.PolarizedCapacitorTest(cdmDir);
       //cdmTest.PreChargeComplianceZeroVolume(cdmDir);
       //cdmTest.PreChargeComplianceNonZeroVolume(cdmDir);
+      //cdmTest.ComplianceVolumeChange(cdmDir);
       //cdmTest.CircuitLockingTest(cdmDir);
 
       // Basic Circuit Tests

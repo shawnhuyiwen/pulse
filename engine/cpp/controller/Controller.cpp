@@ -363,10 +363,10 @@ bool PulseController::SetupPatient()
     Warning(ss);
   }
 
-  //jbw - update validation to use instead of weight.
   //IDEAL BODY WEIGHT ----------------------------------------------------
   /// \cite green2017green
   //page 295
+  //Devine Formula
   if (m_Patient->HasIdealBodyWeight())
     Warning("Ignorning provided patient ideal body weight. It is determined by weight and body fat fraction.");
   double height_in = m_Patient->GetHeight().GetValue(LengthUnit::in);
@@ -732,7 +732,7 @@ bool PulseController::SetupPatient()
   //These are based on weight
   /// \cite ganong1995review
   double totalLungCapacity_L;
-  double computedTotalLungCapacity_L = 80.0 * weight_kg / 1000.0;
+  double computedTotalLungCapacity_L = 80.0 * idealWeight_kg / 1000.0;
   if (!m_Patient->HasTotalLungCapacity())
   {
     totalLungCapacity_L = computedTotalLungCapacity_L;
@@ -748,7 +748,7 @@ bool PulseController::SetupPatient()
   }
   
   double functionalResidualCapacity_L;
-  double computedFunctionalResidualCapacity_L = 30.0 * weight_kg / 1000.0;
+  double computedFunctionalResidualCapacity_L = 30.0 * idealWeight_kg / 1000.0;
   if (!m_Patient->HasFunctionalResidualCapacity())
   {
     functionalResidualCapacity_L = computedFunctionalResidualCapacity_L;
@@ -764,7 +764,7 @@ bool PulseController::SetupPatient()
   }
 
   double residualVolume_L;
-  double computRedesidualVolume_L = 16.0 * weight_kg / 1000.0;
+  double computRedesidualVolume_L = 16.0 * idealWeight_kg / 1000.0;
   if (!m_Patient->HasResidualVolume())
   {
     residualVolume_L = computRedesidualVolume_L;
@@ -810,7 +810,7 @@ bool PulseController::SetupPatient()
     err = true;
   }
 
-  double tidalVolume_L = 37.0 * weight_kg / 1000.0 - functionalResidualCapacity_L; 
+  double tidalVolume_L = 37.0 * idealWeight_kg / 1000.0 - functionalResidualCapacity_L;
   double vitalCapacity = totalLungCapacity_L - residualVolume_L;
   double expiratoryReserveVolume = functionalResidualCapacity_L - residualVolume_L;
   double inspiratoryReserveVolume = totalLungCapacity_L - functionalResidualCapacity_L - tidalVolume_L;
