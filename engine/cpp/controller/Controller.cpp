@@ -3695,14 +3695,20 @@ void PulseController::SetupRespiratory()
   SEFluidCircuitNode& Carina = cRespiratory.CreateNode(pulse::RespiratoryNode::Carina);
   Carina.GetPressure().SetValue(AmbientPresure, PressureUnit::cmH2O);
   Carina.GetVolumeBaseline().SetValue(0.05 * FunctionalResidualCapacity_L / 2.4, VolumeUnit::L); //Trachea Volume
-  // Right Dead Space
+  // Right Anatomic Dead Space
   SEFluidCircuitNode& RightAnatomicDeadSpace = cRespiratory.CreateNode(pulse::RespiratoryNode::RightAnatomicDeadSpace);
   RightAnatomicDeadSpace.GetPressure().SetValue(AmbientPresure, PressureUnit::cmH2O);
   RightAnatomicDeadSpace.GetVolumeBaseline().SetValue(RightLungRatio*physiologicDeadSpaceVolume_L, VolumeUnit::L);
-  // Left Dead Space
+  // Left Anatomic Dead Space
   SEFluidCircuitNode& LeftAnatomicDeadSpace = cRespiratory.CreateNode(pulse::RespiratoryNode::LeftAnatomicDeadSpace);
   LeftAnatomicDeadSpace.GetPressure().SetValue(AmbientPresure, PressureUnit::cmH2O);
   LeftAnatomicDeadSpace.GetVolumeBaseline().SetValue(LeftLungRatio*physiologicDeadSpaceVolume_L, VolumeUnit::L);
+  // Right Alveolar Dead Space
+  SEFluidCircuitNode& RightAlveolarDeadSpace = cRespiratory.CreateNode(pulse::RespiratoryNode::RightAlveolarDeadSpace);
+  RightAlveolarDeadSpace.GetPressure().SetValue(AmbientPresure, PressureUnit::cmH2O);
+  // Left Alveolar Dead Space
+  SEFluidCircuitNode& LeftAlveolarDeadSpace = cRespiratory.CreateNode(pulse::RespiratoryNode::LeftAlveolarDeadSpace);
+  LeftAlveolarDeadSpace.GetPressure().SetValue(AmbientPresure, PressureUnit::cmH2O);
   // Right Alveoli
   SEFluidCircuitNode& RightAlveoli = cRespiratory.CreateNode(pulse::RespiratoryNode::RightAlveoli);
   RightAlveoli.GetPressure().SetValue(AmbientPresure, PressureUnit::cmH2O);
@@ -3753,22 +3759,16 @@ void PulseController::SetupRespiratory()
   CarinaToRightAnatomicDeadSpace.GetResistanceBaseline().SetValue(BronchiResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   SEFluidCircuitPath& CarinaToLeftAnatomicDeadSpace = cRespiratory.CreatePath(Carina, LeftAnatomicDeadSpace, pulse::RespiratoryPath::CarinaToLeftAnatomicDeadSpace);
   CarinaToLeftAnatomicDeadSpace.GetResistanceBaseline().SetValue(BronchiResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  //SEFluidCircuitPath& RightAnatomicDeadSpaceToRightPleuralConnection = cRespiratory.CreatePath(RightAnatomicDeadSpace, RightPleuralConnection, pulse::RespiratoryPath::RightAnatomicDeadSpaceToRightPleuralConnection);
-  //RightAnatomicDeadSpaceToRightPleuralConnection.GetComplianceBaseline().SetValue(DeadSpaceCompliance, VolumePerPressureUnit::L_Per_cmH2O);
-  //RightAnatomicDeadSpaceToRightPleuralConnection.SetNextPolarizedState(eGate::Closed);
-  //SEFluidCircuitPath& LeftAnatomicDeadSpaceToLeftPleuralConnection = cRespiratory.CreatePath(LeftAnatomicDeadSpace, LeftPleuralConnection, pulse::RespiratoryPath::LeftAnatomicDeadSpaceToLeftPleuralConnection);
-  //LeftAnatomicDeadSpaceToLeftPleuralConnection.GetComplianceBaseline().SetValue(DeadSpaceCompliance, VolumePerPressureUnit::L_Per_cmH2O);
-  //LeftAnatomicDeadSpaceToLeftPleuralConnection.SetNextPolarizedState(eGate::Closed);
-  SEFluidCircuitPath& RightAnatomicDeadSpaceToRightAlveoli = cRespiratory.CreatePath(RightAnatomicDeadSpace, RightAlveoli, pulse::RespiratoryPath::RightAnatomicDeadSpaceToRightAlveoli);
-  RightAnatomicDeadSpaceToRightAlveoli.GetResistanceBaseline().SetValue(AlveoliDuctResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  SEFluidCircuitPath& LeftAnatomicDeadSpaceToLeftAlveoli = cRespiratory.CreatePath(LeftAnatomicDeadSpace, LeftAlveoli, pulse::RespiratoryPath::LeftAnatomicDeadSpaceToLeftAlveoli);
-  LeftAnatomicDeadSpaceToLeftAlveoli.GetResistanceBaseline().SetValue(AlveoliDuctResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  SEFluidCircuitPath& RightAnatomicDeadSpaceToRightAlveolarDeadSpace = cRespiratory.CreatePath(RightAnatomicDeadSpace, RightAlveolarDeadSpace, pulse::RespiratoryPath::RightAnatomicDeadSpaceToRightAlveolarDeadSpace);
+  RightAnatomicDeadSpaceToRightAlveolarDeadSpace.GetResistanceBaseline().SetValue(AlveoliDuctResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  SEFluidCircuitPath& LeftAnatomicDeadSpaceToLeftAlveolarDeadSpace = cRespiratory.CreatePath(LeftAnatomicDeadSpace, LeftAlveolarDeadSpace, pulse::RespiratoryPath::LeftAnatomicDeadSpaceToLeftAlveolarDeadSpace);
+  LeftAnatomicDeadSpaceToLeftAlveolarDeadSpace.GetResistanceBaseline().SetValue(AlveoliDuctResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);  
+  SEFluidCircuitPath& RightAlveolarDeadSpaceToRightAlveoli = cRespiratory.CreatePath(RightAlveolarDeadSpace, RightAlveoli, pulse::RespiratoryPath::RightAlveolarDeadSpaceToRightAlveoli);
+  SEFluidCircuitPath& LeftAlveolarDeadSpaceToLeftAlveoli = cRespiratory.CreatePath(LeftAlveolarDeadSpace, LeftAlveoli, pulse::RespiratoryPath::LeftAlveolarDeadSpaceToLeftAlveoli);  
   SEFluidCircuitPath& RightAlveoliToRightPleuralConnection = cRespiratory.CreatePath(RightAlveoli, RightPleuralConnection, pulse::RespiratoryPath::RightAlveoliToRightPleuralConnection);
   RightAlveoliToRightPleuralConnection.GetComplianceBaseline().SetValue(LungCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
-  //RightAlveoliToRightPleuralConnection.SetNextPolarizedState(eGate::Closed);
   SEFluidCircuitPath& LeftAlveoliToLeftPleuralConnection = cRespiratory.CreatePath(LeftAlveoli, LeftPleuralConnection, pulse::RespiratoryPath::LeftAlveoliToLeftPleuralConnection);
   LeftAlveoliToLeftPleuralConnection.GetComplianceBaseline().SetValue(LungCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
-  //LeftAlveoliToLeftPleuralConnection.SetNextPolarizedState(eGate::Closed);
   //Need a no element path to be able to include a node with no volume, so it doesn't get modified by compliances
   SEFluidCircuitPath& RightPleuralConnectionToRightPleural = cRespiratory.CreatePath(RightPleuralConnection, RightPleural, pulse::RespiratoryPath::RightPleuralConnectionToRightPleural);
   SEFluidCircuitPath& LeftPleuralConnectionToLeftPleural = cRespiratory.CreatePath(LeftPleuralConnection, LeftPleural, pulse::RespiratoryPath::LeftPleuralConnectionToLeftPleural);
@@ -3811,10 +3811,8 @@ void PulseController::SetupRespiratory()
   // Paths to RespiratoryMuscle
   SEFluidCircuitPath& RightPleuralToRespiratoryMuscle = cRespiratory.CreatePath(RightPleural, RespiratoryMuscle, pulse::RespiratoryPath::RightPleuralToRespiratoryMuscle);
   RightPleuralToRespiratoryMuscle.GetComplianceBaseline().SetValue(ChestWallCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
-  //RightPleuralToRespiratoryMuscle.SetNextPolarizedState(eGate::Closed);
   SEFluidCircuitPath& LeftPleuralToRespiratoryMuscle = cRespiratory.CreatePath(LeftPleural, RespiratoryMuscle, pulse::RespiratoryPath::LeftPleuralToRespiratoryMuscle);
   LeftPleuralToRespiratoryMuscle.GetComplianceBaseline().SetValue(ChestWallCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
-  //LeftPleuralToRespiratoryMuscle.SetNextPolarizedState(eGate::Closed);
 
   cRespiratory.SetNextAndCurrentFromBaselines();
   cRespiratory.StateChange();
@@ -3828,14 +3826,18 @@ void PulseController::SetupRespiratory()
   pStomach.MapNode(Stomach);
   SEGasCompartment& pCarina = m_Compartments->CreateGasCompartment(pulse::PulmonaryCompartment::Carina);
   pCarina.MapNode(Carina);
-  SEGasCompartment& pLeftDeadSpace = m_Compartments->CreateGasCompartment(pulse::PulmonaryCompartment::LeftDeadSpace);
-  pLeftDeadSpace.MapNode(LeftAnatomicDeadSpace);
+  SEGasCompartment& pLeftAnatomicDeadSpace = m_Compartments->CreateGasCompartment(pulse::PulmonaryCompartment::LeftAnatomicDeadSpace);
+  pLeftAnatomicDeadSpace.MapNode(LeftAnatomicDeadSpace);
+  SEGasCompartment& pLeftAlveolarDeadSpace = m_Compartments->CreateGasCompartment(pulse::PulmonaryCompartment::LeftAlveolarDeadSpace);
+  pLeftAlveolarDeadSpace.MapNode(LeftAlveolarDeadSpace);
   SEGasCompartment& pLeftAlveoli = m_Compartments->CreateGasCompartment(pulse::PulmonaryCompartment::LeftAlveoli);
   pLeftAlveoli.MapNode(LeftAlveoli);
   SEGasCompartment& pLeftPleuralCavity = m_Compartments->CreateGasCompartment(pulse::PulmonaryCompartment::LeftPleuralCavity);
   pLeftPleuralCavity.MapNode(LeftPleural);
-  SEGasCompartment& pRightDeadSpace = m_Compartments->CreateGasCompartment(pulse::PulmonaryCompartment::RightDeadSpace);
-  pRightDeadSpace.MapNode(RightAnatomicDeadSpace);
+  SEGasCompartment& pRightAnatomicDeadSpace = m_Compartments->CreateGasCompartment(pulse::PulmonaryCompartment::RightAnatomicDeadSpace);
+  pRightAnatomicDeadSpace.MapNode(RightAnatomicDeadSpace);
+  SEGasCompartment& pRightAlveolarDeadSpace = m_Compartments->CreateGasCompartment(pulse::PulmonaryCompartment::RightAlveolarDeadSpace);
+  pRightAlveolarDeadSpace.MapNode(RightAlveolarDeadSpace);
   SEGasCompartment& pRightAlveoli = m_Compartments->CreateGasCompartment(pulse::PulmonaryCompartment::RightAlveoli);
   pRightAlveoli.MapNode(RightAlveoli);
   SEGasCompartment& pRightPleuralCavity = m_Compartments->CreateGasCompartment(pulse::PulmonaryCompartment::RightPleuralCavity);
@@ -3851,8 +3853,10 @@ void PulseController::SetupRespiratory()
 
   // Set up hierarchy
   SEGasCompartment& pLeftLung = m_Compartments->CreateGasCompartment(pulse::PulmonaryCompartment::LeftLung);
+  pLeftLung.AddChild(pLeftAnatomicDeadSpace);
   pLeftLung.AddChild(pLeftAlveoli);
   SEGasCompartment& pRightLung = m_Compartments->CreateGasCompartment(pulse::PulmonaryCompartment::RightLung);
+  pRightLung.AddChild(pRightAnatomicDeadSpace);
   pRightLung.AddChild(pRightAlveoli);
   SEGasCompartment& pLungs = m_Compartments->CreateGasCompartment(pulse::PulmonaryCompartment::Lungs);
   pLungs.AddChild(pLeftLung);
@@ -3869,14 +3873,18 @@ void PulseController::SetupRespiratory()
   pMouthToCarina.MapPath(MouthToCarina);
   SEGasCompartmentLink& pMouthToStomach = m_Compartments->CreateGasLink(pMouth, pStomach, pulse::PulmonaryLink::MouthToStomach);
   pMouthToStomach.MapPath(MouthToStomach);
-  SEGasCompartmentLink& pCarinaToLeftDeadSpace = m_Compartments->CreateGasLink(pCarina, pLeftDeadSpace, pulse::PulmonaryLink::CarinaToLeftDeadSpace);
-  pCarinaToLeftDeadSpace.MapPath(CarinaToLeftAnatomicDeadSpace);
-  SEGasCompartmentLink& pLeftDeadSpaceToAlveoli = m_Compartments->CreateGasLink(pLeftDeadSpace, pLeftAlveoli, pulse::PulmonaryLink::LeftDeadSpaceToAlveoli);
-  pLeftDeadSpaceToAlveoli.MapPath(LeftAnatomicDeadSpaceToLeftAlveoli);
-  SEGasCompartmentLink& pCarinaToRightDeadSpace = m_Compartments->CreateGasLink(pCarina, pRightDeadSpace, pulse::PulmonaryLink::CarinaToRightDeadSpace);
-  pCarinaToRightDeadSpace.MapPath(CarinaToRightAnatomicDeadSpace);
-  SEGasCompartmentLink& pRightDeadSpaceToAlveoli = m_Compartments->CreateGasLink(pRightDeadSpace, pRightAlveoli, pulse::PulmonaryLink::RightDeadSpaceToAlveoli);
-  pRightDeadSpaceToAlveoli.MapPath(RightAnatomicDeadSpaceToRightAlveoli);
+  SEGasCompartmentLink& pCarinaToLeftAnatomicDeadSpace = m_Compartments->CreateGasLink(pCarina, pLeftAnatomicDeadSpace, pulse::PulmonaryLink::CarinaToLeftAnatomicDeadSpace);
+  pCarinaToLeftAnatomicDeadSpace.MapPath(CarinaToLeftAnatomicDeadSpace);
+  SEGasCompartmentLink& pLeftAnatomicDeadSpaceToLeftAlveolarDeadSpace = m_Compartments->CreateGasLink(pLeftAnatomicDeadSpace, pLeftAlveolarDeadSpace, pulse::PulmonaryLink::LeftAnatomicDeadSpaceToLeftAlveolarDeadSpace);
+  pLeftAnatomicDeadSpaceToLeftAlveolarDeadSpace.MapPath(LeftAnatomicDeadSpaceToLeftAlveolarDeadSpace);
+  SEGasCompartmentLink& pLeftAlveolarDeadSpaceToLeftAlveoli = m_Compartments->CreateGasLink(pLeftAlveolarDeadSpace, pLeftAlveoli, pulse::PulmonaryLink::LeftAlveolarDeadSpaceToLeftAlveoli);
+  pLeftAlveolarDeadSpaceToLeftAlveoli.MapPath(LeftAlveolarDeadSpaceToLeftAlveoli);
+  SEGasCompartmentLink& pCarinaToRightAnatomicDeadSpace = m_Compartments->CreateGasLink(pCarina, pRightAnatomicDeadSpace, pulse::PulmonaryLink::CarinaToRightAnatomicDeadSpace);
+  pCarinaToRightAnatomicDeadSpace.MapPath(CarinaToRightAnatomicDeadSpace);
+  SEGasCompartmentLink& pRightAnatomicDeadSpaceToRightAlveolarDeadSpace = m_Compartments->CreateGasLink(pRightAnatomicDeadSpace, pRightAlveolarDeadSpace, pulse::PulmonaryLink::RightAnatomicDeadSpaceToRightAlveolarDeadSpace);
+  pRightAnatomicDeadSpaceToRightAlveolarDeadSpace.MapPath(RightAnatomicDeadSpaceToRightAlveolarDeadSpace);
+  SEGasCompartmentLink& pRightAlveolarDeadSpaceToRightAlveoli = m_Compartments->CreateGasLink(pRightAlveolarDeadSpace, pRightAlveoli, pulse::PulmonaryLink::RightAlveolarDeadSpaceToRightAlveoli);
+  pRightAlveolarDeadSpaceToRightAlveoli.MapPath(RightAlveolarDeadSpaceToRightAlveoli);
   SEGasCompartmentLink& pEnvironmentToLeftChestLeak = m_Compartments->CreateGasLink(*gEnvironment, pLeftChestLeak, pulse::PulmonaryLink::EnvironmentToLeftChestLeak);
   pEnvironmentToLeftChestLeak.MapPath(EnvironmentToLeftChestLeak);
   SEGasCompartmentLink& pEnvironmentToRightChestLeak = m_Compartments->CreateGasLink(*gEnvironment, pRightChestLeak, pulse::PulmonaryLink::EnvironmentToRightChestLeak);
@@ -3904,9 +3912,11 @@ void PulseController::SetupRespiratory()
   gRespiratory.AddCompartment(pMouth);
   gRespiratory.AddCompartment(pStomach);
   gRespiratory.AddCompartment(pCarina);
-  gRespiratory.AddCompartment(pLeftDeadSpace);
+  gRespiratory.AddCompartment(pLeftAnatomicDeadSpace);
+  gRespiratory.AddCompartment(pLeftAlveolarDeadSpace);
   gRespiratory.AddCompartment(pLeftAlveoli);
-  gRespiratory.AddCompartment(pRightDeadSpace);
+  gRespiratory.AddCompartment(pRightAnatomicDeadSpace);
+  gRespiratory.AddCompartment(pRightAlveolarDeadSpace);
   gRespiratory.AddCompartment(pRightPleuralCavity);
   gRespiratory.AddCompartment(pLeftPleuralCavity);
   gRespiratory.AddCompartment(pRightAlveoli);
@@ -3917,10 +3927,12 @@ void PulseController::SetupRespiratory()
   gRespiratory.AddLink(pEnvironmentToMouth);
   gRespiratory.AddLink(pMouthToCarina);
   gRespiratory.AddLink(pMouthToStomach);
-  gRespiratory.AddLink(pCarinaToLeftDeadSpace);
-  gRespiratory.AddLink(pLeftDeadSpaceToAlveoli);
-  gRespiratory.AddLink(pCarinaToRightDeadSpace);
-  gRespiratory.AddLink(pRightDeadSpaceToAlveoli);
+  gRespiratory.AddLink(pCarinaToLeftAnatomicDeadSpace);
+  gRespiratory.AddLink(pLeftAnatomicDeadSpaceToLeftAlveolarDeadSpace);
+  gRespiratory.AddLink(pLeftAlveolarDeadSpaceToLeftAlveoli);
+  gRespiratory.AddLink(pCarinaToRightAnatomicDeadSpace);
+  gRespiratory.AddLink(pRightAnatomicDeadSpaceToRightAlveolarDeadSpace);
+  gRespiratory.AddLink(pRightAlveolarDeadSpaceToRightAlveoli);
   gRespiratory.AddLink(pEnvironmentToLeftChestLeak);
   gRespiratory.AddLink(pEnvironmentToRightChestLeak);
   gRespiratory.AddLink(pLeftAlveoliLeakToLeftPleural);

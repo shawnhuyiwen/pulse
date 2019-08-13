@@ -114,9 +114,11 @@ void Respiratory::Clear()
   m_Environment = nullptr;
   m_AerosolMouth = nullptr;
   m_AerosolCarina = nullptr;
-  m_AerosolLeftDeadSpace = nullptr;
+  m_AerosolLeftAnatomicDeadSpace = nullptr;
+  m_AerosolLeftAlveolarDeadSpace = nullptr;
   m_AerosolLeftAlveoli = nullptr;
-  m_AerosolRightDeadSpace = nullptr;
+  m_AerosolRightAnatomicDeadSpace = nullptr;
+  m_AerosolRightAlveolarDeadSpace = nullptr;
   m_AerosolRightAlveoli = nullptr;
   m_Lungs = nullptr;
   m_LeftLungExtravascular = nullptr;
@@ -132,21 +134,24 @@ void Respiratory::Clear()
 
   m_Mouth = nullptr;
   m_LeftAlveoli = nullptr;
-  m_LeftDeadSpace = nullptr;
+  m_LeftAnatomicDeadSpace = nullptr;
+  m_LeftAlveolarDeadSpace = nullptr;
   m_LeftPleural = nullptr;
   m_RespiratoryMuscle = nullptr;
   m_RightAlveoli = nullptr;
-  m_RightDeadSpace = nullptr;
+  m_RightAnatomicDeadSpace = nullptr;
+  m_RightAlveolarDeadSpace = nullptr;
   m_RightPleural = nullptr;
 
   m_CarinaToLeftAnatomicDeadSpace = nullptr;
   m_CarinaToRightAnatomicDeadSpace = nullptr;
-  m_LeftAnatomicDeadSpaceToLeftAlveoli = nullptr;
-  m_RightAnatomicDeadSpaceToRightAlveoli = nullptr;
+  m_LeftAnatomicDeadSpaceToLeftAlveolarDeadSpace = nullptr;
+  m_RightAnatomicDeadSpaceToRightAlveolarDeadSpace = nullptr;
+  m_LeftAlveolarDeadSpaceToLeftAlveoli = nullptr;
+  m_RightAlveolarDeadSpaceToRightAlveoli = nullptr;
   m_RightPleuralToRespiratoryMuscle = nullptr;
   m_LeftPleuralToRespiratoryMuscle = nullptr;
   m_DriverPressurePath = nullptr;
-  m_LeftDriverPressurePath = nullptr;
   m_MouthToCarina = nullptr;
   m_MouthToStomach = nullptr;
   m_EnvironmentToLeftChestLeak = nullptr;
@@ -179,7 +184,6 @@ void Respiratory::Initialize()
   m_NotBreathing = false;
   m_TopBreathTotalVolume_L = 0.0;
   m_TopBreathAlveoliVolume_L = 0.0;
-  m_TopBreathDeadSpaceVolume_L = 0.0;
   m_TopBreathPleuralVolume_L = 0.0;
   m_TopBreathPleuralPressure_cmH2O = 0.0;
   m_TopBreathAlveoliPressure_cmH2O = 0.0;
@@ -190,7 +194,6 @@ void Respiratory::Initialize()
   m_BottomBreathElapsedTime_min = 0.0;
   m_BottomBreathTotalVolume_L = 0.0;
   m_BottomBreathAlveoliVolume_L = m_BottomBreathTotalVolume_L;
-  m_BottomBreathDeadSpaceVolume_L = 0.0;
   m_BottomBreathPleuralVolume_L = 0.0;
   m_BottomBreathPleuralPressure_cmH2O = 0.0;
   m_TopBreathAlveoliPressure_cmH2O = 0.0;
@@ -240,8 +243,8 @@ void Respiratory::Initialize()
   GetRespirationRate().SetValue(RespirationRate_Per_min, FrequencyUnit::Per_min);
   GetCarricoIndex().SetValue(452.0, PressureUnit::mmHg);
 
-  double AnatomicDeadSpace_L = m_LeftDeadSpace->GetVolumeBaseline(VolumeUnit::L) + m_RightDeadSpace->GetVolumeBaseline(VolumeUnit::L);
-  double AlveolarDeadSpace_L = 0.0; //jbw - Populate after adding a new node
+  double AnatomicDeadSpace_L = m_LeftAnatomicDeadSpace->GetVolumeBaseline(VolumeUnit::L) + m_RightAnatomicDeadSpace->GetVolumeBaseline(VolumeUnit::L);
+  double AlveolarDeadSpace_L = 0.0;
   GetAnatomicDeadSpace().SetValue(AnatomicDeadSpace_L, VolumeUnit::L);
   GetAlveolarDeadSpace().SetValue(AlveolarDeadSpace_L, VolumeUnit::L);
   GetPhysiologicDeadSpace().SetValue(AlveolarDeadSpace_L + AlveolarDeadSpace_L, VolumeUnit::L);
@@ -314,9 +317,11 @@ void Respiratory::SetUp()
   m_Environment = m_data.GetCompartments().GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
   m_AerosolMouth = m_data.GetCompartments().GetLiquidCompartment(pulse::PulmonaryCompartment::Mouth);
   m_AerosolCarina = m_data.GetCompartments().GetLiquidCompartment(pulse::PulmonaryCompartment::Carina);
-  m_AerosolLeftDeadSpace = m_data.GetCompartments().GetLiquidCompartment(pulse::PulmonaryCompartment::LeftDeadSpace);
+  m_AerosolLeftAnatomicDeadSpace = m_data.GetCompartments().GetLiquidCompartment(pulse::PulmonaryCompartment::LeftAnatomicDeadSpace);
+  m_AerosolLeftAlveolarDeadSpace = m_data.GetCompartments().GetLiquidCompartment(pulse::PulmonaryCompartment::LeftAlveolarDeadSpace);
   m_AerosolLeftAlveoli = m_data.GetCompartments().GetLiquidCompartment(pulse::PulmonaryCompartment::LeftAlveoli);
-  m_AerosolRightDeadSpace = m_data.GetCompartments().GetLiquidCompartment(pulse::PulmonaryCompartment::RightDeadSpace);
+  m_AerosolRightAnatomicDeadSpace = m_data.GetCompartments().GetLiquidCompartment(pulse::PulmonaryCompartment::RightAnatomicDeadSpace);
+  m_AerosolRightAlveolarDeadSpace = m_data.GetCompartments().GetLiquidCompartment(pulse::PulmonaryCompartment::RightAlveolarDeadSpace);
   m_AerosolRightAlveoli = m_data.GetCompartments().GetLiquidCompartment(pulse::PulmonaryCompartment::RightAlveoli);
   m_Lungs = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Lungs);
   m_PleuralCavity = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::PleuralCavity);
@@ -335,27 +340,33 @@ void Respiratory::SetUp()
   m_AerosolEffects.clear();
   m_AerosolEffects.push_back(m_data.GetCompartments().GetLiquidCompartment(pulse::PulmonaryCompartment::Carina));
   m_AerosolEffects.push_back(m_data.GetCompartments().GetLiquidCompartment(pulse::PulmonaryCompartment::LeftAlveoli));
-  m_AerosolEffects.push_back(m_data.GetCompartments().GetLiquidCompartment(pulse::PulmonaryCompartment::LeftDeadSpace));
+  m_AerosolEffects.push_back(m_data.GetCompartments().GetLiquidCompartment(pulse::PulmonaryCompartment::LeftAnatomicDeadSpace));
+  m_AerosolEffects.push_back(m_data.GetCompartments().GetLiquidCompartment(pulse::PulmonaryCompartment::LeftAlveolarDeadSpace));
   m_AerosolEffects.push_back(m_data.GetCompartments().GetLiquidCompartment(pulse::PulmonaryCompartment::RightAlveoli));
-  m_AerosolEffects.push_back(m_data.GetCompartments().GetLiquidCompartment(pulse::PulmonaryCompartment::RightDeadSpace));
+  m_AerosolEffects.push_back(m_data.GetCompartments().GetLiquidCompartment(pulse::PulmonaryCompartment::RightAnatomicDeadSpace));
+  m_AerosolEffects.push_back(m_data.GetCompartments().GetLiquidCompartment(pulse::PulmonaryCompartment::RightAlveolarDeadSpace));
   //Circuits
   m_RespiratoryCircuit = &m_data.GetCircuits().GetRespiratoryCircuit();
   //Nodes
   m_Mouth = m_RespiratoryCircuit->GetNode(pulse::RespiratoryNode::Mouth);
   m_LeftAlveoli = m_RespiratoryCircuit->GetNode(pulse::RespiratoryNode::LeftAlveoli);
-  m_LeftDeadSpace = m_RespiratoryCircuit->GetNode(pulse::RespiratoryNode::LeftAnatomicDeadSpace);
+  m_LeftAnatomicDeadSpace = m_RespiratoryCircuit->GetNode(pulse::RespiratoryNode::LeftAnatomicDeadSpace);
+  m_LeftAlveolarDeadSpace = m_RespiratoryCircuit->GetNode(pulse::RespiratoryNode::LeftAlveolarDeadSpace);
   m_LeftPleural = m_RespiratoryCircuit->GetNode(pulse::RespiratoryNode::LeftPleural);
   m_RespiratoryMuscle = m_RespiratoryCircuit->GetNode(pulse::RespiratoryNode::RespiratoryMuscle);
   m_RightAlveoli = m_RespiratoryCircuit->GetNode(pulse::RespiratoryNode::RightAlveoli);
-  m_RightDeadSpace = m_RespiratoryCircuit->GetNode(pulse::RespiratoryNode::RightAnatomicDeadSpace);
+  m_RightAnatomicDeadSpace = m_RespiratoryCircuit->GetNode(pulse::RespiratoryNode::RightAnatomicDeadSpace);
+  m_RightAlveolarDeadSpace = m_RespiratoryCircuit->GetNode(pulse::RespiratoryNode::RightAlveolarDeadSpace);
   m_RightPleural = m_RespiratoryCircuit->GetNode(pulse::RespiratoryNode::RightPleural);
   m_Ambient = m_RespiratoryCircuit->GetNode(pulse::EnvironmentNode::Ambient);
   m_Stomach = m_RespiratoryCircuit->GetNode(pulse::RespiratoryNode::Stomach);
   //Paths
   m_CarinaToLeftAnatomicDeadSpace = m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::CarinaToLeftAnatomicDeadSpace);
   m_CarinaToRightAnatomicDeadSpace = m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::CarinaToRightAnatomicDeadSpace);
-  m_LeftAnatomicDeadSpaceToLeftAlveoli = m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::LeftAnatomicDeadSpaceToLeftAlveoli);
-  m_RightAnatomicDeadSpaceToRightAlveoli = m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::RightAnatomicDeadSpaceToRightAlveoli);
+  m_LeftAnatomicDeadSpaceToLeftAlveolarDeadSpace = m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::LeftAnatomicDeadSpaceToLeftAlveolarDeadSpace);
+  m_RightAnatomicDeadSpaceToRightAlveolarDeadSpace = m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::RightAnatomicDeadSpaceToRightAlveolarDeadSpace);
+  m_LeftAlveolarDeadSpaceToLeftAlveoli = m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::LeftAlveolarDeadSpaceToLeftAlveoli);
+  m_RightAlveolarDeadSpaceToRightAlveoli = m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::RightAlveolarDeadSpaceToRightAlveoli);
   m_RightPleuralToRespiratoryMuscle = m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::RightPleuralToRespiratoryMuscle);
   m_LeftPleuralToRespiratoryMuscle = m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::LeftPleuralToRespiratoryMuscle);
   m_DriverPressurePath = m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::EnvironmentToRespiratoryMuscle);
@@ -369,8 +380,6 @@ void Respiratory::SetUp()
   m_RightPleuralToEnvironment = m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::RightPleuralToEnvironment);
   m_RightAlveoliToRightPleuralConnection = m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::RightAlveoliToRightPleuralConnection);
   m_LeftAlveoliToLeftPleuralConnection = m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::LeftAlveoliToLeftPleuralConnection);
-  m_RightAnatomicDeadSpaceToRightPleuralConnection = m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::RightAnatomicDeadSpaceToRightPleuralConnection);
-  m_LeftAnatomicDeadSpaceToLeftPleuralConnection = m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::LeftAnatomicDeadSpaceToLeftPleuralConnection);
   m_ConnectionToMouth = m_data.GetCircuits().GetRespiratoryAndMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::ConnectionToMouth);
   m_GroundToConnection = m_data.GetCircuits().GetRespiratoryAndMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::GroundToConnection);
 
@@ -610,8 +619,8 @@ void Respiratory::ProcessAerosolSubstances()
     carinaTotalDepositied_ug = subQ->GetMassDeposited().IncrementValue(carinaDepositied_ug, MassUnit::ug);
     carinaResistanceModifier += carinaTotalDepositied_ug*inflammationCoefficient;
     //Left DeadSpace
-    subQ = m_AerosolLeftDeadSpace->GetSubstanceQuantities()[i];
-    leftDeadSpaceDepositied_ug = subQ->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*m_AerosolLeftDeadSpace->GetInFlow(VolumePerTimeUnit::mL_Per_s)*m_dt_s*SIDECoeff->GetDeadSpace();
+    subQ = m_AerosolLeftAnatomicDeadSpace->GetSubstanceQuantities()[i];
+    leftDeadSpaceDepositied_ug = subQ->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*m_AerosolLeftAnatomicDeadSpace->GetInFlow(VolumePerTimeUnit::mL_Per_s)*m_dt_s*SIDECoeff->GetDeadSpace();
     if (leftDeadSpaceDepositied_ug > subQ->GetMass(MassUnit::ug))
     {
       leftDeadSpaceDepositied_ug = subQ->GetMass(MassUnit::ug);
@@ -636,8 +645,8 @@ void Respiratory::ProcessAerosolSubstances()
     leftAlveoliTotalDepositied_ug = subQ->GetMassDeposited().IncrementValue(leftAlveoliDepositied_ug, MassUnit::ug);
     leftAlveoliResistanceModifier += leftAlveoliTotalDepositied_ug*inflammationCoefficient;
     //Right DeadSpace
-    subQ = m_AerosolRightDeadSpace->GetSubstanceQuantities()[i];
-    rightDeadSpaceDepositied_ug = subQ->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*m_AerosolRightDeadSpace->GetInFlow(VolumePerTimeUnit::mL_Per_s)*m_dt_s*SIDECoeff->GetDeadSpace();
+    subQ = m_AerosolRightAnatomicDeadSpace->GetSubstanceQuantities()[i];
+    rightDeadSpaceDepositied_ug = subQ->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*m_AerosolRightAnatomicDeadSpace->GetInFlow(VolumePerTimeUnit::mL_Per_s)*m_dt_s*SIDECoeff->GetDeadSpace();
     if (rightDeadSpaceDepositied_ug > subQ->GetMass(MassUnit::ug))
     {
       rightDeadSpaceDepositied_ug = subQ->GetMass(MassUnit::ug);
@@ -694,8 +703,8 @@ void Respiratory::ProcessAerosolSubstances()
 
     // Change resistances due to deposition
   double dTracheaResistance = m_MouthToCarina->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L)*carinaResistanceModifier;
-  double dLeftAlveoliResistance = m_LeftAnatomicDeadSpaceToLeftAlveoli->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L)*leftAlveoliResistanceModifier;
-  double dRightAlveoliResistance = m_RightAnatomicDeadSpaceToRightAlveoli->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L)*rightAlveoliResistanceModifier;
+  double dLeftAlveoliResistance = m_LeftAnatomicDeadSpaceToLeftAlveolarDeadSpace->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L)*leftAlveoliResistanceModifier;
+  double dRightAlveoliResistance = m_RightAnatomicDeadSpaceToRightAlveolarDeadSpace->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L)*rightAlveoliResistanceModifier;
 
   double dLeftBronchiResistance = m_CarinaToLeftAnatomicDeadSpace->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   double dRightBronchiResistance = m_CarinaToRightAnatomicDeadSpace->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
@@ -707,8 +716,8 @@ void Respiratory::ProcessAerosolSubstances()
   m_MouthToCarina->GetNextResistance().SetValue(dTracheaResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   m_CarinaToLeftAnatomicDeadSpace->GetNextResistance().SetValue(dLeftBronchiResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   m_CarinaToRightAnatomicDeadSpace->GetNextResistance().SetValue(dRightBronchiResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  m_LeftAnatomicDeadSpaceToLeftAlveoli->GetNextResistance().SetValue(dLeftAlveoliResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  m_RightAnatomicDeadSpaceToRightAlveoli->GetNextResistance().SetValue(dRightAlveoliResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  m_LeftAnatomicDeadSpaceToLeftAlveolarDeadSpace->GetNextResistance().SetValue(dLeftAlveoliResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  m_RightAnatomicDeadSpaceToRightAlveolarDeadSpace->GetNextResistance().SetValue(dRightAlveoliResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -1144,7 +1153,7 @@ void Respiratory::RespiratoryDriver()
 
       //Target Tidal Volume (i.e. Driver amplitude) *************************************************************************
       //Calculate the target Tidal Volume based on the Alveolar Ventilation
-      double dTargetPulmonaryVentilation_L_Per_min = dTargetAlveolarVentilation_L_Per_min + GetTotalDeadSpaceVentilation(VolumePerTimeUnit::L_Per_min);
+      double dTargetPulmonaryVentilation_L_Per_min = dTargetAlveolarVentilation_L_Per_min;
 
       double dMaximumPulmonaryVentilationRate = m_data.GetConfiguration().GetPulmonaryVentilationRateMaximum(VolumePerTimeUnit::L_Per_min);
       /// \event Patient: Maximum Pulmonary Ventilation Rate : Pulmonary ventilation exceeds maximum value
@@ -1938,8 +1947,14 @@ void Respiratory::CalculateVitalSigns()
   double totalLungVolume_L = m_Lungs->GetVolume(VolumeUnit::L);
   GetTotalLungVolume().Set(m_Lungs->GetVolume());
 
-  double AnatomicDeadSpace_L = m_LeftDeadSpace->GetVolumeBaseline(VolumeUnit::L) + m_RightDeadSpace->GetVolumeBaseline(VolumeUnit::L);
-  double AlveolarDeadSpace_L = 0.0; //jbw - Populate after adding a new node
+  double AnatomicDeadSpace_L = m_LeftAnatomicDeadSpace->GetNextVolume(VolumeUnit::L) + m_RightAnatomicDeadSpace->GetNextVolume(VolumeUnit::L);
+  double LeftAlveolarDeadSpace_L = 0.0;
+  if (m_LeftAlveolarDeadSpace->HasNextVolume())
+    LeftAlveolarDeadSpace_L = m_LeftAlveolarDeadSpace->GetNextVolume(VolumeUnit::L);
+  double RightAlveolarDeadSpace_L = 0.0;
+  if (m_RightAlveolarDeadSpace->HasNextVolume())
+    RightAlveolarDeadSpace_L = m_RightAlveolarDeadSpace->GetNextVolume(VolumeUnit::L);
+  double AlveolarDeadSpace_L = LeftAlveolarDeadSpace_L + RightAlveolarDeadSpace_L;
   GetAnatomicDeadSpace().SetValue(AnatomicDeadSpace_L, VolumeUnit::L);  
   GetAlveolarDeadSpace().SetValue(AlveolarDeadSpace_L, VolumeUnit::L);
   GetPhysiologicDeadSpace().SetValue(AnatomicDeadSpace_L + AlveolarDeadSpace_L, VolumeUnit::L);
@@ -2013,7 +2028,6 @@ void Respiratory::CalculateVitalSigns()
       m_BottomBreathTotalVolume_L = totalLungVolume_L;
       m_BottomBreathElapsedTime_min = m_ElapsedBreathingCycleTime_min - m_TopBreathElapsedTime_min;
       m_BottomBreathAlveoliVolume_L = m_RightAlveoli->GetNextVolume().GetValue(VolumeUnit::L) + m_LeftAlveoli->GetNextVolume().GetValue(VolumeUnit::L);
-      m_BottomBreathDeadSpaceVolume_L = m_RightDeadSpace->GetNextVolume().GetValue(VolumeUnit::L) + m_LeftDeadSpace->GetNextVolume().GetValue(VolumeUnit::L);
       m_BottomBreathPleuralVolume_L = m_RightPleural->GetNextVolume().GetValue(VolumeUnit::L) + m_LeftPleural->GetNextVolume().GetValue(VolumeUnit::L);
       m_BottomBreathPleuralPressure_cmH2O = pleuralPressure_cmH2O;
       m_BottomBreathAlveoliPressure_cmH2O = alveolarPressure_cmH2O;
@@ -2040,7 +2054,6 @@ void Respiratory::CalculateVitalSigns()
 
       double TidalVolume_L = std::abs(m_TopBreathTotalVolume_L - m_BottomBreathTotalVolume_L);
       double AlveoliDeltaVolume_L = std::abs(m_TopBreathAlveoliVolume_L - m_BottomBreathAlveoliVolume_L);
-      double DeadSpaceDeltaVolume_L = std::abs(m_TopBreathDeadSpaceVolume_L - m_BottomBreathDeadSpaceVolume_L);
       double PleuralDeltaVolume_L = std::abs(m_TopBreathPleuralVolume_L - m_BottomBreathPleuralVolume_L);
       double PleuralDeltaPressure_cmH2O = std::abs((m_BottomBreathPleuralPressure_cmH2O - m_BottomBreathDriverPressure_cmH2O) - (m_TopBreathPleuralPressure_cmH2O - m_TopBreathDriverPressure_cmH2O));
       double AlveoliDeltaPressure_cmH2O = std::abs((m_BottomBreathAlveoliPressure_cmH2O - m_BottomBreathPleuralPressure_cmH2O) - (m_TopBreathAlveoliPressure_cmH2O - m_TopBreathPleuralPressure_cmH2O));
@@ -2059,10 +2072,8 @@ void Respiratory::CalculateVitalSigns()
       // Calculate Ventilations
       GetTotalPulmonaryVentilation().SetValue(TidalVolume_L * RespirationRate_Per_min, VolumePerTimeUnit::L_Per_min);
       GetSpecificVentilation().SetValue(TidalVolume_L / m_InstantaneousFunctionalResidualCapacity_L);
-      double AnatomicDeadspaceVolume_L = m_RightDeadSpace->GetNextVolume().GetValue(VolumeUnit::L) + m_LeftDeadSpace->GetNextVolume().GetValue(VolumeUnit::L);
-      double AlveolarDeadspaceVolume_L = 0.0; //jbw - Update with new nodes
       GetTotalAlveolarVentilation().SetValue(TidalVolume_L * RespirationRate_Per_min, VolumePerTimeUnit::L_Per_min);
-      GetTotalDeadSpaceVentilation().SetValue((AnatomicDeadspaceVolume_L + AlveolarDeadSpace_L) * RespirationRate_Per_min, VolumePerTimeUnit::L_Per_min);
+      GetTotalDeadSpaceVentilation().SetValue((AnatomicDeadSpace_L + AlveolarDeadSpace_L) * RespirationRate_Per_min, VolumePerTimeUnit::L_Per_min);
 
       m_TopBreathTotalVolume_L = totalLungVolume_L;
       m_TopBreathElapsedTime_min = m_ElapsedBreathingCycleTime_min;
@@ -2076,7 +2087,6 @@ void Respiratory::CalculateVitalSigns()
       m_TopBreathElapsedTime_min = m_ElapsedBreathingCycleTime_min;
       m_TopBreathTotalVolume_L = totalLungVolume_L;
       m_TopBreathAlveoliVolume_L = m_RightAlveoli->GetNextVolume().GetValue(VolumeUnit::L) + m_LeftAlveoli->GetNextVolume().GetValue(VolumeUnit::L);
-      m_TopBreathDeadSpaceVolume_L = m_RightDeadSpace->GetNextVolume().GetValue(VolumeUnit::L) + m_LeftDeadSpace->GetNextVolume().GetValue(VolumeUnit::L);
       m_TopBreathPleuralVolume_L = m_RightPleural->GetNextVolume().GetValue(VolumeUnit::L) + m_LeftPleural->GetNextVolume().GetValue(VolumeUnit::L);
       m_TopBreathPleuralPressure_cmH2O = pleuralPressure_cmH2O;
       m_TopBreathAlveoliPressure_cmH2O = alveolarPressure_cmH2O;

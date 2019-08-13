@@ -401,7 +401,6 @@ void PBPulsePhysiology::Serialize(const RespiratoryData& src, Respiratory& dst)
   dst.m_NotBreathing = src.notbreathing();
   dst.m_TopBreathTotalVolume_L = src.topbreathtotalvolume_l();
   dst.m_TopBreathAlveoliVolume_L = src.topbreathalveolivolume_l();
-  dst.m_TopBreathDeadSpaceVolume_L = src.topbreathdeadspacevolume_l();
   dst.m_TopBreathPleuralPressure_cmH2O = src.topbreathpleuralpressure_cmh2o();
   dst.m_LastCardiacCycleBloodPH = src.lastcardiaccyclebloodph();
   dst.m_TopCarinaO2 = src.topcarinao2();
@@ -409,7 +408,6 @@ void PBPulsePhysiology::Serialize(const RespiratoryData& src, Respiratory& dst)
   dst.m_BottomBreathElapsedTime_min = src.bottombreathelapsedtime_min();
   dst.m_BottomBreathTotalVolume_L = src.bottombreathtotalvolume_l();
   dst.m_BottomBreathAlveoliVolume_L = src.bottombreathalveolivolume_l();
-  dst.m_BottomBreathDeadSpaceVolume_L = src.bottombreathdeadspacevolume_l();
   dst.m_BottomBreathPleuralPressure_cmH2O = src.bottombreathpleuralpressure_cmh2o();
   PBProperty::Load(src.bloodphrunningaverage(), *dst.m_BloodPHRunningAverage);
 
@@ -456,7 +454,6 @@ void PBPulsePhysiology::Serialize(const Respiratory& src, RespiratoryData& dst)
   dst.set_notbreathing(src.m_NotBreathing);
   dst.set_topbreathtotalvolume_l(src.m_TopBreathTotalVolume_L);
   dst.set_topbreathalveolivolume_l(src.m_TopBreathAlveoliVolume_L);
-  dst.set_topbreathdeadspacevolume_l(src.m_TopBreathDeadSpaceVolume_L);
   dst.set_topbreathpleuralpressure_cmh2o(src.m_TopBreathPleuralPressure_cmH2O);
   dst.set_lastcardiaccyclebloodph(src.m_LastCardiacCycleBloodPH);
   dst.set_topcarinao2(src.m_TopCarinaO2);
@@ -464,7 +461,6 @@ void PBPulsePhysiology::Serialize(const Respiratory& src, RespiratoryData& dst)
   dst.set_bottombreathelapsedtime_min(src.m_BottomBreathElapsedTime_min);
   dst.set_bottombreathtotalvolume_l(src.m_BottomBreathTotalVolume_L);
   dst.set_bottombreathalveolivolume_l(src.m_BottomBreathAlveoliVolume_L);
-  dst.set_bottombreathdeadspacevolume_l(src.m_BottomBreathDeadSpaceVolume_L);
   dst.set_bottombreathpleuralpressure_cmh2o(src.m_BottomBreathPleuralPressure_cmH2O);
   dst.set_allocated_bloodphrunningaverage(PBProperty::Unload(*src.m_BloodPHRunningAverage));
 

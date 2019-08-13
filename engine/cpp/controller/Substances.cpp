@@ -123,21 +123,21 @@ void PulseSubstances::InitializeGasCompartments()
   Carina->GetSubstanceQuantity(*m_N2)->GetVolumeFraction().SetValue(AmbientN2VF);
   Carina->GetSubstanceQuantity(*m_O2)->GetVolumeFraction().SetValue(AmbientO2VF);
   Carina->Balance(BalanceGasBy::VolumeFraction);
-  SEGasCompartment* LeftDeadSpace = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::LeftDeadSpace);
-  LeftDeadSpace->GetSubstanceQuantity(*m_CO2)->GetVolumeFraction().SetValue(0.011);
-  LeftDeadSpace->GetSubstanceQuantity(*m_O2)->GetVolumeFraction().SetValue(0.195);
-  LeftDeadSpace->GetSubstanceQuantity(*m_N2)->GetVolumeFraction().SetValue(1 - 0.011 - 0.195);
-  LeftDeadSpace->Balance(BalanceGasBy::VolumeFraction);
+  SEGasCompartment* LeftAnatomicDeadSpace = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::LeftAnatomicDeadSpace);
+  LeftAnatomicDeadSpace->GetSubstanceQuantity(*m_CO2)->GetVolumeFraction().SetValue(0.011);
+  LeftAnatomicDeadSpace->GetSubstanceQuantity(*m_O2)->GetVolumeFraction().SetValue(0.195);
+  LeftAnatomicDeadSpace->GetSubstanceQuantity(*m_N2)->GetVolumeFraction().SetValue(1 - 0.011 - 0.195);
+  LeftAnatomicDeadSpace->Balance(BalanceGasBy::VolumeFraction);
   SEGasCompartment* LeftAlveoli = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::LeftAlveoli);
   LeftAlveoli->GetSubstanceQuantity(*m_CO2)->GetVolumeFraction().SetValue(0.050);
   LeftAlveoli->GetSubstanceQuantity(*m_O2)->GetVolumeFraction().SetValue(0.155);
   LeftAlveoli->GetSubstanceQuantity(*m_N2)->GetVolumeFraction().SetValue(1- 0.050 - 0.155);
   LeftAlveoli->Balance(BalanceGasBy::VolumeFraction);
-  SEGasCompartment* RightDeadSpace = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::RightDeadSpace);
-  RightDeadSpace->GetSubstanceQuantity(*m_CO2)->GetVolumeFraction().SetValue(0.011);
-  RightDeadSpace->GetSubstanceQuantity(*m_O2)->GetVolumeFraction().SetValue(0.195);
-  RightDeadSpace->GetSubstanceQuantity(*m_N2)->GetVolumeFraction().SetValue(1 - 0.011 - 0.195);
-  RightDeadSpace->Balance(BalanceGasBy::VolumeFraction);
+  SEGasCompartment* RightAnatomicDeadSpace = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::RightAnatomicDeadSpace);
+  RightAnatomicDeadSpace->GetSubstanceQuantity(*m_CO2)->GetVolumeFraction().SetValue(0.011);
+  RightAnatomicDeadSpace->GetSubstanceQuantity(*m_O2)->GetVolumeFraction().SetValue(0.195);
+  RightAnatomicDeadSpace->GetSubstanceQuantity(*m_N2)->GetVolumeFraction().SetValue(1 - 0.011 - 0.195);
+  RightAnatomicDeadSpace->Balance(BalanceGasBy::VolumeFraction);
   SEGasCompartment* RightAlveoli = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::RightAlveoli);
   RightAlveoli->GetSubstanceQuantity(*m_CO2)->GetVolumeFraction().SetValue(0.050);
   RightAlveoli->GetSubstanceQuantity(*m_O2)->GetVolumeFraction().SetValue(0.155);
@@ -439,9 +439,9 @@ void PulseSubstances::WritePulmonaryGases()
   std::stringstream ss;
   std::vector<SEGasCompartment*> cmpts;
   cmpts.push_back(m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Carina));
-  cmpts.push_back(m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::LeftDeadSpace));
+  cmpts.push_back(m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::LeftAnatomicDeadSpace));
   cmpts.push_back(m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::LeftAlveoli));
-  cmpts.push_back(m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::RightDeadSpace));
+  cmpts.push_back(m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::RightAnatomicDeadSpace));
   cmpts.push_back(m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::RightAlveoli));
   for(SEGasCompartment* cmpt: cmpts)
   {

@@ -115,7 +115,6 @@ protected:
   bool   m_NotBreathing;
   double m_TopBreathTotalVolume_L;
   double m_TopBreathAlveoliVolume_L;
-  double m_TopBreathDeadSpaceVolume_L;
   double m_TopBreathPleuralVolume_L;
   double m_TopBreathPleuralPressure_cmH2O;
   double m_TopBreathAlveoliPressure_cmH2O;
@@ -126,7 +125,6 @@ protected:
   double m_BottomBreathElapsedTime_min;
   double m_BottomBreathTotalVolume_L;
   double m_BottomBreathAlveoliVolume_L;
-  double m_BottomBreathDeadSpaceVolume_L;
   double m_BottomBreathPleuralVolume_L;
   double m_BottomBreathPleuralPressure_cmH2O;
   double m_BottomBreathAlveoliPressure_cmH2O;
@@ -193,9 +191,11 @@ protected:
   SEGasCompartment*          m_Environment;
   SELiquidCompartment*       m_AerosolMouth;
   SELiquidCompartment*       m_AerosolCarina;
-  SELiquidCompartment*       m_AerosolLeftDeadSpace;
+  SELiquidCompartment*       m_AerosolLeftAnatomicDeadSpace;
+  SELiquidCompartment*       m_AerosolLeftAlveolarDeadSpace;
   SELiquidCompartment*       m_AerosolLeftAlveoli;
-  SELiquidCompartment*       m_AerosolRightDeadSpace;
+  SELiquidCompartment*       m_AerosolRightAnatomicDeadSpace;
+  SELiquidCompartment*       m_AerosolRightAlveolarDeadSpace;
   SELiquidCompartment*       m_AerosolRightAlveoli;
   SELiquidCompartment*       m_LeftLungExtravascular;
   SELiquidCompartment*       m_RightLungExtravascular;
@@ -215,23 +215,26 @@ protected:
   //Nodes
   SEFluidCircuitNode*        m_Mouth;
   SEFluidCircuitNode*        m_LeftAlveoli;
-  SEFluidCircuitNode*        m_LeftDeadSpace;
+  SEFluidCircuitNode*        m_LeftAnatomicDeadSpace;
+  SEFluidCircuitNode*        m_LeftAlveolarDeadSpace;
   SEFluidCircuitNode*        m_LeftPleural;
   SEFluidCircuitNode*        m_RespiratoryMuscle;
   SEFluidCircuitNode*        m_RightAlveoli;
-  SEFluidCircuitNode*        m_RightDeadSpace;
+  SEFluidCircuitNode*        m_RightAnatomicDeadSpace;
+  SEFluidCircuitNode*        m_RightAlveolarDeadSpace;
   SEFluidCircuitNode*        m_RightPleural;
   SEFluidCircuitNode*        m_Ambient;
   SEFluidCircuitNode*        m_Stomach;
   //Paths
   SEFluidCircuitPath*        m_CarinaToLeftAnatomicDeadSpace;
   SEFluidCircuitPath*        m_CarinaToRightAnatomicDeadSpace;
-  SEFluidCircuitPath*        m_LeftAnatomicDeadSpaceToLeftAlveoli;
-  SEFluidCircuitPath*        m_RightAnatomicDeadSpaceToRightAlveoli;
-  SEFluidCircuitPath*        m_RightPleuralToRespiratoryMuscle;
+  SEFluidCircuitPath*        m_LeftAnatomicDeadSpaceToLeftAlveolarDeadSpace;
+  SEFluidCircuitPath*        m_RightAnatomicDeadSpaceToRightAlveolarDeadSpace;
+  SEFluidCircuitPath*        m_LeftAlveolarDeadSpaceToLeftAlveoli;
+  SEFluidCircuitPath*        m_RightAlveolarDeadSpaceToRightAlveoli;
   SEFluidCircuitPath*        m_LeftPleuralToRespiratoryMuscle;
+  SEFluidCircuitPath*        m_RightPleuralToRespiratoryMuscle;
   SEFluidCircuitPath*        m_DriverPressurePath;
-  SEFluidCircuitPath*        m_LeftDriverPressurePath;
   SEFluidCircuitPath*        m_MouthToCarina;
   SEFluidCircuitPath*        m_MouthToStomach;
   SEFluidCircuitPath*        m_EnvironmentToLeftChestLeak;
@@ -240,12 +243,10 @@ protected:
   SEFluidCircuitPath*        m_RightAlveoliLeakToRightPleural;
   SEFluidCircuitPath*        m_LeftPleuralToEnvironment;
   SEFluidCircuitPath*        m_RightPleuralToEnvironment;
-  SEFluidCircuitPath*        m_RightAlveoliToRightPleuralConnection;
   SEFluidCircuitPath*        m_LeftAlveoliToLeftPleuralConnection;
-  SEFluidCircuitPath*        m_RightAnatomicDeadSpaceToRightPleuralConnection;
-  SEFluidCircuitPath*        m_LeftAnatomicDeadSpaceToLeftPleuralConnection;
-  SEFluidCircuitPath*        m_RightPulmonaryCapillary;
+  SEFluidCircuitPath*        m_RightAlveoliToRightPleuralConnection;
   SEFluidCircuitPath*        m_LeftPulmonaryCapillary;
+  SEFluidCircuitPath*        m_RightPulmonaryCapillary;
   SEFluidCircuitPath*        m_ConnectionToMouth;
   SEFluidCircuitPath*        m_GroundToConnection;
 
