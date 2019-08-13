@@ -129,6 +129,8 @@ protected:
   double m_BottomBreathPleuralPressure_cmH2O;
   double m_BottomBreathAlveoliPressure_cmH2O;
   double m_BottomBreathDriverPressure_cmH2O;
+  double m_PeakAlveolarPressure_cmH2O; //Aaron - Add to serialization
+  double m_MaximalAlveolarPressure_cmH2O; //Aaron - Add to serialization
   SERunningAverage* m_BloodPHRunningAverage;
 
   //   Respiratory Driver

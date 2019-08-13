@@ -196,8 +196,10 @@ void Respiratory::Initialize()
   m_BottomBreathAlveoliVolume_L = m_BottomBreathTotalVolume_L;
   m_BottomBreathPleuralVolume_L = 0.0;
   m_BottomBreathPleuralPressure_cmH2O = 0.0;
-  m_TopBreathAlveoliPressure_cmH2O = 0.0;
-  m_TopBreathDriverPressure_cmH2O = 0.0;
+  m_BottomBreathAlveoliPressure_cmH2O = 0.0;
+  m_BottomBreathDriverPressure_cmH2O = 0.0;
+  m_PeakAlveolarPressure_cmH2O = 0.0;
+  m_MaximalAlveolarPressure_cmH2O = 0.0;
 
   //Driver
   m_MaxDriverPressure_cmH2O = -50.0;
@@ -2069,6 +2071,10 @@ void Respiratory::CalculateVitalSigns()
       GetChestWallCompliance().SetValue(chestWallCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
       GetPulmonaryElastance().SetValue(1.0 / pulmonaryCompiance_L_Per_cmH2O, PressurePerVolumeUnit::cmH2O_Per_L);
 
+      GetPeakInspiratoryPressure().SetValue(m_PeakAlveolarPressure_cmH2O - bodySurfacePressure_cmH2O, PressureUnit::cmH2O);
+      GetPositiveEndExpiratoryPressure().SetValue(m_BottomBreathAlveoliPressure_cmH2O - bodySurfacePressure_cmH2O, PressureUnit::cmH2O);
+      GetMaximalInspiratoryPressure().SetValue(m_MaximalAlveolarPressure_cmH2O - bodySurfacePressure_cmH2O, PressureUnit::cmH2O);
+
       // Calculate Ventilations
       GetTotalPulmonaryVentilation().SetValue(TidalVolume_L * RespirationRate_Per_min, VolumePerTimeUnit::L_Per_min);
       GetSpecificVentilation().SetValue(TidalVolume_L / m_InstantaneousFunctionalResidualCapacity_L);
@@ -2077,6 +2083,8 @@ void Respiratory::CalculateVitalSigns()
 
       m_TopBreathTotalVolume_L = totalLungVolume_L;
       m_TopBreathElapsedTime_min = m_ElapsedBreathingCycleTime_min;
+      m_PeakAlveolarPressure_cmH2O = m_BottomBreathAlveoliPressure_cmH2O;
+      m_MaximalAlveolarPressure_cmH2O = m_BottomBreathAlveoliPressure_cmH2O;
     }
   }
   else //Inhaling
@@ -2093,6 +2101,9 @@ void Respiratory::CalculateVitalSigns()
       m_TopBreathDriverPressure_cmH2O = m_RespiratoryMuscle->GetNextPressure(PressureUnit::cmH2O);
       m_TopCarinaO2 = m_CarinaO2->GetVolumeFraction().GetValue();
     }
+
+    m_PeakAlveolarPressure_cmH2O = MAX(m_PeakAlveolarPressure_cmH2O, alveolarPressure_cmH2O);
+    m_MaximalAlveolarPressure_cmH2O = MIN(m_MaximalAlveolarPressure_cmH2O, alveolarPressure_cmH2O);
 
     if (m_TopBreathTotalVolume_L - totalLungVolume_L > m_MinimumAllowableTidalVolume_L //Volume has transitioned sufficiently
       && m_TopBreathElapsedTime_min > m_MinimumAllowableInpiratoryAndExpiratoryPeriod_s / 60.0) //We've waited a sufficient amount of time to transition
