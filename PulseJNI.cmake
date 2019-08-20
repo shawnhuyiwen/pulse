@@ -14,8 +14,6 @@ target_include_directories(PulseJNI PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/cdm/cpp)
 target_include_directories(PulseJNI PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test/engine/cpp)
 target_include_directories(PulseJNI PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test/cdm/cpp)
 target_include_directories(PulseJNI PRIVATE ${EIGEN3_INCLUDE_DIR})
-target_include_directories(PulseJNI PRIVATE ${LOG4CPLUS_INCLUDE_DIR})
-target_include_directories(PulseJNI PRIVATE ${PROTOBUF_INCLUDE_DIR})
 
 set(PulseJNI_FLAGS)
 set_target_properties(PulseJNI PROPERTIES COMPILE_FLAGS "${PulseJNI_FLAGS}" PREFIX "")

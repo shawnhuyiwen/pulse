@@ -5,20 +5,20 @@
 #include <iostream>
 #include "CommonDataModel.h" 
 #include "utils/unitconversion/UCCommon.h"
+#include "utils/Logger.h"
 #include "CommonDataModelTest.h"
-#include "log4cplus/config.hxx"
 
 extern "C"
 JNIEXPORT void JNICALL Java_com_kitware_physiology_utilities_jniBridge_nativeInitialize(JNIEnv *env, jobject obj)
 {
-  log4cplus::initialize();
+  Logger::Initialize();
 }
 
 extern "C"
 JNIEXPORT void JNICALL Java_com_kitware_physiology_utilities_jniBridge_nativeDeinitialize(JNIEnv *env, jobject obj)
 {
   CUnitConversionEngine::DestroyEngine();
-  log4cplus::deinitialize();// Free up log4cplus before the DllMain quits so we can stop threads on windows
+  Logger::Deinitialize();// Free up logger before the DllMain quits so we can stop threads on windows
 }
 
 extern "C"

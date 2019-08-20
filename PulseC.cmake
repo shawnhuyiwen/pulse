@@ -7,8 +7,6 @@ target_include_directories(PulseC PRIVATE ${CMAKE_BINARY_DIR}/schema/cpp/bind/)
 target_include_directories(PulseC PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/engine/cpp)
 target_include_directories(PulseC PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/cdm/cpp)
 target_include_directories(PulseC PRIVATE ${EIGEN3_INCLUDE_DIR})
-target_include_directories(PulseC PRIVATE ${LOG4CPLUS_INCLUDE_DIR})
-target_include_directories(PulseC PRIVATE ${PROTOBUF_INCLUDE_DIR})
 
 set(PulseC_FLAGS)
 set_target_properties(PulseC PROPERTIES COMPILE_FLAGS "${PulseC_FLAGS}" PREFIX "")
