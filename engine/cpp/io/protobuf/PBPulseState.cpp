@@ -335,8 +335,6 @@ bool PBPulseState::SerializeToString(const PulseEngine& src, std::string& output
 }
 bool PBPulseState::SerializeToFile(const PulseEngine& src, const std::string& filename, SerializationFormat m)
 {
-  pulse::proto::StateData data;
-  PBPulseState::Serialize(src, data);
   std::string content;
   PBPulseState::SerializeToString(src, content, m);
   return WriteFile(content, filename, m);
