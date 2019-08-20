@@ -247,12 +247,11 @@ void PulseEngine::AdvanceModelTime()
 
 void PulseEngine::AdvanceModelTime(double time, const TimeUnit& unit)
 {
-  double time_s = Convert(time,unit,TimeUnit::s);
-  int count = (int)(time_s / m_Config->GetTimeStep(TimeUnit::s));
-  if (count == 0)
-    Error("Requested advancement time is smaller than time step, not advancing.");
-  for(int i=0;i<count;i++)
+  double time_s = Convert(time, unit, TimeUnit::s) + m_spareAdvanceTime_s;
+  int count = (int)(time_s / GetTimeStep(TimeUnit::s));
+  for (int i = 0; i < count; i++)
     AdvanceModelTime();
+  m_spareAdvanceTime_s = time_s - (count * GetTimeStep(TimeUnit::s));
 }
 
 void PulseEngine::AdvanceCallback(double time_s)

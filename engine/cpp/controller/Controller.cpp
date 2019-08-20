@@ -75,8 +75,6 @@
 PulseController::PulseController(const std::string& logFileName, const std::string& data_dir) : PulseController(new Logger(logFileName), data_dir)
 {
   myLogger = true;
-  m_DataTrack = nullptr;
-  m_AdvanceHandler = nullptr;
 }
 
 PulseController::PulseController(Logger* logger, const std::string& data_dir) : Loggable(logger)
@@ -90,6 +88,7 @@ PulseController::PulseController(Logger* logger, const std::string& data_dir) : 
   m_SimulationTime = std::unique_ptr<SEScalarTime>(new SEScalarTime());
   m_CurrentTime->SetValue(0, TimeUnit::s);
   m_SimulationTime->SetValue(0, TimeUnit::s);
+  m_spareAdvanceTime_s = 0;
 
   myLogger = false;
   if (m_Logger == nullptr)
@@ -200,6 +199,7 @@ bool PulseController::Initialize(const PulseConfiguration* config)
   Info("Creating Circuits and Compartments");
   CreateCircuitsAndCompartments();
 
+  m_spareAdvanceTime_s = 0;
   m_AirwayMode = eAirwayMode::Free;
   m_Intubation = eSwitch::Off;
   m_CurrentTime->SetValue(0, TimeUnit::s);
@@ -209,7 +209,6 @@ bool PulseController::Initialize(const PulseConfiguration* config)
   Info("Initializing Substances");
   m_Substances->InitializeSubstances(); // Sets all concentrations and such of all substances for all compartments, need to do this after we figure out what's in the environment
 
-  
   Info("Initializing Systems");
   m_CardiovascularSystem->Initialize();
   m_RespiratorySystem->Initialize();
