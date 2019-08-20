@@ -11,6 +11,12 @@ public class PulseEngine
     readonly IntPtr pulseEngineCPtr;        // Pointer to the pulse engine in C
 
     [DllImport("PulseC", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
+    public static extern void Initialize();
+
+    [DllImport("PulseC", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
+    public static extern void Deinitialize();
+
+    [DllImport("PulseC", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
     static extern IntPtr Allocate(string logfile, string data_dir);
     PulseEngine() {} // make default constructor private
     public PulseEngine(string logFilePath, string data_dir)

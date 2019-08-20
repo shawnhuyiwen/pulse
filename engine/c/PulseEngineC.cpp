@@ -19,7 +19,7 @@
 #include "properties/SEScalarTime.h"
 #include "properties/SEScalarVolume.h"
 #include "utils/DataTrack.h"
-#include "log4cplus/config.hxx"
+#include "utils/Logger.h"
 
 #if defined (__clang__)
   #define C_EXPORT
@@ -31,6 +31,19 @@
   #define C_EXPORT __declspec(dllexport)
   #define C_CALL __stdcall
 #endif
+
+extern "C"
+C_EXPORT void C_CALL PulseInitialize()
+{
+  Logger::Initialize();
+}
+
+extern "C"
+C_EXPORT void C_CALL PulseDeinitialize()
+{
+  CUnitConversionEngine::DestroyEngine();
+  Logger::Deinitialize();// Free up logger before the DllMain quits so we can stop threads on windows
+}
 
 extern "C"
 C_EXPORT PulseEngineC* C_CALL Allocate(const char* logFile, const char* data_dir=".")
