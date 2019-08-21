@@ -34,56 +34,64 @@ list(APPEND Pulse_DEPENDENCIES eigen)
 # Install Headers
 message(STATUS "Eigen is here : ${eigen_SRC}" )
 
+# Loggers are built in the Inner build
+# It will be easier to switch cofigurations in MSVC/XCode
 set(PULSE_LOGGER "log4cpp" CACHE STRING "Select Logger Library")
 set(AVAILABLE_PULSE_LOGGERS "log4cpp;log4cplus" CACHE INTERNAL "List of available loggers")
 set_property(CACHE PULSE_LOGGER PROPERTY STRINGS ${AVAILABLE_PULSE_LOGGERS})
 
 if (${PULSE_LOGGER} STREQUAL "log4cpp")
-	###################################################
-	## log4cpp                                       ##
-	## General logging utility                       ##
-	###################################################
+  ###################################################
+  ## log4cpp                                       ##
+  ## General logging utility                       ##
+  ###################################################
 
-	message( STATUS "External project - log4cpp" )
-	set(logger_SRC "${CMAKE_BINARY_DIR}/log4cpp/src/log4cpp" CACHE INTERNAL "Log4cpp Source")
+  message( STATUS "External project - log4cpp" )
+  set(logger_SRC "${CMAKE_BINARY_DIR}/log4cpp/src/log4cpp" CACHE INTERNAL "Log4cpp Source")
 
-	ExternalProject_Add( log4cpp
-	  PREFIX log4cpp
-	  URL "https://data.kitware.com/api/v1/file/5d577c0e85f25b11ff34dbf8/download"
-	  URL_HASH MD5=b9e2cee932da987212f2c74b767b4d8b
-	  #GIT_REPOSITORY "https://github.com/log4cplus/log4cpp.git"
-	  #GIT_TAG 411a262b92a7bdc26348d6ae6b15f76763c21b44
-	#  GIT_SHALLOW TRUE
-	# Build this in the Inner build
-	# It will be easier to switch cofigurations in MSVC/XCode
-	  CONFIGURE_COMMAND "" 
-	  BUILD_COMMAND ""
-	  INSTALL_COMMAND ""
-	)
-	list(APPEND Pulse_DEPENDENCIES log4cpp)
+  if(UNIX)
+    set(CONFIGURE "./configure")
+  endif()
+
+  ExternalProject_Add( log4cpp
+    PREFIX log4cpp
+    URL "https://data.kitware.com/api/v1/file/5d577c0e85f25b11ff34dbf8/download"
+    URL_HASH MD5=b9e2cee932da987212f2c74b767b4d8b
+    #GIT_REPOSITORY "https://github.com/log4cplus/log4cpp.git"
+    #GIT_TAG 411a262b92a7bdc26348d6ae6b15f76763c21b44
+    #GIT_SHALLOW TRUE
+    UPDATE_COMMAND 
+      COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/cmake/log4cpp-patches/CMakeLists.txt ${logger_SRC}/CMakeLists.txt
+      COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/cmake/log4cpp-patches/config.guess ${logger_SRC}/config/config.guess
+      COMMAND ${CONFIGURE}
+    CONFIGURE_COMMAND "" 
+    BUILD_COMMAND ""
+    INSTALL_COMMAND ""
+  )
+  list(APPEND Pulse_DEPENDENCIES log4cpp)
 else()
-	###################################################
-	## log4cplus                                     ##
-	## General logging utility                       ##
-	###################################################
+  ###################################################
+  ## log4cplus                                     ##
+  ## General logging utility                       ##
+  ###################################################
 
-	message( STATUS "External project - log4cplus" )
-	set(logger_SRC "${CMAKE_BINARY_DIR}/log4cplus/src/log4cplus" CACHE INTERNAL "Log4cplus Source")
+  message( STATUS "External project - log4cplus" )
+  set(logger_SRC "${CMAKE_BINARY_DIR}/log4cplus/src/log4cplus" CACHE INTERNAL "Log4cplus Source")
 
-	ExternalProject_Add( log4cplus
-	  PREFIX log4cplus
-	  URL "https://github.com/log4cplus/log4cplus/releases/download/REL_2_0_4/log4cplus-2.0.4.zip"
-	  URL_HASH MD5=cb075cd19ce561273b1c74907cc66b6a
-	  #GIT_REPOSITORY "https://github.com/log4cplus/log4cplus.git"
-	  #GIT_TAG 411a262b92a7bdc26348d6ae6b15f76763c21b44
-	#  GIT_SHALLOW TRUE
-	# Build this in the Inner build
-	# It will be easier to switch cofigurations in MSVC/XCode
-	  CONFIGURE_COMMAND "" 
-	  BUILD_COMMAND ""
-	  INSTALL_COMMAND ""
-	)
-	list(APPEND Pulse_DEPENDENCIES log4cplus)
+  ExternalProject_Add( log4cplus
+    PREFIX log4cplus
+    URL "https://github.com/log4cplus/log4cplus/releases/download/REL_2_0_4/log4cplus-2.0.4.zip"
+    URL_HASH MD5=cb075cd19ce561273b1c74907cc66b6a
+    #GIT_REPOSITORY "https://github.com/log4cplus/log4cplus.git"
+    #GIT_TAG 411a262b92a7bdc26348d6ae6b15f76763c21b44
+  #  GIT_SHALLOW TRUE
+  # Build this in the Inner build
+  # It will be easier to switch cofigurations in MSVC/XCode
+    CONFIGURE_COMMAND "" 
+    BUILD_COMMAND ""
+    INSTALL_COMMAND ""
+  )
+  list(APPEND Pulse_DEPENDENCIES log4cplus)
 endif()
 
 ###################################################
@@ -163,7 +171,7 @@ ExternalProject_Add( Pulse
     
     -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
     -DPULSE_BUILD_CLR:BOOL=${PULSE_BUILD_CLR}
-	-DPULSE_LOGGER:STRING=${PULSE_LOGGER}
+  -DPULSE_LOGGER:STRING=${PULSE_LOGGER}
     # Let InnerBuild build and install these
     -Dlogger_SRC=${logger_SRC}
     -Dprotobuf_SRC=${protobuf_SRC}
