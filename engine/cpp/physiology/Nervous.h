@@ -34,6 +34,8 @@ protected:
   void PostProcess();
 
   void BaroreceptorFeedback();
+  void UpdateBaroreceptorActivityStatus();
+  void UpdateBaroreceptorThresholds();
   void CheckBrainStatus();
   void ChemoreceptorFeedback();
   void SetPupilEffects();
@@ -44,7 +46,13 @@ protected:
 
   // Stateless member variable (Set in SetUp())
   bool m_FeedbackActive;
+  bool m_BaroreceptorFeedbackStatus;
   double m_dt_s;
+
+  //Baroreceptor threshold parameters
+  double m_BaroreceptorActivityTime_s;
+  double m_meanArterialPressureBaseline_mmHg;
+  double m_sedationDampeningEffect;
   // Configuration fractions representing the amount by which each quantity can change due to baroreceptors;
   double m_normalizedGammaHeartRate;
   double m_normalizedGammaElastance;
