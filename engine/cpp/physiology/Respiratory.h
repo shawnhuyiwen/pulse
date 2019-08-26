@@ -255,4 +255,6 @@ protected:
   SEFluidCircuitCalculator*  m_Calculator;
   SEGasTransporter*          m_GasTransporter;
   SELiquidTransporter*       m_AerosolTransporter;
+
+  double m_initialAlveoliDiffusionArea_cm2;
 };

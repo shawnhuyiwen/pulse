@@ -23,7 +23,8 @@ public:
   static double LinearInterpolator(double x1, double x2, double y1, double y2, double xPrime);
   static double PercentDifference(double expected, double calculated);
   static double PercentTolerance(double expected, double calculated, double epsilon = 1e-20);
-  static double ResistanceFunction(double dbase, double dmin, double dmax, double dx);
+  static double ExponentialDecayFunction(double dbase, double dmin, double dmax, double dx);
+  static double ExponentialGrowthFunction(double dbase, double dmin, double dmax, double dx);
   static double LogisticFunction(double a, double x50, double k, double x);
 };
 

@@ -3853,9 +3853,11 @@ void PulseController::SetupRespiratory()
   // Set up hierarchy
   SEGasCompartment& pLeftLung = m_Compartments->CreateGasCompartment(pulse::PulmonaryCompartment::LeftLung);
   pLeftLung.AddChild(pLeftAnatomicDeadSpace);
+  pLeftLung.AddChild(pLeftAlveolarDeadSpace);
   pLeftLung.AddChild(pLeftAlveoli);
   SEGasCompartment& pRightLung = m_Compartments->CreateGasCompartment(pulse::PulmonaryCompartment::RightLung);
   pRightLung.AddChild(pRightAnatomicDeadSpace);
+  pRightLung.AddChild(pRightAlveolarDeadSpace);
   pRightLung.AddChild(pRightAlveoli);
   SEGasCompartment& pLungs = m_Compartments->CreateGasCompartment(pulse::PulmonaryCompartment::Lungs);
   pLungs.AddChild(pLeftLung);

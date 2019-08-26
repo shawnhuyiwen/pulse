@@ -560,7 +560,7 @@ void AnesthesiaMachine::CalculateEquipmentLeak()
           TotalSeverity = 1.0;
         }
 
-        double dResistance = GeneralMath::ResistanceFunction(10.0, m_dValveClosedResistance_cmH2O_s_Per_L, m_dValveOpenResistance_cmH2O_s_Per_L, TotalSeverity);
+        double dResistance = GeneralMath::ExponentialDecayFunction(10.0, m_dValveClosedResistance_cmH2O_s_Per_L, m_dValveOpenResistance_cmH2O_s_Per_L, TotalSeverity);
         m_pAnesthesiaConnectionToEnvironment->GetNextResistance().SetValue(dResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
       }
     }
@@ -588,7 +588,7 @@ void AnesthesiaMachine::CalculateEquipmentLeak()
         TotalSeverity = 1.0;
       }
 
-      double dResistance = GeneralMath::ResistanceFunction(10.0, m_dValveClosedResistance_cmH2O_s_Per_L, m_dValveOpenResistance_cmH2O_s_Per_L, TotalSeverity);
+      double dResistance = GeneralMath::ExponentialDecayFunction(10.0, m_dValveClosedResistance_cmH2O_s_Per_L, m_dValveOpenResistance_cmH2O_s_Per_L, TotalSeverity);
       m_pAnesthesiaConnectionToEnvironment->GetNextResistance().SetValue(dResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     }
   }
@@ -621,23 +621,23 @@ void AnesthesiaMachine::CalculateValveResistances()
   if (m_actions->HasInspiratoryValveLeak())
   {
     double severity = m_actions->GetInspiratoryValveLeak()->GetSeverity().GetValue();
-    dInspValveOpenResistance = GeneralMath::ResistanceFunction(10.0, dInspValveClosedResistance, dInspValveOpenResistance, severity);
+    dInspValveOpenResistance = GeneralMath::ExponentialDecayFunction(10.0, dInspValveClosedResistance, dInspValveOpenResistance, severity);
   }
   else if (m_actions->HasInspiratoryValveObstruction())
   {
     double severity = m_actions->GetInspiratoryValveObstruction()->GetSeverity().GetValue();
-    dInspValveClosedResistance = GeneralMath::ResistanceFunction(10.0, dInspValveOpenResistance, dInspValveClosedResistance, severity);
+    dInspValveClosedResistance = GeneralMath::ExponentialDecayFunction(10.0, dInspValveOpenResistance, dInspValveClosedResistance, severity);
   }
 
   if (m_actions->HasExpiratoryValveLeak())
   {
     double severity = m_actions->GetExpiratoryValveLeak()->GetSeverity().GetValue();
-    dExpValveOpenResistance = GeneralMath::ResistanceFunction(10.0, dExpValveClosedResistance, dExpValveOpenResistance, severity);
+    dExpValveOpenResistance = GeneralMath::ExponentialDecayFunction(10.0, dExpValveClosedResistance, dExpValveOpenResistance, severity);
   }
   else if (m_actions->HasExpiratoryValveObstruction())
   {
     double severity = m_actions->GetExpiratoryValveObstruction()->GetSeverity().GetValue();
-    dExpValveClosedResistance = GeneralMath::ResistanceFunction(10.0, dExpValveOpenResistance, dExpValveClosedResistance, severity);
+    dExpValveClosedResistance = GeneralMath::ExponentialDecayFunction(10.0, dExpValveOpenResistance, dExpValveClosedResistance, severity);
   }
   
   //Set the value based on where we are in the cycle
