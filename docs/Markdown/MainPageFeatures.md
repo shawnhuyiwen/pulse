@@ -249,6 +249,38 @@ Our user manual offers in-depth details of all the Pulse asset functionality. It
 </center>
 \endhtmlonly
 
+### Extra Corporeal Membrane Oxygenation (ECMO) Training Simulator
+
+\htmlonly
+<center>
+<table color="white" border="1" bordercolor="Gainsboro" style="border-collapse: collapse">
+<tr>
+  <th><center>Description</center></th>
+  <th><center>Team</center></th>
+  <th><center>Links</center></th>
+</tr>
+<tr>
+  <td width="30%" style="border-top:2px solid Gainsboro; padding:3px">
+    A full-fledged training simulator of various procedures and scenarios involved in ECMO and the associated complications. The simulator has three main parts: 
+	1. A physical cardiovascular circuit that mimics the human circulation system, including an artificial human heart and a synthetic vasculature with cannulation pads. 
+	2. A physical ECMO circuit to simulate oxygenation with a color changing blood simulant, an external pump to regulate flow, and sensors to monitor vitals. 
+	3. A mathematical model of human physiology simulating respiratory failure and cardiac arrest based on Pulse Physiology Engine. Pulse helps to simulate clinical scenarios (i.e., hypovolemia, hypoxia, etc.) by controlling the cardiovascular and ECMO circuits, and provides real-time physiological feedback for experimental training.
+    <img src="./Images/Features/ECMO.png" width="400">
+  </td>
+  <td width="30%" style="border-top:2px solid Gainsboro; padding:3px" valign="top">
+    <center>
+      <a href="https://illinois.edu/"><img src="./Images/Features/UIUCLogo.png" width="200"></a><br><br>
+      <a href="https://www.jumpsimulation.org/research-innovation/research/jump-arches"><img src="./Images/Features/JumpARCHESLogo.jpg" width="200"></a><br><br>
+    </center>
+  </td>
+  <td width="40%" valign="top" style="border-top:2px solid Gainsboro; padding:3px">
+      &bull; <a href="https://healtheng.illinois.edu/research/focus/simulation/training-simulator-for-extra-corporeal-membrane-oxygenation-in-adults/">ECMO Simulator Website</a><br>
+  </td>
+</tr>
+</table>
+</center>
+\endhtmlonly
+
 ### Virtual Pediatric Airway Workbench (VPAW)
 
 \htmlonly
@@ -337,7 +369,7 @@ Our user manual offers in-depth details of all the Pulse asset functionality. It
   </td>
   <td width="40%" valign="top" style="border-top:2px solid Gainsboro; padding:3px">
       &bull; <a href="https://embs.papercept.net/conferences/conferences/EMBC18/program/EMBC18_ContentListWeb_2.html">Paul Ruales Rosero, Pavithra Rajeswaran, Jeffrey Webb, Aaron Bray, Thenkurussi Kesavadas. "Modelling Valvular Diseases Using a Virtual Physiology Engine." 40th Annual International Conference of the IEEE Engineering in Medicine and Biology Society. Honolulu, Hawaii. 2018.</a><br>
-      &bull; <a href="https://healtheng.illinois.edu/research/simulation/virtual-physiology-engine-based-simulation-modules/">Website</a><br>
+      &bull; <a href="https://healtheng.illinois.edu/research/simulation/virtual-physiology-engine-based-simulation-modules/">Physiology Engine-Based Simulation Website</a><br>
   </td>
 </tr>
 </table>
