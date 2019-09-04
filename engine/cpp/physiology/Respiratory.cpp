@@ -72,6 +72,9 @@
 #include "properties/SEFunctionVolumeVsTime.h"
 #include "properties/SERunningAverage.h"
 
+//jbw - remove
+#include "utils/DataTrack.h"
+
 
 #ifdef _MSC_VER 
 #pragma warning( disable : 4305 4244 )  // Disable some warning messages
@@ -325,6 +328,8 @@ void Respiratory::SetUp()
   m_AerosolRightAlveolarDeadSpace = m_data.GetCompartments().GetLiquidCompartment(pulse::PulmonaryCompartment::RightAlveolarDeadSpace);
   m_AerosolRightAlveoli = m_data.GetCompartments().GetLiquidCompartment(pulse::PulmonaryCompartment::RightAlveoli);
   m_Lungs = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Lungs);
+  m_LeftLung = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::LeftLung);
+  m_RightLung = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::RightLung);
   m_PleuralCavity = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::PleuralCavity);
   m_LeftLungExtravascular = m_data.GetCompartments().GetLiquidCompartment(pulse::ExtravascularCompartment::LeftLungIntracellular);
   m_RightLungExtravascular = m_data.GetCompartments().GetLiquidCompartment(pulse::ExtravascularCompartment::RightLungIntracellular);
@@ -483,13 +488,6 @@ void Respiratory::PreProcess()
   SupplementalOxygen();
 
   RespiratoryDriver();
-
-  //jbw - remove after pneumo testing
-  //double AmbientPresure = 1033.23; // = 1 atm
-  //double leftPleuralPressure = m_LeftPleural->GetPressure(PressureUnit::cmH2O);
-  //double rightPleuralPressure = m_RightPleural->GetPressure(PressureUnit::cmH2O);
-  //m_data.GetDataTrack().Probe("LeftRelativePleuralPressure_cmH2O", leftPleuralPressure - AmbientPresure);
-  //m_data.GetDataTrack().Probe("RightRelativePleuralPressure_cmH2O", rightPleuralPressure - AmbientPresure);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -520,6 +518,40 @@ void Respiratory::Process()
     m_AerosolTransporter->Transport(AerosolGraph, m_dt_s);
   //Update system data
   CalculateVitalSigns();
+
+  //jbw - remove
+
+  double leftAlveoliPressure = m_LeftAlveoli->GetNextPressure(PressureUnit::cmH2O);
+  double leftAlveoliVolume = m_LeftAlveoli->GetNextVolume(VolumeUnit::L);
+  double leftPleuralPressure = m_LeftPleural->GetNextPressure(PressureUnit::cmH2O);
+  double leftPleuralVolume = m_LeftPleural->GetNextVolume(VolumeUnit::L);
+  double leftFlow = m_LeftAlveolarDeadSpaceToLeftAlveoli->GetNextFlow(VolumePerTimeUnit::L_Per_s);
+  double leftCompliance = m_LeftPleuralToRespiratoryMuscle->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
+
+  double rightAlveoliPressure = m_RightAlveoli->GetNextPressure(PressureUnit::cmH2O);
+  double rightAlveoliVolume = m_RightAlveoli->GetNextVolume(VolumeUnit::L);
+  double rightPleuralPressure = m_RightPleural->GetNextPressure(PressureUnit::cmH2O);
+  double rightPleuralVolume = m_RightPleural->GetNextVolume(VolumeUnit::L);
+  double rightFlow = m_RightAlveolarDeadSpaceToRightAlveoli->GetNextFlow(VolumePerTimeUnit::L_Per_s);
+  double rightCompliance = m_RightPleuralToRespiratoryMuscle->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
+
+  m_data.GetDataTrack().Probe("leftAlveoliPressure", leftAlveoliPressure);
+  m_data.GetDataTrack().Probe("leftAlveoliVolume",   leftAlveoliVolume);
+  m_data.GetDataTrack().Probe("leftPleuralPressure", leftPleuralPressure);
+  m_data.GetDataTrack().Probe("leftPleuralVolume",   leftPleuralVolume);
+  m_data.GetDataTrack().Probe("leftFlow",            leftFlow);
+  m_data.GetDataTrack().Probe("leftCompliance",      leftCompliance);
+
+  m_data.GetDataTrack().Probe("rightAlveoliPressure", rightAlveoliPressure);
+  m_data.GetDataTrack().Probe("rightAlveoliVolume",   rightAlveoliVolume);
+  m_data.GetDataTrack().Probe("rightPleuralPressure", rightPleuralPressure);
+  m_data.GetDataTrack().Probe("rightPleuralVolume",   rightPleuralVolume);
+  m_data.GetDataTrack().Probe("rightFlow",            rightFlow);
+  m_data.GetDataTrack().Probe("rightCompliance",      rightCompliance);
+    
+  double AmbientPresure = 1033.23; // = 1 atm
+  m_data.GetDataTrack().Probe("LeftRelativePleuralPressure_cmH2O", leftPleuralPressure - AmbientPresure);
+  m_data.GetDataTrack().Probe("RightRelativePleuralPressure_cmH2O", rightPleuralPressure - AmbientPresure);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -1135,7 +1167,7 @@ void Respiratory::RespiratoryDriver()
       //If you stays there, it will get there, just more controlled/slowly.
       //This is needed so we don't overshoot and introduce low frequency oscillations into the system (i.e. overdamped).
       double targetCO2PP_mmHg = 40.0;
-      double changeFraction = 1.0;
+      double changeFraction = 1.0; //jbw - make this independet of timestep (i.e., use 0.02/m_dt_s)
       if (m_data.GetState() <= EngineState::InitialStabilization)
       {
         //This gets it nice and stable
@@ -1505,82 +1537,82 @@ void Respiratory::Pneumothorax()
   if (m_PatientActions->HasTensionPneumothorax())
   {
     // Minimum flow resistance for the chest cavity or alveoli leak 
-    double dPneumoMinPressureTimePerVolume_cmH2O_s_Per_L = 30.0;
+    double PneumoMinResistance_cmH2O_s_Per_L = 30.0;
     // Maximum flow resistance for the chest cavity or alveoli leak
-    double dPneumoMaxPressureTimePerVolume_cmH2O_s_Per_L = m_DefaultOpenResistance_cmH2O_s_Per_L;
+    double PneumoMaxResistance_cmH2O_s_Per_L = m_DefaultOpenResistance_cmH2O_s_Per_L;
     // Flow resistance for the decompression needle, if used
-    double dNeedlePressureTimePerVolume_cmH2O_s_Per_L = 15.0;
+    double NeedleResistance_cmH2O_s_Per_L = 100.0;
 
     if (m_PatientActions->HasLeftOpenTensionPneumothorax())
     {
       // Scale the flow resistance through the chest opening based on severity
       double severity = m_PatientActions->GetLeftOpenTensionPneumothorax()->GetSeverity().GetValue();
-    double resistance_cmH2O_s_Per_L = dPneumoMaxPressureTimePerVolume_cmH2O_s_Per_L;
-    if (severity > 0.0 && !m_PatientActions->HasLeftChestOcclusiveDressing())
-    {
-    resistance_cmH2O_s_Per_L = dPneumoMinPressureTimePerVolume_cmH2O_s_Per_L / pow(severity, 2.0);
-    }    
-    resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, dPneumoMaxPressureTimePerVolume_cmH2O_s_Per_L);
-      m_EnvironmentToLeftChestLeak->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-      
-    if (m_PatientActions->HasLeftNeedleDecompression())
+      double resistance_cmH2O_s_Per_L = PneumoMaxResistance_cmH2O_s_Per_L;
+      if (severity > 0.0 && !m_PatientActions->HasLeftChestOcclusiveDressing())
       {
-        DoLeftNeedleDecompression(dNeedlePressureTimePerVolume_cmH2O_s_Per_L);
+        resistance_cmH2O_s_Per_L = PneumoMinResistance_cmH2O_s_Per_L / pow(severity, 2.0);
+      }
+      resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, PneumoMaxResistance_cmH2O_s_Per_L);
+      m_EnvironmentToLeftChestLeak->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+
+      if (m_PatientActions->HasLeftNeedleDecompression())
+      {
+        DoLeftNeedleDecompression(NeedleResistance_cmH2O_s_Per_L);
       }
     }
 
     if (m_PatientActions->HasRightOpenTensionPneumothorax())
     {
-    // Scale the flow resistance through the chest opening based on severity
-    double severity = m_PatientActions->GetRightOpenTensionPneumothorax()->GetSeverity().GetValue();
-    double resistance_cmH2O_s_Per_L = dPneumoMaxPressureTimePerVolume_cmH2O_s_Per_L;
-    if (severity > 0.0 && !m_PatientActions->HasRightChestOcclusiveDressing())
-    {
-      resistance_cmH2O_s_Per_L = dPneumoMinPressureTimePerVolume_cmH2O_s_Per_L / pow(severity, 2.0);
-    }
-    resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, dPneumoMaxPressureTimePerVolume_cmH2O_s_Per_L);
-    m_EnvironmentToRightChestLeak->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      // Scale the flow resistance through the chest opening based on severity
+      double severity = m_PatientActions->GetRightOpenTensionPneumothorax()->GetSeverity().GetValue();
+      double resistance_cmH2O_s_Per_L = PneumoMaxResistance_cmH2O_s_Per_L;
+      if (severity > 0.0 && !m_PatientActions->HasRightChestOcclusiveDressing())
+      {
+        resistance_cmH2O_s_Per_L = PneumoMinResistance_cmH2O_s_Per_L / pow(severity, 2.0);
+      }
+      resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, PneumoMaxResistance_cmH2O_s_Per_L);
+      m_EnvironmentToRightChestLeak->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 
       if (m_PatientActions->HasRightNeedleDecompression())
       {
-        DoRightNeedleDecompression(dNeedlePressureTimePerVolume_cmH2O_s_Per_L);
+        DoRightNeedleDecompression(NeedleResistance_cmH2O_s_Per_L);
       }
       m_EnvironmentToRightChestLeak->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     }
 
     if (m_PatientActions->HasLeftClosedTensionPneumothorax())
     {
-    // Scale the flow resistance through the chest opening based on severity
-    double severity = m_PatientActions->GetLeftClosedTensionPneumothorax()->GetSeverity().GetValue();
-    double resistance_cmH2O_s_Per_L = dPneumoMaxPressureTimePerVolume_cmH2O_s_Per_L;
-    if (severity > 0.0)
-    {
-      resistance_cmH2O_s_Per_L = dPneumoMinPressureTimePerVolume_cmH2O_s_Per_L / pow(severity, 2.0);
-    }
-    resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, dPneumoMaxPressureTimePerVolume_cmH2O_s_Per_L);
-    m_LeftAlveoliLeakToLeftPleural->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      // Scale the flow resistance through the chest opening based on severity
+      double severity = m_PatientActions->GetLeftClosedTensionPneumothorax()->GetSeverity().GetValue();
+      double resistance_cmH2O_s_Per_L = PneumoMaxResistance_cmH2O_s_Per_L;
+      if (severity > 0.0)
+      {
+        resistance_cmH2O_s_Per_L = PneumoMinResistance_cmH2O_s_Per_L / pow(severity, 2.0);
+      }
+      resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, PneumoMaxResistance_cmH2O_s_Per_L);
+      m_LeftAlveoliLeakToLeftPleural->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 
       if (m_PatientActions->HasLeftNeedleDecompression())
       {
-        DoLeftNeedleDecompression(dNeedlePressureTimePerVolume_cmH2O_s_Per_L);
+        DoLeftNeedleDecompression(NeedleResistance_cmH2O_s_Per_L);
       }
     }
 
     if (m_PatientActions->HasRightClosedTensionPneumothorax())
     {
-    // Scale the flow resistance through the chest opening based on severity
-    double severity = m_PatientActions->GetRightClosedTensionPneumothorax()->GetSeverity().GetValue();
-    double resistance_cmH2O_s_Per_L = dPneumoMaxPressureTimePerVolume_cmH2O_s_Per_L;
-    if (severity > 0.0)
-    {
-      resistance_cmH2O_s_Per_L = dPneumoMinPressureTimePerVolume_cmH2O_s_Per_L / pow(severity, 2.0);
-    }
-    resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, dPneumoMaxPressureTimePerVolume_cmH2O_s_Per_L);
-    m_RightAlveoliLeakToRightPleural->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      // Scale the flow resistance through the chest opening based on severity
+      double severity = m_PatientActions->GetRightClosedTensionPneumothorax()->GetSeverity().GetValue();
+      double resistance_cmH2O_s_Per_L = PneumoMaxResistance_cmH2O_s_Per_L;
+      if (severity > 0.0)
+      {
+        resistance_cmH2O_s_Per_L = PneumoMinResistance_cmH2O_s_Per_L / pow(severity, 2.0);
+      }
+      resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, PneumoMaxResistance_cmH2O_s_Per_L);
+      m_RightAlveoliLeakToRightPleural->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 
       if (m_PatientActions->HasRightNeedleDecompression())
       {
-        DoRightNeedleDecompression(dNeedlePressureTimePerVolume_cmH2O_s_Per_L);
+        DoRightNeedleDecompression(NeedleResistance_cmH2O_s_Per_L);
       }
     }
 
@@ -2391,7 +2423,7 @@ void Respiratory::TuneCircuit()
 {
   SEFluidCircuit& RespiratoryCircuit = m_data.GetCircuits().GetRespiratoryCircuit();
   //Set the starting/default driver pressure
-  m_DriverPressurePath->GetNextPressureSource().SetValue(0.0, PressureUnit::cmH2O);
+  m_DriverPressurePath->GetNextPressureSource().Set(m_DriverPressurePath->GetPressureSourceBaseline());
   m_Calculator->Process(RespiratoryCircuit, m_dt_s);
   m_Calculator->PostProcess(RespiratoryCircuit);
 
@@ -2410,63 +2442,108 @@ void Respiratory::UpdateChestWallCompliances()
 {
   //Settings --------------------------------------------
   double rightLowerInflection =              0.1;       //Fraction between reserve volume and total lung capacity
-  double rightUpperInflection =              0.9;       //Fraction between reserve volume and total lung capacity
-  double rightLowerCompliance_L_Per_cmH20 =  0.002;
-  double rightUppperCompliance_L_Per_cmH20 = 0.002;
-  double rightMiddleCompliance_L_Per_cmH20 = 0.1 / 2.0; //jbw - Add to settings as healthy compliance  
+  double rightUpperInflection =              0.7;       //Fraction between reserve volume and total lung capacity
+  double rightLowerSlope_L_Per_cmH20 =       0.03;
+  double rightUpperSlope_L_Per_cmH20 =       0.03;
+  double rightMiddleCompliance_L_Per_cmH20 = 1.0 / (1.0 / m_RightAlveoliToRightPleuralConnection->GetComplianceBaseline(VolumePerPressureUnit::L_Per_cmH2O) + 
+   1.0 / m_RightPleuralToRespiratoryMuscle->GetComplianceBaseline(VolumePerPressureUnit::L_Per_cmH2O));
 
   double leftLowerInflection =               0.1;       //Fraction between reserve volume and total lung capacity
-  double leftUpperInflection =               0.9;       //Fraction between reserve volume and total lung capacity
-  double leftLowerCompliance_L_Per_cmH20 =   0.002;
-  double leftUppperCompliance_L_Per_cmH20 =  0.002;
-  double leftMiddleCompliance_L_Per_cmH20 =  0.1 / 2.0; //jbw - Add to settings as healthy compliance  
+  double leftUpperInflection =               0.7;       //Fraction between reserve volume and total lung capacity 
+  double leftLowerSlope_L_Per_cmH20 =        0.03;
+  double leftUpperSlope_L_Per_cmH20 =        0.03;
+  double leftMiddleCompliance_L_Per_cmH20 = 1.0 / (1.0 / m_LeftAlveoliToLeftPleuralConnection->GetComplianceBaseline(VolumePerPressureUnit::L_Per_cmH2O) +
+    1.0 / m_LeftPleuralToRespiratoryMuscle->GetComplianceBaseline(VolumePerPressureUnit::L_Per_cmH2O));
+
+  double maxSlope_L_Per_cmH2O = 0.0005;
   //-----------------------------------------------------
 
   double rightLungRatio = m_Patient->GetRightLungRatio().GetValue();
   double leftLungRatio = 1.0 - rightLungRatio;
 
-  double rightVolume_L = m_RightAlveoli->GetNextVolume(VolumeUnit::L);
-  double leftVolume_L = m_LeftAlveoli->GetNextVolume(VolumeUnit::L);
+  double rightVolume_L = m_RightLung->GetVolume(VolumeUnit::L);
+  double leftVolume_L = m_LeftLung->GetVolume(VolumeUnit::L);
 
-  double rightLowerInflection_L = (m_Patient->GetResidualVolume(VolumeUnit::L) + (m_Patient->GetTotalLungCapacity(VolumeUnit::L) - m_Patient->GetResidualVolume(VolumeUnit::L)) * rightLowerInflection) * rightLungRatio;
-  double rightUpperInflection_L = (m_Patient->GetResidualVolume(VolumeUnit::L) + (m_Patient->GetTotalLungCapacity(VolumeUnit::L) - m_Patient->GetResidualVolume(VolumeUnit::L)) * rightUpperInflection) * rightLungRatio;
-  double leftLowerInflection_L = (m_Patient->GetResidualVolume(VolumeUnit::L) + (m_Patient->GetTotalLungCapacity(VolumeUnit::L) - m_Patient->GetResidualVolume(VolumeUnit::L)) * leftLowerInflection) * leftLungRatio;
-  double leftUpperInflection_L = (m_Patient->GetResidualVolume(VolumeUnit::L) + (m_Patient->GetTotalLungCapacity(VolumeUnit::L) - m_Patient->GetResidualVolume(VolumeUnit::L)) * leftUpperInflection) * leftLungRatio;
+  double rightResidualVolume_L = m_Patient->GetResidualVolume(VolumeUnit::L) * rightLungRatio;
+  double rightTotalLungCapacity_L = m_Patient->GetTotalLungCapacity(VolumeUnit::L) * rightLungRatio;
+  double rightFunctionalResidualCapacity_L = m_Patient->GetFunctionalResidualCapacity(VolumeUnit::L) * rightLungRatio;
+  double leftResidualVolume_L = m_Patient->GetResidualVolume(VolumeUnit::L) * leftLungRatio;
+  double leftTotalLungCapacity_L = m_Patient->GetTotalLungCapacity(VolumeUnit::L) * leftLungRatio;  
+  double leftFunctionalResidualCapacity_L = m_Patient->GetFunctionalResidualCapacity(VolumeUnit::L) * leftLungRatio;
+
+  double rightLowerInflection_L = rightResidualVolume_L + (rightTotalLungCapacity_L - rightResidualVolume_L) * rightLowerInflection;
+  double rightUpperInflection_L = rightResidualVolume_L + (rightTotalLungCapacity_L - rightResidualVolume_L) * rightUpperInflection;
+  double leftLowerInflection_L = leftResidualVolume_L + (leftTotalLungCapacity_L - leftResidualVolume_L) * leftLowerInflection;
+  double leftUpperInflection_L = leftResidualVolume_L + (leftTotalLungCapacity_L - leftResidualVolume_L) * leftUpperInflection;
+
+  double rightLowerInflection_cmH2O = (rightLowerInflection_L - rightFunctionalResidualCapacity_L) / rightMiddleCompliance_L_Per_cmH20;
+  double rightUpperInflection_cmH2O = (rightUpperInflection_L - rightFunctionalResidualCapacity_L) / rightMiddleCompliance_L_Per_cmH20;
+  double leftLowerInflection_cmH2O = (leftLowerInflection_L - leftFunctionalResidualCapacity_L) / leftMiddleCompliance_L_Per_cmH20;
+  double leftUpperInflection_cmH2O = (leftUpperInflection_L - leftFunctionalResidualCapacity_L) / leftMiddleCompliance_L_Per_cmH20;
+
+  double rightResidualVolume_cmH2O = rightLowerInflection_cmH2O - (rightLowerInflection_L - rightResidualVolume_L) / rightLowerSlope_L_Per_cmH20;
+  double rightTotalLungCapacity_cmH2O = rightUpperInflection_cmH2O + (rightUpperInflection_L - rightTotalLungCapacity_L) / rightUpperSlope_L_Per_cmH20;
+  double leftResidualVolume_cmH2O = leftLowerInflection_cmH2O - (leftLowerInflection_L - leftResidualVolume_L) / leftLowerSlope_L_Per_cmH20;
+  double leftTotalLungCapacity_cmH2O = leftUpperInflection_cmH2O + (leftUpperInflection_L - leftTotalLungCapacity_L) / leftUpperSlope_L_Per_cmH20;
 
   double rightSideCompliance_L_Per_cmH2O = 0.0;
-  if (rightVolume_L < rightLowerInflection_L)
+  if (rightVolume_L < rightResidualVolume_L)
   {
-    rightSideCompliance_L_Per_cmH2O = rightLowerCompliance_L_Per_cmH20;
+    double expected_Pressure_cmH2O = rightResidualVolume_cmH2O - (rightResidualVolume_L - rightVolume_L) / maxSlope_L_Per_cmH2O;
+    rightSideCompliance_L_Per_cmH2O = (rightVolume_L - rightFunctionalResidualCapacity_L) / expected_Pressure_cmH2O;
+  }
+  else if (rightVolume_L < rightLowerInflection_L)
+  {
+    double expected_Pressure_cmH2O = rightLowerInflection_cmH2O - (rightLowerInflection_L - rightVolume_L) / rightLowerSlope_L_Per_cmH20;
+    rightSideCompliance_L_Per_cmH2O = (rightVolume_L - rightFunctionalResidualCapacity_L) / expected_Pressure_cmH2O;
   }
   else if (rightVolume_L < rightUpperInflection_L)
   {
     rightSideCompliance_L_Per_cmH2O = rightMiddleCompliance_L_Per_cmH20;
   }
+  else if (rightVolume_L < rightTotalLungCapacity_L)
+  {
+    double expected_Pressure_cmH2O = rightUpperInflection_cmH2O + (rightVolume_L - rightUpperInflection_L) / rightUpperSlope_L_Per_cmH20;
+    rightSideCompliance_L_Per_cmH2O = (rightVolume_L - rightFunctionalResidualCapacity_L) / expected_Pressure_cmH2O;
+  }
   else
   {
-    rightSideCompliance_L_Per_cmH2O = rightUppperCompliance_L_Per_cmH20;
+    double expected_Pressure_cmH2O = rightTotalLungCapacity_cmH2O + (rightVolume_L - rightTotalLungCapacity_L) / maxSlope_L_Per_cmH2O;
+    rightSideCompliance_L_Per_cmH2O = (rightVolume_L - rightFunctionalResidualCapacity_L) / expected_Pressure_cmH2O;
   }
 
   double leftSideCompliance_L_Per_cmH2O = 0.0;
-  if (leftVolume_L < leftLowerInflection_L)
+  if (leftVolume_L < leftResidualVolume_L)
   {
-    leftSideCompliance_L_Per_cmH2O = leftLowerCompliance_L_Per_cmH20;
+    double expected_Pressure_cmH2O = leftResidualVolume_cmH2O - (leftResidualVolume_L - leftVolume_L) / maxSlope_L_Per_cmH2O;
+    leftSideCompliance_L_Per_cmH2O = (leftVolume_L - leftFunctionalResidualCapacity_L) / expected_Pressure_cmH2O;
+  }
+  else if (leftVolume_L < leftLowerInflection_L)
+  {
+    double expected_Pressure_cmH2O = leftLowerInflection_cmH2O - (leftLowerInflection_L - leftVolume_L) / leftLowerSlope_L_Per_cmH20;
+    leftSideCompliance_L_Per_cmH2O = (leftVolume_L - leftFunctionalResidualCapacity_L) / expected_Pressure_cmH2O;
   }
   else if (leftVolume_L < leftUpperInflection_L)
   {
     leftSideCompliance_L_Per_cmH2O = leftMiddleCompliance_L_Per_cmH20;
   }
+  else if (leftVolume_L < leftTotalLungCapacity_L)
+  {
+    double expected_Pressure_cmH2O = leftUpperInflection_cmH2O + (leftVolume_L - leftTotalLungCapacity_L) / leftUpperSlope_L_Per_cmH20;
+    leftSideCompliance_L_Per_cmH2O = (leftVolume_L - leftFunctionalResidualCapacity_L) / expected_Pressure_cmH2O;
+  }
   else
   {
-    leftSideCompliance_L_Per_cmH2O = leftUppperCompliance_L_Per_cmH20;
+    double expected_Pressure_cmH2O = leftTotalLungCapacity_cmH2O + (leftVolume_L - leftUpperInflection_L) / maxSlope_L_Per_cmH2O;
+    leftSideCompliance_L_Per_cmH2O = (leftVolume_L - leftFunctionalResidualCapacity_L) / expected_Pressure_cmH2O;
   }
 
-  //Assume lung compliance is a constant value
+  //Assume lung/alveoli compliance is a constant value
   double leftHealthyLungCompliance_L_Per_cmH2O = m_LeftAlveoliToLeftPleuralConnection->GetComplianceBaseline(VolumePerPressureUnit::L_Per_cmH2O);
   double rightHealthyLungCompliance_L_Per_cmH2O = m_RightAlveoliToRightPleuralConnection->GetComplianceBaseline(VolumePerPressureUnit::L_Per_cmH2O);
 
-  double leftChestWallCompliance_L_Per_cmH2O = 0.0001;
-  double rightChestWallCompliance_L_Per_cmH2O = 0.0001;
+  double leftChestWallCompliance_L_Per_cmH2O = 0.0;
+  double rightChestWallCompliance_L_Per_cmH2O = 0.0;
   //Can't divide by zero
   if (leftSideCompliance_L_Per_cmH2O != leftHealthyLungCompliance_L_Per_cmH2O)
   {
@@ -2476,6 +2553,33 @@ void Respiratory::UpdateChestWallCompliances()
   {
     rightChestWallCompliance_L_Per_cmH2O = 1.0 / (1.0 / rightSideCompliance_L_Per_cmH2O - 1.0 / rightHealthyLungCompliance_L_Per_cmH2O);
   }
+
+  //Dampen the change to prevent craziness
+  double maxChange_L_Per_cmH2O_s = 0.01;
+
+  double rightComplianceChange_L_Per_cmH2O = rightChestWallCompliance_L_Per_cmH2O - m_RightPleuralToRespiratoryMuscle->GetCompliance(VolumePerPressureUnit::L_Per_cmH2O);
+  double leftComplianceChange_L_Per_cmH2O = leftChestWallCompliance_L_Per_cmH2O - m_LeftPleuralToRespiratoryMuscle->GetCompliance(VolumePerPressureUnit::L_Per_cmH2O);
+
+  if (rightComplianceChange_L_Per_cmH2O > 0.0)
+  {
+    rightComplianceChange_L_Per_cmH2O = MIN(rightComplianceChange_L_Per_cmH2O, maxChange_L_Per_cmH2O_s * m_dt_s);
+  }
+  else if (rightComplianceChange_L_Per_cmH2O < 0.0)
+  {
+    rightComplianceChange_L_Per_cmH2O = MAX(rightComplianceChange_L_Per_cmH2O, -maxChange_L_Per_cmH2O_s * m_dt_s);
+  }
+
+  if (leftComplianceChange_L_Per_cmH2O > 0.0)
+  {
+    leftComplianceChange_L_Per_cmH2O = MIN(leftComplianceChange_L_Per_cmH2O, maxChange_L_Per_cmH2O_s * m_dt_s);
+  }
+  else if (leftComplianceChange_L_Per_cmH2O < 0.0)
+  {
+    leftComplianceChange_L_Per_cmH2O = MAX(leftComplianceChange_L_Per_cmH2O, -maxChange_L_Per_cmH2O_s * m_dt_s);
+  }
+
+  rightChestWallCompliance_L_Per_cmH2O = m_RightPleuralToRespiratoryMuscle->GetCompliance(VolumePerPressureUnit::L_Per_cmH2O) + rightComplianceChange_L_Per_cmH2O;
+  leftChestWallCompliance_L_Per_cmH2O = m_LeftPleuralToRespiratoryMuscle->GetCompliance(VolumePerPressureUnit::L_Per_cmH2O) + leftComplianceChange_L_Per_cmH2O;
 
   m_RightPleuralToRespiratoryMuscle->GetNextCompliance().SetValue(rightChestWallCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
   m_LeftPleuralToRespiratoryMuscle->GetNextCompliance().SetValue(leftChestWallCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);

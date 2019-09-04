@@ -2134,7 +2134,7 @@ void Cardiovascular::CalculatePleuralCavityVenousEffects()
   //Pressure difference causes a mediastinum shift
   double pleuralCavityPressureDiff_cmH2O = abs(m_leftPleuralCavity->GetPressure(PressureUnit::cmH2O) - m_rightPleuralCavity->GetPressure(PressureUnit::cmH2O));
   
-  double maxPressureDiff_cmH2O = 40.0;
+  double maxPressureDiff_cmH2O = 14.0;
   double maxResistanceMultiplier = 10.0;
   pleuralCavityPressureDiff_cmH2O = min(pleuralCavityPressureDiff_cmH2O, maxPressureDiff_cmH2O);
 
@@ -2148,7 +2148,8 @@ void Cardiovascular::CalculatePleuralCavityVenousEffects()
   double rightHeartResistance_mmHg_s_Per_mL = m_RightHeartResistance->GetNextResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
   m_RightHeartResistance->GetNextResistance().SetValue(rightHeartResistance_mmHg_s_Per_mL * resistanceMultiplier, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
 
+  //jbw
   //For tuning
-  //m_data.GetDataTrack().Probe("pleuralCavityPressureDiff_cmH2O", pleuralCavityPressureDiff_cmH2O);
-  //m_data.GetDataTrack().Probe("resistanceMultiplier", resistanceMultiplier);
+  m_data.GetDataTrack().Probe("pleuralCavityPressureDiff_cmH2O", pleuralCavityPressureDiff_cmH2O);
+  m_data.GetDataTrack().Probe("resistanceMultiplier", resistanceMultiplier);
 }

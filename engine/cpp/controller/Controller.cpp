@@ -3680,11 +3680,10 @@ void PulseController::SetupRespiratory()
   double alveolarDeadSpaceVolume_L = 0.0;  //Should change with certain diseases /// \cite Levitzky2013pulmonary
   double physiologicDeadSpaceVolume_L = anatomicDeadSpaceVolume_L + alveolarDeadSpaceVolume_L;
   //double PleuralVolume_L = 20.0 / 1000.0; //this is a liquid volume  /// \cite Levitzky2013pulmonary
-  double PleuralVolume_L = FunctionalResidualCapacity_L; //Make this an gas volume to mimic the liquid volume
+  double PleuralVolume_L = FunctionalResidualCapacity_L; //Make this a gas volume to mimic the liquid volume
 
   double AmbientPresure = 1033.23; // = 1 atm
   double OpenResistance_cmH2O_s_Per_L = m_Config->GetDefaultOpenFlowResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-
 
   // Mouth
   SEFluidCircuitNode& Mouth = cRespiratory.CreateNode(pulse::RespiratoryNode::Mouth);
@@ -3697,11 +3696,11 @@ void PulseController::SetupRespiratory()
   // Right Anatomic Dead Space
   SEFluidCircuitNode& RightAnatomicDeadSpace = cRespiratory.CreateNode(pulse::RespiratoryNode::RightAnatomicDeadSpace);
   RightAnatomicDeadSpace.GetPressure().SetValue(AmbientPresure, PressureUnit::cmH2O);
-  RightAnatomicDeadSpace.GetVolumeBaseline().SetValue(RightLungRatio*physiologicDeadSpaceVolume_L, VolumeUnit::L);
+  RightAnatomicDeadSpace.GetVolumeBaseline().SetValue(RightLungRatio*anatomicDeadSpaceVolume_L, VolumeUnit::L);
   // Left Anatomic Dead Space
   SEFluidCircuitNode& LeftAnatomicDeadSpace = cRespiratory.CreateNode(pulse::RespiratoryNode::LeftAnatomicDeadSpace);
   LeftAnatomicDeadSpace.GetPressure().SetValue(AmbientPresure, PressureUnit::cmH2O);
-  LeftAnatomicDeadSpace.GetVolumeBaseline().SetValue(LeftLungRatio*physiologicDeadSpaceVolume_L, VolumeUnit::L);
+  LeftAnatomicDeadSpace.GetVolumeBaseline().SetValue(LeftLungRatio*anatomicDeadSpaceVolume_L, VolumeUnit::L);
   // Right Alveolar Dead Space
   SEFluidCircuitNode& RightAlveolarDeadSpace = cRespiratory.CreateNode(pulse::RespiratoryNode::RightAlveolarDeadSpace);
   RightAlveolarDeadSpace.GetPressure().SetValue(AmbientPresure, PressureUnit::cmH2O);
@@ -3711,11 +3710,11 @@ void PulseController::SetupRespiratory()
   // Right Alveoli
   SEFluidCircuitNode& RightAlveoli = cRespiratory.CreateNode(pulse::RespiratoryNode::RightAlveoli);
   RightAlveoli.GetPressure().SetValue(AmbientPresure, PressureUnit::cmH2O);
-  RightAlveoli.GetVolumeBaseline().SetValue(RightLungRatio * FunctionalResidualCapacity_L, VolumeUnit::L);
+  RightAlveoli.GetVolumeBaseline().SetValue(RightLungRatio * FunctionalResidualCapacity_L - RightLungRatio * physiologicDeadSpaceVolume_L, VolumeUnit::L);
   // Left Alveoli
   SEFluidCircuitNode& LeftAlveoli = cRespiratory.CreateNode(pulse::RespiratoryNode::LeftAlveoli);
   LeftAlveoli.GetPressure().SetValue(AmbientPresure, PressureUnit::cmH2O);
-  LeftAlveoli.GetVolumeBaseline().SetValue(LeftLungRatio * FunctionalResidualCapacity_L, VolumeUnit::L);
+  LeftAlveoli.GetVolumeBaseline().SetValue(LeftLungRatio * FunctionalResidualCapacity_L - LeftLungRatio * physiologicDeadSpaceVolume_L, VolumeUnit::L);
   // Node for right alveoli leak
   SEFluidCircuitNode& RightAlveoliLeak = cRespiratory.CreateNode(pulse::RespiratoryNode::RightAlveoliLeak);
   RightAlveoliLeak.GetPressure().SetValue(AmbientPresure, PressureUnit::cmH2O);
@@ -3800,7 +3799,7 @@ void PulseController::SetupRespiratory()
   LeftChestLeakToLeftPleural.SetNextValve(eGate::Closed);
   // Paths for the Driver
   SEFluidCircuitPath& EnvironmentToRespiratoryMuscle = cRespiratory.CreatePath(*Ambient, RespiratoryMuscle, pulse::RespiratoryPath::EnvironmentToRespiratoryMuscle);
-  EnvironmentToRespiratoryMuscle.GetPressureSourceBaseline().Set(RespiratoryMuscle.GetPressure());
+  EnvironmentToRespiratoryMuscle.GetPressureSourceBaseline().SetValue(RespiratoryMuscle.GetPressure(PressureUnit::cmH2O) - AmbientPresure, PressureUnit::cmH2O);
   // Esophageal (Stomach) path
   SEFluidCircuitPath& MouthToStomach = cRespiratory.CreatePath(Mouth, Stomach, pulse::RespiratoryPath::MouthToStomach);
   MouthToStomach.GetResistanceBaseline().SetValue(OpenResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);

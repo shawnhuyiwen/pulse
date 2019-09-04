@@ -202,6 +202,8 @@ protected:
   SELiquidCompartment*       m_LeftLungExtravascular;
   SELiquidCompartment*       m_RightLungExtravascular;
   SEGasCompartment*          m_Lungs;
+  SEGasCompartment*          m_LeftLung;
+  SEGasCompartment*          m_RightLung;
   SEGasCompartment*          m_Carina;
   SEGasSubstanceQuantity*    m_CarinaO2;
   SELiquidSubstanceQuantity* m_AortaO2;
