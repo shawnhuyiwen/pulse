@@ -175,14 +175,12 @@ void Nervous::BaroreceptorFeedback()
   
   UpdateBaroreceptorThresholds();
   //update nu - the slope response of the firing rate
-  //nu *= (1 - m_sedationDampeningEffect);
+  //nu *= (1 - m_sedationDampeningEffect);  TODO: Add this back when I have data for validation
 
   //Adjusting the mean arterial pressure set-point to account for cardiovascular drug effects
   m_meanArterialPressureBaseline_mmHg = m_meanArtrialPressurePatientBaseline_mmHg //m_MeanArterialPressureNoFeedbackBaseline_mmHg
     + m_data.GetDrugs().GetMeanBloodPressureChange(PressureUnit::mmHg)
     + m_data.GetEnergy().GetExerciseMeanArterialPressureDelta(PressureUnit::mmHg);  
-
-
   
   double sympatheticFraction = 1.0 / (1.0 + pow(meanArterialPressure_mmHg / m_meanArterialPressureBaseline_mmHg, nu));
   double parasympatheticFraction = 1.0 / (1.0 + pow(meanArterialPressure_mmHg / m_meanArterialPressureBaseline_mmHg, -nu));
@@ -243,7 +241,6 @@ void Nervous::UpdateBaroreceptorThresholds()
 		double meanArterialPressure_mmHg = m_data.GetCardiovascular().GetMeanArterialPressure(PressureUnit::mmHg);
 		double pressureDeviation = meanArterialPressure_mmHg - m_meanArterialPressureBaseline_mmHg;
 		m_meanArtrialPressurePatientBaseline_mmHg += 0.35*pressureDeviation;
-		//m_data.GetPatient().GetMeanArterialPressureBaseline().IncrementValue(0.3*pressureDeviation, PressureUnit::mmHg);
 		
 		m_ss << "Baroreceptor threshold updated to " << m_meanArtrialPressurePatientBaseline_mmHg << " mmHg";
 		Warning(m_ss);
@@ -254,9 +251,11 @@ void Nervous::UpdateBaroreceptorThresholds()
 
 	//Dampen response due to sedation
 	double sedationLevel = m_data.GetDrugs().GetSedationLevel().GetValue();
+
 	//maximum slope reduction of 25% - making that up right now
-	double maxSedationEffect = 0.25;
+	double maxSedationEffect = 0.35;
 	m_sedationDampeningEffect = maxSedationEffect * sedationLevel;
+
 }
 
 //--------------------------------------------------------------------------------------------------
