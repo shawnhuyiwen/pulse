@@ -69,10 +69,6 @@ protected:
   //PreProcess
   void UpdateChestWallCompliances();
   //Actions
-  void AirwayObstruction();
-  void BronchoConstriction();
-  void BronchoDilation();
-  void Intubation();
   void Pneumothorax();
   void ConsciousRespiration();
   /**/void ProcessConsciousRespiration(SEConsciousRespirationCommand& cmd);
@@ -102,14 +98,25 @@ protected:
 
   //Process
   void CalculateVitalSigns();
+  void Debugging();
 
   // Serializable member variables (Set in Initialize and in schema)
   //   Initial patient values
-  double m_InitialExpiratoryReserveVolume_L;
-  double m_InitialFunctionalResidualCapacity_L;
-  double m_InitialInspiratoryCapacity_L;
-  double m_InitialResidualVolume_L;
-  double m_InitialTotalLungCapacity_L;
+  //Aaron - add to serialization
+  double m_initialAlveoliDiffusionArea_cm2;
+
+  //   Current patient values
+  //Aaron - add to serialization
+  double m_RespirationRateBaseline_Per_min;
+  double m_TidalVolumeBaseline_L;
+  double m_ExpiratoryReserveVolume_L;
+  double m_FunctionalResidualCapacity_L;
+  double m_InspiratoryCapacity_L;
+  double m_InspiratoryReserveVolume_L;
+  double m_ResidualVolume_L;
+  double m_TotalLungCapacity_L;
+  double m_VitalCapacity_L;
+
   //   CalculateVitalSigns()
   bool   m_BreathingCycle;
   bool   m_NotBreathing;
@@ -142,7 +149,6 @@ protected:
   double m_DriverPressureMin_cmH2O;
   double m_ElapsedBreathingCycleTime_min;
   double m_IERatioScaleFactor;
-  double m_InstantaneousFunctionalResidualCapacity_L;
   double m_MaxDriverPressure_cmH2O;    
   double m_PeakRespiratoryDrivePressure_cmH2O;
   double m_PreviousTargetAlveolarVentilation_L_Per_min;
@@ -257,6 +263,4 @@ protected:
   SEFluidCircuitCalculator*  m_Calculator;
   SEGasTransporter*          m_GasTransporter;
   SELiquidTransporter*       m_AerosolTransporter;
-
-  double m_initialAlveoliDiffusionArea_cm2;
 };

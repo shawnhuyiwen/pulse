@@ -392,10 +392,6 @@ void PBPulsePhysiology::Load(const RespiratoryData& src, Respiratory& dst)
 void PBPulsePhysiology::Serialize(const RespiratoryData& src, Respiratory& dst)
 {
   PBPhysiology::Serialize(src.common(), dst);
-  dst.m_InitialExpiratoryReserveVolume_L = src.initialexpiratoryreservevolume_l();
-  dst.m_InitialFunctionalResidualCapacity_L = src.initialfunctionalresidualcapacity_l();
-  dst.m_InitialInspiratoryCapacity_L = src.initialinspiratorycapacity_l();
-  dst.m_InitialResidualVolume_L = src.initialresidualvolume_l();
 
   dst.m_BreathingCycle = src.breathingcycle();
   dst.m_NotBreathing = src.notbreathing();
@@ -419,7 +415,6 @@ void PBPulsePhysiology::Serialize(const RespiratoryData& src, Respiratory& dst)
   dst.m_DriverPressureMin_cmH2O = src.driverpressuremin_cmh2o();
   dst.m_ElapsedBreathingCycleTime_min = src.elapsedbreathingcycletime_min();
   dst.m_IERatioScaleFactor = src.iescalefactor();
-  dst.m_InstantaneousFunctionalResidualCapacity_L = src.instantaneousfunctionalresidualcapacity_l();
   dst.m_MaxDriverPressure_cmH2O = src.maxdriverpressure_cmh2o();
   dst.m_PeakRespiratoryDrivePressure_cmH2O = src.peakrespiratorydrivepressure_cmh2o();
   dst.m_PreviousTargetAlveolarVentilation_L_Per_min = src.previoustargetalveolarventilation_l_per_min();
@@ -445,10 +440,6 @@ RespiratoryData* PBPulsePhysiology::Unload(const Respiratory& src)
 void PBPulsePhysiology::Serialize(const Respiratory& src, RespiratoryData& dst)
 {
   PBPhysiology::Serialize(src, *dst.mutable_common());
-  dst.set_initialexpiratoryreservevolume_l(src.m_InitialExpiratoryReserveVolume_L);
-  dst.set_initialfunctionalresidualcapacity_l(src.m_InitialFunctionalResidualCapacity_L);
-  dst.set_initialinspiratorycapacity_l(src.m_InitialInspiratoryCapacity_L);
-  dst.set_initialresidualvolume_l(src.m_InitialResidualVolume_L);
 
   dst.set_breathingcycle(src.m_BreathingCycle);
   dst.set_notbreathing(src.m_NotBreathing);
@@ -472,7 +463,6 @@ void PBPulsePhysiology::Serialize(const Respiratory& src, RespiratoryData& dst)
   dst.set_driverpressuremin_cmh2o(src.m_DriverPressureMin_cmH2O);
   dst.set_elapsedbreathingcycletime_min(src.m_ElapsedBreathingCycleTime_min);
   dst.set_iescalefactor(src.m_IERatioScaleFactor);
-  dst.set_instantaneousfunctionalresidualcapacity_l(src.m_InstantaneousFunctionalResidualCapacity_L);
   dst.set_maxdriverpressure_cmh2o(src.m_MaxDriverPressure_cmH2O);
   dst.set_peakrespiratorydrivepressure_cmh2o(src.m_PeakRespiratoryDrivePressure_cmH2O);
   dst.set_previoustargetalveolarventilation_l_per_min(src.m_PreviousTargetAlveolarVentilation_L_Per_min);

@@ -2148,8 +2148,7 @@ void Cardiovascular::CalculatePleuralCavityVenousEffects()
   double rightHeartResistance_mmHg_s_Per_mL = m_RightHeartResistance->GetNextResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
   m_RightHeartResistance->GetNextResistance().SetValue(rightHeartResistance_mmHg_s_Per_mL * resistanceMultiplier, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
 
-  //jbw
   //For tuning
-  m_data.GetDataTrack().Probe("pleuralCavityPressureDiff_cmH2O", pleuralCavityPressureDiff_cmH2O);
-  m_data.GetDataTrack().Probe("resistanceMultiplier", resistanceMultiplier);
+  //m_data.GetDataTrack().Probe("pleuralCavityPressureDiff_cmH2O", pleuralCavityPressureDiff_cmH2O);
+  //m_data.GetDataTrack().Probe("resistanceMultiplier", resistanceMultiplier);
 }

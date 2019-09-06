@@ -28,6 +28,7 @@
 #include "patient/actions/SEIntubation.h"
 #include "patient/actions/SEMechanicalVentilation.h"
 #include "patient/actions/SENeedleDecompression.h"
+#include "patient/actions/SERespiratoryFatigue.h"
 #include "patient/actions/SESupplementalOxygen.h"
 #include "patient/actions/SETensionPneumothorax.h"
 // Assessments
@@ -71,14 +72,16 @@
 #include "properties/SEScalarVolumePerPressure.h"
 #include "properties/SEFunctionVolumeVsTime.h"
 #include "properties/SERunningAverage.h"
-
-//jbw - remove
+// Data Track
 #include "utils/DataTrack.h"
-
 
 #ifdef _MSC_VER 
 #pragma warning( disable : 4305 4244 )  // Disable some warning messages
 #endif
+
+//Flag for data tracks
+//Should be commented out, unless debugging
+//#define DEBUG
 
 //Flag for setting things constant to test
 //Should be commented out, unless debugging/tuning
@@ -233,18 +236,25 @@ void Respiratory::Initialize()
   m_ConsciousBreathing = false;
 
   //Patient data
-  m_InitialExpiratoryReserveVolume_L = m_Patient->GetExpiratoryReserveVolume(VolumeUnit::L);
-  m_InitialInspiratoryCapacity_L = m_Patient->GetInspiratoryCapacity(VolumeUnit::L);
-  m_InitialFunctionalResidualCapacity_L = m_Patient->GetFunctionalResidualCapacity(VolumeUnit::L);
-  m_InitialResidualVolume_L = m_Patient->GetResidualVolume(VolumeUnit::L);
-  m_InstantaneousFunctionalResidualCapacity_L = m_Patient->GetFunctionalResidualCapacity(VolumeUnit::L);
-  m_InitialTotalLungCapacity_L = m_Patient->GetTotalLungCapacity(VolumeUnit::L);
+  m_RespirationRateBaseline_Per_min = m_Patient->GetRespirationRateBaseline(FrequencyUnit::Per_min);
+  m_TidalVolumeBaseline_L = m_Patient->GetTidalVolumeBaseline(VolumeUnit::L);
+  m_FunctionalResidualCapacity_L = m_Patient->GetFunctionalResidualCapacity(VolumeUnit::L);
+  m_VitalCapacity_L = m_Patient->GetVitalCapacity(VolumeUnit::L);
+  m_ExpiratoryReserveVolume_L = m_Patient->GetExpiratoryReserveVolume(VolumeUnit::L);
+  m_InspiratoryReserveVolume_L = m_Patient->GetInspiratoryReserveVolume(VolumeUnit::L);
+  m_InspiratoryCapacity_L = m_Patient->GetInspiratoryCapacity(VolumeUnit::L);
+  m_ResidualVolume_L = m_Patient->GetResidualVolume(VolumeUnit::L);
+  m_TotalLungCapacity_L = m_Patient->GetTotalLungCapacity(VolumeUnit::L);
+
+  /// \todo Remove this and do it with new healthy patient vs current patient methodology
+  m_initialAlveoliDiffusionArea_cm2 = m_Patient->GetAlveoliSurfaceArea(AreaUnit::cm2);
 
   //System data
   double TidalVolume_L = m_Patient->GetTidalVolumeBaseline(VolumeUnit::L);
   double RespirationRate_Per_min = m_Patient->GetRespirationRateBaseline(FrequencyUnit::Per_min);
   GetTidalVolume().SetValue(TidalVolume_L, VolumeUnit::L);
   GetRespirationRate().SetValue(RespirationRate_Per_min, FrequencyUnit::Per_min);
+  GetInspiratoryExpiratoryRatio().SetValue(0.5);
   GetCarricoIndex().SetValue(452.0, PressureUnit::mmHg);
 
   double AnatomicDeadSpace_L = m_LeftAnatomicDeadSpace->GetVolumeBaseline(VolumeUnit::L) + m_RightAnatomicDeadSpace->GetVolumeBaseline(VolumeUnit::L);
@@ -392,9 +402,6 @@ void Respiratory::SetUp()
   /// \todo figure out how to modify these resistances without getting the cv circuit - maybe add a parameter, like baroreceptors does
   m_RightPulmonaryCapillary = m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightPulmonaryCapillariesToRightPulmonaryVeins);
   m_LeftPulmonaryCapillary = m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::LeftPulmonaryCapillariesToLeftPulmonaryVeins);
-
-  //jbw - Remove this and do it with the new healthy patient stored values
-  m_initialAlveoliDiffusionArea_cm2 = m_Patient->GetAlveoliSurfaceArea(AreaUnit::cm2);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -412,52 +419,48 @@ void Respiratory::SetUp()
 //--------------------------------------------------------------------------------------------------
 void Respiratory::AtSteadyState()
 {
-  //jbw - only reset these at healthy stabilization - make member variables for things that change - PFT: need to actually do it
-  //jbw - FRC is known now that it's modeled correctly (make sure it can be overwritten) - only TV should be experimentally determined
-  //jbw - Make sure CV also follow this methodology
-  double respirationRate_Per_min = GetRespirationRate(FrequencyUnit::Per_min);
-  double tidalVolume_L = GetTidalVolume(VolumeUnit::L);
-  double totalLungCapacity_L = m_Patient->GetTotalLungCapacity(VolumeUnit::L);
-  double residualVolume_L = m_Patient->GetResidualVolume(VolumeUnit::L);
-  double vitalCapacity_L = totalLungCapacity_L - residualVolume_L;
-  double expiratoryReserveVolume_L = m_InstantaneousFunctionalResidualCapacity_L - residualVolume_L;
-  double inspiratoryReserveVolume_L = totalLungCapacity_L - m_InstantaneousFunctionalResidualCapacity_L - tidalVolume_L;
-  double inspiratoryCapacity_L = totalLungCapacity_L - m_InstantaneousFunctionalResidualCapacity_L;
-  m_Patient->GetRespirationRateBaseline().SetValue(respirationRate_Per_min, FrequencyUnit::Per_min);
-  m_Patient->GetTidalVolumeBaseline().SetValue(tidalVolume_L, VolumeUnit::L);
-  m_Patient->GetFunctionalResidualCapacity().SetValue(m_InstantaneousFunctionalResidualCapacity_L, VolumeUnit::L);
-  m_Patient->GetVitalCapacity().SetValue(vitalCapacity_L, VolumeUnit::L);
-  m_Patient->GetExpiratoryReserveVolume().SetValue(expiratoryReserveVolume_L, VolumeUnit::L);
-  m_Patient->GetInspiratoryReserveVolume().SetValue(inspiratoryReserveVolume_L, VolumeUnit::L);
-  m_Patient->GetInspiratoryCapacity().SetValue(inspiratoryCapacity_L, VolumeUnit::L);
+  /// \todo figure out how to save an initial healthy/baseline patient definition and another current patient definition
+  //Experimentally determined
+  m_RespirationRateBaseline_Per_min = GetRespirationRate(FrequencyUnit::Per_min);
+  m_TidalVolumeBaseline_L = GetTidalVolume(VolumeUnit::L);
+  //Modified and set by conditions and actions
+  m_FunctionalResidualCapacity_L = m_Patient->GetFunctionalResidualCapacity(VolumeUnit::L);
+  m_TotalLungCapacity_L = m_Patient->GetTotalLungCapacity(VolumeUnit::L);
+  m_ResidualVolume_L = m_Patient->GetResidualVolume(VolumeUnit::L);
+  //Calculated
+  m_VitalCapacity_L = m_TotalLungCapacity_L - m_ResidualVolume_L;
+  m_ExpiratoryReserveVolume_L = m_FunctionalResidualCapacity_L - m_ResidualVolume_L;
+  m_InspiratoryReserveVolume_L = m_TotalLungCapacity_L - m_FunctionalResidualCapacity_L - m_TidalVolumeBaseline_L;
+  m_InspiratoryCapacity_L = m_TotalLungCapacity_L - m_FunctionalResidualCapacity_L;
 
   std::string typeString = "Initial Stabilization Homeostasis: ";
   if (m_data.GetState() == EngineState::AtSecondaryStableState)
     typeString = "Secondary Stabilization Homeostasis: ";
 
   std::stringstream ss;
-  ss << typeString << "Patient respiration rate = " << respirationRate_Per_min << " bpm.";
+  ss << typeString << "Patient respiration rate = " << m_RespirationRateBaseline_Per_min << " bpm.";
   Info(ss);
-  ss << typeString << "Patient tidal volume = " << tidalVolume_L << " L.";
+  ss << typeString << "Patient tidal volume = " << m_TidalVolumeBaseline_L << " L.";
   Info(ss);
-  ss << typeString << "Patient functional residual capacity = " << m_InstantaneousFunctionalResidualCapacity_L << " L.";
+  ss << typeString << "Patient functional residual capacity = " << m_FunctionalResidualCapacity_L << " L.";
   Info(ss);
-  ss << typeString << "Patient vital capacity = " << vitalCapacity_L << " L.";
+  ss << typeString << "Patient totoal lung capacity = " << m_TotalLungCapacity_L << " L.";
   Info(ss);
-  ss << typeString << "Patient expiratory reserve volume = " << expiratoryReserveVolume_L << " L.";
+  ss << typeString << "Patient residual volume = " << m_ResidualVolume_L << " L.";
   Info(ss);
-  ss << typeString << "Patient inspiratory reserve volume = " << inspiratoryReserveVolume_L << " L.";
+  ss << typeString << "Patient vital capacity = " << m_VitalCapacity_L << " L.";
   Info(ss);
-  ss << typeString << "Patient inspiratory capacity = " << inspiratoryCapacity_L << " L.";
+  ss << typeString << "Patient expiratory reserve volume = " << m_ExpiratoryReserveVolume_L << " L.";
+  Info(ss);
+  ss << typeString << "Patient inspiratory reserve volume = " << m_InspiratoryReserveVolume_L << " L.";
+  Info(ss);
+  ss << typeString << "Patient inspiratory capacity = " << m_InspiratoryCapacity_L << " L.";
   Info(ss);
 
   if (m_data.GetState() == EngineState::AtInitialStableState)
-  {// At Resting State, apply conditions if we have them
-    COPD();    
-    LobarPneumonia();
-  //These conditions stack effects
-  //If combined, it will be a fraction of the already effected alveolar surface area
-  ImpairedAlveolarExchange();
+  {
+    //At Resting State, apply conditions if we have them
+    //Respiratory conditions are applied each timestep to handle combined effects properly
   }
 }
 
@@ -474,13 +477,11 @@ void Respiratory::AtSteadyState()
 //--------------------------------------------------------------------------------------------------
 void Respiratory::PreProcess()
 {
+  CalculateWork();
+  CalculateFatigue();
+
   UpdateChestWallCompliances();
   ProcessAerosolSubstances();
-  AirwayObstruction();
-  UpdateObstructiveResistance();
-  BronchoConstriction();
-  BronchoDilation();
-  Intubation();
   Pneumothorax();  
   ConsciousRespiration();
 
@@ -507,51 +508,25 @@ void Respiratory::Process()
   // Respiration circuit changes based on if Anesthesia Machine is on or off
   // When dynamic intercircuit connections work, we can stash off the respiration circuit in a member variable
   SEFluidCircuit& RespirationCircuit = m_data.GetCircuits().GetActiveRespiratoryCircuit();
+  
   // Calc the circuits
   m_Calculator->Process(RespirationCircuit, m_dt_s);
+  
   //ModifyPleuralVolume();
   SEGasCompartmentGraph& RespirationGraph = m_data.GetCompartments().GetActiveRespiratoryGraph();
   SELiquidCompartmentGraph& AerosolGraph = m_data.GetCompartments().GetActiveAerosolGraph();
+  
   // Transport substances
   m_GasTransporter->Transport(RespirationGraph, m_dt_s);
   if(m_AerosolMouth->HasSubstanceQuantities())
     m_AerosolTransporter->Transport(AerosolGraph, m_dt_s);
+  
   //Update system data
   CalculateVitalSigns();
 
-  //jbw - remove
-
-  double leftAlveoliPressure = m_LeftAlveoli->GetNextPressure(PressureUnit::cmH2O);
-  double leftAlveoliVolume = m_LeftAlveoli->GetNextVolume(VolumeUnit::L);
-  double leftPleuralPressure = m_LeftPleural->GetNextPressure(PressureUnit::cmH2O);
-  double leftPleuralVolume = m_LeftPleural->GetNextVolume(VolumeUnit::L);
-  double leftFlow = m_LeftAlveolarDeadSpaceToLeftAlveoli->GetNextFlow(VolumePerTimeUnit::L_Per_s);
-  double leftCompliance = m_LeftPleuralToRespiratoryMuscle->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
-
-  double rightAlveoliPressure = m_RightAlveoli->GetNextPressure(PressureUnit::cmH2O);
-  double rightAlveoliVolume = m_RightAlveoli->GetNextVolume(VolumeUnit::L);
-  double rightPleuralPressure = m_RightPleural->GetNextPressure(PressureUnit::cmH2O);
-  double rightPleuralVolume = m_RightPleural->GetNextVolume(VolumeUnit::L);
-  double rightFlow = m_RightAlveolarDeadSpaceToRightAlveoli->GetNextFlow(VolumePerTimeUnit::L_Per_s);
-  double rightCompliance = m_RightPleuralToRespiratoryMuscle->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
-
-  m_data.GetDataTrack().Probe("leftAlveoliPressure", leftAlveoliPressure);
-  m_data.GetDataTrack().Probe("leftAlveoliVolume",   leftAlveoliVolume);
-  m_data.GetDataTrack().Probe("leftPleuralPressure", leftPleuralPressure);
-  m_data.GetDataTrack().Probe("leftPleuralVolume",   leftPleuralVolume);
-  m_data.GetDataTrack().Probe("leftFlow",            leftFlow);
-  m_data.GetDataTrack().Probe("leftCompliance",      leftCompliance);
-
-  m_data.GetDataTrack().Probe("rightAlveoliPressure", rightAlveoliPressure);
-  m_data.GetDataTrack().Probe("rightAlveoliVolume",   rightAlveoliVolume);
-  m_data.GetDataTrack().Probe("rightPleuralPressure", rightPleuralPressure);
-  m_data.GetDataTrack().Probe("rightPleuralVolume",   rightPleuralVolume);
-  m_data.GetDataTrack().Probe("rightFlow",            rightFlow);
-  m_data.GetDataTrack().Probe("rightCompliance",      rightCompliance);
-    
-  double AmbientPresure = 1033.23; // = 1 atm
-  m_data.GetDataTrack().Probe("LeftRelativePleuralPressure_cmH2O", leftPleuralPressure - AmbientPresure);
-  m_data.GetDataTrack().Probe("RightRelativePleuralPressure_cmH2O", rightPleuralPressure - AmbientPresure);
+#ifdef DEBUG
+  Debugging();
+#endif  
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -737,7 +712,7 @@ void Respiratory::ProcessAerosolSubstances()
   combinedLeftBronchodilationEffects = exp(-32894.0 * combinedLeftBronchodilationEffects);
   combinedRightBronchodilationEffects = exp(-32894.0 * combinedRightBronchodilationEffects);  
 
-    // Change resistances due to deposition
+  // Change resistances due to deposition
   double dTracheaResistance = m_MouthToCarina->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L)*carinaResistanceModifier;
   double dLeftAlveoliResistance = m_LeftAnatomicDeadSpaceToLeftAlveolarDeadSpace->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L)*leftAlveoliResistanceModifier;
   double dRightAlveoliResistance = m_RightAnatomicDeadSpaceToRightAlveolarDeadSpace->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L)*rightAlveoliResistanceModifier;
@@ -1164,10 +1139,10 @@ void Respiratory::RespiratoryDriver()
       dTargetAlveolarVentilation_L_Per_min *= metabolicModifier;
 
       //Only move it part way to where it wants to be.
-      //If you stays there, it will get there, just more controlled/slowly.
+      //If it stays there, it will get there, just more controlled/slowly.
       //This is needed so we don't overshoot and introduce low frequency oscillations into the system (i.e. overdamped).
       double targetCO2PP_mmHg = 40.0;
-      double changeFraction = 1.0; //jbw - make this independet of timestep (i.e., use 0.02/m_dt_s)
+      double changeFraction = 1.0;
       if (m_data.GetState() <= EngineState::InitialStabilization)
       {
         //This gets it nice and stable
@@ -1219,7 +1194,7 @@ void Respiratory::RespiratoryDriver()
       dTargetTidalVolume_L = MIN(dTargetTidalVolume_L, dHalfVitalCapacity_L);
 
       //Map the Target Tidal Volume to the Driver
-      double TargetVolume_L = m_InitialFunctionalResidualCapacity_L + dTargetTidalVolume_L;
+      double TargetVolume_L = m_Patient->GetFunctionalResidualCapacity(VolumeUnit::L) + dTargetTidalVolume_L;
       m_PeakRespiratoryDrivePressure_cmH2O = VolumeToDriverPressure(TargetVolume_L);
       //There's a maximum force the driver can try to achieve
       m_PeakRespiratoryDrivePressure_cmH2O = MAX(m_PeakRespiratoryDrivePressure_cmH2O, m_MaxDriverPressure_cmH2O);
@@ -1364,156 +1339,6 @@ void Respiratory::SetBreathCycleFractions()
   m_ExpiratoryHoldFraction = 0.0;
   m_ExpiratoryReleaseFraction = 0.0;  
  }
-
-//--------------------------------------------------------------------------------------------------
-/// \brief
-/// Airway obstruction 
-///
-/// \details
-/// Various factors can trigger upper airway obstruction. The engine handles airway obstruction that arise from 
-/// the partial or complete obstruction of the upper airways by foreign objects. The model accounts for such obstruction by setting the 
-/// flow resistance of the trachea compartment in proportion to the severity of the obstruction.
-/// The function updates the tracheal flow resistance by modifying the resistance across the airway to carina node path.
-//--------------------------------------------------------------------------------------------------
-void Respiratory::AirwayObstruction()
-{
-  if (!m_PatientActions->HasAirwayObstruction())
-    return;
-
-  double Severity = m_PatientActions->GetAirwayObstruction()->GetSeverity().GetValue();
-  double AirwayResistance = m_MouthToCarina->GetNextResistance().GetValue(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  double dClosedResistance = AirwayResistance;
-  AirwayResistance = GeneralMath::ResistanceFunction(20.0, m_RespOpenResistance_cmH2O_s_Per_L, dClosedResistance, Severity);
-  m_MouthToCarina->GetNextResistance().SetValue(AirwayResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-}
-
-//--------------------------------------------------------------------------------------------------
-/// \brief
-/// Bronchoconstriction
-///
-/// \details
-/// Bronchoconstriction involves the tightening of smooth muscles surrounding bronchi. The effect of such airway constriction is the 
-/// reduction of air flow or increase of flow resistance of the lower airways. This model handles bronchoconstriction by increasing
-/// the flow resistances of the bronchi compartments. The function updates the bronchial resistances in proportion to the severity of the 
-/// bronchoconstriction. 
-//--------------------------------------------------------------------------------------------------
-void Respiratory::BronchoConstriction()
-{
-  if (!m_PatientActions->HasBronchoconstriction())
-    return;
-
-  double LeftBronchiResistance = m_CarinaToLeftAnatomicDeadSpace->GetNextResistance().GetValue(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  double RightBronchiResistance = m_CarinaToRightAnatomicDeadSpace->GetNextResistance().GetValue(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  double dSeverity = m_PatientActions->GetBronchoconstriction()->GetSeverity().GetValue();
-  double dClosedResistance = LeftBronchiResistance;
-  LeftBronchiResistance = GeneralMath::ResistanceFunction(70.0, m_RespOpenResistance_cmH2O_s_Per_L, dClosedResistance, dSeverity);
-  dClosedResistance = RightBronchiResistance;
-  RightBronchiResistance = GeneralMath::ResistanceFunction(70.0, m_RespOpenResistance_cmH2O_s_Per_L, dClosedResistance, dSeverity);
-
-  m_CarinaToLeftAnatomicDeadSpace->GetNextResistance().SetValue(LeftBronchiResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  m_CarinaToRightAnatomicDeadSpace->GetNextResistance().SetValue(RightBronchiResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-}
-
-//--------------------------------------------------------------------------------------------------
-/// \brief
-/// Bronchodilation PD effects.
-///
-/// \details
-/// This reduces the bronchi resitances based on drug PD effects (i.e., plasma concentrations).
-//--------------------------------------------------------------------------------------------------
-void Respiratory::BronchoDilation()
-{
-  //Note: this could constrict with a negative number from PD
-  
-  //We're going to make the bronchodilation effects be based off of Albuterol.
-  //A value of 1.0 will be the effective Albuterol EMax (with the current, non-overdose implementation), and -1.0 will be a bronchconstriction the same percentage in the other direction.
-  //Experimentally, 1mg of Albuterol given via a spacer device on an endotracheal tube caused a pulmonary resistance change of ~20% @cite mancebo1991effects.
-  //The bronchi are ~30% of the total pulmonary resistance, so we'll make a dilation effect of 1.0 be at the respiratory open resistance.
-  //Dilation effect values have max effect at 1 and below -1, so anything outside of that will maintain that effect.
-  double bronchoDilationEffect = m_data.GetDrugs().GetBronchodilationLevel().GetValue();
-  if (bronchoDilationEffect != 0.0)
-  {
-    //Note: It'll pretty much always get in here because there's epinephrine present
-    // Get the path resistances 
-    double dLeftBronchiResistance = m_CarinaToLeftAnatomicDeadSpace->GetNextResistance().GetValue(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-    double dRightBronchiResistance = m_CarinaToRightAnatomicDeadSpace->GetNextResistance().GetValue(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-    if (bronchoDilationEffect >= 0.0)// positive, therefore dilation
-    {
-      bronchoDilationEffect = MIN(bronchoDilationEffect, 1.0);
-      dLeftBronchiResistance = GeneralMath::ResistanceFunction(10.0, m_RespClosedResistance_cmH2O_s_Per_L, dLeftBronchiResistance, bronchoDilationEffect);
-      dRightBronchiResistance = GeneralMath::ResistanceFunction(10.0, m_RespClosedResistance_cmH2O_s_Per_L, dRightBronchiResistance, bronchoDilationEffect);
-    }
-    else //negative, therefore constriction
-    {
-      bronchoDilationEffect = MIN(-bronchoDilationEffect, 1.0);
-      dLeftBronchiResistance = GeneralMath::ResistanceFunction(10.0, dLeftBronchiResistance, m_RespOpenResistance_cmH2O_s_Per_L, bronchoDilationEffect);
-      dRightBronchiResistance = GeneralMath::ResistanceFunction(10.0, dRightBronchiResistance, m_RespOpenResistance_cmH2O_s_Per_L, bronchoDilationEffect);
-    }
-    m_CarinaToLeftAnatomicDeadSpace->GetNextResistance().SetValue(dLeftBronchiResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-    m_CarinaToRightAnatomicDeadSpace->GetNextResistance().SetValue(dRightBronchiResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  }
-}
-
-//--------------------------------------------------------------------------------------------------
-/// \brief
-/// Intubation, including esophageal, left mainstem, and right mainstem
-///
-/// \details
-/// During mechanical ventilation, one of the clinical complications of endotracheal intubation is esophageal intubation. This involves the 
-/// misplacement of the tube down the esophagus. Such event prohibits air flow into or out of the lungs. The Biogers circuit handles 
-/// this respiratory distress by manipulating the tracheal resistance. When esophageal intubation incidence is triggered, significantly large 
-/// resistance is assigned to the trachea compartment. Otherwise, the esophageal compartment resistance is set to be significantly
-/// large value under normal condition. 
-//--------------------------------------------------------------------------------------------------
-void Respiratory::Intubation()
-{
-  //Don't modify the stomach on environment changes
-  if (m_Ambient->GetNextPressure(PressureUnit::cmH2O) != m_Ambient->GetPressure(PressureUnit::cmH2O))
-  {
-    //The environment just changed
-    //Keep volume the same by changing the pressure equally on both sides
-    double pressureChange_cmH2O = m_Ambient->GetNextPressure(PressureUnit::cmH2O) - m_Ambient->GetPressure(PressureUnit::cmH2O);
-    m_Stomach->GetNextPressure().IncrementValue(pressureChange_cmH2O, PressureUnit::cmH2O);
-  }
-
-  if (m_PatientActions->HasIntubation())
-  {
-    m_data.SetIntubation(eSwitch::On);
-    SEIntubation* intubation = m_PatientActions->GetIntubation();
-    switch (intubation->GetType())
-    {
-    case eIntubation_Type::Tracheal:
-      {// The proper way to intubate
-        // Airway mode handles this case by default
-        break;
-      }
-    case eIntubation_Type::Esophageal:
-      {        
-        // Allow air flow between Airway and Stomach
-        ///\todo Make this a modifier (i.e. multiplier), instead of setting it directly
-        m_MouthToStomach->GetNextResistance().SetValue(1.2, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-        // Stop air flow between the Airway and Carina
-        //This is basically an open switch.  We don't need to worry about anyone else modifying it if this action is on.
-        m_MouthToCarina->GetNextResistance().SetValue(m_DefaultOpenResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-        break;
-      }      
-    case eIntubation_Type::RightMainstem:
-      {
-        m_CarinaToLeftAnatomicDeadSpace->GetNextResistance().SetValue(m_RespOpenResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-        break;
-      }
-    case eIntubation_Type::LeftMainstem:
-      {
-        m_CarinaToRightAnatomicDeadSpace->GetNextResistance().SetValue(m_RespOpenResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-        break;
-      }
-    }
-  }
-  else
-  {
-    m_data.SetIntubation(eSwitch::Off);
-  }
-}
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
@@ -1745,7 +1570,7 @@ void Respiratory::ProcessConsciousRespiration(SEConsciousRespirationCommand& cmd
     m_ConsciousRespirationPeriod_s = m_ConsciousRespirationRemainingPeriod_s;
 
     //Pressure effects
-    double TargetVolume_L = m_InitialResidualVolume_L + m_InitialExpiratoryReserveVolume_L * (1.0 - m_ExpiratoryReserveVolumeFraction);
+    double TargetVolume_L = m_Patient->GetResidualVolume(VolumeUnit::L) + m_Patient->GetExpiratoryReserveVolume(VolumeUnit::L) * (1.0 - m_ExpiratoryReserveVolumeFraction);
     m_ConsciousEndPressure_cmH2O = VolumeToDriverPressure(TargetVolume_L);
 
     return;
@@ -1758,7 +1583,7 @@ void Respiratory::ProcessConsciousRespiration(SEConsciousRespirationCommand& cmd
     m_ConsciousRespirationPeriod_s = m_ConsciousRespirationRemainingPeriod_s;
 
     //Pressure effects
-    double TargetVolume_L = m_InitialFunctionalResidualCapacity_L + m_InitialInspiratoryCapacity_L * m_InspiratoryCapacityFraction;
+    double TargetVolume_L = m_Patient->GetFunctionalResidualCapacity(VolumeUnit::L) + m_Patient->GetInspiratoryCapacity(VolumeUnit::L) * m_InspiratoryCapacityFraction;
     m_ConsciousEndPressure_cmH2O = VolumeToDriverPressure(TargetVolume_L);
 
     return;
@@ -1889,7 +1714,7 @@ void Respiratory::DoRightNeedleDecompression(double dPressureTimePerVolume)
     }
 
     if (totalLungVolume_L - m_BottomBreathTotalVolume_L > m_MinimumAllowableTidalVolume_L //Volume has transitioned sufficiently
-      && m_BottomBreathElapsedTime_min > m_MinimumAllowableInpiratoryAndExpiratoryPeriod_s / 60.0) //We've waited a sufficient amount of time to transition
+      && m_BottomBreathElapsedTime_min > m_MinimumAllowableInpiratoryAndExpiratoryPeriod_s / 60.0 / 10.0) //We've waited a sufficient amount of time to transition
     {
       //Transition to inhale
 
@@ -1904,8 +1729,6 @@ void Respiratory::DoRightNeedleDecompression(double dPressureTimePerVolume)
       m_BreathingCycle = false;
 
       // Calculate the Tidal Volume from the last peak
-      m_InstantaneousFunctionalResidualCapacity_L = m_BottomBreathTotalVolume_L;
-
       double TidalVolume_L = std::abs(m_TopBreathTotalVolume_L - m_BottomBreathTotalVolume_L);
       double AlveoliDeltaVolume_L = std::abs(m_TopBreathAlveoliVolume_L - m_BottomBreathAlveoliVolume_L);
       double PleuralDeltaVolume_L = std::abs(m_TopBreathPleuralVolume_L - m_BottomBreathPleuralVolume_L);
@@ -1929,7 +1752,7 @@ void Respiratory::DoRightNeedleDecompression(double dPressureTimePerVolume)
 
       // Calculate Ventilations
       GetTotalPulmonaryVentilation().SetValue(TidalVolume_L * RespirationRate_Per_min, VolumePerTimeUnit::L_Per_min);
-      GetSpecificVentilation().SetValue(TidalVolume_L / m_InstantaneousFunctionalResidualCapacity_L);
+      GetSpecificVentilation().SetValue(TidalVolume_L / m_BottomBreathTotalVolume_L);
       GetTotalAlveolarVentilation().SetValue(TidalVolume_L * RespirationRate_Per_min, VolumePerTimeUnit::L_Per_min);
       GetTotalDeadSpaceVentilation().SetValue((AnatomicDeadSpace_L + AlveolarDeadSpace_L) * RespirationRate_Per_min, VolumePerTimeUnit::L_Per_min);
 
@@ -1958,7 +1781,7 @@ void Respiratory::DoRightNeedleDecompression(double dPressureTimePerVolume)
     m_MaximalAlveolarPressure_cmH2O = MIN(m_MaximalAlveolarPressure_cmH2O, alveolarPressure_cmH2O);
 
     if (m_TopBreathTotalVolume_L - totalLungVolume_L > m_MinimumAllowableTidalVolume_L //Volume has transitioned sufficiently
-      && m_TopBreathElapsedTime_min > m_MinimumAllowableInpiratoryAndExpiratoryPeriod_s / 60.0) //We've waited a sufficient amount of time to transition
+      && m_TopBreathElapsedTime_min > m_MinimumAllowableInpiratoryAndExpiratoryPeriod_s / 60.0 / 2.0) //We've waited a sufficient amount of time to transition
     {
       //Transition to exhaling
       m_BreathingCycle = true;      
@@ -2324,7 +2147,7 @@ double Respiratory::VolumeToDriverPressure(double TargetVolume_L)
   double totalCompliance_L_Per_cmH2O = 1.0 / (1.0 / leftHealthyChestWallCompliance_L_Per_cmH2O + 1.0 / leftHealthyLungCompliance_L_Per_cmH2O) +
     1.0 / (1.0 / rightHealthyChestWallCompliance_L_Per_cmH2O + 1.0 / rightHealthyLungCompliance_L_Per_cmH2O);
 
-  double driverPressure_cmH2O = -(TargetVolume_L - m_InitialFunctionalResidualCapacity_L) / totalCompliance_L_Per_cmH2O;
+  double driverPressure_cmH2O = -(TargetVolume_L - m_Patient->GetFunctionalResidualCapacity(VolumeUnit::L)) / totalCompliance_L_Per_cmH2O;
   return driverPressure_cmH2O;
 }
 
@@ -2339,20 +2162,20 @@ double Respiratory::VolumeToDriverPressure(double TargetVolume_L)
 bool Respiratory::CalculatePulmonaryFunctionTest(SEPulmonaryFunctionTest& pft) const
 {
   pft.Clear();
-  pft.GetExpiratoryReserveVolume().Set(m_Patient->GetExpiratoryReserveVolume());
-  pft.GetFunctionalResidualCapacity().Set(m_Patient->GetFunctionalResidualCapacity());
-  pft.GetInspiratoryCapacity().Set(m_Patient->GetInspiratoryCapacity());
-  pft.GetInspiratoryReserveVolume().Set(m_Patient->GetInspiratoryReserveVolume());
-  pft.GetResidualVolume().Set(m_Patient->GetResidualVolume());
-  pft.GetTotalLungCapacity().Set(m_Patient->GetTotalLungCapacity());
-  pft.GetVitalCapacity().Set(m_Patient->GetVitalCapacity());
+  pft.GetExpiratoryReserveVolume().SetValue(m_ExpiratoryReserveVolume_L, VolumeUnit::L);
+  pft.GetFunctionalResidualCapacity().SetValue(m_FunctionalResidualCapacity_L, VolumeUnit::L);
+  pft.GetInspiratoryCapacity().SetValue(m_InspiratoryCapacity_L, VolumeUnit::L);
+  pft.GetInspiratoryReserveVolume().SetValue(m_InspiratoryReserveVolume_L, VolumeUnit::L);
+  pft.GetResidualVolume().SetValue(m_ResidualVolume_L, VolumeUnit::L);
+  pft.GetTotalLungCapacity().SetValue(m_TotalLungCapacity_L, VolumeUnit::L);
+  pft.GetVitalCapacity().SetValue(m_VitalCapacity_L, VolumeUnit::L);
 
   double rr_Hz = GetRespirationRate(FrequencyUnit::Hz);
   double tv_L = GetTidalVolume(VolumeUnit::L);
   double waveRespirationRate = rr_Hz;
   double pi = 3.14159265359;
   double magnitude = 0.5*tv_L;
-  double superPosition = m_Patient->GetFunctionalResidualCapacity(VolumeUnit::L) + magnitude;
+  double superPosition = m_FunctionalResidualCapacity_L + magnitude;
   double waveTime = 0.0;
   double currentTime = 0.0;
 
@@ -2437,9 +2260,11 @@ void Respiratory::TuneCircuit()
   }
 }
 
-//jbw - add description
+//jbw - Add description
 void Respiratory::UpdateChestWallCompliances()
 {
+  /// \todo A lot of this stuff we don't need to recalculate every timestep - it can be made more efficient
+
   //Settings --------------------------------------------
   double rightLowerInflection =              0.1;       //Fraction between reserve volume and total lung capacity
   double rightUpperInflection =              0.7;       //Fraction between reserve volume and total lung capacity
@@ -2464,12 +2289,12 @@ void Respiratory::UpdateChestWallCompliances()
   double rightVolume_L = m_RightLung->GetVolume(VolumeUnit::L);
   double leftVolume_L = m_LeftLung->GetVolume(VolumeUnit::L);
 
-  double rightResidualVolume_L = m_Patient->GetResidualVolume(VolumeUnit::L) * rightLungRatio;
-  double rightTotalLungCapacity_L = m_Patient->GetTotalLungCapacity(VolumeUnit::L) * rightLungRatio;
-  double rightFunctionalResidualCapacity_L = m_Patient->GetFunctionalResidualCapacity(VolumeUnit::L) * rightLungRatio;
-  double leftResidualVolume_L = m_Patient->GetResidualVolume(VolumeUnit::L) * leftLungRatio;
-  double leftTotalLungCapacity_L = m_Patient->GetTotalLungCapacity(VolumeUnit::L) * leftLungRatio;  
-  double leftFunctionalResidualCapacity_L = m_Patient->GetFunctionalResidualCapacity(VolumeUnit::L) * leftLungRatio;
+  double rightResidualVolume_L = m_ResidualVolume_L * rightLungRatio;
+  double rightTotalLungCapacity_L = m_TotalLungCapacity_L * rightLungRatio;
+  double rightFunctionalResidualCapacity_L = m_FunctionalResidualCapacity_L * rightLungRatio;
+  double leftResidualVolume_L = m_ResidualVolume_L * leftLungRatio;
+  double leftTotalLungCapacity_L = m_TotalLungCapacity_L * leftLungRatio;
+  double leftFunctionalResidualCapacity_L = m_FunctionalResidualCapacity_L * leftLungRatio;
 
   double rightLowerInflection_L = rightResidualVolume_L + (rightTotalLungCapacity_L - rightResidualVolume_L) * rightLowerInflection;
   double rightUpperInflection_L = rightResidualVolume_L + (rightTotalLungCapacity_L - rightResidualVolume_L) * rightUpperInflection;
@@ -2594,22 +2419,25 @@ void Respiratory::CalculateFatigue()
   ///\ToDo Add fatigue calculation
 }
 
-
-//jbw????
-//if (m_data.GetEvents().IsEventActive(eEvent::StartOfInhale))
-//  {
-//    //Only do this at the end of a breath, otherwise it won't be at the correct spot on the curve and will shift everything
-//  }
-
 //jbw - Add description
 void Respiratory::UpdateVolumes()
 {
-  ///\cite guyton2006medical p504: In a person with partially functional or nonfunctional alveoli in some parts of the lungs, 
-  //the physiological dead space may be as much as 10 times the volume of the anatomical dead space, or 1 to 2 liters.
+  //Don't modify the stomach on environment changes
+  if (m_Ambient->GetNextPressure(PressureUnit::cmH2O) != m_Ambient->GetPressure(PressureUnit::cmH2O))
+  {
+    //The environment just changed
+    //Keep volume the same by changing the pressure equally on both sides
+    double pressureChange_cmH2O = m_Ambient->GetNextPressure(PressureUnit::cmH2O) - m_Ambient->GetPressure(PressureUnit::cmH2O);
+    m_Stomach->GetNextPressure().IncrementValue(pressureChange_cmH2O, PressureUnit::cmH2O);
+  }
 
   //------------------------------------------------------------------------------------------------------
   //COPD
   //Exacerbation will overwrite the condition, even if it means improvement
+
+  ///\cite guyton2006medical p504: In a person with partially functional or nonfunctional alveoli in some parts of the lungs, 
+  //the physiological dead space may be as much as 10 times the volume of the anatomical dead space, or 1 to 2 liters.
+
   if (m_data.GetConditions().HasChronicObstructivePulmonaryDisease() || m_PatientActions->HasChronicObstructivePulmonaryDiseaseExacerbation())
   {
     double leftAlveolarDeadSpace_L = 0.0;
@@ -2645,9 +2473,41 @@ void Respiratory::UpdateVolumes()
     m_LeftAlveolarDeadSpace->GetNextVolume().SetValue(leftAlveolarDeadSpace_L + alveolarDeadSpace_L * leftLungRatio, VolumeUnit::L);
     m_RightAlveolarDeadSpace->GetNextVolume().SetValue(rightAlveolarDeadSpace_L + alveolarDeadSpace_L * rightLungRatio, VolumeUnit::L);
   }
+
+  //Update lung volumes
+  double leftAlveolarDeadSpace_L = 0.0;
+  if (m_LeftAlveolarDeadSpace->HasNextVolume())
+  {
+    leftAlveolarDeadSpace_L = m_LeftAlveolarDeadSpace->GetNextVolume(VolumeUnit::L);
+  }
+  double rightAlveolarDeadSpace_L = 0.0;
+  if (m_RightAlveolarDeadSpace->HasNextVolume())
+  {
+    rightAlveolarDeadSpace_L = m_RightAlveolarDeadSpace->GetNextVolume(VolumeUnit::L);
+  }
+    
+  double functionalResidualCapacity_L = m_Patient->GetFunctionalResidualCapacity(VolumeUnit::L) + leftAlveolarDeadSpace_L + rightAlveolarDeadSpace_L;
+  if (functionalResidualCapacity_L != m_FunctionalResidualCapacity_L)
+  {
+    m_FunctionalResidualCapacity_L = functionalResidualCapacity_L;
+    m_ExpiratoryReserveVolume_L = m_FunctionalResidualCapacity_L - m_ResidualVolume_L;
+    m_InspiratoryReserveVolume_L = m_TotalLungCapacity_L - m_FunctionalResidualCapacity_L - m_TidalVolumeBaseline_L;
+    m_InspiratoryCapacity_L = m_TotalLungCapacity_L - m_FunctionalResidualCapacity_L;
+  }
 }
 
 //jbw - Add description
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Intubation, including esophageal, left mainstem, and right mainstem
+///
+/// \details
+/// During mechanical ventilation, one of the clinical complications of endotracheal intubation is esophageal intubation. This involves the 
+/// misplacement of the tube down the esophagus. Such event prohibits air flow into or out of the lungs. The circuit handles 
+/// this respiratory distress by manipulating the tracheal resistance. When esophageal intubation incidence is triggered, significantly large 
+/// resistance is assigned to the trachea compartment. Otherwise, the esophageal compartment resistance is set to be significantly
+/// large value under normal condition. 
+//--------------------------------------------------------------------------------------------------
 void Respiratory::UpdateResistances()
 {
   double tracheaResistance_cmH2O_s_Per_L = m_MouthToCarina->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
@@ -2730,16 +2590,13 @@ void Respiratory::UpdateResistances()
   if (m_data.GetConditions().HasChronicObstructivePulmonaryDisease() || m_PatientActions->HasChronicObstructivePulmonaryDiseaseExacerbation())
   {
     double bronchitisSeverity = 0.0;
-    double emphysemaSeverity = 0.0;
     if (m_PatientActions->HasChronicObstructivePulmonaryDiseaseExacerbation())
     {
       bronchitisSeverity = m_PatientActions->GetChronicObstructivePulmonaryDiseaseExacerbation()->GetBronchitisSeverity().GetValue();
-      emphysemaSeverity = m_PatientActions->GetChronicObstructivePulmonaryDiseaseExacerbation()->GetEmphysemaSeverity().GetValue();
     }
     else
     {
       bronchitisSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease()->GetBronchitisSeverity().GetValue();
-      emphysemaSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease()->GetEmphysemaSeverity().GetValue();
     }
 
     double dResistanceScalingFactor = GeneralMath::ExponentialGrowthFunction(10.0, 1.0, 90.0, bronchitisSeverity);
@@ -2794,20 +2651,17 @@ void Respiratory::UpdateCompliances()
   //Exacerbation will overwrite the condition, even if it means improvement
   if (m_data.GetConditions().HasChronicObstructivePulmonaryDisease() || m_PatientActions->HasChronicObstructivePulmonaryDiseaseExacerbation())
   {
-    double bronchitisSeverity = 0.0;
     double emphysemaSeverity = 0.0;
     if (m_PatientActions->HasChronicObstructivePulmonaryDiseaseExacerbation())
     {
-      bronchitisSeverity = m_PatientActions->GetChronicObstructivePulmonaryDiseaseExacerbation()->GetBronchitisSeverity().GetValue();
       emphysemaSeverity = m_PatientActions->GetChronicObstructivePulmonaryDiseaseExacerbation()->GetEmphysemaSeverity().GetValue();
     }
     else
     {
-      bronchitisSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease()->GetBronchitisSeverity().GetValue();
       emphysemaSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease()->GetEmphysemaSeverity().GetValue();
     }
 
-    double complianceScalingFactor = GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, 5.0, emphysemaSeverity);
+    double complianceScalingFactor = GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, 2.0, emphysemaSeverity);
     
     leftObstructiveComplianceScalingFactor = MAX(leftObstructiveComplianceScalingFactor, complianceScalingFactor);
     rightObstructiveComplianceScalingFactor = MAX(rightObstructiveComplianceScalingFactor, complianceScalingFactor);
@@ -2841,8 +2695,8 @@ void Respiratory::UpdateCompliances()
     
     double complianceScalingFactor = GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, 0.4, severity);
 
-    leftRestrictiveComplianceScalingFactor = MIN(leftRestrictiveComplianceScalingFactor, complianceScalingFactor * leftLungFraction);
-    rightRestrictiveComplianceScalingFactor = MIN(rightRestrictiveComplianceScalingFactor, complianceScalingFactor * rightLungFraction);
+    leftRestrictiveComplianceScalingFactor = MIN(leftRestrictiveComplianceScalingFactor, 1.0 - (1.0 - complianceScalingFactor) * leftLungFraction);
+    rightRestrictiveComplianceScalingFactor = MIN(rightRestrictiveComplianceScalingFactor, 1.0 - (1.0 - complianceScalingFactor) * rightLungFraction);
   }
 
   //------------------------------------------------------------------------------------------------------
@@ -2869,8 +2723,8 @@ void Respiratory::UpdateCompliances()
 
     double complianceScalingFactor = GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, 0.4, severity);
 
-    leftRestrictiveComplianceScalingFactor = MIN(leftRestrictiveComplianceScalingFactor, complianceScalingFactor * leftLungFraction);
-    rightRestrictiveComplianceScalingFactor = MIN(rightRestrictiveComplianceScalingFactor, complianceScalingFactor * rightLungFraction);
+    leftRestrictiveComplianceScalingFactor = MIN(leftRestrictiveComplianceScalingFactor, 1.0 - (1.0 - complianceScalingFactor) * leftLungFraction);
+    rightRestrictiveComplianceScalingFactor = MIN(rightRestrictiveComplianceScalingFactor, 1.0 - (1.0 - complianceScalingFactor) * rightLungFraction);
   }
 
   //------------------------------------------------------------------------------------------------------
@@ -2995,6 +2849,7 @@ void Respiratory::UpdateInspiratoryExpiratoryRatio()
 void Respiratory::UpdateDiffusion()
 {
   //These fractions all stack
+  /// \todo Update this with new healthy vs. current patient methodology
   double alveoliDiffusionArea_cm2 = m_initialAlveoliDiffusionArea_cm2;
 
   //------------------------------------------------------------------------------------------------------
@@ -3067,14 +2922,14 @@ void Respiratory::UpdateDiffusion()
     }
 
     // Get the right and left lung ratios
-    double dRightLungRatio = m_Patient->GetRightLungRatio().GetValue();
-    double dLeftLungRatio = 1.0 - dRightLungRatio;
+    double rightLungRatio = m_Patient->GetRightLungRatio().GetValue();
+    double leftLungRatio = 1.0 - rightLungRatio;
 
     double gasDiffusionScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.1, 1.0, severity);
 
     // Calculate the surface area contributions for each lung
-    double dRightContribution = dRightLungRatio * alveoliDiffusionArea_cm2 * gasDiffusionScalingFactor * rightLungFraction;
-    double dLeftContribution = dLeftLungRatio * alveoliDiffusionArea_cm2 * gasDiffusionScalingFactor * leftLungFraction;
+    double dRightContribution = rightLungRatio * ((alveoliDiffusionArea_cm2 * (1.0 - rightLungFraction)) + (alveoliDiffusionArea_cm2 * gasDiffusionScalingFactor * rightLungFraction));
+    double dLeftContribution = leftLungRatio * ((alveoliDiffusionArea_cm2 * (1.0 - leftLungFraction)) + (alveoliDiffusionArea_cm2 * gasDiffusionScalingFactor * leftLungFraction));
 
     // Calculate the total surface area
     alveoliDiffusionArea_cm2 = dLeftContribution + dRightContribution;
@@ -3103,14 +2958,14 @@ void Respiratory::UpdateDiffusion()
     }
 
     // Get the right and left lung ratios
-    double dRightLungRatio = m_Patient->GetRightLungRatio().GetValue();
-    double dLeftLungRatio = 1.0 - dRightLungRatio;
+    double rightLungRatio = m_Patient->GetRightLungRatio().GetValue();
+    double leftLungRatio = 1.0 - rightLungRatio;
 
     double gasDiffusionScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.1, 1.0, severity);
 
     // Calculate the surface area contributions for each lung
-    double dRightContribution = dRightLungRatio * alveoliDiffusionArea_cm2 * gasDiffusionScalingFactor * rightLungFraction;
-    double dLeftContribution = dLeftLungRatio * alveoliDiffusionArea_cm2 * gasDiffusionScalingFactor * leftLungFraction;
+    double dRightContribution = rightLungRatio * ((alveoliDiffusionArea_cm2 * (1.0 - rightLungFraction)) + (alveoliDiffusionArea_cm2 * gasDiffusionScalingFactor * rightLungFraction));
+    double dLeftContribution = leftLungRatio * ((alveoliDiffusionArea_cm2 * (1.0 - leftLungFraction)) + (alveoliDiffusionArea_cm2 * gasDiffusionScalingFactor * leftLungFraction));
 
     // Calculate the total surface area
     alveoliDiffusionArea_cm2 = dLeftContribution + dRightContribution;
@@ -3118,7 +2973,6 @@ void Respiratory::UpdateDiffusion()
 
   //------------------------------------------------------------------------------------------------------
   //Set new value
-  //jbw - this will change it perminently and won't work with exacerbation - need to do it differently
   m_Patient->GetAlveoliSurfaceArea().SetValue(alveoliDiffusionArea_cm2, AreaUnit::cm2);
 }
 
@@ -3165,13 +3019,20 @@ void Respiratory::UpdateFatigue()
 {
   double dyspneaSeverity = 0.0;
 
+  //------------------------------------------------------------------------------------------------------
   //Dyspnea
   if (m_PatientActions->HasDyspnea())
   {
     dyspneaSeverity = m_PatientActions->GetDyspnea()->GetSeverity().GetValue();    
   }
 
-  //jbw - Add fatigue
+  //------------------------------------------------------------------------------------------------------
+  //Fatigue
+  if (m_PatientActions->HasRespiratoryFatigue())
+  {
+    double thisDyspneaSeverity = m_PatientActions->GetRespiratoryFatigue()->GetSeverity().GetValue();
+    dyspneaSeverity = MAX(dyspneaSeverity, thisDyspneaSeverity);
+  }
 
   //------------------------------------------------------------------------------------------------------
   //COPD
@@ -3273,4 +3134,42 @@ void Respiratory::UpdateFatigue()
   //Just reduce the tidal volume by the percentage given
   m_DriverPressure_cmH2O = m_DriverPressure_cmH2O * (1 - dyspneaSeverity);
 }
-*/
+
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Output data tracks for debugging purposes
+//--------------------------------------------------------------------------------------------------
+void Respiratory::Debugging()
+{
+  double leftAlveoliPressure = m_LeftAlveoli->GetNextPressure(PressureUnit::cmH2O);
+  double leftAlveoliVolume = m_LeftAlveoli->GetNextVolume(VolumeUnit::L);
+  double leftPleuralPressure = m_LeftPleural->GetNextPressure(PressureUnit::cmH2O);
+  double leftPleuralVolume = m_LeftPleural->GetNextVolume(VolumeUnit::L);
+  double leftFlow = m_LeftAlveolarDeadSpaceToLeftAlveoli->GetNextFlow(VolumePerTimeUnit::L_Per_s);
+  double leftCompliance = m_LeftPleuralToRespiratoryMuscle->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
+
+  double rightAlveoliPressure = m_RightAlveoli->GetNextPressure(PressureUnit::cmH2O);
+  double rightAlveoliVolume = m_RightAlveoli->GetNextVolume(VolumeUnit::L);
+  double rightPleuralPressure = m_RightPleural->GetNextPressure(PressureUnit::cmH2O);
+  double rightPleuralVolume = m_RightPleural->GetNextVolume(VolumeUnit::L);
+  double rightFlow = m_RightAlveolarDeadSpaceToRightAlveoli->GetNextFlow(VolumePerTimeUnit::L_Per_s);
+  double rightCompliance = m_RightPleuralToRespiratoryMuscle->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
+
+  m_data.GetDataTrack().Probe("leftAlveoliPressure", leftAlveoliPressure);
+  m_data.GetDataTrack().Probe("leftAlveoliVolume", leftAlveoliVolume);
+  m_data.GetDataTrack().Probe("leftPleuralPressure", leftPleuralPressure);
+  m_data.GetDataTrack().Probe("leftPleuralVolume", leftPleuralVolume);
+  m_data.GetDataTrack().Probe("leftFlow", leftFlow);
+  m_data.GetDataTrack().Probe("leftCompliance", leftCompliance);
+
+  m_data.GetDataTrack().Probe("rightAlveoliPressure", rightAlveoliPressure);
+  m_data.GetDataTrack().Probe("rightAlveoliVolume", rightAlveoliVolume);
+  m_data.GetDataTrack().Probe("rightPleuralPressure", rightPleuralPressure);
+  m_data.GetDataTrack().Probe("rightPleuralVolume", rightPleuralVolume);
+  m_data.GetDataTrack().Probe("rightFlow", rightFlow);
+  m_data.GetDataTrack().Probe("rightCompliance", rightCompliance);
+
+  double AmbientPresure = 1033.23; // = 1 atm
+  m_data.GetDataTrack().Probe("LeftRelativePleuralPressure_cmH2O", leftPleuralPressure - AmbientPresure);
+  m_data.GetDataTrack().Probe("RightRelativePleuralPressure_cmH2O", rightPleuralPressure - AmbientPresure);
+}
