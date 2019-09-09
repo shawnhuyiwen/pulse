@@ -4045,7 +4045,7 @@ void PulseController::SetupAnesthesiaMachine()
   ///////////////////////
 
   double ventilatorVolume_L = 1.0;
-  double ventilatorCompliance_L_Per_cmH2O = 0.5;
+  double ventilatorCompliance_L_Per_cmH2O = 0.1;
   double dValveOpenResistance = m_Config->GetMachineOpenResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   double dValveClosedResistance = m_Config->GetMachineClosedResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   double dSwitchOpenResistance = m_Config->GetDefaultOpenFlowResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
@@ -4061,10 +4061,6 @@ void PulseController::SetupAnesthesiaMachine()
   SEFluidCircuitNode& Ventilator = cAnesthesia.CreateNode(pulse::AnesthesiaMachineNode::Ventilator);
   Ventilator.GetVolumeBaseline().SetValue(ventilatorVolume_L, VolumeUnit::L);
   Ventilator.GetPressure().SetValue(AmbientPresure, PressureUnit::cmH2O);
-  //////////////////////////
-  // VentilatorConnection //  
-  SEFluidCircuitNode& VentilatorConnection = cAnesthesia.CreateNode(pulse::AnesthesiaMachineNode::VentilatorConnection);
-  VentilatorConnection.GetPressure().SetValue(AmbientPresure, PressureUnit::cmH2O);
   /////////////////
   // ReliefValve //  
   SEFluidCircuitNode& ReliefValve = cAnesthesia.CreateNode(pulse::AnesthesiaMachineNode::ReliefValve);
@@ -4109,7 +4105,6 @@ void PulseController::SetupAnesthesiaMachine()
   SEFluidCircuitNode& ExpiratoryLimb = cAnesthesia.CreateNode(pulse::AnesthesiaMachineNode::ExpiratoryLimb);
   ExpiratoryLimb.GetPressure().SetValue(AmbientPresure, PressureUnit::cmH2O);
   ExpiratoryLimb.GetVolumeBaseline().SetValue(0.1, VolumeUnit::L);
-
   /////////////////////////////
   // EnvironmentToVentilator //
   SEFluidCircuitPath& EnvironmentToVentilator = cAnesthesia.CreatePath(*Ambient, Ventilator, pulse::AnesthesiaMachinePath::EnvironmentToVentilator);
@@ -4118,14 +4113,14 @@ void PulseController::SetupAnesthesiaMachine()
   // EnvironmentToReliefValve //
   SEFluidCircuitPath& EnvironmentToReliefValve = cAnesthesia.CreatePath(*Ambient, ReliefValve, pulse::AnesthesiaMachinePath::EnvironmentToReliefValve);
   EnvironmentToReliefValve.GetPressureSourceBaseline().SetValue(100.0, PressureUnit::cmH2O);
-  //////////////////////////////////////
-  // VentilatorConnectionToVentilator //
-  SEFluidCircuitPath& VentilatorToVentilatorConnection = cAnesthesia.CreatePath(Ventilator, VentilatorConnection, pulse::AnesthesiaMachinePath::VentilatorToVentilatorConnection);
-  VentilatorToVentilatorConnection.GetComplianceBaseline().SetValue(ventilatorCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
-  VentilatorToVentilatorConnection.SetNextPolarizedState(eGate::Closed);
+  /////////////////////////////
+  // VentilatorToEnvironment //
+  SEFluidCircuitPath& VentilatorToEnviornment = cAnesthesia.CreatePath(Ventilator, *Ambient, pulse::AnesthesiaMachinePath::VentilatorToEnvironment);
+  VentilatorToEnviornment.GetComplianceBaseline().SetValue(ventilatorCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
   ////////////////////////////////////
-  // VentilatorConnectionToSelector //
-  SEFluidCircuitPath& VentilatorConnectionToSelector = cAnesthesia.CreatePath(VentilatorConnection, Selector, pulse::AnesthesiaMachinePath::VentilatorConnectionToSelector);
+  // VentilatorToSelector //
+  SEFluidCircuitPath& VentilatorConnectionToSelector = cAnesthesia.CreatePath(Ventilator, Selector, pulse::AnesthesiaMachinePath::VentilatorToSelector);
+  VentilatorConnectionToSelector.GetResistanceBaseline().SetValue(dSwitchClosedResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   ///////////////////////////
   // SelectorToReliefValve //
   SEFluidCircuitPath& SelectorToReliefValve = cAnesthesia.CreatePath(Selector, ReliefValve, pulse::AnesthesiaMachinePath::SelectorToReliefValve);
@@ -4141,14 +4136,11 @@ void PulseController::SetupAnesthesiaMachine()
   ////////////////////////////
   // EnvironmentToGasSource //
   SEFluidCircuitPath& EnvironmentToGasSource = cAnesthesia.CreatePath(*Ambient, GasSource, pulse::AnesthesiaMachinePath::EnvironmentToGasSource);
-  ///////////////////////////
-  // SelectorToEnvironment //
-  SEFluidCircuitPath& SelectorToEnvironment = cAnesthesia.CreatePath(Selector, *Ambient, pulse::AnesthesiaMachinePath::SelectorToEnvironment);
-  SelectorToEnvironment.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::L_Per_s); //Exhaust
+  EnvironmentToGasSource.GetPressureSourceBaseline().SetValue(2000.0, PressureUnit::psi);
   /////////////////////////
   // GasSourceToGasInlet //
   SEFluidCircuitPath& GasSourceToGasInlet = cAnesthesia.CreatePath(GasSource, GasInlet, pulse::AnesthesiaMachinePath::GasSourceToGasInlet);
-  GasSourceToGasInlet.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::L_Per_s); //Fresh gas source
+  GasSourceToGasInlet.GetResistanceBaseline().SetValue(dValveOpenResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   ///////////////////////////////
   // GasInletToInspiratoryLimb //
   SEFluidCircuitPath& GasInletToInspiratoryLimb = cAnesthesia.CreatePath(GasInlet, InspiratoryLimb, pulse::AnesthesiaMachinePath::GasInletToInspiratoryLimb);
@@ -4207,8 +4199,6 @@ void PulseController::SetupAnesthesiaMachine()
   aSelector.MapNode(Selector);
   SEGasCompartment& aVentilator = m_Compartments->CreateGasCompartment(pulse::AnesthesiaMachineCompartment::Ventilator);
   aVentilator.MapNode(Ventilator);
-  SEGasCompartment& aVentilatorConnection = m_Compartments->CreateGasCompartment(pulse::AnesthesiaMachineCompartment::VentilatorConnection);
-  aVentilator.MapNode(VentilatorConnection);
   SEGasCompartment& aYPiece = m_Compartments->CreateGasCompartment(pulse::AnesthesiaMachineCompartment::YPiece);
   aYPiece.MapNode(Ypiece);
 
@@ -4221,8 +4211,6 @@ void PulseController::SetupAnesthesiaMachine()
   aSelectorToScrubber.MapPath(SelectorToScrubber);
   SEGasCompartmentLink& aScrubberToGasInlet = m_Compartments->CreateGasLink(aScrubber, aGasInlet, pulse::AnesthesiaMachineLink::ScrubberToGasInlet);
   aScrubberToGasInlet.MapPath(ScrubberToGasInlet);
-  SEGasCompartmentLink& aExhaust = m_Compartments->CreateGasLink(aSelector, *eEnvironment, pulse::AnesthesiaMachineLink::Exhaust);
-  aExhaust.MapPath(SelectorToEnvironment);
   SEGasCompartmentLink& aGasSourceToGasInlet = m_Compartments->CreateGasLink(aGasSource, aGasInlet, pulse::AnesthesiaMachineLink::GasSourceToGasInlet);
   aGasSourceToGasInlet.MapPath(GasSourceToGasInlet);
   SEGasCompartmentLink& aGasInletToInspiratoryLimb = m_Compartments->CreateGasLink(aGasInlet, aInspiratoryLimb, pulse::AnesthesiaMachineLink::GasInletToInspiratoryLimb);
@@ -4254,7 +4242,6 @@ void PulseController::SetupAnesthesiaMachine()
   gAnesthesia.AddLink(aSelectorToReliefValve);
   gAnesthesia.AddLink(aSelectorToScrubber);
   gAnesthesia.AddLink(aScrubberToGasInlet);
-  gAnesthesia.AddLink(aExhaust);
   gAnesthesia.AddLink(aGasSourceToGasInlet);
   gAnesthesia.AddLink(aGasInletToInspiratoryLimb);
   gAnesthesia.AddLink(aInspiratoryLimbToYPiece);

@@ -420,10 +420,10 @@ void Respiratory::SetUp()
 void Respiratory::AtSteadyState()
 {
   /// \todo figure out how to save an initial healthy/baseline patient definition and another current patient definition
-  //Experimentally determined
-  m_RespirationRateBaseline_Per_min = GetRespirationRate(FrequencyUnit::Per_min);
+  //Experimentally determined  
   m_TidalVolumeBaseline_L = GetTidalVolume(VolumeUnit::L);
   //Modified and set by conditions and actions
+  m_RespirationRateBaseline_Per_min = m_Patient->GetRespirationRateBaseline(FrequencyUnit::Per_min);
   m_FunctionalResidualCapacity_L = m_Patient->GetFunctionalResidualCapacity(VolumeUnit::L);
   m_TotalLungCapacity_L = m_Patient->GetTotalLungCapacity(VolumeUnit::L);
   m_ResidualVolume_L = m_Patient->GetResidualVolume(VolumeUnit::L);
@@ -461,6 +461,11 @@ void Respiratory::AtSteadyState()
   {
     //At Resting State, apply conditions if we have them
     //Respiratory conditions are applied each timestep to handle combined effects properly
+
+    //Update healthy patient volumes
+    //Tidal volume is experimentatlly determined based and is dependent on other patient settings
+    m_Patient->GetTidalVolumeBaseline().SetValue(m_TidalVolumeBaseline_L, VolumeUnit::L);
+    m_Patient->GetInspiratoryReserveVolume().SetValue(m_InspiratoryReserveVolume_L, VolumeUnit::L);
   }
 }
 

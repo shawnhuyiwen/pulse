@@ -203,7 +203,6 @@ namespace pulse {
     DEFINE_STATIC_STRING(Scrubber);
     DEFINE_STATIC_STRING(Selector);
     DEFINE_STATIC_STRING(Ventilator);
-    DEFINE_STATIC_STRING(VentilatorConnection);
     DEFINE_STATIC_STRING(YPiece);
   };
 
@@ -211,9 +210,9 @@ namespace pulse {
   {
   public:
     DEFINE_STATIC_STRING(EnvironmentToVentilator);
+    DEFINE_STATIC_STRING(VentilatorToEnvironment);
     DEFINE_STATIC_STRING(EnvironmentToReliefValve);
-    DEFINE_STATIC_STRING(VentilatorToVentilatorConnection);
-    DEFINE_STATIC_STRING(VentilatorConnectionToSelector);
+    DEFINE_STATIC_STRING(VentilatorToSelector);
     DEFINE_STATIC_STRING(SelectorToReliefValve);
     DEFINE_STATIC_STRING(SelectorToScrubber);
     DEFINE_STATIC_STRING(ScrubberToGasInlet);

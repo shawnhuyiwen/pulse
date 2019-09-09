@@ -80,6 +80,8 @@ void AnesthesiaMachine::Clear()
   m_pEnvironmentToReliefValve = nullptr;
   m_pSelectorToEnvironment = nullptr;
   m_pEnvironmentToVentilator = nullptr;
+  m_pEnvironmentToGasSource = nullptr;
+  m_pVentilatorToSelector = nullptr;
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -157,6 +159,7 @@ void AnesthesiaMachine::SetUp()
   m_pEnvironmentToVentilator = m_data.GetCircuits().GetAnesthesiaMachineCircuit().GetPath(pulse::AnesthesiaMachinePath::EnvironmentToVentilator);
   m_pExpiratoryLimbToSelector = m_data.GetCircuits().GetAnesthesiaMachineCircuit().GetPath(pulse::AnesthesiaMachinePath::ExpiratoryLimbToSelector);
   m_pSelectorToScrubber = m_data.GetCircuits().GetAnesthesiaMachineCircuit().GetPath(pulse::AnesthesiaMachinePath::SelectorToScrubber);
+  m_pEnvironmentToGasSource = m_data.GetCircuits().GetAnesthesiaMachineCircuit().GetPath(pulse::AnesthesiaMachinePath::EnvironmentToGasSource);
 }
 
 void AnesthesiaMachine::StateChange()
@@ -297,8 +300,9 @@ void AnesthesiaMachine::PreProcess()
   SetConnection();
   CalculateValveResistances();
   CalculateEquipmentLeak();
-  CalculateVentilator();
-  CalculateGasSource();
+  CalculateVentilatorPressure();
+  CalculateGasSourceSubstances();
+  CalculateGasSourceResistance();
   CheckReliefValve();  
 }
 
@@ -369,14 +373,8 @@ void AnesthesiaMachine::CalculateScrubber()
 /// setting on the anesthesia machine. The oxygen source (bottle and wall) are checked to ensure no equipment failures exist. 
 /// The volume fractions are adjusted according to gas composition, the sources, and any failures present. 
 //--------------------------------------------------------------------------------------------------
-void AnesthesiaMachine::CalculateGasSource()
-{
-  double dInletflow = GetInletFlow().GetValue(VolumePerTimeUnit::L_Per_min);
-  m_pGasSourceToGasInlet->GetNextFlowSource().SetValue(dInletflow, VolumePerTimeUnit::L_Per_min);
-  
-  //For Exhaust to balance volume properly
-  m_pSelectorToEnvironment->GetNextFlowSource().SetValue(dInletflow, VolumePerTimeUnit::L_Per_min);
-  
+void AnesthesiaMachine::CalculateGasSourceSubstances()
+{  
   double LeftInhaledAgentVolumeFraction = 0.0;
   double RightInhaledAgentVolumeFraction = 0.0;
   //Vaporizer Failure
@@ -466,6 +464,27 @@ void AnesthesiaMachine::CalculateGasSource()
   m_gasSourceCO2->GetVolumeFraction().SetValue(dCO2VolumeFraction);
   m_gasSourceN2->GetVolumeFraction().SetValue(dN2VolumeFraction);
   m_gasSource->Balance(BalanceGasBy::VolumeFraction);
+}
+
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Updates the circuit to supply gas at the flow setting.
+///
+/// \details
+/// Calculates a resistance to mimic the flow knob based on the constant, large pressure and flow setting.
+//--------------------------------------------------------------------------------------------------
+void AnesthesiaMachine::CalculateGasSourceResistance()
+{
+  double flow_L_Per_s = GetInletFlow().GetValue(VolumePerTimeUnit::L_Per_s);
+
+  //Determine flow control resistance
+  //Assume pressure outside tank is comparatively approximately ambient
+  double tankPressure_cmH2O = m_pEnvironmentToGasSource->GetNextPressureSource(PressureUnit::cmH2O);
+  double resistance_cmH2O_s_Per_L = tankPressure_cmH2O / flow_L_Per_s;
+  resistance_cmH2O_s_Per_L = LIMIT(resistance_cmH2O_s_Per_L, m_dSwitchClosedResistance_cmH2O_s_Per_L, m_dSwitchOpenResistance_cmH2O_s_Per_L);
+
+  //Apply flow
+  m_pGasSourceToGasInlet->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -664,7 +683,7 @@ void AnesthesiaMachine::CalculateValveResistances()
 /// This causes gas to flow into the inspiratory limb path. The pressure is dropped to much low pressure during the expiration 
 /// phase to allow gas return to the ventilator.
 //--------------------------------------------------------------------------------------------------
-void AnesthesiaMachine::CalculateVentilator()
+void AnesthesiaMachine::CalculateVentilatorPressure()
 {
   //Calculate the driver pressure
   double dDriverPressure = 0.0;
