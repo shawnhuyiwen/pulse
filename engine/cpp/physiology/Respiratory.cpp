@@ -1332,7 +1332,15 @@ void Respiratory::RespiratoryDriver()
   m_DriverPressurePath->GetNextPressureSource().SetValue(m_DriverPressure_cmH2O, PressureUnit::cmH2O);
 }
 
-//jbw - Add description
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Set inspiratory and expiratory timing
+///
+/// \details
+/// This sets the fraction/percentage of each segment of a breath cycle. The values are used by the
+/// driver to produce the pressure waveform for a single breath. The fractions must sum to 1.0, and 
+/// anything remaining will be added at the end as a hold at zero.
+//--------------------------------------------------------------------------------------------------
 void Respiratory::SetBreathCycleFractions()
 {
   ////Healthy = 0.34 remaining, giving ~1:2 IE Ratio
@@ -2265,7 +2273,16 @@ void Respiratory::TuneCircuit()
   }
 }
 
-//jbw - Add description
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Modify the chest wall compliance based on lung volume.
+///
+/// \details
+/// The chest wall compliance is modified using a piecewise linear function. Segment cutoffs/inflection
+/// points are defined by the volume vs. pressure slope and fraction between reserve volume (minimum
+/// lung volume) and total lung capacity (maximum lung volume). The instantaneous compliance is
+/// calculated each time step to follow this defined volume vs. pressure piecewise function.
+//--------------------------------------------------------------------------------------------------
 void Respiratory::UpdateChestWallCompliances()
 {
   /// \todo A lot of this stuff we don't need to recalculate every timestep - it can be made more efficient
@@ -2415,16 +2432,38 @@ void Respiratory::UpdateChestWallCompliances()
   m_LeftPleuralToRespiratoryMuscle->GetNextCompliance().SetValue(leftChestWallCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
 }
 
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Calculate the instantaneous work of breathing.
+///
+/// \details
+/// ToDo
+//--------------------------------------------------------------------------------------------------
+void Respiratory::CalculateWork()
+{
   ///\ToDo Add work calculation
 }
 
-//jbw - Add description
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Calculate and apply repiratory fatigue effects.
+///
+/// \details
+/// ToDo
+//--------------------------------------------------------------------------------------------------
 void Respiratory::CalculateFatigue()
 {
   ///\ToDo Add fatigue calculation
 }
 
-//jbw - Add description
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Modify lung volumes based on actions and conditions.
+///
+/// \details
+/// Increase the alveolar dead space volume due to COPD. Also, make sure the stomach volume does
+/// not cause a problem with ambient changes.
+//--------------------------------------------------------------------------------------------------
 void Respiratory::UpdateVolumes()
 {
   //Don't modify the stomach on environment changes
@@ -2501,17 +2540,13 @@ void Respiratory::UpdateVolumes()
   }
 }
 
-//jbw - Add description
 //--------------------------------------------------------------------------------------------------
 /// \brief
-/// Intubation, including esophageal, left mainstem, and right mainstem
+/// Update respiratory resistances due to actions and conditions.
 ///
 /// \details
-/// During mechanical ventilation, one of the clinical complications of endotracheal intubation is esophageal intubation. This involves the 
-/// misplacement of the tube down the esophagus. Such event prohibits air flow into or out of the lungs. The circuit handles 
-/// this respiratory distress by manipulating the tracheal resistance. When esophageal intubation incidence is triggered, significantly large 
-/// resistance is assigned to the trachea compartment. Otherwise, the esophageal compartment resistance is set to be significantly
-/// large value under normal condition. 
+/// Update the trachea, bronchial, and alveoli resistances as appropriate. Effects are combined by
+/// taking the action/conditions that has the greatest change from baseline.
 //--------------------------------------------------------------------------------------------------
 void Respiratory::UpdateResistances()
 {
@@ -2530,6 +2565,53 @@ void Respiratory::UpdateResistances()
     tracheaResistance_cmH2O_s_Per_L *= 8.0;
   }
 
+  //------------------------------------------------------------------------------------------------------
+  //Intubation
+  if (m_PatientActions->HasIntubation())
+  {
+    m_data.SetIntubation(eSwitch::On);
+    SEIntubation* intubation = m_PatientActions->GetIntubation();
+    switch (intubation->GetType())
+    {
+    case eIntubation_Type::Tracheal:
+    {
+      //The proper way to intubate
+      //Airway mode handles this case by default
+      break;
+    }
+    case eIntubation_Type::Esophageal:
+    {
+      //During mechanical ventilation, one of the clinical complications of endotracheal intubation is esophageal intubation. This involves the 
+      //misplacement of the tube down the esophagus. Such event prohibits air flow into or out of the lungs. The circuit handles 
+      //this respiratory distress by manipulating the tracheal resistance. When esophageal intubation incidence is triggered, significantly large 
+      //resistance is assigned to the trachea compartment. Otherwise, the esophageal compartment resistance is set to be significantly
+      //large value under normal condition. 
+
+      // Allow air flow between Airway and Stomach
+      esophagusResistance_cmH2O_s_Per_L = 1.2;
+      // Stop air flow between the Airway and Carina
+      //This is basically an open switch.  We don't need to worry about anyone else modifying it if this action is on.
+      tracheaResistance_cmH2O_s_Per_L = m_DefaultOpenResistance_cmH2O_s_Per_L;
+      break;
+    }
+    case eIntubation_Type::RightMainstem:
+    {
+      leftBronchiResistance_cmH2O_s_Per_L = m_RespOpenResistance_cmH2O_s_Per_L;
+      break;
+    }
+    case eIntubation_Type::LeftMainstem:
+    {
+      rightBronchiResistance_cmH2O_s_Per_L = m_RespOpenResistance_cmH2O_s_Per_L;
+      break;
+    }
+    }
+  }
+  else
+  {
+    m_data.SetIntubation(eSwitch::Off);
+  }
+
+  //------------------------------------------------------------------------------------------------------
   //Airway obstruction
   if (m_PatientActions->HasAirwayObstruction())
   {
@@ -2585,8 +2667,8 @@ void Respiratory::UpdateResistances()
   //Asthma
   if (m_PatientActions->HasAsthmaAttack())
   {
-    double dSeverity = m_PatientActions->GetAsthmaAttack()->GetSeverity().GetValue();
-    obstructiveResistanceScalingFactor = GeneralMath::ExponentialGrowthFunction(10.0, 1.0, 90.0, dSeverity);
+    double severity = m_PatientActions->GetAsthmaAttack()->GetSeverity().GetValue();
+    obstructiveResistanceScalingFactor = GeneralMath::ExponentialGrowthFunction(10.0, 1.0, 90.0, severity);
   }
 
   //------------------------------------------------------------------------------------------------------
@@ -2628,7 +2710,15 @@ void Respiratory::UpdateResistances()
   m_MouthToStomach->GetNextResistance().SetValue(esophagusResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 }
 
-//jbw - Add description
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Update lung compliance due to actions and conditions.
+///
+/// \details
+/// The alveoli/lung compliance is a constant value (linear volume vs. presure function) that is
+/// modified and tuned to provide the desired total pulmonary compliance. The maximal obstructive and 
+/// maximal restrictive effects are combined through individual multipliers.
+//--------------------------------------------------------------------------------------------------
 void Respiratory::UpdateCompliances()
 {
   //Artificial airway
@@ -2741,7 +2831,16 @@ void Respiratory::UpdateCompliances()
   m_LeftAlveoliToLeftPleuralConnection->GetNextCompliance().SetValue(leftAlveoliCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
 }
 
-//jbw - Add description
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Update the inspiratory:expiratory ratio due to actions and conditions.
+///
+/// \details
+/// The inspiratory and expiratory ratio scaling factors are determine thorugh the tuned combined 
+/// effects of respiratory conditions and actions, as well as drug PD effects. The resulting modifier
+/// is then applied to the breath cycle fraction to ultimately modify the relaive inspiratory and 
+/// expiratory time.
+//--------------------------------------------------------------------------------------------------
 void Respiratory::UpdateInspiratoryExpiratoryRatio()
 {
   //Adjust the inspiration/expiration ratio based on severity
@@ -2850,7 +2949,16 @@ void Respiratory::UpdateInspiratoryExpiratoryRatio()
   }
 }
 
-//jbw - Add description
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Update the diffusion surface area due to actions and conditions.
+///
+/// \details
+/// The surface area is an important factor for gas exchange between the respiratory and 
+/// cardiovascular systems. Several conditions effectively reduce the area of alveoli that
+/// participate in gas exchange and cause increased CO2 and decreased O2 in the blood. This models 
+/// the destruction of alveoli membranes and/or lung consolidation.
+//--------------------------------------------------------------------------------------------------
 void Respiratory::UpdateDiffusion()
 {
   //These fractions all stack
@@ -2981,7 +3089,14 @@ void Respiratory::UpdateDiffusion()
   m_Patient->GetAlveoliSurfaceArea().SetValue(alveoliDiffusionArea_cm2, AreaUnit::cm2);
 }
 
-//jbw - Add description
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Update Pulmonary Capillary Resistance 
+///
+/// \details
+/// This method determines a resistance scaling factor from COPD severity to updates the pulmonary 
+/// capillary resistance in order to model the destruction of capillaries in the alveolus membrane.
+//--------------------------------------------------------------------------------------------------
 void Respiratory::UpdatePulmonaryCapillary()
 {
   //COPD
@@ -3019,7 +3134,15 @@ void Respiratory::UpdatePulmonaryCapillary()
   }
 }
 
-//jbw - Add description
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Reduce the driver pressure based on action and conditions.
+///
+/// \details
+/// This method scales the driver pressure lower than "requested" by the chemoreceptors and other
+/// nervous system / PD effects. This ultamitely caused lower O2 in the blood and higher respiration
+/// rates compared to lower tidal volumes.
+//--------------------------------------------------------------------------------------------------
 void Respiratory::UpdateFatigue()
 {
   double dyspneaSeverity = 0.0;
