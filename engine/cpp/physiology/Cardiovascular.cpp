@@ -2133,7 +2133,7 @@ void Cardiovascular::CalculatePleuralCavityVenousEffects()
 {
   //The left and right pleural pressures are likely to have large differences only due to a pneumothorax
   //Pressure difference causes a mediastinum shift
-  double pleuralCavityPressureDiff_cmH2O = abs(m_leftPleuralCavity->GetPressure(PressureUnit::cmH2O) - m_rightPleuralCavity->GetPressure(PressureUnit::cmH2O));
+  double pleuralCavityPressureDiff_cmH2O = std::abs(m_leftPleuralCavity->GetPressure(PressureUnit::cmH2O) - m_rightPleuralCavity->GetPressure(PressureUnit::cmH2O));
   
   double maxPressureDiff_cmH2O = 40.0;
   double maxResistanceMultiplier = 10.0;

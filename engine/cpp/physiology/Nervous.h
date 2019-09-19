@@ -52,7 +52,6 @@ protected:
   //Baroreceptor threshold parameters
   double m_BaroreceptorActivityTime_s;
   double m_meanArterialPressureBaseline_mmHg;
-  double m_sedationDampeningEffect;
   double m_meanArtrialPressurePatientBaseline_mmHg;
 
   // Configuration fractions representing the amount by which each quantity can change due to baroreceptors;
