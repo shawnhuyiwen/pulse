@@ -123,7 +123,8 @@ void PBAnesthesiaMachine::Serialize(const SEAnesthesiaMachineChamber& src, cdm::
   dst.set_state((cdm::eSwitch)src.m_State);
   if (src.HasSubstanceFraction())
     dst.set_allocated_substancefraction(PBProperty::Unload(*src.m_SubstanceFraction));
-  dst.set_substance(src.m_Substance->GetName());
+  if(src.HasSubstance())
+    dst.set_substance(src.m_Substance->GetName());
 }
 
 void PBAnesthesiaMachine::Load(const cdm::AnesthesiaMachineOxygenBottleData& src, SEAnesthesiaMachineOxygenBottle& dst)

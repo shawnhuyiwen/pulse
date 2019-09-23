@@ -112,7 +112,6 @@ target_include_directories(PulseEngine PRIVATE ${CMAKE_SOURCE_DIR}/schema/bind/c
 target_include_directories(PulseEngine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/cpp)
 target_include_directories(PulseEngine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../cdm/cpp)
 target_include_directories(PulseEngine PRIVATE ${EIGEN3_INCLUDE_DIR})
-target_include_directories(PulseEngine PRIVATE ${LOG4CPLUS_INCLUDE_DIR})
 target_include_directories(PulseEngine PRIVATE ${PROTOBUF_INCLUDE_DIR})
 
 set_target_properties(PulseEngine PROPERTIES LINKER_LANGUAGE CXX)

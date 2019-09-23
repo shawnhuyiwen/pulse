@@ -191,7 +191,7 @@ bool PulseEngine::InitializeEngine(const SEPatientConfiguration& patient_configu
 
   m_State = EngineState::Active;
   // Hook up the handlers (Note events will still be in the log)
-  m_EventManager->ForwardEvents(event_handler);  
+  m_EventManager->ForwardEvents(event_handler);
   Info("Finalizing homeostasis");
 
   // Run this again to clear out any bumps from systems resetting baselines in the last AtSteadyState call
@@ -201,7 +201,7 @@ bool PulseEngine::InitializeEngine(const SEPatientConfiguration& patient_configu
   //  return false;
 
   if (!m_Config->GetStabilization()->IsTrackingStabilization())
-    m_SimulationTime->SetValue(0, TimeUnit::s);  
+    m_SimulationTime->SetValue(0, TimeUnit::s);
   // Don't allow any changes to Quantity/Potential/Flux values directly
   // Use Quantity/Potential/Flux Sources
   m_Circuits->SetReadOnly(true);
@@ -229,9 +229,9 @@ double PulseEngine::GetSimulationTime(const TimeUnit& unit) const
 void PulseEngine::AdvanceModelTime()
 {
   if (!IsReady())
-    return;  
+    return;
   if(m_EventManager->IsEventActive(eEvent::IrreversibleState))
-    return;  
+    return;
 
   PreProcess();
   Process();
@@ -247,12 +247,11 @@ void PulseEngine::AdvanceModelTime()
 
 void PulseEngine::AdvanceModelTime(double time, const TimeUnit& unit)
 {
-  double time_s = Convert(time,unit,TimeUnit::s);
-  int count = (int)(time_s / m_Config->GetTimeStep(TimeUnit::s));
-  if (count == 0)
-    Error("Requested advancement time is smaller than time step, not advancing.");
-  for(int i=0;i<count;i++)
+  double time_s = Convert(time, unit, TimeUnit::s) + m_spareAdvanceTime_s;
+  int count = (int)(time_s / GetTimeStep(TimeUnit::s));
+  for (int i = 0; i < count; i++)
     AdvanceModelTime();
+  m_spareAdvanceTime_s = time_s - (count * GetTimeStep(TimeUnit::s));
 }
 
 void PulseEngine::AdvanceCallback(double time_s)

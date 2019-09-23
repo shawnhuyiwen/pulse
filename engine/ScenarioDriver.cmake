@@ -8,8 +8,6 @@ target_include_directories(PulseScenarioDriver PRIVATE ${CMAKE_BINARY_DIR}/schem
 target_include_directories(PulseScenarioDriver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/cpp)
 target_include_directories(PulseScenarioDriver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../cdm/cpp)
 target_include_directories(PulseScenarioDriver PRIVATE ${EIGEN3_INCLUDE_DIR})
-target_include_directories(PulseScenarioDriver PRIVATE ${LOG4CPLUS_INCLUDE_DIR})
-target_include_directories(PulseScenarioDriver PRIVATE ${PROTOBUF_INCLUDE_DIR})
 
 # Dependent Libraries
 target_link_libraries(PulseScenarioDriver PulseEngine)

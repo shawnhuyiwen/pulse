@@ -16,8 +16,6 @@ endif()
 target_include_directories(CommonDataModelUnitTests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/cdm/cpp)
 target_include_directories(CommonDataModelUnitTests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../cdm/cpp)
 target_include_directories(CommonDataModelUnitTests PRIVATE ${EIGEN3_INCLUDE_DIR})
-target_include_directories(CommonDataModelUnitTests PRIVATE ${LOG4CPLUS_INCLUDE_DIR})
-target_include_directories(CommonDataModelUnitTests PRIVATE ${PROTOBUF_INCLUDE_DIR})
 set_target_properties(CommonDataModelUnitTests PROPERTIES COMPILE_FLAGS "${CDM_TEST_FLAGS}" PREFIX "")
 
 IF(APPLE)

@@ -25,10 +25,14 @@ set(Pulse_INCLUDE_DIRS "${Pulse_INSTALL}/include"
                        )
 set(Pulse_LIB_ROOT_DIR "${Pulse_INSTALL}/lib")
 
-if(MSVC)
- set(LOG4CPLUS_LIB "log4cplus")
+if("@PULSE_LOGGER@" STREQUAL "log4cpp")
+  set(LOGGER_LIB "log4cpp")
 else()
- set(LOG4CPLUS_LIB "liblog4cplus")
+  if(MSVC)
+   set(LOGGER_LIB "log4cplus")
+  else()
+   set(LOGGER_LIB "liblog4cplus")
+  endif()
 endif()
 
 if (WIN32)
@@ -49,7 +53,7 @@ set (PULSE_LIBRARIES "")
 set(Pulse_RELEASE_LIBS "${Pulse_LIB_ROOT_DIR}/PulseEngine.${LIB_ENDING}" 
                "${Pulse_LIB_ROOT_DIR}/CommonDataModel.${LIB_ENDING}"
                "${Pulse_LIB_ROOT_DIR}/DataModelBindings.${LIB_ENDING}"
-               "${Pulse_LIB_ROOT_DIR}/${LOG4CPLUS_LIB}.${LIB_ENDING}"
+               "${Pulse_LIB_ROOT_DIR}/${LOGGER_LIB}.${LIB_ENDING}"
                "${Pulse_LIB_ROOT_DIR}/libprotobuf.${LIB_ENDING}"
                "${WIN32_LIBS}"
 )
@@ -60,7 +64,7 @@ endforeach(lib)
 set(Pulse_DEBUG_LIBS "${Pulse_LIB_ROOT_DIR}/PulseEngined.${LIB_ENDING}"
                      "${Pulse_LIB_ROOT_DIR}/CommonDataModeld.${LIB_ENDING}"
                      "${Pulse_LIB_ROOT_DIR}/DataModelBindingsd.${LIB_ENDING}"
-                     "${Pulse_LIB_ROOT_DIR}/${LOG4CPLUS_LIB}D.${LIB_ENDING}"
+                     "${Pulse_LIB_ROOT_DIR}/${LOGGER_LIB}d.${LIB_ENDING}"
                      "${Pulse_LIB_ROOT_DIR}/libprotobufd.${LIB_ENDING}"
                      "${WIN32_LIBS}"
 )

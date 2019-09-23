@@ -728,7 +728,7 @@ public abstract class ValidationTool
       }
       case WaveformMinPerWeight:
       {
-      /*
+    	/*
         List<Double> xMin = new ArrayList<Double>();
         List<Double> yMin = new ArrayList<Double>();
         List<Double> xMax = new ArrayList<Double>();
@@ -747,7 +747,7 @@ public abstract class ValidationTool
       }
       case WaveformMaxPerWeight:
       {
-      /*  
+    	/*  
         List<Double> xMin = new ArrayList<Double>();
         List<Double> yMin = new ArrayList<Double>();
         List<Double> xMax = new ArrayList<Double>();

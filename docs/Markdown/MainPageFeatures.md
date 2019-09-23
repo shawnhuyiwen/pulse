@@ -155,6 +155,37 @@ Our user manual offers in-depth details of all the Pulse asset functionality. It
 </center>
 \endhtmlonly
 
+### Ventilation Management Trainer
+
+\htmlonly
+<center>
+<table color="white" border="1" bordercolor="Gainsboro" style="border-collapse: collapse">
+<tr>
+  <th><center>Description</center></th>
+  <th><center>Team</center></th>
+  <th><center>Links</center></th>
+</tr>
+<tr>
+  <td width="30%" style="border-top:2px solid Gainsboro; padding:3px">
+     A training simulator designed to mimic respiratory distress during mechanical ventilation. A simulated torso was developed and integrated with an appropriately equipped Special Medical Emergency Evacuation Device affixed with medical equipment utilized during Critical Care Air Transport Team missions. The torso includes a lung model, upper airway, and head with reproducible computerized algorithms with the ability to simulate respiratory distress. The simulator is responsive to providers' interventions in treating conditions encountered during mechanical ventilation.	 
+	 Pulse is fully integrated to autonomously drive all patient responses.
+    <img src="./Images/Features/VentilationTrainer.png" width="400">
+  </td>
+  <td width="30%" style="border-top:2px solid Gainsboro; padding:3px" valign="top">
+    <center>
+      <a href="https://www.ingmarmed.com/"><img src="./Images/Features/IngMarLogo.jpg" width="200"></a><br><br>
+      <a href="https://www.uchealth.com/education/c-stars/"><img src="./Images/Features/UCHealthLogo.png" width="200"></a><br><br>
+	  <a href="https://www.wpafb.af.mil/afrl/"><img src="./Images/Features/ARLLogo.jpg" width="150"></a>
+    </center>
+  </td>
+  <td width="40%" valign="top" style="border-top:2px solid Gainsboro; padding:3px">
+      &bull; <a href="https://apps.dtic.mil/dtic/tr/fulltext/u2/1074448.pdf">Rodriquez Jr, Dario, Thomas Blakeman, Dina Gomaa, and Richard Branson. Advancing Mechanical Ventilation Management through Simulation. No. AFRL-SA-WP-SR-2019-0006. USAFSAM/FHE Wright-Patterson AFB United States, 2019.</a><br>
+  </td>
+</tr>
+</table>
+</center>
+\endhtmlonly
+
 ### Combat Casualty Care Augmented Reality Intelligent Training System (C3ARESYS)
 
 \htmlonly

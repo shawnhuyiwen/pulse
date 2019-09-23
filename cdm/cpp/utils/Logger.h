@@ -65,6 +65,9 @@ public:
   Logger(std::string const&  logFilename = Loggable::empty);
   virtual ~Logger();
 
+  static void Initialize();
+  static void Deinitialize();
+
   void LogToConsole(bool b);
 
   void ResetLogFile(std::string const&  logFilename = Loggable::empty);

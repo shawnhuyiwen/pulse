@@ -12,8 +12,6 @@ target_include_directories(PulseCLR PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/cdm/cpp)
 target_include_directories(PulseCLR PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test/engine/cpp)
 target_include_directories(PulseCLR PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test/cdm/cpp)
 target_include_directories(PulseCLR PRIVATE ${EIGEN3_INCLUDE_DIR})
-target_include_directories(PulseCLR PRIVATE ${LOG4CPLUS_INCLUDE_DIR})
-target_include_directories(PulseCLR PRIVATE ${PROTOBUF_INCLUDE_DIR})
 
 set(PulseCLR_FLAGS "/clr /EHa")
 string( REPLACE "/RTC1" "" CMAKE_CXX_FLAGS_DEBUG ${CMAKE_CXX_FLAGS_DEBUG} )

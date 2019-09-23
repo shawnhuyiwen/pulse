@@ -37,7 +37,7 @@ public:
 
 protected:
 
-  eSwitch          m_State;
+  eSwitch               m_State;
   const SESubstance*    m_Substance;
   SEScalar0To1*         m_SubstanceFraction;
 
