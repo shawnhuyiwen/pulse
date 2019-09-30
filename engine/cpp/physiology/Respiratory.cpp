@@ -12,13 +12,16 @@
 #include "patient/conditions/SEChronicObstructivePulmonaryDisease.h"
 #include "patient/conditions/SELobarPneumonia.h"
 #include "patient/conditions/SEImpairedAlveolarExchange.h"
+#include "patient/conditions/SEAcuteRespiratoryDistressSyndrome.h"
 // Actions
 #include "engine/SEActionManager.h"
 #include "engine/SEPatientActionCollection.h"
+#include "patient/actions/SEAcuteRespiratoryDistressSyndromeExacerbation.h"
 #include "patient/actions/SEAirwayObstruction.h"
 #include "patient/actions/SEAsthmaAttack.h"
 #include "patient/actions/SEBronchoconstriction.h"
 #include "patient/actions/SEChestOcclusiveDressing.h"
+#include "patient/actions/SEChronicObstructivePulmonaryDiseaseExacerbation.h"
 #include "patient/actions/SEConsciousRespiration.h"
 #include "patient/actions/SEBreathHold.h"
 #include "patient/actions/SEForcedExhale.h"
@@ -26,6 +29,7 @@
 #include "patient/actions/SEUseInhaler.h"
 #include "patient/actions/SEDyspnea.h"
 #include "patient/actions/SEIntubation.h"
+#include "patient/actions/SELobarPneumoniaExacerbation.h"
 #include "patient/actions/SEMechanicalVentilation.h"
 #include "patient/actions/SENeedleDecompression.h"
 #include "patient/actions/SERespiratoryFatigue.h"
@@ -486,6 +490,13 @@ void Respiratory::PreProcess()
   CalculateFatigue();
 
   UpdateChestWallCompliances();
+  UpdateVolumes();
+  UpdateResistances();
+  UpdateAlveolarCompliances();
+  UpdateInspiratoryExpiratoryRatio();
+  UpdateDiffusion();
+  UpdatePulmonaryCapillary();
+
   ProcessAerosolSubstances();
   Pneumothorax();  
   ConsciousRespiration();
@@ -1087,8 +1098,6 @@ void Respiratory::RespiratoryDriver()
     //Prepare for the next cycle -------------------------------------------------------------------------------
     if (m_BreathingCycleTime_s > TotalBreathingCycleTime_s) //End of the cycle or currently not breathing
     {
-      UpdateIERatio();
-
       // Make a cardicArrestEffect that is 1.0 unless cardiac arrest is true
       double cardiacArrestEffect = 1.0;
       // If the cv system parameter is true, then make the cardicArrestEffect = 0
@@ -1320,7 +1329,7 @@ void Respiratory::RespiratoryDriver()
       m_DriverPressure_cmH2O = -(exp(-m_BreathingCycleTime_s / tau) - 1) * m_PeakRespiratoryDrivePressure_cmH2O;
     }
 
-    Dyspnea();
+    ModifyDriverPressure();
 
     if (m_NotBreathing)
     {
@@ -1501,6 +1510,42 @@ void Respiratory::Pneumothorax()
   }
 }
 
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Left Side Needle Decompression
+///
+/// \param  dPressureTimePerVolume - Resistance value for air flow through the needle
+///
+/// \details
+/// Used for left side needle decompression. this is an intervention (action) used to treat left 
+/// side tension pneumothorax
+//--------------------------------------------------------------------------------------------------
+void Respiratory::DoLeftNeedleDecompression(double dPressureTimePerVolume)
+{
+  //Leak flow resistance that is scaled in proportion to Lung resistance, depending on severity
+  double dScalingFactor = 0.5; //Tuning parameter to allow gas flow due to needle decompression using lung resistance as reference
+  double dPressureTimePerVolumeLeftNeedle = dScalingFactor * dPressureTimePerVolume;
+  m_LeftPleuralToEnvironment->GetNextResistance().SetValue(dPressureTimePerVolumeLeftNeedle, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+}
+
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Right Side Needle Decompression
+///
+/// \param  dPressureTimePerVolume - Resistance value for air flow through the needle
+///
+/// \details
+/// Used for right side needle decompression. this is an intervention (action) used to treat right
+/// side tension pneumothorax
+//--------------------------------------------------------------------------------------------------
+void Respiratory::DoRightNeedleDecompression(double dPressureTimePerVolume)
+{
+  //Leak flow resistance that is scaled in proportion to Lung resistance, depending on severity
+  double dScalingFactor = 0.5; //Tuning parameter to allow gas flow due to needle decompression using lung resistance as reference
+  double dPressureTimePerVolumeRightNeedle = dScalingFactor * dPressureTimePerVolume;
+  m_RightPleuralToEnvironment->GetNextResistance().SetValue(dPressureTimePerVolumeRightNeedle, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+}
+
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
@@ -1532,7 +1577,7 @@ void Respiratory::ConsciousRespiration()
       SEConsciousRespiration* cr = m_PatientActions->GetConsciousRespiration();
       m_ss << "Completed Conscious Respiration Command : " << *cr->GetActiveCommand();
       Info(m_ss);
-      cr->RemoveActiveCommand();      
+      cr->RemoveActiveCommand();
     }
   }
 
@@ -1544,7 +1589,6 @@ void Respiratory::ConsciousRespiration()
     ProcessConsciousRespiration(*cmd);
   }
 }
-
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
@@ -1605,39 +1649,25 @@ void Respiratory::ProcessConsciousRespiration(SEConsciousRespirationCommand& cmd
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
-/// Left Side Needle Decompression
-///
-/// \param  dPressureTimePerVolume - Resistance value for air flow through the needle
+/// Calculates key respiratory physiological parameters
 ///
 /// \details
-/// Used for left side needle decompression. this is an intervention (action) used to treat left 
-/// side tension pneumothorax
+/// Calculates the respiration rate and tidal volume. For each breathing cycle, the tidal volume is calculated by identifying 
+/// the peaks in the total lung volume.
+/// The tidal volume of a particular breathing cycle is then calculated by taking the difference between the 
+/// maximum and minimum values of the total lung volume. 
+/// The respiration rate is calculated by measuring the duration for one complete breathing cycle and then 
+/// converting the duration to the number of breaths per minute.
+// The method also checks for bradypnea and tachypnea events and reports to the use.
 //--------------------------------------------------------------------------------------------------
-void Respiratory::DoLeftNeedleDecompression(double dPressureTimePerVolume)
+void Respiratory::CalculateVitalSigns()
 {
-  //Leak flow resistance that is scaled in proportion to Lung resistance, depending on severity
-  double dScalingFactor = 0.5; //Tuning parameter to allow gas flow due to needle decompression using lung resistance as reference
-  double dPressureTimePerVolumeLeftNeedle = dScalingFactor * dPressureTimePerVolume;
-  m_LeftPleuralToEnvironment->GetNextResistance().SetValue(dPressureTimePerVolumeLeftNeedle, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-}
+  //Record values each time-step
+  std::stringstream ss;
 
-//--------------------------------------------------------------------------------------------------
-/// \brief
-/// Right Side Needle Decompression
-///
-/// \param  dPressureTimePerVolume - Resistance value for air flow through the needle
-///
-/// \details
-/// Used for right side needle decompression. this is an intervention (action) used to treat right
-/// side tension pneumothorax
-//--------------------------------------------------------------------------------------------------
-void Respiratory::DoRightNeedleDecompression(double dPressureTimePerVolume)
-{
-  //Leak flow resistance that is scaled in proportion to Lung resistance, depending on severity
-  double dScalingFactor = 0.5; //Tuning parameter to allow gas flow due to needle decompression using lung resistance as reference
-  double dPressureTimePerVolumeRightNeedle = dScalingFactor * dPressureTimePerVolume;
-  m_RightPleuralToEnvironment->GetNextResistance().SetValue(dPressureTimePerVolumeRightNeedle, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-}
+  //Total Respiratory Volume - this should not include the Pleural Space
+  double totalLungVolume_L = m_Lungs->GetVolume(VolumeUnit::L);
+  GetTotalLungVolume().Set(m_Lungs->GetVolume());
 
   double AnatomicDeadSpace_L = m_LeftAnatomicDeadSpace->GetNextVolume(VolumeUnit::L) + m_RightAnatomicDeadSpace->GetNextVolume(VolumeUnit::L);
   double LeftAlveolarDeadSpace_L = 0.0;
@@ -1942,198 +1972,6 @@ void Respiratory::DoRightNeedleDecompression(double dPressureTimePerVolume)
       m_data.GetEvents().SetEvent(eEvent::RespiratoryAlkalosis, false, m_data.GetSimulationTime());
     }
   }
-}
-
-//--------------------------------------------------------------------------------------------------
-/// \brief
-/// Update obstructive (airway) resistance 
-///
-/// \return void
-///
-/// \details
-/// This method takes a resistance scaling factor and lung percentages (left and right) as input
-/// variables.  It updates the Carina to Dead Space path resistances in order to model airflow 
-/// blockage through the bronchi and bronchioles.
-//--------------------------------------------------------------------------------------------------
-void Respiratory::UpdateObstructiveResistance()
-{
-  if ((!m_PatientActions->HasAsthmaAttack() && !m_data.GetConditions().HasChronicObstructivePulmonaryDisease())
-    || GetExpiratoryFlow(VolumePerTimeUnit::L_Per_s) < 0.0) // Only on exhalation
-  {
-    return;
-  }
-  
-  double combinedResistanceScalingFactor = 1.0;  
-  //Asthma attack on
-  if (m_PatientActions->HasAsthmaAttack())
-  {
-    double dSeverity = m_PatientActions->GetAsthmaAttack()->GetSeverity().GetValue();
-    // Resistance function: Base = 10, Min = 1.0, Max = 90.0 (increasing with severity)
-    double dResistanceScalingFactor = GeneralMath::ResistanceFunction(10, 90, 1, dSeverity);
-    combinedResistanceScalingFactor = dResistanceScalingFactor;
-  }
-  //COPD on
-  if (m_data.GetConditions().HasChronicObstructivePulmonaryDisease())
-  {
-    double dSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease()->GetBronchitisSeverity().GetValue();
-    // Resistance function: Base = 10, Min = 1.0, Max = 100.0 (increasing with severity)
-    double dResistanceScalingFactor = GeneralMath::ResistanceFunction(10, 90, 1, dSeverity);
-    combinedResistanceScalingFactor = MAX(combinedResistanceScalingFactor, dResistanceScalingFactor);
-  }
-  
-  // Get the path resistances 
-  double dLeftBronchiResistance = m_CarinaToLeftAnatomicDeadSpace->GetNextResistance().GetValue(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  double dRightBronchiResistance = m_CarinaToRightAnatomicDeadSpace->GetNextResistance().GetValue(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-
-  dLeftBronchiResistance *= combinedResistanceScalingFactor;
-  m_CarinaToLeftAnatomicDeadSpace->GetNextResistance().SetValue(dLeftBronchiResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  dRightBronchiResistance *= combinedResistanceScalingFactor;
-  m_CarinaToRightAnatomicDeadSpace->GetNextResistance().SetValue(dRightBronchiResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-}
-
-//--------------------------------------------------------------------------------------------------
-/// \brief
-/// Update the inspiratory-expiratory ratio
-///
-/// \return void
-///
-/// \details
-/// The inspiratory-expiratory ratio is modified based on certain actions and conditions, as well as
-/// local bronchodilation effects from aerosols.
-//--------------------------------------------------------------------------------------------------
-void Respiratory::UpdateIERatio()
-{
-  // Asthma, Chronic Bronchitis, and Lobar Pneumonia
-  //  Adjust the inspiration/expiration ratio based on severity
-  double combinedSeverity = 0.0;
-  m_IEscaleFactor = 1.0;
-  if (m_PatientActions->HasAsthmaAttack())
-  {
-    combinedSeverity = m_PatientActions->GetAsthmaAttack()->GetSeverity().GetValue();
-  }
-  if (m_data.GetConditions().HasChronicObstructivePulmonaryDisease())
-  {
-    double dBronchitisSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease()->GetBronchitisSeverity().GetValue();
-    double dEmphysemaSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease()->GetEmphysemaSeverity().GetValue();
-    combinedSeverity = MAX(combinedSeverity, dEmphysemaSeverity);
-    combinedSeverity = MAX(combinedSeverity, dBronchitisSeverity);
-  }
-  if (m_data.GetConditions().HasLobarPneumonia())
-  {
-    double severity = m_data.GetConditions().GetLobarPneumonia()->GetSeverity().GetValue();
-    // Get lung fractions
-    double dRightLungFraction = m_data.GetConditions().GetLobarPneumonia()->GetRightLungAffected().GetValue();
-    double dLeftLungFraction = m_data.GetConditions().GetLobarPneumonia()->GetLeftLungAffected().GetValue();
-
-    // Get the right and left lung ratios
-    double dRightLungRatio = m_Patient->GetRightLungRatio().GetValue();
-    double dLeftLungRatio = 1.0 - dRightLungRatio;
-
-    double dLP_ScaledSeverity = (0.75*severity) + (severity*dLeftLungFraction*dLeftLungRatio) + (severity*dRightLungFraction*dRightLungRatio);
-    combinedSeverity = MAX(combinedSeverity, dLP_ScaledSeverity);
-  }
-
-  if (combinedSeverity > 0.0)
-  {
-    //When albuterol is administered, the bronchodilation also causes the IE ratio to correct itself
-    m_IEscaleFactor = 1.0 - combinedSeverity;
-    m_IEscaleFactor *= exp(7728.4 * m_AverageLocalTissueBronchodilationEffects);
-
-    // IE scale factor is constrained to a minimum of 0.1 and a maximum 1.0. Lower than 0.1 causes simulation instability.
-    // Greater than 1.0 is not possible for patients with these conditions
-    m_IEscaleFactor = LIMIT(m_IEscaleFactor, 0.1, 1.0);
-  }
-}
-
-
-//--------------------------------------------------------------------------------------------------
-/// \brief
-/// Update Alveoli Compliance 
-///
-/// \param  dComplianceScalingFactor  Alveoli compliance multiplier
-/// \param  dLeftLungFraction      Fraction of left lung affected by change in surface area (0 to 1)
-/// \param  dRightLungFraction      Fraction of right lung affected by change in surface area (0 to 1)
-///
-/// \return void
-///
-/// \details
-/// This method takes a compliance scaling factor and lung percentages (left and right) as input
-/// variables.  It updates the Alveoli to Pleural compliances in order to model changes in alveoli
-/// compliance resulting from alveolus membrane damage or alveolus fluid content
-//--------------------------------------------------------------------------------------------------
-void Respiratory::UpdateLungCompliance(double dCompilanceScalingFactor, double dLeftLungFraction, double dRightLungFraction)
-{
-  // Get path compliances
-  double dRightAlveoliBaselineCompliance = m_RightAlveoliToRightPleuralConnection->GetComplianceBaseline().GetValue(VolumePerPressureUnit::L_Per_cmH2O);
-  double dLeftAlveoliBaselineCompliance = m_LeftAlveoliToLeftPleuralConnection->GetComplianceBaseline().GetValue(VolumePerPressureUnit::L_Per_cmH2O);
-
-  // Left lung alveoli
-  dLeftAlveoliBaselineCompliance = (dLeftAlveoliBaselineCompliance*(1.0 - dLeftLungFraction)) + (dLeftAlveoliBaselineCompliance*dCompilanceScalingFactor*dLeftLungFraction);
-  m_LeftAlveoliToLeftPleuralConnection->GetComplianceBaseline().SetValue(dLeftAlveoliBaselineCompliance, VolumePerPressureUnit::L_Per_cmH2O);
-
-  // Right lung alveoli
-  dRightAlveoliBaselineCompliance = (dRightAlveoliBaselineCompliance*(1.0 - dRightLungFraction)) + (dRightAlveoliBaselineCompliance*dCompilanceScalingFactor*dRightLungFraction);
-  m_RightAlveoliToRightPleuralConnection->GetComplianceBaseline().SetValue(dRightAlveoliBaselineCompliance, VolumePerPressureUnit::L_Per_cmH2O);
-}
-
-//--------------------------------------------------------------------------------------------------
-/// \brief
-/// Update Pulmonary Capillary Resistance 
-///
-/// \param  dResistanceScalingFactor  Pulmonary capillary resistance multiplier
-/// \param  dLeftLungFraction      Fraction of left lung affected by change in surface area (0 to 1)
-/// \param  dRightLungFraction      Fraction of right lung affected by change in surface area (0 to 1)
-///
-/// \return void
-///
-/// \details
-/// This method takes a resistance scaling factor and lung fractions (left and right) as input
-/// variables.  It updates the pulmonary capillary to pulmonary vein resistance in order to model the 
-/// destruction of capillaries in the alveolus membrane.
-//--------------------------------------------------------------------------------------------------
-void Respiratory::UpdatePulmonaryCapillaryResistance(double dResistanceScalingFactor, double dLeftLungPercent, double dRightLungPercent)
-{
-  // Get path resistances
-  double dRightPulmonaryCapillaryResistance = m_RightPulmonaryCapillary->GetResistanceBaseline().GetValue(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  double dLeftPulmonaryCapillaryResistance = m_LeftPulmonaryCapillary->GetResistanceBaseline().GetValue(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-
-  dLeftPulmonaryCapillaryResistance = (dLeftPulmonaryCapillaryResistance*(1.0 - dLeftLungPercent)) + (dLeftPulmonaryCapillaryResistance*dResistanceScalingFactor*dLeftLungPercent);
-  m_LeftPulmonaryCapillary->GetResistanceBaseline().SetValue(dLeftPulmonaryCapillaryResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  dRightPulmonaryCapillaryResistance = (dRightPulmonaryCapillaryResistance*(1.0 - dRightLungPercent)) + (dRightPulmonaryCapillaryResistance*dResistanceScalingFactor*dRightLungPercent);
-  m_RightPulmonaryCapillary->GetResistanceBaseline().SetValue(dRightPulmonaryCapillaryResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-}
-
-//--------------------------------------------------------------------------------------------------
-/// \brief
-/// Update Gas Diffusion Surface Area
-///
-/// \param  dFractionArea    Fractional change in gas diffusion surface area (0 to 1)
-/// \param  dLeftLungFraction  Fraction of left lung affected by change in surface area (0 to 1)
-/// \param  dRightLungFraction  Fraction of right lung affected by change in surface area (0 to 1)
-///
-/// \return void
-///
-/// \details
-/// This method takes a percent valve and lung percentages (left and right) as input
-/// variables.  It updates the gas diffusion surface area in the lungs in order to model the 
-/// destruction of alveoli membranes and/or lung consolidation.
-//--------------------------------------------------------------------------------------------------
-void Respiratory::UpdateGasDiffusionSurfaceArea(double dFractionArea, double dLeftLungFraction, double dRightLungFraction)
-{
-  double AlveoliDiffusionArea_cm2 = m_Patient->GetAlveoliSurfaceArea(AreaUnit::cm2);
-
-  // Get the right and left lung ratios
-  double RightLungRatio = m_Patient->GetRightLungRatio().GetValue();
-  double LeftLungRatio = 1.0 - RightLungRatio;
-
-  // Calculate the surface area contributions for each lung
-  double dRightContribution = RightLungRatio*((AlveoliDiffusionArea_cm2*(1.0 - dRightLungFraction)) + (AlveoliDiffusionArea_cm2*dFractionArea*dRightLungFraction));
-  double dLeftContribution = LeftLungRatio*((AlveoliDiffusionArea_cm2*(1.0 - dLeftLungFraction)) + (AlveoliDiffusionArea_cm2*dFractionArea*dLeftLungFraction));
-
-  // Calculate the total surface area
-  AlveoliDiffusionArea_cm2 = dLeftContribution + dRightContribution;
-
-  m_Patient->GetAlveoliSurfaceArea().SetValue(AlveoliDiffusionArea_cm2, AreaUnit::cm2);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -2620,6 +2458,7 @@ void Respiratory::UpdateResistances()
     tracheaResistance_cmH2O_s_Per_L = MIN(tracheaResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
   }
 
+  //------------------------------------------------------------------------------------------------------
   //Broncho constriction
   if (m_PatientActions->HasBronchoconstriction())
   {
@@ -2719,9 +2558,10 @@ void Respiratory::UpdateResistances()
 /// modified and tuned to provide the desired total pulmonary compliance. The maximal obstructive and 
 /// maximal restrictive effects are combined through individual multipliers.
 //--------------------------------------------------------------------------------------------------
-void Respiratory::UpdateCompliances()
+void Respiratory::UpdateAlveolarCompliances()
 {
-  //Artificial airway
+  double rightAlveoliCompliance_L_Per_cmH2O = m_RightAlveoliToRightPleuralConnection->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
+  double leftAlveoliCompliance_L_Per_cmH2O = m_LeftAlveoliToLeftPleuralConnection->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
 
   //------------------------------------------------------------------------------------------------------
   //Artificial Airway
@@ -3134,6 +2974,7 @@ void Respiratory::UpdatePulmonaryCapillary()
   }
 }
 
+
 //--------------------------------------------------------------------------------------------------
 /// \brief
 /// Reduce the driver pressure based on action and conditions.
@@ -3143,7 +2984,7 @@ void Respiratory::UpdatePulmonaryCapillary()
 /// nervous system / PD effects. This ultamitely caused lower O2 in the blood and higher respiration
 /// rates compared to lower tidal volumes.
 //--------------------------------------------------------------------------------------------------
-void Respiratory::UpdateFatigue()
+void Respiratory::ModifyDriverPressure()
 {
   double dyspneaSeverity = 0.0;
 
@@ -3151,7 +2992,7 @@ void Respiratory::UpdateFatigue()
   //Dyspnea
   if (m_PatientActions->HasDyspnea())
   {
-    dyspneaSeverity = m_PatientActions->GetDyspnea()->GetSeverity().GetValue();    
+    dyspneaSeverity = m_PatientActions->GetDyspnea()->GetSeverity().GetValue();
   }
 
   //------------------------------------------------------------------------------------------------------
