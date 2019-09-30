@@ -418,7 +418,7 @@ void PBPulsePhysiology::Serialize(const RespiratoryData& src, Respiratory& dst)
   dst.m_DriverPressure_cmH2O = src.driverpressure_cmh2o();
   dst.m_DriverPressureMin_cmH2O = src.driverpressuremin_cmh2o();
   dst.m_ElapsedBreathingCycleTime_min = src.elapsedbreathingcycletime_min();
-  dst.m_IEscaleFactor = src.iescalefactor();
+  dst.m_IERatioScaleFactor = src.iescalefactor();
   dst.m_InstantaneousFunctionalResidualCapacity_L = src.instantaneousfunctionalresidualcapacity_l();
   dst.m_MaxDriverPressure_cmH2O = src.maxdriverpressure_cmh2o();
   dst.m_PeakRespiratoryDrivePressure_cmH2O = src.peakrespiratorydrivepressure_cmh2o();
@@ -471,7 +471,7 @@ void PBPulsePhysiology::Serialize(const Respiratory& src, RespiratoryData& dst)
   dst.set_driverpressure_cmh2o(src.m_DriverPressure_cmH2O);
   dst.set_driverpressuremin_cmh2o(src.m_DriverPressureMin_cmH2O);
   dst.set_elapsedbreathingcycletime_min(src.m_ElapsedBreathingCycleTime_min);
-  dst.set_iescalefactor(src.m_IEscaleFactor);
+  dst.set_iescalefactor(src.m_IERatioScaleFactor);
   dst.set_instantaneousfunctionalresidualcapacity_l(src.m_InstantaneousFunctionalResidualCapacity_L);
   dst.set_maxdriverpressure_cmh2o(src.m_MaxDriverPressure_cmH2O);
   dst.set_peakrespiratorydrivepressure_cmh2o(src.m_PeakRespiratoryDrivePressure_cmH2O);

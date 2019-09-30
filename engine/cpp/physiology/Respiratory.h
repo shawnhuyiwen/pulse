@@ -141,7 +141,7 @@ protected:
   double m_DriverPressure_cmH2O;
   double m_DriverPressureMin_cmH2O;
   double m_ElapsedBreathingCycleTime_min;
-  double m_IEscaleFactor;
+  double m_IERatioScaleFactor;
   double m_InstantaneousFunctionalResidualCapacity_L;
   double m_MaxDriverPressure_cmH2O;    
   double m_PeakRespiratoryDrivePressure_cmH2O;
