@@ -322,6 +322,9 @@ void PBPulsePhysiology::Serialize(const NervousData& src, Nervous& dst)
   dst.m_FeedbackActive = true;
   dst.m_ArterialOxygenBaseline_mmHg = src.arterialoxygenbaseline_mmhg();
   dst.m_ArterialCarbonDioxideBaseline_mmHg = src.arterialcarbondioxidebaseline_mmhg();
+  dst.m_BaroreceptorFeedbackStatus = src.baroreceptorfeedbackstatus();
+  dst.m_BaroreceptorActiveTime_s = src.baroreceptoractivetime_s();
+  dst.m_BaroreceptorMeanArterialPressureBaseline_mmHg = src.baroreceptormeanarterialpressurebaseline_mmhg();
 }
 NervousData* PBPulsePhysiology::Unload(const Nervous& src)
 {
@@ -334,6 +337,9 @@ void PBPulsePhysiology::Serialize(const Nervous& src, NervousData& dst)
   PBPhysiology::Serialize(src, *dst.mutable_common());
   dst.set_arterialoxygenbaseline_mmhg(src.m_ArterialOxygenBaseline_mmHg);
   dst.set_arterialcarbondioxidebaseline_mmhg(src.m_ArterialCarbonDioxideBaseline_mmHg);
+  dst.set_baroreceptorfeedbackstatus(src.m_BaroreceptorFeedbackStatus);
+  dst.set_baroreceptoractivetime_s(src.m_BaroreceptorActiveTime_s);
+  dst.set_baroreceptormeanarterialpressurebaseline_mmhg(src.m_BaroreceptorMeanArterialPressureBaseline_mmHg);
 }
 
 void PBPulsePhysiology::Load(const RenalData& src, Renal& dst)
