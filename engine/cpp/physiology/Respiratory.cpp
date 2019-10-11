@@ -2116,32 +2116,16 @@ void Respiratory::TuneCircuit()
 /// Modify the chest wall compliance based on lung volume.
 ///
 /// \details
-/// The chest wall compliance is modified using a piecewise linear function. Segment cutoffs/inflection
-/// points are defined by the volume vs. pressure slope and fraction between reserve volume (minimum
-/// lung volume) and total lung capacity (maximum lung volume). The instantaneous compliance is
-/// calculated each time step to follow this defined volume vs. pressure piecewise function.
+/// The chest wall compliance is modified using a sigmoidal function. Extreme values are defined by 
+/// a volume vs. pressure curve between reserve volume (minimum lung volume) and total lung capacity
+/// (maximum lung volume). The instantaneous compliance is calculated each time step to follow this 
+/// defined volume vs. pressure piecewise function.
 //--------------------------------------------------------------------------------------------------
 void Respiratory::UpdateChestWallCompliances()
 {
   /// \todo A lot of this stuff we don't need to recalculate every timestep - it can be made more efficient
 
-  //Settings --------------------------------------------
-  double rightLowerInflection =              0.1;       //Fraction between reserve volume and total lung capacity
-  double rightUpperInflection =              0.7;       //Fraction between reserve volume and total lung capacity
-  double rightLowerSlope_L_Per_cmH20 =       0.03;
-  double rightUpperSlope_L_Per_cmH20 =       0.03;
-  double rightMiddleCompliance_L_Per_cmH20 = 1.0 / (1.0 / m_RightAlveoliToRightPleuralConnection->GetComplianceBaseline(VolumePerPressureUnit::L_Per_cmH2O) + 
-   1.0 / m_RightPleuralToRespiratoryMuscle->GetComplianceBaseline(VolumePerPressureUnit::L_Per_cmH2O));
-
-  double leftLowerInflection =               0.1;       //Fraction between reserve volume and total lung capacity
-  double leftUpperInflection =               0.7;       //Fraction between reserve volume and total lung capacity 
-  double leftLowerSlope_L_Per_cmH20 =        0.03;
-  double leftUpperSlope_L_Per_cmH20 =        0.03;
-  double leftMiddleCompliance_L_Per_cmH20 = 1.0 / (1.0 / m_LeftAlveoliToLeftPleuralConnection->GetComplianceBaseline(VolumePerPressureUnit::L_Per_cmH2O) +
-    1.0 / m_LeftPleuralToRespiratoryMuscle->GetComplianceBaseline(VolumePerPressureUnit::L_Per_cmH2O));
-
-  double maxSlope_L_Per_cmH2O = 0.0005;
-  //-----------------------------------------------------
+  /// \cite venegas1998comprehensive
 
   double rightLungRatio = m_Patient->GetRightLungRatio().GetValue();
   double leftLungRatio = 1.0 - rightLungRatio;
@@ -2149,125 +2133,73 @@ void Respiratory::UpdateChestWallCompliances()
   double rightVolume_L = m_RightLung->GetVolume(VolumeUnit::L);
   double leftVolume_L = m_LeftLung->GetVolume(VolumeUnit::L);
 
-  double rightResidualVolume_L = m_ResidualVolume_L * rightLungRatio;
-  double rightTotalLungCapacity_L = m_TotalLungCapacity_L * rightLungRatio;
-  double rightFunctionalResidualCapacity_L = m_FunctionalResidualCapacity_L * rightLungRatio;
-  double leftResidualVolume_L = m_ResidualVolume_L * leftLungRatio;
-  double leftTotalLungCapacity_L = m_TotalLungCapacity_L * leftLungRatio;
-  double leftFunctionalResidualCapacity_L = m_FunctionalResidualCapacity_L * leftLungRatio;
+  for (unsigned int iterLung = 0; iterLung < 2; iterLung++)
+  {
+    //0 = right lung, 1 = left lung
 
-  double rightLowerInflection_L = rightResidualVolume_L + (rightTotalLungCapacity_L - rightResidualVolume_L) * rightLowerInflection;
-  double rightUpperInflection_L = rightResidualVolume_L + (rightTotalLungCapacity_L - rightResidualVolume_L) * rightUpperInflection;
-  double leftLowerInflection_L = leftResidualVolume_L + (leftTotalLungCapacity_L - leftResidualVolume_L) * leftLowerInflection;
-  double leftUpperInflection_L = leftResidualVolume_L + (leftTotalLungCapacity_L - leftResidualVolume_L) * leftUpperInflection;
+    double lungRatio = 0.0;
+    double lungVolume_L = 0.0;
+    SEFluidCircuitPath* chestWallPath;
+    SEFluidCircuitPath* lungPath;
+    
+    if (iterLung == 0)
+    {
+      lungRatio = rightLungRatio;
+      lungVolume_L = rightVolume_L;
+      chestWallPath = m_RightPleuralToRespiratoryMuscle;
+      lungPath = m_RightAlveoliToRightPleuralConnection;
+    }
+    else
+    {
+      lungRatio = leftLungRatio;
+      lungVolume_L = leftVolume_L;
+      chestWallPath = m_LeftPleuralToRespiratoryMuscle;
+      lungPath = m_LeftAlveoliToLeftPleuralConnection;
+    }
 
-  double rightLowerInflection_cmH2O = (rightLowerInflection_L - rightFunctionalResidualCapacity_L) / rightMiddleCompliance_L_Per_cmH20;
-  double rightUpperInflection_cmH2O = (rightUpperInflection_L - rightFunctionalResidualCapacity_L) / rightMiddleCompliance_L_Per_cmH20;
-  double leftLowerInflection_cmH2O = (leftLowerInflection_L - leftFunctionalResidualCapacity_L) / leftMiddleCompliance_L_Per_cmH20;
-  double leftUpperInflection_cmH2O = (leftUpperInflection_L - leftFunctionalResidualCapacity_L) / leftMiddleCompliance_L_Per_cmH20;
+    double healthyChestWallCompliance_L_Per_cmH2O = chestWallPath->GetComplianceBaseline(VolumePerPressureUnit::L_Per_cmH2O);
+    double healthyLungCompliance_L_Per_cmH2O = lungPath->GetComplianceBaseline(VolumePerPressureUnit::L_Per_cmH2O);
 
-  double rightResidualVolume_cmH2O = rightLowerInflection_cmH2O - (rightLowerInflection_L - rightResidualVolume_L) / rightLowerSlope_L_Per_cmH20;
-  double rightTotalLungCapacity_cmH2O = rightUpperInflection_cmH2O + (rightUpperInflection_L - rightTotalLungCapacity_L) / rightUpperSlope_L_Per_cmH20;
-  double leftResidualVolume_cmH2O = leftLowerInflection_cmH2O - (leftLowerInflection_L - leftResidualVolume_L) / leftLowerSlope_L_Per_cmH20;
-  double leftTotalLungCapacity_cmH2O = leftUpperInflection_cmH2O + (leftUpperInflection_L - leftTotalLungCapacity_L) / leftUpperSlope_L_Per_cmH20;
+    double residualVolume_L = m_ResidualVolume_L * lungRatio;
+    double vitalCapacity_L = m_VitalCapacity_L * lungRatio;
+    double functionalResidualCapacity_L = m_FunctionalResidualCapacity_L * lungRatio;
+        
+    double healthyTotalCompliance_L_Per_cmH2O = 1.0 / (1.0 / healthyChestWallCompliance_L_Per_cmH2O + 1.0 / healthyLungCompliance_L_Per_cmH2O);
 
-  double rightSideCompliance_L_Per_cmH2O = 0.0;
-  if (rightVolume_L < rightResidualVolume_L)
-  {
-    double expected_Pressure_cmH2O = rightResidualVolume_cmH2O - (rightResidualVolume_L - rightVolume_L) / maxSlope_L_Per_cmH2O;
-    rightSideCompliance_L_Per_cmH2O = (rightVolume_L - rightFunctionalResidualCapacity_L) / expected_Pressure_cmH2O;
-  }
-  else if (rightVolume_L < rightLowerInflection_L)
-  {
-    double expected_Pressure_cmH2O = rightLowerInflection_cmH2O - (rightLowerInflection_L - rightVolume_L) / rightLowerSlope_L_Per_cmH20;
-    rightSideCompliance_L_Per_cmH2O = (rightVolume_L - rightFunctionalResidualCapacity_L) / expected_Pressure_cmH2O;
-  }
-  else if (rightVolume_L < rightUpperInflection_L)
-  {
-    rightSideCompliance_L_Per_cmH2O = rightMiddleCompliance_L_Per_cmH20;
-  }
-  else if (rightVolume_L < rightTotalLungCapacity_L)
-  {
-    double expected_Pressure_cmH2O = rightUpperInflection_cmH2O + (rightVolume_L - rightUpperInflection_L) / rightUpperSlope_L_Per_cmH20;
-    rightSideCompliance_L_Per_cmH2O = (rightVolume_L - rightFunctionalResidualCapacity_L) / expected_Pressure_cmH2O;
-  }
-  else
-  {
-    double expected_Pressure_cmH2O = rightTotalLungCapacity_cmH2O + (rightVolume_L - rightTotalLungCapacity_L) / maxSlope_L_Per_cmH2O;
-    rightSideCompliance_L_Per_cmH2O = (rightVolume_L - rightFunctionalResidualCapacity_L) / expected_Pressure_cmH2O;
-  }
+    double pressureCornerUpper_cmH2O = (vitalCapacity_L - functionalResidualCapacity_L) / healthyTotalCompliance_L_Per_cmH2O;
+    double naturalLog = log((functionalResidualCapacity_L - residualVolume_L) / (residualVolume_L + vitalCapacity_L - functionalResidualCapacity_L));
+    double c = -(pressureCornerUpper_cmH2O / 2.0 * naturalLog) / (1.0 / 2.0 - naturalLog);
+    double d = (pressureCornerUpper_cmH2O - c) / 2.0;
 
-  double leftSideCompliance_L_Per_cmH2O = 0.0;
-  if (leftVolume_L < leftResidualVolume_L)
-  {
-    double expected_Pressure_cmH2O = leftResidualVolume_cmH2O - (leftResidualVolume_L - leftVolume_L) / maxSlope_L_Per_cmH2O;
-    leftSideCompliance_L_Per_cmH2O = (leftVolume_L - leftFunctionalResidualCapacity_L) / expected_Pressure_cmH2O;
-  }
-  else if (leftVolume_L < leftLowerInflection_L)
-  {
-    double expected_Pressure_cmH2O = leftLowerInflection_cmH2O - (leftLowerInflection_L - leftVolume_L) / leftLowerSlope_L_Per_cmH20;
-    leftSideCompliance_L_Per_cmH2O = (leftVolume_L - leftFunctionalResidualCapacity_L) / expected_Pressure_cmH2O;
-  }
-  else if (leftVolume_L < leftUpperInflection_L)
-  {
-    leftSideCompliance_L_Per_cmH2O = leftMiddleCompliance_L_Per_cmH20;
-  }
-  else if (leftVolume_L < leftTotalLungCapacity_L)
-  {
-    double expected_Pressure_cmH2O = leftUpperInflection_cmH2O + (leftVolume_L - leftTotalLungCapacity_L) / leftUpperSlope_L_Per_cmH20;
-    leftSideCompliance_L_Per_cmH2O = (leftVolume_L - leftFunctionalResidualCapacity_L) / expected_Pressure_cmH2O;
-  }
-  else
-  {
-    double expected_Pressure_cmH2O = leftTotalLungCapacity_cmH2O + (leftVolume_L - leftUpperInflection_L) / maxSlope_L_Per_cmH2O;
-    leftSideCompliance_L_Per_cmH2O = (leftVolume_L - leftFunctionalResidualCapacity_L) / expected_Pressure_cmH2O;
-  }
+    double expectedPressure_cmH2O = d * log((lungVolume_L - residualVolume_L) / (residualVolume_L + vitalCapacity_L - lungVolume_L)) + c;
 
-  //Assume lung/alveoli compliance is a constant value
-  double leftHealthyLungCompliance_L_Per_cmH2O = m_LeftAlveoliToLeftPleuralConnection->GetComplianceBaseline(VolumePerPressureUnit::L_Per_cmH2O);
-  double rightHealthyLungCompliance_L_Per_cmH2O = m_RightAlveoliToRightPleuralConnection->GetComplianceBaseline(VolumePerPressureUnit::L_Per_cmH2O);
+    double sideCompliance_L_Per_cmH2O = (lungVolume_L - functionalResidualCapacity_L) / expectedPressure_cmH2O;
 
-  double leftChestWallCompliance_L_Per_cmH2O = 0.0;
-  double rightChestWallCompliance_L_Per_cmH2O = 0.0;
-  //Can't divide by zero
-  if (leftSideCompliance_L_Per_cmH2O != leftHealthyLungCompliance_L_Per_cmH2O)
-  {
-    leftChestWallCompliance_L_Per_cmH2O = 1.0 / (1.0 / leftSideCompliance_L_Per_cmH2O - 1.0 / leftHealthyLungCompliance_L_Per_cmH2O);
-  }
-  if (rightSideCompliance_L_Per_cmH2O != rightHealthyLungCompliance_L_Per_cmH2O)
-  {
-    rightChestWallCompliance_L_Per_cmH2O = 1.0 / (1.0 / rightSideCompliance_L_Per_cmH2O - 1.0 / rightHealthyLungCompliance_L_Per_cmH2O);
-  }
+    double chestWallCompliance_L_Per_cmH2O = healthyChestWallCompliance_L_Per_cmH2O;
+    //Can't divide by zero
+    if (sideCompliance_L_Per_cmH2O != 0.0 && sideCompliance_L_Per_cmH2O != healthyLungCompliance_L_Per_cmH2O)
+    {
+      chestWallCompliance_L_Per_cmH2O = 1.0 / (1.0 / sideCompliance_L_Per_cmH2O - 1.0 / healthyLungCompliance_L_Per_cmH2O);
+    }
 
-  //Dampen the change to prevent craziness
-  double maxChange_L_Per_cmH2O_s = 0.01;
+    //Dampen the change to prevent craziness
+    double maxChange_L_Per_cmH2O_s = 0.01;
 
-  double rightComplianceChange_L_Per_cmH2O = rightChestWallCompliance_L_Per_cmH2O - m_RightPleuralToRespiratoryMuscle->GetCompliance(VolumePerPressureUnit::L_Per_cmH2O);
-  double leftComplianceChange_L_Per_cmH2O = leftChestWallCompliance_L_Per_cmH2O - m_LeftPleuralToRespiratoryMuscle->GetCompliance(VolumePerPressureUnit::L_Per_cmH2O);
+    double complianceChange_L_Per_cmH2O = chestWallCompliance_L_Per_cmH2O - healthyChestWallCompliance_L_Per_cmH2O;
 
-  if (rightComplianceChange_L_Per_cmH2O > 0.0)
-  {
-    rightComplianceChange_L_Per_cmH2O = MIN(rightComplianceChange_L_Per_cmH2O, maxChange_L_Per_cmH2O_s * m_dt_s);
-  }
-  else if (rightComplianceChange_L_Per_cmH2O < 0.0)
-  {
-    rightComplianceChange_L_Per_cmH2O = MAX(rightComplianceChange_L_Per_cmH2O, -maxChange_L_Per_cmH2O_s * m_dt_s);
-  }
+    if (complianceChange_L_Per_cmH2O > 0.0)
+    {
+      complianceChange_L_Per_cmH2O = MIN(complianceChange_L_Per_cmH2O, maxChange_L_Per_cmH2O_s * m_dt_s);
+    }
+    else if (complianceChange_L_Per_cmH2O < 0.0)
+    {
+      complianceChange_L_Per_cmH2O = MAX(complianceChange_L_Per_cmH2O, -maxChange_L_Per_cmH2O_s * m_dt_s);
+    }
 
-  if (leftComplianceChange_L_Per_cmH2O > 0.0)
-  {
-    leftComplianceChange_L_Per_cmH2O = MIN(leftComplianceChange_L_Per_cmH2O, maxChange_L_Per_cmH2O_s * m_dt_s);
-  }
-  else if (leftComplianceChange_L_Per_cmH2O < 0.0)
-  {
-    leftComplianceChange_L_Per_cmH2O = MAX(leftComplianceChange_L_Per_cmH2O, -maxChange_L_Per_cmH2O_s * m_dt_s);
-  }
+    chestWallCompliance_L_Per_cmH2O = healthyChestWallCompliance_L_Per_cmH2O + complianceChange_L_Per_cmH2O;
 
-  rightChestWallCompliance_L_Per_cmH2O = m_RightPleuralToRespiratoryMuscle->GetCompliance(VolumePerPressureUnit::L_Per_cmH2O) + rightComplianceChange_L_Per_cmH2O;
-  leftChestWallCompliance_L_Per_cmH2O = m_LeftPleuralToRespiratoryMuscle->GetCompliance(VolumePerPressureUnit::L_Per_cmH2O) + leftComplianceChange_L_Per_cmH2O;
-
-  m_RightPleuralToRespiratoryMuscle->GetNextCompliance().SetValue(rightChestWallCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
-  m_LeftPleuralToRespiratoryMuscle->GetNextCompliance().SetValue(leftChestWallCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
+    chestWallPath->GetNextCompliance().SetValue(chestWallCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
+  }  
 }
 
 //--------------------------------------------------------------------------------------------------
