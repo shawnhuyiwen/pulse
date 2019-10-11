@@ -21,7 +21,6 @@
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarAmountPerVolume.h"
 
-#include <cmath>
 #include <iterator>
 
 DataTrack::DataTrack() : DataTrack(nullptr)
