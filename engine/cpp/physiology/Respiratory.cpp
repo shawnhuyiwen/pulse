@@ -2166,15 +2166,17 @@ void Respiratory::UpdateChestWallCompliances()
         
     double healthyTotalCompliance_L_Per_cmH2O = 1.0 / (1.0 / healthyChestWallCompliance_L_Per_cmH2O + 1.0 / healthyLungCompliance_L_Per_cmH2O);
 
-    double pressureCornerUpper_cmH2O = (vitalCapacity_L - functionalResidualCapacity_L) / healthyTotalCompliance_L_Per_cmH2O;
-    double naturalLog = log((functionalResidualCapacity_L - residualVolume_L) / (residualVolume_L + vitalCapacity_L - functionalResidualCapacity_L));
-    double c = -(pressureCornerUpper_cmH2O / 2.0 * naturalLog) / (1.0 / 2.0 - naturalLog);
-    double d = (pressureCornerUpper_cmH2O - c) / 2.0;
-
-    double expectedPressure_cmH2O = d * log((lungVolume_L - residualVolume_L) / (residualVolume_L + vitalCapacity_L - lungVolume_L)) + c;
-
-    double sideCompliance_L_Per_cmH2O = (lungVolume_L - functionalResidualCapacity_L) / expectedPressure_cmH2O;
-
+    double sideCompliance_L_Per_cmH2O = 0.001; //Minimum possible compliance
+    if (lungVolume_L > residualVolume_L && lungVolume_L < vitalCapacity_L + residualVolume_L)
+    {
+      double pressureCornerUpper_cmH2O = (vitalCapacity_L - functionalResidualCapacity_L) / healthyTotalCompliance_L_Per_cmH2O;
+      double naturalLog = log((functionalResidualCapacity_L - residualVolume_L) / (residualVolume_L + vitalCapacity_L - functionalResidualCapacity_L));
+      double c = -(pressureCornerUpper_cmH2O / 2.0 * naturalLog) / (1.0 / 2.0 - naturalLog);
+      double d = (pressureCornerUpper_cmH2O - c) / 2.0;
+      double expectedPressure_cmH2O = d * log((lungVolume_L - residualVolume_L) / (residualVolume_L + vitalCapacity_L - lungVolume_L)) + c;
+      sideCompliance_L_Per_cmH2O = (lungVolume_L - functionalResidualCapacity_L) / expectedPressure_cmH2O;
+    }    
+    
     double chestWallCompliance_L_Per_cmH2O = healthyChestWallCompliance_L_Per_cmH2O;
     //Can't divide by zero
     if (sideCompliance_L_Per_cmH2O != 0.0 && sideCompliance_L_Per_cmH2O != healthyLungCompliance_L_Per_cmH2O)
