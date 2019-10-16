@@ -83,6 +83,8 @@ set(protobuf_BUILD_EXAMPLES OFF CACHE BOOL INTERNAL FORCE)
 add_subdirectory("${protobuf_SRC}/cmake" "${protobuf_SRC}-build")
 set_target_properties (libprotobuf libprotobuf-lite PROPERTIES FOLDER protobufs)
 
+set(logger_lib)
+set(logger_SRC)
 if (${PULSE_LOGGER} STREQUAL "log4cpp")
     # log4cpp src should have been download to somewhere
   if(NOT logger_SRC)
@@ -98,7 +100,7 @@ if (${PULSE_LOGGER} STREQUAL "log4cpp")
   set(BUILD_TESTING OFF CACHE BOOL INTERNAL FORCE)
   add_subdirectory(${logger_SRC} ${logger_SRC}-build)
   set(logger_lib log4cpp)
-else()
+elseif (${PULSE_LOGGER} STREQUAL "log4cplus")
   # log4cplus src should have been download to somewhere
   if(NOT logger_SRC)
     # It should be here if the outer build ran

@@ -1,3 +1,6 @@
+if(NOT MSVC)
+  return()
+endif()
 
 find_package(Java REQUIRED)
 include(UseJava)

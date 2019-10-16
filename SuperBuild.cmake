@@ -3,6 +3,13 @@ include(ExternalProject)
 include(CMakeDetermineSystem)
 
 set(BUILD_SHARED_LIBS OFF)
+set(CMAKE_GENERATION
+     CMAKE_GENERATOR ${CMAKE_GENERATOR}
+     CMAKE_GENERATOR_PLATFORM ${CMAKE_GENERATOR_PLATFORM}
+     CMAKE_GENERATOR_TOOLSET ${CMAKE_GENERATOR_TOOLSET}
+     CMAKE_GENERATOR_INSTANCE ${CMAKE_GENERATOR_INSTANCE}
+   )
+
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_INSTALL_PREFIX})
 if(MSVC OR XCode)
 # For multi configuration IDE environments start with release
@@ -25,7 +32,9 @@ ExternalProject_Add( eigen
   #UPDATE_COMMAND 
   #  COMMAND ${CMAKE_COMMAND} -Deigen_source=${eigen_SRC} -Deigen_patch=${eigen_Patch} -P ${eigen_Patch}/Patch.cmake
   INSTALL_DIR "${CMAKE_INSTALL_PREFIX}"
+  ${CMAKE_GENERATION}
   CMAKE_ARGS
+        -DCMAKE_TOOLCHAIN_FILE:FILE=${CMAKE_TOOLCHAIN_FILE}
         -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF
         -DCMAKE_INSTALL_PREFIX:STRING=${CMAKE_INSTALL_PREFIX}
         -DINCLUDE_INSTALL_DIR:STRING=${CMAKE_INSTALL_PREFIX}/include
@@ -36,10 +45,11 @@ message(STATUS "Eigen is here : ${eigen_SRC}" )
 
 # Loggers are built in the Inner build
 # It will be easier to switch cofigurations in MSVC/XCode
-set(PULSE_LOGGER "log4cpp" CACHE STRING "Select Logger Library")
-set(AVAILABLE_PULSE_LOGGERS "log4cpp;log4cplus" CACHE INTERNAL "List of available loggers")
+set(PULSE_LOGGER "simple" CACHE STRING "Select Logger Library")
+set(AVAILABLE_PULSE_LOGGERS "simple;log4cpp;log4cplus" CACHE INTERNAL "List of available loggers")
 set_property(CACHE PULSE_LOGGER PROPERTY STRINGS ${AVAILABLE_PULSE_LOGGERS})
 
+set(logger_SRC)
 if (${PULSE_LOGGER} STREQUAL "log4cpp")
   ###################################################
   ## log4cpp                                       ##
@@ -60,16 +70,17 @@ if (${PULSE_LOGGER} STREQUAL "log4cpp")
     #GIT_REPOSITORY "https://github.com/log4cplus/log4cpp.git"
     #GIT_TAG 411a262b92a7bdc26348d6ae6b15f76763c21b44
     #GIT_SHALLOW TRUE
+    ${CMAKE_GENERATION}
     UPDATE_COMMAND 
       COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/cmake/log4cpp-patches/CMakeLists.txt ${logger_SRC}/CMakeLists.txt
       COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/cmake/log4cpp-patches/config.guess ${logger_SRC}/config/config.guess
-      COMMAND ${CONFIGURE}
+      #COMMAND ${CONFIGURE}
     CONFIGURE_COMMAND "" 
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
   )
   list(APPEND Pulse_DEPENDENCIES log4cpp)
-else()
+elseif(${PULSE_LOGGER} STREQUAL "log4cplus")
   ###################################################
   ## log4cplus                                     ##
   ## General logging utility                       ##
@@ -84,9 +95,10 @@ else()
     URL_HASH MD5=cb075cd19ce561273b1c74907cc66b6a
     #GIT_REPOSITORY "https://github.com/log4cplus/log4cplus.git"
     #GIT_TAG 411a262b92a7bdc26348d6ae6b15f76763c21b44
-  #  GIT_SHALLOW TRUE
-  # Build this in the Inner build
-  # It will be easier to switch cofigurations in MSVC/XCode
+    #  GIT_SHALLOW TRUE
+    # Build this in the Inner build
+    # It will be easier to switch cofigurations in MSVC/XCode
+    ${CMAKE_GENERATION}
     CONFIGURE_COMMAND "" 
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
@@ -115,7 +127,9 @@ ExternalProject_Add( protobuf
   SOURCE_SUBDIR ./cmake
   UPDATE_COMMAND 
     COMMAND ${CMAKE_COMMAND} -DPULSE_IL2CPP_PATCH=${PULSE_IL2CPP_PATCH} -Dprotobuf_source=${protobuf_SRC} -Dprotobuf_patch=${protobuf_Patch} -P ${protobuf_Patch}/Patch.cmake
+  ${CMAKE_GENERATION}
   CMAKE_ARGS
+    -DCMAKE_TOOLCHAIN_FILE:FILE=${CMAKE_TOOLCHAIN_FILE}
     -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
     -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
     -DCMAKE_INSTALL_PREFIX:STRING=${CMAKE_INSTALL_PREFIX}
@@ -143,10 +157,12 @@ if(WIN32)
     PREFIX dirent
     URL "https://github.com/tronkko/dirent/archive/1.22.zip"
     URL_MD5 ${dirent_MD5}
+    ${CMAKE_GENERATION}
     CMAKE_ARGS
-          -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
-          -DCMAKE_INSTALL_PREFIX:STRING=${CMAKE_INSTALL_PREFIX}
-          -DINCLUDE_INSTALL_DIR:STRING=${CMAKE_INSTALL_PREFIX}/include
+      -DCMAKE_TOOLCHAIN_FILE:FILE=${CMAKE_TOOLCHAIN_FILE}
+      -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
+      -DCMAKE_INSTALL_PREFIX:STRING=${CMAKE_INSTALL_PREFIX}
+      -DINCLUDE_INSTALL_DIR:STRING=${CMAKE_INSTALL_PREFIX}/include
   )
   message(STATUS "dirent is here : ${dirent_DIR}" )
   list(APPEND Pulse_DEPENDENCIES dirent)
@@ -163,20 +179,25 @@ ExternalProject_Add( Pulse
   DOWNLOAD_DIR ${CMAKE_SOURCE_DIR}
   SOURCE_DIR ${CMAKE_SOURCE_DIR}
   BINARY_DIR ${CMAKE_BINARY_DIR}/Pulse
+  ${CMAKE_GENERATION}
   CMAKE_ARGS
-    -DSUPERBUILD:BOOL=OFF
+    -DCMAKE_TOOLCHAIN_FILE:FILE=${CMAKE_TOOLCHAIN_FILE}
     -DCMAKE_PREFIX_PATH:STRING=${CMAKE_PREFIX_PATH}
     -DCMAKE_INSTALL_PREFIX:STRING=${CMAKE_INSTALL_PREFIX}
     -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-    
     -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
+    # Pulse Specific
+    -DPULSE_SUPERBUILD:BOOL=OFF
+    -DPULSE_BUILD_JAVA_UTILS:BOOL=${PULSE_BUILD_JAVA_UTILS}
     -DPULSE_BUILD_CLR:BOOL=${PULSE_BUILD_CLR}
-  -DPULSE_LOGGER:STRING=${PULSE_LOGGER}
+    -DPULSE_LOGGER:STRING=${PULSE_LOGGER}
     # Let InnerBuild build and install these
     -Dlogger_SRC=${logger_SRC}
     -Dprotobuf_SRC=${protobuf_SRC}
 )
 
+# Need Java Utils to generate data
+if (PULSE_BUILD_JAVA_UTILS)
 add_custom_target(PulseData ALL)
 add_dependencies(PulseData Pulse)
 add_custom_command(TARGET PulseData POST_BUILD
@@ -185,6 +206,11 @@ add_custom_command(TARGET PulseData POST_BUILD
 add_custom_command(TARGET PulseData POST_BUILD
     COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=genStates -P run.cmake WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin
             WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin)
+else()
+  message(WARNING "Without Java Utils, this build will not generate required data files needed for Pulse to execute")
+  message(WARNING "You will need to get these required data files from another build/source")
+endif()
+
 if(PULSE_DOWNLOAD_BASELINES)
   message(STATUS "I am going to pull the latest Pulse Baselines!")
   add_custom_command(TARGET PulseData POST_BUILD

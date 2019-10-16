@@ -1,4 +1,4 @@
-if(NOT MSVC)
+if(NOT PULSE_BUILD_JAVA_UTILS)
   return()
 endif()
 
