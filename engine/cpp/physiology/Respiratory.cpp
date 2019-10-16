@@ -1379,9 +1379,14 @@ void Respiratory::Intubation()
         m_CarinaToLeftAnatomicDeadSpace->GetNextResistance().SetValue(m_RespOpenResistance_cmH2O_s_Per_L, FlowResistanceUnit::cmH2O_s_Per_L);
         break;
       }
-      case eIntubation_Type::LeftMainstem:
+    case eIntubation_Type::LeftMainstem:
       {
         m_CarinaToRightAnatomicDeadSpace->GetNextResistance().SetValue(m_RespOpenResistance_cmH2O_s_Per_L, FlowResistanceUnit::cmH2O_s_Per_L);
+        break;
+      }
+    case eIntubation_Type::Off:
+      {
+        m_data.SetIntubation(eSwitch::Off);
         break;
       }
     }
