@@ -27,7 +27,7 @@ set(Pulse_LIB_ROOT_DIR "${Pulse_INSTALL}/lib")
 
 if("@PULSE_LOGGER@" STREQUAL "log4cpp")
   set(LOGGER_LIB "log4cpp")
-else()
+elseif("@PULSE_LOGGER@" STREQUAL "log4cplus")
   if(MSVC)
    set(LOGGER_LIB "log4cplus")
   else()
@@ -53,21 +53,35 @@ set (PULSE_LIBRARIES "")
 set(Pulse_RELEASE_LIBS "${Pulse_LIB_ROOT_DIR}/PulseEngine.${LIB_ENDING}" 
                "${Pulse_LIB_ROOT_DIR}/CommonDataModel.${LIB_ENDING}"
                "${Pulse_LIB_ROOT_DIR}/DataModelBindings.${LIB_ENDING}"
-               "${Pulse_LIB_ROOT_DIR}/${LOGGER_LIB}.${LIB_ENDING}"
                "${Pulse_LIB_ROOT_DIR}/libprotobuf.${LIB_ENDING}"
                "${WIN32_LIBS}"
 )
-foreach(lib ${Pulse_RELEASE_LIBS})
-  list (APPEND PULSE_LIBRARIES optimized ${lib})
-endforeach(lib)
-
 set(Pulse_DEBUG_LIBS "${Pulse_LIB_ROOT_DIR}/PulseEngined.${LIB_ENDING}"
                      "${Pulse_LIB_ROOT_DIR}/CommonDataModeld.${LIB_ENDING}"
                      "${Pulse_LIB_ROOT_DIR}/DataModelBindingsd.${LIB_ENDING}"
-                     "${Pulse_LIB_ROOT_DIR}/${LOGGER_LIB}d.${LIB_ENDING}"
                      "${Pulse_LIB_ROOT_DIR}/libprotobufd.${LIB_ENDING}"
                      "${WIN32_LIBS}"
 )
+
+if(NOT "@PULSE_LOGGER@" STREQUAL "simple")
+  if("@PULSE_LOGGER@" STREQUAL "log4cpp")
+    set(LOGGER_LIB "log4cpp")
+  elseif("@PULSE_LOGGER@" STREQUAL "log4cplus")
+    if(MSVC)
+     set(LOGGER_LIB "log4cplus")
+    else()
+     set(LOGGER_LIB "liblog4cplus")
+    endif()
+  else()
+    message(FATAL_ERROR "Unknown Pulse Logger")
+  endif()
+  list (APPEND Pulse_RELEASE_LIBS "${Pulse_LIB_ROOT_DIR}/${LOGGER_LIB}.${LIB_ENDING}")
+  list (APPEND Pulse_DEBUG_LIBS "${Pulse_LIB_ROOT_DIR}/${LOGGER_LIB}d.${LIB_ENDING}")
+endif()
+
+foreach(lib ${Pulse_RELEASE_LIBS})
+  list (APPEND PULSE_LIBRARIES optimized ${lib})
+endforeach(lib)
 foreach(lib ${Pulse_DEBUG_LIBS})
   list (APPEND PULSE_LIBRARIES debug ${lib})
 endforeach(lib)
