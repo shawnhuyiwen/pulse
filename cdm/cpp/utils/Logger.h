@@ -74,7 +74,6 @@ public:
 
   enum class level
   {
-    Trace,
     Debug,
     Info,
     Warn,

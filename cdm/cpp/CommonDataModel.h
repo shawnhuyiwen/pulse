@@ -36,6 +36,7 @@
 #include <fstream>
 #include <stdexcept>
 #include <algorithm>
+#include <cmath>
 
 #ifdef _MSC_VER
 #include <direct.h>

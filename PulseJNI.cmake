@@ -1,3 +1,6 @@
+if(NOT PULSE_BUILD_JAVA_UTILS)
+  return()
+endif()
 
 find_package(Java REQUIRED)
 include(UseJava)

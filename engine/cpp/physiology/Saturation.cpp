@@ -16,8 +16,6 @@
 #include "properties/SEScalarInversePressure.h"
 
 #include "unsupported/Eigen/NonLinearOptimization"
-#include <cmath>
-#include <algorithm>
 
 //#define VERBOSE
 
@@ -315,7 +313,7 @@ void SaturationCalculator::CalculateCarbonMonoxideSpeciesDistribution(SELiquidCo
   }
   // Check to make sure hemoglobin was conserved
   newTotalHb_mM = HbUnbound_mM + HbO2_mM + HbO2CO2_mM + HbCO2_mM + targetBoundCO_mM;
-  if (abs(newTotalHb_mM - totalHb_mM) > tolerance)
+  if (std::abs(newTotalHb_mM - totalHb_mM) > tolerance)
     Warning("Hemoglobin not conserved during carbon monoxide species distribution calculation.");
 
   // We can now set and balance for CO.
@@ -430,12 +428,12 @@ void SaturationCalculator::CalculateBloodGasDistribution(SELiquidCompartment& cm
     double newHb_mM = m_subHbQ->GetMolarity(AmountPerVolumeUnit::mmol_Per_L);
     double newTotalHb_mM = newHbO2_mM + newHbCO2_mM + newHbO2CO2_mM + newHb_mM + newHbCO_mM;
     double diffTotal = newTotalHb_mM - oldTotalHb_mM;
-    if (abs(diffTotal) > 1.0e-8)
+    if (std::abs(diffTotal) > 1.0e-8)
     {
       std::stringstream debugSS;
       debugSS << "CalculateCarbonMonoxideSpeciesDistribution failed to conserve hemoglobin. Difference = ";
       debugSS << diffTotal;
-      if (abs(diffTotal) > 1.0e-8)
+      if (std::abs(diffTotal) > 1.0e-8)
         Warning(debugSS.str());
     }
   }
