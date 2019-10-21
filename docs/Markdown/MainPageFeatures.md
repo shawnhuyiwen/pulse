@@ -17,9 +17,9 @@
 There is a wide range of potential applications, a few include:
 - Powering serious games for medical education and training
 - Producing responsive physiology in real time for manikin training
-- Integrating a single-system model into the engine to understand full-body physiologic response
-- Providing inputs and outputs for sensor systems
-- Teaching and education
+- Integrating higher fidelity single-system or sub-system models to understand full-body physiologic response
+- Connecting in-silico patients for hardware-in-the-loop (HIL) testing of medical devices
+- Providing simulations and visualizations for teaching and education
 - Pairing with virtual surgery planning/rehearsal
 
 ## Featured Applications Leveraging Pulse

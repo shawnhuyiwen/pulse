@@ -1686,12 +1686,11 @@ void Respiratory::CalculateVitalSigns()
   GetInspiratoryFlow().SetValue(tracheaFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);
   GetExpiratoryFlow().SetValue(-tracheaFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);  
 
-  GetRespiratoryMusclePressure().Set(m_RespiratoryMuscle->GetNextPressure());
-
   /// \cite kacmarek2016egan page 227-228 ---------------------------------------------------
   double airwayOpeningPressure_cmH2O = m_Mouth->GetPressure(PressureUnit::cmH2O);
   double alveolarPressure_cmH2O = (m_LeftAlveoli->GetNextPressure().GetValue(PressureUnit::cmH2O) + m_RightAlveoli->GetNextPressure().GetValue(PressureUnit::cmH2O)) / 2.0; //Average of L and R
   double pleuralPressure_cmH2O = (m_LeftPleural->GetNextPressure().GetValue(PressureUnit::cmH2O) + m_RightPleural->GetNextPressure().GetValue(PressureUnit::cmH2O)) / 2.0; //Average of L and R
+  double musclePressure_cmH2O = m_RespiratoryMuscle->GetNextPressure(PressureUnit::cmH2O);
   double bodySurfacePressure_cmH2O = m_Ambient->GetPressure(PressureUnit::cmH2O);
 
   double transrespiratoryPressure_cmH2O = airwayOpeningPressure_cmH2O - bodySurfacePressure_cmH2O;
@@ -1700,14 +1699,18 @@ void Respiratory::CalculateVitalSigns()
   double transalveolarPressure_cmH2O = alveolarPressure_cmH2O - pleuralPressure_cmH2O;
   double transthoracicPressure_cmH2O = alveolarPressure_cmH2O - bodySurfacePressure_cmH2O;
   double transChestWallPressure_cmH2O = pleuralPressure_cmH2O - bodySurfacePressure_cmH2O;
+  double transMusclePressure_cmH2O = musclePressure_cmH2O - bodySurfacePressure_cmH2O;
 
+  GetRespiratoryMusclePressure().SetValue(musclePressure_cmH2O, PressureUnit::cmH2O);
   GetIntrapleuralPressure().SetValue(transChestWallPressure_cmH2O, PressureUnit::cmH2O);
+  //GetIntrapulmonaryPressure().SetValue(-transMusclePressure_cmH2O, PressureUnit::cmH2O); //Aaron - add this - Defintion: "Total respiratory recoil pressure relative to body surface."
   GetTransrespiratoryPressure().SetValue(transrespiratoryPressure_cmH2O, PressureUnit::cmH2O);
   GetTransairwayPressure().SetValue(transairwayPressure_cmH2O, PressureUnit::cmH2O);
   GetTranspulmonaryPressure().SetValue(transpulmonaryPressure_cmH2O, PressureUnit::cmH2O);
   GetTransalveolarPressure().SetValue(transalveolarPressure_cmH2O, PressureUnit::cmH2O);
   GetTransthoracicPressure().SetValue(transthoracicPressure_cmH2O, PressureUnit::cmH2O);
   GetTransChestWallPressure().SetValue(transChestWallPressure_cmH2O, PressureUnit::cmH2O);
+  //GetTransMuslcePressure().SetValue(transMusclePressure_cmH2O, PressureUnit::cmH2O); //Aaron - add this - Definition: "Respiratory muscle driver pressure relative to body surface."
 
   if(SEScalar::IsZero(tracheaFlow_L_Per_s, ZERO_APPROX))
     GetPulmonaryResistance().SetValue(std::numeric_limits<double>::infinity(), PressureTimePerVolumeUnit::cmH2O_s_Per_L);
@@ -1716,11 +1719,6 @@ void Respiratory::CalculateVitalSigns()
 
   double averageAlveoliO2PartialPressure_mmHg = (m_LeftAlveoliO2->GetPartialPressure(PressureUnit::mmHg) + m_RightAlveoliO2->GetPartialPressure(PressureUnit::mmHg)) / 2.0;
   GetAlveolarArterialGradient().SetValue(averageAlveoliO2PartialPressure_mmHg - m_AortaO2->GetPartialPressure(PressureUnit::mmHg), PressureUnit::mmHg);
-
-  GetRespiratoryMusclePressure().Set(m_RespiratoryMuscle->GetNextPressure());
-
-  double avgAlveoliO2PP_mmHg = (m_LeftAlveoliO2->GetPartialPressure(PressureUnit::mmHg) + m_RightAlveoliO2->GetPartialPressure(PressureUnit::mmHg)) / 2.0;
-  GetAlveolarArterialGradient().SetValue(avgAlveoliO2PP_mmHg - m_AortaO2->GetPartialPressure(PressureUnit::mmHg), PressureUnit::mmHg);
 
   //It's a pain to figure out how to hold onto this data, so let's just set it at a sensitive transition point
   if (GetInspiratoryFlow(VolumePerTimeUnit::L_Per_s) > 0.0 //We're inhaling
@@ -1980,11 +1978,12 @@ void Respiratory::CalculateVitalSigns()
 ///
 /// \param  TargetVolume_L        Target volume (L)
 ///
-/// \return Peak Driver Pressure    The driver pressure required to achieve target volume (cm H2O)
+/// \return Peak Driver Pressure    The driver pressure required to achieve target volume (cmH2O)
 ///
 /// \details
-/// This method returns the driver pressure as a function of target volume. The equation
-/// used is constructed from respiratory unit test data (see RespiratoryDriverTest). 
+/// This method returns an estimated driver pressure as a function of target volume. The equation
+/// uses a constant total compliance from the basline values. This is an approximation and will
+/// not acheive the desired volume exactly.
 //--------------------------------------------------------------------------------------------------
 double Respiratory::VolumeToDriverPressure(double TargetVolume_L)
 {
@@ -2164,18 +2163,25 @@ void Respiratory::UpdateChestWallCompliances()
     double vitalCapacity_L = m_VitalCapacity_L * lungRatio;
     double functionalResidualCapacity_L = m_FunctionalResidualCapacity_L * lungRatio;
         
-    double healthyTotalCompliance_L_Per_cmH2O = 1.0 / (1.0 / healthyChestWallCompliance_L_Per_cmH2O + 1.0 / healthyLungCompliance_L_Per_cmH2O);
+    double healthySideCompliance_L_Per_cmH2O = 1.0 / (1.0 / healthyChestWallCompliance_L_Per_cmH2O + 1.0 / healthyLungCompliance_L_Per_cmH2O);
 
-    double sideCompliance_L_Per_cmH2O = 0.001; //Minimum possible compliance
+    double minCompliance_L_Per_cmH2O = 0.01; //Minimum possible compliance
+    double sideCompliance_L_Per_cmH2O = minCompliance_L_Per_cmH2O;
     if (lungVolume_L > residualVolume_L && lungVolume_L < vitalCapacity_L + residualVolume_L)
     {
-      double pressureCornerUpper_cmH2O = (vitalCapacity_L - functionalResidualCapacity_L) / healthyTotalCompliance_L_Per_cmH2O;
+      double pressureCornerUpper_cmH2O = (vitalCapacity_L - functionalResidualCapacity_L) / healthySideCompliance_L_Per_cmH2O;
       double naturalLog = log((functionalResidualCapacity_L - residualVolume_L) / (residualVolume_L + vitalCapacity_L - functionalResidualCapacity_L));
       double c = -(pressureCornerUpper_cmH2O / 2.0 * naturalLog) / (1.0 / 2.0 - naturalLog);
       double d = (pressureCornerUpper_cmH2O - c) / 2.0;
       double expectedPressure_cmH2O = d * log((lungVolume_L - residualVolume_L) / (residualVolume_L + vitalCapacity_L - lungVolume_L)) + c;
-      sideCompliance_L_Per_cmH2O = (lungVolume_L - functionalResidualCapacity_L) / expectedPressure_cmH2O;
-    }    
+      double volumeAtZeroPressure = residualVolume_L + (vitalCapacity_L / (1.0 + exp(c / d)));
+      sideCompliance_L_Per_cmH2O = (lungVolume_L - volumeAtZeroPressure) / expectedPressure_cmH2O;
+      if (sideCompliance_L_Per_cmH2O == 0.0)
+      {
+        sideCompliance_L_Per_cmH2O = healthySideCompliance_L_Per_cmH2O;
+      }
+      sideCompliance_L_Per_cmH2O = MAX(sideCompliance_L_Per_cmH2O, minCompliance_L_Per_cmH2O);
+    }
     
     double chestWallCompliance_L_Per_cmH2O = healthyChestWallCompliance_L_Per_cmH2O;
     //Can't divide by zero
@@ -2184,10 +2190,11 @@ void Respiratory::UpdateChestWallCompliances()
       chestWallCompliance_L_Per_cmH2O = 1.0 / (1.0 / sideCompliance_L_Per_cmH2O - 1.0 / healthyLungCompliance_L_Per_cmH2O);
     }
 
-    //Dampen the change to prevent craziness
-    double maxChange_L_Per_cmH2O_s = 0.01;
+    //Dampen the change to prevent potential craziness
+    double maxChange_L_Per_cmH2O_s = 1.0;
 
-    double complianceChange_L_Per_cmH2O = chestWallCompliance_L_Per_cmH2O - healthyChestWallCompliance_L_Per_cmH2O;
+    double previousChestWallCompliance_L_Per_cmH2O = chestWallPath->GetCompliance(VolumePerPressureUnit::L_Per_cmH2O);
+    double complianceChange_L_Per_cmH2O = chestWallCompliance_L_Per_cmH2O - previousChestWallCompliance_L_Per_cmH2O;
 
     if (complianceChange_L_Per_cmH2O > 0.0)
     {
@@ -2198,8 +2205,7 @@ void Respiratory::UpdateChestWallCompliances()
       complianceChange_L_Per_cmH2O = MAX(complianceChange_L_Per_cmH2O, -maxChange_L_Per_cmH2O_s * m_dt_s);
     }
 
-    chestWallCompliance_L_Per_cmH2O = healthyChestWallCompliance_L_Per_cmH2O + complianceChange_L_Per_cmH2O;
-
+    chestWallCompliance_L_Per_cmH2O = previousChestWallCompliance_L_Per_cmH2O + complianceChange_L_Per_cmH2O;
     chestWallPath->GetNextCompliance().SetValue(chestWallCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
   }  
 }
@@ -2288,6 +2294,11 @@ void Respiratory::UpdateVolumes()
     
     m_LeftAlveolarDeadSpace->GetNextVolume().SetValue(leftAlveolarDeadSpace_L + alveolarDeadSpace_L * leftLungRatio, VolumeUnit::L);
     m_RightAlveolarDeadSpace->GetNextVolume().SetValue(rightAlveolarDeadSpace_L + alveolarDeadSpace_L * rightLungRatio, VolumeUnit::L);
+  }
+  else
+  {
+    m_LeftAlveolarDeadSpace->GetNextVolume().Invalidate();
+    m_RightAlveolarDeadSpace->GetNextVolume().Invalidate();
   }
 
   //Update lung volumes
@@ -3075,4 +3086,16 @@ void Respiratory::Debugging()
   double AmbientPresure = 1033.23; // = 1 atm
   m_data.GetDataTrack().Probe("LeftRelativePleuralPressure_cmH2O", leftPleuralPressure - AmbientPresure);
   m_data.GetDataTrack().Probe("RightRelativePleuralPressure_cmH2O", rightPleuralPressure - AmbientPresure);
+
+
+  double leftChestWallCompliance_L_Per_cmH2O = m_RightPleuralToRespiratoryMuscle->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
+  double rightChestWallCompliance_L_Per_cmH2O = m_RightPleuralToRespiratoryMuscle->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
+  double leftLungCompliance_L_Per_cmH2O = m_RightAlveoliToRightPleuralConnection->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
+  double rightLungCompliance_L_Per_cmH2O = m_RightAlveoliToRightPleuralConnection->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
+
+  double leftSideCompliance_L_Per_cmH2O = 1.0 / (1.0 / leftChestWallCompliance_L_Per_cmH2O + 1.0 / leftLungCompliance_L_Per_cmH2O);
+  double rightSideCompliance_L_Per_cmH2O = 1.0 / (1.0 / rightChestWallCompliance_L_Per_cmH2O + 1.0 / rightLungCompliance_L_Per_cmH2O);
+
+  double total_Compliance_L_Per_cmH2O = leftSideCompliance_L_Per_cmH2O + rightSideCompliance_L_Per_cmH2O;
+  m_data.GetDataTrack().Probe("total_Compliance_L_Per_cmH2O", total_Compliance_L_Per_cmH2O);
 }

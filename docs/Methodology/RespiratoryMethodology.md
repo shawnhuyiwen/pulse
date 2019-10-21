@@ -183,7 +183,7 @@ analysis during the next time step.
 
 Assessments are called outside of the system to allow compiling of information from multiple systems.
 
-<center><img src="./Images/Respiratory/Respiratory_Figure02.png" width="900"></center>
+<center><img src="./Images/Respiratory/RespiratoryFlow.png" width="900"></center>
 <center> 
 <i>Figure 2. The data flow for the %Respiratory System consists of Preprocess,
 Process, and Postprocess. Preprocess sets the circuit element values based on
@@ -217,7 +217,7 @@ direction, preventing flow in the opposite direction. Such functional elements
 are employed to represent insults that allow unidirectional gas flow into the
 pleural cavity through an opening at the alveoli or the thoracic wall.
 
-<img src="./Images/Respiratory/Respiratory_Figure03.png" width="650">
+<img src="./Images/Respiratory/RespiratoryCircuit.png" width="650">
 <center>
 <i>Figure 3. Circuit diagram of the %Respiratory System. The diagram depicts a
 closed circuit of the seven major compartments (trachea, right and left anatomic
