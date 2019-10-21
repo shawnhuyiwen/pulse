@@ -95,6 +95,9 @@ message NervousData
   cdm.NervousSystemData          Common                                              = 1;
   double                         ArterialOxygenBaseline_mmHg                         = 2;
   double                         ArterialCarbonDioxideBaseline_mmHg                  = 3;
+  bool                           BaroreceptorFeedbackStatus                          = 4;
+  double                         BaroreceptorActiveTime_s                            = 5;
+  double                         BaroreceptorMeanArterialPressureBaseline_mmHg       = 6;
 }
 
 message RenalData
