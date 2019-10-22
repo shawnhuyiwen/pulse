@@ -131,8 +131,8 @@ protected:
   void SetupExternalTemperature();
   void SetupInternalTemperature();
 
-  bool Initialize(const PulseConfiguration* config);
-  bool SetupPatient();
+  bool Initialize(const PulseConfiguration* config, const SEPatient& patient);
+  bool SetupPatient(const SEPatient& patient);
 
   // Notify systems that steady state has been achieved
   virtual void AtSteadyState(EngineState state);

@@ -148,11 +148,11 @@ DataTrack& PulseController::GetDataTrack()
   return *m_DataTrack;
 }
 
-bool PulseController::Initialize(const PulseConfiguration* config)
+bool PulseController::Initialize(const PulseConfiguration* config, SEPatient const& patient)
 {
   m_State = EngineState::NotReady;
   Info("Configuring patient");
-  if (!SetupPatient())
+  if (!SetupPatient(patient))
     return false;
 
   Info("Resetting Substances");
@@ -286,10 +286,12 @@ void PulseController::SetIntubation(eSwitch s)
 }
 eSwitch PulseController::GetIntubation() { return m_Intubation; }
 
-bool PulseController::SetupPatient()
+
+bool PulseController::SetupPatient(SEPatient const& patient)
 {
   bool err = false;
   std::stringstream ss;
+  m_InitialPatient->Copy(patient);
 
   //Sex is the only thing we absolutely need to be defined, the CDM assumes male if not provided
 

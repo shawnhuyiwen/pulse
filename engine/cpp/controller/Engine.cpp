@@ -122,22 +122,6 @@ bool PulseEngine::InitializeEngine(const std::string& patient_configuration, Ser
 
 bool PulseEngine::InitializeEngine(const SEPatientConfiguration& patient_configuration, const SEEngineConfiguration* config)
 {
-  if (patient_configuration.HasPatient())
-    m_InitialPatient->Copy(*patient_configuration.GetPatient());
-  else if (patient_configuration.HasPatientFile())
-  {
-    std::string pFile = patient_configuration.GetPatientFile();
-    if (pFile.find("/patients") == std::string::npos)
-    {// Prepend the patient directory if it's not there
-      pFile = "./patients/";
-      pFile += patient_configuration.GetPatientFile();
-    }
-    if (!m_InitialPatient->SerializeFromFile(pFile, JSON))// TODO Support all serialization formats
-      return false;
-  }
-  else
-    return false;
-
   const PulseConfiguration* pConfig = nullptr;
   if (config != nullptr)
   {
@@ -150,7 +134,26 @@ bool PulseEngine::InitializeEngine(const SEPatientConfiguration& patient_configu
   }
   m_EngineTrack->ResetFile();
   m_State = EngineState::Initialization;
-  if (!PulseController::Initialize(pConfig))
+  if (patient_configuration.HasPatient())
+  {
+    if (!PulseController::Initialize(pConfig, *patient_configuration.GetPatient()))
+      return false;
+  }
+  else if (patient_configuration.HasPatientFile())
+  {
+    SEPatient patient(m_Logger);
+    std::string pFile = patient_configuration.GetPatientFile();
+    if (pFile.find("/patients") == std::string::npos)
+    {// Prepend the patient directory if it's not there
+      pFile = "./patients/";
+      pFile += patient_configuration.GetPatientFile();
+    }
+    if (!patient.SerializeFromFile(pFile, JSON))// TODO Support all serialization formats
+      return false;
+    if (!PulseController::Initialize(pConfig, patient))
+      return false;
+  }
+  else
     return false;
 
   // We don't capture events during initialization

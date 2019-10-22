@@ -45,8 +45,9 @@ void PulseEngineTest::RespiratoryCircuitAndTransportTest(RespiratoryConfiguratio
   std::ofstream fAerosolGraph;
 
   PulseController pc(sTestDirectory + "/RespiratoryCircuitAndTransportTest.log");
-  pc.GetPatient().SerializeFromFile("./patients/StandardMale.json",JSON);
-  pc.SetupPatient();
+  SEPatient patient(pc.GetLogger());
+  patient.SerializeFromFile("./patients/StandardMale.json", JSON);
+  pc.SetupPatient(patient);
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off); 
   pc.CreateCircuitsAndCompartments();
@@ -206,8 +207,9 @@ void PulseEngineTest::RespiratoryDriverTest(const std::string& sTestDirectory)
   TimingProfile tmr;
   tmr.Start("Test");
   PulseController pc(sTestDirectory + "/RespiratoryDriverTest.log");
-  pc.GetPatient().SerializeFromFile("./patients/StandardMale.json",JSON);
-  pc.SetupPatient();
+  SEPatient patient(pc.GetLogger());
+  patient.SerializeFromFile("./patients/StandardMale.json", JSON);
+  pc.SetupPatient(patient);
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
@@ -276,7 +278,7 @@ void PulseEngineTest::RespiratoryDriverTest(const std::string& sTestDirectory)
       //Check to see if the circuit has stabilized
       if (std::abs(TotalVolume_L - PreviousTotalVolume_L) < 1e-10)
       {
-        if (!bRVReached && TotalVolume_L <= pc.GetPatient().GetResidualVolume(VolumeUnit::L))
+        if (!bRVReached && TotalVolume_L <= pc.GetCurrentPatient().GetResidualVolume(VolumeUnit::L))
         {
           bRVReached = true;
         }
@@ -316,7 +318,7 @@ void PulseEngineTest::RespiratoryDriverTest(const std::string& sTestDirectory)
     bSettled = false;
 
     //Check to see if we've gone all the way to the max volume
-    if (TotalVolume_L >= pc.GetPatient().GetTotalLungCapacity(VolumeUnit::L))
+    if (TotalVolume_L >= pc.GetCurrentPatient().GetTotalLungCapacity(VolumeUnit::L))
     {
       bIRVReached = true;
     }

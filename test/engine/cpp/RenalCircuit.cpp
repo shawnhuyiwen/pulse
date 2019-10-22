@@ -48,8 +48,9 @@ void PulseEngineTest::RenalCircuitAndTransportTest(const std::string& sTestDirec
   std::ofstream graphFile;
 
   PulseController pc(sTestDirectory + "/RenalCircuitAndTransportTest.log");
-  pc.GetPatient().SerializeFromFile("./patients/StandardMale.json",JSON);
-  pc.SetupPatient();
+  SEPatient patient(pc.GetLogger());
+  patient.SerializeFromFile("./patients/StandardMale.json",JSON);
+  pc.SetupPatient(patient);
   pc.m_Config->EnableRenal(eSwitch::On);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
@@ -174,8 +175,9 @@ void PulseEngineTest::RenalFeedbackTest(RenalFeedback feedback, const std::strin
   TimingProfile tmr;
   tmr.Start("Test");
   PulseController pc(sTestDirectory + "/RenalFeedbackTest.log");
-  pc.GetPatient().SerializeFromFile("./patients/StandardMale.json",JSON);
-  pc.SetupPatient();
+  SEPatient patient(pc.GetLogger());
+  patient.SerializeFromFile("./patients/StandardMale.json", JSON);
+  pc.SetupPatient(patient);
   pc.m_Config->EnableRenal(eSwitch::On);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
@@ -189,7 +191,6 @@ void PulseEngineTest::RenalFeedbackTest(RenalFeedback feedback, const std::strin
   pc.GetCompartments().CreateLiquidCompartment(pulse::ExtravascularCompartment::RightKidneyIntracellular);
   pc.m_Config->EnableTissue(eSwitch::On);// This needs to be on for making the tissue to extravascular mapping
   pc.GetCompartments().StateChange();
-  SEPatient* patient = (SEPatient*)&pc.GetPatient();
 
   SEFluidCircuit& rCircuit = pc.GetCircuits().GetRenalCircuit();
   SELiquidCompartmentGraph& rGraph = pc.GetCompartments().GetRenalGraph();
@@ -489,8 +490,9 @@ void PulseEngineTest::RenalSystemTest(RenalSystems systemtest, const std::string
   TimingProfile tmr;
   tmr.Start("Test");
   PulseController pc(sTestDirectory + "/RenalSystemTest.log");
-  pc.GetPatient().SerializeFromFile("./patients/StandardMale.json",JSON);
-  pc.SetupPatient();
+  SEPatient patient(pc.GetLogger());
+  patient.SerializeFromFile("./patients/StandardMale.json", JSON);
+  pc.SetupPatient(patient);
   pc.m_Config->EnableRenal(eSwitch::On);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
@@ -504,7 +506,6 @@ void PulseEngineTest::RenalSystemTest(RenalSystems systemtest, const std::string
   pc.GetCompartments().CreateLiquidCompartment(pulse::ExtravascularCompartment::RightKidneyIntracellular);
   pc.m_Config->EnableTissue(eSwitch::On);// This needs to be on for making the tissue to extravascular mapping
   pc.GetCompartments().StateChange();
-  SEPatient* patient = (SEPatient*)&pc.GetPatient();
   SESubstance& potassium = pc.GetSubstances().GetPotassium();
 
   // Renal needs these present for Gluconeogenesis
