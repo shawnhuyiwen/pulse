@@ -103,7 +103,8 @@ PulseController::PulseController(Logger* logger, const std::string& data_dir) : 
   m_Substances = std::unique_ptr<PulseSubstances>(new PulseSubstances(*this));
   m_Substances->LoadSubstanceDirectory(m_DataDir);
 
-  m_Patient = std::unique_ptr<SEPatient>(new SEPatient(GetLogger()));
+  m_InitialPatient = std::unique_ptr<SEPatient>(new SEPatient(GetLogger()));
+  m_CurrentPatient = std::unique_ptr<SEPatient>(new SEPatient(GetLogger()));
 
   m_Config = std::unique_ptr<PulseConfiguration>(new PulseConfiguration(*m_Substances));
   m_Config->Initialize(m_DataDir);
@@ -186,7 +187,7 @@ bool PulseController::Initialize(const PulseConfiguration* config)
   {
     std::string stableDir = "./stable/";
     MakeDirectory(stableDir.c_str());
-    m_Patient->SerializeToFile(stableDir + m_Patient->GetName() + ".json",JSON);
+    m_CurrentPatient->SerializeToFile(stableDir + m_CurrentPatient->GetName() + ".json",JSON);
   }
 
   m_SaturationCalculator->Initialize(*m_Substances);
@@ -232,7 +233,8 @@ bool PulseController::Initialize(const PulseConfiguration* config)
 EngineState               PulseController::GetState() { return m_State; }
 SaturationCalculator&     PulseController::GetSaturationCalculator() { return *m_SaturationCalculator; }
 PulseSubstances&          PulseController::GetSubstances() { return *m_Substances; }
-SEPatient&                PulseController::GetPatient() { return *m_Patient; }
+SEPatient&                PulseController::GetCurrentPatient() { return *m_CurrentPatient; }
+const SEPatient&          PulseController::GetInitialPatient() { return *m_InitialPatient; }
 SEBloodChemistrySystem&   PulseController::GetBloodChemistry() { return *m_BloodChemistrySystem; }
 SECardiovascularSystem&   PulseController::GetCardiovascular() { return *m_CardiovascularSystem; }
 SEDrugSystem&             PulseController::GetDrugs() { return *m_DrugSystem; }
@@ -296,13 +298,13 @@ bool PulseController::SetupPatient()
   double ageMin_yr = 18.0;
   double ageMax_yr = 65.0;
   double ageStandard_yr = 44.0;
-  if (!m_Patient->HasAge())
+  if (!m_InitialPatient->HasAge())
   { 
-    m_Patient->GetAge().SetValue(ageStandard_yr, TimeUnit::yr);    
+    m_InitialPatient->GetAge().SetValue(ageStandard_yr, TimeUnit::yr);
     ss << "No patient age set. Using the standard value of " << ageStandard_yr << " years.";
     Info(ss);
   }
-  age_yr = m_Patient->GetAge().GetValue(TimeUnit::yr);
+  age_yr = m_InitialPatient->GetAge().GetValue(TimeUnit::yr);
   if (age_yr < ageMin_yr)
   {    
     ss << "Patient age of " << age_yr << " years is too young. We do not model pediatrics. Minimum age allowed is " << ageMin_yr << " years.";
@@ -330,20 +332,20 @@ bool PulseController::SetupPatient()
   double heightMin_cm = heightMinMale_cm;
   double heightMax_cm = heightMaxMale_cm;
   double heightStandard_cm = heightStandardMale_cm;
-  if (m_Patient->GetSex() == ePatient_Sex::Female)
+  if (m_InitialPatient->GetSex() == ePatient_Sex::Female)
   {
     //Female
     heightMin_cm = heightMinFemale_cm;
     heightMax_cm = heightMaxFemale_cm;
     heightStandard_cm = heightStandardFemale_cm;
   }
-  if (!m_Patient->HasHeight())
+  if (!m_InitialPatient->HasHeight())
   {
-    m_Patient->GetHeight().SetValue(heightStandard_cm, LengthUnit::cm);    
+    m_InitialPatient->GetHeight().SetValue(heightStandard_cm, LengthUnit::cm);
     ss << "No patient height set. Using the standard value of " << heightStandard_cm << " cm.";
     Info(ss);
   }
-  double height_cm = m_Patient->GetHeight().GetValue(LengthUnit::cm);
+  double height_cm = m_InitialPatient->GetHeight().GetValue(LengthUnit::cm);
   double height_ft = Convert(height_cm, LengthUnit::cm, LengthUnit::ft);
   //Check for outrageous values
   if (height_ft < 4.5 || height_ft > 7.0)
@@ -366,11 +368,11 @@ bool PulseController::SetupPatient()
   /// \cite green2017green
   //page 295
   //Devine Formula
-  if (m_Patient->HasIdealBodyWeight())
+  if (m_InitialPatient->HasIdealBodyWeight())
     Warning("Ignorning provided patient ideal body weight. It is determined by weight and body fat fraction.");
-  double height_in = m_Patient->GetHeight().GetValue(LengthUnit::in);
+  double height_in = m_InitialPatient->GetHeight().GetValue(LengthUnit::in);
   double idealWeight_kg = 0.0;
-  if (m_Patient->GetSex() == ePatient_Sex::Female)
+  if (m_InitialPatient->GetSex() == ePatient_Sex::Female)
   {
     //Female
     idealWeight_kg = 45.5 + 2.3 * (height_in - 60.0);
@@ -380,7 +382,7 @@ bool PulseController::SetupPatient()
     //Male
     idealWeight_kg = 50.0 + 2.3 * (height_in - 60.0);
   }
-  m_Patient->GetIdealBodyWeight().SetValue(idealWeight_kg, MassUnit::kg);
+  m_InitialPatient->GetIdealBodyWeight().SetValue(idealWeight_kg, MassUnit::kg);
   ss << "Patient ideal body weight computed and set to " << idealWeight_kg << " kg.";
   Info(ss);
 
@@ -393,15 +395,15 @@ bool PulseController::SetupPatient()
   double BMIOverweight_kg_per_m2 = 25.0;
   double BMIUnderweight_kg_per_m2 = 18.5;
   double BMISeverelyUnderweight_kg_per_m2 = 16.0;
-  if (!m_Patient->HasWeight())
+  if (!m_InitialPatient->HasWeight())
   {   
-    weight_kg = BMIStandard_kg_per_m2 * pow(m_Patient->GetHeight().GetValue(LengthUnit::m), 2);
-    m_Patient->GetWeight().SetValue(weight_kg, MassUnit::kg);    
+    weight_kg = BMIStandard_kg_per_m2 * pow(m_InitialPatient->GetHeight().GetValue(LengthUnit::m), 2);
+    m_InitialPatient->GetWeight().SetValue(weight_kg, MassUnit::kg);
     ss << "No patient weight set. Using the standard BMI value of 21.75 kg/m^2, resulting in a weight of " << weight_kg << " kg.";
     Info(ss);
   }
-  weight_kg = m_Patient->GetWeight(MassUnit::kg);
-  BMI_kg_per_m2 = weight_kg / pow(m_Patient->GetHeight().GetValue(LengthUnit::m), 2);
+  weight_kg = m_InitialPatient->GetWeight(MassUnit::kg);
+  BMI_kg_per_m2 = weight_kg / pow(m_InitialPatient->GetHeight().GetValue(LengthUnit::m), 2);
   if (BMI_kg_per_m2 > BMIObese_kg_per_m2)
   {    
     ss << "Patient Body Mass Index (BMI) of " << BMI_kg_per_m2 << "  kg/m^2 is too high. Obese patients must be modeled by adding/using a condition. Maximum BMI allowed is " << BMIObese_kg_per_m2 << " kg/m^2.";
@@ -439,7 +441,7 @@ bool PulseController::SetupPatient()
   double fatFractionMin = fatFractionMinMale;
   double fatFractionMax = fatFractionMaxMale;
   double fatFractionStandard = fatFractionStandardMale;
-  if (m_Patient->GetSex() == ePatient_Sex::Female)
+  if (m_InitialPatient->GetSex() == ePatient_Sex::Female)
   {
     //Female
     fatFractionMin = fatFractionMinFemale;
@@ -447,14 +449,14 @@ bool PulseController::SetupPatient()
     fatFractionStandard = fatFractionStandardFemale;
   }
 
-  if (!m_Patient->HasBodyFatFraction())
+  if (!m_InitialPatient->HasBodyFatFraction())
   {
     fatFraction = fatFractionStandard;
-    m_Patient->GetBodyFatFraction().SetValue(fatFraction);    
+    m_InitialPatient->GetBodyFatFraction().SetValue(fatFraction);
     ss << "No patient body fat fraction set. Using the standard value of " << fatFraction << ".";
     Info(ss);
   }
-  fatFraction = m_Patient->GetBodyFatFraction().GetValue();
+  fatFraction = m_InitialPatient->GetBodyFatFraction().GetValue();
   if (fatFraction > fatFractionMax)
   {    
     ss << "Patient body fat fraction of " << fatFraction << " is too high. Obese patients must be modeled by adding/using a condition. Maximum body fat fraction allowed is " << fatFractionMax << ".";
@@ -469,19 +471,19 @@ bool PulseController::SetupPatient()
   }
 
   //Lean Body Mass ---------------------------------------------------------------
-  if (m_Patient->HasLeanBodyMass())
+  if (m_InitialPatient->HasLeanBodyMass())
   {    
     ss << "Patient lean body mass cannot be set. It is determined by weight and body fat fraction.";
     Error(ss);
     err = true;
   }
   double leanBodyMass_kg = weight_kg * (1.0 - fatFraction);
-  m_Patient->GetLeanBodyMass().SetValue(leanBodyMass_kg, MassUnit::kg);
+  m_InitialPatient->GetLeanBodyMass().SetValue(leanBodyMass_kg, MassUnit::kg);
   ss << "Patient lean body mass computed and set to " << leanBodyMass_kg << " kg.";
   Info(ss);
 
   //Body Density ---------------------------------------------------------------
-  if (m_Patient->HasBodyDensity())
+  if (m_InitialPatient->HasBodyDensity())
   {
     ss << "Patient body density cannot be set. It is determined using body fat fraction.";
     Error(ss);
@@ -493,7 +495,7 @@ bool PulseController::SetupPatient()
   double SiriBodyDensity_g_Per_cm3 = 4.95 / (fatFraction + 4.50);
   double BrozekBodyDensity_g_Per_cm3 = 4.57 / (fatFraction + 4.142);
   double bodyDensity_g_Per_cm3 = (SiriBodyDensity_g_Per_cm3 + BrozekBodyDensity_g_Per_cm3) / 2.0;
-  m_Patient->GetBodyDensity().SetValue(bodyDensity_g_Per_cm3, MassPerVolumeUnit::g_Per_cm3);
+  m_InitialPatient->GetBodyDensity().SetValue(bodyDensity_g_Per_cm3, MassPerVolumeUnit::g_Per_cm3);
   ss << "Patient body density computed and set to " << bodyDensity_g_Per_cm3 << " g/cm^3.";
   Info(ss);
   
@@ -504,14 +506,14 @@ bool PulseController::SetupPatient()
   double heartRateTachycardia_bpm = 110;
   double heartRateMin_bpm = 60.0;
   double heartRateBradycardia_bpm = 50;
-  if (!m_Patient->HasHeartRateBaseline())
+  if (!m_InitialPatient->HasHeartRateBaseline())
   {
     heartRate_bpm = heartStandard_bpm;
-    m_Patient->GetHeartRateBaseline().SetValue(heartRate_bpm, FrequencyUnit::Per_min);    
+    m_InitialPatient->GetHeartRateBaseline().SetValue(heartRate_bpm, FrequencyUnit::Per_min);
     ss << "No patient heart rate baseline set. Using the standard value of " << heartRate_bpm << " bpm.";
     Info(ss);
   }
-  heartRate_bpm = m_Patient->GetHeartRateBaseline(FrequencyUnit::Per_min);
+  heartRate_bpm = m_InitialPatient->GetHeartRateBaseline(FrequencyUnit::Per_min);
   if (heartRate_bpm > heartRateMax_bpm)
   {    
     if (heartRate_bpm <= heartRateTachycardia_bpm)
@@ -542,31 +544,31 @@ bool PulseController::SetupPatient()
   }
 
   //Tanaka H, Monahan KD, Seals DR (January 2001). "Age-predicted maximal heart rate revisited". J. Am. Coll. Cardiol. 37(1): 153�6. doi:10.1016/S0735-1097(00)01054-8.PMID 11153730.
-  double computedHeartRateMaximum_bpm = 208.0 - (0.7*m_Patient->GetAge(TimeUnit::yr));
-  if (!m_Patient->HasHeartRateMaximum())
+  double computedHeartRateMaximum_bpm = 208.0 - (0.7* m_InitialPatient->GetAge(TimeUnit::yr));
+  if (!m_InitialPatient->HasHeartRateMaximum())
   {    
-    m_Patient->GetHeartRateMaximum().SetValue(computedHeartRateMaximum_bpm, FrequencyUnit::Per_min);    
+    m_InitialPatient->GetHeartRateMaximum().SetValue(computedHeartRateMaximum_bpm, FrequencyUnit::Per_min);
     ss << "No patient heart rate maximum set. Using a computed value of " << computedHeartRateMaximum_bpm << " bpm.";
     Info(ss);
   }
   else
   {
-    if (m_Patient->GetHeartRateMaximum(FrequencyUnit::Per_min) < heartRate_bpm)
+    if (m_InitialPatient->GetHeartRateMaximum(FrequencyUnit::Per_min) < heartRate_bpm)
     {      
       ss << "Patient heart rate maximum must be greater than the baseline heart rate.";
       Error(ss);
       err = true;
     }    
-    ss << "Specified patient heart rate maximum of " << m_Patient->GetHeartRateMaximum(FrequencyUnit::Per_min) << " bpm differs from computed value of " << computedHeartRateMaximum_bpm << " bpm. No guarantees of model validity.";
+    ss << "Specified patient heart rate maximum of " << m_InitialPatient->GetHeartRateMaximum(FrequencyUnit::Per_min) << " bpm differs from computed value of " << computedHeartRateMaximum_bpm << " bpm. No guarantees of model validity.";
     Warning(ss);
   }
-  if (!m_Patient->HasHeartRateMinimum())
+  if (!m_InitialPatient->HasHeartRateMinimum())
   {
-    m_Patient->GetHeartRateMinimum().SetValue(0.001, FrequencyUnit::Per_min);    
+    m_InitialPatient->GetHeartRateMinimum().SetValue(0.001, FrequencyUnit::Per_min);
     ss << "No patient heart rate minimum set. Using a default value of " << 0.001 << " bpm.";
     Info(ss);
   }
-  if (m_Patient->GetHeartRateMinimum(FrequencyUnit::Per_min) > heartRate_bpm)
+  if (m_InitialPatient->GetHeartRateMinimum(FrequencyUnit::Per_min) > heartRate_bpm)
   {    
     ss << "Patient heart rate minimum must be less than the baseline heart rate.";
     Error(ss);
@@ -583,14 +585,14 @@ bool PulseController::SetupPatient()
   double systolicMin_mmHg = 90.0; //Hypotension
   double diastolicMin_mmHg = 60.0; //Hypotension
   double narrowestPulseFactor = 0.75; //From Wikipedia: Pulse Pressure
-  if (!m_Patient->HasSystolicArterialPressureBaseline())
+  if (!m_InitialPatient->HasSystolicArterialPressureBaseline())
   {
     systolic_mmHg = systolicStandard_mmHg;
-    m_Patient->GetSystolicArterialPressureBaseline().SetValue(systolic_mmHg, PressureUnit::mmHg);    
+    m_InitialPatient->GetSystolicArterialPressureBaseline().SetValue(systolic_mmHg, PressureUnit::mmHg);
     ss << "No patient systolic pressure baseline set. Using the standard value of " << systolic_mmHg << " mmHg.";
     Info(ss);
   }
-  systolic_mmHg = m_Patient->GetSystolicArterialPressureBaseline(PressureUnit::mmHg);
+  systolic_mmHg = m_InitialPatient->GetSystolicArterialPressureBaseline(PressureUnit::mmHg);
   if (systolic_mmHg < systolicMin_mmHg)
   {    
     ss << "Patient systolic pressure baseline of " << systolic_mmHg << " mmHg is too low. Hypotension must be modeled by adding/using a condition. Minimum systolic pressure baseline allowed is " << systolicMin_mmHg << " mmHg.";
@@ -604,14 +606,14 @@ bool PulseController::SetupPatient()
     err = true;
   }
 
-  if (!m_Patient->HasDiastolicArterialPressureBaseline())
+  if (!m_InitialPatient->HasDiastolicArterialPressureBaseline())
   {
     diastolic_mmHg = diastolicStandard_mmHg;
-    m_Patient->GetDiastolicArterialPressureBaseline().SetValue(diastolic_mmHg, PressureUnit::mmHg);    
+    m_InitialPatient->GetDiastolicArterialPressureBaseline().SetValue(diastolic_mmHg, PressureUnit::mmHg);
     ss << "No patient diastolic pressure baseline set. Using the standard value of " << diastolic_mmHg << " mmHg.";
     Info(ss);
   }
-  diastolic_mmHg = m_Patient->GetDiastolicArterialPressureBaseline(PressureUnit::mmHg);
+  diastolic_mmHg = m_InitialPatient->GetDiastolicArterialPressureBaseline(PressureUnit::mmHg);
   if (diastolic_mmHg < diastolicMin_mmHg)
   {    
     ss << "Patient diastolic pressure baseline of " << diastolic_mmHg << " mmHg is too low. Hypotension must be modeled by adding/using a condition. Minimum diastolic pressure baseline allowed is " << diastolicMin_mmHg << " mmHg.";
@@ -632,14 +634,14 @@ bool PulseController::SetupPatient()
     err = true;
   }
 
-  if (m_Patient->HasMeanArterialPressureBaseline())
+  if (m_InitialPatient->HasMeanArterialPressureBaseline())
   {    
     ss << "Patient mean arterial pressure baseline cannot be set. It is determined through homeostatic simulation.";
     Error(ss);
     err = true;
   }
   double MAP_mmHg = 1.0 / 3.0 * systolic_mmHg + 2.0 / 3.0 * diastolic_mmHg;
-  m_Patient->GetMeanArterialPressureBaseline().SetValue(MAP_mmHg, PressureUnit::mmHg);
+  m_InitialPatient->GetMeanArterialPressureBaseline().SetValue(MAP_mmHg, PressureUnit::mmHg);
 
   //Blood Volume ---------------------------------------------------------------
   /// \cite Morgan2006Clinical
@@ -647,14 +649,14 @@ bool PulseController::SetupPatient()
   double computedBloodVolume_mL = 65.6*pow(weight_kg, 1.02);
   double bloodVolumeMin_mL = computedBloodVolume_mL * 0.85; //Stage 1 Hypovolemia
   double bloodVolumeMax_mL = computedBloodVolume_mL * 1.15; //Just go the same distance on the other side
-  if (!m_Patient->HasBloodVolumeBaseline())
+  if (!m_InitialPatient->HasBloodVolumeBaseline())
   {
     bloodVolume_mL = computedBloodVolume_mL;
-    m_Patient->GetBloodVolumeBaseline().SetValue(bloodVolume_mL, VolumeUnit::mL);    
+    m_InitialPatient->GetBloodVolumeBaseline().SetValue(bloodVolume_mL, VolumeUnit::mL);
     ss << "No patient blood volume baseline set. Using a computed value of " << computedBloodVolume_mL << " mL.";
     Info(ss);
   }
-  bloodVolume_mL = m_Patient->GetBloodVolumeBaseline(VolumeUnit::mL);
+  bloodVolume_mL = m_InitialPatient->GetBloodVolumeBaseline(VolumeUnit::mL);
   if(bloodVolume_mL != computedBloodVolume_mL)
   {    
     ss << "Specified patient blood volume baseline of " << bloodVolume_mL << " mL differs from computed value of " << computedBloodVolume_mL << " mL. No guarantees of model validity and there is a good chance the patient will not reach a starting homeostatic point.";
@@ -680,14 +682,14 @@ bool PulseController::SetupPatient()
   double respirationRateStandard_bpm = 12.0;
   double respirationRateMax_bpm = 20.0; 
   double respirationRateMin_bpm = 8.0;
-  if (!m_Patient->HasRespirationRateBaseline())
+  if (!m_InitialPatient->HasRespirationRateBaseline())
   {
     respirationRate_bpm = respirationRateStandard_bpm;
-    m_Patient->GetRespirationRateBaseline().SetValue(respirationRate_bpm, FrequencyUnit::Per_min);    
+    m_InitialPatient->GetRespirationRateBaseline().SetValue(respirationRate_bpm, FrequencyUnit::Per_min);
     ss << "No patient respiration rate baseline set. Using the standard value of " << respirationRate_bpm << " bpm.";
     Info(ss);
   }
-  respirationRate_bpm = m_Patient->GetRespirationRateBaseline(FrequencyUnit::Per_min);
+  respirationRate_bpm = m_InitialPatient->GetRespirationRateBaseline(FrequencyUnit::Per_min);
   if (respirationRate_bpm > respirationRateMax_bpm)
   {    
     ss << "Patient respiration rate baseline of " << respirationRate_bpm << " bpm is too high. Non-healthy values must be modeled by adding/using a condition. Maximum respiration rate baseline allowed is " << respirationRateMax_bpm << " bpm.";
@@ -706,14 +708,14 @@ bool PulseController::SetupPatient()
   double rightLungRatioStandard = 0.525;
   double rightLungRatioMax = 0.60;
   double rightLungRatioMin = 0.50;
-  if (!m_Patient->HasRightLungRatio())
+  if (!m_InitialPatient->HasRightLungRatio())
   {
     rightLungRatio = rightLungRatioStandard;
-    m_Patient->GetRightLungRatio().SetValue(rightLungRatio);    
+    m_InitialPatient->GetRightLungRatio().SetValue(rightLungRatio);
     ss << "No patient right lung ratio set. Using the standard value of " << rightLungRatio << ".";
     Info(ss);
   }
-  rightLungRatio = m_Patient->GetRightLungRatio().GetValue();
+  rightLungRatio = m_InitialPatient->GetRightLungRatio().GetValue();
   if (rightLungRatio > rightLungRatioMax)
   {    
     ss << "Patient right lung ratio of " << rightLungRatio << " is too high. Non-healthy values must be modeled by adding/using a condition. Maximum right lung ratio allowed is " << rightLungRatioMax << ".";
@@ -732,14 +734,14 @@ bool PulseController::SetupPatient()
   /// \cite ganong1995review
   double totalLungCapacity_L;
   double computedTotalLungCapacity_L = 80.0 * idealWeight_kg / 1000.0;
-  if (!m_Patient->HasTotalLungCapacity())
+  if (!m_InitialPatient->HasTotalLungCapacity())
   {
     totalLungCapacity_L = computedTotalLungCapacity_L;
-    m_Patient->GetTotalLungCapacity().SetValue(totalLungCapacity_L, VolumeUnit::L);    
+    m_InitialPatient->GetTotalLungCapacity().SetValue(totalLungCapacity_L, VolumeUnit::L);
     ss << "No patient total lung capacity set. Using a computed value of " << computedTotalLungCapacity_L << " L.";
     Info(ss);
   }
-  totalLungCapacity_L = m_Patient->GetTotalLungCapacity(VolumeUnit::L);
+  totalLungCapacity_L = m_InitialPatient->GetTotalLungCapacity(VolumeUnit::L);
   if (totalLungCapacity_L != computedTotalLungCapacity_L)
   {    
     ss << "Specified total lung capacity of " << totalLungCapacity_L << " L differs from computed value of " << computedTotalLungCapacity_L << " L. No guarantees of model validity.";
@@ -748,14 +750,14 @@ bool PulseController::SetupPatient()
   
   double functionalResidualCapacity_L;
   double computedFunctionalResidualCapacity_L = 30.0 * idealWeight_kg / 1000.0;
-  if (!m_Patient->HasFunctionalResidualCapacity())
+  if (!m_InitialPatient->HasFunctionalResidualCapacity())
   {
     functionalResidualCapacity_L = computedFunctionalResidualCapacity_L;
-    m_Patient->GetFunctionalResidualCapacity().SetValue(functionalResidualCapacity_L, VolumeUnit::L);    
+    m_InitialPatient->GetFunctionalResidualCapacity().SetValue(functionalResidualCapacity_L, VolumeUnit::L);
     ss << "No patient functional residual capacity set. Using a computed value of " << computedFunctionalResidualCapacity_L << " L.";
     Info(ss);
   }
-  functionalResidualCapacity_L = m_Patient->GetFunctionalResidualCapacity(VolumeUnit::L);
+  functionalResidualCapacity_L = m_InitialPatient->GetFunctionalResidualCapacity(VolumeUnit::L);
   if (functionalResidualCapacity_L != computedFunctionalResidualCapacity_L)
   {    
     ss << "Specified functional residual capacity of " << functionalResidualCapacity_L << " L differs from computed value of " << computedFunctionalResidualCapacity_L << " L. No guarantees of model validity.";
@@ -764,45 +766,45 @@ bool PulseController::SetupPatient()
 
   double residualVolume_L;
   double computRedesidualVolume_L = 16.0 * idealWeight_kg / 1000.0;
-  if (!m_Patient->HasResidualVolume())
+  if (!m_InitialPatient->HasResidualVolume())
   {
     residualVolume_L = computRedesidualVolume_L;
-    m_Patient->GetResidualVolume().SetValue(residualVolume_L, VolumeUnit::L);    
+    m_InitialPatient->GetResidualVolume().SetValue(residualVolume_L, VolumeUnit::L);
     ss << "No patient residual volume set. Using a computed value of " << computRedesidualVolume_L << " L.";
     Info(ss);
   }
-  residualVolume_L = m_Patient->GetResidualVolume(VolumeUnit::L);
+  residualVolume_L = m_InitialPatient->GetResidualVolume(VolumeUnit::L);
   if (residualVolume_L != computRedesidualVolume_L)
   {    
     ss << "Specified residual volume of " << residualVolume_L << " L differs from computed value of " << computRedesidualVolume_L << " L. No guarantees of model validity.";
     Warning(ss);
   }
   
-  if (m_Patient->HasTidalVolumeBaseline())
+  if (m_InitialPatient->HasTidalVolumeBaseline())
   {    
     ss << "Patient tidal volume baseline cannot be set. It is determined through homeostatic simulation.";
     Error(ss);
     err = true;
   }
-  if (m_Patient->HasVitalCapacity())
+  if (m_InitialPatient->HasVitalCapacity())
   {    
     ss << "Patient vital capacity cannot be set. It is directly computed via other lung volume patient parameters.";
     Error(ss);
     err = true;
   }
-  if (m_Patient->HasExpiratoryReserveVolume())
+  if (m_InitialPatient->HasExpiratoryReserveVolume())
   {    
     ss << "Patient expiratory reserve volume cannot be set. It is directly computed via other lung volume patient parameters.";
     Error(ss);
     err = true;
   }
-  if (m_Patient->HasInspiratoryReserveVolume())
+  if (m_InitialPatient->HasInspiratoryReserveVolume())
   {    
     ss << "Patient inspiratory reserve volume cannot be set. It is directly computed via other lung volume patient parameters.";
     Error(ss);
     err = true;
   }
-  if (m_Patient->HasInspiratoryCapacity())
+  if (m_InitialPatient->HasInspiratoryCapacity())
   {    
     ss << "Patient inspiratory capacity cannot be set. It is directly computed via other lung volume patient parameters.";
     Error(ss);
@@ -822,23 +824,23 @@ bool PulseController::SetupPatient()
     Error(ss);
     err = true;
   }
-  m_Patient->GetTidalVolumeBaseline().SetValue(tidalVolume_L, VolumeUnit::L); //This is overwritten after stabilization  
+  m_InitialPatient->GetTidalVolumeBaseline().SetValue(tidalVolume_L, VolumeUnit::L); //This is overwritten after stabilization  
   ss << "Patient tidal volume computed and set to " << tidalVolume_L << " L.";
   Info(ss);
 
-  m_Patient->GetVitalCapacity().SetValue(vitalCapacity, VolumeUnit::L);  
+  m_InitialPatient->GetVitalCapacity().SetValue(vitalCapacity, VolumeUnit::L);
   ss << "Patient vital capacity computed and set to " << vitalCapacity << " L.";
   Info(ss);
 
-  m_Patient->GetExpiratoryReserveVolume().SetValue(expiratoryReserveVolume, VolumeUnit::L);  
+  m_InitialPatient->GetExpiratoryReserveVolume().SetValue(expiratoryReserveVolume, VolumeUnit::L);
   ss << "Patient expiratory reserve volume computed and set to " << expiratoryReserveVolume << " L.";
   Info(ss);
 
-  m_Patient->GetInspiratoryReserveVolume().SetValue(inspiratoryReserveVolume, VolumeUnit::L);  
+  m_InitialPatient->GetInspiratoryReserveVolume().SetValue(inspiratoryReserveVolume, VolumeUnit::L);
   ss << "Patient inspiratory reserve volume computed and set to " << inspiratoryReserveVolume << " L.";
   Info(ss);
 
-  m_Patient->GetInspiratoryCapacity().SetValue(inspiratoryCapacity, VolumeUnit::L);  
+  m_InitialPatient->GetInspiratoryCapacity().SetValue(inspiratoryCapacity, VolumeUnit::L);
   ss << "Patient inspiratory capacity computed and set to " << inspiratoryCapacity << " L.";
   Info(ss);
 
@@ -850,14 +852,14 @@ bool PulseController::SetupPatient()
   /// \cite ganong1995review
   double standardTotalLungCapacity_L = 6.17; //This is the Total Lung Capacity of our standard patient  
   double computedAlveoliSurfaceArea_m2 = totalLungCapacity_L / standardTotalLungCapacity_L * standardAlveoliSurfaceArea_m2;
-  if (!m_Patient->HasAlveoliSurfaceArea())
+  if (!m_InitialPatient->HasAlveoliSurfaceArea())
   {
     alveoliSurfaceArea_m2 = computedAlveoliSurfaceArea_m2;
-    m_Patient->GetAlveoliSurfaceArea().SetValue(alveoliSurfaceArea_m2, AreaUnit::m2);
+    m_InitialPatient->GetAlveoliSurfaceArea().SetValue(alveoliSurfaceArea_m2, AreaUnit::m2);
     ss << "No patient alveoli surface area set. Using a computed value of " << computedAlveoliSurfaceArea_m2 << " m^2.";
     Info(ss);
   }
-  alveoliSurfaceArea_m2 = m_Patient->GetAlveoliSurfaceArea(AreaUnit::m2);
+  alveoliSurfaceArea_m2 = m_InitialPatient->GetAlveoliSurfaceArea(AreaUnit::m2);
   if (alveoliSurfaceArea_m2 != computedAlveoliSurfaceArea_m2)
   {
     ss << "Specified alveoli surface area of " << alveoliSurfaceArea_m2 << " m^2 differs from computed value of " << computedAlveoliSurfaceArea_m2 << " m^2. No guarantees of model validity.";
@@ -868,14 +870,14 @@ bool PulseController::SetupPatient()
   /// \cite du1989formula
   double skinSurfaceArea_m2;
   double computSkinSurfaceArea_m2 = 0.20247 * pow(weight_kg, 0.425) * pow(Convert(height_cm, LengthUnit::cm, LengthUnit::m), 0.725);
-  if (!m_Patient->HasSkinSurfaceArea())
+  if (!m_InitialPatient->HasSkinSurfaceArea())
   {
     skinSurfaceArea_m2 = computSkinSurfaceArea_m2;
-    m_Patient->GetSkinSurfaceArea().SetValue(skinSurfaceArea_m2, AreaUnit::m2);    
+    m_InitialPatient->GetSkinSurfaceArea().SetValue(skinSurfaceArea_m2, AreaUnit::m2);
     ss << "No patient skin surface area set. Using a computed value of " << computSkinSurfaceArea_m2 << " m^2.";
     Info(ss);
   }
-  skinSurfaceArea_m2 = m_Patient->GetSkinSurfaceArea(AreaUnit::m2);
+  skinSurfaceArea_m2 = m_InitialPatient->GetSkinSurfaceArea(AreaUnit::m2);
   if (skinSurfaceArea_m2 != computSkinSurfaceArea_m2)
   {    
     ss << "Specified skin surface area of " << skinSurfaceArea_m2 << " cm differs from computed value of " << computSkinSurfaceArea_m2 << " cm. No guarantees of model validity.";
@@ -887,25 +889,28 @@ bool PulseController::SetupPatient()
   /// \cite roza1984metabolic
   double BMR_kcal_Per_day;
   double computBMR_kcal_Per_day = 88.632 + 13.397 * weight_kg + 4.799 * height_cm - 5.677 * age_yr; //Male
-  if (m_Patient->GetSex() == ePatient_Sex::Female)
+  if (m_InitialPatient->GetSex() == ePatient_Sex::Female)
   {
     computBMR_kcal_Per_day = 447.593 + 9.247 * weight_kg + 3.098 * height_cm - 4.330 * age_yr; //Female
   }
-  if (!m_Patient->HasBasalMetabolicRate())
+  if (!m_InitialPatient->HasBasalMetabolicRate())
   {
     BMR_kcal_Per_day = computBMR_kcal_Per_day;
-    m_Patient->GetBasalMetabolicRate().SetValue(BMR_kcal_Per_day, PowerUnit::kcal_Per_day);
+    m_InitialPatient->GetBasalMetabolicRate().SetValue(BMR_kcal_Per_day, PowerUnit::kcal_Per_day);
     
     ss << "No patient basal metabolic rate set. Using a computed value of " << computBMR_kcal_Per_day << " kcal/day.";
     Info(ss);
   }
-  BMR_kcal_Per_day = m_Patient->GetBasalMetabolicRate(PowerUnit::kcal_Per_day);
+  BMR_kcal_Per_day = m_InitialPatient->GetBasalMetabolicRate(PowerUnit::kcal_Per_day);
   if (BMR_kcal_Per_day != computBMR_kcal_Per_day)
   {    
     ss << "Specified basal metabolic rate of " << BMR_kcal_Per_day << " kcal/day differs from computed value of " << computBMR_kcal_Per_day << " kcal/day. No guarantees of model validity.";
     Warning(ss);
   }
-  
+
+  // Copy the initial patient to the current patient
+  m_CurrentPatient->Copy(*m_InitialPatient);
+
   if (err)
     return false;
   return true;
@@ -1100,13 +1105,13 @@ bool PulseController::CreateCircuitsAndCompartments()
 void PulseController::SetupCardiovascular()
 {
   Info("Setting Up Cardiovascular");
-  bool male = m_Patient->GetSex() == ePatient_Sex::Male ? true : false;
-  double RightLungRatio = m_Patient->GetRightLungRatio().GetValue();
+  bool male = m_InitialPatient->GetSex() == ePatient_Sex::Male ? true : false;
+  double RightLungRatio = m_InitialPatient->GetRightLungRatio().GetValue();
   double LeftLungRatio = 1 - RightLungRatio;
-  double bloodVolume_mL = m_Patient->GetBloodVolumeBaseline(VolumeUnit::mL);
+  double bloodVolume_mL = m_InitialPatient->GetBloodVolumeBaseline(VolumeUnit::mL);
 
-  double systolicPressureTarget_mmHg = m_Patient->GetSystolicArterialPressureBaseline(PressureUnit::mmHg);
-  double heartRate_bpm = m_Patient->GetHeartRateBaseline(FrequencyUnit::Per_min);
+  double systolicPressureTarget_mmHg = m_InitialPatient->GetSystolicArterialPressureBaseline(PressureUnit::mmHg);
+  double heartRate_bpm = m_InitialPatient->GetHeartRateBaseline(FrequencyUnit::Per_min);
   double strokeVolumeTarget_mL = 81.0;
   double cardiacOutputTarget_mL_Per_s = heartRate_bpm / 60.0 * strokeVolumeTarget_mL;
   double diastolicPressureTarget_mmHg = 80.0;
@@ -2914,7 +2919,7 @@ void PulseController::SetupTissue()
 
   //Typical ICRP Female - From ICRP
   //Total Mass (kg)
-  if (m_Patient->GetSex() == ePatient_Sex::Female)
+  if (m_InitialPatient->GetSex() == ePatient_Sex::Female)
   {
     AdiposeTissueMass = 19.0;
     BoneTissueMass = 7.8;
@@ -2934,39 +2939,39 @@ void PulseController::SetupTissue()
   //Scale things based on patient parameters -------------------------------
 
   //Modify adipose (i.e. fat) directly using the body fat fraction
-  AdiposeTissueMass = m_Patient->GetBodyFatFraction().GetValue() * m_Patient->GetWeight().GetValue(MassUnit::kg);
+  AdiposeTissueMass = m_InitialPatient->GetBodyFatFraction().GetValue() * m_InitialPatient->GetWeight().GetValue(MassUnit::kg);
 
   //Modify skin based on total surface area
   //Male
   double standardPatientWeight_lb = 170.0;
   double standardPatientHeight_in = 71.0;
-  if (m_Patient->GetSex() == ePatient_Sex::Female)
+  if (m_InitialPatient->GetSex() == ePatient_Sex::Female)
   {
     //Female
     standardPatientWeight_lb = 130.0;
     standardPatientHeight_in = 64.0;
   }
   double typicalSkinSurfaceArea_m2 = 0.20247 * pow(Convert(standardPatientWeight_lb, MassUnit::lb, MassUnit::kg), 0.425) * pow(Convert(standardPatientHeight_in, LengthUnit::in, LengthUnit::m), 0.725);
-  double patientSkinArea_m2 = m_Patient->GetSkinSurfaceArea(AreaUnit::m2);
+  double patientSkinArea_m2 = m_InitialPatient->GetSkinSurfaceArea(AreaUnit::m2);
   SkinTissueMass = SkinTissueMass * patientSkinArea_m2 / typicalSkinSurfaceArea_m2;
     
   //Modify most based on lean body mass
   //Hume, R (Jul 1966). "Prediction of lean body mass from height and weight." Journal of clinical pathology. 19 (4): 389�91. doi:10.1136/jcp.19.4.389. PMC 473290. PMID 5929341.
   //double typicalLeanBodyMass_kg = 0.32810 * Convert(standardPatientWeight_lb, MassUnit::lb, MassUnit::kg) + 0.33929 * Convert(standardPatientHeight_in, LengthUnit::in, LengthUnit::cm) - 29.5336; //Male
-  //if (m_Patient->GetSex() == ePatient_Sex::Female)
+  //if (m_InitialPatient->GetSex() == ePatient_Sex::Female)
   //{
    // typicalLeanBodyMass_kg = 0.29569 * Convert(standardPatientWeight_lb, MassUnit::lb, MassUnit::kg) + 0.41813 * Convert(standardPatientHeight_in, LengthUnit::in, LengthUnit::cm) - 43.2933; //Female
   //}
 
   //Male
   double standardFatFraction = 0.21;
-  if (m_Patient->GetSex() == ePatient_Sex::Female)
+  if (m_InitialPatient->GetSex() == ePatient_Sex::Female)
   {
     //Female
     standardFatFraction = 0.28;
   }
   double standardLeanBodyMass_kg = Convert(standardPatientWeight_lb, MassUnit::lb, MassUnit::kg) * (1.0 - standardFatFraction);
-  double patientLeanBodyMass_kg = m_Patient->GetLeanBodyMass(MassUnit::kg);
+  double patientLeanBodyMass_kg = m_InitialPatient->GetLeanBodyMass(MassUnit::kg);
   double leanBodyMassFractionOfTypical = patientLeanBodyMass_kg / standardLeanBodyMass_kg;
 
   BoneTissueMass       *= leanBodyMassFractionOfTypical;
@@ -3649,7 +3654,7 @@ void PulseController::SetupTissue()
 void PulseController::SetupRespiratory()
 {
   Info("Setting Up Respiratory");
-  double RightLungRatio = m_Patient->GetRightLungRatio().GetValue();
+  double RightLungRatio = m_InitialPatient->GetRightLungRatio().GetValue();
   double LeftLungRatio = 1 - RightLungRatio;
 
   SEFluidCircuit& cRespiratory = m_Circuits->GetRespiratoryCircuit();
@@ -3675,8 +3680,8 @@ void PulseController::SetupRespiratory()
   double BronchiResistance = 2 * (TotalAirwayResistance_cmH2O_s_Per_L - TracheaResistance) - AlveoliDuctResistancePercent *TotalAirwayResistance_cmH2O_s_Per_L;
   double AlveoliDuctResistance = 2 * (TotalAirwayResistance_cmH2O_s_Per_L - TracheaResistance) - BronchiResistance;
 
-  double FunctionalResidualCapacity_L = m_Patient->GetFunctionalResidualCapacity(VolumeUnit::L);
-  double anatomicDeadSpaceVolume_L = 0.002 * m_Patient->GetWeight(MassUnit::kg); //Should not change with diseases /// \cite Levitzky2013pulmonary
+  double FunctionalResidualCapacity_L = m_InitialPatient->GetFunctionalResidualCapacity(VolumeUnit::L);
+  double anatomicDeadSpaceVolume_L = 0.002 * m_InitialPatient->GetWeight(MassUnit::kg); //Should not change with diseases /// \cite Levitzky2013pulmonary
   double alveolarDeadSpaceVolume_L = 0.0;  //Should change with certain diseases /// \cite Levitzky2013pulmonary
   double physiologicDeadSpaceVolume_L = anatomicDeadSpaceVolume_L + alveolarDeadSpaceVolume_L;
   //double PleuralVolume_L = 20.0 / 1000.0; //this is a liquid volume  /// \cite Levitzky2013pulmonary
@@ -4771,11 +4776,11 @@ void PulseController::SetupInternalTemperature()
 
   double skinMassFraction = 0.09; //0.09 is fraction of mass that the skin takes up in a typical human \cite herman2006physics
   SEThermalCircuitPath& CoreToTemperatureGround = cIntemperature.CreatePath(Core, Ground, pulse::InternalTemperaturePath::InternalCoreToGround);
-  CoreToTemperatureGround.GetCapacitanceBaseline().SetValue((1.0 - skinMassFraction)*m_Patient->GetWeight(MassUnit::kg) * GetConfiguration().GetBodySpecificHeat(HeatCapacitancePerMassUnit::J_Per_K_kg), HeatCapacitanceUnit::J_Per_K);
+  CoreToTemperatureGround.GetCapacitanceBaseline().SetValue((1.0 - skinMassFraction)* m_InitialPatient->GetWeight(MassUnit::kg) * GetConfiguration().GetBodySpecificHeat(HeatCapacitancePerMassUnit::J_Per_K_kg), HeatCapacitanceUnit::J_Per_K);
   Core.GetHeatBaseline().SetValue(CoreToTemperatureGround.GetCapacitanceBaseline().GetValue(HeatCapacitanceUnit::J_Per_K) * Core.GetTemperature().GetValue(TemperatureUnit::K), EnergyUnit::J);
 
   SEThermalCircuitPath& SkinToTemperatureGround = cIntemperature.CreatePath(Skin, Ground, pulse::InternalTemperaturePath::InternalSkinToGround);
-  SkinToTemperatureGround.GetCapacitanceBaseline().SetValue(skinMassFraction*m_Patient->GetWeight(MassUnit::kg) * GetConfiguration().GetBodySpecificHeat(HeatCapacitancePerMassUnit::J_Per_K_kg), HeatCapacitanceUnit::J_Per_K);
+  SkinToTemperatureGround.GetCapacitanceBaseline().SetValue(skinMassFraction* m_InitialPatient->GetWeight(MassUnit::kg) * GetConfiguration().GetBodySpecificHeat(HeatCapacitancePerMassUnit::J_Per_K_kg), HeatCapacitanceUnit::J_Per_K);
   Skin.GetHeatBaseline().SetValue(SkinToTemperatureGround.GetCapacitanceBaseline().GetValue(HeatCapacitanceUnit::J_Per_K) * Skin.GetTemperature().GetValue(TemperatureUnit::K), EnergyUnit::J);
 
   cIntemperature.SetNextAndCurrentFromBaselines();

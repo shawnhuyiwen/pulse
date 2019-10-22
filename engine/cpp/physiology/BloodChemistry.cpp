@@ -328,7 +328,6 @@ void BloodChemistry::PostProcess()
 //--------------------------------------------------------------------------------------------------
 void BloodChemistry::CheckBloodGasLevels()
 {
-  SEPatient& patient = m_data.GetPatient();
   double hypoxiaFlag = 65.0; //Arterial O2 Partial Pressure in mmHg \cite Pierson2000Pathophysiology
   double hypoxiaIrreversible = 15.0; // \cite hobler1973HypoxemiaCardiacOutput
 

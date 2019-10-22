@@ -67,7 +67,8 @@ public:
 
   PulseSubstances&                        GetSubstances();
 
-  SEPatient&                              GetPatient();
+  const SEPatient&                        GetInitialPatient();
+  SEPatient&                              GetCurrentPatient();
   bool                                    GetPatientAssessment(SEPatientAssessment& assessment) const;
 
   SEBloodChemistrySystem&                 GetBloodChemistry();
@@ -178,7 +179,8 @@ protected:
 
   std::unique_ptr<Inhaler>                                      m_Inhaler;
 
-  std::unique_ptr<SEPatient>                                    m_Patient;
+  std::unique_ptr<SEPatient>                                    m_InitialPatient;
+  std::unique_ptr<SEPatient>                                    m_CurrentPatient;
 
   std::unique_ptr<SEEventManager>                               m_EventManager;
 

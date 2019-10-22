@@ -147,42 +147,44 @@ message RespiratoryData
   double                         BottomBreathAlveoliPressure_cmH2O                   = 23;
   double                         BottomBreathDriverPressure_cmH2O                    = 24;
   double                         BottomBreathPleuralPressure_cmH2O                   = 25;
-  cdm.RunningAverageData         BloodPHRunningAverage                               = 26;
+  double                         PeakAlveolarPressure_cmH2O                          = 26;
+  double                         MaximalAlveolarPressure_cmH2O                       = 27;
+  cdm.RunningAverageData         BloodPHRunningAverage                               = 28;
   
-  double                         ArterialO2PartialPressure_mmHg                      = 27;
-  double                         ArterialCO2PartialPressure_mmHg                     = 28;
-  double                         BreathingCycleTime_s                                = 29;
-  double                         DefaultDrivePressure_cmH2O                          = 30;
-  double                         DriverInspirationTime_s                             = 31;
-  double                         DriverPressure_cmH2O                                = 32;
-  double                         DriverPressureMin_cmH2O                             = 33;
-  double                         ElapsedBreathingCycleTime_min                       = 34;
-  double                         IEscaleFactor                                       = 35;
-  double                         InstantaneousFunctionalResidualCapacity_L           = 36;
-  double                         MaxDriverPressure_cmH2O                             = 37;
-  double                         PeakRespiratoryDrivePressure_cmH2O                  = 38;
-  double                         PreviousTargetAlveolarVentilation_L_Per_min         = 39;
-  double                         VentilationFrequency_Per_min                        = 40;
-  double                         VentilationToTidalVolumeSlope                       = 41;
-  cdm.RunningAverageData         ArterialO2RunningAverage_mmHg                       = 42;
-  cdm.RunningAverageData         ArterialCO2RunningAverage_mmHg                      = 43;
+  double                         ArterialO2PartialPressure_mmHg                      = 29;
+  double                         ArterialCO2PartialPressure_mmHg                     = 30;
+  double                         BreathingCycleTime_s                                = 31;
+  double                         DefaultDrivePressure_cmH2O                          = 32;
+  double                         DriverInspirationTime_s                             = 33;
+  double                         DriverPressure_cmH2O                                = 34;
+  double                         DriverPressureMin_cmH2O                             = 35;
+  double                         ElapsedBreathingCycleTime_min                       = 36;
+  double                         IEscaleFactor                                       = 37;
+  double                         InstantaneousFunctionalResidualCapacity_L           = 38;
+  double                         MaxDriverPressure_cmH2O                             = 39;
+  double                         PeakRespiratoryDrivePressure_cmH2O                  = 40;
+  double                         PreviousTargetAlveolarVentilation_L_Per_min         = 41;
+  double                         VentilationFrequency_Per_min                        = 42;
+  double                         VentilationToTidalVolumeSlope                       = 43;
+  cdm.RunningAverageData         ArterialO2RunningAverage_mmHg                       = 44;
+  cdm.RunningAverageData         ArterialCO2RunningAverage_mmHg                      = 45;
   // Conscious Breathing
-  bool                           ConsciousBreathing                                  = 44;
-  double                         ConsciousRespirationPeriod_s                        = 45;
-  double                         ConsciousRespirationRemainingPeriod_s               = 46;
-  double                         ExpiratoryReserveVolumeFraction                     = 47;
-  double                         InspiratoryCapacityFraction                         = 48;
-  double                         ConsciousStartPressure_cmH2O                        = 49;
-  double                         ConsciousEndPressure_cmH2O                          = 50;
+  bool                           ConsciousBreathing                                  = 46;
+  double                         ConsciousRespirationPeriod_s                        = 47;
+  double                         ConsciousRespirationRemainingPeriod_s               = 48;
+  double                         ExpiratoryReserveVolumeFraction                     = 49;
+  double                         InspiratoryCapacityFraction                         = 50;
+  double                         ConsciousStartPressure_cmH2O                        = 51;
+  double                         ConsciousEndPressure_cmH2O                          = 52;
   // Muscle Pressure Waveform
-  double                         ExpiratoryHoldFraction                              = 51;
-  double                         ExpiratoryReleaseFraction                           = 52;
-  double                         ExpiratoryRiseFraction                              = 53;
-  double                         InspiratoryHoldFraction                             = 54;
-  double                         InspiratoryReleaseFraction                          = 55;
-  double                         InspiratoryRiseFraction                             = 56;
-  double                         InspiratoryToExpiratoryPauseFraction                = 57;
-  double                         ResidueFraction                                     = 58;
+  double                         ExpiratoryHoldFraction                              = 53;
+  double                         ExpiratoryReleaseFraction                           = 54;
+  double                         ExpiratoryRiseFraction                              = 55;
+  double                         InspiratoryHoldFraction                             = 56;
+  double                         InspiratoryReleaseFraction                          = 57;
+  double                         InspiratoryRiseFraction                             = 58;
+  double                         InspiratoryToExpiratoryPauseFraction                = 59;
+  double                         ResidueFraction                                     = 60;
 }
 
 message TissueData

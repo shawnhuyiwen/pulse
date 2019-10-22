@@ -100,7 +100,6 @@ protected:
   SERunningAverage* m_rightRenalArterialPressure_mmHg_runningAvg;
   
   // Stateless member variable (Set in SetUp())
-  SEPatient*          m_patient;
   //Circuits
   SEFluidCircuit*     m_RenalCircuit;
   //Nodes

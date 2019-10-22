@@ -123,7 +123,7 @@ bool PulseEngine::InitializeEngine(const std::string& patient_configuration, Ser
 bool PulseEngine::InitializeEngine(const SEPatientConfiguration& patient_configuration, const SEEngineConfiguration* config)
 {
   if (patient_configuration.HasPatient())
-    m_Patient->Copy(*patient_configuration.GetPatient());
+    m_InitialPatient->Copy(*patient_configuration.GetPatient());
   else if (patient_configuration.HasPatientFile())
   {
     std::string pFile = patient_configuration.GetPatientFile();
@@ -132,7 +132,7 @@ bool PulseEngine::InitializeEngine(const SEPatientConfiguration& patient_configu
       pFile = "./patients/";
       pFile += patient_configuration.GetPatientFile();
     }
-    if (!m_Patient->SerializeFromFile(pFile, JSON))// TODO Support all serialization formats
+    if (!m_InitialPatient->SerializeFromFile(pFile, JSON))// TODO Support all serialization formats
       return false;
   }
   else
@@ -172,6 +172,8 @@ bool PulseEngine::InitializeEngine(const SEPatientConfiguration& patient_configu
   if(patient_configuration.HasConditions())
     m_Conditions->Copy(*patient_configuration.GetConditions());
   AtSteadyState(EngineState::AtInitialStableState);// This will peek at conditions
+  // Copy any changes to the current patient to the initial patient
+  m_InitialPatient->Copy(*m_CurrentPatient);
 
   m_State = EngineState::SecondaryStabilization;
   // Apply conditions and anything else to the physiology
@@ -283,7 +285,7 @@ bool PulseEngine::ProcessAction(const SEAction& action)
       {
         std::stringstream ss;
         MakeDirectory("./states");
-        ss << "./states/" << m_Patient->GetName() << "@" << GetSimulationTime(TimeUnit::s) << "s.json";
+        ss << "./states/" << m_InitialPatient->GetName() << "@" << GetSimulationTime(TimeUnit::s) << "s.json";
         Info("Saving " + ss.str());
         SerializeToFile(ss.str(), JSON);
         // Debug code to make sure things are consistent
@@ -406,9 +408,9 @@ const SEEngineConfiguration* PulseEngine::GetConfiguration() const
   return PulseController::m_Config.get();
 }
 
-const SEPatient&  PulseEngine::GetPatient() const
+const SEPatient& PulseEngine::GetPatient() const
 {
-  return *PulseController::m_Patient.get();
+  return *PulseController::m_CurrentPatient.get();
 }
 
 bool PulseEngine::GetPatientAssessment(SEPatientAssessment& assessment) const

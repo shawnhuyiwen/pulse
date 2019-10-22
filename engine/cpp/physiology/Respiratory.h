@@ -128,8 +128,8 @@ protected:
   double m_BottomBreathPleuralPressure_cmH2O;
   double m_BottomBreathAlveoliPressure_cmH2O;
   double m_BottomBreathDriverPressure_cmH2O;
-  double m_PeakAlveolarPressure_cmH2O; //Aaron - Add to serialization
-  double m_MaximalAlveolarPressure_cmH2O; //Aaron - Add to serialization
+  double m_PeakAlveolarPressure_cmH2O;
+  double m_MaximalAlveolarPressure_cmH2O;
   SERunningAverage* m_BloodPHRunningAverage;
 
   //   Respiratory Driver
@@ -185,7 +185,6 @@ protected:
   double m_AverageLocalTissueBronchodilationEffects;
 
   // Patient
-  SEPatient* m_Patient;
   SEPatientActionCollection* m_PatientActions;
   //Compartments
   SEGasCompartment* m_Environment;
