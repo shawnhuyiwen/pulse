@@ -79,6 +79,7 @@ Our user manual offers in-depth details of all the Pulse asset functionality. It
     </center>
   </td>
   <td width="40%" valign="top" style="border-top:2px solid Gainsboro; padding:3px">
+      &bull; <a href="https://traumasimulator.com">Trauma Simulator Website</a><br>
       &bull; <a href="https://militarysimulation.training/technology/exonicus-kitware-trauma-simulator-%ef%bb%bf/">Military Simulation & Training Magazine Article</a><br>
       &bull; <a href="https://blog.kitware.com/exonicus-and-kitware-collaborate-to-develop-a-trauma-simulator-using-the-pulse-physiology-engine/">Kitware Blog Post</a><br>
   </td>

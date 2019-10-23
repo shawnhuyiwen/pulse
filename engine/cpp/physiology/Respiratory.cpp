@@ -287,7 +287,7 @@ void Respiratory::Initialize()
 
   GetPulmonaryCompliance().SetValue(0.1, VolumePerPressureUnit::L_Per_cmH2O);
   GetLungCompliance().SetValue(0.1, VolumePerPressureUnit::L_Per_cmH2O);
-  GetChestWallCompliance().SetValue(0.1, VolumePerPressureUnit::L_Per_cmH2O);
+  GetChestWallCompliance().SetValue(0.2, VolumePerPressureUnit::L_Per_cmH2O);
   GetPulmonaryElastance().SetValue(1.0 / 0.1, PressurePerVolumeUnit::cmH2O_Per_L);
 
   // Muscle Pressure Waveform
@@ -448,7 +448,7 @@ void Respiratory::AtSteadyState()
   Info(ss);
   ss << typeString << "Patient functional residual capacity = " << m_FunctionalResidualCapacity_L << " L.";
   Info(ss);
-  ss << typeString << "Patient totoal lung capacity = " << m_TotalLungCapacity_L << " L.";
+  ss << typeString << "Patient total lung capacity = " << m_TotalLungCapacity_L << " L.";
   Info(ss);
   ss << typeString << "Patient residual volume = " << m_ResidualVolume_L << " L.";
   Info(ss);
@@ -541,7 +541,7 @@ void Respiratory::Process()
   CalculateVitalSigns();
 
 #ifdef DEBUG
-  Debugging();
+  Debugging(RespirationCircuit);
 #endif  
 }
 
@@ -1290,7 +1290,7 @@ void Respiratory::RespiratoryDriver()
     }
 
     double tau = 0.0;
-    double tauDenominator = 10.0; //lower = "rounder"... too low (seems to be < 5) starts creating incontinuities
+    double tauDenominator = 4.0; //lower = "rounder"... too low (seems to be < 5) starts creating incontinuities
     if (m_BreathingCycleTime_s >= ResidueFractionTimeStart_s)
     {
       m_DriverPressure_cmH2O = 0.0;
@@ -1352,7 +1352,7 @@ void Respiratory::RespiratoryDriver()
 //--------------------------------------------------------------------------------------------------
 void Respiratory::SetBreathCycleFractions()
 {
-  ////Healthy = 0.34 remaining, giving ~1:2 IE Ratio
+  //Healthy = 0.34 remaining, giving ~1:2 IE Ratio
   m_InspiratoryRiseFraction = 0.33 * m_IERatioScaleFactor;
   m_InspiratoryHoldFraction = 0.0;
   m_InspiratoryReleaseFraction = MIN(0.33 / m_IERatioScaleFactor, 1.0 - m_InspiratoryRiseFraction);
@@ -2122,8 +2122,6 @@ void Respiratory::TuneCircuit()
 //--------------------------------------------------------------------------------------------------
 void Respiratory::UpdateChestWallCompliances()
 {
-  /// \todo A lot of this stuff we don't need to recalculate every timestep - it can be made more efficient
-
   /// \cite venegas1998comprehensive
 
   double rightLungRatio = m_Patient->GetRightLungRatio().GetValue();
@@ -2191,20 +2189,12 @@ void Respiratory::UpdateChestWallCompliances()
     }
 
     //Dampen the change to prevent potential craziness
-    double maxChange_L_Per_cmH2O_s = 1.0;
+    //It will only change half as much as it wants to each time step to ensure it's critically damped and doesn't overshoot
+    double dampenFraction = 0.5;
 
     double previousChestWallCompliance_L_Per_cmH2O = chestWallPath->GetCompliance(VolumePerPressureUnit::L_Per_cmH2O);
-    double complianceChange_L_Per_cmH2O = chestWallCompliance_L_Per_cmH2O - previousChestWallCompliance_L_Per_cmH2O;
-
-    if (complianceChange_L_Per_cmH2O > 0.0)
-    {
-      complianceChange_L_Per_cmH2O = MIN(complianceChange_L_Per_cmH2O, maxChange_L_Per_cmH2O_s * m_dt_s);
-    }
-    else if (complianceChange_L_Per_cmH2O < 0.0)
-    {
-      complianceChange_L_Per_cmH2O = MAX(complianceChange_L_Per_cmH2O, -maxChange_L_Per_cmH2O_s * m_dt_s);
-    }
-
+    double complianceChange_L_Per_cmH2O = (chestWallCompliance_L_Per_cmH2O - previousChestWallCompliance_L_Per_cmH2O) * dampenFraction;
+ 
     chestWallCompliance_L_Per_cmH2O = previousChestWallCompliance_L_Per_cmH2O + complianceChange_L_Per_cmH2O;
     chestWallPath->GetNextCompliance().SetValue(chestWallCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
   }  
@@ -3053,45 +3043,45 @@ void Respiratory::ModifyDriverPressure()
 /// \brief
 /// Output data tracks for debugging purposes
 //--------------------------------------------------------------------------------------------------
-void Respiratory::Debugging()
+void Respiratory::Debugging(SEFluidCircuit& RespirationCircuit)
 {
+  m_data.GetDataTrack().Probe(RespirationCircuit);
+  
   double leftAlveoliPressure = m_LeftAlveoli->GetNextPressure(PressureUnit::cmH2O);
   double leftAlveoliVolume = m_LeftAlveoli->GetNextVolume(VolumeUnit::L);
   double leftPleuralPressure = m_LeftPleural->GetNextPressure(PressureUnit::cmH2O);
   double leftPleuralVolume = m_LeftPleural->GetNextVolume(VolumeUnit::L);
   double leftFlow = m_LeftAlveolarDeadSpaceToLeftAlveoli->GetNextFlow(VolumePerTimeUnit::L_Per_s);
-  double leftCompliance = m_LeftPleuralToRespiratoryMuscle->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
+  double leftChestWallCompliance_L_Per_cmH2O = m_RightPleuralToRespiratoryMuscle->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
+  double leftLungCompliance_L_Per_cmH2O = m_RightAlveoliToRightPleuralConnection->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
 
   double rightAlveoliPressure = m_RightAlveoli->GetNextPressure(PressureUnit::cmH2O);
   double rightAlveoliVolume = m_RightAlveoli->GetNextVolume(VolumeUnit::L);
   double rightPleuralPressure = m_RightPleural->GetNextPressure(PressureUnit::cmH2O);
   double rightPleuralVolume = m_RightPleural->GetNextVolume(VolumeUnit::L);
   double rightFlow = m_RightAlveolarDeadSpaceToRightAlveoli->GetNextFlow(VolumePerTimeUnit::L_Per_s);
-  double rightCompliance = m_RightPleuralToRespiratoryMuscle->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
+  double rightChestWallCompliance_L_Per_cmH2O = m_RightPleuralToRespiratoryMuscle->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
+  double rightLungCompliance_L_Per_cmH2O = m_RightAlveoliToRightPleuralConnection->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
 
   m_data.GetDataTrack().Probe("leftAlveoliPressure", leftAlveoliPressure);
   m_data.GetDataTrack().Probe("leftAlveoliVolume", leftAlveoliVolume);
   m_data.GetDataTrack().Probe("leftPleuralPressure", leftPleuralPressure);
   m_data.GetDataTrack().Probe("leftPleuralVolume", leftPleuralVolume);
   m_data.GetDataTrack().Probe("leftFlow", leftFlow);
-  m_data.GetDataTrack().Probe("leftCompliance", leftCompliance);
+  m_data.GetDataTrack().Probe("leftChestWallCompliance_L_Per_cmH2O", leftChestWallCompliance_L_Per_cmH2O);
+  m_data.GetDataTrack().Probe("leftLungCompliance_L_Per_cmH2O", leftLungCompliance_L_Per_cmH2O);
 
   m_data.GetDataTrack().Probe("rightAlveoliPressure", rightAlveoliPressure);
   m_data.GetDataTrack().Probe("rightAlveoliVolume", rightAlveoliVolume);
   m_data.GetDataTrack().Probe("rightPleuralPressure", rightPleuralPressure);
   m_data.GetDataTrack().Probe("rightPleuralVolume", rightPleuralVolume);
   m_data.GetDataTrack().Probe("rightFlow", rightFlow);
-  m_data.GetDataTrack().Probe("rightCompliance", rightCompliance);
+  m_data.GetDataTrack().Probe("rightChestWallCompliance_L_Per_cmH2O", rightChestWallCompliance_L_Per_cmH2O);
+  m_data.GetDataTrack().Probe("rightLungCompliance_L_Per_cmH2O", rightLungCompliance_L_Per_cmH2O);
 
   double AmbientPresure = 1033.23; // = 1 atm
   m_data.GetDataTrack().Probe("LeftRelativePleuralPressure_cmH2O", leftPleuralPressure - AmbientPresure);
-  m_data.GetDataTrack().Probe("RightRelativePleuralPressure_cmH2O", rightPleuralPressure - AmbientPresure);
-
-
-  double leftChestWallCompliance_L_Per_cmH2O = m_RightPleuralToRespiratoryMuscle->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
-  double rightChestWallCompliance_L_Per_cmH2O = m_RightPleuralToRespiratoryMuscle->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
-  double leftLungCompliance_L_Per_cmH2O = m_RightAlveoliToRightPleuralConnection->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
-  double rightLungCompliance_L_Per_cmH2O = m_RightAlveoliToRightPleuralConnection->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
+  m_data.GetDataTrack().Probe("RightRelativePleuralPressure_cmH2O", rightPleuralPressure - AmbientPresure);  
 
   double leftSideCompliance_L_Per_cmH2O = 1.0 / (1.0 / leftChestWallCompliance_L_Per_cmH2O + 1.0 / leftLungCompliance_L_Per_cmH2O);
   double rightSideCompliance_L_Per_cmH2O = 1.0 / (1.0 / rightChestWallCompliance_L_Per_cmH2O + 1.0 / rightLungCompliance_L_Per_cmH2O);

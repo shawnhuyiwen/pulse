@@ -90,7 +90,7 @@ protected:
 
   //Process
   void CalculateVitalSigns();
-  void Debugging();
+  void Debugging(SEFluidCircuit& RespiratoryCircuit);
 
   // Serializable member variables (Set in Initialize and in schema)
   //   Initial patient values
