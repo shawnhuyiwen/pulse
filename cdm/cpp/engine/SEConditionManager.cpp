@@ -408,6 +408,8 @@ const SEInitialEnvironmentConditions* SEConditionManager::GetInitialEnvironmentC
 
 void SEConditionManager::GetAllConditions(std::vector<const SECondition*>& conditions) const
 {
+  if (HasAcuteRespiratoryDistressSyndrome())
+    conditions.push_back(GetAcuteRespiratoryDistressSyndrome());
   if (HasChronicAnemia())
     conditions.push_back(GetChronicAnemia());
   if (HasChronicObstructivePulmonaryDisease())
@@ -424,12 +426,17 @@ void SEConditionManager::GetAllConditions(std::vector<const SECondition*>& condi
     conditions.push_back(GetImpairedAlveolarExchange());
   if (HasLobarPneumonia())
     conditions.push_back(GetLobarPneumonia());
+  if (HasSepsis())
+    conditions.push_back(GetSepsis());
+
   if (HasInitialEnvironmentConditions())
     conditions.push_back(GetInitialEnvironmentConditions());
 }
 
 bool SEConditionManager::IsEmpty() const
 {
+  if (HasAcuteRespiratoryDistressSyndrome())
+    return false;
   if (HasChronicAnemia())
     return false;
   if (HasChronicObstructivePulmonaryDisease())
@@ -446,6 +453,9 @@ bool SEConditionManager::IsEmpty() const
     return false;
   if (HasLobarPneumonia())
     return false;
+  if (HasSepsis())
+    return false;
+
   if (HasInitialEnvironmentConditions())
     return false;
   return true;

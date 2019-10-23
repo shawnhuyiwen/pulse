@@ -36,6 +36,7 @@ SERespiratorySystem::SERespiratorySystem(Logger* logger) : SESystem(logger)
   m_InspiratoryFlow = nullptr;
   m_InspiratoryPulmonaryResistance = nullptr;
   m_IntrapleuralPressure = nullptr;
+  m_IntrapulmonaryPressure = nullptr;
   m_LungCompliance = nullptr;
   m_MaximalInspiratoryPressure = nullptr;
   m_PatientPowerOfBreathing = nullptr;
@@ -61,6 +62,7 @@ SERespiratorySystem::SERespiratorySystem(Logger* logger) : SESystem(logger)
   m_TransairwayPressure = nullptr;
   m_TransalveolarPressure = nullptr;
   m_TransChestWallPressure = nullptr;
+  m_TransMusclePressure = nullptr;
   m_TranspulmonaryPressure = nullptr;
   m_TransrespiratoryPressure = nullptr;
   m_TransthoracicPressure = nullptr;
@@ -93,6 +95,7 @@ void SERespiratorySystem::Clear()
   SAFE_DELETE(m_InspiratoryFlow);
   SAFE_DELETE(m_InspiratoryPulmonaryResistance);
   SAFE_DELETE(m_IntrapleuralPressure);
+  SAFE_DELETE(m_IntrapulmonaryPressure);
   SAFE_DELETE(m_LungCompliance);
   SAFE_DELETE(m_MaximalInspiratoryPressure);
   SAFE_DELETE(m_PatientPowerOfBreathing);
@@ -118,6 +121,7 @@ void SERespiratorySystem::Clear()
   SAFE_DELETE(m_TransairwayPressure);
   SAFE_DELETE(m_TransalveolarPressure);
   SAFE_DELETE(m_TransChestWallPressure);
+  SAFE_DELETE(m_TransMusclePressure);
   SAFE_DELETE(m_TranspulmonaryPressure);
   SAFE_DELETE(m_TransrespiratoryPressure);
   SAFE_DELETE(m_TransthoracicPressure);

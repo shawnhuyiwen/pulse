@@ -85,19 +85,19 @@ void SELiquidSubstanceQuantity::Clear()
 
 void SELiquidSubstanceQuantity::SetToZero()
 {
-  auto c = GetConcentration();
+  auto& c = GetConcentration();
   if (c.HasUnit())
     c.SetValue(0, *c.GetUnit());
   else
     c.SetValue(0, MassPerVolumeUnit::mg_Per_mL);
 
-  auto m = GetMass();
+  auto& m = GetMass();
   if (m.HasUnit())
     m.SetValue(0, *m.GetUnit());
   else
     m.SetValue(0, MassUnit::mg);
 
-  auto mol = GetMolarity();
+  auto& mol = GetMolarity();
   if (mol.HasUnit())
     mol.SetValue(0, *mol.GetUnit());
   else
@@ -105,7 +105,7 @@ void SELiquidSubstanceQuantity::SetToZero()
 
   if (m_Substance.GetState() == eSubstance_State::Gas)
   {
-    auto pp = GetPartialPressure();
+    auto& pp = GetPartialPressure();
     if (pp.HasUnit())
       pp.SetValue(0, *pp.GetUnit());
     else
@@ -115,19 +115,19 @@ void SELiquidSubstanceQuantity::SetToZero()
   if (m_isO2 || m_isCO || m_isCO2)
     GetSaturation().SetValue(0);
 
-  auto mc = GetMassCleared();
+  auto& mc = GetMassCleared();
   if (mc.HasUnit())
     mc.SetValue(0, *mc.GetUnit());
   else
     mc.SetValue(0, MassUnit::mg);
 
-  auto md = GetMassDeposited();
+  auto& md = GetMassDeposited();
   if (md.HasUnit())
     md.SetValue(0, *md.GetUnit());
   else
     md.SetValue(0, MassUnit::mg);
 
-  auto me = GetMassExcreted();
+  auto& me = GetMassExcreted();
   if (me.HasUnit())
     me.SetValue(0, *me.GetUnit());
   else
@@ -379,7 +379,7 @@ SEScalarAmountPerVolume& SELiquidSubstanceQuantity::GetMolarity()
       m_Molarity->Invalidate();
     else
     {
-      double molarity_mmol_Per_mL = GetMass(MassUnit::mg) / m_Substance.GetMolarMass(MassPerAmountUnit::mg_Per_mmol) / m_Compartment.GetVolume(VolumeUnit::mL);      
+      double molarity_mmol_Per_mL = GetMass(MassUnit::mg) / m_Substance.GetMolarMass(MassPerAmountUnit::mg_Per_mmol) / m_Compartment.GetVolume(VolumeUnit::mL);
       m_Molarity->SetValue(molarity_mmol_Per_mL, AmountPerVolumeUnit::mmol_Per_mL);
     }
     m_Molarity->SetReadOnly(true);

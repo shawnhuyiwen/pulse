@@ -48,13 +48,13 @@ void SEGasSubstanceQuantity::Clear()
 
 void SEGasSubstanceQuantity::SetToZero()
 {
-  auto pp = GetPartialPressure();
+  auto& pp = GetPartialPressure();
   if (pp.HasUnit())
     pp.SetValue(0, *pp.GetUnit());
   else
     pp.SetValue(0, PressureUnit::mmHg);
 
-  auto vol = GetVolume();
+  auto& vol = GetVolume();
   if (vol.HasUnit())
     vol.SetValue(0, *vol.GetUnit());
   else
