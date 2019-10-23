@@ -4060,7 +4060,7 @@ void PulseController::SetupAnesthesiaMachine()
   double dLowResistance = 0.01;
 
   SEFluidCircuit& cAnesthesia = m_Circuits->GetAnesthesiaMachineCircuit();
-  SEFluidCircuitNode* Ambient = m_Circuits->GetFluidNode(pulse::EnvironmentNode::Ambient);    
+  SEFluidCircuitNode* Ambient = m_Circuits->GetFluidNode(pulse::EnvironmentNode::Ambient);
   cAnesthesia.AddNode(*Ambient);
 
   ////////////////
@@ -4069,46 +4069,46 @@ void PulseController::SetupAnesthesiaMachine()
   Ventilator.GetVolumeBaseline().SetValue(ventilatorVolume_L, VolumeUnit::L);
   Ventilator.GetPressure().SetValue(AmbientPresure, PressureUnit::cmH2O);
   /////////////////
-  // ReliefValve //  
+  // ReliefValve //
   SEFluidCircuitNode& ReliefValve = cAnesthesia.CreateNode(pulse::AnesthesiaMachineNode::ReliefValve);
   ReliefValve.GetPressure().SetValue(AmbientPresure, PressureUnit::cmH2O);
   //////////////
-  // Selector //   
+  // Selector //
   SEFluidCircuitNode& Selector = cAnesthesia.CreateNode(pulse::AnesthesiaMachineNode::Selector);
   Selector.GetPressure().SetValue(AmbientPresure, PressureUnit::cmH2O);
   Selector.GetVolumeBaseline().SetValue(0.1, VolumeUnit::L);
   //////////////
-  // Scrubber //   
+  // Scrubber //
   SEFluidCircuitNode& Scrubber = cAnesthesia.CreateNode(pulse::AnesthesiaMachineNode::Scrubber);
   Scrubber.GetPressure().SetValue(AmbientPresure, PressureUnit::cmH2O);
   Scrubber.GetVolumeBaseline().SetValue(0.1, VolumeUnit::L);
   ////////////
-  // YPiece //   
+  // YPiece //
   SEFluidCircuitNode& Ypiece = cAnesthesia.CreateNode(pulse::AnesthesiaMachineNode::YPiece);
   Ypiece.GetPressure().SetValue(AmbientPresure, PressureUnit::cmH2O);
   Ypiece.GetVolumeBaseline().SetValue(0.01, VolumeUnit::L);
   //////////////
-  // GasInlet //   
+  // GasInlet //
   SEFluidCircuitNode& GasInlet = cAnesthesia.CreateNode(pulse::AnesthesiaMachineNode::GasInlet);
   GasInlet.GetPressure().SetValue(AmbientPresure, PressureUnit::cmH2O);
   GasInlet.GetVolumeBaseline().SetValue(0.1, VolumeUnit::L);
   ///////////////
-  // GasSource //   
+  // GasSource //
   SEFluidCircuitNode& GasSource = cAnesthesia.CreateNode(pulse::AnesthesiaMachineNode::GasSource);
   GasSource.GetPressure().SetValue(AmbientPresure, PressureUnit::cmH2O);
   GasSource.GetVolumeBaseline().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::mL);
   //////////////////////////
-  // AnesthesiaConnection //   
+  // AnesthesiaConnection //
   SEFluidCircuitNode& AnesthesiaConnection = cAnesthesia.CreateNode(pulse::AnesthesiaMachineNode::AnesthesiaConnection);
   AnesthesiaConnection.GetPressure().SetValue(AmbientPresure, PressureUnit::cmH2O);
   AnesthesiaConnection.GetVolumeBaseline().SetValue(0.01, VolumeUnit::L);
   /////////////////////
-  // InspiratoryLimb //   
+  // InspiratoryLimb //
   SEFluidCircuitNode& InspiratoryLimb = cAnesthesia.CreateNode(pulse::AnesthesiaMachineNode::InspiratoryLimb);
   InspiratoryLimb.GetPressure().SetValue(AmbientPresure, PressureUnit::cmH2O);
   InspiratoryLimb.GetVolumeBaseline().SetValue(0.1, VolumeUnit::L);
   ////////////////////
-  // ExpiratoryLimb //   
+  // ExpiratoryLimb //
   SEFluidCircuitNode& ExpiratoryLimb = cAnesthesia.CreateNode(pulse::AnesthesiaMachineNode::ExpiratoryLimb);
   ExpiratoryLimb.GetPressure().SetValue(AmbientPresure, PressureUnit::cmH2O);
   ExpiratoryLimb.GetVolumeBaseline().SetValue(0.1, VolumeUnit::L);
@@ -4180,7 +4180,7 @@ void PulseController::SetupAnesthesiaMachine()
   cCombinedAnesthesia.AddCircuit(cRespiratory);
   cCombinedAnesthesia.AddCircuit(cAnesthesia);
   SEFluidCircuitNode& Mouth = *cCombinedAnesthesia.GetNode(pulse::RespiratoryNode::Mouth);
-  SEFluidCircuitPath& AnesthesiaConnectionToMouth = cCombinedAnesthesia.CreatePath(AnesthesiaConnection, Mouth, "AnesthesiaConnectionToMouth");
+  SEFluidCircuitPath& AnesthesiaConnectionToMouth = cCombinedAnesthesia.CreatePath(AnesthesiaConnection, Mouth, pulse::CombinedAnesthesiaMachinePath::AnesthesiaConnectionToMouth);
   cCombinedAnesthesia.RemovePath(pulse::RespiratoryPath::EnvironmentToMouth);
   cCombinedAnesthesia.SetNextAndCurrentFromBaselines();
   cCombinedAnesthesia.StateChange();
@@ -4210,6 +4210,8 @@ void PulseController::SetupAnesthesiaMachine()
   aYPiece.MapNode(Ypiece);
 
   // Setup Links //
+  SEGasCompartmentLink& aEnvironmentToReliefValve = m_Compartments->CreateGasLink(*eEnvironment, aReliefValve, pulse::AnesthesiaMachineLink::EnvironmentToReliefValve);
+  aEnvironmentToReliefValve.MapPath(EnvironmentToReliefValve);
   SEGasCompartmentLink& aVentilatorToSelector = m_Compartments->CreateGasLink(aVentilator, aSelector, pulse::AnesthesiaMachineLink::VentilatorToSelector);
   aVentilatorToSelector.MapPath(VentilatorConnectionToSelector);
   SEGasCompartmentLink& aSelectorToReliefValve = m_Compartments->CreateGasLink(aSelector, aReliefValve, pulse::AnesthesiaMachineLink::SelectorToReliefValve);
@@ -4245,6 +4247,7 @@ void PulseController::SetupAnesthesiaMachine()
   gAnesthesia.AddCompartment(aSelector);
   gAnesthesia.AddCompartment(aVentilator);
   gAnesthesia.AddCompartment(aYPiece);
+  gAnesthesia.AddLink(aEnvironmentToReliefValve);
   gAnesthesia.AddLink(aVentilatorToSelector);
   gAnesthesia.AddLink(aSelectorToReliefValve);
   gAnesthesia.AddLink(aSelectorToScrubber);
@@ -4261,14 +4264,14 @@ void PulseController::SetupAnesthesiaMachine()
   //Now do the combined transport setup
   // Grab the mouth from pulmonary
   SEGasCompartment* pMouth = m_Compartments->GetGasCompartment(pulse::PulmonaryCompartment::Mouth);
-  SEGasCompartmentLink& aMask = m_Compartments->CreateGasLink(aAnesthesiaConnection, *pMouth, pulse::AnesthesiaMachineLink::Mask);
-  aMask.MapPath(AnesthesiaConnectionToMouth);
+  SEGasCompartmentLink& aAnesthesiaConnectionToMouth = m_Compartments->CreateGasLink(aAnesthesiaConnection, *pMouth, pulse::AnesthesiaMachineLink::AnesthesiaConnectionToMouth);
+  aAnesthesiaConnectionToMouth.MapPath(AnesthesiaConnectionToMouth);
 
   SEGasCompartmentGraph& gCombinedRespiratoryAnesthesia = m_Compartments->GetRespiratoryAndAnesthesiaMachineGraph();
   gCombinedRespiratoryAnesthesia.AddGraph(gRespiratory);
   gCombinedRespiratoryAnesthesia.AddGraph(gAnesthesia);
   gCombinedRespiratoryAnesthesia.RemoveLink(pulse::PulmonaryLink::EnvironmentToMouth);
-  gCombinedRespiratoryAnesthesia.AddLink(aMask);
+  gCombinedRespiratoryAnesthesia.AddLink(aAnesthesiaConnectionToMouth);
   gCombinedRespiratoryAnesthesia.StateChange();
 }
 

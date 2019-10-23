@@ -15,6 +15,10 @@ bool VolumePerPressureUnit::IsValidUnit(const std::string& unit)
     return true;
   if (L_Per_cmH2O.GetString().compare(unit) == 0)
     return true;
+  if (m3_Per_Pa.GetString().compare(unit) == 0)
+    return true;
+  if (mL_Per_mmHg.GetString().compare(unit) == 0)
+    return true;
   return false;
 }
 
@@ -24,6 +28,10 @@ const VolumePerPressureUnit& VolumePerPressureUnit::GetCompoundUnit(const std::s
     return L_Per_Pa;
   if (L_Per_cmH2O.GetString().compare(unit) == 0)
     return L_Per_cmH2O;
+  if (m3_Per_Pa.GetString().compare(unit) == 0)
+    return m3_Per_Pa;
+  if (mL_Per_mmHg.GetString().compare(unit) == 0)
+    return mL_Per_mmHg;
   std::stringstream err;
   err << unit << " is not a valid VolumePerPressure unit";
   throw CommonDataModelException(err.str());

@@ -78,7 +78,6 @@ void AnesthesiaMachine::Clear()
   m_pInspiratoryLimbToYPiece = nullptr;
   m_pSelectorToReliefValve = nullptr;
   m_pEnvironmentToReliefValve = nullptr;
-  m_pSelectorToEnvironment = nullptr;
   m_pEnvironmentToVentilator = nullptr;
   m_pEnvironmentToGasSource = nullptr;
   m_pVentilatorToSelector = nullptr;
@@ -155,7 +154,6 @@ void AnesthesiaMachine::SetUp()
   m_pInspiratoryLimbToYPiece = m_data.GetCircuits().GetAnesthesiaMachineCircuit().GetPath(pulse::AnesthesiaMachinePath::InspiratoryLimbToYPiece);
   m_pSelectorToReliefValve = m_data.GetCircuits().GetAnesthesiaMachineCircuit().GetPath(pulse::AnesthesiaMachinePath::SelectorToReliefValve);
   m_pEnvironmentToReliefValve = m_data.GetCircuits().GetAnesthesiaMachineCircuit().GetPath(pulse::AnesthesiaMachinePath::EnvironmentToReliefValve);
-  m_pSelectorToEnvironment = m_data.GetCircuits().GetAnesthesiaMachineCircuit().GetPath(pulse::AnesthesiaMachinePath::SelectorToEnvironment);
   m_pEnvironmentToVentilator = m_data.GetCircuits().GetAnesthesiaMachineCircuit().GetPath(pulse::AnesthesiaMachinePath::EnvironmentToVentilator);
   m_pExpiratoryLimbToSelector = m_data.GetCircuits().GetAnesthesiaMachineCircuit().GetPath(pulse::AnesthesiaMachinePath::ExpiratoryLimbToSelector);
   m_pSelectorToScrubber = m_data.GetCircuits().GetAnesthesiaMachineCircuit().GetPath(pulse::AnesthesiaMachinePath::SelectorToScrubber);
@@ -303,7 +301,7 @@ void AnesthesiaMachine::PreProcess()
   CalculateVentilatorPressure();
   CalculateGasSourceSubstances();
   CalculateGasSourceResistance();
-  CheckReliefValve();  
+  CheckReliefValve();
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -700,7 +698,7 @@ void AnesthesiaMachine::CalculateVentilatorPressure()
     double severity = m_actions->GetVentilatorPressureLoss()->GetSeverity().GetValue();
     dDriverPressure *= (1 - severity);
   }
-  m_pEnvironmentToVentilator->GetNextPressureSource().SetValue(dDriverPressure, PressureUnit::cmH2O);  
+  m_pEnvironmentToVentilator->GetNextPressureSource().SetValue(dDriverPressure, PressureUnit::cmH2O);
 }
 
 //--------------------------------------------------------------------------------------------------

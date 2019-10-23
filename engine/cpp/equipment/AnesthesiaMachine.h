@@ -88,7 +88,6 @@ public:
   SEFluidCircuitPath*                  m_pInspiratoryLimbToYPiece;
   SEFluidCircuitPath*                  m_pSelectorToReliefValve;
   SEFluidCircuitPath*                  m_pEnvironmentToReliefValve;
-  SEFluidCircuitPath*                  m_pSelectorToEnvironment;
   SEFluidCircuitPath*                  m_pEnvironmentToVentilator;
   SEFluidCircuitPath*                  m_pExpiratoryLimbToSelector;
   SEFluidCircuitPath*                  m_pSelectorToScrubber;
