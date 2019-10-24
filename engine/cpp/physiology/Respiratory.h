@@ -93,21 +93,6 @@ protected:
   void Debugging(SEFluidCircuit& RespiratoryCircuit);
 
   // Serializable member variables (Set in Initialize and in schema)
-  //   Initial patient values
-  //Aaron - add to serialization
-  double m_initialAlveoliDiffusionArea_cm2;
-
-  //   Current patient values
-  //Aaron - add to serialization
-  double m_RespirationRateBaseline_Per_min;
-  double m_TidalVolumeBaseline_L;
-  double m_ExpiratoryReserveVolume_L;
-  double m_FunctionalResidualCapacity_L;
-  double m_InspiratoryCapacity_L;
-  double m_InspiratoryReserveVolume_L;
-  double m_ResidualVolume_L;
-  double m_TotalLungCapacity_L;
-  double m_VitalCapacity_L;
 
   //   CalculateVitalSigns()
   bool   m_BreathingCycle;
