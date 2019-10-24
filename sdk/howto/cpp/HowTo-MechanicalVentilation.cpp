@@ -58,30 +58,6 @@ public:
   {
     switch (type)
     {     
-      case eEvent::MildAcuteRespiratoryDistress:
-      {
-        if (active)
-          m_Logger->Info("Do something for MildAcuteRespiratoryDistress");
-        else
-          m_Logger->Info("Stop doing something for MildAcuteRespiratoryDistress");
-        break;
-      }
-      case eEvent::ModerateAcuteRespiratoryDistress:
-      {
-        if (active)
-          m_Logger->Info("Do something for ModerateAcuteRespiratoryDistress");
-        else
-          m_Logger->Info("Stop doing something for ModerateAcuteRespiratoryDistress");
-        break;
-      }
-      case eEvent::SevereAcuteRespiratoryDistress:
-      {
-        if (active)
-          m_Logger->Info("Do something for SevereAcuteRespiratoryDistress");
-        else
-          m_Logger->Info("Stop doing something for SevereAcuteRespiratoryDistress");
-        break;
-      }
       case eEvent::CardiogenicShock:
       {
         if (active)

@@ -286,7 +286,7 @@ public class CSVContents
     row=aLine2.split(",");
     if(!this.headers.isEmpty()&&this.headers.size()!=row.length)
     {
-      Log.error(this.resultsFile+" did not find the expected number of results on line, there is headers "+this.headers.size()+" and "+row.length+" on this row");
+      Log.error(this.resultsFile+" did not find the expected number of results on line, there are "+this.headers.size()+" headers and "+row.length+" data columns on this row");
     }  
     return row;
   }

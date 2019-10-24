@@ -131,10 +131,9 @@ void PulseEngineTest::TuneCardiovascularCircuitTest(SETestSuite& testSuite, cons
   timer.Start("TestCase");
   PulseController pc(testSuite.GetLogger());
   testSuite.GetLogger()->Info("Running " + sTestName);
-  pc.GetPatient().Copy(patient);
   pc.m_Config->EnableRenal(eSwitch::On);
   pc.m_Config->EnableTissue(eSwitch::On);
-  pc.SetupPatient();
+  pc.SetupPatient(patient);
   pc.CreateCircuitsAndCompartments();
 
   SETestCase& testCase = testSuite.CreateTestCase();
@@ -195,13 +194,14 @@ void PulseEngineTest::CardiovascularCircuitAndTransportTest(CardiovascularDriver
   double binding_s = 0;
   PulseController pc(sTestDirectory + "/" + tName.str() + "CircuitAndTransportTest.log");
   pc.GetLogger()->Info("Running " + tName.str());
-  pc.GetPatient().SerializeFromFile("./patients/StandardMale.json",JSON);
-  pc.SetupPatient();
+  SEPatient patient(pc.GetLogger());
+  patient.SerializeFromFile("./patients/StandardMale.json", JSON);
+  pc.SetupPatient(patient);
   if (heartRate_bpm <= 0)
-    heartRate_bpm = pc.GetPatient().GetHeartRateBaseline().GetValue(FrequencyUnit::Per_min);
+    heartRate_bpm = pc.GetCurrentPatient().GetHeartRateBaseline(FrequencyUnit::Per_min);
   else
   {
-    pc.GetPatient().GetHeartRateBaseline().SetValue(heartRate_bpm, FrequencyUnit::Per_min);
+    pc.GetCurrentPatient().GetHeartRateBaseline().SetValue(heartRate_bpm, FrequencyUnit::Per_min);
   }
 
   pc.m_Config->EnableRenal(connectRenal ? eSwitch::On : eSwitch::Off);

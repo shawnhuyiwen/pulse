@@ -29,11 +29,14 @@ SERespiratorySystem::SERespiratorySystem(Logger* logger) : SESystem(logger)
   m_EndTidalOxygenFraction = nullptr;
   m_EndTidalOxygenPressure = nullptr;
   m_ExpiratoryFlow = nullptr;
+  m_ExpiratoryPulmonaryResistance = nullptr;
   m_ImposedPowerOfBreathing = nullptr;
   m_ImposedWorkOfBreathing = nullptr;
   m_InspiratoryExpiratoryRatio = nullptr;
   m_InspiratoryFlow = nullptr;
+  m_InspiratoryPulmonaryResistance = nullptr;
   m_IntrapleuralPressure = nullptr;
+  m_IntrapulmonaryPressure = nullptr;
   m_LungCompliance = nullptr;
   m_MaximalInspiratoryPressure = nullptr;
   m_PatientPowerOfBreathing = nullptr;
@@ -43,7 +46,6 @@ SERespiratorySystem::SERespiratorySystem(Logger* logger) : SESystem(logger)
   m_PositiveEndExpiratoryPressure = nullptr;
   m_PulmonaryCompliance = nullptr;
   m_PulmonaryElastance = nullptr;
-  m_PulmonaryResistance = nullptr;
   m_ResistiveExpiratoryWorkOfBreathing = nullptr;
   m_ResistiveInspiratoryWorkOfBreathing = nullptr;
   m_RespirationRate = nullptr;
@@ -60,6 +62,7 @@ SERespiratorySystem::SERespiratorySystem(Logger* logger) : SESystem(logger)
   m_TransairwayPressure = nullptr;
   m_TransalveolarPressure = nullptr;
   m_TransChestWallPressure = nullptr;
+  m_TransMusclePressure = nullptr;
   m_TranspulmonaryPressure = nullptr;
   m_TransrespiratoryPressure = nullptr;
   m_TransthoracicPressure = nullptr;
@@ -85,11 +88,14 @@ void SERespiratorySystem::Clear()
   SAFE_DELETE(m_EndTidalOxygenFraction);
   SAFE_DELETE(m_EndTidalOxygenPressure);
   SAFE_DELETE(m_ExpiratoryFlow);
+  SAFE_DELETE(m_ExpiratoryPulmonaryResistance);
   SAFE_DELETE(m_ImposedPowerOfBreathing);
   SAFE_DELETE(m_ImposedWorkOfBreathing);
   SAFE_DELETE(m_InspiratoryExpiratoryRatio);
   SAFE_DELETE(m_InspiratoryFlow);
+  SAFE_DELETE(m_InspiratoryPulmonaryResistance);
   SAFE_DELETE(m_IntrapleuralPressure);
+  SAFE_DELETE(m_IntrapulmonaryPressure);
   SAFE_DELETE(m_LungCompliance);
   SAFE_DELETE(m_MaximalInspiratoryPressure);
   SAFE_DELETE(m_PatientPowerOfBreathing);
@@ -99,7 +105,6 @@ void SERespiratorySystem::Clear()
   SAFE_DELETE(m_PositiveEndExpiratoryPressure);
   SAFE_DELETE(m_PulmonaryCompliance);
   SAFE_DELETE(m_PulmonaryElastance);
-  SAFE_DELETE(m_PulmonaryResistance);
   SAFE_DELETE(m_ResistiveExpiratoryWorkOfBreathing);
   SAFE_DELETE(m_ResistiveInspiratoryWorkOfBreathing);
   SAFE_DELETE(m_RespirationRate);
@@ -116,6 +121,7 @@ void SERespiratorySystem::Clear()
   SAFE_DELETE(m_TransairwayPressure);
   SAFE_DELETE(m_TransalveolarPressure);
   SAFE_DELETE(m_TransChestWallPressure);
+  SAFE_DELETE(m_TransMusclePressure);
   SAFE_DELETE(m_TranspulmonaryPressure);
   SAFE_DELETE(m_TransrespiratoryPressure);
   SAFE_DELETE(m_TransthoracicPressure);
@@ -146,6 +152,8 @@ const SEScalar* SERespiratorySystem::GetScalar(const std::string& name)
     return &GetEndTidalOxygenPressure();
   if (name.compare("ExpiratoryFlow") == 0)
     return &GetExpiratoryFlow();
+  if (name.compare("ExpiratoryPulmonaryResistance") == 0)
+    return &GetExpiratoryPulmonaryResistance();
   if (name.compare("ImposedPowerOfBreathing") == 0)
     return &GetImposedPowerOfBreathing();
   if (name.compare("ImposedWorkOfBreathing") == 0)
@@ -154,6 +162,8 @@ const SEScalar* SERespiratorySystem::GetScalar(const std::string& name)
     return &GetInspiratoryExpiratoryRatio();
   if (name.compare("InspiratoryFlow") == 0)
     return &GetInspiratoryFlow();
+  if (name.compare("InspiratoryPulmonaryResistance") == 0)
+    return &GetInspiratoryPulmonaryResistance();
   if (name.compare("IntrapleuralPressure") == 0)
     return &GetIntrapleuralPressure();
   if (name.compare("LungCompliance") == 0)
@@ -174,8 +184,6 @@ const SEScalar* SERespiratorySystem::GetScalar(const std::string& name)
     return &GetPulmonaryCompliance();
   if (name.compare("PulmonaryElastance") == 0)
     return &GetPulmonaryElastance();
-  if (name.compare("PulmonaryResistance") == 0)
-    return &GetPulmonaryResistance();
   if (name.compare("ResistiveExpiratoryWorkOfBreathing") == 0)
     return &GetResistiveExpiratoryWorkOfBreathing();
   if (name.compare("ResistiveInspiratoryWorkOfBreathing") == 0)
@@ -404,6 +412,23 @@ double SERespiratorySystem::GetExpiratoryFlow(const VolumePerTimeUnit& unit) con
   return m_ExpiratoryFlow->GetValue(unit);
 }
 
+bool SERespiratorySystem::HasExpiratoryPulmonaryResistance() const
+{
+  return m_ExpiratoryPulmonaryResistance == nullptr ? false : m_ExpiratoryPulmonaryResistance->IsValid();
+}
+SEScalarPressureTimePerVolume& SERespiratorySystem::GetExpiratoryPulmonaryResistance()
+{
+  if (m_ExpiratoryPulmonaryResistance == nullptr)
+    m_ExpiratoryPulmonaryResistance = new SEScalarPressureTimePerVolume();
+  return *m_ExpiratoryPulmonaryResistance;
+}
+double SERespiratorySystem::GetExpiratoryPulmonaryResistance(const PressureTimePerVolumeUnit& unit) const
+{
+  if (m_ExpiratoryPulmonaryResistance == nullptr)
+    return SEScalar::dNaN();
+  return m_ExpiratoryPulmonaryResistance->GetValue(unit);
+}
+
 bool SERespiratorySystem::HasImposedPowerOfBreathing() const
 {
   return m_ImposedPowerOfBreathing == nullptr ? false : m_ImposedPowerOfBreathing->IsValid();
@@ -472,6 +497,23 @@ double SERespiratorySystem::GetInspiratoryFlow(const VolumePerTimeUnit& unit) co
   return m_InspiratoryFlow->GetValue(unit);
 }
 
+bool SERespiratorySystem::HasInspiratoryPulmonaryResistance() const
+{
+  return m_InspiratoryPulmonaryResistance == nullptr ? false : m_InspiratoryPulmonaryResistance->IsValid();
+}
+SEScalarPressureTimePerVolume& SERespiratorySystem::GetInspiratoryPulmonaryResistance()
+{
+  if (m_InspiratoryPulmonaryResistance == nullptr)
+    m_InspiratoryPulmonaryResistance = new SEScalarPressureTimePerVolume();
+  return *m_InspiratoryPulmonaryResistance;
+}
+double SERespiratorySystem::GetInspiratoryPulmonaryResistance(const PressureTimePerVolumeUnit& unit) const
+{
+  if (m_InspiratoryPulmonaryResistance == nullptr)
+    return SEScalar::dNaN();
+  return m_InspiratoryPulmonaryResistance->GetValue(unit);
+}
+
 bool SERespiratorySystem::HasIntrapleuralPressure() const
 {
   return m_IntrapleuralPressure == nullptr ? false : m_IntrapleuralPressure->IsValid();
@@ -487,6 +529,23 @@ double SERespiratorySystem::GetIntrapleuralPressure(const PressureUnit& unit) co
   if (m_IntrapleuralPressure == nullptr)
     return SEScalar::dNaN();
   return m_IntrapleuralPressure->GetValue(unit);
+}
+
+bool SERespiratorySystem::HasIntrapulmonaryPressure() const
+{
+  return m_IntrapulmonaryPressure == nullptr ? false : m_IntrapulmonaryPressure->IsValid();
+}
+SEScalarPressure& SERespiratorySystem::GetIntrapulmonaryPressure()
+{
+  if (m_IntrapulmonaryPressure == nullptr)
+    m_IntrapulmonaryPressure = new SEScalarPressure();
+  return *m_IntrapulmonaryPressure;
+}
+double SERespiratorySystem::GetIntrapulmonaryPressure(const PressureUnit& unit) const
+{
+  if (m_IntrapulmonaryPressure == nullptr)
+    return SEScalar::dNaN();
+  return m_IntrapulmonaryPressure->GetValue(unit);
 }
 
 bool SERespiratorySystem::HasLungCompliance() const
@@ -640,23 +699,6 @@ double SERespiratorySystem::GetPulmonaryElastance(const PressurePerVolumeUnit& u
   if (m_PulmonaryElastance == nullptr)
     return SEScalar::dNaN();
   return m_PulmonaryElastance->GetValue(unit);
-}
-
-bool SERespiratorySystem::HasPulmonaryResistance() const
-{
-  return m_PulmonaryResistance == nullptr ? false : m_PulmonaryResistance->IsValid();
-}
-SEScalarPressureTimePerVolume& SERespiratorySystem::GetPulmonaryResistance()
-{
-  if (m_PulmonaryResistance== nullptr)
-    m_PulmonaryResistance = new SEScalarPressureTimePerVolume();
-  return *m_PulmonaryResistance;
-}
-double SERespiratorySystem::GetPulmonaryResistance(const PressureTimePerVolumeUnit& unit) const
-{
-  if (m_PulmonaryResistance == nullptr)
-    return SEScalar::dNaN();
-  return m_PulmonaryResistance->GetValue(unit);
 }
 
 bool SERespiratorySystem::HasResistiveExpiratoryWorkOfBreathing() const
@@ -930,6 +972,23 @@ double SERespiratorySystem::GetTransChestWallPressure(const PressureUnit& unit) 
   if (m_TransChestWallPressure == nullptr)
     return SEScalar::dNaN();
   return m_TransChestWallPressure->GetValue(unit);
+}
+
+bool SERespiratorySystem::HasTransMusclePressure() const
+{
+  return m_TransMusclePressure == nullptr ? false : m_TransMusclePressure->IsValid();
+}
+SEScalarPressure& SERespiratorySystem::GetTransMusclePressure()
+{
+  if (m_TransMusclePressure == nullptr)
+    m_TransMusclePressure = new SEScalarPressure();
+  return *m_TransMusclePressure;
+}
+double SERespiratorySystem::GetTransMusclePressure(const PressureUnit& unit) const
+{
+  if (m_TransMusclePressure == nullptr)
+    return SEScalar::dNaN();
+  return m_TransMusclePressure->GetValue(unit);
 }
 
 bool SERespiratorySystem::HasTranspulmonaryPressure() const

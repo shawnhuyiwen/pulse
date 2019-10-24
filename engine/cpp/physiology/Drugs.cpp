@@ -303,7 +303,7 @@ void Drugs::AdministerSubstanceCompoundInfusion()
   double rate_mL_Per_s = 0;
   double totalRate_mL_Per_s = 0;
   double massIncrement_ug=0;
-  double patientMass_kg = m_data.GetPatient().GetWeight(MassUnit::kg);
+  double patientMass_kg = m_data.GetCurrentPatient().GetWeight(MassUnit::kg);
   double densityFluid_kg_Per_mL = 0.0;
 
   std::vector<const SESubstanceCompound*> emptyBags;
@@ -350,7 +350,7 @@ void Drugs::AdministerSubstanceCompoundInfusion()
   for (const SESubstanceCompound* c : emptyBags)
     m_data.GetActions().GetPatientActions().RemoveSubstanceCompoundInfusion(*c);
 
-  m_data.GetPatient().GetWeight().SetValue(patientMass_kg, MassUnit::kg);
+  m_data.GetCurrentPatient().GetWeight().SetValue(patientMass_kg, MassUnit::kg);
   m_IVToVenaCava->GetNextFlowSource().SetValue(totalRate_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
 }
 
@@ -506,7 +506,7 @@ void Drugs::CalculateDrugEffects()
   double pupilSizeResponseLevel = 0;
   double pupilReactivityResponseLevel = 0;
   double shapeParameter = 1.;
-  SEPatient& patient = m_data.GetPatient();
+  SEPatient& patient = m_data.GetCurrentPatient();
   double HRBaseline_per_min = patient.GetHeartRateBaseline(FrequencyUnit::Per_min);
   
   //Loop over substances
@@ -622,7 +622,7 @@ void Drugs::CalculatePlasmaSubstanceConcentration()
 //--------------------------------------------------------------------------------------------------
 void Drugs::CalculateSubstanceClearance()
 {
-  double PatientWeight_kg = m_data.GetPatient().GetWeight(MassUnit::kg);
+  double PatientWeight_kg = m_data.GetCurrentPatient().GetWeight(MassUnit::kg);
   double HepaticClearance_mLPers = 0;
   double FractionUnboundInPlasma = 0;
   double IntrinsicClearance_mLPersPerkg = 0;

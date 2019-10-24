@@ -411,6 +411,8 @@ void PBPulsePhysiology::Serialize(const RespiratoryData& src, Respiratory& dst)
   dst.m_BottomBreathTotalVolume_L = src.bottombreathtotalvolume_l();
   dst.m_BottomBreathAlveoliVolume_L = src.bottombreathalveolivolume_l();
   dst.m_BottomBreathPleuralPressure_cmH2O = src.bottombreathpleuralpressure_cmh2o();
+  dst.m_PeakAlveolarPressure_cmH2O = src.peakalveolarpressure_cmh2o();
+  dst.m_MaximalAlveolarPressure_cmH2O = src.maximalalveolarpressure_cmh2o();
   PBProperty::Load(src.bloodphrunningaverage(), *dst.m_BloodPHRunningAverage);
 
   dst.m_ArterialO2PartialPressure_mmHg = src.arterialo2partialpressure_mmhg();
@@ -459,6 +461,8 @@ void PBPulsePhysiology::Serialize(const Respiratory& src, RespiratoryData& dst)
   dst.set_bottombreathtotalvolume_l(src.m_BottomBreathTotalVolume_L);
   dst.set_bottombreathalveolivolume_l(src.m_BottomBreathAlveoliVolume_L);
   dst.set_bottombreathpleuralpressure_cmh2o(src.m_BottomBreathPleuralPressure_cmH2O);
+  dst.set_peakalveolarpressure_cmh2o(src.m_PeakAlveolarPressure_cmH2O);
+  dst.set_maximalalveolarpressure_cmh2o(src.m_MaximalAlveolarPressure_cmH2O);
   dst.set_allocated_bloodphrunningaverage(PBProperty::Unload(*src.m_BloodPHRunningAverage));
 
   dst.set_arterialo2partialpressure_mmhg(src.m_ArterialO2PartialPressure_mmHg);

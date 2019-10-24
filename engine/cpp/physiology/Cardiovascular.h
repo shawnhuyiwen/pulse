@@ -117,7 +117,7 @@ protected:
   double m_CardiacCycleAortaPressureLow_mmHg; // The current low for this cycle - Reset at the start of systole
   double m_CardiacCycleAortaPressureHigh_mmHg; // The current high for this cycle - Reset at the start of systole
   double m_CardiacCyclePulmonaryArteryPressureLow_mmHg;
-  double m_CardiacCyclePulmonaryArteryPressureHigh_mmHg;  
+  double m_CardiacCyclePulmonaryArteryPressureHigh_mmHg;
   double m_LastCardiacCycleMeanArterialCO2PartialPressure_mmHg;
   double m_CardiacCycleStrokeVolume_mL; // Total volume of the left heart flow for the current cardiac cycle
   SERunningAverage* m_CardiacCycleArterialPressure_mmHg;
@@ -138,8 +138,6 @@ protected:
   
   SEFluidCircuitCalculator*        m_circuitCalculator;
   SELiquidTransporter*             m_transporter;
-
-  SEPatient*                       m_patient;
 
   SEFluidCircuit*                  m_CirculatoryCircuit;
   SELiquidCompartmentGraph*        m_CirculatoryGraph;

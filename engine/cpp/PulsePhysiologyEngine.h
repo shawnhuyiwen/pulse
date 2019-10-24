@@ -910,7 +910,6 @@ namespace pulse {
     DEFINE_STATIC_STRING(Scrubber);
     DEFINE_STATIC_STRING(Selector);
     DEFINE_STATIC_STRING(Ventilator);
-    DEFINE_STATIC_STRING(VentilatorConnection);
     DEFINE_STATIC_STRING(YPiece);
 
     static const std::vector<std::string>& GetValues()
@@ -927,7 +926,6 @@ namespace pulse {
         _values.push_back(Scrubber);
         _values.push_back(Selector);
         _values.push_back(Ventilator);
-        _values.push_back(VentilatorConnection);
         _values.push_back(YPiece);
       }
       return _values;
@@ -939,11 +937,11 @@ namespace pulse {
   class AnesthesiaMachineLink
   {
   public:
+    DEFINE_STATIC_STRING(EnvironmentToReliefValve);
     DEFINE_STATIC_STRING(VentilatorToSelector);
     DEFINE_STATIC_STRING(SelectorToReliefValve);
     DEFINE_STATIC_STRING(SelectorToScrubber);
     DEFINE_STATIC_STRING(ScrubberToGasInlet);
-    DEFINE_STATIC_STRING(Exhaust);
     DEFINE_STATIC_STRING(GasSourceToGasInlet);
     DEFINE_STATIC_STRING(GasInletToInspiratoryLimb);
     DEFINE_STATIC_STRING(InspiratoryLimbToYPiece);
@@ -951,18 +949,18 @@ namespace pulse {
     DEFINE_STATIC_STRING(ExpiratoryLimbToSelector);
     DEFINE_STATIC_STRING(YPieceToAnesthesiaConnection);
     DEFINE_STATIC_STRING(AnesthesiaConnectionLeak);
-    DEFINE_STATIC_STRING(Mask);
+    DEFINE_STATIC_STRING(AnesthesiaConnectionToMouth);
 
     static const std::vector<std::string>& GetValues()
     {
       ScopedMutex lock;
       if (_values.empty())
       {
+        _values.push_back(EnvironmentToReliefValve);
         _values.push_back(VentilatorToSelector);
         _values.push_back(SelectorToReliefValve);
         _values.push_back(SelectorToScrubber);
         _values.push_back(ScrubberToGasInlet);
-        _values.push_back(Exhaust);
         _values.push_back(GasSourceToGasInlet);
         _values.push_back(GasInletToInspiratoryLimb);
         _values.push_back(InspiratoryLimbToYPiece);
@@ -970,7 +968,7 @@ namespace pulse {
         _values.push_back(ExpiratoryLimbToSelector);
         _values.push_back(YPieceToAnesthesiaConnection);
         _values.push_back(AnesthesiaConnectionLeak);
-        _values.push_back(Mask);
+        _values.push_back(AnesthesiaConnectionToMouth);
       }
       return _values;
     }

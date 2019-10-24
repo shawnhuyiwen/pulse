@@ -21,11 +21,14 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
   protected SEScalar0To1                  endTidalOxygenFraction;
   protected SEScalarPressure              endTidalOxygenPressure;
   protected SEScalarVolumePerTime         expiratoryFlow;
+  protected SEScalarPressureTimePerVolume expiratoryPulmonaryResistance;
   protected SEScalarPower                 imposedPowerOfBreathing;
   protected SEScalarEnergy                imposedWorkOfBreathing;
   protected SEScalar                      inspiratoryExpiratoryRatio;
   protected SEScalarVolumePerTime         inspiratoryFlow;
+  protected SEScalarPressureTimePerVolume inspiratoryPulmonaryResistance;
   protected SEScalarPressure              intrapleuralPressure;
+  protected SEScalarPressure              intrapulmonaryPressure;
   protected SEScalarVolumePerPressure     lungCompliance;
   protected SEScalarPressure              maximalInspiratoryPressure;
   protected SEScalarPower                 patientPowerOfBreathing;
@@ -35,7 +38,6 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
   protected SEScalarPressure              positiveEndExpiratoryPressure;
   protected SEScalarVolumePerPressure     pulmonaryCompliance;
   protected SEScalarPressurePerVolume     pulmonaryElastance;
-  protected SEScalarPressureTimePerVolume pulmonaryResistance;
   protected SEScalarEnergy                resistiveExpiratoryWorkOfBreathing;
   protected SEScalarEnergy                resistiveInspiratoryWorkOfBreathing;
   protected SEScalarFrequency             respirationRate;
@@ -52,6 +54,7 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
   protected SEScalarPressure              transairwayPressure;
   protected SEScalarPressure              transalveolarPressure;
   protected SEScalarPressure              transChestWallPressure;
+  protected SEScalarPressure              transMusclePressure;
   protected SEScalarPressure              transpulmonaryPressure;
   protected SEScalarPressure              transrespiratoryPressure;
   protected SEScalarPressure              transthoracicPressure;
@@ -70,11 +73,14 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
     endTidalOxygenFraction = null;
     endTidalOxygenPressure = null;
     expiratoryFlow = null;
+    expiratoryPulmonaryResistance = null;
     imposedPowerOfBreathing = null;
     imposedWorkOfBreathing = null;
     inspiratoryExpiratoryRatio = null;
     inspiratoryFlow = null;
+    inspiratoryPulmonaryResistance = null;
     intrapleuralPressure = null;
+    intrapulmonaryPressure = null;
     lungCompliance = null;
     maximalInspiratoryPressure = null;
     patientPowerOfBreathing = null;
@@ -84,7 +90,6 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
     positiveEndExpiratoryPressure = null;
     pulmonaryCompliance = null;
     pulmonaryElastance = null;
-    pulmonaryResistance = null;
     resistiveExpiratoryWorkOfBreathing = null;
     resistiveInspiratoryWorkOfBreathing = null;
     respirationRate = null;
@@ -101,6 +106,7 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
     transairwayPressure = null;
     transalveolarPressure = null;
     transChestWallPressure = null;
+    transMusclePressure = null;
     transpulmonaryPressure = null;
     transrespiratoryPressure = null;
     transthoracicPressure = null;
@@ -130,6 +136,8 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
       endTidalOxygenPressure.invalidate();
     if (expiratoryFlow != null)
       expiratoryFlow.invalidate();
+    if (expiratoryPulmonaryResistance != null)
+      expiratoryPulmonaryResistance.invalidate();
     if (imposedPowerOfBreathing != null)
       imposedPowerOfBreathing.invalidate();
     if (imposedWorkOfBreathing != null)
@@ -138,8 +146,12 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
       inspiratoryExpiratoryRatio.invalidate();
     if (inspiratoryFlow != null)
       inspiratoryFlow.invalidate();
+    if (inspiratoryPulmonaryResistance != null)
+      inspiratoryPulmonaryResistance.invalidate();
     if (intrapleuralPressure != null)
       intrapleuralPressure.invalidate();
+    if (intrapulmonaryPressure != null)
+      intrapulmonaryPressure.invalidate();
     if (lungCompliance != null)
       lungCompliance.invalidate();
     if (maximalInspiratoryPressure != null)
@@ -158,8 +170,6 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
       pulmonaryCompliance.invalidate();
     if (pulmonaryElastance != null)
       pulmonaryElastance.invalidate();
-    if (pulmonaryResistance != null)
-      pulmonaryResistance.invalidate();
     if (resistiveExpiratoryWorkOfBreathing != null)
       resistiveExpiratoryWorkOfBreathing.invalidate();
     if (resistiveInspiratoryWorkOfBreathing != null)
@@ -192,6 +202,8 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
       transalveolarPressure.invalidate();
     if (transChestWallPressure != null)
       transChestWallPressure.invalidate();
+    if (transMusclePressure != null)
+      transMusclePressure.invalidate();
     if (transpulmonaryPressure != null)
       transpulmonaryPressure.invalidate();
     if (transrespiratoryPressure != null)
@@ -224,6 +236,8 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
       SEScalarPressure.load(src.getEndTidalOxygenPressure(),dst.getEndTidalOxygenPressure());
     if (src.hasExpiratoryFlow())
       SEScalarVolumePerTime.load(src.getExpiratoryFlow(),dst.getExpiratoryFlow());
+    if (src.hasExpiratoryPulmonaryResistance())
+      SEScalarPressureTimePerVolume.load(src.getExpiratoryPulmonaryResistance(),dst.getExpiratoryPulmonaryResistance()); 
     if (src.hasImposedPowerOfBreathing())
       SEScalarPower.load(src.getImposedPowerOfBreathing(),dst.getImposedPowerOfBreathing()); 
     if (src.hasImposedWorkOfBreathing())
@@ -232,8 +246,12 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
       SEScalar.load(src.getInspiratoryExpiratoryRatio(),dst.getInspiratoryExpiratoryRatio()); 
     if (src.hasInspiratoryFlow())
       SEScalarVolumePerTime.load(src.getInspiratoryFlow(),dst.getInspiratoryFlow()); 
+    if (src.hasInspiratoryPulmonaryResistance())
+      SEScalarPressureTimePerVolume.load(src.getInspiratoryPulmonaryResistance(),dst.getInspiratoryPulmonaryResistance()); 
     if (src.hasIntrapleuralPressure())
-      SEScalarPressure.load(src.getIntrapleuralPressure(),dst.getIntrapleuralPressure()); 
+      SEScalarPressure.load(src.getIntrapleuralPressure(),dst.getIntrapleuralPressure());
+    if (src.hasIntrapulmonaryPressure())
+      SEScalarPressure.load(src.getIntrapulmonaryPressure(),dst.getIntrapulmonaryPressure()); 
     if (src.hasLungCompliance())
       SEScalarVolumePerPressure.load(src.getLungCompliance(),dst.getLungCompliance()); 
     if (src.hasMaximalInspiratoryPressure())
@@ -252,8 +270,6 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
       SEScalarVolumePerPressure.load(src.getPulmonaryCompliance(),dst.getPulmonaryCompliance()); 
     if (src.hasPulmonaryElastance())
       SEScalarPressurePerVolume.load(src.getPulmonaryElastance(),dst.getPulmonaryElastance()); 
-    if (src.hasPulmonaryResistance())
-      SEScalarPressureTimePerVolume.load(src.getPulmonaryResistance(),dst.getPulmonaryResistance()); 
     if (src.hasResistiveExpiratoryWorkOfBreathing())
       SEScalarEnergy.load(src.getResistiveExpiratoryWorkOfBreathing(),dst.getResistiveExpiratoryWorkOfBreathing()); 
     if (src.hasResistiveInspiratoryWorkOfBreathing())
@@ -286,6 +302,8 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
       SEScalarPressure.load(src.getTransalveolarPressure(),dst.getTransalveolarPressure());
     if (src.hasTransChestWallPressure())
       SEScalarPressure.load(src.getTransChestWallPressure(),dst.getTransChestWallPressure());
+    if (src.hasTransMusclePressure())
+      SEScalarPressure.load(src.getTransMusclePressure(),dst.getTransMusclePressure());
     if (src.hasTranspulmonaryPressure())
       SEScalarPressure.load(src.getTranspulmonaryPressure(),dst.getTranspulmonaryPressure());
     if (src.hasTransrespiratoryPressure())
@@ -325,6 +343,8 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
       dst.setEndTidalOxygenPressure(SEScalarPressure.unload(src.getEndTidalOxygenPressure())); 
     if (src.hasExpiratoryFlow())
       dst.setExpiratoryFlow(SEScalarVolumePerTime.unload(src.getExpiratoryFlow()));
+    if (src.hasExpiratoryPulmonaryResistance())
+      dst.setExpiratoryPulmonaryResistance(SEScalarPressureTimePerVolume.unload(src.getExpiratoryPulmonaryResistance()));
     if (src.hasImposedPowerOfBreathing())
       dst.setImposedPowerOfBreathing(SEScalarPower.unload(src.getImposedPowerOfBreathing()));
     if (src.hasImposedWorkOfBreathing())
@@ -333,8 +353,12 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
       dst.setInspiratoryExpiratoryRatio(SEScalar.unload(src.getInspiratoryExpiratoryRatio()));
     if (src.hasInspiratoryFlow())
       dst.setInspiratoryFlow(SEScalarVolumePerTime.unload(src.getInspiratoryFlow()));
+    if (src.hasInspiratoryPulmonaryResistance())
+      dst.setInspiratoryPulmonaryResistance(SEScalarPressureTimePerVolume.unload(src.getInspiratoryPulmonaryResistance()));
     if (src.hasIntrapleuralPressure())
       dst.setIntrapleuralPressure(SEScalarPressure.unload(src.getIntrapleuralPressure()));
+    if (src.hasIntrapulmonaryPressure())
+      dst.setIntrapulmonaryPressure(SEScalarPressure.unload(src.getIntrapulmonaryPressure()));
     if (src.hasLungCompliance())
       dst.setLungCompliance(SEScalarVolumePerPressure.unload(src.getLungCompliance()));
     if (src.hasMaximalInspiratoryPressure())
@@ -353,8 +377,6 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
       dst.setPulmonaryCompliance(SEScalarVolumePerPressure.unload(src.getPulmonaryCompliance()));
     if (src.hasPulmonaryElastance())
         dst.setPulmonaryElastance(SEScalarPressurePerVolume.unload(src.getPulmonaryElastance()));
-    if (src.hasPulmonaryResistance())
-      dst.setPulmonaryResistance(SEScalarPressureTimePerVolume.unload(src.getPulmonaryResistance()));
     if (src.hasResistiveExpiratoryWorkOfBreathing())
       dst.setResistiveExpiratoryWorkOfBreathing(SEScalarEnergy.unload(src.getResistiveExpiratoryWorkOfBreathing()));
     if (src.hasResistiveInspiratoryWorkOfBreathing())
@@ -387,6 +409,8 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
       dst.setTransalveolarPressure(SEScalarPressure.unload(src.getTransalveolarPressure()));
     if (src.hasTransChestWallPressure())
       dst.setTransChestWallPressure(SEScalarPressure.unload(src.getTransChestWallPressure()));
+    if (src.hasTransMusclePressure())
+      dst.setTransMusclePressure(SEScalarPressure.unload(src.getTransMusclePressure()));
     if (src.hasTranspulmonaryPressure())
       dst.setTranspulmonaryPressure(SEScalarPressure.unload(src.getTranspulmonaryPressure()));
     if (src.hasTransrespiratoryPressure())
@@ -516,6 +540,18 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
     return expiratoryFlow;
   }
 
+  public boolean hasExpiratoryPulmonaryResistance()
+  {
+    return expiratoryPulmonaryResistance == null ? false : expiratoryPulmonaryResistance.isValid();
+  }
+  public SEScalarPressureTimePerVolume getExpiratoryPulmonaryResistance()
+  {
+    if (expiratoryPulmonaryResistance == null)
+      expiratoryPulmonaryResistance = new SEScalarPressureTimePerVolume();
+    return expiratoryPulmonaryResistance;
+  }
+  
+
   public boolean hasImposedPowerOfBreathing()
   {
     return imposedPowerOfBreathing == null ? false : imposedPowerOfBreathing.isValid();
@@ -560,6 +596,17 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
     return inspiratoryFlow;
   }
   
+  public boolean hasInspiratoryPulmonaryResistance()
+  {
+    return inspiratoryPulmonaryResistance == null ? false : inspiratoryPulmonaryResistance.isValid();
+  }
+  public SEScalarPressureTimePerVolume getInspiratoryPulmonaryResistance()
+  {
+    if (inspiratoryPulmonaryResistance == null)
+      inspiratoryPulmonaryResistance = new SEScalarPressureTimePerVolume();
+    return inspiratoryPulmonaryResistance;
+  }
+  
   public boolean hasIntrapleuralPressure()
   {
     return intrapleuralPressure == null ? false : intrapleuralPressure.isValid();
@@ -569,6 +616,17 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
     if (intrapleuralPressure == null)
       intrapleuralPressure = new SEScalarPressure();
     return intrapleuralPressure;
+  }
+  
+  public boolean hasIntrapulmonaryPressure()
+  {
+    return intrapulmonaryPressure == null ? false : intrapulmonaryPressure.isValid();
+  }
+  public SEScalarPressure getIntrapulmonaryPressure()
+  {
+    if (intrapulmonaryPressure == null)
+      intrapulmonaryPressure = new SEScalarPressure();
+    return intrapulmonaryPressure;
   }
   
   public boolean hasLungCompliance()
@@ -661,24 +719,13 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
 
   public boolean hasPulmonaryElastance()
   {
-    return pulmonaryElastance == null ? false : pulmonaryResistance.isValid();
+    return pulmonaryElastance == null ? false : pulmonaryElastance.isValid();
   }
   public SEScalarPressurePerVolume getPulmonaryElastance()
   {
     if (pulmonaryElastance == null)
       pulmonaryElastance = new SEScalarPressurePerVolume();
     return pulmonaryElastance;
-  }
-
-  public boolean hasPulmonaryResistance()
-  {
-    return pulmonaryResistance == null ? false : pulmonaryResistance.isValid();
-  }
-  public SEScalarPressureTimePerVolume getPulmonaryResistance()
-  {
-    if (pulmonaryResistance == null)
-      pulmonaryResistance = new SEScalarPressureTimePerVolume();
-    return pulmonaryResistance;
   }
   
   public boolean hasResistiveExpiratoryWorkOfBreathing()
@@ -855,6 +902,17 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
     if (transChestWallPressure == null)
       transChestWallPressure = new SEScalarPressure();
     return transChestWallPressure;
+  }
+
+  public boolean hasTransMusclePressure()
+  {
+    return transMusclePressure == null ? false : transMusclePressure.isValid();
+  }
+  public SEScalarPressure getTransMusclePressure()
+  {
+    if (transMusclePressure == null)
+      transMusclePressure = new SEScalarPressure();
+    return transMusclePressure;
   }
 
   public boolean hasTranspulmonaryPressure()

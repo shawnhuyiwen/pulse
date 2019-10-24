@@ -67,7 +67,8 @@ public:
 
   PulseSubstances&                        GetSubstances();
 
-  SEPatient&                              GetPatient();
+  const SEPatient&                        GetInitialPatient();
+  SEPatient&                              GetCurrentPatient();
   bool                                    GetPatientAssessment(SEPatientAssessment& assessment) const;
 
   SEBloodChemistrySystem&                 GetBloodChemistry();
@@ -130,8 +131,8 @@ protected:
   void SetupExternalTemperature();
   void SetupInternalTemperature();
 
-  bool Initialize(const PulseConfiguration* config);
-  bool SetupPatient();
+  bool Initialize(const PulseConfiguration* config, const SEPatient& patient);
+  bool SetupPatient(const SEPatient& patient);
 
   // Notify systems that steady state has been achieved
   virtual void AtSteadyState(EngineState state);
@@ -178,7 +179,8 @@ protected:
 
   std::unique_ptr<Inhaler>                                      m_Inhaler;
 
-  std::unique_ptr<SEPatient>                                    m_Patient;
+  std::unique_ptr<SEPatient>                                    m_InitialPatient;
+  std::unique_ptr<SEPatient>                                    m_CurrentPatient;
 
   std::unique_ptr<SEEventManager>                               m_EventManager;
 

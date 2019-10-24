@@ -102,7 +102,7 @@ void Nervous::AtSteadyState()
   // The set-points (Baselines) get reset at the end of each stabilization period.
   m_ArterialOxygenBaseline_mmHg = m_data.GetBloodChemistry().GetArterialOxygenPressure(PressureUnit::mmHg);
   m_ArterialCarbonDioxideBaseline_mmHg = m_data.GetBloodChemistry().GetArterialCarbonDioxidePressure(PressureUnit::mmHg);
-  m_BaroreceptorMeanArterialPressureBaseline_mmHg = m_data.GetPatient().GetMeanArterialPressureBaseline().GetValue(PressureUnit::mmHg);
+  m_BaroreceptorMeanArterialPressureBaseline_mmHg = m_data.GetCurrentPatient().GetMeanArterialPressureBaseline(PressureUnit::mmHg);
   // The baroreceptor scales need to be reset any time the baselines are reset.
   GetBaroreceptorHeartRateScale().SetValue(1.0);
   GetBaroreceptorHeartElastanceScale().SetValue(1.0);
@@ -317,7 +317,7 @@ void Nervous::ChemoreceptorFeedback()
   //double HRBaseline_per_min = m_HeartRateNoFeedbackBaseline_per_min;
   // Maximum HR delta is 1.23 times baseline. The derivation of this maximum is described in the NervousMethodology documentation
   //double maxHeartRateDelta = 1.23 * m_HeartRateNoFeedbackBaseline_per_min;
-  double maxHeartRateDelta = 1.23 * m_data.GetPatient().GetHeartRateBaseline(FrequencyUnit::Per_min);
+  double maxHeartRateDelta = 1.23 * m_data.GetCurrentPatient().GetHeartRateBaseline(FrequencyUnit::Per_min);
   double modifier = GeneralMath::LogisticFunction(amax, a50, aeta, normalized_pCO2);
   modifier += GeneralMath::LogisticFunction(bmax, b50, beta, normalized_pCO2);
   modifier += GeneralMath::LogisticFunction(cmax, c50, ceta, normalized_pO2);

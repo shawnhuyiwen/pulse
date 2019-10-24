@@ -94,7 +94,6 @@ Cardiovascular::~Cardiovascular()
 void Cardiovascular::Clear()
 {
   SECardiovascularSystem::Clear();
-  m_patient = nullptr;
 
   m_CirculatoryCircuit = nullptr;
   m_CirculatoryGraph = nullptr;
@@ -210,15 +209,15 @@ void Cardiovascular::Initialize()
   m_CompressionPeriod_s = 0.0;
 
   //Initialize system data based on patient file inputs
-  GetBloodVolume().Set(m_patient->GetBloodVolumeBaseline());
-  m_CardiacCycleAortaPressureHigh_mmHg = m_patient->GetSystolicArterialPressureBaseline(PressureUnit::mmHg);
-  m_CardiacCycleAortaPressureLow_mmHg = m_patient->GetDiastolicArterialPressureBaseline(PressureUnit::mmHg);
+  GetBloodVolume().Set(m_data.GetCurrentPatient().GetBloodVolumeBaseline());
+  m_CardiacCycleAortaPressureHigh_mmHg = m_data.GetCurrentPatient().GetSystolicArterialPressureBaseline(PressureUnit::mmHg);
+  m_CardiacCycleAortaPressureLow_mmHg = m_data.GetCurrentPatient().GetDiastolicArterialPressureBaseline(PressureUnit::mmHg);
   GetMeanArterialPressure().SetValue((2. / 3.*m_CardiacCycleAortaPressureLow_mmHg) + (1. / 3.*m_CardiacCycleAortaPressureHigh_mmHg), PressureUnit::mmHg);
   m_CardiacCycleArterialPressure_mmHg->Sample(GetMeanArterialPressure().GetValue(PressureUnit::mmHg));
   m_CardiacCyclePulmonaryArteryPressureHigh_mmHg = 26;
   m_CardiacCyclePulmonaryArteryPressureLow_mmHg = 9;
   GetPulmonaryMeanArterialPressure().SetValue(15, PressureUnit::mmHg);
-  GetHeartRate().Set(m_patient->GetHeartRateBaseline());
+  GetHeartRate().Set(m_data.GetCurrentPatient().GetHeartRateBaseline());
   RecordAndResetCardiacCycle();  
   
   // Set system data based on physiology norms
@@ -265,7 +264,6 @@ void Cardiovascular::Initialize()
 void Cardiovascular::SetUp()
 {
   m_dT_s = m_data.GetTimeStep().GetValue(TimeUnit::s);
-  m_patient = &m_data.GetPatient();
   m_minIndividialSystemicResistance__mmHg_s_Per_mL = 0.1;
 
   //Circuits
@@ -387,10 +385,10 @@ void Cardiovascular::SetUp()
 //--------------------------------------------------------------------------------------------------
 void Cardiovascular::AtSteadyState()
 {
-  m_patient->GetHeartRateBaseline().Set(GetHeartRate());
-  m_patient->GetDiastolicArterialPressureBaseline().Set(GetDiastolicArterialPressure());
-  m_patient->GetSystolicArterialPressureBaseline().Set(GetSystolicArterialPressure());
-  m_patient->GetMeanArterialPressureBaseline().Set(GetMeanArterialPressure());
+  m_data.GetCurrentPatient().GetHeartRateBaseline().Set(GetHeartRate());
+  m_data.GetCurrentPatient().GetDiastolicArterialPressureBaseline().Set(GetDiastolicArterialPressure());
+  m_data.GetCurrentPatient().GetSystolicArterialPressureBaseline().Set(GetSystolicArterialPressure());
+  m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().Set(GetMeanArterialPressure());
 
   std::string typeString = "Initial Stabilization Homeostasis: ";
   if (m_data.GetState() == EngineState::AtSecondaryStableState)
@@ -745,13 +743,13 @@ void Cardiovascular::CalculateVitalSigns()
 
   // Check for hypovolemic shock
   /// \event Patient: Hypovolemic Shock: blood volume below 65% of its normal value
-    if (GetBloodVolume().GetValue(VolumeUnit::mL) <= (m_data.GetConfiguration().GetMinimumBloodVolumeFraction()*m_patient->GetBloodVolumeBaseline(VolumeUnit::mL)))
+    if (GetBloodVolume().GetValue(VolumeUnit::mL) <= (m_data.GetConfiguration().GetMinimumBloodVolumeFraction()* m_data.GetCurrentPatient().GetBloodVolumeBaseline(VolumeUnit::mL)))
     {
       m_data.GetEvents().SetEvent(eEvent::HypovolemicShock, true, m_data.GetSimulationTime());
 
       /// \event Patient: blood loss below 50%, irreversible state enacted 
       // @cite Gutierrez2004HemorrhagicShock
-      double hypovolemicShock = 0.5*m_patient->GetBloodVolumeBaseline(VolumeUnit::mL);
+      double hypovolemicShock = 0.5*m_data.GetCurrentPatient().GetBloodVolumeBaseline(VolumeUnit::mL);
       if (GetBloodVolume().GetValue(VolumeUnit::mL) <= hypovolemicShock)
       {
         m_ss << "Over half the patients blood volume has been lost. The patient is now in an irreversible state.";
@@ -847,7 +845,7 @@ void Cardiovascular::RecordAndResetCardiacCycle()
     ejectionFraction = m_CardiacCycleStrokeVolume_mL / m_CardiacCycleDiastolicVolume_mL;
   GetHeartEjectionFraction().SetValue(ejectionFraction);
   GetCardiacOutput().SetValue(m_CardiacCycleStrokeVolume_mL * GetHeartRate().GetValue(FrequencyUnit::Per_min), VolumePerTimeUnit::mL_Per_min);
-  GetCardiacIndex().SetValue(GetCardiacOutput().GetValue(VolumePerTimeUnit::mL_Per_min) / m_patient->GetSkinSurfaceArea(AreaUnit::m2), VolumePerTimeAreaUnit::mL_Per_min_m2);
+  GetCardiacIndex().SetValue(GetCardiacOutput().GetValue(VolumePerTimeUnit::mL_Per_min) / m_data.GetCurrentPatient().GetSkinSurfaceArea(AreaUnit::m2), VolumePerTimeAreaUnit::mL_Per_min_m2);
 
   // Running means
   // Mean Arterial Pressure
@@ -1221,10 +1219,10 @@ void Cardiovascular::Hemorrhage()
   //Update the patient's mass
   double bloodDensity_kg_Per_mL = m_data.GetBloodChemistry().GetBloodDensity(MassPerVolumeUnit::kg_Per_mL);
   double massLost_kg = (TotalLossRate_mL_Per_s - internal_rate_mL_Per_s)*bloodDensity_kg_Per_mL*m_dT_s;
-  double patientMass_kg = m_patient->GetWeight(MassUnit::kg);
+  double patientMass_kg = m_data.GetCurrentPatient().GetWeight(MassUnit::kg);
   patientMass_kg -= massLost_kg;
 
-  m_patient->GetWeight().SetValue(patientMass_kg, MassUnit::kg);
+  m_data.GetCurrentPatient().GetWeight().SetValue(patientMass_kg, MassUnit::kg);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -1584,7 +1582,7 @@ void Cardiovascular::BeginCardiacCycle()
   if (m_data.GetNervous().HasBaroreceptorHeartElastanceScale())
     m_RightHeartElastanceMax_mmHg_Per_mL *= m_data.GetNervous().GetBaroreceptorHeartElastanceScale().GetValue();
 
-  double HeartDriverFrequency_Per_Min = m_patient->GetHeartRateBaseline(FrequencyUnit::Per_min);
+  double HeartDriverFrequency_Per_Min = m_data.GetCurrentPatient().GetHeartRateBaseline(FrequencyUnit::Per_min);
   if (m_data.GetNervous().HasBaroreceptorHeartRateScale())
     HeartDriverFrequency_Per_Min *= m_data.GetNervous().GetBaroreceptorHeartRateScale().GetValue();
 
@@ -1596,7 +1594,7 @@ void Cardiovascular::BeginCardiacCycle()
   // Apply drug effects
   if (m_data.GetDrugs().HasHeartRateChange())
     HeartDriverFrequency_Per_Min += m_data.GetDrugs().GetHeartRateChange(FrequencyUnit::Per_min);
-  BLIM(HeartDriverFrequency_Per_Min, m_data.GetPatient().GetHeartRateMinimum(FrequencyUnit::Per_min), m_data.GetPatient().GetHeartRateMaximum(FrequencyUnit::Per_min));
+  BLIM(HeartDriverFrequency_Per_Min, m_data.GetCurrentPatient().GetHeartRateMinimum(FrequencyUnit::Per_min), m_data.GetCurrentPatient().GetHeartRateMaximum(FrequencyUnit::Per_min));
 
   //Apply heart failure effects
   m_LeftHeartElastanceMax_mmHg_Per_mL *= m_LeftHeartElastanceModifier;
@@ -1670,7 +1668,7 @@ void Cardiovascular::MetabolicToneResponse()
   if (m_data.GetEnergy().HasTotalMetabolicRate())
   {
     double TMR_kcal_Per_day = m_data.GetEnergy().GetTotalMetabolicRate(PowerUnit::kcal_Per_day);
-    metabolicFraction = TMR_kcal_Per_day / m_patient->GetBasalMetabolicRate(PowerUnit::kcal_Per_day);
+    metabolicFraction = TMR_kcal_Per_day / m_data.GetCurrentPatient().GetBasalMetabolicRate(PowerUnit::kcal_Per_day);
   }
   
   if (metabolicFraction == 1.0)
@@ -1692,7 +1690,7 @@ void Cardiovascular::MetabolicToneResponse()
   double metabolicMultiplier = (sp0*metabolicFraction + (divisor - sp0)) / divisor;
 
   // Max delta approx. 20% of baseline \cite christie1997cardiac \cite foster1999left
-  double metabolicRateMeanArterialPressureDelta_mmHg = (0.05*metabolicFraction - 0.05)*m_data.GetPatient().GetMeanArterialPressureBaseline(PressureUnit::mmHg);
+  double metabolicRateMeanArterialPressureDelta_mmHg = (0.05*metabolicFraction - 0.05)*m_data.GetCurrentPatient().GetMeanArterialPressureBaseline(PressureUnit::mmHg);
   m_data.GetEnergy().GetExerciseMeanArterialPressureDelta().SetValue(metabolicRateMeanArterialPressureDelta_mmHg, PressureUnit::mmHg);
 
   //Reducing resistances scaling with metabolic rate increase and changes in core temperature
@@ -1742,9 +1740,9 @@ void Cardiovascular::TuneCircuit()
   std::ofstream circuitFile;
 
   bool success = false;
-  double systolicTarget_mmHg = m_patient->GetSystolicArterialPressureBaseline(PressureUnit::mmHg);
-  double diastolicTarget_mmHg = m_patient->GetDiastolicArterialPressureBaseline(PressureUnit::mmHg);
-  double heartRateTarget_bpm = m_patient->GetHeartRateBaseline(FrequencyUnit::Per_min);
+  double systolicTarget_mmHg = m_data.GetCurrentPatient().GetSystolicArterialPressureBaseline(PressureUnit::mmHg);
+  double diastolicTarget_mmHg = m_data.GetCurrentPatient().GetDiastolicArterialPressureBaseline(PressureUnit::mmHg);
+  double heartRateTarget_bpm = m_data.GetCurrentPatient().GetHeartRateBaseline(FrequencyUnit::Per_min);
 
   m_ss << "Tuning to patient parameters : HeartRate(bpm):" << heartRateTarget_bpm << " Systolic(mmHg):" << systolicTarget_mmHg << " Diastolic(mmHg):" << diastolicTarget_mmHg;
   Info(m_ss);

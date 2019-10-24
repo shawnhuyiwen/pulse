@@ -65,8 +65,6 @@ public:
   double m_PatientEquivalentDiameter_m;
 
   // Stateless member variable (Set in SetUp())
-  // Patient and Actions
-  SEPatient*                     m_Patient;
   // Compartments
   SEGasCompartment*              m_AmbientGases;
   SELiquidCompartment*           m_AmbientAerosols;

@@ -224,7 +224,6 @@ namespace pulse {
     DEFINE_STATIC_STRING(ExpiratoryLimbToSelector);
     DEFINE_STATIC_STRING(YPieceToAnesthesiaConnection);
     DEFINE_STATIC_STRING(AnesthesiaConnectionToEnvironment);
-    DEFINE_STATIC_STRING(SelectorToEnvironment);
   };
 
   class CombinedAnesthesiaMachinePath

@@ -22,7 +22,7 @@ public:
 
   bool log(Logger::level requested_level)
   {
-    if (_log_level < requested_level)
+    if (requested_level < _log_level)
       return false;
     if (!_log_to_console && !_log_to_file)
       return false;
