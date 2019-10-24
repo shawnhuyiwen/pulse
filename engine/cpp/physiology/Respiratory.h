@@ -136,7 +136,7 @@ protected:
   double m_ElapsedBreathingCycleTime_min;
   double m_IEscaleFactor;
   double m_InstantaneousFunctionalResidualCapacity_L;
-  double m_MaxDriverPressure_cmH2O;    
+  double m_MaxDriverPressure_cmH2O;
   double m_PeakRespiratoryDrivePressure_cmH2O;
   double m_PreviousTargetAlveolarVentilation_L_Per_min;
   double m_VentilationFrequency_Per_min;

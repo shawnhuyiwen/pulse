@@ -26,6 +26,8 @@ public class SETestJob extends LogListener
   public boolean      PlottableResults = false;
   public PlotType     plotType = PlotType.FastPlot;//Only plot every nth data point
   public double       percentDifference;
+  public List<String> scenarioFiles = new ArrayList<String>();
+  public String       scenarioDirectory = null;
   public List<String> baselineFiles = new ArrayList<String>();
   public String       baselineDirectory = null;
   public List<String> computedFiles = new ArrayList<String>();

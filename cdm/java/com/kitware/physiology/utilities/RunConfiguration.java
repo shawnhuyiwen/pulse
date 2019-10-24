@@ -14,16 +14,18 @@ import org.jfree.util.Log;
  */
 public class RunConfiguration 
 {
-	protected String rootDirectory;
+  protected String rootDirectory;
   protected String dataDirectory;
+  protected String scenarioDirectory;
   protected String testConfigDirectory;
   protected String validationDirectory;
   protected String verificationDirectory;
   
   public    String getRootDirectory()         { return rootDirectory;         }
   public    String getDataDirectory()         { return dataDirectory;         }
+  public    String getScenarioDirectory()     { return scenarioDirectory;     }
   public    String getTestConfigDirectory()   { return testConfigDirectory;   }
-  public    String getValidationDirectory()   { return validationDirectory; }
+  public    String getValidationDirectory()   { return validationDirectory;   }
   public    String getVerificationDirectory() { return verificationDirectory; }
   
   
@@ -32,6 +34,7 @@ public class RunConfiguration
     // Default values
   	rootDirectory         = "./";
     dataDirectory         = "./";
+    scenarioDirectory     = "./";
     testConfigDirectory   = "./";
     validationDirectory   = "./";
     verificationDirectory = "./";
@@ -81,6 +84,18 @@ public class RunConfiguration
           dataDirectory = val;
         else
           Log.error("data_dir set to invalid directory "+val+", ignoring and using default ("+this.dataDirectory+")");
+      }
+    }
+    if(properties.containsKey("scenario_dir"))
+    {  
+      String val = properties.get("scenario_dir").toString();
+      if(!val.startsWith("@"))
+      {
+        File dir = new File(val);
+        if(dir.exists() && dir.isDirectory())
+          scenarioDirectory = val;
+        else
+          Log.error("scenario_dir set to invalid directory "+val+", ignoring and using default ("+this.scenarioDirectory+")");
       }
     }
     if(properties.containsKey("test_config_dir"))
