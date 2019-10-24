@@ -227,13 +227,15 @@ void PulseEngineTest::RespiratoryDriverTest(const std::string& sTestDirectory)
   SEFluidCircuit& RespCircuit = pc.GetCircuits().GetRespiratoryCircuit();
   SEFluidCircuitCalculator calc(VolumePerPressureUnit::L_Per_cmH2O, VolumePerTimeUnit::L_Per_s, PressureTimeSquaredPerVolumeUnit::cmH2O_s2_Per_L, PressureUnit::cmH2O, VolumeUnit::L, PressureTimePerVolumeUnit::cmH2O_s_Per_L, pc.GetLogger());
 
-  double deltaT_s = 1.0 / 90.0;
+  double deltaT_s = 1.0 / 50.0;
 
   SEFluidCircuitPath* driverPressurePath = RespCircuit.GetPath(pulse::RespiratoryPath::EnvironmentToRespiratoryMuscle);
   SEFluidCircuitPath* rightPleuralToRespiratoryMuscle = RespCircuit.GetPath(pulse::RespiratoryPath::RightPleuralToRespiratoryMuscle);
   SEFluidCircuitPath* leftPleuralToRespiratoryMuscle = RespCircuit.GetPath(pulse::RespiratoryPath::LeftPleuralToRespiratoryMuscle);
   SEFluidCircuitPath* mouthToCarina = RespCircuit.GetPath(pulse::RespiratoryPath::MouthToCarina);
-
+  SEFluidCircuitPath* RightAlveoliToRightPleuralConnection = RespCircuit.GetPath(pulse::RespiratoryPath::RightAlveoliToRightPleuralConnection);
+  SEFluidCircuitPath* LeftAlveoliToLeftPleuralConnection = RespCircuit.GetPath(pulse::RespiratoryPath::LeftAlveoliToLeftPleuralConnection);
+  
   SEFluidCircuitNode* rightPleuralNode = RespCircuit.GetNode(pulse::RespiratoryNode::RightPleural);
   SEFluidCircuitNode* leftPleuralNode = RespCircuit.GetNode(pulse::RespiratoryNode::LeftPleural);
   SEFluidCircuitNode* rightDeadSpaceNode = RespCircuit.GetNode(pulse::RespiratoryNode::RightAnatomicDeadSpace);
@@ -241,9 +243,7 @@ void PulseEngineTest::RespiratoryDriverTest(const std::string& sTestDirectory)
   SEFluidCircuitNode* rightAlveoliNode = RespCircuit.GetNode(pulse::RespiratoryNode::RightAlveoli);
   SEFluidCircuitNode* leftAlveoliNode = RespCircuit.GetNode(pulse::RespiratoryNode::LeftAlveoli);
   SEFluidCircuitNode* muscleNode = RespCircuit.GetNode(pulse::RespiratoryNode::RespiratoryMuscle);
-
-  RespCircuit.GetNode(pulse::EnvironmentNode::Ambient)->GetNextPressure().SetValue(760, PressureUnit::mmHg);
-
+  
   driverPressurePath->GetNextPressureSource().SetValue(0.0, PressureUnit::cmH2O);
   double PressureIncrement_cmH2O = 0.1;
   double DriverPressure_cmH2O = 0.0;
@@ -251,7 +251,9 @@ void PulseEngineTest::RespiratoryDriverTest(const std::string& sTestDirectory)
   bool bIRVReached = false;
   bool bRVReached = false;
   int iTime = 0;
-  double AmbientPresure = 1033.23; // = 1 atm
+  double AmbientPresure_cmH2O = 1033.23; // = 1 atm
+
+  RespCircuit.GetNode(pulse::EnvironmentNode::Ambient)->GetNextPressure().SetValue(AmbientPresure_cmH2O, PressureUnit::cmH2O);
 
   while (!bIRVReached)
   {
@@ -278,7 +280,9 @@ void PulseEngineTest::RespiratoryDriverTest(const std::string& sTestDirectory)
       //Check to see if the circuit has stabilized
       if (std::abs(TotalVolume_L - PreviousTotalVolume_L) < 1e-10)
       {
-        if (!bRVReached && TotalVolume_L <= pc.GetCurrentPatient().GetResidualVolume(VolumeUnit::L))
+        bool polarityReversed = RightAlveoliToRightPleuralConnection->GetPolarizedState() == eGate::Open &&
+          LeftAlveoliToLeftPleuralConnection->GetPolarizedState() == eGate::Open;
+        if (!bRVReached && TotalVolume_L <= pc.GetCurrentPatient().GetResidualVolume(VolumeUnit::L) || polarityReversed)
         {
           bRVReached = true;
         }
@@ -297,15 +301,15 @@ void PulseEngineTest::RespiratoryDriverTest(const std::string& sTestDirectory)
           //Advance time
           calc.PostProcess(RespCircuit);
 
-          trk1.Track("ChestWallPressure_cmH2O", iTime, muscleNode->GetPressure(PressureUnit::cmH2O) - AmbientPresure);
+          trk1.Track("ChestWallPressure_cmH2O", iTime, muscleNode->GetPressure(PressureUnit::cmH2O) - AmbientPresure_cmH2O);
           trk1.Track("RightAlveoliVolume_L", iTime, rightAlveoliNode->GetVolume(VolumeUnit::L));
           trk1.Track("LeftAlveoliVolume_L", iTime, leftAlveoliNode->GetVolume(VolumeUnit::L));
-          trk1.Track("RightAlveoliPressure_cmH2O", iTime, rightAlveoliNode->GetPressure(PressureUnit::cmH2O) - AmbientPresure);
-          trk1.Track("LeftAlveoliPressure_cmH2O", iTime, leftAlveoliNode->GetPressure(PressureUnit::cmH2O) - AmbientPresure);
+          trk1.Track("RightAlveoliPressure_cmH2O", iTime, rightAlveoliNode->GetPressure(PressureUnit::cmH2O) - AmbientPresure_cmH2O);
+          trk1.Track("LeftAlveoliPressure_cmH2O", iTime, leftAlveoliNode->GetPressure(PressureUnit::cmH2O) - AmbientPresure_cmH2O);
           trk1.Track("RightPleuralVolume_L", iTime, rightPleuralNode->GetVolume(VolumeUnit::L));
           trk1.Track("LeftPleuralVolume_L", iTime, leftPleuralNode->GetVolume(VolumeUnit::L));
-          trk1.Track("RightPleuralPressure_cmH2O", iTime, rightPleuralNode->GetPressure(PressureUnit::cmH2O) - AmbientPresure);
-          trk1.Track("LeftPleuralPressure_cmH2O", iTime, leftPleuralNode->GetPressure(PressureUnit::cmH2O) - AmbientPresure);
+          trk1.Track("RightPleuralPressure_cmH2O", iTime, rightPleuralNode->GetPressure(PressureUnit::cmH2O) - AmbientPresure_cmH2O);
+          trk1.Track("LeftPleuralPressure_cmH2O", iTime, leftPleuralNode->GetPressure(PressureUnit::cmH2O) - AmbientPresure_cmH2O);
           trk1.Track("rightTranspulmonaryPressure_cmH2O", iTime, rightAlveoliNode->GetPressure(PressureUnit::cmH2O) - rightPleuralNode->GetPressure(PressureUnit::cmH2O));
           trk1.Track("LeftTranspulmonaryPressure_cmH2O", iTime, leftAlveoliNode->GetPressure(PressureUnit::cmH2O) - leftPleuralNode->GetPressure(PressureUnit::cmH2O));
 
