@@ -981,7 +981,7 @@
         "Precision": 4
       },
       "Category": "LiquidCompartment",
-      "CompartmentName": "LeftDeadSpace",
+      "CompartmentName": "LeftAnatomicDeadSpace",
       "SubstanceName": "Albuterol",
       "PropertyName": "Concentration",
       "Unit": "ug/L"
@@ -999,7 +999,7 @@
         "Precision": 4
       },
       "Category": "LiquidCompartment",
-      "CompartmentName": "RightDeadSpace",
+      "CompartmentName": "RightAnatomicDeadSpace",
       "SubstanceName": "Albuterol",
       "PropertyName": "Concentration",
       "Unit": "ug/L"
@@ -1035,7 +1035,7 @@
         "Precision": 4
       },
       "Category": "LiquidCompartment",
-      "CompartmentName": "LeftDeadSpace",
+      "CompartmentName": "LeftAnatomicDeadSpace",
       "SubstanceName": "Albuterol",
       "PropertyName": "MassDeposited",
       "Unit": "ug"
@@ -1053,7 +1053,7 @@
         "Precision": 4
       },
       "Category": "LiquidCompartment",
-      "CompartmentName": "RightDeadSpace",
+      "CompartmentName": "RightAnatomicDeadSpace",
       "SubstanceName": "Albuterol",
       "PropertyName": "MassDeposited",
       "Unit": "ug"

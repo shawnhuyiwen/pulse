@@ -445,7 +445,9 @@
       "SubstanceName": "Albuterol",
       "PropertyName": "MassInBody",
       "Unit": "ug"
-    }]
+    }, { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "PulmonaryCompliance", "Unit": "L/cmH2O" 
+	}, { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "PulmonaryResistance", "Unit": "cmH2O s/L" 
+	}]
   },
   "AnyAction": [{
     "AdvanceTime": {
@@ -457,8 +459,29 @@
       }
     }
   }, {
+   "PatientAction": {
+     "MechanicalVentilation": {
+       "State": "On",
+       "Pressure": {
+         "ScalarPressure": {
+           "Value": 0.0,
+           "Unit": "cmH2O"
+         }
+       }
+     }
+   }
+  }, {
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 30.0,
+          "Unit": "s"
+        }
+      }
+    }
+  }, {
     "PatientAction": {
-      "Apnea": {
+      "Dyspnea": {
         "Severity": {
           "Scalar0To1": {
             "Value": 1.0

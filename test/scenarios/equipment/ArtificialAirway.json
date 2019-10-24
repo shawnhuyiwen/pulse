@@ -1,9 +1,20 @@
 {
-  "Name": "AirwayObstructionVaried",
-  "Description": "Test the Airway Obstruction action by giving various severities and ensuring trends back to stable physiology when removed.",
+  "Name": "MechanicalVentilation",
+  "Description": "Mimic a patient with generic impaired alveolar exchange and apnea, then ventilated by simulating inputs as if they are from external sensors.",
   "StartType": {
     "PatientConfiguration": {
-      "PatientFile": "StandardMale.json"
+      "PatientFile": "StandardMale.json",
+      "Conditions": { "AnyCondition": [{
+        "PatientCondition": {
+          "ImpairedAlveolarExchange": {
+            "ImpairedFraction": {
+              "Scalar0To1": {
+                "Value": 0.6
+              }
+            }
+          }
+        }
+      }]}
     }
   },
   "DataRequestManager":
@@ -66,130 +77,68 @@
       { "DecimalFormat": { "Precision": 6 }, "Category": "Substance", "SubstanceName": "Epinephrine",   "PropertyName": "BloodConcentration",  "Unit": "ug/L" },
       { "DecimalFormat": { "Precision": 8 }, "Category": "Substance", "SubstanceName": "Epinephrine",   "PropertyName": "SystemicMassCleared", "Unit": "ug" },
 	  
+	  { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "InspiratoryExpiratoryRatio", "Unit": "unitless" },
 	  { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ExpiratoryFlow",             "Unit": "L/s" },
 	  { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "InspiratoryFlow",            "Unit": "L/s" },
+	  { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "PulmonaryCompliance",        "Unit": "L/cmH2O" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "PulmonaryResistance",        "Unit": "cmH2O s/L" }
 	]
   },
-  "AnyAction": [{
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 30.0,
-          "Unit": "s"
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "AirwayObstruction": {
-        "Severity": {
-          "Scalar0To1": {
-            "Value": 0.3
-          }
-        }
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 180.0,
-          "Unit": "s"
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "AirwayObstruction": {
-        "Severity": {
-          "Scalar0To1": {
-          }
-        }
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 300.0,
-          "Unit": "s"
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "AirwayObstruction": {
-        "Severity": {
-          "Scalar0To1": {
-            "Value": 0.6
-          }
-        }
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 180.0,
-          "Unit": "s"
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "AirwayObstruction": {
-        "Severity": {
-          "Scalar0To1": {
-          }
-        }
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 300.0,
-          "Unit": "s"
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "AirwayObstruction": {
-        "Severity": {
-          "Scalar0To1": {
-            "Value": 1.0
-          }
-        }
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 180.0,
-          "Unit": "s"
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "AirwayObstruction": {
-        "Severity": {
-          "Scalar0To1": {
-          }
-        }
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 500.0,
-          "Unit": "s"
-        }
-      }
-    }
-  }]
+  "AnyAction":
+  [
+    { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" }}}},
+    { "PatientAction": { "MechanicalVentilation": 
+	  { "State": "On", "Pressure": 
+	    { "ScalarPressure": { "Value": 0.0, "Unit": "cmH2O" }}
+	  }}},
+    { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" }}}},
+	{ "PatientAction": { "ChronicObstructivePulmonaryDiseaseExacerbation": 
+      {
+        "BronchitisSeverity": { "Scalar0To1": { "Value": 0.6 }},
+        "EmphysemaSeverity": { "Scalar0To1": { "Value": 0.6 }}
+      }}
+	},
+	{ "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" }}}},
+    { "PatientAction": { "ChronicObstructivePulmonaryDiseaseExacerbation": 
+      {
+        "BronchitisSeverity": { "Scalar0To1": { "Value": 0.0 }},
+        "EmphysemaSeverity": { "Scalar0To1": { "Value": 0.0 }}
+      }}
+	},	
+	{ "PatientAction": { "LobarPneumoniaExacerbation": 
+      {
+        "Severity": { "Scalar0To1": { "Value": 0.3 }},
+        "LeftLungAffected": { "Scalar0To1": { "Value": 1.0 }},
+        "RightLungAffected": { "Scalar0To1": { "Value": 1.0 }}
+      }}
+    },
+    { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" }}}},
+	{ "PatientAction": { "LobarPneumoniaExacerbation": 
+      {
+        "Severity": { "Scalar0To1": { "Value": 0.6 }},
+        "LeftLungAffected": { "Scalar0To1": { "Value": 1.0 }},
+        "RightLungAffected": { "Scalar0To1": { "Value": 1.0 }}
+      }}
+    },
+    { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" }}}},
+	{ "PatientAction": { "LobarPneumoniaExacerbation": 
+      {
+        "Severity": { "Scalar0To1": { "Value": 0.9 }},
+        "LeftLungAffected": { "Scalar0To1": { "Value": 1.0 }},
+        "RightLungAffected": { "Scalar0To1": { "Value": 1.0 }}
+      }}
+    },
+	{ "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" }}}},
+	{ "PatientAction": { "LobarPneumoniaExacerbation": 
+      {
+        "Severity": { "Scalar0To1": { "Value": 0.0 }},
+        "LeftLungAffected": { "Scalar0To1": { "Value": 0.0 }},
+        "RightLungAffected": { "Scalar0To1": { "Value": 0.0 }}
+      }}
+    },
+    { "PatientAction": { "MechanicalVentilation": 
+	  { "State": "Off" }
+	}}, 
+    { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" }}}}
+  ]
 }

@@ -1,5 +1,5 @@
 {
-  "Name": "StabilityTest",
+  "Name": "Comprehensive",
   "Description": "Do a bunch of stuff together to test the stability of the engine.",
   "StartType": {
     "PatientConfiguration": {
@@ -35,6 +35,16 @@
             "EmphysemaSeverity": {
               "Scalar0To1": {
                 "Value": 0.1
+              }
+            }
+          }
+        }
+      }, {
+	    "PatientCondition": {
+          "ImpairedAlveolarExchange": {
+            "ImpairedFraction": {
+              "Scalar0To1": {
+                "Value": 0.09
               }
             }
           }
@@ -451,10 +461,46 @@
     }
   }, {
     "PatientAction": {
+      "PericardialEffusion": {
+        "EffusionRate": {
+          "ScalarVolumePerTime": {
+            "Value": 0.0001,
+            "Unit": "mL/s"
+          }
+        }
+      }
+    }
+  }, {
+    "PatientAction": {
       "AirwayObstruction": {
         "Severity": {
           "Scalar0To1": {
             "Value": 0.1
+          }
+        }
+      }
+	}
+  }, {
+    "PatientAction": { 
+	  "RespiratoryFatigue": 
+      {
+        "Severity": { "Scalar0To1": { "Value": 0.0 }}
+      }
+	}  
+  }, {
+    "EnvironmentAction": {
+      "ThermalApplication": {
+        "ActiveHeating": {
+          "Power": {
+            "ScalarPower": {
+              "Value": 10.0,
+              "Unit": "BTU/hr"
+            }
+          },
+          "SurfaceAreaFraction": {
+            "Scalar0To1": {
+              "Value": 0.23
+            }
           }
         }
       }
@@ -503,7 +549,7 @@
     }
   }, {
     "PatientAction": {
-      "Apnea": {
+      "Dyspnea": {
         "Severity": {
           "Scalar0To1": {
             "Value": 0.3
@@ -533,9 +579,30 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 1.0,
-          "Unit": "min"
+          "Value": 30.0,
+          "Unit": "s"
         }
+      }
+    }
+  }, {
+    "PatientAction": {
+      "CardiacArrest": {
+        "State": "On"
+      }
+    }
+  }, {
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 30.0,
+          "Unit": "s"
+        }
+      }
+    }
+  }, {
+    "PatientAction": {
+      "CardiacArrest": {
+        "State": "Off"
       }
     }
   }, {
@@ -1163,17 +1230,6 @@
     }
   }, {
     "PatientAction": {
-      "TensionPneumothorax": {
-        "Type": "Open",
-        "Side": "Left",
-        "Severity": {
-          "Scalar0To1": {
-          }
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
       "BrainInjury": {
         "Severity": {
           "Scalar0To1": {
@@ -1183,7 +1239,7 @@
     }
   }, {
     "PatientAction": {
-      "Apnea": {
+      "Dyspnea": {
         "Severity": {
           "Scalar0To1": {
           }
@@ -1191,6 +1247,26 @@
       }
     }
   }, {
+    "PatientAction": {
+      "SupplementalOxygenData": {
+        "Device": "SimpleMask"
+      }
+    }
+  },
+    { "PatientAction": { "LobarPneumoniaExacerbation": 
+      {
+        "Severity": { "Scalar0To1": { "Value": 0.45 }},
+        "LeftLungAffected": { "Scalar0To1": { "Value": 0.22 }},
+        "RightLungAffected": { "Scalar0To1": { "Value": 0.77 }}
+      }}
+    },
+	{ "PatientAction": { "ChronicObstructivePulmonaryDiseaseExacerbation": 
+      {
+        "BronchitisSeverity": { "Scalar0To1": { "Value": 0.215 }},
+        "EmphysemaSeverity": { "Scalar0To1": { "Value": 0.333 }}
+      }}
+    },
+  {
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {

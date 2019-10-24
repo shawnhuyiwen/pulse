@@ -1,6 +1,6 @@
 {
-  "Name": "ApneaVaried",
-  "Description": "Test the Apnea action by giving various severities and ensuring trends back to stable physiology when removed.",
+  "Name": "DyspneaVaried",
+  "Description": "Test the Dyspnea action by giving various severities and ensuring trends back to stable physiology when removed.",
   "StartType": {
     "PatientConfiguration": {
       "PatientFile": "StandardMale.json"
@@ -388,7 +388,7 @@
     }
   }, {
     "PatientAction": {
-      "Apnea": {
+      "Dyspnea": {
         "Severity": {
           "Scalar0To1": {
             "Value": 0.3
@@ -407,7 +407,7 @@
     }
   }, {
     "PatientAction": {
-      "Apnea": {
+      "Dyspnea": {
         "Severity": {
           "Scalar0To1": {
           }
@@ -425,7 +425,7 @@
     }
   }, {
     "PatientAction": {
-      "Apnea": {
+      "Dyspnea": {
         "Severity": {
           "Scalar0To1": {
             "Value": 0.6
@@ -444,7 +444,7 @@
     }
   }, {
     "PatientAction": {
-      "Apnea": {
+      "Dyspnea": {
         "Severity": {
           "Scalar0To1": {
           }
@@ -462,7 +462,7 @@
     }
   }, {
     "PatientAction": {
-      "Apnea": {
+      "Dyspnea": {
         "Severity": {
           "Scalar0To1": {
             "Value": 1.0
@@ -481,7 +481,7 @@
     }
   }, {
     "PatientAction": {
-      "Apnea": {
+      "Dyspnea": {
         "Severity": {
           "Scalar0To1": {
           }

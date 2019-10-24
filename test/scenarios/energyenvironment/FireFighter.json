@@ -409,7 +409,7 @@
         "Precision": 4
       },
       "Category": "LiquidCompartment",
-      "CompartmentName": "LeftDeadSpace",
+      "CompartmentName": "LeftAnatomicDeadSpace",
       "SubstanceName": "ForestFireParticulate",
       "PropertyName": "Concentration",
       "Unit": "ug/L"
@@ -427,7 +427,7 @@
         "Precision": 4
       },
       "Category": "LiquidCompartment",
-      "CompartmentName": "RightDeadSpace",
+      "CompartmentName": "RightAnatomicDeadSpace",
       "SubstanceName": "ForestFireParticulate",
       "PropertyName": "Concentration",
       "Unit": "ug/L"
@@ -463,7 +463,7 @@
         "Precision": 4
       },
       "Category": "LiquidCompartment",
-      "CompartmentName": "LeftDeadSpace",
+      "CompartmentName": "LeftAnatomicDeadSpace",
       "SubstanceName": "ForestFireParticulate",
       "PropertyName": "MassDeposited",
       "Unit": "ug"
@@ -481,7 +481,7 @@
         "Precision": 4
       },
       "Category": "LiquidCompartment",
-      "CompartmentName": "RightDeadSpace",
+      "CompartmentName": "RightAnatomicDeadSpace",
       "SubstanceName": "ForestFireParticulate",
       "PropertyName": "MassDeposited",
       "Unit": "ug"

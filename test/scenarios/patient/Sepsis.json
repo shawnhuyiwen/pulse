@@ -1,9 +1,20 @@
 {
-  "Name": "AirwayObstructionVaried",
-  "Description": "Test the Airway Obstruction action by giving various severities and ensuring trends back to stable physiology when removed.",
-  "StartType": {
+  "Name": "Sepsis",
+  "Description": "",
+  "StartType":
+  {
     "PatientConfiguration": {
-      "PatientFile": "StandardMale.json"
+      "PatientFile": "StandardMale.json",
+      "Conditions": 
+      { 
+        "AnyCondition": 
+        [
+          { "PatientCondition": { "Sepsis": 
+          {
+            "Severity": { "Scalar0To1": { "Value": 0.5 }}
+          }}}
+        ]
+      }
     }
   },
   "DataRequestManager":
@@ -64,132 +75,11 @@
       { "DecimalFormat": { "Precision": 2 }, "Category": "Substance", "SubstanceName": "Oxygen",        "PropertyName": "AlveolarTransfer",    "Unit": "mL/s" },
       { "DecimalFormat": { "Precision": 2 }, "Category": "Substance", "SubstanceName": "CarbonDioxide", "PropertyName": "AlveolarTransfer",    "Unit": "mL/s" },
       { "DecimalFormat": { "Precision": 6 }, "Category": "Substance", "SubstanceName": "Epinephrine",   "PropertyName": "BloodConcentration",  "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 8 }, "Category": "Substance", "SubstanceName": "Epinephrine",   "PropertyName": "SystemicMassCleared", "Unit": "ug" },
-	  
-	  { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ExpiratoryFlow",             "Unit": "L/s" },
-	  { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "InspiratoryFlow",            "Unit": "L/s" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "PulmonaryResistance",        "Unit": "cmH2O s/L" }
-	]
+      { "DecimalFormat": { "Precision": 8 }, "Category": "Substance", "SubstanceName": "Epinephrine",   "PropertyName": "SystemicMassCleared", "Unit": "ug" }
+    ]
   },
-  "AnyAction": [{
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 30.0,
-          "Unit": "s"
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "AirwayObstruction": {
-        "Severity": {
-          "Scalar0To1": {
-            "Value": 0.3
-          }
-        }
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 180.0,
-          "Unit": "s"
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "AirwayObstruction": {
-        "Severity": {
-          "Scalar0To1": {
-          }
-        }
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 300.0,
-          "Unit": "s"
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "AirwayObstruction": {
-        "Severity": {
-          "Scalar0To1": {
-            "Value": 0.6
-          }
-        }
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 180.0,
-          "Unit": "s"
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "AirwayObstruction": {
-        "Severity": {
-          "Scalar0To1": {
-          }
-        }
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 300.0,
-          "Unit": "s"
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "AirwayObstruction": {
-        "Severity": {
-          "Scalar0To1": {
-            "Value": 1.0
-          }
-        }
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 180.0,
-          "Unit": "s"
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "AirwayObstruction": {
-        "Severity": {
-          "Scalar0To1": {
-          }
-        }
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 500.0,
-          "Unit": "s"
-        }
-      }
-    }
-  }]
+  "AnyAction":
+  [
+    { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 2.0, "Unit": "min" }}}}
+  ]
 }

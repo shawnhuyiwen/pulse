@@ -481,35 +481,35 @@
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
-      "CompartmentName": "LeftDeadSpace",
+      "CompartmentName": "LeftAnatomicDeadSpace",
       "PropertyName": "InFlow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
-      "CompartmentName": "LeftDeadSpace",
+      "CompartmentName": "LeftAnatomicDeadSpace",
       "PropertyName": "OutFlow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
-      "CompartmentName": "LeftDeadSpace",
+      "CompartmentName": "LeftAnatomicDeadSpace",
       "PropertyName": "Pressure",
       "Unit": "mmHg"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
-      "CompartmentName": "LeftDeadSpace",
+      "CompartmentName": "LeftAnatomicDeadSpace",
       "PropertyName": "Volume",
       "Unit": "mL"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
-      "CompartmentName": "LeftDeadSpace",
+      "CompartmentName": "LeftAnatomicDeadSpace",
       "SubstanceName": "Oxygen",
       "PropertyName": "Volume",
       "Unit": "mL"
@@ -518,14 +518,14 @@
         "Precision": 3
       },
       "Category": "GasCompartment",
-      "CompartmentName": "LeftDeadSpace",
+      "CompartmentName": "LeftAnatomicDeadSpace",
       "SubstanceName": "Oxygen",
       "PropertyName": "VolumeFraction"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
-      "CompartmentName": "LeftDeadSpace",
+      "CompartmentName": "LeftAnatomicDeadSpace",
       "SubstanceName": "Oxygen",
       "PropertyName": "PartialPressure",
       "Unit": "mmHg"
@@ -534,7 +534,7 @@
         "Precision": 1
       },
       "Category": "GasCompartment",
-      "CompartmentName": "LeftDeadSpace",
+      "CompartmentName": "LeftAnatomicDeadSpace",
       "SubstanceName": "CarbonDioxide",
       "PropertyName": "Volume",
       "Unit": "mL"
@@ -543,14 +543,14 @@
         "Precision": 4
       },
       "Category": "GasCompartment",
-      "CompartmentName": "LeftDeadSpace",
+      "CompartmentName": "LeftAnatomicDeadSpace",
       "SubstanceName": "CarbonDioxide",
       "PropertyName": "VolumeFraction"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
-      "CompartmentName": "LeftDeadSpace",
+      "CompartmentName": "LeftAnatomicDeadSpace",
       "SubstanceName": "CarbonDioxide",
       "PropertyName": "PartialPressure",
       "Unit": "mmHg"
@@ -558,7 +558,7 @@
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
-      "CompartmentName": "LeftDeadSpace",
+      "CompartmentName": "LeftAnatomicDeadSpace",
       "SubstanceName": "Nitrogen",
       "PropertyName": "Volume",
       "Unit": "mL"
@@ -567,14 +567,14 @@
         "Precision": 3
       },
       "Category": "GasCompartment",
-      "CompartmentName": "LeftDeadSpace",
+      "CompartmentName": "LeftAnatomicDeadSpace",
       "SubstanceName": "Nitrogen",
       "PropertyName": "VolumeFraction"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
-      "CompartmentName": "LeftDeadSpace",
+      "CompartmentName": "LeftAnatomicDeadSpace",
       "SubstanceName": "Nitrogen",
       "PropertyName": "PartialPressure",
       "Unit": "mmHg"
@@ -784,35 +784,35 @@
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
-      "CompartmentName": "RightDeadSpace",
+      "CompartmentName": "RightAnatomicDeadSpace",
       "PropertyName": "InFlow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
-      "CompartmentName": "RightDeadSpace",
+      "CompartmentName": "RightAnatomicDeadSpace",
       "PropertyName": "OutFlow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
-      "CompartmentName": "RightDeadSpace",
+      "CompartmentName": "RightAnatomicDeadSpace",
       "PropertyName": "Pressure",
       "Unit": "mmHg"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
-      "CompartmentName": "RightDeadSpace",
+      "CompartmentName": "RightAnatomicDeadSpace",
       "PropertyName": "Volume",
       "Unit": "mL"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
-      "CompartmentName": "RightDeadSpace",
+      "CompartmentName": "RightAnatomicDeadSpace",
       "SubstanceName": "Oxygen",
       "PropertyName": "Volume",
       "Unit": "mL"
@@ -821,14 +821,14 @@
         "Precision": 3
       },
       "Category": "GasCompartment",
-      "CompartmentName": "RightDeadSpace",
+      "CompartmentName": "RightAnatomicDeadSpace",
       "SubstanceName": "Oxygen",
       "PropertyName": "VolumeFraction"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
-      "CompartmentName": "RightDeadSpace",
+      "CompartmentName": "RightAnatomicDeadSpace",
       "SubstanceName": "Oxygen",
       "PropertyName": "PartialPressure",
       "Unit": "mmHg"
@@ -837,7 +837,7 @@
         "Precision": 1
       },
       "Category": "GasCompartment",
-      "CompartmentName": "RightDeadSpace",
+      "CompartmentName": "RightAnatomicDeadSpace",
       "SubstanceName": "CarbonDioxide",
       "PropertyName": "Volume",
       "Unit": "mL"
@@ -846,14 +846,14 @@
         "Precision": 4
       },
       "Category": "GasCompartment",
-      "CompartmentName": "RightDeadSpace",
+      "CompartmentName": "RightAnatomicDeadSpace",
       "SubstanceName": "CarbonDioxide",
       "PropertyName": "VolumeFraction"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
-      "CompartmentName": "RightDeadSpace",
+      "CompartmentName": "RightAnatomicDeadSpace",
       "SubstanceName": "CarbonDioxide",
       "PropertyName": "PartialPressure",
       "Unit": "mmHg"
@@ -861,7 +861,7 @@
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
-      "CompartmentName": "RightDeadSpace",
+      "CompartmentName": "RightAnatomicDeadSpace",
       "SubstanceName": "Nitrogen",
       "PropertyName": "Volume",
       "Unit": "mL"
@@ -870,14 +870,14 @@
         "Precision": 3
       },
       "Category": "GasCompartment",
-      "CompartmentName": "RightDeadSpace",
+      "CompartmentName": "RightAnatomicDeadSpace",
       "SubstanceName": "Nitrogen",
       "PropertyName": "VolumeFraction"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
-      "CompartmentName": "RightDeadSpace",
+      "CompartmentName": "RightAnatomicDeadSpace",
       "SubstanceName": "Nitrogen",
       "PropertyName": "PartialPressure",
       "Unit": "mmHg"
