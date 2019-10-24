@@ -22,10 +22,10 @@ public class ScenarioTestDriver implements SETestDriver.Executor
     String outputFile = job.computedDirectory+"/"+job.name;
     String log;
     String results;
-    String json = FileUtils.readFile(job.baselineDirectory+"/"+job.name);
+    String json = FileUtils.readFile(job.scenarioDirectory+"/"+job.name);
     if(json==null)
     {
-      Log.error("Could not read file : "+job.baselineDirectory+"/"+job.name);
+      Log.error("Could not read file : "+job.scenarioDirectory+"/"+job.name);
       return false;
     }
     ScenarioData.Builder builder;
@@ -44,7 +44,7 @@ public class ScenarioTestDriver implements SETestDriver.Executor
 	    }
 	    catch(InvalidProtocolBufferException ex2)
 	    {
-	    	Log.error("Unable to read scenario"+job.baselineDirectory+"/"+job.name,ex2);
+	    	Log.error("Unable to read scenario"+job.scenarioDirectory+"/"+job.name,ex2);
 	    	return false;
 	    }
     }

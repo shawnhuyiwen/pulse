@@ -1,0 +1,1407 @@
+{
+  "Name": "AnesthesiaMachineCompartments",
+  "Description": "Validation scenario to make sure all compartment level data requests match up with the expected results.",
+  "StartType": {
+    "PatientConfiguration": {
+      "PatientFile": "StandardMale.json"
+    }
+  },
+  "DataRequestManager": {
+    "DataRequest": [{
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "AnesthesiaConnection",
+      "PropertyName": "InFlow",
+      "Unit": "mL/s"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "AnesthesiaConnection",
+      "PropertyName": "OutFlow",
+      "Unit": "mL/s"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "AnesthesiaConnection",
+      "PropertyName": "Pressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "AnesthesiaConnection",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "AnesthesiaConnection",
+      "SubstanceName": "Oxygen",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 3
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "AnesthesiaConnection",
+      "SubstanceName": "Oxygen",
+      "PropertyName": "VolumeFraction"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "AnesthesiaConnection",
+      "SubstanceName": "Oxygen",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "AnesthesiaConnection",
+      "SubstanceName": "CarbonDioxide",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "AnesthesiaConnection",
+      "SubstanceName": "CarbonDioxide",
+      "PropertyName": "VolumeFraction"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "AnesthesiaConnection",
+      "SubstanceName": "CarbonDioxide",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "AnesthesiaConnection",
+      "SubstanceName": "Desflurane",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 3
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "AnesthesiaConnection",
+      "SubstanceName": "Desflurane",
+      "PropertyName": "VolumeFraction"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "AnesthesiaConnection",
+      "SubstanceName": "Desflurane",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "AnesthesiaConnection",
+      "SubstanceName": "Nitrogen",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 3
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "AnesthesiaConnection",
+      "SubstanceName": "Nitrogen",
+      "PropertyName": "VolumeFraction"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "AnesthesiaConnection",
+      "SubstanceName": "Nitrogen",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "ExpiratoryLimb",
+      "PropertyName": "InFlow",
+      "Unit": "mL/s"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "ExpiratoryLimb",
+      "PropertyName": "OutFlow",
+      "Unit": "mL/s"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "ExpiratoryLimb",
+      "PropertyName": "Pressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "ExpiratoryLimb",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "ExpiratoryLimb",
+      "SubstanceName": "Oxygen",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 3
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "ExpiratoryLimb",
+      "SubstanceName": "Oxygen",
+      "PropertyName": "VolumeFraction"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "ExpiratoryLimb",
+      "SubstanceName": "Oxygen",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "ExpiratoryLimb",
+      "SubstanceName": "CarbonDioxide",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "ExpiratoryLimb",
+      "SubstanceName": "CarbonDioxide",
+      "PropertyName": "VolumeFraction"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "ExpiratoryLimb",
+      "SubstanceName": "CarbonDioxide",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "ExpiratoryLimb",
+      "SubstanceName": "Desflurane",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "ExpiratoryLimb",
+      "SubstanceName": "Desflurane",
+      "PropertyName": "VolumeFraction"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "ExpiratoryLimb",
+      "SubstanceName": "Desflurane",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "ExpiratoryLimb",
+      "SubstanceName": "Nitrogen",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 3
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "ExpiratoryLimb",
+      "SubstanceName": "Nitrogen",
+      "PropertyName": "VolumeFraction"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "ExpiratoryLimb",
+      "SubstanceName": "Nitrogen",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "GasInlet",
+      "PropertyName": "InFlow",
+      "Unit": "mL/s"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "GasInlet",
+      "PropertyName": "OutFlow",
+      "Unit": "mL/s"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "GasInlet",
+      "PropertyName": "Pressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "GasInlet",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "GasInlet",
+      "SubstanceName": "Oxygen",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 3
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "GasInlet",
+      "SubstanceName": "Oxygen",
+      "PropertyName": "VolumeFraction"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "GasInlet",
+      "SubstanceName": "Oxygen",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "GasInlet",
+      "SubstanceName": "CarbonDioxide",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "GasInlet",
+      "SubstanceName": "CarbonDioxide",
+      "PropertyName": "VolumeFraction"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "GasInlet",
+      "SubstanceName": "CarbonDioxide",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "GasInlet",
+      "SubstanceName": "Desflurane",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "GasInlet",
+      "SubstanceName": "Desflurane",
+      "PropertyName": "VolumeFraction"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "GasInlet",
+      "SubstanceName": "Desflurane",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "GasInlet",
+      "SubstanceName": "Nitrogen",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "GasInlet",
+      "SubstanceName": "Nitrogen",
+      "PropertyName": "VolumeFraction"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "GasInlet",
+      "SubstanceName": "Nitrogen",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "GasSource",
+      "PropertyName": "InFlow",
+      "Unit": "mL/s"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "GasSource",
+      "PropertyName": "OutFlow",
+      "Unit": "mL/s"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "GasSource",
+      "PropertyName": "Pressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "GasSource",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "GasSource",
+      "SubstanceName": "Oxygen",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "GasSource",
+      "SubstanceName": "Oxygen",
+      "PropertyName": "VolumeFraction"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "GasSource",
+      "SubstanceName": "Oxygen",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "GasSource",
+      "SubstanceName": "CarbonDioxide",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "GasSource",
+      "SubstanceName": "CarbonDioxide",
+      "PropertyName": "VolumeFraction"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "GasSource",
+      "SubstanceName": "CarbonDioxide",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "GasSource",
+      "SubstanceName": "Desflurane",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "GasSource",
+      "SubstanceName": "Desflurane",
+      "PropertyName": "VolumeFraction"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "GasSource",
+      "SubstanceName": "Desflurane",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "GasSource",
+      "SubstanceName": "Nitrogen",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "GasSource",
+      "SubstanceName": "Nitrogen",
+      "PropertyName": "VolumeFraction"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "GasSource",
+      "SubstanceName": "Nitrogen",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "InspiratoryLimb",
+      "PropertyName": "InFlow",
+      "Unit": "mL/s"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "InspiratoryLimb",
+      "PropertyName": "OutFlow",
+      "Unit": "mL/s"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "InspiratoryLimb",
+      "PropertyName": "Pressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "InspiratoryLimb",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "InspiratoryLimb",
+      "SubstanceName": "Oxygen",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "InspiratoryLimb",
+      "SubstanceName": "Oxygen",
+      "PropertyName": "VolumeFraction"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "InspiratoryLimb",
+      "SubstanceName": "Oxygen",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "InspiratoryLimb",
+      "SubstanceName": "CarbonDioxide",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "InspiratoryLimb",
+      "SubstanceName": "CarbonDioxide",
+      "PropertyName": "VolumeFraction"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "InspiratoryLimb",
+      "SubstanceName": "CarbonDioxide",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "InspiratoryLimb",
+      "SubstanceName": "Desflurane",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "InspiratoryLimb",
+      "SubstanceName": "Desflurane",
+      "PropertyName": "VolumeFraction"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "InspiratoryLimb",
+      "SubstanceName": "Desflurane",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "InspiratoryLimb",
+      "SubstanceName": "Nitrogen",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "InspiratoryLimb",
+      "SubstanceName": "Nitrogen",
+      "PropertyName": "VolumeFraction"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "InspiratoryLimb",
+      "SubstanceName": "Nitrogen",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "ReliefValve",
+      "PropertyName": "InFlow",
+      "Unit": "mL/s"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "ReliefValve",
+      "PropertyName": "OutFlow",
+      "Unit": "mL/s"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "ReliefValve",
+      "PropertyName": "Pressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Scrubber",
+      "PropertyName": "InFlow",
+      "Unit": "mL/s"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Scrubber",
+      "PropertyName": "OutFlow",
+      "Unit": "mL/s"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Scrubber",
+      "PropertyName": "Pressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Scrubber",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Scrubber",
+      "SubstanceName": "Oxygen",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 3
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Scrubber",
+      "SubstanceName": "Oxygen",
+      "PropertyName": "VolumeFraction"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Scrubber",
+      "SubstanceName": "Oxygen",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Scrubber",
+      "SubstanceName": "CarbonDioxide",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Scrubber",
+      "SubstanceName": "CarbonDioxide",
+      "PropertyName": "VolumeFraction"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Scrubber",
+      "SubstanceName": "CarbonDioxide",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Scrubber",
+      "SubstanceName": "Desflurane",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 3
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Scrubber",
+      "SubstanceName": "Desflurane",
+      "PropertyName": "VolumeFraction"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Scrubber",
+      "SubstanceName": "Desflurane",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Scrubber",
+      "SubstanceName": "Nitrogen",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Scrubber",
+      "SubstanceName": "Nitrogen",
+      "PropertyName": "VolumeFraction"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Scrubber",
+      "SubstanceName": "Nitrogen",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Selector",
+      "PropertyName": "InFlow",
+      "Unit": "mL/s"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Selector",
+      "PropertyName": "OutFlow",
+      "Unit": "mL/s"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Selector",
+      "PropertyName": "Pressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Selector",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Selector",
+      "SubstanceName": "Oxygen",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 3
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Selector",
+      "SubstanceName": "Oxygen",
+      "PropertyName": "VolumeFraction"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Selector",
+      "SubstanceName": "Oxygen",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Selector",
+      "SubstanceName": "CarbonDioxide",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 3
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Selector",
+      "SubstanceName": "CarbonDioxide",
+      "PropertyName": "VolumeFraction"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Selector",
+      "SubstanceName": "CarbonDioxide",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Selector",
+      "SubstanceName": "Desflurane",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 3
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Selector",
+      "SubstanceName": "Desflurane",
+      "PropertyName": "VolumeFraction"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Selector",
+      "SubstanceName": "Desflurane",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Selector",
+      "SubstanceName": "Nitrogen",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 3
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Selector",
+      "SubstanceName": "Nitrogen",
+      "PropertyName": "VolumeFraction"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Selector",
+      "SubstanceName": "Nitrogen",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Ventilator",
+      "PropertyName": "InFlow",
+      "Unit": "mL/s"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Ventilator",
+      "PropertyName": "OutFlow",
+      "Unit": "mL/s"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Ventilator",
+      "PropertyName": "Pressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Ventilator",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Ventilator",
+      "SubstanceName": "Oxygen",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 3
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Ventilator",
+      "SubstanceName": "Oxygen",
+      "PropertyName": "VolumeFraction"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Ventilator",
+      "SubstanceName": "Oxygen",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Ventilator",
+      "SubstanceName": "CarbonDioxide",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Ventilator",
+      "SubstanceName": "CarbonDioxide",
+      "PropertyName": "VolumeFraction"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Ventilator",
+      "SubstanceName": "CarbonDioxide",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Ventilator",
+      "SubstanceName": "Desflurane",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Ventilator",
+      "SubstanceName": "Desflurane",
+      "PropertyName": "VolumeFraction"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Ventilator",
+      "SubstanceName": "Desflurane",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Ventilator",
+      "SubstanceName": "Nitrogen",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 3
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Ventilator",
+      "SubstanceName": "Nitrogen",
+      "PropertyName": "VolumeFraction"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Ventilator",
+      "SubstanceName": "Nitrogen",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "VentilatorConnection",
+      "PropertyName": "InFlow",
+      "Unit": "mL/s"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "VentilatorConnection",
+      "PropertyName": "OutFlow",
+      "Unit": "mL/s"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "VentilatorConnection",
+      "PropertyName": "Pressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "VentilatorConnection",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "VentilatorConnection",
+      "SubstanceName": "Oxygen",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 3
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "VentilatorConnection",
+      "SubstanceName": "Oxygen",
+      "PropertyName": "VolumeFraction"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "VentilatorConnection",
+      "SubstanceName": "Oxygen",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+        "Precision": 3
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "VentilatorConnection",
+      "SubstanceName": "CarbonDioxide",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "VentilatorConnection",
+      "SubstanceName": "CarbonDioxide",
+      "PropertyName": "VolumeFraction"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "VentilatorConnection",
+      "SubstanceName": "CarbonDioxide",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "VentilatorConnection",
+      "SubstanceName": "Desflurane",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 5
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "VentilatorConnection",
+      "SubstanceName": "Desflurane",
+      "PropertyName": "VolumeFraction"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "VentilatorConnection",
+      "SubstanceName": "Desflurane",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "VentilatorConnection",
+      "SubstanceName": "Nitrogen",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "VentilatorConnection",
+      "SubstanceName": "Nitrogen",
+      "PropertyName": "VolumeFraction"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "VentilatorConnection",
+      "SubstanceName": "Nitrogen",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "YPiece",
+      "PropertyName": "InFlow",
+      "Unit": "mL/s"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "YPiece",
+      "PropertyName": "OutFlow",
+      "Unit": "mL/s"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "YPiece",
+      "PropertyName": "Pressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "YPiece",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "YPiece",
+      "SubstanceName": "Oxygen",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "YPiece",
+      "SubstanceName": "Oxygen",
+      "PropertyName": "VolumeFraction"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "YPiece",
+      "SubstanceName": "Oxygen",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+        "Precision": 3
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "YPiece",
+      "SubstanceName": "CarbonDioxide",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "YPiece",
+      "SubstanceName": "CarbonDioxide",
+      "PropertyName": "VolumeFraction"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "YPiece",
+      "SubstanceName": "CarbonDioxide",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "YPiece",
+      "SubstanceName": "Desflurane",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "YPiece",
+      "SubstanceName": "Desflurane",
+      "PropertyName": "VolumeFraction"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "YPiece",
+      "SubstanceName": "Desflurane",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "YPiece",
+      "SubstanceName": "Nitrogen",
+      "PropertyName": "Volume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "YPiece",
+      "SubstanceName": "Nitrogen",
+      "PropertyName": "VolumeFraction"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "YPiece",
+      "SubstanceName": "Nitrogen",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }]
+  },
+  "AnyAction": [{
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 5.0,
+          "Unit": "s"
+        }
+      }
+    }
+  }, {
+    "PatientAction": {
+      "SubstanceBolus": {
+        "Substance": "Succinylcholine",
+        "Concentration": {
+          "ScalarMassPerVolume": {
+            "Value": 4820.0,
+            "Unit": "ug/mL"
+          }
+        },
+        "Dose": {
+          "ScalarVolume": {
+            "Value": 20.0,
+            "Unit": "mL"
+          }
+        }
+      }
+    }
+  }, {
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 60.0,
+          "Unit": "s"
+        }
+      }
+    }
+  }, {
+    "AnesthesiaMachineAction": {
+      "Configuration": {
+        "Configuration": {
+          "Connection": "Mask",
+          "InspiratoryExpiratoryRatio": {
+            "Value": 0.5
+          },
+          "OxygenFraction": {
+            "Scalar0To1": {
+              "Value": 0.23
+            }
+          },
+          "OxygenSource": "Wall",
+          "PositiveEndExpiredPressure": {
+            "ScalarPressure": {
+              "Value": 3.0,
+              "Unit": "cmH2O"
+            }
+          },
+          "PrimaryGas": "Nitrogen",
+          "ReliefValvePressure": {
+            "ScalarPressure": {
+              "Value": 20.0,
+              "Unit": "cmH2O"
+            }
+          },
+          "RespiratoryRate": {
+            "ScalarFrequency": {
+              "Value": 12.0,
+              "Unit": "1/min"
+            }
+          },
+          "VentilatorPressure": {
+            "ScalarPressure": {
+              "Value": 14.0,
+              "Unit": "cmH2O"
+            }
+          },
+          "LeftChamber": {
+            "State": "On",
+            "SubstanceFraction": {
+              "Scalar0To1": {
+                "Value": 0.04
+              }
+            },
+            "Substance": "Desflurane"
+          },
+          "OxygenBottleOne": {
+            "Volume": {
+              "ScalarVolume": {
+                "Value": 660.0,
+                "Unit": "L"
+              }
+            }
+          },
+          "OxygenBottleTwo": {
+            "Volume": {
+              "ScalarVolume": {
+                "Value": 660.0,
+                "Unit": "L"
+              }
+            }
+          }
+        }
+      }
+    }
+  }, {
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 30.0,
+          "Unit": "s"
+        }
+      }
+    }
+  }]
+}

@@ -166,6 +166,8 @@ const SEScalar* SERespiratorySystem::GetScalar(const std::string& name)
     return &GetInspiratoryPulmonaryResistance();
   if (name.compare("IntrapleuralPressure") == 0)
     return &GetIntrapleuralPressure();
+  if (name.compare("IntrapulmonaryPressure") == 0)
+    return &GetIntrapulmonaryPressure();
   if (name.compare("LungCompliance") == 0)
     return &GetLungCompliance();
   if (name.compare("MaximalInspiratoryPressure") == 0)
@@ -216,6 +218,8 @@ const SEScalar* SERespiratorySystem::GetScalar(const std::string& name)
     return &GetTransalveolarPressure();
   if (name.compare("TransChestWallPressure") == 0)
     return &GetTransChestWallPressure();
+  if (name.compare("TransMusclePressure") == 0)
+    return &GetTransMusclePressure();
   if (name.compare("TranspulmonaryPressure") == 0)
     return &GetTranspulmonaryPressure();
   if (name.compare("TransrespiratoryPressure") == 0)
