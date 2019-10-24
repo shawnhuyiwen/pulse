@@ -66,9 +66,10 @@
       { "DecimalFormat": { "Precision": 6 }, "Category": "Substance", "SubstanceName": "Epinephrine",   "PropertyName": "BloodConcentration",  "Unit": "ug/L" },
       { "DecimalFormat": { "Precision": 8 }, "Category": "Substance", "SubstanceName": "Epinephrine",   "PropertyName": "SystemicMassCleared", "Unit": "ug" },
 	  
-	  { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ExpiratoryFlow",             "Unit": "L/s" },
-	  { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "InspiratoryFlow",            "Unit": "L/s" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "PulmonaryResistance",        "Unit": "cmH2O s/L" }
+	  { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ExpiratoryFlow",                 "Unit": "L/s" },
+	  { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "InspiratoryFlow",                "Unit": "L/s" },
+      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "InspiratoryPulmonaryResistance", "Unit": "cmH2O s/L" },
+	  { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ExpiratoryPulmonaryResistance",  "Unit": "cmH2O s/L" }
 	]
   },
   "AnyAction": [{

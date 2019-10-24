@@ -1710,19 +1710,17 @@ void Respiratory::CalculateVitalSigns()
   GetTransChestWallPressure().SetValue(transChestWallPressure_cmH2O, PressureUnit::cmH2O);
   GetTransMusclePressure().SetValue(transMusclePressure_cmH2O, PressureUnit::cmH2O);
 
-  if (SEScalar::IsZero(tracheaFlow_L_Per_s, ZERO_APPROX))
-  {
-    GetExpiratoryPulmonaryResistance().SetValue(std::numeric_limits<double>::infinity(), PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-    GetInspiratoryPulmonaryResistance().SetValue(std::numeric_limits<double>::infinity(), PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  }
-  else
-  {
-    GetExpiratoryPulmonaryResistance().SetValue((airwayOpeningPressure_cmH2O - alveolarPressure_cmH2O) / tracheaFlow_L_Per_s, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-    GetInspiratoryPulmonaryResistance().SetValue((airwayOpeningPressure_cmH2O - alveolarPressure_cmH2O) / tracheaFlow_L_Per_s, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  }
-
   double averageAlveoliO2PartialPressure_mmHg = (m_LeftAlveoliO2->GetPartialPressure(PressureUnit::mmHg) + m_RightAlveoliO2->GetPartialPressure(PressureUnit::mmHg)) / 2.0;
   GetAlveolarArterialGradient().SetValue(averageAlveoliO2PartialPressure_mmHg - m_AortaO2->GetPartialPressure(PressureUnit::mmHg), PressureUnit::mmHg);
+
+  if (tracheaFlow_L_Per_s > ZERO_APPROX)
+  {
+    GetInspiratoryPulmonaryResistance().SetValue((airwayOpeningPressure_cmH2O - alveolarPressure_cmH2O) / tracheaFlow_L_Per_s, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  }
+  else if (tracheaFlow_L_Per_s < ZERO_APPROX)
+  {
+    GetExpiratoryPulmonaryResistance().SetValue((airwayOpeningPressure_cmH2O - alveolarPressure_cmH2O) / tracheaFlow_L_Per_s, PressureTimePerVolumeUnit::cmH2O_s_Per_L);    
+  }
 
   //It's a pain to figure out how to hold onto this data, so let's just set it at a sensitive transition point
   if (GetInspiratoryFlow(VolumePerTimeUnit::L_Per_s) > 0.0 //We're inhaling
@@ -2136,7 +2134,6 @@ void Respiratory::UpdateChestWallCompliances()
 
     double minCompliance_L_Per_cmH2O = 0.01; //Minimum possible compliance
     double sideCompliance_L_Per_cmH2O = minCompliance_L_Per_cmH2O;
-    double approxZero = 1e-10;
     if (lungVolume_L > residualVolume_L && lungVolume_L < vitalCapacity_L + residualVolume_L)
     {
       double pressureCornerUpper_cmH2O = (vitalCapacity_L - functionalResidualCapacity_L) / healthySideCompliance_L_Per_cmH2O;
@@ -2148,7 +2145,7 @@ void Respiratory::UpdateChestWallCompliances()
 
       sideCompliance_L_Per_cmH2O = healthySideCompliance_L_Per_cmH2O;
 
-      if (!(expectedPressure_cmH2O < approxZero && expectedPressure_cmH2O > -approxZero))
+      if (!SEScalar::IsZero(expectedPressure_cmH2O, ZERO_APPROX))
       {
         //Not dividing by ~0
         sideCompliance_L_Per_cmH2O = (lungVolume_L - volumeAtZeroPressure) / expectedPressure_cmH2O;
