@@ -2136,6 +2136,7 @@ void Respiratory::UpdateChestWallCompliances()
 
     double minCompliance_L_Per_cmH2O = 0.01; //Minimum possible compliance
     double sideCompliance_L_Per_cmH2O = minCompliance_L_Per_cmH2O;
+    double approxZero = 1e-10;
     if (lungVolume_L > residualVolume_L && lungVolume_L < vitalCapacity_L + residualVolume_L)
     {
       double pressureCornerUpper_cmH2O = (vitalCapacity_L - functionalResidualCapacity_L) / healthySideCompliance_L_Per_cmH2O;
@@ -2144,7 +2145,15 @@ void Respiratory::UpdateChestWallCompliances()
       double d = (pressureCornerUpper_cmH2O - c) / 2.0;
       double expectedPressure_cmH2O = d * log((lungVolume_L - residualVolume_L) / (residualVolume_L + vitalCapacity_L - lungVolume_L)) + c;
       double volumeAtZeroPressure = residualVolume_L + (vitalCapacity_L / (1.0 + exp(c / d)));
-      sideCompliance_L_Per_cmH2O = (lungVolume_L - volumeAtZeroPressure) / expectedPressure_cmH2O;
+
+      sideCompliance_L_Per_cmH2O = healthySideCompliance_L_Per_cmH2O;
+
+      if (!(expectedPressure_cmH2O < approxZero && expectedPressure_cmH2O > -approxZero))
+      {
+        //Not dividing by ~0
+        sideCompliance_L_Per_cmH2O = (lungVolume_L - volumeAtZeroPressure) / expectedPressure_cmH2O;
+      }
+
       if (sideCompliance_L_Per_cmH2O == 0.0)
       {
         sideCompliance_L_Per_cmH2O = healthySideCompliance_L_Per_cmH2O;
@@ -3023,8 +3032,8 @@ void Respiratory::Debugging(SEFluidCircuit& RespirationCircuit)
   double leftPleuralPressure = m_LeftPleural->GetNextPressure(PressureUnit::cmH2O);
   double leftPleuralVolume = m_LeftPleural->GetNextVolume(VolumeUnit::L);
   double leftFlow = m_LeftAlveolarDeadSpaceToLeftAlveoli->GetNextFlow(VolumePerTimeUnit::L_Per_s);
-  double leftChestWallCompliance_L_Per_cmH2O = m_RightPleuralToRespiratoryMuscle->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
-  double leftLungCompliance_L_Per_cmH2O = m_RightAlveoliToRightPleuralConnection->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
+  double leftChestWallCompliance_L_Per_cmH2O = m_LeftPleuralToRespiratoryMuscle->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
+  double leftLungCompliance_L_Per_cmH2O = m_LeftAlveoliToLeftPleuralConnection->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
 
   double rightAlveoliPressure = m_RightAlveoli->GetNextPressure(PressureUnit::cmH2O);
   double rightAlveoliVolume = m_RightAlveoli->GetNextVolume(VolumeUnit::L);
@@ -3057,6 +3066,6 @@ void Respiratory::Debugging(SEFluidCircuit& RespirationCircuit)
   double leftSideCompliance_L_Per_cmH2O = 1.0 / (1.0 / leftChestWallCompliance_L_Per_cmH2O + 1.0 / leftLungCompliance_L_Per_cmH2O);
   double rightSideCompliance_L_Per_cmH2O = 1.0 / (1.0 / rightChestWallCompliance_L_Per_cmH2O + 1.0 / rightLungCompliance_L_Per_cmH2O);
 
-  double total_Compliance_L_Per_cmH2O = leftSideCompliance_L_Per_cmH2O + rightSideCompliance_L_Per_cmH2O;
-  m_data.GetDataTrack().Probe("total_Compliance_L_Per_cmH2O", total_Compliance_L_Per_cmH2O);
+  double totalCompliance_L_Per_cmH2O = leftSideCompliance_L_Per_cmH2O + rightSideCompliance_L_Per_cmH2O;
+  m_data.GetDataTrack().Probe("totalCompliance_L_Per_cmH2O", totalCompliance_L_Per_cmH2O);
 }
