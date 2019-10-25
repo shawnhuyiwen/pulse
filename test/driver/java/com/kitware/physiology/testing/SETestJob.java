@@ -49,6 +49,8 @@ public class SETestJob extends LogListener
     copy.PlottableResults = this.PlottableResults;
     copy.plotType = this.plotType;
     copy.percentDifference = this.percentDifference;
+    copy.scenarioFiles.addAll(this.scenarioFiles);
+    copy.scenarioDirectory = this.scenarioDirectory;
     copy.baselineFiles.addAll(this.baselineFiles);
     copy.baselineDirectory = this.baselineDirectory;
     copy.computedFiles.addAll(this.computedFiles);
