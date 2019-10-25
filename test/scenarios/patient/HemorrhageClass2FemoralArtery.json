@@ -462,7 +462,7 @@
         "Compartment": "RightLegVasculature",
         "Rate": {
           "ScalarVolumePerTime": {
-            "Value": 100.0,
+            "Value": 90.0,
             "Unit": "mL/min"
           }
         }
@@ -472,7 +472,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 930.0,
+          "Value": 1200.0,
           "Unit": "s"
         }
       }
