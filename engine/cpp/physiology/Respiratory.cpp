@@ -1194,11 +1194,7 @@ void Respiratory::RespiratoryDriver()
         m_NotBreathing = false;
       }
 
-      if (m_VentilationFrequency_Per_min > dMaximumPulmonaryVentilationRate / dHalfVitalCapacity_L)
-        m_VentilationFrequency_Per_min = dMaximumPulmonaryVentilationRate / dHalfVitalCapacity_L;
-
-      if (m_VentilationFrequency_Per_min < 0.0)
-        m_VentilationFrequency_Per_min = 0.0;
+      m_VentilationFrequency_Per_min = LIMIT(m_VentilationFrequency_Per_min, 0.0, dMaximumPulmonaryVentilationRate / dHalfVitalCapacity_L);
 
       //Patient Definition *************************************************************************
       //We need to hit the patient's defined Respiration Rate Baseline, no matter what,
@@ -2134,10 +2130,10 @@ void Respiratory::UpdateChestWallCompliances()
 
     //Dampen the change to prevent potential craziness
     //It will only change half as much as it wants to each time step to ensure it's critically damped and doesn't overshoot
-    double dampenFraction = 0.5;
+    double dampenFraction_perSec = 0.5 * 50.0;
 
     double previousChestWallCompliance_L_Per_cmH2O = chestWallPath->GetCompliance(VolumePerPressureUnit::L_Per_cmH2O);
-    double complianceChange_L_Per_cmH2O = (chestWallCompliance_L_Per_cmH2O - previousChestWallCompliance_L_Per_cmH2O) * dampenFraction;
+    double complianceChange_L_Per_cmH2O = (chestWallCompliance_L_Per_cmH2O - previousChestWallCompliance_L_Per_cmH2O) * dampenFraction_perSec * m_dt_s;
  
     chestWallCompliance_L_Per_cmH2O = previousChestWallCompliance_L_Per_cmH2O + complianceChange_L_Per_cmH2O;
     chestWallPath->GetNextCompliance().SetValue(chestWallCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);

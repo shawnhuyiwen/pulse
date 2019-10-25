@@ -2144,9 +2144,20 @@ void Cardiovascular::CalculatePleuralCavityVenousEffects()
   double resistanceMultiplier = a * factor * factor + min;
 
   double rightHeartResistance_mmHg_s_Per_mL = m_RightHeartResistance->GetNextResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-  m_RightHeartResistance->GetNextResistance().SetValue(rightHeartResistance_mmHg_s_Per_mL * resistanceMultiplier, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+  rightHeartResistance_mmHg_s_Per_mL *= resistanceMultiplier;
+  
+  //Dampen the change to prevent potential craziness
+  //It will only change half as much as it wants to each time step to ensure it's critically damped and doesn't overshoot
+  double dampenFraction_perSec = 0.001 * 50.0;
+
+  double previousRightHeartResistance_mmHg_s_Per_mL = m_RightHeartResistance->GetResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+  double resistanceChange_L_Per_mmHg_s_Per_mL = (rightHeartResistance_mmHg_s_Per_mL - previousRightHeartResistance_mmHg_s_Per_mL) * dampenFraction_perSec * m_dT_s;
+
+  rightHeartResistance_mmHg_s_Per_mL = previousRightHeartResistance_mmHg_s_Per_mL + resistanceChange_L_Per_mmHg_s_Per_mL;
+  m_RightHeartResistance->GetNextResistance().SetValue(rightHeartResistance_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
 
   //For tuning
   //m_data.GetDataTrack().Probe("pleuralCavityPressureDiff_cmH2O", pleuralCavityPressureDiff_cmH2O);
   //m_data.GetDataTrack().Probe("resistanceMultiplier", resistanceMultiplier);
+  //m_data.GetDataTrack().Probe("rightHeartResistance_mmHg_s_Per_mL", rightHeartResistance_mmHg_s_Per_mL);
 }
