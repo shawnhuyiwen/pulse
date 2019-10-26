@@ -102,13 +102,13 @@ public class SETestDriver
               job.state = SETestJob.State.Comparing;
               cThread.job = job;
               activeThreads++;
-              cThread.start();              
+              cThread.start();
               break;
             }
             else
             {
               job.state = SETestJob.State.Complete;
-            }            
+            }
           }
         }
       }
@@ -125,7 +125,7 @@ public class SETestDriver
             activeThreads++;
           }
           if(activeThreads == engineThreads)
-            break;            
+            break;
         }
       }      
       if(activeThreads==0)
@@ -211,8 +211,8 @@ public class SETestDriver
         {
           CSVComparison compare = new CSVComparison();
           compare.limit = job.percentDifference;
-          compare.reportDifferences = false;          
-          compare.setFullReportPath(job.reportFiles.get(i)); 
+          compare.reportDifferences = false;
+          compare.setFullReportPath(job.reportFiles.get(i));
           if(new File(job.computedFiles.get(i)).exists())
           {
             Set<String> failures = null;

@@ -182,6 +182,7 @@ void Nervous::BaroreceptorFeedback()
     {
       m_BaroreceptorActiveTime_s = 0.0;
       m_BaroreceptorFeedbackStatus = true;
+      Info("Starting Baroreceptor timer ");
     }
     else
     {
@@ -200,6 +201,8 @@ void Nervous::BaroreceptorFeedback()
   }
   else
   {
+    if (m_BaroreceptorFeedbackStatus)
+      Info("Stopping Baroreceptor timer ");
     m_BaroreceptorFeedbackStatus = false;
   }
   

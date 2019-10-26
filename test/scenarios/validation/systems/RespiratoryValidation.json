@@ -20,14 +20,14 @@
       { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "EndTidalOxygenFraction",              "Unit": "unitless" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "EndTidalOxygenPressure",              "Unit": "cmH2O" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ExpiratoryFlow",                      "Unit": "L/s" },
-	  { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ExpiratoryPulmonaryResistance",       "Unit": "cmH2O s/L" },
+      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ExpiratoryPulmonaryResistance",       "Unit": "cmH2O s/L" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ImposedPowerOfBreathing",             "Unit": "W" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ImposedWorkOfBreathing",              "Unit": "J" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "InspiratoryExpiratoryRatio",          "Unit": "unitless" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "InspiratoryFlow",                     "Unit": "L/s" },
-	  { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "InspiratoryPulmonaryResistance",      "Unit": "cmH2O s/L" },
+      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "InspiratoryPulmonaryResistance",      "Unit": "cmH2O s/L" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "IntrapleuralPressure",                "Unit": "cmH2O" },
-	  { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "IntrapulmonaryPressure",              "Unit": "cmH2O" },
+      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "IntrapulmonaryPressure",              "Unit": "cmH2O" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "LungCompliance",                      "Unit": "L/cmH2O" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "MaximalInspiratoryPressure",          "Unit": "cmH2O" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "PatientPowerOfBreathing",             "Unit": "W" },
@@ -53,7 +53,7 @@
       { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TransairwayPressure",                 "Unit": "cmH2O" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TransalveolarPressure",               "Unit": "cmH2O" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TransChestWallPressure",              "Unit": "cmH2O" },
-	  { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TransMusclePressure",                 "Unit": "cmH2O" },
+      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TransMusclePressure",                 "Unit": "cmH2O" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TranspulmonaryPressure",              "Unit": "cmH2O" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TransrespiratoryPressure",            "Unit": "cmH2O" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TransthoracicPressure",               "Unit": "cmH2O" },
@@ -83,9 +83,20 @@
       { "DecimalFormat": { "Precision": 4 }, "Category": "GasCompartment", "CompartmentName": "RightAnatomicDeadSpace", "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" }
     ]
   },
-  "AnyAction": 
-  [
-    { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 2.0, "Unit": "min" }}}},
-    { "PatientAction": { "Assessment": { "Type": "PulmonaryFunctionTest" }}}
-  ]
+  "AnyAction": [{
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 2.0,
+          "Unit": "min"
+        }
+      }
+    }
+  }, {
+    "PatientAction": {
+      "Assessment": {
+        "Type": "PulmonaryFunctionTest"
+      }
+    }
+  }]
 }

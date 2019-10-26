@@ -244,7 +244,7 @@ public class SETestConfiguration
           }
           else if(job.executor.getClass().getName().indexOf("Scenario")!=-1)//Is a Scenario File test
           {
-            deriveScenarioResultNames(job, job.name);            
+            deriveScenarioResultNames(job, job.name);
           }
           else
           {
@@ -260,7 +260,7 @@ public class SETestConfiguration
         List<String> patientFileNames;
 
         if(patientFiles.equalsIgnoreCase("all"))
-          patientFileNames = FileUtils.findFiles("./patients", sce_ext, true);        
+          patientFileNames = FileUtils.findFiles("./patients", sce_ext, true);
         else
         {
           String[] patientFiles = this.patientFiles.split(",");
@@ -290,7 +290,7 @@ public class SETestConfiguration
               jobs.add(job);
               continue;
             }
-            copy = job.clone();                              
+            copy = job.clone();
             copy.patientFile = pFileName;
             deriveScenarioResultNames(copy, copy.name.replaceAll(sce_ext, "-"+pFileName));  
             jobs.add(copy);
