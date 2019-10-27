@@ -1002,15 +1002,6 @@ void Cardiovascular::Hemorrhage()
       continue;
     }
 
-    /// \error Error: Bleeding rate cannot exceed cardiac output
-    if (rate_mL_Per_s > GetCardiacOutput().GetValue(VolumePerTimeUnit::mL_Per_s))
-    {
-      m_ss << "Cannot have bleeding rate greater than cardiac output. \n\tCurrent cardiac output is: " << GetCardiacOutput()
-        << "\n\tAnd specified bleeding rate is: " << h->GetRate();
-      Error(m_ss);
-      invalid_hemorrhages.push_back(h);
-      continue;
-    }
     /// \error Error: Bleeding rate cannot be less than zero
     if (rate_mL_Per_s < 0)
     {
