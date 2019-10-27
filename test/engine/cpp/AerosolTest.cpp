@@ -81,7 +81,7 @@ void PulseEngineTest::AerosolTest(const std::string& sOutputDirectory)
                                                  // Bin n contains 
 
   SizeIndependentDepositionEfficencyCoefficientsTest(normalDistributionSuite, normalDistributedSubstance, 0.043737,0.045737,0.090432,0.3115);
-  DepositionFractionTest(normalDistributionSuite, normalDistributedSubstance, 0.0805701, 0.0843696, 0.0701852, 0.111879);
+  DepositionFractionTest(normalDistributionSuite, normalDistributedSubstance, 0.074548, 0.0774748, 0.0751394, 0.144502, 0.0755068, 0.145212);
 
   // Create another suite...
   // Create a suite
@@ -110,7 +110,7 @@ void PulseEngineTest::AerosolTest(const std::string& sOutputDirectory)
   monoConcentrations.GetFraction().push_back(0);     // Bin 5 (Bounded by Boundary 5 and Boundary 6)
 
   SizeIndependentDepositionEfficencyCoefficientsTest(monodispersedSuite, monodispersedSubstance, 0.024864, 0.025498, 0.083839, 0.32856);
-  DepositionFractionTest(monodispersedSuite, monodispersedSubstance, 0.0471459, 0.0482577, 0.0660969, 0.117988);
+  DepositionFractionTest(monodispersedSuite, monodispersedSubstance, 0.0438201, 0.0447655, 0.0715328, 0.15274, 0.0718575, 0.153452);
 
   // Create a suite
   SETestSuite& mono2Suite = testReport.CreateTestSuite();
@@ -138,7 +138,7 @@ void PulseEngineTest::AerosolTest(const std::string& sOutputDirectory)
   mono2Concentrations.GetFraction().push_back(1.0);     // Bin 5 (Bounded by Boundary 5 and Boundary 6)
 
   SizeIndependentDepositionEfficencyCoefficientsTest(mono2Suite, mono2Substance, 0.26841, 0.36689, 0.0012658, 0.0014995);
-  DepositionFractionTest(mono2Suite, mono2Substance, 0.366641, 0.504666, 0.000931153, 0.000542435);
+  DepositionFractionTest(mono2Suite, mono2Substance, 0.344719, 0.443596, 0.000942165, 0.000709455, 0.000947155, 0.000712776);
 
   // Create a suite
   SETestSuite& mono3Suite = testReport.CreateTestSuite();
@@ -166,7 +166,7 @@ void PulseEngineTest::AerosolTest(const std::string& sOutputDirectory)
   mono3Concentrations.GetFraction().push_back(0);     // Bin 5 (Bounded by Boundary 5 and Boundary 6)
 
   SizeIndependentDepositionEfficencyCoefficientsTest(mono3Suite, mono3Substance, 0.43617, 0.77358, 0.21788, 0.005489);
-  DepositionFractionTest(mono3Suite, mono3Substance, 0.468578, 0.753432, 0.1188, 0.00197536);
+  DepositionFractionTest(mono3Suite, mono3Substance, 0.417621, 0.592992, 0.112668, 0.00248646, 0.114005, 0.00250667);
 
   // Create a suite
   SETestSuite& zhangDispersion = testReport.CreateTestSuite();
@@ -202,7 +202,7 @@ void PulseEngineTest::AerosolTest(const std::string& sOutputDirectory)
   zhangConcentrations.GetFraction().push_back(0.016661235);     // Bin 9 (Bounded by Boundary 9 and Boundary 10)
 
   SizeIndependentDepositionEfficencyCoefficientsTest(zhangDispersion, zhangSubstance, 0.25368, 0.3399, 0.00013825, 0.00022882);
-  DepositionFractionTest(zhangDispersion, zhangSubstance, 0.353503, 0.478626, 0.000102784, 8.27909e-05);
+  DepositionFractionTest(zhangDispersion, zhangSubstance, 0.333249, 0.423409, 0.000104601, 0.000108576, 0.000105119, 0.000109058);
 
   testReport.SerializeToFile(sOutputDirectory + "/AerosolTestReport.json",JSON);
 }
@@ -250,8 +250,8 @@ void PulseEngineTest::SizeIndependentDepositionEfficencyCoefficientsTest(SETestS
   tc1.GetDuration().SetValue(pTimer.GetElapsedTime_s("Test"), TimeUnit::s); 
 }
 
-void PulseEngineTest::DepositionFractionTest(SETestSuite& suite, SESubstance& substance,
-  double expectedMouthDepFrac, double expectedCarinaDepFrac, double expectedDeadSpaceDepFrac, double expectedAlveoliDepFrac)
+void PulseEngineTest::DepositionFractionTest(SETestSuite& suite, SESubstance& substance, double expectedMouthDepFrac, double expectedCarinaDepFrac,
+  double expectedLeftDeadSpaceDepFrac, double expectedLeftAlveoliDepFrac, double expectedRightDeadSpaceDepFrac, double expectedRightAlveoliDepFrac)
 {
   TimingProfile pTimer;
   pTimer.Start("Test");
@@ -485,33 +485,33 @@ void PulseEngineTest::DepositionFractionTest(SETestSuite& suite, SESubstance& su
 
   m_ss << "Particulate Deposited in Left Dead Space : " << leftAnatomicDeadSpaceParticulate->GetMassDeposited(MassUnit::ug);
   Info(m_ss);
-  if (GeneralMath::PercentTolerance(expectedDeadSpaceDepFrac, leftAnatomicDeadSpaceParticulate->GetMassDeposited(MassUnit::ug) / totalInspiredParticulate_ug) > PercentTolerance)
+  if (GeneralMath::PercentTolerance(expectedLeftDeadSpaceDepFrac, leftAnatomicDeadSpaceParticulate->GetMassDeposited(MassUnit::ug) / totalInspiredParticulate_ug) > PercentTolerance)
   {
-    m_ss << " Left Dead Space Particle Deposition is not correct : " << leftAnatomicDeadSpaceParticulate->GetMassDeposited(MassUnit::ug) / totalInspiredParticulate_ug << " expected " << expectedDeadSpaceDepFrac;
+    m_ss << " Left Dead Space Particle Deposition is not correct : " << leftAnatomicDeadSpaceParticulate->GetMassDeposited(MassUnit::ug) / totalInspiredParticulate_ug << " expected " << expectedLeftDeadSpaceDepFrac;
     tc.AddFailure(m_ss);
   }
 
   m_ss << "Particulate Deposited in Left Alveoli : " << leftAlveoliParticulate->GetMassDeposited(MassUnit::ug);
   Info(m_ss);
-  if (GeneralMath::PercentTolerance(expectedAlveoliDepFrac, leftAlveoliParticulate->GetMassDeposited(MassUnit::ug) / totalInspiredParticulate_ug) > PercentTolerance)
+  if (GeneralMath::PercentTolerance(expectedLeftAlveoliDepFrac, leftAlveoliParticulate->GetMassDeposited(MassUnit::ug) / totalInspiredParticulate_ug) > PercentTolerance)
   {
-    m_ss << " Left Alveoli Particle Deposition is not correct : " << leftAlveoliParticulate->GetMassDeposited(MassUnit::ug) / totalInspiredParticulate_ug << " expected " << expectedAlveoliDepFrac;
+    m_ss << " Left Alveoli Particle Deposition is not correct : " << leftAlveoliParticulate->GetMassDeposited(MassUnit::ug) / totalInspiredParticulate_ug << " expected " << expectedLeftAlveoliDepFrac;
     tc.AddFailure(m_ss);
   }
 
   m_ss << "Particulate Deposited in Right Dead Space : " << rightAnatomicDeadSpaceParticulate->GetMassDeposited(MassUnit::ug);
   Info(m_ss);
-  if (GeneralMath::PercentTolerance(expectedDeadSpaceDepFrac, rightAnatomicDeadSpaceParticulate->GetMassDeposited(MassUnit::ug) / totalInspiredParticulate_ug) > PercentTolerance)
+  if (GeneralMath::PercentTolerance(expectedRightDeadSpaceDepFrac, rightAnatomicDeadSpaceParticulate->GetMassDeposited(MassUnit::ug) / totalInspiredParticulate_ug) > PercentTolerance)
   {
-    m_ss << " Right Dead Space Particle Deposition is not correct : " << rightAnatomicDeadSpaceParticulate->GetMassDeposited(MassUnit::ug) / totalInspiredParticulate_ug << " expected " << expectedDeadSpaceDepFrac;
+    m_ss << " Right Dead Space Particle Deposition is not correct : " << rightAnatomicDeadSpaceParticulate->GetMassDeposited(MassUnit::ug) / totalInspiredParticulate_ug << " expected " << expectedRightDeadSpaceDepFrac;
     tc.AddFailure(m_ss);
   }
 
   m_ss << "Particulate Deposited in Right Alveoli : " << rightAlveoliParticulate->GetMassDeposited(MassUnit::ug);
   Info(m_ss);
-  if (GeneralMath::PercentTolerance(expectedAlveoliDepFrac, rightAlveoliParticulate->GetMassDeposited(MassUnit::ug) / totalInspiredParticulate_ug) > PercentTolerance)
+  if (GeneralMath::PercentTolerance(expectedRightAlveoliDepFrac, rightAlveoliParticulate->GetMassDeposited(MassUnit::ug) / totalInspiredParticulate_ug) > PercentTolerance)
   {
-    m_ss << " Right Alveoli Particle Deposition is not correct : " << rightAlveoliParticulate->GetMassDeposited(MassUnit::ug) / totalInspiredParticulate_ug << " expected " << expectedAlveoliDepFrac;
+    m_ss << " Right Alveoli Particle Deposition is not correct : " << rightAlveoliParticulate->GetMassDeposited(MassUnit::ug) / totalInspiredParticulate_ug << " expected " << expectedRightAlveoliDepFrac;
     tc.AddFailure(m_ss);
   }
 
