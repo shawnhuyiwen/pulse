@@ -99,10 +99,29 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 90.0,
+          "Value": 20.0,
           "Unit": "min"
         }
       }
-	}
+    }
+  }, {
+    "PatientAction": {
+      "Dyspnea": {
+        "Severity": {
+          "Scalar0To1": {
+            "Value": 0.5
+          }
+        }
+      }
+    }
+  }, {
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 1.0,
+          "Unit": "hr"
+        }
+      }
+    }
   }]
 }

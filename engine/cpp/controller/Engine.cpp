@@ -176,6 +176,9 @@ bool PulseEngine::InitializeEngine(const SEPatientConfiguration& patient_configu
     m_Conditions->Copy(*patient_configuration.GetConditions());
   AtSteadyState(EngineState::AtInitialStableState);// This will peek at conditions
 
+  // Copy any changes to the current patient to the initial patient
+  m_InitialPatient->Copy(*m_CurrentPatient);
+
   m_State = EngineState::SecondaryStabilization;
   // Apply conditions and anything else to the physiology
   // now that it's steady with provided patient, environment, and feedback
@@ -190,9 +193,7 @@ bool PulseEngine::InitializeEngine(const SEPatientConfiguration& patient_configu
     if (!m_Config->GetStabilization()->StabilizeFeedbackState(*this))
       return false;
   }
-  AtSteadyState(EngineState::AtSecondaryStableState);
-  // Copy any changes to the current patient to the initial patient
-  m_InitialPatient->Copy(*m_CurrentPatient);
+  AtSteadyState(EngineState::AtSecondaryStableState);  
 
   m_State = EngineState::Active;
   // Hook up the handlers (Note events will still be in the log)
