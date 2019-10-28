@@ -285,7 +285,7 @@ message PericardialEffusionData
 message RespiratoryFatigueData
 {
   PatientActionData                         PatientAction                   = 1;
-  Scalar0To1Data                            Severity                        = 2;/**<<@brief Scale of affect, 0 no dyspnea, 1 having apnea. */
+  Scalar0To1Data                            Severity                        = 2;/**<<@brief Scale of affect, 0 no dyspnea, 1 having dyspnea. */
 }
 
 message SubstanceBolusStateData

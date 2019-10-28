@@ -1,6 +1,6 @@
 {
   "Name": "MechanicalVentilation",
-  "Description": "Mimic a patient with generic impaired alveolar exchange and apnea, then ventilated by simulating inputs as if they are from external sensors.",
+  "Description": "Mimic a patient with generic impaired alveolar exchange and dyspnea, then ventilated by simulating inputs as if they are from external sensors.",
   "StartType": {
     "PatientConfiguration": {
       "PatientFile": "StandardMale.json",

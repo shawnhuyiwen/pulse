@@ -180,7 +180,7 @@ void PulseEngineTest::AerosolTest(const std::string& sOutputDirectory)
   zhangConcentrations.GetLength().push_back(16.263765); // Boundary 1
   zhangConcentrations.GetLength().push_back(25.854805); // Boundary 2
   zhangConcentrations.GetLength().push_back(41.101852); // Boundary 3
-  zhangConcentrations.GetLength().push_back(65.83879);    // Boundary 4
+  zhangConcentrations.GetLength().push_back(65.83879);  // Boundary 4
   zhangConcentrations.GetLength().push_back(103.87276);  // Boundary 5
   zhangConcentrations.GetLength().push_back(165.1284);  // Boundary 6
   zhangConcentrations.GetLength().push_back(260.5203);  // Boundary 7

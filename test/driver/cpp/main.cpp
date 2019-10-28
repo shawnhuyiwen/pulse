@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
       // Pulse Tests //
       ////////////////////
 
-      //peTest.ReadScenarios(peDir);
+      peTest.ReadScenarios(peDir);
 
       //peTest.CardiovascularCircuitAndTransportTest(peDir);
       //peTest.CardiovascularAndRenalCircuitAndTransportTest(peDir);
