@@ -146,7 +146,7 @@ bool SEDynamicStabilization::StabilizeConditions(PhysiologyEngine& engine, const
   {
     if (!HasConditionConvergence(c->GetName()))
     {
-      Error("Engine does not support Condition");
+      Error("Engine does not support Condition "+c->GetName());
       return false;
     }
     else

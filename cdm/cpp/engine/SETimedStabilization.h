@@ -24,6 +24,7 @@ public:
   virtual bool StabilizeFeedbackState(PhysiologyEngine& engine);
   virtual bool StabilizeConditions(PhysiologyEngine& engine, const SEConditionManager& conditions);
 
+  virtual bool HasRestingStabilizationTime() const;
   virtual SEScalarTime& GetRestingStabilizationTime();
   virtual double GetRestingStabilizationTime(const TimeUnit& unit) const;
 

@@ -39,18 +39,16 @@ bool SEAcuteRespiratoryDistressSyndromeExacerbation::IsActive() const
 {
   if (!IsValid())
     return false;
-  return GetSeverity() > 0;
-}
-
-bool SEAcuteRespiratoryDistressSyndromeExacerbation::HasSeverity() const
-{
-  if (!IsValid())
-    return false;
   if (GetSeverity() <= 0)
     return false;
   if (GetLeftLungAffected() <= 0 && GetRightLungAffected() <= 0)
     return false;
   return true;
+}
+
+bool SEAcuteRespiratoryDistressSyndromeExacerbation::HasSeverity() const
+{
+  return m_Severity == nullptr ? false : m_Severity->IsValid();
 }
 
 SEScalar0To1& SEAcuteRespiratoryDistressSyndromeExacerbation::GetSeverity()

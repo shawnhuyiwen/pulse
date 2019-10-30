@@ -35,7 +35,7 @@ bool SETimedStabilization::StabilizeConditions(PhysiologyEngine& engine, const S
   {
     if(!HasConditionTime(c->GetName()))
     {
-      Error("Engine does not support Condition");
+      Error("Engine does not support Condition "+c->GetName());
       return false;
     }
     const SEScalarTime& time = GetConditionTime(c->GetName());
@@ -127,6 +127,7 @@ bool SETimedStabilization::Stabilize(PhysiologyEngine& engine, const SEScalarTim
 
 SETimedStabilization::SETimedStabilization(Logger *logger) : SEEngineStabilization(logger)
 {
+  m_RestingStabilizationTime = nullptr;
   m_FeedbackStabilizationTime = nullptr;
   GetStabilizationDuration().SetValue(0, TimeUnit::s);
 }
@@ -134,13 +135,12 @@ SETimedStabilization::SETimedStabilization(Logger *logger) : SEEngineStabilizati
 SETimedStabilization::~SETimedStabilization()
 {
   Clear();
-  delete m_RestingStabilizationTime;
 }
 
 void SETimedStabilization::Clear()
 {
   SEEngineStabilization::Clear();
-  m_RestingStabilizationTime->Invalidate();
+  SAFE_DELETE(m_RestingStabilizationTime);
   SAFE_DELETE(m_FeedbackStabilizationTime);
   DELETE_MAP_SECOND(m_ConditionTimes);
 }
@@ -162,12 +162,20 @@ bool SETimedStabilization::SerializeFromFile(const std::string& filename, Serial
   return PBEngine::SerializeFromFile(filename, *this, m);
 }
 
+bool SETimedStabilization::HasRestingStabilizationTime() const
+{
+  return m_FeedbackStabilizationTime == nullptr ? false : m_FeedbackStabilizationTime->IsValid();
+}
 SEScalarTime& SETimedStabilization::GetRestingStabilizationTime()
 {
+  if (m_RestingStabilizationTime == nullptr)
+    m_RestingStabilizationTime = new SEScalarTime();
   return *m_RestingStabilizationTime;
 }
 double SETimedStabilization::GetRestingStabilizationTime(const TimeUnit& unit) const
 {
+  if (!HasRestingStabilizationTime())
+    return SEScalar::dNaN();
   return m_RestingStabilizationTime->GetValue(unit);
 }
 
