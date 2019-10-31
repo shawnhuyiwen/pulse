@@ -112,6 +112,7 @@ This initialization method is also the only way to specify any conditions (chron
 
 #### Patient Conditions
 @secreflist
+  @refitem AcuteRespiratoryDistressSyndromeTable "ARDS"
   @refitem ChronicAnemiaTable "Chronic Anemia"
   @refitem ChronicObstructivePulmonaryDiseaseTable "COPD"
   @refitem ChronicPericardialEffusionTable "Chronic Pericardial Effusion"
@@ -120,6 +121,7 @@ This initialization method is also the only way to specify any conditions (chron
   @refitem ConsumeMealTable "Consume Meal"
   @refitem ImpairedAlveolarExchangeTable "Impaired Alveolar Exchange"
   @refitem LobarPneumoniaTable "Lobar Pneumonia"
+  @refitem SepsisTable "Sepsis"
 @endsecreflist
 
 #### %Environment Conditions
@@ -244,8 +246,8 @@ You will need to create an instance of an action class, fill it out with the nec
 #### Patient Actions
 @secreflist
   @refitem AcuteStressTable "Acute Stress"
+  @refitem AcuteRespiratoryDistressSyndromeExacerbationTable "ARDS Exacerbation"
   @refitem AirwayObstructionTable "Airway Obstruction"
-  @refitem ApneaTable "Apnea"
   @refitem AsthmaAttackTable "Asthma Attack"
   @refitem BrainInjuryTable "Brain Injury"
   @refitem BronchoconstrictionTable "Bronchoconstriction"
@@ -255,12 +257,16 @@ You will need to create an instance of an action class, fill it out with the nec
   @refitem ChestOcclusiveDressingTable "Chest Occlusive Dressing"
   @refitem ConsciousRespirationTable "Conscious Respiration"
   @refitem ConsumeNutrientsTable "Consume Nutrients"
+  @refitem ChronicObstructivePulmonaryDiseaseExacerbationTable "COPD Exacerbation"
+  @refitem DyspneaTable "Dyspnea"
   @refitem ExerciseTable "Exercise"
   @refitem HemorrhageTable "Hemorrhage"
   @refitem IntubationTable "Intubation"
+  @refitem LobarPneumoniaExacerbationTable "Lobar Pneumonia Exacerbation"
   @refitem MechanicalVentilationTable "Mechanical Ventilation"
   @refitem NeedleDecompressionTable "Needle Decompression"
   @refitem PericardialEffusionTable "Pericardial Effusion"
+  @refitem RespiratoryFatigueTable "Respiratory Fatigue"
   @refitem SubstanceBolusTable "Substance Bolus"
   @refitem SubstanceCompoundInfusionTable "Substance Compound Infusion"
   @refitem SubstanceInfusionTable "Substance Infusion"

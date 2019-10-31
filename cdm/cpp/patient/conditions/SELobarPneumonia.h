@@ -39,4 +39,4 @@ protected:
   SEScalar0To1*     m_Severity;
   SEScalar0To1*     m_LeftLungAffected;
   SEScalar0To1*     m_RightLungAffected;
-};      
+};

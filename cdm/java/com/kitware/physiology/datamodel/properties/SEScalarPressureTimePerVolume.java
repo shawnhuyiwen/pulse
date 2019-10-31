@@ -3,18 +3,18 @@
 
 package com.kitware.physiology.datamodel.properties;
 
-import com.kitware.physiology.cdm.Properties.ScalarFlowInertanceData;
+import com.kitware.physiology.cdm.Properties.ScalarPressureTimePerVolumeData;
 
-import com.kitware.physiology.datamodel.properties.CommonUnits.FlowInertanceUnit;
+import com.kitware.physiology.datamodel.properties.CommonUnits.PressureTimePerVolumeUnit;
 
 /**
  * @author abray
- * FlowInertance Scalar Class, will enforce that units are proper to FlowInertances
+ * PressureTimePerVolume Scalar Class, will enforce that units are proper to PressureTimePerVolumes
  */
 
-public class SEScalarFlowInertance extends SEScalar
+public class SEScalarPressureTimePerVolume extends SEScalar
 {
-  public SEScalarFlowInertance()
+  public SEScalarPressureTimePerVolume()
   {
     super();
   }
@@ -24,7 +24,7 @@ public class SEScalarFlowInertance extends SEScalar
    * @param unit - specific any valid standard unit abbreviation
    * http://www.bipm.org/en/si/ for this quantity type
    */
-  public SEScalarFlowInertance(double value, String unit)
+  public SEScalarPressureTimePerVolume(double value, String unit)
   {
     this();
     this.setValue(value, unit);
@@ -38,27 +38,27 @@ public class SEScalarFlowInertance extends SEScalar
    * and specify any valid standard unit abbreviation sting for this type
    * Unit Abbreviation Standards: http://www.bipm.org/en/si/
    */
-  public SEScalarFlowInertance(double value, FlowInertanceUnit unit)
+  public SEScalarPressureTimePerVolume(double value, PressureTimePerVolumeUnit unit)
   {
     this();
     this.setValue(value,unit);
   }
   
-  public static void load(ScalarFlowInertanceData src, SEScalarFlowInertance dst)
+  public static void load(ScalarPressureTimePerVolumeData src, SEScalarPressureTimePerVolume dst)
   {
-    SEScalar.load(src.getScalarFlowInertance(),dst);
+    SEScalar.load(src.getScalarPressureTimePerVolume(),dst);
   }
-  public static ScalarFlowInertanceData unload(SEScalarFlowInertance src)
+  public static ScalarPressureTimePerVolumeData unload(SEScalarPressureTimePerVolume src)
   {
     if(!src.isValid())
       return null;
-    ScalarFlowInertanceData.Builder dst = ScalarFlowInertanceData.newBuilder();
+    ScalarPressureTimePerVolumeData.Builder dst = ScalarPressureTimePerVolumeData.newBuilder();
     unload(src,dst);
     return dst.build();
   }
-  protected static void unload(SEScalarFlowInertance src, ScalarFlowInertanceData.Builder dst)
+  protected static void unload(SEScalarPressureTimePerVolume src, ScalarPressureTimePerVolumeData.Builder dst)
   {
-    SEScalar.unload(src,dst.getScalarFlowInertanceBuilder());
+    SEScalar.unload(src,dst.getScalarPressureTimePerVolumeBuilder());
   }
   
   /**
@@ -69,7 +69,7 @@ public class SEScalarFlowInertance extends SEScalar
    * and specify any valid standard unit abbreviation sting for this type
    * Unit Abbreviation Standards: http://www.bipm.org/en/si/
    */
-  public void setValue(double value, FlowInertanceUnit unit)
+  public void setValue(double value, PressureTimePerVolumeUnit unit)
   {
     this.setValue(value,unit.toString());
   }
@@ -82,14 +82,14 @@ public class SEScalarFlowInertance extends SEScalar
    * and specify any valid standard unit abbreviation sting for this type
    * Unit Abbreviation Standards: http://www.bipm.org/en/si/
    */
-  public double getValue(FlowInertanceUnit unit)
+  public double getValue(PressureTimePerVolumeUnit unit)
   {
     return this.getValue(unit.toString());
   }
 
   public boolean validUnit(String unit)
   {
-    if(FlowInertanceUnit.validUnit(unit))
+    if(PressureTimePerVolumeUnit.validUnit(unit))
       return true;
     return false;
   }

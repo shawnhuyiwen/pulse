@@ -1,6 +1,6 @@
 {
   "Name": "MechanicalVentilation",
-  "Description": "Mimic a patient with generic impaired alveolar exchange and apnea, then ventilated by simulating inputs as if they are from external sensors.",
+  "Description": "Mimic a patient with generic impaired alveolar exchange and dyspnea, then ventilated by simulating inputs as if they are from external sensors.",
   "StartType": {
     "PatientConfiguration": {
       "PatientFile": "StandardMale.json",
@@ -445,7 +445,10 @@
       "SubstanceName": "Albuterol",
       "PropertyName": "MassInBody",
       "Unit": "ug"
-    }]
+    }, { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "PulmonaryCompliance", "Unit": "L/cmH2O" 
+	}, { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "InspiratoryPulmonaryResistance", "Unit": "cmH2O s/L" 
+	}, { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ExpiratoryPulmonaryResistance", "Unit": "cmH2O s/L" 
+	}]
   },
   "AnyAction": [{
     "AdvanceTime": {
@@ -457,8 +460,29 @@
       }
     }
   }, {
+   "PatientAction": {
+     "MechanicalVentilation": {
+       "State": "On",
+       "Pressure": {
+         "ScalarPressure": {
+           "Value": 0.0,
+           "Unit": "cmH2O"
+         }
+       }
+     }
+   }
+  }, {
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 30.0,
+          "Unit": "s"
+        }
+      }
+    }
+  }, {
     "PatientAction": {
-      "Apnea": {
+      "Dyspnea": {
         "Severity": {
           "Scalar0To1": {
             "Value": 1.0

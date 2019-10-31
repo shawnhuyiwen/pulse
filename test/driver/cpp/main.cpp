@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
       //peTest.RespiratoryCircuitAndTransportTest(peDir);
       //peTest.RespiratoryDriverTest(peDir);
       //peTest.AnesthesiaMachineCircuitAndTransportTest(peDir);
-      //peTest.RespiratoryWithAnesthesiaMachineCircuitAndTransportTest(peDir);  
+      //peTest.RespiratoryWithAnesthesiaMachineCircuitAndTransportTest(peDir);
       //peTest.RespiratoryWithInhalerCircuitAndTransportTest(peDir); 
       //peTest.RespiratoryWithMechanicalVentilatorCircuitAndTransportTest(peDir);
 
@@ -133,7 +133,9 @@ int main(int argc, char* argv[])
       //cdmTest.PolarizedCapacitorTest(cdmDir);
       //cdmTest.PreChargeComplianceZeroVolume(cdmDir);
       //cdmTest.PreChargeComplianceNonZeroVolume(cdmDir);
+      //cdmTest.ComplianceVolumeChange(cdmDir);
       //cdmTest.CircuitLockingTest(cdmDir);
+      //cdmTest.ComplianceVolumeChange(cdmDir);
 
       // Basic Circuit Tests
       //cdmTest.BasicCircuitTest(cdmDir);

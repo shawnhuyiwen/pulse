@@ -50,8 +50,6 @@
 #include "properties/SEScalarAmountPerVolume.h"
 #include "properties/SEScalarAmountPerTime.h"
 #include "properties/SEScalarPressure.h"
-#include "properties/SEScalarFlowResistance.h"
-#include "properties/SEScalarFlowCompliance.h"
 #include "properties/SEScalarAmountPerTime.h"
 #include "properties/SEScalarTime.h"
 #include "properties/SEScalarVolumePerTimeMass.h"
@@ -75,7 +73,6 @@ Energy::~Energy()
 void Energy::Clear()
 {
   SEEnergySystem::Clear();
-  m_Patient = nullptr;
   m_AortaHCO3 = nullptr;
   m_coreNode = nullptr;
   m_skinNode = nullptr;
@@ -97,7 +94,7 @@ void Energy::Initialize()
 {
   PulseSystem::Initialize();
 
-  GetTotalMetabolicRate().Set(m_Patient->GetBasalMetabolicRate());
+  GetTotalMetabolicRate().Set(m_data.GetCurrentPatient().GetBasalMetabolicRate());
   //Initialization of other system variables
   /// \cite herman2008physics
   GetCoreTemperature().SetValue(37.0, TemperatureUnit::C);
@@ -135,7 +132,6 @@ void Energy::Initialize()
 void Energy::SetUp()
 {
   m_dT_s = m_data.GetTimeStep().GetValue(TimeUnit::s);
-  m_Patient = &m_data.GetPatient();
 
   m_AortaHCO3 = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta)->GetSubstanceQuantity(m_data.GetSubstances().GetHCO3());
 
@@ -289,7 +285,7 @@ void Energy::Exercise()
 
   double exerciseIntensity = 0.0;
   double currentMetabolicRate_kcal_Per_day = GetTotalMetabolicRate().GetValue(PowerUnit::kcal_Per_day);
-  double basalMetabolicRate_kcal_Per_day = m_Patient->GetBasalMetabolicRate().GetValue(PowerUnit::kcal_Per_day);
+  double basalMetabolicRate_kcal_Per_day = m_data.GetCurrentPatient().GetBasalMetabolicRate().GetValue(PowerUnit::kcal_Per_day);
 
   // Only try to get intensity if the exercise action is active. Otherwise, we are just refilling energy buckets post-exercise.
   if (m_data.GetActions().GetPatientActions().HasExercise())
@@ -606,9 +602,9 @@ void Energy::CalculateMetabolicHeatGeneration()
   double totalMetabolicRateNew_Kcal_Per_day = 0.0;
   double totalMetabolicRateNew_W = 0.0;
   //The summit metabolism is the maximum amount of power the human body can generate due to shivering/response to the cold.
-  double summitMetabolism_W = 21.0*pow(m_Patient->GetWeight(MassUnit::kg), 0.75); /// \cite herman2008physics
-  double currentMetabolicRate_kcal_Per_day = GetTotalMetabolicRate().GetValue(PowerUnit::kcal_Per_day);
-  double basalMetabolicRate_kcal_Per_day = m_Patient->GetBasalMetabolicRate().GetValue(PowerUnit::kcal_Per_day);
+  double summitMetabolism_W = 21.0*pow(m_data.GetCurrentPatient().GetWeight(MassUnit::kg), 0.75); /// \cite herman2008physics
+  double currentMetabolicRate_kcal_Per_day = GetTotalMetabolicRate(PowerUnit::kcal_Per_day);
+  double basalMetabolicRate_kcal_Per_day = m_data.GetCurrentPatient().GetBasalMetabolicRate(PowerUnit::kcal_Per_day);
 
   if (coreTemperature_degC < 34.0) //Hypothermic state inducing metabolic depression (decline of metabolic heat generation)
   {
@@ -618,7 +614,7 @@ void Energy::CalculateMetabolicHeatGeneration()
   else if (coreTemperature_degC >= 34.0 && coreTemperature_degC < 36.8) //Patient is increasing heat generation via shivering. This caps out at the summit metabolism
   {
     //Add an event for shivering
-    double basalMetabolicRate_W = m_Patient->GetBasalMetabolicRate(PowerUnit::W);
+    double basalMetabolicRate_W = m_data.GetCurrentPatient().GetBasalMetabolicRate(PowerUnit::W);
     totalMetabolicRateNew_W = basalMetabolicRate_W + (summitMetabolism_W - basalMetabolicRate_W)*(coreTemperatureLow_degC - coreTemperature_degC) / coreTemperatureLowDelta_degC;
     totalMetabolicRateNew_W = MIN(totalMetabolicRateNew_W, summitMetabolism_W); //Bounded at the summit metabolism so further heat generation doesn't continue for continue drops below 34 C.
     GetTotalMetabolicRate().SetValue(totalMetabolicRateNew_W, PowerUnit::W);
@@ -664,7 +660,7 @@ void Energy::CalculateSweatRate()
 
   //Account for mass lost by substracting from the current patient mass
   double massLost_kg = sweatRate_kg_Per_s*m_dT_s;
-  m_Patient->GetWeight().IncrementValue(-massLost_kg, MassUnit::kg);
+  m_data.GetCurrentPatient().GetWeight().IncrementValue(-massLost_kg, MassUnit::kg);
 
   GetSweatRate().SetValue(sweatRate_kg_Per_s, MassPerTimeUnit::kg_Per_s);
 
@@ -713,20 +709,19 @@ void Energy::UpdateHeatResistance()
 //--------------------------------------------------------------------------------------------------
 void Energy::CalculateBasalMetabolicRate()
 {
-  SEPatient& patient = m_data.GetPatient();
-  double PatientMass_kg = patient.GetWeight(MassUnit::kg);
-  double PatientAge_yr = patient.GetAge(TimeUnit::yr);
-  double PatientHeight_cm = patient.GetHeight(LengthUnit::cm);
+  double PatientMass_kg = m_data.GetCurrentPatient().GetWeight(MassUnit::kg);
+  double PatientAge_yr = m_data.GetCurrentPatient().GetAge(TimeUnit::yr);
+  double PatientHeight_cm = m_data.GetCurrentPatient().GetHeight(LengthUnit::cm);
 
   //The basal metabolic rate is determined from the Harris-Benedict formula, with differences dependent on sex, age, height and mass
   /// \cite roza1984metabolic
   double patientBMR_kcal_Per_day = 0.0;
-  if (patient.GetSex() == ePatient_Sex::Male)
+  if (m_data.GetCurrentPatient().GetSex() == ePatient_Sex::Male)
     patientBMR_kcal_Per_day = 88.632 + 13.397*PatientMass_kg + 4.799*PatientHeight_cm - 5.677*PatientAge_yr;
   else
     patientBMR_kcal_Per_day = 447.593 + 9.247*PatientMass_kg + 3.098*PatientHeight_cm - 4.330*PatientAge_yr;
   // Systems do their math with MetabolicRate in Watts, so let's make these consistent
-  patient.GetBasalMetabolicRate().SetValue(patientBMR_kcal_Per_day, PowerUnit::kcal_Per_day);
+  m_data.GetCurrentPatient().GetBasalMetabolicRate().SetValue(patientBMR_kcal_Per_day, PowerUnit::kcal_Per_day);
 
   std::stringstream ss;
   ss << "Conditions applied homeostasis: " << "Patient basal metabolic rate = " << patientBMR_kcal_Per_day << " kcal/day";

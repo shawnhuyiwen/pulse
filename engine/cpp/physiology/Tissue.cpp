@@ -136,7 +136,7 @@ void Tissue::Initialize()
   m_RestingBloodGlucose_g_Per_L = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::VenaCava)->GetSubstanceQuantity(*m_Glucose)->GetConcentration(MassPerVolumeUnit::g_Per_L);
   m_RestingBloodLipid_g_Per_L = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::VenaCava)->GetSubstanceQuantity(*m_Tristearin)->GetConcentration(MassPerVolumeUnit::g_Per_L);
   m_RestingBloodInsulin_g_Per_L = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::VenaCava)->GetSubstanceQuantity(*m_Insulin)->GetConcentration(MassPerVolumeUnit::g_Per_L);
-  m_RestingPatientMass_kg = m_data.GetPatient().GetWeight(MassUnit::kg);
+  m_RestingPatientMass_kg = m_data.GetCurrentPatient().GetWeight(MassUnit::kg);
   GetIntracellularFluidPH().SetValue(7.0);
 
   /// \cite guyton2006medical
@@ -253,7 +253,7 @@ void Tissue::AtSteadyState()
       SEScalarMass mass;
       SEMeal& meal = m_data.GetConditions().GetConsumeMeal()->GetMeal();
       double elapsedTime_s = meal.GetElapsedTime().GetValue(TimeUnit::s);
-      double patientWeight_kg = m_data.GetPatient().GetWeight(MassUnit::kg);
+      double patientWeight_kg = m_data.GetCurrentPatient().GetWeight(MassUnit::kg);
       double renalVolumeCleared = m_Albumin->GetClearance().GetRenalClearance(VolumePerTimeMassUnit::mL_Per_s_kg)*patientWeight_kg*elapsedTime_s;
       double systemicVolumeCleared = m_Albumin->GetClearance().GetSystemicClearance(VolumePerTimeMassUnit::mL_Per_s_kg)*patientWeight_kg*elapsedTime_s - renalVolumeCleared;
       SEScalarVolume integratedVolume;
@@ -516,14 +516,13 @@ void Tissue::CalculateDiffusion()
 //--------------------------------------------------------------------------------------------------
 void Tissue::CalculatePulmonaryCapillarySubstanceTransfer()
 {
-  SEPatient& Patient = m_data.GetPatient();
   const PulseConfiguration& Configuration = m_data.GetConfiguration();
 
 
-  double AlveoliSurfaceArea_cm2 = Patient.GetAlveoliSurfaceArea(AreaUnit::cm2);
+  double AlveoliSurfaceArea_cm2 = m_data.GetCurrentPatient().GetAlveoliSurfaceArea(AreaUnit::cm2);
   double PulmonaryCapillaryCoverage = Configuration.GetStandardPulmonaryCapillaryCoverage();
   double DiffusionSurfaceArea_cm2 = AlveoliSurfaceArea_cm2 * PulmonaryCapillaryCoverage;
-  double RightLungRatio = Patient.GetRightLungRatio().GetValue();
+  double RightLungRatio = m_data.GetCurrentPatient().GetRightLungRatio().GetValue();
 
   double StandardDiffusingCapacityOfOxygen_mLPersPermmHg = (DiffusionSurfaceArea_cm2*Configuration.GetStandardOxygenDiffusionCoefficient(AreaPerTimePressureUnit::cm2_Per_s_mmHg)) / Configuration.GetStandardDiffusionDistance(LengthUnit::cm);
   double DiffusingCapacityPerSide_mLPerSPermmHg = StandardDiffusingCapacityOfOxygen_mLPersPermmHg;
@@ -593,7 +592,7 @@ void Tissue::CalculateMetabolicConsumptionAndProduction(double time_s)
   bool gasOnly = false; // To easily disable non-gas substance production and consumption
   const PulseConfiguration& config = m_data.GetConfiguration();
   double TMR_kcal_Per_s = m_data.GetEnergy().GetTotalMetabolicRate(PowerUnit::kcal_Per_s);
-  double BMR_kcal_Per_s = m_data.GetPatient().GetBasalMetabolicRate(PowerUnit::kcal_Per_s);
+  double BMR_kcal_Per_s = m_data.GetCurrentPatient().GetBasalMetabolicRate(PowerUnit::kcal_Per_s);
   double ATPUseRate_mol_Per_s = TMR_kcal_Per_s / config.GetEnergyPerATP(EnergyPerAmountUnit::kcal_Per_mol);
   double BloodFlowFraction;         // Fraction of blood flow entering a tissue compartment. Used to determine the fraction of total metabolic activity in a tissue compartment.
   double LocalATPUseRate_mol_Per_s; // Holds the ATP use rate for a tissue compartment
@@ -666,7 +665,7 @@ void Tissue::CalculateMetabolicConsumptionAndProduction(double time_s)
 
   /// \todo Remove this temporary blood increment when diffusion is operational (0.125 is tuning factor)
   double acetoacetateIncrement_mg = 0.375 * KetoneProductionRate_mmol_Per_kg_s * m_Acetoacetate->GetMolarMass(MassPerAmountUnit::mg_Per_mmol) 
-    * m_data.GetPatient().GetWeight(MassUnit::kg) * time_s;
+    * m_data.GetCurrentPatient().GetWeight(MassUnit::kg) * time_s;
   m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Liver)->GetSubstanceQuantity(*m_Acetoacetate)->GetMass().IncrementValue(acetoacetateIncrement_mg, MassUnit::mg);
   if (m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Liver)->GetSubstanceQuantity(*m_Acetoacetate)->GetMass(MassUnit::ug) < ZERO_APPROX)
   {
@@ -889,7 +888,7 @@ void Tissue::CalculateMetabolicConsumptionAndProduction(double time_s)
           vascular->GetSubstanceQuantity(*m_Glucose)->Balance(BalanceLiquidBy::Mass);
         } // End temporary endocrine control of glucose
 
-        massConverted_g = acidDissociationFraction*KetoneProductionRate_mmol_Per_kg_s * m_data.GetPatient().GetWeight(MassUnit::kg)
+        massConverted_g = acidDissociationFraction*KetoneProductionRate_mmol_Per_kg_s * m_data.GetCurrentPatient().GetWeight(MassUnit::kg)
           * m_Acetoacetate->GetMolarMass(MassPerAmountUnit::g_Per_mmol);
       }
     }

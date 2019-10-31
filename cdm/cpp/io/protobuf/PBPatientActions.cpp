@@ -11,9 +11,9 @@
 
 #include "substance/SESubstanceManager.h"
 #include "patient/actions/SEPatientAssessmentRequest.h"
+#include "patient/actions/SEAcuteRespiratoryDistressSyndromeExacerbation.h"
 #include "patient/actions/SEAcuteStress.h"
 #include "patient/actions/SEAirwayObstruction.h"
-#include "patient/actions/SEApnea.h"
 #include "patient/actions/SEAsthmaAttack.h"
 #include "patient/actions/SEBrainInjury.h"
 #include "patient/actions/SEBronchoconstriction.h"
@@ -21,18 +21,22 @@
 #include "patient/actions/SEChestCompressionForce.h"
 #include "patient/actions/SEChestCompressionForceScale.h"
 #include "patient/actions/SEChestOcclusiveDressing.h"
+#include "patient/actions/SEChronicObstructivePulmonaryDiseaseExacerbation.h"
 #include "patient/actions/SEConsciousRespiration.h"
 /**/#include "patient/actions/SEBreathHold.h"
 /**/#include "patient/actions/SEForcedExhale.h"
 /**/#include "patient/actions/SEForcedInhale.h"
 /**/#include "patient/actions/SEUseInhaler.h"
 #include "patient/actions/SEConsumeNutrients.h"
+#include "patient/actions/SEDyspnea.h"
 #include "patient/actions/SEExercise.h"
 #include "patient/actions/SEHemorrhage.h"
 #include "patient/actions/SEIntubation.h"
+#include "patient/actions/SELobarPneumoniaExacerbation.h"
 #include "patient/actions/SEMechanicalVentilation.h"
 #include "patient/actions/SENeedleDecompression.h"
 #include "patient/actions/SEPericardialEffusion.h"
+#include "patient/actions/SERespiratoryFatigue.h"
 #include "patient/actions/SESubstanceBolus.h"
 #include "patient/actions/SESubstanceInfusion.h"
 #include "patient/actions/SESubstanceCompoundInfusion.h"
@@ -50,6 +54,43 @@ void PBPatientAction::Serialize(const cdm::PatientActionData& src, SEPatientActi
 void PBPatientAction::Serialize(const SEPatientAction& src, cdm::PatientActionData& dst)
 {
   PBAction::Serialize(src, *dst.mutable_action());
+}
+
+void PBPatientAction::Load(const cdm::AcuteRespiratoryDistressSyndromeExacerbationData& src, SEAcuteRespiratoryDistressSyndromeExacerbation& dst)
+{
+  PBPatientAction::Serialize(src, dst);
+}
+void PBPatientAction::Serialize(const cdm::AcuteRespiratoryDistressSyndromeExacerbationData& src, SEAcuteRespiratoryDistressSyndromeExacerbation& dst)
+{
+  PBPatientAction::Serialize(src.patientaction(), dst);
+  if (src.has_severity())
+    PBProperty::Load(src.severity(), dst.GetSeverity());
+  if (src.has_leftlungaffected())
+    PBProperty::Load(src.leftlungaffected(), dst.GetLeftLungAffected());
+  if (src.has_rightlungaffected())
+    PBProperty::Load(src.rightlungaffected(), dst.GetRightLungAffected());
+}
+cdm::AcuteRespiratoryDistressSyndromeExacerbationData* PBPatientAction::Unload(const SEAcuteRespiratoryDistressSyndromeExacerbation& src)
+{
+  cdm::AcuteRespiratoryDistressSyndromeExacerbationData* dst = new cdm::AcuteRespiratoryDistressSyndromeExacerbationData();
+  PBPatientAction::Serialize(src, *dst);
+  return dst;
+}
+void PBPatientAction::Serialize(const SEAcuteRespiratoryDistressSyndromeExacerbation& src, cdm::AcuteRespiratoryDistressSyndromeExacerbationData& dst)
+{
+  PBPatientAction::Serialize(src, *dst.mutable_patientaction());
+  if (src.HasSeverity())
+    dst.set_allocated_severity(PBProperty::Unload(*src.m_Severity));
+  if (src.HasLeftLungAffected())
+    dst.set_allocated_leftlungaffected(PBProperty::Unload(*src.m_LeftLungAffected));
+  if (src.HasRightLungAffected())
+    dst.set_allocated_rightlungaffected(PBProperty::Unload(*src.m_RightLungAffected));
+}
+void PBPatientAction::Copy(const SEAcuteRespiratoryDistressSyndromeExacerbation& src, SEAcuteRespiratoryDistressSyndromeExacerbation& dst)
+{
+  cdm::AcuteRespiratoryDistressSyndromeExacerbationData data;
+  PBPatientAction::Serialize(src, data);
+  PBPatientAction::Serialize(data, dst);
 }
 
 void PBPatientAction::Load(const cdm::AcuteStressData& src, SEAcuteStress& dst)
@@ -107,35 +148,6 @@ void PBPatientAction::Serialize(const SEAirwayObstruction& src, cdm::AirwayObstr
 void PBPatientAction::Copy(const SEAirwayObstruction& src, SEAirwayObstruction& dst)
 {
   cdm::AirwayObstructionData data;
-  PBPatientAction::Serialize(src, data);
-  PBPatientAction::Serialize(data, dst);
-}
-
-void PBPatientAction::Load(const cdm::ApneaData& src, SEApnea& dst)
-{
-  PBPatientAction::Serialize(src, dst);
-}
-void PBPatientAction::Serialize(const cdm::ApneaData& src, SEApnea& dst)
-{
-  PBPatientAction::Serialize(src.patientaction(), dst);
-  if (src.has_severity())
-    PBProperty::Load(src.severity(), dst.GetSeverity());
-}
-cdm::ApneaData* PBPatientAction::Unload(const SEApnea& src)
-{
-  cdm::ApneaData* dst = new cdm::ApneaData();
-  PBPatientAction::Serialize(src, *dst);
-  return dst;
-}
-void PBPatientAction::Serialize(const SEApnea& src, cdm::ApneaData& dst)
-{
-  PBPatientAction::Serialize(src, *dst.mutable_patientaction());
-  if (src.HasSeverity())
-    dst.set_allocated_severity(PBProperty::Unload(*src.m_Severity));
-}
-void PBPatientAction::Copy(const SEApnea& src, SEApnea& dst)
-{
-  cdm::ApneaData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
@@ -378,6 +390,39 @@ void PBPatientAction::Copy(const SEChestOcclusiveDressing& src, SEChestOcclusive
   PBPatientAction::Serialize(data, dst);
 }
 
+void PBPatientAction::Load(const cdm::ChronicObstructivePulmonaryDiseaseExacerbationData& src, SEChronicObstructivePulmonaryDiseaseExacerbation& dst)
+{
+  PBPatientAction::Serialize(src, dst);
+}
+void PBPatientAction::Serialize(const cdm::ChronicObstructivePulmonaryDiseaseExacerbationData& src, SEChronicObstructivePulmonaryDiseaseExacerbation& dst)
+{
+  PBPatientAction::Serialize(src.patientaction(), dst);
+  if (src.has_bronchitisseverity())
+    PBProperty::Load(src.bronchitisseverity(), dst.GetBronchitisSeverity());
+  if (src.has_emphysemaseverity())
+    PBProperty::Load(src.emphysemaseverity(), dst.GetEmphysemaSeverity());
+}
+cdm::ChronicObstructivePulmonaryDiseaseExacerbationData* PBPatientAction::Unload(const SEChronicObstructivePulmonaryDiseaseExacerbation& src)
+{
+  cdm::ChronicObstructivePulmonaryDiseaseExacerbationData* dst = new cdm::ChronicObstructivePulmonaryDiseaseExacerbationData();
+  PBPatientAction::Serialize(src, *dst);
+  return dst;
+}
+void PBPatientAction::Serialize(const SEChronicObstructivePulmonaryDiseaseExacerbation& src, cdm::ChronicObstructivePulmonaryDiseaseExacerbationData& dst)
+{
+  PBPatientAction::Serialize(src, *dst.mutable_patientaction());
+  if (src.HasBronchitisSeverity())
+    dst.set_allocated_bronchitisseverity(PBProperty::Unload(*src.m_BronchitisSeverity));
+  if (src.HasEmphysemaSeverity())
+    dst.set_allocated_emphysemaseverity(PBProperty::Unload(*src.m_EmphysemaSeverity));
+}
+void PBPatientAction::Copy(const SEChronicObstructivePulmonaryDiseaseExacerbation& src, SEChronicObstructivePulmonaryDiseaseExacerbation& dst)
+{
+  cdm::ChronicObstructivePulmonaryDiseaseExacerbationData data;
+  PBPatientAction::Serialize(src, data);
+  PBPatientAction::Serialize(data, dst);
+}
+
 void PBPatientAction::Load(const cdm::ConsciousRespirationData& src, SEConsciousRespiration& dst)
 {
   PBPatientAction::Serialize(src, dst);
@@ -489,6 +534,35 @@ void PBPatientAction::Serialize(const SEConsumeNutrients& src, cdm::ConsumeNutri
 void PBPatientAction::Copy(const SEConsumeNutrients& src, SEConsumeNutrients& dst)
 {
   cdm::ConsumeNutrientsData data;
+  PBPatientAction::Serialize(src, data);
+  PBPatientAction::Serialize(data, dst);
+}
+
+void PBPatientAction::Load(const cdm::DyspneaData& src, SEDyspnea& dst)
+{
+  PBPatientAction::Serialize(src, dst);
+}
+void PBPatientAction::Serialize(const cdm::DyspneaData& src, SEDyspnea& dst)
+{
+  PBPatientAction::Serialize(src.patientaction(), dst);
+  if (src.has_severity())
+    PBProperty::Load(src.severity(), dst.GetSeverity());
+}
+cdm::DyspneaData* PBPatientAction::Unload(const SEDyspnea& src)
+{
+  cdm::DyspneaData* dst = new cdm::DyspneaData();
+  PBPatientAction::Serialize(src, *dst);
+  return dst;
+}
+void PBPatientAction::Serialize(const SEDyspnea& src, cdm::DyspneaData& dst)
+{
+  PBPatientAction::Serialize(src, *dst.mutable_patientaction());
+  if (src.HasSeverity())
+    dst.set_allocated_severity(PBProperty::Unload(*src.m_Severity));
+}
+void PBPatientAction::Copy(const SEDyspnea& src, SEDyspnea& dst)
+{
+  cdm::DyspneaData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
@@ -643,6 +717,43 @@ void PBPatientAction::Serialize(const SEIntubation& src, cdm::IntubationData& ds
 void PBPatientAction::Copy(const SEIntubation& src, SEIntubation& dst)
 {
   cdm::IntubationData data;
+  PBPatientAction::Serialize(src, data);
+  PBPatientAction::Serialize(data, dst);
+}
+
+void PBPatientAction::Load(const cdm::LobarPneumoniaExacerbationData& src, SELobarPneumoniaExacerbation& dst)
+{
+  PBPatientAction::Serialize(src, dst);
+}
+void PBPatientAction::Serialize(const cdm::LobarPneumoniaExacerbationData& src, SELobarPneumoniaExacerbation& dst)
+{
+  PBPatientAction::Serialize(src.patientaction(), dst);
+  if (src.has_severity())
+    PBProperty::Load(src.severity(), dst.GetSeverity());
+  if (src.has_leftlungaffected())
+    PBProperty::Load(src.leftlungaffected(), dst.GetLeftLungAffected());
+  if (src.has_rightlungaffected())
+    PBProperty::Load(src.rightlungaffected(), dst.GetRightLungAffected());
+}
+cdm::LobarPneumoniaExacerbationData* PBPatientAction::Unload(const SELobarPneumoniaExacerbation& src)
+{
+  cdm::LobarPneumoniaExacerbationData* dst = new cdm::LobarPneumoniaExacerbationData();
+  PBPatientAction::Serialize(src, *dst);
+  return dst;
+}
+void PBPatientAction::Serialize(const SELobarPneumoniaExacerbation& src, cdm::LobarPneumoniaExacerbationData& dst)
+{
+  PBPatientAction::Serialize(src, *dst.mutable_patientaction());
+  if (src.HasSeverity())
+    dst.set_allocated_severity(PBProperty::Unload(*src.m_Severity));
+  if (src.HasLeftLungAffected())
+    dst.set_allocated_leftlungaffected(PBProperty::Unload(*src.m_LeftLungAffected));
+  if (src.HasRightLungAffected())
+    dst.set_allocated_rightlungaffected(PBProperty::Unload(*src.m_RightLungAffected));
+}
+void PBPatientAction::Copy(const SELobarPneumoniaExacerbation& src, SELobarPneumoniaExacerbation& dst)
+{
+  cdm::LobarPneumoniaExacerbationData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
@@ -807,6 +918,35 @@ void PBPatientAction::Serialize(const SEPericardialEffusion& src, cdm::Pericardi
 void PBPatientAction::Copy(const SEPericardialEffusion& src, SEPericardialEffusion& dst)
 {
   cdm::PericardialEffusionData data;
+  PBPatientAction::Serialize(src, data);
+  PBPatientAction::Serialize(data, dst);
+}
+
+void PBPatientAction::Load(const cdm::RespiratoryFatigueData& src, SERespiratoryFatigue& dst)
+{
+  PBPatientAction::Serialize(src, dst);
+}
+void PBPatientAction::Serialize(const cdm::RespiratoryFatigueData& src, SERespiratoryFatigue& dst)
+{
+  PBPatientAction::Serialize(src.patientaction(), dst);
+  if (src.has_severity())
+    PBProperty::Load(src.severity(), dst.GetSeverity());
+}
+cdm::RespiratoryFatigueData* PBPatientAction::Unload(const SERespiratoryFatigue& src)
+{
+  cdm::RespiratoryFatigueData* dst = new cdm::RespiratoryFatigueData();
+  PBPatientAction::Serialize(src, *dst);
+  return dst;
+}
+void PBPatientAction::Serialize(const SERespiratoryFatigue& src, cdm::RespiratoryFatigueData& dst)
+{
+  PBPatientAction::Serialize(src, *dst.mutable_patientaction());
+  if (src.HasSeverity())
+    dst.set_allocated_severity(PBProperty::Unload(*src.m_Severity));
+}
+void PBPatientAction::Copy(const SERespiratoryFatigue& src, SERespiratoryFatigue& dst)
+{
+  cdm::RespiratoryFatigueData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
@@ -1079,6 +1219,12 @@ SEPatientAction* PBPatientAction::Load(const cdm::AnyPatientActionData& any, SES
     PBPatientAction::Load(any.assessment(), *a);
     return a;
   }
+  case cdm::AnyPatientActionData::ActionCase::kAcuteRespiratoryDistressSyndromeExacerbation:
+  {
+    SEAcuteRespiratoryDistressSyndromeExacerbation* a = new SEAcuteRespiratoryDistressSyndromeExacerbation();
+    PBPatientAction::Load(any.acuterespiratorydistresssyndromeexacerbation(), *a);
+    return a;
+  }
   case cdm::AnyPatientActionData::ActionCase::kAcuteStress:
   {
     SEAcuteStress* a = new SEAcuteStress();
@@ -1089,12 +1235,6 @@ SEPatientAction* PBPatientAction::Load(const cdm::AnyPatientActionData& any, SES
   {
     SEAirwayObstruction* a = new SEAirwayObstruction();
     PBPatientAction::Load(any.airwayobstruction(), *a);
-    return a;
-  }
-  case cdm::AnyPatientActionData::ActionCase::kApnea:
-  {
-    SEApnea* a = new SEApnea();
-    PBPatientAction::Load(any.apnea(), *a);
     return a;
   }
   case cdm::AnyPatientActionData::ActionCase::kAsthmaAttack:
@@ -1139,6 +1279,12 @@ SEPatientAction* PBPatientAction::Load(const cdm::AnyPatientActionData& any, SES
     PBPatientAction::Load(any.chestocclusivedressing(), *a);
     return a;
   }
+  case cdm::AnyPatientActionData::ActionCase::kChronicObstructivePulmonaryDiseaseExacerbation:
+  {
+    SEChronicObstructivePulmonaryDiseaseExacerbation* a = new SEChronicObstructivePulmonaryDiseaseExacerbation();
+    PBPatientAction::Load(any.chronicobstructivepulmonarydiseaseexacerbation(), *a);
+    return a;
+  }
   case cdm::AnyPatientActionData::ActionCase::kConsciousRespiration:
   {
     SEConsciousRespiration* a = new SEConsciousRespiration();
@@ -1149,6 +1295,12 @@ SEPatientAction* PBPatientAction::Load(const cdm::AnyPatientActionData& any, SES
   {
     SEConsumeNutrients* a = new SEConsumeNutrients();
     PBPatientAction::Load(any.consumenutrients(), *a);
+    return a;
+  }
+  case cdm::AnyPatientActionData::ActionCase::kDyspnea:
+  {
+    SEDyspnea* a = new SEDyspnea();
+    PBPatientAction::Load(any.dyspnea(), *a);
     return a;
   }
   case cdm::AnyPatientActionData::ActionCase::kExercise:
@@ -1169,6 +1321,12 @@ SEPatientAction* PBPatientAction::Load(const cdm::AnyPatientActionData& any, SES
     PBPatientAction::Load(any.intubation(), *a);
     return a;
   }
+  case cdm::AnyPatientActionData::ActionCase::kLobarPneumoniaExacerbation:
+  {
+    SELobarPneumoniaExacerbation* a = new SELobarPneumoniaExacerbation();
+    PBPatientAction::Load(any.lobarpneumoniaexacerbation(), *a);
+    return a;
+  }
   case cdm::AnyPatientActionData::ActionCase::kMechanicalVentilation:
   {
     SEMechanicalVentilation* a = new SEMechanicalVentilation();
@@ -1185,6 +1343,12 @@ SEPatientAction* PBPatientAction::Load(const cdm::AnyPatientActionData& any, SES
   {
     SEPericardialEffusion* a = new SEPericardialEffusion();
     PBPatientAction::Load(any.pericardialeffusion(), *a);
+    return a;
+  }
+  case cdm::AnyPatientActionData::ActionCase::kRespiratoryFatigue:
+  {
+    SERespiratoryFatigue* a = new SERespiratoryFatigue();
+    PBPatientAction::Load(any.respiratoryfatigue(), *a);
     return a;
   }
   case cdm::AnyPatientActionData::ActionCase::kSubstanceBolus:
@@ -1254,6 +1418,12 @@ cdm::AnyPatientActionData* PBPatientAction::Unload(const SEPatientAction& action
     any->set_allocated_assessment(PBPatientAction::Unload(*ar));
     return any;
   }
+  const SEAcuteRespiratoryDistressSyndromeExacerbation* ards = dynamic_cast<const SEAcuteRespiratoryDistressSyndromeExacerbation*>(&action);
+  if (ards != nullptr)
+  {
+    any->set_allocated_acuterespiratorydistresssyndromeexacerbation(PBPatientAction::Unload(*ards));
+    return any;
+  }
   const SEAcuteStress* as = dynamic_cast<const SEAcuteStress*>(&action);
   if (as != nullptr)
   {
@@ -1264,12 +1434,6 @@ cdm::AnyPatientActionData* PBPatientAction::Unload(const SEPatientAction& action
   if (ao != nullptr)
   {
     any->set_allocated_airwayobstruction(PBPatientAction::Unload(*ao));
-    return any;
-  }
-  const SEApnea* a = dynamic_cast<const SEApnea*>(&action);
-  if (a != nullptr)
-  {
-    any->set_allocated_apnea(PBPatientAction::Unload(*a));
     return any;
   }
   const SEAsthmaAttack* aa = dynamic_cast<const SEAsthmaAttack*>(&action);
@@ -1314,6 +1478,12 @@ cdm::AnyPatientActionData* PBPatientAction::Unload(const SEPatientAction& action
     any->set_allocated_chestocclusivedressing(PBPatientAction::Unload(*chd));
     return any;
   }
+  const SEChronicObstructivePulmonaryDiseaseExacerbation* copd = dynamic_cast<const SEChronicObstructivePulmonaryDiseaseExacerbation*>(&action);
+  if (copd != nullptr)
+  {
+    any->set_allocated_chronicobstructivepulmonarydiseaseexacerbation(PBPatientAction::Unload(*copd));
+    return any;
+  }
   const SEConsciousRespiration* cr = dynamic_cast<const SEConsciousRespiration*>(&action);
   if (cr != nullptr)
   {
@@ -1324,6 +1494,12 @@ cdm::AnyPatientActionData* PBPatientAction::Unload(const SEPatientAction& action
   if (cn != nullptr)
   {
     any->set_allocated_consumenutrients(PBPatientAction::Unload(*cn));
+    return any;
+  }
+  const SEDyspnea* a = dynamic_cast<const SEDyspnea*>(&action);
+  if (a != nullptr)
+  {
+    any->set_allocated_dyspnea(PBPatientAction::Unload(*a));
     return any;
   }
   const SEExercise* e = dynamic_cast<const SEExercise*>(&action);
@@ -1344,6 +1520,12 @@ cdm::AnyPatientActionData* PBPatientAction::Unload(const SEPatientAction& action
     any->set_allocated_intubation(PBPatientAction::Unload(*i));
     return any;
   }
+  const SELobarPneumoniaExacerbation* lp = dynamic_cast<const SELobarPneumoniaExacerbation*>(&action);
+  if (lp != nullptr)
+  {
+    any->set_allocated_lobarpneumoniaexacerbation(PBPatientAction::Unload(*lp));
+    return any;
+  }
   const SEMechanicalVentilation* mv = dynamic_cast<const SEMechanicalVentilation*>(&action);
   if (mv != nullptr)
   {
@@ -1360,6 +1542,12 @@ cdm::AnyPatientActionData* PBPatientAction::Unload(const SEPatientAction& action
   if (pe != nullptr)
   {
     any->set_allocated_pericardialeffusion(PBPatientAction::Unload(*pe));
+    return any;
+  }
+  const SERespiratoryFatigue* rf = dynamic_cast<const SERespiratoryFatigue*>(&action);
+  if (rf != nullptr)
+  {
+    any->set_allocated_respiratoryfatigue(PBPatientAction::Unload(*rf));
     return any;
   }
   const SESubstanceBolus* sb = dynamic_cast<const SESubstanceBolus*>(&action);

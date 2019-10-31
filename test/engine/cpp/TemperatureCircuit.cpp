@@ -37,8 +37,9 @@
 void PulseEngineTest::InternalTemperatureVariableBMRCircuitTest(const std::string& sTestDirectory)
 {
   PulseController pc(sTestDirectory + "/InternalTemperatureVariableBMRCircuitTest.log");
-  pc.GetPatient().SerializeFromFile("./patients/StandardMale.json",JSON);
-  pc.SetupPatient();
+  SEPatient patient(pc.GetLogger());
+  patient.SerializeFromFile("./patients/StandardMale.json", JSON);
+  pc.SetupPatient(patient);
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
@@ -111,8 +112,9 @@ void PulseEngineTest::InternalTemperatureVariableBMRCircuitTest(const std::strin
 void PulseEngineTest::InternalTemperatureVariableSkinCircuitTest(const std::string& sTestDirectory)
 {
   PulseController pc(sTestDirectory + "/InternalTemperatureVariableSkinCircuitTest.log");
-  pc.GetPatient().SerializeFromFile("./patients/StandardMale.json",JSON);
-  pc.SetupPatient();
+  SEPatient patient(pc.GetLogger());
+  patient.SerializeFromFile("./patients/StandardMale.json", JSON);
+  pc.SetupPatient(patient);
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
@@ -208,8 +210,9 @@ void PulseEngineTest::InternalTemperatureVariableSkinCircuitTest(const std::stri
 void PulseEngineTest::InternalTemperatureVariableCoreCircuitTest(const std::string& sTestDirectory)
 {
   PulseController pc(sTestDirectory + "/InternalTemperatureVariableCoreCircuitTest.log");
-  pc.GetPatient().SerializeFromFile("./patients/StandardMale.json",JSON);
-  pc.SetupPatient();
+  SEPatient patient(pc.GetLogger());
+  patient.SerializeFromFile("./patients/StandardMale.json", JSON);
+  pc.SetupPatient(patient);
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
@@ -304,8 +307,9 @@ void PulseEngineTest::InternalTemperatureVariableCoreCircuitTest(const std::stri
 void PulseEngineTest::EnvironmentVariableTemperatureCircuitTest(const std::string& sTestDirectory)
 {
   PulseController pc(sTestDirectory + "/EnvironmentVariableTemperatureCircuitTest.log");
-  pc.GetPatient().SerializeFromFile("./patients/StandardMale.json",JSON);
-  pc.SetupPatient();
+  SEPatient patient(pc.GetLogger());
+  patient.SerializeFromFile("./patients/StandardMale.json", JSON);
+  pc.SetupPatient(patient);
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
@@ -428,8 +432,9 @@ void PulseEngineTest::EnvironmentVariableTemperatureCircuitTest(const std::strin
 void PulseEngineTest::CombinedInternalAndEnvironmentVariableBMRandTemperatureCircuitTest(const std::string& sTestDirectory)
 {
   PulseController pc(sTestDirectory + "/CombinedInternalAndEnvironmentVariableBMRandTemperatureCircuitTest.log");
-  pc.GetPatient().SerializeFromFile("./patients/StandardMale.json",JSON);
-  pc.SetupPatient();
+  SEPatient patient(pc.GetLogger());
+  patient.SerializeFromFile("./patients/StandardMale.json", JSON);
+  pc.SetupPatient(patient);
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
@@ -582,8 +587,9 @@ void PulseEngineTest::CombinedInternalAndEnvironmentVariableBMRandTemperatureCir
 void PulseEngineTest::CombinedInternalAndEnvironmentSkinTempDropCircuitTest(const std::string& sTestDirectory)
 {
   PulseController pc(sTestDirectory + "/CombinedInternalAndEnvironmentSkinTempDropCircuitTest.log");
-  pc.GetPatient().SerializeFromFile("./patients/StandardMale.json",JSON);
-  pc.SetupPatient();
+  SEPatient patient(pc.GetLogger());
+  patient.SerializeFromFile("./patients/StandardMale.json", JSON);
+  pc.SetupPatient(patient);
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
@@ -676,8 +682,9 @@ void PulseEngineTest::CombinedInternalAndEnvironmentSkinTempDropCircuitTest(cons
 void PulseEngineTest::EnvironmentISO7730ComparisonTest(const std::string& sTestDirectory)
 {
   PulseController pc(sTestDirectory + "/EnvironmentTemperatureInput.log");
-  pc.GetPatient().SerializeFromFile("./patients/StandardMale.json",JSON);
-  pc.SetupPatient();
+  SEPatient patient(pc.GetLogger());
+  patient.SerializeFromFile("./patients/StandardMale.json", JSON);
+  pc.SetupPatient(patient);
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
@@ -690,7 +697,7 @@ void PulseEngineTest::EnvironmentISO7730ComparisonTest(const std::string& sTestD
   pc.GetEnergy().GetSweatRate().SetValue(1.5e-5, MassPerTimeUnit::kg_Per_s);
   pc.GetRespiratory().GetRespirationRate().SetValue(16.0, FrequencyUnit::Per_min);
   pc.GetRespiratory().GetTotalPulmonaryVentilation().SetValue(16/*RespirationRate*/ * 0.5/*TidalVolume_L*/, VolumePerTimeUnit::L_Per_min);
-  double dSkinSurfaceArea_M2 = pc.GetPatient().GetSkinSurfaceArea(AreaUnit::m2);
+  double dSkinSurfaceArea_M2 = pc.GetCurrentPatient().GetSkinSurfaceArea(AreaUnit::m2);
 
   //Inputs
   double dAirTemperature_C[13] = { 22, 27, 27, 23.5, 23.5, 19, 23.5, 23.5, 23, 23, 22, 27, 27 };

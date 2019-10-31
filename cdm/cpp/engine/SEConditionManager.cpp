@@ -4,15 +4,17 @@
 #include "stdafx.h"
 #include "engine/SEConditionManager.h"
 //Patient Conditions
+#include "patient/conditions/SEAcuteRespiratoryDistressSyndrome.h"
 #include "patient/conditions/SEChronicAnemia.h"
 #include "patient/conditions/SEChronicObstructivePulmonaryDisease.h"
 #include "patient/conditions/SEChronicHeartFailure.h"
+#include "patient/conditions/SEChronicPericardialEffusion.h"
 #include "patient/conditions/SEChronicRenalStenosis.h"
 #include "patient/conditions/SEChronicVentricularSystolicDysfunction.h"
 #include "patient/conditions/SEConsumeMeal.h"
-#include "patient/conditions/SELobarPneumonia.h"
-#include "patient/conditions/SEChronicPericardialEffusion.h"
 #include "patient/conditions/SEImpairedAlveolarExchange.h"
+#include "patient/conditions/SELobarPneumonia.h"
+#include "patient/conditions/SESepsis.h"
 // Environment Conditions
 #include "system/environment/conditions/SEInitialEnvironmentConditions.h"
 #include "substance/SESubstance.h"
@@ -21,6 +23,7 @@
 
 SEConditionManager::SEConditionManager(SESubstanceManager& substances) : Loggable(substances.GetLogger()), m_Substances(substances)
 {
+  m_ARDS = nullptr;
   m_Anemia = nullptr;
   m_COPD = nullptr;
   m_ChronicVentricularSystolicDysfunction = nullptr;
@@ -30,6 +33,7 @@ SEConditionManager::SEConditionManager(SESubstanceManager& substances) : Loggabl
   m_PericardialEffusion = nullptr;
   m_ImpairedAlveolarExchange = nullptr;
   m_InitialEnvironmentConditions = nullptr;
+  m_Sepsis = nullptr;
 }
 
 SEConditionManager::~SEConditionManager()
@@ -39,6 +43,7 @@ SEConditionManager::~SEConditionManager()
 
 void SEConditionManager::Clear()
 {
+  SAFE_DELETE(m_ARDS);
   SAFE_DELETE(m_Anemia);
   SAFE_DELETE(m_COPD);
   SAFE_DELETE(m_ChronicVentricularSystolicDysfunction);
@@ -48,6 +53,7 @@ void SEConditionManager::Clear()
   SAFE_DELETE(m_PericardialEffusion);
   SAFE_DELETE(m_ImpairedAlveolarExchange);
   SAFE_DELETE(m_InitialEnvironmentConditions);
+  SAFE_DELETE(m_Sepsis);
 }
 
 void SEConditionManager::Copy(const SEConditionManager& src)
@@ -93,6 +99,19 @@ bool SEConditionManager::ProcessCondition(const SECondition& condition)
 
   if (dynamic_cast<const SEPatientCondition*>(&condition) != nullptr)
   {
+
+    const SEAcuteRespiratoryDistressSyndrome* ards = dynamic_cast<const SEAcuteRespiratoryDistressSyndrome*>(&condition);
+    if (ards != nullptr)
+    {
+      if (HasAcuteRespiratoryDistressSyndrome())
+      {
+        Error("Cannot have multiple ARDS conditions");
+        return false;
+      }
+      m_ARDS = new SEAcuteRespiratoryDistressSyndrome();
+      m_ARDS->Copy(*ards);
+      return true;
+    }
 
     const SEChronicAnemia* a = dynamic_cast<const SEChronicAnemia*>(&condition);
     if (a != nullptr)
@@ -203,6 +222,19 @@ bool SEConditionManager::ProcessCondition(const SECondition& condition)
       m_LobarPneumonia->Copy(*lp);
       return true;
     }
+
+    const SESepsis* s = dynamic_cast<const SESepsis*>(&condition);
+    if (s != nullptr)
+    {
+      if (HasSepsis())
+      {
+        Error("Cannot have multiple Lobar Pneumonia conditions");
+        return false;
+      }
+      m_Sepsis = new SESepsis();
+      m_Sepsis->Copy(*s);
+      return true;
+    }
   }
 
   if (dynamic_cast<const SEEnvironmentCondition*>(&condition) != nullptr)
@@ -224,6 +256,19 @@ bool SEConditionManager::ProcessCondition(const SECondition& condition)
   /// \error Unsupported Condition
   Error("Unsupported Condition");
   return false;
+}
+
+bool SEConditionManager::HasAcuteRespiratoryDistressSyndrome() const
+{
+  return m_ARDS == nullptr ? false : m_ARDS->IsValid();
+}
+SEAcuteRespiratoryDistressSyndrome* SEConditionManager::GetAcuteRespiratoryDistressSyndrome()
+{
+  return m_ARDS;
+}
+const SEAcuteRespiratoryDistressSyndrome* SEConditionManager::GetAcuteRespiratoryDistressSyndrome() const
+{
+  return m_ARDS;
 }
 
 bool SEConditionManager::HasChronicAnemia() const
@@ -335,6 +380,19 @@ const SELobarPneumonia* SEConditionManager::GetLobarPneumonia() const
   return m_LobarPneumonia;
 }
 
+bool SEConditionManager::HasSepsis() const
+{
+  return m_Sepsis == nullptr ? false : m_Sepsis->IsValid();
+}
+SESepsis* SEConditionManager::GetSepsis()
+{
+  return m_Sepsis;
+}
+const SESepsis* SEConditionManager::GetSepsis() const
+{
+  return m_Sepsis;
+}
+
 bool SEConditionManager::HasInitialEnvironmentConditions() const
 {
   return m_InitialEnvironmentConditions == nullptr ? false : m_InitialEnvironmentConditions->IsValid();
@@ -350,6 +408,8 @@ const SEInitialEnvironmentConditions* SEConditionManager::GetInitialEnvironmentC
 
 void SEConditionManager::GetAllConditions(std::vector<const SECondition*>& conditions) const
 {
+  if (HasAcuteRespiratoryDistressSyndrome())
+    conditions.push_back(GetAcuteRespiratoryDistressSyndrome());
   if (HasChronicAnemia())
     conditions.push_back(GetChronicAnemia());
   if (HasChronicObstructivePulmonaryDisease())
@@ -366,12 +426,17 @@ void SEConditionManager::GetAllConditions(std::vector<const SECondition*>& condi
     conditions.push_back(GetImpairedAlveolarExchange());
   if (HasLobarPneumonia())
     conditions.push_back(GetLobarPneumonia());
+  if (HasSepsis())
+    conditions.push_back(GetSepsis());
+
   if (HasInitialEnvironmentConditions())
     conditions.push_back(GetInitialEnvironmentConditions());
 }
 
 bool SEConditionManager::IsEmpty() const
 {
+  if (HasAcuteRespiratoryDistressSyndrome())
+    return false;
   if (HasChronicAnemia())
     return false;
   if (HasChronicObstructivePulmonaryDisease())
@@ -388,6 +453,9 @@ bool SEConditionManager::IsEmpty() const
     return false;
   if (HasLobarPneumonia())
     return false;
+  if (HasSepsis())
+    return false;
+
   if (HasInitialEnvironmentConditions())
     return false;
   return true;

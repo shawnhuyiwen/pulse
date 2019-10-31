@@ -43,6 +43,12 @@
         "Unit": "kg"
       }, {
         "DecimalFormat": {
+          "Precision": 1
+        },
+        "PropertyName": "IdealBodyWeight",
+        "Unit": "kg"
+      }, {
+        "DecimalFormat": {
         },
         "PropertyName": "AlveoliSurfaceArea",
         "Unit": "m^2"

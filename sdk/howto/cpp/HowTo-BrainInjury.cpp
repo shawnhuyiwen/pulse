@@ -14,8 +14,6 @@
 #include "system/physiology/SENervousSystem.h"
 #include "system/physiology/SEPupillaryResponse.h"
 #include "patient/actions/SEBrainInjury.h"
-#include "properties/SEScalarFlowCompliance.h"
-#include "properties/SEScalarFlowResistance.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"

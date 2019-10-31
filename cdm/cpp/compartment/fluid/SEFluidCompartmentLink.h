@@ -26,14 +26,14 @@ public:
   virtual std::string GetName() const { return m_Name; }
   
   virtual bool HasCompliance() const;
-  virtual double GetCompliance(const FlowComplianceUnit& unit) const;
+  virtual double GetCompliance(const VolumePerPressureUnit& unit) const;
 
   virtual bool HasFlow() const;
   virtual SEScalarVolumePerTime& GetFlow();
   virtual double GetFlow(const VolumePerTimeUnit& unit) const;
 
   virtual bool HasResistance() const;
-  virtual double GetResistance(const FlowResistanceUnit& unit) const;
+  virtual double GetResistance(const PressureTimePerVolumeUnit& unit) const;
 
   virtual CompartmentType& GetSourceCompartment() { return m_SourceCmpt; }
   virtual CompartmentType& GetTargetCompartment() { return m_TargetCmpt; }

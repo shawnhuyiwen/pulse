@@ -30,6 +30,10 @@ if(NOT _RUN_PROTOC)
   return()
 endif()
 
+# Remove all previously generated files
+file(GLOB_RECURSE OLD_FILES "${to}/*.h" "${to}/*.cc" "${to}/*.cs" "${to}/*.java")
+file(REMOVE "${OLD_FILES}")
+
 set(cpp_bindings_DIR "${to}/cpp")
 file(MAKE_DIRECTORY "${cpp_bindings_DIR}")
 file(GLOB_RECURSE _OLD_CPP_FILES "${cpp_bindings_DIR}/*.*")

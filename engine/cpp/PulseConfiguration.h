@@ -174,34 +174,34 @@ protected:
   /////////////////////
 public:
   virtual bool HasLeftHeartElastanceMaximum() const;
-  virtual SEScalarFlowElastance& GetLeftHeartElastanceMaximum();
-  virtual double GetLeftHeartElastanceMaximum(const FlowElastanceUnit& unit) const;
+  virtual SEScalarPressurePerVolume& GetLeftHeartElastanceMaximum();
+  virtual double GetLeftHeartElastanceMaximum(const PressurePerVolumeUnit& unit) const;
 
   virtual bool HasLeftHeartElastanceMinimum() const;
-  virtual SEScalarFlowElastance& GetLeftHeartElastanceMinimum();
-  virtual double GetLeftHeartElastanceMinimum(const FlowElastanceUnit& unit) const;
+  virtual SEScalarPressurePerVolume& GetLeftHeartElastanceMinimum();
+  virtual double GetLeftHeartElastanceMinimum(const PressurePerVolumeUnit& unit) const;
 
   virtual bool HasMinimumBloodVolumeFraction() const;
   virtual SEScalar0To1& GetMinimumBloodVolumeFraction();
   virtual double GetMinimumBloodVolumeFraction() const;
 
   virtual bool HasRightHeartElastanceMaximum() const;
-  virtual SEScalarFlowElastance& GetRightHeartElastanceMaximum();
-  virtual double GetRightHeartElastanceMaximum(const FlowElastanceUnit& unit) const;
+  virtual SEScalarPressurePerVolume& GetRightHeartElastanceMaximum();
+  virtual double GetRightHeartElastanceMaximum(const PressurePerVolumeUnit& unit) const;
 
   virtual bool HasRightHeartElastanceMinimum() const;
-  virtual SEScalarFlowElastance& GetRightHeartElastanceMinimum();
-  virtual double GetRightHeartElastanceMinimum(const FlowElastanceUnit& unit) const;
+  virtual SEScalarPressurePerVolume& GetRightHeartElastanceMinimum();
+  virtual double GetRightHeartElastanceMinimum(const PressurePerVolumeUnit& unit) const;
 
   virtual bool HasStandardPulmonaryCapillaryCoverage() const;
   virtual SEScalar& GetStandardPulmonaryCapillaryCoverage();
   virtual double GetStandardPulmonaryCapillaryCoverage() const;
 protected:
-  SEScalarFlowElastance* m_LeftHeartElastanceMaximum; 
-  SEScalarFlowElastance* m_LeftHeartElastanceMinimum; 
+  SEScalarPressurePerVolume* m_LeftHeartElastanceMaximum; 
+  SEScalarPressurePerVolume* m_LeftHeartElastanceMinimum; 
   SEScalar0To1*          m_MinimumBloodVolumeFraction;
-  SEScalarFlowElastance* m_RightHeartElastanceMaximum; 
-  SEScalarFlowElastance* m_RightHeartElastanceMinimum;
+  SEScalarPressurePerVolume* m_RightHeartElastanceMaximum; 
+  SEScalarPressurePerVolume* m_RightHeartElastanceMinimum;
   SEScalar*              m_StandardPulmonaryCapillaryCoverage;
 
   //////////////
@@ -210,16 +210,16 @@ protected:
 public:
 
   virtual bool HasCardiovascularOpenResistance() const;
-  virtual SEScalarFlowResistance& GetCardiovascularOpenResistance();
-  virtual double GetCardiovascularOpenResistance(const FlowResistanceUnit& unit) const;
+  virtual SEScalarPressureTimePerVolume& GetCardiovascularOpenResistance();
+  virtual double GetCardiovascularOpenResistance(const PressureTimePerVolumeUnit& unit) const;
 
   virtual bool HasDefaultClosedElectricResistance() const;
   virtual SEScalarElectricResistance& GetDefaultClosedElectricResistance();
   virtual double GetDefaultClosedElectricResistance(const ElectricResistanceUnit& unit) const;
 
   virtual bool HasDefaultClosedFlowResistance() const;
-  virtual SEScalarFlowResistance& GetDefaultClosedFlowResistance();
-  virtual double GetDefaultClosedFlowResistance(const FlowResistanceUnit& unit) const;
+  virtual SEScalarPressureTimePerVolume& GetDefaultClosedFlowResistance();
+  virtual double GetDefaultClosedFlowResistance(const PressureTimePerVolumeUnit& unit) const;
 
   virtual bool HasDefaultClosedHeatResistance() const;
   virtual SEScalarHeatResistance& GetDefaultClosedHeatResistance();
@@ -230,41 +230,41 @@ public:
   virtual double GetDefaultOpenElectricResistance(const ElectricResistanceUnit& unit) const;
 
   virtual bool HasDefaultOpenFlowResistance() const;
-  virtual SEScalarFlowResistance& GetDefaultOpenFlowResistance();
-  virtual double GetDefaultOpenFlowResistance(const FlowResistanceUnit& unit) const;
+  virtual SEScalarPressureTimePerVolume& GetDefaultOpenFlowResistance();
+  virtual double GetDefaultOpenFlowResistance(const PressureTimePerVolumeUnit& unit) const;
 
   virtual bool HasDefaultOpenHeatResistance() const;
   virtual SEScalarHeatResistance& GetDefaultOpenHeatResistance();
   virtual double GetDefaultOpenHeatResistance(const HeatResistanceUnit& unit) const;
 
   virtual bool HasMachineClosedResistance() const;
-  virtual SEScalarFlowResistance& GetMachineClosedResistance();
-  virtual double GetMachineClosedResistance(const FlowResistanceUnit& unit) const;
+  virtual SEScalarPressureTimePerVolume& GetMachineClosedResistance();
+  virtual double GetMachineClosedResistance(const PressureTimePerVolumeUnit& unit) const;
 
   virtual bool HasMachineOpenResistance() const;
-  virtual SEScalarFlowResistance& GetMachineOpenResistance();
-  virtual double GetMachineOpenResistance(const FlowResistanceUnit& unit) const;
+  virtual SEScalarPressureTimePerVolume& GetMachineOpenResistance();
+  virtual double GetMachineOpenResistance(const PressureTimePerVolumeUnit& unit) const;
 
   virtual bool HasRespiratoryClosedResistance() const;
-  virtual SEScalarFlowResistance& GetRespiratoryClosedResistance();
-  virtual double GetRespiratoryClosedResistance(const FlowResistanceUnit& unit) const;
+  virtual SEScalarPressureTimePerVolume& GetRespiratoryClosedResistance();
+  virtual double GetRespiratoryClosedResistance(const PressureTimePerVolumeUnit& unit) const;
 
   virtual bool HasRespiratoryOpenResistance() const;
-  virtual SEScalarFlowResistance& GetRespiratoryOpenResistance();
-  virtual double GetRespiratoryOpenResistance(const FlowResistanceUnit& unit) const;
+  virtual SEScalarPressureTimePerVolume& GetRespiratoryOpenResistance();
+  virtual double GetRespiratoryOpenResistance(const PressureTimePerVolumeUnit& unit) const;
 
 protected:
-  SEScalarFlowResistance*      m_CardiovascularOpenResistance;
-  SEScalarElectricResistance*  m_DefaultClosedElectricResistance;
-  SEScalarFlowResistance*      m_DefaultClosedFlowResistance;
-  SEScalarHeatResistance*      m_DefaultClosedHeatResistance;
-  SEScalarElectricResistance*  m_DefaultOpenElectricResistance;
-  SEScalarFlowResistance*      m_DefaultOpenFlowResistance;
-  SEScalarHeatResistance*      m_DefaultOpenHeatResistance;
-  SEScalarFlowResistance*      m_MachineClosedResistance;
-  SEScalarFlowResistance*      m_MachineOpenResistance;
-  SEScalarFlowResistance*      m_RespiratoryClosedResistance;
-  SEScalarFlowResistance*      m_RespiratoryOpenResistance;
+  SEScalarPressureTimePerVolume*      m_CardiovascularOpenResistance;
+  SEScalarElectricResistance*         m_DefaultClosedElectricResistance;
+  SEScalarPressureTimePerVolume*      m_DefaultClosedFlowResistance;
+  SEScalarHeatResistance*             m_DefaultClosedHeatResistance;
+  SEScalarElectricResistance*         m_DefaultOpenElectricResistance;
+  SEScalarPressureTimePerVolume*      m_DefaultOpenFlowResistance;
+  SEScalarHeatResistance*             m_DefaultOpenHeatResistance;
+  SEScalarPressureTimePerVolume*      m_MachineClosedResistance;
+  SEScalarPressureTimePerVolume*      m_MachineOpenResistance;
+  SEScalarPressureTimePerVolume*      m_RespiratoryClosedResistance;
+  SEScalarPressureTimePerVolume*      m_RespiratoryOpenResistance;
 
   ////////////////
   /** Constants */
@@ -490,12 +490,12 @@ public:
   virtual double GetLeftTubularReabsorptionFluidPermeabilityBaseline(const VolumePerTimePressureAreaUnit& unit) const;
 
   virtual bool HasMaximumAfferentResistance() const;
-  virtual SEScalarFlowResistance& GetMaximumAfferentResistance();
-  virtual double GetMaximumAfferentResistance(const FlowResistanceUnit& unit) const;
+  virtual SEScalarPressureTimePerVolume& GetMaximumAfferentResistance();
+  virtual double GetMaximumAfferentResistance(const PressureTimePerVolumeUnit& unit) const;
 
   virtual bool HasMinimumAfferentResistance() const;
-  virtual SEScalarFlowResistance& GetMinimumAfferentResistance();
-  virtual double GetMinimumAfferentResistance(const FlowResistanceUnit& unit) const;
+  virtual SEScalarPressureTimePerVolume& GetMinimumAfferentResistance();
+  virtual double GetMinimumAfferentResistance(const PressureTimePerVolumeUnit& unit) const;
 
   virtual bool HasRightGlomerularFilteringSurfaceAreaBaseline() const;
   virtual SEScalarArea& GetRightGlomerularFilteringSurfaceAreaBaseline();
@@ -531,8 +531,8 @@ protected:
   SEScalarArea*                        m_RightTubularReabsorptionFilteringSurfaceAreaBaseline;
   SEScalarVolumePerTimePressureArea*   m_RightTubularReabsorptionFluidPermeabilityBaseline;
    
-  SEScalarFlowResistance*              m_MaximumAfferentResistance;
-  SEScalarFlowResistance*              m_MinimumAfferentResistance;
+  SEScalarPressureTimePerVolume*              m_MaximumAfferentResistance;
+  SEScalarPressureTimePerVolume*              m_MinimumAfferentResistance;
   
   SEScalarMassPerTime*                 m_TargetSodiumDelivery;
 

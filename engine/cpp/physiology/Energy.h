@@ -65,16 +65,15 @@ protected:
 
   // Stateless member variable (Set in SetUp())
   double                      m_dT_s;
-  SEPatient*                  m_Patient;
   // Cmpts,Substance, and nodes
-  SELiquidSubstanceQuantity*  m_AortaHCO3;  
+  SELiquidSubstanceQuantity*  m_AortaHCO3;
   //Nodes
   SEThermalCircuitNode*       m_coreNode;
   SEThermalCircuitNode*       m_skinNode;
   //Paths
   SEThermalCircuitPath*       m_temperatureGroundToCorePath;
   SEThermalCircuitPath*       m_coreToSkinPath;
-  SEFluidCircuitPath*         m_skinExtravascularToSweatingGroundPath;   
+  SEFluidCircuitPath*         m_skinExtravascularToSweatingGroundPath;
   //Circuits
   SEThermalCircuit*           m_InternalTemperatureCircuit;
   SEThermalCircuit*           m_TemperatureCircuit;

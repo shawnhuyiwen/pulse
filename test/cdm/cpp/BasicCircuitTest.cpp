@@ -15,9 +15,9 @@
 #include "circuit/thermal/SEThermalCircuitPath.h"
 #include "circuit/thermal/SEThermalCircuitCalculator.h"
 #include "properties/SEScalarPressure.h"
-#include "properties/SEScalarFlowResistance.h"
-#include "properties/SEScalarFlowCompliance.h"
-#include "properties/SEScalarFlowInertance.h"
+#include "properties/SEScalarPressureTimePerVolume.h"
+#include "properties/SEScalarVolumePerPressure.h"
+#include "properties/SEScalarPressureTimeSquaredPerVolume.h"
 #include "properties/SEScalarTime.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
@@ -52,9 +52,9 @@ void CommonDataModelTest::TestSetup7SeriesRCDC()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
-  Path3.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path3.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path3.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
 }
 
@@ -84,9 +84,9 @@ void CommonDataModelTest::TestSetup7SeriesRCSIN()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");  
-  Path3.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path3.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path3.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
 }
 
@@ -116,9 +116,9 @@ void CommonDataModelTest::TestSetup7SeriesRCPULSE()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");  
-  Path3.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path3.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path3.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
 }
 
@@ -146,11 +146,11 @@ void CommonDataModelTest::TestSetup8SeriesRDC()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(10, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(10, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
-  Path3.GetNextResistance().SetValue(20, FlowResistanceUnit::Pa_s_Per_m3);
+  Path3.GetNextResistance().SetValue(20, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
-  Path4.GetNextResistance().SetValue(30, FlowResistanceUnit::Pa_s_Per_m3);
+  Path4.GetNextResistance().SetValue(30, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 
 }
 
@@ -178,11 +178,11 @@ void CommonDataModelTest::TestSetup8SeriesRSIN()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(10, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(10, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
-  Path3.GetNextResistance().SetValue(20, FlowResistanceUnit::Pa_s_Per_m3);
+  Path3.GetNextResistance().SetValue(20, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
-  Path4.GetNextResistance().SetValue(30, FlowResistanceUnit::Pa_s_Per_m3);
+  Path4.GetNextResistance().SetValue(30, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 }
 
 void CommonDataModelTest::TestSetup8SeriesRPULSE()
@@ -209,11 +209,11 @@ void CommonDataModelTest::TestSetup8SeriesRPULSE()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(10, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(10, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
-  Path3.GetNextResistance().SetValue(20, FlowResistanceUnit::Pa_s_Per_m3);
+  Path3.GetNextResistance().SetValue(20, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
-  Path4.GetNextResistance().SetValue(30, FlowResistanceUnit::Pa_s_Per_m3);
+  Path4.GetNextResistance().SetValue(30, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 }
 
 void CommonDataModelTest::TestSetup9SeriesRLDC()
@@ -242,9 +242,9 @@ void CommonDataModelTest::TestSetup9SeriesRLDC()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(0.001, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(0.001, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
-  Path3.GetNextInertance().SetValue(0.001, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path3.GetNextInertance().SetValue(0.001, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path3.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
 }
 
@@ -274,9 +274,9 @@ void CommonDataModelTest::TestSetup9SeriesRLSIN()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(0.001, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(0.001, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
-  Path3.GetNextInertance().SetValue(0.001, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path3.GetNextInertance().SetValue(0.001, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path3.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
 }
 
@@ -306,9 +306,9 @@ void CommonDataModelTest::TestSetup9SeriesRLPULSE()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(0.001, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(0.001, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
-  Path3.GetNextInertance().SetValue(0.001, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path3.GetNextInertance().SetValue(0.001, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path3.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
 }
 
@@ -334,11 +334,11 @@ void CommonDataModelTest::TestSetup10ParallelRDC()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(10, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(10, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node1,Node2,"Path3");
-  Path3.GetNextResistance().SetValue(20, FlowResistanceUnit::Pa_s_Per_m3);
+  Path3.GetNextResistance().SetValue(20, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node1,Node2,"Path4");
-  Path4.GetNextResistance().SetValue(30, FlowResistanceUnit::Pa_s_Per_m3);
+  Path4.GetNextResistance().SetValue(30, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 }
 
 void CommonDataModelTest::TestSetup10ParallelRSIN()
@@ -363,11 +363,11 @@ void CommonDataModelTest::TestSetup10ParallelRSIN()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(10, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(10, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node1,Node2,"Path3");
-  Path3.GetNextResistance().SetValue(20, FlowResistanceUnit::Pa_s_Per_m3);
+  Path3.GetNextResistance().SetValue(20, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node1,Node2,"Path4");
-  Path4.GetNextResistance().SetValue(30, FlowResistanceUnit::Pa_s_Per_m3);
+  Path4.GetNextResistance().SetValue(30, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 }
 
 void CommonDataModelTest::TestSetup10ParallelRPULSE()
@@ -392,11 +392,11 @@ void CommonDataModelTest::TestSetup10ParallelRPULSE()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(10, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(10, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node1,Node2,"Path3");
-  Path3.GetNextResistance().SetValue(20, FlowResistanceUnit::Pa_s_Per_m3);
+  Path3.GetNextResistance().SetValue(20, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node1,Node2,"Path4");
-  Path4.GetNextResistance().SetValue(30, FlowResistanceUnit::Pa_s_Per_m3);
+  Path4.GetNextResistance().SetValue(30, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 }
 
 void CommonDataModelTest::TestSetup11ParallelRCDC()
@@ -424,9 +424,9 @@ void CommonDataModelTest::TestSetup11ParallelRCDC()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node1,Node2,"Path3");
-  Path3.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path3.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path3.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
 }
 
@@ -455,9 +455,9 @@ void CommonDataModelTest::TestSetup11ParallelRCSIN()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node1,Node2,"Path3");
-  Path3.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path3.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path3.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
 }
 
@@ -486,9 +486,9 @@ void CommonDataModelTest::TestSetup11ParallelRCPULSE()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node1,Node2,"Path3");
-  Path3.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path3.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path3.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
 }
 
@@ -517,9 +517,9 @@ void CommonDataModelTest::TestSetup12ParallelRLDC()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(10, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(10, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node1,Node2,"Path3");
-  Path3.GetNextInertance().SetValue(0.001, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path3.GetNextInertance().SetValue(0.001, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path3.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
 }
 
@@ -548,9 +548,9 @@ void CommonDataModelTest::TestSetup12ParallelRLSIN()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(10, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(10, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node1,Node2,"Path3");
-  Path3.GetNextInertance().SetValue(0.001, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path3.GetNextInertance().SetValue(0.001, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path3.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s); 
 }
 
@@ -579,9 +579,9 @@ void CommonDataModelTest::TestSetup12ParallelRLPULSE()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(10, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(10, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node1,Node2,"Path3");
-  Path3.GetNextInertance().SetValue(0.001, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path3.GetNextInertance().SetValue(0.001, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path3.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
 }
 
@@ -610,9 +610,9 @@ void CommonDataModelTest::TestSetup12ParallelRLSINCentered()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(10, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(10, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node1,Node2,"Path3");
-  Path3.GetNextInertance().SetValue(0.001, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path3.GetNextInertance().SetValue(0.001, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path3.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
 }
 
@@ -644,12 +644,12 @@ void CommonDataModelTest::TestSetup13SeriesRLCDC()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(10, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(10, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
-  Path3.GetNextInertance().SetValue(0.01, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path3.GetNextInertance().SetValue(0.01, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path3.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
-  Path4.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path4.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path4.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
 }
 
@@ -681,12 +681,12 @@ void CommonDataModelTest::TestSetup13SeriesRLCSIN()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(10, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(10, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
-  Path3.GetNextInertance().SetValue(0.01, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path3.GetNextInertance().SetValue(0.01, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path3.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
-  Path4.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path4.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path4.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
 }
 
@@ -718,12 +718,12 @@ void CommonDataModelTest::TestSetup13SeriesRLCPULSE()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(10, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(10, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
-  Path3.GetNextInertance().SetValue(0.01, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path3.GetNextInertance().SetValue(0.01, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path3.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
-  Path4.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path4.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path4.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
 }
 
@@ -751,12 +751,12 @@ void CommonDataModelTest::TestSetup14ParallelRLCDC()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(10, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(10, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node1,Node2,"Path3");
-  Path3.GetNextInertance().SetValue(0.01, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path3.GetNextInertance().SetValue(0.01, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path3.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node1,Node2,"Path4");
-  Path4.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path4.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path4.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
 }
 
@@ -784,12 +784,12 @@ void CommonDataModelTest::TestSetup14ParallelRLCSIN()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(10, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(10, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node1,Node2,"Path3");
-  Path3.GetNextInertance().SetValue(0.01, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path3.GetNextInertance().SetValue(0.01, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path3.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node1,Node2,"Path4");
-  Path4.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path4.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path4.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
 }
 
@@ -817,12 +817,12 @@ void CommonDataModelTest::TestSetup14ParallelRLCPULSE()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(10, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(10, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node1,Node2,"Path3");
-  Path3.GetNextInertance().SetValue(0.01, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path3.GetNextInertance().SetValue(0.01, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path3.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node1,Node2,"Path4");
-  Path4.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path4.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path4.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
 }
 
@@ -854,9 +854,9 @@ void CommonDataModelTest::TestSetup15SwitchRCDC()
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
   Path2.SetNextSwitch(eGate::Open);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
-  Path3.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path3.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
-  Path4.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path4.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path4.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
 }
 
@@ -888,9 +888,9 @@ void CommonDataModelTest::TestSetup15SwitchRCSIN()
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
   Path2.SetNextSwitch(eGate::Open);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
-  Path3.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path3.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
-  Path4.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path4.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path4.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3); 
 }
 
@@ -922,9 +922,9 @@ void CommonDataModelTest::TestSetup15SwitchRCPULSE()
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
   Path2.SetNextSwitch(eGate::Open);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
-  Path3.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path3.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
-  Path4.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path4.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path4.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
 }
 
@@ -954,16 +954,16 @@ void CommonDataModelTest::TestSetup16Comprehensive1DC()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(10, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(10, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
   Path3.SetNextSwitch(eGate::Open);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
-  Path4.GetNextInertance().SetValue(0.1, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path4.GetNextInertance().SetValue(0.1, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path4.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path5 = fluidCircuit.CreatePath(Node1,Node4,"Path5");
-  Path5.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path5.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path6 = fluidCircuit.CreatePath(Node2,Node4,"Path6");
-  Path6.GetNextCompliance().SetValue(0.005, FlowComplianceUnit::m3_Per_Pa);
+  Path6.GetNextCompliance().SetValue(0.005, VolumePerPressureUnit::m3_Per_Pa);
   Path6.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
   Node2.GetPressure().SetValue(0, PressureUnit::Pa);
 
@@ -998,16 +998,16 @@ void CommonDataModelTest::TestSetup16Comprehensive1SIN()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(10, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(10, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
   Path3.SetNextSwitch(eGate::Open);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
-  Path4.GetNextInertance().SetValue(0.1, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path4.GetNextInertance().SetValue(0.1, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path4.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path5 = fluidCircuit.CreatePath(Node1,Node4,"Path5");
-  Path5.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path5.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path6 = fluidCircuit.CreatePath(Node2,Node4,"Path6");
-  Path6.GetNextCompliance().SetValue(0.005, FlowComplianceUnit::m3_Per_Pa);
+  Path6.GetNextCompliance().SetValue(0.005, VolumePerPressureUnit::m3_Per_Pa);
   Path6.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
   Node2.GetPressure().SetValue(0, PressureUnit::Pa);
 
@@ -1042,16 +1042,16 @@ void CommonDataModelTest::TestSetup16Comprehensive1PULSE()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(10, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(10, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
   Path3.SetNextSwitch(eGate::Open);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
-  Path4.GetNextInertance().SetValue(0.1, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path4.GetNextInertance().SetValue(0.1, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path4.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path5 = fluidCircuit.CreatePath(Node1,Node4,"Path5");
-  Path5.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path5.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path6 = fluidCircuit.CreatePath(Node2,Node4,"Path6");
-  Path6.GetNextCompliance().SetValue(0.005, FlowComplianceUnit::m3_Per_Pa);
+  Path6.GetNextCompliance().SetValue(0.005, VolumePerPressureUnit::m3_Per_Pa);
   Path6.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
   Node2.GetPressure().SetValue(0, PressureUnit::Pa);
 
@@ -1085,9 +1085,9 @@ void CommonDataModelTest::TestSetup17BasicDiodeDC()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(10, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(10, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");  
-  Path3.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path3.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path3.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node2,"Path4");
   Path4.SetNextValve(eGate::Closed);
@@ -1118,9 +1118,9 @@ void CommonDataModelTest::TestSetup17BasicDiodeSIN()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(10, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(10, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");  
-  Path3.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path3.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path3.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node2,"Path4");
   Path4.SetNextValve(eGate::Closed);
@@ -1151,9 +1151,9 @@ void CommonDataModelTest::TestSetup17BasicDiodePULSE()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(10, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(10, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");  
-  Path3.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path3.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path3.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node2,"Path4");
   Path4.SetNextValve(eGate::Closed);
@@ -1198,15 +1198,15 @@ void CommonDataModelTest::TestSetup17BasicDiodePULSE()
 //  Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 //
 //  SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-//  Path2.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+//  Path2.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 //  SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
 //  Path3.SetSwitch(eGate::Open);
 //  SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
-//  Path4.GetNextInertance().SetValue(0.001, FlowInertanceUnit::Pa_s2_Per_m3);
+//  Path4.GetNextInertance().SetValue(0.001, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
 //  SEFluidCircuitPath& Path5 = fluidCircuit.CreatePath(Node1,Node4,"Path5");
-//  Path5.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+//  Path5.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 //  SEFluidCircuitPath& Path6 = fluidCircuit.CreatePath(Node2,Node4,"Path6");
-//  Path6.GetNextCompliance().SetValue(1000, FlowComplianceUnit::m3_Per_Pa);
+//  Path6.GetNextCompliance().SetValue(1000, VolumePerPressureUnit::m3_Per_Pa);
 //  Path6.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
 //  Node2.GetPressure().SetValue(0, PressureUnit::Pa);
 //
@@ -1250,9 +1250,9 @@ void CommonDataModelTest::TestSetup18RCSeriesDCCurrent()
   Path7.GetNextFlowSource().SetValue(3,VolumePerTimeUnit::m3_Per_s);  // TODO: Clean up methodology if these are to be released at any point.
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
-  Path3.GetNextCompliance().SetValue(0.0001, FlowComplianceUnit::m3_Per_Pa);
+  Path3.GetNextCompliance().SetValue(0.0001, VolumePerPressureUnit::m3_Per_Pa);
   Path3.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
 }
 
@@ -1281,9 +1281,9 @@ void CommonDataModelTest::TestSetup18RCSeriesSINCurrent()
   Path7.GetNextFlowSource().SetValue(3,VolumePerTimeUnit::m3_Per_s);  // TODO: Clean up methodology if these are to be released at any point.
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
-  Path3.GetNextCompliance().SetValue(0.0001, FlowComplianceUnit::m3_Per_Pa);
+  Path3.GetNextCompliance().SetValue(0.0001, VolumePerPressureUnit::m3_Per_Pa);
   Path3.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
 }
 
@@ -1312,9 +1312,9 @@ void CommonDataModelTest::TestSetup18RCSeriesPulseCurrent()
   Path7.GetNextFlowSource().SetValue(3,VolumePerTimeUnit::m3_Per_s);  // TODO: Clean up methodology if these are to be released at any point.
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
-  Path3.GetNextCompliance().SetValue(0.0001, FlowComplianceUnit::m3_Per_Pa);
+  Path3.GetNextCompliance().SetValue(0.0001, VolumePerPressureUnit::m3_Per_Pa);
   Path3.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
 }
 
@@ -1343,9 +1343,9 @@ void CommonDataModelTest::TestSetup19RCParallelDCCurrent()
   Path7.GetNextFlowSource().SetValue(3,VolumePerTimeUnit::m3_Per_s);  // TODO: Clean up methodology if these are to be released at any point.
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node1,Node2,"Path3");
-  Path3.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path3.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path3.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
 }
 
@@ -1374,9 +1374,9 @@ void CommonDataModelTest::TestSetup19RCParallelSINCurrent()
   Path7.GetNextFlowSource().SetValue(3,VolumePerTimeUnit::m3_Per_s);  // TODO: Clean up methodology if these are to be released at any point.
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node1,Node2,"Path3");
-  Path3.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path3.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path3.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
 }
 
@@ -1405,9 +1405,9 @@ void CommonDataModelTest::TestSetup19RCParallelPulseCurrent()
   Path7.GetNextFlowSource().SetValue(3,VolumePerTimeUnit::m3_Per_s);  // TODO: Clean up methodology if these are to be released at any point.
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node1,Node2,"Path3");
-  Path3.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path3.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path3.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
 }
 
@@ -1439,13 +1439,13 @@ void CommonDataModelTest::TestSetup20SeriesCapDC()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path2.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path2.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
-  Path3.GetNextCompliance().SetValue(0.005, FlowComplianceUnit::m3_Per_Pa);
+  Path3.GetNextCompliance().SetValue(0.005, VolumePerPressureUnit::m3_Per_Pa);
   Path3.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
-  Path4.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path4.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 }
 
 void CommonDataModelTest::TestSetup20SeriesCapSIN()
@@ -1477,13 +1477,13 @@ void CommonDataModelTest::TestSetup20SeriesCapSIN()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path2.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path2.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
-  Path3.GetNextCompliance().SetValue(0.005, FlowComplianceUnit::m3_Per_Pa);
+  Path3.GetNextCompliance().SetValue(0.005, VolumePerPressureUnit::m3_Per_Pa);
   Path3.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
-  Path4.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path4.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 }
 
 void CommonDataModelTest::TestSetup20SeriesCapPulse()
@@ -1515,13 +1515,13 @@ void CommonDataModelTest::TestSetup20SeriesCapPulse()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path2.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path2.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
-  Path3.GetNextCompliance().SetValue(0.005, FlowComplianceUnit::m3_Per_Pa);
+  Path3.GetNextCompliance().SetValue(0.005, VolumePerPressureUnit::m3_Per_Pa);
   Path3.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
-  Path4.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path4.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 }
 
 void CommonDataModelTest::TestSetup21ParallelRDCCurrent()
@@ -1546,11 +1546,11 @@ void CommonDataModelTest::TestSetup21ParallelRDCCurrent()
   Path7.GetNextFlowSource().SetValue(3,VolumePerTimeUnit::m3_Per_s);  // TODO: Clean up methodology if these are to be released at any point.
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(100, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(100, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node1,Node2,"Path3");
-  Path3.GetNextResistance().SetValue(500, FlowResistanceUnit::Pa_s_Per_m3);
+  Path3.GetNextResistance().SetValue(500, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node1,Node2,"Path4");
-  Path4.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path4.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 }
 
 void CommonDataModelTest::TestSetup21ParallelRSINCurrent()
@@ -1575,11 +1575,11 @@ void CommonDataModelTest::TestSetup21ParallelRSINCurrent()
   Path7.GetNextFlowSource().SetValue(3,VolumePerTimeUnit::m3_Per_s);  // TODO: Clean up methodology if these are to be released at any point.
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(100, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(100, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node1,Node2,"Path3");
-  Path3.GetNextResistance().SetValue(500, FlowResistanceUnit::Pa_s_Per_m3);
+  Path3.GetNextResistance().SetValue(500, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node1,Node2,"Path4");
-  Path4.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path4.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 }
 
 void CommonDataModelTest::TestSetup21ParallelRPulseCurrent()
@@ -1604,11 +1604,11 @@ void CommonDataModelTest::TestSetup21ParallelRPulseCurrent()
   Path7.GetNextFlowSource().SetValue(3,VolumePerTimeUnit::m3_Per_s);  // TODO: Clean up methodology if these are to be released at any point.
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(100, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(100, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node1,Node2,"Path3");
-  Path3.GetNextResistance().SetValue(500, FlowResistanceUnit::Pa_s_Per_m3);
+  Path3.GetNextResistance().SetValue(500, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node1,Node2,"Path4");
-  Path4.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path4.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 }
 
 void CommonDataModelTest::TestSetup22CurrentCompDC()
@@ -1635,13 +1635,13 @@ void CommonDataModelTest::TestSetup22CurrentCompDC()
   Path7.GetNextFlowSource().SetValue(3,VolumePerTimeUnit::m3_Per_s);  // TODO: Clean up methodology if these are to be released at any point.
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
   Path3.SetNextSwitch(eGate::Open);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
-  Path4.GetNextResistance().SetValue(500, FlowResistanceUnit::Pa_s_Per_m3);
+  Path4.GetNextResistance().SetValue(500, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path5 = fluidCircuit.CreatePath(Node2,Node4,"Path5");
-  Path5.GetNextResistance().SetValue(100, FlowResistanceUnit::Pa_s_Per_m3);
+  Path5.GetNextResistance().SetValue(100, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path6 = fluidCircuit.CreatePath(Node2,Node4,"Path6");
   Path6.SetNextValve(eGate::Closed);
 }
@@ -1670,13 +1670,13 @@ void CommonDataModelTest::TestSetup22CurrentCompSIN()
   Path7.GetNextFlowSource().SetValue(3,VolumePerTimeUnit::m3_Per_s);  // TODO: Clean up methodology if these are to be released at any point.
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
   Path3.SetNextSwitch(eGate::Open);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
-  Path4.GetNextResistance().SetValue(500, FlowResistanceUnit::Pa_s_Per_m3);
+  Path4.GetNextResistance().SetValue(500, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path5 = fluidCircuit.CreatePath(Node2,Node4,"Path5");
-  Path5.GetNextResistance().SetValue(100, FlowResistanceUnit::Pa_s_Per_m3);
+  Path5.GetNextResistance().SetValue(100, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path6 = fluidCircuit.CreatePath(Node2,Node4,"Path6");
   Path6.SetNextValve(eGate::Closed);
 }
@@ -1705,13 +1705,13 @@ void CommonDataModelTest::TestSetup22CurrentCompPulse()
   Path7.GetNextFlowSource().SetValue(3,VolumePerTimeUnit::m3_Per_s);  // TODO: Clean up methodology if these are to be released at any point.
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
   Path3.SetNextSwitch(eGate::Open);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
-  Path4.GetNextResistance().SetValue(500, FlowResistanceUnit::Pa_s_Per_m3);
+  Path4.GetNextResistance().SetValue(500, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path5 = fluidCircuit.CreatePath(Node2,Node4,"Path5");
-  Path5.GetNextResistance().SetValue(100, FlowResistanceUnit::Pa_s_Per_m3);
+  Path5.GetNextResistance().SetValue(100, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path6 = fluidCircuit.CreatePath(Node2,Node4,"Path6");
   Path6.SetNextValve(eGate::Closed);
 }
@@ -1742,9 +1742,9 @@ void CommonDataModelTest::TestSetup23SeriesRLDCCurrent()
   Path7.GetNextFlowSource().SetValue(3,VolumePerTimeUnit::m3_Per_s);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
-  Path3.GetNextInertance().SetValue(0.001, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path3.GetNextInertance().SetValue(0.001, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path3.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
 }
 
@@ -1774,9 +1774,9 @@ void CommonDataModelTest::TestSetup23SeriesRLSINCurrent()
   Path7.GetNextFlowSource().SetValue(3,VolumePerTimeUnit::m3_Per_s);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
-  Path3.GetNextInertance().SetValue(0.001, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path3.GetNextInertance().SetValue(0.001, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path3.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s); 
 }
 
@@ -1806,9 +1806,9 @@ void CommonDataModelTest::TestSetup23SeriesRLPULSECurrent()
   Path7.GetNextFlowSource().SetValue(3,VolumePerTimeUnit::m3_Per_s);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
-  Path3.GetNextInertance().SetValue(0.001, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path3.GetNextInertance().SetValue(0.001, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path3.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
 }
 
@@ -1837,9 +1837,9 @@ void CommonDataModelTest::TestSetup24ParallelRLDCCurrent()
   Path7.GetNextFlowSource().SetValue(3,VolumePerTimeUnit::m3_Per_s);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(10, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(10, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node1,Node2,"Path3");
-  Path3.GetNextInertance().SetValue(0.001, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path3.GetNextInertance().SetValue(0.001, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path3.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
 }
 
@@ -1868,9 +1868,9 @@ void CommonDataModelTest::TestSetup24ParallelRLSINCurrent()
   Path7.GetNextFlowSource().SetValue(3,VolumePerTimeUnit::m3_Per_s);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(10, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(10, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node1,Node2,"Path3");
-  Path3.GetNextInertance().SetValue(0.001, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path3.GetNextInertance().SetValue(0.001, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path3.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
 }
 
@@ -1899,9 +1899,9 @@ void CommonDataModelTest::TestSetup24ParallelRLPULSECurrent()
   Path7.GetNextFlowSource().SetValue(3,VolumePerTimeUnit::m3_Per_s);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(10, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(10, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node1,Node2,"Path3");
-  Path3.GetNextInertance().SetValue(0.001, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path3.GetNextInertance().SetValue(0.001, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path3.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
 }
 
@@ -1931,9 +1931,9 @@ void CommonDataModelTest::TestSetup25BasicDiodeDCCurrent()
   Path7.GetNextFlowSource().SetValue(3,VolumePerTimeUnit::m3_Per_s);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(10, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(10, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");  
-  Path3.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path3.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path3.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node2,"Path4");
   Path4.SetNextValve(eGate::Closed);
@@ -1965,9 +1965,9 @@ void CommonDataModelTest::TestSetup25BasicDiodeSINCurrent()
   Path7.GetNextFlowSource().SetValue(3,VolumePerTimeUnit::m3_Per_s);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(10, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(10, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");  
-  Path3.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path3.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path3.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node2,"Path4");
   Path4.SetNextValve(eGate::Closed);
@@ -1999,9 +1999,9 @@ void CommonDataModelTest::TestSetup25BasicDiodePULSECurrent()
   Path7.GetNextFlowSource().SetValue(3,VolumePerTimeUnit::m3_Per_s);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(10, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(10, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");  
-  Path3.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path3.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path3.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node2,"Path4");
   Path4.SetNextValve(eGate::Closed);
@@ -2036,9 +2036,9 @@ void CommonDataModelTest::TestSetup26SwitchRCDCCurrent()
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
   Path2.SetNextSwitch(eGate::Open);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
-  Path3.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path3.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
-  Path4.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path4.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path4.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
 }
 
@@ -2071,9 +2071,9 @@ void CommonDataModelTest::TestSetup26SwitchRCSINCurrent()
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
   Path2.SetNextSwitch(eGate::Open);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
-  Path3.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path3.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
-  Path4.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path4.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path4.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
 }
 
@@ -2106,9 +2106,9 @@ void CommonDataModelTest::TestSetup26SwitchRCPULSECurrent()
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
   Path2.SetNextSwitch(eGate::Open);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
-  Path3.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path3.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
-  Path4.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path4.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path4.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
 }
 
@@ -2140,12 +2140,12 @@ void CommonDataModelTest::TestSetup27SeriesRLCDCCurrent()
   Path7.GetNextFlowSource().SetValue(3,VolumePerTimeUnit::m3_Per_s);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(100, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(100, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
-  Path3.GetNextInertance().SetValue(0.01, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path3.GetNextInertance().SetValue(0.01, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path3.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
-  Path4.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path4.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path4.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
 }
 
@@ -2177,12 +2177,12 @@ void CommonDataModelTest::TestSetup27SeriesRLCSINCurrent()
   Path7.GetNextFlowSource().SetValue(3,VolumePerTimeUnit::m3_Per_s);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(100, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(100, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
-  Path3.GetNextInertance().SetValue(0.01, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path3.GetNextInertance().SetValue(0.01, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path3.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
-  Path4.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path4.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path4.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
 }
 
@@ -2214,12 +2214,12 @@ void CommonDataModelTest::TestSetup27SeriesRLCPULSECurrent()
   Path7.GetNextFlowSource().SetValue(3,VolumePerTimeUnit::m3_Per_s);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(100, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(100, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
-  Path3.GetNextInertance().SetValue(0.01, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path3.GetNextInertance().SetValue(0.01, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path3.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
-  Path4.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path4.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path4.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
 }
 
@@ -2248,12 +2248,12 @@ void CommonDataModelTest::TestSetup28ParallelRLCDCCurrent()
   Path7.GetNextFlowSource().SetValue(3,VolumePerTimeUnit::m3_Per_s);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(10, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(10, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node1,Node2,"Path3");
-  Path3.GetNextInertance().SetValue(0.01, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path3.GetNextInertance().SetValue(0.01, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path3.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node1,Node2,"Path4");
-  Path4.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path4.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path4.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
 }
 
@@ -2282,12 +2282,12 @@ void CommonDataModelTest::TestSetup28ParallelRLCSINCurrent()
   Path7.GetNextFlowSource().SetValue(3,VolumePerTimeUnit::m3_Per_s);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(10, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(10, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node1,Node2,"Path3");
-  Path3.GetNextInertance().SetValue(0.01, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path3.GetNextInertance().SetValue(0.01, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path3.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node1,Node2,"Path4");
-  Path4.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path4.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path4.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
 }
 
@@ -2316,12 +2316,12 @@ void CommonDataModelTest::TestSetup28ParallelRLCPULSECurrent()
   Path7.GetNextFlowSource().SetValue(3,VolumePerTimeUnit::m3_Per_s);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(10, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(10, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node1,Node2,"Path3");
-  Path3.GetNextInertance().SetValue(0.01, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path3.GetNextInertance().SetValue(0.01, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path3.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node1,Node2,"Path4");
-  Path4.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path4.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path4.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
 }
 
@@ -2350,7 +2350,7 @@ void CommonDataModelTest::TestSetup29SeriesPressureSourceAdditionDC()
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node1,Node2,"Path3");
   Path3.GetNextPressureSource().SetValue(10,PressureUnit::Pa);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node2,Node3,"Path4");
-  Path4.GetNextResistance().SetValue(500, FlowResistanceUnit::Pa_s_Per_m3);
+  Path4.GetNextResistance().SetValue(500, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 }
 
 void CommonDataModelTest::TestSetup29SeriesPressureSourceAdditionSIN()
@@ -2378,7 +2378,7 @@ void CommonDataModelTest::TestSetup29SeriesPressureSourceAdditionSIN()
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node1,Node2,"Path3");
   Path3.GetNextPressureSource().SetValue(10,PressureUnit::Pa);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node2,Node3,"Path4");
-  Path4.GetNextResistance().SetValue(500, FlowResistanceUnit::Pa_s_Per_m3);
+  Path4.GetNextResistance().SetValue(500, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 }
 
 void CommonDataModelTest::TestSetup29SeriesPressureSourceAdditionPULSE()
@@ -2406,7 +2406,7 @@ void CommonDataModelTest::TestSetup29SeriesPressureSourceAdditionPULSE()
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node1,Node2,"Path3");
   Path3.GetNextPressureSource().SetValue(10,PressureUnit::Pa);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node2,Node3,"Path4");
-  Path4.GetNextResistance().SetValue(500, FlowResistanceUnit::Pa_s_Per_m3); 
+  Path4.GetNextResistance().SetValue(500, PressureTimePerVolumeUnit::Pa_s_Per_m3); 
 }
 
 void CommonDataModelTest::TestSetup30SeriesCurrentSourceAdditionDC()
@@ -2433,7 +2433,7 @@ void CommonDataModelTest::TestSetup30SeriesCurrentSourceAdditionDC()
   SEFluidCircuitPath& Path8 = fluidCircuit.CreatePath(Node1,Node2,"Path8");  
   Path8.GetNextFlowSource().SetValue(2,VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node2,Node3,"Path4");
-  Path4.GetNextResistance().SetValue(500, FlowResistanceUnit::Pa_s_Per_m3);
+  Path4.GetNextResistance().SetValue(500, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 }
 
 void CommonDataModelTest::TestSetup30SeriesCurrentSourceAdditionSIN()
@@ -2462,7 +2462,7 @@ void CommonDataModelTest::TestSetup30SeriesCurrentSourceAdditionSIN()
   SEFluidCircuitPath& Path8 = fluidCircuit.CreatePath(Node1,Node2,"Path8");  
   Path8.GetNextFlowSource().SetValue(2,VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node2,Node3,"Path4");
-  Path4.GetNextResistance().SetValue(500, FlowResistanceUnit::Pa_s_Per_m3);
+  Path4.GetNextResistance().SetValue(500, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 }
 
 void CommonDataModelTest::TestSetup30SeriesCurrentSourceAdditionPULSE()
@@ -2490,7 +2490,7 @@ void CommonDataModelTest::TestSetup30SeriesCurrentSourceAdditionPULSE()
   SEFluidCircuitPath& Path8 = fluidCircuit.CreatePath(Node1,Node2,"Path8");  
   Path8.GetNextFlowSource().SetValue(2,VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node2,Node3,"Path4");
-  Path4.GetNextResistance().SetValue(500, FlowResistanceUnit::Pa_s_Per_m3);
+  Path4.GetNextResistance().SetValue(500, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 }
 
 void CommonDataModelTest::TestSetup31ParallelPressureSourceAdditionDC()
@@ -2517,7 +2517,7 @@ void CommonDataModelTest::TestSetup31ParallelPressureSourceAdditionDC()
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node1,"Path3");
   Path3.GetNextPressureSource().SetValue(10,PressureUnit::Pa);
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(500, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(500, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 }
 
 void CommonDataModelTest::TestSetup31ParallelPressureSourceAdditionSIN()
@@ -2544,7 +2544,7 @@ void CommonDataModelTest::TestSetup31ParallelPressureSourceAdditionSIN()
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node1,"Path3");
   Path3.GetNextPressureSource().SetValue(10,PressureUnit::Pa);
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(500, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(500, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 }
 
 void CommonDataModelTest::TestSetup31ParallelPressureSourceAdditionPULSE()
@@ -2571,7 +2571,7 @@ void CommonDataModelTest::TestSetup31ParallelPressureSourceAdditionPULSE()
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node1,"Path3");
   Path3.GetNextPressureSource().SetValue(10,PressureUnit::Pa);
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(500, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(500, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 }
 
 void CommonDataModelTest::TestSetup32ParallelCurrentSourceAdditionDC()
@@ -2598,7 +2598,7 @@ void CommonDataModelTest::TestSetup32ParallelCurrentSourceAdditionDC()
   SEFluidCircuitPath& Path8 = fluidCircuit.CreatePath(Node2,Node1,"Path8");
   Path8.GetNextFlowSource().SetValue(2,VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(500,FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(500,PressureTimePerVolumeUnit::Pa_s_Per_m3);
 }
 
 void CommonDataModelTest::TestSetup32ParallelCurrentSourceAdditionSIN()
@@ -2625,7 +2625,7 @@ void CommonDataModelTest::TestSetup32ParallelCurrentSourceAdditionSIN()
   SEFluidCircuitPath& Path8 = fluidCircuit.CreatePath(Node2,Node1,"Path8");
   Path8.GetNextFlowSource().SetValue(2,VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(500, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(500, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 }
 
 void CommonDataModelTest::TestSetup32ParallelCurrrentSourceAdditionPULSE()
@@ -2652,7 +2652,7 @@ void CommonDataModelTest::TestSetup32ParallelCurrrentSourceAdditionPULSE()
   SEFluidCircuitPath& Path8 = fluidCircuit.CreatePath(Node2,Node1,"Path8");
   Path8.GetNextFlowSource().SetValue(2,VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(500,FlowResistanceUnit::Pa_s_Per_m3); 
+  Path2.GetNextResistance().SetValue(500,PressureTimePerVolumeUnit::Pa_s_Per_m3); 
 }
 
 void CommonDataModelTest::TestSetup33SeriesCapDCCurrent()
@@ -2684,13 +2684,13 @@ void CommonDataModelTest::TestSetup33SeriesCapDCCurrent()
   Path7.GetNextFlowSource().SetValue(3,VolumePerTimeUnit::m3_Per_s);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path2.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path2.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
-  Path3.GetNextCompliance().SetValue(0.005, FlowComplianceUnit::m3_Per_Pa);
+  Path3.GetNextCompliance().SetValue(0.005, VolumePerPressureUnit::m3_Per_Pa);
   Path3.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
-  Path4.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path4.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 }
 
 void CommonDataModelTest::TestSetup33SeriesCapSINCurrent()
@@ -2722,13 +2722,13 @@ void CommonDataModelTest::TestSetup33SeriesCapSINCurrent()
   Path7.GetNextFlowSource().SetValue(3,VolumePerTimeUnit::m3_Per_s);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path2.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path2.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
-  Path3.GetNextCompliance().SetValue(0.005, FlowComplianceUnit::m3_Per_Pa);
+  Path3.GetNextCompliance().SetValue(0.005, VolumePerPressureUnit::m3_Per_Pa);
   Path3.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
-  Path4.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path4.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 }
 
 void CommonDataModelTest::TestSetup33SeriesCapPulseCurrent()
@@ -2760,13 +2760,13 @@ void CommonDataModelTest::TestSetup33SeriesCapPulseCurrent()
   Path7.GetNextFlowSource().SetValue(3,VolumePerTimeUnit::m3_Per_s);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path2.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path2.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
-  Path3.GetNextCompliance().SetValue(0.005, FlowComplianceUnit::m3_Per_Pa);
+  Path3.GetNextCompliance().SetValue(0.005, VolumePerPressureUnit::m3_Per_Pa);
   Path3.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
-  Path4.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path4.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 }
 
 void CommonDataModelTest::TestSetup34ParallelCapDC()
@@ -2794,13 +2794,13 @@ void CommonDataModelTest::TestSetup34ParallelCapDC()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path2.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path2.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node1,Node2,"Path3");
-  Path3.GetNextCompliance().SetValue(0.005, FlowComplianceUnit::m3_Per_Pa);
+  Path3.GetNextCompliance().SetValue(0.005, VolumePerPressureUnit::m3_Per_Pa);
   Path3.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node1,Node2,"Path4");
-  Path4.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path4.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 }
 
 void CommonDataModelTest::TestSetup34ParallelCapSIN()
@@ -2828,13 +2828,13 @@ void CommonDataModelTest::TestSetup34ParallelCapSIN()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path2.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path2.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node1,Node2,"Path3");
-  Path3.GetNextCompliance().SetValue(0.005, FlowComplianceUnit::m3_Per_Pa);
+  Path3.GetNextCompliance().SetValue(0.005, VolumePerPressureUnit::m3_Per_Pa);
   Path3.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node1,Node2,"Path4");
-  Path4.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path4.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 }
 
 void CommonDataModelTest::TestSetup34ParallelCapPulse()
@@ -2862,13 +2862,13 @@ void CommonDataModelTest::TestSetup34ParallelCapPulse()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path2.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path2.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node1,Node2,"Path3");
-  Path3.GetNextCompliance().SetValue(0.005, FlowComplianceUnit::m3_Per_Pa);
+  Path3.GetNextCompliance().SetValue(0.005, VolumePerPressureUnit::m3_Per_Pa);
   Path3.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node1,Node2,"Path4");
-  Path4.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path4.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 }
 
 void CommonDataModelTest::TestSetup35ParallelCapDCCurrent()
@@ -2896,13 +2896,13 @@ void CommonDataModelTest::TestSetup35ParallelCapDCCurrent()
   Path7.GetNextFlowSource().SetValue(3,VolumePerTimeUnit::m3_Per_s);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path2.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path2.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node1,Node2,"Path3");
-  Path3.GetNextCompliance().SetValue(0.005, FlowComplianceUnit::m3_Per_Pa);
+  Path3.GetNextCompliance().SetValue(0.005, VolumePerPressureUnit::m3_Per_Pa);
   Path3.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node1,Node2,"Path4");
-  Path4.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path4.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 }
 
 void CommonDataModelTest::TestSetup35ParallelCapSINCurrent()
@@ -2930,13 +2930,13 @@ void CommonDataModelTest::TestSetup35ParallelCapSINCurrent()
   Path7.GetNextFlowSource().SetValue(3,VolumePerTimeUnit::m3_Per_s);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path2.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path2.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node1,Node2,"Path3");
-  Path3.GetNextCompliance().SetValue(0.005, FlowComplianceUnit::m3_Per_Pa);
+  Path3.GetNextCompliance().SetValue(0.005, VolumePerPressureUnit::m3_Per_Pa);
   Path3.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node1,Node2,"Path4");
-  Path4.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path4.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 }
 
 void CommonDataModelTest::TestSetup35ParallelCapPulseCurrent()
@@ -2964,13 +2964,13 @@ void CommonDataModelTest::TestSetup35ParallelCapPulseCurrent()
   Path7.GetNextFlowSource().SetValue(3,VolumePerTimeUnit::m3_Per_s);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path2.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path2.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node1,Node2,"Path3");
-  Path3.GetNextCompliance().SetValue(0.005, FlowComplianceUnit::m3_Per_Pa);
+  Path3.GetNextCompliance().SetValue(0.005, VolumePerPressureUnit::m3_Per_Pa);
   Path3.GetSourceNode().GetNextVolume().SetValue(5, VolumeUnit::m3);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node1,Node2,"Path4");
-  Path4.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path4.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 }
 
 void CommonDataModelTest::TestSetup36SeriesIndDC()
@@ -3002,13 +3002,13 @@ void CommonDataModelTest::TestSetup36SeriesIndDC()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextInertance().SetValue(0.01, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path2.GetNextInertance().SetValue(0.01, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path2.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
-  Path3.GetNextInertance().SetValue(0.05, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path3.GetNextInertance().SetValue(0.05, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path3.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
-  Path4.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path4.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 }
 
 void CommonDataModelTest::TestSetup36SeriesIndSIN()
@@ -3040,13 +3040,13 @@ void CommonDataModelTest::TestSetup36SeriesIndSIN()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextInertance().SetValue(0.01, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path2.GetNextInertance().SetValue(0.01, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path2.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
-  Path3.GetNextInertance().SetValue(0.05, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path3.GetNextInertance().SetValue(0.05, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path3.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
-  Path4.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path4.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 }
 
 void CommonDataModelTest::TestSetup36SeriesIndPulse()
@@ -3078,13 +3078,13 @@ void CommonDataModelTest::TestSetup36SeriesIndPulse()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextInertance().SetValue(0.01, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path2.GetNextInertance().SetValue(0.01, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path2.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
-  Path3.GetNextInertance().SetValue(0.05, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path3.GetNextInertance().SetValue(0.05, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path3.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
-  Path4.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path4.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 }
 
 void CommonDataModelTest::TestSetup37SeriesIndDCCurrent()
@@ -3116,13 +3116,13 @@ void CommonDataModelTest::TestSetup37SeriesIndDCCurrent()
   Path7.GetNextFlowSource().SetValue(3,VolumePerTimeUnit::m3_Per_s);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextInertance().SetValue(0.01, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path2.GetNextInertance().SetValue(0.01, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path2.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
-  Path3.GetNextInertance().SetValue(0.05, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path3.GetNextInertance().SetValue(0.05, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path3.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
-  Path4.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path4.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 }
 
 void CommonDataModelTest::TestSetup37SeriesIndSINCurrent()
@@ -3154,13 +3154,13 @@ void CommonDataModelTest::TestSetup37SeriesIndSINCurrent()
   Path7.GetNextFlowSource().SetValue(3,VolumePerTimeUnit::m3_Per_s);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextInertance().SetValue(0.01, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path2.GetNextInertance().SetValue(0.01, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path2.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
-  Path3.GetNextInertance().SetValue(0.05, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path3.GetNextInertance().SetValue(0.05, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path3.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
-  Path4.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path4.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 }
 
 void CommonDataModelTest::TestSetup37SeriesIndPulseCurrent()
@@ -3193,13 +3193,13 @@ void CommonDataModelTest::TestSetup37SeriesIndPulseCurrent()
   Path7.GetNextFlowSource().SetValue(3,VolumePerTimeUnit::m3_Per_s);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextInertance().SetValue(0.01, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path2.GetNextInertance().SetValue(0.01, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path2.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node3,"Path3");
-  Path3.GetNextInertance().SetValue(0.05, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path3.GetNextInertance().SetValue(0.05, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path3.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node3,Node4,"Path4");
-  Path4.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path4.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 }
 
 void CommonDataModelTest::TestSetup38ParallelIndDC()
@@ -3227,13 +3227,13 @@ void CommonDataModelTest::TestSetup38ParallelIndDC()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextInertance().SetValue(0.01, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path2.GetNextInertance().SetValue(0.01, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path2.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node1,Node2,"Path3");
-  Path3.GetNextInertance().SetValue(0.05, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path3.GetNextInertance().SetValue(0.05, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path3.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node1,Node2,"Path4");
-  Path4.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path4.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 }
 
 void CommonDataModelTest::TestSetup38ParallelIndSIN()
@@ -3261,13 +3261,13 @@ void CommonDataModelTest::TestSetup38ParallelIndSIN()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextInertance().SetValue(0.01, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path2.GetNextInertance().SetValue(0.01, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path2.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node1,Node2,"Path3");
-  Path3.GetNextInertance().SetValue(0.05, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path3.GetNextInertance().SetValue(0.05, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path3.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node1,Node2,"Path4");
-  Path4.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path4.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 }
 
 void CommonDataModelTest::TestSetup38ParallelIndPulse()
@@ -3295,13 +3295,13 @@ void CommonDataModelTest::TestSetup38ParallelIndPulse()
   Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextInertance().SetValue(0.01, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path2.GetNextInertance().SetValue(0.01, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path2.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node1,Node2,"Path3");
-  Path3.GetNextInertance().SetValue(0.05, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path3.GetNextInertance().SetValue(0.05, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path3.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node1,Node2,"Path4");
-  Path4.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path4.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 }
 
 void CommonDataModelTest::TestSetup39ParallelIndDCCurrent()
@@ -3329,13 +3329,13 @@ void CommonDataModelTest::TestSetup39ParallelIndDCCurrent()
   Path7.GetNextFlowSource().SetValue(3,VolumePerTimeUnit::m3_Per_s);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextInertance().SetValue(0.01, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path2.GetNextInertance().SetValue(0.01, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path2.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node1,Node2,"Path3");
-  Path3.GetNextInertance().SetValue(0.05, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path3.GetNextInertance().SetValue(0.05, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path3.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node1,Node2,"Path4");
-  Path4.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path4.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 }
 
 void CommonDataModelTest::TestSetup39ParallelIndSINCurrent()
@@ -3363,13 +3363,13 @@ void CommonDataModelTest::TestSetup39ParallelIndSINCurrent()
   Path7.GetNextFlowSource().SetValue(3,VolumePerTimeUnit::m3_Per_s);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextInertance().SetValue(0.01, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path2.GetNextInertance().SetValue(0.01, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path2.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node1,Node2,"Path3");
-  Path3.GetNextInertance().SetValue(0.05, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path3.GetNextInertance().SetValue(0.05, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path3.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node1,Node2,"Path4");
-  Path4.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path4.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 }
 
 void CommonDataModelTest::TestSetup39ParallelIndPulseCurrent()
@@ -3397,13 +3397,13 @@ void CommonDataModelTest::TestSetup39ParallelIndPulseCurrent()
   Path7.GetNextFlowSource().SetValue(3,VolumePerTimeUnit::m3_Per_s);
 
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node1,Node2,"Path2");
-  Path2.GetNextInertance().SetValue(0.01, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path2.GetNextInertance().SetValue(0.01, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path2.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node1,Node2,"Path3");
-  Path3.GetNextInertance().SetValue(0.05, FlowInertanceUnit::Pa_s2_Per_m3);
+  Path3.GetNextInertance().SetValue(0.05, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
   Path3.GetFlow().SetValue(0, VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& Path4 = fluidCircuit.CreatePath(Node1,Node2,"Path4");
-  Path4.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path4.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 }
 
 void CommonDataModelTest::TestSetup40BadDiodeDC()
@@ -3539,24 +3539,24 @@ void CommonDataModelTest::TestSetup41ValidationComprehensive1DC()
 
   //Resistors
   SEFluidCircuitPath& Path11 = fluidCircuit.CreatePath(Node1,Node2,"Path11");
-  Path11.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path11.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node1,Node2,"Path3");
-  Path3.GetNextResistance().SetValue(2000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path3.GetNextResistance().SetValue(2000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path5 = fluidCircuit.CreatePath(Node2,Node3,"Path5");
-  Path5.GetNextResistance().SetValue(1500, FlowResistanceUnit::Pa_s_Per_m3);
+  Path5.GetNextResistance().SetValue(1500, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path6 = fluidCircuit.CreatePath(Node3,Node4,"Path6");
-  Path6.GetNextResistance().SetValue(400, FlowResistanceUnit::Pa_s_Per_m3);
+  Path6.GetNextResistance().SetValue(400, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path10 = fluidCircuit.CreatePath(Node5,Node7,"Path10");
-  Path10.GetNextResistance().SetValue(200, FlowResistanceUnit::Pa_s_Per_m3);
+  Path10.GetNextResistance().SetValue(200, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path12 = fluidCircuit.CreatePath(Node6,Node7,"Path12");
-  Path12.GetNextResistance().SetValue(500, FlowResistanceUnit::Pa_s_Per_m3);
+  Path12.GetNextResistance().SetValue(500, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 
   //Compliances
   SEFluidCircuitPath& Path8 = fluidCircuit.CreatePath(Node3,Node4,"Path8");
-  Path8.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path8.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path8.GetSourceNode().GetNextVolume().SetValue(0.0,VolumeUnit::m3);
   SEFluidCircuitPath& Path9 = fluidCircuit.CreatePath(Node5,Node7,"Path9");
-  Path9.GetNextCompliance().SetValue(0.0001, FlowComplianceUnit::m3_Per_Pa);
+  Path9.GetNextCompliance().SetValue(0.0001, VolumePerPressureUnit::m3_Per_Pa);
   Path9.GetSourceNode().GetNextVolume().SetValue(0.0,VolumeUnit::m3);
 }
 
@@ -3605,24 +3605,24 @@ void CommonDataModelTest::TestSetup41ValidationComprehensive1SIN()
 
   //Resistors
   SEFluidCircuitPath& Path11 = fluidCircuit.CreatePath(Node1,Node2,"Path11");
-  Path11.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path11.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node1,Node2,"Path3");
-  Path3.GetNextResistance().SetValue(2000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path3.GetNextResistance().SetValue(2000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path5 = fluidCircuit.CreatePath(Node2,Node3,"Path5");
-  Path5.GetNextResistance().SetValue(1500, FlowResistanceUnit::Pa_s_Per_m3);
+  Path5.GetNextResistance().SetValue(1500, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path6 = fluidCircuit.CreatePath(Node3,Node4,"Path6");
-  Path6.GetNextResistance().SetValue(400, FlowResistanceUnit::Pa_s_Per_m3);
+  Path6.GetNextResistance().SetValue(400, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path10 = fluidCircuit.CreatePath(Node5,Node7,"Path10");
-  Path10.GetNextResistance().SetValue(200, FlowResistanceUnit::Pa_s_Per_m3);
+  Path10.GetNextResistance().SetValue(200, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path12 = fluidCircuit.CreatePath(Node6,Node7,"Path12");
-  Path12.GetNextResistance().SetValue(500, FlowResistanceUnit::Pa_s_Per_m3);
+  Path12.GetNextResistance().SetValue(500, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 
   //Compliances
   SEFluidCircuitPath& Path8 = fluidCircuit.CreatePath(Node3,Node4,"Path8");
-  Path8.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path8.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path8.GetSourceNode().GetNextVolume().SetValue(0.0,VolumeUnit::m3);
   SEFluidCircuitPath& Path9 = fluidCircuit.CreatePath(Node5,Node7,"Path9");
-  Path9.GetNextCompliance().SetValue(0.0001, FlowComplianceUnit::m3_Per_Pa);
+  Path9.GetNextCompliance().SetValue(0.0001, VolumePerPressureUnit::m3_Per_Pa);
   Path9.GetSourceNode().GetNextVolume().SetValue(0.0,VolumeUnit::m3);
 }
 
@@ -3671,24 +3671,24 @@ void CommonDataModelTest::TestSetup41ValidationComprehensive1Pulse()
 
   //Resistors
   SEFluidCircuitPath& Path11 = fluidCircuit.CreatePath(Node2,Node1,"Path11");
-  Path11.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path11.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node2,Node1,"Path3");
-  Path3.GetNextResistance().SetValue(2000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path3.GetNextResistance().SetValue(2000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path5 = fluidCircuit.CreatePath(Node3,Node2,"Path5");
-  Path5.GetNextResistance().SetValue(1500, FlowResistanceUnit::Pa_s_Per_m3);
+  Path5.GetNextResistance().SetValue(1500, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path6 = fluidCircuit.CreatePath(Node3,Node4,"Path6");
-  Path6.GetNextResistance().SetValue(400, FlowResistanceUnit::Pa_s_Per_m3);
+  Path6.GetNextResistance().SetValue(400, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path10 = fluidCircuit.CreatePath(Node5,Node7,"Path10");
-  Path10.GetNextResistance().SetValue(200, FlowResistanceUnit::Pa_s_Per_m3);
+  Path10.GetNextResistance().SetValue(200, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path12 = fluidCircuit.CreatePath(Node6,Node7,"Path12");
-  Path12.GetNextResistance().SetValue(500, FlowResistanceUnit::Pa_s_Per_m3);
+  Path12.GetNextResistance().SetValue(500, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 
   //Compliances
   SEFluidCircuitPath& Path8 = fluidCircuit.CreatePath(Node3,Node4,"Path8");
-  Path8.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path8.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path8.GetSourceNode().GetNextVolume().SetValue(0.0,VolumeUnit::m3);
   SEFluidCircuitPath& Path9 = fluidCircuit.CreatePath(Node5,Node7,"Path9");
-  Path9.GetNextCompliance().SetValue(0.0001, FlowComplianceUnit::m3_Per_Pa);
+  Path9.GetNextCompliance().SetValue(0.0001, VolumePerPressureUnit::m3_Per_Pa);
   Path9.GetSourceNode().GetNextVolume().SetValue(0.0,VolumeUnit::m3);
 }
 
@@ -3737,24 +3737,24 @@ void CommonDataModelTest::TestSetup41ValidationComprehensive1SINCentered()
 
   //Resistors
   SEFluidCircuitPath& Path11 = fluidCircuit.CreatePath(Node1,Node2,"Path11");
-  Path11.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path11.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit.CreatePath(Node1,Node2,"Path3");
-  Path3.GetNextResistance().SetValue(2000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path3.GetNextResistance().SetValue(2000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path5 = fluidCircuit.CreatePath(Node2,Node3,"Path5");
-  Path5.GetNextResistance().SetValue(1500, FlowResistanceUnit::Pa_s_Per_m3);
+  Path5.GetNextResistance().SetValue(1500, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path6 = fluidCircuit.CreatePath(Node3,Node4,"Path6");
-  Path6.GetNextResistance().SetValue(400, FlowResistanceUnit::Pa_s_Per_m3);
+  Path6.GetNextResistance().SetValue(400, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path10 = fluidCircuit.CreatePath(Node5,Node7,"Path10");
-  Path10.GetNextResistance().SetValue(200, FlowResistanceUnit::Pa_s_Per_m3);
+  Path10.GetNextResistance().SetValue(200, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path12 = fluidCircuit.CreatePath(Node6,Node7,"Path12");
-  Path12.GetNextResistance().SetValue(500, FlowResistanceUnit::Pa_s_Per_m3);
+  Path12.GetNextResistance().SetValue(500, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 
   //Compliances
   SEFluidCircuitPath& Path8 = fluidCircuit.CreatePath(Node3,Node4,"Path8");
-  Path8.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path8.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path8.GetSourceNode().GetNextVolume().SetValue(0.0,VolumeUnit::m3);
   SEFluidCircuitPath& Path9 = fluidCircuit.CreatePath(Node5,Node7,"Path9");
-  Path9.GetNextCompliance().SetValue(0.0001, FlowComplianceUnit::m3_Per_Pa);
+  Path9.GetNextCompliance().SetValue(0.0001, VolumePerPressureUnit::m3_Per_Pa);
   Path9.GetSourceNode().GetNextVolume().SetValue(0.0,VolumeUnit::m3);
 }
 
@@ -3801,24 +3801,24 @@ void CommonDataModelTest::TestSetup42ValidationComprehensive2DC()
 
   //Resistors
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node2,Node3,"Path2");
-  Path2.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path6 = fluidCircuit.CreatePath(Node1,Node5,"Path6");
-  Path6.GetNextResistance().SetValue(500, FlowResistanceUnit::Pa_s_Per_m3);
+  Path6.GetNextResistance().SetValue(500, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path11 = fluidCircuit.CreatePath(Node5,Node6,"Path11");
-  Path11.GetNextResistance().SetValue(450, FlowResistanceUnit::Pa_s_Per_m3);
+  Path11.GetNextResistance().SetValue(450, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 
   //Compliances
   SEFluidCircuitPath& Path12 = fluidCircuit.CreatePath(Node1,Node6,"Path12");
-  Path12.GetNextCompliance().SetValue(0.005, FlowComplianceUnit::m3_Per_Pa);
+  Path12.GetNextCompliance().SetValue(0.005, VolumePerPressureUnit::m3_Per_Pa);
   Path12.GetSourceNode().GetNextVolume().SetValue(0.0,VolumeUnit::m3);
   SEFluidCircuitPath& Path5 = fluidCircuit.CreatePath(Node1,Node5,"Path5");
-  Path5.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path5.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path5.GetSourceNode().GetNextVolume().SetValue(0.0,VolumeUnit::m3);
   SEFluidCircuitPath& Path9 = fluidCircuit.CreatePath(Node1,Node4,"Path9");
-  Path9.GetNextCompliance().SetValue(0.003, FlowComplianceUnit::m3_Per_Pa);
+  Path9.GetNextCompliance().SetValue(0.003, VolumePerPressureUnit::m3_Per_Pa);
   Path9.GetSourceNode().GetNextVolume().SetValue(0.0,VolumeUnit::m3);
   SEFluidCircuitPath& Path10 = fluidCircuit.CreatePath(Node4,Node5,"Path10");
-  Path10.GetNextCompliance().SetValue(0.0005, FlowComplianceUnit::m3_Per_Pa);
+  Path10.GetNextCompliance().SetValue(0.0005, VolumePerPressureUnit::m3_Per_Pa);
   Path10.GetSourceNode().GetNextVolume().SetValue(0.0,VolumeUnit::m3);
 }
 
@@ -3865,24 +3865,24 @@ void CommonDataModelTest::TestSetup42ValidationComprehensive2SIN()
 
   //Resistors
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node2,Node3,"Path2");
-  Path2.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path6 = fluidCircuit.CreatePath(Node1,Node5,"Path6");
-  Path6.GetNextResistance().SetValue(500, FlowResistanceUnit::Pa_s_Per_m3);
+  Path6.GetNextResistance().SetValue(500, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path11 = fluidCircuit.CreatePath(Node5,Node6,"Path11");
-  Path11.GetNextResistance().SetValue(450, FlowResistanceUnit::Pa_s_Per_m3);
+  Path11.GetNextResistance().SetValue(450, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 
   //Compliances
   SEFluidCircuitPath& Path12 = fluidCircuit.CreatePath(Node1,Node6,"Path12");
-  Path12.GetNextCompliance().SetValue(0.005, FlowComplianceUnit::m3_Per_Pa);
+  Path12.GetNextCompliance().SetValue(0.005, VolumePerPressureUnit::m3_Per_Pa);
   Path12.GetSourceNode().GetNextVolume().SetValue(0.0,VolumeUnit::m3);
   SEFluidCircuitPath& Path5 = fluidCircuit.CreatePath(Node1,Node5,"Path5");
-  Path5.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path5.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path5.GetSourceNode().GetNextVolume().SetValue(0.0,VolumeUnit::m3);
   SEFluidCircuitPath& Path9 = fluidCircuit.CreatePath(Node1,Node4,"Path9");
-  Path9.GetNextCompliance().SetValue(0.003, FlowComplianceUnit::m3_Per_Pa);
+  Path9.GetNextCompliance().SetValue(0.003, VolumePerPressureUnit::m3_Per_Pa);
   Path9.GetSourceNode().GetNextVolume().SetValue(0.0,VolumeUnit::m3);
   SEFluidCircuitPath& Path10 = fluidCircuit.CreatePath(Node4,Node5,"Path10");
-  Path10.GetNextCompliance().SetValue(0.0005, FlowComplianceUnit::m3_Per_Pa);
+  Path10.GetNextCompliance().SetValue(0.0005, VolumePerPressureUnit::m3_Per_Pa);
   Path10.GetSourceNode().GetNextVolume().SetValue(0.0,VolumeUnit::m3);
 }
 
@@ -3929,24 +3929,24 @@ void CommonDataModelTest::TestSetup42ValidationComprehensive2Pulse()
 
   //Resistors
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node2,Node3,"Path2");
-  Path2.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path6 = fluidCircuit.CreatePath(Node1,Node5,"Path6");
-  Path6.GetNextResistance().SetValue(500, FlowResistanceUnit::Pa_s_Per_m3);
+  Path6.GetNextResistance().SetValue(500, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path11 = fluidCircuit.CreatePath(Node5,Node6,"Path11");
-  Path11.GetNextResistance().SetValue(450, FlowResistanceUnit::Pa_s_Per_m3);
+  Path11.GetNextResistance().SetValue(450, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 
   //Compliances
   SEFluidCircuitPath& Path12 = fluidCircuit.CreatePath(Node1,Node6,"Path12");
-  Path12.GetNextCompliance().SetValue(0.005, FlowComplianceUnit::m3_Per_Pa);
+  Path12.GetNextCompliance().SetValue(0.005, VolumePerPressureUnit::m3_Per_Pa);
   Path12.GetSourceNode().GetNextVolume().SetValue(0.0,VolumeUnit::m3);
   SEFluidCircuitPath& Path5 = fluidCircuit.CreatePath(Node1,Node5,"Path5");
-  Path5.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path5.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path5.GetSourceNode().GetNextVolume().SetValue(0.0,VolumeUnit::m3);
   SEFluidCircuitPath& Path9 = fluidCircuit.CreatePath(Node1,Node4,"Path9");
-  Path9.GetNextCompliance().SetValue(0.003, FlowComplianceUnit::m3_Per_Pa);
+  Path9.GetNextCompliance().SetValue(0.003, VolumePerPressureUnit::m3_Per_Pa);
   Path9.GetSourceNode().GetNextVolume().SetValue(0.0,VolumeUnit::m3);
   SEFluidCircuitPath& Path10 = fluidCircuit.CreatePath(Node4,Node5,"Path10");
-  Path10.GetNextCompliance().SetValue(0.0005, FlowComplianceUnit::m3_Per_Pa);
+  Path10.GetNextCompliance().SetValue(0.0005, VolumePerPressureUnit::m3_Per_Pa);
   Path10.GetSourceNode().GetNextVolume().SetValue(0.0,VolumeUnit::m3);
 }
 
@@ -3992,24 +3992,24 @@ void CommonDataModelTest::TestSetup42ValidationComprehensive2SINCentered()
 
   //Resistors
   SEFluidCircuitPath& Path2 = fluidCircuit.CreatePath(Node3,Node2,"Path2");
-  Path2.GetNextResistance().SetValue(1000, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(1000, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path6 = fluidCircuit.CreatePath(Node1,Node5,"Path6");
-  Path6.GetNextResistance().SetValue(500, FlowResistanceUnit::Pa_s_Per_m3);
+  Path6.GetNextResistance().SetValue(500, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path11 = fluidCircuit.CreatePath(Node5,Node6,"Path11");
-  Path11.GetNextResistance().SetValue(450, FlowResistanceUnit::Pa_s_Per_m3);
+  Path11.GetNextResistance().SetValue(450, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 
   //Compliances
   SEFluidCircuitPath& Path12 = fluidCircuit.CreatePath(Node6,Node1,"Path12");
-  Path12.GetNextCompliance().SetValue(0.005, FlowComplianceUnit::m3_Per_Pa);
+  Path12.GetNextCompliance().SetValue(0.005, VolumePerPressureUnit::m3_Per_Pa);
   Path12.GetSourceNode().GetNextVolume().SetValue(0.0,VolumeUnit::m3);
   SEFluidCircuitPath& Path5 = fluidCircuit.CreatePath(Node1,Node5,"Path5");
-  Path5.GetNextCompliance().SetValue(0.001, FlowComplianceUnit::m3_Per_Pa);
+  Path5.GetNextCompliance().SetValue(0.001, VolumePerPressureUnit::m3_Per_Pa);
   Path5.GetSourceNode().GetNextVolume().SetValue(0.0,VolumeUnit::m3);
   SEFluidCircuitPath& Path9 = fluidCircuit.CreatePath(Node1,Node4,"Path9");
-  Path9.GetNextCompliance().SetValue(0.003, FlowComplianceUnit::m3_Per_Pa);
+  Path9.GetNextCompliance().SetValue(0.003, VolumePerPressureUnit::m3_Per_Pa);
   Path9.GetSourceNode().GetNextVolume().SetValue(0.0,VolumeUnit::m3);
   SEFluidCircuitPath& Path10 = fluidCircuit.CreatePath(Node4,Node5,"Path10");
-  Path10.GetNextCompliance().SetValue(0.0005, FlowComplianceUnit::m3_Per_Pa);
+  Path10.GetNextCompliance().SetValue(0.0005, VolumePerPressureUnit::m3_Per_Pa);
   Path10.GetSourceNode().GetNextVolume().SetValue(0.0,VolumeUnit::m3);
 }
 
@@ -4521,11 +4521,11 @@ void CommonDataModelTest::BasicCircuitTest(const std::string& outputDirectory)
   //-----------------------------------------------------------
   //Paths
   SEFluidCircuitPath& Path2 = fluidCircuit->CreatePath(Node1, Node2, "Path2");
-  Path2.GetNextResistance().SetValue(25, FlowResistanceUnit::Pa_s_Per_m3);
+  Path2.GetNextResistance().SetValue(25, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path3 = fluidCircuit->CreatePath(Node2, Node3, "Path3");
-  Path3.GetNextResistance().SetValue(25, FlowResistanceUnit::Pa_s_Per_m3);
+  Path3.GetNextResistance().SetValue(25, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   SEFluidCircuitPath& Path4 = fluidCircuit->CreatePath(Node3, Node4, "Path4");
-  Path4.GetNextResistance().SetValue(25, FlowResistanceUnit::Pa_s_Per_m3);
+  Path4.GetNextResistance().SetValue(25, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 
   //Pressure source
   SEFluidCircuitPath& Path1 = fluidCircuit->CreatePath(Node4, Node1, "Path1");

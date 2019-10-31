@@ -36,7 +36,7 @@ SEScalar::~SEScalar()
 
 void SEScalar::Clear()
 {
-  SEProperty::Clear();  
+  SEProperty::Clear();
   m_readOnly = false;
   Invalidate();
 }
@@ -51,7 +51,7 @@ bool SEScalar::Set(const SEScalar& s)
     throw CommonDataModelException("Scalar is marked read-only");
   m_value = s.m_value;
   m_isnan = (std::isnan(m_value)) ? true : false;
-  m_isinf = (std::isinf(m_value)) ? true : false;  
+  m_isinf = (std::isinf(m_value)) ? true : false;
   return true;
 }
 
@@ -151,6 +151,27 @@ double SEScalar::IncrementValue(double d)
     return d;
   }
   SetValue(m_value+d);
+  return m_value;
+}
+
+
+double SEScalar::Multiply(const SEScalar& s)
+{
+  if (!s.IsValid())
+    Invalidate();
+  else
+    MultiplyValue(s.GetValue());
+  return m_value;
+}
+
+double SEScalar::MultiplyValue(double d)
+{
+  if (!IsValid())
+  {
+    SetValue(d);
+    return d;
+  }
+  SetValue(m_value * d);
   return m_value;
 }
 

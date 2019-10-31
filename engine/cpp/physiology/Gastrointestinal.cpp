@@ -97,7 +97,6 @@ void Gastrointestinal::Initialize()
     // We are going to initialize the body with 2 meals so we process the default meal twice
     // 1 meal about 5hrs ago, and one meal at the start of the scenario
     GetStomachContents().Copy(*m_data.GetConfiguration().GetDefaultStomachContents());
-    m_data.GetPatient().GetWeight().IncrementValue(2 * m_StomachContents->GetWeight(MassUnit::g), MassUnit::g);
     // Now digest the contents
     DigestStomachNutrients(5 * 60 * 60);//hrs to seconds (note decrement is off, so the stomach will stay full)    
                                         // TODO Should I be getting the weight here? After we digest?
@@ -158,13 +157,13 @@ void Gastrointestinal::AtSteadyState()
       Info(m_ss);
 #endif
       // Remove the default meal weight from the patient
-      m_data.GetPatient().GetWeight().IncrementValue(-m_StomachContents->GetWeight(MassUnit::g), MassUnit::g);
+      m_data.GetCurrentPatient().GetWeight().IncrementValue(-m_StomachContents->GetWeight(MassUnit::g), MassUnit::g);
       // Overwrite meal contents into our stomach
       GetStomachContents().Copy(meal);
       if (!m_StomachContents->HasWater() || m_StomachContents->GetWater().IsZero())
         m_StomachContents->GetWater().SetValue(m_secretionRate_mL_Per_s*m_dT_s, VolumeUnit::mL);//Add a time steps worth of water if empty
       // Increase our weight by the meal
-      m_data.GetPatient().GetWeight().IncrementValue(m_StomachContents->GetWeight(MassUnit::g), MassUnit::g);
+      m_data.GetCurrentPatient().GetWeight().IncrementValue(m_StomachContents->GetWeight(MassUnit::g), MassUnit::g);
       // Empty out the gut
       m_SmallIntestineChyme->GetVolume().SetValue(0, VolumeUnit::mL);
       m_SmallIntestineChymeGlucose->GetMass().SetValue(0,MassUnit::ug);
@@ -271,7 +270,7 @@ void Gastrointestinal::PreProcess()
       }
       DefaultNutritionRates(c->GetNutrition());
       m_StomachContents->Increment(c->GetNutrition());
-      m_data.GetPatient().GetWeight().IncrementValue(c->GetNutrition().GetWeight(MassUnit::kg), MassUnit::kg);
+      m_data.GetCurrentPatient().GetWeight().IncrementValue(c->GetNutrition().GetWeight(MassUnit::kg), MassUnit::kg);
       m_data.GetActions().GetPatientActions().RemoveConsumeNutrients();
     }
     GastricSecretion(m_dT_s); // Move some water from the Gut EV fluids to the Stomach

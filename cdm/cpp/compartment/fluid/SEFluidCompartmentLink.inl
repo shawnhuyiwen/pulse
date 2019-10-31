@@ -44,7 +44,7 @@ bool SEFluidCompartmentLink<FLUID_COMPARTMENT_LINK_TYPES>::HasCompliance() const
   return false;
 }
 template<FLUID_COMPARTMENT_LINK_TEMPLATE>
-double SEFluidCompartmentLink<FLUID_COMPARTMENT_LINK_TYPES>::GetCompliance(const FlowComplianceUnit& unit) const
+double SEFluidCompartmentLink<FLUID_COMPARTMENT_LINK_TYPES>::GetCompliance(const VolumePerPressureUnit& unit) const
 {
   if (m_Path != nullptr)
     return m_Path->GetNextCompliance(unit);
@@ -86,7 +86,7 @@ bool SEFluidCompartmentLink<FLUID_COMPARTMENT_LINK_TYPES>::HasResistance() const
   return false;
 }
 template<FLUID_COMPARTMENT_LINK_TEMPLATE>
-double SEFluidCompartmentLink<FLUID_COMPARTMENT_LINK_TYPES>::GetResistance(const FlowResistanceUnit& unit) const
+double SEFluidCompartmentLink<FLUID_COMPARTMENT_LINK_TYPES>::GetResistance(const PressureTimePerVolumeUnit& unit) const
 {
   if (m_Path != nullptr)
     return m_Path->GetNextResistance(unit);

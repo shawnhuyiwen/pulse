@@ -34,10 +34,10 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
   protected SEScalarVolumePerTime             pulmonaryMeanCapillaryFlow;
   protected SEScalarVolumePerTime             pulmonaryMeanShuntFlow;
   protected SEScalarPressure                  pulmonarySystolicArterialPressure;
-  protected SEScalarFlowResistance            pulmonaryVascularResistance;
+  protected SEScalarPressureTimePerVolume     pulmonaryVascularResistance;
   protected SEScalarPressureTimePerVolumeArea pulmonaryVascularResistanceIndex;
   protected SEScalarPressure                  pulsePressure;
-  protected SEScalarFlowResistance            systemicVascularResistance;
+  protected SEScalarPressureTimePerVolume     systemicVascularResistance;
   protected SEScalarPressure                  systolicArterialPressure;
 
   public SECardiovascularSystem()
@@ -179,13 +179,13 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
     if (src.hasPulmonarySystolicArterialPressure())
       SEScalarPressure.load(src.getPulmonarySystolicArterialPressure(),dst.getPulmonarySystolicArterialPressure());
     if (src.hasPulmonaryVascularResistance())
-      SEScalarFlowResistance.load(src.getPulmonaryVascularResistance(),dst.getPulmonaryVascularResistance());
+      SEScalarPressureTimePerVolume.load(src.getPulmonaryVascularResistance(),dst.getPulmonaryVascularResistance());
     if (src.hasPulmonaryVascularResistanceIndex())
       SEScalarPressureTimePerVolumeArea.load(src.getPulmonaryVascularResistanceIndex(),dst.getPulmonaryVascularResistanceIndex());
     if (src.hasPulsePressure())
       SEScalarPressure.load(src.getPulsePressure(),dst.getPulsePressure());
     if (src.hasSystemicVascularResistance())
-      SEScalarFlowResistance.load(src.getSystemicVascularResistance(),dst.getSystemicVascularResistance());
+      SEScalarPressureTimePerVolume.load(src.getSystemicVascularResistance(),dst.getSystemicVascularResistance());
     if (src.hasSystolicArterialPressure())
       SEScalarPressure.load(src.getSystolicArterialPressure(),dst.getSystolicArterialPressure());
     if (src.hasMeanArterialCarbonDioxidePartialPressure())
@@ -250,13 +250,13 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
     if (src.hasPulmonarySystolicArterialPressure())
       dst.setPulmonarySystolicArterialPressure(SEScalarPressure.unload(src.getPulmonarySystolicArterialPressure())); 
     if (src.hasPulmonaryVascularResistance())
-      dst.setPulmonaryVascularResistance(SEScalarFlowResistance.unload(src.getPulmonaryVascularResistance())); 
+      dst.setPulmonaryVascularResistance(SEScalarPressureTimePerVolume.unload(src.getPulmonaryVascularResistance())); 
     if (src.hasPulmonaryVascularResistanceIndex())
       dst.setPulmonaryVascularResistanceIndex(SEScalarPressureTimePerVolumeArea.unload(src.getPulmonaryVascularResistanceIndex())); 
     if (src.hasPulsePressure())
       dst.setPulsePressure(SEScalarPressure.unload(src.getPulsePressure()));
     if (src.hasSystemicVascularResistance())
-      dst.setSystemicVascularResistance(SEScalarFlowResistance.unload(src.getSystemicVascularResistance()));    
+      dst.setSystemicVascularResistance(SEScalarPressureTimePerVolume.unload(src.getSystemicVascularResistance()));    
     if (src.hasSystolicArterialPressure())
       dst.setSystolicArterialPressure(SEScalarPressure.unload(src.getSystolicArterialPressure()));
     if (src.hasMeanArterialCarbonDioxidePartialPressure())
@@ -560,10 +560,10 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
   {
     return pulmonaryVascularResistance == null ? false : pulmonaryVascularResistance.isValid();
   }
-  public SEScalarFlowResistance getPulmonaryVascularResistance()
+  public SEScalarPressureTimePerVolume getPulmonaryVascularResistance()
   {
     if (pulmonaryVascularResistance == null)
-      pulmonaryVascularResistance = new SEScalarFlowResistance();
+      pulmonaryVascularResistance = new SEScalarPressureTimePerVolume();
     return pulmonaryVascularResistance;
   }
   
@@ -599,10 +599,10 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
   {
     return systemicVascularResistance == null ? false : systemicVascularResistance.isValid();
   }
-  public SEScalarFlowResistance getSystemicVascularResistance()
+  public SEScalarPressureTimePerVolume getSystemicVascularResistance()
   {
     if (systemicVascularResistance == null)
-      systemicVascularResistance = new SEScalarFlowResistance();
+      systemicVascularResistance = new SEScalarPressureTimePerVolume();
     return systemicVascularResistance;
   }
 

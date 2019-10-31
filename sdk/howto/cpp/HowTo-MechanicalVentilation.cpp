@@ -23,7 +23,7 @@
 #include "patient/actions/SEAirwayObstruction.h"
 #include "patient/actions/SEAsthmaAttack.h"
 #include "patient/actions/SEAcuteStress.h"
-#include "patient/actions/SEApnea.h"
+#include "patient/actions/SEDyspnea.h"
 #include "patient/actions/SETensionPneumothorax.h"
 #include "patient/actions/SEBrainInjury.h"
 #include "patient/actions/SESubstanceBolus.h"
@@ -35,14 +35,14 @@
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarPressure.h"
+#include "properties/SEScalarPressureTimePerVolume.h"
+#include "properties/SEScalarPressureTimePerVolumeArea.h"
 #include "properties/SEScalarTemperature.h"
 #include "properties/SEScalarTime.h"
 #include "properties/SEScalarVolume.h"
+#include "properties/SEScalarVolumePerPressure.h"
 #include "properties/SEScalarVolumePerTime.h"
-#include "properties/SEScalarFlowResistance.h"
-#include "properties/SEScalarFlowCompliance.h"
 #include "properties/SEScalarVolumePerTimeArea.h"
-#include "properties/SEScalarPressureTimePerVolumeArea.h"
 #include "properties/SEScalarLengthPerTime.h"
 #include "properties/SEScalar0To1.h"
 #include "engine/SEEventManager.h"
@@ -58,30 +58,6 @@ public:
   {
     switch (type)
     {     
-      case eEvent::MildAcuteRespiratoryDistress:
-      {
-        if (active)
-          m_Logger->Info("Do something for MildAcuteRespiratoryDistress");
-        else
-          m_Logger->Info("Stop doing something for MildAcuteRespiratoryDistress");
-        break;
-      }
-      case eEvent::ModerateAcuteRespiratoryDistress:
-      {
-        if (active)
-          m_Logger->Info("Do something for ModerateAcuteRespiratoryDistress");
-        else
-          m_Logger->Info("Stop doing something for ModerateAcuteRespiratoryDistress");
-        break;
-      }
-      case eEvent::SevereAcuteRespiratoryDistress:
-      {
-        if (active)
-          m_Logger->Info("Do something for SevereAcuteRespiratoryDistress");
-        else
-          m_Logger->Info("Stop doing something for SevereAcuteRespiratoryDistress");
-        break;
-      }
       case eEvent::CardiogenicShock:
       {
         if (active)
@@ -178,14 +154,14 @@ void HowToMechanicalVentilation()
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("OxygenSaturation");
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RespirationMusclePressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryResistance", FlowResistanceUnit::cmH2O_s_Per_L);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryCompliance", FlowComplianceUnit::L_Per_cmH2O);
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryCompliance", VolumePerPressureUnit::L_Per_cmH2O);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryCapillariesWedgePressure", PressureUnit::mmHg);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryArterialPressure", PressureUnit::mmHg);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryMeanArterialPressure", PressureUnit::mmHg);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CardiacIndex", VolumePerTimeAreaUnit::L_Per_min_m2);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystemicVascularResistance", FlowResistanceUnit::cmH2O_s_Per_L);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryVascularResistance", FlowResistanceUnit::cmH2O_s_Per_L);
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystemicVascularResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryVascularResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryVascularResistanceIndex", PressureTimePerVolumeAreaUnit::dyn_s_Per_cm5_m2);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("BloodPH");
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("ArterialOxygenPressure", PressureUnit::mmHg);
@@ -301,11 +277,11 @@ void HowToMechanicalVentilation()
 
   tracker.AdvanceModelTime(60.0);
   
-  //Apnea
+  //Dyspnea
   //Maybe the muscles are getting weak?
-  SEApnea apnea;
-  apnea.GetSeverity().SetValue(0.3);
-  pe->ProcessAction(apnea);
+  SEDyspnea Dyspnea;
+  Dyspnea.GetSeverity().SetValue(0.3);
+  pe->ProcessAction(Dyspnea);
 
   //Succs
   //Make the patient stop breathing

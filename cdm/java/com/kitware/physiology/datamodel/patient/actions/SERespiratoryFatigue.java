@@ -3,15 +3,15 @@
 
 package com.kitware.physiology.datamodel.patient.actions;
 
-import com.kitware.physiology.cdm.PatientActions.ApneaData;
+import com.kitware.physiology.cdm.PatientActions.RespiratoryFatigueData;
 
 import com.kitware.physiology.datamodel.properties.SEScalar0To1;
 
-public class SEApnea extends SEPatientAction
+public class SERespiratoryFatigue extends SEPatientAction
 {
   protected SEScalar0To1 severity;
   
-  public SEApnea()
+  public SERespiratoryFatigue()
   {
     severity = null;
   }
@@ -23,7 +23,7 @@ public class SEApnea extends SEPatientAction
       severity.invalidate();
   }
   
-  public void copy(SEApnea other)
+  public void copy(SERespiratoryFatigue other)
   {
     if(this==other)
       return;
@@ -39,21 +39,21 @@ public class SEApnea extends SEPatientAction
     return hasSeverity();
   }
   
-  public static void load(ApneaData src, SEApnea dst) 
+  public static void load(RespiratoryFatigueData src, SERespiratoryFatigue dst) 
   {
     SEPatientAction.load(src.getPatientAction(), dst);
     if(src.hasSeverity())
       SEScalar0To1.load(src.getSeverity(),dst.getSeverity());
   }
   
-  public static ApneaData unload(SEApnea src)
+  public static RespiratoryFatigueData unload(SERespiratoryFatigue src)
   {
-    ApneaData.Builder dst = ApneaData.newBuilder();
+    RespiratoryFatigueData.Builder dst = RespiratoryFatigueData.newBuilder();
     unload(src,dst);
     return dst.build();
   }
   
-  protected static void unload(SEApnea src, ApneaData.Builder dst)
+  protected static void unload(SERespiratoryFatigue src, RespiratoryFatigueData.Builder dst)
   {
     SEPatientAction.unload(src,dst.getPatientActionBuilder());
     if (src.hasSeverity())
@@ -74,7 +74,7 @@ public class SEApnea extends SEPatientAction
   public String toString()
   {
     if (severity != null)
-      return "Apnea" 
+      return "Respiratory Fatigue" 
           + "\n\tSeverity: " + getSeverity();
     else
       return "Action not specified properly";

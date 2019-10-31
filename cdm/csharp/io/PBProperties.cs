@@ -178,7 +178,7 @@ public class PBProperty
   }
   #endregion
 
-  #region SEScalar MassPerTime
+  #region SEScalarMassPerTime
   public static void Load(Cdm.ScalarMassPerTimeData src, SEScalarMassPerTime dst)
   {
     Serialize(src, dst);

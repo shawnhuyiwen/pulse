@@ -7,10 +7,10 @@
 #include "properties/SEScalarElectricCurrent.h"
 #include "properties/SEScalarElectricInductance.h"
 #include "properties/SEScalarElectricResistance.h"
-#include "properties/SEScalarFlowCompliance.h"
+#include "properties/SEScalarVolumePerPressure.h"
 #include "properties/SEScalarVolumePerTime.h"
-#include "properties/SEScalarFlowInertance.h"
-#include "properties/SEScalarFlowResistance.h"
+#include "properties/SEScalarPressureTimeSquaredPerVolume.h"
+#include "properties/SEScalarPressureTimePerVolume.h"
 #include "properties/SEScalarHeatCapacitance.h"
 #include "properties/SEScalarPower.h"
 #include "properties/SEScalarHeatInductance.h"
@@ -19,7 +19,7 @@
 #define CIRCUIT_PATH_TEMPLATE typename FluxScalar, typename ResistanceScalar, typename CapacitanceScalar, typename InductanceScalar, typename PotentialScalar, typename QuantityScalar
 #define CIRCUIT_PATH_TYPES FluxScalar,ResistanceScalar,CapacitanceScalar,InductanceScalar,PotentialScalar,QuantityScalar
 #define ELECTRICAL_CIRCUIT_PATH SEScalarElectricCurrent, SEScalarElectricResistance, SEScalarElectricCapacitance, SEScalarElectricInductance, SEScalarElectricPotential, SEScalarElectricCharge
-#define FLUID_CIRCUIT_PATH SEScalarVolumePerTime, SEScalarFlowResistance, SEScalarFlowCompliance, SEScalarFlowInertance, SEScalarPressure, SEScalarVolume
+#define FLUID_CIRCUIT_PATH SEScalarVolumePerTime, SEScalarPressureTimePerVolume, SEScalarVolumePerPressure, SEScalarPressureTimeSquaredPerVolume, SEScalarPressure, SEScalarVolume
 #define THERMAL_CIRCUIT_PATH SEScalarPower, SEScalarHeatResistance, SEScalarHeatCapacitance, SEScalarHeatInductance, SEScalarTemperature, SEScalarEnergy
 
 template<CIRCUIT_PATH_TEMPLATE>

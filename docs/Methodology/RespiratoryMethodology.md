@@ -183,7 +183,7 @@ analysis during the next time step.
 
 Assessments are called outside of the system to allow compiling of information from multiple systems.
 
-<center><img src="./Images/Respiratory/Respiratory_Figure02.png" width="900"></center>
+<center><img src="./Images/Respiratory/RespiratoryFlow.png" width="900"></center>
 <center> 
 <i>Figure 2. The data flow for the %Respiratory System consists of Preprocess,
 Process, and Postprocess. Preprocess sets the circuit element values based on
@@ -217,7 +217,7 @@ direction, preventing flow in the opposite direction. Such functional elements
 are employed to represent insults that allow unidirectional gas flow into the
 pleural cavity through an opening at the alveoli or the thoracic wall.
 
-<img src="./Images/Respiratory/Respiratory_Figure03.png" width="650">
+<img src="./Images/Respiratory/RespiratoryCircuit.png" width="650">
 <center>
 <i>Figure 3. Circuit diagram of the %Respiratory System. The diagram depicts a
 closed circuit of the seven major compartments (trachea, right and left anatomic
@@ -1319,7 +1319,7 @@ The actions and interventions associated with the %Respiratory System were valid
 |	Bronchoconstriction	|	Bronchoconstriction with varying severities	|<span class="success">	25	</span>|<span class="warning">	0	</span>|<span class="danger">	5	</span>|
 |	MainstemIntubation	|	Right and left mainstem intubation and correction (with Succs)	|<span class="success">	22	</span>|<span class="warning">	3	</span>|<span class="danger">	0	</span>|
 |	EsophagealIntubation	|	Esophageal intubation and correction (with Succs)	|<span class="success">	15	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|	Apnea	|	Varied severities of respiratory apnea	|<span class="success">	6	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
+|	Dyspnea	|	Varied severities of respiratory dyspnea	|<span class="success">	6	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	Supplemental Oxygen	|	Nasal cannula, simple mask, and non-rebreather mask	|<span class="success">	3	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |		|	Total	|<span class="success">	258	</span>|<span class="warning">	28	</span>|<span class="danger">	27	</span>|
 
@@ -1693,22 +1693,22 @@ The acute asthma action was validated against three scenarios: moderate (severit
 |	Life threatening acute asthma attack (Severity = 0.9) 	|		|	30	|	550	|<span class="success">	< 33% of Normal @cite britishGuideline2014asthma	</span>|<span class="success">	> 25 @cite britishGuideline2014asthma	</span>|<span class="success">	< 60% of normal @cite limmer2011emergency	</span>|<span class="success">	> 120 @cite papiris2001clinical; > 110 @cite britishGuideline2014asthma Arrhythmia, @cite britishGuideline2014asthma	</span>|<span class="danger">	Decrease NO Pulsus Paradoxus 85 mm Hg @cite papiris2001clinical	</span>|<span class="success">	< 92% @cite britishGuideline2014asthma	</span>|<span class="success">	< 60 mmHg @cite britishGuideline2014asthma	</span>|<span class="warning">	Normal or Slight Increase > 45 mm Hg @cite papiris2001clinical, @cite britishGuideline2014asthma 	</span>|<span class="success">	Decrease @cite van1991physical	</span>|
 |	No asthma (Severity = 0.0)	|		|	580	|	775	|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|
 
-### Apnea
+### Dyspnea
 
-Apnea directly effects the achieved respiratory driver (breathing muscles) pressure amplitude.  The more severe the apnea, the lower the tidal volume.
+Dyspnea directly effects the achieved respiratory driver (breathing muscles) pressure amplitude.  The more severe the dyspnea, the lower the tidal volume.
 
 <center><br>
-<i>Table 21. Validation matrix for physiological responses due to varying severities of apnea.</i>
+<i>Table 21. Validation matrix for physiological responses due to varying severities of dyspnea.</i>
 </center>
 
 |	Segment	|	Notes	|	Action Occurance Time (s)	|	Sampled Scenario Time (s)	|	Tidal Volume (mL)	|
 |	---	|	---	|	---	|	---	|	---	|
-|	Apnea: Severity = 0.3	|	Mild	|	30	|	210	|<span class="success">	Decrease to ~70% of healthy	</span>|
-|	Apnea: Severity = 0.0	|	Healthy	|	210	|	510	|<span class="success">	Normal	</span>|
-|	Apnea: Severity = 0.6	|	Moderate	|	510	|	690	|<span class="success">	Decrease to ~30% of healthy	</span>|
-|	Apnea: Severity = 0.0	|	Healthy	|	690	|	990	|<span class="success">	Normal	</span>|
-|	Apnea: Severity = 1.0	|	Severe	|	990	|	1170	|<span class="success">	Decrease to 0	</span>|
-|	Apnea: Severity = 0.0	|	Healthy	|	1170	|	1650	|<span class="success">	Normal	</span>|
+|	Dyspnea: Severity = 0.3	|	Mild	|	30	|	210	|<span class="success">	Decrease to ~70% of healthy	</span>|
+|	Dyspnea: Severity = 0.0	|	Healthy	|	210	|	510	|<span class="success">	Normal	</span>|
+|	Dyspnea: Severity = 0.6	|	Moderate	|	510	|	690	|<span class="success">	Decrease to ~30% of healthy	</span>|
+|	Dyspnea: Severity = 0.0	|	Healthy	|	690	|	990	|<span class="success">	Normal	</span>|
+|	Dyspnea: Severity = 1.0	|	Severe	|	990	|	1170	|<span class="success">	Decrease to 0	</span>|
+|	Dyspnea: Severity = 0.0	|	Healthy	|	1170	|	1650	|<span class="success">	Normal	</span>|
 
 ### Supplemental Oxygen
 

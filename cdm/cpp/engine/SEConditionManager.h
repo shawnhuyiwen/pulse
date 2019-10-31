@@ -4,15 +4,17 @@
 #pragma once
 class SECondition;
 //Patient Conditions
+class SEAcuteRespiratoryDistressSyndrome;
 class SEChronicAnemia;
 class SEChronicObstructivePulmonaryDisease;
 class SEChronicHeartFailure;
+class SEChronicPericardialEffusion;
 class SEChronicRenalStenosis;
 class SEChronicVentricularSystolicDysfunction;
 class SEConsumeMeal;
-class SELobarPneumonia;
-class SEChronicPericardialEffusion;
 class SEImpairedAlveolarExchange;
+class SELobarPneumonia;
+class SESepsis;
 // Environment Conditions
 class SEInitialEnvironmentConditions;
 class SESubstanceManager;
@@ -41,6 +43,10 @@ public:
   bool IsEmpty() const;
 
   // Patient Conditions
+
+  bool HasAcuteRespiratoryDistressSyndrome() const;
+  SEAcuteRespiratoryDistressSyndrome* GetAcuteRespiratoryDistressSyndrome();
+  const SEAcuteRespiratoryDistressSyndrome* GetAcuteRespiratoryDistressSyndrome() const;
 
   bool HasChronicAnemia() const;
   SEChronicAnemia* GetChronicAnemia();
@@ -75,6 +81,10 @@ public:
   SELobarPneumonia* GetLobarPneumonia();
   const SELobarPneumonia* GetLobarPneumonia() const;
 
+  bool HasSepsis() const;
+  SESepsis* GetSepsis();
+  const SESepsis* GetSepsis() const;
+
   // Environment Conditions
 
   bool HasInitialEnvironmentConditions() const;
@@ -87,6 +97,7 @@ public:
 protected:
 
   SESubstanceManager&                      m_Substances;
+  SEAcuteRespiratoryDistressSyndrome*      m_ARDS;
   SEChronicAnemia*                         m_Anemia;
   SEConsumeMeal*                           m_ConsumeMeal;
   SEChronicObstructivePulmonaryDisease*    m_COPD;
@@ -95,6 +106,7 @@ protected:
   SEChronicPericardialEffusion*            m_PericardialEffusion;
   SELobarPneumonia*                        m_LobarPneumonia;
   SEChronicRenalStenosis*                  m_RenalStenosis;
+  SESepsis*                                m_Sepsis;
 
   SEInitialEnvironmentConditions*          m_InitialEnvironmentConditions;
 

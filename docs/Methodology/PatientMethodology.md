@@ -56,7 +56,7 @@ Features and Capabilities
 |	Heart Rate Baseline	|	Optional	|	\f[Hr[bpm] = 72\f]	|	50 bpm	|	110 bpm	|	Bradycardia < 60 bpm & Tachycardia > 100 bpm.	|
 |	Systolic Arterial Pressure Baseline	|	Optional	|	\f[Sys[mmHg] = 114\f]	|	90 mmHg	|	120 mmHg	|	No hypotension or hypertension. 	|
 |	Diastolic Arterial Pressure Baseline	|	Optional	|	\f[Dia[mmHg] = 73.5\f]	|	60 mmHg	|	80 mmHg	|	No hypotension or hypertension. Includes pressure fraction check: Dia > 0.75 Sys.	|
-|	Respiration Rate Baseline	|	Optional	|	\f[Rr[bpm] = 16\f]	|	12 bpm	|	20 bpm	|		|
+|	Respiration Rate Baseline	|	Optional	|	\f[Rr[bpm] = 12\f]	|	8 bpm	|	20 bpm	|		|
 |	Alveoli Surface Area	|	Optional	|	\f[Asa[{m^2}] = \frac{{{\rm{Tlc[L]}}}}{{6.17}} \times {\rm{70}}\f]	|	 -	|	 -	|	Calculated using standard Tlc (6.17 L) @cite ganong1995review and standard Asa (70 m2) @cite roberts2000gaseous.	|
 |	Right Lung Ratio	|	Optional	|	\f[Rlr = 0.525\f]	|	0.5	|	0.6	|		|
 |	Skin Surface Area	|	Optional	|	\f[Ssa[{m^2}] = 0.20247W{[kg]^{0.45}}H{[m]^{0.725}}\f]	|	 -	|	 -	|	@cite du1989formula	|

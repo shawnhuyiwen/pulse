@@ -490,7 +490,7 @@
         "Precision": 4
       },
       "Category": "LiquidCompartment",
-      "CompartmentName": "LeftDeadSpace",
+      "CompartmentName": "LeftAnatomicDeadSpace",
       "SubstanceName": "Albuterol",
       "PropertyName": "Concentration",
       "Unit": "ug/L"
@@ -508,7 +508,7 @@
         "Precision": 4
       },
       "Category": "LiquidCompartment",
-      "CompartmentName": "RightDeadSpace",
+      "CompartmentName": "RightAnatomicDeadSpace",
       "SubstanceName": "Albuterol",
       "PropertyName": "Concentration",
       "Unit": "ug/L"
@@ -544,7 +544,7 @@
         "Precision": 4
       },
       "Category": "LiquidCompartment",
-      "CompartmentName": "LeftDeadSpace",
+      "CompartmentName": "LeftAnatomicDeadSpace",
       "SubstanceName": "Albuterol",
       "PropertyName": "MassDeposited",
       "Unit": "ug"
@@ -562,7 +562,7 @@
         "Precision": 4
       },
       "Category": "LiquidCompartment",
-      "CompartmentName": "RightDeadSpace",
+      "CompartmentName": "RightAnatomicDeadSpace",
       "SubstanceName": "Albuterol",
       "PropertyName": "MassDeposited",
       "Unit": "ug"
@@ -646,7 +646,14 @@
         "Precision": 4
       },
       "Category": "Physiology",
-      "PropertyName": "PulmonaryResistance",
+      "PropertyName": "InspiratoryPulmonaryResistance",
+      "Unit": "cmH2O s/L"
+    }, {
+	  "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "Physiology",
+      "PropertyName": "ExpiratoryPulmonaryResistance",
       "Unit": "cmH2O s/L"
     }]
   },

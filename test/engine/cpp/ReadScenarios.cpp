@@ -21,47 +21,68 @@ void PulseEngineTest::ReadScenarios(const std::string& rptDirectory)
   subMgr.LoadSubstanceDirectory();
   PulseScenario scenario(subMgr);
 
-  std::string dir = GetCurrentWorkingDirectory();
-  dir.append("/verification/scenarios");
+  std::string line;
+  std::string sce_dir;
+  std::ifstream run_config;
+  run_config.open(GetCurrentWorkingDirectory()+"/run.config");
+  while (!run_config.eof()) // To get you all the lines.
+  {
+    std::getline(run_config, line); // Get the line.
+    size_t pos = line.find("scenario_dir=");
+    if (pos != std::string::npos)
+    {
+      sce_dir = line.substr(13);
+      break;
+    }
+  }
+  run_config.close();
 
   SETestReport testReport(m_Logger);
   SETestSuite&  testSuite = testReport.CreateTestSuite();
   testSuite.SetName(testName);
 
-  std::vector<std::string> files;
-  ListFiles(dir, files, ".json");
-  for (std::vector<std::string>::iterator it = files.begin(); it != files.end(); ++it)
+  if (sce_dir.empty())
   {
-    if (it->find("json") != std::string::npos)
+    SETestCase& testCase = testSuite.CreateTestCase();
+    testCase.AddFailure("Unable to find run.config to get scenario directory");
+  }
+  else
+  {
+    std::vector<std::string> files;
+    ListFiles(sce_dir, files, ".json");
+    for (std::vector<std::string>::iterator it = files.begin(); it != files.end(); ++it)
     {
-      if (it->find("PFT@") != std::string::npos ||
+      if (it->find("json") != std::string::npos)
+      {
+        if (it->find("PFT@") != std::string::npos ||
           it->find("CBC@") != std::string::npos ||
-          it->find("MP@") != std::string::npos  ||
+          it->find("MP@") != std::string::npos ||
           it->find("Urinalysis@") != std::string::npos)// Ignore PFT, CBC, UPanel  and MP files
-        continue;// TODO should actually peek the file and ensure it starts with a <scenario> tag
+          continue;// TODO should actually peek the file and ensure it starts with a <scenario> tag
 
-      pTimer.Start("Case");
-      SETestCase& testCase = testSuite.CreateTestCase();
-      Info(it->c_str());
-      try
-      {
-        if (scenario.SerializeFromFile(*it,JSON))
+        pTimer.Start("Case");
+        SETestCase& testCase = testSuite.CreateTestCase();
+        Info(it->c_str());
+        try
         {
-          if (!scenario.IsValid())
-            testCase.AddFailure(*it + " is not a valid scenario!");
-          // todo check to see that all compartment, substances, property names are valid
+          if (scenario.SerializeFromFile(*it, JSON))
+          {
+            if (!scenario.IsValid())
+              testCase.AddFailure(*it + " is not a valid scenario!");
+            // todo check to see that all compartment, substances, property names are valid
+          }
+          else
+          {
+            testCase.AddFailure(*it + " has failed to load!");
+          }
         }
-        else
+        catch (...)
         {
-          testCase.AddFailure(*it + " has failed to load!");
+          testCase.AddFailure(*it + " has failed to load! unknown exception.");
         }
+        testCase.GetDuration().SetValue(pTimer.GetElapsedTime_s("Case"), TimeUnit::s);
+        testCase.SetName(*it);
       }
-      catch (...)
-      {
-        testCase.AddFailure(*it + " has failed to load! unknown exception.");
-      }
-      testCase.GetDuration().SetValue(pTimer.GetElapsedTime_s("Case"), TimeUnit::s);
-      testCase.SetName(*it);
     }
   }
   testReport.SerializeToFile(rptDirectory + "/" + testName + "Report.json",JSON);  

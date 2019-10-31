@@ -4,9 +4,9 @@
 #pragma once
 class SEAction;
 class SEPatientAction;
+class SEAcuteRespiratoryDistressSyndromeExacerbation;
 class SEAcuteStress;
 class SEAirwayObstruction;
-class SEApnea;
 class SEBrainInjury;
 class SEBronchoconstriction;
 class SECardiacArrest;
@@ -17,12 +17,16 @@ class SEChestCompressionForceScale;
 class SEChestOcclusiveDressing;
 class SEConsciousRespiration;
 class SEConsumeNutrients;
+class SEChronicObstructivePulmonaryDiseaseExacerbation;
+class SEDyspnea;
 class SEExercise;
 class SEHemorrhage;
 class SEIntubation;
+class SELobarPneumoniaExacerbation;
 class SEMechanicalVentilation;
 class SENeedleDecompression;
 class SEPericardialEffusion;
+class SERespiratoryFatigue;
 class SESubstanceBolus;
 class SESubstanceCompoundInfusion;
 class SESubstanceInfusion;
@@ -43,6 +47,10 @@ protected:
 public:
   ~SEPatientActionCollection();
 
+  bool HasAcuteRespiratoryDistressSyndromeExacerbation() const;
+  SEAcuteRespiratoryDistressSyndromeExacerbation* GetAcuteRespiratoryDistressSyndromeExacerbation();
+  const SEAcuteRespiratoryDistressSyndromeExacerbation* GetAcuteRespiratoryDistressSyndromeExacerbation() const;
+  void RemoveAcuteRespiratoryDistressSyndromeExacerbation();
 
   bool HasAcuteStress() const;
   SEAcuteStress* GetAcuteStress();
@@ -53,11 +61,6 @@ public:
   SEAirwayObstruction* GetAirwayObstruction();
   const SEAirwayObstruction* GetAirwayObstruction() const;
   void RemoveAirwayObstruction();
-
-  bool HasApnea() const;
-  SEApnea* GetApnea();
-  const SEApnea* GetApnea() const;
-  void RemoveApnea();
 
   bool HasAsthmaAttack() const;
   SEAsthmaAttack* GetAsthmaAttack();
@@ -98,6 +101,11 @@ public:
   const SEChestOcclusiveDressing* GetRightChestOcclusiveDressing() const;
   void RemoveRightChestOcclusiveDressing();
 
+  bool HasChronicObstructivePulmonaryDiseaseExacerbation() const;
+  SEChronicObstructivePulmonaryDiseaseExacerbation* GetChronicObstructivePulmonaryDiseaseExacerbation();
+  const SEChronicObstructivePulmonaryDiseaseExacerbation* GetChronicObstructivePulmonaryDiseaseExacerbation() const;
+  void RemoveChronicObstructivePulmonaryDiseaseExacerbation();
+
   bool HasConsciousRespiration() const;
   SEConsciousRespiration* GetConsciousRespiration();
   const SEConsciousRespiration* GetConsciousRespiration() const;
@@ -107,6 +115,11 @@ public:
   SEConsumeNutrients* GetConsumeNutrients();
   const SEConsumeNutrients* GetConsumeNutrients() const;
   void RemoveConsumeNutrients();
+
+  bool HasDyspnea() const;
+  SEDyspnea* GetDyspnea();
+  const SEDyspnea* GetDyspnea() const;
+  void RemoveDyspnea();
 
   bool HasExercise() const;
   SEExercise* GetExercise();
@@ -121,6 +134,11 @@ public:
   SEIntubation* GetIntubation();
   const SEIntubation* GetIntubation() const;
   void RemoveIntubation();
+
+  bool HasLobarPneumoniaExacerbation() const;
+  SELobarPneumoniaExacerbation* GetLobarPneumoniaExacerbation();
+  const SELobarPneumoniaExacerbation* GetLobarPneumoniaExacerbation() const;
+  void RemoveLobarPneumoniaExacerbation();
 
   bool HasMechanicalVentilation() const;
   SEMechanicalVentilation* GetMechanicalVentilation();
@@ -142,6 +160,11 @@ public:
   SEPericardialEffusion* GetPericardialEffusion();
   const SEPericardialEffusion* GetPericardialEffusion() const;
   void RemovePericardialEffusion();
+
+  bool HasRespiratoryFatigue() const;
+  SERespiratoryFatigue* GetRespiratoryFatigue();
+  const SERespiratoryFatigue* GetRespiratoryFatigue() const;
+  void RemoveRespiratoryFatigue();
 
   const std::map<const SESubstance*, SESubstanceBolus*>&  GetSubstanceBoluses() const;
   void RemoveSubstanceBolus(const SESubstance& sub);
@@ -190,30 +213,34 @@ protected:
   void Clear();
   bool ProcessAction(const SEPatientAction& action);
 
-  SEAcuteStress*                m_AcuteStress;
-  SEAirwayObstruction*          m_AirwayObstruction;
-  SEApnea*                      m_Apnea;
-  SEAsthmaAttack*               m_AsthmaAttack;
-  SEBrainInjury*                m_BrainInjury;
-  SEBronchoconstriction*        m_Bronchoconstriction;
-  SECardiacArrest*              m_CardiacArrest;
-  SEChestCompression*           m_ChestCompression;
-  SEChestOcclusiveDressing*     m_LeftChestOcclusiveDressing;
-  SEChestOcclusiveDressing*     m_RightChestOcclusiveDressing;
-  SEConsciousRespiration*       m_ConsciousRespiration;
-  SEConsumeNutrients*           m_ConsumeNutrients;
-  SEExercise*                   m_Exercise;
-  SEIntubation*                 m_Intubation;
-  SEMechanicalVentilation*      m_MechanicalVentilation;
-  SENeedleDecompression*        m_LeftNeedleDecompression;
-  SENeedleDecompression*        m_RightNeedleDecompression;
-  SEPericardialEffusion*        m_PericardialEffusion;
-  SESupplementalOxygen*         m_SupplementalOxygen;
-  SETensionPneumothorax*        m_LeftClosedTensionPneumothorax;
-  SETensionPneumothorax*        m_LeftOpenTensionPneumothorax;
-  SETensionPneumothorax*        m_RightClosedTensionPneumothorax;
-  SETensionPneumothorax*        m_RightOpenTensionPneumothorax;
-  SEUrinate*                    m_Urinate;
+  SEAcuteRespiratoryDistressSyndromeExacerbation*   m_ARDSExacerbation;
+  SEAcuteStress*                                    m_AcuteStress;
+  SEAirwayObstruction*                              m_AirwayObstruction;
+  SEAsthmaAttack*                                   m_AsthmaAttack;
+  SEBrainInjury*                                    m_BrainInjury;
+  SEBronchoconstriction*                            m_Bronchoconstriction;
+  SECardiacArrest*                                  m_CardiacArrest;
+  SEChestCompression*                               m_ChestCompression;
+  SEChestOcclusiveDressing*                         m_LeftChestOcclusiveDressing;
+  SEChestOcclusiveDressing*                         m_RightChestOcclusiveDressing;
+  SEConsciousRespiration*                           m_ConsciousRespiration;
+  SEConsumeNutrients*                               m_ConsumeNutrients;
+  SEChronicObstructivePulmonaryDiseaseExacerbation* m_COPDExacerbation;
+  SEDyspnea*                                        m_Dyspnea;
+  SEExercise*                                       m_Exercise;
+  SEIntubation*                                     m_Intubation;
+  SELobarPneumoniaExacerbation*                     m_LobarPneumoniaExacerbation;
+  SEMechanicalVentilation*                          m_MechanicalVentilation;
+  SENeedleDecompression*                            m_LeftNeedleDecompression;
+  SENeedleDecompression*                            m_RightNeedleDecompression;
+  SEPericardialEffusion*                            m_PericardialEffusion;
+  SERespiratoryFatigue*                             m_RespiratoryFatigue;
+  SESupplementalOxygen*                             m_SupplementalOxygen;
+  SETensionPneumothorax*                            m_LeftClosedTensionPneumothorax;
+  SETensionPneumothorax*                            m_LeftOpenTensionPneumothorax;
+  SETensionPneumothorax*                            m_RightClosedTensionPneumothorax;
+  SETensionPneumothorax*                            m_RightOpenTensionPneumothorax;
+  SEUrinate*                                        m_Urinate;
 
   std::map<std::string, SEHemorrhage*>                              m_Hemorrhages;
   std::map<const SESubstance*,SESubstanceBolus*>                    m_SubstanceBolus;

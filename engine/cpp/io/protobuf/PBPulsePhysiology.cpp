@@ -398,16 +398,11 @@ void PBPulsePhysiology::Load(const RespiratoryData& src, Respiratory& dst)
 void PBPulsePhysiology::Serialize(const RespiratoryData& src, Respiratory& dst)
 {
   PBPhysiology::Serialize(src.common(), dst);
-  dst.m_InitialExpiratoryReserveVolume_L = src.initialexpiratoryreservevolume_l();
-  dst.m_InitialFunctionalResidualCapacity_L = src.initialfunctionalresidualcapacity_l();
-  dst.m_InitialInspiratoryCapacity_L = src.initialinspiratorycapacity_l();
-  dst.m_InitialResidualVolume_L = src.initialresidualvolume_l();
 
   dst.m_BreathingCycle = src.breathingcycle();
   dst.m_NotBreathing = src.notbreathing();
   dst.m_TopBreathTotalVolume_L = src.topbreathtotalvolume_l();
   dst.m_TopBreathAlveoliVolume_L = src.topbreathalveolivolume_l();
-  dst.m_TopBreathDeadSpaceVolume_L = src.topbreathdeadspacevolume_l();
   dst.m_TopBreathPleuralPressure_cmH2O = src.topbreathpleuralpressure_cmh2o();
   dst.m_LastCardiacCycleBloodPH = src.lastcardiaccyclebloodph();
   dst.m_TopCarinaO2 = src.topcarinao2();
@@ -415,20 +410,19 @@ void PBPulsePhysiology::Serialize(const RespiratoryData& src, Respiratory& dst)
   dst.m_BottomBreathElapsedTime_min = src.bottombreathelapsedtime_min();
   dst.m_BottomBreathTotalVolume_L = src.bottombreathtotalvolume_l();
   dst.m_BottomBreathAlveoliVolume_L = src.bottombreathalveolivolume_l();
-  dst.m_BottomBreathDeadSpaceVolume_L = src.bottombreathdeadspacevolume_l();
   dst.m_BottomBreathPleuralPressure_cmH2O = src.bottombreathpleuralpressure_cmh2o();
+  dst.m_PeakAlveolarPressure_cmH2O = src.peakalveolarpressure_cmh2o();
+  dst.m_MaximalAlveolarPressure_cmH2O = src.maximalalveolarpressure_cmh2o();
   PBProperty::Load(src.bloodphrunningaverage(), *dst.m_BloodPHRunningAverage);
 
   dst.m_ArterialO2PartialPressure_mmHg = src.arterialo2partialpressure_mmhg();
   dst.m_ArterialCO2PartialPressure_mmHg = src.arterialco2partialpressure_mmhg();
   dst.m_BreathingCycleTime_s = src.breathingcycletime_s();
-  dst.m_DefaultDrivePressure_cmH2O = src.defaultdrivepressure_cmh2o();
   dst.m_DriverInspirationTime_s = src.driverinspirationtime_s();
   dst.m_DriverPressure_cmH2O = src.driverpressure_cmh2o();
   dst.m_DriverPressureMin_cmH2O = src.driverpressuremin_cmh2o();
   dst.m_ElapsedBreathingCycleTime_min = src.elapsedbreathingcycletime_min();
-  dst.m_IEscaleFactor = src.iescalefactor();
-  dst.m_InstantaneousFunctionalResidualCapacity_L = src.instantaneousfunctionalresidualcapacity_l();
+  dst.m_IERatioScaleFactor = src.iescalefactor();
   dst.m_MaxDriverPressure_cmH2O = src.maxdriverpressure_cmh2o();
   dst.m_PeakRespiratoryDrivePressure_cmH2O = src.peakrespiratorydrivepressure_cmh2o();
   dst.m_PreviousTargetAlveolarVentilation_L_Per_min = src.previoustargetalveolarventilation_l_per_min();
@@ -454,16 +448,11 @@ RespiratoryData* PBPulsePhysiology::Unload(const Respiratory& src)
 void PBPulsePhysiology::Serialize(const Respiratory& src, RespiratoryData& dst)
 {
   PBPhysiology::Serialize(src, *dst.mutable_common());
-  dst.set_initialexpiratoryreservevolume_l(src.m_InitialExpiratoryReserveVolume_L);
-  dst.set_initialfunctionalresidualcapacity_l(src.m_InitialFunctionalResidualCapacity_L);
-  dst.set_initialinspiratorycapacity_l(src.m_InitialInspiratoryCapacity_L);
-  dst.set_initialresidualvolume_l(src.m_InitialResidualVolume_L);
 
   dst.set_breathingcycle(src.m_BreathingCycle);
   dst.set_notbreathing(src.m_NotBreathing);
   dst.set_topbreathtotalvolume_l(src.m_TopBreathTotalVolume_L);
   dst.set_topbreathalveolivolume_l(src.m_TopBreathAlveoliVolume_L);
-  dst.set_topbreathdeadspacevolume_l(src.m_TopBreathDeadSpaceVolume_L);
   dst.set_topbreathpleuralpressure_cmh2o(src.m_TopBreathPleuralPressure_cmH2O);
   dst.set_lastcardiaccyclebloodph(src.m_LastCardiacCycleBloodPH);
   dst.set_topcarinao2(src.m_TopCarinaO2);
@@ -471,20 +460,19 @@ void PBPulsePhysiology::Serialize(const Respiratory& src, RespiratoryData& dst)
   dst.set_bottombreathelapsedtime_min(src.m_BottomBreathElapsedTime_min);
   dst.set_bottombreathtotalvolume_l(src.m_BottomBreathTotalVolume_L);
   dst.set_bottombreathalveolivolume_l(src.m_BottomBreathAlveoliVolume_L);
-  dst.set_bottombreathdeadspacevolume_l(src.m_BottomBreathDeadSpaceVolume_L);
   dst.set_bottombreathpleuralpressure_cmh2o(src.m_BottomBreathPleuralPressure_cmH2O);
+  dst.set_peakalveolarpressure_cmh2o(src.m_PeakAlveolarPressure_cmH2O);
+  dst.set_maximalalveolarpressure_cmh2o(src.m_MaximalAlveolarPressure_cmH2O);
   dst.set_allocated_bloodphrunningaverage(PBProperty::Unload(*src.m_BloodPHRunningAverage));
 
   dst.set_arterialo2partialpressure_mmhg(src.m_ArterialO2PartialPressure_mmHg);
   dst.set_arterialco2partialpressure_mmhg(src.m_ArterialCO2PartialPressure_mmHg);
   dst.set_breathingcycletime_s(src.m_BreathingCycleTime_s);
-  dst.set_defaultdrivepressure_cmh2o(src.m_DefaultDrivePressure_cmH2O);
   dst.set_driverinspirationtime_s(src.m_DriverInspirationTime_s);
   dst.set_driverpressure_cmh2o(src.m_DriverPressure_cmH2O);
   dst.set_driverpressuremin_cmh2o(src.m_DriverPressureMin_cmH2O);
   dst.set_elapsedbreathingcycletime_min(src.m_ElapsedBreathingCycleTime_min);
-  dst.set_iescalefactor(src.m_IEscaleFactor);
-  dst.set_instantaneousfunctionalresidualcapacity_l(src.m_InstantaneousFunctionalResidualCapacity_L);
+  dst.set_iescalefactor(src.m_IERatioScaleFactor);
   dst.set_maxdriverpressure_cmh2o(src.m_MaxDriverPressure_cmH2O);
   dst.set_peakrespiratorydrivepressure_cmh2o(src.m_PeakRespiratoryDrivePressure_cmH2O);
   dst.set_previoustargetalveolarventilation_l_per_min(src.m_PreviousTargetAlveolarVentilation_L_Per_min);

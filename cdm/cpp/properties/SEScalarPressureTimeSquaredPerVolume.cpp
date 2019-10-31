@@ -2,15 +2,15 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "properties/SEScalarFlowInertance.h"
+#include "properties/SEScalarPressureTimeSquaredPerVolume.h"
 
-const FlowInertanceUnit FlowInertanceUnit::mmHg_s2_Per_mL("mmHg s^2/mL");
-const FlowInertanceUnit FlowInertanceUnit::mmHg_s2_Per_L("mmHg s^2/L");
-const FlowInertanceUnit FlowInertanceUnit::cmH2O_s2_Per_mL("cmH2O s^2/mL");
-const FlowInertanceUnit FlowInertanceUnit::cmH2O_s2_Per_L("cmH2O s^2/L");
-const FlowInertanceUnit FlowInertanceUnit::Pa_s2_Per_m3("Pa s^2/m^3");
+const PressureTimeSquaredPerVolumeUnit PressureTimeSquaredPerVolumeUnit::mmHg_s2_Per_mL("mmHg s^2/mL");
+const PressureTimeSquaredPerVolumeUnit PressureTimeSquaredPerVolumeUnit::mmHg_s2_Per_L("mmHg s^2/L");
+const PressureTimeSquaredPerVolumeUnit PressureTimeSquaredPerVolumeUnit::cmH2O_s2_Per_mL("cmH2O s^2/mL");
+const PressureTimeSquaredPerVolumeUnit PressureTimeSquaredPerVolumeUnit::cmH2O_s2_Per_L("cmH2O s^2/L");
+const PressureTimeSquaredPerVolumeUnit PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3("Pa s^2/m^3");
 
-bool FlowInertanceUnit::IsValidUnit(const std::string& unit)
+bool PressureTimeSquaredPerVolumeUnit::IsValidUnit(const std::string& unit)
 {
   if (mmHg_s2_Per_mL.GetString().compare(unit) == 0)
     return true;
@@ -25,7 +25,7 @@ bool FlowInertanceUnit::IsValidUnit(const std::string& unit)
   return false;
 }
 
-const FlowInertanceUnit& FlowInertanceUnit::GetCompoundUnit(const std::string& unit)
+const PressureTimeSquaredPerVolumeUnit& PressureTimeSquaredPerVolumeUnit::GetCompoundUnit(const std::string& unit)
 {
   if (mmHg_s2_Per_mL.GetString().compare(unit) == 0)
     return mmHg_s2_Per_mL;
@@ -38,6 +38,6 @@ const FlowInertanceUnit& FlowInertanceUnit::GetCompoundUnit(const std::string& u
   if (Pa_s2_Per_m3.GetString().compare(unit) == 0)
     return Pa_s2_Per_m3;
   std::stringstream err;
-  err << unit << " is not a valid FlowInertance unit";
+  err << unit << " is not a valid PressureTimeSquaredPerVolume unit";
   throw CommonDataModelException(err.str());
 }

@@ -17,9 +17,9 @@
 There is a wide range of potential applications, a few include:
 - Powering serious games for medical education and training
 - Producing responsive physiology in real time for manikin training
-- Integrating a single-system model into the engine to understand full-body physiologic response
-- Providing inputs and outputs for sensor systems
-- Teaching and education
+- Integrating higher fidelity single-system or sub-system models to understand full-body physiologic response
+- Connecting in-silico patients for hardware-in-the-loop (HIL) testing of medical devices
+- Providing simulations and visualizations for teaching and education
 - Pairing with virtual surgery planning/rehearsal
 
 ## Featured Applications Leveraging Pulse
@@ -79,6 +79,7 @@ Our user manual offers in-depth details of all the Pulse asset functionality. It
     </center>
   </td>
   <td width="40%" valign="top" style="border-top:2px solid Gainsboro; padding:3px">
+      &bull; <a href="https://traumasimulator.com">Trauma Simulator Website</a><br>
       &bull; <a href="https://militarysimulation.training/technology/exonicus-kitware-trauma-simulator-%ef%bb%bf/">Military Simulation & Training Magazine Article</a><br>
       &bull; <a href="https://blog.kitware.com/exonicus-and-kitware-collaborate-to-develop-a-trauma-simulator-using-the-pulse-physiology-engine/">Kitware Blog Post</a><br>
   </td>

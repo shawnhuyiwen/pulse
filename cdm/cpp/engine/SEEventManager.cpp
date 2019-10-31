@@ -118,12 +118,6 @@ void SEEventManager::SetEvent(eEvent type, bool active, const SEScalarTime& time
       case eEvent::MetabolicAlkalosis:
         m_ss << " The patient is in a state of metabolic alkalosis";
         break;
-      case eEvent::MildAcuteRespiratoryDistress:
-        m_ss << " The patient has Mild Acute Respiratory Distress";
-        break;
-      case eEvent::ModerateAcuteRespiratoryDistress:
-        m_ss << " The patient has Moderate Acute Respiratory Distress";
-        break;
       case eEvent::MyocardiumOxygenDeficit:
         m_ss << " The patient's heart is not receiving enough oxygen";
         break;
@@ -135,9 +129,6 @@ void SEEventManager::SetEvent(eEvent type, bool active, const SEScalarTime& time
         break;
       case eEvent::RenalHypoperfusion:
         m_ss << " Patient has Renal Hypoperfusion";
-        break;
-      case eEvent::SevereAcuteRespiratoryDistress:
-        m_ss << " The patient has Severe Acute Respiratory Distress";
         break;
       case eEvent::Tachycardia:
         m_ss << " Patient has Tachycardia";
@@ -252,12 +243,6 @@ void SEEventManager::SetEvent(eEvent type, bool active, const SEScalarTime& time
       case eEvent::MetabolicAlkalosis:
         m_ss << " The patient is no longer in a state of metabolic alkalosis";
         break;
-      case eEvent::MildAcuteRespiratoryDistress:
-        m_ss << " Patient no longer has a Mild Acute Respiratory Distress";
-        break;
-      case eEvent::ModerateAcuteRespiratoryDistress:
-        m_ss << " Patient no longer has a Moderate Acute Respiratory Distress";
-        break;
       case eEvent::MyocardiumOxygenDeficit:
         m_ss << " Patient no longer has a Myocardium Oxygen Deficit";
         break;
@@ -269,9 +254,6 @@ void SEEventManager::SetEvent(eEvent type, bool active, const SEScalarTime& time
         break;
       case eEvent::RenalHypoperfusion:
         m_ss << " Patient no longer has Renal Hypoperfusion";
-        break;
-      case eEvent::SevereAcuteRespiratoryDistress:
-        m_ss << " Patient no longer has a Severe Acute Respiratory Distress";
         break;
       case eEvent::Tachycardia:
         m_ss << " Patient no longer has Tachycardia";

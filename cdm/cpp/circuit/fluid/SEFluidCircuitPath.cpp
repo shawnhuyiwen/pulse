@@ -3,15 +3,15 @@
 
 #include "stdafx.h"
 #include "circuit/fluid/SEFluidCircuitPath.h"
-#include "properties/SEScalarFlowResistance.h"
-#include "properties/SEScalarFlowCompliance.h"
-#include "properties/SEScalarFlowInertance.h"
+#include "properties/SEScalarPressureTimePerVolume.h"
+#include "properties/SEScalarVolumePerPressure.h"
+#include "properties/SEScalarPressureTimeSquaredPerVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolume.h"
 
 SEFluidCircuitPath::SEFluidCircuitPath(SEFluidCircuitNode& src, SEFluidCircuitNode& tgt, const std::string& name) :
-  SECircuitPath<SEScalarVolumePerTime, SEScalarFlowResistance, SEScalarFlowCompliance, SEScalarFlowInertance, SEScalarPressure, SEScalarVolume>(src, tgt, name),
+  SECircuitPath<SEScalarVolumePerTime, SEScalarPressureTimePerVolume, SEScalarVolumePerPressure, SEScalarPressureTimeSquaredPerVolume, SEScalarPressure, SEScalarVolume>(src, tgt, name),
   m_FluidSourceNode(src), m_FluidTargetNode(tgt)
 {
 
@@ -34,11 +34,11 @@ bool SEFluidCircuitPath::HasResistance() const
 {
   return SECircuitPath::HasResistance();
 }
-SEScalarFlowResistance& SEFluidCircuitPath::GetResistance()
+SEScalarPressureTimePerVolume& SEFluidCircuitPath::GetResistance()
 {
   return SECircuitPath::GetResistance();
 }
-double SEFluidCircuitPath::GetResistance(const FlowResistanceUnit& unit) const
+double SEFluidCircuitPath::GetResistance(const PressureTimePerVolumeUnit& unit) const
 {
   if (m_Resistance == nullptr)
     return SEScalar::dNaN();
@@ -48,11 +48,11 @@ bool SEFluidCircuitPath::HasNextResistance() const
 {
   return SECircuitPath::HasNextResistance();
 }
-SEScalarFlowResistance& SEFluidCircuitPath::GetNextResistance()
+SEScalarPressureTimePerVolume& SEFluidCircuitPath::GetNextResistance()
 {
   return SECircuitPath::GetNextResistance();
 }
-double SEFluidCircuitPath::GetNextResistance(const FlowResistanceUnit& unit) const
+double SEFluidCircuitPath::GetNextResistance(const PressureTimePerVolumeUnit& unit) const
 {
   if (m_NextResistance == nullptr)
     return SEScalar::dNaN();
@@ -62,11 +62,11 @@ bool SEFluidCircuitPath::HasResistanceBaseline() const
 {
   return SECircuitPath::HasResistanceBaseline();
 }
-SEScalarFlowResistance& SEFluidCircuitPath::GetResistanceBaseline()
+SEScalarPressureTimePerVolume& SEFluidCircuitPath::GetResistanceBaseline()
 {
   return SECircuitPath::GetResistanceBaseline();
 }
-double SEFluidCircuitPath::GetResistanceBaseline(const FlowResistanceUnit& unit) const
+double SEFluidCircuitPath::GetResistanceBaseline(const PressureTimePerVolumeUnit& unit) const
 {
   if (m_ResistanceBaseline == nullptr)
     return SEScalar::dNaN();
@@ -81,11 +81,11 @@ bool SEFluidCircuitPath::HasCompliance() const
 {
   return HasCapacitance();
 }
-SEScalarFlowCompliance& SEFluidCircuitPath::GetCompliance()
+SEScalarVolumePerPressure& SEFluidCircuitPath::GetCompliance()
 {
   return GetCapacitance();
 }
-double SEFluidCircuitPath::GetCompliance(const FlowComplianceUnit& unit) const
+double SEFluidCircuitPath::GetCompliance(const VolumePerPressureUnit& unit) const
 {
   if (m_Capacitance == nullptr)
     return SEScalar::dNaN();
@@ -95,11 +95,11 @@ bool SEFluidCircuitPath::HasNextCompliance() const
 {
   return HasNextCapacitance();
 }
-SEScalarFlowCompliance& SEFluidCircuitPath::GetNextCompliance()
+SEScalarVolumePerPressure& SEFluidCircuitPath::GetNextCompliance()
 {
   return GetNextCapacitance();
 }
-double SEFluidCircuitPath::GetNextCompliance(const FlowComplianceUnit& unit) const
+double SEFluidCircuitPath::GetNextCompliance(const VolumePerPressureUnit& unit) const
 {
   if (m_NextCapacitance == nullptr)
     return SEScalar::dNaN();
@@ -109,11 +109,11 @@ bool SEFluidCircuitPath::HasComplianceBaseline() const
 {
   return HasCapacitanceBaseline();
 }
-SEScalarFlowCompliance& SEFluidCircuitPath::GetComplianceBaseline()
+SEScalarVolumePerPressure& SEFluidCircuitPath::GetComplianceBaseline()
 {
   return GetCapacitanceBaseline();
 }
-double SEFluidCircuitPath::GetComplianceBaseline(const FlowComplianceUnit& unit) const
+double SEFluidCircuitPath::GetComplianceBaseline(const VolumePerPressureUnit& unit) const
 {
   if (m_CapacitanceBaseline == nullptr)
     return SEScalar::dNaN();
@@ -128,11 +128,11 @@ bool SEFluidCircuitPath::HasInertance() const
 {
   return HasInductance();
 }
-SEScalarFlowInertance& SEFluidCircuitPath::GetInertance()
+SEScalarPressureTimeSquaredPerVolume& SEFluidCircuitPath::GetInertance()
 {
   return GetInductance();
 }
-double SEFluidCircuitPath::GetInertance(const FlowInertanceUnit& unit) const
+double SEFluidCircuitPath::GetInertance(const PressureTimeSquaredPerVolumeUnit& unit) const
 {
   if (m_Inductance == nullptr)
     return SEScalar::dNaN();
@@ -142,11 +142,11 @@ bool SEFluidCircuitPath::HasNextInertance() const
 {
   return HasNextInductance();
 }
-SEScalarFlowInertance& SEFluidCircuitPath::GetNextInertance()
+SEScalarPressureTimeSquaredPerVolume& SEFluidCircuitPath::GetNextInertance()
 {
   return GetNextInductance();
 }
-double SEFluidCircuitPath::GetNextInertance(const FlowInertanceUnit& unit) const
+double SEFluidCircuitPath::GetNextInertance(const PressureTimeSquaredPerVolumeUnit& unit) const
 {
   if (m_NextInductance == nullptr)
     return SEScalar::dNaN();
@@ -156,11 +156,11 @@ bool SEFluidCircuitPath::HasInertanceBaseline() const
 {
   return HasInductanceBaseline();
 }
-SEScalarFlowInertance& SEFluidCircuitPath::GetInertanceBaseline()
+SEScalarPressureTimeSquaredPerVolume& SEFluidCircuitPath::GetInertanceBaseline()
 {
   return GetInductanceBaseline();
 }
-double SEFluidCircuitPath::GetInertanceBaseline(const FlowInertanceUnit& unit) const
+double SEFluidCircuitPath::GetInertanceBaseline(const PressureTimeSquaredPerVolumeUnit& unit) const
 {
   if (m_InductanceBaseline == nullptr)
     return SEScalar::dNaN();

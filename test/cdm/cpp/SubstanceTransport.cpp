@@ -21,7 +21,6 @@
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarMassPerVolume.h"
-#include "properties/SEScalarFlowResistance.h"
 #include "properties/SEScalarTime.h"
 #include "utils/DataTrack.h"
 
