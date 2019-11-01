@@ -117,7 +117,7 @@ void PulseEngineTest::AnesthesiaMachineCircuitAndTransportTest(RespiratoryConfig
   SEFluidCircuitPath* GasSourceToGasInlet = amCircuit->GetPath(pulse::AnesthesiaMachinePath::GasSourceToGasInlet);
   SEFluidCircuitPath* EnvironmentToGasSource = amCircuit->GetPath(pulse::AnesthesiaMachinePath::EnvironmentToGasSource);
 
-  SEGasTransporter txpt(VolumePerTimeUnit::L_Per_s, VolumeUnit::L, VolumeUnit::L, NoUnit::unitless, pc.GetLogger());
+  SEGasTransporter txpt(VolumePerTimeUnit::L_Per_s, VolumeUnit::L, VolumeUnit::L, pc.GetLogger());
   SEFluidCircuitCalculator calc(VolumePerPressureUnit::L_Per_cmH2O, VolumePerTimeUnit::L_Per_s, PressureTimeSquaredPerVolumeUnit::cmH2O_s2_Per_L, PressureUnit::cmH2O, VolumeUnit::L, PressureTimePerVolumeUnit::cmH2O_s_Per_L, pc.GetLogger());
 
   //Execution parameters

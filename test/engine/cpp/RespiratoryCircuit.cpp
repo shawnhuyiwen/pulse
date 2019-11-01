@@ -121,7 +121,7 @@ void PulseEngineTest::RespiratoryCircuitAndTransportTest(RespiratoryConfiguratio
   }
 
   SEFluidCircuitPath *driverPath = rCircuit->GetPath(pulse::RespiratoryPath::EnvironmentToRespiratoryMuscle);
-  SEGasTransporter    gtxpt(VolumePerTimeUnit::L_Per_s, VolumeUnit::L, VolumeUnit::L, NoUnit::unitless, pc.GetLogger());
+  SEGasTransporter    gtxpt(VolumePerTimeUnit::L_Per_s, VolumeUnit::L, VolumeUnit::L, pc.GetLogger());
   SELiquidTransporter ltxpt(VolumePerTimeUnit::mL_Per_s, VolumeUnit::mL, MassUnit::ug, MassPerVolumeUnit::ug_Per_mL, pc.GetLogger());
   SEFluidCircuitCalculator calc(VolumePerPressureUnit::L_Per_cmH2O, VolumePerTimeUnit::L_Per_s, PressureTimeSquaredPerVolumeUnit::cmH2O_s2_Per_L, PressureUnit::cmH2O, VolumeUnit::L, PressureTimePerVolumeUnit::cmH2O_s_Per_L, pc.GetLogger());
   
