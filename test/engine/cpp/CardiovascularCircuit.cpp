@@ -31,6 +31,7 @@
 #include "properties/SEScalarPower.h"
 #include "properties/SEScalarAmountPerVolume.h"
 #include "utils/DataTrack.h"
+#include "utils/TimingProfile.h"
 #include "utils/testing/SETestReport.h"
 #include "utils/testing/SETestCase.h"
 #include "utils/testing/SETestSuite.h"

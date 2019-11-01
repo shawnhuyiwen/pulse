@@ -25,6 +25,7 @@
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarNegative1To1.h"
 #include "properties/SEScalar0To1.h"
+#include "utils/GeneralMath.h"
 
 #pragma warning(disable:4786)
 #pragma warning(disable:4275)

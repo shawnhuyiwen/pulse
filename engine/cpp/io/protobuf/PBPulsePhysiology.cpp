@@ -19,7 +19,7 @@
 #include "physiology/Tissue.h"
 #include "compartment/fluid/SELiquidCompartmentGraph.h"
 #include "compartment/fluid/SELiquidCompartment.h"
-#include "circuit/fluid/SEFluidCircuitPath.h"
+#include "circuit/fluid/SEFluidCircuit.h"
 #include "controller/Circuits.h"
 #include "controller/Compartments.h"
 

@@ -46,5 +46,4 @@ protected:
   QuantityScalar*  m_Quantity;
   PotentialScalar* m_Potential;
 };
-#include "compartment/SECompartmentNodes.inl"
 

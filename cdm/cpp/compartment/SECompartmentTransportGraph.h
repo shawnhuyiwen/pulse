@@ -32,4 +32,4 @@ protected:
   std::map<const GraphVertexType*, std::vector<GraphEdgeType*>*> m_SourceEdgeMap;
   std::map<const GraphVertexType*, std::vector<GraphEdgeType*>*> m_TargetEdgeMap;
 };
-#include "compartment/SECompartmentTransportGraph.inl"
+

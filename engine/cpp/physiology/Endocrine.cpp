@@ -21,6 +21,7 @@
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarTime.h"
 #include "properties/SEScalar0To1.h"
+#include "utils/GeneralMath.h"
 
 Endocrine::Endocrine(PulseController& data) : SEEndocrineSystem(data.GetLogger()), m_data(data)
 {

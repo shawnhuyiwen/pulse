@@ -6,6 +6,7 @@
 #include "engine/SEDataRequest.h"
 #include "engine/SEEngineTracker.h"
 #include "properties/SEScalar.h"
+#include "utils/GeneralMath.h"
 
 SEDynamicStabilizationPropertyConvergence::SEDynamicStabilizationPropertyConvergence(SEDataRequest& dr, Logger* logger) : Loggable(logger), m_DataRequest(dr)
 {

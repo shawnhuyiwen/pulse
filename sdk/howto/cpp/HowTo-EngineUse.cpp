@@ -7,6 +7,7 @@
 #include "engine/SEDataRequestManager.h"
 #include "compartment/SECompartmentManager.h"
 #include "compartment/fluid/SEGasCompartment.h"
+#include "compartment/fluid/SELiquidCompartment.h"
 #include "patient/SEPatient.h"
 #include "patient/assessments/SEPulmonaryFunctionTest.h"
 #include "system/physiology/SEBloodChemistrySystem.h"

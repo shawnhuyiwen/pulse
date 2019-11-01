@@ -272,5 +272,3 @@ inline void IncrementOverride(SEScalarQuantity<Unit>& s, double value, const Uni
   s.IncrementValue(value, unit);
   s.SetReadOnly(b);
 }
-
-#include "properties/SEScalar.inl"

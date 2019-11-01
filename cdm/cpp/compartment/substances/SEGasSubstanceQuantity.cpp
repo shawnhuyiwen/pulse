@@ -12,6 +12,7 @@
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalar0To1.h"
+#include "utils/GeneralMath.h"
 
 SEGasSubstanceQuantity::SEGasSubstanceQuantity(SESubstance& sub, SEGasCompartment& compartment) : SESubstanceQuantity(sub), m_Compartment(compartment)
 {

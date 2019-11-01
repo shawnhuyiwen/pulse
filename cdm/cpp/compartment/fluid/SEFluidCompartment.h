@@ -89,4 +89,4 @@ protected:
   std::vector<SEFluidCompartment*> m_FluidChildren;
   SECompartmentNodes<FLUID_COMPARTMENT_NODE>  m_Nodes;
 };
-#include "compartment/fluid/SEFluidCompartment.inl"
+

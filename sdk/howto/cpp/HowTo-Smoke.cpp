@@ -7,6 +7,7 @@
 #include "engine/SEDataRequestManager.h"
 #include "engine/SEEngineTracker.h"
 #include "compartment/SECompartmentManager.h"
+#include "compartment/fluid/SELiquidCompartment.h"
 #include "compartment/fluid/SEGasCompartment.h"
 #include "system/environment/SEActiveConditioning.h"
 #include "system/environment/actions/SEChangeEnvironmentConditions.h"

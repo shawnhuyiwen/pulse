@@ -2,6 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #include "CommonDataModelTest.h"
+#include "circuit/SECircuitManager.h"
 #include "circuit/fluid/SEFluidCircuit.h"
 #include "circuit/fluid/SEFluidCircuitCalculator.h"
 #include "circuit/fluid/SEFluidCircuitNode.h"
@@ -448,7 +449,7 @@ void CommonDataModelTest::GasTransportTest(const std::string& rptDirectory)
   cmptMgr.StateChange();
 
   bool serialized = false;
-  SEGasTransporter Transporter(VolumePerTimeUnit::mL_Per_s, VolumeUnit::mL, VolumeUnit::mL, &logger);
+  SEGasTransporter Transporter(VolumePerTimeUnit::mL_Per_s, VolumeUnit::mL, VolumeUnit::mL, NoUnit::unitless, &logger);
   double deltaT_s = 1.0 / 165;
   DataTrack outTrk;
   std::ofstream file;

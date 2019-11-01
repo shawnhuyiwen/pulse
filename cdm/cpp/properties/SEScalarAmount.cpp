@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "properties/SEScalarAmount.h"
 
+
 const AmountUnit AmountUnit::mol("mol");
 const AmountUnit AmountUnit::pmol("pmol");
 
