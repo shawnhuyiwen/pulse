@@ -37,6 +37,7 @@
 #include <stdexcept>
 #include <algorithm>
 #include <cmath>
+#include <string>
 
 #ifdef _MSC_VER
 #include <direct.h>
@@ -48,6 +49,7 @@
 #include <vector>
 #include <stack>
 #include <map>
+#include <set>
 
 #if defined(_MSC_VER)
   #include <unordered_map>
@@ -139,6 +141,7 @@ extern const std::string& eCharge_Name(eCharge m);
 
 // IF YOU ADD A NEW SCALAR TYPE
 // PLEASE UPDATE THE METHOD IN SEProperty.cpp
+// ALSO DECLARE A TEMPLATE CLASS AT THE BOTTOM OF SESCALAR.CPP
 
 class CCompoundUnit;
 

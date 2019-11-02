@@ -1,12 +1,14 @@
 
 set(from "${SCHEMA_SRC}/proto")
 set(to   "${SCHEMA_DST}")
-if( CMAKE_INSTALL_PREFIX )# Running as part of the build
-  set(BINDER "${CMAKE_INSTALL_PREFIX}/bin/protoc")
-else()# Running via run.cmake script from install/bin
-  # Reform to be consistent with relative paths below
-  set(CMAKE_BINARY_DIR "${CMAKE_BINARY_DIR}/../")
-  set(BINDER "protoc")
+if( protobuf_DIR )
+  set(BINDER "${protobuf_DIR}/bin/protoc")
+else()#
+  message(FATAL_ERROR "Where is the protoc binder?")
+endif()
+
+if( NOT protobuf_SRC )
+  message(FATAL_ERROR "Where is the protoc source?")
 endif()
 
 
@@ -63,7 +65,7 @@ if(_OLD_FILES)
   file(REMOVE ${_OLD_FILES})
 endif()
 
-#if(NOT EXISTS "${CMAKE_BINARY_DIR}/../protobuf/src/protobuf/java/core/src/main/java/com/google/protobuf/Any.java")
+#if(NOT EXISTS "${protobuf_SRC}/java/core/src/main/java/com/google/protobuf/Any.java")
   message(STATUS "Generating Java Protobuf files")
   set(__API_PROTO_FILES any.proto
                         any_test.proto
@@ -116,19 +118,19 @@ endif()
                         )
   #Generate the java API files from their proto files
   foreach(f ${__API_PROTO_FILES})
-    execute_process(COMMAND ${BINDER} --proto_path=${CMAKE_BINARY_DIR}/../protobuf/src/protobuf/src/
-                                      --java_out=${CMAKE_BINARY_DIR}/../protobuf/src/protobuf/java/core/src/main/java/
-                                        "${CMAKE_BINARY_DIR}/../protobuf/src/protobuf/src/google/protobuf/${f}")
-    message(STATUS "Java Binding file ${CMAKE_BINARY_DIR}/../protobuf/src/protobuf/src/google/protobuf/${f}")
+    execute_process(COMMAND ${BINDER} --proto_path=${protobuf_SRC}/src/
+                                      --java_out=${protobuf_SRC}/java/core/src/main/java/
+                                        "${protobuf_SRC}/src/google/protobuf/${f}")
+    message(STATUS "Java Binding file ${protobuf_SRC}/src/google/protobuf/${f}")
   endforeach()
 #else()
 #  message(STATUS "Java Protobuf source files found")
 #endif()
 # Copy these files to our source directory
-file(COPY "${CMAKE_BINARY_DIR}/../protobuf/src/protobuf/java/core/src/main/java/com"
+file(COPY "${protobuf_SRC}/java/core/src/main/java/com"
      DESTINATION ${java_bindings_DIR}
 )
-file(COPY "${CMAKE_BINARY_DIR}/../protobuf/src/protobuf/java/util/src/main/java/com"
+file(COPY "${protobuf_SRC}/java/util/src/main/java/com"
      DESTINATION ${java_bindings_DIR}
 )
 

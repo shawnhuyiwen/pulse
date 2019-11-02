@@ -30,6 +30,8 @@
 #include "circuit/thermal/SEThermalCircuitPath.h"
 #include "compartment/fluid/SEGasCompartment.h"
 #include "compartment/substances/SEGasSubstanceQuantity.h"
+#include "compartment/fluid/SELiquidCompartment.h"
+#include "compartment/substances/SELiquidSubstanceQuantity.h"
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceAerosolization.h"
 #include "substance/SESubstanceFraction.h"

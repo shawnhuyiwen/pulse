@@ -92,3 +92,8 @@ double SEFluidCompartmentLink<FLUID_COMPARTMENT_LINK_TYPES>::GetResistance(const
     return m_Path->GetNextResistance(unit);
   return SEScalar::dNaN();
 }
+
+#include "compartment/fluid/SEGasCompartment.h"
+template class SEFluidCompartmentLink<SEGasTransportEdge, SEGasTransportVertex, SEGasCompartment>;
+#include "compartment/fluid/SELiquidCompartment.h"
+template class SEFluidCompartmentLink<SELiquidTransportEdge, SELiquidTransportVertex, SELiquidCompartment>;

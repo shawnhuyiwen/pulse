@@ -396,3 +396,11 @@ bool SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::HasChild(const std::string& na
   }
   return false;
 }
+
+
+#include "compartment/fluid/SEGasCompartment.h"
+#include "compartment/substances/SEGasSubstanceQuantity.h"
+template class SEFluidCompartment<SEGasCompartmentLink, SEGasTransportVertex, SEGasTransportSubstance, SEGasSubstanceQuantity>;
+#include "compartment/fluid/SELiquidCompartment.h"
+#include "compartment/substances/SELiquidSubstanceQuantity.h"
+template class SEFluidCompartment<SELiquidCompartmentLink, SELiquidTransportVertex, SELiquidTransportSubstance, SELiquidSubstanceQuantity>;

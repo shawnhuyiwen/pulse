@@ -25,6 +25,7 @@
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
 #include "utils/DataTrack.h"
+#include "utils/TimingProfile.h"
 
 //*********************************************************
 //Circuit Setup

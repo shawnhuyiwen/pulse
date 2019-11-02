@@ -159,4 +159,3 @@ protected:
   PotentialScalar*             m_PotentialSourceBaseline;
   PotentialScalar*             m_ValveBreakdownPotential;
 };
-#include "circuit/SECircuitPath.inl"

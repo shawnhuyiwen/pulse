@@ -1,6 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
+#include "stdafx.h"
 #include "compartment/SECompartmentTransportGraph.h"
 
 template<COMPARTMENT_TRANSPORT_GRAPH_TEMPLATE>
@@ -102,3 +103,8 @@ const std::vector<GraphEdgeType*>* SECompartmentTransportGraph<COMPARTMENT_TRANS
     return nullptr;
   return itr->second;
 }
+
+#include "compartment/fluid/SEGasCompartmentGraph.h"
+template class SECompartmentTransportGraph<SEGasTransportGraph, SEGasTransportVertex, SEGasTransportEdge, SEGasCompartment, SEGasCompartmentLink>;
+#include "compartment/fluid/SELiquidCompartmentGraph.h"
+template class SECompartmentTransportGraph<SELiquidTransportGraph, SELiquidTransportVertex, SELiquidTransportEdge, SELiquidCompartment, SELiquidCompartmentLink>;

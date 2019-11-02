@@ -5,7 +5,7 @@
 #include "circuit/SECircuitPath.h"
 #include "circuit/electrical/SEElectricalCircuitNode.h"
 
-class CDM_DECL SEElectricalCircuitPath : public SECircuitPath<SEScalarElectricCurrent, SEScalarElectricResistance, SEScalarElectricCapacitance, SEScalarElectricInductance, SEScalarElectricPotential, SEScalarElectricCharge>
+class CDM_DECL SEElectricalCircuitPath : public SECircuitPath<ELECTRICAL_CIRCUIT_PATH>
 {
   friend class PBCircuit;//friend the serialization class
   friend class SECircuitManager;  

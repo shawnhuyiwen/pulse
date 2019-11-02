@@ -24,6 +24,7 @@ message( STATUS "External project - Eigen" )
 set(eigen_VERSION "3.3.7" )
 set(eigen_SRC "${CMAKE_BINARY_DIR}/eigen/src/eigen")
 set(eigen_Patch "${CMAKE_SOURCE_DIR}/cmake/eigen-patches")
+set(Eigen3_DIR "${CMAKE_BINARY_DIR}/eigen/install")
 
 ExternalProject_Add( eigen
   PREFIX eigen
@@ -31,13 +32,13 @@ ExternalProject_Add( eigen
   URL_HASH MD5=f2a417d083fe8ca4b8ed2bc613d20f07
   #UPDATE_COMMAND 
   #  COMMAND ${CMAKE_COMMAND} -Deigen_source=${eigen_SRC} -Deigen_patch=${eigen_Patch} -P ${eigen_Patch}/Patch.cmake
-  INSTALL_DIR "${CMAKE_INSTALL_PREFIX}"
+  INSTALL_DIR "${Eigen3_DIR}"
   ${CMAKE_GENERATION}
   CMAKE_ARGS
         -DCMAKE_TOOLCHAIN_FILE:FILE=${CMAKE_TOOLCHAIN_FILE}
         -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF
-        -DCMAKE_INSTALL_PREFIX:STRING=${CMAKE_INSTALL_PREFIX}
-        -DINCLUDE_INSTALL_DIR:STRING=${CMAKE_INSTALL_PREFIX}/include
+        -DCMAKE_INSTALL_PREFIX:STRING=${Eigen3_DIR}
+        -DINCLUDE_INSTALL_DIR:STRING=${Eigen3_DIR}/include
 )
 list(APPEND Pulse_DEPENDENCIES eigen)
 # Install Headers
@@ -116,6 +117,7 @@ message( STATUS "External project - protobuf" )
 set(protobuf_URL "https://github.com/protocolbuffers/protobuf/releases/download/v3.9.0/protobuf-all-3.9.0.zip")
 set(protobuf_MD5 "4f042c8b46823a69db3dcbc7381b73f4" )
 set(protobuf_SRC "${CMAKE_BINARY_DIR}/protobuf/src/protobuf")
+set(protobuf_DIR "${CMAKE_BINARY_DIR}/protobuf/install")
 set(protobuf_Patch "${CMAKE_SOURCE_DIR}/cmake/protobuf-patches")
 
 message(STATUS "Patching protobuf ${PULSE_IL2CPP_PATCH}")
@@ -132,7 +134,7 @@ ExternalProject_Add( protobuf
     -DCMAKE_TOOLCHAIN_FILE:FILE=${CMAKE_TOOLCHAIN_FILE}
     -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
     -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-    -DCMAKE_INSTALL_PREFIX:STRING=${CMAKE_INSTALL_PREFIX}
+    -DCMAKE_INSTALL_PREFIX:STRING=${protobuf_DIR}
     -Dprotobuf_BUILD_TESTS:BOOL=OFF
     -Dprotobuf_BUILD_EXAMPLES:BOOL=OFF
     -Dprotobuf_BUILD_SHARED_LIBS:BOOL=OFF
@@ -191,9 +193,11 @@ ExternalProject_Add( Pulse
     -DPULSE_BUILD_JAVA_UTILS:BOOL=${PULSE_BUILD_JAVA_UTILS}
     -DPULSE_BUILD_CLR:BOOL=${PULSE_BUILD_CLR}
     -DPULSE_LOGGER:STRING=${PULSE_LOGGER}
+    -Deigen_DIR:PATH=${eigen_DIR}
     # Let InnerBuild build and install these
-    -Dlogger_SRC=${logger_SRC}
-    -Dprotobuf_SRC=${protobuf_SRC}
+    -Dlogger_SRC:PATH=${logger_SRC}
+    -Dprotobuf_SRC:PATH=${protobuf_SRC}
+    -Dprotobuf_DIR:PATH=${protobuf_DIR}
 )
 
 # Need Java Utils to generate data

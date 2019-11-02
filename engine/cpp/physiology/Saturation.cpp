@@ -14,6 +14,7 @@
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarInversePressure.h"
+#include "utils/GeneralMath.h"
 
 #include "unsupported/Eigen/NonLinearOptimization"
 

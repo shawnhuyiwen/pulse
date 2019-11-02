@@ -9,6 +9,7 @@
 #include "utils/testing/SETestCase.h"
 #include "utils/testing/SETestSuite.h"
 #include "utils/GeneralMath.h"
+#include "circuit/SECircuitManager.h"
 #include "circuit/fluid/SEFluidCircuitNode.h"
 #include "circuit/fluid/SEFluidCircuitPath.h"
 #include "circuit/fluid/SEFluidCircuit.h"

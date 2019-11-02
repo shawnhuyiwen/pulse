@@ -1,6 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
+#include "stdafx.h"
 #include "compartment/SECompartmentNodes.h"
 #include "properties/SEScalar.h"
 
@@ -151,3 +152,8 @@ void SECompartmentNodes<COMPARTMENT_NODE_TYPES>::StateChange()
   for (NodeType* node : m_AllNodes)
     SortNode(*node);
 }
+
+#include "compartment/fluid/SEFluidCompartment.h"
+template class SECompartmentNodes<FLUID_COMPARTMENT_NODE>;
+#include "compartment/thermal/SEThermalCompartment.h"
+template class SECompartmentNodes<THERMAL_COMPARTMENT_NODE>;

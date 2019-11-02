@@ -21,6 +21,7 @@
 #include "properties/SEScalarTime.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
+#include "utils/GeneralMath.h"
 
 void CommonDataModelTest::TissueCompartmentTest(const std::string& rptDirectory)
 {

@@ -37,6 +37,7 @@
 #include "properties/SEScalarNegative1To1.h"
 #include "properties/SEScalarLength.h"
 #include "utils/DataTrack.h"
+#include "utils/GeneralMath.h"
 
 void PulseEngineTest::AerosolTest(const std::string& sOutputDirectory)
 {

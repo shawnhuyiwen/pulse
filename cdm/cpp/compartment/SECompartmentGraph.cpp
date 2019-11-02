@@ -1,6 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
+#include "stdafx.h"
 #include "compartment/SECompartmentGraph.h"
 
 template<COMPARTMENT_GRAPH_TEMPLATE>
@@ -147,3 +148,7 @@ void SECompartmentGraph<COMPARTMENT_GRAPH_TYPES>::RemoveLink(const std::string& 
   }
 }
 
+#include "compartment/fluid/SEGasCompartmentGraph.h"
+template class SECompartmentGraph<SEGasCompartment, SEGasCompartmentLink>;
+#include "compartment/fluid/SELiquidCompartmentGraph.h"
+template class SECompartmentGraph<SELiquidCompartment, SELiquidCompartmentLink>;

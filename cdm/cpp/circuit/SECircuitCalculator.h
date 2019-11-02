@@ -2,12 +2,12 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "Eigen/Core"
 #include "utils/SmartEnum.h"
-#include <set>
 
 #define CIRCUIT_CALCULATOR_TEMPLATE typename CircuitType, typename NodeType, typename PathType, typename CapacitanceUnit, typename FluxUnit, typename InductanceUnit, typename PotentialUnit, typename QuantityUnit, typename ResistanceUnit
 #define CIRCUIT_CALCULATOR_TYPES CircuitType,NodeType,PathType,CapacitanceUnit,FluxUnit,InductanceUnit,PotentialUnit,QuantityUnit,ResistanceUnit
+
+class eigen; // Encapsulate eigen in pimpl pattern
 
 // These are the Eigen Solvers we can use for solving our circuits
 struct CDM_DECL EigenCircuitSolver
@@ -45,12 +45,8 @@ protected:
   virtual void PopulateAMatrix(NodeType& nKCL, PathType& p, double dMultiplier, bool hasPotentialSource = false);  
   // These are all transient and cleared/set at the start of the process call
 
-  std::stringstream    m_ss;
-  //Ax=b
-  Eigen::MatrixXd m_AMatrix; //A
-  Eigen::VectorXd m_xVector; //x
-  Eigen::VectorXd m_bVector; //b
-  
+  std::stringstream m_ss;
+
   double                         m_dT_s; 
   double                         m_currentTime_s;
   double                         m_refPotential;
@@ -65,5 +61,7 @@ protected:
   const PotentialUnit   &m_PotentialUnit;
   const QuantityUnit    &m_QuantityUnit;
   const ResistanceUnit  &m_ResistanceUnit;
+
+private:
+  eigen* _eigen;
 };
-#include "circuit/SECircuitCalculator.inl"

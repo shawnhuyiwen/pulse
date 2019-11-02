@@ -26,6 +26,7 @@
 #include "properties/SEScalarMassPerAmount.h"
 #include "properties/SEHistogramFractionVsLength.h"
 #include "utils/DataTrack.h"
+#include "utils/GeneralMath.h"
 
 PulseSubstances::PulseSubstances(PulseController& data) : SESubstanceManager(data.GetLogger()), m_data(data)
 {

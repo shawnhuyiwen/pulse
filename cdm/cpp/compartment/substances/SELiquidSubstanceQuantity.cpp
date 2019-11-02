@@ -16,6 +16,7 @@
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarMassPerAmount.h"
+#include "utils/GeneralMath.h"
 
 SELiquidSubstanceQuantity::SELiquidSubstanceQuantity(SESubstance& sub, SELiquidCompartment& compartment) : SESubstanceQuantity(sub), m_Compartment(compartment)
 {
