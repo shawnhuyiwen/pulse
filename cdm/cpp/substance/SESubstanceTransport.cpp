@@ -254,8 +254,6 @@ SELiquidTransporter::~SELiquidTransporter()
 // Transportables
 template class SESubstanceTransportVertex<SEScalarVolume, SEScalarVolume, SEScalar0To1>;
 template class SESubstanceTransportVertex<SEScalarVolume, SEScalarMass, SEScalarMassPerVolume>;
-template class SESubstanceTransportVertex<SEScalarVolume, SEScalarVolume, SEScalar0To1>;
-template class SESubstanceTransportVertex<SEScalarVolume, SEScalarMass, SEScalarMassPerVolume>;
 template class SESubstanceTransportEdge<SEScalarVolumePerTime, SEScalarVolume, SEScalarVolume, SEScalar0To1>;
 template class SESubstanceTransportEdge<SEScalarVolumePerTime, SEScalarVolume, SEScalarMass, SEScalarMassPerVolume>;
 template class SESubstanceTransportGraph<SEScalarVolumePerTime, SEScalarVolume, SEScalarVolume, SEScalar0To1>;
