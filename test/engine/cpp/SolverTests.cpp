@@ -17,6 +17,7 @@
 #include "utils/testing/SETestCase.h"
 #include "utils/testing/SETestSuite.h"
 #include <numeric>
+#include <climits>
 
 std::chrono::microseconds::rep vectorAverage(std::vector<std::chrono::microseconds::rep> const&v)
 {
