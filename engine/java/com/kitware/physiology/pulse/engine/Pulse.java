@@ -59,7 +59,7 @@ public class Pulse
   
   protected CDMUpdatedCallback            cdmCallback;
   protected LogListener                   listener;
-  protected SEEventManager                eventManager;
+  protected SEEventManager                eventManager = new SEEventManager();
   
   protected long nativeObj;
   protected synchronized native long nativeAllocate(String logFile);
@@ -140,7 +140,7 @@ public class Pulse
     // I am not clearing these, end user manages these
     //cdmCallback=null;
     //listener = null;
-    //eventHandler = null;
+    //eventManager = null;
   }
 
   public void cleanUp()
@@ -170,7 +170,7 @@ public class Pulse
    * after all data has been set on the Java side.
    * @param cb
    */
-  public void setCDMCallback(CDMUpdatedCallback cb)
+  protected void setCDMCallback(CDMUpdatedCallback cb)
   {
     this.cdmCallback = cb;
   }
