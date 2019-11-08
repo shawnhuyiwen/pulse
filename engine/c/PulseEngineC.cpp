@@ -198,6 +198,32 @@ C_EXPORT double* C_CALL PullData(PulseEngineC* pulseC)
 }
 
 extern "C"
+C_EXPORT bool C_CALL PullEvents(PulseEngineC* pulseC, char** changes)
+{
+  if (pulseC->events.empty())
+    return false;
+
+  std::string event_changes;
+  SEEventChange::SerializeToString(pulseC->events, event_changes, SerializationFormat::JSON, pulseC->eng->GetLogger());
+  DELETE_VECTOR(pulseC->events);
+  *changes = _strdup(event_changes.c_str());
+  return true;
+}
+
+extern "C"
+C_EXPORT bool C_CALL PullActiveEvents(PulseEngineC* pulseC, char** active)
+{
+  
+  if(!pulseC->eng->GetEventManager().GetActiveEvents(pulseC->active_events))
+    return false;
+  std::string active_events_json;
+  SEActiveEvent::SerializeToString(pulseC->active_events, active_events_json, SerializationFormat::JSON, pulseC->eng->GetLogger());
+  DELETE_VECTOR(pulseC->active_events);
+  *active = _strdup(active_events_json.c_str());
+  return true;
+}
+
+extern "C"
 C_EXPORT bool C_CALL ProcessActions(PulseEngineC* pulseC, const char* actions, int format)
 {
   bool success = true;
@@ -292,5 +318,5 @@ void PulseEngineC::ForwardFatal(const std::string&  msg, const std::string&  ori
 
 void PulseEngineC::HandleEvent(eEvent type, bool active, const SEScalarTime* time)
 {
-  
+  events.push_back(new SEEventChange(type, active, time));
 }

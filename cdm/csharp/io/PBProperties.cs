@@ -61,7 +61,7 @@ public class PBProperty
   public static void Serialize(Cdm.ScalarFrequencyData src, SEScalarFrequency dst)
   {
     dst.Invalidate();
-    dst.SetValue(src.ScalarFrequency.Value);
+    dst.SetValue(src.ScalarFrequency.Value, FrequencyUnit.FromString(src.ScalarFrequency.Unit));
   }
   public static Cdm.ScalarFrequencyData Unload(SEScalarFrequency src)
   {
@@ -86,7 +86,7 @@ public class PBProperty
   public static void Serialize(Cdm.ScalarInversePressureData src, SEScalarInversePressure dst)
   {
     dst.Invalidate();
-    dst.SetValue(src.ScalarInversePressure.Value);
+    dst.SetValue(src.ScalarInversePressure.Value, InversePressureUnit.FromString(src.ScalarInversePressure.Unit));
   }
   public static Cdm.ScalarInversePressureData Unload(SEScalarInversePressure src)
   {
@@ -111,7 +111,7 @@ public class PBProperty
   public static void Serialize(Cdm.ScalarMassData src, SEScalarMass dst)
   {
     dst.Invalidate();
-    dst.SetValue(src.ScalarMass.Value);
+    dst.SetValue(src.ScalarMass.Value, MassUnit.FromString(src.ScalarMass.Unit));
   }
   public static Cdm.ScalarMassData Unload(SEScalarMass src)
   {
@@ -136,7 +136,7 @@ public class PBProperty
   public static void Serialize(Cdm.ScalarMassPerAmountData src, SEScalarMassPerAmount dst)
   {
     dst.Invalidate();
-    dst.SetValue(src.ScalarMassPerAmount.Value);
+    dst.SetValue(src.ScalarMassPerAmount.Value, MassPerAmountUnit.FromString(src.ScalarMassPerAmount.Unit));
   }
   public static Cdm.ScalarMassPerAmountData Unload(SEScalarMassPerAmount src)
   {
@@ -161,7 +161,7 @@ public class PBProperty
   public static void Serialize(Cdm.ScalarMassPerAreaTimeData src, SEScalarMassPerAreaTime dst)
   {
     dst.Invalidate();
-    dst.SetValue(src.ScalarMassPerAreaTime.Value);
+    dst.SetValue(src.ScalarMassPerAreaTime.Value, MassPerAreaTimeUnit.FromString(src.ScalarMassPerAreaTime.Unit));
   }
   public static Cdm.ScalarMassPerAreaTimeData Unload(SEScalarMassPerAreaTime src)
   {
@@ -186,7 +186,7 @@ public class PBProperty
   public static void Serialize(Cdm.ScalarMassPerTimeData src, SEScalarMassPerTime dst)
   {
     dst.Invalidate();
-    dst.SetValue(src.ScalarMassPerTime.Value);
+    dst.SetValue(src.ScalarMassPerTime.Value, MassPerTimeUnit.FromString(src.ScalarMassPerTime.Unit));
   }
   public static Cdm.ScalarMassPerTimeData Unload(SEScalarMassPerTime src)
   {
@@ -211,7 +211,7 @@ public class PBProperty
   public static void Serialize(Cdm.ScalarMassPerVolumeData src, SEScalarMassPerVolume dst)
   {
     dst.Invalidate();
-    dst.SetValue(src.ScalarMassPerVolume.Value);
+    dst.SetValue(src.ScalarMassPerVolume.Value, MassPerVolumeUnit.FromString(src.ScalarMassPerVolume.Unit));
   }
   public static Cdm.ScalarMassPerVolumeData Unload(SEScalarMassPerVolume src)
   {
@@ -260,7 +260,7 @@ public class PBProperty
   public static void Serialize(Cdm.ScalarPressureData src, SEScalarPressure dst)
   {
     dst.Invalidate();
-    dst.SetValue(src.ScalarPressure.Value);
+    dst.SetValue(src.ScalarPressure.Value, PressureUnit.FromString(src.ScalarPressure.Unit));
   }
   public static Cdm.ScalarPressureData Unload(SEScalarPressure src)
   {
@@ -285,7 +285,7 @@ public class PBProperty
   public static void Serialize(Cdm.ScalarTimeData src, SEScalarTime dst)
   {
     dst.Invalidate();
-    dst.SetValue(src.ScalarTime.Value);
+    dst.SetValue(src.ScalarTime.Value, TimeUnit.FromString(src.ScalarTime.Unit));
   }
   public static Cdm.ScalarTimeData Unload(SEScalarTime src)
   {
@@ -309,7 +309,7 @@ public class PBProperty
   public static void Serialize(Cdm.ScalarVolumeData src, SEScalarVolume dst)
   {
     dst.Invalidate();
-    dst.SetValue(src.ScalarVolume.Value);
+    dst.SetValue(src.ScalarVolume.Value, VolumeUnit.FromString(src.ScalarVolume.Unit));
   }
   public static Cdm.ScalarVolumeData Unload(SEScalarVolume src)
   {
@@ -333,7 +333,7 @@ public class PBProperty
   public static void Serialize(Cdm.ScalarVolumePerTimeData src, SEScalarVolumePerTime dst)
   {
     dst.Invalidate();
-    dst.SetValue(src.ScalarVolumePerTime.Value);
+    dst.SetValue(src.ScalarVolumePerTime.Value, VolumePerTimeUnit.FromString(src.ScalarVolumePerTime.Unit));
   }
   public static Cdm.ScalarVolumePerTimeData Unload(SEScalarVolumePerTime src)
   {
@@ -358,7 +358,7 @@ public class PBProperty
   public static void Serialize(Cdm.ScalarVolumePerTimeMassData src, SEScalarVolumePerTimeMass dst)
   {
     dst.Invalidate();
-    dst.SetValue(src.ScalarVolumePerTimeMass.Value);
+    dst.SetValue(src.ScalarVolumePerTimeMass.Value, VolumePerTimeMassUnit.FromString(src.ScalarVolumePerTimeMass.Unit));
   }
   public static Cdm.ScalarVolumePerTimeMassData Unload(SEScalarVolumePerTimeMass src)
   {
@@ -383,7 +383,7 @@ public class PBProperty
   public static void Serialize(Cdm.ScalarVolumePerTimePressureData src, SEScalarVolumePerTimePressure dst)
   {
     dst.Invalidate();
-    dst.SetValue(src.ScalarVolumePerTimePressure.Value);
+    dst.SetValue(src.ScalarVolumePerTimePressure.Value, VolumePerTimePressureUnit.FromString(src.ScalarVolumePerTimePressure.Unit));
   }
   public static Cdm.ScalarVolumePerTimePressureData Unload(SEScalarVolumePerTimePressure src)
   {

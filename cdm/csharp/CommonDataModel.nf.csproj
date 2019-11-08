@@ -52,6 +52,8 @@
   <ItemGroup>
     <Compile Include="CommonDataModel.cs" />
     <Compile Include="engine\SEAction.cs" />
+    <Compile Include="engine\SEEvents.cs" />
+    <Compile Include="io\PBEvents.cs" />
     <Compile Include="io\PBActions.cs" />
     <Compile Include="io\PBAnesthesiaMachine.cs" />
     <Compile Include="io\PBAnesthesiaMachineActions.cs" />

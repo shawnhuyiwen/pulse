@@ -20,12 +20,13 @@ public:
   void ForwardWarning(const std::string&  msg, const std::string&  origin);
   void ForwardError(const std::string&  msg, const std::string&  origin);
   void ForwardFatal(const std::string&  msg, const std::string&  origin);
-  //void PullData(double time_s);
 
   void HandleEvent(eEvent type, bool active, const SEScalarTime* time = nullptr);
 
   void SetupDefaultDataRequests();
 
-  std::unique_ptr<PulseEngine> eng;
+  std::unique_ptr<PulseEngine>      eng;
+  std::vector<const SEEventChange*> events;
+  std::vector<const SEActiveEvent*> active_events;
   double* requestedData = nullptr;
 };
