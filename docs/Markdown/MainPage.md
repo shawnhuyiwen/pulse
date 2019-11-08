@@ -6,11 +6,11 @@
 Distributed under the <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0.</a>
 See accompanying <a href="https://gitlab.kitware.com/physiology/engine/blob/master/NOTICE">NOTICE</a> file for details.
 
-For the latest news visit our <a href="https://blog.kitware.com/tag/pulse/">blog</a>
-
-There are @ref published on several systems and clinical scenarios. 
-
 Pulse @ref version is available from our <a href="https://gitlab.kitware.com/physiology/engine">GitLab repository</a>.
+
+<a href="http://eepurl.com/gj8Mrf">Subscribe</a> to the newsletter for the most up to date release and feature announcements.
+
+For the latest news visit our <a href="https://blog.kitware.com/tag/pulse/">blog</a>
 
 Use this <a href="https://discourse.kitware.com/c/pulse-physiology-engine">discourse channel</a> 
 to discuss anything and everything about building, using, or understanding the Pulse engine.
@@ -25,7 +25,9 @@ The Pulse Physiology Engine is a C++ based, open source, multi-platform (Windows
 simulator that will drive medical education, research, and training technologies. 
 The engine enables accurate and consistent physiology simulation across the medical community. 
 The engine can be used as a standalone application or integrated with simulators, sensor interfaces, and models of all fidelities.
-We are advancing the engine and exploring new avenues of research, such as pediatrics, patient-specific modeling and virtual surgery planning/rehearsal. 
+We are advancing the engine and exploring new avenues of research, such as pediatrics, patient-specific modeling and virtual surgery planning/rehearsal.
+
+There are @ref published on several systems and clinical scenarios.  
 
 <center>
 <img src="./Images/PulseRunner.png" width="550" align="middle">

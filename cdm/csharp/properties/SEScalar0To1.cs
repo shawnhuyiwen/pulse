@@ -15,7 +15,7 @@ public class SEScalar0To1 : SEScalar
 
     public override void SetValue(double val)
     {
-        if (val >= 0 || val <= 1)
+        if (val >= 0 && val <= 1)
             value = val;
         else
             throw new System.Exception("Value must be [0-1]");
