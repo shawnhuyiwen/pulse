@@ -20,6 +20,7 @@
 #include "properties/SEScalarVolume.h"
 #include "utils/DataTrack.h"
 #include "utils/Logger.h"
+#include <cstring>
 
 #if defined (__clang__)
   #define C_EXPORT
@@ -34,9 +35,8 @@
 
 // Implement a C Style strdup
 // So we can still use std-c11
-char* c_strdup(const char* s)
+char* c_strdup(const char* s, size_t slen)
 {
-  size_t slen = strlen(s);
   char* result = (char*)malloc(slen + 1);
   if (result == NULL)
   {
@@ -134,7 +134,7 @@ C_EXPORT bool C_CALL SerializeToString(PulseEngineC* pulseC, int format, char** 
   std::string state;
   if (!pulseC->eng->SerializeToString(state, (SerializationFormat)format))
     return false;
-  *state_str = c_strdup(state.c_str());
+  *state_str = c_strdup(state.c_str(), state.length());
   return true;
 }
 
@@ -182,7 +182,7 @@ C_EXPORT bool C_CALL PullLogMessages(PulseEngineC* pulseC, char** str_addr)
   std::string log_msgs_str;
   LogMessages::SerializeToString(pulseC->log_msgs, log_msgs_str, SerializationFormat::JSON, pulseC->eng->GetLogger());
   pulseC->log_msgs.Clear();
-  *str_addr = c_strdup(log_msgs_str.c_str());
+  *str_addr = c_strdup(log_msgs_str.c_str(), log_msgs_str.length());
   return true;
 }
 
@@ -201,7 +201,7 @@ C_EXPORT bool C_CALL PullEvents(PulseEngineC* pulseC, char** str_addr)
   std::string event_changes;
   SEEventChange::SerializeToString(pulseC->events, event_changes, SerializationFormat::JSON, pulseC->eng->GetLogger());
   DELETE_VECTOR(pulseC->events);
-  *str_addr = c_strdup(event_changes.c_str());
+  *str_addr = c_strdup(event_changes.c_str(), event_changes.length());
   return true;
 }
 
@@ -214,7 +214,7 @@ C_EXPORT bool C_CALL PullActiveEvents(PulseEngineC* pulseC, char** active)
   std::string active_events_json;
   SEActiveEvent::SerializeToString(pulseC->active_events, active_events_json, SerializationFormat::JSON, pulseC->eng->GetLogger());
   DELETE_VECTOR(pulseC->active_events);
-  *active = c_strdup(active_events_json.c_str());
+  *active = c_strdup(active_events_json.c_str(), active_events_json.length());
   return true;
 }
 
