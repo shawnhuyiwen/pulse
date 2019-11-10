@@ -13,7 +13,7 @@ class PulseEngineC : public LoggerForward, public SEEventHandler
 {
 public:
   PulseEngineC(const std::string& logFile, const std::string& data_dir);
-  ~PulseEngineC();
+  ~PulseEngineC() { };
 
   void ForwardDebug(const std::string&  msg, const std::string&  origin);
   void ForwardInfo(const std::string&  msg, const std::string&  origin);
@@ -25,7 +25,13 @@ public:
 
   void SetupDefaultDataRequests();
 
+
   std::unique_ptr<PulseEngine>      eng;
+
+  bool keep_log_msgs = false;
+  bool keep_event_changes = false;
+
+  LogMessages log_msgs;
   std::vector<const SEEventChange*> events;
   std::vector<const SEActiveEvent*> active_events;
   double* requestedData = nullptr;

@@ -6,56 +6,92 @@ using Pulse;
 
 namespace HowTo_UseC
 {
+  public class MyEventHandler : EventHandler
+  {
+    public void HandleEvent(SEEventChange change)
+    {
+      Console.WriteLine(change.ToString());
+    }
+  }
+
+  public class MyLogListener : LogListener
+  {
+    public void Debug(string msg) { Console.WriteLine("[DEBUG] " + msg); }
+    public void Info(string msg) { Console.WriteLine("[INFO] " + msg); }
+    public void Warning(string msg) { Console.WriteLine("[WARN] " + msg); }
+    public void Error(string msg) { Console.WriteLine("[ERROR] " + msg); }
+    public void Fatal(string msg) { Console.WriteLine("[FATAL] " + msg); }
+  }
+
   class Program
   {
     protected enum InitializationType { PatientObject, PatientFile, StateFileName, StateString };
 
+
+
     static void Main(string[] args)
     {
-      // We are not providing data requests, so this will default to vitals data
-      List<string> headings = new List<string>();
-      headings.Add("SimTime(s)");
-      headings.Add("Lead3ElectricPotential(mV)");
-      headings.Add("HeartRate(1 / min)");
-      headings.Add("ArterialPressure(mmHg)");
-      headings.Add("MeanArterialPressure(mmHg)");
-      headings.Add("SystolicArterialPressure(mmHg)");
-      headings.Add("DiastolicArterialPressure(mmHg)");
-      headings.Add("OxygenSaturation");
-      headings.Add("EndTidalCarbonDioxidePressure(mmHg)");
-      headings.Add("RespirationRate(1 / min)");
-      headings.Add("SkinTemperature(degC)");
-      headings.Add("Carina-CarbonDioxide-PartialPressure(mmHg)");
-      headings.Add("BloodVolume(mL)");
-      double[] result = new double[headings.Count];
-
-      // Here is an array of Event Changes
+      // Here is an array to store Event Changes
       List<SEEventChange> event_changes = new List<SEEventChange>();
-      // Here is an array of Active Events
+      // Here is an array to store Active Events
       List<SEActiveEvent> active_events = new List<SEActiveEvent>();
+      // Create a list of Data Requests to specify all the data we want from Pulse
+      List<SEDataRequest> data_requests = new List<SEDataRequest>
+      {
+        SEDataRequest.CreatePhysiologyRequest("HeartRate", "1/min"),
+        SEDataRequest.CreatePhysiologyRequest("ArterialPressure", "mmHg"),
+        SEDataRequest.CreatePhysiologyRequest("MeanArterialPressure", "mmHg"),
+        SEDataRequest.CreatePhysiologyRequest("SystolicArterialPressure", "mmHg"),
+        SEDataRequest.CreatePhysiologyRequest("DiastolicArterialPressure", "mmHg"),
+        SEDataRequest.CreatePhysiologyRequest("OxygenSaturation"),
+        SEDataRequest.CreatePhysiologyRequest("EndTidalCarbonDioxidePressure", "mmHg"),
+        SEDataRequest.CreatePhysiologyRequest("RespirationRate", "1/min"),
+        SEDataRequest.CreatePhysiologyRequest("SkinTemperature", "degC"),
+        SEDataRequest.CreateGasCompartmentSubstanceRequest("Carina", "CarbonDioxide", "PartialPressure", "mmHg"),
+        SEDataRequest.CreatePhysiologyRequest("BloodVolume", "mL"),
+        SEDataRequest.CreateECGRequest("Lead3ElectricPotential", "mV"),
+      };
+      SEDataRequestManager data_mgr = new SEDataRequestManager(data_requests);
+      // Create a reference to a double[] that will contain the data returned from Pulse
+      double[] data_values;
+      // data_values[0] is ALWAYS the simulation time in seconds
+      // The rest of the data values are in order of the data_requests list provided
 
-      // Instatiate a Pulse engine
-      PulseEngine pulse = new PulseEngine("pulse.log", ".");
+      // Instantiate a Pulse engine
+      //PulseEngine pulse = new PulseEngine("pulse.log", ".");
+      // Pass null or empty sting to not get a log file,
+      // and turn off cout via a bool
+      PulseEngine pulse = new PulseEngine(null, false, ".");
 
       InitializationType initType = InitializationType.StateFileName;
-      // INITIALIZE THE ENGINE WITH A PATIENT
       switch (initType)
       {
         case InitializationType.StateFileName:
           {
             // Load a state file
-            if (!pulse.SerializeFromFile("./states/Soldier@0s.json", null, SerializationFormat.JSON, 0))
+            if (!pulse.SerializeFromFile("./states/Soldier@0s.json", data_mgr, 0))
               Console.WriteLine("Error Initializing Pulse!");
             break;
           }
         case InitializationType.StateString:
           {
             string file_content = File.ReadAllText("./states/Soldier@0s.json");
-            if (!pulse.SerializeFromString(file_content, null, SerializationFormat.JSON, 0))
+            if (!pulse.SerializeFromString(file_content, data_mgr, 0))
               Console.WriteLine("Error Initializing Pulse!");
             break;
           }
+        case InitializationType.PatientFile:
+        case InitializationType.PatientObject:
+          throw new System.NotSupportedException("Patient File/Object is currently not implemented");
+          // TODO SUPPORT CREATING YOUR OWN PATIENT!!! POST A BUG OR DISCOURSE TOPIC!!
       }
+      // DOES ANYONE WANT TO BE ABLE TO CHANGE DATA REQUESTS IN THE MIDDLE OF A RUN?
+      // NOTE ANY CSV FILE BEING WRITTEN OUT WOULD NOT SUPPORT CHANGING DATA IN THE MIDDLE OF A RUN
+      // BUT IF YOU ARE NOT WRITING A CSV OUT, I COULD SEE THIS BEING USEFUL...
+
+      // Create our Log and Event handling objects
+      pulse.SetEventHandler(new MyEventHandler());
+      pulse.SetLogListener(new MyLogListener());
 
       // Now we can start telling the engine what to do
       // All the same concepts apply from the C++ HowTo files, so look there if you want to see more examples
@@ -68,29 +104,14 @@ namespace HowTo_UseC
         else
         {
           // Pull data from pulse
-          IntPtr data = pulse.PullData();
-          Marshal.Copy(data, result, 0, headings.Count);
-          for (int d = 0; d < headings.Count; d++)
-            Console.WriteLine(headings[d] + " " + result[d]);
-          // Did any events occur during from the last time we called PullEvents?
-          pulse.PullEvents(event_changes);
-          // Iterate through the events to look for things you are interested in
-          // Use PullEvents when you are advancing Pulse at/near single time step at a time
-          // If you have large time steps, you will essentially get a history of event changes
-          // Which may or may not be considered 'stale'
-          // You will also get a lot of StartOfCardiacCycle and StartOfInhale/Exhale events
-          // The provided event_changes list will be cleared in PullEvents
-          // event_changes will be populated with any changes from the last PullEvents,
-          // So if you want to have a full event history between advancements
-          // You will need to keep that history in your own List.
-          foreach (var change in event_changes)
-          {
-            Console.WriteLine(change.ToString());
-          }
-          pulse.PullActiveEvents(active_events);
-          // The engine will provide you with all the current
-          // Active events and how long they have been active for
+          data_values = pulse.PullData();
+          // And write it out to the console
+          data_mgr.ToConsole(data_values);
+
+          // The engine can provide you with all the current
+          // active events and how long they have been active for
           // Active events are reevaluated each call to PullActiveEvents
+          pulse.PullActiveEvents(active_events);
           foreach (var active_event in active_events)
           {
             Console.WriteLine(active_event.ToString());
@@ -120,17 +141,9 @@ namespace HowTo_UseC
           return;
         }
         // Get the values of the data you requested at this time
-        IntPtr data = pulse.PullData();
-        Marshal.Copy(data, result, 0, headings.Count);
-        for (int d = 0; d < headings.Count; d++)
-          Console.WriteLine(headings[d] + " " + result[d]);
-        // Check for event activity
-        pulse.PullEvents(event_changes);
-        foreach (var change in event_changes)
-          Console.WriteLine(change.ToString());
-        pulse.PullActiveEvents(active_events);
-        foreach (var active_event in active_events)
-          Console.WriteLine(active_event.ToString());
+        data_values = pulse.PullData();
+        // And write it out to the console
+        data_mgr.ToConsole(data_values);
       }
 
       // Stop the hemorrhage
@@ -150,17 +163,9 @@ namespace HowTo_UseC
           return;
         }
         // Pull data from pulse
-        IntPtr data = pulse.PullData();
-        Marshal.Copy(data, result, 0, headings.Count);
-        for (int d = 0; d < headings.Count; d++)
-          Console.WriteLine(headings[d] + " " + result[d]);
-        // Check for event activity
-        pulse.PullEvents(event_changes);
-        foreach (var change in event_changes)
-          Console.WriteLine(change.ToString());
-        pulse.PullActiveEvents(active_events);
-        foreach (var active_event in active_events)
-          Console.WriteLine(active_event.ToString());
+        data_values = pulse.PullData();
+        // And write it out to the console
+        data_mgr.ToConsole(data_values);
       }
 
       // Administer Drugs
@@ -213,17 +218,9 @@ namespace HowTo_UseC
           return;
         }
         // Pull data from pulse
-        IntPtr data = pulse.PullData();
-        Marshal.Copy(data, result, 0, headings.Count);
-        for (int d = 0; d < headings.Count; d++)
-          Console.WriteLine(headings[d] + " " + result[d]);
-        // Check for event activity
-        pulse.PullEvents(event_changes);
-        foreach (var change in event_changes)
-          Console.WriteLine(change.ToString());
-        pulse.PullActiveEvents(active_events);
-        foreach (var active_event in active_events)
-          Console.WriteLine(active_event.ToString());
+        data_values = pulse.PullData();
+        // And write it out to the console
+        data_mgr.ToConsole(data_values);
       }
     }
   }

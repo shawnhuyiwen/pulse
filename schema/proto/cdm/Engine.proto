@@ -151,3 +151,12 @@ message DynamicStabilizationData
   DynamicStabilizationEngineConvergenceData             FeedbackConvergence             = 3;/**<< @brief */
   map<string,DynamicStabilizationEngineConvergenceData> ConditionConvergence            = 4;/**<< @brief */
 }
+
+message LogMessagesData
+{
+  repeated string                                       DebugMessages                   = 1;
+  repeated string                                       InfogMessages                   = 2;
+  repeated string                                       WarningMessages                 = 3;
+  repeated string                                       ErrorMessages                   = 4;
+  repeated string                                       FatalMessages                   = 5;
+}

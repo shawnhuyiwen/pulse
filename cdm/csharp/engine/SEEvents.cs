@@ -51,6 +51,11 @@ public enum eEvent : int
   NonRebreatherMaskOxygenBagEmpty = 1004
 }
 
+public interface EventHandler
+{
+  void HandleEvent(SEEventChange change);
+}
+
 public class SEActiveEvent
 {
   public eEvent Event { get; }

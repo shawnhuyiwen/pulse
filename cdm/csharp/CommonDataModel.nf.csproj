@@ -51,8 +51,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommonDataModel.cs" />
+    <Compile Include="engine\SEDataRequestManager.cs" />
+    <Compile Include="engine\SEDataRequest.cs" />
     <Compile Include="engine\SEAction.cs" />
+    <Compile Include="engine\SELogger.cs" />
     <Compile Include="engine\SEEvents.cs" />
+    <Compile Include="io\PBDataRequest.cs" />
+    <Compile Include="io\PBLogMessages.cs" />
     <Compile Include="io\PBEvents.cs" />
     <Compile Include="io\PBActions.cs" />
     <Compile Include="io\PBAnesthesiaMachine.cs" />
