@@ -99,7 +99,7 @@ namespace HowTo_UseC
       // Advance time and print out values
       for (int i = 1; i <= 10; i++)
       {
-        if (!pulse.AdvanceTime_s(1))
+        if (!pulse.AdvanceTime_s(0.65))
           Console.WriteLine("Error Advancing Time!");
         else
         {

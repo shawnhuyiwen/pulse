@@ -70,15 +70,15 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\cdm\csharp\CommonDataModel.nf.csproj">
+    <ProjectReference Include="..\..\..\cdm\csharp\CommonDataModel.nf.csproj">
       <Project>{dc674c38-20d9-4195-8d33-d6f9452b6fca}</Project>
       <Name>CommonDataModel.nf</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\engine\csharp\PulseEngine.nf.csproj">
+    <ProjectReference Include="..\..\..\engine\csharp\PulseEngine.nf.csproj">
       <Project>{a9981da7-5adb-4f69-be10-f79d806a0a90}</Project>
       <Name>PulseEngine.nf</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\schema\DataModelBindings.nf.csproj">
+    <ProjectReference Include="..\..\..\schema\DataModelBindings.nf.csproj">
       <Project>{1194cec1-6ae7-48e4-b214-90c72dd6c90b}</Project>
       <Name>DataModelBindings.nf</Name>
     </ProjectReference>

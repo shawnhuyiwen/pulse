@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 // C# class that wraps the PulseC API
 public class PulseEngine
 {
-  private const string        PulseLib = "PulseCd"; // Name of our Pulse library (PulseC or PulseCd)
+  private const string        PulseLib = "PulseC";  // Name of our Pulse library (PulseC or PulseCd)
   readonly IntPtr             pulse_cptr;           // Pointer to the pulse engine in C
   private double[]            data_values;          // Data coming back from the engine
   private double              time_step_s = 0.02;   // Time step (TODO Get this from engine)
