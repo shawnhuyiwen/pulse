@@ -4,7 +4,9 @@
 public class SEAcuteRespiratoryDistressSyndromeExacerbation : SEPatientAction
 {
   protected SEScalar0To1 severity;
-  
+  protected SEScalar0To1 leftLungAffected;
+  protected SEScalar0To1 rightLungAffected;
+
   public SEAcuteRespiratoryDistressSyndromeExacerbation()
   {
     severity = null;
@@ -25,7 +27,7 @@ public class SEAcuteRespiratoryDistressSyndromeExacerbation : SEPatientAction
   
   public override bool IsValid()
   {
-    return HasSeverity() && HasLeftLungAffected() && HasRightLungAffected()
+    return HasSeverity() && HasLeftLungAffected() && HasRightLungAffected();
   }
   
   public bool HasSeverity()
@@ -50,7 +52,6 @@ public class SEAcuteRespiratoryDistressSyndromeExacerbation : SEPatientAction
     return leftLungAffected;
   }
 
-    
   public bool HasRightLungAffected()
   {
     return rightLungAffected == null ? false : rightLungAffected.IsValid();

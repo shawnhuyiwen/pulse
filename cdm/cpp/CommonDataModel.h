@@ -106,6 +106,7 @@ template class __declspec(dllexport) std::vector<std::string>;
 // kitware@kitware.com
 #pragma warning(disable : 4251)
 //Utilities
+enum SerializationFormat { BINARY = 0, JSON };
 
 struct CommonDataModelException : public std::runtime_error
 {
@@ -119,7 +120,6 @@ struct CommonDataModelException : public std::runtime_error
 #include "Macros.h"
 #include "utils/Logger.h"
 
-enum SerializationFormat { BINARY = 0, JSON };
 
 // General Enums
 // Keep enums in sync with appropriate schema/cdm/Enums.proto file !!

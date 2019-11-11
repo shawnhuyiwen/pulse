@@ -15,6 +15,20 @@ public class PBAction
         foreach(var action in src.AnyAction)
             dst.Add(PBAction.Load(action));
     }
+    public static bool SerializeFromString(string src, List<SEAction> dst)
+    {
+        try
+        {
+            Cdm.ActionListData data = JsonParser.Default.Parse<Cdm.ActionListData>(src);
+            PBAction.Load(data, dst);
+        }
+        catch (Google.Protobuf.InvalidJsonException)
+        {
+            return false;
+        }
+        return true;
+    }
+
     public static Cdm.ActionListData Unload(List<SEAction> src)
     {
         Cdm.ActionListData dst = new Cdm.ActionListData();
@@ -25,6 +39,11 @@ public class PBAction
     {
         foreach(var action in src)
             dst.AnyAction.Add(PBAction.Unload(action));
+    }
+    public static string SerializeToString(List<SEAction> src)
+    {
+        var pb = PBAction.Unload(src);
+        return pb.ToString();
     }
 
     #region AnyAction

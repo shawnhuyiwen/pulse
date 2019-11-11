@@ -3,17 +3,35 @@
 
 public class VolumePerTimeUnit
 {
-    private VolumePerTimeUnit(string v) { Value = v; }
-    protected string Value { get; }
+  private VolumePerTimeUnit(string v) { Value = v; }
+  protected string Value { get; }
 
-    public new string ToString() { return Value; }
+  public new string ToString() { return Value; }
 
-    public static VolumePerTimeUnit L_Per_s { get { return new VolumePerTimeUnit("L/s"); } }
-    public static VolumePerTimeUnit mL_Per_s { get { return new VolumePerTimeUnit("mL/s"); } }
-    public static VolumePerTimeUnit L_Per_min { get { return new VolumePerTimeUnit("L/min"); } }
-    public static VolumePerTimeUnit m3_Per_s { get { return new VolumePerTimeUnit("m^3/s"); } }
-    public static VolumePerTimeUnit mL_Per_min { get { return new VolumePerTimeUnit("mL/min"); } }
-    public static VolumePerTimeUnit mL_Per_day { get { return new VolumePerTimeUnit("mL/day"); } }
+  public static VolumePerTimeUnit L_Per_s { get { return new VolumePerTimeUnit("L/s"); } }
+  public static VolumePerTimeUnit mL_Per_s { get { return new VolumePerTimeUnit("mL/s"); } }
+  public static VolumePerTimeUnit L_Per_min { get { return new VolumePerTimeUnit("L/min"); } }
+  public static VolumePerTimeUnit m3_Per_s { get { return new VolumePerTimeUnit("m^3/s"); } }
+  public static VolumePerTimeUnit mL_Per_min { get { return new VolumePerTimeUnit("mL/min"); } }
+  public static VolumePerTimeUnit mL_Per_day { get { return new VolumePerTimeUnit("mL/day"); } }
+
+  public static VolumePerTimeUnit FromString(string u)
+  {
+    if (u == VolumePerTimeUnit.L_Per_s.Value)
+      return VolumePerTimeUnit.L_Per_s;
+    if (u == VolumePerTimeUnit.mL_Per_s.Value)
+      return VolumePerTimeUnit.mL_Per_s;
+    if (u == VolumePerTimeUnit.L_Per_min.Value)
+      return VolumePerTimeUnit.L_Per_min;
+    if (u == VolumePerTimeUnit.m3_Per_s.Value)
+      return VolumePerTimeUnit.m3_Per_s;
+    if (u == VolumePerTimeUnit.mL_Per_min.Value)
+      return VolumePerTimeUnit.mL_Per_min;
+    if (u == VolumePerTimeUnit.mL_Per_day.Value)
+      return VolumePerTimeUnit.mL_Per_day;
+
+    throw new System.NotSupportedException(u + " is an unsupported VolumePerTimeUnit");
+  }
 }
 
 public class SEScalarVolumePerTime : SEScalar
@@ -25,29 +43,39 @@ public class SEScalarVolumePerTime : SEScalar
 
   }
 
+  public SEScalarVolumePerTime(SEScalarVolumePerTime from)
+  {
+    Set(from);
+  }
+
   public SEScalarVolumePerTime(double value, VolumePerTimeUnit unit)
-    {
-        SetValue(value, unit);
-    }
+  {
+    SetValue(value, unit);
+  }
 
-    public new void SetValue(double value)
-    {
-        throw new System.NotSupportedException("You must provide a unit");
-    }
+  public void Set(SEScalarVolumePerTime from)
+  {
+    SetValue(from.value, from.unit);
+  }
 
-    public void SetValue(double value, VolumePerTimeUnit unit)
-    {
-        this.value = value;
-        this.unit = unit;
-    }
+  public new void SetValue(double value)
+  {
+    throw new System.NotSupportedException("You must provide a unit");
+  }
 
-    public double GetValue(VolumePerTimeUnit unit)
-    {
-        throw new System.NotImplementedException();
-    }
+  public void SetValue(double value, VolumePerTimeUnit unit)
+  {
+    this.value = value;
+    this.unit = unit;
+  }
 
-    public VolumePerTimeUnit GetUnit()
-    {
-        return unit;
-    }
+  public double GetValue(VolumePerTimeUnit unit)
+  {
+    throw new System.NotImplementedException();
+  }
+
+  public VolumePerTimeUnit GetUnit()
+  {
+    return unit;
+  }
 }

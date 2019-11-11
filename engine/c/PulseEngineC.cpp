@@ -20,6 +20,7 @@
 #include "properties/SEScalarVolume.h"
 #include "utils/DataTrack.h"
 #include "utils/Logger.h"
+#include <cstring>
 
 #if defined (__clang__)
   #define C_EXPORT
@@ -31,6 +32,19 @@
   #define C_EXPORT __declspec(dllexport)
   #define C_CALL __stdcall
 #endif
+
+// Implement a C Style strdup
+// So we can still use std-c11
+char* c_strdup(const char* s, size_t slen)
+{
+  char* result = (char*)malloc(slen + 1);
+  if (result == NULL)
+  {
+    return NULL;
+  }
+  memcpy(result, s, slen + 1);
+  return result;
+}
 
 extern "C"
 C_EXPORT void C_CALL PulseInitialize()
@@ -46,10 +60,11 @@ C_EXPORT void C_CALL PulseDeinitialize()
 }
 
 extern "C"
-C_EXPORT PulseEngineC* C_CALL Allocate(const char* logFile, const char* data_dir=".")
+C_EXPORT PulseEngineC* C_CALL Allocate(const char* logFile, bool cout_enabled, const char* data_dir=".")
 {
-  std::string str(logFile);
+  std::string str(logFile==nullptr?"": logFile);
   PulseEngineC *pulseC = new PulseEngineC(str,data_dir);
+  pulseC->eng->GetLogger()->LogToConsole(cout_enabled);
   return pulseC;
 }
 
@@ -89,7 +104,6 @@ C_EXPORT void C_CALL SerializeToFile(PulseEngineC* pulseC, const char* filename,
   pulseC->eng->SerializeToFile(filename, (SerializationFormat)format);
 }
 
-
 extern "C"
 C_EXPORT bool C_CALL SerializeFromString(PulseEngineC* pulseC, const char* state, const char* data_requests, int format, double sim_time_s)
 {
@@ -115,11 +129,13 @@ C_EXPORT bool C_CALL SerializeFromString(PulseEngineC* pulseC, const char* state
 }
 
 extern "C"
-C_EXPORT const char* C_CALL SerializeToString(PulseEngineC* pulseC, int format)
+C_EXPORT bool C_CALL SerializeToString(PulseEngineC* pulseC, int format, char** state_str)
 {
   std::string state;
-  pulseC->eng->SerializeToString(state, (SerializationFormat)format);
-  return state.c_str();
+  if (!pulseC->eng->SerializeToString(state, (SerializationFormat)format))
+    return false;
+  *state_str = c_strdup(state.c_str(), state.length());
+  return true;
 }
 
 extern "C"
@@ -152,49 +168,54 @@ C_EXPORT bool C_CALL InitializeEngine(PulseEngineC* pulseC, const char* patient_
 }
 
 extern "C"
-C_EXPORT bool C_CALL AdvanceTime_s(PulseEngineC* pulseC, double time_s)
+C_EXPORT void C_CALL KeepLogMessages(PulseEngineC* pulseC, bool keep)
 {
-  bool success = true;
-  try
-  {
-    pulseC->eng->AdvanceModelTime(time_s, TimeUnit::s);
-  }
-  catch (CommonDataModelException& ex)
-  {
-    pulseC->eng->GetLogger()->Error(ex.what());
-    success = false;
-  }
-  catch (std::exception& ex)
-  {
-    pulseC->eng->GetLogger()->Error(ex.what());
-    success = false;
-  }
-  catch (...)
-  {
-    pulseC->eng->GetLogger()->Error("Caught Unknown Exception");
-    success = false;
-  }
-  return success;
+  pulseC->keep_log_msgs = keep;
 }
 
 extern "C"
-C_EXPORT double* C_CALL PullData(PulseEngineC* pulseC)
+C_EXPORT bool C_CALL PullLogMessages(PulseEngineC* pulseC, char** str_addr)
 {
-  double currentTime_s = pulseC->eng->GetSimulationTime(TimeUnit::s);
-  pulseC->eng->GetEngineTracker()->TrackData(currentTime_s);
-  if (pulseC->requestedData == nullptr)
-  {
-    // +1 for the sim time
-    pulseC->requestedData = new double[pulseC->eng->GetEngineTracker()->GetDataTrack().GetHeadings().size() + 1];
-  }
-  // Always put the sim time in index 0 as seconds
-  pulseC->requestedData[0] = currentTime_s;
-  // Pull all data we requested and pack into our array for return to the caller
-  int i = 0;
-  for (std::string& heading : pulseC->eng->GetEngineTracker()->GetDataTrack().GetHeadings())
-    pulseC->requestedData[++i] = pulseC->eng->GetEngineTracker()->GetDataTrack().GetProbe(heading);
- 
-  return pulseC->requestedData;
+  if (pulseC->log_msgs.IsEmpty())
+    return false;
+  
+  std::string log_msgs_str;
+  LogMessages::SerializeToString(pulseC->log_msgs, log_msgs_str, SerializationFormat::JSON, pulseC->eng->GetLogger());
+  pulseC->log_msgs.Clear();
+  *str_addr = c_strdup(log_msgs_str.c_str(), log_msgs_str.length());
+  return true;
+}
+
+extern "C"
+C_EXPORT void C_CALL KeepEventChanges(PulseEngineC* pulseC, bool keep)
+{
+  pulseC->keep_event_changes = keep;
+}
+
+extern "C"
+C_EXPORT bool C_CALL PullEvents(PulseEngineC* pulseC, char** str_addr)
+{
+  if (pulseC->events.empty())
+    return false;
+
+  std::string event_changes;
+  SEEventChange::SerializeToString(pulseC->events, event_changes, SerializationFormat::JSON, pulseC->eng->GetLogger());
+  DELETE_VECTOR(pulseC->events);
+  *str_addr = c_strdup(event_changes.c_str(), event_changes.length());
+  return true;
+}
+
+extern "C"
+C_EXPORT bool C_CALL PullActiveEvents(PulseEngineC* pulseC, char** active)
+{
+
+  if (!pulseC->eng->GetEventManager().GetActiveEvents(pulseC->active_events))
+    return false;
+  std::string active_events_json;
+  SEActiveEvent::SerializeToString(pulseC->active_events, active_events_json, SerializationFormat::JSON, pulseC->eng->GetLogger());
+  DELETE_VECTOR(pulseC->active_events);
+  *active = c_strdup(active_events_json.c_str(), active_events_json.length());
+  return true;
 }
 
 extern "C"
@@ -242,9 +263,50 @@ PulseEngineC::PulseEngineC(const std::string& logFile, const std::string& data_d
   eng->GetLogger()->LogToConsole(false);
 }
 
-PulseEngineC::~PulseEngineC()
+extern "C"
+C_EXPORT bool C_CALL AdvanceTimeStep(PulseEngineC* pulseC)
 {
-  
+  bool success = true;
+  try
+  {
+    pulseC->eng->AdvanceModelTime();
+  }
+  catch (CommonDataModelException& ex)
+  {
+    pulseC->eng->GetLogger()->Error(ex.what());
+    success = false;
+  }
+  catch (std::exception& ex)
+  {
+    pulseC->eng->GetLogger()->Error(ex.what());
+    success = false;
+  }
+  catch (...)
+  {
+    pulseC->eng->GetLogger()->Error("Caught Unknown Exception");
+    success = false;
+  }
+  return success;
+}
+
+extern "C"
+C_EXPORT double* C_CALL PullData(PulseEngineC* pulseC)
+{
+  double currentTime_s = pulseC->eng->GetSimulationTime(TimeUnit::s);
+  pulseC->eng->GetEngineTracker()->TrackData(currentTime_s);
+  if (pulseC->requestedData == nullptr)
+  {
+    // +1 for the sim time
+    pulseC->requestedData = new double[pulseC->eng->GetEngineTracker()->GetDataTrack().GetHeadings().size() + 1];
+  }
+  // Always put the sim time in index 0 as seconds
+  pulseC->requestedData[0] = currentTime_s;
+  // Pull all data we requested and pack into our array for return to the caller
+  int i = 0;
+  for (std::string& heading : pulseC->eng->GetEngineTracker()->GetDataTrack().GetHeadings())
+    pulseC->requestedData[++i] = pulseC->eng->GetEngineTracker()->GetDataTrack().GetProbe(heading);
+
+  return pulseC->requestedData;
 }
 
 void PulseEngineC::SetupDefaultDataRequests()
@@ -267,30 +329,36 @@ void PulseEngineC::SetupDefaultDataRequests()
 
 void PulseEngineC::ForwardDebug(const std::string&  msg, const std::string&  origin)
 {
-  
+  if(keep_log_msgs)
+    log_msgs.debug_msgs.push_back(msg + origin);
 }
 
 void PulseEngineC::ForwardInfo(const std::string&  msg, const std::string&  origin)
 {
-  std::cout << msg << std::endl;
+  if (keep_log_msgs)
+    log_msgs.info_msgs.push_back(msg + origin);
 }
 
 void PulseEngineC::ForwardWarning(const std::string&  msg, const std::string&  origin)
 {
-  
+  if (keep_log_msgs)
+    log_msgs.warning_msgs.push_back(msg + origin);
 }
 
 void PulseEngineC::ForwardError(const std::string&  msg, const std::string&  origin)
 {
-  
+  if (keep_log_msgs)
+    log_msgs.error_msgs.push_back(msg + origin);
 }
 
 void PulseEngineC::ForwardFatal(const std::string&  msg, const std::string&  origin)
 {
-  
+  if(keep_log_msgs)
+    log_msgs.fatal_msgs.push_back(msg + origin);
 }
 
 void PulseEngineC::HandleEvent(eEvent type, bool active, const SEScalarTime* time)
 {
-  
+  if (keep_event_changes)
+    events.push_back(new SEEventChange(type, active, time));
 }

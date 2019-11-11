@@ -24,6 +24,7 @@ set( IO_PB_CDM_FILES ${_cur_dir}/PBUtils.h
                      ${_cur_dir}/PBEngine.cpp
                      ${_cur_dir}/PBEngineEnums.cpp
                      ${_cur_dir}/PBEnums.cpp
+                     ${_cur_dir}/PBEvents.h
                      ${_cur_dir}/PBEvents.cpp
                      ${_cur_dir}/PBEnvironment.h
                      ${_cur_dir}/PBEnvironment.cpp

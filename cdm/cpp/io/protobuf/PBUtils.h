@@ -13,4 +13,5 @@ public:
 
   static void ProtobufLogHandler(google::protobuf::LogLevel level, const char* filename, int line, const std::string& message);
 
+
 };

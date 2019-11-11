@@ -1,9 +1,0 @@
-{
-  "profiles": {
-    "HowTo-UseC": {
-      "commandName": "Project",
-      "workingDirectory": "N:\\Programming\\builds\\pulse-engine\\install\\bin\\",
-      "nativeDebugging": true
-    }
-  }
-}

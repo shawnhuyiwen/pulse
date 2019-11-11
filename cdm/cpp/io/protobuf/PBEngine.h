@@ -2,6 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
+CDM_BIND_DECL(LogMessagesData)
 CDM_BIND_DECL(ActionListData)
 CDM_BIND_DECL(ConditionListData)
 CDM_BIND_DECL2(DataRequest)
@@ -12,6 +13,7 @@ CDM_BIND_DECL2(DynamicStabilization)
 CDM_BIND_DECL2(DynamicStabilizationEngineConvergence)
 CDM_BIND_DECL2(TimedStabilization)
 CDM_BIND_DECL2(PatientConfiguration)
+class LogMessages;
 class SEAction;
 class SEActionManager;
 class SEConditionManager;
@@ -25,11 +27,17 @@ class CDM_DECL PBEngine
 {
 public:
 
+  static void Load(const cdm::LogMessagesData& src, LogMessages& dst);
+  static cdm::LogMessagesData* Unload(const LogMessages& src);
+  static void Serialize(const cdm::LogMessagesData& src, LogMessages& dst);
+  static void Serialize(const LogMessages& src, cdm::LogMessagesData& dst); 
+  static bool SerializeToString(const LogMessages& src, std::string& output, SerializationFormat m, Logger* logger);
+  static bool SerializeFromString(const std::string& src, LogMessages& dst, SerializationFormat m, Logger* logger);
+
   static void Load(const cdm::PatientConfigurationData& src, SEPatientConfiguration& dst, SESubstanceManager& subMgr);
   static cdm::PatientConfigurationData* Unload(const SEPatientConfiguration& src);
   static void Serialize(const cdm::PatientConfigurationData& src, SEPatientConfiguration& dst, SESubstanceManager& subMgr);
   static void Serialize(const SEPatientConfiguration& src, cdm::PatientConfigurationData& dst);
-
   static bool SerializeToString(const SEPatientConfiguration& src, std::string& output, SerializationFormat m);
   static bool SerializeToFile(const SEPatientConfiguration& src, const std::string& filename, SerializationFormat m);
   static bool SerializeFromString(const std::string& src, SEPatientConfiguration& dst, SerializationFormat m, SESubstanceManager& subMgr);

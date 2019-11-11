@@ -1,6 +1,8 @@
-if(NOT PULSE_BUILD_JAVA_UTILS)
+if(NOT PULSE_BUILD_CLR)
   return()
 endif()
+
+message(AUTHOR_WARNING "CLR support has not been maintained due to our C# implementation")
 
 add_library(PulseCLR SHARED engine/clr/PulseEngine.h
                             engine/clr/PulseEngine.cpp)
