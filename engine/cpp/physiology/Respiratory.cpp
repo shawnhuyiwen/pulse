@@ -2227,14 +2227,11 @@ void Respiratory::UpdateVolumes()
     m_LeftAlveolarDeadSpace->GetNextVolume().SetValue(leftAlveolarDeadSpace_L + alveolarDeadSpace_L * leftLungRatio, VolumeUnit::L);
     m_RightAlveolarDeadSpace->GetNextVolume().SetValue(rightAlveolarDeadSpace_L + alveolarDeadSpace_L * rightLungRatio, VolumeUnit::L);
   }
-  else
-  {
-    m_LeftAlveolarDeadSpace->GetNextVolume().Invalidate();
-    m_RightAlveolarDeadSpace->GetNextVolume().Invalidate();
-  }
+ 
 
   //---------------------------------------------------------------------------------------------------------------------------------------------
   //Pulmonary Fibrosis
+
   if (m_data.GetConditions().HasPulmonaryFibrosis())
   {
 	  double leftAlveolarDeadSpace_L = 0.0;
@@ -2245,7 +2242,6 @@ void Respiratory::UpdateVolumes()
 		  rightAlveolarDeadSpace_L = m_RightAlveolarDeadSpace->GetVolumeBaseline(VolumeUnit::L);
 
 	  double Severity = 0.0;
-	  //double emphysemaSeverity = 0.0;
 
 	  if (m_data.GetConditions().HasPulmonaryFibrosis())
 	  {
@@ -2260,6 +2256,12 @@ void Respiratory::UpdateVolumes()
 
 	  m_LeftAlveolarDeadSpace->GetNextVolume().SetValue(leftAlveolarDeadSpace_L + alveolarDeadSpace_L * leftLungRatio, VolumeUnit::L);
 	  m_RightAlveolarDeadSpace->GetNextVolume().SetValue(rightAlveolarDeadSpace_L + alveolarDeadSpace_L * rightLungRatio, VolumeUnit::L);
+  }
+
+  else
+  {
+	  m_LeftAlveolarDeadSpace->GetNextVolume().Invalidate();
+	  m_RightAlveolarDeadSpace->GetNextVolume().Invalidate();
   }
 
   //Update lung volumes
