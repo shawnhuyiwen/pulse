@@ -21,6 +21,7 @@ file(GLOB SRC_FILES howto/cpp/EngineHowTo.cpp
                     howto/cpp/HowTo-Hemorrhage.cpp
                     howto/cpp/HowTo-LobarPneumonia.cpp
                     howto/cpp/HowTo-MechanicalVentilation.cpp
+					howto/cpp/HowTo-PulmonaryFibrosis.cpp
                     howto/cpp/HowTo-PulmonaryFunctionTest.cpp
                     howto/cpp/HowTo-RunScenario.cpp
                     howto/cpp/HowTo-RunThreaded.cpp

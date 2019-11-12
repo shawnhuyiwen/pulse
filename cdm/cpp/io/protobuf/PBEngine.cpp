@@ -32,6 +32,7 @@
 #include "patient/conditions/SEConsumeMeal.h"
 #include "patient/conditions/SEImpairedAlveolarExchange.h"
 #include "patient/conditions/SELobarPneumonia.h"
+#include "patient/conditions/SEPulmonaryFibrosis.h"
 #include "patient/conditions/SESepsis.h"
 #include "engine/SEAction.h"
 #include "engine/SEActionManager.h"
@@ -133,6 +134,8 @@ void PBEngine::Serialize(const SEConditionManager& src, cdm::ConditionListData& 
     dst.mutable_anycondition()->AddAllocated(PBCondition::Unload(*src.m_LobarPneumonia));
   if (src.HasChronicRenalStenosis())
     dst.mutable_anycondition()->AddAllocated(PBCondition::Unload(*src.m_RenalStenosis));
+  if (src.HasPulmonaryFibrosis())
+	  dst.mutable_anycondition()->AddAllocated(PBCondition::Unload(*src.m_PulmonaryFibrosis));
   if (src.HasSepsis())
     dst.mutable_anycondition()->AddAllocated(PBCondition::Unload(*src.m_Sepsis));
   if (src.HasInitialEnvironmentConditions())

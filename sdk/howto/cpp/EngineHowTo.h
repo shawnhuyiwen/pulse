@@ -25,6 +25,7 @@ void HowToExercise();
 void HowToHemorrhage();
 void HowToLobarPneumonia();
 void HowToMechanicalVentilation();
+void HowToPulmonaryFibrosis();
 void HowToPulmonaryFunctionTest();
 void HowToSmoke();
 void HowToTensionPneumothorax();

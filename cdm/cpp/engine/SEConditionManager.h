@@ -14,6 +14,7 @@ class SEChronicVentricularSystolicDysfunction;
 class SEConsumeMeal;
 class SEImpairedAlveolarExchange;
 class SELobarPneumonia;
+class SEPulmonaryFibrosis;
 class SESepsis;
 // Environment Conditions
 class SEInitialEnvironmentConditions;
@@ -81,6 +82,10 @@ public:
   SELobarPneumonia* GetLobarPneumonia();
   const SELobarPneumonia* GetLobarPneumonia() const;
 
+  bool HasPulmonaryFibrosis() const;
+  SEPulmonaryFibrosis* GetPulmonaryFibrosis();
+  const SEPulmonaryFibrosis* GetPulmonaryFibrosis() const;
+
   bool HasSepsis() const;
   SESepsis* GetSepsis();
   const SESepsis* GetSepsis() const;
@@ -106,6 +111,7 @@ protected:
   SEChronicPericardialEffusion*            m_PericardialEffusion;
   SELobarPneumonia*                        m_LobarPneumonia;
   SEChronicRenalStenosis*                  m_RenalStenosis;
+  SEPulmonaryFibrosis*                     m_PulmonaryFibrosis;
   SESepsis*                                m_Sepsis;
 
   SEInitialEnvironmentConditions*          m_InitialEnvironmentConditions;

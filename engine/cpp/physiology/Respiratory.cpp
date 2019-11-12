@@ -12,6 +12,7 @@
 #include "patient/conditions/SEChronicObstructivePulmonaryDisease.h"
 #include "patient/conditions/SELobarPneumonia.h"
 #include "patient/conditions/SEImpairedAlveolarExchange.h"
+#include "patient/conditions/SEPulmonaryFibrosis.h"
 #include "patient/conditions/SEAcuteRespiratoryDistressSyndrome.h"
 // Actions
 #include "engine/SEActionManager.h"
@@ -402,6 +403,7 @@ void Respiratory::SetUp()
 ///   <LI>COPD</LI>
 ///   <LI>Lobar Pneumonia</LI>
 ///   <LI>ImpairedAlveolarExchange</LI>
+///   <LI>Pulmonary Fibrosis< / LI>
 ///  </UL>
 ///
 //--------------------------------------------------------------------------------------------------
@@ -2231,6 +2233,35 @@ void Respiratory::UpdateVolumes()
     m_RightAlveolarDeadSpace->GetNextVolume().Invalidate();
   }
 
+  //---------------------------------------------------------------------------------------------------------------------------------------------
+  //Pulmonary Fibrosis
+  if (m_data.GetConditions().HasPulmonaryFibrosis())
+  {
+	  double leftAlveolarDeadSpace_L = 0.0;
+	  double rightAlveolarDeadSpace_L = 0.0;
+	  if (m_LeftAlveolarDeadSpace->HasVolumeBaseline())
+		  leftAlveolarDeadSpace_L = m_LeftAlveolarDeadSpace->GetVolumeBaseline(VolumeUnit::L);
+	  if (m_RightAlveolarDeadSpace->HasVolumeBaseline())
+		  rightAlveolarDeadSpace_L = m_RightAlveolarDeadSpace->GetVolumeBaseline(VolumeUnit::L);
+
+	  double Severity = 0.0;
+	  //double emphysemaSeverity = 0.0;
+
+	  if (m_data.GetConditions().HasPulmonaryFibrosis())
+	  {
+		  Severity = m_data.GetConditions().GetPulmonaryFibrosis()->GetSeverity().GetValue();
+	  }
+
+	  //Linear function: Min = 0.0, Max = 2.0 (decreasing with severity)
+	  double alveolarDeadSpace_L = GeneralMath::LinearInterpolator(0.0, 1.0, 2.0, 0.0, Severity);
+
+	  double rightLungRatio = m_data.GetCurrentPatient().GetRightLungRatio().GetValue();
+	  double leftLungRatio = 1.0 - rightLungRatio;
+
+	  m_LeftAlveolarDeadSpace->GetNextVolume().SetValue(leftAlveolarDeadSpace_L + alveolarDeadSpace_L * leftLungRatio, VolumeUnit::L);
+	  m_RightAlveolarDeadSpace->GetNextVolume().SetValue(rightAlveolarDeadSpace_L + alveolarDeadSpace_L * rightLungRatio, VolumeUnit::L);
+  }
+
   //Update lung volumes
   double leftAlveolarDeadSpace_L = 0.0;
   if (m_LeftAlveolarDeadSpace->HasNextVolume())
@@ -2518,6 +2549,22 @@ void Respiratory::UpdateAlveolarCompliances()
   }
 
   //------------------------------------------------------------------------------------------------------
+  //Pulmonary Fibrosis
+  if (m_data.GetConditions().HasPulmonaryFibrosis())
+  {
+	  double Severity = 0.0;
+	 
+	  if (m_data.GetConditions().HasPulmonaryFibrosis())
+	  {
+		  Severity = m_data.GetConditions().GetPulmonaryFibrosis()->GetSeverity().GetValue();
+	  }
+	  double complianceScalingFactor = GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, 0.4, Severity);
+
+	  leftRestrictiveComplianceScalingFactor = MIN(leftRestrictiveComplianceScalingFactor, complianceScalingFactor);
+	  rightRestrictiveComplianceScalingFactor = MIN(rightRestrictiveComplianceScalingFactor, complianceScalingFactor);
+  }
+
+  //------------------------------------------------------------------------------------------------------
   //ARDS
   //Exacerbation will overwrite the condition, even if it means improvement
   //Same as lobar pneumonia for now
@@ -2626,6 +2673,20 @@ void Respiratory::UpdateInspiratoryExpiratoryRatio()
 
     double scaledSeverity = severity * leftLungFraction * dLeftLungRatio + severity * rightLungFraction * dRightLungRatio;
     combinedSeverity = MAX(combinedSeverity, scaledSeverity);
+  }
+
+  //------------------------------------------------------------------------------------------------------
+  // Pulmonary Fibrosis
+  if (m_data.GetConditions().HasPulmonaryFibrosis())
+  {
+	  double Severity = 0.0;
+
+	  if (m_data.GetConditions().HasPulmonaryFibrosis())
+	  {
+		  Severity = m_data.GetConditions().GetPulmonaryFibrosis()->GetSeverity().GetValue();
+
+	  }
+	  combinedSeverity = MAX(combinedSeverity, Severity);
   }
 
   //------------------------------------------------------------------------------------------------------
@@ -2772,6 +2833,22 @@ void Respiratory::UpdateDiffusion()
   }
 
   //------------------------------------------------------------------------------------------------------
+ //PulmonaryFibrosis
+  if (m_data.GetConditions().HasPulmonaryFibrosis())
+  {
+	  double Severity = 0.0;
+	  if (m_data.GetConditions().GetPulmonaryFibrosis())
+	  {
+		  Severity = m_data.GetConditions().GetPulmonaryFibrosis()->GetSeverity().GetValue();
+	  }
+
+	  double gasDiffusionScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.1, 1.0, Severity);
+
+	  // Calculate the total surface area
+	  alveoliDiffusionArea_cm2 *= gasDiffusionScalingFactor;
+  }
+
+  //------------------------------------------------------------------------------------------------------
   //ARDS
   //Exacerbation will overwrite the condition, even if it means improvement
   //Same as lobar pneumonia for now
@@ -2854,6 +2931,34 @@ void Respiratory::UpdatePulmonaryCapillary()
     
     m_RightPulmonaryCapillary->GetNextResistance().SetValue(dRightPulmonaryCapillaryResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     m_LeftPulmonaryCapillary->GetNextResistance().SetValue(dLeftPulmonaryCapillaryResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  }
+
+  //-------------------------------------------------------------------------------------------------------------------
+  //PulmonaryFibrosis
+  if (m_data.GetConditions().HasPulmonaryFibrosis())
+  {
+	  double Severity = 0.0;
+
+	  if (m_data.GetConditions().GetPulmonaryFibrosis())
+	  {
+		  Severity = m_data.GetConditions().GetPulmonaryFibrosis()->GetSeverity().GetValue();
+	  }
+
+	  // Calculate Pulmonary Capillary Resistance Multiplier based on severities
+
+	  // Resistance is based on a a simple line fit where severity = 0 is resistance multiplier = 1.0
+	  // and severity = 0.6 is resistance multiplier = 2.0.
+	  double dSlopePulResist = 1.66666; // hard-coded slope for line
+	  double dPulmonaryResistanceMultiplier = 1.0 + (Severity*dSlopePulResist);
+
+	  double dRightPulmonaryCapillaryResistance = m_RightPulmonaryCapillary->GetNextResistance().GetValue(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+	  double dLeftPulmonaryCapillaryResistance = m_LeftPulmonaryCapillary->GetNextResistance().GetValue(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+
+	  dRightPulmonaryCapillaryResistance *= dPulmonaryResistanceMultiplier;
+	  dLeftPulmonaryCapillaryResistance *= dPulmonaryResistanceMultiplier;
+
+	  m_RightPulmonaryCapillary->GetNextResistance().SetValue(dRightPulmonaryCapillaryResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+	  m_LeftPulmonaryCapillary->GetNextResistance().SetValue(dLeftPulmonaryCapillaryResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   }
 }
 
@@ -2943,6 +3048,23 @@ void Respiratory::ModifyDriverPressure()
     //Linear function: Min = 0.0, Max = 0.8 (increasing with severity)
     double thisDyspneaSeverity = GeneralMath::LinearInterpolator(0.0, 1.0, 0.0, 0.8, combinedSeverity);
     dyspneaSeverity = MAX(dyspneaSeverity, thisDyspneaSeverity);
+  }
+
+  //------------------------------------------------------------------------------------------------------
+  //Pulmonary Fibrosis
+
+  if (m_data.GetConditions().HasPulmonaryFibrosis())
+  {
+	  double Severity = 0.0;
+
+	  if (m_data.GetConditions().GetPulmonaryFibrosis())
+	  {
+		  Severity = m_data.GetConditions().GetPulmonaryFibrosis()->GetSeverity().GetValue();
+	  }
+
+	  //Linear function: Min = 0.0, Max = 0.8 (increasing with severity)
+	  double thisDyspneaSeverity = GeneralMath::LinearInterpolator(0.0, 1.0, 0.0, 0.8, Severity);
+	  dyspneaSeverity = MAX(dyspneaSeverity, thisDyspneaSeverity);
   }
 
   //------------------------------------------------------------------------------------------------------
