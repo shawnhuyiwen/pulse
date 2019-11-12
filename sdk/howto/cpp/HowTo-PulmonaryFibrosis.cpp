@@ -27,16 +27,16 @@
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
-/// Usage for applying a COPD condition to the patient
+/// Usage for applying a PulmonaryFibrosis condition to the patient
 ///
 /// \details
-/// Refer to the SEChronicObstructivePulmonaryDisease class
+/// Refer to the SEPulmonaryFibrosis class
 //--------------------------------------------------------------------------------------------------
 void HowToPulmonaryFibrosis()
 {
 	// Create the engine and load the patient
 	std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowToPilmonaryFibrosis.log");
-	pe->GetLogger()->Info("HowToPilmonaryFibrosis");
+	pe->GetLogger()->Info("HowToPulmonaryFibrosis");
 
 	// Since this is a condition, we do not provide a starting state
 	// You will need to initialize the engine to this patient configuration
@@ -71,7 +71,7 @@ void HowToPulmonaryFibrosis()
 	pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("InspiratoryExpiratoryRatio");
 	pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("ExpiratoryFlow", VolumePerTimeUnit::L_Per_s);
 
-	pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToPilmonaryFibrosis.csv");
+	pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToPulmonaryFibrosis.csv");
 
 	// Advance some time to get some data
 	tracker.AdvanceModelTime(120);
