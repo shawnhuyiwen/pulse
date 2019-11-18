@@ -325,3 +325,117 @@ input.gsc-input,
   background-color: #222;
 }
 /* Google Custom Search Engine Tweaks  END */
+
+
+
+/* Website Refresh Styles
+================================== */
+
+/* Header */
+.navbar {
+  border-top: 4px solid #00529b !important;
+  box-shadow: 0 1px 0 rgba(0,0,0,.1);
+  height: 80px;
+}
+
+.navbar > .container {
+  align-items: center;
+  display: flex;
+  height: 100% !important;
+}
+
+.navbar > .container .navbar-nav li a {
+  color: #666;
+  font-size: 16px;
+}
+
+.navbar-nav {
+  position: relative;
+}
+
+.navbar-nav>li.jobs-link {
+	position: absolute;
+  right: -110px;
+  top: -5px;
+  background: #00a950;
+  color: white;
+	padding:0;
+	width:78px;
+	z-index:999;
+}
+
+.navbar-nav>li.jobs-link a {
+  color: white !important;
+  display: block !important;
+  text-transform: uppercase;
+  text-align: center;
+  padding:10px !important;
+  font-size: 11px !important;
+  display: block;
+  width: 100%;
+  line-height: 1.2em;
+}
+
+.navbar-nav>li.jobs-link a:before {
+background: url(../jobs_icon.png) no-repeat;
+  content: "";
+  display: block;
+  width: 32px;
+  height: 32px;
+	background-size:100%;
+	margin:0 auto;
+}
+
+#mobile_menu>li.jobs-link {
+	background:#00529b;
+}
+#mobile_menu>li.jobs-link a {
+	color:white;
+}
+#mobile_menu>li.jobs-link a:before {
+	display:none;
+}
+
+/* Footer */
+#footer {
+  background: #002342;
+}
+
+#footer .footer-row:nth-child(2) {
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+
+  /* Responsive Header */
+  .navbar-header {
+    float: none;
+  }
+
+  .navbar-header:before,
+  .navbar > .container:before,
+  .navbar-header:after,
+  .navbar > .container:after {
+    content: none !important;
+  }
+
+  .navbar > .container {
+    justify-content: space-between;
+  }
+
+  .navbar > .container .navbar-collapse,
+  .navbar > .container .navbar-nav,
+  .navbar > .container .navbar-nav li,
+  .navbar > .container .navbar-nav li a {
+    align-items: center;
+    display: flex;
+    height: 100% !important;
+  }
+}
+
+@media (min-width: 992px) {
+  /* Responsive Footer */
+  #footer .footer-row:nth-child(2) {
+    text-align: right;
+  }
+}

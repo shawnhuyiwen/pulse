@@ -148,7 +148,7 @@ Our user manual offers in-depth details of all the Pulse asset functionality. It
     </center>
   </td>
   <td width="40%" valign="top" style="border-top:2px solid Gainsboro; padding:3px">
-      &bull; <a href="https://blog.kitware.com/pulse-physiology-used-for-testing-and-validation-of-a-closed-loop-physiology-management-system/">Kitware Blog Post</a><br>
+      &bull; <a href="https://blog.kitware.com/kitware-provides-pulse-physiology-engine-support-tosimquest-for-the-medical-simulation-and-training-architecture/">Kitware Blog Post</a><br>
       
   </td>
 </tr>
