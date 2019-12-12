@@ -1040,9 +1040,20 @@ void Respiratory::RespiratoryDriver()
       //Just increase/decrease the driver pressure linearly to achieve the desired 
       //pressure (attempting to reach a specific volume) at the end of the user specified period
       double Time_s = m_ConsciousRespirationPeriod_s - m_ConsciousRespirationRemainingPeriod_s;
-      double Slope = (m_ConsciousEndPressure_cmH2O - m_ConsciousStartPressure_cmH2O) / m_ConsciousRespirationPeriod_s;
-      //Form of y=mx+b
-      m_DriverPressure_cmH2O = Slope * Time_s + m_ConsciousStartPressure_cmH2O;
+
+      //jbw - Update this once with new concious respiration option
+      if (m_ConsciousEndPressure_cmH2O < 0.0)
+      {
+        double Slope = (m_ConsciousEndPressure_cmH2O - m_ConsciousStartPressure_cmH2O) / m_ConsciousRespirationPeriod_s;
+        //Form of y=mx+b
+        m_DriverPressure_cmH2O = Slope * Time_s + m_ConsciousStartPressure_cmH2O;
+      }
+      else
+      {
+        double tauDenominator = 4.0; //lower = "rounder"... too low (seems to be < 5) starts creating incontinuities
+        double tau = m_ConsciousRespirationPeriod_s / tauDenominator;
+        m_DriverPressure_cmH2O = (1.0 - std::exp(-Time_s / tau)) * m_ConsciousEndPressure_cmH2O;
+      }      
 
       //Make it so we start a fresh cycle when we go back to spontaneous breathing
       //Adding 2.0 * timestamp just makes it greater than the TotalBreathingCycleTime_s
