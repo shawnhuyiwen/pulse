@@ -28,8 +28,8 @@ set(Eigen3_DIR "${CMAKE_BINARY_DIR}/eigen/install")
 
 ExternalProject_Add( eigen
   PREFIX eigen
-  URL "http://bitbucket.org/eigen/eigen/get/${eigen_VERSION}.tar.gz"
-  URL_HASH MD5=f2a417d083fe8ca4b8ed2bc613d20f07
+  URL "https://gitlab.com/libeigen/eigen/-/archive/3.3.7/eigen-3.3.7.tar.gz"
+  URL_HASH MD5=9e30f67e8531477de4117506fe44669b
   #UPDATE_COMMAND 
   #  COMMAND ${CMAKE_COMMAND} -Deigen_source=${eigen_SRC} -Deigen_patch=${eigen_Patch} -P ${eigen_Patch}/Patch.cmake
   INSTALL_DIR "${Eigen3_DIR}"
@@ -113,9 +113,8 @@ endif()
 ###################################################
 
 message( STATUS "External project - protobuf" )
-#This is a working 3.7.0-rc2 hash, the tag is bunk :(
-set(protobuf_URL "https://github.com/protocolbuffers/protobuf/releases/download/v3.9.0/protobuf-all-3.9.0.zip")
-set(protobuf_MD5 "4f042c8b46823a69db3dcbc7381b73f4" )
+set(protobuf_URL "https://github.com/protocolbuffers/protobuf/releases/download/v3.11.1/protobuf-all-3.11.1.zip")
+set(protobuf_MD5 "01f0e58bb432727d494b390e62f877d5" )
 set(protobuf_SRC "${CMAKE_BINARY_DIR}/protobuf/src/protobuf")
 set(protobuf_DIR "${CMAKE_BINARY_DIR}/protobuf/install")
 set(protobuf_Patch "${CMAKE_SOURCE_DIR}/cmake/protobuf-patches")
@@ -170,6 +169,31 @@ if(WIN32)
   list(APPEND Pulse_DEPENDENCIES dirent)
 endif()
 
+###################################################
+## PyBind11                                      ##
+## Creation of Pulse Python Bindings             ##
+###################################################
+if(PULSE_PYTHON_BINDINGS)
+  message( STATUS "External project - pybind11" )
+  set(pybind11_DIR "${CMAKE_BINARY_DIR}/pybind11/install")
+  set(pybind11_version "2.2.1")
+  set(pybind11_url "https://github.com/pybind/pybind11/archive/v${pybind11_version}.tar.gz")
+  set(pybind11_md5 "bab1d46bbc465af5af3a4129b12bfa3b")
+
+  ExternalProject_Add(pybind11
+    PREFIX pybind11
+    URL ${pybind11_url}
+    URL_MD5 ${pybind11_md5}
+    DOWNLOAD_NAME ${pybind11_dlname}
+    ${CMAKE_GENERATION}
+    CMAKE_ARGS
+      -DCMAKE_INSTALL_PREFIX:STRING=${pybind11_DIR}
+      -DPYBIND11_TEST:BOOL=OFF # To remove dependencies; build can still be tested manually
+  )
+  message(STATUS "pybind11 is here : ${pybind11_DIR}" )
+  list(APPEND Pulse_DEPENDENCIES pybind11)
+endif()
+
 # ExternalProject_Add doesn't like to work with lists: it keeps only the first element
 string(REPLACE ";" "::" CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH}")
 
@@ -193,6 +217,7 @@ ExternalProject_Add( Pulse
     -DPULSE_BUILD_JAVA_UTILS:BOOL=${PULSE_BUILD_JAVA_UTILS}
     -DPULSE_BUILD_CLR:BOOL=${PULSE_BUILD_CLR}
     -DPULSE_LOGGER:STRING=${PULSE_LOGGER}
+    -DPULSE_PYTHON_BINDINGS:BOOL=${PULSE_PYTHON_BINDINGS}
     -Deigen_DIR:PATH=${eigen_DIR}
     # Let InnerBuild build and install these
     -Dlogger_SRC:PATH=${logger_SRC}
