@@ -18,6 +18,8 @@ public class PulseEngine
   private EventHandler        event_handler = null; // Forware events to this object
   private List<SEEventChange> event_changes = new List<SEEventChange>();
   private IntPtr              str_addr;             // Used to hold data between C# and C
+  private SerializationFormat thunk_as = SerializationFormat.JSON;
+  // TODO when we allow binary thunking, add many if/switchs below!
 
   [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
   public static extern void Initialize();
@@ -46,11 +48,11 @@ public class PulseEngine
 
   [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
   static extern bool SerializeFromFile(IntPtr pulse, string filename, string data_mgr, int format, double sim_time_s);
-  public bool SerializeFromFile(string filename, SEDataRequestManager data_mgr, double sim_time_s)
+  public bool SerializeFromFile(string filename, SEDataRequestManager data_mgr, double sim_time_s, SerializationFormat format)
   {
     data_values = new double[data_mgr.GetDataRequests().Count+1];
     string data_mgr_str = PBDataRequest.SerializeToString(data_mgr);
-    return SerializeFromFile(pulse_cptr, filename, data_mgr_str, (int)SerializationFormat.JSON, sim_time_s);
+    return SerializeFromFile(pulse_cptr, filename, data_mgr_str, (int)format, sim_time_s);
   }
 
   [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
@@ -62,11 +64,11 @@ public class PulseEngine
 
   [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
   static extern bool SerializeFromString(IntPtr pulse, string state, string data_mgr, int format, double sim_time_s);
-  public bool SerializeFromString(string state, SEDataRequestManager data_mgr, double sim_time_s)
+  public bool SerializeFromString(string state, SEDataRequestManager data_mgr, double sim_time_s, SerializationFormat format)
   {
     data_values = new double[data_mgr.GetDataRequests().Count+1];
     string data_mgr_str = PBDataRequest.SerializeToString(data_mgr);
-    return SerializeFromString(pulse_cptr, state, data_mgr_str, (int)SerializationFormat.JSON, sim_time_s);
+    return SerializeFromString(pulse_cptr, state, data_mgr_str, (int)format, sim_time_s);
   }
 
   [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
@@ -81,9 +83,11 @@ public class PulseEngine
 
   [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
   static extern void InitializeEngine(IntPtr pulse, string patient_configuration, string data_requests, int format);
-  public void InitializeEngine(string patient_configuration, string data_requests, SerializationFormat format)
+  public void InitializeEngine(SEPatientConfiguration patient_configuration, SEDataRequestManager data_mgr)
   {
-    InitializeEngine(pulse_cptr, patient_configuration, data_requests, (int)format);
+    string patient_configuration_str = PBPatientConfiguration.SerializeToString(patient_configuration);
+    string data_mgr_str = PBDataRequest.SerializeToString(data_mgr);
+    InitializeEngine(pulse_cptr, patient_configuration, data_mgr_str, (int)thunk_as);
   }
 
   [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
@@ -94,7 +98,7 @@ public class PulseEngine
     KeepLogMessages(pulse_cptr, log_listener != null);
   }
   [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-  static extern bool PullLogMessages(IntPtr pulse, out IntPtr event_changes);
+  static extern bool PullLogMessages(IntPtr pulse, int format, out IntPtr event_changes);
 
   [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
   static extern void KeepEventChanges(IntPtr pulse, bool keep);// Let the engine know to save events or not
@@ -104,14 +108,14 @@ public class PulseEngine
     KeepEventChanges(pulse_cptr, event_handler != null);
   }
   [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-  static extern bool PullEvents(IntPtr pulse, out IntPtr event_changes);
+  static extern bool PullEvents(IntPtr pulse, int format, out IntPtr event_changes);
 
   [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-  static extern bool PullActiveEvents(IntPtr pulse, out IntPtr active_events);
+  static extern bool PullActiveEvents(IntPtr pulse, int format, out IntPtr active_events);
   public bool PullActiveEvents(List<SEActiveEvent> active_events)
   {
     active_events.Clear();
-    if (!PullActiveEvents(pulse_cptr, out str_addr))
+    if (!PullActiveEvents(pulse_cptr, (int)thunk_as, out str_addr))
       return false;
     string activities = System.Runtime.InteropServices.Marshal.PtrToStringAnsi(str_addr);
     if (activities == null)
@@ -131,7 +135,7 @@ public class PulseEngine
   public bool ProcessActions(List<SEAction> actions)
   {
     string any_action_list_str = PBAction.SerializeToString(actions);
-    return ProcessActions(pulse_cptr, any_action_list_str, (int)SerializationFormat.JSON);
+    return ProcessActions(pulse_cptr, any_action_list_str, (int)thunk_as);
   }
 
   [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
@@ -143,7 +147,7 @@ public class PulseEngine
     if (event_handler != null)
     {
       event_changes.Clear();
-      if (PullEvents(pulse_cptr, out str_addr))
+      if (PullEvents(pulse_cptr, (int)thunk_as, out str_addr))
       {
         string event_changes_str = System.Runtime.InteropServices.Marshal.PtrToStringAnsi(str_addr);
         if (event_changes_str != null)
@@ -160,7 +164,7 @@ public class PulseEngine
     if (log_listener != null)
     {
       log_messages.Clear();
-      if (PullLogMessages(pulse_cptr, out str_addr))
+      if (PullLogMessages(pulse_cptr, (int)thunk_as, out str_addr))
       {
         string log_messages_str = System.Runtime.InteropServices.Marshal.PtrToStringAnsi(str_addr);
         if (log_messages_str != null)

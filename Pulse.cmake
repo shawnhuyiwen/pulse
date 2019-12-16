@@ -127,6 +127,13 @@ elseif (${PULSE_LOGGER} STREQUAL "log4cplus")
   set(logger_lib log4cplus)
 endif()
 
+if(PULSE_PYTHON_BINDINGS)
+  if(NOT pybind11_DIR)
+    set(pybind11_DIR ${CMAKE_BINARY_DIR}/../pybind11/install/share/cmake/pybind11)
+  endif()
+  find_package(pybind11 CONFIG REQUIRED)
+endif()
+
 
 # Include the rest of the Pulse projects
 add_subdirectory(schema)
@@ -139,6 +146,9 @@ add_subdirectory(verification)
 include(${CMAKE_CURRENT_SOURCE_DIR}/PulseC.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/PulseCLR.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/PulseJNI.cmake)
+if(PULSE_PYTHON_BINDINGS)
+  include(${CMAKE_CURRENT_SOURCE_DIR}/PulsePython.cmake)
+endif()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 

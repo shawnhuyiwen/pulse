@@ -175,10 +175,10 @@ endif()
 ###################################################
 if(PULSE_PYTHON_BINDINGS)
   message( STATUS "External project - pybind11" )
-  set(pybind11_DIR "${CMAKE_BINARY_DIR}/pybind11/install")
-  set(pybind11_version "2.2.1")
+  set(pybind11_install "${CMAKE_BINARY_DIR}/pybind11/install/")
+  set(pybind11_version "2.4.3")
   set(pybind11_url "https://github.com/pybind/pybind11/archive/v${pybind11_version}.tar.gz")
-  set(pybind11_md5 "bab1d46bbc465af5af3a4129b12bfa3b")
+  set(pybind11_md5 "62254c40f89925bb894be421fe4cdef2")
 
   ExternalProject_Add(pybind11
     PREFIX pybind11
@@ -187,9 +187,13 @@ if(PULSE_PYTHON_BINDINGS)
     DOWNLOAD_NAME ${pybind11_dlname}
     ${CMAKE_GENERATION}
     CMAKE_ARGS
-      -DCMAKE_INSTALL_PREFIX:STRING=${pybind11_DIR}
-      -DPYBIND11_TEST:BOOL=OFF # To remove dependencies; build can still be tested manually
+      -DCMAKE_INSTALL_PREFIX:STRING=${pybind11_install}
+      -DPYBIND11_TEST:BOOL=OFF 
+      -DPYBIND11_PYTHON_VERSION=3.6
+      -DPYBIND11_CPP_STANDARD:STRING=/std:c++11
   )
+  
+  set(pybind11_DIR "${pybind11_install}/share/cmake/pybind11")
   message(STATUS "pybind11 is here : ${pybind11_DIR}" )
   list(APPEND Pulse_DEPENDENCIES pybind11)
 endif()
