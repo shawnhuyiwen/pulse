@@ -11,12 +11,16 @@ import com.kitware.physiology.datamodel.properties.SEScalarTime;
 public class SEForcedInhale extends SEConsciousRespirationCommand
 {
   protected SEScalar0To1 inspiratoryCapacityFraction;
-  protected SEScalarTime period;
+  protected SEScalarTime inhalePeriod;
+  protected SEScalarTime holdPeriod;
+  protected SEScalarTime releasePeriod;
   
   public SEForcedInhale()
   {
     inspiratoryCapacityFraction = null;
-    period = null;
+    inhalePeriod = null;
+    holdPeriod = null;
+    releasePeriod = null;
   }
   
   public void copy(SEForcedInhale other)
@@ -24,8 +28,14 @@ public class SEForcedInhale extends SEConsciousRespirationCommand
     if(this==other)
       return;
     
-    inspiratoryCapacityFraction = other.inspiratoryCapacityFraction;
-    period = other.period;
+    if(other.hasInspiratoryCapacityFraction())
+      getInspiratoryCapacityFraction().set(other.inspiratoryCapacityFraction);
+    if(other.hasInspiratoryCapacityFraction())
+      getInspiratoryCapacityFraction().set(other.inspiratoryCapacityFraction);
+    if(other.hasInspiratoryCapacityFraction())
+      getInspiratoryCapacityFraction().set(other.inspiratoryCapacityFraction);
+    if(other.hasInspiratoryCapacityFraction())
+      getInspiratoryCapacityFraction().set(other.inspiratoryCapacityFraction);
   }
   
   public SEConsciousRespirationCommand getCopy()
@@ -41,13 +51,17 @@ public class SEForcedInhale extends SEConsciousRespirationCommand
     super.reset();
     if (inspiratoryCapacityFraction != null)
       inspiratoryCapacityFraction.invalidate();
-    if (period != null)
-      period.invalidate();
+    if (inhalePeriod != null)
+      inhalePeriod.invalidate();
+    if (holdPeriod != null)
+      holdPeriod.invalidate();
+    if (releasePeriod != null)
+      releasePeriod.invalidate();
   }
   
   public boolean isValid()
   {
-    return hasInspiratoryCapacityFraction() && hasPeriod();
+    return hasInspiratoryCapacityFraction() && hasInhalePeriod();
   }
   
   public static void load(ForcedInhaleData src, SEForcedInhale dst)
@@ -55,8 +69,12 @@ public class SEForcedInhale extends SEConsciousRespirationCommand
     //SEConsciousRespirationCommand.load(src.getConsciousRespirationCommand(), dst);
     if(src.hasInspiratoryCapacityFraction())
       SEScalar0To1.load(src.getInspiratoryCapacityFraction(),dst.getInspiratoryCapacityFraction());
-    if(src.hasPeriod())
-      SEScalarTime.load(src.getPeriod(),dst.getPeriod());
+    if(src.hasInhalePeriod())
+      SEScalarTime.load(src.getInhalePeriod(),dst.getInhalePeriod());
+    if(src.hasHoldPeriod())
+      SEScalarTime.load(src.getHoldPeriod(),dst.getHoldPeriod());
+    if(src.hasReleasePeriod())
+      SEScalarTime.load(src.getReleasePeriod(),dst.getReleasePeriod());
   }
   
   public static ForcedInhaleData unload(SEForcedInhale src)
@@ -71,8 +89,12 @@ public class SEForcedInhale extends SEConsciousRespirationCommand
     //SEConsciousRespirationCommand.unload(src,dst.getConsciousRespirationCommand());    
     if (src.hasInspiratoryCapacityFraction())
       dst.setInspiratoryCapacityFraction(SEScalar0To1.unload(src.inspiratoryCapacityFraction));
-    if (src.hasPeriod())
-      dst.setPeriod(SEScalarTime.unload(src.period));
+    if (src.hasInhalePeriod())
+      dst.setInhalePeriod(SEScalarTime.unload(src.inhalePeriod));
+    if (src.hasHoldPeriod())
+      dst.setHoldPeriod(SEScalarTime.unload(src.holdPeriod));
+    if (src.hasReleasePeriod())
+      dst.setReleasePeriod(SEScalarTime.unload(src.releasePeriod));
   }
   
   public boolean hasInspiratoryCapacityFraction()
@@ -86,27 +108,45 @@ public class SEForcedInhale extends SEConsciousRespirationCommand
     return inspiratoryCapacityFraction;
   }
   
-  public boolean hasPeriod()
+  public boolean hasInhalePeriod()
   {
-    return period != null;
+    return inhalePeriod != null;
   }
-  public SEScalarTime getPeriod()
+  public SEScalarTime getInhalePeriod()
   {
-    if (period == null)
-      period = new SEScalarTime();
-    return period;
+    if (inhalePeriod == null)
+      inhalePeriod = new SEScalarTime();
+    return inhalePeriod;
+  }
+  
+  public boolean hasHoldPeriod()
+  {
+    return holdPeriod != null;
+  }
+  public SEScalarTime getHoldPeriod()
+  {
+    if (holdPeriod == null)
+      holdPeriod = new SEScalarTime();
+    return holdPeriod;
+  }
+  
+  public boolean hasReleasePeriod()
+  {
+    return releasePeriod != null;
+  }
+  public SEScalarTime getReleasePeriod()
+  {
+    if (releasePeriod == null)
+      releasePeriod = new SEScalarTime();
+    return releasePeriod;
   }
   
   public String toString()
   {
-    if (inspiratoryCapacityFraction != null &&
-      period != null)
-    {
       return "Forced Inhale" 
-          + "\n\tInspiratory Capacity Fraction: " + getInspiratoryCapacityFraction()
-          + "\n\tPeriod: " + getPeriod();
-    }
-    else
-      return "Action not specified properly";
+          + "\n\tInspiratoryCapacityFraction: " + (hasInspiratoryCapacityFraction() ? getInspiratoryCapacityFraction() : "Not Specified")
+          + "\n\tInhalePeriod: " + (hasInhalePeriod() ? getInhalePeriod() : "Not Specified")
+          + "\n\tHoldPeriod: " + (hasHoldPeriod() ? getHoldPeriod() : "Not Specified")
+          + "\n\tReleasePeriod: " + (hasReleasePeriod() ? getReleasePeriod() : "Not Specified");
   }
 }

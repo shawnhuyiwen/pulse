@@ -25,11 +25,21 @@ public:
   virtual SEScalar0To1& GetExpiratoryReserveVolumeFraction();
   virtual double GetExpiratoryReserveVolumeFraction() const;
 
-  virtual bool HasPeriod() const;
-  virtual SEScalarTime& GetPeriod();
-  virtual double GetPeriod(const TimeUnit& unit) const;
+  virtual bool HasExhalePeriod() const;
+  virtual SEScalarTime& GetExhalePeriod();
+  virtual double GetExhalePeriod(const TimeUnit& unit) const;
+
+  virtual bool HasHoldPeriod() const;
+  virtual SEScalarTime& GetHoldPeriod();
+  virtual double GetHoldPeriod(const TimeUnit& unit) const;
+
+  virtual bool HasReleasePeriod() const;
+  virtual SEScalarTime& GetReleasePeriod();
+  virtual double GetReleasePeriod(const TimeUnit& unit) const;
 
 protected:
   SEScalar0To1* m_ExpiratoryReserveVolumeFraction;
-  SEScalarTime* m_Period;
+  SEScalarTime* m_ExhalePeriod;
+  SEScalarTime* m_HoldPeriod;
+  SEScalarTime* m_ReleasePeriod;
 };  

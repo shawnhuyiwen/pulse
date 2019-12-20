@@ -207,13 +207,13 @@ void HowToMechanicalVentilation()
   // Inhale is the first command we want to process
   SEForcedInhale& forcedInhale = consciousRespiration.AddForcedInhale();
   forcedInhale.GetInspiratoryCapacityFraction().SetValue(0.25);
-  forcedInhale.GetPeriod().SetValue(0.7, TimeUnit::s);
+  forcedInhale.GetInhalePeriod().SetValue(0.7, TimeUnit::s);
   // Next we will hold our breath
   consciousRespiration.AddBreathHold().GetPeriod().SetValue(0.25, TimeUnit::s);
   // Then exhale
   SEForcedExhale& forcedExhale = consciousRespiration.AddForcedExhale();
   forcedExhale.GetExpiratoryReserveVolumeFraction().SetValue(0.0);
-  forcedExhale.GetPeriod().SetValue(0.05, TimeUnit::s);
+  forcedExhale.GetExhalePeriod().SetValue(0.05, TimeUnit::s);
   // Then hold our breath again
   consciousRespiration.AddBreathHold().GetPeriod().SetValue(0.5, TimeUnit::s);
   // Once ProcessAction is called, the engine will make a copy of these commands.

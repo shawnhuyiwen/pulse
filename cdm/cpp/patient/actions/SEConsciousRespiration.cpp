@@ -12,7 +12,7 @@
 
 SEConsciousRespiration::SEConsciousRespiration() : SEPatientAction()
 {
-  m_ClearCommands = true;
+  m_StartImmediately = false;
 }
 
 SEConsciousRespiration::~SEConsciousRespiration()
@@ -23,12 +23,13 @@ SEConsciousRespiration::~SEConsciousRespiration()
 void SEConsciousRespiration::Clear()
 {
   SEPatientAction::Clear();
-  if (m_ClearCommands)
-    DELETE_VECTOR(m_Commands);
+  DELETE_VECTOR(m_Commands);
+  m_StartImmediately = false;
 }
 
 void SEConsciousRespiration::Copy(const SEConsciousRespiration& src)
 {
+
   PBPatientAction::Copy(src, *this);
 }
 
@@ -42,6 +43,19 @@ bool SEConsciousRespiration::IsActive() const
   return SEPatientAction::IsActive();
 }
 
+bool SEConsciousRespiration::StartImmediately() const
+{
+  return m_StartImmediately;
+}
+void SEConsciousRespiration::SetStartImmediately(bool b)
+{
+  m_StartImmediately = b;
+}
+
+bool SEConsciousRespiration::HasCommands() const
+{
+  return !m_Commands.empty();
+}
 SEConsciousRespirationCommand* SEConsciousRespiration::GetActiveCommand()
 {
   if (!m_Commands.empty())

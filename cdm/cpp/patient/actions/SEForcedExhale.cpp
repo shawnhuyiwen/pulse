@@ -10,7 +10,9 @@
 SEForcedExhale::SEForcedExhale() : SEConsciousRespirationCommand()
 {
   m_ExpiratoryReserveVolumeFraction = nullptr;
-  m_Period = nullptr;
+  m_ExhalePeriod = nullptr;
+  m_HoldPeriod = nullptr;
+  m_ReleasePeriod = nullptr;
 }
 
 SEForcedExhale::~SEForcedExhale()
@@ -22,7 +24,9 @@ void SEForcedExhale::Clear()
 {
   SEConsciousRespirationCommand::Clear();
   SAFE_DELETE(m_ExpiratoryReserveVolumeFraction);
-  SAFE_DELETE(m_Period);
+  SAFE_DELETE(m_ExhalePeriod);
+  SAFE_DELETE(m_HoldPeriod);
+  SAFE_DELETE(m_ReleasePeriod);
 }
 
 void SEForcedExhale::Copy(const SEForcedExhale& src)
@@ -32,7 +36,7 @@ void SEForcedExhale::Copy(const SEForcedExhale& src)
 
 bool SEForcedExhale::IsValid() const
 {
-  return SEConsciousRespirationCommand::IsValid() && HasExpiratoryReserveVolumeFraction() && HasPeriod();
+  return SEConsciousRespirationCommand::IsValid() && HasExpiratoryReserveVolumeFraction() && HasExhalePeriod();
 }
 
 bool SEForcedExhale::IsActive() const
@@ -57,21 +61,55 @@ double SEForcedExhale::GetExpiratoryReserveVolumeFraction() const
   return m_ExpiratoryReserveVolumeFraction->GetValue();
 }
 
-bool SEForcedExhale::HasPeriod() const
+bool SEForcedExhale::HasExhalePeriod() const
 {
-  return m_Period == nullptr ? false : m_Period->IsValid();
+  return m_ExhalePeriod == nullptr ? false : m_ExhalePeriod->IsValid();
 }
-SEScalarTime& SEForcedExhale::GetPeriod()
+SEScalarTime& SEForcedExhale::GetExhalePeriod()
 {
-  if (m_Period == nullptr)
-    m_Period = new SEScalarTime();
-  return *m_Period;
+  if (m_ExhalePeriod == nullptr)
+    m_ExhalePeriod = new SEScalarTime();
+  return *m_ExhalePeriod;
 }
-double SEForcedExhale::GetPeriod(const TimeUnit& unit) const
+double SEForcedExhale::GetExhalePeriod(const TimeUnit& unit) const
 {
-  if (m_Period == nullptr)
+  if (m_ExhalePeriod == nullptr)
     return SEScalar::dNaN();
-  return m_Period->GetValue(unit);
+  return m_ExhalePeriod->GetValue(unit);
+}
+
+bool SEForcedExhale::HasHoldPeriod() const
+{
+  return m_HoldPeriod == nullptr ? false : m_HoldPeriod->IsValid();
+}
+SEScalarTime& SEForcedExhale::GetHoldPeriod()
+{
+  if (m_HoldPeriod == nullptr)
+    m_HoldPeriod = new SEScalarTime();
+  return *m_HoldPeriod;
+}
+double SEForcedExhale::GetHoldPeriod(const TimeUnit& unit) const
+{
+  if (m_HoldPeriod == nullptr)
+    return SEScalar::dNaN();
+  return m_HoldPeriod->GetValue(unit);
+}
+
+bool SEForcedExhale::HasReleasePeriod() const
+{
+  return m_ReleasePeriod == nullptr ? false : m_ReleasePeriod->IsValid();
+}
+SEScalarTime& SEForcedExhale::GetReleasePeriod()
+{
+  if (m_ReleasePeriod == nullptr)
+    m_ReleasePeriod = new SEScalarTime();
+  return *m_ReleasePeriod;
+}
+double SEForcedExhale::GetReleasePeriod(const TimeUnit& unit) const
+{
+  if (m_ReleasePeriod == nullptr)
+    return SEScalar::dNaN();
+  return m_ReleasePeriod->GetValue(unit);
 }
 
 void SEForcedExhale::ToString(std::ostream &str) const
@@ -80,6 +118,8 @@ void SEForcedExhale::ToString(std::ostream &str) const
   if (HasComment())
     str << "\n\tComment: " << m_Comment;
   str << "\n\tExpiratoryReserveVolumeFraction: "; HasExpiratoryReserveVolumeFraction() ? str << *m_ExpiratoryReserveVolumeFraction : str << "NaN";
-  str << "\n\tPeriod: "; HasPeriod() ? str << *m_Period : str << "NaN";
+  str << "\n\tExhalePeriod: "; HasExhalePeriod() ? str << *m_ExhalePeriod : str << "NaN";
+  str << "\n\tHoldPeriod: "; HasHoldPeriod() ? str << *m_HoldPeriod : str << "NaN";
+  str << "\n\tReleasePeriod: "; HasReleasePeriod() ? str << *m_ReleasePeriod : str << "NaN";
   str << std::flush;
 }

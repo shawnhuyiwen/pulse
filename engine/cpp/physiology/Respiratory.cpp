@@ -1597,7 +1597,7 @@ void Respiratory::ProcessConsciousRespiration(SEConsciousRespirationCommand& cmd
   if (fe != nullptr)
   {
     m_ExpiratoryReserveVolumeFraction = fe->GetExpiratoryReserveVolumeFraction().GetValue();
-    m_ConsciousRespirationRemainingPeriod_s = fe->GetPeriod().GetValue(TimeUnit::s);
+    m_ConsciousRespirationRemainingPeriod_s = fe->GetExhalePeriod().GetValue(TimeUnit::s);
     m_ConsciousRespirationPeriod_s = m_ConsciousRespirationRemainingPeriod_s;
 
     //Pressure effects
@@ -1610,7 +1610,7 @@ void Respiratory::ProcessConsciousRespiration(SEConsciousRespirationCommand& cmd
   if (fi != nullptr)
   {
     m_InspiratoryCapacityFraction = fi->GetInspiratoryCapacityFraction().GetValue();
-    m_ConsciousRespirationRemainingPeriod_s = fi->GetPeriod().GetValue(TimeUnit::s);
+    m_ConsciousRespirationRemainingPeriod_s = fi->GetInhalePeriod().GetValue(TimeUnit::s);
     m_ConsciousRespirationPeriod_s = m_ConsciousRespirationRemainingPeriod_s;
 
     //Pressure effects
