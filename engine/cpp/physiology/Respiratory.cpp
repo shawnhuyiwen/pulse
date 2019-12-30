@@ -222,22 +222,14 @@ void Respiratory::Initialize()
   m_DriverPressureMin_cmH2O = 0.0;
   m_VentilationToTidalVolumeSlope = 30.0;
   //The peak driver pressure is the pressure above the default pressure
-  m_PeakRespiratoryDrivePressure_cmH2O = 0.0;
+  m_PeakInspiratoryPressure_cmH2O = 0.0;
+  m_PeakExpiratoryPressure_cmH2O = 0.0;
   m_ArterialO2PartialPressure_mmHg = m_AortaO2->GetPartialPressure(PressureUnit::mmHg);
   m_ArterialCO2PartialPressure_mmHg = m_AortaCO2->GetPartialPressure(PressureUnit::mmHg);
   m_PreviousTargetAlveolarVentilation_L_Per_min = m_data.GetCurrentPatient().GetTidalVolumeBaseline(VolumeUnit::L) * m_VentilationFrequency_Per_min;
   m_AverageLocalTissueBronchodilationEffects = 0.0;
 
   m_IERatioScaleFactor = 1.0;
-
-  // Conscious Respiration
-  m_ConsciousRespirationPeriod_s = 0.0;
-  m_ConsciousRespirationRemainingPeriod_s = 0.0;
-  m_ExpiratoryReserveVolumeFraction = -1.0;
-  m_InspiratoryCapacityFraction = -1.0;
-  m_ConsciousStartPressure_cmH2O = 0.0;
-  m_ConsciousEndPressure_cmH2O = 0.0;
-  m_ConsciousBreathing = false;
 
   //System data
   double TidalVolume_L = m_data.GetCurrentPatient().GetTidalVolumeBaseline(VolumeUnit::L);
@@ -284,7 +276,9 @@ void Respiratory::Initialize()
   m_ExpiratoryRiseFraction = 0;
   m_ExpiratoryHoldFraction = 0;
   m_ExpiratoryReleaseFraction = 0;
-  m_ResidueFraction = 0;
+
+  //Conscious Respiration
+  m_ActiveConsciousRespirationCommand = false;
 
   //Get the fluid mechanics to a good starting point
   TuneCircuit();
@@ -465,8 +459,7 @@ void Respiratory::PreProcess()
   UpdatePulmonaryCapillary();
 
   ProcessAerosolSubstances();
-  Pneumothorax();  
-  ConsciousRespiration();
+  Pneumothorax();
 
   MechanicalVentilation();
   SupplementalOxygen();
@@ -1004,8 +997,6 @@ void Respiratory::RespiratoryDriver()
   if (m_data.GetEvents().IsEventActive(eEvent::StartOfInhale))
     m_data.GetEvents().SetEvent(eEvent::StartOfInhale, false, m_data.GetSimulationTime());
 
-  m_BreathingCycleTime_s += m_dt_s;
-
   //Keep a running average of the Arterial Partial Pressures  
   m_ArterialO2RunningAverage_mmHg->Sample(m_AortaO2->GetPartialPressure(PressureUnit::mmHg));
   m_ArterialCO2RunningAverage_mmHg->Sample(m_AortaCO2->GetPartialPressure(PressureUnit::mmHg));
@@ -1024,58 +1015,27 @@ void Respiratory::RespiratoryDriver()
   m_ArterialCO2PartialPressure_mmHg = 40.0;
 #endif  
 
-  if (m_ConsciousBreathing) //Conscious breathing 
+  double TotalBreathingCycleTime_s = 0.0;
+  if (m_VentilationFrequency_Per_min > 1.0 || m_ActiveConsciousRespirationCommand)
   {
-    SEConsciousRespiration* cr = m_data.GetActions().GetPatientActions().GetConsciousRespiration();
-    SEConsciousRespirationCommand* cmd = cr->GetActiveCommand();
-    SEUseInhaler* ui = dynamic_cast<SEUseInhaler*>(cmd);
-    if (ui != nullptr)
-    {
-      //We're using the inhaler, so just wait at this driver pressure
-      m_DriverPressure_cmH2O = m_DriverPressurePath->GetPressureSource(PressureUnit::cmH2O);
-      m_ConsciousBreathing = false;
-    }
-    else
-    {
-      //Just increase/decrease the driver pressure linearly to achieve the desired 
-      //pressure (attempting to reach a specific volume) at the end of the user specified period
-      double Time_s = m_ConsciousRespirationPeriod_s - m_ConsciousRespirationRemainingPeriod_s;
-
-      //jbw - Update this once with new concious respiration option
-      if (m_ConsciousEndPressure_cmH2O < 0.0)
-      {
-        double Slope = (m_ConsciousEndPressure_cmH2O - m_ConsciousStartPressure_cmH2O) / m_ConsciousRespirationPeriod_s;
-        //Form of y=mx+b
-        m_DriverPressure_cmH2O = Slope * Time_s + m_ConsciousStartPressure_cmH2O;
-      }
-      else
-      {
-        double tauDenominator = 4.0; //lower = "rounder"... too low (seems to be < 5) starts creating incontinuities
-        double tau = m_ConsciousRespirationPeriod_s / tauDenominator;
-        m_DriverPressure_cmH2O = (1.0 - std::exp(-Time_s / tau)) * m_ConsciousEndPressure_cmH2O;
-      }      
-
-      //Make it so we start a fresh cycle when we go back to spontaneous breathing
-      //Adding 2.0 * timestamp just makes it greater than the TotalBreathingCycleTime_s
-      m_VentilationFrequency_Per_min = m_data.GetCurrentPatient().GetRespirationRateBaseline(FrequencyUnit::Per_min);
-      m_BreathingCycleTime_s = 60.0 / m_VentilationFrequency_Per_min + 2.0 * m_dt_s;
-    }
+    TotalBreathingCycleTime_s = 60.0 / m_VentilationFrequency_Per_min; //Total time of one breathing cycle  
   }
-  else //Spontaneous (i.e. not conscious) breathing
-  {
-    double TotalBreathingCycleTime_s = 0.0;
-    if (m_VentilationFrequency_Per_min < 1.0)
-    {
-      TotalBreathingCycleTime_s = 0.0;
-    }
-    else
-    {
-      TotalBreathingCycleTime_s = 60.0 / m_VentilationFrequency_Per_min; //Total time of one breathing cycle  
-    }
 
-    //Prepare for the next cycle -------------------------------------------------------------------------------
-    if (m_BreathingCycleTime_s > TotalBreathingCycleTime_s) //End of the cycle or currently not breathing
+  //Prepare for the next cycle -------------------------------------------------------------------------------
+  if ((m_BreathingCycleTime_s > TotalBreathingCycleTime_s) ||                              //End of the cycle or currently not breathing
+    (m_PatientActions->HasConsciousRespiration() && !m_ActiveConsciousRespirationCommand)) //Or new consious respiration command to start immediately
+  {
+    m_BreathingCycleTime_s = 0.0;
+
+    if (m_PatientActions->HasConsciousRespiration())
     {
+      m_ActiveConsciousRespirationCommand = true;
+      ConsciousRespiration();
+    }
+    else //Spontaneous breathing
+    {
+      m_ActiveConsciousRespirationCommand = false;
+
       // Make a cardicArrestEffect that is 1.0 unless cardiac arrest is true
       double cardiacArrestEffect = 1.0;
       // If the cv system parameter is true, then make the cardicArrestEffect = 0
@@ -1120,7 +1080,7 @@ void Respiratory::RespiratoryDriver()
       }
 
       //Calculate the target Alveolar Ventilation based on the Arterial O2 and CO2 concentrations
-      double dTargetAlveolarVentilation_L_Per_min = m_PeripheralControlGainConstant * exp(-0.05*m_ArterialO2PartialPressure_mmHg)*MAX(0., m_ArterialCO2PartialPressure_mmHg - PeripheralCO2PartialPressureSetPoint); //Peripheral portion
+      double dTargetAlveolarVentilation_L_Per_min = m_PeripheralControlGainConstant * exp(-0.05 * m_ArterialO2PartialPressure_mmHg) * MAX(0., m_ArterialCO2PartialPressure_mmHg - PeripheralCO2PartialPressureSetPoint); //Peripheral portion
       dTargetAlveolarVentilation_L_Per_min += m_CentralControlGainConstant * MAX(0., m_ArterialCO2PartialPressure_mmHg - CentralCO2PartialPressureSetPoint); //Central portion
 
       //Metabolic modifier is used to drive the system to reasonable levels achievable during increased metabolic exertion
@@ -1187,10 +1147,12 @@ void Respiratory::RespiratoryDriver()
 
       //Map the Target Tidal Volume to the Driver
       double TargetVolume_L = m_data.GetCurrentPatient().GetFunctionalResidualCapacity(VolumeUnit::L) + dTargetTidalVolume_L;
-      m_PeakRespiratoryDrivePressure_cmH2O = VolumeToDriverPressure(TargetVolume_L);
+      m_PeakInspiratoryPressure_cmH2O = VolumeToDriverPressure(TargetVolume_L);
       //There's a maximum force the driver can try to achieve
-      m_PeakRespiratoryDrivePressure_cmH2O = MAX(m_PeakRespiratoryDrivePressure_cmH2O, m_MaxDriverPressure_cmH2O);
+      m_PeakInspiratoryPressure_cmH2O = MAX(m_PeakInspiratoryPressure_cmH2O, m_MaxDriverPressure_cmH2O);
 
+      //This is always zero, unless there's conscious respiration
+      m_PeakExpiratoryPressure_cmH2O = 0.0;
 
       //Respiration Rate (i.e. Driver frequency) *************************************************************************
       //Calculate the Respiration Rate given the Alveolar Ventilation and the Target Tidal Volume
@@ -1230,79 +1192,75 @@ void Respiratory::RespiratoryDriver()
 #endif
 
       SetBreathCycleFractions();
-
-      m_BreathingCycleTime_s = 0.0;
-
-      //KEEP COMMENTED OUT - this is for keeping the driver constant while debugging
-      //m_VentilationFrequency_Per_min = 16.0;
-      //m_PeakRespiratoryDrivePressure = -11.3;
-
-      m_data.GetEvents().SetEvent(eEvent::StartOfInhale, true, m_data.GetSimulationTime()); ///\todo rename "StartOfConsiousInhale"
     }
+  }
 
-    //Run the driver based on the waveform -------------------------------------------------------------------------------
-    TotalBreathingCycleTime_s = 60.0 / m_VentilationFrequency_Per_min; //Recalculate, in case we just calculated a new breath
+  //Run the driver based on the waveform -------------------------------------------------------------------------------
+  TotalBreathingCycleTime_s = 60.0 / m_VentilationFrequency_Per_min; //Recalculate, in case we just calculated a new breath
 
-    double PeakExpiratoryPressure = 0.0; //For potential future implementation
+  double InspiratoryRiseTimeStart_s = 0.0;
+  double InspiratoryHoldTimeStart_s = InspiratoryRiseTimeStart_s + m_InspiratoryRiseFraction * TotalBreathingCycleTime_s;
+  double InspiratoryReleaseTimeStart_s = InspiratoryHoldTimeStart_s + m_InspiratoryHoldFraction * TotalBreathingCycleTime_s;
+  double InspiratoryToExpiratoryPauseTimeStart_s = InspiratoryReleaseTimeStart_s + m_InspiratoryReleaseFraction * TotalBreathingCycleTime_s;
+  double ExpiratoryRiseTimeStart_s = InspiratoryToExpiratoryPauseTimeStart_s + m_InspiratoryToExpiratoryPauseFraction * TotalBreathingCycleTime_s;
+  double ExpiratoryHoldTimeStart_s = ExpiratoryRiseTimeStart_s + m_ExpiratoryRiseFraction * TotalBreathingCycleTime_s;
+  double ExpiratoryReleaseTimeStart_s = ExpiratoryHoldTimeStart_s + m_ExpiratoryHoldFraction * TotalBreathingCycleTime_s;
+  double ResidueFractionTimeStart_s = ExpiratoryReleaseTimeStart_s + m_ExpiratoryReleaseFraction * TotalBreathingCycleTime_s;
 
-    double InspiratoryRiseTimeStart_s = 0.0;
-    double InspiratoryHoldTimeStart_s = InspiratoryRiseTimeStart_s + m_InspiratoryRiseFraction * TotalBreathingCycleTime_s;
-    double InspiratoryReleaseTimeStart_s = InspiratoryHoldTimeStart_s + m_InspiratoryHoldFraction * TotalBreathingCycleTime_s;
-    double InspiratoryToExpiratoryPauseTimeStart_s = InspiratoryReleaseTimeStart_s + m_InspiratoryReleaseFraction * TotalBreathingCycleTime_s;
-    double ExpiratoryRiseTimeStart_s = InspiratoryToExpiratoryPauseTimeStart_s + m_InspiratoryToExpiratoryPauseFraction * TotalBreathingCycleTime_s;
-    double ExpiratoryHoldTimeStart_s = ExpiratoryRiseTimeStart_s + m_ExpiratoryRiseFraction * TotalBreathingCycleTime_s;
-    double ExpiratoryReleaseTimeStart_s = ExpiratoryHoldTimeStart_s + m_ExpiratoryHoldFraction * TotalBreathingCycleTime_s;
-    double ResidueFractionTimeStart_s = ExpiratoryReleaseTimeStart_s + m_ExpiratoryReleaseFraction * TotalBreathingCycleTime_s;
+  if (m_BreathingCycleTime_s == 0.0 &&
+    m_InspiratoryRiseFraction != 0.0) //Only call this once per cycle - needed here for conscious respiration
+  {
+    m_data.GetEvents().SetEvent(eEvent::StartOfInhale, true, m_data.GetSimulationTime());
+  }  
 
-    m_DriverInspirationTime_s = ExpiratoryRiseTimeStart_s;
+  if (m_BreathingCycleTime_s >= InspiratoryReleaseTimeStart_s &&
+    m_BreathingCycleTime_s < InspiratoryReleaseTimeStart_s + m_dt_s) //Only call this once per cycle
+  {
+    m_data.GetEvents().SetEvent(eEvent::StartOfExhale, true, m_data.GetSimulationTime());
+  }
 
+  double tau = 0.0;
+  double tauDenominator = 4.0; //lower = "rounder"... too low (seems to be < 5) starts creating incontinuities
+  if (m_BreathingCycleTime_s >= ResidueFractionTimeStart_s)
+  {
+    m_DriverPressure_cmH2O = 0.0;
+  }
+  else if (m_BreathingCycleTime_s >= ExpiratoryReleaseTimeStart_s)
+  {
+    tau = m_ExpiratoryReleaseFraction * TotalBreathingCycleTime_s / tauDenominator;
+    m_DriverPressure_cmH2O = exp(-(m_BreathingCycleTime_s - ExpiratoryReleaseTimeStart_s) / tau) * m_PeakExpiratoryPressure_cmH2O;
+  }
+  else if (m_BreathingCycleTime_s >= ExpiratoryHoldTimeStart_s)
+  {
+    m_DriverPressure_cmH2O = m_PeakExpiratoryPressure_cmH2O;
+  }
+  else if (m_BreathingCycleTime_s >= ExpiratoryRiseTimeStart_s)
+  {
+    tau = m_ExpiratoryRiseFraction * TotalBreathingCycleTime_s / tauDenominator;
+    m_DriverPressure_cmH2O = (1.0 - exp(-(m_BreathingCycleTime_s - ExpiratoryRiseTimeStart_s) / tau)) * m_PeakExpiratoryPressure_cmH2O;
+  }
+  else if (m_BreathingCycleTime_s >= InspiratoryToExpiratoryPauseTimeStart_s)
+  {
+    m_DriverPressure_cmH2O = 0.0;
+  }
+  else if (m_BreathingCycleTime_s >= InspiratoryReleaseTimeStart_s)
+  {
+    tau = m_InspiratoryReleaseFraction * TotalBreathingCycleTime_s / tauDenominator;
+    m_DriverPressure_cmH2O = exp(-(m_BreathingCycleTime_s - InspiratoryReleaseTimeStart_s) / tau) * m_PeakInspiratoryPressure_cmH2O;
+  }
+  else if (m_BreathingCycleTime_s >= InspiratoryHoldTimeStart_s)
+  {
+    tau = m_InspiratoryHoldFraction * TotalBreathingCycleTime_s / tauDenominator;
+    m_DriverPressure_cmH2O = m_PeakInspiratoryPressure_cmH2O;
+  }
+  else //(m_BreathingCycleTime_s >= InspiratoryRiseTimeStart_s)
+  {
+    tau = m_InspiratoryRiseFraction * TotalBreathingCycleTime_s / tauDenominator;
+    m_DriverPressure_cmH2O = -(exp(-m_BreathingCycleTime_s / tau) - 1) * m_PeakInspiratoryPressure_cmH2O;
+  }
 
-    if (m_BreathingCycleTime_s >= InspiratoryReleaseTimeStart_s &&
-      m_BreathingCycleTime_s < InspiratoryReleaseTimeStart_s + m_dt_s) //Only call this once per cycle
-    {
-      m_data.GetEvents().SetEvent(eEvent::StartOfExhale, true, m_data.GetSimulationTime());
-    }
-
-    double tau = 0.0;
-    double tauDenominator = 4.0; //lower = "rounder"... too low (seems to be < 5) starts creating incontinuities
-    if (m_BreathingCycleTime_s >= ResidueFractionTimeStart_s)
-    {
-      m_DriverPressure_cmH2O = 0.0;
-    }
-    else if (m_BreathingCycleTime_s >= ExpiratoryReleaseTimeStart_s)
-    {
-      tau = m_ExpiratoryReleaseFraction * TotalBreathingCycleTime_s / tauDenominator;
-      m_DriverPressure_cmH2O = exp(-(m_BreathingCycleTime_s - ExpiratoryReleaseTimeStart_s) / tau) * PeakExpiratoryPressure;
-    }
-    else if (m_BreathingCycleTime_s >= ExpiratoryHoldTimeStart_s)
-    {
-      m_DriverPressure_cmH2O = PeakExpiratoryPressure;
-    }
-    else if (m_BreathingCycleTime_s >= ExpiratoryRiseTimeStart_s)
-    {
-      tau = m_ExpiratoryRiseFraction * TotalBreathingCycleTime_s / tauDenominator;
-      m_DriverPressure_cmH2O = 1.0 - (exp(-(m_BreathingCycleTime_s - ExpiratoryRiseTimeStart_s) / tau)) * PeakExpiratoryPressure;
-    }
-    else if (m_BreathingCycleTime_s >= InspiratoryToExpiratoryPauseTimeStart_s)
-    {
-      m_DriverPressure_cmH2O = 0.0;
-    }
-    else if (m_BreathingCycleTime_s >= InspiratoryReleaseTimeStart_s)
-    {
-      tau = m_InspiratoryReleaseFraction * TotalBreathingCycleTime_s / tauDenominator;
-      m_DriverPressure_cmH2O = exp(-(m_BreathingCycleTime_s - InspiratoryReleaseTimeStart_s) / tau) * m_PeakRespiratoryDrivePressure_cmH2O;
-    }
-    else if (m_BreathingCycleTime_s >= InspiratoryHoldTimeStart_s)
-    {
-      tau = m_InspiratoryHoldFraction * TotalBreathingCycleTime_s / tauDenominator;
-      m_DriverPressure_cmH2O = m_PeakRespiratoryDrivePressure_cmH2O;
-    }
-    else //(m_BreathingCycleTime_s >= InspiratoryRiseTimeStart_s)
-    {
-      tau = m_InspiratoryRiseFraction * TotalBreathingCycleTime_s / tauDenominator;
-      m_DriverPressure_cmH2O = -(exp(-m_BreathingCycleTime_s / tau) - 1) * m_PeakRespiratoryDrivePressure_cmH2O;
-    }
-
+  if (!m_PatientActions->HasConsciousRespiration())
+  {
     ModifyDriverPressure();
 
     if (m_NotBreathing)
@@ -1313,6 +1271,20 @@ void Respiratory::RespiratoryDriver()
 
   //Push Driving Data to the Circuit -------------------------------------------------------------------------------
   m_DriverPressurePath->GetNextPressureSource().SetValue(m_DriverPressure_cmH2O, PressureUnit::cmH2O);
+
+  //We need to do this here to allow for the inhaler to get called before the next go-around
+  m_BreathingCycleTime_s += m_dt_s;
+  if (m_BreathingCycleTime_s > TotalBreathingCycleTime_s) //End of the cycle or currently not breathing
+  {
+    if (m_ActiveConsciousRespirationCommand)
+    {
+      SEConsciousRespiration* cr = m_PatientActions->GetConsciousRespiration();
+      SEConsciousRespirationCommand* cmd = cr->GetActiveCommand();
+      m_ss << "Completed Conscious Respiration Command : " << *cmd;
+      Info(m_ss);
+      cr->RemoveActiveCommand();
+    }
+  }
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -1326,14 +1298,14 @@ void Respiratory::RespiratoryDriver()
 //--------------------------------------------------------------------------------------------------
 void Respiratory::SetBreathCycleFractions()
 {
-  //Healthy = 0.34 remaining, giving ~1:2 IE Ratio
+  //Healthy = 0.33 remaining, giving ~1:2 IE Ratio
   m_InspiratoryRiseFraction = 0.33 * m_IERatioScaleFactor;
   m_InspiratoryHoldFraction = 0.0;
   m_InspiratoryReleaseFraction = MIN(0.33 / m_IERatioScaleFactor, 1.0 - m_InspiratoryRiseFraction);
   m_InspiratoryToExpiratoryPauseFraction = 0.0;
   m_ExpiratoryRiseFraction = 0.0;
   m_ExpiratoryHoldFraction = 0.0;
-  m_ExpiratoryReleaseFraction = 0.0;  
+  m_ExpiratoryReleaseFraction = 0.0;
  }
 
 //--------------------------------------------------------------------------------------------------
@@ -1520,7 +1492,6 @@ void Respiratory::DoRightNeedleDecompression(double dPressureTimePerVolume)
   m_RightPleuralToEnvironment->GetNextResistance().SetValue(dPressureTimePerVolumeRightNeedle, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 }
 
-
 //--------------------------------------------------------------------------------------------------
 /// \brief
 /// Conscious respiration
@@ -1530,95 +1501,134 @@ void Respiratory::DoRightNeedleDecompression(double dPressureTimePerVolume)
 /// \return void
 ///
 /// \details
-/// This method determines when to process a conscious respiration command and removes the command
-/// from the stack.
+/// This method processes a conscious respiration command and removes by setting the effort waveform
+/// parameters. New commands will overwrite incomplete commands.
 //--------------------------------------------------------------------------------------------------
 void Respiratory::ConsciousRespiration()
 {
-  if (m_ConsciousBreathing && m_ConsciousRespirationRemainingPeriod_s >= 0.0)
-  {
-    m_ConsciousRespirationRemainingPeriod_s -= m_dt_s;
+  SEConsciousRespiration* cr = m_PatientActions->GetConsciousRespiration();
 
-    if (m_ConsciousRespirationRemainingPeriod_s <= 0.0)
-    {// We are done with this command
-      m_ConsciousRespirationRemainingPeriod_s = 0.0;
-      m_ConsciousRespirationPeriod_s = 0.0;
-      m_ConsciousStartPressure_cmH2O = 0.0;
-      m_ConsciousEndPressure_cmH2O = 0.0;
-      m_ExpiratoryReserveVolumeFraction = -1.0;
-      m_InspiratoryCapacityFraction = -1.0;
-      m_ConsciousBreathing = false;
-      SEConsciousRespiration* cr = m_PatientActions->GetConsciousRespiration();
-      m_ss << "Completed Conscious Respiration Command : " << *cr->GetActiveCommand();
-      Info(m_ss);
-      cr->RemoveActiveCommand();
-    }
-  }
+  m_InspiratoryRiseFraction = 0.0;
+  m_InspiratoryHoldFraction = 0.0;
+  m_InspiratoryReleaseFraction = 0.0;
+  m_InspiratoryToExpiratoryPauseFraction = 0.0;
+  m_ExpiratoryRiseFraction = 0.0;
+  m_ExpiratoryHoldFraction = 0.0;
+  m_ExpiratoryReleaseFraction = 0.0;
 
-  //We'll wait for any current commands to complete first - only one at a time
-  if (!m_ConsciousBreathing && m_PatientActions->HasConsciousRespiration())
-  {
-    SEConsciousRespiration* cr = m_PatientActions->GetConsciousRespiration();
-    SEConsciousRespirationCommand* cmd = cr->GetActiveCommand();
-    ProcessConsciousRespiration(*cmd);
-  }
-}
+  SEConsciousRespirationCommand* cmd = cr->GetActiveCommand();
 
-//--------------------------------------------------------------------------------------------------
-/// \brief
-/// Process conscious respiration
-///
-/// \param  cmd - Conscious respiration command
-///
-/// \details
-/// Processes conscious respiration commands.
-//--------------------------------------------------------------------------------------------------
-void Respiratory::ProcessConsciousRespiration(SEConsciousRespirationCommand& cmd)
-{
-  if (m_ConsciousRespirationRemainingPeriod_s > 0)
-  {
-    Error("Already processing a Conscious Respiration Command, ignoring this command");
-    return;
-  }
-
-  m_ConsciousBreathing = true;
-  m_ConsciousStartPressure_cmH2O = m_DriverPressurePath->GetPressureSource(PressureUnit::cmH2O);
-
-  SEBreathHold* bh = dynamic_cast<SEBreathHold*>(&cmd);
-  if (bh != nullptr)
-  {
-    m_ConsciousRespirationRemainingPeriod_s = bh->GetPeriod().GetValue(TimeUnit::s);
-    m_ConsciousRespirationPeriod_s = m_ConsciousRespirationRemainingPeriod_s;
-    m_ConsciousEndPressure_cmH2O = m_ConsciousStartPressure_cmH2O;
-
-    return;
-  }
-  SEForcedExhale* fe = dynamic_cast<SEForcedExhale*>(&cmd);
-  if (fe != nullptr)
-  {
-    m_ExpiratoryReserveVolumeFraction = fe->GetExpiratoryReserveVolumeFraction().GetValue();
-    m_ConsciousRespirationRemainingPeriod_s = fe->GetExhalePeriod().GetValue(TimeUnit::s);
-    m_ConsciousRespirationPeriod_s = m_ConsciousRespirationRemainingPeriod_s;
-
-    //Pressure effects
-    double TargetVolume_L = m_data.GetCurrentPatient().GetResidualVolume(VolumeUnit::L) + m_data.GetCurrentPatient().GetExpiratoryReserveVolume(VolumeUnit::L) * (1.0 - m_ExpiratoryReserveVolumeFraction);
-    m_ConsciousEndPressure_cmH2O = VolumeToDriverPressure(TargetVolume_L);
-
-    return;
-  }
-  SEForcedInhale* fi = dynamic_cast<SEForcedInhale*>(&cmd);
+  SEForcedInhale* fi = dynamic_cast<SEForcedInhale*>(cmd);
   if (fi != nullptr)
   {
-    m_InspiratoryCapacityFraction = fi->GetInspiratoryCapacityFraction().GetValue();
-    m_ConsciousRespirationRemainingPeriod_s = fi->GetInhalePeriod().GetValue(TimeUnit::s);
-    m_ConsciousRespirationPeriod_s = m_ConsciousRespirationRemainingPeriod_s;
+    double pressureFraction = 0.0;
+    double risePeriod_s = 0.0;
+    double holdPeriod_s = 0.0;
+    double releasePeriod_s = 0.0;
 
-    //Pressure effects
-    double TargetVolume_L = m_data.GetCurrentPatient().GetFunctionalResidualCapacity(VolumeUnit::L) + m_data.GetCurrentPatient().GetInspiratoryCapacity(VolumeUnit::L) * m_InspiratoryCapacityFraction;
-    m_ConsciousEndPressure_cmH2O = VolumeToDriverPressure(TargetVolume_L);
+    if (fi->HasInspiratoryCapacityFraction())
+    {
+      pressureFraction = fi->GetInspiratoryCapacityFraction().GetValue();
+    }
+
+    if (fi->HasInhalePeriod())
+    {
+      risePeriod_s = fi->GetInhalePeriod().GetValue(TimeUnit::s);
+    }
+    if (fi->HasHoldPeriod())
+    {
+      holdPeriod_s = fi->GetHoldPeriod().GetValue(TimeUnit::s);
+    }
+    if (fi->HasReleasePeriod())
+    {
+      releasePeriod_s = fi->GetReleasePeriod().GetValue(TimeUnit::s);
+    }
+
+    double TargetVolume_L = m_data.GetCurrentPatient().GetFunctionalResidualCapacity(VolumeUnit::L) + m_data.GetCurrentPatient().GetInspiratoryCapacity(VolumeUnit::L) * pressureFraction;
+    m_PeakInspiratoryPressure_cmH2O = VolumeToDriverPressure(TargetVolume_L);
+
+    double totalPeriod = risePeriod_s + holdPeriod_s + releasePeriod_s;
+
+    if (totalPeriod == 0.0)
+    {
+      m_VentilationFrequency_Per_min = 0.0;
+      m_InspiratoryRiseFraction = 0.0;
+      m_InspiratoryHoldFraction = 0.0;
+      m_InspiratoryReleaseFraction = 0.0;
+    }
+    else
+    {
+      m_VentilationFrequency_Per_min = 60.0 / totalPeriod;
+      m_InspiratoryRiseFraction = risePeriod_s / totalPeriod;
+      m_InspiratoryHoldFraction = holdPeriod_s / totalPeriod;
+      m_InspiratoryReleaseFraction = releasePeriod_s / totalPeriod;
+    }    
 
     return;
   }
+
+  SEForcedExhale* fe = dynamic_cast<SEForcedExhale*>(cmd);
+  if (fe != nullptr)
+  {
+    double pressureFraction = 0.0;
+    double risePeriod_s = 0.0;
+    double holdPeriod_s = 0.0;
+    double releasePeriod_s = 0.0;
+
+    if (fe->HasExpiratoryReserveVolumeFraction())
+    {
+      pressureFraction = fe->GetExpiratoryReserveVolumeFraction().GetValue();
+    }
+
+    if (fe->HasExhalePeriod())
+    {
+      risePeriod_s = fe->GetExhalePeriod().GetValue(TimeUnit::s);
+    }
+    if (fe->HasHoldPeriod())
+    {
+      holdPeriod_s = fe->GetHoldPeriod().GetValue(TimeUnit::s);
+    }
+    if (fe->HasReleasePeriod())
+    {
+      releasePeriod_s = fe->GetReleasePeriod().GetValue(TimeUnit::s);
+    }
+
+    double TargetVolume_L = m_data.GetCurrentPatient().GetResidualVolume(VolumeUnit::L) + m_data.GetCurrentPatient().GetExpiratoryReserveVolume(VolumeUnit::L) * (1.0 - pressureFraction);
+    m_PeakExpiratoryPressure_cmH2O = VolumeToDriverPressure(TargetVolume_L);
+
+    double totalPeriod = risePeriod_s + holdPeriod_s + releasePeriod_s;
+    if (totalPeriod == 0.0)
+    {
+      m_VentilationFrequency_Per_min = 0.0;
+      m_ExpiratoryRiseFraction = 0.0;
+      m_ExpiratoryHoldFraction = 0.0;
+      m_ExpiratoryReleaseFraction = 0.0;
+    }
+    else
+    {
+      m_VentilationFrequency_Per_min = 60.0 / totalPeriod;
+      m_ExpiratoryRiseFraction = risePeriod_s / totalPeriod;
+      m_ExpiratoryHoldFraction = holdPeriod_s / totalPeriod;
+      m_ExpiratoryReleaseFraction = releasePeriod_s / totalPeriod;
+    }
+
+    return;
+  }
+
+  SEBreathHold* bh = dynamic_cast<SEBreathHold*>(cmd);
+  if (bh != nullptr)
+  {
+    double period_s = 0.0;
+    if (bh->HasPeriod())
+    {
+      period_s = bh->GetPeriod().GetValue(TimeUnit::s);      
+    }
+
+    m_VentilationFrequency_Per_min = (period_s == 0.0) ? 0.0 : 60.0 / period_s;
+    m_InspiratoryToExpiratoryPauseFraction = 1.0;
+
+    return;
+  } 
 }
 
 //--------------------------------------------------------------------------------------------------

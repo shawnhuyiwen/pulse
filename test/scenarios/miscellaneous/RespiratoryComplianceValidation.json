@@ -37,13 +37,12 @@
 	{ "PatientAction": { "ConsciousRespiration": { "Command": [
 	    { "ForcedExhale": {
             "ExpiratoryReserveVolumeFraction": { "Scalar0To1": { "Value": 1.2 } },
-            "Period": { "ScalarTime": { "Value": 10.0, "Unit": "s" } } } }, 
+            "ExhalePeriod": { "ScalarTime": { "Value": 10.0, "Unit": "s" } } ,
+			"ReleasePeriod": { "ScalarTime": { "Value": 1.0, "Unit": "s" } } } },			
 		{ "ForcedInhale": {
             "InspiratoryCapacityFraction": { "Scalar0To1": { "Value": 1.2 } },
-            "Period": { "ScalarTime": { "Value": 20.0, "Unit": "s" } } } }, 
-		{ "ForcedExhale": { 
-		    "ExpiratoryReserveVolumeFraction": { "Scalar0To1": { } },
-            "Period": { "ScalarTime": { "Value": 10.0, "Unit": "s" } } } } 
+            "InhalePeriod": { "ScalarTime": { "Value": 20.0, "Unit": "s" } } , 
+			"ReleasePeriod": { "ScalarTime": { "Value": 10.0, "Unit": "s" } } } }  
 	] } } },
 		
 	{ "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.5, "Unit": "min" }}}},
@@ -60,13 +59,12 @@
 	{ "PatientAction": { "ConsciousRespiration": { "Command": [
 	    { "ForcedExhale": {
             "ExpiratoryReserveVolumeFraction": { "Scalar0To1": { "Value": 1.2 } },
-            "Period": { "ScalarTime": { "Value": 10.0, "Unit": "s" } } } }, 
+            "ExhalePeriod": { "ScalarTime": { "Value": 10.0, "Unit": "s" } } ,
+			"ReleasePeriod": { "ScalarTime": { "Value": 1.0, "Unit": "s" } } } },			
 		{ "ForcedInhale": {
             "InspiratoryCapacityFraction": { "Scalar0To1": { "Value": 1.2 } },
-            "Period": { "ScalarTime": { "Value": 20.0, "Unit": "s" } } } }, 
-		{ "ForcedExhale": { 
-		    "ExpiratoryReserveVolumeFraction": { "Scalar0To1": { } },
-            "Period": { "ScalarTime": { "Value": 10.0, "Unit": "s" } } } } 
+            "InhalePeriod": { "ScalarTime": { "Value": 20.0, "Unit": "s" } } , 
+			"ReleasePeriod": { "ScalarTime": { "Value": 10.0, "Unit": "s" } } } }  
 	] } } },
 	
 	{ "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.5, "Unit": "min" }}}},
@@ -93,13 +91,12 @@
 	{ "PatientAction": { "ConsciousRespiration": { "Command": [
 	    { "ForcedExhale": {
             "ExpiratoryReserveVolumeFraction": { "Scalar0To1": { "Value": 1.2 } },
-            "Period": { "ScalarTime": { "Value": 10.0, "Unit": "s" } } } }, 
+            "ExhalePeriod": { "ScalarTime": { "Value": 10.0, "Unit": "s" } } ,
+			"ReleasePeriod": { "ScalarTime": { "Value": 1.0, "Unit": "s" } } } },			
 		{ "ForcedInhale": {
             "InspiratoryCapacityFraction": { "Scalar0To1": { "Value": 1.2 } },
-            "Period": { "ScalarTime": { "Value": 20.0, "Unit": "s" } } } }, 
-		{ "ForcedExhale": { 
-		    "ExpiratoryReserveVolumeFraction": { "Scalar0To1": { } },
-            "Period": { "ScalarTime": { "Value": 10.0, "Unit": "s" } } } } 
+            "InhalePeriod": { "ScalarTime": { "Value": 20.0, "Unit": "s" } } , 
+			"ReleasePeriod": { "ScalarTime": { "Value": 10.0, "Unit": "s" } } } }  
 	] } } },
 	
 	{ "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.5, "Unit": "min" }}}},

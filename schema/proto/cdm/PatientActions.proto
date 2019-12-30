@@ -191,10 +191,9 @@ message AnyConsciousRespirationCommandData
     UseInhalerData                        UseInhaler                      = 5;
   }
 }
-/** @brief An ordered list of concious breath commands for the patient to preform. */
+/** @brief An ordered list of conscious breath commands for the patient to preform. */
 message ConsciousRespirationData
-{
-  
+{  
   PatientActionData                           PatientAction                   = 1;
   bool                                        StartImmediately                = 2;
   repeated AnyConsciousRespirationCommandData Command                         = 3;

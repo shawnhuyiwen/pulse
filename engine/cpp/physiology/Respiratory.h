@@ -76,13 +76,12 @@ protected:
   void Pneumothorax();
   void DoLeftNeedleDecompression(double dFlowResistance);
   void DoRightNeedleDecompression(double dFlowResistance);
-  void ConsciousRespiration();
-  /**/void ProcessConsciousRespiration(SEConsciousRespirationCommand& cmd);
   void MechanicalVentilation();
   void SupplementalOxygen();
   // Driver
   void RespiratoryDriver();
   /**/void SetBreathCycleFractions();
+  /**/void ConsciousRespiration();
   /**/double VolumeToDriverPressure(double TargetVolume);
   /**/void ModifyDriverPressure();
   // Aerosol Deposition and various Effects
@@ -127,20 +126,13 @@ protected:
   double m_ElapsedBreathingCycleTime_min;
   double m_IERatioScaleFactor;
   double m_MaxDriverPressure_cmH2O;
-  double m_PeakRespiratoryDrivePressure_cmH2O;
+  double m_PeakInspiratoryPressure_cmH2O;
+  double m_PeakExpiratoryPressure_cmH2O;
   double m_PreviousTargetAlveolarVentilation_L_Per_min;
   double m_VentilationFrequency_Per_min;
   double m_VentilationToTidalVolumeSlope;
   SERunningAverage* m_ArterialO2RunningAverage_mmHg;
   SERunningAverage* m_ArterialCO2RunningAverage_mmHg;
-  //   Conscious Breathing
-  bool   m_ConsciousBreathing;
-  double m_ConsciousRespirationPeriod_s;
-  double m_ConsciousRespirationRemainingPeriod_s;
-  double m_ExpiratoryReserveVolumeFraction;
-  double m_InspiratoryCapacityFraction;
-  double m_ConsciousStartPressure_cmH2O;
-  double m_ConsciousEndPressure_cmH2O;
   // Muscle Pressure Waveform
   double m_InspiratoryRiseFraction;
   double m_InspiratoryHoldFraction;
@@ -149,7 +141,9 @@ protected:
   double m_ExpiratoryRiseFraction;
   double m_ExpiratoryHoldFraction;
   double m_ExpiratoryReleaseFraction;
-  double m_ResidueFraction;
+
+  //Conscious Respiration
+  bool m_ActiveConsciousRespirationCommand; //jbw - add to serialization... make sure things that were removed are really gone
 
   // Stateless member variable (Set in SetUp())
   double m_dt_s;
