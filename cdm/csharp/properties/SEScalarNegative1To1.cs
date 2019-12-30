@@ -20,6 +20,11 @@ public class SEScalarNegative1To1 : SEScalar
 
   public void Set(SEScalarNegative1To1 from)
   {
+    if (from == null)
+    {
+      Invalidate();
+      return;
+    }
     SetValue(from.value);
   }
 

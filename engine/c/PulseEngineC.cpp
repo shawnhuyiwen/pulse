@@ -46,7 +46,7 @@ C_EXPORT void C_CALL PulseDeinitialize()
 extern "C"
 C_EXPORT PulseEngineThunk* C_CALL Allocate(const char* logFile="", bool cout_enabled=true, const char* data_dir=".")
 {
-  return new PulseEngineThunk(logFile, cout_enabled, data_dir);
+  return new PulseEngineThunk(logFile==nullptr?"":logFile, cout_enabled, data_dir==nullptr?"":data_dir);
 }
 
 extern "C"
@@ -58,18 +58,18 @@ C_EXPORT void C_CALL Deallocate(PulseEngineThunk* thunk)
 extern "C"
 C_EXPORT bool C_CALL SerializeFromFile(PulseEngineThunk* thunk, const char* filename, const char* data_requests, int format, double sim_time_s)
 {
-  return thunk->SerializeFromFile(filename, data_requests, (SerializationFormat)format, sim_time_s);
+  return thunk->SerializeFromFile(filename==nullptr?"":filename, data_requests==nullptr?"":data_requests, (SerializationFormat)format, sim_time_s);
 }
 extern "C"
 C_EXPORT bool C_CALL SerializeToFile(PulseEngineThunk* thunk, const char* filename, int format)
 {
-  return thunk->SerializeToFile(filename, (SerializationFormat)format);
+  return thunk->SerializeToFile(filename==nullptr?"":filename, (SerializationFormat)format);
 }
 
 extern "C"
 C_EXPORT bool C_CALL SerializeFromString(PulseEngineThunk* thunk, const char* state, const char* data_requests, int format, double sim_time_s)
 {
-  return thunk->SerializeFromString(state, data_requests, (SerializationFormat)format, sim_time_s);
+  return thunk->SerializeFromString(state==nullptr?"":state, data_requests==nullptr?"":data_requests, (SerializationFormat)format, sim_time_s);
 }
 extern "C"
 C_EXPORT bool C_CALL SerializeToString(PulseEngineThunk* thunk, int format, char** state_str)
@@ -82,7 +82,7 @@ C_EXPORT bool C_CALL SerializeToString(PulseEngineThunk* thunk, int format, char
 extern "C"
 C_EXPORT bool C_CALL InitializeEngine(PulseEngineThunk* thunk, const char* patient_configuration, const char* data_requests, int format)
 {
-  return thunk->InitializeEngine(patient_configuration, data_requests, (SerializationFormat)format);
+  return thunk->InitializeEngine(patient_configuration==nullptr?"":patient_configuration, data_requests==nullptr?"":data_requests, (SerializationFormat)format);
 }
 
 extern "C"
@@ -124,6 +124,8 @@ C_EXPORT bool C_CALL PullActiveEvents(PulseEngineThunk* thunk, int format, char*
 extern "C"
 C_EXPORT bool C_CALL ProcessActions(PulseEngineThunk* thunk, const char* actions, int format)
 {
+  if (actions == nullptr)
+    return true;// Nothing to do...
   return thunk->ProcessActions(actions, (SerializationFormat)format);
 }
 

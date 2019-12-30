@@ -82,12 +82,13 @@ public class PulseEngine
   }
 
   [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-  static extern void InitializeEngine(IntPtr pulse, string patient_configuration, string data_requests, int format);
-  public void InitializeEngine(SEPatientConfiguration patient_configuration, SEDataRequestManager data_mgr)
+  static extern bool InitializeEngine(IntPtr pulse, string patient_configuration, string data_requests, int format);
+  public bool InitializeEngine(SEPatientConfiguration patient_configuration, SEDataRequestManager data_mgr)
   {
+    data_values = new double[data_mgr.GetDataRequests().Count + 1];
     string patient_configuration_str = PBPatientConfiguration.SerializeToString(patient_configuration);
     string data_mgr_str = PBDataRequest.SerializeToString(data_mgr);
-    InitializeEngine(pulse_cptr, patient_configuration, data_mgr_str, (int)thunk_as);
+    return InitializeEngine(pulse_cptr, patient_configuration_str, data_mgr_str, (int)thunk_as);
   }
 
   [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]

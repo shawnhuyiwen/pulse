@@ -11,7 +11,7 @@ set(CMAKE_GENERATION
    )
 
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_INSTALL_PREFIX})
-if(MSVC OR XCode)
+if(NOT PULSE_SUPERBUILD_ALL_CFGS AND (MSVC OR XCode))
 # For multi configuration IDE environments start with release
   set(CMAKE_CONFIGURATION_TYPES Release CACHE STRING INTERNAL FORCE )
 endif()
@@ -113,8 +113,8 @@ endif()
 ###################################################
 
 message( STATUS "External project - protobuf" )
-set(protobuf_URL "https://github.com/protocolbuffers/protobuf/releases/download/v3.11.1/protobuf-all-3.11.1.zip")
-set(protobuf_MD5 "01f0e58bb432727d494b390e62f877d5" )
+set(protobuf_URL "https://github.com/protocolbuffers/protobuf/releases/download/v3.10.1/protobuf-all-3.10.1.zip")
+set(protobuf_MD5 "bbdac9517e4d92088d520dbc8a48098b" )
 set(protobuf_SRC "${CMAKE_BINARY_DIR}/protobuf/src/protobuf")
 set(protobuf_DIR "${CMAKE_BINARY_DIR}/protobuf/install")
 set(protobuf_Patch "${CMAKE_SOURCE_DIR}/cmake/protobuf-patches")
@@ -231,14 +231,22 @@ ExternalProject_Add( Pulse
 
 # Need Java Utils to generate data
 if (PULSE_BUILD_JAVA_UTILS)
-add_custom_target(PulseData ALL)
-add_dependencies(PulseData Pulse)
-add_custom_command(TARGET PulseData POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=genData -P run.cmake WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin
-            WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin)
-add_custom_command(TARGET PulseData POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=genStates -P run.cmake WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin
-            WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin)
+  add_custom_target(PulseData ALL)
+  add_dependencies(PulseData Pulse)
+  add_custom_command(TARGET PulseData POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=genData -P run.cmake
+              WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin)
+  # Don't genStates if in Debug, takes way too long
+  string(APPEND _genStates
+    "$<IF:$<CONFIG:Debug>,"
+        "${CMAKE_COMMAND};-E;echo;!!! NOT GENERATING STATES FOR DEBUG BUILDS !!!,"
+        "${CMAKE_COMMAND};-DTYPE:STRING=genStates;-P;run.cmake"
+    ">")
+  add_custom_command(TARGET PulseData POST_BUILD
+      COMMAND "${_genStates}"
+              COMMAND_EXPAND_LISTS
+              WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin)
+
 else()
   message(WARNING "Without Java Utils, this build will not generate required data files needed for Pulse to execute")
   message(WARNING "You will need to get these required data files from another build/source")

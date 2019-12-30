@@ -132,7 +132,7 @@ void HowToEngineUse()
   // If no time is provided, the simulation time that is in the state file will be used
   // Note the provided state files are named to include what is simulation time is
   startTime.SetValue(0, TimeUnit::s);
-  if (!pe->SerializeFromFile("./states/StandardMale@0s.json", JSON, &startTime, nullptr))
+  if (!pe->SerializeFromFile("./states/Soldier@0s.json", JSON, &startTime, nullptr))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;

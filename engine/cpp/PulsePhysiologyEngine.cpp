@@ -61,7 +61,7 @@ bool PulseEngineThunk::SerializeFromFile(std::string const& filename, std::strin
   data->eng->GetEventManager().ForwardEvents(this);
 
   // Load up the data requests
-  if (data_requests != nullptr)
+  if (!data_requests.empty())
   {
     if (!data->eng->GetEngineTracker()->GetDataRequestManager().SerializeFromString(data_requests, format, data->eng->GetSubstanceManager()))
     {
@@ -90,7 +90,7 @@ bool PulseEngineThunk::SerializeFromString(std::string const& state, std::string
   data->eng->GetEventManager().ForwardEvents(this);
 
   // Load up the data requests
-  if (data_requests != nullptr)
+  if (!data_requests.empty())
   {
     if (!data->eng->GetEngineTracker()->GetDataRequestManager().SerializeFromString(data_requests, format, data->eng->GetSubstanceManager()))
     {
@@ -123,7 +123,7 @@ bool PulseEngineThunk::InitializeEngine(std::string const& patient_configuration
   }
 
   // Load up the data requests
-  if (data_requests != nullptr)
+  if (!data_requests.empty())
   {
     if (!data->eng->GetEngineTracker()->GetDataRequestManager().SerializeFromString(data_requests, format, data->eng->GetSubstanceManager()))
     {
@@ -185,7 +185,7 @@ std::string PulseEngineThunk::PullActiveEvents(SerializationFormat format)
 bool PulseEngineThunk::ProcessActions(std::string const& actions, SerializationFormat format)
 {
   bool success = true;
-  if (actions == nullptr)
+  if (actions.empty())
     return success;
 
   try

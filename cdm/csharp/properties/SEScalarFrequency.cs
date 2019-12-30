@@ -46,6 +46,11 @@ public class SEScalarFrequency : SEScalar
 
   public void Set(SEScalarFrequency from)
   {
+    if (from == null)
+    {
+      Invalidate();
+      return;
+    }
     SetValue(from.value, from.unit);
   }
 

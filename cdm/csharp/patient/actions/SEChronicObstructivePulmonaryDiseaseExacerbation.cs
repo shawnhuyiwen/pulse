@@ -3,22 +3,22 @@
 
 public class SEChronicObstructivePulmonaryDiseaseExacerbation : SEPatientAction
 {
-  protected SEScalar0To1 bronchitisSeverity;
-  protected SEScalar0To1 emphysemaSeverity;
+  protected SEScalar0To1 bronchitis_severity;
+  protected SEScalar0To1 emphysema_severity;
 
     public SEChronicObstructivePulmonaryDiseaseExacerbation()
   {
-    bronchitisSeverity = null;
-    emphysemaSeverity = null;
+    bronchitis_severity = null;
+    emphysema_severity = null;
   }
   
   public override void Clear()
   {
     base.Clear();
-    if (bronchitisSeverity != null)
-      bronchitisSeverity.Invalidate();
-    if (emphysemaSeverity != null)
-      emphysemaSeverity.Invalidate();
+    if (bronchitis_severity != null)
+      bronchitis_severity.Invalidate();
+    if (emphysema_severity != null)
+      emphysema_severity.Invalidate();
   }
   
   public override bool IsValid()
@@ -28,23 +28,23 @@ public class SEChronicObstructivePulmonaryDiseaseExacerbation : SEPatientAction
   
   public bool HasBronchitisSeverity()
   {
-    return bronchitisSeverity == null ? false : bronchitisSeverity.IsValid();
+    return bronchitis_severity == null ? false : bronchitis_severity.IsValid();
   }
   public SEScalar0To1 GetBronchitisSeverity()
   {
-    if (bronchitisSeverity == null)
-      bronchitisSeverity = new SEScalar0To1();
-    return bronchitisSeverity;
+    if (bronchitis_severity == null)
+      bronchitis_severity = new SEScalar0To1();
+    return bronchitis_severity;
   }
 
   public bool HasEmphysemaSeverity()
   {
-    return emphysemaSeverity == null ? false : emphysemaSeverity.IsValid();
+    return emphysema_severity == null ? false : emphysema_severity.IsValid();
   }
   public SEScalar0To1 GetEmphysemaSeverity()
   {
-    if (emphysemaSeverity == null)
-      emphysemaSeverity = new SEScalar0To1();
-    return emphysemaSeverity;
+    if (emphysema_severity == null)
+      emphysema_severity = new SEScalar0To1();
+    return emphysema_severity;
   }
 }
