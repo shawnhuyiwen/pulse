@@ -131,7 +131,7 @@ $ cd install/bin
 # In this example that would be ~/Pulse/builds/install/bin
 # Now you can run something
 $ ./PulseScenarioDriver VitalsMonitor.json
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Note that on small boards, like the Beagle Board Black and DragonBoard 410c, you may need to allocate a <a href="https://www.cyberciti.biz/faq/linux-add-a-swap-file-howto/">temporary swap</a> file if your build runs out of memory
 
@@ -142,7 +142,7 @@ su - root
 fallocate -l 1G tmpswap
 mkswap tmpswap
 swapon tmpswap
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Read the article if you want to make this change permanent, it contains some valuable hints regarding permissions and fstab.
 

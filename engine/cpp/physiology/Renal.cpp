@@ -53,6 +53,7 @@
 #include "properties/SEScalarVolumePerTimeMass.h"
 #include "properties/SEScalarVolumePerTimePressure.h"
 #include "properties/SERunningAverage.h"
+#include "utils/GeneralMath.h"
 
 Renal::Renal(PulseController& data) : SERenalSystem(data.GetLogger()), m_data(data)
 {

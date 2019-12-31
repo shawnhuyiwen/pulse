@@ -59,6 +59,7 @@
 #include "properties/SEScalarPressureTimePerVolumeArea.h"
 #include "properties/SERunningAverage.h"
 #include "utils/DataTrack.h"
+#include "utils/GeneralMath.h"
 
 Cardiovascular::Cardiovascular(PulseController& data) : SECardiovascularSystem(data.GetLogger()), m_data(data)
 {
@@ -2125,7 +2126,7 @@ void Cardiovascular::CalculatePleuralCavityVenousEffects()
   
   double maxPressureDiff_cmH2O = 20.0;
   double maxResistanceMultiplier = 10.0;
-  pleuralCavityPressureDiff_cmH2O = min(pleuralCavityPressureDiff_cmH2O, maxPressureDiff_cmH2O);
+  pleuralCavityPressureDiff_cmH2O = MIN(pleuralCavityPressureDiff_cmH2O, maxPressureDiff_cmH2O);
 
   //Interpolate into a parabola to effect things much more at larger differences
   double min = 1.0;

@@ -4,6 +4,7 @@
 #pragma once
 #include "controller/System.h"
 #include "system/physiology/SERespiratorySystem.h"
+#include "substance/SESubstanceTransport.h"
 class SEPatient;
 class SEPatientActionCollection;
 class SEGasCompartment;
@@ -14,8 +15,6 @@ class SEFluidCircuit;
 class SEFluidCircuitNode;
 class SEFluidCircuitPath;
 class SEFluidCircuitCalculator;
-class SEGasTransporter;
-class SELiquidTransporter;
 class SEConsciousRespirationCommand;
 class SEPulmonaryFunctionTest;
 

@@ -13,10 +13,20 @@ message ActiveEventData
   eEvent         Event                       = 1; /**<< @ref eEngineEventTable. */
   ScalarTimeData Duration                    = 2; /**<< @brief The duration since last activated. */
 }
-
 message ActiveEventListData
 {
-  repeated ActiveEventData ActiveEvent       = 1;/**<< @brief Active  Events and their duration. */
+  repeated ActiveEventData ActiveEvent       = 1;/**<< @brief Active Events and their duration. */
+}
+
+message EventChangeData
+{
+  eEvent         Event                       = 1; /**<< @ref eEngineEventTable. */
+  ScalarTimeData SimTime                     = 2; /**<< @brief The simulation time the event change occured. */
+  bool           Active                      = 3; /**<< @brief If the event is active or not. */
+}
+message EventChangeListData
+{
+  repeated EventChangeData Change            = 1; /**<< @ref Event changes. */
 }
 
 enum eEvent

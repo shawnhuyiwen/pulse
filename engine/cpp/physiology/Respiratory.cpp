@@ -77,8 +77,9 @@
 #include "properties/SEScalarVolumePerPressure.h"
 #include "properties/SEFunctionVolumeVsTime.h"
 #include "properties/SERunningAverage.h"
-// Data Track
+// Utilitiy Classes
 #include "utils/DataTrack.h"
+#include "utils/GeneralMath.h"
 
 #ifdef _MSC_VER 
 #pragma warning( disable : 4305 4244 )  // Disable some warning messages

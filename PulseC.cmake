@@ -1,12 +1,8 @@
 
-add_library(PulseC SHARED engine/c/PulseEngineC.h
-                          engine/c/PulseEngineC.cpp)
+add_library(PulseC SHARED engine/c/PulseEngineC.cpp)
 
-target_include_directories(PulseC PRIVATE ${CMAKE_BINARY_DIR}/schema/cpp/)
-target_include_directories(PulseC PRIVATE ${CMAKE_BINARY_DIR}/schema/cpp/bind/)
 target_include_directories(PulseC PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/engine/cpp)
 target_include_directories(PulseC PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/cdm/cpp)
-target_include_directories(PulseC PRIVATE ${EIGEN3_INCLUDE_DIR})
 
 set(PulseC_FLAGS)
 set_target_properties(PulseC PROPERTIES COMPILE_FLAGS "${PulseC_FLAGS}" PREFIX "")

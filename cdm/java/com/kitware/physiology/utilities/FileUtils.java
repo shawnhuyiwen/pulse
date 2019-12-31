@@ -44,8 +44,8 @@ public class FileUtils
   public static boolean loadLibraries(List<String> libs, String location)
   {
     boolean b = true;
-    for(String lib : libs)
-      b &= loadLibrary(lib,location);
+    for (String lib : libs)
+      b &= loadLibrary(lib, location);
     return b;
   }
   public static boolean loadLibraries(List<String> libs)
@@ -55,18 +55,22 @@ public class FileUtils
   public static boolean loadLibrary(String libName, String location)
   {
     Log.info("Loading native library : "+location+"/"+libName);
-    List<String> files;
     if(location==null || location.isEmpty())
       location = System.getProperty("user.dir");
-
-    files = FileUtils.findFiles(location, libName+".", true);// With out '.' we cant tell diff between CommonDataModel.dll and CommonDataModelJNI.dll
+    // With out '.' we cant tell diff between CommonDataModel.dll and CommonDataModelJNI.dll
+    List<String> files = FileUtils.findFiles(location, libName+".", true);
+    List<String> dfiles = FileUtils.findFiles(location, libName+"d.", true);
     try
     {
       //Log.info("Found files at "+files);
       if (files.size()==1)
       {
-        //Log.info("load() "+files.get(0));
         System.load(files.get(0));
+      }
+      else if (dfiles.size()==1)
+      {
+        Log.warn("Loading debug version of "+libName+", performace may be reduced");
+        System.load(dfiles.get(0));
       }
       else// Attempt to load and hope for the best...
       {
@@ -461,7 +465,7 @@ public class FileUtils
   public static boolean directoryExists(String filepath)
   {
     File file = new File(filepath);
-    if(file.exists())   
+    if(file.exists())
       return file.isDirectory();
     return false;
   }
@@ -484,7 +488,7 @@ public class FileUtils
    */
   public static boolean fileExists(File f)
   {
-    if(f.exists())   
+    if(f.exists())
       return f.isFile();
     return false;
   }

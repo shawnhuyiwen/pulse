@@ -40,7 +40,7 @@ message AnyPatientActionData
     SubstanceBolusData                                 SubstanceBolus                                 = 24;
     SubstanceCompoundInfusionData                      SubstanceCompoundInfusion                      = 25;
     SubstanceInfusionData                              SubstanceInfusion                              = 26;
-    SupplementalOxygenData                             SupplementalOxygenData                         = 27;
+    SupplementalOxygenData                             SupplementalOxygen                             = 27;
     TensionPneumothoraxData                            TensionPneumothorax                            = 28;
     UrinateData                                        Urinate                                        = 29;
   }

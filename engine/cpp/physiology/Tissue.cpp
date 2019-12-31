@@ -54,6 +54,7 @@
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalarVolumePerTimePressure.h"
 #include "properties/SEScalarVolumePerTimeMass.h"
+#include "utils/GeneralMath.h"
 
 #pragma warning(disable:4786)
 #pragma warning(disable:4275)

@@ -37,6 +37,7 @@
 #include <stdexcept>
 #include <algorithm>
 #include <cmath>
+#include <string>
 
 #ifdef _MSC_VER
 #include <direct.h>
@@ -48,6 +49,7 @@
 #include <vector>
 #include <stack>
 #include <map>
+#include <set>
 
 #if defined(_MSC_VER)
   #include <unordered_map>
@@ -104,6 +106,7 @@ template class __declspec(dllexport) std::vector<std::string>;
 // kitware@kitware.com
 #pragma warning(disable : 4251)
 //Utilities
+enum SerializationFormat { BINARY = 0, JSON };
 
 struct CommonDataModelException : public std::runtime_error
 {
@@ -117,7 +120,6 @@ struct CommonDataModelException : public std::runtime_error
 #include "Macros.h"
 #include "utils/Logger.h"
 
-enum SerializationFormat { BINARY = 0, JSON };
 
 // General Enums
 // Keep enums in sync with appropriate schema/cdm/Enums.proto file !!
@@ -139,6 +141,7 @@ extern const std::string& eCharge_Name(eCharge m);
 
 // IF YOU ADD A NEW SCALAR TYPE
 // PLEASE UPDATE THE METHOD IN SEProperty.cpp
+// ALSO DECLARE A TEMPLATE CLASS AT THE BOTTOM OF SESCALAR.CPP
 
 class CCompoundUnit;
 

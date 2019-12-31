@@ -11,7 +11,7 @@ set(CMAKE_GENERATION
    )
 
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_INSTALL_PREFIX})
-if(MSVC OR XCode)
+if(NOT PULSE_SUPERBUILD_ALL_CFGS AND (MSVC OR XCode))
 # For multi configuration IDE environments start with release
   set(CMAKE_CONFIGURATION_TYPES Release CACHE STRING INTERNAL FORCE )
 endif()
@@ -24,20 +24,21 @@ message( STATUS "External project - Eigen" )
 set(eigen_VERSION "3.3.7" )
 set(eigen_SRC "${CMAKE_BINARY_DIR}/eigen/src/eigen")
 set(eigen_Patch "${CMAKE_SOURCE_DIR}/cmake/eigen-patches")
+set(Eigen3_DIR "${CMAKE_BINARY_DIR}/eigen/install")
 
 ExternalProject_Add( eigen
   PREFIX eigen
-  URL "http://bitbucket.org/eigen/eigen/get/${eigen_VERSION}.tar.gz"
-  URL_HASH MD5=f2a417d083fe8ca4b8ed2bc613d20f07
+  URL "https://gitlab.com/libeigen/eigen/-/archive/3.3.7/eigen-3.3.7.tar.gz"
+  URL_HASH MD5=9e30f67e8531477de4117506fe44669b
   #UPDATE_COMMAND 
   #  COMMAND ${CMAKE_COMMAND} -Deigen_source=${eigen_SRC} -Deigen_patch=${eigen_Patch} -P ${eigen_Patch}/Patch.cmake
-  INSTALL_DIR "${CMAKE_INSTALL_PREFIX}"
+  INSTALL_DIR "${Eigen3_DIR}"
   ${CMAKE_GENERATION}
   CMAKE_ARGS
         -DCMAKE_TOOLCHAIN_FILE:FILE=${CMAKE_TOOLCHAIN_FILE}
         -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF
-        -DCMAKE_INSTALL_PREFIX:STRING=${CMAKE_INSTALL_PREFIX}
-        -DINCLUDE_INSTALL_DIR:STRING=${CMAKE_INSTALL_PREFIX}/include
+        -DCMAKE_INSTALL_PREFIX:STRING=${Eigen3_DIR}
+        -DINCLUDE_INSTALL_DIR:STRING=${Eigen3_DIR}/include
 )
 list(APPEND Pulse_DEPENDENCIES eigen)
 # Install Headers
@@ -112,10 +113,10 @@ endif()
 ###################################################
 
 message( STATUS "External project - protobuf" )
-#This is a working 3.7.0-rc2 hash, the tag is bunk :(
-set(protobuf_URL "https://github.com/protocolbuffers/protobuf/releases/download/v3.9.0/protobuf-all-3.9.0.zip")
-set(protobuf_MD5 "4f042c8b46823a69db3dcbc7381b73f4" )
+set(protobuf_URL "https://github.com/protocolbuffers/protobuf/releases/download/v3.10.1/protobuf-all-3.10.1.zip")
+set(protobuf_MD5 "bbdac9517e4d92088d520dbc8a48098b" )
 set(protobuf_SRC "${CMAKE_BINARY_DIR}/protobuf/src/protobuf")
+set(protobuf_DIR "${CMAKE_BINARY_DIR}/protobuf/install")
 set(protobuf_Patch "${CMAKE_SOURCE_DIR}/cmake/protobuf-patches")
 
 message(STATUS "Patching protobuf ${PULSE_IL2CPP_PATCH}")
@@ -132,7 +133,7 @@ ExternalProject_Add( protobuf
     -DCMAKE_TOOLCHAIN_FILE:FILE=${CMAKE_TOOLCHAIN_FILE}
     -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
     -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-    -DCMAKE_INSTALL_PREFIX:STRING=${CMAKE_INSTALL_PREFIX}
+    -DCMAKE_INSTALL_PREFIX:STRING=${protobuf_DIR}
     -Dprotobuf_BUILD_TESTS:BOOL=OFF
     -Dprotobuf_BUILD_EXAMPLES:BOOL=OFF
     -Dprotobuf_BUILD_SHARED_LIBS:BOOL=OFF
@@ -168,6 +169,35 @@ if(WIN32)
   list(APPEND Pulse_DEPENDENCIES dirent)
 endif()
 
+###################################################
+## PyBind11                                      ##
+## Creation of Pulse Python Bindings             ##
+###################################################
+if(PULSE_PYTHON_BINDINGS)
+  message( STATUS "External project - pybind11" )
+  set(pybind11_install "${CMAKE_BINARY_DIR}/pybind11/install/")
+  set(pybind11_version "2.4.3")
+  set(pybind11_url "https://github.com/pybind/pybind11/archive/v${pybind11_version}.tar.gz")
+  set(pybind11_md5 "62254c40f89925bb894be421fe4cdef2")
+
+  ExternalProject_Add(pybind11
+    PREFIX pybind11
+    URL ${pybind11_url}
+    URL_MD5 ${pybind11_md5}
+    DOWNLOAD_NAME ${pybind11_dlname}
+    ${CMAKE_GENERATION}
+    CMAKE_ARGS
+      -DCMAKE_INSTALL_PREFIX:STRING=${pybind11_install}
+      -DPYBIND11_TEST:BOOL=OFF 
+      -DPYBIND11_PYTHON_VERSION=3.6
+      -DPYBIND11_CPP_STANDARD:STRING=/std:c++11
+  )
+  
+  set(pybind11_DIR "${pybind11_install}/share/cmake/pybind11")
+  message(STATUS "pybind11 is here : ${pybind11_DIR}" )
+  list(APPEND Pulse_DEPENDENCIES pybind11)
+endif()
+
 # ExternalProject_Add doesn't like to work with lists: it keeps only the first element
 string(REPLACE ";" "::" CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH}")
 
@@ -191,21 +221,32 @@ ExternalProject_Add( Pulse
     -DPULSE_BUILD_JAVA_UTILS:BOOL=${PULSE_BUILD_JAVA_UTILS}
     -DPULSE_BUILD_CLR:BOOL=${PULSE_BUILD_CLR}
     -DPULSE_LOGGER:STRING=${PULSE_LOGGER}
+    -DPULSE_PYTHON_BINDINGS:BOOL=${PULSE_PYTHON_BINDINGS}
+    -Deigen_DIR:PATH=${eigen_DIR}
     # Let InnerBuild build and install these
-    -Dlogger_SRC=${logger_SRC}
-    -Dprotobuf_SRC=${protobuf_SRC}
+    -Dlogger_SRC:PATH=${logger_SRC}
+    -Dprotobuf_SRC:PATH=${protobuf_SRC}
+    -Dprotobuf_DIR:PATH=${protobuf_DIR}
 )
 
 # Need Java Utils to generate data
 if (PULSE_BUILD_JAVA_UTILS)
-add_custom_target(PulseData ALL)
-add_dependencies(PulseData Pulse)
-add_custom_command(TARGET PulseData POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=genData -P run.cmake WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin
-            WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin)
-add_custom_command(TARGET PulseData POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=genStates -P run.cmake WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin
-            WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin)
+  add_custom_target(PulseData ALL)
+  add_dependencies(PulseData Pulse)
+  add_custom_command(TARGET PulseData POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=genData -P run.cmake
+              WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin)
+  # Don't genStates if in Debug, takes way too long
+  string(APPEND _genStates
+    "$<IF:$<CONFIG:Debug>,"
+        "${CMAKE_COMMAND};-E;echo;!!! NOT GENERATING STATES FOR DEBUG BUILDS !!!,"
+        "${CMAKE_COMMAND};-DTYPE:STRING=genStates;-P;run.cmake"
+    ">")
+  add_custom_command(TARGET PulseData POST_BUILD
+      COMMAND "${_genStates}"
+              COMMAND_EXPAND_LISTS
+              WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin)
+
 else()
   message(WARNING "Without Java Utils, this build will not generate required data files needed for Pulse to execute")
   message(WARNING "You will need to get these required data files from another build/source")

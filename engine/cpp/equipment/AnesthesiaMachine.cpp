@@ -40,6 +40,7 @@
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarTime.h"
+#include "utils/GeneralMath.h"
 
 /*
 ========================

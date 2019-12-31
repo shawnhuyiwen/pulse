@@ -6,6 +6,7 @@
 #include "substance/SESubstanceManager.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalar0To1.h"
+#include "utils/GeneralMath.h"
 
 SEGasCompartment::SEGasCompartment(const std::string& name, Logger* logger) : SEFluidCompartment(name, logger)
 {

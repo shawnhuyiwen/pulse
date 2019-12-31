@@ -53,6 +53,9 @@ list(APPEND CMAKE_PREFIX_PATH ${CMAKE_INSTALL_PREFIX})
 set(SCHEMA_SRC "${CMAKE_SOURCE_DIR}/schema")
 set(SCHEMA_DST "${CMAKE_SOURCE_DIR}/schema/bind")
 
+if(NOT Eigen3_DIR)
+  set(Eigen3_DIR ${CMAKE_BINARY_DIR}/../eigen/install)
+endif()
 find_package(Eigen3 REQUIRED)
 
 if(WIN32)
@@ -70,10 +73,10 @@ set(protobuf_Header ${protobuf_SRC}/src/google/protobuf/package_info.h)
 if(NOT EXISTS ${protobuf_Header})
   message(FATAL_ERROR "I cannot find protobuf source, please set protobuf_SRC to its root directory")
 endif()
-if(NOT protobuf_INSTALL)
-  set(protobuf_INSTALL ${CMAKE_BINARY_DIR}/../protobuf/install)
+if(NOT protobuf_DIR)
+  set(protobuf_DIR ${CMAKE_BINARY_DIR}/../protobuf/install)
 endif()
-list(APPEND CMAKE_PREFIX_PATH ${protobuf_INSTALL})
+list(APPEND CMAKE_PREFIX_PATH ${protobuf_DIR})
 # Settings for protobuf configuration
 set(protobuf_BUILD_PROTOC_BINARIES OFF CACHE BOOL INTERNAL FORCE)
 set(protobuf_BUILD_SHARED_LIBS OFF CACHE BOOL INTERNAL FORCE)
@@ -124,6 +127,13 @@ elseif (${PULSE_LOGGER} STREQUAL "log4cplus")
   set(logger_lib log4cplus)
 endif()
 
+if(PULSE_PYTHON_BINDINGS)
+  if(NOT pybind11_DIR)
+    set(pybind11_DIR ${CMAKE_BINARY_DIR}/../pybind11/install/share/cmake/pybind11)
+  endif()
+  find_package(pybind11 CONFIG REQUIRED)
+endif()
+
 
 # Include the rest of the Pulse projects
 add_subdirectory(schema)
@@ -136,6 +146,9 @@ add_subdirectory(verification)
 include(${CMAKE_CURRENT_SOURCE_DIR}/PulseC.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/PulseCLR.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/PulseJNI.cmake)
+if(PULSE_PYTHON_BINDINGS)
+  include(${CMAKE_CURRENT_SOURCE_DIR}/PulsePython.cmake)
+endif()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 

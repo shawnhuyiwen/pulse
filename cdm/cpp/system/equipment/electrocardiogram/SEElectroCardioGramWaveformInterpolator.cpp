@@ -8,6 +8,7 @@
 #include "properties/SEScalarElectricPotential.h"
 #include "properties/SEFunctionElectricPotentialVsTime.h"
 #include "io/protobuf/PBElectroCardioGram.h"
+#include "utils/GeneralMath.h"
 
 SEElectroCardioGramWaveformInterpolator::SEElectroCardioGramWaveformInterpolator(Logger* logger) : Loggable(logger)
 {

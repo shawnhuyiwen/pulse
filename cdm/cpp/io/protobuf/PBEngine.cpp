@@ -95,6 +95,60 @@
 #include "utils/unitconversion/UCCommon.h"
 #include "utils/FileUtils.h"
 
+
+void PBEngine::Load(const cdm::LogMessagesData& src, LogMessages& dst)
+{
+  PBEngine::Serialize(src, dst);
+}
+void PBEngine::Serialize(const cdm::LogMessagesData& src, LogMessages& dst)
+{
+  dst.Clear();
+  for (int i = 0; i < src.debugmessages_size(); i++)
+    dst.debug_msgs.push_back(src.debugmessages()[i]);
+  for (int i = 0; i < src.infogmessages_size(); i++)
+    dst.info_msgs.push_back(src.infogmessages()[i]);
+  for (int i = 0; i < src.warningmessages_size(); i++)
+    dst.warning_msgs.push_back(src.warningmessages()[i]);
+  for (int i = 0; i < src.errormessages_size(); i++)
+    dst.error_msgs.push_back(src.errormessages()[i]);
+  for (int i = 0; i < src.fatalmessages_size(); i++)
+    dst.fatal_msgs.push_back(src.fatalmessages()[i]);
+}
+bool PBEngine::SerializeFromString(const std::string& src, LogMessages& dst, SerializationFormat m, Logger* logger)
+{
+  cdm::LogMessagesData data;
+  if (!PBUtils::SerializeFromString(src, data, m, logger))
+    return false;
+  PBEngine::Load(data, dst);
+  return true;
+}
+
+cdm::LogMessagesData* PBEngine::Unload(const LogMessages& src)
+{
+  cdm::LogMessagesData* dst = new cdm::LogMessagesData();
+  PBEngine::Serialize(src, *dst);
+  return dst;
+}
+void PBEngine::Serialize(const LogMessages& src, cdm::LogMessagesData& dst)
+{
+  for (std::string str : src.debug_msgs)
+    dst.add_debugmessages(str);
+  for (std::string str : src.info_msgs)
+    dst.add_infogmessages(str);
+  for (std::string str : src.warning_msgs)
+    dst.add_warningmessages(str);
+  for (std::string str : src.error_msgs)
+    dst.add_errormessages(str);
+  for (std::string str : src.fatal_msgs)
+    dst.add_fatalmessages(str);
+}
+bool PBEngine::SerializeToString(const LogMessages& src, std::string& output, SerializationFormat m, Logger* logger)
+{
+  cdm::LogMessagesData data;
+  PBEngine::Serialize(src, data);
+  return PBUtils::SerializeToString(data, output, m, logger);
+}
+
 void PBEngine::Load(const cdm::ConditionListData& src, SEConditionManager& dst)
 {
   PBEngine::Serialize(src, dst);

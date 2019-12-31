@@ -11,6 +11,7 @@
 
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalar0To1.h"
+#include "utils/GeneralMath.h"
 
 void PulseEngineTest::ConditionCombinations(const std::string& rptDirectory)
 {

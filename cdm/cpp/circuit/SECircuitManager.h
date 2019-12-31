@@ -127,4 +127,3 @@ protected:
   template<CIRCUIT_LEDGER_TEMPLATE> CircuitType*       GetCircuit(const std::string& name, SECircuitLedger<CIRCUIT_LEDGER_TYPES>& ledger);
   template<CIRCUIT_LEDGER_TEMPLATE> const CircuitType* GetCircuit(const std::string& name, const SECircuitLedger<CIRCUIT_LEDGER_TYPES>& ledger) const;
 };
-#include "circuit/SECircuitManager.inl"

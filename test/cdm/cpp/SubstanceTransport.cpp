@@ -2,6 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #include "CommonDataModelTest.h"
+#include "circuit/SECircuitManager.h"
 #include "circuit/fluid/SEFluidCircuit.h"
 #include "circuit/fluid/SEFluidCircuitCalculator.h"
 #include "circuit/fluid/SEFluidCircuitNode.h"

@@ -66,4 +66,3 @@ protected:
   std::vector<PathType*>            m_ValvePaths;
   std::vector<PathType*>            m_PolarizedElementPaths; 
 };
-#include "circuit/SECircuit.inl"

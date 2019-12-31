@@ -4,13 +4,13 @@
 #pragma once
 #include "controller/System.h"
 #include "system/physiology/SECardiovascularSystem.h"
+#include "substance/SESubstanceTransport.h"
 class SEPatient;
 class SELiquidCompartment;
 class SEGasCompartment;
 class SELiquidSubstanceQuantity;
 class SELiquidCompartmentGraph;
 class SELiquidCompartmentLink;
-class SELiquidTransporter;
 class SEFluidCircuit;
 class SEFluidCircuitNode;
 class SEFluidCircuitPath;

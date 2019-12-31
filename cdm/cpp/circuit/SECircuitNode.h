@@ -65,5 +65,3 @@ private:
   size_t                  m_CalculatorIndex;
   bool                    m_IsReferenceNode = false;
 };
-
-#include "circuit/SECircuitNode.inl"

@@ -32,5 +32,5 @@ public:
 protected:
   
   SEScalarArea*      m_ImpairedSurfaceArea;
-  SEScalar0To1*      m_ImpairedFraction;  
+  SEScalar0To1*      m_ImpairedFraction;
 };

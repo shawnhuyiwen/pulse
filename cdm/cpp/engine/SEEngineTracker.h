@@ -14,6 +14,8 @@ class SEDataRequest;
 class SEDataRequestManager;
 class SEGasCompartment;
 class SEGasSubstanceQuantity;
+class SELiquidCompartment;
+class SELiquidSubstanceQuantity;
 class SEThermalCompartment;
 #include "properties/SEScalar.h"
 
