@@ -1238,7 +1238,7 @@
     }
   }, {
     "PatientAction": {
-      "SupplementalOxygenData": {
+      "SupplementalOxygen": {
         "Device": "SimpleMask"
       }
     }
