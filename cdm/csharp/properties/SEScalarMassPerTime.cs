@@ -61,6 +61,11 @@ public class SEScalarMassPerTime : SEScalar
 
   public void Set(SEScalarMassPerTime from)
   {
+    if (from == null)
+    {
+      Invalidate();
+      return;
+    }
     SetValue(from.value, from.unit);
   }
 

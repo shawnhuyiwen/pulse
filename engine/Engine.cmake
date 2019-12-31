@@ -3,6 +3,7 @@ set(PULSE_FILES
   "cpp/PulseConfiguration.h"
   "cpp/PulseConfiguration.cpp"
   "cpp/PulsePhysiologyEngine.h"
+  "cpp/PulsePhysiologyEngine.cpp"
   "cpp/PulsePhysiologySystems.h"
   "cpp/PulseScenario.h"
   "cpp/PulseScenario.cpp"

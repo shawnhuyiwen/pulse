@@ -32,6 +32,10 @@ if(NOT _RUN_PROTOC)
   return()
 endif()
 
+##################
+## C++ Bindings ##
+##################
+
 # Remove all previously generated files
 file(GLOB_RECURSE OLD_FILES "${to}/*.h" "${to}/*.cc" "${to}/*.cs" "${to}/*.java")
 file(REMOVE "${OLD_FILES}")
@@ -52,6 +56,9 @@ foreach(f ${_FILES})
 endforeach()
 message(STATUS "cpp bindings are here : ${cpp_bindings_DIR}" )
 
+###################
+## Java Bindings ##
+###################
 
 set(java_bindings_DIR "${to}/java")
 file(MAKE_DIRECTORY "${java_bindings_DIR}")
@@ -123,9 +130,7 @@ endif()
                                         "${protobuf_SRC}/src/google/protobuf/${f}")
     message(STATUS "Java Binding file ${protobuf_SRC}/src/google/protobuf/${f}")
   endforeach()
-#else()
-#  message(STATUS "Java Protobuf source files found")
-#endif()
+  
 # Copy these files to our source directory
 file(COPY "${protobuf_SRC}/java/core/src/main/java/com"
      DESTINATION ${java_bindings_DIR}
@@ -142,6 +147,9 @@ foreach(f ${_FILES})
 endforeach()
 message(STATUS "java bindings are here : ${java_bindings_DIR}" )
 
+#################
+## C# Bindings ##
+#################
 
 set(csharp_bindings_DIR "${to}/csharp")
 file(MAKE_DIRECTORY "${csharp_bindings_DIR}")
@@ -156,6 +164,24 @@ foreach(f ${_FILES})
                                     ${f})
 endforeach()
 message(STATUS "csharp bindings are here : ${csharp_bindings_DIR}" )
+
+#####################
+## Python Bindings ##
+#####################
+
+set(python_bindings_DIR "${to}/python")
+file(MAKE_DIRECTORY "${python_bindings_DIR}")
+file(GLOB_RECURSE _OLD_PYTHON_FILES "${python_bindings_DIR}/*.*")
+if(_OLD_PYTHON_FILES)
+  file(REMOVE ${_OLD_PYTHON_FILES})
+endif() 
+foreach(f ${_FILES})
+  message(STATUS "Python Binding file ${f}")
+  execute_process(COMMAND ${BINDER} --proto_path=${from}
+                                    --python_out=${python_bindings_DIR}
+                                    ${f})
+endforeach()
+message(STATUS "python bindings are here : ${python_bindings_DIR}" )
 
 file(TOUCH ${to}/schema_last_built)
 message(STATUS "Touch file ${to}/schema_last_built")

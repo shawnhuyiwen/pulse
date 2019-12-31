@@ -52,6 +52,11 @@ public class SEScalarTime : SEScalar
 
   public void Set(SEScalarTime from)
   {
+    if (from == null)
+    {
+      Invalidate();
+      return;
+    }
     SetValue(from.value, from.unit);
   }
 

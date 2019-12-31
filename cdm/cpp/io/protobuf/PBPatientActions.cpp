@@ -1387,10 +1387,10 @@ SEPatientAction* PBPatientAction::Load(const cdm::AnyPatientActionData& any, SES
     PBPatientAction::Load(any.substancecompoundinfusion(), *a);
     return a;
   }
-  case cdm::AnyPatientActionData::ActionCase::kSupplementalOxygenData:
+  case cdm::AnyPatientActionData::ActionCase::kSupplementalOxygen:
   {
     SESupplementalOxygen* a = new SESupplementalOxygen();
-    PBPatientAction::Load(any.supplementaloxygendata(), *a);
+    PBPatientAction::Load(any.supplementaloxygen(), *a);
     return a;
   }
   case cdm::AnyPatientActionData::ActionCase::kTensionPneumothorax:

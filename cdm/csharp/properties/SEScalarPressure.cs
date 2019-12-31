@@ -52,6 +52,11 @@ public class SEScalarPressure : SEScalar
 
   public void Set(SEScalarPressure from)
   {
+    if (from == null)
+    {
+      Invalidate();
+      return;
+    }
     SetValue(from.value, from.unit);
   }
 

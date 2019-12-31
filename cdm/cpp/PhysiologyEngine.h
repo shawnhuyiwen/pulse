@@ -48,7 +48,6 @@ struct PhysiologyEngineException : public CommonDataModelException
     : CommonDataModelException(_Message) {}
 };
 
-
 class CDM_DECL PhysiologyEngine
 {
 public:

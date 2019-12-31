@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonDataModel.nf", "cdm\c
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PulseEngine.nf", "engine\csharp\PulseEngine.nf.csproj", "{A9981DA7-5ADB-4F69-BE10-F79D806A0A90}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HowTo_UseEngine", "sdk\howto\csharp\HowTo_UseEngine.csproj", "{AE5D8455-9E70-4AB9-AB31-BB60ED013610}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HowToDriver", "sdk\howto\csharp\HowToDriver.csproj", "{AE5D8455-9E70-4AB9-AB31-BB60ED013610}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
