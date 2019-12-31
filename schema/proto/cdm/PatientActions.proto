@@ -171,8 +171,8 @@ message ForcedExhaleData
   ScalarTimeData                          HoldPeriod                      = 3;/**<<@brief Duration to at the end of exhale. */
   ScalarTimeData                          ReleasePeriod                   = 4;/**<<@brief Duration to get back to equilibrium/FRC. */
 }
-/** @brief Hold the patients breath. There will be no inflow or out flow of air during the specified period */
-message BreathHoldData
+/** @brief Pause breathing at 0 pressure. There will be no inflow or out flow of air during the specified period */
+message ForcedPauseData
 {
   ScalarTimeData                          Period                          = 1;/**<<@brief Duration of the breath hold. */
 }
@@ -187,7 +187,7 @@ message AnyConsciousRespirationCommandData
   {
     ForcedInhaleData                      ForcedInhale                    = 2;
     ForcedExhaleData                      ForcedExhale                    = 3;
-    BreathHoldData                        BreathHold                      = 4;
+    ForcedPauseData                       ForcedPause                     = 4;
     UseInhalerData                        UseInhaler                      = 5;
   }
 }

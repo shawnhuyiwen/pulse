@@ -315,7 +315,7 @@ public class CDM2MD
             else if(bag.propertyName.equals("Commands"))
             {
               writer.print("|"+"List of Commands");
-              String tables = "@ref BreathHoldTable <br> @ref ForcedExhaleTable <br> @ref ForcedInhaleTable <br> @ref UseInhalerTable";
+              String tables = "@ref ForcedPauseTable <br> @ref ForcedExhaleTable <br> @ref ForcedInhaleTable <br> @ref UseInhalerTable";
               writer.print("|"+tables);
             }
             else if(bag.propertyName.equals("SubstanceQuantities") && tableName.startsWith("Gas"))

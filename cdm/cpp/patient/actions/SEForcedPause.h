@@ -4,17 +4,17 @@
 #pragma once
 #include "patient/actions/SEConsciousRespirationCommand.h"
 
-class CDM_DECL SEBreathHold : public SEConsciousRespirationCommand
+class CDM_DECL SEForcedPause : public SEConsciousRespirationCommand
 {
   friend class PBPatientAction;//friend the serialization class
   friend class SEConsciousRespiration;
-  SEBreathHold();
+  SEForcedPause();
 public:
 
-  virtual ~SEBreathHold();
+  virtual ~SEForcedPause();
 
   virtual void Clear(); //clear memory
-  virtual void Copy(const SEBreathHold& src);
+  virtual void Copy(const SEForcedPause& src);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;

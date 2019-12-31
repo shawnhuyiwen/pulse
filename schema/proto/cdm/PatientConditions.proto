@@ -21,8 +21,8 @@ message AnyPatientConditionData
     ConsumeMealData                           ConsumeMeal                           = 7;
     ImpairedAlveolarExchangeData              ImpairedAlveolarExchange              = 8;
     LobarPneumoniaData                        LobarPneumonia                        = 9;
-    PulmonaryFibrosisData                     PulmonaryFibrosis                     = 1001;
-    SepsisData                                Sepsis                                = 10;
+    PulmonaryFibrosisData                     PulmonaryFibrosis                     = 10;
+    SepsisData                                Sepsis                                = 11;
   }
 }
 

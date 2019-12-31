@@ -98,6 +98,12 @@ public abstract class SEPatientCondition extends SECondition
       SELobarPneumonia.load(c.getLobarPneumonia(), newC);
       return newC;
     }
+    case PULMONARYFIBROSIS:
+    {
+      SEPulmonaryFibrosis newC = new SEPulmonaryFibrosis();
+      SEPulmonaryFibrosis.load(c.getPulmonaryFibrosis(), newC);
+      return newC;
+    }
     case SEPSIS:
     {
       SESepsis newC = new SESepsis();
@@ -116,17 +122,17 @@ public abstract class SEPatientCondition extends SECondition
     AnyPatientConditionData.Builder dst = AnyPatientConditionData.newBuilder();
     if(c instanceof SEAcuteRespiratoryDistressSyndrome)
     {
-      dst.setAcuteRespiratoryDistressSyndrome(SEAcuteRespiratoryDistressSyndrome.unload((SEAcuteRespiratoryDistressSyndrome)c));    
+      dst.setAcuteRespiratoryDistressSyndrome(SEAcuteRespiratoryDistressSyndrome.unload((SEAcuteRespiratoryDistressSyndrome)c));
       return dst.build();
     }
     if(c instanceof SEChronicAnemia)
     {
-      dst.setChronicAnemia(SEChronicAnemia.unload((SEChronicAnemia)c));    
+      dst.setChronicAnemia(SEChronicAnemia.unload((SEChronicAnemia)c));
       return dst.build();
     }
     if(c instanceof SEChronicObstructivePulmonaryDisease)
     {
-      dst.setChronicObstructivePulmonaryDisease(SEChronicObstructivePulmonaryDisease.unload((SEChronicObstructivePulmonaryDisease)c));    
+      dst.setChronicObstructivePulmonaryDisease(SEChronicObstructivePulmonaryDisease.unload((SEChronicObstructivePulmonaryDisease)c));
       return dst.build();
     }
     if(c instanceof SEChronicPericardialEffusion)
@@ -136,32 +142,37 @@ public abstract class SEPatientCondition extends SECondition
     }
     if(c instanceof SEChronicRenalStenosis)
     {
-      dst.setChronicRenalStenosis(SEChronicRenalStenosis.unload((SEChronicRenalStenosis)c));    
+      dst.setChronicRenalStenosis(SEChronicRenalStenosis.unload((SEChronicRenalStenosis)c));
       return dst.build();
     }
     if(c instanceof SEChronicVentricularSystolicDysfunction)
     {
-      dst.setChronicVentricularSystolicDysfunction(SEChronicVentricularSystolicDysfunction.unload((SEChronicVentricularSystolicDysfunction)c));    
+      dst.setChronicVentricularSystolicDysfunction(SEChronicVentricularSystolicDysfunction.unload((SEChronicVentricularSystolicDysfunction)c));
       return dst.build();
     }
     if(c instanceof SEConsumeMeal)
     {
-      dst.setConsumeMeal(SEConsumeMeal.unload((SEConsumeMeal)c));    
+      dst.setConsumeMeal(SEConsumeMeal.unload((SEConsumeMeal)c));
       return dst.build();
     }
     if(c instanceof SEImpairedAlveolarExchange)
     {
-      dst.setImpairedAlveolarExchange(SEImpairedAlveolarExchange.unload((SEImpairedAlveolarExchange)c));    
+      dst.setImpairedAlveolarExchange(SEImpairedAlveolarExchange.unload((SEImpairedAlveolarExchange)c));
       return dst.build();
     }
     if(c instanceof SELobarPneumonia)
     {
-      dst.setLobarPneumonia(SELobarPneumonia.unload((SELobarPneumonia)c));    
+      dst.setLobarPneumonia(SELobarPneumonia.unload((SELobarPneumonia)c));
+      return dst.build();
+    }
+    if(c instanceof SEPulmonaryFibrosis)
+    {
+      dst.setPulmonaryFibrosis(SEPulmonaryFibrosis.unload((SEPulmonaryFibrosis)c));
       return dst.build();
     }
     if(c instanceof SESepsis)
     {
-      dst.setSepsis(SESepsis.unload((SESepsis)c));    
+      dst.setSepsis(SESepsis.unload((SESepsis)c));
       return dst.build();
     }
     Log.error("Unsupported Patient condition type "+c);

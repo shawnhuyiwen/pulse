@@ -55,6 +55,12 @@ public class PBPatientCondition
       Serialize(any.LobarPneumonia, lp);
       return lp;
     }
+    if (any.PulmonaryFibrosis != null)
+    {
+      SEPulmonaryFibrosis pf = new SEPulmonaryFibrosis();
+      Serialize(any.PulmonaryFibrosis, pf);
+      return pf;
+    }
     if (any.Sepsis != null)
     {
       SESepsis s = new SESepsis();
@@ -106,6 +112,11 @@ public class PBPatientCondition
     if (Condition.GetType().IsAssignableFrom(typeof(SELobarPneumonia)))
     {
       any.LobarPneumonia = Unload((SELobarPneumonia)Condition);
+      return any;
+    }
+    if (Condition.GetType().IsAssignableFrom(typeof(SEPulmonaryFibrosis)))
+    {
+      any.PulmonaryFibrosis = Unload((SEPulmonaryFibrosis)Condition);
       return any;
     }
     if (Condition.GetType().IsAssignableFrom(typeof(SESepsis)))
@@ -359,6 +370,32 @@ public class PBPatientCondition
       dst.LeftLungAffected = PBProperty.Unload(src.GetLeftLungAffected());
     if (src.HasRightLungAffected())
       dst.RightLungAffected = PBProperty.Unload(src.GetRightLungAffected());
+  }
+  #endregion
+
+  #region SEPulmonaryFibrosis
+  public static void Load(Cdm.PulmonaryFibrosisData src, SEPulmonaryFibrosis dst)
+  {
+    Serialize(src, dst);
+  }
+  public static void Serialize(Cdm.PulmonaryFibrosisData src, SEPulmonaryFibrosis dst)
+  {
+    Serialize(src.PatientCondition, dst);
+    if (src.Severity != null)
+      PBProperty.Load(src.Severity, dst.GetSeverity());
+  }
+  public static Cdm.PulmonaryFibrosisData Unload(SEPulmonaryFibrosis src)
+  {
+    Cdm.PulmonaryFibrosisData dst = new Cdm.PulmonaryFibrosisData();
+    Serialize(src, dst);
+    return dst;
+  }
+  public static void Serialize(SEPulmonaryFibrosis src, Cdm.PulmonaryFibrosisData dst)
+  {
+    dst.PatientCondition = new Cdm.PatientConditionData();
+    Serialize(src, dst.PatientCondition);
+    if (src.HasSeverity())
+      dst.Severity = PBProperty.Unload(src.GetSeverity());
   }
   #endregion
 

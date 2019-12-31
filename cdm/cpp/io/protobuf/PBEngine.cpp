@@ -70,9 +70,9 @@
 #include "patient/actions/SEChestOcclusiveDressing.h"
 #include "patient/actions/SEChronicObstructivePulmonaryDiseaseExacerbation.h"
 #include "patient/actions/SEConsciousRespiration.h"
-/**/#include "patient/actions/SEBreathHold.h"
 /**/#include "patient/actions/SEForcedExhale.h"
 /**/#include "patient/actions/SEForcedInhale.h"
+/**/#include "patient/actions/SEForcedPause.h"
 /**/#include "patient/actions/SEUseInhaler.h"
 #include "patient/actions/SEConsumeNutrients.h"
 #include "patient/actions/SEDyspnea.h"
@@ -184,12 +184,12 @@ void PBEngine::Serialize(const SEConditionManager& src, cdm::ConditionListData& 
     dst.mutable_anycondition()->AddAllocated(PBCondition::Unload(*src.m_ImpairedAlveolarExchange));
   if (src.HasChronicPericardialEffusion())
     dst.mutable_anycondition()->AddAllocated(PBCondition::Unload(*src.m_PericardialEffusion));
+  if (src.HasPulmonaryFibrosis())
+    dst.mutable_anycondition()->AddAllocated(PBCondition::Unload(*src.m_PulmonaryFibrosis));
   if (src.HasLobarPneumonia())
     dst.mutable_anycondition()->AddAllocated(PBCondition::Unload(*src.m_LobarPneumonia));
   if (src.HasChronicRenalStenosis())
     dst.mutable_anycondition()->AddAllocated(PBCondition::Unload(*src.m_RenalStenosis));
-  if (src.HasPulmonaryFibrosis())
-	  dst.mutable_anycondition()->AddAllocated(PBCondition::Unload(*src.m_PulmonaryFibrosis));
   if (src.HasSepsis())
     dst.mutable_anycondition()->AddAllocated(PBCondition::Unload(*src.m_Sepsis));
   if (src.HasInitialEnvironmentConditions())

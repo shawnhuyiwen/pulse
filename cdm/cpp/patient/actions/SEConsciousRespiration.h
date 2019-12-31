@@ -6,7 +6,7 @@
 class SEConsciousRespirationCommand;
 class SEForcedExhale;
 class SEForcedInhale;
-class SEBreathHold;
+class SEForcedPause;
 class SEUseInhaler;
 
 class CDM_DECL SEConsciousRespiration : public SEPatientAction
@@ -34,7 +34,7 @@ public:
 
   virtual SEForcedExhale& AddForcedExhale();
   virtual SEForcedInhale& AddForcedInhale();
-  virtual SEBreathHold&   AddBreathHold();
+  virtual SEForcedPause&  AddForcedPause();
   virtual SEUseInhaler&   AddUseInhaler();
 
   virtual void ToString(std::ostream &str) const;

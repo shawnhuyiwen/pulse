@@ -8,62 +8,59 @@
 
 SEPulmonaryFibrosis::SEPulmonaryFibrosis() : SEPatientCondition()
 {
-	m_Severity = nullptr;
+  m_Severity = nullptr;
 }
 
 SEPulmonaryFibrosis::~SEPulmonaryFibrosis()
 {
-	Clear();
+  Clear();
 }
 
 void SEPulmonaryFibrosis::Clear()
 {
-	SEPatientCondition::Clear();
-	SAFE_DELETE(m_Severity);
+  SEPatientCondition::Clear();
+  SAFE_DELETE(m_Severity);
 }
 
 void SEPulmonaryFibrosis::Copy(const SEPulmonaryFibrosis& src)
 {
-	PBPatientCondition::Copy(src, *this);
+  PBPatientCondition::Copy(src, *this);
 }
 
 bool SEPulmonaryFibrosis::IsValid() const
 {
-	return HasSeverity();
+  return HasSeverity();
 }
 
 bool SEPulmonaryFibrosis::IsActive() const
 {
-	if (!IsValid())
-		return false;
-	return GetSeverity()>0;
+  if (!IsValid())
+    return false;
+  return GetSeverity()>0;
 }
 
 bool SEPulmonaryFibrosis::HasSeverity() const
 {
-	return m_Severity == nullptr ? false : m_Severity->IsValid();
+  return m_Severity == nullptr ? false : m_Severity->IsValid();
 }
 SEScalar0To1& SEPulmonaryFibrosis::GetSeverity()
 {
-	if (m_Severity == nullptr)
-		m_Severity = new SEScalar0To1();
-	return *m_Severity;
+  if (m_Severity == nullptr)
+    m_Severity = new SEScalar0To1();
+  return *m_Severity;
 }
 double SEPulmonaryFibrosis::GetSeverity() const
 {
-	if (m_Severity == nullptr)
-		return SEScalar::dNaN();
-	return m_Severity->GetValue();
+  if (m_Severity == nullptr)
+    return SEScalar::dNaN();
+  return m_Severity->GetValue();
 }
-
 
 void SEPulmonaryFibrosis::ToString(std::ostream &str) const
 {
-	str << "Patient Condition : PulmonaryFibrosis";
-	if (HasComment())
-		str << "\n\tComment: " << m_Comment;
-	str << "\n\tSeverity: "; HasSeverity() ? str << *m_Severity : str << "NaN";
-	str << std::flush;
+  str << "Patient Condition : PulmonaryFibrosis";
+  if (HasComment())
+    str << "\n\tComment: " << m_Comment;
+  str << "\n\tSeverity: "; HasSeverity() ? str << *m_Severity : str << "NaN";
+  str << std::flush;
 }
-
-

@@ -98,9 +98,9 @@ protected:
   double m_TopBreathTotalVolume_L;
   double m_TopBreathAlveoliVolume_L;
   double m_TopBreathPleuralVolume_L;
-  double m_TopBreathPleuralPressure_cmH2O;
   double m_TopBreathAlveoliPressure_cmH2O;
   double m_TopBreathDriverPressure_cmH2O;
+  double m_TopBreathPleuralPressure_cmH2O;
   double m_LastCardiacCycleBloodPH;
   double m_TopCarinaO2;
   double m_TopBreathElapsedTime_min;
@@ -108,23 +108,20 @@ protected:
   double m_BottomBreathTotalVolume_L;
   double m_BottomBreathAlveoliVolume_L;
   double m_BottomBreathPleuralVolume_L;
-  double m_BottomBreathPleuralPressure_cmH2O;
   double m_BottomBreathAlveoliPressure_cmH2O;
   double m_BottomBreathDriverPressure_cmH2O;
+  double m_BottomBreathPleuralPressure_cmH2O;
   double m_PeakAlveolarPressure_cmH2O;
   double m_MaximalAlveolarPressure_cmH2O;
   SERunningAverage* m_BloodPHRunningAverage;
 
-  //   Respiratory Driver
+  // Respiratory Driver
   double m_ArterialO2PartialPressure_mmHg;
   double m_ArterialCO2PartialPressure_mmHg;
   double m_BreathingCycleTime_s;
-  double m_DriverInspirationTime_s;
   double m_DriverPressure_cmH2O;
-  double m_DriverPressureMin_cmH2O;
   double m_ElapsedBreathingCycleTime_min;
   double m_IERatioScaleFactor;
-  double m_MaxDriverPressure_cmH2O;
   double m_PeakInspiratoryPressure_cmH2O;
   double m_PeakExpiratoryPressure_cmH2O;
   double m_PreviousTargetAlveolarVentilation_L_Per_min;
@@ -132,21 +129,24 @@ protected:
   double m_VentilationToTidalVolumeSlope;
   SERunningAverage* m_ArterialO2RunningAverage_mmHg;
   SERunningAverage* m_ArterialCO2RunningAverage_mmHg;
+
   // Muscle Pressure Waveform
-  double m_InspiratoryRiseFraction;
-  double m_InspiratoryHoldFraction;
-  double m_InspiratoryReleaseFraction;
-  double m_InspiratoryToExpiratoryPauseFraction;
-  double m_ExpiratoryRiseFraction;
   double m_ExpiratoryHoldFraction;
   double m_ExpiratoryReleaseFraction;
+  double m_ExpiratoryRiseFraction;
+  double m_InspiratoryHoldFraction;
+  double m_InspiratoryReleaseFraction;
+  double m_InspiratoryRiseFraction;
+  double m_InspiratoryToExpiratoryPauseFraction;
 
   //Conscious Respiration
-  bool m_ActiveConsciousRespirationCommand; //jbw - add to serialization... make sure things that were removed are really gone
+  bool m_ActiveConsciousRespirationCommand;
 
   // Stateless member variable (Set in SetUp())
   double m_dt_s;
   double m_dt_min;
+  // Respiratory Driver
+  double m_MaxDriverPressure_cmH2O;
   // Configuration parameters
   double m_CentralControlGainConstant;
   double m_DefaultOpenResistance_cmH2O_s_Per_L;

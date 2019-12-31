@@ -30,7 +30,7 @@
 #include "patient/actions/SEConsciousRespiration.h"
 #include "patient/actions/SEForcedInhale.h"
 #include "patient/actions/SEForcedExhale.h"
-#include "patient/actions/SEBreathHold.h"
+#include "patient/actions/SEForcedPause.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEScalarMassPerVolume.h"
@@ -209,13 +209,13 @@ void HowToMechanicalVentilation()
   forcedInhale.GetInspiratoryCapacityFraction().SetValue(0.25);
   forcedInhale.GetInhalePeriod().SetValue(0.7, TimeUnit::s);
   // Next we will hold our breath
-  consciousRespiration.AddBreathHold().GetPeriod().SetValue(0.25, TimeUnit::s);
+  consciousRespiration.AddForcedPause().GetPeriod().SetValue(0.25, TimeUnit::s);
   // Then exhale
   SEForcedExhale& forcedExhale = consciousRespiration.AddForcedExhale();
   forcedExhale.GetExpiratoryReserveVolumeFraction().SetValue(0.0);
   forcedExhale.GetExhalePeriod().SetValue(0.05, TimeUnit::s);
   // Then hold our breath again
-  consciousRespiration.AddBreathHold().GetPeriod().SetValue(0.5, TimeUnit::s);
+  consciousRespiration.AddForcedPause().GetPeriod().SetValue(0.5, TimeUnit::s);
   // Once ProcessAction is called, the engine will make a copy of these commands.
   // You cannont modify them, 
   //  you will need to either clear out this command and reprocess it, 

@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 #include "engine/SEConditionManager.h"
-//Patient Conditions
+   //Patient Conditions
 #include "patient/conditions/SEAcuteRespiratoryDistressSyndrome.h"
 #include "patient/conditions/SEChronicAnemia.h"
 #include "patient/conditions/SEChronicObstructivePulmonaryDisease.h"
@@ -226,18 +226,18 @@ bool SEConditionManager::ProcessCondition(const SECondition& condition)
       return true;
     }
 
-	const SEPulmonaryFibrosis* pf = dynamic_cast<const SEPulmonaryFibrosis*>(&condition);
-	if (pf != nullptr)
-	{
-		if (HasPulmonaryFibrosis())
-		{
-			Error("Cannot have multiple Pulmonary Fibrosis conditions");
-			return false;
-		}
-		m_PulmonaryFibrosis = new SEPulmonaryFibrosis();
-		m_PulmonaryFibrosis->Copy(*pf);
-		return true;
-	}
+    const SEPulmonaryFibrosis* pf = dynamic_cast<const SEPulmonaryFibrosis*>(&condition);
+    if (pf != nullptr)
+    {
+      if (HasPulmonaryFibrosis())
+      {
+        Error("Cannot have multiple Pulmonary Fibrosis conditions");
+        return false;
+      }
+      m_PulmonaryFibrosis = new SEPulmonaryFibrosis();
+      m_PulmonaryFibrosis->Copy(*pf);
+      return true;
+    }
 
     const SESepsis* s = dynamic_cast<const SESepsis*>(&condition);
     if (s != nullptr)
@@ -268,7 +268,7 @@ bool SEConditionManager::ProcessCondition(const SECondition& condition)
       return true;
     }
   }
-  
+
   /// \error Unsupported Condition
   Error("Unsupported Condition");
   return false;
@@ -398,15 +398,15 @@ const SELobarPneumonia* SEConditionManager::GetLobarPneumonia() const
 
 bool SEConditionManager::HasPulmonaryFibrosis() const
 {
-	return m_PulmonaryFibrosis == nullptr ? false : m_PulmonaryFibrosis->IsValid();
+  return m_PulmonaryFibrosis == nullptr ? false : m_PulmonaryFibrosis->IsValid();
 }
 SEPulmonaryFibrosis* SEConditionManager::GetPulmonaryFibrosis()
 {
-	return m_PulmonaryFibrosis;
+  return m_PulmonaryFibrosis;
 }
 const SEPulmonaryFibrosis* SEConditionManager::GetPulmonaryFibrosis() const
 {
-	return m_PulmonaryFibrosis;
+  return m_PulmonaryFibrosis;
 }
 
 bool SEConditionManager::HasSepsis() const
@@ -456,7 +456,7 @@ void SEConditionManager::GetAllConditions(std::vector<const SECondition*>& condi
   if (HasLobarPneumonia())
     conditions.push_back(GetLobarPneumonia());
   if (HasPulmonaryFibrosis())
-	  conditions.push_back(GetPulmonaryFibrosis());
+    conditions.push_back(GetPulmonaryFibrosis());
   if (HasSepsis())
     conditions.push_back(GetSepsis());
 
@@ -485,7 +485,7 @@ bool SEConditionManager::IsEmpty() const
   if (HasLobarPneumonia())
     return false;
   if (HasPulmonaryFibrosis())
-	  return false;
+    return false;
   if (HasSepsis())
     return false;
 

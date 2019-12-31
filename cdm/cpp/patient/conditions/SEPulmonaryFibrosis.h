@@ -6,26 +6,26 @@
 
 class CDM_DECL SEPulmonaryFibrosis : public SEPatientCondition
 {
-	friend class PBPatientCondition;//friend the serialization class
+  friend class PBPatientCondition;//friend the serialization class
 public:
 
-	SEPulmonaryFibrosis();
-	virtual ~SEPulmonaryFibrosis();
+  SEPulmonaryFibrosis();
+  virtual ~SEPulmonaryFibrosis();
 
-	virtual void Clear(); //clear memory
-	virtual void Copy(const SEPulmonaryFibrosis& src);
+  virtual void Clear(); //clear memory
+  virtual void Copy(const SEPulmonaryFibrosis& src);
 
-	virtual bool IsValid() const;
-	virtual bool IsActive() const;
+  virtual bool IsValid() const;
+  virtual bool IsActive() const;
 
-	virtual std::string GetName() const { return "PulmonaryFibrosis"; }
+  virtual std::string GetName() const { return "PulmonaryFibrosis"; }
 
-	virtual bool HasSeverity() const;
-	virtual SEScalar0To1& GetSeverity();
-	virtual double GetSeverity() const;
+  virtual bool HasSeverity() const;
+  virtual SEScalar0To1& GetSeverity();
+  virtual double GetSeverity() const;
 
-	virtual void ToString(std::ostream &str) const;
+  virtual void ToString(std::ostream &str) const;
 
 protected:
-	SEScalar0To1*     m_Severity;
+  SEScalar0To1* m_Severity;
 };

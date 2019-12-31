@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "patient/actions/SEConsciousRespiration.h"
 #include "patient/actions/SEConsciousRespirationCommand.h"
-#include "patient/actions/SEBreathHold.h"
+#include "patient/actions/SEForcedPause.h"
 #include "patient/actions/SEForcedExhale.h"
 #include "patient/actions/SEForcedInhale.h"
 #include "patient/actions/SEUseInhaler.h"
@@ -86,9 +86,9 @@ SEForcedInhale& SEConsciousRespiration::AddForcedInhale()
   return *myIn;
 }
 
-SEBreathHold& SEConsciousRespiration::AddBreathHold()
+SEForcedPause& SEConsciousRespiration::AddForcedPause()
 {
-  SEBreathHold* myHold = new SEBreathHold();
+  SEForcedPause* myHold = new SEForcedPause();
   m_Commands.push_back(myHold);
   return *myHold;
 }

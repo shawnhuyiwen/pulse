@@ -63,10 +63,10 @@ public class SEConsciousRespiration extends SEPatientAction
     {
       switch(cmd.getCommandCase())
       {
-        case BREATHHOLD:
+        case FORCEDPAUSE:
         {
-          SEBreathHold command = new SEBreathHold();
-          SEBreathHold.load(cmd.getBreathHold(),command);
+          SEForcedPause command = new SEForcedPause();
+          SEForcedPause.load(cmd.getForcedPause(),command);
           dst.commands.add(command);
           break;
         }
@@ -109,9 +109,9 @@ public class SEConsciousRespiration extends SEPatientAction
     for (SEConsciousRespirationCommand command : src.commands)
     {
       AnyConsciousRespirationCommandData.Builder cmd = dst.addCommandBuilder();
-      if (command instanceof SEBreathHold)
+      if (command instanceof SEForcedPause)
       {
-        cmd.setBreathHold(SEBreathHold.unload((SEBreathHold)command));
+        cmd.setForcedPause(SEForcedPause.unload((SEForcedPause)command));
         continue;
       }
       if (command instanceof SEForcedExhale)
