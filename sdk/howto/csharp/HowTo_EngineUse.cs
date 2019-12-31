@@ -62,7 +62,7 @@ namespace HowTo_UseEngine
       // and turn off cout via a bool
       PulseEngine pulse = new PulseEngine(null, true, ".");
 
-      InitializationType initType = InitializationType.PatientFile;
+      InitializationType initType = InitializationType.StateFileName;
       switch (initType)
       {
         case InitializationType.StateFileName:
