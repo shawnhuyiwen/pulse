@@ -4,10 +4,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Pulse;
+using Pulse.CDM;
 
 namespace HowTo_UseEngine
 {
-  public class MyEventHandler : EventHandler
+  public class MyEventHandler : IEventHandler
   {
     public void HandleEvent(SEEventChange change)
     {
@@ -15,7 +17,7 @@ namespace HowTo_UseEngine
     }
   }
 
-  public class MyLogListener : LogListener
+  public class MyLogListener : ILogListener
   {
     public void Debug(string msg) { Console.WriteLine("[DEBUG] " + msg); }
     public void Info(string msg) { Console.WriteLine("[INFO] " + msg); }

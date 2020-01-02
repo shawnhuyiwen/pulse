@@ -3,43 +3,46 @@
 
 using System.Collections.Generic;
 
-public interface LogListener
+namespace Pulse.CDM
 {
-  void Debug(string msg);
-  void Info(string msg);
-  void Warning(string msg);
-  void Error(string msg);
-  void Fatal(string msg);
-}
-
-public class SELogMessages
-{
-  public List<string> debug_msgs = new List<string>();
-  public List<string> info_msgs = new List<string>();
-  public List<string> warning_msgs = new List<string>();
-  public List<string> error_msgs = new List<string>();
-  public List<string> fatal_msgs = new List<string>();
-
-  public void Clear()
+  public interface ILogListener
   {
-    debug_msgs.Clear();
-    info_msgs.Clear();
-    warning_msgs.Clear();
-    error_msgs.Clear();
-    fatal_msgs.Clear();
+    void Debug(string msg);
+    void Info(string msg);
+    void Warning(string msg);
+    void Error(string msg);
+    void Fatal(string msg);
   }
 
-  public void Forward(LogListener listener)
+  public class SELogMessages
   {
-    foreach (string msg in debug_msgs)
-      listener.Debug(msg);
-    foreach (string msg in info_msgs)
-      listener.Info(msg);
-    foreach (string msg in warning_msgs)
-      listener.Warning(msg);
-    foreach (string msg in error_msgs)
-      listener.Error(msg);
-    foreach (string msg in fatal_msgs)
-      listener.Fatal(msg);
+    public List<string> debug_msgs = new List<string>();
+    public List<string> info_msgs = new List<string>();
+    public List<string> warning_msgs = new List<string>();
+    public List<string> error_msgs = new List<string>();
+    public List<string> fatal_msgs = new List<string>();
+
+    public void Clear()
+    {
+      debug_msgs.Clear();
+      info_msgs.Clear();
+      warning_msgs.Clear();
+      error_msgs.Clear();
+      fatal_msgs.Clear();
+    }
+
+    public void Forward(ILogListener listener)
+    {
+      foreach (string msg in debug_msgs)
+        listener.Debug(msg);
+      foreach (string msg in info_msgs)
+        listener.Info(msg);
+      foreach (string msg in warning_msgs)
+        listener.Warning(msg);
+      foreach (string msg in error_msgs)
+        listener.Error(msg);
+      foreach (string msg in fatal_msgs)
+        listener.Fatal(msg);
+    }
   }
 }

@@ -1,66 +1,68 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-public class SESupplementalOxygen : SEPatientAction
+namespace Pulse.CDM
 {
-
-  public enum eDevice : int
+  public class SESupplementalOxygen : SEPatientAction
   {
-    None = 0,
-    NasalCannula,
-    SimpleMask,
-    NonRebreatherMask
-  }
 
-  protected eDevice device;
-  protected SEScalarVolumePerTime flow;
-  protected SEScalarVolume volume;
+    public enum eDevice : int
+    {
+      None = 0,
+      NasalCannula,
+      SimpleMask,
+      NonRebreatherMask
+    }
 
-  public SESupplementalOxygen()
-  {
-    device = eDevice.None;
-    flow = null;
-    volume = null;
-  }
+    protected eDevice device;
+    protected SEScalarVolumePerTime flow;
+    protected SEScalarVolume volume;
 
-  public override void Clear()
-  {
-    base.Clear();
-    device = eDevice.None;
-    if (flow != null)
-      flow.Invalidate();
-    if (volume != null)
-      volume.Invalidate();
-  }
+    public SESupplementalOxygen()
+    {
+      device = eDevice.None;
+      flow = null;
+      volume = null;
+    }
 
-  public override bool IsValid()
-  {
-    return HasFlow() && HasVolume();
-  }
+    public override void Clear()
+    {
+      base.Clear();
+      device = eDevice.None;
+      if (flow != null)
+        flow.Invalidate();
+      if (volume != null)
+        volume.Invalidate();
+    }
 
-  public eDevice GetDevice() { return device; }
-  public void SetDevice(eDevice d) { device = d; }
+    public override bool IsValid()
+    {
+      return HasFlow() && HasVolume();
+    }
 
-  public bool HasFlow()
-  {
-    return flow == null ? false : flow.IsValid();
-  }
-  public SEScalarVolumePerTime GetFlow()
-  {
-    if (flow == null)
-      flow = new SEScalarVolumePerTime();
-    return flow;
-  }
+    public eDevice GetDevice() { return device; }
+    public void SetDevice(eDevice d) { device = d; }
 
-  public bool HasVolume()
-  {
-    return volume == null ? false : volume.IsValid();
-  }
-  public SEScalarVolume GetVolume()
-  {
-    if (volume == null)
-      volume = new SEScalarVolume();
-    return volume;
-  }
+    public bool HasFlow()
+    {
+      return flow == null ? false : flow.IsValid();
+    }
+    public SEScalarVolumePerTime GetFlow()
+    {
+      if (flow == null)
+        flow = new SEScalarVolumePerTime();
+      return flow;
+    }
 
+    public bool HasVolume()
+    {
+      return volume == null ? false : volume.IsValid();
+    }
+    public SEScalarVolume GetVolume()
+    {
+      if (volume == null)
+        volume = new SEScalarVolume();
+      return volume;
+    }
+  }
 }

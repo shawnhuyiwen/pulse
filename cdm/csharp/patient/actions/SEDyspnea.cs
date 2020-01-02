@@ -1,35 +1,38 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-public class SEDyspnea : SEPatientAction
+namespace Pulse.CDM
 {
-  protected SEScalar0To1 severity;
+  public class SEDyspnea : SEPatientAction
+  {
+    protected SEScalar0To1 severity;
 
-  public SEDyspnea()
-  {
-    severity = null;
-  }
+    public SEDyspnea()
+    {
+      severity = null;
+    }
 
-  public override void Clear()
-  {
-    base.Clear();
-    if (severity != null)
-      severity.Invalidate();
-  }
+    public override void Clear()
+    {
+      base.Clear();
+      if (severity != null)
+        severity.Invalidate();
+    }
 
-  public override bool IsValid()
-  {
-    return HasSeverity();
-  }
+    public override bool IsValid()
+    {
+      return HasSeverity();
+    }
 
-  public bool HasSeverity()
-  {
-    return severity == null ? false : severity.IsValid();
-  }
-  public SEScalar0To1 GetSeverity()
-  {
-    if (severity == null)
-      severity = new SEScalar0To1();
-    return severity;
+    public bool HasSeverity()
+    {
+      return severity == null ? false : severity.IsValid();
+    }
+    public SEScalar0To1 GetSeverity()
+    {
+      if (severity == null)
+        severity = new SEScalar0To1();
+      return severity;
+    }
   }
 }
