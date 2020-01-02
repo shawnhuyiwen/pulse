@@ -79,6 +79,11 @@ public class SEScalarMassPerVolume : SEScalar
 
   public void Set(SEScalarMassPerVolume from)
   {
+    if (from == null)
+    {
+      Invalidate();
+      return;
+    }
     SetValue(from.value, from.unit);
   }
 

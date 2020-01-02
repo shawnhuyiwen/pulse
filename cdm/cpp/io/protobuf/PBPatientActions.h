@@ -8,7 +8,6 @@ CDM_BIND_DECL2(AcuteStress)
 CDM_BIND_DECL2(AirwayObstruction)
 CDM_BIND_DECL2(AsthmaAttack)
 CDM_BIND_DECL2(BrainInjury)
-CDM_BIND_DECL2(BreathHold)
 CDM_BIND_DECL2(Bronchoconstriction)
 CDM_BIND_DECL2(CardiacArrest)
 CDM_BIND_DECL2(ChestCompressionForce)
@@ -21,6 +20,7 @@ CDM_BIND_DECL2(Dyspnea)
 CDM_BIND_DECL2(Exercise)
 CDM_BIND_DECL2(ForcedExhale)
 CDM_BIND_DECL2(ForcedInhale)
+CDM_BIND_DECL2(ForcedPause)
 CDM_BIND_DECL2(Hemorrhage)
 CDM_BIND_DECL2(Intubation)
 CDM_BIND_DECL2(LobarPneumoniaExacerbation)
@@ -79,12 +79,6 @@ public:
   static void Serialize(const cdm::BrainInjuryData& src, SEBrainInjury& dst);
   static void Serialize(const SEBrainInjury& src, cdm::BrainInjuryData& dst);
   static void Copy(const SEBrainInjury& src, SEBrainInjury& dst);
-
-  static void Load(const cdm::BreathHoldData& src, SEBreathHold& dst);
-  static cdm::BreathHoldData* Unload(const SEBreathHold& src);
-  static void Serialize(const cdm::BreathHoldData& src, SEBreathHold& dst);
-  static void Serialize(const SEBreathHold& src, cdm::BreathHoldData& dst);
-  static void Copy(const SEBreathHold& src, SEBreathHold& dst);
 
   static void Load(const cdm::BronchoconstrictionData& src, SEBronchoconstriction& dst);
   static cdm::BronchoconstrictionData* Unload(const SEBronchoconstriction& src);
@@ -157,6 +151,12 @@ public:
   static void Serialize(const cdm::ForcedInhaleData& src, SEForcedInhale& dst);
   static void Serialize(const SEForcedInhale& src, cdm::ForcedInhaleData& dst);
   static void Copy(const SEForcedInhale& src, SEForcedInhale& dst);
+
+  static void Load(const cdm::ForcedPauseData& src, SEForcedPause& dst);
+  static cdm::ForcedPauseData* Unload(const SEForcedPause& src);
+  static void Serialize(const cdm::ForcedPauseData& src, SEForcedPause& dst);
+  static void Serialize(const SEForcedPause& src, cdm::ForcedPauseData& dst);
+  static void Copy(const SEForcedPause& src, SEForcedPause& dst);
 
   static void Load(const cdm::HemorrhageData& src, SEHemorrhage& dst);
   static cdm::HemorrhageData* Unload(const SEHemorrhage& src);

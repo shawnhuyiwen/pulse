@@ -760,7 +760,7 @@ FATAL: If the side specified does not have a pneumothorax
 This action can contain 1 or more commands :
 - @copybrief ForcedInhaleData
 - @copybrief ForcedExhaleData
-- @copybrief BreathHoldData
+- @copybrief ForcedPauseData
 - @copybrief UseInhalerData
 
 <br>
@@ -794,7 +794,7 @@ the system to react.
         }
       }
       "Command": {
-        "BreathHold": {
+        "ForcedPause": {
           "Period": { "ScalarTime": { "Value":10.0, "Unit":"s" } }
         }
       }

@@ -55,6 +55,11 @@ public class SEScalarVolumePerTime : SEScalar
 
   public void Set(SEScalarVolumePerTime from)
   {
+    if (from == null)
+    {
+      Invalidate();
+      return;
+    }
     SetValue(from.value, from.unit);
   }
 

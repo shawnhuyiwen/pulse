@@ -6,7 +6,7 @@
 class SEConsciousRespirationCommand;
 class SEForcedExhale;
 class SEForcedInhale;
-class SEBreathHold;
+class SEForcedPause;
 class SEUseInhaler;
 
 class CDM_DECL SEConsciousRespiration : public SEPatientAction
@@ -23,19 +23,23 @@ public:
   virtual bool IsValid() const;
   virtual bool IsActive() const;
 
+  virtual bool StartImmediately() const;
+  virtual void SetStartImmediately(bool b);
+
   // Get the active command
+  virtual bool HasCommands() const;
   virtual SEConsciousRespirationCommand* GetActiveCommand();
   /// When the active command has been processed, remove it
   virtual void RemoveActiveCommand();
 
   virtual SEForcedExhale& AddForcedExhale();
   virtual SEForcedInhale& AddForcedInhale();
-  virtual SEBreathHold&   AddBreathHold();
+  virtual SEForcedPause&  AddForcedPause();
   virtual SEUseInhaler&   AddUseInhaler();
 
   virtual void ToString(std::ostream &str) const;
 protected:
 
-  bool m_ClearCommands;
+  bool m_StartImmediately;
   std::vector<SEConsciousRespirationCommand*> m_Commands;
 };  
