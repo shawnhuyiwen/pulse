@@ -892,13 +892,13 @@ void Cardiovascular::RecordAndResetCardiacCycle()
   }
   else
   {
-	//(Mean arteral pressure - mean pulmonary wedge pressure)/Cardiac output
-	  double PulmonaryPressureDrop_mmHg = GetPulmonaryMeanArterialPressure(PressureUnit::mmHg) - GetPulmonaryCapillariesWedgePressure(PressureUnit::mmHg);
+    //(Mean arteral pressure - mean pulmonary wedge pressure)/Cardiac output
+    double PulmonaryPressureDrop_mmHg = GetPulmonaryMeanArterialPressure(PressureUnit::mmHg) - GetPulmonaryCapillariesWedgePressure(PressureUnit::mmHg);
     GetPulmonaryVascularResistance().SetValue(PulmonaryPressureDrop_mmHg / cardiacOutput_mL_Per_s, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-	
+
     //Mean arteral pressure - mean pulmonary wedge pressure)/Cardiac index where cardiac index is cardiac output / body surface area
-	GetPulmonaryVascularResistanceIndex().SetValue(PulmonaryPressureDrop_mmHg / GetCardiacIndex(VolumePerTimeAreaUnit::mL_Per_s_m2), PressureTimePerVolumeAreaUnit::mmHg_s_Per_mL_m2);
-  }  
+    GetPulmonaryVascularResistanceIndex().SetValue(PulmonaryPressureDrop_mmHg / GetCardiacIndex(VolumePerTimeAreaUnit::mL_Per_s_m2), PressureTimePerVolumeAreaUnit::mmHg_s_Per_mL_m2);
+  }
   
   m_CardiacCycleAortaPressureHigh_mmHg = 0.0;
   m_CardiacCycleAortaPressureLow_mmHg = 10000.0;

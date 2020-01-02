@@ -11,6 +11,7 @@ public class SEConditionManager
   protected SEImpairedAlveolarExchange impaired_alveolar_exchange;
   protected SEChronicPericardialEffusion pericardial_effusion;
   protected SELobarPneumonia lobar_pneumonia;
+  protected SEPulmonaryFibrosis pulmonary_fibrosis;
   protected SEChronicRenalStenosis renal_stenosis;
   protected SESepsis sepsis;
 
@@ -31,6 +32,7 @@ public class SEConditionManager
     impaired_alveolar_exchange = null;
     pericardial_effusion = null;
     lobar_pneumonia = null;
+    pulmonary_fibrosis = null;
     renal_stenosis = null;
     sepsis = null;
     //initial_environment_conditions = null;
@@ -55,6 +57,8 @@ public class SEConditionManager
     if (HasImpairedAlveolarExchange())
       return false;
     if (HasLobarPneumonia())
+      return false;
+    if (HasPulmonaryFibrosis())
       return false;
     if (HasSepsis())
       return false;
@@ -109,6 +113,11 @@ public class SEConditionManager
     if (c.GetType().IsAssignableFrom(typeof(SELobarPneumonia)))
     {
       lobar_pneumonia = (SELobarPneumonia)c;
+      return true;
+    }
+    if (c.GetType().IsAssignableFrom(typeof(SEPulmonaryFibrosis)))
+    {
+      pulmonary_fibrosis = (SEPulmonaryFibrosis)c;
       return true;
     }
     if (c.GetType().IsAssignableFrom(typeof(SESepsis)))
@@ -251,6 +260,21 @@ public class SEConditionManager
   public void RemoveLobarPneumonia()
   {
     lobar_pneumonia = null;
+  }
+
+  public bool HasPulmonaryFibrosis()
+  {
+    return pulmonary_fibrosis == null ? false : pulmonary_fibrosis.IsValid();
+  }
+  public SEPulmonaryFibrosis GetPulmonaryFibrosis()
+  {
+    if (pulmonary_fibrosis == null)
+      pulmonary_fibrosis = new SEPulmonaryFibrosis();
+    return pulmonary_fibrosis;
+  }
+  public void RemovePulmonaryFibrosis()
+  {
+    pulmonary_fibrosis = null;
   }
 
   public bool HasSepsis()

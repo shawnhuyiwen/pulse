@@ -286,6 +286,11 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
   {
     if (m_ConsciousRespiration == nullptr)
       m_ConsciousRespiration = new SEConsciousRespiration();
+    if (m_ConsciousRespiration->HasCommands())
+    {
+      Warning("Processing conscious respiration before the previous conscious breath was completed.");
+      Warning("Previous conscious respiration commands will not be processed.");
+    }
     m_ConsciousRespiration->Copy(*conResp);
     if (!m_ConsciousRespiration->IsActive())
       RemoveConsciousRespiration();

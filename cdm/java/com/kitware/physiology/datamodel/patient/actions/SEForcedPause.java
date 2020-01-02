@@ -3,19 +3,19 @@
 
 package com.kitware.physiology.datamodel.patient.actions;
 
-import com.kitware.physiology.cdm.PatientActions.BreathHoldData;
+import com.kitware.physiology.cdm.PatientActions.ForcedPauseData;
 import com.kitware.physiology.datamodel.properties.SEScalarTime;
 
-public class SEBreathHold extends SEConsciousRespirationCommand
+public class SEForcedPause extends SEConsciousRespirationCommand
 {
   protected SEScalarTime period;
   
-  public SEBreathHold()
+  public SEForcedPause()
   {
     period = null;
   }
   
-  public void copy(SEBreathHold other)
+  public void copy(SEForcedPause other)
   {
     if(this==other)
       return;
@@ -25,7 +25,7 @@ public class SEBreathHold extends SEConsciousRespirationCommand
   
   public SEConsciousRespirationCommand getCopy()
   {
-    SEConsciousRespirationCommand command = new SEBreathHold();
+    SEConsciousRespirationCommand command = new SEForcedPause();
     command.copy(this);
     
     return command;
@@ -44,21 +44,21 @@ public class SEBreathHold extends SEConsciousRespirationCommand
     return hasPeriod();
   }
   
-  public static void load(BreathHoldData src, SEBreathHold dst)
+  public static void load(ForcedPauseData src, SEForcedPause dst)
   {
     //SEConsciousRespirationCommand.load(src.getConsciousRespirationCommand(), dst);
     if(src.hasPeriod())
       SEScalarTime.load(src.getPeriod(),dst.getPeriod());    
   }
   
-  public static BreathHoldData unload(SEBreathHold src)
+  public static ForcedPauseData unload(SEForcedPause src)
   {
-    BreathHoldData.Builder dst = BreathHoldData.newBuilder();
+    ForcedPauseData.Builder dst = ForcedPauseData.newBuilder();
     unload(src,dst);
     return dst.build();
   }
   
-  protected static void unload(SEBreathHold src, BreathHoldData.Builder dst)
+  protected static void unload(SEForcedPause src, ForcedPauseData.Builder dst)
   {
     //SEConsciousRespirationCommand.unload(src,dst.getConsciousRespirationCommand());
     if (src.hasPeriod())

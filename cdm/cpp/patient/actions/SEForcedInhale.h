@@ -19,18 +19,26 @@ public:
   virtual bool IsValid() const;
   virtual bool IsActive() const;
 
-public:
-
   virtual bool HasInspiratoryCapacityFraction() const;
   virtual SEScalar0To1& GetInspiratoryCapacityFraction();
   virtual double GetInspiratoryCapacityFraction() const;
 
-  virtual bool HasPeriod() const;
-  virtual SEScalarTime& GetPeriod();
-  virtual double GetPeriod(const TimeUnit& unit) const;
+  virtual bool HasInhalePeriod() const;
+  virtual SEScalarTime& GetInhalePeriod();
+  virtual double GetInhalePeriod(const TimeUnit& unit) const;
+
+  virtual bool HasHoldPeriod() const;
+  virtual SEScalarTime& GetHoldPeriod();
+  virtual double GetHoldPeriod(const TimeUnit& unit) const;
+
+  virtual bool HasReleasePeriod() const;
+  virtual SEScalarTime& GetReleasePeriod();
+  virtual double GetReleasePeriod(const TimeUnit& unit) const;
 
   virtual void ToString(std::ostream &str) const;
 protected:
   SEScalar0To1* m_InspiratoryCapacityFraction;
-  SEScalarTime* m_Period;
+  SEScalarTime* m_InhalePeriod;
+  SEScalarTime* m_HoldPeriod;
+  SEScalarTime* m_ReleasePeriod;
 };

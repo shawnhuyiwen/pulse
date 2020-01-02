@@ -159,16 +159,20 @@ message DyspneaData
 message ForcedInhaleData
 {
   Scalar0To1Data                          InspiratoryCapacityFraction     = 1;/**<<@brief The fraction of the Inspiratory capacity that will be filled by the breath. */
-  ScalarTimeData                          Period                          = 2;/**<<@brief Duration of the inhale. */
+  ScalarTimeData                          InhalePeriod                    = 2;/**<<@brief Duration of the inhale. */
+  ScalarTimeData                          HoldPeriod                      = 3;/**<<@brief Duration to hold at the end of inhale. */
+  ScalarTimeData                          ReleasePeriod                   = 4;/**<<@brief Duration to get back to equilibrium/FRC. */
 }
 /** @brief Force air into the lungs. */
 message ForcedExhaleData
 {
   Scalar0To1Data                          ExpiratoryReserveVolumeFraction = 1;/**<<@brief The fraction of the Expiratory Reserve Volume that is forced out of the body. */
-  ScalarTimeData                          Period                          = 2;/**<<@brief Duration of the exhale.*/
+  ScalarTimeData                          ExhalePeriod                    = 2;/**<<@brief Duration of the exhale. */
+  ScalarTimeData                          HoldPeriod                      = 3;/**<<@brief Duration to at the end of exhale. */
+  ScalarTimeData                          ReleasePeriod                   = 4;/**<<@brief Duration to get back to equilibrium/FRC. */
 }
-/** @brief Hold the patients breath. There will be no inflow or out flow of air during the specified period */
-message BreathHoldData
+/** @brief Pause breathing at 0 pressure. There will be no inflow or out flow of air during the specified period */
+message ForcedPauseData
 {
   ScalarTimeData                          Period                          = 1;/**<<@brief Duration of the breath hold. */
 }
@@ -183,16 +187,15 @@ message AnyConsciousRespirationCommandData
   {
     ForcedInhaleData                      ForcedInhale                    = 2;
     ForcedExhaleData                      ForcedExhale                    = 3;
-    BreathHoldData                        BreathHold                      = 4;
+    ForcedPauseData                       ForcedPause                     = 4;
     UseInhalerData                        UseInhaler                      = 5;
   }
 }
-/** @brief An ordered list of concious breath commands for the patient to preform. */
+/** @brief An ordered list of conscious breath commands for the patient to preform. */
 message ConsciousRespirationData
-{
-  
+{  
   PatientActionData                           PatientAction                   = 1;
-  bool                                        AppendToPrevious                = 2;
+  bool                                        StartImmediately                = 2;
   repeated AnyConsciousRespirationCommandData Command                         = 3;
 }
 

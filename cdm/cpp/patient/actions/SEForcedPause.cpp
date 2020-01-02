@@ -2,59 +2,59 @@
 See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "patient/actions/SEBreathHold.h"
+#include "patient/actions/SEForcedPause.h"
 #include "properties/SEScalarTime.h"
 #include "io/protobuf/PBPatientActions.h"
 
-SEBreathHold::SEBreathHold() : SEConsciousRespirationCommand()
+SEForcedPause::SEForcedPause() : SEConsciousRespirationCommand()
 {
   m_Period = nullptr;
 }
 
-SEBreathHold::~SEBreathHold()
+SEForcedPause::~SEForcedPause()
 {
   Clear();
 }
 
-void SEBreathHold::Clear()
+void SEForcedPause::Clear()
 {
   SEConsciousRespirationCommand::Clear();
   SAFE_DELETE(m_Period);
 }
 
-void SEBreathHold::Copy(const SEBreathHold& src)
+void SEForcedPause::Copy(const SEForcedPause& src)
 {
   PBPatientAction::Copy(src, *this);
 }
 
-bool SEBreathHold::IsValid() const
+bool SEForcedPause::IsValid() const
 {
   return SEConsciousRespirationCommand::IsValid() && HasPeriod();
 }
 
-bool SEBreathHold::IsActive() const
+bool SEForcedPause::IsActive() const
 {
   return SEConsciousRespirationCommand::IsActive();
 }
 
-bool SEBreathHold::HasPeriod() const
+bool SEForcedPause::HasPeriod() const
 {
   return m_Period == nullptr ? false : m_Period->IsValid();
 }
-SEScalarTime& SEBreathHold::GetPeriod()
+SEScalarTime& SEForcedPause::GetPeriod()
 {
   if (m_Period == nullptr)
     m_Period = new SEScalarTime();
   return *m_Period;
 }
-double SEBreathHold::GetPeriod(const TimeUnit& unit) const
+double SEForcedPause::GetPeriod(const TimeUnit& unit) const
 {
   if (m_Period == nullptr)
     return SEScalar::dNaN();
   return m_Period->GetValue(unit);
 }
 
-void SEBreathHold::ToString(std::ostream &str) const
+void SEForcedPause::ToString(std::ostream &str) const
 {
   str << "Breath Hold";
   if (HasComment())

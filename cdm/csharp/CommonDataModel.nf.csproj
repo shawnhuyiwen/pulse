@@ -93,6 +93,7 @@
     <Compile Include="patient\actions\SESubstanceInfusion.cs" />
     <Compile Include="patient\actions\SESupplementalOxygen.cs" />
     <Compile Include="patient\actions\SETensionPneumothorax.cs" />
+    <Compile Include="patient\conditions\SEPulmonaryFibrosis.cs" />
     <Compile Include="patient\conditions\SEPatientCondition.cs" />
     <Compile Include="patient\conditions\SEAcuteRespiratoryDistressSyndrome.cs" />
     <Compile Include="patient\conditions\SEChronicAnemia.cs" />
