@@ -40,6 +40,11 @@ public class SEScalarMassPerAreaTime : SEScalar
 
   public void Set(SEScalarMassPerAreaTime from)
   {
+    if (from == null)
+    {
+      Invalidate();
+      return;
+    }
     SetValue(from.value, from.unit);
   }
 

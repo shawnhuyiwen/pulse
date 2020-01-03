@@ -23,7 +23,7 @@
 #include "patient/actions/SEChestOcclusiveDressing.h"
 #include "patient/actions/SEChronicObstructivePulmonaryDiseaseExacerbation.h"
 #include "patient/actions/SEConsciousRespiration.h"
-/**/#include "patient/actions/SEBreathHold.h"
+/**/#include "patient/actions/SEForcedPause.h"
 /**/#include "patient/actions/SEForcedExhale.h"
 /**/#include "patient/actions/SEForcedInhale.h"
 /**/#include "patient/actions/SEUseInhaler.h"
@@ -208,34 +208,6 @@ void PBPatientAction::Serialize(const SEBrainInjury& src, cdm::BrainInjuryData& 
 void PBPatientAction::Copy(const SEBrainInjury& src, SEBrainInjury& dst)
 {
   cdm::BrainInjuryData data;
-  PBPatientAction::Serialize(src, data);
-  PBPatientAction::Serialize(data, dst);
-}
-
-void PBPatientAction::Load(const cdm::BreathHoldData& src, SEBreathHold& dst)
-{
-  PBPatientAction::Serialize(src, dst);
-}
-void PBPatientAction::Serialize(const cdm::BreathHoldData& src, SEBreathHold& dst)
-{
-  dst.Clear();
-  if (src.has_period())
-    PBProperty::Load(src.period(), dst.GetPeriod());
-}
-cdm::BreathHoldData* PBPatientAction::Unload(const SEBreathHold& src)
-{
-  cdm:: BreathHoldData* dst = new cdm::BreathHoldData();
-  PBPatientAction::Serialize(src, *dst);
-  return dst;
-}
-void PBPatientAction::Serialize(const SEBreathHold& src, cdm::BreathHoldData& dst)
-{
-  if (src.HasPeriod())
-    dst.set_allocated_period(PBProperty::Unload(*src.m_Period));
-}
-void PBPatientAction::Copy(const SEBreathHold& src, SEBreathHold& dst)
-{
-  cdm::BreathHoldData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
@@ -430,16 +402,15 @@ void PBPatientAction::Load(const cdm::ConsciousRespirationData& src, SEConscious
 void PBPatientAction::Serialize(const cdm::ConsciousRespirationData& src, SEConsciousRespiration& dst)
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
-  dst.m_ClearCommands = true;
-  
+  dst.SetStartImmediately(src.startimmediately());
   for (int i = 0; i < src.command().size(); i++)
   {
     const cdm::AnyConsciousRespirationCommandData& command = src.command()[i];
 
     switch (command.Command_case())
     {
-    case cdm::AnyConsciousRespirationCommandData::CommandCase::kBreathHold:
-      PBPatientAction::Load(command.breathhold(), dst.AddBreathHold());
+    case cdm::AnyConsciousRespirationCommandData::CommandCase::kForcedPause:
+      PBPatientAction::Load(command.forcedpause(), dst.AddForcedPause());
       break;
     case cdm::AnyConsciousRespirationCommandData::CommandCase::kForcedExhale:
       PBPatientAction::Load(command.forcedexhale(), dst.AddForcedExhale());
@@ -466,15 +437,14 @@ cdm::ConsciousRespirationData* PBPatientAction::Unload(const SEConsciousRespirat
 void PBPatientAction::Serialize(const SEConsciousRespiration& src, cdm::ConsciousRespirationData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
-  dst.appendtoprevious();
   for (SEConsciousRespirationCommand* cmd : src.m_Commands)
   {
     cdm::AnyConsciousRespirationCommandData* cmdData = dst.add_command();
     cmdData->set_comment(cmd->GetComment());
-    SEBreathHold* bh = dynamic_cast<SEBreathHold*>(cmd);
+    SEForcedPause* bh = dynamic_cast<SEForcedPause*>(cmd);
     if (bh != nullptr)
     {
-      cmdData->set_allocated_breathhold(PBPatientAction::Unload(*bh));
+      cmdData->set_allocated_forcedpause(PBPatientAction::Unload(*bh));
       continue;
     }
     SEForcedExhale* fe = dynamic_cast<SEForcedExhale*>(cmd);
@@ -605,8 +575,12 @@ void PBPatientAction::Serialize(const cdm::ForcedExhaleData& src, SEForcedExhale
   dst.Clear();
   if (src.has_expiratoryreservevolumefraction())
     PBProperty::Load(src.expiratoryreservevolumefraction(), dst.GetExpiratoryReserveVolumeFraction());
-  if (src.has_period())
-    PBProperty::Load(src.period(), dst.GetPeriod());
+  if (src.has_exhaleperiod())
+    PBProperty::Load(src.exhaleperiod(), dst.GetExhalePeriod());
+  if (src.has_holdperiod())
+    PBProperty::Load(src.holdperiod(), dst.GetHoldPeriod());
+  if (src.has_releaseperiod())
+    PBProperty::Load(src.releaseperiod(), dst.GetReleasePeriod());
 }
 cdm::ForcedExhaleData* PBPatientAction::Unload(const SEForcedExhale& src)
 {
@@ -618,8 +592,12 @@ void PBPatientAction::Serialize(const SEForcedExhale& src, cdm::ForcedExhaleData
 {
   if (src.HasExpiratoryReserveVolumeFraction())
     dst.set_allocated_expiratoryreservevolumefraction(PBProperty::Unload(*src.m_ExpiratoryReserveVolumeFraction));
-  if (src.HasPeriod())
-    dst.set_allocated_period(PBProperty::Unload(*src.m_Period));
+  if (src.HasExhalePeriod())
+    dst.set_allocated_exhaleperiod(PBProperty::Unload(*src.m_ExhalePeriod));
+  if (src.HasHoldPeriod())
+    dst.set_allocated_holdperiod(PBProperty::Unload(*src.m_HoldPeriod));
+  if (src.HasReleasePeriod())
+    dst.set_allocated_releaseperiod(PBProperty::Unload(*src.m_ReleasePeriod));
 }
 void PBPatientAction::Copy(const SEForcedExhale& src, SEForcedExhale& dst)
 {
@@ -637,8 +615,12 @@ void PBPatientAction::Serialize(const cdm::ForcedInhaleData& src, SEForcedInhale
   dst.Clear();
   if (src.has_inspiratorycapacityfraction())
     PBProperty::Load(src.inspiratorycapacityfraction(), dst.GetInspiratoryCapacityFraction());
-  if (src.has_period())
-    PBProperty::Load(src.period(), dst.GetPeriod());
+  if (src.has_inhaleperiod())
+    PBProperty::Load(src.inhaleperiod(), dst.GetInhalePeriod());
+  if (src.has_holdperiod())
+    PBProperty::Load(src.holdperiod(), dst.GetHoldPeriod());
+  if (src.has_releaseperiod())
+    PBProperty::Load(src.releaseperiod(), dst.GetReleasePeriod());
 }
 cdm::ForcedInhaleData* PBPatientAction::Unload(const SEForcedInhale& src)
 {
@@ -650,12 +632,44 @@ void PBPatientAction::Serialize(const SEForcedInhale& src, cdm::ForcedInhaleData
 {
   if (src.HasInspiratoryCapacityFraction())
     dst.set_allocated_inspiratorycapacityfraction(PBProperty::Unload(*src.m_InspiratoryCapacityFraction));
-  if (src.HasPeriod())
-    dst.set_allocated_period(PBProperty::Unload(*src.m_Period));
+  if (src.HasInhalePeriod())
+    dst.set_allocated_inhaleperiod(PBProperty::Unload(*src.m_InhalePeriod));
+  if (src.HasHoldPeriod())
+    dst.set_allocated_holdperiod(PBProperty::Unload(*src.m_HoldPeriod));
+  if (src.HasReleasePeriod())
+    dst.set_allocated_releaseperiod(PBProperty::Unload(*src.m_ReleasePeriod));
 }
 void PBPatientAction::Copy(const SEForcedInhale& src, SEForcedInhale& dst)
 {
   cdm::ForcedInhaleData data;
+  PBPatientAction::Serialize(src, data);
+  PBPatientAction::Serialize(data, dst);
+}
+
+void PBPatientAction::Load(const cdm::ForcedPauseData& src, SEForcedPause& dst)
+{
+  PBPatientAction::Serialize(src, dst);
+}
+void PBPatientAction::Serialize(const cdm::ForcedPauseData& src, SEForcedPause& dst)
+{
+  dst.Clear();
+  if (src.has_period())
+    PBProperty::Load(src.period(), dst.GetPeriod());
+}
+cdm::ForcedPauseData* PBPatientAction::Unload(const SEForcedPause& src)
+{
+  cdm::ForcedPauseData* dst = new cdm::ForcedPauseData();
+  PBPatientAction::Serialize(src, *dst);
+  return dst;
+}
+void PBPatientAction::Serialize(const SEForcedPause& src, cdm::ForcedPauseData& dst)
+{
+  if (src.HasPeriod())
+    dst.set_allocated_period(PBProperty::Unload(*src.m_Period));
+}
+void PBPatientAction::Copy(const SEForcedPause& src, SEForcedPause& dst)
+{
+  cdm::ForcedPauseData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
@@ -1387,10 +1401,10 @@ SEPatientAction* PBPatientAction::Load(const cdm::AnyPatientActionData& any, SES
     PBPatientAction::Load(any.substancecompoundinfusion(), *a);
     return a;
   }
-  case cdm::AnyPatientActionData::ActionCase::kSupplementalOxygenData:
+  case cdm::AnyPatientActionData::ActionCase::kSupplementalOxygen:
   {
     SESupplementalOxygen* a = new SESupplementalOxygen();
-    PBPatientAction::Load(any.supplementaloxygendata(), *a);
+    PBPatientAction::Load(any.supplementaloxygen(), *a);
     return a;
   }
   case cdm::AnyPatientActionData::ActionCase::kTensionPneumothorax:

@@ -601,7 +601,7 @@
     }
   }, {
     "PatientAction": {
-      "SupplementalOxygenData": {
+      "SupplementalOxygen": {
         "Device": "NonRebreatherMask"
       }
     }

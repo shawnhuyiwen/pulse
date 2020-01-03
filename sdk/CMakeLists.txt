@@ -21,6 +21,7 @@ file(GLOB SRC_FILES howto/cpp/EngineHowTo.cpp
                     howto/cpp/HowTo-Hemorrhage.cpp
                     howto/cpp/HowTo-LobarPneumonia.cpp
                     howto/cpp/HowTo-MechanicalVentilation.cpp
+                    howto/cpp/HowTo-PulmonaryFibrosis.cpp
                     howto/cpp/HowTo-PulmonaryFunctionTest.cpp
                     howto/cpp/HowTo-RunScenario.cpp
                     howto/cpp/HowTo-RunThreaded.cpp
@@ -30,7 +31,7 @@ file(GLOB SRC_FILES howto/cpp/EngineHowTo.cpp
                     howto/cpp/HowTo-Serialize.cpp
                     howto/cpp/HowTo-Smoke.cpp
                     howto/cpp/HowTo-TensionPneumothorax.cpp
-                    
+
                     howto/cpp/HowTo-TestSystemCapability.cpp
 )
 source_group("" FILES ${SRC_FILES})

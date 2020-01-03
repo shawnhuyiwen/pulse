@@ -49,6 +49,11 @@ public class SEScalarInversePressure : SEScalar
 
   public void Set(SEScalarInversePressure from)
   {
+    if (from == null)
+    {
+      Invalidate();
+      return;
+    }
     SetValue(from.value, from.unit);
   }
 

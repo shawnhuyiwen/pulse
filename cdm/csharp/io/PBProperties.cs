@@ -53,6 +53,31 @@ public class PBProperty
   }
   #endregion
 
+  #region SEScalarArea
+  public static void Load(Cdm.ScalarAreaData src, SEScalarArea dst)
+  {
+    Serialize(src, dst);
+  }
+  public static void Serialize(Cdm.ScalarAreaData src, SEScalarArea dst)
+  {
+    dst.Invalidate();
+    dst.SetValue(src.ScalarArea.Value, AreaUnit.FromString(src.ScalarArea.Unit));
+  }
+  public static Cdm.ScalarAreaData Unload(SEScalarArea src)
+  {
+    Cdm.ScalarAreaData dst = new Cdm.ScalarAreaData();
+    Serialize(src, dst);
+    return dst;
+  }
+
+  public static void Serialize(SEScalarArea src, Cdm.ScalarAreaData dst)
+  {
+    dst.ScalarArea = new Cdm.ScalarData();
+    dst.ScalarArea.Value = src.GetValue();
+    dst.ScalarArea.Unit = src.GetUnit().ToString();
+  }
+  #endregion
+
   #region SEScalarFrequency
   public static void Load(Cdm.ScalarFrequencyData src, SEScalarFrequency dst)
   {
@@ -100,6 +125,31 @@ public class PBProperty
     dst.ScalarInversePressure = new Cdm.ScalarData();
     dst.ScalarInversePressure.Value = src.GetValue();
     dst.ScalarInversePressure.Unit = src.GetUnit().ToString();
+  }
+  #endregion
+
+  #region SEScalarLength
+  public static void Load(Cdm.ScalarLengthData src, SEScalarLength dst)
+  {
+    Serialize(src, dst);
+  }
+  public static void Serialize(Cdm.ScalarLengthData src, SEScalarLength dst)
+  {
+    dst.Invalidate();
+    dst.SetValue(src.ScalarLength.Value, LengthUnit.FromString(src.ScalarLength.Unit));
+  }
+  public static Cdm.ScalarLengthData Unload(SEScalarLength src)
+  {
+    Cdm.ScalarLengthData dst = new Cdm.ScalarLengthData();
+    Serialize(src, dst);
+    return dst;
+  }
+
+  public static void Serialize(SEScalarLength src, Cdm.ScalarLengthData dst)
+  {
+    dst.ScalarLength = new Cdm.ScalarData();
+    dst.ScalarLength.Value = src.GetValue();
+    dst.ScalarLength.Unit = src.GetUnit().ToString();
   }
   #endregion
 
@@ -274,6 +324,31 @@ public class PBProperty
     dst.ScalarPressure = new Cdm.ScalarData();
     dst.ScalarPressure.Value = src.GetValue();
     dst.ScalarPressure.Unit = src.GetUnit().ToString();
+  }
+  #endregion
+
+  #region SEScalarPower
+  public static void Load(Cdm.ScalarPowerData src, SEScalarPower dst)
+  {
+    Serialize(src, dst);
+  }
+  public static void Serialize(Cdm.ScalarPowerData src, SEScalarPower dst)
+  {
+    dst.Invalidate();
+    dst.SetValue(src.ScalarPower.Value, PowerUnit.FromString(src.ScalarPower.Unit));
+  }
+  public static Cdm.ScalarPowerData Unload(SEScalarPower src)
+  {
+    Cdm.ScalarPowerData dst = new Cdm.ScalarPowerData();
+    Serialize(src, dst);
+    return dst;
+  }
+
+  public static void Serialize(SEScalarPower src, Cdm.ScalarPowerData dst)
+  {
+    dst.ScalarPower = new Cdm.ScalarData();
+    dst.ScalarPower.Value = src.GetValue();
+    dst.ScalarPower.Unit = src.GetUnit().ToString();
   }
   #endregion
 

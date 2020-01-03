@@ -520,18 +520,9 @@
                 "Value": 1.0
               }
             },
-            "Period": {
+            "InhalePeriod": {
               "ScalarTime": {
                 "Value": 6.0,
-                "Unit": "s"
-              }
-            }
-          }
-        }, {
-          "BreathHold": {
-            "Period": {
-              "ScalarTime": {
-                "Value": 0.1,
                 "Unit": "s"
               }
             }
@@ -542,7 +533,7 @@
               "Scalar0To1": {
               }
             },
-            "Period": {
+            "ExhalePeriod": {
               "ScalarTime": {
                 "Value": 6.0,
                 "Unit": "s"
@@ -583,18 +574,9 @@
                 "Value": 1.0
               }
             },
-            "Period": {
+            "InhalePeriod": {
               "ScalarTime": {
                 "Value": 6.0,
-                "Unit": "s"
-              }
-            }
-          }
-        }, {
-          "BreathHold": {
-            "Period": {
-              "ScalarTime": {
-                "Value": 0.1,
                 "Unit": "s"
               }
             }
@@ -605,7 +587,7 @@
               "Scalar0To1": {
               }
             },
-            "Period": {
+            "ExhalePeriod": {
               "ScalarTime": {
                 "Value": 6.0,
                 "Unit": "s"

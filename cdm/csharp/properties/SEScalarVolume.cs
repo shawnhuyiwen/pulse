@@ -49,6 +49,11 @@ public class SEScalarVolume : SEScalar
 
   public void Set(SEScalarVolume from)
   {
+    if (from == null)
+    {
+      Invalidate();
+      return;
+    }
     SetValue(from.value, from.unit);
   }
 

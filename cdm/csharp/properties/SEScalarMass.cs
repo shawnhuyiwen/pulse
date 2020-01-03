@@ -52,6 +52,11 @@ public class SEScalarMass : SEScalar
 
   public void Set(SEScalarMass from)
   {
+    if (from == null)
+    {
+      Invalidate();
+      return;
+    }
     SetValue(from.value, from.unit);
   }
 

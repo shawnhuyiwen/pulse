@@ -3,7 +3,7 @@
 #
 #    This file will define the following variables:
 #      - Pulse_LIB_ROOT_DIR             : The root library directory
-#      - PULSE_LIBRARIES                : The list of both debug and release libraries.
+#      - Pulse_LIBRARIES                : The list of both debug and release libraries.
 #                                       : It is recommended to use this variable in your CMake file
 #                                       : It will configure both debug and release build types for you.
 #                                       : target_link_libraries(YourProject ${PULSE_LIBRARIES})
@@ -20,7 +20,6 @@
 set(Pulse_INSTALL "${Pulse_DIR}")
 
 set(Pulse_INCLUDE_DIRS "${Pulse_INSTALL}/include"
-                       "${Pulse_INSTALL}/include/bind"
                        "${Pulse_INSTALL}/include/cdm"
                        )
 set(Pulse_LIB_ROOT_DIR "${Pulse_INSTALL}/lib")
@@ -48,7 +47,7 @@ if(WIN32)
   list(APPEND WIN32_LIBS "ws2_32" "advapi32")
 endif()
 
-set (PULSE_LIBRARIES "")
+set (Pulse_LIBRARIES "")
 
 set(Pulse_RELEASE_LIBS "${Pulse_LIB_ROOT_DIR}/PulseEngine.${LIB_ENDING}" 
                "${Pulse_LIB_ROOT_DIR}/CommonDataModel.${LIB_ENDING}"
@@ -80,12 +79,16 @@ if(NOT "@PULSE_LOGGER@" STREQUAL "simple")
 endif()
 
 foreach(lib ${Pulse_RELEASE_LIBS})
-  list (APPEND PULSE_LIBRARIES optimized ${lib})
+  list (APPEND Pulse_LIBRARIES optimized ${lib})
 endforeach(lib)
 foreach(lib ${Pulse_DEBUG_LIBS})
-  list (APPEND PULSE_LIBRARIES debug ${lib})
+  list (APPEND Pulse_LIBRARIES debug ${lib})
 endforeach(lib)
 
+# Create an interface target
+add_library(Pulse INTERFACE IMPORTED)
+target_include_directories(Pulse INTERFACE ${Pulse_INCLUDE_DIRS})
+target_link_libraries(Pulse INTERFACE ${Pulse_LIBRARIES})
 
 set( Pulse_VERSION_MAJOR "@PULSE_VERSION_MAJOR@" )
 set( Pulse_VERSION_MINOR "@PULSE_VERSION_MINOR@" )

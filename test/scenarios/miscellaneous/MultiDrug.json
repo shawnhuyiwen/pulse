@@ -825,7 +825,7 @@
                 "Value": 1.0
               }
             },
-            "Period": {
+            "ExhalePeriod": {
               "ScalarTime": {
                 "Value": 3.0,
                 "Unit": "s"
@@ -842,18 +842,21 @@
                 "Value": 1.0
               }
             },
-            "Period": {
+            "InhalePeriod": {
               "ScalarTime": {
-                "Value": 5.0,
+                "Value": 12.0,
                 "Unit": "s"
               }
-            }
-          }
-        }, {
-          "BreathHold": {
-            "Period": {
+            },
+			"HoldPeriod": {
               "ScalarTime": {
-                "Value": 10.0,
+                "Value": 3.0,
+                "Unit": "s"
+              }
+            },
+			"ReleasePeriod": {
+              "ScalarTime": {
+                "Value": 5.0,
                 "Unit": "s"
               }
             }

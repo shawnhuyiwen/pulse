@@ -11,12 +11,16 @@ import com.kitware.physiology.datamodel.properties.SEScalarTime;
 public class SEForcedExhale extends SEConsciousRespirationCommand
 {
   protected SEScalar0To1 expiratoryReserveVolumeFraction;
-  protected SEScalarTime period;
+  protected SEScalarTime exhalePeriod;
+  protected SEScalarTime holdPeriod;
+  protected SEScalarTime releasePeriod;
   
   public SEForcedExhale()
   {
     expiratoryReserveVolumeFraction = null;
-    period = null;
+    exhalePeriod = null;
+    holdPeriod = null;
+    releasePeriod = null;
   }
   
   public void copy(SEForcedExhale other)
@@ -24,8 +28,14 @@ public class SEForcedExhale extends SEConsciousRespirationCommand
     if(this==other)
       return;
     
-    expiratoryReserveVolumeFraction = other.expiratoryReserveVolumeFraction;
-    period = other.period;
+    if(other.hasExpiratoryReserveVolumeFraction())
+      getExpiratoryReserveVolumeFraction().set(other.expiratoryReserveVolumeFraction);
+    if(other.hasExpiratoryReserveVolumeFraction())
+      getExpiratoryReserveVolumeFraction().set(other.expiratoryReserveVolumeFraction);
+    if(other.hasExpiratoryReserveVolumeFraction())
+      getExpiratoryReserveVolumeFraction().set(other.expiratoryReserveVolumeFraction);
+    if(other.hasExpiratoryReserveVolumeFraction())
+      getExpiratoryReserveVolumeFraction().set(other.expiratoryReserveVolumeFraction);
   }
   
   public SEConsciousRespirationCommand getCopy()
@@ -39,16 +49,19 @@ public class SEForcedExhale extends SEConsciousRespirationCommand
   public void reset()
   {
     super.reset();
-    
     if (expiratoryReserveVolumeFraction != null)
       expiratoryReserveVolumeFraction.invalidate();
-    if (period != null)
-      period.invalidate();
+    if (exhalePeriod != null)
+      exhalePeriod.invalidate();
+    if (holdPeriod != null)
+      holdPeriod.invalidate();
+    if (releasePeriod != null)
+      releasePeriod.invalidate();
   }
   
   public boolean isValid()
   {
-    return hasExpiratoryReserveVolumeFraction() && hasPeriod();
+    return hasExpiratoryReserveVolumeFraction() && hasExhalePeriod();
   }
   
   public static void load(ForcedExhaleData src, SEForcedExhale dst)
@@ -56,8 +69,12 @@ public class SEForcedExhale extends SEConsciousRespirationCommand
     //SEConsciousRespirationCommand.load(src.getConsciousRespirationCommand(), dst);
     if(src.hasExpiratoryReserveVolumeFraction())
       SEScalar0To1.load(src.getExpiratoryReserveVolumeFraction(),dst.getExpiratoryReserveVolumeFraction());
-    if(src.hasPeriod())
-      SEScalarTime.load(src.getPeriod(),dst.getPeriod());
+    if(src.hasExhalePeriod())
+      SEScalarTime.load(src.getExhalePeriod(),dst.getExhalePeriod());
+    if(src.hasHoldPeriod())
+      SEScalarTime.load(src.getHoldPeriod(),dst.getHoldPeriod());
+    if(src.hasReleasePeriod())
+      SEScalarTime.load(src.getReleasePeriod(),dst.getReleasePeriod());
   }
   
   public static ForcedExhaleData unload(SEForcedExhale src)
@@ -69,11 +86,15 @@ public class SEForcedExhale extends SEConsciousRespirationCommand
   
   protected static void unload(SEForcedExhale src, ForcedExhaleData.Builder dst)
   {
-    //SEConsciousRespirationCommand.unload(src,dst.getConsciousRespirationCommand());
+    //SEConsciousRespirationCommand.unload(src,dst.getConsciousRespirationCommand());    
     if (src.hasExpiratoryReserveVolumeFraction())
       dst.setExpiratoryReserveVolumeFraction(SEScalar0To1.unload(src.expiratoryReserveVolumeFraction));
-    if (src.hasPeriod())
-      dst.setPeriod(SEScalarTime.unload(src.period));
+    if (src.hasExhalePeriod())
+      dst.setExhalePeriod(SEScalarTime.unload(src.exhalePeriod));
+    if (src.hasHoldPeriod())
+      dst.setHoldPeriod(SEScalarTime.unload(src.holdPeriod));
+    if (src.hasReleasePeriod())
+      dst.setReleasePeriod(SEScalarTime.unload(src.releasePeriod));
   }
   
   public boolean hasExpiratoryReserveVolumeFraction()
@@ -87,25 +108,45 @@ public class SEForcedExhale extends SEConsciousRespirationCommand
     return expiratoryReserveVolumeFraction;
   }
   
-  public boolean hasPeriod()
+  public boolean hasExhalePeriod()
   {
-    return period != null;
+    return exhalePeriod != null;
   }
-  public SEScalarTime getPeriod()
+  public SEScalarTime getExhalePeriod()
   {
-    if (period == null)
-      period = new SEScalarTime();
-    return period;
+    if (exhalePeriod == null)
+      exhalePeriod = new SEScalarTime();
+    return exhalePeriod;
+  }
+  
+  public boolean hasHoldPeriod()
+  {
+    return holdPeriod != null;
+  }
+  public SEScalarTime getHoldPeriod()
+  {
+    if (holdPeriod == null)
+      holdPeriod = new SEScalarTime();
+    return holdPeriod;
+  }
+  
+  public boolean hasReleasePeriod()
+  {
+    return releasePeriod != null;
+  }
+  public SEScalarTime getReleasePeriod()
+  {
+    if (releasePeriod == null)
+      releasePeriod = new SEScalarTime();
+    return releasePeriod;
   }
   
   public String toString()
   {
-    if (expiratoryReserveVolumeFraction != null &&
-      period != null)
       return "Forced Exhale" 
-          + "\n\tExpiratory Reserve Volume Fraction: " + getExpiratoryReserveVolumeFraction()
-          + "\n\tPeriod: " + getPeriod();
-    else
-      return "Action not specified properly";
+          + "\n\tExpiratoryReserveVolumeFraction: " + (hasExpiratoryReserveVolumeFraction() ? getExpiratoryReserveVolumeFraction() : "Not Specified")
+          + "\n\tExhalePeriod: " + (hasExhalePeriod() ? getExhalePeriod() : "Not Specified")
+          + "\n\tHoldPeriod: " + (hasHoldPeriod() ? getHoldPeriod() : "Not Specified")
+          + "\n\tReleasePeriod: " + (hasReleasePeriod() ? getReleasePeriod() : "Not Specified");
   }
 }
