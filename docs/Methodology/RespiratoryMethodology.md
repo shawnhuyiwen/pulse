@@ -19,7 +19,7 @@ The %Respiratory System supplies oxygen and removes waste carbon dioxide from th
 
 The human %Respiratory System consists of the upper airways (region above the cricoid cartilage), the lower airways, the lungs, and the respiratory muscles. The lower airways begin at the trachea and extend to the bronchi, bronchioles, and the alveoli. At the carina, the trachea divides into two mainstem bronchi, the right and left. The bronchi bifurcate into smaller bronchioles that continue branching for up to 23 generations, forming the tracheobronchial tree that terminates with the alveoli. Alveolar ducts and alveolar sacs are the operating units of the lungs where gas exchange occurs with the pulmonary capillaries. The first several generations of airways, where no gas exchange occurs, constitute the anatomic dead space and are referred to as the conducting zone. In contrast, alveolar ducts and sacs that terminate the tracheobronchial tree are referred to as the respiration zone.
 
-@image html Respiratory_Figure01_SystemDiagram.png
+@image html RespiratorySystemDiagram.png
 <center>
 <i>Figure 1. The %Respiratory System consists of the upper and lower airways. The diaphragm acts as a respiratory muscle taking part in the ventilatory driver mechanics. The trachea branches into the right and left bronchi, each of which further bifurcates into multiple generations of smaller bronchioles. These bronchioles form the tracheobronchial tree, which terminates at the alveoli. @cite LadyofHats2014Respiratory </i>
 </center><br>
@@ -101,14 +101,9 @@ compartments corresponding to the dead space and the alveoli @cite FukuiSmith198
 The %Respiratory Model in the engine is an
 extension of the work by Fukui and Smith. This model was developed and released
 by Advanced Simulation Corporation as part of the simulator, Body Simulation for
-Anesthesia&trade;. This later formed the backbone of the HumanSim&trade; physiology engine,
-which continues to provide realistic physiology for several serious training
-games in the HumanSim product line, including HumanSim: Combat Medic and
-HumanSim: Sedation and Airway @cite Clipp2012Humansim . The HumanSim
-physiology engine is the starting point for the engine. The
-basic elements of the %Respiratory System remain the same as the HumanSim
-physiology engine; however, the respiratory circuit has been further developed
-to allow realistic mechanical responses to pathological conditions.
+Anesthesia&trade;. This later formed the backbone of the HumanSim&trade; physiology engine @cite Clipp2012Humansim . 
+The basic elements of the %Respiratory System were advanced by the BioGears program before being forked and
+further developed and improved to allow realistic mechanical responses to pathological conditions.
 
 ### Approach
 
@@ -147,15 +142,13 @@ At the beginning of a simulation, patient parameters are used to modify the musc
 
 ### Preprocess
 
-#### Update Pleural Compliance
+#### Update Compliances
 
-The compliances of the left and right pleural space are modified as a function of volume.
+The chest wall compliances of the left and right pleural space are modified as a function of volume.
 
-#### Process Actions
+#### Process Actions and Conditions
 
-Process Actions deals with modification of the respiratory parameters and
-circuit properties due to actions (insults or interventions) specified by the
-user.
+There are several methods that modify respiratory parameters based on insults and interventions. This includes combined effects that change deadspace volumes, airway and bronchi resistances, alveolar compliances, inspiratory-espiratory ratios, diffusion surface area, pulmonary capillary resistance, aerosol deposition, and air leaks.
 
 #### %Respiratory Driver
 
@@ -181,18 +174,7 @@ analysis during the next time step.
 
 ### Assessments
 
-Assessments are called outside of the system to allow compiling of information from multiple systems.
-
-<center><img src="./Images/Respiratory/RespiratoryFlow.png" width="900"></center>
-<center> 
-<i>Figure 2. The data flow for the %Respiratory System consists of Preprocess,
-Process, and Postprocess. Preprocess sets the circuit element values based on
-feedback mechanisms and engine actions. Process utilizes generic circuit
-methodology to solve the respiratory circuit for pressures, volumes, and flows
-along paths and on nodes. Process also updates system level quantities by
-calculating the vital signs. Postprocess updates these quantities to the next
-time step and then begins advancing time.</i>
-</center><br>
+Assessments are called outside of the system to allow compiling of information from multiple systems. The respiratory system includes a pulmonary function test assessment.
 
 @anchor respiratory-features
 Features and Capabilities
@@ -220,22 +202,15 @@ pleural cavity through an opening at the alveoli or the thoracic wall.
 <img src="./Images/Respiratory/RespiratoryCircuit.png" width="650">
 <center>
 <i>Figure 3. Circuit diagram of the %Respiratory System. The diagram depicts a
-closed circuit of the seven major compartments (trachea, right and left anatomic
-dead space, right and left alveoli, and right and left chest wall) and the four
-subordinate compartments (right and left pleural, esophagus, and stomach). Each
-of the alveoli and anatomic dead space compartments are represented by a
-combination of resistor and capacitor. The remaining compartments are
-represented by resistors or capacitors. The circuit also depicts the muscle
-pressure source that serves as the driver for the %Respiratory System. Unless changed
+closed circuit of the major compartments and the subordinate compartments. The circuit depicts the muscle
+pressure source that serves as the driver for the %Respiratory System, with larger efforts modeled as higher pressures. Unless changed
 for insults and interventions, the subordinate compartments have "infinitely"
 large resistors and behave as open electrical switches.</i>
 </center><br>
 
-In the circuit model, the carina and right and left anatomic dead spaces are
+In the circuit model, the carina and right and left dead spaces are
 represented by resistors to account for pneumatic resistance that impedes flow
-of gas across the conducting zones. A capacitor representing the compliance of a
-compartment is added to the nodes designated as anatomic dead spaces to account
-for the elastic behavior of the lower airways. Each of the right and left
+of gas across the conducting zones. Each of the right and left
 alveoli compartments are represented by a combination of resistors and
 capacitors (compliances) to account for the elastic behavior of the alveoli. The
 right and left chest wall compartments are represented by variable compliance
@@ -279,7 +254,7 @@ Several patient parameters are updated at the end of each stabilization segment 
 - Inspiratory Reserve Volume: calculated as [TLC - FRC - TV]
 - Inspiratory Capacity: calculated as [TLC - FRC]
 
-The patient Alveoli Surface Area is also modified when COPD and lobar pneumonia effects are applied.
+The patient Alveoli Surface Area is also modified when condition/action effects are applied.
 
 @anchor respiratory-feedback
 ### Feedback
@@ -294,7 +269,7 @@ stresses and chemical stimuli is required. To this end, the engine
 %Respiratory System employs a time-dependent pressure source based on a chemical
 feedback mechanism that mimics the respiratory response to blood gas levels as
 sensed by the central and peripheral chemoreceptors. The pressure source
-represents the muscle pressure source signal and serves as an input power source
+represents the muscle effort and serves as an input power source
 to drive the inspiration and expiration phases of the breathing cycle. 
 
 During inhalation, the driver pressure source is set to a negative value. The end of the exhalation cycle represents the initial
@@ -309,37 +284,56 @@ controls the pressure at the airway node for positive pressure ventilation. More
 details on positive pressure ventilation can be found in the @ref AnesthesiaMachineMethodology.
 
 For a realistic muscle pressure source signal, the %Respiratory System
-adopted the mathematical model proposed by Fresnel, et al. @cite Fresnel2014musclePressure , which is
+adopted a piecewise logarithmic mathematical model for each lung, which is
 based on clinical data. Accordingly, the time series of the respiratory muscle
 pressure, <i>P<sub>mus</sub></i>, is given by,
 
-\f[P_{mus} =\left\{\begin{array}{l} {P_{\max } (1-\exp (-\frac{f_{v} +4P_{0.1} }{10} *t)),0<t\le T_{I} } \\ {P_{\max } (\exp (-\frac{f_{v} +\frac{P_{0.1} }{2} }{10} *t)),T_{I} <t\le T_{tot} } \end{array}\right. \f] 
+\f[{P_{mus}} = \left\{ \begin{array}{l}
+ - {e^{\left( {\frac{{ - t}}{\tau } - 1} \right)}} \times {P_{min }},\quad 0 < t \le {t_1}\\
+{P_{min }},\quad {t_1} < t \le {t_2}\\
+{e^{\left( {\frac{{ - t - {t_2}}}{\tau }} \right)}} \times {P_{min }},\quad {t_2} < t \le {t_3}\\
+0,\quad {t_3} < t \le {t_4}\\
+1 - {e^{ - \left( {\frac{{t - {t_4}}}{\tau }} \right)}} \times {P_{max}},\quad {t_4} < t \le {t_5}\\
+{P_{max}},\quad {t_5} < t \le {t_6}\\
+{e^{ - \left( {\frac{{t - {t_6}}}{\tau }} \right)}} \times {P_{max}},\quad {t_6} < t \le {t_7}\\
+0,\quad {t_7} < t \le {t_{max }}
+\end{array} \right.\f]
 <center>
 <i>Equation 6.</i>
 </center><br> 
 
-Where <i>T<sub>I</sub></i> and <i>T<sub>tot</sub></i> are the inspiratory and total respiration times, respectively.  <i>f<sub>v</sub>=1/T<sub>tot</sub></i> is the ventilation frequency, <i>P<sub>0.1</sub></i> is the mouth occlusion pressure, and <i>P<sub>max</sub></i> is the maximum muscle pressure that specifies the amplitude of the pressure source signal.  <i>P<sub>max</sub></i> is estimated using a pressure/volume curve constructed from simulation data. The %Respiratory System circuit was exercised over a range of pressures to produce a curve showing lung volume as a function of driver pressure (Figure 4). Given the desired lung volume (based on target tidal volume, see Equation 13), P<sub>max</sub> can be estimated. 
+Where <i>tau</i> is the fraction of the breath segment times the total breath time (determined by the ventilation frequency) divided by a constant (default is 10) that determines the logarithmic shape. We use a constant value of 4 for the denominator to cause a less rapid increase/decrease at the beginning of a segment. <i>P<sub>min</sub></i> is the largest negative pressure value during inhalation and <i>P<sub>max</sub></i> is the largest positive pressure value during exhalation, the combination of which specifies the amplitude of the pressure source signal. Each time value (<i>t</i> with a subscript) is determined using set fractions and the total breath time to achieve the desired inspiratory-expiratory ratio.  Figure ? shows the basic segmented muscle driver waveform used.
 
-<img src="./Images/Respiratory/Respiratory_Figure04.png" width="550">
+<img src="./Images/Respiratory/DriverWaveform.png" width="600">
 <center> 
-<i>Figure 4. Maximum driver pressure, P<sub>max</sub>, as a function of lung volume.</i>
+<i>Figure ?. Segmented waveform used to drive the respiratory system. Segment functions are presented in Equation 6. The fraction of each segment duration compared to the total breath duration is set based on the inspiratory-expiratory ratio - many often set to zero. The total time of each breath is determined from a target respiration rate.</i>
 </center><br>
 
-The curve in Figure 4 is parameterized to produce the relation 
+The single breath waveform segments are defined by fraction of total breath and are broken out by the following steps:
 
-\f[P_{\max } =-0.3743V^{5} +7.4105V^{4} -57.076V^{3} +214.11V^{2} -409.97V+262.22\f] 
+1. Inspiratory rise
+2. Inspiratory hold
+3. Inspiratory released
+4. Inspiratory to expiratory pause fraction
+5. Expiratory rise
+6. Expiratory hold
+7. Expiratory release
+8. Residue
+
+At the beginning of each breath, a target volume (i.e., tidal volume) is determined and mapped to the <i>P<sub>min</sub></i> value using simple circuit math and assuming constant lung and chest wall compliances. This is given by,
+
+\f[{P_{min }} = \frac{{ - V + FRC}}{{{C_{total}}}}\f]
 <center>
-<i>Equation 7.</i>
+<i>Equation ?.</i>
 </center><br> 
 
-In this manner, P<sub>max</sub> is related to target tidal volume <i>V<sub>T</sub></i>. 
-In the model, <i>T<sub>I</sub></i> and <i>T<sub>tot</sub></i> are related to <i>f<sub>v</sub></i> 
-through the relation @cite Fresnel2014musclePressure 
+Where <i>V</i> is the target volume, <i>FRC</i> is the functional residual capacity and <i>C<sub>total</sub></i> is the total compliance of the respiratory system. The total compliance is determined from the baseline constant compliances of the left chest wall (<i>C<sub>LCW</sub></i>), left lung (<i>C<sub>LL</sub></i>), right chest wall (<i>C<sub>RCW</sub></i>), and right lung (<i>C<sub>RL</sub></i>) by,
 
-\f[\frac{T_{I} }{T_{tot} } =0.0125f_{v} +0.125\f] 
+\f[{C_{total}} = \frac{1}{{\frac{1}{{{C_{LCW}}}} + \frac{1}{{{C_{LL}}}}}} + \frac{1}{{\frac{1}{{{C_{RCW}}}} + \frac{1}{{{C_{RL}}}}}}\f]
 <center>
-<i>Equation 8.</i>
+<i>Equation ?.</i>
 </center><br> 
+
 @anchor respiratory-chemoreceptors
 The Fresnel model uses pre-selected ventilation frequencies to model various physiological and pathological conditions. The %Respiratory System extended the Fresnel, et. al. model by incorporating a chemical stimuli feedback mechanism that contributes to the overall blood gas regulation. As a chemical feedback mechanism, past works used empirical relationships between minute ventilation, <i>V<sup><b>.</b></sup><sub>E</sub></i>, or alveolar ventilation, <i>V<sup><b>.</b></sup><sub>A</sub></i>, and the blood gas partial pressures that represent the respiratory response to chemical stimuli at the peripheral and central chemoreceptors @cite Khoo1982chemicalFeedback , @cite Batzel2005chemicalFeedback . The %Respiratory Model adopted the mathematical relation  that links the alveolar ventilation with the blood gas levels. The resulting mathematical relationship implemented in the %Respiratory System is 
 
@@ -405,7 +399,7 @@ The model described above is implemented in the engine with reference values and
 |G<sub>p</sub>                   		  |30.24 @cite Batzel2005chemicalFeedback    |30.24                    |
 |G<sub>c</sub>                     		  |1.44  @cite Batzel2005chemicalFeedback    |1.44                     |
 |I<sub>p</sub>, I<sub>c</sub>(mmHg)       |35.5  @cite Batzel2005chemicalFeedback    |35.5                     |
-|P<sub>0.1</sub>(cmH<SUB>2</SUB>O)                   |0.75  @cite Budwiser2007chemicalFeedback  |0.75                    |
+|P<sub>0.1</sub>(cmH<SUB>2</SUB>O)        |0.75  @cite Budwiser2007chemicalFeedback  |0.75                    |
 </center><br>
 
 Figure 6 depicts the time-dependent driver pressure source of the %Respiratory System as obtained during simulation of the standard patient model of the engine (77 kg adult male) under normal physiological conditions. For comparison, the driver pressure is plotted with the alveolar, intrapleural, and transpulmonary pressures. The figure shows the pressures for several breathing cycles. As seen in Figure 6, the model driver pressure exhibits distinct waveforms during the inspiration and expiration phases. These patterns represent the active distension and passive relaxation behaviors of the inspiratory muscles. As a result of such input, the model distinguishes between the active inspiratory and passive expiratory phases of the breathing cycle. The time-dependent muscle pressure together with the atmospheric pressure and the compliances act in tandem to generate the pleural and alveolar pressure waveforms shown in the figure.
@@ -427,6 +421,75 @@ Figure 6 depicts the time-dependent driver pressure source of the %Respiratory S
 <center>
 <i>Figure 6. The driver pressure, or pressure source, that serves as an electrical analogue voltage source for the respiratory circuit is plotted along with the alveolar, intrapleural, and transpulmonary pressures.  The pressure source generates a subatmospheric intrapleural pressure that facilitates the inspiration and expiration phases of spontaneous breathing.</i>
 </center><br>
+
+#### Compliances
+
+The Pulse respiratory system is separated into four compliances (see the circuit diagram in Figure ?): the chest wall and lung for both the left and right lungs. The pressure-volume relationship has been well studied to describe the mechanical behavior of the lungs and chest wall during inflation and deflation @cite harris2005pressure. A comprehensive sigmoidal  equation for the entire system has been determined from empirical pulmonary pressure-volume data @cite venegas1998comprehensive. This compliance curve has been further broken into two constant values for the left and right lung curves and two sigmoidal functions for the left and right lungs. Figure? show the right side (combined chest wall and lung) compliance curve for the healthy standard patient. Parameters are varied based on patient settings. During simulations, the instantaneous compliances based on this curve are are determined using the current lung volume.
+
+<center><img src="./Images/Respiratory/ComplianceCurve.png" width="550"></center>
+<center>
+<i>Figure ?. The healthy single lung compliance curve is determined by standard patient lung volume parameters and a baseline compliance value.</i>
+</center><br>
+
+The waveform in Figure ? is defined by these mathematical relationships,
+
+\f[V = a + \frac{b}{{1 + {e^{{{ - \left( {P - c} \right)} \mathord{\left/
+ {\vphantom {{ - \left( {P - c} \right)} d}} \right.
+ \kern-\nulldelimiterspace} d}}}}}\f]
+<center>
+<i>Equation ?.</i>
+</center><br> 
+ 
+\f[{P_{cl}} = c - 2d\f]
+<center>
+<i>Equation ?.</i>
+</center><br> 
+
+\f[{P_{cu}} = c + 2d\f]
+<center>
+<i>Equation ?.</i>
+</center><br> 
+
+These equations can be rearranged and input with known parameters to determine the instantaneous expected pressure (<i>P</i>) of each lung. First, the baseline side compliance (<i>C<sub>sb</sub></i>) is determined knowing the baseline chest wall (<i>C<sub>cwb</sub></i>) and lung (<i>C<sub>lb</sub></i>) compliances,
+
+\f[{C_{sb}} = \frac{1}{{\frac{1}{{{C_{cwb}}}} + \frac{1}{{{C_{lb}}}}}}\f]
+<center>
+<i>Equation ?.</i>
+</center><br> 
+
+The expected intrapleural pressure (<i>P</i>) at the a given volume (<i>V</i>) can be calculated knowing the individual lung functional residual capacity (<i>FRC</i>), residual volume (<i>RV</i>), and vital capacity (<i>VC</i>) by the following,
+
+\f[NL = \ln \left( {\frac{{FRC - RV}}{{RV + VC - FRC}}} \right)\f]
+<center>
+<i>Equation ?.</i>
+</center><br> 
+
+\f[c =  - \frac{{{P_{cu}}NL\left( {2 - NL} \right)}}{2}\f]
+<center>
+<i>Equation ?.</i>
+</center><br> 
+
+\f[d = \frac{{{P_{cu}} - c}}{2}\f]
+<center>
+<i>Equation ?.</i>
+</center><br> 
+
+\f[P = d \cdot \ln \left( {\frac{{V - RV}}{{RV + VC - V}}} \right) + c\f]
+<center>
+<i>Equation ?.</i>
+</center><br> 
+
+Then, the instantaneous chest wall compliance (<i>C<sub>cw</sub></i>) to apply at the current timestep is found using the side compliance (<i>C<sub>s</sub></i>) by,
+
+\f[{C_s} = \frac{{V - FRC}}{P}\f]
+<center>
+<i>Equation ?.</i>
+</center><br> 
+
+\f[{C_{cw}} = \frac{1}{{\frac{1}{{{C_s}}} - \frac{1}{{{C_{lb}}}}}}\f]
+<center>
+<i>Equation ?.</i>
+</center><br> 
 
 #### Standard Lung Volumes and Capacities
 
@@ -490,7 +553,6 @@ breathing cycle. Figure 7 presents the plot of the total lung volume and V<sub>T
 function of time.
 
 <center><img src="./plots/Respiratory/TidalVolume_from_TotalLungVolume.jpg" width="800"></center>
-
 <center>
 <i>Figure 7. This shows the relationship of the total lung volume with the tidal
 volume. The tidal volume for each cycle is determined by taking the difference between the maximum and
@@ -687,6 +749,7 @@ that found and digitized from literature @cite guyton2006medical. The left plots
 </center><br>
 
 #### Pressure-Volume (P-V) curve
+
 One method of characterizing the lungs' elastic behavior is to use a diagram
 that relates the lung volume changes to changes in pleural pressure. The pressure-volume 
 curve of a healthy person shows hysteresis during the inspiratory and expiratory phases. 
@@ -912,7 +975,7 @@ the flow across the trachea <i>Q<sub>trachea</sub></i> as
 The %Respiratory Model calculates the pulmonary compliance <i>C<sub>pulm</sub></i> by dividing the tidal 
 volume <i>V<sub>T</sub></i> by the intrapleural pressure <i>P<sub>pleu</sub></i> difference as
 
-\f[C_{pulm} =\frac{V_{T} }{P_{pleau(\max )} -P_{pleu(\min )} } \f] 
+\f[C_{pulm} =\frac{V_{T} }{P_{pleau(max )} -P_{pleu(min )} } \f] 
 <center>
 <i>Equation 25.</i>
 </center><br> 
@@ -981,9 +1044,43 @@ The model makes no distinction between different generations of bifurcating
 airways. Therefore, factors affecting the regional ventilation and perfusion of
 the lungs cannot be captured by the model.
 
-@anchor respiratory-conditions
-Conditions
+Insults and Interventions
 ----------
+
+### General Approach
+
+jbw
+
+Disease states
+
+Combined effects
+
+Restrictive and Obstructive
+
+Equations for severity mapping
+
+
+Table with compliance and resistance - mild (severity = 0.3), moderate (severity = 0.6), severe (severity = 0.9)
+
+|	Parameter	|	Healthy	|	Artificial Airway	|	Restrictive (ARDS)	||||	Obstructive (COPD)	||||
+|		|		|		|	Equation	|	Mild	|	Moderate	|	Severe	|	Equation	|	Mild	|	Moderate	|	Severe	|
+|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
+|	Alveolar Dead Space (L)	|	0	|	0	|		|		|		|		|		|		|		|		|
+|	Airway Resistance (cmH20-s/L)	|		|		|		|		|		|		|		|		|		|		|
+|	Bronchi Resistance (cmH20-s/L)	|		|		|		|		|		|		|		|		|		|		|
+|	Lung Compliance (L/cmH2O)	|		|		|		|		|		|		|		|		|		|		|
+|	Inspiratory-Expiratory Ratio	|		|		|		|		|		|		|		|		|		|		|
+|	Diffusion Surface Area (cm^2)	|		|		|		|		|		|		|		|		|		|		|
+|	Pulmonary Capilary Resistance (cmH20-s/L)	|		|		|		|		|		|		|		|		|		|		|
+|	Fatigue Factor	|		|		|		|		|		|		|		|		|		|		|
+
+
+
+Figure with healthy, ARDS, and COPD
+
+
+@anchor respiratory-conditions
+### Conditions
 
 #### Chronic Obstructive Pulmonary Disease
 
@@ -1032,10 +1129,7 @@ Lobar pneumonia is a form of pneumonia that affects one or more lobes of the lun
 The impaired alveolar exchange generically models an unspecified reduction of effective alveolar surface area.  This condition causes less effective gas exchange between the %Respiratory and %Cardiovascular systems.  The user can specify either a fraction or area value of the surface area to remove.
 
 @anchor respiratory-actions
-Actions
--------
-
-### Insults
+### Actions
 
 #### Airway Obstruction
 
@@ -1174,9 +1268,6 @@ Additionally, the inspiratory/expiratory (IE) ratio decreases during an acute as
 </tr>
 </table>
 
-@anchor respiratory-interventions
-### Interventions
-
 #### Occlusive Dressing
 
 The management of an open tension pneumothorax requires sealing the open chest wound with an occlusive dressing. Such intervention slows the progression of tension pneumothorax and may ensure recovery if timely intervention takes place. The %Respiratory Model simulates occlusive dressing by assigning large flow resistance across the element that serves as an electrical analogue open switch for the path linking the pleural cavity to the environment. Based on this implementation, the model calculates the physiological responses arising from numerical equivalent occlusive dressing.
@@ -1202,7 +1293,7 @@ The seal resistance in each circuit dictates how much air escapes due to be secu
 <i>Figure 27. Each supplemental oxygen device has a different circuit to mimic the air mixing nuances of each.</i>
 </center><br>
 
-### Conscious Respiration 
+#### Conscious Respiration 
 
 Conscious respiration consists of a set of commands that model forced exhalation, forced inhalation, holding breath, and inhaler actuation. Collectively, they allow the engine to model coordinated use of an inhaler.  It should be noted that the conscious respiration action begins immediately when called, and will continue until completed while the simulation continues.  Users will likely want to advance time for the duration of the conscious respiration command before attempting other actions or completing a scenario.  The following commands can be used in any order and will wait until the completion of the previous command to begin:
 
