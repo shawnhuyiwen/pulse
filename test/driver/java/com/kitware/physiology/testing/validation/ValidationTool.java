@@ -81,7 +81,7 @@ public abstract class ValidationTool
     public String   refCites   = "";
     public double   refValue    = Double.NaN;
     public double   intervalMin = Double.NaN;
-    public double   intervalMax = Double.NaN;  
+    public double   intervalMax = Double.NaN;
     public double   result = Double.NaN;
     public double   resultError;
     public String   resultEnum = "";
@@ -105,11 +105,21 @@ public abstract class ValidationTool
     public double warningTolerance = 30;
   }
 
-  public void loadData(String revision, String env, String arch)
+  public void loadData(String csv_root)
   {
     String directoryName = DEFAULT_DIRECTORY;
     String fileName = DEFAULT_FILE;
     String destinationDirectory = DEST_DIRECTORY;
+    if (csv_root.equals("TEST"))
+      csv_root = "test_results";
+    else if(csv_root.equals("BASELINE"))
+      csv_root = "verification";
+    else
+    {
+      Log.warn("CSV source directory not specified, using baseline files for validation");
+      csv_root = "verification";
+    }
+
     try
     {
       File dest = new File(DEST_DIRECTORY);
@@ -146,7 +156,7 @@ public abstract class ValidationTool
       
       // Get a list of all the results files we have to work with
       
-      File vdir = new File("./test_results/scenarios/validation/"+VALIDATION_FOLDER+"/");
+      File vdir = new File("./"+csv_root+"/scenarios/validation/"+VALIDATION_FOLDER+"/");
       String[] vFiles = vdir.list();
       if(vFiles==null || vFiles.length==0)
       {
@@ -155,7 +165,7 @@ public abstract class ValidationTool
       }
       
       // Now read in the spreadsheet      
-      FileInputStream xlFile = new FileInputStream(directoryName+"/"+fileName);   
+      FileInputStream xlFile = new FileInputStream(directoryName+"/"+fileName);
       XSSFWorkbook xlWBook =  new XSSFWorkbook (xlFile);
       
       FormulaEvaluator evaluator = xlWBook.getCreationHelper().createFormulaEvaluator();
@@ -166,7 +176,7 @@ public abstract class ValidationTool
       for(int i=0; i<xlWBook.getNumberOfSheets(); i++)
       {
         XSSFSheet xlSheet = xlWBook.getSheetAt(i);
-        Log.info("Processing Sheet : " + xlSheet.getSheetName());       
+        Log.info("Processing Sheet : " + xlSheet.getSheetName());
         String sheetName = xlSheet.getSheetName().trim().replaceAll(" ", "");
         
         List<String> sheetFiles = new ArrayList<String>();
@@ -188,17 +198,17 @@ public abstract class ValidationTool
           try
           {          
             // Look for a results file
-            CSVContents results = new CSVContents("./test_results/scenarios/validation/"+VALIDATION_FOLDER+"/"+resultsName);
-            results.readAll(resultData);              
+            CSVContents results = new CSVContents("./"+csv_root+"/scenarios/validation/"+VALIDATION_FOLDER+"/"+resultsName);
+            results.readAll(resultData);
             // Find any assessments
-            assessments = new HashMap<String,SEPatientAssessment>();      
+            assessments = new HashMap<String,SEPatientAssessment>();
             for(String vFile : vFiles)
             {
               if(vFile.indexOf(sheetName)>-1 && vFile.indexOf('@')>-1)
               {
                 try
                 {
-                  SEPatientAssessment ass = SEPatientAssessment.readAssessment("./test_results/scenarios/validation/"+VALIDATION_FOLDER+"/"+vFile);
+                  SEPatientAssessment ass = SEPatientAssessment.readAssessment("./"+csv_root+"/scenarios/validation/"+VALIDATION_FOLDER+"/"+vFile);
                   assessments.put(vFile,ass);
                 }
                 catch(InvalidProtocolBufferException ex)
@@ -213,7 +223,7 @@ public abstract class ValidationTool
             ValidationRow vRow = new ValidationRow();
             vRow.header = sheetName;
             vRow.error=danger+"No results found for sheet "+endSpan;
-            badSheets.add(vRow);          
+            badSheets.add(vRow);
             continue;
           }
           // Is this patient validation?
@@ -221,19 +231,19 @@ public abstract class ValidationTool
           if(TABLE_TYPE.equals("Patient"))
           {
             // Patient Name is encoded in the naming convention (or else it needs to be)
-            String patientName = resultsName.substring(resultsName.lastIndexOf("-")+1,resultsName.indexOf("Results"));            
+            String patientName = resultsName.substring(resultsName.lastIndexOf("-")+1,resultsName.indexOf("Results"));
             patient = new SEPatient();
             patient.readFile("./stable/"+patientName+".json");
           }
 
           allRows.clear();
           tables.clear();
-          tableErrors.clear();                
+          tableErrors.clear();
           // Read the sheet and process all the validation data rows
           try
           {
 
-            int rows = xlSheet.getPhysicalNumberOfRows();     
+            int rows = xlSheet.getPhysicalNumberOfRows();
             for (int r = 0; r < rows; r++) 
             {
               XSSFRow row = xlSheet.getRow(r);
@@ -249,7 +259,7 @@ public abstract class ValidationTool
                 continue;// No property, skip it
               cellValue = row.getCell(1).getStringCellValue();
               if(cellValue!=null&&cellValue.equals("Units"))
-                continue;// Header                      
+                continue;// Header
 
 
               ValidationRow vRow = new ValidationRow();
@@ -276,15 +286,15 @@ public abstract class ValidationTool
                         break;
                       case XSSFCell.CELL_TYPE_STRING:
                         cellValue = cell.getStringCellValue();
-                        break;                      
-                    }         
+                        break;
+                    }
                     
                 }
 
                 switch(c)
                 {
-                  case 0://A                 
-                    Log.info("Processing "+cellValue);                  
+                  case 0://A
+                    Log.info("Processing "+cellValue);
                     vRow.name = cellValue.trim().replaceAll(" ","");
                     String prop = vRow.name;
                     if(vRow.name.indexOf('*')!=-1)
@@ -298,7 +308,7 @@ public abstract class ValidationTool
                     !cellValue.equalsIgnoreCase("n/a"))
                     {
                       vRow.unit = cellValue;
-                    }                                                      
+                    }
                     if(vRow.unit!=null&&!vRow.unit.isEmpty())
                       vRow.header+="("+vRow.unit+")";
                     break;
@@ -351,7 +361,7 @@ public abstract class ValidationTool
                       catch(Exception ex)
                       {
                         // Nothing to do, row is not a patient property
-                      }                      
+                      }
                     }
                     if(cellValue==null)
                       vRow.refValues = null;
@@ -363,7 +373,7 @@ public abstract class ValidationTool
                     // Replace any return characters with empty
                     if(cellValue!=null)
                       cellValue = cellValue.replace("\n","");
-                    vRow.refCites = cellValue;                  
+                    vRow.refCites = cellValue;
                     break;
                   case 5://F Reference Page (Internal only)
                     break;
@@ -394,7 +404,7 @@ public abstract class ValidationTool
                     break;
                 }
               }
-            }  
+            }
           }
           catch(Exception ex)
           {
@@ -402,7 +412,7 @@ public abstract class ValidationTool
             ValidationRow vRow = new ValidationRow();
             vRow.header = sheetName;
             vRow.error=danger+"Sheet has errors"+endSpan;
-            badSheets.add(vRow);   
+            badSheets.add(vRow);
             continue;
           }
 
@@ -412,9 +422,9 @@ public abstract class ValidationTool
             if(vRow.table.isEmpty())
               vRow.table = sheetName;//Default table is the sheet name
             if(!tables.containsKey(vRow.table))
-              tables.put(vRow.table, new ArrayList<ValidationRow>());   
+              tables.put(vRow.table, new ArrayList<ValidationRow>());
             if(!tableErrors.containsKey(vRow.table))
-              tableErrors.put(vRow.table, new ArrayList<ValidationRow>());   
+              tableErrors.put(vRow.table, new ArrayList<ValidationRow>());
             if(buildExpectedHeader(vRow))
             {
               Log.info("Validating "+vRow.header); 
@@ -447,8 +457,8 @@ public abstract class ValidationTool
             }
             WriteHTML(tableErrors.get(name),name+"Errors");
             if(patient!=null)
-              CustomMarkdown(patient.getName(),destinationDirectory);  
-          }             
+              CustomMarkdown(patient.getName(),destinationDirectory);
+          }
         }
       }
       xlWBook.close();
@@ -457,7 +467,7 @@ public abstract class ValidationTool
       html.append("</html>");
       try
       {
-        BufferedWriter out = new BufferedWriter(new FileWriter("./test_results/"+TABLE_TYPE+"Validation.html"));
+        BufferedWriter out = new BufferedWriter(new FileWriter(".//"+TABLE_TYPE+"Validation.html"));
         out.write(html.toString());
         out.close();
       }
@@ -529,8 +539,8 @@ public abstract class ValidationTool
       String cite = "@cite ";
       if(vRow.refCites.contains("["))
         cite = "";// This is an equation, not a cite
-      if(vRow.dType==DataType.Min || vRow.dType==DataType.Max || vRow.dType==DataType.Mean ||  
-    	 vRow.dType == DataType.MinPerWeight || vRow.dType == DataType.MaxPerWeight || vRow.dType == DataType.MeanPerWeight || 
+      if(vRow.dType==DataType.Min || vRow.dType==DataType.Max || vRow.dType==DataType.Mean ||
+    	 vRow.dType == DataType.MinPerWeight || vRow.dType == DataType.MaxPerWeight || vRow.dType == DataType.MeanPerWeight ||
     	 vRow.dType == DataType.MinPerIdealWeight ||vRow.dType == DataType.MaxPerIdealWeight ||vRow.dType == DataType.MeanPerIdealWeight ||
          vRow.dType==DataType.WaveformMin ||  vRow.dType == DataType.WaveformMinPerWeight || vRow.dType == DataType.WaveformMinPerIdealWeight ||
          vRow.dType==DataType.WaveformMax ||  vRow.dType == DataType.WaveformMaxPerWeight || vRow.dType == DataType.WaveformMaxPerIdealWeight)
@@ -564,7 +574,7 @@ public abstract class ValidationTool
         if(vRow.dType == DataType.Patient2SystemMin)
           vRow.header += " Minimum";
         if(vRow.unit!=null && !vRow.unit.isEmpty())
-          vRow.header += "("+vRow.unit+")";       
+          vRow.header += "("+vRow.unit+")";
         vRow.expected = String.format("%."+vRow.doubleFormat, vRow.refValue);
       }
       else if(!vRow.refValues.isEmpty())
@@ -607,7 +617,7 @@ public abstract class ValidationTool
       return true;
     }
     else
-    {// It's more than one value,intervals, this is where things get tricky..      
+    {// It's more than one value,intervals, this is where things get tricky.
       List<String> cites = new ArrayList<String>();
       List<Double> values = new ArrayList<Double>();
 
@@ -764,7 +774,7 @@ public abstract class ValidationTool
         List<Double> xMin = new ArrayList<Double>();
         List<Double> yMin = new ArrayList<Double>();
         List<Double> xMax = new ArrayList<Double>();
-        List<Double> yMax = new ArrayList<Double>();    
+        List<Double> yMax = new ArrayList<Double>();
         WaveformUtils.getPeriodBounds(vRow.weight, vRow.results, xMin, yMin, xMax, yMax);
         List<Double> resultPerWeight = new ArrayList<Double>();
         for(int i=0; i<yMin.size(); i++)
@@ -1241,7 +1251,7 @@ public abstract class ValidationTool
         {
           try
           {// Or a boolean method...
-            c.getMethod("is"+property);            
+            c.getMethod("is"+property);
           }
           catch(Exception e2)
           {
@@ -1262,7 +1272,7 @@ public abstract class ValidationTool
     
     html.append("<table border=\"1\">");
     html.append("<tr>");
-    html.append("<th> "+tableName+" </th>");      
+    html.append("<th> "+tableName+" </th>");
     html.append("<th> Expected Value </th>");
     html.append("<th> Engine Value </th>");
     html.append("<th> Percent Error </th>");
@@ -1283,7 +1293,7 @@ public abstract class ValidationTool
       html.append("<td>"+vRow.expected+"</td>");
       html.append("<td>"+vRow.engine+"</td>");
       html.append("<td>"+vRow.error+"</td>");
-      html.append("<td>"+vRow.notes+"</td>");    
+      html.append("<td>"+vRow.notes+"</td>");
     }
     html.append("</table>");
   }

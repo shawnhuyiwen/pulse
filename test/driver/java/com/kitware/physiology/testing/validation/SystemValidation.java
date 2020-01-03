@@ -23,13 +23,13 @@ public class SystemValidation extends ValidationTool
     Log.setFileName("ValidationTool.log");
     Log.info("Running with agrs : "+Arrays.toString(args));
     SystemValidation me = new SystemValidation();
-    if(args.length!=3)
+    if(args.length==0)
     {
-      me.loadData("Local","MSVC","x64");
+      me.loadData("TEST");
     }
     else
-    {      
-      me.loadData(args[0], args[1], args[2]);
+    {
+      me.loadData(args[0]);
     }
     jniBridge.deinitialize();
   }
