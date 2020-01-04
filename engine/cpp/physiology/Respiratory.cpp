@@ -1143,11 +1143,11 @@ void Respiratory::RespiratoryDriver()
 
       //This is a piecewise function that plateaus at the Tidal Volume equal to 1/2 * Vital Capacity
       //The Respiration Rate will make up for the Alveoli Ventilation difference
-      double dHalfVitalCapacity_L = m_data.GetCurrentPatient().GetVitalCapacity(VolumeUnit::L) / 2;
+      double dHalfVitalCapacity_L = m_data.GetInitialPatient().GetVitalCapacity(VolumeUnit::L) / 2;
       dTargetTidalVolume_L = MIN(dTargetTidalVolume_L, dHalfVitalCapacity_L);
 
       //Map the Target Tidal Volume to the Driver
-      double TargetVolume_L = m_data.GetCurrentPatient().GetFunctionalResidualCapacity(VolumeUnit::L) + dTargetTidalVolume_L;
+      double TargetVolume_L = m_data.GetInitialPatient().GetFunctionalResidualCapacity(VolumeUnit::L) + dTargetTidalVolume_L;
       m_PeakInspiratoryPressure_cmH2O = VolumeToDriverPressure(TargetVolume_L);
       //There's a maximum force the driver can try to achieve
       m_PeakInspiratoryPressure_cmH2O = MAX(m_PeakInspiratoryPressure_cmH2O, m_MaxDriverPressure_cmH2O);
@@ -1545,7 +1545,7 @@ void Respiratory::ConsciousRespiration()
       releasePeriod_s = fi->GetReleasePeriod().GetValue(TimeUnit::s);
     }
 
-    double TargetVolume_L = m_data.GetCurrentPatient().GetFunctionalResidualCapacity(VolumeUnit::L) + m_data.GetCurrentPatient().GetInspiratoryCapacity(VolumeUnit::L) * pressureFraction;
+    double TargetVolume_L = m_data.GetInitialPatient().GetFunctionalResidualCapacity(VolumeUnit::L) + m_data.GetInitialPatient().GetInspiratoryCapacity(VolumeUnit::L) * pressureFraction;
     m_PeakInspiratoryPressure_cmH2O = VolumeToDriverPressure(TargetVolume_L);
 
     double totalPeriod = risePeriod_s + holdPeriod_s + releasePeriod_s;
@@ -1665,6 +1665,12 @@ void Respiratory::CalculateVitalSigns()
   GetAnatomicDeadSpace().SetValue(AnatomicDeadSpace_L, VolumeUnit::L);  
   GetAlveolarDeadSpace().SetValue(AlveolarDeadSpace_L, VolumeUnit::L);
   GetPhysiologicDeadSpace().SetValue(AnatomicDeadSpace_L + AlveolarDeadSpace_L, VolumeUnit::L);
+
+  //Aaron - Why is this different than the m_Lungs volume when there is there are alveolar dead space volumes?-------------
+  double Alveoli_L = m_LeftAlveoli->GetNextVolume(VolumeUnit::L) + m_RightAlveoli->GetNextVolume(VolumeUnit::L);
+  totalLungVolume_L = Alveoli_L + AnatomicDeadSpace_L + AlveolarDeadSpace_L;
+  GetTotalLungVolume().SetValue(totalLungVolume_L, VolumeUnit::L);
+  //Remove this when it's figured out--------------------------------------------------------------------------------------
 
   double tracheaFlow_L_Per_s = m_MouthToCarina->GetNextFlow().GetValue(VolumePerTimeUnit::L_Per_s);
   double previousInspiratoryFlow_L_Per_s = GetInspiratoryFlow(VolumePerTimeUnit::L_Per_s);
@@ -1953,7 +1959,7 @@ double Respiratory::VolumeToDriverPressure(double TargetVolume_L)
   double totalCompliance_L_Per_cmH2O = 1.0 / (1.0 / leftHealthyChestWallCompliance_L_Per_cmH2O + 1.0 / leftHealthyLungCompliance_L_Per_cmH2O) +
     1.0 / (1.0 / rightHealthyChestWallCompliance_L_Per_cmH2O + 1.0 / rightHealthyLungCompliance_L_Per_cmH2O);
 
-  double driverPressure_cmH2O = -(TargetVolume_L - m_data.GetCurrentPatient().GetFunctionalResidualCapacity(VolumeUnit::L)) / totalCompliance_L_Per_cmH2O;
+  double driverPressure_cmH2O = -(TargetVolume_L - m_data.GetInitialPatient().GetFunctionalResidualCapacity(VolumeUnit::L)) / totalCompliance_L_Per_cmH2O;
   return driverPressure_cmH2O;
 }
 
@@ -3109,6 +3115,10 @@ void Respiratory::ModifyDriverPressure()
 
   //Just reduce the tidal volume by the percentage given
   m_DriverPressure_cmH2O = m_DriverPressure_cmH2O * (1 - dyspneaSeverity);
+
+#ifdef DEBUG
+  m_data.GetDataTrack().Probe("fatigueFactor", 1 - dyspneaSeverity);
+#endif  
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -3117,47 +3127,79 @@ void Respiratory::ModifyDriverPressure()
 //--------------------------------------------------------------------------------------------------
 void Respiratory::Debugging(SEFluidCircuit& RespirationCircuit)
 {
-  m_data.GetDataTrack().Probe(RespirationCircuit);
-  
-  double leftAlveoliPressure = m_LeftAlveoli->GetNextPressure(PressureUnit::cmH2O);
-  double leftAlveoliVolume = m_LeftAlveoli->GetNextVolume(VolumeUnit::L);
-  double leftPleuralPressure = m_LeftPleural->GetNextPressure(PressureUnit::cmH2O);
-  double leftPleuralVolume = m_LeftPleural->GetNextVolume(VolumeUnit::L);
-  double leftFlow = m_LeftAlveolarDeadSpaceToLeftAlveoli->GetNextFlow(VolumePerTimeUnit::L_Per_s);
-  double leftChestWallCompliance_L_Per_cmH2O = m_LeftPleuralToRespiratoryMuscle->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
+  //m_data.GetDataTrack().Probe(RespirationCircuit);
+  //
+  //double leftAlveoliPressure = m_LeftAlveoli->GetNextPressure(PressureUnit::cmH2O);
+  //double leftAlveoliVolume = m_LeftAlveoli->GetNextVolume(VolumeUnit::L);
+  //double leftPleuralPressure = m_LeftPleural->GetNextPressure(PressureUnit::cmH2O);
+  //double leftPleuralVolume = m_LeftPleural->GetNextVolume(VolumeUnit::L);
+  //double leftFlow = m_LeftAlveolarDeadSpaceToLeftAlveoli->GetNextFlow(VolumePerTimeUnit::L_Per_s);
+  //double leftChestWallCompliance_L_Per_cmH2O = m_LeftPleuralToRespiratoryMuscle->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
   double leftLungCompliance_L_Per_cmH2O = m_LeftAlveoliToLeftPleuralConnection->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
 
-  double rightAlveoliPressure = m_RightAlveoli->GetNextPressure(PressureUnit::cmH2O);
-  double rightAlveoliVolume = m_RightAlveoli->GetNextVolume(VolumeUnit::L);
-  double rightPleuralPressure = m_RightPleural->GetNextPressure(PressureUnit::cmH2O);
-  double rightPleuralVolume = m_RightPleural->GetNextVolume(VolumeUnit::L);
-  double rightFlow = m_RightAlveolarDeadSpaceToRightAlveoli->GetNextFlow(VolumePerTimeUnit::L_Per_s);
-  double rightChestWallCompliance_L_Per_cmH2O = m_RightPleuralToRespiratoryMuscle->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
+  //double rightAlveoliPressure = m_RightAlveoli->GetNextPressure(PressureUnit::cmH2O);
+  //double rightAlveoliVolume = m_RightAlveoli->GetNextVolume(VolumeUnit::L);
+  //double rightPleuralPressure = m_RightPleural->GetNextPressure(PressureUnit::cmH2O);
+  //double rightPleuralVolume = m_RightPleural->GetNextVolume(VolumeUnit::L);
+  //double rightFlow = m_RightAlveolarDeadSpaceToRightAlveoli->GetNextFlow(VolumePerTimeUnit::L_Per_s);
+  //double rightChestWallCompliance_L_Per_cmH2O = m_RightPleuralToRespiratoryMuscle->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
   double rightLungCompliance_L_Per_cmH2O = m_RightAlveoliToRightPleuralConnection->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
 
-  m_data.GetDataTrack().Probe("leftAlveoliPressure", leftAlveoliPressure);
-  m_data.GetDataTrack().Probe("leftAlveoliVolume", leftAlveoliVolume);
-  m_data.GetDataTrack().Probe("leftPleuralPressure", leftPleuralPressure);
-  m_data.GetDataTrack().Probe("leftPleuralVolume", leftPleuralVolume);
-  m_data.GetDataTrack().Probe("leftFlow", leftFlow);
-  m_data.GetDataTrack().Probe("leftChestWallCompliance_L_Per_cmH2O", leftChestWallCompliance_L_Per_cmH2O);
-  m_data.GetDataTrack().Probe("leftLungCompliance_L_Per_cmH2O", leftLungCompliance_L_Per_cmH2O);
+  //m_data.GetDataTrack().Probe("leftAlveoliPressure", leftAlveoliPressure);
+  //m_data.GetDataTrack().Probe("leftAlveoliVolume", leftAlveoliVolume);
+  //m_data.GetDataTrack().Probe("leftPleuralPressure", leftPleuralPressure);
+  //m_data.GetDataTrack().Probe("leftPleuralVolume", leftPleuralVolume);
+  //m_data.GetDataTrack().Probe("leftFlow", leftFlow);
+  //m_data.GetDataTrack().Probe("leftChestWallCompliance_L_Per_cmH2O", leftChestWallCompliance_L_Per_cmH2O);
+  //m_data.GetDataTrack().Probe("leftLungCompliance_L_Per_cmH2O", leftLungCompliance_L_Per_cmH2O);
 
-  m_data.GetDataTrack().Probe("rightAlveoliPressure", rightAlveoliPressure);
-  m_data.GetDataTrack().Probe("rightAlveoliVolume", rightAlveoliVolume);
-  m_data.GetDataTrack().Probe("rightPleuralPressure", rightPleuralPressure);
-  m_data.GetDataTrack().Probe("rightPleuralVolume", rightPleuralVolume);
-  m_data.GetDataTrack().Probe("rightFlow", rightFlow);
-  m_data.GetDataTrack().Probe("rightChestWallCompliance_L_Per_cmH2O", rightChestWallCompliance_L_Per_cmH2O);
-  m_data.GetDataTrack().Probe("rightLungCompliance_L_Per_cmH2O", rightLungCompliance_L_Per_cmH2O);
+  //m_data.GetDataTrack().Probe("rightAlveoliPressure", rightAlveoliPressure);
+  //m_data.GetDataTrack().Probe("rightAlveoliVolume", rightAlveoliVolume);
+  //m_data.GetDataTrack().Probe("rightPleuralPressure", rightPleuralPressure);
+  //m_data.GetDataTrack().Probe("rightPleuralVolume", rightPleuralVolume);
+  //m_data.GetDataTrack().Probe("rightFlow", rightFlow);
+  //m_data.GetDataTrack().Probe("rightChestWallCompliance_L_Per_cmH2O", rightChestWallCompliance_L_Per_cmH2O);
+  //m_data.GetDataTrack().Probe("rightLungCompliance_L_Per_cmH2O", rightLungCompliance_L_Per_cmH2O);
 
-  double AmbientPresure = 1033.23; // = 1 atm
-  m_data.GetDataTrack().Probe("LeftRelativePleuralPressure_cmH2O", leftPleuralPressure - AmbientPresure);
-  m_data.GetDataTrack().Probe("RightRelativePleuralPressure_cmH2O", rightPleuralPressure - AmbientPresure);  
+  //double AmbientPresure = 1033.23; // = 1 atm
+  //m_data.GetDataTrack().Probe("LeftRelativePleuralPressure_cmH2O", leftPleuralPressure - AmbientPresure);
+  //m_data.GetDataTrack().Probe("RightRelativePleuralPressure_cmH2O", rightPleuralPressure - AmbientPresure);  
 
-  double leftSideCompliance_L_Per_cmH2O = 1.0 / (1.0 / leftChestWallCompliance_L_Per_cmH2O + 1.0 / leftLungCompliance_L_Per_cmH2O);
-  double rightSideCompliance_L_Per_cmH2O = 1.0 / (1.0 / rightChestWallCompliance_L_Per_cmH2O + 1.0 / rightLungCompliance_L_Per_cmH2O);
+  //double leftSideCompliance_L_Per_cmH2O = 1.0 / (1.0 / leftChestWallCompliance_L_Per_cmH2O + 1.0 / leftLungCompliance_L_Per_cmH2O);
+  //double rightSideCompliance_L_Per_cmH2O = 1.0 / (1.0 / rightChestWallCompliance_L_Per_cmH2O + 1.0 / rightLungCompliance_L_Per_cmH2O);
 
-  double totalCompliance_L_Per_cmH2O = leftSideCompliance_L_Per_cmH2O + rightSideCompliance_L_Per_cmH2O;
-  m_data.GetDataTrack().Probe("totalCompliance_L_Per_cmH2O", totalCompliance_L_Per_cmH2O);
+  //double totalCompliance_L_Per_cmH2O = leftSideCompliance_L_Per_cmH2O + rightSideCompliance_L_Per_cmH2O;
+  //m_data.GetDataTrack().Probe("totalCompliance_L_Per_cmH2O", totalCompliance_L_Per_cmH2O);
+
+  //Parameter table outputs for methodology report
+  double leftAlveolarDeadSpace_L = 0.0;
+  double rightAlveolarDeadSpace_L = 0.0;
+  if (m_LeftAlveolarDeadSpace->HasNextVolume())
+    leftAlveolarDeadSpace_L = m_LeftAlveolarDeadSpace->GetNextVolume(VolumeUnit::L);
+  if (m_RightAlveolarDeadSpace->HasNextVolume())
+    rightAlveolarDeadSpace_L = m_RightAlveolarDeadSpace->GetNextVolume(VolumeUnit::L);
+  double totalAlveolarDeadSpace_L = leftAlveolarDeadSpace_L + rightAlveolarDeadSpace_L;
+  m_data.GetDataTrack().Probe("totalAlveolarDeadSpace_L", totalAlveolarDeadSpace_L);
+
+  double airwayResistance_cmH2O_s_Per_L = m_MouthToCarina->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  m_data.GetDataTrack().Probe("airwayResistance_cmH2O_s_Per_L", airwayResistance_cmH2O_s_Per_L);
+
+  double rightBronchiResistance_cmH2O_s_Per_L = m_CarinaToRightAnatomicDeadSpace->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  double leftBronchiResistance_cmH2O_s_Per_L = m_CarinaToLeftAnatomicDeadSpace->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  double averageBronchiResistance_cmH2O_s_Per_L = (rightBronchiResistance_cmH2O_s_Per_L + leftBronchiResistance_cmH2O_s_Per_L) / 2.0;
+  m_data.GetDataTrack().Probe("averageBronchiResistance_cmH2O_s_Per_L", averageBronchiResistance_cmH2O_s_Per_L);
+
+  double averageLungCompliance_L_Per_cmH2O = (rightLungCompliance_L_Per_cmH2O + leftLungCompliance_L_Per_cmH2O) / 2.0;
+  m_data.GetDataTrack().Probe("averageLungCompliance_L_Per_cmH2O", averageLungCompliance_L_Per_cmH2O);
+
+  double inspiratoryExpiratoryRatio = m_InspiratoryRiseFraction / (1.0 - m_InspiratoryRiseFraction);
+  m_data.GetDataTrack().Probe("inspiratoryExpiratoryRatio", inspiratoryExpiratoryRatio);
+
+  double diffusionSurfaceArea_m2 = m_data.GetCurrentPatient().GetAlveoliSurfaceArea(AreaUnit::m2);
+  m_data.GetDataTrack().Probe("diffusionSurfaceArea_m2", diffusionSurfaceArea_m2);
+
+  double rightPulmonaryCapillaryResistance_cmH2O_s_Per_L = m_RightPulmonaryCapillary->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  double leftPulmonaryCapillaryResistance_cmH2O_s_Per_L = m_LeftPulmonaryCapillary->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  double averagePulmonaryCapillaryResistance_cmH2O_s_Per_L = (rightPulmonaryCapillaryResistance_cmH2O_s_Per_L + leftPulmonaryCapillaryResistance_cmH2O_s_Per_L) / 2.0;
+  m_data.GetDataTrack().Probe("averagePulmonaryCapillaryResistance_cmH2O_s_Per_L", averagePulmonaryCapillaryResistance_cmH2O_s_Per_L);
 }

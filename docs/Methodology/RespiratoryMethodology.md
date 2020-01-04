@@ -320,6 +320,8 @@ The single breath waveform segments are defined by fraction of total breath and 
 7. Expiratory release
 8. Residue
 
+During quiet/eupnea breathing, only the inspiratory rise and inspiratory release steps are used. The fraction of total breath time is set by the inspiratory-expiratory ratio.
+
 At the beginning of each breath, a target volume (i.e., tidal volume) is determined and mapped to the <i>P<sub>min</sub></i> value using simple circuit math and assuming constant lung and chest wall compliances. This is given by,
 
 \f[{P_{min }} = \frac{{ - V + FRC}}{{{C_{total}}}}\f]
@@ -407,7 +409,7 @@ Figure 6 depicts the time-dependent driver pressure source of the %Respiratory S
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/Respiratory/Driver_Pressure.jpg" width="800"></td>    
+    <td><img src="./plots/Respiratory/Muscle_Pressure.jpg" width="800"></td>    
 </tr>
 <tr>
     <td><img src="./plots/Respiratory/Pleural_and_Alveoli_Pressure.jpg" width="800"></td>
@@ -459,12 +461,12 @@ These equations can be rearranged and input with known parameters to determine t
 
 The expected intrapleural pressure (<i>P</i>) at the a given volume (<i>V</i>) can be calculated knowing the individual lung functional residual capacity (<i>FRC</i>), residual volume (<i>RV</i>), and vital capacity (<i>VC</i>) by the following,
 
-\f[NL = \ln \left( {\frac{{FRC - RV}}{{RV + VC - FRC}}} \right)\f]
+\f[\lambda  = \ln \left( {\frac{{FRC - RV}}{{RV + VC - FRC}}} \right)\f]
 <center>
 <i>Equation ?.</i>
 </center><br> 
 
-\f[c =  - \frac{{{P_{cu}}NL\left( {2 - NL} \right)}}{2}\f]
+\f[c =  - \frac{{{P_{cu}}\lambda \left( {2 - \lambda } \right)}}{2}\f]
 <center>
 <i>Equation ?.</i>
 </center><br> 
@@ -868,7 +870,7 @@ trachea is calculated by using the pressure and the CO<SUB>2</SUB> volume fracti
 carina node. The plot shows the value of tracheal CO<SUB>2</SUB> partial pressure over the course of one breathing cycle.</i>
 </center><br>
 
-##### Tracheal O<SUB>2</SUB> partial pressure
+##### Tracheal O<SUB>2</SUB> Partial Pressure
 
 The O<SUB>2</SUB> partial pressure at the trachea is calculated in the same manner as the
 alveolar O<SUB>2</SUB> partial pressure. As mentioned for CO<SUB>2</SUB> partial pressure, the model
@@ -957,7 +959,7 @@ A metabolic modifier is set by the %Energy System (@ref EnergyMethodology) to dr
 The %Respiratory System can be hooked up to the anesthesia machine for positive-pressure ventilation (see the @ref AnesthesiaMachineMethodology).  This is achieved by connecting the two fluid circuits.  The anesthesia connection node is merely connected to the respiratory mouth node to allow for automatic calculation of the fluid mechanics by the circuit solver and transport by the substance transporter.  The mechanistic cascading effects are automatically acheived, and everything else is modeled exactly the same as when the systems are disconnected.
 
 @anchor respiratory-outputs
-###Outputs
+### Outputs
 
 At each time iteration, the %Circuit Solver calculates the values of the
 state variables for that particular time. Using the calculated state variables,
@@ -1049,35 +1051,52 @@ Insults and Interventions
 
 ### General Approach
 
-jbw
+Disease states are applied to the simulated patient by modifying various parameters. Chronic conditions stabilize to a new homeostatic point before the simulation begins. Pulse simulates both restrictive and obstructive diseases of varying severities with different continuous function mappings. All actions and conditions have a severity of zero causing no changes. The respiratory system also includes logic to combine effect for each parameter when multiple insults/interventions are applied. Table ? shows parameter settings for representative conditions and severities based on trends and values determined from literature review @cite brunner2019lung @cite arnal2018parameters @cite harris2005pressure @cite aguirre2018lung @cite arndt1995linear @cite bikker2008end @cite brunner2012pulmonary @cite ibanez1982normal. jbw add references.
 
-Disease states
+When an artificial airway is applied (i.e., mechanical ventilator or anesthesia machine), there is a change in the respiratory circuit's resistance and compliance @cite arnal2018parameters. Intubated patients will have these modifiers stacked/combined with other action/condition modifiers.
 
-Combined effects
+<center><br>
+<i>Table ?. Property changes due to the application of respiratory diseases and an artificial airway. ARDS and COPD are applied by the user with a severity defined between 0 and 1 and mapped using with linear or exponential functions.  Mild severity = 0.3, moderate severity = 0.6, severe severity = 0.9. The fatigue factor is a multiplier on the muscle pressure source target that effectively reduces the tidal volume due to the increased effort of breathing.</i>
+</center>
 
-Restrictive and Obstructive
+<table>
+  <tr>
+    <th>Parameter</th>
+    <th>Standard Healthy</th>
+    <th>Artificial Airway</th>
+    <th colspan="4">Restrictive (ARDS)</th>
+    <th colspan="4">Obstructive (COPD)</th>
+  </tr>
+  <tr>
+    <th></th>
+	<th></th>
+	<th></th>
+	<th>Severity Mapping</th>
+    <th>Mild</th>
+    <th>Moderate</th>
+    <th>Severe</th>
+    <th>Severity Mapping</th>
+    <th>Mild</th>
+    <th>Moderate</th>
+    <th>Severe</th>
+  </tr>
+  <tr><td>Alveolar Dead Space (L)</td><td>0</td><td>0</td><td>N/A</td><td>0</td><td>0</td><td>0</td><td>Linear Growth</td><td>0.6</td><td>1.2</td><td>1.8</td></tr>
+  <tr><td>Airway Resistance (cmH20-s/L)</td><td>1.125</td><td>9</td><td>N/A</td><td>1.125</td><td>1.125</td><td>1.125</td><td>N/A</td><td>1.125</td><td>1.125</td><td>1.125</td></tr>
+  <tr><td>Bronchi Resistance (cmH20-s/L)</td><td>0.45</td><td>0.45</td><td>N/A</td><td>0.45</td><td>0.45</td><td>0.45</td><td>Exponential Growth</td><td>1.74</td><td>6.7</td><td>25.8</td></tr>
+  <tr><td>Lung Compliance (L/cmH2O)</td><td>0.1</td><td>0.04</td><td>Linear Decay</td><td>0.082</td><td>0.064</td><td>0.046</td><td>Linear Growth</td><td>0.13</td><td>0.16</td><td>0.19</td></tr>
+  <tr><td>Inspiratory-Expiratory Ratio</td><td>0.5</td><td>0.5</td><td>Linear Decay</td><td>0.3</td><td>0.15</td><td>0.03</td><td>Linear Decay</td><td>0.3</td><td>0.15</td><td>0.03</td></tr>
+  <tr><td>Diffusion Surface Area (m^2)</td><td>68.3</td><td>68.3</td><td>Exponential Decay</td><td>34.3</td><td>17.2</td><td>8.6</td><td>Exponential Decay</td><td>34.3</td><td>17.2</td><td>8.6</td></tr>
+  <tr><td>Pulmonary Capilary Resistance (cmH20-s/L)</td><td>85.6</td><td>85.6</td><td>N/A</td><td>85.6</td><td>85.6</td><td>85.6</td><td>Linear Growth</td><td>128.4</td><td>171.2</td><td>214.0</td></tr>
+  <tr><td>Fatigue Factor</td><td>1</td><td>1</td><td>Linear Decay</td><td>0.76</td><td>0.52</td><td>0.28</td><td>Linear Decay</td><td>0.76</td><td>0.52</td><td>0.28</td></tr>
+</table>
 
-Equations for severity mapping
 
+Modifications to respiratory circuit resistances and compliances can further be examined and validated through volume-flow curves, like those created during spirometry testing. Figure ? shows results from a simulated pulmonary function test with the standard patient healthy and with moderate ARDS and COPD.
 
-Table with compliance and resistance - mild (severity = 0.3), moderate (severity = 0.6), severe (severity = 0.9)
-
-|	Parameter	|	Healthy	|	Artificial Airway	|	Restrictive (ARDS)	||||	Obstructive (COPD)	||||
-|		|		|		|	Equation	|	Mild	|	Moderate	|	Severe	|	Equation	|	Mild	|	Moderate	|	Severe	|
-|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
-|	Alveolar Dead Space (L)	|	0	|	0	|		|		|		|		|		|		|		|		|
-|	Airway Resistance (cmH20-s/L)	|		|		|		|		|		|		|		|		|		|		|
-|	Bronchi Resistance (cmH20-s/L)	|		|		|		|		|		|		|		|		|		|		|
-|	Lung Compliance (L/cmH2O)	|		|		|		|		|		|		|		|		|		|		|
-|	Inspiratory-Expiratory Ratio	|		|		|		|		|		|		|		|		|		|		|
-|	Diffusion Surface Area (cm^2)	|		|		|		|		|		|		|		|		|		|		|
-|	Pulmonary Capilary Resistance (cmH20-s/L)	|		|		|		|		|		|		|		|		|		|		|
-|	Fatigue Factor	|		|		|		|		|		|		|		|		|		|		|
-
-
-
-Figure with healthy, ARDS, and COPD
-
+<center><img src="./Images/Respiratory/FlowVolumeCurves.png" width="800"></center>
+<center>
+<i>Figure ?. A spirometry simulation comparing healthy, obstructive (COPD), and restrictive (ARDS) forced breath loops. COPD and ARDS severities of 0.6 and conscious respiration actions are used in the simulation. Results match those expected and presented in literature @cite barreiro2004approach.</i>
+</center><br>
 
 @anchor respiratory-conditions
 ### Conditions
@@ -1088,41 +1107,21 @@ Chronic Obstructive Pulmonary Disease (COPD) is an obstructive lung disease char
 
 The engine simulates COPD by modeling damage to the small airways and alveolar membranes. COPD severity is controlled by two severity values, a chronic bronchitis severity value and an emphysema severity value. Chronic bronchitis severity is used to scale the airflow resistance through the lower airways in the circuit model, simulating airway tissue damage and scarring. Increasing chronic bronchitis severity increases the airflow resistance through the lower airways. The function used to determine airflow resistance for COPD is the same as that used for asthma (see Figure 18) and is based on chronic bronchitis severity.
 
-Emphysema severity is used to scale destruction of the alveolar membranes. Destruction of the alveolar membranes decreases the effective surface area for gas exchange, thereby reducing alveolar gas transfer. In cases of severe emphysema, up to 80% of the alveolar membranes are destroyed, with a corresponding reduction in effective gas diffusion surface area @cite guyton2006medical. The engine scales the gas diffusion surface area using a multiplier based on emphysema severity.  The function used to determine the gas diffusion surface area multiplier is plotted in Figure 17. 
+Emphysema severity is used to scale destruction of the alveolar membranes. Destruction of the alveolar membranes decreases the effective surface area for gas exchange, thereby reducing alveolar gas transfer. In cases of severe emphysema, up to 80% of the alveolar membranes are destroyed, with a corresponding reduction in effective gas diffusion surface area @cite guyton2006medical. The engine scales the gas diffusion surface area using a multiplier based on emphysema severity.
 
-Additionally, The engine models destruction of lung tissue with an increase in alveolar compliance.  The function used to determine the compliance multiplier is plotted in Figure 18. 
+Additionally, The engine models destruction of lung tissue with an increase in alveolar compliance.
 
-The destruction of the alveolar membranes also destroys the pulmonary capillaries embedded in the membranes. To model pulmonary capillary destruction, the engine increases the pulmonary capillary flow resistance based on severity. Although increased pulmonary capillary resistance is related to alveolar membrane destruction, and therefore associated with emphysema, the engine uses either emphysema severity or chronic bronchitis severity (whichever is higher) to determine the pulmonary capillary resistance multiplier - see Figure 19. This was done in an attempt to model increased blood pressure and elevated heart rate, which are symptoms of both emphysema and chronic bronchitis. Increasing the capillary resistance should increase arterial blood pressure as the heart pumps harder to overcome the increased resistance in the lungs. However, we were unable to successfully model either increased blood pressure or elevated heart rate for COPD, as the validation results show (see @ref respiratory-results "Results and Conclusions"). This will be the focus of later efforts to improve the model.  
+The destruction of the alveolar membranes also destroys the pulmonary capillaries embedded in the membranes. To model pulmonary capillary destruction, the engine increases the pulmonary capillary flow resistance based on severity. Although increased pulmonary capillary resistance is related to alveolar membrane destruction, and therefore associated with emphysema, the engine uses either emphysema severity or chronic bronchitis severity (whichever is higher) to determine the pulmonary capillary resistance multiplier. This was done in an attempt to model increased blood pressure and elevated heart rate, which are symptoms of both emphysema and chronic bronchitis. Increasing the capillary resistance should increase arterial blood pressure as the heart pumps harder to overcome the increased resistance in the lungs. 
 
-Decreased Inspiration-Expiration (IE) ratio is another pathophysiologic feature of COPD.  As with asthma, the normal IE ratio is scaled using a multiplier based on severity. Either chronic bronchitis severity or emphysema severity (whichever is higher) is used to determine the IE ratio scaling multiplier - see Figure 20. 
-
-<table border="0">
-<tr>
-    <td><img src="./Images/Respiratory/Respiratory_Figure17_GasDiffusion.png" width="550"></td>
-    <td><img src="./Images/Respiratory/Respiratory_Figure18_AlveoliCompliance_COPD.png" width="550"></td>
-</tr>
-<tr>
-    <td><center><i>Figure 17. Gas diffusion surface area multiplier as a function of emphysema severity. Gas diffusion surface area decreases with increasing emphysema severity.</i></center></td>
-    <td><center><i>Figure 18. Alveoli compliance multiplier as a function of emphysema severity. Alveoli compliance increases with increasing emphysema severity.</i></center></td>
-</tr>
-<tr>
-    <td><img src="./Images/Respiratory/Respiratory_Figure19_PCResistance.png" width="550"></td>
-    <td><img src="./Images/Respiratory/Respiratory_Figure20_IERatio_COPD.png" width="550"></td>
-</tr>
-<tr>
-    <td><center><i>Figure 19. Pulmonary capillary flow resistance multiplier as a function of COPD severity. Pulmonary capillary flow resistance increases with increasing chronic bronchitis or emphysema severity, whichever is higher.</i></center></td>
-    <td><center><i>Figure 20. IE ratio multiplier as a function of COPD severity. IE ratio decreases with increasing chronic bronchitis or emphysema severity, whichever is higher.</i></center></td>
-</tr>
-</table>
+Decreased Inspiration-Expiration (IE) ratio is another pathophysiologic feature of COPD.  As with asthma, the normal IE ratio is scaled using a multiplier based on severity. Either chronic bronchitis severity or emphysema severity (whichever is higher) is used to determine the IE ratio scaling multiplier. 
 
 #### Lobar Pneumonia
 
-Lobar pneumonia is a form of pneumonia that affects one or more lobes of the lungs.  Symptoms typically include increased respiration rate, decreased  tidal volume, reduced oxygen saturation, decreased IE ratio, and increased body temperature @cite ebell2006outpatient .  As fluid fills portions of the lung, it becomes more difficult to breathe. Fluid also reduces the effective gas diffusion surface area in the alveoli, reducing alveolar transfer of oxygen and carbon dioxide into and out of the bloodstream @cite guyton2006medical . The engine simulates lobar pneumonia by decreasing the alveoli compliance in the respiratory circuit, which models increased breathing difficulty due to fluid congestion in the alveoli. Similarly, gas diffusion surface area is reduced using the same function as for COPD (see Figure 17). Decreased IE ratio is pathophysiologic feature of lobar pneumonia.  Like COPD, the normal IE ratio is scaled using a multiplier based on severity. The engine uses the same function as for COPD to determine the IE ratio multiplier (see Figure 20).   
+Lobar pneumonia is a form of pneumonia that affects one or more lobes of the lungs.  Symptoms typically include increased respiration rate, decreased  tidal volume, reduced oxygen saturation, decreased IE ratio, and increased body temperature @cite ebell2006outpatient .  As fluid fills portions of the lung, it becomes more difficult to breathe. Fluid also reduces the effective gas diffusion surface area in the alveoli, reducing alveolar transfer of oxygen and carbon dioxide into and out of the bloodstream @cite guyton2006medical . The engine simulates lobar pneumonia by decreasing the alveoli compliance in the respiratory circuit, which models increased breathing difficulty due to fluid congestion in the alveoli. Similarly, gas diffusion surface area is reduced using the same function as for COPD (see Figure 17). Decreased IE ratio is pathophysiologic feature of lobar pneumonia.  Like COPD, the normal IE ratio is scaled using a multiplier based on severity. The engine uses the same function as for COPD to determine the IE ratio multiplier.   
 
-<img src="./Images/Respiratory/Respiratory_Figure21_AlveoliCompliance_LP.png" width="550">
-<center>
-<i>Figure 21. Alveoli compliance multiplier as a function of lobar pneumonia severity. Alveoli compliance decreases with increasing severity.</i>
-</center><br>
+#### Pulmonary Fibrosis
+
+jbw
 
 #### Impaired Alveolar Exchange
 
@@ -1151,15 +1150,9 @@ is the case reported by @cite Roy2005airwayObstruction where the oxygen
 saturation (SPO<SUB>2</SUB>) of a patient dropped to 40 percent due to a blockage by a
 parasitic nematode during the use of a laryngeal mask airway. The %Respiratory
 Model simulates airway obstruction by increasing the flow resistance across the
-path connecting the airway node to the carina node. This path corresponds to the
+path connecting the airway node to the carina node by mapping a user defined severity with an exponential growth function. This path corresponds to the
 flow through the trachea. The model then calculates the physiological responses
 due to increased airway resistance.
-
-<img src="./Images/Respiratory/Respiratory_Figure22.png" width="550">
-<center>
-<i>Figure 22. Logarithmically increasing resistance values used to increase the airway resistance in relation
-to the airway obstruction severity levels.</i>
-</center><br>
 
 #### Bronchoconstriction
 
@@ -1171,7 +1164,7 @@ mechanical ventilation. A number of factors can trigger bronchospasms, including
 a foreign body in the airway and stimulation of an endotracheal tube in patients
 with reactive disease @cite Woodworth2012anesthesia . The 
 %Respiratory Model accounts for this respiratory distress by adjusting the
-resistance of the bronchi units. The increase in bronchial airway resistance results in a
+resistance of the bronchi units by mapping a user defined severity with an exponential growth function. The increase in bronchial airway resistance results in a
 decrease in gas flow in and out of the alveoli, which in turn affects the gas
 concentration in the circulatory system. The engine then responds to the
 respiratory distress in proportion to the level of bronchoconstriction.
@@ -1212,6 +1205,12 @@ resistance to the esophageal compartment. The lack of airflow into the lungs
 affects the amount of alveolar-capillary gas exchange, which in turn affects the
 hemodynamic and respiratory responses of the engine.
 
+#### Acute Asthma
+
+Asthma is a common inflammatory disease of the airways (bronchi and bronchioles) where air flow into the lungs is partially obstructed. Acute asthma is an exacerbation of asthma that does not respond to standard treatments. Symptoms include elevated respiration rate, labored breathing, and a reduction in oxygen saturation, among others.  It is generally considered a life-threatening obstruction of the airway requiring immediate medical attention. During an acute asthma attack, airflow is partially obstructed during exhalation, and flow resistance is 5 to 15 times normal @cite papiris2002asthma . The engine simulates this by increasing the airway flow resistance in the circuit model. The function used to determine the airway flow resistance multiplier is shown in the figure below. The asthma attack severity is governed by a specified severity value. The higher the severity, the more severe the asthma attack, and the higher the resistance values are set.
+
+Additionally, the inspiratory/expiratory (IE) ratio decreases during an acute asthma attack. It takes a noticeably longer time to exhale than inhale @cite papiris2002asthma .  In the engine, the normal IE ratio is scaled using a multiplier based on severity to model decreased IE ratio during an acute asthma attack.
+
 #### Tension Pneumothorax
 
 Pneumothorax is an abnormal accumulation of air in the pleural cavity, i.e., a
@@ -1244,29 +1243,7 @@ intrapleural pressure and leakage in the airflow of the respiratory circuit.
 <i>Figure 23. Both lungs in the engine have elements to mimic the effects of open and closed tension pneumothorax insults as well as chest occlusive dressing (for open) and needle decompression (for both) interventions. The red boxes denote these additional elements.</i>
 </center><br>
 
-<img src="./Images/Respiratory/PneumoLeakResistance.png" width="550">
-<center>
-<i>Figure 24. An exponential function is used to map pnemothorax action severity to leak resistance.  This same function is used for both the open and the closed tension pneumothorax.</i>
-</center><br>
-
 When a lung collapses (as with pneumothorax), increased pleural cavity pressure pushes on the mediastinum and great veins. As an effect, the mediastinum is displaced and the great veins become kinked, leading to decreased venous return to the heart. This leads to increasing cardiac and respiratory embarrasment @cite jain2008understanding . The %Cardiovascular model includes a model that maps the pleural cavity pressure difference between the right and left lungs to an increased venous return resistance.  This causes the blood pressure to decrease when a pneumothorax is present.
-
-#### Acute Asthma
-
-Asthma is a common inflammatory disease of the airways (bronchi and bronchioles) where air flow into the lungs is partially obstructed. Acute asthma is an exacerbation of asthma that does not respond to standard treatments. Symptoms include elevated respiration rate, labored breathing, and a reduction in oxygen saturation, among others.  It is generally considered a life-threatening obstruction of the airway requiring immediate medical attention. During an acute asthma attack, airflow is partially obstructed during exhalation, and flow resistance is 5 to 15 times normal @cite papiris2002asthma . The engine simulates this by increasing the airway flow resistance in the circuit model. The function used to determine the airway flow resistance multiplier is shown in the figure below. The asthma attack severity is governed by a specified severity value. The higher the severity, the more severe the asthma attack, and the higher the resistance values are set.
-
-Additionally, the inspiratory/expiratory (IE) ratio decreases during an acute asthma attack. It takes a noticeably longer time to exhale than inhale @cite papiris2002asthma .  In the engine, the normal IE ratio is scaled using a multiplier based on severity to model decreased IE ratio during an acute asthma attack.
-
-<table border="0">
-<tr>
-    <td><img src="./Images/Respiratory/Respiratory_Figure25_AirwayResistance.png" width="550"></td>
-    <td><img src="./Images/Respiratory/Respiratory_Figure26_IERatio_Asthma.png" width="550"></td>
-</tr>
-<tr>
-    <td><center><i>Figure 25. Airway flow resistance multiplier as a function of asthma severity. Airway flow resistance increases (during exhalation) with increasing asthma severity.</i></center></td>
-    <td><center><i>Figure 26. IE ratio multiplier as a function of asthma severity. IE ratio decreases with increasing asthma severity.</i></center></td>
-</tr>
-</table>
 
 #### Occlusive Dressing
 
@@ -1299,7 +1276,7 @@ Conscious respiration consists of a set of commands that model forced exhalation
 
 - <b>Forced Exhale</b>: The "depth" or "shallowness" of the exhalation is determined by the expiratory reserve volume fraction, which specifies what portion of the expiratory reserve volume to exhale. If set to 1.0, the patient exhales his or her entire expiratory reserve volume, leaving only the residual volume in the lungs. The time period over which to execute the exhale is determined by the period. 
 - <b>Forced Inhale</b>: The "depth" or "shallowness" of the inhalation is determined by the inspiratory capacity fraction, which specifies what portion of the inspiratory capacity to inhale. If set to 1.0, the patient inhales his or her entire inspiratory capacity, completely filling the lungs. The time period over which to execute the inhale is determined by the period. 
-- <b>Breath Hold</b>: The time period to hold breath is determined by the period. 
+- <b>Forced Pause</b>: The time period to hold breath at functional residual capacity (0 drive pressure) is determined by the period. 
 - <b>Use %Inhaler</b>: The %Inhaler command is interpreted by the inhaler equipment (@ref InhalerMethodology).
 
 Conscious respiration has any number of potential applications and is likely to be implemented to attain proper breathing while using an inhaler, generate a spirometry curve, or simulate coughing.  Figure 28 shows the results for a cough scenario that leverages the conscious respiration action compared to empirical data.
@@ -1340,10 +1317,6 @@ Tachypnea is defined as high breathing rate. Normal respiration rate in an adult
 ### %Respiratory Alkalosis
 
 %Respiratory alkalosis is triggered when the blood pH rises above 7.45.  An irreversible state (similar to a death state) is reached when the blood pH rises above 8.5.  See @ref EnergyMethodology for more details about alkalosis.
-
-### Acute %Respiratory Distress
-
-There are three levels of Acute %Respiratory Distress (ARD) - mild, moderate, and severe.  These levels are based on Carrico Index thresholds that provide insight into the effectiveness of the alveolar transfer of oxygen. 
 
 @anchor respiratory-assessments
 Assessments
@@ -1606,34 +1579,6 @@ It is important to note nervous system responses of a conscious patient due to p
 |	Tension Pneumothorax;  severity = 1.0	|	Represents a leak on the right lung side with the severe severity (maximum size hole).  Should lead to full collapse.	|	660	|	900	|<span class="success">	 Clinical sign: Tachypnea      @cite bond200968w, @cite leigh2005tension 	</span>|<span class="success">	Increase @cite leigh2005tension	</span>|<span class="success">	Clinical sign: Tachycardia   @cite bond200968w, @cite leigh2005tension	</span>|<span class="success">	Clinical sign: Hypotension  @cite bond200968w, @cite leigh2005tension	</span>|<span class="warning">	Clinical sign: Hypotension  @cite bond200968w, @cite leigh2005tension	</span>|<span class="success">	Clinical sign: Hypotension  @cite bond200968w, @cite leigh2005tension	</span>|<span class="success">	Clinical sign: Hypoxia   @cite bond200968w, @cite leigh2005tension	</span>|
 |	Apply needle decompression	|	Needle decompression is applied on the right side of the chest	|	960	|	1260	|<span class="success">	Slightly lower tachypnea  @cite bergeronSME	</span>|<span class="success">	Returning toward normal @cite bergeronSME	</span>|<span class="success">	Tachycardia, but may be lower value  @cite bergeronSME	</span>|<span class="success">	Slightly diminished from normal @cite bergeronSME	</span>|<span class="success">	Slightly diminished from normal @cite bergeronSME	</span>|<span class="warning">	Slightly diminished from normal @cite bergeronSME	</span>|<span class="success">	Normal @cite bergeronSME	</span>|
 
-<center>
-<table border="0">
-<tr>
-    <td><img src="./plots/Respiratory/TensionPneumothoraxBilateral_TotalLungVolume.jpg" width="550"></td>
-    <td><img src="./plots/Respiratory/TensionPneumothoraxBilateral_TranspulmonaryPressure.jpg" width="550"></td>
-</tr>
-<tr>
-    <td><img src="./plots/Respiratory/TensionPneumothoraxBilateral_O2Sat.jpg" width="550"></td>
-    <td><img src="./plots/Respiratory/TensionPneumothoraxBilateral_MAP.jpg" width="550"></td>
-</tr>
-<tr>
-    <td colspan="2"><img src="./plots/Respiratory/TensionPneumothoraxBilateralLegend.jpg" width="1100"></td>
-</tr>
-</table>
-</center>
-<center><i>Figure 33. Select outputs from the bilateral tension pnemothorax scenario.</i></center>
-
-<center><br>
-<i>Table 15. Validation matrix for physiological responses due to open tension pneumothorax on one side in combination with closed tension pneumothorax on the other side, as well as occlusive dressing for the open side and needle decompression interventions for both sides.</i>
-</center>
-
-|	Segment	|	Notes	|	Action Occurance Time (s)	|	Sampled Scenario Time (s)	|	Respiration Rate (breaths/min)	|	Tidal Volume (mL)	|	Heart Rate (beats/min)	|	Systolic Pressure (mmHg)	|	Diastolic Pressure (mmHg)	|	Mean Arterial Pressure (mmHg)	|	Oxygen Saturation	|
-|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
-|	Tension Pneumothorax;  Severity: 0.5 Type: Open Side: Left Tension Pneumothorax;  Severity: 0.5 Type: Closed Side: Right	|	Represents a leak on the right and left lung sides simultaneously with a moderate severity (large size hole).	|	30	|	300	|<span class="success">	 Increase  @cite bond200968w, @cite leigh2005tension 	</span>|<span class="danger">	Increase @cite leigh2005tension	</span>|<span class="success">	Increase  @cite bond200968w, @cite leigh2005tension	</span>|<span class="danger">	Decrease  @cite bond200968w, @cite leigh2005tension	</span>|<span class="danger">	Decrease  @cite bond200968w, @cite leigh2005tension	</span>|<span class="danger">	Decrease  @cite bond200968w, @cite leigh2005tension	</span>|<span class="success">	Decrease  @cite bond200968w, @cite leigh2005tension	</span>|
-|	Apply Chest Occlusive dressing on the left side 	|	Represents the closing of chest wound on the left side	|	330	|	360	|<span class="success">	No Change or Increased  @cite bergeronSME	</span>|<span class="success">	No Change 	</span>|<span class="success">	Tachycardia > 120 @cite bergeronSME	</span>|<span class="success">	Slightly improved to no change  @cite bergeronSME	</span>|<span class="success">	Slightly improved to no change  @cite bergeronSME	</span>|<span class="success">	Slightly improved to no change  @cite bergeronSME	</span>|<span class="success">	Modest decrease to no change  @cite bergeronSME	</span>|
-|	Apply needle decompression on the left side 	|	Needle decompression is applied on the left side of the chest	|	390	|	400	|<span class="success">	Returning toward normal @cite bergeronSME	</span>|<span class="success">	Returning toward normal @cite bergeronSME	</span>|<span class="success">	Returning toward normal @cite bergeronSME	</span>|<span class="warning">	Diminished from normal @cite bergeronSME	</span>|<span class="warning">	Diminished from normal @cite bergeronSME	</span>|<span class="warning">	Diminished from normal @cite bergeronSME	</span>|<span class="success">	Returning toward normal @cite bergeronSME	</span>|
-|	Apply needle decompression on the right side 	|	Needle decompression is applied on the right side of the chest	|	420	|	720	|<span class="success">	Slightly lower tachypnea  @cite bergeronSME	</span>|<span class="success">	Returning toward normal @cite bergeronSME	</span>|<span class="success">	Tachycardia, but may be lower value  @cite bergeronSME	</span>|<span class="warning">	Slightly diminished from normal @cite bergeronSME	</span>|<span class="warning">	Slightly diminished from normal @cite bergeronSME	</span>|<span class="warning">	Slightly diminished from normal @cite bergeronSME	</span>|<span class="success">	Normal @cite bergeronSME	</span>|
-
 ### Mainstem Intubation
 
 The right and left mainstem intubation actions were validated with a scenario that simulates mechanical ventilation with improper tracheal tube placement. In this scenario, the patient is injected with succinycholine, then mechanically ventilated through the placement of the endotracheal tube. During the intubation action, the tube is incorrectly placed, leading to the right and left mainstem intubation. The mainstem intubations are then set to the trachea for proper function.
@@ -1881,7 +1826,9 @@ Appendices
 Acronyms
 --------
 
-ARD - Acute %Respiratory Distress
+ARDS - Acute %Respiratory Distress Syndrome
+
+COPD - Chronic Obstructive Pulmonary Disease
 
 RV - Residual volume
 
@@ -1918,10 +1865,12 @@ Compartments
 * Carina
 * Lungs
 	* LeftLung
-		* LeftDeadSpace
+		* LeftAnatomicDeadSpace
+		* LeftAlveolarDeadSpace
 		* LeftAlveoli
 	* RightLung, RightLungPulmonary
-		* RightDeadSpace
+		* RightAnatomicDeadSpace
+		* RightAlveolarDeadSpace
 		* RightAlveoli
 * PleuralCavity
 	* LeftPleuralCavity
