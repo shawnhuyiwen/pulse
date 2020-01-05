@@ -1652,7 +1652,7 @@ void Respiratory::CalculateVitalSigns()
 
   //Total Respiratory Volume - this should not include the Pleural Space
   double totalLungVolume_L = m_Lungs->GetVolume(VolumeUnit::L);
-  GetTotalLungVolume().Set(m_Lungs->GetVolume());
+  GetTotalLungVolume().SetValue(totalLungVolume_L, VolumeUnit::L);
 
   double AnatomicDeadSpace_L = m_LeftAnatomicDeadSpace->GetNextVolume(VolumeUnit::L) + m_RightAnatomicDeadSpace->GetNextVolume(VolumeUnit::L);
   double LeftAlveolarDeadSpace_L = 0.0;
