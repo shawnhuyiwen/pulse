@@ -1656,13 +1656,7 @@ void Respiratory::CalculateVitalSigns()
   GetTotalLungVolume().Set(m_Lungs->GetVolume());
 
   double AnatomicDeadSpace_L = m_LeftAnatomicDeadSpace->GetNextVolume(VolumeUnit::L) + m_RightAnatomicDeadSpace->GetNextVolume(VolumeUnit::L);
-  double LeftAlveolarDeadSpace_L = 0.0;
-  if (m_LeftAlveolarDeadSpace->HasNextVolume())
-    LeftAlveolarDeadSpace_L = m_LeftAlveolarDeadSpace->GetNextVolume(VolumeUnit::L);
-  double RightAlveolarDeadSpace_L = 0.0;
-  if (m_RightAlveolarDeadSpace->HasNextVolume())
-    RightAlveolarDeadSpace_L = m_RightAlveolarDeadSpace->GetNextVolume(VolumeUnit::L);
-  double AlveolarDeadSpace_L = LeftAlveolarDeadSpace_L + RightAlveolarDeadSpace_L;
+  double AlveolarDeadSpace_L = m_LeftAlveolarDeadSpace->GetNextVolume(VolumeUnit::L) + m_RightAlveolarDeadSpace->GetNextVolume(VolumeUnit::L);
   GetAnatomicDeadSpace().SetValue(AnatomicDeadSpace_L, VolumeUnit::L);  
   GetAlveolarDeadSpace().SetValue(AlveolarDeadSpace_L, VolumeUnit::L);
   GetPhysiologicDeadSpace().SetValue(AnatomicDeadSpace_L + AlveolarDeadSpace_L, VolumeUnit::L);
@@ -2208,12 +2202,8 @@ void Respiratory::UpdateVolumes()
     m_Stomach->GetNextPressure().IncrementValue(pressureChange_cmH2O, PressureUnit::cmH2O);
   }
 
-  double leftAlveolarDeadSpace_L = 0.0;
-  double rightAlveolarDeadSpace_L = 0.0;
-  if (m_LeftAlveolarDeadSpace->HasVolumeBaseline())
-    leftAlveolarDeadSpace_L = m_LeftAlveolarDeadSpace->GetVolumeBaseline(VolumeUnit::L);
-  if (m_RightAlveolarDeadSpace->HasVolumeBaseline())
-    rightAlveolarDeadSpace_L = m_RightAlveolarDeadSpace->GetVolumeBaseline(VolumeUnit::L);
+  double leftAlveolarDeadSpace_L = m_LeftAlveolarDeadSpace->GetVolumeBaseline(VolumeUnit::L);
+  double rightAlveolarDeadSpace_L = m_RightAlveolarDeadSpace->GetVolumeBaseline(VolumeUnit::L);
 
   double leftAlveolarDeadSpaceIncrease_L = 0.0;
   double rightAlveolarDeadSpaceIncrease_L = 0.0;
@@ -2259,13 +2249,6 @@ void Respiratory::UpdateVolumes()
 
   if (m_data.GetConditions().HasPulmonaryFibrosis())
   {
-    double leftAlveolarDeadSpace_L = 0.0;
-    double rightAlveolarDeadSpace_L = 0.0;
-    if (m_LeftAlveolarDeadSpace->HasVolumeBaseline())
-      leftAlveolarDeadSpace_L = m_LeftAlveolarDeadSpace->GetVolumeBaseline(VolumeUnit::L);
-    if (m_RightAlveolarDeadSpace->HasVolumeBaseline())
-      rightAlveolarDeadSpace_L = m_RightAlveolarDeadSpace->GetVolumeBaseline(VolumeUnit::L);
-
     double Severity = m_data.GetConditions().GetPulmonaryFibrosis()->GetSeverity().GetValue();
 
     //Linear function: Min = 0.0, Max = 2.0 (decreasing with severity)
@@ -2282,24 +2265,11 @@ void Respiratory::UpdateVolumes()
   leftAlveolarDeadSpace_L += leftAlveolarDeadSpaceIncrease_L;
   rightAlveolarDeadSpace_L += rightAlveolarDeadSpaceIncrease_L;
 
-  if(leftAlveolarDeadSpace_L == 0.0)
-  {
-    m_LeftAlveolarDeadSpace->GetNextVolume().Invalidate();
-  }
-  else
-  {
-    m_LeftAlveolarDeadSpace->GetNextVolume().SetValue(leftAlveolarDeadSpace_L, VolumeUnit::L);
-  }
-  if (rightAlveolarDeadSpace_L == 0.0)
-  {
-    m_RightAlveolarDeadSpace->GetNextVolume().Invalidate();
-  }
-  else
-  {
-    m_RightAlveolarDeadSpace->GetNextVolume().SetValue(rightAlveolarDeadSpace_L, VolumeUnit::L);
-  }
+  m_LeftAlveolarDeadSpace->GetNextVolume().SetValue(leftAlveolarDeadSpace_L, VolumeUnit::L);
+  m_RightAlveolarDeadSpace->GetNextVolume().SetValue(rightAlveolarDeadSpace_L, VolumeUnit::L);
 
   //Update lung volumes
+  //Don't change residual volume or total lung capacity
   double functionalResidualCapacity_L = m_data.GetInitialPatient().GetFunctionalResidualCapacity(VolumeUnit::L);
   functionalResidualCapacity_L += leftAlveolarDeadSpaceIncrease_L + rightAlveolarDeadSpaceIncrease_L;
   double residualVolume_L = m_data.GetCurrentPatient().GetResidualVolume(VolumeUnit::L);
