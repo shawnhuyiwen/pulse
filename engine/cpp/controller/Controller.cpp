@@ -3684,7 +3684,7 @@ void PulseController::SetupRespiratory()
 
   double FunctionalResidualCapacity_L = m_InitialPatient->GetFunctionalResidualCapacity(VolumeUnit::L);
   double anatomicDeadSpaceVolume_L = 0.002 * m_InitialPatient->GetWeight(MassUnit::kg); //Should not change with diseases /// \cite Levitzky2013pulmonary
-  double alveolarDeadSpaceVolume_L = 0.0;  //Should change with certain diseases /// \cite Levitzky2013pulmonary
+  double alveolarDeadSpaceVolume_L = 0.001;  //Should change with certain diseases /// \cite Levitzky2013pulmonary
   double physiologicDeadSpaceVolume_L = anatomicDeadSpaceVolume_L + alveolarDeadSpaceVolume_L;
   //double PleuralVolume_L = 20.0 / 1000.0; //this is a liquid volume  /// \cite Levitzky2013pulmonary
   double PleuralVolume_L = FunctionalResidualCapacity_L; //Make this a gas volume to mimic the liquid volume
@@ -3711,9 +3711,11 @@ void PulseController::SetupRespiratory()
   // Right Alveolar Dead Space
   SEFluidCircuitNode& RightAlveolarDeadSpace = cRespiratory.CreateNode(pulse::RespiratoryNode::RightAlveolarDeadSpace);
   RightAlveolarDeadSpace.GetPressure().SetValue(AmbientPresure, PressureUnit::cmH2O);
+  RightAlveolarDeadSpace.GetVolumeBaseline().SetValue(RightLungRatio * alveolarDeadSpaceVolume_L, VolumeUnit::L);
   // Left Alveolar Dead Space
   SEFluidCircuitNode& LeftAlveolarDeadSpace = cRespiratory.CreateNode(pulse::RespiratoryNode::LeftAlveolarDeadSpace);
   LeftAlveolarDeadSpace.GetPressure().SetValue(AmbientPresure, PressureUnit::cmH2O);
+  LeftAlveolarDeadSpace.GetVolumeBaseline().SetValue(LeftLungRatio * alveolarDeadSpaceVolume_L, VolumeUnit::L);
   // Right Alveoli
   SEFluidCircuitNode& RightAlveoli = cRespiratory.CreateNode(pulse::RespiratoryNode::RightAlveoli);
   RightAlveoli.GetPressure().SetValue(AmbientPresure, PressureUnit::cmH2O);
