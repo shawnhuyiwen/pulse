@@ -1091,13 +1091,18 @@ When an artificial airway is applied (i.e., mechanical ventilator or anesthesia 
   <tr><td>Fatigue Factor</td><td>1</td><td>1</td><td>Linear Decay</td><td>0.76</td><td>0.52</td><td>0.28</td><td>Linear Decay</td><td>0.76</td><td>0.52</td><td>0.28</td></tr>
 </table>
 
-
 Modifications to respiratory circuit resistances and compliances can further be examined and validated through volume-flow curves, like those created during spirometry testing. Figure ? shows results from a simulated pulmonary function test with the standard patient healthy and with moderate ARDS and COPD.
 
 <center><img src="./Images/Respiratory/FlowVolumeCurves.png" width="800"></center>
 <center>
 <i>Figure ?. A spirometry simulation comparing healthy, obstructive (COPD), and restrictive (ARDS) forced breath loops. COPD and ARDS severities of 0.6 and conscious respiration actions are used in the simulation. Results match those expected and presented in literature @cite barreiro2004approach.</i>
 </center><br>
+
+<center><img src="./Images/Respiratory/SpirometryVolumeCurves.png" width="800"></center>
+<center>
+<i>Figure ?. Figure ?. Volume vs. time results from the same pulmonary function test as Figure ?. This scenario uses the COPD and ARDS exacerbation action to simulate all three modalities with the conscious respiration action to complete a full exhale-inhale cycle. Changes in the functional residual capacity, residual volume, and total lung capacity can be seen at the maximum and minimum points. Results match those expected and presented in literature @cite kliegman2007nelson.</i>
+</center><br>
+
 
 @anchor respiratory-conditions
 ### Conditions
