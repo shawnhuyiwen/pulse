@@ -109,12 +109,6 @@ The generic circuit methodology developed for the engine is used to solve for th
 
 The Post Process step moves everything calculated in Process from the next time step calculation to the current time step calculation. This allows all other systems access to the information when completing their Preprocess analysis for the next time step.
 
-<center><img src="./Images/Environment/EnvironmentFlow.png" width="900"></center>
-<center>
-<i>Figure 2. The data flow for the %Environment System consists of Preprocess, Process, and Post Process. Preprocess determines the circuit element values based on feedback mechanisms and engine actions. Preprocess also updates system-level quantities via the Calculate.  Process uses generic circuit methodology to solve the %Environment thermal circuit for temperatures and heat flows along the paths and on nodes. Post Process updates these quantities to the next time step and then begins advancing time, which causes the loop to repeat.</i>
-</center><br>
-
-
 @anchor environment-features
 Features and Capabilities
 -------------------------

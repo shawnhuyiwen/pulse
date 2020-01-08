@@ -132,12 +132,6 @@ There is no system specific function for Post Process in Blood Chemistry.
 ### Assessments
 Assessments are data collected and packaged to resemble a report or analysis that might be ordered by a physician. There are two assessments in the Blood Chemistry system: a Metabolic panel and a complete blood count (CBC). The metabolic panel is modeled after the Chem-14 blood test. Currently, eight of the fourteen Chem-14 components are included in the metabolic panel. 
 
-<br>
-<img src="./Images/BloodChemistry/BloodChemistryDataFlow.png" width="600">
-<center>
-*Figure 1. The data flow for the Blood Chemistry system consists of a Reset, Conditions, Preprocess, Process, Post Process, and Assessments. Only the Process and Assessments categories have system-specific functionality for the Blood Chemistry System.*
-</center><br>
-
 @anchor bloodchemistry-features
 Features and Capabilities
 -------------------------

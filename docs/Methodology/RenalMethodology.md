@@ -166,13 +166,6 @@ The Postprocess step moves values calculated in the Process step from the next t
 
 There is one assessment that is done within the %Renal system - urinalysis.  This is a data call that requires further calculations and analysis to create outputs.  It is discussed in detail later.
 
-<img src="./Images/Renal/RenalFlowChart.png" width="1100">
-<center>
-<i>
-Figure 3. The data flow for the %Renal System consists of Preprocess, Process, and Postprocess. Preprocess determines the circuit element values based on feedback mechanisms and engine actions. Process uses generic circuit methodology to solve the circuit for pressures, volumes, and flows along the paths and on nodes. Postprocess updates these quantities to the next time step and then begins advancing time, which causes the loop to repeat.
-</i>
-</center><br>
-
 @anchor renal-features
 Features, Capabilities, and Dependencies
 ----------------------------------------

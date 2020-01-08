@@ -101,13 +101,6 @@ The current implementation has no specific Process functionality for the inhaler
 
 The Post Process step moves values calculated in the Process step from the next time step calculation to the current time step calculation. The current implementation has no specific Post Process functionality for the inhaler. All postprocessing is done in the %Respiratory System with the combined circuit methodology.
 
-The following figure presents the data flow of the %Inhaler data processing steps. 
-
-<center><img src="./Images/Inhaler/Inhaler_Figure03.png" width="550"></center>
-
-<center>
-<i>Figure 3. All primary inhaler activity occurs during the preprocessing step.</i>
-</center>
 @anchor inhaler-features
 Features and Capabilities
 -------------------------

@@ -39,12 +39,6 @@ There is no system specific function for Post Process in the %Endocrine System.
 ### Assessments
 There are no assessments in the %Endocrine System.
 
-<br>
-<img src="./Images/Endocrine/EndocrineDataFlow.png" width="800">
-<center>
-*Figure 1. The data flow for the %Endocrine System consists of a Reset, Conditions, Preprocess, Process, Post Process, and Assessments. Only the Process function has system-specific functionality for the %Endocrine System.*
-</center><br>
-
 @anchor endrocrine-features
 Features, Capabilities, and Dependencies
 ----------------------------------------

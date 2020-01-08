@@ -2108,9 +2108,9 @@ void Respiratory::UpdateChestWallCompliances()
     double healthyChestWallCompliance_L_Per_cmH2O = chestWallPath->GetComplianceBaseline(VolumePerPressureUnit::L_Per_cmH2O);
     double healthyLungCompliance_L_Per_cmH2O = lungPath->GetComplianceBaseline(VolumePerPressureUnit::L_Per_cmH2O);
 
-    double residualVolume_L = m_data.GetCurrentPatient().GetResidualVolume(VolumeUnit::L) * lungRatio;
-    double vitalCapacity_L = m_data.GetCurrentPatient().GetVitalCapacity(VolumeUnit::L) * lungRatio;
-    double functionalResidualCapacity_L = m_data.GetCurrentPatient().GetFunctionalResidualCapacity(VolumeUnit::L) * lungRatio;
+    double residualVolume_L = m_data.GetInitialPatient().GetResidualVolume(VolumeUnit::L) * lungRatio;
+    double vitalCapacity_L = m_data.GetInitialPatient().GetVitalCapacity(VolumeUnit::L) * lungRatio;
+    double functionalResidualCapacity_L = m_data.GetInitialPatient().GetFunctionalResidualCapacity(VolumeUnit::L) * lungRatio;
         
     double healthySideCompliance_L_Per_cmH2O = 1.0 / (1.0 / healthyChestWallCompliance_L_Per_cmH2O + 1.0 / healthyLungCompliance_L_Per_cmH2O);
 
@@ -2271,19 +2271,26 @@ void Respiratory::UpdateVolumes()
   //Update lung volumes
   //Don't change residual volume or total lung capacity
   double functionalResidualCapacity_L = m_data.GetInitialPatient().GetFunctionalResidualCapacity(VolumeUnit::L);
+  double residualVolume_L = m_data.GetInitialPatient().GetResidualVolume(VolumeUnit::L);
+  double totalLungCapacity_L = m_data.GetInitialPatient().GetTotalLungCapacity(VolumeUnit::L);
   functionalResidualCapacity_L += leftAlveolarDeadSpaceIncrease_L + rightAlveolarDeadSpaceIncrease_L;
-  double residualVolume_L = m_data.GetCurrentPatient().GetResidualVolume(VolumeUnit::L);
+  residualVolume_L += leftAlveolarDeadSpaceIncrease_L + rightAlveolarDeadSpaceIncrease_L;
+  totalLungCapacity_L += leftAlveolarDeadSpaceIncrease_L + rightAlveolarDeadSpaceIncrease_L;
+
   double tidalVolumeBaseline_L = m_data.GetCurrentPatient().GetTidalVolumeBaseline(VolumeUnit::L);
-  double totalLungCapacity_L = m_data.GetCurrentPatient().GetTotalLungCapacity(VolumeUnit::L);
 
   double expiratoryReserveVolume_L = functionalResidualCapacity_L - residualVolume_L;
   double inspiratoryReserveVolume_L = totalLungCapacity_L - functionalResidualCapacity_L - tidalVolumeBaseline_L;
   double inspiratoryCapacity_L = totalLungCapacity_L - functionalResidualCapacity_L;
+  double vitalCapacity_L = totalLungCapacity_L - residualVolume_L;
 
   m_data.GetCurrentPatient().GetFunctionalResidualCapacity().SetValue(functionalResidualCapacity_L, VolumeUnit::L);
+  m_data.GetCurrentPatient().GetResidualVolume().SetValue(residualVolume_L, VolumeUnit::L);
+  m_data.GetCurrentPatient().GetTotalLungCapacity().SetValue(totalLungCapacity_L, VolumeUnit::L);
   m_data.GetCurrentPatient().GetExpiratoryReserveVolume().SetValue(expiratoryReserveVolume_L, VolumeUnit::L);
   m_data.GetCurrentPatient().GetInspiratoryReserveVolume().SetValue(inspiratoryReserveVolume_L, VolumeUnit::L);
   m_data.GetCurrentPatient().GetInspiratoryCapacity().SetValue(inspiratoryCapacity_L, VolumeUnit::L);
+  m_data.GetCurrentPatient().GetVitalCapacity().SetValue(vitalCapacity_L, VolumeUnit::L);
 }
 
 //--------------------------------------------------------------------------------------------------

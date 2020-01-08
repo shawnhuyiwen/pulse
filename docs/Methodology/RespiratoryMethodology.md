@@ -284,9 +284,21 @@ controls the pressure at the airway node for positive pressure ventilation. More
 details on positive pressure ventilation can be found in the @ref AnesthesiaMachineMethodology.
 
 For a realistic muscle pressure source signal, the %Respiratory System
-adopted a piecewise logarithmic mathematical model for each lung, which is
-based on clinical data. Accordingly, the time series of the respiratory muscle
-pressure, <i>P<sub>mus</sub></i>, is given by,
+adopted a piecewise logarithmic mathematical model for each lung
+based on clinical data. The single breath waveform segments are defined by fraction of total breath and are broken out by the following segments:
+
+1. Inspiratory rise
+2. Inspiratory hold
+3. Inspiratory released
+4. Inspiratory to expiratory pause fraction
+5. Expiratory rise
+6. Expiratory hold
+7. Expiratory release
+8. Residue
+
+Each segment is given a fraction of the total breath, with all summing to a value of 1 whole breath. The segment period is calculated by multiplying the segment fraction by the total breath time (determined by the target ventilation frequency). During quiet/eupnea breathing, only the inspiratory rise and inspiratory release segments are used. The fraction of total breath time is set by the inspiratory-expiratory ratio.
+
+The time series of the respiratory muscle pressure (<i>P<sub>mus</sub></i>) is given by,
 
 \f[{P_{mus}} = \left\{ \begin{array}{l}
  - {e^{\left( {\frac{{ - t}}{\tau } - 1} \right)}} \times {P_{min }},\quad 0 < t \le {t_1}\\
@@ -302,25 +314,14 @@ pressure, <i>P<sub>mus</sub></i>, is given by,
 <i>Equation 6.</i>
 </center><br> 
 
-Where <i>tau</i> is the fraction of the breath segment times the total breath time (determined by the ventilation frequency) divided by a constant (default is 10) that determines the logarithmic shape. We use a constant value of 4 for the denominator to cause a less rapid increase/decrease at the beginning of a segment. <i>P<sub>min</sub></i> is the largest negative pressure value during inhalation and <i>P<sub>max</sub></i> is the largest positive pressure value during exhalation, the combination of which specifies the amplitude of the pressure source signal. Each time value (<i>t</i> with a subscript) is determined using set fractions and the total breath time to achieve the desired inspiratory-expiratory ratio.  Figure ? shows the basic segmented muscle driver waveform used.
+Where <i>tau</i> is the segment period/time divided by a constant that determines the logarithmic shape. We use a constant value of 4 for the denominator constant to cause a less rapid increase/decrease at the beginning of a segment that more closely matches expected peak inspiratory and expiratory flows.  While a value of 10 in the denominator gives a smoother transition than the implemented value of 4, it is too sharp to meet validation.
+
+<i>P<sub>min</sub></i> is the largest negative pressure value during inhalation and <i>P<sub>max</sub></i> is the largest positive pressure value during exhalation, the combination of which specifies the amplitude of the pressure source signal. Each time value (<i>t</i> with a subscript) is determined using set fractions and the total breath time to achieve the desired inspiratory-expiratory ratio.  Figure ? shows the basic segmented muscle driver waveform used.
 
 <img src="./Images/Respiratory/DriverWaveform.png" width="600">
 <center> 
 <i>Figure ?. Segmented waveform used to drive the respiratory system. Segment functions are presented in Equation 6. The fraction of each segment duration compared to the total breath duration is set based on the inspiratory-expiratory ratio - many often set to zero. The total time of each breath is determined from a target respiration rate.</i>
 </center><br>
-
-The single breath waveform segments are defined by fraction of total breath and are broken out by the following steps:
-
-1. Inspiratory rise
-2. Inspiratory hold
-3. Inspiratory released
-4. Inspiratory to expiratory pause fraction
-5. Expiratory rise
-6. Expiratory hold
-7. Expiratory release
-8. Residue
-
-During quiet/eupnea breathing, only the inspiratory rise and inspiratory release steps are used. The fraction of total breath time is set by the inspiratory-expiratory ratio.
 
 At the beginning of each breath, a target volume (i.e., tidal volume) is determined and mapped to the <i>P<sub>min</sub></i> value using simple circuit math and assuming constant lung and chest wall compliances. This is given by,
 
@@ -430,7 +431,7 @@ The Pulse respiratory system is separated into four compliances (see the circuit
 
 <center><img src="./Images/Respiratory/ComplianceCurve.png" width="550"></center>
 <center>
-<i>Figure ?. The healthy single lung compliance curve is determined by standard patient lung volume parameters and a baseline compliance value.</i>
+<i>Figure ?. The healthy single lung compliance curve is determined by standard patient lung volume parameters and a baseline compliance (C<sub>baseline</sub>) value.</i>
 </center><br>
 
 The waveform in Figure ? is defined by these mathematical relationships,
@@ -452,14 +453,14 @@ The waveform in Figure ? is defined by these mathematical relationships,
 <i>Equation ?.</i>
 </center><br> 
 
-These equations can be rearranged and input with known parameters to determine the instantaneous expected pressure (<i>P</i>) of each lung. First, the baseline side compliance (<i>C<sub>sb</sub></i>) is determined knowing the baseline chest wall (<i>C<sub>cwb</sub></i>) and lung (<i>C<sub>lb</sub></i>) compliances,
+Where (<i>V</i>) is the individual lung volume, (<i>P</i>) is the intrapulmonary pressure, and the other variables are defined in figure ?. These equations can be rearranged and input with known parameters to determine the instantaneous expected pressure (<i>P</i>) of each lung. First, the baseline side compliance (<i>C<sub>sb</sub></i>) is determined knowing the baseline chest wall (<i>C<sub>cwb</sub></i>) and baseline lung (<i>C<sub>lb</sub></i>) compliances,
 
 \f[{C_{sb}} = \frac{1}{{\frac{1}{{{C_{cwb}}}} + \frac{1}{{{C_{lb}}}}}}\f]
 <center>
 <i>Equation ?.</i>
 </center><br> 
 
-The expected intrapleural pressure (<i>P</i>) at the a given volume (<i>V</i>) can be calculated knowing the individual lung functional residual capacity (<i>FRC</i>), residual volume (<i>RV</i>), and vital capacity (<i>VC</i>) by the following,
+The expected intrapulmonary pressure (<i>P</i>) at the a given volume (<i>V</i>) can be calculated knowing the individual lung functional residual capacity (<i>FRC</i>), residual volume (<i>RV</i>), and vital capacity (<i>VC</i>) by the following,
 
 \f[\lambda  = \ln \left( {\frac{{FRC - RV}}{{RV + VC - FRC}}} \right)\f]
 <center>
@@ -1051,7 +1052,7 @@ Insults and Interventions
 
 ### General Approach
 
-Disease states are applied to the simulated patient by modifying various parameters. Chronic conditions stabilize to a new homeostatic point before the simulation begins. Pulse simulates both restrictive and obstructive diseases of varying severities with different continuous function mappings. All actions and conditions have a severity of zero causing no changes. The respiratory system also includes logic to combine effect for each parameter when multiple insults/interventions are applied. Table ? shows parameter settings for representative conditions and severities based on trends and values determined from literature review @cite brunner2019lung @cite arnal2018parameters @cite harris2005pressure @cite aguirre2018lung @cite arndt1995linear @cite bikker2008end @cite brunner2012pulmonary @cite ibanez1982normal. jbw add references.
+Disease states are applied to the simulated patient by modifying various parameters. Chronic conditions stabilize to a new homeostatic point before the simulation begins. Pulse simulates both restrictive and obstructive diseases of varying severities with different continuous function mappings. All actions and conditions have a severity of zero causing no changes. The respiratory system also includes logic to combine effect for each parameter when multiple insults/interventions are applied. Table ? shows parameter settings for representative conditions and severities based on trends and values determined from literature review @cite brunner2019lung @cite arnal2018parameters @cite harris2005pressure @cite aguirre2018lung @cite arndt1995linear @cite bikker2008end @cite brunner2012pulmonary @cite ibanez1982normal.
 
 When an artificial airway is applied (i.e., mechanical ventilator or anesthesia machine), there is a change in the respiratory circuit's resistance and compliance @cite arnal2018parameters. Intubated patients will have these modifiers stacked/combined with other action/condition modifiers.
 
@@ -1121,7 +1122,7 @@ Lobar pneumonia is a form of pneumonia that affects one or more lobes of the lun
 
 #### Pulmonary Fibrosis
 
-jbw
+ToDo!
 
 #### Impaired Alveolar Exchange
 
@@ -1173,7 +1174,7 @@ respiratory distress in proportion to the level of bronchoconstriction.
 
 The Intubation action sets the type of intubation present: off, tracheal, esophageal, right mainstem, or left mainstem. Tracheal intubation is the successful state. See @ref AnesthesiaMachineMethodology for more details about intubation and mechanical ventilation.
 
-##### Mainstem intubation
+##### Mainstem Intubation
 
 During endotracheal intubation, a flexible tube is inserted orally or nasally
 down into the trachea to facilitate ventilation of the lungs during mechanical
@@ -1354,7 +1355,7 @@ The %Respiratory Model outputs a number of system-level and compartment-level re
 Scenario Validation
 -------------------
 
-The actions and interventions associated with the %Respiratory System were validated quantitatively where possible and qualitatively elsewhere by comparing the engine output to expected trends and values. For each scenario, the table shows the total number of results in each category. For many investigated scenarios, the model shows good agreement with the expected trends. For the scenarios that did not match with the expected trends, improvements are planned for future engine releases.
+The actions and interventions associated with the %Respiratory System were validated quantitatively where possible and qualitatively elsewhere by comparing the engine output to expected trends and values. For each scenario, the table shows the total number of results in each category. For many investigated scenarios, the model shows good agreement with the expected trends. For the scenarios that did not match with the expected trends, improvements are planned for future engine releases. Many of the parameters that do not meet validation are specific to the cardiovascular system, including heart rate and blood pressures.
 
 <center><br>
 *Table 5. Cumulative validation results for %Respiratory specific conditions and actions scenarios.*
@@ -1370,22 +1371,22 @@ The actions and interventions associated with the %Respiratory System were valid
 |	---	|	---	|	---	|	---	|	---	|
 |	AsthmaAttackModerateAcute	|	Moderate acute asthma attack	|<span class="success">	18	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	AsthmaAttackSevereAcute	|	Severe acute asthma attack	|<span class="success">	13	</span>|<span class="warning">	3	</span>|<span class="danger">	2	</span>|
-|	AsthmaAttackLifeThreateningAcute	|	Life threateing acute asthma attack	|<span class="success">	16	</span>|<span class="warning">	1	</span>|<span class="danger">	1	</span>|
-|	COPDSevereEmphysema	|	GOLD Stage III Emphysema	|<span class="success">	3	</span>|<span class="warning">	5	</span>|<span class="danger">	1	</span>|
-|	COPDSevereBronchitisLeft	|	Severe Chronic Bronchitis	|<span class="success">	3	</span>|<span class="warning">	5	</span>|<span class="danger">	1	</span>|
-|	LobarPneumoniaSevereLeftLobe	|	Severe Lobar Pneumonia in one lobe in the left lung	|<span class="success">	5	</span>|<span class="warning">	2	</span>|<span class="danger">	2	</span>|
-|	LobarPneumoniaSevereRightLung	|	Severe Lobar Pneumonia in two lobes of right lung	|<span class="success">	7	</span>|<span class="warning">	0	</span>|<span class="danger">	2	</span>|
+|	AsthmaAttackLifeThreateningAcute	|	Life threatening acute asthma attack	|<span class="success">	16	</span>|<span class="warning">	3	</span>|<span class="danger">	0	</span>|
+|	COPDSevereEmphysema	|	GOLD Stage III Emphysema	|<span class="success">	5	</span>|<span class="warning">	3	</span>|<span class="danger">	1	</span>|
+|	COPDSevereBronchitisLeft	|	Severe Chronic Bronchitis	|<span class="success">	7	</span>|<span class="warning">	1	</span>|<span class="danger">	1	</span>|
+|	LobarPneumoniaSevereLeftLobe	|	Severe Lobar Pneumonia in one lobe in the left lung	|<span class="success">	2	</span>|<span class="warning">	5	</span>|<span class="danger">	2	</span>|
+|	LobarPneumoniaSevereRightLung	|	Severe Lobar Pneumonia in two lobes of right lung	|<span class="success">	4	</span>|<span class="warning">	3	</span>|<span class="danger">	2	</span>|
 |	LobarPneumoniaModerateBothLungs	|	Moderate Lobar Pneumonia in both lungs	|<span class="success">	6	</span>|<span class="warning">	1	</span>|<span class="danger">	2	</span>|
-|	TensionPneumothoraxOpenVaried	|	Varied open pneumothorax severities and interventions	|<span class="success">	39	</span>|<span class="warning">	1	</span>|<span class="danger">	2	</span>|
+|	PulmonaryFibrosisSevere	|	Severe Pulmonary Fibrosis	|<span class="success">	7	</span>|<span class="warning">	1	</span>|<span class="danger">	1	</span>|
+|	TensionPneumothoraxOpenVaried	|	Varied open pneumothorax severities and interventions	|<span class="success">	40	</span>|<span class="warning">	1	</span>|<span class="danger">	1	</span>|
 |	TensionPneumothoraxClosedVaried	|	Varied closed pneumothorax severities and interventions	|<span class="success">	32	</span>|<span class="warning">	1	</span>|<span class="danger">	2	</span>|
-|	TensionPneumothoraxBilateral	|	Open and closed bilateral pneumothorax and interventions	|<span class="success">	18	</span>|<span class="warning">	6	</span>|<span class="danger">	4	</span>|
 |	AirwayObstructionVaried	|	Airway Obstruction with varying severities	|<span class="success">	27	</span>|<span class="warning">	0	</span>|<span class="danger">	3	</span>|
 |	Bronchoconstriction	|	Bronchoconstriction with varying severities	|<span class="success">	25	</span>|<span class="warning">	0	</span>|<span class="danger">	5	</span>|
-|	MainstemIntubation	|	Right and left mainstem intubation and correction (with Succs)	|<span class="success">	22	</span>|<span class="warning">	3	</span>|<span class="danger">	0	</span>|
+|	MainstemIntubation	|	Right and left mainstem intubation and correction (with Succs)	|<span class="success">	25	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	EsophagealIntubation	|	Esophageal intubation and correction (with Succs)	|<span class="success">	15	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|	Dyspnea	|	Varied severities of respiratory dyspnea	|<span class="success">	6	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
+|	Dyspnea	|	Varied severities of respiratory apnea	|<span class="success">	6	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	Supplemental Oxygen	|	Nasal cannula, simple mask, and non-rebreather mask	|<span class="success">	3	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|		|	Total	|<span class="success">	258	</span>|<span class="warning">	28	</span>|<span class="danger">	27	</span>|
+|		|	Total	|<span class="success">	251	</span>|<span class="warning">	22	</span>|<span class="danger">	22	</span>|
 
 @anchor respiratory-conditionvalidation
 Validation - Conditions
@@ -1401,7 +1402,7 @@ The COPD condition was validated against two scenarios. The severe emphysema sce
 
 |	Segment	|	Notes	|	Sampled Scenario Time (s)	|	Trachea Flow - Peak Expiratory Flow  (L/min)	|	Respiration Rate (breaths/min)	|	Tidal Volume (mL)	|	Heart Rate (beats/min)	|	Systolic Pressure (mmHg)	|	Oxygen Saturation	|	PaO2 (mmHg)	|	PaCO2 (mmHg)	|	IERatio	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
-|	Severe Emphysema: Bronchitis Severity = 0.5 Emphysema Severity = 0.7 Both Lungs 100%	|	GOLD Stage III	|	120	|<span class="success">	< 70% of Normal @cite perez2009can	</span>|<span class="warning">	Increase,  Tachypnea, Dypsnea,  > 30 @cite gunning2003pathophysiology	</span>|<span class="warning">	< 60% of normal @cite gunning2003pathophysiology	</span>|<span class="success">	Increase, Tachycardia	</span>|<span class="danger">	Increase,   Pulmonary Hypertension ,  > 140 mm Hg @cite keller2003pathophysiology, @cite scharf2002hemodynamic	</span>|<span class="warning">	< 90%  @cite man2003contemporary; < 89% @cite keller2003pathophysiology	</span>|<span class="warning">	Decrease,  Hypoxemia @cite keller2003pathophysiology; < 55 mm Hg  @cite man2003contemporary, @cite keller2003pathophysiology	</span>|<span class="warning">	Increase, Hypercapnia, > 55 mmHg @cite keller2003pathophysiology	</span>|<span class="success">	Decrease @cite van1991physical	</span>|
+|	Severe Emphysema: Bronchitis Severity = 0.5 Emphysema Severity = 0.7 Both Lungs 100%	|	GOLD Stage III	|	120	|<span class="success">	< 70% of Normal @cite perez2009can	</span>|<span class="warning">	Increase,  Tachypnea, Dyspnea,  > 30 @cite gunning2003pathophysiology	</span>|<span class="warning">	< 60% of normal @cite gunning2003pathophysiology	</span>|<span class="success">	Increase, Tachycardia	</span>|<span class="danger">	Increase,   Pulmonary Hypertension ,  > 140 mm Hg @cite keller2003pathophysiology, @cite scharf2002hemodynamic	</span>|<span class="success">	< 90%  @cite man2003contemporary; < 89% @cite keller2003pathophysiology	</span>|<span class="success">	Decrease,  Hypoxemia @cite keller2003pathophysiology; < 55 mm Hg  @cite man2003contemporary, @cite keller2003pathophysiology	</span>|<span class="warning">	Increase, Hypercapnia, > 55 mmHg @cite keller2003pathophysiology	</span>|<span class="success">	Decrease @cite van1991physical	</span>|
 
 <center><br>
 <i>Table 7. Validation matrix for severe chronic bronchitis. The table shows the engine output compared to validation data for respiratory and hemodynamic values.</i>
@@ -1409,18 +1410,19 @@ The COPD condition was validated against two scenarios. The severe emphysema sce
 
 |	Segment	|	Notes	|	Sampled Scenario Time (s)	|	Trachea Flow - Peak Expiratory Flow  (L/min)	|	Respiration Rate (breaths/min)	|	Tidal Volume (mL)	|	Heart Rate (beats/min)	|	Systolic Pressure (mmHg)	|	Oxygen Saturation	|	PaO2 (mmHg)	|	PaCO2 (mmHg)	|	IERatio	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
-|	Severe Chronic Bronchitis: Bronchitis Severity = 0.65 Emphysema Severity = 0.5 Both Lungs 100%	|		|	120	|<span class="success">	Decrease @cite bergeronSME	</span>|<span class="success">	> 20 @cite bergeronSME	</span>|<span class="warning">	< 60% of normal @cite bergeronSME	</span>|<span class="warning">	Increase,  Tachycardia @cite bergeronSME	</span>|<span class="danger">	Increase,  Pulmonary Hypertension,  > 140 mm Hg @cite bergeronSME	</span>|<span class="warning">	< 90% @cite bergeronSME	</span>|<span class="warning">	Decrease,  Hypoxemia,  < 55 mm Hg  @cite bergeronSME	</span>|<span class="warning">	Increase,   Hypercapnia > 55 mmHg   @cite bergeronSME	</span>|<span class="success">	Decrease @cite van1991physical, @cite bergeronSME	</span>|
+|	Severe Chronic Bronchitis: Bronchitis Severity = 0.65 Emphysema Severity = 0.5 Both Lungs 100%	|		|	120	|<span class="success">	Decrease @cite bergeronSME	</span>|<span class="success">	> 20 @cite bergeronSME	</span>|<span class="success">	< 60% of normal @cite bergeronSME	</span>|<span class="success">	Increase,  Tachycardia @cite bergeronSME	</span>|<span class="danger">	Increase,  Pulmonary Hypertension,  > 140 mm Hg @cite bergeronSME	</span>|<span class="success">	< 90% @cite bergeronSME	</span>|<span class="success">	Decrease,  Hypoxemia,  < 55 mm Hg  @cite bergeronSME	</span>|<span class="warning">	Increase,   Hypercapnia > 55 mmHg   @cite bergeronSME	</span>|<span class="success">	Decrease @cite van1991physical, @cite bergeronSME	</span>|
 
 ### Lobar Pneumonia
 
 The lobar pneumonia condition was validated against three scenarios; severe pneumonia in the one lobe of the left lung (Severity = 0.7), severe pneumonia in two lobes of the right lung (Severity = 0.7), and moderate pneumonia in both lungs (Severity = 0.2). The engine does not model the discrete lobes of each lung, so infected-lobe behavior is modeled by applying pneumonia severity against a fraction of each lung. The fraction approximates the portion of the lung (by volume) that the lobe(s) occupy. In the case of the left lung, there are two lobes. Each lobe constitutes approximately 50% of the whole lung. It is understood that the actual volume distribution is not equal for the two lobes, but we use this as an approximation. The same is true for the right lung, which has three lobes. In all three scenarios, expected general trends are observed for most measures. However, heart rate and blood pressure do not follow expected trends. This is similar to COPD, where heart rate and blood pressure also do not always behave as expected. Additionally, increasing core body temperature is also a symptom of lobar pneumonia that fails to agree with the validation data. However, we expected this disagreement since the engine doesn't currently model elevated body temperature in response to infection. This is something we plan to address in subsequent releases. 
+
 <center><br>
 <i>Table 8. Validation matrix for severe lobar pneumonia concentrated in one lobe in the left lung. The table shows the engine output compared to validation data for respiratory and hemodynamic values.</i>
 </center>
 
 |	Condition	|	Notes	|	Sampled Scenario Time (s)	|	Respiration Rate (breaths/min)	|	Tidal Volume (mL)	|	Heart Rate (beats/min)	|	Systolic Pressure (mmHg)	|	Oxygen Saturation	|	PaO2 (mmHg)	|	PaCO2 (mmHg)	|	IERatio	|	Core Body Temperature  (Degrees C)	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
-|	Severe Lobar Pneumonia:  Severity = 0.70 Left Lung = 50% Right Lung = 0%	|	Severe Lobar Pneumonia in one lobe in the left lung. Current model does not include metabolic effects.	|	120	|<span class="success">	Increase,  Tachypnea, Dypsnea  > 20 @cite ebell2007predicting	</span>|<span class="success">	Decrease @cite bergeronSME	</span>|<span class="warning">	Increase,  Tachycardia, > 100 @cite ebell2007predicting	</span>|<span class="danger">	Decrease, < 90 mm Hg @cite fine1997prediction	</span>|<span class="success">	Decrease , < 95% @cite majumdar2010oxygen	</span>|<span class="warning">	Decrease,  Hypoxemia @cite fine1997prediction < 60 mm Hg	</span>|<span class="success">	Increase @cite bergeronSME	</span>|<span class="success">	Decrease @cite bergeronSME	</span>|<span class="danger">	Increase,   > 37.8 C (100 F) @cite ebell2007predicting	</span>|
+|	Severe Lobar Pneumonia:  Severity = 0.70 Left Lung = 50% Right Lung = 0%	|	Severe Lobar Pneumonia in one lobe in the left lung. Current model does not include metabolic effects.	|	120	</span>|<span class="warning">	Increase,  Tachypnea, Dyspnea  > 20 @cite ebell2007predicting	</span>|<span class="success">	Decrease @cite bergeronSME	</span>|<span class="warning">	Increase,  Tachycardia, > 100 @cite ebell2007predicting	</span>|<span class="danger">	Decrease, < 90 mm Hg @cite fine1997prediction	</span>|<span class="warning">	Decrease , < 95% @cite majumdar2010oxygen	</span>|<span class="warning">	Decrease,  Hypoxemia @cite fine1997prediction < 60 mm Hg	</span>|<span class="warning">	Increase @cite bergeronSME	</span>|<span class="success">	Decrease @cite bergeronSME	</span>|<span class="danger">	Increase,   > 37.8 C (100 F) @cite ebell2007predicting	</span>|
 
 <center><br>
 <i>Table 9. Validation matrix for severe lobar pneumonia concentrated in two lobes in the right lung. The table shows the engine output compared to validation data for respiratory and hemodynamic values.</i>
@@ -1428,7 +1430,7 @@ The lobar pneumonia condition was validated against three scenarios; severe pneu
 
 |	Condition	|	Notes	|	Sampled Scenario Time (s)	|	Respiration Rate (breaths/min)	|	Tidal Volume (mL)	|	Heart Rate (beats/min)	|	Systolic Pressure (mmHg)	|	Oxygen Saturation	|	PaO2 (mmHg)	|	PaCO2 (mmHg)	|	IERatio	|	Core Body Temperature  (Degrees C)	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
-|	Severe Lobar Pneumonia: Right Lung Severity = 0.70 Left Lung = 0% Right Lung  = 67%	|	Severe lobar pneumonia in two lobes of the  right lung. Current model does not include metabolic effects.	|	120	|<span class="success">	Increase,  Tachypnea, Dypsnea  > 20 @cite ebell2007predicting	</span>|<span class="success">	Decrease @cite bergeronSME	</span>|<span class="success">	Increase,  Tachycardia, > 100 @cite ebell2007predicting	</span>|<span class="danger">	Decrease, < 90 mm Hg @cite fine1997prediction	</span>|<span class="success">	Decrease , < 95% @cite majumdar2010oxygen	</span>|<span class="warning">	Decrease,  Hypoxemia @cite fine1997prediction < 60 mm Hg	</span>|<span class="success">	Increase @cite bergeronSME	</span>|<span class="success">	Decrease @cite bergeronSME	</span>|<span class="danger">	Increase,   > 37.8 C (100 F) @cite ebell2007predicting	</span>|
+|	Severe Lobar Pneumonia: Right Lung Severity = 0.70 Left Lung = 0% Right Lung  = 67%	|	Severe lobar pneumonia in two lobes of the  right lung. Current model does not include metabolic effects.	|	120	|<span class="success">	Increase,  Tachypnea, Dypsnea  > 20 @cite ebell2007predicting	</span>|<span class="success">	Decrease @cite bergeronSME	</span>|<span class="warning">	Increase,  Tachycardia, > 100 @cite ebell2007predicting	</span>|<span class="danger">	Decrease, < 90 mm Hg @cite fine1997prediction	</span>|<span class="success">	Decrease , < 95% @cite majumdar2010oxygen	</span>|<span class="warning">	Decrease,  Hypoxemia @cite fine1997prediction < 60 mm Hg	</span>|<span class="warning">	Increase @cite bergeronSME	</span>|<span class="success">	Decrease @cite bergeronSME	</span>|<span class="danger">	Increase,   > 37.8 C (100 F) @cite ebell2007predicting	</span>|
 
 <center><br>
 <i>Table 10. Validation matrix for moderate lobar pneumonia in both lungs. The table shows the engine output compared to validation data for respiratory and hemodynamic values.</i>
@@ -1436,7 +1438,19 @@ The lobar pneumonia condition was validated against three scenarios; severe pneu
 
 |	Condition	|	Notes	|	Sampled Scenario Time (s)	|	Respiration Rate (breaths/min)	|	Tidal Volume (mL)	|	Heart Rate (beats/min)	|	Systolic Pressure (mmHg)	|	Oxygen Saturation	|	PaO2 (mmHg)	|	PaCO2 (mmHg)	|	IERatio	|	Core Body Temperature  (Degrees C)	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
-|	Moderate Lober: Pneumonia Severity = 0.2 Left Lung = 100% Right Lung  = 100%	|	Moderate pneumonia in both lungs. Current model does not include metabolic effects.	|	120	|<span class="success">	Increase,  Tachypnea, Dypsnea  > 20 @cite ebell2007predicting	</span>|<span class="success">	Decrease @cite bergeronSME	</span>|<span class="warning">	Increase,  Tachycardia, > 100 @cite ebell2007predicting	</span>|<span class="danger">	Decrease, < 90 mm Hg @cite fine1997prediction	</span>|<span class="success">	Decrease , < 95% @cite majumdar2010oxygen	</span>|<span class="success">	Decrease,  Hypoxemia @cite fine1997prediction < 60 mm Hg	</span>|<span class="success">	Increase @cite bergeronSME	</span>|<span class="success">	Decrease @cite bergeronSME	</span>|<span class="danger">	Increase,   > 37.8 C (100 F) @cite ebell2007predicting	</span>|
+|	Moderate Lober: Pneumonia Severity = 0.2 Left Lung = 100% Right Lung  = 100%	|	Moderate pneumonia in both lungs. Current model does not include metabolic effects.	|	120	|<span class="success">	Increase,  Tachypnea, Dypsnea  > 20 @cite ebell2007predicting	</span>|<span class="success">	Decrease @cite bergeronSME	</span>|<span class="success">	Increase,  Tachycardia, > 100 @cite ebell2007predicting	</span>|<span class="danger">	Decrease, < 90 mm Hg @cite fine1997prediction	</span>|<span class="success">	Decrease , < 95% @cite majumdar2010oxygen	</span>|<span class="success">	Decrease,  Hypoxemia @cite fine1997prediction < 60 mm Hg	</span>|<span class="warning">	Increase @cite bergeronSME	</span>|<span class="success">	Decrease @cite bergeronSME	</span>|<span class="danger">	Increase,   > 37.8 C (100 F) @cite ebell2007predicting	</span>|
+
+### Pulmonary Fibrosis
+
+ToDo.
+
+<center><br>
+<i>Table 8. Validation matrix for severe pulmonary fibrosis. The table shows the engine output compared to validation data for respiratory and hemodynamic values.</i>
+</center>
+
+|	Segment	|	Notes	|	Sampled Scenario Time (s)	|	Trachea Flow - Peak Expiratory Flow  (L/min)	|	Respiration Rate (breaths/min)	|	Tidal Volume (mL)	|	Heart Rate (beats/min)	|	Systolic Pressure (mmHg)	|	Oxygen Saturation	|	PaO2 (mmHg)	|	PaCO2 (mmHg)	|	IERatio	|
+|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
+|	Severe Pulmonary Fibrosis	|	Severity = 0.9	|	120	|<span class="success">	Decreases	|<span class="success">	Increase,  Tachypnea,   > 30 @cite gunning2003pathophysiology	|<span class="success">	Dyspnea, < 60% of normal @cite nava1999lung, @cite gunning2003pathophysiology	</span>|<span class="success">	Increase, Tachycardia	</span>|<span class="danger">	Increase, Pulmonary Hypertension, > 140 mm Hg @cite raghu2015pulmonary	</span>|<span class="success">	< 90%  	</span>|<span class="success">	Decrease,  Hypoxemia @cite costanzo2010physiology	</span>|<span class="warning">	Increase, Hypercapnia	</span>|<span class="success">	Decrease 	</span>|
 
 @anchor respiratory-actionvalidation
 Validation - Actions
@@ -1469,7 +1483,7 @@ The resulting outputs from the engine are shown in Table 11 for common clinical 
 <i>Table 11. Validation matrix for physiological responses due to varying severities of airway obstruction.</i>
 </center>
 
-|	Segment	|	Notes	|	Action Occurance Time (s)	|	Sampled Scenario Time (s)	|	Respiration Rate (breaths/min)	|	Heart Rate (beats/min)	|	Systolic Pressure (mmHg)	|	Diastolic Pressure (mmHg)	|	Oxygen Saturation	|
+|	Segment	|	Notes	|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Respiration Rate (breaths/min)	|	Heart Rate (beats/min)	|	Systolic Pressure (mmHg)	|	Diastolic Pressure (mmHg)	|	Oxygen Saturation	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
 |	Trigger airway obstruction;  severity = 0.3	|	Represents the partial (severity = 0.3) obstruction of airway due to  foreign body (obstructing material). Not severe enough to trigger CV responses.	|	30	|	180	|<span class="success">	 Increase  @cite Morgan2006Clinical	</span>|<span class="success">	Increase @cite bergeronSME	</span>|<span class="danger">	Increase @cite bergeronSME(case study of awake patient @cite izakson2013complete)	</span>|<span class="success">	Increase @cite bergeronSME (case study of awake patient @cite izakson2013complete)	</span>|<span class="success">	Decrease @cite Morgan2006Clinical	</span>|
 |	Remove airway obstruction	|	Airway obstruction is turned off.	|	210	|	300	|<span class="success">	returns to resting physiology 	</span>|<span class="success">	returns to resting physiology 	</span>|<span class="success">	returns to resting physiology 	</span>|<span class="success">	returns to resting physiology 	</span>|<span class="success">	returns to resting physiology 	</span>|
@@ -1503,7 +1517,7 @@ The bronchoconstriction action was validated with a scenario that applies a seri
 <i>Table 12. Validation matrix for physiological responses due to varying severities of bronchoconstriction.</i>
 </center>
 
-|	Segment	|	Notes	|	Action Occurance Time  (s)	|	Sampled Scenario Time  (s)	|	Respiration Rate (breaths/min)	|	Heart Rate (beats/min)	|	Systolic Pressure (mmHg)	|	Diastolic Pressure (mmHg)	|	Oxygen Saturation	|
+|	Segment	|	Notes	|	Action Occurrence Time  (s)	|	Sampled Scenario Time  (s)	|	Respiration Rate (breaths/min)	|	Heart Rate (beats/min)	|	Systolic Pressure (mmHg)	|	Diastolic Pressure (mmHg)	|	Oxygen Saturation	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
 |	Trigger Bronchoconstriction; severity 0.3	|	Trigger bronchoconstriction of severity 0.3 by Increasing effective breathing resistances on bronchi. Not severe enough to trigger CV responses.	|	30	|	180	|<span class="success">	Decrease  @cite Morgan2006Clinical	</span>|<span class="danger">	Increase  tachycardia  @cite faust2002anesthesiology, @cite Morgan2006Clinical	</span>|<span class="danger">	Decrease hypotension  @cite faust2002anesthesiology	</span>|<span class="danger">	Decrease hypotension  @cite faust2002anesthesiology	</span>|<span class="success">	Decrease  @cite Morgan2006Clinical	</span>|
 |	Remove bronchoconstriction	|	Bronchoconstriction is turned off.	|	210	|	300	|<span class="success">	returns to resting physiology 	</span>|<span class="success">	returns to resting physiology 	</span>|<span class="success">	returns to resting physiology 	</span>|<span class="success">	returns to resting physiology 	</span>|<span class="success">	returns to resting physiology 	</span>|
@@ -1541,11 +1555,11 @@ It is important to note nervous system responses of a conscious patient due to p
 <i>Table 13. Validation matrix for physiological responses due to varying severities of open tension pneumothorax, as well as occlusive dressing and needle decompression interventions.</i>
 </center>
 
-|	Segment	|	Notes	|	Action Occurance Time (s)	|	Sampled Scenario Time (s)	|	Respiration Rate (breaths/min)	|	Tidal Volume (mL)	|	Heart Rate (beats/min)	|	Systolic Pressure (mmHg)	|	Diastolic Pressure (mmHg)	|	Mean Arterial Pressure (mmHg)	|	Oxygen Saturation	|
+|	Segment	|	Notes	|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Respiration Rate (breaths/min)	|	Tidal Volume (mL)	|	Heart Rate (beats/min)	|	Systolic Pressure (mmHg)	|	Diastolic Pressure (mmHg)	|	Mean Arterial Pressure (mmHg)	|	Oxygen Saturation	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
-|	Tension Pneumothorax;  severity = 0.0	|	A severity of zero should not change the leak resistance from the defualt open switch value.	|	0	|	15	|<span class="success">	No Change 	</span>|<span class="success">	No Change 	</span>|<span class="success">	No Change 	</span>|<span class="success">	No Change 	</span>|<span class="success">	No Change 	</span>|<span class="success">	No Change 	</span>|<span class="success">	No Change 	</span>|
+|	Tension Pneumothorax;  severity = 0.0	|	A severity of zero should not change the leak resistance from the default open switch value.	|	0	|	15	|<span class="success">	No Change 	</span>|<span class="success">	No Change 	</span>|<span class="success">	No Change 	</span>|<span class="success">	No Change 	</span>|<span class="success">	No Change 	</span>|<span class="success">	No Change 	</span>|<span class="success">	No Change 	</span>|
 |	Tension Pneumothorax;  severity = 0.3	|	Represents a "sucking" chest wound on the left lung side with a mild severity (medium size hole).	|	30	|	300	|<span class="success">	 No change or Increase  @cite bond200968w, @cite leigh2005tension 	</span>|<span class="danger">	 Increase  @cite bond200968w, @cite leigh2005tension 	</span>|<span class="success">	 No change or Increase  @cite bond200968w, @cite leigh2005tension 	</span>|<span class="success">	 No change or Decrease  @cite bond200968w, @cite leigh2005tension 	</span>|<span class="success">	 No change or Decrease  @cite bond200968w, @cite leigh2005tension 	</span>|<span class="success">	 No change or Decrease  @cite bond200968w, @cite leigh2005tension 	</span>|<span class="success">	 No change or Decrease  @cite bond200968w, @cite leigh2005tension 	</span>|
-|	Tension Pneumothorax;  severity = 0.6	|	Represents a "sucking" chest wound on the left lung side with a moderate severity (large size hole).	|	360	|	600	|<span class="success">	 Increase @cite bond200968w, @cite leigh2005tension 	</span>|<span class="success">	Increase @cite leigh2005tension	</span>|<span class="success">	Increase @cite bond200968w, @cite leigh2005tension	</span>|<span class="success">	Decrease @cite bond200968w, @cite leigh2005tension	</span>|<span class="danger">	Decrease @cite bond200968w, @cite leigh2005tension	</span>|<span class="success">	Decrease @cite bond200968w, @cite leigh2005tension	</span>|<span class="success">	Decrease @cite bond200968w, @cite leigh2005tension	</span>|
+|	Tension Pneumothorax;  severity = 0.6	|	Represents a "sucking" chest wound on the left lung side with a moderate severity (large size hole).	|	360	|	600	|<span class="success">	 Increase @cite bond200968w, @cite leigh2005tension 	</span>|<span class="success">	Increase @cite leigh2005tension	</span>|<span class="success">	Increase @cite bond200968w, @cite leigh2005tension	</span>|<span class="success">	Decrease @cite bond200968w, @cite leigh2005tension	</span>|<span class="success">	Decrease @cite bond200968w, @cite leigh2005tension	</span>|<span class="success">	Decrease @cite bond200968w, @cite leigh2005tension	</span>|<span class="success">	Decrease @cite bond200968w, @cite leigh2005tension	</span>|
 |	Tension Pneumothorax;  severity = 1.0	|	Represents a "sucking" chest wound on the left lung side with the severe severity (maximum size hole).  Should lead to full collapse.	|	660	|	900	|<span class="success">	 Clinical sign: Tachypnea  @cite bond200968w, @cite leigh2005tension 	</span>|<span class="success">	Increase @cite leigh2005tension	</span>|<span class="success">	Clinical sign: Tachycardia  @cite bond200968w, @cite leigh2005tension	</span>|<span class="success">	Clinical sign: Hypotension @cite bond200968w, @cite leigh2005tension	</span>|<span class="warning">	Clinical sign: Hypotension @cite bond200968w, @cite leigh2005tension	</span>|<span class="success">	Clinical sign: Hypotension @cite bond200968w, @cite leigh2005tension	</span>|<span class="success">	Clinical sign: Hypoxia  @cite bond200968w, @cite leigh2005tension	</span>|
 |	Apply Chest Occlusive dressing on the left side 	|	Represents the closing of chest wound on the left side	|	960	|	1000	|<span class="success">	No Change or Increased  @cite bergeronSME	</span>|<span class="success">	No Change 	</span>|<span class="success">	Tachycardia > 120 @cite bergeronSME	</span>|<span class="success">	Slightly improved to no change  @cite bergeronSME	</span>|<span class="success">	Slightly improved to no change  @cite bergeronSME	</span>|<span class="success">	Slightly improved to no change  @cite bergeronSME	</span>|<span class="success">	Modest decrease to no change  @cite bergeronSME	</span>|
 |	Apply needle decompression	|	Needle decompression is applied on the left side of the chest	|	1020	|	1320	|<span class="success">	Returning toward normal @cite bergeronSME	</span>|<span class="success">	Returning toward normal @cite bergeronSME	</span>|<span class="success">	Returning toward normal @cite bergeronSME	</span>|<span class="success">	Slightly diminished from normal @cite bergeronSME	</span>|<span class="success">	Slightly diminished from normal @cite bergeronSME	</span>|<span class="success">	Slightly diminished from normal @cite bergeronSME	</span>|<span class="success">	Normal @cite bergeronSME	</span>|
@@ -1606,9 +1620,8 @@ Common clinical vital signs were compared to validation data, as shown in Table 
 <i>Table 16. Validation matrix for physiological responses due to varying severities of right mainstem intubation and correction.</i>
 </center>
 
-|	Segment	|	Notes	|	Action Occurance Time  (s)	|	Sampled Scenario Time  (s)	|	Respiration Rate (breaths/min)	|	Heart Rate (beats/min)	|	Systolic Pressure (mmHg)	|	Diastolic Pressure (mmHg)	|	Oxygen Saturation	|
+|	Segment	|	Notes	|	Action Occurrence Time  (s)	|	Sampled Scenario Time  (s)	|	Respiration Rate (breaths/min)	|	Heart Rate (beats/min)	|	Systolic Pressure (mmHg)	|	Diastolic Pressure (mmHg)	|	Oxygen Saturation	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
-|	Inject succinycholine; concentration = 4820 ug/ml; Dose = 20 ml	|	Neuromuscular blocker agent is administered to represent events that facilitate endotracheal intubation.	|	30	|	60	|<span class="success">	Goes to Zero @cite Morgan2006Clinical             @cite dukeSME	</span>|<span class="warning">	Mild  Increase @cite Morgan2006Clinical                       5-10% Decrease @cite dukeSME    	</span>|<span class="warning">	Mild  Increase @cite Morgan2006Clinical                      5-10% Decrease @cite dukeSME	</span>|<span class="warning">	Mild  Increase @cite Morgan2006Clinical                       5-10% Decrease @cite dukeSME	</span>|<span class="success">	Begins to drop according to preoxygenated O2 curve 	</span>|
 |	Turn on Anesthesia Machine and insert   Endotracheal (ET) tube in the right mainstem	|	Anesthesia machine is turned on to supply oxygen to the subject. ET tube is inserted, but it is set in the right mainstem.	|	60	|	180	|<span class="success">	16  (set by machine) 	</span>|<span class="success">	No Change @cite dukeSME; Increase above normal due to cardiovascular stress  @cite bergeronSME	</span>|<span class="success">	No Change @cite dukeSME; Increase above normal due to cardiovascular stress  @cite bergeronSME	</span>|<span class="success">	No Change @cite dukeSME; Increase above normal due to cardiovascular stress  @cite bergeronSME	</span>|<span class="success">	Continues to drop; 93-95% @cite bergeronSME	</span>|
 |	Reset ET tube in the trachea.	|	 ET tube is adjusted to be set in the trachea (good depth).	|	180	|	480	|<span class="success">	16  (set by machine) 	</span>|<span class="success">	Towards normal @cite bergeronSME	</span>|<span class="success">	Towards normal @cite bergeronSME	</span>|<span class="success">	Towards normal @cite bergeronSME	</span>|<span class="success">	Towards normal @cite bergeronSME	</span>|
 |	Turn on Anesthesia Machine and insert   Endotracheal (ET) tube in the left mainstem	|	ET tube is adjusted, but it is set in the left mainstem.	|	480	|	600	|<span class="success">	16  (set by machine) 	</span>|<span class="success">	No Change @cite dukeSME; Increase above normal due to cardiovascular stress  @cite bergeronSME	</span>|<span class="success">	No Change @cite dukeSME; Increase above normal due to cardiovascular stress  @cite bergeronSME	</span>|<span class="success">	No Change @cite dukeSME; Increase above normal due to cardiovascular stress  @cite bergeronSME	</span>|<span class="success">	Continues to drop; 93-95% @cite bergeronSME	</span>|
@@ -1641,10 +1654,9 @@ All clinical outputs validated agreed with expected trends. As previously mentio
 <i>Table 17. Validation matrix for physiological responses due esophageal intubation and correction.</i>
 </center>
 
-|	Segment	|	Notes	|	Action Occurance Time  (s)	|	Sample Scenario Time  (s)	|	Respiration Rate  (breaths/min)	|	Heart Rate  (beats/min)	|	Systolic Pressure  (mmHg)	|	Diastolic Pressure  (mmHg)	|	Oxygen Saturation  (mmHg)	|
+|	Segment	|	Notes	|	Action Occurrence Time  (s)	|	Sample Scenario Time  (s)	|	Respiration Rate  (breaths/min)	|	Heart Rate  (beats/min)	|	Systolic Pressure  (mmHg)	|	Diastolic Pressure  (mmHg)	|	Oxygen Saturation  (mmHg)	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
-|	Administer Succinycholine - 96.4mg	|	Drug Onset < 1 minute	|	30	|	30	|<span class="success">	Goes to Zero @cite Morgan2006Clinical             @cite dukeSME	</span>|<span class="success">	Mild  Increase @cite Morgan2006Clinical;                       5-10% Decrease @cite dukeSME    	</span>|<span class="success">	Mild  Increase @cite Morgan2006Clinical;                       5-10% Decrease @cite dukeSME    	</span>|<span class="success">	Mild  Increase @cite Morgan2006Clinical;                       5-10% Decrease @cite dukeSME    	</span>|<span class="success">	Begins to drop according to preoxygenated O2 curve 	</span>|
-|	Esophageal Intubation	|	This repesents failed  endotracheal intubation that led to esophageal intubation	|	60	|	120	|<span class="success">	Zero 	</span>|<span class="success">	 If undetected and O2 level drops significantly, Mild Increase @cite dukeSME	</span>|<span class="success">	 If undetected and O2 level drops significantly, Mild Increase @cite dukeSME	</span>|<span class="success">	 If undetected and O2 level drops significantly, Mild Increase @cite dukeSME	</span>|<span class="success">	continue to decrease along O2 curve 	</span>|
+|	Esophageal Intubation	|	This represents failed  endotracheal intubation that led to esophageal intubation	|	60	|	120	|<span class="success">	Zero 	</span>|<span class="success">	 If undetected and O2 level drops significantly, Mild Increase @cite dukeSME	</span>|<span class="success">	 If undetected and O2 level drops significantly, Mild Increase @cite dukeSME	</span>|<span class="success">	 If undetected and O2 level drops significantly, Mild Increase @cite dukeSME	</span>|<span class="success">	continue to decrease along O2 curve 	</span>|
 |	Successful Intubation	|	Represents successful endotracheal intubation	|	180	|	500	|<span class="success">	16  (set by machine) 	</span>|<span class="success">	Towards normal @cite bergeronSME	</span>|<span class="success">	Towards normal @cite bergeronSME	</span>|<span class="success">	Towards normal @cite bergeronSME	</span>|<span class="success">	Towards normal @cite bergeronSME	</span>|
 
 ### Asthma
@@ -1672,7 +1684,7 @@ The acute asthma action was validated against three scenarios: moderate (severit
 <i>Table 18. Validation matrix for physiological responses due to moderate acute asthma and correction.</i>
 </center>
 
-|	Segment	|	Notes	|	Action Occurance Time (s)	|	Sampled Scenario Time (s)	|	Trachea Flow - Peak Expiratory Flow  (L/min)	|	Respiration Rate (breaths/min)	|	Tidal Volume (mL)	|	Heart Rate (beats/min)	|	Systolic Pressure (mmHg)	|	Oxygen Saturation	|	PaO2 (mmHg)	|	PaCO2 (mmHg)	|	IERatio	|
+|	Segment	|	Notes	|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Trachea Flow - Peak Expiratory Flow  (L/min)	|	Respiration Rate (breaths/min)	|	Tidal Volume (mL)	|	Heart Rate (beats/min)	|	Systolic Pressure (mmHg)	|	Oxygen Saturation	|	PaO2 (mmHg)	|	PaCO2 (mmHg)	|	IERatio	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
 |	Moderate acute asthma attack (Severity = 0.3)	|		|	30	|	550	|<span class="success">	75% to 90% of normal @cite britishGuideline2014asthma	</span>|<span class="success">	Slight Increase @cite britishGuideline2014asthma	</span>|<span class="success">	 ~95% of normal @cite limmer2011emergency	</span>|<span class="success">	No Change @cite britishGuideline2014asthma	</span>|<span class="success">	No Change @cite papiris2001clinical	</span>|<span class="success">	No Change @cite britishGuideline2014asthma	</span>|<span class="success">	No Change @cite britishGuideline2014asthma	</span>|<span class="success">	No Change @cite britishGuideline2014asthma	</span>|<span class="success">	Decrease @cite van1991physical	</span>|
 |	No asthma (Severity = 0.0)	|		|	580	|	775	|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|
@@ -1698,7 +1710,7 @@ The acute asthma action was validated against three scenarios: moderate (severit
 <i>Table 19. Validation matrix for physiological responses due to severe acute asthma and correction.</i>
 </center>
 
-|	Segment	|	Notes	|	Action Occurance Time (s)	|	Sampled Scenario Time (s)	|	Trachea Flow - Peak Expiratory Flow  (L/min)	|	Respiration Rate (breaths/min)	|	Tidal Volume (mL)	|	Heart Rate (beats/min)	|	Systolic Pressure (mmHg)	|	Oxygen Saturation	|	PaO2 (mmHg)	|	PaCO2 (mmHg)	|	IERatio	|
+|	Segment	|	Notes	|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Trachea Flow - Peak Expiratory Flow  (L/min)	|	Respiration Rate (breaths/min)	|	Tidal Volume (mL)	|	Heart Rate (beats/min)	|	Systolic Pressure (mmHg)	|	Oxygen Saturation	|	PaO2 (mmHg)	|	PaCO2 (mmHg)	|	IERatio	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
 |	Severe acute asthma attack (Severity = 0.7)	|		|	30	|	550	|<span class="success">	< 50% of Normal @cite papiris2001clinical, @cite britishGuideline2014asthma	</span>|<span class="warning">	> 25 @cite britishGuideline2014asthma	</span>|<span class="success">	< 60% of normal @cite limmer2011emergency	</span>|<span class="danger">	> 120 @cite papiris2001clinical; > 110 @cite britishGuideline2014asthma	</span>|<span class="danger">	Decrease Pulsus Paradoxus 85 mm Hg @cite papiris2001clinical	</span>|<span class="warning">	< 90% @cite papiris2001clinical; < 92% @cite britishGuideline2014asthma	</span>|<span class="warning">	Decrease Mild Hypoxemia @cite bergeronSME; < 60 mmHg @cite papiris2001clinical, @cite britishGuideline2014asthma	</span>|<span class="success">	Normal or Slight Increase > 45 mm Hg @cite papiris2001clinical, @cite britishGuideline2014asthma 	</span>|<span class="success">	Decrease @cite van1991physical	</span>|
 |	No asthma (Severity = 0.0)	|		|	580	|	775	|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|
@@ -1726,7 +1738,7 @@ The acute asthma action was validated against three scenarios: moderate (severit
 
 |	Segment	|	Notes	|	Action Occurance Time (s)	|	Sampled Scenario Time (s)	|	Trachea Flow - Peak Expiratory Flow  (L/min)	|	Respiration Rate (breaths/min)	|	Tidal Volume (mL)	|	Heart Rate (beats/min)	|	Systolic Pressure (mmHg)	|	Oxygen Saturation	|	PaO2 (mmHg)	|	PaCO2 (mmHg)	|	IERatio	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
-|	Life threatening acute asthma attack (Severity = 0.9) 	|		|	30	|	550	|<span class="success">	< 33% of Normal @cite britishGuideline2014asthma	</span>|<span class="success">	> 25 @cite britishGuideline2014asthma	</span>|<span class="success">	< 60% of normal @cite limmer2011emergency	</span>|<span class="success">	> 120 @cite papiris2001clinical; > 110 @cite britishGuideline2014asthma Arrhythmia, @cite britishGuideline2014asthma	</span>|<span class="danger">	Decrease NO Pulsus Paradoxus 85 mm Hg @cite papiris2001clinical	</span>|<span class="success">	< 92% @cite britishGuideline2014asthma	</span>|<span class="success">	< 60 mmHg @cite britishGuideline2014asthma	</span>|<span class="warning">	Normal or Slight Increase > 45 mm Hg @cite papiris2001clinical, @cite britishGuideline2014asthma 	</span>|<span class="success">	Decrease @cite van1991physical	</span>|
+|	Life threatening acute asthma attack (Severity = 0.9) 	|		|	30	|	550	|<span class="success">	< 33% of Normal @cite britishGuideline2014asthma	</span>|<span class="warning">	> 25 @cite britishGuideline2014asthma	</span>|<span class="success">	< 60% of normal @cite limmer2011emergency	</span>|<span class="warning">	> 120 @cite papiris2001clinical; > 110 @cite britishGuideline2014asthma Arrhythmia, @cite britishGuideline2014asthma	</span>|<span class="warning">	Decrease NO Pulsus Paradoxus 85 mm Hg @cite papiris2001clinical	</span>|<span class="success">	< 92% @cite britishGuideline2014asthma	</span>|<span class="success">	< 60 mmHg @cite britishGuideline2014asthma	</span>|<span class="success">	Normal or Slight Increase > 45 mm Hg @cite papiris2001clinical, @cite britishGuideline2014asthma 	</span>|<span class="success">	Decrease @cite van1991physical	</span>|
 |	No asthma (Severity = 0.0)	|		|	580	|	775	|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|
 
 ### Dyspnea
@@ -1737,14 +1749,14 @@ Dyspnea directly effects the achieved respiratory driver (breathing muscles) pre
 <i>Table 21. Validation matrix for physiological responses due to varying severities of dyspnea.</i>
 </center>
 
-|	Segment	|	Notes	|	Action Occurance Time (s)	|	Sampled Scenario Time (s)	|	Tidal Volume (mL)	|
+|	Segment	|	Notes	|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Tidal Volume (mL)	|
 |	---	|	---	|	---	|	---	|	---	|
-|	Dyspnea: Severity = 0.3	|	Mild	|	30	|	210	|<span class="success">	Decrease to ~70% of healthy	</span>|
-|	Dyspnea: Severity = 0.0	|	Healthy	|	210	|	510	|<span class="success">	Normal	</span>|
-|	Dyspnea: Severity = 0.6	|	Moderate	|	510	|	690	|<span class="success">	Decrease to ~30% of healthy	</span>|
-|	Dyspnea: Severity = 0.0	|	Healthy	|	690	|	990	|<span class="success">	Normal	</span>|
-|	Dyspnea: Severity = 1.0	|	Severe	|	990	|	1170	|<span class="success">	Decrease to 0	</span>|
-|	Dyspnea: Severity = 0.0	|	Healthy	|	1170	|	1650	|<span class="success">	Normal	</span>|
+|	Dysnea: Severity = 0.3	|	Mild	|	30	|	210	|<span class="success">	Decrease to ~70% of healthy	</span>|
+|	Dysnea: Severity = 0.0	|	Healthy	|	210	|	510	|<span class="success">	Normal	</span>|
+|	Dysnea: Severity = 0.6	|	Moderate	|	510	|	690	|<span class="success">	Decrease to ~30% of healthy	</span>|
+|	Dysnea: Severity = 0.0	|	Healthy	|	690	|	990	|<span class="success">	Normal	</span>|
+|	Dysnea: Severity = 1.0	|	Severe	|	990	|	1170	|<span class="success">	Decrease to 0	</span>|
+|	Dysnea: Severity = 0.0	|	Healthy	|	1170	|	1650	|<span class="success">	Normal	</span>|
 
 ### Supplemental Oxygen
 
@@ -1754,15 +1766,15 @@ The nasal cannula, simple mask, and non-rebreather mask are validated by applyin
 <i>Table 22. Validation matrix for application of a nasal cannula.</i>
 </center>
 
-|	Segment	|	Notes	|	Action Occurance Time (s)	|	Sampled Scenario Time (s)	|	Fraction of Inspired Oxygen (FiO2)	|
+|	Segment	|	Notes	|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Fraction of Inspired Oxygen (FiO2)	|
 |	---	|	---	|	---	|	---	|	---	|
-|	SupplementalOxygen: Nasal Cannula	|	Default flow = 3.5 L/min	|	30	|	330	|<span class="success">	Increase to ~0.4 @cite korupolu2009early, @cite bailey2007early	</span>|
+|	Supplemental Oxygen: Nasal Cannula	|	Default flow = 3.5 L/min	|	30	|	330	|<span class="success">	Increase to ~0.4 @cite korupolu2009early, @cite bailey2007early	</span>|
 
 <center><br>
 <i>Table 23. Validation matrix for application of a simple mask.</i>
 </center>
 
-|	Segment	|	Notes	|	Action Occurance Time (s)	|	Sampled Scenario Time (s)	|	Fraction of Inspired Oxygen (FiO2)	|
+|	Segment	|	Notes	|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Fraction of Inspired Oxygen (FiO2)	|
 |	---	|	---	|	---	|	---	|	---	|
 |	SupplementalOxygen: Simple Mask	|	Default flow = 7.5 L/min	|	30	|	330	|<span class="success">	Increase to ~0.5 @cite korupolu2009early, @cite bailey2007early	</span>|
 

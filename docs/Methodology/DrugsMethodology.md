@@ -36,11 +36,6 @@ The generic substance methodology developed for the engine is used to solve for 
 ### Post Process
 The Post Process step moves everything calculated in Process from the next time step calculation to the current time step calculation. %Substances have no specific Post Process functionality. Each system post processes their circuit and moves the mass, concentration, substance volume, and volume fraction from next to current.
 
-<img src="./Images/Drugs/DrugsDataFlow.png" width="900">
-<center>
-<i>Figure 1. The data flow begins with a Preprocess step where substances entering or exiting the engine body are incremented or decremented. During the Process step, the mass and concentration (blood) or substance volume and volume fraction (air/gas) are calculated for each compartment in a system. During Process, the effects of any drugs in the system are calculated. There is no specific Post Process functionality in substances. However, as other systems post process their circuits, the substance values are moved from the next time step to the current time step calculation.</i>
-</center><br>
-
 Features, Capabilities, and Dependencies
 ----------------------------------------
 Pharmacokinetic models quantify the time evolution of drug distribution from the administration of a dose. Pharmacodynamic models, on the other hand, characterize the events from the arrival of the drug at the site of action to the “onset, magnitude and duration of the biological response @cite rosenbaum2012basic.” The %Drug system contains both pharmacokinetic and pharmacodynamic models.

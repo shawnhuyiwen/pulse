@@ -64,12 +64,6 @@ There is no system specific functionality for the %Nervous System in Post Proces
 ### Assessments
 Assessments are data collected and packaged to resemble a report or analysis that might be ordered by a physician. No assessments are associated with the %Nervous System.
 
-<br>
-<img src="./Images/Nervous/NervousDataFlow.png" width="800">
-<center>
-*Figure 1. The data flow for the %Nervous System consists of Preprocess, Process and Postprocess. In Preprocess, the baroreceptor feedback is calculated. In Process, the brain metrics are checked to see if event thresholds have been reached and pupil effects are determined and applied.*
-</center><br>
-
 @anchor nervous-features
 Features, Capabilities, and Dependencies
 ----------------------------------------

@@ -77,12 +77,6 @@ The Postprocess step moves everything calculated in Process from the next time s
 ### Assessments
 Assessments are data collected and packaged to resemble a report or analysis that might be ordered by a physician. No assessments are associated with the %Cardiovascular system.
 
-<br>
-<img src="./Images/Cardiovascular/CardiovascularDataFlow.png" width="900">
-<center>
-*Figure 2. The data flow for the CV System consists of Preprocess, Process, and Postprocess. Preprocess determines the circuit element values based on feedback mechanisms and engine actions. Preprocess also updates system-level quantities via the CalculateVitalSigns and cardiac cycle calculations. Process uses generic circuit methodology to solve the CV circuit for pressures, volumes, and flows along the paths and on nodes. Postprocess updates these quantities to the next time step and then begins advancing time, which causes the loop to repeat.*
-</center><br>
-
 @anchor cardiovascular-features
 Features, Capabilities, and Dependencies
 ----------------------------------------
@@ -381,7 +375,7 @@ Following the completion of the hemorrhage, intravenous blood is administered. T
 </td>
 </tr>
 </table>
-<img src="./plots/Cardiovascular/Hemrrhage_Blood_Legend.jpg" width="500">
+<img src="./plots/Cardiovascular/Class2Saline_Legend.jpg" width="500">
 <center>
 *Figure 12. The class 2 hemorrhage scenario shows the blood volume decreasing linearly with the constant 250&nbsp;milliliter per minute bleeding rate. The blood hemoglobin content follows this exact trend. At the conclusion of the bleed, the blood volume and hemoglobin are at a lower value. Five hundred (500) milliliters of blood is then administered intravenously over the course of 5&nbsp;minutes. Both the blood volume and hemoglobin content increase linearly with this administration.*
 </center>
