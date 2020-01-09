@@ -125,7 +125,7 @@ Features, Capabilities, and Dependencies
 @image html GICircuit.png
 <center>
 <i>
-Figure 4. The %GI circuit is made up of nodes and paths with elements and is connected to extravascular tissue and the cardiovascular system.
+Figure 2. The %GI circuit is made up of nodes and paths with elements and is connected to extravascular tissue and the cardiovascular system.
 </i>
 </center><br>
 

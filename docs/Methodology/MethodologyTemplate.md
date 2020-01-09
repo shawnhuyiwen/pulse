@@ -46,8 +46,6 @@ Initialize, setup, tune, conditions, stabilization, etc.
 
 ### Assessments
 
-Include a data flow diagram.
-
 Features and Capabilities
 -------------------------
 

@@ -64,11 +64,11 @@ Epinephrine is released by the adrenal medulla at a basal endogenous rate of app
 Two stimuli, exercise and acute stress, can modify the epinephrine release rate. 
 
 #### Exercise
-The increase in epinephrine release as a function of above-basal exercise was developed using data in @cite stratton1985hemodynamic and @cite tidgren1991renal. We assume that the epinephrine clearance rate is constant; therefore, the fractional increase in epinephrine concentration described in @cite stratton1985hemodynamic and @cite tidgren1991renal can be assumed to be due to a similar fractional increase in release rate. Using that assumption, we fit a logistic function to the basal-normalized epinephrine steady-state concentrations during exercise presented in @cite tidgren1991renal. The release modifier varies from 1 to 19.75, as shown in Figure 2, meaning that the epinephrine release rate will be 19.75 times the basal release rate with maximal exercise. The model is implemented by first computing the above-basal metabolic rate and then using the generic logistic function with the appropriate parameter values to compute the release rate multiplier.
+The increase in epinephrine release as a function of above-basal exercise was developed using data in @cite stratton1985hemodynamic and @cite tidgren1991renal. We assume that the epinephrine clearance rate is constant; therefore, the fractional increase in epinephrine concentration described in @cite stratton1985hemodynamic and @cite tidgren1991renal can be assumed to be due to a similar fractional increase in release rate. Using that assumption, we fit a logistic function to the basal-normalized epinephrine steady-state concentrations during exercise presented in @cite tidgren1991renal. The release modifier varies from 1 to 19.75, as shown in Figure 1, meaning that the epinephrine release rate will be 19.75 times the basal release rate with maximal exercise. The model is implemented by first computing the above-basal metabolic rate and then using the generic logistic function with the appropriate parameter values to compute the release rate multiplier.
 
 <img src="./plots/Endocrine/EpiExercise.jpg" width="600">
 <center>
-*Figure 2. The increase in epinephrine release during exercise is computed as a fraction of the basal rate.*
+*Figure 1. The increase in epinephrine release during exercise is computed as a fraction of the basal rate.*
 </center><br>
 
 
@@ -112,7 +112,7 @@ Validation - Actions
 --------------------------------------
 @anchor endocrine-acute-stress
 ### Acute Stress
-The effects of epinephrine release on the physiology can be clearly seen by triggering an Acute Stress action. The patient in this scenario undergoes three bouts of Acute Stress, with the first representing mild pain, the second representing mental stress, and the third representing a panic attack. The severity levels were chosen by checking the blood concentration of epinephrine to ensure it met published values. However, a known issue with epinephrine modeling in the current engine release is that higher concentrations of epinephrine are needed to produce the effects noted in literature. In order to achieve the physiological effects, the severity was proportionally scaled up. This shortcoming is the reason for the failing epinephrine concentrations, but it allows for the other effects of epinephrine to be modeled, which has beneficial effects for other systems utilizing epinephrine. Heart rate behaves as expected, but blood pressure effects aren't always in line with expectations. This is likely an effect of baroreceptor reflex counterbalancing epinephrine effects. Figure 3 shows the blood concentration and select effects with the acute stress action.
+The effects of epinephrine release on the physiology can be clearly seen by triggering an Acute Stress action. The patient in this scenario undergoes three bouts of Acute Stress, with the first representing mild pain, the second representing mental stress, and the third representing a panic attack. The severity levels were chosen by checking the blood concentration of epinephrine to ensure it met published values. However, a known issue with epinephrine modeling in the current engine release is that higher concentrations of epinephrine are needed to produce the effects noted in literature. In order to achieve the physiological effects, the severity was proportionally scaled up. This shortcoming is the reason for the failing epinephrine concentrations, but it allows for the other effects of epinephrine to be modeled, which has beneficial effects for other systems utilizing epinephrine. Heart rate behaves as expected, but blood pressure effects aren't always in line with expectations. This is likely an effect of baroreceptor reflex counterbalancing epinephrine effects. Figure 2 shows the blood concentration and select effects with the acute stress action.
 
 <center>
 <table border="0">
@@ -130,7 +130,7 @@ The effects of epinephrine release on the physiology can be clearly seen by trig
 </table>
 </center>
 <center><i>
-*Figure 3. Epinephrine is released in response to Acute Stress actions.*
+*Figure 2. Epinephrine is released in response to Acute Stress actions.*
 </i>
 </center><br>
 

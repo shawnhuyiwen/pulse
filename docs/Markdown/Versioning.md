@@ -1,4 +1,4 @@
-Version 2.2.0 {#version}
+Version 2.3.0 {#version}
 =============
 
 Our versioning follows the <a href="http://semver.org">Semantic Versioning 2.0.0</a> format.
@@ -8,6 +8,56 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
 - MINOR changes when we add functionality in a backwards-compatible manner, and
 - PATCH changes when we make backwards-compatible bug fixes.
 - Release Stage - We have extended this versioning with a <a href="http://en.wikipedia.org/wiki/Software_release_life_cycle">release stage</a>
+
+- - -
+
+## Pulse v2.3.0 (January 2020)
+
+- Software Architecture
+  - Added a <i>Multiply</i> value setting, similar to <i>Increment</i>
+  - Created separate <i>Initial</i> and <i>Current</i> patient definitions
+  - Updated general math exponential functions to be more intuitive
+- Physiology Models
+  - Patient lung volumes are now determined using ideal body weight rather than actual body weight
+  - Significant respiratory model updates
+    - Changed standard respiration rate from 16 bpm to 12 bpm to better match standards in literature and validation
+    - Tweaked respiratory circuit for improved modeling
+    - Refactored the respiratory muscle driver with a new waveform
+    - Added a sigmoidal chest wall compliance model
+    - Refactored respiratory conditions and actions for improved restrictive and obstructive disease results and combined effects
+    - Added an ARDS condition
+    - Added a pulmonary fibrosis condition
+    - Added exacerbation action to degrade/improve respiratory conditions during simulations
+    - Renamed apnea action to dyspnea    
+    - Refactored conscious respiration, leading to improved spirometry curves
+    - More/better validation
+  - Updated anesthesia machine circuit to use pressure sources for supplying gas, rather than flow sources to avoid issues with flow source pressure calculations
+
+## Planned Improvements
+
+- Black box circuit/compartment components
+- Sepsis
+- Hemorrhagic Shock
+- Work of breathing and respiratory fatigue models
+- A second order baroreceptor model
+- Modularity improvements for system/model/circuit swapping
+- Pediatric physiology prototype
+- Official contribution plan for merge requests for methodology/model changes
+
+@anchor known-issues
+## Known Physiology Model Issues and Limitations
+
+The following are known issues with the current version of the software:
+- Lack of a full sympathetic/parasympathetic nervous system
+- Extravascular fluid exchange model is incomplete
+- Peripheral resistance currently does not scale with core temperature
+- Only tested a simulation up to 12 hours in length (No sleep model)
+- Limited Consumption model
+  - Limited number of macronutrients available
+  - Limited conversion and use within the engine
+- Oxygen saturation drops too sharply
+
+- - -
 
 ## Pulse v2.2.0 (August 2019)
 
@@ -21,36 +71,11 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
   - Added the ability to provide supplemental oxygen through a nasal cannula, simple mask, and nonrebreather mask.
   - Updated vascular effects caused by respiratory pleural cavity imbalances, mainly to increased venous return resistance when the patient has a pneumothorax / collapsed lungs.
 
-## Planned Improvements
-
-- Sepsis
-- Hemorrhagic Shock
-- %Respiratory fatigue and chronic condition exacerbation
-- Surface area and efficiency parameters for the gas diffusion model
-- A second order baroreceptor model
-- Modularity improvements for system/model/circuit swapping
-- Pediatric physiology prototype
-- Official contribution plan for merge requests for methodology/model changes
-
-
-- - -
-@anchor known-issues
-## Known Physiology Model Issues and Limitations
-The following are known issues with the current version of the software:
-- Lack of a full sympathetic/parasympathetic nervous system
-- Extravascular fluid exchange model is incomplete
-- Peripheral resistance currently does not scale with core temperature
-- Only tested a simulation up to 12 hours in length (No sleep model)
-- Limited Consumption model
-  - Limited number of macronutrients available
-  - Limited conversion and use within the engine
-- Oxygen saturation drops too sharply
-
-## Pulse v2.1.0 (Feb 2019)
+## Pulse v2.1.0 (February 2019)
 
 - Software updates necessary for integration with Unity
 
-## Pulse v2.0.0 (Jan 2019)
+## Pulse v2.0.0 (January 2019)
 
 - Software Architecture
   - Converted ASCII file I/O to JSON (Compliant to Protobuf IDLs)

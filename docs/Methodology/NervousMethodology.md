@@ -84,7 +84,7 @@ Where &nu; is a parameter that represents the response slope of the baroreceptor
 
 <img src="./plots/Nervous/Response_Fractions.jpg" width="550">
 <center>
-*Figure 2. The sympathetic and parasympatheric response fractions are displayed as a function of mean arterial pressure (MAP). Both fractional forms show asymptotic behavior as divergence from the MAP set-point occurs. The response fractions are additive, always summing to a value of 1.0. At homeostasis (MAP equal to the set-point), the fractions are both equal to 0.5.*
+*Figure 1. The sympathetic and parasympatheric response fractions are displayed as a function of mean arterial pressure (MAP). Both fractional forms show asymptotic behavior as divergence from the MAP set-point occurs. The response fractions are additive, always summing to a value of 1.0. At homeostasis (MAP equal to the set-point), the fractions are both equal to 0.5.*
 </center><br>
 
 As described in the [cardiovascular](@ref cardiovascular-initialize) methodology report, the %cardiovascular system is initialized according to patient definitions and the stabilized to a homeostatic state. The set-point is the resultant mean arterial pressure following the engine stabilization period. The set-point is adjusted dynamically with certain actions and insults, as shown in Equation 3.

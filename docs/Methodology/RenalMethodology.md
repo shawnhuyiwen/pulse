@@ -142,7 +142,7 @@ The transport of substances is a combination of the generic methodology and acti
 Data Flow
 ---------
 
-The %Renal System determines its state at every time step through a three-step process: Preprocess, Process, and Postprocess (Figure 3). In general, Preprocess sets the circuit element values based on feedback mechanisms and engine settings/actions. Process uses the generic circuit calculator to compute the entire state of the circuit. Postprocess is used to advance time. More specifics about these steps are detailed below.
+The %Renal System determines its state at every time step through a three-step process: Preprocess, Process, and Postprocess. In general, Preprocess sets the circuit element values based on feedback mechanisms and engine settings/actions. Process uses the generic circuit calculator to compute the entire state of the circuit. Postprocess is used to advance time. More specifics about these steps are detailed below.
 
 ### Reset, Conditions, and Initialization
 

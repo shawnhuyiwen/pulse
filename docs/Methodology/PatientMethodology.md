@@ -4,11 +4,13 @@
 @anchor patient-overview
 Overview
 ========
+========
 
 Abstract
 --------
 
 The engine allows for patient variability via a set of parameters used to define aspects of the simulated human. These parameters are used throughout the system models to manipulate the physiological responses and homeostatic state. The code base contains several defined patients created for various testing and analysis purposes.
+
 @anchor patient-intro
 Introduction
 ------------
@@ -78,7 +80,11 @@ Features and Capabilities
 
 ### Stabilization
 
-All patient parameters are set at the beginning of the resting stabilization period (see @ref SystemMethodology). These values are used to modify the inner workings of systems. The complex interactions require a simulated period to allow everything to balance into a stable, homeostatic, healthy starting point. After each stabilization period (i.e., resting, conditions, and feedback), several parameters are reset due to their reliance on combined effects. The patient definition only allows for healthy values - any chronic pathophysiology needs to be handled using the CDM condition definition. 
+There are two complete sets of patient parameters stored in the data model:
+
+1. <i>Initial Patient</i>: These are the healthy patient parameters before any conditions or action are applied. All patient parameters are set at the beginning of the resting stabilization period (see @ref SystemMethodology). These values are used to modify the inner workings of systems. The complex interactions require a simulated period to allow everything to balance into a stable, homeostatic, healthy starting point. These parameters should not be changed during a simulation.
+
+2. <i>Current Patient</i>: After each stabilization period (i.e., resting, conditions, and feedback), several parameters are reset due to their reliance on combined effects. These parameters can further be changed during a simulation.
 
 While every effort has been made to allow any combination of patient parameters within bounds, there is no guarantee that all combinations will be able to reach a stable starting homeostatic point. 
 
