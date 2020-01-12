@@ -155,11 +155,6 @@ time step calculation to the current time step calculation. The current implemen
 specific post process functionality for the anesthesia machine. All postprocessing is done in the
 %Respiratory System with the combined circuit methodology.
 
-The following figure presents the data flow of the %Anesthesia System data processing steps.
-
-<center><img src="./Images/AnesthesiaMachine/AnesthesiaMachineDataFlow.png" width="550"></center>
-<center><i>Figure 2. The Anesthesia Machine system has three processing steps at the highest level. Each time step, Preprocess prepares the circuit to be calculated; Process performs the calculation to determine the entire circuit state; and Postprocess advances time.</i></center>    
-<br>
 @anchor anesthesia-features
 ## Features and Capabilities
 
