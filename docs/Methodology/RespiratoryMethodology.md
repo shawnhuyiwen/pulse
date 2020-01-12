@@ -436,7 +436,7 @@ The Pulse respiratory system is separated into four compliances (see the circuit
 
 The waveform in Figure 6 is defined by these mathematical relationships,
 
-\f[V = a + \frac{b}{{1 + {e^{{{ - \left( {P - c} \right)} \mathord{\left/
+\f[V = RV + \frac{{VC}}{{1 + {e^{{{ - \left( {P - c} \right)} \mathord{\left/
  {\vphantom {{ - \left( {P - c} \right)} d}} \right.
  \kern-\nulldelimiterspace} d}}}}}\f]
 <center>
@@ -467,31 +467,36 @@ The expected intrapulmonary pressure (<i>P</i>) at the a given volume (<i>V</i>)
 <i>Equation 18.</i>
 </center><br> 
 
-\f[c =  - \frac{{{P_{cu}}\lambda \left( {2 - \lambda } \right)}}{2}\f]
+\f[{P_{cu}} = \frac{{VC - FRC}}{{{C_{sb}}}}\f]
 <center>
 <i>Equation 19.</i>
 </center><br> 
 
-\f[d = \frac{{{P_{cu}} - c}}{2}\f]
+\f[c =  - \frac{{{P_{cu}}\lambda \left( {2 - \lambda } \right)}}{2}\f]
 <center>
 <i>Equation 20.</i>
 </center><br> 
 
-\f[P = d \cdot \ln \left( {\frac{{V - RV}}{{RV + VC - V}}} \right) + c\f]
+\f[d = \frac{{{P_{cu}} - c}}{2}\f]
 <center>
 <i>Equation 21.</i>
+</center><br> 
+
+\f[P = d \cdot \ln \left( {\frac{{V - RV}}{{RV + VC - V}}} \right) + c\f]
+<center>
+<i>Equation 22.</i>
 </center><br> 
 
 Then, the instantaneous chest wall compliance (<i>C<sub>cw</sub></i>) to apply at the current timestep is found using the side compliance (<i>C<sub>s</sub></i>) by,
 
 \f[{C_s} = \frac{{V - FRC}}{P}\f]
 <center>
-<i>Equation 22.</i>
+<i>Equation 23.</i>
 </center><br> 
 
 \f[{C_{cw}} = \frac{1}{{\frac{1}{{{C_s}}} - \frac{1}{{{C_{lb}}}}}}\f]
 <center>
-<i>Equation 23.</i>
+<i>Equation 24.</i>
 </center><br> 
 
 #### Standard Lung Volumes and Capacities
@@ -532,7 +537,7 @@ maximal forced expiration. ERV can be calculated as
 
 \f[ERV=FRC-RV\f] 
 <center>
-<i>Equation 24.</i>
+<i>Equation 25.</i>
 </center><br> 
 
 In this equation, both FRC and RV are input values obtained from weight-based
@@ -570,7 +575,7 @@ capacity (TLC) using the relation
 
 \f[IRV=TLC-FRC-V_{T} \f] 
 <center>
-<i>Equation 25.</i>
+<i>Equation 26.</i>
 </center><br> 
 
 Both TLC and FRC are weight-based inputs to the model, whereas V<sub>T</sub> is calculated
@@ -588,14 +593,14 @@ calculated as
 
 \f[V_{C} =IRV+V_{T} +ERV\f] 
 <center>
-<i>Equation 26.</i>
+<i>Equation 27.</i>
 </center><br> 
 
 V<sub>C</sub>  can also be calculated using TLC as:
 
 \f[V_{C} =TLC-RV\f] 
 <center>
-<i>Equation 27.</i>
+<i>Equation 28.</i>
 </center><br> 
 
 Again, both TLC and RV are weight-based inputs to the model, and V<sub>T</sub> is calculated
@@ -611,7 +616,7 @@ calculated from TLC and FRC as
 
 \f[IC=TLC-FRC\f] 
 <center>
-<i>Equation 28.</i>
+<i>Equation 29.</i>
 </center><br> 
 
 In the model, both TLC and FRC are weight-based input variables, and IC can be
@@ -641,7 +646,7 @@ product of tidal volume (V<sub>T</sub>) and respiration rate (RR), i.e.,
 
 \f[\dot{V}_{E} =V_{T} *RR\f] 
 <center>
-<i>Equation 29.</i>
+<i>Equation 30.</i>
 </center><br> 
 
 The %Respiratory Model calculates both V<sub>T</sub> and RR from the simulation data. 
@@ -684,7 +689,7 @@ resistance <i>R<sub>trachea</sub></i> as:
 
 \f[Q_{trachea} =\frac{P_{mouth} -P_{carina} }{R_{trachea} } \f] 
 <center>
-<i>Equation 30.</i>
+<i>Equation 31.</i>
 </center><br> 
 
 <i>P<sub>mouth</sub></i> and <i>P<sub>carina</sub></i> are the pressures at the mouth and the carina nodes,
@@ -788,7 +793,7 @@ mixture and the fractional concentration F<sub>gas</sub> of the gas as
 
 \f[P_{gas} =F_{gas} *P_{total} \f] 
 <center>
-<i>Equation 31.</i>
+<i>Equation 32.</i>
 </center><br> 
 
 The %Respiratory Model calculates the partial pressure of a gas at any node
@@ -807,7 +812,7 @@ pressure P<sub>Lung</sub/> at the alveoli nodes as
 
 \f[P_{LungO_{2} } =VF_{LungO_{2} } *P_{Lung} \f] 
 <center>
-<i>Equation 32.</i>
+<i>Equation 33.</i>
 </center><br> 
 
 The alveolar O<SUB>2</SUB> partial pressure can thus be determined by taking the average of
@@ -822,7 +827,7 @@ calculated using the absolute lung pressure, i.e.,
 
 \f[P_{LungO_{2} } =VF_{LungO_{2} } *(P_{B} -P_{H_{2} O} +P_{Lung} )\f] 
 <center>
-<i>Equation 33.</i>
+<i>Equation 34.</i>
 </center><br> 
 
 Figure 13 depicts the plot of P<sub>LungO<SUB>2</SUB></sub>  for the left and right alveoli
@@ -972,7 +977,7 @@ the flow across the trachea <i>Q<sub>trachea</sub></i> as
 
 \f[R_{pulm} =\frac{P_{mouth} -P_{alveoli} }{Q_{trachea} } \f] 
 <center>
-<i>Equation 34.</i>
+<i>Equation 35.</i>
 </center><br> 
 
 The %Respiratory Model calculates the pulmonary compliance <i>C<sub>pulm</sub></i> by dividing the tidal 
@@ -980,7 +985,7 @@ volume <i>V<sub>T</sub></i> by the intrapleural pressure <i>P<sub>pleu</sub></i>
 
 \f[C_{pulm} =\frac{V_{T} }{P_{pleau(max )} -P_{pleu(min )} } \f] 
 <center>
-<i>Equation 35.</i>
+<i>Equation 36.</i>
 </center><br> 
  
 Here <i>P<sub>pleu(min)</sub></i> and <i>P<sub>pleu(max)</sub></i> are the minimum and maximum respective pressures at the 
