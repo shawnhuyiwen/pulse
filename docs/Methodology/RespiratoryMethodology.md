@@ -1132,7 +1132,7 @@ Lobar pneumonia is a form of pneumonia that affects one or more lobes of the lun
 
 #### Pulmonary Fibrosis
 
-ToDo!
+Pulmonary Fibrosis is a restrictive lung disease characterized by alveoli wall thickening. Symptoms typically include increased respiration rate, decreased tidal volume, decreased respiratory flow, reduced oxygen saturation, decreased IE ratio, and increased body temperature. As a result, the compliance of the lung is reduced making it stiffer and more difficult to expand during inspiration @cite koeppen2002netter. The engine models increased work of breathing due to alveoli wall stiffness in pulmonary fibrosis by decreasing alveoli compliance in the respiratory circuit. To model pulmonary capillary destruction, the engine increases the pulmonary capillary flow resistance based on severity. Increasing the capillary resistance should increase arterial blood pressure as the heart pumps harder to overcome the increased resistance in the lungs. The gas diffusion area is reduced using the same function as  COPD. Decreased IE ratio is pathophysiologic feature of pulmonary fibrosis. Like COPD, the normal IE ratio is scaled using a multiplier based on severity.
 
 #### Impaired Alveolar Exchange
 
@@ -1452,7 +1452,7 @@ The lobar pneumonia condition was validated against three scenarios; severe pneu
 
 ### Pulmonary Fibrosis
 
-ToDo!
+The pulmonary fibrosis condition was validated with a severe pulmonary fibrosis scenario by applying a severity of 0.9 to the patient.The severity decreased the lung compliance and increased the airway resistance making it difficult to breathe.The resulting outputs are shown in Table 11 for common clinical parameters.
 
 <center><br>
 <i>Table 11. Validation matrix for severe pulmonary fibrosis. The table shows the engine output compared to validation data for respiratory and hemodynamic values.</i>
@@ -1460,7 +1460,7 @@ ToDo!
 
 |	Segment	|	Notes	|	Sampled Scenario Time (s)	|	Trachea Flow - Peak Expiratory Flow  (L/min)	|	Respiration Rate (breaths/min)	|	Tidal Volume (mL)	|	Heart Rate (beats/min)	|	Systolic Pressure (mmHg)	|	Oxygen Saturation	|	PaO2 (mmHg)	|	PaCO2 (mmHg)	|	IERatio	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
-|	Severe Pulmonary Fibrosis	|	Severity = 0.9	|	120	|<span class="success">	Decreases	|<span class="success">	Increase,  Tachypnea,   > 30 @cite gunning2003pathophysiology	|<span class="success">	Dyspnea, < 60% of normal @cite nava1999lung, @cite gunning2003pathophysiology	</span>|<span class="success">	Increase, Tachycardia	</span>|<span class="danger">	Increase, Pulmonary Hypertension, > 140 mm Hg @cite raghu2015pulmonary	</span>|<span class="success">	< 90%  	</span>|<span class="success">	Decrease,  Hypoxemia @cite costanzo2010physiology	</span>|<span class="warning">	Increase, Hypercapnia	</span>|<span class="success">	Decrease 	</span>|
+|	Severe Pulmonary Fibrosis	|	Severity = 0.9	|	120	|<span class="success">	Decreases	</span>|<span class="success">	Increase,  Tachypnea,   > 30 @cite gunning2003pathophysiology	</span>|<span class="success">	Dyspnea, < 60% of normal @cite nava1999lung, @cite gunning2003pathophysiology	</span>|<span class="success">	Increase, Tachycardia	</span>|<span class="danger">	Increase, Pulmonary Hypertension, > 140 mm Hg @cite raghu2015pulmonary	</span>|<span class="success">	< 90%  	</span>|<span class="success">	Decrease,  Hypoxemia @cite costanzo2010physiology	</span>|<span class="warning">	Increase, Hypercapnia	</span>|<span class="success">	Decrease 	</span>|
 
 @anchor respiratory-actionvalidation
 Validation - Actions
