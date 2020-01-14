@@ -325,7 +325,7 @@ public abstract class ValidationTool
                       vRow.dType = DataType.valueOf(cellValue);
                       if(vRow.dType == DataType.MinPerWeight ||
                          vRow.dType == DataType.MaxPerWeight ||
-                    	 vRow.dType == DataType.MeanPerWeight ||
+                         vRow.dType == DataType.MeanPerWeight ||
                          vRow.dType == DataType.WaveformMinPerWeight || 
                          vRow.dType == DataType.WaveformMaxPerWeight ||  
                          vRow.dType == DataType.MinPerIdealWeight || 
@@ -467,7 +467,7 @@ public abstract class ValidationTool
       html.append("</html>");
       try
       {
-        BufferedWriter out = new BufferedWriter(new FileWriter(".//"+TABLE_TYPE+"Validation.html"));
+        BufferedWriter out = new BufferedWriter(new FileWriter(".//test_results/"+TABLE_TYPE+"Validation.html"));
         out.write(html.toString());
         out.close();
       }
@@ -502,9 +502,12 @@ public abstract class ValidationTool
         while ((line = inFile.readLine()) != null)
           writer.println(line);
         inFile.close();
+        inFile = null;
         writer.println("<br>");
       }
       writer.close();
+      writer = null;
+      System.gc();
     }
     catch (Exception ex)
     {
@@ -514,7 +517,7 @@ public abstract class ValidationTool
   
   protected boolean buildExpectedHeader(ValidationRow vRow)
   {
-    if(vRow.name.startsWith("ResidualVolume"))
+    if(vRow.name.startsWith("Bladder-Lactate-Concentration"))
      Log.info("Here");
     if(vRow.name.contains("*"))
     {
@@ -540,8 +543,8 @@ public abstract class ValidationTool
       if(vRow.refCites.contains("["))
         cite = "";// This is an equation, not a cite
       if(vRow.dType==DataType.Min || vRow.dType==DataType.Max || vRow.dType==DataType.Mean ||
-    	 vRow.dType == DataType.MinPerWeight || vRow.dType == DataType.MaxPerWeight || vRow.dType == DataType.MeanPerWeight ||
-    	 vRow.dType == DataType.MinPerIdealWeight ||vRow.dType == DataType.MaxPerIdealWeight ||vRow.dType == DataType.MeanPerIdealWeight ||
+         vRow.dType == DataType.MinPerWeight || vRow.dType == DataType.MaxPerWeight || vRow.dType == DataType.MeanPerWeight ||
+         vRow.dType == DataType.MinPerIdealWeight ||vRow.dType == DataType.MaxPerIdealWeight ||vRow.dType == DataType.MeanPerIdealWeight ||
          vRow.dType==DataType.WaveformMin ||  vRow.dType == DataType.WaveformMinPerWeight || vRow.dType == DataType.WaveformMinPerIdealWeight ||
          vRow.dType==DataType.WaveformMax ||  vRow.dType == DataType.WaveformMaxPerWeight || vRow.dType == DataType.WaveformMaxPerIdealWeight)
       {
@@ -681,7 +684,7 @@ public abstract class ValidationTool
 
   protected boolean validate(ValidationRow vRow)
   {
-    if(vRow.name.startsWith("ResidualVolume"))
+    if(vRow.name.startsWith("Bladder-Lactate-Concentration"))
       Log.info("Break");
     if(!getResult(vRow))
     {
@@ -707,7 +710,7 @@ public abstract class ValidationTool
       }      
       case Min:
       {
-    	vRow.result = DoubleUtils.getMin(vRow.results);
+        vRow.result = DoubleUtils.getMin(vRow.results);
         vRow.engine = "Minimum of " + String.format("%."+vRow.doubleFormat, vRow.result); //StringUtils.toString(vRow.mean,3);
         break;
       }
@@ -725,13 +728,13 @@ public abstract class ValidationTool
       }      
       case Max:
       {
-      	vRow.result = DoubleUtils.getMax(vRow.results);
+        vRow.result = DoubleUtils.getMax(vRow.results);
         vRow.engine = "Maximum of " + String.format("%."+vRow.doubleFormat, vRow.result); //StringUtils.toString(vRow.mean,3);
         break;
       }
       case WaveformMax:
       {
-      	vRow.result = WaveformUtils.getMax(vRow.results);
+        vRow.result = WaveformUtils.getMax(vRow.results);
         vRow.engine = "Maximum of " + String.format("%."+vRow.doubleFormat, vRow.result); //StringUtils.toString(vRow.mean,3);
         break;
       }
@@ -749,13 +752,13 @@ public abstract class ValidationTool
       case MinPerWeight:
       {
         vRow.result = DoubleUtils.getMin(vRow.results) / DoubleUtils.getAverage(vRow.weight);
-        vRow.engine = "Minimum of " + String.format("%."+3+"g", vRow.result); //StringUtils.toString(vRow.mean,3);
+        vRow.engine = "Minimum of " + String.format("%."+vRow.doubleFormat, vRow.result); //StringUtils.toString(vRow.mean,3);
         break;
       }
       case MaxPerWeight:
       {
         vRow.result = DoubleUtils.getMax(vRow.results) / DoubleUtils.getAverage(vRow.weight);
-        vRow.engine = "Maximum of " + String.format("%."+3+"g", vRow.result); //StringUtils.toString(vRow.mean,3);
+        vRow.engine = "Maximum of " + String.format("%."+vRow.doubleFormat, vRow.result); //StringUtils.toString(vRow.mean,3);
         break;
       }
       case MeanPerWeight:
@@ -766,7 +769,7 @@ public abstract class ValidationTool
           resultPerWeight.add(vRow.results.get(i) / vRow.weight.get(i));
         }
         vRow.result = DoubleUtils.getAverage(resultPerWeight);
-        vRow.engine = "Mean of " + String.format("%."+3+"g", vRow.result); //StringUtils.toString(vRow.mean,3);
+        vRow.engine = "Mean of " + String.format("%."+vRow.doubleFormat, vRow.result); //StringUtils.toString(vRow.mean,3);
         break;
       }
       case WaveformMinPerWeight:
@@ -782,7 +785,7 @@ public abstract class ValidationTool
           resultPerWeight.add(yMin.get(i) / xMin.get(i));
         }
         vRow.result = DoubleUtils.getMin(resultPerWeight);
-        vRow.engine = "Minimum of " + String.format("%."+3+"g", vRow.result); //StringUtils.toString(vRow.mean,3);
+        vRow.engine = "Minimum of " + String.format("%."+vRow.doubleFormat, vRow.result); //StringUtils.toString(vRow.mean,3);
         break;
       }
       case WaveformMaxPerWeight:
@@ -798,13 +801,13 @@ public abstract class ValidationTool
           resultPerWeight.add(yMax.get(i) / xMax.get(i));
         }
         vRow.result = DoubleUtils.getMax(resultPerWeight);
-        vRow.engine = "Maximum of " + String.format("%."+3+"g", vRow.result); //StringUtils.toString(vRow.mean,3);
+        vRow.engine = "Maximum of " + String.format("%."+vRow.doubleFormat, vRow.result); //StringUtils.toString(vRow.mean,3);
         break;
       }
       case MinPerIdealWeight:
       {
         vRow.result = DoubleUtils.getMin(vRow.results) / DoubleUtils.getAverage(vRow.idealWeight);
-        vRow.engine = "Minimum of " + String.format("%."+3+"g", vRow.result); //StringUtils.toString(vRow.mean,3);
+        vRow.engine = "Minimum of " + String.format("%."+vRow.doubleFormat, vRow.result); //StringUtils.toString(vRow.mean,3);
         break;
       }
       case MeanPerIdealWeight:
@@ -815,13 +818,13 @@ public abstract class ValidationTool
           resultPerWeight.add(vRow.results.get(i) / vRow.idealWeight.get(i));
         }
         vRow.result = DoubleUtils.getAverage(resultPerWeight);
-        vRow.engine = "Mean of " + String.format("%."+3+"g", vRow.result); //StringUtils.toString(vRow.mean,3);
+        vRow.engine = "Mean of " + String.format("%."+vRow.doubleFormat, vRow.result); //StringUtils.toString(vRow.mean,3);
         break;
       }
       case MaxPerIdealWeight:
       {
         vRow.result = DoubleUtils.getMax(vRow.results) / DoubleUtils.getAverage(vRow.idealWeight);
-        vRow.engine = "Maximum of " + String.format("%."+3+"g", vRow.result); //StringUtils.toString(vRow.mean,3);
+        vRow.engine = "Maximum of " + String.format("%."+vRow.doubleFormat, vRow.result); //StringUtils.toString(vRow.mean,3);
         break;
       }
       case WaveformMinPerIdealWeight:
@@ -829,7 +832,7 @@ public abstract class ValidationTool
         List<Double> xMin = new ArrayList<Double>();
         List<Double> yMin = new ArrayList<Double>();
         List<Double> xMax = new ArrayList<Double>();
-        List<Double> yMax = new ArrayList<Double>();    
+        List<Double> yMax = new ArrayList<Double>();
         WaveformUtils.getPeriodBounds(vRow.idealWeight, vRow.results, xMin, yMin, xMax, yMax);
         List<Double> resultPerWeight = new ArrayList<Double>();
         for(int i=0; i<yMin.size(); i++)
@@ -844,7 +847,7 @@ public abstract class ValidationTool
         List<Double> xMin = new ArrayList<Double>();
         List<Double> yMin = new ArrayList<Double>();
         List<Double> xMax = new ArrayList<Double>();
-        List<Double> yMax = new ArrayList<Double>();    
+        List<Double> yMax = new ArrayList<Double>();
         WaveformUtils.getPeriodBounds(vRow.idealWeight, vRow.results, xMin, yMin, xMax, yMax);
         List<Double> resultPerWeight = new ArrayList<Double>();
         for(int i=0; i<yMax.size(); i++)
@@ -865,6 +868,8 @@ public abstract class ValidationTool
       vRow.error = danger+"Not found in result"+endSpan;
       return false;
     }
+    // Round our result value to it's specified precision
+    vRow.result = Double.parseDouble(String.format("%."+vRow.doubleFormat, vRow.result));
     
     if(!Double.isNaN(vRow.intervalMin)&&!Double.isNaN(vRow.intervalMax))
     {     
@@ -883,7 +888,7 @@ public abstract class ValidationTool
       }
     }
     else if(!Double.isNaN(vRow.refValue))
-    {// What is the % difference between the value and the test value      
+    {// What is the % difference between the value and the test value
       if(vRow.dType == DataType.Patient2SystemMax && vRow.result <= vRow.refValue)
       {
         vRow.resultError = 0;
@@ -919,9 +924,13 @@ public abstract class ValidationTool
       return false;
     }
     
-    if(Double.isNaN(vRow.resultError))
+    if(Double.isNaN(vRow.resultError) || Double.isInfinite(vRow.resultError))
     {
-      vRow.error  = warning+"N/A : divide by 0"+endSpan;
+      vRow.error  = "N/A : divide by 0";
+    }
+    else if(Double.isInfinite(vRow.resultError))
+    {
+      vRow.error  = "N/A : divide by 0";
     }
     else
     {    
@@ -941,7 +950,7 @@ public abstract class ValidationTool
   
   protected boolean getResult(ValidationRow vRow)
   {
-    if(vRow.name.startsWith("Carina-CarbonDioxide"))
+    if(vRow.name.startsWith("Bladder-Lactate-Concentration"))
       Log.info("Here");
     
     if(vRow.dType == DataType.MinPerIdealWeight || vRow.dType == DataType.MaxPerIdealWeight || vRow.dType == DataType.MeanPerIdealWeight|| 

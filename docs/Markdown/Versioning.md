@@ -14,9 +14,14 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
 ## Pulse v2.3.0 (January 2020)
 
 - Software Architecture
-  - Added a <i>Multiply</i> value setting, similar to <i>Increment</i>
-  - Created separate <i>Initial</i> and <i>Current</i> patient definitions
-  - Updated general math exponential functions to be more intuitive
+  - C# API Updates
+    - Added Data Request support for requesting any data from the engine
+    - Added support for patient creation, with or without chronic conditions
+    - Added support for more actions
+  - C++ API Updates
+    - Created separate <i>Initial</i> and <i>Current</i> patient definitions
+    - Updated general math exponential functions to be more intuitive
+    - Added a <i>Multiply</i> value setting, similar to <i>Increment</i>
 - Physiology Models
   - Patient lung volumes are now determined using ideal body weight rather than actual body weight
   - Significant respiratory model updates
@@ -32,12 +37,22 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
     - Refactored conscious respiration, leading to improved spirometry curves
     - More/better validation
   - Updated anesthesia machine circuit to use pressure sources for supplying gas, rather than flow sources to avoid issues with flow source pressure calculations
+  
+### Congratulations
+
+Congratulations and thank you to everyone who contributed to this release. This release, we would like to specially recognize our 3 new contributors:
+
+  - Hongpeng Liu
+  - Mattias Lantz Cronqvist
+  - Anusha Muralidharan
 
 ## Planned Improvements
 
+- Python bindings
 - Black box circuit/compartment components
 - Sepsis
 - Hemorrhagic Shock
+- Hemorrhage methodology update for better performance and usability
 - Work of breathing and respiratory fatigue models
 - A second order baroreceptor model
 - Modularity improvements for system/model/circuit swapping
@@ -116,7 +131,7 @@ The following are known issues with the current version of the software:
 - Fixed multi-platform compiling bugs
 - Moved from an in-source to out-of-source build
   - src tree is treated as read only
-  - See a description <a href="https://cmake.org/Wiki/CMake_FAQ#What_is_an_.22out-of-source.22_build.3F">here</a>
+  - See a description <a href="https://gitlab.kitware.com/cmake/community/-/wikis/FAQ#out-of-source-build-trees">here</a>
 - Full CMake Builds
   - Replaced all ant and scripts (.sh and .bat) with CMake
     - Improves build support across all target platforms
