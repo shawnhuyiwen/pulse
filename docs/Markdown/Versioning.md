@@ -126,7 +126,7 @@ The following are known issues with the current version of the software:
 - CMake build improvements
   - Pulse builds and runs on single board pc's and all major operating systems
 
-### Pulse v1.0.0 (September 2017) :
+### Pulse v1.0.0 (September 2017)
 
 - Fixed multi-platform compiling bugs
 - Moved from an in-source to out-of-source build
