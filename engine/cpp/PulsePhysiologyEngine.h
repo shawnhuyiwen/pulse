@@ -7,6 +7,7 @@
 // CDM Features in use
 #include "PhysiologyEngine.h"
 #include "utils/ScopedMutex.h"
+#include "engine/SEEventManager.h"
 
 #include <memory>
 
@@ -24,6 +25,53 @@
     #endif
   #endif
 #endif
+
+/**
+ * An instance of Pulse where the interface is define in stl and base data types.
+ * This interface is a thunk layer using serialized cdm objects to drive a Pulse engine.
+ */
+class PULSE_DECL PulseEngineThunk : public LoggerForward, public SEEventHandler
+{
+public:
+  PulseEngineThunk(std::string const& logfile = "", bool cout_enabled = true, std::string const& data_dir = ".");
+  ~PulseEngineThunk();
+
+  bool SerializeFromFile(std::string const& filename, std::string const& data_requests, SerializationFormat format, double sim_time_s);
+  bool SerializeToFile(std::string const& filename, SerializationFormat format);
+  bool SerializeFromString(std::string const& state, std::string const& data_requests, SerializationFormat format, double sim_time_s);
+  std::string SerializeToString(SerializationFormat format);
+
+  bool InitializeEngine(std::string const& patient_configuration, std::string const& data_requests, SerializationFormat format);
+
+  void KeepLogMessages(bool keep);
+  std::string PullLogMessages(SerializationFormat format);
+  void KeepEventChanges(bool keep);
+
+  std::string PullEvents(SerializationFormat format);
+  std::string PullActiveEvents(SerializationFormat format);
+
+  bool ProcessActions(std::string const& actions, SerializationFormat format);
+
+  bool AdvanceTimeStep();
+
+  double* PullData();
+  void PullData(std::vector<double>& data);
+
+  void ForwardDebug(const std::string& msg, const std::string& origin);
+  void ForwardInfo(const std::string& msg, const std::string& origin);
+  void ForwardWarning(const std::string& msg, const std::string& origin);
+  void ForwardError(const std::string& msg, const std::string& origin);
+  void ForwardFatal(const std::string& msg, const std::string& origin);
+
+  void HandleEvent(eEvent type, bool active, const SEScalarTime* time = nullptr);
+
+protected:
+  void SetupDefaultDataRequests();
+
+private:
+  class pimpl;
+  pimpl* data;
+};
 
 PULSE_DECL std::unique_ptr<PhysiologyEngine> CreatePulseEngine(const std::string& logfile, const std::string& data_dir = ".");
 PULSE_DECL std::unique_ptr<PhysiologyEngine> CreatePulseEngine(Logger* logger = nullptr, const std::string& data_dir =".");

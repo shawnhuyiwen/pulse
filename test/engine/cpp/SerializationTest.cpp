@@ -17,7 +17,7 @@
 #include "patient/actions/SEForcedExhale.h"
 #include "patient/actions/SEForcedInhale.h"
 #include "patient/actions/SEUseInhaler.h"
-#include "patient/actions/SEBreathHold.h"
+#include "patient/actions/SEForcedPause.h"
 #include "patient/actions/SESubstanceBolus.h"
 
 #include "system/equipment/anesthesiamachine/SEAnesthesiaMachine.h"
@@ -91,16 +91,16 @@ void PulseEngineTest::InhalerState(PhysiologyEngine* pc, HowToTracker& tracker)
  
   SEForcedExhale& exhale = cResp.AddForcedExhale();
   exhale.GetExpiratoryReserveVolumeFraction().SetValue(1.0);
-  exhale.GetPeriod().SetValue(3.0, TimeUnit::s);  
+  exhale.GetExhalePeriod().SetValue(3.0, TimeUnit::s);  
 
   SEForcedInhale& inhale = cResp.AddForcedInhale();
   inhale.GetInspiratoryCapacityFraction().SetValue(1.0);
-  inhale.GetPeriod().SetValue(5.0, TimeUnit::s);
+  inhale.GetInhalePeriod().SetValue(5.0, TimeUnit::s);
 
   SEUseInhaler& inhaler = cResp.AddUseInhaler();
 
-  SEBreathHold& hold = cResp.AddBreathHold();
-  hold.GetPeriod().SetValue(10, TimeUnit::s);
+  SEForcedPause& pause = cResp.AddForcedPause();
+  pause.GetPeriod().SetValue(10, TimeUnit::s);
 
   pc->ProcessAction(cResp);
   tracker.AdvanceModelTime(5);

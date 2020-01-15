@@ -30,7 +30,7 @@ public class DoxygenPreprocessor
           else
             tDir = sDir;
 
-          List<String> found = FileUtils.findFiles(sDir.getAbsolutePath(), "md", true);      
+          List<String> found = FileUtils.findFiles(sDir.getAbsolutePath(), "md", true);
           for (String fName : found)
           {        
             if(new File(fName).isDirectory())
@@ -83,7 +83,7 @@ public class DoxygenPreprocessor
         try
         {
           // Read this file
-          FileReader iFile = new FileReader(iName);            
+          FileReader iFile = new FileReader(iName);
           BufferedReader insertFile = new BufferedReader(iFile);
           while ((line = insertFile.readLine()) != null)
           {

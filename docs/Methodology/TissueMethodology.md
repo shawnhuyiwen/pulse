@@ -22,12 +22,7 @@ Groups of cells in the body which share a common embryonic origin can be describ
 @anchor tissue-data-flow
 Data Flow
 ---------
-Like the other systems, the %Tissue system uses the execution structure described in @ref SystemMethodology. Figure 1 shows the data flow.
-
-<img src="./Images/Tissue/TissueDataFlow.png" width="900">
-<center>
-<i>Figure 1. The %Tissue data flow consists of a Preprocess, Process, and Post Process loop. Conditions are applied during initialization prior to executing the loop. Albumin is produced in the preprocess step. Most of the tissue functionality is executed during the process step, including all modes of mass transport and conversion. Time is advanced in the postprocess step.</i>
-</center><br>
+Like the other systems, the %Tissue system uses the execution structure described in @ref SystemMethodology.
 
 ### Preprocess
 #### Produce Albumin

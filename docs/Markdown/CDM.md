@@ -109,6 +109,7 @@ The circuit compartment fluid dynamics data is combined in the following manner:
     - Volume - The sum of all the volumes for each node in the compartment for a particular substance
     - Volume Fraction - The compartment's substance volume mass divided by the compartment volume
 
+@anchor common-algorithms
 ##Common Framework
 
 The CDM is implemented as a set of classes built to reflect the organization of the data dictionary. 

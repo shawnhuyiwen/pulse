@@ -89,6 +89,7 @@ Equipment:
 %Environment:
 - @ref EnvironmentMethodology
 
+@anchor system-solvers
 ### Solvers
 
 The engine of also comes with verified tools for extensibility and elimination of potential error sources:
@@ -151,7 +152,7 @@ maintains three time steps for elements and parameters. These times are:
 -   Next - The next values are what will be used to calculate the system
     state on the next process call.
 
-@anchor system-stabilization	
+@anchor system-stabilization
 ### Stabilization
 
 The engine stabilizes with a multi-step process. The engine must be initialized and reach a stable state prior to modifying the patient condition. This is completed by using a dynamic stabilization protocol to execute the engine until a specified set of criteria are met, then any patient chronic conditions are applied. These conditions modify patient parameters and model values to represent the new patient state. The engine must restabilize using the dynamic protocol to achieve a stable state. This process is outlined in Figure 3.

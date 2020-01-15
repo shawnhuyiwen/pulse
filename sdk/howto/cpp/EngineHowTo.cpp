@@ -31,6 +31,7 @@ int main()
   //HowToLobarPneumonia();
   //HowToMechanicalVentilation();
   //HowToPulmonaryFunctionTest();
+  //HowToPulmonaryFibrosis();
   //HowToSmoke();
   //HowToTensionPneumothorax();
 

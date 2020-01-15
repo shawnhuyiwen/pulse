@@ -272,7 +272,7 @@ public class CDM2MD
       if(bag.propertyName.length()>maxColumnLength[0])
         maxColumnLength[0] = bag.propertyName.length();
       if(bag.returnType.getSimpleName().length()>maxColumnLength[1])
-        maxColumnLength[1] = bag.returnType.getSimpleName().length();           
+        maxColumnLength[1] = bag.returnType.getSimpleName().length();
     }
     maxColumnLength[2] = descPrepend.length()+maxColumnLength[0];
 
@@ -315,7 +315,7 @@ public class CDM2MD
             else if(bag.propertyName.equals("Commands"))
             {
               writer.print("|"+"List of Commands");
-              String tables = "@ref BreathHoldTable <br> @ref ForcedExhaleTable <br> @ref ForcedInhaleTable <br> @ref UseInhalerTable";
+              String tables = "@ref ForcedPauseTable <br> @ref ForcedExhaleTable <br> @ref ForcedInhaleTable <br> @ref UseInhalerTable";
               writer.print("|"+tables);
             }
             else if(bag.propertyName.equals("SubstanceQuantities") && tableName.startsWith("Gas"))
@@ -384,7 +384,7 @@ public class CDM2MD
     }
     catch(Exception ex)
     {
-      Log.error("Error writing cdm table for "+tableName,ex);      
+      Log.error("Error writing cdm table for "+tableName,ex);
     }
     writer.print("\n<hr>\n");
   }

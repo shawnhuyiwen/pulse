@@ -116,12 +116,6 @@ The core and skin temperatures are recorded in this function. In addition, the c
 ### Postprocess
 The Postprocess step moves everything calculated in Process from the next timestep calculation to the current timestep calculation. This allows all other systems access to the information when completing their preprocess analysis for the next timestep.
 
-<br>
-<img src="./Images/Energy/EnergyDataFlow.png" width="900">
-<center>
-<i>Figure 3. The data flow for the %Energy System consists of Preprocess, Process, and Postprocess. Preprocess determines the circuit element values based on feedback mechanisms engine actions. Process uses the generic @ref CircuitMethodology to solve the temperature circuit for temperatures and heat transfer rates. Postprocess updates these quantities to the next time step and then begins advancing time, which causes the loop to repeat.</i>
-</center><br>
-
 @anchor energy-features
 Features, Capabilities, and Dependencies
 ----------------------------------------

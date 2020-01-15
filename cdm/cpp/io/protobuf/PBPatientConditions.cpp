@@ -18,6 +18,7 @@
 #include "patient/conditions/SEConsumeMeal.h"
 #include "patient/conditions/SEImpairedAlveolarExchange.h"
 #include "patient/conditions/SELobarPneumonia.h"
+#include "patient/conditions/SEPulmonaryFibrosis.h"
 #include "patient/conditions/SESepsis.h"
 
 void PBPatientCondition::Serialize(const cdm::PatientConditionData& src, SEPatientCondition& dst)
@@ -318,6 +319,34 @@ void PBPatientCondition::Copy(const SELobarPneumonia& src, SELobarPneumonia& dst
   PBPatientCondition::Serialize(data, dst);
 }
 
+void PBPatientCondition::Load(const cdm::PulmonaryFibrosisData& src, SEPulmonaryFibrosis& dst)
+{
+  PBPatientCondition::Serialize(src, dst);
+}
+void PBPatientCondition::Serialize(const cdm::PulmonaryFibrosisData& src, SEPulmonaryFibrosis& dst)
+{
+  PBPatientCondition::Serialize(src.patientcondition(), dst);
+  if (src.has_severity())
+    PBProperty::Load(src.severity(), dst.GetSeverity());
+}
+cdm::PulmonaryFibrosisData* PBPatientCondition::Unload(const SEPulmonaryFibrosis& src)
+{
+  cdm::PulmonaryFibrosisData* dst = new cdm::PulmonaryFibrosisData();
+  PBPatientCondition::Serialize(src, *dst);
+  return dst;
+}
+void PBPatientCondition::Serialize(const SEPulmonaryFibrosis& src, cdm::PulmonaryFibrosisData& dst)
+{
+  PBPatientCondition::Serialize(src, *dst.mutable_patientcondition());
+  if (src.HasSeverity())
+    dst.set_allocated_severity(PBProperty::Unload(*src.m_Severity));
+}
+void PBPatientCondition::Copy(const SEPulmonaryFibrosis& src, SEPulmonaryFibrosis& dst)
+{
+  cdm::PulmonaryFibrosisData data;
+  PBPatientCondition::Serialize(src, data);
+  PBPatientCondition::Serialize(data, dst);
+}
 
 void PBPatientCondition::Load(const cdm::SepsisData& src, SESepsis& dst)
 {
@@ -406,6 +435,12 @@ SEPatientCondition* PBPatientCondition::Load(const cdm::AnyPatientConditionData&
     PBPatientCondition::Load(any.lobarpneumonia(), *a);
     return a;
   }
+  case cdm::AnyPatientConditionData::ConditionCase::kPulmonaryFibrosis:
+  {
+    SEPulmonaryFibrosis* a = new SEPulmonaryFibrosis();
+    PBPatientCondition::Load(any.pulmonaryfibrosis(), *a);
+    return a;
+  }
   case cdm::AnyPatientConditionData::ConditionCase::kSepsis:
   {
     SESepsis* a = new SESepsis();
@@ -471,6 +506,12 @@ cdm::AnyPatientConditionData* PBPatientCondition::Unload(const SEPatientConditio
   if (lp != nullptr)
   {
     any->set_allocated_lobarpneumonia(PBPatientCondition::Unload(*lp));
+    return any;
+  }
+  const SEPulmonaryFibrosis* pf = dynamic_cast<const SEPulmonaryFibrosis*>(&condition);
+  if (pf != nullptr)
+  {
+    any->set_allocated_pulmonaryfibrosis(PBPatientCondition::Unload(*pf));
     return any;
   }
   const SESepsis* s = dynamic_cast<const SESepsis*>(&condition);

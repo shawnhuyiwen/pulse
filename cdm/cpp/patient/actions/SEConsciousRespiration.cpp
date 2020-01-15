@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "patient/actions/SEConsciousRespiration.h"
 #include "patient/actions/SEConsciousRespirationCommand.h"
-#include "patient/actions/SEBreathHold.h"
+#include "patient/actions/SEForcedPause.h"
 #include "patient/actions/SEForcedExhale.h"
 #include "patient/actions/SEForcedInhale.h"
 #include "patient/actions/SEUseInhaler.h"
@@ -12,7 +12,7 @@
 
 SEConsciousRespiration::SEConsciousRespiration() : SEPatientAction()
 {
-  m_ClearCommands = true;
+  m_StartImmediately = false;
 }
 
 SEConsciousRespiration::~SEConsciousRespiration()
@@ -23,12 +23,13 @@ SEConsciousRespiration::~SEConsciousRespiration()
 void SEConsciousRespiration::Clear()
 {
   SEPatientAction::Clear();
-  if (m_ClearCommands)
-    DELETE_VECTOR(m_Commands);
+  DELETE_VECTOR(m_Commands);
+  m_StartImmediately = false;
 }
 
 void SEConsciousRespiration::Copy(const SEConsciousRespiration& src)
 {
+
   PBPatientAction::Copy(src, *this);
 }
 
@@ -42,6 +43,19 @@ bool SEConsciousRespiration::IsActive() const
   return SEPatientAction::IsActive();
 }
 
+bool SEConsciousRespiration::StartImmediately() const
+{
+  return m_StartImmediately;
+}
+void SEConsciousRespiration::SetStartImmediately(bool b)
+{
+  m_StartImmediately = b;
+}
+
+bool SEConsciousRespiration::HasCommands() const
+{
+  return !m_Commands.empty();
+}
 SEConsciousRespirationCommand* SEConsciousRespiration::GetActiveCommand()
 {
   if (!m_Commands.empty())
@@ -72,9 +86,9 @@ SEForcedInhale& SEConsciousRespiration::AddForcedInhale()
   return *myIn;
 }
 
-SEBreathHold& SEConsciousRespiration::AddBreathHold()
+SEForcedPause& SEConsciousRespiration::AddForcedPause()
 {
-  SEBreathHold* myHold = new SEBreathHold();
+  SEForcedPause* myHold = new SEForcedPause();
   m_Commands.push_back(myHold);
   return *myHold;
 }

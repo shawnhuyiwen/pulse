@@ -1,66 +1,69 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-public class SELobarPneumoniaExacerbation : SEPatientAction
+namespace Pulse.CDM
 {
-  protected SEScalar0To1 severity;
-  protected SEScalar0To1 leftLungAffected;
-  protected SEScalar0To1 rightLungAffected;
-  
-  public SELobarPneumoniaExacerbation()
+  public class SELobarPneumoniaExacerbation : SEPatientAction
   {
-    severity = null;
-    leftLungAffected = null;
-    rightLungAffected = null;
-  }
-  
-  public override void Clear()
-  {
-    base.Clear();
-    if (severity != null)
-      severity.Invalidate();
-    if (leftLungAffected != null)
-      leftLungAffected.Invalidate();
-    if (rightLungAffected != null)
-      rightLungAffected.Invalidate();
-  }
-  
-  public override bool IsValid()
-  {
-    return HasSeverity() && HasLeftLungAffected() && HasRightLungAffected();
-  }
-  
-  public bool HasSeverity()
-  {
-    return severity == null ? false : severity.IsValid();
-  }
-  public SEScalar0To1 GetSeverity()
-  {
-    if (severity == null)
-      severity = new SEScalar0To1();
-    return severity;
-  }
+    protected SEScalar0To1 severity;
+    protected SEScalar0To1 left_lung_affected;
+    protected SEScalar0To1 right_lung_affected;
 
-  public bool HasLeftLungAffected()
-  {
-    return leftLungAffected == null ? false : leftLungAffected.IsValid();
-  }
-  public SEScalar0To1 GetLeftLungAffected()
-  {
-    if (leftLungAffected == null)
-      leftLungAffected = new SEScalar0To1();
-    return leftLungAffected;
-  }
+    public SELobarPneumoniaExacerbation()
+    {
+      severity = null;
+      left_lung_affected = null;
+      right_lung_affected = null;
+    }
 
-    
-  public bool HasRightLungAffected()
-  {
-    return rightLungAffected == null ? false : rightLungAffected.IsValid();
-  }
-  public SEScalar0To1 GetRightLungAffected()
-  {
-    if (rightLungAffected == null)
-      rightLungAffected = new SEScalar0To1();
-    return rightLungAffected;
+    public override void Clear()
+    {
+      base.Clear();
+      if (severity != null)
+        severity.Invalidate();
+      if (left_lung_affected != null)
+        left_lung_affected.Invalidate();
+      if (right_lung_affected != null)
+        right_lung_affected.Invalidate();
+    }
+
+    public override bool IsValid()
+    {
+      return HasSeverity() && HasLeftLungAffected() && HasRightLungAffected();
+    }
+
+    public bool HasSeverity()
+    {
+      return severity == null ? false : severity.IsValid();
+    }
+    public SEScalar0To1 GetSeverity()
+    {
+      if (severity == null)
+        severity = new SEScalar0To1();
+      return severity;
+    }
+
+    public bool HasLeftLungAffected()
+    {
+      return left_lung_affected == null ? false : left_lung_affected.IsValid();
+    }
+    public SEScalar0To1 GetLeftLungAffected()
+    {
+      if (left_lung_affected == null)
+        left_lung_affected = new SEScalar0To1();
+      return left_lung_affected;
+    }
+
+
+    public bool HasRightLungAffected()
+    {
+      return right_lung_affected == null ? false : right_lung_affected.IsValid();
+    }
+    public SEScalar0To1 GetRightLungAffected()
+    {
+      if (right_lung_affected == null)
+        right_lung_affected = new SEScalar0To1();
+      return right_lung_affected;
+    }
   }
 }

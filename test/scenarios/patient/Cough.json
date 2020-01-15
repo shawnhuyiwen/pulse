@@ -396,29 +396,19 @@
                 "Value": 0.25
               }
             },
-            "Period": {
+            "InhalePeriod": {
               "ScalarTime": {
                 "Value": 0.7,
                 "Unit": "s"
               }
-            }
-          }
-        }, {
-          "BreathHold": {
-            "Period": {
+            },
+			"HoldPeriod": {
               "ScalarTime": {
                 "Value": 0.25,
                 "Unit": "s"
               }
-            }
-          }
-        }, {
-          "ForcedExhale": {
-            "ExpiratoryReserveVolumeFraction": {
-              "Scalar0To1": {
-              }
             },
-            "Period": {
+			"ReleasePeriod": {
               "ScalarTime": {
                 "Value": 0.05,
                 "Unit": "s"
@@ -426,7 +416,7 @@
             }
           }
         }, {
-          "BreathHold": {
+          "ForcedPause": {
             "Period": {
               "ScalarTime": {
                 "Value": 0.5,

@@ -116,13 +116,6 @@ There is no system specific function for Post Process in %Gastrointestinal.
 ### Assessments
 There are no system specific assessments in %Gastrointestinal.
 
-<br>
-<img src="./Images/GI/GastrointestinalDataFlow.png" width="600">
-<center>
-*Figure 2. The data flow for the %Gastrointestinal System consists of a Reset, Conditions, Preprocess, Process, Post Process, and Assessments. 
-Only the Reset, Conditions, and Preprocess have system-specific functionality.*
-</center><br>
-
 @anchor GI-features
 Features, Capabilities, and Dependencies 
 ----------------------
@@ -132,7 +125,7 @@ Features, Capabilities, and Dependencies
 @image html GICircuit.png
 <center>
 <i>
-Figure 4. The %GI circuit is made up of nodes and paths with elements and is connected to extravascular tissue and the cardiovascular system.
+Figure 2. The %GI circuit is made up of nodes and paths with elements and is connected to extravascular tissue and the cardiovascular system.
 </i>
 </center><br>
 

@@ -65,7 +65,7 @@ public class ScenarioTestDriver implements SETestDriver.Executor
       log = outputFile.replaceAll(".json", "-"+patientName+".log");
       results = outputFile.replaceAll(".json", "-"+patientName+"Results.csv");
       
-      if(builder.getStartType().hasPatientConfiguration())      
+      if(builder.getStartType().hasPatientConfiguration())
       {
       	  builder.getStartTypeBuilder().getPatientConfigurationBuilder().clearPatient();
           builder.getStartTypeBuilder().getPatientConfigurationBuilder().setPatientFile(job.patientFile);
@@ -76,7 +76,7 @@ public class ScenarioTestDriver implements SETestDriver.Executor
           builder.getStartTypeBuilder().getPatientConfigurationBuilder().setPatientFile(job.patientFile);
       }      
     }
-    if(job.useState && builder.getStartType().hasPatientConfiguration())      
+    if(job.useState && builder.getStartType().hasPatientConfiguration())
     {
       	String pFile = pBuilder.getScenario().getStartType().getPatientConfiguration().getPatientFile();
       	pFile =  pFile.substring(0, pFile.indexOf(".json"));
@@ -86,7 +86,7 @@ public class ScenarioTestDriver implements SETestDriver.Executor
     }
 
     if(job.autoSerialization!=null)
-    	pBuilder.getConfigurationBuilder().setAutoSerialization(SEAutoSerialization.unload(job.autoSerialization)); 
+    	pBuilder.getConfigurationBuilder().setAutoSerialization(SEAutoSerialization.unload(job.autoSerialization));
 
     try 
     {

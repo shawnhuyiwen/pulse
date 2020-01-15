@@ -33,7 +33,7 @@ public:
   virtual void ToString(std::ostream &str) const;
 
 protected:
-  SEScalar0To1*           m_Severity;
+  SEScalar0To1* m_Severity;
   SEScalar0To1* m_LeftLungAffected;
   SEScalar0To1* m_RightLungAffected;
 };

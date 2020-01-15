@@ -12,6 +12,7 @@ CDM_BIND_DECL2(ChronicVentricularSystolicDysfunction)
 CDM_BIND_DECL2(ConsumeMeal)
 CDM_BIND_DECL2(ImpairedAlveolarExchange)
 CDM_BIND_DECL2(LobarPneumonia)
+CDM_BIND_DECL2(PulmonaryFibrosis)
 CDM_BIND_DECL2(Sepsis)
 CDM_BIND_DECL(AnyPatientConditionData)
 class SESubstanceManager;
@@ -81,6 +82,12 @@ public:
   static void Serialize(const cdm::LobarPneumoniaData& src, SELobarPneumonia& dst);
   static void Serialize(const SELobarPneumonia& src, cdm::LobarPneumoniaData& dst);
   static void Copy(const SELobarPneumonia& src, SELobarPneumonia& dst);
+
+  static void Load(const cdm::PulmonaryFibrosisData& src, SEPulmonaryFibrosis& dst);
+  static cdm::PulmonaryFibrosisData* Unload(const SEPulmonaryFibrosis& src);
+  static void Serialize(const cdm::PulmonaryFibrosisData& src, SEPulmonaryFibrosis& dst);
+  static void Serialize(const SEPulmonaryFibrosis& src, cdm::PulmonaryFibrosisData& dst);
+  static void Copy(const SEPulmonaryFibrosis& src, SEPulmonaryFibrosis& dst);
 
   static void Load(const cdm::SepsisData& src, SESepsis& dst);
   static cdm::SepsisData* Unload(const SESepsis& src);
