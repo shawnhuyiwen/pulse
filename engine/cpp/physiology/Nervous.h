@@ -41,10 +41,13 @@ protected:
   // Serializable member variables (Set in Initialize and in schema)
   double m_ArterialOxygenBaseline_mmHg;
   double m_ArterialCarbonDioxideBaseline_mmHg;
+  double m_LastMeanArterialPressure_mmHg;
   //Baroreceptor threshold parameters
   bool   m_BaroreceptorFeedbackStatus;
   double m_BaroreceptorActiveTime_s;
   double m_BaroreceptorMeanArterialPressureBaseline_mmHg;
+  double m_TotalSympatheticFraction;
+
 
   // Stateless member variable (Set in SetUp())
   bool m_FeedbackActive; // An overall flag used to turn off baro/chemo receptors during stabilization
