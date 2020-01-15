@@ -95,6 +95,9 @@ message NervousData
   cdm.NervousSystemData          Common                                              = 1;
   double                         ArterialOxygenBaseline_mmHg                         = 2;
   double                         ArterialCarbonDioxideBaseline_mmHg                  = 3;
+  bool                           BaroreceptorFeedbackStatus                          = 4;
+  double                         BaroreceptorActiveTime_s                            = 5;
+  double                         BaroreceptorMeanArterialPressureBaseline_mmHg       = 6;
 }
 
 message RenalData
@@ -119,52 +122,53 @@ message RenalData
 message RespiratoryData
 {// Next value : 45
   cdm.RespiratorySystemData      Common                                              = 1;
-  double                         InitialExpiratoryReserveVolume_L                    = 2;
-  double                         InitialFunctionalResidualCapacity_L                 = 3;
-  double                         InitialInspiratoryCapacity_L                        = 4;
-  double                         InitialResidualVolume_L                             = 5;
   
-  bool                           BreathingCycle                                      = 6;
-  bool                           NotBreathing                                        = 7;
-  double                         TopBreathTotalVolume_L                              = 8;
-  double                         TopBreathAlveoliVolume_L                            = 9;
-  double                         TopBreathDeadSpaceVolume_L                          = 10;
-  double                         TopBreathPleuralPressure_cmH2O                      = 11;
-  double                         LastCardiacCycleBloodPH                             = 12;
-  double                         TopCarinaO2                                         = 13;
-  double                         TopBreathElapsedTime_min                            = 14;
-  double                         BottomBreathElapsedTime_min                         = 15;
-  double                         BottomBreathTotalVolume_L                           = 16;
-  double                         BottomBreathAlveoliVolume_L                         = 17;
-  double                         BottomBreathDeadSpaceVolume_L                       = 18;
-  double                         BottomBreathPleuralPressure_cmH2O                   = 19;  
-  cdm.RunningAverageData         BloodPHRunningAverage                               = 20;
+  bool                           BreathingCycle                                      = 2;
+  bool                           NotBreathing                                        = 3;
+  double                         TopBreathTotalVolume_L                              = 4;
+  double                         TopBreathAlveoliVolume_L                            = 5;
+  double                         TopBreathPleuralVolume_L                            = 6;
+  double                         TopBreathAlveoliPressure_cmH2O                      = 7;
+  double                         TopBreathDriverPressure_cmH2O                       = 8;
+  double                         TopBreathPleuralPressure_cmH2O                      = 9;
+  double                         LastCardiacCycleBloodPH                             = 10;
+  double                         TopCarinaO2                                         = 11;
+  double                         TopBreathElapsedTime_min                            = 12;
+  double                         BottomBreathElapsedTime_min                         = 13;
+  double                         BottomBreathTotalVolume_L                           = 14;
+  double                         BottomBreathAlveoliVolume_L                         = 15;
+  double                         BottomBreathPleuralVolume_L                         = 16;
+  double                         BottomBreathAlveoliPressure_cmH2O                   = 17;
+  double                         BottomBreathDriverPressure_cmH2O                    = 18;
+  double                         BottomBreathPleuralPressure_cmH2O                   = 19;
+  double                         PeakAlveolarPressure_cmH2O                          = 20;
+  double                         MaximalAlveolarPressure_cmH2O                       = 21;
+  cdm.RunningAverageData         BloodPHRunningAverage                               = 22;
   
-  double                         ArterialO2PartialPressure_mmHg                      = 21;
-  double                         ArterialCO2PartialPressure_mmHg                     = 22;
-  double                         BreathingCycleTime_s                                = 23;
-  double                         DefaultDrivePressure_cmH2O                          = 24;
-  double                         DriverInspirationTime_s                             = 25;
+  double                         ArterialO2PartialPressure_mmHg                      = 23;
+  double                         ArterialCO2PartialPressure_mmHg                     = 24;
+  double                         BreathingCycleTime_s                                = 25;
   double                         DriverPressure_cmH2O                                = 26;
-  double                         DriverPressureMin_cmH2O                             = 27;
-  double                         ElapsedBreathingCycleTime_min                       = 28;
-  double                         IEscaleFactor                                       = 29;
-  double                         InstantaneousFunctionalResidualCapacity_L           = 30;
-  double                         MaxDriverPressure_cmH2O                             = 31;
-  double                         PeakRespiratoryDrivePressure_cmH2O                  = 32;
-  double                         PreviousTargetAlveolarVentilation_L_Per_min         = 33;
-  double                         VentilationFrequency_Per_min                        = 34;
-  double                         VentilationToTidalVolumeSlope                       = 35;
-  cdm.RunningAverageData         ArterialO2RunningAverage_mmHg                       = 36;
-  cdm.RunningAverageData         ArterialCO2RunningAverage_mmHg                      = 37;
+  double                         ElapsedBreathingCycleTime_min                       = 27;
+  double                         IERatioScaleFactor                                  = 28;
+  double                         PeakInspiratoryPressure_cmH2O                       = 29;
+  double                         PeakExpiratoryPressure_cmH2O                        = 30;
+  double                         PreviousTargetAlveolarVentilation_L_Per_min         = 31;
+  double                         VentilationFrequency_Per_min                        = 32;
+  double                         VentilationToTidalVolumeSlope                       = 33;
+  cdm.RunningAverageData         ArterialO2RunningAverage_mmHg                       = 34;
+  cdm.RunningAverageData         ArterialCO2RunningAverage_mmHg                      = 35;
+  // Muscle Pressure Waveform
+  double                         ExpiratoryHoldFraction                              = 36;
+  double                         ExpiratoryReleaseFraction                           = 37;
+  double                         ExpiratoryRiseFraction                              = 38;
+  double                         InspiratoryHoldFraction                             = 39;
+  double                         InspiratoryReleaseFraction                          = 40;
+  double                         InspiratoryRiseFraction                             = 41;
+  double                         InspiratoryToExpiratoryPauseFraction                = 42;
   
-  bool                           ConsciousBreathing                                  = 38;
-  double                         ConsciousRespirationPeriod_s                        = 39;
-  double                         ConsciousRespirationRemainingPeriod_s               = 40;
-  double                         ExpiratoryReserveVolumeFraction                     = 41;
-  double                         InspiratoryCapacityFraction                         = 42;
-  double                         ConsciousStartPressure_cmH2O                        = 43;
-  double                         ConsciousEndPressure_cmH2O                          = 44;
+  // Conscious Breathing
+  bool                           ActiveConsciousRespirationCommand                   = 43;
 }
 
 message TissueData

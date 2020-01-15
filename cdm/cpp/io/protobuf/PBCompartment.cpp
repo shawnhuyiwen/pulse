@@ -20,6 +20,7 @@
 #include "compartment/thermal/SEThermalCompartmentLink.h"
 #include "compartment/tissue/SETissueCompartment.h"
 #include "compartment/SECompartmentManager.h"
+#include "circuit/SECircuitManager.h"
 #include "circuit/thermal/SEThermalCircuitPath.h"
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceManager.h"

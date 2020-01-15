@@ -45,13 +45,17 @@ if ( CMAKE_COMPILER_IS_GNUCC )
   endif()
 endif()
 
-
-
 message(STATUS "Looking for modules here : ${CMAKE_PREFIX_PATH}")
 set(CMAKE_CXX_STANDARD_LIBRARIES "" CACHE STRING INTERNAL FORCE)
 set(CMAKE_C_STANDARD_LIBRARIES "" CACHE STRING INTERNAL FORCE)
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_INSTALL_PREFIX})
 
+set(SCHEMA_SRC "${CMAKE_SOURCE_DIR}/schema")
+set(SCHEMA_DST "${CMAKE_SOURCE_DIR}/schema/bind")
+
+if(NOT Eigen3_DIR)
+  set(Eigen3_DIR ${CMAKE_BINARY_DIR}/../eigen/install)
+endif()
 find_package(Eigen3 REQUIRED)
 
 if(WIN32)
@@ -60,6 +64,7 @@ endif()
 
 # The outer build does some custom installing of dependent libraries
 # Instead of using find_package, I will make sure things are where expected
+
 if(NOT protobuf_SRC)
   set(protobuf_SRC ${CMAKE_BINARY_DIR}/../protobuf/src/protobuf)
 endif()
@@ -68,24 +73,10 @@ set(protobuf_Header ${protobuf_SRC}/src/google/protobuf/package_info.h)
 if(NOT EXISTS ${protobuf_Header})
   message(FATAL_ERROR "I cannot find protobuf source, please set protobuf_SRC to its root directory")
 endif()
-if(NOT protobuf_INSTALL)
-  set(protobuf_INSTALL ${CMAKE_BINARY_DIR}/../protobuf/install)
+if(NOT protobuf_DIR)
+  set(protobuf_DIR ${CMAKE_BINARY_DIR}/../protobuf/install)
 endif()
-list(APPEND CMAKE_PREFIX_PATH ${protobuf_INSTALL})
-# log4cplus src should have been download to somewhere
-if(NOT log4cplus_SRC)
-  # It should be here if the outer build ran
-  set(log4cplus_SRC ${CMAKE_BINARY_DIR}/../log4cplus/src/log4cplus)
-endif()
-set(log4cplus_HEADER ${log4cplus_SRC}/include/log4cplus/logger.h)
-if(NOT EXISTS ${log4cplus_HEADER})
-  message(FATAL_ERROR "I cannot find log4cplus source, please set log4cplus_SRC to its root directory")
-endif()
-list(APPEND LOG4CPLUS_INCLUDE_DIR ${log4cplus_SRC}/include)
-list(APPEND LOG4CPLUS_INCLUDE_DIR ${log4cplus_SRC}-build/include)
-
-set(SCHEMA_SRC "${CMAKE_SOURCE_DIR}/schema")
-set(SCHEMA_DST "${CMAKE_SOURCE_DIR}/schema/bind")
+list(APPEND CMAKE_PREFIX_PATH ${protobuf_DIR})
 # Settings for protobuf configuration
 set(protobuf_BUILD_PROTOC_BINARIES OFF CACHE BOOL INTERNAL FORCE)
 set(protobuf_BUILD_SHARED_LIBS OFF CACHE BOOL INTERNAL FORCE)
@@ -93,15 +84,57 @@ set(protobuf_MSVC_STATIC_RUNTIME OFF CACHE BOOL INTERNAL FORCE)#Use our MSVC run
 set(protobuf_BUILD_TESTS OFF CACHE BOOL INTERNAL FORCE)
 set(protobuf_BUILD_EXAMPLES OFF CACHE BOOL INTERNAL FORCE)
 add_subdirectory("${protobuf_SRC}/cmake" "${protobuf_SRC}-build")
-# Setting for log4cplus configuration
-set(UNICODE OFF CACHE BOOL INTERNAL FORCE)
-set(LOG4CPLUS_SINGLE_THREADED OFF CACHE BOOL INTERNAL FORCE)
-set(LOG4CPLUS_BUILD_LOGGINGSERVER OFF CACHE BOOL INTERNAL FORCE)
-set(LOG4CPLUS_BUILD_TESTING OFF CACHE BOOL INTERNAL FORCE)
-set(LOG4CPLUS_ENABLE_DECORATED_LIBRARY_NAME OFF CACHE BOOL INTERNAL FORCE)
-set(WITH_UNIT_TESTS OFF CACHE BOOL INTERNAL FORCE)
-# Get log4cplus to install to a location so we can customize the install for Pulse
-add_subdirectory(${log4cplus_SRC} ${log4cplus_SRC}-build)
+set_target_properties (libprotobuf libprotobuf-lite PROPERTIES FOLDER protobufs)
+
+set(logger_lib)
+set(logger_SRC)
+if (${PULSE_LOGGER} STREQUAL "log4cpp")
+    # log4cpp src should have been download to somewhere
+  if(NOT logger_SRC)
+    # It should be here if the outer build ran
+    set(logger_SRC ${CMAKE_BINARY_DIR}/../log4cpp/src/log4cpp)
+  endif()
+  set(log4cpp_HEADER ${logger_SRC}/include/log4cpp/FileAppender.hh)
+  if(NOT EXISTS ${log4cpp_HEADER})
+    message(FATAL_ERROR "I cannot find log4cpp source, please set logger_SRC to its root directory")
+  endif()
+  list(APPEND LOGGER_INCLUDE_DIR ${logger_SRC}/include)
+  list(APPEND LOGGER_INCLUDE_DIR ${logger_SRC}-build/include)
+  set(BUILD_TESTING OFF CACHE BOOL INTERNAL FORCE)
+  add_subdirectory(${logger_SRC} ${logger_SRC}-build)
+  set(logger_lib log4cpp)
+elseif (${PULSE_LOGGER} STREQUAL "log4cplus")
+  # log4cplus src should have been download to somewhere
+  if(NOT logger_SRC)
+    # It should be here if the outer build ran
+    set(logger_SRC ${CMAKE_BINARY_DIR}/../log4cplus/src/log4cplus)
+  endif()
+  set(log4cplus_HEADER ${logger_SRC}/include/log4cplus/logger.h)
+  if(NOT EXISTS ${log4cplus_HEADER})
+    message(FATAL_ERROR "I cannot find log4cplus source, please set logger_SRC to its root directory")
+  endif()
+  list(APPEND LOGGER_INCLUDE_DIR ${logger_SRC}/include)
+  list(APPEND LOGGER_INCLUDE_DIR ${logger_SRC}-build/include)
+  # Setting for log4cplus configuration
+  set(UNICODE OFF CACHE BOOL INTERNAL FORCE)
+  set(LOG4CPLUS_SINGLE_THREADED OFF CACHE BOOL INTERNAL FORCE)
+  set(LOG4CPLUS_BUILD_LOGGINGSERVER OFF CACHE BOOL INTERNAL FORCE)
+  set(LOG4CPLUS_BUILD_TESTING OFF CACHE BOOL INTERNAL FORCE)
+  set(LOG4CPLUS_ENABLE_DECORATED_LIBRARY_NAME OFF CACHE BOOL INTERNAL FORCE)
+  set(WITH_UNIT_TESTS OFF CACHE BOOL INTERNAL FORCE)
+  # Get log4cplus to install to a location so we can customize the install for Pulse
+  add_subdirectory(${logger_SRC} ${logger_SRC}-build)
+  set(logger_lib log4cplus)
+endif()
+
+if(PULSE_PYTHON_BINDINGS)
+  if(NOT pybind11_DIR)
+    set(pybind11_DIR ${CMAKE_BINARY_DIR}/../pybind11/install/share/cmake/pybind11)
+  endif()
+  find_package(pybind11 CONFIG REQUIRED)
+endif()
+
+
 # Include the rest of the Pulse projects
 add_subdirectory(schema)
 add_subdirectory(cdm)
@@ -113,10 +146,11 @@ add_subdirectory(verification)
 include(${CMAKE_CURRENT_SOURCE_DIR}/PulseC.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/PulseCLR.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/PulseJNI.cmake)
+if(PULSE_PYTHON_BINDINGS)
+  include(${CMAKE_CURRENT_SOURCE_DIR}/PulsePython.cmake)
+endif()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-set_target_properties (libprotobuf libprotobuf-lite PROPERTIES FOLDER protobufs)
-
 
 file(COPY ${CMAKE_SOURCE_DIR}/bin DESTINATION ${CMAKE_INSTALL_PREFIX})
 configure_file(${CMAKE_SOURCE_DIR}/bin/run.cmake.in ${CMAKE_INSTALL_PREFIX}/bin/run.cmake @ONLY)

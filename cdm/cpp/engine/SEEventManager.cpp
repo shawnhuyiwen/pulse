@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "engine/SEEventManager.h"
 #include "properties/SEScalarTime.h"
+#include "io/protobuf/PBEvents.h"
 
 SEEventManager::SEEventManager(Logger* logger) : Loggable(logger)
 {
@@ -118,12 +119,6 @@ void SEEventManager::SetEvent(eEvent type, bool active, const SEScalarTime& time
       case eEvent::MetabolicAlkalosis:
         m_ss << " The patient is in a state of metabolic alkalosis";
         break;
-      case eEvent::MildAcuteRespiratoryDistress:
-        m_ss << " The patient has Mild Acute Respiratory Distress";
-        break;
-      case eEvent::ModerateAcuteRespiratoryDistress:
-        m_ss << " The patient has Moderate Acute Respiratory Distress";
-        break;
       case eEvent::MyocardiumOxygenDeficit:
         m_ss << " The patient's heart is not receiving enough oxygen";
         break;
@@ -135,9 +130,6 @@ void SEEventManager::SetEvent(eEvent type, bool active, const SEScalarTime& time
         break;
       case eEvent::RenalHypoperfusion:
         m_ss << " Patient has Renal Hypoperfusion";
-        break;
-      case eEvent::SevereAcuteRespiratoryDistress:
-        m_ss << " The patient has Severe Acute Respiratory Distress";
         break;
       case eEvent::Tachycardia:
         m_ss << " Patient has Tachycardia";
@@ -252,12 +244,6 @@ void SEEventManager::SetEvent(eEvent type, bool active, const SEScalarTime& time
       case eEvent::MetabolicAlkalosis:
         m_ss << " The patient is no longer in a state of metabolic alkalosis";
         break;
-      case eEvent::MildAcuteRespiratoryDistress:
-        m_ss << " Patient no longer has a Mild Acute Respiratory Distress";
-        break;
-      case eEvent::ModerateAcuteRespiratoryDistress:
-        m_ss << " Patient no longer has a Moderate Acute Respiratory Distress";
-        break;
       case eEvent::MyocardiumOxygenDeficit:
         m_ss << " Patient no longer has a Myocardium Oxygen Deficit";
         break;
@@ -269,9 +255,6 @@ void SEEventManager::SetEvent(eEvent type, bool active, const SEScalarTime& time
         break;
       case eEvent::RenalHypoperfusion:
         m_ss << " Patient no longer has Renal Hypoperfusion";
-        break;
-      case eEvent::SevereAcuteRespiratoryDistress:
-        m_ss << " Patient no longer has a Severe Acute Respiratory Distress";
         break;
       case eEvent::Tachycardia:
         m_ss << " Patient no longer has Tachycardia";
@@ -332,14 +315,63 @@ void SEEventManager::OverrideActiveState(eEvent e, const SEScalarTime& duration)
   m_EventDuration_s[e] = duration.GetValue(TimeUnit::s);
 }
 
-
 void SEEventManager::UpdateEvents(const SEScalarTime& timeStep)
 {
   for (auto& itr : m_EventDuration_s)
     itr.second += timeStep.GetValue(TimeUnit::s);
 }
 
+bool SEEventManager::GetActiveEvents(std::vector<const SEActiveEvent*>& active) const
+{
+  active.clear();
+  for (auto itr : m_EventState)
+  {
+    if (!itr.second)
+      continue;
+    SEActiveEvent* ae = new SEActiveEvent(itr.first, m_EventDuration_s.at(itr.first), TimeUnit::s);
+    active.push_back(ae);
+  }
+  return !active.empty();
+}
+
 void SEEventManager::ForwardEvents(SEEventHandler* handler) const
 {
   m_EventHandler = handler;
+}
+
+SEEventChange::SEEventChange(eEvent e, bool active, const SEScalarTime* simTime)
+{
+  m_Event = e;
+  m_Active = active;
+  if (simTime != nullptr)
+    m_SimTime.Set(*simTime);
+  else
+    m_SimTime.Invalidate();
+}
+bool SEEventChange::SerializeToString(std::vector<const SEEventChange*>& changes, std::string& output, SerializationFormat m, Logger* logger)
+{
+  return PBEvents::SerializeToString(changes, output, m, logger);
+}
+bool SEEventChange::SerializeFromString(const std::string& src, std::vector<const SEEventChange*>& changes, SerializationFormat m, Logger* logger)
+{
+  return PBEvents::SerializeFromString(src, changes, m, logger);
+}
+
+SEActiveEvent::SEActiveEvent(eEvent e, const SEScalarTime& duration)
+{
+  m_Event = e;
+  m_Duration.Set(duration);
+}
+SEActiveEvent::SEActiveEvent(eEvent e, double duration, const TimeUnit& unit)
+{
+  m_Event = e;
+  m_Duration.SetValue(duration,unit);
+}
+bool SEActiveEvent::SerializeToString(std::vector<const SEActiveEvent*>& active, std::string& output, SerializationFormat m, Logger* logger)
+{
+  return PBEvents::SerializeToString(active, output, m, logger);
+}
+bool SEActiveEvent::SerializeFromString(const std::string& src, std::vector<const SEActiveEvent*>& active, SerializationFormat m, Logger* logger)
+{
+  return PBEvents::SerializeFromString(src, active, m, logger);
 }

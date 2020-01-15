@@ -21,6 +21,7 @@ file(GLOB SRC_FILES howto/cpp/EngineHowTo.cpp
                     howto/cpp/HowTo-Hemorrhage.cpp
                     howto/cpp/HowTo-LobarPneumonia.cpp
                     howto/cpp/HowTo-MechanicalVentilation.cpp
+                    howto/cpp/HowTo-PulmonaryFibrosis.cpp
                     howto/cpp/HowTo-PulmonaryFunctionTest.cpp
                     howto/cpp/HowTo-RunScenario.cpp
                     howto/cpp/HowTo-RunThreaded.cpp
@@ -30,7 +31,7 @@ file(GLOB SRC_FILES howto/cpp/EngineHowTo.cpp
                     howto/cpp/HowTo-Serialize.cpp
                     howto/cpp/HowTo-Smoke.cpp
                     howto/cpp/HowTo-TensionPneumothorax.cpp
-                    
+
                     howto/cpp/HowTo-TestSystemCapability.cpp
 )
 source_group("" FILES ${SRC_FILES})
@@ -43,8 +44,6 @@ target_include_directories(HowToDriver PRIVATE ${CMAKE_BINARY_DIR}/schema/cpp/bi
 target_include_directories(HowToDriver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../engine/cpp)
 target_include_directories(HowToDriver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../cdm/cpp)
 target_include_directories(HowToDriver PRIVATE ${EIGEN3_INCLUDE_DIR})
-target_include_directories(HowToDriver PRIVATE ${LOG4CPLUS_INCLUDE_DIR})
-target_include_directories(HowToDriver PRIVATE ${PROTOBUF_INCLUDE_DIR})
 
 # Dependent Libraries
 target_link_libraries(HowToDriver PulseEngine)

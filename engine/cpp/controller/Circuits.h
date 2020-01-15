@@ -130,6 +130,7 @@ namespace pulse {
     DEFINE_STATIC_STRING(LeftAlveoli);
     DEFINE_STATIC_STRING(LeftAlveoliLeak);
     DEFINE_STATIC_STRING(LeftAnatomicDeadSpace);
+    DEFINE_STATIC_STRING(LeftAlveolarDeadSpace);
     DEFINE_STATIC_STRING(LeftChestLeak);
     DEFINE_STATIC_STRING(LeftPleural);
     DEFINE_STATIC_STRING(LeftPleuralConnection);
@@ -139,6 +140,7 @@ namespace pulse {
     DEFINE_STATIC_STRING(RightAlveoli);
     DEFINE_STATIC_STRING(RightAlveoliLeak);
     DEFINE_STATIC_STRING(RightAnatomicDeadSpace);
+    DEFINE_STATIC_STRING(RightAlveolarDeadSpace);
     DEFINE_STATIC_STRING(RightChestLeak);
     DEFINE_STATIC_STRING(RightPleural);
     DEFINE_STATIC_STRING(RightPleuralConnection);
@@ -162,8 +164,8 @@ namespace pulse {
     DEFINE_STATIC_STRING(LeftAlveoliToLeftAlveoliLeak);
     DEFINE_STATIC_STRING(LeftAlveoliToLeftPleuralConnection);
     DEFINE_STATIC_STRING(LeftPleuralConnectionToLeftPleural);
-    DEFINE_STATIC_STRING(LeftAnatomicDeadSpaceToLeftAlveoli);
-    DEFINE_STATIC_STRING(LeftAnatomicDeadSpaceToLeftPleuralConnection);
+    DEFINE_STATIC_STRING(LeftAnatomicDeadSpaceToLeftAlveolarDeadSpace);
+    DEFINE_STATIC_STRING(LeftAlveolarDeadSpaceToLeftAlveoli);
     DEFINE_STATIC_STRING(LeftChestLeakToLeftPleural);
     DEFINE_STATIC_STRING(LeftPleuralToEnvironment);
     DEFINE_STATIC_STRING(LeftPleuralToRespiratoryMuscle);
@@ -175,8 +177,8 @@ namespace pulse {
     DEFINE_STATIC_STRING(RightAlveoliToRightAlveoliLeak);
     DEFINE_STATIC_STRING(RightAlveoliToRightPleuralConnection);
     DEFINE_STATIC_STRING(RightPleuralConnectionToRightPleural);
-    DEFINE_STATIC_STRING(RightAnatomicDeadSpaceToRightAlveoli);
-    DEFINE_STATIC_STRING(RightAnatomicDeadSpaceToRightPleuralConnection);
+    DEFINE_STATIC_STRING(RightAnatomicDeadSpaceToRightAlveolarDeadSpace);
+    DEFINE_STATIC_STRING(RightAlveolarDeadSpaceToRightAlveoli);
     DEFINE_STATIC_STRING(RightChestLeakToRightPleural);
     DEFINE_STATIC_STRING(RightPleuralToEnvironment);
     DEFINE_STATIC_STRING(RightPleuralToRespiratoryMuscle);
@@ -201,7 +203,6 @@ namespace pulse {
     DEFINE_STATIC_STRING(Scrubber);
     DEFINE_STATIC_STRING(Selector);
     DEFINE_STATIC_STRING(Ventilator);
-    DEFINE_STATIC_STRING(VentilatorConnection);
     DEFINE_STATIC_STRING(YPiece);
   };
 
@@ -209,9 +210,9 @@ namespace pulse {
   {
   public:
     DEFINE_STATIC_STRING(EnvironmentToVentilator);
+    DEFINE_STATIC_STRING(VentilatorToEnvironment);
     DEFINE_STATIC_STRING(EnvironmentToReliefValve);
-    DEFINE_STATIC_STRING(VentilatorToVentilatorConnection);
-    DEFINE_STATIC_STRING(VentilatorConnectionToSelector);
+    DEFINE_STATIC_STRING(VentilatorToSelector);
     DEFINE_STATIC_STRING(SelectorToReliefValve);
     DEFINE_STATIC_STRING(SelectorToScrubber);
     DEFINE_STATIC_STRING(ScrubberToGasInlet);
@@ -223,7 +224,6 @@ namespace pulse {
     DEFINE_STATIC_STRING(ExpiratoryLimbToSelector);
     DEFINE_STATIC_STRING(YPieceToAnesthesiaConnection);
     DEFINE_STATIC_STRING(AnesthesiaConnectionToEnvironment);
-    DEFINE_STATIC_STRING(SelectorToEnvironment);
   };
 
   class CombinedAnesthesiaMachinePath

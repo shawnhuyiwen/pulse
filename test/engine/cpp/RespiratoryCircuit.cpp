@@ -24,7 +24,7 @@
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
-#include "properties/SEScalarFlowCompliance.h"
+#include "properties/SEScalarVolumePerPressure.h"
 #include "properties/SEScalarTime.h"
 #include "properties/SEScalarInverseVolume.h"
 #include "properties/SEScalarMassPerVolume.h"
@@ -45,8 +45,9 @@ void PulseEngineTest::RespiratoryCircuitAndTransportTest(RespiratoryConfiguratio
   std::ofstream fAerosolGraph;
 
   PulseController pc(sTestDirectory + "/RespiratoryCircuitAndTransportTest.log");
-  pc.GetPatient().SerializeFromFile("./patients/StandardMale.json",JSON);
-  pc.SetupPatient();
+  SEPatient patient(pc.GetLogger());
+  patient.SerializeFromFile("./patients/StandardMale.json", JSON);
+  pc.SetupPatient(patient);
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off); 
   pc.CreateCircuitsAndCompartments();
@@ -122,7 +123,7 @@ void PulseEngineTest::RespiratoryCircuitAndTransportTest(RespiratoryConfiguratio
   SEFluidCircuitPath *driverPath = rCircuit->GetPath(pulse::RespiratoryPath::EnvironmentToRespiratoryMuscle);
   SEGasTransporter    gtxpt(VolumePerTimeUnit::L_Per_s, VolumeUnit::L, VolumeUnit::L, pc.GetLogger());
   SELiquidTransporter ltxpt(VolumePerTimeUnit::mL_Per_s, VolumeUnit::mL, MassUnit::ug, MassPerVolumeUnit::ug_Per_mL, pc.GetLogger());
-  SEFluidCircuitCalculator calc(FlowComplianceUnit::L_Per_cmH2O, VolumePerTimeUnit::L_Per_s, FlowInertanceUnit::cmH2O_s2_Per_L, PressureUnit::cmH2O, VolumeUnit::L, FlowResistanceUnit::cmH2O_s_Per_L, pc.GetLogger());
+  SEFluidCircuitCalculator calc(VolumePerPressureUnit::L_Per_cmH2O, VolumePerTimeUnit::L_Per_s, PressureTimeSquaredPerVolumeUnit::cmH2O_s2_Per_L, PressureUnit::cmH2O, VolumeUnit::L, PressureTimePerVolumeUnit::cmH2O_s_Per_L, pc.GetLogger());
   
   //Set the reference not pressure to the standard environment
   //This is needed because we're not setting the Environment during initialization in this unit test
@@ -206,8 +207,9 @@ void PulseEngineTest::RespiratoryDriverTest(const std::string& sTestDirectory)
   TimingProfile tmr;
   tmr.Start("Test");
   PulseController pc(sTestDirectory + "/RespiratoryDriverTest.log");
-  pc.GetPatient().SerializeFromFile("./patients/StandardMale.json",JSON);
-  pc.SetupPatient();
+  SEPatient patient(pc.GetLogger());
+  patient.SerializeFromFile("./patients/StandardMale.json", JSON);
+  pc.SetupPatient(patient);
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
@@ -223,23 +225,25 @@ void PulseEngineTest::RespiratoryDriverTest(const std::string& sTestDirectory)
 
   DataTrack trk1;  
   SEFluidCircuit& RespCircuit = pc.GetCircuits().GetRespiratoryCircuit();
-  SEFluidCircuitCalculator calc(FlowComplianceUnit::L_Per_cmH2O, VolumePerTimeUnit::L_Per_s, FlowInertanceUnit::cmH2O_s2_Per_L, PressureUnit::cmH2O, VolumeUnit::L, FlowResistanceUnit::cmH2O_s_Per_L, pc.GetLogger());
+  SEFluidCircuitCalculator calc(VolumePerPressureUnit::L_Per_cmH2O, VolumePerTimeUnit::L_Per_s, PressureTimeSquaredPerVolumeUnit::cmH2O_s2_Per_L, PressureUnit::cmH2O, VolumeUnit::L, PressureTimePerVolumeUnit::cmH2O_s_Per_L, pc.GetLogger());
 
-  double deltaT_s = 1.0 / 90.0;
+  double deltaT_s = 1.0 / 50.0;
 
   SEFluidCircuitPath* driverPressurePath = RespCircuit.GetPath(pulse::RespiratoryPath::EnvironmentToRespiratoryMuscle);
   SEFluidCircuitPath* rightPleuralToRespiratoryMuscle = RespCircuit.GetPath(pulse::RespiratoryPath::RightPleuralToRespiratoryMuscle);
   SEFluidCircuitPath* leftPleuralToRespiratoryMuscle = RespCircuit.GetPath(pulse::RespiratoryPath::LeftPleuralToRespiratoryMuscle);
-
+  SEFluidCircuitPath* mouthToCarina = RespCircuit.GetPath(pulse::RespiratoryPath::MouthToCarina);
+  SEFluidCircuitPath* RightAlveoliToRightPleuralConnection = RespCircuit.GetPath(pulse::RespiratoryPath::RightAlveoliToRightPleuralConnection);
+  SEFluidCircuitPath* LeftAlveoliToLeftPleuralConnection = RespCircuit.GetPath(pulse::RespiratoryPath::LeftAlveoliToLeftPleuralConnection);
+  
   SEFluidCircuitNode* rightPleuralNode = RespCircuit.GetNode(pulse::RespiratoryNode::RightPleural);
   SEFluidCircuitNode* leftPleuralNode = RespCircuit.GetNode(pulse::RespiratoryNode::LeftPleural);
   SEFluidCircuitNode* rightDeadSpaceNode = RespCircuit.GetNode(pulse::RespiratoryNode::RightAnatomicDeadSpace);
   SEFluidCircuitNode* leftDeadSpaceNode = RespCircuit.GetNode(pulse::RespiratoryNode::LeftAnatomicDeadSpace);
   SEFluidCircuitNode* rightAlveoliNode = RespCircuit.GetNode(pulse::RespiratoryNode::RightAlveoli);
   SEFluidCircuitNode* leftAlveoliNode = RespCircuit.GetNode(pulse::RespiratoryNode::LeftAlveoli);
-
-  RespCircuit.GetNode(pulse::EnvironmentNode::Ambient)->GetNextPressure().SetValue(760, PressureUnit::mmHg);
-
+  SEFluidCircuitNode* muscleNode = RespCircuit.GetNode(pulse::RespiratoryNode::RespiratoryMuscle);
+  
   driverPressurePath->GetNextPressureSource().SetValue(0.0, PressureUnit::cmH2O);
   double PressureIncrement_cmH2O = 0.1;
   double DriverPressure_cmH2O = 0.0;
@@ -247,6 +251,10 @@ void PulseEngineTest::RespiratoryDriverTest(const std::string& sTestDirectory)
   bool bIRVReached = false;
   bool bRVReached = false;
   int iTime = 0;
+  double AmbientPresure_cmH2O = 1033.23; // = 1 atm
+  double calculatedTotalCompliance_L_Per_cmH2O = 0.0;
+
+  RespCircuit.GetNode(pulse::EnvironmentNode::Ambient)->GetNextPressure().SetValue(AmbientPresure_cmH2O, PressureUnit::cmH2O);
 
   while (!bIRVReached)
   {
@@ -255,28 +263,9 @@ void PulseEngineTest::RespiratoryDriverTest(const std::string& sTestDirectory)
     while (!bSettled)
     {
       //Set the driver pressure
-      //Note: the driver pressure should be negative
-    driverPressurePath->GetNextPressureSource().SetValue(DriverPressure_cmH2O, PressureUnit::cmH2O);
-
-      //Variable compliance feedback
-      //TODO: Figure out how to use that actual Respiratory function.  For now we'll just copy and paste it in.
-    double dRightPleuralCompliance = rightPleuralToRespiratoryMuscle->GetNextCompliance().GetValue(FlowComplianceUnit::L_Per_cmH2O);
-    double dLeftPleuralCompliance = leftPleuralToRespiratoryMuscle->GetNextCompliance().GetValue(FlowComplianceUnit::L_Per_cmH2O);
-    double dRightPleuralVolumeBaseline = rightPleuralNode->GetVolumeBaseline().GetValue(VolumeUnit::L);
-    double dLeftPleuralVolumeBaseline = leftPleuralNode->GetVolumeBaseline().GetValue(VolumeUnit::L);
-    double dRightPleuralVolume = rightPleuralNode->GetNextVolume().GetValue(VolumeUnit::L);
-    double dLeftPleuralVolume = leftPleuralNode->GetNextVolume().GetValue(VolumeUnit::L);
-
-    dRightPleuralCompliance = (dRightPleuralVolume - dRightPleuralVolumeBaseline) * 5.0 * dRightPleuralCompliance + dRightPleuralCompliance;
-    dLeftPleuralCompliance = (dLeftPleuralVolume - dLeftPleuralVolumeBaseline) * 5.0 * dLeftPleuralCompliance + dLeftPleuralCompliance;
-
-    dRightPleuralCompliance = LIMIT(dRightPleuralCompliance, 1e-6, 0.05);
-    dLeftPleuralCompliance = LIMIT(dLeftPleuralCompliance, 1e-6, 0.05);
-
-    rightPleuralToRespiratoryMuscle->GetNextCompliance().SetValue(dRightPleuralCompliance, FlowComplianceUnit::L_Per_cmH2O);
-    leftPleuralToRespiratoryMuscle->GetNextCompliance().SetValue(dLeftPleuralCompliance, FlowComplianceUnit::L_Per_cmH2O);
-
-
+      //Note: the driver pressure should be negative for inhaling
+      driverPressurePath->GetNextPressureSource().SetValue(DriverPressure_cmH2O, PressureUnit::cmH2O);
+      
       //Process the circuit
       calc.Process(RespCircuit, deltaT_s);
       //Advance time
@@ -284,18 +273,74 @@ void PulseEngineTest::RespiratoryDriverTest(const std::string& sTestDirectory)
 
       //Calculate the total lung volume
       TotalVolume_L =
-        leftDeadSpaceNode->GetNextVolume(VolumeUnit::L) +
-        leftAlveoliNode->GetNextVolume(VolumeUnit::L) +
-        rightDeadSpaceNode->GetNextVolume(VolumeUnit::L) +
-        rightAlveoliNode->GetNextVolume(VolumeUnit::L);
+        leftDeadSpaceNode->GetVolume(VolumeUnit::L) +
+        leftAlveoliNode->GetVolume(VolumeUnit::L) +
+        rightDeadSpaceNode->GetVolume(VolumeUnit::L) +
+        rightAlveoliNode->GetVolume(VolumeUnit::L);
 
       //Check to see if the circuit has stabilized
-      if (std::abs(TotalVolume_L - PreviousTotalVolume_L) < 0.0001)
+      if (std::abs(TotalVolume_L - PreviousTotalVolume_L) < 1e-10)
       {
-        //Output values        
-        trk1.Track("LungVolume_L", iTime, TotalVolume_L);
-        trk1.Track("DriverPressure_cmH2O", iTime, driverPressurePath->GetPressureSource(PressureUnit::cmH2O));
-        iTime++;
+        bool polarityReversed = RightAlveoliToRightPleuralConnection->GetPolarizedState() == eGate::Open &&
+          LeftAlveoliToLeftPleuralConnection->GetPolarizedState() == eGate::Open;
+        if (!bRVReached && TotalVolume_L <= pc.GetCurrentPatient().GetResidualVolume(VolumeUnit::L) || polarityReversed)
+        {
+          bRVReached = true;
+        }
+
+        if (bRVReached)
+        {
+          //Output values
+          double driverPressure = driverPressurePath->GetPressureSource(PressureUnit::cmH2O);
+
+          trk1.Track("LungVolume_L", iTime, TotalVolume_L);
+          trk1.Track("DriverPressure_cmH2O", iTime, driverPressure);
+
+          double leftAlveoliPressure = leftAlveoliNode->GetPressure(PressureUnit::cmH2O);
+          double leftAlveoliVolume = leftAlveoliNode->GetVolume(VolumeUnit::L);
+          double leftPleuralPressure = leftPleuralNode->GetPressure(PressureUnit::cmH2O);
+          double leftPleuralVolume = leftPleuralNode->GetVolume(VolumeUnit::L);
+          double leftChestWallCompliance_L_Per_cmH2O = leftPleuralToRespiratoryMuscle->GetCompliance(VolumePerPressureUnit::L_Per_cmH2O);
+          double leftLungCompliance_L_Per_cmH2O = leftPleuralToRespiratoryMuscle->GetCompliance(VolumePerPressureUnit::L_Per_cmH2O);
+
+          double rightAlveoliPressure = rightAlveoliNode->GetPressure(PressureUnit::cmH2O);
+          double rightAlveoliVolume = rightAlveoliNode->GetVolume(VolumeUnit::L);
+          double rightPleuralPressure = rightPleuralNode->GetPressure(PressureUnit::cmH2O);
+          double rightPleuralVolume = rightPleuralNode->GetVolume(VolumeUnit::L);
+          double rightChestWallCompliance_L_Per_cmH2O = rightPleuralToRespiratoryMuscle->GetCompliance(VolumePerPressureUnit::L_Per_cmH2O);
+          double rightLungCompliance_L_Per_cmH2O = rightPleuralToRespiratoryMuscle->GetCompliance(VolumePerPressureUnit::L_Per_cmH2O);
+
+          double leftSideCompliance_L_Per_cmH2O = 1.0 / (1.0 / leftChestWallCompliance_L_Per_cmH2O + 1.0 / leftLungCompliance_L_Per_cmH2O);
+          double rightSideCompliance_L_Per_cmH2O = 1.0 / (1.0 / rightChestWallCompliance_L_Per_cmH2O + 1.0 / rightLungCompliance_L_Per_cmH2O);
+
+          double totalCompliance_L_Per_cmH2O = leftSideCompliance_L_Per_cmH2O + rightSideCompliance_L_Per_cmH2O;
+
+          double approxZero = 1e-10;
+          if (!(driverPressure < approxZero && driverPressure > -approxZero))
+          {
+            calculatedTotalCompliance_L_Per_cmH2O = -(TotalVolume_L - pc.GetCurrentPatient().GetFunctionalResidualCapacity(VolumeUnit::L)) / driverPressure;
+          }           
+
+          trk1.Track("ChestWallPressure_cmH2O", iTime, muscleNode->GetPressure(PressureUnit::cmH2O) - AmbientPresure_cmH2O);
+          trk1.Track("RightAlveoliVolume_L", iTime, rightAlveoliVolume);
+          trk1.Track("LeftAlveoliVolume_L", iTime, leftAlveoliVolume);
+          trk1.Track("RightAlveoliPressure_cmH2O", iTime, rightAlveoliPressure - AmbientPresure_cmH2O);
+          trk1.Track("LeftAlveoliPressure_cmH2O", iTime, leftAlveoliPressure - AmbientPresure_cmH2O);
+          trk1.Track("RightPleuralVolume_L", iTime, rightPleuralVolume);
+          trk1.Track("LeftPleuralVolume_L", iTime, leftPleuralVolume);
+          trk1.Track("RightPleuralPressure_cmH2O", iTime, rightPleuralPressure - AmbientPresure_cmH2O);
+          trk1.Track("LeftPleuralPressure_cmH2O", iTime, leftPleuralPressure - AmbientPresure_cmH2O);
+          trk1.Track("RightTranspulmonaryPressure_cmH2O", iTime, rightAlveoliPressure - rightPleuralPressure);
+          trk1.Track("LeftTranspulmonaryPressure_cmH2O", iTime, leftAlveoliPressure - leftPleuralPressure);
+
+          trk1.Track("leftSideCompliance_L_Per_cmH2O", iTime, leftSideCompliance_L_Per_cmH2O);
+          trk1.Track("rightSideCompliance_L_Per_cmH2O", iTime, rightSideCompliance_L_Per_cmH2O);
+          trk1.Track("totalCompliance_L_Per_cmH2O", iTime, totalCompliance_L_Per_cmH2O);
+
+          trk1.Track("calculatedTotalCompliance_L_Per_cmH2O", iTime, calculatedTotalCompliance_L_Per_cmH2O);
+
+          iTime++;
+        }
         bSettled = true;
       }
       PreviousTotalVolume_L = TotalVolume_L;
@@ -303,12 +348,18 @@ void PulseEngineTest::RespiratoryDriverTest(const std::string& sTestDirectory)
     bSettled = false;
 
     //Check to see if we've gone all the way to the max volume
-    if (TotalVolume_L >= pc.GetPatient().GetTotalLungCapacity(VolumeUnit::L))
+    if (TotalVolume_L >= pc.GetCurrentPatient().GetTotalLungCapacity(VolumeUnit::L))
     {
       bIRVReached = true;
     }
+    else if (!bRVReached)
+    {
+      //Exhale more
+      DriverPressure_cmH2O = DriverPressure_cmH2O + PressureIncrement_cmH2O;
+    }
     else
     {
+      //Inhale more
       DriverPressure_cmH2O = DriverPressure_cmH2O - PressureIncrement_cmH2O;
     }
   }

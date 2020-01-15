@@ -11,10 +11,10 @@ public class SERenalSystem extends SEPhysiologySystem implements SESystem
 {
   protected SEScalarVolumePerTime glomerularFiltrationRate;
   protected SEScalar0To1 filtrationFraction;
-  protected SEScalarFlowResistance leftAfferentArterioleResistance;
+  protected SEScalarPressureTimePerVolume leftAfferentArterioleResistance;
   protected SEScalarPressure leftBowmansCapsulesHydrostaticPressure;
   protected SEScalarPressure leftBowmansCapsulesOsmoticPressure;
-  protected SEScalarFlowResistance leftEfferentArterioleResistance;
+  protected SEScalarPressureTimePerVolume leftEfferentArterioleResistance;
   protected SEScalarPressure leftGlomerularCapillariesHydrostaticPressure;
   protected SEScalarPressure leftGlomerularCapillariesOsmoticPressure;
   protected SEScalarVolumePerTimePressure leftGlomerularFiltrationCoefficient;
@@ -34,11 +34,11 @@ public class SERenalSystem extends SEPhysiologySystem implements SESystem
   protected SEScalarVolumePerTimePressureArea leftTubularReabsorptionFluidPermeability;
   protected SEScalarVolumePerTime renalBloodFlow;
   protected SEScalarVolumePerTime renalPlasmaFlow;
-  protected SEScalarFlowResistance renalVascularResistance;
-  protected SEScalarFlowResistance rightAfferentArterioleResistance;
+  protected SEScalarPressureTimePerVolume renalVascularResistance;
+  protected SEScalarPressureTimePerVolume rightAfferentArterioleResistance;
   protected SEScalarPressure rightBowmansCapsulesHydrostaticPressure;
   protected SEScalarPressure rightBowmansCapsulesOsmoticPressure;
-  protected SEScalarFlowResistance rightEfferentArterioleResistance;
+  protected SEScalarPressureTimePerVolume rightEfferentArterioleResistance;
   protected SEScalarPressure rightGlomerularCapillariesHydrostaticPressure;
   protected SEScalarPressure rightGlomerularCapillariesOsmoticPressure;
   protected SEScalarVolumePerTimePressure rightGlomerularFiltrationCoefficient;
@@ -241,13 +241,13 @@ public class SERenalSystem extends SEPhysiologySystem implements SESystem
     if (src.hasFiltrationFraction())
       SEScalar0To1.load(src.getFiltrationFraction(),dst.getFiltrationFraction());
     if (src.hasLeftAfferentArterioleResistance())
-      SEScalarFlowResistance.load(src.getLeftAfferentArterioleResistance(),dst.getLeftAfferentArterioleResistance());
+      SEScalarPressureTimePerVolume.load(src.getLeftAfferentArterioleResistance(),dst.getLeftAfferentArterioleResistance());
     if (src.hasLeftBowmansCapsulesHydrostaticPressure())
       SEScalarPressure.load(src.getLeftBowmansCapsulesHydrostaticPressure(),dst.getLeftBowmansCapsulesHydrostaticPressure());
     if (src.hasLeftBowmansCapsulesOsmoticPressure())
       SEScalarPressure.load(src.getLeftBowmansCapsulesOsmoticPressure(),dst.getLeftBowmansCapsulesOsmoticPressure());
     if (src.hasLeftEfferentArterioleResistance())
-      SEScalarFlowResistance.load(src.getLeftEfferentArterioleResistance(),dst.getLeftEfferentArterioleResistance());
+      SEScalarPressureTimePerVolume.load(src.getLeftEfferentArterioleResistance(),dst.getLeftEfferentArterioleResistance());
     if (src.hasLeftGlomerularCapillariesHydrostaticPressure())
       SEScalarPressure.load(src.getLeftGlomerularCapillariesHydrostaticPressure(),dst.getLeftGlomerularCapillariesHydrostaticPressure());
     if (src.hasLeftGlomerularCapillariesOsmoticPressure())
@@ -287,15 +287,15 @@ public class SERenalSystem extends SEPhysiologySystem implements SESystem
     if (src.hasRenalPlasmaFlow())
       SEScalarVolumePerTime.load(src.getRenalPlasmaFlow(),dst.getRenalPlasmaFlow());
     if (src.hasRenalVascularResistance())
-      SEScalarFlowResistance.load(src.getRenalVascularResistance(),dst.getRenalVascularResistance());
+      SEScalarPressureTimePerVolume.load(src.getRenalVascularResistance(),dst.getRenalVascularResistance());
     if (src.hasRightAfferentArterioleResistance())
-      SEScalarFlowResistance.load(src.getRightAfferentArterioleResistance(),dst.getRightAfferentArterioleResistance());
+      SEScalarPressureTimePerVolume.load(src.getRightAfferentArterioleResistance(),dst.getRightAfferentArterioleResistance());
     if (src.hasRightBowmansCapsulesHydrostaticPressure())
       SEScalarPressure.load(src.getRightBowmansCapsulesHydrostaticPressure(),dst.getRightBowmansCapsulesHydrostaticPressure());
     if (src.hasRightBowmansCapsulesOsmoticPressure())
       SEScalarPressure.load(src.getRightBowmansCapsulesOsmoticPressure(),dst.getRightBowmansCapsulesOsmoticPressure());
     if (src.hasRightEfferentArterioleResistance())
-      SEScalarFlowResistance.load(src.getRightEfferentArterioleResistance(),dst.getRightEfferentArterioleResistance());
+      SEScalarPressureTimePerVolume.load(src.getRightEfferentArterioleResistance(),dst.getRightEfferentArterioleResistance());
     if (src.hasRightGlomerularCapillariesHydrostaticPressure())
       SEScalarPressure.load(src.getRightGlomerularCapillariesHydrostaticPressure(),dst.getRightGlomerularCapillariesHydrostaticPressure());
     if (src.hasRightGlomerularCapillariesOsmoticPressure())
@@ -360,13 +360,13 @@ public class SERenalSystem extends SEPhysiologySystem implements SESystem
     if (src.hasFiltrationFraction())
       dst.setFiltrationFraction(SEScalar0To1.unload(src.getFiltrationFraction()));
     if (src.hasLeftAfferentArterioleResistance())
-      dst.setLeftAfferentArterioleResistance(SEScalarFlowResistance.unload(src.getLeftAfferentArterioleResistance()));
+      dst.setLeftAfferentArterioleResistance(SEScalarPressureTimePerVolume.unload(src.getLeftAfferentArterioleResistance()));
     if (src.hasLeftBowmansCapsulesHydrostaticPressure())
       dst.setLeftBowmansCapsulesHydrostaticPressure(SEScalarPressure.unload(src.getLeftBowmansCapsulesHydrostaticPressure()));
     if (src.hasLeftBowmansCapsulesOsmoticPressure())
       dst.setLeftBowmansCapsulesOsmoticPressure(SEScalarPressure.unload(src.getLeftBowmansCapsulesOsmoticPressure()));
     if (src.hasLeftBowmansCapsulesHydrostaticPressure())
-      dst.setLeftEfferentArterioleResistance(SEScalarFlowResistance.unload(src.getLeftEfferentArterioleResistance()));
+      dst.setLeftEfferentArterioleResistance(SEScalarPressureTimePerVolume.unload(src.getLeftEfferentArterioleResistance()));
     if (src.hasLeftEfferentArterioleResistance())
       dst.setLeftGlomerularCapillariesHydrostaticPressure(SEScalarPressure.unload(src.getLeftGlomerularCapillariesHydrostaticPressure()));
     if (src.hasLeftGlomerularCapillariesOsmoticPressure())
@@ -406,13 +406,13 @@ public class SERenalSystem extends SEPhysiologySystem implements SESystem
     if (src.hasRenalPlasmaFlow())
       dst.setRenalPlasmaFlow(SEScalarVolumePerTime.unload(src.getRenalPlasmaFlow()));
     if (src.hasRenalVascularResistance())
-      dst.setRenalVascularResistance(SEScalarFlowResistance.unload(src.getRenalVascularResistance()));
+      dst.setRenalVascularResistance(SEScalarPressureTimePerVolume.unload(src.getRenalVascularResistance()));
     if (src.hasRightAfferentArterioleResistance())
-      dst.setRightAfferentArterioleResistance(SEScalarFlowResistance.unload(src.getRightAfferentArterioleResistance()));
+      dst.setRightAfferentArterioleResistance(SEScalarPressureTimePerVolume.unload(src.getRightAfferentArterioleResistance()));
     if (src.hasRightBowmansCapsulesHydrostaticPressure())
       dst.setRightBowmansCapsulesHydrostaticPressure(SEScalarPressure.unload(src.getRightBowmansCapsulesHydrostaticPressure()));
     if (src.hasRightBowmansCapsulesOsmoticPressure())
-      dst.setRightEfferentArterioleResistance(SEScalarFlowResistance.unload(src.getRightEfferentArterioleResistance()));
+      dst.setRightEfferentArterioleResistance(SEScalarPressureTimePerVolume.unload(src.getRightEfferentArterioleResistance()));
     if (src.hasRightEfferentArterioleResistance())
       dst.setRightBowmansCapsulesHydrostaticPressure(SEScalarPressure.unload(src.getRightBowmansCapsulesHydrostaticPressure()));
     if (src.hasRightGlomerularCapillariesHydrostaticPressure())
@@ -491,10 +491,10 @@ public class SERenalSystem extends SEPhysiologySystem implements SESystem
   {
     return leftAfferentArterioleResistance == null ? false : leftAfferentArterioleResistance.isValid();
   }
-  public SEScalarFlowResistance getLeftAfferentArterioleResistance()
+  public SEScalarPressureTimePerVolume getLeftAfferentArterioleResistance()
   {
     if (leftAfferentArterioleResistance == null)
-      leftAfferentArterioleResistance = new SEScalarFlowResistance();
+      leftAfferentArterioleResistance = new SEScalarPressureTimePerVolume();
     return leftAfferentArterioleResistance;
   }
 
@@ -524,10 +524,10 @@ public class SERenalSystem extends SEPhysiologySystem implements SESystem
   {
     return leftEfferentArterioleResistance == null ? false : leftEfferentArterioleResistance.isValid();
   }
-  public SEScalarFlowResistance getLeftEfferentArterioleResistance()
+  public SEScalarPressureTimePerVolume getLeftEfferentArterioleResistance()
   {
     if (leftEfferentArterioleResistance == null)
-      leftEfferentArterioleResistance = new SEScalarFlowResistance();
+      leftEfferentArterioleResistance = new SEScalarPressureTimePerVolume();
     return leftEfferentArterioleResistance;
   }
 
@@ -744,10 +744,10 @@ public class SERenalSystem extends SEPhysiologySystem implements SESystem
   {
     return renalVascularResistance == null ? false : renalVascularResistance.isValid();
   }
-  public SEScalarFlowResistance getRenalVascularResistance()
+  public SEScalarPressureTimePerVolume getRenalVascularResistance()
   {
     if (renalVascularResistance == null)
-      renalVascularResistance = new SEScalarFlowResistance();
+      renalVascularResistance = new SEScalarPressureTimePerVolume();
     return renalVascularResistance;
   }
   
@@ -755,10 +755,10 @@ public class SERenalSystem extends SEPhysiologySystem implements SESystem
   {
     return rightAfferentArterioleResistance == null ? false : rightAfferentArterioleResistance.isValid();
   }
-  public SEScalarFlowResistance getRightAfferentArterioleResistance()
+  public SEScalarPressureTimePerVolume getRightAfferentArterioleResistance()
   {
     if (rightAfferentArterioleResistance == null)
-      rightAfferentArterioleResistance = new SEScalarFlowResistance();
+      rightAfferentArterioleResistance = new SEScalarPressureTimePerVolume();
     return rightAfferentArterioleResistance;
   }
 
@@ -788,10 +788,10 @@ public class SERenalSystem extends SEPhysiologySystem implements SESystem
   {
     return rightEfferentArterioleResistance == null ? false : rightEfferentArterioleResistance.isValid();
   }
-  public SEScalarFlowResistance getRightEfferentArterioleResistance()
+  public SEScalarPressureTimePerVolume getRightEfferentArterioleResistance()
   {
     if (rightEfferentArterioleResistance == null)
-      rightEfferentArterioleResistance = new SEScalarFlowResistance();
+      rightEfferentArterioleResistance = new SEScalarPressureTimePerVolume();
     return rightEfferentArterioleResistance;
   }
 

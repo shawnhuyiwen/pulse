@@ -2,8 +2,9 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
+#include "properties/SEScalarTime.h"
 
-   // Keep enums in sync with appropriate schema/cdm/Event.proto file !!
+// Keep enums in sync with appropriate schema/cdm/Event.proto file !!
 enum class eEvent
 {
   Antidiuresis = 0,
@@ -34,20 +35,17 @@ enum class eEvent
   MaximumPulmonaryVentilationRate = 25,
   MetabolicAcidosis = 26,
   MetabolicAlkalosis = 27,
-  MildAcuteRespiratoryDistress = 28,
-  ModerateAcuteRespiratoryDistress = 29,
-  MyocardiumOxygenDeficit = 30,
-  Natriuresis = 31,
-  NutritionDepleted = 32,
-  RenalHypoperfusion = 33,
-  RespiratoryAcidosis = 34,
-  RespiratoryAlkalosis = 35,
-  StartOfCardiacCycle = 36,
-  StartOfExhale = 37,
-  StartOfInhale = 38,
-  SevereAcuteRespiratoryDistress = 39,
-  Tachycardia = 40,
-  Tachypnea = 41,
+  MyocardiumOxygenDeficit = 28,
+  Natriuresis = 29,
+  NutritionDepleted = 30,
+  RenalHypoperfusion = 31,
+  RespiratoryAcidosis = 32,
+  RespiratoryAlkalosis = 33,
+  StartOfCardiacCycle = 34,
+  StartOfExhale = 35,
+  StartOfInhale = 36,
+  Tachycardia = 37,
+  Tachypnea = 38,
 
   // Equipment
   AnesthesiaMachineOxygenBottleOneExhausted = 1000, 
@@ -64,7 +62,42 @@ public:
   SEEventHandler() {};
   virtual ~SEEventHandler() {};
 
-  virtual void HandleEvent(eEvent type, bool active, const SEScalarTime* time = nullptr) = 0;
+  virtual void HandleEvent(eEvent e, bool active, const SEScalarTime* simTime = nullptr) = 0;
+};
+
+class CDM_DECL SEActiveEvent
+{
+public:
+  SEActiveEvent(eEvent e, const SEScalarTime& duration);
+  SEActiveEvent(eEvent e, double duration, const TimeUnit& unit);
+
+  static bool SerializeToString(std::vector<const SEActiveEvent*>& active, std::string& output, SerializationFormat m, Logger* logger);
+  static bool SerializeFromString(const std::string& src, std::vector<const SEActiveEvent*>& active, SerializationFormat m, Logger* logger);
+
+  eEvent GetEvent() const { return m_Event; }
+  const SEScalarTime& GetDuration() const { return m_Duration; }
+
+protected:
+  eEvent       m_Event;
+  SEScalarTime m_Duration;
+};
+
+class CDM_DECL SEEventChange
+{
+public:
+  SEEventChange(eEvent e, bool active, const SEScalarTime* simTime = nullptr);
+
+  static bool SerializeToString(std::vector<const SEEventChange*>& changes, std::string& output, SerializationFormat m, Logger* logger);
+  static bool SerializeFromString(const std::string& src, std::vector<const SEEventChange*>& changes, SerializationFormat m, Logger* logger);
+
+  eEvent GetEvent() const { return m_Event; }
+  bool   GetActive() const { return m_Active; }
+  const SEScalarTime& GetSimTime() const { return m_SimTime; }
+
+protected:
+  bool         m_Active;
+  eEvent       m_Event;
+  SEScalarTime m_SimTime;
 };
 
 class CDM_DECL SEEventManager : public Loggable
@@ -82,6 +115,7 @@ public:
   virtual bool IsEventActive(eEvent e) const;
   virtual double GetEventDuration(eEvent e, const TimeUnit& unit) const;
   virtual void UpdateEvents(const SEScalarTime& timeStep);
+  virtual bool GetActiveEvents(std::vector<const SEActiveEvent*>& active) const;
   /** @name ForwardEvents
    *  @brief - Set a callback class to invoke when any event changes
    *  @details - Note that the handler callback can and will be called in the middle of a time step

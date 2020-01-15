@@ -3,7 +3,7 @@
 #
 #    This file will define the following variables:
 #      - Pulse_LIB_ROOT_DIR             : The root library directory
-#      - PULSE_LIBRARIES                : The list of both debug and release libraries.
+#      - Pulse_LIBRARIES                : The list of both debug and release libraries.
 #                                       : It is recommended to use this variable in your CMake file
 #                                       : It will configure both debug and release build types for you.
 #                                       : target_link_libraries(YourProject ${PULSE_LIBRARIES})
@@ -20,15 +20,18 @@
 set(Pulse_INSTALL "${Pulse_DIR}")
 
 set(Pulse_INCLUDE_DIRS "${Pulse_INSTALL}/include"
-                       "${Pulse_INSTALL}/include/bind"
                        "${Pulse_INSTALL}/include/cdm"
                        )
 set(Pulse_LIB_ROOT_DIR "${Pulse_INSTALL}/lib")
 
-if(MSVC)
- set(LOG4CPLUS_LIB "log4cplus")
-else()
- set(LOG4CPLUS_LIB "liblog4cplus")
+if("@PULSE_LOGGER@" STREQUAL "log4cpp")
+  set(LOGGER_LIB "log4cpp")
+elseif("@PULSE_LOGGER@" STREQUAL "log4cplus")
+  if(MSVC)
+   set(LOGGER_LIB "log4cplus")
+  else()
+   set(LOGGER_LIB "liblog4cplus")
+  endif()
 endif()
 
 if (WIN32)
@@ -44,30 +47,48 @@ if(WIN32)
   list(APPEND WIN32_LIBS "ws2_32" "advapi32")
 endif()
 
-set (PULSE_LIBRARIES "")
+set (Pulse_LIBRARIES "")
 
 set(Pulse_RELEASE_LIBS "${Pulse_LIB_ROOT_DIR}/PulseEngine.${LIB_ENDING}" 
                "${Pulse_LIB_ROOT_DIR}/CommonDataModel.${LIB_ENDING}"
                "${Pulse_LIB_ROOT_DIR}/DataModelBindings.${LIB_ENDING}"
-               "${Pulse_LIB_ROOT_DIR}/${LOG4CPLUS_LIB}.${LIB_ENDING}"
                "${Pulse_LIB_ROOT_DIR}/libprotobuf.${LIB_ENDING}"
                "${WIN32_LIBS}"
 )
-foreach(lib ${Pulse_RELEASE_LIBS})
-  list (APPEND PULSE_LIBRARIES optimized ${lib})
-endforeach(lib)
-
 set(Pulse_DEBUG_LIBS "${Pulse_LIB_ROOT_DIR}/PulseEngined.${LIB_ENDING}"
                      "${Pulse_LIB_ROOT_DIR}/CommonDataModeld.${LIB_ENDING}"
                      "${Pulse_LIB_ROOT_DIR}/DataModelBindingsd.${LIB_ENDING}"
-                     "${Pulse_LIB_ROOT_DIR}/${LOG4CPLUS_LIB}D.${LIB_ENDING}"
                      "${Pulse_LIB_ROOT_DIR}/libprotobufd.${LIB_ENDING}"
                      "${WIN32_LIBS}"
 )
+
+if(NOT "@PULSE_LOGGER@" STREQUAL "simple")
+  if("@PULSE_LOGGER@" STREQUAL "log4cpp")
+    set(LOGGER_LIB "log4cpp")
+  elseif("@PULSE_LOGGER@" STREQUAL "log4cplus")
+    if(MSVC)
+     set(LOGGER_LIB "log4cplus")
+    else()
+     set(LOGGER_LIB "liblog4cplus")
+    endif()
+  else()
+    message(FATAL_ERROR "Unknown Pulse Logger")
+  endif()
+  list (APPEND Pulse_RELEASE_LIBS "${Pulse_LIB_ROOT_DIR}/${LOGGER_LIB}.${LIB_ENDING}")
+  list (APPEND Pulse_DEBUG_LIBS "${Pulse_LIB_ROOT_DIR}/${LOGGER_LIB}d.${LIB_ENDING}")
+endif()
+
+foreach(lib ${Pulse_RELEASE_LIBS})
+  list (APPEND Pulse_LIBRARIES optimized ${lib})
+endforeach(lib)
 foreach(lib ${Pulse_DEBUG_LIBS})
-  list (APPEND PULSE_LIBRARIES debug ${lib})
+  list (APPEND Pulse_LIBRARIES debug ${lib})
 endforeach(lib)
 
+# Create an interface target
+add_library(Pulse INTERFACE IMPORTED)
+target_include_directories(Pulse INTERFACE ${Pulse_INCLUDE_DIRS})
+target_link_libraries(Pulse INTERFACE ${Pulse_LIBRARIES})
 
 set( Pulse_VERSION_MAJOR "@PULSE_VERSION_MAJOR@" )
 set( Pulse_VERSION_MINOR "@PULSE_VERSION_MINOR@" )

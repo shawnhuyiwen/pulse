@@ -26,4 +26,4 @@ public:
 
 protected:
   SEScalarVolumePerTime* m_EffusionRate;
-};      
+};

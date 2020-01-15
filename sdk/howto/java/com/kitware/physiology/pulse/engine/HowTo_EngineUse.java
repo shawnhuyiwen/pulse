@@ -262,7 +262,7 @@ public class HowTo_EngineUse
    SEHemorrhage h = new SEHemorrhage();
    h.setType(HemorrhageData.eType.External);
    h.setCompartment(PulseCompartments.Vascular.RightLeg);
-   h.getRate().setValue(200,VolumePerTimeUnit.mL_Per_min);// Change this to 750 if you want to see how engine failures are handled!!
+   h.getRate().setValue(75,VolumePerTimeUnit.mL_Per_min);// Change this to 750 if you want to see how engine failures are handled!!
    if(!pe.processAction(h))
    {
      Log.error("Engine was unable to process requested actions");
@@ -281,7 +281,7 @@ public class HowTo_EngineUse
 	   // Again, the CDM is updated after this call
 	   Log.info("Heart Rate " + pe.cardiovascular.getHeartRate());
 	   Log.info("Respiration Rate " + pe.respiratory.getRespirationRate());
-	   Log.info("Total Lung Volume " + pe.respiratory.getTotalLungVolume());     
+	   Log.info("Total Lung Volume " + pe.respiratory.getTotalLungVolume());
 	   Log.info("Blood Volume " + pe.cardiovascular.getBloodVolume());  
    }
    

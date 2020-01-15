@@ -33,10 +33,10 @@ void SEProperty::Clear()
 #include "properties/SEScalarEnergy.h"
 #include "properties/SEScalarEnergyPerAmount.h"
 #include "properties/SEScalarEnergyPerMass.h"
-#include "properties/SEScalarFlowCompliance.h"
-#include "properties/SEScalarFlowElastance.h"
-#include "properties/SEScalarFlowInertance.h"
-#include "properties/SEScalarFlowResistance.h"
+#include "properties/SEScalarVolumePerPressure.h"
+#include "properties/SEScalarPressurePerVolume.h"
+#include "properties/SEScalarPressureTimeSquaredPerVolume.h"
+#include "properties/SEScalarPressureTimePerVolume.h"
 #include "properties/SEScalarForce.h"
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEScalarHeatCapacitance.h"
@@ -130,10 +130,10 @@ const CCompoundUnit& GetUnit(const std::string& unit)
   IS_A(EnergyUnit);
   IS_A(EnergyPerAmountUnit);
   IS_A(EnergyPerMassUnit);
-  IS_A(FlowComplianceUnit);
-  IS_A(FlowElastanceUnit);
-  IS_A(FlowInertanceUnit);
-  IS_A(FlowResistanceUnit);
+  IS_A(VolumePerPressureUnit);
+  IS_A(PressurePerVolumeUnit);
+  IS_A(PressureTimeSquaredPerVolumeUnit);
+  IS_A(PressureTimePerVolumeUnit);
   IS_A(ForceUnit);
   IS_A(FrequencyUnit);
   IS_A(HeatCapacitanceUnit);

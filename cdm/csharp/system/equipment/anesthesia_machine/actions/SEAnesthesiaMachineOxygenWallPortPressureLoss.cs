@@ -1,38 +1,41 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-public class SEAnesthesiaMachineOxygenWallPortPressureLoss : SEAnesthesiaMachineAction
+namespace Pulse.CDM
 {
-  protected eSwitch state;
-  
-  public SEAnesthesiaMachineOxygenWallPortPressureLoss()
+  public class SEAnesthesiaMachineOxygenWallPortPressureLoss : SEAnesthesiaMachineAction
   {
-    state = eSwitch.On;
-  }
+    protected eSwitch state;
 
-  public override void Clear()
-  {
-    base.Clear();
-    state = eSwitch.Off;
-  }
+    public SEAnesthesiaMachineOxygenWallPortPressureLoss()
+    {
+      state = eSwitch.On;
+    }
 
-  public override bool IsValid()
-  {
-    return true;
-  }
+    public override void Clear()
+    {
+      base.Clear();
+      state = eSwitch.Off;
+    }
 
-  public eSwitch GetState()
-  {
-    return state;
-  }
-  public void SetState(eSwitch s)
-  {
-    this.state = (s == eSwitch.NullSwitch) ? eSwitch.Off : s;
-  }
+    public override bool IsValid()
+    {
+      return true;
+    }
 
-  public override string ToString()
-  {
-    return "Oxygen Wall Port Pressure Loss"
-        + "\n\tState: " + GetState();
+    public eSwitch GetState()
+    {
+      return state;
+    }
+    public void SetState(eSwitch s)
+    {
+      this.state = (s == eSwitch.NullSwitch) ? eSwitch.Off : s;
+    }
+
+    public override string ToString()
+    {
+      return "Oxygen Wall Port Pressure Loss"
+          + "\n\tState: " + GetState();
+    }
   }
 }

@@ -20,10 +20,6 @@ CDM_BIND_DECL(ScalarElectricResistanceData)
 CDM_BIND_DECL(ScalarEnergyData)
 CDM_BIND_DECL(ScalarEnergyPerAmountData)
 CDM_BIND_DECL(ScalarEnergyPerMassData)
-CDM_BIND_DECL(ScalarFlowComplianceData)
-CDM_BIND_DECL(ScalarFlowElastanceData)
-CDM_BIND_DECL(ScalarFlowInertanceData)
-CDM_BIND_DECL(ScalarFlowResistanceData)
 CDM_BIND_DECL(ScalarForceData)
 CDM_BIND_DECL(ScalarFrequencyData)
 CDM_BIND_DECL(ScalarHeatCapacitanceData)
@@ -52,8 +48,10 @@ CDM_BIND_DECL(ScalarPowerData)
 CDM_BIND_DECL(ScalarPowerPerAreaTemperatureToTheFourthData)
 CDM_BIND_DECL(ScalarPressureData)
 CDM_BIND_DECL(ScalarPressurePerVolumeData)
+CDM_BIND_DECL(ScalarPressureTimePerVolumeData)
 CDM_BIND_DECL(ScalarPressureTimePerAreaData)
 CDM_BIND_DECL(ScalarPressureTimePerVolumeAreaData)
+CDM_BIND_DECL(ScalarPressureTimeSquaredPerVolumeData)
 CDM_BIND_DECL(ScalarTemperatureData)
 CDM_BIND_DECL(ScalarTimeData)
 CDM_BIND_DECL(ScalarVolumeData)
@@ -164,26 +162,6 @@ public:
   static cdm::ScalarEnergyPerMassData* Unload(const SEScalarEnergyPerMass& src);
   static void Serialize(const cdm::ScalarEnergyPerMassData& src, SEScalarEnergyPerMass& dst);
   static void Serialize(const SEScalarEnergyPerMass& src, cdm::ScalarEnergyPerMassData& dst);
-
-  static void Load(const cdm::ScalarFlowComplianceData& src, SEScalarFlowCompliance& dst);
-  static cdm::ScalarFlowComplianceData* Unload(const SEScalarFlowCompliance& src);
-  static void Serialize(const cdm::ScalarFlowComplianceData& src, SEScalarFlowCompliance& dst);
-  static void Serialize(const SEScalarFlowCompliance& src, cdm::ScalarFlowComplianceData& dst);
-
-  static void Load(const cdm::ScalarFlowElastanceData& src, SEScalarFlowElastance& dst);
-  static cdm::ScalarFlowElastanceData* Unload(const SEScalarFlowElastance& src);
-  static void Serialize(const cdm::ScalarFlowElastanceData& src, SEScalarFlowElastance& dst);
-  static void Serialize(const SEScalarFlowElastance& src, cdm::ScalarFlowElastanceData& dst);
-
-  static void Load(const cdm::ScalarFlowInertanceData& src, SEScalarFlowInertance& dst);
-  static cdm::ScalarFlowInertanceData* Unload(const SEScalarFlowInertance& src);
-  static void Serialize(const cdm::ScalarFlowInertanceData& src, SEScalarFlowInertance& dst);
-  static void Serialize(const SEScalarFlowInertance& src, cdm::ScalarFlowInertanceData& dst);
-
-  static void Load(const cdm::ScalarFlowResistanceData& src, SEScalarFlowResistance& dst);
-  static cdm::ScalarFlowResistanceData* Unload(const SEScalarFlowResistance& src);
-  static void Serialize(const cdm::ScalarFlowResistanceData& src, SEScalarFlowResistance& dst);
-  static void Serialize(const SEScalarFlowResistance& src, cdm::ScalarFlowResistanceData& dst);
 
   static void Load(const cdm::ScalarForceData& src, SEScalarForce& dst);
   static cdm::ScalarForceData* Unload(const SEScalarForce& src);
@@ -330,10 +308,20 @@ public:
   static void Serialize(const cdm::ScalarPressureTimePerAreaData& src, SEScalarPressureTimePerArea& dst);
   static void Serialize(const SEScalarPressureTimePerArea& src, cdm::ScalarPressureTimePerAreaData& dst);
 
+  static void Load(const cdm::ScalarPressureTimePerVolumeData& src, SEScalarPressureTimePerVolume& dst);
+  static cdm::ScalarPressureTimePerVolumeData* Unload(const SEScalarPressureTimePerVolume& src);
+  static void Serialize(const cdm::ScalarPressureTimePerVolumeData& src, SEScalarPressureTimePerVolume& dst);
+  static void Serialize(const SEScalarPressureTimePerVolume& src, cdm::ScalarPressureTimePerVolumeData& dst);
+
   static void Load(const cdm::ScalarPressureTimePerVolumeAreaData& src, SEScalarPressureTimePerVolumeArea& dst);
   static cdm::ScalarPressureTimePerVolumeAreaData* Unload(const SEScalarPressureTimePerVolumeArea& src);
   static void Serialize(const cdm::ScalarPressureTimePerVolumeAreaData& src, SEScalarPressureTimePerVolumeArea& dst);
   static void Serialize(const SEScalarPressureTimePerVolumeArea& src, cdm::ScalarPressureTimePerVolumeAreaData& dst);
+
+  static void Load(const cdm::ScalarPressureTimeSquaredPerVolumeData& src, SEScalarPressureTimeSquaredPerVolume& dst);
+  static cdm::ScalarPressureTimeSquaredPerVolumeData* Unload(const SEScalarPressureTimeSquaredPerVolume& src);
+  static void Serialize(const cdm::ScalarPressureTimeSquaredPerVolumeData& src, SEScalarPressureTimeSquaredPerVolume& dst);
+  static void Serialize(const SEScalarPressureTimeSquaredPerVolume& src, cdm::ScalarPressureTimeSquaredPerVolumeData& dst);
 
   static void Load(const cdm::ScalarTemperatureData& src, SEScalarTemperature& dst);
   static cdm::ScalarTemperatureData* Unload(const SEScalarTemperature& src);

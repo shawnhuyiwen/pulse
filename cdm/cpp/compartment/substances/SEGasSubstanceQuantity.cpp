@@ -12,6 +12,7 @@
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalar0To1.h"
+#include "utils/GeneralMath.h"
 
 SEGasSubstanceQuantity::SEGasSubstanceQuantity(SESubstance& sub, SEGasCompartment& compartment) : SESubstanceQuantity(sub), m_Compartment(compartment)
 {
@@ -48,8 +49,18 @@ void SEGasSubstanceQuantity::Clear()
 
 void SEGasSubstanceQuantity::SetToZero()
 {
-  GetPartialPressure().SetValue(0, PressureUnit::mmHg);
-  GetVolume().SetValue(0, VolumeUnit::mL);
+  auto& pp = GetPartialPressure();
+  if (pp.HasUnit())
+    pp.SetValue(0, *pp.GetUnit());
+  else
+    pp.SetValue(0, PressureUnit::mmHg);
+
+  auto& vol = GetVolume();
+  if (vol.HasUnit())
+    vol.SetValue(0, *vol.GetUnit());
+  else
+    vol.SetValue(0, VolumeUnit::mL);
+
   GetVolumeFraction().SetValue(0);
 }
 

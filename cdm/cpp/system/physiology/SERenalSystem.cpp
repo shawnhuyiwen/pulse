@@ -16,7 +16,7 @@
 #include "properties/SEScalarMassPerTime.h"
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarAmountPerVolume.h"
-#include "properties/SEScalarFlowResistance.h"
+#include "properties/SEScalarPressureTimePerVolume.h"
 
 SERenalSystem::SERenalSystem(Logger* logger) : SESystem(logger)
 {
@@ -306,13 +306,13 @@ bool SERenalSystem::HasLeftAfferentArterioleResistance() const
 {
   return m_LeftAfferentArterioleResistance == nullptr ? false : m_LeftAfferentArterioleResistance->IsValid();
 }
-SEScalarFlowResistance& SERenalSystem::GetLeftAfferentArterioleResistance()
+SEScalarPressureTimePerVolume& SERenalSystem::GetLeftAfferentArterioleResistance()
 {
   if (m_LeftAfferentArterioleResistance == nullptr)
-    m_LeftAfferentArterioleResistance = new SEScalarFlowResistance();
+    m_LeftAfferentArterioleResistance = new SEScalarPressureTimePerVolume();
   return *m_LeftAfferentArterioleResistance;
 }
-double SERenalSystem::GetLeftAfferentArterioleResistance(const FlowResistanceUnit& unit) const
+double SERenalSystem::GetLeftAfferentArterioleResistance(const PressureTimePerVolumeUnit& unit) const
 {
   if (m_LeftAfferentArterioleResistance == nullptr)
     return SEScalar::dNaN();
@@ -357,13 +357,13 @@ bool SERenalSystem::HasLeftEfferentArterioleResistance() const
 {
   return m_LeftEfferentArterioleResistance == nullptr ? false : m_LeftEfferentArterioleResistance->IsValid();
 }
-SEScalarFlowResistance& SERenalSystem::GetLeftEfferentArterioleResistance()
+SEScalarPressureTimePerVolume& SERenalSystem::GetLeftEfferentArterioleResistance()
 {
   if (m_LeftEfferentArterioleResistance == nullptr)
-    m_LeftEfferentArterioleResistance = new SEScalarFlowResistance();
+    m_LeftEfferentArterioleResistance = new SEScalarPressureTimePerVolume();
   return *m_LeftEfferentArterioleResistance;
 }
-double SERenalSystem::GetLeftEfferentArterioleResistance(const FlowResistanceUnit& unit) const
+double SERenalSystem::GetLeftEfferentArterioleResistance(const PressureTimePerVolumeUnit& unit) const
 {
   if (m_LeftEfferentArterioleResistance == nullptr)
     return SEScalar::dNaN();
@@ -697,13 +697,13 @@ bool SERenalSystem::HasRenalVascularResistance() const
 {
   return m_RenalVascularResistance == nullptr ? false : m_RenalVascularResistance->IsValid();
 }
-SEScalarFlowResistance& SERenalSystem::GetRenalVascularResistance()
+SEScalarPressureTimePerVolume& SERenalSystem::GetRenalVascularResistance()
 {
   if (m_RenalVascularResistance == nullptr)
-    m_RenalVascularResistance = new SEScalarFlowResistance();
+    m_RenalVascularResistance = new SEScalarPressureTimePerVolume();
   return *m_RenalVascularResistance;
 }
-double SERenalSystem::GetRenalVascularResistance(const FlowResistanceUnit& unit) const
+double SERenalSystem::GetRenalVascularResistance(const PressureTimePerVolumeUnit& unit) const
 {
   if (m_RenalVascularResistance == nullptr)
     return SEScalar::dNaN();
@@ -714,13 +714,13 @@ bool SERenalSystem::HasRightAfferentArterioleResistance() const
 {
   return m_RightAfferentArterioleResistance == nullptr ? false : m_RightAfferentArterioleResistance->IsValid();
 }
-SEScalarFlowResistance& SERenalSystem::GetRightAfferentArterioleResistance()
+SEScalarPressureTimePerVolume& SERenalSystem::GetRightAfferentArterioleResistance()
 {
   if (m_RightAfferentArterioleResistance == nullptr)
-    m_RightAfferentArterioleResistance = new SEScalarFlowResistance();
+    m_RightAfferentArterioleResistance = new SEScalarPressureTimePerVolume();
   return *m_RightAfferentArterioleResistance;
 }
-double SERenalSystem::GetRightAfferentArterioleResistance(const FlowResistanceUnit& unit) const
+double SERenalSystem::GetRightAfferentArterioleResistance(const PressureTimePerVolumeUnit& unit) const
 {
   if (m_RightAfferentArterioleResistance == nullptr)
     return SEScalar::dNaN();
@@ -765,13 +765,13 @@ bool SERenalSystem::HasRightEfferentArterioleResistance() const
 {
   return m_RightEfferentArterioleResistance == nullptr ? false : m_RightEfferentArterioleResistance->IsValid();
 }
-SEScalarFlowResistance& SERenalSystem::GetRightEfferentArterioleResistance()
+SEScalarPressureTimePerVolume& SERenalSystem::GetRightEfferentArterioleResistance()
 {
   if (m_RightEfferentArterioleResistance == nullptr)
-    m_RightEfferentArterioleResistance = new SEScalarFlowResistance();
+    m_RightEfferentArterioleResistance = new SEScalarPressureTimePerVolume();
   return *m_RightEfferentArterioleResistance;
 }
-double SERenalSystem::GetRightEfferentArterioleResistance(const FlowResistanceUnit& unit) const
+double SERenalSystem::GetRightEfferentArterioleResistance(const PressureTimePerVolumeUnit& unit) const
 {
   if (m_RightEfferentArterioleResistance == nullptr)
     return SEScalar::dNaN();

@@ -6,9 +6,6 @@
 #include "properties/SEScalarAmount.h"
 #include "properties/SEScalarAmountPerVolume.h"
 #include "properties/SEScalarLength.h"
-#include "properties/SEScalarFlowCompliance.h"
-#include "properties/SEScalarFlowInertance.h"
-#include "properties/SEScalarFlowResistance.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEScalarInversePressure.h"
@@ -17,6 +14,8 @@
 #include "properties/SEScalarMassPerTime.h"
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarPressure.h"
+#include "properties/SEScalarPressureTimePerVolume.h"
+#include "properties/SEScalarPressureTimeSquaredPerVolume.h"
 #include "properties/SEScalarTemperature.h"
 #include "properties/SEScalarTime.h"
 #include "properties/SEScalarVolume.h"
@@ -75,23 +74,23 @@ void CommonDataModelTest::UnitsTest(const std::string& sOutputDirectory)
 
     ((SEScalar&)length).GetValue();
 
-    SEScalarFlowCompliance flowCompliance;
-    flowCompliance.SetValue(1.0, FlowComplianceUnit::GetCompoundUnit("L/cmH2O"));
+    SEScalarVolumePerPressure flowCompliance;
+    flowCompliance.SetValue(1.0, VolumePerPressureUnit::GetCompoundUnit("L/cmH2O"));
     stringList.clear();
     stringList.push_back("L/cmH2O");
     stringList.push_back("mL/mmHg");
     stringList.push_back("m^3/Pa");
     ConvertList(stringList);
 
-    SEScalarFlowInertance flowInertance;
-    flowInertance.SetValue(1.0, FlowInertanceUnit::GetCompoundUnit("mmHg s^2/mL"));
+    SEScalarPressureTimeSquaredPerVolume flowInertance;
+    flowInertance.SetValue(1.0, PressureTimeSquaredPerVolumeUnit::GetCompoundUnit("mmHg s^2/mL"));
     stringList.clear();
     stringList.push_back("mmHg s^2/mL");
     stringList.push_back("Pa s^2/m^3");
     ConvertList(stringList);
 
-    SEScalarFlowResistance flowResistance;
-    flowResistance.SetValue(1.0, FlowResistanceUnit::GetCompoundUnit("cmH2O s/L"));
+    SEScalarPressureTimePerVolume flowResistance;
+    flowResistance.SetValue(1.0, PressureTimePerVolumeUnit::GetCompoundUnit("cmH2O s/L"));
     stringList.clear();
     stringList.push_back("cmH2O s/L");
     stringList.push_back("mmHg s/L");

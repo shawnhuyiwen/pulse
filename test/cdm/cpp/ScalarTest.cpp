@@ -6,9 +6,6 @@
 #include "properties/SEScalarAmount.h"
 #include "properties/SEScalarAmountPerVolume.h"
 #include "properties/SEScalarLength.h"
-#include "properties/SEScalarFlowCompliance.h"
-#include "properties/SEScalarFlowInertance.h"
-#include "properties/SEScalarFlowResistance.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEScalarInversePressure.h"
@@ -17,6 +14,7 @@
 #include "properties/SEScalarMassPerTime.h"
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarPressure.h"
+#include "properties/SEScalarPressureTimePerVolume.h"
 #include "properties/SEScalarTemperature.h"
 #include "properties/SEScalarTime.h"
 #include "properties/SEScalarVolume.h"
@@ -67,8 +65,8 @@ void CommonDataModelTest::ScalarTest(const std::string& sOutputDirectory)
   std::cout<<t.GetValue(TemperatureUnit::C)<<std::endl;
 
 
-  SEScalarFlowResistance r;
-  r.SetValue(0, FlowResistanceUnit::GetCompoundUnit("mmHg s/mL"));
+  SEScalarPressureTimePerVolume r;
+  r.SetValue(0, PressureTimePerVolumeUnit::GetCompoundUnit("mmHg s/mL"));
 
   SEScalarVolume v;
   v.SetValue(1,VolumeUnit::L);

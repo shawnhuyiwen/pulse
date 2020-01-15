@@ -14,11 +14,11 @@ import com.kitware.physiology.datamodel.substance.SESubstanceFraction;
 public class SEConsciousRespiration extends SEPatientAction
 {
   protected List<SEConsciousRespirationCommand> commands;
-  protected Boolean                             appendToPrevious;
+  protected Boolean                             startImmediately;
   
   public SEConsciousRespiration()
   {
-    appendToPrevious = null;
+    startImmediately = false;
     commands = new ArrayList<SEConsciousRespirationCommand>();
   }
   
@@ -27,7 +27,7 @@ public class SEConsciousRespiration extends SEPatientAction
     if (this == other)
       return;
     super.copy(other);
-    appendToPrevious = other.appendToPrevious;
+    startImmediately = other.startImmediately;
     if (other.commands != null)
       {
       commands.clear();
@@ -42,7 +42,7 @@ public class SEConsciousRespiration extends SEPatientAction
   {
     super.reset();
     commands.clear();
-    appendToPrevious = null;
+    startImmediately = false;
   }
   
   public boolean isValid()
@@ -58,16 +58,15 @@ public class SEConsciousRespiration extends SEPatientAction
   public static void load(ConsciousRespirationData src, SEConsciousRespiration dst)
   {
     SEPatientAction.load(src.getPatientAction(), dst);
-    dst.appendToPrevious = src.getAppendToPrevious();
-    dst.commands.clear();
+    dst.startImmediately = src.getStartImmediately();
     for (AnyConsciousRespirationCommandData cmd : src.getCommandList())
     {
       switch(cmd.getCommandCase())
       {
-        case BREATHHOLD:
+        case FORCEDPAUSE:
         {
-          SEBreathHold command = new SEBreathHold();
-          SEBreathHold.load(cmd.getBreathHold(),command);
+          SEForcedPause command = new SEForcedPause();
+          SEForcedPause.load(cmd.getForcedPause(),command);
           dst.commands.add(command);
           break;
         }
@@ -106,14 +105,13 @@ public class SEConsciousRespiration extends SEPatientAction
   protected static void unload(SEConsciousRespiration src, ConsciousRespirationData.Builder dst)
   {
     SEPatientAction.unload(src,dst.getPatientActionBuilder());
-    if(src.appendToPrevious!=null)
-      dst.setAppendToPrevious(src.appendToPrevious);
+    dst.setStartImmediately(src.startImmediately);
     for (SEConsciousRespirationCommand command : src.commands)
     {
       AnyConsciousRespirationCommandData.Builder cmd = dst.addCommandBuilder();
-      if (command instanceof SEBreathHold)
+      if (command instanceof SEForcedPause)
       {
-        cmd.setBreathHold(SEBreathHold.unload((SEBreathHold)command));
+        cmd.setForcedPause(SEForcedPause.unload((SEForcedPause)command));
         continue;
       }
       if (command instanceof SEForcedExhale)
@@ -134,8 +132,8 @@ public class SEConsciousRespiration extends SEPatientAction
     }
   }
     
-  public boolean hasAppendToPrevious() { return this.appendToPrevious!=null;}
-  public boolean appendToPrevious() { return appendToPrevious; }
+  public void setStartImmediately(Boolean b) { this.startImmediately=b;}
+  public boolean startImmediately() { return startImmediately; }
   
   
   public boolean hasCommands()

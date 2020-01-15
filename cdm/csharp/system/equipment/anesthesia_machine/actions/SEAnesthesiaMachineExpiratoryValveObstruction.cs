@@ -1,44 +1,47 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
-   
-public class SEAnesthesiaMachineExpiratoryValveObstruction : SEAnesthesiaMachineAction
+
+namespace Pulse.CDM
 {
-  protected SEScalar0To1 severity;
-  
-  public SEAnesthesiaMachineExpiratoryValveObstruction()
+  public class SEAnesthesiaMachineExpiratoryValveObstruction : SEAnesthesiaMachineAction
   {
-    severity = null;
-  }
+    protected SEScalar0To1 severity;
 
-  public override void Clear()
-  {
-    base.Clear();
-    if (severity != null)
-      severity.Invalidate();
-  }
+    public SEAnesthesiaMachineExpiratoryValveObstruction()
+    {
+      severity = null;
+    }
 
-  public override bool IsValid()
-  {
-    return HasSeverity();
-  }
+    public override void Clear()
+    {
+      base.Clear();
+      if (severity != null)
+        severity.Invalidate();
+    }
 
-  public bool HasSeverity()
-  {
-    return severity == null ? false : severity.IsValid();
-  }
-  public SEScalar0To1 GetSeverity()
-  {
-    if (severity == null)
-      severity = new SEScalar0To1();
-    return severity;
-  }
+    public override bool IsValid()
+    {
+      return HasSeverity();
+    }
 
-  public override string ToString()
-  {
-    if (severity != null)
-      return "Expiratory Valve Obstruction"
-          + "\n\tSeverity: " + GetSeverity();
-    else
-      return "Expiratory Valve Obstruction not specified properly";
+    public bool HasSeverity()
+    {
+      return severity == null ? false : severity.IsValid();
+    }
+    public SEScalar0To1 GetSeverity()
+    {
+      if (severity == null)
+        severity = new SEScalar0To1();
+      return severity;
+    }
+
+    public override string ToString()
+    {
+      if (severity != null)
+        return "Expiratory Valve Obstruction"
+            + "\n\tSeverity: " + GetSeverity();
+      else
+        return "Expiratory Valve Obstruction not specified properly";
+    }
   }
 }

@@ -21,6 +21,7 @@
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarTime.h"
 #include "properties/SEScalar0To1.h"
+#include "utils/GeneralMath.h"
 
 Endocrine::Endocrine(PulseController& data) : SEEndocrineSystem(data.GetLogger()), m_data(data)
 {
@@ -123,7 +124,7 @@ void Endocrine::SynthesizeInsulin()
 //--------------------------------------------------------------------------------------------------
 void Endocrine::ReleaseEpinephrine()
 {
-  SEPatient& Patient = m_data.GetPatient();
+  SEPatient& Patient = m_data.GetCurrentPatient();
   double patientWeight_kg = Patient.GetWeight(MassUnit::kg);
   double epinephrineBasalReleaseRate_ug_Per_min = .00229393 * patientWeight_kg; //We want it to be ~.18 ug/min for our StandardMale
   double epinephrineRelease_ug = (epinephrineBasalReleaseRate_ug_Per_min / 60) * m_dt_s;  //amount released per timestep

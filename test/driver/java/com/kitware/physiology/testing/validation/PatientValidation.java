@@ -25,13 +25,13 @@ public class PatientValidation extends ValidationTool
     Log.setFileName("ValidationTool.log");
     Log.info("Running with agrs : "+Arrays.toString(args));
     PatientValidation me = new PatientValidation();
-    if(args.length!=3)
+    if(args.length==0)
     {
-      me.loadData("Local","MSVC","x86");
+      me.loadData("TEST");
     }
     else
     {      
-      me.loadData(args[0], args[1], args[2]);
+      me.loadData(args[0]);
     }
     jniBridge.deinitialize();
   }
@@ -54,6 +54,7 @@ public class PatientValidation extends ValidationTool
       writer.println("|BodyDensity                       |"+patient.getBodyDensity());
       writer.println("|BodyFatFraction                   |"+patient.getBodyFatFraction());
       writer.println("|LeanBodyMass                      |"+patient.getLeanBodyMass());
+      writer.println("|IdealBodyWeight                   |"+patient.getIdealBodyWeight());
       writer.println("|AlveoliSurfaceArea                |"+patient.getAlveoliSurfaceArea());
       writer.println("|RightLungRatio                    |"+patient.getRightLungRatio());
       writer.println("|SkinSurfaceArea                   |"+patient.getSkinSurfaceArea());

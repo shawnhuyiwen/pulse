@@ -105,10 +105,13 @@ bool PBPulseState::Serialize(const pulse::proto::StateData& src, PulseEngine& ds
   dst.m_Intubation = (eSwitch)src.intubation();
 
   /// Patient //  
-  if (!src.has_patient())
+  if (!src.has_currentpatient() || !src.has_initialpatient())
     ss << "PulseState must have a patient" << std::endl;
   else
-    PBPatient::Load(src.patient(), *dst.m_Patient);
+  {
+    PBPatient::Load(src.currentpatient(), *dst.m_CurrentPatient);
+    PBPatient::Load(src.initialpatient(), *dst.m_InitialPatient);
+  }
   // Conditions //
   dst.m_Conditions->Clear();
   if (src.has_conditions())
@@ -280,7 +283,8 @@ bool PBPulseState::Serialize(const PulseEngine& src, pulse::proto::StateData& ds
   if (src.m_EngineTrack->GetDataRequestManager().HasDataRequests())
     dst.set_allocated_datarequestmanager(PBEngine::Unload(src.m_EngineTrack->GetDataRequestManager()));
   // Patient
-  dst.set_allocated_patient(PBPatient::Unload(*src.m_Patient));
+  dst.set_allocated_currentpatient(PBPatient::Unload(*src.m_CurrentPatient));
+  dst.set_allocated_initialpatient(PBPatient::Unload(*src.m_InitialPatient));
   // Conditions
   dst.set_allocated_conditions(PBEngine::Unload(*src.m_Conditions));
   // Actions
@@ -335,8 +339,6 @@ bool PBPulseState::SerializeToString(const PulseEngine& src, std::string& output
 }
 bool PBPulseState::SerializeToFile(const PulseEngine& src, const std::string& filename, SerializationFormat m)
 {
-  pulse::proto::StateData data;
-  PBPulseState::Serialize(src, data);
   std::string content;
   PBPulseState::SerializeToString(src, content, m);
   return WriteFile(content, filename, m);

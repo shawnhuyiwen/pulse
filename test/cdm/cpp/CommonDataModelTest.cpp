@@ -233,6 +233,7 @@ void CommonDataModelTest::FillFunctionMap()
   cdmMap.insert(std::make_pair("PolarizedCapacitorTest", &CommonDataModelTest::PolarizedCapacitorTest));
   cdmMap.insert(std::make_pair("PreChargeComplianceZeroVolume", &CommonDataModelTest::PreChargeComplianceZeroVolume));
   cdmMap.insert(std::make_pair("PreChargeComplianceNonZeroVolume", &CommonDataModelTest::PreChargeComplianceNonZeroVolume));
+  cdmMap.insert(std::make_pair("ComplianceVolumeChange", &CommonDataModelTest::ComplianceVolumeChange));
   cdmMap.insert(std::make_pair("CircuitErrorTest", &CommonDataModelTest::CircuitErrorTest));
   cdmMap.insert(std::make_pair("CircuitLockingTest", &CommonDataModelTest::CircuitLockingTest));
 

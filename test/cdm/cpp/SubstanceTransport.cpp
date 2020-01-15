@@ -2,6 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #include "CommonDataModelTest.h"
+#include "circuit/SECircuitManager.h"
 #include "circuit/fluid/SEFluidCircuit.h"
 #include "circuit/fluid/SEFluidCircuitCalculator.h"
 #include "circuit/fluid/SEFluidCircuitNode.h"
@@ -21,7 +22,6 @@
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarMassPerVolume.h"
-#include "properties/SEScalarFlowResistance.h"
 #include "properties/SEScalarTime.h"
 #include "utils/DataTrack.h"
 

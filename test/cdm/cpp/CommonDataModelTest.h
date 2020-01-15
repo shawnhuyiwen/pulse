@@ -229,6 +229,7 @@ public:
   void PolarizedCapacitorTest(const std::string& sOutputDirectory);  
   void PreChargeComplianceZeroVolume(const std::string& sOutputDirectory);
   void PreChargeComplianceNonZeroVolume(const std::string& sOutputDirectory);
+  void ComplianceVolumeChange(const std::string& sOutputDirectory);
   void CircuitLockingTest(const std::string& sOutputDirectory);
 
 protected:

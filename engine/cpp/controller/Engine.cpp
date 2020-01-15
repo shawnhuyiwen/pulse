@@ -122,22 +122,6 @@ bool PulseEngine::InitializeEngine(const std::string& patient_configuration, Ser
 
 bool PulseEngine::InitializeEngine(const SEPatientConfiguration& patient_configuration, const SEEngineConfiguration* config)
 {
-  if (patient_configuration.HasPatient())
-    m_Patient->Copy(*patient_configuration.GetPatient());
-  else if (patient_configuration.HasPatientFile())
-  {
-    std::string pFile = patient_configuration.GetPatientFile();
-    if (pFile.find("/patients") == std::string::npos)
-    {// Prepend the patient directory if it's not there
-      pFile = "./patients/";
-      pFile += patient_configuration.GetPatientFile();
-    }
-    if (!m_Patient->SerializeFromFile(pFile, JSON))// TODO Support all serialization formats
-      return false;
-  }
-  else
-    return false;
-
   const PulseConfiguration* pConfig = nullptr;
   if (config != nullptr)
   {
@@ -150,7 +134,26 @@ bool PulseEngine::InitializeEngine(const SEPatientConfiguration& patient_configu
   }
   m_EngineTrack->ResetFile();
   m_State = EngineState::Initialization;
-  if (!PulseController::Initialize(pConfig))
+  if (patient_configuration.HasPatient())
+  {
+    if (!PulseController::Initialize(pConfig, *patient_configuration.GetPatient()))
+      return false;
+  }
+  else if (patient_configuration.HasPatientFile())
+  {
+    SEPatient patient(m_Logger);
+    std::string pFile = patient_configuration.GetPatientFile();
+    if (pFile.find("/patients") == std::string::npos)
+    {// Prepend the patient directory if it's not there
+      pFile = "./patients/";
+      pFile += patient_configuration.GetPatientFile();
+    }
+    if (!patient.SerializeFromFile(pFile, JSON))// TODO Support all serialization formats
+      return false;
+    if (!PulseController::Initialize(pConfig, patient))
+      return false;
+  }
+  else
     return false;
 
   // We don't capture events during initialization
@@ -173,6 +176,9 @@ bool PulseEngine::InitializeEngine(const SEPatientConfiguration& patient_configu
     m_Conditions->Copy(*patient_configuration.GetConditions());
   AtSteadyState(EngineState::AtInitialStableState);// This will peek at conditions
 
+  // Copy any changes to the current patient to the initial patient
+  m_InitialPatient->Copy(*m_CurrentPatient);
+
   m_State = EngineState::SecondaryStabilization;
   // Apply conditions and anything else to the physiology
   // now that it's steady with provided patient, environment, and feedback
@@ -187,11 +193,11 @@ bool PulseEngine::InitializeEngine(const SEPatientConfiguration& patient_configu
     if (!m_Config->GetStabilization()->StabilizeFeedbackState(*this))
       return false;
   }
-  AtSteadyState(EngineState::AtSecondaryStableState);
+  AtSteadyState(EngineState::AtSecondaryStableState);  
 
   m_State = EngineState::Active;
   // Hook up the handlers (Note events will still be in the log)
-  m_EventManager->ForwardEvents(event_handler);  
+  m_EventManager->ForwardEvents(event_handler);
   Info("Finalizing homeostasis");
 
   // Run this again to clear out any bumps from systems resetting baselines in the last AtSteadyState call
@@ -201,7 +207,7 @@ bool PulseEngine::InitializeEngine(const SEPatientConfiguration& patient_configu
   //  return false;
 
   if (!m_Config->GetStabilization()->IsTrackingStabilization())
-    m_SimulationTime->SetValue(0, TimeUnit::s);  
+    m_SimulationTime->SetValue(0, TimeUnit::s);
   // Don't allow any changes to Quantity/Potential/Flux values directly
   // Use Quantity/Potential/Flux Sources
   m_Circuits->SetReadOnly(true);
@@ -229,9 +235,9 @@ double PulseEngine::GetSimulationTime(const TimeUnit& unit) const
 void PulseEngine::AdvanceModelTime()
 {
   if (!IsReady())
-    return;  
+    return;
   if(m_EventManager->IsEventActive(eEvent::IrreversibleState))
-    return;  
+    return;
 
   PreProcess();
   Process();
@@ -247,12 +253,11 @@ void PulseEngine::AdvanceModelTime()
 
 void PulseEngine::AdvanceModelTime(double time, const TimeUnit& unit)
 {
-  double time_s = Convert(time,unit,TimeUnit::s);
-  int count = (int)(time_s / m_Config->GetTimeStep(TimeUnit::s));
-  if (count == 0)
-    Error("Requested advancement time is smaller than time step, not advancing.");
-  for(int i=0;i<count;i++)
+  double time_s = Convert(time, unit, TimeUnit::s) + m_spareAdvanceTime_s;
+  int count = (int)(time_s / GetTimeStep(TimeUnit::s));
+  for (int i = 0; i < count; i++)
     AdvanceModelTime();
+  m_spareAdvanceTime_s = time_s - (count * GetTimeStep(TimeUnit::s));
 }
 
 void PulseEngine::AdvanceCallback(double time_s)
@@ -284,7 +289,7 @@ bool PulseEngine::ProcessAction(const SEAction& action)
       {
         std::stringstream ss;
         MakeDirectory("./states");
-        ss << "./states/" << m_Patient->GetName() << "@" << GetSimulationTime(TimeUnit::s) << "s.json";
+        ss << "./states/" << m_InitialPatient->GetName() << "@" << GetSimulationTime(TimeUnit::s) << "s.json";
         Info("Saving " + ss.str());
         SerializeToFile(ss.str(), JSON);
         // Debug code to make sure things are consistent
@@ -407,9 +412,9 @@ const SEEngineConfiguration* PulseEngine::GetConfiguration() const
   return PulseController::m_Config.get();
 }
 
-const SEPatient&  PulseEngine::GetPatient() const
+const SEPatient& PulseEngine::GetPatient() const
 {
-  return *PulseController::m_Patient.get();
+  return *PulseController::m_CurrentPatient.get();
 }
 
 bool PulseEngine::GetPatientAssessment(SEPatientAssessment& assessment) const

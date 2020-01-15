@@ -14,31 +14,35 @@ message AnyPatientActionData
 {
   oneof Action
   {
-    PatientAssessmentRequestData            Assessment                      = 1;
-    AcuteStressData                         AcuteStress                     = 2;
-    AirwayObstructionData                   AirwayObstruction               = 3;
-    ApneaData                               Apnea                           = 4;
-    AsthmaAttackData                        AsthmaAttack                    = 5;
-    BrainInjuryData                         BrainInjury                     = 6;
-    BronchoconstrictionData                 Bronchoconstriction             = 7;
-    CardiacArrestData                       CardiacArrest                   = 8;
-    ChestCompressionForceData               ChestCompressionForce           = 9;
-    ChestCompressionForceScaleData          ChestCompressionForceScale      = 10;
-    ChestOcclusiveDressingData              ChestOcclusiveDressing          = 11;
-    ConsciousRespirationData                ConsciousRespiration            = 12;
-    ConsumeNutrientsData                    ConsumeNutrients                = 13;
-    ExerciseData                            Exercise                        = 14;
-    HemorrhageData                          Hemorrhage                      = 15;
-    IntubationData                          Intubation                      = 16;
-    MechanicalVentilationData               MechanicalVentilation           = 17;
-    NeedleDecompressionData                 NeedleDecompression             = 18;
-    PericardialEffusionData                 PericardialEffusion             = 19;
-    SubstanceBolusData                      SubstanceBolus                  = 20;
-    SubstanceCompoundInfusionData           SubstanceCompoundInfusion       = 21;
-    SubstanceInfusionData                   SubstanceInfusion               = 22;
-    SupplementalOxygenData                  SupplementalOxygenData          = 23;
-    TensionPneumothoraxData                 TensionPneumothorax             = 24;
-    UrinateData                             Urinate                         = 25;
+    PatientAssessmentRequestData                       Assessment                                     = 1;
+    AcuteRespiratoryDistressSyndromeExacerbationData   AcuteRespiratoryDistressSyndromeExacerbation   = 2;
+    AcuteStressData                                    AcuteStress                                    = 3;
+    AirwayObstructionData                              AirwayObstruction                              = 4;
+    AsthmaAttackData                                   AsthmaAttack                                   = 5;
+    BrainInjuryData                                    BrainInjury                                    = 6;
+    BronchoconstrictionData                            Bronchoconstriction                            = 7;
+    CardiacArrestData                                  CardiacArrest                                  = 8;
+    ChestCompressionForceData                          ChestCompressionForce                          = 9;
+    ChestCompressionForceScaleData                     ChestCompressionForceScale                     = 10;
+    ChestOcclusiveDressingData                         ChestOcclusiveDressing                         = 11;
+    ChronicObstructivePulmonaryDiseaseExacerbationData ChronicObstructivePulmonaryDiseaseExacerbation = 12;
+    ConsciousRespirationData                           ConsciousRespiration                           = 13;
+    ConsumeNutrientsData                               ConsumeNutrients                               = 14;
+    DyspneaData                                        Dyspnea                                        = 15;
+    ExerciseData                                       Exercise                                       = 16;
+    HemorrhageData                                     Hemorrhage                                     = 17;
+    IntubationData                                     Intubation                                     = 18;
+    LobarPneumoniaExacerbationData                     LobarPneumoniaExacerbation                     = 19;
+    MechanicalVentilationData                          MechanicalVentilation                          = 20;
+    NeedleDecompressionData                            NeedleDecompression                            = 21;
+    PericardialEffusionData                            PericardialEffusion                            = 22;
+    RespiratoryFatigueData                             RespiratoryFatigue                             = 23;
+    SubstanceBolusData                                 SubstanceBolus                                 = 24;
+    SubstanceCompoundInfusionData                      SubstanceCompoundInfusion                      = 25;
+    SubstanceInfusionData                              SubstanceInfusion                              = 26;
+    SupplementalOxygenData                             SupplementalOxygen                             = 27;
+    TensionPneumothoraxData                            TensionPneumothorax                            = 28;
+    UrinateData                                        Urinate                                        = 29;
   }
 }
 
@@ -53,6 +57,15 @@ message PatientAssessmentRequestData
   ePatientAssessmentType                    Type                            = 2;/**<<@brief @ref ePatientAssessmentTypeTable */
 }
 
+/** @brief Worsen the effects of the Acute Respiratory Distress Syndrome condition. */
+message AcuteRespiratoryDistressSyndromeExacerbationData
+{
+  PatientActionData                         PatientAction                   = 1;
+  Scalar0To1Data                            Severity                        = 2;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
+  Scalar0To1Data                            LeftLungAffected                = 3;/**<< @brief Fraction of the Left Lung Affected*/
+  Scalar0To1Data                            RightLungAffected               = 4;/**<< @brief Fraction of the Left Lung Affected */
+}
+
 /** @brief Fight or flight.  The body prepares to defend itself. */
 message AcuteStressData
 {
@@ -62,13 +75,6 @@ message AcuteStressData
 
 /** @brief A blockage of the Airway leading to no respiration/air flow in or out of the body. */
 message AirwayObstructionData
-{
-  PatientActionData                         PatientAction                   = 1;
-  Scalar0To1Data                            Severity                        = 2;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
-}
-
-/** @brief Reduction of achieved tidal volume by inhibiting the respiratory breathing mechanism (i.e., muscles of respiration).  Maximum severity will stop breathing completely. */
-message ApneaData
 {
   PatientActionData                         PatientAction                   = 1;
   Scalar0To1Data                            Severity                        = 2;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
@@ -134,20 +140,39 @@ message ChestOcclusiveDressingData
   eSide                                     Side                            = 3;/**<<@brief @ref eSideTable */
 }
 
+/** @brief Worsen the effects of the Chronic Obstructive Pulmonary Disease condition. */
+message ChronicObstructivePulmonaryDiseaseExacerbationData
+{
+  PatientActionData                         PatientAction                   = 1;
+  Scalar0To1Data                            BronchitisSeverity              = 2;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
+  Scalar0To1Data                            EmphysemaSeverity               = 3;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
+}
+
+/** @brief Reduction of achieved tidal volume by inhibiting the respiratory breathing mechanism (i.e., muscles of respiration).  Maximum severity will stop breathing completely. */
+message DyspneaData
+{
+  PatientActionData                         PatientAction                   = 1;
+  Scalar0To1Data                            Severity                        = 2;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
+}
+
 /** @brief Force air out of the lungs. */
 message ForcedInhaleData
 {
   Scalar0To1Data                          InspiratoryCapacityFraction     = 1;/**<<@brief The fraction of the Inspiratory capacity that will be filled by the breath. */
-  ScalarTimeData                          Period                          = 2;/**<<@brief Duration of the inhale. */
+  ScalarTimeData                          InhalePeriod                    = 2;/**<<@brief Duration of the inhale. */
+  ScalarTimeData                          HoldPeriod                      = 3;/**<<@brief Duration to hold at the end of inhale. */
+  ScalarTimeData                          ReleasePeriod                   = 4;/**<<@brief Duration to get back to equilibrium/FRC. */
 }
 /** @brief Force air into the lungs. */
 message ForcedExhaleData
 {
   Scalar0To1Data                          ExpiratoryReserveVolumeFraction = 1;/**<<@brief The fraction of the Expiratory Reserve Volume that is forced out of the body. */
-  ScalarTimeData                          Period                          = 2;/**<<@brief Duration of the exhale.*/
+  ScalarTimeData                          ExhalePeriod                    = 2;/**<<@brief Duration of the exhale. */
+  ScalarTimeData                          HoldPeriod                      = 3;/**<<@brief Duration to at the end of exhale. */
+  ScalarTimeData                          ReleasePeriod                   = 4;/**<<@brief Duration to get back to equilibrium/FRC. */
 }
-/** @brief Hold the patients breath. There will be no inflow or out flow of air during the specified period */
-message BreathHoldData
+/** @brief Pause breathing at 0 pressure. There will be no inflow or out flow of air during the specified period */
+message ForcedPauseData
 {
   ScalarTimeData                          Period                          = 1;/**<<@brief Duration of the breath hold. */
 }
@@ -162,16 +187,15 @@ message AnyConsciousRespirationCommandData
   {
     ForcedInhaleData                      ForcedInhale                    = 2;
     ForcedExhaleData                      ForcedExhale                    = 3;
-    BreathHoldData                        BreathHold                      = 4;
+    ForcedPauseData                       ForcedPause                     = 4;
     UseInhalerData                        UseInhaler                      = 5;
   }
 }
-/** @brief An ordered list of concious breath commands for the patient to preform. */
+/** @brief An ordered list of conscious breath commands for the patient to preform. */
 message ConsciousRespirationData
-{
-  
+{  
   PatientActionData                           PatientAction                   = 1;
-  bool                                        AppendToPrevious                = 2;
+  bool                                        StartImmediately                = 2;
   repeated AnyConsciousRespirationCommandData Command                         = 3;
 }
 
@@ -225,6 +249,15 @@ message IntubationData
   eType                                     Type                            = 2;/**<<@brief @ref IntubationData_eTypeTable*/
 }
 
+/** @brief Worsen the effects of the Lobar Pneumonia condition. */
+message LobarPneumoniaExacerbationData
+{
+  PatientActionData                         PatientAction                   = 1;
+  Scalar0To1Data                            Severity                        = 2;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
+  Scalar0To1Data                            LeftLungAffected                = 3;/**<< @brief Fraction of the Left Lung Affected*/
+  Scalar0To1Data                            RightLungAffected               = 4;/**<< @brief Fraction of the Left Lung Affected */
+}
+
 /** @brief Mechanically breathing for the patient, such as with a squeeze bag or other equipment. */
 message MechanicalVentilationData
 {
@@ -249,6 +282,13 @@ message PericardialEffusionData
 {
   PatientActionData                         PatientAction                   = 1;
   ScalarVolumePerTimeData                   EffusionRate                    = 2;/**<<@brief Rate at which fluid is filling the pericardial cavity*/
+}
+
+/** @brief Respiratory muscle weakness caused by excessive effort relative to the strength and endurance of the muscles. */
+message RespiratoryFatigueData
+{
+  PatientActionData                         PatientAction                   = 1;
+  Scalar0To1Data                            Severity                        = 2;/**<<@brief Scale of affect, 0 no dyspnea, 1 having dyspnea. */
 }
 
 message SubstanceBolusStateData

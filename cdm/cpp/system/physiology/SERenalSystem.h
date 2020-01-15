@@ -25,8 +25,8 @@ public:
   virtual double GetFiltrationFraction() const;
 
   virtual bool HasLeftAfferentArterioleResistance() const;
-  virtual SEScalarFlowResistance& GetLeftAfferentArterioleResistance();
-  virtual double GetLeftAfferentArterioleResistance(const FlowResistanceUnit& unit) const;
+  virtual SEScalarPressureTimePerVolume& GetLeftAfferentArterioleResistance();
+  virtual double GetLeftAfferentArterioleResistance(const PressureTimePerVolumeUnit& unit) const;
 
   virtual bool HasLeftBowmansCapsulesHydrostaticPressure() const;
   virtual SEScalarPressure& GetLeftBowmansCapsulesHydrostaticPressure();
@@ -37,8 +37,8 @@ public:
   virtual double GetLeftBowmansCapsulesOsmoticPressure(const PressureUnit& unit) const;
 
   virtual bool HasLeftEfferentArterioleResistance() const;
-  virtual SEScalarFlowResistance& GetLeftEfferentArterioleResistance();
-  virtual double GetLeftEfferentArterioleResistance(const FlowResistanceUnit& unit) const;
+  virtual SEScalarPressureTimePerVolume& GetLeftEfferentArterioleResistance();
+  virtual double GetLeftEfferentArterioleResistance(const PressureTimePerVolumeUnit& unit) const;
 
   virtual bool HasLeftGlomerularCapillariesHydrostaticPressure() const;
   virtual SEScalarPressure& GetLeftGlomerularCapillariesHydrostaticPressure();
@@ -117,12 +117,12 @@ public:
   virtual double GetRenalPlasmaFlow(const VolumePerTimeUnit& unit) const;
 
   virtual bool HasRenalVascularResistance() const;
-  virtual SEScalarFlowResistance& GetRenalVascularResistance();
-  virtual double GetRenalVascularResistance(const FlowResistanceUnit& unit) const;
+  virtual SEScalarPressureTimePerVolume& GetRenalVascularResistance();
+  virtual double GetRenalVascularResistance(const PressureTimePerVolumeUnit& unit) const;
 
   virtual bool HasRightAfferentArterioleResistance() const;
-  virtual SEScalarFlowResistance& GetRightAfferentArterioleResistance();
-  virtual double GetRightAfferentArterioleResistance(const FlowResistanceUnit& unit) const;
+  virtual SEScalarPressureTimePerVolume& GetRightAfferentArterioleResistance();
+  virtual double GetRightAfferentArterioleResistance(const PressureTimePerVolumeUnit& unit) const;
 
   virtual bool HasRightBowmansCapsulesHydrostaticPressure() const;
   virtual SEScalarPressure& GetRightBowmansCapsulesHydrostaticPressure();
@@ -133,8 +133,8 @@ public:
   virtual double GetRightBowmansCapsulesOsmoticPressure(const PressureUnit& unit) const;
 
   virtual bool HasRightEfferentArterioleResistance() const;
-  virtual SEScalarFlowResistance& GetRightEfferentArterioleResistance();
-  virtual double GetRightEfferentArterioleResistance(const FlowResistanceUnit& unit) const;
+  virtual SEScalarPressureTimePerVolume& GetRightEfferentArterioleResistance();
+  virtual double GetRightEfferentArterioleResistance(const PressureTimePerVolumeUnit& unit) const;
 
   virtual bool HasRightGlomerularCapillariesHydrostaticPressure() const;
   virtual SEScalarPressure& GetRightGlomerularCapillariesHydrostaticPressure();
@@ -237,10 +237,10 @@ protected:
   SEScalarVolumePerTime*              m_GlomerularFiltrationRate; 
   SEScalar0To1*                       m_FiltrationFraction;
 
-  SEScalarFlowResistance*             m_LeftAfferentArterioleResistance;
+  SEScalarPressureTimePerVolume*             m_LeftAfferentArterioleResistance;
   SEScalarPressure*                   m_LeftBowmansCapsulesHydrostaticPressure;
   SEScalarPressure*                   m_LeftBowmansCapsulesOsmoticPressure;
-  SEScalarFlowResistance*             m_LeftEfferentArterioleResistance;
+  SEScalarPressureTimePerVolume*             m_LeftEfferentArterioleResistance;
   SEScalarPressure*                   m_LeftGlomerularCapillariesHydrostaticPressure;
   SEScalarPressure*                   m_LeftGlomerularCapillariesOsmoticPressure;
   SEScalarVolumePerTimePressure*      m_LeftGlomerularFiltrationCoefficient;
@@ -261,12 +261,12 @@ protected:
 
   SEScalarVolumePerTime*              m_RenalBloodFlow;
   SEScalarVolumePerTime*              m_RenalPlasmaFlow;
-  SEScalarFlowResistance*             m_RenalVascularResistance;
+  SEScalarPressureTimePerVolume*             m_RenalVascularResistance;
 
-  SEScalarFlowResistance*             m_RightAfferentArterioleResistance;
+  SEScalarPressureTimePerVolume*             m_RightAfferentArterioleResistance;
   SEScalarPressure*                   m_RightBowmansCapsulesHydrostaticPressure;
   SEScalarPressure*                   m_RightBowmansCapsulesOsmoticPressure;
-  SEScalarFlowResistance*             m_RightEfferentArterioleResistance;
+  SEScalarPressureTimePerVolume*             m_RightEfferentArterioleResistance;
   SEScalarPressure*                   m_RightGlomerularCapillariesHydrostaticPressure;
   SEScalarPressure*                   m_RightGlomerularCapillariesOsmoticPressure;
   SEScalarVolumePerTimePressure*      m_RightGlomerularFiltrationCoefficient;

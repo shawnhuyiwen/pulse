@@ -8,7 +8,7 @@
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
-#include "properties/SEScalarFlowResistance.h"
+#include "properties/SEScalarPressureTimePerVolume.h"
 #include "properties/SEScalarPressurePerVolume.h"
 #include "properties/SEScalarPressureTimePerArea.h"
 #include "properties/SEScalarPressureTimePerVolumeArea.h"
@@ -556,13 +556,13 @@ bool SECardiovascularSystem::HasSystemicVascularResistance() const
 {
   return m_SystemicVascularResistance == nullptr ? false : m_SystemicVascularResistance->IsValid();
 }
-SEScalarFlowResistance& SECardiovascularSystem::GetSystemicVascularResistance()
+SEScalarPressureTimePerVolume& SECardiovascularSystem::GetSystemicVascularResistance()
 {
   if (m_SystemicVascularResistance == nullptr)
-    m_SystemicVascularResistance = new SEScalarFlowResistance();
+    m_SystemicVascularResistance = new SEScalarPressureTimePerVolume();
   return *m_SystemicVascularResistance;
 }
-double SECardiovascularSystem::GetSystemicVascularResistance(const FlowResistanceUnit& unit) const
+double SECardiovascularSystem::GetSystemicVascularResistance(const PressureTimePerVolumeUnit& unit) const
 {
   if (m_SystemicVascularResistance == nullptr)
     return SEScalar::dNaN();
@@ -590,13 +590,13 @@ bool SECardiovascularSystem::HasPulmonaryVascularResistance() const
 {
   return m_PulmonaryVascularResistance == nullptr ? false : m_PulmonaryVascularResistance->IsValid();
 }
-SEScalarFlowResistance& SECardiovascularSystem::GetPulmonaryVascularResistance()
+SEScalarPressureTimePerVolume& SECardiovascularSystem::GetPulmonaryVascularResistance()
 {
   if (m_PulmonaryVascularResistance == nullptr)
-    m_PulmonaryVascularResistance = new SEScalarFlowResistance();
+    m_PulmonaryVascularResistance = new SEScalarPressureTimePerVolume();
   return *m_PulmonaryVascularResistance;
 }
-double SECardiovascularSystem::GetPulmonaryVascularResistance(const FlowResistanceUnit& unit) const
+double SECardiovascularSystem::GetPulmonaryVascularResistance(const PressureTimePerVolumeUnit& unit) const
 {
   if (m_PulmonaryVascularResistance == nullptr)
     return SEScalar::dNaN();

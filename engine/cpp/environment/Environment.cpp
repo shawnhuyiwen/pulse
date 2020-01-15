@@ -30,6 +30,8 @@
 #include "circuit/thermal/SEThermalCircuitPath.h"
 #include "compartment/fluid/SEGasCompartment.h"
 #include "compartment/substances/SEGasSubstanceQuantity.h"
+#include "compartment/fluid/SELiquidCompartment.h"
+#include "compartment/substances/SELiquidSubstanceQuantity.h"
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceAerosolization.h"
 #include "substance/SESubstanceFraction.h"
@@ -68,7 +70,6 @@ Environment::~Environment()
 void Environment::Clear()
 {
   SEEnvironment::Clear();
-  m_Patient = nullptr;
   m_AmbientGases = nullptr;
   m_AmbientAerosols = nullptr;
   m_EnvironmentCircuit = nullptr;
@@ -107,17 +108,15 @@ void Environment::Initialize()
   GetEvaporativeHeatTranferCoefficient().SetValue(0.0, HeatConductancePerAreaUnit::W_Per_m2_K);
   GetRadiativeHeatTranferCoefficient().SetValue(0.0, HeatConductancePerAreaUnit::W_Per_m2_K);
 
-  double patientDensity_g_Per_mL = m_Patient->GetBodyDensity(MassPerVolumeUnit::g_Per_mL);
-  double patientMass_g = m_Patient->GetWeight(MassUnit::g);
-  double patientHeight_m = m_Patient->GetHeight(LengthUnit::m);
+  double patientDensity_g_Per_mL = m_data.GetCurrentPatient().GetBodyDensity(MassPerVolumeUnit::g_Per_mL);
+  double patientMass_g = m_data.GetCurrentPatient().GetWeight(MassUnit::g);
+  double patientHeight_m = m_data.GetCurrentPatient().GetHeight(LengthUnit::m);
   double pi = 3.14159;
   m_PatientEquivalentDiameter_m = pow(Convert(patientMass_g / patientDensity_g_Per_mL, VolumeUnit::mL, VolumeUnit::m3) / (pi*patientHeight_m), 0.5);
 }
 
 void Environment::SetUp()
 {
-  // Patient and Actions
-  m_Patient = &m_data.GetPatient();
   //Circuits
   m_EnvironmentCircuit = &m_data.GetCircuits().GetExternalTemperatureCircuit();
   //Compartments
@@ -231,7 +230,7 @@ void Environment::PreProcess()
 
   //Set clothing resistor
   double dClothingResistance_rsi = GetConditions().GetClothingResistance(HeatResistanceAreaUnit::rsi); //1 rsi = 1 m^2-K/W
-  double dSurfaceArea_m2 = m_Patient->GetSkinSurfaceArea(AreaUnit::m2);
+  double dSurfaceArea_m2 = m_data.GetCurrentPatient().GetSkinSurfaceArea(AreaUnit::m2);
   m_SkinToClothing->GetNextResistance().SetValue(dClothingResistance_rsi / dSurfaceArea_m2, HeatResistanceUnit::K_Per_W);
 
   //Set the skin heat loss
@@ -301,7 +300,7 @@ void Environment::ProcessActions()
   
   SEThermalApplication* ta = m_data.GetActions().GetEnvironmentActions().GetThermalApplication();
   double dEffectiveAreaFraction = 0.0;
-  double dSurfaceArea_m2 = m_Patient->GetSkinSurfaceArea(AreaUnit::m2);
+  double dSurfaceArea_m2 = m_data.GetCurrentPatient().GetSkinSurfaceArea(AreaUnit::m2);
 
   //Handle active heating and cooling
   //We'll allow heating and cooling to be done simultaneously by just summing the effects
@@ -542,7 +541,7 @@ void Environment::CalculateRadiation()
     GetRadiativeHeatTranferCoefficient().SetValue(dRadiativeHeatTransferCoefficient_WPerM2_K, HeatConductancePerAreaUnit::W_Per_m2_K);
 
     //Calculate the resistance
-    double dSurfaceArea_m2 = m_Patient->GetSkinSurfaceArea(AreaUnit::m2);
+    double dSurfaceArea_m2 = m_data.GetCurrentPatient().GetSkinSurfaceArea(AreaUnit::m2);
     double dResistance_K_Per_W = 0.0;
     if (dRadiativeHeatTransferCoefficient_WPerM2_K == 0)
     {
@@ -609,7 +608,7 @@ void Environment::CalculateConvection()
   GetConvectiveHeatTranferCoefficient().SetValue(dConvectiveHeatTransferCoefficient_WPerM2_K, HeatConductancePerAreaUnit::W_Per_m2_K);
 
   //Calculate the resistance
-  double dSurfaceArea_m2 = m_Patient->GetSkinSurfaceArea(AreaUnit::m2);
+  double dSurfaceArea_m2 = m_data.GetCurrentPatient().GetSkinSurfaceArea(AreaUnit::m2);
   double dResistance_K_Per_W = 0.0;
   if (dConvectiveHeatTransferCoefficient_WPerM2_K == 0)
   {
@@ -671,7 +670,7 @@ void Environment::CalculateEvaporation()
     double dClothingResistance_rsi = GetConditions().GetClothingResistance(HeatResistanceAreaUnit::rsi); //1 rsi = 1 m^2-K/W
     double dFactorOfReduction = 1.0 / (1.0 + 2.22 * dConvectiveTransferCoefficient_WPerM2_K * dClothingResistance_rsi);
     double dMaxEvaporativePotential = dEvaporativeHeatTransferCoefficient_WPerM2_K * dFactorOfReduction * (m_dWaterVaporPressureAtSkin_Pa - m_dWaterVaporPressureInAmbientAir_Pa);
-    double dSurfaceArea_m2 = m_Patient->GetSkinSurfaceArea(AreaUnit::m2);
+    double dSurfaceArea_m2 = m_data.GetCurrentPatient().GetSkinSurfaceArea(AreaUnit::m2);
     double dSweatRate_kgPers = 0.0;
     if (m_data.GetEnergy().HasSweatRate())
     {

@@ -19,7 +19,7 @@
 #include "physiology/Tissue.h"
 #include "compartment/fluid/SELiquidCompartmentGraph.h"
 #include "compartment/fluid/SELiquidCompartment.h"
-#include "circuit/fluid/SEFluidCircuitPath.h"
+#include "circuit/fluid/SEFluidCircuit.h"
 #include "controller/Circuits.h"
 #include "controller/Compartments.h"
 
@@ -322,6 +322,9 @@ void PBPulsePhysiology::Serialize(const NervousData& src, Nervous& dst)
   dst.m_FeedbackActive = true;
   dst.m_ArterialOxygenBaseline_mmHg = src.arterialoxygenbaseline_mmhg();
   dst.m_ArterialCarbonDioxideBaseline_mmHg = src.arterialcarbondioxidebaseline_mmhg();
+  dst.m_BaroreceptorFeedbackStatus = src.baroreceptorfeedbackstatus();
+  dst.m_BaroreceptorActiveTime_s = src.baroreceptoractivetime_s();
+  dst.m_BaroreceptorMeanArterialPressureBaseline_mmHg = src.baroreceptormeanarterialpressurebaseline_mmhg();
 }
 NervousData* PBPulsePhysiology::Unload(const Nervous& src)
 {
@@ -334,6 +337,9 @@ void PBPulsePhysiology::Serialize(const Nervous& src, NervousData& dst)
   PBPhysiology::Serialize(src, *dst.mutable_common());
   dst.set_arterialoxygenbaseline_mmhg(src.m_ArterialOxygenBaseline_mmHg);
   dst.set_arterialcarbondioxidebaseline_mmhg(src.m_ArterialCarbonDioxideBaseline_mmHg);
+  dst.set_baroreceptorfeedbackstatus(src.m_BaroreceptorFeedbackStatus);
+  dst.set_baroreceptoractivetime_s(src.m_BaroreceptorActiveTime_s);
+  dst.set_baroreceptormeanarterialpressurebaseline_mmhg(src.m_BaroreceptorMeanArterialPressureBaseline_mmHg);
 }
 
 void PBPulsePhysiology::Load(const RenalData& src, Renal& dst)
@@ -392,16 +398,14 @@ void PBPulsePhysiology::Load(const RespiratoryData& src, Respiratory& dst)
 void PBPulsePhysiology::Serialize(const RespiratoryData& src, Respiratory& dst)
 {
   PBPhysiology::Serialize(src.common(), dst);
-  dst.m_InitialExpiratoryReserveVolume_L = src.initialexpiratoryreservevolume_l();
-  dst.m_InitialFunctionalResidualCapacity_L = src.initialfunctionalresidualcapacity_l();
-  dst.m_InitialInspiratoryCapacity_L = src.initialinspiratorycapacity_l();
-  dst.m_InitialResidualVolume_L = src.initialresidualvolume_l();
 
   dst.m_BreathingCycle = src.breathingcycle();
   dst.m_NotBreathing = src.notbreathing();
   dst.m_TopBreathTotalVolume_L = src.topbreathtotalvolume_l();
   dst.m_TopBreathAlveoliVolume_L = src.topbreathalveolivolume_l();
-  dst.m_TopBreathDeadSpaceVolume_L = src.topbreathdeadspacevolume_l();
+  dst.m_TopBreathPleuralVolume_L = src.topbreathpleuralvolume_l();
+  dst.m_TopBreathAlveoliPressure_cmH2O = src.topbreathalveolipressure_cmh2o();
+  dst.m_TopBreathDriverPressure_cmH2O = src.topbreathdriverpressure_cmh2o();
   dst.m_TopBreathPleuralPressure_cmH2O = src.topbreathpleuralpressure_cmh2o();
   dst.m_LastCardiacCycleBloodPH = src.lastcardiaccyclebloodph();
   dst.m_TopCarinaO2 = src.topcarinao2();
@@ -409,35 +413,37 @@ void PBPulsePhysiology::Serialize(const RespiratoryData& src, Respiratory& dst)
   dst.m_BottomBreathElapsedTime_min = src.bottombreathelapsedtime_min();
   dst.m_BottomBreathTotalVolume_L = src.bottombreathtotalvolume_l();
   dst.m_BottomBreathAlveoliVolume_L = src.bottombreathalveolivolume_l();
-  dst.m_BottomBreathDeadSpaceVolume_L = src.bottombreathdeadspacevolume_l();
+  dst.m_BottomBreathPleuralVolume_L = src.bottombreathpleuralvolume_l();
+  dst.m_BottomBreathAlveoliPressure_cmH2O = src.bottombreathalveolipressure_cmh2o();
+  dst.m_BottomBreathDriverPressure_cmH2O = src.bottombreathdriverpressure_cmh2o();
   dst.m_BottomBreathPleuralPressure_cmH2O = src.bottombreathpleuralpressure_cmh2o();
+  dst.m_PeakAlveolarPressure_cmH2O = src.peakalveolarpressure_cmh2o();
+  dst.m_MaximalAlveolarPressure_cmH2O = src.maximalalveolarpressure_cmh2o();
   PBProperty::Load(src.bloodphrunningaverage(), *dst.m_BloodPHRunningAverage);
 
   dst.m_ArterialO2PartialPressure_mmHg = src.arterialo2partialpressure_mmhg();
   dst.m_ArterialCO2PartialPressure_mmHg = src.arterialco2partialpressure_mmhg();
   dst.m_BreathingCycleTime_s = src.breathingcycletime_s();
-  dst.m_DefaultDrivePressure_cmH2O = src.defaultdrivepressure_cmh2o();
-  dst.m_DriverInspirationTime_s = src.driverinspirationtime_s();
   dst.m_DriverPressure_cmH2O = src.driverpressure_cmh2o();
-  dst.m_DriverPressureMin_cmH2O = src.driverpressuremin_cmh2o();
   dst.m_ElapsedBreathingCycleTime_min = src.elapsedbreathingcycletime_min();
-  dst.m_IEscaleFactor = src.iescalefactor();
-  dst.m_InstantaneousFunctionalResidualCapacity_L = src.instantaneousfunctionalresidualcapacity_l();
-  dst.m_MaxDriverPressure_cmH2O = src.maxdriverpressure_cmh2o();
-  dst.m_PeakRespiratoryDrivePressure_cmH2O = src.peakrespiratorydrivepressure_cmh2o();
+  dst.m_IERatioScaleFactor = src.ieratioscalefactor();
+  dst.m_PeakInspiratoryPressure_cmH2O = src.peakinspiratorypressure_cmh2o();
+  dst.m_PeakExpiratoryPressure_cmH2O = src.peakexpiratorypressure_cmh2o();
   dst.m_PreviousTargetAlveolarVentilation_L_Per_min = src.previoustargetalveolarventilation_l_per_min();
   dst.m_VentilationFrequency_Per_min = src.ventilationfrequency_per_min();
   dst.m_VentilationToTidalVolumeSlope = src.ventilationtotidalvolumeslope();
   PBProperty::Load(src.arterialo2runningaverage_mmhg(), *dst.m_ArterialO2RunningAverage_mmHg);
   PBProperty::Load(src.arterialco2runningaverage_mmhg(), *dst.m_ArterialCO2RunningAverage_mmHg);
 
-  dst.m_ConsciousBreathing = src.consciousbreathing();
-  dst.m_ConsciousRespirationPeriod_s = src.consciousrespirationperiod_s();
-  dst.m_ConsciousRespirationRemainingPeriod_s = src.consciousrespirationremainingperiod_s();
-  dst.m_ExpiratoryReserveVolumeFraction = src.expiratoryreservevolumefraction();
-  dst.m_InspiratoryCapacityFraction = src.inspiratorycapacityfraction();
-  dst.m_ConsciousStartPressure_cmH2O = src.consciousstartpressure_cmh2o();
-  dst.m_ConsciousEndPressure_cmH2O = src.consciousendpressure_cmh2o();
+  dst.m_ExpiratoryHoldFraction = src.expiratoryholdfraction();
+  dst.m_ExpiratoryReleaseFraction = src.expiratoryreleasefraction();
+  dst.m_ExpiratoryRiseFraction = src.expiratoryrisefraction();
+  dst.m_InspiratoryHoldFraction = src.inspiratoryholdfraction();
+  dst.m_InspiratoryReleaseFraction = src.inspiratoryreleasefraction();
+  dst.m_InspiratoryRiseFraction = src.inspiratoryrisefraction();
+  dst.m_InspiratoryToExpiratoryPauseFraction = src.inspiratorytoexpiratorypausefraction();
+
+  dst.m_ActiveConsciousRespirationCommand = src.activeconsciousrespirationcommand();
 }
 RespiratoryData* PBPulsePhysiology::Unload(const Respiratory& src)
 {
@@ -448,16 +454,14 @@ RespiratoryData* PBPulsePhysiology::Unload(const Respiratory& src)
 void PBPulsePhysiology::Serialize(const Respiratory& src, RespiratoryData& dst)
 {
   PBPhysiology::Serialize(src, *dst.mutable_common());
-  dst.set_initialexpiratoryreservevolume_l(src.m_InitialExpiratoryReserveVolume_L);
-  dst.set_initialfunctionalresidualcapacity_l(src.m_InitialFunctionalResidualCapacity_L);
-  dst.set_initialinspiratorycapacity_l(src.m_InitialInspiratoryCapacity_L);
-  dst.set_initialresidualvolume_l(src.m_InitialResidualVolume_L);
 
   dst.set_breathingcycle(src.m_BreathingCycle);
   dst.set_notbreathing(src.m_NotBreathing);
   dst.set_topbreathtotalvolume_l(src.m_TopBreathTotalVolume_L);
   dst.set_topbreathalveolivolume_l(src.m_TopBreathAlveoliVolume_L);
-  dst.set_topbreathdeadspacevolume_l(src.m_TopBreathDeadSpaceVolume_L);
+  dst.set_topbreathpleuralvolume_l(src.m_TopBreathPleuralVolume_L);
+  dst.set_topbreathalveolipressure_cmh2o(src.m_TopBreathAlveoliPressure_cmH2O);
+  dst.set_topbreathdriverpressure_cmh2o(src.m_TopBreathDriverPressure_cmH2O);
   dst.set_topbreathpleuralpressure_cmh2o(src.m_TopBreathPleuralPressure_cmH2O);
   dst.set_lastcardiaccyclebloodph(src.m_LastCardiacCycleBloodPH);
   dst.set_topcarinao2(src.m_TopCarinaO2);
@@ -465,35 +469,37 @@ void PBPulsePhysiology::Serialize(const Respiratory& src, RespiratoryData& dst)
   dst.set_bottombreathelapsedtime_min(src.m_BottomBreathElapsedTime_min);
   dst.set_bottombreathtotalvolume_l(src.m_BottomBreathTotalVolume_L);
   dst.set_bottombreathalveolivolume_l(src.m_BottomBreathAlveoliVolume_L);
-  dst.set_bottombreathdeadspacevolume_l(src.m_BottomBreathDeadSpaceVolume_L);
+  dst.set_bottombreathpleuralvolume_l(src.m_BottomBreathPleuralVolume_L);
+  dst.set_bottombreathalveolipressure_cmh2o(src.m_BottomBreathAlveoliPressure_cmH2O);
+  dst.set_bottombreathdriverpressure_cmh2o(src.m_BottomBreathDriverPressure_cmH2O);
   dst.set_bottombreathpleuralpressure_cmh2o(src.m_BottomBreathPleuralPressure_cmH2O);
+  dst.set_peakalveolarpressure_cmh2o(src.m_PeakAlveolarPressure_cmH2O);
+  dst.set_maximalalveolarpressure_cmh2o(src.m_MaximalAlveolarPressure_cmH2O);
   dst.set_allocated_bloodphrunningaverage(PBProperty::Unload(*src.m_BloodPHRunningAverage));
 
   dst.set_arterialo2partialpressure_mmhg(src.m_ArterialO2PartialPressure_mmHg);
   dst.set_arterialco2partialpressure_mmhg(src.m_ArterialCO2PartialPressure_mmHg);
   dst.set_breathingcycletime_s(src.m_BreathingCycleTime_s);
-  dst.set_defaultdrivepressure_cmh2o(src.m_DefaultDrivePressure_cmH2O);
-  dst.set_driverinspirationtime_s(src.m_DriverInspirationTime_s);
   dst.set_driverpressure_cmh2o(src.m_DriverPressure_cmH2O);
-  dst.set_driverpressuremin_cmh2o(src.m_DriverPressureMin_cmH2O);
   dst.set_elapsedbreathingcycletime_min(src.m_ElapsedBreathingCycleTime_min);
-  dst.set_iescalefactor(src.m_IEscaleFactor);
-  dst.set_instantaneousfunctionalresidualcapacity_l(src.m_InstantaneousFunctionalResidualCapacity_L);
-  dst.set_maxdriverpressure_cmh2o(src.m_MaxDriverPressure_cmH2O);
-  dst.set_peakrespiratorydrivepressure_cmh2o(src.m_PeakRespiratoryDrivePressure_cmH2O);
+  dst.set_ieratioscalefactor(src.m_IERatioScaleFactor);
+  dst.set_peakinspiratorypressure_cmh2o(src.m_PeakInspiratoryPressure_cmH2O);
+  dst.set_peakexpiratorypressure_cmh2o(src.m_PeakExpiratoryPressure_cmH2O);
   dst.set_previoustargetalveolarventilation_l_per_min(src.m_PreviousTargetAlveolarVentilation_L_Per_min);
   dst.set_ventilationfrequency_per_min(src.m_VentilationFrequency_Per_min);
   dst.set_ventilationtotidalvolumeslope(src.m_VentilationToTidalVolumeSlope);
   dst.set_allocated_arterialo2runningaverage_mmhg(PBProperty::Unload(*src.m_ArterialO2RunningAverage_mmHg));
   dst.set_allocated_arterialco2runningaverage_mmhg(PBProperty::Unload(*src.m_ArterialCO2RunningAverage_mmHg));
 
-  dst.set_consciousbreathing(src.m_ConsciousBreathing);
-  dst.set_consciousrespirationperiod_s(src.m_ConsciousRespirationPeriod_s);
-  dst.set_consciousrespirationremainingperiod_s(src.m_ConsciousRespirationRemainingPeriod_s);
-  dst.set_expiratoryreservevolumefraction(src.m_ExpiratoryReserveVolumeFraction);
-  dst.set_inspiratorycapacityfraction(src.m_InspiratoryCapacityFraction);
-  dst.set_consciousstartpressure_cmh2o(src.m_ConsciousStartPressure_cmH2O);
-  dst.set_consciousendpressure_cmh2o(src.m_ConsciousEndPressure_cmH2O);
+  dst.set_expiratoryholdfraction(src.m_ExpiratoryHoldFraction);
+  dst.set_expiratoryreleasefraction(src.m_ExpiratoryReleaseFraction);
+  dst.set_expiratoryrisefraction(src.m_ExpiratoryRiseFraction);
+  dst.set_inspiratoryholdfraction(src.m_InspiratoryHoldFraction);
+  dst.set_inspiratoryreleasefraction(src.m_InspiratoryReleaseFraction);
+  dst.set_inspiratoryrisefraction(src.m_InspiratoryRiseFraction);
+  dst.set_inspiratorytoexpiratorypausefraction(src.m_InspiratoryToExpiratoryPauseFraction);
+
+  dst.set_activeconsciousrespirationcommand(src.m_ActiveConsciousRespirationCommand);
 }
 
 void PBPulsePhysiology::Load(const TissueData& src, Tissue& dst)

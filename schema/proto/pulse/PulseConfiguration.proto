@@ -41,27 +41,27 @@ message ConfigurationData
   
   message CardiovascularConfigurationData
   {
-    cdm.ScalarFlowElastanceData                        LeftHeartElastanceMaximum                             = 1;
-    cdm.ScalarFlowElastanceData                        LeftHeartElastanceMinimum                             = 2;
+    cdm.ScalarPressurePerVolumeData                    LeftHeartElastanceMaximum                             = 1;
+    cdm.ScalarPressurePerVolumeData                    LeftHeartElastanceMinimum                             = 2;
     cdm.Scalar0To1Data                                 MinimumBloodVolumeFraction                            = 3;
-    cdm.ScalarFlowElastanceData                        RightHeartElastanceMaximum                            = 4;
-    cdm.ScalarFlowElastanceData                        RightHeartElastanceMinimum                            = 5;
+    cdm.ScalarPressurePerVolumeData                    RightHeartElastanceMaximum                            = 4;
+    cdm.ScalarPressurePerVolumeData                    RightHeartElastanceMinimum                            = 5;
     cdm.ScalarData                                     StandardPulmonaryCapillaryCoverage                    = 6;
   }
   
   message CircuitConfigurationData
   {
-    cdm.ScalarFlowResistanceData                       CardiovascularOpenResistance                         = 1;;
+    cdm.ScalarPressureTimePerVolumeData                CardiovascularOpenResistance                         = 1;;
     cdm.ScalarElectricResistanceData                   DefaultClosedElectricResistance                      = 2;;
     cdm.ScalarElectricResistanceData                   DefaultOpenElectricResistance                        = 3;;
-    cdm.ScalarFlowResistanceData                       DefaultClosedFlowResistance                          = 4;;
-    cdm.ScalarFlowResistanceData                       DefaultOpenFlowResistance                            = 5;;
+    cdm.ScalarPressureTimePerVolumeData                DefaultClosedFlowResistance                          = 4;;
+    cdm.ScalarPressureTimePerVolumeData                DefaultOpenFlowResistance                            = 5;;
     cdm.ScalarHeatResistanceData                       DefaultClosedHeatResistance                          = 6;;
     cdm.ScalarHeatResistanceData                       DefaultOpenHeatResistance                            = 7;;
-    cdm.ScalarFlowResistanceData                       MachineClosedResistance                              = 8;;
-    cdm.ScalarFlowResistanceData                       MachineOpenResistance                                = 9;;
-    cdm.ScalarFlowResistanceData                       RespiratoryClosedResistance                          = 10;
-    cdm.ScalarFlowResistanceData                       RespiratoryOpenResistance                            = 11;
+    cdm.ScalarPressureTimePerVolumeData                MachineClosedResistance                              = 8;;
+    cdm.ScalarPressureTimePerVolumeData                MachineOpenResistance                                = 9;;
+    cdm.ScalarPressureTimePerVolumeData                RespiratoryClosedResistance                          = 10;
+    cdm.ScalarPressureTimePerVolumeData                RespiratoryOpenResistance                            = 11;
   }
   
   message ConstantsConfigurationData
@@ -146,8 +146,8 @@ message ConfigurationData
     cdm.ScalarAreaData                                 LeftTubularReabsorptionFilteringSurfaceAreaBaseline  = 5;
     cdm.ScalarVolumePerTimePressureAreaData            LeftTubularReabsorptionFluidPermeabilityBaseline     = 6;
     
-    cdm.ScalarFlowResistanceData                       MaximumAfferentResistance                            = 7;
-    cdm.ScalarFlowResistanceData                       MinimumAfferentResistance                            = 8;
+    cdm.ScalarPressureTimePerVolumeData                MaximumAfferentResistance                            = 7;
+    cdm.ScalarPressureTimePerVolumeData                MinimumAfferentResistance                            = 8;
     
     cdm.ScalarAreaData                                 RightGlomerularFilteringSurfaceAreaBaseline          = 9;
     cdm.ScalarVolumePerTimePressureAreaData            RightGlomerularFluidPermeabilityBaseline             = 10;

@@ -18,7 +18,7 @@
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalarArea.h"
 #include "properties/SEScalarPower.h"
-#include "properties/SEScalarFlowElastance.h"
+#include "properties/SEScalarPressurePerVolume.h"
 #include "io/protobuf/PBPatient.h"
 
 
@@ -41,6 +41,7 @@ SEPatient::SEPatient(Logger* logger) : Loggable(logger)
   m_HeartRateBaseline = nullptr;
   m_HeartRateMaximum = nullptr;
   m_HeartRateMinimum = nullptr;
+  m_IdealBodyWeight = nullptr;
   m_InspiratoryCapacity = nullptr;
   m_InspiratoryReserveVolume = nullptr;
   m_LeanBodyMass = nullptr;
@@ -79,6 +80,7 @@ void SEPatient::Clear()
   SAFE_DELETE(m_HeartRateBaseline);
   SAFE_DELETE(m_HeartRateMaximum);
   SAFE_DELETE(m_HeartRateMinimum);
+  SAFE_DELETE(m_IdealBodyWeight);
   SAFE_DELETE(m_InspiratoryCapacity);
   SAFE_DELETE(m_InspiratoryReserveVolume);
   SAFE_DELETE(m_LeanBodyMass);
@@ -146,6 +148,8 @@ const SEScalar* SEPatient::GetScalar(const std::string& name)
     return &GetHeartRateMaximum();
   if (name.compare("HeartRateMinimum") == 0)
     return &GetHeartRateMinimum();
+  if (name.compare("IdealBodyWeight") == 0)
+    return &GetIdealBodyWeight();
   if (name.compare("InspiratoryCapacity") == 0)
     return &GetInspiratoryCapacity();
   if (name.compare("InspiratoryReserveVolume") == 0)
@@ -436,6 +440,23 @@ double SEPatient::GetHeartRateMinimum(const FrequencyUnit& unit) const
   if (m_HeartRateMinimum == nullptr)
     return SEScalar::dNaN();
   return m_HeartRateMinimum->GetValue(unit);
+}
+
+bool SEPatient::HasIdealBodyWeight() const
+{
+  return m_IdealBodyWeight == nullptr ? false : m_IdealBodyWeight->IsValid();
+}
+SEScalarMass& SEPatient::GetIdealBodyWeight()
+{
+  if (m_IdealBodyWeight == nullptr)
+    m_IdealBodyWeight = new SEScalarMass();
+  return *m_IdealBodyWeight;
+}
+double SEPatient::GetIdealBodyWeight(const MassUnit& unit) const
+{
+  if (m_IdealBodyWeight == nullptr)
+    return SEScalar::dNaN();
+  return m_IdealBodyWeight->GetValue(unit);
 }
 
 bool SEPatient::HasInspiratoryCapacity() const

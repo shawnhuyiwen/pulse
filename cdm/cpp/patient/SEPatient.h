@@ -98,6 +98,10 @@ public:
   virtual bool HasHeartRateMinimum() const;
   virtual SEScalarFrequency& GetHeartRateMinimum();
   virtual double GetHeartRateMinimum(const FrequencyUnit& unit) const;
+
+  virtual bool HasIdealBodyWeight() const;
+  virtual SEScalarMass& GetIdealBodyWeight();
+  virtual double GetIdealBodyWeight(const MassUnit& unit) const;
   
   virtual bool HasInspiratoryCapacity() const;
   virtual SEScalarVolume& GetInspiratoryCapacity();
@@ -157,6 +161,7 @@ protected:
   SEScalarMassPerVolume*     m_BodyDensity;
   SEScalar0To1*              m_BodyFatFraction;
   SEScalarMass*              m_LeanBodyMass;
+  SEScalarMass*              m_IdealBodyWeight;
 
   SEScalarArea*              m_AlveoliSurfaceArea;
   SEScalar0To1*              m_RightLungRatio;

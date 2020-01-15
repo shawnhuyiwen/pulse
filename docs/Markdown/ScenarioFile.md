@@ -103,6 +103,20 @@ Conditions give instructions to the engine to apply certain changes to the engin
 The following are links to the Condition class specification along with XML examples of conditions that can be used in making your own scenarios.
 
 #### Chronic Anemia
+@copybrief AcuteRespiratoryDistressSyndromeData
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"AnyCondition": [{
+  "PatientCondition": {
+    "AcuteRespiratoryDistressSyndrome": {
+      "Severity": { "Scalar0To1": { "Value": 0.3 } },
+      "LeftLungAffected": { "Scalar0To1": { "Value": 1.0  },
+      "RightLungAffected": { "Scalar0To1": { "Value": 1.0 }
+    }
+  }
+}]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#### Chronic Anemia
 @copybrief ChronicAnemiaData
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 "AnyCondition": [{
@@ -232,6 +246,18 @@ or
       "LeftLungAffected": { "Scalar0To1": { "Value": 1.0  },
       "RightLungAffected": { "Scalar0To1": { "Value": 1.0 }
       }
+    }
+  }
+}]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#### Sepsis
+@copybrief SepsisData
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"AnyCondition": [{
+  "PatientCondition": {
+    "Sepsis": { 
+      "Severity": { "Scalar0To1": { "Value": 0.6 } }
     }
   }
 }]
@@ -397,6 +423,22 @@ Patient Insults
 ---------------
 - - -
 
+#### ARDS Exacerbation
+@copybrief AcuteRespiratoryDistressSyndromeExacerbationData <br>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"AnyAction": [{
+  "PatientAction": {
+    "AcuteRespiratoryDistressSyndromeExacerbation": {
+      "Severity": { "Scalar0To1": { "Value":0.3 } },
+      "LeftLungAffected": { "Scalar0To1": { "Value": 1.0  },
+      "RightLungAffected": { "Scalar0To1": { "Value": 1.0 }
+    }
+  }
+}]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- - -
+
 #### Acute Stress
 @copybrief AcuteStressData <br>
 Severity value must be >=0.0 and <=1.0 <br>
@@ -405,22 +447,6 @@ A severity of 0 removes the action completely.
 "AnyAction": [{
   "PatientAction": {
     "AcuteStress": {
-      "Severity": { "Scalar0To1": { "Value":0.3 } }
-    }
-  }
-}]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-- - -
-
-#### Apnea
-@copybrief ApneaData <br>
-Severity value must be >=0.0 and <=1.0 <br>
-A severity of 0 removes the action completely.
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-"AnyAction": [{
-  "PatientAction": {
-    "Apnea": {
       "Severity": { "Scalar0To1": { "Value":0.3 } }
     }
   }
@@ -559,6 +585,37 @@ An intensity of 0 removes the action completely.
 
 - - -
 
+#### COPD Exacerbation
+@copybrief ChronicObstructivePulmonaryDiseaseExacerbationExacerbationData <br>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"AnyAction": [{
+  "PatientAction": {
+    "ChronicObstructivePulmonaryDiseaseExacerbation": {
+      "BronchitisSeverity": { "Scalar0To1": { "Value": 0.5 }},
+      "EmphysemaSeverity": { "Scalar0To1": { "Value": 0.7 }}
+    }
+  }
+}]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- - -
+
+#### Dyspnea
+@copybrief DyspneaData <br>
+Severity value must be >=0.0 and <=1.0 <br>
+A severity of 0 removes the action completely.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"AnyAction": [{
+  "PatientAction": {
+    "Dyspnea": {
+      "Severity": { "Scalar0To1": { "Value":0.3 } }
+    }
+  }
+}]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- - -
+
 #### Hemorrhage 
 @copybrief HemorrhageData <br>
 The Compartment attribute can be any of the enumerations defined in the enumAnatomy enumeration.<br>
@@ -575,6 +632,21 @@ FATAL: Cannot have bleeding rate greater than cardiac output or less than 0
   }
 }]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- - -
+
+#### Lobar Pneumonia Exacerbation
+@copybrief LobarPneumoniaExacerbationData <br>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"AnyAction": [{
+  "PatientAction": {
+    "LobarPneumoniaExacerbation": {
+      "Severity": { "Scalar0To1": { "Value": 0.2 }},
+      "LeftLungAffected": { "Scalar0To1": { "Value": 1.0 }},
+      "RightLungAffected": { "Scalar0To1": { "Value": 1.0 }}
+    }
+  }
+}]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
 
@@ -590,6 +662,20 @@ EffusionRate of the liquid
   }
 }]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- - -
+
+#### Respiratory Fatigue
+@copybrief RespiratoryFatigueData <br>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"AnyAction": [{
+  "PatientAction": {
+    "RespiratoryFatigue": {
+      "Severity": { "Scalar0To1": { "Value":0.3 } }
+    }
+  }
+}]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
 
@@ -674,7 +760,7 @@ FATAL: If the side specified does not have a pneumothorax
 This action can contain 1 or more commands :
 - @copybrief ForcedInhaleData
 - @copybrief ForcedExhaleData
-- @copybrief BreathHoldData
+- @copybrief ForcedPauseData
 - @copybrief UseInhalerData
 
 <br>
@@ -708,7 +794,7 @@ the system to react.
         }
       }
       "Command": {
-        "BreathHold": {
+        "ForcedPause": {
           "Period": { "ScalarTime": { "Value":10.0, "Unit":"s" } }
         }
       }

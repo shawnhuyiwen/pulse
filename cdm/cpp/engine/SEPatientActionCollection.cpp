@@ -4,9 +4,9 @@
 #include "stdafx.h"
 #include "engine/SEPatientActionCollection.h"
 #include "patient/SEPatient.h"
+#include "patient/actions/SEAcuteRespiratoryDistressSyndromeExacerbation.h"
 #include "patient/actions/SEAcuteStress.h"
 #include "patient/actions/SEAirwayObstruction.h"
-#include "patient/actions/SEApnea.h"
 #include "patient/actions/SEBrainInjury.h"
 #include "patient/actions/SEBronchoconstriction.h"
 #include "patient/actions/SECardiacArrest.h"
@@ -16,12 +16,16 @@
 #include "patient/actions/SEChestOcclusiveDressing.h"
 #include "patient/actions/SEConsciousRespiration.h"
 #include "patient/actions/SEConsumeNutrients.h"
+#include "patient/actions/SEChronicObstructivePulmonaryDiseaseExacerbation.h"
 #include "patient/actions/SEExercise.h"
+#include "patient/actions/SEDyspnea.h"
 #include "patient/actions/SEHemorrhage.h"
 #include "patient/actions/SEIntubation.h"
+#include "patient/actions/SELobarPneumoniaExacerbation.h"
 #include "patient/actions/SEMechanicalVentilation.h"
 #include "patient/actions/SENeedleDecompression.h"
 #include "patient/actions/SEPericardialEffusion.h"
+#include "patient/actions/SERespiratoryFatigue.h"
 #include "patient/actions/SESubstanceBolus.h"
 #include "patient/actions/SESubstanceCompoundInfusion.h"
 #include "patient/actions/SESubstanceInfusion.h"
@@ -39,9 +43,9 @@
 
 SEPatientActionCollection::SEPatientActionCollection(SESubstanceManager& substances) : Loggable(substances.GetLogger()), m_Substances(substances)
 {
+  m_ARDSExacerbation = nullptr;
   m_AcuteStress = nullptr;
   m_AirwayObstruction = nullptr;
-  m_Apnea = nullptr;
   m_AsthmaAttack = nullptr;
   m_BrainInjury = nullptr;
   m_Bronchoconstriction = nullptr;
@@ -49,13 +53,17 @@ SEPatientActionCollection::SEPatientActionCollection(SESubstanceManager& substan
   m_ChestCompression = nullptr;
   m_ConsciousRespiration = nullptr;
   m_ConsumeNutrients = nullptr;
+  m_COPDExacerbation = nullptr;
   m_LeftChestOcclusiveDressing = nullptr;
   m_RightChestOcclusiveDressing = nullptr;
+  m_Dyspnea = nullptr;
   m_Exercise = nullptr;
   m_Intubation = nullptr;
+  m_LobarPneumoniaExacerbation = nullptr;
   m_MechanicalVentilation = nullptr;
   m_LeftNeedleDecompression = nullptr;
   m_RightNeedleDecompression = nullptr;
+  m_RespiratoryFatigue = nullptr;
   m_PericardialEffusion = nullptr;
   m_SupplementalOxygen = nullptr;
   m_LeftOpenTensionPneumothorax = nullptr;
@@ -72,24 +80,28 @@ SEPatientActionCollection::~SEPatientActionCollection()
 
 void SEPatientActionCollection::Clear()
 {
+  RemoveAcuteRespiratoryDistressSyndromeExacerbation();
   RemoveAcuteStress();
   RemoveAirwayObstruction();
-  RemoveApnea();
   RemoveAsthmaAttack();
   RemoveBrainInjury();
   RemoveBronchoconstriction();
   RemoveChestCompression();
   RemoveCardiacArrest();
+  RemoveChronicObstructivePulmonaryDiseaseExacerbation();
   RemoveConsciousRespiration();
   RemoveConsumeNutrients();
   RemoveLeftChestOcclusiveDressing();
   RemoveRightChestOcclusiveDressing();
+  RemoveDyspnea();
   RemoveExercise();
   RemoveIntubation();
+  RemoveLobarPneumoniaExacerbation();
   RemoveMechanicalVentilation();
   RemoveLeftNeedleDecompression();
   RemoveRightNeedleDecompression();
   RemovePericardialEffusion();
+  RemoveRespiratoryFatigue();
   RemoveLeftOpenTensionPneumothorax();
   RemoveLeftClosedTensionPneumothorax();
   RemoveRightOpenTensionPneumothorax();
@@ -126,6 +138,17 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
   // with that compartment. 
   // SO, we make our own copy and manage that copy (i.e. by updating a single action)
 
+  const SEAcuteRespiratoryDistressSyndromeExacerbation* ards = dynamic_cast<const SEAcuteRespiratoryDistressSyndromeExacerbation*>(&action);
+  if (ards != nullptr)
+  {
+    if (m_ARDSExacerbation == nullptr)
+      m_ARDSExacerbation = new SEAcuteRespiratoryDistressSyndromeExacerbation();
+    m_ARDSExacerbation->Copy(*ards);
+    if (!m_ARDSExacerbation->IsActive())
+      RemoveAcuteRespiratoryDistressSyndromeExacerbation();
+    return true;
+  }
+
   const SEAcuteStress* aStress = dynamic_cast<const SEAcuteStress*>(&action);
   if (aStress != nullptr)
   {
@@ -145,17 +168,6 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
     m_AirwayObstruction->Copy(*airwayObst);
     if (!m_AirwayObstruction->IsActive())
       RemoveAirwayObstruction();
-    return true;
-  }
-
-  const SEApnea* apnea = dynamic_cast<const SEApnea*>(&action);
-  if (apnea != nullptr)
-  {
-    if (m_Apnea == nullptr)
-      m_Apnea = new SEApnea();
-    m_Apnea->Copy(*apnea);
-    if (!m_Apnea->IsActive())
-      RemoveApnea();
     return true;
   }
 
@@ -235,7 +247,6 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
     return false;
   }
 
-
   const SEChestOcclusiveDressing* chestOccl = dynamic_cast<const SEChestOcclusiveDressing*>(&action);
   if (chestOccl != nullptr)
   {
@@ -259,11 +270,27 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
     }
   }
 
+  const SEChronicObstructivePulmonaryDiseaseExacerbation* copd = dynamic_cast<const SEChronicObstructivePulmonaryDiseaseExacerbation*>(&action);
+  if (copd != nullptr)
+  {
+    if (m_COPDExacerbation == nullptr)
+      m_COPDExacerbation = new SEChronicObstructivePulmonaryDiseaseExacerbation();
+    m_COPDExacerbation->Copy(*copd);
+    if (!m_COPDExacerbation->IsActive())
+      RemoveChronicObstructivePulmonaryDiseaseExacerbation();
+    return true;
+  }
+
   const SEConsciousRespiration* conResp = dynamic_cast<const SEConsciousRespiration*>(&action);
   if (conResp != nullptr)
   {
     if (m_ConsciousRespiration == nullptr)
       m_ConsciousRespiration = new SEConsciousRespiration();
+    if (m_ConsciousRespiration->HasCommands())
+    {
+      Warning("Processing conscious respiration before the previous conscious breath was completed.");
+      Warning("Previous conscious respiration commands will not be processed.");
+    }
     m_ConsciousRespiration->Copy(*conResp);
     if (!m_ConsciousRespiration->IsActive())
       RemoveConsciousRespiration();
@@ -278,6 +305,17 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
     m_ConsumeNutrients->Copy(*consume);
     if (!m_ConsumeNutrients->IsActive())
       RemoveConsumeNutrients();
+    return true;
+  }
+
+  const SEDyspnea* Dyspnea = dynamic_cast<const SEDyspnea*>(&action);
+  if (Dyspnea != nullptr)
+  {
+    if (m_Dyspnea == nullptr)
+      m_Dyspnea = new SEDyspnea();
+    m_Dyspnea->Copy(*Dyspnea);
+    if (!m_Dyspnea->IsActive())
+      RemoveDyspnea();
     return true;
   }
 
@@ -315,6 +353,17 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
     m_Intubation->Copy(*intubation);
     if (!m_Intubation->IsActive())
       RemoveIntubation();
+    return true;
+  }
+
+  const SELobarPneumoniaExacerbation* lp = dynamic_cast<const SELobarPneumoniaExacerbation*>(&action);
+  if (lp != nullptr)
+  {
+    if (m_LobarPneumoniaExacerbation == nullptr)
+      m_LobarPneumoniaExacerbation = new SELobarPneumoniaExacerbation();
+    m_LobarPneumoniaExacerbation->Copy(*lp);
+    if (!m_LobarPneumoniaExacerbation->IsActive())
+      RemoveLobarPneumoniaExacerbation();
     return true;
   }
 
@@ -362,6 +411,17 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
     m_PericardialEffusion->Copy(*pericardialEff);
     if (!m_PericardialEffusion->IsActive())
       RemovePericardialEffusion();
+    return true;
+  }
+
+  const SERespiratoryFatigue* rf = dynamic_cast<const SERespiratoryFatigue*>(&action);
+  if (rf != nullptr)
+  {
+    if (m_RespiratoryFatigue == nullptr)
+      m_RespiratoryFatigue = new SERespiratoryFatigue();
+    m_RespiratoryFatigue->Copy(*rf);
+    if (!m_RespiratoryFatigue->IsActive())
+      RemoveRespiratoryFatigue();
     return true;
   }
 
@@ -507,6 +567,23 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
   return false;
 }
 
+bool SEPatientActionCollection::HasAcuteRespiratoryDistressSyndromeExacerbation() const
+{
+  return m_ARDSExacerbation == nullptr ? false : m_ARDSExacerbation->IsActive();
+}
+SEAcuteRespiratoryDistressSyndromeExacerbation* SEPatientActionCollection::GetAcuteRespiratoryDistressSyndromeExacerbation()
+{
+  return m_ARDSExacerbation;
+}
+const SEAcuteRespiratoryDistressSyndromeExacerbation* SEPatientActionCollection::GetAcuteRespiratoryDistressSyndromeExacerbation() const
+{
+  return m_ARDSExacerbation;
+}
+void SEPatientActionCollection::RemoveAcuteRespiratoryDistressSyndromeExacerbation()
+{
+  SAFE_DELETE(m_ARDSExacerbation);
+}
+
 bool SEPatientActionCollection::HasAcuteStress() const
 {
   return m_AcuteStress == nullptr ? false : m_AcuteStress->IsActive();
@@ -539,23 +616,6 @@ const SEAirwayObstruction* SEPatientActionCollection::GetAirwayObstruction() con
 void SEPatientActionCollection::RemoveAirwayObstruction()
 {
   SAFE_DELETE(m_AirwayObstruction);
-}
-
-bool SEPatientActionCollection::HasApnea() const
-{
-  return m_Apnea == nullptr ? false : m_Apnea->IsActive();
-}
-SEApnea* SEPatientActionCollection::GetApnea()
-{
-  return m_Apnea;
-}
-const SEApnea* SEPatientActionCollection::GetApnea() const
-{
-  return m_Apnea;
-}
-void SEPatientActionCollection::RemoveApnea()
-{
-  SAFE_DELETE(m_Apnea);
 }
 
 bool SEPatientActionCollection::HasAsthmaAttack() const
@@ -704,6 +764,23 @@ void SEPatientActionCollection::RemoveRightChestOcclusiveDressing()
   SAFE_DELETE(m_RightChestOcclusiveDressing);
 }
 
+bool SEPatientActionCollection::HasChronicObstructivePulmonaryDiseaseExacerbation() const
+{
+  return m_COPDExacerbation == nullptr ? false : m_COPDExacerbation->IsActive();
+}
+SEChronicObstructivePulmonaryDiseaseExacerbation* SEPatientActionCollection::GetChronicObstructivePulmonaryDiseaseExacerbation()
+{
+  return m_COPDExacerbation;
+}
+const SEChronicObstructivePulmonaryDiseaseExacerbation* SEPatientActionCollection::GetChronicObstructivePulmonaryDiseaseExacerbation() const
+{
+  return m_COPDExacerbation;
+}
+void SEPatientActionCollection::RemoveChronicObstructivePulmonaryDiseaseExacerbation()
+{
+  SAFE_DELETE(m_COPDExacerbation);
+}
+
 bool SEPatientActionCollection::HasConsciousRespiration() const
 {
   return m_ConsciousRespiration == nullptr ? false : m_ConsciousRespiration->IsActive();
@@ -736,6 +813,23 @@ const SEConsumeNutrients* SEPatientActionCollection::GetConsumeNutrients() const
 void SEPatientActionCollection::RemoveConsumeNutrients()
 {
   SAFE_DELETE(m_ConsumeNutrients);
+}
+
+bool SEPatientActionCollection::HasDyspnea() const
+{
+  return m_Dyspnea == nullptr ? false : m_Dyspnea->IsActive();
+}
+SEDyspnea* SEPatientActionCollection::GetDyspnea()
+{
+  return m_Dyspnea;
+}
+const SEDyspnea* SEPatientActionCollection::GetDyspnea() const
+{
+  return m_Dyspnea;
+}
+void SEPatientActionCollection::RemoveDyspnea()
+{
+  SAFE_DELETE(m_Dyspnea);
 }
 
 bool SEPatientActionCollection::HasExercise() const
@@ -785,6 +879,23 @@ const SEIntubation* SEPatientActionCollection::GetIntubation() const
 void SEPatientActionCollection::RemoveIntubation()
 {
   SAFE_DELETE(m_Intubation);
+}
+
+bool SEPatientActionCollection::HasLobarPneumoniaExacerbation() const
+{
+  return m_LobarPneumoniaExacerbation == nullptr ? false : m_LobarPneumoniaExacerbation->IsActive();
+}
+SELobarPneumoniaExacerbation* SEPatientActionCollection::GetLobarPneumoniaExacerbation()
+{
+  return m_LobarPneumoniaExacerbation;
+}
+const SELobarPneumoniaExacerbation* SEPatientActionCollection::GetLobarPneumoniaExacerbation() const
+{
+  return m_LobarPneumoniaExacerbation;
+}
+void SEPatientActionCollection::RemoveLobarPneumoniaExacerbation()
+{
+  SAFE_DELETE(m_LobarPneumoniaExacerbation);
 }
 
 bool SEPatientActionCollection::HasMechanicalVentilation() const
@@ -856,6 +967,23 @@ const SEPericardialEffusion* SEPatientActionCollection::GetPericardialEffusion()
 void SEPatientActionCollection::RemovePericardialEffusion()
 {
   SAFE_DELETE(m_PericardialEffusion);
+}
+
+bool SEPatientActionCollection::HasRespiratoryFatigue() const
+{
+  return m_RespiratoryFatigue == nullptr ? false : m_RespiratoryFatigue->IsActive();
+}
+SERespiratoryFatigue* SEPatientActionCollection::GetRespiratoryFatigue()
+{
+  return m_RespiratoryFatigue;
+}
+const SERespiratoryFatigue* SEPatientActionCollection::GetRespiratoryFatigue() const
+{
+  return m_RespiratoryFatigue;
+}
+void SEPatientActionCollection::RemoveRespiratoryFatigue()
+{
+  SAFE_DELETE(m_RespiratoryFatigue);
 }
 
 bool SEPatientActionCollection::HasSupplementalOxygen() const
@@ -1012,12 +1140,12 @@ void SEPatientActionCollection::RemoveUrinate()
 
 void SEPatientActionCollection::GetAllActions(std::vector<const SEAction*>& actions) const
 {
+  if (HasAcuteRespiratoryDistressSyndromeExacerbation())
+    actions.push_back(GetAcuteRespiratoryDistressSyndromeExacerbation());
   if (HasAcuteStress())
     actions.push_back(GetAcuteStress());
   if (HasAirwayObstruction())
     actions.push_back(GetAirwayObstruction());
-  if (HasApnea())
-    actions.push_back(GetApnea());
   if (HasAsthmaAttack())
     actions.push_back(GetAsthmaAttack());
   if (HasBrainInjury())
@@ -1034,16 +1162,22 @@ void SEPatientActionCollection::GetAllActions(std::vector<const SEAction*>& acti
     actions.push_back(GetLeftChestOcclusiveDressing());
   if (HasRightChestOcclusiveDressing())
     actions.push_back(GetRightChestOcclusiveDressing());
+  if (HasChronicObstructivePulmonaryDiseaseExacerbation())
+    actions.push_back(GetChronicObstructivePulmonaryDiseaseExacerbation());
   if (HasConsciousRespiration())
     actions.push_back(GetConsciousRespiration());
   if (HasConsumeNutrients())
     actions.push_back(GetConsumeNutrients());
+  if (HasDyspnea())
+    actions.push_back(GetDyspnea());
   if (HasExercise())
     actions.push_back(GetExercise());
   for (auto itr : m_Hemorrhages)
     actions.push_back(itr.second);
   if (HasIntubation())
     actions.push_back(GetIntubation());
+  if (HasLobarPneumoniaExacerbation())
+    actions.push_back(GetLobarPneumoniaExacerbation());
   if (HasMechanicalVentilation())
     actions.push_back(GetMechanicalVentilation());
   if (HasLeftNeedleDecompression())
@@ -1052,6 +1186,8 @@ void SEPatientActionCollection::GetAllActions(std::vector<const SEAction*>& acti
     actions.push_back(GetRightNeedleDecompression());
   if (HasPericardialEffusion())
     actions.push_back(GetPericardialEffusion());
+  if (HasRespiratoryFatigue())
+    actions.push_back(GetRespiratoryFatigue());
   if (HasLeftClosedTensionPneumothorax())
     actions.push_back(GetLeftClosedTensionPneumothorax());
   if (HasLeftOpenTensionPneumothorax())

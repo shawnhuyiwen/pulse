@@ -19,8 +19,6 @@
 #include "properties/SEScalarElectricResistance.h"
 #include "properties/SEScalarEnergyPerAmount.h"
 #include "properties/SEScalarEnergyPerMass.h"
-#include "properties/SEScalarFlowElastance.h"
-#include "properties/SEScalarFlowResistance.h"
 #include "properties/SEScalarHeatCapacitancePerAmount.h"
 #include "properties/SEScalarHeatCapacitancePerMass.h"
 #include "properties/SEScalarHeatResistance.h"
@@ -33,6 +31,8 @@
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarMassPerTime.h"
 #include "properties/SEScalarPowerPerAreaTemperatureToTheFourth.h"
+#include "properties/SEScalarPressurePerVolume.h"
+#include "properties/SEScalarPressureTimePerVolume.h"
 #include "properties/SEScalarTemperature.h"
 #include "properties/SEScalarTime.h"
 #include "properties/SEScalarVolume.h"
@@ -359,25 +359,25 @@ void PulseConfiguration::Initialize(const std::string& data_dir)
   GetStandardOxygenDiffusionCoefficient().SetValue(0.00000000246, AreaPerTimePressureUnit::cm2_Per_min_mmHg);
 
   // Cardiovascular
-  GetLeftHeartElastanceMaximum().SetValue(2.49, FlowElastanceUnit::mmHg_Per_mL);
-  GetLeftHeartElastanceMinimum().SetValue(0.049, FlowElastanceUnit::mmHg_Per_mL);
+  GetLeftHeartElastanceMaximum().SetValue(2.49, PressurePerVolumeUnit::mmHg_Per_mL);
+  GetLeftHeartElastanceMinimum().SetValue(0.049, PressurePerVolumeUnit::mmHg_Per_mL);
   GetMinimumBloodVolumeFraction().SetValue(0.65); // \cite Guyton 11th ed p.279
-  GetRightHeartElastanceMaximum().SetValue(0.523, FlowElastanceUnit::mmHg_Per_mL);
-  GetRightHeartElastanceMinimum().SetValue(0.0243, FlowElastanceUnit::mmHg_Per_mL);
+  GetRightHeartElastanceMaximum().SetValue(0.523, PressurePerVolumeUnit::mmHg_Per_mL);
+  GetRightHeartElastanceMinimum().SetValue(0.0243, PressurePerVolumeUnit::mmHg_Per_mL);
   GetStandardPulmonaryCapillaryCoverage().SetValue(0.70);
 
   // Circuits
-  GetCardiovascularOpenResistance().SetValue(100.0, FlowResistanceUnit::mmHg_s_Per_mL);
+  GetCardiovascularOpenResistance().SetValue(100.0, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
   GetDefaultOpenElectricResistance().SetValue(1E100, ElectricResistanceUnit::Ohm);
-  GetDefaultOpenFlowResistance().SetValue(1E100, FlowResistanceUnit::Pa_s_Per_m3);
+  GetDefaultOpenFlowResistance().SetValue(1E100, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   GetDefaultOpenHeatResistance().SetValue(1E100, HeatResistanceUnit::K_Per_W);
   GetDefaultClosedElectricResistance().SetValue(1E-100, ElectricResistanceUnit::Ohm);
-  GetDefaultClosedFlowResistance().SetValue(1E-100, FlowResistanceUnit::Pa_s_Per_m3);
+  GetDefaultClosedFlowResistance().SetValue(1E-100, PressureTimePerVolumeUnit::Pa_s_Per_m3);
   GetDefaultClosedHeatResistance().SetValue(1E-100, HeatResistanceUnit::K_Per_W);
-  GetMachineClosedResistance().SetValue(1E-3, FlowResistanceUnit::cmH2O_s_Per_L);
-  GetMachineOpenResistance().SetValue(1E3, FlowResistanceUnit::cmH2O_s_Per_L);
-  GetRespiratoryClosedResistance().SetValue(1E-3, FlowResistanceUnit::cmH2O_s_Per_L);
-  GetRespiratoryOpenResistance().SetValue(1E3, FlowResistanceUnit::cmH2O_s_Per_L);
+  GetMachineClosedResistance().SetValue(1E-3, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  GetMachineOpenResistance().SetValue(1E3, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  GetRespiratoryClosedResistance().SetValue(1E-3, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  GetRespiratoryOpenResistance().SetValue(1E3, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 
   // Constants
   GetOxygenMetabolicConstant().SetValue(9.0);
@@ -430,8 +430,8 @@ void PulseConfiguration::Initialize(const std::string& data_dir)
   GetLeftGlomerularFilteringSurfaceAreaBaseline().SetValue(2.0, AreaUnit::m2);
   GetLeftTubularReabsorptionFluidPermeabilityBaseline().SetValue(2.91747, VolumePerTimePressureAreaUnit::mL_Per_min_mmHg_m2);
   GetLeftTubularReabsorptionFilteringSurfaceAreaBaseline().SetValue(2.5, AreaUnit::m2);
-  GetMaximumAfferentResistance().SetValue(11.2, FlowResistanceUnit::mmHg_s_Per_mL);  //11.2
-  GetMinimumAfferentResistance().SetValue(2.2, FlowResistanceUnit::mmHg_s_Per_mL);  //2.1 
+  GetMaximumAfferentResistance().SetValue(11.2, PressureTimePerVolumeUnit::mmHg_s_Per_mL);  //11.2
+  GetMinimumAfferentResistance().SetValue(2.2, PressureTimePerVolumeUnit::mmHg_s_Per_mL);  //2.1 
   GetRightGlomerularFluidPermeabilityBaseline().SetValue(3.67647, VolumePerTimePressureAreaUnit::mL_Per_min_mmHg_m2);
   GetRightGlomerularFilteringSurfaceAreaBaseline().SetValue(2.0, AreaUnit::m2);
   GetRightTubularReabsorptionFluidPermeabilityBaseline().SetValue(2.91747, VolumePerTimePressureAreaUnit::mL_Per_min_mmHg_m2);
@@ -869,13 +869,13 @@ bool PulseConfiguration::HasLeftHeartElastanceMaximum() const
 {
   return m_LeftHeartElastanceMaximum == nullptr ? false : m_LeftHeartElastanceMaximum->IsValid();
 }
-SEScalarFlowElastance& PulseConfiguration::GetLeftHeartElastanceMaximum()
+SEScalarPressurePerVolume& PulseConfiguration::GetLeftHeartElastanceMaximum()
 {
   if (m_LeftHeartElastanceMaximum == nullptr)
-    m_LeftHeartElastanceMaximum = new SEScalarFlowElastance();
+    m_LeftHeartElastanceMaximum = new SEScalarPressurePerVolume();
   return *m_LeftHeartElastanceMaximum;
 }
-double PulseConfiguration::GetLeftHeartElastanceMaximum(const FlowElastanceUnit& unit) const
+double PulseConfiguration::GetLeftHeartElastanceMaximum(const PressurePerVolumeUnit& unit) const
 {
   if (m_LeftHeartElastanceMaximum == nullptr)
     return SEScalar::dNaN();
@@ -886,13 +886,13 @@ bool PulseConfiguration::HasLeftHeartElastanceMinimum() const
 {
   return m_LeftHeartElastanceMinimum == nullptr ? false : m_LeftHeartElastanceMinimum->IsValid();
 }
-SEScalarFlowElastance& PulseConfiguration::GetLeftHeartElastanceMinimum()
+SEScalarPressurePerVolume& PulseConfiguration::GetLeftHeartElastanceMinimum()
 {
   if (m_LeftHeartElastanceMinimum == nullptr)
-    m_LeftHeartElastanceMinimum = new SEScalarFlowElastance();
+    m_LeftHeartElastanceMinimum = new SEScalarPressurePerVolume();
   return *m_LeftHeartElastanceMinimum;
 }
-double PulseConfiguration::GetLeftHeartElastanceMinimum(const FlowElastanceUnit& unit) const
+double PulseConfiguration::GetLeftHeartElastanceMinimum(const PressurePerVolumeUnit& unit) const
 {
   if (m_LeftHeartElastanceMinimum == nullptr)
     return SEScalar::dNaN();
@@ -920,13 +920,13 @@ bool PulseConfiguration::HasRightHeartElastanceMaximum() const
 {
   return m_RightHeartElastanceMaximum == nullptr ? false : m_RightHeartElastanceMaximum->IsValid();
 }
-SEScalarFlowElastance& PulseConfiguration::GetRightHeartElastanceMaximum()
+SEScalarPressurePerVolume& PulseConfiguration::GetRightHeartElastanceMaximum()
 {
   if (m_RightHeartElastanceMaximum == nullptr)
-    m_RightHeartElastanceMaximum = new SEScalarFlowElastance();
+    m_RightHeartElastanceMaximum = new SEScalarPressurePerVolume();
   return *m_RightHeartElastanceMaximum;
 }
-double PulseConfiguration::GetRightHeartElastanceMaximum(const FlowElastanceUnit& unit) const
+double PulseConfiguration::GetRightHeartElastanceMaximum(const PressurePerVolumeUnit& unit) const
 {
   if (m_RightHeartElastanceMaximum == nullptr)
     return SEScalar::dNaN();
@@ -937,13 +937,13 @@ bool PulseConfiguration::HasRightHeartElastanceMinimum() const
 {
   return m_RightHeartElastanceMinimum == nullptr ? false : m_RightHeartElastanceMinimum->IsValid();
 }
-SEScalarFlowElastance& PulseConfiguration::GetRightHeartElastanceMinimum()
+SEScalarPressurePerVolume& PulseConfiguration::GetRightHeartElastanceMinimum()
 {
   if (m_RightHeartElastanceMinimum == nullptr)
-    m_RightHeartElastanceMinimum = new SEScalarFlowElastance();
+    m_RightHeartElastanceMinimum = new SEScalarPressurePerVolume();
   return *m_RightHeartElastanceMinimum;
 }
-double PulseConfiguration::GetRightHeartElastanceMinimum(const FlowElastanceUnit& unit) const
+double PulseConfiguration::GetRightHeartElastanceMinimum(const PressurePerVolumeUnit& unit) const
 {
   if (m_RightHeartElastanceMinimum == nullptr)
     return SEScalar::dNaN();
@@ -975,13 +975,13 @@ bool PulseConfiguration::HasCardiovascularOpenResistance() const
 {
   return m_CardiovascularOpenResistance == nullptr ? false : m_CardiovascularOpenResistance->IsValid();
 }
-SEScalarFlowResistance& PulseConfiguration::GetCardiovascularOpenResistance()
+SEScalarPressureTimePerVolume& PulseConfiguration::GetCardiovascularOpenResistance()
 {
   if (m_CardiovascularOpenResistance == nullptr)
-    m_CardiovascularOpenResistance = new SEScalarFlowResistance();
+    m_CardiovascularOpenResistance = new SEScalarPressureTimePerVolume();
   return *m_CardiovascularOpenResistance;
 }
-double PulseConfiguration::GetCardiovascularOpenResistance(const FlowResistanceUnit& unit) const
+double PulseConfiguration::GetCardiovascularOpenResistance(const PressureTimePerVolumeUnit& unit) const
 {
   if (m_CardiovascularOpenResistance == nullptr)
     return SEScalar::dNaN();
@@ -1009,13 +1009,13 @@ bool PulseConfiguration::HasDefaultClosedFlowResistance() const
 {
   return m_DefaultClosedFlowResistance == nullptr ? false : m_DefaultClosedFlowResistance->IsValid();
 }
-SEScalarFlowResistance& PulseConfiguration::GetDefaultClosedFlowResistance()
+SEScalarPressureTimePerVolume& PulseConfiguration::GetDefaultClosedFlowResistance()
 {
   if (m_DefaultClosedFlowResistance == nullptr)
-    m_DefaultClosedFlowResistance = new SEScalarFlowResistance();
+    m_DefaultClosedFlowResistance = new SEScalarPressureTimePerVolume();
   return *m_DefaultClosedFlowResistance;
 }
-double PulseConfiguration::GetDefaultClosedFlowResistance(const FlowResistanceUnit& unit) const
+double PulseConfiguration::GetDefaultClosedFlowResistance(const PressureTimePerVolumeUnit& unit) const
 {
   if (m_DefaultClosedFlowResistance == nullptr)
     return SEScalar::dNaN();
@@ -1060,13 +1060,13 @@ bool PulseConfiguration::HasDefaultOpenFlowResistance() const
 {
   return m_DefaultOpenFlowResistance == nullptr ? false : m_DefaultOpenFlowResistance->IsValid();
 }
-SEScalarFlowResistance& PulseConfiguration::GetDefaultOpenFlowResistance()
+SEScalarPressureTimePerVolume& PulseConfiguration::GetDefaultOpenFlowResistance()
 {
   if (m_DefaultOpenFlowResistance == nullptr)
-    m_DefaultOpenFlowResistance = new SEScalarFlowResistance();
+    m_DefaultOpenFlowResistance = new SEScalarPressureTimePerVolume();
   return *m_DefaultOpenFlowResistance;
 }
-double PulseConfiguration::GetDefaultOpenFlowResistance(const FlowResistanceUnit& unit) const
+double PulseConfiguration::GetDefaultOpenFlowResistance(const PressureTimePerVolumeUnit& unit) const
 {
   if (m_DefaultOpenFlowResistance == nullptr)
     return SEScalar::dNaN();
@@ -1094,13 +1094,13 @@ bool PulseConfiguration::HasMachineClosedResistance() const
 {
   return m_MachineClosedResistance == nullptr ? false : m_MachineClosedResistance->IsValid();
 }
-SEScalarFlowResistance& PulseConfiguration::GetMachineClosedResistance()
+SEScalarPressureTimePerVolume& PulseConfiguration::GetMachineClosedResistance()
 {
   if (m_MachineClosedResistance == nullptr)
-    m_MachineClosedResistance = new SEScalarFlowResistance();
+    m_MachineClosedResistance = new SEScalarPressureTimePerVolume();
   return *m_MachineClosedResistance;
 }
-double PulseConfiguration::GetMachineClosedResistance(const FlowResistanceUnit& unit) const
+double PulseConfiguration::GetMachineClosedResistance(const PressureTimePerVolumeUnit& unit) const
 {
   if (m_MachineClosedResistance == nullptr)
     return SEScalar::dNaN();
@@ -1111,13 +1111,13 @@ bool PulseConfiguration::HasMachineOpenResistance() const
 {
   return m_MachineOpenResistance == nullptr ? false : m_MachineOpenResistance->IsValid();
 }
-SEScalarFlowResistance& PulseConfiguration::GetMachineOpenResistance()
+SEScalarPressureTimePerVolume& PulseConfiguration::GetMachineOpenResistance()
 {
   if (m_MachineOpenResistance == nullptr)
-    m_MachineOpenResistance = new SEScalarFlowResistance();
+    m_MachineOpenResistance = new SEScalarPressureTimePerVolume();
   return *m_MachineOpenResistance;
 }
-double PulseConfiguration::GetMachineOpenResistance(const FlowResistanceUnit& unit) const
+double PulseConfiguration::GetMachineOpenResistance(const PressureTimePerVolumeUnit& unit) const
 {
   if (m_MachineOpenResistance == nullptr)
     return SEScalar::dNaN();
@@ -1128,13 +1128,13 @@ bool PulseConfiguration::HasRespiratoryClosedResistance() const
 {
   return m_RespiratoryClosedResistance == nullptr ? false : m_RespiratoryClosedResistance->IsValid();
 }
-SEScalarFlowResistance& PulseConfiguration::GetRespiratoryClosedResistance()
+SEScalarPressureTimePerVolume& PulseConfiguration::GetRespiratoryClosedResistance()
 {
   if (m_RespiratoryClosedResistance == nullptr)
-    m_RespiratoryClosedResistance = new SEScalarFlowResistance();
+    m_RespiratoryClosedResistance = new SEScalarPressureTimePerVolume();
   return *m_RespiratoryClosedResistance;
 }
-double PulseConfiguration::GetRespiratoryClosedResistance(const FlowResistanceUnit& unit) const
+double PulseConfiguration::GetRespiratoryClosedResistance(const PressureTimePerVolumeUnit& unit) const
 {
   if (m_RespiratoryClosedResistance == nullptr)
     return SEScalar::dNaN();
@@ -1145,13 +1145,13 @@ bool PulseConfiguration::HasRespiratoryOpenResistance() const
 {
   return m_RespiratoryOpenResistance == nullptr ? false : m_RespiratoryOpenResistance->IsValid();
 }
-SEScalarFlowResistance& PulseConfiguration::GetRespiratoryOpenResistance()
+SEScalarPressureTimePerVolume& PulseConfiguration::GetRespiratoryOpenResistance()
 {
   if (m_RespiratoryOpenResistance == nullptr)
-    m_RespiratoryOpenResistance = new SEScalarFlowResistance();
+    m_RespiratoryOpenResistance = new SEScalarPressureTimePerVolume();
   return *m_RespiratoryOpenResistance;
 }
-double PulseConfiguration::GetRespiratoryOpenResistance(const FlowResistanceUnit& unit) const
+double PulseConfiguration::GetRespiratoryOpenResistance(const PressureTimePerVolumeUnit& unit) const
 {
   if (m_RespiratoryOpenResistance == nullptr)
     return SEScalar::dNaN();
@@ -1796,13 +1796,13 @@ bool PulseConfiguration::HasMaximumAfferentResistance() const
 {
   return m_MaximumAfferentResistance == nullptr ? false : m_MaximumAfferentResistance->IsValid();
 }
-SEScalarFlowResistance& PulseConfiguration::GetMaximumAfferentResistance()
+SEScalarPressureTimePerVolume& PulseConfiguration::GetMaximumAfferentResistance()
 {
   if (m_MaximumAfferentResistance == nullptr)
-    m_MaximumAfferentResistance = new SEScalarFlowResistance();
+    m_MaximumAfferentResistance = new SEScalarPressureTimePerVolume();
   return *m_MaximumAfferentResistance;
 }
-double PulseConfiguration::GetMaximumAfferentResistance(const FlowResistanceUnit& unit) const
+double PulseConfiguration::GetMaximumAfferentResistance(const PressureTimePerVolumeUnit& unit) const
 {
   if (m_MaximumAfferentResistance == nullptr)
     return SEScalar::dNaN();
@@ -1813,13 +1813,13 @@ bool PulseConfiguration::HasMinimumAfferentResistance() const
 {
   return m_MinimumAfferentResistance == nullptr ? false : m_MinimumAfferentResistance->IsValid();
 }
-SEScalarFlowResistance& PulseConfiguration::GetMinimumAfferentResistance()
+SEScalarPressureTimePerVolume& PulseConfiguration::GetMinimumAfferentResistance()
 {
   if (m_MinimumAfferentResistance == nullptr)
-    m_MinimumAfferentResistance = new SEScalarFlowResistance();
+    m_MinimumAfferentResistance = new SEScalarPressureTimePerVolume();
   return *m_MinimumAfferentResistance;
 }
-double PulseConfiguration::GetMinimumAfferentResistance(const FlowResistanceUnit& unit) const
+double PulseConfiguration::GetMinimumAfferentResistance(const PressureTimePerVolumeUnit& unit) const
 {
   if (m_MinimumAfferentResistance == nullptr)
     return SEScalar::dNaN();

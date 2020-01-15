@@ -50,8 +50,9 @@ public:
   void CalculateEquipmentLeak();
   void SetConnection();
   void CalculateValveResistances();
-  void CalculateVentilator();
-  void CalculateGasSource();
+  void CalculateVentilatorPressure();
+  void CalculateGasSourceSubstances();
+  void CalculateGasSourceResistance();
   void CalculateCyclePhase();
   void CheckReliefValve();
 
@@ -87,8 +88,9 @@ public:
   SEFluidCircuitPath*                  m_pInspiratoryLimbToYPiece;
   SEFluidCircuitPath*                  m_pSelectorToReliefValve;
   SEFluidCircuitPath*                  m_pEnvironmentToReliefValve;
-  SEFluidCircuitPath*                  m_pSelectorToEnvironment;
   SEFluidCircuitPath*                  m_pEnvironmentToVentilator;
   SEFluidCircuitPath*                  m_pExpiratoryLimbToSelector;
   SEFluidCircuitPath*                  m_pSelectorToScrubber;
+  SEFluidCircuitPath*                  m_pEnvironmentToGasSource;
+  SEFluidCircuitPath*                  m_pVentilatorToSelector;
 };

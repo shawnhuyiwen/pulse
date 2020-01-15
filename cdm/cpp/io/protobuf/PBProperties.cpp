@@ -21,10 +21,10 @@
 #include "properties/SEScalarEnergy.h"
 #include "properties/SEScalarEnergyPerAmount.h"
 #include "properties/SEScalarEnergyPerMass.h"
-#include "properties/SEScalarFlowCompliance.h"
-#include "properties/SEScalarFlowElastance.h"
-#include "properties/SEScalarFlowInertance.h"
-#include "properties/SEScalarFlowResistance.h"
+#include "properties/SEScalarVolumePerPressure.h"
+#include "properties/SEScalarPressurePerVolume.h"
+#include "properties/SEScalarPressureTimeSquaredPerVolume.h"
+#include "properties/SEScalarPressureTimePerVolume.h"
 #include "properties/SEScalarForce.h"
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEScalarHeatCapacitance.h"
@@ -454,90 +454,6 @@ cdm::ScalarEnergyPerMassData* PBProperty::Unload(const SEScalarEnergyPerMass& sr
 void PBProperty::Serialize(const SEScalarEnergyPerMass& src, cdm::ScalarEnergyPerMassData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarenergypermass());
-}
-
-void PBProperty::Load(const cdm::ScalarFlowComplianceData& src, SEScalarFlowCompliance& dst)
-{
-  PBProperty::Serialize(src, dst);
-}
-void PBProperty::Serialize(const cdm::ScalarFlowComplianceData& src, SEScalarFlowCompliance& dst)
-{
-  PBProperty::Serialize(src.scalarflowcompliance(), dst);
-}
-cdm::ScalarFlowComplianceData* PBProperty::Unload(const SEScalarFlowCompliance& src)
-{
-  if (!src.IsValid())
-    return nullptr;
-  cdm::ScalarFlowComplianceData* dst = new cdm::ScalarFlowComplianceData();
-  PBProperty::Serialize(src, *dst);
-  return dst;
-}
-void PBProperty::Serialize(const SEScalarFlowCompliance& src, cdm::ScalarFlowComplianceData& dst)
-{
-  PBProperty::Serialize(src, *dst.mutable_scalarflowcompliance());
-}
-
-void PBProperty::Load(const cdm::ScalarFlowElastanceData& src, SEScalarFlowElastance& dst)
-{
-  PBProperty::Serialize(src, dst);
-}
-void PBProperty::Serialize(const cdm::ScalarFlowElastanceData& src, SEScalarFlowElastance& dst)
-{
-  PBProperty::Serialize(src.scalarflowelastance(), dst);
-}
-cdm::ScalarFlowElastanceData* PBProperty::Unload(const SEScalarFlowElastance& src)
-{
-  if (!src.IsValid())
-    return nullptr;
-  cdm::ScalarFlowElastanceData* dst = new cdm::ScalarFlowElastanceData();
-  PBProperty::Serialize(src, *dst);
-  return dst;
-}
-void PBProperty::Serialize(const SEScalarFlowElastance& src, cdm::ScalarFlowElastanceData& dst)
-{
-  PBProperty::Serialize(src, *dst.mutable_scalarflowelastance());
-}
-
-void PBProperty::Load(const cdm::ScalarFlowInertanceData& src, SEScalarFlowInertance& dst)
-{
-  PBProperty::Serialize(src, dst);
-}
-void PBProperty::Serialize(const cdm::ScalarFlowInertanceData& src, SEScalarFlowInertance& dst)
-{
-  PBProperty::Serialize(src.scalarflowinertance(), dst);
-}
-cdm::ScalarFlowInertanceData* PBProperty::Unload(const SEScalarFlowInertance& src)
-{
-  if (!src.IsValid())
-    return nullptr;
-  cdm::ScalarFlowInertanceData* dst = new cdm::ScalarFlowInertanceData();
-  PBProperty::Serialize(src, *dst);
-  return dst;
-}
-void PBProperty::Serialize(const SEScalarFlowInertance& src, cdm::ScalarFlowInertanceData& dst)
-{
-  PBProperty::Serialize(src, *dst.mutable_scalarflowinertance());
-}
-
-void PBProperty::Load(const cdm::ScalarFlowResistanceData& src, SEScalarFlowResistance& dst)
-{
-  PBProperty::Serialize(src, dst);
-}
-void PBProperty::Serialize(const cdm::ScalarFlowResistanceData& src, SEScalarFlowResistance& dst)
-{
-  PBProperty::Serialize(src.scalarflowresistance(), dst);
-}
-cdm::ScalarFlowResistanceData* PBProperty::Unload(const SEScalarFlowResistance& src)
-{
-  if (!src.IsValid())
-    return nullptr;
-  cdm::ScalarFlowResistanceData* dst = new cdm::ScalarFlowResistanceData();
-  PBProperty::Serialize(src, *dst);
-  return dst;
-}
-void PBProperty::Serialize(const SEScalarFlowResistance& src, cdm::ScalarFlowResistanceData& dst)
-{
-  PBProperty::Serialize(src, *dst.mutable_scalarflowresistance());
 }
 
 void PBProperty::Load(const cdm::ScalarForceData& src, SEScalarForce& dst)
@@ -1149,6 +1065,27 @@ void PBProperty::Serialize(const SEScalarPressureTimePerArea& src, cdm::ScalarPr
   PBProperty::Serialize(src, *dst.mutable_scalarpressuretimeperarea());
 }
 
+void PBProperty::Load(const cdm::ScalarPressureTimePerVolumeData& src, SEScalarPressureTimePerVolume& dst)
+{
+  PBProperty::Serialize(src, dst);
+}
+void PBProperty::Serialize(const cdm::ScalarPressureTimePerVolumeData& src, SEScalarPressureTimePerVolume& dst)
+{
+  PBProperty::Serialize(src.scalarpressuretimepervolume(), dst);
+}
+cdm::ScalarPressureTimePerVolumeData* PBProperty::Unload(const SEScalarPressureTimePerVolume& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarPressureTimePerVolumeData* dst = new cdm::ScalarPressureTimePerVolumeData();
+  PBProperty::Serialize(src, *dst);
+  return dst;
+}
+void PBProperty::Serialize(const SEScalarPressureTimePerVolume& src, cdm::ScalarPressureTimePerVolumeData& dst)
+{
+  PBProperty::Serialize(src, *dst.mutable_scalarpressuretimepervolume());
+}
+
 void PBProperty::Load(const cdm::ScalarPressureTimePerVolumeAreaData& src, SEScalarPressureTimePerVolumeArea& dst)
 {
   PBProperty::Serialize(src, dst);
@@ -1168,6 +1105,28 @@ cdm::ScalarPressureTimePerVolumeAreaData* PBProperty::Unload(const SEScalarPress
 void PBProperty::Serialize(const SEScalarPressureTimePerVolumeArea& src, cdm::ScalarPressureTimePerVolumeAreaData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarpressuretimepervolumearea());
+}
+
+
+void PBProperty::Load(const cdm::ScalarPressureTimeSquaredPerVolumeData& src, SEScalarPressureTimeSquaredPerVolume& dst)
+{
+  PBProperty::Serialize(src, dst);
+}
+void PBProperty::Serialize(const cdm::ScalarPressureTimeSquaredPerVolumeData& src, SEScalarPressureTimeSquaredPerVolume& dst)
+{
+  PBProperty::Serialize(src.scalarpressuretimesquaredpervolume(), dst);
+}
+cdm::ScalarPressureTimeSquaredPerVolumeData* PBProperty::Unload(const SEScalarPressureTimeSquaredPerVolume& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  cdm::ScalarPressureTimeSquaredPerVolumeData* dst = new cdm::ScalarPressureTimeSquaredPerVolumeData();
+  PBProperty::Serialize(src, *dst);
+  return dst;
+}
+void PBProperty::Serialize(const SEScalarPressureTimeSquaredPerVolume& src, cdm::ScalarPressureTimeSquaredPerVolumeData& dst)
+{
+  PBProperty::Serialize(src, *dst.mutable_scalarpressuretimesquaredpervolume());
 }
 
 void PBProperty::Load(const cdm::ScalarTemperatureData& src, SEScalarTemperature& dst)

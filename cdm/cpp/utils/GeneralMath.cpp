@@ -314,7 +314,7 @@ double GeneralMath::LinearInterpolator(double x1, double x2, double y1, double y
 
 // --------------------------------------------------------------------------------------------------
 /// \brief
-/// Returns y value for the specified exponential function given a normalized x value (0.0 to 1.0).
+/// Returns y value for the specified logarithmic function given a normalized x value (0.0 to 1.0).
 ///
 ///   y = dbase ^ [(Log10(dmin/dmax) * x) + Log10(dmax)]
 /// 
@@ -326,8 +326,8 @@ double GeneralMath::LinearInterpolator(double x1, double x2, double y1, double y
 /// \return y
 ///
 /// \details
-/// Exponential function used to model airflow resistance. Requires a base value for the function, a minimum y value 
-/// (x = 0), and maximum y value (x = 1).  Return the y value that maps to x.  
+/// Exponential function used to model changes based on severity. Requires a base value for the function, 
+/// a maximum y value (x = 0), and minimum y value (x = 1).  Return the y value that maps to x.
 ///
 /// Limitations:
 ///  - dmin > 0
@@ -336,13 +336,50 @@ double GeneralMath::LinearInterpolator(double x1, double x2, double y1, double y
 ///  
 /// If any of the input variables fall outside the above bounds, the function returns NaN
 ///
+/// Input with a min value greater than max value will be exponential growth 
 //--------------------------------------------------------------------------------------------------
-double GeneralMath::ResistanceFunction(double dbase, double dmin, double dmax, double dx)
+double GeneralMath::ExponentialDecayFunction(double dbase, double dmin, double dmax, double dx)
 {
   double dy = SEScalar::dNaN();     // Resistance value
   if (dmin > 0.0 && dmax > 0.0 && dx >= 0.0 && dx <= 1.0)
   {
     dy = pow(dbase, ((log10(dmin / dmax) * dx) + log10(dmax)));
+  }
+  return dy;
+}
+
+// --------------------------------------------------------------------------------------------------
+/// \brief
+/// Returns y value for the specified logarithmic function given a normalized x value (0.0 to 1.0).
+///
+///   y = dbase ^ [(Log10(dmax/dmin) * x) + Log10(dmin)]
+/// 
+/// \param  dbase    base value
+/// \param  dmin     minimum 
+/// \param  dmax     maximum
+/// \param  x    normalized x, 0.0 to 1.0
+///
+/// \return y
+///
+/// \details
+/// Exponential function used to model changes based on severity. Requires a base value for the function, 
+/// a minimum y value (x = 0), and maximum y value (x = 1).  Return the y value that maps to x.
+///
+/// Limitations:
+///  - dmin > 0
+///  - dmax > 0 
+///  - 0.0 <= dx <= 1.0
+///  
+/// If any of the input variables fall outside the above bounds, the function returns NaN
+///
+/// Input with a min value greater than max value will be exponential decay 
+//--------------------------------------------------------------------------------------------------
+double GeneralMath::ExponentialGrowthFunction(double dbase, double dmin, double dmax, double dx)
+{
+  double dy = SEScalar::dNaN();     // Resistance value
+  if (dmax > 0.0 && dmin > 0.0 && dx >= 0.0 && dx <= 1.0)
+  {
+    dy = pow(dbase, ((log10(dmax / dmin) * dx) + log10(dmin)));
   }
   return dy;
 }

@@ -120,8 +120,8 @@ public:
   virtual double GetPulmonarySystolicArterialPressure(const PressureUnit& unit) const;
 
   virtual bool HasPulmonaryVascularResistance() const;
-  virtual SEScalarFlowResistance& GetPulmonaryVascularResistance();
-  virtual double GetPulmonaryVascularResistance(const FlowResistanceUnit& unit) const;
+  virtual SEScalarPressureTimePerVolume& GetPulmonaryVascularResistance();
+  virtual double GetPulmonaryVascularResistance(const PressureTimePerVolumeUnit& unit) const;
 
   virtual bool HasPulmonaryVascularResistanceIndex() const;
   virtual SEScalarPressureTimePerVolumeArea& GetPulmonaryVascularResistanceIndex();
@@ -136,8 +136,8 @@ public:
   virtual double GetSystolicArterialPressure(const PressureUnit& unit) const;
 
   virtual bool HasSystemicVascularResistance() const;
-  virtual SEScalarFlowResistance& GetSystemicVascularResistance();
-  virtual double GetSystemicVascularResistance(const FlowResistanceUnit& unit) const;
+  virtual SEScalarPressureTimePerVolume& GetSystemicVascularResistance();
+  virtual double GetSystemicVascularResistance(const PressureTimePerVolumeUnit& unit) const;
 
 protected:
 
@@ -166,9 +166,9 @@ protected:
   SEScalarVolumePerTime*                 m_PulmonaryMeanCapillaryFlow;
   SEScalarVolumePerTime*                 m_PulmonaryMeanShuntFlow;
   SEScalarPressure*                      m_PulmonarySystolicArterialPressure;
-  SEScalarFlowResistance*                m_PulmonaryVascularResistance;
+  SEScalarPressureTimePerVolume*                m_PulmonaryVascularResistance;
   SEScalarPressureTimePerVolumeArea*     m_PulmonaryVascularResistanceIndex;
   SEScalarPressure*                      m_PulsePressure;
   SEScalarPressure*                      m_SystolicArterialPressure;
-  SEScalarFlowResistance*                m_SystemicVascularResistance;
+  SEScalarPressureTimePerVolume*                m_SystemicVascularResistance;
 };

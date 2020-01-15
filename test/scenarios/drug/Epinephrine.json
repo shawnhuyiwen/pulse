@@ -1,0 +1,977 @@
+{
+  "Name": "Epinephrine",
+  "Description": "Inject standard patient with Epinephrine.",
+  "StartType": {
+    "PatientConfiguration": {
+      "PatientFile": "StandardMale.json"
+    }
+  },
+  "DataRequestManager": {
+    "DataRequest": [{
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "PropertyName": "Weight",
+      "Unit": "kg"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "Physiology",
+      "PropertyName": "HeartRate",
+      "Unit": "1/min"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "Physiology",
+      "PropertyName": "HeartStrokeVolume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "Physiology",
+      "PropertyName": "BloodVolume",
+      "Unit": "L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "Physiology",
+      "PropertyName": "ExtravascularFluidVolume",
+      "Unit": "L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "Physiology",
+      "PropertyName": "ArterialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "Physiology",
+      "PropertyName": "MeanArterialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "Physiology",
+      "PropertyName": "SystolicArterialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "Physiology",
+      "PropertyName": "DiastolicArterialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "Physiology",
+      "PropertyName": "CardiacOutput",
+      "Unit": "L/min"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "Physiology",
+      "PropertyName": "HemoglobinContent",
+      "Unit": "g"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "Physiology",
+      "PropertyName": "CentralVenousPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "Physiology",
+      "PropertyName": "PulmonaryCapillariesWedgePressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+        "Precision": 3
+      },
+      "Category": "Physiology",
+      "PropertyName": "TidalVolume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "Physiology",
+      "PropertyName": "TotalLungVolume",
+      "Unit": "L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "Physiology",
+      "PropertyName": "RespirationRate",
+      "Unit": "1/min"
+    }, {
+      "DecimalFormat": {
+        "Precision": 3
+      },
+      "Category": "Physiology",
+      "PropertyName": "OxygenSaturation",
+      "Unit": "unitless"
+    }, {
+      "DecimalFormat": {
+        "Precision": 3
+      },
+      "Category": "Physiology",
+      "PropertyName": "CarbonDioxideSaturation",
+      "Unit": "unitless"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "Physiology",
+      "PropertyName": "EndTidalCarbonDioxideFraction",
+      "Unit": "unitless"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "Physiology",
+      "PropertyName": "TotalAlveolarVentilation",
+      "Unit": "L/min"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "Physiology",
+      "PropertyName": "TranspulmonaryPressure",
+      "Unit": "cmH2O"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "Physiology",
+      "PropertyName": "CoreTemperature",
+      "Unit": "degC"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "Physiology",
+      "PropertyName": "SkinTemperature",
+      "Unit": "degC"
+    }, {
+      "DecimalFormat": {
+        "Precision": 3
+      },
+      "Category": "Physiology",
+      "PropertyName": "RespiratoryExchangeRatio",
+      "Unit": "unitless"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "Physiology",
+      "PropertyName": "OxygenConsumptionRate",
+      "Unit": "mL/min"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "Physiology",
+      "PropertyName": "CarbonDioxideProductionRate",
+      "Unit": "mL/min"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "Physiology",
+      "PropertyName": "GlomerularFiltrationRate",
+      "Unit": "mL/min"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "Physiology",
+      "PropertyName": "RenalBloodFlow",
+      "Unit": "L/min"
+    }, {
+      "DecimalFormat": {
+        "Precision": 3
+      },
+      "Category": "Physiology",
+      "PropertyName": "UrineProductionRate",
+      "Unit": "mL/min"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "Physiology",
+      "PropertyName": "LeftAfferentArterioleResistance",
+      "Unit": "mmHg min/mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "Physiology",
+      "PropertyName": "RightAfferentArterioleResistance",
+      "Unit": "mmHg min/mL"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "LeftAlveoli",
+      "PropertyName": "Pressure",
+      "Unit": "cmH2O"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "LeftAlveoli",
+      "SubstanceName": "Oxygen",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "LeftAlveoli",
+      "SubstanceName": "CarbonDioxide",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "RightAlveoli",
+      "PropertyName": "Pressure",
+      "Unit": "cmH2O"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "RightAlveoli",
+      "SubstanceName": "Oxygen",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "RightAlveoli",
+      "SubstanceName": "CarbonDioxide",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Carina",
+      "SubstanceName": "Oxygen",
+      "PropertyName": "PartialPressure",
+      "Unit": "cmH2O"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Carina",
+      "SubstanceName": "CarbonDioxide",
+      "PropertyName": "PartialPressure",
+      "Unit": "cmH2O"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "Aorta",
+      "SubstanceName": "Oxygen",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "Aorta",
+      "SubstanceName": "CarbonDioxide",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "VenaCava",
+      "SubstanceName": "Oxygen",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "VenaCava",
+      "SubstanceName": "CarbonDioxide",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "RightTubules",
+      "SubstanceName": "Sodium",
+      "PropertyName": "Concentration",
+      "Unit": "g/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "LeftTubules",
+      "SubstanceName": "Sodium",
+      "PropertyName": "Concentration",
+      "Unit": "g/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "Substance",
+      "SubstanceName": "Oxygen",
+      "PropertyName": "AlveolarTransfer",
+      "Unit": "mL/s"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "Substance",
+      "SubstanceName": "CarbonDioxide",
+      "PropertyName": "AlveolarTransfer",
+      "Unit": "mL/s"
+    }, {
+      "DecimalFormat": {
+        "Precision": 6
+      },
+      "Category": "Substance",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "BloodConcentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "Physiology",
+      "PropertyName": "NeuromuscularBlockLevel",
+      "Unit": "unitless"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "Physiology",
+      "PropertyName": "SedationLevel",
+      "Unit": "unitless"
+    }, {
+      "DecimalFormat": {
+        "Precision": 3
+      },
+      "Category": "Physiology",
+      "PropertyName": "PupillaryResponse-SizeModifier",
+      "Unit": "unitless"
+    }, {
+      "DecimalFormat": {
+        "Precision": 3
+      },
+      "Category": "Physiology",
+      "PropertyName": "PupillaryResponse-ReactivityModifier",
+      "Unit": "unitless"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "Aorta",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "VenaCava",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "BoneVasculature",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "BrainVasculature",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "FatVasculature",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "GutVasculature",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "LeftKidneyVasculature",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "LeftLungVasculature",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "LiverVasculature",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "MuscleVasculature",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "MyocardiumVasculature",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "RightKidneyVasculature",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "RightLungVasculature",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "SkinVasculature",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "SpleenVasculature",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "BoneTissueExtracellular",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "BrainTissueExtracellular",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "FatTissueExtracellular",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "GutTissueExtracellular",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "LeftKidneyTissueExtracellular",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "LeftLungTissueExtracellular",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "LiverTissueExtracellular",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "MuscleTissueExtracellular",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "MyocardiumTissueExtracellular",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "RightKidneyTissueExtracellular",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "RightLungTissueExtracellular",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "SkinTissueExtracellular",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "SpleenTissueExtracellular",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "BoneTissueIntracellular",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "BrainTissueIntracellular",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "FatTissueIntracellular",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "GutTissueIntracellular",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "LeftKidneyTissueIntracellular",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "LeftLungTissueIntracellular",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "LiverTissueIntracellular",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "MuscleTissueIntracellular",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "MyocardiumTissueIntracellular",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "RightKidneyTissueIntracellular",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "RightLungTissueIntracellular",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "SkinTissueIntracellular",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "SpleenTissueIntracellular",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 6
+      },
+      "Category": "Substance",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "PlasmaConcentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "Substance",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "SystemicMassCleared",
+      "Unit": "ug"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "Substance",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "MassInBody",
+      "Unit": "ug"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "Substance",
+      "CompartmentName": "LeftKidneyTissue",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "PartitionCoefficient",
+      "Unit": "unitless"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "Substance",
+      "CompartmentName": "RightKidneyTissue",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "PartitionCoefficient",
+      "Unit": "unitless"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "Substance",
+      "CompartmentName": "BrainTissue",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "PartitionCoefficient",
+      "Unit": "unitless"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "Substance",
+      "CompartmentName": "RightLungTissue",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "PartitionCoefficient",
+      "Unit": "unitless"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "Substance",
+      "CompartmentName": "LeftLungTissue",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "PartitionCoefficient",
+      "Unit": "unitless"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "Substance",
+      "CompartmentName": "LiverTissue",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "PartitionCoefficient",
+      "Unit": "unitless"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "Substance",
+      "CompartmentName": "BoneTissue",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "PartitionCoefficient",
+      "Unit": "unitless"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "Substance",
+      "CompartmentName": "FatTissue",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "PartitionCoefficient",
+      "Unit": "unitless"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "Substance",
+      "CompartmentName": "SkinTissue",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "PartitionCoefficient",
+      "Unit": "unitless"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "Substance",
+      "CompartmentName": "MuscleTissue",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "PartitionCoefficient",
+      "Unit": "unitless"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "Substance",
+      "CompartmentName": "SpleenTissue",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "PartitionCoefficient",
+      "Unit": "unitless"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "Substance",
+      "CompartmentName": "GutTissue",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "PartitionCoefficient",
+      "Unit": "unitless"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "Substance",
+      "CompartmentName": "MyocardiumTissue",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "PartitionCoefficient",
+      "Unit": "unitless"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "LiverTissueIntracellular",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "MassCleared",
+      "Unit": "ug"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "LeftKidneyTissueIntracellular",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "MassCleared",
+      "Unit": "ug"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "RightKidneyTissueIntracellular",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "MassCleared",
+      "Unit": "ug"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "LiverTissueIntracellular",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "MassExcreted",
+      "Unit": "ug"
+    }]
+  },
+  "AnyAction": [{
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 30.0,
+          "Unit": "s"
+        }
+      }
+    }
+  }, {
+    "PatientAction": {
+      "SubstanceBolus": {
+        "Substance": "Epinephrine",
+        "Concentration": {
+          "ScalarMassPerVolume": {
+            "Value": 1.0,
+            "Unit": "ug/mL"
+          }
+        },
+        "Dose": {
+          "ScalarVolume": {
+            "Value": 10.0,
+            "Unit": "mL"
+          }
+        }
+      }
+    }
+  }, {
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 500.0,
+          "Unit": "s"
+        }
+      }
+    }
+  }]
+}

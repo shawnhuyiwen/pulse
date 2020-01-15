@@ -49,6 +49,12 @@ public abstract class SEPatientAction extends SEAction
       SEPatientAssessmentRequest.load(c.getAssessment(), dst);
       return dst;
     }
+    case ACUTERESPIRATORYDISTRESSSYNDROMEEXACERBATION:
+    {
+      SEAcuteRespiratoryDistressSyndromeExacerbation dst = new SEAcuteRespiratoryDistressSyndromeExacerbation();
+      SEAcuteRespiratoryDistressSyndromeExacerbation.load(c.getAcuteRespiratoryDistressSyndromeExacerbation(), dst);
+      return dst;
+    }
     case ACUTESTRESS:
     {
       SEAcuteStress dst = new SEAcuteStress();
@@ -59,12 +65,6 @@ public abstract class SEPatientAction extends SEAction
     {
       SEAirwayObstruction dst = new SEAirwayObstruction();
       SEAirwayObstruction.load(c.getAirwayObstruction(), dst);
-      return dst;
-    }
-    case APNEA:
-    {
-      SEApnea dst = new SEApnea();
-      SEApnea.load(c.getApnea(), dst);
       return dst;
     }
     case ASTHMAATTACK:
@@ -109,6 +109,12 @@ public abstract class SEPatientAction extends SEAction
       SEChestOcclusiveDressing.load(c.getChestOcclusiveDressing(), dst);
       return dst;
     }
+    case CHRONICOBSTRUCTIVEPULMONARYDISEASEEXACERBATION:
+    {
+      SEChronicObstructivePulmonaryDiseaseExacerbation dst = new SEChronicObstructivePulmonaryDiseaseExacerbation();
+      SEChronicObstructivePulmonaryDiseaseExacerbation.load(c.getChronicObstructivePulmonaryDiseaseExacerbation(), dst);
+      return dst;
+    }
     case CONSCIOUSRESPIRATION:
     {
       SEConsciousRespiration dst = new SEConsciousRespiration();
@@ -119,6 +125,12 @@ public abstract class SEPatientAction extends SEAction
     {
       SEConsumeNutrients dst = new SEConsumeNutrients();
       SEConsumeNutrients.load(c.getConsumeNutrients(), dst);;
+      return dst;
+    }
+    case DYSPNEA:
+    {
+      SEDyspnea dst = new SEDyspnea();
+      SEDyspnea.load(c.getDyspnea(), dst);
       return dst;
     }
     case EXERCISE:
@@ -139,6 +151,12 @@ public abstract class SEPatientAction extends SEAction
       SEIntubation.load(c.getIntubation(), dst);
       return dst;
     }
+    case LOBARPNEUMONIAEXACERBATION:
+    {
+      SELobarPneumoniaExacerbation dst = new SELobarPneumoniaExacerbation();
+      SELobarPneumoniaExacerbation.load(c.getLobarPneumoniaExacerbation(), dst);
+      return dst;
+    }
     case MECHANICALVENTILATION:
     {
       SEMechanicalVentilation dst = new SEMechanicalVentilation();
@@ -157,10 +175,10 @@ public abstract class SEPatientAction extends SEAction
       SEPericardialEffusion.load(c.getPericardialEffusion(), dst);
       return dst;
     }
-    case TENSIONPNEUMOTHORAX:
+    case RESPIRATORYFATIGUE:
     {
-      SETensionPneumothorax dst = new SETensionPneumothorax();
-      SETensionPneumothorax.load(c.getTensionPneumothorax(), dst);
+      SERespiratoryFatigue dst = new SERespiratoryFatigue();
+      SERespiratoryFatigue.load(c.getRespiratoryFatigue(), dst);
       return dst;
     }
     case SUBSTANCEBOLUS:
@@ -184,6 +202,12 @@ public abstract class SEPatientAction extends SEAction
       SESubstanceInfusion.load(c.getSubstanceInfusion(), dst);
       return dst;
     }
+    case TENSIONPNEUMOTHORAX:
+    {
+      SETensionPneumothorax dst = new SETensionPneumothorax();
+      SETensionPneumothorax.load(c.getTensionPneumothorax(), dst);
+      return dst;
+    }
     case URINATE:
     {
       SEUrinate dst = new SEUrinate();
@@ -205,6 +229,11 @@ public abstract class SEPatientAction extends SEAction
       dst.setAssessment(SEPatientAssessmentRequest.unload((SEPatientAssessmentRequest)c));
       return dst.build();
     }
+    if(c instanceof SEAcuteRespiratoryDistressSyndromeExacerbation)
+    {
+      dst.setAcuteRespiratoryDistressSyndromeExacerbation(SEAcuteRespiratoryDistressSyndromeExacerbation.unload((SEAcuteRespiratoryDistressSyndromeExacerbation)c));
+      return dst.build();
+    }
     if(c instanceof SEAcuteStress)
     {
       dst.setAcuteStress(SEAcuteStress.unload((SEAcuteStress)c));
@@ -213,11 +242,6 @@ public abstract class SEPatientAction extends SEAction
     if(c instanceof SEAirwayObstruction)
     {
       dst.setAirwayObstruction(SEAirwayObstruction.unload((SEAirwayObstruction)c));
-      return dst.build();
-    }
-    if(c instanceof SEApnea)
-    {
-      dst.setApnea(SEApnea.unload((SEApnea)c));
       return dst.build();
     }
     if(c instanceof SEAsthmaAttack)
@@ -255,6 +279,11 @@ public abstract class SEPatientAction extends SEAction
       dst.setChestOcclusiveDressing(SEChestOcclusiveDressing.unload((SEChestOcclusiveDressing)c));
       return dst.build();
     }
+    if(c instanceof SEChronicObstructivePulmonaryDiseaseExacerbation)
+    {
+      dst.setChronicObstructivePulmonaryDiseaseExacerbation(SEChronicObstructivePulmonaryDiseaseExacerbation.unload((SEChronicObstructivePulmonaryDiseaseExacerbation)c));
+      return dst.build();
+    }
     if(c instanceof SEConsciousRespiration)
     {
       dst.setConsciousRespiration(SEConsciousRespiration.unload((SEConsciousRespiration)c));
@@ -263,6 +292,11 @@ public abstract class SEPatientAction extends SEAction
     if(c instanceof SEConsumeNutrients)
     {
       dst.setConsumeNutrients(SEConsumeNutrients.unload((SEConsumeNutrients)c));
+      return dst.build();
+    }
+    if(c instanceof SEDyspnea)
+    {
+      dst.setDyspnea(SEDyspnea.unload((SEDyspnea)c));
       return dst.build();
     }
     if(c instanceof SEExercise)
@@ -280,6 +314,11 @@ public abstract class SEPatientAction extends SEAction
       dst.setIntubation(SEIntubation.unload((SEIntubation)c));
       return dst.build();
     }
+    if(c instanceof SELobarPneumoniaExacerbation)
+    {
+      dst.setLobarPneumoniaExacerbation(SELobarPneumoniaExacerbation.unload((SELobarPneumoniaExacerbation)c));
+      return dst.build();
+    }
     if(c instanceof SEMechanicalVentilation)
     {
       dst.setMechanicalVentilation(SEMechanicalVentilation.unload((SEMechanicalVentilation)c));
@@ -295,9 +334,9 @@ public abstract class SEPatientAction extends SEAction
       dst.setPericardialEffusion(SEPericardialEffusion.unload((SEPericardialEffusion)c));
       return dst.build();
     }
-    if(c instanceof SETensionPneumothorax)
+    if(c instanceof SERespiratoryFatigue)
     {
-      dst.setTensionPneumothorax(SETensionPneumothorax.unload((SETensionPneumothorax)c));
+      dst.setRespiratoryFatigue(SERespiratoryFatigue.unload((SERespiratoryFatigue)c));
       return dst.build();
     }
     if(c instanceof SESubstanceBolus)
@@ -313,6 +352,11 @@ public abstract class SEPatientAction extends SEAction
     if(c instanceof SESubstanceInfusion)
     {
       dst.setSubstanceInfusion(SESubstanceInfusion.unload((SESubstanceInfusion)c));
+      return dst.build();
+    }
+    if(c instanceof SETensionPneumothorax)
+    {
+      dst.setTensionPneumothorax(SETensionPneumothorax.unload((SETensionPneumothorax)c));
       return dst.build();
     }
     if(c instanceof SEUrinate)

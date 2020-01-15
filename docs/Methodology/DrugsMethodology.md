@@ -36,11 +36,6 @@ The generic substance methodology developed for the engine is used to solve for 
 ### Post Process
 The Post Process step moves everything calculated in Process from the next time step calculation to the current time step calculation. %Substances have no specific Post Process functionality. Each system post processes their circuit and moves the mass, concentration, substance volume, and volume fraction from next to current.
 
-<img src="./Images/Drugs/DrugsDataFlow.png" width="900">
-<center>
-<i>Figure 1. The data flow begins with a Preprocess step where substances entering or exiting the engine body are incremented or decremented. During the Process step, the mass and concentration (blood) or substance volume and volume fraction (air/gas) are calculated for each compartment in a system. During Process, the effects of any drugs in the system are calculated. There is no specific Post Process functionality in substances. However, as other systems post process their circuits, the substance values are moved from the next time step to the current time step calculation.</i>
-</center><br>
-
 Features, Capabilities, and Dependencies
 ----------------------------------------
 Pharmacokinetic models quantify the time evolution of drug distribution from the administration of a dose. Pharmacodynamic models, on the other hand, characterize the events from the arrival of the drug at the site of action to the “onset, magnitude and duration of the biological response @cite rosenbaum2012basic.” The %Drug system contains both pharmacokinetic and pharmacodynamic models.
@@ -242,7 +237,7 @@ The pharmacodynamic effects of diuretics locally target the renal system's funct
 
 @anchor drugs-substances
 ### %Substances
-The full list of drugs available in the data library can be found in Table&nbsp;5 in the Validation section. Additional substances, such as oxygen, carbon dioxide, and hemoglobin that are available in the engine can be found in the @ref BloodChemistryMethodology.
+The full list of drugs available in the data library can be found in Table 5 in the Validation section. Additional substances, such as oxygen, carbon dioxide, and hemoglobin that are available in the engine can be found in the @ref BloodChemistryMethodology.
 
 @anchor drugs-variability
 ### Patient Variability
@@ -254,7 +249,7 @@ The substance calculations rely on the flow values calculated by the @ref Circui
 
 While this model is primarily used for drugs, it could be used for any substance in the body. The engine uses the clearance methodology for several additional substances. The modular approach to these calculations allows for the use of any combination of the three methodologies, PK, clearance, and PD.
 
-The substance values and calculations are used by a variety of systems to trigger actions and responses, define physiologic set points, scale circuit parameters, and modify driver frequencies. Many of these triggers and responses are discussed in the @ref BloodChemistryMethodology and the @ref EndocrineMethodology. The drug-specific effects are listed and described briefly in Table&nbsp;5. The implementation of these calculated responses can be found in the @ref CardiovascularMethodology and the @ref RespiratoryMethodology.
+The substance values and calculations are used by a variety of systems to trigger actions and responses, define physiologic set points, scale circuit parameters, and modify driver frequencies. Many of these triggers and responses are discussed in the @ref BloodChemistryMethodology and the @ref EndocrineMethodology. The drug-specific effects are listed and described briefly in Table 5. The implementation of these calculated responses can be found in the @ref CardiovascularMethodology and the @ref RespiratoryMethodology.
 
 @anchor drugs-assumptions
 ### Assumptions and Limitations
@@ -299,7 +294,7 @@ Validation - Actions
 
 All drugs in the data library were validated qualitatively or with subject matter expert input. The bolus injection methodology was validated by comparing the PK and PD results to literature. See the sections below for more detail. 
 
-The succinycholine scenario shows a drug impacting the major engine systems. Succinycholine (Figure&nbsp;4) initially drops the heart rate and blood pressure approximately 5&ndash;10%. As expected, the respiration drops to zero within 60&ndash;90 seconds to represent the paralysis associated with the neuromuscular blocker. The oxygen saturation drops slowly as the concentration of oxygen in the bloodstream drops, leading to hypoxia. Epinephrine is released in response to hypoxia, causing an increase in heart rate and blood pressure (@ref EndocrineMethodology). This is an example of the interdependent nature of the engine systems and the chain reaction drug administration can cause.
+The succinycholine scenario shows a drug impacting the major engine systems. Succinycholine (Figure 1) initially drops the heart rate and blood pressure approximately 5-10%. As expected, the respiration drops to zero within 60-90 seconds to represent the paralysis associated with the neuromuscular blocker. The oxygen saturation drops slowly as the concentration of oxygen in the bloodstream drops, leading to hypoxia. Epinephrine is released in response to hypoxia, causing an increase in heart rate and blood pressure (@ref EndocrineMethodology). This is an example of the interdependent nature of the engine systems and the chain reaction drug administration can cause.
 
 <center>
 <table border="0">
@@ -317,7 +312,7 @@ The succinycholine scenario shows a drug impacting the major engine systems. Suc
 </table>
 </center>
 <center>
-<i>Figure 2. The neuromuscular blocker, Succinylcholine, causes a cessation of respiration due to its paralytic effects. The heart rate and blood pressure initially decrease due to the system-level drug effects. As the oxygen decreases,  hypoxia occurs, resulting in an increase in heart rate and blood pressure.</i>
+<i>Figure 1. The neuromuscular blocker, Succinylcholine, causes a cessation of respiration due to its paralytic effects. The heart rate and blood pressure initially decrease due to the system-level drug effects. As the oxygen decreases,  hypoxia occurs, resulting in an increase in heart rate and blood pressure.</i>
 </center><br>
 
 #### Intravenous Administration
@@ -327,7 +322,7 @@ Validation of intravenous administration of a hypotonic solution and blood produ
 Validation - Pharmacokinetic
 --------------------
 
-The PK model was validated by comparing the plasma concentration calculated by the engine to plasma concentration curves found in the literature. The comparisons are shown in Figures 4&ndash;14. No available data was found for Epinephrine, so this drug was only validated from a PD perspective.
+The PK model was validated by comparing the plasma concentration calculated by the engine to plasma concentration curves found in the literature. The comparisons are shown in Figures 4-14. No available data was found for Epinephrine, so this drug was only validated from a PD perspective.
 
 <img src="./plots/Drugs/Albuterol.jpg" width="1100">
 <center>
@@ -395,7 +390,7 @@ The above results show that, in general, the model chosen for the engine produce
 Validation - Pharmacodynamic
 --------------------
 
-The pharmacodynamic effects of the drugs were validated by comparing the effects of each drug to a number of clinical parameters. A summary of the drug validation is shown in Table&nbsp;5. More details on the individual scenario validation can be found in the <a href="DrugsValidation.pdf">Drugs Scenario Validation Matrix</a>.
+The pharmacodynamic effects of the drugs were validated by comparing the effects of each drug to a number of clinical parameters. A summary of the drug validation is shown in Table 5. More details on the individual scenario validation can be found in the <a href="DrugsValidation.pdf">Drugs Scenario Validation Matrix</a>.
 
 <center>
 <i>Table 5. The engine drug library was validated qualitatively with published values and using subject matter expertise. Green indicates good agreement with validation data, yellow indicates agreement with a general trend with some minor disagreement, and red indicates a disagreement with the validation data. The number indicates the number of output parameters for each category of validation success or failure.</i>
@@ -484,7 +479,7 @@ PD effects for the diuretic Furosemide are handled differently than other drugs 
 Conclusions
 -----------
 
-In general, the drugs in the data library have strong agreement with both the published data and subject matter expertise. The biggest limitation lies in the transient response to drugs. Currently, the system tolerances provide a response within 30&ndash;60 seconds for all drugs, regardless of the physiologic onset time. The drug response also wears off quickly for all drugs. It is difficult to specify the desired pharmacodynamic response without a well thought out set of parameters. These issues will be addressed as part of future work on the engine by validating the pharmacokinetic model and implementing and validating a pharmacodynamic model.
+In general, the drugs in the data library have strong agreement with both the published data and subject matter expertise. The biggest limitation lies in the transient response to drugs. Currently, the system tolerances provide a response within 30-60 seconds for all drugs, regardless of the physiologic onset time. The drug response also wears off quickly for all drugs. It is difficult to specify the desired pharmacodynamic response without a well thought out set of parameters. These issues will be addressed as part of future work on the engine by validating the pharmacokinetic model and implementing and validating a pharmacodynamic model.
 
 These models and the combination of these models represent a positive step forward for drug simulation. The parameters are intuitive and accurate for each drug and additional drugs can be added for an expanded drug library.
 

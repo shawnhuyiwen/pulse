@@ -241,13 +241,13 @@ void PulseEngineRef::AirwayObstruction(double severity)
   Monitor::Exit(_lock);
 }
 
-void PulseEngineRef::Apnea(double severity)
+void PulseEngineRef::Dyspnea(double severity)
 {
   Monitor::Enter(_lock);
   {
-    SEApnea apnea;
-    apnea.GetSeverity().SetValue(severity);
-    _pulse->ProcessAction(apnea);
+    SEDyspnea Dyspnea;
+    Dyspnea.GetSeverity().SetValue(severity);
+    _pulse->ProcessAction(Dyspnea);
   }
   Monitor::Exit(_lock);
 }

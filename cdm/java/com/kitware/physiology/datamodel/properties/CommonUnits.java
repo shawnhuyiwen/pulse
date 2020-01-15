@@ -331,190 +331,6 @@ public class CommonUnits
     }
   }
   
-    
-  /**
-   * Enumeration of commonly used units for this type
-   * Units are not limited to this enum.
-   * Any method that accepts this enum will have another method
-   * that takes any valid standard unit abbreviation string 
-   * in place of method that take this enum.
-   * Unit Abbreviation Standards: http://www.bipm.org/en/si/
-   */
-  public enum FlowComplianceUnit 
-  {
-    L_Per_cmH2O("L/cmH2O"),
-    mL_Per_mmHg("mL/mmHg"),
-    m3_Per_Pa("m^3/Pa");
-    private String unit;
-    private FlowComplianceUnit(String unit)
-    {
-      this.unit=unit;
-    }
-    public String toString(){return this.unit;}
-    public static boolean contains(String unit)
-    {
-      for(FlowComplianceUnit v : FlowComplianceUnit.values())
-      {
-        if(v.toString().equals(unit))
-          return true;
-      }
-      return false;
-    }
-    /**
-     * Test if unit string provided is a
-     * valid unit abbreviation for this quantity
-     * Does not need to be an enumerated value.
-     * Can be any string of standard unit 
-     * abbreviations that represent this quantity
-     * Unit Abbreviation Standards: http://www.bipm.org/en/si/
-     */
-    public static boolean validUnit(String unit)
-    {
-      if(unit == null || unit.isEmpty())
-        return false;
-      if(FlowComplianceUnit.contains(unit))
-        return true;
-      return UnitConverter.isOfQuantityType("L/cmH2O", unit);
-    }
-  }
-  
-  /**
-   * Enumeration of commonly used units for this type
-   * Units are not limited to this enum.
-   * Any method that accepts this enum will have another method
-   * that takes any valid standard unit abbreviation string 
-   * in place of method that take this enum.
-   * Unit Abbreviation Standards: http://www.bipm.org/en/si/
-   */
-  public enum FlowElastanceUnit 
-  {
-    cmH2O_Per_L("cmH2O/L"),
-    mmHg_Per_mL("mmHg/mL"),
-    Pa_Per_m3("Pa/m^3");
-    private String unit;
-    private FlowElastanceUnit(String unit)
-    {
-      this.unit=unit;
-    }
-    public String toString(){return this.unit;}
-    public static boolean contains(String unit)
-    {
-      for(FlowElastanceUnit v : FlowElastanceUnit.values())
-      {
-        if(v.toString().equals(unit))
-          return true;
-      }
-      return false;
-    }
-    /**
-     * Test if unit string provided is a
-     * valid unit abbreviation for this quantity
-     * Does not need to be an enumerated value.
-     * Can be any string of standard unit 
-     * abbreviations that represent this quantity
-     * Unit Abbreviation Standards: http://www.bipm.org/en/si/
-     */
-    public static boolean validUnit(String unit)
-    {
-      if(unit == null || unit.isEmpty())
-        return false;
-      if(FlowElastanceUnit.contains(unit))
-        return true;
-      return UnitConverter.isOfQuantityType("cmH2O/L", unit);
-    }
-  }
-  
-  /**
-   * Enumeration of commonly used units for this type
-   * Units are not limited to this enum.
-   * Any method that accepts this enum will have another method
-   * that takes any valid standard unit abbreviation string 
-   * in place of method that take this enum.
-   * Unit Abbreviation Standards: http://www.bipm.org/en/si/
-   */
-  public enum FlowInertanceUnit
-  {
-    mmHg_s_Per_mL_Per_s("mmHg s^2/mL"),
-    Pa_s2_Per_m3("Pa s^2/m^3");
-    private String unit;
-    private FlowInertanceUnit(String unit)
-    {
-      this.unit=unit;
-    }
-    public String toString(){return this.unit;}
-    public static boolean contains(String unit)
-    {
-      for(FlowInertanceUnit v : FlowInertanceUnit.values())
-      {
-        if(v.toString().equals(unit))
-          return true;
-      }
-      return false;
-    }
-    /**
-     * Test if unit string provided is a
-     * valid unit abbreviation for this quantity
-     * Does not need to be an enumerated value.
-     * Can be any string of standard unit 
-     * abbreviations that represent this quantity
-     * Unit Abbreviation Standards: http://www.bipm.org/en/si/
-     */
-    public static boolean validUnit(String unit)
-    {
-      if(unit == null || unit.isEmpty())
-        return false;
-      if(FlowInertanceUnit.contains(unit))
-        return true;
-      return UnitConverter.isOfQuantityType("mmHg s^2/mL", unit);
-    }
-  }
-  
-  /**
-   * Enumeration of commonly used units for this type
-   * Units are not limited to this enum.
-   * Any method that accepts this enum will have another method
-   * that takes any valid standard unit abbreviation string 
-   * in place of method that take this enum.
-   * Unit Abbreviation Standards: http://www.bipm.org/en/si/
-   */
-  public enum FlowResistanceUnit 
-  {
-    cmH2O_Per_L_s("cmH2O s/L"),
-    mmHg_Per_mL_Per_s("mmHg s/mL"),
-    mmHg_Per_mL_Per_min("mmHg min/mL"),
-    Pa_s_Per_m3("Pa s/m^3");
-    private String unit;
-    private FlowResistanceUnit(String unit)
-    {
-      this.unit=unit;
-    }
-    public String toString(){return this.unit;}
-    public static boolean contains(String unit)
-    {
-      for(FlowResistanceUnit v : FlowResistanceUnit.values())
-      {
-        if(v.toString().equals(unit))
-          return true;
-      }
-      return false;
-    }
-    /**
-     * Test if unit string provided is a
-     * valid unit abbreviation for this quantity
-     * Does not need to be an enumerated value.
-     * Can be any string of standard unit 
-     * abbreviations that represent this quantity
-     * Unit Abbreviation Standards: http://www.bipm.org/en/si/
-     */
-    public static boolean validUnit(String unit)
-    {
-      if(unit == null || unit.isEmpty())
-        return false;
-      if(FlowResistanceUnit.contains(unit))
-        return true;
-      return UnitConverter.isOfQuantityType("cmH2O s/L", unit);
-    }
-  }
   
   /**
    * Enumeration of commonly used units for this type
@@ -1395,6 +1211,54 @@ public class CommonUnits
    * in place of method that take this enum.
    * Unit Abbreviation Standards: http://www.bipm.org/en/si/
    */
+  public enum PressureTimePerVolumeUnit 
+  {
+    cmH2O_Per_L_s("cmH2O s/L"),
+    mmHg_Per_mL_Per_s("mmHg s/mL"),
+    mmHg_Per_mL_Per_min("mmHg min/mL"),
+    Pa_s_Per_m3("Pa s/m^3");
+    private String unit;
+    private PressureTimePerVolumeUnit(String unit)
+    {
+      this.unit=unit;
+    }
+    public String toString(){return this.unit;}
+    public static boolean contains(String unit)
+    {
+      for(PressureTimePerVolumeUnit v : PressureTimePerVolumeUnit.values())
+      {
+        if(v.toString().equals(unit))
+          return true;
+      }
+      return false;
+    }
+    /**
+     * Test if unit string provided is a
+     * valid unit abbreviation for this quantity
+     * Does not need to be an enumerated value.
+     * Can be any string of standard unit 
+     * abbreviations that represent this quantity
+     * Unit Abbreviation Standards: http://www.bipm.org/en/si/
+     */
+    public static boolean validUnit(String unit)
+    {
+      if(unit == null || unit.isEmpty())
+        return false;
+      if(PressureTimePerVolumeUnit.contains(unit))
+        return true;
+      return UnitConverter.isOfQuantityType("cmH2O s/L", unit);
+    }
+  }
+  
+  
+  /**
+   * Enumeration of commonly used units for this type
+   * Units are not limited to this enum.
+   * Any method that accepts this enum will have another method
+   * that takes any valid standard unit abbreviation string 
+   * in place of method that take this enum.
+   * Unit Abbreviation Standards: http://www.bipm.org/en/si/
+   */
   public enum PressureTimePerVolumeAreaUnit 
   {
     mmHg_min_Per_mL_m2("mmHg min/mL m^2"),mmHg_s_Per_mL_m2("mmHg s/mL m^2"),dyn_s_Per_cm5_m2("dyn s /cm^5 m^2");
@@ -1472,6 +1336,51 @@ public class CommonUnits
       if(PressureTimePerAreaUnit.contains(unit))
         return true;
       return UnitConverter.isOfQuantityType("mmHg/mL m^2", unit);
+    }
+  }
+  
+  /**
+   * Enumeration of commonly used units for this type
+   * Units are not limited to this enum.
+   * Any method that accepts this enum will have another method
+   * that takes any valid standard unit abbreviation string 
+   * in place of method that take this enum.
+   * Unit Abbreviation Standards: http://www.bipm.org/en/si/
+   */
+  public enum PressureTimeSquaredPerVolumeUnit
+  {
+    mmHg_s_Per_mL_Per_s("mmHg s^2/mL"),
+    Pa_s2_Per_m3("Pa s^2/m^3");
+    private String unit;
+    private PressureTimeSquaredPerVolumeUnit(String unit)
+    {
+      this.unit=unit;
+    }
+    public String toString(){return this.unit;}
+    public static boolean contains(String unit)
+    {
+      for(PressureTimeSquaredPerVolumeUnit v : PressureTimeSquaredPerVolumeUnit.values())
+      {
+        if(v.toString().equals(unit))
+          return true;
+      }
+      return false;
+    }
+    /**
+     * Test if unit string provided is a
+     * valid unit abbreviation for this quantity
+     * Does not need to be an enumerated value.
+     * Can be any string of standard unit 
+     * abbreviations that represent this quantity
+     * Unit Abbreviation Standards: http://www.bipm.org/en/si/
+     */
+    public static boolean validUnit(String unit)
+    {
+      if(unit == null || unit.isEmpty())
+        return false;
+      if(PressureTimeSquaredPerVolumeUnit.contains(unit))
+        return true;
+      return UnitConverter.isOfQuantityType("mmHg s^2/mL", unit);
     }
   }
   

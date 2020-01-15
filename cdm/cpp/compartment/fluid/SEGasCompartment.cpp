@@ -6,6 +6,7 @@
 #include "substance/SESubstanceManager.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalar0To1.h"
+#include "utils/GeneralMath.h"
 
 SEGasCompartment::SEGasCompartment(const std::string& name, Logger* logger) : SEFluidCompartment(name, logger)
 {
@@ -49,7 +50,7 @@ void SEGasCompartment::Balance(BalanceGasBy by)
         else
         {
           subQ->GetVolumeFraction().SetValue(subQ->GetVolume(VolumeUnit::mL) / totalVolume_mL);
-      subQ->GetVolume().SetValue(subQ->GetVolumeFraction().GetValue() * GetVolume(VolumeUnit::mL), VolumeUnit::mL);
+          subQ->GetVolume().SetValue(subQ->GetVolumeFraction().GetValue() * GetVolume(VolumeUnit::mL), VolumeUnit::mL);
           if(HasPressure())
             GeneralMath::CalculatePartialPressureInGas(subQ->GetVolumeFraction(), GetPressure(), subQ->GetPartialPressure(), m_Logger);
         }

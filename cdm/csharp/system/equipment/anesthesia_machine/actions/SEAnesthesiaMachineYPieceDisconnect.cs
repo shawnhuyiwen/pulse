@@ -1,43 +1,46 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
-   
-public class SEAnesthesiaMachineYPieceDisconnect : SEAnesthesiaMachineAction
+
+namespace Pulse.CDM
 {
-  protected SEScalar0To1 severity;
-  
-  public SEAnesthesiaMachineYPieceDisconnect()
+  public class SEAnesthesiaMachineYPieceDisconnect : SEAnesthesiaMachineAction
   {
-    severity = null;
-  }
-  public override void Clear()
-  {
-    base.Clear();
-    if (severity != null)
-      severity.Invalidate();
-  }
+    protected SEScalar0To1 severity;
 
-  public override bool IsValid()
-  {
-    return HasSeverity();
-  }
+    public SEAnesthesiaMachineYPieceDisconnect()
+    {
+      severity = null;
+    }
+    public override void Clear()
+    {
+      base.Clear();
+      if (severity != null)
+        severity.Invalidate();
+    }
 
-  public bool HasSeverity()
-  {
-    return severity == null ? false : severity.IsValid();
-  }
-  public SEScalar0To1 GetSeverity()
-  {
-    if (severity == null)
-      severity = new SEScalar0To1();
-    return severity;
-  }
+    public override bool IsValid()
+    {
+      return HasSeverity();
+    }
 
-  public override string ToString()
-  {
-    if (severity != null)
-      return "Y Piece Disconnect"
-          + "\n\tSeverity: " + GetSeverity();
-    else
-      return "Y Piece Disconnect not specified properly";
+    public bool HasSeverity()
+    {
+      return severity == null ? false : severity.IsValid();
+    }
+    public SEScalar0To1 GetSeverity()
+    {
+      if (severity == null)
+        severity = new SEScalar0To1();
+      return severity;
+    }
+
+    public override string ToString()
+    {
+      if (severity != null)
+        return "Y Piece Disconnect"
+            + "\n\tSeverity: " + GetSeverity();
+      else
+        return "Y Piece Disconnect not specified properly";
+    }
   }
 }

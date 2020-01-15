@@ -4,11 +4,13 @@
 @anchor patient-overview
 Overview
 ========
+========
 
 Abstract
 --------
 
 The engine allows for patient variability via a set of parameters used to define aspects of the simulated human. These parameters are used throughout the system models to manipulate the physiological responses and homeostatic state. The code base contains several defined patients created for various testing and analysis purposes.
+
 @anchor patient-intro
 Introduction
 ------------
@@ -47,6 +49,7 @@ Features and Capabilities
 |	---	|	---	|	---	|	---	|	---	|	---	|
 |	Sex	|	Required	|	\f[M = Male,F = Female\f]	|	 -	|	 -	|	This is the only parameter required to be explicitly set.	|
 |	Age	|	Optional	|	\f[A[yr] = 44\f]	|	18 yr	|	65 yr	|	No pediatric or geriatric modeling.	|
+|	Ideal Weight	|	Optional	|	\f[Iw[kg] = \left\{ {\begin{array}{*{20}{c}} {{\rm{50}}{\rm{.0  +  2}}{\rm{.3}}\left( {{\rm{H[in]  -  60}}} \right),\;M}\\ {{\rm{45}}{\rm{.5  +  2}}{\rm{.3}}\left( {{\rm{H[in]  -  60}}} \right),\;F} \end{array}} \right.\f]	|	 -	|	 -	|	@cite green2017green	|
 |	Weight	|	Optional	|	\f[W[kg] = 21.75H{[m]^2}\f]	|	Bmi = 16 kg/m<sup>2</sup>	|	Bmi = 30 kg/m<sup>2</sup>	|	Bmi = Body Mass Index = W[kg]/H[m]<sup>2</sup>. 21.75 kg/m<sup>2</sup> is standard. No severly Underweight or Obese. @cite World2006bmi	|
 |	Height	|	Optional	|	\f[{\rm{H[cm] = }}\left\{ {\begin{array}{*{20}{c}} {{\rm{177}},\;M}\\ {{\rm{163}},\;F} \end{array}} \right.\f]	|	M = 163 cm, F = 151 cm	|	M = 190 cm, F = 175.5 cm	|	Min = 3rd percentile, Max = 97th percentile, Standard = 50th percentile. @cite Centers2016clinical	|
 |	Body Fat Fraction	|	Optional	|	\f[{\rm{Ff[cm] = }}\left\{ {\begin{array}{*{20}{c}} {{\rm{0}}{\rm{.21}},\;M}\\ {0.28,\;F} \end{array}} \right.\f]	|	M = 0.25, F = 0.32	|	M = 0.02, F = 0.10	|	No obese and not less than essential fat. @cite muth2009what	|
@@ -62,21 +65,26 @@ Features and Capabilities
 |	Skin Surface Area	|	Optional	|	\f[Ssa[{m^2}] = 0.20247W{[kg]^{0.45}}H{[m]^{0.725}}\f]	|	 -	|	 -	|	@cite du1989formula	|
 |	Heart Rate Maximum	|	Optional	|	\f[H{r_{\max }}[bpm] = 208 - 0.7A[yr]\f]	|	 -	|	 -	|	@cite tanaka2001age	|
 |	Heart Rate Minimum	|	Optional	|	\f[H{r_{\min }}[bpm] = 0.001\f]	|	 -	|	 -	|		|
-|	Functional Residual Capacity	|	Optional	|	\f[Frc[mL] = 30W[kg]\f]	|	 -	|	 -	|	@cite ganong1995review	|
-|	Total Lung Capacity	|	Optional	|	\f[Tlc[mL] = 80W[kg]\f]	|	 -	|	 -	|	@cite ganong1995review	|
-|	Residual Volume	|	Optional	|	\f[Rv[mL] = 16W[kg]\f]	|	 -	|	 -	|	@cite ganong1995review	|
+|	Functional Residual Capacity	|	Optional	|	\f[Frc[mL] = 30Iw[kg]\f]	|	 -	|	 -	|	@cite ganong1995review	|
+|	Total Lung Capacity	|	Optional	|	\f[Tlc[mL] = 80Iw[kg]\f]	|	 -	|	 -	|	@cite ganong1995review	|
+|	Residual Volume	|	Optional	|	\f[Rv[mL] = 16Iw[kg]\f]	|	 -	|	 -	|	@cite ganong1995review	|
 |	Lean Body Mass	|	Unallowed	|	\f[Lbm = W(1 - Ff)\f]	|	 -	|	 -	|		|
 |	Body Density	|	Unallowed	|	\f[Bd = {{\left( {\frac{{4.95}}{{Ff + 4.5}} + \frac{{4.57}}{{Ff + 4.142}}} \right)} \mathord{\left/  {\vphantom {{\left( {\frac{{4.95}}{{Ff + 4.5}} + \frac{{4.57}}{{Ff + 4.142}}} \right)} 2}} \right.  \kern-\nulldelimiterspace} 2}\f]	|	 -	|	 -	|	Average of Siri @cite siri1961body and Brozek @cite brovzek1963densitometric equations.	|
 |	Mean Arterial Pressure	|	Unallowed	|	\f[Map = \frac{1}{3}Sys + \frac{2}{3}Dia\f]	|	 -	|	 -	|	@cite guyton2006medical	|
-|	Tidal Volume Baseline	|	Unallowed	|	\f[Tv[mL] = 37W[kg] - Frc[mL]\f]	|	 -	|	 -	|	@cite ganong1995review	|
+|	Tidal Volume Baseline	|	Unallowed	|	\f[Tv[mL] = 37Iw[kg] - Frc[mL]\f]	|	 -	|	 -	|	@cite ganong1995review	|
 |	Expiratory Reserve Volume	|	Unallowed	|	\f[Erv = Frc - Rv\f]	|	 -	|	 -	|	@cite ganong1995review	|
 |	Inspiratory Capacity	|	Unallowed	|	\f[Ic = Tlc - Frc\f]	|	 -	|	 -	|	@cite ganong1995review	|
 |	Inspriatory Reserve Volume	|	Unallowed	|	\f[Irv = Ic - Tv\f]	|	 -	|	 -	|	@cite ganong1995review	|
 |	Vital Capacity	|	Unallowed	|	\f[Vc - Tlc - Rv\f]	|	 -	|	 -	|	@cite ganong1995review	|
 
+
 ### Stabilization
 
-All patient parameters are set at the beginning of the resting stabilization period (see @ref SystemMethodology). These values are used to modify the inner workings of systems. The complex interactions require a simulated period to allow everything to balance into a stable, homeostatic, healthy starting point. After each stabilization period (i.e., resting, conditions, and feedback), several parameters are reset due to their reliance on combined effects. The patient definition only allows for healthy values - any chronic pathophysiology needs to be handled using the CDM condition definition. 
+There are two complete sets of patient parameters stored in the data model:
+
+1. <i>Initial Patient</i>: These are the healthy patient parameters before any conditions or action are applied. All patient parameters are set at the beginning of the resting stabilization period (see @ref SystemMethodology). These values are used to modify the inner workings of systems. The complex interactions require a simulated period to allow everything to balance into a stable, homeostatic, healthy starting point. These parameters should not be changed during a simulation.
+
+2. <i>Current Patient</i>: After each stabilization period (i.e., resting, conditions, and feedback), several parameters are reset due to their reliance on combined effects. These parameters can further be changed during a simulation.
 
 While every effort has been made to allow any combination of patient parameters within bounds, there is no guarantee that all combinations will be able to reach a stable starting homeostatic point. 
 

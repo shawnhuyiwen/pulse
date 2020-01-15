@@ -25,7 +25,7 @@
 #include "engine/SEEventManager.h"
 #include "engine/SEPatientActionCollection.h"
 #include "patient/actions/SEUrinate.h"
-#include "properties/SEScalarFlowResistance.h"
+#include "properties/SEScalarPressureTimePerVolume.h"
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarMassPerTime.h"
 #include "properties/SEScalarMassPerVolume.h"
@@ -48,8 +48,9 @@ void PulseEngineTest::RenalCircuitAndTransportTest(const std::string& sTestDirec
   std::ofstream graphFile;
 
   PulseController pc(sTestDirectory + "/RenalCircuitAndTransportTest.log");
-  pc.GetPatient().SerializeFromFile("./patients/StandardMale.json",JSON);
-  pc.SetupPatient();
+  SEPatient patient(pc.GetLogger());
+  patient.SerializeFromFile("./patients/StandardMale.json",JSON);
+  pc.SetupPatient(patient);
   pc.m_Config->EnableRenal(eSwitch::On);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
@@ -129,7 +130,7 @@ void PulseEngineTest::RenalCircuitAndTransportTest(const std::string& sTestDirec
   double yOffset = 75.0;
 
   SELiquidTransporter txpt(VolumePerTimeUnit::mL_Per_s, VolumeUnit::mL, MassUnit::ug, MassPerVolumeUnit::ug_Per_mL, pc.GetLogger());
-  SEFluidCircuitCalculator calc(FlowComplianceUnit::mL_Per_mmHg, VolumePerTimeUnit::mL_Per_s, FlowInertanceUnit::mmHg_s2_Per_mL, PressureUnit::mmHg, VolumeUnit::mL, FlowResistanceUnit::mmHg_s_Per_mL, pc.GetLogger());
+  SEFluidCircuitCalculator calc(VolumePerPressureUnit::mL_Per_mmHg, VolumePerTimeUnit::mL_Per_s, PressureTimeSquaredPerVolumeUnit::mmHg_s2_Per_mL, PressureUnit::mmHg, VolumeUnit::mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL, pc.GetLogger());
   for (unsigned int i = 0; i < runTime_min * 60.0 / deltaT_s; i++)
   {
     // Drive the circuit
@@ -174,8 +175,9 @@ void PulseEngineTest::RenalFeedbackTest(RenalFeedback feedback, const std::strin
   TimingProfile tmr;
   tmr.Start("Test");
   PulseController pc(sTestDirectory + "/RenalFeedbackTest.log");
-  pc.GetPatient().SerializeFromFile("./patients/StandardMale.json",JSON);
-  pc.SetupPatient();
+  SEPatient patient(pc.GetLogger());
+  patient.SerializeFromFile("./patients/StandardMale.json", JSON);
+  pc.SetupPatient(patient);
   pc.m_Config->EnableRenal(eSwitch::On);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
@@ -189,7 +191,6 @@ void PulseEngineTest::RenalFeedbackTest(RenalFeedback feedback, const std::strin
   pc.GetCompartments().CreateLiquidCompartment(pulse::ExtravascularCompartment::RightKidneyIntracellular);
   pc.m_Config->EnableTissue(eSwitch::On);// This needs to be on for making the tissue to extravascular mapping
   pc.GetCompartments().StateChange();
-  SEPatient* patient = (SEPatient*)&pc.GetPatient();
 
   SEFluidCircuit& rCircuit = pc.GetCircuits().GetRenalCircuit();
   SELiquidCompartmentGraph& rGraph = pc.GetCompartments().GetRenalGraph();
@@ -247,7 +248,7 @@ void PulseEngineTest::RenalFeedbackTest(RenalFeedback feedback, const std::strin
   SEFluidCircuitPath* RightPeritubularCapillariesToNetPeritubularCapillaries = rCircuit.GetPath(pulse::RenalPath::RightPeritubularCapillariesToNetPeritubularCapillaries);
 
   SELiquidTransporter txpt(VolumePerTimeUnit::mL_Per_s, VolumeUnit::mL, MassUnit::ug, MassPerVolumeUnit::ug_Per_mL, pc.GetLogger());
-  SEFluidCircuitCalculator calc(FlowComplianceUnit::mL_Per_mmHg, VolumePerTimeUnit::mL_Per_s, FlowInertanceUnit::mmHg_s2_Per_mL, PressureUnit::mmHg, VolumeUnit::mL, FlowResistanceUnit::mmHg_s_Per_mL, pc.GetLogger());
+  SEFluidCircuitCalculator calc(VolumePerPressureUnit::mL_Per_mmHg, VolumePerTimeUnit::mL_Per_s, PressureTimeSquaredPerVolumeUnit::mmHg_s2_Per_mL, PressureUnit::mmHg, VolumeUnit::mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL, pc.GetLogger());
 
   DataTrack trk;
   double time_s = 0.0;
@@ -371,11 +372,11 @@ void PulseEngineTest::RenalFeedbackTest(RenalFeedback feedback, const std::strin
       currentRBF_L_Per_min = bgRenal.GetRenalBloodFlow(VolumePerTimeUnit::L_Per_min);
       currentUPR_mL_Per_min = bgRenal.GetUrineProductionRate(VolumePerTimeUnit::mL_Per_min);
       leftReabsorptionFlow_mL_Per_min = LeftNetTubulesToNetPeritubularCapillaries->GetNextFlow(VolumePerTimeUnit::mL_Per_min);
-      leftAffResistance_mmHg_s_Per_mL = LeftAfferentArterioleToGlomerularCapillaries->GetNextResistance(FlowResistanceUnit::mmHg_s_Per_mL);
-      leftReabsorptionResistance_mmHg_s_Per_mL = LeftNetTubulesToNetPeritubularCapillaries->GetNextResistance(FlowResistanceUnit::mmHg_s_Per_mL);
+      leftAffResistance_mmHg_s_Per_mL = LeftAfferentArterioleToGlomerularCapillaries->GetNextResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+      leftReabsorptionResistance_mmHg_s_Per_mL = LeftNetTubulesToNetPeritubularCapillaries->GetNextResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
       rightReabsorptionFlow_mL_Per_min = RightNetTubulesToNetPeritubularCapillaries->GetNextFlow(VolumePerTimeUnit::mL_Per_min);
-      rightAffResistance_mmHg_s_Per_mL = RightAfferentArterioleToGlomerularCapillaries->GetNextResistance(FlowResistanceUnit::mmHg_s_Per_mL);
-      rightReabsorptionResistance_mmHg_s_Per_mL = RightNetTubulesToNetPeritubularCapillaries->GetNextResistance(FlowResistanceUnit::mmHg_s_Per_mL);
+      rightAffResistance_mmHg_s_Per_mL = RightAfferentArterioleToGlomerularCapillaries->GetNextResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+      rightReabsorptionResistance_mmHg_s_Per_mL = RightNetTubulesToNetPeritubularCapillaries->GetNextResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
       permeabilityCurrentLeft_mL_Per_s_Per_mmHg_Per_m2 = bgRenal.GetLeftTubularReabsorptionFluidPermeability().GetValue(VolumePerTimePressureAreaUnit::mL_Per_s_mmHg_m2);
       permeabilityCurrentRight_mL_Per_s_Per_mmHg_Per_m2 = bgRenal.GetRightTubularReabsorptionFluidPermeability().GetValue(VolumePerTimePressureAreaUnit::mL_Per_s_mmHg_m2);
 
@@ -489,8 +490,9 @@ void PulseEngineTest::RenalSystemTest(RenalSystems systemtest, const std::string
   TimingProfile tmr;
   tmr.Start("Test");
   PulseController pc(sTestDirectory + "/RenalSystemTest.log");
-  pc.GetPatient().SerializeFromFile("./patients/StandardMale.json",JSON);
-  pc.SetupPatient();
+  SEPatient patient(pc.GetLogger());
+  patient.SerializeFromFile("./patients/StandardMale.json", JSON);
+  pc.SetupPatient(patient);
   pc.m_Config->EnableRenal(eSwitch::On);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
@@ -504,7 +506,6 @@ void PulseEngineTest::RenalSystemTest(RenalSystems systemtest, const std::string
   pc.GetCompartments().CreateLiquidCompartment(pulse::ExtravascularCompartment::RightKidneyIntracellular);
   pc.m_Config->EnableTissue(eSwitch::On);// This needs to be on for making the tissue to extravascular mapping
   pc.GetCompartments().StateChange();
-  SEPatient* patient = (SEPatient*)&pc.GetPatient();
   SESubstance& potassium = pc.GetSubstances().GetPotassium();
 
   // Renal needs these present for Gluconeogenesis

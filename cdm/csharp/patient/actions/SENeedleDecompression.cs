@@ -1,48 +1,51 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-public class SENeedleDecompression : SEPatientAction
+namespace Pulse.CDM
 {
+  public class SENeedleDecompression : SEPatientAction
+  {
     protected eSwitch state;
     protected eSide side;
 
     public SENeedleDecompression()
     {
-        state = eSwitch.Off;
-        side = eSide.NullSide;
+      state = eSwitch.Off;
+      side = eSide.NullSide;
     }
 
     public override void Clear()
     {
-        base.Clear();
-        state = eSwitch.Off;
-        side = eSide.NullSide;
+      base.Clear();
+      state = eSwitch.Off;
+      side = eSide.NullSide;
     }
 
     public override bool IsValid()
     {
-        return HasSide();
+      return HasSide();
     }
 
     public eSwitch GetState()
     {
-        return state;
+      return state;
     }
     public void SetState(eSwitch s)
     {
-        this.state = (s == eSwitch.NullSwitch) ? eSwitch.Off : s;
+      this.state = (s == eSwitch.NullSwitch) ? eSwitch.Off : s;
     }
 
     public eSide GetSide()
     {
-        return side;
+      return side;
     }
     public void SetSide(eSide rightOrLeft)
     {
-        side = rightOrLeft;
+      side = rightOrLeft;
     }
     public bool HasSide()
     {
-        return side == eSide.NullSide ? false : true;
+      return side == eSide.NullSide ? false : true;
     }
+  }
 }

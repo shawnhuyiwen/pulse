@@ -65,13 +65,15 @@ public:
   Logger(std::string const&  logFilename = Loggable::empty);
   virtual ~Logger();
 
+  static void Initialize();
+  static void Deinitialize();
+
   void LogToConsole(bool b);
 
   void ResetLogFile(std::string const&  logFilename = Loggable::empty);
 
   enum class level
   {
-    Trace,
     Debug,
     Info,
     Warn,
@@ -119,3 +121,42 @@ private:
    log_lib*                     _log_lib;
 };
 
+class CDM_DECL LogMessages
+{
+public:
+  LogMessages() {}
+  virtual ~LogMessages() {};
+
+  bool static SerializeToString(const LogMessages& msgs, std::string& output, SerializationFormat m, Logger* logger);
+  bool static SerializeFromString(const std::string& src, LogMessages& msgs, SerializationFormat m, Logger* logger);
+
+  void Clear()
+  {
+    debug_msgs.clear();
+    info_msgs.clear();
+    warning_msgs.clear();
+    error_msgs.clear();
+    fatal_msgs.clear();
+  }
+
+  bool IsEmpty()
+  {
+    if (!debug_msgs.empty())
+      return false;
+    if (!info_msgs.empty())
+      return false;
+    if (!warning_msgs.empty())
+      return false;
+    if (!error_msgs.empty())
+      return false;
+    if (!fatal_msgs.empty())
+      return false;
+    return true;
+  }
+
+  std::vector<std::string> debug_msgs;
+  std::vector<std::string> info_msgs;
+  std::vector<std::string> warning_msgs;
+  std::vector<std::string> error_msgs;
+  std::vector<std::string> fatal_msgs;
+};

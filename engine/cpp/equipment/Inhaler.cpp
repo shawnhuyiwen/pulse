@@ -21,9 +21,9 @@
 #include "patient/actions/SEUseInhaler.h"
 #include "properties/SEScalarTime.h"
 #include "properties/SEScalarLength.h"
-#include "properties/SEScalarFlowResistance.h"
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarMass.h"
+#include "properties/SEScalarPressureTimePerVolume.h"
 #include "properties/SEScalar0To1.h"
 
 /*

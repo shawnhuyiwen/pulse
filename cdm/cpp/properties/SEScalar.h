@@ -66,6 +66,9 @@ public:
   double Increment(const SEScalar& s);
   double IncrementValue(double d);
 
+  double Multiply(const SEScalar& s);
+  double MultiplyValue(double d);
+
   void Average(int cnt);
 
   bool Equals(const SEScalar& to) const;
@@ -117,6 +120,7 @@ public:
   virtual void   SetValue(double d, const CCompoundUnit& unit) = 0;
   virtual void   ForceValue(double d, const CCompoundUnit& unit) = 0;
   virtual double IncrementValue(double d, const CCompoundUnit& unit) = 0;
+  virtual double MultiplyValue(double d, const CCompoundUnit& unit) = 0;
 
 protected:
   virtual const CCompoundUnit* GetCompoundUnit(const std::string& unit) const = 0;
@@ -145,6 +149,7 @@ protected:
   virtual void   SetValue(double d, const CCompoundUnit& unit);
   virtual void   ForceValue(double d, const CCompoundUnit& unit);
   virtual double IncrementValue(double d, const CCompoundUnit& unit);
+  virtual double MultiplyValue(double d, const CCompoundUnit& unit);
 
   virtual const CCompoundUnit* GetCompoundUnit(const std::string& unit) const;
 
@@ -170,6 +175,12 @@ public:
 
   double Increment(const SEScalar& s) = delete;// Must provide a unit
   virtual double Increment(const SEScalarQuantity& s);
+
+  double MultiplyValue(double d) = delete;// Must provide a unit
+  virtual double MultiplyValue(double d, const Unit& unit);
+
+  double Multiply(const SEScalar& s) = delete;// Must provide a unit
+  virtual double Multiply(const SEScalarQuantity& s);
 
   bool Equals(const SEScalar& to) const = delete;// Must provide a unit
   virtual bool Equals(const SEScalarQuantity<Unit>& to) const;
@@ -261,5 +272,3 @@ inline void IncrementOverride(SEScalarQuantity<Unit>& s, double value, const Uni
   s.IncrementValue(value, unit);
   s.SetReadOnly(b);
 }
-
-#include "properties/SEScalar.inl"

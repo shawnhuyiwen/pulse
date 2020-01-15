@@ -21,7 +21,7 @@ public:
 public:
 
   void                SetName(const std::string& Name);                        
-  std::string          GetName() const;  
+  std::string         GetName() const;  
 
   void                PerformSuite(bool Performed);                      
   bool                PerformedSuite();  

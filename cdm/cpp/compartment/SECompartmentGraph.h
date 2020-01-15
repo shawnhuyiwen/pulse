@@ -38,4 +38,3 @@ protected:
   std::vector<CompartmentType*>     m_Compartments;
   std::vector<CompartmentLinkType*> m_CompartmentLinks;
 };
-#include "compartment/SECompartmentGraph.inl"

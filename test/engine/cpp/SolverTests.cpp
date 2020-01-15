@@ -17,6 +17,7 @@
 #include "utils/testing/SETestCase.h"
 #include "utils/testing/SETestSuite.h"
 #include <numeric>
+#include <climits>
 
 std::chrono::microseconds::rep vectorAverage(std::vector<std::chrono::microseconds::rep> const&v)
 {
@@ -45,8 +46,9 @@ void PulseEngineTest::SolverSpeedTest(const std::string& rptDirectory)
   bool showAllOutput = true; //toggle this to show all Info outputs for all circuits, which will show first-pass solve times and fail rates
 
   PulseController pc(tsSolverSpeed.GetLogger());
-  pc.GetPatient().SerializeFromFile("./patients/StandardMale.json",JSON);
-  pc.SetupPatient();
+  SEPatient patient(pc.GetLogger());
+  patient.SerializeFromFile("./patients/StandardMale.json", JSON);
+  pc.SetupPatient(patient);
   pc.m_Config->EnableRenal(eSwitch::On);
   pc.m_Config->EnableTissue(eSwitch::On);
   pc.CreateCircuitsAndCompartments();

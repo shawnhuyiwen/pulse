@@ -21,7 +21,6 @@
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarAmountPerVolume.h"
 
-#include <cmath>
 #include <iterator>
 
 DataTrack::DataTrack() : DataTrack(nullptr)
@@ -362,6 +361,9 @@ void DataTrack::Track(const std::string& name, double time, double value)
     // Initialize any empty slots to NaN
     for(unsigned int i=0; i<m_Time.size(); i++)
       v->push_back(std::numeric_limits<double>::quiet_NaN());
+
+    // This output helps to see if something is added to the csv after initialization, who it is, to figure out why
+    //std::cout << "Adding vector for " << name << std::endl;
   }
 
   if(v->size()==0)
@@ -543,6 +545,7 @@ void DataTrack::Track(double time_s, const SEThermalCircuit& c)
     }
   }
 }
+
 void DataTrack::Track(double time_s, const SEGasCompartmentGraph& graph, std::vector<SESubstance*>* substances)
 {
   for (SEGasCompartment* cmpt : graph.GetCompartments())
@@ -581,6 +584,7 @@ void DataTrack::Track(double time_s, const SEGasCompartmentGraph& graph, std::ve
   }
   for (SEGasCompartmentLink* link : graph.GetLinks())
   {
+    
     if (link->HasFlow())
     {
       auto unit = link->GetFlow().GetUnit();
