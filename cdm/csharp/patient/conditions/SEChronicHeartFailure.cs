@@ -1,17 +1,19 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-public abstract class SEChronicHeartFailure : SEPatientCondition
+namespace Pulse.CDM
 {
-
-  public SEChronicHeartFailure()
+  public abstract class SEChronicHeartFailure : SEPatientCondition
   {
-    
-  }
 
-  public override void Clear()
-  {
-    base.Clear();
-  }
+    public SEChronicHeartFailure()
+    {
 
+    }
+
+    public override void Clear()
+    {
+      base.Clear();
+    }
+  }
 }

@@ -1,43 +1,46 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-public class SEAnesthesiaMachineOxygenBottle
+namespace Pulse.CDM
 {
-  protected SEScalarVolume volume;
-
-  public SEAnesthesiaMachineOxygenBottle()
+  public class SEAnesthesiaMachineOxygenBottle
   {
-    volume = null;
-  }
+    protected SEScalarVolume volume;
 
-  public void Clear()
-  {
-    if (volume != null)
-      volume.Invalidate();
-  }
+    public SEAnesthesiaMachineOxygenBottle()
+    {
+      volume = null;
+    }
 
-  //public void Copy(SEAnesthesiaMachineOxygenBottle from)
-  //{
-  //  Clear();
-  //  if(from.HasVolume())
-  //    this.GetVolume().Set(from.GetVolume());
-  //}
+    public void Clear()
+    {
+      if (volume != null)
+        volume.Invalidate();
+    }
 
-  public bool HasVolume()
-  {
-    return volume == null ? false : volume.IsValid();
-  }
+    //public void Copy(SEAnesthesiaMachineOxygenBottle from)
+    //{
+    //  Clear();
+    //  if(from.HasVolume())
+    //    this.GetVolume().Set(from.GetVolume());
+    //}
 
-  public SEScalarVolume GetVolume()
-  {
-    if (volume == null)
-      volume = new SEScalarVolume();        
-    return volume;
-  }
+    public bool HasVolume()
+    {
+      return volume == null ? false : volume.IsValid();
+    }
 
-  public override string ToString()
-  {
-    return "Anesthesia Machine Oxygen Bottle"
-        + "\n\tVolume: " + GetVolume();
+    public SEScalarVolume GetVolume()
+    {
+      if (volume == null)
+        volume = new SEScalarVolume();
+      return volume;
+    }
+
+    public override string ToString()
+    {
+      return "Anesthesia Machine Oxygen Bottle"
+          + "\n\tVolume: " + GetVolume();
+    }
   }
 }

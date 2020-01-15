@@ -1,43 +1,46 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-public class SEAnesthesiaMachineVaporizerFailure : SEAnesthesiaMachineAction
+namespace Pulse.CDM
 {
-  protected SEScalar0To1 severity;
-  
-  public SEAnesthesiaMachineVaporizerFailure()
+  public class SEAnesthesiaMachineVaporizerFailure : SEAnesthesiaMachineAction
   {
-    severity = null;
-  }
-  public override void Clear()
-  {
-    base.Clear();
-    if (severity != null)
-      severity.Invalidate();
-  }
+    protected SEScalar0To1 severity;
 
-  public override bool IsValid()
-  {
-    return HasSeverity();
-  }
+    public SEAnesthesiaMachineVaporizerFailure()
+    {
+      severity = null;
+    }
+    public override void Clear()
+    {
+      base.Clear();
+      if (severity != null)
+        severity.Invalidate();
+    }
 
-  public bool HasSeverity()
-  {
-    return severity == null ? false : severity.IsValid();
-  }
-  public SEScalar0To1 GetSeverity()
-  {
-    if (severity == null)
-      severity = new SEScalar0To1();
-    return severity;
-  }
+    public override bool IsValid()
+    {
+      return HasSeverity();
+    }
 
-  public override string ToString()
-  {
-    if (severity != null)
-      return "Vaporizer Failure"
-          + "\n\tSeverity: " + GetSeverity();
-    else
-      return "Vaporizer Failure not specified properly";
+    public bool HasSeverity()
+    {
+      return severity == null ? false : severity.IsValid();
+    }
+    public SEScalar0To1 GetSeverity()
+    {
+      if (severity == null)
+        severity = new SEScalar0To1();
+      return severity;
+    }
+
+    public override string ToString()
+    {
+      if (severity != null)
+        return "Vaporizer Failure"
+            + "\n\tSeverity: " + GetSeverity();
+      else
+        return "Vaporizer Failure not specified properly";
+    }
   }
 }
