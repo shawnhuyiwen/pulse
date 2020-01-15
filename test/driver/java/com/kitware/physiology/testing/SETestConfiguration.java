@@ -176,7 +176,7 @@ public class SETestConfiguration
           key = key.substring(1);
         }
         this.jobs.add(job);
-        job.name = key.trim();          
+        job.name = key.trim();
         job.percentDifference = this.percentDifference;
 
         String[] directives = value.trim().split(" ");
@@ -190,7 +190,7 @@ public class SETestConfiguration
               catch (Exception e)
               {
                 job.knownFailure = true;
-                Log.error("Could not make a new "+executors.get(directive).getName()+" executor");                
+                Log.error("Could not make a new "+executors.get(directive).getName()+" executor");
               }
               continue;
             }
@@ -292,7 +292,7 @@ public class SETestConfiguration
             }
             copy = job.clone();
             copy.patientFile = pFileName;
-            deriveScenarioResultNames(copy, copy.name.replaceAll(sce_ext, "-"+pFileName));  
+            deriveScenarioResultNames(copy, copy.name.replaceAll(sce_ext, "-"+pFileName));
             jobs.add(copy);
           }
         }

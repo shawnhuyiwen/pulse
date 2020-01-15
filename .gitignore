@@ -8,6 +8,9 @@
 # The IntelliJ build dir
 /.idea/out
 
+# Auto concat'd files for doxygen html
+/docs/Doxygen/panel_header.html
+/docs/Doxygen/panel_footer.html
 
 # This is for the MSVC projects
 /.vs/

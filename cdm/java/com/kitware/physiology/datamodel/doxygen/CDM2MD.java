@@ -272,7 +272,7 @@ public class CDM2MD
       if(bag.propertyName.length()>maxColumnLength[0])
         maxColumnLength[0] = bag.propertyName.length();
       if(bag.returnType.getSimpleName().length()>maxColumnLength[1])
-        maxColumnLength[1] = bag.returnType.getSimpleName().length();           
+        maxColumnLength[1] = bag.returnType.getSimpleName().length();
     }
     maxColumnLength[2] = descPrepend.length()+maxColumnLength[0];
 
@@ -384,7 +384,7 @@ public class CDM2MD
     }
     catch(Exception ex)
     {
-      Log.error("Error writing cdm table for "+tableName,ex);      
+      Log.error("Error writing cdm table for "+tableName,ex);
     }
     writer.print("\n<hr>\n");
   }

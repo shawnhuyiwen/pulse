@@ -61,8 +61,6 @@
     {"DecimalFormat":{"Precision":2}, "Category":"Substance", "SubstanceName":"CarbonDioxide", "PropertyName":"AlveolarTransfer",    "Unit":"mL/s"},
     {"DecimalFormat":{"Precision":6}, "Category":"Substance", "SubstanceName":"Epinephrine",   "PropertyName":"BloodConcentration",  "Unit":"ug/L"},
     
-    
-    # Specific to this scenario
     {"DecimalFormat":{"Precision":8}, "Category":"Substance", "SubstanceName":"Epinephrine",   "PropertyName":"SystemicMassCleared", "Unit":"ug"},
     
     {"DecimalFormat":{"Precision":2}, "Category":"Physiology", "PropertyName":"ChymeAbsorptionRate",          "Unit":"mL/min"},

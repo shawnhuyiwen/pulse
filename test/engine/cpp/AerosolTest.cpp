@@ -167,7 +167,7 @@ void PulseEngineTest::AerosolTest(const std::string& sOutputDirectory)
   mono3Concentrations.GetFraction().push_back(0);     // Bin 5 (Bounded by Boundary 5 and Boundary 6)
 
   SizeIndependentDepositionEfficencyCoefficientsTest(mono3Suite, mono3Substance, 0.43617, 0.77358, 0.21788, 0.005489);
-  DepositionFractionTest(mono3Suite, mono3Substance, 0.417621, 0.592992, 0.112668, 0.00248646, 0.114005, 0.00250667);
+  DepositionFractionTest(mono3Suite, mono3Substance, 0.417621, 0.592992, 0.112553, 0.00248646, 0.113877, 0.00250667);
 
   // Create a suite
   SETestSuite& zhangDispersion = testReport.CreateTestSuite();

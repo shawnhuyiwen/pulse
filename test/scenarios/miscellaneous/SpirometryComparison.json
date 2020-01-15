@@ -1,6 +1,6 @@
 {
-  "Name": "Respiratory Compliance Validation",
-  "Description": "Produce Lung-Thorax Relaxation Pressure Curve (i.e., lung volume vs intrapulmonary pressure curves) for healthy and diseased lungs.",
+  "Name": "Spirometry",
+  "Description": "Perform a spirometry breath.",
   "StartType": { "PatientConfiguration": { "PatientFile": "StandardMale.json" }},
   "DataRequestManager":
   {
@@ -27,47 +27,51 @@
 	  { "DecimalFormat": { }, "PropertyName": "InspiratoryReserveVolume",   "Unit": "mL" },
 	  { "DecimalFormat": { }, "PropertyName": "ResidualVolume",             "Unit": "mL" },
 	  { "DecimalFormat": { }, "PropertyName": "TotalLungCapacity",          "Unit": "mL" },
-	  { "DecimalFormat": { }, "PropertyName": "VitalCapacity",              "Unit": "mL" }
+	  { "DecimalFormat": { }, "PropertyName": "VitalCapacity",              "Unit": "mL" },
+	  
+	  { "DecimalFormat": { "Precision": 6 }, "Category": "Physiology", "PropertyName": "ExpiratoryFlow", "Unit": "L/s"}
 	]
   },
   "AnyAction":
-  [
-    { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 30.0, "Unit": "s" }}}},
-	
+  [	
 	{ "PatientAction": { "ConsciousRespiration": { "Command": [
 	    { "ForcedExhale": {
-            "ExpiratoryReserveVolumeFraction": { "Scalar0To1": { "Value": 1.2 } },
-            "ExhalePeriod": { "ScalarTime": { "Value": 10.0, "Unit": "s" } } ,
-			"ReleasePeriod": { "ScalarTime": { "Value": 1.0, "Unit": "s" } } } },			
+            "ExpiratoryReserveVolumeFraction": { "Scalar0To1": { "Value": 1.0 } },
+            "ExhalePeriod": { "ScalarTime": { "Value": 10.0, "Unit": "s" } } } }, 
 		{ "ForcedInhale": {
-            "InspiratoryCapacityFraction": { "Scalar0To1": { "Value": 1.2 } },
-            "InhalePeriod": { "ScalarTime": { "Value": 20.0, "Unit": "s" } } , 
-			"ReleasePeriod": { "ScalarTime": { "Value": 10.0, "Unit": "s" } } } }  
+            "InspiratoryCapacityFraction": { "Scalar0To1": { "Value": 1.0 } },
+            "InhalePeriod": { "ScalarTime": { "Value": 1.0, "Unit": "s" } } , 
+			"HoldPeriod": { "ScalarTime": { "Value": 1.0, "Unit": "s" } } } },
+		{ "ForcedExhale": { 
+		    "ExpiratoryReserveVolumeFraction": { "Scalar0To1": { "Value": 1.0 } },
+            "ExhalePeriod": { "ScalarTime": { "Value": 10.0, "Unit": "s" } } } } 
 	] } } },
-		
-	{ "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.5, "Unit": "min" }}}},
 	
-    { "PatientAction": { "ChronicObstructivePulmonaryDiseaseExacerbation": 
+	{ "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" }}}},
+	
+	{ "PatientAction": { "ChronicObstructivePulmonaryDiseaseExacerbation": 
       {
-        "BronchitisSeverity": { "Scalar0To1": { "Value": 0.9 }},
-        "EmphysemaSeverity": { "Scalar0To1": { "Value": 0.9 }}
+        "BronchitisSeverity": { "Scalar0To1": { "Value": 0.6 }},
+        "EmphysemaSeverity": { "Scalar0To1": { "Value": 0.6 }}
       }}
     },
 	
-	{ "AdvanceTime": { "Time": { "ScalarTime": { "Value": 30.0, "Unit": "s" }}}},
+	{ "AdvanceTime": { "Time": { "ScalarTime": { "Value": 10.0, "Unit": "s" }}}},
 	
 	{ "PatientAction": { "ConsciousRespiration": { "Command": [
 	    { "ForcedExhale": {
-            "ExpiratoryReserveVolumeFraction": { "Scalar0To1": { "Value": 1.2 } },
-            "ExhalePeriod": { "ScalarTime": { "Value": 10.0, "Unit": "s" } } ,
-			"ReleasePeriod": { "ScalarTime": { "Value": 1.0, "Unit": "s" } } } },			
+            "ExpiratoryReserveVolumeFraction": { "Scalar0To1": { "Value": 1.0 } },
+            "ExhalePeriod": { "ScalarTime": { "Value": 10.0, "Unit": "s" } } } }, 
 		{ "ForcedInhale": {
-            "InspiratoryCapacityFraction": { "Scalar0To1": { "Value": 1.2 } },
-            "InhalePeriod": { "ScalarTime": { "Value": 20.0, "Unit": "s" } } , 
-			"ReleasePeriod": { "ScalarTime": { "Value": 10.0, "Unit": "s" } } } }  
+            "InspiratoryCapacityFraction": { "Scalar0To1": { "Value": 1.0 } },
+            "InhalePeriod": { "ScalarTime": { "Value": 1.0, "Unit": "s" } } , 
+			"HoldPeriod": { "ScalarTime": { "Value": 1.0, "Unit": "s" } } } },
+		{ "ForcedExhale": { 
+		    "ExpiratoryReserveVolumeFraction": { "Scalar0To1": { "Value": 1.0 } },
+            "ExhalePeriod": { "ScalarTime": { "Value": 10.0, "Unit": "s" } } } } 
 	] } } },
 	
-	{ "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.5, "Unit": "min" }}}},
+	{ "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" }}}},
 	
 	{ "PatientAction": { "ChronicObstructivePulmonaryDiseaseExacerbation": 
       {
@@ -76,39 +80,31 @@
       }}
     },
 	
-	{ "AdvanceTime": { "Time": { "ScalarTime": { "Value": 30.0, "Unit": "s" }}}},
+	{ "AdvanceTime": { "Time": { "ScalarTime": { "Value": 10.0, "Unit": "s" }}}},
 	
-	{ "PatientAction": { "LobarPneumoniaExacerbation": 
+	{ "PatientAction": { "AcuteRespiratoryDistressSyndromeExacerbation": 
       {
-        "Severity": { "Scalar0To1": { "Value": 0.9 }},
+        "Severity": { "Scalar0To1": { "Value": 0.6 }},
         "LeftLungAffected": { "Scalar0To1": { "Value": 1.0 }},
         "RightLungAffected": { "Scalar0To1": { "Value": 1.0 }}
       }}
     },
 	
-	{ "AdvanceTime": { "Time": { "ScalarTime": { "Value": 30.0, "Unit": "s" }}}},
+	{ "AdvanceTime": { "Time": { "ScalarTime": { "Value": 10.0, "Unit": "s" }}}},
 	
 	{ "PatientAction": { "ConsciousRespiration": { "Command": [
 	    { "ForcedExhale": {
-            "ExpiratoryReserveVolumeFraction": { "Scalar0To1": { "Value": 1.2 } },
-            "ExhalePeriod": { "ScalarTime": { "Value": 10.0, "Unit": "s" } } ,
-			"ReleasePeriod": { "ScalarTime": { "Value": 1.0, "Unit": "s" } } } },			
+            "ExpiratoryReserveVolumeFraction": { "Scalar0To1": { "Value": 1.0 } },
+            "ExhalePeriod": { "ScalarTime": { "Value": 10.0, "Unit": "s" } } } }, 
 		{ "ForcedInhale": {
-            "InspiratoryCapacityFraction": { "Scalar0To1": { "Value": 1.2 } },
-            "InhalePeriod": { "ScalarTime": { "Value": 20.0, "Unit": "s" } } , 
-			"ReleasePeriod": { "ScalarTime": { "Value": 10.0, "Unit": "s" } } } }  
+            "InspiratoryCapacityFraction": { "Scalar0To1": { "Value": 1.0 } },
+            "InhalePeriod": { "ScalarTime": { "Value": 1.0, "Unit": "s" } } , 
+			"HoldPeriod": { "ScalarTime": { "Value": 1.0, "Unit": "s" } } } },
+		{ "ForcedExhale": { 
+		    "ExpiratoryReserveVolumeFraction": { "Scalar0To1": { "Value": 1.0 } },
+            "ExhalePeriod": { "ScalarTime": { "Value": 10.0, "Unit": "s" } } } } 
 	] } } },
 	
-	{ "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.5, "Unit": "min" }}}},
-	
-	{ "PatientAction": { "LobarPneumoniaExacerbation": 
-      {
-        "Severity": { "Scalar0To1": { "Value": 0.0 }},
-        "LeftLungAffected": { "Scalar0To1": { "Value": 1.0 }},
-        "RightLungAffected": { "Scalar0To1": { "Value": 1.0 }}
-      }}
-    },
-	
-    { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 30.0, "Unit": "s" }}}}
+	{ "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" }}}}
   ]
 }

@@ -39,7 +39,7 @@ public class PlotDriver
       {// Plotting from config file
         if(args[0].substring(args[0].lastIndexOf(".")+1).equalsIgnoreCase("config"))
         {
-          File configFile = new File(cfg.getTestConfigDirectory()+"/"+args[0]);      
+          File configFile = new File(cfg.getTestConfigDirectory()+"/"+args[0]);
           if(configFile.exists())
           {
             me.processConfigFile(configFile,cfg);
@@ -236,7 +236,7 @@ public class PlotDriver
           Class<Plotter> clazz = null;
           try
           {
-            clazz = (Class<Plotter>)Class.forName(value);             
+            clazz = (Class<Plotter>)Class.forName(value);
             this.plotters.put(clazz.getSimpleName(), clazz);
           } 
           catch(Exception e){Log.error("Could not find Plotter "+value);}
@@ -256,6 +256,7 @@ public class PlotDriver
         }
         
         PlotJob job = new PlotJob();
+        job.scenarioPath = cfg.getScenarioDirectory()+"/patient";
         job.verificationDirectory=cfg.getVerificationDirectory()+"/scenarios/patient";
         //job2groups.put(job, currentGroup);
         if (key.charAt(0) == '-')
@@ -264,7 +265,7 @@ public class PlotDriver
           key = key.substring(1);
         }
         this.jobs.add(job);
-        job.name = key.trim();          
+        job.name = key.trim();
 
         String[] directives = value.trim().split(" ");
         for(String directive : directives)
@@ -277,7 +278,7 @@ public class PlotDriver
               catch (Exception e)
               {
                 job.ignore = true;
-                Log.error("Could not make a new "+plotters.get(directive).getName()+" plotter");                
+                Log.error("Could not make a new "+plotters.get(directive).getName()+" plotter");
               }
               continue;
             }
@@ -364,7 +365,11 @@ public class PlotDriver
               continue;
             } 
             else if(key.equalsIgnoreCase("VerificationDir"))
-            {job.verificationDirectory = cfg.getVerificationDirectory()+"/scenarios/"+value; continue;}
+            {
+              job.scenarioPath = cfg.getScenarioDirectory()+"/"+value;
+              job.verificationDirectory = cfg.getVerificationDirectory()+"/scenarios/"+value;
+              continue;
+            }
             else if(key.equalsIgnoreCase("Title"))
             {job.titleOverride = value; continue;}    
             else if(key.equalsIgnoreCase("OutputFilename"))
@@ -584,7 +589,7 @@ public class PlotDriver
         job.logPath = computedPath;  //only computed files have a log
         if(isScenario)
         {
-        //If this is a scenario test, remove "Results" from name and don't add "Test"
+          //If this is a scenario test, remove "Results" from name and don't add "Test"
           job.logFile = job.name.substring(0,job.name.indexOf("Results"))+".log";
           job.scenarioPath = expectedPath.substring(0,expectedPath.indexOf("Current Baseline"));
           job.scenarioFile = job.name.substring(0,job.name.indexOf("Results"))+".json";
