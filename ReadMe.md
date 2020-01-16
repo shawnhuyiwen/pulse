@@ -146,6 +146,44 @@ swapon tmpswap
 
 Read the article if you want to make this change permanent, it contains some valuable hints regarding permissions and fstab.
 
+### Cross Compiling
+
+CMake provides the ability to easily cross compile.
+In general, when we cross compile, we are doing so to get out a PulseC library for use in our Unity Asset.
+The PulseC library provides an interface used by our C#/Unity and Python API's to access and control the C++ based engine.
+Unity is C# based and any C# managed libraries built one any platform, will automatically run on other platforms.
+But the PulseC library is a native library and a specific platform version must be provided for the platform Unity is being run on.
+The following sections will highlight specific build instructions for cross compiling for these target platforms.
+
+#### Magic Leap
+
+Magic Leap provides a Lumin SDK for use in compiling native C++ code for use on the Magic Leap platform.
+You will need to download and install this SDK. In this example we are building on a windows machine, using the Lumin SDK v0.22.0.
+Please follow the Lumin instructions on generating a cmake toolchain file needed for cross compiling.
+You will need this file later.
+
+The first thing you will want to do is build Pulse on the host system. I use Visual Studio when building natively.
+During the Pulse build, it will build and run the Protobuf protoc compiler to generate C++ classes needed for I/O.
+These files are needed to build, but when you cross compile, you will build a protoc executable for your target platform, and it will not run on the native windows system.
+Doing a native build will ensure these files are generated. The cross compile build will see the files exist and not run the non native protoc compiler.
+Once you have a native build, create a new empty build directory for your cross compile build and place the magic leap toolchain file there.
+
+The Lumin SDK provides the mingw compiler, in order to use the windows executables (ming32-make.exe) via a command shell, I had to modify the toolchain file.
+Here is a copy of the [modified toolchain file](https://data.kitware.com/api/v1/item/5e209505af2e2eed350c8c03/download)
+The generated toolchain file generated needs to utilize the ming32-make for its CMAKE_MAKE_PROGRAM.
+I also had to add several compiler/linker options needed for compiling protobuf.
+
+With your toolchain file in your build directory open a cmd shell and run :
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
+# Where Pulse source is located in N:/Pulse/engine on my system
+cmake -G "Unix Makefiles" -DPULSE_BUILD_JAVA_UTILS=OFF -DCMAKE_TOOLCHAIN_FILE=magicleap.toolchain.cmake N:/Pulse/engine
+# Where the Lumin SDK was installed to N:/Tools/MagicLeap on my system
+N:/Tools/MagicLeap/dev/mlsdk/v0.22.0/tools/mabu/tools/MinGW/bin/mingw32-make.exe
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This will provide a PulseC.so in the build/install/bin that works on the Magic Leap platform!
+
 ## Updating Pulse
 
 The Pulse repository is always changing as we add improvements and features to the code base.
