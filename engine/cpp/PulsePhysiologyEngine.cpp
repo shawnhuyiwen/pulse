@@ -36,6 +36,7 @@ public:
   std::vector<const SEEventChange*> events;
   std::vector<const SEActiveEvent*> active_events;
   size_t length;
+  std::vector<double> requestedValues;
   double* requestedData = nullptr;
 };
 
@@ -70,7 +71,10 @@ bool PulseEngineThunk::SerializeFromFile(std::string const& filename, std::strin
     }
   }
   else
+  {
     SetupDefaultDataRequests();
+    data->eng->GetLogger()->Info("No data requested, will return default vitals");
+  }
 
   return true;
 }
@@ -244,7 +248,7 @@ bool PulseEngineThunk::AdvanceTimeStep()
   return success;
 }
 
-double* PulseEngineThunk::PullData()
+double* PulseEngineThunk::PullDataPtr()
 {
   double currentTime_s = data->eng->GetSimulationTime(TimeUnit::s);
   data->eng->GetEngineTracker()->TrackData(currentTime_s);
@@ -264,15 +268,32 @@ double* PulseEngineThunk::PullData()
   return data->requestedData;
 }
 
+size_t PulseEngineThunk::DataLength() const
+{
+  return data->length;
+}
 void PulseEngineThunk::PullData(std::vector<double>& d)
 {
-  double* v = PullData();
+  std::cout << "Trying to pull data" << std::endl;
+  double* v = PullDataPtr();
+  std::cout << "Pult " << data->length << " data" << std::endl;
+  if (d.size() != data->length)
+  {
+    std::cout << "Reserving result" << std::endl;
+    d.reserve(data->length);
+    std::cout << "Ok" << std::endl;
+  }
   for (int i = 0; i < data->length; i++)
   {
-    d[i] = v[i];
-  }
-}
 
+    std::cout << "Beep " << d[i] << std::endl;
+    d[i] = v[i];
+
+    std::cout << "Boop" << d[i] << std::endl;
+  }
+
+  std::cout << "Added data to the array? " << data->length << " data" << std::endl;
+}
 
 void PulseEngineThunk::SetupDefaultDataRequests()
 {// Default to vitals data

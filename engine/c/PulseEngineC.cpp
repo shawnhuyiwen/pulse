@@ -138,6 +138,6 @@ C_EXPORT bool C_CALL AdvanceTimeStep(PulseEngineThunk* thunk)
 extern "C"
 C_EXPORT double* C_CALL PullData(PulseEngineThunk* thunk)
 {
-  return thunk->PullData();
+  return thunk->PullDataPtr();
 }
 

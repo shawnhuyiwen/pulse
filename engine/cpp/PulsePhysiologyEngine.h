@@ -54,7 +54,8 @@ public:
 
   bool AdvanceTimeStep();
 
-  double* PullData();
+  size_t DataLength() const;
+  double* PullDataPtr();
   void PullData(std::vector<double>& data);
 
   void ForwardDebug(const std::string& msg, const std::string& origin);
