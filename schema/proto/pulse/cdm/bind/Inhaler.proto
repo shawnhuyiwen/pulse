@@ -1,0 +1,17 @@
+syntax = "proto3";
+package pulse.cdm.bind;
+option java_package = "pulse.cdm.bind";
+option optimize_for = SPEED;
+
+import "pulse/cdm/bind/Enums.proto";
+import "pulse/cdm/bind/Properties.proto";
+
+/** @brief Generic inhaler for substance administration. */
+message InhalerData
+{
+  eSwitch            State        = 1;/**<< @brief Is the inhaler adminstering it's substance or not. */
+  string             Substance    = 2;/**<< @brief Substance contained. */
+  ScalarMassData     MeteredDose  = 3;/**<< @brief Dosage of substance. */
+  Scalar0To1Data     NozzleLoss   = 4;/**<< @brief Fraction of substance lost from the inhaler. -*/
+  ScalarVolumeData   SpacerVolume = 5;/**<< @brief Volume of a spacer, if used. */
+}

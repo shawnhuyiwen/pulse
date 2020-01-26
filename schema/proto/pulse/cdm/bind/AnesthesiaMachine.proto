@@ -1,0 +1,67 @@
+syntax = "proto3";
+package pulse.cdm.bind;
+option java_package = "pulse.cdm.bind";
+option optimize_for = SPEED;
+
+import "pulse/cdm/bind/Enums.proto";
+import "pulse/cdm/bind/Properties.proto";
+
+/** @brief A vaporization chamber that can be filled with a particular substance for inhalation. */
+message AnesthesiaMachineChamberData
+{
+  eSwitch                           State                         = 1; /**<< @brief If the chamber is being used or not. */
+  Scalar0To1Data                    SubstanceFraction             = 2; /**<< @brief The fraction of the substance supplied by the vaporizer chamber. */
+  string                            Substance                     = 3; /**<< @brief The name of the substance. */
+}
+
+/** @brief A bottle of Oxygen */
+message AnesthesiaMachineOxygenBottleData
+{
+  ScalarVolumeData                  Volume                        = 1; /**<< @brief Amount of oxygen in the bottle. */
+}
+
+message AnesthesiaMachineData
+{
+
+  enum eConnection
+  {
+    NullConnection = 0;/**<< Signals not provided, or no change */
+    Off            = 1;
+    Mask           = 2;
+    Tube           = 3;
+  }
+  
+  enum eOxygenSource
+  {
+    NullSource   = 0;/**<< Signals not provided, or no change */
+    NoSource     = 1;
+    Wall         = 2;
+    BottleOne    = 3;
+    BottleTwo    = 4;
+  }
+  
+  enum ePrimaryGas
+  {
+    NullGas  = 0;/**<< Signals not provided, or no change */
+    NoGas    = 1;
+    Air      = 2;
+    Nitrogen = 3;
+  }
+  
+  eConnection                       Connection                    = 1; /**<< @brief @ref AnesthesiaMachineData_eConnectionTable */
+  ScalarVolumePerTimeData           InletFlow                     = 2; /**<< @brief The total fresh gas inlet flow. */
+  ScalarData                        InspiratoryExpiratoryRatio    = 3; /**<< @brief The ratio of time spent in the inspiratory phase vs the expiratory phase of respiration. */
+  Scalar0To1Data                    OxygenFraction                = 4; /**<< @brief The fraction of the fresh gas inlet flow that is oxygen. */
+  eOxygenSource                     OxygenSource                  = 5; /**<< @brief @ref AnesthesiaMachineData_eOxygenSourceTable */
+  ScalarPressureData                PositiveEndExpiredPressure    = 6; /**<< @brief The pressure above atmospheric pressure that exists in the lungs at the end of expiration.*/
+  ePrimaryGas                       PrimaryGas                    = 7; /**<< @brief @ref AnesthesiaMachineData_ePrimaryGasTable */      
+  ScalarPressureData                ReliefValvePressure           = 8; /**<< @brief Pressure at while the valve opens to prevent a build up of pressure in the system. */
+  ScalarFrequencyData               RespiratoryRate               = 9; /**<< @brief The prescribed rate of positive-pressure ventilation. */
+  ScalarPressureData                VentilatorPressure            = 10;/**<< @brief The pressure of the ventilator. */
+  
+  AnesthesiaMachineChamberData      LeftChamber                   = 11;/**<< @brief The left chamber of the machine. */  
+  AnesthesiaMachineChamberData      RightChamber                  = 12;/**<< @brief The right chamber of the machine. */    
+  
+  AnesthesiaMachineOxygenBottleData OxygenBottleOne               = 13;/**<< @brief The first bottle attached to the machine. */  
+  AnesthesiaMachineOxygenBottleData OxygenBottleTwo               = 14;/**<< @brief The second bottle attached to the machine. */
+}

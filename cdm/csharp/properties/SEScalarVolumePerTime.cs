@@ -8,12 +8,12 @@ public class VolumePerTimeUnit
 
   public new string ToString() { return Value; }
 
-  public static VolumePerTimeUnit L_Per_s { get { return new VolumePerTimeUnit("L/s"); } }
-  public static VolumePerTimeUnit mL_Per_s { get { return new VolumePerTimeUnit("mL/s"); } }
-  public static VolumePerTimeUnit L_Per_min { get { return new VolumePerTimeUnit("L/min"); } }
-  public static VolumePerTimeUnit m3_Per_s { get { return new VolumePerTimeUnit("m^3/s"); } }
-  public static VolumePerTimeUnit mL_Per_min { get { return new VolumePerTimeUnit("mL/min"); } }
-  public static VolumePerTimeUnit mL_Per_day { get { return new VolumePerTimeUnit("mL/day"); } }
+  public static VolumePerTimeUnit L_Per_s = new VolumePerTimeUnit("L/s");
+  public static VolumePerTimeUnit mL_Per_s = new VolumePerTimeUnit("mL/s");
+  public static VolumePerTimeUnit L_Per_min = new VolumePerTimeUnit("L/min");
+  public static VolumePerTimeUnit m3_Per_s = new VolumePerTimeUnit("m^3/s");
+  public static VolumePerTimeUnit mL_Per_min = new VolumePerTimeUnit("mL/min");
+  public static VolumePerTimeUnit mL_Per_day = new VolumePerTimeUnit("mL/day");
 
   public static VolumePerTimeUnit FromString(string u)
   {

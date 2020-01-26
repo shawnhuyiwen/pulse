@@ -18,6 +18,16 @@ public class SEScalar : SEProperty
         Invalidate();
         SetValue(val);
     }
+    
+    public void Set(SEScalar from)
+  {
+    if (from == null)
+    {
+      Invalidate();
+      return;
+    }
+    SetValue(from.value);
+  }
 
     public virtual bool IsValid()
     {

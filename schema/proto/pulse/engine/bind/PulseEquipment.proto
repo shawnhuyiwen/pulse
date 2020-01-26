@@ -1,0 +1,32 @@
+syntax = "proto3";
+package pulse.engine.bind;
+option java_package = "pulse.engine.bind";
+option optimize_for = SPEED;
+
+import "pulse/cdm/bind/AnesthesiaMachine.proto";
+import "pulse/cdm/bind/ElectroCardioGram.proto";
+import "pulse/cdm/bind/Inhaler.proto";
+
+message AnesthesiaMachineData
+{
+  pulse.cdm.bind.AnesthesiaMachineData             Common                         = 1;
+  bool                                             Inhaling                       = 2;
+  double                                           CurrentBreathingCycleTime_s    = 3;
+  double                                           InspirationTime_s              = 4;
+  double                                           OxygenInletVolumeFraction      = 5;
+  double                                           TotalBreathingCycleTime_s      = 6;
+}
+
+message ElectroCardioGramData
+{
+  pulse.cdm.bind.ElectroCardioGramData             Common                         = 1;
+  double                                           HeartRythmTime_s               = 2;
+  double                                           HeartRythmPeriod_s             = 3;
+  pulse.cdm.bind.ElectroCardioGramWaveformListData Waveforms                      = 4;
+}
+
+
+message InhalerData
+{
+  pulse.cdm.bind.InhalerData                        Common                         = 1;
+}

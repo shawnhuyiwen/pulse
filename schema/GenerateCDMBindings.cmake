@@ -17,6 +17,8 @@ message(STATUS "Using : ${BINDER}")
 message(STATUS "From ${from}")
 message(STATUS "To ${to}")
 
+set(CDM_PACKAGE "pulse/cdm/bind")
+set(ENGINE_PACKAGE "pulse/engine/bind")
 file(GLOB_RECURSE _FILES "${from}/*.proto")
 
 set(_RUN_PROTOC OFF)
@@ -169,12 +171,15 @@ message(STATUS "csharp bindings are here : ${csharp_bindings_DIR}" )
 ## Python Bindings ##
 #####################
 
-set(python_bindings_DIR "${to}/python")
-file(MAKE_DIRECTORY "${python_bindings_DIR}")
-file(GLOB_RECURSE _OLD_PYTHON_FILES "${python_bindings_DIR}/*.*")
-if(_OLD_PYTHON_FILES)
-  file(REMOVE ${_OLD_PYTHON_FILES})
-endif() 
+set(python_bindings_DIR "${SRC_ROOT}/python")
+file(GLOB _OLD_CDM_BIND_FILES "${python_bindings_DIR}/${CDM_PACKAGE}/*")
+if(_OLD_CDM_BIND_FILES)
+  file(REMOVE ${_OLD_CDM_BIND_FILES})
+endif()
+file(GLOB _OLD_ENGINE_BIND_FILES "${python_bindings_DIR}/${ENGINE_PACKAGE}/*")
+if(_OLD_ENGINE_BIND_FILES)
+  file(REMOVE ${_OLD_ENGINE_BIND_FILES})
+endif()
 foreach(f ${_FILES})
   message(STATUS "Python Binding file ${f}")
   execute_process(COMMAND ${BINDER} --proto_path=${from}
