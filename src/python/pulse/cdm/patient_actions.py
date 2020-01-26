@@ -30,7 +30,7 @@ class SEHemorrhage(SEPatientAction):
 
     def has_compartment(self):
         return self._compartment is not None
-    def _get_compartment(self):
+    def get_compartment(self):
         return self._compartment
     def set_compartment(self, compartment: str):
         self._compartment = compartment

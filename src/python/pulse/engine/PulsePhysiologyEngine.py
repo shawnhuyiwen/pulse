@@ -1,7 +1,8 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 import PyPulse
-from pulse.cdm.engine import eSerializationFormat
+from pulse.cdm.engine import SEAction, eSerializationFormat
+from pulse.cdm.io import SerializeActions
 
 class PulsePhysiologyEngine:
     __slots__ = ['__pulse', "results"]
@@ -20,6 +21,10 @@ class PulsePhysiologyEngine:
 
     def advance_time(self):
         return self.__pulse.advance_timestep()
+
+    def advance_time_s(self, duration_s: float):
+        for n in range(500):
+            self.__pulse.advance_timestep()
 
     def pull_data(self):
         values = self.__pulse.pull_data()
@@ -42,4 +47,14 @@ class PulsePhysiologyEngine:
             self.results["CoreTemperature(C)"]=0
             self.results["CarinaCO2PartialPressure(mmHg)"]=0
             self.results["BloodVolume(mL)"]=0
+
+    def process_action(self, action: SEAction):
+        actions = [action]
+        self.process_actions(actions)
+
+    def process_actions(self, actions: []):
+        json = SerializeActions(actions,eSerializationFormat.JSON)
+        print(json)
+        self.__pulse.process_actions(json,PyPulse.serialization_format.json)
+
 

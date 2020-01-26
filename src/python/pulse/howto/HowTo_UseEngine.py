@@ -1,6 +1,7 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 from pulse.cdm.engine import eSerializationFormat
+from pulse.cdm.patient_actions import eHemorrhageType
 from pulse.cdm.patient_actions import SEHemorrhage
 from pulse.cdm.scalars import VolumePerTimeUnit
 from pulse.engine.PulsePhysiologyEngine import PulsePhysiologyEngine
@@ -16,7 +17,14 @@ results = pulse.pull_data()
 print(results)
 
 hemorrhage = SEHemorrhage()
+hemorrhage.set_comment("Hello")
 hemorrhage.set_compartment("RightLeg")
+hemorrhage.set_type(eHemorrhageType.External)
 hemorrhage.get_rate().set_value(75, VolumePerTimeUnit.mL_Per_min)
 
-print(hemorrhage)
+pulse.process_action(hemorrhage)
+
+pulse.advance_time_s(30)
+
+results = pulse.pull_data()
+print(results)

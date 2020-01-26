@@ -4,7 +4,7 @@
 class SEScalar():
     __slots__ = ["_value"]
 
-    def __init__(self, value=None):
+    def __init__(self, value: float=None):
         if value is None:
             self._value = None
         else:
@@ -30,16 +30,16 @@ class SEScalar():
         return " {} """.format(self._value)
 
 class ScalarUnit():
-    __slots__ = ["_unit"]
+    __slots__ = ["_string"]
 
-    def __init__(self, unit: str):
-        self._unit = unit
+    def __init__(self, string: str):
+        self._string = string
 
-    def unit(self):
-        return self._unit
+    def get_string(self):
+        return self._string
 
     def __repr__(self):
-        return "({})".format(self._unit)
+        return "({})".format(self._string)
 
 
 class VolumePerTimeUnit(ScalarUnit):
@@ -54,7 +54,7 @@ VolumePerTimeUnit.mL_Per_day = VolumePerTimeUnit("mL/day")
 class SEScalarVolumePerTime(SEScalar):
     __slots__ = ["_units"]
 
-    def __init__(self, value=None, units=None):
+    def __init__(self, value:float=None, units:VolumePerTimeUnit=None):
         if value is None or units is None:
             self.invalidate()
         else:
@@ -70,12 +70,12 @@ class SEScalarVolumePerTime(SEScalar):
     def is_valid(self):
         return self._value is not None and self._units is not None
 
-    def get_value(self, units: VolumePerTimeUnit):
-        if units is None:
-            raise Exception("Must provide a unit")
+    def get_value(self, units: VolumePerTimeUnit=None):
         if self.is_valid() is False:
             return None
-        if self._units.unit() is units.unit():
+        if units is None:
+            return self._value
+        if self._units.get_string() is units.get_string():
             return self._value
         else:
             raise Exception("Unit converter not connected")
@@ -86,6 +86,9 @@ class SEScalarVolumePerTime(SEScalar):
             self._units = units
         else:
             raise Exception("Provided argument must be a VolumePerTimeUnit")
+
+    def get_unit(self):
+        return self._units
 
     def invalidate(self):
         self._value = None
