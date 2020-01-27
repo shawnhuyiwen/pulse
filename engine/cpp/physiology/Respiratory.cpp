@@ -2611,14 +2611,17 @@ void Respiratory::UpdateAlveolarCompliances()
 void Respiratory::UpdateInspiratoryExpiratoryRatio()
 {
   //Adjust the inspiration/expiration ratio based on severity
-  double combinedSeverity = 0.0;
-  m_IERatioScaleFactor = 1.0;
+  double combinedObstructiveSeverity = 0.0;
+  double combinedRestrictiveSeverity = 0.0;
+
+  //------------------------------------------------------------------------------------------------------
+  //Obsructive = Decrease (prolonged expiration)
 
   //------------------------------------------------------------------------------------------------------
   //Asthma
   if (m_PatientActions->HasAsthmaAttack())
   {
-    combinedSeverity = m_PatientActions->GetAsthmaAttack()->GetSeverity().GetValue();
+    combinedObstructiveSeverity = m_PatientActions->GetAsthmaAttack()->GetSeverity().GetValue();
   }
 
   //------------------------------------------------------------------------------------------------------
@@ -2639,9 +2642,12 @@ void Respiratory::UpdateInspiratoryExpiratoryRatio()
       emphysemaSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease()->GetEmphysemaSeverity().GetValue();
     }
 
-    combinedSeverity = MAX(combinedSeverity, emphysemaSeverity);
-    combinedSeverity = MAX(combinedSeverity, bronchitisSeverity);
+    combinedObstructiveSeverity = MAX(combinedObstructiveSeverity, emphysemaSeverity);
+    combinedObstructiveSeverity = MAX(combinedObstructiveSeverity, bronchitisSeverity);
   }
+
+  //------------------------------------------------------------------------------------------------------
+  //Restrictive = Increase
 
   //------------------------------------------------------------------------------------------------------
   //LobarPneumonia
@@ -2669,7 +2675,7 @@ void Respiratory::UpdateInspiratoryExpiratoryRatio()
     double dLeftLungRatio = 1.0 - dRightLungRatio;
 
     double scaledSeverity = severity * leftLungFraction * dLeftLungRatio + severity * rightLungFraction * dRightLungRatio;
-    combinedSeverity = MAX(combinedSeverity, scaledSeverity);
+    combinedRestrictiveSeverity = MAX(combinedRestrictiveSeverity, scaledSeverity);
   }
 
   //------------------------------------------------------------------------------------------------------
@@ -2678,7 +2684,7 @@ void Respiratory::UpdateInspiratoryExpiratoryRatio()
   {
     double Severity = m_data.GetConditions().GetPulmonaryFibrosis()->GetSeverity().GetValue();
 
-    combinedSeverity = MAX(combinedSeverity, Severity);
+    combinedRestrictiveSeverity = MAX(combinedRestrictiveSeverity, Severity);
   }
 
   //------------------------------------------------------------------------------------------------------
@@ -2708,21 +2714,17 @@ void Respiratory::UpdateInspiratoryExpiratoryRatio()
     double dLeftLungRatio = 1.0 - dRightLungRatio;
 
     double scaledSeverity = severity * leftLungFraction * dLeftLungRatio + severity * rightLungFraction * dRightLungRatio;
-    combinedSeverity = MAX(combinedSeverity, scaledSeverity);
+    combinedRestrictiveSeverity = MAX(combinedRestrictiveSeverity, scaledSeverity);
   }
 
   //------------------------------------------------------------------------------------------------------
   //Set new value & Drugs/PD
-  if (combinedSeverity > 0.0)
-  {
-    //When albuterol is administered, the bronchodilation also causes the IE ratio to correct itself
-    m_IERatioScaleFactor = 1.0 - combinedSeverity;
-    m_IERatioScaleFactor *= exp(7728.4 * m_AverageLocalTissueBronchodilationEffects);
+  m_IERatioScaleFactor = 1.0 - combinedObstructiveSeverity + (2.0 * combinedRestrictiveSeverity);
+  //When albuterol is administered, the bronchodilation also causes the IE ratio to correct itself
+  m_IERatioScaleFactor *= exp(7728.4 * m_AverageLocalTissueBronchodilationEffects);
 
-    // IE scale factor is constrained to a minimum of 0.1 and a maximum 1.0. Lower than 0.1 causes simulation instability.
-    // Greater than 1.0 is not possible for patients with these conditions
-    m_IERatioScaleFactor = LIMIT(m_IERatioScaleFactor, 0.1, 1.0);
-  }
+  //Lower than 0.1 causes simulation instability
+  m_IERatioScaleFactor = LIMIT(m_IERatioScaleFactor, 0.1, 10.0);
 }
 
 //--------------------------------------------------------------------------------------------------
