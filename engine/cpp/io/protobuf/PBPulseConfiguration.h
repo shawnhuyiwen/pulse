@@ -3,16 +3,16 @@
 
 #pragma once
 class PulseConfiguration;
-namespace pulse { namespace proto { class ConfigurationData; } }
+PULSE_BIND_DECL(Configuration)
 
 class PULSE_DECL PBPulseConfiguration
 {
 public:
 
-  static void Load(const pulse::proto::ConfigurationData& src, PulseConfiguration& dst);
-  static pulse::proto::ConfigurationData* Unload(const PulseConfiguration& src);
-  static void Serialize(const pulse::proto::ConfigurationData& src, PulseConfiguration& dst, bool merge=false);
-  static void Serialize(const PulseConfiguration& src, pulse::proto::ConfigurationData& dst);
+  static void Load(const PULSE_BIND::ConfigurationData& src, PulseConfiguration& dst);
+  static PULSE_BIND::ConfigurationData* Unload(const PulseConfiguration& src);
+  static void Serialize(const PULSE_BIND::ConfigurationData& src, PulseConfiguration& dst, bool merge=false);
+  static void Serialize(const PulseConfiguration& src, PULSE_BIND::ConfigurationData& dst);
   static void Merge(const PulseConfiguration& src, PulseConfiguration& dst);
 
   static bool SerializeToString(const PulseConfiguration& src, std::string& output, SerializationFormat m);

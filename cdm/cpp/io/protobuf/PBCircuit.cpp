@@ -9,11 +9,11 @@
 #include "circuit/fluid/SEFluidCircuit.h"
 #include "circuit/thermal/SEThermalCircuit.h"
 #include "circuit/SECircuitManager.h"
-#include "bind/cpp/cdm/Circuit.pb.h"
+#include "bind/Circuit.pb.h"
 
 
 template<CIRCUIT_PATH_TEMPLATE>
-void PBCircuit::Serialize(const cdm::CircuitPathData& src, SECircuitPath<CIRCUIT_PATH_TYPES>& dst)
+void PBCircuit::Serialize(const CDM_BIND::CircuitPathData& src, SECircuitPath<CIRCUIT_PATH_TYPES>& dst)
 {
   dst.Clear();
   if (!src.name().empty())
@@ -28,23 +28,23 @@ void PBCircuit::Serialize(const cdm::CircuitPathData& src, SECircuitPath<CIRCUIT
 }
 
 template<CIRCUIT_PATH_TEMPLATE>
-void PBCircuit::Serialize(const SECircuitPath<CIRCUIT_PATH_TYPES>& src, cdm::CircuitPathData& dst)
+void PBCircuit::Serialize(const SECircuitPath<CIRCUIT_PATH_TYPES>& src, CDM_BIND::CircuitPathData& dst)
 {
   dst.set_name(src.m_Name);
   dst.set_sourcenode(src.m_SourceNode.GetName());
   dst.set_targetnode(src.m_TargetNode.GetName());
   if (src.HasSwitch())
-    dst.set_switch_((cdm::eGate)src.m_Switch);
+    dst.set_switch_((CDM_BIND::eGate)src.m_Switch);
   if (src.HasNextSwitch())
-    dst.set_nextswitch((cdm::eGate)src.m_NextSwitch);
+    dst.set_nextswitch((CDM_BIND::eGate)src.m_NextSwitch);
   if (src.HasValve())
-    dst.set_valve((cdm::eGate)src.m_Valve);
+    dst.set_valve((CDM_BIND::eGate)src.m_Valve);
   if (src.HasNextValve())
-    dst.set_nextvalve((cdm::eGate)src.m_NextValve);
+    dst.set_nextvalve((CDM_BIND::eGate)src.m_NextValve);
   if (src.HasPolarizedState())
-    dst.set_polarizedstate((cdm::eGate)src.m_PolarizedState);
+    dst.set_polarizedstate((CDM_BIND::eGate)src.m_PolarizedState);
   if (src.HasNextPolarizedState())
-    dst.set_nextpolarizedstate((cdm::eGate)src.m_NextPolarizedState);
+    dst.set_nextpolarizedstate((CDM_BIND::eGate)src.m_NextPolarizedState);
 }
 
 
@@ -58,7 +58,7 @@ template<typename CircuitBindType, CIRCUIT_TEMPLATE>
 void PBCircuit::Serialize(const CircuitBindType& src, SECircuit<CIRCUIT_TYPES>& dst, const std::map<std::string, NodeType*>& nodes, const std::map<std::string, PathType*>& paths)
 {// note: not clearing here as the derived class needs to clear and call this super class Load last to get the ref node hooked up
   dst.Clear();
-  const cdm::CircuitData& srcC = src.circuit();
+  const CDM_BIND::CircuitData& srcC = src.circuit();
   dst.m_Name = srcC.name();
   for (int i = 0; i < srcC.node_size(); i++)
   {
@@ -93,7 +93,7 @@ CircuitBindType* PBCircuit::Unload(const SECircuit<CIRCUIT_TYPES>& src)
 template<typename CircuitBindType, CIRCUIT_TEMPLATE>
 void PBCircuit::Serialize(const SECircuit<CIRCUIT_TYPES>& src, CircuitBindType& dst)
 {
-  cdm::CircuitData* dstC = dst.mutable_circuit();
+  CDM_BIND::CircuitData* dstC = dst.mutable_circuit();
   dstC->set_name(src.m_Name);
   for (auto* n : src.m_Nodes)
     dstC->add_node(n->GetName());
@@ -102,7 +102,7 @@ void PBCircuit::Serialize(const SECircuit<CIRCUIT_TYPES>& src, CircuitBindType& 
 }
 
 template<CIRCUIT_NODE_TEMPLATE>
-void PBCircuit::Serialize(const cdm::CircuitNodeData& src, SECircuitNode<CIRCUIT_NODE_TYPES>& dst)
+void PBCircuit::Serialize(const CDM_BIND::CircuitNodeData& src, SECircuitNode<CIRCUIT_NODE_TYPES>& dst)
 {
   dst.Clear();
   if (!src.name().empty())
@@ -110,7 +110,7 @@ void PBCircuit::Serialize(const cdm::CircuitNodeData& src, SECircuitNode<CIRCUIT
   dst.m_IsReferenceNode = src.referencenode();
 }
 template<CIRCUIT_NODE_TEMPLATE>
-void PBCircuit::Serialize(const SECircuitNode<CIRCUIT_NODE_TYPES>& src, cdm::CircuitNodeData& dst)
+void PBCircuit::Serialize(const SECircuitNode<CIRCUIT_NODE_TYPES>& src, CDM_BIND::CircuitNodeData& dst)
 {
   dst.set_name(src.m_Name);
   dst.set_referencenode(src.m_IsReferenceNode);
@@ -119,7 +119,7 @@ void PBCircuit::Serialize(const SECircuitNode<CIRCUIT_NODE_TYPES>& src, cdm::Cir
 
 bool PBCircuit::LoadCircuitManagerFile(SECircuitManager& mgr, const std::string& filename)
 {
-  cdm::CircuitManagerData src;
+  CDM_BIND::CircuitManagerData src;
   std::ifstream file_stream(filename, std::ios::in);
   std::string fmsg((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
   if (!PBUtils::SerializeFromString(fmsg, src, JSON, mgr.GetLogger()))
@@ -135,7 +135,7 @@ bool PBCircuit::LoadCircuitManagerFile(SECircuitManager& mgr, const std::string&
 void PBCircuit::SaveCircuitManagerFile(const SECircuitManager& mgr, const std::string& filename)
 {
   std::string content;
-  cdm::CircuitManagerData* src = PBCircuit::Unload(mgr);
+  CDM_BIND::CircuitManagerData* src = PBCircuit::Unload(mgr);
   PBUtils::SerializeToString(*src, content, JSON, mgr.GetLogger());
   std::ofstream ascii_ostream(filename, std::ios::out | std::ios::trunc);
   ascii_ostream << content;
@@ -144,23 +144,23 @@ void PBCircuit::SaveCircuitManagerFile(const SECircuitManager& mgr, const std::s
   delete src;
 }
 
-void PBCircuit::Load(const cdm::CircuitManagerData& src, SECircuitManager& dst)
+void PBCircuit::Load(const CDM_BIND::CircuitManagerData& src, SECircuitManager& dst)
 {
   PBCircuit::Serialize(src, dst);
   dst.StateChange();
 }
-void PBCircuit::Serialize(const cdm::CircuitManagerData& src, SECircuitManager& dst)
+void PBCircuit::Serialize(const CDM_BIND::CircuitManagerData& src, SECircuitManager& dst)
 {
   dst.Clear();
   // Electrical
   for (int i = 0; i < src.electricalnode_size(); i++)
   {
-    const cdm::ElectricalCircuitNodeData& n = src.electricalnode(i);
+    const CDM_BIND::ElectricalCircuitNodeData& n = src.electricalnode(i);
     PBCircuit::Load(n, dst.CreateNode<ELECTRICAL_LEDGER_TYPES>(n.circuitnode().name(), dst.m_ElectricalLedger));
   }
   for (int i = 0; i < src.electricalpath_size(); i++)
   {
-    const cdm::ElectricalCircuitPathData& p = src.electricalpath(i);
+    const CDM_BIND::ElectricalCircuitPathData& p = src.electricalpath(i);
     SEElectricalCircuitNode* src = dst.GetNode(p.circuitpath().sourcenode(), dst.m_ElectricalLedger);
     if (src == nullptr)
     {
@@ -177,19 +177,19 @@ void PBCircuit::Serialize(const cdm::CircuitManagerData& src, SECircuitManager& 
   }
   for (int i = 0; i < src.electricalcircuit_size(); i++)
   {
-    const cdm::ElectricalCircuitData& c = src.electricalcircuit(i);
+    const CDM_BIND::ElectricalCircuitData& c = src.electricalcircuit(i);
     PBCircuit::Load(c, dst.CreateCircuit<ELECTRICAL_LEDGER_TYPES>(c.circuit().name(), dst.m_ElectricalLedger), dst.m_ElectricalLedger.nodes, dst.m_ElectricalLedger.paths);
   }
 
   // Fluid
   for (int i = 0; i < src.fluidnode_size(); i++)
   {
-    const cdm::FluidCircuitNodeData& n = src.fluidnode(i);
+    const CDM_BIND::FluidCircuitNodeData& n = src.fluidnode(i);
     PBCircuit::Load(n, dst.CreateNode<FLUID_LEDGER_TYPES>(n.circuitnode().name(), dst.m_FluidLedger));
   }
   for (int i = 0; i < src.fluidpath_size(); i++)
   {
-    const cdm::FluidCircuitPathData& p = src.fluidpath(i);
+    const CDM_BIND::FluidCircuitPathData& p = src.fluidpath(i);
     SEFluidCircuitNode* src = dst.GetNode(p.circuitpath().sourcenode(), dst.m_FluidLedger);
     if (src == nullptr)
     {
@@ -206,19 +206,19 @@ void PBCircuit::Serialize(const cdm::CircuitManagerData& src, SECircuitManager& 
   }
   for (int i = 0; i < src.fluidcircuit_size(); i++)
   {
-    const cdm::FluidCircuitData& c = src.fluidcircuit(i);
+    const CDM_BIND::FluidCircuitData& c = src.fluidcircuit(i);
     PBCircuit::Load(c, dst.CreateCircuit<FLUID_LEDGER_TYPES>(c.circuit().name(), dst.m_FluidLedger), dst.m_FluidLedger.nodes, dst.m_FluidLedger.paths);
   }
 
   // Thermal
   for (int i = 0; i < src.thermalnode_size(); i++)
   {
-    const cdm::ThermalCircuitNodeData& n = src.thermalnode(i);
+    const CDM_BIND::ThermalCircuitNodeData& n = src.thermalnode(i);
     PBCircuit::Load(n, dst.CreateNode<THERMAL_LEDGER_TYPES>(n.circuitnode().name(), dst.m_ThermalLedger));
   }
   for (int i = 0; i < src.thermalpath_size(); i++)
   {
-    const cdm::ThermalCircuitPathData& p = src.thermalpath(i);
+    const CDM_BIND::ThermalCircuitPathData& p = src.thermalpath(i);
     SEThermalCircuitNode* src = dst.GetNode(p.circuitpath().sourcenode(), dst.m_ThermalLedger);
     if (src == nullptr)
     {
@@ -235,21 +235,21 @@ void PBCircuit::Serialize(const cdm::CircuitManagerData& src, SECircuitManager& 
   }
   for (int i = 0; i < src.thermalcircuit_size(); i++)
   {
-    const cdm::ThermalCircuitData& c = src.thermalcircuit(i);
+    const CDM_BIND::ThermalCircuitData& c = src.thermalcircuit(i);
     PBCircuit::Load(c, dst.CreateCircuit<THERMAL_LEDGER_TYPES>(c.circuit().name(), dst.m_ThermalLedger), dst.m_ThermalLedger.nodes, dst.m_ThermalLedger.paths);
   }
 }
 
-cdm::CircuitManagerData* PBCircuit::Unload(const SECircuitManager& src)
+CDM_BIND::CircuitManagerData* PBCircuit::Unload(const SECircuitManager& src)
 {
-  cdm::CircuitManagerData* dst = new cdm::CircuitManagerData();
+  CDM_BIND::CircuitManagerData* dst = new CDM_BIND::CircuitManagerData();
   PBCircuit::Serialize(src, *dst);
   return dst;
 }
-#define ELECTRICAL_CIRCUIT_UNLOAD_TYPES cdm::ElectricalCircuitData,SEElectricalCircuitNode,SEElectricalCircuitPath
-#define FLUID_CIRCUIT_UNLOAD_TYPES cdm::FluidCircuitData,SEFluidCircuitNode,SEFluidCircuitPath
-#define THERMAL_CIRCUIT_UNLOAD_TYPES cdm::ThermalCircuitData,SEThermalCircuitNode,SEThermalCircuitPath
-void PBCircuit::Serialize(const SECircuitManager& src, cdm::CircuitManagerData& dst)
+#define ELECTRICAL_CIRCUIT_UNLOAD_TYPES CDM_BIND::ElectricalCircuitData,SEElectricalCircuitNode,SEElectricalCircuitPath
+#define FLUID_CIRCUIT_UNLOAD_TYPES CDM_BIND::FluidCircuitData,SEFluidCircuitNode,SEFluidCircuitPath
+#define THERMAL_CIRCUIT_UNLOAD_TYPES CDM_BIND::ThermalCircuitData,SEThermalCircuitNode,SEThermalCircuitPath
+void PBCircuit::Serialize(const SECircuitManager& src, CDM_BIND::CircuitManagerData& dst)
 {
   for (auto itr : src.m_ElectricalLedger.nodes)
     dst.mutable_electricalnode()->AddAllocated(PBCircuit::Unload(*itr.second));
@@ -277,11 +277,11 @@ void PBCircuit::Serialize(const SECircuitManager& src, cdm::CircuitManagerData& 
 // Electrical Circuits //
 /////////////////////////
 
-void PBCircuit::Load(const cdm::ElectricalCircuitNodeData& src, SEElectricalCircuitNode& dst)
+void PBCircuit::Load(const CDM_BIND::ElectricalCircuitNodeData& src, SEElectricalCircuitNode& dst)
 {
   PBCircuit::Serialize(src, dst);
 }
-void PBCircuit::Serialize(const cdm::ElectricalCircuitNodeData& src, SEElectricalCircuitNode& dst)
+void PBCircuit::Serialize(const CDM_BIND::ElectricalCircuitNodeData& src, SEElectricalCircuitNode& dst)
 {
   PBCircuit::Serialize(src.circuitnode(), dst);
   if (src.has_voltage())
@@ -296,13 +296,13 @@ void PBCircuit::Serialize(const cdm::ElectricalCircuitNodeData& src, SEElectrica
     PBProperty::Load(src.chargebaseline(), dst.GetChargeBaseline());
 }
 
-cdm::ElectricalCircuitNodeData* PBCircuit::Unload(const SEElectricalCircuitNode& src)
+CDM_BIND::ElectricalCircuitNodeData* PBCircuit::Unload(const SEElectricalCircuitNode& src)
 {
-  cdm::ElectricalCircuitNodeData* dst = new cdm::ElectricalCircuitNodeData();
+  CDM_BIND::ElectricalCircuitNodeData* dst = new CDM_BIND::ElectricalCircuitNodeData();
   PBCircuit::Serialize(src, *dst);
   return dst;
 }
-void PBCircuit::Serialize(const SEElectricalCircuitNode& src, cdm::ElectricalCircuitNodeData& dst)
+void PBCircuit::Serialize(const SEElectricalCircuitNode& src, CDM_BIND::ElectricalCircuitNodeData& dst)
 {
   PBCircuit::Serialize(src, *dst.mutable_circuitnode());
   if (src.HasVoltage())
@@ -317,11 +317,11 @@ void PBCircuit::Serialize(const SEElectricalCircuitNode& src, cdm::ElectricalCir
     dst.set_allocated_chargebaseline(PBProperty::Unload(*src.m_QuantityBaseline));
 }
 
-void PBCircuit::Load(const cdm::ElectricalCircuitPathData& src, SEElectricalCircuitPath& dst)
+void PBCircuit::Load(const CDM_BIND::ElectricalCircuitPathData& src, SEElectricalCircuitPath& dst)
 {
   PBCircuit::Serialize(src, dst);
 }
-void PBCircuit::Serialize(const cdm::ElectricalCircuitPathData& src, SEElectricalCircuitPath& dst)
+void PBCircuit::Serialize(const CDM_BIND::ElectricalCircuitPathData& src, SEElectricalCircuitPath& dst)
 {
   PBCircuit::Serialize(src.circuitpath(), dst);
   if (src.has_resistance())
@@ -365,13 +365,13 @@ void PBCircuit::Serialize(const cdm::ElectricalCircuitPathData& src, SEElectrica
     dst.Warning("Path does not have valid elements");
 }
 
-cdm::ElectricalCircuitPathData* PBCircuit::Unload(const SEElectricalCircuitPath& src)
+CDM_BIND::ElectricalCircuitPathData* PBCircuit::Unload(const SEElectricalCircuitPath& src)
 {
-  cdm::ElectricalCircuitPathData* dst = new cdm::ElectricalCircuitPathData();
+  CDM_BIND::ElectricalCircuitPathData* dst = new CDM_BIND::ElectricalCircuitPathData();
   PBCircuit::Serialize(src, *dst);
   return dst;
 }
-void PBCircuit::Serialize(const SEElectricalCircuitPath& src, cdm::ElectricalCircuitPathData& dst)
+void PBCircuit::Serialize(const SEElectricalCircuitPath& src, CDM_BIND::ElectricalCircuitPathData& dst)
 {
   PBCircuit::Serialize(src, *dst.mutable_circuitpath());
   if (src.HasResistance())
@@ -416,11 +416,11 @@ void PBCircuit::Serialize(const SEElectricalCircuitPath& src, cdm::ElectricalCir
 // Fluid Circuits //
 ////////////////////
 
-void PBCircuit::Load(const cdm::FluidCircuitNodeData& src, SEFluidCircuitNode& dst)
+void PBCircuit::Load(const CDM_BIND::FluidCircuitNodeData& src, SEFluidCircuitNode& dst)
 {
   PBCircuit::Serialize(src, dst);
 }
-void PBCircuit::Serialize(const cdm::FluidCircuitNodeData& src, SEFluidCircuitNode& dst)
+void PBCircuit::Serialize(const CDM_BIND::FluidCircuitNodeData& src, SEFluidCircuitNode& dst)
 {
   PBCircuit::Serialize(src.circuitnode(), dst);
   if (src.has_pressure())
@@ -435,13 +435,13 @@ void PBCircuit::Serialize(const cdm::FluidCircuitNodeData& src, SEFluidCircuitNo
     PBProperty::Load(src.volumebaseline(), dst.GetVolumeBaseline());
 }
 
-cdm::FluidCircuitNodeData* PBCircuit::Unload(const SEFluidCircuitNode& src)
+CDM_BIND::FluidCircuitNodeData* PBCircuit::Unload(const SEFluidCircuitNode& src)
 {
-  cdm::FluidCircuitNodeData* dst = new cdm::FluidCircuitNodeData();
+  CDM_BIND::FluidCircuitNodeData* dst = new CDM_BIND::FluidCircuitNodeData();
   PBCircuit::Serialize(src, *dst);
   return dst;
 }
-void PBCircuit::Serialize(const SEFluidCircuitNode& src, cdm::FluidCircuitNodeData& dst)
+void PBCircuit::Serialize(const SEFluidCircuitNode& src, CDM_BIND::FluidCircuitNodeData& dst)
 {
   PBCircuit::Serialize(src, *dst.mutable_circuitnode());
   if (src.HasPressure())
@@ -456,11 +456,11 @@ void PBCircuit::Serialize(const SEFluidCircuitNode& src, cdm::FluidCircuitNodeDa
     dst.set_allocated_volumebaseline(PBProperty::Unload(*src.m_QuantityBaseline));
 }
 
-void PBCircuit::Load(const cdm::FluidCircuitPathData& src, SEFluidCircuitPath& dst)
+void PBCircuit::Load(const CDM_BIND::FluidCircuitPathData& src, SEFluidCircuitPath& dst)
 {
   PBCircuit::Serialize(src, dst);
 }
-void PBCircuit::Serialize(const cdm::FluidCircuitPathData& src, SEFluidCircuitPath& dst)
+void PBCircuit::Serialize(const CDM_BIND::FluidCircuitPathData& src, SEFluidCircuitPath& dst)
 {
   PBCircuit::Serialize(src.circuitpath(), dst);
   if (src.has_resistance())
@@ -504,13 +504,13 @@ void PBCircuit::Serialize(const cdm::FluidCircuitPathData& src, SEFluidCircuitPa
     dst.Warning("Path does not have valid elements");
 }
 
-cdm::FluidCircuitPathData* PBCircuit::Unload(const SEFluidCircuitPath& src)
+CDM_BIND::FluidCircuitPathData* PBCircuit::Unload(const SEFluidCircuitPath& src)
 {
-  cdm::FluidCircuitPathData* dst = new cdm::FluidCircuitPathData();
+  CDM_BIND::FluidCircuitPathData* dst = new CDM_BIND::FluidCircuitPathData();
   PBCircuit::Serialize(src, *dst);
   return dst;
 }
-void PBCircuit::Serialize(const SEFluidCircuitPath& src, cdm::FluidCircuitPathData& dst)
+void PBCircuit::Serialize(const SEFluidCircuitPath& src, CDM_BIND::FluidCircuitPathData& dst)
 {
   PBCircuit::Serialize(src, *dst.mutable_circuitpath());
   if (src.HasResistance())
@@ -555,11 +555,11 @@ void PBCircuit::Serialize(const SEFluidCircuitPath& src, cdm::FluidCircuitPathDa
 // Thermal Circuits //
 //////////////////////
 
-void PBCircuit::Load(const cdm::ThermalCircuitNodeData& src, SEThermalCircuitNode& dst)
+void PBCircuit::Load(const CDM_BIND::ThermalCircuitNodeData& src, SEThermalCircuitNode& dst)
 {
   PBCircuit::Serialize(src, dst);
 }
-void PBCircuit::Serialize(const cdm::ThermalCircuitNodeData& src, SEThermalCircuitNode& dst)
+void PBCircuit::Serialize(const CDM_BIND::ThermalCircuitNodeData& src, SEThermalCircuitNode& dst)
 {
   PBCircuit::Serialize(src.circuitnode(), dst);
   if (src.has_temperature())
@@ -574,13 +574,13 @@ void PBCircuit::Serialize(const cdm::ThermalCircuitNodeData& src, SEThermalCircu
     PBProperty::Load(src.heatbaseline(), dst.GetHeatBaseline());
 }
 
-cdm::ThermalCircuitNodeData* PBCircuit::Unload(const SEThermalCircuitNode& src)
+CDM_BIND::ThermalCircuitNodeData* PBCircuit::Unload(const SEThermalCircuitNode& src)
 {
-  cdm::ThermalCircuitNodeData* dst = new cdm::ThermalCircuitNodeData();
+  CDM_BIND::ThermalCircuitNodeData* dst = new CDM_BIND::ThermalCircuitNodeData();
   PBCircuit::Serialize(src, *dst);
   return dst;
 }
-void PBCircuit::Serialize(const SEThermalCircuitNode& src, cdm::ThermalCircuitNodeData& dst)
+void PBCircuit::Serialize(const SEThermalCircuitNode& src, CDM_BIND::ThermalCircuitNodeData& dst)
 {
   PBCircuit::Serialize(src, *dst.mutable_circuitnode());
   if (src.HasTemperature())
@@ -596,11 +596,11 @@ void PBCircuit::Serialize(const SEThermalCircuitNode& src, cdm::ThermalCircuitNo
 }
 
 
-void PBCircuit::Load(const cdm::ThermalCircuitPathData& src, SEThermalCircuitPath& dst)
+void PBCircuit::Load(const CDM_BIND::ThermalCircuitPathData& src, SEThermalCircuitPath& dst)
 {
   PBCircuit::Serialize(src, dst);
 }
-void PBCircuit::Serialize(const cdm::ThermalCircuitPathData& src, SEThermalCircuitPath& dst)
+void PBCircuit::Serialize(const CDM_BIND::ThermalCircuitPathData& src, SEThermalCircuitPath& dst)
 {
   PBCircuit::Serialize(src.circuitpath(), dst);
   if (src.has_resistance())
@@ -644,13 +644,13 @@ void PBCircuit::Serialize(const cdm::ThermalCircuitPathData& src, SEThermalCircu
     dst.Warning("Path does not have valid elements");
 }
 
-cdm::ThermalCircuitPathData* PBCircuit::Unload(const SEThermalCircuitPath& src)
+CDM_BIND::ThermalCircuitPathData* PBCircuit::Unload(const SEThermalCircuitPath& src)
 {
-  cdm::ThermalCircuitPathData* dst = new cdm::ThermalCircuitPathData();
+  CDM_BIND::ThermalCircuitPathData* dst = new CDM_BIND::ThermalCircuitPathData();
   PBCircuit::Serialize(src, *dst);
   return dst;
 }
-void PBCircuit::Serialize(const SEThermalCircuitPath& src, cdm::ThermalCircuitPathData& dst)
+void PBCircuit::Serialize(const SEThermalCircuitPath& src, CDM_BIND::ThermalCircuitPathData& dst)
 {
   PBCircuit::Serialize(src, *dst.mutable_circuitpath());
   if (src.HasResistance())

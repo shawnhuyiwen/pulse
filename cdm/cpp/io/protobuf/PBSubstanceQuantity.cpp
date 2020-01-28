@@ -9,23 +9,23 @@
 #include "compartment/substances/SELiquidSubstanceQuantity.h"
 #include "compartment/fluid/SEGasCompartment.h"
 #include "compartment/fluid/SELiquidCompartment.h"
-#include "bind/cpp/cdm/SubstanceQuantity.pb.h"
+#include "bind/SubstanceQuantity.pb.h"
 
-void PBSubstanceQuantity::Serialize(const cdm::SubstanceQuantityData& src, SESubstanceQuantity& dst)
+void PBSubstanceQuantity::Serialize(const CDM_BIND::SubstanceQuantityData& src, SESubstanceQuantity& dst)
 {
   dst.Clear();
   // Name will be used to get substance for ctor
 }
-void PBSubstanceQuantity::Serialize(const SESubstanceQuantity& src, cdm::SubstanceQuantityData& dst)
+void PBSubstanceQuantity::Serialize(const SESubstanceQuantity& src, CDM_BIND::SubstanceQuantityData& dst)
 {
   dst.set_substance(src.m_Substance.GetName());
 }
 
-void PBSubstanceQuantity::Load(const cdm::GasSubstanceQuantityData& src, SEGasSubstanceQuantity& dst)
+void PBSubstanceQuantity::Load(const CDM_BIND::GasSubstanceQuantityData& src, SEGasSubstanceQuantity& dst)
 {
   PBSubstanceQuantity::Serialize(src, dst);
 }
-void PBSubstanceQuantity::Serialize(const cdm::GasSubstanceQuantityData& src, SEGasSubstanceQuantity& dst)
+void PBSubstanceQuantity::Serialize(const CDM_BIND::GasSubstanceQuantityData& src, SEGasSubstanceQuantity& dst)
 {
   PBSubstanceQuantity::Serialize(src.substancequantity(), dst);
   if (!dst.m_Compartment.HasChildren())
@@ -39,13 +39,13 @@ void PBSubstanceQuantity::Serialize(const cdm::GasSubstanceQuantityData& src, SE
   }
 }
 
-cdm::GasSubstanceQuantityData* PBSubstanceQuantity::Unload(const SEGasSubstanceQuantity& src)
+CDM_BIND::GasSubstanceQuantityData* PBSubstanceQuantity::Unload(const SEGasSubstanceQuantity& src)
 {
-  cdm::GasSubstanceQuantityData* dst = new cdm::GasSubstanceQuantityData();
+  CDM_BIND::GasSubstanceQuantityData* dst = new CDM_BIND::GasSubstanceQuantityData();
   PBSubstanceQuantity::Serialize(src, *dst);
   return dst;
 }
-void PBSubstanceQuantity::Serialize(const SEGasSubstanceQuantity& src, cdm::GasSubstanceQuantityData& dst)
+void PBSubstanceQuantity::Serialize(const SEGasSubstanceQuantity& src, CDM_BIND::GasSubstanceQuantityData& dst)
 {
   PBSubstanceQuantity::Serialize(src, *dst.mutable_substancequantity());
   // Even if you have children, I am unloading everything, this makes the output actually usefull...
@@ -58,11 +58,11 @@ void PBSubstanceQuantity::Serialize(const SEGasSubstanceQuantity& src, cdm::GasS
 }
 
 
-void PBSubstanceQuantity::Load(const cdm::LiquidSubstanceQuantityData& src, SELiquidSubstanceQuantity& dst)
+void PBSubstanceQuantity::Load(const CDM_BIND::LiquidSubstanceQuantityData& src, SELiquidSubstanceQuantity& dst)
 {
   PBSubstanceQuantity::Serialize(src, dst);
 }
-void PBSubstanceQuantity::Serialize(const cdm::LiquidSubstanceQuantityData& src, SELiquidSubstanceQuantity& dst)
+void PBSubstanceQuantity::Serialize(const CDM_BIND::LiquidSubstanceQuantityData& src, SELiquidSubstanceQuantity& dst)
 {
   PBSubstanceQuantity::Serialize(src.substancequantity(), dst);
   if (!dst.m_Compartment.HasChildren())
@@ -86,13 +86,13 @@ void PBSubstanceQuantity::Serialize(const cdm::LiquidSubstanceQuantityData& src,
   }
 }
 
-cdm::LiquidSubstanceQuantityData* PBSubstanceQuantity::Unload(const SELiquidSubstanceQuantity& src)
+CDM_BIND::LiquidSubstanceQuantityData* PBSubstanceQuantity::Unload(const SELiquidSubstanceQuantity& src)
 {
-  cdm::LiquidSubstanceQuantityData* dst = new cdm::LiquidSubstanceQuantityData();
+  CDM_BIND::LiquidSubstanceQuantityData* dst = new CDM_BIND::LiquidSubstanceQuantityData();
   PBSubstanceQuantity::Serialize(src, *dst);
   return dst;
 }
-void PBSubstanceQuantity::Serialize(const SELiquidSubstanceQuantity& src, cdm::LiquidSubstanceQuantityData& dst)
+void PBSubstanceQuantity::Serialize(const SELiquidSubstanceQuantity& src, CDM_BIND::LiquidSubstanceQuantityData& dst)
 {
   PBSubstanceQuantity::Serialize(src, *dst.mutable_substancequantity());
   // Even if you have children, I am unloading everything, this makes the output actually usefull...

@@ -8,10 +8,10 @@ class CDM_DECL PBPatient
 {
 public:
 
-  static void Load(const cdm::PatientData& src, SEPatient& dst);
-  static cdm::PatientData* Unload(const SEPatient& src);
-  static void Serialize(const cdm::PatientData& src, SEPatient& dst);
-  static void Serialize(const SEPatient& src, cdm::PatientData& dst);
+  static void Load(const CDM_BIND::PatientData& src, SEPatient& dst);
+  static CDM_BIND::PatientData* Unload(const SEPatient& src);
+  static void Serialize(const CDM_BIND::PatientData& src, SEPatient& dst);
+  static void Serialize(const SEPatient& src, CDM_BIND::PatientData& dst);
   static void Copy(const SEPatient& src, SEPatient& dst);
 
   static bool SerializeToString(const SEPatient& src, std::string& output, SerializationFormat m);

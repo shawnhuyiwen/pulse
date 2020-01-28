@@ -18,7 +18,7 @@
 #include "io/protobuf/PBCompartment.h"
 #include "io/protobuf/PBProperties.h"
 #include "io/protobuf/PBUtils.h"
-#include "bind/cpp/pulse/PulseState.pb.h"
+#include "pulse/engine/bind/PulseState.pb.h"
 #include "PulseConfiguration.h"
 #include "controller/Engine.h"
 #include "controller/Substances.h"
@@ -37,11 +37,11 @@
 #include "utils/FileUtils.h"
 
 
-void PBPulseState::Load(const pulse::proto::StateData& src, PulseEngine& dst, const SEScalarTime* simTime, const SEEngineConfiguration* config)
+void PBPulseState::Load(const PULSE_BIND::StateData& src, PulseEngine& dst, const SEScalarTime* simTime, const SEEngineConfiguration* config)
 {
   PBPulseState::Serialize(src, dst,simTime,config);
 }
-bool PBPulseState::Serialize(const pulse::proto::StateData& src, PulseEngine& dst, const SEScalarTime* simTime, const SEEngineConfiguration* config)
+bool PBPulseState::Serialize(const PULSE_BIND::StateData& src, PulseEngine& dst, const SEScalarTime* simTime, const SEEngineConfiguration* config)
 {
   std::stringstream ss;
   dst.m_State = EngineState::NotReady;
@@ -50,7 +50,7 @@ bool PBPulseState::Serialize(const pulse::proto::StateData& src, PulseEngine& ds
   // Substances //
   for (int i = 0; i < src.activesubstance_size(); i++)
   {
-    const cdm::SubstanceData& subData = src.activesubstance()[i];
+    const CDM_BIND::SubstanceData& subData = src.activesubstance()[i];
     SESubstance* sub = dst.m_Substances->GetSubstance(subData.name());
     if (sub == nullptr)
     {
@@ -63,7 +63,7 @@ bool PBPulseState::Serialize(const pulse::proto::StateData& src, PulseEngine& ds
   // Compounds //
   for (int i = 0; i < src.activecompound_size(); i++)
   {
-    const cdm::SubstanceCompoundData& cmpdData = src.activecompound()[i];
+    const CDM_BIND::SubstanceCompoundData& cmpdData = src.activecompound()[i];
     SESubstanceCompound* cmpd = dst.m_Substances->GetCompound(cmpdData.name());
     if (cmpd == nullptr)
       cmpd = new SESubstanceCompound(dst.GetLogger());
@@ -100,7 +100,7 @@ bool PBPulseState::Serialize(const pulse::proto::StateData& src, PulseEngine& ds
     }
   }
   dst.m_AirwayMode = (eAirwayMode)src.airwaymode();
-  if (src.intubation() == (cdm::eSwitch)eSwitch::NullSwitch)
+  if (src.intubation() == (CDM_BIND::eSwitch)eSwitch::NullSwitch)
     ss << "Pulse State must have none null intubation state";
   dst.m_Intubation = (eSwitch)src.intubation();
 
@@ -141,11 +141,11 @@ bool PBPulseState::Serialize(const pulse::proto::StateData& src, PulseEngine& ds
     SEScalarTime time;
     for (int i = 0; i < src.activeevents().activeevent_size(); i++)
     {
-      const cdm::ActiveEventData& e = src.activeevents().activeevent()[i];
+      const CDM_BIND::ActiveEventData& e = src.activeevents().activeevent()[i];
       if (e.has_duration())
         PBProperty::Load(e.duration(), time);
       {
-        dst.m_ss << "Active event " << cdm::eEvent_Name(e.event()) << " does not have time associated with it";
+        dst.m_ss << "Active event " << CDM_BIND::eEvent_Name(e.event()) << " does not have time associated with it";
         dst.Debug(dst.m_ss);
         time.SetValue(0, TimeUnit::s);
       }
@@ -269,16 +269,16 @@ bool PBPulseState::Serialize(const pulse::proto::StateData& src, PulseEngine& ds
   return true;
 }
 
-pulse::proto::StateData* PBPulseState::Unload(const PulseEngine& src)
+PULSE_BIND::StateData* PBPulseState::Unload(const PulseEngine& src)
 {
-  pulse::proto::StateData* dst = new pulse::proto::StateData();
+  PULSE_BIND::StateData* dst = new PULSE_BIND::StateData();
   PBPulseState::Serialize(src, *dst);
   return dst;
 }
-bool PBPulseState::Serialize(const PulseEngine& src, pulse::proto::StateData& dst)
+bool PBPulseState::Serialize(const PulseEngine& src, PULSE_BIND::StateData& dst)
 {
-  dst.set_airwaymode((pulse::proto::eAirwayMode)src.m_AirwayMode);
-  dst.set_intubation((cdm::eSwitch)src.m_Intubation);
+  dst.set_airwaymode((PULSE_BIND::eAirwayMode)src.m_AirwayMode);
+  dst.set_intubation((CDM_BIND::eSwitch)src.m_Intubation);
   dst.set_allocated_simulationtime(PBProperty::Unload(*src.m_SimulationTime));
   if (src.m_EngineTrack->GetDataRequestManager().HasDataRequests())
     dst.set_allocated_datarequestmanager(PBEngine::Unload(src.m_EngineTrack->GetDataRequestManager()));
@@ -296,8 +296,8 @@ bool PBPulseState::Serialize(const PulseEngine& src, pulse::proto::StateData& ds
     if (!itr.second)
       continue;
 
-    cdm::ActiveEventData* eData = dst.mutable_activeevents()->add_activeevent();
-    eData->set_event((cdm::eEvent)itr.first);
+    CDM_BIND::ActiveEventData* eData = dst.mutable_activeevents()->add_activeevent();
+    eData->set_event((CDM_BIND::eEvent)itr.first);
     time.SetValue(src.m_EventManager->GetEventDuration(itr.first, TimeUnit::s), TimeUnit::s);
     eData->set_allocated_duration(PBProperty::Unload(time));
   }
@@ -333,7 +333,7 @@ bool PBPulseState::Serialize(const PulseEngine& src, pulse::proto::StateData& ds
 
 bool PBPulseState::SerializeToString(const PulseEngine& src, std::string& output, SerializationFormat m)
 {
-  pulse::proto::StateData data;
+  PULSE_BIND::StateData data;
   PBPulseState::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
@@ -345,7 +345,7 @@ bool PBPulseState::SerializeToFile(const PulseEngine& src, const std::string& fi
 }
 bool PBPulseState::SerializeFromString(const std::string& src, PulseEngine& dst, SerializationFormat m, const SEScalarTime* simTime, const SEEngineConfiguration* config)
 {
-  pulse::proto::StateData data;
+  PULSE_BIND::StateData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
     return false;
   PBPulseState::Load(data, dst, simTime, config);

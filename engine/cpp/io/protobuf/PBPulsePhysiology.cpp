@@ -5,7 +5,7 @@
 #include "io/protobuf/PBPulsePhysiology.h"
 #include "io/protobuf/PBPhysiology.h"
 #include "io/protobuf/PBProperties.h"
-#include "bind/cpp/pulse/PulsePhysiology.pb.h"
+#include "pulse/engine/bind/PulsePhysiology.pb.h"
 #include "physiology/BloodChemistry.h"
 #include "physiology/Cardiovascular.h"
 #include "physiology/Drugs.h"
@@ -23,14 +23,12 @@
 #include "controller/Circuits.h"
 #include "controller/Compartments.h"
 
-using namespace pulse::proto;
-
-void PBPulsePhysiology::Load(const BloodChemistryData& src, BloodChemistry& dst)
+void PBPulsePhysiology::Load(const PULSE_BIND::BloodChemistryData& src, BloodChemistry& dst)
 {
   PBPulsePhysiology::Serialize(src, dst);
   dst.SetUp();
 }
-void PBPulsePhysiology::Serialize(const BloodChemistryData& src, BloodChemistry& dst)
+void PBPulsePhysiology::Serialize(const PULSE_BIND::BloodChemistryData& src, BloodChemistry& dst)
 {
   PBPhysiology::Serialize(src.common(), dst);
   if (!src.has_arterialoxygenaverage_mmhg()) { dst.Fatal("Missing ArterialOxygen_mmHg", "BloodChemistry::Serialize"); }
@@ -38,25 +36,25 @@ void PBPulsePhysiology::Serialize(const BloodChemistryData& src, BloodChemistry&
   if (!src.has_arterialcarbondioxideaverage_mmhg()) { dst.Fatal("Missing ArterialCarbonDioxide_mmHg", "BloodChemistry::Serialize"); }
   PBProperty::Load(src.arterialcarbondioxideaverage_mmhg(), *dst.m_ArterialCarbonDioxide_mmHg);
 }
-BloodChemistryData* PBPulsePhysiology::Unload(const BloodChemistry& src)
+PULSE_BIND::BloodChemistryData* PBPulsePhysiology::Unload(const BloodChemistry& src)
 {
-  BloodChemistryData* dst = new BloodChemistryData();
+  PULSE_BIND::BloodChemistryData* dst = new PULSE_BIND::BloodChemistryData();
   PBPulsePhysiology::Serialize(src, *dst);
   return dst;
 }
-void PBPulsePhysiology::Serialize(const BloodChemistry& src, BloodChemistryData& dst)
+void PBPulsePhysiology::Serialize(const BloodChemistry& src, PULSE_BIND::BloodChemistryData& dst)
 {
   PBPhysiology::Serialize(src, *dst.mutable_common());
   dst.set_allocated_arterialoxygenaverage_mmhg(PBProperty::Unload(*src.m_ArterialOxygen_mmHg));
   dst.set_allocated_arterialcarbondioxideaverage_mmhg(PBProperty::Unload(*src.m_ArterialCarbonDioxide_mmHg));
 }
 
-void PBPulsePhysiology::Load(const CardiovascularData& src, Cardiovascular& dst)
+void PBPulsePhysiology::Load(const PULSE_BIND::CardiovascularData& src, Cardiovascular& dst)
 {
   PBPulsePhysiology::Serialize(src, dst);
   dst.SetUp();
 }
-void PBPulsePhysiology::Serialize(const CardiovascularData& src, Cardiovascular& dst)
+void PBPulsePhysiology::Serialize(const PULSE_BIND::CardiovascularData& src, Cardiovascular& dst)
 {
   PBPhysiology::Serialize(src.common(), dst);
   dst.m_StartSystole = src.startsystole();
@@ -138,13 +136,13 @@ void PBPulsePhysiology::Serialize(const CardiovascularData& src, Cardiovascular&
       dst.m_InternalHemorrhagePaths.push_back(hPath);
   }
 }
-CardiovascularData* PBPulsePhysiology::Unload(const Cardiovascular& src)
+PULSE_BIND::CardiovascularData* PBPulsePhysiology::Unload(const Cardiovascular& src)
 {
-  CardiovascularData* dst = new CardiovascularData();
+  PULSE_BIND::CardiovascularData* dst = new PULSE_BIND::CardiovascularData();
   PBPulsePhysiology::Serialize(src, *dst);
   return dst;
 }
-void PBPulsePhysiology::Serialize(const Cardiovascular& src, CardiovascularData& dst)
+void PBPulsePhysiology::Serialize(const Cardiovascular& src, PULSE_BIND::CardiovascularData& dst)
 {
   PBPhysiology::Serialize(src, *dst.mutable_common());
   dst.set_startsystole(src.m_StartSystole);
@@ -193,53 +191,53 @@ void PBPulsePhysiology::Serialize(const Cardiovascular& src, CardiovascularData&
     dst.add_internalhemorrhagepaths(p->GetName());
 }
 
-void PBPulsePhysiology::Load(const DrugData& src, Drugs& dst)
+void PBPulsePhysiology::Load(const PULSE_BIND::DrugData& src, Drugs& dst)
 {
   PBPulsePhysiology::Serialize(src, dst);
   dst.SetUp();
 }
-void PBPulsePhysiology::Serialize(const DrugData& src, Drugs& dst)
+void PBPulsePhysiology::Serialize(const PULSE_BIND::DrugData& src, Drugs& dst)
 {
   PBPhysiology::Serialize(src.common(), dst);
 }
-DrugData* PBPulsePhysiology::Unload(const Drugs& src)
+PULSE_BIND::DrugData* PBPulsePhysiology::Unload(const Drugs& src)
 {
-  DrugData* dst = new DrugData();
+  PULSE_BIND::DrugData* dst = new PULSE_BIND::DrugData();
   PBPulsePhysiology::Serialize(src, *dst);
   return dst;
 }
-void PBPulsePhysiology::Serialize(const Drugs& src, DrugData& dst)
+void PBPulsePhysiology::Serialize(const Drugs& src, PULSE_BIND::DrugData& dst)
 {
   PBPhysiology::Serialize(src, *dst.mutable_common());
 }
 
-void PBPulsePhysiology::Load(const EndocrineData& src, Endocrine& dst)
+void PBPulsePhysiology::Load(const PULSE_BIND::EndocrineData& src, Endocrine& dst)
 {
   PBPulsePhysiology::Serialize(src, dst);
   dst.SetUp();
 }
-void PBPulsePhysiology::Serialize(const EndocrineData& src, Endocrine& dst)
+void PBPulsePhysiology::Serialize(const PULSE_BIND::EndocrineData& src, Endocrine& dst)
 {
   PBPhysiology::Serialize(src.common(), dst);
 }
-EndocrineData* PBPulsePhysiology::Unload(const Endocrine& src)
+PULSE_BIND::EndocrineData* PBPulsePhysiology::Unload(const Endocrine& src)
 {
 
-  EndocrineData* dst = new EndocrineData();
+  PULSE_BIND::EndocrineData* dst = new PULSE_BIND::EndocrineData();
   PBPulsePhysiology::Serialize(src, *dst);
   return dst;
 }
-void PBPulsePhysiology::Serialize(const Endocrine& src, EndocrineData& dst)
+void PBPulsePhysiology::Serialize(const Endocrine& src, PULSE_BIND::EndocrineData& dst)
 {
   PBPhysiology::Serialize(src, *dst.mutable_common());
 }
 
-void PBPulsePhysiology::Load(const EnergyData& src, Energy& dst)
+void PBPulsePhysiology::Load(const PULSE_BIND::EnergyData& src, Energy& dst)
 {
   PBPulsePhysiology::Serialize(src, dst);
   dst.SetUp();
 }
-void PBPulsePhysiology::Serialize(const EnergyData& src, Energy& dst)
+void PBPulsePhysiology::Serialize(const PULSE_BIND::EnergyData& src, Energy& dst)
 {
   PBPhysiology::Serialize(src.common(), dst);
   dst.m_UsableEnergyStore_J = src.usableenergystore_j();
@@ -250,13 +248,13 @@ void PBPulsePhysiology::Serialize(const EnergyData& src, Energy& dst)
   PBProperty::Load(src.bloodph(), *dst.m_BloodpH);
   PBProperty::Load(src.bicarbonatemolarity_mmol_per_l(), *dst.m_BicarbonateMolarity_mmol_Per_L);
 }
-EnergyData* PBPulsePhysiology::Unload(const Energy& src)
+PULSE_BIND::EnergyData* PBPulsePhysiology::Unload(const Energy& src)
 {
-  EnergyData* dst = new EnergyData();
+  PULSE_BIND::EnergyData* dst = new PULSE_BIND::EnergyData();
   PBPulsePhysiology::Serialize(src, *dst);
   return dst;
 }
-void PBPulsePhysiology::Serialize(const Energy& src, EnergyData& dst)
+void PBPulsePhysiology::Serialize(const Energy& src, PULSE_BIND::EnergyData& dst)
 {
   PBPhysiology::Serialize(src, *dst.mutable_common());
   dst.set_usableenergystore_j(src.m_UsableEnergyStore_J);
@@ -268,54 +266,54 @@ void PBPulsePhysiology::Serialize(const Energy& src, EnergyData& dst)
   dst.set_allocated_bicarbonatemolarity_mmol_per_l(PBProperty::Unload(*src.m_BicarbonateMolarity_mmol_Per_L));
 }
 
-void PBPulsePhysiology::Load(const GastrointestinalData& src, Gastrointestinal& dst)
+void PBPulsePhysiology::Load(const PULSE_BIND::GastrointestinalData& src, Gastrointestinal& dst)
 {
   PBPulsePhysiology::Serialize(src, dst);
   dst.SetUp();
   // We assume state is from after all stabilization
   dst.m_DecrementNutrients = true;
 }
-void PBPulsePhysiology::Serialize(const GastrointestinalData& src, Gastrointestinal& dst)
+void PBPulsePhysiology::Serialize(const PULSE_BIND::GastrointestinalData& src, Gastrointestinal& dst)
 {
   PBPhysiology::Serialize(src.common(), dst);
 }
-GastrointestinalData* PBPulsePhysiology::Unload(const Gastrointestinal& src)
+PULSE_BIND::GastrointestinalData* PBPulsePhysiology::Unload(const Gastrointestinal& src)
 {
-  GastrointestinalData* dst = new GastrointestinalData();
+  PULSE_BIND::GastrointestinalData* dst = new PULSE_BIND::GastrointestinalData();
   PBPulsePhysiology::Serialize(src, *dst);
   return dst;
 }
-void PBPulsePhysiology::Serialize(const Gastrointestinal& src, GastrointestinalData& dst)
+void PBPulsePhysiology::Serialize(const Gastrointestinal& src, PULSE_BIND::GastrointestinalData& dst)
 {
   PBPhysiology::Serialize(src, *dst.mutable_common());
 }
 
-void PBPulsePhysiology::Load(const HepaticData& src, Hepatic& dst)
+void PBPulsePhysiology::Load(const PULSE_BIND::HepaticData& src, Hepatic& dst)
 {
   PBPulsePhysiology::Serialize(src, dst);
   dst.SetUp();
 }
-void PBPulsePhysiology::Serialize(const HepaticData& src, Hepatic& dst)
+void PBPulsePhysiology::Serialize(const PULSE_BIND::HepaticData& src, Hepatic& dst)
 {
   PBPhysiology::Serialize(src.common(), dst);
 }
-HepaticData* PBPulsePhysiology::Unload(const Hepatic& src)
+PULSE_BIND::HepaticData* PBPulsePhysiology::Unload(const Hepatic& src)
 {
-  HepaticData* dst = new HepaticData();
+  PULSE_BIND::HepaticData* dst = new PULSE_BIND::HepaticData();
   PBPulsePhysiology::Serialize(src, *dst);
   return dst;
 }
-void PBPulsePhysiology::Serialize(const Hepatic& src, HepaticData& dst)
+void PBPulsePhysiology::Serialize(const Hepatic& src, PULSE_BIND::HepaticData& dst)
 {
   PBPhysiology::Serialize(src, *dst.mutable_common());
 }
 
-void PBPulsePhysiology::Load(const NervousData& src, Nervous& dst)
+void PBPulsePhysiology::Load(const PULSE_BIND::NervousData& src, Nervous& dst)
 {
   PBPulsePhysiology::Serialize(src, dst);
   dst.SetUp();
 }
-void PBPulsePhysiology::Serialize(const NervousData& src, Nervous& dst)
+void PBPulsePhysiology::Serialize(const PULSE_BIND::NervousData& src, Nervous& dst)
 {
   PBPhysiology::Serialize(src.common(), dst);
   // We assume state have to be after all stabilization
@@ -326,13 +324,13 @@ void PBPulsePhysiology::Serialize(const NervousData& src, Nervous& dst)
   dst.m_BaroreceptorActiveTime_s = src.baroreceptoractivetime_s();
   dst.m_BaroreceptorMeanArterialPressureBaseline_mmHg = src.baroreceptormeanarterialpressurebaseline_mmhg();
 }
-NervousData* PBPulsePhysiology::Unload(const Nervous& src)
+PULSE_BIND::NervousData* PBPulsePhysiology::Unload(const Nervous& src)
 {
-  NervousData* dst = new NervousData();
+  PULSE_BIND::NervousData* dst = new PULSE_BIND::NervousData();
   PBPulsePhysiology::Serialize(src, *dst);
   return dst;
 }
-void PBPulsePhysiology::Serialize(const Nervous& src, NervousData& dst)
+void PBPulsePhysiology::Serialize(const Nervous& src, PULSE_BIND::NervousData& dst)
 {
   PBPhysiology::Serialize(src, *dst.mutable_common());
   dst.set_arterialoxygenbaseline_mmhg(src.m_ArterialOxygenBaseline_mmHg);
@@ -342,12 +340,12 @@ void PBPulsePhysiology::Serialize(const Nervous& src, NervousData& dst)
   dst.set_baroreceptormeanarterialpressurebaseline_mmhg(src.m_BaroreceptorMeanArterialPressureBaseline_mmHg);
 }
 
-void PBPulsePhysiology::Load(const RenalData& src, Renal& dst)
+void PBPulsePhysiology::Load(const PULSE_BIND::RenalData& src, Renal& dst)
 {
   PBPulsePhysiology::Serialize(src, dst);
   dst.SetUp();
 }
-void PBPulsePhysiology::Serialize(const RenalData& src, Renal& dst)
+void PBPulsePhysiology::Serialize(const PULSE_BIND::RenalData& src, Renal& dst)
 {
   PBPhysiology::Serialize(src.common(), dst);
   dst.m_Urinating = src.urinating();
@@ -365,13 +363,13 @@ void PBPulsePhysiology::Serialize(const RenalData& src, Renal& dst)
   PBProperty::Load(src.leftrenalarterialpressure_mmhg(), *dst.m_leftRenalArterialPressure_mmHg_runningAvg);
   PBProperty::Load(src.rightrenalarterialpressure_mmhg(), *dst.m_rightRenalArterialPressure_mmHg_runningAvg);
 }
-RenalData* PBPulsePhysiology::Unload(const Renal& src)
+PULSE_BIND::RenalData* PBPulsePhysiology::Unload(const Renal& src)
 {
-  RenalData* dst = new RenalData();
+  PULSE_BIND::RenalData* dst = new PULSE_BIND::RenalData();
   PBPulsePhysiology::Serialize(src, *dst);
   return dst;
 }
-void PBPulsePhysiology::Serialize(const Renal& src, RenalData& dst)
+void PBPulsePhysiology::Serialize(const Renal& src, PULSE_BIND::RenalData& dst)
 {
   PBPhysiology::Serialize(src, *dst.mutable_common());
   dst.set_urinating(src.m_Urinating);
@@ -390,12 +388,12 @@ void PBPulsePhysiology::Serialize(const Renal& src, RenalData& dst)
   dst.set_allocated_rightrenalarterialpressure_mmhg(PBProperty::Unload(*src.m_rightRenalArterialPressure_mmHg_runningAvg));
 }
 
-void PBPulsePhysiology::Load(const RespiratoryData& src, Respiratory& dst)
+void PBPulsePhysiology::Load(const PULSE_BIND::RespiratoryData& src, Respiratory& dst)
 {
   PBPulsePhysiology::Serialize(src, dst);
   dst.SetUp();
 }
-void PBPulsePhysiology::Serialize(const RespiratoryData& src, Respiratory& dst)
+void PBPulsePhysiology::Serialize(const PULSE_BIND::RespiratoryData& src, Respiratory& dst)
 {
   PBPhysiology::Serialize(src.common(), dst);
 
@@ -445,13 +443,13 @@ void PBPulsePhysiology::Serialize(const RespiratoryData& src, Respiratory& dst)
 
   dst.m_ActiveConsciousRespirationCommand = src.activeconsciousrespirationcommand();
 }
-RespiratoryData* PBPulsePhysiology::Unload(const Respiratory& src)
+PULSE_BIND::RespiratoryData* PBPulsePhysiology::Unload(const Respiratory& src)
 {
-  RespiratoryData* dst = new RespiratoryData();
+  PULSE_BIND::RespiratoryData* dst = new PULSE_BIND::RespiratoryData();
   PBPulsePhysiology::Serialize(src, *dst);
   return dst;
 }
-void PBPulsePhysiology::Serialize(const Respiratory& src, RespiratoryData& dst)
+void PBPulsePhysiology::Serialize(const Respiratory& src, PULSE_BIND::RespiratoryData& dst)
 {
   PBPhysiology::Serialize(src, *dst.mutable_common());
 
@@ -502,12 +500,12 @@ void PBPulsePhysiology::Serialize(const Respiratory& src, RespiratoryData& dst)
   dst.set_activeconsciousrespirationcommand(src.m_ActiveConsciousRespirationCommand);
 }
 
-void PBPulsePhysiology::Load(const TissueData& src, Tissue& dst)
+void PBPulsePhysiology::Load(const PULSE_BIND::TissueData& src, Tissue& dst)
 {
   PBPulsePhysiology::Serialize(src, dst);
   dst.SetUp();
 }
-void PBPulsePhysiology::Serialize(const TissueData& src, Tissue& dst)
+void PBPulsePhysiology::Serialize(const PULSE_BIND::TissueData& src, Tissue& dst)
 {
   PBPhysiology::Serialize(src.common(), dst);
   dst.m_RestingTissueGlucose_g = src.restingtissueglucose_g();
@@ -517,13 +515,13 @@ void PBPulsePhysiology::Serialize(const TissueData& src, Tissue& dst)
   dst.m_RestingPatientMass_kg = src.restingpatientmass_kg();
   dst.m_RestingFluidMass_kg = src.restingfluidmass_kg();
 }
-TissueData* PBPulsePhysiology::Unload(const Tissue& src)
+PULSE_BIND::TissueData* PBPulsePhysiology::Unload(const Tissue& src)
 {
-  TissueData* dst = new TissueData();
+  PULSE_BIND::TissueData* dst = new PULSE_BIND::TissueData();
   PBPulsePhysiology::Serialize(src, *dst);
   return dst;
 }
-void PBPulsePhysiology::Serialize(const Tissue& src, TissueData& dst)
+void PBPulsePhysiology::Serialize(const Tissue& src, PULSE_BIND::TissueData& dst)
 {
   PBPhysiology::Serialize(src, *dst.mutable_common());
   dst.set_restingtissueglucose_g(src.m_RestingTissueGlucose_g);

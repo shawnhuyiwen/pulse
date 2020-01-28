@@ -5,28 +5,28 @@
 #include "io/protobuf/PBConditions.h"
 #include "io/protobuf/PBPatientConditions.h"
 #include "io/protobuf/PBEnvironmentConditions.h"
-#include "bind/cpp/cdm/Conditions.pb.h"
-#include "bind/cpp/cdm/Scenario.pb.h"
+#include "bind/Conditions.pb.h"
+#include "bind/Scenario.pb.h"
 #include "patient/conditions/SEPatientCondition.h"
 #include "system/environment/conditions/SEEnvironmentCondition.h"
 #include "substance/SESubstanceManager.h"
 
 
-SECondition* PBCondition::Load(const cdm::AnyConditionData& condition, SESubstanceManager& subMgr)
+SECondition* PBCondition::Load(const CDM_BIND::AnyConditionData& condition, SESubstanceManager& subMgr)
 {
   switch (condition.Condition_case())
   {
-  case cdm::AnyConditionData::kPatientCondition:
+  case CDM_BIND::AnyConditionData::kPatientCondition:
     return PBPatientCondition::Load(condition.patientcondition(), subMgr);
-  case cdm::AnyConditionData::kEnvironmentCondition:
+  case CDM_BIND::AnyConditionData::kEnvironmentCondition:
     return PBEnvironmentCondition::Load(condition.environmentcondition(), subMgr);
   }
   subMgr.Error("Unknown Condition");
   return nullptr;
 }
-cdm::AnyConditionData* PBCondition::Unload(const SECondition& condition)
+CDM_BIND::AnyConditionData* PBCondition::Unload(const SECondition& condition)
 {
-  cdm::AnyConditionData* any = new cdm::AnyConditionData();
+  CDM_BIND::AnyConditionData* any = new CDM_BIND::AnyConditionData();
   const SEPatientCondition* pc = dynamic_cast<const SEPatientCondition*>(&condition);
   if (pc != nullptr)
   {
@@ -44,12 +44,12 @@ cdm::AnyConditionData* PBCondition::Unload(const SECondition& condition)
   return nullptr;
 }
 
-void PBCondition::Serialize(const cdm::ConditionData& src, SECondition& dst)
+void PBCondition::Serialize(const CDM_BIND::ConditionData& src, SECondition& dst)
 {
   dst.Clear();
   dst.SetComment(src.comment());
 }
-void PBCondition::Serialize(const SECondition& src, cdm::ConditionData& dst)
+void PBCondition::Serialize(const SECondition& src, CDM_BIND::ConditionData& dst)
 {
   dst.set_comment(src.m_Comment);
 }

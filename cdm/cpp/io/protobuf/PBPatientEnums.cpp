@@ -3,11 +3,11 @@
 
 #include "stdafx.h"
 #include "io/protobuf/PBUtils.h"
-#include "bind/cpp/cdm/Patient.pb.h"
+#include "bind/Patient.pb.h"
 #include "patient/SEPatient.h"
 
 const std::string& ePatient_Sex_Name(ePatient_Sex m)
 {
-  return cdm::PatientData::eSex_Name((cdm::PatientData::eSex)m);
+  return CDM_BIND::PatientData::eSex_Name((CDM_BIND::PatientData::eSex)m);
 }
 

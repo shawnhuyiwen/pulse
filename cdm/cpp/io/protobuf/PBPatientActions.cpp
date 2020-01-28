@@ -7,7 +7,7 @@
 #include "io/protobuf/PBActions.h"
 #include "io/protobuf/PBSubstance.h"
 #include "io/protobuf/PBProperties.h"
-#include "bind/cpp/cdm/PatientActions.pb.h"
+#include "bind/PatientActions.pb.h"
 
 #include "substance/SESubstanceManager.h"
 #include "patient/actions/SEPatientAssessmentRequest.h"
@@ -47,20 +47,20 @@
 #include "substance/SESubstanceCompound.h"
 #include "substance/SESubstanceManager.h"
 
-void PBPatientAction::Serialize(const cdm::PatientActionData& src, SEPatientAction& dst)
+void PBPatientAction::Serialize(const CDM_BIND::PatientActionData& src, SEPatientAction& dst)
 {
   PBAction::Serialize(src.action(), dst);
 }
-void PBPatientAction::Serialize(const SEPatientAction& src, cdm::PatientActionData& dst)
+void PBPatientAction::Serialize(const SEPatientAction& src, CDM_BIND::PatientActionData& dst)
 {
   PBAction::Serialize(src, *dst.mutable_action());
 }
 
-void PBPatientAction::Load(const cdm::AcuteRespiratoryDistressSyndromeExacerbationData& src, SEAcuteRespiratoryDistressSyndromeExacerbation& dst)
+void PBPatientAction::Load(const CDM_BIND::AcuteRespiratoryDistressSyndromeExacerbationData& src, SEAcuteRespiratoryDistressSyndromeExacerbation& dst)
 {
   PBPatientAction::Serialize(src, dst);
 }
-void PBPatientAction::Serialize(const cdm::AcuteRespiratoryDistressSyndromeExacerbationData& src, SEAcuteRespiratoryDistressSyndromeExacerbation& dst)
+void PBPatientAction::Serialize(const CDM_BIND::AcuteRespiratoryDistressSyndromeExacerbationData& src, SEAcuteRespiratoryDistressSyndromeExacerbation& dst)
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
   if (src.has_severity())
@@ -70,13 +70,13 @@ void PBPatientAction::Serialize(const cdm::AcuteRespiratoryDistressSyndromeExace
   if (src.has_rightlungaffected())
     PBProperty::Load(src.rightlungaffected(), dst.GetRightLungAffected());
 }
-cdm::AcuteRespiratoryDistressSyndromeExacerbationData* PBPatientAction::Unload(const SEAcuteRespiratoryDistressSyndromeExacerbation& src)
+CDM_BIND::AcuteRespiratoryDistressSyndromeExacerbationData* PBPatientAction::Unload(const SEAcuteRespiratoryDistressSyndromeExacerbation& src)
 {
-  cdm::AcuteRespiratoryDistressSyndromeExacerbationData* dst = new cdm::AcuteRespiratoryDistressSyndromeExacerbationData();
+  CDM_BIND::AcuteRespiratoryDistressSyndromeExacerbationData* dst = new CDM_BIND::AcuteRespiratoryDistressSyndromeExacerbationData();
   PBPatientAction::Serialize(src, *dst);
   return dst;
 }
-void PBPatientAction::Serialize(const SEAcuteRespiratoryDistressSyndromeExacerbation& src, cdm::AcuteRespiratoryDistressSyndromeExacerbationData& dst)
+void PBPatientAction::Serialize(const SEAcuteRespiratoryDistressSyndromeExacerbation& src, CDM_BIND::AcuteRespiratoryDistressSyndromeExacerbationData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
   if (src.HasSeverity())
@@ -88,28 +88,28 @@ void PBPatientAction::Serialize(const SEAcuteRespiratoryDistressSyndromeExacerba
 }
 void PBPatientAction::Copy(const SEAcuteRespiratoryDistressSyndromeExacerbation& src, SEAcuteRespiratoryDistressSyndromeExacerbation& dst)
 {
-  cdm::AcuteRespiratoryDistressSyndromeExacerbationData data;
+  CDM_BIND::AcuteRespiratoryDistressSyndromeExacerbationData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
 
-void PBPatientAction::Load(const cdm::AcuteStressData& src, SEAcuteStress& dst)
+void PBPatientAction::Load(const CDM_BIND::AcuteStressData& src, SEAcuteStress& dst)
 {
   PBPatientAction::Serialize(src, dst);
 }
-void PBPatientAction::Serialize(const cdm::AcuteStressData& src, SEAcuteStress& dst)
+void PBPatientAction::Serialize(const CDM_BIND::AcuteStressData& src, SEAcuteStress& dst)
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
   if (src.has_severity())
     PBProperty::Load(src.severity(), dst.GetSeverity());
 }
-cdm::AcuteStressData* PBPatientAction::Unload(const SEAcuteStress& src)
+CDM_BIND::AcuteStressData* PBPatientAction::Unload(const SEAcuteStress& src)
 {
-  cdm::AcuteStressData* dst = new cdm::AcuteStressData();
+  CDM_BIND::AcuteStressData* dst = new CDM_BIND::AcuteStressData();
   PBPatientAction::Serialize(src, *dst);
   return dst;
 }
-void PBPatientAction::Serialize(const SEAcuteStress& src, cdm::AcuteStressData& dst)
+void PBPatientAction::Serialize(const SEAcuteStress& src, CDM_BIND::AcuteStressData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
   if (src.HasSeverity())
@@ -117,29 +117,29 @@ void PBPatientAction::Serialize(const SEAcuteStress& src, cdm::AcuteStressData& 
 }
 void PBPatientAction::Copy(const SEAcuteStress& src, SEAcuteStress& dst)
 {
-  cdm::AcuteStressData data;
+  CDM_BIND::AcuteStressData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
 
 
-void PBPatientAction::Load(const cdm::AirwayObstructionData& src, SEAirwayObstruction& dst)
+void PBPatientAction::Load(const CDM_BIND::AirwayObstructionData& src, SEAirwayObstruction& dst)
 {
   PBPatientAction::Serialize(src, dst);
 }
-void PBPatientAction::Serialize(const cdm::AirwayObstructionData& src, SEAirwayObstruction& dst)
+void PBPatientAction::Serialize(const CDM_BIND::AirwayObstructionData& src, SEAirwayObstruction& dst)
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
   if (src.has_severity())
     PBProperty::Load(src.severity(), dst.GetSeverity());
 }
-cdm::AirwayObstructionData* PBPatientAction::Unload(const SEAirwayObstruction& src)
+CDM_BIND::AirwayObstructionData* PBPatientAction::Unload(const SEAirwayObstruction& src)
 {
-  cdm::AirwayObstructionData* dst = new cdm::AirwayObstructionData();
+  CDM_BIND::AirwayObstructionData* dst = new CDM_BIND::AirwayObstructionData();
   PBPatientAction::Serialize(src, *dst);
   return dst;
 }
-void PBPatientAction::Serialize(const SEAirwayObstruction& src, cdm::AirwayObstructionData& dst)
+void PBPatientAction::Serialize(const SEAirwayObstruction& src, CDM_BIND::AirwayObstructionData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
   if (src.HasSeverity())
@@ -147,28 +147,28 @@ void PBPatientAction::Serialize(const SEAirwayObstruction& src, cdm::AirwayObstr
 }
 void PBPatientAction::Copy(const SEAirwayObstruction& src, SEAirwayObstruction& dst)
 {
-  cdm::AirwayObstructionData data;
+  CDM_BIND::AirwayObstructionData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
 
-void PBPatientAction::Load(const cdm::AsthmaAttackData& src, SEAsthmaAttack& dst)
+void PBPatientAction::Load(const CDM_BIND::AsthmaAttackData& src, SEAsthmaAttack& dst)
 {
   PBPatientAction::Serialize(src, dst);
 }
-void PBPatientAction::Serialize(const cdm::AsthmaAttackData& src, SEAsthmaAttack& dst)
+void PBPatientAction::Serialize(const CDM_BIND::AsthmaAttackData& src, SEAsthmaAttack& dst)
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
   if (src.has_severity())
     PBProperty::Load(src.severity(), dst.GetSeverity());
 }
-cdm::AsthmaAttackData* PBPatientAction::Unload(const SEAsthmaAttack& src)
+CDM_BIND::AsthmaAttackData* PBPatientAction::Unload(const SEAsthmaAttack& src)
 {
-  cdm::AsthmaAttackData* dst = new cdm::AsthmaAttackData();
+  CDM_BIND::AsthmaAttackData* dst = new CDM_BIND::AsthmaAttackData();
   PBPatientAction::Serialize(src, *dst);
   return dst;
 }
-void PBPatientAction::Serialize(const SEAsthmaAttack& src, cdm::AsthmaAttackData& dst)
+void PBPatientAction::Serialize(const SEAsthmaAttack& src, CDM_BIND::AsthmaAttackData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
   if (src.HasSeverity())
@@ -176,59 +176,59 @@ void PBPatientAction::Serialize(const SEAsthmaAttack& src, cdm::AsthmaAttackData
 }
 void PBPatientAction::Copy(const SEAsthmaAttack& src, SEAsthmaAttack& dst)
 {
-  cdm::AsthmaAttackData data;
+  CDM_BIND::AsthmaAttackData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
 
-void PBPatientAction::Load(const cdm::BrainInjuryData& src, SEBrainInjury& dst)
+void PBPatientAction::Load(const CDM_BIND::BrainInjuryData& src, SEBrainInjury& dst)
 {
   PBPatientAction::Serialize(src, dst);
 }
-void PBPatientAction::Serialize(const cdm::BrainInjuryData& src, SEBrainInjury& dst)
+void PBPatientAction::Serialize(const CDM_BIND::BrainInjuryData& src, SEBrainInjury& dst)
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
   if (src.has_severity())
     PBProperty::Load(src.severity(), dst.GetSeverity());
   dst.SetType((eBrainInjury_Type)src.type());
 }
-cdm::BrainInjuryData* PBPatientAction::Unload(const SEBrainInjury& src)
+CDM_BIND::BrainInjuryData* PBPatientAction::Unload(const SEBrainInjury& src)
 {
-  cdm::BrainInjuryData* dst = new cdm::BrainInjuryData();
+  CDM_BIND::BrainInjuryData* dst = new CDM_BIND::BrainInjuryData();
   PBPatientAction::Serialize(src, *dst);
   return dst;
 }
-void PBPatientAction::Serialize(const SEBrainInjury& src, cdm::BrainInjuryData& dst)
+void PBPatientAction::Serialize(const SEBrainInjury& src, CDM_BIND::BrainInjuryData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
   if (src.HasSeverity())
     dst.set_allocated_severity(PBProperty::Unload(*src.m_Severity));
-  dst.set_type((cdm::BrainInjuryData::eType)src.m_Type);
+  dst.set_type((CDM_BIND::BrainInjuryData::eType)src.m_Type);
 }
 void PBPatientAction::Copy(const SEBrainInjury& src, SEBrainInjury& dst)
 {
-  cdm::BrainInjuryData data;
+  CDM_BIND::BrainInjuryData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
 
-void PBPatientAction::Load(const cdm::BronchoconstrictionData& src, SEBronchoconstriction& dst)
+void PBPatientAction::Load(const CDM_BIND::BronchoconstrictionData& src, SEBronchoconstriction& dst)
 {
   PBPatientAction::Serialize(src, dst);
 }
-void PBPatientAction::Serialize(const cdm::BronchoconstrictionData& src, SEBronchoconstriction& dst)
+void PBPatientAction::Serialize(const CDM_BIND::BronchoconstrictionData& src, SEBronchoconstriction& dst)
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
   if (src.has_severity())
     PBProperty::Load(src.severity(), dst.GetSeverity());
 }
-cdm::BronchoconstrictionData* PBPatientAction::Unload(const SEBronchoconstriction& src)
+CDM_BIND::BronchoconstrictionData* PBPatientAction::Unload(const SEBronchoconstriction& src)
 {
-  cdm::BronchoconstrictionData* dst = new cdm::BronchoconstrictionData();
+  CDM_BIND::BronchoconstrictionData* dst = new CDM_BIND::BronchoconstrictionData();
   PBPatientAction::Serialize(src, *dst);
   return dst;
 }
-void PBPatientAction::Serialize(const SEBronchoconstriction& src, cdm::BronchoconstrictionData& dst)
+void PBPatientAction::Serialize(const SEBronchoconstriction& src, CDM_BIND::BronchoconstrictionData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
   if (src.HasSeverity())
@@ -236,56 +236,56 @@ void PBPatientAction::Serialize(const SEBronchoconstriction& src, cdm::Bronchoco
 }
 void PBPatientAction::Copy(const SEBronchoconstriction& src, SEBronchoconstriction& dst)
 {
-  cdm::BronchoconstrictionData data;
+  CDM_BIND::BronchoconstrictionData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
 
-void PBPatientAction::Load(const cdm::CardiacArrestData& src, SECardiacArrest& dst)
+void PBPatientAction::Load(const CDM_BIND::CardiacArrestData& src, SECardiacArrest& dst)
 {
   PBPatientAction::Serialize(src, dst);
 }
-void PBPatientAction::Serialize(const cdm::CardiacArrestData& src, SECardiacArrest& dst)
+void PBPatientAction::Serialize(const CDM_BIND::CardiacArrestData& src, SECardiacArrest& dst)
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
-  if (src.state() != cdm::eSwitch::NullSwitch)
+  if (src.state() != CDM_BIND::eSwitch::NullSwitch)
     dst.SetState((eSwitch)src.state());
 }
-cdm::CardiacArrestData* PBPatientAction::Unload(const SECardiacArrest& src)
+CDM_BIND::CardiacArrestData* PBPatientAction::Unload(const SECardiacArrest& src)
 {
-  cdm::CardiacArrestData* dst = new cdm::CardiacArrestData();
+  CDM_BIND::CardiacArrestData* dst = new CDM_BIND::CardiacArrestData();
   PBPatientAction::Serialize(src, *dst);
   return dst;
 }
-void PBPatientAction::Serialize(const SECardiacArrest& src, cdm::CardiacArrestData& dst)
+void PBPatientAction::Serialize(const SECardiacArrest& src, CDM_BIND::CardiacArrestData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
-  dst.set_state((cdm::eSwitch)src.m_State);
+  dst.set_state((CDM_BIND::eSwitch)src.m_State);
 }
 void PBPatientAction::Copy(const SECardiacArrest& src, SECardiacArrest& dst)
 {
-  cdm::CardiacArrestData data;
+  CDM_BIND::CardiacArrestData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
 
-void PBPatientAction::Load(const cdm::ChestCompressionForceData& src, SEChestCompressionForce& dst)
+void PBPatientAction::Load(const CDM_BIND::ChestCompressionForceData& src, SEChestCompressionForce& dst)
 {
   PBPatientAction::Serialize(src, dst);
 }
-void PBPatientAction::Serialize(const cdm::ChestCompressionForceData& src, SEChestCompressionForce& dst)
+void PBPatientAction::Serialize(const CDM_BIND::ChestCompressionForceData& src, SEChestCompressionForce& dst)
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
   if (src.has_force())
     PBProperty::Load(src.force(), dst.GetForce());
 }
-cdm::ChestCompressionForceData* PBPatientAction::Unload(const SEChestCompressionForce& src)
+CDM_BIND::ChestCompressionForceData* PBPatientAction::Unload(const SEChestCompressionForce& src)
 {
-  cdm::ChestCompressionForceData* dst = new cdm::ChestCompressionForceData();
+  CDM_BIND::ChestCompressionForceData* dst = new CDM_BIND::ChestCompressionForceData();
   PBPatientAction::Serialize(src, *dst);
   return dst;
 }
-void PBPatientAction::Serialize(const SEChestCompressionForce& src, cdm::ChestCompressionForceData& dst)
+void PBPatientAction::Serialize(const SEChestCompressionForce& src, CDM_BIND::ChestCompressionForceData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
   if (src.HasForce())
@@ -293,16 +293,16 @@ void PBPatientAction::Serialize(const SEChestCompressionForce& src, cdm::ChestCo
 }
 void PBPatientAction::Copy(const SEChestCompressionForce& src, SEChestCompressionForce& dst)
 {
-  cdm::ChestCompressionForceData data;
+  CDM_BIND::ChestCompressionForceData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
 
-void PBPatientAction::Load(const cdm::ChestCompressionForceScaleData& src, SEChestCompressionForceScale& dst)
+void PBPatientAction::Load(const CDM_BIND::ChestCompressionForceScaleData& src, SEChestCompressionForceScale& dst)
 {
   PBPatientAction::Serialize(src, dst);
 }
-void PBPatientAction::Serialize(const cdm::ChestCompressionForceScaleData& src, SEChestCompressionForceScale& dst)
+void PBPatientAction::Serialize(const CDM_BIND::ChestCompressionForceScaleData& src, SEChestCompressionForceScale& dst)
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
   if (src.has_forcescale())
@@ -310,13 +310,13 @@ void PBPatientAction::Serialize(const cdm::ChestCompressionForceScaleData& src, 
   if (src.has_forceperiod())
     PBProperty::Load(src.forceperiod(), dst.GetForcePeriod());
 }
-cdm::ChestCompressionForceScaleData* PBPatientAction::Unload(const SEChestCompressionForceScale& src)
+CDM_BIND::ChestCompressionForceScaleData* PBPatientAction::Unload(const SEChestCompressionForceScale& src)
 {
-  cdm::ChestCompressionForceScaleData* dst = new cdm::ChestCompressionForceScaleData();
+  CDM_BIND::ChestCompressionForceScaleData* dst = new CDM_BIND::ChestCompressionForceScaleData();
   PBPatientAction::Serialize(src, *dst);
   return dst;
 }
-void PBPatientAction::Serialize(const SEChestCompressionForceScale& src, cdm::ChestCompressionForceScaleData& dst)
+void PBPatientAction::Serialize(const SEChestCompressionForceScale& src, CDM_BIND::ChestCompressionForceScaleData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
   if (src.HasForceScale())
@@ -326,47 +326,47 @@ void PBPatientAction::Serialize(const SEChestCompressionForceScale& src, cdm::Ch
 }
 void PBPatientAction::Copy(const SEChestCompressionForceScale& src, SEChestCompressionForceScale& dst)
 {
-  cdm::ChestCompressionForceScaleData data;
+  CDM_BIND::ChestCompressionForceScaleData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
 
-void PBPatientAction::Load(const cdm::ChestOcclusiveDressingData& src, SEChestOcclusiveDressing& dst)
+void PBPatientAction::Load(const CDM_BIND::ChestOcclusiveDressingData& src, SEChestOcclusiveDressing& dst)
 {
   PBPatientAction::Serialize(src, dst);
 }
-void PBPatientAction::Serialize(const cdm::ChestOcclusiveDressingData& src, SEChestOcclusiveDressing& dst)
+void PBPatientAction::Serialize(const CDM_BIND::ChestOcclusiveDressingData& src, SEChestOcclusiveDressing& dst)
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
   dst.SetSide((eSide)src.side());
-  if (src.state() != cdm::eSwitch::NullSwitch)
+  if (src.state() != CDM_BIND::eSwitch::NullSwitch)
     dst.SetState((eSwitch)src.state());
 }
-cdm::ChestOcclusiveDressingData* PBPatientAction::Unload(const SEChestOcclusiveDressing& src)
+CDM_BIND::ChestOcclusiveDressingData* PBPatientAction::Unload(const SEChestOcclusiveDressing& src)
 {
-  cdm::ChestOcclusiveDressingData* dst = new cdm::ChestOcclusiveDressingData();
+  CDM_BIND::ChestOcclusiveDressingData* dst = new CDM_BIND::ChestOcclusiveDressingData();
   PBPatientAction::Serialize(src, *dst);
   return dst;
 }
-void PBPatientAction::Serialize(const SEChestOcclusiveDressing& src, cdm::ChestOcclusiveDressingData& dst)
+void PBPatientAction::Serialize(const SEChestOcclusiveDressing& src, CDM_BIND::ChestOcclusiveDressingData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
-  dst.set_state((cdm::eSwitch)src.m_State);
+  dst.set_state((CDM_BIND::eSwitch)src.m_State);
   if (src.HasSide())
-    dst.set_side((cdm::eSide)src.m_Side);
+    dst.set_side((CDM_BIND::eSide)src.m_Side);
 }
 void PBPatientAction::Copy(const SEChestOcclusiveDressing& src, SEChestOcclusiveDressing& dst)
 {
-  cdm::ChestOcclusiveDressingData data;
+  CDM_BIND::ChestOcclusiveDressingData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
 
-void PBPatientAction::Load(const cdm::ChronicObstructivePulmonaryDiseaseExacerbationData& src, SEChronicObstructivePulmonaryDiseaseExacerbation& dst)
+void PBPatientAction::Load(const CDM_BIND::ChronicObstructivePulmonaryDiseaseExacerbationData& src, SEChronicObstructivePulmonaryDiseaseExacerbation& dst)
 {
   PBPatientAction::Serialize(src, dst);
 }
-void PBPatientAction::Serialize(const cdm::ChronicObstructivePulmonaryDiseaseExacerbationData& src, SEChronicObstructivePulmonaryDiseaseExacerbation& dst)
+void PBPatientAction::Serialize(const CDM_BIND::ChronicObstructivePulmonaryDiseaseExacerbationData& src, SEChronicObstructivePulmonaryDiseaseExacerbation& dst)
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
   if (src.has_bronchitisseverity())
@@ -374,13 +374,13 @@ void PBPatientAction::Serialize(const cdm::ChronicObstructivePulmonaryDiseaseExa
   if (src.has_emphysemaseverity())
     PBProperty::Load(src.emphysemaseverity(), dst.GetEmphysemaSeverity());
 }
-cdm::ChronicObstructivePulmonaryDiseaseExacerbationData* PBPatientAction::Unload(const SEChronicObstructivePulmonaryDiseaseExacerbation& src)
+CDM_BIND::ChronicObstructivePulmonaryDiseaseExacerbationData* PBPatientAction::Unload(const SEChronicObstructivePulmonaryDiseaseExacerbation& src)
 {
-  cdm::ChronicObstructivePulmonaryDiseaseExacerbationData* dst = new cdm::ChronicObstructivePulmonaryDiseaseExacerbationData();
+  CDM_BIND::ChronicObstructivePulmonaryDiseaseExacerbationData* dst = new CDM_BIND::ChronicObstructivePulmonaryDiseaseExacerbationData();
   PBPatientAction::Serialize(src, *dst);
   return dst;
 }
-void PBPatientAction::Serialize(const SEChronicObstructivePulmonaryDiseaseExacerbation& src, cdm::ChronicObstructivePulmonaryDiseaseExacerbationData& dst)
+void PBPatientAction::Serialize(const SEChronicObstructivePulmonaryDiseaseExacerbation& src, CDM_BIND::ChronicObstructivePulmonaryDiseaseExacerbationData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
   if (src.HasBronchitisSeverity())
@@ -390,35 +390,35 @@ void PBPatientAction::Serialize(const SEChronicObstructivePulmonaryDiseaseExacer
 }
 void PBPatientAction::Copy(const SEChronicObstructivePulmonaryDiseaseExacerbation& src, SEChronicObstructivePulmonaryDiseaseExacerbation& dst)
 {
-  cdm::ChronicObstructivePulmonaryDiseaseExacerbationData data;
+  CDM_BIND::ChronicObstructivePulmonaryDiseaseExacerbationData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
 
-void PBPatientAction::Load(const cdm::ConsciousRespirationData& src, SEConsciousRespiration& dst)
+void PBPatientAction::Load(const CDM_BIND::ConsciousRespirationData& src, SEConsciousRespiration& dst)
 {
   PBPatientAction::Serialize(src, dst);
 }
-void PBPatientAction::Serialize(const cdm::ConsciousRespirationData& src, SEConsciousRespiration& dst)
+void PBPatientAction::Serialize(const CDM_BIND::ConsciousRespirationData& src, SEConsciousRespiration& dst)
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
   dst.SetStartImmediately(src.startimmediately());
   for (int i = 0; i < src.command().size(); i++)
   {
-    const cdm::AnyConsciousRespirationCommandData& command = src.command()[i];
+    const CDM_BIND::AnyConsciousRespirationCommandData& command = src.command()[i];
 
     switch (command.Command_case())
     {
-    case cdm::AnyConsciousRespirationCommandData::CommandCase::kForcedPause:
+    case CDM_BIND::AnyConsciousRespirationCommandData::CommandCase::kForcedPause:
       PBPatientAction::Load(command.forcedpause(), dst.AddForcedPause());
       break;
-    case cdm::AnyConsciousRespirationCommandData::CommandCase::kForcedExhale:
+    case CDM_BIND::AnyConsciousRespirationCommandData::CommandCase::kForcedExhale:
       PBPatientAction::Load(command.forcedexhale(), dst.AddForcedExhale());
       break;
-    case cdm::AnyConsciousRespirationCommandData::CommandCase::kForcedInhale:
+    case CDM_BIND::AnyConsciousRespirationCommandData::CommandCase::kForcedInhale:
       PBPatientAction::Load(command.forcedinhale(), dst.AddForcedInhale());
       break;
-    case cdm::AnyConsciousRespirationCommandData::CommandCase::kUseInhaler:
+    case CDM_BIND::AnyConsciousRespirationCommandData::CommandCase::kUseInhaler:
       PBPatientAction::Load(command.useinhaler(), dst.AddUseInhaler());
       break;
     default:
@@ -428,18 +428,18 @@ void PBPatientAction::Serialize(const cdm::ConsciousRespirationData& src, SECons
     dst.m_Commands.back()->SetComment(command.comment());
   }
 }
-cdm::ConsciousRespirationData* PBPatientAction::Unload(const SEConsciousRespiration& src)
+CDM_BIND::ConsciousRespirationData* PBPatientAction::Unload(const SEConsciousRespiration& src)
 {
-  cdm::ConsciousRespirationData* dst = new cdm::ConsciousRespirationData();
+  CDM_BIND::ConsciousRespirationData* dst = new CDM_BIND::ConsciousRespirationData();
   PBPatientAction::Serialize(src, *dst);
   return dst;
 }
-void PBPatientAction::Serialize(const SEConsciousRespiration& src, cdm::ConsciousRespirationData& dst)
+void PBPatientAction::Serialize(const SEConsciousRespiration& src, CDM_BIND::ConsciousRespirationData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
   for (SEConsciousRespirationCommand* cmd : src.m_Commands)
   {
-    cdm::AnyConsciousRespirationCommandData* cmdData = dst.add_command();
+    CDM_BIND::AnyConsciousRespirationCommandData* cmdData = dst.add_command();
     cmdData->set_comment(cmd->GetComment());
     SEForcedPause* bh = dynamic_cast<SEForcedPause*>(cmd);
     if (bh != nullptr)
@@ -470,16 +470,16 @@ void PBPatientAction::Serialize(const SEConsciousRespiration& src, cdm::Consciou
 }
 void PBPatientAction::Copy(const SEConsciousRespiration& src, SEConsciousRespiration& dst)
 {
-  cdm::ConsciousRespirationData data;
+  CDM_BIND::ConsciousRespirationData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
 
-void PBPatientAction::Load(const cdm::ConsumeNutrientsData& src, SEConsumeNutrients& dst)
+void PBPatientAction::Load(const CDM_BIND::ConsumeNutrientsData& src, SEConsumeNutrients& dst)
 {
   PBPatientAction::Serialize(src, dst);
 }
-void PBPatientAction::Serialize(const cdm::ConsumeNutrientsData& src, SEConsumeNutrients& dst)
+void PBPatientAction::Serialize(const CDM_BIND::ConsumeNutrientsData& src, SEConsumeNutrients& dst)
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
   if (src.has_nutrition())
@@ -487,13 +487,13 @@ void PBPatientAction::Serialize(const cdm::ConsumeNutrientsData& src, SEConsumeN
   else
     dst.SetNutritionFile(src.nutritionfile());
 }
-cdm::ConsumeNutrientsData* PBPatientAction::Unload(const SEConsumeNutrients& src)
+CDM_BIND::ConsumeNutrientsData* PBPatientAction::Unload(const SEConsumeNutrients& src)
 {
-  cdm::ConsumeNutrientsData* dst = new cdm::ConsumeNutrientsData();
+  CDM_BIND::ConsumeNutrientsData* dst = new CDM_BIND::ConsumeNutrientsData();
   PBPatientAction::Serialize(src, *dst);
   return dst;
 }
-void PBPatientAction::Serialize(const SEConsumeNutrients& src, cdm::ConsumeNutrientsData& dst)
+void PBPatientAction::Serialize(const SEConsumeNutrients& src, CDM_BIND::ConsumeNutrientsData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
   if (src.HasNutrition())
@@ -503,28 +503,28 @@ void PBPatientAction::Serialize(const SEConsumeNutrients& src, cdm::ConsumeNutri
 }
 void PBPatientAction::Copy(const SEConsumeNutrients& src, SEConsumeNutrients& dst)
 {
-  cdm::ConsumeNutrientsData data;
+  CDM_BIND::ConsumeNutrientsData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
 
-void PBPatientAction::Load(const cdm::DyspneaData& src, SEDyspnea& dst)
+void PBPatientAction::Load(const CDM_BIND::DyspneaData& src, SEDyspnea& dst)
 {
   PBPatientAction::Serialize(src, dst);
 }
-void PBPatientAction::Serialize(const cdm::DyspneaData& src, SEDyspnea& dst)
+void PBPatientAction::Serialize(const CDM_BIND::DyspneaData& src, SEDyspnea& dst)
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
   if (src.has_severity())
     PBProperty::Load(src.severity(), dst.GetSeverity());
 }
-cdm::DyspneaData* PBPatientAction::Unload(const SEDyspnea& src)
+CDM_BIND::DyspneaData* PBPatientAction::Unload(const SEDyspnea& src)
 {
-  cdm::DyspneaData* dst = new cdm::DyspneaData();
+  CDM_BIND::DyspneaData* dst = new CDM_BIND::DyspneaData();
   PBPatientAction::Serialize(src, *dst);
   return dst;
 }
-void PBPatientAction::Serialize(const SEDyspnea& src, cdm::DyspneaData& dst)
+void PBPatientAction::Serialize(const SEDyspnea& src, CDM_BIND::DyspneaData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
   if (src.HasSeverity())
@@ -532,28 +532,28 @@ void PBPatientAction::Serialize(const SEDyspnea& src, cdm::DyspneaData& dst)
 }
 void PBPatientAction::Copy(const SEDyspnea& src, SEDyspnea& dst)
 {
-  cdm::DyspneaData data;
+  CDM_BIND::DyspneaData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
 
-void PBPatientAction::Load(const cdm::ExerciseData& src, SEExercise& dst)
+void PBPatientAction::Load(const CDM_BIND::ExerciseData& src, SEExercise& dst)
 {
   PBPatientAction::Serialize(src, dst);
 }
-void PBPatientAction::Serialize(const cdm::ExerciseData& src, SEExercise& dst)
+void PBPatientAction::Serialize(const CDM_BIND::ExerciseData& src, SEExercise& dst)
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
   if (src.has_intensity())
     PBProperty::Load(src.intensity(), dst.GetIntensity());
 }
-cdm::ExerciseData* PBPatientAction::Unload(const SEExercise& src)
+CDM_BIND::ExerciseData* PBPatientAction::Unload(const SEExercise& src)
 {
-  cdm::ExerciseData* dst = new cdm::ExerciseData();
+  CDM_BIND::ExerciseData* dst = new CDM_BIND::ExerciseData();
   PBPatientAction::Serialize(src, *dst);
   return dst;
 }
-void PBPatientAction::Serialize(const SEExercise& src, cdm::ExerciseData& dst)
+void PBPatientAction::Serialize(const SEExercise& src, CDM_BIND::ExerciseData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
   if (src.HasIntensity())
@@ -561,16 +561,16 @@ void PBPatientAction::Serialize(const SEExercise& src, cdm::ExerciseData& dst)
 }
 void PBPatientAction::Copy(const SEExercise& src, SEExercise& dst)
 {
-  cdm::ExerciseData data;
+  CDM_BIND::ExerciseData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
 
-void PBPatientAction::Load(const cdm::ForcedExhaleData& src, SEForcedExhale& dst)
+void PBPatientAction::Load(const CDM_BIND::ForcedExhaleData& src, SEForcedExhale& dst)
 {
   PBPatientAction::Serialize(src, dst);
 }
-void PBPatientAction::Serialize(const cdm::ForcedExhaleData& src, SEForcedExhale& dst)
+void PBPatientAction::Serialize(const CDM_BIND::ForcedExhaleData& src, SEForcedExhale& dst)
 {
   dst.Clear();
   if (src.has_expiratoryreservevolumefraction())
@@ -582,13 +582,13 @@ void PBPatientAction::Serialize(const cdm::ForcedExhaleData& src, SEForcedExhale
   if (src.has_releaseperiod())
     PBProperty::Load(src.releaseperiod(), dst.GetReleasePeriod());
 }
-cdm::ForcedExhaleData* PBPatientAction::Unload(const SEForcedExhale& src)
+CDM_BIND::ForcedExhaleData* PBPatientAction::Unload(const SEForcedExhale& src)
 {
-  cdm::ForcedExhaleData* dst = new cdm::ForcedExhaleData();
+  CDM_BIND::ForcedExhaleData* dst = new CDM_BIND::ForcedExhaleData();
   PBPatientAction::Serialize(src, *dst);
   return dst;
 }
-void PBPatientAction::Serialize(const SEForcedExhale& src, cdm::ForcedExhaleData& dst)
+void PBPatientAction::Serialize(const SEForcedExhale& src, CDM_BIND::ForcedExhaleData& dst)
 {
   if (src.HasExpiratoryReserveVolumeFraction())
     dst.set_allocated_expiratoryreservevolumefraction(PBProperty::Unload(*src.m_ExpiratoryReserveVolumeFraction));
@@ -601,16 +601,16 @@ void PBPatientAction::Serialize(const SEForcedExhale& src, cdm::ForcedExhaleData
 }
 void PBPatientAction::Copy(const SEForcedExhale& src, SEForcedExhale& dst)
 {
-  cdm::ForcedExhaleData data;
+  CDM_BIND::ForcedExhaleData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
 
-void PBPatientAction::Load(const cdm::ForcedInhaleData& src, SEForcedInhale& dst)
+void PBPatientAction::Load(const CDM_BIND::ForcedInhaleData& src, SEForcedInhale& dst)
 {
   PBPatientAction::Serialize(src, dst);
 }
-void PBPatientAction::Serialize(const cdm::ForcedInhaleData& src, SEForcedInhale& dst)
+void PBPatientAction::Serialize(const CDM_BIND::ForcedInhaleData& src, SEForcedInhale& dst)
 {
   dst.Clear();
   if (src.has_inspiratorycapacityfraction())
@@ -622,13 +622,13 @@ void PBPatientAction::Serialize(const cdm::ForcedInhaleData& src, SEForcedInhale
   if (src.has_releaseperiod())
     PBProperty::Load(src.releaseperiod(), dst.GetReleasePeriod());
 }
-cdm::ForcedInhaleData* PBPatientAction::Unload(const SEForcedInhale& src)
+CDM_BIND::ForcedInhaleData* PBPatientAction::Unload(const SEForcedInhale& src)
 {
-  cdm::ForcedInhaleData* dst = new cdm::ForcedInhaleData();
+  CDM_BIND::ForcedInhaleData* dst = new CDM_BIND::ForcedInhaleData();
   PBPatientAction::Serialize(src, *dst);
   return dst;
 }
-void PBPatientAction::Serialize(const SEForcedInhale& src, cdm::ForcedInhaleData& dst)
+void PBPatientAction::Serialize(const SEForcedInhale& src, CDM_BIND::ForcedInhaleData& dst)
 {
   if (src.HasInspiratoryCapacityFraction())
     dst.set_allocated_inspiratorycapacityfraction(PBProperty::Unload(*src.m_InspiratoryCapacityFraction));
@@ -641,44 +641,44 @@ void PBPatientAction::Serialize(const SEForcedInhale& src, cdm::ForcedInhaleData
 }
 void PBPatientAction::Copy(const SEForcedInhale& src, SEForcedInhale& dst)
 {
-  cdm::ForcedInhaleData data;
+  CDM_BIND::ForcedInhaleData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
 
-void PBPatientAction::Load(const cdm::ForcedPauseData& src, SEForcedPause& dst)
+void PBPatientAction::Load(const CDM_BIND::ForcedPauseData& src, SEForcedPause& dst)
 {
   PBPatientAction::Serialize(src, dst);
 }
-void PBPatientAction::Serialize(const cdm::ForcedPauseData& src, SEForcedPause& dst)
+void PBPatientAction::Serialize(const CDM_BIND::ForcedPauseData& src, SEForcedPause& dst)
 {
   dst.Clear();
   if (src.has_period())
     PBProperty::Load(src.period(), dst.GetPeriod());
 }
-cdm::ForcedPauseData* PBPatientAction::Unload(const SEForcedPause& src)
+CDM_BIND::ForcedPauseData* PBPatientAction::Unload(const SEForcedPause& src)
 {
-  cdm::ForcedPauseData* dst = new cdm::ForcedPauseData();
+  CDM_BIND::ForcedPauseData* dst = new CDM_BIND::ForcedPauseData();
   PBPatientAction::Serialize(src, *dst);
   return dst;
 }
-void PBPatientAction::Serialize(const SEForcedPause& src, cdm::ForcedPauseData& dst)
+void PBPatientAction::Serialize(const SEForcedPause& src, CDM_BIND::ForcedPauseData& dst)
 {
   if (src.HasPeriod())
     dst.set_allocated_period(PBProperty::Unload(*src.m_Period));
 }
 void PBPatientAction::Copy(const SEForcedPause& src, SEForcedPause& dst)
 {
-  cdm::ForcedPauseData data;
+  CDM_BIND::ForcedPauseData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
 
-void PBPatientAction::Load(const cdm::HemorrhageData& src, SEHemorrhage& dst)
+void PBPatientAction::Load(const CDM_BIND::HemorrhageData& src, SEHemorrhage& dst)
 {
   PBPatientAction::Serialize(src, dst);
 }
-void PBPatientAction::Serialize(const cdm::HemorrhageData& src, SEHemorrhage& dst)
+void PBPatientAction::Serialize(const CDM_BIND::HemorrhageData& src, SEHemorrhage& dst)
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
   if (src.has_rate())
@@ -686,60 +686,60 @@ void PBPatientAction::Serialize(const cdm::HemorrhageData& src, SEHemorrhage& ds
   dst.m_Compartment = src.compartment();
   dst.SetType((eHemorrhage_Type)src.type());
 }
-cdm::HemorrhageData* PBPatientAction::Unload(const SEHemorrhage& src)
+CDM_BIND::HemorrhageData* PBPatientAction::Unload(const SEHemorrhage& src)
 {
-  cdm::HemorrhageData* dst = new cdm::HemorrhageData();
+  CDM_BIND::HemorrhageData* dst = new CDM_BIND::HemorrhageData();
   PBPatientAction::Serialize(src, *dst);
   return dst;
 }
-void PBPatientAction::Serialize(const SEHemorrhage& src, cdm::HemorrhageData& dst)
+void PBPatientAction::Serialize(const SEHemorrhage& src, CDM_BIND::HemorrhageData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
   if (src.HasRate())
     dst.set_allocated_rate(PBProperty::Unload(*src.m_Rate));
   if (src.HasCompartment())
     dst.set_compartment(src.m_Compartment);
-  dst.set_type((cdm::HemorrhageData::eType)src.m_Type);
+  dst.set_type((CDM_BIND::HemorrhageData::eType)src.m_Type);
 }
 void PBPatientAction::Copy(const SEHemorrhage& src, SEHemorrhage& dst)
 {
-  cdm::HemorrhageData data;
+  CDM_BIND::HemorrhageData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
 
-void PBPatientAction::Load(const cdm::IntubationData& src, SEIntubation& dst)
+void PBPatientAction::Load(const CDM_BIND::IntubationData& src, SEIntubation& dst)
 {
   PBPatientAction::Serialize(src, dst);
 }
-void PBPatientAction::Serialize(const cdm::IntubationData& src, SEIntubation& dst)
+void PBPatientAction::Serialize(const CDM_BIND::IntubationData& src, SEIntubation& dst)
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
   dst.SetType((eIntubation_Type)src.type());
 }
-cdm::IntubationData* PBPatientAction::Unload(const SEIntubation& src)
+CDM_BIND::IntubationData* PBPatientAction::Unload(const SEIntubation& src)
 {
-  cdm::IntubationData* dst = new cdm::IntubationData();
+  CDM_BIND::IntubationData* dst = new CDM_BIND::IntubationData();
   PBPatientAction::Serialize(src, *dst);
   return dst;
 }
-void PBPatientAction::Serialize(const SEIntubation& src, cdm::IntubationData& dst)
+void PBPatientAction::Serialize(const SEIntubation& src, CDM_BIND::IntubationData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
-  dst.set_type((cdm::IntubationData::eType)src.m_Type);
+  dst.set_type((CDM_BIND::IntubationData::eType)src.m_Type);
 }
 void PBPatientAction::Copy(const SEIntubation& src, SEIntubation& dst)
 {
-  cdm::IntubationData data;
+  CDM_BIND::IntubationData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
 
-void PBPatientAction::Load(const cdm::LobarPneumoniaExacerbationData& src, SELobarPneumoniaExacerbation& dst)
+void PBPatientAction::Load(const CDM_BIND::LobarPneumoniaExacerbationData& src, SELobarPneumoniaExacerbation& dst)
 {
   PBPatientAction::Serialize(src, dst);
 }
-void PBPatientAction::Serialize(const cdm::LobarPneumoniaExacerbationData& src, SELobarPneumoniaExacerbation& dst)
+void PBPatientAction::Serialize(const CDM_BIND::LobarPneumoniaExacerbationData& src, SELobarPneumoniaExacerbation& dst)
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
   if (src.has_severity())
@@ -749,13 +749,13 @@ void PBPatientAction::Serialize(const cdm::LobarPneumoniaExacerbationData& src, 
   if (src.has_rightlungaffected())
     PBProperty::Load(src.rightlungaffected(), dst.GetRightLungAffected());
 }
-cdm::LobarPneumoniaExacerbationData* PBPatientAction::Unload(const SELobarPneumoniaExacerbation& src)
+CDM_BIND::LobarPneumoniaExacerbationData* PBPatientAction::Unload(const SELobarPneumoniaExacerbation& src)
 {
-  cdm::LobarPneumoniaExacerbationData* dst = new cdm::LobarPneumoniaExacerbationData();
+  CDM_BIND::LobarPneumoniaExacerbationData* dst = new CDM_BIND::LobarPneumoniaExacerbationData();
   PBPatientAction::Serialize(src, *dst);
   return dst;
 }
-void PBPatientAction::Serialize(const SELobarPneumoniaExacerbation& src, cdm::LobarPneumoniaExacerbationData& dst)
+void PBPatientAction::Serialize(const SELobarPneumoniaExacerbation& src, CDM_BIND::LobarPneumoniaExacerbationData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
   if (src.HasSeverity())
@@ -767,19 +767,19 @@ void PBPatientAction::Serialize(const SELobarPneumoniaExacerbation& src, cdm::Lo
 }
 void PBPatientAction::Copy(const SELobarPneumoniaExacerbation& src, SELobarPneumoniaExacerbation& dst)
 {
-  cdm::LobarPneumoniaExacerbationData data;
+  CDM_BIND::LobarPneumoniaExacerbationData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
 
-void PBPatientAction::Load(const cdm::MechanicalVentilationData& src, SEMechanicalVentilation& dst, const SESubstanceManager& subMgr)
+void PBPatientAction::Load(const CDM_BIND::MechanicalVentilationData& src, SEMechanicalVentilation& dst, const SESubstanceManager& subMgr)
 {
   PBPatientAction::Serialize(src, dst, subMgr);
 }
-void PBPatientAction::Serialize(const cdm::MechanicalVentilationData& src, SEMechanicalVentilation& dst, const SESubstanceManager& subMgr)
+void PBPatientAction::Serialize(const CDM_BIND::MechanicalVentilationData& src, SEMechanicalVentilation& dst, const SESubstanceManager& subMgr)
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
-  if (src.state() != cdm::eSwitch::NullSwitch)
+  if (src.state() != CDM_BIND::eSwitch::NullSwitch)
     dst.SetState((eSwitch)src.state());
   if (src.has_flow())
     PBProperty::Load(src.flow(), dst.GetFlow());
@@ -791,7 +791,7 @@ void PBPatientAction::Serialize(const cdm::MechanicalVentilationData& src, SEMec
   SESubstance* sub;
   for (int i = 0; i < src.gasfraction_size(); i++)
   {
-    const cdm::SubstanceFractionData& sfData = src.gasfraction()[i];
+    const CDM_BIND::SubstanceFractionData& sfData = src.gasfraction()[i];
     sub = subMgr.GetSubstance(sfData.name());
     if (sub == nullptr)
     {
@@ -808,7 +808,7 @@ void PBPatientAction::Serialize(const cdm::MechanicalVentilationData& src, SEMec
 
   for (int i = 0; i < src.aerosol_size(); i++)
   {
-    const cdm::SubstanceConcentrationData& scData = src.aerosol()[i];
+    const CDM_BIND::SubstanceConcentrationData& scData = src.aerosol()[i];
     sub = subMgr.GetSubstance(scData.name());
     if (sub == nullptr)
     {
@@ -823,16 +823,16 @@ void PBPatientAction::Serialize(const cdm::MechanicalVentilationData& src, SEMec
     PBSubstance::Load(scData, dst.GetAerosol(*sub));
   }
 }
-cdm::MechanicalVentilationData* PBPatientAction::Unload(const SEMechanicalVentilation& src)
+CDM_BIND::MechanicalVentilationData* PBPatientAction::Unload(const SEMechanicalVentilation& src)
 {
-  cdm::MechanicalVentilationData* dst = new cdm::MechanicalVentilationData();
+  CDM_BIND::MechanicalVentilationData* dst = new CDM_BIND::MechanicalVentilationData();
   PBPatientAction::Serialize(src, *dst);
   return dst;
 }
-void PBPatientAction::Serialize(const SEMechanicalVentilation& src, cdm::MechanicalVentilationData& dst)
+void PBPatientAction::Serialize(const SEMechanicalVentilation& src, CDM_BIND::MechanicalVentilationData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
-  dst.set_state((cdm::eSwitch)src.m_State);
+  dst.set_state((CDM_BIND::eSwitch)src.m_State);
   if (src.HasFlow())
     dst.set_allocated_flow(PBProperty::Unload(*src.m_Flow));
   if (src.HasPressure())
@@ -844,86 +844,86 @@ void PBPatientAction::Serialize(const SEMechanicalVentilation& src, cdm::Mechani
 }
 void PBPatientAction::Copy(const SEMechanicalVentilation& src, SEMechanicalVentilation& dst, const SESubstanceManager& subMgr)
 {
-  cdm::MechanicalVentilationData data;
+  CDM_BIND::MechanicalVentilationData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst, subMgr);
 }
 
-void PBPatientAction::Load(const cdm::NeedleDecompressionData& src, SENeedleDecompression& dst)
+void PBPatientAction::Load(const CDM_BIND::NeedleDecompressionData& src, SENeedleDecompression& dst)
 {
   PBPatientAction::Serialize(src, dst);
 }
-void PBPatientAction::Serialize(const cdm::NeedleDecompressionData& src, SENeedleDecompression& dst)
+void PBPatientAction::Serialize(const CDM_BIND::NeedleDecompressionData& src, SENeedleDecompression& dst)
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
   dst.SetSide((eSide)src.side());
-  if (src.state() != cdm::eSwitch::NullSwitch)
+  if (src.state() != CDM_BIND::eSwitch::NullSwitch)
     dst.SetState((eSwitch)src.state());
 }
-cdm::NeedleDecompressionData* PBPatientAction::Unload(const SENeedleDecompression& src)
+CDM_BIND::NeedleDecompressionData* PBPatientAction::Unload(const SENeedleDecompression& src)
 {
-  cdm::NeedleDecompressionData* dst = new cdm::NeedleDecompressionData();
+  CDM_BIND::NeedleDecompressionData* dst = new CDM_BIND::NeedleDecompressionData();
   PBPatientAction::Serialize(src, *dst);
   return dst;
 }
-void PBPatientAction::Serialize(const SENeedleDecompression& src, cdm::NeedleDecompressionData& dst)
+void PBPatientAction::Serialize(const SENeedleDecompression& src, CDM_BIND::NeedleDecompressionData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
   if (src.HasSide())
-    dst.set_side((cdm::eSide)src.m_Side);
-  dst.set_state((cdm::eSwitch)src.m_State);
+    dst.set_side((CDM_BIND::eSide)src.m_Side);
+  dst.set_state((CDM_BIND::eSwitch)src.m_State);
 }
 void PBPatientAction::Copy(const SENeedleDecompression& src, SENeedleDecompression& dst)
 {
-  cdm::NeedleDecompressionData data;
+  CDM_BIND::NeedleDecompressionData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
 
-void PBPatientAction::Load(const cdm::PatientAssessmentRequestData& src, SEPatientAssessmentRequest& dst)
+void PBPatientAction::Load(const CDM_BIND::PatientAssessmentRequestData& src, SEPatientAssessmentRequest& dst)
 {
   PBPatientAction::Serialize(src, dst);
 }
-void PBPatientAction::Serialize(const cdm::PatientAssessmentRequestData& src, SEPatientAssessmentRequest& dst)
+void PBPatientAction::Serialize(const CDM_BIND::PatientAssessmentRequestData& src, SEPatientAssessmentRequest& dst)
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
   dst.SetType((ePatientAssessment_Type)src.type());
 }
-cdm::PatientAssessmentRequestData* PBPatientAction::Unload(const SEPatientAssessmentRequest& src)
+CDM_BIND::PatientAssessmentRequestData* PBPatientAction::Unload(const SEPatientAssessmentRequest& src)
 {
-  cdm::PatientAssessmentRequestData* dst = new cdm::PatientAssessmentRequestData();
+  CDM_BIND::PatientAssessmentRequestData* dst = new CDM_BIND::PatientAssessmentRequestData();
   PBPatientAction::Serialize(src, *dst);
   return dst;
 }
-void PBPatientAction::Serialize(const SEPatientAssessmentRequest& src, cdm::PatientAssessmentRequestData& dst)
+void PBPatientAction::Serialize(const SEPatientAssessmentRequest& src, CDM_BIND::PatientAssessmentRequestData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
-  dst.set_type((cdm::ePatientAssessmentType)src.m_Type);
+  dst.set_type((CDM_BIND::ePatientAssessmentType)src.m_Type);
 }
 void PBPatientAction::Copy(const SEPatientAssessmentRequest& src, SEPatientAssessmentRequest& dst)
 {
-  cdm::PatientAssessmentRequestData data;
+  CDM_BIND::PatientAssessmentRequestData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
 
-void PBPatientAction::Load(const cdm::PericardialEffusionData& src, SEPericardialEffusion& dst)
+void PBPatientAction::Load(const CDM_BIND::PericardialEffusionData& src, SEPericardialEffusion& dst)
 {
   PBPatientAction::Serialize(src, dst);
 }
-void PBPatientAction::Serialize(const cdm::PericardialEffusionData& src, SEPericardialEffusion& dst)
+void PBPatientAction::Serialize(const CDM_BIND::PericardialEffusionData& src, SEPericardialEffusion& dst)
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
   if (src.has_effusionrate())
     PBProperty::Load(src.effusionrate(), dst.GetEffusionRate());
 }
-cdm::PericardialEffusionData* PBPatientAction::Unload(const SEPericardialEffusion& src)
+CDM_BIND::PericardialEffusionData* PBPatientAction::Unload(const SEPericardialEffusion& src)
 {
-  cdm::PericardialEffusionData* dst = new cdm::PericardialEffusionData();
+  CDM_BIND::PericardialEffusionData* dst = new CDM_BIND::PericardialEffusionData();
   PBPatientAction::Serialize(src, *dst);
   return dst;
 }
-void PBPatientAction::Serialize(const SEPericardialEffusion& src, cdm::PericardialEffusionData& dst)
+void PBPatientAction::Serialize(const SEPericardialEffusion& src, CDM_BIND::PericardialEffusionData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
   if (src.HasEffusionRate())
@@ -931,28 +931,28 @@ void PBPatientAction::Serialize(const SEPericardialEffusion& src, cdm::Pericardi
 }
 void PBPatientAction::Copy(const SEPericardialEffusion& src, SEPericardialEffusion& dst)
 {
-  cdm::PericardialEffusionData data;
+  CDM_BIND::PericardialEffusionData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
 
-void PBPatientAction::Load(const cdm::RespiratoryFatigueData& src, SERespiratoryFatigue& dst)
+void PBPatientAction::Load(const CDM_BIND::RespiratoryFatigueData& src, SERespiratoryFatigue& dst)
 {
   PBPatientAction::Serialize(src, dst);
 }
-void PBPatientAction::Serialize(const cdm::RespiratoryFatigueData& src, SERespiratoryFatigue& dst)
+void PBPatientAction::Serialize(const CDM_BIND::RespiratoryFatigueData& src, SERespiratoryFatigue& dst)
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
   if (src.has_severity())
     PBProperty::Load(src.severity(), dst.GetSeverity());
 }
-cdm::RespiratoryFatigueData* PBPatientAction::Unload(const SERespiratoryFatigue& src)
+CDM_BIND::RespiratoryFatigueData* PBPatientAction::Unload(const SERespiratoryFatigue& src)
 {
-  cdm::RespiratoryFatigueData* dst = new cdm::RespiratoryFatigueData();
+  CDM_BIND::RespiratoryFatigueData* dst = new CDM_BIND::RespiratoryFatigueData();
   PBPatientAction::Serialize(src, *dst);
   return dst;
 }
-void PBPatientAction::Serialize(const SERespiratoryFatigue& src, cdm::RespiratoryFatigueData& dst)
+void PBPatientAction::Serialize(const SERespiratoryFatigue& src, CDM_BIND::RespiratoryFatigueData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
   if (src.HasSeverity())
@@ -960,16 +960,16 @@ void PBPatientAction::Serialize(const SERespiratoryFatigue& src, cdm::Respirator
 }
 void PBPatientAction::Copy(const SERespiratoryFatigue& src, SERespiratoryFatigue& dst)
 {
-  cdm::RespiratoryFatigueData data;
+  CDM_BIND::RespiratoryFatigueData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
 
-void PBPatientAction::Load(const cdm::SubstanceBolusData& src, SESubstanceBolus& dst)
+void PBPatientAction::Load(const CDM_BIND::SubstanceBolusData& src, SESubstanceBolus& dst)
 {
   PBPatientAction::Serialize(src, dst);
 }
-void PBPatientAction::Serialize(const cdm::SubstanceBolusData& src, SESubstanceBolus& dst)
+void PBPatientAction::Serialize(const CDM_BIND::SubstanceBolusData& src, SESubstanceBolus& dst)
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
   dst.SetAdminRoute((eSubstanceAdministration_Route)src.administrationroute());
@@ -980,17 +980,17 @@ void PBPatientAction::Serialize(const cdm::SubstanceBolusData& src, SESubstanceB
   if (src.has_state())
     PBPatientAction::Load(src.state(), dst.m_State);
 }
-cdm::SubstanceBolusData* PBPatientAction::Unload(const SESubstanceBolus& src)
+CDM_BIND::SubstanceBolusData* PBPatientAction::Unload(const SESubstanceBolus& src)
 {
-  cdm::SubstanceBolusData* dst = new cdm::SubstanceBolusData();
+  CDM_BIND::SubstanceBolusData* dst = new CDM_BIND::SubstanceBolusData();
   PBPatientAction::Serialize(src, *dst);
   return dst;
 }
-void PBPatientAction::Serialize(const SESubstanceBolus& src, cdm::SubstanceBolusData& dst)
+void PBPatientAction::Serialize(const SESubstanceBolus& src, CDM_BIND::SubstanceBolusData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
   dst.set_substance(src.m_Substance.GetName());
-  dst.set_administrationroute((cdm::SubstanceBolusData::eRoute)src.m_AdminRoute);
+  dst.set_administrationroute((CDM_BIND::SubstanceBolusData::eRoute)src.m_AdminRoute);
   if (src.HasDose())
     dst.set_allocated_dose(PBProperty::Unload(*src.m_Dose));
   if (src.HasConcentration())
@@ -999,29 +999,29 @@ void PBPatientAction::Serialize(const SESubstanceBolus& src, cdm::SubstanceBolus
 }
 void PBPatientAction::Copy(const SESubstanceBolus& src, SESubstanceBolus& dst)
 {
-  cdm::SubstanceBolusData data;
+  CDM_BIND::SubstanceBolusData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
 
-void PBPatientAction::Load(const cdm::SubstanceBolusStateData& src, SESubstanceBolusState& dst)
+void PBPatientAction::Load(const CDM_BIND::SubstanceBolusStateData& src, SESubstanceBolusState& dst)
 {
   PBPatientAction::Serialize(src, dst);
 }
-void PBPatientAction::Serialize(const cdm::SubstanceBolusStateData& src, SESubstanceBolusState& dst)
+void PBPatientAction::Serialize(const CDM_BIND::SubstanceBolusStateData& src, SESubstanceBolusState& dst)
 {
   if (src.has_elapsedtime())
     PBProperty::Load(src.elapsedtime(), dst.GetElapsedTime());
   if (src.has_administereddose())
     PBProperty::Load(src.administereddose(), dst.GetAdministeredDose());
 }
-cdm::SubstanceBolusStateData* PBPatientAction::Unload(const SESubstanceBolusState& src)
+CDM_BIND::SubstanceBolusStateData* PBPatientAction::Unload(const SESubstanceBolusState& src)
 {
-  cdm::SubstanceBolusStateData* dst = new cdm::SubstanceBolusStateData();
+  CDM_BIND::SubstanceBolusStateData* dst = new CDM_BIND::SubstanceBolusStateData();
   PBPatientAction::Serialize(src, *dst);
   return dst;
 }
-void PBPatientAction::Serialize(const SESubstanceBolusState& src, cdm::SubstanceBolusStateData& dst)
+void PBPatientAction::Serialize(const SESubstanceBolusState& src, CDM_BIND::SubstanceBolusStateData& dst)
 {
   dst.set_substance(src.m_Substance.GetName());
   dst.set_allocated_elapsedtime(PBProperty::Unload(*src.m_ElapsedTime));
@@ -1029,16 +1029,16 @@ void PBPatientAction::Serialize(const SESubstanceBolusState& src, cdm::Substance
 }
 void PBPatientAction::Copy(const SESubstanceBolusState& src, SESubstanceBolusState& dst)
 {
-  cdm::SubstanceBolusStateData data;
+  CDM_BIND::SubstanceBolusStateData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
 
-void PBPatientAction::Load(const cdm::SubstanceCompoundInfusionData& src, SESubstanceCompoundInfusion& dst)
+void PBPatientAction::Load(const CDM_BIND::SubstanceCompoundInfusionData& src, SESubstanceCompoundInfusion& dst)
 {
   PBPatientAction::Serialize(src, dst);
 }
-void PBPatientAction::Serialize(const cdm::SubstanceCompoundInfusionData& src, SESubstanceCompoundInfusion& dst)
+void PBPatientAction::Serialize(const CDM_BIND::SubstanceCompoundInfusionData& src, SESubstanceCompoundInfusion& dst)
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
   if (src.has_rate())
@@ -1046,13 +1046,13 @@ void PBPatientAction::Serialize(const cdm::SubstanceCompoundInfusionData& src, S
   if (src.has_bagvolume())
     PBProperty::Load(src.bagvolume(), dst.GetBagVolume());
 }
-cdm::SubstanceCompoundInfusionData* PBPatientAction::Unload(const SESubstanceCompoundInfusion& src)
+CDM_BIND::SubstanceCompoundInfusionData* PBPatientAction::Unload(const SESubstanceCompoundInfusion& src)
 {
-  cdm::SubstanceCompoundInfusionData* dst = new cdm::SubstanceCompoundInfusionData();
+  CDM_BIND::SubstanceCompoundInfusionData* dst = new CDM_BIND::SubstanceCompoundInfusionData();
   PBPatientAction::Serialize(src, *dst);
   return dst;
 }
-void PBPatientAction::Serialize(const SESubstanceCompoundInfusion& src, cdm::SubstanceCompoundInfusionData& dst)
+void PBPatientAction::Serialize(const SESubstanceCompoundInfusion& src, CDM_BIND::SubstanceCompoundInfusionData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
   dst.set_substancecompound(src.m_Compound.GetName());
@@ -1063,16 +1063,16 @@ void PBPatientAction::Serialize(const SESubstanceCompoundInfusion& src, cdm::Sub
 }
 void PBPatientAction::Copy(const SESubstanceCompoundInfusion& src, SESubstanceCompoundInfusion& dst)
 {
-  cdm::SubstanceCompoundInfusionData data;
+  CDM_BIND::SubstanceCompoundInfusionData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
 
-void PBPatientAction::Load(const cdm::SubstanceInfusionData& src, SESubstanceInfusion& dst)
+void PBPatientAction::Load(const CDM_BIND::SubstanceInfusionData& src, SESubstanceInfusion& dst)
 {
   PBPatientAction::Serialize(src, dst);
 }
-void PBPatientAction::Serialize(const cdm::SubstanceInfusionData& src, SESubstanceInfusion& dst)
+void PBPatientAction::Serialize(const CDM_BIND::SubstanceInfusionData& src, SESubstanceInfusion& dst)
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
   if (src.has_rate())
@@ -1080,13 +1080,13 @@ void PBPatientAction::Serialize(const cdm::SubstanceInfusionData& src, SESubstan
   if (src.has_concentration())
     PBProperty::Load(src.concentration(), dst.GetConcentration());
 }
-cdm::SubstanceInfusionData* PBPatientAction::Unload(const SESubstanceInfusion& src)
+CDM_BIND::SubstanceInfusionData* PBPatientAction::Unload(const SESubstanceInfusion& src)
 {
-  cdm::SubstanceInfusionData* dst = new cdm::SubstanceInfusionData();
+  CDM_BIND::SubstanceInfusionData* dst = new CDM_BIND::SubstanceInfusionData();
   PBPatientAction::Serialize(src, *dst);
   return dst;
 }
-void PBPatientAction::Serialize(const SESubstanceInfusion& src, cdm::SubstanceInfusionData& dst)
+void PBPatientAction::Serialize(const SESubstanceInfusion& src, CDM_BIND::SubstanceInfusionData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
   dst.set_substance(src.m_Substance.GetName());
@@ -1097,16 +1097,16 @@ void PBPatientAction::Serialize(const SESubstanceInfusion& src, cdm::SubstanceIn
 }
 void PBPatientAction::Copy(const SESubstanceInfusion& src, SESubstanceInfusion& dst)
 {
-  cdm::SubstanceInfusionData data;
+  CDM_BIND::SubstanceInfusionData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
 
-void PBPatientAction::Load(const cdm::SupplementalOxygenData& src, SESupplementalOxygen& dst)
+void PBPatientAction::Load(const CDM_BIND::SupplementalOxygenData& src, SESupplementalOxygen& dst)
 {
   PBPatientAction::Serialize(src, dst);
 }
-void PBPatientAction::Serialize(const cdm::SupplementalOxygenData& src, SESupplementalOxygen& dst)
+void PBPatientAction::Serialize(const CDM_BIND::SupplementalOxygenData& src, SESupplementalOxygen& dst)
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
   dst.SetDevice((eSupplementalOxygen_Device)src.device());
@@ -1115,16 +1115,16 @@ void PBPatientAction::Serialize(const cdm::SupplementalOxygenData& src, SESupple
   if (src.has_volume())
     PBProperty::Load(src.volume(), dst.GetVolume());
 }
-cdm::SupplementalOxygenData* PBPatientAction::Unload(const SESupplementalOxygen& src)
+CDM_BIND::SupplementalOxygenData* PBPatientAction::Unload(const SESupplementalOxygen& src)
 {
-  cdm::SupplementalOxygenData* dst = new cdm::SupplementalOxygenData();
+  CDM_BIND::SupplementalOxygenData* dst = new CDM_BIND::SupplementalOxygenData();
   PBPatientAction::Serialize(src, *dst);
   return dst;
 }
-void PBPatientAction::Serialize(const SESupplementalOxygen& src, cdm::SupplementalOxygenData& dst)
+void PBPatientAction::Serialize(const SESupplementalOxygen& src, CDM_BIND::SupplementalOxygenData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
-  dst.set_device((cdm::SupplementalOxygenData::eDevice)src.m_Device);
+  dst.set_device((CDM_BIND::SupplementalOxygenData::eDevice)src.m_Device);
   if (src.HasFlow())
     dst.set_allocated_flow(PBProperty::Unload(*src.m_Flow));
   if (src.HasVolume())
@@ -1132,16 +1132,16 @@ void PBPatientAction::Serialize(const SESupplementalOxygen& src, cdm::Supplement
 }
 void PBPatientAction::Copy(const SESupplementalOxygen& src, SESupplementalOxygen& dst)
 {
-  cdm::SupplementalOxygenData data;
+  CDM_BIND::SupplementalOxygenData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
 
-void PBPatientAction::Load(const cdm::TensionPneumothoraxData& src, SETensionPneumothorax& dst)
+void PBPatientAction::Load(const CDM_BIND::TensionPneumothoraxData& src, SETensionPneumothorax& dst)
 {
   PBPatientAction::Serialize(src, dst);
 }
-void PBPatientAction::Serialize(const cdm::TensionPneumothoraxData& src, SETensionPneumothorax& dst)
+void PBPatientAction::Serialize(const CDM_BIND::TensionPneumothoraxData& src, SETensionPneumothorax& dst)
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
   dst.SetType((eGate)src.type());
@@ -1149,223 +1149,223 @@ void PBPatientAction::Serialize(const cdm::TensionPneumothoraxData& src, SETensi
   if (src.has_severity())
     PBProperty::Load(src.severity(), dst.GetSeverity());
 }
-cdm::TensionPneumothoraxData* PBPatientAction::Unload(const SETensionPneumothorax& src)
+CDM_BIND::TensionPneumothoraxData* PBPatientAction::Unload(const SETensionPneumothorax& src)
 {
-  cdm::TensionPneumothoraxData* dst = new cdm::TensionPneumothoraxData();
+  CDM_BIND::TensionPneumothoraxData* dst = new CDM_BIND::TensionPneumothoraxData();
   PBPatientAction::Serialize(src, *dst);
   return dst;
 }
-void PBPatientAction::Serialize(const SETensionPneumothorax& src, cdm::TensionPneumothoraxData& dst)
+void PBPatientAction::Serialize(const SETensionPneumothorax& src, CDM_BIND::TensionPneumothoraxData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
   if (src.HasType())
-    dst.set_type((cdm::eGate)src.m_Type);
+    dst.set_type((CDM_BIND::eGate)src.m_Type);
   if (src.HasSide())
-    dst.set_side((cdm::eSide)src.m_Side);
+    dst.set_side((CDM_BIND::eSide)src.m_Side);
   if (src.HasSeverity())
     dst.set_allocated_severity(PBProperty::Unload(*src.m_Severity));
 }
 void PBPatientAction::Copy(const SETensionPneumothorax& src, SETensionPneumothorax& dst)
 {
-  cdm::TensionPneumothoraxData data;
+  CDM_BIND::TensionPneumothoraxData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
 
-void PBPatientAction::Load(const cdm::UrinateData& src, SEUrinate& dst)
+void PBPatientAction::Load(const CDM_BIND::UrinateData& src, SEUrinate& dst)
 {
   PBPatientAction::Serialize(src, dst);
 }
-void PBPatientAction::Serialize(const cdm::UrinateData& src, SEUrinate& dst)
+void PBPatientAction::Serialize(const CDM_BIND::UrinateData& src, SEUrinate& dst)
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
 }
-cdm::UrinateData* PBPatientAction::Unload(const SEUrinate& src)
+CDM_BIND::UrinateData* PBPatientAction::Unload(const SEUrinate& src)
 {
-  cdm::UrinateData* dst = new cdm::UrinateData();
+  CDM_BIND::UrinateData* dst = new CDM_BIND::UrinateData();
   PBPatientAction::Serialize(src, *dst);
   return dst;
 }
-void PBPatientAction::Serialize(const SEUrinate& src, cdm::UrinateData& dst)
+void PBPatientAction::Serialize(const SEUrinate& src, CDM_BIND::UrinateData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
 }
 void PBPatientAction::Copy(const SEUrinate& src, SEUrinate& dst)
 {
-  cdm::UrinateData data;
+  CDM_BIND::UrinateData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
 
-void PBPatientAction::Load(const cdm::UseInhalerData& src, SEUseInhaler& dst)
+void PBPatientAction::Load(const CDM_BIND::UseInhalerData& src, SEUseInhaler& dst)
 {
   PBPatientAction::Serialize(src, dst);
 }
-void PBPatientAction::Serialize(const cdm::UseInhalerData& src, SEUseInhaler& dst)
+void PBPatientAction::Serialize(const CDM_BIND::UseInhalerData& src, SEUseInhaler& dst)
 {
   dst.Clear();
 }
-cdm::UseInhalerData* PBPatientAction::Unload(const SEUseInhaler& src)
+CDM_BIND::UseInhalerData* PBPatientAction::Unload(const SEUseInhaler& src)
 {
-  cdm::UseInhalerData* dst = new cdm::UseInhalerData();
+  CDM_BIND::UseInhalerData* dst = new CDM_BIND::UseInhalerData();
   PBPatientAction::Serialize(src, *dst);
   return dst;
 }
-void PBPatientAction::Serialize(const SEUseInhaler& src, cdm::UseInhalerData& dst)
+void PBPatientAction::Serialize(const SEUseInhaler& src, CDM_BIND::UseInhalerData& dst)
 {
 
 }
 void PBPatientAction::Copy(const SEUseInhaler& src, SEUseInhaler& dst)
 {
-  cdm::UseInhalerData data;
+  CDM_BIND::UseInhalerData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
 
 
-SEPatientAction* PBPatientAction::Load(const cdm::AnyPatientActionData& any, SESubstanceManager& subMgr)
+SEPatientAction* PBPatientAction::Load(const CDM_BIND::AnyPatientActionData& any, SESubstanceManager& subMgr)
 {
   switch (any.Action_case())
   {
-  case cdm::AnyPatientActionData::ActionCase::kAssessment:
+  case CDM_BIND::AnyPatientActionData::ActionCase::kAssessment:
   {
     SEPatientAssessmentRequest* a = new SEPatientAssessmentRequest();
     PBPatientAction::Load(any.assessment(), *a);
     return a;
   }
-  case cdm::AnyPatientActionData::ActionCase::kAcuteRespiratoryDistressSyndromeExacerbation:
+  case CDM_BIND::AnyPatientActionData::ActionCase::kAcuteRespiratoryDistressSyndromeExacerbation:
   {
     SEAcuteRespiratoryDistressSyndromeExacerbation* a = new SEAcuteRespiratoryDistressSyndromeExacerbation();
     PBPatientAction::Load(any.acuterespiratorydistresssyndromeexacerbation(), *a);
     return a;
   }
-  case cdm::AnyPatientActionData::ActionCase::kAcuteStress:
+  case CDM_BIND::AnyPatientActionData::ActionCase::kAcuteStress:
   {
     SEAcuteStress* a = new SEAcuteStress();
     PBPatientAction::Load(any.acutestress(), *a);
     return a;
   }
-  case cdm::AnyPatientActionData::ActionCase::kAirwayObstruction:
+  case CDM_BIND::AnyPatientActionData::ActionCase::kAirwayObstruction:
   {
     SEAirwayObstruction* a = new SEAirwayObstruction();
     PBPatientAction::Load(any.airwayobstruction(), *a);
     return a;
   }
-  case cdm::AnyPatientActionData::ActionCase::kAsthmaAttack:
+  case CDM_BIND::AnyPatientActionData::ActionCase::kAsthmaAttack:
   {
     SEAsthmaAttack* a = new SEAsthmaAttack();
     PBPatientAction::Load(any.asthmaattack(), *a);
     return a;
   }
-  case cdm::AnyPatientActionData::ActionCase::kBrainInjury:
+  case CDM_BIND::AnyPatientActionData::ActionCase::kBrainInjury:
   {
     SEBrainInjury* a = new SEBrainInjury();
     PBPatientAction::Load(any.braininjury(), *a);
     return a;
   }
-  case cdm::AnyPatientActionData::ActionCase::kBronchoconstriction:
+  case CDM_BIND::AnyPatientActionData::ActionCase::kBronchoconstriction:
   {
     SEBronchoconstriction* a = new SEBronchoconstriction();
     PBPatientAction::Load(any.bronchoconstriction(), *a);
     return a;
   }
-  case cdm::AnyPatientActionData::ActionCase::kCardiacArrest:
+  case CDM_BIND::AnyPatientActionData::ActionCase::kCardiacArrest:
   {
     SECardiacArrest* a = new SECardiacArrest();
     PBPatientAction::Load(any.cardiacarrest(), *a);
     return a;
   }
-  case cdm::AnyPatientActionData::ActionCase::kChestCompressionForce:
+  case CDM_BIND::AnyPatientActionData::ActionCase::kChestCompressionForce:
   {
     SEChestCompressionForce* a = new SEChestCompressionForce();
     PBPatientAction::Load(any.chestcompressionforce(), *a);
     return a;
   }
-  case cdm::AnyPatientActionData::ActionCase::kChestCompressionForceScale:
+  case CDM_BIND::AnyPatientActionData::ActionCase::kChestCompressionForceScale:
   {
     SEChestCompressionForceScale* a = new SEChestCompressionForceScale();
     PBPatientAction::Load(any.chestcompressionforcescale(), *a);
     return a;
   }
-  case cdm::AnyPatientActionData::ActionCase::kChestOcclusiveDressing:
+  case CDM_BIND::AnyPatientActionData::ActionCase::kChestOcclusiveDressing:
   {
     SEChestOcclusiveDressing* a = new SEChestOcclusiveDressing();
     PBPatientAction::Load(any.chestocclusivedressing(), *a);
     return a;
   }
-  case cdm::AnyPatientActionData::ActionCase::kChronicObstructivePulmonaryDiseaseExacerbation:
+  case CDM_BIND::AnyPatientActionData::ActionCase::kChronicObstructivePulmonaryDiseaseExacerbation:
   {
     SEChronicObstructivePulmonaryDiseaseExacerbation* a = new SEChronicObstructivePulmonaryDiseaseExacerbation();
     PBPatientAction::Load(any.chronicobstructivepulmonarydiseaseexacerbation(), *a);
     return a;
   }
-  case cdm::AnyPatientActionData::ActionCase::kConsciousRespiration:
+  case CDM_BIND::AnyPatientActionData::ActionCase::kConsciousRespiration:
   {
     SEConsciousRespiration* a = new SEConsciousRespiration();
     PBPatientAction::Load(any.consciousrespiration(), *a);
     return a;
   }
-  case cdm::AnyPatientActionData::ActionCase::kConsumeNutrients:
+  case CDM_BIND::AnyPatientActionData::ActionCase::kConsumeNutrients:
   {
     SEConsumeNutrients* a = new SEConsumeNutrients();
     PBPatientAction::Load(any.consumenutrients(), *a);
     return a;
   }
-  case cdm::AnyPatientActionData::ActionCase::kDyspnea:
+  case CDM_BIND::AnyPatientActionData::ActionCase::kDyspnea:
   {
     SEDyspnea* a = new SEDyspnea();
     PBPatientAction::Load(any.dyspnea(), *a);
     return a;
   }
-  case cdm::AnyPatientActionData::ActionCase::kExercise:
+  case CDM_BIND::AnyPatientActionData::ActionCase::kExercise:
   {
     SEExercise* a = new SEExercise();
     PBPatientAction::Load(any.exercise(), *a);
     return a;
   }
-  case cdm::AnyPatientActionData::ActionCase::kHemorrhage:
+  case CDM_BIND::AnyPatientActionData::ActionCase::kHemorrhage:
   {
     SEHemorrhage* a = new SEHemorrhage();
     PBPatientAction::Load(any.hemorrhage(), *a);
     return a;
   }
-  case cdm::AnyPatientActionData::ActionCase::kIntubation:
+  case CDM_BIND::AnyPatientActionData::ActionCase::kIntubation:
   {
     SEIntubation* a = new SEIntubation();
     PBPatientAction::Load(any.intubation(), *a);
     return a;
   }
-  case cdm::AnyPatientActionData::ActionCase::kLobarPneumoniaExacerbation:
+  case CDM_BIND::AnyPatientActionData::ActionCase::kLobarPneumoniaExacerbation:
   {
     SELobarPneumoniaExacerbation* a = new SELobarPneumoniaExacerbation();
     PBPatientAction::Load(any.lobarpneumoniaexacerbation(), *a);
     return a;
   }
-  case cdm::AnyPatientActionData::ActionCase::kMechanicalVentilation:
+  case CDM_BIND::AnyPatientActionData::ActionCase::kMechanicalVentilation:
   {
     SEMechanicalVentilation* a = new SEMechanicalVentilation();
     PBPatientAction::Load(any.mechanicalventilation(), *a, subMgr);
     return a;
   }
-  case cdm::AnyPatientActionData::ActionCase::kNeedleDecompression:
+  case CDM_BIND::AnyPatientActionData::ActionCase::kNeedleDecompression:
   {
     SENeedleDecompression* a = new SENeedleDecompression();
     PBPatientAction::Load(any.needledecompression(), *a);
     return a;
   }
-  case cdm::AnyPatientActionData::ActionCase::kPericardialEffusion:
+  case CDM_BIND::AnyPatientActionData::ActionCase::kPericardialEffusion:
   {
     SEPericardialEffusion* a = new SEPericardialEffusion();
     PBPatientAction::Load(any.pericardialeffusion(), *a);
     return a;
   }
-  case cdm::AnyPatientActionData::ActionCase::kRespiratoryFatigue:
+  case CDM_BIND::AnyPatientActionData::ActionCase::kRespiratoryFatigue:
   {
     SERespiratoryFatigue* a = new SERespiratoryFatigue();
     PBPatientAction::Load(any.respiratoryfatigue(), *a);
     return a;
   }
-  case cdm::AnyPatientActionData::ActionCase::kSubstanceBolus:
+  case CDM_BIND::AnyPatientActionData::ActionCase::kSubstanceBolus:
   {
     SESubstance* sub = subMgr.GetSubstance(any.substancebolus().substance());
     if (sub == nullptr)
@@ -1377,7 +1377,7 @@ SEPatientAction* PBPatientAction::Load(const cdm::AnyPatientActionData& any, SES
     PBPatientAction::Load(any.substancebolus(), *a);
     return a;
   }
-  case cdm::AnyPatientActionData::ActionCase::kSubstanceInfusion:
+  case CDM_BIND::AnyPatientActionData::ActionCase::kSubstanceInfusion:
   {
     SESubstance* sub = subMgr.GetSubstance(any.substanceinfusion().substance());
     if (sub == nullptr)
@@ -1389,7 +1389,7 @@ SEPatientAction* PBPatientAction::Load(const cdm::AnyPatientActionData& any, SES
     PBPatientAction::Load(any.substanceinfusion(), *a);
     return a;
   }
-  case cdm::AnyPatientActionData::ActionCase::kSubstanceCompoundInfusion:
+  case CDM_BIND::AnyPatientActionData::ActionCase::kSubstanceCompoundInfusion:
   {
     SESubstanceCompound* subC = subMgr.GetCompound(any.substancecompoundinfusion().substancecompound());
     if (subC == nullptr)
@@ -1401,19 +1401,19 @@ SEPatientAction* PBPatientAction::Load(const cdm::AnyPatientActionData& any, SES
     PBPatientAction::Load(any.substancecompoundinfusion(), *a);
     return a;
   }
-  case cdm::AnyPatientActionData::ActionCase::kSupplementalOxygen:
+  case CDM_BIND::AnyPatientActionData::ActionCase::kSupplementalOxygen:
   {
     SESupplementalOxygen* a = new SESupplementalOxygen();
     PBPatientAction::Load(any.supplementaloxygen(), *a);
     return a;
   }
-  case cdm::AnyPatientActionData::ActionCase::kTensionPneumothorax:
+  case CDM_BIND::AnyPatientActionData::ActionCase::kTensionPneumothorax:
   {
     SETensionPneumothorax* a = new SETensionPneumothorax();
     PBPatientAction::Load(any.tensionpneumothorax(), *a);
     return a;
   }
-  case cdm::AnyPatientActionData::ActionCase::kUrinate:
+  case CDM_BIND::AnyPatientActionData::ActionCase::kUrinate:
   {
     SEUrinate* a = new SEUrinate();
     PBPatientAction::Load(any.urinate(), *a);
@@ -1423,9 +1423,9 @@ SEPatientAction* PBPatientAction::Load(const cdm::AnyPatientActionData& any, SES
   subMgr.Error("Unknown action type : " + any.Action_case());
   return nullptr;
 }
-cdm::AnyPatientActionData* PBPatientAction::Unload(const SEPatientAction& action)
+CDM_BIND::AnyPatientActionData* PBPatientAction::Unload(const SEPatientAction& action)
 {
-  cdm::AnyPatientActionData* any = new cdm::AnyPatientActionData();
+  CDM_BIND::AnyPatientActionData* any = new CDM_BIND::AnyPatientActionData();
   const SEPatientAssessmentRequest* ar = dynamic_cast<const SEPatientAssessmentRequest*>(&action);
   if (ar != nullptr)
   {

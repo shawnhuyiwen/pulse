@@ -32,64 +32,64 @@ public:
   static void SaveCompartmentManagerFile(const SECompartmentManager& mgr, const std::string& filename);
 
   // Generic Compartments
-  static void Load(const cdm::CompartmentManagerData& src, SECompartmentManager& dst, SECircuitManager* circuits = nullptr);
-  static cdm::CompartmentManagerData* Unload(const SECompartmentManager& src);
-  static void Serialize(const cdm::CompartmentManagerData& src, SECompartmentManager& dst, SECircuitManager* circuits = nullptr);
-  static void Serialize(const SECompartmentManager& src, cdm::CompartmentManagerData& dst);
-  static void Serialize(const cdm::CompartmentData& src, SECompartment& dst);
-  static void Serialize(const SECompartment& src, cdm::CompartmentData& dst);
-  static void Serialize(const cdm::CompartmentLinkData& src, SECompartmentLink& dst);
-  static void Serialize(const SECompartmentLink& src, cdm::CompartmentLinkData& dst);
+  static void Load(const CDM_BIND::CompartmentManagerData& src, SECompartmentManager& dst, SECircuitManager* circuits = nullptr);
+  static CDM_BIND::CompartmentManagerData* Unload(const SECompartmentManager& src);
+  static void Serialize(const CDM_BIND::CompartmentManagerData& src, SECompartmentManager& dst, SECircuitManager* circuits = nullptr);
+  static void Serialize(const SECompartmentManager& src, CDM_BIND::CompartmentManagerData& dst);
+  static void Serialize(const CDM_BIND::CompartmentData& src, SECompartment& dst);
+  static void Serialize(const SECompartment& src, CDM_BIND::CompartmentData& dst);
+  static void Serialize(const CDM_BIND::CompartmentLinkData& src, SECompartmentLink& dst);
+  static void Serialize(const SECompartmentLink& src, CDM_BIND::CompartmentLinkData& dst);
 
   // Fluid (Liquid, Gas) Compartments
-  static void Load(const cdm::GasCompartmentData& src, SEGasCompartment& dst, SESubstanceManager& subMgr, SECircuitManager* circuits = nullptr);
-  static cdm::GasCompartmentData* Unload(const SEGasCompartment& src);
-  static void Load(const cdm::GasCompartmentGraphData& src, SEGasCompartmentGraph& dst, SECompartmentManager& cmptMgr);
-  static cdm::GasCompartmentGraphData* Unload(const SEGasCompartmentGraph& src);
-  static void Load(const cdm::GasCompartmentLinkData& src, SEGasCompartmentLink& dst, SECircuitManager* circuits = nullptr);
-  static cdm::GasCompartmentLinkData* Unload(const SEGasCompartmentLink& src);
-  static void Load(const cdm::LiquidCompartmentData& src, SELiquidCompartment& dst, SESubstanceManager& subMgr, SECircuitManager* circuits = nullptr);
-  static cdm::LiquidCompartmentData* Unload(const SELiquidCompartment& src);
-  static void Load(const cdm::LiquidCompartmentGraphData& src, SELiquidCompartmentGraph& dst, SECompartmentManager& cmptMgr);
-  static cdm::LiquidCompartmentGraphData* Unload(const SELiquidCompartmentGraph& src);
-  static void Load(const cdm::LiquidCompartmentLinkData& src, SELiquidCompartmentLink& dst, SECircuitManager* circuits = nullptr);
-  static cdm::LiquidCompartmentLinkData* Unload(const SELiquidCompartmentLink& src);
+  static void Load(const CDM_BIND::GasCompartmentData& src, SEGasCompartment& dst, SESubstanceManager& subMgr, SECircuitManager* circuits = nullptr);
+  static CDM_BIND::GasCompartmentData* Unload(const SEGasCompartment& src);
+  static void Load(const CDM_BIND::GasCompartmentGraphData& src, SEGasCompartmentGraph& dst, SECompartmentManager& cmptMgr);
+  static CDM_BIND::GasCompartmentGraphData* Unload(const SEGasCompartmentGraph& src);
+  static void Load(const CDM_BIND::GasCompartmentLinkData& src, SEGasCompartmentLink& dst, SECircuitManager* circuits = nullptr);
+  static CDM_BIND::GasCompartmentLinkData* Unload(const SEGasCompartmentLink& src);
+  static void Load(const CDM_BIND::LiquidCompartmentData& src, SELiquidCompartment& dst, SESubstanceManager& subMgr, SECircuitManager* circuits = nullptr);
+  static CDM_BIND::LiquidCompartmentData* Unload(const SELiquidCompartment& src);
+  static void Load(const CDM_BIND::LiquidCompartmentGraphData& src, SELiquidCompartmentGraph& dst, SECompartmentManager& cmptMgr);
+  static CDM_BIND::LiquidCompartmentGraphData* Unload(const SELiquidCompartmentGraph& src);
+  static void Load(const CDM_BIND::LiquidCompartmentLinkData& src, SELiquidCompartmentLink& dst, SECircuitManager* circuits = nullptr);
+  static CDM_BIND::LiquidCompartmentLinkData* Unload(const SELiquidCompartmentLink& src);
 
   template<FLUID_COMPARTMENT_TEMPLATE>
-  static void Serialize(const cdm::FluidCompartmentData& src, SEFluidCompartment<FLUID_COMPARTMENT_TYPES>& dst, SECircuitManager* circuits = nullptr);
+  static void Serialize(const CDM_BIND::FluidCompartmentData& src, SEFluidCompartment<FLUID_COMPARTMENT_TYPES>& dst, SECircuitManager* circuits = nullptr);
   template<FLUID_COMPARTMENT_TEMPLATE>
-  static void Serialize(const SEFluidCompartment<FLUID_COMPARTMENT_TYPES>& src, cdm::FluidCompartmentData& dst);
+  static void Serialize(const SEFluidCompartment<FLUID_COMPARTMENT_TYPES>& src, CDM_BIND::FluidCompartmentData& dst);
   template<FLUID_COMPARTMENT_LINK_TEMPLATE>
-  static void Serialize(const cdm::FluidCompartmentLinkData& src, SEFluidCompartmentLink<FLUID_COMPARTMENT_LINK_TYPES>& dst, SECircuitManager* circuits = nullptr);
+  static void Serialize(const CDM_BIND::FluidCompartmentLinkData& src, SEFluidCompartmentLink<FLUID_COMPARTMENT_LINK_TYPES>& dst, SECircuitManager* circuits = nullptr);
   template<FLUID_COMPARTMENT_LINK_TEMPLATE>
-  static void Serialize(const SEFluidCompartmentLink<FLUID_COMPARTMENT_LINK_TYPES>& src, cdm::FluidCompartmentLinkData& dst);
+  static void Serialize(const SEFluidCompartmentLink<FLUID_COMPARTMENT_LINK_TYPES>& src, CDM_BIND::FluidCompartmentLinkData& dst);
 
-  static void Serialize(const cdm::GasCompartmentData& src, SEGasCompartment& dst, SESubstanceManager& subMgr, SECircuitManager* circuits = nullptr);
-  static void Serialize(const SEGasCompartment& src, cdm::GasCompartmentData& dst);
-  static void Serialize(const cdm::GasCompartmentGraphData& src, SEGasCompartmentGraph& dst, SECompartmentManager& cmptMgr);
-  static void Serialize(const SEGasCompartmentGraph& src, cdm::GasCompartmentGraphData& dst);
-  static void Serialize(const cdm::GasCompartmentLinkData& src, SEGasCompartmentLink& dst, SECircuitManager* circuits = nullptr);
-  static void Serialize(const SEGasCompartmentLink& src, cdm::GasCompartmentLinkData& dst);
-  static void Serialize(const cdm::LiquidCompartmentData& src, SELiquidCompartment& dst, SESubstanceManager& subMgr, SECircuitManager* circuits = nullptr);
-  static void Serialize(const SELiquidCompartment& src, cdm::LiquidCompartmentData& dst);
-  static void Serialize(const cdm::LiquidCompartmentGraphData& src, SELiquidCompartmentGraph& dst, SECompartmentManager& cmptMgr);
-  static void Serialize(const SELiquidCompartmentGraph& src, cdm::LiquidCompartmentGraphData& dst);
-  static void Serialize(const cdm::LiquidCompartmentLinkData& src, SELiquidCompartmentLink& dst, SECircuitManager* circuits = nullptr);
-  static void Serialize(const SELiquidCompartmentLink& src, cdm::LiquidCompartmentLinkData& dst);
+  static void Serialize(const CDM_BIND::GasCompartmentData& src, SEGasCompartment& dst, SESubstanceManager& subMgr, SECircuitManager* circuits = nullptr);
+  static void Serialize(const SEGasCompartment& src, CDM_BIND::GasCompartmentData& dst);
+  static void Serialize(const CDM_BIND::GasCompartmentGraphData& src, SEGasCompartmentGraph& dst, SECompartmentManager& cmptMgr);
+  static void Serialize(const SEGasCompartmentGraph& src, CDM_BIND::GasCompartmentGraphData& dst);
+  static void Serialize(const CDM_BIND::GasCompartmentLinkData& src, SEGasCompartmentLink& dst, SECircuitManager* circuits = nullptr);
+  static void Serialize(const SEGasCompartmentLink& src, CDM_BIND::GasCompartmentLinkData& dst);
+  static void Serialize(const CDM_BIND::LiquidCompartmentData& src, SELiquidCompartment& dst, SESubstanceManager& subMgr, SECircuitManager* circuits = nullptr);
+  static void Serialize(const SELiquidCompartment& src, CDM_BIND::LiquidCompartmentData& dst);
+  static void Serialize(const CDM_BIND::LiquidCompartmentGraphData& src, SELiquidCompartmentGraph& dst, SECompartmentManager& cmptMgr);
+  static void Serialize(const SELiquidCompartmentGraph& src, CDM_BIND::LiquidCompartmentGraphData& dst);
+  static void Serialize(const CDM_BIND::LiquidCompartmentLinkData& src, SELiquidCompartmentLink& dst, SECircuitManager* circuits = nullptr);
+  static void Serialize(const SELiquidCompartmentLink& src, CDM_BIND::LiquidCompartmentLinkData& dst);
 
   // Thermal
-  static void Load(const cdm::ThermalCompartmentData& src, SEThermalCompartment& dst, SECircuitManager* circuits = nullptr);
-  static cdm::ThermalCompartmentData* Unload(const SEThermalCompartment& src);
-  static void Load(const cdm::ThermalCompartmentLinkData& src, SEThermalCompartmentLink& dst, SECircuitManager* circuits = nullptr);
-  static cdm::ThermalCompartmentLinkData* Unload(const SEThermalCompartmentLink& src);
-  static void Serialize(const cdm::ThermalCompartmentData& src, SEThermalCompartment& dst, SECircuitManager* circuits = nullptr);
-  static void Serialize(const SEThermalCompartment& src, cdm::ThermalCompartmentData& dst);
-  static void Serialize(const cdm::ThermalCompartmentLinkData& src, SEThermalCompartmentLink& dst, SECircuitManager* circuits = nullptr);
-  static void Serialize(const SEThermalCompartmentLink& src, cdm::ThermalCompartmentLinkData& dst);
+  static void Load(const CDM_BIND::ThermalCompartmentData& src, SEThermalCompartment& dst, SECircuitManager* circuits = nullptr);
+  static CDM_BIND::ThermalCompartmentData* Unload(const SEThermalCompartment& src);
+  static void Load(const CDM_BIND::ThermalCompartmentLinkData& src, SEThermalCompartmentLink& dst, SECircuitManager* circuits = nullptr);
+  static CDM_BIND::ThermalCompartmentLinkData* Unload(const SEThermalCompartmentLink& src);
+  static void Serialize(const CDM_BIND::ThermalCompartmentData& src, SEThermalCompartment& dst, SECircuitManager* circuits = nullptr);
+  static void Serialize(const SEThermalCompartment& src, CDM_BIND::ThermalCompartmentData& dst);
+  static void Serialize(const CDM_BIND::ThermalCompartmentLinkData& src, SEThermalCompartmentLink& dst, SECircuitManager* circuits = nullptr);
+  static void Serialize(const SEThermalCompartmentLink& src, CDM_BIND::ThermalCompartmentLinkData& dst);
 
   // Tissue
-  static void Load(const cdm::TissueCompartmentData& src, SETissueCompartment& dst);
-  static cdm::TissueCompartmentData* Unload(const SETissueCompartment& src);
-  static void Serialize(const cdm::TissueCompartmentData& src, SETissueCompartment& dst);
-  static void Serialize(const SETissueCompartment& src, cdm::TissueCompartmentData& dst);
+  static void Load(const CDM_BIND::TissueCompartmentData& src, SETissueCompartment& dst);
+  static CDM_BIND::TissueCompartmentData* Unload(const SETissueCompartment& src);
+  static void Serialize(const CDM_BIND::TissueCompartmentData& src, SETissueCompartment& dst);
+  static void Serialize(const SETissueCompartment& src, CDM_BIND::TissueCompartmentData& dst);
 };

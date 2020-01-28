@@ -5,24 +5,24 @@
 #include "io/protobuf/PBEnvironmentConditions.h"
 #include "io/protobuf/PBEnvironment.h"
 #include "io/protobuf/PBConditions.h"
-#include "bind/cpp/cdm/EnvironmentConditions.pb.h"
+#include "bind/EnvironmentConditions.pb.h"
 #include "system/environment/SEEnvironment.h"
 #include "system/environment/conditions/SEInitialEnvironmentConditions.h"
 #include "substance/SESubstanceManager.h"
 
-void PBEnvironmentCondition::Serialize(const cdm::EnvironmentConditionData& src, SEEnvironmentCondition& dst)
+void PBEnvironmentCondition::Serialize(const CDM_BIND::EnvironmentConditionData& src, SEEnvironmentCondition& dst)
 {
   PBCondition::Serialize(src.condition(), dst);
 }
-void PBEnvironmentCondition::Serialize(const SEEnvironmentCondition& src, cdm::EnvironmentConditionData& dst)
+void PBEnvironmentCondition::Serialize(const SEEnvironmentCondition& src, CDM_BIND::EnvironmentConditionData& dst)
 {
   PBCondition::Serialize(src, *dst.mutable_condition());
 }
-SEEnvironmentCondition* PBEnvironmentCondition::Load(const cdm::AnyEnvironmentConditionData& any, SESubstanceManager& subMgr)
+SEEnvironmentCondition* PBEnvironmentCondition::Load(const CDM_BIND::AnyEnvironmentConditionData& any, SESubstanceManager& subMgr)
 {
   switch (any.Condition_case())
   {
-    case cdm::AnyEnvironmentConditionData::ConditionCase::kInitialEnvironmentConditions:
+    case CDM_BIND::AnyEnvironmentConditionData::ConditionCase::kInitialEnvironmentConditions:
     {
       SEInitialEnvironmentConditions* a = new SEInitialEnvironmentConditions(subMgr);
       PBEnvironmentCondition::Load(any.initialenvironmentconditions(), *a);
@@ -32,9 +32,9 @@ SEEnvironmentCondition* PBEnvironmentCondition::Load(const cdm::AnyEnvironmentCo
   subMgr.Error("Unknown action type : " + any.Condition_case());
   return nullptr;
 }
-cdm::AnyEnvironmentConditionData* PBEnvironmentCondition::Unload(const SEEnvironmentCondition& action)
+CDM_BIND::AnyEnvironmentConditionData* PBEnvironmentCondition::Unload(const SEEnvironmentCondition& action)
 {
-  cdm::AnyEnvironmentConditionData* any = new cdm::AnyEnvironmentConditionData();
+  CDM_BIND::AnyEnvironmentConditionData* any = new CDM_BIND::AnyEnvironmentConditionData();
   const SEInitialEnvironmentConditions* cec = dynamic_cast<const SEInitialEnvironmentConditions*>(&action);
   if (cec != nullptr)
   {
@@ -45,11 +45,11 @@ cdm::AnyEnvironmentConditionData* PBEnvironmentCondition::Unload(const SEEnviron
   return nullptr;
 }
 
-void PBEnvironmentCondition::Load(const cdm::InitialEnvironmentConditionsData& src, SEInitialEnvironmentConditions& dst)
+void PBEnvironmentCondition::Load(const CDM_BIND::InitialEnvironmentConditionsData& src, SEInitialEnvironmentConditions& dst)
 {
   PBEnvironmentCondition::Serialize(src, dst);
 }
-void PBEnvironmentCondition::Serialize(const cdm::InitialEnvironmentConditionsData& src, SEInitialEnvironmentConditions& dst)
+void PBEnvironmentCondition::Serialize(const CDM_BIND::InitialEnvironmentConditionsData& src, SEInitialEnvironmentConditions& dst)
 {
   PBEnvironmentCondition::Serialize(src.environmentcondition(), dst);
   if (src.has_conditions())
@@ -57,13 +57,13 @@ void PBEnvironmentCondition::Serialize(const cdm::InitialEnvironmentConditionsDa
   else
     dst.SetConditionsFile(src.conditionsfile());
 }
-cdm::InitialEnvironmentConditionsData* PBEnvironmentCondition::Unload(const SEInitialEnvironmentConditions& src)
+CDM_BIND::InitialEnvironmentConditionsData* PBEnvironmentCondition::Unload(const SEInitialEnvironmentConditions& src)
 {
-  cdm::InitialEnvironmentConditionsData* dst = new cdm::InitialEnvironmentConditionsData();
+  CDM_BIND::InitialEnvironmentConditionsData* dst = new CDM_BIND::InitialEnvironmentConditionsData();
   PBEnvironmentCondition::Serialize(src, *dst);
   return dst;
 }
-void PBEnvironmentCondition::Serialize(const SEInitialEnvironmentConditions& src, cdm::InitialEnvironmentConditionsData& dst)
+void PBEnvironmentCondition::Serialize(const SEInitialEnvironmentConditions& src, CDM_BIND::InitialEnvironmentConditionsData& dst)
 {
   PBEnvironmentCondition::Serialize(src, *dst.mutable_environmentcondition());
   if (src.HasConditions())
@@ -73,7 +73,7 @@ void PBEnvironmentCondition::Serialize(const SEInitialEnvironmentConditions& src
 }
 void PBEnvironmentCondition::Copy(const SEInitialEnvironmentConditions& src, SEInitialEnvironmentConditions& dst)
 {
-  cdm::InitialEnvironmentConditionsData data;
+  CDM_BIND::InitialEnvironmentConditionsData data;
   PBEnvironmentCondition::Serialize(src, data);
   PBEnvironmentCondition::Serialize(data, dst);
 }

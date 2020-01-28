@@ -30,57 +30,57 @@ public:
   static void SaveCircuitManagerFile(const SECircuitManager& mgr, const std::string& filename);
 
   // General Circuit
-  static void Load(const cdm::CircuitManagerData& src, SECircuitManager& dst);
-  static cdm::CircuitManagerData* Unload(const SECircuitManager& src);
+  static void Load(const CDM_BIND::CircuitManagerData& src, SECircuitManager& dst);
+  static CDM_BIND::CircuitManagerData* Unload(const SECircuitManager& src);
 
   template<typename CircuitBindType, CIRCUIT_TEMPLATE>
   static void Load(const CircuitBindType& src, SECircuit<CIRCUIT_TYPES>& dst, const std::map<std::string, NodeType*>& nodes, const std::map<std::string, PathType*>& paths);
   template <typename CircuitBindType, CIRCUIT_TEMPLATE>
   static CircuitBindType* Unload(const SECircuit<CIRCUIT_TYPES>& src);
 
-  static void Serialize(const cdm::CircuitManagerData& src, SECircuitManager& dst);
-  static void Serialize(const SECircuitManager& src, cdm::CircuitManagerData& dst);
+  static void Serialize(const CDM_BIND::CircuitManagerData& src, SECircuitManager& dst);
+  static void Serialize(const SECircuitManager& src, CDM_BIND::CircuitManagerData& dst);
 
   template<typename CircuitBindType, CIRCUIT_TEMPLATE>
   static void Serialize(const CircuitBindType& src, SECircuit<CIRCUIT_TYPES>& dst, const std::map<std::string, NodeType*>& nodes, const std::map<std::string, PathType*>& paths);
   template<typename CircuitBindType, CIRCUIT_TEMPLATE>
   static void Serialize(const SECircuit<CIRCUIT_TYPES>& src, CircuitBindType& dst);
   template<CIRCUIT_NODE_TEMPLATE>
-  static void Serialize(const cdm::CircuitNodeData& src, SECircuitNode<CIRCUIT_NODE_TYPES>& dst);
+  static void Serialize(const CDM_BIND::CircuitNodeData& src, SECircuitNode<CIRCUIT_NODE_TYPES>& dst);
   template<CIRCUIT_NODE_TEMPLATE>
-  static void Serialize(const SECircuitNode<CIRCUIT_NODE_TYPES>& src, cdm::CircuitNodeData& dst);
+  static void Serialize(const SECircuitNode<CIRCUIT_NODE_TYPES>& src, CDM_BIND::CircuitNodeData& dst);
   template<CIRCUIT_PATH_TEMPLATE>
-  static void Serialize(const cdm::CircuitPathData& src, SECircuitPath<CIRCUIT_PATH_TYPES>& dst);
+  static void Serialize(const CDM_BIND::CircuitPathData& src, SECircuitPath<CIRCUIT_PATH_TYPES>& dst);
   template<CIRCUIT_PATH_TEMPLATE>
-  static void Serialize(const SECircuitPath<CIRCUIT_PATH_TYPES>& src, cdm::CircuitPathData& dst);
+  static void Serialize(const SECircuitPath<CIRCUIT_PATH_TYPES>& src, CDM_BIND::CircuitPathData& dst);
 
   // Electrical
-  static void Load(const cdm::ElectricalCircuitPathData& src, SEElectricalCircuitPath& dst);
-  static cdm::ElectricalCircuitPathData* Unload(const SEElectricalCircuitPath& src);
-  static void Load(const cdm::ElectricalCircuitNodeData& src, SEElectricalCircuitNode& dst);
-  static cdm::ElectricalCircuitNodeData* Unload(const SEElectricalCircuitNode& src);
-  static void Serialize(const cdm::ElectricalCircuitPathData& src, SEElectricalCircuitPath& dst);
-  static void Serialize(const SEElectricalCircuitPath& src, cdm::ElectricalCircuitPathData& dst);
-  static void Serialize(const cdm::ElectricalCircuitNodeData& src, SEElectricalCircuitNode& dst);
-  static void Serialize(const SEElectricalCircuitNode& src, cdm::ElectricalCircuitNodeData& dst);
+  static void Load(const CDM_BIND::ElectricalCircuitPathData& src, SEElectricalCircuitPath& dst);
+  static CDM_BIND::ElectricalCircuitPathData* Unload(const SEElectricalCircuitPath& src);
+  static void Load(const CDM_BIND::ElectricalCircuitNodeData& src, SEElectricalCircuitNode& dst);
+  static CDM_BIND::ElectricalCircuitNodeData* Unload(const SEElectricalCircuitNode& src);
+  static void Serialize(const CDM_BIND::ElectricalCircuitPathData& src, SEElectricalCircuitPath& dst);
+  static void Serialize(const SEElectricalCircuitPath& src, CDM_BIND::ElectricalCircuitPathData& dst);
+  static void Serialize(const CDM_BIND::ElectricalCircuitNodeData& src, SEElectricalCircuitNode& dst);
+  static void Serialize(const SEElectricalCircuitNode& src, CDM_BIND::ElectricalCircuitNodeData& dst);
 
   // Fluid
-  static void Load(const cdm::FluidCircuitPathData& src, SEFluidCircuitPath& dst);
-  static cdm::FluidCircuitPathData* Unload(const SEFluidCircuitPath& src);
-  static void Load(const cdm::FluidCircuitNodeData& src, SEFluidCircuitNode& dst);
-  static cdm::FluidCircuitNodeData* Unload(const SEFluidCircuitNode& src);
-  static void Serialize(const cdm::FluidCircuitPathData& src, SEFluidCircuitPath& dst);
-  static void Serialize(const SEFluidCircuitPath& src, cdm::FluidCircuitPathData& dst);
-  static void Serialize(const cdm::FluidCircuitNodeData& src, SEFluidCircuitNode& dst);
-  static void Serialize(const SEFluidCircuitNode& src, cdm::FluidCircuitNodeData& dst);
+  static void Load(const CDM_BIND::FluidCircuitPathData& src, SEFluidCircuitPath& dst);
+  static CDM_BIND::FluidCircuitPathData* Unload(const SEFluidCircuitPath& src);
+  static void Load(const CDM_BIND::FluidCircuitNodeData& src, SEFluidCircuitNode& dst);
+  static CDM_BIND::FluidCircuitNodeData* Unload(const SEFluidCircuitNode& src);
+  static void Serialize(const CDM_BIND::FluidCircuitPathData& src, SEFluidCircuitPath& dst);
+  static void Serialize(const SEFluidCircuitPath& src, CDM_BIND::FluidCircuitPathData& dst);
+  static void Serialize(const CDM_BIND::FluidCircuitNodeData& src, SEFluidCircuitNode& dst);
+  static void Serialize(const SEFluidCircuitNode& src, CDM_BIND::FluidCircuitNodeData& dst);
 
   // Thermal
-  static void Load(const cdm::ThermalCircuitNodeData& src, SEThermalCircuitNode& dst);
-  static cdm::ThermalCircuitNodeData* Unload(const SEThermalCircuitNode& src);
-  static void Load(const cdm::ThermalCircuitPathData& src, SEThermalCircuitPath& dst);
-  static cdm::ThermalCircuitPathData* Unload(const SEThermalCircuitPath& src);
-  static void Serialize(const cdm::ThermalCircuitNodeData& src, SEThermalCircuitNode& dst);
-  static void Serialize(const SEThermalCircuitNode& src, cdm::ThermalCircuitNodeData& dst);
-  static void Serialize(const cdm::ThermalCircuitPathData& src, SEThermalCircuitPath& dst);
-  static void Serialize(const SEThermalCircuitPath& src, cdm::ThermalCircuitPathData& dst);
+  static void Load(const CDM_BIND::ThermalCircuitNodeData& src, SEThermalCircuitNode& dst);
+  static CDM_BIND::ThermalCircuitNodeData* Unload(const SEThermalCircuitNode& src);
+  static void Load(const CDM_BIND::ThermalCircuitPathData& src, SEThermalCircuitPath& dst);
+  static CDM_BIND::ThermalCircuitPathData* Unload(const SEThermalCircuitPath& src);
+  static void Serialize(const CDM_BIND::ThermalCircuitNodeData& src, SEThermalCircuitNode& dst);
+  static void Serialize(const SEThermalCircuitNode& src, CDM_BIND::ThermalCircuitNodeData& dst);
+  static void Serialize(const CDM_BIND::ThermalCircuitPathData& src, SEThermalCircuitPath& dst);
+  static void Serialize(const SEThermalCircuitPath& src, CDM_BIND::ThermalCircuitPathData& dst);
 };

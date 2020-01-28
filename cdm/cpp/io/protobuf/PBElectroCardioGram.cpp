@@ -5,18 +5,18 @@
 #include "io/protobuf/PBElectroCardioGram.h"
 #include "io/protobuf/PBProperties.h"
 #include "io/protobuf/PBUtils.h"
-#include "bind/cpp/cdm/ElectroCardioGram.pb.h"
+#include "bind/ElectroCardioGram.pb.h"
 #include "system/equipment/electrocardiogram/SEElectroCardioGram.h"
 #include "system/equipment/electrocardiogram/SEElectroCardioGramWaveform.h"
 #include "system/equipment/electrocardiogram/SEElectroCardioGramWaveformInterpolator.h"
 #include "utils/FileUtils.h"
 
 
-void PBElectroCardioGram::Load(const cdm::ElectroCardioGramData& src, SEElectroCardioGram& dst)
+void PBElectroCardioGram::Load(const CDM_BIND::ElectroCardioGramData& src, SEElectroCardioGram& dst)
 {
   PBElectroCardioGram::Serialize(src, dst);
 }
-void PBElectroCardioGram::Serialize(const cdm::ElectroCardioGramData& src, SEElectroCardioGram& dst)
+void PBElectroCardioGram::Serialize(const CDM_BIND::ElectroCardioGramData& src, SEElectroCardioGram& dst)
 {
   if (src.has_lead1electricpotential())
     PBProperty::Load(src.lead1electricpotential(), dst.GetLead1ElectricPotential());
@@ -43,13 +43,13 @@ void PBElectroCardioGram::Serialize(const cdm::ElectroCardioGramData& src, SEEle
   if (src.has_lead12electricpotential())
     PBProperty::Load(src.lead12electricpotential(), dst.GetLead12ElectricPotential());
 }
-cdm::ElectroCardioGramData* PBElectroCardioGram::Unload(const SEElectroCardioGram& src)
+CDM_BIND::ElectroCardioGramData* PBElectroCardioGram::Unload(const SEElectroCardioGram& src)
 {
-  cdm::ElectroCardioGramData* dst = new cdm::ElectroCardioGramData();
+  CDM_BIND::ElectroCardioGramData* dst = new CDM_BIND::ElectroCardioGramData();
   PBElectroCardioGram::Serialize(src, *dst);
   return dst;
 }
-void PBElectroCardioGram::Serialize(const SEElectroCardioGram& src, cdm::ElectroCardioGramData& dst)
+void PBElectroCardioGram::Serialize(const SEElectroCardioGram& src, CDM_BIND::ElectroCardioGramData& dst)
 {
   if (src.HasLead1ElectricPotential())
     dst.set_allocated_lead1electricpotential(PBProperty::Unload(*src.m_Lead1ElectricPotential));
@@ -77,11 +77,11 @@ void PBElectroCardioGram::Serialize(const SEElectroCardioGram& src, cdm::Electro
     dst.set_allocated_lead12electricpotential(PBProperty::Unload(*src.m_Lead12ElectricPotential));
 }
 
-void PBElectroCardioGram::Load(const cdm::ElectroCardioGramWaveformData& src, SEElectroCardioGramWaveform& dst)
+void PBElectroCardioGram::Load(const CDM_BIND::ElectroCardioGramWaveformData& src, SEElectroCardioGramWaveform& dst)
 {
   PBElectroCardioGram::Serialize(src, dst);
 }
-void PBElectroCardioGram::Serialize(const cdm::ElectroCardioGramWaveformData& src, SEElectroCardioGramWaveform& dst)
+void PBElectroCardioGram::Serialize(const CDM_BIND::ElectroCardioGramWaveformData& src, SEElectroCardioGramWaveform& dst)
 {
   dst.Clear();
   dst.m_Rhythm = (eHeartRhythm)src.rhythm();
@@ -93,16 +93,16 @@ void PBElectroCardioGram::Serialize(const cdm::ElectroCardioGramWaveformData& sr
   for (int i = 0; i < src.activeindicies_size(); i++)
     dst.m_ActiveIndicies.push_back(src.activeindicies()[i]);
 }
-cdm::ElectroCardioGramWaveformData* PBElectroCardioGram::Unload(const SEElectroCardioGramWaveform& src)
+CDM_BIND::ElectroCardioGramWaveformData* PBElectroCardioGram::Unload(const SEElectroCardioGramWaveform& src)
 {
-  cdm::ElectroCardioGramWaveformData* dst = new cdm::ElectroCardioGramWaveformData();
+  CDM_BIND::ElectroCardioGramWaveformData* dst = new CDM_BIND::ElectroCardioGramWaveformData();
   PBElectroCardioGram::Serialize(src, *dst);
   return dst;
 }
-void PBElectroCardioGram::Serialize(const SEElectroCardioGramWaveform& src, cdm::ElectroCardioGramWaveformData& dst)
+void PBElectroCardioGram::Serialize(const SEElectroCardioGramWaveform& src, CDM_BIND::ElectroCardioGramWaveformData& dst)
 {
-  dst.set_rhythm((cdm::eHeartRhythm)src.m_Rhythm);
-  dst.set_lead((cdm::ElectroCardioGramWaveformData::eWaveformLead)src.m_LeadNumber);
+  dst.set_rhythm((CDM_BIND::eHeartRhythm)src.m_Rhythm);
+  dst.set_lead((CDM_BIND::ElectroCardioGramWaveformData::eWaveformLead)src.m_LeadNumber);
   if (src.HasData())
   {
     dst.set_allocated_data(PBProperty::Unload(*src.m_Data));
@@ -113,11 +113,11 @@ void PBElectroCardioGram::Serialize(const SEElectroCardioGramWaveform& src, cdm:
     dst.set_allocated_timestep(PBProperty::Unload(*src.m_TimeStep));
 }
 
-void PBElectroCardioGram::Load(const cdm::ElectroCardioGramWaveformListData& src, SEElectroCardioGramWaveformInterpolator& dst)
+void PBElectroCardioGram::Load(const CDM_BIND::ElectroCardioGramWaveformListData& src, SEElectroCardioGramWaveformInterpolator& dst)
 {
   PBElectroCardioGram::Serialize(src, dst);
 }
-void PBElectroCardioGram::Serialize(const cdm::ElectroCardioGramWaveformListData& src, SEElectroCardioGramWaveformInterpolator& dst)
+void PBElectroCardioGram::Serialize(const CDM_BIND::ElectroCardioGramWaveformListData& src, SEElectroCardioGramWaveformInterpolator& dst)
 {
   dst.Clear();
   for (int i = 0; i < src.waveform_size(); i++)
@@ -127,13 +127,13 @@ void PBElectroCardioGram::Serialize(const cdm::ElectroCardioGramWaveformListData
     dst.m_Waveforms[waveform->GetLeadNumber()][waveform->GetRhythm()] = waveform;
   }
 }
-cdm::ElectroCardioGramWaveformListData* PBElectroCardioGram::Unload(const SEElectroCardioGramWaveformInterpolator& src)
+CDM_BIND::ElectroCardioGramWaveformListData* PBElectroCardioGram::Unload(const SEElectroCardioGramWaveformInterpolator& src)
 {
-  cdm::ElectroCardioGramWaveformListData* dst = new cdm::ElectroCardioGramWaveformListData();
+  CDM_BIND::ElectroCardioGramWaveformListData* dst = new CDM_BIND::ElectroCardioGramWaveformListData();
   PBElectroCardioGram::Serialize(src, *dst);
   return dst;
 }
-void PBElectroCardioGram::Serialize(const SEElectroCardioGramWaveformInterpolator& src, cdm::ElectroCardioGramWaveformListData& dst)
+void PBElectroCardioGram::Serialize(const SEElectroCardioGramWaveformInterpolator& src, CDM_BIND::ElectroCardioGramWaveformListData& dst)
 {
   for (auto i : src.m_Waveforms)
     for (auto j : i.second)
@@ -141,20 +141,20 @@ void PBElectroCardioGram::Serialize(const SEElectroCardioGramWaveformInterpolato
 }
 void PBElectroCardioGram::Copy(const SEElectroCardioGramWaveformInterpolator& src, SEElectroCardioGramWaveformInterpolator& dst)
 {
-  cdm::ElectroCardioGramWaveformListData data;
+  CDM_BIND::ElectroCardioGramWaveformListData data;
   PBElectroCardioGram::Serialize(src, data);
   PBElectroCardioGram::Serialize(data, dst);
 }
 
 bool PBElectroCardioGram::SerializeToString(const SEElectroCardioGramWaveformInterpolator& src, std::string& output, SerializationFormat m)
 {
-  cdm::ElectroCardioGramWaveformListData data;
+  CDM_BIND::ElectroCardioGramWaveformListData data;
   PBElectroCardioGram::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
 bool PBElectroCardioGram::SerializeToFile(const SEElectroCardioGramWaveformInterpolator& src, const std::string& filename, SerializationFormat m)
 {
-  cdm::ElectroCardioGramWaveformListData data;
+  CDM_BIND::ElectroCardioGramWaveformListData data;
   PBElectroCardioGram::Serialize(src, data);
   std::string content;
   PBElectroCardioGram::SerializeToString(src, content, m);
@@ -162,7 +162,7 @@ bool PBElectroCardioGram::SerializeToFile(const SEElectroCardioGramWaveformInter
 }
 bool PBElectroCardioGram::SerializeFromString(const std::string& src, SEElectroCardioGramWaveformInterpolator& dst, SerializationFormat m)
 {
-  cdm::ElectroCardioGramWaveformListData data;
+  CDM_BIND::ElectroCardioGramWaveformListData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
     return false;
   PBElectroCardioGram::Load(data, dst);

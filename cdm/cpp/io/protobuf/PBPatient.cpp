@@ -5,17 +5,17 @@
 #include "io/protobuf/PBPatient.h"
 #include "io/protobuf/PBProperties.h"
 #include "io/protobuf/PBUtils.h"
-#include "bind/cpp/cdm/Patient.pb.h"
-#include "bind/cpp/cdm/PatientNutrition.pb.h"
+#include "bind/Patient.pb.h"
+#include "bind/PatientNutrition.pb.h"
 #include "patient/SEPatient.h"
 #include "properties/SEScalarTime.h"
 #include "utils/FileUtils.h"
 
-void PBPatient::Load(const cdm::PatientData& src, SEPatient& dst)
+void PBPatient::Load(const CDM_BIND::PatientData& src, SEPatient& dst)
 {
   PBPatient::Serialize(src, dst);
 }
-void PBPatient::Serialize(const cdm::PatientData& src, SEPatient& dst)
+void PBPatient::Serialize(const CDM_BIND::PatientData& src, SEPatient& dst)
 {
   dst.Clear();
   dst.SetName(src.name());
@@ -79,17 +79,17 @@ void PBPatient::Serialize(const cdm::PatientData& src, SEPatient& dst)
     PBProperty::Load(src.vitalcapacity(), dst.GetVitalCapacity());
 }
 
-cdm::PatientData* PBPatient::Unload(const SEPatient& src)
+CDM_BIND::PatientData* PBPatient::Unload(const SEPatient& src)
 {
-  cdm::PatientData* dst = new cdm::PatientData();
+  CDM_BIND::PatientData* dst = new CDM_BIND::PatientData();
   PBPatient::Serialize(src, *dst);
   return dst;
 }
-void PBPatient::Serialize(const SEPatient& src, cdm::PatientData& dst)
+void PBPatient::Serialize(const SEPatient& src, CDM_BIND::PatientData& dst)
 {
   if (src.HasName())
     dst.set_name(src.m_Name);
-  dst.set_sex((cdm::PatientData::eSex)src.m_Sex);
+  dst.set_sex((CDM_BIND::PatientData::eSex)src.m_Sex);
   if (src.HasAge())
     dst.set_allocated_age(PBProperty::Unload(*src.m_Age));
   if (src.HasWeight())
@@ -151,20 +151,20 @@ void PBPatient::Serialize(const SEPatient& src, cdm::PatientData& dst)
 }
 void PBPatient::Copy(const SEPatient& src, SEPatient& dst)
 {
-  cdm::PatientData data;
+  CDM_BIND::PatientData data;
   PBPatient::Serialize(src, data);
   PBPatient::Serialize(data, dst);
 }
 
 bool PBPatient::SerializeToString(const SEPatient& src, std::string& output, SerializationFormat m)
 {
-  cdm::PatientData data;
+  CDM_BIND::PatientData data;
   PBPatient::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
 bool PBPatient::SerializeToFile(const SEPatient& src, const std::string& filename, SerializationFormat m)
 {
-  cdm::PatientData data;
+  CDM_BIND::PatientData data;
   PBPatient::Serialize(src, data);
   std::string content;
   PBPatient::SerializeToString(src, content, m);
@@ -173,7 +173,7 @@ bool PBPatient::SerializeToFile(const SEPatient& src, const std::string& filenam
 
 bool PBPatient::SerializeFromString(const std::string& src, SEPatient& dst, SerializationFormat m)
 {
-  cdm::PatientData data;
+  CDM_BIND::PatientData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
     return false;
   PBPatient::Load(data, dst);

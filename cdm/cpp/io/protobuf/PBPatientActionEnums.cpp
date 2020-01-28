@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "bind/cpp/cdm/PatientActions.pb.h"
+#include "bind/PatientActions.pb.h"
 #include "io/protobuf/PBUtils.h"
 #include "patient/actions/SEBrainInjury.h"
 #include "patient/actions/SEHemorrhage.h"
@@ -12,25 +12,25 @@
 
 const std::string& eBrainInjury_Type_Name(eBrainInjury_Type m)
 {
-  return cdm::BrainInjuryData::eType_Name((cdm::BrainInjuryData::eType)m);
+  return CDM_BIND::BrainInjuryData::eType_Name((CDM_BIND::BrainInjuryData::eType)m);
 }
 
 const std::string& eHemorrhage_Type_Name(eHemorrhage_Type m)
 {
-  return cdm::HemorrhageData::eType_Name((cdm::HemorrhageData::eType)m);
+  return CDM_BIND::HemorrhageData::eType_Name((CDM_BIND::HemorrhageData::eType)m);
 }
 
 const std::string& eIntubation_Type_Name(eIntubation_Type m)
 {
-  return cdm::IntubationData::eType_Name((cdm::IntubationData::eType)m);
+  return CDM_BIND::IntubationData::eType_Name((CDM_BIND::IntubationData::eType)m);
 }
 
 const std::string& eSubstanceAdministration_Route_Name(eSubstanceAdministration_Route m)
 {
-  return cdm::SubstanceBolusData::eRoute_Name((cdm::SubstanceBolusData::eRoute)m);
+  return CDM_BIND::SubstanceBolusData::eRoute_Name((CDM_BIND::SubstanceBolusData::eRoute)m);
 }
 
 const std::string& eSupplementalOxygen_Device_Name(eSupplementalOxygen_Device m)
 {
-  return cdm::SupplementalOxygenData::eDevice_Name((cdm::SupplementalOxygenData::eDevice)m);
+  return CDM_BIND::SupplementalOxygenData::eDevice_Name((CDM_BIND::SupplementalOxygenData::eDevice)m);
 }

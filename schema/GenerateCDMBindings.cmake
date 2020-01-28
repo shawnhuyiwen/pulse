@@ -12,13 +12,26 @@ if( NOT protobuf_SRC )
 endif()
 
 
+set(CDM_PACKAGE "pulse/cdm/bind")
+set(ENGINE_PACKAGE "pulse/engine/bind")
+
+macro(delete_bindings _root)
+  file(GLOB _OLD_CDM_BIND_FILES "${_root}/${CDM_PACKAGE}/*")
+  if(_OLD_CDM_BIND_FILES)
+    file(REMOVE ${_OLD_CDM_BIND_FILES})
+  endif()
+  file(GLOB _OLD_ENGINE_BIND_FILES "${_root}/${ENGINE_PACKAGE}/*")
+  if(_OLD_ENGINE_BIND_FILES)
+    file(REMOVE ${_OLD_ENGINE_BIND_FILES})
+  endif()
+endmacro()
+
+
 message(STATUS "Generating Schema Bindings" )
 message(STATUS "Using : ${BINDER}")
 message(STATUS "From ${from}")
 message(STATUS "To ${to}")
 
-set(CDM_PACKAGE "pulse/cdm/bind")
-set(ENGINE_PACKAGE "pulse/engine/bind")
 file(GLOB_RECURSE _FILES "${from}/*.proto")
 
 set(_RUN_PROTOC OFF)
@@ -62,17 +75,9 @@ message(STATUS "cpp bindings are here : ${cpp_bindings_DIR}" )
 ## Java Bindings ##
 ###################
 
-set(java_bindings_DIR "${to}/java")
+set(java_bindings_DIR "${SRC_ROOT}/java")
 file(MAKE_DIRECTORY "${java_bindings_DIR}")
-file(GLOB_RECURSE _OLD_FILES "${java_bindings_DIR}/*.*")
-if(_OLD_FILES)
-  file(REMOVE ${_OLD_FILES})
-endif()
-file(MAKE_DIRECTORY "${to}/build")
-file(GLOB_RECURSE _OLD_FILES "${to}/build/*.*")
-if(_OLD_FILES)
-  file(REMOVE ${_OLD_FILES})
-endif()
+delete_bindings(${java_bindings_DIR})
 
 #if(NOT EXISTS "${protobuf_SRC}/java/core/src/main/java/com/google/protobuf/Any.java")
   message(STATUS "Generating Java Protobuf files")
@@ -172,14 +177,7 @@ message(STATUS "csharp bindings are here : ${csharp_bindings_DIR}" )
 #####################
 
 set(python_bindings_DIR "${SRC_ROOT}/python")
-file(GLOB _OLD_CDM_BIND_FILES "${python_bindings_DIR}/${CDM_PACKAGE}/*")
-if(_OLD_CDM_BIND_FILES)
-  file(REMOVE ${_OLD_CDM_BIND_FILES})
-endif()
-file(GLOB _OLD_ENGINE_BIND_FILES "${python_bindings_DIR}/${ENGINE_PACKAGE}/*")
-if(_OLD_ENGINE_BIND_FILES)
-  file(REMOVE ${_OLD_ENGINE_BIND_FILES})
-endif()
+delete_bindings(${python_bindings_DIR})
 foreach(f ${_FILES})
   message(STATUS "Python Binding file ${f}")
   execute_process(COMMAND ${BINDER} --proto_path=${from}

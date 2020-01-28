@@ -2,20 +2,20 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "bind/cpp/cdm/AnesthesiaMachine.pb.h"
+#include "bind/AnesthesiaMachine.pb.h"
 #include "system/equipment/anesthesiamachine/SEAnesthesiaMachine.h"
 
 const std::string& eAnesthesiaMachine_OxygenSource_Name(eAnesthesiaMachine_OxygenSource m)
 {
-  return cdm::AnesthesiaMachineData::eOxygenSource_Name((cdm::AnesthesiaMachineData::eOxygenSource)m);
+  return CDM_BIND::AnesthesiaMachineData::eOxygenSource_Name((CDM_BIND::AnesthesiaMachineData::eOxygenSource)m);
 }
 
 const std::string& eAnesthesiaMachine_PrimaryGas_Name(eAnesthesiaMachine_PrimaryGas m)
 {
-  return cdm::AnesthesiaMachineData::ePrimaryGas_Name((cdm::AnesthesiaMachineData::ePrimaryGas)m);
+  return CDM_BIND::AnesthesiaMachineData::ePrimaryGas_Name((CDM_BIND::AnesthesiaMachineData::ePrimaryGas)m);
 }
 
 const std::string& eAnesthesiaMachine_Connection_Name(eAnesthesiaMachine_Connection m)
 {
-  return cdm::AnesthesiaMachineData::eConnection_Name((cdm::AnesthesiaMachineData::eConnection)m);
+  return CDM_BIND::AnesthesiaMachineData::eConnection_Name((CDM_BIND::AnesthesiaMachineData::eConnection)m);
 }

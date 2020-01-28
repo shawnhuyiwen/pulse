@@ -77,9 +77,9 @@ private:
 PULSE_DECL std::unique_ptr<PhysiologyEngine> CreatePulseEngine(const std::string& logfile, const std::string& data_dir = ".");
 PULSE_DECL std::unique_ptr<PhysiologyEngine> CreatePulseEngine(Logger* logger = nullptr, const std::string& data_dir =".");
 
+#define PULSE_BIND pulse::engine::bind
 #define PULSE_BIND_DECL(type) \
-  class type;\
-  namespace pulse { namespace proto { class type##Data; } }
+  namespace pulse { namespace engine { namespace bind { class type##Data; }}}
 
 // I bet there is a way cool macro you could do for these enums...
 namespace pulse {

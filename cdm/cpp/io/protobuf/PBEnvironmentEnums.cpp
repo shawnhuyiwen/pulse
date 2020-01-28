@@ -2,10 +2,10 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "bind/cpp/cdm/Environment.pb.h"
+#include "bind/Environment.pb.h"
 #include "system/environment/SEEnvironmentalConditions.h"
 
 const std::string& eSurroundingType_Name(eSurroundingType m)
 {
-  return cdm::EnvironmentalConditionsData::eSurroundingType_Name((cdm::EnvironmentalConditionsData::eSurroundingType)m);
+  return CDM_BIND::EnvironmentalConditionsData::eSurroundingType_Name((CDM_BIND::EnvironmentalConditionsData::eSurroundingType)m);
 }

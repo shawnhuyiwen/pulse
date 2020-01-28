@@ -11,28 +11,28 @@ class CDM_DECL PBEnvironment
 {
 public:
 
-  static void Load(const cdm::ActiveConditioningData& src, SEActiveConditioning& dst);
-  static cdm::ActiveConditioningData* Unload(const SEActiveConditioning& src);
-  static void Serialize(const cdm::ActiveConditioningData& src, SEActiveConditioning& dst);
-  static void Serialize(const SEActiveConditioning& src, cdm::ActiveConditioningData& dst);
+  static void Load(const CDM_BIND::ActiveConditioningData& src, SEActiveConditioning& dst);
+  static CDM_BIND::ActiveConditioningData* Unload(const SEActiveConditioning& src);
+  static void Serialize(const CDM_BIND::ActiveConditioningData& src, SEActiveConditioning& dst);
+  static void Serialize(const SEActiveConditioning& src, CDM_BIND::ActiveConditioningData& dst);
   static void Copy(const SEActiveConditioning& src, SEActiveConditioning& dst);
 
-  static void Load(const cdm::AppliedTemperatureData& src, SEAppliedTemperature& dst);
-  static cdm::AppliedTemperatureData* Unload(const SEAppliedTemperature& src);
-  static void Serialize(const cdm::AppliedTemperatureData& src, SEAppliedTemperature& dst);
-  static void Serialize(const SEAppliedTemperature& src, cdm::AppliedTemperatureData& dst);
+  static void Load(const CDM_BIND::AppliedTemperatureData& src, SEAppliedTemperature& dst);
+  static CDM_BIND::AppliedTemperatureData* Unload(const SEAppliedTemperature& src);
+  static void Serialize(const CDM_BIND::AppliedTemperatureData& src, SEAppliedTemperature& dst);
+  static void Serialize(const SEAppliedTemperature& src, CDM_BIND::AppliedTemperatureData& dst);
   static void Copy(const SEAppliedTemperature& src, SEAppliedTemperature& dst);
 
-  static void Load(const cdm::EnvironmentData& src, SEEnvironment& dst);
-  static cdm::EnvironmentData* Unload(const SEEnvironment& src);
-  static void Serialize(const cdm::EnvironmentData& src, SEEnvironment& dst);
-  static void Serialize(const SEEnvironment& src, cdm::EnvironmentData& dst);
+  static void Load(const CDM_BIND::EnvironmentData& src, SEEnvironment& dst);
+  static CDM_BIND::EnvironmentData* Unload(const SEEnvironment& src);
+  static void Serialize(const CDM_BIND::EnvironmentData& src, SEEnvironment& dst);
+  static void Serialize(const SEEnvironment& src, CDM_BIND::EnvironmentData& dst);
   static void Copy(const SEEnvironment& src, SEEnvironment& dst);
 
-  static void Load(const cdm::EnvironmentalConditionsData& src, SEEnvironmentalConditions& dst);
-  static cdm::EnvironmentalConditionsData* Unload(const SEEnvironmentalConditions& src);
-  static void Serialize(const cdm::EnvironmentalConditionsData& src, SEEnvironmentalConditions& dst);
-  static void Serialize(const SEEnvironmentalConditions& src, cdm::EnvironmentalConditionsData& dst);
+  static void Load(const CDM_BIND::EnvironmentalConditionsData& src, SEEnvironmentalConditions& dst);
+  static CDM_BIND::EnvironmentalConditionsData* Unload(const SEEnvironmentalConditions& src);
+  static void Serialize(const CDM_BIND::EnvironmentalConditionsData& src, SEEnvironmentalConditions& dst);
+  static void Serialize(const SEEnvironmentalConditions& src, CDM_BIND::EnvironmentalConditionsData& dst);
   static void Copy(const SEEnvironmentalConditions& src, SEEnvironmentalConditions& dst);
 
   static bool SerializeToString(const SEEnvironmentalConditions& src, std::string& output, SerializationFormat m);

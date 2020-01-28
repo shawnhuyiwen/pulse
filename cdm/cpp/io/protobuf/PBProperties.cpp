@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 #include "io/protobuf/PBProperties.h"
-#include "bind/cpp/cdm/Properties.pb.h"
+#include "bind/Properties.pb.h"
 
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarAmount.h"
@@ -71,35 +71,35 @@
 
 #include "properties/SERunningAverage.h"
 
-void PBProperty::Load(const cdm::ScalarData& src, SEScalar& dst)
+void PBProperty::Load(const CDM_BIND::ScalarData& src, SEScalar& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarData& src, SEScalar& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarData& src, SEScalar& dst)
 {
   dst.Clear();
   dst.SetValue(src.value());
   if (!src.unit().empty())
   {
     if (src.unit() != "unitless")
-      throw CommonDataModelException("CDM::Scalar API is intended to be unitless, You are trying to load a ScalarData with a unit defined");
+      throw CommonDataModelException("CDM_BIND::Scalar API is intended to be unitless, You are trying to load a ScalarData with a unit defined");
   }
   dst.m_readOnly = src.readonly();
 }
-cdm::ScalarData* PBProperty::Unload(const SEScalar& src)
+CDM_BIND::ScalarData* PBProperty::Unload(const SEScalar& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarData* dst = new cdm::ScalarData();
+  CDM_BIND::ScalarData* dst = new CDM_BIND::ScalarData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalar& src, cdm::ScalarData& dst)
+void PBProperty::Serialize(const SEScalar& src, CDM_BIND::ScalarData& dst)
 {
   dst.set_value(src.m_value);
   dst.set_readonly(src.m_readOnly);
 }
-void PBProperty::Serialize(const cdm::ScalarData& src, SEUnitScalar& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarData& src, SEUnitScalar& dst)
 {
   dst.Clear();
   if (!src.unit().empty())
@@ -108,7 +108,7 @@ void PBProperty::Serialize(const cdm::ScalarData& src, SEUnitScalar& dst)
     throw CommonDataModelException("ScalarQuantity attempted to load a ScalarData with no unit, must have a unit.");
   dst.m_readOnly = src.readonly();
 }
-void PBProperty::Serialize(const SEUnitScalar& src, cdm::ScalarData& dst)
+void PBProperty::Serialize(const SEUnitScalar& src, CDM_BIND::ScalarData& dst)
 {
   dst.set_value(src.m_value);
   if (src.HasUnit())
@@ -119,1202 +119,1202 @@ void PBProperty::Serialize(const SEUnitScalar& src, cdm::ScalarData& dst)
 }
 
 
-void PBProperty::Load(const cdm::Scalar0To1Data& src, SEScalar0To1& dst)
+void PBProperty::Load(const CDM_BIND::Scalar0To1Data& src, SEScalar0To1& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::Scalar0To1Data& src, SEScalar0To1& dst)
+void PBProperty::Serialize(const CDM_BIND::Scalar0To1Data& src, SEScalar0To1& dst)
 {
   PBProperty::Serialize(src.scalar0to1(), dst);
 }
-cdm::Scalar0To1Data* PBProperty::Unload(const SEScalar0To1& src)
+CDM_BIND::Scalar0To1Data* PBProperty::Unload(const SEScalar0To1& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::Scalar0To1Data* dst = new cdm::Scalar0To1Data();
+  CDM_BIND::Scalar0To1Data* dst = new CDM_BIND::Scalar0To1Data();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalar0To1& src, cdm::Scalar0To1Data& dst)
+void PBProperty::Serialize(const SEScalar0To1& src, CDM_BIND::Scalar0To1Data& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalar0to1());
 }
 
-void PBProperty::Load(const cdm::ScalarAmountData& src, SEScalarAmount& dst)
+void PBProperty::Load(const CDM_BIND::ScalarAmountData& src, SEScalarAmount& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarAmountData& src, SEScalarAmount& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarAmountData& src, SEScalarAmount& dst)
 {
   PBProperty::Serialize(src.scalaramount(), dst);
 }
-cdm::ScalarAmountData* PBProperty::Unload(const SEScalarAmount& src)
+CDM_BIND::ScalarAmountData* PBProperty::Unload(const SEScalarAmount& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarAmountData* dst = new cdm::ScalarAmountData();
+  CDM_BIND::ScalarAmountData* dst = new CDM_BIND::ScalarAmountData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarAmount& src, cdm::ScalarAmountData& dst)
+void PBProperty::Serialize(const SEScalarAmount& src, CDM_BIND::ScalarAmountData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalaramount());
 }
 
 
-void PBProperty::Load(const cdm::ScalarAmountPerMassData& src, SEScalarAmountPerMass& dst)
+void PBProperty::Load(const CDM_BIND::ScalarAmountPerMassData& src, SEScalarAmountPerMass& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarAmountPerMassData& src, SEScalarAmountPerMass& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarAmountPerMassData& src, SEScalarAmountPerMass& dst)
 {
   PBProperty::Serialize(src.scalaramountpermass(), dst);
 }
-cdm::ScalarAmountPerMassData* PBProperty::Unload(const SEScalarAmountPerMass& src)
+CDM_BIND::ScalarAmountPerMassData* PBProperty::Unload(const SEScalarAmountPerMass& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarAmountPerMassData* dst = new cdm::ScalarAmountPerMassData();
+  CDM_BIND::ScalarAmountPerMassData* dst = new CDM_BIND::ScalarAmountPerMassData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarAmountPerMass& src, cdm::ScalarAmountPerMassData& dst)
+void PBProperty::Serialize(const SEScalarAmountPerMass& src, CDM_BIND::ScalarAmountPerMassData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalaramountpermass());
 }
 
-void PBProperty::Load(const cdm::ScalarAmountPerTimeData& src, SEScalarAmountPerTime& dst)
+void PBProperty::Load(const CDM_BIND::ScalarAmountPerTimeData& src, SEScalarAmountPerTime& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarAmountPerTimeData& src, SEScalarAmountPerTime& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarAmountPerTimeData& src, SEScalarAmountPerTime& dst)
 {
   PBProperty::Serialize(src.scalaramountpertime(), dst);
 }
-cdm::ScalarAmountPerTimeData* PBProperty::Unload(const SEScalarAmountPerTime& src)
+CDM_BIND::ScalarAmountPerTimeData* PBProperty::Unload(const SEScalarAmountPerTime& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarAmountPerTimeData* dst = new cdm::ScalarAmountPerTimeData();
+  CDM_BIND::ScalarAmountPerTimeData* dst = new CDM_BIND::ScalarAmountPerTimeData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarAmountPerTime& src, cdm::ScalarAmountPerTimeData& dst)
+void PBProperty::Serialize(const SEScalarAmountPerTime& src, CDM_BIND::ScalarAmountPerTimeData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalaramountpertime());
 }
 
-void PBProperty::Load(const cdm::ScalarAmountPerVolumeData& src, SEScalarAmountPerVolume& dst)
+void PBProperty::Load(const CDM_BIND::ScalarAmountPerVolumeData& src, SEScalarAmountPerVolume& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarAmountPerVolumeData& src, SEScalarAmountPerVolume& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarAmountPerVolumeData& src, SEScalarAmountPerVolume& dst)
 {
   PBProperty::Serialize(src.scalaramountpervolume(), dst);
 }
-cdm::ScalarAmountPerVolumeData* PBProperty::Unload(const SEScalarAmountPerVolume& src)
+CDM_BIND::ScalarAmountPerVolumeData* PBProperty::Unload(const SEScalarAmountPerVolume& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarAmountPerVolumeData* dst = new cdm::ScalarAmountPerVolumeData();
+  CDM_BIND::ScalarAmountPerVolumeData* dst = new CDM_BIND::ScalarAmountPerVolumeData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarAmountPerVolume& src, cdm::ScalarAmountPerVolumeData& dst)
+void PBProperty::Serialize(const SEScalarAmountPerVolume& src, CDM_BIND::ScalarAmountPerVolumeData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalaramountpervolume());
 }
 
-void PBProperty::Load(const cdm::ScalarAreaData& src, SEScalarArea& dst)
+void PBProperty::Load(const CDM_BIND::ScalarAreaData& src, SEScalarArea& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarAreaData& src, SEScalarArea& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarAreaData& src, SEScalarArea& dst)
 {
   PBProperty::Serialize(src.scalararea(), dst);
 }
-cdm::ScalarAreaData* PBProperty::Unload(const SEScalarArea& src)
+CDM_BIND::ScalarAreaData* PBProperty::Unload(const SEScalarArea& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarAreaData* dst = new cdm::ScalarAreaData();
+  CDM_BIND::ScalarAreaData* dst = new CDM_BIND::ScalarAreaData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarArea& src, cdm::ScalarAreaData& dst)
+void PBProperty::Serialize(const SEScalarArea& src, CDM_BIND::ScalarAreaData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalararea());
 }
 
-void PBProperty::Load(const cdm::ScalarAreaPerTimePressureData& src, SEScalarAreaPerTimePressure& dst)
+void PBProperty::Load(const CDM_BIND::ScalarAreaPerTimePressureData& src, SEScalarAreaPerTimePressure& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarAreaPerTimePressureData& src, SEScalarAreaPerTimePressure& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarAreaPerTimePressureData& src, SEScalarAreaPerTimePressure& dst)
 {
   PBProperty::Serialize(src.scalarareapertimepressure(), dst);
 }
-cdm::ScalarAreaPerTimePressureData* PBProperty::Unload(const SEScalarAreaPerTimePressure& src)
+CDM_BIND::ScalarAreaPerTimePressureData* PBProperty::Unload(const SEScalarAreaPerTimePressure& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarAreaPerTimePressureData* dst = new cdm::ScalarAreaPerTimePressureData();
+  CDM_BIND::ScalarAreaPerTimePressureData* dst = new CDM_BIND::ScalarAreaPerTimePressureData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarAreaPerTimePressure& src, cdm::ScalarAreaPerTimePressureData& dst)
+void PBProperty::Serialize(const SEScalarAreaPerTimePressure& src, CDM_BIND::ScalarAreaPerTimePressureData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarareapertimepressure());
 }
 
-void PBProperty::Load(const cdm::ScalarElectricCapacitanceData& src, SEScalarElectricCapacitance& dst)
+void PBProperty::Load(const CDM_BIND::ScalarElectricCapacitanceData& src, SEScalarElectricCapacitance& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarElectricCapacitanceData& src, SEScalarElectricCapacitance& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarElectricCapacitanceData& src, SEScalarElectricCapacitance& dst)
 {
   PBProperty::Serialize(src.scalarelectriccapacitance(), dst);
 }
-cdm::ScalarElectricCapacitanceData* PBProperty::Unload(const SEScalarElectricCapacitance& src)
+CDM_BIND::ScalarElectricCapacitanceData* PBProperty::Unload(const SEScalarElectricCapacitance& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarElectricCapacitanceData* dst = new cdm::ScalarElectricCapacitanceData();
+  CDM_BIND::ScalarElectricCapacitanceData* dst = new CDM_BIND::ScalarElectricCapacitanceData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarElectricCapacitance& src, cdm::ScalarElectricCapacitanceData& dst)
+void PBProperty::Serialize(const SEScalarElectricCapacitance& src, CDM_BIND::ScalarElectricCapacitanceData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarelectriccapacitance());
 }
 
-void PBProperty::Load(const cdm::ScalarElectricChargeData& src, SEScalarElectricCharge& dst)
+void PBProperty::Load(const CDM_BIND::ScalarElectricChargeData& src, SEScalarElectricCharge& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarElectricChargeData& src, SEScalarElectricCharge& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarElectricChargeData& src, SEScalarElectricCharge& dst)
 {
   PBProperty::Serialize(src.scalarelectriccharge(), dst);
 }
-cdm::ScalarElectricChargeData* PBProperty::Unload(const SEScalarElectricCharge& src)
+CDM_BIND::ScalarElectricChargeData* PBProperty::Unload(const SEScalarElectricCharge& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarElectricChargeData* dst = new cdm::ScalarElectricChargeData();
+  CDM_BIND::ScalarElectricChargeData* dst = new CDM_BIND::ScalarElectricChargeData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarElectricCharge& src, cdm::ScalarElectricChargeData& dst)
+void PBProperty::Serialize(const SEScalarElectricCharge& src, CDM_BIND::ScalarElectricChargeData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarelectriccharge());
 }
 
-void PBProperty::Load(const cdm::ScalarElectricCurrentData& src, SEScalarElectricCurrent& dst)
+void PBProperty::Load(const CDM_BIND::ScalarElectricCurrentData& src, SEScalarElectricCurrent& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarElectricCurrentData& src, SEScalarElectricCurrent& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarElectricCurrentData& src, SEScalarElectricCurrent& dst)
 {
   PBProperty::Serialize(src.scalarelectriccurrent(), dst);
 }
-cdm::ScalarElectricCurrentData* PBProperty::Unload(const SEScalarElectricCurrent& src)
+CDM_BIND::ScalarElectricCurrentData* PBProperty::Unload(const SEScalarElectricCurrent& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarElectricCurrentData* dst = new cdm::ScalarElectricCurrentData();
+  CDM_BIND::ScalarElectricCurrentData* dst = new CDM_BIND::ScalarElectricCurrentData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarElectricCurrent& src, cdm::ScalarElectricCurrentData& dst)
+void PBProperty::Serialize(const SEScalarElectricCurrent& src, CDM_BIND::ScalarElectricCurrentData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarelectriccurrent());
 }
 
-void PBProperty::Load(const cdm::ScalarElectricInductanceData& src, SEScalarElectricInductance& dst)
+void PBProperty::Load(const CDM_BIND::ScalarElectricInductanceData& src, SEScalarElectricInductance& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarElectricInductanceData& src, SEScalarElectricInductance& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarElectricInductanceData& src, SEScalarElectricInductance& dst)
 {
   PBProperty::Serialize(src.scalarelectricinductance(), dst);
 }
-cdm::ScalarElectricInductanceData* PBProperty::Unload(const SEScalarElectricInductance& src)
+CDM_BIND::ScalarElectricInductanceData* PBProperty::Unload(const SEScalarElectricInductance& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarElectricInductanceData* dst = new cdm::ScalarElectricInductanceData();
+  CDM_BIND::ScalarElectricInductanceData* dst = new CDM_BIND::ScalarElectricInductanceData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarElectricInductance& src, cdm::ScalarElectricInductanceData& dst)
+void PBProperty::Serialize(const SEScalarElectricInductance& src, CDM_BIND::ScalarElectricInductanceData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarelectricinductance());
 }
 
-void PBProperty::Load(const cdm::ScalarElectricPotentialData& src, SEScalarElectricPotential& dst)
+void PBProperty::Load(const CDM_BIND::ScalarElectricPotentialData& src, SEScalarElectricPotential& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarElectricPotentialData& src, SEScalarElectricPotential& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarElectricPotentialData& src, SEScalarElectricPotential& dst)
 {
   PBProperty::Serialize(src.scalarelectricpotential(), dst);
 }
-cdm::ScalarElectricPotentialData* PBProperty::Unload(const SEScalarElectricPotential& src)
+CDM_BIND::ScalarElectricPotentialData* PBProperty::Unload(const SEScalarElectricPotential& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarElectricPotentialData* dst = new cdm::ScalarElectricPotentialData();
+  CDM_BIND::ScalarElectricPotentialData* dst = new CDM_BIND::ScalarElectricPotentialData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarElectricPotential& src, cdm::ScalarElectricPotentialData& dst)
+void PBProperty::Serialize(const SEScalarElectricPotential& src, CDM_BIND::ScalarElectricPotentialData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarelectricpotential());
 }
 
-void PBProperty::Load(const cdm::ScalarElectricResistanceData& src, SEScalarElectricResistance& dst)
+void PBProperty::Load(const CDM_BIND::ScalarElectricResistanceData& src, SEScalarElectricResistance& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarElectricResistanceData& src, SEScalarElectricResistance& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarElectricResistanceData& src, SEScalarElectricResistance& dst)
 {
   PBProperty::Serialize(src.scalarelectricresistance(), dst);
 }
-cdm::ScalarElectricResistanceData* PBProperty::Unload(const SEScalarElectricResistance& src)
+CDM_BIND::ScalarElectricResistanceData* PBProperty::Unload(const SEScalarElectricResistance& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarElectricResistanceData* dst = new cdm::ScalarElectricResistanceData();
+  CDM_BIND::ScalarElectricResistanceData* dst = new CDM_BIND::ScalarElectricResistanceData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarElectricResistance& src, cdm::ScalarElectricResistanceData& dst)
+void PBProperty::Serialize(const SEScalarElectricResistance& src, CDM_BIND::ScalarElectricResistanceData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarelectricresistance());
 }
 
-void PBProperty::Load(const cdm::ScalarEnergyData& src, SEScalarEnergy& dst)
+void PBProperty::Load(const CDM_BIND::ScalarEnergyData& src, SEScalarEnergy& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarEnergyData& src, SEScalarEnergy& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarEnergyData& src, SEScalarEnergy& dst)
 {
   PBProperty::Serialize(src.scalarenergy(), dst);
 }
-cdm::ScalarEnergyData* PBProperty::Unload(const SEScalarEnergy& src)
+CDM_BIND::ScalarEnergyData* PBProperty::Unload(const SEScalarEnergy& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarEnergyData* dst = new cdm::ScalarEnergyData();
+  CDM_BIND::ScalarEnergyData* dst = new CDM_BIND::ScalarEnergyData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarEnergy& src, cdm::ScalarEnergyData& dst)
+void PBProperty::Serialize(const SEScalarEnergy& src, CDM_BIND::ScalarEnergyData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarenergy());
 }
 
-void PBProperty::Load(const cdm::ScalarEnergyPerAmountData& src, SEScalarEnergyPerAmount& dst)
+void PBProperty::Load(const CDM_BIND::ScalarEnergyPerAmountData& src, SEScalarEnergyPerAmount& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarEnergyPerAmountData& src, SEScalarEnergyPerAmount& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarEnergyPerAmountData& src, SEScalarEnergyPerAmount& dst)
 {
   PBProperty::Serialize(src.scalarenergyperamount(), dst);
 }
-cdm::ScalarEnergyPerAmountData* PBProperty::Unload(const SEScalarEnergyPerAmount& src)
+CDM_BIND::ScalarEnergyPerAmountData* PBProperty::Unload(const SEScalarEnergyPerAmount& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarEnergyPerAmountData* dst = new cdm::ScalarEnergyPerAmountData();
+  CDM_BIND::ScalarEnergyPerAmountData* dst = new CDM_BIND::ScalarEnergyPerAmountData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarEnergyPerAmount& src, cdm::ScalarEnergyPerAmountData& dst)
+void PBProperty::Serialize(const SEScalarEnergyPerAmount& src, CDM_BIND::ScalarEnergyPerAmountData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarenergyperamount());
 }
 
-void PBProperty::Load(const cdm::ScalarEnergyPerMassData& src, SEScalarEnergyPerMass& dst)
+void PBProperty::Load(const CDM_BIND::ScalarEnergyPerMassData& src, SEScalarEnergyPerMass& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarEnergyPerMassData& src, SEScalarEnergyPerMass& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarEnergyPerMassData& src, SEScalarEnergyPerMass& dst)
 {
   PBProperty::Serialize(src.scalarenergypermass(), dst);
 }
-cdm::ScalarEnergyPerMassData* PBProperty::Unload(const SEScalarEnergyPerMass& src)
+CDM_BIND::ScalarEnergyPerMassData* PBProperty::Unload(const SEScalarEnergyPerMass& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarEnergyPerMassData* dst = new cdm::ScalarEnergyPerMassData();
+  CDM_BIND::ScalarEnergyPerMassData* dst = new CDM_BIND::ScalarEnergyPerMassData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarEnergyPerMass& src, cdm::ScalarEnergyPerMassData& dst)
+void PBProperty::Serialize(const SEScalarEnergyPerMass& src, CDM_BIND::ScalarEnergyPerMassData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarenergypermass());
 }
 
-void PBProperty::Load(const cdm::ScalarForceData& src, SEScalarForce& dst)
+void PBProperty::Load(const CDM_BIND::ScalarForceData& src, SEScalarForce& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarForceData& src, SEScalarForce& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarForceData& src, SEScalarForce& dst)
 {
   PBProperty::Serialize(src.scalarforce(), dst);
 }
-cdm::ScalarForceData* PBProperty::Unload(const SEScalarForce& src)
+CDM_BIND::ScalarForceData* PBProperty::Unload(const SEScalarForce& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarForceData* dst = new cdm::ScalarForceData();
+  CDM_BIND::ScalarForceData* dst = new CDM_BIND::ScalarForceData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarForce& src, cdm::ScalarForceData& dst)
+void PBProperty::Serialize(const SEScalarForce& src, CDM_BIND::ScalarForceData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarforce());
 }
 
-void PBProperty::Load(const cdm::ScalarFrequencyData& src, SEScalarFrequency& dst)
+void PBProperty::Load(const CDM_BIND::ScalarFrequencyData& src, SEScalarFrequency& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarFrequencyData& src, SEScalarFrequency& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarFrequencyData& src, SEScalarFrequency& dst)
 {
   PBProperty::Serialize(src.scalarfrequency(), dst);
 }
-cdm::ScalarFrequencyData* PBProperty::Unload(const SEScalarFrequency& src)
+CDM_BIND::ScalarFrequencyData* PBProperty::Unload(const SEScalarFrequency& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarFrequencyData* dst = new cdm::ScalarFrequencyData();
+  CDM_BIND::ScalarFrequencyData* dst = new CDM_BIND::ScalarFrequencyData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarFrequency& src, cdm::ScalarFrequencyData& dst)
+void PBProperty::Serialize(const SEScalarFrequency& src, CDM_BIND::ScalarFrequencyData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarfrequency());
 }
 
-void PBProperty::Load(const cdm::ScalarHeatCapacitanceData& src, SEScalarHeatCapacitance& dst)
+void PBProperty::Load(const CDM_BIND::ScalarHeatCapacitanceData& src, SEScalarHeatCapacitance& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarHeatCapacitanceData& src, SEScalarHeatCapacitance& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarHeatCapacitanceData& src, SEScalarHeatCapacitance& dst)
 {
   PBProperty::Serialize(src.scalarheatcapacitance(), dst);
 }
-cdm::ScalarHeatCapacitanceData* PBProperty::Unload(const SEScalarHeatCapacitance& src)
+CDM_BIND::ScalarHeatCapacitanceData* PBProperty::Unload(const SEScalarHeatCapacitance& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarHeatCapacitanceData* dst = new cdm::ScalarHeatCapacitanceData();
+  CDM_BIND::ScalarHeatCapacitanceData* dst = new CDM_BIND::ScalarHeatCapacitanceData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarHeatCapacitance& src, cdm::ScalarHeatCapacitanceData& dst)
+void PBProperty::Serialize(const SEScalarHeatCapacitance& src, CDM_BIND::ScalarHeatCapacitanceData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarheatcapacitance());
 }
 
-void PBProperty::Load(const cdm::ScalarHeatCapacitancePerAmountData& src, SEScalarHeatCapacitancePerAmount& dst)
+void PBProperty::Load(const CDM_BIND::ScalarHeatCapacitancePerAmountData& src, SEScalarHeatCapacitancePerAmount& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarHeatCapacitancePerAmountData& src, SEScalarHeatCapacitancePerAmount& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarHeatCapacitancePerAmountData& src, SEScalarHeatCapacitancePerAmount& dst)
 {
   PBProperty::Serialize(src.scalarheatcapacitanceperamount(), dst);
 }
-cdm::ScalarHeatCapacitancePerAmountData* PBProperty::Unload(const SEScalarHeatCapacitancePerAmount& src)
+CDM_BIND::ScalarHeatCapacitancePerAmountData* PBProperty::Unload(const SEScalarHeatCapacitancePerAmount& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarHeatCapacitancePerAmountData* dst = new cdm::ScalarHeatCapacitancePerAmountData();
+  CDM_BIND::ScalarHeatCapacitancePerAmountData* dst = new CDM_BIND::ScalarHeatCapacitancePerAmountData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarHeatCapacitancePerAmount& src, cdm::ScalarHeatCapacitancePerAmountData& dst)
+void PBProperty::Serialize(const SEScalarHeatCapacitancePerAmount& src, CDM_BIND::ScalarHeatCapacitancePerAmountData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarheatcapacitanceperamount());
 }
 
-void PBProperty::Load(const cdm::ScalarHeatCapacitancePerMassData& src, SEScalarHeatCapacitancePerMass& dst)
+void PBProperty::Load(const CDM_BIND::ScalarHeatCapacitancePerMassData& src, SEScalarHeatCapacitancePerMass& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarHeatCapacitancePerMassData& src, SEScalarHeatCapacitancePerMass& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarHeatCapacitancePerMassData& src, SEScalarHeatCapacitancePerMass& dst)
 {
   PBProperty::Serialize(src.scalarheatcapacitancepermass(), dst);
 }
-cdm::ScalarHeatCapacitancePerMassData* PBProperty::Unload(const SEScalarHeatCapacitancePerMass& src)
+CDM_BIND::ScalarHeatCapacitancePerMassData* PBProperty::Unload(const SEScalarHeatCapacitancePerMass& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarHeatCapacitancePerMassData* dst = new cdm::ScalarHeatCapacitancePerMassData();
+  CDM_BIND::ScalarHeatCapacitancePerMassData* dst = new CDM_BIND::ScalarHeatCapacitancePerMassData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarHeatCapacitancePerMass& src, cdm::ScalarHeatCapacitancePerMassData& dst)
+void PBProperty::Serialize(const SEScalarHeatCapacitancePerMass& src, CDM_BIND::ScalarHeatCapacitancePerMassData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarheatcapacitancepermass());
 }
 
-void PBProperty::Load(const cdm::ScalarHeatConductanceData& src, SEScalarHeatConductance& dst)
+void PBProperty::Load(const CDM_BIND::ScalarHeatConductanceData& src, SEScalarHeatConductance& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarHeatConductanceData& src, SEScalarHeatConductance& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarHeatConductanceData& src, SEScalarHeatConductance& dst)
 {
   PBProperty::Serialize(src.scalarheatconductance(), dst);
 }
-cdm::ScalarHeatConductanceData* PBProperty::Unload(const SEScalarHeatConductance& src)
+CDM_BIND::ScalarHeatConductanceData* PBProperty::Unload(const SEScalarHeatConductance& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarHeatConductanceData* dst = new cdm::ScalarHeatConductanceData();
+  CDM_BIND::ScalarHeatConductanceData* dst = new CDM_BIND::ScalarHeatConductanceData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarHeatConductance& src, cdm::ScalarHeatConductanceData& dst)
+void PBProperty::Serialize(const SEScalarHeatConductance& src, CDM_BIND::ScalarHeatConductanceData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarheatconductance());
 }
 
-void PBProperty::Load(const cdm::ScalarHeatConductancePerAreaData& src, SEScalarHeatConductancePerArea& dst)
+void PBProperty::Load(const CDM_BIND::ScalarHeatConductancePerAreaData& src, SEScalarHeatConductancePerArea& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarHeatConductancePerAreaData& src, SEScalarHeatConductancePerArea& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarHeatConductancePerAreaData& src, SEScalarHeatConductancePerArea& dst)
 {
   PBProperty::Serialize(src.scalarheatconductanceperarea(), dst);
 }
-cdm::ScalarHeatConductancePerAreaData* PBProperty::Unload(const SEScalarHeatConductancePerArea& src)
+CDM_BIND::ScalarHeatConductancePerAreaData* PBProperty::Unload(const SEScalarHeatConductancePerArea& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarHeatConductancePerAreaData* dst = new cdm::ScalarHeatConductancePerAreaData();
+  CDM_BIND::ScalarHeatConductancePerAreaData* dst = new CDM_BIND::ScalarHeatConductancePerAreaData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarHeatConductancePerArea& src, cdm::ScalarHeatConductancePerAreaData& dst)
+void PBProperty::Serialize(const SEScalarHeatConductancePerArea& src, CDM_BIND::ScalarHeatConductancePerAreaData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarheatconductanceperarea());
 }
 
-void PBProperty::Load(const cdm::ScalarHeatInductanceData& src, SEScalarHeatInductance& dst)
+void PBProperty::Load(const CDM_BIND::ScalarHeatInductanceData& src, SEScalarHeatInductance& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarHeatInductanceData& src, SEScalarHeatInductance& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarHeatInductanceData& src, SEScalarHeatInductance& dst)
 {
   PBProperty::Serialize(src.scalarheatinductance(), dst);
 }
-cdm::ScalarHeatInductanceData* PBProperty::Unload(const SEScalarHeatInductance& src)
+CDM_BIND::ScalarHeatInductanceData* PBProperty::Unload(const SEScalarHeatInductance& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarHeatInductanceData* dst = new cdm::ScalarHeatInductanceData();
+  CDM_BIND::ScalarHeatInductanceData* dst = new CDM_BIND::ScalarHeatInductanceData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarHeatInductance& src, cdm::ScalarHeatInductanceData& dst)
+void PBProperty::Serialize(const SEScalarHeatInductance& src, CDM_BIND::ScalarHeatInductanceData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarheatinductance());
 }
 
-void PBProperty::Load(const cdm::ScalarHeatResistanceData& src, SEScalarHeatResistance& dst)
+void PBProperty::Load(const CDM_BIND::ScalarHeatResistanceData& src, SEScalarHeatResistance& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarHeatResistanceData& src, SEScalarHeatResistance& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarHeatResistanceData& src, SEScalarHeatResistance& dst)
 {
   PBProperty::Serialize(src.scalarheatresistance(), dst);
 }
-cdm::ScalarHeatResistanceData* PBProperty::Unload(const SEScalarHeatResistance& src)
+CDM_BIND::ScalarHeatResistanceData* PBProperty::Unload(const SEScalarHeatResistance& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarHeatResistanceData* dst = new cdm::ScalarHeatResistanceData();
+  CDM_BIND::ScalarHeatResistanceData* dst = new CDM_BIND::ScalarHeatResistanceData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarHeatResistance& src, cdm::ScalarHeatResistanceData& dst)
+void PBProperty::Serialize(const SEScalarHeatResistance& src, CDM_BIND::ScalarHeatResistanceData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarheatresistance());
 }
 
-void PBProperty::Load(const cdm::ScalarHeatResistanceAreaData& src, SEScalarHeatResistanceArea& dst)
+void PBProperty::Load(const CDM_BIND::ScalarHeatResistanceAreaData& src, SEScalarHeatResistanceArea& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarHeatResistanceAreaData& src, SEScalarHeatResistanceArea& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarHeatResistanceAreaData& src, SEScalarHeatResistanceArea& dst)
 {
   PBProperty::Serialize(src.scalarheatresistancearea(), dst);
 }
-cdm::ScalarHeatResistanceAreaData* PBProperty::Unload(const SEScalarHeatResistanceArea& src)
+CDM_BIND::ScalarHeatResistanceAreaData* PBProperty::Unload(const SEScalarHeatResistanceArea& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarHeatResistanceAreaData* dst = new cdm::ScalarHeatResistanceAreaData();
+  CDM_BIND::ScalarHeatResistanceAreaData* dst = new CDM_BIND::ScalarHeatResistanceAreaData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarHeatResistanceArea& src, cdm::ScalarHeatResistanceAreaData& dst)
+void PBProperty::Serialize(const SEScalarHeatResistanceArea& src, CDM_BIND::ScalarHeatResistanceAreaData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarheatresistancearea());
 }
 
-void PBProperty::Load(const cdm::ScalarInversePressureData& src, SEScalarInversePressure& dst)
+void PBProperty::Load(const CDM_BIND::ScalarInversePressureData& src, SEScalarInversePressure& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarInversePressureData& src, SEScalarInversePressure& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarInversePressureData& src, SEScalarInversePressure& dst)
 {
   PBProperty::Serialize(src.scalarinversepressure(), dst);
 }
-cdm::ScalarInversePressureData* PBProperty::Unload(const SEScalarInversePressure& src)
+CDM_BIND::ScalarInversePressureData* PBProperty::Unload(const SEScalarInversePressure& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarInversePressureData* dst = new cdm::ScalarInversePressureData();
+  CDM_BIND::ScalarInversePressureData* dst = new CDM_BIND::ScalarInversePressureData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarInversePressure& src, cdm::ScalarInversePressureData& dst)
+void PBProperty::Serialize(const SEScalarInversePressure& src, CDM_BIND::ScalarInversePressureData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarinversepressure());
 }
 
-void PBProperty::Load(const cdm::ScalarInverseVolumeData& src, SEScalarInverseVolume& dst)
+void PBProperty::Load(const CDM_BIND::ScalarInverseVolumeData& src, SEScalarInverseVolume& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarInverseVolumeData& src, SEScalarInverseVolume& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarInverseVolumeData& src, SEScalarInverseVolume& dst)
 {
   PBProperty::Serialize(src.scalarinversevolume(), dst);
 }
-cdm::ScalarInverseVolumeData* PBProperty::Unload(const SEScalarInverseVolume& src)
+CDM_BIND::ScalarInverseVolumeData* PBProperty::Unload(const SEScalarInverseVolume& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarInverseVolumeData* dst = new cdm::ScalarInverseVolumeData();
+  CDM_BIND::ScalarInverseVolumeData* dst = new CDM_BIND::ScalarInverseVolumeData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarInverseVolume& src, cdm::ScalarInverseVolumeData& dst)
+void PBProperty::Serialize(const SEScalarInverseVolume& src, CDM_BIND::ScalarInverseVolumeData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarinversevolume());
 }
 
-void PBProperty::Load(const cdm::ScalarLengthData& src, SEScalarLength& dst)
+void PBProperty::Load(const CDM_BIND::ScalarLengthData& src, SEScalarLength& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarLengthData& src, SEScalarLength& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarLengthData& src, SEScalarLength& dst)
 {
   PBProperty::Serialize(src.scalarlength(), dst);
 }
-cdm::ScalarLengthData* PBProperty::Unload(const SEScalarLength& src)
+CDM_BIND::ScalarLengthData* PBProperty::Unload(const SEScalarLength& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarLengthData* dst = new cdm::ScalarLengthData();
+  CDM_BIND::ScalarLengthData* dst = new CDM_BIND::ScalarLengthData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarLength& src, cdm::ScalarLengthData& dst)
+void PBProperty::Serialize(const SEScalarLength& src, CDM_BIND::ScalarLengthData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarlength());
 }
 
-void PBProperty::Load(const cdm::ScalarLengthPerTimeData& src, SEScalarLengthPerTime& dst)
+void PBProperty::Load(const CDM_BIND::ScalarLengthPerTimeData& src, SEScalarLengthPerTime& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarLengthPerTimeData& src, SEScalarLengthPerTime& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarLengthPerTimeData& src, SEScalarLengthPerTime& dst)
 {
   PBProperty::Serialize(src.scalarlengthpertime(), dst);
 }
-cdm::ScalarLengthPerTimeData* PBProperty::Unload(const SEScalarLengthPerTime& src)
+CDM_BIND::ScalarLengthPerTimeData* PBProperty::Unload(const SEScalarLengthPerTime& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarLengthPerTimeData* dst = new cdm::ScalarLengthPerTimeData();
+  CDM_BIND::ScalarLengthPerTimeData* dst = new CDM_BIND::ScalarLengthPerTimeData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarLengthPerTime& src, cdm::ScalarLengthPerTimeData& dst)
+void PBProperty::Serialize(const SEScalarLengthPerTime& src, CDM_BIND::ScalarLengthPerTimeData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarlengthpertime());
 }
 
-void PBProperty::Load(const cdm::ScalarLengthPerTimePressureData& src, SEScalarLengthPerTimePressure& dst)
+void PBProperty::Load(const CDM_BIND::ScalarLengthPerTimePressureData& src, SEScalarLengthPerTimePressure& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarLengthPerTimePressureData& src, SEScalarLengthPerTimePressure& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarLengthPerTimePressureData& src, SEScalarLengthPerTimePressure& dst)
 {
   PBProperty::Serialize(src.scalarlengthpertimepressure(), dst);
 }
-cdm::ScalarLengthPerTimePressureData* PBProperty::Unload(const SEScalarLengthPerTimePressure& src)
+CDM_BIND::ScalarLengthPerTimePressureData* PBProperty::Unload(const SEScalarLengthPerTimePressure& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarLengthPerTimePressureData* dst = new cdm::ScalarLengthPerTimePressureData();
+  CDM_BIND::ScalarLengthPerTimePressureData* dst = new CDM_BIND::ScalarLengthPerTimePressureData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarLengthPerTimePressure& src, cdm::ScalarLengthPerTimePressureData& dst)
+void PBProperty::Serialize(const SEScalarLengthPerTimePressure& src, CDM_BIND::ScalarLengthPerTimePressureData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarlengthpertimepressure());
 }
 
-void PBProperty::Load(const cdm::ScalarMassData& src, SEScalarMass& dst)
+void PBProperty::Load(const CDM_BIND::ScalarMassData& src, SEScalarMass& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarMassData& src, SEScalarMass& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarMassData& src, SEScalarMass& dst)
 {
   PBProperty::Serialize(src.scalarmass(), dst);
 }
-cdm::ScalarMassData* PBProperty::Unload(const SEScalarMass& src)
+CDM_BIND::ScalarMassData* PBProperty::Unload(const SEScalarMass& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarMassData* dst = new cdm::ScalarMassData();
+  CDM_BIND::ScalarMassData* dst = new CDM_BIND::ScalarMassData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarMass& src, cdm::ScalarMassData& dst)
+void PBProperty::Serialize(const SEScalarMass& src, CDM_BIND::ScalarMassData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarmass());
 }
 
-void PBProperty::Load(const cdm::ScalarMassPerAmountData& src, SEScalarMassPerAmount& dst)
+void PBProperty::Load(const CDM_BIND::ScalarMassPerAmountData& src, SEScalarMassPerAmount& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarMassPerAmountData& src, SEScalarMassPerAmount& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarMassPerAmountData& src, SEScalarMassPerAmount& dst)
 {
   PBProperty::Serialize(src.scalarmassperamount(), dst);
 }
-cdm::ScalarMassPerAmountData* PBProperty::Unload(const SEScalarMassPerAmount& src)
+CDM_BIND::ScalarMassPerAmountData* PBProperty::Unload(const SEScalarMassPerAmount& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarMassPerAmountData* dst = new cdm::ScalarMassPerAmountData();
+  CDM_BIND::ScalarMassPerAmountData* dst = new CDM_BIND::ScalarMassPerAmountData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarMassPerAmount& src, cdm::ScalarMassPerAmountData& dst)
+void PBProperty::Serialize(const SEScalarMassPerAmount& src, CDM_BIND::ScalarMassPerAmountData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarmassperamount());
 }
 
-void PBProperty::Load(const cdm::ScalarMassPerAreaTimeData& src, SEScalarMassPerAreaTime& dst)
+void PBProperty::Load(const CDM_BIND::ScalarMassPerAreaTimeData& src, SEScalarMassPerAreaTime& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarMassPerAreaTimeData& src, SEScalarMassPerAreaTime& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarMassPerAreaTimeData& src, SEScalarMassPerAreaTime& dst)
 {
   PBProperty::Serialize(src.scalarmassperareatime(), dst);
 }
-cdm::ScalarMassPerAreaTimeData* PBProperty::Unload(const SEScalarMassPerAreaTime& src)
+CDM_BIND::ScalarMassPerAreaTimeData* PBProperty::Unload(const SEScalarMassPerAreaTime& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarMassPerAreaTimeData* dst = new cdm::ScalarMassPerAreaTimeData();
+  CDM_BIND::ScalarMassPerAreaTimeData* dst = new CDM_BIND::ScalarMassPerAreaTimeData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarMassPerAreaTime& src, cdm::ScalarMassPerAreaTimeData& dst)
+void PBProperty::Serialize(const SEScalarMassPerAreaTime& src, CDM_BIND::ScalarMassPerAreaTimeData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarmassperareatime());
 }
 
-void PBProperty::Load(const cdm::ScalarMassPerMassData& src, SEScalarMassPerMass& dst)
+void PBProperty::Load(const CDM_BIND::ScalarMassPerMassData& src, SEScalarMassPerMass& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarMassPerMassData& src, SEScalarMassPerMass& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarMassPerMassData& src, SEScalarMassPerMass& dst)
 {
   PBProperty::Serialize(src.scalarmasspermass(), dst);
 }
-cdm::ScalarMassPerMassData* PBProperty::Unload(const SEScalarMassPerMass& src)
+CDM_BIND::ScalarMassPerMassData* PBProperty::Unload(const SEScalarMassPerMass& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarMassPerMassData* dst = new cdm::ScalarMassPerMassData();
+  CDM_BIND::ScalarMassPerMassData* dst = new CDM_BIND::ScalarMassPerMassData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarMassPerMass& src, cdm::ScalarMassPerMassData& dst)
+void PBProperty::Serialize(const SEScalarMassPerMass& src, CDM_BIND::ScalarMassPerMassData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarmasspermass());
 }
 
-void PBProperty::Load(const cdm::ScalarMassPerTimeData& src, SEScalarMassPerTime& dst)
+void PBProperty::Load(const CDM_BIND::ScalarMassPerTimeData& src, SEScalarMassPerTime& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarMassPerTimeData& src, SEScalarMassPerTime& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarMassPerTimeData& src, SEScalarMassPerTime& dst)
 {
   PBProperty::Serialize(src.scalarmasspertime(), dst);
 }
-cdm::ScalarMassPerTimeData* PBProperty::Unload(const SEScalarMassPerTime& src)
+CDM_BIND::ScalarMassPerTimeData* PBProperty::Unload(const SEScalarMassPerTime& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarMassPerTimeData* dst = new cdm::ScalarMassPerTimeData();
+  CDM_BIND::ScalarMassPerTimeData* dst = new CDM_BIND::ScalarMassPerTimeData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarMassPerTime& src, cdm::ScalarMassPerTimeData& dst)
+void PBProperty::Serialize(const SEScalarMassPerTime& src, CDM_BIND::ScalarMassPerTimeData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarmasspertime());
 }
 
-void PBProperty::Load(const cdm::ScalarMassPerVolumeData& src, SEScalarMassPerVolume& dst)
+void PBProperty::Load(const CDM_BIND::ScalarMassPerVolumeData& src, SEScalarMassPerVolume& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarMassPerVolumeData& src, SEScalarMassPerVolume& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarMassPerVolumeData& src, SEScalarMassPerVolume& dst)
 {
   PBProperty::Serialize(src.scalarmasspervolume(), dst);
 }
-cdm::ScalarMassPerVolumeData* PBProperty::Unload(const SEScalarMassPerVolume& src)
+CDM_BIND::ScalarMassPerVolumeData* PBProperty::Unload(const SEScalarMassPerVolume& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarMassPerVolumeData* dst = new cdm::ScalarMassPerVolumeData();
+  CDM_BIND::ScalarMassPerVolumeData* dst = new CDM_BIND::ScalarMassPerVolumeData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarMassPerVolume& src, cdm::ScalarMassPerVolumeData& dst)
+void PBProperty::Serialize(const SEScalarMassPerVolume& src, CDM_BIND::ScalarMassPerVolumeData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarmasspervolume());
 }
 
-void PBProperty::Load(const cdm::ScalarNegative1To1Data& src, SEScalarNegative1To1& dst)
+void PBProperty::Load(const CDM_BIND::ScalarNegative1To1Data& src, SEScalarNegative1To1& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarNegative1To1Data& src, SEScalarNegative1To1& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarNegative1To1Data& src, SEScalarNegative1To1& dst)
 {
   PBProperty::Serialize(src.scalarnegative1to1(), dst);
 }
-cdm::ScalarNegative1To1Data* PBProperty::Unload(const SEScalarNegative1To1& src)
+CDM_BIND::ScalarNegative1To1Data* PBProperty::Unload(const SEScalarNegative1To1& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarNegative1To1Data* dst = new cdm::ScalarNegative1To1Data();
+  CDM_BIND::ScalarNegative1To1Data* dst = new CDM_BIND::ScalarNegative1To1Data();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarNegative1To1& src, cdm::ScalarNegative1To1Data& dst)
+void PBProperty::Serialize(const SEScalarNegative1To1& src, CDM_BIND::ScalarNegative1To1Data& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarnegative1to1());
 }
 
-void PBProperty::Load(const cdm::ScalarOsmolalityData& src, SEScalarOsmolality& dst)
+void PBProperty::Load(const CDM_BIND::ScalarOsmolalityData& src, SEScalarOsmolality& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarOsmolalityData& src, SEScalarOsmolality& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarOsmolalityData& src, SEScalarOsmolality& dst)
 {
   PBProperty::Serialize(src.scalarosmolality(), dst);
 }
-cdm::ScalarOsmolalityData* PBProperty::Unload(const SEScalarOsmolality& src)
+CDM_BIND::ScalarOsmolalityData* PBProperty::Unload(const SEScalarOsmolality& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarOsmolalityData* dst = new cdm::ScalarOsmolalityData();
+  CDM_BIND::ScalarOsmolalityData* dst = new CDM_BIND::ScalarOsmolalityData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarOsmolality& src, cdm::ScalarOsmolalityData& dst)
+void PBProperty::Serialize(const SEScalarOsmolality& src, CDM_BIND::ScalarOsmolalityData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarosmolality());
 }
 
-void PBProperty::Load(const cdm::ScalarOsmolarityData& src, SEScalarOsmolarity& dst)
+void PBProperty::Load(const CDM_BIND::ScalarOsmolarityData& src, SEScalarOsmolarity& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarOsmolarityData& src, SEScalarOsmolarity& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarOsmolarityData& src, SEScalarOsmolarity& dst)
 {
   PBProperty::Serialize(src.scalarosmolarity(), dst);
 }
-cdm::ScalarOsmolarityData* PBProperty::Unload(const SEScalarOsmolarity& src)
+CDM_BIND::ScalarOsmolarityData* PBProperty::Unload(const SEScalarOsmolarity& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarOsmolarityData* dst = new cdm::ScalarOsmolarityData();
+  CDM_BIND::ScalarOsmolarityData* dst = new CDM_BIND::ScalarOsmolarityData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarOsmolarity& src, cdm::ScalarOsmolarityData& dst)
+void PBProperty::Serialize(const SEScalarOsmolarity& src, CDM_BIND::ScalarOsmolarityData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarosmolarity());
 }
 
-void PBProperty::Load(const cdm::ScalarPowerData& src, SEScalarPower& dst)
+void PBProperty::Load(const CDM_BIND::ScalarPowerData& src, SEScalarPower& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarPowerData& src, SEScalarPower& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarPowerData& src, SEScalarPower& dst)
 {
   PBProperty::Serialize(src.scalarpower(), dst);
 }
-cdm::ScalarPowerData* PBProperty::Unload(const SEScalarPower& src)
+CDM_BIND::ScalarPowerData* PBProperty::Unload(const SEScalarPower& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarPowerData* dst = new cdm::ScalarPowerData();
+  CDM_BIND::ScalarPowerData* dst = new CDM_BIND::ScalarPowerData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarPower& src, cdm::ScalarPowerData& dst)
+void PBProperty::Serialize(const SEScalarPower& src, CDM_BIND::ScalarPowerData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarpower());
 }
 
-void PBProperty::Load(const cdm::ScalarPowerPerAreaTemperatureToTheFourthData& src, SEScalarPowerPerAreaTemperatureToTheFourth& dst)
+void PBProperty::Load(const CDM_BIND::ScalarPowerPerAreaTemperatureToTheFourthData& src, SEScalarPowerPerAreaTemperatureToTheFourth& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarPowerPerAreaTemperatureToTheFourthData& src, SEScalarPowerPerAreaTemperatureToTheFourth& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarPowerPerAreaTemperatureToTheFourthData& src, SEScalarPowerPerAreaTemperatureToTheFourth& dst)
 {
   PBProperty::Serialize(src.scalarpowerperareatemperaturetothefourth(), dst);
 }
-cdm::ScalarPowerPerAreaTemperatureToTheFourthData* PBProperty::Unload(const SEScalarPowerPerAreaTemperatureToTheFourth& src)
+CDM_BIND::ScalarPowerPerAreaTemperatureToTheFourthData* PBProperty::Unload(const SEScalarPowerPerAreaTemperatureToTheFourth& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarPowerPerAreaTemperatureToTheFourthData* dst = new cdm::ScalarPowerPerAreaTemperatureToTheFourthData();
+  CDM_BIND::ScalarPowerPerAreaTemperatureToTheFourthData* dst = new CDM_BIND::ScalarPowerPerAreaTemperatureToTheFourthData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarPowerPerAreaTemperatureToTheFourth& src, cdm::ScalarPowerPerAreaTemperatureToTheFourthData& dst)
+void PBProperty::Serialize(const SEScalarPowerPerAreaTemperatureToTheFourth& src, CDM_BIND::ScalarPowerPerAreaTemperatureToTheFourthData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarpowerperareatemperaturetothefourth());
 }
 
-void PBProperty::Load(const cdm::ScalarPressureData& src, SEScalarPressure& dst)
+void PBProperty::Load(const CDM_BIND::ScalarPressureData& src, SEScalarPressure& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarPressureData& src, SEScalarPressure& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarPressureData& src, SEScalarPressure& dst)
 {
   PBProperty::Serialize(src.scalarpressure(), dst);
 }
-cdm::ScalarPressureData* PBProperty::Unload(const SEScalarPressure& src)
+CDM_BIND::ScalarPressureData* PBProperty::Unload(const SEScalarPressure& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarPressureData* dst = new cdm::ScalarPressureData();
+  CDM_BIND::ScalarPressureData* dst = new CDM_BIND::ScalarPressureData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarPressure& src, cdm::ScalarPressureData& dst)
+void PBProperty::Serialize(const SEScalarPressure& src, CDM_BIND::ScalarPressureData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarpressure());
 }
 
-void PBProperty::Load(const cdm::ScalarPressurePerVolumeData& src, SEScalarPressurePerVolume& dst)
+void PBProperty::Load(const CDM_BIND::ScalarPressurePerVolumeData& src, SEScalarPressurePerVolume& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarPressurePerVolumeData& src, SEScalarPressurePerVolume& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarPressurePerVolumeData& src, SEScalarPressurePerVolume& dst)
 {
   PBProperty::Serialize(src.scalarpressurepervolume(), dst);
 }
-cdm::ScalarPressurePerVolumeData* PBProperty::Unload(const SEScalarPressurePerVolume& src)
+CDM_BIND::ScalarPressurePerVolumeData* PBProperty::Unload(const SEScalarPressurePerVolume& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarPressurePerVolumeData* dst = new cdm::ScalarPressurePerVolumeData();
+  CDM_BIND::ScalarPressurePerVolumeData* dst = new CDM_BIND::ScalarPressurePerVolumeData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarPressurePerVolume& src, cdm::ScalarPressurePerVolumeData& dst)
+void PBProperty::Serialize(const SEScalarPressurePerVolume& src, CDM_BIND::ScalarPressurePerVolumeData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarpressurepervolume());
 }
 
-void PBProperty::Load(const cdm::ScalarPressureTimePerAreaData& src, SEScalarPressureTimePerArea& dst)
+void PBProperty::Load(const CDM_BIND::ScalarPressureTimePerAreaData& src, SEScalarPressureTimePerArea& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarPressureTimePerAreaData& src, SEScalarPressureTimePerArea& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarPressureTimePerAreaData& src, SEScalarPressureTimePerArea& dst)
 {
   PBProperty::Serialize(src.scalarpressuretimeperarea(), dst);
 }
-cdm::ScalarPressureTimePerAreaData* PBProperty::Unload(const SEScalarPressureTimePerArea& src)
+CDM_BIND::ScalarPressureTimePerAreaData* PBProperty::Unload(const SEScalarPressureTimePerArea& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarPressureTimePerAreaData* dst = new cdm::ScalarPressureTimePerAreaData();
+  CDM_BIND::ScalarPressureTimePerAreaData* dst = new CDM_BIND::ScalarPressureTimePerAreaData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarPressureTimePerArea& src, cdm::ScalarPressureTimePerAreaData& dst)
+void PBProperty::Serialize(const SEScalarPressureTimePerArea& src, CDM_BIND::ScalarPressureTimePerAreaData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarpressuretimeperarea());
 }
 
-void PBProperty::Load(const cdm::ScalarPressureTimePerVolumeData& src, SEScalarPressureTimePerVolume& dst)
+void PBProperty::Load(const CDM_BIND::ScalarPressureTimePerVolumeData& src, SEScalarPressureTimePerVolume& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarPressureTimePerVolumeData& src, SEScalarPressureTimePerVolume& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarPressureTimePerVolumeData& src, SEScalarPressureTimePerVolume& dst)
 {
   PBProperty::Serialize(src.scalarpressuretimepervolume(), dst);
 }
-cdm::ScalarPressureTimePerVolumeData* PBProperty::Unload(const SEScalarPressureTimePerVolume& src)
+CDM_BIND::ScalarPressureTimePerVolumeData* PBProperty::Unload(const SEScalarPressureTimePerVolume& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarPressureTimePerVolumeData* dst = new cdm::ScalarPressureTimePerVolumeData();
+  CDM_BIND::ScalarPressureTimePerVolumeData* dst = new CDM_BIND::ScalarPressureTimePerVolumeData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarPressureTimePerVolume& src, cdm::ScalarPressureTimePerVolumeData& dst)
+void PBProperty::Serialize(const SEScalarPressureTimePerVolume& src, CDM_BIND::ScalarPressureTimePerVolumeData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarpressuretimepervolume());
 }
 
-void PBProperty::Load(const cdm::ScalarPressureTimePerVolumeAreaData& src, SEScalarPressureTimePerVolumeArea& dst)
+void PBProperty::Load(const CDM_BIND::ScalarPressureTimePerVolumeAreaData& src, SEScalarPressureTimePerVolumeArea& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarPressureTimePerVolumeAreaData& src, SEScalarPressureTimePerVolumeArea& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarPressureTimePerVolumeAreaData& src, SEScalarPressureTimePerVolumeArea& dst)
 {
   PBProperty::Serialize(src.scalarpressuretimepervolumearea(), dst);
 }
-cdm::ScalarPressureTimePerVolumeAreaData* PBProperty::Unload(const SEScalarPressureTimePerVolumeArea& src)
+CDM_BIND::ScalarPressureTimePerVolumeAreaData* PBProperty::Unload(const SEScalarPressureTimePerVolumeArea& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarPressureTimePerVolumeAreaData* dst = new cdm::ScalarPressureTimePerVolumeAreaData();
+  CDM_BIND::ScalarPressureTimePerVolumeAreaData* dst = new CDM_BIND::ScalarPressureTimePerVolumeAreaData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarPressureTimePerVolumeArea& src, cdm::ScalarPressureTimePerVolumeAreaData& dst)
+void PBProperty::Serialize(const SEScalarPressureTimePerVolumeArea& src, CDM_BIND::ScalarPressureTimePerVolumeAreaData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarpressuretimepervolumearea());
 }
 
 
-void PBProperty::Load(const cdm::ScalarPressureTimeSquaredPerVolumeData& src, SEScalarPressureTimeSquaredPerVolume& dst)
+void PBProperty::Load(const CDM_BIND::ScalarPressureTimeSquaredPerVolumeData& src, SEScalarPressureTimeSquaredPerVolume& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarPressureTimeSquaredPerVolumeData& src, SEScalarPressureTimeSquaredPerVolume& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarPressureTimeSquaredPerVolumeData& src, SEScalarPressureTimeSquaredPerVolume& dst)
 {
   PBProperty::Serialize(src.scalarpressuretimesquaredpervolume(), dst);
 }
-cdm::ScalarPressureTimeSquaredPerVolumeData* PBProperty::Unload(const SEScalarPressureTimeSquaredPerVolume& src)
+CDM_BIND::ScalarPressureTimeSquaredPerVolumeData* PBProperty::Unload(const SEScalarPressureTimeSquaredPerVolume& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarPressureTimeSquaredPerVolumeData* dst = new cdm::ScalarPressureTimeSquaredPerVolumeData();
+  CDM_BIND::ScalarPressureTimeSquaredPerVolumeData* dst = new CDM_BIND::ScalarPressureTimeSquaredPerVolumeData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarPressureTimeSquaredPerVolume& src, cdm::ScalarPressureTimeSquaredPerVolumeData& dst)
+void PBProperty::Serialize(const SEScalarPressureTimeSquaredPerVolume& src, CDM_BIND::ScalarPressureTimeSquaredPerVolumeData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarpressuretimesquaredpervolume());
 }
 
-void PBProperty::Load(const cdm::ScalarTemperatureData& src, SEScalarTemperature& dst)
+void PBProperty::Load(const CDM_BIND::ScalarTemperatureData& src, SEScalarTemperature& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarTemperatureData& src, SEScalarTemperature& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarTemperatureData& src, SEScalarTemperature& dst)
 {
   PBProperty::Serialize(src.scalartemperature(), dst);
 }
-cdm::ScalarTemperatureData* PBProperty::Unload(const SEScalarTemperature& src)
+CDM_BIND::ScalarTemperatureData* PBProperty::Unload(const SEScalarTemperature& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarTemperatureData* dst = new cdm::ScalarTemperatureData();
+  CDM_BIND::ScalarTemperatureData* dst = new CDM_BIND::ScalarTemperatureData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarTemperature& src, cdm::ScalarTemperatureData& dst)
+void PBProperty::Serialize(const SEScalarTemperature& src, CDM_BIND::ScalarTemperatureData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalartemperature());
 }
 
-void PBProperty::Load(const cdm::ScalarTimeData& src, SEScalarTime& dst)
+void PBProperty::Load(const CDM_BIND::ScalarTimeData& src, SEScalarTime& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarTimeData& src, SEScalarTime& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarTimeData& src, SEScalarTime& dst)
 {
   PBProperty::Serialize(src.scalartime(), dst);
 }
-cdm::ScalarTimeData* PBProperty::Unload(const SEScalarTime& src)
+CDM_BIND::ScalarTimeData* PBProperty::Unload(const SEScalarTime& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarTimeData* dst = new cdm::ScalarTimeData();
+  CDM_BIND::ScalarTimeData* dst = new CDM_BIND::ScalarTimeData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarTime& src, cdm::ScalarTimeData& dst)
+void PBProperty::Serialize(const SEScalarTime& src, CDM_BIND::ScalarTimeData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalartime());
 }
 
-void PBProperty::Load(const cdm::ScalarVolumeData& src, SEScalarVolume& dst)
+void PBProperty::Load(const CDM_BIND::ScalarVolumeData& src, SEScalarVolume& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarVolumeData& src, SEScalarVolume& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarVolumeData& src, SEScalarVolume& dst)
 {
   PBProperty::Serialize(src.scalarvolume(), dst);
 }
-cdm::ScalarVolumeData* PBProperty::Unload(const SEScalarVolume& src)
+CDM_BIND::ScalarVolumeData* PBProperty::Unload(const SEScalarVolume& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarVolumeData* dst = new cdm::ScalarVolumeData();
+  CDM_BIND::ScalarVolumeData* dst = new CDM_BIND::ScalarVolumeData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarVolume& src, cdm::ScalarVolumeData& dst)
+void PBProperty::Serialize(const SEScalarVolume& src, CDM_BIND::ScalarVolumeData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarvolume());
 }
 
-void PBProperty::Load(const cdm::ScalarVolumePerPressureData& src, SEScalarVolumePerPressure& dst)
+void PBProperty::Load(const CDM_BIND::ScalarVolumePerPressureData& src, SEScalarVolumePerPressure& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarVolumePerPressureData& src, SEScalarVolumePerPressure& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarVolumePerPressureData& src, SEScalarVolumePerPressure& dst)
 {
   PBProperty::Serialize(src.scalarvolumeperpressure(), dst);
 }
-cdm::ScalarVolumePerPressureData* PBProperty::Unload(const SEScalarVolumePerPressure& src)
+CDM_BIND::ScalarVolumePerPressureData* PBProperty::Unload(const SEScalarVolumePerPressure& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarVolumePerPressureData* dst = new cdm::ScalarVolumePerPressureData();
+  CDM_BIND::ScalarVolumePerPressureData* dst = new CDM_BIND::ScalarVolumePerPressureData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarVolumePerPressure& src, cdm::ScalarVolumePerPressureData& dst)
+void PBProperty::Serialize(const SEScalarVolumePerPressure& src, CDM_BIND::ScalarVolumePerPressureData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarvolumeperpressure());
 }
 
-void PBProperty::Load(const cdm::ScalarVolumePerTimeData& src, SEScalarVolumePerTime& dst)
+void PBProperty::Load(const CDM_BIND::ScalarVolumePerTimeData& src, SEScalarVolumePerTime& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarVolumePerTimeData& src, SEScalarVolumePerTime& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarVolumePerTimeData& src, SEScalarVolumePerTime& dst)
 {
   PBProperty::Serialize(src.scalarvolumepertime(), dst);
 }
-cdm::ScalarVolumePerTimeData* PBProperty::Unload(const SEScalarVolumePerTime& src)
+CDM_BIND::ScalarVolumePerTimeData* PBProperty::Unload(const SEScalarVolumePerTime& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarVolumePerTimeData* dst = new cdm::ScalarVolumePerTimeData();
+  CDM_BIND::ScalarVolumePerTimeData* dst = new CDM_BIND::ScalarVolumePerTimeData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarVolumePerTime& src, cdm::ScalarVolumePerTimeData& dst)
+void PBProperty::Serialize(const SEScalarVolumePerTime& src, CDM_BIND::ScalarVolumePerTimeData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarvolumepertime());
 }
 
-void PBProperty::Load(const cdm::ScalarVolumePerTimeAreaData& src, SEScalarVolumePerTimeArea& dst)
+void PBProperty::Load(const CDM_BIND::ScalarVolumePerTimeAreaData& src, SEScalarVolumePerTimeArea& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarVolumePerTimeAreaData& src, SEScalarVolumePerTimeArea& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarVolumePerTimeAreaData& src, SEScalarVolumePerTimeArea& dst)
 {
   PBProperty::Serialize(src.scalarvolumepertimearea(), dst);
 }
-cdm::ScalarVolumePerTimeAreaData* PBProperty::Unload(const SEScalarVolumePerTimeArea& src)
+CDM_BIND::ScalarVolumePerTimeAreaData* PBProperty::Unload(const SEScalarVolumePerTimeArea& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarVolumePerTimeAreaData* dst = new cdm::ScalarVolumePerTimeAreaData();
+  CDM_BIND::ScalarVolumePerTimeAreaData* dst = new CDM_BIND::ScalarVolumePerTimeAreaData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarVolumePerTimeArea& src, cdm::ScalarVolumePerTimeAreaData& dst)
+void PBProperty::Serialize(const SEScalarVolumePerTimeArea& src, CDM_BIND::ScalarVolumePerTimeAreaData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarvolumepertimearea());
 }
 
-void PBProperty::Load(const cdm::ScalarVolumePerTimeMassData& src, SEScalarVolumePerTimeMass& dst)
+void PBProperty::Load(const CDM_BIND::ScalarVolumePerTimeMassData& src, SEScalarVolumePerTimeMass& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarVolumePerTimeMassData& src, SEScalarVolumePerTimeMass& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarVolumePerTimeMassData& src, SEScalarVolumePerTimeMass& dst)
 {
   PBProperty::Serialize(src.scalarvolumepertimemass(), dst);
 }
-cdm::ScalarVolumePerTimeMassData* PBProperty::Unload(const SEScalarVolumePerTimeMass& src)
+CDM_BIND::ScalarVolumePerTimeMassData* PBProperty::Unload(const SEScalarVolumePerTimeMass& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarVolumePerTimeMassData* dst = new cdm::ScalarVolumePerTimeMassData();
+  CDM_BIND::ScalarVolumePerTimeMassData* dst = new CDM_BIND::ScalarVolumePerTimeMassData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarVolumePerTimeMass& src, cdm::ScalarVolumePerTimeMassData& dst)
+void PBProperty::Serialize(const SEScalarVolumePerTimeMass& src, CDM_BIND::ScalarVolumePerTimeMassData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarvolumepertimemass());
 }
 
-void PBProperty::Load(const cdm::ScalarVolumePerTimePressureData& src, SEScalarVolumePerTimePressure& dst)
+void PBProperty::Load(const CDM_BIND::ScalarVolumePerTimePressureData& src, SEScalarVolumePerTimePressure& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarVolumePerTimePressureData& src, SEScalarVolumePerTimePressure& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarVolumePerTimePressureData& src, SEScalarVolumePerTimePressure& dst)
 {
   PBProperty::Serialize(src.scalarvolumepertimepressure(), dst);
 }
-cdm::ScalarVolumePerTimePressureData* PBProperty::Unload(const SEScalarVolumePerTimePressure& src)
+CDM_BIND::ScalarVolumePerTimePressureData* PBProperty::Unload(const SEScalarVolumePerTimePressure& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarVolumePerTimePressureData* dst = new cdm::ScalarVolumePerTimePressureData();
+  CDM_BIND::ScalarVolumePerTimePressureData* dst = new CDM_BIND::ScalarVolumePerTimePressureData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarVolumePerTimePressure& src, cdm::ScalarVolumePerTimePressureData& dst)
+void PBProperty::Serialize(const SEScalarVolumePerTimePressure& src, CDM_BIND::ScalarVolumePerTimePressureData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarvolumepertimepressure());
 }
 
-void PBProperty::Load(const cdm::ScalarVolumePerTimePressureAreaData& src, SEScalarVolumePerTimePressureArea& dst)
+void PBProperty::Load(const CDM_BIND::ScalarVolumePerTimePressureAreaData& src, SEScalarVolumePerTimePressureArea& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::ScalarVolumePerTimePressureAreaData& src, SEScalarVolumePerTimePressureArea& dst)
+void PBProperty::Serialize(const CDM_BIND::ScalarVolumePerTimePressureAreaData& src, SEScalarVolumePerTimePressureArea& dst)
 {
   PBProperty::Serialize(src.scalarvolumepertimepressurearea(), dst);
 }
 
-cdm::ScalarVolumePerTimePressureAreaData* PBProperty::Unload(const SEScalarVolumePerTimePressureArea& src)
+CDM_BIND::ScalarVolumePerTimePressureAreaData* PBProperty::Unload(const SEScalarVolumePerTimePressureArea& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::ScalarVolumePerTimePressureAreaData* dst = new cdm::ScalarVolumePerTimePressureAreaData();
+  CDM_BIND::ScalarVolumePerTimePressureAreaData* dst = new CDM_BIND::ScalarVolumePerTimePressureAreaData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEScalarVolumePerTimePressureArea& src, cdm::ScalarVolumePerTimePressureAreaData& dst)
+void PBProperty::Serialize(const SEScalarVolumePerTimePressureArea& src, CDM_BIND::ScalarVolumePerTimePressureAreaData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarvolumepertimepressurearea());
 }
@@ -1322,22 +1322,22 @@ void PBProperty::Serialize(const SEScalarVolumePerTimePressureArea& src, cdm::Sc
 // Functions //
 ///////////////
 
-void PBProperty::Load(const cdm::FunctionData& src, SEFunction& dst)
+void PBProperty::Load(const CDM_BIND::FunctionData& src, SEFunction& dst)
 {
   PBProperty::Serialize(src, dst);
 
   if (!src.dependentunit().empty())
   {
     if (src.dependentunit() != "unitless")
-      throw CommonDataModelException("CDM::Function API is intended to be unitless, You are trying to load a dependent axis with a unit defined");
+      throw CommonDataModelException("CDM_BIND::Function API is intended to be unitless, You are trying to load a dependent axis with a unit defined");
   }
   if (!src.independentunit().empty())
   {
     if (src.independentunit() != "unitless")
-      throw CommonDataModelException("CDM::Function API is intended to be unitless, You are trying to load an independent axis with a unit defined");
+      throw CommonDataModelException("CDM_BIND::Function API is intended to be unitless, You are trying to load an independent axis with a unit defined");
   }
 }
-void PBProperty::Serialize(const cdm::FunctionData& src, SEFunction& dst)
+void PBProperty::Serialize(const CDM_BIND::FunctionData& src, SEFunction& dst)
 {
   dst.Clear();
   for (int i = 0; i < src.dependent().value_size(); i++)
@@ -1345,15 +1345,15 @@ void PBProperty::Serialize(const cdm::FunctionData& src, SEFunction& dst)
   for (int i = 0; i < src.independent().value_size(); i++)
     dst.m_Independent.push_back(src.independent().value(i));
 }
-cdm::FunctionData* PBProperty::Unload(const SEFunction& src)
+CDM_BIND::FunctionData* PBProperty::Unload(const SEFunction& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::FunctionData* dst = new cdm::FunctionData();
+  CDM_BIND::FunctionData* dst = new CDM_BIND::FunctionData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEFunction& src, cdm::FunctionData& dst)
+void PBProperty::Serialize(const SEFunction& src, CDM_BIND::FunctionData& dst)
 {
   for (size_t i = 0; i < src.m_Dependent.size(); i++)
   {
@@ -1362,51 +1362,51 @@ void PBProperty::Serialize(const SEFunction& src, cdm::FunctionData& dst)
   }
 }
 
-void PBProperty::Load(const cdm::FunctionElectricPotentialVsTimeData& src, SEFunctionElectricPotentialVsTime& dst)
+void PBProperty::Load(const CDM_BIND::FunctionElectricPotentialVsTimeData& src, SEFunctionElectricPotentialVsTime& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::FunctionElectricPotentialVsTimeData& src, SEFunctionElectricPotentialVsTime& dst)
+void PBProperty::Serialize(const CDM_BIND::FunctionElectricPotentialVsTimeData& src, SEFunctionElectricPotentialVsTime& dst)
 {
   PBProperty::Serialize(src.functionelectricpotentialvstime(), dst);
   dst.m_TimeUnit = &TimeUnit::GetCompoundUnit(src.functionelectricpotentialvstime().independentunit());
   dst.m_ElectricPotentialUnit = &ElectricPotentialUnit::GetCompoundUnit(src.functionelectricpotentialvstime().dependentunit());
 }
 
-cdm::FunctionElectricPotentialVsTimeData* PBProperty::Unload(const SEFunctionElectricPotentialVsTime& src)
+CDM_BIND::FunctionElectricPotentialVsTimeData* PBProperty::Unload(const SEFunctionElectricPotentialVsTime& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::FunctionElectricPotentialVsTimeData* dst = new cdm::FunctionElectricPotentialVsTimeData();
+  CDM_BIND::FunctionElectricPotentialVsTimeData* dst = new CDM_BIND::FunctionElectricPotentialVsTimeData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEFunctionElectricPotentialVsTime& src, cdm::FunctionElectricPotentialVsTimeData& dst)
+void PBProperty::Serialize(const SEFunctionElectricPotentialVsTime& src, CDM_BIND::FunctionElectricPotentialVsTimeData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_functionelectricpotentialvstime());
   dst.mutable_functionelectricpotentialvstime()->set_independentunit(src.m_TimeUnit->GetString());
   dst.mutable_functionelectricpotentialvstime()->set_dependentunit(src.m_ElectricPotentialUnit->GetString());
 }
 
-void PBProperty::Load(const cdm::FunctionVolumeVsTimeData& src, SEFunctionVolumeVsTime& dst)
+void PBProperty::Load(const CDM_BIND::FunctionVolumeVsTimeData& src, SEFunctionVolumeVsTime& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::FunctionVolumeVsTimeData& src, SEFunctionVolumeVsTime& dst)
+void PBProperty::Serialize(const CDM_BIND::FunctionVolumeVsTimeData& src, SEFunctionVolumeVsTime& dst)
 {
   PBProperty::Serialize(src.functionvolumevstime(), dst);
   dst.m_TimeUnit = &TimeUnit::GetCompoundUnit(src.functionvolumevstime().independentunit());
   dst.m_VolumeUnit = &VolumeUnit::GetCompoundUnit(src.functionvolumevstime().dependentunit());
 }
-cdm::FunctionVolumeVsTimeData* PBProperty::Unload(const SEFunctionVolumeVsTime& src)
+CDM_BIND::FunctionVolumeVsTimeData* PBProperty::Unload(const SEFunctionVolumeVsTime& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::FunctionVolumeVsTimeData* dst = new cdm::FunctionVolumeVsTimeData();
+  CDM_BIND::FunctionVolumeVsTimeData* dst = new CDM_BIND::FunctionVolumeVsTimeData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEFunctionVolumeVsTime& src, cdm::FunctionVolumeVsTimeData& dst)
+void PBProperty::Serialize(const SEFunctionVolumeVsTime& src, CDM_BIND::FunctionVolumeVsTimeData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_functionvolumevstime());
   dst.mutable_functionvolumevstime()->set_independentunit(src.m_TimeUnit->GetString());
@@ -1418,22 +1418,22 @@ void PBProperty::Serialize(const SEFunctionVolumeVsTime& src, cdm::FunctionVolum
 ////////////////
 
 
-void PBProperty::Load(const cdm::HistogramData& src, SEHistogram& dst)
+void PBProperty::Load(const CDM_BIND::HistogramData& src, SEHistogram& dst)
 {
   PBProperty::Serialize(src, dst);
 
   if (!src.histogram().dependentunit().empty())
   {
     if (src.histogram().dependentunit() != "unitless")
-      throw CommonDataModelException("CDM::Histogram API is intended to be unitless, You are trying to load a dependent axis with a unit defined");
+      throw CommonDataModelException("CDM_BIND::Histogram API is intended to be unitless, You are trying to load a dependent axis with a unit defined");
   }
   if (!src.histogram().independentunit().empty())
   {
     if (src.histogram().independentunit() != "unitless")
-      throw CommonDataModelException("CDM::Histogram API is intended to be unitless, You are trying to load an independent axis with a unit defined");
+      throw CommonDataModelException("CDM_BIND::Histogram API is intended to be unitless, You are trying to load an independent axis with a unit defined");
   }
 }
-void PBProperty::Serialize(const cdm::HistogramData& src, SEHistogram& dst)
+void PBProperty::Serialize(const CDM_BIND::HistogramData& src, SEHistogram& dst)
 {
   dst.Clear();
   for (int i = 0; i < src.histogram().dependent().value_size(); i++)
@@ -1442,15 +1442,15 @@ void PBProperty::Serialize(const cdm::HistogramData& src, SEHistogram& dst)
     dst.m_Independent.push_back(src.histogram().independent().value(i));
 }
 
-cdm::HistogramData* PBProperty::Unload(const SEHistogram& src)
+CDM_BIND::HistogramData* PBProperty::Unload(const SEHistogram& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::HistogramData* dst = new cdm::HistogramData();
+  CDM_BIND::HistogramData* dst = new CDM_BIND::HistogramData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEHistogram& src, cdm::HistogramData& dst)
+void PBProperty::Serialize(const SEHistogram& src, CDM_BIND::HistogramData& dst)
 {
   for (size_t i = 0; i < src.m_Dependent.size(); i++)
   {
@@ -1459,11 +1459,11 @@ void PBProperty::Serialize(const SEHistogram& src, cdm::HistogramData& dst)
   }
 }
 
-void PBProperty::Load(const cdm::HistogramFractionVsLengthData& src, SEHistogramFractionVsLength& dst)
+void PBProperty::Load(const CDM_BIND::HistogramFractionVsLengthData& src, SEHistogramFractionVsLength& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::HistogramFractionVsLengthData& src, SEHistogramFractionVsLength& dst)
+void PBProperty::Serialize(const CDM_BIND::HistogramFractionVsLengthData& src, SEHistogramFractionVsLength& dst)
 {
   dst.Clear();
   for (int i = 0; i < src.histogramfractionvslength().histogram().dependent().value_size(); i++)
@@ -1471,15 +1471,15 @@ void PBProperty::Serialize(const cdm::HistogramFractionVsLengthData& src, SEHist
   for (int i = 0; i < src.histogramfractionvslength().histogram().independent().value_size(); i++)
     dst.m_Independent.push_back(src.histogramfractionvslength().histogram().independent().value(i));
 }
-cdm::HistogramFractionVsLengthData* PBProperty::Unload(const SEHistogramFractionVsLength& src)
+CDM_BIND::HistogramFractionVsLengthData* PBProperty::Unload(const SEHistogramFractionVsLength& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::HistogramFractionVsLengthData* dst = new cdm::HistogramFractionVsLengthData();
+  CDM_BIND::HistogramFractionVsLengthData* dst = new CDM_BIND::HistogramFractionVsLengthData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SEHistogramFractionVsLength& src, cdm::HistogramFractionVsLengthData& dst)
+void PBProperty::Serialize(const SEHistogramFractionVsLength& src, CDM_BIND::HistogramFractionVsLengthData& dst)
 {
   for (size_t i = 0; i < src.m_Dependent.size(); i++)
     dst.mutable_histogramfractionvslength()->mutable_histogram()->mutable_dependent()->add_value(src.m_Dependent[i]);
@@ -1487,22 +1487,22 @@ void PBProperty::Serialize(const SEHistogramFractionVsLength& src, cdm::Histogra
     dst.mutable_histogramfractionvslength()->mutable_histogram()->mutable_independent()->add_value(src.m_Independent[i]);
 }
 
-void PBProperty::Load(const cdm::RunningAverageData& src, SERunningAverage& dst)
+void PBProperty::Load(const CDM_BIND::RunningAverageData& src, SERunningAverage& dst)
 {
   PBProperty::Serialize(src, dst);
 }
-void PBProperty::Serialize(const cdm::RunningAverageData& src, SERunningAverage& dst)
+void PBProperty::Serialize(const CDM_BIND::RunningAverageData& src, SERunningAverage& dst)
 {
   dst.m_Sum = src.sum();
   dst.m_NumSamples = src.numsamples();
 }
-cdm::RunningAverageData* PBProperty::Unload(const SERunningAverage& src)
+CDM_BIND::RunningAverageData* PBProperty::Unload(const SERunningAverage& src)
 {
-  cdm::RunningAverageData* dst = new cdm::RunningAverageData();
+  CDM_BIND::RunningAverageData* dst = new CDM_BIND::RunningAverageData();
   PBProperty::Serialize(src, *dst);
   return dst;
 }
-void PBProperty::Serialize(const SERunningAverage& src, cdm::RunningAverageData& dst)
+void PBProperty::Serialize(const SERunningAverage& src, CDM_BIND::RunningAverageData& dst)
 {
   dst.set_sum(src.m_Sum);
   dst.set_numsamples(src.m_NumSamples);

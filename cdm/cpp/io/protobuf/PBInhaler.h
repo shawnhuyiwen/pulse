@@ -8,10 +8,10 @@ class CDM_DECL PBInhaler
 {
 public:
 
-  static void Load(const cdm::InhalerData& src, SEInhaler& dst);
-  static cdm::InhalerData* Unload(const SEInhaler& src);
-  static void Serialize(const cdm::InhalerData& src, SEInhaler& dst);
-  static void Serialize(const SEInhaler& src, cdm::InhalerData& dst);
+  static void Load(const CDM_BIND::InhalerData& src, SEInhaler& dst);
+  static CDM_BIND::InhalerData* Unload(const SEInhaler& src);
+  static void Serialize(const CDM_BIND::InhalerData& src, SEInhaler& dst);
+  static void Serialize(const SEInhaler& src, CDM_BIND::InhalerData& dst);
 
   static bool SerializeToString(const SEInhaler& src, std::string& output, SerializationFormat m);
   static bool SerializeToFile(const SEInhaler& src, const std::string& filename, SerializationFormat m);

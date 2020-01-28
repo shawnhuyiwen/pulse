@@ -3,11 +3,11 @@
 
 #include "stdafx.h"
 
-#include "bind/cpp/pulse/Pulse.pb.h"
-#include "bind/cpp/pulse/PulseState.pb.h"
+#include "pulse/engine/bind/Pulse.pb.h"
+#include "pulse/engine/bind/PulseState.pb.h"
 #include "controller/Controller.h"
 
 const std::string& eAirwayMode_Name(eAirwayMode m)
 {
-  return pulse::proto::eAirwayMode_Name((pulse::proto::eAirwayMode)m);
+  return PULSE_BIND::eAirwayMode_Name((PULSE_BIND::eAirwayMode)m);
 }

@@ -8,7 +8,7 @@
 #include "io/protobuf/PBPatient.h"
 #include "io/protobuf/PBProperties.h"
 #include "io/protobuf/PBUtils.h"
-#include "bind/cpp/cdm/Engine.pb.h"
+#include "bind/Engine.pb.h"
 #include "engine/SEDataRequest.h"
 #include "engine/SEDataRequestManager.h"
 #include "engine/SEDecimalFormat.h"
@@ -96,11 +96,11 @@
 #include "utils/FileUtils.h"
 
 
-void PBEngine::Load(const cdm::LogMessagesData& src, LogMessages& dst)
+void PBEngine::Load(const CDM_BIND::LogMessagesData& src, LogMessages& dst)
 {
   PBEngine::Serialize(src, dst);
 }
-void PBEngine::Serialize(const cdm::LogMessagesData& src, LogMessages& dst)
+void PBEngine::Serialize(const CDM_BIND::LogMessagesData& src, LogMessages& dst)
 {
   dst.Clear();
   for (int i = 0; i < src.debugmessages_size(); i++)
@@ -116,20 +116,20 @@ void PBEngine::Serialize(const cdm::LogMessagesData& src, LogMessages& dst)
 }
 bool PBEngine::SerializeFromString(const std::string& src, LogMessages& dst, SerializationFormat m, Logger* logger)
 {
-  cdm::LogMessagesData data;
+  CDM_BIND::LogMessagesData data;
   if (!PBUtils::SerializeFromString(src, data, m, logger))
     return false;
   PBEngine::Load(data, dst);
   return true;
 }
 
-cdm::LogMessagesData* PBEngine::Unload(const LogMessages& src)
+CDM_BIND::LogMessagesData* PBEngine::Unload(const LogMessages& src)
 {
-  cdm::LogMessagesData* dst = new cdm::LogMessagesData();
+  CDM_BIND::LogMessagesData* dst = new CDM_BIND::LogMessagesData();
   PBEngine::Serialize(src, *dst);
   return dst;
 }
-void PBEngine::Serialize(const LogMessages& src, cdm::LogMessagesData& dst)
+void PBEngine::Serialize(const LogMessages& src, CDM_BIND::LogMessagesData& dst)
 {
   for (std::string str : src.debug_msgs)
     dst.add_debugmessages(str);
@@ -144,16 +144,16 @@ void PBEngine::Serialize(const LogMessages& src, cdm::LogMessagesData& dst)
 }
 bool PBEngine::SerializeToString(const LogMessages& src, std::string& output, SerializationFormat m, Logger* logger)
 {
-  cdm::LogMessagesData data;
+  CDM_BIND::LogMessagesData data;
   PBEngine::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, logger);
 }
 
-void PBEngine::Load(const cdm::ConditionListData& src, SEConditionManager& dst)
+void PBEngine::Load(const CDM_BIND::ConditionListData& src, SEConditionManager& dst)
 {
   PBEngine::Serialize(src, dst);
 }
-void PBEngine::Serialize(const cdm::ConditionListData& src, SEConditionManager& dst)
+void PBEngine::Serialize(const CDM_BIND::ConditionListData& src, SEConditionManager& dst)
 {
   for (int i = 0; i < src.anycondition_size(); i++)
   {
@@ -162,13 +162,13 @@ void PBEngine::Serialize(const cdm::ConditionListData& src, SEConditionManager& 
     delete c;
   }
 }
-cdm::ConditionListData* PBEngine::Unload(const SEConditionManager& src)
+CDM_BIND::ConditionListData* PBEngine::Unload(const SEConditionManager& src)
 {
-  cdm::ConditionListData* dst = new cdm::ConditionListData();
+  CDM_BIND::ConditionListData* dst = new CDM_BIND::ConditionListData();
   PBEngine::Serialize(src, *dst);
   return dst;
 }
-void PBEngine::Serialize(const SEConditionManager& src, cdm::ConditionListData& dst)
+void PBEngine::Serialize(const SEConditionManager& src, CDM_BIND::ConditionListData& dst)
 {
   if (src.HasAcuteRespiratoryDistressSyndrome())
     dst.mutable_anycondition()->AddAllocated(PBCondition::Unload(*src.m_ARDS));
@@ -196,11 +196,11 @@ void PBEngine::Serialize(const SEConditionManager& src, cdm::ConditionListData& 
     dst.mutable_anycondition()->AddAllocated(PBCondition::Unload(*src.m_InitialEnvironmentConditions));
 }
 
-void PBEngine::Load(const cdm::ActionListData& src, SEActionManager& dst)
+void PBEngine::Load(const CDM_BIND::ActionListData& src, SEActionManager& dst)
 {
   PBEngine::Serialize(src, dst);
 }
-void PBEngine::Serialize(const cdm::ActionListData& src, SEActionManager& dst)
+void PBEngine::Serialize(const CDM_BIND::ActionListData& src, SEActionManager& dst)
 {
   for (int i = 0; i < src.anyaction_size(); i++)
   {
@@ -209,13 +209,13 @@ void PBEngine::Serialize(const cdm::ActionListData& src, SEActionManager& dst)
     delete a;
   }
 }
-cdm::ActionListData* PBEngine::Unload(const SEActionManager& src)
+CDM_BIND::ActionListData* PBEngine::Unload(const SEActionManager& src)
 {
-  cdm::ActionListData* dst = new cdm::ActionListData();
+  CDM_BIND::ActionListData* dst = new CDM_BIND::ActionListData();
   PBEngine::Serialize(src, *dst);
   return dst;
 }
-void PBEngine::Serialize(const SEActionManager& src, cdm::ActionListData& dst)
+void PBEngine::Serialize(const SEActionManager& src, CDM_BIND::ActionListData& dst)
 {
   PBEngine::Serialize(*src.m_PatientActions, dst);
   PBEngine::Serialize(*src.m_EnvironmentActions, dst);
@@ -223,7 +223,7 @@ void PBEngine::Serialize(const SEActionManager& src, cdm::ActionListData& dst)
   PBEngine::Serialize(*src.m_InhalerActions, dst);
 }
 
-void PBEngine::Serialize(const SEAnesthesiaMachineActionCollection& src, cdm::ActionListData& dst)
+void PBEngine::Serialize(const SEAnesthesiaMachineActionCollection& src, CDM_BIND::ActionListData& dst)
 {
   if (src.HasConfiguration())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_Configuration));
@@ -254,20 +254,20 @@ void PBEngine::Serialize(const SEAnesthesiaMachineActionCollection& src, cdm::Ac
   if (src.HasYPieceDisconnect())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_YPieceDisconnect));
 }
-void PBEngine::Serialize(const SEEnvironmentActionCollection& src, cdm::ActionListData& dst)
+void PBEngine::Serialize(const SEEnvironmentActionCollection& src, CDM_BIND::ActionListData& dst)
 {
   if (src.HasChange())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_Change));
   if (src.HasThermalApplication())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_ThermalApplication));
 }
-void PBEngine::Serialize(const SEInhalerActionCollection& src, cdm::ActionListData& dst)
+void PBEngine::Serialize(const SEInhalerActionCollection& src, CDM_BIND::ActionListData& dst)
 {
   if (src.HasConfiguration())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_Configuration));
 }
 
-void PBEngine::Serialize(const SEPatientActionCollection& src, cdm::ActionListData& dst)
+void PBEngine::Serialize(const SEPatientActionCollection& src, CDM_BIND::ActionListData& dst)
 {
   if (src.HasAcuteRespiratoryDistressSyndromeExacerbation())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_ARDSExacerbation));
@@ -337,11 +337,11 @@ void PBEngine::Serialize(const SEPatientActionCollection& src, cdm::ActionListDa
 }
 
 
-void PBEngine::Load(const cdm::PatientConfigurationData& src, SEPatientConfiguration& dst, SESubstanceManager& subMgr)
+void PBEngine::Load(const CDM_BIND::PatientConfigurationData& src, SEPatientConfiguration& dst, SESubstanceManager& subMgr)
 {
   PBEngine::Serialize(src, dst, subMgr);
 }
-void PBEngine::Serialize(const cdm::PatientConfigurationData& src, SEPatientConfiguration& dst, SESubstanceManager& subMgr)
+void PBEngine::Serialize(const CDM_BIND::PatientConfigurationData& src, SEPatientConfiguration& dst, SESubstanceManager& subMgr)
 {
   dst.Clear();
 
@@ -353,13 +353,13 @@ void PBEngine::Serialize(const cdm::PatientConfigurationData& src, SEPatientConf
   if (src.has_conditions())
     PBEngine::Load(src.conditions(), dst.GetConditions());
 }
-cdm::PatientConfigurationData* PBEngine::Unload(const SEPatientConfiguration& src)
+CDM_BIND::PatientConfigurationData* PBEngine::Unload(const SEPatientConfiguration& src)
 {
-  cdm::PatientConfigurationData* dst = new cdm::PatientConfigurationData();
+  CDM_BIND::PatientConfigurationData* dst = new CDM_BIND::PatientConfigurationData();
   PBEngine::Serialize(src, *dst);
   return dst;
 }
-void PBEngine::Serialize(const SEPatientConfiguration& src, cdm::PatientConfigurationData& dst)
+void PBEngine::Serialize(const SEPatientConfiguration& src, CDM_BIND::PatientConfigurationData& dst)
 {
   if (src.HasPatientFile())
     dst.set_patientfile(src.m_PatientFile);
@@ -372,13 +372,13 @@ void PBEngine::Serialize(const SEPatientConfiguration& src, cdm::PatientConfigur
 
 bool PBEngine::SerializeToString(const SEPatientConfiguration& src, std::string& output, SerializationFormat m)
 {
-  cdm::PatientConfigurationData data;
+  CDM_BIND::PatientConfigurationData data;
   PBEngine::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
 bool PBEngine::SerializeToFile(const SEPatientConfiguration& src, const std::string& filename, SerializationFormat m)
 {
-  cdm::PatientConfigurationData data;
+  CDM_BIND::PatientConfigurationData data;
   PBEngine::Serialize(src, data);
   std::string content;
   PBEngine::SerializeToString(src, content, m);
@@ -386,7 +386,7 @@ bool PBEngine::SerializeToFile(const SEPatientConfiguration& src, const std::str
 }
 bool PBEngine::SerializeFromString(const std::string& src, SEPatientConfiguration& dst, SerializationFormat m, SESubstanceManager& subMgr)
 {
-  cdm::PatientConfigurationData data;
+  CDM_BIND::PatientConfigurationData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
     return false;
   PBEngine::Load(data, dst, subMgr);
@@ -400,11 +400,11 @@ bool PBEngine::SerializeFromFile(const std::string& filename, SEPatientConfigura
   return PBEngine::SerializeFromString(content, dst, m, subMgr);
 }
 
-void PBEngine::Load(const cdm::DataRequestData& src, SEDataRequest& dst)
+void PBEngine::Load(const CDM_BIND::DataRequestData& src, SEDataRequest& dst)
 {
   PBEngine::Serialize(src, dst);
 }
-void PBEngine::Serialize(const cdm::DataRequestData& src, SEDataRequest& dst)
+void PBEngine::Serialize(const CDM_BIND::DataRequestData& src, SEDataRequest& dst)
 {
   PBEngine::Serialize(src.decimalformat(), dst);
   dst.m_CompartmentName = src.compartmentname();
@@ -412,16 +412,16 @@ void PBEngine::Serialize(const cdm::DataRequestData& src, SEDataRequest& dst)
   dst.m_PropertyName = src.propertyname();
   dst.m_RequestedUnit = src.unit();
 }
-cdm::DataRequestData* PBEngine::Unload(const SEDataRequest& src)
+CDM_BIND::DataRequestData* PBEngine::Unload(const SEDataRequest& src)
 {
-  cdm::DataRequestData* dst = new cdm::DataRequestData();
+  CDM_BIND::DataRequestData* dst = new CDM_BIND::DataRequestData();
   PBEngine::Serialize(src, *dst);
   return dst;
 }
-void PBEngine::Serialize(const SEDataRequest& src, cdm::DataRequestData& dst)
+void PBEngine::Serialize(const SEDataRequest& src, CDM_BIND::DataRequestData& dst)
 {
   PBEngine::Serialize(src, *dst.mutable_decimalformat());
-  dst.set_category((cdm::DataRequestData::eCategory)src.m_Category);
+  dst.set_category((CDM_BIND::DataRequestData::eCategory)src.m_Category);
   if (src.HasCompartmentName())
     dst.set_compartmentname(src.m_CompartmentName);
   if (src.HasSubstanceName())
@@ -435,16 +435,16 @@ void PBEngine::Serialize(const SEDataRequest& src, cdm::DataRequestData& dst)
 }
 void PBEngine::Copy(const SEDataRequest& src, SEDataRequest& dst)
 {
-  cdm::DataRequestData data;
+  CDM_BIND::DataRequestData data;
   PBEngine::Serialize(src, data);
   PBEngine::Serialize(data, dst);
 }
 
-void PBEngine::Load(const cdm::DataRequestManagerData& src, SEDataRequestManager& dst, const SESubstanceManager& subMgr)
+void PBEngine::Load(const CDM_BIND::DataRequestManagerData& src, SEDataRequestManager& dst, const SESubstanceManager& subMgr)
 {
   PBEngine::Serialize(src, dst, subMgr);
 }
-void PBEngine::Serialize(const cdm::DataRequestManagerData& src, SEDataRequestManager& dst, const SESubstanceManager& subMgr)
+void PBEngine::Serialize(const CDM_BIND::DataRequestManagerData& src, SEDataRequestManager& dst, const SESubstanceManager& subMgr)
 {
   dst.Clear();
   dst.m_ResultsFilename = src.resultsfilename();
@@ -456,7 +456,7 @@ void PBEngine::Serialize(const cdm::DataRequestManagerData& src, SEDataRequestMa
 
   for (int i = 0; i < src.datarequest_size(); i++)
   {
-    const cdm::DataRequestData& drData = src.datarequest(i);
+    const CDM_BIND::DataRequestData& drData = src.datarequest(i);
     SEDataRequest* dr = new SEDataRequest((eDataRequest_Category)drData.category(), dst.HasOverrideDecimalFormatting() ? dst.m_OverrideDecimalFormatting : dst.m_DefaultDecimalFormatting);
     PBEngine::Load(drData, *dr);
     if (!dr->IsValid())
@@ -465,13 +465,13 @@ void PBEngine::Serialize(const cdm::DataRequestManagerData& src, SEDataRequestMa
       dst.m_Requests.push_back(dr);
   }
 }
-cdm::DataRequestManagerData* PBEngine::Unload(const SEDataRequestManager& src)
+CDM_BIND::DataRequestManagerData* PBEngine::Unload(const SEDataRequestManager& src)
 {
-  cdm::DataRequestManagerData* dst = new cdm::DataRequestManagerData();
+  CDM_BIND::DataRequestManagerData* dst = new CDM_BIND::DataRequestManagerData();
   PBEngine::Serialize(src, *dst);
   return dst;
 }
-void PBEngine::Serialize(const SEDataRequestManager& src, cdm::DataRequestManagerData& dst)
+void PBEngine::Serialize(const SEDataRequestManager& src, CDM_BIND::DataRequestManagerData& dst)
 {
   dst.set_resultsfilename(src.m_ResultsFilename);
   dst.set_samplespersecond(src.m_SamplesPerSecond);
@@ -484,42 +484,42 @@ void PBEngine::Serialize(const SEDataRequestManager& src, cdm::DataRequestManage
 }
 void PBEngine::Copy(const SEDataRequestManager& src, SEDataRequestManager& dst, const SESubstanceManager& subMgr)
 {
-  cdm::DataRequestManagerData data;
+  CDM_BIND::DataRequestManagerData data;
   PBEngine::Serialize(src, data);
   PBEngine::Serialize(data, dst, subMgr);
 }
 
-void PBEngine::Load(const cdm::DecimalFormatData& src, SEDecimalFormat& dst)
+void PBEngine::Load(const CDM_BIND::DecimalFormatData& src, SEDecimalFormat& dst)
 {
   PBEngine::Serialize(src, dst);
 }
-void PBEngine::Serialize(const cdm::DecimalFormatData& src, SEDecimalFormat& dst)
+void PBEngine::Serialize(const CDM_BIND::DecimalFormatData& src, SEDecimalFormat& dst)
 {
   dst.Clear();
   dst.SetNotation((eDecimalFormat_Type)src.type());
   dst.SetPrecision(src.precision());
 }
-cdm::DecimalFormatData* PBEngine::Unload(const SEDecimalFormat& src)
+CDM_BIND::DecimalFormatData* PBEngine::Unload(const SEDecimalFormat& src)
 {
-  cdm::DecimalFormatData* dst = new cdm::DecimalFormatData();
+  CDM_BIND::DecimalFormatData* dst = new CDM_BIND::DecimalFormatData();
   PBEngine::Serialize(src, *dst);
   return dst;
 }
-void PBEngine::Serialize(const SEDecimalFormat& src, cdm::DecimalFormatData& dst)
+void PBEngine::Serialize(const SEDecimalFormat& src, CDM_BIND::DecimalFormatData& dst)
 {
-  dst.set_type((cdm::DecimalFormatData::eType)src.m_Notation);
+  dst.set_type((CDM_BIND::DecimalFormatData::eType)src.m_Notation);
   dst.set_precision((google::protobuf::uint32)src.m_Precision);
 }
 
 bool PBEngine::SerializeToString(const SEConditionManager& src, std::string& output, SerializationFormat m)
 {
-  cdm::ConditionListData data;
+  CDM_BIND::ConditionListData data;
   PBEngine::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
 bool PBEngine::SerializeToFile(const SEConditionManager& src, const std::string& filename, SerializationFormat m)
 {
-  cdm::ConditionListData data;
+  CDM_BIND::ConditionListData data;
   PBEngine::Serialize(src, data);
   std::string content;
   PBEngine::SerializeToString(src, content, m);
@@ -527,7 +527,7 @@ bool PBEngine::SerializeToFile(const SEConditionManager& src, const std::string&
 }
 bool PBEngine::SerializeFromString(const std::string& src, SEConditionManager& dst, SerializationFormat m)
 {
-  cdm::ConditionListData data;
+  CDM_BIND::ConditionListData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
     return false;
   PBEngine::Load(data, dst);
@@ -543,13 +543,13 @@ bool PBEngine::SerializeFromFile(const std::string& filename, SEConditionManager
 
 bool PBEngine::SerializeToString(const SEActionManager& src, std::string& output, SerializationFormat m)
 {
-  cdm::ActionListData data;
+  CDM_BIND::ActionListData data;
   PBEngine::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
 bool PBEngine::SerializeToFile(const SEActionManager& src, const std::string& filename, SerializationFormat m)
 {
-  cdm::ActionListData data;
+  CDM_BIND::ActionListData data;
   PBEngine::Serialize(src, data);
   std::string content;
   PBEngine::SerializeToString(src, content, m);
@@ -557,7 +557,7 @@ bool PBEngine::SerializeToFile(const SEActionManager& src, const std::string& fi
 }
 bool PBEngine::SerializeFromString(const std::string& src, SEActionManager& dst, SerializationFormat m)
 {
-  cdm::ActionListData data;
+  CDM_BIND::ActionListData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
     return false;
   PBEngine::Load(data, dst);
@@ -573,17 +573,17 @@ bool PBEngine::SerializeFromFile(const std::string& filename, SEActionManager& d
 
 bool PBEngine::SerializeFromString(const std::string& src, std::vector<SEAction*>& dst, SerializationFormat m, SESubstanceManager& subMgr)
 {
-  cdm::ActionListData data;
+  CDM_BIND::ActionListData data;
   if (!PBUtils::SerializeFromString(src, data, m, subMgr.GetLogger()))
     return false;
   PBEngine::Load(data, dst, subMgr);
   return true;
 }
-void PBEngine::Load(const cdm::ActionListData& src, std::vector<SEAction*>& dst, SESubstanceManager& subMgr)
+void PBEngine::Load(const CDM_BIND::ActionListData& src, std::vector<SEAction*>& dst, SESubstanceManager& subMgr)
 {
   PBEngine::Serialize(src, dst, subMgr);
 }
-void PBEngine::Serialize(const cdm::ActionListData& src, std::vector<SEAction*>& dst, SESubstanceManager& subMgr)
+void PBEngine::Serialize(const CDM_BIND::ActionListData& src, std::vector<SEAction*>& dst, SESubstanceManager& subMgr)
 {
   for (int i = 0; i < src.anyaction_size(); i++)
   {
@@ -594,13 +594,13 @@ void PBEngine::Serialize(const cdm::ActionListData& src, std::vector<SEAction*>&
 
 bool PBEngine::SerializeToString(const SEDataRequestManager& src, std::string& output, SerializationFormat m)
 {
-  cdm::DataRequestManagerData data;
+  CDM_BIND::DataRequestManagerData data;
   PBEngine::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
 bool PBEngine::SerializeToFile(const SEDataRequestManager& src, const std::string& filename, SerializationFormat m)
 {
-  cdm::DataRequestManagerData data;
+  CDM_BIND::DataRequestManagerData data;
   PBEngine::Serialize(src, data);
   std::string content;
   PBEngine::SerializeToString(src, content, m);
@@ -608,7 +608,7 @@ bool PBEngine::SerializeToFile(const SEDataRequestManager& src, const std::strin
 }
 bool PBEngine::SerializeFromString(const std::string& src, SEDataRequestManager& dst, SerializationFormat m, const SESubstanceManager& subMgr)
 {
-  cdm::DataRequestManagerData data;
+  CDM_BIND::DataRequestManagerData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
     return false;
   PBEngine::Load(data, dst, subMgr);
@@ -622,51 +622,51 @@ bool PBEngine::SerializeFromFile(const std::string& filename, SEDataRequestManag
   return PBEngine::SerializeFromString(content, dst, m, subMgr);
 }
 
-void PBEngine::Load(const cdm::AutoSerializationData& src, SEAutoSerialization& dst)
+void PBEngine::Load(const CDM_BIND::AutoSerializationData& src, SEAutoSerialization& dst)
 {
   PBEngine::Serialize(src, dst);
 }
-void PBEngine::Serialize(const cdm::AutoSerializationData& src, SEAutoSerialization& dst)
+void PBEngine::Serialize(const CDM_BIND::AutoSerializationData& src, SEAutoSerialization& dst)
 {
   dst.Clear();
   if (src.has_period())
     PBProperty::Load(src.period(), dst.GetPeriod());
-  if (src.periodtimestamps() != cdm::eSwitch::NullSwitch)
+  if (src.periodtimestamps() != CDM_BIND::eSwitch::NullSwitch)
     dst.SetPeriodTimeStamps((eSwitch)src.periodtimestamps());
-  if (src.afteractions() != cdm::eSwitch::NullSwitch)
+  if (src.afteractions() != CDM_BIND::eSwitch::NullSwitch)
     dst.SetAfterActions((eSwitch)src.afteractions());
-  if (src.reloadstate() != cdm::eSwitch::NullSwitch)
+  if (src.reloadstate() != CDM_BIND::eSwitch::NullSwitch)
     dst.SetReloadState((eSwitch)src.reloadstate());
   dst.SetDirectory(src.directory());
   dst.SetFileName(src.filename());
 }
-cdm::AutoSerializationData* PBEngine::Unload(const SEAutoSerialization& src)
+CDM_BIND::AutoSerializationData* PBEngine::Unload(const SEAutoSerialization& src)
 {
-  cdm::AutoSerializationData *dst = new cdm::AutoSerializationData();
+  CDM_BIND::AutoSerializationData *dst = new CDM_BIND::AutoSerializationData();
   PBEngine::Serialize(src, *dst);
   return dst;
 }
-void PBEngine::Serialize(const SEAutoSerialization& src, cdm::AutoSerializationData& dst)
+void PBEngine::Serialize(const SEAutoSerialization& src, CDM_BIND::AutoSerializationData& dst)
 {
   if (src.HasPeriod())
     dst.set_allocated_period(PBProperty::Unload(*src.m_Period));
-  dst.set_periodtimestamps((cdm::eSwitch)src.m_PeriodTimeStamps);
-  dst.set_afteractions((cdm::eSwitch)src.m_AfterActions);
-  dst.set_reloadstate((cdm::eSwitch)src.m_ReloadState);
+  dst.set_periodtimestamps((CDM_BIND::eSwitch)src.m_PeriodTimeStamps);
+  dst.set_afteractions((CDM_BIND::eSwitch)src.m_AfterActions);
+  dst.set_reloadstate((CDM_BIND::eSwitch)src.m_ReloadState);
   if (src.HasDirectory())
     dst.set_directory(src.m_Directory);
   if (src.HasFileName())
     dst.set_filename(src.m_FileName);
 }
 
-void PBEngine::Load(const cdm::DynamicStabilizationData& src, SEDynamicStabilization& dst)
+void PBEngine::Load(const CDM_BIND::DynamicStabilizationData& src, SEDynamicStabilization& dst)
 {
   PBEngine::Serialize(src, dst);
 }
-void PBEngine::Serialize(const cdm::DynamicStabilizationData& src, SEDynamicStabilization& dst)
+void PBEngine::Serialize(const CDM_BIND::DynamicStabilizationData& src, SEDynamicStabilization& dst)
 {
   dst.Clear();
-  if (src.trackingstabilization() != cdm::eSwitch::NullSwitch)
+  if (src.trackingstabilization() != CDM_BIND::eSwitch::NullSwitch)
     dst.TrackStabilization((eSwitch)src.trackingstabilization());
   if (src.has_restingconvergence())
     PBEngine::Load(src.restingconvergence(), dst.GetRestingConvergence());
@@ -680,32 +680,32 @@ void PBEngine::Serialize(const cdm::DynamicStabilizationData& src, SEDynamicStab
     dst.m_ConditionConvergence[itr.first] = c;
   }
 }
-cdm::DynamicStabilizationData* PBEngine::Unload(const SEDynamicStabilization& src)
+CDM_BIND::DynamicStabilizationData* PBEngine::Unload(const SEDynamicStabilization& src)
 {
-  cdm::DynamicStabilizationData* dst(new cdm::DynamicStabilizationData());
+  CDM_BIND::DynamicStabilizationData* dst(new CDM_BIND::DynamicStabilizationData());
   PBEngine::Serialize(src, *dst);
   return dst;
 }
-void PBEngine::Serialize(const SEDynamicStabilization& src, cdm::DynamicStabilizationData& dst)
+void PBEngine::Serialize(const SEDynamicStabilization& src, CDM_BIND::DynamicStabilizationData& dst)
 {
-  dst.set_trackingstabilization((cdm::eSwitch)src.m_TrackingStabilization);
+  dst.set_trackingstabilization((CDM_BIND::eSwitch)src.m_TrackingStabilization);
   dst.set_allocated_restingconvergence(PBEngine::Unload(*src.m_RestingConvergence));
   if (src.HasFeedbackConvergence())
     dst.set_allocated_feedbackconvergence(PBEngine::Unload(*src.m_FeedbackConvergence));
   for (auto &c : src.m_ConditionConvergence)
   {
-    cdm::DynamicStabilizationEngineConvergenceData* cData = PBEngine::Unload(*c.second);
+    CDM_BIND::DynamicStabilizationEngineConvergenceData* cData = PBEngine::Unload(*c.second);
     (*dst.mutable_conditionconvergence())[c.first] = *cData;
     delete cData;
   }
 }
 
 
-void PBEngine::Load(const cdm::DynamicStabilizationEngineConvergenceData& src, SEDynamicStabilizationEngineConvergence& dst)
+void PBEngine::Load(const CDM_BIND::DynamicStabilizationEngineConvergenceData& src, SEDynamicStabilizationEngineConvergence& dst)
 {
   PBEngine::Serialize(src, dst);
 }
-void PBEngine::Serialize(const cdm::DynamicStabilizationEngineConvergenceData& src, SEDynamicStabilizationEngineConvergence& dst)
+void PBEngine::Serialize(const CDM_BIND::DynamicStabilizationEngineConvergenceData& src, SEDynamicStabilizationEngineConvergence& dst)
 {
   dst.Clear();
   // TODO Warn if these are not provided
@@ -717,7 +717,7 @@ void PBEngine::Serialize(const cdm::DynamicStabilizationEngineConvergenceData& s
     PBProperty::Load(src.maximumallowedstabilizationtime(), dst.GetMaximumAllowedStabilizationTime());
   for (int i = 0; i < src.propertyconvergence_size(); i++)
   {
-    const cdm::DynamicStabilizationPropertyConvergenceData& pcData = src.propertyconvergence(i);
+    const CDM_BIND::DynamicStabilizationPropertyConvergenceData& pcData = src.propertyconvergence(i);
     if (pcData.has_datarequest())
     {
       SEDataRequest& dr = dst.m_DataRequestMgr->CreateDataRequest((eDataRequest_Category)pcData.datarequest().category());
@@ -730,33 +730,33 @@ void PBEngine::Serialize(const cdm::DynamicStabilizationEngineConvergenceData& s
     }
   }
 }
-cdm::DynamicStabilizationEngineConvergenceData* PBEngine::Unload(const SEDynamicStabilizationEngineConvergence& src)
+CDM_BIND::DynamicStabilizationEngineConvergenceData* PBEngine::Unload(const SEDynamicStabilizationEngineConvergence& src)
 {
-  cdm::DynamicStabilizationEngineConvergenceData* dst = new cdm::DynamicStabilizationEngineConvergenceData();
+  CDM_BIND::DynamicStabilizationEngineConvergenceData* dst = new CDM_BIND::DynamicStabilizationEngineConvergenceData();
   PBEngine::Serialize(src, *dst);
   return dst;
 }
-void PBEngine::Serialize(const SEDynamicStabilizationEngineConvergence& src, cdm::DynamicStabilizationEngineConvergenceData& dst)
+void PBEngine::Serialize(const SEDynamicStabilizationEngineConvergence& src, CDM_BIND::DynamicStabilizationEngineConvergenceData& dst)
 {
   dst.set_allocated_convergencetime(PBProperty::Unload(*src.m_ConvergenceTime));
   dst.set_allocated_minimumreactiontime(PBProperty::Unload(*src.m_MinimumReactionTime));
   dst.set_allocated_maximumallowedstabilizationtime(PBProperty::Unload(*src.m_MaximumAllowedStabilizationTime));
   for (auto pc : src.m_PropertyConvergence)
   {
-    cdm::DynamicStabilizationPropertyConvergenceData* pcData = dst.mutable_propertyconvergence()->Add();
+    CDM_BIND::DynamicStabilizationPropertyConvergenceData* pcData = dst.mutable_propertyconvergence()->Add();
     pcData->set_percentdifference(pc->m_Error);
     pcData->set_allocated_datarequest(PBEngine::Unload(pc->m_DataRequest));
   }
 }
 
-void PBEngine::Load(const cdm::TimedStabilizationData& src, SETimedStabilization& dst)
+void PBEngine::Load(const CDM_BIND::TimedStabilizationData& src, SETimedStabilization& dst)
 {
   PBEngine::Serialize(src, dst);
 }
-void PBEngine::Serialize(const cdm::TimedStabilizationData& src, SETimedStabilization& dst)
+void PBEngine::Serialize(const CDM_BIND::TimedStabilizationData& src, SETimedStabilization& dst)
 {
   dst.Clear();
-  if (src.trackingstabilization() != cdm::eSwitch::NullSwitch)
+  if (src.trackingstabilization() != CDM_BIND::eSwitch::NullSwitch)
     dst.TrackStabilization((eSwitch)src.trackingstabilization());
   if (src.has_restingstabilizationtime())
     PBProperty::Load(src.restingstabilizationtime(), dst.GetRestingStabilizationTime());
@@ -769,15 +769,15 @@ void PBEngine::Serialize(const cdm::TimedStabilizationData& src, SETimedStabiliz
     dst.m_ConditionTimes[itr.first] = time;
   }
 }
-cdm::TimedStabilizationData* PBEngine::Unload(const SETimedStabilization& src)
+CDM_BIND::TimedStabilizationData* PBEngine::Unload(const SETimedStabilization& src)
 {
-  cdm::TimedStabilizationData* dst(new cdm::TimedStabilizationData());
+  CDM_BIND::TimedStabilizationData* dst(new CDM_BIND::TimedStabilizationData());
   PBEngine::Serialize(src, *dst);
   return dst;
 }
-void PBEngine::Serialize(const SETimedStabilization& src, cdm::TimedStabilizationData& dst)
+void PBEngine::Serialize(const SETimedStabilization& src, CDM_BIND::TimedStabilizationData& dst)
 {
-  dst.set_trackingstabilization((cdm::eSwitch)src.m_TrackingStabilization);
+  dst.set_trackingstabilization((CDM_BIND::eSwitch)src.m_TrackingStabilization);
   dst.set_allocated_restingstabilizationtime(PBProperty::Unload(*src.m_RestingStabilizationTime));
   if (src.HasFeedbackStabilizationTime())
     dst.set_allocated_feedbackstabilizationtime(PBProperty::Unload(*src.m_FeedbackStabilizationTime));
@@ -785,7 +785,7 @@ void PBEngine::Serialize(const SETimedStabilization& src, cdm::TimedStabilizatio
   {
     if (cc.second == nullptr)
       continue;
-    cdm::ScalarTimeData* time = PBProperty::Unload(*cc.second);
+    CDM_BIND::ScalarTimeData* time = PBProperty::Unload(*cc.second);
     (*dst.mutable_conditionstabilization())[cc.first] = *time;
     delete time;
   }
@@ -793,13 +793,13 @@ void PBEngine::Serialize(const SETimedStabilization& src, cdm::TimedStabilizatio
 
 bool PBEngine::SerializeToString(const SEDynamicStabilization& src, std::string& output, SerializationFormat m)
 {
-  cdm::DynamicStabilizationData data;
+  CDM_BIND::DynamicStabilizationData data;
   PBEngine::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
 bool PBEngine::SerializeToFile(const SEDynamicStabilization& src, const std::string& filename, SerializationFormat m)
 {
-  cdm::DynamicStabilizationData data;
+  CDM_BIND::DynamicStabilizationData data;
   PBEngine::Serialize(src, data);
   std::string content;
   PBEngine::SerializeToString(src, content, m);
@@ -807,7 +807,7 @@ bool PBEngine::SerializeToFile(const SEDynamicStabilization& src, const std::str
 }
 bool PBEngine::SerializeFromString(const std::string& src, SEDynamicStabilization& dst, SerializationFormat m)
 {
-  cdm::DynamicStabilizationData data;
+  CDM_BIND::DynamicStabilizationData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
     return false;
   PBEngine::Load(data, dst);
@@ -823,13 +823,13 @@ bool PBEngine::SerializeFromFile(const std::string& filename, SEDynamicStabiliza
 
 bool PBEngine::SerializeToString(const SETimedStabilization& src, std::string& output, SerializationFormat m)
 {
-  cdm::TimedStabilizationData data;
+  CDM_BIND::TimedStabilizationData data;
   PBEngine::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
 bool PBEngine::SerializeToFile(const SETimedStabilization& src, const std::string& filename, SerializationFormat m)
 {
-  cdm::TimedStabilizationData data;
+  CDM_BIND::TimedStabilizationData data;
   PBEngine::Serialize(src, data);
   std::string content;
   PBEngine::SerializeToString(src, content, m);
@@ -837,7 +837,7 @@ bool PBEngine::SerializeToFile(const SETimedStabilization& src, const std::strin
 }
 bool PBEngine::SerializeFromString(const std::string& src, SETimedStabilization& dst, SerializationFormat m)
 {
-  cdm::TimedStabilizationData data;
+  CDM_BIND::TimedStabilizationData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
     return false;
   PBEngine::Load(data, dst);

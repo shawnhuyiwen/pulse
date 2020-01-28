@@ -5,25 +5,25 @@
 #include "io/protobuf/PBEnvironmentActions.h"
 #include "io/protobuf/PBEnvironment.h"
 #include "io/protobuf/PBActions.h"
-#include "bind/cpp/cdm/EnvironmentActions.pb.h"
+#include "bind/EnvironmentActions.pb.h"
 #include "system/environment/actions/SEChangeEnvironmentConditions.h"
 #include "system/environment/actions/SEThermalApplication.h"
 #include "substance/SESubstanceManager.h"
 
-void PBEnvironmentAction::Serialize(const cdm::EnvironmentActionData& src, SEEnvironmentAction& dst)
+void PBEnvironmentAction::Serialize(const CDM_BIND::EnvironmentActionData& src, SEEnvironmentAction& dst)
 {
   PBAction::Serialize(src.action(), dst);
 }
-void PBEnvironmentAction::Serialize(const SEEnvironmentAction& src, cdm::EnvironmentActionData& dst)
+void PBEnvironmentAction::Serialize(const SEEnvironmentAction& src, CDM_BIND::EnvironmentActionData& dst)
 {
   PBAction::Serialize(src, *dst.mutable_action());
 }
 
-void PBEnvironmentAction::Load(const cdm::ChangeEnvironmentConditionsData& src, SEChangeEnvironmentConditions& dst)
+void PBEnvironmentAction::Load(const CDM_BIND::ChangeEnvironmentConditionsData& src, SEChangeEnvironmentConditions& dst)
 {
   PBEnvironmentAction::Serialize(src, dst);
 }
-void PBEnvironmentAction::Serialize(const cdm::ChangeEnvironmentConditionsData& src, SEChangeEnvironmentConditions& dst)
+void PBEnvironmentAction::Serialize(const CDM_BIND::ChangeEnvironmentConditionsData& src, SEChangeEnvironmentConditions& dst)
 {
   PBEnvironmentAction::Serialize(src.environmentaction(), dst);
   if (src.has_conditions())
@@ -31,13 +31,13 @@ void PBEnvironmentAction::Serialize(const cdm::ChangeEnvironmentConditionsData& 
   else
     dst.SetConditionsFile(src.conditionsfile());
 }
-cdm::ChangeEnvironmentConditionsData* PBEnvironmentAction::Unload(const SEChangeEnvironmentConditions& src)
+CDM_BIND::ChangeEnvironmentConditionsData* PBEnvironmentAction::Unload(const SEChangeEnvironmentConditions& src)
 {
-  cdm::ChangeEnvironmentConditionsData* dst = new cdm::ChangeEnvironmentConditionsData();
+  CDM_BIND::ChangeEnvironmentConditionsData* dst = new CDM_BIND::ChangeEnvironmentConditionsData();
   PBEnvironmentAction::Serialize(src, *dst);
   return dst;
 }
-void PBEnvironmentAction::Serialize(const SEChangeEnvironmentConditions& src, cdm::ChangeEnvironmentConditionsData& dst)
+void PBEnvironmentAction::Serialize(const SEChangeEnvironmentConditions& src, CDM_BIND::ChangeEnvironmentConditionsData& dst)
 {
   PBEnvironmentAction::Serialize(src, *dst.mutable_environmentaction());
   if (src.HasConditions())
@@ -47,16 +47,16 @@ void PBEnvironmentAction::Serialize(const SEChangeEnvironmentConditions& src, cd
 }
 void PBEnvironmentAction::Copy(const SEChangeEnvironmentConditions& src, SEChangeEnvironmentConditions& dst)
 {
-  cdm::ChangeEnvironmentConditionsData data;
+  CDM_BIND::ChangeEnvironmentConditionsData data;
   PBEnvironmentAction::Serialize(src, data);
   PBEnvironmentAction::Serialize(data, dst);
 }
 
-void PBEnvironmentAction::Load(const cdm::ThermalApplicationData& src, SEThermalApplication& dst)
+void PBEnvironmentAction::Load(const CDM_BIND::ThermalApplicationData& src, SEThermalApplication& dst)
 {
   PBEnvironmentAction::Serialize(src, dst);
 }
-void PBEnvironmentAction::Serialize(const cdm::ThermalApplicationData& src, SEThermalApplication& dst)
+void PBEnvironmentAction::Serialize(const CDM_BIND::ThermalApplicationData& src, SEThermalApplication& dst)
 {
   // Set this before our super class tells us to Clear if the action wants us to keep our current data
   dst.m_ClearContents = !src.appendtoprevious();
@@ -69,13 +69,13 @@ void PBEnvironmentAction::Serialize(const cdm::ThermalApplicationData& src, SETh
     PBEnvironment::Load(src.appliedtemperature(), dst.GetAppliedTemperature());
   dst.m_ClearContents = true;
 }
-cdm::ThermalApplicationData* PBEnvironmentAction::Unload(const SEThermalApplication& src)
+CDM_BIND::ThermalApplicationData* PBEnvironmentAction::Unload(const SEThermalApplication& src)
 {
-  cdm::ThermalApplicationData* dst = new cdm::ThermalApplicationData();
+  CDM_BIND::ThermalApplicationData* dst = new CDM_BIND::ThermalApplicationData();
   PBEnvironmentAction::Serialize(src, *dst);
   return dst;
 }
-void PBEnvironmentAction::Serialize(const SEThermalApplication& src, cdm::ThermalApplicationData& dst)
+void PBEnvironmentAction::Serialize(const SEThermalApplication& src, CDM_BIND::ThermalApplicationData& dst)
 {
   PBEnvironmentAction::Serialize(src, *dst.mutable_environmentaction());
   if (src.HasActiveHeating())
@@ -87,22 +87,22 @@ void PBEnvironmentAction::Serialize(const SEThermalApplication& src, cdm::Therma
 }
 void PBEnvironmentAction::Copy(const SEThermalApplication& src, SEThermalApplication& dst)
 {
-  cdm::ThermalApplicationData data;
+  CDM_BIND::ThermalApplicationData data;
   PBEnvironmentAction::Serialize(src, data);
   PBEnvironmentAction::Serialize(data, dst);
 }
 
-SEEnvironmentAction* PBEnvironmentAction::Load(const cdm::AnyEnvironmentActionData& any, SESubstanceManager& subMgr)
+SEEnvironmentAction* PBEnvironmentAction::Load(const CDM_BIND::AnyEnvironmentActionData& any, SESubstanceManager& subMgr)
 {
   switch (any.Action_case())
   {
-  case cdm::AnyEnvironmentActionData::ActionCase::kConditions:
+  case CDM_BIND::AnyEnvironmentActionData::ActionCase::kConditions:
   {
     SEChangeEnvironmentConditions* a = new SEChangeEnvironmentConditions(subMgr);
     PBEnvironmentAction::Load(any.conditions(), *a);
     return a;
   }
-  case cdm::AnyEnvironmentActionData::ActionCase::kThermalApplication:
+  case CDM_BIND::AnyEnvironmentActionData::ActionCase::kThermalApplication:
   {
     SEThermalApplication* a = new SEThermalApplication();
     PBEnvironmentAction::Load(any.thermalapplication(), *a);
@@ -112,9 +112,9 @@ SEEnvironmentAction* PBEnvironmentAction::Load(const cdm::AnyEnvironmentActionDa
   subMgr.Error("Unknown action type : " + any.Action_case());
   return nullptr;
 }
-cdm::AnyEnvironmentActionData* PBEnvironmentAction::Unload(const SEEnvironmentAction& action)
+CDM_BIND::AnyEnvironmentActionData* PBEnvironmentAction::Unload(const SEEnvironmentAction& action)
 {
-  cdm::AnyEnvironmentActionData* any = new cdm::AnyEnvironmentActionData();
+  CDM_BIND::AnyEnvironmentActionData* any = new CDM_BIND::AnyEnvironmentActionData();
   const SEChangeEnvironmentConditions* cec = dynamic_cast<const SEChangeEnvironmentConditions*>(&action);
   if (cec != nullptr)
   {

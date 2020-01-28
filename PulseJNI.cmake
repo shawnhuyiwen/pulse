@@ -42,30 +42,25 @@ install(TARGETS PulseJNI
 
 
 file(GLOB_RECURSE JAVA_FILES 
-  "${CMAKE_SOURCE_DIR}/schema/bind/java/*.java"
-  "${CMAKE_SOURCE_DIR}/cdm/java/*.java"
-  "${CMAKE_SOURCE_DIR}/engine/java/*.java"
-  "${CMAKE_SOURCE_DIR}/test/cdm/java/*.java"
-  "${CMAKE_SOURCE_DIR}/test/engine/java/*.java"
-  "${CMAKE_SOURCE_DIR}/test/driver/java/*.java")
+  "${CMAKE_SOURCE_DIR}/src/java/*.java")
 add_jar(PulseJava ${JAVA_FILES}
     INCLUDE_JARS 
-      "${CMAKE_SOURCE_DIR}/jar/jcommon-1.0.16.jar"
-      "${CMAKE_SOURCE_DIR}/jar/jdom-2.0.2.jar"
-      "${CMAKE_SOURCE_DIR}/jar/jfreechart-1.0.13.jar"
-      "${CMAKE_SOURCE_DIR}/jar/gson-2.8.5.jar"
-      "${CMAKE_SOURCE_DIR}/jar/guava-26.0-jre.jar"
-      "${CMAKE_SOURCE_DIR}/jar/log4j-1.2.17.jar"
-      "${CMAKE_SOURCE_DIR}/jar/poi-3.13-20150929.jar"
-      "${CMAKE_SOURCE_DIR}/jar/poi-ooxml-3.13-20150929.jar"
-      "${CMAKE_SOURCE_DIR}/jar/poi-ooxml-schemas-3.13-20150929.jar"
-      "${CMAKE_SOURCE_DIR}/jar/pdfbox-2.0.0-RC3.jar"
-      "${CMAKE_SOURCE_DIR}/jar/reflections-0.9.9-RC1-uberjar.jar"
-      "${CMAKE_SOURCE_DIR}/jar/zip4j-1.3.1.jar"
-      "${CMAKE_SOURCE_DIR}/jar/org.eclipse.jgit-4.11.0.201803080745-r.jar"
-      "${CMAKE_SOURCE_DIR}/jar/slf4j-api-1.7.25.jar"
-      "${CMAKE_SOURCE_DIR}/jar/slf4j-simple-1.7.25.jar"
-      "${CMAKE_SOURCE_DIR}/jar/error_prone_annotations-2.3.2.jar"
+      "${CMAKE_SOURCE_DIR}/src/java/jar/jcommon-1.0.16.jar"
+      "${CMAKE_SOURCE_DIR}/src/java/jar/jdom-2.0.2.jar"
+      "${CMAKE_SOURCE_DIR}/src/java/jar/jfreechart-1.0.13.jar"
+      "${CMAKE_SOURCE_DIR}/src/java/jar/gson-2.8.5.jar"
+      "${CMAKE_SOURCE_DIR}/src/java/jar/guava-26.0-jre.jar"
+      "${CMAKE_SOURCE_DIR}/src/java/jar/log4j-1.2.17.jar"
+      "${CMAKE_SOURCE_DIR}/src/java/jar/poi-3.13-20150929.jar"
+      "${CMAKE_SOURCE_DIR}/src/java/jar/poi-ooxml-3.13-20150929.jar"
+      "${CMAKE_SOURCE_DIR}/src/java/jar/poi-ooxml-schemas-3.13-20150929.jar"
+      "${CMAKE_SOURCE_DIR}/src/java/jar/pdfbox-2.0.0-RC3.jar"
+      "${CMAKE_SOURCE_DIR}/src/java/jar/reflections-0.9.9-RC1-uberjar.jar"
+      "${CMAKE_SOURCE_DIR}/src/java/jar/zip4j-1.3.1.jar"
+      "${CMAKE_SOURCE_DIR}/src/java/jar/org.eclipse.jgit-4.11.0.201803080745-r.jar"
+      "${CMAKE_SOURCE_DIR}/src/java/jar/slf4j-api-1.7.25.jar"
+      "${CMAKE_SOURCE_DIR}/src/java/jar/slf4j-simple-1.7.25.jar"
+      "${CMAKE_SOURCE_DIR}/src/java/jar/error_prone_annotations-2.3.2.jar"
     OUTPUT_NAME Pulse)
 get_target_property(_jarFile PulseJava JAR_FILE)
 add_custom_command(TARGET PulseJava POST_BUILD

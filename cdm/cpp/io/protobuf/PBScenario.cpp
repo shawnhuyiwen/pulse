@@ -6,15 +6,15 @@
 #include "io/protobuf/PBActions.h"
 #include "io/protobuf/PBEngine.h"
 #include "io/protobuf/PBUtils.h"
-#include "bind/cpp/cdm/Scenario.pb.h"
+#include "bind/Scenario.pb.h"
 #include "scenario/SEScenario.h"
 #include "utils/FileUtils.h"
 
-void PBScenario::Load(const cdm::ScenarioData& src, SEScenario& dst)
+void PBScenario::Load(const CDM_BIND::ScenarioData& src, SEScenario& dst)
 {
   PBScenario::Serialize(src, dst);
 }
-void PBScenario::Serialize(const cdm::ScenarioData& src, SEScenario& dst)
+void PBScenario::Serialize(const CDM_BIND::ScenarioData& src, SEScenario& dst)
 {
   dst.Clear();
   dst.SetName(src.name());
@@ -41,13 +41,13 @@ void PBScenario::Serialize(const cdm::ScenarioData& src, SEScenario& dst)
   }
 }
 
-cdm::ScenarioData* PBScenario::Unload(const SEScenario& src)
+CDM_BIND::ScenarioData* PBScenario::Unload(const SEScenario& src)
 {
-  cdm::ScenarioData* dst = new cdm::ScenarioData();
+  CDM_BIND::ScenarioData* dst = new CDM_BIND::ScenarioData();
   PBScenario::Serialize(src, *dst);
   return dst;
 }
-void PBScenario::Serialize(const SEScenario& src, cdm::ScenarioData& dst)
+void PBScenario::Serialize(const SEScenario& src, CDM_BIND::ScenarioData& dst)
 {
   dst.set_name(src.m_Name);
   dst.set_description(src.m_Description);
@@ -67,13 +67,13 @@ void PBScenario::Serialize(const SEScenario& src, cdm::ScenarioData& dst)
 
 bool PBScenario::SerializeToString(const SEScenario& src, std::string& output, SerializationFormat m)
 {
-  cdm::ScenarioData data;
+  CDM_BIND::ScenarioData data;
   PBScenario::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
 bool PBScenario::SerializeToFile(const SEScenario& src, const std::string& filename, SerializationFormat m)
 {
-  cdm::ScenarioData data;
+  CDM_BIND::ScenarioData data;
   PBScenario::Serialize(src, data);
   std::string content;
   PBScenario::SerializeToString(src, content, m);
@@ -81,7 +81,7 @@ bool PBScenario::SerializeToFile(const SEScenario& src, const std::string& filen
 }
 bool PBScenario::SerializeFromString(const std::string& src, SEScenario& dst, SerializationFormat m)
 {
-  cdm::ScenarioData data;
+  CDM_BIND::ScenarioData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
     return false;
   PBScenario::Load(data, dst);

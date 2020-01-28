@@ -5,24 +5,24 @@
 #include "io/protobuf/PBInhalerActions.h"
 #include "io/protobuf/PBInhaler.h"
 #include "io/protobuf/PBActions.h"
-#include "bind/cpp/cdm/InhalerActions.pb.h"
+#include "bind/InhalerActions.pb.h"
 #include "system/equipment/inhaler/actions/SEInhalerConfiguration.h"
 #include "substance/SESubstanceManager.h"
 
-void PBInhalerAction::Serialize(const cdm::InhalerActionData& src, SEInhalerAction& dst)
+void PBInhalerAction::Serialize(const CDM_BIND::InhalerActionData& src, SEInhalerAction& dst)
 {
   PBAction::Serialize(src.action(), dst);
 }
-void PBInhalerAction::Serialize(const SEInhalerAction& src, cdm::InhalerActionData& dst)
+void PBInhalerAction::Serialize(const SEInhalerAction& src, CDM_BIND::InhalerActionData& dst)
 {
   PBAction::Serialize(src, *dst.mutable_action());
 }
 
-void PBInhalerAction::Load(const cdm::InhalerConfigurationData& src, SEInhalerConfiguration& dst)
+void PBInhalerAction::Load(const CDM_BIND::InhalerConfigurationData& src, SEInhalerConfiguration& dst)
 {
   PBInhalerAction::Serialize(src, dst);
 }
-void PBInhalerAction::Serialize(const cdm::InhalerConfigurationData& src, SEInhalerConfiguration& dst)
+void PBInhalerAction::Serialize(const CDM_BIND::InhalerConfigurationData& src, SEInhalerConfiguration& dst)
 {
   PBInhalerAction::Serialize(src.inhaleraction(), dst);
   if (src.has_configuration())
@@ -30,13 +30,13 @@ void PBInhalerAction::Serialize(const cdm::InhalerConfigurationData& src, SEInha
   else
     dst.SetConfigurationFile(src.configurationfile());
 }
-cdm::InhalerConfigurationData* PBInhalerAction::Unload(const SEInhalerConfiguration& src)
+CDM_BIND::InhalerConfigurationData* PBInhalerAction::Unload(const SEInhalerConfiguration& src)
 {
-  cdm::InhalerConfigurationData* dst = new cdm::InhalerConfigurationData();
+  CDM_BIND::InhalerConfigurationData* dst = new CDM_BIND::InhalerConfigurationData();
   PBInhalerAction::Serialize(src, *dst);
   return dst;
 }
-void PBInhalerAction::Serialize(const SEInhalerConfiguration& src, cdm::InhalerConfigurationData& dst)
+void PBInhalerAction::Serialize(const SEInhalerConfiguration& src, CDM_BIND::InhalerConfigurationData& dst)
 {
   PBInhalerAction::Serialize(src, *dst.mutable_inhaleraction());
   if (src.HasConfiguration())
@@ -46,16 +46,16 @@ void PBInhalerAction::Serialize(const SEInhalerConfiguration& src, cdm::InhalerC
 }
 void PBInhalerAction::Copy(const SEInhalerConfiguration& src, SEInhalerConfiguration& dst)
 {
-  cdm::InhalerConfigurationData data;
+  CDM_BIND::InhalerConfigurationData data;
   PBInhalerAction::Serialize(src, data);
   PBInhalerAction::Serialize(data, dst);
 }
 
-SEInhalerAction* PBInhalerAction::Load(const cdm::AnyInhalerActionData& any, SESubstanceManager& subMgr)
+SEInhalerAction* PBInhalerAction::Load(const CDM_BIND::AnyInhalerActionData& any, SESubstanceManager& subMgr)
 {
   switch (any.Action_case())
   {
-    case cdm::AnyInhalerActionData::ActionCase::kConfiguration:
+    case CDM_BIND::AnyInhalerActionData::ActionCase::kConfiguration:
     {
       SEInhalerConfiguration* a = new SEInhalerConfiguration(subMgr);
       PBInhalerAction::Load(any.configuration(), *a);
@@ -65,9 +65,9 @@ SEInhalerAction* PBInhalerAction::Load(const cdm::AnyInhalerActionData& any, SES
   subMgr.Error("Unknown action type : " + any.Action_case());
   return nullptr;
 }
-cdm::AnyInhalerActionData* PBInhalerAction::Unload(const SEInhalerAction& action)
+CDM_BIND::AnyInhalerActionData* PBInhalerAction::Unload(const SEInhalerAction& action)
 {
-  cdm::AnyInhalerActionData* any = new cdm::AnyInhalerActionData();
+  CDM_BIND::AnyInhalerActionData* any = new CDM_BIND::AnyInhalerActionData();
   const SEInhalerConfiguration* cec = dynamic_cast<const SEInhalerConfiguration*>(&action);
   if (cec != nullptr)
   {

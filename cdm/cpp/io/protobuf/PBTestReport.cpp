@@ -5,7 +5,7 @@
 #include "io/protobuf/PBTestReport.h"
 #include "io/protobuf/PBProperties.h"
 #include "io/protobuf/PBUtils.h"
-#include "bind/cpp/cdm/TestReport.pb.h"
+#include "bind/TestReport.pb.h"
 #include "utils/testing/SETestCase.h"
 #include "utils/testing/SETestErrorStatistics.h"
 #include "utils/testing/SETestReport.h"
@@ -13,11 +13,11 @@
 #include "utils/FileUtils.h"
 
 
-void PBTestReport::Load(const cdm::TestCaseData& src, SETestCase& dst)
+void PBTestReport::Load(const CDM_BIND::TestCaseData& src, SETestCase& dst)
 {
   PBTestReport::Serialize(src, dst);
 }
-void PBTestReport::Serialize(const cdm::TestCaseData& src, SETestCase& dst)
+void PBTestReport::Serialize(const CDM_BIND::TestCaseData& src, SETestCase& dst)
 {
   dst.Clear();
 
@@ -37,13 +37,13 @@ void PBTestReport::Serialize(const cdm::TestCaseData& src, SETestCase& dst)
   for (int i = 0; i < src.failure_size(); i++)
     dst.m_Failure.push_back(src.failure(i));
 }
-cdm::TestCaseData* PBTestReport::Unload(const SETestCase& src)
+CDM_BIND::TestCaseData* PBTestReport::Unload(const SETestCase& src)
 {
-  cdm::TestCaseData* dst = new cdm::TestCaseData();
+  CDM_BIND::TestCaseData* dst = new CDM_BIND::TestCaseData();
   PBTestReport::Serialize(src, *dst);
   return dst;
 }
-void PBTestReport::Serialize(const SETestCase& src, cdm::TestCaseData& dst)
+void PBTestReport::Serialize(const SETestCase& src, CDM_BIND::TestCaseData& dst)
 {
   dst.set_name(src.m_Name);
 
@@ -57,11 +57,11 @@ void PBTestReport::Serialize(const SETestCase& src, cdm::TestCaseData& dst)
 }
 
 
-void PBTestReport::Load(const cdm::TestErrorStatisticsData& src, SETestErrorStatistics& dst)
+void PBTestReport::Load(const CDM_BIND::TestErrorStatisticsData& src, SETestErrorStatistics& dst)
 {
   PBTestReport::Serialize(src, dst);
 }
-void PBTestReport::Serialize(const cdm::TestErrorStatisticsData& src, SETestErrorStatistics& dst)
+void PBTestReport::Serialize(const CDM_BIND::TestErrorStatisticsData& src, SETestErrorStatistics& dst)
 {
   dst.Clear();
 
@@ -82,13 +82,13 @@ void PBTestReport::Serialize(const cdm::TestErrorStatisticsData& src, SETestErro
   for (int i = 0; i < src.differences_size(); i++)
     dst.m_Differences.push_back(src.differences(i));
 }
-cdm::TestErrorStatisticsData* PBTestReport::Unload(const SETestErrorStatistics& src)
+CDM_BIND::TestErrorStatisticsData* PBTestReport::Unload(const SETestErrorStatistics& src)
 {
-  cdm::TestErrorStatisticsData* dst = new cdm::TestErrorStatisticsData();
+  CDM_BIND::TestErrorStatisticsData* dst = new CDM_BIND::TestErrorStatisticsData();
   PBTestReport::Serialize(src, *dst);
   return dst;
 }
-void PBTestReport::Serialize(const SETestErrorStatistics& src, cdm::TestErrorStatisticsData& dst)
+void PBTestReport::Serialize(const SETestErrorStatistics& src, CDM_BIND::TestErrorStatisticsData& dst)
 {
   if (!src.m_PropertyName.empty())
     dst.set_propertyname(src.m_PropertyName);
@@ -117,11 +117,11 @@ void PBTestReport::Serialize(const SETestErrorStatistics& src, cdm::TestErrorSta
 }
 
 
-void PBTestReport::Load(const cdm::TestReportData& src, SETestReport& dst)
+void PBTestReport::Load(const CDM_BIND::TestReportData& src, SETestReport& dst)
 {
   PBTestReport::Serialize(src, dst);
 }
-void PBTestReport::Serialize(const cdm::TestReportData& src, SETestReport& dst)
+void PBTestReport::Serialize(const CDM_BIND::TestReportData& src, SETestReport& dst)
 {
   dst.Clear();
 
@@ -133,24 +133,24 @@ void PBTestReport::Serialize(const cdm::TestReportData& src, SETestReport& dst)
     dst.m_testSuite.push_back(sx);
   }
 }
-cdm::TestReportData* PBTestReport::Unload(const SETestReport& src)
+CDM_BIND::TestReportData* PBTestReport::Unload(const SETestReport& src)
 {
-  cdm::TestReportData* dst = new cdm::TestReportData();
+  CDM_BIND::TestReportData* dst = new CDM_BIND::TestReportData();
   PBTestReport::Serialize(src, *dst);
   return dst;
 }
-void PBTestReport::Serialize(const SETestReport& src, cdm::TestReportData& dst)
+void PBTestReport::Serialize(const SETestReport& src, CDM_BIND::TestReportData& dst)
 {
   for (auto ts : src.m_testSuite)
     dst.mutable_testsuite()->AddAllocated(PBTestReport::Unload(*ts));
 }
 
 
-void PBTestReport::Load(const cdm::TestSuiteData& src, SETestSuite& dst)
+void PBTestReport::Load(const CDM_BIND::TestSuiteData& src, SETestSuite& dst)
 {
   PBTestReport::Serialize(src, dst);
 }
-void PBTestReport::Serialize(const cdm::TestSuiteData& src, SETestSuite& dst)
+void PBTestReport::Serialize(const CDM_BIND::TestSuiteData& src, SETestSuite& dst)
 {
   dst.Clear();
 
@@ -176,13 +176,13 @@ void PBTestReport::Serialize(const cdm::TestSuiteData& src, SETestSuite& dst)
     dst.m_TestCase.push_back(tx);
   }
 }
-cdm::TestSuiteData* PBTestReport::Unload(const SETestSuite& src)
+CDM_BIND::TestSuiteData* PBTestReport::Unload(const SETestSuite& src)
 {
-  cdm::TestSuiteData* dst = new cdm::TestSuiteData();
+  CDM_BIND::TestSuiteData* dst = new CDM_BIND::TestSuiteData();
   PBTestReport::Serialize(src, *dst);
   return dst;
 }
-void PBTestReport::Serialize(const SETestSuite& src, cdm::TestSuiteData& dst)
+void PBTestReport::Serialize(const SETestSuite& src, CDM_BIND::TestSuiteData& dst)
 {
   dst.set_name(src.m_Name);
   dst.set_performed(src.m_Performed);
@@ -202,13 +202,13 @@ void PBTestReport::Serialize(const SETestSuite& src, cdm::TestSuiteData& dst)
 
 bool PBTestReport::SerializeToString(const SETestReport& src, std::string& output, SerializationFormat m)
 {
-  cdm::TestReportData data;
+  CDM_BIND::TestReportData data;
   PBTestReport::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
 bool PBTestReport::SerializeToFile(const SETestReport& src, const std::string& filename, SerializationFormat m)
 {
-  cdm::TestReportData data;
+  CDM_BIND::TestReportData data;
   PBTestReport::Serialize(src, data);
   std::string content;
   PBTestReport::SerializeToString(src, content, m);
@@ -216,7 +216,7 @@ bool PBTestReport::SerializeToFile(const SETestReport& src, const std::string& f
 }
 bool PBTestReport::SerializeFromString(const std::string& src, SETestReport& dst, SerializationFormat m)
 {
-  cdm::TestReportData data;
+  CDM_BIND::TestReportData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
     return false;
   PBTestReport::Load(data, dst);

@@ -17,13 +17,13 @@
 #include "system/physiology/SERenalSystem.h"
 #include "system/physiology/SERespiratorySystem.h"
 #include "system/physiology/SETissueSystem.h"
-#include "bind/cpp/cdm/Physiology.pb.h"
+#include "bind/Physiology.pb.h"
 
-void PBPhysiology::Load(const cdm::BloodChemistrySystemData& src, SEBloodChemistrySystem& dst)
+void PBPhysiology::Load(const CDM_BIND::BloodChemistrySystemData& src, SEBloodChemistrySystem& dst)
 {
   PBPhysiology::Serialize(src, dst);
 }
-void PBPhysiology::Serialize(const cdm::BloodChemistrySystemData& src, SEBloodChemistrySystem& dst)
+void PBPhysiology::Serialize(const CDM_BIND::BloodChemistrySystemData& src, SEBloodChemistrySystem& dst)
 {
   dst.Clear();
   if (src.has_blooddensity())
@@ -83,13 +83,13 @@ void PBPhysiology::Serialize(const cdm::BloodChemistrySystemData& src, SEBloodCh
     PBProperty::Load(src.venousoxygenpressure(), dst.GetVenousOxygenPressure());
 }
 
-cdm::BloodChemistrySystemData* PBPhysiology::Unload(const SEBloodChemistrySystem& src)
+CDM_BIND::BloodChemistrySystemData* PBPhysiology::Unload(const SEBloodChemistrySystem& src)
 {
-  cdm::BloodChemistrySystemData* dst = new cdm::BloodChemistrySystemData();
+  CDM_BIND::BloodChemistrySystemData* dst = new CDM_BIND::BloodChemistrySystemData();
   PBPhysiology::Serialize(src, *dst);
   return dst;
 }
-void PBPhysiology::Serialize(const SEBloodChemistrySystem& src, cdm::BloodChemistrySystemData& dst)
+void PBPhysiology::Serialize(const SEBloodChemistrySystem& src, CDM_BIND::BloodChemistrySystemData& dst)
 {
   if (src.HasBloodDensity())
     dst.set_allocated_blooddensity(PBProperty::Unload(*src.m_BloodDensity));
@@ -148,11 +148,11 @@ void PBPhysiology::Serialize(const SEBloodChemistrySystem& src, cdm::BloodChemis
     dst.set_allocated_venousoxygenpressure(PBProperty::Unload(*src.m_VenousOxygenPressure));
 }
 
-void PBPhysiology::Load(const cdm::CardiovascularSystemData& src, SECardiovascularSystem& dst)
+void PBPhysiology::Load(const CDM_BIND::CardiovascularSystemData& src, SECardiovascularSystem& dst)
 {
   PBPhysiology::Serialize(src, dst);
 }
-void PBPhysiology::Serialize(const cdm::CardiovascularSystemData& src, SECardiovascularSystem& dst)
+void PBPhysiology::Serialize(const CDM_BIND::CardiovascularSystemData& src, SECardiovascularSystem& dst)
 {
   dst.Clear();
   if (src.has_arterialpressure())
@@ -216,13 +216,13 @@ void PBPhysiology::Serialize(const cdm::CardiovascularSystemData& src, SECardiov
     PBProperty::Load(src.systolicarterialpressure(), dst.GetSystolicArterialPressure());
 }
 
-cdm::CardiovascularSystemData* PBPhysiology::Unload(const SECardiovascularSystem& src)
+CDM_BIND::CardiovascularSystemData* PBPhysiology::Unload(const SECardiovascularSystem& src)
 {
-  cdm::CardiovascularSystemData* dst = new cdm::CardiovascularSystemData();
+  CDM_BIND::CardiovascularSystemData* dst = new CDM_BIND::CardiovascularSystemData();
   PBPhysiology::Serialize(src, *dst);
   return dst;
 }
-void PBPhysiology::Serialize(const SECardiovascularSystem& src, cdm::CardiovascularSystemData& dst)
+void PBPhysiology::Serialize(const SECardiovascularSystem& src, CDM_BIND::CardiovascularSystemData& dst)
 {
   if (src.HasArterialPressure())
     dst.set_allocated_arterialpressure(PBProperty::Unload(*src.m_ArterialPressure));
@@ -244,7 +244,7 @@ void PBPhysiology::Serialize(const SECardiovascularSystem& src, cdm::Cardiovascu
     dst.set_allocated_heartejectionfraction(PBProperty::Unload(*src.m_HeartEjectionFraction));
   if (src.HasHeartRate())
     dst.set_allocated_heartrate(PBProperty::Unload(*src.m_HeartRate));
-  dst.set_heartrhythm((cdm::eHeartRhythm)src.m_HeartRhythm);
+  dst.set_heartrhythm((CDM_BIND::eHeartRhythm)src.m_HeartRhythm);
   if (src.HasHeartStrokeVolume())
     dst.set_allocated_heartstrokevolume(PBProperty::Unload(*src.m_HeartStrokeVolume));
   if (src.HasIntracranialPressure())
@@ -286,11 +286,11 @@ void PBPhysiology::Serialize(const SECardiovascularSystem& src, cdm::Cardiovascu
 }
 
 
-void PBPhysiology::Load(const cdm::DrugSystemData& src, SEDrugSystem& dst)
+void PBPhysiology::Load(const CDM_BIND::DrugSystemData& src, SEDrugSystem& dst)
 {
   PBPhysiology::Serialize(src, dst);
 }
-void PBPhysiology::Serialize(const cdm::DrugSystemData& src, SEDrugSystem& dst)
+void PBPhysiology::Serialize(const CDM_BIND::DrugSystemData& src, SEDrugSystem& dst)
 {
   dst.Clear();
   if (src.has_bronchodilationlevel())
@@ -315,13 +315,13 @@ void PBPhysiology::Serialize(const cdm::DrugSystemData& src, SEDrugSystem& dst)
     PBProperty::Load(src.tubularpermeabilitychange(), dst.GetTubularPermeabilityChange());
 }
 
-cdm::DrugSystemData* PBPhysiology::Unload(const SEDrugSystem& src)
+CDM_BIND::DrugSystemData* PBPhysiology::Unload(const SEDrugSystem& src)
 {
-  cdm::DrugSystemData* dst = new cdm::DrugSystemData();
+  CDM_BIND::DrugSystemData* dst = new CDM_BIND::DrugSystemData();
   PBPhysiology::Serialize(src, *dst);
   return dst;
 }
-void PBPhysiology::Serialize(const SEDrugSystem& src, cdm::DrugSystemData& dst)
+void PBPhysiology::Serialize(const SEDrugSystem& src, CDM_BIND::DrugSystemData& dst)
 {
   if (src.HasBronchodilationLevel())
     dst.set_allocated_bronchodilationlevel(PBProperty::Unload(*src.m_BronchodilationLevel));
@@ -346,34 +346,34 @@ void PBPhysiology::Serialize(const SEDrugSystem& src, cdm::DrugSystemData& dst)
 }
 
 
-void PBPhysiology::Load(const cdm::EndocrineSystemData& src, SEEndocrineSystem& dst)
+void PBPhysiology::Load(const CDM_BIND::EndocrineSystemData& src, SEEndocrineSystem& dst)
 {
   PBPhysiology::Serialize(src, dst);
 }
-void PBPhysiology::Serialize(const cdm::EndocrineSystemData& src, SEEndocrineSystem& dst)
+void PBPhysiology::Serialize(const CDM_BIND::EndocrineSystemData& src, SEEndocrineSystem& dst)
 {
   dst.Clear();
   if (src.has_insulinsynthesisrate())
     PBProperty::Load(src.insulinsynthesisrate(), dst.GetInsulinSynthesisRate());
 }
 
-cdm::EndocrineSystemData* PBPhysiology::Unload(const SEEndocrineSystem& src)
+CDM_BIND::EndocrineSystemData* PBPhysiology::Unload(const SEEndocrineSystem& src)
 {
-  cdm::EndocrineSystemData* dst = new cdm::EndocrineSystemData();
+  CDM_BIND::EndocrineSystemData* dst = new CDM_BIND::EndocrineSystemData();
   PBPhysiology::Serialize(src, *dst);
   return dst;
 }
-void PBPhysiology::Serialize(const SEEndocrineSystem& src, cdm::EndocrineSystemData& dst)
+void PBPhysiology::Serialize(const SEEndocrineSystem& src, CDM_BIND::EndocrineSystemData& dst)
 {
   if (src.HasInsulinSynthesisRate())
     dst.set_allocated_insulinsynthesisrate(PBProperty::Unload(*src.m_InsulinSynthesisRate));
 }
 
-void PBPhysiology::Load(const cdm::EnergySystemData& src, SEEnergySystem& dst)
+void PBPhysiology::Load(const CDM_BIND::EnergySystemData& src, SEEnergySystem& dst)
 {
   PBPhysiology::Serialize(src, dst);
 }
-void PBPhysiology::Serialize(const cdm::EnergySystemData& src, SEEnergySystem& dst)
+void PBPhysiology::Serialize(const CDM_BIND::EnergySystemData& src, SEEnergySystem& dst)
 {
   dst.Clear();
   if (src.has_achievedexerciselevel())
@@ -400,13 +400,13 @@ void PBPhysiology::Serialize(const cdm::EnergySystemData& src, SEEnergySystem& d
     PBProperty::Load(src.totalworkratelevel(), dst.GetTotalWorkRateLevel());
 }
 
-cdm::EnergySystemData* PBPhysiology::Unload(const SEEnergySystem& src)
+CDM_BIND::EnergySystemData* PBPhysiology::Unload(const SEEnergySystem& src)
 {
-  cdm::EnergySystemData* dst = new cdm::EnergySystemData();
+  CDM_BIND::EnergySystemData* dst = new CDM_BIND::EnergySystemData();
   PBPhysiology::Serialize(src, *dst);
   return dst;
 }
-void PBPhysiology::Serialize(const SEEnergySystem& src, cdm::EnergySystemData& dst)
+void PBPhysiology::Serialize(const SEEnergySystem& src, CDM_BIND::EnergySystemData& dst)
 {
   if (src.HasAchievedExerciseLevel())
     dst.set_allocated_achievedexerciselevel(PBProperty::Unload(*src.m_AchievedExerciseLevel));
@@ -432,11 +432,11 @@ void PBPhysiology::Serialize(const SEEnergySystem& src, cdm::EnergySystemData& d
     dst.set_allocated_totalworkratelevel(PBProperty::Unload(*src.m_TotalWorkRateLevel));
 }
 
-void PBPhysiology::Load(const cdm::GastrointestinalSystemData& src, SEGastrointestinalSystem& dst)
+void PBPhysiology::Load(const CDM_BIND::GastrointestinalSystemData& src, SEGastrointestinalSystem& dst)
 {
   PBPhysiology::Serialize(src, dst);
 }
-void PBPhysiology::Serialize(const cdm::GastrointestinalSystemData& src, SEGastrointestinalSystem& dst)
+void PBPhysiology::Serialize(const CDM_BIND::GastrointestinalSystemData& src, SEGastrointestinalSystem& dst)
 {
   dst.Clear();
   if (src.has_chymeabsorptionrate())
@@ -445,13 +445,13 @@ void PBPhysiology::Serialize(const cdm::GastrointestinalSystemData& src, SEGastr
     PBPatientNutrition::Load(src.stomachcontents(), dst.GetStomachContents());
 }
 
-cdm::GastrointestinalSystemData* PBPhysiology::Unload(const SEGastrointestinalSystem& src)
+CDM_BIND::GastrointestinalSystemData* PBPhysiology::Unload(const SEGastrointestinalSystem& src)
 {
-  cdm::GastrointestinalSystemData* dst = new cdm::GastrointestinalSystemData();
+  CDM_BIND::GastrointestinalSystemData* dst = new CDM_BIND::GastrointestinalSystemData();
   PBPhysiology::Serialize(src, *dst);
   return dst;
 }
-void PBPhysiology::Serialize(const SEGastrointestinalSystem& src, cdm::GastrointestinalSystemData& dst)
+void PBPhysiology::Serialize(const SEGastrointestinalSystem& src, CDM_BIND::GastrointestinalSystemData& dst)
 {
   if (src.HasChymeAbsorptionRate())
     dst.set_allocated_chymeabsorptionrate(PBProperty::Unload(*src.m_ChymeAbsorptionRate));
@@ -460,32 +460,32 @@ void PBPhysiology::Serialize(const SEGastrointestinalSystem& src, cdm::Gastroint
 }
 
 
-void PBPhysiology::Load(const cdm::HepaticSystemData& src, SEHepaticSystem& dst)
+void PBPhysiology::Load(const CDM_BIND::HepaticSystemData& src, SEHepaticSystem& dst)
 {
   PBPhysiology::Serialize(src, dst);
 }
-void PBPhysiology::Serialize(const cdm::HepaticSystemData& src, SEHepaticSystem& dst)
+void PBPhysiology::Serialize(const CDM_BIND::HepaticSystemData& src, SEHepaticSystem& dst)
 {
   dst.Clear();
 
 }
 
-cdm::HepaticSystemData* PBPhysiology::Unload(const SEHepaticSystem& src)
+CDM_BIND::HepaticSystemData* PBPhysiology::Unload(const SEHepaticSystem& src)
 {
-  cdm::HepaticSystemData* dst = new cdm::HepaticSystemData();
+  CDM_BIND::HepaticSystemData* dst = new CDM_BIND::HepaticSystemData();
   PBPhysiology::Serialize(src, *dst);
   return dst;
 }
-void PBPhysiology::Serialize(const SEHepaticSystem& src, cdm::HepaticSystemData& dst)
+void PBPhysiology::Serialize(const SEHepaticSystem& src, CDM_BIND::HepaticSystemData& dst)
 {
 
 }
 
-void PBPhysiology::Load(const cdm::NervousSystemData& src, SENervousSystem& dst)
+void PBPhysiology::Load(const CDM_BIND::NervousSystemData& src, SENervousSystem& dst)
 {
   PBPhysiology::Serialize(src, dst);
 }
-void PBPhysiology::Serialize(const cdm::NervousSystemData& src, SENervousSystem& dst)
+void PBPhysiology::Serialize(const CDM_BIND::NervousSystemData& src, SENervousSystem& dst)
 {
   dst.Clear();
   if (src.has_baroreceptorheartratescale())
@@ -506,13 +506,13 @@ void PBPhysiology::Serialize(const cdm::NervousSystemData& src, SENervousSystem&
     PBPhysiology::Load(src.righteyepupillaryresponse(), dst.GetRightEyePupillaryResponse());
 }
 
-cdm::NervousSystemData* PBPhysiology::Unload(const SENervousSystem& src)
+CDM_BIND::NervousSystemData* PBPhysiology::Unload(const SENervousSystem& src)
 {
-  cdm::NervousSystemData* dst = new cdm::NervousSystemData();
+  CDM_BIND::NervousSystemData* dst = new CDM_BIND::NervousSystemData();
   PBPhysiology::Serialize(src, *dst);
   return dst;
 }
-void PBPhysiology::Serialize(const SENervousSystem& src, cdm::NervousSystemData& dst)
+void PBPhysiology::Serialize(const SENervousSystem& src, CDM_BIND::NervousSystemData& dst)
 {
   if (src.HasBaroreceptorHeartRateScale())
     dst.set_allocated_baroreceptorheartratescale(PBProperty::Unload(*src.m_BaroreceptorHeartRateScale));
@@ -532,11 +532,11 @@ void PBPhysiology::Serialize(const SENervousSystem& src, cdm::NervousSystemData&
     dst.set_allocated_righteyepupillaryresponse(PBPhysiology::Unload(*src.m_RightEyePupillaryResponse));
 }
 
-void PBPhysiology::Load(const cdm::PupillaryResponseData& src, SEPupillaryResponse& dst)
+void PBPhysiology::Load(const CDM_BIND::PupillaryResponseData& src, SEPupillaryResponse& dst)
 {
   PBPhysiology::Serialize(src, dst);
 }
-void PBPhysiology::Serialize(const cdm::PupillaryResponseData& src, SEPupillaryResponse& dst)
+void PBPhysiology::Serialize(const CDM_BIND::PupillaryResponseData& src, SEPupillaryResponse& dst)
 {
   dst.Clear();
   if (src.has_reactivitymodifier())
@@ -546,13 +546,13 @@ void PBPhysiology::Serialize(const cdm::PupillaryResponseData& src, SEPupillaryR
   if (src.has_sizemodifier())
     PBProperty::Load(src.sizemodifier(), dst.GetSizeModifier());
 }
-cdm::PupillaryResponseData* PBPhysiology::Unload(const SEPupillaryResponse& src)
+CDM_BIND::PupillaryResponseData* PBPhysiology::Unload(const SEPupillaryResponse& src)
 {
-  cdm::PupillaryResponseData* dst = new cdm::PupillaryResponseData();
+  CDM_BIND::PupillaryResponseData* dst = new CDM_BIND::PupillaryResponseData();
   PBPhysiology::Serialize(src, *dst);
   return dst;
 }
-void PBPhysiology::Serialize(const SEPupillaryResponse& src, cdm::PupillaryResponseData& dst)
+void PBPhysiology::Serialize(const SEPupillaryResponse& src, CDM_BIND::PupillaryResponseData& dst)
 {
   if (src.HasReactivityModifier())
     dst.set_allocated_reactivitymodifier(PBProperty::Unload(*src.m_ReactivityModifier));
@@ -562,11 +562,11 @@ void PBPhysiology::Serialize(const SEPupillaryResponse& src, cdm::PupillaryRespo
     dst.set_allocated_sizemodifier(PBProperty::Unload(*src.m_SizeModifier));
 }
 
-void PBPhysiology::Load(const cdm::RenalSystemData& src, SERenalSystem& dst)
+void PBPhysiology::Load(const CDM_BIND::RenalSystemData& src, SERenalSystem& dst)
 {
   PBPhysiology::Serialize(src, dst);
 }
-void PBPhysiology::Serialize(const cdm::RenalSystemData& src, SERenalSystem& dst)
+void PBPhysiology::Serialize(const CDM_BIND::RenalSystemData& src, SERenalSystem& dst)
 {
   dst.Clear();
   if (src.has_glomerularfiltrationrate())
@@ -683,13 +683,13 @@ void PBPhysiology::Serialize(const cdm::RenalSystemData& src, SERenalSystem& dst
     PBProperty::Load(src.urineureanitrogenconcentration(), dst.GetUrineUreaNitrogenConcentration());
 }
 
-cdm::RenalSystemData* PBPhysiology::Unload(const SERenalSystem& src)
+CDM_BIND::RenalSystemData* PBPhysiology::Unload(const SERenalSystem& src)
 {
-  cdm::RenalSystemData* dst = new cdm::RenalSystemData();
+  CDM_BIND::RenalSystemData* dst = new CDM_BIND::RenalSystemData();
   PBPhysiology::Serialize(src, *dst);
   return dst;
 }
-void PBPhysiology::Serialize(const SERenalSystem& src, cdm::RenalSystemData& dst)
+void PBPhysiology::Serialize(const SERenalSystem& src, CDM_BIND::RenalSystemData& dst)
 {
   if (src.HasGlomerularFiltrationRate())
     dst.set_allocated_glomerularfiltrationrate(PBProperty::Unload(*src.m_GlomerularFiltrationRate));
@@ -805,11 +805,11 @@ void PBPhysiology::Serialize(const SERenalSystem& src, cdm::RenalSystemData& dst
     dst.set_allocated_urineureanitrogenconcentration(PBProperty::Unload(*src.m_UrineUreaNitrogenConcentration));
 }
 
-void PBPhysiology::Load(const cdm::RespiratorySystemData& src, SERespiratorySystem& dst)
+void PBPhysiology::Load(const CDM_BIND::RespiratorySystemData& src, SERespiratorySystem& dst)
 {
   PBPhysiology::Serialize(src, dst);
 }
-void PBPhysiology::Serialize(const cdm::RespiratorySystemData& src, SERespiratorySystem& dst)
+void PBPhysiology::Serialize(const CDM_BIND::RespiratorySystemData& src, SERespiratorySystem& dst)
 {
   dst.Clear();
   if (src.has_alveolararterialgradient())
@@ -912,13 +912,13 @@ void PBPhysiology::Serialize(const cdm::RespiratorySystemData& src, SERespirator
     PBProperty::Load(src.transthoracicpressure(), dst.GetTransthoracicPressure());
 }
 
-cdm::RespiratorySystemData* PBPhysiology::Unload(const SERespiratorySystem& src)
+CDM_BIND::RespiratorySystemData* PBPhysiology::Unload(const SERespiratorySystem& src)
 {
-  cdm::RespiratorySystemData* dst = new cdm::RespiratorySystemData();
+  CDM_BIND::RespiratorySystemData* dst = new CDM_BIND::RespiratorySystemData();
   PBPhysiology::Serialize(src, *dst);
   return dst;
 }
-void PBPhysiology::Serialize(const SERespiratorySystem& src, cdm::RespiratorySystemData& dst)
+void PBPhysiology::Serialize(const SERespiratorySystem& src, CDM_BIND::RespiratorySystemData& dst)
 {
   if (src.HasAlveolarArterialGradient())
     dst.set_allocated_alveolararterialgradient(PBProperty::Unload(*src.m_AlveolarArterialGradient));
@@ -1019,11 +1019,11 @@ void PBPhysiology::Serialize(const SERespiratorySystem& src, cdm::RespiratorySys
 }
 
 
-void PBPhysiology::Load(const cdm::TissueSystemData& src, SETissueSystem& dst)
+void PBPhysiology::Load(const CDM_BIND::TissueSystemData& src, SETissueSystem& dst)
 {
   PBPhysiology::Serialize(src, dst);
 }
-void PBPhysiology::Serialize(const cdm::TissueSystemData& src, SETissueSystem& dst)
+void PBPhysiology::Serialize(const CDM_BIND::TissueSystemData& src, SETissueSystem& dst)
 {
   dst.Clear();
   if (src.has_carbondioxideproductionrate())
@@ -1042,13 +1042,13 @@ void PBPhysiology::Serialize(const cdm::TissueSystemData& src, SETissueSystem& d
     PBProperty::Load(src.respiratoryexchangeratio(), dst.GetRespiratoryExchangeRatio());
 }
 
-cdm::TissueSystemData* PBPhysiology::Unload(const SETissueSystem& src)
+CDM_BIND::TissueSystemData* PBPhysiology::Unload(const SETissueSystem& src)
 {
-  cdm::TissueSystemData* dst = new cdm::TissueSystemData();
+  CDM_BIND::TissueSystemData* dst = new CDM_BIND::TissueSystemData();
   PBPhysiology::Serialize(src, *dst);
   return dst;
 }
-void PBPhysiology::Serialize(const SETissueSystem& src, cdm::TissueSystemData& dst)
+void PBPhysiology::Serialize(const SETissueSystem& src, CDM_BIND::TissueSystemData& dst)
 {
   if (src.HasCarbonDioxideProductionRate())
     dst.set_allocated_carbondioxideproductionrate(PBProperty::Unload(*src.m_CarbonDioxideProductionRate));

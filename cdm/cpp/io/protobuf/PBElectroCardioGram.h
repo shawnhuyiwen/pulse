@@ -11,20 +11,20 @@ class CDM_DECL PBElectroCardioGram
 {
 public:
 
-  static void Load(const cdm::ElectroCardioGramData& src, SEElectroCardioGram& dst);
-  static cdm::ElectroCardioGramData* Unload(const SEElectroCardioGram& src);
-  static void Serialize(const cdm::ElectroCardioGramData& src, SEElectroCardioGram& dst);
-  static void Serialize(const SEElectroCardioGram& src, cdm::ElectroCardioGramData& dst);
+  static void Load(const CDM_BIND::ElectroCardioGramData& src, SEElectroCardioGram& dst);
+  static CDM_BIND::ElectroCardioGramData* Unload(const SEElectroCardioGram& src);
+  static void Serialize(const CDM_BIND::ElectroCardioGramData& src, SEElectroCardioGram& dst);
+  static void Serialize(const SEElectroCardioGram& src, CDM_BIND::ElectroCardioGramData& dst);
 
-  static void Load(const cdm::ElectroCardioGramWaveformData& src, SEElectroCardioGramWaveform& dst);
-  static cdm::ElectroCardioGramWaveformData* Unload(const SEElectroCardioGramWaveform& src);
-  static void Serialize(const cdm::ElectroCardioGramWaveformData& src, SEElectroCardioGramWaveform& dst);
-  static void Serialize(const SEElectroCardioGramWaveform& src, cdm::ElectroCardioGramWaveformData& dst);
+  static void Load(const CDM_BIND::ElectroCardioGramWaveformData& src, SEElectroCardioGramWaveform& dst);
+  static CDM_BIND::ElectroCardioGramWaveformData* Unload(const SEElectroCardioGramWaveform& src);
+  static void Serialize(const CDM_BIND::ElectroCardioGramWaveformData& src, SEElectroCardioGramWaveform& dst);
+  static void Serialize(const SEElectroCardioGramWaveform& src, CDM_BIND::ElectroCardioGramWaveformData& dst);
 
-  static void Load(const cdm::ElectroCardioGramWaveformListData& src, SEElectroCardioGramWaveformInterpolator& dst);
-  static cdm::ElectroCardioGramWaveformListData* Unload(const SEElectroCardioGramWaveformInterpolator& src);
-  static void Serialize(const cdm::ElectroCardioGramWaveformListData& src, SEElectroCardioGramWaveformInterpolator& dst);
-  static void Serialize(const SEElectroCardioGramWaveformInterpolator& src, cdm::ElectroCardioGramWaveformListData& dst);
+  static void Load(const CDM_BIND::ElectroCardioGramWaveformListData& src, SEElectroCardioGramWaveformInterpolator& dst);
+  static CDM_BIND::ElectroCardioGramWaveformListData* Unload(const SEElectroCardioGramWaveformInterpolator& src);
+  static void Serialize(const CDM_BIND::ElectroCardioGramWaveformListData& src, SEElectroCardioGramWaveformInterpolator& dst);
+  static void Serialize(const SEElectroCardioGramWaveformInterpolator& src, CDM_BIND::ElectroCardioGramWaveformListData& dst);
   static void Copy(const SEElectroCardioGramWaveformInterpolator& src, SEElectroCardioGramWaveformInterpolator& dst);
 
   static bool SerializeToString(const SEElectroCardioGramWaveformInterpolator& src, std::string& output, SerializationFormat m);

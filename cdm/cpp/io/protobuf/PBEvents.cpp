@@ -5,13 +5,13 @@
 #include "io/protobuf/PBEvents.h"
 #include "io/protobuf/PBProperties.h"
 #include "io/protobuf/PBUtils.h"
-#include "bind/cpp/cdm/Events.pb.h"
+#include "bind/Events.pb.h"
 #include "engine/SEEventManager.h"
 #include "utils/FileUtils.h"
 
 const std::string& eEvent_Name(eEvent m)
 {
-  return cdm::eEvent_Name((cdm::eEvent)m);
+  return CDM_BIND::eEvent_Name((CDM_BIND::eEvent)m);
 }
 
 bool PBEvents::SerializeToString(std::vector<const SEEventChange*>& changes, std::string& output, SerializationFormat m, Logger* logger)
@@ -19,11 +19,11 @@ bool PBEvents::SerializeToString(std::vector<const SEEventChange*>& changes, std
   if (changes.empty())
     return false;
 
-  cdm::EventChangeListData data;
+  CDM_BIND::EventChangeListData data;
   for (const SEEventChange* c : changes)
   {
-    cdm::EventChangeData* change = data.add_change();
-    change->set_event((cdm::eEvent)c->GetEvent());
+    CDM_BIND::EventChangeData* change = data.add_change();
+    change->set_event((CDM_BIND::eEvent)c->GetEvent());
     change->set_active(c->GetActive());
     if (c->GetSimTime().IsValid())
       change->set_allocated_simtime(PBProperty::Unload(c->GetSimTime()));
@@ -36,7 +36,7 @@ bool PBEvents::SerializeToString(std::vector<const SEEventChange*>& changes, std
 bool PBEvents::SerializeFromString(const std::string& src, std::vector<const SEEventChange*>& changes, SerializationFormat m, Logger* logger)
 {
   SEScalarTime time;
-  cdm::EventChangeListData data;
+  CDM_BIND::EventChangeListData data;
   if (!PBUtils::SerializeFromString(src, data, m, logger))
     return false;
   for (int i = 0; i < data.change_size(); i++)
@@ -58,11 +58,11 @@ bool PBEvents::SerializeToString(std::vector<const SEActiveEvent*>& active_event
   if (active_events.empty())
     return false;
 
-  cdm::ActiveEventListData data;
+  CDM_BIND::ActiveEventListData data;
   for (const SEActiveEvent* a : active_events)
   {
-    cdm::ActiveEventData* aeData = data.add_activeevent();
-    aeData->set_event((cdm::eEvent)a->GetEvent());
+    CDM_BIND::ActiveEventData* aeData = data.add_activeevent();
+    aeData->set_event((CDM_BIND::eEvent)a->GetEvent());
     if (a->GetDuration().IsValid())
       aeData->set_allocated_duration(PBProperty::Unload(a->GetDuration()));
   }
@@ -74,7 +74,7 @@ bool PBEvents::SerializeToString(std::vector<const SEActiveEvent*>& active_event
 bool PBEvents::SerializeFromString(const std::string& src, std::vector<const SEActiveEvent*>& active_events, SerializationFormat m, Logger* logger)
 {
   SEScalarTime time;
-  cdm::ActiveEventListData data;
+  CDM_BIND::ActiveEventListData data;
   if (!PBUtils::SerializeFromString(src, data, m, logger))
     return false;
   for (int i = 0; i < data.activeevent_size(); i++)

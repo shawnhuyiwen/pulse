@@ -6,7 +6,7 @@
 #include "io/protobuf/PBPhysiology.h"
 #include "io/protobuf/PBProperties.h"
 #include "io/protobuf/PBUtils.h"
-#include "bind/cpp/cdm/Substance.pb.h"
+#include "bind/Substance.pb.h"
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceAerosolization.h"
 #include "substance/SESubstanceClearance.h"
@@ -35,7 +35,7 @@
 #include "utils/FileUtils.h"
 
 
-void PBSubstance::Load(const cdm::SubstanceData& src, SESubstance& dst)
+void PBSubstance::Load(const CDM_BIND::SubstanceData& src, SESubstance& dst)
 {
   PBSubstance::Serialize(src, dst);
 
@@ -46,7 +46,7 @@ void PBSubstance::Load(const cdm::SubstanceData& src, SESubstance& dst)
     dst.Fatal("Multiple FractionUnboundInPlasma values specified, but not the same. These must match at this time.");
   }
 }
-void PBSubstance::Serialize(const cdm::SubstanceData& src, SESubstance& dst)
+void PBSubstance::Serialize(const CDM_BIND::SubstanceData& src, SESubstance& dst)
 {
   dst.Clear();
   dst.SetName(src.name());
@@ -99,18 +99,18 @@ void PBSubstance::Serialize(const cdm::SubstanceData& src, SESubstance& dst)
     PBSubstance::Load(src.pharmacodynamics(), dst.GetPD());
 }
 
-cdm::SubstanceData* PBSubstance::Unload(const SESubstance& src)
+CDM_BIND::SubstanceData* PBSubstance::Unload(const SESubstance& src)
 {
-  cdm::SubstanceData* dst = new cdm::SubstanceData();
+  CDM_BIND::SubstanceData* dst = new CDM_BIND::SubstanceData();
   PBSubstance::Serialize(src, *dst);
   return dst;
 }
-void PBSubstance::Serialize(const SESubstance& src, cdm::SubstanceData& dst)
+void PBSubstance::Serialize(const SESubstance& src, CDM_BIND::SubstanceData& dst)
 {
   if (src.HasName())
     dst.set_name(src.m_Name);
   if (src.HasState())
-    dst.set_state((cdm::SubstanceData::eState)src.m_State);
+    dst.set_state((CDM_BIND::SubstanceData::eState)src.m_State);
   if (src.HasDensity())
     dst.set_allocated_density(PBProperty::Unload(*src.m_Density));
   if (src.HasMolarMass())
@@ -160,11 +160,11 @@ void PBSubstance::Serialize(const SESubstance& src, cdm::SubstanceData& dst)
 }
 
 
-void PBSubstance::Load(const cdm::SubstanceAerosolizationData& src, SESubstanceAerosolization& dst)
+void PBSubstance::Load(const CDM_BIND::SubstanceAerosolizationData& src, SESubstanceAerosolization& dst)
 {
   PBSubstance::Serialize(src, dst);
 }
-void PBSubstance::Serialize(const cdm::SubstanceAerosolizationData& src, SESubstanceAerosolization& dst)
+void PBSubstance::Serialize(const CDM_BIND::SubstanceAerosolizationData& src, SESubstanceAerosolization& dst)
 {
   dst.Clear();
   if (src.has_bronchiolemodifier())
@@ -175,13 +175,13 @@ void PBSubstance::Serialize(const cdm::SubstanceAerosolizationData& src, SESubst
     PBProperty::Load(src.particulatesizedistribution(), dst.GetParticulateSizeDistribution());
 }
 
-cdm::SubstanceAerosolizationData* PBSubstance::Unload(const SESubstanceAerosolization& src)
+CDM_BIND::SubstanceAerosolizationData* PBSubstance::Unload(const SESubstanceAerosolization& src)
 {
-  cdm::SubstanceAerosolizationData* dst = new cdm::SubstanceAerosolizationData();
+  CDM_BIND::SubstanceAerosolizationData* dst = new CDM_BIND::SubstanceAerosolizationData();
   PBSubstance::Serialize(src, *dst);
   return dst;
 }
-void PBSubstance::Serialize(const SESubstanceAerosolization& src, cdm::SubstanceAerosolizationData& dst)
+void PBSubstance::Serialize(const SESubstanceAerosolization& src, CDM_BIND::SubstanceAerosolizationData& dst)
 {
   if (src.HasBronchioleModifier())
     dst.set_allocated_bronchiolemodifier(PBProperty::Unload(*src.m_BronchioleModifier));
@@ -192,11 +192,11 @@ void PBSubstance::Serialize(const SESubstanceAerosolization& src, cdm::Substance
 }
 
 
-void PBSubstance::Load(const cdm::SubstanceClearanceData& src, SESubstanceClearance& dst)
+void PBSubstance::Load(const CDM_BIND::SubstanceClearanceData& src, SESubstanceClearance& dst)
 {
   PBSubstance::Serialize(src, dst);
 }
-void PBSubstance::Serialize(const cdm::SubstanceClearanceData& src, SESubstanceClearance& dst)
+void PBSubstance::Serialize(const CDM_BIND::SubstanceClearanceData& src, SESubstanceClearance& dst)
 {
   dst.Clear();
 
@@ -253,17 +253,17 @@ void PBSubstance::Serialize(const cdm::SubstanceClearanceData& src, SESubstanceC
   }
 }
 
-cdm::SubstanceClearanceData* PBSubstance::Unload(const SESubstanceClearance& src)
+CDM_BIND::SubstanceClearanceData* PBSubstance::Unload(const SESubstanceClearance& src)
 {
-  cdm::SubstanceClearanceData* dst = new cdm::SubstanceClearanceData();
+  CDM_BIND::SubstanceClearanceData* dst = new CDM_BIND::SubstanceClearanceData();
   PBSubstance::Serialize(src, *dst);
   return dst;
 }
-void PBSubstance::Serialize(const SESubstanceClearance& src, cdm::SubstanceClearanceData& dst)
+void PBSubstance::Serialize(const SESubstanceClearance& src, CDM_BIND::SubstanceClearanceData& dst)
 {
   if (src.HasSystemicClearance())
   {
-    cdm::SubstanceSystemicClearanceData* sys = new cdm::SubstanceSystemicClearanceData();
+    CDM_BIND::SubstanceSystemicClearanceData* sys = new CDM_BIND::SubstanceSystemicClearanceData();
     dst.set_allocated_systemicclearance(sys);
 
     if (src.HasFractionExcretedInFeces())
@@ -284,18 +284,18 @@ void PBSubstance::Serialize(const SESubstanceClearance& src, cdm::SubstanceClear
 
   if (src.HasRenalDynamic())
   {
-    cdm::SubstanceRenalClearanceData* rc = new cdm::SubstanceRenalClearanceData();
+    CDM_BIND::SubstanceRenalClearanceData* rc = new CDM_BIND::SubstanceRenalClearanceData();
     dst.set_allocated_renalclearance(rc);
 
     if (src.m_RenalDynamic == RenalDynamic::Clearance && src.HasRenalClearance())
       rc->set_allocated_clearance(PBProperty::Unload(*src.m_RenalClearance));
     else if (src.m_RenalDynamic == RenalDynamic::Regulation)
     {
-      cdm::SubstanceRenalRegulationData* rr = new cdm::SubstanceRenalRegulationData();
+      CDM_BIND::SubstanceRenalRegulationData* rr = new CDM_BIND::SubstanceRenalRegulationData();
       rc->set_allocated_regulation(rr);
 
       if (src.HasChargeInBlood())
-        rr->set_chargeinblood((cdm::eCharge)src.m_ChargeInBlood);
+        rr->set_chargeinblood((CDM_BIND::eCharge)src.m_ChargeInBlood);
       if (src.HasFractionUnboundInPlasma())
         rr->set_allocated_fractionunboundinplasma(PBProperty::Unload(*src.m_FractionUnboundInPlasma));
       if (src.HasRenalReabsorptionRatio())
@@ -314,11 +314,11 @@ void PBSubstance::Serialize(const SESubstanceClearance& src, cdm::SubstanceClear
   }
 }
 
-void PBSubstance::Load(const cdm::SubstanceCompoundData& src, SESubstanceCompound& dst, const SESubstanceManager& subMgr)
+void PBSubstance::Load(const CDM_BIND::SubstanceCompoundData& src, SESubstanceCompound& dst, const SESubstanceManager& subMgr)
 {
   PBSubstance::Serialize(src, dst, subMgr);
 }
-void PBSubstance::Serialize(const cdm::SubstanceCompoundData& src, SESubstanceCompound& dst, const SESubstanceManager& subMgr)
+void PBSubstance::Serialize(const CDM_BIND::SubstanceCompoundData& src, SESubstanceCompound& dst, const SESubstanceManager& subMgr)
 {
   dst.Clear();
   dst.m_Name = src.name();
@@ -329,7 +329,7 @@ void PBSubstance::Serialize(const cdm::SubstanceCompoundData& src, SESubstanceCo
   SESubstanceConcentration* cc;
   for (int i = 0; i < src.component_size(); i++)
   {
-    const cdm::SubstanceConcentrationData& cData = src.component(i);
+    const CDM_BIND::SubstanceConcentrationData& cData = src.component(i);
     substance = subMgr.GetSubstance(cData.name());
     if (substance == nullptr)
     {
@@ -344,13 +344,13 @@ void PBSubstance::Serialize(const cdm::SubstanceCompoundData& src, SESubstanceCo
   }
 }
 
-cdm::SubstanceCompoundData* PBSubstance::Unload(const SESubstanceCompound& src)
+CDM_BIND::SubstanceCompoundData* PBSubstance::Unload(const SESubstanceCompound& src)
 {
-  cdm::SubstanceCompoundData* dst = new cdm::SubstanceCompoundData();
+  CDM_BIND::SubstanceCompoundData* dst = new CDM_BIND::SubstanceCompoundData();
   PBSubstance::Serialize(src, *dst);
   return dst;
 }
-void PBSubstance::Serialize(const SESubstanceCompound& src, cdm::SubstanceCompoundData& dst)
+void PBSubstance::Serialize(const SESubstanceCompound& src, CDM_BIND::SubstanceCompoundData& dst)
 {
   if (src.HasName())
     dst.set_name(src.m_Name);
@@ -359,49 +359,49 @@ void PBSubstance::Serialize(const SESubstanceCompound& src, cdm::SubstanceCompou
     dst.mutable_component()->AddAllocated(PBSubstance::Unload(*c));
 }
 
-void PBSubstance::Load(const cdm::SubstanceConcentrationData& src, SESubstanceConcentration& dst)
+void PBSubstance::Load(const CDM_BIND::SubstanceConcentrationData& src, SESubstanceConcentration& dst)
 {
   dst.Clear();
   if (src.has_concentration())
     PBProperty::Load(src.concentration(), dst.GetConcentration());
 }
-void PBSubstance::Serialize(const cdm::SubstanceConcentrationData& src, SESubstanceConcentration& dst)
+void PBSubstance::Serialize(const CDM_BIND::SubstanceConcentrationData& src, SESubstanceConcentration& dst)
 {
 
 }
 
-cdm::SubstanceConcentrationData* PBSubstance::Unload(const SESubstanceConcentration& src)
+CDM_BIND::SubstanceConcentrationData* PBSubstance::Unload(const SESubstanceConcentration& src)
 {
-  cdm::SubstanceConcentrationData* dst = new cdm::SubstanceConcentrationData();
+  CDM_BIND::SubstanceConcentrationData* dst = new CDM_BIND::SubstanceConcentrationData();
   PBSubstance::Serialize(src, *dst);
   return dst;
 }
 
-void PBSubstance::Serialize(const SESubstanceConcentration& src, cdm::SubstanceConcentrationData& dst)
+void PBSubstance::Serialize(const SESubstanceConcentration& src, CDM_BIND::SubstanceConcentrationData& dst)
 {
   dst.set_name(src.m_Substance.GetName());
   if (src.HasConcentration())
     dst.set_allocated_concentration(PBProperty::Unload(*src.m_Concentration));
 }
 
-void PBSubstance::Load(const cdm::SubstanceFractionData& src, SESubstanceFraction& dst)
+void PBSubstance::Load(const CDM_BIND::SubstanceFractionData& src, SESubstanceFraction& dst)
 {
   PBSubstance::Serialize(src, dst);
 }
-void PBSubstance::Serialize(const cdm::SubstanceFractionData& src, SESubstanceFraction& dst)
+void PBSubstance::Serialize(const CDM_BIND::SubstanceFractionData& src, SESubstanceFraction& dst)
 {
   dst.Clear();
   if (src.has_amount())
     PBProperty::Load(src.amount(), dst.GetFractionAmount());
 }
 
-cdm::SubstanceFractionData* PBSubstance::Unload(const SESubstanceFraction& src)
+CDM_BIND::SubstanceFractionData* PBSubstance::Unload(const SESubstanceFraction& src)
 {
-  cdm::SubstanceFractionData* dst = new cdm::SubstanceFractionData();
+  CDM_BIND::SubstanceFractionData* dst = new CDM_BIND::SubstanceFractionData();
   PBSubstance::Serialize(src, *dst);
   return dst;
 }
-void PBSubstance::Serialize(const SESubstanceFraction& src, cdm::SubstanceFractionData& dst)
+void PBSubstance::Serialize(const SESubstanceFraction& src, CDM_BIND::SubstanceFractionData& dst)
 {
   dst.set_name(src.m_Substance.GetName());
   if (src.HasFractionAmount())
@@ -409,12 +409,12 @@ void PBSubstance::Serialize(const SESubstanceFraction& src, cdm::SubstanceFracti
 }
 
 
-void PBSubstance::Load(const cdm::SubstancePharmacodynamicsData& src, SESubstancePharmacodynamics& dst)
+void PBSubstance::Load(const CDM_BIND::SubstancePharmacodynamicsData& src, SESubstancePharmacodynamics& dst)
 {
   PBSubstance::Serialize(src, dst);
   dst.CalculateDerived();
 }
-void PBSubstance::Serialize(const cdm::SubstancePharmacodynamicsData& src, SESubstancePharmacodynamics& dst)
+void PBSubstance::Serialize(const CDM_BIND::SubstancePharmacodynamicsData& src, SESubstancePharmacodynamics& dst)
 {
   dst.Clear();
 
@@ -444,15 +444,15 @@ void PBSubstance::Serialize(const cdm::SubstancePharmacodynamicsData& src, SESub
     PBProperty::Load(src.tubularpermeabilitymodifier(), dst.GetTubularPermeabilityModifier());
 }
 
-cdm::SubstancePharmacodynamicsData* PBSubstance::Unload(const SESubstancePharmacodynamics& src)
+CDM_BIND::SubstancePharmacodynamicsData* PBSubstance::Unload(const SESubstancePharmacodynamics& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::SubstancePharmacodynamicsData* dst = new cdm::SubstancePharmacodynamicsData();
+  CDM_BIND::SubstancePharmacodynamicsData* dst = new CDM_BIND::SubstancePharmacodynamicsData();
   PBSubstance::Serialize(src, *dst);
   return dst;
 }
-void PBSubstance::Serialize(const SESubstancePharmacodynamics& src, cdm::SubstancePharmacodynamicsData& dst)
+void PBSubstance::Serialize(const SESubstancePharmacodynamics& src, CDM_BIND::SubstancePharmacodynamicsData& dst)
 {
   if (src.HasBronchodilation())
     dst.set_allocated_bronchodilation(PBProperty::Unload(*src.m_Bronchodilation));
@@ -481,11 +481,11 @@ void PBSubstance::Serialize(const SESubstancePharmacodynamics& src, cdm::Substan
 }
 
 
-void PBSubstance::Load(const cdm::SubstancePharmacokineticsData& src, SESubstancePharmacokinetics& dst)
+void PBSubstance::Load(const CDM_BIND::SubstancePharmacokineticsData& src, SESubstancePharmacokinetics& dst)
 {
   PBSubstance::Serialize(src, dst);
 }
-void PBSubstance::Serialize(const cdm::SubstancePharmacokineticsData& src, SESubstancePharmacokinetics& dst)
+void PBSubstance::Serialize(const CDM_BIND::SubstancePharmacokineticsData& src, SESubstancePharmacokinetics& dst)
 {
   dst.Clear();
 
@@ -495,22 +495,22 @@ void PBSubstance::Serialize(const cdm::SubstancePharmacokineticsData& src, SESub
   SESubstanceTissuePharmacokinetics* fx;
   for (int i = 0; i < src.tissuekinetics_size(); i++)
   {
-    const cdm::SubstanceTissuePharmacokineticsData& fxData = src.tissuekinetics(i);
+    const CDM_BIND::SubstanceTissuePharmacokineticsData& fxData = src.tissuekinetics(i);
     fx = new SESubstanceTissuePharmacokinetics(fxData.name(), dst.GetLogger());
     PBSubstance::Load(fxData, *fx);
     dst.m_TissueKinetics[fx->GetName()] = (fx);
   }
 }
 
-cdm::SubstancePharmacokineticsData* PBSubstance::Unload(const SESubstancePharmacokinetics& src)
+CDM_BIND::SubstancePharmacokineticsData* PBSubstance::Unload(const SESubstancePharmacokinetics& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::SubstancePharmacokineticsData* dst = new cdm::SubstancePharmacokineticsData();
+  CDM_BIND::SubstancePharmacokineticsData* dst = new CDM_BIND::SubstancePharmacokineticsData();
   PBSubstance::Serialize(src, *dst);
   return dst;
 }
-void PBSubstance::Serialize(const SESubstancePharmacokinetics& src, cdm::SubstancePharmacokineticsData& dst)
+void PBSubstance::Serialize(const SESubstancePharmacokinetics& src, CDM_BIND::SubstancePharmacokineticsData& dst)
 {
   if (src.HasPhysicochemicals())
     dst.set_allocated_physicochemicals(PBSubstance::Unload(*src.m_Physicochemicals));
@@ -520,11 +520,11 @@ void PBSubstance::Serialize(const SESubstancePharmacokinetics& src, cdm::Substan
 }
 
 
-void PBSubstance::Load(const cdm::SubstancePhysicochemicalsData& src, SESubstancePhysicochemicals& dst)
+void PBSubstance::Load(const CDM_BIND::SubstancePhysicochemicalsData& src, SESubstancePhysicochemicals& dst)
 {
   PBSubstance::Serialize(src, dst);
 }
-void PBSubstance::Serialize(const cdm::SubstancePhysicochemicalsData& src, SESubstancePhysicochemicals& dst)
+void PBSubstance::Serialize(const CDM_BIND::SubstancePhysicochemicalsData& src, SESubstancePhysicochemicals& dst)
 {
   dst.Clear();
   if (src.has_aciddissociationconstant())
@@ -541,26 +541,26 @@ void PBSubstance::Serialize(const cdm::SubstancePhysicochemicalsData& src, SESub
     PBProperty::Load(src.oralabsorptionrateconstant(), dst.GetOralAbsorptionRateConstant());
 }
 
-cdm::SubstancePhysicochemicalsData* PBSubstance::Unload(const SESubstancePhysicochemicals& src)
+CDM_BIND::SubstancePhysicochemicalsData* PBSubstance::Unload(const SESubstancePhysicochemicals& src)
 {
   if (!src.IsValid())
     return nullptr;
-  cdm::SubstancePhysicochemicalsData* dst = new cdm::SubstancePhysicochemicalsData();
+  CDM_BIND::SubstancePhysicochemicalsData* dst = new CDM_BIND::SubstancePhysicochemicalsData();
   PBSubstance::Serialize(src, *dst);
   return dst;
 }
-void PBSubstance::Serialize(const SESubstancePhysicochemicals& src, cdm::SubstancePhysicochemicalsData& dst)
+void PBSubstance::Serialize(const SESubstancePhysicochemicals& src, CDM_BIND::SubstancePhysicochemicalsData& dst)
 {
   if (src.HasAcidDissociationConstant())
     dst.set_allocated_aciddissociationconstant(PBProperty::Unload(*src.m_AcidDissociationConstant));
   if (src.HasBindingProtein())
-    dst.set_bindingprotein((cdm::SubstancePhysicochemicalsData::eBindingProtein)src.m_BindingProtein);
+    dst.set_bindingprotein((CDM_BIND::SubstancePhysicochemicalsData::eBindingProtein)src.m_BindingProtein);
   if (src.HasBloodPlasmaRatio())
     dst.set_allocated_bloodplasmaratio(PBProperty::Unload(*src.m_BloodPlasmaRatio));
   if (src.HasFractionUnboundInPlasma())
     dst.set_allocated_fractionunboundinplasma(PBProperty::Unload(*src.m_FractionUnboundInPlasma));
   if (src.HasIonicState())
-    dst.set_ionicstate((cdm::SubstancePhysicochemicalsData::eIonicState)src.m_IonicState);
+    dst.set_ionicstate((CDM_BIND::SubstancePhysicochemicalsData::eIonicState)src.m_IonicState);
   if (src.HasLogP())
     dst.set_allocated_logp(PBProperty::Unload(*src.m_LogP));
   if (src.HasOralAbsorptionRateConstant())
@@ -568,24 +568,24 @@ void PBSubstance::Serialize(const SESubstancePhysicochemicals& src, cdm::Substan
 }
 
 
-void PBSubstance::Load(const cdm::SubstanceTissuePharmacokineticsData& src, SESubstanceTissuePharmacokinetics& dst)
+void PBSubstance::Load(const CDM_BIND::SubstanceTissuePharmacokineticsData& src, SESubstanceTissuePharmacokinetics& dst)
 {
   PBSubstance::Serialize(src, dst);
 }
-void PBSubstance::Serialize(const cdm::SubstanceTissuePharmacokineticsData& src, SESubstanceTissuePharmacokinetics& dst)
+void PBSubstance::Serialize(const CDM_BIND::SubstanceTissuePharmacokineticsData& src, SESubstanceTissuePharmacokinetics& dst)
 {
   dst.Clear();
   if (src.has_partitioncoefficient())
     PBProperty::Load(src.partitioncoefficient(), dst.GetPartitionCoefficient());
 }
 
-cdm::SubstanceTissuePharmacokineticsData* PBSubstance::Unload(const SESubstanceTissuePharmacokinetics& src)
+CDM_BIND::SubstanceTissuePharmacokineticsData* PBSubstance::Unload(const SESubstanceTissuePharmacokinetics& src)
 {
-  cdm::SubstanceTissuePharmacokineticsData* dst = new cdm::SubstanceTissuePharmacokineticsData();
+  CDM_BIND::SubstanceTissuePharmacokineticsData* dst = new CDM_BIND::SubstanceTissuePharmacokineticsData();
   PBSubstance::Serialize(src, *dst);
   return dst;
 }
-void PBSubstance::Serialize(const SESubstanceTissuePharmacokinetics& src, cdm::SubstanceTissuePharmacokineticsData& dst)
+void PBSubstance::Serialize(const SESubstanceTissuePharmacokinetics& src, CDM_BIND::SubstanceTissuePharmacokineticsData& dst)
 {
   dst.set_name(src.m_Name);
   if (src.HasPartitionCoefficient())
@@ -594,13 +594,13 @@ void PBSubstance::Serialize(const SESubstanceTissuePharmacokinetics& src, cdm::S
 
 bool PBSubstance::SerializeToString(const SESubstance& src, std::string& output, SerializationFormat m)
 {
-  cdm::SubstanceData data;
+  CDM_BIND::SubstanceData data;
   PBSubstance::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
 bool PBSubstance::SerializeToFile(const SESubstance& src, const std::string& filename, SerializationFormat m)
 {
-  cdm::SubstanceData data;
+  CDM_BIND::SubstanceData data;
   PBSubstance::Serialize(src, data);
   std::string content;
   PBSubstance::SerializeToString(src, content, m);
@@ -609,7 +609,7 @@ bool PBSubstance::SerializeToFile(const SESubstance& src, const std::string& fil
 
 bool PBSubstance::SerializeFromString(const std::string& src, SESubstance& dst, SerializationFormat m)
 {
-  cdm::SubstanceData data;
+  CDM_BIND::SubstanceData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
     return false;
   PBSubstance::Load(data, dst);
@@ -625,13 +625,13 @@ bool PBSubstance::SerializeFromFile(const std::string& filename, SESubstance& ds
 
 bool PBSubstance::SerializeToString(const SESubstanceCompound& src, std::string& output, SerializationFormat m)
 {
-  cdm::SubstanceCompoundData data;
+  CDM_BIND::SubstanceCompoundData data;
   PBSubstance::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
 bool PBSubstance::SerializeToFile(const SESubstanceCompound& src, const std::string& filename, SerializationFormat m)
 {
-  cdm::SubstanceCompoundData data;
+  CDM_BIND::SubstanceCompoundData data;
   PBSubstance::Serialize(src, data);
   std::string content;
   PBSubstance::SerializeToString(src, content, m);
@@ -640,7 +640,7 @@ bool PBSubstance::SerializeToFile(const SESubstanceCompound& src, const std::str
 
 bool PBSubstance::SerializeFromString(const std::string& src, SESubstanceCompound& dst, const SESubstanceManager& subMgr, SerializationFormat m)
 {
-  cdm::SubstanceCompoundData data;
+  CDM_BIND::SubstanceCompoundData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
     return false;
   PBSubstance::Load(data, dst, subMgr);

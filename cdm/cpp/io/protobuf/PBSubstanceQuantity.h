@@ -11,14 +11,14 @@ class CDM_DECL PBSubstanceQuantity
 {
 public:
 
-  static void Load(const cdm::LiquidSubstanceQuantityData& src, SELiquidSubstanceQuantity& dst);
-  static cdm::LiquidSubstanceQuantityData* Unload(const SELiquidSubstanceQuantity& src);
-  static void Load(const cdm::GasSubstanceQuantityData& src, SEGasSubstanceQuantity& dst);
-  static cdm::GasSubstanceQuantityData* Unload(const SEGasSubstanceQuantity& src);
-  static void Serialize(const cdm::SubstanceQuantityData& src, SESubstanceQuantity& dst);
-  static void Serialize(const SESubstanceQuantity& src, cdm::SubstanceQuantityData& dst);
-  static void Serialize(const cdm::LiquidSubstanceQuantityData& src, SELiquidSubstanceQuantity& dst);
-  static void Serialize(const SELiquidSubstanceQuantity& src, cdm::LiquidSubstanceQuantityData& dst);
-  static void Serialize(const cdm::GasSubstanceQuantityData& src, SEGasSubstanceQuantity& dst);
-  static void Serialize(const SEGasSubstanceQuantity& src, cdm::GasSubstanceQuantityData& dst);
+  static void Load(const CDM_BIND::LiquidSubstanceQuantityData& src, SELiquidSubstanceQuantity& dst);
+  static CDM_BIND::LiquidSubstanceQuantityData* Unload(const SELiquidSubstanceQuantity& src);
+  static void Load(const CDM_BIND::GasSubstanceQuantityData& src, SEGasSubstanceQuantity& dst);
+  static CDM_BIND::GasSubstanceQuantityData* Unload(const SEGasSubstanceQuantity& src);
+  static void Serialize(const CDM_BIND::SubstanceQuantityData& src, SESubstanceQuantity& dst);
+  static void Serialize(const SESubstanceQuantity& src, CDM_BIND::SubstanceQuantityData& dst);
+  static void Serialize(const CDM_BIND::LiquidSubstanceQuantityData& src, SELiquidSubstanceQuantity& dst);
+  static void Serialize(const SELiquidSubstanceQuantity& src, CDM_BIND::LiquidSubstanceQuantityData& dst);
+  static void Serialize(const CDM_BIND::GasSubstanceQuantityData& src, SEGasSubstanceQuantity& dst);
+  static void Serialize(const SEGasSubstanceQuantity& src, CDM_BIND::GasSubstanceQuantityData& dst);
 };

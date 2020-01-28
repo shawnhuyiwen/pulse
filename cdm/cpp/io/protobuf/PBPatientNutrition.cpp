@@ -5,16 +5,16 @@
 #include "io/protobuf/PBPatientNutrition.h"
 #include "io/protobuf/PBProperties.h"
 #include "io/protobuf/PBUtils.h"
-#include "bind/cpp/cdm/PatientNutrition.pb.h"
+#include "bind/PatientNutrition.pb.h"
 #include "patient/SEMeal.h"
 #include "utils/FileUtils.h"
 
 
-void PBPatientNutrition::Load(const cdm::NutritionData& src, SENutrition& dst)
+void PBPatientNutrition::Load(const CDM_BIND::NutritionData& src, SENutrition& dst)
 {
   PBPatientNutrition::Serialize(src, dst);
 }
-void PBPatientNutrition::Serialize(const cdm::NutritionData& src, SENutrition& dst)
+void PBPatientNutrition::Serialize(const CDM_BIND::NutritionData& src, SENutrition& dst)
 {
   dst.Clear();
   if (src.has_carbohydrate())
@@ -37,13 +37,13 @@ void PBPatientNutrition::Serialize(const cdm::NutritionData& src, SENutrition& d
     PBProperty::Load(src.water(), dst.GetWater());
 }
 
-cdm::NutritionData* PBPatientNutrition::Unload(const SENutrition& src)
+CDM_BIND::NutritionData* PBPatientNutrition::Unload(const SENutrition& src)
 {
-  cdm::NutritionData* dst = new cdm::NutritionData();
+  CDM_BIND::NutritionData* dst = new CDM_BIND::NutritionData();
   PBPatientNutrition::Serialize(src, *dst);
   return dst;
 }
-void PBPatientNutrition::Serialize(const SENutrition& src, cdm::NutritionData& dst)
+void PBPatientNutrition::Serialize(const SENutrition& src, CDM_BIND::NutritionData& dst)
 {
   if (src.HasCarbohydrate())
     dst.set_allocated_carbohydrate(PBProperty::Unload(*src.m_Carbohydrate));
@@ -66,20 +66,20 @@ void PBPatientNutrition::Serialize(const SENutrition& src, cdm::NutritionData& d
 }
 void PBPatientNutrition::Copy(const SENutrition& src, SENutrition& dst)
 {
-  cdm::NutritionData data;
+  CDM_BIND::NutritionData data;
   PBPatientNutrition::Serialize(src, data);
   PBPatientNutrition::Serialize(data, dst);
 }
 
 bool PBPatientNutrition::SerializeToString(const SENutrition& src, std::string& output, SerializationFormat m)
 {
-  cdm::NutritionData data;
+  CDM_BIND::NutritionData data;
   PBPatientNutrition::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
 bool PBPatientNutrition::SerializeToFile(const SENutrition& src, const std::string& filename, SerializationFormat m)
 {
-  cdm::NutritionData data;
+  CDM_BIND::NutritionData data;
   PBPatientNutrition::Serialize(src, data);
   std::string content;
   PBPatientNutrition::SerializeToString(src, content, m);
@@ -88,7 +88,7 @@ bool PBPatientNutrition::SerializeToFile(const SENutrition& src, const std::stri
 
 bool PBPatientNutrition::SerializeFromString(const std::string& src, SENutrition& dst, SerializationFormat m)
 {
-  cdm::NutritionData data;
+  CDM_BIND::NutritionData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
     return false;
   PBPatientNutrition::Load(data, dst);
@@ -102,24 +102,24 @@ bool PBPatientNutrition::SerializeFromFile(const std::string& filename, SENutrit
   return PBPatientNutrition::SerializeFromString(content, dst, m);
 }
 
-void PBPatientNutrition::Load(const cdm::MealData& src, SEMeal& dst)
+void PBPatientNutrition::Load(const CDM_BIND::MealData& src, SEMeal& dst)
 {
   PBPatientNutrition::Serialize(src, dst);
 }
-void PBPatientNutrition::Serialize(const cdm::MealData& src, SEMeal& dst)
+void PBPatientNutrition::Serialize(const CDM_BIND::MealData& src, SEMeal& dst)
 {
   PBPatientNutrition::Serialize(src.nutrition(), dst);
   dst.Clear();
   if (src.has_elapsedtime())
     PBProperty::Load(src.elapsedtime(), dst.GetElapsedTime());
 }
-cdm::MealData* PBPatientNutrition::Unload(const SEMeal& src)
+CDM_BIND::MealData* PBPatientNutrition::Unload(const SEMeal& src)
 {
-  cdm::MealData* dst = new cdm::MealData();
+  CDM_BIND::MealData* dst = new CDM_BIND::MealData();
   PBPatientNutrition::Serialize(src, *dst);
   return dst;
 }
-void PBPatientNutrition::Serialize(const SEMeal& src, cdm::MealData& dst)
+void PBPatientNutrition::Serialize(const SEMeal& src, CDM_BIND::MealData& dst)
 {
   PBPatientNutrition::Serialize(src, *dst.mutable_nutrition());
   if (src.HasElapsedTime())
@@ -127,20 +127,20 @@ void PBPatientNutrition::Serialize(const SEMeal& src, cdm::MealData& dst)
 }
 void PBPatientNutrition::Copy(const SEMeal& src, SEMeal& dst)
 {
-  cdm::MealData data;
+  CDM_BIND::MealData data;
   PBPatientNutrition::Serialize(src, data);
   PBPatientNutrition::Serialize(data, dst);
 }
 
 bool PBPatientNutrition::SerializeToString(const SEMeal& src, std::string& output, SerializationFormat m)
 {
-  cdm::MealData data;
+  CDM_BIND::MealData data;
   PBPatientNutrition::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
 bool PBPatientNutrition::SerializeToFile(const SEMeal& src, const std::string& filename, SerializationFormat m)
 {
-  cdm::MealData data;
+  CDM_BIND::MealData data;
   PBPatientNutrition::Serialize(src, data);
   std::string content;
   PBPatientNutrition::SerializeToString(src, content, m);
@@ -149,7 +149,7 @@ bool PBPatientNutrition::SerializeToFile(const SEMeal& src, const std::string& f
 
 bool PBPatientNutrition::SerializeFromString(const std::string& src, SEMeal& dst, SerializationFormat m)
 {
-  cdm::MealData data;
+  CDM_BIND::MealData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
     return false;
   PBPatientNutrition::Load(data, dst);

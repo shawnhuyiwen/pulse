@@ -8,7 +8,7 @@
 #include "io/protobuf/PBPatientNutrition.h"
 #include "io/protobuf/PBProperties.h"
 #include "io/protobuf/PBUtils.h"
-#include "bind/cpp/pulse/PulseConfiguration.pb.h"
+#include "pulse/engine/bind/PulseConfiguration.pb.h"
 #include "PulseConfiguration.h"
 #include "patient/SENutrition.h"
 #include "engine/SEDynamicStabilization.h"
@@ -18,21 +18,18 @@
 #include "properties/SEScalarMassPerTime.h"
 #include "utils/FileUtils.h"
 
-using namespace pulse::proto;
-
-
 void PBPulseConfiguration::Merge(const PulseConfiguration& src, PulseConfiguration& dst)
 {
-  ConfigurationData data;
+  PULSE_BIND::ConfigurationData data;
   PBPulseConfiguration::Serialize(src, data);
   PBPulseConfiguration::Serialize(data, dst,true);
 }
 
-void PBPulseConfiguration::Load(const ConfigurationData& src, PulseConfiguration& dst)
+void PBPulseConfiguration::Load(const PULSE_BIND::ConfigurationData& src, PulseConfiguration& dst)
 {
   PBPulseConfiguration::Serialize(src, dst);
 }
-void PBPulseConfiguration::Serialize(const ConfigurationData& src, PulseConfiguration& dst, bool merge)
+void PBPulseConfiguration::Serialize(const PULSE_BIND::ConfigurationData& src, PulseConfiguration& dst, bool merge)
 {
   if (!merge)
     dst.Clear();
@@ -54,13 +51,13 @@ void PBPulseConfiguration::Serialize(const ConfigurationData& src, PulseConfigur
   }
   if (src.has_autoserialization())
     PBEngine::Load(src.autoserialization(), dst.GetAutoSerialization());
-  if (src.writepatientbaselinefile() != cdm::eSwitch::NullSwitch)
+  if (src.writepatientbaselinefile() != CDM_BIND::eSwitch::NullSwitch)
     dst.EnableWritePatientBaselineFile((eSwitch)src.writepatientbaselinefile());
 
   //Barorecptors
   if (src.has_baroreceptorconfiguration())
   {
-    const ConfigurationData_BaroreceptorConfigurationData& config = src.baroreceptorconfiguration();
+    const PULSE_BIND::ConfigurationData_BaroreceptorConfigurationData& config = src.baroreceptorconfiguration();
     if (config.has_responseslope())
       PBProperty::Load(config.responseslope(), dst.GetResponseSlope());
     if (config.has_heartratedistributedtimedelay())
@@ -94,7 +91,7 @@ void PBPulseConfiguration::Serialize(const ConfigurationData& src, PulseConfigur
   // Blood Chemistry
   if (src.has_bloodchemistryconfiguration())
   {
-    const ConfigurationData_BloodChemistryConfigurationData& config = src.bloodchemistryconfiguration();
+    const PULSE_BIND::ConfigurationData_BloodChemistryConfigurationData& config = src.bloodchemistryconfiguration();
     if (config.has_meancorpuscularvolume())
       PBProperty::Load(config.meancorpuscularvolume(), dst.GetMeanCorpuscularVolume());
     if (config.has_meancorpuscularhemoglobin())
@@ -108,7 +105,7 @@ void PBPulseConfiguration::Serialize(const ConfigurationData& src, PulseConfigur
   // Cardiovascular
   if (src.has_cardiovascularconfiguration())
   {
-    const ConfigurationData_CardiovascularConfigurationData& config = src.cardiovascularconfiguration();
+    const PULSE_BIND::ConfigurationData_CardiovascularConfigurationData& config = src.cardiovascularconfiguration();
     if (config.has_leftheartelastancemaximum())
       PBProperty::Load(config.leftheartelastancemaximum(), dst.GetLeftHeartElastanceMaximum());
     if (config.has_leftheartelastanceminimum())
@@ -126,7 +123,7 @@ void PBPulseConfiguration::Serialize(const ConfigurationData& src, PulseConfigur
   // Circuit
   if (src.has_circuitconfiguration())
   {
-    const ConfigurationData_CircuitConfigurationData& config = src.circuitconfiguration();
+    const PULSE_BIND::ConfigurationData_CircuitConfigurationData& config = src.circuitconfiguration();
     if (config.has_cardiovascularopenresistance())
       PBProperty::Load(config.cardiovascularopenresistance(), dst.GetCardiovascularOpenResistance());
     if (config.has_defaultopenelectricresistance())
@@ -154,7 +151,7 @@ void PBPulseConfiguration::Serialize(const ConfigurationData& src, PulseConfigur
   // Constants
   if (src.has_constantsconfiguration())
   {
-    const ConfigurationData_ConstantsConfigurationData& config = src.constantsconfiguration();
+    const PULSE_BIND::ConfigurationData_ConstantsConfigurationData& config = src.constantsconfiguration();
     if (config.has_oxygenmetabolicconstant())
       PBProperty::Load(config.oxygenmetabolicconstant(), dst.GetOxygenMetabolicConstant());
     if (config.has_stefanboltzmann())
@@ -166,15 +163,15 @@ void PBPulseConfiguration::Serialize(const ConfigurationData& src, PulseConfigur
   // Drugs
   if (src.has_drugsconfiguration())
   {
-    const ConfigurationData_DrugsConfigurationData& config = src.drugsconfiguration();
-    if (config.pdmodel() != cdm::eSwitch::NullSwitch)
+    const PULSE_BIND::ConfigurationData_DrugsConfigurationData& config = src.drugsconfiguration();
+    if (config.pdmodel() != CDM_BIND::eSwitch::NullSwitch)
       dst.UsePDModel((eSwitch)config.pdmodel());
   }
 
   // Energy
   if (src.has_energyconfiguration())
   {
-    const ConfigurationData_EnergyConfigurationData& config = src.energyconfiguration();
+    const PULSE_BIND::ConfigurationData_EnergyConfigurationData& config = src.energyconfiguration();
     if (config.has_bodyspecificheat())
       PBProperty::Load(config.bodyspecificheat(), dst.GetBodySpecificHeat());
     if (config.has_carbondioxideproductionfromoxygenconsumptionconstant())
@@ -198,7 +195,7 @@ void PBPulseConfiguration::Serialize(const ConfigurationData& src, PulseConfigur
   // Environment
   if (src.has_environmentconfiguration())
   {
-    const ConfigurationData_EnvironmentConfigurationData& config = src.environmentconfiguration();
+    const PULSE_BIND::ConfigurationData_EnvironmentConfigurationData& config = src.environmentconfiguration();
     if (config.has_airdensity())
       PBProperty::Load(config.airdensity(), dst.GetAirDensity());
     if (config.has_airspecificheat())
@@ -225,7 +222,7 @@ void PBPulseConfiguration::Serialize(const ConfigurationData& src, PulseConfigur
   // Gastrointestinal
   if (src.has_gastrointestinalconfiguration())
   {
-    const ConfigurationData_GastrointestinalConfigurationData& config = src.gastrointestinalconfiguration();
+    const PULSE_BIND::ConfigurationData_GastrointestinalConfigurationData& config = src.gastrointestinalconfiguration();
     if (config.has_calciumabsorptionfraction())
       PBProperty::Load(config.calciumabsorptionfraction(), dst.GetCalciumAbsorptionFraction());
     if (config.has_calciumdigestionrate())
@@ -270,7 +267,7 @@ void PBPulseConfiguration::Serialize(const ConfigurationData& src, PulseConfigur
   // Nervous
   if (src.has_nervousconfiguration())
   {
-    const ConfigurationData_NervousConfigurationData& config = src.nervousconfiguration();
+    const PULSE_BIND::ConfigurationData_NervousConfigurationData& config = src.nervousconfiguration();
     if (config.has_pupildiameterbaseline())
       PBProperty::Load(config.pupildiameterbaseline(), dst.GetPupilDiameterBaseline());
   }
@@ -278,9 +275,9 @@ void PBPulseConfiguration::Serialize(const ConfigurationData& src, PulseConfigur
   // Renal
   if (src.has_renalconfiguration())
   {
-    const ConfigurationData_RenalConfigurationData& config = src.renalconfiguration();
+    const PULSE_BIND::ConfigurationData_RenalConfigurationData& config = src.renalconfiguration();
 
-    if (config.enablerenal() != cdm::eSwitch::NullSwitch)
+    if (config.enablerenal() != CDM_BIND::eSwitch::NullSwitch)
       dst.EnableRenal((eSwitch)config.enablerenal());
 
     if (config.has_plasmasodiumconcentrationsetpoint())
@@ -316,7 +313,7 @@ void PBPulseConfiguration::Serialize(const ConfigurationData& src, PulseConfigur
   // Respiratory
   if (src.has_respiratoryconfiguration())
   {
-    const ConfigurationData_RespiratoryConfigurationData& config = src.respiratoryconfiguration();
+    const PULSE_BIND::ConfigurationData_RespiratoryConfigurationData& config = src.respiratoryconfiguration();
     if (config.has_centralcontrollerco2pressuresetpoint())
       PBProperty::Load(config.centralcontrollerco2pressuresetpoint(), dst.GetCentralControllerCO2PressureSetPoint());
     if (config.has_centralventilatorycontrollergain())
@@ -342,19 +339,19 @@ void PBPulseConfiguration::Serialize(const ConfigurationData& src, PulseConfigur
   // Tissue
   if (src.has_tissueconfiguration())
   {
-    const ConfigurationData_TissueConfigurationData& config = src.tissueconfiguration();
-    if (config.enabletissue() != cdm::eSwitch::NullSwitch)
+    const PULSE_BIND::ConfigurationData_TissueConfigurationData& config = src.tissueconfiguration();
+    if (config.enabletissue() != CDM_BIND::eSwitch::NullSwitch)
       dst.EnableTissue((eSwitch)config.enabletissue());
   }
 }
 
-ConfigurationData* PBPulseConfiguration::Unload(const PulseConfiguration& src)
+PULSE_BIND::ConfigurationData* PBPulseConfiguration::Unload(const PulseConfiguration& src)
 {
-  ConfigurationData* dst = new ConfigurationData();
+  PULSE_BIND::ConfigurationData* dst = new PULSE_BIND::ConfigurationData();
   PBPulseConfiguration::Serialize(src, *dst);
   return dst;
 }
-void PBPulseConfiguration::Serialize(const PulseConfiguration& src, ConfigurationData& dst)
+void PBPulseConfiguration::Serialize(const PulseConfiguration& src, PULSE_BIND::ConfigurationData& dst)
 {
   if (src.HasTimedStabilization())
     dst.set_allocated_timedstabilization(PBEngine::Unload(*src.m_TimedStabilization));
@@ -364,10 +361,10 @@ void PBPulseConfiguration::Serialize(const PulseConfiguration& src, Configuratio
     dst.set_allocated_timestep(PBProperty::Unload(*src.m_TimeStep));
   if (src.HasAutoSerialization())
     dst.set_allocated_autoserialization(PBEngine::Unload(*src.m_AutoSerialization));
-  dst.set_writepatientbaselinefile((cdm::eSwitch)src.m_WritePatientBaselineFile);
+  dst.set_writepatientbaselinefile((CDM_BIND::eSwitch)src.m_WritePatientBaselineFile);
 
   // Barorecptor
-  ConfigurationData_BaroreceptorConfigurationData* baro = dst.mutable_baroreceptorconfiguration();
+  PULSE_BIND::ConfigurationData_BaroreceptorConfigurationData* baro = dst.mutable_baroreceptorconfiguration();
   if (src.HasResponseSlope())
     baro->set_allocated_responseslope(PBProperty::Unload(*src.m_ResponseSlope));
   if (src.HasHeartRateDistributedTimeDelay())
@@ -398,7 +395,7 @@ void PBPulseConfiguration::Serialize(const PulseConfiguration& src, Configuratio
     baro->set_allocated_normalizedcomplianceparasympatheticslope(PBProperty::Unload(*src.m_NormalizedComplianceParasympatheticSlope));
 
   // Blood Chemistry
-  ConfigurationData_BloodChemistryConfigurationData* bc = dst.mutable_bloodchemistryconfiguration();
+  PULSE_BIND::ConfigurationData_BloodChemistryConfigurationData* bc = dst.mutable_bloodchemistryconfiguration();
   if (src.HasMeanCorpuscularHemoglobin())
     bc->set_allocated_meancorpuscularhemoglobin(PBProperty::Unload(*src.m_MeanCorpuscularHemoglobin));
   if (src.HasMeanCorpuscularVolume())
@@ -409,7 +406,7 @@ void PBPulseConfiguration::Serialize(const PulseConfiguration& src, Configuratio
     bc->set_allocated_standardoxygendiffusioncoefficient(PBProperty::Unload(*src.m_StandardOxygenDiffusionCoefficient));
 
   // Cardiovascular
-  ConfigurationData_CardiovascularConfigurationData* cv = dst.mutable_cardiovascularconfiguration();
+  PULSE_BIND::ConfigurationData_CardiovascularConfigurationData* cv = dst.mutable_cardiovascularconfiguration();
   if (src.HasLeftHeartElastanceMaximum())
     cv->set_allocated_leftheartelastancemaximum(PBProperty::Unload(*src.m_LeftHeartElastanceMaximum));
   if (src.HasLeftHeartElastanceMinimum())
@@ -424,7 +421,7 @@ void PBPulseConfiguration::Serialize(const PulseConfiguration& src, Configuratio
     cv->set_allocated_standardpulmonarycapillarycoverage(PBProperty::Unload(*src.m_StandardPulmonaryCapillaryCoverage));
 
   // Circuits
-  ConfigurationData_CircuitConfigurationData* circuit = dst.mutable_circuitconfiguration();
+  PULSE_BIND::ConfigurationData_CircuitConfigurationData* circuit = dst.mutable_circuitconfiguration();
   if (src.HasCardiovascularOpenResistance())
     circuit->set_allocated_cardiovascularopenresistance(PBProperty::Unload(*src.m_CardiovascularOpenResistance));
   if (src.HasDefaultClosedElectricResistance())
@@ -449,7 +446,7 @@ void PBPulseConfiguration::Serialize(const PulseConfiguration& src, Configuratio
     circuit->set_allocated_respiratoryopenresistance(PBProperty::Unload(*src.m_RespiratoryOpenResistance));
 
   // Constants
-  ConfigurationData_ConstantsConfigurationData* consts = dst.mutable_constantsconfiguration();
+  PULSE_BIND::ConfigurationData_ConstantsConfigurationData* consts = dst.mutable_constantsconfiguration();
   if (src.HasOxygenMetabolicConstant())
     consts->set_allocated_oxygenmetabolicconstant(PBProperty::Unload(*src.m_OxygenMetabolicConstant));
   if (src.HasStefanBoltzmann())
@@ -458,11 +455,11 @@ void PBPulseConfiguration::Serialize(const PulseConfiguration& src, Configuratio
     consts->set_allocated_universalgasconstant(PBProperty::Unload(*src.m_UniversalGasConstant));
 
   // Drugs
-  ConfigurationData_DrugsConfigurationData* drugs = dst.mutable_drugsconfiguration();
-  drugs->set_pdmodel((cdm::eSwitch)src.m_PDEnabled);
+  PULSE_BIND::ConfigurationData_DrugsConfigurationData* drugs = dst.mutable_drugsconfiguration();
+  drugs->set_pdmodel((CDM_BIND::eSwitch)src.m_PDEnabled);
 
   // Energy
-  ConfigurationData_EnergyConfigurationData* energy = dst.mutable_energyconfiguration();
+  PULSE_BIND::ConfigurationData_EnergyConfigurationData* energy = dst.mutable_energyconfiguration();
   if (src.HasBodySpecificHeat())
     energy->set_allocated_bodyspecificheat(PBProperty::Unload(*src.m_BodySpecificHeat));
   if (src.HasCarbonDioxideProductionFromOxygenConsumptionConstant())
@@ -483,7 +480,7 @@ void PBPulseConfiguration::Serialize(const PulseConfiguration& src, Configuratio
     energy->set_allocated_vaporizationenergy(PBProperty::Unload(*src.m_VaporizationEnergy));
 
   // Environment
-  ConfigurationData_EnvironmentConfigurationData* env = dst.mutable_environmentconfiguration();
+  PULSE_BIND::ConfigurationData_EnvironmentConfigurationData* env = dst.mutable_environmentconfiguration();
   if (src.HasAirDensity())
     env->set_allocated_airdensity(PBProperty::Unload(*src.m_AirDensity));
   if (src.HasAirSpecificHeat())
@@ -498,7 +495,7 @@ void PBPulseConfiguration::Serialize(const PulseConfiguration& src, Configuratio
     env->set_allocated_waterdensity(PBProperty::Unload(*src.m_WaterDensity));
 
   // Gastrointestinal
-  ConfigurationData_GastrointestinalConfigurationData* gi = dst.mutable_gastrointestinalconfiguration();
+  PULSE_BIND::ConfigurationData_GastrointestinalConfigurationData* gi = dst.mutable_gastrointestinalconfiguration();
   if (src.HasCalciumAbsorptionFraction())
     gi->set_allocated_calciumabsorptionfraction(PBProperty::Unload(*src.m_CalciumAbsorptionFraction));
   if (src.HasCalciumDigestionRate())
@@ -521,13 +518,13 @@ void PBPulseConfiguration::Serialize(const PulseConfiguration& src, Configuratio
     gi->set_allocated_waterdigestionrate(PBProperty::Unload(*src.m_WaterDigestionRate));
 
   // Nervous
-  ConfigurationData_NervousConfigurationData* n = dst.mutable_nervousconfiguration();
+  PULSE_BIND::ConfigurationData_NervousConfigurationData* n = dst.mutable_nervousconfiguration();
   if (src.HasPupilDiameterBaseline())
     n->set_allocated_pupildiameterbaseline(PBProperty::Unload(*src.m_PupilDiameterBaseline));
 
   // Renal
-  ConfigurationData_RenalConfigurationData* renal = dst.mutable_renalconfiguration();
-  renal->set_enablerenal((cdm::eSwitch)src.m_RenalEnabled);
+  PULSE_BIND::ConfigurationData_RenalConfigurationData* renal = dst.mutable_renalconfiguration();
+  renal->set_enablerenal((CDM_BIND::eSwitch)src.m_RenalEnabled);
   if (src.HasPlasmaSodiumConcentrationSetPoint())
     renal->set_allocated_plasmasodiumconcentrationsetpoint(PBProperty::Unload(*src.m_PlasmaSodiumConcentrationSetPoint));
   if (src.HasLeftGlomerularFilteringSurfaceAreaBaseline())
@@ -554,7 +551,7 @@ void PBPulseConfiguration::Serialize(const PulseConfiguration& src, Configuratio
     renal->set_allocated_righttubularreabsorptionfluidpermeabilitybaseline(PBProperty::Unload(*src.m_RightTubularReabsorptionFluidPermeabilityBaseline));
 
   // Respiratory
-  ConfigurationData_RespiratoryConfigurationData* resp = dst.mutable_respiratoryconfiguration();
+  PULSE_BIND::ConfigurationData_RespiratoryConfigurationData* resp = dst.mutable_respiratoryconfiguration();
   if (src.HasCentralControllerCO2PressureSetPoint())
     resp->set_allocated_centralcontrollerco2pressuresetpoint(PBProperty::Unload(*src.m_CentralControllerCO2PressureSetPoint));
   if (src.HasCentralVentilatoryControllerGain())
@@ -577,19 +574,19 @@ void PBPulseConfiguration::Serialize(const PulseConfiguration& src, Configuratio
     resp->set_allocated_ventilatoryocclusionpressure(PBProperty::Unload(*src.m_VentilatoryOcclusionPressure));
 
   // Tissue
-  ConfigurationData_TissueConfigurationData* tissue = dst.mutable_tissueconfiguration();
-  tissue->set_enabletissue((cdm::eSwitch)src.m_TissueEnabled);
+  PULSE_BIND::ConfigurationData_TissueConfigurationData* tissue = dst.mutable_tissueconfiguration();
+  tissue->set_enabletissue((CDM_BIND::eSwitch)src.m_TissueEnabled);
 }
 
 bool PBPulseConfiguration::SerializeToString(const PulseConfiguration& src, std::string& output, SerializationFormat m)
 {
-  pulse::proto::ConfigurationData data;
+  PULSE_BIND::ConfigurationData data;
   PBPulseConfiguration::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
 bool PBPulseConfiguration::SerializeToFile(const PulseConfiguration& src, const std::string& filename, SerializationFormat m)
 {
-  pulse::proto::ConfigurationData data;
+  PULSE_BIND::ConfigurationData data;
   PBPulseConfiguration::Serialize(src, data);
   std::string content;
   PBPulseConfiguration::SerializeToString(src, content, m);
@@ -598,7 +595,7 @@ bool PBPulseConfiguration::SerializeToFile(const PulseConfiguration& src, const 
 
 bool PBPulseConfiguration::SerializeFromString(const std::string& src, PulseConfiguration& dst, SerializationFormat m)
 {
-  pulse::proto::ConfigurationData data;
+  PULSE_BIND::ConfigurationData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
     return false;
   PBPulseConfiguration::Load(data, dst);

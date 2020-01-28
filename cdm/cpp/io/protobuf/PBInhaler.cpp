@@ -5,20 +5,20 @@
 #include "io/protobuf/PBInhaler.h"
 #include "io/protobuf/PBProperties.h"
 #include "io/protobuf/PBUtils.h"
-#include "bind/cpp/cdm/Inhaler.pb.h"
+#include "bind/Inhaler.pb.h"
 #include "system/equipment/inhaler/SEInhaler.h"
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceManager.h"
 #include "utils/FileUtils.h"
 
-void PBInhaler::Load(const cdm::InhalerData& src, SEInhaler& dst)
+void PBInhaler::Load(const CDM_BIND::InhalerData& src, SEInhaler& dst)
 {
   PBInhaler::Serialize(src, dst);
   dst.StateChange();
 }
-void PBInhaler::Serialize(const cdm::InhalerData& src, SEInhaler& dst)
+void PBInhaler::Serialize(const CDM_BIND::InhalerData& src, SEInhaler& dst)
 {
-  if (src.state() != cdm::eSwitch::NullSwitch)
+  if (src.state() != CDM_BIND::eSwitch::NullSwitch)
     dst.SetState((eSwitch)src.state());
   if (src.has_metereddose())
     PBProperty::Load(src.metereddose(), dst.GetMeteredDose());
@@ -30,15 +30,15 @@ void PBInhaler::Serialize(const cdm::InhalerData& src, SEInhaler& dst)
     dst.SetSubstance(dst.m_Substances.GetSubstance(src.substance()));
 }
 
-cdm::InhalerData* PBInhaler::Unload(const SEInhaler& src)
+CDM_BIND::InhalerData* PBInhaler::Unload(const SEInhaler& src)
 {
-  cdm::InhalerData* dst = new cdm::InhalerData();
+  CDM_BIND::InhalerData* dst = new CDM_BIND::InhalerData();
   PBInhaler::Serialize(src, *dst);
   return dst;
 }
-void PBInhaler::Serialize(const SEInhaler& src, cdm::InhalerData& dst)
+void PBInhaler::Serialize(const SEInhaler& src, CDM_BIND::InhalerData& dst)
 {
-  dst.set_state((cdm::eSwitch)src.m_State);
+  dst.set_state((CDM_BIND::eSwitch)src.m_State);
   if (src.HasMeteredDose())
     dst.set_allocated_metereddose(PBProperty::Unload(*src.m_MeteredDose));
   if (src.HasNozzleLoss())
@@ -51,13 +51,13 @@ void PBInhaler::Serialize(const SEInhaler& src, cdm::InhalerData& dst)
 
 bool PBInhaler::SerializeToString(const SEInhaler& src, std::string& output, SerializationFormat m)
 {
-  cdm::InhalerData data;
+  CDM_BIND::InhalerData data;
   PBInhaler::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
 bool PBInhaler::SerializeToFile(const SEInhaler& src, const std::string& filename, SerializationFormat m)
 {
-  cdm::InhalerData data;
+  CDM_BIND::InhalerData data;
   PBInhaler::Serialize(src, data);
   std::string content;
   PBInhaler::SerializeToString(src, content, m);
@@ -66,7 +66,7 @@ bool PBInhaler::SerializeToFile(const SEInhaler& src, const std::string& filenam
 
 bool PBInhaler::SerializeFromString(const std::string& src, SEInhaler& dst, SerializationFormat m)
 {
-  cdm::InhalerData data;
+  CDM_BIND::InhalerData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
     return false;
   PBInhaler::Load(data, dst);

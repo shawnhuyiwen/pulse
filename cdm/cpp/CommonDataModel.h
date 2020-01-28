@@ -25,10 +25,12 @@
 #define DEBUGOUT(x) 
 #endif
 
-#define CDM_BIND_DECL(type) namespace cdm { class type; }
+#define CDM_BIND pulse::cdm::bind
+#define CDM_BIND_DECL(type) \
+  namespace pulse { namespace cdm { namespace bind { class type; }}}
 #define CDM_BIND_DECL2(type) \
   class SE##type;\
-  namespace cdm { class type##Data; }
+  namespace pulse { namespace cdm { namespace bind { class type##Data; }}}
 
 #include <memory>
 #include <stdio.h>

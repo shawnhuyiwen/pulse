@@ -3,17 +3,17 @@
 
 #pragma once
 class PulseEngine;
-namespace pulse { namespace proto { class StateData; } }
+PULSE_BIND_DECL(State)
 
 
 class PULSE_DECL PBPulseState
 {
 public:
 
-  static void Load(const pulse::proto::StateData& src, PulseEngine& dst, const SEScalarTime* simTime, const SEEngineConfiguration* config);
-  static pulse::proto::StateData* Unload(const PulseEngine& src);
-  static bool Serialize(const pulse::proto::StateData& src, PulseEngine& dst, const SEScalarTime* simTime, const SEEngineConfiguration* config);
-  static bool Serialize(const PulseEngine& src, pulse::proto::StateData& dst);
+  static void Load(const PULSE_BIND::StateData& src, PulseEngine& dst, const SEScalarTime* simTime, const SEEngineConfiguration* config);
+  static PULSE_BIND::StateData* Unload(const PulseEngine& src);
+  static bool Serialize(const PULSE_BIND::StateData& src, PulseEngine& dst, const SEScalarTime* simTime, const SEEngineConfiguration* config);
+  static bool Serialize(const PulseEngine& src, PULSE_BIND::StateData& dst);
 
   static bool SerializeToString(const PulseEngine& src, std::string& output, SerializationFormat m);
   static bool SerializeToFile(const PulseEngine& src, const std::string& filename, SerializationFormat m);

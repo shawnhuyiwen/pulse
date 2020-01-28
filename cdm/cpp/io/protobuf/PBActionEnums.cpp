@@ -2,10 +2,10 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "bind/cpp/cdm/Actions.pb.h"
+#include "bind/Actions.pb.h"
 #include "engine/SESerializeState.h"
 
 const std::string& eSerialization_Type_Name(eSerialization_Type m)
 {
-  return cdm::SerializeStateData::eType_Name((cdm::SerializeStateData::eType)m);
+  return CDM_BIND::SerializeStateData::eType_Name((CDM_BIND::SerializeStateData::eType)m);
 }

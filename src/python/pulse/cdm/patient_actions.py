@@ -53,6 +53,6 @@ class SEHemorrhage(SEPatientAction):
         return ("Hemorrhage\n"
                 "  Type: {}\n"
                 "  Compartment: {}\n"
-                "  Rate: {}\n").format(self._type,self._compartment,self._rate)
+                "  Rate: {}").format(self._type,self._compartment,self._rate)
 
 

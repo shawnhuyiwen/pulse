@@ -8,10 +8,10 @@ class CDM_DECL PBScenario
 {
 public:
 
-  static void Load(const cdm::ScenarioData& src, SEScenario& dst);
-  static cdm::ScenarioData* Unload(const SEScenario& src);
-  static void Serialize(const cdm::ScenarioData& src, SEScenario& dst);
-  static void Serialize(const SEScenario& src, cdm::ScenarioData& dst);
+  static void Load(const CDM_BIND::ScenarioData& src, SEScenario& dst);
+  static CDM_BIND::ScenarioData* Unload(const SEScenario& src);
+  static void Serialize(const CDM_BIND::ScenarioData& src, SEScenario& dst);
+  static void Serialize(const SEScenario& src, CDM_BIND::ScenarioData& dst);
 
   static bool SerializeToString(const SEScenario& src, std::string& output, SerializationFormat m);
   static bool SerializeToFile(const SEScenario& src, const std::string& filename, SerializationFormat m);

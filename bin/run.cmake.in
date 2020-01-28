@@ -23,24 +23,24 @@ endif()
 #set(Java_JAVA_EXECUTABLE "/the_jdk_I_want/bin/java)
 
 set(JAVA_CLASSPATH Pulse.jar
-        "@CMAKE_SOURCE_DIR@/jar/javassist-3.16.1-GA.jar"
-        "@CMAKE_SOURCE_DIR@/jar/jcommon-1.0.16.jar"
-        "@CMAKE_SOURCE_DIR@/jar/jdom-2.0.2.jar"
-        "@CMAKE_SOURCE_DIR@/jar/jfreechart-1.0.13.jar"
-        "@CMAKE_SOURCE_DIR@/jar/gson-2.8.5.jar"
-        "@CMAKE_SOURCE_DIR@/jar/guava-26.0-jre.jar"
-        "@CMAKE_SOURCE_DIR@/jar/log4j-1.2.17.jar"
-        "@CMAKE_SOURCE_DIR@/jar/poi-3.13-20150929.jar"
-        "@CMAKE_SOURCE_DIR@/jar/poi-ooxml-3.13-20150929.jar"
-        "@CMAKE_SOURCE_DIR@/jar/poi-ooxml-schemas-3.13-20150929.jar"
-        "@CMAKE_SOURCE_DIR@/jar/pdfbox-2.0.0-RC3.jar"
-        "@CMAKE_SOURCE_DIR@/jar/reflections-0.9.9-RC1-uberjar.jar"
-        "@CMAKE_SOURCE_DIR@/jar/xmlbeans-2.6.0.jar"
-        "@CMAKE_SOURCE_DIR@/jar/zip4j-1.3.1.jar"
-        "@CMAKE_SOURCE_DIR@/jar/org.eclipse.jgit-4.11.0.201803080745-r.jar"
-        "@CMAKE_SOURCE_DIR@/jar/slf4j-api-1.7.25.jar"
-        "@CMAKE_SOURCE_DIR@/jar/slf4j-simple-1.7.25.jar"
-        "@CMAKE_SOURCE_DIR@/jar/error_prone_annotations-2.3.2.jar")
+        "@CMAKE_SOURCE_DIR@/src/java/jar/javassist-3.16.1-GA.jar"
+        "@CMAKE_SOURCE_DIR@/src/java/jar/jcommon-1.0.16.jar"
+        "@CMAKE_SOURCE_DIR@/src/java/jar/jdom-2.0.2.jar"
+        "@CMAKE_SOURCE_DIR@/src/java/jar/jfreechart-1.0.13.jar"
+        "@CMAKE_SOURCE_DIR@/src/java/jar/gson-2.8.5.jar"
+        "@CMAKE_SOURCE_DIR@/src/java/jar/guava-26.0-jre.jar"
+        "@CMAKE_SOURCE_DIR@/src/java/jar/log4j-1.2.17.jar"
+        "@CMAKE_SOURCE_DIR@/src/java/jar/poi-3.13-20150929.jar"
+        "@CMAKE_SOURCE_DIR@/src/java/jar/poi-ooxml-3.13-20150929.jar"
+        "@CMAKE_SOURCE_DIR@/src/java/jar/poi-ooxml-schemas-3.13-20150929.jar"
+        "@CMAKE_SOURCE_DIR@/src/java/jar/pdfbox-2.0.0-RC3.jar"
+        "@CMAKE_SOURCE_DIR@/src/java/jar/reflections-0.9.9-RC1-uberjar.jar"
+        "@CMAKE_SOURCE_DIR@/src/java/jar/xmlbeans-2.6.0.jar"
+        "@CMAKE_SOURCE_DIR@/src/java/jar/zip4j-1.3.1.jar"
+        "@CMAKE_SOURCE_DIR@/src/java/jar/org.eclipse.jgit-4.11.0.201803080745-r.jar"
+        "@CMAKE_SOURCE_DIR@/src/java/jar/slf4j-api-1.7.25.jar"
+        "@CMAKE_SOURCE_DIR@/src/java/jar/slf4j-simple-1.7.25.jar"
+        "@CMAKE_SOURCE_DIR@/src/java/jar/error_prone_annotations-2.3.2.jar")
 
 if(NOT WIN32)
   string(REPLACE ";" ":" JAVA_CLASSPATH "${JAVA_CLASSPATH}")
@@ -48,22 +48,22 @@ endif()
 
 if(TYPE STREQUAL "tests" OR TYPE STREQUAL "SystemValidation" OR TYPE STREQUAL "PatientValidation")
   if(TYPE STREQUAL "tests")
-    execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.physiology.testing.SETestDriver CDMUnitTests.config)
-    execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.physiology.testing.SETestDriver EngineUnitTests.config)
-    execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.physiology.testing.SETestDriver ScenarioVerification.config)
+    execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" pulse.cdm.testing.SETestDriver CDMUnitTests.config)
+    execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" pulse.cdm.testing.SETestDriver EngineUnitTests.config)
+    execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" pulse.cdm.testing.SETestDriver ScenarioVerification.config)
   endif()
   if(TYPE STREQUAL "SystemValidation" OR TYPE STREQUAL "tests")
-    execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.physiology.testing.SETestDriver SystemVerification.config)
-    execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.physiology.testing.validation.SystemValidation TEST)
+    execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" pulse.cdm..testing.SETestDriver SystemVerification.config)
+    execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" pulse.cdm..testing.validation.SystemValidation TEST)
   endif()
   if(TYPE STREQUAL "PatientValidation" OR TYPE STREQUAL "tests")
-    execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.physiology.testing.SETestDriver PatientVerification.config)
-    execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.physiology.testing.validation.PatientValidation TEST)
+    execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" pulse.cdm.testing.SETestDriver PatientVerification.config)
+    execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" pulse.cdm.testing.validation.PatientValidation TEST)
   endif()
 elseif(TYPE STREQUAL "genData")
-  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.physiology.pulse.dataset.DataSetReader)
+  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" pulse.dataset.DataSetReader)
 elseif(TYPE STREQUAL "genStates")
-  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.physiology.testing.SETestDriver InitialPatientStates.config)
+  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" pulse.cdm..testing.SETestDriver InitialPatientStates.config)
 elseif(TYPE STREQUAL "doxygen")
   file(READ @CMAKE_SOURCE_DIR@/docs/Doxygen/header.html HEADER)
   file(READ @CMAKE_SOURCE_DIR@/docs/Doxygen/footer.html FOOTER)
@@ -90,13 +90,13 @@ elseif(TYPE STREQUAL "doxygen")
   file(WRITE  @CMAKE_SOURCE_DIR@/docs/Doxygen/panel_footer.html "${FOOTER_PANEL}")
   file(APPEND @CMAKE_SOURCE_DIR@/docs/Doxygen/panel_footer.html "${FOOTER}")
   # These are run above
-  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.physiology.testing.validation.SystemValidation BASELINE)
-  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.physiology.testing.validation.PatientValidation BASELINE)
-  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.physiology.datamodel.doxygen.DoxygenPreprocessor "@CMAKE_SOURCE_DIR@/docs/Markdown" ./docs/markdown)
-  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.physiology.datamodel.doxygen.DoxygenPreprocessor "@CMAKE_SOURCE_DIR@/docs/Methodology" ./docs/markdown ./test_results/tables)
-  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.physiology.datamodel.doxygen.Proto2Doxygen "@CMAKE_SOURCE_DIR@/schema/proto" ./docs/markdown)
-  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.physiology.datamodel.doxygen.CDM2MD ./docs/markdown)
-  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.physiology.utilities.csv.plots.PlotDriver PlotRun.config)
+  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" pulse.cdm.testing.validation.SystemValidation BASELINE)
+  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" pulse.cdm.testing.validation.PatientValidation BASELINE)
+  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" pulse.cdm.doxygen.DoxygenPreprocessor "@CMAKE_SOURCE_DIR@/docs/Markdown" ./docs/markdown)
+  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" pulse.cdm.doxygen.DoxygenPreprocessor "@CMAKE_SOURCE_DIR@/docs/Methodology" ./docs/markdown ./test_results/tables)
+  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" pulse.cdm.doxygen.Proto2Doxygen "@CMAKE_SOURCE_DIR@/schema/proto" ./docs/markdown)
+  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" pulse.cdm.doxygen.CDM2MD ./docs/markdown)
+  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" pulse.utilities.csv.plots.PlotDriver PlotRun.config)
   execute_process(COMMAND doxygen ./docs/full.doxy)
   # Build our landing files
   setup_landing_page(index.html)
@@ -108,9 +108,9 @@ elseif(TYPE STREQUAL "protoc")
 elseif(TYPE STREQUAL "updateBaselines")
   execute_process(COMMAND ${CMAKE_COMMAND} --build "@CMAKE_CURRENT_BINARY_DIR@" --target UpdateVerification)
 elseif(TYPE STREQUAL "rebase")
-  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.physiology.testing.Rebase)
+  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" pulse.cdm.testing.Rebase)
 elseif(TYPE STREQUAL "FullReport")
-  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.physiology.testing.SEReportResults)
+  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" pulse.cdm.testing.SEReportResults)
 else()
-  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.physiology.testing.SETestDriver ${TYPE}.config)
+  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" pulse.cdm.testing.SETestDriver ${TYPE}.config)
 endif()

@@ -2,24 +2,24 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "bind/cpp/cdm/Enums.pb.h"
+#include "bind/Enums.pb.h"
 
 const std::string& eSide_Name(eSide m)
 {
-  return cdm::eSide_Name((cdm::eSide)m);
+  return CDM_BIND::eSide_Name((CDM_BIND::eSide)m);
 }
 
 const std::string& eGate_Name(eGate m)
 {
-  return cdm::eGate_Name((cdm::eGate)m);
+  return CDM_BIND::eGate_Name((CDM_BIND::eGate)m);
 }
 
 const std::string& eSwitch_Name(eSwitch m)
 {
-  return cdm::eSwitch_Name((cdm::eSwitch)m);
+  return CDM_BIND::eSwitch_Name((CDM_BIND::eSwitch)m);
 }
 
 const std::string& eCharge_Name(eCharge m)
 {
-  return cdm::eCharge_Name((cdm::eCharge)m);
+  return CDM_BIND::eCharge_Name((CDM_BIND::eCharge)m);
 }

@@ -3,17 +3,16 @@
 
 #pragma once
 class PulseScenario;
-namespace pulse { namespace proto { class ScenarioData; } }
-
+PULSE_BIND_DECL(Scenario)
 
 class PULSE_DECL PBPulse
 {
 public:
 
-  static void Load(const pulse::proto::ScenarioData& src, PulseScenario& dst);
-  static pulse::proto::ScenarioData* Unload(const PulseScenario& src);
-  static void Serialize(const pulse::proto::ScenarioData& src, PulseScenario& dst);
-  static void Serialize(const PulseScenario& src, pulse::proto::ScenarioData& dst);
+  static void Load(const PULSE_BIND::ScenarioData& src, PulseScenario& dst);
+  static PULSE_BIND::ScenarioData* Unload(const PulseScenario& src);
+  static void Serialize(const PULSE_BIND::ScenarioData& src, PulseScenario& dst);
+  static void Serialize(const PulseScenario& src, PULSE_BIND::ScenarioData& dst);
 
   static bool SerializeToString(const PulseScenario& src, std::string& output, SerializationFormat m);
   static bool SerializeToFile(const PulseScenario& src, const std::string& filename, SerializationFormat m);

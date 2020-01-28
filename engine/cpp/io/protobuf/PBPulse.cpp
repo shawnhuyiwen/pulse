@@ -6,15 +6,15 @@
 #include "io/protobuf/PBPulseConfiguration.h"
 #include "io/protobuf/PBScenario.h"
 #include "io/protobuf/PBUtils.h"
-#include "bind/cpp/pulse/Pulse.pb.h"
+#include "pulse/engine/bind/Pulse.pb.h"
 #include "PulseScenario.h"
 #include "utils/FileUtils.h"
 
-void PBPulse::Load(const pulse::proto::ScenarioData& src, PulseScenario& dst)
+void PBPulse::Load(const PULSE_BIND::ScenarioData& src, PulseScenario& dst)
 {
   PBPulse::Serialize(src, dst);
 }
-void PBPulse::Serialize(const pulse::proto::ScenarioData& src, PulseScenario& dst)
+void PBPulse::Serialize(const PULSE_BIND::ScenarioData& src, PulseScenario& dst)
 {
   dst.Clear();
   PBScenario::Serialize(src.scenario(), dst);
@@ -22,13 +22,13 @@ void PBPulse::Serialize(const pulse::proto::ScenarioData& src, PulseScenario& ds
   if (src.has_configuration())
     PBPulseConfiguration::Load(src.configuration(), dst.GetConfiguration());
 }
-pulse::proto::ScenarioData* PBPulse::Unload(const PulseScenario& src)
+PULSE_BIND::ScenarioData* PBPulse::Unload(const PulseScenario& src)
 {
-  pulse::proto::ScenarioData* dst = new pulse::proto::ScenarioData();
+  PULSE_BIND::ScenarioData* dst = new PULSE_BIND::ScenarioData();
   PBPulse::Serialize(src, *dst);
   return dst;
 }
-void PBPulse::Serialize(const PulseScenario& src, pulse::proto::ScenarioData& dst)
+void PBPulse::Serialize(const PulseScenario& src, PULSE_BIND::ScenarioData& dst)
 {
   PBScenario::Serialize(src, *dst.mutable_scenario());
   if (src.HasConfiguration())
@@ -37,13 +37,13 @@ void PBPulse::Serialize(const PulseScenario& src, pulse::proto::ScenarioData& ds
 
 bool PBPulse::SerializeToString(const PulseScenario& src, std::string& output, SerializationFormat m)
 {
-  pulse::proto::ScenarioData data;
+  PULSE_BIND::ScenarioData data;
   PBPulse::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
 bool PBPulse::SerializeToFile(const PulseScenario& src, const std::string& filename, SerializationFormat m)
 {
-  pulse::proto::ScenarioData data;
+  PULSE_BIND::ScenarioData data;
   PBPulse::Serialize(src, data);
   std::string content;
   PBPulse::SerializeToString(src, content, m);
@@ -52,13 +52,13 @@ bool PBPulse::SerializeToFile(const PulseScenario& src, const std::string& filen
 
 bool PBPulse::SerializeFromString(const std::string& src, PulseScenario& dst, SerializationFormat m)
 {
-  pulse::proto::ScenarioData data;
+  PULSE_BIND::ScenarioData data;
   dst.GetLogger()->Info("Loading scenario...");
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
   {
     dst.GetLogger()->Info("Attempting to resolve errors...");
     // Try our base class
-    cdm::ScenarioData cdm_data;
+    CDM_BIND::ScenarioData cdm_data;
     if (!PBUtils::SerializeFromString(src, cdm_data, m, dst.GetLogger()))
       return false;
     dst.GetLogger()->Info("Successfully loaded scenario as a base SEScenario");

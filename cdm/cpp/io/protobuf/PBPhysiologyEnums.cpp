@@ -2,10 +2,10 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "bind/cpp/cdm/Physiology.pb.h"
+#include "bind/Physiology.pb.h"
 #include "system/physiology/SECardiovascularSystem.h"
 
 const std::string& eHeartRhythm_Name(eHeartRhythm m)
 {
-  return cdm::eHeartRhythm_Name((cdm::eHeartRhythm)m);
+  return CDM_BIND::eHeartRhythm_Name((CDM_BIND::eHeartRhythm)m);
 }
