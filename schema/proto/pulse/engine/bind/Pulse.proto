@@ -1,6 +1,7 @@
 syntax = "proto3";
 package pulse.engine.bind;
 option java_package = "pulse.engine.bind";
+option csharp_namespace = "pulse.engine.bind";
 option optimize_for = SPEED;
 
 import "pulse/cdm/bind/Scenario.proto";

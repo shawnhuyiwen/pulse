@@ -52,7 +52,7 @@ endif()
 ##################
 
 # Remove all previously generated files
-file(GLOB_RECURSE OLD_FILES "${to}/*.h" "${to}/*.cc" "${to}/*.cs" "${to}/*.java")
+file(GLOB_RECURSE OLD_FILES "${to}/*.h" "${to}/*.cc")
 file(REMOVE "${OLD_FILES}")
 
 set(cpp_bindings_DIR "${to}/cpp")
@@ -158,12 +158,12 @@ message(STATUS "java bindings are here : ${java_bindings_DIR}" )
 ## C# Bindings ##
 #################
 
-set(csharp_bindings_DIR "${to}/csharp")
+set(csharp_bindings_DIR "${SRC_ROOT}/csharp/pulse/bind")
 file(MAKE_DIRECTORY "${csharp_bindings_DIR}")
-file(GLOB_RECURSE _OLD_CSHARP_FILES "${csharp_bindings_DIR}/*.*")
-if(_OLD_CSHARP_FILES)
-  file(REMOVE ${_OLD_CSHARP_FILES})
-endif() 
+file(GLOB _OLD_BIND_FILES "${csharp_bindings_DIR}/*")
+if(_OLD_BIND_FILES)
+  file(REMOVE ${_OLD_BIND_FILES})
+endif()
 foreach(f ${_FILES})
   message(STATUS "C# Binding file ${f}")
   execute_process(COMMAND ${BINDER} --proto_path=${from}

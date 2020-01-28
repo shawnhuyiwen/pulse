@@ -45,6 +45,8 @@ if ( CMAKE_COMPILER_IS_GNUCC )
   endif()
 endif()
 
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
 message(STATUS "Looking for modules here : ${CMAKE_PREFIX_PATH}")
 set(CMAKE_CXX_STANDARD_LIBRARIES "" CACHE STRING INTERNAL FORCE)
 set(CMAKE_C_STANDARD_LIBRARIES "" CACHE STRING INTERNAL FORCE)
@@ -144,14 +146,9 @@ add_subdirectory(test)
 add_subdirectory(sdk)
 add_subdirectory(verification)
 # Various interfaces for different languages
-include(${CMAKE_CURRENT_SOURCE_DIR}/PulseC.cmake)
-include(${CMAKE_CURRENT_SOURCE_DIR}/PulseCLR.cmake)
-include(${CMAKE_CURRENT_SOURCE_DIR}/PulseJNI.cmake)
-if(PULSE_PYTHON_BINDINGS)
-  include(${CMAKE_CURRENT_SOURCE_DIR}/PulsePython.cmake)
-endif()
-
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+add_subdirectory(src/c)
+add_subdirectory(src/java)
+add_subdirectory(src/python)
 
 file(COPY ${CMAKE_SOURCE_DIR}/bin DESTINATION ${CMAKE_INSTALL_PREFIX})
 configure_file(${CMAKE_SOURCE_DIR}/bin/run.cmake.in ${CMAKE_INSTALL_PREFIX}/bin/run.cmake @ONLY)
