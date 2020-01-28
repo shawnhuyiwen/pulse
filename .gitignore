@@ -10,6 +10,7 @@
 /src/java/pulse/engine/bind
 /src/python/pulse/cdm/bind
 /src/python/pulse/engine/bind
+/src/python/google
 
 # Eclipse Build Directory
 /src/java/build

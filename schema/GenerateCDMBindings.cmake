@@ -175,9 +175,17 @@ message(STATUS "csharp bindings are here : ${csharp_bindings_DIR}" )
 #####################
 ## Python Bindings ##
 #####################
-
+if(WIN32)
+  set(BINDER_EXT ".exe")
+endif()
 set(python_bindings_DIR "${SRC_ROOT}/python")
 delete_bindings(${python_bindings_DIR})
+set( ENV{PROTOC} ${BINDER}${BINDER_EXT} )
+execute_process(COMMAND python setup.py build
+                WORKING_DIRECTORY "${protobuf_SRC}/python")
+file(COPY "${protobuf_SRC}/python/build/lib/google"
+     DESTINATION ${python_bindings_DIR}
+)
 foreach(f ${_FILES})
   message(STATUS "Python Binding file ${f}")
   execute_process(COMMAND ${BINDER} --proto_path=${from}
