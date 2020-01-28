@@ -95,6 +95,8 @@ extern "C"
 C_EXPORT bool C_CALL PullLogMessages(PulseEngineThunk* thunk, int format, char** str_addr)
 {
   std::string log_msgs = thunk->PullLogMessages((SerializationFormat)format);
+  if (log_msgs.empty())
+    return false;
   *str_addr = c_strdup(log_msgs.c_str(), log_msgs.length());
   return true;
 }
@@ -109,6 +111,8 @@ extern "C"
 C_EXPORT bool C_CALL PullEvents(PulseEngineThunk* thunk, int format, char** str_addr)
 {
   std::string event_changes = thunk->PullEvents((SerializationFormat)format);
+  if (event_changes.empty())
+    return false;
   *str_addr = c_strdup(event_changes.c_str(), event_changes.length());
   return true;
 }
@@ -117,6 +121,8 @@ extern "C"
 C_EXPORT bool C_CALL PullActiveEvents(PulseEngineThunk* thunk, int format, char** active)
 {
   std::string active_events = thunk->PullActiveEvents((SerializationFormat)format);
+  if (active_events.empty())
+    return false;
   *active = c_strdup(active_events.c_str(), active_events.length());
   return true;
 }
