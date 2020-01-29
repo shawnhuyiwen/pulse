@@ -15,23 +15,6 @@ public class VolumePerTimeUnit
   public static VolumePerTimeUnit mL_Per_min = new VolumePerTimeUnit("mL/min");
   public static VolumePerTimeUnit mL_Per_day = new VolumePerTimeUnit("mL/day");
 
-  public static VolumePerTimeUnit FromString(string u)
-  {
-    if (u == VolumePerTimeUnit.L_Per_s.Value)
-      return VolumePerTimeUnit.L_Per_s;
-    if (u == VolumePerTimeUnit.mL_Per_s.Value)
-      return VolumePerTimeUnit.mL_Per_s;
-    if (u == VolumePerTimeUnit.L_Per_min.Value)
-      return VolumePerTimeUnit.L_Per_min;
-    if (u == VolumePerTimeUnit.m3_Per_s.Value)
-      return VolumePerTimeUnit.m3_Per_s;
-    if (u == VolumePerTimeUnit.mL_Per_min.Value)
-      return VolumePerTimeUnit.mL_Per_min;
-    if (u == VolumePerTimeUnit.mL_Per_day.Value)
-      return VolumePerTimeUnit.mL_Per_day;
-
-    throw new System.NotSupportedException(u + " is an unsupported VolumePerTimeUnit");
-  }
 }
 
 public class SEScalarVolumePerTime : SEScalar

@@ -8,21 +8,9 @@ public class FrequencyUnit
 
   public new string ToString() { return Value; }
 
-  public static FrequencyUnit Per_min { get { return new FrequencyUnit("1/min"); } }
-  public static FrequencyUnit Per_s { get { return new FrequencyUnit("1/s"); } }
-  public static FrequencyUnit Hz { get { return new FrequencyUnit("Hz"); } }
-
-  public static FrequencyUnit FromString(string u)
-  {
-    if (u == FrequencyUnit.Per_min.Value)
-      return FrequencyUnit.Per_min;
-    if (u == FrequencyUnit.Per_s.Value)
-      return FrequencyUnit.Per_s;
-    if (u == FrequencyUnit.Hz.Value)
-      return FrequencyUnit.Hz;
-
-    throw new System.NotSupportedException(u + " is an unsupported FrequencyUnit");
-  }
+  public static FrequencyUnit Per_min = new FrequencyUnit("1/min");
+  public static FrequencyUnit Per_s = new FrequencyUnit("1/s");
+  public static FrequencyUnit Hz = new FrequencyUnit("Hz");
 }
 
 public class SEScalarFrequency : SEScalar

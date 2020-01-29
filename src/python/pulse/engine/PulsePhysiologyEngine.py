@@ -11,7 +11,7 @@ class PulsePhysiologyEngine:
         self.results = {}
         self.__pulse = PyPulse.Engine(log_file, write_to_console, data_root)
 
-    def serialize_from_file(self, state_file, data_requests, format, start_time):
+    def serialize_from_file(self, state_file: str, data_requests, format: eSerializationFormat, start_time: float=0):
         # Process requests and setup our results structure
         self.process_requests(data_requests)
         fmt = PyPulse.serialization_format.json

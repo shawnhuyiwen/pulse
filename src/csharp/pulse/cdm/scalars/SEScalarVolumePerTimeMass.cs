@@ -8,27 +8,12 @@ public class VolumePerTimeMassUnit
 
   public new string ToString() { return Value; }
 
-  public static VolumePerTimeMassUnit L_Per_s_g { get { return new VolumePerTimeMassUnit("L/s g"); } }
-  public static VolumePerTimeMassUnit mL_Per_s_g { get { return new VolumePerTimeMassUnit("mL / s g"); } }
-  public static VolumePerTimeMassUnit mL_Per_min_kg { get { return new VolumePerTimeMassUnit("mL/min kg"); } }
-  public static VolumePerTimeMassUnit mL_Per_s_kg { get { return new VolumePerTimeMassUnit("mL/s kg"); } }
-  public static VolumePerTimeMassUnit uL_Per_min_kg { get { return new VolumePerTimeMassUnit("uL/min kg"); } }
+  public static VolumePerTimeMassUnit L_Per_s_g = new VolumePerTimeMassUnit("L/s g");
+  public static VolumePerTimeMassUnit mL_Per_s_g = new VolumePerTimeMassUnit("mL/s g");
+  public static VolumePerTimeMassUnit mL_Per_min_kg = new VolumePerTimeMassUnit("mL/min kg");
+  public static VolumePerTimeMassUnit mL_Per_s_kg = new VolumePerTimeMassUnit("mL/s kg");
+  public static VolumePerTimeMassUnit uL_Per_min_kg = new VolumePerTimeMassUnit("uL/min kg");
 
-  public static VolumePerTimeMassUnit FromString(string u)
-  {
-    if (u == VolumePerTimeMassUnit.L_Per_s_g.Value)
-      return VolumePerTimeMassUnit.L_Per_s_g;
-    if (u == VolumePerTimeMassUnit.mL_Per_s_g.Value)
-      return VolumePerTimeMassUnit.mL_Per_s_g;
-    if (u == VolumePerTimeMassUnit.mL_Per_min_kg.Value)
-      return VolumePerTimeMassUnit.mL_Per_min_kg;
-    if (u == VolumePerTimeMassUnit.mL_Per_s_kg.Value)
-      return VolumePerTimeMassUnit.mL_Per_s_kg;
-    if (u == VolumePerTimeMassUnit.uL_Per_min_kg.Value)
-      return VolumePerTimeMassUnit.uL_Per_min_kg;
-
-    throw new System.NotSupportedException(u + " is an unsupported VolumePerTimeMassUnit");
-  }
 }
 
 public class SEScalarVolumePerTimeMass : SEScalar

@@ -8,27 +8,11 @@ public class MassUnit
 
   public new string ToString() { return Value; }
 
-  public static MassUnit g { get { return new MassUnit("g"); } }
-  public static MassUnit ug { get { return new MassUnit("ug"); } }
-  public static MassUnit mg { get { return new MassUnit("mg"); } }
-  public static MassUnit kg { get { return new MassUnit("kg"); } }
-  public static MassUnit lb { get { return new MassUnit("lb"); } }
-
-  public static MassUnit FromString(string u)
-  {
-    if (u == MassUnit.g.Value)
-      return MassUnit.g;
-    if (u == MassUnit.ug.Value)
-      return MassUnit.ug;
-    if (u == MassUnit.mg.Value)
-      return MassUnit.mg;
-    if (u == MassUnit.kg.Value)
-      return MassUnit.kg;
-    if (u == MassUnit.lb.Value)
-      return MassUnit.lb;
-
-    throw new System.NotSupportedException(u + " is an unsupported MassUnit");
-  }
+  public static MassUnit g = new MassUnit("g");
+  public static MassUnit ug = new MassUnit("ug");
+  public static MassUnit mg = new MassUnit("mg");
+  public static MassUnit kg = new MassUnit("kg");
+  public static MassUnit lb = new MassUnit("lb");
 }
 
 public class SEScalarMass : SEScalar

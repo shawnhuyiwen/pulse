@@ -8,27 +8,12 @@ public class TimeUnit
 
   public new string ToString() { return Value; }
 
-  public static TimeUnit s { get { return new TimeUnit("s"); } }
-  public static TimeUnit min { get { return new TimeUnit("min"); } }
-  public static TimeUnit hr { get { return new TimeUnit("hr"); } }
-  public static TimeUnit day { get { return new TimeUnit("day"); } }
-  public static TimeUnit yr { get { return new TimeUnit("yr"); } }
+  public static TimeUnit s = new TimeUnit("s");
+  public static TimeUnit min = new TimeUnit("min");
+  public static TimeUnit hr = new TimeUnit("hr");
+  public static TimeUnit day = new TimeUnit("day");
+  public static TimeUnit yr = new TimeUnit("yr");
 
-  public static TimeUnit FromString(string u)
-  {
-    if (u == TimeUnit.s.Value)
-      return TimeUnit.s;
-    if (u == TimeUnit.min.Value)
-      return TimeUnit.min;
-    if (u == TimeUnit.hr.Value)
-      return TimeUnit.hr;
-    if (u == TimeUnit.day.Value)
-      return TimeUnit.day;
-    if (u == TimeUnit.yr.Value)
-      return TimeUnit.yr;
-
-    throw new System.NotSupportedException(u+" is an unsupported TimeUnit");
-  }
 }
 
 public class SEScalarTime : SEScalar

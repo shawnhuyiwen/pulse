@@ -8,24 +8,11 @@ public class VolumeUnit
 
   public new string ToString() { return Value; }
 
-  public static VolumeUnit L { get { return new VolumeUnit("L"); } }
-  public static VolumeUnit mL { get { return new VolumeUnit("mL"); } }
-  public static VolumeUnit dL { get { return new VolumeUnit("dL"); } }
-  public static VolumeUnit m3 { get { return new VolumeUnit("m3"); } }
+  public static VolumeUnit L = new VolumeUnit("L");
+  public static VolumeUnit mL = new VolumeUnit("mL");
+  public static VolumeUnit dL = new VolumeUnit("dL");
+  public static VolumeUnit m3 = new VolumeUnit("m^3");
 
-  public static VolumeUnit FromString(string u)
-  {
-    if (u == VolumeUnit.L.Value)
-      return VolumeUnit.L;
-    if (u == VolumeUnit.mL.Value)
-      return VolumeUnit.mL;
-    if (u == VolumeUnit.dL.Value)
-      return VolumeUnit.dL;
-    if (u == VolumeUnit.m3.Value)
-      return VolumeUnit.m3;
-
-    throw new System.NotSupportedException(u + " is an unsupported VolumeUnit");
-  }
 }
 
 public class SEScalarVolume : SEScalar

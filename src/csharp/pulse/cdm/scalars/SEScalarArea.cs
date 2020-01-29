@@ -8,18 +8,8 @@ public class AreaUnit
 
   public new string ToString() { return Value; }
 
-  public static AreaUnit cm2 { get { return new AreaUnit("cm^2"); } }
-  public static AreaUnit m2 { get { return new AreaUnit("m^2"); } }
-
-  public static AreaUnit FromString(string u)
-  {
-    if (u == AreaUnit.cm2.Value)
-      return AreaUnit.cm2;
-    if (u == AreaUnit.m2.Value)
-      return AreaUnit.m2;
-
-    throw new System.NotSupportedException(u+" is an unsupported AreaUnit");
-  }
+  public static AreaUnit cm2 = new AreaUnit("cm^2");
+  public static AreaUnit m2 = new AreaUnit("m^2");
 }
 
 public class SEScalarArea : SEScalar

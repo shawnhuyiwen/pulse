@@ -8,54 +8,21 @@ public class MassPerVolumeUnit
 
   public new string ToString() { return Value; }
 
-  public static MassPerVolumeUnit g_Per_dL { get { return new MassPerVolumeUnit("g/dL"); } }
-  public static MassPerVolumeUnit g_Per_cm3 { get { return new MassPerVolumeUnit("g/cm^3"); } }
-  public static MassPerVolumeUnit g_Per_m3 { get { return new MassPerVolumeUnit("g/m^3"); } }
-  public static MassPerVolumeUnit ug_Per_mL { get { return new MassPerVolumeUnit("ug/mL"); } }
-  public static MassPerVolumeUnit mg_Per_m3 { get { return new MassPerVolumeUnit("mg/m^3"); } }
-  public static MassPerVolumeUnit kg_Per_m3 { get { return new MassPerVolumeUnit("kg/m^3"); } }
-  public static MassPerVolumeUnit ug_Per_L { get { return new MassPerVolumeUnit("ug/L"); } }
-  public static MassPerVolumeUnit g_Per_L { get { return new MassPerVolumeUnit("g/L"); } }
-  public static MassPerVolumeUnit g_Per_mL { get { return new MassPerVolumeUnit("g/mL"); } }
-  public static MassPerVolumeUnit mg_Per_mL { get { return new MassPerVolumeUnit("mg/mL"); } }
-  public static MassPerVolumeUnit mg_Per_L { get { return new MassPerVolumeUnit("mg/L"); } }
-  public static MassPerVolumeUnit mg_Per_dL { get { return new MassPerVolumeUnit("mg/dL"); } }
-  public static MassPerVolumeUnit kg_Per_mL { get { return new MassPerVolumeUnit("kg/mL"); } }
-  public static MassPerVolumeUnit kg_Per_L { get { return new MassPerVolumeUnit("kg/L"); } }
+  public static MassPerVolumeUnit g_Per_dL = new MassPerVolumeUnit("g/dL");
+  public static MassPerVolumeUnit g_Per_cm3 = new MassPerVolumeUnit("g/cm^3");
+  public static MassPerVolumeUnit g_Per_m3 = new MassPerVolumeUnit("g/m^3");
+  public static MassPerVolumeUnit ug_Per_mL = new MassPerVolumeUnit("ug/mL");
+  public static MassPerVolumeUnit mg_Per_m3 = new MassPerVolumeUnit("mg/m^3");
+  public static MassPerVolumeUnit kg_Per_m3 = new MassPerVolumeUnit("kg/m^3");
+  public static MassPerVolumeUnit ug_Per_L = new MassPerVolumeUnit("ug/L");
+  public static MassPerVolumeUnit g_Per_L = new MassPerVolumeUnit("g/L");
+  public static MassPerVolumeUnit g_Per_mL = new MassPerVolumeUnit("g/mL");
+  public static MassPerVolumeUnit mg_Per_mL = new MassPerVolumeUnit("mg/mL");
+  public static MassPerVolumeUnit mg_Per_L = new MassPerVolumeUnit("mg/L");
+  public static MassPerVolumeUnit mg_Per_dL = new MassPerVolumeUnit("mg/dL");
+  public static MassPerVolumeUnit kg_Per_mL = new MassPerVolumeUnit("kg/mL");
+  public static MassPerVolumeUnit kg_Per_L = new MassPerVolumeUnit("kg/L");
 
-  public static MassPerVolumeUnit FromString(string u)
-  {
-    if (u == MassPerVolumeUnit.g_Per_dL.Value)
-      return MassPerVolumeUnit.g_Per_dL;
-    if (u == MassPerVolumeUnit.g_Per_cm3.Value)
-      return MassPerVolumeUnit.g_Per_cm3;
-    if (u == MassPerVolumeUnit.g_Per_m3.Value)
-      return MassPerVolumeUnit.g_Per_m3;
-    if (u == MassPerVolumeUnit.ug_Per_mL.Value)
-      return MassPerVolumeUnit.ug_Per_mL;
-    if (u == MassPerVolumeUnit.mg_Per_m3.Value)
-      return MassPerVolumeUnit.mg_Per_m3;
-    if (u == MassPerVolumeUnit.kg_Per_m3.Value)
-      return MassPerVolumeUnit.kg_Per_m3;
-    if (u == MassPerVolumeUnit.ug_Per_L.Value)
-      return MassPerVolumeUnit.ug_Per_L;
-    if (u == MassPerVolumeUnit.g_Per_L.Value)
-      return MassPerVolumeUnit.g_Per_L;
-    if (u == MassPerVolumeUnit.g_Per_mL.Value)
-      return MassPerVolumeUnit.g_Per_mL;
-    if (u == MassPerVolumeUnit.mg_Per_mL.Value)
-      return MassPerVolumeUnit.mg_Per_mL;
-    if (u == MassPerVolumeUnit.mg_Per_L.Value)
-      return MassPerVolumeUnit.mg_Per_L;
-    if (u == MassPerVolumeUnit.mg_Per_dL.Value)
-      return MassPerVolumeUnit.mg_Per_dL;
-    if (u == MassPerVolumeUnit.kg_Per_mL.Value)
-      return MassPerVolumeUnit.kg_Per_mL;
-    if (u == MassPerVolumeUnit.kg_Per_L.Value)
-      return MassPerVolumeUnit.kg_Per_L;
-
-    throw new System.NotSupportedException(u + " is an unsupported MassPerVolumeUnit");
-  }
 }
 
 public class SEScalarMassPerVolume : SEScalar

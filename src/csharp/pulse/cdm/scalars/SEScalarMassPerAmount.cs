@@ -8,45 +8,18 @@ public class MassPerAmountUnit
 
   public new string ToString() { return Value; }
 
-  public static MassPerAmountUnit g_Per_ct { get { return new MassPerAmountUnit("g/ct"); } }
-  public static MassPerAmountUnit g_Per_mol { get { return new MassPerAmountUnit("g/mol"); } }
-  public static MassPerAmountUnit g_Per_mmol { get { return new MassPerAmountUnit("g/mmol"); } }
-  public static MassPerAmountUnit g_Per_umol { get { return new MassPerAmountUnit("g/umol"); } }
-  public static MassPerAmountUnit mg_Per_mol { get { return new MassPerAmountUnit("mg/mol"); } }
-  public static MassPerAmountUnit mg_Per_mmol { get { return new MassPerAmountUnit("mg/mmol"); } }
-  public static MassPerAmountUnit kg_Per_mol { get { return new MassPerAmountUnit("kg/mol"); } }
-  public static MassPerAmountUnit ug_Per_mmol { get { return new MassPerAmountUnit("ug/mmol"); } }
-  public static MassPerAmountUnit ug_Per_mol { get { return new MassPerAmountUnit("ug/mol"); } }
-  public static MassPerAmountUnit ug_Per_ct { get { return new MassPerAmountUnit("ug/ct"); } }
-  public static MassPerAmountUnit pg_Per_ct { get { return new MassPerAmountUnit("pg/ct"); } }
+  public static MassPerAmountUnit g_Per_ct = new MassPerAmountUnit("g/ct");
+  public static MassPerAmountUnit g_Per_mol = new MassPerAmountUnit("g/mol");
+  public static MassPerAmountUnit g_Per_mmol = new MassPerAmountUnit("g/mmol");
+  public static MassPerAmountUnit g_Per_umol = new MassPerAmountUnit("g/umol");
+  public static MassPerAmountUnit mg_Per_mol = new MassPerAmountUnit("mg/mol");
+  public static MassPerAmountUnit mg_Per_mmol = new MassPerAmountUnit("mg/mmol");
+  public static MassPerAmountUnit kg_Per_mol = new MassPerAmountUnit("kg/mol");
+  public static MassPerAmountUnit ug_Per_mmol = new MassPerAmountUnit("ug/mmol");
+  public static MassPerAmountUnit ug_Per_mol = new MassPerAmountUnit("ug/mol");
+  public static MassPerAmountUnit ug_Per_ct = new MassPerAmountUnit("ug/ct");
+  public static MassPerAmountUnit pg_Per_ct = new MassPerAmountUnit("pg/ct");
 
-  public static MassPerAmountUnit FromString(string u)
-  {
-    if (u == MassPerAmountUnit.g_Per_ct.Value)
-      return MassPerAmountUnit.g_Per_ct;
-    if (u == MassPerAmountUnit.g_Per_mol.Value)
-      return MassPerAmountUnit.g_Per_mol;
-    if (u == MassPerAmountUnit.g_Per_mmol.Value)
-      return MassPerAmountUnit.g_Per_mmol;
-    if (u == MassPerAmountUnit.g_Per_umol.Value)
-      return MassPerAmountUnit.g_Per_umol;
-    if (u == MassPerAmountUnit.mg_Per_mol.Value)
-      return MassPerAmountUnit.mg_Per_mol;
-    if (u == MassPerAmountUnit.mg_Per_mmol.Value)
-      return MassPerAmountUnit.mg_Per_mmol;
-    if (u == MassPerAmountUnit.kg_Per_mol.Value)
-      return MassPerAmountUnit.kg_Per_mol;
-    if (u == MassPerAmountUnit.ug_Per_mmol.Value)
-      return MassPerAmountUnit.ug_Per_mmol;
-    if (u == MassPerAmountUnit.ug_Per_mol.Value)
-      return MassPerAmountUnit.ug_Per_mol;
-    if (u == MassPerAmountUnit.ug_Per_ct.Value)
-      return MassPerAmountUnit.ug_Per_ct;
-    if (u == MassPerAmountUnit.pg_Per_ct.Value)
-      return MassPerAmountUnit.pg_Per_ct;
-
-    throw new System.NotSupportedException(u + " is an unsupported MassPerAmountUnit");
-  }
 }
 
 public class SEScalarMassPerAmount : SEScalar

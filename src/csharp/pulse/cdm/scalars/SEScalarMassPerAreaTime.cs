@@ -8,15 +8,8 @@ public class MassPerAreaTimeUnit
 
   public new string ToString() { return Value; }
 
-  public static MassPerAreaTimeUnit g_Per_cm2_s { get { return new MassPerAreaTimeUnit("g/cm^2 s"); } }
+  public static MassPerAreaTimeUnit g_Per_cm2_s = new MassPerAreaTimeUnit("g/cm^2 s");
 
-  public static MassPerAreaTimeUnit FromString(string u)
-  {
-    if (u == MassPerAreaTimeUnit.g_Per_cm2_s.Value)
-      return MassPerAreaTimeUnit.g_Per_cm2_s;
-
-    throw new System.NotSupportedException(u + " is an unsupported MassPerAreaTimeUnit");
-  }
 }
 
 public class SEScalarMassPerAreaTime : SEScalar

@@ -8,36 +8,15 @@ public class MassPerTimeUnit
 
   public new string ToString() { return Value; }
 
-  public static MassPerTimeUnit g_Per_s { get { return new MassPerTimeUnit("g/s"); } }
-  public static MassPerTimeUnit g_Per_min { get { return new MassPerTimeUnit("g/min"); } }
-  public static MassPerTimeUnit g_Per_day { get { return new MassPerTimeUnit("g/day"); } }
-  public static MassPerTimeUnit mg_Per_s { get { return new MassPerTimeUnit("mg/s"); } }
-  public static MassPerTimeUnit mg_Per_min { get { return new MassPerTimeUnit("mg/min"); } }
-  public static MassPerTimeUnit ug_Per_s { get { return new MassPerTimeUnit("ug/s"); } }
-  public static MassPerTimeUnit kg_Per_s { get { return new MassPerTimeUnit("kg/s"); } }
-  public static MassPerTimeUnit ug_Per_min { get { return new MassPerTimeUnit("ug/min"); } }
+  public static MassPerTimeUnit g_Per_s = new MassPerTimeUnit("g/s");
+  public static MassPerTimeUnit g_Per_min = new MassPerTimeUnit("g/min");
+  public static MassPerTimeUnit g_Per_day = new MassPerTimeUnit("g/day");
+  public static MassPerTimeUnit mg_Per_s = new MassPerTimeUnit("mg/s");
+  public static MassPerTimeUnit mg_Per_min = new MassPerTimeUnit("mg/min");
+  public static MassPerTimeUnit ug_Per_s = new MassPerTimeUnit("ug/s");
+  public static MassPerTimeUnit kg_Per_s = new MassPerTimeUnit("kg/s");
+  public static MassPerTimeUnit ug_Per_min = new MassPerTimeUnit("ug/min");
 
-  public static MassPerTimeUnit FromString(string u)
-  {
-    if (u == MassPerTimeUnit.g_Per_s.Value)
-      return MassPerTimeUnit.g_Per_s;
-    if (u == MassPerTimeUnit.g_Per_min.Value)
-      return MassPerTimeUnit.g_Per_min;
-    if (u == MassPerTimeUnit.g_Per_day.Value)
-      return MassPerTimeUnit.g_Per_day;
-    if (u == MassPerTimeUnit.mg_Per_s.Value)
-      return MassPerTimeUnit.mg_Per_s;
-    if (u == MassPerTimeUnit.mg_Per_min.Value)
-      return MassPerTimeUnit.mg_Per_min;
-    if (u == MassPerTimeUnit.ug_Per_s.Value)
-      return MassPerTimeUnit.ug_Per_s;
-    if (u == MassPerTimeUnit.kg_Per_s.Value)
-      return MassPerTimeUnit.kg_Per_s;
-    if (u == MassPerTimeUnit.ug_Per_min.Value)
-      return MassPerTimeUnit.ug_Per_min;
-
-    throw new System.NotSupportedException(u + " is an unsupported MassPerTimeUnit");
-  }
 }
 
 public class SEScalarMassPerTime : SEScalar

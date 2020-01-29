@@ -8,30 +8,13 @@ public class PowerUnit
 
   public new string ToString() { return Value; }
 
-  public static PowerUnit W { get { return new PowerUnit("W"); } }
-  public static PowerUnit kcal_Per_s { get { return new PowerUnit("kcal/s"); } }
-  public static PowerUnit kcal_Per_hr { get { return new PowerUnit("kcal/hr"); } }
-  public static PowerUnit kcal_Per_day { get { return new PowerUnit("kcal/day"); } }
-  public static PowerUnit J_Per_s { get { return new PowerUnit("J/s"); } }
-  public static PowerUnit BTU_Per_hr { get { return new PowerUnit("BTU/hr"); } }
+  public static PowerUnit W = new PowerUnit("W");
+  public static PowerUnit kcal_Per_s = new PowerUnit("kcal/s");
+  public static PowerUnit kcal_Per_hr = new PowerUnit("kcal/hr");
+  public static PowerUnit kcal_Per_day = new PowerUnit("kcal/day");
+  public static PowerUnit J_Per_s = new PowerUnit("J/s");
+  public static PowerUnit BTU_Per_hr = new PowerUnit("BTU/hr");
 
-  public static PowerUnit FromString(string u)
-  {
-    if (u == PowerUnit.W.Value)
-      return PowerUnit.W;
-    if (u == PowerUnit.kcal_Per_s.Value)
-      return PowerUnit.kcal_Per_s;
-    if (u == PowerUnit.kcal_Per_hr.Value)
-      return PowerUnit.kcal_Per_hr;
-    if (u == PowerUnit.kcal_Per_day.Value)
-      return PowerUnit.kcal_Per_day;
-    if (u == PowerUnit.J_Per_s.Value)
-      return PowerUnit.J_Per_s;
-    if (u == PowerUnit.BTU_Per_hr.Value)
-      return PowerUnit.BTU_Per_hr;
-
-    throw new System.NotSupportedException(u+" is an unsupported PowerUnit");
-  }
 }
 
 public class SEScalarPower : SEScalar
