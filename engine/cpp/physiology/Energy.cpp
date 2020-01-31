@@ -430,9 +430,13 @@ void Energy::Exercise()
   if (exerciseIntensity > 0.0)
   {
     double  achievedExerciseFraction = GetTotalWorkRateLevel().GetValue() / exerciseIntensity;
+    //Handle cases of small errors from calculation (e.g., 1.000000001)
+    achievedExerciseFraction = LIMIT(achievedExerciseFraction, 0.0, 1.0);
+
     /// \todo Log an event or info message that available energy is insufficient to meet demand.
     //if (achievedExerciseFraction < 1.0)
     //  Info("Available energy insufficient to meet requested work rate.");
+
     GetAchievedExerciseLevel().SetValue(achievedExerciseFraction);
   }    
   else
