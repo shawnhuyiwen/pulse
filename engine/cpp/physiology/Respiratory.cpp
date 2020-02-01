@@ -2719,11 +2719,13 @@ void Respiratory::UpdateInspiratoryExpiratoryRatio()
 
   //------------------------------------------------------------------------------------------------------
   //Set new value & Drugs/PD
-  m_IERatioScaleFactor = 1.0 - combinedObstructiveSeverity + (2.0 * combinedRestrictiveSeverity);
+  m_IERatioScaleFactor = 1.0 - combinedObstructiveSeverity;
   //When albuterol is administered, the bronchodilation also causes the IE ratio to correct itself
   m_IERatioScaleFactor *= exp(7728.4 * m_AverageLocalTissueBronchodilationEffects);
-
   //Lower than 0.1 causes simulation instability
+  m_IERatioScaleFactor = LIMIT(m_IERatioScaleFactor, 0.1, 1.0);
+
+  m_IERatioScaleFactor += 2.0 * combinedRestrictiveSeverity;
   m_IERatioScaleFactor = LIMIT(m_IERatioScaleFactor, 0.1, 10.0);
 }
 
