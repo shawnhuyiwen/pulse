@@ -126,7 +126,7 @@ void Nervous::PreProcess()
 {
   if (m_FeedbackActive)
   {
-    //BaroreceptorFeedback();
+    BaroreceptorFeedback();
     ChemoreceptorFeedback();
   }
 }
@@ -222,10 +222,10 @@ void Nervous::BaroreceptorFeedback()
   double parasympatheticFraction = 1 - m_TotalSympatheticFraction;
   m_LastMeanArterialPressure_mmHg = meanArterialPressure_mmHg;
 
-  m_data.GetDataTrack().Probe("SympatheticFraction", m_TotalSympatheticFraction);
+  /*m_data.GetDataTrack().Probe("SympatheticFraction", m_TotalSympatheticFraction);
   m_data.GetDataTrack().Probe("CumulativeMAP", cumulativeMeanArterialPressure_mmHg);
   m_data.GetDataTrack().Probe("baroreceptorPressure", baroreceptorPressure_mmHg);
-  m_data.GetDataTrack().Probe("deltaPressure", deltaPressure_mmHg);
+  m_data.GetDataTrack().Probe("deltaPressure", deltaPressure_mmHg);*/
   
   //Calculate the normalized change in heart rate
   double normalizedHeartRate = GetBaroreceptorHeartRateScale().GetValue();

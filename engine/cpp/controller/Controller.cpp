@@ -2869,7 +2869,7 @@ void PulseController::SetupTissue()
 
   // The assumption for the vascular-tissue convection drag is that the resistance is inversely proportional to the tissue mass.
   // This is the proportionality constant
-  double resistanceConstant = 1.0;
+  double resistanceConstant = 2000.0;//1.0; //increased to prevent fluid from freely moving into the vascular space
 
   /// \todo Put Initial Circuit/Compartment data values into the configuration file.
 

@@ -211,6 +211,7 @@ void Cardiovascular::Initialize()
 
   //Initialize system data based on patient file inputs
   GetBloodVolume().Set(m_data.GetCurrentPatient().GetBloodVolumeBaseline());
+  m_BloodVolumeEstimate = m_data.GetCurrentPatient().GetBloodVolumeBaseline().GetValue(VolumeUnit::mL);
   m_CardiacCycleAortaPressureHigh_mmHg = m_data.GetCurrentPatient().GetSystolicArterialPressureBaseline(PressureUnit::mmHg);
   m_CardiacCycleAortaPressureLow_mmHg = m_data.GetCurrentPatient().GetDiastolicArterialPressureBaseline(PressureUnit::mmHg);
   GetMeanArterialPressure().SetValue((2. / 3.*m_CardiacCycleAortaPressureLow_mmHg) + (1. / 3.*m_CardiacCycleAortaPressureHigh_mmHg), PressureUnit::mmHg);
@@ -603,6 +604,8 @@ void Cardiovascular::PreProcess()
   ProcessActions();
   UpdateHeartRhythm();
   CalculatePleuralCavityVenousEffects();
+  //m_data.GetDataTrack().Probe("BloodVolumeEstimate", m_BloodVolumeEstimate/1000.0);
+
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -1215,6 +1218,10 @@ void Cardiovascular::Hemorrhage()
   patientMass_kg -= massLost_kg;
 
   m_data.GetCurrentPatient().GetWeight().SetValue(patientMass_kg, MassUnit::kg);
+
+  //Debugging hemorrhage
+  m_BloodVolumeEstimate -= (TotalLossRate_mL_Per_s * m_dT_s);
+
 }
 
 //--------------------------------------------------------------------------------------------------

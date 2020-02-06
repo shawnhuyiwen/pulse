@@ -211,6 +211,9 @@ protected:
 
   std::vector<SEFluidCircuitPath*> m_systemicResistancePaths;
   std::vector<SEFluidCircuitPath*> m_systemicCompliancePaths;
+
+  //debugging hemorrhage
+  double m_BloodVolumeEstimate;
 };
 
 
