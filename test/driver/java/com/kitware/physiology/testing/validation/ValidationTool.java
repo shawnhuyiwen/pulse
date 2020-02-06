@@ -70,6 +70,18 @@ public abstract class ValidationTool
   protected Map<String,List<Double>>        resultData = new HashMap<String,List<Double>>();
   protected Map<String,SEPatientAssessment> assessments;
 
+  protected class SummaryRow
+  {
+    public String str_success;
+    public String str_warning;
+    public String str_danger;
+    public String str_total;
+    public int num_success = 0;
+    public int num_warning = 0;
+    public int num_danger = 0;
+    public int other=0;
+    public int total=0;
+  }
   protected class ValidationRow
   {
     public DataType dType = null;
@@ -101,8 +113,8 @@ public abstract class ValidationTool
     public List<Double> idealWeight;
     
     public String doubleFormat="3f";
-    public double successTolerance = 10;
-    public double warningTolerance = 30;
+    public static final int successTolerance = 10;
+    public static final int warningTolerance = 30;
   }
 
   public void loadData(String csv_root)
@@ -173,6 +185,7 @@ public abstract class ValidationTool
       Map<String,List<ValidationRow>> tables = new HashMap<String,List<ValidationRow>>();
       Map<String,List<ValidationRow>> tableErrors = new HashMap<String,List<ValidationRow>>();
       List<ValidationRow> allRows = new ArrayList<ValidationRow>();
+      Map<String,SummaryRow> summary = new TreeMap<String, SummaryRow>();
       for(int i=0; i<xlWBook.getNumberOfSheets(); i++)
       {
         XSSFSheet xlSheet = xlWBook.getSheetAt(i);
@@ -438,12 +451,13 @@ public abstract class ValidationTool
             else
               tableErrors.get(vRow.table).add(vRow);
           }
-        
+
           for(String name : tables.keySet())
           {
             if(name.contains("All"))
               continue;
             List<ValidationRow> t = tables.get(name);
+            AddToSummary(summary, name, t);
             WriteHTML(t,name);
             WriteDoxyTable(t,name,destinationDirectory);
             if(name.equalsIgnoreCase(sheetName))
@@ -461,6 +475,7 @@ public abstract class ValidationTool
           }
         }
       }
+      WriteSummary(summary, destinationDirectory);
       xlWBook.close();
       WriteHTML(badSheets,fileName+" Errors");
       html.append("</body>");
@@ -1114,6 +1129,110 @@ public abstract class ValidationTool
       }            
     } 
     return results;
+  }
+  
+  protected void AddToSummary(Map<String,SummaryRow> summary, String sheetName, List<ValidationRow> vData)
+  {
+    SummaryRow row = new SummaryRow();
+    for(ValidationRow vRow : vData)
+    {
+      row.total++;
+      if(Double.isNaN(vRow.resultError))
+        row.other++;
+      else if(vRow.resultError < ValidationRow.successTolerance)
+        row.num_success++;
+      else if(vRow.resultError < ValidationRow.warningTolerance)
+        row.num_warning++;
+      else
+        row.num_danger++;
+    }
+    row.str_success = ValidationTool.success + Integer.toString(row.num_success) + ValidationTool.endSpan;
+    row.str_warning = ValidationTool.warning + Integer.toString(row.num_warning) + ValidationTool.endSpan;
+    row.str_danger = ValidationTool.danger + Integer.toString(row.num_danger) + ValidationTool.endSpan;
+    if(sheetName.contains("Patient"))
+      sheetName = sheetName.substring(0,sheetName.length()-7);
+    row.str_total = Integer.toString(row.total);
+    summary.put("%"+sheetName,row);
+  }
+  protected void WriteSummary(Map<String,SummaryRow> summary, String destinationDirectory)
+  {
+    if(summary.isEmpty())
+      return;
+    String columnHeaders[] = new String[5];
+    int maxColumnLength[] = new int[columnHeaders.length];
+    columnHeaders[0] = "Category";
+    columnHeaders[1] = " < "+Integer.toString(ValidationRow.successTolerance)+"% ";
+    columnHeaders[2] = " "+Integer.toString(ValidationRow.successTolerance)+"%-"+Integer.toString(ValidationRow.warningTolerance)+"%";
+    columnHeaders[3] = " > "+Integer.toString(ValidationRow.warningTolerance)+"% ";
+    columnHeaders[4] = " Total ";
+    for(int i=0; i<maxColumnLength.length; i++)
+      maxColumnLength[i] = columnHeaders[i].length();
+    // Size the category column appropriately 
+    for(String sName : summary.keySet())
+    {
+      SummaryRow sRow = summary.get(sName);
+      if(sName.length()>maxColumnLength[0])
+        maxColumnLength[0] = sName.length();
+      if(sRow.str_success.length()>maxColumnLength[1])
+        maxColumnLength[1] = sRow.str_success.length();
+      if(sRow.str_warning.length()>maxColumnLength[2])
+        maxColumnLength[2] = sRow.str_warning.length();
+      if(sRow.str_danger.length()>maxColumnLength[3])
+        maxColumnLength[3] = sRow.str_danger.length();
+      if(sRow.str_total.length()>maxColumnLength[4])
+        maxColumnLength[4] = sRow.str_total.length();
+    }
+    
+    String tableName = TABLE_TYPE + "Summary";
+    
+    int success = 0;
+    int warning = 0;
+    int danger  = 0;
+    int total   = 0;
+    PrintWriter writer=null;
+    try
+    {
+      // Create file and start the table
+      writer = new PrintWriter(destinationDirectory+"/"+tableName+"ValidationTable.md", "UTF-8");
+      for(int i=0; i<columnHeaders.length; i++)
+        writer.print("|"+pad(columnHeaders[i],maxColumnLength[i]));
+      writer.println("|");
+      for(int i=0; i<columnHeaders.length; i++)
+        writer.print("|"+pad("---",maxColumnLength[i]));
+      writer.println("|");
+      // Now loop the vData and write out table rows
+      for(String sName : summary.keySet())
+      {
+        SummaryRow sRow = summary.get(sName);
+        writer.print("|"+pad(sName,maxColumnLength[0]));
+        writer.print("|"+pad(sRow.str_success,maxColumnLength[1]));
+        writer.print("|"+pad(sRow.str_warning,maxColumnLength[2]));
+        writer.print("|"+pad(sRow.str_danger,maxColumnLength[3]));
+        writer.print("|"+pad(sRow.str_total,maxColumnLength[4]));
+        writer.println("|");
+        success += sRow.num_success;
+        warning += sRow.num_warning;
+        danger += sRow.num_danger;
+        total += sRow.total;
+      }
+      String str_success = ValidationTool.success + Integer.toString(success) + ValidationTool.endSpan;
+      String str_warning = ValidationTool.warning + Integer.toString(warning) + ValidationTool.endSpan;
+      String str_danger = ValidationTool.danger + Integer.toString(danger) + ValidationTool.endSpan;
+      String str_total = Integer.toString(total);
+      writer.print("|"+pad("Total",maxColumnLength[0]));
+      writer.print("|"+pad(str_success,maxColumnLength[1]));
+      writer.print("|"+pad(str_warning,maxColumnLength[2]));
+      writer.print("|"+pad(str_danger,maxColumnLength[3]));
+      writer.print("|"+pad(str_total,maxColumnLength[4]));
+      writer.println("|");
+
+      writer.close();
+    }
+    catch(Exception ex)
+    {
+      Log.error("Error writing validation table for "+tableName,ex);
+      writer.close();
+    }
   }
 
   protected void WriteDoxyTable(List<ValidationRow> vData, String sheetName, String destinationDirectory)
