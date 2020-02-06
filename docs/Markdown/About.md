@@ -35,7 +35,15 @@ Models are validated using a combination of peer-reviewed publications and subje
   - Using custom developed tools to compare data, perform analysis, and generate plots and tables of results
 
 We validate each system at a compartment level (pressure, flow, volume, temperature, etc.). We also validate each action for a variety of system level parameters (heart rate, respiratory rate, tidal volume, blood pressure, etc.). 
-We provide reports for each system in our Methodology documentation. Below is a summary of our system level validation.
+We provide reports for each system in our <a href="_system_methodology.html">Methodology documentation.</a>
+
+Below is a summary of our system and compartment level validation.
+
+|	Key	|
+|	---	|
+|<span class="success"> Good agreement: correct trends or <10% deviation from expected </span>|
+|<span class="warning"> Some deviation: correct trend and/or <30% deviation from expected </span>|
+|<span class="danger"> Poor agreement: incorrect trends or >30% deviation from expected </span>|
 
 @insert ./test_results/tables/SystemSummaryValidationTable.md
 
