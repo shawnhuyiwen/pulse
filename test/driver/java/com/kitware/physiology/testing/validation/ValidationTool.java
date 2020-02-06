@@ -1137,11 +1137,12 @@ public abstract class ValidationTool
     for(ValidationRow vRow : vData)
     {
       row.total++;
+      double abs = Math.abs(vRow.resultError);
       if(Double.isNaN(vRow.resultError))
         row.other++;
-      else if(vRow.resultError < ValidationRow.successTolerance)
+      else if(abs < ValidationRow.successTolerance)
         row.num_success++;
-      else if(vRow.resultError < ValidationRow.warningTolerance)
+      else if(abs < ValidationRow.warningTolerance)
         row.num_warning++;
       else
         row.num_danger++;
