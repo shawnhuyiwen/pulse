@@ -2,10 +2,35 @@
 # See accompanying NOTICE file for details.
 from enum import Enum
 from pulse.cdm.engine import SEAction
-from pulse.cdm.scalars import SEScalarVolumePerTime
+from pulse.cdm.scalars import SEScalar0To1, SEScalarVolumePerTime
 
 class SEPatientAction(SEAction):
     pass
+
+class SEExercise(SEPatientAction):
+    __slots__ = ["_intensity"]
+
+    def __init__(self):
+        self._intensity = None
+
+    def clear(self):
+        super().clear()
+        if self._intensity is not None:
+            self._intensity.invalidate()
+
+    def is_valid(self):
+        return self.has_intensity()
+
+    def has_intensity(self):
+        return False if self._intensity is None else self._intensity.is_valid()
+    def get_intensity(self):
+        if self._intensity is None:
+            self._intensity = SEScalar0To1()
+        return self._intensity
+
+    def __repr__(self):
+        return ("Exercise\n"
+                "  Intensity: {}").format(self._intensity)
 
 class eHemorrhageType(Enum):
     External = 0

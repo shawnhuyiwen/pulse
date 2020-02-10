@@ -24,6 +24,15 @@ double SEScalar::dNaN()
   return d;
 }
 
+// Opposite of isnan which can be slow
+bool SEScalar::IsNumber(double d)
+{
+  if (d >= std::numeric_limits<double>::min()&&
+      d <= std::numeric_limits<double>::max())
+    return true;
+  return false;
+}
+
 const NoUnit NoUnit::unitless;
 
 SEScalar::SEScalar() : SEProperty()
@@ -52,8 +61,13 @@ bool SEScalar::Set(const SEScalar& s)
   if (m_readOnly)
     throw CommonDataModelException("Scalar is marked read-only");
   m_value = s.m_value;
-  m_isnan = (std::isnan(m_value)) ? true : false;
-  m_isinf = (std::isinf(m_value)) ? true : false;
+  m_isnan = false;
+  m_isinf = false;
+  if (!IsNumber(m_value))
+  {
+    m_isnan = (std::isnan(m_value)) ? true : false;
+    m_isinf = (std::isinf(m_value)) ? true : false;
+  }
   return true;
 }
 
@@ -124,16 +138,26 @@ void SEScalar::SetValue(double d)
   if (m_readOnly)
     throw CommonDataModelException("Scalar is marked read-only");
   m_value = d;
-  m_isnan = (std::isnan(m_value)) ? true : false;
-  m_isinf = (std::isinf(m_value)) ? true : false;
+  m_isnan = false;
+  m_isinf = false;
+  if (!IsNumber(m_value))
+  {
+    m_isnan = (std::isnan(m_value)) ? true : false;
+    m_isinf = (std::isinf(m_value)) ? true : false;
+  }
 }
 void SEScalar::ForceValue(double d)
 {
   if (m_readOnly)
     throw CommonDataModelException("Scalar is marked read-only");
   m_value = d;
-  m_isnan = (std::isnan(m_value)) ? true : false;
-  m_isinf = (std::isinf(m_value)) ? true : false;
+  m_isnan = false;
+  m_isinf = false;
+  if (!IsNumber(m_value))
+  {
+    m_isnan = (std::isnan(m_value)) ? true : false;
+    m_isinf = (std::isinf(m_value)) ? true : false;
+  }
 }
 
 double SEScalar::Increment(const SEScalar& s)
@@ -269,9 +293,14 @@ bool SEScalarQuantity<Unit>::Set(const SEScalarQuantity<Unit>& s)
   if (!s.IsValid())
     return false;
   m_value = s.m_value;
-  m_isnan = (std::isnan(m_value)) ? true : false;
-  m_isinf = (std::isinf(m_value)) ? true : false;
+  m_isnan = false;
+  m_isinf = false;
   m_unit = s.m_unit;
+  if (!IsNumber(m_value))
+  {
+    m_isnan = (std::isnan(m_value)) ? true : false;
+    m_isinf = (std::isinf(m_value)) ? true : false;
+  }
   return true;
 }
 
@@ -331,9 +360,14 @@ void SEScalarQuantity<Unit>::SetValue(double d, const Unit& unit)
   if (m_readOnly)
     throw CommonDataModelException("Scalar is marked read-only");
   m_value = d;
-  m_isnan = (std::isnan(m_value)) ? true : false;
-  m_isinf = (std::isinf(m_value)) ? true : false;
+  m_isnan = false;
+  m_isinf = false;
   m_unit = &unit;
+  if (!IsNumber(m_value))
+  {
+    m_isnan = (std::isnan(m_value)) ? true : false;
+    m_isinf = (std::isinf(m_value)) ? true : false;
+  }
 }
 template<typename Unit>
 void SEScalarQuantity<Unit>::ForceValue(double d, const Unit& unit)
@@ -341,8 +375,14 @@ void SEScalarQuantity<Unit>::ForceValue(double d, const Unit& unit)
   if (m_readOnly)
     throw CommonDataModelException("Scalar is marked read-only");
   m_value = d;
-  m_isnan = (std::isnan(m_value)) ? true : false;
-  m_isinf = (std::isinf(m_value)) ? true : false;
+  m_isnan = false;
+  m_isinf = false;
+  m_unit = &unit;
+  if (!IsNumber(m_value))
+  {
+    m_isnan = (std::isnan(m_value)) ? true : false;
+    m_isinf = (std::isinf(m_value)) ? true : false;
+  }
   m_unit = &unit;
 }
 

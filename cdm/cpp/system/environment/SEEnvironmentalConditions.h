@@ -113,4 +113,4 @@ protected:
   std::vector<const SESubstanceConcentration*> m_cAmbientAerosols;
 
   SESubstanceManager&               m_Substances;
-};                  
+};

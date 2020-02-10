@@ -194,7 +194,7 @@ namespace Pulse.CDM
 
     public string GetName() { return name; }
     public void SetName(string n) { name = n; }
-    public bool HasName() { return name == null; }
+    public bool HasName() { return name != null; }
     public void InvalidateName() { name = null; }
 
     public eSex GetSex() { return sex; }

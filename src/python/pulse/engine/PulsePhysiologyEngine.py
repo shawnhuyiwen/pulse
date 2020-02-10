@@ -1,8 +1,10 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 import PyPulse
+from pulse.cdm.patient import SEPatientConfiguration
 from pulse.cdm.engine import SEAction, eSerializationFormat
-from pulse.cdm.io import SerializeActions
+from pulse.cdm.io import serialize_actions_to_string
+from pulse.cdm import io
 
 class PulsePhysiologyEngine:
     __slots__ = ['__pulse', "results"]
@@ -19,11 +21,19 @@ class PulsePhysiologyEngine:
             fmt = PyPulse.serialization_format.binary
         return self.__pulse.serialize_from_file(state_file, "", fmt, start_time)
 
+    def initialize_engine(self, patient_configuration: SEPatientConfiguration, data_requests):
+        # Process requests and setup our results structure
+        self.process_requests(data_requests)
+        pc = io.serialize_patient_configuration_to_string(patient_configuration, eSerializationFormat.JSON)
+        return self.__pulse.initialize_engine(pc, "", PyPulse.serialization_format.json )
+
     def advance_time(self):
         return self.__pulse.advance_timestep()
 
     def advance_time_s(self, duration_s: float):
-        for n in range(500):
+        # TODO this is assuming duration_s is a factor of 0.02
+        num_steps = int(duration_s / 0.02)
+        for n in range(num_steps):
             self.__pulse.advance_timestep()
 
     def pull_data(self):
@@ -53,7 +63,7 @@ class PulsePhysiologyEngine:
         self.process_actions(actions)
 
     def process_actions(self, actions: []):
-        json = SerializeActions(actions,eSerializationFormat.JSON)
+        json = serialize_actions_to_string(actions,eSerializationFormat.JSON)
         print(json)
         self.__pulse.process_actions(json,PyPulse.serialization_format.json)
 

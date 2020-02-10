@@ -96,6 +96,7 @@ void SEInitialEnvironmentConditions::ToString(std::ostream &str) const
   if (HasConditions())
   {
     str << "\n\tSurroundingType: " << eSurroundingType_Name(m_Conditions->GetSurroundingType());
+    str << "\n\tAir Density: ";  m_Conditions->HasAirDensity() ? str << m_Conditions->GetAirDensity() : str << "Not Set";
     str << "\n\tAir Velocity: ";  m_Conditions->HasAirVelocity() ? str << m_Conditions->GetAirVelocity() : str << "Not Set";
     str << "\n\tAmbient Temperature: ";  m_Conditions->HasAmbientTemperature() ? str << m_Conditions->GetAmbientTemperature() : str << "Not Set";
     str << "\n\tAtmospheric Pressure: ";  m_Conditions->HasAtmosphericPressure() ? str << m_Conditions->GetAtmosphericPressure() : str << "Not Set";

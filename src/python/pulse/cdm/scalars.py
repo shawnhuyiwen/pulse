@@ -19,6 +19,12 @@ class SEScalar():
     def is_valid(self):
         return self._value is not None
 
+    def is_positive(self):
+        return self._value is not None and self._value > 0
+
+    def is_negative(self):
+        return self._value is not None and self._value < 0
+
     def get_value(self):
         return self._value
     def set_value(self, value: float):
@@ -31,7 +37,7 @@ class SEScalar():
 
 class SEScalar0To1(SEScalar):
     def set_value(self, value: float):
-        if value>1 or value<0:
+        if value>1.0 or value<0.0:
             raise Exception("Scalar0To1 must be [0,1]")
         self._value = value
 
@@ -70,7 +76,13 @@ class SEScalarUnit():
         return "({})".format(self._string)
 
 class AreaUnit(SEScalarUnit):
-    pass
+    @staticmethod
+    def from_string(string: str):
+        if string == AreaUnit.cm2.get_string():
+            return AreaUnit.cm2
+        if string == AreaUnit.m2.get_string():
+            return AreaUnit.m2
+        raise Exception("No AreaUnit defined for " + string)
 AreaUnit.cm2 = AreaUnit("cm^2")
 AreaUnit.m2 = AreaUnit("m^2")
 class SEScalarArea(SEScalarQuantity):
@@ -86,14 +98,14 @@ class SEScalarArea(SEScalarQuantity):
             self._value = scalar._value
             self._units = scalar._units
         else:
-            raise Exception("Provided argument must be a SEScalar")
+            raise Exception("Provided argument must be a SEScalarArea")
 
     def get_value(self, units: AreaUnit=None):
         if self.is_valid() is False:
             return None
         if units is None:
             return self._value
-        if self._units.get_string() is units.get_string():
+        if self._units is units:
             return self._value
         else:
             raise Exception("Unit converter not connected")
@@ -106,7 +118,15 @@ class SEScalarArea(SEScalarQuantity):
             raise Exception("Provided argument must be a AreaUnit")
 
 class FrequencyUnit(SEScalarUnit):
-    pass
+    @staticmethod
+    def from_string(string: str):
+        if string == FrequencyUnit.Per_min.get_string():
+            return FrequencyUnit.Per_min
+        if string == FrequencyUnit.Per_s.get_string():
+            return FrequencyUnit.Per_s
+        if string == FrequencyUnit.Hz.get_string():
+            return FrequencyUnit.Hz
+        raise Exception("No FrequencyUnit defined for " + string)
 FrequencyUnit.Per_min = FrequencyUnit("1/min")
 FrequencyUnit.Per_s = FrequencyUnit("1/s")
 FrequencyUnit.Hz = FrequencyUnit("Hz")
@@ -123,14 +143,14 @@ class SEScalarFrequency(SEScalarQuantity):
             self._value = scalar._value
             self._units = scalar._units
         else:
-            raise Exception("Provided argument must be a SEScalar")
+            raise Exception("Provided argument must be a SEScalarFrequency")
 
     def get_value(self, units: FrequencyUnit=None):
         if self.is_valid() is False:
             return None
         if units is None:
             return self._value
-        if self._units.get_string() is units.get_string():
+        if self._units is units:
             return self._value
         else:
             raise Exception("Unit converter not connected")
@@ -142,8 +162,66 @@ class SEScalarFrequency(SEScalarQuantity):
         else:
             raise Exception("Provided argument must be a FrequencyUnit")
 
+class HeatResistanceAreaUnit(SEScalarUnit):
+    @staticmethod
+    def from_string(string: str):
+        if string == HeatResistanceAreaUnit.rsi.get_string():
+            return HeatResistanceAreaUnit.rsi
+        if string == HeatResistanceAreaUnit.clo.get_string():
+            return HeatResistanceAreaUnit.clo
+        if string == HeatResistanceAreaUnit.rValue.get_string():
+            return HeatResistanceAreaUnit.rValue
+        if string == HeatResistanceAreaUnit.tog.get_string():
+            return HeatResistanceAreaUnit.tog
+        raise Exception("No HeatResistanceAreaUnit defined for " + string)
+HeatResistanceAreaUnit.rsi = HeatResistanceAreaUnit("rsi")
+HeatResistanceAreaUnit.clo = HeatResistanceAreaUnit("clo")
+HeatResistanceAreaUnit.rValue = HeatResistanceAreaUnit("rValue")
+HeatResistanceAreaUnit.tog = HeatResistanceAreaUnit("tog")
+class SEScalarHeatResistanceArea(SEScalarQuantity):
+
+    def __init__(self, value:float=None, units:HeatResistanceAreaUnit=None):
+        if value is None or units is None:
+            self.invalidate()
+        else:
+            self.set_value(value,units)
+
+    def set(self, scalar):
+        if isinstance(SEScalarHeatResistanceArea, scalar):
+            self._value = scalar._value
+            self._units = scalar._units
+        else:
+            raise Exception("Provided argument must be a SEScalarHeatResistanceArea")
+
+    def get_value(self, units: HeatResistanceAreaUnit=None):
+        if self.is_valid() is False:
+            return None
+        if units is None:
+            return self._value
+        if self._units is units:
+            return self._value
+        else:
+            raise Exception("Unit converter not connected")
+
+    def set_value(self, value: float, units: HeatResistanceAreaUnit):
+        if isinstance(units, HeatResistanceAreaUnit):
+            self._value = value
+            self._units = units
+        else:
+            raise Exception("Provided argument must be a HeatResistanceAreaUnit")
+
 class InversePressureUnit(SEScalarUnit):
-    pass
+    @staticmethod
+    def from_string(string: str):
+        if string == InversePressureUnit.Inverse_Pa.get_string():
+            return InversePressureUnit.Inverse_Pa
+        if string == InversePressureUnit.Inverse_mmHg.get_string():
+            return InversePressureUnit.Inverse_mmHg
+        if string == InversePressureUnit.Inverse_cmH2O.get_string():
+            return InversePressureUnit.Inverse_cmH2O
+        if string == InversePressureUnit.Inverse_atm.get_string():
+            return InversePressureUnit.Inverse_atm
+        raise Exception("No InversePressureUnit defined for " + string)
 InversePressureUnit.Inverse_Pa = InversePressureUnit("1/Pa")
 InversePressureUnit.Inverse_mmHg = InversePressureUnit("1/mmHg")
 InversePressureUnit.Inverse_cmH2O = InversePressureUnit("1/cmH2O")
@@ -161,14 +239,14 @@ class SEScalarInversePressure(SEScalarQuantity):
             self._value = scalar._value
             self._units = scalar._units
         else:
-            raise Exception("Provided argument must be a SEScalar")
+            raise Exception("Provided argument must be a SEScalarInversePressure")
 
     def get_value(self, units: InversePressureUnit=None):
         if self.is_valid() is False:
             return None
         if units is None:
             return self._value
-        if self._units.get_string() is units.get_string():
+        if self._units is units:
             return self._value
         else:
             raise Exception("Unit converter not connected")
@@ -181,12 +259,26 @@ class SEScalarInversePressure(SEScalarQuantity):
             raise Exception("Provided argument must be a InversePressureUnit")
 
 class LengthUnit(SEScalarUnit):
-    pass
+    @staticmethod
+    def from_string(string: str):
+        if string == LengthUnit.m.get_string():
+            return LengthUnit.m
+        if string == LengthUnit.cm.get_string():
+            return LengthUnit.cm
+        if string == LengthUnit.mm.get_string():
+            return LengthUnit.mm
+        if string == LengthUnit.um.get_string():
+            return LengthUnit.um
+        if string == LengthUnit.inch.get_string():
+            return LengthUnit.inch
+        if string == LengthUnit.ft.get_string():
+            return LengthUnit.ft
+        raise Exception("No LengthUnit defined for " + string)
 LengthUnit.m = LengthUnit("m")
 LengthUnit.cm = LengthUnit("cm")
 LengthUnit.mm = LengthUnit("mm")
 LengthUnit.um = LengthUnit("um")
-LengthUnit.inch = LengthUnit("inch")
+LengthUnit.inch = LengthUnit("in")
 LengthUnit.ft = LengthUnit("ft")
 class SEScalarLength(SEScalarQuantity):
 
@@ -201,14 +293,14 @@ class SEScalarLength(SEScalarQuantity):
             self._value = scalar._value
             self._units = scalar._units
         else:
-            raise Exception("Provided argument must be a SEScalar")
+            raise Exception("Provided argument must be a SEScalarLength")
 
     def get_value(self, units: LengthUnit=None):
         if self.is_valid() is False:
             return None
         if units is None:
             return self._value
-        if self._units.get_string() is units.get_string():
+        if self._units is units:
             return self._value
         else:
             raise Exception("Unit converter not connected")
@@ -220,8 +312,78 @@ class SEScalarLength(SEScalarQuantity):
         else:
             raise Exception("Provided argument must be a LengthUnit")
 
+class LengthPerTimeUnit(SEScalarUnit):
+    @staticmethod
+    def from_string(string: str):
+        if string == LengthPerTimeUnit.m_Per_s.get_string():
+            return LengthPerTimeUnit.m_Per_s
+        if string == LengthPerTimeUnit.cm_Per_s.get_string():
+            return LengthPerTimeUnit.cm_Per_s
+        if string == LengthPerTimeUnit.m_Per_min.get_string():
+            return LengthPerTimeUnit.m_Per_min
+        if string == LengthPerTimeUnit.cm_Per_min.get_string():
+            return LengthPerTimeUnit.cm_Per_min
+        if string == LengthPerTimeUnit.ft_Per_s.get_string():
+            return LengthPerTimeUnit.ft_Per_s
+        if string == LengthPerTimeUnit.ft_Per_min.get_string():
+            return LengthPerTimeUnit.ft_Per_min
+        if string == LengthPerTimeUnit.km_Per_hr.get_string():
+            return LengthPerTimeUnit.km_Per_hr
+        raise Exception("No LengthPerTimeUnit defined for " + string)
+LengthPerTimeUnit.m_Per_s = LengthPerTimeUnit("m/s")
+LengthPerTimeUnit.cm_Per_s = LengthPerTimeUnit("cm/s")
+LengthPerTimeUnit.m_Per_min = LengthPerTimeUnit("m/min")
+LengthPerTimeUnit.cm_Per_min = LengthPerTimeUnit("cm/min")
+LengthPerTimeUnit.ft_Per_s = LengthPerTimeUnit("ft/s")
+LengthPerTimeUnit.ft_Per_min = LengthPerTimeUnit("ft/min")
+LengthPerTimeUnit.km_Per_hr = LengthPerTimeUnit("km/hr")
+class SEScalarLengthPerTime(SEScalarQuantity):
+
+    def __init__(self, value:float=None, units:LengthPerTimeUnit=None):
+        if value is None or units is None:
+            self.invalidate()
+        else:
+            self.set_value(value,units)
+
+    def set(self, scalar):
+        if isinstance(SEScalarLengthPerTime, scalar):
+            self._value = scalar._value
+            self._units = scalar._units
+        else:
+            raise Exception("Provided argument must be a SEScalarLengthPerTime")
+
+    def get_value(self, units: LengthPerTimeUnit=None):
+        if self.is_valid() is False:
+            return None
+        if units is None:
+            return self._value
+        if self._units is units:
+            return self._value
+        else:
+            raise Exception("Unit converter not connected")
+
+    def set_value(self, value: float, units: LengthPerTimeUnit):
+        if isinstance(units, LengthPerTimeUnit):
+            self._value = value
+            self._units = units
+        else:
+            raise Exception("Provided argument must be a LengthUnit")
+
+
 class MassUnit(SEScalarUnit):
-    pass
+    @staticmethod
+    def from_string(string: str):
+        if string == MassUnit.g.get_string():
+            return MassUnit.g
+        if string == MassUnit.ug.get_string():
+            return MassUnit.ug
+        if string == MassUnit.mg.get_string():
+            return MassUnit.mg
+        if string == MassUnit.kg.get_string():
+            return MassUnit.kg
+        if string == MassUnit.lb.get_string():
+            return MassUnit.lb
+        raise Exception("No MassUnit defined for " + string)
 MassUnit.g = MassUnit("g")
 MassUnit.ug = MassUnit("ug")
 MassUnit.mg = MassUnit("mg")
@@ -240,14 +402,14 @@ class SEScalarMass(SEScalarQuantity):
             self._value = scalar._value
             self._units = scalar._units
         else:
-            raise Exception("Provided argument must be a SEScalar")
+            raise Exception("Provided argument must be a SEScalarMass")
 
     def get_value(self, units: MassUnit=None):
         if self.is_valid() is False:
             return None
         if units is None:
             return self._value
-        if self._units.get_string() is units.get_string():
+        if self._units is units:
             return self._value
         else:
             raise Exception("Unit converter not connected")
@@ -260,7 +422,31 @@ class SEScalarMass(SEScalarQuantity):
             raise Exception("Provided argument must be a MassUnit")
 
 class MassPerAmountUnit(SEScalarUnit):
-    pass
+    @staticmethod
+    def from_string(string: str):
+        if string == MassPerAmountUnit.g_Per_ct.get_string():
+            return MassPerAmountUnit.g_Per_ct
+        if string == MassPerAmountUnit.g_Per_mol.get_string():
+            return MassPerAmountUnit.g_Per_mol
+        if string == MassPerAmountUnit.g_Per_mmol.get_string():
+            return MassPerAmountUnit.g_Per_mmol
+        if string == MassPerAmountUnit.g_Per_umol.get_string():
+            return MassPerAmountUnit.g_Per_umol
+        if string == MassPerAmountUnit.mg_Per_mol.get_string():
+            return MassPerAmountUnit.mg_Per_mol
+        if string == MassPerAmountUnit.mg_Per_mmol.get_string():
+            return MassPerAmountUnit.mg_Per_mmol
+        if string == MassPerAmountUnit.kg_Per_mol.get_string():
+            return MassPerAmountUnit.kg_Per_mol
+        if string == MassPerAmountUnit.ug_Per_mmol.get_string():
+            return MassPerAmountUnit.ug_Per_mmol
+        if string == MassPerAmountUnit.ug_Per_mol.get_string():
+            return MassPerAmountUnit.ug_Per_mol
+        if string == MassPerAmountUnit.ug_Per_ct.get_string():
+            return MassPerAmountUnit.ug_Per_ct
+        if string == MassPerAmountUnit.pg_Per_ct.get_string():
+            return MassPerAmountUnit.pg_Per_ct
+        raise Exception("No MassPerAmountUnit defined for " + string)
 MassPerAmountUnit.g_Per_ct = MassPerAmountUnit("g/ct")
 MassPerAmountUnit.g_Per_mol = MassPerAmountUnit("g/mol")
 MassPerAmountUnit.g_Per_mmol = MassPerAmountUnit("g/mmol")
@@ -285,14 +471,14 @@ class SEScalarMassPerAmount(SEScalarQuantity):
             self._value = scalar._value
             self._units = scalar._units
         else:
-            raise Exception("Provided argument must be a SEScalar")
+            raise Exception("Provided argument must be a SEScalarMassPerAmount")
 
     def get_value(self, units: MassPerAmountUnit=None):
         if self.is_valid() is False:
             return None
         if units is None:
             return self._value
-        if self._units.get_string() is units.get_string():
+        if self._units is units:
             return self._value
         else:
             raise Exception("Unit converter not connected")
@@ -305,7 +491,11 @@ class SEScalarMassPerAmount(SEScalarQuantity):
             raise Exception("Provided argument must be a MassPerAmountUnit")
 
 class MassPerAreaTimeUnit(SEScalarUnit):
-    pass
+    @staticmethod
+    def from_string(string: str):
+        if string == MassPerAreaTimeUnit.g_Per_cm2_s.get_string():
+            return MassPerAreaTimeUnit.g_Per_cm2_s
+        raise Exception("No MassPerAreaTimeUnit defined for " + string)
 MassPerAreaTimeUnit.g_Per_cm2_s = MassPerAreaTimeUnit("g/cm^2 s")
 class SEScalarMassPerAreaTime(SEScalarQuantity):
 
@@ -320,14 +510,14 @@ class SEScalarMassPerAreaTime(SEScalarQuantity):
             self._value = scalar._value
             self._units = scalar._units
         else:
-            raise Exception("Provided argument must be a SEScalar")
+            raise Exception("Provided argument must be a SEScalarMassPerAreaTime")
 
     def get_value(self, units: MassPerAreaTimeUnit=None):
         if self.is_valid() is False:
             return None
         if units is None:
             return self._value
-        if self._units.get_string() is units.get_string():
+        if self._units is units:
             return self._value
         else:
             raise Exception("Unit converter not connected")
@@ -340,7 +530,25 @@ class SEScalarMassPerAreaTime(SEScalarQuantity):
             raise Exception("Provided argument must be a MassPerAreaTimeUnit")
 
 class MassPerTimeUnit(SEScalarUnit):
-    pass
+    @staticmethod
+    def from_string(string: str):
+        if string == MassPerTimeUnit.g_Per_s.get_string():
+            return MassPerTimeUnit.g_Per_s
+        if string == MassPerTimeUnit.g_Per_min.get_string():
+            return MassPerTimeUnit.g_Per_min
+        if string == MassPerTimeUnit.g_Per_day.get_string():
+            return MassPerTimeUnit.g_Per_day
+        if string == MassPerTimeUnit.mg_Per_s.get_string():
+            return MassPerTimeUnit.mg_Per_s
+        if string == MassPerTimeUnit.mg_Per_min.get_string():
+            return MassPerTimeUnit.mg_Per_min
+        if string == MassPerTimeUnit.ug_Per_s.get_string():
+            return MassPerTimeUnit.ug_Per_s
+        if string == MassPerTimeUnit.kg_Per_s.get_string():
+            return MassPerTimeUnit.kg_Per_s
+        if string == MassPerTimeUnit.ug_Per_min.get_string():
+            return MassPerTimeUnit.ug_Per_min
+        raise Exception("No MassPerTimeUnit defined for " + string)
 MassPerTimeUnit.g_Per_s = MassPerTimeUnit("g/s")
 MassPerTimeUnit.g_Per_min = MassPerTimeUnit("g/min")
 MassPerTimeUnit.g_Per_day = MassPerTimeUnit("g/day")
@@ -362,14 +570,14 @@ class SEScalarMassPerTime(SEScalarQuantity):
             self._value = scalar._value
             self._units = scalar._units
         else:
-            raise Exception("Provided argument must be a SEScalar")
+            raise Exception("Provided argument must be a SEScalarMassPerTime")
 
     def get_value(self, units: MassPerTimeUnit=None):
         if self.is_valid() is False:
             return None
         if units is None:
             return self._value
-        if self._units.get_string() is units.get_string():
+        if self._units is units:
             return self._value
         else:
             raise Exception("Unit converter not connected")
@@ -382,7 +590,37 @@ class SEScalarMassPerTime(SEScalarQuantity):
             raise Exception("Provided argument must be a MassPerTimeUnit")
 
 class MassPerVolumeUnit(SEScalarUnit):
-    pass
+    @staticmethod
+    def from_string(string: str):
+        if string == MassPerVolumeUnit.g_Per_dL.get_string():
+            return MassPerVolumeUnit.g_Per_dL
+        if string == MassPerVolumeUnit.g_Per_cm3.get_string():
+            return MassPerVolumeUnit.g_Per_cm3
+        if string == MassPerVolumeUnit.g_Per_m3.get_string():
+            return MassPerVolumeUnit.g_Per_m3
+        if string == MassPerVolumeUnit.ug_Per_mL.get_string():
+            return MassPerVolumeUnit.ug_Per_mL
+        if string == MassPerVolumeUnit.mg_Per_m3.get_string():
+            return MassPerVolumeUnit.mg_Per_m3
+        if string == MassPerVolumeUnit.kg_Per_m3.get_string():
+            return MassPerVolumeUnit.kg_Per_m3
+        if string == MassPerVolumeUnit.ug_Per_L.get_string():
+            return MassPerVolumeUnit.ug_Per_L
+        if string == MassPerVolumeUnit.g_Per_L.get_string():
+            return MassPerVolumeUnit.g_Per_L
+        if string == MassPerVolumeUnit.g_Per_mL.get_string():
+            return MassPerVolumeUnit.g_Per_mL
+        if string == MassPerVolumeUnit.mg_Per_mL.get_string():
+            return MassPerVolumeUnit.mg_Per_mL
+        if string == MassPerVolumeUnit.mg_Per_L.get_string():
+            return MassPerVolumeUnit.mg_Per_L
+        if string == MassPerVolumeUnit.mg_Per_dL.get_string():
+            return MassPerVolumeUnit.mg_Per_dL
+        if string == MassPerVolumeUnit.kg_Per_mL.get_string():
+            return MassPerVolumeUnit.kg_Per_mL
+        if string == MassPerVolumeUnit.kg_Per_L.get_string():
+            return MassPerVolumeUnit.kg_Per_L
+        raise Exception("No MassPerVolumeUnit defined for " + string)
 MassPerVolumeUnit.g_Per_dL = MassPerVolumeUnit("g/dL")
 MassPerVolumeUnit.g_Per_cm3 = MassPerVolumeUnit("g/cm^3")
 MassPerVolumeUnit.g_Per_m3 = MassPerVolumeUnit("g/m^3")
@@ -410,14 +648,14 @@ class SEScalarMassPerVolume(SEScalarQuantity):
             self._value = scalar._value
             self._units = scalar._units
         else:
-            raise Exception("Provided argument must be a SEScalar")
+            raise Exception("Provided argument must be a SEScalarMassPerVolume")
 
     def get_value(self, units: MassPerVolumeUnit=None):
         if self.is_valid() is False:
             return None
         if units is None:
             return self._value
-        if self._units.get_string() is units.get_string():
+        if self._units is units:
             return self._value
         else:
             raise Exception("Unit converter not connected")
@@ -430,7 +668,21 @@ class SEScalarMassPerVolume(SEScalarQuantity):
             raise Exception("Provided argument must be a MassPerVolumeUnit")
 
 class PowerUnit(SEScalarUnit):
-    pass
+    @staticmethod
+    def from_string(string: str):
+        if string == PowerUnit.W.get_string():
+            return PowerUnit.W
+        if string == PowerUnit.kcal_Per_s.get_string():
+            return PowerUnit.kcal_Per_s
+        if string == PowerUnit.kcal_Per_hr.get_string():
+            return PowerUnit.kcal_Per_hr
+        if string == PowerUnit.kcal_Per_day.get_string():
+            return PowerUnit.kcal_Per_day
+        if string == PowerUnit.J_Per_s.get_string():
+            return PowerUnit.J_Per_s
+        if string == PowerUnit.BTU_Per_hr.get_string():
+            return PowerUnit.BTU_Per_hr
+        raise Exception("No PowerUnit defined for " + string)
 PowerUnit.W = PowerUnit("W")
 PowerUnit.kcal_Per_s = PowerUnit("kcal_Per_s")
 PowerUnit.kcal_Per_hr = PowerUnit("kcal_Per_hr")
@@ -450,14 +702,14 @@ class SEScalarPower(SEScalarQuantity):
             self._value = scalar._value
             self._units = scalar._units
         else:
-            raise Exception("Provided argument must be a SEScalar")
+            raise Exception("Provided argument must be a SEScalarPower")
 
     def get_value(self, units: PowerUnit=None):
         if self.is_valid() is False:
             return None
         if units is None:
             return self._value
-        if self._units.get_string() is units.get_string():
+        if self._units is units:
             return self._value
         else:
             raise Exception("Unit converter not connected")
@@ -470,7 +722,19 @@ class SEScalarPower(SEScalarQuantity):
             raise Exception("Provided argument must be a PowerUnit")
 
 class PressureUnit(SEScalarUnit):
-    pass
+    @staticmethod
+    def from_string(string: str):
+        if string == PressureUnit.Pa.get_string():
+            return PressureUnit.Pa
+        if string == PressureUnit.mmHg.get_string():
+            return PressureUnit.mmHg
+        if string == PressureUnit.cmH2O.get_string():
+            return PressureUnit.cmH2O
+        if string == PressureUnit.psi.get_string():
+            return PressureUnit.psi
+        if string == PressureUnit.atm.get_string():
+            return PressureUnit.atm
+        raise Exception("No PressureUnit defined for " + string)
 PressureUnit.Pa = PressureUnit("Pa")
 PressureUnit.mmHg = PressureUnit("mmHg")
 PressureUnit.cmH2O = PressureUnit("cmH2O")
@@ -489,14 +753,14 @@ class SEScalarPressure(SEScalarQuantity):
             self._value = scalar._value
             self._units = scalar._units
         else:
-            raise Exception("Provided argument must be a SEScalar")
+            raise Exception("Provided argument must be a SEScalarPressure")
 
     def get_value(self, units: PressureUnit=None):
         if self.is_valid() is False:
             return None
         if units is None:
             return self._value
-        if self._units.get_string() is units.get_string():
+        if self._units is units:
             return self._value
         else:
             raise Exception("Unit converter not connected")
@@ -508,8 +772,68 @@ class SEScalarPressure(SEScalarQuantity):
         else:
             raise Exception("Provided argument must be a PressureUnit")
 
+class TemperatureUnit(SEScalarUnit):
+    @staticmethod
+    def from_string(string: str):
+        if string == TemperatureUnit.F.get_string():
+            return TemperatureUnit.F
+        if string == TemperatureUnit.C.get_string():
+            return TemperatureUnit.C
+        if string == TemperatureUnit.K.get_string():
+            return TemperatureUnit.K
+        if string == TemperatureUnit.R.get_string():
+            return TemperatureUnit.R
+        raise Exception("No TemperatureUnit defined for " + string)
+TemperatureUnit.F = TemperatureUnit("degF")
+TemperatureUnit.C = TemperatureUnit("degC")
+TemperatureUnit.K = TemperatureUnit("K")
+TemperatureUnit.R = TemperatureUnit("degR")
+class SEScalarTemperature(SEScalarQuantity):
+
+    def __init__(self, value:float=None, units:TemperatureUnit=None):
+        if value is None or units is None:
+            self.invalidate()
+        else:
+            self.set_value(value,units)
+
+    def set(self, scalar):
+        if isinstance(SEScalarTemperature, scalar):
+            self._value = scalar._value
+            self._units = scalar._units
+        else:
+            raise Exception("Provided argument must be a SEScalarTemperature")
+
+    def get_value(self, units: TemperatureUnit=None):
+        if self.is_valid() is False:
+            return None
+        if units is None:
+            return self._value
+        if self._units is units:
+            return self._value
+        else:
+            raise Exception("Unit converter not connected")
+
+    def set_value(self, value: float, units: TemperatureUnit):
+        if isinstance(units, TemperatureUnit):
+            self._value = value
+            self._units = units
+        else:
+            raise Exception("Provided argument must be a TemperatureUnit")
+
 class TimeUnit(SEScalarUnit):
-    pass
+    @staticmethod
+    def from_string(string: str):
+        if string == TimeUnit.s.get_string():
+            return TimeUnit.s
+        if string == TimeUnit.min.get_string():
+            return TimeUnit.min
+        if string == TimeUnit.hr.get_string():
+            return TimeUnit.hr
+        if string == TimeUnit.day.get_string():
+            return TimeUnit.day
+        if string == TimeUnit.yr.get_string():
+            return TimeUnit.yr
+        raise Exception("No TimeUnit defined for " + string)
 TimeUnit.s = TimeUnit("s")
 TimeUnit.min = TimeUnit("min")
 TimeUnit.hr = TimeUnit("hr")
@@ -528,14 +852,14 @@ class SEScalarTime(SEScalarQuantity):
             self._value = scalar._value
             self._units = scalar._units
         else:
-            raise Exception("Provided argument must be a SEScalar")
+            raise Exception("Provided argument must be a SEScalarTime")
 
     def get_value(self, units: TimeUnit=None):
         if self.is_valid() is False:
             return None
         if units is None:
             return self._value
-        if self._units.get_string() is units.get_string():
+        if self._units is units:
             return self._value
         else:
             raise Exception("Unit converter not connected")
@@ -548,7 +872,17 @@ class SEScalarTime(SEScalarQuantity):
             raise Exception("Provided argument must be a TimeUnit")
 
 class VolumeUnit(SEScalarUnit):
-    pass
+    @staticmethod
+    def from_string(string: str):
+        if string == VolumeUnit.L.get_string():
+            return VolumeUnit.L
+        if string == VolumeUnit.mL.get_string():
+            return VolumeUnit.mL
+        if string == VolumeUnit.dL.get_string():
+            return VolumeUnit.dL
+        if string == VolumeUnit.m3.get_string():
+            return VolumeUnit.m3
+        raise Exception("No VolumeUnit defined for " + string)
 VolumeUnit.L = VolumeUnit("L")
 VolumeUnit.mL = VolumeUnit("mL")
 VolumeUnit.dL = VolumeUnit("dL")
@@ -566,14 +900,14 @@ class SEScalarVolume(SEScalarQuantity):
             self._value = scalar._value
             self._units = scalar._units
         else:
-            raise Exception("Provided argument must be a SEScalar")
+            raise Exception("Provided argument must be a SEScalarVolume")
 
     def get_value(self, units: VolumeUnit=None):
         if self.is_valid() is False:
             return None
         if units is None:
             return self._value
-        if self._units.get_string() is units.get_string():
+        if self._units is units:
             return self._value
         else:
             raise Exception("Unit converter not connected")
@@ -586,14 +920,33 @@ class SEScalarVolume(SEScalarQuantity):
             raise Exception("Provided argument must be a VolumeUnit")
 
 class VolumePerTimeUnit(SEScalarUnit):
-    pass
+    @staticmethod
+    def from_string(string: str):
+        if string is VolumePerTimeUnit.L_Per_s.get_string():
+            return VolumePerTimeUnit.L_Per_s
+        if string is VolumePerTimeUnit.L_Per_day.get_string():
+            return VolumePerTimeUnit.L_Per_day
+        if string is VolumePerTimeUnit.mL_Per_s.get_string():
+            return VolumePerTimeUnit.mL_Per_s
+        if string is VolumePerTimeUnit.mL_Per_day.get_string():
+            return VolumePerTimeUnit.mL_Per_day
+        if string is VolumePerTimeUnit.L_Per_min.get_string():
+            return VolumePerTimeUnit.L_Per_min
+        if string is VolumePerTimeUnit.m3_Per_s.get_string():
+            return VolumePerTimeUnit.m3_Per_s
+        if string is VolumePerTimeUnit.mL_Per_min.get_string():
+            return VolumePerTimeUnit.mL_Per_min
+        if string is VolumePerTimeUnit.mL_Per_hr.get_string():
+            return VolumePerTimeUnit.mL_Per_hr
+        raise Exception("No VolumePerTimeUnit defined for "+string)
 VolumePerTimeUnit.L_Per_s = VolumePerTimeUnit("L/s")
+VolumePerTimeUnit.L_Per_day = VolumePerTimeUnit("L/day")
 VolumePerTimeUnit.mL_Per_s = VolumePerTimeUnit("mL/s")
-VolumePerTimeUnit.mL_Per_min = VolumePerTimeUnit("mL/min")
+VolumePerTimeUnit.mL_Per_day = VolumePerTimeUnit("mL/day")
 VolumePerTimeUnit.L_Per_min = VolumePerTimeUnit("L/min")
 VolumePerTimeUnit.m3_Per_s = VolumePerTimeUnit("m^3/s")
 VolumePerTimeUnit.mL_Per_min = VolumePerTimeUnit("mL/min")
-VolumePerTimeUnit.mL_Per_day = VolumePerTimeUnit("mL/day")
+VolumePerTimeUnit.mL_Per_hr = VolumePerTimeUnit("mL/hr")
 class SEScalarVolumePerTime(SEScalarQuantity):
 
     def __init__(self, value:float=None, units:VolumePerTimeUnit=None):
@@ -607,14 +960,14 @@ class SEScalarVolumePerTime(SEScalarQuantity):
             self._value = scalar._value
             self._units = scalar._units
         else:
-            raise Exception("Provided argument must be a SEScalar")
+            raise Exception("Provided argument must be a SEScalarVolumePerTime")
 
     def get_value(self, units: VolumePerTimeUnit=None):
         if self.is_valid() is False:
             return None
         if units is None:
             return self._value
-        if self._units.get_string() is units.get_string():
+        if self._units is units:
             return self._value
         else:
             raise Exception("Unit converter not connected")
@@ -627,7 +980,19 @@ class SEScalarVolumePerTime(SEScalarQuantity):
             raise Exception("Provided argument must be a VolumePerTimeUnit")
 
 class VolumePerTimeMassUnit(SEScalarUnit):
-    pass
+    @staticmethod
+    def from_string(string: str):
+        if string == VolumePerTimeMassUnit.L_Per_s_g.get_string():
+            return VolumePerTimeMassUnit.L_Per_s_g
+        if string == VolumePerTimeMassUnit.mL_Per_s_g.get_string():
+            return VolumePerTimeMassUnit.mL_Per_s_g
+        if string == VolumePerTimeMassUnit.mL_Per_min_kg.get_string():
+            return VolumePerTimeMassUnit.mL_Per_min_kg
+        if string == VolumePerTimeMassUnit.mL_Per_s_kg.get_string():
+            return VolumePerTimeMassUnit.mL_Per_s_kg
+        if string == VolumePerTimeMassUnit.uL_Per_min_kg.get_string():
+            return VolumePerTimeMassUnit.uL_Per_min_kg
+        raise Exception("No VolumePerTimeMassUnit defined for " + string)
 VolumePerTimeMassUnit.L_Per_s_g = VolumePerTimeMassUnit("L/s g")
 VolumePerTimeMassUnit.mL_Per_s_g = VolumePerTimeMassUnit("mL/s g")
 VolumePerTimeMassUnit.mL_Per_min_kg = VolumePerTimeMassUnit("mL/min kg")
@@ -646,14 +1011,14 @@ class SEScalarVolumePerTimeMass(SEScalarQuantity):
             self._value = scalar._value
             self._units = scalar._units
         else:
-            raise Exception("Provided argument must be a SEScalar")
+            raise Exception("Provided argument must be a SEScalarVolumePerTimeMass")
 
     def get_value(self, units: VolumePerTimeMassUnit=None):
         if self.is_valid() is False:
             return None
         if units is None:
             return self._value
-        if self._units.get_string() is units.get_string():
+        if self._units is units:
             return self._value
         else:
             raise Exception("Unit converter not connected")
@@ -666,7 +1031,17 @@ class SEScalarVolumePerTimeMass(SEScalarQuantity):
             raise Exception("Provided argument must be a VolumePerTimeMassUnit")
 
 class VolumePerTimePressureUnit(SEScalarUnit):
-    pass
+    @staticmethod
+    def from_string(string: str):
+        if string == VolumePerTimePressureUnit.L_Per_s_mmHg.get_string():
+            return VolumePerTimePressureUnit.L_Per_s_mmHg
+        if string == VolumePerTimePressureUnit.mL_Per_s_mmHg.get_string():
+            return VolumePerTimePressureUnit.mL_Per_s_mmHg
+        if string == VolumePerTimePressureUnit.L_Per_min_mmHg.get_string():
+            return VolumePerTimePressureUnit.L_Per_min_mmHg
+        if string == VolumePerTimePressureUnit.mL_Per_min_mmHg.get_string():
+            return VolumePerTimePressureUnit.mL_Per_min_mmHg
+        raise Exception("No VolumePerTimePressureUnit defined for " + string)
 VolumePerTimePressureUnit.L_Per_s_mmHg = VolumePerTimePressureUnit("L/s mmHg")
 VolumePerTimePressureUnit.mL_Per_s_mmHg = VolumePerTimePressureUnit("mL/s mmHg")
 VolumePerTimePressureUnit.L_Per_min_mmHg = VolumePerTimePressureUnit("L/min mmHg")
@@ -684,14 +1059,14 @@ class SEScalarVolumePerTimePressure(SEScalarQuantity):
             self._value = scalar._value
             self._units = scalar._units
         else:
-            raise Exception("Provided argument must be a SEScalar")
+            raise Exception("Provided argument must be a SEScalarVolumePerTimePressure")
 
     def get_value(self, units: VolumePerTimePressureUnit=None):
         if self.is_valid() is False:
             return None
         if units is None:
             return self._value
-        if self._units.get_string() is units.get_string():
+        if self._units is units:
             return self._value
         else:
             raise Exception("Unit converter not connected")

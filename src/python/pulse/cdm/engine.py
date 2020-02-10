@@ -43,13 +43,10 @@ class SEAction(ABC):
 
     def has_comment(self):
         return self._comment is not None
-
     def get_comment(self):
         return self._comment
-
     def set_comment(self, comment: str):
         self._comment = comment
-
     def invalidate_comment(self):
         self._comment = None
 
@@ -76,13 +73,10 @@ class SECondition(ABC):
 
     def has_comment(self):
         return self._comment is not None
-
     def get_comment(self):
         return self._comment
-
     def set_comment(self, comment: str):
         self._comment = comment
-
     def invalidate_comment(self):
         self._comment = None
 
@@ -93,6 +87,8 @@ class SECondition(ABC):
     @abstractmethod
     def is_active(self):
         pass
+
+from pulse.cdm.environment_conditions import SEInitialEnvironmentalConditions
 
 class SEConditionManager():
     __slots__ = ["_ards", "_anemia", "_copd", "_cvsd", "_impaired_alveolar_exchange",
@@ -206,13 +202,13 @@ class SEConditionManager():
         self._impaired_alveolar_exchange = None
 
     def has_lobar_pneumonia(self):
-        return False if self._lobar_pneumoni is None else self._lobar_pneumoni.is_valid()
+        return False if self._lobar_pneumonia is None else self._lobar_pneumonia.is_valid()
     def get_lobar_pneumonia(self):
-        if self._lobar_pneumoni is None:
-            self._lobar_pneumoni = None
-        return self._lobar_pneumoni
+        if self._lobar_pneumonia is None:
+            self._lobar_pneumonia = None
+        return self._lobar_pneumonia
     def remove_lobar_pneumonia(self):
-        self._lobar_pneumoni = None
+        self._lobar_pneumonia = None
 
     def has_pulmonary_fibrosis(self):
         return False if self._pulmonary_fibrosis is None else self._pulmonary_fibrosis.is_valid()
@@ -245,7 +241,7 @@ class SEConditionManager():
         return False if self._initial_environmental_conditions is None else self._initial_environmental_conditions.is_valid()
     def get_initial_environmental_conditions(self):
         if self._initial_environmental_conditions is None:
-            self._initial_environmental_conditions = None
+            self._initial_environmental_conditions = SEInitialEnvironmentalConditions()
         return self._initial_environmental_conditions
     def remove_initial_environmental_conditions(self):
         self._initial_environmental_conditions = None
