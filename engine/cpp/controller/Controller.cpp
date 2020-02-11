@@ -1165,18 +1165,18 @@ void PulseController::SetupCardiovascular()
   double ResistanceAorta = 1.17 * (VascularPressureTargetHeartLeft - systolicPressureTarget_mmHg) / VascularFlowTargetAorta;                        /*No Downstream Resistance Aorta*/
   double ResistanceArmLeft = 1.15 * (systolicPressureTarget_mmHg - VascularPressureTargetArmLeft) / VascularFlowTargetArmLeft, ResistanceArmLeftVenous = (VascularPressureTargetArmLeft - VascularPressureTargetVenaCava) / VascularFlowTargetArmLeft;
   double ResistanceArmRight = ResistanceArmLeft, ResistanceArmRightVenous = ResistanceArmLeftVenous;
-  double ResistanceBone = 1.20 * (systolicPressureTarget_mmHg - VascularPressureTargetBone) / VascularFlowTargetBone, ResistanceBoneVenous = (VascularPressureTargetBone - VascularPressureTargetVenaCava) / VascularFlowTargetBone;
+  double ResistanceBone = 1.17 * (systolicPressureTarget_mmHg - VascularPressureTargetBone) / VascularFlowTargetBone, ResistanceBoneVenous = (VascularPressureTargetBone - VascularPressureTargetVenaCava) / VascularFlowTargetBone;
   double ResistanceBrain = 1.1 * (systolicPressureTarget_mmHg - VascularPressureTargetBrain) / VascularFlowTargetBrain, ResistanceBrainVenous = (VascularPressureTargetBrain - VascularPressureTargetVenaCava) / VascularFlowTargetBrain;
   double ResistanceFat = 1.2 * (systolicPressureTarget_mmHg - VascularPressureTargetFat) / VascularFlowTargetFat, ResistanceFatVenous = (VascularPressureTargetFat - VascularPressureTargetVenaCava) / VascularFlowTargetFat;
   double ResistanceHeartLeft = 0.000002;                                                                                                          /*No Downstream Resistance HeartLeft*/
   double ResistanceHeartRight = (0.04225*systolicPressureTarget_mmHg - VascularPressureTargetVenaCava) / cardiacOutputTarget_mL_Per_s; // Describes the flow resistance between the systemic vasculature and the right atrium    /*No Downstream Resistance Heart Right*/
   double ResistanceKidney = 1.25 * (systolicPressureTarget_mmHg - VascularPressureTargetKidney) / VascularFlowTargetKidney, ResistanceKidneyVenous = (VascularPressureTargetKidney - VascularPressureTargetVenaCava) / VascularFlowTargetKidney;
-  double ResistanceLargeIntestine = 1.15 * (systolicPressureTarget_mmHg - VascularPressureTargetLargeIntestine) / VascularFlowTargetLargeIntestine, ResistanceLargeIntestineVenous = (VascularPressureTargetLargeIntestine - VascularPressureTargetLiver) / VascularFlowTargetLargeIntestine;
-  double ResistanceLegLeft = 1.15 * (systolicPressureTarget_mmHg - VascularPressureTargetLegLeft) / VascularFlowTargetLegLeft, ResistanceLegLeftVenous = (VascularPressureTargetLegLeft - VascularPressureTargetVenaCava) / VascularFlowTargetLegLeft;
+  double ResistanceLargeIntestine = 1.1 * (systolicPressureTarget_mmHg - VascularPressureTargetLargeIntestine) / VascularFlowTargetLargeIntestine, ResistanceLargeIntestineVenous = (VascularPressureTargetLargeIntestine - VascularPressureTargetLiver) / VascularFlowTargetLargeIntestine;
+  double ResistanceLegLeft = 1.1 * (systolicPressureTarget_mmHg - VascularPressureTargetLegLeft) / VascularFlowTargetLegLeft, ResistanceLegLeftVenous = (VascularPressureTargetLegLeft - VascularPressureTargetVenaCava) / VascularFlowTargetLegLeft;
   double ResistanceLegRight = 1.05 * ResistanceLegLeft, ResistanceLegRightVenous = ResistanceLegLeftVenous;
   double ResistanceLiver = 1.20 * (systolicPressureTarget_mmHg - VascularPressureTargetLiver) / VascularFlowTargetLiver, ResistanceLiverVenous = (VascularPressureTargetLiver - VascularPressureTargetVenaCava) / (VascularFlowTargetLiver + VascularFlowTargetPortalVein);
-  double ResistanceMuscle = 1.20 * (systolicPressureTarget_mmHg - VascularPressureTargetMuscle) / VascularFlowTargetMuscle, ResistanceMuscleVenous = (VascularPressureTargetMuscle - VascularPressureTargetVenaCava) / VascularFlowTargetMuscle;
-  double ResistanceMyocardium = 1.15 * (systolicPressureTarget_mmHg - VascularPressureTargetMyocardium) / VascularFlowTargetMyocardium, ResistanceMyocardiumVenous = (VascularPressureTargetMyocardium - VascularPressureTargetVenaCava) / VascularFlowTargetMyocardium;
+  double ResistanceMuscle = 1.15 * (systolicPressureTarget_mmHg - VascularPressureTargetMuscle) / VascularFlowTargetMuscle, ResistanceMuscleVenous = (VascularPressureTargetMuscle - VascularPressureTargetVenaCava) / VascularFlowTargetMuscle;
+  double ResistanceMyocardium = 1.1 * (systolicPressureTarget_mmHg - VascularPressureTargetMyocardium) / VascularFlowTargetMyocardium, ResistanceMyocardiumVenous = (VascularPressureTargetMyocardium - VascularPressureTargetVenaCava) / VascularFlowTargetMyocardium;
   double ResistancePulmArtRight = 1.0 * (VascularPressureTargetHeartRight - VascularPressureTargetPulmArtRight) / VascularFlowTargetPulmArtRight;        /*No Downstream Resistance PulmArt*/
   double ResistancePulmCapRight = 1.0 * (VascularPressureTargetPulmArtRight - VascularPressureTargetPulmCapRight) / VascularFlowTargetPulmCapRight;      /*No Downstream Resistance PulmCap*/
   double ResistancePulmVeinsRight = 1.0 * (VascularPressureTargetPulmCapRight - VascularPressureTargetPulmVeinsRight) / VascularFlowTargetPulmVeinsRight;/*No Downstream Resistance PulmVeins*/
@@ -1184,9 +1184,9 @@ void PulseController::SetupCardiovascular()
   double ResistancePulmCapLeft = 1.0 * (VascularPressureTargetPulmArtLeft - VascularPressureTargetPulmCapLeft) / VascularFlowTargetPulmCapLeft;          /*No Downstream Resistance PulmCap*/
   double ResistancePulmVeinsLeft = 1.0 * (VascularPressureTargetPulmCapLeft - VascularPressureTargetPulmVeinsLeft) / VascularFlowTargetPulmVeinsLeft;    /*No Downstream Resistance PulmVeins*/
   double ResistanceSkin = 1.0 * (systolicPressureTarget_mmHg - VascularPressureTargetSkin) / VascularFlowTargetSkin, ResistanceSkinVenous = (VascularPressureTargetSkin - VascularPressureTargetVenaCava) / VascularFlowTargetSkin;
-  double ResistanceSmallIntestine = 1.17 * (systolicPressureTarget_mmHg - VascularPressureTargetSmallIntestine) / VascularFlowTargetSmallIntestine, ResistanceSmallIntestineVenous = (VascularPressureTargetArmLeft - VascularPressureTargetLiver) / VascularFlowTargetSmallIntestine;
-  double ResistanceSplanchnic = 1.20 * (systolicPressureTarget_mmHg - VascularPressureTargetSplanchnic) / VascularFlowTargetSplanchnic, ResistanceSplanchnicVenous = (VascularPressureTargetArmLeft - VascularPressureTargetLiver) / VascularFlowTargetSplanchnic;
-  double ResistanceSpleen = 1.15 * (systolicPressureTarget_mmHg - VascularPressureTargetSpleen) / VascularFlowTargetSpleen, ResistanceSpleenVenous = (VascularPressureTargetArmLeft - VascularPressureTargetLiver) / VascularFlowTargetSpleen;
+  double ResistanceSmallIntestine = 1.14 * (systolicPressureTarget_mmHg - VascularPressureTargetSmallIntestine) / VascularFlowTargetSmallIntestine, ResistanceSmallIntestineVenous = (VascularPressureTargetArmLeft - VascularPressureTargetLiver) / VascularFlowTargetSmallIntestine;
+  double ResistanceSplanchnic = 1.15 * (systolicPressureTarget_mmHg - VascularPressureTargetSplanchnic) / VascularFlowTargetSplanchnic, ResistanceSplanchnicVenous = (VascularPressureTargetArmLeft - VascularPressureTargetLiver) / VascularFlowTargetSplanchnic;
+  double ResistanceSpleen = 1.10 * (systolicPressureTarget_mmHg - VascularPressureTargetSpleen) / VascularFlowTargetSpleen, ResistanceSpleenVenous = (VascularPressureTargetArmLeft - VascularPressureTargetLiver) / VascularFlowTargetSpleen;
 
   // Portal vein and shunt are just paths - only have resistance
   double ResistancePortalVein = 0.001; // The portal vein is just a pathway in Pulse. The pressure across this path does not represent portal vein pressure (if it did our patient would always be portal hypertensive)
@@ -2869,7 +2869,7 @@ void PulseController::SetupTissue()
 
   // The assumption for the vascular-tissue convection drag is that the resistance is inversely proportional to the tissue mass.
   // This is the proportionality constant
-  double resistanceConstant = 2000.0;//1.0; //increased to prevent fluid from freely moving into the vascular space
+  double resistanceConstant = 20000.0;//1.0; //increased to prevent fluid from freely moving into the vascular space
 
   /// \todo Put Initial Circuit/Compartment data values into the configuration file.
 
