@@ -23,7 +23,7 @@ Newsletter {#News}
           
       </div>
       <div class="row-img col-sm-5">
-        <img src="Images/PulseMontage.png" alt="" width="100%">
+        <img src="Images/PulseNewsletter.jpg" alt="" width="100%">
       </div>
     </div>
   </div>
