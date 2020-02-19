@@ -47,7 +47,9 @@ protected:
   double m_BaroreceptorActiveTime_s;
   double m_BaroreceptorMeanArterialPressureBaseline_mmHg;
   double m_TotalSympatheticFraction;
-
+  bool   m_BaroreceptorSaturationStatus;
+  double m_BaroreceptorSaturationTime_s;
+  double m_BaroreceptorEffectivenessParameter;
 
   // Stateless member variable (Set in SetUp())
   bool m_FeedbackActive; // An overall flag used to turn off baro/chemo receptors during stabilization

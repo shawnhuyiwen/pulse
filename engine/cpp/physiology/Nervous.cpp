@@ -73,6 +73,9 @@ void Nervous::Initialize()
   m_BaroreceptorActiveTime_s = 0.0;
   m_BaroreceptorFeedbackStatus = false;
   m_BaroreceptorMeanArterialPressureBaseline_mmHg = 0;
+  m_BaroreceptorSaturationStatus = false;
+  m_BaroreceptorSaturationTime_s = 0.0;
+  m_BaroreceptorEffectivenessParameter = 1.0;
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -169,7 +172,7 @@ void Nervous::PostProcess()
 void Nervous::BaroreceptorFeedback()
 {
   //First calculate the sympathetic and parasympathetic firing rates:
-  double nu = m_data.GetConfiguration().GetResponseSlope();
+  double nu = 4 * m_data.GetConfiguration().GetResponseSlope();
   double meanArterialPressure_mmHg = m_data.GetCardiovascular().GetMeanArterialPressure(PressureUnit::mmHg);
 
   //Adjusting the mean arterial pressure set-point to account for cardiovascular drug effects
@@ -214,7 +217,7 @@ void Nervous::BaroreceptorFeedback()
   //double sedationDampeningEffect = m_data.GetDrugs().GetSedationLevel().GetValue() * 0.35; //maximum slope reduction of 35% - making that up right now
   //update nu - the slope response of the firing rate
   //nu *= (1 - sedationDampeningEffect);  TODO: Add this back when I have data for validation
-  //Backout the pressure associated with the total sympathetic fraction from the last time step
+  //Backout the pressure associated with the total sympathetic fraction from the last time step 
   double cumulativeMeanArterialPressure_mmHg = pow(((1.0 / m_TotalSympatheticFraction) - 1.0), (1 / nu)) * meanArterialPressureCombinedBaseline_mmHg;
   double deltaPressure_mmHg = meanArterialPressure_mmHg - m_LastMeanArterialPressure_mmHg;
   double baroreceptorPressure_mmHg = cumulativeMeanArterialPressure_mmHg + deltaPressure_mmHg;
@@ -222,36 +225,87 @@ void Nervous::BaroreceptorFeedback()
   double parasympatheticFraction = 1 - m_TotalSympatheticFraction;
   m_LastMeanArterialPressure_mmHg = meanArterialPressure_mmHg;
 
-  /*m_data.GetDataTrack().Probe("SympatheticFraction", m_TotalSympatheticFraction);
-  m_data.GetDataTrack().Probe("CumulativeMAP", cumulativeMeanArterialPressure_mmHg);
-  m_data.GetDataTrack().Probe("baroreceptorPressure", baroreceptorPressure_mmHg);
-  m_data.GetDataTrack().Probe("deltaPressure", deltaPressure_mmHg);*/
+  m_data.GetDataTrack().Probe("SympatheticFraction", m_TotalSympatheticFraction);
+  //m_data.GetDataTrack().Probe("ParaSympatheticFraction", parasympatheticFraction);
+  //m_data.GetDataTrack().Probe("CumulativeMAP", cumulativeMeanArterialPressure_mmHg);
+  //m_data.GetDataTrack().Probe("baroreceptorPressure", baroreceptorPressure_mmHg);
+  //m_data.GetDataTrack().Probe("deltaPressure", deltaPressure_mmHg);
+  double normalizedMAP = meanArterialPressure_mmHg / meanArterialPressureCombinedBaseline_mmHg;
+  if (m_TotalSympatheticFraction > 0.79) //saturation achieved
+  {
+    if (!m_BaroreceptorSaturationStatus)
+    {
+      //m_BaroreceptorSaturationTime_s = 0.0;
+      m_BaroreceptorSaturationStatus = true;
+      Info("Baroreceptors Saturated ");
+    }
+    else
+    {
+     // m_BaroreceptorSaturationTime_s += m_dt_s;
+     
+      if (normalizedMAP <= 0.48 && normalizedMAP >= 0.43)
+      {
+        //last ditch effort
+        //m_BaroreceptorEffectivenessParameter += 0.0001;
+        m_BaroreceptorEffectivenessParameter = 0.0008;
+      }
+      else if (normalizedMAP < 0.43)
+      {
+        m_BaroreceptorEffectivenessParameter -= 0.00004;
+      }
+      else
+      {
+        //reduce effectiveness of baroreceptors
+        if (m_TotalSympatheticFraction < 0.82)
+        {
+          m_BaroreceptorEffectivenessParameter -= 0.0027;
+        }
+        else
+        {
+          m_BaroreceptorEffectivenessParameter -= 0.0001;
+        }
+
+        if (m_BaroreceptorEffectivenessParameter < -0.25)
+        {
+          m_BaroreceptorEffectivenessParameter = -0.25;
+        }
+      }
+    }
+  }
+  else
+  {
+    if (m_BaroreceptorSaturationStatus)
+      m_BaroreceptorSaturationStatus = false;
+  }
+
+  m_data.GetDataTrack().Probe("effectivenessParameter", m_BaroreceptorEffectivenessParameter);
+  m_data.GetDataTrack().Probe("normalizedMAPBaro", normalizedMAP);
   
   //Calculate the normalized change in heart rate
   double normalizedHeartRate = GetBaroreceptorHeartRateScale().GetValue();
   double tauHeartRate_s = m_data.GetConfiguration().GetHeartRateDistributedTimeDelay(TimeUnit::s);
-  double deltaNormalizedHeartRate = (1.0 / tauHeartRate_s)*(-normalizedHeartRate + m_NormalizedAlphaHeartRate*m_TotalSympatheticFraction - m_NormalizedBetaHeartRate*parasympatheticFraction + m_NormalizedGammaHeartRate)*m_dt_s;
+  double deltaNormalizedHeartRate = m_BaroreceptorEffectivenessParameter * (1.0 / tauHeartRate_s)*(-normalizedHeartRate + m_NormalizedAlphaHeartRate*m_TotalSympatheticFraction - m_NormalizedBetaHeartRate*parasympatheticFraction + m_NormalizedGammaHeartRate)*m_dt_s;
   normalizedHeartRate += deltaNormalizedHeartRate;
   GetBaroreceptorHeartRateScale().SetValue(normalizedHeartRate);
   
   //Calculate the normalized change in heart elastance
   double normalizedHeartElastance = GetBaroreceptorHeartElastanceScale().GetValue();
   double tauElastance_s = m_data.GetConfiguration().GetHeartElastanceDistributedTimeDelay(TimeUnit::s);
-  double deltaNormalizedHeartElastance = (1.0 / tauElastance_s)*(-normalizedHeartElastance + m_NormalizedAlphaElastance*m_TotalSympatheticFraction + m_NormalizedGammaElastance)*m_dt_s;
+  double deltaNormalizedHeartElastance = m_BaroreceptorEffectivenessParameter * (1.0 / tauElastance_s)*(-normalizedHeartElastance + m_NormalizedAlphaElastance*m_TotalSympatheticFraction + m_NormalizedGammaElastance)*m_dt_s;
   normalizedHeartElastance += deltaNormalizedHeartElastance;
   GetBaroreceptorHeartElastanceScale().SetValue(normalizedHeartElastance);
   
   //Calculate the normalized change in flow resistance for any cardiovascular resistor
   double normalizedResistance = GetBaroreceptorResistanceScale().GetValue();
   double tauResistance_s = m_data.GetConfiguration().GetSystemicResistanceDistributedTimeDelay(TimeUnit::s);
-  double deltaNormalizedResistance = (1.0 / tauResistance_s)*(-normalizedResistance + m_NormalizedAlphaResistance*m_TotalSympatheticFraction + m_NormalizedGammaResistance)*m_dt_s;
+  double deltaNormalizedResistance = m_BaroreceptorEffectivenessParameter * (1.0 / tauResistance_s)*(-normalizedResistance + m_NormalizedAlphaResistance*m_TotalSympatheticFraction + m_NormalizedGammaResistance)*m_dt_s;
   normalizedResistance += deltaNormalizedResistance;
   GetBaroreceptorResistanceScale().SetValue(normalizedResistance);
   
   //Calculate the normalized change in flow compliance for any cardiovascular compliance
   double normalizedCompliance = GetBaroreceptorComplianceScale().GetValue();
   double tauCompliance_s = m_data.GetConfiguration().GetVenousComplianceDistributedTimeDelay(TimeUnit::s);
-  double deltaNormalizedCompliance = (1.0 / tauCompliance_s)*(-normalizedCompliance + m_NormalizedAlphaCompliance*parasympatheticFraction + m_NormalizedGammaCompliance)*m_dt_s;
+  double deltaNormalizedCompliance = m_BaroreceptorEffectivenessParameter * (1.0 / tauCompliance_s)*(-normalizedCompliance + m_NormalizedAlphaCompliance*parasympatheticFraction + m_NormalizedGammaCompliance)*m_dt_s;
   normalizedCompliance += deltaNormalizedCompliance;
   GetBaroreceptorComplianceScale().SetValue(normalizedCompliance);
 #ifdef VERBOSE

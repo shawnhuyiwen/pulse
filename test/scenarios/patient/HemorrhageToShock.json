@@ -1,10 +1,10 @@
 {
-  "Name": "HemorrhageClass4NoFluidLongTerm",
-  "Description": "",
+  "Name": "HemorrhageToShock",
+  "Description": "Greater than 40% blood loss with no intervention.",
   "StartType":
   {
     "PatientConfiguration": {
-      "PatientFile": "StandardMale.json"
+      "PatientFile": "StandardMaleIncreaseBV.json"
     }
   },
   "DataRequestManager":
@@ -24,13 +24,15 @@
       { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "TidalVolume",                       "Unit": "mL" },
       { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "RespirationRate",                   "Unit": "1/min" },
       { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "OxygenSaturation",                  "Unit": "unitless" },    
+	  { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "BloodPH",                                "Unit": "unitless" },    
       
+	  { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava",                "SubstanceName": "Lactate",       "PropertyName": "Concentration", "Unit": "ug/mL" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "MyocardiumVasculature",   "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "BrainVasculature",        "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "MyocardiumVasculature",   "PropertyName": "InFlow",  "Unit": "mL/min" },
 	  { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "BrainVasculature",        "PropertyName": "InFlow",  "Unit": "mL/min" },
-
-      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "SystemicVascularResistance", "Unit": "mmHg s/mL"}
+	  
+	  { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "SystemicVascularResistance", "Unit": "mmHg s/mL"}
     ]
   },
   "AnyAction": [{
@@ -70,7 +72,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 800.0,
+          "Value": 1500.0,
           "Unit": "s"
         }
       }
@@ -101,7 +103,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 500.0,
+          "Value": 200.0,
           "Unit": "s"
         }
       }

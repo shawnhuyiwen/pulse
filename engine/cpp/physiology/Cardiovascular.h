@@ -214,6 +214,7 @@ protected:
 
   //debugging hemorrhage
   double m_BloodVolumeEstimate;
+  double m_CardiacOutputBaseline;
 };
 
 

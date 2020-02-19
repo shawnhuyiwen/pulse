@@ -254,6 +254,10 @@ void Cardiovascular::Initialize()
   GetSystemicVascularResistance().SetValue(systemicVascularResistance_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
   m_LeftHeartElastanceMax_mmHg_Per_mL = m_data.GetConfiguration().GetLeftHeartElastanceMaximum(PressurePerVolumeUnit::mmHg_Per_mL);
   m_RightHeartElastanceMax_mmHg_Per_mL = m_data.GetConfiguration().GetRightHeartElastanceMaximum(PressurePerVolumeUnit::mmHg_Per_mL);
+
+  //Debugging
+  m_CardiacOutputBaseline = m_CardiacOutput->GetValue(VolumePerTimeUnit::L_Per_min);
+
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -369,6 +373,7 @@ void Cardiovascular::SetUp()
   m_AortaResistance = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta3ToAorta1);
   m_VenaCavaCompliance = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::VenaCavaToGround);
   m_RightHeartResistance = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::VenaCavaToRightHeart2);
+
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -604,8 +609,18 @@ void Cardiovascular::PreProcess()
   ProcessActions();
   UpdateHeartRhythm();
   CalculatePleuralCavityVenousEffects();
-  //m_data.GetDataTrack().Probe("BloodVolumeEstimate", m_BloodVolumeEstimate/1000.0);
 
+  //Debugging
+  m_data.GetDataTrack().Probe("BloodVolumeEstimate", m_BloodVolumeEstimate/1000.0);
+
+  double percentageBloodLoss = ((m_data.GetCurrentPatient().GetBloodVolumeBaseline(VolumeUnit::mL) - GetBloodVolume().GetValue(VolumeUnit::mL)) / m_data.GetCurrentPatient().GetBloodVolumeBaseline(VolumeUnit::mL)) * 100;
+  m_data.GetDataTrack().Probe("BloodLossPercentage", percentageBloodLoss);
+
+  double normalizedardiacOutput = GetCardiacOutput().GetValue(VolumePerTimeUnit::L_Per_min) / m_CardiacOutputBaseline;
+  m_data.GetDataTrack().Probe("NormalizedCardiacOutput", normalizedardiacOutput);
+
+  double normalizedMAP = GetMeanArterialPressure().GetValue(PressureUnit::mmHg) / m_data.GetCurrentPatient().GetMeanArterialPressureBaseline(PressureUnit::mmHg);
+  m_data.GetDataTrack().Probe("NormalizedMAP", normalizedMAP);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -756,10 +771,10 @@ void Cardiovascular::CalculateVitalSigns()
       double hypovolemicShock = 0.5*m_data.GetCurrentPatient().GetBloodVolumeBaseline(VolumeUnit::mL);
       if (GetBloodVolume().GetValue(VolumeUnit::mL) <= hypovolemicShock)
       {
-        m_ss << "Over half the patients blood volume has been lost. The patient is now in an irreversible state.";
+        /*m_ss << "Over half the patients blood volume has been lost. The patient is now in an irreversible state.";
         Warning(m_ss);
         /// \irreversible Over half the patients blood volume has been lost.
-        m_data.GetEvents().SetEvent(eEvent::IrreversibleState, true, m_data.GetSimulationTime());
+        m_data.GetEvents().SetEvent(eEvent::IrreversibleState, true, m_data.GetSimulationTime());*/
       }
     }
     else
@@ -1642,12 +1657,22 @@ void Cardiovascular::CalculateHeartElastance()
   double n1 = 1.32;
   double n2 = 21.9;
   double maxShape = 0.598;
+  double oxygenDeficitEffect = 1.0;
+
+  if (m_data.GetEvents().IsEventActive(eEvent::MyocardiumOxygenDeficit) == true)
+  {
+    double eventDuration = m_data.GetEvents().GetEventDuration(eEvent::MyocardiumOxygenDeficit, TimeUnit::s);
+    oxygenDeficitEffect = pow(-3E-9*eventDuration, 2) + 8E-6*eventDuration + 0.9865;
+  }
 
   double normalizedCardiacTime = m_CurrentCardiacCycleTime_s / m_CardiacCyclePeriod_s;  
   double elastanceShapeFunction = (pow(normalizedCardiacTime / alpha1, n1) / (1.0 + pow(normalizedCardiacTime / alpha1, n1)))*(1.0 / (1.0 + pow(normalizedCardiacTime / alpha2, n2))) / maxShape;
 
-  m_LeftHeartElastance_mmHg_Per_mL = (m_LeftHeartElastanceMax_mmHg_Per_mL - m_LeftHeartElastanceMin_mmHg_Per_mL)*elastanceShapeFunction + m_LeftHeartElastanceMin_mmHg_Per_mL;
-  m_RightHeartElastance_mmHg_Per_mL = (m_RightHeartElastanceMax_mmHg_Per_mL - m_RightHeartElastanceMin_mmHg_Per_mL)*elastanceShapeFunction + m_RightHeartElastanceMin_mmHg_Per_mL;
+  m_LeftHeartElastance_mmHg_Per_mL = oxygenDeficitEffect * ((m_LeftHeartElastanceMax_mmHg_Per_mL - m_LeftHeartElastanceMin_mmHg_Per_mL)*elastanceShapeFunction + m_LeftHeartElastanceMin_mmHg_Per_mL);
+  m_RightHeartElastance_mmHg_Per_mL = oxygenDeficitEffect * ((m_RightHeartElastanceMax_mmHg_Per_mL - m_RightHeartElastanceMin_mmHg_Per_mL)*elastanceShapeFunction + m_RightHeartElastanceMin_mmHg_Per_mL);
+
+  m_data.GetDataTrack().Probe("LeftHeartElastance", m_LeftHeartElastance_mmHg_Per_mL);
+  m_data.GetDataTrack().Probe("oxygendeficiteffect", oxygenDeficitEffect);
 }
 
 //--------------------------------------------------------------------------------------------------

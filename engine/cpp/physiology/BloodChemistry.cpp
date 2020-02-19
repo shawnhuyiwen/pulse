@@ -446,7 +446,7 @@ void BloodChemistry::CheckBloodGasLevels()
     }
 
     //Myocardium Oxygen Check
-    if (m_myocardiumO2->GetPartialPressure(PressureUnit::mmHg) < 5)
+    if (m_myocardiumO2->GetPartialPressure(PressureUnit::mmHg) < 25)
     {
       /// \event Patient: The heart is not receiving enough oxygen. Coronary arteries should dilate to increase blood flow to the heart.
       m_data.GetEvents().SetEvent(eEvent::MyocardiumOxygenDeficit, true, m_data.GetSimulationTime());
