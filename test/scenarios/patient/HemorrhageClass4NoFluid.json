@@ -1,5 +1,5 @@
 {
-  "Name": "HemorrhageClass4NoFluidLongTerm",
+  "Name": "HemorrhageClass3NoFluidLongTerm",
   "Description": "",
   "StartType":
   {
@@ -107,40 +107,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 900.0,
-          "Unit": "s"
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "Hemorrhage": {
-        "Compartment": "RightLegVasculature",
-        "Rate": {
-          "ScalarVolumePerTime": {
-            "Value": 55.0,
-            "Unit": "mL/min"
-          }
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "Hemorrhage": {
-        "Compartment": "VenaCava",
-        "Rate": {
-          "ScalarVolumePerTime": {
-            "Value": 90.0,
-            "Unit": "mL/min"
-          }
-        }
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 900.0,
+          "Value": 750.0,
           "Unit": "s"
         }
       }
@@ -171,7 +138,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 1500.0,
+          "Value": 500.0,
           "Unit": "s"
         }
       }

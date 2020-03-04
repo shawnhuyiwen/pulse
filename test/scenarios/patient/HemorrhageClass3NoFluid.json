@@ -1,5 +1,5 @@
 {
-  "Name": "HemorrhageClass2BrachialArtery",
+  "Name": "HemorrhageClass3NoFluidLongTerm",
   "Description": "",
   "StartType":
   {
@@ -82,10 +82,22 @@
   }, {
     "PatientAction": {
       "Hemorrhage": {
-        "Compartment": "RightArmVasculature",
+        "Compartment": "RightLegVasculature",
         "Rate": {
           "ScalarVolumePerTime": {
-            "Value": 60.0,
+            "Value": 75.0,
+            "Unit": "mL/min"
+          }
+        }
+      }
+    }
+  }, {
+    "PatientAction": {
+      "Hemorrhage": {
+        "Compartment": "VenaCava",
+        "Rate": {
+          "ScalarVolumePerTime": {
+            "Value": 125.0,
             "Unit": "mL/min"
           }
         }
@@ -95,7 +107,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 1100.0,
+          "Value": 575.0,
           "Unit": "s"
         }
       }
@@ -103,36 +115,20 @@
   }, {
     "PatientAction": {
       "Hemorrhage": {
-        "Compartment": "RightArmVasculature",
+        "Compartment": "RightLegVasculature",
         "Rate": {
           "ScalarVolumePerTime": {
             "Unit": "mL/min"
           }
-        }
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 120.0,
-          "Unit": "s"
         }
       }
     }
   }, {
     "PatientAction": {
-      "SubstanceCompoundInfusion": {
-        "SubstanceCompound": "Blood",
-        "BagVolume": {
-          "ScalarVolume": {
-            "Value": 500.0,
-            "Unit": "mL"
-          }
-        },
+      "Hemorrhage": {
+        "Compartment": "VenaCava",
         "Rate": {
           "ScalarVolumePerTime": {
-            "Value": 100.0,
             "Unit": "mL/min"
           }
         }
@@ -142,7 +138,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 400.0,
+          "Value": 500.0,
           "Unit": "s"
         }
       }

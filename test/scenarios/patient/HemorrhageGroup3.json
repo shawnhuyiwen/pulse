@@ -1,6 +1,6 @@
 {
-  "Name": "HemorrhageToShock",
-  "Description": "Greater than 40% blood loss with no intervention.",
+  "Name": "HemorrhageGroup3",
+  "Description": "28% Blood Loss",
   "StartType":
   {
     "PatientConfiguration": {
@@ -24,13 +24,13 @@
       { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "TidalVolume",                       "Unit": "mL" },
       { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "RespirationRate",                   "Unit": "1/min" },
       { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "OxygenSaturation",                  "Unit": "unitless" },    
-	  { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "BloodPH",                                "Unit": "unitless" },    
       
-	  { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava",                "SubstanceName": "Lactate",       "PropertyName": "Concentration", "Unit": "ug/mL" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "MyocardiumVasculature",   "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "BrainVasculature",        "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "MyocardiumVasculature",   "PropertyName": "InFlow",  "Unit": "mL/min" },
 	  { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "BrainVasculature",        "PropertyName": "InFlow",  "Unit": "mL/min" },
+      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava",     "PropertyName": "InFlow",  "Unit": "mL/min" },
+      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "RightHeartVasculature",   "PropertyName": "InFlow",  "Unit": "mL/min" },    
 	  
 	  { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "SystemicVascularResistance", "Unit": "mmHg s/mL"}
     ]
@@ -47,22 +47,10 @@
   }, {
     "PatientAction": {
       "Hemorrhage": {
-        "Compartment": "RightLegVasculature",
-        "Rate": {
-          "ScalarVolumePerTime": {
-            "Value": 50.0,
-            "Unit": "mL/min"
-          }
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "Hemorrhage": {
         "Compartment": "VenaCava",
         "Rate": {
           "ScalarVolumePerTime": {
-            "Value": 150.0,
+            "Value": 175.0,
             "Unit": "mL/min"
           }
         }
@@ -72,7 +60,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 1500.0,
+          "Value": 530,
           "Unit": "s"
         }
       }
@@ -80,17 +68,6 @@
   }, {
     "PatientAction": {
       "Hemorrhage": {
-        "Compartment": "RightLegVasculature",
-        "Rate": {
-          "ScalarVolumePerTime": {
-            "Unit": "mL/min"
-          }
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "Hemorrhage": {
         "Compartment": "VenaCava",
         "Rate": {
           "ScalarVolumePerTime": {
@@ -103,7 +80,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 200.0,
+          "Value": 14000.0,
           "Unit": "s"
         }
       }
