@@ -74,7 +74,7 @@
 
 PulseController::PulseController(const std::string& logFileName, const std::string& data_dir) : PulseController(new Logger(logFileName), data_dir)
 {
-  myLogger = true;
+
 }
 
 PulseController::PulseController(Logger* logger, const std::string& data_dir) : Loggable(logger)
@@ -90,12 +90,6 @@ PulseController::PulseController(Logger* logger, const std::string& data_dir) : 
   m_SimulationTime->SetValue(0, TimeUnit::s);
   m_spareAdvanceTime_s = 0;
 
-  myLogger = false;
-  if (m_Logger == nullptr)
-  {
-    myLogger = true;
-    m_Logger = new Logger();
-  }
   if (!m_Logger->HasForward())// Don't override a forwarder, if there already is one there
     m_Logger->SetForward(this);
   m_Logger->SetLogTime(m_SimulationTime.get());
@@ -920,12 +914,7 @@ bool PulseController::SetupPatient(SEPatient const& patient)
 
 PulseController::~PulseController()
 {
-  if (myLogger)
-  {
-    SAFE_DELETE(m_Logger);
-  }
-  else//Turn off forwarding for this logger
-    m_Logger->SetForward(nullptr);
+
 }
 
 void PulseController::AtSteadyState(EngineState state)

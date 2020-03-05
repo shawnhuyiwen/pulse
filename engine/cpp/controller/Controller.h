@@ -184,8 +184,6 @@ protected:
 
   std::unique_ptr<SEEventManager>                               m_EventManager;
 
-  // Flag to destroy the logger or not
-  bool                                                          myLogger;
   double                                                        m_spareAdvanceTime_s;
   SEAdvanceHandler*                                             m_AdvanceHandler;
 

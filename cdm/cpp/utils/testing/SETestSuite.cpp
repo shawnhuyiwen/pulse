@@ -51,7 +51,7 @@ void SETestSuite::PerformSuite(bool performed)
   m_Performed = performed;
 }
 
-bool SETestSuite::PerformedSuite()
+bool SETestSuite::PerformedSuite() const
 {
   return m_Performed;
 }
