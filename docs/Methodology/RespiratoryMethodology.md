@@ -300,21 +300,21 @@ Each segment is given a fraction of the total breath, with all summing to a valu
 
 The time series of the respiratory muscle pressure (<i>P<sub>mus</sub></i>) is given by,
 
-\f[{P_{mus}} = \left\{ \begin{array}{l}
- - {e^{\left( {\frac{{ - t}}{\tau } - 1} \right)}} \times {P_{min }},\quad 0 < t \le {t_1}\\
-{P_{min }},\quad {t_1} < t \le {t_2}\\
-{e^{\left( {\frac{{ - t - {t_2}}}{\tau }} \right)}} \times {P_{min }},\quad {t_2} < t \le {t_3}\\
-0,\quad {t_3} < t \le {t_4}\\
-1 - {e^{ - \left( {\frac{{t - {t_4}}}{\tau }} \right)}} \times {P_{max}},\quad {t_4} < t \le {t_5}\\
-{P_{max}},\quad {t_5} < t \le {t_6}\\
-{e^{ - \left( {\frac{{t - {t_6}}}{\tau }} \right)}} \times {P_{max}},\quad {t_6} < t \le {t_7}\\
-0,\quad {t_7} < t \le {t_{max }}
-\end{array} \right.\f]
+\f[{P_{mus}} = \left\{ {\begin{array}{*{20}{l}}
+{ - {e^{\left( {\frac{{ - t}}{\tau } - 1} \right)}}{P_{\min }},}&{0 < t \le {t_1}}\\
+{{P_{\min }},}&{{t_1} < t \le {t_2}}\\
+{{e^{\left( {\frac{{ - t - {t_2}}}{\tau }} \right)}}{P_{\min }},}&{{t_2} < t \le {t_3}}\\
+{0,}&{{t_3} < t \le {t_4}}\\
+{1 - {e^{ - \left( {\frac{{t - {t_4}}}{\tau }} \right)}}{P_{max}},}&{{t_4} < t \le {t_5}}\\
+{{P_{max}},}&{{t_5} < t \le {t_6}}\\
+{{e^{ - \left( {\frac{{t - {t_6}}}{\tau }} \right)}}{P_{max}},}&{{t_6} < t \le {t_7}}\\
+{0,}&{{t_7} < t \le {t_{\max }}}
+\end{array}} \right.\f]
 <center>
 <i>Equation 6.</i>
 </center><br> 
 
-Where &tau; is the segment period/time divided by a constant that determines the logarithmic shape. We use a constant value of 4 for the denominator constant to cause a less rapid increase/decrease at the beginning of a segment that more closely matches expected peak inspiratory and expiratory flows.  While a value of 10 in the denominator gives a smoother transition between segments, it causes pressure to change too rapidly initially and does not meet validation for airflow.
+Where &tau; is the quotient of the segment duration and a shape constant value. We use a constant value of 4 for this denominator for a less rapid increase/decrease at the beginning of segments. This allows for peak inspiratory and expiratory flows to more closely matches expected values.  While a value of 10 in the denominator gives a smoother transition between segments, it causes pressure to change too rapidly initially and does not meet validation for airflow.
 
 <i>P<sub>min</sub></i> is the largest negative pressure value during inhalation and <i>P<sub>max</sub></i> is the largest positive pressure value during exhalation, the combination of which specifies the amplitude of the pressure source signal. Each time value (<i>t</i> with a subscript) is determined using set fractions and the total breath time to achieve the desired inspiratory-expiratory ratio.  Figure 3 shows the basic segmented muscle driver waveform used.
 
@@ -427,7 +427,7 @@ Figure 5 depicts the time-dependent driver pressure source of the %Respiratory S
 
 #### Compliances
 
-The Pulse respiratory system is separated into four compliances (see the circuit diagram in Figure 6): the chest wall and lung for both the left and right lungs. The pressure-volume relationship has been well studied to describe the mechanical behavior of the lungs and chest wall during inflation and deflation @cite harris2005pressure. A comprehensive sigmoidal  equation for the entire system has been determined from empirical pulmonary pressure-volume data @cite venegas1998comprehensive. This compliance curve has been further broken into two constant values for the left and right lung curves and two sigmoidal functions for the left and right lungs. Figure6 show the right side (combined chest wall and lung) compliance curve for the healthy standard patient. Parameters are varied based on patient settings. During simulations, the instantaneous compliances based on this curve are are determined using the current lung volume.
+The Pulse respiratory system is separated into four compliances (see the circuit diagram in Figure 6) defined by the left and right chest walls and lungs. The pressure-volume relationship has been well studied in describing the mechanical behavior of the lungs during inflation and deflation @cite harris2005pressure. A comprehensive sigmoidal equation for the entire system has been determined from empirical pulmonary pressure-volume data @cite venegas1998comprehensive. This compliance curve has been further broken into two constant values for the left and right lung curves and two sigmoidal functions for the left and right lungs. Figure 6 shows the right side (combined chest wall and lung) compliance curve for the healthy standard patient. This function is varied based on patient settings. During simulations, the instantaneous compliances based on this curve are determined using the current lung volume.
 
 <center><img src="./Images/Respiratory/ComplianceCurve.png" width="550"></center>
 <center>
@@ -453,7 +453,7 @@ The waveform in Figure 6 is defined by these mathematical relationships,
 <i>Equation 16.</i>
 </center><br> 
 
-Where (<i>V</i>) is the individual lung volume, (<i>P</i>) is the intrapulmonary pressure, and the other variables are defined in figure 6. These equations can be rearranged and input with known parameters to determine the instantaneous expected pressure (<i>P</i>) of each lung. First, the baseline side compliance (<i>C<sub>sb</sub></i>) is determined knowing the baseline chest wall (<i>C<sub>cwb</sub></i>) and baseline lung (<i>C<sub>lb</sub></i>) compliances,
+Where (<i>V</i>) is the individual lung volume, (<i>P</i>) is the intrapulmonary pressure, and the other variables are defined in Figure 6. These equations can be rearranged and input with known parameters to determine the instantaneous expected pressure (<i>P</i>) of each lung. First, the baseline side compliance (<i>C<sub>sb</sub></i>) is determined knowing the baseline chest wall (<i>C<sub>cwb</sub></i>) and baseline lung (<i>C<sub>lb</sub></i>) compliances,
 
 \f[{C_{sb}} = \frac{1}{{\frac{1}{{{C_{cwb}}}} + \frac{1}{{{C_{lb}}}}}}\f]
 <center>
@@ -1057,9 +1057,21 @@ Insults and Interventions
 
 ### General Approach
 
-Disease states are applied to the simulated patient by modifying various parameters. Chronic conditions stabilize to a new homeostatic point before the simulation begins. Pulse simulates both restrictive and obstructive diseases of varying severities with different continuous function mappings. No changes will occur for actions and conditions set with a severity of zero. The respiratory system also includes logic to combine effects for each parameter when multiple insults/interventions are applied. Table 2 shows parameter settings for representative conditions and severities based on trends and values determined from literature @cite brunner2019lung @cite arnal2018parameters @cite harris2005pressure @cite aguirre2018lung @cite arndt1995linear @cite bikker2008end @cite brunner2012pulmonary @cite ibanez1982normal.
+Disease states are applied to the simulated patient by modifying various parameters. Chronic conditions stabilize to a new homeostatic point before the simulation begins. Pulse simulates both restrictive and obstructive diseases of varying severities with different continuous function mappings. Table 2 shows parameter settings for representative conditions and severities based on trends and values determined from literature @cite brunner2019lung @cite arnal2018parameters @cite harris2005pressure @cite aguirre2018lung @cite arndt1995linear @cite bikker2008end @cite brunner2012pulmonary @cite ibanez1982normal. Most respiratory-specific pathophysiology is applied as parameter multipliers (y) determined by a severity (x) setting between 0 and 1, with the following exponential or linear functions:
 
-When an artificial airway is applied (i.e., mechanical ventilator or anesthesia machine), there is a change in the respiratory circuit's resistance and compliance @cite arnal2018parameters. Intubated patients will have these modifiers stacked/combined with other action/condition modifiers.
+\f[y = {10^{\ln \left( {x\frac{b}{a}} \right) + \ln \left( a \right)}}\f] 
+<center>
+<i>Equation 37.</i>
+</center><br> 
+
+\f[y = \left( {b - a} \right)x + a\f] 
+<center>
+<i>Equation 38.</i>
+</center><br> 
+
+Growth/increasing functions define a as 1 and b as the maximum multiplier, while decay/decreasing functions define b as 1 and a as the minimum multiplier. Therefore, a severity of 0 will not change the healthy value and allows for an intuitive continuous function without any discontinuities. The respiratory system also includes logic to combine effects for each parameter when multiple insults/interventions are applied. 
+
+When an artificial airway is applied (i.e., mechanical ventilator or anesthesia machine), there is a change in the respiratory circuit's resistance and compliance @cite arnal2018parameters. Intubated patients will have these modifiers stacked/combined with all other action/condition modifiers.
 
 <center><br>
 <i>Table 2. Property changes due to the application of respiratory diseases and an artificial airway. ARDS and COPD are applied by the user with a severity defined between 0 and 1 and mapped using with linear or exponential functions.  Mild severity = 0.3, moderate severity = 0.6, severe severity = 0.9. The fatigue factor is a multiplier on the muscle pressure source target that effectively reduces the tidal volume due to the increased effort of breathing.</i>
@@ -1090,7 +1102,7 @@ When an artificial airway is applied (i.e., mechanical ventilator or anesthesia 
   <tr><td>Airway Resistance (cmH20-s/L)</td><td>1.125</td><td>9</td><td>N/A</td><td>1.125</td><td>1.125</td><td>1.125</td><td>N/A</td><td>1.125</td><td>1.125</td><td>1.125</td></tr>
   <tr><td>Bronchi Resistance (cmH20-s/L)</td><td>0.45</td><td>0.45</td><td>N/A</td><td>0.45</td><td>0.45</td><td>0.45</td><td>Exponential Growth</td><td>1.74</td><td>6.7</td><td>25.8</td></tr>
   <tr><td>Lung Compliance (L/cmH2O)</td><td>0.1</td><td>0.04</td><td>Linear Decay</td><td>0.082</td><td>0.064</td><td>0.046</td><td>Linear Growth</td><td>0.13</td><td>0.16</td><td>0.19</td></tr>
-  <tr><td>Inspiratory-Expiratory Ratio</td><td>0.5</td><td>0.5</td><td>Linear Decay</td><td>0.3</td><td>0.15</td><td>0.03</td><td>Linear Decay</td><td>0.3</td><td>0.15</td><td>0.03</td></tr>
+  <tr><td>Inspiratory-Expiratory Ratio</td><td>0.5</td><td>0.5</td><td>Exponential Growth</td><td>1.1</td><td>2.6</td><td>12.1</td><td>Linear Decay</td><td>0.3</td><td>0.15</td><td>0.03</td></tr>
   <tr><td>Diffusion Surface Area (m^2)</td><td>68.3</td><td>68.3</td><td>Exponential Decay</td><td>34.3</td><td>17.2</td><td>8.6</td><td>Exponential Decay</td><td>34.3</td><td>17.2</td><td>8.6</td></tr>
   <tr><td>Pulmonary Capilary Resistance (cmH20-s/L)</td><td>85.6</td><td>85.6</td><td>N/A</td><td>85.6</td><td>85.6</td><td>85.6</td><td>Linear Growth</td><td>128.4</td><td>171.2</td><td>214.0</td></tr>
   <tr><td>Fatigue Factor</td><td>1</td><td>1</td><td>Linear Decay</td><td>0.76</td><td>0.52</td><td>0.28</td><td>Linear Decay</td><td>0.76</td><td>0.52</td><td>0.28</td></tr>

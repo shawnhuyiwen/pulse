@@ -101,6 +101,7 @@ elseif(TYPE STREQUAL "doxygen")
   # Build our landing files
   setup_landing_page(index.html)
   setup_landing_page(pulse-in-action.html)
+  setup_landing_page(news.html)
 elseif(TYPE STREQUAL "protoc")
   execute_process(COMMAND ${CMAKE_COMMAND} -Dprotobuf_SRC:STRING=@protobuf_SRC@ -Dprotobuf_DIR:STRING=@protobuf_DIR@ -DSCHEMA_SRC:STRING=@SCHEMA_SRC@ -DSCHEMA_DST:STRING=@SCHEMA_DST@ -P "@CMAKE_SOURCE_DIR@/schema/GenerateCDMBindings.cmake")
 elseif(TYPE STREQUAL "updateBaselines")
