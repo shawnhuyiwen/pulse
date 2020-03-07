@@ -42,10 +42,10 @@ public abstract class SEEnvironmentAction extends SEAction
   {
     switch(c.getActionCase())
     {
-    case CONDITIONS:
+    case CHANGEENVIRONMENTALCONDITIONS:
     {
-      SEChangeEnvironmentConditions dst = new SEChangeEnvironmentConditions();
-      SEChangeEnvironmentConditions.load(c.getConditions(), dst, subMgr);
+      SEChangeEnvironmentalConditions dst = new SEChangeEnvironmentalConditions();
+      SEChangeEnvironmentalConditions.load(c.getChangeEnvironmentalConditions(), dst, subMgr);
       return dst;
     }
     case THERMALAPPLICATION:
@@ -65,9 +65,9 @@ public abstract class SEEnvironmentAction extends SEAction
   {
     AnyEnvironmentActionData.Builder dst = AnyEnvironmentActionData.newBuilder();
     
-    if(c instanceof SEChangeEnvironmentConditions)
+    if(c instanceof SEChangeEnvironmentalConditions)
     {
-      dst.setConditions(SEChangeEnvironmentConditions.unload((SEChangeEnvironmentConditions)c));
+      dst.setChangeEnvironmentalConditions(SEChangeEnvironmentalConditions.unload((SEChangeEnvironmentalConditions)c));
       return dst.build();
     }
     if(c instanceof SEThermalApplication)

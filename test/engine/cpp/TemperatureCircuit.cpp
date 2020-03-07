@@ -690,7 +690,7 @@ void PulseEngineTest::EnvironmentISO7730ComparisonTest(const std::string& sTestD
   pc.CreateCircuitsAndCompartments();
   Environment &env = (Environment&)pc.GetEnvironment();
   env.Initialize();
-  env.GetConditions().SerializeFromFile("./environments/Standard.json",JSON);
+  env.GetEnvironmentalConditions().SerializeFromFile("./environments/Standard.json",JSON);
   env.StateChange();
 
   pc.GetEnergy().GetCoreTemperature().SetValue(37.0, TemperatureUnit::C);
@@ -740,11 +740,11 @@ void PulseEngineTest::EnvironmentISO7730ComparisonTest(const std::string& sTestD
 
   for (unsigned int i = 0; i < 13; i++)
   {    
-    env.GetConditions().GetAmbientTemperature().SetValue(dAirTemperature_C[i], TemperatureUnit::C);
-    env.GetConditions().GetMeanRadiantTemperature().SetValue(dMeanRadiantTemperature_C[i], TemperatureUnit::C);
-    env.GetConditions().GetAirVelocity().SetValue(dRelativeAirVelocity_MPerS[i], LengthPerTimeUnit::m_Per_s);
-    env.GetConditions().GetRelativeHumidity().SetValue(dRelativeHumidity[i] / 100.0);
-    env.GetConditions().GetClothingResistance().SetValue(dClothing_clo[i], HeatResistanceAreaUnit::clo);
+    env.GetEnvironmentalConditions().GetAmbientTemperature().SetValue(dAirTemperature_C[i], TemperatureUnit::C);
+    env.GetEnvironmentalConditions().GetMeanRadiantTemperature().SetValue(dMeanRadiantTemperature_C[i], TemperatureUnit::C);
+    env.GetEnvironmentalConditions().GetAirVelocity().SetValue(dRelativeAirVelocity_MPerS[i], LengthPerTimeUnit::m_Per_s);
+    env.GetEnvironmentalConditions().GetRelativeHumidity().SetValue(dRelativeHumidity[i] / 100.0);
+    env.GetEnvironmentalConditions().GetClothingResistance().SetValue(dClothing_clo[i], HeatResistanceAreaUnit::clo);
     env.StateChange();
 
     //Convert from mets and get rid of area

@@ -53,7 +53,7 @@ message AppliedTemperatureData
 /** @brief The overall environment of the patient. */
 message EnvironmentData
 {
-  EnvironmentalConditionsData               Conditions                        = 1; /**<< @brief @copybrief Environment_EnvironmentalConditionsData */
+  EnvironmentalConditionsData               EnvironmentalConditions           = 1; /**<< @brief @copybrief Environment_EnvironmentalConditionsData */
   ActiveConditioningData                    ActiveHeating                     = 2; /**<< @brief @copybrief Environment_ActiveHeatingData */
   ActiveConditioningData                    ActiveCooling                     = 3; /**<< @brief @copybrief Environment_ActiveCoolingData */
   AppliedTemperatureData                    AppliedTemperature                = 4; /**<< @brief @copybrief Environment_AppliedTemperatureData */

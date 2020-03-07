@@ -17,7 +17,7 @@ class SELobarPneumonia;
 class SEPulmonaryFibrosis;
 class SESepsis;
 // Environment Conditions
-class SEInitialEnvironmentConditions;
+class SEInitialEnvironmentalConditions;
 class SESubstanceManager;
 
 class CDM_DECL SEConditionManager : public Loggable
@@ -92,9 +92,9 @@ public:
 
   // Environment Conditions
 
-  bool HasInitialEnvironmentConditions() const;
-  SEInitialEnvironmentConditions* GetInitialEnvironmentConditions();
-  const SEInitialEnvironmentConditions* GetInitialEnvironmentConditions() const;
+  bool HasInitialEnvironmentalConditions() const;
+  SEInitialEnvironmentalConditions* GetInitialEnvironmentalConditions();
+  const SEInitialEnvironmentalConditions* GetInitialEnvironmentalConditions() const;
 
   // Helper to get a list of the active conditions
   void GetAllConditions(std::vector<const SECondition*>& v) const;
@@ -114,7 +114,7 @@ protected:
   SEPulmonaryFibrosis*                     m_PulmonaryFibrosis;
   SESepsis*                                m_Sepsis;
 
-  SEInitialEnvironmentConditions*          m_InitialEnvironmentConditions;
+  SEInitialEnvironmentalConditions*        m_InitialEnvironmentalConditions;
 
   std::stringstream m_ss;
 };

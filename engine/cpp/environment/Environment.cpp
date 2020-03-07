@@ -15,7 +15,7 @@
 #include "engine/SEActionManager.h"
 #include "engine/SEEnvironmentActionCollection.h"
 #include "system/environment/actions/SEThermalApplication.h"
-#include "system/environment/actions/SEChangeEnvironmentConditions.h"
+#include "system/environment/actions/SEChangeEnvironmentalConditions.h"
 // Dependent Systems
 #include "system/physiology/SEEnergySystem.h"
 #include "system/physiology/SERespiratorySystem.h"
@@ -153,12 +153,12 @@ void Environment::StateChange()
   if (m_AmbientGases == nullptr ||m_AmbientAerosols == nullptr)
     return;
 
-  if (GetConditions().GetAmbientGases().size() > 0)
+  if (GetEnvironmentalConditions().GetAmbientGases().size() > 0)
   {
     // Add Gases to the environment
     //Check to make sure fractions sum to 1.0  
     double totalFraction = 0.0;
-    for (auto s : GetConditions().GetAmbientGases())
+    for (auto s : GetEnvironmentalConditions().GetAmbientGases())
     {
       SESubstance& sub = s->GetSubstance();
       totalFraction += s->GetFractionAmount().GetValue();
@@ -176,20 +176,20 @@ void Environment::StateChange()
       subQ->SetToZero();
     //Update the substance values on the Ambient Node based on the Action/File settings
     //We want to set an ambient volume fraction for all active gases
-    for (SESubstanceFraction* subFrac : GetConditions().GetAmbientGases())
+    for (SESubstanceFraction* subFrac : GetEnvironmentalConditions().GetAmbientGases())
     {
       SEGasSubstanceQuantity* subQ = m_AmbientGases->GetSubstanceQuantity(subFrac->GetSubstance());
       subQ->GetVolumeFraction().Set(subFrac->GetFractionAmount());
       //Set substance volumes to be infinite when compartment/node volume is also infinite
       subQ->GetVolume().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::L);
     }
-    m_AmbientGases->GetPressure().Set(GetConditions().GetAtmosphericPressure());
+    m_AmbientGases->GetPressure().Set(GetEnvironmentalConditions().GetAtmosphericPressure());
     m_AmbientGases->Balance(BalanceGasBy::VolumeFraction);
   }
   // Add aerosols to the environment compartment
   // Note we made the design decision that if you want to get rid of a sub
   // you need to provide a zero concentration.
-  for (auto s : GetConditions().GetAmbientAerosols())
+  for (auto s : GetEnvironmentalConditions().GetAmbientAerosols())
   {
     SESubstance& sub = s->GetSubstance();
     if (!sub.HasAerosolization())
@@ -207,8 +207,8 @@ void Environment::AtSteadyState()
 {
   if (m_data.GetState() == EngineState::AtInitialStableState)
   {
-    if (m_data.GetConditions().HasInitialEnvironmentConditions())
-      ProcessChange(*m_data.GetConditions().GetInitialEnvironmentConditions());
+    if (m_data.GetConditions().HasInitialEnvironmentalConditions())
+      ProcessChange(*m_data.GetConditions().GetInitialEnvironmentalConditions());
   }
 }
 
@@ -222,14 +222,14 @@ void Environment::AtSteadyState()
 //--------------------------------------------------------------------------------------------------
 void Environment::PreProcess()
 {
-  if (m_data.GetActions().GetEnvironmentActions().HasChange())
+  if (m_data.GetActions().GetEnvironmentActions().HasChangeEnvironmentalConditions())
   {
-    ProcessChange(*m_data.GetActions().GetEnvironmentActions().GetChange());
-    m_data.GetActions().GetEnvironmentActions().RemoveChange();
+    ProcessChange(*m_data.GetActions().GetEnvironmentActions().GetChangeEnvironmentalConditions());
+    m_data.GetActions().GetEnvironmentActions().RemoveChangeEnvironmentalConditions();
   }
 
   //Set clothing resistor
-  double dClothingResistance_rsi = GetConditions().GetClothingResistance(HeatResistanceAreaUnit::rsi); //1 rsi = 1 m^2-K/W
+  double dClothingResistance_rsi = GetEnvironmentalConditions().GetClothingResistance(HeatResistanceAreaUnit::rsi); //1 rsi = 1 m^2-K/W
   double dSurfaceArea_m2 = m_data.GetCurrentPatient().GetSkinSurfaceArea(AreaUnit::m2);
   m_SkinToClothing->GetNextResistance().SetValue(dClothingResistance_rsi / dSurfaceArea_m2, HeatResistanceUnit::K_Per_W);
 
@@ -426,7 +426,7 @@ void Environment::ProcessActions()
     }
 
     //Average the active temperature with ambient temperature by using the fraction of the body covered
-    double dAmbientTemperature_K = GetConditions().GetAmbientTemperature(TemperatureUnit::K);
+    double dAmbientTemperature_K = GetEnvironmentalConditions().GetAmbientTemperature(TemperatureUnit::K);
     double dAppliedTemperature_K = ap.GetTemperature(TemperatureUnit::K);
     dAppliedTemperature_K = dAppliedTemperature_K * dEffectiveAreaFraction + dAmbientTemperature_K * (1.0 - dEffectiveAreaFraction);
 
@@ -453,7 +453,7 @@ void Environment::CalculateSupplementalValues()
   double dAirTemperature_C = 0.0;
   if (!m_ThermalEnvironment->HasTemperature())
   {
-    dAirTemperature_C = GetConditions().GetAmbientTemperature(TemperatureUnit::C);
+    dAirTemperature_C = GetEnvironmentalConditions().GetAmbientTemperature(TemperatureUnit::C);
   }
   else
   {
@@ -472,13 +472,13 @@ void Environment::CalculateSupplementalValues()
   double dMolarMassOfDryAir_KgPerMol = m_data.GetConfiguration().GetMolarMassOfDryAir(MassPerAmountUnit::kg_Per_mol);
   double dMolarMassOfWaterVapor_KgPerMol = m_data.GetConfiguration().GetMolarMassOfWaterVapor(MassPerAmountUnit::kg_Per_mol);
   
-  double dAmbientTemperature_K = GetConditions().GetAmbientTemperature().GetValue(TemperatureUnit::K);
+  double dAmbientTemperature_K = GetEnvironmentalConditions().GetAmbientTemperature().GetValue(TemperatureUnit::K);
   
-  double dPressureOfWaterVapor_Pa = GetConditions().GetRelativeHumidity().GetValue() * m_dWaterVaporPressureInAmbientAir_Pa;
-  double dPartialPressureOfDryAir_Pa = GetConditions().GetAtmosphericPressure().GetValue(PressureUnit::Pa) - dPressureOfWaterVapor_Pa;
+  double dPressureOfWaterVapor_Pa = GetEnvironmentalConditions().GetRelativeHumidity().GetValue() * m_dWaterVaporPressureInAmbientAir_Pa;
+  double dPartialPressureOfDryAir_Pa = GetEnvironmentalConditions().GetAtmosphericPressure().GetValue(PressureUnit::Pa) - dPressureOfWaterVapor_Pa;
   
   double dAirDensity_kgPerm3 = (dPartialPressureOfDryAir_Pa * dMolarMassOfDryAir_KgPerMol + dPressureOfWaterVapor_Pa * dMolarMassOfWaterVapor_KgPerMol) / (dUniversalGasConstant_JPerK_Mol * dAmbientTemperature_K);
-  GetConditions().GetAirDensity().SetValue(dAirDensity_kgPerm3, MassPerVolumeUnit::kg_Per_m3);
+  GetEnvironmentalConditions().GetAirDensity().SetValue(dAirDensity_kgPerm3, MassPerVolumeUnit::kg_Per_m3);
 
   //Now use that to determine the Lewis Relation
   double dAirSpecificHeat_JPerK_kg = m_data.GetConfiguration().GetAirSpecificHeat(HeatCapacitancePerMassUnit::J_Per_K_kg);
@@ -493,9 +493,9 @@ void Environment::CalculateSupplementalValues()
 
 
   //Water convective heat transfer properties
-  if (GetConditions().GetSurroundingType() == eSurroundingType::Water)
+  if (GetEnvironmentalConditions().GetSurroundingType() == eSurroundingType::Water)
   {
-    double dWaterTemperature_C = GetConditions().GetAmbientTemperature(TemperatureUnit::C);
+    double dWaterTemperature_C = GetEnvironmentalConditions().GetAmbientTemperature(TemperatureUnit::C);
     double dT = Convert(dWaterTemperature_C, TemperatureUnit::C, TemperatureUnit::K) / 298.15;
 
     m_WaterSpecificHeat_J_Per_kg_K = 0.001*((-1.0E-7)*pow(dWaterTemperature_C, 3.0) + (3.0E-5)*pow(dWaterTemperature_C, 2.0) - 0.0018*dWaterTemperature_C + 4.2093);
@@ -515,7 +515,7 @@ void Environment::CalculateSupplementalValues()
 //--------------------------------------------------------------------------------------------------
 void Environment::CalculateRadiation()
 {  
-  if (GetConditions().GetSurroundingType() == eSurroundingType::Water)
+  if (GetEnvironmentalConditions().GetSurroundingType() == eSurroundingType::Water)
   {
     //Submerged - therefore, no radiation
     
@@ -532,7 +532,7 @@ void Environment::CalculateRadiation()
   else //Air
   {
     //Calculate the coefficient
-    double dEmissivity = GetConditions().GetEmissivity().GetValue();
+    double dEmissivity = GetEnvironmentalConditions().GetEmissivity().GetValue();
     double dStefanBoltzmann_WPerM2_K4 = m_data.GetConfiguration().GetStefanBoltzmann(PowerPerAreaTemperatureToTheFourthUnit::W_Per_m2_K4);
     double dEffectiveAreaOverSurfaceArea = 0.73; //Standing
     double dClothingTemperature_K = m_ClothingNode->GetTemperature().GetValue(TemperatureUnit::K);
@@ -557,7 +557,7 @@ void Environment::CalculateRadiation()
     m_ClothingToEnclosurePath->GetNextResistance().SetValue(dResistance_K_Per_W, HeatResistanceUnit::K_Per_W);
 
     //Set the source
-    dMeanRadiantTemperature_K = GetConditions().GetMeanRadiantTemperature(TemperatureUnit::K);
+    dMeanRadiantTemperature_K = GetEnvironmentalConditions().GetMeanRadiantTemperature(TemperatureUnit::K);
     m_GroundToEnclosurePath->GetNextTemperatureSource().SetValue(dMeanRadiantTemperature_K, TemperatureUnit::K);
   }
 
@@ -582,11 +582,11 @@ void Environment::CalculateConvection()
 {
   double dConvectiveHeatTransferCoefficient_WPerM2_K = 0.0;
 
-  if (GetConditions().GetSurroundingType() == eSurroundingType::Water)
+  if (GetEnvironmentalConditions().GetSurroundingType() == eSurroundingType::Water)
   {
     //Submerged - therefore, convection is most important
     double dClothingTemperature_K = m_ClothingNode->GetTemperature().GetValue(TemperatureUnit::K);
-    double dWaterTemperature_K = GetConditions().GetAmbientTemperature(TemperatureUnit::K);
+    double dWaterTemperature_K = GetEnvironmentalConditions().GetAmbientTemperature(TemperatureUnit::K);
     double dWaterDensity_kg_Per_m3 = m_data.GetConfiguration().GetWaterDensity(MassPerVolumeUnit::kg_Per_m3);
     double dGravity_m_Per_s2 = 9.81;
 
@@ -600,7 +600,7 @@ void Environment::CalculateConvection()
   {
     //Calculate the coefficient
     //Velocity should take into account wind and patient movement combined
-    double dAirVelocity_MPerS = GetConditions().GetAirVelocity(LengthPerTimeUnit::m_Per_s);
+    double dAirVelocity_MPerS = GetEnvironmentalConditions().GetAirVelocity(LengthPerTimeUnit::m_Per_s);
     dConvectiveHeatTransferCoefficient_WPerM2_K = 10.3 * pow(dAirVelocity_MPerS, 0.6);
   }
 
@@ -624,7 +624,7 @@ void Environment::CalculateConvection()
   m_ClothingToEnvironmentPath->GetNextResistance().SetValue(dResistance_K_Per_W, HeatResistanceUnit::K_Per_W);
   
   //Set the source
-  double dAmbientTemperature_K = GetConditions().GetAmbientTemperature(TemperatureUnit::K);
+  double dAmbientTemperature_K = GetEnvironmentalConditions().GetAmbientTemperature(TemperatureUnit::K);
   m_GroundToEnvironmentPath->GetNextTemperatureSource().SetValue(dAmbientTemperature_K, TemperatureUnit::K);
 
   //Set the total heat lost
@@ -646,7 +646,7 @@ void Environment::CalculateConvection()
 //--------------------------------------------------------------------------------------------------
 void Environment::CalculateEvaporation()
 {  
-  if (GetConditions().GetSurroundingType() == eSurroundingType::Water)
+  if (GetEnvironmentalConditions().GetSurroundingType() == eSurroundingType::Water)
   {
     //Submerged - therefore, no evaporation
 
@@ -667,7 +667,7 @@ void Environment::CalculateEvaporation()
     GetEvaporativeHeatTranferCoefficient().SetValue(dEvaporativeHeatTransferCoefficient_WPerM2_K, HeatConductancePerAreaUnit::W_Per_m2_K);
 
     //Calculate the source
-    double dClothingResistance_rsi = GetConditions().GetClothingResistance(HeatResistanceAreaUnit::rsi); //1 rsi = 1 m^2-K/W
+    double dClothingResistance_rsi = GetEnvironmentalConditions().GetClothingResistance(HeatResistanceAreaUnit::rsi); //1 rsi = 1 m^2-K/W
     double dFactorOfReduction = 1.0 / (1.0 + 2.22 * dConvectiveTransferCoefficient_WPerM2_K * dClothingResistance_rsi);
     double dMaxEvaporativePotential = dEvaporativeHeatTransferCoefficient_WPerM2_K * dFactorOfReduction * (m_dWaterVaporPressureAtSkin_Pa - m_dWaterVaporPressureInAmbientAir_Pa);
     double dSurfaceArea_m2 = m_data.GetCurrentPatient().GetSkinSurfaceArea(AreaUnit::m2);
@@ -712,21 +712,21 @@ void Environment::CalculateRespiration()
   //This is the same for submerged - assume head stays above water - would be zero anyway, if holding breath (Ventilation Rate = 0)
 
   //Convection
-  double dTempOfRespAir_K = GetConditions().GetRespirationAmbientTemperature(TemperatureUnit::K);
+  double dTempOfRespAir_K = GetEnvironmentalConditions().GetRespirationAmbientTemperature(TemperatureUnit::K);
   double dTempOfRespTract_K = 310.15; // = 37C = 98.6F
   if (m_data.GetEnergy().HasCoreTemperature())
   {
     dTempOfRespTract_K = m_data.GetEnergy().GetCoreTemperature(TemperatureUnit::K);
   }  
   double dPulmonaryVentilationRate_M3PerS = m_data.GetRespiratory().GetTotalPulmonaryVentilation(VolumePerTimeUnit::m3_Per_s);
-  double dAirDensity_kgPerM3 = GetConditions().GetAirDensity(MassPerVolumeUnit::kg_Per_m3);
+  double dAirDensity_kgPerM3 = GetEnvironmentalConditions().GetAirDensity(MassPerVolumeUnit::kg_Per_m3);
   double dAirSpecificHeat_JPerK_kg = m_data.GetConfiguration().GetAirSpecificHeat(HeatCapacitancePerMassUnit::J_Per_K_kg);
   double dSensibleHeatLoss_W = dPulmonaryVentilationRate_M3PerS * dAirDensity_kgPerM3 * dAirSpecificHeat_JPerK_kg * (dTempOfRespTract_K - dTempOfRespAir_K);
   
   //Evaporation
-  double dTempOfRespAir_F = GetConditions().GetRespirationAmbientTemperature(TemperatureUnit::F);
-  double dRelativeHumidity = GetConditions().GetRelativeHumidity().GetValue();
-  double dPressure_Pa = GetConditions().GetAtmosphericPressure(PressureUnit::Pa);
+  double dTempOfRespAir_F = GetEnvironmentalConditions().GetRespirationAmbientTemperature(TemperatureUnit::F);
+  double dRelativeHumidity = GetEnvironmentalConditions().GetRelativeHumidity().GetValue();
+  double dPressure_Pa = GetEnvironmentalConditions().GetAtmosphericPressure(PressureUnit::Pa);
   double dSpecificHumidity = (dRelativeHumidity * 100.0) / (0.263 * dPressure_Pa) * (std::exp(17.67 * (dTempOfRespAir_K - 273.16) / (dTempOfRespAir_K - 29.65)));
   double dHumidityDiff = 0.02645 + 0.0000361 * dTempOfRespAir_F - 0.798 * dSpecificHumidity;
   double dLatentHeatLoss_W = m_dHeatOfVaporizationOfWater_J_Per_kg * dPulmonaryVentilationRate_M3PerS * dAirDensity_kgPerM3 * dHumidityDiff;

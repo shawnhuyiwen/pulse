@@ -6,8 +6,8 @@
 class SEActiveConditioning;
 class SEAppliedTemperature;
 class SEEnvironmentalConditions;
-class SEChangeEnvironmentConditions;
-class SEInitialEnvironmentConditions;
+class SEChangeEnvironmentalConditions;
+class SEInitialEnvironmentalConditions;
 
 class CDM_DECL SEEnvironment : public SESystem
 {
@@ -23,12 +23,12 @@ protected:
   /** @name ProcessChange
   * @brief - Will change this class as directed by the Action
   */
-  virtual bool ProcessChange(SEChangeEnvironmentConditions& action);
+  virtual bool ProcessChange(SEChangeEnvironmentalConditions& action);
 
   /** @name ProcessChange
   * @brief - Will change this class as directed by the Condition
   */
-  virtual bool ProcessChange(SEInitialEnvironmentConditions& change);
+  virtual bool ProcessChange(SEInitialEnvironmentalConditions& change);
 
   /** @name StateChange
   *   @brief - This method is called when ever there is a state change
@@ -56,10 +56,10 @@ public:
   virtual const SEAppliedTemperature* GetAppliedTemperature() const;
   virtual void RemoveAppliedTemperature();
 
-  virtual bool HasConditions() const;
-  virtual SEEnvironmentalConditions& GetConditions();
-  virtual const SEEnvironmentalConditions* GetConditions() const;
-  virtual void RemoveConditions();
+  virtual bool HasEnvironmentalConditions() const;
+  virtual SEEnvironmentalConditions& GetEnvironmentalConditions();
+  virtual const SEEnvironmentalConditions* GetEnvironmentalConditions() const;
+  virtual void RemoveEnvironmentalConditions();
 
   virtual bool HasConvectiveHeatLoss() const;
   virtual SEScalarPower& GetConvectiveHeatLoss();
@@ -107,7 +107,7 @@ protected:
   SEActiveConditioning*             m_ActiveHeating;
   SEActiveConditioning*             m_ActiveCooling;
   SEAppliedTemperature*             m_AppliedTemperature;
-  SEEnvironmentalConditions*        m_Conditions;
+  SEEnvironmentalConditions*        m_EnvironmentalConditions;
 
   SESubstanceManager&               m_Substances;
 };

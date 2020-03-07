@@ -6,8 +6,8 @@
 #include "system/environment/SEActiveConditioning.h"
 #include "system/environment/SEAppliedTemperature.h"
 #include "system/environment/SEEnvironmentalConditions.h"
-#include "system/environment/actions/SEChangeEnvironmentConditions.h"
-#include "system/environment/conditions/SEInitialEnvironmentConditions.h"
+#include "system/environment/actions/SEChangeEnvironmentalConditions.h"
+#include "system/environment/conditions/SEInitialEnvironmentalConditions.h"
 #include "substance/SESubstanceManager.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarHeatConductancePerArea.h"
@@ -23,7 +23,7 @@ SEEnvironment::SEEnvironment(SESubstanceManager& substances) : SESystem(substanc
   m_ActiveHeating = nullptr;
   m_ActiveCooling = nullptr;
   m_AppliedTemperature = nullptr; 
-  m_Conditions = nullptr;
+  m_EnvironmentalConditions = nullptr;
   m_ConvectiveHeatLoss = nullptr;
   m_ConvectiveHeatTranferCoefficient = nullptr;
   m_EvaporativeHeatLoss = nullptr;
@@ -45,7 +45,7 @@ void SEEnvironment::Clear()
   SAFE_DELETE(m_ActiveHeating);
   SAFE_DELETE(m_ActiveCooling);
   SAFE_DELETE(m_AppliedTemperature);
-  SAFE_DELETE(m_Conditions);
+  SAFE_DELETE(m_EnvironmentalConditions);
   SAFE_DELETE(m_ConvectiveHeatLoss);
   SAFE_DELETE(m_ConvectiveHeatTranferCoefficient);
   SAFE_DELETE(m_EvaporativeHeatLoss);
@@ -80,8 +80,8 @@ const SEScalar* SEEnvironment::GetScalar(const std::string& name)
   {
     std::string child = name.substr(0, split);
     std::string prop = name.substr(split + 1, name.npos);
-    if (child == "Conditions")
-      return GetConditions().GetScalar(prop);
+    if (child == "EnvironmentalConditions")
+      return GetEnvironmentalConditions().GetScalar(prop);
     if (child == "ActiveHeating")
       return GetActiveHeating().GetScalar(prop);
     if (child == "ActiveCooling")
@@ -92,45 +92,45 @@ const SEScalar* SEEnvironment::GetScalar(const std::string& name)
   return nullptr;
 }
 
-bool SEEnvironment::ProcessChange(SEInitialEnvironmentConditions& change)
+bool SEEnvironment::ProcessChange(SEInitialEnvironmentalConditions& change)
 {
   // If we have data then we merge it, if a file was provided
   // we reset and set the environment to the file, so we only have the file data
-  if (change.HasConditions())
-    GetConditions().Merge(change.GetConditions());
-  else if (change.HasConditionsFile())
+  if (change.HasEnvironmentalConditions())
+    GetEnvironmentalConditions().Merge(change.GetEnvironmentalConditions());
+  else if (change.HasEnvironmentalConditionsFile())
   {
     // Update the condition with the file contents
-    std::string cfg_file = change.GetConditionsFile();
-    if (!change.GetConditions().SerializeFromFile(cfg_file,JSON))
+    std::string cfg_file = change.GetEnvironmentalConditionsFile();
+    if (!change.GetEnvironmentalConditions().SerializeFromFile(cfg_file,JSON))
     {
       /// \error Unable to read Configuration Action file
       Error("Could not read provided SEInitialEnvironment file", "SEEnvironment::ProcessChange");
       return false;
     }
-    GetConditions().Merge(change.GetConditions());
+    GetEnvironmentalConditions().Merge(change.GetEnvironmentalConditions());
   }
   StateChange();
   return true;
 }
 
-bool SEEnvironment::ProcessChange(SEChangeEnvironmentConditions& change)
+bool SEEnvironment::ProcessChange(SEChangeEnvironmentalConditions& change)
 {
   // If we have data then we merge it, if a file was provided
   // we reset and set the environment to the file, so we only have the file data
-  if (change.HasConditions())
-    GetConditions().Merge(change.GetConditions());
-  else if (change.HasConditionsFile())
+  if (change.HasEnvironmentalConditions())
+    GetEnvironmentalConditions().Merge(change.GetEnvironmentalConditions());
+  else if (change.HasEnvironmentalConditionsFile())
   {
     // Update the action with the file contents
-    std::string cfg_file = change.GetConditionsFile();
-    if (!change.GetConditions().SerializeFromFile(cfg_file,JSON))
+    std::string cfg_file = change.GetEnvironmentalConditionsFile();
+    if (!change.GetEnvironmentalConditions().SerializeFromFile(cfg_file,JSON))
     {
       /// \error Unable to read Configuration Action file
-      Error("Could not read provided SEEnvironmentChange file", "SEEnvironment::ProcessChange");
+      Error("Could not read provided Environmental Conditions file", "SEEnvironment::ProcessChange");
       return false;
     }
-    GetConditions().Merge(change.GetConditions());
+    GetEnvironmentalConditions().Merge(change.GetEnvironmentalConditions());
   }
   StateChange();
   return true;
@@ -193,23 +193,23 @@ void SEEnvironment::RemoveAppliedTemperature()
   SAFE_DELETE(m_AppliedTemperature);
 }
 
-bool SEEnvironment::HasConditions() const
+bool SEEnvironment::HasEnvironmentalConditions() const
 {
-  return m_Conditions != nullptr;
+  return m_EnvironmentalConditions != nullptr;
 }
-SEEnvironmentalConditions& SEEnvironment::GetConditions()
+SEEnvironmentalConditions& SEEnvironment::GetEnvironmentalConditions()
 {
-  if (m_Conditions == nullptr)
-    m_Conditions = new SEEnvironmentalConditions(m_Substances);
-  return *m_Conditions;
+  if (m_EnvironmentalConditions == nullptr)
+    m_EnvironmentalConditions = new SEEnvironmentalConditions(m_Substances);
+  return *m_EnvironmentalConditions;
 }
-const SEEnvironmentalConditions* SEEnvironment::GetConditions() const
+const SEEnvironmentalConditions* SEEnvironment::GetEnvironmentalConditions() const
 {
-  return m_Conditions;
+  return m_EnvironmentalConditions;
 }
-void SEEnvironment::RemoveConditions()
+void SEEnvironment::RemoveEnvironmentalConditions()
 {
-  SAFE_DELETE(m_Conditions);
+  SAFE_DELETE(m_EnvironmentalConditions);
 }
 
 bool SEEnvironment::HasConvectiveHeatLoss() const

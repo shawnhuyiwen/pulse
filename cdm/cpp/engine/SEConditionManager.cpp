@@ -17,7 +17,7 @@
 #include "patient/conditions/SEPulmonaryFibrosis.h"
 #include "patient/conditions/SESepsis.h"
 // Environment Conditions
-#include "system/environment/conditions/SEInitialEnvironmentConditions.h"
+#include "system/environment/conditions/SEInitialEnvironmentalConditions.h"
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceManager.h"
 #include "io/protobuf/PBEngine.h"
@@ -34,7 +34,7 @@ SEConditionManager::SEConditionManager(SESubstanceManager& substances) : Loggabl
   m_PericardialEffusion = nullptr;
   m_PulmonaryFibrosis = nullptr;
   m_ImpairedAlveolarExchange = nullptr;
-  m_InitialEnvironmentConditions = nullptr;
+  m_InitialEnvironmentalConditions = nullptr;
   m_Sepsis = nullptr;
 }
 
@@ -55,7 +55,7 @@ void SEConditionManager::Clear()
   SAFE_DELETE(m_PericardialEffusion);
   SAFE_DELETE(m_PulmonaryFibrosis);
   SAFE_DELETE(m_ImpairedAlveolarExchange);
-  SAFE_DELETE(m_InitialEnvironmentConditions);
+  SAFE_DELETE(m_InitialEnvironmentalConditions);
   SAFE_DELETE(m_Sepsis);
 }
 
@@ -255,16 +255,16 @@ bool SEConditionManager::ProcessCondition(const SECondition& condition)
 
   if (dynamic_cast<const SEEnvironmentCondition*>(&condition) != nullptr)
   {
-    const SEInitialEnvironmentConditions* ie = dynamic_cast<const SEInitialEnvironmentConditions*>(&condition);
+    const SEInitialEnvironmentalConditions* ie = dynamic_cast<const SEInitialEnvironmentalConditions*>(&condition);
     if (ie != nullptr)
     {
-      if (HasInitialEnvironmentConditions())
+      if (HasInitialEnvironmentalConditions())
       {
-        Error("Cannot have multiple Initial Environment conditions");
+        Error("Cannot have multiple Initial Environmental conditions");
         return false;
       }
-      m_InitialEnvironmentConditions = new SEInitialEnvironmentConditions(m_Substances);
-      m_InitialEnvironmentConditions->Copy(*ie);
+      m_InitialEnvironmentalConditions = new SEInitialEnvironmentalConditions(m_Substances);
+      m_InitialEnvironmentalConditions->Copy(*ie);
       return true;
     }
   }
@@ -422,17 +422,17 @@ const SESepsis* SEConditionManager::GetSepsis() const
   return m_Sepsis;
 }
 
-bool SEConditionManager::HasInitialEnvironmentConditions() const
+bool SEConditionManager::HasInitialEnvironmentalConditions() const
 {
-  return m_InitialEnvironmentConditions == nullptr ? false : m_InitialEnvironmentConditions->IsValid();
+  return m_InitialEnvironmentalConditions == nullptr ? false : m_InitialEnvironmentalConditions->IsValid();
 }
-SEInitialEnvironmentConditions* SEConditionManager::GetInitialEnvironmentConditions()
+SEInitialEnvironmentalConditions* SEConditionManager::GetInitialEnvironmentalConditions()
 {
-  return m_InitialEnvironmentConditions;
+  return m_InitialEnvironmentalConditions;
 }
-const SEInitialEnvironmentConditions* SEConditionManager::GetInitialEnvironmentConditions() const
+const SEInitialEnvironmentalConditions* SEConditionManager::GetInitialEnvironmentalConditions() const
 {
-  return m_InitialEnvironmentConditions;
+  return m_InitialEnvironmentalConditions;
 }
 
 void SEConditionManager::GetAllConditions(std::vector<const SECondition*>& conditions) const
@@ -460,8 +460,8 @@ void SEConditionManager::GetAllConditions(std::vector<const SECondition*>& condi
   if (HasSepsis())
     conditions.push_back(GetSepsis());
 
-  if (HasInitialEnvironmentConditions())
-    conditions.push_back(GetInitialEnvironmentConditions());
+  if (HasInitialEnvironmentalConditions())
+    conditions.push_back(GetInitialEnvironmentalConditions());
 }
 
 bool SEConditionManager::IsEmpty() const
@@ -489,7 +489,7 @@ bool SEConditionManager::IsEmpty() const
   if (HasSepsis())
     return false;
 
-  if (HasInitialEnvironmentConditions())
+  if (HasInitialEnvironmentalConditions())
     return false;
   return true;
 }

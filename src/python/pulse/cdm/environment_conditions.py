@@ -7,36 +7,36 @@ class SEEnvironmentCondition(SECondition):
     pass
 
 class SEInitialEnvironmentalConditions(SEEnvironmentCondition):
-    __slots__ = ["_conditions_file", "_conditions"]
+    __slots__ = ["_environmental_conditions_file", "_environmental_conditions"]
 
     def __init__(self):
-        self._conditions = None
-        self._conditions_file = None
+        self._environmental_conditions = None
+        self._environmental_conditions_file = None
 
     def get_name(self):
-        return "InitialEnvironment"
+        return "InitialEnvironmentalConditions"
     
     def is_valid(self):
-        if not self.has_conditions() and not self.has_conditions_file():
+        if not self.has_environmental_conditions() and not self.has_environmental_conditions_file():
             return False;
         return True
 
     def is_active(self):
         return self.is_valid()
 
-    def has_conditions_file(self):
-        return self._conditions_file is not None
-    def get_conditions_file(self):
-        return self._conditions_file
-    def set_conditions_file(self, file: str):
-        self._conditions_file = file
-    def invalidate_conditions_file(self):
-        self._conditions_file = None
+    def has_environmental_conditions_file(self):
+        return self._environmental_conditions_file is not None
+    def get_environmental_conditions_file(self):
+        return self._environmental_conditions_file
+    def set_environmental_conditions_file(self, file: str):
+        self._environmental_conditions_file = file
+    def invalidate_environmental_conditions_file(self):
+        self._environmental_conditions_file = None
 
-    def has_conditions(self):
-        return self._conditions is not None
-    def get_conditions(self):
-        if self._conditions is None:
-            self._conditions = SEEnvironmentalConditions()
-        return self._conditions
+    def has_environmental_conditions(self):
+        return self._environmental_conditions is not None
+    def get_environmental_conditions(self):
+        if self._environmental_conditions is None:
+            self._environmental_conditions = SEEnvironmentalConditions()
+        return self._environmental_conditions
 

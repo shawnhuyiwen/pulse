@@ -12,17 +12,19 @@ from pulse.cdm.bind.Engine_pb2 import ActionListData, AnyActionData, \
 # Environment
 from pulse.cdm.environment import eSurroundingType, SEEnvironmentalConditions, \
                                   SEAppliedTemperature, SEActiveConditioning
-from pulse.cdm.environment_conditions import SEEnvironmentCondition, \
-                                             SEInitialEnvironmentalConditions
 from pulse.cdm.bind.Environment_pb2 import EnvironmentalConditionsData, \
                                            AppliedTemperatureData, \
                                            ActiveConditioningData
-from pulse.cdm.bind.EnvironmentActions_pb2 import EnvironmentActionData, \
-                                                  AnyEnvironmentActionData, \
-                                                  ChangeEnvironmentConditionsData
+from pulse.cdm.environment_conditions import SEEnvironmentCondition, \
+                                             SEInitialEnvironmentalConditions
 from pulse.cdm.bind.EnvironmentConditions_pb2 import EnvironmentConditionData, \
-                                                     AnyEnvironmentConditionData, \
-                                                     InitialEnvironmentConditionsData
+                                                     InitialEnvironmentalConditionsData
+from pulse.cdm.environment_actions import SEEnvironmentAction, \
+                                          SEChangeEnvironmentalConditions, \
+                                          SEThermalApplication
+from pulse.cdm.bind.EnvironmentActions_pb2 import EnvironmentActionData, \
+                                                  ChangeEnvironmentalConditionsData, \
+                                                  ThermalApplicationData
 # Substances
 from pulse.cdm.bind.Substance_pb2 import SubstanceConcentrationData, SubstanceFractionData
 # Patient
@@ -64,9 +66,36 @@ from pulse.cdm.bind.Properties_pb2 import ScalarData, Scalar0To1Data, ScalarNega
                                           ScalarVolumeData, ScalarVolumePerTimeData, ScalarVolumePerTimeMassData, \
                                           ScalarVolumePerTimePressureData
 
+
+# Conditions
+def _serialize_condition_to_bind(src: SECondition, dst: ConditionData):
+    dst.Comment = src.get_comment()
+
+def _serialize_condition_from_bind(src: ConditionData, dst: SECondition):
+    dst.set_comment(src.Comment)
+
+
+def serialize_condition_manager_to_string(condition_manager: SEConditionManager, fmt: eSerializationFormat):
+    dst = ConditionListData()
+    _serialize_condition_manager_to_bind(condition_manager, dst)
+    return json_format.MessageToJson(dst, True, True)
+
+def _serialize_condition_manager_to_bind(condition_manager: SEConditionManager, dst: ConditionListData):
+    if (condition_manager.is_empty()):
+        return ""
+    if condition_manager.has_initial_environmental_conditions():
+        any_condition = AnyConditionData()
+        _serialize_initial_environmental_conditions_to_bind(condition_manager.get_initial_environmental_conditions(),
+                                                            any_condition.EnvironmentCondition.InitialEnvironmentConditions)
+        dst.AnyCondition.append(any_condition)
+
 # Actions
 def _serialize_action_to_bind(src: SEAction, dst: ActionData):
     dst.Comment = src.get_comment()
+
+def _serialize_action_from_bind(src: ActionData, dst: SEAction):
+    dst.set_comment(src.Comment)
+
 def serialize_actions_to_string(actions: [], fmt: eSerializationFormat):
     action_list = ActionListData()
     for action in actions:
@@ -75,48 +104,43 @@ def serialize_actions_to_string(actions: [], fmt: eSerializationFormat):
             continue
         print(action)
         any_action = AnyActionData()
-        if isinstance(action, SEExercise):
-            _serialize_exercise_to_bind(action, any_action.PatientAction.Exercise)
-            action_list.AnyAction.append(any_action)
-            continue
-        if isinstance(action, SEHemorrhage):
-            _serialize_hemorrhage_to_bind(action, any_action.PatientAction.Hemorrhage)
-            action_list.AnyAction.append(any_action)
-            continue
+        if isinstance(action, SEPatientAction):
+            if isinstance(action, SEExercise):
+                _serialize_exercise_to_bind(action, any_action.PatientAction.Exercise)
+                action_list.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SEHemorrhage):
+                _serialize_hemorrhage_to_bind(action, any_action.PatientAction.Hemorrhage)
+                action_list.AnyAction.append(any_action)
+                continue
+        if isinstance(action, SEEnvironmentAction):
+            if isinstance(action, SEChangeEnvironmentalConditions):
+                _serialize_change_environmental_conditions_to_bind(action, any_action.EnvironmentAction.ChangeEnvironmentalConditions)
+                action_list.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SEThermalApplication):
+                _serialize_thermal_application_to_bind(action, any_action.EnvironmentAction.ThermalApplication)
+                action_list.AnyAction.append(any_action)
+                continue
     return json_format.MessageToJson(action_list,True,True)
 
-# Conditions
-def _serialize_condition_to_bind(src: SECondition, dst: ConditionData):
-    dst.Comment = src.get_comment()
-def serialize_condition_manager_to_string(condition_manager: SEConditionManager, fmt: eSerializationFormat):
-    dst = ConditionListData()
-    _serialize_condition_manager_to_bind(condition_manager, dst)
-    return json_format.MessageToJson(dst,True,True)
-def _serialize_condition_manager_to_bind(condition_manager: SEConditionManager, dst: ConditionListData):
-    if (condition_manager.is_empty()):
-        return ""
-    if condition_manager.has_initial_environmental_conditions():
-        any_condition = AnyConditionData()
-        _serialize_initial_environmental_conditions_to_bind(condition_manager.get_initial_environmental_conditions(),
-                                                           any_condition.EnvironmentCondition.InitialEnvironmentConditions)
-
-        dst.AnyCondition.append(any_condition)
-
-
-# Environmental Conditions
+# Environment Objects
 def serialize_environmental_conditions_to_string(src: SEEnvironmentalConditions, fmt: eSerializationFormat):
     dst = EnvironmentalConditionsData()
     _serialize_environmental_conditions_to_bind(src, dst)
     return json_format.MessageToJson(dst, True, True)
+
 def serialize_environmental_conditions_to_file(src: SEEnvironmentalConditions, filename: str, fmt: eSerializationFormat):
     string = serialize_environmental_conditions_to_string(src, fmt)
     file = open(filename, "w")
     n = file.write(string)
     file.close()
+
 def serialize_environmental_conditions_from_string(string: str, dst: SEEnvironmentalConditions, fmt: eSerializationFormat):
     src = EnvironmentalConditionsData()
     json_format.Parse(string, src)
     _serialize_environmental_conditions_from_bind(src,dst)
+
 def serialize_environmental_conditions_from_file(filename: str, dst: SEEnvironmentalConditions, fmt: eSerializationFormat):
     with open(filename) as f:
         string = f.read()
@@ -152,6 +176,7 @@ def _serialize_environmental_conditions_to_bind(src: SEEnvironmentalConditions, 
         sc.Name = aAerosol.get_substance()
         _serialize_scalar_mass_per_volume_to_bind(aAerosol.get_concentration(), sc.Concentration)
         dst.AmbientAerosol.append(sc)
+
 def _serialize_environmental_conditions_from_bind(src: EnvironmentalConditionsData, dst: SEEnvironmentalConditions):
     dst.set_surrounding_type(eSurroundingType(src.SurroundingType))
     if src.HasField("AirDensity"):
@@ -176,30 +201,65 @@ def _serialize_environmental_conditions_from_bind(src: EnvironmentalConditionsDa
         _serialize_scalar_0to1_from_bind(aGas.Amount, dst.get_ambient_gas(aGas.Name).get_fraction_amount())
     for aAerosol in src.AmbientAerosol:
         _serialize_scalar_mass_per_volume_from_bind(aAerosol.Concentration, dst.get_ambient_aerosol(aAerosol.Name).get_concentration())
+
 # Environment Conditions
+def _serialize_environment_condition_to_bind(src: SEEnvironmentCondition, dst: EnvironmentConditionData):
+    _serialize_condition_to_bind(src,dst.Condition)
+
+def _serialize_environment_condition_from_bind(src: EnvironmentConditionData, dst: SEEnvironmentCondition):
+    _serialize_condition_from_bind(src.Condition, dst)
+
 def _serialize_initial_environmental_conditions_to_bind(src: SEInitialEnvironmentalConditions, dst: EnvironmentalConditionsData):
+    _serialize_environment_condition_to_bind(src, dst)
     if src.has_conditions_file():
         dst.ConditionsFile = src.get_conditions_file()
     elif src.has_conditions():
         _serialize_environmental_conditions_to_bind(src.get_conditions(), dst.Conditions)
+
 def _serialize_initial_environmental_conditions_from_bind(src: EnvironmentalConditionsData, dst: SEInitialEnvironmentalConditions):
+    _serialize_environment_condition_from_bind(src, dst)
     raise Exception("_serialize_initial_environmental_conditions_from_bind not implemented")
+
 # Environment Actions
+def _serialize_environment_action_to_bind(src: SEEnvironmentAction, dst: EnvironmentActionData):
+    _serialize_action_to_bind(src,dst.Action)
+
+def _serialize_environment_action_from_bind(src: EnvironmentActionData, dst: SEEnvironmentAction):
+    _serialize_action_from_bind(src.Action,dst)
+
+def _serialize_change_environmental_conditions_to_bind(src: SEChangeEnvironmentalConditions, dst: ChangeEnvironmentalConditionsData):
+    _serialize_environment_action_to_bind(src, dst.EnvironmentAction)
+    raise Exception("_serialize_change_environmental_conditions_to_bind not implemented")
+
+def _serialize_change_environmental_conditions_from_bind(src: ChangeEnvironmentalConditionsData, dst: SEChangeEnvironmentalConditions):
+    _serialize_environment_action_from_bind(src.EnvironmentAction, dst)
+    raise Exception("_serialize_change_environmental_conditions_from_bind not implemented")
+
+def _serialize_thermal_application_to_bind(src: SEThermalApplication, dst: ThermalApplicationData):
+    _serialize_environment_action_to_bind(src, dst.EnvironmentAction)
+    raise Exception("_serialize_thermal_application_to_bind not implemented")
+
+def _serialize_thermal_application_from_bind(src: ThermalApplicationData, dst: SEThermalApplication):
+    _serialize_environment_action_from_bind(src.EnvironmentAction, dst)
+    raise Exception("_serialize_thermal_application_from_bind not implemented")
 
 # Patient
 def serialize_patient_to_string(src: SEPatient, fmt: eSerializationFormat):
     dst = PatientData()
     _serialize_patient_to_bind(src, dst)
     return json_format.MessageToJson(dst, True, True)
+
 def serialize_patient_to_file(src: SEPatient, filename: str, fmt: eSerializationFormat):
     string = serialize_patient_to_string(src, fmt)
     file = open(filename, "w")
     n = file.write(string)
     file.close()
+
 def serialize_patient_from_string(string: str, dst: SEPatient, fmt: eSerializationFormat):
     src = PatientData()
     json_format.Parse(string, src)
     _serialize_patient_from_bind(src,dst)
+
 def serialize_patient_from_file(filename: str, dst: SEPatient, fmt: eSerializationFormat):
     with open(filename) as f:
         string = f.read()
@@ -262,6 +322,7 @@ def _serialize_patient_to_bind(src: SEPatient, dst: PatientData):
         _serialize_scalar_volume_to_bind(src.get_total_lung_capacity(), dst.TotalLungCapacity)
     if src.has_vital_capacity():
         _serialize_scalar_volume_to_bind(src.get_vital_capacity(), dst.VitalCapacity)
+
 def _serialize_patient_from_bind(src: PatientData, dst: SEPatient):
     dst.set_name(src.Name)
     dst.set_sex(eSex(src.Sex))
@@ -319,20 +380,24 @@ def _serialize_patient_from_bind(src: PatientData, dst: SEPatient):
         _serialize_scalar_volume_from_bind(src.TotalLungCapacity, dst.get_total_lung_capacity())
     if src.HasField("VitalCapacity"):
         _serialize_scalar_volume_from_bind(src.VitalCapacity, dst.get_vital_capacity())
+
 # Patient Configuration
 def serialize_patient_configuration_to_string(src: SEPatientConfiguration, fmt: eSerializationFormat):
     dst = PatientConfigurationData()
     _serialize_patient_configuration_to_bind(src, dst)
     return json_format.MessageToJson(dst, True, True)
+
 def serialize_patient_configuration_to_file(src: SEPatientConfiguration, filename: str, fmt: eSerializationFormat):
     string = serialize_patient_configuration_to_string(src, fmt)
     file = open(filename, "w")
     n = file.write(string)
     file.close()
+
 def serialize_patient_configuration_from_string(string: str, dst: SEPatientConfiguration, fmt: eSerializationFormat):
     src = PatientConfigurationData()
     json_format.Parse(string, src)
     _serialize_patient_configuration_from_bind(src,dst)
+
 def serialize_patient_configuration_from_file(filename: str, dst: SEPatientConfiguration, fmt: eSerializationFormat):
     with open(filename) as f:
         string = f.read()
@@ -345,19 +410,26 @@ def _serialize_patient_configuration_to_bind(src: SEPatientConfiguration, dst: P
         dst.PatientFile = src.get_patient_file()
     if src.has_conditions():
         _serialize_condition_manager_to_bind(src.get_conditions(), dst.Conditions)
+
 def _serialize_patient_configuration_from_bind(src: PatientConfigurationData, dst: SEPatientConfiguration):
     raise Exception("_serialize_patient_configuration_from_bind not implemented")
+
 # Patient Conditions
+
 # Patient Actions
 def _serialize_patient_action_to_bind(src: SEPatientAction, dst: PatientActionData):
     _serialize_action_to_bind(src,dst.Action)
+
 def _serialize_patient_action_from_bind(src: PatientActionData, dst: SEPatientAction):
     raise Exception("_serialize_patient_action_from_bind not implemented")
+
 
 def _serialize_exercise_to_bind(src: SEExercise, dst: ExerciseData):
     _serialize_patient_action_to_bind(src, dst.PatientAction)
     _serialize_scalar_0to1_to_bind(src.get_intensity(), dst.Intensity)
+
 def _serialize_exercise_from_bind(src: ExerciseData, dst: SEExercise):
+    _serialize_patient_action_from_bind(src.PatientAction, dst)
     raise Exception("_serialize_exercise_from_bind not implemented")
 
 def _serialize_hemorrhage_to_bind(src: SEHemorrhage, dst: HemorrhageData):
@@ -365,6 +437,7 @@ def _serialize_hemorrhage_to_bind(src: SEHemorrhage, dst: HemorrhageData):
     dst.Compartment = src.get_compartment()
     dst.Type = src.get_type().value
     _serialize_scalar_volume_per_time_to_bind(src.get_rate(), dst.Rate)
+
 def _serialize_hemorrhage_from_bind(src: HemorrhageData, dst: SEHemorrhage):
     raise Exception("_serialize_hemorrhage_from_bind not implemented")
 

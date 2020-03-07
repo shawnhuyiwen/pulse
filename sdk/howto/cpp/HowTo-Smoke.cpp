@@ -10,7 +10,8 @@
 #include "compartment/fluid/SELiquidCompartment.h"
 #include "compartment/fluid/SEGasCompartment.h"
 #include "system/environment/SEActiveConditioning.h"
-#include "system/environment/actions/SEChangeEnvironmentConditions.h"
+#include "system/environment/conditions/SEInitialEnvironmentalConditions.h"
+#include "system/environment/actions/SEChangeEnvironmentalConditions.h"
 #include "system/environment/SEEnvironmentalConditions.h"
 #include "substance/SESubstanceFraction.h"
 #include "substance/SESubstanceConcentration.h"
@@ -35,7 +36,6 @@
 #include "properties/SEScalarPower.h"
 #include "properties/SEScalarPressureTimePerVolume.h"
 
-#include "system/environment/conditions/SEInitialEnvironmentConditions.h"
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
@@ -126,14 +126,14 @@ void HowToSmoke()
   pe->GetLogger()->Info(std::stringstream() <<"Systemic Vascular Resistance : " << pe->GetCardiovascularSystem()->GetSystemicVascularResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL) << PressureTimePerVolumeUnit::mmHg_s_Per_mL);;
 
   // Here we will put this healty patient into a smokey environment.
-  SEChangeEnvironmentConditions envChange(pe->GetSubstanceManager());
+  SEChangeEnvironmentalConditions envChange(pe->GetSubstanceManager());
   // NOTE YOUR FRACTIONS MUST ADD UP TO 1.0
-  envChange.GetConditions().GetAmbientGas(*N2).GetFractionAmount().SetValue(0.79008);
-  envChange.GetConditions().GetAmbientGas(*O2).GetFractionAmount().SetValue(0.2095);
-  envChange.GetConditions().GetAmbientGas(*CO2).GetFractionAmount().SetValue(4.0E-4);
-  envChange.GetConditions().GetAmbientGas(*CO).GetFractionAmount().SetValue(2.0E-5);
+  envChange.GetEnvironmentalConditions().GetAmbientGas(*N2).GetFractionAmount().SetValue(0.79008);
+  envChange.GetEnvironmentalConditions().GetAmbientGas(*O2).GetFractionAmount().SetValue(0.2095);
+  envChange.GetEnvironmentalConditions().GetAmbientGas(*CO2).GetFractionAmount().SetValue(4.0E-4);
+  envChange.GetEnvironmentalConditions().GetAmbientGas(*CO).GetFractionAmount().SetValue(2.0E-5);
   // Concentrations are independent and do not need to add up to 1.0
-  envChange.GetConditions().GetAmbientAerosol(*Particulate).GetConcentration().SetValue(2.9, MassPerVolumeUnit::mg_Per_m3);
+  envChange.GetEnvironmentalConditions().GetAmbientAerosol(*Particulate).GetConcentration().SetValue(2.9, MassPerVolumeUnit::mg_Per_m3);
   pe->ProcessAction(envChange);
   tracker.AdvanceModelTime(30);
 

@@ -22,7 +22,7 @@
 #include "engine/SEPatientConfiguration.h"
 #include "engine/SECondition.h"
 #include "engine/SEConditionManager.h"
-#include "system/environment/conditions/SEInitialEnvironmentConditions.h"
+#include "system/environment/conditions/SEInitialEnvironmentalConditions.h"
 #include "patient/conditions/SEAcuteRespiratoryDistressSyndrome.h"
 #include "patient/conditions/SEChronicAnemia.h"
 #include "patient/conditions/SEChronicObstructivePulmonaryDisease.h"
@@ -54,7 +54,7 @@
 #include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineVaporizerFailure.h"
 #include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineVentilatorPressureLoss.h"
 #include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineYPieceDisconnect.h"
-#include "system/environment/actions/SEChangeEnvironmentConditions.h"
+#include "system/environment/actions/SEChangeEnvironmentalConditions.h"
 #include "system/environment/actions/SEThermalApplication.h"
 #include "system/equipment/inhaler/actions/SEInhalerConfiguration.h"
 #include "patient/actions/SEPatientAssessmentRequest.h"
@@ -192,8 +192,8 @@ void PBEngine::Serialize(const SEConditionManager& src, CDM_BIND::ConditionListD
     dst.mutable_anycondition()->AddAllocated(PBCondition::Unload(*src.m_RenalStenosis));
   if (src.HasSepsis())
     dst.mutable_anycondition()->AddAllocated(PBCondition::Unload(*src.m_Sepsis));
-  if (src.HasInitialEnvironmentConditions())
-    dst.mutable_anycondition()->AddAllocated(PBCondition::Unload(*src.m_InitialEnvironmentConditions));
+  if (src.HasInitialEnvironmentalConditions())
+    dst.mutable_anycondition()->AddAllocated(PBCondition::Unload(*src.m_InitialEnvironmentalConditions));
 }
 
 void PBEngine::Load(const CDM_BIND::ActionListData& src, SEActionManager& dst)
@@ -256,8 +256,8 @@ void PBEngine::Serialize(const SEAnesthesiaMachineActionCollection& src, CDM_BIN
 }
 void PBEngine::Serialize(const SEEnvironmentActionCollection& src, CDM_BIND::ActionListData& dst)
 {
-  if (src.HasChange())
-    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_Change));
+  if (src.HasChangeEnvironmentalConditions())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_ChangeEnvironmentalConditions));
   if (src.HasThermalApplication())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_ThermalApplication));
 }

@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-CDM_BIND_DECL2(ChangeEnvironmentConditions)
+CDM_BIND_DECL2(ChangeEnvironmentalConditions)
 CDM_BIND_DECL2(EnvironmentAction)
 CDM_BIND_DECL2(ThermalApplication)
 CDM_BIND_DECL(AnyEnvironmentActionData)
@@ -19,11 +19,11 @@ public:
   static void Serialize(const CDM_BIND::EnvironmentActionData& src, SEEnvironmentAction& dst);
   static void Serialize(const SEEnvironmentAction& src, CDM_BIND::EnvironmentActionData& dst);
   
-  static void Load(const CDM_BIND::ChangeEnvironmentConditionsData& src, SEChangeEnvironmentConditions& dst);
-  static CDM_BIND::ChangeEnvironmentConditionsData* Unload(const SEChangeEnvironmentConditions& src);
-  static void Serialize(const CDM_BIND::ChangeEnvironmentConditionsData& src, SEChangeEnvironmentConditions& dst);
-  static void Serialize(const SEChangeEnvironmentConditions& src, CDM_BIND::ChangeEnvironmentConditionsData& dst);
-  static void Copy(const SEChangeEnvironmentConditions& src, SEChangeEnvironmentConditions& dst);
+  static void Load(const CDM_BIND::ChangeEnvironmentalConditionsData& src, SEChangeEnvironmentalConditions& dst);
+  static CDM_BIND::ChangeEnvironmentalConditionsData* Unload(const SEChangeEnvironmentalConditions& src);
+  static void Serialize(const CDM_BIND::ChangeEnvironmentalConditionsData& src, SEChangeEnvironmentalConditions& dst);
+  static void Serialize(const SEChangeEnvironmentalConditions& src, CDM_BIND::ChangeEnvironmentalConditionsData& dst);
+  static void Copy(const SEChangeEnvironmentalConditions& src, SEChangeEnvironmentalConditions& dst);
 
   static void Load(const CDM_BIND::ThermalApplicationData& src, SEThermalApplication& dst);
   static CDM_BIND::ThermalApplicationData* Unload(const SEThermalApplication& src);

@@ -18,7 +18,7 @@
 #include "system/physiology/SECardiovascularSystem.h"
 #include "system/physiology/SERespiratorySystem.h"
 #include "system/environment/SEEnvironmentalConditions.h"
-#include "system/environment/actions/SEChangeEnvironmentConditions.h"
+#include "system/environment/actions/SEChangeEnvironmentalConditions.h"
 #include "patient/actions/SEMechanicalVentilation.h"
 #include "patient/actions/SEAirwayObstruction.h"
 #include "patient/actions/SEAsthmaAttack.h"
@@ -267,8 +267,8 @@ void HowToMechanicalVentilation()
   pe->ProcessAction(tbi);
 
   //Environment change
-  SEChangeEnvironmentConditions env(pe->GetSubstanceManager());
-  SEEnvironmentalConditions& envConditions = env.GetConditions();
+  SEChangeEnvironmentalConditions env(pe->GetSubstanceManager());
+  SEEnvironmentalConditions& envConditions = env.GetEnvironmentalConditions();
   envConditions.GetAirVelocity().SetValue(2.0, LengthPerTimeUnit::m_Per_s);
   envConditions.GetAmbientTemperature().SetValue(15.0, TemperatureUnit::C);
   envConditions.GetAtmosphericPressure().SetValue(740., PressureUnit::mmHg);

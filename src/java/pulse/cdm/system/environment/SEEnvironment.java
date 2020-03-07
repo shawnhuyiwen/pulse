@@ -21,7 +21,7 @@ public class SEEnvironment implements SESystem
   protected SEScalarPower                   respirationHeatLoss;
   protected SEScalarPower                   skinHeatLoss;
   
-  protected SEEnvironmentalConditions       conditions;
+  protected SEEnvironmentalConditions       environmentalConditions;
   protected SEActiveConditioning            activeHeating;
   protected SEActiveConditioning            activeCooling;
   protected SEAppliedTemperature            appliedTemperature;
@@ -37,7 +37,7 @@ public class SEEnvironment implements SESystem
     this.respirationHeatLoss=null;
     this.skinHeatLoss=null;
     
-    this.conditions=null;
+    this.environmentalConditions=null;
     activeHeating=null;  
     activeCooling=null;
     appliedTemperature=null;
@@ -61,8 +61,8 @@ public class SEEnvironment implements SESystem
       respirationHeatLoss.invalidate();
     if (skinHeatLoss != null)
       skinHeatLoss.invalidate();
-    if (conditions != null)
-      conditions.reset();
+    if (environmentalConditions != null)
+      environmentalConditions.reset();
     if (activeHeating != null)
       activeHeating.reset();
     if (activeCooling != null)
@@ -91,8 +91,8 @@ public class SEEnvironment implements SESystem
     if (src.hasSkinHeatLoss())
       SEScalarPower.load(src.getSkinHeatLoss(),dst.getSkinHeatLoss());  
     
-    if (src.hasConditions())
-      SEEnvironmentalConditions.load(src.getConditions(),dst.getConditions(),subMgr); 
+    if (src.hasEnvironmentalConditions())
+      SEEnvironmentalConditions.load(src.getEnvironmentalConditions(),dst.getEnvironmentalConditions(),subMgr); 
     if (src.hasActiveHeating())
       SEActiveConditioning.load(src.getActiveHeating(),dst.getActiveHeating());
     if (src.hasActiveCooling())
@@ -125,8 +125,8 @@ public class SEEnvironment implements SESystem
     if (src.hasSkinHeatLoss())
       dst.setSkinHeatLoss(SEScalarPower.unload(src.skinHeatLoss));
     
-    if (src.hasConditions())
-      dst.setConditions(SEEnvironmentalConditions.unload(src.conditions));
+    if (src.hasEnvironmentalConditions())
+      dst.setEnvironmentalConditions(SEEnvironmentalConditions.unload(src.environmentalConditions));
     if (src.hasActiveHeating())
       dst.setActiveHeating(SEActiveConditioning.unload(src.activeHeating));
     if (src.hasActiveCooling())
@@ -223,15 +223,15 @@ public class SEEnvironment implements SESystem
     return skinHeatLoss == null ? false : skinHeatLoss.isValid();
   }
   
-  public SEEnvironmentalConditions getConditions()
+  public SEEnvironmentalConditions getEnvironmentalConditions()
   {
-    if (conditions == null)
-      conditions = new SEEnvironmentalConditions();
-    return conditions;
+    if (environmentalConditions == null)
+      environmentalConditions = new SEEnvironmentalConditions();
+    return environmentalConditions;
   }
-  public boolean hasConditions()
+  public boolean hasEnvironmentalConditions()
   {
-    return conditions != null;
+    return environmentalConditions != null;
   }
   
   public boolean hasActiveHeating()

@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "engine/SEEnvironmentActionCollection.h"
 #include "system/environment/SEEnvironment.h"
-#include "system/environment/actions/SEChangeEnvironmentConditions.h"
+#include "system/environment/actions/SEChangeEnvironmentalConditions.h"
 #include "system/environment/actions/SEThermalApplication.h"
 #include "substance/SESubstanceManager.h"
 #include "substance/SESubstanceFraction.h"
@@ -17,7 +17,7 @@
 
 SEEnvironmentActionCollection::SEEnvironmentActionCollection(SESubstanceManager& substances) : Loggable(substances.GetLogger()), m_Substances(substances)
 {
-  m_Change = nullptr;
+  m_ChangeEnvironmentalConditions = nullptr;
   m_ThermalApplication = nullptr;
 }
 
@@ -28,20 +28,20 @@ SEEnvironmentActionCollection::~SEEnvironmentActionCollection()
 
 void SEEnvironmentActionCollection::Clear()
 {
-  RemoveChange();
+  RemoveChangeEnvironmentalConditions();
   RemoveThermalApplication();
 }
 
 bool SEEnvironmentActionCollection::ProcessAction(const SEEnvironmentAction& action)
 {
-  const SEChangeEnvironmentConditions* conditions = dynamic_cast<const SEChangeEnvironmentConditions*>(&action);
+  const SEChangeEnvironmentalConditions* conditions = dynamic_cast<const SEChangeEnvironmentalConditions*>(&action);
   if (conditions != nullptr)
   {
-    if (m_Change == nullptr)
-      m_Change = new SEChangeEnvironmentConditions(m_Substances);
-    m_Change->Copy(*conditions);
-    if (!m_Change->IsActive())
-      RemoveChange();
+    if (m_ChangeEnvironmentalConditions == nullptr)
+      m_ChangeEnvironmentalConditions = new SEChangeEnvironmentalConditions(m_Substances);
+    m_ChangeEnvironmentalConditions->Copy(*conditions);
+    if (!m_ChangeEnvironmentalConditions->IsActive())
+      RemoveChangeEnvironmentalConditions();
     return true;
   }
 
@@ -61,21 +61,21 @@ bool SEEnvironmentActionCollection::ProcessAction(const SEEnvironmentAction& act
   return false;
 }
 
-bool SEEnvironmentActionCollection::HasChange() const
+bool SEEnvironmentActionCollection::HasChangeEnvironmentalConditions() const
 {
-  return m_Change == nullptr ? false : true;
+  return m_ChangeEnvironmentalConditions == nullptr ? false : true;
 }
-SEChangeEnvironmentConditions* SEEnvironmentActionCollection::GetChange()
+SEChangeEnvironmentalConditions* SEEnvironmentActionCollection::GetChangeEnvironmentalConditions()
 {
-  return m_Change;
+  return m_ChangeEnvironmentalConditions;
 }
-const SEChangeEnvironmentConditions* SEEnvironmentActionCollection::GetChange() const
+const SEChangeEnvironmentalConditions* SEEnvironmentActionCollection::GetChangeEnvironmentalConditions() const
 {
-  return m_Change;
+  return m_ChangeEnvironmentalConditions;
 }
-void SEEnvironmentActionCollection::RemoveChange()
+void SEEnvironmentActionCollection::RemoveChangeEnvironmentalConditions()
 {
-  SAFE_DELETE(m_Change);
+  SAFE_DELETE(m_ChangeEnvironmentalConditions);
 }
 
 bool SEEnvironmentActionCollection::HasThermalApplication() const
@@ -97,8 +97,8 @@ void SEEnvironmentActionCollection::RemoveThermalApplication()
 
 void SEEnvironmentActionCollection::GetAllActions(std::vector<const SEAction*>& actions) const
 {
-  if (HasChange())
-    actions.push_back(GetChange());
+  if (HasChangeEnvironmentalConditions())
+    actions.push_back(GetChangeEnvironmentalConditions());
   if (HasThermalApplication())
     actions.push_back(GetThermalApplication());
 }

@@ -268,7 +268,7 @@ void PulseEngineTest::DepositionFractionTest(SETestSuite& suite, SESubstance& su
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
   pc.GetSubstances().InitializeGasCompartments();
-  SEEnvironmentalConditions& env = pc.GetEnvironment().GetConditions(); 
+  SEEnvironmentalConditions& env = pc.GetEnvironment().GetEnvironmentalConditions(); 
   SELiquidCompartment* ambient = pc.GetCompartments().GetLiquidCompartment(pulse::EnvironmentCompartment::Ambient);
 
   SEFluidCircuit* rCircuit = &pc.GetCircuits().GetRespiratoryCircuit();

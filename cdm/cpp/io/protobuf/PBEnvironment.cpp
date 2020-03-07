@@ -40,8 +40,8 @@ void PBEnvironment::Serialize(const CDM_BIND::EnvironmentData& src, SEEnvironmen
   if (src.has_skinheatloss())
     PBProperty::Load(src.skinheatloss(), dst.GetSkinHeatLoss());
 
-  if (src.has_conditions())
-    PBEnvironment::Load(src.conditions(), dst.GetConditions());
+  if (src.has_environmentalconditions())
+    PBEnvironment::Load(src.environmentalconditions(), dst.GetEnvironmentalConditions());
   if (src.has_activeheating())
     PBEnvironment::Load(src.activeheating(), dst.GetActiveHeating());
   if (src.has_activecooling())
@@ -80,8 +80,8 @@ void PBEnvironment::Serialize(const SEEnvironment& src, CDM_BIND::EnvironmentDat
     dst.set_allocated_activecooling(PBEnvironment::Unload(*src.m_ActiveCooling));
   if (src.HasAppliedTemperature())
     dst.set_allocated_appliedtemperature(PBEnvironment::Unload(*src.m_AppliedTemperature));
-  if (src.HasConditions())
-    dst.set_allocated_conditions(PBEnvironment::Unload(*src.m_Conditions));
+  if (src.HasEnvironmentalConditions())
+    dst.set_allocated_environmentalconditions(PBEnvironment::Unload(*src.m_EnvironmentalConditions));
 }
 void PBEnvironment::Copy(const SEEnvironment& src, SEEnvironment& dst)
 {

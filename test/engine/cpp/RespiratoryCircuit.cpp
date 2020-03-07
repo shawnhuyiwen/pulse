@@ -52,7 +52,7 @@ void PulseEngineTest::RespiratoryCircuitAndTransportTest(RespiratoryConfiguratio
   pc.m_Config->EnableTissue(eSwitch::Off); 
   pc.CreateCircuitsAndCompartments();
   pc.GetSubstances().InitializeGasCompartments();
-  SEEnvironmentalConditions& env = pc.GetEnvironment().GetConditions();
+  SEEnvironmentalConditions& env = pc.GetEnvironment().GetEnvironmentalConditions();
 
   SEFluidCircuit* rCircuit = nullptr;
   SEGasCompartmentGraph* rGraph = nullptr;

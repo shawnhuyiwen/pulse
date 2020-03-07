@@ -10,7 +10,8 @@
 #include "compartment/fluid/SEGasCompartment.h"
 #include "system/environment/SEActiveConditioning.h"
 #include "system/environment/SEEnvironmentalConditions.h"
-#include "system/environment/actions/SEChangeEnvironmentConditions.h"
+#include "system/environment/conditions/SEInitialEnvironmentalConditions.h"
+#include "system/environment/actions/SEChangeEnvironmentalConditions.h"
 #include "system/environment/actions/SEThermalApplication.h"
 #include "system/physiology/SEBloodChemistrySystem.h"
 #include "system/physiology/SECardiovascularSystem.h"
@@ -32,8 +33,6 @@
 #include "properties/SEScalarPower.h"
 #include "properties/SEScalarPressureTimePerVolume.h"
 #include "substance/SESubstanceFraction.h"
-
-#include "system/environment/conditions/SEInitialEnvironmentConditions.h"
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
@@ -115,8 +114,8 @@ void HowToEnvironmentChange()
   // The patient is instantly submerged in 10 degree Celsius water. 
   // This causes an immediate drop in the skin temperature due to increased convective heat transfer from the skin surface. 
   // The core temperature follows the skin temperature, and the metabolic rate increases due to shivering.
-  SEChangeEnvironmentConditions env(pe->GetSubstanceManager());
-  SEEnvironmentalConditions& conditions = env.GetConditions();
+  SEChangeEnvironmentalConditions env(pe->GetSubstanceManager());
+  SEEnvironmentalConditions& conditions = env.GetEnvironmentalConditions();
   conditions.SetSurroundingType(eSurroundingType::Water);
   conditions.GetAirVelocity().SetValue(0, LengthPerTimeUnit::m_Per_s);
   conditions.GetAmbientTemperature().SetValue(10.0, TemperatureUnit::C);

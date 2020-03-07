@@ -74,39 +74,39 @@ class SEThermalApplication(SEEnvironmentAction):
             self._applied_temperature = SEAppliedTemperature()
         return self._applied_temperature
 
-class SEChangeEnvironmentConditions(SEEnvironmentAction):
-    __slots__ = ["_conditions_file",
-                 "_conditions"]
+class SEChangeEnvironmentalConditions(SEEnvironmentAction):
+    __slots__ = ["_environmental_conditions_file",
+                 "_environmental_conditions"]
 
     def __init__(self):
-        self._conditions_file = None
-        self._conditions = None
+        self._environmental_conditions_file = None
+        self._environmental_conditions = None
 
     def clear(self):
-        self._conditions_file = None
-        self._conditions = None
+        self._environmental_conditions_file = None
+        self._environmental_conditions = None
 
     def copy(self, src):
-        if not isinstance(SEChangeEnvironmentConditions, src):
-            raise Exception("Provided argument must be a SEChangeEnvironmentConditions")
+        if not isinstance(SEChangeEnvironmentalConditions, src):
+            raise Exception("Provided argument must be a SEChangeEnvironmentalConditions")
         self.clear()
-        self._conditions_file = src._conditions_file
-        self._conditions = src._conditions
+        self._environmental_conditions_file = src._environmental_conditions_file
+        self._environmental_conditions = src._environmental_conditions
 
     def is_valid(self):
-        return self.has_conditions() or self.has_conditions_file()
+        return self.has_environmental_conditions() or self.has_environmental_conditions_file()
 
     def is_active(self):
         return True;
 
-    def get_conditions_file(self):
-        return self._conditions_file
-    def set_conditions_file(self, filename: str):
-        self._conditions_file = filename
+    def get_environmental_conditions_file(self):
+        return self._environmental_conditions_file
+    def set_environmental_conditions_file(self, filename: str):
+        self._environmental_conditions_file = filename
 
-    def has_conditions(self):
-        return False if self._conditions is None else self._conditions.is_valid()
-    def get_conditions(self):
-        if self._conditions is None:
-            self._conditions = SEEnvironmentalConditions()
-        return self._conditions
+    def has_environmental_conditions(self):
+        return False if self._conditions is None else self._environmental_conditions.is_valid()
+    def get_environmental_conditions(self):
+        if self._environmental_conditions is None:
+            self._environmental_conditions = SEEnvironmentalConditions()
+        return self._environmental_conditions

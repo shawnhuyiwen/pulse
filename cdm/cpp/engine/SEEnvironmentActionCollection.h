@@ -5,7 +5,7 @@ class SEAction;
 class SEEnvironmentAction;
 class SESubstanceManager;
 class SEThermalApplication;
-class SEChangeEnvironmentConditions;
+class SEChangeEnvironmentalConditions;
 CDM_BIND_DECL(ActionListData)
 CDM_BIND_DECL(AnyEnvironmentActionData)
 
@@ -18,10 +18,10 @@ protected:
 public:
   ~SEEnvironmentActionCollection();
 
-  bool HasChange() const;
-  SEChangeEnvironmentConditions* GetChange();
-  const SEChangeEnvironmentConditions* GetChange() const;
-  void RemoveChange();
+  bool HasChangeEnvironmentalConditions() const;
+  SEChangeEnvironmentalConditions* GetChangeEnvironmentalConditions();
+  const SEChangeEnvironmentalConditions* GetChangeEnvironmentalConditions() const;
+  void RemoveChangeEnvironmentalConditions();
 
   bool HasThermalApplication() const;
   SEThermalApplication* GetThermalApplication();
@@ -34,8 +34,8 @@ protected:
   void Clear();
   bool ProcessAction(const SEEnvironmentAction& action);
   
-  SEChangeEnvironmentConditions*  m_Change;
-  SEThermalApplication*           m_ThermalApplication;
+  SEChangeEnvironmentalConditions*  m_ChangeEnvironmentalConditions;
+  SEThermalApplication*             m_ThermalApplication;
   // General
   SESubstanceManager&             m_Substances;
 };
