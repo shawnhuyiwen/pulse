@@ -5,12 +5,14 @@ from pulse.cdm.engine import SEAction
 from pulse.cdm.scalars import SEScalar0To1, SEScalarVolumePerTime
 
 class SEPatientAction(SEAction):
-    pass
+    def __init__(self):
+        super().__init__()
 
 class SEExercise(SEPatientAction):
     __slots__ = ["_intensity"]
 
     def __init__(self):
+        super().__init__()
         self._intensity = None
 
     def clear(self):
@@ -39,6 +41,7 @@ class SEHemorrhage(SEPatientAction):
     __slots__ = ["_compartment","_rate","_type"]
 
     def __init__(self):
+        super().__init__()
         self._compartment = None
         self._rate = None
         self._type = eHemorrhageType.External

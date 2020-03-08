@@ -7,7 +7,8 @@ from pulse.cdm.environment import SEActiveConditioning, \
                                   SEEnvironmentalConditions
 
 class SEEnvironmentAction(SEAction):
-    pass
+    def __init__(self):
+        super.__init__()
 
 class SEThermalApplication(SEEnvironmentAction):
     __slots__ = ["_clear_contents",
@@ -16,6 +17,7 @@ class SEThermalApplication(SEEnvironmentAction):
                  "_applied_temperature"]
 
     def __init__(self):
+        super.__init__()
         self._clear_contents = True
         self._active_heating = None
         self._active_cooling = None
@@ -40,9 +42,9 @@ class SEThermalApplication(SEEnvironmentAction):
         return True
 
     def is_active(self):
-        if self._has_active_heating() and self._active_heating.get_power().is_positive():
+        if self.has_active_heating() and self._active_heating.get_power().is_positive():
             return True;
-        if self._has_active_cooling() and self._active_cooling.get_power().is_positive():
+        if self.has_active_cooling() and self._active_cooling.get_power().is_positive():
             return True;
         if self.has_applied_temperature() and self._applied_temperature.get_state() is eSwitch.On:
             return True;
@@ -79,6 +81,7 @@ class SEChangeEnvironmentalConditions(SEEnvironmentAction):
                  "_environmental_conditions"]
 
     def __init__(self):
+        super.__init__()
         self._environmental_conditions_file = None
         self._environmental_conditions = None
 

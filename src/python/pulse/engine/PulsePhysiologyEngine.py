@@ -3,8 +3,8 @@
 import PyPulse
 from pulse.cdm.patient import SEPatientConfiguration
 from pulse.cdm.engine import SEAction, eSerializationFormat
-from pulse.cdm.io import serialize_actions_to_string
-from pulse.cdm import io
+from pulse.cdm.io.engine import serialize_actions_to_string
+from pulse.cdm.io.engine import serialize_patient_configuration_to_string
 
 class PulsePhysiologyEngine:
     __slots__ = ['__pulse', "results"]
@@ -24,8 +24,8 @@ class PulsePhysiologyEngine:
     def initialize_engine(self, patient_configuration: SEPatientConfiguration, data_requests):
         # Process requests and setup our results structure
         self.process_requests(data_requests)
-        pc = io.serialize_patient_configuration_to_string(patient_configuration, eSerializationFormat.JSON)
-        return self.__pulse.initialize_engine(pc, "", PyPulse.serialization_format.json )
+        pc = serialize_patient_configuration_to_string(patient_configuration, eSerializationFormat.JSON)
+        return self.__pulse.initialize_engine(pc, "", PyPulse.serialization_format.json)
 
     def advance_time(self):
         return self.__pulse.advance_timestep()

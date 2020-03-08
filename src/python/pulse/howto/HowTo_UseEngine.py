@@ -9,7 +9,9 @@ from pulse.engine.PulsePhysiologyEngine import PulsePhysiologyEngine
 from pulse.cdm.scalars import FrequencyUnit, LengthUnit, MassUnit, \
                               MassPerVolumeUnit, PressureUnit, TemperatureUnit, \
                               TimeUnit, VolumePerTimeUnit
-import pulse.cdm.io as io
+
+from pulse.cdm.io.patient import serialize_patient_from_file
+from pulse.cdm.io.environment import serialize_environmental_conditions_from_file
 
 # TODO things that still need to be implemented:
 #    Getting Events from Pulse
@@ -47,7 +49,7 @@ def HowTo_UseEngine():
             # You only need to set sex and all other properties will be computed
             # per https://pulse.kitware.com/_patient_methodology.html
             # Let's  load up a file from disk (You don't have to start with a file)
-            io.serialize_patient_from_file("./patients/Soldier.json", p, eSerializationFormat.JSON)
+            serialize_patient_from_file("./patients/Soldier.json", p, eSerializationFormat.JSON)
             # Now let's modify a few properties
             p.set_name("Wenye")
             p.get_age().set_value(22,TimeUnit.yr)
@@ -62,13 +64,13 @@ def HowTo_UseEngine():
         # But if you do, you can add as many as you want like this
         env = pc.get_conditions().get_initial_environmental_conditions()
         # Let's  load up a file from disk (You don't have to start with a file)
-        io.serialize_environmental_conditions_from_file("./environments/ExerciseEnvironment.json",
-                                                        env.get_conditions(),
+        serialize_environmental_conditions_from_file("./environments/ExerciseEnvironment.json",
+                                                        env.get_environmental_conditions(),
                                                         eSerializationFormat.JSON)
         # Now let's modify a few properties
-        env.get_conditions().get_air_density().set_value(1.225, MassPerVolumeUnit.kg_Per_m3)
-        env.get_conditions().get_ambient_temperature().set_value(33, TemperatureUnit.C)
-        env.get_conditions().get_respiration_ambient_temperature().set_value(33, TemperatureUnit.C)
+        env.get_environmental_conditions().get_air_density().set_value(1.225, MassPerVolumeUnit.kg_Per_m3)
+        env.get_environmental_conditions().get_ambient_temperature().set_value(33, TemperatureUnit.C)
+        env.get_environmental_conditions().get_respiration_ambient_temperature().set_value(33, TemperatureUnit.C)
 
         # Initialize the engine with our configuration
         if not pulse.initialize_engine(pc, None):

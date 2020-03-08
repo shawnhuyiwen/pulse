@@ -4,12 +4,14 @@ from pulse.cdm.engine import SECondition
 from pulse.cdm.environment import SEEnvironmentalConditions
 
 class SEEnvironmentCondition(SECondition):
-    pass
+    def __init__(self):
+        super().__init__()
 
 class SEInitialEnvironmentalConditions(SEEnvironmentCondition):
     __slots__ = ["_environmental_conditions_file", "_environmental_conditions"]
 
     def __init__(self):
+        super().__init__()
         self._environmental_conditions = None
         self._environmental_conditions_file = None
 
