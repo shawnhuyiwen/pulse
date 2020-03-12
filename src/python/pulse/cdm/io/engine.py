@@ -50,6 +50,26 @@ def serialize_actions_to_string(actions: [], fmt: eSerializationFormat):
                 serialize_hemorrhage_to_bind(action, any_action.PatientAction.Hemorrhage)
                 action_list.AnyAction.append(any_action)
                 continue
+            if isinstance(action, SEAsthmaAttack):
+                serialize_asthma_attack_to_bind(action, any_action.PatientAction.AsthmaAttack)
+                action_list.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SEAcuteRespiratoryDistressSyndromeExacerbation):
+                serialize_acute_respiratory_exacerbation_to_bind(action, any_action.PatientAction.AcuteRespiratoryDistressSyndromeExacerbation)
+                action_list.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SEAcuteStress):
+                serialize_acute_stress_to_bind(action, any_action.PatientAction.AcuteStress)
+                action_list.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SEAirwayObstruction):
+                serialize_airway_obstruction_to_bind(action, any_action.PatientAction.AirwayObstruction)
+                action_list.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SEBrainInjury):
+                serialize_brain_injury_to_bind(action, any_action.PatientAction.BrainInjury)
+                action_list.AnyAction.append(any_action)
+                continue
         if isinstance(action, SEEnvironmentAction):
             if isinstance(action, SEChangeEnvironmentalConditions):
                 serialize_change_environmental_conditions_to_bind(action, any_action.EnvironmentAction.ChangeEnvironmentalConditions)
