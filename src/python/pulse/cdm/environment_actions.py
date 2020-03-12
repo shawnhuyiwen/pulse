@@ -8,7 +8,7 @@ from pulse.cdm.environment import SEActiveConditioning, \
 
 class SEEnvironmentAction(SEAction):
     def __init__(self):
-        super.__init__()
+        super().__init__()
 
 class SEThermalApplication(SEEnvironmentAction):
     __slots__ = ["_clear_contents",
@@ -17,7 +17,7 @@ class SEThermalApplication(SEEnvironmentAction):
                  "_applied_temperature"]
 
     def __init__(self):
-        super.__init__()
+        super().__init__()
         self._clear_contents = True
         self._active_heating = None
         self._active_cooling = None
@@ -56,21 +56,21 @@ class SEThermalApplication(SEEnvironmentAction):
         self._clear_contents = t
 
     def has_active_heating(self):
-        return False if self._active_heating is None else self._active_heating.is_valid()
+        return self._active_heating is not None
     def get_active_heating(self):
         if self._active_heating is None:
             self._active_heating = SEActiveConditioning()
         return self._active_heating
 
     def has_active_cooling(self):
-        return False if self._active_cooling is None else self._active_cooling.is_valid()
+        return self._active_cooling is not None
     def get_active_cooling(self):
         if self._active_cooling is None:
             self._active_cooling = SEActiveConditioning()
         return self._active_cooling
 
     def has_applied_temperature(self):
-        return False if self._applied_temperature is None else self._applied_temperature.is_valid()
+        return self._applied_temperature is not None
     def get_applied_temperature(self):
         if self._applied_temperature is None:
             self._applied_temperature = SEAppliedTemperature()
@@ -81,7 +81,7 @@ class SEChangeEnvironmentalConditions(SEEnvironmentAction):
                  "_environmental_conditions"]
 
     def __init__(self):
-        super.__init__()
+        super().__init__()
         self._environmental_conditions_file = None
         self._environmental_conditions = None
 
@@ -102,13 +102,15 @@ class SEChangeEnvironmentalConditions(SEEnvironmentAction):
     def is_active(self):
         return True;
 
+    def has_environmental_conditions_file(self):
+        return self._environmental_conditions_file is not None
     def get_environmental_conditions_file(self):
         return self._environmental_conditions_file
     def set_environmental_conditions_file(self, filename: str):
         self._environmental_conditions_file = filename
 
     def has_environmental_conditions(self):
-        return False if self._conditions is None else self._environmental_conditions.is_valid()
+        return self._environmental_conditions is not None
     def get_environmental_conditions(self):
         if self._environmental_conditions is None:
             self._environmental_conditions = SEEnvironmentalConditions()

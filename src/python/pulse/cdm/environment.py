@@ -85,7 +85,7 @@ class SEActiveConditioning():
 
     def has_power(self):
         return False if self._power is None else self._power.is_valid()
-    def get_temperature(self):
+    def get_power(self):
         if self._power is None:
             self._power = SEScalarPower()
         return self._power

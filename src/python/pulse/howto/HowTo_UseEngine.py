@@ -1,5 +1,6 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
+
 from enum import Enum
 from pulse.cdm.engine import eSerializationFormat
 from pulse.cdm.patient import eSex, SEPatient, SEPatientConfiguration

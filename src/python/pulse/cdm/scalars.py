@@ -684,11 +684,11 @@ class PowerUnit(SEScalarUnit):
             return PowerUnit.BTU_Per_hr
         raise Exception("No PowerUnit defined for " + string)
 PowerUnit.W = PowerUnit("W")
-PowerUnit.kcal_Per_s = PowerUnit("kcal_Per_s")
-PowerUnit.kcal_Per_hr = PowerUnit("kcal_Per_hr")
-PowerUnit.kcal_Per_day = PowerUnit("kcal_Per_day")
-PowerUnit.J_Per_s = PowerUnit("J_Per_s")
-PowerUnit.BTU_Per_hr = PowerUnit("BTU_Per_hr")
+PowerUnit.kcal_Per_s = PowerUnit("kcal/s")
+PowerUnit.kcal_Per_hr = PowerUnit("kcal/hr")
+PowerUnit.kcal_Per_day = PowerUnit("kcal/day")
+PowerUnit.J_Per_s = PowerUnit("J/s")
+PowerUnit.BTU_Per_hr = PowerUnit("BTU/hr")
 class SEScalarPower(SEScalarQuantity):
 
     def __init__(self, value:float=None, units:PowerUnit=None):
