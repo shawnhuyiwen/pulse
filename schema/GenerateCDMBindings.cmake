@@ -192,6 +192,10 @@ foreach(f ${_FILES})
                                     --python_out=${python_bindings_DIR}
                                     ${f})
 endforeach()
+# Hard coded for now, will need to be more clever on how it finds each file.
+# Necessary for setup.py file to find the bindings to install.
+file(COPY "${python_bindings_DIR}/__init__.py" DESTINATION "${python_bindings_DIR}/pulse/cdm/bind")
+file(COPY "${python_bindings_DIR}/__init__.py" DESTINATION "${python_bindings_DIR}/pulse/engine/bind")
 message(STATUS "python bindings are here : ${python_bindings_DIR}" )
 
 file(TOUCH ${to}/schema_last_built)
