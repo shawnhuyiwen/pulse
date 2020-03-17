@@ -2,7 +2,7 @@
 # See accompanying NOTICE file for details.
 import PyPulse
 from pulse.cdm.patient import SEPatientConfiguration
-from pulse.cdm.engine import SEAction, eSerializationFormat
+from pulse.cdm.engine import SEAction, eSerializationFormat, SEDataRequestManager
 from pulse.cdm.io.engine import serialize_actions_to_string
 from pulse.cdm.io.engine import serialize_patient_configuration_to_string
 
@@ -21,9 +21,9 @@ class PulsePhysiologyEngine:
             fmt = PyPulse.serialization_format.binary
         return self.__pulse.serialize_from_file(state_file, "", fmt, start_time)
 
-    def initialize_engine(self, patient_configuration: SEPatientConfiguration, data_requests):
+    def initialize_engine(self, patient_configuration: SEPatientConfiguration, data_request_mgr: SEDataRequestManager):
         # Process requests and setup our results structure
-        self.process_requests(data_requests)
+        self.process_requests(data_request_mgr)
         pc = serialize_patient_configuration_to_string(patient_configuration, eSerializationFormat.JSON)
         return self.__pulse.initialize_engine(pc, "", PyPulse.serialization_format.json)
 
@@ -42,9 +42,9 @@ class PulsePhysiologyEngine:
             self.results[key] = values[i]
         return self.results
 
-    def process_requests(self, data_requests):
-        if data_requests is None:
-            self.results["SimulationTime(s)"]=0
+    def process_requests(self, data_request_mgr):
+        self.results["SimulationTime(s)"]=0
+        if data_request_mgr is None:
             self.results["Lead3ElectricPotential(mV)"]=0
             self.results["HeartRate(bpm)"]=0
             self.results["ArterialPressure(mmHg)"]=0
@@ -57,6 +57,9 @@ class PulsePhysiologyEngine:
             self.results["CoreTemperature(C)"]=0
             self.results["CarinaCO2PartialPressure(mmHg)"]=0
             self.results["BloodVolume(mL)"]=0
+        else:
+            for data_request in data_request_mgr.get_data_requests():
+                self.results[data_request.to_string()] = 0
 
     def process_action(self, action: SEAction):
         actions = [action]

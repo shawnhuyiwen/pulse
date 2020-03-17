@@ -2,7 +2,7 @@
 # See accompanying NOTICE file for details.
 
 from enum import Enum
-from pulse.cdm.engine import eSerializationFormat
+from pulse.cdm.engine import eSerializationFormat, SEDataRequestManager, SEDataRequest
 from pulse.cdm.patient import eSex, SEPatient, SEPatientConfiguration
 from pulse.cdm.patient_actions import eHemorrhageType
 from pulse.cdm.patient_actions import SEExercise, SEHemorrhage
@@ -30,9 +30,23 @@ def HowTo_UseEngine():
 
     # There are several ways to initialize an engine to a patient
     start_type = eStartType.Stabilize_PatientObject
-
+    data_requests = [
+        SEDataRequest.create_physiology_request("HeartRate", unit="1/min"),
+        SEDataRequest.create_physiology_request("ArterialPressure",  unit="mmHg"),
+        SEDataRequest.create_physiology_request("MeanArterialPressure",  unit="mmHg"),
+        SEDataRequest.create_physiology_request("SystolicArterialPressure",  unit="mmHg"),
+        SEDataRequest.create_physiology_request("DiastolicArterialPressure", unit="mmHg"),
+        SEDataRequest.create_physiology_request("OxygenSaturation"),
+        SEDataRequest.create_physiology_request("EndTidalCarbonDioxidePressure",  unit="mmHg"),
+        SEDataRequest.create_physiology_request("RespirationRate",  unit="1/min"),
+        SEDataRequest.create_physiology_request("SkinTemperature",  unit="degC"),
+        SEDataRequest.create_gas_compartment_substance_request("Carina", "CarbonDioxide", "PartialPressure",  unit="mmHg"),
+        SEDataRequest.create_physiology_request("BloodVolume",  unit="mL"),
+        SEDataRequest.create_ecg_request("Lead3ElectricPotential",  unit="mV"),
+    ]
+    data_mgr = SEDataRequestManager(data_requests)
     if start_type is eStartType.State: # The engine is ready instantaneously
-        if not pulse.serialize_from_file("./states/Soldier@0s.json", None, eSerializationFormat.JSON, 0):
+        if not pulse.serialize_from_file("./states/Soldier@0s.json", data_mgr, eSerializationFormat.JSON, 0):
             print("Unable to load initial state file")
             return
         # Stabilization will require the engine to run for several minutes
@@ -74,13 +88,13 @@ def HowTo_UseEngine():
         env.get_environmental_conditions().get_respiration_ambient_temperature().set_value(33, TemperatureUnit.C)
 
         # Initialize the engine with our configuration
-        if not pulse.initialize_engine(pc, None):
+        if not pulse.initialize_engine(pc, data_mgr):
             print("Unable to load stabilize engine")
             return
 
     # Get some data from the engine
     results = pulse.pull_data()
-    print(results)
+    data_mgr.to_console(results)
 
     # Perform an action
     exercise = SEExercise()
@@ -91,7 +105,7 @@ def HowTo_UseEngine():
     # Advance some time and print out the vitals
     pulse.advance_time_s(30)
     results = pulse.pull_data()
-    print(results)
+    data_mgr.to_console(results)
 
 HowTo_UseEngine()
 

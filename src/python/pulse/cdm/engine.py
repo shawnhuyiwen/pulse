@@ -28,6 +28,19 @@ class eCharge(Enum):
     Neutral = 2
     Positive = 3
 
+class eDataRequest_category(Enum):
+    Patient = 0
+    Physiology = 1
+    Environment = 2
+    GasCompartment = 3
+    LiquidCompartment = 4
+    ThermalCompartment = 5
+    TissueCompartment = 6
+    Substance = 7
+    AnesthesiaMachine = 8
+    ECG = 9
+    Inhaler = 10
+
 class SEAction(ABC):
     __slots__ = ["_comment"]
 
@@ -246,3 +259,108 @@ class SEConditionManager():
     def remove_initial_environmental_conditions(self):
         self._initial_environmental_conditions = None
 
+class SEDataRequest:
+    __slots__ = ['_category', '_compartment_name', '_substance_name', '_property_name', '_unit']
+
+    def __init__(self, category: eDataRequest_category, compartment=None, substance=None, property=None, unit=None):
+        self._category = category
+        self._compartment_name = compartment
+        self._substance_name = substance
+        self._property_name = property
+        self._unit = unit
+
+    def __repr__(self):
+        out_string = ""
+        if self.has_compartment_name():
+            out_string += "{} - ".format(self._compartment_name)
+        if self.has_substance_name():
+            out_string += "{} - ".format(self._substance_name)
+        out_string += "{} ({})".format(self._property_name, self._unit)
+        return out_string
+
+    def to_string(self):
+        return self.__repr__()
+    @classmethod
+    def create_patient_request(cls, property, unit=None):
+        return cls(eDataRequest_category.Patient, property=property,  unit=unit)
+    @classmethod
+    def create_physiology_request(cls, property, unit=None):
+        return cls(eDataRequest_category.Physiology, property=property,  unit=unit)
+    @classmethod
+    def create_environment_request(cls, property, unit=None):
+        return cls(eDataRequest_category.Environment, property=property,  unit=unit)
+    @classmethod
+    def create_gas_compartment_request(cls, compartment, property, unit=None):
+        return cls(eDataRequest_category.GasCompartment, compartment=compartment, property=property,  unit=unit)
+    @classmethod
+    def create_gas_compartment_substance_request(cls, compartment, property, substance, unit=None):
+        return cls(eDataRequest_category.GasCompartment,
+                   compartment=compartment,
+                   substance=substance,
+                   property=property,
+                   unit=unit)
+    @classmethod
+    def create_liquid_compartment_request(cls, compartment, property, unit=None):
+        return cls(eDataRequest_category.LiquidCompartment, compartment=compartment, property=property,  unit=unit)
+    @classmethod
+    def create_liquid_compartment_substance_request(cls, compartment, property, substance, unit=None):
+        return cls(eDataRequest_category.LiquidCompartment,
+                   compartment=compartment,
+                   substance=substance,
+                   property=property,
+                   unit=unit)
+    @classmethod
+    def create_thermal_compartment_request(cls, compartment, property, unit=None):
+        return cls(eDataRequest_category.ThermalCompartment, compartment=compartment, property=property,  unit=unit)
+
+    @classmethod
+    def create_substance_request(cls, substance, property, unit=None):
+        return cls(eDataRequest_category.ThermalCompartment, substance=substance, property=property,  unit=unit)
+
+    @classmethod
+    def create_ecg_request(cls, property, unit=None):
+        return cls(eDataRequest_category.ECG, property=property,  unit=unit)
+
+    def get_category(self):
+        return self._category
+
+    def has_compartment_name(self):
+        return self._compartment_name is not None
+    def get_compartment_name(self):
+        return self._compartment_name
+    def has_substance_name(self):
+        return self._substance_name is not None
+    def get_substance_name(self):
+        return self._substance_name
+    def has_property_name(self):
+        return self._property_name is not None
+    def get_property_name(self):
+        return self._property_name
+    def has_unit(self):
+        return self._unit is not None
+    def get_unit(self):
+        return self._unit
+
+
+class SEDataRequestManager:
+    __slots__ = ["_results_filename", "_samples_per_second", "_data_requests"]
+
+    def __init__(self, data_requests=[]):
+        self._data_requests = data_requests
+        self._results_filename = None
+        self._samples_per_second = 0
+
+    def has_data_requests(self): return len(self._data_requests)
+    def get_data_requests(self): return self._data_requests
+    def set_data_requests(self, requests): self._data_requests = requests
+
+    def has_results_filename(self): return self._results_filename is not None
+    def get_results_filename(self): return self._results_filename
+    def set_results_filename(self, filename): self._results_filename = filename
+
+    def get_samples_per_second(self): return self._samples_per_second
+    def set_samples_per_second(self, sample): self._samples_per_second = sample
+
+    def to_console(self, data_values):
+        for key in data_values:
+            print("{}={}".format(key, data_values[key]))
