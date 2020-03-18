@@ -44,8 +44,6 @@ protected:
   Logger* m_Logger;
 };
 
-#pragma warning(push)
-#pragma warning(disable:4100)
 class CDM_DECL LoggerForward
 {
 public:
@@ -55,8 +53,6 @@ public:
   virtual void ForwardError(std::string const&  msg, std::string const&  origin){};
   virtual void ForwardFatal(std::string const&  msg, std::string const&  origin){};
 };
-
-#pragma warning(pop)
 
 class CDM_DECL Logger
 {

@@ -1,15 +1,20 @@
 
 set(from "${SCHEMA_SRC}/proto")
 set(to   "${SCHEMA_DST}")
-if( protobuf_DIR )
-  set(BINDER "${protobuf_DIR}/bin/protoc")
+if( Protobuf_PROTOC_EXECUTABLE )
+  set(BINDER ${Protobuf_PROTOC_EXECUTABLE})
 else()#
   message(FATAL_ERROR "Where is the protoc binder?")
 endif()
 
 if( NOT protobuf_SRC )
-  message(FATAL_ERROR "Where is the protoc source?")
+  set(protobuf_SRC CACHE PATH "Location of protobuf source code")
+  message(FATAL_ERROR "Please specify protobuf_SRC")
+  
+else()
+  message(STATUS "protobuf_SRC is located at ${protobuf_SRC}")
 endif()
+
 
 
 set(CDM_PACKAGE "pulse/cdm/bind")

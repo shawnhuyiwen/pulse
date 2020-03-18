@@ -2,7 +2,9 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
+PUSH_PROTO_WARNINGS()
 #include "bind/PatientActions.pb.h"
+POP_PROTO_WARNINGS()
 #include "io/protobuf/PBUtils.h"
 #include "patient/actions/SEBrainInjury.h"
 #include "patient/actions/SEHemorrhage.h"

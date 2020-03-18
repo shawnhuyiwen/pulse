@@ -2,9 +2,11 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
+PUSH_PROTO_WARNINGS()
+#include "bind/Substance.pb.h"
+POP_PROTO_WARNINGS()
 #include "substance/SESubstance.h"
 #include "substance/SESubstancePhysicochemicals.h"
-#include "bind/Substance.pb.h"
 
 const std::string& eSubstance_State_Name(eSubstance_State m)
 {

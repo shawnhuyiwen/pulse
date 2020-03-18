@@ -2,7 +2,9 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
+PUSH_PROTO_WARNINGS()
 #include "bind/PatientAssessments.pb.h"
+POP_PROTO_WARNINGS()
 #include "patient/assessments/SEPatientAssessment.h"
 #include "patient/assessments/SEUrinalysisMicroscopic.h"
 

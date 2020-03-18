@@ -2,11 +2,13 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
+PUSH_PROTO_WARNINGS()
+#include "bind/AnesthesiaMachineActions.pb.h"
+POP_PROTO_WARNINGS()
 #include "io/protobuf/PBAnesthesiaMachineActions.h"
 #include "io/protobuf/PBAnesthesiaMachine.h"
 #include "io/protobuf/PBActions.h"
 #include "io/protobuf/PBProperties.h"
-#include "bind/AnesthesiaMachineActions.pb.h"
 #include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineAction.h"
 #include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineConfiguration.h"
 #include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineOxygenWallPortPressureLoss.h"

@@ -341,7 +341,7 @@ bool SEDynamicStabilization::Merge()
       maxMaxStabilize_s = time_s;
   }
   double tmpError;
-  SEDynamicStabilizationPropertyConvergence* pConv;
+  SEDynamicStabilizationPropertyConvergence* pConv=nullptr;
   for (auto i = cMap.begin(); i != cMap.end(); i++)
   {
     // Let's find the Convergence that has the largest % difference
@@ -354,6 +354,11 @@ bool SEDynamicStabilization::Merge()
         pErr = tmpError;
         pConv = (*j);
       }
+    }
+    if (pConv == nullptr)
+    {
+      Error("Unable to find convergence criteria...");
+      return false;
     }
     if (i->second->size() == m_ActiveConditions.size())
     {

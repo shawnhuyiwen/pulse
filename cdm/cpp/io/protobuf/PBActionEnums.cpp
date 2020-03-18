@@ -2,7 +2,9 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
+PUSH_PROTO_WARNINGS()
 #include "bind/Actions.pb.h"
+POP_PROTO_WARNINGS()
 #include "engine/SESerializeState.h"
 
 const std::string& eSerialization_Type_Name(eSerialization_Type m)

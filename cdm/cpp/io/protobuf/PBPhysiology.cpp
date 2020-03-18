@@ -2,6 +2,9 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
+PUSH_PROTO_WARNINGS()
+#include "bind/Physiology.pb.h"
+POP_PROTO_WARNINGS()
 #include "io/protobuf/PBPhysiology.h"
 #include "io/protobuf/PBPatientNutrition.h"
 #include "io/protobuf/PBProperties.h"
@@ -17,7 +20,6 @@
 #include "system/physiology/SERenalSystem.h"
 #include "system/physiology/SERespiratorySystem.h"
 #include "system/physiology/SETissueSystem.h"
-#include "bind/Physiology.pb.h"
 
 void PBPhysiology::Load(const CDM_BIND::BloodChemistrySystemData& src, SEBloodChemistrySystem& dst)
 {

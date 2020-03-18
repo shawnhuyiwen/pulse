@@ -2,10 +2,12 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
+PUSH_PROTO_WARNINGS()
+#include "bind/InhalerActions.pb.h"
+POP_PROTO_WARNINGS()
 #include "io/protobuf/PBInhalerActions.h"
 #include "io/protobuf/PBInhaler.h"
 #include "io/protobuf/PBActions.h"
-#include "bind/InhalerActions.pb.h"
 #include "system/equipment/inhaler/actions/SEInhalerConfiguration.h"
 #include "substance/SESubstanceManager.h"
 

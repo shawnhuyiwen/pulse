@@ -2,9 +2,11 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "io/protobuf/PBUtils.h"
+PUSH_PROTO_WARNINGS()
 #include <google/protobuf/text_format.h>
 #include <google/protobuf/util/json_util.h>
+POP_PROTO_WARNINGS()
+#include "io/protobuf/PBUtils.h"
 
 std::mutex log_mutex;
 Logger* g_logger = nullptr;

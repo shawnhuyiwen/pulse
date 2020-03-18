@@ -2,9 +2,11 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
+PUSH_PROTO_WARNINGS()
+#include "pulse/engine/bind/PulseEnvironment.pb.h"
+POP_PROTO_WARNINGS()
 #include "io/protobuf/PBPulseEnvironment.h"
 #include "io/protobuf/PBEnvironment.h"
-#include "pulse/engine/bind/PulseEnvironment.pb.h"
 #include "environment/Environment.h"
 
 void PBPulseEnvironment::Load(const PULSE_BIND::EnvironmentData& src, Environment& dst)

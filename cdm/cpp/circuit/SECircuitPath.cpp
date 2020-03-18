@@ -101,17 +101,17 @@ SECircuitNode<PotentialScalar, QuantityScalar>& SECircuitPath<CIRCUIT_PATH_TYPES
 template<CIRCUIT_PATH_TEMPLATE>
 bool SECircuitPath<CIRCUIT_PATH_TYPES>::HasValidElements() const
 {
-  int numRCI = (HasResistance() ? 1 : 0) +
+  size_t numRCI = (HasResistance() ? 1 : 0) +
     (HasCapacitance() ? 1 : 0) +
     (HasInductance() ? 1 : 0);
-  int numNextRCI = (HasNextResistance() ? 1 : 0) +
+  size_t numNextRCI = (HasNextResistance() ? 1 : 0) +
     (HasNextCapacitance() ? 1 : 0) +
     (HasNextInductance() ? 1 : 0);
-  int numSrcState = (HasSwitch() ? 1 : 0) +
+  size_t numSrcState = (HasSwitch() ? 1 : 0) +
     (HasValve() ? 1 : 0) +
     (HasFluxSource() ? 1 : 0) +
     (HasPotentialSource() ? 1 : 0);
-  int numNextSrcState = (HasNextSwitch() ? 1 : 0) +
+  size_t numNextSrcState = (HasNextSwitch() ? 1 : 0) +
     (HasNextValve() ? 1 : 0) +
     (HasNextFluxSource() ? 1 : 0) +
     (HasNextPotentialSource() ? 1 : 0);

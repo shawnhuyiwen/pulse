@@ -2,6 +2,9 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
+PUSH_PROTO_WARNINGS()
+#include "bind/Compartment.pb.h"
+POP_PROTO_WARNINGS()
 #include "io/protobuf/PBCompartment.h"
 #include "io/protobuf/PBSubstanceQuantity.h"
 #include "io/protobuf/PBProperties.h"
@@ -24,7 +27,6 @@
 #include "circuit/thermal/SEThermalCircuitPath.h"
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceManager.h"
-#include "bind/Compartment.pb.h"
 
 void PBCompartment::Serialize(const CDM_BIND::CompartmentData& src, SECompartment& dst)
 {

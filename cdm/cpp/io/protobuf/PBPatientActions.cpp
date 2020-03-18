@@ -2,13 +2,14 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
+PUSH_PROTO_WARNINGS()
+#include "bind/PatientActions.pb.h"
+POP_PROTO_WARNINGS()
 #include "io/protobuf/PBPatientActions.h"
 #include "io/protobuf/PBPatientNutrition.h"
 #include "io/protobuf/PBActions.h"
 #include "io/protobuf/PBSubstance.h"
 #include "io/protobuf/PBProperties.h"
-#include "bind/PatientActions.pb.h"
-
 #include "substance/SESubstanceManager.h"
 #include "patient/actions/SEPatientAssessmentRequest.h"
 #include "patient/actions/SEAcuteRespiratoryDistressSyndromeExacerbation.h"

@@ -2,7 +2,9 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
+PUSH_PROTO_WARNINGS()
 #include "bind/Enums.pb.h"
+POP_PROTO_WARNINGS()
 
 const std::string& eSide_Name(eSide m)
 {

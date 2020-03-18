@@ -2,10 +2,12 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
+PUSH_PROTO_WARNINGS()
+#include "bind/EnvironmentConditions.pb.h"
+POP_PROTO_WARNINGS()
 #include "io/protobuf/PBEnvironmentConditions.h"
 #include "io/protobuf/PBEnvironment.h"
 #include "io/protobuf/PBConditions.h"
-#include "bind/EnvironmentConditions.pb.h"
 #include "system/environment/SEEnvironment.h"
 #include "system/environment/conditions/SEInitialEnvironmentalConditions.h"
 #include "substance/SESubstanceManager.h"

@@ -2,6 +2,9 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
+PUSH_PROTO_WARNINGS()
+#include "bind/SubstanceQuantity.pb.h"
+POP_PROTO_WARNINGS()
 #include "io/protobuf/PBSubstanceQuantity.h"
 #include "io/protobuf/PBProperties.h"
 #include "substance/SESubstance.h"
@@ -9,7 +12,6 @@
 #include "compartment/substances/SELiquidSubstanceQuantity.h"
 #include "compartment/fluid/SEGasCompartment.h"
 #include "compartment/fluid/SELiquidCompartment.h"
-#include "bind/SubstanceQuantity.pb.h"
 
 void PBSubstanceQuantity::Serialize(const CDM_BIND::SubstanceQuantityData& src, SESubstanceQuantity& dst)
 {

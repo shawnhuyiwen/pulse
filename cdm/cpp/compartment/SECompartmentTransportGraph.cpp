@@ -72,7 +72,7 @@ void SECompartmentTransportGraph<COMPARTMENT_TRANSPORT_GRAPH_TYPES>::StateChange
 }
 
 template<COMPARTMENT_TRANSPORT_GRAPH_TEMPLATE>
-size_t SECompartmentTransportGraph<COMPARTMENT_TRANSPORT_GRAPH_TYPES>::GetVertexIndex(const GraphVertexType& v) const
+int SECompartmentTransportGraph<COMPARTMENT_TRANSPORT_GRAPH_TYPES>::GetVertexIndex(const GraphVertexType& v) const
 {
   auto itr = m_VertexIndicies.find(&v);
   if (itr == m_VertexIndicies.end())

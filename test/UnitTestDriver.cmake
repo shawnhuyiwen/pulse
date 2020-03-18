@@ -1,23 +1,6 @@
-# Files in the project (Relative to this CMAKE file)
-source_group("" FILES driver/cpp/main.cpp)
-# The DLL we are building
-add_executable(UnitTestDriver driver/cpp/main.cpp)
 
-target_include_directories(UnitTestDriver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/cdm/cpp)
-target_include_directories(UnitTestDriver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../cdm/cpp)
-target_include_directories(UnitTestDriver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/engine/cpp)
-target_include_directories(UnitTestDriver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../engine/cpp)
-target_include_directories(UnitTestDriver PRIVATE ${EIGEN3_INCLUDE_DIR})
-target_link_libraries(UnitTestDriver CommonDataModelUnitTests PulseEngineUnitTests)
+add_executable_ex(UnitTestDriver driver/cpp/main.cpp)
 
-
-set_target_properties(UnitTestDriver PROPERTIES
-    DEBUG_POSTFIX "${PULSE_DEBUG_POSTFIX}"
-    RELWITHDEBINFO_POSTFIX "${PULSE_RELWITHDEBINFO_POSTFIX}")
-
-add_custom_command(TARGET UnitTestDriver POST_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:UnitTestDriver> ${INSTALL_BIN})
-                   
-if(MSVC) # Configure running executable out of MSVC
-  set_property(TARGET UnitTestDriver PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${INSTALL_BIN}")
-endif()
+target_link_libraries(UnitTestDriver PulseEngineUnitTests CommonDataModelUnitTests)
+target_include_directories(UnitTestDriver PUBLIC cdm/cpp)
+target_include_directories(UnitTestDriver PUBLIC engine/cpp)

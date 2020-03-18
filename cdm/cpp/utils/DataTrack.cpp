@@ -678,7 +678,7 @@ std::vector<double>& DataTrack::GetTimes()
 std::vector<std::string> DataTrack::ReadTrackFromFile(const char* fileName)
 {
   m_Track.clear();
-  std::string line;  
+  std::string line;
   std::ifstream infile(fileName);
   // Grab the headings from the first line
   std::getline(infile, line);
@@ -699,8 +699,8 @@ std::vector<std::string> DataTrack::ReadTrackFromFile(const char* fileName)
     while (pos < line.size())
       if ((pos = line.find_first_of(',', pos)) != std::string::npos)
         line[pos] = ' ';
-    std::istringstream iss(line);
-    copy(std::istream_iterator<double>(iss),
+    std::istringstream iss2(line);
+    copy(std::istream_iterator<double>(iss2),
              std::istream_iterator<double>(),
              std::back_inserter<std::vector<double>>(values));
     double time = values[0];

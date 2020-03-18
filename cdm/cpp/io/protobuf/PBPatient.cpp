@@ -2,11 +2,13 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
+PUSH_PROTO_WARNINGS()
+#include "bind/Patient.pb.h"
+#include "bind/PatientNutrition.pb.h"
+POP_PROTO_WARNINGS()
 #include "io/protobuf/PBPatient.h"
 #include "io/protobuf/PBProperties.h"
 #include "io/protobuf/PBUtils.h"
-#include "bind/Patient.pb.h"
-#include "bind/PatientNutrition.pb.h"
 #include "patient/SEPatient.h"
 #include "properties/SEScalarTime.h"
 #include "utils/FileUtils.h"

@@ -2,7 +2,9 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
+PUSH_PROTO_WARNINGS()
 #include "bind/Engine.pb.h"
+POP_PROTO_WARNINGS()
 #include "engine/SEDataRequest.h"
 
 const std::string& eDataRequest_Category_Name(eDataRequest_Category m)

@@ -2,8 +2,10 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "io/protobuf/PBProperties.h"
+PUSH_PROTO_WARNINGS()
 #include "bind/Properties.pb.h"
+POP_PROTO_WARNINGS()
+#include "io/protobuf/PBProperties.h"
 
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarAmount.h"

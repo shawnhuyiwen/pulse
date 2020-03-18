@@ -102,12 +102,12 @@ QuantityScalar& SECircuitNode<CIRCUIT_NODE_TYPES>::GetQuantityBaseline()
 }
 
 template<CIRCUIT_NODE_TEMPLATE>
-size_t SECircuitNode<CIRCUIT_NODE_TYPES>::GetCalculatorIndex() const
+int SECircuitNode<CIRCUIT_NODE_TYPES>::GetCalculatorIndex() const
 {
   return m_CalculatorIndex;
 }
 template<CIRCUIT_NODE_TEMPLATE>
-void SECircuitNode<CIRCUIT_NODE_TYPES>::SetCalculatorIndex(const size_t index)
+void SECircuitNode<CIRCUIT_NODE_TYPES>::SetCalculatorIndex(const int index)
 {
   m_CalculatorIndex = index;
 }

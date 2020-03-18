@@ -32,6 +32,21 @@
   class SE##type;\
   namespace pulse { namespace cdm { namespace bind { class type##Data; }}}
 
+#if defined(_MSC_VER)
+  #define PUSH_PROTO_WARNINGS() \
+    __pragma(pack(push)) \
+    __pragma(warning(disable:4127)) \
+    __pragma(warning(disable:4267))
+  #define POP_PROTO_WARNINGS() __pragma(pack(pop))
+#else
+  #define PUSH_PROTO_WARNINGS() \
+    _Pragma("pack(push)") \
+    _Pragma("warning(disable:4127)") \
+    _Pragma("warning(disable:4267)")
+  #define POP_PROTO_WARNINGS() _Pragma("pack(pop)")
+#endif
+
+
 #include <memory>
 #include <stdio.h>
 #include <iostream>
@@ -107,6 +122,12 @@ template class __declspec(dllexport) std::vector<std::string>;
 // If anyone else has opinions on this, let us know
 // kitware@kitware.com
 #pragma warning(disable : 4251)
+
+#pragma warning(disable:4100) // unreferenced formal parameter (intentional in base classes)
+#pragma warning(disable:4996) // Deprecation
+#pragma warning(disable:4505) // unreferenced local function has been removed (dirent)
+#pragma warning(disable:4503)
+
 //Utilities
 enum SerializationFormat { BINARY = 0, JSON };
 

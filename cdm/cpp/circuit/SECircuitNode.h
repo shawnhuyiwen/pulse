@@ -41,8 +41,8 @@ public:
   virtual bool HasQuantityBaseline() const;
   virtual QuantityScalar& GetQuantityBaseline();
 
-  void SetCalculatorIndex(const size_t index);
-  size_t GetCalculatorIndex() const;
+  void SetCalculatorIndex(const int index);
+  int GetCalculatorIndex() const;
 
   bool IsReferenceNode() const;
   void SetAsReferenceNode();
@@ -62,6 +62,6 @@ protected:
   QuantityScalar*         m_QuantityBaseline;
 
 private:
-  size_t                  m_CalculatorIndex;
+  int                     m_CalculatorIndex;
   bool                    m_IsReferenceNode = false;
 };

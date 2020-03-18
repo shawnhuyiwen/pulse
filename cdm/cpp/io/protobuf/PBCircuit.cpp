@@ -2,6 +2,9 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
+PUSH_PROTO_WARNINGS()
+#include "bind/Circuit.pb.h"
+POP_PROTO_WARNINGS()
 #include "io/protobuf/PBCircuit.h"
 #include "io/protobuf/PBProperties.h"
 #include "io/protobuf/PBUtils.h"
@@ -9,7 +12,6 @@
 #include "circuit/fluid/SEFluidCircuit.h"
 #include "circuit/thermal/SEThermalCircuit.h"
 #include "circuit/SECircuitManager.h"
-#include "bind/Circuit.pb.h"
 
 
 template<CIRCUIT_PATH_TEMPLATE>
@@ -161,19 +163,19 @@ void PBCircuit::Serialize(const CDM_BIND::CircuitManagerData& src, SECircuitMana
   for (int i = 0; i < src.electricalpath_size(); i++)
   {
     const CDM_BIND::ElectricalCircuitPathData& p = src.electricalpath(i);
-    SEElectricalCircuitNode* src = dst.GetNode(p.circuitpath().sourcenode(), dst.m_ElectricalLedger);
-    if (src == nullptr)
+    SEElectricalCircuitNode* srcNode = dst.GetNode(p.circuitpath().sourcenode(), dst.m_ElectricalLedger);
+    if (srcNode == nullptr)
     {
       dst.Error("Could not find source node " + p.circuitpath().sourcenode() + " from path " + p.circuitpath().name().c_str());
       continue;
     }
-    SEElectricalCircuitNode* tgt = dst.GetNode(p.circuitpath().targetnode(), dst.m_ElectricalLedger);
-    if (tgt == nullptr)
+    SEElectricalCircuitNode* tgtNode = dst.GetNode(p.circuitpath().targetnode(), dst.m_ElectricalLedger);
+    if (tgtNode == nullptr)
     {
       dst.Error("Could not find target node " + p.circuitpath().targetnode() + " from path " + p.circuitpath().name().c_str());
       continue;
     }
-    PBCircuit::Load(p, dst.CreatePath<ELECTRICAL_LEDGER_TYPES>(*src, *tgt, p.circuitpath().name(), dst.m_ElectricalLedger));
+    PBCircuit::Load(p, dst.CreatePath<ELECTRICAL_LEDGER_TYPES>(*srcNode, *tgtNode, p.circuitpath().name(), dst.m_ElectricalLedger));
   }
   for (int i = 0; i < src.electricalcircuit_size(); i++)
   {
@@ -190,19 +192,19 @@ void PBCircuit::Serialize(const CDM_BIND::CircuitManagerData& src, SECircuitMana
   for (int i = 0; i < src.fluidpath_size(); i++)
   {
     const CDM_BIND::FluidCircuitPathData& p = src.fluidpath(i);
-    SEFluidCircuitNode* src = dst.GetNode(p.circuitpath().sourcenode(), dst.m_FluidLedger);
-    if (src == nullptr)
+    SEFluidCircuitNode* srcNode = dst.GetNode(p.circuitpath().sourcenode(), dst.m_FluidLedger);
+    if (srcNode == nullptr)
     {
       dst.Error("Could not find source node " + p.circuitpath().sourcenode() + " from path " + p.circuitpath().name().c_str());
       continue;
     }
-    SEFluidCircuitNode* tgt = dst.GetNode(p.circuitpath().targetnode(), dst.m_FluidLedger);
-    if (tgt == nullptr)
+    SEFluidCircuitNode* tgtNode = dst.GetNode(p.circuitpath().targetnode(), dst.m_FluidLedger);
+    if (tgtNode == nullptr)
     {
       dst.Error("Could not find target node " + p.circuitpath().targetnode() + " from path " + p.circuitpath().name().c_str());
       continue;
     }
-    PBCircuit::Load(p, dst.CreatePath<FLUID_LEDGER_TYPES>(*src, *tgt, p.circuitpath().name(), dst.m_FluidLedger));
+    PBCircuit::Load(p, dst.CreatePath<FLUID_LEDGER_TYPES>(*srcNode, *tgtNode, p.circuitpath().name(), dst.m_FluidLedger));
   }
   for (int i = 0; i < src.fluidcircuit_size(); i++)
   {
@@ -219,19 +221,19 @@ void PBCircuit::Serialize(const CDM_BIND::CircuitManagerData& src, SECircuitMana
   for (int i = 0; i < src.thermalpath_size(); i++)
   {
     const CDM_BIND::ThermalCircuitPathData& p = src.thermalpath(i);
-    SEThermalCircuitNode* src = dst.GetNode(p.circuitpath().sourcenode(), dst.m_ThermalLedger);
-    if (src == nullptr)
+    SEThermalCircuitNode* srcNode = dst.GetNode(p.circuitpath().sourcenode(), dst.m_ThermalLedger);
+    if (srcNode == nullptr)
     {
       dst.Error("Could not find source node " + p.circuitpath().sourcenode() + " from path " + p.circuitpath().name().c_str());
       continue;
     }
-    SEThermalCircuitNode* tgt = dst.GetNode(p.circuitpath().targetnode(), dst.m_ThermalLedger);
-    if (tgt == nullptr)
+    SEThermalCircuitNode* tgtNode = dst.GetNode(p.circuitpath().targetnode(), dst.m_ThermalLedger);
+    if (tgtNode == nullptr)
     {
       dst.Error("Could not find target node " + p.circuitpath().targetnode() + " from path " + p.circuitpath().name().c_str());
       continue;
     }
-    PBCircuit::Load(p, dst.CreatePath<THERMAL_LEDGER_TYPES>(*src, *tgt, p.circuitpath().name(), dst.m_ThermalLedger));
+    PBCircuit::Load(p, dst.CreatePath<THERMAL_LEDGER_TYPES>(*srcNode, *tgtNode, p.circuitpath().name(), dst.m_ThermalLedger));
   }
   for (int i = 0; i < src.thermalcircuit_size(); i++)
   {

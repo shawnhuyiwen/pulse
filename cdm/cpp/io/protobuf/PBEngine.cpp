@@ -2,13 +2,15 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
+PUSH_PROTO_WARNINGS()
+#include "bind/Engine.pb.h"
+POP_PROTO_WARNINGS()
 #include "io/protobuf/PBEngine.h"
 #include "io/protobuf/PBActions.h"
 #include "io/protobuf/PBConditions.h"
 #include "io/protobuf/PBPatient.h"
 #include "io/protobuf/PBProperties.h"
 #include "io/protobuf/PBUtils.h"
-#include "bind/Engine.pb.h"
 #include "engine/SEDataRequest.h"
 #include "engine/SEDataRequestManager.h"
 #include "engine/SEDecimalFormat.h"

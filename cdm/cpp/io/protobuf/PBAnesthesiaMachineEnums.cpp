@@ -2,7 +2,9 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
+PUSH_PROTO_WARNINGS()
 #include "bind/AnesthesiaMachine.pb.h"
+POP_PROTO_WARNINGS()
 #include "system/equipment/anesthesiamachine/SEAnesthesiaMachine.h"
 
 const std::string& eAnesthesiaMachine_OxygenSource_Name(eAnesthesiaMachine_OxygenSource m)

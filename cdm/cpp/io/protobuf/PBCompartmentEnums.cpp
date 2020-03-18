@@ -2,8 +2,10 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "compartment/SECompartmentManager.h"
+PUSH_PROTO_WARNINGS()
 #include "bind/Compartment.pb.h"
+POP_PROTO_WARNINGS()
+#include "compartment/SECompartmentManager.h"
 
 const std::string& eCompartment_Type_Name(eCompartment_Type m)
 {

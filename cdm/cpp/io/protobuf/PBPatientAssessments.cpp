@@ -2,10 +2,12 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
+PUSH_PROTO_WARNINGS()
+#include "bind/PatientAssessments.pb.h"
+POP_PROTO_WARNINGS()
 #include "io/protobuf/PBUtils.h"
 #include "io/protobuf/PBPatientAssessments.h"
 #include "io/protobuf/PBProperties.h"
-#include "bind/PatientAssessments.pb.h"
 #include "patient/assessments/SECompleteBloodCount.h"
 #include "patient/assessments/SEComprehensiveMetabolicPanel.h"
 #include "patient/assessments/SEPulmonaryFunctionTest.h"

@@ -2,11 +2,13 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
+PUSH_PROTO_WARNINGS()
+#include "pulse/engine/bind/PulseEquipment.pb.h"
+POP_PROTO_WARNINGS()
 #include "io/protobuf/PBPulseEquipment.h"
 #include "io/protobuf/PBAnesthesiaMachine.h"
 #include "io/protobuf/PBElectroCardioGram.h"
 #include "io/protobuf/PBInhaler.h"
-#include "pulse/engine/bind/PulseEquipment.pb.h"
 #include "equipment/AnesthesiaMachine.h"
 #include "equipment/ECG.h"
 #include "equipment/Inhaler.h"

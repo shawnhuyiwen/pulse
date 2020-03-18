@@ -2,11 +2,13 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
+PUSH_PROTO_WARNINGS()
+#include "pulse/engine/bind/Pulse.pb.h"
+POP_PROTO_WARNINGS()
 #include "io/protobuf/PBPulse.h"
 #include "io/protobuf/PBPulseConfiguration.h"
 #include "io/protobuf/PBScenario.h"
 #include "io/protobuf/PBUtils.h"
-#include "pulse/engine/bind/Pulse.pb.h"
 #include "PulseScenario.h"
 #include "utils/FileUtils.h"
 

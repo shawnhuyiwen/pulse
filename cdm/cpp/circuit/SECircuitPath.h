@@ -81,8 +81,8 @@ public:
   virtual PotentialScalar& GetValveBreakdownPotential();
   
   virtual bool HasValidElements() const;
-  virtual unsigned short NumberOfElements() const { return m_NumElements; }
-  virtual unsigned short NumberOfNextElements() const { return m_NumNextElements; }
+  virtual size_t NumberOfElements() const { return m_NumElements; }
+  virtual size_t NumberOfNextElements() const { return m_NumNextElements; }
 
   virtual eGate GetSwitch() const;
   virtual void SetSwitch(eGate state);
@@ -124,8 +124,8 @@ protected:
   std::string                         m_Name;
   SECircuitNode<CIRCUIT_NODE_TYPES>&  m_SourceNode;
   SECircuitNode<CIRCUIT_NODE_TYPES>&  m_TargetNode;
-  mutable unsigned short              m_NumElements;
-  mutable unsigned short              m_NumNextElements;
+  mutable size_t                      m_NumElements;
+  mutable size_t                      m_NumNextElements;
   /////////////////////////    
   // Valves and Switches //    
   /////////////////////////    

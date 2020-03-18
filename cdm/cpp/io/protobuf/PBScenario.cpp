@@ -2,11 +2,13 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
+PUSH_PROTO_WARNINGS()
+#include "bind/Scenario.pb.h"
+POP_PROTO_WARNINGS()
 #include "io/protobuf/PBScenario.h"
 #include "io/protobuf/PBActions.h"
 #include "io/protobuf/PBEngine.h"
 #include "io/protobuf/PBUtils.h"
-#include "bind/Scenario.pb.h"
 #include "scenario/SEScenario.h"
 #include "utils/FileUtils.h"
 

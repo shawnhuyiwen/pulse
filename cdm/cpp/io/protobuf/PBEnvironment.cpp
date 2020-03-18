@@ -2,11 +2,13 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
+PUSH_PROTO_WARNINGS()
+#include "bind/Environment.pb.h"
+POP_PROTO_WARNINGS()
 #include "io/protobuf/PBEnvironment.h"
 #include "io/protobuf/PBSubstance.h"
 #include "io/protobuf/PBProperties.h"
 #include "io/protobuf/PBUtils.h"
-#include "bind/Environment.pb.h"
 #include "system/environment/SEEnvironment.h"
 #include "system/environment/SEActiveConditioning.h"
 #include "system/environment/SEAppliedTemperature.h"

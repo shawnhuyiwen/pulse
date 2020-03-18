@@ -2,10 +2,12 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
+PUSH_PROTO_WARNINGS()
+#include "bind/TestReport.pb.h"
+POP_PROTO_WARNINGS()
 #include "io/protobuf/PBTestReport.h"
 #include "io/protobuf/PBProperties.h"
 #include "io/protobuf/PBUtils.h"
-#include "bind/TestReport.pb.h"
 #include "utils/testing/SETestCase.h"
 #include "utils/testing/SETestErrorStatistics.h"
 #include "utils/testing/SETestReport.h"

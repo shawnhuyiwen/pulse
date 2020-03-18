@@ -2,6 +2,8 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
+PUSH_PROTO_WARNINGS()
+#include "pulse/engine/bind/PulseState.pb.h"
 #include "io/protobuf/PBPulseState.h"
 #include "io/protobuf/PBPulseConfiguration.h"
 #include "io/protobuf/PBPulsePhysiology.h"
@@ -18,7 +20,6 @@
 #include "io/protobuf/PBCompartment.h"
 #include "io/protobuf/PBProperties.h"
 #include "io/protobuf/PBUtils.h"
-#include "pulse/engine/bind/PulseState.pb.h"
 #include "PulseConfiguration.h"
 #include "controller/Engine.h"
 #include "controller/Substances.h"

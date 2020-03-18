@@ -2,7 +2,9 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
+PUSH_PROTO_WARNINGS()
 #include "bind/ElectroCardioGram.pb.h"
+POP_PROTO_WARNINGS()
 #include "system/equipment/electrocardiogram/SEElectroCardioGramWaveform.h"
 
 const std::string& eElectroCardioGram_WaveformLead_Name(eElectroCardioGram_WaveformLead m)

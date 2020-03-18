@@ -2,11 +2,13 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
+PUSH_PROTO_WARNINGS()
+#include "bind/Substance.pb.h"
+POP_PROTO_WARNINGS()
 #include "io/protobuf/PBSubstance.h"
 #include "io/protobuf/PBPhysiology.h"
 #include "io/protobuf/PBProperties.h"
 #include "io/protobuf/PBUtils.h"
-#include "bind/Substance.pb.h"
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceAerosolization.h"
 #include "substance/SESubstanceClearance.h"

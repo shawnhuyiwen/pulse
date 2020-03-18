@@ -2,7 +2,9 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
+PUSH_PROTO_WARNINGS()
 #include "bind/Physiology.pb.h"
+POP_PROTO_WARNINGS()
 #include "system/physiology/SECardiovascularSystem.h"
 
 const std::string& eHeartRhythm_Name(eHeartRhythm m)

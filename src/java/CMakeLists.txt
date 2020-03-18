@@ -1,45 +1,24 @@
-if(NOT PULSE_BUILD_JAVA_UTILS)
+if(NOT Pulse_JAVA_API)
   return()
 endif()
 
 find_package(Java REQUIRED)
 include(UseJava)
-# TODO put a USE_JAVA option in (you would get no JNI, jar, and test suite, but maybe you just want the C++ SDK)
-# Java Compiling
-
-add_library(PulseJNI SHARED jni/CommonDataModelJNI.cpp
-                            jni/PulseEngineJNI.h
-                            jni/PulseEngineJNI.cpp)
 find_package(JNI REQUIRED)
+
+add_library_ex(PulseJNI SHARED
+  H_FILES
+    jni/PulseEngineJNI.h
+  CPP_FILES
+    jni/CommonDataModelJNI.cpp
+    jni/PulseEngineJNI.cpp
+  PUBLIC_DEPENDS
+    CommonDataModelUnitTests
+    PulseEngineUnitTests
+)
 target_include_directories(PulseJNI PRIVATE ${JNI_INCLUDE_DIRS})
-target_include_directories(PulseJNI PRIVATE ${EIGEN3_INCLUDE_DIR})
-target_include_directories(PulseJNI PRIVATE ${CMAKE_SOURCE_DIR}/engine/cpp)
-target_include_directories(PulseJNI PRIVATE ${CMAKE_SOURCE_DIR}/cdm/cpp)
-target_include_directories(PulseJNI PRIVATE ${CMAKE_SOURCE_DIR}/test/engine/cpp)
 target_include_directories(PulseJNI PRIVATE ${CMAKE_SOURCE_DIR}/test/cdm/cpp)
-
-set(PulseJNI_FLAGS)
-set_target_properties(PulseJNI PROPERTIES COMPILE_FLAGS "${PulseJNI_FLAGS}" PREFIX "")
-
-if(APPLE)
-    set_target_properties(PulseJNI PROPERTIES MACOSX_RPATH ON)
-endif()
-
-set_target_properties(PulseJNI PROPERTIES
-    DEBUG_POSTFIX "${PULSE_DEBUG_POSTFIX}"
-    RELWITHDEBINFO_POSTFIX "${PULSE_RELWITHDEBINFO_POSTFIX}")
-
-target_link_libraries(PulseJNI PulseEngineUnitTests)
-target_link_libraries(PulseJNI CommonDataModelUnitTests)
-
-add_custom_command(TARGET PulseJNI POST_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:PulseJNI> ${INSTALL_BIN})
-
-install(TARGETS PulseJNI
-        RUNTIME DESTINATION ${INSTALL_BIN}
-        LIBRARY DESTINATION ${INSTALL_LIB}
-        ARCHIVE DESTINATION ${INSTALL_LIB})
-
+target_include_directories(PulseJNI PRIVATE ${CMAKE_SOURCE_DIR}/test/engine/cpp)
 
 file(GLOB_RECURSE JAVA_FILES
   "com/*.java"
@@ -65,6 +44,5 @@ add_jar(PulseJava ${JAVA_FILES}
     OUTPUT_NAME Pulse)
 get_target_property(_jarFile PulseJava JAR_FILE)
 add_custom_command(TARGET PulseJava POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALL_BIN}
-    COMMAND ${CMAKE_COMMAND} -E copy ${_jarFile} ${INSTALL_BIN})
-install_jar(PulseJava ${INSTALL_BIN})
+    COMMAND ${CMAKE_COMMAND} -E copy ${_jarFile} ${CMAKE_INSTALL_PREFIX}/bin)
+install_jar(PulseJava ${CMAKE_INSTALL_PREFIX}/bin)

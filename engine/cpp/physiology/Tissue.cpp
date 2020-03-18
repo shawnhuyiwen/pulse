@@ -614,7 +614,7 @@ void Tissue::CalculateMetabolicConsumptionAndProduction(double time_s)
   double FractionOfLactateToGlucose = 0.5;          // Ratio of glucose required to lactate produced during anaerobic metabolism. = 1.0 / 2.0;
   double FractionOfAcetoacetateToATP = 0.041666667; // Ratio of acetoacetate required to ATP produced. = 1.0 / 24.0;
   double FractionOfLactateToATP = 0.027777778;      // Ratio of lactate required to ATP produced. = 1.0 / 36.0;
-  double FractionOfLipidToATP = 0.002604167;        // Ratio of of lipid required to ATP produced. = 2.0 / 768.0;  
+  double FractionOfLipidToATP = 0.002604167;        // Ratio of of lipid required to ATP produced. = 2.0 / 768.0;
   double FractionLipidsAsTristearin = 0.256;        // This is an empirically determined value specific to the Pulse implementation
 
   double exerciseTuningFactor = 1.0; // 2.036237;           // A tuning factor to adjust production and consumption during exercise
@@ -1202,16 +1202,16 @@ void Tissue::DistributeMassbyMassWeighted(SELiquidCompartment& cmpt, const SESub
     for (SELiquidCompartment* leaf : cmpt.GetLeaves())
     {
       SELiquidSubstanceQuantity* subQ = leaf->GetSubstanceQuantity(sub);
-    double leafMass = 0.0;
-    if (mass_ug != 0.0)
-    {
-      leafMass = mass * (subQ->GetMass(MassUnit::ug) / mass_ug);
-    }
-      subQ->GetMass().IncrementValue(leafMass, unit);
-    if (std::abs(subQ->GetMass(MassUnit::ug)) < ZERO_APPROX)
-    {
-      subQ->GetMass().SetValue(0.0, MassUnit::ug);
-    }
+      double leafMass = 0.0;
+      if (mass_ug != 0.0)
+      {
+        leafMass = mass * (subQ->GetMass(MassUnit::ug) / mass_ug);
+      }
+        subQ->GetMass().IncrementValue(leafMass, unit);
+      if (std::abs(subQ->GetMass(MassUnit::ug)) < ZERO_APPROX)
+      {
+        subQ->GetMass().SetValue(0.0, MassUnit::ug);
+      }
     }
   }
 }

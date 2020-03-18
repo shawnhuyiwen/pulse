@@ -2,10 +2,12 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
+PUSH_PROTO_WARNINGS()
+#include "pulse/engine/bind/PulsePhysiology.pb.h"
+POP_PROTO_WARNINGS()
 #include "io/protobuf/PBPulsePhysiology.h"
 #include "io/protobuf/PBPhysiology.h"
 #include "io/protobuf/PBProperties.h"
-#include "pulse/engine/bind/PulsePhysiology.pb.h"
 #include "physiology/BloodChemistry.h"
 #include "physiology/Cardiovascular.h"
 #include "physiology/Drugs.h"

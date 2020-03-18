@@ -2,13 +2,15 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
+PUSH_PROTO_WARNINGS()
+#include "pulse/engine/bind/PulseConfiguration.pb.h"
+POP_PROTO_WARNINGS()
 #include "io/protobuf/PBPulseConfiguration.h"
 #include "io/protobuf/PBEngine.h"
 #include "io/protobuf/PBEnvironment.h"
 #include "io/protobuf/PBPatientNutrition.h"
 #include "io/protobuf/PBProperties.h"
 #include "io/protobuf/PBUtils.h"
-#include "pulse/engine/bind/PulseConfiguration.pb.h"
 #include "PulseConfiguration.h"
 #include "patient/SENutrition.h"
 #include "engine/SEDynamicStabilization.h"

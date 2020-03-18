@@ -2,14 +2,16 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
+PUSH_PROTO_WARNINGS()
+#include "bind/Actions.pb.h"
+#include "bind/Scenario.pb.h"
+POP_PROTO_WARNINGS()
 #include "io/protobuf/PBActions.h"
 #include "io/protobuf/PBPatientActions.h"
 #include "io/protobuf/PBEnvironmentActions.h"
 #include "io/protobuf/PBAnesthesiaMachineActions.h"
 #include "io/protobuf/PBInhalerActions.h"
 #include "io/protobuf/PBProperties.h"
-#include "bind/Actions.pb.h"
-#include "bind/Scenario.pb.h"
 #include "patient/actions/SEPatientAction.h"
 #include "system/environment/actions/SEEnvironmentAction.h"
 #include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineAction.h"

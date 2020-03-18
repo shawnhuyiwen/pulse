@@ -10,12 +10,19 @@
 #include "utils/GeneralMath.h"
 #include "utils/TimingProfile.h"
 
+#ifdef _MSC_VER
+#pragma warning( push )
+#pragma warning( disable : 4127 )
+#endif
 #include "Eigen/Dense"
 #include "Eigen/SparseLU"
 #include "Eigen/SparseCore"
    //#include "Eigen/SparseCholesky"
 #include "Eigen/IterativeLinearSolvers"
 #include "Eigen/SparseQR"
+#ifdef _MSC_VER
+#pragma warning( push )
+#endif
 
 #include <numeric>
 #include <bitset>
@@ -232,7 +239,6 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
   //The b matrix will have all of the right side values (known values) from the KCL equation
   //Variables used in the loop
   double dStartingCompliance = 0.0;
-  double dStartingInertance = 0.0;
   for (NodeType* n : m_circuit->GetNodes())
   {
     //Sum of the flows at each node is 0

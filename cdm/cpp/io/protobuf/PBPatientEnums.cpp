@@ -2,8 +2,10 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "io/protobuf/PBUtils.h"
+PUSH_PROTO_WARNINGS()
 #include "bind/Patient.pb.h"
+POP_PROTO_WARNINGS()
+#include "io/protobuf/PBUtils.h"
 #include "patient/SEPatient.h"
 
 const std::string& ePatient_Sex_Name(ePatient_Sex m)

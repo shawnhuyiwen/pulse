@@ -1,6 +1,7 @@
-if(NOT PULSE_PYTHON_BINDINGS)
+if(NOT Pulse_PYTHON_API)
   return()
 endif()
+find_package(pybind11 CONFIG REQUIRED)
 
 pybind11_add_module(PyPulse
   pybind/PyPulse.cpp)
@@ -25,9 +26,9 @@ set_target_properties(PyPulse PROPERTIES
     RELWITHDEBINFO_POSTFIX "${PULSE_RELWITHDEBINFO_POSTFIX}")
 
 add_custom_command(TARGET PyPulse POST_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:PyPulse> ${INSTALL_BIN})
+                   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:PyPulse> ${CMAKE_INSTALL_PREFIX}/bin)
 
 install(TARGETS PyPulse
-        RUNTIME DESTINATION ${INSTALL_BIN}
-        LIBRARY DESTINATION ${INSTALL_LIB}
-        ARCHIVE DESTINATION ${INSTALL_LIB})
+        RUNTIME DESTINATION /bin
+        LIBRARY DESTINATION /lib
+        ARCHIVE DESTINATION /lib)

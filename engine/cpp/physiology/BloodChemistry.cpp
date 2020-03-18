@@ -168,8 +168,6 @@ void BloodChemistry::SetUp()
   SELiquidCompartment* pulmonaryVeins = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::PulmonaryVeins);
   m_pulmonaryVeinsO2 = pulmonaryVeins->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
   m_pulmonaryVeinsCO2 = pulmonaryVeins->GetSubstanceQuantity(m_data.GetSubstances().GetCO2());
-
-  double dT_s = m_data.GetTimeStep().GetValue(TimeUnit::s);
 }
 
 void BloodChemistry::AtSteadyState()

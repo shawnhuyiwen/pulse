@@ -79,7 +79,7 @@ bool SEActionManager::ProcessAction(const SEAction& action)
     Error(m_ss);
     return false;
   }
-  bool bRet;
+  bool bRet = true;
 
   const SEPatientAction* pa = dynamic_cast<const SEPatientAction*>(&action);
   if (pa != nullptr)

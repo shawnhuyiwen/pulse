@@ -2,9 +2,10 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-
+PUSH_PROTO_WARNINGS()
 #include "pulse/engine/bind/Pulse.pb.h"
 #include "pulse/engine/bind/PulseState.pb.h"
+POP_PROTO_WARNINGS()
 #include "controller/Controller.h"
 
 const std::string& eAirwayMode_Name(eAirwayMode m)

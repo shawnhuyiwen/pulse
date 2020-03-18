@@ -76,8 +76,8 @@ inline bool CIEQUAL(std::string strA, std::string strB)
         return true;
     }
 
-    std::transform(begin(strA), end(strA), begin(strA), (int (*)(int))std::tolower);
-    std::transform(begin(strB), end(strB), begin(strB), (int (*)(int))std::tolower);
+    std::transform(begin(strA), end(strA), begin(strA), (char (*)(char))std::tolower);
+    std::transform(begin(strB), end(strB), begin(strB), (char (*)(char))std::tolower);
 
     return strA == strB;
 }
@@ -176,7 +176,7 @@ void CUnitConversionEngine::LoadDefinitions()
       std::string TargetCompoundUnit;
       std::string TCUSubstr; 
       std::string PrefixModeStr;
-      CUnitDescriptor::PrefixModeType PrefixMode;
+      CUnitDescriptor::PrefixModeType PrefixMode = CUnitDescriptor::NONE;
       std::string Prefixes;
 
       curLineStream >> QuantName;
@@ -340,9 +340,9 @@ CQuantityConversionDescriptor *CUnitConversionEngine::NewQuantityConversion(cons
                                       const std::string &toTypeName, const std::string &mappingUnit)
 {
   // Lookup all the relevant strings
-  CUnitConversionEngine &uce = CUnitConversionEngine::GetEngine();
-  int fromQTID = uce.GetQuantityTypeID(fromTypeName);
-  int toQTID = uce.GetQuantityTypeID(toTypeName);
+  CUnitConversionEngine &uce_ = CUnitConversionEngine::GetEngine();
+  int fromQTID = uce_.GetQuantityTypeID(fromTypeName);
+  int toQTID = uce_.GetQuantityTypeID(toTypeName);
   CQuantityConversionKey qckey(fromQTID,toQTID);
 
   CQuantityConversionDescriptor *qcd = new CQuantityConversionDescriptor(fromExp,mappingUnit);

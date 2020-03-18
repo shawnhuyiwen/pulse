@@ -1100,19 +1100,15 @@ void Cardiovascular::Hemorrhage()
       }
 
       //Check if we've already been hemorrhaging here
-      SEFluidCircuitPath* hemorrhagePath;
-      bool pathFound = false;
+      SEFluidCircuitPath* hemorrhagePath = nullptr;
       for (unsigned int hIter = 0; hIter < m_HemorrhagePaths.size(); hIter++)
       {
         hemorrhagePath = m_HemorrhagePaths.at(hIter);
         if (&(hemorrhagePath->GetSourceNode()) == node)
-        {
-          pathFound = true;
           break;
-        }
       }
 
-      if (pathFound)
+      if (hemorrhagePath!=nullptr)
       {
         //Update the existing bleed path
         //Increment value to allow overlapping compartments
@@ -1171,8 +1167,8 @@ void Cardiovascular::Hemorrhage()
   }
 
   // Remove any invalid hemorrhages
-  for (SEHemorrhage* h : invalid_hemorrhages)
-    m_data.GetActions().GetPatientActions().RemoveHemorrhage(h->GetCompartment());
+  for (SEHemorrhage* ih : invalid_hemorrhages)
+    m_data.GetActions().GetPatientActions().RemoveHemorrhage(ih->GetCompartment());
 
   //Remove hemorrhage elements that aren't being used
   //Make sure to do this even if no hemorrhage action, since it's needed when removed

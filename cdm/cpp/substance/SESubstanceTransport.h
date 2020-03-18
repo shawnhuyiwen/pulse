@@ -2,9 +2,6 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#ifdef MSVC
-  #pragma warning(disable : 4503)
-#endif
 
 #define SUBSTANCE_TRANSPORTER_TEMPLATE typename GraphType, typename FluxUnit, typename QuantityUnit, typename ExtensiveUnit, typename IntensiveUnit
 
@@ -75,7 +72,7 @@ public:
 
 protected:
   virtual void BalanceByIntensive() = 0;// Transporter calculates the new concentration
-  virtual size_t GetVertexIndex(const SESubstanceTransportVertex<TRANSPORT_VERTEX_TYPES>& v) const = 0;
+  virtual int GetVertexIndex(const SESubstanceTransportVertex<TRANSPORT_VERTEX_TYPES>& v) const = 0;
   virtual const std::vector<SESubstanceTransportVertex<TRANSPORT_VERTEX_TYPES>*>& GetVerticies() const = 0;
   virtual const std::vector<SESubstanceTransportEdge<TRANSPORT_EDGE_TYPES>*>* GetSourceEdges(const SESubstanceTransportVertex<TRANSPORT_VERTEX_TYPES>& v) const = 0;
   virtual const std::vector<SESubstanceTransportEdge<TRANSPORT_EDGE_TYPES>*>* GetTargetEdges(const SESubstanceTransportVertex<TRANSPORT_VERTEX_TYPES>& v) const = 0;

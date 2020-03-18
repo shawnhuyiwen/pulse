@@ -86,7 +86,6 @@ void SEElectroCardioGramWaveformInterpolator::Interpolate(SEElectroCardioGramWav
     // NOTE: This assumes that the data is a SINGLE waveform
     std::vector<double>  iTime;
     std::vector<double>& wTime = data.GetTime();
-    std::vector<double>& wEleP = data.GetElectricPotential();
     double currentTime_s = 0;
     double timeStep_s = timeStep.GetValue(TimeUnit::s);
     double endTime_s = wTime[wTime.size() - 1];
@@ -216,12 +215,11 @@ void SEElectroCardioGramWaveformInterpolator::CalculateWaveformsElectricPotentia
 
     for (auto & r2w : m_Waveforms[l2s.first])//rhythm to indecies
     {
-      int i = 0;
       SEElectroCardioGramWaveform* waveform = r2w.second;
       if (waveform == nullptr)
         continue;
       SEFunctionElectricPotentialVsTime& data = waveform->GetData();
-      for (unsigned int i = 0; i < waveform->GetActiveIndicies().size(); i++)
+      for (size_t i = 0; i < waveform->GetActiveIndicies().size(); i++)
       {
         idx = waveform->GetActiveIndicies()[i];
         val = data.GetElectricPotentialValue(idx++, *data.GetElectricPotentialUnit());
