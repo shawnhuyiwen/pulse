@@ -27,7 +27,6 @@ def serialize_asthma_attack_to_bind(src: SEAsthmaAttack, dst: AsthmaAttackData):
     serialize_patient_action_to_bind(src, dst.PatientAction)
     serialize_scalar_0to1_to_bind(src.get_severity(), dst.Severity)
 
-
 def serialize_asthma_attack_from_bind(src: AsthmaAttackData, dst: SEAsthmaAttack):
     serialize_patient_action_from_bind(src.PatientAction, dst)
     raise Exception("serialize_asthma_attack_from_bind not implemented")
@@ -40,10 +39,10 @@ def serialize_acute_respiratory_exacerbation_to_bind(src: SEAcuteRespiratoryDist
     serialize_scalar_0to1_to_bind(src.get_left_lung_affected(), dst.LeftLungAffected)
     serialize_scalar_0to1_to_bind(src.get_right_lung_affected(), dst.RightLungAffected)
 
-
 def serialize_acute_respiratory_exacerbation_from_bind(src: AsthmaAttackData, dst: SEAsthmaAttack):
     serialize_patient_action_from_bind(src.PatientAction, dst)
     raise Exception("serialize_acute_respiratory_exacerbation_from_bind not implemented")
+
 
 def serialize_acute_stress_to_bind(src: SEAcuteStress, dst: AcuteStressData):
     serialize_patient_action_to_bind(src, dst.PatientAction)
@@ -51,6 +50,7 @@ def serialize_acute_stress_to_bind(src: SEAcuteStress, dst: AcuteStressData):
 
 def serialize_acute_stress_from_bind(src:AcuteStressData, dst: SEAcuteStress):
     serialize_patient_action_from_bind(src.PatientAction, dst)
+
 
 def serialize_airway_obstruction_to_bind(src: SEAirwayObstruction, dst: AirwayObstructionData):
     serialize_patient_action_to_bind(src, dst.PatientAction)
