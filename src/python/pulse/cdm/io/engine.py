@@ -70,6 +70,54 @@ def serialize_actions_to_string(actions: [], fmt: eSerializationFormat):
                 serialize_brain_injury_to_bind(action, any_action.PatientAction.BrainInjury)
                 action_list.AnyAction.append(any_action)
                 continue
+            if isinstance(action, SEBronchoConstriction):
+                serialize_broncho_constriction_to_bind(action, any_action.PatientAction.Bronchoconstriction)
+                action_list.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SEDyspnea):
+                serialize_dsypnea_to_bind(action, any_action.PatientAction.Dyspnea)
+                action_list.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SEIntubation):
+                serialize_intubation_to_bind(action, any_action.PatientAction.Intubation)
+                action_list.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SELobarPneumoniaExacerbation):
+                serialize_lobar_pneumonia_exacerbation_to_bind(action, any_action.PatientAction.LobarPneumoniaExacerbation)
+                action_list.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SENeedleDecompression):
+                serialize_needle_decompression_to_bind(action, any_action.PatientAction.NeedleDecompression)
+                action_list.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SEPericardialEffusion):
+                serialize_pericardial_effusion_to_bind(action, any_action.PatientAction.PericardialEffusion)
+                action_list.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SERespiratoryFatigue):
+                serialize_respiratory_fatigue_to_bind(action, any_action.PatientAction.RespiratoryFatigue)
+                action_list.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SESubstanceBolus):
+                serialize_substance_bolus_to_bind(action, any_action.PatientAction.SubstanceBolus)
+                action_list.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SESubstanceInfusion):
+                serialize_substance_infusion_to_bind(action, any_action.PatientAction.SubstanceInfusion)
+                action_list.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SESubstanceCompoundInfusion):
+                serialize_substance_compound_infusion_to_bind(action, any_action.PatientAction.SubstanceCompoundInfusion)
+                action_list.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SESupplementalOxygen):
+                serialize_supplemental_oxygen_to_bind(action, any_action.PatientAction.SupplementalOxygen)
+                action_list.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SETensionPneumothorax):
+                serialize_tension_pneumothorax_to_bind(action, any_action.PatientAction.TensionPneumothorax)
+                action_list.AnyAction.append(any_action)
+                continue
         if isinstance(action, SEEnvironmentAction):
             if isinstance(action, SEChangeEnvironmentalConditions):
                 serialize_change_environmental_conditions_to_bind(action, any_action.EnvironmentAction.ChangeEnvironmentalConditions)

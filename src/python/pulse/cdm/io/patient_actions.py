@@ -63,10 +63,28 @@ def serialize_airway_obstruction_from_bind(src:AirwayObstructionData, dst: SEAir
 def serialize_brain_injury_to_bind(src:SEBrainInjury, dst: BrainInjuryData):
     serialize_patient_action_to_bind(src, dst.PatientAction)
     serialize_scalar_0to1_to_bind(src.get_severity(), dst.Severity)
-    dst.Type = src.get_injury_type()
+    dst.Type = src.get_injury_type().value
 
 def serialize_brain_injury_from_bind(src: BrainInjuryData, dst: SEBrainInjury):
     serialize_patient_action_from_bind(src.PatientAction, dst)
+
+
+def serialize_broncho_constriction_to_bind(src: SEBronchoConstriction, dst: BronchoconstrictionData):
+    serialize_patient_action_to_bind(src, dst.PatientAction)
+    serialize_scalar_0to1_to_bind(src.get_severity(), dst.Severity)
+
+
+def serialize_broncho_constriction_from_bind(src: BronchoconstrictionData, dst: SEBronchoConstriction):
+    serialize_patient_action_from_bind(src.PatientAction, dst)
+
+
+def serialize_dsypnea_to_bind(src: SEDyspnea, dst: DyspneaData):
+    serialize_patient_action_to_bind(src, dst.PatientAction)
+    serialize_scalar_0to1_to_bind(src.get_severity(), dst.Severity)
+
+
+def serialize_dsypnea_from_bind(src:DyspneaData, dst: SEDyspnea):
+    serialize_patient_action_from_bind(dst.PatientAction, src)
 
 
 def serialize_hemorrhage_to_bind(src: SEHemorrhage, dst: HemorrhageData):
@@ -77,3 +95,84 @@ def serialize_hemorrhage_to_bind(src: SEHemorrhage, dst: HemorrhageData):
 
 def serialize_hemorrhage_from_bind(src: HemorrhageData, dst: SEHemorrhage):
     raise Exception("serialize_hemorrhage_from_bind not implemented")
+
+
+def serialize_intubation_to_bind(src:SEIntubation, dst:IntubationData):
+    serialize_patient_action_to_bind(src, dst.PatientAction)
+    dst.Type = src.get_type().value
+def serialize_intubation_from_bind(src:IntubationData, dst:SEIntubation):
+    serialize_patient_action_from_bind(src.PatientAction, dst)
+
+def serialize_lobar_pneumonia_exacerbation_to_bind(src:SELobarPneumoniaExacerbation, dst: LobarPneumoniaExacerbationData):
+    serialize_patient_action_to_bind(src, dst.PatientAction)
+    serialize_scalar_0to1_to_bind(src.get_severity(), dst.Severity)
+    serialize_scalar_0to1_to_bind(src.get_right_lung_affected(), dst.RightLungAffected)
+    serialize_scalar_0to1_to_bind(src.get_left_lung_affected(), dst.LeftLungAffected)
+def serialize_lobar_pneumonia_exacerbation_from_bind(src:LobarPneumoniaExacerbationData, dst: SELobarPneumoniaExacerbation ):
+    serialize_patient_action_from_bind(src.PatientAction, dst)
+
+def serialize_needle_decompression_to_bind(src: SENeedleDecompression, dst: NeedleDecompressionData):
+    serialize_patient_action_to_bind(src, dst.PatientAction)
+    dst.Side = src.get_side().value
+    dst.State = src.get_state().value
+def serialize_needle_decompression_from_bind(src:NeedleDecompressionData, dst: SENeedleDecompression):
+    serialize_patient_action_from_bind(src.PatientAction, dst)
+
+def serialize_pericardial_effusion_to_bind(src: SEPericardialEffusion, dst:PericardialEffusionData):
+    serialize_patient_action_to_bind(src, dst.PatientAction)
+    serialize_scalar_volume_per_time_to_bind(src.get_effusion_rate(), dst.EffusionRate)
+def serialize_pericardial_effusion_from_bind(src: PericardialEffusionData, dst: SEPericardialEffusion):
+    serialize_patient_action_from_bind(src.PatientAction, dst)
+
+def serialize_respiratory_fatigue_to_bind(src:SERespiratoryFatigue, dst: RespiratoryFatigueData):
+    serialize_patient_action_to_bind(src, dst.PatientAction)
+    serialize_scalar_0to1_to_bind(src.get_severity(), dst.Severity)
+
+
+def serialize_respiratory_fatigue_from_bind(src: RespiratoryFatigueData, dst: SERespiratoryFatigue):
+    serialize_patient_action_from_bind(src.PatientAction, dst)
+
+
+def serialize_substance_bolus_to_bind(src:SESubstanceBolus, dst: SubstanceBolusData):
+    serialize_patient_action_to_bind(src, dst.PatientAction)
+    serialize_scalar_mass_per_volume_to_bind(src.get_concentration(), dst.Concentration)
+    serialize_scalar_volume_to_bind(src.get_dose(), dst.Dose)
+    dst.Substance = src.get_substance()
+    dst.AdministrationRoute = src.get_admin_route().value
+
+def serialize_substance_bolus_from_bind(src: SubstanceBolusData, dst: SESubstanceBolus):
+    serialize_patient_action_from_bind(src.PatientAction, dst)
+
+def serialize_substance_compound_infusion_to_bind(src:SESubstanceCompoundInfusion, dst: SubstanceCompoundInfusionData):
+    serialize_patient_action_to_bind(src, dst.PatientAction)
+    serialize_scalar_volume_to_bind(src.get_bag_volume(), dst.BagVolume)
+    serialize_scalar_volume_per_time_to_bind(src.get_rate(), dst.Rate)
+    dst.SubstanceCompound = src.get_compound()
+
+def serialize_substance_compound_infusion_from_bind(src: SubstanceCompoundInfusionData, dst: SESubstanceCompoundInfusion):
+    serialize_patient_action_from_bind(src.PatientAction, dst)
+
+def serialize_substance_infusion_to_bind(src:SESubstanceInfusion, dst: SubstanceInfusionData):
+    serialize_patient_action_to_bind(src, dst.PatientAction)
+    serialize_scalar_mass_per_volume_to_bind(src.get_concentration(), dst.Concentration)
+    serialize_scalar_volume_per_time_to_bind(src.get_rate(), dst.Rate)
+    dst.Substance = src.get_substance()
+
+def serialize_substance_infusion_from_bind(src: SubstanceInfusionData, dst: SESubstanceInfusion):
+    serialize_patient_action_from_bind(src.PatientAction, dst)
+
+def serialize_supplemental_oxygen_to_bind(src: SESupplementalOxygen, dst: SupplementalOxygenData):
+    serialize_patient_action_to_bind(src, dst.PatientAction)
+    serialize_scalar_volume_per_time_to_bind(src.get_flow(), dst.Flow)
+    serialize_scalar_volume_to_bind(src.get_volume(), dst.Volume)
+    dst.Device = src.get_device().value
+def serialize_supplemental_oxygen_from_bind(src: SupplementalOxygenData, dst: SESupplementalOxygen):
+    serialize_patient_action_from_bind(src.PatientAction, dst)
+
+def serialize_tension_pneumothorax_to_bind(src: SETensionPneumothorax, dst: TensionPneumothoraxData):
+    serialize_patient_action_to_bind(src, dst.PatientAction)
+    serialize_scalar_0to1_to_bind(src.get_severity(), dst.Severity)
+    dst.Side = src.get_side().value
+    dst.Type = src.get_type().value
+def serialize_tension_pneumothorax_from_bind(src: TensionPneumothoraxData, dst: SETensionPneumothorax):
+    serialize_patient_action_from_bind(src.PatientAction, dst)
