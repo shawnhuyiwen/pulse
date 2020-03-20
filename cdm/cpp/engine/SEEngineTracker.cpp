@@ -148,6 +148,8 @@ double SEEngineTracker::GetValue(const SEDataRequest& dr) const
   auto drs = GetScalar(dr);
   if (drs == nullptr)
     return SEScalar::dNaN();
+  if (!drs->IsValid())
+    return SEScalar::dNaN();
   if (dr.HasUnit())
     return drs->GetValue(*dr.GetUnit());
   return drs->GetValue();
@@ -550,7 +552,7 @@ void SEDataRequestScalar::SetScalar(const SEScalar* s, SEDataRequest& dr)
     Fatal("Unknown Data Request : " + dr.GetPropertyName());
     return;
   }
-  SEGenericScalar::SetScalar(*s);  
+  SEGenericScalar::SetScalar(*s);
   if (m_UnitScalar != nullptr)
   {
     if (!dr.HasRequestedUnit())// Use set unit if none provide

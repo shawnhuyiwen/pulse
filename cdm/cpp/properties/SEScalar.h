@@ -206,14 +206,14 @@ public:
   SEGenericScalar(Logger* logger);
   virtual ~SEGenericScalar() {};
 
-  virtual bool HasScalar();
+  virtual bool HasScalar() const;
   virtual void SetScalar(const SEScalar& s);
 
-  virtual bool IsValid();
-  virtual bool IsInfinity();
+  virtual bool IsValid() const;
+  virtual bool IsInfinity() const;
 
-  virtual bool HasUnit();
-  virtual const CCompoundUnit* GetUnit();
+  virtual bool HasUnit() const;
+  virtual const CCompoundUnit* GetUnit() const;
   virtual bool IsValidUnit(const CCompoundUnit& unit) const;
   virtual const CCompoundUnit* GetCompoundUnit(const std::string& unit) const;
 
