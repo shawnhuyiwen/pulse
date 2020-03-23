@@ -35,6 +35,9 @@ void CreateState()
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowToCombatMultitraumaCreateState.log");
   pe->GetLogger()->Info("HowToCombatMultitraumaCreateState");
 
+  // Load the Soldier patient
+  // You can alternatively define your own patient (see HowTo-CreateAPatient) and apply conditions (see HowTo-LobarPneumonia) 
+  // This would require runnning stabilization rather than loading an existing state
   if (!pe->SerializeFromFile("./states/Soldier@0s.json", JSON))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
