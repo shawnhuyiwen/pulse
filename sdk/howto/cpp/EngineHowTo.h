@@ -17,6 +17,7 @@ void HowToAnesthesiaMachine();
 void HowToAsthmaAttack();
 void HowToBrainInjury();
 void HowToBolusDrug();
+void HowToCombatMultitrauma();
 void HowToConsumeNutrients();
 void HowToCOPD();
 void HowToCPR();

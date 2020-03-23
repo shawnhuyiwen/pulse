@@ -76,14 +76,13 @@ void HowToTensionPneumothorax()
   
   // You can have a Closed or Open Tension Pneumothorax
   pneumo.SetType(eGate::Closed);
-  //pneumo.SetType(CDM::enumPneumothoraxType::Open);
+  //pneumo.SetType(eGate::Open);
   pneumo.GetSeverity().SetValue(0.75);
   
     // It can be on the Left or right side
   pneumo.SetSide(eSide::Right);  
-  //pneumo.SetSide(CDM::enumSide::Left);
+  //pneumo.SetSide(eSide::Left);
   pneumo.SetComment("ICD-9: 860.0");
-  //pneumo.SetComment('ICD-9: 860.0');
   pe->ProcessAction(pneumo);
 
   pe->GetLogger()->Info("Giving the patient a tension pneumothorax");
@@ -110,6 +109,7 @@ void HowToTensionPneumothorax()
   needleDecomp.SetSide(eSide::Right);
   //needleDecomp.SetSide(CDM::enumSide::Left);
   
+  needleDecomp.SetActive(true);
   pe->ProcessAction(needleDecomp);
   pe->GetLogger()->Info("Giving the patient a needle decompression");
 
