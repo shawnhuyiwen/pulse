@@ -89,6 +89,7 @@ class SECondition(ABC):
         pass
 
 from pulse.cdm.environment_conditions import SEInitialEnvironmentalConditions
+from pulse.cdm.patient_conditions import *
 
 class SEConditionManager():
     __slots__ = ["_ards", "_anemia", "_copd", "_cvsd", "_impaired_alveolar_exchange",
@@ -142,7 +143,7 @@ class SEConditionManager():
         return False if self._ards is None else self._ards.is_valid()
     def get_acute_respiratory_distress_syndrome(self):
         if self._ards is None:
-            self._ards = None
+            self._ards = SEAcuteRespiratoryDistressSyndrome()
         return self._ards
     def remove_acute_respiratory_distress_syndrome(self):
         self._ards = None
@@ -151,7 +152,7 @@ class SEConditionManager():
         return False if self._anemia is None else self._anemia.is_valid()
     def get_chronic_anemia(self):
         if self._anemia is None:
-            self._anemia = None
+            self._anemia = SEChronicAnemia()
         return self._anemia
     def remove_chronic_anemia(self):
         self._anemia = None
@@ -160,7 +161,7 @@ class SEConditionManager():
         return False if self._copd is None else self._copd.is_valid()
     def get_chronic_obstructive_pulmonary_disease(self):
         if self._copd is None:
-            self._copd = None
+            self._copd = SEChronicObstructivePulmonaryDisease()
         return self._copd
     def remove_chronic_obstructive_pulmonary_disease(self):
         self._copd = None
@@ -169,7 +170,7 @@ class SEConditionManager():
         return False if self._cvsd is None else self._cvsd.is_valid()
     def get_chronic_ventricular_systolic_dysfunction(self):
         if self._cvsd is None:
-            self._cvsd = None
+            self._cvsd = SEChronicVentricularSystolicDysfunction()
         return self._cvsd
     def remove_chronic_ventricular_systolic_dysfunction(self):
         self._cvsd = None
@@ -178,7 +179,7 @@ class SEConditionManager():
         return False if self._pericardial_effusion is None else self._pericardial_effusion.is_valid()
     def get_chronic_pericardial_effusion(self):
         if self._pericardial_effusion is None:
-            self._pericardial_effusion = None
+            self._pericardial_effusion = SEChronicPericardialEffusion()
         return self._pericardial_effusion
     def remove_chronic_pericardial_effusion(self):
         self._pericardial_effusion = None
@@ -187,7 +188,7 @@ class SEConditionManager():
         return False if self._renal_stenosis is None else self._renal_stenosis.is_valid()
     def get_chronic_renal_stenosis(self):
         if self._renal_stenosis is None:
-            self._renal_stenosis = None
+            self._renal_stenosis = SEChronicRenalStenosis()
         return self._renal_stenosis
     def remove_chronic_renal_stenosis(self):
         self._renal_stenosis = None
@@ -196,7 +197,7 @@ class SEConditionManager():
         return False if self._impaired_alveolar_exchange is None else self._impaired_alveolar_exchange.is_valid()
     def get_impaired_alveolar_exchange(self):
         if self._impaired_alveolar_exchange is None:
-            self._impaired_alveolar_exchange = None
+            self._impaired_alveolar_exchange = SEImpairedAlveolarExchange()
         return self._impaired_alveolar_exchange
     def remove_impaired_alveolar_exchange(self):
         self._impaired_alveolar_exchange = None
@@ -205,7 +206,7 @@ class SEConditionManager():
         return False if self._lobar_pneumonia is None else self._lobar_pneumonia.is_valid()
     def get_lobar_pneumonia(self):
         if self._lobar_pneumonia is None:
-            self._lobar_pneumonia = None
+            self._lobar_pneumonia = SELobarPneumonia()
         return self._lobar_pneumonia
     def remove_lobar_pneumonia(self):
         self._lobar_pneumonia = None
@@ -214,7 +215,7 @@ class SEConditionManager():
         return False if self._pulmonary_fibrosis is None else self._pulmonary_fibrosis.is_valid()
     def get_pulmonary_fibrosis(self):
         if self._pulmonary_fibrosis is None:
-            self._pulmonary_fibrosis = None
+            self._pulmonary_fibrosis = SEPulmonaryFibrosis()
         return self._pulmonary_fibrosis
     def remove_pulmonary_fibrosis(self):
         self._pulmonary_fibrosis = None
@@ -223,7 +224,7 @@ class SEConditionManager():
         return False if self._renal_stenosis is None else self._renal_stenosis.is_valid()
     def get_renal_stenosis(self):
         if self._renal_stenosis is None:
-            self._renal_stenosis = None
+            self._renal_stenosis = SEChronicRenalStenosis()
         return self._renal_stenosis
     def remove_renal_stenosis(self):
         self._renal_stenosis = None
@@ -232,7 +233,7 @@ class SEConditionManager():
         return False if self._sepsis is None else self._sepsis.is_valid()
     def get_sepsis(self):
         if self._sepsis is None:
-            self._sepsis = None
+            self._sepsis = SESepsis()
         return self._sepsis
     def remove_sepsis(self):
         self._sepsis = None
