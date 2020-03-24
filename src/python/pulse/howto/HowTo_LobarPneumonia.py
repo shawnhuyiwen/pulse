@@ -22,7 +22,7 @@ def HowTo_UseLPE():
         print("Unable to load stabilize engine")
         return
 
-    # Perform an action
+    # Perform an action to exacerbate the initial condition state
     exacerbation = SELobarPneumoniaExacerbation()
     exacerbation.set_comment("Patient's Lobar Pneumonia is exacerbated")
     exacerbation.get_severity().set_value(0.4)

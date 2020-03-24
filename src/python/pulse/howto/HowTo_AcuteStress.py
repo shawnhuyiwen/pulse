@@ -17,14 +17,13 @@ def HowTo_AcuteStress():
     results = pulse.pull_data()
     print(results)
 
-    # Perform an action to exacerbate the initial condition state
     acute_stress = SEAcuteStress()
     acute_stress.set_comment("Patient undergoes acute stress")
-    acute_stress.get_severity().set_value(1)
+    acute_stress.get_severity().set_value(1.0)
     pulse.process_action(acute_stress)
 
     # Advance some time and print out the vitals
-    pulse.advance_time_s(30)
+    pulse.advance_time_s(60)
     results = pulse.pull_data()
     print(results)
 

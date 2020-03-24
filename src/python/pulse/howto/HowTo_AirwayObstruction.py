@@ -18,7 +18,6 @@ def HowTo_AirwayObstruction():
     results = pulse.pull_data()
     print(results)
 
-    # Perform an action to exacerbate the initial condition state
     airway_obstruction = SEAirwayObstruction()
     airway_obstruction.set_comment("Patient's airways are obstructed")
     airway_obstruction.get_severity().set_value(0.7)

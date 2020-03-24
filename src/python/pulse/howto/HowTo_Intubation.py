@@ -17,20 +17,9 @@ def HowTo_Intubation():
     results = pulse.pull_data()
     print(results)
 
-    # Perform an action to exacerbate the initial condition state
     intubation = SEIntubation()
     intubation.set_comment("Patient undergoes intubation of the left lung")
     intubation.set_type(eIntubationType.LeftMainstem)
-    pulse.process_action(intubation)
-
-    # Advance some time and print out the vitals
-    pulse.advance_time_s(30)
-    results = pulse.pull_data()
-    print(results)
-
-    intubation.clear()
-    intubation.set_comment("Patient undergoes intubation of the esophagus")
-    intubation.set_type(eIntubationType.Tracheal)
     pulse.process_action(intubation)
 
     # Advance some time and print out the vitals

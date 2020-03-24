@@ -17,7 +17,6 @@ def HowTo_BrainInjury():
     results = pulse.pull_data()
     print(results)
 
-    # Perform an action to exacerbate the initial condition state
     brain_injury = SEBrainInjury()
     brain_injury.set_comment("Patient receives a brain injury")
     brain_injury.set_injury_type(eBrainInjuryType.LeftFocal)
