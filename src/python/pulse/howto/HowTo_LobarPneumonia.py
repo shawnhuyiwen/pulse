@@ -8,7 +8,7 @@ from pulse.cdm.patient_conditions import SELobarPneumonia
 from pulse.engine.PulsePhysiologyEngine import PulsePhysiologyEngine
 
 def HowTo_UseLPE():
-    pulse = PulsePhysiologyEngine("pulse_LPE.log")
+    pulse = PulsePhysiologyEngine("pulse_LobarPneumonia.log")
 
     pc = SEPatientConfiguration()
     pc.set_patient_file("./patients/StandardMale.json")
@@ -18,6 +18,7 @@ def HowTo_UseLPE():
     pneumonia.get_severity().set_value(0.3)
 
     # Initialize the engine with our configuration
+    # NOTE: No data requests are being provided, so Pulse will return the default vitals data
     if not pulse.initialize_engine(pc, None):
         print("Unable to load stabilize engine")
         return

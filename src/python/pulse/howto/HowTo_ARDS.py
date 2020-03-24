@@ -19,6 +19,7 @@ def HowTo_ARDS():
     ards.get_severity().set_value(0.3)
 
     # Initialize the engine with our configuration
+    # NOTE: No data requests are being provided, so Pulse will return the default vitals data
     if not pulse.initialize_engine(pc, None):
         print("Unable to load stabilize engine")
         return

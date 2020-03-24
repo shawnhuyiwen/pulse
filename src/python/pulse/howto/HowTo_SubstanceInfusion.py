@@ -7,8 +7,9 @@ from pulse.cdm.patient_actions import SESubstanceInfusion
 from pulse.engine.PulsePhysiologyEngine import PulsePhysiologyEngine
 
 def HowTo_SubstanceInfusion():
-    pulse = PulsePhysiologyEngine("pulse_substance_infusion.log")
+    pulse = PulsePhysiologyEngine("pulse_SubstanceInfusion.log")
 
+    # NOTE: No data requests are being provided, so Pulse will return the default vitals data
     if not pulse.serialize_from_file("./states/Soldier@0s.json", None, eSerializationFormat.JSON, 0):
         print("Unable to load initial state file")
         return

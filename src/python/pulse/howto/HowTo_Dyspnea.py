@@ -6,8 +6,9 @@ from pulse.cdm.patient_actions import SEDyspnea
 from pulse.engine.PulsePhysiologyEngine import PulsePhysiologyEngine
 
 def HowTo_Dyspnea():
-    pulse = PulsePhysiologyEngine("pulse_dyspnea.log")
+    pulse = PulsePhysiologyEngine("pulse_Dyspnea.log")
 
+    # NOTE: No data requests are being provided, so Pulse will return the default vitals data
     if not pulse.serialize_from_file("./states/Soldier@0s.json", None, eSerializationFormat.JSON, 0):
         print("Unable to load initial state file")
         return

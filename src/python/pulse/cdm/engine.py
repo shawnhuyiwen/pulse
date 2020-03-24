@@ -28,19 +28,6 @@ class eCharge(Enum):
     Neutral = 2
     Positive = 3
 
-class eDataRequest_category(Enum):
-    Patient = 0
-    Physiology = 1
-    Environment = 2
-    GasCompartment = 3
-    LiquidCompartment = 4
-    ThermalCompartment = 5
-    TissueCompartment = 6
-    Substance = 7
-    AnesthesiaMachine = 8
-    ECG = 9
-    Inhaler = 10
-
 class SEAction(ABC):
     __slots__ = ["_comment"]
 
@@ -259,10 +246,34 @@ class SEConditionManager():
     def remove_initial_environmental_conditions(self):
         self._initial_environmental_conditions = None
 
+class eDataRequest_category(Enum):
+    Patient = 0
+    Physiology = 1
+    Environment = 2
+    GasCompartment = 3
+    LiquidCompartment = 4
+    ThermalCompartment = 5
+    TissueCompartment = 6
+    Substance = 7
+    AnesthesiaMachine = 8
+    ECG = 9
+    Inhaler = 10
+
 class SEDataRequest:
     __slots__ = ['_category', '_compartment_name', '_substance_name', '_property_name', '_unit']
 
     def __init__(self, category: eDataRequest_category, compartment=None, substance=None, property=None, unit=None):
+        if category is None:
+            raise Exception("Must provide a Data Request Category")
+        if property is None:
+            raise Exception("Must provide a Data Request Property Name")
+        if (compartment is None and (category is eDataRequest_category.GasCompartment or
+                                     category is eDataRequest_category.LiquidCompartment or
+                                     category is eDataRequest_category.ThermalCompartment or
+                                     category is eDataRequest_category.TissueCompartment)):
+            raise Exception("Must provide a Compartment Name for Compartment Data Requests")
+        if (substance is None and category is eDataRequest_category.Substance):
+            raise Exception("Must provide a Substance Name for Substance Data Requests")
         self._category = category
         self._compartment_name = compartment
         self._substance_name = substance
@@ -280,6 +291,7 @@ class SEDataRequest:
 
     def to_string(self):
         return self.__repr__()
+
     @classmethod
     def create_patient_request(cls, property, unit=None):
         return cls(eDataRequest_category.Patient, property=property,  unit=unit)
@@ -293,7 +305,7 @@ class SEDataRequest:
     def create_gas_compartment_request(cls, compartment, property, unit=None):
         return cls(eDataRequest_category.GasCompartment, compartment=compartment, property=property,  unit=unit)
     @classmethod
-    def create_gas_compartment_substance_request(cls, compartment, property, substance, unit=None):
+    def create_gas_compartment_substance_request(cls, compartment, substance, property, unit=None):
         return cls(eDataRequest_category.GasCompartment,
                    compartment=compartment,
                    substance=substance,
@@ -303,7 +315,7 @@ class SEDataRequest:
     def create_liquid_compartment_request(cls, compartment, property, unit=None):
         return cls(eDataRequest_category.LiquidCompartment, compartment=compartment, property=property,  unit=unit)
     @classmethod
-    def create_liquid_compartment_substance_request(cls, compartment, property, substance, unit=None):
+    def create_liquid_compartment_substance_request(cls, compartment, substance, property, unit=None):
         return cls(eDataRequest_category.LiquidCompartment,
                    compartment=compartment,
                    substance=substance,
@@ -315,11 +327,18 @@ class SEDataRequest:
 
     @classmethod
     def create_substance_request(cls, substance, property, unit=None):
-        return cls(eDataRequest_category.ThermalCompartment, substance=substance, property=property,  unit=unit)
+        return cls(eDataRequest_category.Substance, substance=substance, property=property,  unit=unit)
 
     @classmethod
     def create_ecg_request(cls, property, unit=None):
         return cls(eDataRequest_category.ECG, property=property,  unit=unit)
+    @classmethod
+    def create_anesthesia_machine_request(cls, property, unit=None):
+        return cls(eDataRequest_category.AnesthesiaMachine, property=property,  unit=unit)
+    @classmethod
+    def create_inhaler_request(cls, property, unit=None):
+        return cls(eDataRequest_category.Inhaler, property=property,  unit=unit)
+
 
     def get_category(self):
         return self._category
@@ -345,7 +364,7 @@ class SEDataRequest:
 class SEDataRequestManager:
     __slots__ = ["_results_filename", "_samples_per_second", "_data_requests"]
 
-    def __init__(self, data_requests=[]):
+    def __init__(self, data_requests=None):
         self._data_requests = data_requests
         self._results_filename = None
         self._samples_per_second = 0

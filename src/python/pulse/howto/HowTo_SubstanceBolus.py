@@ -7,8 +7,9 @@ from pulse.cdm.scalars import MassPerVolumeUnit, VolumeUnit
 from pulse.engine.PulsePhysiologyEngine import PulsePhysiologyEngine
 
 def HowTo_SubstanceBolus():
-    pulse = PulsePhysiologyEngine("pulse_substance_bolus.log")
+    pulse = PulsePhysiologyEngine("pulse_SubstanceBolus.log")
 
+    # NOTE: No data requests are being provided, so Pulse will return the default vitals data
     if not pulse.serialize_from_file("./states/Soldier@0s.json", None, eSerializationFormat.JSON, 0):
         print("Unable to load initial state file")
         return

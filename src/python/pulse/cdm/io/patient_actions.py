@@ -82,7 +82,6 @@ def serialize_dsypnea_to_bind(src: SEDyspnea, dst: DyspneaData):
     serialize_patient_action_to_bind(src, dst.PatientAction)
     serialize_scalar_0to1_to_bind(src.get_severity(), dst.Severity)
 
-
 def serialize_dsypnea_from_bind(src:DyspneaData, dst: SEDyspnea):
     serialize_patient_action_from_bind(dst.PatientAction, src)
 
@@ -128,10 +127,8 @@ def serialize_respiratory_fatigue_to_bind(src:SERespiratoryFatigue, dst: Respira
     serialize_patient_action_to_bind(src, dst.PatientAction)
     serialize_scalar_0to1_to_bind(src.get_severity(), dst.Severity)
 
-
 def serialize_respiratory_fatigue_from_bind(src: RespiratoryFatigueData, dst: SERespiratoryFatigue):
     serialize_patient_action_from_bind(src.PatientAction, dst)
-
 
 def serialize_substance_bolus_to_bind(src:SESubstanceBolus, dst: SubstanceBolusData):
     serialize_patient_action_to_bind(src, dst.PatientAction)

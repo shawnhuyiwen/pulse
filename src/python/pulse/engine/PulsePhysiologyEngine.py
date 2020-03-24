@@ -3,8 +3,9 @@
 import PyPulse
 from pulse.cdm.patient import SEPatientConfiguration
 from pulse.cdm.engine import SEAction, eSerializationFormat, SEDataRequestManager
-from pulse.cdm.io.engine import serialize_actions_to_string
-from pulse.cdm.io.engine import serialize_patient_configuration_to_string
+from pulse.cdm.io.engine import serialize_actions_to_string, \
+                                serialize_patient_configuration_to_string, \
+                                serialize_data_request_manager_to_string
 
 class PulsePhysiologyEngine:
     __slots__ = ['__pulse', "results"]
@@ -13,19 +14,23 @@ class PulsePhysiologyEngine:
         self.results = {}
         self.__pulse = PyPulse.Engine(log_file, write_to_console, data_root)
 
-    def serialize_from_file(self, state_file: str, data_requests, format: eSerializationFormat, start_time: float=0):
+    def serialize_from_file(self, state_file: str, data_request_mgr: SEDataRequestManager, format: eSerializationFormat, start_time: float=0):
         # Process requests and setup our results structure
-        self.process_requests(data_requests)
-        fmt = PyPulse.serialization_format.json
+        self.process_requests(data_request_mgr)
         if format == eSerializationFormat.BINARY:
             fmt = PyPulse.serialization_format.binary
-        return self.__pulse.serialize_from_file(state_file, "", fmt, start_time)
+            drm = serialize_data_request_manager_to_string(data_request_mgr, eSerializationFormat.BINARY)
+        else:
+            fmt = PyPulse.serialization_format.json
+            drm = serialize_data_request_manager_to_string(data_request_mgr, eSerializationFormat.JSON)
+        return self.__pulse.serialize_from_file(state_file, drm, fmt, start_time)
 
     def initialize_engine(self, patient_configuration: SEPatientConfiguration, data_request_mgr: SEDataRequestManager):
         # Process requests and setup our results structure
         self.process_requests(data_request_mgr)
         pc = serialize_patient_configuration_to_string(patient_configuration, eSerializationFormat.JSON)
-        return self.__pulse.initialize_engine(pc, "", PyPulse.serialization_format.json)
+        drm = serialize_data_request_manager_to_string(data_request_mgr, eSerializationFormat.JSON)
+        return self.__pulse.initialize_engine(pc, drm, PyPulse.serialization_format.json)
 
     def advance_time(self):
         return self.__pulse.advance_timestep()

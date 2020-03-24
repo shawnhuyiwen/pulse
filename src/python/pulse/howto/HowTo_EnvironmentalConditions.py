@@ -12,7 +12,7 @@ from pulse.cdm.scalars import LengthPerTimeUnit, TemperatureUnit, \
 from pulse.cdm.io.environment import serialize_environmental_conditions_from_file
 
 def HowTo_InitializeEnvironment():
-    pulse = PulsePhysiologyEngine("pulse.log")
+    pulse = PulsePhysiologyEngine("pulse_EnvironmentalConditions.log")
 
     # Configure the engine with some files
     # You can always get objects and fill them out manually if you want
@@ -30,6 +30,7 @@ def HowTo_InitializeEnvironment():
     env.get_environmental_conditions().get_respiration_ambient_temperature().set_value(33, TemperatureUnit.C)
 
     # Initialize the engine with our configuration
+    # NOTE: No data requests are being provided, so Pulse will return the default vitals data
     if not pulse.initialize_engine(pc, None):
         print("Unable to load stabilize engine")
         return

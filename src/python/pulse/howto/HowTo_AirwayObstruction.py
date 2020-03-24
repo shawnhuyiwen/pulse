@@ -10,6 +10,7 @@ from pulse.engine.PulsePhysiologyEngine import PulsePhysiologyEngine
 def HowTo_AirwayObstruction():
     pulse = PulsePhysiologyEngine("pulse_AirwayObstruction.log")
 
+    # NOTE: No data requests are being provided, so Pulse will return the default vitals data
     if not pulse.serialize_from_file("./states/Soldier@0s.json", None, eSerializationFormat.JSON, 0):
         print("Unable to load initial state file")
         return

@@ -4,10 +4,11 @@
 from pulse.cdm.engine import eSerializationFormat
 from google.protobuf import json_format
 
-from pulse.cdm.engine import SEAction, SECondition, SEConditionManager
+from pulse.cdm.engine import SEDataRequestManager, SEDataRequest, SEConditionManager
 from pulse.cdm.bind.Engine_pb2 import ActionListData, AnyActionData, \
                                       AnyConditionData, ConditionListData, \
-                                      PatientConfigurationData
+                                      PatientConfigurationData, \
+                                      DataRequestData, DataRequestManagerData
 
 from pulse.cdm.patient import SEPatientConfiguration
 
@@ -161,3 +162,38 @@ def serialize_patient_configuration_to_bind(src: SEPatientConfiguration, dst: Pa
 
 def serialize_patient_configuration_from_bind(src: PatientConfigurationData, dst: SEPatientConfiguration):
     raise Exception("serialize_patient_configuration_from_bind not implemented")
+
+
+# Data Requests and Manager
+def serialize_data_request_to_bind(src: SEDataRequest, dst: DataRequestData):
+    if src.has_compartment_name():
+        dst.CompartmentName = src.get_compartment_name()
+    if src.has_substance_name():
+        dst.SubstanceName = src.get_substance_name()
+    if src.has_unit():
+        dst.Unit = src.get_unit()
+    dst.PropertyName = src.get_property_name()
+    dst.Category = src.get_category().value
+
+def serialize_data_request_from_bind(src: DataRequestData, dst: SEDataRequest):
+    raise Exception("serialize_data_request_from_bind not implemented")
+
+def serialize_data_request_manager_to_string(src: SEDataRequestManager, fmt: eSerializationFormat):
+    dst = DataRequestManagerData()
+    serialize_data_request_manager_to_bind(src, dst)
+    return json_format.MessageToJson(dst, True, True)
+
+def serialize_data_request_manager_from_string(string: str, dst: SEDataRequestManager, fmt: eSerializationFormat):
+    src = DataRequestManagerData()
+    json_format.Parse(string, src)
+    serialize_data_request_manager_from_bind(src,dst)
+
+def serialize_data_request_manager_to_bind(src: SEDataRequestManager, dst: DataRequestManagerData):
+    if src.has_data_requests():
+        for dr in src.get_data_requests():
+            dst_dr = DataRequestData()
+            serialize_data_request_to_bind(dr, dst_dr)
+            dst.DataRequest.append(dst_dr)
+
+def serialize_data_request_manager_from_bind(src: DataRequestManagerData, dst: SEDataRequestManager):
+    raise Exception("serialize_data_request_manager_from_bind not implemented")

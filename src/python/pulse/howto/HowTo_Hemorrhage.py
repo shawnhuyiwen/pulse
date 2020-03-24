@@ -7,8 +7,9 @@ from pulse.engine.PulsePhysiologyEngine import PulsePhysiologyEngine
 from pulse.cdm.scalars import VolumePerTimeUnit
 
 def HowTo_Hemorrhage():
-    pulse = PulsePhysiologyEngine("pulse_exercise.log")
+    pulse = PulsePhysiologyEngine("pulse_Hemorrhage.log")
 
+    # NOTE: No data requests are being provided, so Pulse will return the default vitals data
     if not pulse.serialize_from_file("./states/Soldier@0s.json", None, eSerializationFormat.JSON, 0):
         print("Unable to load initial state file")
         return
