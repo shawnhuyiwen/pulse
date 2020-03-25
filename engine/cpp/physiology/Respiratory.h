@@ -152,7 +152,6 @@ protected:
   double m_DefaultOpenResistance_cmH2O_s_Per_L;
   double m_DefaultClosedResistance_cmH2O_s_Per_L;
   double m_PeripheralControlGainConstant;
-  double m_PleuralComplianceSensitivity_Per_L;
   double m_RespOpenResistance_cmH2O_s_Per_L;
   double m_RespClosedResistance_cmH2O_s_Per_L;
   double m_VentilationTidalVolumeIntercept;

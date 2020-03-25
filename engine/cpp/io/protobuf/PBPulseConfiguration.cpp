@@ -329,8 +329,6 @@ void PBPulseConfiguration::Serialize(const ConfigurationData& src, PulseConfigur
       PBProperty::Load(config.peripheralcontrollerco2pressuresetpoint(), dst.GetPeripheralControllerCO2PressureSetPoint());
     if (config.has_peripheralventilatorycontrollergain())
       PBProperty::Load(config.peripheralventilatorycontrollergain(), dst.GetPeripheralVentilatoryControllerGain());
-    if (config.has_pleuralcompliancesensitivity())
-      PBProperty::Load(config.pleuralcompliancesensitivity(), dst.GetPleuralComplianceSensitivity());
     if (config.has_pulmonaryventilationratemaximum())
       PBProperty::Load(config.pulmonaryventilationratemaximum(), dst.GetPulmonaryVentilationRateMaximum());
     if (config.has_ventilationtidalvolumeintercept())
@@ -567,8 +565,6 @@ void PBPulseConfiguration::Serialize(const PulseConfiguration& src, Configuratio
     resp->set_allocated_peripheralcontrollerco2pressuresetpoint(PBProperty::Unload(*src.m_PeripheralControllerCO2PressureSetPoint));
   if (src.HasPeripheralVentilatoryControllerGain())
     resp->set_allocated_peripheralventilatorycontrollergain(PBProperty::Unload(*src.m_PeripheralVentilatoryControllerGain));
-  if (src.HasPleuralComplianceSensitivity())
-    resp->set_allocated_pleuralcompliancesensitivity(PBProperty::Unload(*src.m_PleuralComplianceSensitivity));
   if (src.HasPulmonaryVentilationRateMaximum())
     resp->set_allocated_pulmonaryventilationratemaximum(PBProperty::Unload(*src.m_PulmonaryVentilationRateMaximum));
   if (src.HasVentilationTidalVolumeIntercept())
