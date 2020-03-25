@@ -2,7 +2,7 @@
 # See accompanying NOTICE file for details.
 import PyPulse
 from pulse.cdm.patient import SEPatientConfiguration
-from pulse.cdm.engine import SEAction, eSerializationFormat, SEDataRequestManager
+from pulse.cdm.engine import SEAction, eSerializationFormat, SEDataRequestManager, SEDataRequest
 from pulse.cdm.io.engine import serialize_actions_to_string, \
                                 serialize_patient_configuration_to_string, \
                                 serialize_data_request_manager_to_string
@@ -14,22 +14,20 @@ class PulsePhysiologyEngine:
         self.results = {}
         self.__pulse = PyPulse.Engine(log_file, write_to_console, data_root)
 
-    def serialize_from_file(self, state_file: str, data_request_mgr: SEDataRequestManager, format: eSerializationFormat, start_time: float=0):
+    def serialize_from_file(self, state_file: str, data_request_mgr: SEDataRequestManager, format: eSerializationFormat,
+                            start_time: float = 0):
         # Process requests and setup our results structure
-        self.process_requests(data_request_mgr)
+        drm = self.process_requests(data_request_mgr, format)
         if format == eSerializationFormat.BINARY:
             fmt = PyPulse.serialization_format.binary
-            drm = serialize_data_request_manager_to_string(data_request_mgr, eSerializationFormat.BINARY)
         else:
             fmt = PyPulse.serialization_format.json
-            drm = serialize_data_request_manager_to_string(data_request_mgr, eSerializationFormat.JSON)
         return self.__pulse.serialize_from_file(state_file, drm, fmt, start_time)
 
     def initialize_engine(self, patient_configuration: SEPatientConfiguration, data_request_mgr: SEDataRequestManager):
         # Process requests and setup our results structure
-        self.process_requests(data_request_mgr)
+        drm = self.process_requests(data_request_mgr, eSerializationFormat.JSON)
         pc = serialize_patient_configuration_to_string(patient_configuration, eSerializationFormat.JSON)
-        drm = serialize_data_request_manager_to_string(data_request_mgr, eSerializationFormat.JSON)
         return self.__pulse.initialize_engine(pc, drm, PyPulse.serialization_format.json)
 
     def advance_time(self):
@@ -47,24 +45,28 @@ class PulsePhysiologyEngine:
             self.results[key] = values[i]
         return self.results
 
-    def process_requests(self, data_request_mgr):
-        self.results["SimulationTime(s)"]=0
+    def process_requests(self, data_request_mgr, fmt: eSerializationFormat):
         if data_request_mgr is None:
-            self.results["Lead3ElectricPotential(mV)"]=0
-            self.results["HeartRate(bpm)"]=0
-            self.results["ArterialPressure(mmHg)"]=0
-            self.results["MeanArterialPressure(mmHg)"]=0
-            self.results["SystolicArterialPressure(mmHg)"]=0
-            self.results["DiastolicArterialPressure(mmHg)"]=0
-            self.results["OxygenSaturation"]=0
-            self.results["EndTidalCarbonDioxidePressure(mmHg)"]=0
-            self.results["RespirationRate(bpm)"]=0
-            self.results["CoreTemperature(C)"]=0
-            self.results["CarinaCO2PartialPressure(mmHg)"]=0
-            self.results["BloodVolume(mL)"]=0
-        else:
-            for data_request in data_request_mgr.get_data_requests():
-                self.results[data_request.to_string()] = 0
+            data_request_mgr = SEDataRequestManager()
+            data_request_mgr.set_data_requests([
+                SEDataRequest.create_ecg_request("Lead3ElectricPotential", "mV"),
+                SEDataRequest.create_physiology_request("HeartRate", "1/min"),
+                SEDataRequest.create_physiology_request("ArterialPressure", "mmHg"),
+                SEDataRequest.create_physiology_request("MeanArterialPressure", "mmHg"),
+                SEDataRequest.create_physiology_request("SystolicArterialPressure", "mmHg"),
+                SEDataRequest.create_physiology_request("DiastolicArterialPressure", "mmHg"),
+                SEDataRequest.create_physiology_request("OxygenSaturation"),
+                SEDataRequest.create_physiology_request("EndTidalCarbonDioxidePressure", "mmHg"),
+                SEDataRequest.create_physiology_request("RespirationRate", "1/min"),
+                SEDataRequest.create_physiology_request("CoreTemperature", "degC"),
+                SEDataRequest.create_gas_compartment_substance_request("Carina", "CarbonDioxide", "PartialPressure", "mmHg"),
+                SEDataRequest.create_physiology_request("BloodVolume", "mL")
+            ])
+        # Simulation time is always the first result.
+        self.results["SimulationTime(s)"] = 0
+        for data_request in data_request_mgr.get_data_requests():
+            self.results[data_request.to_string()] = 0
+        return serialize_data_request_manager_to_string(data_request_mgr, fmt)
 
     def process_action(self, action: SEAction):
         actions = [action]
