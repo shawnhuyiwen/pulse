@@ -90,8 +90,6 @@ PulseController::PulseController(Logger* logger, const std::string& data_dir) : 
   m_SimulationTime->SetValue(0, TimeUnit::s);
   m_spareAdvanceTime_s = 0;
 
-  if (!m_Logger->HasForward())// Don't override a forwarder, if there already is one there
-    m_Logger->SetForward(this);
   m_Logger->SetLogTime(m_SimulationTime.get());
 
   m_Substances = std::unique_ptr<PulseSubstances>(new PulseSubstances(*this));
