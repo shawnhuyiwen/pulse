@@ -27,6 +27,8 @@ def HowTo_UseLPE():
     exacerbation = SELobarPneumoniaExacerbation()
     exacerbation.set_comment("Patient's Lobar Pneumonia is exacerbated")
     exacerbation.get_severity().set_value(0.4)
+    exacerbation.get_right_lung_affected().set_value(.4)
+    exacerbation.get_left_lung_affected().set_value(.2)
     pulse.process_action(exacerbation)
 
     # Advance some time and print out the vitals
