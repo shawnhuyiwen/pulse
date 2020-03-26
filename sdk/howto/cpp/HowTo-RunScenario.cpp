@@ -48,8 +48,8 @@ void HowToRunScenario()
   // PulseEngines will always output log messages to stdout and a log file  
   // If you want this engine to write a log file, include the name 
   // of the log file. If nullptr is given, the engine will only output to the console
-  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowToRunScenario.log");
-  pe->GetLogger()->Info("HowToRunScenario");
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowTo_RunScenario.log");
+  pe->GetLogger()->Info("HowTo_RunScenario");
 
   // Let's do something everytime the engine advances
   pe->SetAdvanceHandler(new MyCustomExec());

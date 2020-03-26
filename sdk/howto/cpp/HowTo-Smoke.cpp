@@ -47,8 +47,8 @@
 void HowToSmoke()
 {
   // Create the engine and load the patient
-  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowToSmoke.log");
-  pe->GetLogger()->Info("HowToSmoke");
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowTo_Smoke.log");
+  pe->GetLogger()->Info("HowTo_Smoke");
   /*
   // Smoke is made up of many things.
   // You will need to add 2 things to the environement to effectively model a smokey environment
@@ -89,8 +89,6 @@ void HowToSmoke()
   HowToTracker tracker(*pe);
 
   // Create data requests for each value that should be written to the output log as the engine is executing
-  // Physiology System Names are defined on the System Objects 
-  // defined in the Physiology.xsd file
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);

@@ -34,8 +34,8 @@
 void HowToBolusDrug()
 {
   // Create the engine and load the patient
-  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowToBolusDrug.log");
-  pe->GetLogger()->Info("HowToBolusDrug");
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowTo_BolusDrug.log");
+  pe->GetLogger()->Info("HowTo_BolusDrug");
   if (!pe->SerializeFromFile("./states/StandardMale@0s.json", JSON))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
@@ -46,8 +46,6 @@ void HowToBolusDrug()
   HowToTracker tracker(*pe);
 
   // Create data requests for each value that should be written to the output log as the engine is executing
-  // Physiology System Names are defined on the System Objects 
-  // defined in the Physiology.xsd file
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);

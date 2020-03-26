@@ -32,8 +32,8 @@
 void CreateState()
 {
   // Create the engine and load the patient
-  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowToCombatMultitraumaCreateState.log");
-  pe->GetLogger()->Info("HowToCombatMultitraumaCreateState");
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowTo_CombatMultitrauma_CreateState.log");
+  pe->GetLogger()->Info("HowTo_CombatMultitrauma_CreateState");
 
   // Load the Soldier patient
   // You can alternatively define your own patient (see HowTo-CreateAPatient) and apply conditions (see HowTo-LobarPneumonia) 
@@ -48,8 +48,6 @@ void CreateState()
   HowToTracker tracker(*pe);
 
   // Create data requests for each value that should be written to the output log as the engine is executing
-  // Physiology System Names are defined on the System Objects 
-  // defined in the Physiology.xsd file
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("OxygenSaturation");
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
@@ -120,7 +118,7 @@ void CreateState()
 
   // Save this state out.
   // You an then load this state in your application
-  pe->SerializeToFile("./CombatMultirauma.json", SerializationFormat::JSON);
+  pe->SerializeToFile("./states/CombatMultirauma_Initial_Injuries.json", SerializationFormat::JSON);
 
   pe->GetLogger()->Info("State saved");
 }
@@ -128,11 +126,11 @@ void CreateState()
 void LoadState()
 {
   // Create the engine and load the patient
-  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowToCombatMultitraumaLoadState.log");
-  pe->GetLogger()->Info("HowToCombatMultitraumaLoadState");
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowTo_CombatMultitrauma_LoadState.log");
+  pe->GetLogger()->Info("HowTo_CombatMultitrauma_LoadState");
 
   //Load the injured state we created
-  if (!pe->SerializeFromFile("./CombatMultirauma.json", JSON))
+  if (!pe->SerializeFromFile("./states/CombatMultirauma_Initial_Injuries.json", JSON))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
@@ -222,6 +220,11 @@ void LoadState()
   pe->GetLogger()->Info(std::stringstream() << "Hemoglobin Content : " << pe->GetBloodChemistrySystem()->GetHemoglobinContent(MassUnit::g) << MassUnit::g);
   pe->GetLogger()->Info(std::stringstream() << "Respiration Rate : " << pe->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min) << "bpm");
   pe->GetLogger()->Info(std::stringstream() << "Tidal Volume : " << pe->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL) << VolumeUnit::mL);
+
+  // Save this state out.
+  // You an then load this state in your application
+  pe->SerializeToFile("./states/CombatMultirauma_Treated_Injuries.json", SerializationFormat::JSON);
+
   pe->GetLogger()->Info("Finished");
 }
 

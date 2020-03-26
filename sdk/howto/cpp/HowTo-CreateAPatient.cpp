@@ -36,8 +36,8 @@
 //--------------------------------------------------------------------------------------------------
 void HowToCreateAPatient()
 {
-  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowToEngineUse.log");
-  pe->GetLogger()->Info("HowToCreateAPatient");
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowTo_CreateAPatient.log");
+  pe->GetLogger()->Info("HowTo_CreateAPatient");
 
   SEPatientConfiguration pc(pe->GetSubstanceManager());
   SEPatient& patient = pc.GetPatient();

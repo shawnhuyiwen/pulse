@@ -63,12 +63,7 @@ public:
 /// A class used to forward event activity for application specific handling logic
 ///
 /// \details
-/// Various objects can enter into and out of a particular state, this will let you know when that happens.
-///
-/// Currently there are two objects that have event based data
-///
-///     Patient - please see the Patient.xsd
-///     AnesthesiaMachine - please see Anesthesia.xsd
+/// Various systems/equipment can enter into and out of a particular state, this will let you know when that happens.
 ///
 /// The time provided is the current engine time.
 /// The provided methods will be called at the end of the time step when the event was triggered
@@ -97,8 +92,8 @@ void HowToEngineUse()
   // PulseEngines will always output log messages to stdout and a log file  
   // If you want this engine to write a log file, include the name 
   // of the log file. If nullptr is given, the engine will only output to the console
-  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowToEngineUse.log");
-  pe->GetLogger()->Info("HowToEngineUse");
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowTo_EngineUse.log");
+  pe->GetLogger()->Info("HowTo_EngineUse");
 
   // This PulseEngine logger is based on log4cpp (which is based on log4j)
   // PulseEngine logs to several distinct, ordered
@@ -159,8 +154,6 @@ void HowToEngineUse()
   HowToTracker tracker(*pe);
 
   // Create data requests for each value that should be written to the output log as the engine is executing
-  // Physiology System Names are defined on the System Objects 
-  // defined in the Physiology.xsd file
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);

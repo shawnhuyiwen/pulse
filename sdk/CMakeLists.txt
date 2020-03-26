@@ -10,6 +10,7 @@ file(GLOB SRC_FILES howto/cpp/EngineHowTo.cpp
                     howto/cpp/HowTo-Asthma.cpp
                     howto/cpp/HowTo-BolusDrug.cpp
                     howto/cpp/HowTo-BrainInjury.cpp
+                    howto/cpp/HowTo-CombatMultitrauma.cpp
                     howto/cpp/HowTo-ConcurrentEngines.cpp
                     howto/cpp/HowTo-ConsumeNutrients.cpp
                     howto/cpp/HowTo-COPD.cpp
