@@ -165,7 +165,6 @@ message ConfigurationData
     cdm.ScalarTimeData                                 MinimumAllowableInpiratoryAndExpiratoryPeriod        = 10;
     cdm.ScalarPressureData                             PeripheralControllerCO2PressureSetPoint              = 3;
     cdm.ScalarData                                     PeripheralVentilatoryControllerGain                  = 4;
-    cdm.ScalarInverseVolumeData                        PleuralComplianceSensitivity                         = 5;
     cdm.ScalarVolumePerTimeData                        PulmonaryVentilationRateMaximum                      = 6;
     cdm.ScalarVolumeData                               VentilationTidalVolumeIntercept                      = 7;
     cdm.ScalarPressureData                             VentilatoryOcclusionPressure                         = 8;

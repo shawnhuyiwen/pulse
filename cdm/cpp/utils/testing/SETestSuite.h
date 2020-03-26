@@ -20,15 +20,15 @@ public:
 
 public:
 
-  void                SetName(const std::string& Name);                        
-  std::string         GetName() const;  
+  void                SetName(const std::string& Name);
+  std::string         GetName() const;
 
-  void                PerformSuite(bool Performed);                      
-  bool                PerformedSuite();  
+  void                PerformSuite(bool Performed);
+  bool                PerformedSuite() const;
   
   const SEScalarTime&  GetDuration() const;
           
-  std::vector<std::string>&  GetRequirements();  
+  std::vector<std::string>&  GetRequirements();
 
   SETestCase& CreateTestCase();
   const std::vector<SETestCase*>&  GetTestCases() const;

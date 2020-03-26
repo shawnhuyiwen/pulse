@@ -134,7 +134,7 @@
       "TensionPneumothorax": {
         "PatientAction": {
           "Action": {
-            "Comment": "Insult"
+            "Comment": "Insult: Closed Tension Pneumothorax"
           }
         },
         "Type": "Closed",

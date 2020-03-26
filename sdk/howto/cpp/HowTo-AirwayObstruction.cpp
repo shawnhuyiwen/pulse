@@ -32,9 +32,9 @@ void HowToAirwayObstruction()
 {
   std::stringstream ss;
   // Create a Pulse Engine and load the standard patient
-  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowToAirwayObstruction.log");
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowTo_AirwayObstruction.log");
   
-  pe->GetLogger()->Info("HowToAirwayObstruction");
+  pe->GetLogger()->Info("HowTo_AirwayObstruction");
   if (!pe->SerializeFromFile("./states/StandardMale@0s.json", JSON))
   {
     pe->GetLogger()->Error("Could not load state, check the error");

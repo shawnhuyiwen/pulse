@@ -22,36 +22,36 @@ public:
   virtual void Reset(); //reset values
   virtual void Clear(); //clear memory
 
-  void             SetPropertyName(const std::string& PropertyName);              
+  void             SetPropertyName(const std::string& PropertyName);
   std::string      GetPropertyName() const;
 
-  void             SetComputedPropertyID(const std::string& ComputedPropertyID);        
+  void             SetComputedPropertyID(const std::string& ComputedPropertyID);
   std::string      GetComputedPropertyID() const;
 
-  void             SetExpectedPropertyID(const std::string& ExpectedPropertyID);        
+  void             SetExpectedPropertyID(const std::string& ExpectedPropertyID);
   std::string      GetExpectedPropertyID() const;
 
-  void             SetNumberOfErrors(int NumberOfErrors);                      
+  void             SetNumberOfErrors(int NumberOfErrors);
   int              GetNumberOfErrors() const;
 
-  void             SetMinimumError(double MinimumError);                    
+  void             SetMinimumError(double MinimumError);
   double           GetMinimumError() const;
 
-  void             SetMaximumError(double MaximumError);                    
+  void             SetMaximumError(double MaximumError);
   double           GetMaximumError() const;
 
-  void             SetAverageError(double AverageError);                    
+  void             SetAverageError(double AverageError);
   double           GetAverageError() const;
 
-  void             SetStandardDeviation(double StandardDeviation);                
+  void             SetStandardDeviation(double StandardDeviation);
   double           GetStandardDeviation() const;
 
-  void             AddDifference(const std::string& difference);            
+  void             AddDifference(const std::string& difference);
   const std::vector<std::string>*  GetDifferences()  const;
 
   // This a histogram that shows a percent tolerance and how many errors fall with in each bin
   bool             HasPercentTolerancevsNumErrorsHistogram() const;
-  SEFunction&      GetPercentToleranceVsNumErrorsHistogram();    
+  SEFunction&      GetPercentToleranceVsNumErrorsHistogram();
   void             SetPercentToleranceVsNumErrorsHistogram(SEFunction* PercentToleranceVsNumErrors);
 
 protected:

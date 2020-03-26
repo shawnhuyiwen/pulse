@@ -22,6 +22,7 @@ int main()
   //HowToAsthmaAttack();
   //HowToBrainInjury();
   //HowToBolusDrug();
+  //HowToCombatMultitrauma();
   //HowToConsumeNutrients();
   //HowToCOPD();
   //HowToCPR(); 

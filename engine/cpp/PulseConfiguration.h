@@ -566,10 +566,6 @@ public:
   virtual SEScalar& GetPeripheralVentilatoryControllerGain();
   virtual double GetPeripheralVentilatoryControllerGain() const;
 
-  virtual bool HasPleuralComplianceSensitivity() const;
-  virtual SEScalarInverseVolume& GetPleuralComplianceSensitivity();
-  virtual double GetPleuralComplianceSensitivity(const InverseVolumeUnit& unit) const;
-
   virtual bool HasPulmonaryVentilationRateMaximum() const;
   virtual SEScalarVolumePerTime& GetPulmonaryVentilationRateMaximum();
   virtual double GetPulmonaryVentilationRateMaximum(const VolumePerTimeUnit& unit) const;
@@ -590,7 +586,6 @@ protected:
   SEScalarVolume*          m_MinimumAllowableTidalVolume;
   SEScalarPressure*        m_PeripheralControllerCO2PressureSetPoint;
   SEScalar*                m_PeripheralVentilatoryControllerGain;
-  SEScalarInverseVolume*   m_PleuralComplianceSensitivity;
   SEScalarVolumePerTime*   m_PulmonaryVentilationRateMaximum;
   SEScalarVolume*          m_VentilationTidalVolumeIntercept;
   SEScalarPressure*        m_VentilatoryOcclusionPressure;;
