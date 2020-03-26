@@ -233,7 +233,7 @@ void Nervous::BaroreceptorFeedback()
   //m_data.GetDataTrack().Probe("baroreceptorPressure", baroreceptorPressure_mmHg);
   //m_data.GetDataTrack().Probe("deltaPressure", deltaPressure_mmHg);
   double normalizedMAP = meanArterialPressure_mmHg / meanArterialPressureCombinedBaseline_mmHg;
-  if (m_TotalSympatheticFraction < 0.82)
+  if (m_TotalSympatheticFraction < 0.78)
   {
     if (m_BaroreceptorSaturationStatus)
     {
@@ -280,7 +280,7 @@ void Nervous::BaroreceptorFeedback()
       //new baroreceptor effect curves
       if (previousBloodVolume_mL - m_data.GetCardiovascular().GetBloodVolume(VolumeUnit::mL) > 0)
       {
-        m_BaroreceptorEffectivenessParameter = -normalizedMAP*0.24;
+        m_BaroreceptorEffectivenessParameter = -normalizedMAP*0.13;
       }
       else
       {
@@ -294,7 +294,7 @@ void Nervous::BaroreceptorFeedback()
       //m_BaroreceptorEffectivenessParameter += 0.0001;
       m_BaroreceptorEffectivenessParameter = 0.0007;
     }
-    else if (normalizedMAP < 0.43)
+    else if (normalizedMAP < 0.42)
     {
       m_BaroreceptorEffectivenessParameter -= 0.00004;
     }
@@ -317,7 +317,7 @@ void Nervous::BaroreceptorFeedback()
     //Calculate the normalized change in heart elastance
     double normalizedHeartElastance = GetBaroreceptorHeartElastanceScale().GetValue();
     double tauElastance_s = m_data.GetConfiguration().GetHeartElastanceDistributedTimeDelay(TimeUnit::s);
-    double deltaNormalizedHeartElastance = 3.45*m_BaroreceptorEffectivenessParameter*(1.0 / tauElastance_s)*(-normalizedHeartElastance + m_NormalizedAlphaElastance*m_TotalSympatheticFraction + m_NormalizedGammaElastance)*m_dt_s;
+    double deltaNormalizedHeartElastance = 2.5*m_BaroreceptorEffectivenessParameter*(1.0 / tauElastance_s)*(-normalizedHeartElastance + m_NormalizedAlphaElastance*m_TotalSympatheticFraction + m_NormalizedGammaElastance)*m_dt_s;
     normalizedHeartElastance += deltaNormalizedHeartElastance;
     GetBaroreceptorHeartElastanceScale().SetValue(normalizedHeartElastance);
 
