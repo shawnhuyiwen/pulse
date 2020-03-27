@@ -1,5 +1,6 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
+import math, copy
 import PyPulse
 from pulse.cdm.patient import SEPatientConfiguration
 from pulse.cdm.engine import SEAction, eSerializationFormat, SEDataRequestManager, SEDataRequest
@@ -31,19 +32,36 @@ class PulsePhysiologyEngine:
         return self.__pulse.initialize_engine(pc, drm, PyPulse.serialization_format.json)
 
     def advance_time(self):
-        return self.__pulse.advance_timestep()
+        self.__pulse.advance_timestep()
+        return self.pull_data()
 
     def advance_time_s(self, duration_s: float):
         # TODO this is assuming duration_s is a factor of 0.02
         num_steps = int(duration_s / 0.02)
         for n in range(num_steps):
             self.__pulse.advance_timestep()
+        return self.pull_data()
+
+    def advance_time_r(self, duration_s: float, rate_s: float):
+        num_steps = int(duration_s / 0.02)
+        sample_times = range(0, num_steps, math.floor(rate_s / 0.02))
+        # Deep copy used to avoid polluting the original set of requests
+        result_summation = copy.deepcopy(self.results)
+        for n in range(num_steps):
+            self.__pulse.advance_timestep()
+            if n in sample_times:
+                timestep_result = self.pull_data()
+                for key, value in result_summation.items():
+                    value.extend(timestep_result[key])
+        return result_summation
 
     def pull_data(self):
         values = self.__pulse.pull_data()
+        # Deep copy used to avoid polluting the original  set of requests
+        pull_result = copy.deepcopy(self.results)
         for i, key in enumerate(self.results.keys()):
-            self.results[key] = values[i]
-        return self.results
+            pull_result[key].append(values[i])
+        return pull_result
 
     def process_requests(self, data_request_mgr, fmt: eSerializationFormat):
         if data_request_mgr is None:
@@ -63,9 +81,9 @@ class PulsePhysiologyEngine:
                 SEDataRequest.create_physiology_request("BloodVolume", "mL")
             ])
         # Simulation time is always the first result.
-        self.results["SimulationTime(s)"] = 0
+        self.results["SimulationTime(s)"] = []
         for data_request in data_request_mgr.get_data_requests():
-            self.results[data_request.to_string()] = 0
+            self.results[data_request.to_string()] = []
         return serialize_data_request_manager_to_string(data_request_mgr, fmt)
 
     def process_action(self, action: SEAction):
