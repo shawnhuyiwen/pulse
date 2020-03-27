@@ -161,7 +161,6 @@ PulseConfiguration::PulseConfiguration(SESubstanceManager& substances) : SEEngin
   m_MinimumAllowableTidalVolume = nullptr;
   m_PeripheralControllerCO2PressureSetPoint = nullptr;
   m_PeripheralVentilatoryControllerGain = nullptr;
-  m_PleuralComplianceSensitivity = nullptr;
   m_PulmonaryVentilationRateMaximum = nullptr;
   m_VentilationTidalVolumeIntercept = nullptr;
   m_VentilatoryOcclusionPressure = nullptr;
@@ -293,7 +292,6 @@ void PulseConfiguration::Clear()
   SAFE_DELETE(m_MinimumAllowableTidalVolume);
   SAFE_DELETE(m_PeripheralControllerCO2PressureSetPoint);
   SAFE_DELETE(m_PeripheralVentilatoryControllerGain);
-  SAFE_DELETE(m_PleuralComplianceSensitivity);
   SAFE_DELETE(m_PulmonaryVentilationRateMaximum);
   SAFE_DELETE(m_VentilationTidalVolumeIntercept);
   SAFE_DELETE(m_VentilatoryOcclusionPressure);
@@ -446,7 +444,6 @@ void PulseConfiguration::Initialize(const std::string& data_dir)
   GetMinimumAllowableTidalVolume().SetValue(0.1, VolumeUnit::L);
   GetPeripheralControllerCO2PressureSetPoint().SetValue(35.5, PressureUnit::mmHg);
   GetPeripheralVentilatoryControllerGain().SetValue(30.24); //How much to add to the amplitude when the CO2 is off
-  GetPleuralComplianceSensitivity().SetValue(5.0, InverseVolumeUnit::Inverse_L);
   GetPulmonaryVentilationRateMaximum().SetValue(150.0, VolumePerTimeUnit::L_Per_min);
   GetVentilationTidalVolumeIntercept().SetValue(0.3, VolumeUnit::L);
   GetVentilatoryOcclusionPressure().SetValue(0.75, PressureUnit::cmH2O); //This increases the absolute max driver pressure
@@ -2008,23 +2005,6 @@ double PulseConfiguration::GetPeripheralVentilatoryControllerGain() const
   if (m_PeripheralVentilatoryControllerGain == nullptr)
     return SEScalar::dNaN();
   return m_PeripheralVentilatoryControllerGain->GetValue();
-}
-
-bool PulseConfiguration::HasPleuralComplianceSensitivity() const
-{
-  return m_PleuralComplianceSensitivity == nullptr ? false : m_PleuralComplianceSensitivity->IsValid();
-}
-SEScalarInverseVolume& PulseConfiguration::GetPleuralComplianceSensitivity()
-{
-  if (m_PleuralComplianceSensitivity == nullptr)
-    m_PleuralComplianceSensitivity = new SEScalarInverseVolume();
-  return *m_PleuralComplianceSensitivity;
-}
-double PulseConfiguration::GetPleuralComplianceSensitivity(const InverseVolumeUnit& unit) const
-{
-  if (m_PleuralComplianceSensitivity == nullptr)
-    return SEScalar::dNaN();
-  return m_PleuralComplianceSensitivity->GetValue(unit);
 }
 
 bool PulseConfiguration::HasPulmonaryVentilationRateMaximum() const

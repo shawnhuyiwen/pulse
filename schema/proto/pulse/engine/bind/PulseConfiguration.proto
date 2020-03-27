@@ -162,14 +162,13 @@ message ConfigurationData
   {
     pulse.cdm.bind.ScalarPressureData                  CentralControllerCO2PressureSetPoint                 = 1;
     pulse.cdm.bind.ScalarData                          CentralVentilatoryControllerGain                     = 2;
-    pulse.cdm.bind.ScalarVolumeData                    MinimumAllowableTidalVolume                          = 9;
-    pulse.cdm.bind.ScalarTimeData                      MinimumAllowableInpiratoryAndExpiratoryPeriod        = 10;
-    pulse.cdm.bind.ScalarPressureData                  PeripheralControllerCO2PressureSetPoint              = 3;
-    pulse.cdm.bind.ScalarData                          PeripheralVentilatoryControllerGain                  = 4;
-    pulse.cdm.bind.ScalarInverseVolumeData             PleuralComplianceSensitivity                         = 5;
-    pulse.cdm.bind.ScalarVolumePerTimeData             PulmonaryVentilationRateMaximum                      = 6;
-    pulse.cdm.bind.ScalarVolumeData                    VentilationTidalVolumeIntercept                      = 7;
-    pulse.cdm.bind.ScalarPressureData                  VentilatoryOcclusionPressure                         = 8;
+    pulse.cdm.bind.ScalarVolumeData                    MinimumAllowableTidalVolume                          = 3;
+    pulse.cdm.bind.ScalarTimeData                      MinimumAllowableInpiratoryAndExpiratoryPeriod        = 4;
+    pulse.cdm.bind.ScalarPressureData                  PeripheralControllerCO2PressureSetPoint              = 5;
+    pulse.cdm.bind.ScalarData                          PeripheralVentilatoryControllerGain                  = 6;
+    pulse.cdm.bind.ScalarVolumePerTimeData             PulmonaryVentilationRateMaximum                      = 7;
+    pulse.cdm.bind.ScalarVolumeData                    VentilationTidalVolumeIntercept                      = 8;
+    pulse.cdm.bind.ScalarPressureData                  VentilatoryOcclusionPressure                         = 9;
   }
   
   message TissueConfigurationData

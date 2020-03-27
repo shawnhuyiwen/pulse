@@ -1,0 +1,64 @@
+{
+  "Name": "Spirometry",
+  "Description": "Perform a spirometry breath.",
+  "StartType": { "PatientConfiguration": { "PatientFile": "StandardMale.json" }},
+  "DataRequestManager":
+  {
+    "DataRequest":
+    [
+      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "TotalLungVolume",            "Unit": "L" },
+	  { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "RespiratoryMusclePressure",  "Unit": "cmH2O" },
+	  { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TransMusclePressure",        "Unit": "cmH2O" },
+	  
+      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "TransthoracicPressure",      "Unit": "cmH2O" },
+	  { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "TransChestWallPressure",     "Unit": "cmH2O" },
+	  { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "IntrapulmonaryPressure",     "Unit": "cmH2O" },
+	  
+	  { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "PulmonaryCompliance",            "Unit": "L/cmH2O" },
+      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "InspiratoryPulmonaryResistance", "Unit": "cmH2O s/L" },	
+	  { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ExpiratoryPulmonaryResistance",  "Unit": "cmH2O s/L" },	
+	  
+	  { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "AlveolarDeadSpace",          "Unit": "mL" },
+      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "AnatomicDeadSpace",          "Unit": "mL" },
+	  { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "PhysiologicDeadSpace",       "Unit": "mL" },
+	  
+	  { "DecimalFormat": { }, "PropertyName": "ExpiratoryReserveVolume",    "Unit": "mL" },
+	  { "DecimalFormat": { }, "PropertyName": "FunctionalResidualCapacity", "Unit": "mL" },
+	  { "DecimalFormat": { }, "PropertyName": "InspiratoryCapacity",        "Unit": "mL" },
+	  { "DecimalFormat": { }, "PropertyName": "InspiratoryReserveVolume",   "Unit": "mL" },
+	  { "DecimalFormat": { }, "PropertyName": "ResidualVolume",             "Unit": "mL" },
+	  { "DecimalFormat": { }, "PropertyName": "TotalLungCapacity",          "Unit": "mL" },
+	  { "DecimalFormat": { }, "PropertyName": "VitalCapacity",              "Unit": "mL" },
+	  
+	  { "DecimalFormat": { "Precision": 6 }, "Category": "Physiology", "PropertyName": "ExpiratoryFlow", "Unit": "L/s"}
+	]
+  },
+  "AnyAction":
+  [	
+	{ "PatientAction": { "ConsciousRespiration": { "Command": [
+	    { "ForcedInhale": {
+            "InspiratoryCapacityFraction": { "Scalar0To1": { "Value": 1.0 } },
+            "InhalePeriod": { "ScalarTime": { "Value": 1.0, "Unit": "s" } } , 
+			"HoldPeriod": { "ScalarTime": { "Value": 1.0, "Unit": "s" } } ,
+			"ReleasePeriod": { "ScalarTime": { "Value": 1.0, "Unit": "s" } } } } ,
+		{ "ForcedInhale": {
+            "InspiratoryCapacityFraction": { "Scalar0To1": { "Value": 0.0 } },
+			"HoldPeriod": { "ScalarTime": { "Value": 1.0, "Unit": "s" } } } }
+	] } } },
+	
+	{ "AdvanceTime": { "Time": { "ScalarTime": { "Value": 4.0, "Unit": "s" }}}},
+	
+	{ "PatientAction": { "ConsciousRespiration": { "Command": [
+	    { "ForcedExhale": { 
+		    "ExpiratoryReserveVolumeFraction": { "Scalar0To1": { "Value": 1.0 } },
+            "ExhalePeriod": { "ScalarTime": { "Value": 1.0, "Unit": "s" } } ,
+			"HoldPeriod": { "ScalarTime": { "Value": 1.0, "Unit": "s" } } ,
+			"ReleasePeriod": { "ScalarTime": { "Value": 1.0, "Unit": "s" } } } } ,
+		{ "ForcedExhale": { 
+		    "ExpiratoryReserveVolumeFraction": { "Scalar0To1": { "Value": 0.0 } },
+			"HoldPeriod": { "ScalarTime": { "Value": 1.0, "Unit": "s" } } } }
+	] } } },
+	
+	{ "AdvanceTime": { "Time": { "ScalarTime": { "Value": 4.0, "Unit": "s" }}}}
+  ]
+}

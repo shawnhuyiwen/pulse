@@ -45,8 +45,8 @@
 void HowToEnvironmentChange()
 {
   // Create the engine and load the patient
-  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowToEnvironmentChange.log");
-  pe->GetLogger()->Info("HowToEnvironmentChange");
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowTo_EnvironmentChange.log");
+  pe->GetLogger()->Info("HowTo_EnvironmentChange");
   /*
   // You have the option to change the enviornmental conditions of the patient 
   // with a condition or an action. By default the standard environment file is used
@@ -82,8 +82,6 @@ void HowToEnvironmentChange()
   HowToTracker tracker(*pe);
 
   // Create data requests for each value that should be written to the output log as the engine is executing
-  // Physiology System Names are defined on the System Objects 
-  // defined in the Physiology.xsd file
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);

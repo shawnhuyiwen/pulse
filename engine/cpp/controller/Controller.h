@@ -48,7 +48,7 @@ extern const std::string& eAirwayMode_Name(eAirwayMode m);
 /**
 * @brief Manages and controls execution of all data/systems in %Pulse
 */
-class PULSE_DECL PulseController : public Loggable, protected LoggerForward
+class PULSE_DECL PulseController : public Loggable
 {
   friend class PulseEngineTest;
   friend class PulseScenarioExec;
@@ -184,8 +184,6 @@ protected:
 
   std::unique_ptr<SEEventManager>                               m_EventManager;
 
-  // Flag to destroy the logger or not
-  bool                                                          myLogger;
   double                                                        m_spareAdvanceTime_s;
   SEAdvanceHandler*                                             m_AdvanceHandler;
 

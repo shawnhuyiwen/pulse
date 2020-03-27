@@ -13,11 +13,12 @@ class CDM_DECL Loggable
 public:
   static const std::string empty;
 
-  Loggable();
-  Loggable(Logger* log);
+  Loggable(Logger* logger = nullptr);
+  Loggable(std::string const& logfile);
   virtual ~Loggable();
 
   virtual Logger* GetLogger() const;
+  virtual void    SetLogger(Logger& logger);
 
   virtual void Debug(std::string const&  msg, std::string const&  origin = empty) const;
   virtual void Debug(std::stringstream &msg, std::string const&  origin = empty) const;
@@ -41,6 +42,7 @@ public:
   virtual void Fatal(std::ostream &msg, std::string const&  origin = empty) const;
 
 protected:
+  bool    myLogger;
   Logger* m_Logger;
 };
 
