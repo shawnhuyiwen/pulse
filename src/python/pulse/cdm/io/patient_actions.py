@@ -78,6 +78,14 @@ def serialize_broncho_constriction_from_bind(src: BronchoconstrictionData, dst: 
     serialize_patient_action_from_bind(src.PatientAction, dst)
 
 
+def serialize_chest_occlusive_dressing_to_bind(src: SEChestOcclusiveDressing, dst: ChestOcclusiveDressingData):
+    serialize_patient_action_to_bind(src, dst.PatientAction)
+    dst.Side = src.get_side().value
+    dst.State = src.get_state().value
+def serialize_chest_occlusive_dressing_from_bind(src:ChestOcclusiveDressingData, dst: SEChestOcclusiveDressing):
+    serialize_patient_action_from_bind(src.PatientAction, dst)
+
+
 def serialize_dsypnea_to_bind(src: SEDyspnea, dst: DyspneaData):
     serialize_patient_action_to_bind(src, dst.PatientAction)
     serialize_scalar_0to1_to_bind(src.get_severity(), dst.Severity)

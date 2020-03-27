@@ -198,6 +198,38 @@ class SEBronchoConstriction(SEPatientAction):
         return ("BronchoConstriction\n"
                 "  Severity: {}").format(self._severity)
 
+class SEChestOcclusiveDressing(SEPatientAction):
+    __slots__ = ["_state", "_side"]
+
+    def __init__(self):
+        super().__init__()
+        self._state = eSwitch.Off
+        self._side = eSide.NullSide
+
+    def clear(self):
+        super().clear()
+        self._state = eSwitch.Off
+        self._side = eSide.NullSide
+
+    def is_valid(self):
+        return self.has_side();
+    def get_side(self):
+        return self._side
+    def set_side(self, side: eSide):
+        self._side = side
+    def has_side(self):
+        return self._side is not eSide.NullSide
+    def get_state(self):
+        return self._state
+    def set_state(self, state: eSwitch):
+        self._state = state
+    def has_state(self):
+        return self._state is not eSwitch.NullSwitch
+    def __repr__(self):
+        return ("Chest Occlusive Dressing\n"
+                "  State: {}\n"
+                "  Side: {}").format(self._state, self._side)
+
 class SEDyspnea(SEPatientAction):
     def __init__(self):
         super().__init__()
