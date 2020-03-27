@@ -2,7 +2,7 @@
 # See accompanying NOTICE file for details.
 
 from enum import Enum
-from pulse.cdm.engine import eSerializationFormat
+from pulse.cdm.engine import eSerializationFormat, SEDataRequestManager, SEDataRequest
 from pulse.cdm.patient import eSex, SEPatient, SEPatientConfiguration
 from pulse.cdm.patient_actions import eHemorrhageType
 from pulse.cdm.patient_actions import SEExercise, SEHemorrhage
@@ -26,13 +26,39 @@ class eStartType(Enum):
     Stabilize_PatientObject = 2
 
 def HowTo_UseEngine():
-    pulse = PulsePhysiologyEngine("pulse.log")
+    pulse = PulsePhysiologyEngine("pulse_EngineUse.log")
+
+    # Data Requests are used to get access to the hundreds of parameters available in Pulse
+    # To learn more about Data Requests please look at the data request section here:
+    # https://pulse.kitware.com/_scenario_file.html
+    data_requests = [
+        SEDataRequest.create_physiology_request("HeartRate", unit="1/min"),
+        SEDataRequest.create_physiology_request("ArterialPressure",  unit="mmHg"),
+        SEDataRequest.create_physiology_request("MeanArterialPressure",  unit="mmHg"),
+        SEDataRequest.create_physiology_request("SystolicArterialPressure",  unit="mmHg"),
+        SEDataRequest.create_physiology_request("DiastolicArterialPressure", unit="mmHg"),
+        SEDataRequest.create_physiology_request("OxygenSaturation"),
+        SEDataRequest.create_physiology_request("EndTidalCarbonDioxidePressure",  unit="mmHg"),
+        SEDataRequest.create_physiology_request("RespirationRate",  unit="1/min"),
+        SEDataRequest.create_physiology_request("SkinTemperature",  unit="degC"),
+        SEDataRequest.create_physiology_request("CardiacOutput", unit="L/min"),
+        SEDataRequest.create_physiology_request("BloodVolume",  unit="mL"),
+        SEDataRequest.create_gas_compartment_request("LeftLungPulmonary", "Volume",  unit="mL"),
+        SEDataRequest.create_gas_compartment_request("RightLungPulmonary", "Volume",  unit="L"), # Unit difference is OK!
+        SEDataRequest.create_gas_compartment_substance_request("Carina", "CarbonDioxide", "PartialPressure",  unit="mmHg"),
+        SEDataRequest.create_liquid_compartment_request("Aorta", "Pressure",  unit="mmHg"),
+        SEDataRequest.create_liquid_compartment_substance_request("Aorta", "Oxygen", "PartialPressure",  unit="mmHg"),
+        SEDataRequest.create_ecg_request("Lead3ElectricPotential",  unit="mV"),
+        SEDataRequest.create_substance_request("Oxygen", "AlveolarTransfer", "mL/s"),
+        SEDataRequest.create_substance_request("CarbonDioxide", "AlveolarTransfer", "mL/s"),
+    ]
+    data_req_mgr = SEDataRequestManager(data_requests)
+    # NOTE: If No data requests are being provided, Pulse will return the default vitals data
 
     # There are several ways to initialize an engine to a patient
-    start_type = eStartType.Stabilize_PatientObject
-
+    start_type = eStartType.State
     if start_type is eStartType.State: # The engine is ready instantaneously
-        if not pulse.serialize_from_file("./states/Soldier@0s.json", None, eSerializationFormat.JSON, 0):
+        if not pulse.serialize_from_file("./states/Soldier@0s.json", data_req_mgr, eSerializationFormat.JSON, 0):
             print("Unable to load initial state file")
             return
         # Stabilization will require the engine to run for several minutes
@@ -74,13 +100,18 @@ def HowTo_UseEngine():
         env.get_environmental_conditions().get_respiration_ambient_temperature().set_value(33, TemperatureUnit.C)
 
         # Initialize the engine with our configuration
-        if not pulse.initialize_engine(pc, None):
+        if not pulse.initialize_engine(pc, data_req_mgr):
             print("Unable to load stabilize engine")
             return
 
     # Get some data from the engine
+    # The results array contains a value for each of the data requests made above
+    # The order of the array is in the same order as the data requests array is
+    # NOTE that the results array also contains the simulation time at results[0]
+    # So the length is Number of Data Requests + 1
+    # Think of this array as starting at index 1, and in the same order as above
     results = pulse.pull_data()
-    print(results)
+    data_req_mgr.to_console(results)
 
     # Perform an action
     exercise = SEExercise()
@@ -91,7 +122,7 @@ def HowTo_UseEngine():
     # Advance some time and print out the vitals
     pulse.advance_time_s(30)
     results = pulse.pull_data()
-    print(results)
+    data_req_mgr.to_console(results)
 
 HowTo_UseEngine()
 

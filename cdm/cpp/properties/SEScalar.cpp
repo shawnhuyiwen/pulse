@@ -503,7 +503,7 @@ SEGenericScalar::SEGenericScalar(Logger* logger) : Loggable(logger)
   m_UnitScalar = nullptr;
 }
 
-bool SEGenericScalar::HasScalar()
+bool SEGenericScalar::HasScalar() const
 {
   return m_Scalar != nullptr;
 }
@@ -513,21 +513,21 @@ void SEGenericScalar::SetScalar(const SEScalar& s)
   m_UnitScalar = dynamic_cast<const SEUnitScalar*>(m_Scalar);
 }
 
-bool SEGenericScalar::IsValid()
+bool SEGenericScalar::IsValid() const
 {
   return m_UnitScalar == nullptr ? m_Scalar->IsValid() : m_UnitScalar->IsValid();
 }
 
-bool SEGenericScalar::IsInfinity()
+bool SEGenericScalar::IsInfinity() const
 {
   return m_Scalar->IsInfinity();
 }
 
-bool SEGenericScalar::HasUnit()
+bool SEGenericScalar::HasUnit() const
 {
   return m_UnitScalar != nullptr && m_UnitScalar->HasUnit();
 }
-const CCompoundUnit* SEGenericScalar::GetUnit()
+const CCompoundUnit* SEGenericScalar::GetUnit() const
 {
   if (m_UnitScalar == nullptr)
     return nullptr;
