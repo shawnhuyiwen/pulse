@@ -24,8 +24,8 @@ add_custom_command(TARGET PyPulse POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:PyPulse> ${CMAKE_INSTALL_PREFIX}/bin)
 
 install(TARGETS PyPulse
-        RUNTIME DESTINATION /bin
-        LIBRARY DESTINATION /lib
-        ARCHIVE DESTINATION /lib)
+        RUNTIME DESTINATION bin
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib)
 
 set_target_properties (PyPulse PROPERTIES FOLDER ${PROJECT_NAME})

@@ -14,20 +14,19 @@ else()
   message(STATUS "protobuf_SRC is located at ${protobuf_SRC}")
 endif()
 
-
-
-set(CDM_PACKAGE "pulse/cdm/bind")
-set(ENGINE_PACKAGE "pulse/engine/bind")
+set(CDM_DIR "pulse/cdm/bind")
+set(ENGINE_DIR "pulse/engine/bind")
+# Let the build also know package locations
+set(CDM_PACKAGE ${CDM_DIR} PARENT_SCOPE)
+set(ENGINE_PACKAGE ${ENGINE_DIR} PARENT_SCOPE)
 
 macro(delete_bindings _root)
-  file(GLOB _OLD_CDM_BIND_FILES "${_root}/${CDM_PACKAGE}/*")
+  file(GLOB _OLD_CDM_BIND_FILES "${_root}/${CDM_DIR}/*")
   if(_OLD_CDM_BIND_FILES)
-    message(STATUS "Deleting ${_OLD_CDM_BIND_FILES}")
     file(REMOVE ${_OLD_CDM_BIND_FILES})
   endif()
-  file(GLOB _OLD_ENGINE_BIND_FILES "${_root}/${ENGINE_PACKAGE}/*")
+  file(GLOB _OLD_ENGINE_BIND_FILES "${_root}/${ENGINE_DIR}/*")
   if(_OLD_ENGINE_BIND_FILES)
-    message(STATUS "Deleting ${_OLD_ENGINE_BIND_FILES}")
     file(REMOVE ${_OLD_ENGINE_BIND_FILES})
   endif()
 endmacro()
@@ -183,7 +182,6 @@ if(Pulse_PYTHON_API)
   find_package (Python3 COMPONENTS Interpreter)
   if(Python3_FOUND)
     set(python_bindings_DIR "${SRC_ROOT}/python")
-    message(STATUS "CDM_PACKAGE = ${CDM_PACKAGE}")
     delete_bindings(${python_bindings_DIR})
     set( ENV{PROTOC} ${BINDER} )
     execute_process(COMMAND ${Python3_EXECUTABLE} setup.py build
@@ -199,14 +197,11 @@ if(Pulse_PYTHON_API)
     endforeach()
     # Hard coded for now, will need to be more clever on how it finds each file.
     # Necessary for setup.py file to find the bindings to install.
-    file(COPY "${python_bindings_DIR}/__init__.py" DESTINATION "${python_bindings_DIR}/${CDM_PACKAGE}")
-    file(COPY "${python_bindings_DIR}/__init__.py" DESTINATION "${python_bindings_DIR}/${ENGINE_PACKAGE}")
+    file(COPY "${python_bindings_DIR}/__init__.py" DESTINATION "${python_bindings_DIR}/${CDM_DIR}")
+    file(COPY "${python_bindings_DIR}/__init__.py" DESTINATION "${python_bindings_DIR}/${ENGINE_DIR}")
     message(STATUS "python bindings are here : ${python_bindings_DIR}" )
   endif()
 endif()
 
 file(TOUCH ${SCHEMA_SRC}/schema_last_built)
 message(STATUS "Touch file ${SCHEMA_SRC}/schema_last_built")
-# Let the regular build know where we put things
-set(CDM_PACKAGE ${CDM_PACKAGE} PARENT_SCOPE)
-set(ENGINE_PACKAGE ${ENGINE_PACKAGE} PARENT_SCOPE)
