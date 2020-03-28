@@ -6,6 +6,7 @@ set(CMAKE_CXX_EXTENSIONS False)
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} /EHsc")
 endif()
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 if(UNIX AND NOT APPLE)
   set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib:$ORIGIN/")
@@ -115,6 +116,14 @@ endif()
 #-----------------------------------------------------------------------------
 #                               INNERBUILD
 #-----------------------------------------------------------------------------
+
+if(MSVC)  
+# Using MD as that seems to be what I run into alot, you could change these to /MT and /MTd if you want...
+  set(CMAKE_CXX_FLAGS_DEBUG "/D_DEBUG /MDd /Zi /Ob2 /Oi /Od /RTC1 /MP /EHsc" CACHE STRING INTERNAL FORCE)
+  set(CMAKE_CXX_FLAGS_RELEASE "/MD /MP /EHsc" CACHE STRING INTERNAL FORCE)
+  set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "/MDd /Zi /MP /EHsc" CACHE STRING INTERNAL FORCE)
+endif()
+
 
 set(${PROJECT_NAME}_INSTALL_FOLDER ${PROJECT_NAME}-${${PROJECT_NAME}_VERSION_MAJOR}.${${PROJECT_NAME}_VERSION_MINOR})
 

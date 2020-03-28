@@ -1,4 +1,8 @@
 
+if(WIN32)
+  set(Dirent Dirent)
+endif()
+
 add_library_ex(CommonDataModel
   H_FILES
     CommonDataModel.h
@@ -634,7 +638,7 @@ add_library_ex(CommonDataModel
     utils/unitconversion/UnitStringLexer.cpp
   PUBLIC_DEPENDS
     DataModelBindings
-    Dirent
+    ${Dirent}
   PRIVATE_DEPENDS
     Eigen3::Eigen
     protobuf::libprotobuf
