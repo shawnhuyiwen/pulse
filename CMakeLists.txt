@@ -85,7 +85,12 @@ if(${PROJECT_NAME}_SUPERBUILD)
   endif()
   define_dependency(protobuf)
   if(${PROJECT_NAME}_PYTHON_API)
-    define_dependency(pybind11)
+    find_package (Python3 COMPONENTS Interpreter Development)
+    if(Python3_FOUND)
+      define_dependency(pybind11)
+      else()
+        message(FATAL_ERROR "Unable to support Python API, cannot find Python3")
+    endif()
   endif()
   
   if(${PROJECT_NAME}_DEPENDENCIES)
@@ -124,12 +129,12 @@ if(MSVC)
   set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "/MDd /Zi /MP /EHsc" CACHE STRING INTERNAL FORCE)
 endif()
 
-
 set(${PROJECT_NAME}_INSTALL_FOLDER ${PROJECT_NAME}-${${PROJECT_NAME}_VERSION_MAJOR}.${${PROJECT_NAME}_VERSION_MINOR})
 
 include(Find)# Our find macros
 include(AddLibrary)# Extras to do when creating a library
 include(AddExecutable)# Extras to do when creating an executable
+
 #-----------------------------------------------------------------------------
 # Find external dependencies
 #-----------------------------------------------------------------------------

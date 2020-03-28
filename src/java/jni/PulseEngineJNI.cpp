@@ -36,7 +36,7 @@ JNIEXPORT void JNICALL Java_pulse_engine_testing_EngineUnitTestDriver_nativeDele
 }
 
 extern "C"
-JNIEXPORT void JNICALL Java_pulse_testing_EngineUnitTestDriver_nativeExecute(JNIEnv *env, jobject obj, jlong ptr, jstring test, jstring toDir)
+JNIEXPORT void JNICALL Java_pulse_engine_testing_EngineUnitTestDriver_nativeExecute(JNIEnv *env, jobject obj, jlong ptr, jstring test, jstring toDir)
 {
   const char* testName = env->GetStringUTFChars(test, JNI_FALSE);
   const char* outputDir = env->GetStringUTFChars(toDir, JNI_FALSE);
