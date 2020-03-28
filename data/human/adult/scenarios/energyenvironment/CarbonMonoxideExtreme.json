@@ -6,8 +6,8 @@
       "PatientFile": "StandardMale.json",
       "Conditions": { "AnyCondition": [{
         "EnvironmentCondition": {
-          "InitialEnvironmentConditions": {
-            "ConditionsFile": "./environments/CarbonMonoxideAtmospheric.json"
+          "InitialEnvironmentalConditions": {
+            "EnvironmentalConditionsFile": "./environments/CarbonMonoxideAtmospheric.json"
           }
         }
       }]}
@@ -566,8 +566,8 @@
     }
   }, {
     "EnvironmentAction": {
-      "Conditions": {
-        "Conditions": {
+      "ChangeEnvironmentalConditions": {
+        "EnvironmentalConditions": {
           "AmbientGas": [{
             "Name": "Nitrogen",
             "Amount": {

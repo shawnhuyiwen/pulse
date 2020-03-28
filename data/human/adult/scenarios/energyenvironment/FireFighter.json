@@ -6,8 +6,8 @@
       "PatientFile": "StandardMale.json",
       "Conditions": { "AnyCondition": [{
         "EnvironmentCondition": {
-          "InitialEnvironmentConditions": {
-            "ConditionsFile": "./environments/CheyenneMountainAprilWarm.json"
+          "InitialEnvironmentalConditions": {
+            "EnvironmentalConditionsFile": "./environments/CheyenneMountainAprilWarm.json"
           }
         }
       }]}
@@ -551,8 +551,8 @@
     }
   }, {
     "EnvironmentAction": {
-      "Conditions": {
-        "ConditionsFile": "./environments/CheyenneMountainFireFighter.json"
+      "ChangeEnvironmentalConditions": {
+        "EnvironmentalConditionsFile": "./environments/CheyenneMountainFireFighter.json"
       }
     }
   }, {

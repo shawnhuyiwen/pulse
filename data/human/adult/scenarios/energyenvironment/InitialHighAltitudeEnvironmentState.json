@@ -6,8 +6,8 @@
       "PatientFile": "StandardMale.json",
       "Conditions": { "AnyCondition": [{
         "EnvironmentCondition": {
-          "InitialEnvironmentConditions": {
-            "Conditions": {
+          "InitialEnvironmentalConditions": {
+            "EnvironmentalConditions": {
               "SurroundingType": "Air",
               "AirVelocity": {
                 "ScalarLengthPerTime": {

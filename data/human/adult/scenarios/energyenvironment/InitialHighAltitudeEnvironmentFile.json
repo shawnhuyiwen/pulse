@@ -6,8 +6,8 @@
       "PatientFile": "StandardMale.json",
       "Conditions": { "AnyCondition": [{
         "EnvironmentCondition": {
-          "InitialEnvironmentConditions": {
-            "ConditionsFile": "./environments/Hypobaric3000m.json"
+          "InitialEnvironmentalConditions": {
+            "EnvironmentalConditionsFile": "./environments/Hypobaric3000m.json"
           }
         }
       }]}

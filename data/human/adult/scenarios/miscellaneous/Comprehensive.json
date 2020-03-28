@@ -686,8 +686,8 @@
     }
   }, {
     "EnvironmentAction": {
-      "Conditions": {
-        "Conditions": {
+      "ChangeEnvironmentalConditions": {
+        "EnvironmentalConditions": {
           "SurroundingType": "Air",
           "AirVelocity": {
             "ScalarLengthPerTime": {
@@ -1090,8 +1090,8 @@
     }
   }, {
     "EnvironmentAction": {
-      "Conditions": {
-        "ConditionsFile": "./environments/CheyenneMountainFireFighter.json"
+      "ChangeEnvironmentalConditions": {
+        "EnvironmentalConditionsFile": "./environments/CheyenneMountainFireFighter.json"
       }
     }
   }, {

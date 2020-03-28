@@ -528,8 +528,8 @@
     }
   }, {
     "EnvironmentAction": {
-      "Conditions": {
-        "Conditions": {
+      "ChangeEnvironmentalConditions": {
+        "EnvironmentalConditions": {
           "SurroundingType": "Air",
           "AirVelocity": {
             "ScalarLengthPerTime": {

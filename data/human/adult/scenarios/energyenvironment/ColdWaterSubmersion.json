@@ -447,8 +447,8 @@
     }
   }, {
     "EnvironmentAction": {
-      "Conditions": {
-        "Conditions": {
+      "ChangeEnvironmentalConditions": {
+        "EnvironmentalConditions": {
           "SurroundingType": "Water",
           "AirVelocity": {
             "ScalarLengthPerTime": {
@@ -530,8 +530,8 @@
     }
   }, {
     "EnvironmentAction": {
-      "Conditions": {
-        "Conditions": {
+      "ChangeEnvironmentalConditions": {
+        "EnvironmentalConditions": {
           "SurroundingType": "Air",
           "AirVelocity": {
             "ScalarLengthPerTime": {

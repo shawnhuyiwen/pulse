@@ -559,8 +559,8 @@
     }
   }, {
     "EnvironmentAction": {
-      "Conditions": {
-        "Conditions": {
+      "ChangeEnvironmentalConditions": {
+        "EnvironmentalConditions": {
           "AmbientGas": [{
             "Name": "Nitrogen",
             "Amount": {

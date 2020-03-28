@@ -139,13 +139,13 @@
   },
   "AnyAction": [{
     "EnvironmentAction": {
-      "Conditions": {
+      "ChangeEnvironmentalConditions": {
         "EnvironmentAction": {
           "Action": {
             "Comment": "Insult: High altitude"
           }
         },
-        "ConditionsFile": "./environments/CheyenneMountainAprilCool.json"
+        "EnvironmentalConditionsFile": "./environments/CheyenneMountainAprilCool.json"
       }
     }
   }, {
@@ -183,13 +183,13 @@
     }
   }, {
     "EnvironmentAction": {
-      "Conditions": {
+      "ChangeEnvironmentalConditions": {
         "EnvironmentAction": {
           "Action": {
             "Comment": "Insult: Increased temperature"
           }
         },
-        "Conditions": {
+        "EnvironmentalConditions": {
           "AmbientTemperature": {
             "ScalarTemperature": {
               "Value": 20.0,
@@ -222,13 +222,13 @@
     }
   }, {
     "EnvironmentAction": {
-      "Conditions": {
+      "ChangeEnvironmentalConditions": {
         "EnvironmentAction": {
           "Action": {
             "Comment": "Insult: Increased ambient temperature"
           }
         },
-        "ConditionsFile": "./environments/CheyenneMountainAprilWarm.json"
+        "EnvironmentalConditionsFile": "./environments/CheyenneMountainAprilWarm.json"
       }
     }
   }, {
@@ -303,13 +303,13 @@
     }
   }, {
     "EnvironmentAction": {
-      "Conditions": {
+      "ChangeEnvironmentalConditions": {
         "EnvironmentAction": {
           "Action": {
             "Comment": "Intervention: Remove clothing"
           }
         },
-        "Conditions": {
+        "EnvironmentalConditions": {
           "ClothingResistance": {
             "ScalarHeatResistanceArea": {
               "Value": 0.5,
@@ -395,13 +395,13 @@
     }
   }, {
     "EnvironmentAction": {
-      "Conditions": {
+      "ChangeEnvironmentalConditions": {
         "EnvironmentAction": {
           "Action": {
             "Comment": "Intervention: Environment change, inside an ambulance"
           }
         },
-        "ConditionsFile": "./environments/CheyenneMountainAmbulance.json"
+        "EnvironmentalConditionsFile": "./environments/CheyenneMountainAmbulance.json"
       }
     }
   }, {

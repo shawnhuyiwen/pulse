@@ -528,8 +528,8 @@
     }
   }, {
     "EnvironmentAction": {
-      "Conditions": {
-        "ConditionsFile": "./environments/Hypobaric3000m.json"
+      "ChangeEnvironmentalConditions": {
+        "EnvironmentalConditionsFile": "./environments/Hypobaric3000m.json"
       }
     }
   }, {

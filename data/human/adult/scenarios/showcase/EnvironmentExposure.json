@@ -88,8 +88,8 @@
     }
   }, {
     "EnvironmentAction": {
-      "Conditions": {
-        "ConditionsFile": "./environments/AnchorageDecember.json"
+      "ChangeEnvironmentalConditions": {
+        "EnvironmentalConditionsFile": "./environments/AnchorageDecember.json"
       }
     }
   }, {
@@ -103,8 +103,8 @@
     }
   }, {
     "EnvironmentAction": {
-      "Conditions": {
-        "ConditionsFile": "./environments/AnchorageInside.json"
+      "ChangeEnvironmentalConditions": {
+        "EnvironmentalConditionsFile": "./environments/AnchorageInside.json"
       }
     }
   }, {
