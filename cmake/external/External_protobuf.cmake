@@ -32,7 +32,11 @@ add_external_project_ex( protobuf
   #VERBOSE
 )
 if (NOT USE_SYSTEM_protobuf)
-  set(protobuf_DIR ${protobuf_PREFIX}/install/cmake)
+  if(WIN32)
+    set(protobuf_DIR ${protobuf_PREFIX}/install/cmake)
+  else()
+    set(protobuf_DIR ${protobuf_PREFIX}/install/lib/cmake/protobuf)
+  endif()
   message(STATUS "protobuf_DIR : ${protobuf_DIR}")
 endif()
 set(protobuf_SRC ${protobuf_PREFIX}/src)
