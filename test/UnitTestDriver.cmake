@@ -1,6 +1,0 @@
-
-add_executable_ex(UnitTestDriver driver/cpp/main.cpp)
-
-target_link_libraries(UnitTestDriver PulseEngineUnitTests CommonDataModelUnitTests)
-target_include_directories(UnitTestDriver PUBLIC cdm/cpp)
-target_include_directories(UnitTestDriver PUBLIC engine/cpp)

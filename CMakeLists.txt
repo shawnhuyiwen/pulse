@@ -116,6 +116,8 @@ endif()
 #                               INNERBUILD
 #-----------------------------------------------------------------------------
 
+set(${PROJECT_NAME}_INSTALL_FOLDER ${PROJECT_NAME}-${${PROJECT_NAME}_VERSION_MAJOR}.${${PROJECT_NAME}_VERSION_MINOR})
+
 include(Find)# Our find macros
 include(AddLibrary)# Extras to do when creating a library
 include(AddExecutable)# Extras to do when creating an executable
@@ -129,21 +131,14 @@ if(WIN32)
   find_package(Dirent REQUIRED)
 endif()
 # Use the config written by protobuf
-set(protobuf_MODULE_COMPATIBLE ON)
+set(protobuf_MODULE_COMPATIBLE ON CACHE BOOL "" FORCE)
 find_package(protobuf REQUIRED NO_DEFAULT_PATH)
 
 set(SCHEMA_SRC "${CMAKE_SOURCE_DIR}/schema")
 set(SCHEMA_DST "${CMAKE_SOURCE_DIR}/schema/bind")
-add_subdirectory(schema)
-add_subdirectory(cdm)
-add_subdirectory(engine)
-add_subdirectory(test)
-add_subdirectory(sdk)
-add_subdirectory(verification)
 
-add_subdirectory(src/c)
-add_subdirectory(src/java)
-add_subdirectory(src/python)
+add_subdirectory(src)
+add_subdirectory(data)
 
 #--------------------------------------------------------------------------
 # Add setup script for *nix systems
@@ -156,9 +151,21 @@ if(NOT WIN32)
   endif()
 endif()
 
+file(GLOB JSON_FILES ${CMAKE_SOURCE_DIR}/bin/*.json)
+file(COPY ${JSON_FILES} DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+file(COPY ${CMAKE_SOURCE_DIR}/bin/log4j.properties DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+if(WIN32)
+  file(COPY ${CMAKE_SOURCE_DIR}/bin/run.bat DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+else()
+  file(COPY ${CMAKE_SOURCE_DIR}/bin/run.sh DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+endif()
+configure_file(${CMAKE_SOURCE_DIR}/bin/rebase.py.in "${CMAKE_INSTALL_PREFIX}/bin/rebase.py" @ONLY)
+configure_file(${CMAKE_SOURCE_DIR}/bin/run.cmake.in "${CMAKE_INSTALL_PREFIX}/bin/run.cmake" @ONLY)
 configure_file(${CMAKE_SOURCE_DIR}/bin/run.config.in "${CMAKE_INSTALL_PREFIX}/bin/run.config" @ONLY)
+configure_file(${CMAKE_SOURCE_DIR}/cmake/PulseConfig.cmake.in ${CMAKE_INSTALL_PREFIX}/PulseConfig.cmake @ONLY)
+configure_file(${CMAKE_SOURCE_DIR}/docs/Doxygen/full.doxy.in ${CMAKE_INSTALL_PREFIX}/bin/docs/full.doxy @ONLY)
 
-set(${PROJECT_NAME}_INSTALL_FOLDER ${PROJECT_NAME}-${${PROJECT_NAME}_VERSION_MAJOR}.${${PROJECT_NAME}_VERSION_MINOR})
+
 #-----------------------------------------------------------------------------
 # This variable controls the prefix used to generate the following files:
 #  ${PROJECT_NAME}ConfigVersion.cmake

@@ -13,12 +13,11 @@ add_library_ex(PulseJNI SHARED
     jni/CommonDataModelJNI.cpp
     jni/PulseEngineJNI.cpp
   PUBLIC_DEPENDS
-    CommonDataModelUnitTests
-    PulseEngineUnitTests
+    CommonDataModelTests
+    CommonPulseModelsTests
 )
 target_include_directories(PulseJNI PRIVATE ${JNI_INCLUDE_DIRS})
-target_include_directories(PulseJNI PRIVATE ${CMAKE_SOURCE_DIR}/test/cdm/cpp)
-target_include_directories(PulseJNI PRIVATE ${CMAKE_SOURCE_DIR}/test/engine/cpp)
+set_target_properties (PulseJNI PROPERTIES FOLDER ${PROJECT_NAME})
 
 file(GLOB_RECURSE JAVA_FILES
   "com/*.java"
@@ -46,3 +45,4 @@ get_target_property(_jarFile PulseJava JAR_FILE)
 add_custom_command(TARGET PulseJava POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy ${_jarFile} ${CMAKE_INSTALL_PREFIX}/bin)
 install_jar(PulseJava ${CMAKE_INSTALL_PREFIX}/bin)
+set_target_properties (PulseJava PROPERTIES FOLDER ${PROJECT_NAME})

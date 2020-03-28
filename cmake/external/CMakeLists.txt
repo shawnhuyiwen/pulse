@@ -95,6 +95,7 @@ ExternalProject_Add( ${PROJECT_NAME}
   #INSTALL_COMMAND ${SKIP_STEP_COMMAND}
   DEPENDS ${${PROJECT_NAME}_DEPENDENCIES}
 )
+set_target_properties (${PROJECT_NAME} PROPERTIES FOLDER ${PROJECT_NAME})
 
 # Need Java Utils to generate data
 if (${PROJECT_NAME}_JAVA_API)
@@ -113,6 +114,7 @@ if (${PROJECT_NAME}_JAVA_API)
       COMMAND "${_genStates}"
               COMMAND_EXPAND_LISTS
               WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin)
+  set_target_properties (PulseData PROPERTIES FOLDER ${PROJECT_NAME})
 else()
   message(WARNING "Without Java Utils, this build will not generate required data files needed for Pulse to execute")
   message(WARNING "You will need to get these required data files from another build/source")
@@ -123,6 +125,7 @@ if(${PROJECT_NAME}_DOWNLOAD_BASELINES)
   add_custom_command(TARGET PulseData POST_BUILD
     COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=updateBaselines -P run.cmake WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin
             WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin)
+  set_target_properties (PulseData PROPERTIES FOLDER ${PROJECT_NAME})
 else()
   message(STATUS "NOT pulling the latest Pulse Baselines!")
 endif()

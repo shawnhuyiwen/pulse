@@ -9,12 +9,11 @@ macro(_subdir_list result curdir)
   set(${result} ${dirlist})
 endmacro()
 
-
 function(add_library_ex target)
 
-  set(options VERBOSE SHARED)
+  set(options VERBOSE SHARED LIB_INSTALL_ONLY)
   set(oneValueArgs)
-  set(multiValueArgs H_FILES CPP_FILES CUDA_FILES SUBDIR_LIST PUBLIC_DEPENDS PRIVATE_DEPENDS GROUP_ROOT)
+  set(multiValueArgs H_FILES CPP_FILES SUBDIR_LIST PUBLIC_DEPENDS PRIVATE_DEPENDS)
   include(CMakeParseArguments)
   cmake_parse_arguments(target "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
 
@@ -36,7 +35,7 @@ function(add_library_ex target)
     message(STATUS "Auto adding source files")
     file(GLOB_RECURSE target_H_FILES "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
     file(GLOB_RECURSE target_CPP_FILES "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
-    file(GLOB_RECURSE testing_FILES "${CMAKE_CURRENT_SOURCE_DIR}/Testing/*")
+    file(GLOB_RECURSE testing_FILES "${CMAKE_CURRENT_SOURCE_DIR}/test/*")
     if(testing_FILES)
       list(REMOVE_ITEM target_H_FILES ${testing_FILES})
       list(REMOVE_ITEM target_CPP_FILES ${testing_FILES})
@@ -51,7 +50,7 @@ function(add_library_ex target)
 
   list(APPEND target_BUILD_INTERFACE_LIST "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>")
   foreach(subdir ${target_SUBDIR_LIST})
-    if( NOT ${subdir} STREQUAL "Testing")
+    if( NOT ${subdir} STREQUAL "test")
       list(APPEND target_BUILD_INTERFACE_LIST "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${subdir}>")
     endif()
   endforeach()
@@ -64,25 +63,10 @@ function(add_library_ex target)
     set(target_LIB_TYPE SHARED)
   endif()
   
-  if( target_CUDA_FILES )
-    set(CUDA_LINK_LIBRARIES_KEYWORD PRIVATE)
-    CUDA_ADD_LIBRARY( ${target} ${target_LIB_TYPE}
-      ${target_H_FILES}
-      ${target_CPP_FILES}
-      ${target_CUDA_FILES}
-      )
-    if(target_VERBOSE)
-      message(STATUS "${target} is a CUDA library")
-    endif()
-    set_property(TARGET ${target} PROPERTY CUDA_STANDARD 11)
-    
-  else()
-    add_library( ${target} ${target_LIB_TYPE}
-      ${target_H_FILES}
-      ${target_CPP_FILES}
-      )
-    
-  endif()
+  add_library( ${target} ${target_LIB_TYPE}
+    ${target_H_FILES}
+    ${target_CPP_FILES}
+    )
 
   if(target_SHARED)
     add_custom_command(TARGET ${target} POST_BUILD
@@ -93,12 +77,6 @@ function(add_library_ex target)
   endif()
 
   set_target_properties(${target} PROPERTIES PREFIX "")
-  list(APPEND target_FILES ${target_H_FILES})
-  list(APPEND target_FILES ${target_CPP_FILES})
-  list(APPEND target_FILES ${target_CUDA_FILES})
-  if (target_GROUP_ROOT)
-    source_group(TREE "${target_GROUP_ROOT}" FILES ${target_FILES})
-  endif()
 
   #-----------------------------------------------------------------------------
   # Link libraries to current target
@@ -141,27 +119,41 @@ function(add_library_ex target)
                            $<$<CXX_COMPILER_ID:MSVC>:
                                 -W4 -MP>)
 
-  #-----------------------------------------------------------------------------
-  # Install headers
-  #-----------------------------------------------------------------------------
-  install( FILES
-    ${target_H_FILES}
-    DESTINATION "/include"
-    COMPONENT Development
-    )
-
+  if(NOT target_LIB_INSTALL_ONLY)
+    #-----------------------------------------------------------------------------
+    # Install headers
+    #-----------------------------------------------------------------------------
+    foreach(h ${target_H_FILES})
+      #message(STATUS "Header at ${h}")
+      get_filename_component(DEST_DIR ${h} PATH) 
+      #message(STATUS "Going to ${DEST_DIR}")
+      install(FILES
+        ${h}
+        DESTINATION include/${${PROJECT_NAME}_INSTALL_FOLDER}/${DEST_DIR}
+        COMPONENT Development
+      )
+    endforeach()
+  endif()
+  
   #-----------------------------------------------------------------------------
   # Install library
   #-----------------------------------------------------------------------------
   install( TARGETS ${target} EXPORT ${PROJECT_NAME}Targets
-    RUNTIME DESTINATION "/bin" COMPONENT RuntimeLibraries
-    LIBRARY DESTINATION "/lib" COMPONENT RuntimeLibraries
-    ARCHIVE DESTINATION "/lib" COMPONENT Development
+    RUNTIME DESTINATION bin COMPONENT RuntimeLibraries
+    LIBRARY DESTINATION lib COMPONENT RuntimeLibraries
+    ARCHIVE DESTINATION lib COMPONENT Development
     )
 
   #-----------------------------------------------------------------------------
-  # Add the target to project folder
+  # Add the target to project folders
   #-----------------------------------------------------------------------------
   set_target_properties (${target} PROPERTIES FOLDER ${PROJECT_NAME})
+  foreach(h ${target_H_FILES})
+    list(APPEND target_FILES "${CMAKE_CURRENT_SOURCE_DIR}/${h}")
+  endforeach()
+  foreach(cpp ${target_CPP_FILES})
+    list(APPEND target_FILES "${CMAKE_CURRENT_SOURCE_DIR}/${cpp}")
+  endforeach()
+  source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${target_FILES})
 
 endfunction()

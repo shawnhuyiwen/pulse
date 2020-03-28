@@ -12,10 +12,15 @@ function(add_executable_ex target)
     FOLDER ${PROJECT_NAME})
   add_custom_command(TARGET ${target} POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${target}> ${CMAKE_INSTALL_PREFIX}/bin)
-  source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${files})
+  foreach(f ${files})
+    list(APPEND target_FILES "${CMAKE_CURRENT_SOURCE_DIR}/${f}")
+  endforeach()
+  source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${target_FILES})
 
   if(MSVC) # Configure running executable out of MSVC
     set_property(TARGET ${target} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_INSTALL_PREFIX}/bin")
   endif()
+  
+  
 
 endfunction()
