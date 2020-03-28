@@ -76,8 +76,10 @@ inline bool CIEQUAL(std::string strA, std::string strB)
         return true;
     }
 
-    std::transform(begin(strA), end(strA), begin(strA), (char (*)(char))std::tolower);
-    std::transform(begin(strB), end(strB), begin(strB), (char (*)(char))std::tolower);
+    std::transform(strA.begin(), strA.end(), strA.begin(),
+      [](unsigned char c) { return std::tolower(c); });
+    std::transform(strB.begin(), strB.end(), strB.begin(),
+      [](unsigned char c) { return std::tolower(c); });
 
     return strA == strB;
 }

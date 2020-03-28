@@ -114,19 +114,20 @@ template class __declspec(dllexport) std::basic_stringstream<char,
 template class __declspec(dllexport) std::vector<std::string>;
 */
 
-// Disabling the waring about STL classes used have 
-// to have a dll interface to be used by clients
-// From what I have read STL is compiler dependent
-// But since we are releasing source, you can build
-// the project necessary to ensure proper linkage
-// If anyone else has opinions on this, let us know
-// kitware@kitware.com
-#pragma warning(disable : 4251)
-
-#pragma warning(disable:4100) // unreferenced formal parameter (intentional in base classes)
-#pragma warning(disable:4996) // Deprecation
-#pragma warning(disable:4505) // unreferenced local function has been removed (dirent)
-#pragma warning(disable:4503)
+#if defined(_MSC_VER)
+  // Disabling the waring about STL classes used have 
+  // to have a dll interface to be used by clients
+  // From what I have read STL is compiler dependent
+  // But since we are releasing source, you can build
+  // the project necessary to ensure proper linkage
+  // If anyone else has opinions on this, let us know
+  // kitware@kitware.com
+  #pragma warning(disable : 4251)
+  #pragma warning(disable:4100) // unreferenced formal parameter (intentional in base classes)
+  #pragma warning(disable:4996) // Deprecation
+  #pragma warning(disable:4505) // unreferenced local function has been removed (dirent)
+  #pragma warning(disable:4503)
+#endif
 
 //Utilities
 enum SerializationFormat { BINARY = 0, JSON };

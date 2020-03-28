@@ -10,11 +10,13 @@
 //----------------------------------------------------------------------------
 #pragma once
 
-// Note: See top of CompoundUnit.h for a discussion of the lines below which export STL
-// container instantiations. In this particular case, the compiler complains about the member
-// variables "end" and "cursor". Note that exporting the iterator base must be done before
-// exporting the iterator template itself.
-#pragma warning(disable:4231)
+#if defined(_MSC_VER)
+  // Note: See top of CompoundUnit.h for a discussion of the lines below which export STL
+  // container instantiations. In this particular case, the compiler complains about the member
+  // variables "end" and "cursor". Note that exporting the iterator base must be done before
+  // exporting the iterator template itself.
+  #pragma warning(disable:4231)
+#endif
 
 
 struct SUnitStringToken

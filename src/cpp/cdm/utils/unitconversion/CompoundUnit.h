@@ -43,25 +43,37 @@ class CDM_DECL CCompoundUnit
 
 public:
   // Default ctor
-  CCompoundUnit()
-    :m_CUD(nullptr), m_dBigness(1.0), m_bStaleBigness(true), m_bStaleDimension(true), 
-    m_bDBFlag(false), m_bExplicitDBFlag(false), m_bExplicitNonDBFlag(false)
+  CCompoundUnit() : m_dBigness(1.0),
+                    m_CUD(nullptr),
+                    m_bStaleBigness(true),
+                    m_bStaleDimension(true),
+                    m_bExplicitNonDBFlag(false),
+                    m_bExplicitDBFlag(false),
+                    m_bDBFlag(false)
   {
   };
 
   // Construct directly from a unit string specification
-  CCompoundUnit(const std::string &unitString)
-    :m_CUD(nullptr), m_dBigness(1.0), m_bStaleBigness(true), m_bStaleDimension(true), 
-    m_bDBFlag(false), m_bExplicitDBFlag(false), m_bExplicitNonDBFlag(false)
+  CCompoundUnit(const std::string &unitString) : m_dBigness(1.0),
+                                                 m_CUD(nullptr),
+                                                 m_bStaleBigness(true),
+                                                 m_bStaleDimension(true),
+                                                 m_bExplicitNonDBFlag(false),
+                                                 m_bExplicitDBFlag(false),
+                                                 m_bDBFlag(false)
   {
     ParseString(unitString);
   }
 
   // Copy ctor
-  CCompoundUnit(const CCompoundUnit &src) // Copy constructor
-    :m_CUEVec(src.m_CUEVec), m_dBigness(src.m_dBigness), m_bStaleBigness(src.m_bStaleBigness),
-    m_strUnit(src.m_strUnit), m_bStaleDimension(src.m_bStaleDimension),m_bDBFlag(src.m_bDBFlag),
-    m_bExplicitDBFlag(src.m_bExplicitDBFlag), m_bExplicitNonDBFlag(src.m_bExplicitNonDBFlag)
+  CCompoundUnit(const CCompoundUnit &src) : m_strUnit(src.m_strUnit),
+                                            m_dBigness(src.m_dBigness),
+                                            m_CUEVec(src.m_CUEVec),
+                                            m_bStaleBigness(src.m_bStaleBigness),
+                                            m_bStaleDimension(src.m_bStaleDimension),
+                                            m_bExplicitNonDBFlag(src.m_bExplicitNonDBFlag),
+                                            m_bExplicitDBFlag(src.m_bExplicitDBFlag),
+                                            m_bDBFlag(src.m_bDBFlag)
   {
     // In the initializer list, I'm assuming that initializing one vector with another 
     // copies the vector correctly. For the CUnitDimension object, we can't just
