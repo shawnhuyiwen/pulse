@@ -128,6 +128,15 @@ if(MSVC)
   set(CMAKE_CXX_FLAGS_RELEASE "/MD /MP /EHsc" CACHE STRING INTERNAL FORCE)
   set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "/MDd /Zi /MP /EHsc" CACHE STRING INTERNAL FORCE)
 endif()
+if ( CMAKE_COMPILER_IS_GNUCC )
+  # Protobuf is not using the same variable name in its swap specificiation definitions
+  # Resulting in a LOT of warnings per file that includes protobuf headers, slowing the build down
+  set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wno-attributes")
+  if(CMAKE_BUILD_TYPE EQUAL "Debug")
+    set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wa,-mbig-obj")
+  endif()
+endif()
+
 
 set(${PROJECT_NAME}_INSTALL_FOLDER ${PROJECT_NAME}-${${PROJECT_NAME}_VERSION_MAJOR}.${${PROJECT_NAME}_VERSION_MINOR})
 
