@@ -1,0 +1,374 @@
+syntax = "proto3";
+package pulse.cdm.bind;
+option java_package = "pulse.cdm.bind";
+option csharp_namespace = "pulse.cdm.bind";
+option optimize_for = SPEED;
+
+import "pulse/cdm/bind/Enums.proto";
+import "pulse/cdm/bind/Properties.proto";
+import "pulse/cdm/bind/Substance.proto";
+import "pulse/cdm/bind/PatientNutrition.proto";
+import "pulse/cdm/bind/Actions.proto";
+import "pulse/cdm/bind/PatientAssessments.proto";
+
+message AnyPatientActionData
+{
+  oneof Action
+  {
+    PatientAssessmentRequestData                       Assessment                                     = 1;
+    AcuteRespiratoryDistressSyndromeExacerbationData   AcuteRespiratoryDistressSyndromeExacerbation   = 2;
+    AcuteStressData                                    AcuteStress                                    = 3;
+    AirwayObstructionData                              AirwayObstruction                              = 4;
+    AsthmaAttackData                                   AsthmaAttack                                   = 5;
+    BrainInjuryData                                    BrainInjury                                    = 6;
+    BronchoconstrictionData                            Bronchoconstriction                            = 7;
+    CardiacArrestData                                  CardiacArrest                                  = 8;
+    ChestCompressionForceData                          ChestCompressionForce                          = 9;
+    ChestCompressionForceScaleData                     ChestCompressionForceScale                     = 10;
+    ChestOcclusiveDressingData                         ChestOcclusiveDressing                         = 11;
+    ChronicObstructivePulmonaryDiseaseExacerbationData ChronicObstructivePulmonaryDiseaseExacerbation = 12;
+    ConsciousRespirationData                           ConsciousRespiration                           = 13;
+    ConsumeNutrientsData                               ConsumeNutrients                               = 14;
+    DyspneaData                                        Dyspnea                                        = 15;
+    ExerciseData                                       Exercise                                       = 16;
+    HemorrhageData                                     Hemorrhage                                     = 17;
+    IntubationData                                     Intubation                                     = 18;
+    LobarPneumoniaExacerbationData                     LobarPneumoniaExacerbation                     = 19;
+    MechanicalVentilationData                          MechanicalVentilation                          = 20;
+    NeedleDecompressionData                            NeedleDecompression                            = 21;
+    PericardialEffusionData                            PericardialEffusion                            = 22;
+    RespiratoryFatigueData                             RespiratoryFatigue                             = 23;
+    SubstanceBolusData                                 SubstanceBolus                                 = 24;
+    SubstanceCompoundInfusionData                      SubstanceCompoundInfusion                      = 25;
+    SubstanceInfusionData                              SubstanceInfusion                              = 26;
+    SupplementalOxygenData                             SupplementalOxygen                             = 27;
+    TensionPneumothoraxData                            TensionPneumothorax                            = 28;
+    UrinateData                                        Urinate                                        = 29;
+  }
+}
+
+message PatientActionData
+{
+  ActionData                                Action                          = 1;
+}
+
+message PatientAssessmentRequestData
+{
+  PatientActionData                         PatientAction                   = 1;
+  ePatientAssessmentType                    Type                            = 2;/**<<@brief @ref ePatientAssessmentTypeTable */
+}
+
+/** @brief Worsen the effects of the Acute Respiratory Distress Syndrome condition. */
+message AcuteRespiratoryDistressSyndromeExacerbationData
+{
+  PatientActionData                         PatientAction                   = 1;
+  Scalar0To1Data                            Severity                        = 2;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
+  Scalar0To1Data                            LeftLungAffected                = 3;/**<< @brief Fraction of the Left Lung Affected*/
+  Scalar0To1Data                            RightLungAffected               = 4;/**<< @brief Fraction of the Left Lung Affected */
+}
+
+/** @brief Fight or flight.  The body prepares to defend itself. */
+message AcuteStressData
+{
+  PatientActionData                         PatientAction                   = 1;
+  Scalar0To1Data                            Severity                        = 2;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
+}
+
+/** @brief A blockage of the Airway leading to no respiration/air flow in or out of the body. */
+message AirwayObstructionData
+{
+  PatientActionData                         PatientAction                   = 1;
+  Scalar0To1Data                            Severity                        = 2;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
+}
+
+/** @brief A common inflammatory disease of the airways where air flow into the lungs is partially obstructed. 
+           This attack is acute asthma, which is an exacerbation of asthma that does not respond to standard treatments. */
+message AsthmaAttackData
+{
+  PatientActionData                         PatientAction                   = 1;
+  Scalar0To1Data                            Severity                        = 2;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
+}
+
+/** @brief A non-localized traumatic brain injury. */
+message BrainInjuryData
+{
+  /** @brief Types of Brain Injury that provided different nervous responses.*/
+  enum eType
+  {
+    Diffuse                                                                 = 0; /**<< @brief A brain injury dilating both eye pupils */
+    LeftFocal                                                               = 1; /**<< @brief A brain injury dilating the left eye pupil */
+    RightFocal                                                              = 2; /**<< @brief A brain injury dilating the right eye pupil */
+  }
+
+  PatientActionData                         PatientAction                   = 1;
+  eType                                     Type                            = 2;/**<<@brief @ref BrainInjuryData_eTypeTable */
+  Scalar0To1Data                            Severity                        = 3;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
+}
+
+/** @brief Constriction of the airways in the lungs due to tightening of surrounding smooth muscle. */
+message BronchoconstrictionData
+{
+  PatientActionData                         PatientAction                   = 1;
+  Scalar0To1Data                            Severity                        = 2;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
+}
+
+/** @brief Applies a non-specific cardiac arrest. */
+message CardiacArrestData
+{
+  PatientActionData                         PatientAction                   = 1;
+  eSwitch                                   State                           = 2;/**<<@brief @ref eSwitchTable*/
+}
+
+/** @brief Technique used when performing cardiopulmonary resuscitation. Application of external force to the chest cavity in order to pump blood through the heart. */
+message ChestCompressionForceData
+{
+  PatientActionData                         PatientAction                   = 1;
+  ScalarForceData                           Force                           = 2;/**<<@brief Amount of force applied to the chest*/
+}
+
+/** @brief Technique used when performing cardiopulmonary resuscitation. Application of external force to the chest cavity in order to pump blood through the heart. */
+message ChestCompressionForceScaleData
+{
+  PatientActionData                         PatientAction                   = 1;
+  Scalar0To1Data                            ForceScale                      = 2;/**<<@brief A fractional representation of the maximum force that can be applied to the chest: 0.0 is no force applied, 1.0 is maximum force applied */
+  ScalarTimeData                            ForcePeriod                     = 3;/**<<@brief The specified length of time the force is applied */
+}
+/** @brief Applies an occlusive dressing to either the left or right side of the chest. An occlusive dressing is an air and water-tight trauma dressing that provides immediate control of pressure and bleeding that occurs with an open pneumothorax. */
+message ChestOcclusiveDressingData
+{
+  PatientActionData                         PatientAction                   = 1;
+  eSwitch                                   State                           = 2;/**<<@brief @ref eSwitchTable */
+  eSide                                     Side                            = 3;/**<<@brief @ref eSideTable */
+}
+
+/** @brief Worsen the effects of the Chronic Obstructive Pulmonary Disease condition. */
+message ChronicObstructivePulmonaryDiseaseExacerbationData
+{
+  PatientActionData                         PatientAction                   = 1;
+  Scalar0To1Data                            BronchitisSeverity              = 2;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
+  Scalar0To1Data                            EmphysemaSeverity               = 3;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
+}
+
+/** @brief Reduction of achieved tidal volume by inhibiting the respiratory breathing mechanism (i.e., muscles of respiration).  Maximum severity will stop breathing completely. */
+message DyspneaData
+{
+  PatientActionData                         PatientAction                   = 1;
+  Scalar0To1Data                            Severity                        = 2;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
+}
+
+/** @brief Force air out of the lungs. */
+message ForcedInhaleData
+{
+  Scalar0To1Data                          InspiratoryCapacityFraction     = 1;/**<<@brief The fraction of the Inspiratory capacity that will be filled by the breath. */
+  ScalarTimeData                          InhalePeriod                    = 2;/**<<@brief Duration of the inhale. */
+  ScalarTimeData                          HoldPeriod                      = 3;/**<<@brief Duration to hold at the end of inhale. */
+  ScalarTimeData                          ReleasePeriod                   = 4;/**<<@brief Duration to get back to equilibrium/FRC. */
+}
+/** @brief Force air into the lungs. */
+message ForcedExhaleData
+{
+  Scalar0To1Data                          ExpiratoryReserveVolumeFraction = 1;/**<<@brief The fraction of the Expiratory Reserve Volume that is forced out of the body. */
+  ScalarTimeData                          ExhalePeriod                    = 2;/**<<@brief Duration of the exhale. */
+  ScalarTimeData                          HoldPeriod                      = 3;/**<<@brief Duration to at the end of exhale. */
+  ScalarTimeData                          ReleasePeriod                   = 4;/**<<@brief Duration to get back to equilibrium/FRC. */
+}
+/** @brief Pause breathing at 0 pressure. There will be no inflow or out flow of air during the specified period */
+message ForcedPauseData
+{
+  ScalarTimeData                          Period                          = 1;/**<<@brief Duration of the breath hold. */
+}
+/** @brief Administer a substance through an Inhaler. This command will represent a single press of an Inhaler. */
+message UseInhalerData
+{
+}
+message AnyConsciousRespirationCommandData
+{
+  string                                  Comment                         = 1;
+  oneof Command
+  {
+    ForcedInhaleData                      ForcedInhale                    = 2;
+    ForcedExhaleData                      ForcedExhale                    = 3;
+    ForcedPauseData                       ForcedPause                     = 4;
+    UseInhalerData                        UseInhaler                      = 5;
+  }
+}
+/** @brief An ordered list of conscious breath commands for the patient to preform. */
+message ConsciousRespirationData
+{  
+  PatientActionData                           PatientAction                   = 1;
+  bool                                        StartImmediately                = 2;
+  repeated AnyConsciousRespirationCommandData Command                         = 3;
+}
+
+/** @brief Consume nutrients into the body. */
+message ConsumeNutrientsData
+{
+  PatientActionData                         PatientAction                   = 1;
+  oneof Option
+  {
+    NutritionData                           Nutrition                       = 2;/**<<@brief @ref NutritionTable*/
+    string                                  NutritionFile                   = 3;/**<<@brief External file containing a NutritionData definition*/
+  }
+}
+
+/** @brief Increase the patient's metabolic rate leading to an increase in core temperature, cardiac output, respiration rate and tidal volume. */
+message ExerciseData
+{
+  PatientActionData                         PatientAction                   = 1;
+  Scalar0To1Data                            Intensity                       = 2;/**<<@brief Fractional representation of the maximum patient exertion */
+}
+
+/** @brief A hemorrhage is the loss of blood escaping from the circulatory system. Typically, a healthy person can endure a loss of 10 to 15 percent of the total blood volume without serious medical difficulties. */
+message HemorrhageData
+{
+  /** @brief Types of Hemorrhages.*/
+  enum eType
+  {
+    External                                                                = 0; /**<< @brief A loss of blood from the vascular system out of the body */
+    Internal                                                                = 1; /**<< @brief A loss of blood from the vascular system into a body cavity or space. */
+  }
+  
+  PatientActionData                         PatientAction                   = 1;
+  string                                    Compartment                     = 2;/**<<@brief Compartment where the bleeding is occurring */
+  ScalarVolumePerTimeData                   Rate                            = 3;/**<<@brief The flow rate of blood exiting the specified compartment. Set to zero to stop the bleeding rate. */
+  eType                                     Type                            = 4;/**<<@brief @ref HemorrhageData_eTypeTable*/
+}
+
+/** @brief Insertion of tube into the patient's airway */
+message IntubationData
+{
+  /** @brief Enumeration Types of Intubation.*/
+  enum eType
+  {
+   Off                                                                     = 0; /**<< @brief Remove intubation */
+   Esophageal                                                              = 1; /**<< @brief Insert into the Esophagus */
+   LeftMainstem                                                            = 2; /**<< @brief Insert into the left main stem inflating only the left lung */
+   RightMainstem                                                           = 3; /**<< @brief Insert into the right main stem inflating only the right lung  */
+   Tracheal                                                                = 4; /**<< @brief Insert into the Trachea */
+  }
+  PatientActionData                         PatientAction                   = 1;
+  eType                                     Type                            = 2;/**<<@brief @ref IntubationData_eTypeTable*/
+}
+
+/** @brief Worsen the effects of the Lobar Pneumonia condition. */
+message LobarPneumoniaExacerbationData
+{
+  PatientActionData                         PatientAction                   = 1;
+  Scalar0To1Data                            Severity                        = 2;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
+  Scalar0To1Data                            LeftLungAffected                = 3;/**<< @brief Fraction of the Left Lung Affected*/
+  Scalar0To1Data                            RightLungAffected               = 4;/**<< @brief Fraction of the Left Lung Affected */
+}
+
+/** @brief Mechanically breathing for the patient, such as with a squeeze bag or other equipment. */
+message MechanicalVentilationData
+{
+  PatientActionData                         PatientAction                   = 1;
+  eSwitch                                   State                           = 2;/**<<@brief Turns action processing off and on*/
+  ScalarVolumePerTimeData                   Flow                            = 3;/**<<@brief Flow produced */
+  ScalarPressureData                        Pressure                        = 4;/**<<@brief Pressure produced */
+  repeated SubstanceFractionData            GasFraction                     = 5;/**<<@brief Break down of the gases in the equipment, fractions must add up to 1 */
+  repeated SubstanceConcentrationData       Aerosol                         = 6;/**<<@brief Break down of the aerosolized solid/liquid substances in the equipment. */
+}
+
+/** @brief A 14-16G intravenous caninula is inserted into the second rib-space in the mid-clavcular line. The needle is advanced until air can be aspirated into a connecting syringe. The needle is withdrawn and the caninula is left to allow air flow out of the pleural space. This effectively converts the closed pneumothorax into an open pneumothorax. */
+message NeedleDecompressionData
+{
+  PatientActionData                         PatientAction                   = 1;
+  eSwitch                                   State                           = 2;/**<<@brief @ref eSwitchTable*/
+  eSide                                     Side                            = 3;/**<<@brief @ref eSideTable*/
+}
+
+/** @brief Pericardial effusion ("fluid around the heart") is an abnormal accumulation of fluid in the pericardial cavity. Because of the limited amount of space in the pericardial cavity, fluid accumulation leads to an increased intrapericardial pressure which can negatively affect heart function. A pericardial effusion with enough pressure to adversely affect heart function is called cardiac tamponade. Pericardial effusion usually results from a disturbed equilibrium between the production andre-absorption of pericardial fluid, or from a structural abnormality that allows fluid to enter the pericardial cavity. Normal levels of pericardial fluid are from 15 to 50 mL. */
+message PericardialEffusionData
+{
+  PatientActionData                         PatientAction                   = 1;
+  ScalarVolumePerTimeData                   EffusionRate                    = 2;/**<<@brief Rate at which fluid is filling the pericardial cavity*/
+}
+
+/** @brief Respiratory muscle weakness caused by excessive effort relative to the strength and endurance of the muscles. */
+message RespiratoryFatigueData
+{
+  PatientActionData                         PatientAction                   = 1;
+  Scalar0To1Data                            Severity                        = 2;/**<<@brief Scale of affect, 0 no dyspnea, 1 having dyspnea. */
+}
+
+message SubstanceBolusStateData
+{
+  string                                  Substance                       = 1;/**<<@brief @ref SubstanceTable */
+  ScalarTimeData                          ElapsedTime                     = 2;/**<<@brief Amount of time the bolus has been active. */
+  ScalarVolumeData                        AdministeredDose                = 3;/**<<@brief Current dose amount administered. */
+}
+/** @brief An administration of a substance that is given all at one time to raise its concentration in blood to an effective level. */
+message SubstanceBolusData
+{
+  /** @brief Types of Substance Administration means.*/
+  enum eRoute
+  {
+    Intravenous                                                             = 0; /**<< @brief Injection into a vein */
+    Epidural                                                                = 1; /**<< @brief Injection into a epidural space */
+    Intraosseous                                                            = 2; /**<< @brief Injection into the bone marrow */
+    Intraarterial                                                           = 3; /**<< @brief Injection into an artery */
+    Intracardiac                                                            = 4; /**<< @brief Injection into the heart */
+    Intracerebral                                                           = 5; /**<< @brief Injection into the brain */
+    Intracerebroventricular                                                 = 6; /**<< @brief Injection into the cerebral ventricles */
+    Intradermal                                                             = 7; /**<< @brief Injection into the skin */
+    Intramuscular                                                           = 8; /**<< @brief Injection into the muscle */      
+    Subcutaneous                                                            = 9; /**<< @brief Injection under the skin */      
+  }
+ 
+  PatientActionData                         PatientAction                   = 1;
+  eRoute                                    AdministrationRoute             = 2;/**<<@brief @ref SubstanceBolusData_eRouteTable */
+  string                                    Substance                       = 3;/**<<@brief @ref SubstanceTable */
+  ScalarMassPerVolumeData                   Concentration                   = 4;/**<<@brief Concentration of the dose to administer. */
+  ScalarVolumeData                          Dose                            = 5;/**<<@brief Volume of dose to administer. */
+  SubstanceBolusStateData                   State                           = 6;/**<<@brief Current state of the bolus. */
+}
+
+/** @brief Continuous injection of a compound. */
+message SubstanceCompoundInfusionData
+{
+  PatientActionData                         PatientAction                   = 1;
+  string                                    SubstanceCompound               = 2;/**<<@brief */
+  ScalarVolumeData                          BagVolume                       = 3;/**<<@brief @ref SubstanceCompoundTable */
+  ScalarVolumePerTimeData                   Rate                            = 4;/**<<@brief Flow rate of the infusion into the body. */
+}
+
+/** @brief Continuous injection of a specific substance. */
+message SubstanceInfusionData
+{
+  PatientActionData                         PatientAction                   = 1;
+  string                                    Substance                       = 2;/**<<@brief @ref SubstanceTable */
+  ScalarMassPerVolumeData                   Concentration                   = 3;/**<<@brief Concentration of the dose to administer. */
+  ScalarVolumePerTimeData                   Rate                            = 4;/**<<@brief Flow rate of the infusion into the body. */
+}
+
+/** @brief Extra Oxygen provided to the patient. */
+message SupplementalOxygenData
+{
+  enum eDevice
+  {
+    None                                                                    = 0;/**<<@brief device is removed. */
+    NasalCannula                                                            = 1;/**<<@brief Nasal Cannula. */
+    SimpleMask                                                              = 2;/**<<@brief Simple Mask. */
+    NonRebreatherMask                                                       = 3;/**<<@brief Non-Rebreather Mask. */
+  }
+  PatientActionData                         PatientAction                   = 1;
+  eDevice                                   Device                          = 2;/**<<@brief @ref SupplementalOxygenData_eDeviceTable */
+  ScalarVolumePerTimeData                   Flow                            = 3;/**<<@brief Flow rate through the device. */
+  ScalarVolumeData                          Volume                          = 4;/**<<@brief The amount of Oxygen to supplement */
+}
+
+/** @brief A pneumothorax is an abnormal collection of air or gas in the pleural space that separates the lung from the chest wall. Like pleural effusion (liquid buildup in that space), pneumothorax may interfere with normal breathing. */
+message TensionPneumothoraxData
+{
+  PatientActionData                         PatientAction                   = 1;
+  eGate                                     Type                            = 2;/**<<@brief @ref eGateTable */
+  eSide                                     Side                            = 3;/**<<@brief @ref eSideTable */
+  Scalar0To1Data                            Severity                        = 4;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
+}
+
+/** @brief Empty the bladder of its contents */
+message UrinateData
+{
+  PatientActionData                         PatientAction                   = 1;
+}

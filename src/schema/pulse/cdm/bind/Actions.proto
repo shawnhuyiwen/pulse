@@ -1,0 +1,30 @@
+syntax = "proto3";
+package pulse.cdm.bind;
+option java_package = "pulse.cdm.bind";
+option csharp_namespace = "pulse.cdm.bind";
+option optimize_for = SPEED;
+
+import "pulse/cdm/bind/Properties.proto";
+
+message ActionData
+{
+  string                Comment  = 1;
+}
+
+message AdvanceTimeData
+{
+  ActionData            Action   = 1;
+  ScalarTimeData        Time     = 2;
+}
+
+message SerializeStateData
+{
+  enum eType
+  {
+    Save = 0;
+    Load = 1;
+  }
+  ActionData            Action   = 1;
+  eType                 Type     = 2;
+  string                Filename = 3;
+}

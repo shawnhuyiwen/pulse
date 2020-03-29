@@ -1,0 +1,13 @@
+syntax = "proto3";
+package pulse.engine.bind;
+option java_package = "pulse.engine.bind";
+option csharp_namespace = "pulse.engine.bind";
+option optimize_for = SPEED;
+
+import "pulse/cdm/bind/Environment.proto";
+
+message EnvironmentData
+{
+  pulse.cdm.bind.EnvironmentData Common                      = 1;
+  double                         PatientEquivalentDiameter_m = 2;
+}

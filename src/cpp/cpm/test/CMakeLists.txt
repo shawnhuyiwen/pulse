@@ -1,0 +1,24 @@
+
+add_library_ex(CommonPulseModelsTests
+  H_FILES
+    EngineTest.h
+  CPP_FILES
+    AcidBaseTests.cpp
+    AerosolTest.cpp
+    AnesthesiaCircuit.cpp
+    CardiovascularCircuit.cpp
+    ConditionsTest.cpp
+    EngineTest.cpp
+    FourCompartmentTest.cpp
+    MultiEngineTest.cpp
+    NervousTests.cpp
+    ReadScenarios.cpp
+    RenalCircuit.cpp
+    RespiratoryCircuit.cpp
+    SerializationTest.cpp
+    SolverTests.cpp
+    TemperatureCircuit.cpp
+    TissueTests.cpp
+  PUBLIC_DEPENDS
+    CommonPulseModels
+)
