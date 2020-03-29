@@ -155,6 +155,8 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
   // Assign calculator index to the nodes in the circuit
   int jIdx = 0;
   for (NodeType* n : m_circuit->GetNodes())
+
+
   {
     //There should never be a next pressure value set on a node
     //  //Initializing a compliance "charge" is done on the current pressure value
@@ -168,10 +170,6 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
     {
       n->SetCalculatorIndex(jIdx);
       jIdx++;
-    }
-    else
-    {
-      n->SetCalculatorIndex(-1);
     }
   }
 

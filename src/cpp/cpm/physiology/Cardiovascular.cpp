@@ -1106,6 +1106,7 @@ void Cardiovascular::Hemorrhage()
         hemorrhagePath = m_HemorrhagePaths.at(hIter);
         if (&(hemorrhagePath->GetSourceNode()) == node)
           break;
+        hemorrhagePath = nullptr;
       }
 
       if (hemorrhagePath!=nullptr)
