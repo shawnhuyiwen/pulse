@@ -69,11 +69,15 @@ font-size: 1.15em !important;
 }
 
 .calls-to-action {
-  padding: 15px 0 30px;
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -10px;
 }
 
 .calls-to-action > * {
-  margin-right: 10px;
+  flex-basis: 0;
+  flex-grow: 1;
+  margin: 10px;
 }
 
 
@@ -384,16 +388,58 @@ input.gsc-input,
 ================================== */
 
 /* Header */
+
+.navbar-toggle {
+  margin-right: 0;
+}
+
+.navbar-toggle .icon-bar {
+  background: black;
+}
+
 .navbar {
-  border-top: 4px solid #00529b !important;
   box-shadow: 0 1px 0 rgba(0,0,0,.1);
-  height: 80px;
+}
+
+.navbar .topbar {
+  background: #00529b;
+  color: #fff;
+}
+
+.navbar .topbar .kw-menu {
+  display: flex;
+  justify-content: flex-end;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.topbar .kw-menu li {
+  font-size: 12px;
+  text-align: right;
+  margin-right: 5px;
+}
+
+.topbar .kw-menu a {
+  color: #fff;
+  display: block;
+  padding: 6px 0;
+}
+
+.topbar .kw-menu li:not(:first-child) a:before {
+  content: "|";
+  margin-right: 5px;
+}
+
+.topbar .kw-menu a:hover {
+  opacity: .7;
+  text-decoration: none;
 }
 
 .navbar > .container {
   align-items: center;
   display: flex;
-  height: 100% !important;
+  height: 80px;
 }
 
 .navbar > .container .navbar-nav li a {
@@ -405,13 +451,14 @@ input.gsc-input,
   position: relative;
 }
 
-.navbar-nav>li.jobs-link {
+.navbar > .container .navbar-nav > li.jobs-link {
+  height: auto !important;
   position: absolute;
   right: -110px;
-  top: -5px;
+  top: -29px;
   background: #00a950;
   color: white;
-  padding:0;
+  padding:20px 0 0;
   width:78px;
   z-index:999;
 }
@@ -882,6 +929,69 @@ section.license p.sub {
     display: flex;
     height: 100% !important;
   }
+}
+
+@media (max-width: 767px) {
+  .navbar-header {
+    margin: 0;
+    width: 100%;
+  }
+
+  .navbar {
+    position: relative;
+  }
+
+  .navbar .navbar-collapse {
+    background: white;
+    height: 280px;
+    position: absolute;
+    top: 100%;
+    width: 100%;
+    z-index: 999;
+  }
+
+  .navbar .navbar-collapse .nav {
+    margin-left: 0 !important;
+    padding-bottom: 5px;
+    width: 100%;
+  }
+
+  .navbar .dropdown ul {
+    border-left: 4px solid #eee;
+  }
+
+  .navbar li.jobs-link {
+    background: #00529b;
+    position: relative;
+    width: 100%;
+    right: auto;
+    left: auto;
+    top: auto;
+  }
+  .navbar li.jobs-link a {
+    color: white;
+    font-size: 16px !important;
+    padding: 10px 15px 12px !important;
+    text-align: left;
+    text-transform: none;
+  }
+  .navbar li.jobs-link a:before {
+  	display:none;
+  }
+
+}
+
+@media (max-width: 992px) {
+  .navbar > .container {
+    width: 100%;
+  }
+
+  .navbar > .container .navbar-nav li a {
+    font-size: 14px;
+    padding-left: 7px !important;
+    padding-right: 7px !important;
+  }
+
 }
 
 @media (min-width: 992px) {

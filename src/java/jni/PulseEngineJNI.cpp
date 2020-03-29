@@ -36,7 +36,7 @@ JNIEXPORT void JNICALL Java_pulse_engine_testing_EngineUnitTestDriver_nativeDele
 }
 
 extern "C"
-JNIEXPORT void JNICALL Java_pulse_testing_EngineUnitTestDriver_nativeExecute(JNIEnv *env, jobject obj, jlong ptr, jstring test, jstring toDir)
+JNIEXPORT void JNICALL Java_pulse_engine_testing_EngineUnitTestDriver_nativeExecute(JNIEnv *env, jobject obj, jlong ptr, jstring test, jstring toDir)
 {
   const char* testName = env->GetStringUTFChars(test, JNI_FALSE);
   const char* outputDir = env->GetStringUTFChars(toDir, JNI_FALSE);
@@ -172,9 +172,6 @@ extern "C"
 JNIEXPORT jboolean JNICALL Java_pulse_engine_PulseEngine_nativeInitializeEngine(JNIEnv *env, jobject obj, jlong ptr, jstring patient_configuration, jstring dataRequests)
 {
   bool ret = false;
-  
-  
-  const char* drStr = env->GetStringUTFChars(dataRequests, JNI_FALSE);
   try
   {
     PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
@@ -430,7 +427,7 @@ void PulseEngineJNI::PushData(double time_s)
     if (firstUpdate)
     {
       firstUpdate = false;
-      jobjectArray sary = jniEnv->NewObjectArray(headings.size(), jniEnv->FindClass("java/lang/String"), jniEnv->NewStringUTF(""));
+      jobjectArray sary = jniEnv->NewObjectArray((jsize)headings.size(), jniEnv->FindClass("java/lang/String"), jniEnv->NewStringUTF(""));
       for (unsigned int i = 0; i < headings.size(); i++)
         jniEnv->SetObjectArrayElement(sary, i, jniEnv->NewStringUTF(headings[i].c_str()));
       m = jniEnv->GetMethodID(jniEnv->GetObjectClass(jniObj), "setCDMHeadings", "([Ljava/lang/String;)V");
@@ -441,7 +438,7 @@ void PulseEngineJNI::PushData(double time_s)
 
     // Gather up the requested data into an array and pass it over to java
     // The order is set in the header order
-    jdoubleArray ary = jniEnv->NewDoubleArray(trk->GetProbes()->size());
+    jdoubleArray ary = jniEnv->NewDoubleArray((jsize)trk->GetProbes()->size());
 
     jboolean isCopy = JNI_FALSE;
     jdouble* reqData = jniEnv->GetDoubleArrayElements(ary, &isCopy);
@@ -476,7 +473,7 @@ void PulseEngineJNI::ForwardInfo(const std::string&  msg, const std::string&  or
     jstring m = jniEnv->NewStringUTF(msg.c_str());
     jstring o = jniEnv->NewStringUTF(origin.c_str());
     if(jniInfoMethodID==nullptr)
-      jniInfoMethodID  = jniEnv->GetMethodID(jniEnv->GetObjectClass(jniObj), "LogInfo",    "(Ljava/lang/String;Ljava/lang/String;)V");  
+      jniInfoMethodID  = jniEnv->GetMethodID(jniEnv->GetObjectClass(jniObj), "LogInfo",    "(Ljava/lang/String;Ljava/lang/String;)V");
     jniEnv->CallVoidMethod(jniObj, jniInfoMethodID, m, o);
   }
 }
@@ -488,7 +485,7 @@ void PulseEngineJNI::ForwardWarning(const std::string&  msg, const std::string& 
     jstring m = jniEnv->NewStringUTF(msg.c_str());
     jstring o = jniEnv->NewStringUTF(origin.c_str());
     if(jniWarnMethodID==nullptr)
-      jniWarnMethodID  = jniEnv->GetMethodID(jniEnv->GetObjectClass(jniObj), "LogWarning", "(Ljava/lang/String;Ljava/lang/String;)V");  
+      jniWarnMethodID  = jniEnv->GetMethodID(jniEnv->GetObjectClass(jniObj), "LogWarning", "(Ljava/lang/String;Ljava/lang/String;)V");
     jniEnv->CallVoidMethod(jniObj, jniWarnMethodID, m, o);
   }
 }

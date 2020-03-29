@@ -22,7 +22,7 @@ JNIEXPORT void JNICALL Java_pulse_utilities_jniBridge_nativeDeinitialize(JNIEnv 
 }
 
 extern "C"
-JNIEXPORT jlong JNICALL Java_pulse_datamodel_testing_CDMUnitTestDriver_nativeAllocate(JNIEnv *env, jobject obj)
+JNIEXPORT jlong JNICALL Java_pulse_cdm_testing_CDMUnitTestDriver_nativeAllocate(JNIEnv *env, jobject obj)
 {
   CommonDataModelTest *executor = new CommonDataModelTest();
   executor->GetLogger()->LogToConsole(false);
@@ -30,14 +30,14 @@ JNIEXPORT jlong JNICALL Java_pulse_datamodel_testing_CDMUnitTestDriver_nativeAll
 }
 
 extern "C"
-JNIEXPORT void JNICALL Java_pulse_datamodel_testing_CDMUnitTestDriver_nativeDelete(JNIEnv *env, jobject obj, jlong ptr)
+JNIEXPORT void JNICALL Java_pulse_cdm_testing_CDMUnitTestDriver_nativeDelete(JNIEnv *env, jobject obj, jlong ptr)
 {
   CommonDataModelTest *executor = reinterpret_cast<CommonDataModelTest*>(ptr);
   SAFE_DELETE(executor);
 }
 
 extern "C"
-JNIEXPORT void JNICALL Java_pulse_datamodel_testing_CDMUnitTestDriver_nativeExecute(JNIEnv *env, jobject obj, jlong ptr, jstring test, jstring toDir)
+JNIEXPORT void JNICALL Java_pulse_cdm_testing_CDMUnitTestDriver_nativeExecute(JNIEnv *env, jobject obj, jlong ptr, jstring test, jstring toDir)
 {
   const char* testName = env->GetStringUTFChars(test, JNI_FALSE);
   const char* outputDir = env->GetStringUTFChars(toDir, JNI_FALSE);

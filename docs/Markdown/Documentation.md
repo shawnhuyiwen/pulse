@@ -4,11 +4,6 @@ Documentation {#Docs}
 Pulse @ref version is available from our <a href="https://gitlab.kitware.com/physiology/engine">GitLab repository</a>.
 
 
-<b>Publications</b>
-
-A list of publications and presentations about the engine can be found on the @ref published "Publications" page. 
-
-
 <b>Implementation</b>
 
 Many of the physiology models in the engine are adapted or implemented directly from models described in literature. 
