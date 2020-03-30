@@ -77,6 +77,12 @@ def serialize_broncho_constriction_to_bind(src: SEBronchoConstriction, dst: Bron
 def serialize_broncho_constriction_from_bind(src: BronchoconstrictionData, dst: SEBronchoConstriction):
     serialize_patient_action_from_bind(src.PatientAction, dst)
 
+def serialize_cardiac_arrest_to_bind(src: SECardiacArrest, dst: CardiacArrestData):
+    serialize_patient_action_to_bind(src, dst.PatientAction)
+    dst.State = src.get_state().value
+
+def serialize_cardiac_arrest_from_bind(src: CardiacArrestData, dst: SECardiacArrest):
+    serialize_patient_action_from_bind(src.PatientAction, dst)
 
 def serialize_chest_occlusive_dressing_to_bind(src: SEChestOcclusiveDressing, dst: ChestOcclusiveDressingData):
     serialize_patient_action_to_bind(src, dst.PatientAction)
@@ -117,6 +123,15 @@ def serialize_lobar_pneumonia_exacerbation_to_bind(src:SELobarPneumoniaExacerbat
     serialize_scalar_0to1_to_bind(src.get_left_lung_affected(), dst.LeftLungAffected)
 def serialize_lobar_pneumonia_exacerbation_from_bind(src:LobarPneumoniaExacerbationData, dst: SELobarPneumoniaExacerbation ):
     serialize_patient_action_from_bind(src.PatientAction, dst)
+
+def serialize_mechanical_ventilation_to_bind(src: SEMechanicalVentilation, dst: MechanicalVentilationData):
+    serialize_patient_action_to_bind(src, dst.PatientAction)
+    serialize_scalar_pressure_to_bind(src.get_pressure(), dst.Pressure)
+    serialize_scalar_volume_per_time_to_bind(src.get_flow(), dst.Flow)
+    dst.State = src.get_state().value
+def serialize_needle_decompression_from_bind(src:MechanicalVentilationData, dst: SEMechanicalVentilation):
+    serialize_patient_action_from_bind(src.PatientAction, dst)
+
 
 def serialize_needle_decompression_to_bind(src: SENeedleDecompression, dst: NeedleDecompressionData):
     serialize_patient_action_to_bind(src, dst.PatientAction)

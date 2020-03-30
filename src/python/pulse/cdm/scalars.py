@@ -871,6 +871,55 @@ class SEScalarTime(SEScalarQuantity):
         else:
             raise Exception("Provided argument must be a TimeUnit")
 
+class ForceUnit(SEScalarUnit):
+    @staticmethod
+    def from_string(string: str):
+        if string == ForceUnit.N.get_string():
+            return ForceUnit.N
+        if string == ForceUnit.lbf.get_string():
+            return ForceUnit.lbf
+        if string == ForceUnit.dyn.get_string():
+            return ForceUnit.dyn
+        raise Exception("No ForceUnit defined for " + string)
+ForceUnit.N = ForceUnit("N")
+ForceUnit.lbf = ForceUnit("lbf")
+ForceUnit.dyn = ForceUnit("dyn")
+class SEScalarForce(SEScalarQuantity):
+
+    def __init__(self, value: float = None, units: ForceUnit = None):
+        if value is None or units is None:
+            self.invalidate()
+        else:
+            self.set_value(value,units)
+
+    def set(self, scalar):
+        if isinstance(SEScalarForce, scalar):
+            self._value = scalar._value
+            self._units = scalar._units
+        else:
+            raise Exception("Provided argument must be a SEScalarForce")
+
+    def get_value(self, units: ForceUnit = None):
+        if self.is_valid() is False:
+            return None
+        if units is None:
+            return self._value
+        if self._units is units:
+            return self._value
+        else:
+            raise Exception("Unit converter not connected")
+
+    def set_value(self, value: float, units: ForceUnit):
+        if isinstance(units, VolumeUnit):
+            self._value = value
+            self._units = units
+        else:
+            raise Exception("Provided argument must be a ForceUnit")
+
+
+
+
+
 class VolumeUnit(SEScalarUnit):
     @staticmethod
     def from_string(string: str):
