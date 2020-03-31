@@ -123,6 +123,17 @@ def HowTo_UseEngine():
     pulse.advance_time_s(30)
     results = pulse.pull_data()
     data_req_mgr.to_console(results)
+    # Perform an action
+
+    exercise.set_comment("Stop star jumps")
+    exercise.get_intensity().set_value(0)
+    pulse.process_action(exercise)
+    # Advance some time and print out the vitals
+    # advance_time_r allows sampling rate change
+    #  Will advance time by total in first argument
+    #  and samples every second argument seconds
+    results = pulse.advance_time_r(45, 5)
+    data_req_mgr.to_console(results)
 
 HowTo_UseEngine()
 

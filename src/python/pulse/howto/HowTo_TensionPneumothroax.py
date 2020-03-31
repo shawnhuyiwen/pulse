@@ -4,6 +4,7 @@
 from pulse.cdm.engine import eSerializationFormat
 from pulse.cdm.patient_actions import SETensionPneumothorax, \
                                       SENeedleDecompression, \
+                                      SEChestOcclusiveDressing, \
                                       eSwitch, eSide, eGate
 from pulse.engine.PulsePhysiologyEngine import PulsePhysiologyEngine
 
@@ -35,6 +36,15 @@ def HowTo_TensionPneumothorax():
     # There are two ways you can help a pneumothorax
     # Apply a chest occlusive dressing to an open pneumothorax .
     # It's not required for closed.
+    dressing = SEChestOcclusiveDressing()
+    dressing.set_comment("Applying Chest occlusive dressing to the patient's right side")
+    dressing.set_side(eSide.Right)
+    dressing.set_state(eSwitch.On)
+    pulse.process_action(dressing)
+
+    pulse.advance_time_s(30)
+    results = pulse.pull_data()
+    print(results)
 
     # Both can use the needle.
     needle_decomp = SENeedleDecompression()

@@ -75,6 +75,14 @@ def serialize_actions_to_string(actions: [], fmt: eSerializationFormat):
                 serialize_broncho_constriction_to_bind(action, any_action.PatientAction.Bronchoconstriction)
                 action_list.AnyAction.append(any_action)
                 continue
+            if isinstance(action, SECardiacArrest):
+                serialize_cardiac_arrest_to_bind(action, any_action.PatientAction.CardiacArrest)
+                action_list.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SEChestOcclusiveDressing):
+                serialize_chest_occlusive_dressing_to_bind(action, any_action.PatientAction.ChestOcclusiveDressing)
+                action_list.AnyAction.append(any_action)
+                continue
             if isinstance(action, SEDyspnea):
                 serialize_dsypnea_to_bind(action, any_action.PatientAction.Dyspnea)
                 action_list.AnyAction.append(any_action)
@@ -85,6 +93,10 @@ def serialize_actions_to_string(actions: [], fmt: eSerializationFormat):
                 continue
             if isinstance(action, SELobarPneumoniaExacerbation):
                 serialize_lobar_pneumonia_exacerbation_to_bind(action, any_action.PatientAction.LobarPneumoniaExacerbation)
+                action_list.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SEMechanicalVentilation):
+                serialize_mechanical_ventilation_to_bind(action, any_action.PatientAction.MechanicalVentilation)
                 action_list.AnyAction.append(any_action)
                 continue
             if isinstance(action, SENeedleDecompression):

@@ -2,7 +2,9 @@
 # See accompanying NOTICE file for details.
 from enum import Enum
 from pulse.cdm.engine import SEAction, eSwitch, eSide, eGate
-from pulse.cdm.scalars import SEScalar0To1, SEScalarVolumePerTime, SEScalarVolume, SEScalarMassPerVolume
+from pulse.cdm.scalars import SEScalar0To1, SEScalarVolumePerTime, SEScalarVolume, \
+                              SEScalarMassPerVolume, SEScalarForce, SEScalarTime, \
+                              SEScalarPressure
 
 class SEPatientAction(SEAction):
     def __init__(self):
@@ -198,6 +200,58 @@ class SEBronchoConstriction(SEPatientAction):
         return ("BronchoConstriction\n"
                 "  Severity: {}").format(self._severity)
 
+
+class SECardiacArrest(SEPatientAction):
+    __slots__ = ["_state"]
+
+    def __init__(self):
+        super().__init__()
+        self._state = eSwitch.Off
+    def clear(self):
+        super().clear()
+        self._state = eSwitch.Off
+    def is_valid(self):
+        return True
+    def set_state(self, state: eSwitch):
+        self._state = state
+    def get_state(self):
+        return self._state
+    def __repr__(self):
+        return ("Cardiac Arrest\n"
+         "  State: {}").format(self._state)
+
+class SEChestOcclusiveDressing(SEPatientAction):
+    __slots__ = ["_state", "_side"]
+
+    def __init__(self):
+        super().__init__()
+        self._state = eSwitch.Off
+        self._side = eSide.NullSide
+
+    def clear(self):
+        super().clear()
+        self._state = eSwitch.Off
+        self._side = eSide.NullSide
+
+    def is_valid(self):
+        return self.has_side();
+    def get_side(self):
+        return self._side
+    def set_side(self, side: eSide):
+        self._side = side
+    def has_side(self):
+        return self._side is not eSide.NullSide
+    def get_state(self):
+        return self._state
+    def set_state(self, state: eSwitch):
+        self._state = state
+    def has_state(self):
+        return self._state is not eSwitch.NullSwitch
+    def __repr__(self):
+        return ("Chest Occlusive Dressing\n"
+                "  State: {}\n"
+                "  Side: {}").format(self._state, self._side)
+
 class SEDyspnea(SEPatientAction):
     def __init__(self):
         super().__init__()
@@ -380,6 +434,44 @@ class SELobarPneumoniaExacerbation(SEPatientAction):
                 "  Right Lung Affected: {}\n"
                 "  Left Lung Affected: {}").format(self._severity, self._right_lung_affected, self._left_lung_affected)
 
+class SEMechanicalVentilation(SEPatientAction):
+    __slots__ = ["_state", "_flow", "pressure"]
+    def __init__(self):
+        super().__init__()
+        self._state = eSwitch.Off
+        self._flow = None
+        self._pressure = None
+    def clear(self):
+        super().clear()
+        if self._state is not eSwitch.Off:
+            self._state = eSwitch.Off
+        if self._flow is not None:
+            self._flow.invalidate()
+        if self._pressure is not None:
+            self._pressure.invalidate()
+    def is_valid(self):
+        return self.has_pressure() and self.has_flow()
+    def get_pressure(self):
+        if self._pressure is None:
+            self._pressure = SEScalarPressure()
+        return self._pressure
+    def has_pressure(self):
+        return self._pressure is not None
+    def get_flow(self):
+        if self._flow is None:
+            self._flow = SEScalarVolumePerTime()
+        return self._flow
+    def has_flow(self):
+        return self._flow is not None
+    def set_state(self, state: eSwitch):
+        self._state = state
+    def get_state(self):
+        return self._state
+    def __repr__(self):
+        return ("Mechanical Ventilation\n"
+                "  State: {} \n"
+                "  Flow: {} \n"
+                "  Pressure: {}").format(self._state, self._flow, self._pressure)
 class SENeedleDecompression(SEPatientAction):
     __slots__ = ["_state", "_side"]
 
