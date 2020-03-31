@@ -563,6 +563,12 @@ SELiquidCompartmentGraph& PulseCompartments::GetAerosolAndInhalerGraph()
   return *m_CombinedAerosolInhalerGraph;
 }
 
+SEGasCompartmentGraph& PulseCompartments::GetMechanicalVentilatorGraph()
+{
+  if (m_MechanicalVentilatorGraph == nullptr)
+    m_MechanicalVentilatorGraph = &CreateGasGraph(pulse::Graph::MechanicalVentilator);
+  return *m_MechanicalVentilatorGraph;
+}
 SEGasCompartmentGraph& PulseCompartments::GetRespiratoryAndMechanicalVentilationGraph()
 {
   if (m_CombinedRespiratoryMechanicalVentilationGraph == nullptr)

@@ -265,19 +265,33 @@ namespace pulse {
   class MechanicalVentilatorNode
   {
   public:
-    // jbw
+    DEFINE_STATIC_STRING(Ventilator);
+    DEFINE_STATIC_STRING(ExpiratoryValve);
+    DEFINE_STATIC_STRING(InspiratoryValve);
+    DEFINE_STATIC_STRING(ExpiratoryLimb);
+    DEFINE_STATIC_STRING(InspiratoryLimb);
+    DEFINE_STATIC_STRING(YPiece);
+    DEFINE_STATIC_STRING(Connection);
   };
 
   class MechanicalVentilatorPath
   {
   public:
-    // jbw
+    DEFINE_STATIC_STRING(EnvironmentToVentilator);
+    DEFINE_STATIC_STRING(VentilatorToExpiratoryValve);
+    DEFINE_STATIC_STRING(VentilatorToInspiratoryValve);
+    DEFINE_STATIC_STRING(ExpiratoryLimbToExpiratoryValve);
+    DEFINE_STATIC_STRING(InspiratoryValveToInspiratoryLimb);
+    DEFINE_STATIC_STRING(ExpiratoryLimbToYPiece);
+    DEFINE_STATIC_STRING(InspiratoryLimbToYPiece);
+    DEFINE_STATIC_STRING(YPieceToConnection);
+    DEFINE_STATIC_STRING(ConnectionToEnvironment);
   };
 
   class CombinedMechanicalVentilatorPath
   {
   public:
-    // jbw
+    DEFINE_STATIC_STRING(ConnectionToMouth);
   };
 
   ///////////////////////////

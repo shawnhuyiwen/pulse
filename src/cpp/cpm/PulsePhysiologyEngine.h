@@ -1105,9 +1105,15 @@ namespace pulse {
     static std::vector<std::string> _values;
   };
   
-  class MechanicalVentilatorCompartment // jbw
+  class MechanicalVentilatorCompartment
   {
   public:
+    DEFINE_STATIC_STRING(Ventilator);
+    DEFINE_STATIC_STRING(ExpiratoryValve);
+    DEFINE_STATIC_STRING(InspiratoryValve);
+    DEFINE_STATIC_STRING(ExpiratoryLimb);
+    DEFINE_STATIC_STRING(InspiratoryLimb);
+    DEFINE_STATIC_STRING(YPiece);
     DEFINE_STATIC_STRING(Connection);
 
     static const std::vector<std::string>& GetValues()
@@ -1115,6 +1121,12 @@ namespace pulse {
       ScopedMutex lock;
       if (_values.empty())
       {
+        _values.push_back(Ventilator);
+        _values.push_back(ExpiratoryValve);
+        _values.push_back(InspiratoryValve);
+        _values.push_back(ExpiratoryLimb);
+        _values.push_back(InspiratoryLimb);
+        _values.push_back(YPiece);
         _values.push_back(Connection);
       }
       return _values;
@@ -1123,9 +1135,17 @@ namespace pulse {
     static std::vector<std::string> _values;
   };
 
-  class MechanicalVentilatorLink // jbw
+  class MechanicalVentilatorLink
   {
   public:
+    DEFINE_STATIC_STRING(VentilatorToExpiratoryValve);
+    DEFINE_STATIC_STRING(VentilatorToInspiratoryValve);
+    DEFINE_STATIC_STRING(ExpiratoryLimbToExpiratoryValve);
+    DEFINE_STATIC_STRING(InspiratoryValveToInspiratoryLimb);
+    DEFINE_STATIC_STRING(ExpiratoryLimbToYPiece);
+    DEFINE_STATIC_STRING(InspiratoryLimbToYPiece);
+    DEFINE_STATIC_STRING(YPieceToConnection);
+    DEFINE_STATIC_STRING(ConnectionToEnvironment);
     DEFINE_STATIC_STRING(ConnectionToMouth);
 
     static const std::vector<std::string>& GetValues()
@@ -1133,6 +1153,14 @@ namespace pulse {
       ScopedMutex lock;
       if (_values.empty())
       {
+        _values.push_back(VentilatorToExpiratoryValve);
+        _values.push_back(VentilatorToInspiratoryValve);
+        _values.push_back(ExpiratoryLimbToExpiratoryValve);
+        _values.push_back(InspiratoryValveToInspiratoryLimb);
+        _values.push_back(ExpiratoryLimbToYPiece);
+        _values.push_back(InspiratoryLimbToYPiece);
+        _values.push_back(YPieceToConnection);
+        _values.push_back(ConnectionToEnvironment);
         _values.push_back(ConnectionToMouth);
       }
       return _values;
