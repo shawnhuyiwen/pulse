@@ -25,11 +25,11 @@ SEAnesthesiaMachine::SEAnesthesiaMachine(SESubstanceManager& substances) : SEEqu
   m_InspiratoryExpiratoryRatio = nullptr;
   m_OxygenFraction = nullptr;
   m_OxygenSource = eAnesthesiaMachine_OxygenSource::NullSource;
+  m_PeakInspiratoryPressure = nullptr;
   m_PositiveEndExpiredPressure = nullptr;
   m_PrimaryGas = eAnesthesiaMachine_PrimaryGas::NullGas;  
   m_RespiratoryRate = nullptr;
   m_ReliefValvePressure = nullptr;
-  m_PeakInspiratoryPressure = nullptr;
   m_LeftChamber = nullptr;
   m_RightChamber = nullptr;
   m_OxygenBottleOne = nullptr;
@@ -70,12 +70,12 @@ void SEAnesthesiaMachine::Merge(const SEAnesthesiaMachine& from)
   COPY_PROPERTY(OxygenFraction);
   if (from.m_OxygenSource != eAnesthesiaMachine_OxygenSource::NullSource)
     SetOxygenSource(from.m_OxygenSource);
+  COPY_PROPERTY(PeakInspiratoryPressure);
   COPY_PROPERTY(PositiveEndExpiredPressure);
   if (from.m_PrimaryGas != eAnesthesiaMachine_PrimaryGas::NullGas)
     SetPrimaryGas(from.m_PrimaryGas);
   COPY_PROPERTY(RespiratoryRate);
   COPY_PROPERTY(ReliefValvePressure);
-  COPY_PROPERTY(PeakInspiratoryPressure);
 
   MERGE_CHILD(LeftChamber);
   MERGE_CHILD(RightChamber);
@@ -124,14 +124,14 @@ const SEScalar* SEAnesthesiaMachine::GetScalar(const std::string& name)
     return &GetInspiratoryExpiratoryRatio();
   if (name == "OxygenFraction")
     return &GetOxygenFraction();
+  if (name == "PeakInspiratoryPressure")
+    return &GetPeakInspiratoryPressure();
   if (name == "PositiveEndExpiredPressure")
     return &GetPositiveEndExpiredPressure();
   if (name == "ReliefValvePressure")
     return &GetReliefValvePressure();
   if (name == "RespiratoryRate")
     return &GetRespiratoryRate();
-  if (name == "PeakInspiratoryPressure")
-    return &GetPeakInspiratoryPressure();
 
   size_t split = name.find('-');
   if (split != name.npos)
@@ -220,6 +220,23 @@ void SEAnesthesiaMachine::SetOxygenSource(eAnesthesiaMachine_OxygenSource src)
   m_OxygenSource = src;
 }
 
+bool SEAnesthesiaMachine::HasPeakInspiratoryPressure() const
+{
+  return m_PeakInspiratoryPressure == nullptr ? false : m_PeakInspiratoryPressure->IsValid();
+}
+SEScalarPressure& SEAnesthesiaMachine::GetPeakInspiratoryPressure()
+{
+  if (m_PeakInspiratoryPressure == nullptr)
+    m_PeakInspiratoryPressure = new SEScalarPressure();
+  return *m_PeakInspiratoryPressure;
+}
+double SEAnesthesiaMachine::GetPeakInspiratoryPressure(const PressureUnit& unit) const
+{
+  if (m_PeakInspiratoryPressure == nullptr)
+    return SEScalar::dNaN();
+  return m_PeakInspiratoryPressure->GetValue(unit);
+}
+
 bool SEAnesthesiaMachine::HasPositiveEndExpiredPressure() const
 {
   return m_PositiveEndExpiredPressure == nullptr ? false : m_PositiveEndExpiredPressure->IsValid();
@@ -278,23 +295,6 @@ double SEAnesthesiaMachine::GetReliefValvePressure(const PressureUnit& unit) con
   if (m_ReliefValvePressure == nullptr)
     return SEScalar::dNaN();
   return m_ReliefValvePressure->GetValue(unit);
-}
-
-bool SEAnesthesiaMachine::HasPeakInspiratoryPressure() const
-{
-  return m_PeakInspiratoryPressure == nullptr ? false : m_PeakInspiratoryPressure->IsValid();
-}
-SEScalarPressure& SEAnesthesiaMachine::GetPeakInspiratoryPressure()
-{
-  if (m_PeakInspiratoryPressure == nullptr)
-    m_PeakInspiratoryPressure = new SEScalarPressure();
-  return *m_PeakInspiratoryPressure;
-}
-double SEAnesthesiaMachine::GetPeakInspiratoryPressure(const PressureUnit& unit) const
-{
-  if (m_PeakInspiratoryPressure == nullptr)
-    return SEScalar::dNaN();
-  return m_PeakInspiratoryPressure->GetValue(unit);
 }
 
 bool SEAnesthesiaMachine::HasLeftChamber() const

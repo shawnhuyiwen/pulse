@@ -33,6 +33,8 @@ void PBAnesthesiaMachine::Serialize(const CDM_BIND::AnesthesiaMachineData& src, 
     PBProperty::Load(src.oxygenfraction(), dst.GetOxygenFraction());
 
   dst.SetOxygenSource((eAnesthesiaMachine_OxygenSource)src.oxygensource());
+  if (src.has_peakinspiratorypressure())
+    PBProperty::Load(src.peakinspiratorypressure(), dst.GetPeakInspiratoryPressure());
   if (src.has_positiveendexpiredpressure())
     PBProperty::Load(src.positiveendexpiredpressure(), dst.GetPositiveEndExpiredPressure());
   dst.SetPrimaryGas((eAnesthesiaMachine_PrimaryGas)src.primarygas());
@@ -41,8 +43,6 @@ void PBAnesthesiaMachine::Serialize(const CDM_BIND::AnesthesiaMachineData& src, 
     PBProperty::Load(src.respiratoryrate(), dst.GetRespiratoryRate());
   if (src.has_reliefvalvepressure())
     PBProperty::Load(src.reliefvalvepressure(), dst.GetReliefValvePressure());
-  if (src.has_peakinspiratorypressure())
-    PBProperty::Load(src.peakinspiratorypressure(), dst.GetPeakInspiratoryPressure());
   if (src.has_leftchamber())
     PBAnesthesiaMachine::Load(src.leftchamber(), dst.GetLeftChamber());
   if (src.has_rightchamber())
@@ -72,6 +72,8 @@ void PBAnesthesiaMachine::Serialize(const SEAnesthesiaMachine& src, CDM_BIND::An
     dst.set_allocated_oxygenfraction(PBProperty::Unload(*src.m_OxygenFraction));
 
   dst.set_oxygensource((CDM_BIND::AnesthesiaMachineData::eOxygenSource)src.m_OxygenSource);
+  if (src.HasPeakInspiratoryPressure())
+    dst.set_allocated_peakinspiratorypressure(PBProperty::Unload(*src.m_PeakInspiratoryPressure));
   if (src.HasPositiveEndExpiredPressure())
     dst.set_allocated_positiveendexpiredpressure(PBProperty::Unload(*src.m_PositiveEndExpiredPressure));
   dst.set_primarygas((CDM_BIND::AnesthesiaMachineData::ePrimaryGas)src.m_PrimaryGas);
@@ -80,8 +82,6 @@ void PBAnesthesiaMachine::Serialize(const SEAnesthesiaMachine& src, CDM_BIND::An
     dst.set_allocated_respiratoryrate(PBProperty::Unload(*src.m_RespiratoryRate));
   if (src.HasReliefValvePressure())
     dst.set_allocated_reliefvalvepressure(PBProperty::Unload(*src.m_ReliefValvePressure));
-  if (src.HasPeakInspiratoryPressure())
-    dst.set_allocated_peakinspiratorypressure(PBProperty::Unload(*src.m_PeakInspiratoryPressure));
   if (src.HasLeftChamber())
     dst.set_allocated_leftchamber(PBAnesthesiaMachine::Unload(*src.m_LeftChamber));
   if (src.HasRightChamber())
