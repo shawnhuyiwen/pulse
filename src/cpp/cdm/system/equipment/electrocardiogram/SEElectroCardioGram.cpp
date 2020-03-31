@@ -5,7 +5,7 @@
 #include "system/equipment/electrocardiogram/SEElectroCardioGram.h"
 #include "properties/SEScalarElectricPotential.h"
 
-SEElectroCardioGram::SEElectroCardioGram(Logger* logger) : SESystem(logger)
+SEElectroCardioGram::SEElectroCardioGram(Logger* logger) : SEEquipment(logger)
 {
   m_Lead1ElectricPotential = nullptr;
   m_Lead2ElectricPotential = nullptr;
@@ -28,6 +28,7 @@ SEElectroCardioGram::~SEElectroCardioGram()
 
 void SEElectroCardioGram::Clear()
 {
+  SEEquipment::Clear();
   SAFE_DELETE(m_Lead1ElectricPotential);
   SAFE_DELETE(m_Lead2ElectricPotential);
   SAFE_DELETE(m_Lead3ElectricPotential);

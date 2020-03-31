@@ -242,10 +242,10 @@ namespace HowTo_UseEngine
       am.GetConfiguration().GetInspiratoryExpiratoryRatio().SetValue(0.5);
       am.GetConfiguration().GetOxygenFraction().SetValue(0.23);
       am.GetConfiguration().SetOxygenSource(SEAnesthesiaMachine.OxygenSource.Wall);
+      am.GetConfiguration().GetPeakInspiratoryPressure().SetValue(10.5, PressureUnit.cmH2O);
       am.GetConfiguration().GetPositiveEndExpiredPressure().SetValue(1, PressureUnit.cmH2O);
       am.GetConfiguration().SetPrimaryGas(SEAnesthesiaMachine.PrimaryGas.Nitrogen);
       am.GetConfiguration().GetRespiratoryRate().SetValue(16, FrequencyUnit.Per_min);
-      am.GetConfiguration().GetVentilatorPressure().SetValue(10.5, PressureUnit.cmH2O);
       if (!pulse.ProcessAction(am))
       {
         Console.WriteLine("Engine was unable to process requested actions");

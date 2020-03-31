@@ -15,6 +15,23 @@ public class PowerUnit
   public static PowerUnit J_Per_s = new PowerUnit("J/s");
   public static PowerUnit BTU_Per_hr = new PowerUnit("BTU/hr");
 
+  public static PowerUnit FromString(string u)
+  {
+    if (u == PowerUnit.W.ToString())
+      return PowerUnit.W;
+    if (u == PowerUnit.kcal_Per_s.ToString())
+      return PowerUnit.kcal_Per_s;
+    if (u == PowerUnit.kcal_Per_hr.ToString())
+      return PowerUnit.kcal_Per_hr;
+    if (u == PowerUnit.kcal_Per_day.ToString())
+      return PowerUnit.kcal_Per_day;
+    if (u == PowerUnit.J_Per_s.ToString())
+      return PowerUnit.J_Per_s;
+    if (u == PowerUnit.BTU_Per_hr.ToString())
+      return PowerUnit.BTU_Per_hr;
+
+    throw new System.ArgumentException(u + " is not a know power unit");
+  }
 }
 
 public class SEScalarPower : SEScalar

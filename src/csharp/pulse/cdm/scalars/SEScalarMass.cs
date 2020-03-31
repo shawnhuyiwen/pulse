@@ -13,6 +13,22 @@ public class MassUnit
   public static MassUnit mg = new MassUnit("mg");
   public static MassUnit kg = new MassUnit("kg");
   public static MassUnit lb = new MassUnit("lb");
+
+  public static MassUnit FromString(string u)
+  {
+    if (u == MassUnit.g.ToString())
+      return MassUnit.g;
+    if (u == MassUnit.ug.ToString())
+      return MassUnit.ug;
+    if (u == MassUnit.mg.ToString())
+      return MassUnit.mg;
+    if (u == MassUnit.kg.ToString())
+      return MassUnit.kg;
+    if (u == MassUnit.lb.ToString())
+      return MassUnit.lb;
+
+    throw new System.ArgumentException(u + " is not a know mass unit");
+  }
 }
 
 public class SEScalarMass : SEScalar

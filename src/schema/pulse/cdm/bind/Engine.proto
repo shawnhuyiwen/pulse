@@ -11,8 +11,7 @@ import "pulse/cdm/bind/PatientActions.proto";
 import "pulse/cdm/bind/PatientConditions.proto";
 import "pulse/cdm/bind/EnvironmentActions.proto";
 import "pulse/cdm/bind/EnvironmentConditions.proto";
-import "pulse/cdm/bind/AnesthesiaMachineActions.proto";
-import "pulse/cdm/bind/InhalerActions.proto";
+import "pulse/cdm/bind/EquipmentActions.proto";
 import "pulse/cdm/bind/Properties.proto";
 
 message DecimalFormatData
@@ -83,8 +82,7 @@ message AnyActionData
     SerializeStateData                                  Serialize                 = 2;
     AnyPatientActionData                                PatientAction             = 3;
     AnyEnvironmentActionData                            EnvironmentAction         = 4;
-    AnyAnesthesiaMachineActionData                      AnesthesiaMachineAction   = 5;
-    AnyInhalerActionData                                InhalerAction             = 6;
+    AnyEquipmentActionData                              EquipmentAction           = 5;
   }
 }
 message ActionListData

@@ -14,6 +14,21 @@ public class PressureUnit
   public static PressureUnit psi = new PressureUnit("psi");
   public static PressureUnit atm = new PressureUnit("atm");
 
+  public static PressureUnit FromString(string u)
+  {
+    if (u == PressureUnit.Pa.ToString())
+      return PressureUnit.Pa;
+    if (u == PressureUnit.mmHg.ToString())
+      return PressureUnit.mmHg;
+    if (u == PressureUnit.cmH2O.ToString())
+      return PressureUnit.cmH2O;
+    if (u == PressureUnit.psi.ToString())
+      return PressureUnit.psi;
+    if (u == PressureUnit.atm.ToString())
+      return PressureUnit.atm;
+
+    throw new System.ArgumentException(u + " is not a know pressure unit");
+  }
 }
 
 public class SEScalarPressure : SEScalar

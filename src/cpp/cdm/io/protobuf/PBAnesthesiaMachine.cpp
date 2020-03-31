@@ -8,9 +8,9 @@ POP_PROTO_WARNINGS()
 #include "io/protobuf/PBAnesthesiaMachine.h"
 #include "io/protobuf/PBProperties.h"
 #include "io/protobuf/PBUtils.h"
-#include "system/equipment/anesthesiamachine/SEAnesthesiaMachine.h"
-#include "system/equipment/anesthesiamachine/SEAnesthesiaMachineChamber.h"
-#include "system/equipment/anesthesiamachine/SEAnesthesiaMachineOxygenBottle.h"
+#include "system/equipment/anesthesia_machine/SEAnesthesiaMachine.h"
+#include "system/equipment/anesthesia_machine/SEAnesthesiaMachineChamber.h"
+#include "system/equipment/anesthesia_machine/SEAnesthesiaMachineOxygenBottle.h"
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceManager.h"
 #include "properties/SEScalarTime.h"
@@ -41,8 +41,8 @@ void PBAnesthesiaMachine::Serialize(const CDM_BIND::AnesthesiaMachineData& src, 
     PBProperty::Load(src.respiratoryrate(), dst.GetRespiratoryRate());
   if (src.has_reliefvalvepressure())
     PBProperty::Load(src.reliefvalvepressure(), dst.GetReliefValvePressure());
-  if (src.has_ventilatorpressure())
-    PBProperty::Load(src.ventilatorpressure(), dst.GetVentilatorPressure());
+  if (src.has_peakinspiratorypressure())
+    PBProperty::Load(src.peakinspiratorypressure(), dst.GetPeakInspiratoryPressure());
   if (src.has_leftchamber())
     PBAnesthesiaMachine::Load(src.leftchamber(), dst.GetLeftChamber());
   if (src.has_rightchamber())
@@ -80,8 +80,8 @@ void PBAnesthesiaMachine::Serialize(const SEAnesthesiaMachine& src, CDM_BIND::An
     dst.set_allocated_respiratoryrate(PBProperty::Unload(*src.m_RespiratoryRate));
   if (src.HasReliefValvePressure())
     dst.set_allocated_reliefvalvepressure(PBProperty::Unload(*src.m_ReliefValvePressure));
-  if (src.HasVentilatorPressure())
-    dst.set_allocated_ventilatorpressure(PBProperty::Unload(*src.m_VentilatorPressure));
+  if (src.HasPeakInspiratoryPressure())
+    dst.set_allocated_peakinspiratorypressure(PBProperty::Unload(*src.m_PeakInspiratoryPressure));
   if (src.HasLeftChamber())
     dst.set_allocated_leftchamber(PBAnesthesiaMachine::Unload(*src.m_LeftChamber));
   if (src.HasRightChamber())

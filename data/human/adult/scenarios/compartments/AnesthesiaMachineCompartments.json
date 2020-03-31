@@ -1198,8 +1198,8 @@
       }
     }
   }, {
-    "AnesthesiaMachineAction": {
-      "Configuration": {
+    "EquipmentAction": {
+      "AnesthesiaMachineConfiguration": {
         "Configuration": {
           "Connection": "Mask",
           "InspiratoryExpiratoryRatio": {
@@ -1230,7 +1230,7 @@
               "Unit": "1/min"
             }
           },
-          "VentilatorPressure": {
+          "PeakInspiratoryPressure": {
             "ScalarPressure": {
               "Value": 14.0,
               "Unit": "cmH2O"

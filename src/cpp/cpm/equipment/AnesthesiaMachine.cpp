@@ -9,23 +9,23 @@
 #include "controller/Circuits.h"
 #include "controller/Compartments.h"
 #include "PulseConfiguration.h"
-#include "system/equipment/anesthesiamachine/SEAnesthesiaMachineOxygenBottle.h"
-#include "system/equipment/anesthesiamachine/SEAnesthesiaMachineChamber.h"
-#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineConfiguration.h"
-#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineOxygenWallPortPressureLoss.h"
-#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineOxygenTankPressureLoss.h"
-#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineExpiratoryValveLeak.h"
-#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineExpiratoryValveObstruction.h"
-#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineInspiratoryValveLeak.h"
-#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineInspiratoryValveObstruction.h"
-#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineMaskLeak.h"
-#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineSodaLimeFailure.h"
-#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineTubeCuffLeak.h"
-#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineVaporizerFailure.h"
-#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineVentilatorPressureLoss.h"
-#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineYPieceDisconnect.h"
+#include "system/equipment/anesthesia_machine/SEAnesthesiaMachineOxygenBottle.h"
+#include "system/equipment/anesthesia_machine/SEAnesthesiaMachineChamber.h"
+#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineConfiguration.h"
+#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineOxygenWallPortPressureLoss.h"
+#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineOxygenTankPressureLoss.h"
+#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineExpiratoryValveLeak.h"
+#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineExpiratoryValveObstruction.h"
+#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineInspiratoryValveLeak.h"
+#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineInspiratoryValveObstruction.h"
+#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineMaskLeak.h"
+#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineSodaLimeFailure.h"
+#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineTubeCuffLeak.h"
+#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineVaporizerFailure.h"
+#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineVentilatorPressureLoss.h"
+#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineYPieceDisconnect.h"
 #include "engine/SEActionManager.h"
-#include "engine/SEAnesthesiaMachineActionCollection.h"
+#include "engine/SEEquipmentActionCollection.h"
 #include "engine/SEPatientActionCollection.h"
 #include "engine/SEEventManager.h"
 #include "circuit/fluid/SEFluidCircuit.h"
@@ -100,7 +100,7 @@ void AnesthesiaMachine::Initialize()
   GetOxygenFraction().SetValue(0.5);
   SetOxygenSource(eAnesthesiaMachine_OxygenSource::Wall);
   SetPrimaryGas(eAnesthesiaMachine_PrimaryGas::Nitrogen);
-  GetVentilatorPressure().SetValue(15.0, PressureUnit::cmH2O);
+  GetPeakInspiratoryPressure().SetValue(15.0, PressureUnit::cmH2O);
   GetOxygenBottleOne().GetVolume().SetValue(660.0, VolumeUnit::L);
   GetOxygenBottleTwo().GetVolume().SetValue(660.0, VolumeUnit::L);
   GetReliefValvePressure().SetValue(100.0, PressureUnit::cmH2O);
@@ -124,7 +124,7 @@ void AnesthesiaMachine::Initialize()
 void AnesthesiaMachine::SetUp()
 {
   m_dt_s = m_data.GetTimeStep().GetValue(TimeUnit::s);
-  m_actions = &m_data.GetActions().GetAnesthesiaMachineActions();
+  m_actions = &m_data.GetActions().GetEquipmentActions();
   m_dValveOpenResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetMachineOpenResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   m_dValveClosedResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetMachineClosedResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   m_dSwitchOpenResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetDefaultOpenFlowResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
@@ -281,10 +281,10 @@ void AnesthesiaMachine::SetConnection()
 //--------------------------------------------------------------------------------------------------
 void AnesthesiaMachine::PreProcess()
 {
-  if (m_data.GetActions().GetAnesthesiaMachineActions().HasConfiguration())
+  if (m_actions->HasAnesthesiaMachineConfiguration())
   {
-    ProcessConfiguration(*m_data.GetActions().GetAnesthesiaMachineActions().GetConfiguration());
-    m_data.GetActions().GetAnesthesiaMachineActions().RemoveConfiguration();
+    ProcessConfiguration(*m_actions->GetAnesthesiaMachineConfiguration());
+    m_actions->RemoveAnesthesiaMachineConfiguration();
   }
   //Do nothing if the machine is off and not initialized
   if (GetConnection() == eAnesthesiaMachine_Connection::Off)
@@ -350,9 +350,9 @@ void AnesthesiaMachine::CalculateScrubber()
   // Calculate incremental volume changes due to scrubber
   double CO2Volume = 0.0;  
 
-  if (m_data.GetActions().GetAnesthesiaMachineActions().HasSodaLimeFailure())
+  if (m_actions->HasAnesthesiaMachineSodaLimeFailure())
   {
-    double SodaLimeFailSeverity = m_actions->GetSodaLimeFailure()->GetSeverity().GetValue();
+    double SodaLimeFailSeverity = m_actions->GetAnesthesiaMachineSodaLimeFailure()->GetSeverity().GetValue();
     CO2Volume = SodaLimeFailSeverity * m_scubberCO2->GetVolume(VolumeUnit::L);
   }
 
@@ -379,9 +379,9 @@ void AnesthesiaMachine::CalculateGasSourceSubstances()
   //Vaporizer Failure
   double VaporizerFailureSeverity = 0.0;
 
-  if(m_data.GetActions().GetAnesthesiaMachineActions().HasVaporizerFailure()) 
+  if(m_actions->HasAnesthesiaMachineVaporizerFailure()) 
   {
-    VaporizerFailureSeverity = m_data.GetActions().GetAnesthesiaMachineActions().GetVaporizerFailure()->GetSeverity().GetValue();
+    VaporizerFailureSeverity = m_actions->GetAnesthesiaMachineVaporizerFailure()->GetSeverity().GetValue();
   }
   if(GetLeftChamber().GetState() == eSwitch::On && GetLeftChamber().HasSubstance())
   {
@@ -404,7 +404,7 @@ void AnesthesiaMachine::CalculateGasSourceSubstances()
   //Note: You're only allowed to use one at a time
   if (GetOxygenSource() == eAnesthesiaMachine_OxygenSource::Wall)
   {
-    if (m_actions->HasOxygenWallPortPressureLoss())
+    if (m_actions->HasAnesthesiaMachineOxygenWallPortPressureLoss())
     {    
       m_O2InletVolumeFraction = 0.0;
     }
@@ -415,7 +415,7 @@ void AnesthesiaMachine::CalculateGasSourceSubstances()
   }
   else if (GetOxygenSource() == eAnesthesiaMachine_OxygenSource::BottleOne || GetOxygenSource() == eAnesthesiaMachine_OxygenSource::BottleTwo)
   {
-    if (m_actions->HasOxygenTankPressureLoss())
+    if (m_actions->HasAnesthesiaMachineOxygenTankPressureLoss())
     {
       m_O2InletVolumeFraction = 0.0;
     }
@@ -556,19 +556,19 @@ void AnesthesiaMachine::CalculateEquipmentLeak()
   {
     if (m_Connection == eAnesthesiaMachine_Connection::Tube)
     {
-      if (m_actions->HasTubeCuffLeak() || m_actions->HasYPieceDisconnect())
+      if (m_actions->HasAnesthesiaMachineTubeCuffLeak() || m_actions->HasAnesthesiaMachineYPieceDisconnect())
       {
         double CuffLeakSeverity = 0.0;
         double YPieceDisconnectSeverity = 0.0;
         double TotalSeverity = 0.0;
 
-        if (m_actions->HasTubeCuffLeak())
+        if (m_actions->HasAnesthesiaMachineTubeCuffLeak())
         {
-          CuffLeakSeverity = m_actions->GetTubeCuffLeak()->GetSeverity().GetValue();
+          CuffLeakSeverity = m_actions->GetAnesthesiaMachineTubeCuffLeak()->GetSeverity().GetValue();
         }
-        if (m_actions->HasYPieceDisconnect())
+        if (m_actions->HasAnesthesiaMachineYPieceDisconnect())
         {
-          YPieceDisconnectSeverity = m_actions->GetYPieceDisconnect()->GetSeverity().GetValue();
+          YPieceDisconnectSeverity = m_actions->GetAnesthesiaMachineYPieceDisconnect()->GetSeverity().GetValue();
         }
 
         //Combine the severities
@@ -584,19 +584,19 @@ void AnesthesiaMachine::CalculateEquipmentLeak()
     }
   else if (m_Connection == eAnesthesiaMachine_Connection::Mask)
   {
-    if (m_actions->HasMaskLeak() || m_actions->HasYPieceDisconnect())
+    if (m_actions->HasAnesthesiaMachineMaskLeak() || m_actions->HasAnesthesiaMachineYPieceDisconnect())
     {
       double MaskLeakSeverity = 0.0;
       double YPieceDisconnectSeverity = 0.0;
       double TotalSeverity = 0.0;
 
-      if (m_actions->HasMaskLeak())
+      if (m_actions->HasAnesthesiaMachineMaskLeak())
       {
-        MaskLeakSeverity = m_actions->GetMaskLeak()->GetSeverity().GetValue();
+        MaskLeakSeverity = m_actions->GetAnesthesiaMachineMaskLeak()->GetSeverity().GetValue();
       }
-      if (m_actions->HasYPieceDisconnect())
+      if (m_actions->HasAnesthesiaMachineYPieceDisconnect())
       {
-        YPieceDisconnectSeverity = m_actions->GetYPieceDisconnect()->GetSeverity().GetValue();
+        YPieceDisconnectSeverity = m_actions->GetAnesthesiaMachineYPieceDisconnect()->GetSeverity().GetValue();
       }
 
       //Combine the severities
@@ -636,25 +636,25 @@ void AnesthesiaMachine::CalculateValveResistances()
   double dExpValveClosedResistance = m_pYPieceToExpiratoryLimb->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 
   //Handle leaks and obstructions
-  if (m_actions->HasInspiratoryValveLeak())
+  if (m_actions->HasAnesthesiaMachineInspiratoryValveLeak())
   {
-    double severity = m_actions->GetInspiratoryValveLeak()->GetSeverity().GetValue();
+    double severity = m_actions->GetAnesthesiaMachineInspiratoryValveLeak()->GetSeverity().GetValue();
     dInspValveOpenResistance = GeneralMath::ExponentialDecayFunction(10.0, dInspValveClosedResistance, dInspValveOpenResistance, severity);
   }
-  else if (m_actions->HasInspiratoryValveObstruction())
+  else if (m_actions->HasAnesthesiaMachineInspiratoryValveObstruction())
   {
-    double severity = m_actions->GetInspiratoryValveObstruction()->GetSeverity().GetValue();
+    double severity = m_actions->GetAnesthesiaMachineInspiratoryValveObstruction()->GetSeverity().GetValue();
     dInspValveClosedResistance = GeneralMath::ExponentialDecayFunction(10.0, dInspValveOpenResistance, dInspValveClosedResistance, severity);
   }
 
-  if (m_actions->HasExpiratoryValveLeak())
+  if (m_actions->HasAnesthesiaMachineExpiratoryValveLeak())
   {
-    double severity = m_actions->GetExpiratoryValveLeak()->GetSeverity().GetValue();
+    double severity = m_actions->GetAnesthesiaMachineExpiratoryValveLeak()->GetSeverity().GetValue();
     dExpValveOpenResistance = GeneralMath::ExponentialDecayFunction(10.0, dExpValveClosedResistance, dExpValveOpenResistance, severity);
   }
-  else if (m_actions->HasExpiratoryValveObstruction())
+  else if (m_actions->HasAnesthesiaMachineExpiratoryValveObstruction())
   {
-    double severity = m_actions->GetExpiratoryValveObstruction()->GetSeverity().GetValue();
+    double severity = m_actions->GetAnesthesiaMachineExpiratoryValveObstruction()->GetSeverity().GetValue();
     dExpValveClosedResistance = GeneralMath::ExponentialDecayFunction(10.0, dExpValveOpenResistance, dExpValveClosedResistance, severity);
   }
   
@@ -688,15 +688,15 @@ void AnesthesiaMachine::CalculateVentilatorPressure()
   double dDriverPressure = 0.0;
   if (m_inhaling)
   {
-    dDriverPressure = GetVentilatorPressure(PressureUnit::cmH2O);
+    dDriverPressure = GetPeakInspiratoryPressure(PressureUnit::cmH2O);
   }
   else
   {
     dDriverPressure = GetPositiveEndExpiredPressure(PressureUnit::cmH2O);
   }  
-  if (m_actions->HasVentilatorPressureLoss())
+  if (m_actions->HasAnesthesiaMachineVentilatorPressureLoss())
   {
-    double severity = m_actions->GetVentilatorPressureLoss()->GetSeverity().GetValue();
+    double severity = m_actions->GetAnesthesiaMachineVentilatorPressureLoss()->GetSeverity().GetValue();
     dDriverPressure *= (1 - severity);
   }
   m_pEnvironmentToVentilator->GetNextPressureSource().SetValue(dDriverPressure, PressureUnit::cmH2O);

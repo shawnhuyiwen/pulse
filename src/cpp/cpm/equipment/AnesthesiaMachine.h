@@ -3,8 +3,8 @@
 
 #pragma once
 #include "controller/System.h"
-#include "system/equipment/anesthesiamachine/SEAnesthesiaMachine.h"
-class SEAnesthesiaMachineActionCollection;
+#include "system/equipment/anesthesia_machine/SEAnesthesiaMachine.h"
+class SEEquipmentActionCollection;
 class SEGasCompartment;
 class SEGasSubstanceQuantity;
 class SEFluidCircuitNode;
@@ -69,7 +69,7 @@ public:
   double m_dValveClosedResistance_cmH2O_s_Per_L;
   double m_dSwitchOpenResistance_cmH2O_s_Per_L;
   double m_dSwitchClosedResistance_cmH2O_s_Per_L;
-  SEAnesthesiaMachineActionCollection* m_actions;
+  SEEquipmentActionCollection*         m_actions;
   SEGasCompartment*                    m_ambient;
   SEGasSubstanceQuantity*              m_ambientCO2;
   SEGasSubstanceQuantity*              m_ambientN2;

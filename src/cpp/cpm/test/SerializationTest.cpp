@@ -20,9 +20,9 @@
 #include "patient/actions/SEForcedPause.h"
 #include "patient/actions/SESubstanceBolus.h"
 
-#include "system/equipment/anesthesiamachine/SEAnesthesiaMachine.h"
-#include "system/equipment/anesthesiamachine/SEAnesthesiaMachineOxygenBottle.h"
-#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineConfiguration.h"
+#include "system/equipment/anesthesia_machine/SEAnesthesiaMachine.h"
+#include "system/equipment/anesthesia_machine/SEAnesthesiaMachineOxygenBottle.h"
+#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineConfiguration.h"
 #include "system/equipment/inhaler/SEInhaler.h"
 #include "system/equipment/inhaler/actions/SEInhalerConfiguration.h"
 
@@ -163,7 +163,7 @@ void PulseEngineTest::InjectSuccsState(PhysiologyEngine* pc, HowToTracker& track
   amConfig.GetConfiguration().SetPrimaryGas(eAnesthesiaMachine_PrimaryGas::Nitrogen);
   amConfig.GetConfiguration().GetReliefValvePressure().SetValue(20, PressureUnit::cmH2O);
   amConfig.GetConfiguration().GetRespiratoryRate().SetValue(16.0, FrequencyUnit::Per_min);
-  amConfig.GetConfiguration().GetVentilatorPressure().SetValue(10, PressureUnit::cmH2O);
+  amConfig.GetConfiguration().GetPeakInspiratoryPressure().SetValue(10, PressureUnit::cmH2O);
   amConfig.GetConfiguration().GetOxygenBottleOne().GetVolume().SetValue(660, VolumeUnit::L);
   amConfig.GetConfiguration().GetOxygenBottleTwo().GetVolume().SetValue(660, VolumeUnit::L);
   pc->ProcessAction(amConfig);

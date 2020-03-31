@@ -8,9 +8,9 @@ import pulse.cdm.bind.Enums.eSwitch;
 import pulse.cdm.properties.*;
 import pulse.cdm.substance.SESubstance;
 import pulse.cdm.substance.SESubstanceManager;
-import pulse.cdm.system.SESystem;
+import pulse.cdm.system.equipment.SEEquipment;
 
-public class SEInhaler implements SESystem
+public class SEInhaler extends SEEquipment
 {
   protected eSwitch        state;
   protected SEScalarMass   meteredDose;

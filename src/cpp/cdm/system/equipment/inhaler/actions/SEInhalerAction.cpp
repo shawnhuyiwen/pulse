@@ -4,7 +4,7 @@
 #include "system/equipment/inhaler/actions/SEInhalerAction.h"
 #include "substance/SESubstanceManager.h"
 
-SEInhalerAction::SEInhalerAction() : SEAction()
+SEInhalerAction::SEInhalerAction() : SEEquipmentAction()
 {
 
 }
@@ -16,10 +16,10 @@ SEInhalerAction::~SEInhalerAction()
 
 void SEInhalerAction::Clear()
 {
-  SEAction::Clear();
+  SEEquipmentAction::Clear();
 }
 
 bool SEInhalerAction::IsValid() const
 {
-  return SEAction::IsValid();
+  return SEEquipmentAction::IsValid();
 }

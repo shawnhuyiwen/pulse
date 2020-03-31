@@ -33,7 +33,7 @@ import pulse.cdm.properties.CommonUnits.VolumePerTimeUnit;
 import pulse.cdm.properties.CommonUnits.VolumeUnit;
 import pulse.cdm.substance.SESubstance;
 import pulse.cdm.substance.SESubstanceManager;
-import pulse.cdm.system.equipment.anesthesia.actions.SEAnesthesiaMachineConfiguration;
+import pulse.cdm.system.equipment.anesthesia_machine.actions.SEAnesthesiaMachineConfiguration;
 import pulse.engine.bind.Pulse;
 import pulse.utilities.FileUtils;
 import pulse.utilities.Log;
@@ -84,7 +84,7 @@ public class SEScenario
       anes.getConfiguration().getPositiveEndExpiredPressure().setValue(1.0, PressureUnit.cmH2O);
       anes.getConfiguration().setPrimaryGas(ePrimaryGas.Nitrogen);
       anes.getConfiguration().getRespiratoryRate().setValue(16.0, FrequencyUnit.Per_min);
-      anes.getConfiguration().getVentilatorPressure().setValue(10.5, PressureUnit.cmH2O);      
+      anes.getConfiguration().getPeakInspiratoryPressure().setValue(10.5, PressureUnit.cmH2O);      
       anes.getConfiguration().getOxygenBottleOne().getVolume().setValue(660.0, VolumeUnit.L);
       anes.getConfiguration().getOxygenBottleTwo().getVolume().setValue(660.0, VolumeUnit.L);      
       anes.getConfiguration().getRightChamber().setState(eSwitch.On);

@@ -103,8 +103,13 @@ elseif(TYPE STREQUAL "doxygen")
   setup_landing_page(pulse-in-action.html)
   setup_landing_page(news.html)
 elseif(TYPE STREQUAL "protoc")
-  file(REMOVE @SCHEMA_DST@/schema_last_built)
-  execute_process(COMMAND ${CMAKE_COMMAND} -DSRC_ROOT:PATH=@SRC_ROOT@ -DSCHEMA_SRC:STRING=@SCHEMA_SRC@ -Dprotobuf_SRC:PATH=@protobuf_SRC@ -Dprotobuf_DIR:PATH=@protobuf_DIR@ -P "@CMAKE_SOURCE_DIR@/schema/GenerateCDMBindings.cmake")
+  file(REMOVE @CMAKE_SOURCE_DIR@/src/schema/schema_last_built)
+  execute_process(COMMAND ${CMAKE_COMMAND} -DSRC_ROOT:PATH=@CMAKE_SOURCE_DIR@/src
+                                           -Dprotobuf_SRC:PATH=@protobuf_SRC@
+                                           -DProtobuf_PROTOC_EXECUTABLE:PATH=@Protobuf_PROTOC_EXECUTABLE@
+                                           -DPulse_JAVA_API:BOOL=@Pulse_JAVA_API@
+                                           -DPulse_PYTHON_API:BOOL=@Pulse_PYTHON_API@
+                                           -P "@CMAKE_SOURCE_DIR@/src/schema/GenerateBindings.cmake")
 elseif(TYPE STREQUAL "updateBaselines")
   execute_process(COMMAND ${CMAKE_COMMAND} --build "@CMAKE_CURRENT_BINARY_DIR@" --target UpdateVerification)
 elseif(TYPE STREQUAL "rebase")

@@ -6,12 +6,10 @@
 #include "engine/SEActionManager.h"
 #include "patient/actions/SEPatientAction.h"
 #include "engine/SEPatientActionCollection.h"
-#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineAction.h"
-#include "engine/SEAnesthesiaMachineActionCollection.h"
 #include "system/environment/actions/SEEnvironmentAction.h"
 #include "engine/SEEnvironmentActionCollection.h"
-#include "system/equipment/inhaler/actions/SEInhalerAction.h"
-#include "engine/SEInhalerActionCollection.h"
+#include "system/equipment/SEEquipmentAction.h"
+#include "engine/SEEquipmentActionCollection.h"
 #include "substance/SESubstanceManager.h"
 #include "io/protobuf/PBEngine.h"
 
@@ -19,9 +17,8 @@ SEActionManager::SEActionManager(SESubstanceManager& substances) : Loggable(subs
                                                                    m_Substances(substances)
 {
   m_PatientActions = new SEPatientActionCollection(substances);
-  m_AnesthesiaMachineActions = new SEAnesthesiaMachineActionCollection(substances);
   m_EnvironmentActions = new SEEnvironmentActionCollection(substances);
-  m_InhalerActions = new SEInhalerActionCollection(substances);
+  m_EquipmentActions = new SEEquipmentActionCollection(substances);
 }
 
 SEActionManager::~SEActionManager()
@@ -29,16 +26,14 @@ SEActionManager::~SEActionManager()
   Clear();
   delete(m_PatientActions);
   delete(m_EnvironmentActions);
-  delete(m_AnesthesiaMachineActions);
-  delete(m_InhalerActions);
+  delete(m_EquipmentActions);
 }
 
 void SEActionManager::Clear()
 {
   m_PatientActions->Clear();
-  m_AnesthesiaMachineActions->Clear();
   m_EnvironmentActions->Clear();
-  m_InhalerActions->Clear();
+  m_EquipmentActions->Clear();
 }
 
 bool SEActionManager::SerializeToString(std::string& output, SerializationFormat m) const
@@ -89,13 +84,9 @@ bool SEActionManager::ProcessAction(const SEAction& action)
   if (ea != nullptr)
     bRet = m_EnvironmentActions->ProcessAction(*ea);
 
-  const SEAnesthesiaMachineAction* aa = dynamic_cast<const SEAnesthesiaMachineAction*>(&action);
-  if (aa != nullptr)
-    bRet = m_AnesthesiaMachineActions->ProcessAction(*aa);
-
-  const SEInhalerAction* ia = dynamic_cast<const SEInhalerAction*>(&action);
+  const SEEquipmentAction* ia = dynamic_cast<const SEEquipmentAction*>(&action);
   if (ia != nullptr)
-    bRet = m_InhalerActions->ProcessAction(*ia);
+    bRet = m_EquipmentActions->ProcessAction(*ia);
 
   if (!bRet)
   {
@@ -109,8 +100,7 @@ void SEActionManager::GetAllActions(std::vector<const SEAction*>& actions) const
 {
   m_PatientActions->GetAllActions(actions);
   m_EnvironmentActions->GetAllActions(actions);
-  m_AnesthesiaMachineActions->GetAllActions(actions);
-  m_InhalerActions->GetAllActions(actions);
+  m_EquipmentActions->GetAllActions(actions);
 }
 
 

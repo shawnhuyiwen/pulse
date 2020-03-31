@@ -11,6 +11,11 @@ message ActionData
   string                Comment  = 1;
 }
 
+message EquipmentActionData
+{
+  ActionData            Action   = 1;
+}
+
 message AdvanceTimeData
 {
   ActionData            Action   = 1;

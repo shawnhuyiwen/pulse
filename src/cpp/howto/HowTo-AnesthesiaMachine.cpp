@@ -7,11 +7,11 @@
 #include "engine/SEDataRequestManager.h"
 #include "engine/SEEngineTracker.h"
 #include "patient/actions/SESubstanceBolus.h"
-#include "system/equipment/anesthesiamachine/SEAnesthesiaMachine.h"
-#include "system/equipment/anesthesiamachine/SEAnesthesiaMachineOxygenBottle.h"
-#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineConfiguration.h"
-#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineMaskLeak.h"
-#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineOxygenWallPortPressureLoss.h"
+#include "system/equipment/anesthesia_machine/SEAnesthesiaMachine.h"
+#include "system/equipment/anesthesia_machine/SEAnesthesiaMachineOxygenBottle.h"
+#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineConfiguration.h"
+#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineMaskLeak.h"
+#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineOxygenWallPortPressureLoss.h"
 #include "system/physiology/SEBloodChemistrySystem.h"
 #include "system/physiology/SECardiovascularSystem.h"
 #include "system/physiology/SERespiratorySystem.h"
@@ -91,7 +91,7 @@ void HowToAnesthesiaMachine()
   config.SetPrimaryGas(eAnesthesiaMachine_PrimaryGas::Nitrogen);
   config.GetReliefValvePressure().SetValue(20.0, PressureUnit::cmH2O);
   config.GetRespiratoryRate().SetValue(12, FrequencyUnit::Per_min);
-  config.GetVentilatorPressure().SetValue(0.0, PressureUnit::cmH2O);
+  config.GetPeakInspiratoryPressure().SetValue(0.0, PressureUnit::cmH2O);
   config.GetOxygenBottleOne().GetVolume().SetValue(660.0, VolumeUnit::L);
   config.GetOxygenBottleTwo().GetVolume().SetValue(660.0, VolumeUnit::L);
 
@@ -133,7 +133,7 @@ void HowToAnesthesiaMachine()
 
   config.GetInletFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
   config.GetPositiveEndExpiredPressure().SetValue(3.0, PressureUnit::cmH2O);
-  config.GetVentilatorPressure().SetValue(22.0, PressureUnit::cmH2O);
+  config.GetPeakInspiratoryPressure().SetValue(22.0, PressureUnit::cmH2O);
   pe->ProcessAction(AMConfig);
   pe->GetLogger()->Info("Setting the ventilator pressure to drive the machine. Also increasing the inlet flow and positive end expired pressure to test machine controls.");
 
@@ -150,7 +150,7 @@ void HowToAnesthesiaMachine()
   config.GetInspiratoryExpiratoryRatio().SetValue(1.0);
   config.GetPositiveEndExpiredPressure().SetValue(1.0, PressureUnit::cmH2O);
   config.GetRespiratoryRate().SetValue(18.0, FrequencyUnit::Per_min);
-  config.GetVentilatorPressure().SetValue(10.0, PressureUnit::cmH2O);
+  config.GetPeakInspiratoryPressure().SetValue(10.0, PressureUnit::cmH2O);
   pe->ProcessAction(AMConfig);
   pe->GetLogger()->Info("More Anesthesia Machine control manipulation. Increasing respiratory rate, reducing driving pressure and increasing the inspiratory-expiratory ratio.");
 

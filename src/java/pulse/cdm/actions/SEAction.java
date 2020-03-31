@@ -12,7 +12,8 @@ import pulse.cdm.patient.actions.SEPatientAction;
 import pulse.cdm.properties.SEScalarTime;
 import pulse.cdm.substance.SESubstanceManager;
 import pulse.cdm.system.environment.actions.SEEnvironmentAction;
-import pulse.cdm.system.equipment.anesthesia.actions.SEAnesthesiaMachineAction;
+import pulse.cdm.system.equipment.SEEquipmentAction;
+import pulse.cdm.system.equipment.anesthesia_machine.actions.SEAnesthesiaMachineAction;
 import pulse.cdm.system.equipment.inhaler.actions.SEInhalerAction;
 import pulse.utilities.Log;
 
@@ -93,10 +94,8 @@ public abstract class SEAction implements Serializable
         return SEPatientAction.ANY2CDM(any.getPatientAction(), subMgr);
       case ENVIRONMENTACTION:
         return SEEnvironmentAction.ANY2CDM(any.getEnvironmentAction(), subMgr);
-      case ANESTHESIAMACHINEACTION:
-        return SEAnesthesiaMachineAction.ANY2CDM(any.getAnesthesiaMachineAction(), subMgr);
-      case INHALERACTION:
-        return SEInhalerAction.ANY2CDM(any.getInhalerAction(), subMgr);      
+      case EQUIPMENTACTION:
+        return SEEquipmentAction.ANY2CDM(any.getEquipmentAction(), subMgr);
       case SERIALIZE:
       {
         SESerializeState dst = new SESerializeState();
@@ -129,14 +128,9 @@ public abstract class SEAction implements Serializable
       dst.setEnvironmentAction(SEEnvironmentAction.CDM2ANY((SEEnvironmentAction)a));
       return dst.build();
     }
-    if(a instanceof SEAnesthesiaMachineAction)
+    if(a instanceof SEEquipmentAction)
     {
-      dst.setAnesthesiaMachineAction(SEAnesthesiaMachineAction.CDM2ANY((SEAnesthesiaMachineAction)a));
-      return dst.build();
-    }
-    if(a instanceof SEInhalerAction)
-    {
-      dst.setInhalerAction(SEInhalerAction.CDM2ANY((SEInhalerAction)a));
+      dst.setEquipmentAction(SEEquipmentAction.CDM2ANY((SEEquipmentAction)a));
       return dst.build();
     }
     if(a instanceof SESerializeState)

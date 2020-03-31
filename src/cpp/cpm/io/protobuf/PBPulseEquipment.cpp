@@ -12,7 +12,7 @@ POP_PROTO_WARNINGS()
 #include "equipment/AnesthesiaMachine.h"
 #include "equipment/ECG.h"
 #include "equipment/Inhaler.h"
-#include "system/equipment/anesthesiamachine/SEAnesthesiaMachine.h"
+#include "system/equipment/anesthesia_machine/SEAnesthesiaMachine.h"
 #include "system/equipment/electrocardiogram/SEElectroCardioGram.h"
 #include "system/equipment/electrocardiogram/SEElectroCardioGramWaveformInterpolator.h"
 #include "system/equipment/inhaler/SEInhaler.h"

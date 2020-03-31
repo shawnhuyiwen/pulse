@@ -485,8 +485,8 @@
       }
     }
   }, {
-    "AnesthesiaMachineAction": {
-      "Configuration": {
+    "EquipmentAction": {
+      "AnesthesiaMachineConfiguration": {
         "Configuration": {
           "Connection": "Tube",
           "InletFlow": {
@@ -517,7 +517,7 @@
               "Unit": "1/min"
             }
           },
-          "VentilatorPressure": {
+          "PeakInspiratoryPressure": {
             "ScalarPressure": {
               "Value": 10.5,
               "Unit": "cmH2O"
@@ -543,8 +543,8 @@
       }
     }
   }, {
-    "AnesthesiaMachineAction": {
-      "TubeCuffLeak": {
+    "EquipmentAction": {
+      "AnesthesiaMachineTubeCuffLeak": {
         "Severity": {
           "Scalar0To1": {
           }
@@ -561,8 +561,8 @@
       }
     }
   }, {
-    "AnesthesiaMachineAction": {
-      "TubeCuffLeak": {
+    "EquipmentAction": {
+      "AnesthesiaMachineTubeCuffLeak": {
         "Severity": {
           "Scalar0To1": {
             "Value": 0.5
@@ -580,8 +580,8 @@
       }
     }
   }, {
-    "AnesthesiaMachineAction": {
-      "TubeCuffLeak": {
+    "EquipmentAction": {
+      "AnesthesiaMachineTubeCuffLeak": {
         "Severity": {
           "Scalar0To1": {
           }
@@ -598,8 +598,8 @@
       }
     }
   }, {
-    "AnesthesiaMachineAction": {
-      "TubeCuffLeak": {
+    "EquipmentAction": {
+      "AnesthesiaMachineTubeCuffLeak": {
         "Severity": {
           "Scalar0To1": {
             "Value": 1.0
@@ -617,8 +617,8 @@
       }
     }
   }, {
-    "AnesthesiaMachineAction": {
-      "TubeCuffLeak": {
+    "EquipmentAction": {
+      "AnesthesiaMachineTubeCuffLeak": {
         "Severity": {
           "Scalar0To1": {
           }

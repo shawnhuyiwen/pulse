@@ -9,13 +9,11 @@ POP_PROTO_WARNINGS()
 #include "io/protobuf/PBActions.h"
 #include "io/protobuf/PBPatientActions.h"
 #include "io/protobuf/PBEnvironmentActions.h"
-#include "io/protobuf/PBAnesthesiaMachineActions.h"
-#include "io/protobuf/PBInhalerActions.h"
+#include "io/protobuf/PBEquipmentActions.h"
 #include "io/protobuf/PBProperties.h"
 #include "patient/actions/SEPatientAction.h"
 #include "system/environment/actions/SEEnvironmentAction.h"
-#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineAction.h"
-#include "system/equipment/inhaler/actions/SEInhalerAction.h"
+#include "system/equipment/SEEquipmentAction.h"
 #include "engine/SEAdvanceTime.h"
 #include "engine/SESerializeState.h"
 #include "substance/SESubstanceManager.h"
@@ -29,10 +27,8 @@ SEAction* PBAction::Load(const CDM_BIND::AnyActionData& action, SESubstanceManag
     return PBPatientAction::Load(action.patientaction(), subMgr);
   case CDM_BIND::AnyActionData::kEnvironmentAction:
     return PBEnvironmentAction::Load(action.environmentaction(), subMgr);
-  case CDM_BIND::AnyActionData::kAnesthesiaMachineAction:
-    return PBAnesthesiaMachineAction::Load(action.anesthesiamachineaction(), subMgr);
-  case CDM_BIND::AnyActionData::kInhalerAction:
-    return PBInhalerAction::Load(action.inhaleraction(), subMgr);
+  case CDM_BIND::AnyActionData::kEquipmentAction:
+    return PBEquipmentAction::Load(action.equipmentaction(), subMgr);
   case CDM_BIND::AnyActionData::kAdvanceTime:
   {
     SEAdvanceTime* a = new SEAdvanceTime();
@@ -78,16 +74,10 @@ CDM_BIND::AnyActionData* PBAction::Unload(const SEAction& action)
     any->set_allocated_environmentaction(PBEnvironmentAction::Unload(*ea));
     return any;
   }
-  const SEAnesthesiaMachineAction* aa = dynamic_cast<const SEAnesthesiaMachineAction*>(&action);
-  if (aa != nullptr)
+  const SEEquipmentAction* eqa = dynamic_cast<const SEEquipmentAction*>(&action);
+  if (eqa != nullptr)
   {
-    any->set_allocated_anesthesiamachineaction(PBAnesthesiaMachineAction::Unload(*aa));
-    return any;
-  }
-  const SEInhalerAction* ia = dynamic_cast<const SEInhalerAction*>(&action);
-  if (ia != nullptr)
-  {
-    any->set_allocated_inhaleraction(PBInhalerAction::Unload(*ia));
+    any->set_allocated_equipmentaction(PBEquipmentAction::Unload(*eqa));
     return any;
   }
   action.Error("Unsupported Action");

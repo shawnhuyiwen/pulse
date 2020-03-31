@@ -453,8 +453,8 @@
       }
     }
   }, {
-    "AnesthesiaMachineAction": {
-      "Configuration": {
+    "EquipmentAction": {
+      "AnesthesiaMachineConfiguration": {
         "Configuration": {
           "Connection": "Mask",
           "InletFlow": {
@@ -484,7 +484,7 @@
               "Unit": "1/min"
             }
           },
-          "VentilatorPressure": {
+          "PeakInspiratoryPressure": {
             "ScalarPressure": {
               "Unit": "cmH2O"
             }
@@ -518,8 +518,8 @@
       }
     }
   }, {
-    "AnesthesiaMachineAction": {
-      "Configuration": {
+    "EquipmentAction": {
+      "AnesthesiaMachineConfiguration": {
         "Configuration": {
           "Connection": "Mask",
           "OxygenSource": "Wall",
@@ -537,8 +537,8 @@
       }
     }
   }, {
-    "AnesthesiaMachineAction": {
-      "VaporizerFailure": {
+    "EquipmentAction": {
+      "AnesthesiaMachineVaporizerFailure": {
         "Severity": {
           "Scalar0To1": {
             "Value": 1.0
@@ -556,8 +556,8 @@
       }
     }
   }, {
-    "AnesthesiaMachineAction": {
-      "VaporizerFailure": {
+    "EquipmentAction": {
+      "AnesthesiaMachineVaporizerFailure": {
         "Severity": {
           "Scalar0To1": {
             "Value": 0.5
@@ -575,8 +575,8 @@
       }
     }
   }, {
-    "AnesthesiaMachineAction": {
-      "VaporizerFailure": {
+    "EquipmentAction": {
+      "AnesthesiaMachineVaporizerFailure": {
         "Severity": {
           "Scalar0To1": {
           }

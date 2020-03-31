@@ -7,17 +7,9 @@ option optimize_for = SPEED;
 import "pulse/cdm/bind/Inhaler.proto";
 import "pulse/cdm/bind/Actions.proto";
 
-message AnyInhalerActionData
-{
-  oneof Action
-  {
-    InhalerConfigurationData Configuration       = 1;
-  }
-}
-
 message InhalerActionData
 {
-  ActionData                 Action              = 1;
+  EquipmentActionData        EquipmentAction     = 1;
 }
 
 /** @brief The configuration of the inhaler to use. */

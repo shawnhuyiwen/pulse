@@ -43,7 +43,7 @@
 #include "system/physiology/SERenalSystem.h"
 #include "system/physiology/SERespiratorySystem.h"
 #include "system/physiology/SETissueSystem.h"
-#include "system/equipment/anesthesiamachine/SEAnesthesiaMachine.h"
+#include "system/equipment/anesthesia_machine/SEAnesthesiaMachine.h"
 #include "system/equipment/electrocardiogram/SEElectroCardioGram.h"
 #include "system/equipment/inhaler/SEInhaler.h"
 #include "system/environment/SEEnvironment.h"

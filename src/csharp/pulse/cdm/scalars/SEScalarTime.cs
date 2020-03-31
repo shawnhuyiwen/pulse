@@ -14,6 +14,21 @@ public class TimeUnit
   public static TimeUnit day = new TimeUnit("day");
   public static TimeUnit yr = new TimeUnit("yr");
 
+  public static TimeUnit FromString(string u)
+  {
+    if (u == TimeUnit.s.ToString())
+      return TimeUnit.s;
+    if (u == TimeUnit.min.ToString())
+      return TimeUnit.min;
+    if (u == TimeUnit.hr.ToString())
+      return TimeUnit.hr;
+    if (u == TimeUnit.day.ToString())
+      return TimeUnit.day;
+    if (u == TimeUnit.yr.ToString())
+      return TimeUnit.yr;
+
+    throw new System.ArgumentException(u + " is not a know time unit");
+  }
 }
 
 public class SEScalarTime : SEScalar

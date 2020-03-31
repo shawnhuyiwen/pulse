@@ -479,8 +479,8 @@
       }
     }
   }, {
-    "AnesthesiaMachineAction": {
-      "Configuration": {
+    "EquipmentAction": {
+      "AnesthesiaMachineConfiguration": {
         "Configuration": {
           "Connection": "Mask",
           "InletFlow": {
@@ -511,7 +511,7 @@
               "Unit": "1/min"
             }
           },
-          "VentilatorPressure": {
+          "PeakInspiratoryPressure": {
             "ScalarPressure": {
               "Value": 10.5,
               "Unit": "cmH2O"
@@ -537,8 +537,8 @@
       }
     }
   }, {
-    "AnesthesiaMachineAction": {
-      "YPieceDisconnect": {
+    "EquipmentAction": {
+      "AnesthesiaMachineYPieceDisconnect": {
         "Severity": {
           "Scalar0To1": {
           }
@@ -555,8 +555,8 @@
       }
     }
   }, {
-    "AnesthesiaMachineAction": {
-      "YPieceDisconnect": {
+    "EquipmentAction": {
+      "AnesthesiaMachineYPieceDisconnect": {
         "Severity": {
           "Scalar0To1": {
             "Value": 0.5
@@ -574,8 +574,8 @@
       }
     }
   }, {
-    "AnesthesiaMachineAction": {
-      "YPieceDisconnect": {
+    "EquipmentAction": {
+      "AnesthesiaMachineYPieceDisconnect": {
         "Severity": {
           "Scalar0To1": {
           }
@@ -592,8 +592,8 @@
       }
     }
   }, {
-    "AnesthesiaMachineAction": {
-      "YPieceDisconnect": {
+    "EquipmentAction": {
+      "AnesthesiaMachineYPieceDisconnect": {
         "Severity": {
           "Scalar0To1": {
             "Value": 1.0
@@ -611,8 +611,8 @@
       }
     }
   }, {
-    "AnesthesiaMachineAction": {
-      "YPieceDisconnect": {
+    "EquipmentAction": {
+      "AnesthesiaMachineYPieceDisconnect": {
         "Severity": {
           "Scalar0To1": {
           }

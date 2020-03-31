@@ -436,8 +436,8 @@
       }
     }
   }, {
-    "AnesthesiaMachineAction": {
-      "Configuration": {
+    "EquipmentAction": {
+      "AnesthesiaMachineConfiguration": {
         "Configuration": {
           "Connection": "Mask",
           "InletFlow": {
@@ -467,7 +467,7 @@
               "Unit": "1/min"
             }
           },
-          "VentilatorPressure": {
+          "PeakInspiratoryPressure": {
             "ScalarPressure": {
               "Unit": "cmH2O"
             }
@@ -501,8 +501,8 @@
       }
     }
   }, {
-    "AnesthesiaMachineAction": {
-      "OxygenWallPortPressureLoss": {
+    "EquipmentAction": {
+      "AnesthesiaMachineOxygenWallPortPressureLoss": {
         "State": "On"
       }
     }
@@ -516,8 +516,8 @@
       }
     }
   }, {
-    "AnesthesiaMachineAction": {
-      "Configuration": {
+    "EquipmentAction": {
+      "AnesthesiaMachineConfiguration": {
         "Configuration": {
           "OxygenSource": "BottleOne"
         }

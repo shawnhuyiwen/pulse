@@ -7,11 +7,9 @@ import java.util.*;
 
 import com.google.protobuf.*;
 import com.google.protobuf.util.*;
-import pulse.cdm.bind.Environment.EnvironmentData;
 import pulse.cdm.bind.Environment.EnvironmentalConditionsData;
 import pulse.cdm.bind.Environment.EnvironmentalConditionsData.eSurroundingType;
 import pulse.cdm.bind.Substance.SubstanceConcentrationData;
-import pulse.cdm.bind.Substance.SubstanceData;
 import pulse.cdm.bind.Substance.SubstanceData.eState;
 import pulse.cdm.bind.Substance.SubstanceFractionData;
 
@@ -20,7 +18,6 @@ import pulse.utilities.Log;
 
 import pulse.cdm.properties.*;
 import pulse.cdm.substance.SESubstance;
-import pulse.cdm.substance.SESubstanceCompound;
 import pulse.cdm.substance.SESubstanceConcentration;
 import pulse.cdm.substance.SESubstanceFraction;
 import pulse.cdm.substance.SESubstanceManager;
@@ -38,7 +35,7 @@ public class SEEnvironmentalConditions
   protected SEScalar0To1                    relativeHumidity;
   protected SEScalarTemperature             respirationAmbientTemperature;
 
-  protected List<SESubstanceFraction> ambientGases;
+  protected List<SESubstanceFraction>       ambientGases;
   protected List<SESubstanceConcentration>  ambientAerosols;
   
   

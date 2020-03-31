@@ -17,6 +17,28 @@ public class MassPerTimeUnit
   public static MassPerTimeUnit kg_Per_s = new MassPerTimeUnit("kg/s");
   public static MassPerTimeUnit ug_Per_min = new MassPerTimeUnit("ug/min");
 
+  public static MassPerTimeUnit FromString(string u)
+  {
+    if (u == MassPerTimeUnit.g_Per_s.ToString())
+      return MassPerTimeUnit.g_Per_s;
+    if (u == MassPerTimeUnit.g_Per_min.ToString())
+      return MassPerTimeUnit.g_Per_min;
+    if (u == MassPerTimeUnit.g_Per_day.ToString())
+      return MassPerTimeUnit.g_Per_day;
+    if (u == MassPerTimeUnit.mg_Per_s.ToString())
+      return MassPerTimeUnit.mg_Per_s;
+    if (u == MassPerTimeUnit.mg_Per_min.ToString())
+      return MassPerTimeUnit.mg_Per_min;
+    if (u == MassPerTimeUnit.ug_Per_s.ToString())
+      return MassPerTimeUnit.ug_Per_s;
+    if (u == MassPerTimeUnit.kg_Per_s.ToString())
+      return MassPerTimeUnit.kg_Per_s;
+    if (u == MassPerTimeUnit.ug_Per_min.ToString())
+      return MassPerTimeUnit.ug_Per_min;
+
+    throw new System.ArgumentException(u + " is not a know mass per time unit");
+  }
+
 }
 
 public class SEScalarMassPerTime : SEScalar
