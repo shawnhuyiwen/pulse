@@ -113,3 +113,10 @@ public:
   // Pure virtual methods to expose methodology data with
   // virtual double GetXXX(const ScalarUnit& unit) const = 0;
 };
+
+class PULSE_DECL PulseMechanicalVentilator
+{
+public:
+  // Pure virtual methods to expose methodology data with
+  // virtual double GetXXX(const ScalarUnit& unit) const = 0;
+};

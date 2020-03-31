@@ -18,10 +18,11 @@
 #include "physiology/Respiratory.h"
 #include "physiology/Saturation.h"
 #include "physiology/Tissue.h"
-#include "equipment/AnesthesiaMachine.h"
 #include "environment/Environment.h"
+#include "equipment/AnesthesiaMachine.h"
 #include "equipment/ECG.h"
 #include "equipment/Inhaler.h"
+#include "equipment/MechanicalVentilator.h"
 #include "PulseConfiguration.h"
 
 #include "engine/SEConditionManager.h"
@@ -126,6 +127,8 @@ PulseController::PulseController(Logger* logger, const std::string& data_dir) : 
 
   m_Inhaler = std::unique_ptr<Inhaler>(new Inhaler(*this));
 
+  m_MechanicalVentilator = std::unique_ptr<MechanicalVentilator>(new MechanicalVentilator(*this));
+
   m_EventManager = std::unique_ptr<SEEventManager>(new SEEventManager(GetLogger()));
 
   m_Compartments = std::unique_ptr<PulseCompartments>(new PulseCompartments(*this));
@@ -206,6 +209,7 @@ bool PulseController::Initialize(const PulseConfiguration* config, SEPatient con
   m_CardiovascularSystem->Initialize();
   m_RespiratorySystem->Initialize();
   m_AnesthesiaMachine->Initialize();
+  m_MechanicalVentilator->Initialize();
   m_GastrointestinalSystem->Initialize();
   m_HepaticSystem->Initialize();
   m_RenalSystem->Initialize();
@@ -242,6 +246,7 @@ SEEnvironment&            PulseController::GetEnvironment() { return *m_Environm
 SEAnesthesiaMachine&      PulseController::GetAnesthesiaMachine() { return *m_AnesthesiaMachine; }
 SEElectroCardioGram&      PulseController::GetECG() { return *m_ECG; }
 SEInhaler&                PulseController::GetInhaler() { return *m_Inhaler; }
+SEMechanicalVentilator&   PulseController::GetMechanicalVentilator() { return *m_MechanicalVentilator; }
 SEActionManager&          PulseController::GetActions() { return *m_Actions; }
 SEConditionManager&       PulseController::GetConditions() { return *m_Conditions; }
 SEEventManager&           PulseController::GetEvents() { return *m_EventManager; }
@@ -923,6 +928,7 @@ void PulseController::AtSteadyState(EngineState state)
   m_Inhaler->AtSteadyState();
   m_RespiratorySystem->AtSteadyState();
   m_AnesthesiaMachine->AtSteadyState();
+  m_MechanicalVentilator->AtSteadyState();
   m_GastrointestinalSystem->AtSteadyState();
   m_HepaticSystem->AtSteadyState();
   m_RenalSystem->AtSteadyState();
@@ -942,6 +948,7 @@ void PulseController::PreProcess()
   m_Inhaler->PreProcess();
   m_RespiratorySystem->PreProcess();
   m_AnesthesiaMachine->PreProcess();
+  m_MechanicalVentilator->PreProcess();
   m_GastrointestinalSystem->PreProcess();
   m_HepaticSystem->PreProcess();
   m_RenalSystem->PreProcess();
@@ -960,6 +967,7 @@ void PulseController::Process()
   m_Inhaler->Process();
   m_RespiratorySystem->Process();
   m_AnesthesiaMachine->Process();
+  m_MechanicalVentilator->Process();
   m_GastrointestinalSystem->Process();
   m_HepaticSystem->Process();
   m_RenalSystem->Process();
@@ -978,6 +986,7 @@ void PulseController::PostProcess()
   m_Inhaler->PostProcess();
   m_RespiratorySystem->PostProcess();
   m_AnesthesiaMachine->PostProcess();
+  m_MechanicalVentilator->PostProcess();
   m_GastrointestinalSystem->PostProcess();
   m_HepaticSystem->PostProcess();
   m_RenalSystem->PostProcess();
@@ -1082,10 +1091,11 @@ bool PulseController::CreateCircuitsAndCompartments()
   SetupRespiratory();
   SetupAnesthesiaMachine();
   SetupInhaler();
-  SetupNasalCannula();
-  SetupSimpleMask();
-  SetupNonRebreatherMask();
+  SetupMechanicalVentilation();
   SetupMechanicalVentilator();
+  SetupNasalCannula();
+  SetupNonRebreatherMask();
+  SetupSimpleMask();
 
   m_Compartments->StateChange();
   return true;
@@ -4347,6 +4357,83 @@ void PulseController::SetupInhaler()
   lCombinedInhaler.StateChange();
 }
 
+void PulseController::SetupMechanicalVentilation()
+{
+  Info("Setting Up MechanicalVentilation");
+  /////////////////////// Circuit Interdependencies
+  SEFluidCircuit& cRespiratory = m_Circuits->GetRespiratoryCircuit();
+  SEGasCompartmentGraph& gRespiratory = m_Compartments->GetRespiratoryGraph();
+  SELiquidCompartmentGraph& lAerosol = m_Compartments->GetAerosolGraph();
+  ///////////////////////
+
+  //Combined Respiratory and Mechanical Ventilation Circuit
+  SEFluidCircuit& m_CombinedMechanicalVentilation = m_Circuits->GetRespiratoryAndMechanicalVentilationCircuit();
+  m_CombinedMechanicalVentilation.AddCircuit(cRespiratory);
+  // Grab connection points/nodes
+  SEFluidCircuitNode& Mouth = *cRespiratory.GetNode(pulse::RespiratoryNode::Mouth);
+  SEFluidCircuitNode& Ambient = *cRespiratory.GetNode(pulse::EnvironmentNode::Ambient);
+  // Define node on the combined graph, this is a simple circuit, no reason to make a independent circuit at this point
+  SEFluidCircuitNode& Connection = m_CombinedMechanicalVentilation.CreateNode(pulse::MechanicalVentilationNode::Connection);
+  Connection.GetPressure().Set(Ambient.GetPressure());
+  Connection.GetNextPressure().Set(Ambient.GetNextPressure());
+  Connection.GetVolumeBaseline().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::L);
+  // Paths
+  SEFluidCircuitPath& ConnectionToMouth = m_CombinedMechanicalVentilation.CreatePath(Connection, Mouth, pulse::MechanicalVentilationPath::ConnectionToMouth);
+  //ConnectionToMouth.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::L_Per_s); //We add this on the fly, it can only be there when explicitly set
+  SEFluidCircuitPath& GroundToConnection = m_CombinedMechanicalVentilation.CreatePath(Ambient, Connection, pulse::MechanicalVentilationPath::GroundToConnection);
+  GroundToConnection.GetPressureSourceBaseline().SetValue(0.0, PressureUnit::cmH2O);
+  m_CombinedMechanicalVentilation.RemovePath(pulse::RespiratoryPath::EnvironmentToMouth);
+  m_CombinedMechanicalVentilation.SetNextAndCurrentFromBaselines();
+  m_CombinedMechanicalVentilation.StateChange();
+
+  //////////////////////
+  // GAS COMPARTMENTS //
+  SEGasCompartment* gMouth = m_Compartments->GetGasCompartment(pulse::PulmonaryCompartment::Mouth);
+  SEGasCompartment* gAmbient = m_Compartments->GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
+  //////////////////
+  // Compartments //
+  SEGasCompartment& gConnection = m_Compartments->CreateGasCompartment(pulse::MechanicalVentilationCompartment::Connection);
+  gConnection.MapNode(Connection);
+  ///////////
+  // Links //  
+  SEGasCompartmentLink& gConnectionToMouth = m_Compartments->CreateGasLink(gConnection, *gMouth, pulse::MechanicalVentilationLink::ConnectionToMouth);
+  gConnectionToMouth.MapPath(ConnectionToMouth);
+  ///////////
+  // Graph //
+  SEGasCompartmentGraph& gCombinedMechanicalVentilation = m_Compartments->GetRespiratoryAndMechanicalVentilationGraph();
+  gCombinedMechanicalVentilation.AddGraph(gRespiratory);
+  gCombinedMechanicalVentilation.RemoveLink(pulse::PulmonaryLink::EnvironmentToMouth);
+  gCombinedMechanicalVentilation.AddCompartment(gConnection);
+  gCombinedMechanicalVentilation.AddLink(gConnectionToMouth);
+  gCombinedMechanicalVentilation.StateChange();
+
+  ///////////////////////////////////
+  // LIQUID (AEROSOL) COMPARTMENTS //
+  SELiquidCompartment* lMouth = m_Compartments->GetLiquidCompartment(pulse::PulmonaryCompartment::Mouth);
+  SELiquidCompartment* lAmbient = m_Compartments->GetLiquidCompartment(pulse::EnvironmentCompartment::Ambient);
+  //////////////////
+  // Compartments //
+  SELiquidCompartment& lConnection = m_Compartments->CreateLiquidCompartment(pulse::MechanicalVentilationCompartment::Connection);
+  lConnection.MapNode(Connection);
+  ///////////
+  // Links //  
+  SELiquidCompartmentLink& lConnectionToMouth = m_Compartments->CreateLiquidLink(lConnection, *lMouth, pulse::MechanicalVentilationLink::ConnectionToMouth);
+  lConnectionToMouth.MapPath(ConnectionToMouth);
+  ///////////
+  // Graph //
+  SELiquidCompartmentGraph& lCombinedMechanicalVentilation = m_Compartments->GetAerosolAndMechanicalVentilationGraph();
+  lCombinedMechanicalVentilation.AddGraph(lAerosol);
+  lCombinedMechanicalVentilation.RemoveLink(pulse::PulmonaryLink::EnvironmentToMouth);
+  lCombinedMechanicalVentilation.AddCompartment(lConnection);
+  lCombinedMechanicalVentilation.AddLink(lConnectionToMouth);
+  lCombinedMechanicalVentilation.StateChange();
+}
+
+void PulseController::SetupMechanicalVentilator()
+{
+  Info("Setting Up MechanicalVentilator");
+  // jbw
+}
 void PulseController::SetupNasalCannula()
 {
   Info("Setting Up Nasal Cannula");
@@ -4410,80 +4497,6 @@ void PulseController::SetupNasalCannula()
   gCombinedNasalCannula.AddLink(gSeal);
   gCombinedNasalCannula.AddLink(gNasalCannulaToMouth);
   gCombinedNasalCannula.StateChange();
-}
-
-void PulseController::SetupSimpleMask()
-{
-  Info("Setting Up Simple Mask");
-  /////////////////////// Circuit Interdependencies
-  SEFluidCircuit& cRespiratory = m_Circuits->GetRespiratoryCircuit();
-  SEGasCompartmentGraph& gRespiratory = m_Compartments->GetRespiratoryGraph();
-  double OpenResistance_cmH2O_s_Per_L = m_Config->GetDefaultOpenFlowResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L); //open switch resistance is super high (i.e., tight seal)
-  double PortsResistance_cmH2O_s_Per_L = 0.1;
-  ///////////////////////
-
-  //Combined Respiratory and Simple Mask Circuit
-  SEFluidCircuit& CombinedSimpleMask = m_Circuits->GetRespiratoryAndSimpleMaskCircuit();
-  CombinedSimpleMask.AddCircuit(cRespiratory);
-  // Grab connection points/nodes
-  SEFluidCircuitNode& Mouth = *cRespiratory.GetNode(pulse::RespiratoryNode::Mouth);
-  SEFluidCircuitNode& Ambient = *cRespiratory.GetNode(pulse::EnvironmentNode::Ambient);
-  // Define node on the combined graph, this is a simple circuit, no reason to make a independent circuit at this point
-  SEFluidCircuitNode& Mask = CombinedSimpleMask.CreateNode(pulse::SimpleMaskNode::SimpleMask);
-  Mask.GetPressure().SetValue(0.0, PressureUnit::cmH2O);
-  Mask.GetNextPressure().SetValue(0.0, PressureUnit::cmH2O);
-  Mask.GetVolumeBaseline().SetValue(0.5, VolumeUnit::L);
-  SEFluidCircuitNode& OxygenSource = CombinedSimpleMask.CreateNode(pulse::SimpleMaskNode::SimpleMaskOxygenSource);
-  OxygenSource.GetPressure().SetValue(0.0, PressureUnit::cmH2O);
-  OxygenSource.GetNextPressure().SetValue(0.0, PressureUnit::cmH2O);
-  OxygenSource.GetVolumeBaseline().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::L);
-  // Define path on the combined graph, this is a simple circuit, no reason to make a independent circuit at this point
-  SEFluidCircuitPath& GroundToOxygenSource = CombinedSimpleMask.CreatePath(Ambient, OxygenSource, pulse::SimpleMaskPath::SimpleMaskPressure);
-  GroundToOxygenSource.GetPressureSourceBaseline().SetValue(2000.0, PressureUnit::psi);
-  SEFluidCircuitPath& OxygenInlet = CombinedSimpleMask.CreatePath(OxygenSource, Mask, pulse::SimpleMaskPath::SimpleMaskOxygenInlet);
-  OxygenInlet.GetResistanceBaseline().SetValue(OpenResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  SEFluidCircuitPath& Seal = CombinedSimpleMask.CreatePath(Ambient, Mask, pulse::SimpleMaskPath::SimpleMaskSeal);
-  Seal.GetResistanceBaseline().SetValue(OpenResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  SEFluidCircuitPath& Ports = CombinedSimpleMask.CreatePath(Mask, Ambient, pulse::SimpleMaskPath::SimpleMaskPorts);
-  Ports.GetResistanceBaseline().SetValue(PortsResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  // Connect Path
-  SEFluidCircuitPath& MaskToMouth = CombinedSimpleMask.CreatePath(Mask, Mouth, pulse::SimpleMaskPath::SimpleMaskToMouth);
-  CombinedSimpleMask.RemovePath(pulse::RespiratoryPath::EnvironmentToMouth);
-  CombinedSimpleMask.SetNextAndCurrentFromBaselines();
-  CombinedSimpleMask.StateChange();
-
-  //////////////////////
-  // GAS COMPARTMENTS //
-  SEGasCompartment* gMouth = m_Compartments->GetGasCompartment(pulse::PulmonaryCompartment::Mouth);
-  SEGasCompartment* gAmbient = m_Compartments->GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
-  //////////////////
-  // Compartments //
-  SEGasCompartment& gMask = m_Compartments->CreateGasCompartment(pulse::SimpleMaskCompartment::SimpleMask);
-  gMask.MapNode(Mask);
-  SEGasCompartment& gOxygenSource = m_Compartments->CreateGasCompartment(pulse::SimpleMaskCompartment::SimpleMaskOxygenSource);
-  gOxygenSource.MapNode(OxygenSource);
-  ///////////
-  // Links //
-  SEGasCompartmentLink& gOxygenInlet = m_Compartments->CreateGasLink(gOxygenSource, gMask, pulse::SimpleMaskLink::SimpleMaskOxygenInlet);
-  gOxygenInlet.MapPath(OxygenInlet);
-  SEGasCompartmentLink& gSeal = m_Compartments->CreateGasLink(*gAmbient, gMask, pulse::SimpleMaskLink::SimpleMaskSeal);
-  gSeal.MapPath(Seal);
-  SEGasCompartmentLink& gPorts = m_Compartments->CreateGasLink(gMask, *gAmbient, pulse::SimpleMaskLink::SimpleMaskPorts);
-  gPorts.MapPath(Ports);
-  SEGasCompartmentLink& gMaskToMouth = m_Compartments->CreateGasLink(gMask, *gMouth, pulse::SimpleMaskLink::SimpleMaskToMouth);
-  gMaskToMouth.MapPath(MaskToMouth);
-  ///////////
-  // Graph //
-  SEGasCompartmentGraph& gCombinedSimpleMask = m_Compartments->GetRespiratoryAndSimpleMaskGraph();
-  gCombinedSimpleMask.AddGraph(gRespiratory);
-  gCombinedSimpleMask.RemoveLink(pulse::PulmonaryLink::EnvironmentToMouth);
-  gCombinedSimpleMask.AddCompartment(gMask);
-  gCombinedSimpleMask.AddCompartment(gOxygenSource);
-  gCombinedSimpleMask.AddLink(gOxygenInlet);
-  gCombinedSimpleMask.AddLink(gSeal);
-  gCombinedSimpleMask.AddLink(gPorts);
-  gCombinedSimpleMask.AddLink(gMaskToMouth);
-  gCombinedSimpleMask.StateChange();
 }
 
 void PulseController::SetupNonRebreatherMask()
@@ -4582,34 +4595,45 @@ void PulseController::SetupNonRebreatherMask()
   gCombinedNonRebreatherMask.StateChange();
 }
 
-void PulseController::SetupMechanicalVentilator()
+void PulseController::SetupSimpleMask()
 {
-  Info("Setting Up MechanicalVentilator");
+  Info("Setting Up Simple Mask");
   /////////////////////// Circuit Interdependencies
   SEFluidCircuit& cRespiratory = m_Circuits->GetRespiratoryCircuit();
   SEGasCompartmentGraph& gRespiratory = m_Compartments->GetRespiratoryGraph();
-  SELiquidCompartmentGraph& lAerosol = m_Compartments->GetAerosolGraph();
+  double OpenResistance_cmH2O_s_Per_L = m_Config->GetDefaultOpenFlowResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L); //open switch resistance is super high (i.e., tight seal)
+  double PortsResistance_cmH2O_s_Per_L = 0.1;
   ///////////////////////
 
-  //Combined Respiratory and Mechanical Ventilator Circuit
-  SEFluidCircuit& m_CombinedMechanicalVentilator = m_Circuits->GetRespiratoryAndMechanicalVentilatorCircuit();
-  m_CombinedMechanicalVentilator.AddCircuit(cRespiratory);
+  //Combined Respiratory and Simple Mask Circuit
+  SEFluidCircuit& CombinedSimpleMask = m_Circuits->GetRespiratoryAndSimpleMaskCircuit();
+  CombinedSimpleMask.AddCircuit(cRespiratory);
   // Grab connection points/nodes
   SEFluidCircuitNode& Mouth = *cRespiratory.GetNode(pulse::RespiratoryNode::Mouth);
   SEFluidCircuitNode& Ambient = *cRespiratory.GetNode(pulse::EnvironmentNode::Ambient);
   // Define node on the combined graph, this is a simple circuit, no reason to make a independent circuit at this point
-  SEFluidCircuitNode& Connection = m_CombinedMechanicalVentilator.CreateNode(pulse::MechanicalVentilatorNode::Connection);
-  Connection.GetPressure().Set(Ambient.GetPressure());
-  Connection.GetNextPressure().Set(Ambient.GetNextPressure());
-  Connection.GetVolumeBaseline().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::L);
-  // Paths
-  SEFluidCircuitPath& ConnectionToMouth = m_CombinedMechanicalVentilator.CreatePath(Connection, Mouth, pulse::MechanicalVentilatorPath::ConnectionToMouth);
-  //ConnectionToMouth.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::L_Per_s); //We add this on the fly, it can only be there when explicitly set
-  SEFluidCircuitPath& GroundToConnection = m_CombinedMechanicalVentilator.CreatePath(Ambient, Connection, pulse::MechanicalVentilatorPath::GroundToConnection);
-  GroundToConnection.GetPressureSourceBaseline().SetValue(0.0, PressureUnit::cmH2O);
-  m_CombinedMechanicalVentilator.RemovePath(pulse::RespiratoryPath::EnvironmentToMouth);
-  m_CombinedMechanicalVentilator.SetNextAndCurrentFromBaselines();
-  m_CombinedMechanicalVentilator.StateChange();
+  SEFluidCircuitNode& Mask = CombinedSimpleMask.CreateNode(pulse::SimpleMaskNode::SimpleMask);
+  Mask.GetPressure().SetValue(0.0, PressureUnit::cmH2O);
+  Mask.GetNextPressure().SetValue(0.0, PressureUnit::cmH2O);
+  Mask.GetVolumeBaseline().SetValue(0.5, VolumeUnit::L);
+  SEFluidCircuitNode& OxygenSource = CombinedSimpleMask.CreateNode(pulse::SimpleMaskNode::SimpleMaskOxygenSource);
+  OxygenSource.GetPressure().SetValue(0.0, PressureUnit::cmH2O);
+  OxygenSource.GetNextPressure().SetValue(0.0, PressureUnit::cmH2O);
+  OxygenSource.GetVolumeBaseline().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::L);
+  // Define path on the combined graph, this is a simple circuit, no reason to make a independent circuit at this point
+  SEFluidCircuitPath& GroundToOxygenSource = CombinedSimpleMask.CreatePath(Ambient, OxygenSource, pulse::SimpleMaskPath::SimpleMaskPressure);
+  GroundToOxygenSource.GetPressureSourceBaseline().SetValue(2000.0, PressureUnit::psi);
+  SEFluidCircuitPath& OxygenInlet = CombinedSimpleMask.CreatePath(OxygenSource, Mask, pulse::SimpleMaskPath::SimpleMaskOxygenInlet);
+  OxygenInlet.GetResistanceBaseline().SetValue(OpenResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  SEFluidCircuitPath& Seal = CombinedSimpleMask.CreatePath(Ambient, Mask, pulse::SimpleMaskPath::SimpleMaskSeal);
+  Seal.GetResistanceBaseline().SetValue(OpenResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  SEFluidCircuitPath& Ports = CombinedSimpleMask.CreatePath(Mask, Ambient, pulse::SimpleMaskPath::SimpleMaskPorts);
+  Ports.GetResistanceBaseline().SetValue(PortsResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  // Connect Path
+  SEFluidCircuitPath& MaskToMouth = CombinedSimpleMask.CreatePath(Mask, Mouth, pulse::SimpleMaskPath::SimpleMaskToMouth);
+  CombinedSimpleMask.RemovePath(pulse::RespiratoryPath::EnvironmentToMouth);
+  CombinedSimpleMask.SetNextAndCurrentFromBaselines();
+  CombinedSimpleMask.StateChange();
 
   //////////////////////
   // GAS COMPARTMENTS //
@@ -4617,41 +4641,32 @@ void PulseController::SetupMechanicalVentilator()
   SEGasCompartment* gAmbient = m_Compartments->GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
   //////////////////
   // Compartments //
-  SEGasCompartment& gConnection = m_Compartments->CreateGasCompartment(pulse::MechanicalVentilatorCompartment::Connection);
-  gConnection.MapNode(Connection);
+  SEGasCompartment& gMask = m_Compartments->CreateGasCompartment(pulse::SimpleMaskCompartment::SimpleMask);
+  gMask.MapNode(Mask);
+  SEGasCompartment& gOxygenSource = m_Compartments->CreateGasCompartment(pulse::SimpleMaskCompartment::SimpleMaskOxygenSource);
+  gOxygenSource.MapNode(OxygenSource);
   ///////////
-  // Links //  
-  SEGasCompartmentLink& gConnectionToMouth = m_Compartments->CreateGasLink(gConnection, *gMouth, pulse::MechanicalVentilatorLink::ConnectionToMouth);
-  gConnectionToMouth.MapPath(ConnectionToMouth);
-  ///////////
-  // Graph //
-  SEGasCompartmentGraph& gCombinedMechanicalVentilator = m_Compartments->GetRespiratoryAndMechanicalVentilatorGraph();
-  gCombinedMechanicalVentilator.AddGraph(gRespiratory);
-  gCombinedMechanicalVentilator.RemoveLink(pulse::PulmonaryLink::EnvironmentToMouth);
-  gCombinedMechanicalVentilator.AddCompartment(gConnection);
-  gCombinedMechanicalVentilator.AddLink(gConnectionToMouth);
-  gCombinedMechanicalVentilator.StateChange();
-
-  ///////////////////////////////////
-  // LIQUID (AEROSOL) COMPARTMENTS //
-  SELiquidCompartment* lMouth = m_Compartments->GetLiquidCompartment(pulse::PulmonaryCompartment::Mouth);
-  SELiquidCompartment* lAmbient = m_Compartments->GetLiquidCompartment(pulse::EnvironmentCompartment::Ambient);
-  //////////////////
-  // Compartments //
-  SELiquidCompartment& lConnection = m_Compartments->CreateLiquidCompartment(pulse::MechanicalVentilatorCompartment::Connection);
-  lConnection.MapNode(Connection);
-  ///////////
-  // Links //  
-  SELiquidCompartmentLink& lConnectionToMouth = m_Compartments->CreateLiquidLink(lConnection, *lMouth, pulse::MechanicalVentilatorLink::ConnectionToMouth);
-  lConnectionToMouth.MapPath(ConnectionToMouth);
+  // Links //
+  SEGasCompartmentLink& gOxygenInlet = m_Compartments->CreateGasLink(gOxygenSource, gMask, pulse::SimpleMaskLink::SimpleMaskOxygenInlet);
+  gOxygenInlet.MapPath(OxygenInlet);
+  SEGasCompartmentLink& gSeal = m_Compartments->CreateGasLink(*gAmbient, gMask, pulse::SimpleMaskLink::SimpleMaskSeal);
+  gSeal.MapPath(Seal);
+  SEGasCompartmentLink& gPorts = m_Compartments->CreateGasLink(gMask, *gAmbient, pulse::SimpleMaskLink::SimpleMaskPorts);
+  gPorts.MapPath(Ports);
+  SEGasCompartmentLink& gMaskToMouth = m_Compartments->CreateGasLink(gMask, *gMouth, pulse::SimpleMaskLink::SimpleMaskToMouth);
+  gMaskToMouth.MapPath(MaskToMouth);
   ///////////
   // Graph //
-  SELiquidCompartmentGraph& lCombinedMechanicalVentilator = m_Compartments->GetAerosolAndMechanicalVentilatorGraph();
-  lCombinedMechanicalVentilator.AddGraph(lAerosol);
-  lCombinedMechanicalVentilator.RemoveLink(pulse::PulmonaryLink::EnvironmentToMouth);
-  lCombinedMechanicalVentilator.AddCompartment(lConnection);
-  lCombinedMechanicalVentilator.AddLink(lConnectionToMouth);
-  lCombinedMechanicalVentilator.StateChange();
+  SEGasCompartmentGraph& gCombinedSimpleMask = m_Compartments->GetRespiratoryAndSimpleMaskGraph();
+  gCombinedSimpleMask.AddGraph(gRespiratory);
+  gCombinedSimpleMask.RemoveLink(pulse::PulmonaryLink::EnvironmentToMouth);
+  gCombinedSimpleMask.AddCompartment(gMask);
+  gCombinedSimpleMask.AddCompartment(gOxygenSource);
+  gCombinedSimpleMask.AddLink(gOxygenInlet);
+  gCombinedSimpleMask.AddLink(gSeal);
+  gCombinedSimpleMask.AddLink(gPorts);
+  gCombinedSimpleMask.AddLink(gMaskToMouth);
+  gCombinedSimpleMask.StateChange();
 }
 
 void PulseController::SetupExternalTemperature()

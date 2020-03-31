@@ -95,14 +95,17 @@ namespace pulse {
     DEFINE_STATIC_STRING(Respiratory);
     DEFINE_STATIC_STRING(RespiratoryAndAnesthesiaMachine);
     DEFINE_STATIC_STRING(RespiratoryAndInhaler);
-    DEFINE_STATIC_STRING(RespiratoryAndNasalCannula);
-    DEFINE_STATIC_STRING(RespiratoryAndSimpleMask);
-    DEFINE_STATIC_STRING(RespiratoryAndNonRebreatherMask);
+    DEFINE_STATIC_STRING(RespiratoryAndMechanicalVentilation);
     DEFINE_STATIC_STRING(RespiratoryAndMechanicalVentilator);
+    DEFINE_STATIC_STRING(RespiratoryAndNasalCannula);
+    DEFINE_STATIC_STRING(RespiratoryAndNonRebreatherMask);
+    DEFINE_STATIC_STRING(RespiratoryAndSimpleMask);
     DEFINE_STATIC_STRING(Aerosol);
     DEFINE_STATIC_STRING(AerosolAndInhaler);
+    DEFINE_STATIC_STRING(AerosolAndMechanicalVentilation);
     DEFINE_STATIC_STRING(AerosolAndMechanicalVentilator);
     DEFINE_STATIC_STRING(AnesthesiaMachine);
+    DEFINE_STATIC_STRING(MechanicalVentilator);
 
     static const std::vector<std::string>& GetValues()
     {
@@ -115,14 +118,17 @@ namespace pulse {
         _values.push_back(Respiratory);
         _values.push_back(RespiratoryAndAnesthesiaMachine);
         _values.push_back(RespiratoryAndInhaler);
-        _values.push_back(RespiratoryAndNasalCannula);
-        _values.push_back(RespiratoryAndSimpleMask);
-        _values.push_back(RespiratoryAndNonRebreatherMask);
+        _values.push_back(RespiratoryAndMechanicalVentilation);
         _values.push_back(RespiratoryAndMechanicalVentilator);
+        _values.push_back(RespiratoryAndNasalCannula);
+        _values.push_back(RespiratoryAndNonRebreatherMask);
+        _values.push_back(RespiratoryAndSimpleMask);
         _values.push_back(Aerosol);
         _values.push_back(AerosolAndInhaler);
+        _values.push_back(AerosolAndMechanicalVentilation);
         _values.push_back(AerosolAndMechanicalVentilator);
         _values.push_back(AnesthesiaMachine);
+        _values.push_back(MechanicalVentilator);
       }
       return _values;
     }
@@ -1063,6 +1069,78 @@ namespace pulse {
     static std::vector<std::string> _values;
   };
 
+  class MechanicalVentilationCompartment
+  {
+  public:
+    DEFINE_STATIC_STRING(Connection);
+
+    static const std::vector<std::string>& GetValues()
+    {
+      ScopedMutex lock;
+      if (_values.empty())
+      {
+        _values.push_back(Connection);
+      }
+      return _values;
+    }
+  protected:
+    static std::vector<std::string> _values;
+  };
+
+  class MechanicalVentilationLink
+  {
+  public:
+    DEFINE_STATIC_STRING(ConnectionToMouth);
+
+    static const std::vector<std::string>& GetValues()
+    {
+      ScopedMutex lock;
+      if (_values.empty())
+      {
+        _values.push_back(ConnectionToMouth);
+      }
+      return _values;
+    }
+  protected:
+    static std::vector<std::string> _values;
+  };
+  
+  class MechanicalVentilatorCompartment // jbw
+  {
+  public:
+    DEFINE_STATIC_STRING(Connection);
+
+    static const std::vector<std::string>& GetValues()
+    {
+      ScopedMutex lock;
+      if (_values.empty())
+      {
+        _values.push_back(Connection);
+      }
+      return _values;
+    }
+  protected:
+    static std::vector<std::string> _values;
+  };
+
+  class MechanicalVentilatorLink // jbw
+  {
+  public:
+    DEFINE_STATIC_STRING(ConnectionToMouth);
+
+    static const std::vector<std::string>& GetValues()
+    {
+      ScopedMutex lock;
+      if (_values.empty())
+      {
+        _values.push_back(ConnectionToMouth);
+      }
+      return _values;
+    }
+  protected:
+    static std::vector<std::string> _values;
+  };
+
   class NasalCannulaCompartment
   {
   public:
@@ -1098,50 +1176,6 @@ namespace pulse {
         _values.push_back(NasalCannulaOxygenInlet);
         _values.push_back(NasalCannulaSeal);
         _values.push_back(NasalCannulaToMouth);
-      }
-      return _values;
-    }
-  protected:
-    static std::vector<std::string> _values;
-  };
-
-  class SimpleMaskCompartment
-  {
-  public:
-    DEFINE_STATIC_STRING(SimpleMaskOxygenSource);
-    DEFINE_STATIC_STRING(SimpleMask);
-
-    static const std::vector<std::string>& GetValues()
-    {
-      ScopedMutex lock;
-      if (_values.empty())
-      {
-        _values.push_back(SimpleMaskOxygenSource);
-        _values.push_back(SimpleMask);
-      }
-      return _values;
-    }
-  protected:
-    static std::vector<std::string> _values;
-  };
-
-  class SimpleMaskLink
-  {
-  public:
-    DEFINE_STATIC_STRING(SimpleMaskOxygenInlet);
-    DEFINE_STATIC_STRING(SimpleMaskSeal);
-    DEFINE_STATIC_STRING(SimpleMaskPorts);
-    DEFINE_STATIC_STRING(SimpleMaskToMouth);
-
-    static const std::vector<std::string>& GetValues()
-    {
-      ScopedMutex lock;
-      if (_values.empty())
-      {
-        _values.push_back(SimpleMaskOxygenInlet);
-        _values.push_back(SimpleMaskSeal);
-        _values.push_back(SimpleMaskPorts);
-        _values.push_back(SimpleMaskToMouth);
       }
       return _values;
     }
@@ -1201,17 +1235,19 @@ namespace pulse {
     static std::vector<std::string> _values;
   };
 
-  class MechanicalVentilatorCompartment
+  class SimpleMaskCompartment
   {
   public:
-    DEFINE_STATIC_STRING(Connection);
+    DEFINE_STATIC_STRING(SimpleMaskOxygenSource);
+    DEFINE_STATIC_STRING(SimpleMask);
 
     static const std::vector<std::string>& GetValues()
     {
       ScopedMutex lock;
       if (_values.empty())
       {
-        _values.push_back(Connection);
+        _values.push_back(SimpleMaskOxygenSource);
+        _values.push_back(SimpleMask);
       }
       return _values;
     }
@@ -1219,17 +1255,23 @@ namespace pulse {
     static std::vector<std::string> _values;
   };
 
-  class MechanicalVentilatorLink
+  class SimpleMaskLink
   {
   public:
-    DEFINE_STATIC_STRING(ConnectionToMouth);
+    DEFINE_STATIC_STRING(SimpleMaskOxygenInlet);
+    DEFINE_STATIC_STRING(SimpleMaskSeal);
+    DEFINE_STATIC_STRING(SimpleMaskPorts);
+    DEFINE_STATIC_STRING(SimpleMaskToMouth);
 
     static const std::vector<std::string>& GetValues()
     {
       ScopedMutex lock;
       if (_values.empty())
       {
-        _values.push_back(ConnectionToMouth);
+        _values.push_back(SimpleMaskOxygenInlet);
+        _values.push_back(SimpleMaskSeal);
+        _values.push_back(SimpleMaskPorts);
+        _values.push_back(SimpleMaskToMouth);
       }
       return _values;
     }
@@ -1237,4 +1279,3 @@ namespace pulse {
     static std::vector<std::string> _values;
   };
 }
-

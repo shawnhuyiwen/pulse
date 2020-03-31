@@ -19,13 +19,14 @@ import "pulse/engine/bind/PulseConfiguration.proto";
 
 enum eAirwayMode
 {
-  Free                                                             = 0;
-  AnesthesiaMachine                                                = 1;
-  Inhaler                                                          = 2;
-  MechanicalVentilator                                             = 3;
-  NasalCannula                                                     = 4;
-  SimpleMask                                                       = 5;
-  NonRebreatherMask                                                = 6;
+  Free                                                             = 0;/**<<@brief Nothing hooked up to the patient airway */
+  AnesthesiaMachine                                                = 1;/**<<@brief Hooked up to this equipment */
+  Inhaler                                                          = 2;/**<<@brief Hooked up to this equipment */
+  MechanicalVentilation                                            = 3;/**<<@brief Physical ventilation being performed */
+  MechanicalVentilator                                             = 4;/**<<@brief Hooked up to this equipment */
+  NasalCannula                                                     = 5;/**<<@brief Hooked up to this equipment */
+  NonRebreatherMask                                                = 6;/**<<@brief Hooked up to this equipment */
+  SimpleMask                                                       = 7;/**<<@brief Hooked up to this equipment */
 }
 
 message StateData

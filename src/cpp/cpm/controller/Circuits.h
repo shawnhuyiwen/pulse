@@ -34,13 +34,15 @@ public:
   SEFluidCircuit&           GetRespiratoryAndNasalCannulaCircuit();
   SEFluidCircuit&           GetRespiratoryAndSimpleMaskCircuit();
   SEFluidCircuit&           GetRespiratoryAndNonRebreatherMaskCircuit();
+  SEFluidCircuit&           GetRespiratoryAndMechanicalVentilationCircuit();
   SEFluidCircuit&           GetRespiratoryAndMechanicalVentilatorCircuit();
 
   SEThermalCircuit&         GetTemperatureCircuit();
   SEThermalCircuit&         GetExternalTemperatureCircuit();
   SEThermalCircuit&         GetInternalTemperatureCircuit();
 
-  SEFluidCircuit&            GetAnesthesiaMachineCircuit();
+  SEFluidCircuit&           GetAnesthesiaMachineCircuit();
+  SEFluidCircuit&           GetMechanicalVentilatorCircuit();
 
 protected:
 
@@ -54,28 +56,30 @@ protected:
   // It depends on how the engine is configured, but this configuration does not change
   // once it's set. Tests can also configure how it's built and test appropriately.
 
-  SEFluidCircuit*            m_CombinedCardiovascularCircuit;
+  SEFluidCircuit*           m_CombinedCardiovascularCircuit;
 
-  SEFluidCircuit*             m_CardiovascularCircuit;
-  SEFluidCircuit*            m_RenalCircuit;
+  SEFluidCircuit*           m_CardiovascularCircuit;
+  SEFluidCircuit*           m_RenalCircuit;
 
-  SEFluidCircuit*            m_RespiratoryCircuit;
+  SEFluidCircuit*           m_RespiratoryCircuit;
 
-  SEFluidCircuit*            m_AnesthesiaMachineCircuit;
+  SEFluidCircuit*           m_AnesthesiaMachineCircuit;
+  SEFluidCircuit*           m_MechanicalVentilatorCircuit;
 
   // Based on if equipment is hooked up, we have to build out the combination of 
   // these 2 circuits and graphs as we don't want to dynamically modify circuits
   // It's quicker and easier to test these combiniation circuits
-  SEFluidCircuit*            m_CombinedRespiratoryAnesthesiaCircuit;
-  SEFluidCircuit*            m_CombinedRespiratoryInhalerCircuit;
-  SEFluidCircuit*            m_CombinedRespiratoryNasalCannulaCircuit;
-  SEFluidCircuit*            m_CombinedRespiratorySimpleMaskCircuit;
-  SEFluidCircuit*            m_CombinedRespiratoryNonRebreatherMaskCircuit;
-  SEFluidCircuit*            m_CombinedRespiratoryMechanicalVentilatorCircuit;
+  SEFluidCircuit*           m_CombinedRespiratoryAnesthesiaCircuit;
+  SEFluidCircuit*           m_CombinedRespiratoryInhalerCircuit;
+  SEFluidCircuit*           m_CombinedRespiratoryNasalCannulaCircuit;
+  SEFluidCircuit*           m_CombinedRespiratorySimpleMaskCircuit;
+  SEFluidCircuit*           m_CombinedRespiratoryNonRebreatherMaskCircuit;
+  SEFluidCircuit*           m_CombinedRespiratoryMechanicalVentilationCircuit;
+  SEFluidCircuit*           m_CombinedRespiratoryMechanicalVentilatorCircuit;
 
-  SEThermalCircuit*          m_TemperatureCircuit;
-  SEThermalCircuit*           m_InternalTemperatureCircuit;// Attempt at circuit independence
-  SEThermalCircuit*          m_ExternalTemperatureCircuit;// Attempt at circuit independence
+  SEThermalCircuit*         m_TemperatureCircuit;
+  SEThermalCircuit*         m_InternalTemperatureCircuit;// Attempt at circuit independence
+  SEThermalCircuit*         m_ExternalTemperatureCircuit;// Attempt at circuit independence
 };
 
 ///////////////////////////////
@@ -91,13 +95,17 @@ namespace pulse {
     DEFINE_STATIC_STRING(Cardiovascular);
     DEFINE_STATIC_STRING(Renal);
     DEFINE_STATIC_STRING(Respiratory);
+    // Equipment
     DEFINE_STATIC_STRING(AnesthesiaMachine);
+    DEFINE_STATIC_STRING(MechanicalVentilator);
     DEFINE_STATIC_STRING(RespiratoryAnesthesia);
     DEFINE_STATIC_STRING(RespiratoryInhaler);
-    DEFINE_STATIC_STRING(RespiratoryNasalCannula);
-    DEFINE_STATIC_STRING(RespiratorySimpleMask);
-    DEFINE_STATIC_STRING(RespiratoryNonRebreatherMask);
+    DEFINE_STATIC_STRING(RespiratoryMechanicalVentilation);
     DEFINE_STATIC_STRING(RespiratoryMechanicalVentilator);
+    DEFINE_STATIC_STRING(RespiratoryNasalCannula);
+    DEFINE_STATIC_STRING(RespiratoryNonRebreatherMask);
+    DEFINE_STATIC_STRING(RespiratorySimpleMask);
+    // Environment
     DEFINE_STATIC_STRING(Temperature);
     DEFINE_STATIC_STRING(InternalTemperature);
     DEFINE_STATIC_STRING(ExternalTemperature);
@@ -233,6 +241,45 @@ namespace pulse {
     DEFINE_STATIC_STRING(GroundConnection);
   };
 
+  //////////////////////////////////////////
+  // Mechanical Ventilation Circuit Enums //
+  ////////////////////////////////////////
+
+  class MechanicalVentilationNode
+  {
+  public:
+    DEFINE_STATIC_STRING_EX(Connection, MechanicalVentilationConnection);
+  };
+
+  class MechanicalVentilationPath
+  {
+  public:
+    DEFINE_STATIC_STRING_EX(ConnectionToMouth, MechanicalVentilationConnectionToMouth);
+    DEFINE_STATIC_STRING_EX(GroundToConnection, MechanicalVentilationGroundToConnection);
+  };
+
+  /////////////////////////////////////////
+  // Mechanical Ventilator Circuit Enums //
+  /////////////////////////////////////////
+
+  class MechanicalVentilatorNode
+  {
+  public:
+    // jbw
+  };
+
+  class MechanicalVentilatorPath
+  {
+  public:
+    // jbw
+  };
+
+  class CombinedMechanicalVentilatorPath
+  {
+  public:
+    // jbw
+  };
+
   ///////////////////////////
   // Inhaler Circuit Enums //
   ///////////////////////////
@@ -270,27 +317,6 @@ namespace pulse {
     DEFINE_STATIC_STRING(NasalCannulaToMouth);
   };
 
-  ////////////////////////////////
-  // Simple Mask Circuit Enums //
-  ////////////////////////////////
-
-  class SimpleMaskNode
-  {
-  public:
-    DEFINE_STATIC_STRING(SimpleMask);
-    DEFINE_STATIC_STRING(SimpleMaskOxygenSource);
-  };
-
-  class SimpleMaskPath
-  {
-  public:
-    DEFINE_STATIC_STRING(SimpleMaskPressure);
-    DEFINE_STATIC_STRING(SimpleMaskOxygenInlet);
-    DEFINE_STATIC_STRING(SimpleMaskSeal);
-    DEFINE_STATIC_STRING(SimpleMaskPorts);
-    DEFINE_STATIC_STRING(SimpleMaskToMouth);
-  };
-
   ///////////////////////////////////
   // NonRebreather Mask Circuit Enums //
   ///////////////////////////////////
@@ -317,23 +343,26 @@ namespace pulse {
     DEFINE_STATIC_STRING(NonRebreatherMaskToMouth);
   };
 
-  //////////////////////////////////////////
-  // Mechanical Ventilator Circuit Enums //
-  ////////////////////////////////////////
+  ////////////////////////////////
+  // Simple Mask Circuit Enums //
+  ////////////////////////////////
 
-  class MechanicalVentilatorNode
+  class SimpleMaskNode
   {
   public:
-    DEFINE_STATIC_STRING_EX(Connection,MechanicalVentilatorConnection);
+    DEFINE_STATIC_STRING(SimpleMask);
+    DEFINE_STATIC_STRING(SimpleMaskOxygenSource);
   };
 
-  class MechanicalVentilatorPath
+  class SimpleMaskPath
   {
   public:
-    DEFINE_STATIC_STRING_EX(ConnectionToMouth,MechanicalVentilatorConnectionToMouth);
-    DEFINE_STATIC_STRING_EX(GroundToConnection, MechanicalVentilatorGroundToConnection);
+    DEFINE_STATIC_STRING(SimpleMaskPressure);
+    DEFINE_STATIC_STRING(SimpleMaskOxygenInlet);
+    DEFINE_STATIC_STRING(SimpleMaskSeal);
+    DEFINE_STATIC_STRING(SimpleMaskPorts);
+    DEFINE_STATIC_STRING(SimpleMaskToMouth);
   };
-
 
   ///////////////////////////////////
   // Environment Gas Circuit Enums //

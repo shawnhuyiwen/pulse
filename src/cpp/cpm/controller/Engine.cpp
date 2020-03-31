@@ -21,6 +21,7 @@
 #include "equipment/AnesthesiaMachine.h"
 #include "equipment/ECG.h"
 #include "equipment/Inhaler.h"
+#include "equipment/MechanicalVentilator.h"
 #include "PulseConfiguration.h"
 #include "patient/SEPatient.h"
 #include "patient/actions/SEPatientAssessmentRequest.h"
@@ -493,7 +494,6 @@ const SETissueSystem* PulseEngine::GetTissueSystem() const
   return PulseController::m_TissueSystem.get();
 }
 
-
 const SEAnesthesiaMachine* PulseEngine::GetAnesthesiaMachine() const
 {
   return PulseController::m_AnesthesiaMachine.get();
@@ -507,6 +507,11 @@ const SEElectroCardioGram* PulseEngine::GetElectroCardioGram() const
 const SEInhaler* PulseEngine::GetInhaler() const
 {
   return PulseController::m_Inhaler.get();
+}
+
+const SEMechanicalVentilator* PulseEngine::GetMechanicalVentilator() const
+{
+  return PulseController::m_MechanicalVentilator.get();
 }
 
 const SECompartmentManager& PulseEngine::GetCompartments() const

@@ -137,8 +137,8 @@ void Respiratory::Clear()
   m_Carina = nullptr;
   m_AortaO2 = nullptr;
   m_AortaCO2 = nullptr;
-  m_MechanicalVentilatorConnection = nullptr;
-  m_MechanicalVentilatorAerosolConnection = nullptr;
+  m_MechanicalVentilationConnection = nullptr;
+  m_MechanicalVentilationAerosolConnection = nullptr;
   m_PleuralCavity = nullptr;
 
   m_RespiratoryCircuit = nullptr;
@@ -333,8 +333,8 @@ void Respiratory::SetUp()
   m_AortaCO2 = Aorta->GetSubstanceQuantity(m_data.GetSubstances().GetCO2());
   m_LeftAlveoliO2 = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::LeftAlveoli)->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
   m_RightAlveoliO2 = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::RightAlveoli)->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
-  m_MechanicalVentilatorConnection = m_data.GetCompartments().GetGasCompartment(pulse::MechanicalVentilatorCompartment::Connection);
-  m_MechanicalVentilatorAerosolConnection = m_data.GetCompartments().GetLiquidCompartment(pulse::MechanicalVentilatorCompartment::Connection);
+  m_MechanicalVentilationConnection = m_data.GetCompartments().GetGasCompartment(pulse::MechanicalVentilationCompartment::Connection);
+  m_MechanicalVentilationAerosolConnection = m_data.GetCompartments().GetLiquidCompartment(pulse::MechanicalVentilationCompartment::Connection);
   // Compartments we will process aerosol effects on
   m_AerosolEffects.clear();
   m_AerosolEffects.push_back(m_data.GetCompartments().GetLiquidCompartment(pulse::PulmonaryCompartment::Carina));
@@ -379,8 +379,8 @@ void Respiratory::SetUp()
   m_RightPleuralToEnvironment = m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::RightPleuralToEnvironment);
   m_RightAlveoliToRightPleuralConnection = m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::RightAlveoliToRightPleuralConnection);
   m_LeftAlveoliToLeftPleuralConnection = m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::LeftAlveoliToLeftPleuralConnection);
-  m_ConnectionToMouth = m_data.GetCircuits().GetRespiratoryAndMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::ConnectionToMouth);
-  m_GroundToConnection = m_data.GetCircuits().GetRespiratoryAndMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::GroundToConnection);
+  m_ConnectionToMouth = m_data.GetCircuits().GetRespiratoryAndMechanicalVentilationCircuit().GetPath(pulse::MechanicalVentilationPath::ConnectionToMouth);
+  m_GroundToConnection = m_data.GetCircuits().GetRespiratoryAndMechanicalVentilationCircuit().GetPath(pulse::MechanicalVentilationPath::GroundToConnection);
 
   /// \todo figure out how to modify these resistances without getting the cv circuit - maybe add a parameter, like baroreceptors does
   m_RightPulmonaryCapillary = m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightPulmonaryCapillariesToRightPulmonaryVeins);
@@ -721,13 +721,13 @@ void Respiratory::MechanicalVentilation()
   {
     SEMechanicalVentilation* mv = m_data.GetActions().GetPatientActions().GetMechanicalVentilation();
     // You only get here if action is On
-    m_data.SetAirwayMode(eAirwayMode::MechanicalVentilator);
+    m_data.SetAirwayMode(eAirwayMode::MechanicalVentilation);
 
     //Set the substance volume fractions ********************************************
     std::vector<SESubstanceFraction*> gasFractions = mv->GetGasFractions();
 
     //Reset the substance quantities at the connection
-    for (SEGasSubstanceQuantity* subQ : m_MechanicalVentilatorConnection->GetSubstanceQuantities())
+    for (SEGasSubstanceQuantity* subQ : m_MechanicalVentilationConnection->GetSubstanceQuantities())
       subQ->SetToZero();
 
     //If no gas fractions specified, assume ambient
@@ -735,7 +735,7 @@ void Respiratory::MechanicalVentilation()
     {
       for (auto s : m_Environment->GetSubstanceQuantities())
       {
-        m_MechanicalVentilatorConnection->GetSubstanceQuantity(s->GetSubstance())->GetVolumeFraction().Set(s->GetVolumeFraction());
+        m_MechanicalVentilationConnection->GetSubstanceQuantity(s->GetSubstance())->GetVolumeFraction().Set(s->GetVolumeFraction());
       }
     }
     else
@@ -751,7 +751,7 @@ void Respiratory::MechanicalVentilation()
 
         //Now set it on the connection compartment
         //It has a NaN volume, so this will keep the same volume fraction no matter what's going on around it
-        m_MechanicalVentilatorConnection->GetSubstanceQuantity(sub)->GetVolumeFraction().SetValue(fraction);
+        m_MechanicalVentilationConnection->GetSubstanceQuantity(sub)->GetVolumeFraction().SetValue(fraction);
       }
     }
 
@@ -759,7 +759,7 @@ void Respiratory::MechanicalVentilation()
     std::vector<SESubstanceConcentration*> liquidConcentrations = mv->GetAerosols();
 
     //Reset the substance quantities at the connection
-    for (SELiquidSubstanceQuantity* subQ : m_MechanicalVentilatorAerosolConnection->GetSubstanceQuantities())
+    for (SELiquidSubstanceQuantity* subQ : m_MechanicalVentilationAerosolConnection->GetSubstanceQuantities())
       subQ->SetToZero();
 
     if (!liquidConcentrations.empty())
@@ -775,7 +775,7 @@ void Respiratory::MechanicalVentilation()
 
         //Now set it on the connection compartment
         //It has a NaN volume, so this will keep the same volume fraction no matter what's going on around it
-        m_MechanicalVentilatorAerosolConnection->GetSubstanceQuantity(sub)->GetConcentration().Set(concentration);
+        m_MechanicalVentilationAerosolConnection->GetSubstanceQuantity(sub)->GetConcentration().Set(concentration);
       }
     }
 
@@ -786,7 +786,7 @@ void Respiratory::MechanicalVentilation()
       //It may or may not be there
       if (!m_ConnectionToMouth->HasFlowSource())
       {
-        m_data.GetCircuits().GetRespiratoryAndMechanicalVentilatorCircuit().StateChange();
+        m_data.GetCircuits().GetRespiratoryAndMechanicalVentilationCircuit().StateChange();
       }
     }
     else
@@ -795,7 +795,7 @@ void Respiratory::MechanicalVentilation()
       if (m_ConnectionToMouth->HasNextFlowSource())
       {
         m_ConnectionToMouth->GetNextFlowSource().Invalidate();
-        m_data.GetCircuits().GetRespiratoryAndMechanicalVentilatorCircuit().StateChange();
+        m_data.GetCircuits().GetRespiratoryAndMechanicalVentilationCircuit().StateChange();
       }
     }
 
@@ -811,14 +811,14 @@ void Respiratory::MechanicalVentilation()
       m_GroundToConnection->GetNextPressureSource().SetValue(0.0, PressureUnit::cmH2O);
     }
   }
-  else if (m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilator)
+  else if (m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilation)
   {
     // Was just turned off
     m_data.SetAirwayMode(eAirwayMode::Free);
     if (m_ConnectionToMouth->HasNextFlowSource())
     {
       m_ConnectionToMouth->GetNextFlowSource().Invalidate();
-      m_data.GetCircuits().GetRespiratoryAndMechanicalVentilatorCircuit().StateChange();
+      m_data.GetCircuits().GetRespiratoryAndMechanicalVentilationCircuit().StateChange();
     }
   }
 }
@@ -833,7 +833,7 @@ void Respiratory::MechanicalVentilation()
 //--------------------------------------------------------------------------------------------------
 void Respiratory::SupplementalOxygen()
 {
-  ///\todo - Maybe this and mechanical ventilator should be broken out to their own class, like anesthesia machine?
+  ///\todo - Maybe this and mechanical ventilation should be broken out to their own class, like anesthesia machine?
 
   if (!m_data.GetActions().GetPatientActions().HasSupplementalOxygen())
     return;
@@ -2317,8 +2317,8 @@ void Respiratory::UpdateResistances()
   
   //------------------------------------------------------------------------------------------------------
   //Artificial Airway
-  if (m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilator ||
-    m_data.GetAirwayMode() == eAirwayMode::AnesthesiaMachine)
+  if (m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilation ||
+      m_data.GetAirwayMode() == eAirwayMode::AnesthesiaMachine)
   {
     tracheaResistance_cmH2O_s_Per_L *= 8.0;
   }
@@ -2485,7 +2485,7 @@ void Respiratory::UpdateAlveolarCompliances()
 
   //------------------------------------------------------------------------------------------------------
   //Artificial Airway
-  if (m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilator ||
+  if (m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilation ||
     m_data.GetAirwayMode() == eAirwayMode::AnesthesiaMachine)
   {
     rightAlveoliCompliance_L_Per_cmH2O *= 0.4;

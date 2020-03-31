@@ -33,16 +33,29 @@ class Environment;
 class ECG;
 class AnesthesiaMachine;
 class Inhaler;
+class MechanicalVentilator;
 
 class SaturationCalculator;
 
 class PulseScenarioExec;
-enum class EngineState { NotReady=0, Initialization, InitialStabilization, AtInitialStableState, SecondaryStabilization, AtSecondaryStableState, Active };
+enum class EngineState { NotReady=0,
+                         Initialization,
+                         InitialStabilization,
+                         AtInitialStableState,
+                         SecondaryStabilization,
+                         AtSecondaryStableState,
+                         Active };
 
 
 // Keep enums in sync with appropriate proto file !!
-enum class eAirwayMode{ Free=0, AnesthesiaMachine, Inhaler, MechanicalVentilator,
-                        NasalCannula, SimpleMask, NonRebreatherMask };
+enum class eAirwayMode{ Free=0, 
+                       AnesthesiaMachine,
+                       Inhaler,
+                       MechanicalVentilation,// Action
+                       MechanicalVentilator, // Equipment
+                       NasalCannula,
+                       NonRebreatherMask,
+                       SimpleMask};
 extern const std::string& eAirwayMode_Name(eAirwayMode m);
 
 /**
@@ -91,6 +104,8 @@ public:
 
   SEInhaler&                              GetInhaler();
 
+  SEMechanicalVentilator&                 GetMechanicalVentilator();
+
   SEActionManager&                        GetActions();
 
   SEConditionManager&                     GetConditions();
@@ -124,10 +139,11 @@ protected:
   void SetupRespiratory();
   void SetupAnesthesiaMachine();
   void SetupInhaler();
+  void SetupMechanicalVentilation();
+  void SetupMechanicalVentilator();
   void SetupNasalCannula();
   void SetupSimpleMask();
   void SetupNonRebreatherMask();
-  void SetupMechanicalVentilator();
   void SetupExternalTemperature();
   void SetupInternalTemperature();
 
@@ -178,6 +194,8 @@ protected:
   std::unique_ptr<AnesthesiaMachine>                            m_AnesthesiaMachine;
 
   std::unique_ptr<Inhaler>                                      m_Inhaler;
+
+  std::unique_ptr<MechanicalVentilator>                         m_MechanicalVentilator;
 
   std::unique_ptr<SEPatient>                                    m_InitialPatient;
   std::unique_ptr<SEPatient>                                    m_CurrentPatient;

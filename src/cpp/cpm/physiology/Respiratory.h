@@ -185,8 +185,8 @@ protected:
   SEGasSubstanceQuantity* m_LeftAlveoliO2;
   SEGasSubstanceQuantity* m_RightAlveoliO2;
   std::vector<SELiquidCompartment*> m_AerosolEffects;
-  SEGasCompartment* m_MechanicalVentilatorConnection;
-  SELiquidCompartment* m_MechanicalVentilatorAerosolConnection;
+  SEGasCompartment* m_MechanicalVentilationConnection;
+  SELiquidCompartment* m_MechanicalVentilationAerosolConnection;
   SEGasCompartment* m_PleuralCavity;
   //Circuits
   SEFluidCircuit* m_RespiratoryCircuit;

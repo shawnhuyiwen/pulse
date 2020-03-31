@@ -70,6 +70,7 @@ public:
   virtual const SEAnesthesiaMachine*                   GetAnesthesiaMachine() const;
   virtual const SEElectroCardioGram*                   GetElectroCardioGram() const;
   virtual const SEInhaler*                             GetInhaler() const;
+  virtual const SEMechanicalVentilator*                GetMechanicalVentilator() const;
 
   virtual const SECompartmentManager&                  GetCompartments() const;
 
