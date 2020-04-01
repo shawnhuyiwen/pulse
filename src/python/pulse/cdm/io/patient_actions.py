@@ -69,12 +69,12 @@ def serialize_brain_injury_from_bind(src: BrainInjuryData, dst: SEBrainInjury):
     serialize_patient_action_from_bind(src.PatientAction, dst)
 
 
-def serialize_broncho_constriction_to_bind(src: SEBronchoConstriction, dst: BronchoconstrictionData):
+def serialize_bronchoconstriction_to_bind(src: SEBronchoconstriction, dst: BronchoconstrictionData):
     serialize_patient_action_to_bind(src, dst.PatientAction)
     serialize_scalar_0to1_to_bind(src.get_severity(), dst.Severity)
 
 
-def serialize_broncho_constriction_from_bind(src: BronchoconstrictionData, dst: SEBronchoConstriction):
+def serialize_bronchoconstriction_from_bind(src: BronchoconstrictionData, dst: SEBronchoconstriction):
     serialize_patient_action_from_bind(src.PatientAction, dst)
 
 def serialize_cardiac_arrest_to_bind(src: SECardiacArrest, dst: CardiacArrestData):
@@ -91,14 +91,12 @@ def serialize_chest_occlusive_dressing_to_bind(src: SEChestOcclusiveDressing, ds
 def serialize_chest_occlusive_dressing_from_bind(src:ChestOcclusiveDressingData, dst: SEChestOcclusiveDressing):
     serialize_patient_action_from_bind(src.PatientAction, dst)
 
-
 def serialize_dsypnea_to_bind(src: SEDyspnea, dst: DyspneaData):
     serialize_patient_action_to_bind(src, dst.PatientAction)
     serialize_scalar_0to1_to_bind(src.get_severity(), dst.Severity)
 
 def serialize_dsypnea_from_bind(src:DyspneaData, dst: SEDyspnea):
     serialize_patient_action_from_bind(dst.PatientAction, src)
-
 
 def serialize_hemorrhage_to_bind(src: SEHemorrhage, dst: HemorrhageData):
     serialize_patient_action_to_bind(src, dst.PatientAction)
@@ -109,6 +107,12 @@ def serialize_hemorrhage_to_bind(src: SEHemorrhage, dst: HemorrhageData):
 def serialize_hemorrhage_from_bind(src: HemorrhageData, dst: SEHemorrhage):
     raise Exception("serialize_hemorrhage_from_bind not implemented")
 
+def serialize_impaired_alveolar_exchange_exacerbation_to_bind(src: SEImpairedAlveolarExchangeExacerbation , dst: ImpairedAlveolarExchangeExacerbationData):
+    serialize_patient_action_to_bind(src, dst.PatientAction)
+    serialize_scalar_0to1_to_bind(src.get_impaired_fraction(), dst.ImpairedFraction)
+    serialize_scalar_area_to_bind(src.get_impaired_surface_area(), dst.ImpairedSurfaceArea)
+def serialize_impaired_alveolar_exchange_exacerbation_from_bind(src: ImpairedAlveolarExchangeExacerbationData, dst: SEImpairedAlveolarExchangeExacerbation):
+    serialize_patient_action_from_bind(src.PatientAction, dst)
 
 def serialize_intubation_to_bind(src:SEIntubation, dst:IntubationData):
     serialize_patient_action_to_bind(src, dst.PatientAction)

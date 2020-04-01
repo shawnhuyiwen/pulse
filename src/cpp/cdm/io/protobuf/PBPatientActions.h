@@ -22,6 +22,7 @@ CDM_BIND_DECL2(ForcedExhale)
 CDM_BIND_DECL2(ForcedInhale)
 CDM_BIND_DECL2(ForcedPause)
 CDM_BIND_DECL2(Hemorrhage)
+CDM_BIND_DECL2(ImpairedAlveolarExchangeExacerbation)
 CDM_BIND_DECL2(Intubation)
 CDM_BIND_DECL2(LobarPneumoniaExacerbation)
 CDM_BIND_DECL2(MechanicalVentilation)
@@ -163,6 +164,12 @@ public:
   static void Serialize(const CDM_BIND::HemorrhageData& src, SEHemorrhage& dst);
   static void Serialize(const SEHemorrhage& src, CDM_BIND::HemorrhageData& dst);
   static void Copy(const SEHemorrhage& src, SEHemorrhage& dst);
+
+  static void Load(const CDM_BIND::ImpairedAlveolarExchangeExacerbationData& src, SEImpairedAlveolarExchangeExacerbation& dst);
+  static CDM_BIND::ImpairedAlveolarExchangeExacerbationData* Unload(const SEImpairedAlveolarExchangeExacerbation& src);
+  static void Serialize(const CDM_BIND::ImpairedAlveolarExchangeExacerbationData& src, SEImpairedAlveolarExchangeExacerbation& dst);
+  static void Serialize(const SEImpairedAlveolarExchangeExacerbation& src, CDM_BIND::ImpairedAlveolarExchangeExacerbationData& dst);
+  static void Copy(const SEImpairedAlveolarExchangeExacerbation& src, SEImpairedAlveolarExchangeExacerbation& dst);
 
   static void Load(const CDM_BIND::IntubationData& src, SEIntubation& dst);
   static CDM_BIND::IntubationData* Unload(const SEIntubation& src);

@@ -34,7 +34,7 @@ def HowTo_TensionPneumothorax():
     print(results)
 
     # There are two ways you can help a pneumothorax
-    # Apply a chest occlusive dressing to an open pneumothorax .
+    # Apply a chest occlusive dressing to an open pneumothorax
     # It's not required for closed.
     dressing = SEChestOcclusiveDressing()
     dressing.set_comment("Applying Chest occlusive dressing to the patient's right side")
@@ -46,7 +46,7 @@ def HowTo_TensionPneumothorax():
     results = pulse.pull_data()
     print(results)
 
-    # Both can use the needle.
+    # Both can use the needle
     needle_decomp = SENeedleDecompression()
     needle_decomp.set_comment("Patient undergoes needle decompression on right site")
     needle_decomp.set_side(eSide.Right)

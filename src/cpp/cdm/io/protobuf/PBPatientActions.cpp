@@ -32,6 +32,7 @@ POP_PROTO_WARNINGS()
 #include "patient/actions/SEDyspnea.h"
 #include "patient/actions/SEExercise.h"
 #include "patient/actions/SEHemorrhage.h"
+#include "patient/actions/SEImpairedAlveolarExchangeExacerbation.h"
 #include "patient/actions/SEIntubation.h"
 #include "patient/actions/SELobarPneumoniaExacerbation.h"
 #include "patient/actions/SEMechanicalVentilation.h"
@@ -709,6 +710,39 @@ void PBPatientAction::Copy(const SEHemorrhage& src, SEHemorrhage& dst)
   PBPatientAction::Serialize(data, dst);
 }
 
+void PBPatientAction::Load(const CDM_BIND::ImpairedAlveolarExchangeExacerbationData& src, SEImpairedAlveolarExchangeExacerbation& dst)
+{
+  PBPatientAction::Serialize(src, dst);
+}
+void PBPatientAction::Serialize(const CDM_BIND::ImpairedAlveolarExchangeExacerbationData& src, SEImpairedAlveolarExchangeExacerbation& dst)
+{
+  PBPatientAction::Serialize(src.patientaction(), dst);
+  if (src.has_impairedfraction())
+    PBProperty::Load(src.impairedfraction(), dst.GetImpairedFraction());
+  if (src.has_impairedsurfacearea())
+    PBProperty::Load(src.impairedsurfacearea(), dst.GetImpairedSurfaceArea());
+}
+CDM_BIND::ImpairedAlveolarExchangeExacerbationData* PBPatientAction::Unload(const SEImpairedAlveolarExchangeExacerbation& src)
+{
+  CDM_BIND::ImpairedAlveolarExchangeExacerbationData* dst = new CDM_BIND::ImpairedAlveolarExchangeExacerbationData();
+  PBPatientAction::Serialize(src, *dst);
+  return dst;
+}
+void PBPatientAction::Serialize(const SEImpairedAlveolarExchangeExacerbation& src, CDM_BIND::ImpairedAlveolarExchangeExacerbationData& dst)
+{
+  PBPatientAction::Serialize(src, *dst.mutable_patientaction());
+  if (src.HasImpairedFraction())
+    dst.set_allocated_impairedfraction(PBProperty::Unload(*src.m_ImpairedFraction));
+  if (src.HasImpairedSurfaceArea())
+    dst.set_allocated_impairedsurfacearea(PBProperty::Unload(*src.m_ImpairedSurfaceArea));
+}
+void PBPatientAction::Copy(const SEImpairedAlveolarExchangeExacerbation& src, SEImpairedAlveolarExchangeExacerbation& dst)
+{
+  CDM_BIND::ImpairedAlveolarExchangeExacerbationData data;
+  PBPatientAction::Serialize(src, data);
+  PBPatientAction::Serialize(data, dst);
+}
+
 void PBPatientAction::Load(const CDM_BIND::IntubationData& src, SEIntubation& dst)
 {
   PBPatientAction::Serialize(src, dst);
@@ -1330,6 +1364,12 @@ SEPatientAction* PBPatientAction::Load(const CDM_BIND::AnyPatientActionData& any
     PBPatientAction::Load(any.hemorrhage(), *a);
     return a;
   }
+  case CDM_BIND::AnyPatientActionData::ActionCase::kImpairedAlveolarExchangeExacerbation:
+  {
+    SEImpairedAlveolarExchangeExacerbation* a = new SEImpairedAlveolarExchangeExacerbation();
+    PBPatientAction::Load(any.impairedalveolarexchangeexacerbation(), *a);
+    return a;
+  }
   case CDM_BIND::AnyPatientActionData::ActionCase::kIntubation:
   {
     SEIntubation* a = new SEIntubation();
@@ -1527,6 +1567,12 @@ CDM_BIND::AnyPatientActionData* PBPatientAction::Unload(const SEPatientAction& a
   if (h != nullptr)
   {
     any->set_allocated_hemorrhage(PBPatientAction::Unload(*h));
+    return any;
+  }
+  const SEImpairedAlveolarExchangeExacerbation* imaee = dynamic_cast<const SEImpairedAlveolarExchangeExacerbation*>(&action);
+  if (imaee != nullptr)
+  {
+    any->set_allocated_impairedalveolarexchangeexacerbation(PBPatientAction::Unload(*imaee));
     return any;
   }
   const SEIntubation* i = dynamic_cast<const SEIntubation*>(&action);

@@ -19,15 +19,6 @@ def HowTo_MechanicalVentilation():
     results = pulse.pull_data()
     print(results)
 
-    fatigue = SERespiratoryFatigue()
-    fatigue.set_comment("Patient experiences severe respiratory fatigue")
-    fatigue.get_severity().set_value(.6)
-    pulse.process_action(fatigue)
-    # Advance some time and print out the vitals
-    pulse.advance_time_s(30)
-    results = pulse.pull_data()
-    print(results)
-
     ventilation = SEMechanicalVentilation()
     ventilation.set_comment("Patient is placed on a mechanical ventilator")
     ventilation.get_flow().set_value(50, VolumePerTimeUnit.mL_Per_day)
