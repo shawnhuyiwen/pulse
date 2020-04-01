@@ -18,6 +18,7 @@
 #include "compartment/fluid/SEGasCompartment.h"
 #include "compartment/substances/SEGasSubstanceQuantity.h"
 #include "substance/SESubstance.h"
+#include "substance/SESubstanceFraction.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarFrequency.h"
@@ -47,6 +48,9 @@ MechanicalVentilator::~MechanicalVentilator ()
 void MechanicalVentilator::Clear()
 {
   SEMechanicalVentilator::Clear();
+  m_Environment = nullptr;
+  m_ventilator = nullptr;
+  m_pEnvironmentToVentilator = nullptr;  
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -56,6 +60,8 @@ void MechanicalVentilator::Clear()
 void MechanicalVentilator::Initialize()
 {
   PulseSystem::Initialize();
+
+  SetConnection(eMechanicalVentilator_Connection::Off);
 
   StateChange();
 }
@@ -69,15 +75,167 @@ void MechanicalVentilator::Initialize()
 //--------------------------------------------------------------------------------------------------
 void MechanicalVentilator::SetUp()
 {
-  
+  m_dt_s = m_data.GetTimeStep().GetValue(TimeUnit::s);
+
+  // Compartments
+  m_Environment = m_data.GetCompartments().GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
+  m_ventilator = m_data.GetCompartments().GetGasCompartment(pulse::MechanicalVentilatorCompartment::Ventilator);
+
+  // Paths
+  m_pEnvironmentToVentilator = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::EnvironmentToVentilator);
 }
 
 void MechanicalVentilator::StateChange()
 {
-  // TODO (jbw)
-  // Make sure you have RR or BreathPeriod and I/E ratio
-  // OR I and E Periods
+  SetConnection();
+
+  if(m_data.GetAirwayMode() != eAirwayMode::MechanicalVentilator)
+  { 
+    return;
+  }
+
+  if (GetControl() != eMechanicalVentilator_Control::P_CMV)
+  {
+    //Only one option for now
+    //jbw - error for unsupported
+    SetControl(eMechanicalVentilator_Control::P_CMV);
+  }
+
+  if (GetDriverWaveform() != eMechanicalVentilator_DriverWaveform::Square)
+  {
+    //Only one option for now
+    //jbw - error for unsupported
+    SetDriverWaveform(eMechanicalVentilator_DriverWaveform::Square);
+  }
+
+  if (!HasPositiveEndExpiredPressure())
+  {
+    //jbw - fatal - required
+  }
+
+  if (!HasPeakInspiratoryPressure())
+  {
+    //jbw - fatal - required
+  }
+
+  //jbw - add checks to alert when things are overriden
+  if (HasRespiratoryRate())
+  {
+    GetBreathPeriod().SetValue(1.0 / GetRespiratoryRate(FrequencyUnit::Per_s), TimeUnit::s);
+  }
+  else if (HasBreathPeriod())
+  {
+    GetRespiratoryRate().SetValue(1.0 / GetBreathPeriod(TimeUnit::min), FrequencyUnit::Per_min);
+  }
+  else if (HasInspiratoryPeriod() && HasExpiratoryPeriod())
+  {
+    double totalPeriod_s = GetInspiratoryPeriod(TimeUnit::s) + GetExpiratoryPeriod(TimeUnit::s);
+    GetBreathPeriod().SetValue(totalPeriod_s, TimeUnit::s);
+    GetRespiratoryRate().SetValue(60.0 / totalPeriod_s, FrequencyUnit::Per_min);
+  }
+  else
+  {
+    //jbw - fatal - need one of these
+  }
+
+  if (HasInspiratoryExpiratoryRatio())
+  {
+    double IERatio = GetInspiratoryExpiratoryRatio().GetValue();
+    double totalPeriod_s = GetBreathPeriod(TimeUnit::s);
+    double inspiratoryPeriod_s = IERatio * totalPeriod_s / (1 + IERatio);
+    GetInspiratoryPeriod().SetValue(inspiratoryPeriod_s, TimeUnit::s);
+    GetExpiratoryPeriod().SetValue(totalPeriod_s - inspiratoryPeriod_s, TimeUnit::s);
+  }
+  else if (HasInspiratoryPeriod())
+  {
+    double inspiratoryPeriod_s = GetInspiratoryPeriod(TimeUnit::s);
+    double totalPeriod_s = GetBreathPeriod(TimeUnit::s);
+    double expiratoryPeriod_s = totalPeriod_s - inspiratoryPeriod_s;
+    GetExpiratoryPeriod().SetValue(expiratoryPeriod_s, TimeUnit::s);
+    GetInspiratoryExpiratoryRatio().SetValue(inspiratoryPeriod_s / expiratoryPeriod_s);
+  }
+  else if (HasExpiratoryPeriod())
+  {
+    double expiratoryPeriod_s = GetInspiratoryPeriod(TimeUnit::s);
+    double totalPeriod_s = GetBreathPeriod(TimeUnit::s);
+    double inspiratoryPeriod_s = totalPeriod_s - expiratoryPeriod_s;
+    GetInspiratoryPeriod().SetValue(inspiratoryPeriod_s, TimeUnit::s);
+    GetInspiratoryExpiratoryRatio().SetValue(inspiratoryPeriod_s / expiratoryPeriod_s);
+  }
+  else
+  {
+    //jbw - fatal - need one of these
+  }
+
+  m_inhaling = true;
+  m_currentBreathingCycleTime_s = 0.0;
+
   // If you have one substance, make sure its Oxygen and add the standard CO2 and N2 to fill the difference
+
+  //Set the substance volume fractions ********************************************
+  std::vector<SESubstanceFraction*> gasFractions = GetFractionInspiredGases();
+
+  //Reset the substance quantities at the connection
+  for (SEGasSubstanceQuantity* subQ : m_ventilator->GetSubstanceQuantities())
+    subQ->SetToZero();
+
+  //Start by setting everything to ambient
+  for (auto s : m_Environment->GetSubstanceQuantities())
+  {
+    m_ventilator->GetSubstanceQuantity(s->GetSubstance())->GetVolumeFraction().Set(s->GetVolumeFraction());
+  }
+
+  double totalFractionDefined = 0.0;
+  //Has fractions defined
+  for (auto f : gasFractions)
+  {
+    SESubstance& sub = f->GetSubstance();
+    double fraction = f->GetFractionAmount().GetValue();
+    totalFractionDefined += fraction;
+
+    //Do this, just in case it's something new
+    m_data.GetSubstances().AddActiveSubstance(sub);
+
+    //Now set it on the connection compartment
+    //It has a infinate volume, so this will keep the same volume fraction no matter what's going on around it
+    m_ventilator->GetSubstanceQuantity(sub)->GetVolumeFraction().SetValue(fraction);
+  }
+
+  //Add or remove Nitrogen to balance
+  double gasFractionDiff = 1.0 - totalFractionDefined;
+  double currentN2Fraction = m_ventilator->GetSubstanceQuantity(m_data.GetSubstances().GetN2())->GetVolumeFraction().GetValue();
+  if (currentN2Fraction + gasFractionDiff < 0.0)
+  {
+    //jbw - error - not enough N2 to balance
+  }
+  m_ventilator->GetSubstanceQuantity(m_data.GetSubstances().GetN2())->GetVolumeFraction().SetValue(currentN2Fraction + gasFractionDiff);
+
+
+  //jbw - add aerosols
+
+  ////Set the aerosol concentrations ********************************************
+  //std::vector<SESubstanceConcentration*> liquidConcentrations = mv->GetAerosols();
+
+  ////Reset the substance quantities at the connection
+  //for (SELiquidSubstanceQuantity* subQ : m_MechanicalVentilationAerosolConnection->GetSubstanceQuantities())
+  //  subQ->SetToZero();
+
+  //if (!liquidConcentrations.empty())
+  //{
+  //  //Has fractions defined
+  //  for (auto f : liquidConcentrations)
+  //  {
+  //    SESubstance& sub = f->GetSubstance();
+  //    SEScalarMassPerVolume concentration = f->GetConcentration();
+
+  //    //Do this, just in case it's something new
+  //    m_data.GetSubstances().AddActiveSubstance(sub);
+
+  //    //Now set it on the connection compartment
+  //    //It has infinite volume, so this will keep the same volume fraction no matter what's going on around it
+  //    m_MechanicalVentilationAerosolConnection->GetSubstanceQuantity(sub)->GetConcentration().Set(concentration);
+  //  }
+  //}
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -200,10 +358,14 @@ void MechanicalVentilator::PreProcess()
   //Do nothing if the ventilator is off and not initialized
   if (GetConnection() == eMechanicalVentilator_Connection::Off)
   {
-   
+    m_inhaling = true;
+    m_currentBreathingCycleTime_s = 0.0;
     return;
   }
+  
   SetConnection();
+  CalculateCyclePhase();
+  CalculateVentilatorPressure();
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -231,4 +393,59 @@ void MechanicalVentilator::Process()
 void MechanicalVentilator::PostProcess()
 {
 
+}
+
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Calculates respiration cycle
+///
+/// \details
+/// The inspiratory and expiratory phase times are calculated based on
+/// a pre-set respiration rate and inspiration-expiration ratio parameters. These parameters are selected as
+/// input parameters for the anesthesia machine configurations.
+//--------------------------------------------------------------------------------------------------
+void MechanicalVentilator::CalculateCyclePhase()
+{
+  //Determine where we are in the cycle
+  m_currentBreathingCycleTime_s += m_dt_s;
+  if (m_currentBreathingCycleTime_s > GetBreathPeriod(TimeUnit::s)) //End of the cycle
+  {
+    m_currentBreathingCycleTime_s = 0.0;
+  }
+
+  if (m_currentBreathingCycleTime_s < GetInspiratoryPeriod(TimeUnit::s)) //Inspiration
+  {
+    m_inhaling = true;
+  }
+  else //Expiration
+  {
+    m_inhaling = false;
+  }
+}
+
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Calculates ventilator pressure
+///
+/// \details
+/// The Anesthesia machine employs pressure-control ventilation mode. This method calculates the 
+/// control ventilator pressure that drives the gas flow in the breathing circle. During inspiration,
+/// the ventilator pressure is set to pre-defined constant value to serve as an input pressure source.
+/// This causes gas to flow into the inspiratory limb path. The pressure is dropped to much low pressure during the expiration 
+/// phase to allow gas return to the ventilator.
+//--------------------------------------------------------------------------------------------------
+void MechanicalVentilator::CalculateVentilatorPressure()
+{
+  //Calculate the driver pressure
+  double dDriverPressure = 0.0;
+  if (m_inhaling)
+  {
+    dDriverPressure = GetPeakInspiratoryPressure(PressureUnit::cmH2O);
+  }
+  else
+  {
+    //Exhaling
+    dDriverPressure = GetPositiveEndExpiredPressure(PressureUnit::cmH2O);
+  }
+  m_pEnvironmentToVentilator->GetNextPressureSource().SetValue(dDriverPressure, PressureUnit::cmH2O);
 }

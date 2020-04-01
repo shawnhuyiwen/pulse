@@ -36,6 +36,7 @@ public:
   SEGasCompartmentGraph&    GetRespiratoryAndMechanicalVentilatorGraph();
 
   SEGasCompartmentGraph&    GetAnesthesiaMachineGraph();
+  SEGasCompartmentGraph&    GetMechanicalVentilatorGraph();
 
   SELiquidCompartmentGraph& GetActiveAerosolGraph();
   SELiquidCompartmentGraph& GetAerosolGraph();

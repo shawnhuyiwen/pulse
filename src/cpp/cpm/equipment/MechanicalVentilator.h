@@ -44,7 +44,18 @@ protected:
   void SetConnection(eMechanicalVentilator_Connection c);
   void InvalidateConnection();
 
+  void CalculateVentilatorPressure();
+  void CalculateCyclePhase();
+
   // Serializable member variables (Set in Initialize and in schema)
+  //aaron - serialize
+  bool         m_inhaling;
+  double       m_currentBreathingCycleTime_s;
 
   // Stateless member variable (Set in SetUp())
+  double                m_dt_s;
+
+  SEGasCompartment*     m_Environment;
+  SEGasCompartment*     m_ventilator;
+  SEFluidCircuitPath*   m_pEnvironmentToVentilator;
 };
