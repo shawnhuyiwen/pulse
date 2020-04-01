@@ -39,14 +39,6 @@ def serialize_actions_to_string(actions: [], fmt: eSerializationFormat):
         print(action)
         any_action = AnyActionData()
         if isinstance(action, SEPatientAction):
-            if isinstance(action, SEExercise):
-                serialize_exercise_to_bind(action, any_action.PatientAction.Exercise)
-                action_list.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SEHemorrhage):
-                serialize_hemorrhage_to_bind(action, any_action.PatientAction.Hemorrhage)
-                action_list.AnyAction.append(any_action)
-                continue
             if isinstance(action, SEAsthmaAttack):
                 serialize_asthma_attack_to_bind(action, any_action.PatientAction.AsthmaAttack)
                 action_list.AnyAction.append(any_action)
@@ -81,6 +73,18 @@ def serialize_actions_to_string(actions: [], fmt: eSerializationFormat):
                 continue
             if isinstance(action, SEDyspnea):
                 serialize_dsypnea_to_bind(action, any_action.PatientAction.Dyspnea)
+                action_list.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SEExercise):
+                serialize_exercise_to_bind(action, any_action.PatientAction.Exercise)
+                action_list.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SEHemorrhage):
+                serialize_hemorrhage_to_bind(action, any_action.PatientAction.Hemorrhage)
+                action_list.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SEImpairedAlveolarExchangeExacerbation):
+                serialize_impaired_alveolar_exchange_exacerbation_to_bind(action, any_action.PatientAction.ImpairedAlveolarExchangeExacerbation)
                 action_list.AnyAction.append(any_action)
                 continue
             if isinstance(action, SEIntubation):

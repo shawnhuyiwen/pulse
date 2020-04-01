@@ -2,14 +2,13 @@
 # See accompanying NOTICE file for details.
 from enum import Enum
 from pulse.cdm.engine import SEAction, eSwitch, eSide, eGate
-from pulse.cdm.scalars import SEScalar0To1, SEScalarVolumePerTime, SEScalarVolume, \
-                              SEScalarMassPerVolume, SEScalarForce, SEScalarTime, \
-                              SEScalarPressure
+from pulse.cdm.scalars import SEScalar0To1, SEScalarArea, \
+                              SEScalarMassPerVolume, SEScalarPressure, \
+                              SEScalarVolumePerTime, SEScalarVolume
 
 class SEPatientAction(SEAction):
     def __init__(self):
         super().__init__()
-
 
 class SEAcuteRespiratoryDistressSyndromeExacerbation(SEPatientAction):
     __slots__ = ["_severity", "_left_lung_affected", "_right_lung_affected"]
@@ -57,7 +56,6 @@ class SEAcuteRespiratoryDistressSyndromeExacerbation(SEPatientAction):
                 "  Right Lung Affected: {}\n"
                 "  Left Lung Affected: {}").format(self._severity, self._right_lung_affected, self._left_lung_affected)
 
-
 class SEAcuteStress(SEPatientAction):
     def __init__(self):
         super().__init__()
@@ -82,7 +80,6 @@ class SEAcuteStress(SEPatientAction):
         return ("Acute Stress\n"
                 "  Severity: {}").format(self._severity)
 
-
 class SEAirwayObstruction(SEPatientAction):
     def __init__(self):
         super().__init__()
@@ -106,7 +103,6 @@ class SEAirwayObstruction(SEPatientAction):
     def __repr__(self):
         return ("Airway Obstruction\n"
                 "  Severity: {}").format(self._severity)
-
 
 class SEAsthmaAttack(SEPatientAction):
     def __init__(self):
@@ -136,7 +132,6 @@ class eBrainInjuryType(Enum):
     Diffuse = 0
     LeftFocal = 1
     RightFocal = 2
-
 class SEBrainInjury(SEPatientAction):
     __slots__ = ["_severity", "_injury_type"]
 
@@ -176,7 +171,7 @@ class SEBrainInjury(SEPatientAction):
                 "  Severity: {}\n"
                 "  Injury Type: {}").format(self._severity, self._injury_type)
 
-class SEBronchoConstriction(SEPatientAction):
+class SEBronchoconstriction(SEPatientAction):
     def __init__(self):
         super().__init__()
         self._severity = None
@@ -197,9 +192,8 @@ class SEBronchoConstriction(SEPatientAction):
             self._severity = SEScalar0To1()
         return self._severity
     def __repr__(self):
-        return ("BronchoConstriction\n"
+        return ("Bronchoconstriction\n"
                 "  Severity: {}").format(self._severity)
-
 
 class SECardiacArrest(SEPatientAction):
     __slots__ = ["_state"]
@@ -351,6 +345,37 @@ class SEHemorrhage(SEPatientAction):
                 "  Compartment: {}\n"
                 "  Rate: {}").format(self._type,self._compartment,self._rate)
 
+class SEImpairedAlveolarExchangeExacerbation(SEPatientAction):
+    __slots__ = ["_impaired_surface_area", "_impaired_fraction"]
+
+    def __init__(self):
+        super().__init__()
+        self._impaired_fraction = None
+        self._impaired_surface_area = None
+    def clear(self):
+        super().clear()
+        if self._impaired_fraction is not None:
+            self._impaired_fraction.invalidate()
+        if self._impaired_surface_area is not None:
+            self._impaired_surface_area.invalidate()
+    def is_valid(self):
+        return self.has_impaired_surface_area() and self.has_impaired_fraction()
+    def has_impaired_surface_area(self):
+        return self._impaired_surface_area is not None
+    def get_impaired_surface_area(self):
+        if self._impaired_surface_area is None:
+            self._impaired_surface_area = SEScalarArea()
+        return self._impaired_surface_area
+    def has_impaired_fraction(self):
+        return self._impaired_fraction is not None
+    def get_impaired_fraction(self):
+        if self._impaired_fraction is None:
+            self._impaired_fraction = SEScalar0To1
+        return self._impaired_fraction
+    def __repr__(self):
+        return ("Impaired Alveolar Exchange Exacerbation\n"
+                "  Impaired Fraction: {}\n"
+                "  Impaired Surface Area: {}").format(self._impaired_fraction, self._impaired_surface_area)
 
 class eIntubationType(Enum):
     Off = 0
@@ -358,7 +383,6 @@ class eIntubationType(Enum):
     LeftMainstem = 2
     RightMainstem = 3
     Tracheal = 4
-
 class SEIntubation(SEPatientAction):
     __slots__ = ["_type"]
 
@@ -382,7 +406,6 @@ class SEIntubation(SEPatientAction):
     def __repr__(self):
         return ("Intubation\n"
                 "  Type: {}\n").format(self._type)
-
 
 class SELobarPneumoniaExacerbation(SEPatientAction):
     __slots__ = ["_severity", "_left_lung_affected", "_right_lung_affected"]
@@ -472,6 +495,7 @@ class SEMechanicalVentilation(SEPatientAction):
                 "  State: {} \n"
                 "  Flow: {} \n"
                 "  Pressure: {}").format(self._state, self._flow, self._pressure)
+
 class SENeedleDecompression(SEPatientAction):
     __slots__ = ["_state", "_side"]
 
@@ -503,7 +527,6 @@ class SENeedleDecompression(SEPatientAction):
         return ("Needle Decompression\n"
                 "  State: {}\n"
                 "  Side: {}").format(self._state, self._side)
-
 
 class SEPericardialEffusion(SEPatientAction):
     __slots__ = ['_effusion_rate']
@@ -619,6 +642,7 @@ class SESubstanceBolus(SEPatientAction):
                 "  Concentration: {}\n"
                 "  Dose: {}\n"
                 "  Substance: {}").format(self._concentration, self._dose, self._substance)
+
 class SESubstanceCompoundInfusion(SEPatientAction):
     __slots__ = ["_bag_volume", "_rate", "_compound"]
 
@@ -665,7 +689,6 @@ class SESubstanceCompoundInfusion(SEPatientAction):
                 "  Compound: {}\n"
                 "  Rate: {}").format(self._bag_volume, self._compound, self._rate)
 
-
 class SESubstanceInfusion(SEPatientAction):
     __slots__ = ["_concentration", "_rate", "_substance"]
 
@@ -711,6 +734,7 @@ class SESubstanceInfusion(SEPatientAction):
                 "  Concentration: {}\n"
                 "  Substance: {}\n"
                 "  Rate: {}").format(self._concentration, self._substance, self._rate)
+
 class eDevice(Enum):
     NullDevice = 0
     NasalCannula = 1

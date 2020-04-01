@@ -20,10 +20,6 @@ def HowTo_UseSepsis():
         print("Unable to load stabilize engine")
         return
 
-    infusion = SESubstanceInfusion()
-    infusion.set_substance()
-
-
     # Advance some time and print out the vitals
     pulse.advance_time_s(30)
     results = pulse.pull_data()

@@ -33,17 +33,18 @@ message AnyPatientActionData
     ExerciseData                                       Exercise                                       = 16;
     HemorrhageData                                     Hemorrhage                                     = 17;
     IntubationData                                     Intubation                                     = 18;
-    LobarPneumoniaExacerbationData                     LobarPneumoniaExacerbation                     = 19;
-    MechanicalVentilationData                          MechanicalVentilation                          = 20;
-    NeedleDecompressionData                            NeedleDecompression                            = 21;
-    PericardialEffusionData                            PericardialEffusion                            = 22;
-    RespiratoryFatigueData                             RespiratoryFatigue                             = 23;
-    SubstanceBolusData                                 SubstanceBolus                                 = 24;
-    SubstanceCompoundInfusionData                      SubstanceCompoundInfusion                      = 25;
-    SubstanceInfusionData                              SubstanceInfusion                              = 26;
-    SupplementalOxygenData                             SupplementalOxygen                             = 27;
-    TensionPneumothoraxData                            TensionPneumothorax                            = 28;
-    UrinateData                                        Urinate                                        = 29;
+    ImpairedAlveolarExchangeExacerbationData           ImpairedAlveolarExchangeExacerbation           = 19;
+    LobarPneumoniaExacerbationData                     LobarPneumoniaExacerbation                     = 20;
+    MechanicalVentilationData                          MechanicalVentilation                          = 21;
+    NeedleDecompressionData                            NeedleDecompression                            = 22;
+    PericardialEffusionData                            PericardialEffusion                            = 23;
+    RespiratoryFatigueData                             RespiratoryFatigue                             = 24;
+    SubstanceBolusData                                 SubstanceBolus                                 = 25;
+    SubstanceCompoundInfusionData                      SubstanceCompoundInfusion                      = 26;
+    SubstanceInfusionData                              SubstanceInfusion                              = 27;
+    SupplementalOxygenData                             SupplementalOxygen                             = 28;
+    TensionPneumothoraxData                            TensionPneumothorax                            = 29;
+    UrinateData                                        Urinate                                        = 30;
   }
 }
 
@@ -232,6 +233,14 @@ message HemorrhageData
   string                                    Compartment                     = 2;/**<<@brief Compartment where the bleeding is occurring */
   ScalarVolumePerTimeData                   Rate                            = 3;/**<<@brief The flow rate of blood exiting the specified compartment. Set to zero to stop the bleeding rate. */
   eType                                     Type                            = 4;/**<<@brief @ref HemorrhageData_eTypeTable*/
+}
+
+/** @brief Generic way to specify the effectivness of alveolar exchange. */
+message ImpairedAlveolarExchangeExacerbationData
+{
+  PatientActionData                         PatientAction                   = 1;
+  ScalarAreaData                            ImpairedSurfaceArea             = 2;/**<< @brief Surface Area of the impaired alveoli. */
+  Scalar0To1Data                            ImpairedFraction                = 3;/**<< @brief Surface Area Fraction of the impaired alveoli. */
 }
 
 /** @brief Insertion of tube into the patient's airway */

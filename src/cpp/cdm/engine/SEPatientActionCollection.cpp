@@ -20,6 +20,7 @@
 #include "patient/actions/SEExercise.h"
 #include "patient/actions/SEDyspnea.h"
 #include "patient/actions/SEHemorrhage.h"
+#include "patient/actions/SEImpairedAlveolarExchangeExacerbation.h"
 #include "patient/actions/SEIntubation.h"
 #include "patient/actions/SELobarPneumoniaExacerbation.h"
 #include "patient/actions/SEMechanicalVentilation.h"
@@ -58,6 +59,7 @@ SEPatientActionCollection::SEPatientActionCollection(SESubstanceManager& substan
   m_RightChestOcclusiveDressing = nullptr;
   m_Dyspnea = nullptr;
   m_Exercise = nullptr;
+  m_ImpairedAlveolarExchangeExacerbation = nullptr;
   m_Intubation = nullptr;
   m_LobarPneumoniaExacerbation = nullptr;
   m_MechanicalVentilation = nullptr;
@@ -95,6 +97,7 @@ void SEPatientActionCollection::Clear()
   RemoveRightChestOcclusiveDressing();
   RemoveDyspnea();
   RemoveExercise();
+  RemoveImpairedAlveolarExchangeExacerbation();
   RemoveIntubation();
   RemoveLobarPneumoniaExacerbation();
   RemoveMechanicalVentilation();
@@ -342,6 +345,17 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
     myHem->Copy(*hem);
     if (!myHem->IsActive())
       RemoveHemorrhage(hem->GetCompartment());
+    return true;
+  }
+
+  const SEImpairedAlveolarExchangeExacerbation* imaee = dynamic_cast<const SEImpairedAlveolarExchangeExacerbation*>(&action);
+  if (imaee != nullptr)
+  {
+    if (m_ImpairedAlveolarExchangeExacerbation == nullptr)
+      m_ImpairedAlveolarExchangeExacerbation = new SEImpairedAlveolarExchangeExacerbation();
+    m_ImpairedAlveolarExchangeExacerbation->Copy(*imaee);
+    if (!m_ImpairedAlveolarExchangeExacerbation->IsActive())
+      RemoveImpairedAlveolarExchangeExacerbation();
     return true;
   }
 
@@ -864,6 +878,23 @@ void SEPatientActionCollection::RemoveHemorrhage(const std::string& cmpt)
   SAFE_DELETE(h);
 }
 
+bool SEPatientActionCollection::HasImpairedAlveolarExchangeExacerbation() const
+{
+  return m_ImpairedAlveolarExchangeExacerbation == nullptr ? false : m_ImpairedAlveolarExchangeExacerbation->IsActive();
+}
+SEImpairedAlveolarExchangeExacerbation* SEPatientActionCollection::GetImpairedAlveolarExchangeExacerbation()
+{
+  return m_ImpairedAlveolarExchangeExacerbation;
+}
+const SEImpairedAlveolarExchangeExacerbation* SEPatientActionCollection::GetImpairedAlveolarExchangeExacerbation() const
+{
+  return m_ImpairedAlveolarExchangeExacerbation;
+}
+void SEPatientActionCollection::RemoveImpairedAlveolarExchangeExacerbation()
+{
+  SAFE_DELETE(m_ImpairedAlveolarExchangeExacerbation);
+}
+
 bool SEPatientActionCollection::HasIntubation() const
 {
   return m_Intubation == nullptr ? false : m_Intubation->IsActive();
@@ -1174,6 +1205,8 @@ void SEPatientActionCollection::GetAllActions(std::vector<const SEAction*>& acti
     actions.push_back(GetExercise());
   for (auto itr : m_Hemorrhages)
     actions.push_back(itr.second);
+  if (HasImpairedAlveolarExchangeExacerbation())
+    actions.push_back(GetImpairedAlveolarExchangeExacerbation());
   if (HasIntubation())
     actions.push_back(GetIntubation());
   if (HasLobarPneumoniaExacerbation())

@@ -145,6 +145,12 @@ public abstract class SEPatientAction extends SEAction
       SEHemorrhage.load(c.getHemorrhage(), dst);
       return dst;
     }
+    case IMPAIREDALVEOLAREXCHANGEEXACERBATION:
+    {
+      SEImpairedAlveolarExchangeExacerbation dst = new SEImpairedAlveolarExchangeExacerbation();
+      SEImpairedAlveolarExchangeExacerbation.load(c.getImpairedAlveolarExchangeExacerbation(), dst);
+      return dst;
+    }
     case INTUBATION:
     {
       SEIntubation dst = new SEIntubation();
@@ -307,6 +313,11 @@ public abstract class SEPatientAction extends SEAction
     if(c instanceof SEHemorrhage)
     {
       dst.setHemorrhage(SEHemorrhage.unload((SEHemorrhage)c));
+      return dst.build();
+    }
+    if(c instanceof SEImpairedAlveolarExchangeExacerbation)
+    {
+      dst.setImpairedAlveolarExchangeExacerbation(SEImpairedAlveolarExchangeExacerbation.unload((SEImpairedAlveolarExchangeExacerbation)c));
       return dst.build();
     }
     if(c instanceof SEIntubation)

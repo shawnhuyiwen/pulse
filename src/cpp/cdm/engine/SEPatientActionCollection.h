@@ -21,6 +21,7 @@ class SEChronicObstructivePulmonaryDiseaseExacerbation;
 class SEDyspnea;
 class SEExercise;
 class SEHemorrhage;
+class SEImpairedAlveolarExchangeExacerbation;
 class SEIntubation;
 class SELobarPneumoniaExacerbation;
 class SEMechanicalVentilation;
@@ -130,6 +131,11 @@ public:
   const std::map<std::string, SEHemorrhage*>& GetHemorrhages() const;
   void RemoveHemorrhage(const std::string& cmpt);
 
+  bool HasImpairedAlveolarExchangeExacerbation() const;
+  SEImpairedAlveolarExchangeExacerbation* GetImpairedAlveolarExchangeExacerbation();
+  const SEImpairedAlveolarExchangeExacerbation* GetImpairedAlveolarExchangeExacerbation() const;
+  void RemoveImpairedAlveolarExchangeExacerbation();
+
   bool HasIntubation() const;
   SEIntubation* GetIntubation();
   const SEIntubation* GetIntubation() const;
@@ -229,6 +235,7 @@ protected:
   SEDyspnea*                                        m_Dyspnea;
   SEExercise*                                       m_Exercise;
   SEIntubation*                                     m_Intubation;
+  SEImpairedAlveolarExchangeExacerbation*           m_ImpairedAlveolarExchangeExacerbation;
   SELobarPneumoniaExacerbation*                     m_LobarPneumoniaExacerbation;
   SEMechanicalVentilation*                          m_MechanicalVentilation;
   SENeedleDecompression*                            m_LeftNeedleDecompression;

@@ -1,39 +1,39 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 #include "stdafx.h"
-#include "patient/conditions/SEImpairedAlveolarExchange.h"
+#include "patient/actions/SEImpairedAlveolarExchangeExacerbation.h"
 #include "properties/SEScalarArea.h"
 #include "properties/SEScalar0To1.h"
-#include "io/protobuf/PBPatientConditions.h"
+#include "io/protobuf/PBPatientActions.h"
 
-SEImpairedAlveolarExchange::SEImpairedAlveolarExchange() : SEPatientCondition()
+SEImpairedAlveolarExchangeExacerbation::SEImpairedAlveolarExchangeExacerbation() : SEPatientAction()
 {
   m_ImpairedSurfaceArea = nullptr;
   m_ImpairedFraction = nullptr;
 }
 
-SEImpairedAlveolarExchange::~SEImpairedAlveolarExchange()
+SEImpairedAlveolarExchangeExacerbation::~SEImpairedAlveolarExchangeExacerbation()
 {
   Clear();
 }
 
-void SEImpairedAlveolarExchange::Clear()
+void SEImpairedAlveolarExchangeExacerbation::Clear()
 {
   SAFE_DELETE(m_ImpairedSurfaceArea);
   SAFE_DELETE(m_ImpairedFraction);
 }
 
-void SEImpairedAlveolarExchange::Copy(const SEImpairedAlveolarExchange& src)
+void SEImpairedAlveolarExchangeExacerbation::Copy(const SEImpairedAlveolarExchangeExacerbation & src)
 {
-  PBPatientCondition::Copy(src, *this);
+  PBPatientAction::Copy(src, *this);
 }
 
-bool SEImpairedAlveolarExchange::IsValid() const
+bool SEImpairedAlveolarExchangeExacerbation::IsValid() const
 {
   return HasImpairedFraction() || HasImpairedSurfaceArea();
 }
 
-bool SEImpairedAlveolarExchange::IsActive() const
+bool SEImpairedAlveolarExchangeExacerbation::IsActive() const
 {
   if (!IsValid())
     return false;
@@ -44,34 +44,34 @@ bool SEImpairedAlveolarExchange::IsActive() const
   return false;
 }
 
-bool SEImpairedAlveolarExchange::HasImpairedSurfaceArea() const
+bool SEImpairedAlveolarExchangeExacerbation::HasImpairedSurfaceArea() const
 {
   return m_ImpairedSurfaceArea == nullptr ? false : m_ImpairedSurfaceArea->IsValid();
 }
-SEScalarArea& SEImpairedAlveolarExchange::GetImpairedSurfaceArea()
+SEScalarArea& SEImpairedAlveolarExchangeExacerbation::GetImpairedSurfaceArea()
 {
   if (m_ImpairedSurfaceArea == nullptr)
     m_ImpairedSurfaceArea = new SEScalarArea();
   return *m_ImpairedSurfaceArea;
 }
-double SEImpairedAlveolarExchange::GetImpairedSurfaceArea(const AreaUnit& unit) const
+double SEImpairedAlveolarExchangeExacerbation::GetImpairedSurfaceArea(const AreaUnit& unit) const
 {
   if (m_ImpairedSurfaceArea == nullptr)
     return SEScalar::dNaN();
   return m_ImpairedSurfaceArea->GetValue(unit);
 }
 
-bool SEImpairedAlveolarExchange::HasImpairedFraction() const
+bool SEImpairedAlveolarExchangeExacerbation::HasImpairedFraction() const
 {
   return m_ImpairedFraction == nullptr ? false : m_ImpairedFraction->IsValid();
 }
-SEScalar0To1& SEImpairedAlveolarExchange::GetImpairedFraction()
+SEScalar0To1& SEImpairedAlveolarExchangeExacerbation::GetImpairedFraction()
 {
   if (m_ImpairedFraction == nullptr)
     m_ImpairedFraction = new SEScalar0To1();
   return *m_ImpairedFraction;
 }
-double SEImpairedAlveolarExchange::GetImpairedFraction() const
+double SEImpairedAlveolarExchangeExacerbation::GetImpairedFraction() const
 {
   if (m_ImpairedFraction == nullptr)
     return SEScalar::dNaN();
@@ -79,9 +79,9 @@ double SEImpairedAlveolarExchange::GetImpairedFraction() const
 }
 
 
-void SEImpairedAlveolarExchange::ToString(std::ostream &str) const
+void SEImpairedAlveolarExchangeExacerbation::ToString(std::ostream &str) const
 {
-  str << "Impaired Alveoli Exchange :";
+  str << "Impaired Alveoli Exchange Exacerbation:";
   str << "\n\tImpairedSurfaceArea :";HasImpairedSurfaceArea() ? str << *m_ImpairedSurfaceArea : str << "Not Provided";
   str << "\n\tImpairedFraction :"; HasImpairedFraction() ? str << *m_ImpairedFraction : str << "Not Provided";
 

@@ -121,6 +121,7 @@ add_library_ex(CommonDataModel
     patient/actions/SEForcedInhale.h
     patient/actions/SEForcedPause.h
     patient/actions/SEHemorrhage.h
+    patient/actions/SEImpairedAlveolarExchangeExacerbation.h
     patient/actions/SEIntubation.h
     patient/actions/SELobarPneumoniaExacerbation.h
     patient/actions/SEMechanicalVentilation.h
@@ -446,6 +447,7 @@ add_library_ex(CommonDataModel
     patient/actions/SEForcedInhale.cpp
     patient/actions/SEForcedPause.cpp
     patient/actions/SEHemorrhage.cpp
+    patient/actions/SEImpairedAlveolarExchangeExacerbation.cpp
     patient/actions/SEIntubation.cpp
     patient/actions/SELobarPneumoniaExacerbation.cpp
     patient/actions/SEMechanicalVentilation.cpp
