@@ -414,7 +414,7 @@ public class SEEnvironmentalConditions
         return sc;
       }
     }    
-    SESubstanceConcentration sc = new SESubstanceConcentration(substance);    
+    SESubstanceConcentration sc = new SESubstanceConcentration(substance);
     this.ambientAerosols.add(sc);
     return sc;
   }

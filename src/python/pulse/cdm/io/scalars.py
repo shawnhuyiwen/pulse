@@ -31,9 +31,9 @@ from pulse.cdm.bind.Properties_pb2 import ScalarData, Scalar0To1Data, ScalarNega
                                           ScalarVolumePerTimePressureData
 
 def serialize_scalar_to_bind(src: SEScalar, dst: ScalarData):
-    dst.Scalar.Value = src.get_value()
+    dst.Value = src.get_value()
 def serialize_scalar_from_bind(src: ScalarData, dst: SEScalar):
-    dst.set_value(src.Scalar.Value)
+    dst.set_value(src.Value)
 
 def serialize_scalar_0to1_to_bind(src: SEScalar0To1, dst: Scalar0To1Data):
     dst.Scalar0To1.Value = src.get_value()

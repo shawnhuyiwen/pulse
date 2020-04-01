@@ -7,6 +7,7 @@ class SEEventHandler;
 class SEMechanicalVentilatorConfiguration;
 class SESubstance;
 class SESubstanceFraction;
+class SESubstanceConcentration;
 
 // Keep enums in sync with appropriate schema/cdm/MechanicalVentilator.proto file !!
 enum class eMechanicalVentilator_Connection { NullConnection = 0, Off, Mask, Tube };
@@ -98,6 +99,15 @@ public:
   void RemoveFractionInspiredGas(const SESubstance& substance);
   void RemoveFractionInspiredGases();
 
+  bool HasConcentrationInspiredAerosol() const;
+  bool HasConcentrationInspiredAerosol(const SESubstance& substance) const;
+  const std::vector<SESubstanceConcentration*>& GetConcentrationInspiredAerosols();
+  const std::vector<const SESubstanceConcentration*>& GetConcentrationInspiredAerosols() const;
+  SESubstanceConcentration& GetConcentrationInspiredAerosol(SESubstance& substance);
+  const SESubstanceConcentration* GetConcentrationInspiredAerosol(const SESubstance& substance) const;
+  void RemoveConcentrationInspiredAerosol(const SESubstance& substance);
+  void RemoveConcentrationInspiredAerosols();
+
 protected:
   
   SEScalarTime*                                          m_BreathPeriod;
@@ -113,6 +123,9 @@ protected:
 
   std::vector<SESubstanceFraction*>                      m_FractionInspiredGases;
   std::vector<const SESubstanceFraction*>                m_cFractionInspiredGases;
+
+  std::vector<SESubstanceConcentration*>                 m_ConcentrationInspiredAerosols;
+  std::vector<const SESubstanceConcentration*>           m_cConcentrationInspiredAerosols;
 
   SESubstanceManager&                                    m_Substances;
 };

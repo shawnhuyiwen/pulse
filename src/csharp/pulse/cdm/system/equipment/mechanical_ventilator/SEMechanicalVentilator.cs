@@ -3,6 +3,7 @@
 
 namespace Pulse.CDM
 {
+  // TODO Substance Fractions and Concentrations!!!
   public class SEMechanicalVentilator : SEEquipment
   {
     // Keep enums in sync with appropriate schema/cdm/MechanicalVentilator.proto file !!

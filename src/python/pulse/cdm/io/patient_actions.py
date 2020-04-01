@@ -11,7 +11,7 @@ def serialize_patient_action_to_bind(src: SEPatientAction, dst: PatientActionDat
     serialize_action_to_bind(src,dst.Action)
 
 def serialize_patient_action_from_bind(src: PatientActionData, dst: SEPatientAction):
-    raise Exception("serialize_patient_action_from_bind not implemented")
+    serialize_action_from_bind(src.Action, dst)
 
 
 def serialize_exercise_to_bind(src: SEExercise, dst: ExerciseData):

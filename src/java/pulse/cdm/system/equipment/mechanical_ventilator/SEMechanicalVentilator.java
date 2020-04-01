@@ -3,13 +3,19 @@
 package pulse.cdm.system.equipment.mechanical_ventilator;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 import pulse.cdm.bind.MechanicalVentilator.MechanicalVentilatorData;
 import pulse.cdm.bind.MechanicalVentilator.MechanicalVentilatorData.*;
+import pulse.cdm.bind.Substance.SubstanceConcentrationData;
+import pulse.cdm.bind.Substance.SubstanceFractionData;
+import pulse.cdm.bind.Substance.SubstanceData.eState;
 import pulse.cdm.properties.SEScalar;
+import pulse.cdm.properties.SEScalar0To1;
 import pulse.cdm.properties.SEScalarFrequency;
+import pulse.cdm.properties.SEScalarMassPerVolume;
 import pulse.cdm.properties.SEScalarPressure;
 import pulse.cdm.properties.SEScalarTime;
 import pulse.cdm.substance.SESubstance;
@@ -17,6 +23,7 @@ import pulse.cdm.substance.SESubstanceConcentration;
 import pulse.cdm.substance.SESubstanceFraction;
 import pulse.cdm.substance.SESubstanceManager;
 import pulse.cdm.system.equipment.SEEquipment;
+import pulse.utilities.Log;
 
 public class SEMechanicalVentilator extends SEEquipment
 {
@@ -32,6 +39,7 @@ public class SEMechanicalVentilator extends SEEquipment
   protected SEScalarFrequency                 respiratoryRate;
   
   protected List<SESubstanceFraction>         fractionInspiredGases;
+  protected List<SESubstanceConcentration>    concentrationInspiredAerosol;
 
 
   public SEMechanicalVentilator()
@@ -48,6 +56,7 @@ public class SEMechanicalVentilator extends SEEquipment
     respiratoryRate = null;
 
     this.fractionInspiredGases=new ArrayList<SESubstanceFraction>();
+    this.concentrationInspiredAerosol=new ArrayList<SESubstanceConcentration>();
   }
 
   public void reset()
@@ -71,6 +80,7 @@ public class SEMechanicalVentilator extends SEEquipment
       respiratoryRate.invalidate();
     
     this.fractionInspiredGases.clear();
+    this.concentrationInspiredAerosol.clear();
   }
 
   public void copy(SEMechanicalVentilator from)
@@ -106,7 +116,17 @@ public class SEMechanicalVentilator extends SEEquipment
         if(sf.hasAmount())
           mine.getAmount().set(sf.getAmount());
       }
-    }    
+    }
+    if(from.concentrationInspiredAerosol!=null)
+    {
+      SESubstanceConcentration mine;
+      for(SESubstanceConcentration sc : from.concentrationInspiredAerosol)
+      {
+        mine=this.createConcentrationInspiredAerosol(sc.getSubstance());
+        if(sc.hasConcentration())
+          mine.getConcentration().set(sc.getConcentration());
+      }
+    }
   }
 
   public static void load(MechanicalVentilatorData src, SEMechanicalVentilator dst, SESubstanceManager subMgr)
@@ -140,6 +160,45 @@ public class SEMechanicalVentilator extends SEEquipment
       SEScalarPressure.load(src.getPeakInspiratoryPressure(), dst.getPeakInspiratoryPressure());
     if (src.hasPositiveEndExpiredPressure())
       SEScalarPressure.load(src.getPositiveEndExpiredPressure(), dst.getPositiveEndExpiredPressure());
+    
+    SESubstance sub;
+    if(src.getFractionInspiredGasList()!=null)
+    {
+      for(SubstanceFractionData subData : src.getFractionInspiredGasList())
+      {
+        sub = subMgr.getSubstance(subData.getName());
+        if(sub == null)
+        {
+          Log.error("Substance does not exist for ambient gas : "+subData.getName());
+          continue;
+        }
+        if(sub.getState() != eState.Gas)
+        {
+          Log.error("Environment Ambient Gas must be a gas, "+subData.getName()+" is not a gas...");
+          continue;
+        }
+        SEScalar0To1.load(subData.getAmount(),dst.createFractionInspiredGas(sub).getAmount());
+      }
+    }
+    
+    if(src.getConcentrationInspiredAerosolList()!=null)
+    {
+      for(SubstanceConcentrationData subData : src.getConcentrationInspiredAerosolList())
+      {
+        sub = subMgr.getSubstance(subData.getName());
+        if(sub == null)
+        {
+          Log.error("Substance does not exist for ambient aerosol : "+subData.getName());
+          continue;
+        }
+        if(sub.getState() != eState.Solid && sub.getState() != eState.Liquid)
+        {
+          Log.error("Environment Ambient Aerosol must be a liquid or a gas, "+subData.getName()+" is neither...");
+          continue;
+        }
+        SEScalarMassPerVolume.load(subData.getConcentration(),dst.createConcentrationInspiredAerosol(sub).getConcentration());
+      }
+    }
   }
   public static MechanicalVentilatorData unload(SEMechanicalVentilator src)
   {
@@ -179,6 +238,11 @@ public class SEMechanicalVentilator extends SEEquipment
     if (src.hasPositiveEndExpiredPressure())
       dst.setPositiveEndExpiredPressure(SEScalarPressure.unload(src.positiveEndExpiredPressure));
     
+    for(SESubstanceFraction ambSub : src.fractionInspiredGases)
+      dst.addFractionInspiredGas(SESubstanceFraction.unload(ambSub));
+    
+    for(SESubstanceConcentration ambSub : src.concentrationInspiredAerosol)
+      dst.addConcentrationInspiredAerosol(SESubstanceConcentration.unload(ambSub));
   }
   
   public SEScalarTime getBreathPeriod()
@@ -310,7 +374,7 @@ public class SEMechanicalVentilator extends SEEquipment
         return sf;
       }
     }    
-    SESubstanceFraction sf = new SESubstanceFraction(substance);    
+    SESubstanceFraction sf = new SESubstanceFraction(substance);
     this.fractionInspiredGases.add(sf);
     return sf;
   }
@@ -345,6 +409,55 @@ public class SEMechanicalVentilator extends SEEquipment
     }  
   }
   
+
+  public SESubstanceConcentration createConcentrationInspiredAerosol(SESubstance substance)
+  {
+    return getConcentrationInspiredAerosol(substance);
+  }
+  public SESubstanceConcentration getConcentrationInspiredAerosol(SESubstance substance)
+  {
+    for(SESubstanceConcentration sc : this.concentrationInspiredAerosol)
+    {
+      if(sc.getSubstance().getName().equals(substance.getName()))
+      {        
+        return sc;
+      }
+    }    
+    SESubstanceConcentration sc = new SESubstanceConcentration(substance);
+    this.concentrationInspiredAerosol.add(sc);
+    return sc;
+  }
+  public boolean hasConcentrationInspiredAerosol()
+  {
+    return !this.concentrationInspiredAerosol.isEmpty();
+  }
+  public boolean hasConcentrationInspiredAerosol(SESubstance substance)
+  {
+    for(SESubstanceConcentration sc : this.concentrationInspiredAerosol)
+    {
+      if(sc.getSubstance()==substance)
+      {        
+        return true;
+      }
+    }
+    return false;
+  }
+  public List<SESubstanceConcentration> getConcentrationInspiredAerosol()
+  {
+    return Collections.unmodifiableList(this.concentrationInspiredAerosol);
+  }
+  public void removeConcentrationInspiredAerosol(SESubstance substance)
+  {
+    for(SESubstanceConcentration sc : this.concentrationInspiredAerosol)
+    {
+      if(sc.getSubstance()==substance)
+      {
+        this.concentrationInspiredAerosol.remove(sc);
+        return;
+      }
+    }  
+  }
+  
   public void trim()
   {
     SESubstanceFraction sf;
@@ -372,6 +485,8 @@ public class SEMechanicalVentilator extends SEEquipment
         + "\n\tRespiratoryRate: " + getRespiratoryRate();
     for(SESubstanceFraction sf : this.fractionInspiredGases)
       str += "\n\t"+sf.toString();
+    for(SESubstanceConcentration sc : this.concentrationInspiredAerosol)
+    str += "\n\t"+sc.toString();
     return str;
   }
 }

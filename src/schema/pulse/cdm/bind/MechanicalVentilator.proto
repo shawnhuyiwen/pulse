@@ -32,32 +32,33 @@ message MechanicalVentilatorData
   
   message BreathProfileData
   {
-    oneof                           Breath
+    oneof Breath
     {
-      ScalarFrequencyData           Rate                          = 1; /**<< @brief . */
-      ScalarTimeData                Period                        = 2; /**<< @brief . */
+      ScalarFrequencyData             Rate                          = 1; /**<< @brief . */
+      ScalarTimeData                  Period                        = 2; /**<< @brief . */
     }
     
-    ScalarData                      InspiratoryExpiratoryRatio    = 3; /**<< @brief The ratio of time spent in the inspiratory phase vs the expiratory phase of respiration. */
+    ScalarData                        InspiratoryExpiratoryRatio    = 3; /**<< @brief The ratio of time spent in the inspiratory phase vs the expiratory phase of respiration. */
   }
   
   message InspiratoryExpiratoryPeriodData
   {
-    ScalarTimeData                  ExpiratoryPeriod              = 1; /**<< @brief . */
-    ScalarTimeData                  InspiratoryPeriod             = 2; /**<< @brief . */
+    ScalarTimeData                    ExpiratoryPeriod              = 1; /**<< @brief . */
+    ScalarTimeData                    InspiratoryPeriod             = 2; /**<< @brief . */
   }
   
   oneof BreathingControl
   {
-    BreathProfileData               BreathProfile                 = 1; /**<< @brief . */
-    InspiratoryExpiratoryPeriodData InspiratoryExpiratoryPeriod   = 2; /**<< @brief . */
+    BreathProfileData                 BreathProfile                 = 1; /**<< @brief . */
+    InspiratoryExpiratoryPeriodData   InspiratoryExpiratoryPeriod   = 2; /**<< @brief . */
   }
-  eConnection                       Connection                    = 3; /**<< @brief @ref MechanicalVentilatorData_eConnectionTable */
-  eControl                          Control                       = 4; /**<< @brief @ref MechanicalVentilatorData_eControlTable */
-  eDriverWaveform                   DriverWaveform                = 5; /**<< @brief @ref MechanicalVentilatorData_eDriverWaveformTable */
+  eConnection                         Connection                    = 3; /**<< @brief @ref MechanicalVentilatorData_eConnectionTable */
+  eControl                            Control                       = 4; /**<< @brief @ref MechanicalVentilatorData_eControlTable */
+  eDriverWaveform                     DriverWaveform                = 5; /**<< @brief @ref MechanicalVentilatorData_eDriverWaveformTable */
   
-  ScalarPressureData                PeakInspiratoryPressure       = 6; /**<< @brief */
-  ScalarPressureData                PositiveEndExpiredPressure    = 7; /**<< @brief The pressure above atmospheric pressure that exists in the lungs at the end of expiration.*/
+  ScalarPressureData                  PeakInspiratoryPressure       = 6; /**<< @brief */
+  ScalarPressureData                  PositiveEndExpiredPressure    = 7; /**<< @brief The pressure above atmospheric pressure that exists in the lungs at the end of expiration.*/
   
-  repeated SubstanceFractionData    FractionInspiredGas           = 8;/**<< @brief Break down of the gasses such as FiO2. */
+  repeated SubstanceFractionData      FractionInspiredGas           = 8;/**<< @brief Break down of the gasses such as FiO2. */
+  repeated SubstanceConcentrationData ConcentrationInspiredAerosol  = 9;/**<< @brief Concentration of added aerosolized substances. */
 }

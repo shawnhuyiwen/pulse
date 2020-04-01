@@ -18,7 +18,6 @@ class SEPatientCondition(SECondition):
     def get_name(self):
         return self.__repr__()
 
-
 class SEAcuteRespiratoryDistressSyndrome(SEPatientCondition):
     __slots__ = ["_severity", "_left_lung_affected", "_right_lung_affected"]
 
@@ -66,6 +65,7 @@ class SEAcuteRespiratoryDistressSyndrome(SEPatientCondition):
                 "  Severity: {}\n"
                 "  Right Lung Affected: {}\n"
                 "  Left Lung Affected: {}").format(self._severity, self._right_lung_affected, self._left_lung_affected)
+
 class SEChronicAnemia(SEPatientCondition):
     __slots__ = ['_reduction_factor']
 
@@ -90,7 +90,6 @@ class SEChronicAnemia(SEPatientCondition):
     def __repr__(self):
         return ("Chronic Anemia\n"
                 "  Reduction Factor: {}").format(self._reduction_factor)
-
 
 class SEChronicHeartFailure(SEPatientCondition):
     __slots__ = []
@@ -154,7 +153,6 @@ class SEChronicPericardialEffusion(SEPatientCondition):
         return ("Chronic Pericardial Effusion\n"
                 "  Accumulated Volume: {}").format(self._accumulated_volume)
 
-
 class SEChronicRenalStenosis(SEPatientCondition):
     __slots__ = ["_right_kidney_severity", "_left_kidney_severity"]
 
@@ -195,7 +193,6 @@ class SEChronicVentricularSystolicDysfunction(SEPatientCondition):
         print("No Functionality in this condition")
         pass
 
-
 class SEImpairedAlveolarExchange(SEPatientCondition):
     __slots__ = ["_impaired_surface_area", "_impaired_fraction"]
 
@@ -228,7 +225,6 @@ class SEImpairedAlveolarExchange(SEPatientCondition):
                 "  Impaired Fraction: {}\n"
                 "  Impaired Surface Area: {}").format(self._impaired_fraction, self._impaired_surface_area)
 
-
 class SELobarPneumonia(SEPatientCondition):
     __slots__ = ["_severity", "_left_lung_affected", "_right_lung_affected"]
 
@@ -237,7 +233,6 @@ class SELobarPneumonia(SEPatientCondition):
         self._severity = None
         self._left_lung_affected = None
         self._right_lung_affected = None
-
     def clear(self):
         if self._severity is not None:
             self._severity.invalidate()
@@ -245,13 +240,10 @@ class SELobarPneumonia(SEPatientCondition):
             self._left_lung_affected.invalidate()
         if self._right_lung_affected is not None:
             self._right_lung_affected.invalidate()
-
     def is_valid(self):
         return self.has_severity() and self.has_left_lung_affected() and self.has_right_lung_affected()
-
     def has_severity(self):
         return self._severity is not None
-
     def get_severity(self):
         if self._severity is None:
             self._severity = SEScalar0To1()
@@ -260,15 +252,12 @@ class SELobarPneumonia(SEPatientCondition):
         if not self._left_lung_affected:
             self._left_lung_affected = SEScalar0To1()
         return self._left_lung_affected
-
     def has_left_lung_affected(self):
         return self._left_lung_affected is not None
-
     def get_right_lung_affected(self):
         if not self._right_lung_affected:
             self._right_lung_affected = SEScalar0To1()
         return self._right_lung_affected
-
     def has_right_lung_affected(self):
         return self._right_lung_affected is not None
     def __repr__(self):
@@ -276,6 +265,7 @@ class SELobarPneumonia(SEPatientCondition):
                 "  Severity: {}\n"
                 "  Right Lung Affected: {}\n"
                 "  Left Lung Affected: {}").format(self._severity, self._right_lung_affected, self._left_lung_affected)
+
 class SEPulmonaryFibrosis(SEPatientCondition):
     __slots__ = ["_severity"]
 
@@ -285,13 +275,10 @@ class SEPulmonaryFibrosis(SEPatientCondition):
     def clear(self):
         if self._severity is not None:
             self._severity.invalidate()
-
     def is_valid(self):
         return self.has_severity()
-
     def has_severity(self):
         return self._severity is not None
-
     def get_severity(self):
         if self._severity is None:
             self._severity = SEScalar0To1()
@@ -299,6 +286,7 @@ class SEPulmonaryFibrosis(SEPatientCondition):
     def __repr__(self):
         return ("Pulmonary Fibrosis\n"
                 "  Severity: {}\n").format(self._severity)
+
 class SESepsis(SEPatientCondition):
     __slots__ = ["_severity"]
 
@@ -308,13 +296,10 @@ class SESepsis(SEPatientCondition):
     def clear(self):
         if self._severity is not None:
             self._severity.invalidate()
-
     def is_valid(self):
         return self.has_severity()
-
     def has_severity(self):
         return self._severity is not None
-
     def get_severity(self):
         if self._severity is None:
             self._severity = SEScalar0To1()

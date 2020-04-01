@@ -79,7 +79,7 @@ void SEMechanicalVentilatorConfiguration::InvalidateConfigurationFile()
 
 void SEMechanicalVentilatorConfiguration::ToString(std::ostream &str) const
 {
-  str << "Anesthesia Machine Configuration";
+  str << "Mechanical Ventilator Configuration";
   if (HasComment())
     str << "\n\tComment: " << m_Comment;
   if (HasConfigurationFile())

@@ -65,6 +65,23 @@ void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorData&
     PBSubstance::Load(sfData, dst.GetFractionInspiredGas(*sub));
   }
 
+  for (int i = 0; i < src.concentrationinspiredaerosol_size(); i++)
+  {
+    const CDM_BIND::SubstanceConcentrationData& scData = src.concentrationinspiredaerosol()[i];
+    sub = dst.m_Substances.GetSubstance(scData.name());
+    if (sub == nullptr)
+    {
+      dst.Error("Ignoring an mechanical ventilator aerosol concentration that was not found : " + scData.name());
+      continue;
+    }
+    if (sub->GetState() != eSubstance_State::Liquid && sub->GetState() != eSubstance_State::Solid)
+    {
+      dst.Error("Ignoring an mechanical ventilator aerosol concentration that is not a gas : " + scData.name());
+      continue;
+    }
+    PBSubstance::Load(scData, dst.GetConcentrationInspiredAerosol(*sub));
+  }
+
   dst.StateChange();
 }
 
@@ -101,6 +118,9 @@ void PBMechanicalVentilator::Serialize(const SEMechanicalVentilator& src, CDM_BI
 
   for (SESubstanceFraction* sf : src.m_FractionInspiredGases)
     dst.mutable_fractioninspiredgas()->AddAllocated(PBSubstance::Unload(*sf));
+
+  for (SESubstanceConcentration* sc : src.m_ConcentrationInspiredAerosols)
+    dst.mutable_concentrationinspiredaerosol()->AddAllocated(PBSubstance::Unload(*sc));
 }
 
 bool PBMechanicalVentilator::SerializeToString(const SEMechanicalVentilator& src, std::string& output, SerializationFormat m)

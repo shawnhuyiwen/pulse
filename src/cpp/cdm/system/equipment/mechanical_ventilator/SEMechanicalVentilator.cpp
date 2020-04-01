@@ -5,6 +5,7 @@
 #include "system/equipment/mechanical_ventilator/SEMechanicalVentilator.h"
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceManager.h"
+#include "substance/SESubstanceConcentration.h"
 #include "substance/SESubstanceFraction.h"
 
 // State Actions
@@ -13,6 +14,7 @@
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarFrequency.h"
+#include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarTime.h"
@@ -55,9 +57,13 @@ void SEMechanicalVentilator::Clear()
 
   DELETE_VECTOR(m_cFractionInspiredGases);
   m_cFractionInspiredGases.clear();
-
   DELETE_VECTOR(m_FractionInspiredGases);
   m_FractionInspiredGases.clear();
+
+  DELETE_VECTOR(m_cConcentrationInspiredAerosols);
+  m_cConcentrationInspiredAerosols.clear();
+  DELETE_VECTOR(m_ConcentrationInspiredAerosols);
+  m_ConcentrationInspiredAerosols.clear();
 }
 
 void SEMechanicalVentilator::Merge(const SEMechanicalVentilator& from)
@@ -110,6 +116,15 @@ void SEMechanicalVentilator::Merge(const SEMechanicalVentilator& from)
     }
     if (!SEScalar::IsValue(1, total))
       Error("Mechanical Ventilator substance fractions do not sum to 1");
+  }
+
+  if (from.HasConcentrationInspiredAerosol())
+  {
+    for (SESubstanceConcentration* sc : from.m_ConcentrationInspiredAerosols)
+    {
+      SESubstanceConcentration& mine = GetConcentrationInspiredAerosol(sc->GetSubstance());
+      mine.GetConcentration().Set(sc->GetConcentration());
+    }
   }
 }
 
@@ -376,4 +391,69 @@ void SEMechanicalVentilator::RemoveFractionInspiredGases()
 {
   DELETE_VECTOR(m_FractionInspiredGases);
   m_cFractionInspiredGases.clear();
+}
+
+bool SEMechanicalVentilator::HasConcentrationInspiredAerosol() const
+{
+  return m_ConcentrationInspiredAerosols.size() == 0 ? false : true;
+}
+bool SEMechanicalVentilator::HasConcentrationInspiredAerosol(const SESubstance& substance) const
+{
+  for (const SESubstanceConcentration* sc : m_ConcentrationInspiredAerosols)
+  {
+    if (&substance == &sc->GetSubstance())
+      return true;
+  }
+  return false;
+}
+const std::vector<SESubstanceConcentration*>& SEMechanicalVentilator::GetConcentrationInspiredAerosols()
+{
+  return m_ConcentrationInspiredAerosols;
+}
+const std::vector<const SESubstanceConcentration*>& SEMechanicalVentilator::GetConcentrationInspiredAerosols() const
+{
+  return m_cConcentrationInspiredAerosols;
+}
+SESubstanceConcentration& SEMechanicalVentilator::GetConcentrationInspiredAerosol(SESubstance& substance)
+{
+  for (SESubstanceConcentration* sc : m_ConcentrationInspiredAerosols)
+  {
+    if (&substance == &sc->GetSubstance())
+      return *sc;
+  }
+  SESubstanceConcentration* sc = new SESubstanceConcentration(substance);
+  sc->GetConcentration().SetValue(0, MassPerVolumeUnit::ug_Per_L);
+  m_ConcentrationInspiredAerosols.push_back(sc);
+  m_cConcentrationInspiredAerosols.push_back(sc);
+  return *sc;
+}
+const SESubstanceConcentration* SEMechanicalVentilator::GetConcentrationInspiredAerosol(const SESubstance& substance) const
+{
+  const SESubstanceConcentration* sc = nullptr;
+  for (unsigned int i = 0; i < m_ConcentrationInspiredAerosols.size(); i++)
+  {
+    sc = m_ConcentrationInspiredAerosols[i];
+    if (&substance == &sc->GetSubstance())
+      return sc;
+  }
+  return sc;
+}
+void SEMechanicalVentilator::RemoveConcentrationInspiredAerosol(const SESubstance& substance)
+{
+  const SESubstanceConcentration* sc;
+  for (unsigned int i = 0; i < m_ConcentrationInspiredAerosols.size(); i++)
+  {
+    sc = m_ConcentrationInspiredAerosols[i];
+    if (&substance == &sc->GetSubstance())
+    {
+      m_ConcentrationInspiredAerosols.erase(m_ConcentrationInspiredAerosols.begin() + i);
+      m_cConcentrationInspiredAerosols.erase(m_cConcentrationInspiredAerosols.begin() + i);
+      delete sc;
+    }
+  }
+}
+void SEMechanicalVentilator::RemoveConcentrationInspiredAerosols()
+{
+  DELETE_VECTOR(m_ConcentrationInspiredAerosols);
+  m_cConcentrationInspiredAerosols.clear();
 }
