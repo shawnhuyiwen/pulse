@@ -79,7 +79,7 @@ void MechanicalVentilator::SetUp()
 
   // Compartments
   m_Environment = m_data.GetCompartments().GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
-  m_ventilator = m_data.GetCompartments().GetGasCompartment(pulse::MechanicalVentilatorCompartment::Ventilator);
+  m_ventilator = m_data.GetCompartments().GetGasCompartment(pulse::MechanicalVentilatorCompartment::MechanicalVentilator);
 
   // Paths
   m_pEnvironmentToVentilator = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::EnvironmentToVentilator);

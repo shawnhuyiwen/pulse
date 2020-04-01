@@ -4444,6 +4444,8 @@ void PulseController::SetupMechanicalVentilator()
   double connectioneVolume_L = 0.01;
   double tubeResistance_cmH2O_s_Per_L = 0.01; //4 total tubes - this is per tube
 
+  /////////////
+  // Circuit //
   // Nodes
   SEFluidCircuit& cMechanicalVentilator = m_Circuits->GetMechanicalVentilatorCircuit();
   SEFluidCircuitNode& Ambient = *cRespiratory.GetNode(pulse::EnvironmentNode::Ambient);
@@ -4517,40 +4519,42 @@ void PulseController::SetupMechanicalVentilator()
   cCombinedMechanicalVentilator.SetNextAndCurrentFromBaselines();
   cCombinedMechanicalVentilator.StateChange();
 
+  //////////////////////
+  // GAS COMPARTMENTS //
   // Grab the Environment Compartment
   SEGasCompartment* eEnvironment = m_Compartments->GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
   // Mechanical Ventilator Compartments
-  SEGasCompartment& mVentilator = m_Compartments->CreateGasCompartment(pulse::MechanicalVentilatorCompartment::Ventilator);
+  SEGasCompartment& mVentilator = m_Compartments->CreateGasCompartment(pulse::MechanicalVentilatorCompartment::MechanicalVentilator);
   mVentilator.MapNode(Ventilator);
-  SEGasCompartment& mExpiratoryValve = m_Compartments->CreateGasCompartment(pulse::MechanicalVentilatorCompartment::ExpiratoryValve);
+  SEGasCompartment& mExpiratoryValve = m_Compartments->CreateGasCompartment(pulse::MechanicalVentilatorCompartment::MechanicalVentilatorExpiratoryValve);
   mExpiratoryValve.MapNode(ExpiratoryValve);
-  SEGasCompartment& mInspiratoryValve = m_Compartments->CreateGasCompartment(pulse::MechanicalVentilatorCompartment::InspiratoryValve);
+  SEGasCompartment& mInspiratoryValve = m_Compartments->CreateGasCompartment(pulse::MechanicalVentilatorCompartment::MechanicalVentilatorInspiratoryValve);
   mInspiratoryValve.MapNode(InspiratoryValve);
-  SEGasCompartment& mExpiratoryLimb = m_Compartments->CreateGasCompartment(pulse::MechanicalVentilatorCompartment::ExpiratoryLimb);
+  SEGasCompartment& mExpiratoryLimb = m_Compartments->CreateGasCompartment(pulse::MechanicalVentilatorCompartment::MechanicalVentilatorExpiratoryLimb);
   mExpiratoryLimb.MapNode(ExpiratoryLimb);
-  SEGasCompartment& mInspiratoryLimb = m_Compartments->CreateGasCompartment(pulse::MechanicalVentilatorCompartment::InspiratoryLimb);
+  SEGasCompartment& mInspiratoryLimb = m_Compartments->CreateGasCompartment(pulse::MechanicalVentilatorCompartment::MechanicalVentilatorInspiratoryLimb);
   mInspiratoryLimb.MapNode(InspiratoryLimb);
-  SEGasCompartment& mYPiece = m_Compartments->CreateGasCompartment(pulse::MechanicalVentilatorCompartment::YPiece);
+  SEGasCompartment& mYPiece = m_Compartments->CreateGasCompartment(pulse::MechanicalVentilatorCompartment::MechanicalVentilatorYPiece);
   mYPiece.MapNode(YPiece);
-  SEGasCompartment& mConnection = m_Compartments->CreateGasCompartment(pulse::MechanicalVentilatorCompartment::Connection);
+  SEGasCompartment& mConnection = m_Compartments->CreateGasCompartment(pulse::MechanicalVentilatorCompartment::MechanicalVentilatorConnection);
   mConnection.MapNode(Connection);
 
   // Setup Links //
-  SEGasCompartmentLink& mVentilatorToExpiratoryValve = m_Compartments->CreateGasLink(mVentilator, mExpiratoryValve, pulse::MechanicalVentilatorLink::VentilatorToExpiratoryValve);
+  SEGasCompartmentLink& mVentilatorToExpiratoryValve = m_Compartments->CreateGasLink(mVentilator, mExpiratoryValve, pulse::MechanicalVentilatorLink::MechanicalVentilatorToExpiratoryValve);
   mVentilatorToExpiratoryValve.MapPath(VentilatorToExpiratoryValve);
-  SEGasCompartmentLink& mVentilatorToInspiratoryValve = m_Compartments->CreateGasLink(mVentilator, mInspiratoryValve, pulse::MechanicalVentilatorLink::VentilatorToInspiratoryValve);
+  SEGasCompartmentLink& mVentilatorToInspiratoryValve = m_Compartments->CreateGasLink(mVentilator, mInspiratoryValve, pulse::MechanicalVentilatorLink::MechanicalVentilatorToInspiratoryValve);
   mVentilatorToInspiratoryValve.MapPath(VentilatorToInspiratoryValve);
-  SEGasCompartmentLink& mExpiratoryLimbToExpiratoryValve = m_Compartments->CreateGasLink(mExpiratoryLimb, mExpiratoryValve, pulse::MechanicalVentilatorLink::ExpiratoryLimbToExpiratoryValve);
+  SEGasCompartmentLink& mExpiratoryLimbToExpiratoryValve = m_Compartments->CreateGasLink(mExpiratoryLimb, mExpiratoryValve, pulse::MechanicalVentilatorLink::MechanicalVentilatorExpiratoryLimbToExpiratoryValve);
   mExpiratoryLimbToExpiratoryValve.MapPath(ExpiratoryLimbToExpiratoryValve);
-  SEGasCompartmentLink& mInspiratoryValveToInspiratoryLimb = m_Compartments->CreateGasLink(mInspiratoryValve, mInspiratoryLimb, pulse::MechanicalVentilatorLink::InspiratoryValveToInspiratoryLimb);
+  SEGasCompartmentLink& mInspiratoryValveToInspiratoryLimb = m_Compartments->CreateGasLink(mInspiratoryValve, mInspiratoryLimb, pulse::MechanicalVentilatorLink::MechanicalVentilatorInspiratoryValveToInspiratoryLimb);
   mInspiratoryValveToInspiratoryLimb.MapPath(InspiratoryValveToInspiratoryLimb);
-  SEGasCompartmentLink& mExpiratoryLimbToYPiece = m_Compartments->CreateGasLink(mExpiratoryLimb, mYPiece, pulse::MechanicalVentilatorLink::ExpiratoryLimbToYPiece);
+  SEGasCompartmentLink& mExpiratoryLimbToYPiece = m_Compartments->CreateGasLink(mExpiratoryLimb, mYPiece, pulse::MechanicalVentilatorLink::MechanicalVentilatorExpiratoryLimbToYPiece);
   mExpiratoryLimbToYPiece.MapPath(ExpiratoryLimbToYPiece);
-  SEGasCompartmentLink& mInspiratoryLimbToYPiece = m_Compartments->CreateGasLink(mInspiratoryLimb, mYPiece, pulse::MechanicalVentilatorLink::InspiratoryLimbToYPiece);
+  SEGasCompartmentLink& mInspiratoryLimbToYPiece = m_Compartments->CreateGasLink(mInspiratoryLimb, mYPiece, pulse::MechanicalVentilatorLink::MechanicalVentilatorInspiratoryLimbToYPiece);
   mInspiratoryLimbToYPiece.MapPath(InspiratoryLimbToYPiece);
-  SEGasCompartmentLink& mYPieceToConnection = m_Compartments->CreateGasLink(mYPiece, mConnection, pulse::MechanicalVentilatorLink::YPieceToConnection);
+  SEGasCompartmentLink& mYPieceToConnection = m_Compartments->CreateGasLink(mYPiece, mConnection, pulse::MechanicalVentilatorLink::MechanicalVentilatorYPieceToConnection);
   mYPieceToConnection.MapPath(YPieceToConnection);
-  SEGasCompartmentLink& mConnectionToEnvironment = m_Compartments->CreateGasLink(mConnection, *eEnvironment, pulse::MechanicalVentilatorLink::ConnectionToEnvironment);
+  SEGasCompartmentLink& mConnectionToEnvironment = m_Compartments->CreateGasLink(mConnection, *eEnvironment, pulse::MechanicalVentilatorLink::MechanicalVentilatorConnectionToEnvironment);
   mConnectionToEnvironment.MapPath(ConnectionToEnvironment);
 
   SEGasCompartmentGraph& gMechanicalVentilator = m_Compartments->GetMechanicalVentilatorGraph();
@@ -4574,16 +4578,85 @@ void PulseController::SetupMechanicalVentilator()
   //Now do the combined transport setup
   // Grab the mouth from pulmonary
   SEGasCompartment* pMouth = m_Compartments->GetGasCompartment(pulse::PulmonaryCompartment::Mouth);
-  SEGasCompartmentLink& mConnectionToMouth = m_Compartments->CreateGasLink(mConnection, *pMouth, pulse::MechanicalVentilatorLink::ConnectionToMouth);
+  SEGasCompartmentLink& mConnectionToMouth = m_Compartments->CreateGasLink(mConnection, *pMouth, pulse::MechanicalVentilatorLink::MechanicalVentilatorConnectionToMouth);
   mConnectionToMouth.MapPath(ConnectionToMouth);
 
   SEGasCompartmentGraph& gCombinedRespiratoryMechanicalVentilator = m_Compartments->GetRespiratoryAndMechanicalVentilatorGraph();
   gCombinedRespiratoryMechanicalVentilator.AddGraph(gRespiratory);
   gCombinedRespiratoryMechanicalVentilator.AddGraph(gMechanicalVentilator);
   gCombinedRespiratoryMechanicalVentilator.RemoveLink(pulse::PulmonaryLink::EnvironmentToMouth);
-  gCombinedRespiratoryMechanicalVentilator.RemoveLink(pulse::MechanicalVentilatorLink::ConnectionToEnvironment);
+  gCombinedRespiratoryMechanicalVentilator.RemoveLink(pulse::MechanicalVentilatorLink::MechanicalVentilatorConnectionToEnvironment);
   gCombinedRespiratoryMechanicalVentilator.AddLink(mConnectionToMouth);
   gCombinedRespiratoryMechanicalVentilator.StateChange();
+
+  ///////////////////////////////////
+  // LIQUID (AEROSOL) COMPARTMENTS //
+  // Grab from pulmonary
+  SELiquidCompartment* lMouth = m_Compartments->GetLiquidCompartment(pulse::PulmonaryCompartment::Mouth);
+  SELiquidCompartment* lEnvironment = m_Compartments->GetLiquidCompartment(pulse::EnvironmentCompartment::Ambient);
+
+  // Mechanical Ventilator Compartments
+  SELiquidCompartment& lVentilator = m_Compartments->CreateLiquidCompartment(pulse::MechanicalVentilatorCompartment::MechanicalVentilator);
+  lVentilator.MapNode(Ventilator);
+  SELiquidCompartment& lExpiratoryValve = m_Compartments->CreateLiquidCompartment(pulse::MechanicalVentilatorCompartment::MechanicalVentilatorExpiratoryValve);
+  lExpiratoryValve.MapNode(ExpiratoryValve);
+  SELiquidCompartment& lInspiratoryValve = m_Compartments->CreateLiquidCompartment(pulse::MechanicalVentilatorCompartment::MechanicalVentilatorInspiratoryValve);
+  lInspiratoryValve.MapNode(InspiratoryValve);
+  SELiquidCompartment& lExpiratoryLimb = m_Compartments->CreateLiquidCompartment(pulse::MechanicalVentilatorCompartment::MechanicalVentilatorExpiratoryLimb);
+  lExpiratoryLimb.MapNode(ExpiratoryLimb);
+  SELiquidCompartment& lInspiratoryLimb = m_Compartments->CreateLiquidCompartment(pulse::MechanicalVentilatorCompartment::MechanicalVentilatorInspiratoryLimb);
+  lInspiratoryLimb.MapNode(InspiratoryLimb);
+  SELiquidCompartment& lYPiece = m_Compartments->CreateLiquidCompartment(pulse::MechanicalVentilatorCompartment::MechanicalVentilatorYPiece);
+  lYPiece.MapNode(YPiece);
+  SELiquidCompartment& lConnection = m_Compartments->CreateLiquidCompartment(pulse::MechanicalVentilatorCompartment::MechanicalVentilatorConnection);
+  lConnection.MapNode(Connection);
+
+  //Links
+  SELiquidCompartmentLink& lConnectionToMouth = m_Compartments->CreateLiquidLink(lConnection, *lMouth, pulse::MechanicalVentilationLink::ConnectionToMouth);
+  lConnectionToMouth.MapPath(ConnectionToMouth);
+
+  SELiquidCompartmentLink& lVentilatorToExpiratoryValve = m_Compartments->CreateLiquidLink(lVentilator, lExpiratoryValve, pulse::MechanicalVentilatorLink::MechanicalVentilatorToExpiratoryValve);
+  lVentilatorToExpiratoryValve.MapPath(VentilatorToExpiratoryValve);
+  SELiquidCompartmentLink& lVentilatorToInspiratoryValve = m_Compartments->CreateLiquidLink(lVentilator, lInspiratoryValve, pulse::MechanicalVentilatorLink::MechanicalVentilatorToInspiratoryValve);
+  lVentilatorToInspiratoryValve.MapPath(VentilatorToInspiratoryValve);
+  SELiquidCompartmentLink& lExpiratoryLimbToExpiratoryValve = m_Compartments->CreateLiquidLink(lExpiratoryLimb, lExpiratoryValve, pulse::MechanicalVentilatorLink::MechanicalVentilatorExpiratoryLimbToExpiratoryValve);
+  lExpiratoryLimbToExpiratoryValve.MapPath(ExpiratoryLimbToExpiratoryValve);
+  SELiquidCompartmentLink& lInspiratoryValveToInspiratoryLimb = m_Compartments->CreateLiquidLink(lInspiratoryValve, lInspiratoryLimb, pulse::MechanicalVentilatorLink::MechanicalVentilatorInspiratoryValveToInspiratoryLimb);
+  lInspiratoryValveToInspiratoryLimb.MapPath(InspiratoryValveToInspiratoryLimb);
+  SELiquidCompartmentLink& lExpiratoryLimbToYPiece = m_Compartments->CreateLiquidLink(lExpiratoryLimb, lYPiece, pulse::MechanicalVentilatorLink::MechanicalVentilatorExpiratoryLimbToYPiece);
+  lExpiratoryLimbToYPiece.MapPath(ExpiratoryLimbToYPiece);
+  SELiquidCompartmentLink& lInspiratoryLimbToYPiece = m_Compartments->CreateLiquidLink(lInspiratoryLimb, lYPiece, pulse::MechanicalVentilatorLink::MechanicalVentilatorInspiratoryLimbToYPiece);
+  lInspiratoryLimbToYPiece.MapPath(InspiratoryLimbToYPiece);
+  SELiquidCompartmentLink& lYPieceToConnection = m_Compartments->CreateLiquidLink(lYPiece, lConnection, pulse::MechanicalVentilatorLink::MechanicalVentilatorYPieceToConnection);
+  lYPieceToConnection.MapPath(YPieceToConnection);
+  SELiquidCompartmentLink& lConnectionToEnvironment = m_Compartments->CreateLiquidLink(lConnection, *lEnvironment, pulse::MechanicalVentilatorLink::MechanicalVentilatorConnectionToEnvironment);
+  lConnectionToEnvironment.MapPath(ConnectionToEnvironment);
+  
+  //Graph
+  SELiquidCompartmentGraph& lCombinedMechanicalVentilator = m_Compartments->GetAerosolAndMechanicalVentilatorGraph();
+  //Respiratory Graph
+  lCombinedMechanicalVentilator.AddGraph(lAerosol);
+  lCombinedMechanicalVentilator.RemoveLink(pulse::PulmonaryLink::EnvironmentToMouth);
+  //Mechanical Ventilator Additions
+  lCombinedMechanicalVentilator.AddCompartment(lVentilator);
+  lCombinedMechanicalVentilator.AddCompartment(lExpiratoryValve);
+  lCombinedMechanicalVentilator.AddCompartment(lInspiratoryValve);
+  lCombinedMechanicalVentilator.AddCompartment(lExpiratoryLimb);
+  lCombinedMechanicalVentilator.AddCompartment(lInspiratoryLimb);
+  lCombinedMechanicalVentilator.AddCompartment(lYPiece);
+  lCombinedMechanicalVentilator.AddCompartment(lConnection);
+  lCombinedMechanicalVentilator.AddLink(lVentilatorToExpiratoryValve);
+  lCombinedMechanicalVentilator.AddLink(lVentilatorToInspiratoryValve);
+  lCombinedMechanicalVentilator.AddLink(lExpiratoryLimbToExpiratoryValve);
+  lCombinedMechanicalVentilator.AddLink(lInspiratoryValveToInspiratoryLimb);
+  lCombinedMechanicalVentilator.AddLink(lExpiratoryLimbToYPiece);
+  lCombinedMechanicalVentilator.AddLink(lInspiratoryLimbToYPiece);
+  lCombinedMechanicalVentilator.AddLink(lYPieceToConnection);
+  //lCombinedMechanicalVentilator.AddLink(lConnectionToEnvironment);
+  //Connection to Respiratory
+  lCombinedMechanicalVentilator.AddLink(lConnectionToMouth);
+  //Set it
+  lCombinedMechanicalVentilator.StateChange();
 }
 
 void PulseController::SetupNasalCannula()
