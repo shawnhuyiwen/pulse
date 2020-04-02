@@ -3,7 +3,11 @@
 import json
 from abc import ABC, abstractmethod
 from enum import Enum
+import logging
 from pulse.cdm.scalars import SEScalarProperty, SEScalarTime, TimeUnit
+import re
+import sys
+
 
 class eSerializationFormat(Enum):
     BINARY = 0
@@ -508,3 +512,53 @@ class SEDataRequestManager:
     def to_console(self, data_values):
         for key in data_values:
             print("{}={}".format(key, data_values[key]))
+
+
+class ILoggingHandler():
+    def __init__(self):
+        pass
+
+    def handle_message(self, msg):
+        pass
+
+
+class IPythonLogging(ILoggingHandler):
+    def __init__(self):
+        super().__init__()
+        defaultLevel = logging.DEBUG
+        self.logger = logging.getLogger()
+        self.logger.setLevel(defaultLevel)
+        formatStr = '%(asctime)s %(levelname)s %(message)s'
+        formatter = logging.Formatter(formatStr)
+        console_handler = logging.StreamHandler(sys.stdout)
+        console_handler.setFormatter(formatter)
+        self.logger.addHandler(console_handler)
+
+    def handle_message(self, msg: str):
+        # Tries to grab message type from within the brackets of the
+        # incoming message
+        regex_match = re.search("\[([A-Za-z]+)\]", msg)
+        msg_type = ""
+        if regex_match:
+            msg_type = regex_match.group(1)
+        if msg_type == "WARNING":
+            self.logger.warning(msg)
+        elif msg_type == "DEBUG":
+            self.logger.debug(msg)
+        elif msg_type == "ERROR":
+            self.logger.error(msg)
+        elif msg_type == "FATAL":
+            self.logger.fatal(msg)
+        else:
+            self.logger.info(msg)
+
+    #def forward_info(self, msg:str):
+    #    self.logger.info(msg)
+    #def forward_debug(self, msg:str):
+    #    self.logger.debug(msg)
+    #def forward_warning(self, msg:str):
+    #    self.logger.warning(msg)
+    #def forward_error(self, msg:str):
+    #    self.logger.error(msg)
+    #def forward_fatal(self, msg:str):
+    #    self.logger.fatal(msg)

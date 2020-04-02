@@ -11,16 +11,21 @@ from pulse.cdm.io.engine import serialize_actions_to_string, \
                                 serialize_patient_configuration_to_string, \
                                 serialize_data_request_manager_to_string
 
-class PulsePhysiologyEngine:
-    __slots__ = ['__pulse', "_results", "_results_template", "_event_handler"]
 
-    def __init__(self, log_file="", write_to_console=True, data_root=".", event_handler=None):
+class PulsePhysiologyEngine:
+    __slots__ = ['__pulse', "_results", "_results_template", "_event_handler", "_logging_handler"]
+
+    def __init__(self, log_file="", write_to_console=True, data_root=".", event_handler=None, logging_handler=None):
         self._results = {}
         self._results_template = {}
         self.__pulse = PyPulse.Engine(log_file, write_to_console, data_root)
         if event_handler:
             self._event_handler = event_handler
             self.__pulse.keep_event_changes(True)
+        if logging_handler:
+            self.__pulse.keep_log_messages(True)
+            self._logging_handler = logging_handler
+
 
     def serialize_from_file(self, state_file: str, data_request_mgr: SEDataRequestManager, format: eSerializationFormat,
                             start_time: float = 0):
@@ -42,6 +47,7 @@ class PulsePhysiologyEngine:
         self._results = copy.deepcopy(self._results_template)
         if self.__pulse.advance_timestep():
             self._process_events()
+            self._process_logs()
             timestep_result = self.__pulse.pull_data()
             for index, value in enumerate(self._results.keys()):
                 self._results[value].append(timestep_result[index])
@@ -56,10 +62,14 @@ class PulsePhysiologyEngine:
             if not self.__pulse.advance_timestep():
                 return False
             self._process_events()
+            self._process_logs()
+
         timestep_result = self.__pulse.pull_data()
         for index, value in enumerate(self._results.keys()):
             self._results[value].append(timestep_result[index])
         return True
+
+
     def advance_time_r(self, duration_s: float, rate_s: float):
         num_steps = int(duration_s / 0.02)
         sample_times = range(0, num_steps, math.floor(rate_s / 0.02))
@@ -69,6 +79,7 @@ class PulsePhysiologyEngine:
             if not self.__pulse.advance_timestep():
                 return False
             self._process_events()
+            self._process_logs()
             if n in sample_times:
                 timestep_result = self.__pulse.pull_data()
                 for index, value in enumerate(self._results.keys()):
@@ -122,3 +133,11 @@ class PulsePhysiologyEngine:
                     for event in values:
                         event_object = SEEventChange.create_event_request_from_string(event)
                         self._event_handler.handle_event(event_object)
+
+    def _process_logs(self):
+        if self._logging_handler:
+            log_str = self.__pulse.pull_log_messages(PyPulse.serialization_format.json)
+            if log_str:
+                for item, value in json.loads(log_str).items():
+                    for msg in value:
+                        self._logging_handler.handle_message(msg)

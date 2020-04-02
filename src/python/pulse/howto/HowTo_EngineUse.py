@@ -2,7 +2,9 @@
 # See accompanying NOTICE file for details.
 
 from enum import Enum
-from pulse.cdm.engine import eSerializationFormat, SEDataRequestManager, SEDataRequest, IEventHandler, SEEventChange
+from pulse.cdm.engine import eSerializationFormat, SEDataRequestManager, SEDataRequest
+from pulse.cdm.engine import IEventHandler, SEEventChange, ILoggingHandler, IPythonLogging
+
 from pulse.cdm.patient import eSex, SEPatient, SEPatientConfiguration
 from pulse.cdm.patient_actions import SEExercise, SEHemorrhage
 from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
@@ -29,8 +31,25 @@ class local_event_handler(IEventHandler):
     def handle_event(self, change: SEEventChange):
         print(change)
 
+
+#  Logging manipulation:
+#  Passing the logging_handler parameter to PulsePhysiologyEngine will allow you to control
+#  the logging of the engine.
+#
+#  A pre-existing class has been used here, which forwards the logging to the Python console via the
+#  logging package. Another instance which prints the message may look like this:
+#
+#  my_logging(ILoggingHandler):
+#    def handle_message(message: str):
+#      print(message)
+#
+#  pulse = PulsePhysiologyEngine("test.log", False, logging_handler=my_logging())
+#
 def HowTo_UseEngine():
-    pulse = PulsePhysiologyEngine("pulse_EngineUse.log", event_handler=local_event_handler())
+    pulse = PulsePhysiologyEngine("pulse_EngineUse.log",
+                                  False,
+                                  event_handler=local_event_handler(),
+                                  logging_handler=IPythonLogging())
 
     # Data Requests are used to get access to the hundreds of parameters available in Pulse
     # To learn more about Data Requests please look at the data request section here:
