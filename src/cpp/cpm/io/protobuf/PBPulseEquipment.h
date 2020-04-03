@@ -5,6 +5,7 @@
 PULSE_BIND_DECL(Inhaler)
 PULSE_BIND_DECL(ElectroCardioGram)
 PULSE_BIND_DECL(AnesthesiaMachine)
+PULSE_BIND_DECL(MechanicalVentilator)
 
 class PULSE_DECL PBPulseEquipment
 {
@@ -24,5 +25,10 @@ public:
   static PULSE_BIND::InhalerData* Unload(const Inhaler& src);
   static void Serialize(const PULSE_BIND::InhalerData& src, Inhaler& dst);
   static void Serialize(const Inhaler& src, PULSE_BIND::InhalerData& dst);
+
+  static void Load(const PULSE_BIND::MechanicalVentilatorData& src, MechanicalVentilator& dst);
+  static PULSE_BIND::MechanicalVentilatorData* Unload(const MechanicalVentilator& src);
+  static void Serialize(const PULSE_BIND::MechanicalVentilatorData& src, MechanicalVentilator& dst);
+  static void Serialize(const MechanicalVentilator& src, PULSE_BIND::MechanicalVentilatorData& dst);
 
 };

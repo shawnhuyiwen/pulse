@@ -957,15 +957,15 @@ namespace pulse {
   {
   public:
     DEFINE_STATIC_STRING(AnesthesiaConnection);
-    DEFINE_STATIC_STRING(ExpiratoryLimb);
-    DEFINE_STATIC_STRING(GasInlet);
-    DEFINE_STATIC_STRING(GasSource);
-    DEFINE_STATIC_STRING(InspiratoryLimb);
-    DEFINE_STATIC_STRING(ReliefValve);
-    DEFINE_STATIC_STRING(Scrubber);
-    DEFINE_STATIC_STRING(Selector);
-    DEFINE_STATIC_STRING(Ventilator);
-    DEFINE_STATIC_STRING(YPiece);
+    DEFINE_STATIC_STRING_EX(ExpiratoryLimb, AnesthesiaMachineExpiratoryLimb);
+    DEFINE_STATIC_STRING_EX(GasInlet, AnesthesiaMachineGasInlet);
+    DEFINE_STATIC_STRING_EX(GasSource, AnesthesiaMachineGasSource);
+    DEFINE_STATIC_STRING_EX(InspiratoryLimb, AnesthesiaMachineInspiratoryLimb);
+    DEFINE_STATIC_STRING_EX(ReliefValve, AnesthesiaMachineReliefValve);
+    DEFINE_STATIC_STRING_EX(Scrubber, AnesthesiaMachineScrubber);
+    DEFINE_STATIC_STRING_EX(Selector, AnesthesiaMachineSelector);
+    DEFINE_STATIC_STRING_EX(Ventilator, AnesthesiaMachineVentilator);
+    DEFINE_STATIC_STRING_EX(YPiece, AnesthesiaMachineYPiece);
 
     static const std::vector<std::string>& GetValues()
     {
@@ -992,19 +992,19 @@ namespace pulse {
   class AnesthesiaMachineLink
   {
   public:
-    DEFINE_STATIC_STRING(EnvironmentToReliefValve);
-    DEFINE_STATIC_STRING(VentilatorToSelector);
-    DEFINE_STATIC_STRING(SelectorToReliefValve);
-    DEFINE_STATIC_STRING(SelectorToScrubber);
-    DEFINE_STATIC_STRING(ScrubberToGasInlet);
-    DEFINE_STATIC_STRING(GasSourceToGasInlet);
-    DEFINE_STATIC_STRING(GasInletToInspiratoryLimb);
-    DEFINE_STATIC_STRING(InspiratoryLimbToYPiece);
-    DEFINE_STATIC_STRING(YPieceToExpiratoryLimb);
-    DEFINE_STATIC_STRING(ExpiratoryLimbToSelector);
-    DEFINE_STATIC_STRING(YPieceToAnesthesiaConnection);
-    DEFINE_STATIC_STRING(AnesthesiaConnectionLeak);
-    DEFINE_STATIC_STRING(AnesthesiaConnectionToMouth);
+    DEFINE_STATIC_STRING_EX(EnvironmentToReliefValve, EnvironmentToAnesthesiaMachineReliefValve);
+    DEFINE_STATIC_STRING_EX(VentilatorToSelector, AnesthesiaMachineVentilatorToSelector);
+    DEFINE_STATIC_STRING_EX(SelectorToReliefValve, AnesthesiaMachineSelectorToReliefValve);
+    DEFINE_STATIC_STRING_EX(SelectorToScrubber, AnesthesiaMachineSelectorToScrubber);
+    DEFINE_STATIC_STRING_EX(ScrubberToGasInlet, AnesthesiaMachineScrubberToGasInlet);
+    DEFINE_STATIC_STRING_EX(GasSourceToGasInlet, AnesthesiaMachineGasSourceToGasInlet);
+    DEFINE_STATIC_STRING_EX(GasInletToInspiratoryLimb, AnesthesiaMachineGasInletToInspiratoryLimb);
+    DEFINE_STATIC_STRING_EX(InspiratoryLimbToYPiece, AnesthesiaMachineInspiratoryLimbToYPiece);
+    DEFINE_STATIC_STRING_EX(YPieceToExpiratoryLimb, AnesthesiaMachineYPieceToExpiratoryLimb);
+    DEFINE_STATIC_STRING_EX(ExpiratoryLimbToSelector, AnesthesiaMachineExpiratoryLimbToSelector);
+    DEFINE_STATIC_STRING_EX(YPieceToConnection, AnesthesiaMachineYPieceToConnection);
+    DEFINE_STATIC_STRING_EX(ConnectionLeak, AnesthesiaMachineConnectionLeak);
+    DEFINE_STATIC_STRING_EX(ConnectionToMouth, AnesthesiaMachineConnectionToMouth);
 
     static const std::vector<std::string>& GetValues()
     {
@@ -1021,9 +1021,9 @@ namespace pulse {
         _values.push_back(InspiratoryLimbToYPiece);
         _values.push_back(YPieceToExpiratoryLimb);
         _values.push_back(ExpiratoryLimbToSelector);
-        _values.push_back(YPieceToAnesthesiaConnection);
-        _values.push_back(AnesthesiaConnectionLeak);
-        _values.push_back(AnesthesiaConnectionToMouth);
+        _values.push_back(YPieceToConnection);
+        _values.push_back(ConnectionLeak);
+        _values.push_back(ConnectionToMouth);
       }
       return _values;
     }
@@ -1034,7 +1034,7 @@ namespace pulse {
   class InhalerCompartment
   {
   public:
-    DEFINE_STATIC_STRING(Mouthpiece);
+    DEFINE_STATIC_STRING_EX(Mouthpiece, InhalerMouthpiece);
 
     static const std::vector<std::string>& GetValues()
     {
@@ -1052,8 +1052,8 @@ namespace pulse {
   class InhalerLink
   {
   public:
-    DEFINE_STATIC_STRING(EnvironmentToMouthpiece);
-    DEFINE_STATIC_STRING(MouthpieceToMouth);
+    DEFINE_STATIC_STRING_EX(EnvironmentToMouthpiece, EnvironmentToInhalerMouthpiece);
+    DEFINE_STATIC_STRING_EX(MouthpieceToMouth, InhalerMouthpieceToMouth);
 
     static const std::vector<std::string>& GetValues()
     {
@@ -1072,7 +1072,7 @@ namespace pulse {
   class MechanicalVentilationCompartment
   {
   public:
-    DEFINE_STATIC_STRING(Connection);
+    DEFINE_STATIC_STRING_EX(Connection, MechanicalVentilationConnection);
 
     static const std::vector<std::string>& GetValues()
     {
@@ -1090,7 +1090,7 @@ namespace pulse {
   class MechanicalVentilationLink
   {
   public:
-    DEFINE_STATIC_STRING(ConnectionToMouth);
+    DEFINE_STATIC_STRING_EX(ConnectionToMouth, MechanicalVentilationConnectionToMouth);
 
     static const std::vector<std::string>& GetValues()
     {
@@ -1105,18 +1105,16 @@ namespace pulse {
     static std::vector<std::string> _values;
   };
   
-  //Aaron - how do we want to share names between mechanical ventilator and anesthesia machine?
-  //Right now, I'm just adding "MechanicalVentilator"
   class MechanicalVentilatorCompartment
   {
   public:
     DEFINE_STATIC_STRING(MechanicalVentilator);
-    DEFINE_STATIC_STRING(MechanicalVentilatorExpiratoryValve);
-    DEFINE_STATIC_STRING(MechanicalVentilatorInspiratoryValve);
-    DEFINE_STATIC_STRING(MechanicalVentilatorExpiratoryLimb);
-    DEFINE_STATIC_STRING(MechanicalVentilatorInspiratoryLimb);
-    DEFINE_STATIC_STRING(MechanicalVentilatorYPiece);
-    DEFINE_STATIC_STRING(MechanicalVentilatorConnection);
+    DEFINE_STATIC_STRING_EX(ExpiratoryValve, MechanicalVentilatorExpiratoryValve);
+    DEFINE_STATIC_STRING_EX(InspiratoryValve, MechanicalVentilatorInspiratoryValve);
+    DEFINE_STATIC_STRING_EX(ExpiratoryLimb, MechanicalVentilatorExpiratoryLimb);
+    DEFINE_STATIC_STRING_EX(InspiratoryLimb, MechanicalVentilatorInspiratoryLimb);
+    DEFINE_STATIC_STRING_EX(YPiece, MechanicalVentilatorYPiece);
+    DEFINE_STATIC_STRING_EX(Connection, MechanicalVentilatorConnection);
 
     static const std::vector<std::string>& GetValues()
     {
@@ -1124,12 +1122,12 @@ namespace pulse {
       if (_values.empty())
       {
         _values.push_back(MechanicalVentilator);
-        _values.push_back(MechanicalVentilatorExpiratoryValve);
-        _values.push_back(MechanicalVentilatorInspiratoryValve);
-        _values.push_back(MechanicalVentilatorExpiratoryLimb);
-        _values.push_back(MechanicalVentilatorInspiratoryLimb);
-        _values.push_back(MechanicalVentilatorYPiece);
-        _values.push_back(MechanicalVentilatorConnection);
+        _values.push_back(ExpiratoryValve);
+        _values.push_back(InspiratoryValve);
+        _values.push_back(ExpiratoryLimb);
+        _values.push_back(InspiratoryLimb);
+        _values.push_back(YPiece);
+        _values.push_back(Connection);
       }
       return _values;
     }
@@ -1137,20 +1135,18 @@ namespace pulse {
     static std::vector<std::string> _values;
   };
 
-  //Aaron - how do we want to share names between mechanical ventilator and anesthesia machine?
-  //Right now, I'm just adding "MechanicalVentilator"
   class MechanicalVentilatorLink
   {
   public:
     DEFINE_STATIC_STRING(MechanicalVentilatorToExpiratoryValve);
     DEFINE_STATIC_STRING(MechanicalVentilatorToInspiratoryValve);
-    DEFINE_STATIC_STRING(MechanicalVentilatorExpiratoryLimbToExpiratoryValve);
-    DEFINE_STATIC_STRING(MechanicalVentilatorInspiratoryValveToInspiratoryLimb);
-    DEFINE_STATIC_STRING(MechanicalVentilatorExpiratoryLimbToYPiece);
-    DEFINE_STATIC_STRING(MechanicalVentilatorInspiratoryLimbToYPiece);
-    DEFINE_STATIC_STRING(MechanicalVentilatorYPieceToConnection);
-    DEFINE_STATIC_STRING(MechanicalVentilatorConnectionToEnvironment);
-    DEFINE_STATIC_STRING(MechanicalVentilatorConnectionToMouth);
+    DEFINE_STATIC_STRING_EX(ExpiratoryLimbToExpiratoryValve, MechanicalVentilatorExpiratoryLimbToExpiratoryValve);
+    DEFINE_STATIC_STRING_EX(InspiratoryValveToInspiratoryLimb, MechanicalVentilatorInspiratoryValveToInspiratoryLimb);
+    DEFINE_STATIC_STRING_EX(ExpiratoryLimbToYPiece, MechanicalVentilatorExpiratoryLimbToYPiece);
+    DEFINE_STATIC_STRING_EX(InspiratoryLimbToYPiece, MechanicalVentilatorInspiratoryLimbToYPiece);
+    DEFINE_STATIC_STRING_EX(YPieceToConnection, MechanicalVentilatorYPieceToConnection);
+    DEFINE_STATIC_STRING_EX(ConnectionToEnvironment, MechanicalVentilatorConnectionToEnvironment);
+    DEFINE_STATIC_STRING_EX(ConnectionToMouth, MechanicalVentilatorConnectionToMouth);
 
     static const std::vector<std::string>& GetValues()
     {
@@ -1159,13 +1155,13 @@ namespace pulse {
       {
         _values.push_back(MechanicalVentilatorToExpiratoryValve);
         _values.push_back(MechanicalVentilatorToInspiratoryValve);
-        _values.push_back(MechanicalVentilatorExpiratoryLimbToExpiratoryValve);
-        _values.push_back(MechanicalVentilatorInspiratoryValveToInspiratoryLimb);
-        _values.push_back(MechanicalVentilatorExpiratoryLimbToYPiece);
-        _values.push_back(MechanicalVentilatorInspiratoryLimbToYPiece);
-        _values.push_back(MechanicalVentilatorYPieceToConnection);
-        _values.push_back(MechanicalVentilatorConnectionToEnvironment);
-        _values.push_back(MechanicalVentilatorConnectionToMouth);
+        _values.push_back(ExpiratoryLimbToExpiratoryValve);
+        _values.push_back(InspiratoryValveToInspiratoryLimb);
+        _values.push_back(ExpiratoryLimbToYPiece);
+        _values.push_back(InspiratoryLimbToYPiece);
+        _values.push_back(YPieceToConnection);
+        _values.push_back(ConnectionToEnvironment);
+        _values.push_back(ConnectionToMouth);
       }
       return _values;
     }

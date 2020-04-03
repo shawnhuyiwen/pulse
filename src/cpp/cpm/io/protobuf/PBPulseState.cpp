@@ -246,6 +246,10 @@ bool PBPulseState::Serialize(const PULSE_BIND::StateData& src, PulseController& 
     ss << "Missing Inhaler State" << std::endl;
   else
     PBPulseEquipment::Load(src.inhaler(), *dst.m_Inhaler);
+  if (!src.has_mechanicalventilator())
+    ss << "Missing Mechanical Ventilator State" << std::endl;
+  else
+    PBPulseEquipment::Load(src.mechanicalventilator(), *dst.m_MechanicalVentilator);
 
   if (!ss.str().empty())
   {
@@ -324,6 +328,7 @@ bool PBPulseState::Serialize(const PulseController& src, PULSE_BIND::StateData& 
   dst.set_allocated_anesthesiamachine(PBPulseEquipment::Unload(*src.m_AnesthesiaMachine));
   dst.set_allocated_electrocardiogram(PBPulseEquipment::Unload(*src.m_ECG));
   dst.set_allocated_inhaler(PBPulseEquipment::Unload(*src.m_Inhaler));
+  dst.set_allocated_mechanicalventilator(PBPulseEquipment::Unload(*src.m_MechanicalVentilator));
   // Compartments
   dst.set_allocated_compartmentmanager(PBCompartment::Unload(*src.m_Compartments));
   // Configuration

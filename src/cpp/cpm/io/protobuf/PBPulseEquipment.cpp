@@ -9,9 +9,11 @@ POP_PROTO_WARNINGS()
 #include "io/protobuf/PBAnesthesiaMachine.h"
 #include "io/protobuf/PBElectroCardioGram.h"
 #include "io/protobuf/PBInhaler.h"
+#include "io/protobuf/PBMechanicalVentilator.h"
 #include "equipment/AnesthesiaMachine.h"
 #include "equipment/ECG.h"
 #include "equipment/Inhaler.h"
+#include "equipment/MechanicalVentilator.h"
 #include "system/equipment/anesthesia_machine/SEAnesthesiaMachine.h"
 #include "system/equipment/electrocardiogram/SEElectroCardioGram.h"
 #include "system/equipment/electrocardiogram/SEElectroCardioGramWaveformInterpolator.h"
@@ -92,4 +94,28 @@ PULSE_BIND::InhalerData* PBPulseEquipment::Unload(const Inhaler& src)
 void PBPulseEquipment::Serialize(const Inhaler& src, PULSE_BIND::InhalerData& dst)
 {
   PBInhaler::Serialize(src, *dst.mutable_common());
+}
+
+void PBPulseEquipment::Load(const PULSE_BIND::MechanicalVentilatorData& src, MechanicalVentilator& dst)
+{
+  PBPulseEquipment::Serialize(src, dst);
+  dst.SetUp();
+}
+void PBPulseEquipment::Serialize(const PULSE_BIND::MechanicalVentilatorData& src, MechanicalVentilator& dst)
+{
+  PBMechanicalVentilator::Serialize(src.common(), dst);
+  dst.m_Inhaling = src.inhaling();
+  dst.m_CurrentBreathingCycleTime_s = src.currentbreathingcycletime_s();
+}
+PULSE_BIND::MechanicalVentilatorData* PBPulseEquipment::Unload(const MechanicalVentilator& src)
+{
+  PULSE_BIND::MechanicalVentilatorData* dst = new PULSE_BIND::MechanicalVentilatorData();
+  PBPulseEquipment::Serialize(src, *dst);
+  return dst;
+}
+void PBPulseEquipment::Serialize(const MechanicalVentilator& src, PULSE_BIND::MechanicalVentilatorData& dst)
+{
+  PBMechanicalVentilator::Serialize(src, *dst.mutable_common());
+  dst.set_inhaling(src.m_Inhaling);
+  dst.set_currentbreathingcycletime_s(src.m_CurrentBreathingCycleTime_s);
 }

@@ -149,7 +149,7 @@ void AnesthesiaMachine::SetUp()
   m_nVentilator = m_data.GetCircuits().GetAnesthesiaMachineCircuit().GetNode(pulse::AnesthesiaMachineNode::Ventilator);
 
   // Circuit Paths
-  m_pAnesthesiaConnectionToEnvironment = m_data.GetCircuits().GetAnesthesiaMachineCircuit().GetPath(pulse::AnesthesiaMachinePath::AnesthesiaConnectionToEnvironment);
+  m_pAnesthesiaConnectionToEnvironment = m_data.GetCircuits().GetAnesthesiaMachineCircuit().GetPath(pulse::AnesthesiaMachinePath::ConnectionToEnvironment);
   m_pYPieceToExpiratoryLimb = m_data.GetCircuits().GetAnesthesiaMachineCircuit().GetPath(pulse::AnesthesiaMachinePath::YPieceToExpiratoryLimb);
   m_pGasSourceToGasInlet = m_data.GetCircuits().GetAnesthesiaMachineCircuit().GetPath(pulse::AnesthesiaMachinePath::GasSourceToGasInlet);
   m_pInspiratoryLimbToYPiece = m_data.GetCircuits().GetAnesthesiaMachineCircuit().GetPath(pulse::AnesthesiaMachinePath::InspiratoryLimbToYPiece);

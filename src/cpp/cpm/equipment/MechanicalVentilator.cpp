@@ -49,8 +49,8 @@ void MechanicalVentilator::Clear()
 {
   SEMechanicalVentilator::Clear();
   m_Environment = nullptr;
-  m_ventilator = nullptr;
-  m_pEnvironmentToVentilator = nullptr;  
+  m_Ventilator = nullptr;
+  m_EnvironmentToVentilator = nullptr;
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -60,9 +60,9 @@ void MechanicalVentilator::Clear()
 void MechanicalVentilator::Initialize()
 {
   PulseSystem::Initialize();
-
   SetConnection(eMechanicalVentilator_Connection::Off);
-
+  m_Inhaling = true;
+  m_CurrentBreathingCycleTime_s = 0.0;
   StateChange();
 }
 
@@ -79,10 +79,10 @@ void MechanicalVentilator::SetUp()
 
   // Compartments
   m_Environment = m_data.GetCompartments().GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
-  m_ventilator = m_data.GetCompartments().GetGasCompartment(pulse::MechanicalVentilatorCompartment::MechanicalVentilator);
+  m_Ventilator = m_data.GetCompartments().GetGasCompartment(pulse::MechanicalVentilatorCompartment::MechanicalVentilator);
 
   // Paths
-  m_pEnvironmentToVentilator = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::EnvironmentToVentilator);
+  m_EnvironmentToVentilator = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::EnvironmentToVentilator);
 }
 
 void MechanicalVentilator::StateChange()
@@ -167,8 +167,8 @@ void MechanicalVentilator::StateChange()
     //jbw - fatal - need one of these
   }
 
-  m_inhaling = true;
-  m_currentBreathingCycleTime_s = 0.0;
+  m_Inhaling = true;
+  m_CurrentBreathingCycleTime_s = 0.0;
 
   // If you have one substance, make sure its Oxygen and add the standard CO2 and N2 to fill the difference
 
@@ -176,13 +176,13 @@ void MechanicalVentilator::StateChange()
   std::vector<SESubstanceFraction*> gasFractions = GetFractionInspiredGases();
 
   //Reset the substance quantities at the connection
-  for (SEGasSubstanceQuantity* subQ : m_ventilator->GetSubstanceQuantities())
+  for (SEGasSubstanceQuantity* subQ : m_Ventilator->GetSubstanceQuantities())
     subQ->SetToZero();
 
   //Start by setting everything to ambient
   for (auto s : m_Environment->GetSubstanceQuantities())
   {
-    m_ventilator->GetSubstanceQuantity(s->GetSubstance())->GetVolumeFraction().Set(s->GetVolumeFraction());
+    m_Ventilator->GetSubstanceQuantity(s->GetSubstance())->GetVolumeFraction().Set(s->GetVolumeFraction());
   }
 
   double totalFractionDefined = 0.0;
@@ -198,17 +198,17 @@ void MechanicalVentilator::StateChange()
 
     //Now set it on the connection compartment
     //It has a infinate volume, so this will keep the same volume fraction no matter what's going on around it
-    m_ventilator->GetSubstanceQuantity(sub)->GetVolumeFraction().SetValue(fraction);
+    m_Ventilator->GetSubstanceQuantity(sub)->GetVolumeFraction().SetValue(fraction);
   }
 
   //Add or remove Nitrogen to balance
   double gasFractionDiff = 1.0 - totalFractionDefined;
-  double currentN2Fraction = m_ventilator->GetSubstanceQuantity(m_data.GetSubstances().GetN2())->GetVolumeFraction().GetValue();
+  double currentN2Fraction = m_Ventilator->GetSubstanceQuantity(m_data.GetSubstances().GetN2())->GetVolumeFraction().GetValue();
   if (currentN2Fraction + gasFractionDiff < 0.0)
   {
     //jbw - error - not enough N2 to balance
   }
-  m_ventilator->GetSubstanceQuantity(m_data.GetSubstances().GetN2())->GetVolumeFraction().SetValue(currentN2Fraction + gasFractionDiff);
+  m_Ventilator->GetSubstanceQuantity(m_data.GetSubstances().GetN2())->GetVolumeFraction().SetValue(currentN2Fraction + gasFractionDiff);
 
 
   //jbw - add aerosols
@@ -358,8 +358,8 @@ void MechanicalVentilator::PreProcess()
   //Do nothing if the ventilator is off and not initialized
   if (GetConnection() == eMechanicalVentilator_Connection::Off)
   {
-    m_inhaling = true;
-    m_currentBreathingCycleTime_s = 0.0;
+    m_Inhaling = true;
+    m_CurrentBreathingCycleTime_s = 0.0;
     return;
   }
   
@@ -407,19 +407,19 @@ void MechanicalVentilator::PostProcess()
 void MechanicalVentilator::CalculateCyclePhase()
 {
   //Determine where we are in the cycle
-  m_currentBreathingCycleTime_s += m_dt_s;
-  if (m_currentBreathingCycleTime_s > GetBreathPeriod(TimeUnit::s)) //End of the cycle
+  m_CurrentBreathingCycleTime_s += m_dt_s;
+  if (m_CurrentBreathingCycleTime_s > GetBreathPeriod(TimeUnit::s)) //End of the cycle
   {
-    m_currentBreathingCycleTime_s = 0.0;
+    m_CurrentBreathingCycleTime_s = 0.0;
   }
 
-  if (m_currentBreathingCycleTime_s < GetInspiratoryPeriod(TimeUnit::s)) //Inspiration
+  if (m_CurrentBreathingCycleTime_s < GetInspiratoryPeriod(TimeUnit::s)) //Inspiration
   {
-    m_inhaling = true;
+    m_Inhaling = true;
   }
   else //Expiration
   {
-    m_inhaling = false;
+    m_Inhaling = false;
   }
 }
 
@@ -438,7 +438,7 @@ void MechanicalVentilator::CalculateVentilatorPressure()
 {
   //Calculate the driver pressure
   double dDriverPressure = 0.0;
-  if (m_inhaling)
+  if (m_Inhaling)
   {
     dDriverPressure = GetPeakInspiratoryPressure(PressureUnit::cmH2O);
   }
@@ -447,5 +447,5 @@ void MechanicalVentilator::CalculateVentilatorPressure()
     //Exhaling
     dDriverPressure = GetPositiveEndExpiredPressure(PressureUnit::cmH2O);
   }
-  m_pEnvironmentToVentilator->GetNextPressureSource().SetValue(dDriverPressure, PressureUnit::cmH2O);
+  m_EnvironmentToVentilator->GetNextPressureSource().SetValue(dDriverPressure, PressureUnit::cmH2O);
 }

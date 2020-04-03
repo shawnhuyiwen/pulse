@@ -49,14 +49,13 @@ protected:
   void CalculateCyclePhase();
 
   // Serializable member variables (Set in Initialize and in schema)
-  //aaron - serialize
-  bool         m_inhaling;
-  double       m_currentBreathingCycleTime_s;
+  bool                  m_Inhaling;
+  double                m_CurrentBreathingCycleTime_s;
 
   // Stateless member variable (Set in SetUp())
   double                m_dt_s;
 
   SEGasCompartment*     m_Environment;
-  SEGasCompartment*     m_ventilator;
-  SEFluidCircuitPath*   m_pEnvironmentToVentilator;
+  SEGasCompartment*     m_Ventilator;
+  SEFluidCircuitPath*   m_EnvironmentToVentilator;
 };

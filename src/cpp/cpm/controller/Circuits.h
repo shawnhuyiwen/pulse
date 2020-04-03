@@ -202,42 +202,42 @@ namespace pulse {
   class AnesthesiaMachineNode
   {
   public:
-    DEFINE_STATIC_STRING(AnesthesiaConnection);
-    DEFINE_STATIC_STRING(ExpiratoryLimb);
-    DEFINE_STATIC_STRING(GasInlet);
-    DEFINE_STATIC_STRING(GasSource);
-    DEFINE_STATIC_STRING(InspiratoryLimb);
-    DEFINE_STATIC_STRING(ReliefValve);
-    DEFINE_STATIC_STRING(Scrubber);
-    DEFINE_STATIC_STRING(Selector);
-    DEFINE_STATIC_STRING(Ventilator);
-    DEFINE_STATIC_STRING(YPiece);
+    DEFINE_STATIC_STRING_EX(Connection, AnesthesiaMachineConnection);
+    DEFINE_STATIC_STRING_EX(ExpiratoryLimb, AnesthesiaMachineExpiratoryLimb);
+    DEFINE_STATIC_STRING_EX(GasInlet, AnesthesiaMachineGasInlet);
+    DEFINE_STATIC_STRING_EX(GasSource, AnesthesiaMachineGasSource);
+    DEFINE_STATIC_STRING_EX(InspiratoryLimb, AnesthesiaMachineInspiratoryLimb);
+    DEFINE_STATIC_STRING_EX(ReliefValve, AnesthesiaMachineReliefValve);
+    DEFINE_STATIC_STRING_EX(Scrubber, AnesthesiaMachineScrubber);
+    DEFINE_STATIC_STRING_EX(Selector, AnesthesiaMachineSelector);
+    DEFINE_STATIC_STRING_EX(Ventilator, AnesthesiaMachineVentilator);
+    DEFINE_STATIC_STRING_EX(YPiece, AnesthesiaMachineYPiece);
   };
 
   class AnesthesiaMachinePath
   {
   public:
-    DEFINE_STATIC_STRING(EnvironmentToVentilator);
-    DEFINE_STATIC_STRING(VentilatorToEnvironment);
-    DEFINE_STATIC_STRING(EnvironmentToReliefValve);
-    DEFINE_STATIC_STRING(VentilatorToSelector);
-    DEFINE_STATIC_STRING(SelectorToReliefValve);
-    DEFINE_STATIC_STRING(SelectorToScrubber);
-    DEFINE_STATIC_STRING(ScrubberToGasInlet);
-    DEFINE_STATIC_STRING(EnvironmentToGasSource);
-    DEFINE_STATIC_STRING(GasSourceToGasInlet);
-    DEFINE_STATIC_STRING(GasInletToInspiratoryLimb);
-    DEFINE_STATIC_STRING(InspiratoryLimbToYPiece);
-    DEFINE_STATIC_STRING(YPieceToExpiratoryLimb);
-    DEFINE_STATIC_STRING(ExpiratoryLimbToSelector);
-    DEFINE_STATIC_STRING(YPieceToAnesthesiaConnection);
-    DEFINE_STATIC_STRING(AnesthesiaConnectionToEnvironment);
+    DEFINE_STATIC_STRING_EX(EnvironmentToVentilator, EnvironmentToAnesthesiaMachineVentilator);
+    DEFINE_STATIC_STRING_EX(VentilatorToEnvironment, AnesthesiaMachineVentilatorToEnvironment);
+    DEFINE_STATIC_STRING_EX(EnvironmentToReliefValve, EnvironmentToAnesthesiaMachineReliefValve);
+    DEFINE_STATIC_STRING_EX(VentilatorToSelector, AnesthesiaMachineVentilatorToSelector);
+    DEFINE_STATIC_STRING_EX(SelectorToReliefValve, AnesthesiaMachineSelectorToReliefValve);
+    DEFINE_STATIC_STRING_EX(SelectorToScrubber, AnesthesiaMachineSelectorToScrubber);
+    DEFINE_STATIC_STRING_EX(ScrubberToGasInlet, AnesthesiaMachineScrubberToGasInlet);
+    DEFINE_STATIC_STRING_EX(EnvironmentToGasSource, EnvironmentToAnesthesiaMachineGasSource);
+    DEFINE_STATIC_STRING_EX(GasSourceToGasInlet, AnesthesiaMachineGasSourceToGasInlet);
+    DEFINE_STATIC_STRING_EX(GasInletToInspiratoryLimb, AnesthesiaMachineGasInletToInspiratoryLimb);
+    DEFINE_STATIC_STRING_EX(InspiratoryLimbToYPiece, AnesthesiaMachineInspiratoryLimbToYPiece);
+    DEFINE_STATIC_STRING_EX(YPieceToExpiratoryLimb, AnesthesiaMachineYPieceToExpiratoryLimb);
+    DEFINE_STATIC_STRING_EX(ExpiratoryLimbToSelector, AnesthesiaMachineExpiratoryLimbToSelector);
+    DEFINE_STATIC_STRING_EX(YPieceToConnection, AnesthesiaMachineYPieceToConnection);
+    DEFINE_STATIC_STRING_EX(ConnectionToEnvironment, AnesthesiaMachineConnectionToEnvironment);
   };
 
   class CombinedAnesthesiaMachinePath
   {
   public:
-    DEFINE_STATIC_STRING(AnesthesiaConnectionToMouth);
+    DEFINE_STATIC_STRING(ConnectionToMouth);
     DEFINE_STATIC_STRING(GroundConnection);
   };
 
@@ -265,33 +265,33 @@ namespace pulse {
   class MechanicalVentilatorNode
   {
   public:
-    DEFINE_STATIC_STRING(Ventilator);
-    DEFINE_STATIC_STRING(ExpiratoryValve);
-    DEFINE_STATIC_STRING(InspiratoryValve);
-    DEFINE_STATIC_STRING(ExpiratoryLimb);
-    DEFINE_STATIC_STRING(InspiratoryLimb);
-    DEFINE_STATIC_STRING(YPiece);
-    DEFINE_STATIC_STRING(Connection);
+    DEFINE_STATIC_STRING_EX(Ventilator, MechanicalVentilator);
+    DEFINE_STATIC_STRING_EX(ExpiratoryValve, MechanicalVentilatorExpiratoryValve);
+    DEFINE_STATIC_STRING_EX(InspiratoryValve, MechanicalVentilatorInspiratoryValve);
+    DEFINE_STATIC_STRING_EX(ExpiratoryLimb, MechanicalVentilatorExpiratoryLimb);
+    DEFINE_STATIC_STRING_EX(InspiratoryLimb, MechanicalVentilatorInspiratoryLimb);
+    DEFINE_STATIC_STRING_EX(YPiece, MechanicalVentilatorYPiece);
+    DEFINE_STATIC_STRING_EX(Connection, MechanicalVentilatorConnection);
   };
 
   class MechanicalVentilatorPath
   {
   public:
-    DEFINE_STATIC_STRING(EnvironmentToVentilator);
-    DEFINE_STATIC_STRING(VentilatorToExpiratoryValve);
-    DEFINE_STATIC_STRING(VentilatorToInspiratoryValve);
-    DEFINE_STATIC_STRING(ExpiratoryLimbToExpiratoryValve);
-    DEFINE_STATIC_STRING(InspiratoryValveToInspiratoryLimb);
-    DEFINE_STATIC_STRING(ExpiratoryLimbToYPiece);
-    DEFINE_STATIC_STRING(InspiratoryLimbToYPiece);
-    DEFINE_STATIC_STRING(YPieceToConnection);
-    DEFINE_STATIC_STRING(ConnectionToEnvironment);
+    DEFINE_STATIC_STRING_EX(EnvironmentToVentilator, EnvironmentToMechanicalVentilator);
+    DEFINE_STATIC_STRING_EX(VentilatorToExpiratoryValve, MechanicalVentilatorToExpiratoryValve);
+    DEFINE_STATIC_STRING_EX(VentilatorToInspiratoryValve, MechanicalVentilatorToInspiratoryValve);
+    DEFINE_STATIC_STRING_EX(ExpiratoryLimbToExpiratoryValve, MechanicalVentilatorExpiratoryLimbToExpiratoryValve);
+    DEFINE_STATIC_STRING_EX(InspiratoryValveToInspiratoryLimb, MechanicalVentilatorInspiratoryValveToInspiratoryLimb);
+    DEFINE_STATIC_STRING_EX(ExpiratoryLimbToYPiece, MechanicalVentilatorExpiratoryLimbToYPiece);
+    DEFINE_STATIC_STRING_EX(InspiratoryLimbToYPiece, MechanicalVentilatorInspiratoryLimbToYPiece);
+    DEFINE_STATIC_STRING_EX(YPieceToConnection, MechanicalVentilatorYPieceToConnection);
+    DEFINE_STATIC_STRING_EX(ConnectionToEnvironment, MechanicalVentilatorConnectionToEnvironment);
   };
 
   class CombinedMechanicalVentilatorPath
   {
   public:
-    DEFINE_STATIC_STRING(ConnectionToMouth);
+    DEFINE_STATIC_STRING_EX(ConnectionToMouth, MechanicalVentilatorConnectionToMouth);
   };
 
   ///////////////////////////
@@ -301,14 +301,14 @@ namespace pulse {
   class InhalerNode
   {
   public:
-    DEFINE_STATIC_STRING(Mouthpiece);
+    DEFINE_STATIC_STRING_EX(Mouthpiece, InhalerMouthpiece);
   };
 
   class InhalerPath
   {
   public:
-    DEFINE_STATIC_STRING(EnvironmentToMouthpiece);
-    DEFINE_STATIC_STRING(MouthpieceToMouth);
+    DEFINE_STATIC_STRING_EX(EnvironmentToMouthpiece, EnvironmentToInhalerMouthpiece);
+    DEFINE_STATIC_STRING_EX(MouthpieceToMouth, InhalerMouthpieceToMouth);
   };
 
   /////////////////////////////////

@@ -7,6 +7,7 @@ option optimize_for = SPEED;
 import "pulse/cdm/bind/AnesthesiaMachine.proto";
 import "pulse/cdm/bind/ElectroCardioGram.proto";
 import "pulse/cdm/bind/Inhaler.proto";
+import "pulse/cdm/bind/MechanicalVentilator.proto";
 
 message AnesthesiaMachineData
 {
@@ -30,4 +31,11 @@ message ElectroCardioGramData
 message InhalerData
 {
   pulse.cdm.bind.InhalerData                        Common                         = 1;
+}
+
+message MechanicalVentilatorData
+{
+  pulse.cdm.bind.MechanicalVentilatorData          Common                         = 1;
+  bool                                             Inhaling                       = 2;
+  double                                           CurrentBreathingCycleTime_s    = 3;
 }

@@ -55,15 +55,12 @@ void SEMechanicalVentilator::Clear()
   SAFE_DELETE(m_PositiveEndExpiredPressure);
   SAFE_DELETE(m_RespiratoryRate);
 
-  DELETE_VECTOR(m_cFractionInspiredGases);
+  DELETE_VECTOR(m_FractionInspiredGases);
   m_cFractionInspiredGases.clear();
-  //Aaron - What's going on here?
-  //DELETE_VECTOR(m_FractionInspiredGases);
   m_FractionInspiredGases.clear();
 
-  DELETE_VECTOR(m_cConcentrationInspiredAerosols);
-  m_cConcentrationInspiredAerosols.clear();
   DELETE_VECTOR(m_ConcentrationInspiredAerosols);
+  m_cConcentrationInspiredAerosols.clear();
   m_ConcentrationInspiredAerosols.clear();
 }
 
