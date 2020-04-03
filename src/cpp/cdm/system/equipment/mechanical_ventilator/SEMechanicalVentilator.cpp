@@ -57,7 +57,8 @@ void SEMechanicalVentilator::Clear()
 
   DELETE_VECTOR(m_cFractionInspiredGases);
   m_cFractionInspiredGases.clear();
-  DELETE_VECTOR(m_FractionInspiredGases);
+  //Aaron - What's going on here?
+  //DELETE_VECTOR(m_FractionInspiredGases);
   m_FractionInspiredGases.clear();
 
   DELETE_VECTOR(m_cConcentrationInspiredAerosols);
