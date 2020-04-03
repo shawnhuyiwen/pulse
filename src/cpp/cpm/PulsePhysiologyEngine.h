@@ -956,7 +956,7 @@ namespace pulse {
   class AnesthesiaMachineCompartment
   {
   public:
-    DEFINE_STATIC_STRING(AnesthesiaConnection);
+    DEFINE_STATIC_STRING_EX(Connection, AnesthesiaMachineConnection);
     DEFINE_STATIC_STRING_EX(ExpiratoryLimb, AnesthesiaMachineExpiratoryLimb);
     DEFINE_STATIC_STRING_EX(GasInlet, AnesthesiaMachineGasInlet);
     DEFINE_STATIC_STRING_EX(GasSource, AnesthesiaMachineGasSource);
@@ -972,7 +972,7 @@ namespace pulse {
       ScopedMutex lock;
       if (_values.empty())
       {
-        _values.push_back(AnesthesiaConnection);
+        _values.push_back(Connection);
         _values.push_back(ExpiratoryLimb);
         _values.push_back(GasInlet);
         _values.push_back(GasSource);

@@ -4509,7 +4509,7 @@ void PulseController::SetupAnesthesiaMachine()
   // Grab the Environment Compartment
   SEGasCompartment* eEnvironment = m_Compartments->GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
   // Anesthesia Machine Compartments
-  SEGasCompartment& aAnesthesiaConnection = m_Compartments->CreateGasCompartment(pulse::AnesthesiaMachineCompartment::AnesthesiaConnection);
+  SEGasCompartment& aAnesthesiaConnection = m_Compartments->CreateGasCompartment(pulse::AnesthesiaMachineCompartment::Connection);
   aAnesthesiaConnection.MapNode(AnesthesiaConnection);
   SEGasCompartment& aExpiratoryLimb = m_Compartments->CreateGasCompartment(pulse::AnesthesiaMachineCompartment::ExpiratoryLimb);
   aExpiratoryLimb.MapNode(ExpiratoryLimb);
