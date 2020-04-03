@@ -8,9 +8,11 @@ src/schema/schema_last_built
 /src/csharp/pulse/bind
 /src/java/com
 /src/java/pulse/cdm/bind
-/src/java/pulse/engine/bind
+/src/java/pulse/cpm/bind
+/src/java/pulse/impl/bind
 /src/python/pulse/cdm/bind
-/src/python/pulse/engine/bind
+/src/python/pulse/cpm/bind
+/src/python/pulse/impl/bind
 /src/python/google
 
 # Eclipse Build Directory

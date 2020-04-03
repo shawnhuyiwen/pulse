@@ -2,7 +2,6 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "PhysiologyEngine.h"
 #include "engine/SEDynamicStabilization.h"
 #include "engine/SEDynamicStabilizationLedger.h"
 #include "engine/SEDynamicStabilizationEngineConvergence.h"
@@ -123,19 +122,19 @@ const std::map<std::string, SEDynamicStabilizationEngineConvergence*>& SEDynamic
   return m_ConditionConvergence;
 }
 
-bool SEDynamicStabilization::StabilizeRestingState(PhysiologyEngine& engine)
+bool SEDynamicStabilization::StabilizeRestingState(Controller& engine)
 {
   Info("Converging to a steady state");
   return Stabilize(engine, *m_RestingConvergence);
 }
-bool SEDynamicStabilization::StabilizeFeedbackState(PhysiologyEngine& engine)
+bool SEDynamicStabilization::StabilizeFeedbackState(Controller& engine)
 {
   if (!HasFeedbackConvergence())
     return true;
   Info("Converging feedback to a steady state");
   return Stabilize(engine, *m_FeedbackConvergence);
 }
-bool SEDynamicStabilization::StabilizeConditions(PhysiologyEngine& engine, const SEConditionManager& conditions)
+bool SEDynamicStabilization::StabilizeConditions(Controller& engine, const SEConditionManager& conditions)
 {
   if (conditions.IsEmpty())
     return true;
@@ -173,7 +172,7 @@ bool SEDynamicStabilization::StabilizeConditions(PhysiologyEngine& engine, const
   }
 }
 
-bool SEDynamicStabilization::Stabilize(PhysiologyEngine& engine, const SEDynamicStabilizationEngineConvergence& Convergence)
+bool SEDynamicStabilization::Stabilize(Controller& engine, const SEDynamicStabilizationEngineConvergence& Convergence)
 {
   const std::vector<SEDynamicStabilizationPropertyConvergence*>& properties = Convergence.GetPropertyConvergence();
   if (properties.empty())
@@ -225,7 +224,7 @@ bool SEDynamicStabilization::Stabilize(PhysiologyEngine& engine, const SEDynamic
     if (ledger.HasExceededTime())
       break;
 
-    engine.AdvanceModelTime();
+    engine.AdvanceTime();
     if (m_currentTime_s == 0)
       tracker->SetupRequests();
     stablizationTime_s += dT_s;

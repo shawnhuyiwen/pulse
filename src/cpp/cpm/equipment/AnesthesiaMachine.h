@@ -16,12 +16,12 @@ class SEFluidCircuitPath;
  */    
 class PULSE_DECL AnesthesiaMachine : public SEAnesthesiaMachine, public PulseAnesthesiaMachine, public PulseSystem
 {
+  friend class PulseData;
   friend class PBPulseEquipment;//friend the serialization class
-  friend class PulseController;
   friend class PulseEngineTest;
 protected:
-  AnesthesiaMachine(PulseController& pc);
-  PulseController& m_data;
+  AnesthesiaMachine(PulseData& pc);
+  PulseData& m_data;
 
 public:
   virtual ~AnesthesiaMachine();
@@ -35,10 +35,12 @@ public:
 
   void StateChange();
 
+  void AtSteadyState() {}
   void PreProcess();
   void Process();
   void PostProcess();
 
+protected:
   void CalculateScrubber();
 
   // Extending some functionality to these base class methods

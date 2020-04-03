@@ -32,17 +32,18 @@ message DataRequestData
 {
   enum eCategory
   {
-    Patient            = 0;
-    Physiology         = 1;
-    Environment        = 2;
-    GasCompartment     = 3;
-    LiquidCompartment  = 4;
-    ThermalCompartment = 5;
-    TissueCompartment  = 6;
-    Substance          = 7;
-    AnesthesiaMachine  = 8;
-    ECG                = 9;
-    Inhaler            = 10;
+    Patient              = 0;
+    Physiology           = 1;
+    Environment          = 2;
+    GasCompartment       = 3;
+    LiquidCompartment    = 4;
+    ThermalCompartment   = 5;
+    TissueCompartment    = 6;
+    Substance            = 7;
+    AnesthesiaMachine    = 8;
+    ECG                  = 9;
+    Inhaler              = 10;
+    MechanicalVentilator = 11;
   }
   
   DecimalFormatData                                    DecimalFormat             = 1;/**<<@brief If writing to a file, specify the decimal formatting */

@@ -19,19 +19,18 @@ class SELiquidSubstanceQuantity;
  */           
 class PULSE_DECL BloodChemistry : public SEBloodChemistrySystem, public PulseBloodChemistrySystem, public PulseSystem
 {
+  friend class PulseData;
   friend class PBPulsePhysiology;//friend the serialization class
-  friend class PulseController;
   friend class PulseEngineTest;
 protected:
-  BloodChemistry(PulseController& data);
-  PulseController& m_data;
+  BloodChemistry(PulseData& data);
+  PulseData& m_data;
 
 public:
   virtual ~BloodChemistry();
 
   void Clear();
 
-protected:
   // Set members to a stable homeostatic state
   void Initialize();
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
@@ -45,6 +44,7 @@ protected:
   bool CalculateCompleteBloodCount(SECompleteBloodCount& cbc) const;
   bool CalculateComprehensiveMetabolicPanel(SEComprehensiveMetabolicPanel& cmp) const;
 
+protected:
   void CheckBloodGasLevels();
   
   // Serializable member variables (Set in Initialize and in schema)

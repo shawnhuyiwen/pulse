@@ -437,35 +437,32 @@ SEDataRequest* SEDataRequestManager::FindSubstanceDataRequest(const SESubstance&
   return nullptr;
 }
 
-SEDataRequest& SEDataRequestManager::CreateAnesthesiaMachineDataRequest(const std::string& cmptName, const std::string& property, const SEDecimalFormat* dfault)
+SEDataRequest& SEDataRequestManager::CreateAnesthesiaMachineDataRequest(const std::string& property, const SEDecimalFormat* dfault)
 {
-  SEDataRequest* dr = FindAnesthesiaMachineDataRequest(cmptName, property);
+  SEDataRequest* dr = FindAnesthesiaMachineDataRequest(property);
   if (dr != nullptr)
     return *dr;
   dr = new SEDataRequest(eDataRequest_Category::AnesthesiaMachine, dfault);
   m_Requests.push_back(dr);
-  dr->SetCompartmentName(cmptName);
   dr->SetPropertyName(property);
   return *dr;
 }
-SEDataRequest& SEDataRequestManager::CreateAnesthesiaMachineDataRequest(const std::string& cmptName, const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault)
+SEDataRequest& SEDataRequestManager::CreateAnesthesiaMachineDataRequest(const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault)
 {
-  SEDataRequest* dr = FindAnesthesiaMachineDataRequest(cmptName, property);
+  SEDataRequest* dr = FindAnesthesiaMachineDataRequest(property);
   if (dr != nullptr)
     return *dr;
   dr = new SEDataRequest(eDataRequest_Category::AnesthesiaMachine, dfault);
   m_Requests.push_back(dr);
-  dr->SetCompartmentName(cmptName);
   dr->SetPropertyName(property);
   dr->SetUnit(unit);
   return *dr;
 }
-SEDataRequest* SEDataRequestManager::FindAnesthesiaMachineDataRequest(const std::string& cmptName, const std::string& property)
+SEDataRequest* SEDataRequestManager::FindAnesthesiaMachineDataRequest(const std::string& property)
 {
   for (SEDataRequest* dr : m_Requests)
   {
-    if (dr->GetCategory() == eDataRequest_Category::AnesthesiaMachine && 
-        dr->GetCompartmentName() == cmptName && 
+    if (dr->GetCategory() == eDataRequest_Category::AnesthesiaMachine &&
         dr->GetPropertyName() == property)
       return dr;
   }
@@ -503,36 +500,65 @@ SEDataRequest* SEDataRequestManager::FindECGDataRequest(const std::string& prope
   return nullptr;
 }
 
-SEDataRequest& SEDataRequestManager::CreateInhalerDataRequest(const std::string& cmptName, const std::string& property, const SEDecimalFormat* dfault)
+SEDataRequest& SEDataRequestManager::CreateInhalerDataRequest(const std::string& property, const SEDecimalFormat* dfault)
 {
-  SEDataRequest* dr = FindInhalerDataRequest(cmptName, property);
+  SEDataRequest* dr = FindInhalerDataRequest(property);
   if (dr != nullptr)
     return *dr;
   dr = new SEDataRequest(eDataRequest_Category::Inhaler, dfault);
   m_Requests.push_back(dr);
-  dr->SetCompartmentName(cmptName);
   dr->SetPropertyName(property);
   return *dr;
 }
-SEDataRequest& SEDataRequestManager::CreateInhalerDataRequest(const std::string& cmptName, const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault)
+SEDataRequest& SEDataRequestManager::CreateInhalerDataRequest(const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault)
 {
-  SEDataRequest* dr = FindInhalerDataRequest(cmptName, property);
+  SEDataRequest* dr = FindInhalerDataRequest(property);
   if (dr != nullptr)
     return *dr;
   dr = new SEDataRequest(eDataRequest_Category::Inhaler, dfault);
   m_Requests.push_back(dr);
-  dr->SetCompartmentName(cmptName);
   dr->SetPropertyName(property);
   dr->SetUnit(unit);
   return *dr;
 }
-SEDataRequest* SEDataRequestManager::FindInhalerDataRequest(const std::string& cmptName, const std::string& property)
+SEDataRequest* SEDataRequestManager::FindInhalerDataRequest(const std::string& property)
 {
   for (SEDataRequest* dr : m_Requests)
   {
-    if (dr->GetCategory() == eDataRequest_Category::Inhaler && 
-        dr->GetCompartmentName() == cmptName && 
+    if (dr->GetCategory() == eDataRequest_Category::Inhaler &&
         dr->GetPropertyName() == property)
+      return dr;
+  }
+  return nullptr;
+}
+
+SEDataRequest& SEDataRequestManager::CreateMechanicalVentilatorDataRequest(const std::string& property, const SEDecimalFormat* dfault)
+{
+  SEDataRequest* dr = FindMechanicalVentilatorDataRequest(property);
+  if (dr != nullptr)
+    return *dr;
+  dr = new SEDataRequest(eDataRequest_Category::MechanicalVentilator, dfault);
+  m_Requests.push_back(dr);
+  dr->SetPropertyName(property);
+  return *dr;
+}
+SEDataRequest& SEDataRequestManager::CreateMechanicalVentilatorDataRequest(const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault)
+{
+  SEDataRequest* dr = FindMechanicalVentilatorDataRequest(property);
+  if (dr != nullptr)
+    return *dr;
+  dr = new SEDataRequest(eDataRequest_Category::MechanicalVentilator, dfault);
+  m_Requests.push_back(dr);
+  dr->SetPropertyName(property);
+  dr->SetUnit(unit);
+  return *dr;
+}
+SEDataRequest* SEDataRequestManager::FindMechanicalVentilatorDataRequest(const std::string& property)
+{
+  for (SEDataRequest* dr : m_Requests)
+  {
+    if (dr->GetCategory() == eDataRequest_Category::MechanicalVentilator &&
+      dr->GetPropertyName() == property)
       return dr;
   }
   return nullptr;

@@ -55,7 +55,7 @@
 #include "properties/SERunningAverage.h"
 #include "utils/GeneralMath.h"
 
-Renal::Renal(PulseController& data) : SERenalSystem(data.GetLogger()), m_data(data)
+Renal::Renal(PulseData& data) : SERenalSystem(data.GetLogger()), m_data(data)
 {
   m_spCleared = new SEScalarMass();
   m_urineProductionRate_mL_Per_min_runningAvg = new SERunningAverage();

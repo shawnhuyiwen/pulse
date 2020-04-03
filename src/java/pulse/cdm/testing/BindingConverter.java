@@ -21,7 +21,7 @@ public class BindingConverter
     for(String pba_filename : FileUtils.findFiles("verification\\scenarios", ".pba", true))
     {
       pulse.cdm.bind.Scenario.ScenarioData.Builder builder = pulse.cdm.bind.Scenario.ScenarioData.newBuilder();
-      pulse.engine.bind.Pulse.ScenarioData.Builder pbuilder = pulse.engine.bind.Pulse.ScenarioData.newBuilder();
+      pulse.cpm.bind.Pulse.ScenarioData.Builder pbuilder = pulse.cpm.bind.Pulse.ScenarioData.newBuilder();
       pulse.cdm.bind.PatientAssessments.PulmonaryFunctionTestData.Builder pftData = pulse.cdm.bind.PatientAssessments.PulmonaryFunctionTestData.newBuilder();
       pulse.cdm.bind.PatientAssessments.ComprehensiveMetabolicPanelData.Builder cmpData = pulse.cdm.bind.PatientAssessments.ComprehensiveMetabolicPanelData.newBuilder();
       pulse.cdm.bind.PatientAssessments.CompleteBloodCountData.Builder cbcData = pulse.cdm.bind.PatientAssessments.CompleteBloodCountData.newBuilder();

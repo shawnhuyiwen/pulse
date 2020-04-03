@@ -34,7 +34,7 @@ import pulse.cdm.properties.CommonUnits.VolumeUnit;
 import pulse.cdm.substance.SESubstance;
 import pulse.cdm.substance.SESubstanceManager;
 import pulse.cdm.system.equipment.anesthesia_machine.actions.SEAnesthesiaMachineConfiguration;
-import pulse.engine.bind.Pulse;
+import pulse.cpm.bind.Pulse;
 import pulse.utilities.FileUtils;
 import pulse.utilities.Log;
 import pulse.utilities.jniBridge;

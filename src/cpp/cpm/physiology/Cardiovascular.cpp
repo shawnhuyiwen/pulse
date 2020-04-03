@@ -61,7 +61,7 @@
 #include "utils/DataTrack.h"
 #include "utils/GeneralMath.h"
 
-Cardiovascular::Cardiovascular(PulseController& data) : SECardiovascularSystem(data.GetLogger()), m_data(data)
+Cardiovascular::Cardiovascular(PulseData& data) : SECardiovascularSystem(data.GetLogger()), m_data(data)
 {
   m_TuningFile = "";
   m_transporter = new SELiquidTransporter(VolumePerTimeUnit::mL_Per_s, VolumeUnit::mL, MassUnit::ug, MassPerVolumeUnit::ug_Per_mL, data.GetLogger());

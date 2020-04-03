@@ -116,7 +116,7 @@ public:
   }
 };
 
-SaturationCalculator::SaturationCalculator(PulseController& data) : Loggable(data.GetLogger()), m_data(data)
+SaturationCalculator::SaturationCalculator(PulseData& data) : Loggable(data.GetLogger()), m_data(data)
 {
   Initialize(data.GetSubstances());
 }

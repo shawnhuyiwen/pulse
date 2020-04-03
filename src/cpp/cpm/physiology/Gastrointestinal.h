@@ -13,19 +13,18 @@ class SEFluidCircuitPath;
 */
 class PULSE_DECL Gastrointestinal : public SEGastrointestinalSystem, public PulseGastrointestinalSystem, public PulseSystem
 {
+  friend class PulseData;
   friend class PBPulsePhysiology;//friend the serialization class
-  friend class PulseController;
   friend class PulseEngineTest;
 protected:
-  Gastrointestinal(PulseController& data);
-  PulseController& m_data;
+  Gastrointestinal(PulseData& data);
+  PulseData& m_data;
 
 public:
   virtual ~Gastrointestinal();
 
   void Clear();
 
-protected:
   // Set members to a stable homeostatic state
   void Initialize();
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
@@ -36,6 +35,7 @@ protected:
   void Process();
   void PostProcess();
 
+protected:
   void   GastricSecretion(double duration_s);
   void   DefaultNutritionRates(SENutrition& n);
   void   DigestStomachNutrients(double duration_s);

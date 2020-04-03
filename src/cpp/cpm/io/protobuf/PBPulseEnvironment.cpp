@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 PUSH_PROTO_WARNINGS()
-#include "pulse/engine/bind/PulseEnvironment.pb.h"
+#include "pulse/cpm/bind/PulseEnvironment.pb.h"
 POP_PROTO_WARNINGS()
 #include "io/protobuf/PBPulseEnvironment.h"
 #include "io/protobuf/PBEnvironment.h"

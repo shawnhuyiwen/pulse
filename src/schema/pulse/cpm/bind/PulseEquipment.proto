@@ -1,7 +1,7 @@
 syntax = "proto3";
-package pulse.engine.bind;
-option java_package = "pulse.engine.bind";
-option csharp_namespace = "pulse.engine.bind";
+package pulse.cpm.bind;
+option java_package = "pulse.cpm.bind";
+option csharp_namespace = "pulse.cpm.bind";
 option optimize_for = SPEED;
 
 import "pulse/cdm/bind/AnesthesiaMachine.proto";

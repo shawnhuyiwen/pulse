@@ -32,7 +32,3 @@ const SEScalar* SESystem::GetScalar(const std::string& name, std::vector<SESyste
   }  
   return nullptr;
 }
-
-
-
-

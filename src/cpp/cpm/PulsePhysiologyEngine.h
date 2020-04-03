@@ -77,14 +77,14 @@ private:
 PULSE_DECL std::unique_ptr<PhysiologyEngine> CreatePulseEngine(const std::string& logfile, const std::string& data_dir = ".");
 PULSE_DECL std::unique_ptr<PhysiologyEngine> CreatePulseEngine(Logger* logger = nullptr, const std::string& data_dir =".");
 
-#define PULSE_BIND pulse::engine::bind
+#define PULSE_BIND pulse::cpm::bind
 #define PULSE_BIND_DECL(type) \
-  namespace pulse { namespace engine { namespace bind { class type##Data; }}}
+  namespace pulse { namespace cpm { namespace bind { class type##Data; }}}
 
 // I bet there is a way cool macro you could do for these enums...
 namespace pulse {
 
-  DEFINE_STATIC_STRING_EX(Version, Pulse_1.0.0_beta);
+  DEFINE_STATIC_STRING_EX(Version, Pulse_3.0.0);
 
   class Graph
   {

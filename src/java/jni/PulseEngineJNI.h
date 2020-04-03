@@ -26,7 +26,7 @@ public:
   void ForwardFatal(const std::string&  msg, const std::string&  origin);
   void PushData(double time_s);
 
-  void OnAdvance(double time_s, const PhysiologyEngine& engine);
+  void OnAdvance(double time_s);
   void HandleEvent(eEvent type, bool active, const SEScalarTime* time = nullptr);
 
   JNIEnv*    jniEnv;

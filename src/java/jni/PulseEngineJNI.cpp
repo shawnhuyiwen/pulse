@@ -409,7 +409,7 @@ void PulseEngineJNI::Reset()
   updateFrequency_cnt = 45;// About every half second
 }
 
-void PulseEngineJNI::OnAdvance(double time_s, const PhysiologyEngine& engine)
+void PulseEngineJNI::OnAdvance(double time_s)
 {
   if (update_cnt++ > updateFrequency_cnt)
   {    

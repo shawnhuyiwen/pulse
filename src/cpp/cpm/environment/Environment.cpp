@@ -56,7 +56,7 @@
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarLength.h"
 
-Environment::Environment(PulseController& data) : SEEnvironment(data.GetSubstances()), m_data(data)
+Environment::Environment(PulseData& data) : SEEnvironment(data.GetSubstances()), m_data(data)
 {
   Clear();
 }

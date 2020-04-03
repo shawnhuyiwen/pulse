@@ -6,7 +6,7 @@
 #include "circuit/fluid/SEFluidCircuitNode.h"
 #include "circuit/fluid/SEFluidCircuitPath.h"
 
-PulseCircuits::PulseCircuits(PulseController& data) : SECircuitManager(data.GetLogger()), m_data(data)
+PulseCircuits::PulseCircuits(PulseData& data) : SECircuitManager(data.GetLogger()), m_data(data)
 {
   Clear();
 }

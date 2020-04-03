@@ -55,7 +55,7 @@
 #include "properties/SEScalarVolumePerTimeMass.h"
 #include "properties/SERunningAverage.h"
 
-Energy::Energy(PulseController& data) : SEEnergySystem(data.GetLogger()), m_data(data)
+Energy::Energy(PulseData& data) : SEEnergySystem(data.GetLogger()), m_data(data)
 {
   m_BloodpH = new SERunningAverage();
   m_BicarbonateMolarity_mmol_Per_L = new SERunningAverage();

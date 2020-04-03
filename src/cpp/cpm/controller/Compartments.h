@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-class PulseController;
+class PulseData;
 #include "compartment/SECompartmentManager.h"
 
 /**
@@ -13,7 +13,7 @@ class PULSE_DECL PulseCompartments : public SECompartmentManager
   friend class PulseSubstances;
 public:
 
-  PulseCompartments(PulseController& data);
+  PulseCompartments(PulseData& data);
   virtual ~PulseCompartments();
 
   void Clear();
@@ -110,7 +110,7 @@ protected:
   virtual bool AllowGasSubstance(SESubstance& s, SEGasCompartment& cmpt) const;
   virtual bool AllowLiquidSubstance(SESubstance& s, SELiquidCompartment& cmpt) const;
 
-  PulseController& m_data;
+  PulseData& m_data;
 
   bool m_UpdateActiveAirwayGraph;
   bool m_UpdateActiveAerosolGraph;

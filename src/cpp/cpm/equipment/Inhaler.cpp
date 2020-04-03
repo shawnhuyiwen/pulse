@@ -32,7 +32,7 @@ Constructors
 ========================
 */
 
-Inhaler::Inhaler(PulseController& data) : SEInhaler(data.GetSubstances()), m_data(data)
+Inhaler::Inhaler(PulseData& data) : SEInhaler(data.GetSubstances()), m_data(data)
 {
   Clear();
 }

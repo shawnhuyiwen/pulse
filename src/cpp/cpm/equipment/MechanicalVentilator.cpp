@@ -35,7 +35,7 @@
 ========================
 */
 
-MechanicalVentilator::MechanicalVentilator(PulseController& data) : SEMechanicalVentilator(data.GetSubstances()), m_data(data)
+MechanicalVentilator::MechanicalVentilator(PulseData& data) : SEMechanicalVentilator(data.GetSubstances()), m_data(data)
 {
   Clear();
 }

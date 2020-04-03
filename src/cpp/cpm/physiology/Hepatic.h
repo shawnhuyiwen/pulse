@@ -10,19 +10,18 @@
  */  
 class PULSE_DECL Hepatic : public SEHepaticSystem, public PulseHepaticSystem, public PulseSystem
 {
+  friend class PulseData;
   friend class PBPulsePhysiology;//friend the serialization class
-  friend class PulseController;
   friend class PulseEngineTest;
 protected:
-  Hepatic(PulseController& data);
-  PulseController& m_data;
+  Hepatic(PulseData& data);
+  PulseData& m_data;
 
 public:
   virtual ~Hepatic();
 
   void Clear();
 
-protected:
   // Set members to a stable homeostatic state
   void Initialize();
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
@@ -33,4 +32,5 @@ protected:
   void Process();
   void PostProcess();
 
+protected:
 };

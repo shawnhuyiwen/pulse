@@ -21,29 +21,29 @@ class SELiquidSubstanceQuantity;
  */  
 class PULSE_DECL Tissue : public SETissueSystem, public PulseTissueSystem, public PulseSystem
 {
+  friend class PulseData;
   friend class PBPulsePhysiology;//friend the serialization class
-  friend class PulseController;
   friend class PulseEngineTest;
 protected:
-  Tissue(PulseController& data);
-  PulseController& m_data;
+  Tissue(PulseData& data);
+  PulseData& m_data;
 
 public:
   virtual ~Tissue();
 
   void Clear();
 
-protected:
   // Set members to a stable homeostatic state
   void Initialize();
   // Set pointers and other member variables common to both homeostatic initialization and loading a state
   void SetUp();
 
-  void AtSteadyState();  
+  void AtSteadyState();
   void PreProcess();
   void Process();
   void PostProcess();
 
+protected:
   // Preprocess Methods
   void ProduceAlbumin(double duration_s);
 

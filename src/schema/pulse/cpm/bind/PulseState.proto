@@ -1,7 +1,7 @@
 syntax = "proto3";
-package pulse.engine.bind;
-option java_package = "pulse.engine.bind";
-option csharp_namespace = "pulse.engine.bind";
+package pulse.cpm.bind;
+option java_package = "pulse.cpm.bind";
+option csharp_namespace = "pulse.cpm.bind";
 option optimize_for = SPEED;
 
 import "pulse/cdm/bind/Enums.proto";
@@ -12,10 +12,10 @@ import "pulse/cdm/bind/Engine.proto";
 import "pulse/cdm/bind/Substance.proto";
 import "pulse/cdm/bind/Compartment.proto";
 import "pulse/cdm/bind/Circuit.proto";
-import "pulse/engine/bind/PulsePhysiology.proto";
-import "pulse/engine/bind/PulseEnvironment.proto";
-import "pulse/engine/bind/PulseEquipment.proto";
-import "pulse/engine/bind/PulseConfiguration.proto";
+import "pulse/cpm/bind/PulsePhysiology.proto";
+import "pulse/cpm/bind/PulseEnvironment.proto";
+import "pulse/cpm/bind/PulseEquipment.proto";
+import "pulse/cpm/bind/PulseConfiguration.proto";
 
 enum eAirwayMode
 {

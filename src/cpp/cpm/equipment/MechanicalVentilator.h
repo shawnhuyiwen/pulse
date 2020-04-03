@@ -16,12 +16,12 @@ class SEFluidCircuitPath;
  */
 class PULSE_DECL MechanicalVentilator : public SEMechanicalVentilator, public PulseMechanicalVentilator, public PulseSystem
 {
+  friend class PulseData;
   friend class PBPulseEquipment;//friend the serialization class
-  friend class PulseController;
   friend class PulseEngineTest;
 protected:
-  MechanicalVentilator(PulseController& pc);
-  PulseController& m_data;
+  MechanicalVentilator(PulseData& pc);
+  PulseData& m_data;
 
 public:
   virtual ~MechanicalVentilator();
@@ -35,6 +35,7 @@ public:
 
   void StateChange();
 
+  void AtSteadyState() {}
   void PreProcess();
   void Process();
   void PostProcess();

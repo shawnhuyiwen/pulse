@@ -19,12 +19,12 @@ class SEUrinalysis;
  */  
 class PULSE_DECL Renal : public SERenalSystem, public PulseRenalSystem, public PulseSystem
 {
+  friend class PulseData;
   friend class PBPulsePhysiology;//friend the serialization class
-  friend class PulseController;
   friend class PulseEngineTest;
 protected:
-  Renal(PulseController& data);
-  PulseController& m_data;
+  Renal(PulseData& data);
+  PulseData& m_data;
 
   double m_dt;
   
@@ -33,7 +33,6 @@ public:
 
   void Clear();
 
-protected:
   // Set members to a stable homeostatic state
   void Initialize();
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
@@ -47,6 +46,7 @@ protected:
   // Assessments
   bool CalculateUrinalysis(SEUrinalysis& u) const;
 
+protected:
   struct ActiveTransport
   {
   public:

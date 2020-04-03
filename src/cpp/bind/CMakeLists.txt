@@ -33,12 +33,14 @@ add_library_ex(DataModelBindings
     "${CDM_PACKAGE}/SubstanceQuantity.pb.h"
     "${CDM_PACKAGE}/TestReport.pb.h"
 # cpm bindings
-    "${ENGINE_PACKAGE}/Pulse.pb.h"
-    "${ENGINE_PACKAGE}/PulseConfiguration.pb.h"
-    "${ENGINE_PACKAGE}/PulseEnvironment.pb.h"
-    "${ENGINE_PACKAGE}/PulseEquipment.pb.h"
-    "${ENGINE_PACKAGE}/PulsePhysiology.pb.h"
-    "${ENGINE_PACKAGE}/PulseState.pb.h"
+    "${CPM_PACKAGE}/Pulse.pb.h"
+    "${CPM_PACKAGE}/PulseConfiguration.pb.h"
+    "${CPM_PACKAGE}/PulseEnvironment.pb.h"
+    "${CPM_PACKAGE}/PulseEquipment.pb.h"
+    "${CPM_PACKAGE}/PulsePhysiology.pb.h"
+    "${CPM_PACKAGE}/PulseState.pb.h"
+# impl bindings
+    "${IMPL_PACKAGE}/MultiplexVentilator.pb.h"
   CPP_FILES
 # cdm bindings
     "${CDM_PACKAGE}/Actions.pb.cc"
@@ -71,12 +73,14 @@ add_library_ex(DataModelBindings
     "${CDM_PACKAGE}/SubstanceQuantity.pb.cc"
     "${CDM_PACKAGE}/TestReport.pb.cc"
 # cpm bindings
-    "${ENGINE_PACKAGE}/Pulse.pb.cc"
-    "${ENGINE_PACKAGE}/PulseConfiguration.pb.cc"
-    "${ENGINE_PACKAGE}/PulseEnvironment.pb.cc"
-    "${ENGINE_PACKAGE}/PulseEquipment.pb.cc"
-    "${ENGINE_PACKAGE}/PulsePhysiology.pb.cc"
-    "${ENGINE_PACKAGE}/PulseState.pb.cc"
+    "${CPM_PACKAGE}/Pulse.pb.cc"
+    "${CPM_PACKAGE}/PulseConfiguration.pb.cc"
+    "${CPM_PACKAGE}/PulseEnvironment.pb.cc"
+    "${CPM_PACKAGE}/PulseEquipment.pb.cc"
+    "${CPM_PACKAGE}/PulsePhysiology.pb.cc"
+    "${CPM_PACKAGE}/PulseState.pb.cc"
+# impl bindings
+    "${IMPL_PACKAGE}/MultiplexVentilator.pb.cc"
   PRIVATE_DEPENDS
     protobuf::libprotobuf
   LIB_INSTALL_ONLY

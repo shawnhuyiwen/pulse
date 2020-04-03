@@ -35,7 +35,7 @@
 #pragma warning(disable:4786)
 #pragma warning(disable:4275)
 
-BloodChemistry::BloodChemistry(PulseController& data) : SEBloodChemistrySystem(data.GetLogger()), m_data(data)
+BloodChemistry::BloodChemistry(PulseData& data) : SEBloodChemistrySystem(data.GetLogger()), m_data(data)
 {
   m_ArterialOxygen_mmHg = new SERunningAverage();
   m_ArterialCarbonDioxide_mmHg = new SERunningAverage();

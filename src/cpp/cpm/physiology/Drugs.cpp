@@ -53,7 +53,7 @@
 #include "properties/SEScalarVolumePerTimePressure.h"
 #include "properties/SEScalarNegative1To1.h"
 
-Drugs::Drugs(PulseController& data) : SEDrugSystem(data.GetLogger()), m_data(data)
+Drugs::Drugs(PulseData& data) : SEDrugSystem(data.GetLogger()), m_data(data)
 {
   Clear();
 }

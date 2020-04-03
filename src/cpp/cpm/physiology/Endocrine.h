@@ -15,19 +15,18 @@ class SELiquidSubstanceQuantity;
  */  
 class PULSE_DECL Endocrine : public SEEndocrineSystem, public PulseEndocrineSystem, public PulseSystem
 {
+  friend class PulseData;
   friend class PBPulsePhysiology;//friend the serialization class
-  friend class PulseController;
   friend class PulseEngineTest;
 protected:
-  Endocrine(PulseController& data);
-  PulseController& m_data;
+  Endocrine(PulseData& data);
+  PulseData& m_data;
 
 public:
   virtual ~Endocrine();
 
   void Clear();
 
-protected:
   // Set members to a stable homeostatic state
   void Initialize();
   // Set pointers and other member variables common to both homeostatic initialization and loading a state
@@ -38,6 +37,7 @@ protected:
   void Process();
   void PostProcess(){}
 
+protected:
   void SynthesizeInsulin();
   void ReleaseEpinephrine();
 

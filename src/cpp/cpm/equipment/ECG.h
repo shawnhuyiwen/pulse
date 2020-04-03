@@ -12,29 +12,30 @@ class SEElectroCardioGramWaveformInterpolator;
 */
 class PULSE_DECL ECG : public SEElectroCardioGram, public PulseElectroCardioGram, public PulseSystem
 {
+  friend class PulseData;
   friend class PBPulseEquipment;//friend the serialization class
-  friend class PulseController;
   friend class PulseEngineTest;
 protected:
-  ECG(PulseController& pc);
-  PulseController& m_data;
+  ECG(PulseData& pc);
+  PulseData& m_data;
 
 public:
   virtual ~ECG();
 
   void Clear();
 
-protected:
   // Set members to a stable homeostatic state
   void Initialize();
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
   void SetUp();
 
   // main driver function responsible for calling the various ECG functions:
+  void AtSteadyState() {}
   void PreProcess();
   void Process();
   void PostProcess();
 
+protected:
   // Serializable member variables (Set in Initialize and in schema)
   double m_heartRhythmTime_s;
   double m_heartRhythmPeriod_s;

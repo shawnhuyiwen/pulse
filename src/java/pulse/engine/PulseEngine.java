@@ -13,7 +13,7 @@ import pulse.cdm.bind.PatientAssessments.PulmonaryFunctionTestData;
 import pulse.cdm.bind.PatientAssessments.UrinalysisData;
 import pulse.cdm.bind.PatientAssessments.ePatientAssessmentType;
 import pulse.cdm.bind.Engine.ActionListData;
-import pulse.engine.bind.PulseState.StateData;
+import pulse.cpm.bind.PulseState.StateData;
 
 import pulse.cdm.actions.SEAction;
 import pulse.cdm.datarequests.SEDataRequestManager;

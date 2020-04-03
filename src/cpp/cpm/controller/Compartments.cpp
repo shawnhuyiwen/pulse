@@ -50,7 +50,7 @@ std::vector<std::string> pulse::NonRebreatherMaskLink::_values;
 std::vector<std::string> pulse::SimpleMaskCompartment::_values;
 std::vector<std::string> pulse::SimpleMaskLink::_values;
 
-PulseCompartments::PulseCompartments(PulseController& data) : SECompartmentManager(data.GetSubstances()), m_data(data)
+PulseCompartments::PulseCompartments(PulseData& data) : SECompartmentManager(data.GetSubstances()), m_data(data)
 {
   Clear();
 }

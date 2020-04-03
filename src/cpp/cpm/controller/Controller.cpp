@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "controller/Controller.h"
+#include "io/protobuf/PBPulseState.h"
 #include "controller/Circuits.h"
 #include "controller/Compartments.h"
 #include "controller/Substances.h"
@@ -25,8 +26,15 @@
 #include "equipment/MechanicalVentilator.h"
 #include "PulseConfiguration.h"
 
+#include "engine/SEPatientConfiguration.h"
 #include "engine/SEConditionManager.h"
 #include "engine/SEActionManager.h"
+#include "engine/SEEngineTracker.h"
+#include "engine/SEDataRequestManager.h"
+#include "engine/SESerializeState.h"
+#include "engine/SEEventManager.h"
+#include "engine/SEAdvanceHandler.h"
+#include "engine/SEEngineStabilization.h"
 
 #include "substance/SESubstance.h"
 
@@ -49,6 +57,7 @@
 #include "compartment/tissue/SETissueCompartment.h"
 
 #include "patient/SEPatient.h"
+#include "patient/actions/SEPatientAssessmentRequest.h"
 #include "patient/assessments/SEPulmonaryFunctionTest.h"
 #include "patient/assessments/SECompleteBloodCount.h"
 #include "patient/assessments/SEComprehensiveMetabolicPanel.h"
@@ -67,31 +76,25 @@
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarPressurePerVolume.h"
 #include "properties/SEScalarTime.h"
-#include "engine/SEEventManager.h"
-#include "engine/SEAdvanceHandler.h"
 #include "utils/DataTrack.h"
 #include "utils/FileUtils.h"
 
 
-PulseController::PulseController(const std::string& logFileName, const std::string& data_dir) : PulseController(new Logger(logFileName), data_dir)
+PulseData::PulseData(const std::string& logFileName, const std::string& data_dir) : PulseData(new Logger(logFileName), data_dir)
 {
-
+  // Directs to the ctor below
 }
-
-PulseController::PulseController(Logger* logger, const std::string& data_dir) : Loggable(logger)
+PulseData::PulseData(Logger* logger, const std::string& data_dir) : Loggable(logger)
 {
-
+  m_State = EngineState::NotReady;
   m_DataDir = data_dir;
-  m_DataTrack = nullptr;
   m_AdvanceHandler = nullptr;
 
-  m_CurrentTime = std::unique_ptr<SEScalarTime>(new SEScalarTime());
-  m_SimulationTime = std::unique_ptr<SEScalarTime>(new SEScalarTime());
-  m_CurrentTime->SetValue(0, TimeUnit::s);
-  m_SimulationTime->SetValue(0, TimeUnit::s);
-  m_spareAdvanceTime_s = 0;
+  m_CurrentTime.SetValue(0, TimeUnit::s);
+  m_SimulationTime.SetValue(0, TimeUnit::s);
+  m_SpareAdvanceTime_s = 0;
 
-  m_Logger->SetLogTime(m_SimulationTime.get());
+  m_Logger->SetLogTime(&m_SimulationTime);
 
   m_Substances = std::unique_ptr<PulseSubstances>(new PulseSubstances(*this));
   m_Substances->LoadSubstanceDirectory(m_DataDir);
@@ -101,13 +104,11 @@ PulseController::PulseController(Logger* logger, const std::string& data_dir) : 
 
   m_Config = std::unique_ptr<PulseConfiguration>(new PulseConfiguration(*m_Substances));
   m_Config->Initialize(m_DataDir);
- 
+
   m_SaturationCalculator = std::unique_ptr<SaturationCalculator>(new SaturationCalculator(*this));
 
   m_Actions = std::unique_ptr<SEActionManager>(new SEActionManager(*m_Substances));
   m_Conditions = std::unique_ptr<SEConditionManager>(new SEConditionManager(*m_Substances));
-
-  m_Environment = std::unique_ptr<Environment>(new Environment(*this));
 
   m_BloodChemistrySystem = std::unique_ptr<BloodChemistry>(new BloodChemistry(*this));
   m_CardiovascularSystem = std::unique_ptr<Cardiovascular>(new Cardiovascular(*this));
@@ -121,12 +122,11 @@ PulseController::PulseController(Logger* logger, const std::string& data_dir) : 
   m_DrugSystem = std::unique_ptr<Drugs>(new Drugs(*this));
   m_TissueSystem = std::unique_ptr<Tissue>(new Tissue(*this));
 
-  m_ECG = std::unique_ptr<ECG>(new ECG(*this));
+  m_Environment = std::unique_ptr<Environment>(new Environment(*this));
 
   m_AnesthesiaMachine = std::unique_ptr<AnesthesiaMachine>(new AnesthesiaMachine(*this));
-
+  m_ECG = std::unique_ptr<ECG>(new ECG(*this));
   m_Inhaler = std::unique_ptr<Inhaler>(new Inhaler(*this));
-
   m_MechanicalVentilator = std::unique_ptr<MechanicalVentilator>(new MechanicalVentilator(*this));
 
   m_EventManager = std::unique_ptr<SEEventManager>(new SEEventManager(GetLogger()));
@@ -134,13 +134,245 @@ PulseController::PulseController(Logger* logger, const std::string& data_dir) : 
   m_Compartments = std::unique_ptr<PulseCompartments>(new PulseCompartments(*this));
 
   m_Circuits = std::unique_ptr<PulseCircuits>(new PulseCircuits(*this));
+
+  m_EngineTrack = new SEEngineTracker(*m_CurrentPatient, *m_Substances, *m_Compartments, m_Logger);
+  m_EngineTrack->AddSystem(*m_BloodChemistrySystem);
+  m_EngineTrack->AddSystem(*m_CardiovascularSystem);
+  m_EngineTrack->AddSystem(*m_EndocrineSystem);
+  m_EngineTrack->AddSystem(*m_EnergySystem);
+  m_EngineTrack->AddSystem(*m_GastrointestinalSystem);
+  m_EngineTrack->AddSystem(*m_HepaticSystem);
+  m_EngineTrack->AddSystem(*m_NervousSystem);
+  m_EngineTrack->AddSystem(*m_RenalSystem);
+  m_EngineTrack->AddSystem(*m_RespiratorySystem);
+  m_EngineTrack->AddSystem(*m_DrugSystem);
+  m_EngineTrack->AddSystem(*m_TissueSystem);
+  m_EngineTrack->AddSystem(*m_Environment);
+  m_EngineTrack->AddSystem(*m_AnesthesiaMachine);
+  m_EngineTrack->AddSystem(*m_ECG);
+  m_EngineTrack->AddSystem(*m_Inhaler);
+  m_EngineTrack->AddSystem(*m_MechanicalVentilator);
+}
+PulseData::~PulseData()
+{
+
 }
 
-DataTrack& PulseController::GetDataTrack()
+void PulseData::AdvanceCallback(double time_s)
 {
-  if (m_DataTrack == nullptr)
-    m_DataTrack = new DataTrack();
-  return *m_DataTrack;
+  if (m_AdvanceHandler)
+  {
+    if (time_s >= 0 || m_AdvanceHandler->OnForStabilization())
+      m_AdvanceHandler->OnAdvance(time_s);
+  }
+}
+
+void PulseData::SetAirwayMode(eAirwayMode mode)
+{
+  if (mode == m_AirwayMode)
+    return;// do nazing!
+  if (mode != eAirwayMode::Free && m_AirwayMode != eAirwayMode::Free)
+    throw CommonDataModelException("Can only change airway mode from the Free mode, Disable other equipment first.");
+  if (mode != m_AirwayMode)
+    m_Compartments->UpdateAirwayGraph();
+  m_AirwayMode = mode;
+  std::stringstream ss;
+  ss << "Airway Mode : " << eAirwayMode_Name(m_AirwayMode);
+  Info(ss);
+}
+
+void PulseData::SetIntubation(eSwitch s)
+{
+  if (s == eSwitch::NullSwitch)
+    s = eSwitch::Off;
+  if (m_Intubation == s)
+    return;// do nazing!
+  if (m_AirwayMode == eAirwayMode::Inhaler)
+    throw CommonDataModelException("Cannot intubate if the inhaler is active.");
+  m_Intubation = s;
+}
+
+SEEngineTracker& PulseData::GetEngineTracker() const { return *m_EngineTrack; }
+DataTrack& PulseData::GetDataTrack() const { return m_EngineTrack->GetDataTrack(); }
+SaturationCalculator& PulseData::GetSaturationCalculator() const { return *m_SaturationCalculator; }
+
+PulseSubstances& PulseData::GetSubstances() const { return *m_Substances; }
+
+const SEPatient& PulseData::GetInitialPatient() const { return *m_CurrentPatient; }
+SEPatient& PulseData::GetCurrentPatient() const { return *m_InitialPatient; }
+
+SEBloodChemistrySystem& PulseData::GetBloodChemistry() const { return *m_BloodChemistrySystem; }
+SECardiovascularSystem& PulseData::GetCardiovascular() const { return *m_CardiovascularSystem; }
+SEDrugSystem& PulseData::GetDrugs() const { return *m_DrugSystem; }
+SEEndocrineSystem& PulseData::GetEndocrine() const { return *m_EndocrineSystem; }
+SEEnergySystem& PulseData::GetEnergy() const { return *m_EnergySystem; }
+SEGastrointestinalSystem& PulseData::GetGastrointestinal() const { return *m_GastrointestinalSystem; }
+SEHepaticSystem& PulseData::GetHepatic() const { return *m_HepaticSystem; }
+SENervousSystem& PulseData::GetNervous() const { return *m_NervousSystem; }
+SERenalSystem& PulseData::GetRenal() const { return *m_RenalSystem; }
+SERespiratorySystem& PulseData::GetRespiratory() const { return *m_RespiratorySystem; }
+SETissueSystem& PulseData::GetTissue() const { return *m_TissueSystem; }
+
+SEEnvironment& PulseData::GetEnvironment() const { return *m_Environment; }
+SEAnesthesiaMachine& PulseData::GetAnesthesiaMachine() const { return *m_AnesthesiaMachine; }
+SEElectroCardioGram& PulseData::GetECG() const { return *m_ECG; }
+SEInhaler& PulseData::GetInhaler() const { return *m_Inhaler; }
+SEMechanicalVentilator& PulseData::GetMechanicalVentilator() const { return *m_MechanicalVentilator; }
+
+SEActionManager& PulseData::GetActions() const { return *m_Actions; }
+
+SEConditionManager& PulseData::GetConditions() const { return *m_Conditions; }
+
+SEEventManager& PulseData::GetEvents() const { return *m_EventManager; }
+
+PulseCircuits& PulseData::GetCircuits() const { return *m_Circuits; }
+
+PulseCompartments& PulseData::GetCompartments() const { return *m_Compartments; }
+
+const PulseConfiguration& PulseData::GetConfiguration() const { return *m_Config; }
+
+const SEScalarTime& PulseData::GetEngineTime() const { return m_CurrentTime; }
+const SEScalarTime& PulseData::GetSimulationTime() const { return m_SimulationTime; }
+const SEScalarTime& PulseData::GetTimeStep() const { return m_Config->GetTimeStep(); }
+
+PulseController::PulseController(const std::string& logFileName, const std::string& data_dir) : PulseController(new Logger(logFileName), data_dir)
+{
+  // Directs to the ctor below
+}
+PulseController::PulseController(Logger* logger, const std::string& data_dir) : PulseData(logger, data_dir)
+{
+  m_Stabilizer = new PulseStabilizationController(*this);
+}
+PulseController::~PulseController()
+{
+
+}
+
+bool PulseController::SerializeToString(std::string& output, SerializationFormat m) const
+{
+  return PBPulseState::SerializeToString(*this, output, m);
+}
+bool PulseController::SerializeToFile(const std::string& filename, SerializationFormat m) const
+{
+  return PBPulseState::SerializeToFile(*this, filename, m);
+}
+bool PulseController::SerializeFromString(const std::string& src, SerializationFormat m)
+{
+  return SerializeFromString(src, m, nullptr, nullptr);
+}
+bool PulseController::SerializeFromString(const std::string& src, SerializationFormat m, const SEScalarTime* simTime, const SEEngineConfiguration* config)
+{
+  return PBPulseState::SerializeFromString(src, *this, m, simTime, config);
+}
+bool PulseController::SerializeFromFile(const std::string& filename, SerializationFormat m)
+{
+  return SerializeFromFile(filename, m, nullptr, nullptr);
+}
+bool PulseController::SerializeFromFile(const std::string& filename, SerializationFormat m, const SEScalarTime* simTime, const SEEngineConfiguration* config)
+{
+  return PBPulseState::SerializeFromFile(filename, *this, m, simTime, config);
+}
+
+bool PulseController::InitializeEngine(const std::string& patient_configuration, SerializationFormat m, const SEEngineConfiguration* config)
+{
+  SEPatientConfiguration pc(*m_Substances);
+  pc.SerializeFromString(patient_configuration, m);
+  return InitializeEngine(pc, config);
+}
+
+bool PulseController::InitializeEngine(const SEPatientConfiguration& patient_configuration, const SEEngineConfiguration* config)
+{
+  const PulseConfiguration* pConfig = nullptr;
+  if (config != nullptr)
+  {
+    pConfig = dynamic_cast<const PulseConfiguration*>(config);
+    if (pConfig == nullptr)
+    {
+      Error("Configuration provided is not a Pulse Configuration Object");
+      return false;
+    }
+  }
+  m_EngineTrack->ResetFile();
+  m_State = EngineState::Initialization;
+  if (patient_configuration.HasPatient())
+  {
+    if (!PulseController::Initialize(pConfig, *patient_configuration.GetPatient()))
+      return false;
+  }
+  else if (patient_configuration.HasPatientFile())
+  {
+    SEPatient patient(m_Logger);
+    std::string pFile = patient_configuration.GetPatientFile();
+    if (pFile.find("/patients") == std::string::npos)
+    {// Prepend the patient directory if it's not there
+      pFile = "./patients/";
+      pFile += patient_configuration.GetPatientFile();
+    }
+    if (!patient.SerializeFromFile(pFile, JSON))// TODO Support all serialization formats
+      return false;
+    if (!PulseController::Initialize(pConfig, patient))
+      return false;
+  }
+  else
+    return false;
+
+  // We don't capture events during initialization
+  SEEventHandler* event_handler = m_EventManager->GetEventHandler();
+  m_EventManager->ForwardEvents(nullptr);
+
+  // Stabilize the engine to a resting state (with a standard meal and environment)
+  if (!m_Config->HasStabilization())
+  {
+    Error("Pulse needs stabilization criteria, none provided in configuration file");
+    return false;
+  }
+
+  m_State = EngineState::InitialStabilization;
+  if (!m_Config->GetStabilization()->StabilizeRestingState(*m_Stabilizer))
+    return false;
+
+  // We need to copy conditions here, so systems can prepare for them in their AtSteadyState method
+  if (patient_configuration.HasConditions())
+    m_Conditions->Copy(*patient_configuration.GetConditions());
+  AtSteadyState(EngineState::AtInitialStableState);// This will peek at conditions
+
+  // Copy any changes to the current patient to the initial patient
+  m_InitialPatient->Copy(*m_CurrentPatient);
+
+  m_State = EngineState::SecondaryStabilization;
+  // Apply conditions and anything else to the physiology
+  // now that it's steady with provided patient, environment, and feedback
+  if (!m_Conditions->IsEmpty())
+  {// Now restabilize the patient with any conditions that were applied
+   // Push conditions into condition manager
+    if (!m_Config->GetStabilization()->StabilizeConditions(*m_Stabilizer, *m_Conditions))
+      return false;
+  }
+  else
+  {
+    if (!m_Config->GetStabilization()->StabilizeFeedbackState(*m_Stabilizer))
+      return false;
+  }
+  AtSteadyState(EngineState::AtSecondaryStableState);
+
+  m_State = EngineState::Active;
+  // Hook up the handlers (Note events will still be in the log)
+  m_EventManager->ForwardEvents(event_handler);
+  Info("Finalizing homeostasis");
+
+  // Run this again to clear out any bumps from systems resetting baselines in the last AtSteadyState call
+  AdvanceModelTime(30, TimeUnit::s); // I would rather run Feedback stablization again, but...
+  // This does not work for a few patients, they will not stay stable (???)  
+  //if (!m_Config->GetStabilizationCriteria()->StabilizeFeedbackState(*this))
+  //  return false;
+
+  if (!m_Config->GetStabilization()->IsTrackingStabilization())
+    m_SimulationTime.SetValue(0, TimeUnit::s);
+  // Don't allow any changes to Quantity/Potential/Flux values directly
+  // Use Quantity/Potential/Flux Sources
+  m_Circuits->SetReadOnly(true);
+
+  return true;
 }
 
 bool PulseController::Initialize(const PulseConfiguration* config, SEPatient const& patient)
@@ -195,12 +427,12 @@ bool PulseController::Initialize(const PulseConfiguration* config, SEPatient con
   Info("Creating Circuits and Compartments");
   CreateCircuitsAndCompartments();
 
-  m_spareAdvanceTime_s = 0;
+  m_SpareAdvanceTime_s = 0;
   m_AirwayMode = eAirwayMode::Free;
   m_Intubation = eSwitch::Off;
-  m_CurrentTime->SetValue(0, TimeUnit::s);
-  m_SimulationTime->SetValue(0, TimeUnit::s);
-  m_Logger->SetLogTime(m_SimulationTime.get());
+  m_CurrentTime.SetValue(0, TimeUnit::s);
+  m_SimulationTime.SetValue(0, TimeUnit::s);
+  m_Logger->SetLogTime(&m_SimulationTime);
 
   Info("Initializing Substances");
   m_Substances->InitializeSubstances(); // Sets all concentrations and such of all substances for all compartments, need to do this after we figure out what's in the environment
@@ -225,64 +457,6 @@ bool PulseController::Initialize(const PulseConfiguration* config, SEPatient con
   AdvanceCallback(-1);
   return true;
 }
-
-EngineState               PulseController::GetState() { return m_State; }
-SaturationCalculator&     PulseController::GetSaturationCalculator() { return *m_SaturationCalculator; }
-PulseSubstances&          PulseController::GetSubstances() { return *m_Substances; }
-SEPatient&                PulseController::GetCurrentPatient() { return *m_CurrentPatient; }
-const SEPatient&          PulseController::GetInitialPatient() { return *m_InitialPatient; }
-SEBloodChemistrySystem&   PulseController::GetBloodChemistry() { return *m_BloodChemistrySystem; }
-SECardiovascularSystem&   PulseController::GetCardiovascular() { return *m_CardiovascularSystem; }
-SEDrugSystem&             PulseController::GetDrugs() { return *m_DrugSystem; }
-SEEndocrineSystem&        PulseController::GetEndocrine() { return *m_EndocrineSystem; }
-SEEnergySystem&           PulseController::GetEnergy() { return *m_EnergySystem; }
-SEGastrointestinalSystem& PulseController::GetGastrointestinal() { return *m_GastrointestinalSystem; }
-SEHepaticSystem&          PulseController::GetHepatic() { return *m_HepaticSystem; }
-SENervousSystem&          PulseController::GetNervous() { return *m_NervousSystem; }
-SERenalSystem&            PulseController::GetRenal() { return *m_RenalSystem; }
-SERespiratorySystem&      PulseController::GetRespiratory() { return *m_RespiratorySystem; }
-SETissueSystem&           PulseController::GetTissue() { return *m_TissueSystem; }
-SEEnvironment&            PulseController::GetEnvironment() { return *m_Environment; }
-SEAnesthesiaMachine&      PulseController::GetAnesthesiaMachine() { return *m_AnesthesiaMachine; }
-SEElectroCardioGram&      PulseController::GetECG() { return *m_ECG; }
-SEInhaler&                PulseController::GetInhaler() { return *m_Inhaler; }
-SEMechanicalVentilator&   PulseController::GetMechanicalVentilator() { return *m_MechanicalVentilator; }
-SEActionManager&          PulseController::GetActions() { return *m_Actions; }
-SEConditionManager&       PulseController::GetConditions() { return *m_Conditions; }
-SEEventManager&           PulseController::GetEvents() { return *m_EventManager; }
-PulseCircuits&            PulseController::GetCircuits() { return *m_Circuits; }
-PulseCompartments&        PulseController::GetCompartments() { return *m_Compartments; }
-const PulseConfiguration& PulseController::GetConfiguration() { return *m_Config; }
-const SEScalarTime&       PulseController::GetEngineTime() { return *m_CurrentTime; }
-const SEScalarTime&       PulseController::GetSimulationTime() { return *m_SimulationTime; }
-const SEScalarTime&       PulseController::GetTimeStep() { return m_Config->GetTimeStep(); }
-
-eAirwayMode  PulseController::GetAirwayMode() { return m_AirwayMode; }
-void PulseController::SetAirwayMode(eAirwayMode mode)
-{
-  if (mode == m_AirwayMode)
-    return;// do nazing!
-  if (mode != eAirwayMode::Free && m_AirwayMode != eAirwayMode::Free)
-    throw CommonDataModelException("Can only change airway mode from the Free mode, Disable other equipment first.");
-  if (mode != m_AirwayMode)
-    m_Compartments->UpdateAirwayGraph();
-  m_AirwayMode = mode;
-  std::stringstream ss;
-  ss << "Airway Mode : " << eAirwayMode_Name(m_AirwayMode);
-  Info(ss);
-}
-void PulseController::SetIntubation(eSwitch s)
-{
-  if (s == eSwitch::NullSwitch)
-    s = eSwitch::Off;
-  if (m_Intubation == s)
-    return;// do nazing!
-  if (m_AirwayMode == eAirwayMode::Inhaler)
-    throw CommonDataModelException("Cannot intubate if the inhaler is active.");
-  m_Intubation = s;
-}
-eSwitch PulseController::GetIntubation() { return m_Intubation; }
-
 
 bool PulseController::SetupPatient(SEPatient const& patient)
 {
@@ -915,9 +1089,42 @@ bool PulseController::SetupPatient(SEPatient const& patient)
   return true;
 }
 
-PulseController::~PulseController()
+bool PulseController::IsReady() const
 {
+  if (m_State == EngineState::NotReady)
+  {
+    Error("Engine is not ready to process, Initialize the engine or Load a state.");
+    return false;
+  }
+  return true;
+}
 
+void PulseController::AdvanceModelTime()
+{
+  if (!IsReady())
+    return;
+  if (m_EventManager->IsEventActive(eEvent::IrreversibleState))
+    return;
+
+  PreProcess();
+  Process();
+  PostProcess();
+
+  m_EventManager->UpdateEvents(m_Config->GetTimeStep());
+  m_CurrentTime.Increment(m_Config->GetTimeStep());
+  m_SimulationTime.Increment(m_Config->GetTimeStep());
+
+  if (m_AdvanceHandler)
+    m_AdvanceHandler->OnAdvance(m_CurrentTime.GetValue(TimeUnit::s));
+}
+
+void PulseController::AdvanceModelTime(double time, const TimeUnit& unit)
+{
+  double time_s = Convert(time, unit, TimeUnit::s) + m_SpareAdvanceTime_s;
+  int count = (int)(time_s / GetTimeStep().GetValue(TimeUnit::s));
+  for (int i = 0; i < count; i++)
+    AdvanceModelTime();
+  m_SpareAdvanceTime_s = time_s - (count * GetTimeStep().GetValue(TimeUnit::s));
 }
 
 void PulseController::AtSteadyState(EngineState state)
@@ -999,8 +1206,122 @@ void PulseController::PostProcess()
   m_ECG->PostProcess();
 }
 
+bool PulseController::ProcessAction(const SEAction& action)
+{
+  if (!IsReady())
+    return false;
+  m_ss << "[Action] " << m_SimulationTime << ", " << action;
+  Info(m_ss);
+
+  const SESerializeState* serialize = dynamic_cast<const SESerializeState*>(&action);
+  if (serialize != nullptr)
+  {
+    if (serialize->GetType() == eSerialization_Type::Save)
+    {
+      if (serialize->HasFilename())
+      {
+        SerializeToFile(serialize->GetFilename(), JSON);
+      }
+      else
+      {
+        std::stringstream ss;
+        MakeDirectory("./states");
+        ss << "./states/" << m_InitialPatient->GetName() << "@" << GetSimulationTime().GetValue(TimeUnit::s) << "s.json";
+        Info("Saving " + ss.str());
+        SerializeToFile(ss.str(), JSON);
+        // Debug code to make sure things are consistent
+        //SerializeFomFile(ss.str(),JSON);
+        //SerializeToFile("./states/AfterSave.json",JSON);
+      }
+    }
+    else
+      return SerializeFromFile(serialize->GetFilename(), JSON);
+    return true;
+  }
+
+  const SEPatientAssessmentRequest* patientAss = dynamic_cast<const SEPatientAssessmentRequest*>(&action);
+  if (patientAss != nullptr)
+  {
+    switch (patientAss->GetType())
+    {
+    case ePatientAssessment_Type::PulmonaryFunctionTest:
+    {
+      SEPulmonaryFunctionTest pft(m_Logger);
+      GetPatientAssessment(pft);
+
+      // Write out the Assessement
+      std::string pftFile = GetEngineTracker().GetDataRequestManager().GetResultFilename();
+      if (pftFile.empty())
+        pftFile = "PulmonaryFunctionTest";
+      m_ss << "PFT@" << GetSimulationTime().GetValue(TimeUnit::s) << "s";
+      pftFile = Replace(pftFile, "Results", m_ss.str());
+      pftFile = Replace(pftFile, ".csv", ".json");
+      m_ss << "PulmonaryFunctionTest@" << GetSimulationTime().GetValue(TimeUnit::s) << "s.json";
+      pft.SerializeToFile(pftFile, JSON);
+      break;
+    }
+    case ePatientAssessment_Type::Urinalysis:
+    {
+      SEUrinalysis upan(m_Logger);
+      GetPatientAssessment(upan);
+
+      std::string upanFile = GetEngineTracker().GetDataRequestManager().GetResultFilename();
+      if (upanFile.empty())
+        upanFile = "Urinalysis";
+      m_ss << "Urinalysis@" << GetSimulationTime().GetValue(TimeUnit::s) << "s";
+      upanFile = Replace(upanFile, "Results", m_ss.str());
+      upanFile = Replace(upanFile, ".csv", ".json");
+      m_ss << "Urinalysis@" << GetSimulationTime().GetValue(TimeUnit::s) << "s.json";
+      upan.SerializeToFile(upanFile, JSON);
+      break;
+    }
+
+    case ePatientAssessment_Type::CompleteBloodCount:
+    {
+      SECompleteBloodCount cbc(m_Logger);
+      GetPatientAssessment(cbc);
+      std::string cbcFile = GetEngineTracker().GetDataRequestManager().GetResultFilename();
+      if (cbcFile.empty())
+        cbcFile = "CompleteBloodCount";
+      m_ss << "CBC@" << GetSimulationTime().GetValue(TimeUnit::s) << "s";
+      cbcFile = Replace(cbcFile, "Results", m_ss.str());
+      cbcFile = Replace(cbcFile, ".csv", ".json");
+      m_ss << "CompleteBloodCount@" << GetSimulationTime().GetValue(TimeUnit::s) << "s.json";
+      cbc.SerializeToFile(cbcFile, JSON);
+      break;
+    }
+
+    case ePatientAssessment_Type::ComprehensiveMetabolicPanel:
+    {
+      SEComprehensiveMetabolicPanel mp(m_Logger);
+      GetPatientAssessment(mp);
+      std::string mpFile = GetEngineTracker().GetDataRequestManager().GetResultFilename();
+      if (mpFile.empty())
+        mpFile = "ComprehensiveMetabolicPanel";
+      m_ss << "CMP@" << GetSimulationTime().GetValue(TimeUnit::s) << "s";
+      mpFile = Replace(mpFile, "Results", m_ss.str());
+      mpFile = Replace(mpFile, ".csv", ".json");
+      m_ss << "ComprehensiveMetabolicPanel@" << GetSimulationTime().GetValue(TimeUnit::s) << "s.json";
+      mp.SerializeToFile(mpFile, JSON);
+      break;
+    }
+    default:
+    {
+      m_ss << "Unsupported assessment request " << ePatientAssessment_Type_Name(patientAss->GetType());
+      Error(m_ss);
+      return false;
+    }
+    }
+    return true;
+  }
+
+  return GetActions().ProcessAction(action);
+}
+
 bool PulseController::GetPatientAssessment(SEPatientAssessment& assessment) const
 {
+  if (!IsReady())
+    return false;
   SEPulmonaryFunctionTest* pft = dynamic_cast<SEPulmonaryFunctionTest*>(&assessment);
   if (pft != nullptr)
     return m_RespiratorySystem->CalculatePulmonaryFunctionTest(*pft);

@@ -28,7 +28,7 @@
 #include "utils/DataTrack.h"
 #include "utils/GeneralMath.h"
 
-PulseSubstances::PulseSubstances(PulseController& data) : SESubstanceManager(data.GetLogger()), m_data(data)
+PulseSubstances::PulseSubstances(PulseData& data) : SESubstanceManager(data.GetLogger()), m_data(data)
 {
   m_isCOActive = false;
 }

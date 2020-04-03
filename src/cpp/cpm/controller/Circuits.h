@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-class PulseController;
+class PulseData;
 class SEFluidCircuit;
 class SEThermalCircuit;
 #include "circuit/SECircuitManager.h"
@@ -14,7 +14,7 @@ class PULSE_DECL PulseCircuits : public SECircuitManager
 {
 public:
 
-  PulseCircuits(PulseController& data);
+  PulseCircuits(PulseData& data);
   virtual ~PulseCircuits();
 
   virtual void Clear();
@@ -46,7 +46,7 @@ public:
 
 protected:
 
-  PulseController& m_data;
+  PulseData& m_data;
 
   // Note, I am not making a tissue or inhaler standalone circuit
   // this are super simple circuits and can't be tested by themselves 

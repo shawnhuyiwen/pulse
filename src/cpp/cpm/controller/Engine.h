@@ -13,9 +13,8 @@ PULSE_BIND_DECL(StateData)
 /// calls as well as assessment calls for obtaining the results. During engine execution a log files
 /// is generated containing information, warning and error data.
 //--------------------------------------------------------------------------------------------------
-class PULSE_DECL PulseEngine : public PhysiologyEngine, public PulseController
+class PULSE_DECL PulseEngine : public PhysiologyEngine
 {
-  friend class PBPulseState;//friend the serialization class
 public:
 
   PulseEngine(Logger* logger, const std::string& data_dir=".");
@@ -76,12 +75,6 @@ public:
 
   virtual const SEEventManager&                        GetEventManager() const;
 
-
-  virtual void AdvanceCallback(double time_s);
 protected:
-
-  virtual bool IsReady() const;
-
-  SEEngineTracker*                                m_EngineTrack;
-  std::stringstream                               m_ss;
+  PulseController* m_PulseController;
 };

@@ -17,19 +17,18 @@ class SETissueCompartment;
  */  
 class PULSE_DECL Drugs : public SEDrugSystem, public PulseDrugsSystem, public PulseSystem
 {
+  friend class PulseData;
   friend class PBPulsePhysiology;//friend the serialization class
-  friend class PulseController;
   friend class PulseEngineTest;
 protected:
-  Drugs(PulseController& data);
-  PulseController& m_data;
+  Drugs(PulseData& data);
+  PulseData& m_data;
 
 public:
   virtual ~Drugs();
 
   void Clear();
 
-protected:
   // Set members to a stable homeostatic state
   void Initialize();
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
@@ -40,6 +39,7 @@ protected:
   void Process();
   void PostProcess(){}
 
+protected:
   void AdministerSubstanceBolus();
   void AdministerSubstanceInfusion();
   void AdministerSubstanceCompoundInfusion();

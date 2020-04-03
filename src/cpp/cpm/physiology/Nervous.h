@@ -10,19 +10,18 @@
  */  
 class PULSE_DECL Nervous : public SENervousSystem, public PulseNervousSystem, public PulseSystem
 {
+  friend class PulseData;
   friend class PBPulsePhysiology;//friend the serialization class
-  friend class PulseController;
   friend class PulseEngineTest;
 protected:
-  Nervous(PulseController& data);
-  PulseController& m_data;
+  Nervous(PulseData& data);
+  PulseData& m_data;
 
 public:
   virtual ~Nervous();
 
   void Clear();
 
-protected:
   // Set members to a stable homeostatic state
   void Initialize();
   // Set pointers and other member variables common to both homeostatic initialization and loading a state
@@ -33,6 +32,7 @@ protected:
   void Process();
   void PostProcess();
 
+protected:
   void BaroreceptorFeedback();
   void CheckBrainStatus();
   void ChemoreceptorFeedback();

@@ -63,7 +63,7 @@
 #define GAS_ONLY_PRODCOM
 #define ZERO_APPROX 1e-10
 
-Tissue::Tissue(PulseController& data) : SETissueSystem(data.GetLogger()), m_data(data)
+Tissue::Tissue(PulseData& data) : SETissueSystem(data.GetLogger()), m_data(data)
 {
   Clear();
 }

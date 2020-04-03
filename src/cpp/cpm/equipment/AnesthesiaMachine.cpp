@@ -48,7 +48,7 @@
 ========================
 */
 
-AnesthesiaMachine::AnesthesiaMachine(PulseController& data) : SEAnesthesiaMachine(data.GetSubstances()), m_data(data)
+AnesthesiaMachine::AnesthesiaMachine(PulseData& data) : SEAnesthesiaMachine(data.GetSubstances()), m_data(data)
 {
   Clear();
 }

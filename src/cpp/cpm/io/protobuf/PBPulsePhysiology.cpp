@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 PUSH_PROTO_WARNINGS()
-#include "pulse/engine/bind/PulsePhysiology.pb.h"
+#include "pulse/cpm/bind/PulsePhysiology.pb.h"
 POP_PROTO_WARNINGS()
 #include "io/protobuf/PBPulsePhysiology.h"
 #include "io/protobuf/PBPhysiology.h"

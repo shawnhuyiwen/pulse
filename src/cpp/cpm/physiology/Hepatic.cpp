@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "physiology/Hepatic.h"
 
-Hepatic::Hepatic(PulseController& data) : SEHepaticSystem(data.GetLogger()), m_data(data)
+Hepatic::Hepatic(PulseData& data) : SEHepaticSystem(data.GetLogger()), m_data(data)
 {
   Clear();
 }

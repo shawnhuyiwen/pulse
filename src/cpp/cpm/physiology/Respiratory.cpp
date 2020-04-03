@@ -93,7 +93,7 @@
 //Should be commented out, unless debugging/tuning
 //#define TUNING
 
-Respiratory::Respiratory(PulseController& data) : SERespiratorySystem(data.GetLogger()), m_data(data)
+Respiratory::Respiratory(PulseData& data) : SERespiratorySystem(data.GetLogger()), m_data(data)
 {
   m_BloodPHRunningAverage = new SERunningAverage();
   m_ArterialO2RunningAverage_mmHg = new SERunningAverage();
