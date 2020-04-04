@@ -205,7 +205,7 @@ def main():
                         default='./test_results/rebase/',
                         help='path to local target folder')
     parser.add_argument('--validation-folder', required=False,
-                        default='@CMAKE_SOURCE_DIR@/verification',
+                        default='@CMAKE_SOURCE_DIR@/data/human/adult/baselines',
                         help='Path to the CMake ExternalData object store')
     parser.add_argument(
         '--no-reuse', action='store_true',
