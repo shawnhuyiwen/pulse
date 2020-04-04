@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "controller/System.h"
+#include "PulsePhysiologySystems.h"
 #include "system/equipment/inhaler/SEInhaler.h"
 class SEGasCompartment;
 class SELiquidCompartment;
@@ -12,7 +12,7 @@ class SELiquidSubstanceQuantity;
 * @brief 
 * Generic inhaler for substance administration.
 */
-class PULSE_DECL Inhaler : public SEInhaler, public PulseInhaler, public PulseSystem
+class PULSE_DECL Inhaler : public PulseInhaler
 {
   friend class PulseData;
   friend class PBPulseEquipment;//friend the serialization class
@@ -41,6 +41,8 @@ public:
   void Administer();
 
 protected:
+  void ComputeExposedModelParameters() override;
+
   // Serializable member variables (Set in Initialize and in schema)
 
   // Stateless member variable (Set in SetUp())

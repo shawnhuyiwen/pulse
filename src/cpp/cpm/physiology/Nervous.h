@@ -2,13 +2,13 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "controller/System.h"
+#include "PulsePhysiologySystems.h"
 #include "system/physiology/SENervousSystem.h"
 /**
  * @brief 
  * The nervous class holds models of the peripheral and central nervous system. Currently, on the baroreceptor reflex is modeled.
  */  
-class PULSE_DECL Nervous : public SENervousSystem, public PulseNervousSystem, public PulseSystem
+class PULSE_DECL Nervous : public PulseNervousSystem
 {
   friend class PulseData;
   friend class PBPulsePhysiology;//friend the serialization class
@@ -33,6 +33,8 @@ public:
   void PostProcess();
 
 protected:
+  void ComputeExposedModelParameters() override;
+
   void BaroreceptorFeedback();
   void CheckBrainStatus();
   void ChemoreceptorFeedback();

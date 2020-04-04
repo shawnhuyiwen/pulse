@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "controller/System.h"
+#include "PulsePhysiologySystems.h"
 #include "system/physiology/SETissueSystem.h"
 class SESubstance;
 class SEFluidCircuitNode;
@@ -19,7 +19,7 @@ class SELiquidSubstanceQuantity;
  * To capture this behavior, the System Interactions methodology was introduced. 
  * The primary function of this system is to capture the substance transport that occurs between systems.
  */  
-class PULSE_DECL Tissue : public SETissueSystem, public PulseTissueSystem, public PulseSystem
+class PULSE_DECL Tissue : public PulseTissueSystem
 {
   friend class PulseData;
   friend class PBPulsePhysiology;//friend the serialization class
@@ -44,6 +44,8 @@ public:
   void PostProcess();
 
 protected:
+  void ComputeExposedModelParameters() override;
+
   // Preprocess Methods
   void ProduceAlbumin(double duration_s);
 

@@ -48,7 +48,7 @@
 ========================
 */
 
-AnesthesiaMachine::AnesthesiaMachine(PulseData& data) : SEAnesthesiaMachine(data.GetSubstances()), m_data(data)
+AnesthesiaMachine::AnesthesiaMachine(PulseData& data) : PulseAnesthesiaMachine(data.GetSubstances()), m_data(data)
 {
   Clear();
 }
@@ -319,6 +319,11 @@ void AnesthesiaMachine::Process()
   {
     CalculateScrubber();
   }
+  ComputeExposedModelParameters();
+}
+void AnesthesiaMachine::ComputeExposedModelParameters()
+{
+
 }
 
 //--------------------------------------------------------------------------------------------------

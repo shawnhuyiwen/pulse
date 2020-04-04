@@ -55,7 +55,7 @@
 #include "properties/SERunningAverage.h"
 #include "utils/GeneralMath.h"
 
-Renal::Renal(PulseData& data) : SERenalSystem(data.GetLogger()), m_data(data)
+Renal::Renal(PulseData& data) : PulseRenalSystem(data.GetLogger()), m_data(data)
 {
   m_spCleared = new SEScalarMass();
   m_urineProductionRate_mL_Per_min_runningAvg = new SERunningAverage();
@@ -471,6 +471,11 @@ void Renal::Process()
   //Circuit Processing is done on the entire circulatory circuit elsewhere
   CalculateActiveTransport();
   CalculateVitalSigns();
+  ComputeExposedModelParameters();
+}
+void Renal::ComputeExposedModelParameters()
+{
+
 }
 
 //--------------------------------------------------------------------------------------------------

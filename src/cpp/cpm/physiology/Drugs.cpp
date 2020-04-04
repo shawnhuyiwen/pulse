@@ -53,7 +53,7 @@
 #include "properties/SEScalarVolumePerTimePressure.h"
 #include "properties/SEScalarNegative1To1.h"
 
-Drugs::Drugs(PulseData& data) : SEDrugSystem(data.GetLogger()), m_data(data)
+Drugs::Drugs(PulseData& data) : PulseDrugSystem(data.GetLogger()), m_data(data)
 {
   Clear();
 }
@@ -160,7 +160,12 @@ void Drugs::Process()
   CalculatePlasmaSubstanceConcentration();
 
   if (m_data.GetConfiguration().IsPDEnabled())  
-    CalculateDrugEffects();  
+    CalculateDrugEffects();
+  ComputeExposedModelParameters();
+}
+void Drugs::ComputeExposedModelParameters()
+{
+
 }
 
 //--------------------------------------------------------------------------------------------------

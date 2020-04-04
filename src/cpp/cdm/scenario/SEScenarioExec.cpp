@@ -20,7 +20,7 @@
 
 SEScenarioExec::SEScenarioExec(PhysiologyEngine& engine) : Loggable(engine.GetLogger()), m_Engine(engine)
 {
-  m_Cancel     = false;
+  m_Cancel              = false;
   m_EngineConfiguration = nullptr;//Derived class will manage this pointer
 }
 

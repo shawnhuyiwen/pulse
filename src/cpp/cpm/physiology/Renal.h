@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "controller/System.h"
+#include "PulsePhysiologySystems.h"
 #include "system/physiology/SERenalSystem.h"
 class SEPatient;
 class SESubstance;
@@ -17,7 +17,7 @@ class SEUrinalysis;
 /**
  * @brief @copydoc Physiology_RenalSystemData
  */  
-class PULSE_DECL Renal : public SERenalSystem, public PulseRenalSystem, public PulseSystem
+class PULSE_DECL Renal : public PulseRenalSystem
 {
   friend class PulseData;
   friend class PBPulsePhysiology;//friend the serialization class
@@ -47,6 +47,8 @@ public:
   bool CalculateUrinalysis(SEUrinalysis& u) const;
 
 protected:
+  void ComputeExposedModelParameters() override;
+
   struct ActiveTransport
   {
   public:

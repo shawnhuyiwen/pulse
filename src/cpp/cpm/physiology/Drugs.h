@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "controller/System.h"
+#include "PulsePhysiologySystems.h"
 #include "system/physiology/SEDrugSystem.h"
 class SEFluidCircuitPath;
 class SELiquidCompartment;
@@ -15,7 +15,7 @@ class SETissueCompartment;
  * Drug transvascular transport is modeled with a physiologically-based pharmacokinetic (PBPK) model,
  * and the physiologic effects on the body are modeled with a low-fidelity pharmacodynamic (PD) model.
  */  
-class PULSE_DECL Drugs : public SEDrugSystem, public PulseDrugsSystem, public PulseSystem
+class PULSE_DECL Drugs : public PulseDrugSystem
 {
   friend class PulseData;
   friend class PBPulsePhysiology;//friend the serialization class
@@ -40,6 +40,8 @@ public:
   void PostProcess(){}
 
 protected:
+  void ComputeExposedModelParameters() override;
+
   void AdministerSubstanceBolus();
   void AdministerSubstanceInfusion();
   void AdministerSubstanceCompoundInfusion();

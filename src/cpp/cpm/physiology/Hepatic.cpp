@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "physiology/Hepatic.h"
 
-Hepatic::Hepatic(PulseData& data) : SEHepaticSystem(data.GetLogger()), m_data(data)
+Hepatic::Hepatic(PulseData& data) : PulseHepaticSystem(data.GetLogger()), m_data(data)
 {
   Clear();
 }
@@ -71,8 +71,12 @@ void Hepatic::PreProcess()
 /// \details
 //--------------------------------------------------------------------------------------------------
 void Hepatic::Process()
-{  
-  
+{
+  ComputeExposedModelParameters();
+}
+void Hepatic::ComputeExposedModelParameters()
+{
+
 }
 
 //--------------------------------------------------------------------------------------------------

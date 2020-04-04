@@ -2,7 +2,6 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "PulsePhysiologySystems.h"
 
 /**
  * @brief Generic class for handling the %Pulse stabilization methodology

@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "controller/System.h"
+#include "PulsePhysiologySystems.h"
 #include "system/equipment/electrocardiogram/SEElectroCardioGram.h"
 class SEElectroCardioGramWaveformInterpolator;
 
@@ -10,7 +10,7 @@ class SEElectroCardioGramWaveformInterpolator;
 * @brief 
 * Generic ECG machine to assess the heart rhythm.
 */
-class PULSE_DECL ECG : public SEElectroCardioGram, public PulseElectroCardioGram, public PulseSystem
+class PULSE_DECL ECG : public PulseElectroCardioGram
 {
   friend class PulseData;
   friend class PBPulseEquipment;//friend the serialization class
@@ -36,6 +36,8 @@ public:
   void PostProcess();
 
 protected:
+  void ComputeExposedModelParameters() override;
+
   // Serializable member variables (Set in Initialize and in schema)
   double m_heartRhythmTime_s;
   double m_heartRhythmPeriod_s;

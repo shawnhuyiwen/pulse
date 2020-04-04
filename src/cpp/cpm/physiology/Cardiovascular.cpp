@@ -61,7 +61,7 @@
 #include "utils/DataTrack.h"
 #include "utils/GeneralMath.h"
 
-Cardiovascular::Cardiovascular(PulseData& data) : SECardiovascularSystem(data.GetLogger()), m_data(data)
+Cardiovascular::Cardiovascular(PulseData& data) : PulseCardiovascularSystem(data.GetLogger()), m_data(data)
 {
   m_TuningFile = "";
   m_transporter = new SELiquidTransporter(VolumePerTimeUnit::mL_Per_s, VolumeUnit::mL, MassUnit::ug, MassPerVolumeUnit::ug_Per_mL, data.GetLogger());
@@ -622,6 +622,11 @@ void Cardiovascular::Process()
   m_circuitCalculator->Process(*m_CirculatoryCircuit, m_dT_s);
   m_transporter->Transport(*m_CirculatoryGraph, m_dT_s);
   CalculateVitalSigns();
+  ComputeExposedModelParameters();
+}
+void Cardiovascular::ComputeExposedModelParameters()
+{
+
 }
 
 //--------------------------------------------------------------------------------------------------

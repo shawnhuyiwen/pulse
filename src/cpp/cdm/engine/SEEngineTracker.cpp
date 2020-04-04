@@ -257,6 +257,7 @@ bool SEEngineTracker::TrackRequest(SEDataRequest& dr)
     case eDataRequest_Category::AnesthesiaMachine:
     case eDataRequest_Category::ECG:
     case eDataRequest_Category::Inhaler:
+    case eDataRequest_Category::MechanicalVentilator:
     {
       if (!dr.GetUnit())
         m_ss << dr.GetPropertyName();

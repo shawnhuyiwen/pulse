@@ -2,10 +2,15 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-
 #include "PulsePhysiologyEngine.h"
+#include "controller/Controller.h"
+#include "substance/SESubstanceManager.h"
+#include "substance/SESubstanceFraction.h"
+#include "patient/actions/SEDyspnea.h"
+#include "patient/actions/SEIntubation.h"
+#include "patient/actions/SEImpairedAlveolarExchangeExacerbation.h"
+#include "equipment/mechanical_ventilator/actions/SEMechanicalVentilatorConfiguration.h"
 #include "properties/SEScalarTime.h"
-#include "MVPulseController.h"
 
 class MVController : public Loggable
 {
@@ -13,16 +18,21 @@ public:
   MVController(const std::string& logfileName, const std::string& data_dir = ".");
   virtual ~MVController();
 
-  void  AdvanceModelTime(double time, const TimeUnit& unit);
+  bool  AdvanceModelTime(double time, const TimeUnit& unit);
 
 protected:
   void SetupMultiplexVentilation();
 
-  void PreProcess();
-  void Process();
-  void PostProcess();
+  double                                  m_TimeStep_s;
+  double                                  m_CurrentTime_s;
+  double                                  m_SpareAdvanceTime_s;
 
-  double         m_SpareAdvanceTime_s;
+  SESubstanceManager*                     m_SubMgr;
+  SEDyspnea*                              m_Dyspnea;
+  SEIntubation*                           m_Intubation;
+  SEImpairedAlveolarExchangeExacerbation* m_ImpairedAlveolarExchangeExacerbation;
+  SEMechanicalVentilatorConfiguration*    m_MechacicalVentilatorConfiguration;
+  SESubstanceFraction*                    m_FiO2;
 
-  std::vector<MVPulseController*> m_Patients;
+  std::vector<PulseController*>           m_Patients;
 };

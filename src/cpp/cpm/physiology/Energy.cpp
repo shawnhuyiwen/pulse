@@ -55,7 +55,7 @@
 #include "properties/SEScalarVolumePerTimeMass.h"
 #include "properties/SERunningAverage.h"
 
-Energy::Energy(PulseData& data) : SEEnergySystem(data.GetLogger()), m_data(data)
+Energy::Energy(PulseData& data) : PulseEnergySystem(data.GetLogger()), m_data(data)
 {
   m_BloodpH = new SERunningAverage();
   m_BicarbonateMolarity_mmol_Per_L = new SERunningAverage();
@@ -469,6 +469,11 @@ void Energy::Process()
 {
   m_circuitCalculator->Process(*m_TemperatureCircuit, m_dT_s);
   CalculateVitalSigns();
+  ComputeExposedModelParameters();
+}
+void Energy::ComputeExposedModelParameters()
+{
+
 }
 
 //--------------------------------------------------------------------------------------------------

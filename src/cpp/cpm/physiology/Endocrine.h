@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "controller/System.h"
+#include "PulsePhysiologySystems.h"
 #include "system/physiology/SEEndocrineSystem.h"
 class SELiquidSubstanceQuantity;
 
@@ -13,7 +13,7 @@ class SELiquidSubstanceQuantity;
  * and two hormones (epinephrine and norepinephrine). The release of the hormones in response to the stimuli to represent the response of the sympathetic nervous system.
  * In the future, additional stimuli and additional hormones will be added.
  */  
-class PULSE_DECL Endocrine : public SEEndocrineSystem, public PulseEndocrineSystem, public PulseSystem
+class PULSE_DECL Endocrine : public PulseEndocrineSystem
 {
   friend class PulseData;
   friend class PBPulsePhysiology;//friend the serialization class
@@ -38,6 +38,8 @@ public:
   void PostProcess(){}
 
 protected:
+  void ComputeExposedModelParameters() override;
+
   void SynthesizeInsulin();
   void ReleaseEpinephrine();
 

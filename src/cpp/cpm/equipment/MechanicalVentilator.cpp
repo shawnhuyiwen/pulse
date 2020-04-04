@@ -35,7 +35,7 @@
 ========================
 */
 
-MechanicalVentilator::MechanicalVentilator(PulseData& data) : SEMechanicalVentilator(data.GetSubstances()), m_data(data)
+MechanicalVentilator::MechanicalVentilator(PulseData& data) : PulseMechanicalVentilator(data.GetSubstances()), m_data(data)
 {
   Clear();
 }
@@ -89,8 +89,8 @@ void MechanicalVentilator::StateChange()
 {
   SetConnection();
 
-  if(m_data.GetAirwayMode() != eAirwayMode::MechanicalVentilator)
-  { 
+  if (m_data.GetAirwayMode() != eAirwayMode::MechanicalVentilator)
+  {
     return;
   }
 
@@ -185,20 +185,24 @@ void MechanicalVentilator::StateChange()
     m_Ventilator->GetSubstanceQuantity(s->GetSubstance())->GetVolumeFraction().Set(s->GetVolumeFraction());
   }
 
-  double totalFractionDefined = 0.0;
   //Has fractions defined
   for (auto f : gasFractions)
   {
     SESubstance& sub = f->GetSubstance();
     double fraction = f->GetFractionAmount().GetValue();
-    totalFractionDefined += fraction;
 
     //Do this, just in case it's something new
     m_data.GetSubstances().AddActiveSubstance(sub);
 
-    //Now set it on the connection compartment
+    //Now set it on the ventilator compartment
     //It has a infinate volume, so this will keep the same volume fraction no matter what's going on around it
     m_Ventilator->GetSubstanceQuantity(sub)->GetVolumeFraction().SetValue(fraction);
+  }
+
+  double totalFractionDefined = 0.0;
+  for (auto s : m_Ventilator->GetSubstanceQuantities())
+  {
+    totalFractionDefined += m_Ventilator->GetSubstanceQuantity(s->GetSubstance())->GetVolumeFraction().GetValue();
   }
 
   //Add or remove Nitrogen to balance
@@ -210,16 +214,13 @@ void MechanicalVentilator::StateChange()
   }
   m_Ventilator->GetSubstanceQuantity(m_data.GetSubstances().GetN2())->GetVolumeFraction().SetValue(currentN2Fraction + gasFractionDiff);
 
-
-  //jbw - add aerosols
-
-  ////Set the aerosol concentrations ********************************************
-  //std::vector<SESubstanceConcentration*> liquidConcentrations = mv->GetAerosols();
-
-  ////Reset the substance quantities at the connection
-  //for (SELiquidSubstanceQuantity* subQ : m_MechanicalVentilationAerosolConnection->GetSubstanceQuantities())
+  //Set the aerosol concentrations ********************************************
+  //std::vector<SESubstanceConcentration*> liquidConcentrations = GetConcentrationInspiredAerosols();
+  //
+  ////Reset the substance quantities at the ventilator
+  //for (SELiquidSubstanceQuantity* subQ : m_VentilatorAerosol->GetSubstanceQuantities())
   //  subQ->SetToZero();
-
+  //
   //if (!liquidConcentrations.empty())
   //{
   //  //Has fractions defined
@@ -227,13 +228,13 @@ void MechanicalVentilator::StateChange()
   //  {
   //    SESubstance& sub = f->GetSubstance();
   //    SEScalarMassPerVolume concentration = f->GetConcentration();
-
+  //
   //    //Do this, just in case it's something new
   //    m_data.GetSubstances().AddActiveSubstance(sub);
-
+  //
   //    //Now set it on the connection compartment
   //    //It has infinite volume, so this will keep the same volume fraction no matter what's going on around it
-  //    m_MechanicalVentilationAerosolConnection->GetSubstanceQuantity(sub)->GetConcentration().Set(concentration);
+  //    m_VentilatorAerosol->GetSubstanceQuantity(sub)->GetConcentration().Set(concentration);
   //  }
   //}
 }
@@ -378,7 +379,11 @@ void MechanicalVentilator::PreProcess()
 //--------------------------------------------------------------------------------------------------
 void MechanicalVentilator::Process()
 {
-  
+  ComputeExposedModelParameters();
+}
+void MechanicalVentilator::ComputeExposedModelParameters()
+{
+
 }
 
 //--------------------------------------------------------------------------------------------------

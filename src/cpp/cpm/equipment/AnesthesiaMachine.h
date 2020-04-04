@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "controller/System.h"
+#include "PulsePhysiologySystems.h"
 #include "system/equipment/anesthesia_machine/SEAnesthesiaMachine.h"
 class SEEquipmentActionCollection;
 class SEGasCompartment;
@@ -14,7 +14,7 @@ class SEFluidCircuitPath;
  * @brief 
  * Generic anesthesia machine for positive pressure ventilation.
  */    
-class PULSE_DECL AnesthesiaMachine : public SEAnesthesiaMachine, public PulseAnesthesiaMachine, public PulseSystem
+class PULSE_DECL AnesthesiaMachine : public PulseAnesthesiaMachine
 {
   friend class PulseData;
   friend class PBPulseEquipment;//friend the serialization class
@@ -41,6 +41,8 @@ public:
   void PostProcess();
 
 protected:
+  void ComputeExposedModelParameters() override;
+
   void CalculateScrubber();
 
   // Extending some functionality to these base class methods

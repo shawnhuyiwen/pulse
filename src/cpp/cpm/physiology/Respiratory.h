@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "controller/System.h"
+#include "PulsePhysiologySystems.h"
 #include "system/physiology/SERespiratorySystem.h"
 #include "substance/SESubstanceTransport.h"
 class SEPatient;
@@ -29,7 +29,7 @@ class SEPulmonaryFunctionTest;
 * of gases in the lungs, and ensures the integration and flow of data between the
 * respiratory system and the anesthesia machine during mechanical ventilation.
 */
-class PULSE_DECL Respiratory : public SERespiratorySystem, public PulseRespiratorySystem, public PulseSystem
+class PULSE_DECL Respiratory : public PulseRespiratorySystem
 {
   friend class PulseData;
   friend class PBPulsePhysiology;//friend the serialization class
@@ -56,6 +56,8 @@ public:
   bool CalculatePulmonaryFunctionTest(SEPulmonaryFunctionTest& pft) const;
 
 protected:
+  void ComputeExposedModelParameters() override;
+
   //Tuning
   void TuneCircuit();
 

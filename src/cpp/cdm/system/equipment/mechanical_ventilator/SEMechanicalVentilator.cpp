@@ -86,9 +86,10 @@ void SEMechanicalVentilator::Merge(const SEMechanicalVentilator& from)
   {
     double amt;
     double total = 0;
-    RemoveFractionInspiredGases();
     SESubstance* sub;
     SESubstanceFraction* sf;
+    for (auto my_sf : m_FractionInspiredGases)
+      my_sf->GetFractionAmount().SetValue(0);
     for (SESubstanceFraction* osf : from.m_FractionInspiredGases)
     {
       if (&m_Substances != &from.m_Substances)
@@ -104,16 +105,25 @@ void SEMechanicalVentilator::Merge(const SEMechanicalVentilator& from)
       else
         sub = &osf->GetSubstance();
 
-      sf = new SESubstanceFraction(*sub);
+      sf = &GetFractionInspiredGas(*sub);
       sf->GetFractionAmount().Set(osf->GetFractionAmount());
       amt = sf->GetFractionAmount().GetValue();
       total += amt;
-      m_FractionInspiredGases.push_back(sf);
-      m_cFractionInspiredGases.push_back(sf);
       m_Substances.AddActiveSubstance((SESubstance&)sf->m_Substance);
     }
+    
+    // It's Ok if you ONLY set Oxygen, i.e. FiO2
+    // Ventilator models should understand that common setting
     if (!SEScalar::IsValue(1, total))
-      Error("Mechanical Ventilator substance fractions do not sum to 1");
+    {
+      bool err = false;
+      if (m_FractionInspiredGases.size() != 1)
+        err = true;
+      else if (m_FractionInspiredGases[0]->GetSubstance().GetName() != "Oxygen")
+        err = true;
+      if(err)
+        Error("Mechanical Ventilator substance fractions do not sum to 1");
+    }
   }
 
   if (from.HasConcentrationInspiredAerosol())

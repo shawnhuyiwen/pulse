@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "controller/System.h"
+#include "PulsePhysiologySystems.h"
 #include "system/physiology/SEGastrointestinalSystem.h"
 class SELiquidCompartment;
 class SELiquidSubstanceQuantity;
@@ -11,7 +11,7 @@ class SEFluidCircuitPath;
 /**
 * @brief @copydoc Physiology_GastrointestinalSystemData
 */
-class PULSE_DECL Gastrointestinal : public SEGastrointestinalSystem, public PulseGastrointestinalSystem, public PulseSystem
+class PULSE_DECL Gastrointestinal : public PulseGastrointestinalSystem
 {
   friend class PulseData;
   friend class PBPulsePhysiology;//friend the serialization class
@@ -36,6 +36,8 @@ public:
   void PostProcess();
 
 protected:
+  void ComputeExposedModelParameters() override;
+
   void   GastricSecretion(double duration_s);
   void   DefaultNutritionRates(SENutrition& n);
   void   DigestStomachNutrients(double duration_s);

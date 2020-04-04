@@ -32,7 +32,7 @@ Constructors
 ========================
 */
 
-Inhaler::Inhaler(PulseData& data) : SEInhaler(data.GetSubstances()), m_data(data)
+Inhaler::Inhaler(PulseData& data) : PulseInhaler(data.GetSubstances()), m_data(data)
 {
   Clear();
 }
@@ -249,7 +249,11 @@ void Inhaler::Administer()
 //--------------------------------------------------------------------------------------------------
 void Inhaler::Process()
 {
-  
+  ComputeExposedModelParameters();
+}
+void Inhaler::ComputeExposedModelParameters()
+{
+
 }
 
 //--------------------------------------------------------------------------------------------------

@@ -56,7 +56,7 @@
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarLength.h"
 
-Environment::Environment(PulseData& data) : SEEnvironment(data.GetSubstances()), m_data(data)
+Environment::Environment(PulseData& data) : PulseEnvironmentSystem(data.GetSubstances()), m_data(data)
 {
   Clear();
 }
@@ -256,7 +256,11 @@ void Environment::PreProcess()
 //--------------------------------------------------------------------------------------------------
 void Environment::Process()
 {
-  
+  ComputeExposedModelParameters();
+}
+void Environment::ComputeExposedModelParameters()
+{
+
 }
 
 //--------------------------------------------------------------------------------------------------

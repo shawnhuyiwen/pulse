@@ -93,7 +93,7 @@
 //Should be commented out, unless debugging/tuning
 //#define TUNING
 
-Respiratory::Respiratory(PulseData& data) : SERespiratorySystem(data.GetLogger()), m_data(data)
+Respiratory::Respiratory(PulseData& data) : PulseRespiratorySystem(data.GetLogger()), m_data(data)
 {
   m_BloodPHRunningAverage = new SERunningAverage();
   m_ArterialO2RunningAverage_mmHg = new SERunningAverage();
@@ -181,6 +181,7 @@ void Respiratory::Clear()
   m_BloodPHRunningAverage->Clear();
   m_ArterialO2RunningAverage_mmHg->Clear();
   m_ArterialCO2RunningAverage_mmHg->Clear();
+  GetTotalRespiratoryModelCompliance().SetValue(0, VolumePerPressureUnit::L_Per_cmH2O); // jbw
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -266,6 +267,8 @@ void Respiratory::Initialize()
   GetLungCompliance().SetValue(0.1, VolumePerPressureUnit::L_Per_cmH2O);
   GetChestWallCompliance().SetValue(0.2, VolumePerPressureUnit::L_Per_cmH2O);
   GetPulmonaryElastance().SetValue(1.0 / 0.1, PressurePerVolumeUnit::cmH2O_Per_L);
+
+  GetTotalRespiratoryModelCompliance().SetValue(0, VolumePerPressureUnit::L_Per_cmH2O); // jbw
 
   // Muscle Pressure Waveform
   m_InspiratoryRiseFraction = 0;
@@ -503,6 +506,11 @@ void Respiratory::Process()
 #ifdef DEBUG
   Debugging(RespirationCircuit);
 #endif
+  ComputeExposedModelParameters();
+}
+void Respiratory::ComputeExposedModelParameters()
+{
+  GetTotalRespiratoryModelCompliance().SetValue(0, VolumePerPressureUnit::L_Per_cmH2O); // jbw
 }
 
 //--------------------------------------------------------------------------------------------------

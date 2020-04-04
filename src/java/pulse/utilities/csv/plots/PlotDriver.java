@@ -58,9 +58,16 @@ public class PlotDriver
       {// Plotting from two results files (compare-type plotting)
         me.expectedFilePath = args[0];
         me.computedFilePath = args[1];
-        me.preload = args[2].equalsIgnoreCase("true") ? true : false;
-        me.onlyPlotFailures = args[3].equalsIgnoreCase("true") ? true : false;
-        me.abbreviateContents = Integer.parseInt(args[4]);
+        // Default 
+        me.preload = true;
+        me.onlyPlotFailures = false;
+        me.abbreviateContents = 0;
+        if (args.length > 2)
+          me.preload = args[2].equalsIgnoreCase("true") ? true : false;
+        if (args.length > 3)
+          me.onlyPlotFailures = args[3].equalsIgnoreCase("true") ? true : false;
+        if (args.length > 4)
+          me.abbreviateContents = Integer.parseInt(args[4]);
 
         if(me.preload)
         {

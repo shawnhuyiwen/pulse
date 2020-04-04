@@ -182,7 +182,7 @@ protected:
 /**
 * @brief Manages and controls execution of all data/systems in %Pulse
 */
-class PULSE_DECL PulseController : protected PulseData
+class PULSE_DECL PulseController : public PulseData
 {
   friend class PulseEngine;
   friend class PulseEngineTest;

@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "controller/System.h"
+#include "PulsePhysiologySystems.h"
 #include "system/physiology/SECardiovascularSystem.h"
 #include "substance/SESubstanceTransport.h"
 class SEPatient;
@@ -28,7 +28,7 @@ class SEFluidCircuitCalculator;
 * with other systems, if alterations are made to the cardiovascular system then the feedback will be felt in the other physiologic systems.
 *
 */
-class PULSE_DECL Cardiovascular : public SECardiovascularSystem, public PulseCardiovascularSystem, public PulseSystem
+class PULSE_DECL Cardiovascular : public PulseCardiovascularSystem
 {
   friend class PulseData;
   friend class PBPulsePhysiology;//friend the serialization class
@@ -53,6 +53,8 @@ public:
   void PostProcess();
 
 protected:
+  void ComputeExposedModelParameters() override;
+
   //Condition Methods
   void ChronicRenalStenosis();
   void ChronicAnemia();

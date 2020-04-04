@@ -198,8 +198,8 @@ SaturationCalculator& PulseData::GetSaturationCalculator() const { return *m_Sat
 
 PulseSubstances& PulseData::GetSubstances() const { return *m_Substances; }
 
-const SEPatient& PulseData::GetInitialPatient() const { return *m_CurrentPatient; }
-SEPatient& PulseData::GetCurrentPatient() const { return *m_InitialPatient; }
+const SEPatient& PulseData::GetInitialPatient() const { return *m_InitialPatient; }
+SEPatient& PulseData::GetCurrentPatient() const { return *m_CurrentPatient; }
 
 SEBloodChemistrySystem& PulseData::GetBloodChemistry() const { return *m_BloodChemistrySystem; }
 SECardiovascularSystem& PulseData::GetCardiovascular() const { return *m_CardiovascularSystem; }

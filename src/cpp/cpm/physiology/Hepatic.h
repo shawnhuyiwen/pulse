@@ -2,13 +2,13 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "controller/System.h"
+#include "PulsePhysiologySystems.h"
 #include "system/physiology/SEHepaticSystem.h"
 
 /**
  * @copydoc Physiology_HepaticystemData
  */  
-class PULSE_DECL Hepatic : public SEHepaticSystem, public PulseHepaticSystem, public PulseSystem
+class PULSE_DECL Hepatic : public PulseHepaticSystem
 {
   friend class PulseData;
   friend class PBPulsePhysiology;//friend the serialization class
@@ -33,4 +33,6 @@ public:
   void PostProcess();
 
 protected:
+  void ComputeExposedModelParameters() override;
+
 };

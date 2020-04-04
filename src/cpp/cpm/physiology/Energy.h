@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "controller/System.h"
+#include "PulsePhysiologySystems.h"
 #include "system/physiology/SEEnergySystem.h"
 class SEPatient;
 class SELiquidSubstanceQuantity;
@@ -15,7 +15,7 @@ class SEThermalCircuitCalculator;
 /**
  * @brief @copydoc Physiology_EnergySystemData
  */  
-class PULSE_DECL Energy : public SEEnergySystem, public PulseEnergySystem, public PulseSystem
+class PULSE_DECL Energy : public PulseEnergySystem
 {
   friend class PulseData;
   friend class PBPulsePhysiology;//friend the serialization class
@@ -40,6 +40,8 @@ public:
   void PostProcess();
 
 protected:
+  void ComputeExposedModelParameters() override;
+
   // Preprocess Methods
   void CalculateMetabolicHeatGeneration();
   void CalculateSweatRate();

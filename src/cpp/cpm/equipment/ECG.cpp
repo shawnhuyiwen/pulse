@@ -17,7 +17,7 @@ Constructors
 ========================
 */
 
-ECG::ECG(PulseData& data) : SEElectroCardioGram(data.GetLogger()), m_data(data)
+ECG::ECG(PulseData& data) : PulseElectroCardioGram(data.GetLogger()), m_data(data)
 {
   Clear();
   m_interpolator = new SEElectroCardioGramWaveformInterpolator(data.GetLogger());
@@ -133,6 +133,11 @@ void ECG::Process()
     }
   }
   m_interpolator->CalculateWaveformsElectricPotential();
+  ComputeExposedModelParameters();
+}
+void ECG::ComputeExposedModelParameters()
+{
+
 }
 
 //--------------------------------------------------------------------------------------------------

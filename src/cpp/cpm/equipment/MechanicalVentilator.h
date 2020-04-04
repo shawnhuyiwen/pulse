@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "controller/System.h"
+#include "PulsePhysiologySystems.h"
 #include "system/equipment/mechanical_ventilator/SEMechanicalVentilator.h"
 class SEEquipmentActionCollection;
 class SEGasCompartment;
@@ -14,7 +14,7 @@ class SEFluidCircuitPath;
  * @brief 
  * Generic mechanical ventilator for positive pressure ventilation.
  */
-class PULSE_DECL MechanicalVentilator : public SEMechanicalVentilator, public PulseMechanicalVentilator, public PulseSystem
+class PULSE_DECL MechanicalVentilator : public PulseMechanicalVentilator
 {
   friend class PulseData;
   friend class PBPulseEquipment;//friend the serialization class
@@ -41,6 +41,8 @@ public:
   void PostProcess();
 
 protected:
+  void ComputeExposedModelParameters() override;
+
   void SetConnection();
   void SetConnection(eMechanicalVentilator_Connection c);
   void InvalidateConnection();
