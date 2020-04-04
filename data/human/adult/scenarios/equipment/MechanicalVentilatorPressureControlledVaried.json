@@ -1,5 +1,5 @@
 {
-  "Name": "PressureControlContinuousMandatoryVentilation",
+  "Name": "PressureControlContinuousMandatoryVentilationVaried",
   "Description": "Apply a P-CMV mode ventilator.",
   "StartType": { "PatientConfiguration": { "PatientFile": "StandardMale.json" }},
   "DataRequestManager":
@@ -93,9 +93,12 @@
   },
   "AnyAction":
   [
-    { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" } } } },
+    { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 30.0, "Unit": "s" } } } },
 	
 	{ "PatientAction": { "Dyspnea": { "Severity": { "Scalar0To1": { "Value": 1.0 } } } } },
+	
+	{ "AdvanceTime": { "Time": { "ScalarTime": { "Value": 30.0, "Unit": "s" } } } },
+	
 	{
       "EquipmentAction": {
         "MechanicalVentilatorConfiguration": {
@@ -122,6 +125,36 @@
       }
     },	
 	
-    { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "min" } } } }
+    { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" } } } },
+	
+	{ "PatientAction": { "Intubation": { "Type": "Tracheal" } } },
+	
+	{
+      "EquipmentAction": {
+        "MechanicalVentilatorConfiguration": {
+          "MechanicalVentilatorAction": { "EquipmentAction": { "Action": {
+                "Comment": "Attach the mechanical ventilator" }}},
+          "Configuration":
+          {
+            "BreathProfile": {
+              "Rate": { "ScalarFrequency": { "Value": 12.0, "Unit": "1/min" } },
+              "InspiratoryExpiratoryRatio": { "Value": 0.5, "Unit": "" }
+            },
+            "Connection": "Tube",
+            "Control": "P_CMV",
+            "DriverWaveform": "Square",
+            "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 10.0, "Unit": "cmH2O" } },
+            "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } },
+            "FractionInspiredGas": [
+              { "Name": "Nitrogen", "Amount": { "Scalar0To1": { "Value": 0.7896, "Unit": "" } } },
+              { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.21, "Unit": "" } } },
+              { "Name": "CarbonDioxide", "Amount": { "Scalar0To1": { "Value": 0.0004, "Unit": "" } } }
+            ]
+          }
+        }
+      }
+    },	
+	
+    { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" } } } }
   ]
 }
