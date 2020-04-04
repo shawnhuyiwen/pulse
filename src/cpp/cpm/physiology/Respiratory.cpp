@@ -175,6 +175,8 @@ void Respiratory::Clear()
   m_LeftAlveoliToLeftPleuralConnection = nullptr;
   m_RightPulmonaryCapillary = nullptr;
   m_LeftPulmonaryCapillary = nullptr;
+  m_LeftPulmonaryArteriesToVeins = nullptr;
+  m_RightPulmonaryArteriesToVeins = nullptr;
   m_ConnectionToMouth = nullptr;
   m_GroundToConnection = nullptr;
 
@@ -388,6 +390,9 @@ void Respiratory::SetUp()
   /// \todo figure out how to modify these resistances without getting the cv circuit - maybe add a parameter, like baroreceptors does
   m_RightPulmonaryCapillary = m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightPulmonaryCapillariesToRightPulmonaryVeins);
   m_LeftPulmonaryCapillary = m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::LeftPulmonaryCapillariesToLeftPulmonaryVeins);
+  //Pulmonary Shunt
+  m_LeftPulmonaryArteriesToVeins = m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::LeftPulmonaryArteriesToLeftPulmonaryVeins);
+  m_RightPulmonaryArteriesToVeins = m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightPulmonaryArteriesToRightPulmonaryVeins);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -460,6 +465,7 @@ void Respiratory::PreProcess()
   UpdateInspiratoryExpiratoryRatio();
   UpdateDiffusion();
   UpdatePulmonaryCapillary();
+  UpdatePulmonaryShunt();
 
   ProcessAerosolSubstances();
   Pneumothorax();
@@ -2325,8 +2331,7 @@ void Respiratory::UpdateResistances()
   
   //------------------------------------------------------------------------------------------------------
   //Artificial Airway
-  if (m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilation ||
-      m_data.GetAirwayMode() == eAirwayMode::AnesthesiaMachine)
+  if (m_data.GetIntubation() == eSwitch::On)
   {
     tracheaResistance_cmH2O_s_Per_L *= 8.0;
   }
@@ -2493,8 +2498,7 @@ void Respiratory::UpdateAlveolarCompliances()
 
   //------------------------------------------------------------------------------------------------------
   //Artificial Airway
-  if (m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilation ||
-    m_data.GetAirwayMode() == eAirwayMode::AnesthesiaMachine)
+  if (m_data.GetIntubation() == eSwitch::On)
   {
     rightAlveoliCompliance_L_Per_cmH2O *= 0.4;
     leftAlveoliCompliance_L_Per_cmH2O *= 0.4;
@@ -2962,6 +2966,49 @@ void Respiratory::UpdatePulmonaryCapillary()
   }
 }
 
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Update Pulmonary Shunt Resistance 
+///
+/// \details
+/// jbw
+//--------------------------------------------------------------------------------------------------
+void Respiratory::UpdatePulmonaryShunt()
+{
+  //------------------------------------------------------------------------------------------------------
+  //ARDS
+  //Exacerbation will overwrite the condition, even if it means improvement
+  //Same as lobar pneumonia for now
+  if (m_data.GetConditions().HasAcuteRespiratoryDistressSyndrome() || m_PatientActions->HasAcuteRespiratoryDistressSyndromeExacerbation())
+  {
+    double severity = 0.0;
+    double leftLungFraction = 0.0;
+    double rightLungFraction = 0.0;
+    if (m_PatientActions->HasAcuteRespiratoryDistressSyndromeExacerbation())
+    {
+      severity = m_PatientActions->GetAcuteRespiratoryDistressSyndromeExacerbation()->GetSeverity().GetValue();
+      leftLungFraction = m_PatientActions->GetAcuteRespiratoryDistressSyndromeExacerbation()->GetLeftLungAffected().GetValue();
+      rightLungFraction = m_PatientActions->GetAcuteRespiratoryDistressSyndromeExacerbation()->GetRightLungAffected().GetValue();
+    }
+    else
+    {
+      severity = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome()->GetSeverity().GetValue();
+      leftLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome()->GetLeftLungAffected().GetValue();
+      rightLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome()->GetRightLungAffected().GetValue();
+    }
+
+    double pulmonaryShuntScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.01, 1.0, severity);
+
+    double rightPulmonaryShuntResistance = m_RightPulmonaryArteriesToVeins->GetNextResistance().GetValue(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    double leftPulmonaryShuntResistance = m_LeftPulmonaryArteriesToVeins->GetNextResistance().GetValue(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+
+    rightPulmonaryShuntResistance *= pulmonaryShuntScalingFactor;
+    leftPulmonaryShuntResistance *= pulmonaryShuntScalingFactor;
+
+    m_RightPulmonaryArteriesToVeins->GetNextResistance().SetValue(rightPulmonaryShuntResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    m_LeftPulmonaryArteriesToVeins->GetNextResistance().SetValue(leftPulmonaryShuntResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  }
+}
 
 //--------------------------------------------------------------------------------------------------
 /// \brief

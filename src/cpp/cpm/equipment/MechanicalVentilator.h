@@ -6,6 +6,7 @@
 #include "system/equipment/mechanical_ventilator/SEMechanicalVentilator.h"
 class SEEquipmentActionCollection;
 class SEGasCompartment;
+class SELiquidCompartment;
 class SEGasSubstanceQuantity;
 class SEFluidCircuitNode;
 class SEFluidCircuitPath;
@@ -59,5 +60,6 @@ protected:
 
   SEGasCompartment*     m_Environment;
   SEGasCompartment*     m_Ventilator;
+  SELiquidCompartment*  m_VentilatorAerosol;
   SEFluidCircuitPath*   m_EnvironmentToVentilator;
 };

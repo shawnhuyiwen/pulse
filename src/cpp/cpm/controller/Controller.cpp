@@ -4366,7 +4366,6 @@ void PulseController::SetupAnesthesiaMachine()
 {
   Info("Setting Up Anesthesia Machine");
   /////////////////////// Circuit Interdependencies
-  //jbw - Use node for pressure
   double AmbientPresure = 1033.23; // = 1 atm // Also defined in SetupRespiratoryCircuit
   SEFluidCircuit& cRespiratory = m_Circuits->GetRespiratoryCircuit();
   SEGasCompartmentGraph& gRespiratory = m_Compartments->GetRespiratoryGraph();

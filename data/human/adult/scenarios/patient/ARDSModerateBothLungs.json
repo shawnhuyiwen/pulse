@@ -96,7 +96,8 @@
 	  
 	  { "DecimalFormat": { "Precision": 2 }, "Category": "GasCompartment", "CompartmentName": "Carina", "PropertyName": "OutFlow", "Unit": "L/s" },
 	  
-	  { "DecimalFormat": {}, "Category": "Patient", "PropertyName": "AlveoliSurfaceArea", "Unit": "m^2" }
+	  { "DecimalFormat": {}, "Category": "Patient", "PropertyName": "AlveoliSurfaceArea", "Unit": "m^2" },
+	  { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "ShuntFraction", "Unit": "unitless" }
 	]
   },
   "AnyAction": [{

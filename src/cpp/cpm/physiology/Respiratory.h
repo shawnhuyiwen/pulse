@@ -71,6 +71,7 @@ protected:
   void UpdateInspiratoryExpiratoryRatio();
   void UpdateDiffusion();
   void UpdatePulmonaryCapillary();
+  void UpdatePulmonaryShunt();
 
   //Actions
   void Pneumothorax();
@@ -226,6 +227,8 @@ protected:
   SEFluidCircuitPath* m_RightAlveoliToRightPleuralConnection;
   SEFluidCircuitPath* m_LeftPulmonaryCapillary;
   SEFluidCircuitPath* m_RightPulmonaryCapillary;
+  SEFluidCircuitPath* m_LeftPulmonaryArteriesToVeins;
+  SEFluidCircuitPath* m_RightPulmonaryArteriesToVeins;
   SEFluidCircuitPath* m_ConnectionToMouth;
   SEFluidCircuitPath* m_GroundToConnection;
 
