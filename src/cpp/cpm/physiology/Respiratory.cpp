@@ -387,7 +387,9 @@ void Respiratory::SetUp()
   m_ConnectionToMouth = m_data.GetCircuits().GetRespiratoryAndMechanicalVentilationCircuit().GetPath(pulse::MechanicalVentilationPath::ConnectionToMouth);
   m_GroundToConnection = m_data.GetCircuits().GetRespiratoryAndMechanicalVentilationCircuit().GetPath(pulse::MechanicalVentilationPath::GroundToConnection);
 
+  //jbw & Aaron
   /// \todo figure out how to modify these resistances without getting the cv circuit - maybe add a parameter, like baroreceptors does
+  //Venous Return
   m_RightPulmonaryCapillary = m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightPulmonaryCapillariesToRightPulmonaryVeins);
   m_LeftPulmonaryCapillary = m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::LeftPulmonaryCapillariesToLeftPulmonaryVeins);
   //Pulmonary Shunt
@@ -2975,6 +2977,30 @@ void Respiratory::UpdatePulmonaryCapillary()
 //--------------------------------------------------------------------------------------------------
 void Respiratory::UpdatePulmonaryShunt()
 {
+  double pulmonaryShuntScalingFactor = 1.0;
+  //LobarPneumonia
+  //Exacerbation will overwrite the condition, even if it means improvement
+  if (m_data.GetConditions().HasLobarPneumonia() || m_PatientActions->HasLobarPneumoniaExacerbation())
+  {
+    double severity = 0.0;
+    double leftLungFraction = 0.0;
+    double rightLungFraction = 0.0;
+    if (m_PatientActions->HasLobarPneumoniaExacerbation())
+    {
+      severity = m_PatientActions->GetLobarPneumoniaExacerbation()->GetSeverity().GetValue();
+      leftLungFraction = m_PatientActions->GetLobarPneumoniaExacerbation()->GetLeftLungAffected().GetValue();
+      rightLungFraction = m_PatientActions->GetLobarPneumoniaExacerbation()->GetRightLungAffected().GetValue();
+    }
+    else
+    {
+      severity = m_data.GetConditions().GetLobarPneumonia()->GetSeverity().GetValue();
+      leftLungFraction = m_data.GetConditions().GetLobarPneumonia()->GetLeftLungAffected().GetValue();
+      rightLungFraction = m_data.GetConditions().GetLobarPneumonia()->GetRightLungAffected().GetValue();
+    }
+
+    pulmonaryShuntScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.01, 1.0, severity);
+  }
+
   //------------------------------------------------------------------------------------------------------
   //ARDS
   //Exacerbation will overwrite the condition, even if it means improvement
@@ -2997,17 +3023,17 @@ void Respiratory::UpdatePulmonaryShunt()
       rightLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome()->GetRightLungAffected().GetValue();
     }
 
-    double pulmonaryShuntScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.01, 1.0, severity);
-
-    double rightPulmonaryShuntResistance = m_RightPulmonaryArteriesToVeins->GetNextResistance().GetValue(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-    double leftPulmonaryShuntResistance = m_LeftPulmonaryArteriesToVeins->GetNextResistance().GetValue(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-
-    rightPulmonaryShuntResistance *= pulmonaryShuntScalingFactor;
-    leftPulmonaryShuntResistance *= pulmonaryShuntScalingFactor;
-
-    m_RightPulmonaryArteriesToVeins->GetNextResistance().SetValue(rightPulmonaryShuntResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-    m_LeftPulmonaryArteriesToVeins->GetNextResistance().SetValue(leftPulmonaryShuntResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    pulmonaryShuntScalingFactor = MIN(pulmonaryShuntScalingFactor, GeneralMath::ExponentialDecayFunction(10, 0.01, 1.0, severity));
   }
+
+  double rightPulmonaryShuntResistance = m_RightPulmonaryArteriesToVeins->GetNextResistance().GetValue(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  double leftPulmonaryShuntResistance = m_LeftPulmonaryArteriesToVeins->GetNextResistance().GetValue(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+
+  rightPulmonaryShuntResistance *= pulmonaryShuntScalingFactor;
+  leftPulmonaryShuntResistance *= pulmonaryShuntScalingFactor;
+
+  m_RightPulmonaryArteriesToVeins->GetNextResistance().SetValue(rightPulmonaryShuntResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  m_LeftPulmonaryArteriesToVeins->GetNextResistance().SetValue(leftPulmonaryShuntResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 }
 
 //--------------------------------------------------------------------------------------------------
