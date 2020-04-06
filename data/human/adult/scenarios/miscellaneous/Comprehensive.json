@@ -646,7 +646,7 @@
           },
           "PeakInspiratoryPressure": {
             "ScalarPressure": {
-              "Value": 10.5,
+              "Value": 6,
               "Unit": "cmH2O"
             }
           },
