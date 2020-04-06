@@ -1,11 +1,9 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-from pulse.cdm.engine import eSerializationFormat
 from pulse.cdm.patient import SEPatientConfiguration
-from pulse.cdm.scalars import AreaUnit
 from pulse.cdm.patient_actions import SEImpairedAlveolarExchangeExacerbation
-from pulse.engine.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
 
 def HowTo_UseImpairedAvleolarExchange():
     pulse = PulsePhysiologyEngine("pulse_impaired_alveolar_exchange.log")

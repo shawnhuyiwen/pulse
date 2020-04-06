@@ -3,7 +3,7 @@
 
 from pulse.cdm.engine import eSerializationFormat
 from pulse.cdm.patient_actions import SEAsthmaAttack
-from pulse.engine.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
 
 def HowTo_AsthmaAttack():
     pulse = PulsePhysiologyEngine("pulse_AsthmaAttack.log")

@@ -59,8 +59,8 @@ def serialize_actions_to_string(actions: [], fmt: eSerializationFormat):
                 serialize_brain_injury_to_bind(action, any_action.PatientAction.BrainInjury)
                 action_list.AnyAction.append(any_action)
                 continue
-            if isinstance(action, SEBronchoConstriction):
-                serialize_broncho_constriction_to_bind(action, any_action.PatientAction.Bronchoconstriction)
+            if isinstance(action, SEBronchoconstriction):
+                serialize_bronchoconstriction_to_bind(action, any_action.PatientAction.Bronchoconstriction)
                 action_list.AnyAction.append(any_action)
                 continue
             if isinstance(action, SECardiacArrest):

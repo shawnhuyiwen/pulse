@@ -4,9 +4,8 @@
 from enum import Enum
 from pulse.cdm.engine import eSerializationFormat, SEDataRequestManager, SEDataRequest
 from pulse.cdm.patient import eSex, SEPatient, SEPatientConfiguration
-from pulse.cdm.patient_actions import eHemorrhageType
 from pulse.cdm.patient_actions import SEExercise, SEHemorrhage
-from pulse.engine.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
 from pulse.cdm.scalars import FrequencyUnit, LengthUnit, MassUnit, \
                               MassPerVolumeUnit, PressureUnit, TemperatureUnit, \
                               TimeUnit, VolumePerTimeUnit

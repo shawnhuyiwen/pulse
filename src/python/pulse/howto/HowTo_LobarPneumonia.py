@@ -1,11 +1,9 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-from pulse.cdm.engine import eSerializationFormat
 from pulse.cdm.patient import SEPatientConfiguration
 from pulse.cdm.patient_actions import SELobarPneumoniaExacerbation
-from pulse.cdm.patient_conditions import SELobarPneumonia
-from pulse.engine.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
 
 def HowTo_UseLPE():
     pulse = PulsePhysiologyEngine("pulse_LobarPneumonia.log")

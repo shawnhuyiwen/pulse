@@ -3,7 +3,7 @@
 
 from pulse.cdm.engine import eSerializationFormat
 from pulse.cdm.patient_actions import SEExercise
-from pulse.engine.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
 
 def HowTo_Exercise():
     pulse = PulsePhysiologyEngine("pulse_Exercise.log")

@@ -3,9 +3,8 @@
 
 from enum import Enum
 from pulse.cdm.engine import eSerializationFormat
-from pulse.cdm.patient import SEPatientConfiguration
 from pulse.cdm.patient_actions import SEAirwayObstruction
-from pulse.engine.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
 
 def HowTo_AirwayObstruction():
     pulse = PulsePhysiologyEngine("pulse_AirwayObstruction.log")

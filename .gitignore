@@ -9,7 +9,7 @@ src/schema/schema_last_built
 /src/java/com
 /src/java/pulse/cdm/bind
 /src/java/pulse/cpm/bind
-/src/java/pulse/impl/bind
+/src/java/pulse/multiplex_ventilator/bind
 /src/python/pulse/cdm/bind
 /src/python/pulse/cpm/bind
 /src/python/pulse/impl/bind

@@ -1,11 +1,9 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-from enum import Enum
 from pulse.cdm.engine import eSerializationFormat
-from pulse.cdm.patient import SEPatientConfiguration
 from pulse.cdm.patient_actions import SEIntubation, eIntubationType
-from pulse.engine.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
 
 def HowTo_Intubation():
     pulse = PulsePhysiologyEngine("pulse_Intubation.log")

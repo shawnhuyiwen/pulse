@@ -3,7 +3,7 @@
 
 from pulse.cdm.engine import eSerializationFormat
 from pulse.cdm.patient_actions import SEHemorrhage, eHemorrhageType
-from pulse.engine.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
 from pulse.cdm.scalars import VolumePerTimeUnit
 
 def HowTo_Hemorrhage():
