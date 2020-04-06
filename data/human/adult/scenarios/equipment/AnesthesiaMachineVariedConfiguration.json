@@ -688,11 +688,15 @@
         }
       }
     }
-  }, {
+  }, 
+  
+  { "PatientAction": { "Intubation": { "Type": "Tracheal" } } },
+  
+  {
     "EquipmentAction": {
       "AnesthesiaMachineConfiguration": {
         "Configuration": {
-          "Connection": "Mask",
+          "Connection": "Tube",
           "InletFlow": {
             "ScalarVolumePerTime": {
               "Value": 10.0,
