@@ -32,7 +32,7 @@ void SEImpairedAlveolarExchangeExacerbation::Copy(const SEImpairedAlveolarExchan
 
 bool SEImpairedAlveolarExchangeExacerbation::IsValid() const
 {
-  return HasImpairedFraction() || HasImpairedSurfaceArea();
+  return HasImpairedFraction() || HasImpairedSurfaceArea() || HasSeverity();
 }
 
 bool SEImpairedAlveolarExchangeExacerbation::IsActive() const

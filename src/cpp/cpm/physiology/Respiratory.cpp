@@ -13,6 +13,7 @@
 #include "patient/conditions/SELobarPneumonia.h"
 #include "patient/conditions/SEImpairedAlveolarExchange.h"
 #include "patient/conditions/SEPulmonaryFibrosis.h"
+#include "patient/conditions/SEPulmonaryShunt.h"
 #include "patient/conditions/SEAcuteRespiratoryDistressSyndrome.h"
 // Actions
 #include "engine/SEActionManager.h"
@@ -28,12 +29,14 @@
 #include "patient/actions/SEForcedExhale.h"
 #include "patient/actions/SEForcedInhale.h"
 #include "patient/actions/SEForcedPause.h"
+#include "patient/actions/SEImpairedAlveolarExchangeExacerbation.h"
 #include "patient/actions/SEUseInhaler.h"
 #include "patient/actions/SEDyspnea.h"
 #include "patient/actions/SEIntubation.h"
 #include "patient/actions/SELobarPneumoniaExacerbation.h"
 #include "patient/actions/SEMechanicalVentilation.h"
 #include "patient/actions/SENeedleDecompression.h"
+#include "patient/actions/SEPulmonaryShuntExacerbation.h"
 #include "patient/actions/SERespiratoryFatigue.h"
 #include "patient/actions/SESupplementalOxygen.h"
 #include "patient/actions/SETensionPneumothorax.h"
@@ -183,7 +186,6 @@ void Respiratory::Clear()
   m_BloodPHRunningAverage->Clear();
   m_ArterialO2RunningAverage_mmHg->Clear();
   m_ArterialCO2RunningAverage_mmHg->Clear();
-  GetTotalRespiratoryModelCompliance().SetValue(0, VolumePerPressureUnit::L_Per_cmH2O); // jbw
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -270,7 +272,7 @@ void Respiratory::Initialize()
   GetChestWallCompliance().SetValue(0.2, VolumePerPressureUnit::L_Per_cmH2O);
   GetPulmonaryElastance().SetValue(1.0 / 0.1, PressurePerVolumeUnit::cmH2O_Per_L);
 
-  GetTotalRespiratoryModelCompliance().SetValue(0, VolumePerPressureUnit::L_Per_cmH2O); // jbw
+  GetTotalRespiratoryModelCompliance().SetValue(0.1, VolumePerPressureUnit::L_Per_cmH2O);
 
   // Muscle Pressure Waveform
   m_InspiratoryRiseFraction = 0;
@@ -2784,28 +2786,73 @@ void Respiratory::UpdateDiffusion()
 
   //------------------------------------------------------------------------------------------------------
   //Impaired Alveolar Exchange
-  if (m_data.GetConditions().HasImpairedAlveolarExchange())
+  if (m_data.GetConditions().HasImpairedAlveolarExchange() || m_PatientActions->HasImpairedAlveolarExchangeExacerbation())
   {
+    if (m_PatientActions->HasImpairedAlveolarExchangeExacerbation())
+    {
+      unsigned int total = int(m_PatientActions->GetImpairedAlveolarExchangeExacerbation()->HasImpairedSurfaceArea()) + 
+        int(m_PatientActions->GetImpairedAlveolarExchangeExacerbation()->HasImpairedFraction()) + 
+        int(m_PatientActions->GetImpairedAlveolarExchangeExacerbation()->HasSeverity());
 
-    if (!m_data.GetConditions().GetImpairedAlveolarExchange()->HasImpairedSurfaceArea() && !m_data.GetConditions().GetImpairedAlveolarExchange()->HasImpairedFraction())
-    {
-      /// \error Fatal: The Impaired Alveolar Exchange action must include either a surface area of fraction.
-      Fatal("The Impaired Alveolar Exchange action must include either a surface area of fraction.");
+      if (total == 0)
+      {
+        /// \error Fatal: The Impaired Alveolar Exchange action must include a surface area, fraction, or severity.
+        Fatal("The Impaired Alveolar Exchange action must include a surface area, fraction, or severity.");
+      }
+
+      if (total > 1)
+      {
+        /// \error Warning: The Impaired Alveolar Exchange action is defined with mulitple values. Defaulting to the surface area value first, impaired fraction next, and severity last.
+        Warning("The Impaired Alveolar Exchange action is defined with mulitple values. Defaulting to the surface area value first, impaired fraction next, and severity last.");
+      }
+
+      if (m_PatientActions->GetImpairedAlveolarExchangeExacerbation()->HasImpairedSurfaceArea())
+      {
+        alveoliDiffusionArea_cm2 = alveoliDiffusionArea_cm2 - m_PatientActions->GetImpairedAlveolarExchangeExacerbation()->GetImpairedSurfaceArea(AreaUnit::cm2);
+      }
+      else if (m_PatientActions->GetImpairedAlveolarExchangeExacerbation()->HasImpairedFraction())
+      {
+        alveoliDiffusionArea_cm2 = (1.0 - m_PatientActions->GetImpairedAlveolarExchangeExacerbation()->GetImpairedFraction().GetValue()) * alveoliDiffusionArea_cm2;
+      }
+      else if (m_PatientActions->GetImpairedAlveolarExchangeExacerbation()->HasSeverity())
+      {
+        double severity = m_PatientActions->GetImpairedAlveolarExchangeExacerbation()->GetSeverity().GetValue();
+        double gasDiffusionScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.1, 1.0, severity);
+        alveoliDiffusionArea_cm2 *= gasDiffusionScalingFactor;
+      }
     }
-    
-    if (m_data.GetConditions().GetImpairedAlveolarExchange()->HasImpairedSurfaceArea() && m_data.GetConditions().GetImpairedAlveolarExchange()->HasImpairedFraction())
+    else
     {
-      /// \error Error: The Impaired Alveolar Exchange action cannot have both an impaired surface area and impaired fraction defined. Defaulting to the surface area value.
-      Warning("The Impaired Alveolar Exchange action cannot have both an impaired surface area and impaired fraction defined. Defaulting to the surface area value.");
-      alveoliDiffusionArea_cm2 = alveoliDiffusionArea_cm2 - m_data.GetConditions().GetImpairedAlveolarExchange()->GetImpairedSurfaceArea(AreaUnit::cm2);
-    }
-    else if (m_data.GetConditions().GetImpairedAlveolarExchange()->HasImpairedSurfaceArea())
-    {
-      alveoliDiffusionArea_cm2 = alveoliDiffusionArea_cm2 - m_data.GetConditions().GetImpairedAlveolarExchange()->GetImpairedSurfaceArea(AreaUnit::cm2);
-    }
-    else if (m_data.GetConditions().GetImpairedAlveolarExchange()->HasImpairedFraction())
-    {
-      alveoliDiffusionArea_cm2 = (1.0 - m_data.GetConditions().GetImpairedAlveolarExchange()->GetImpairedFraction().GetValue()) * alveoliDiffusionArea_cm2;
+      unsigned int total = int(m_data.GetConditions().GetImpairedAlveolarExchange()->HasImpairedSurfaceArea()) +
+        int(m_data.GetConditions().GetImpairedAlveolarExchange()->HasImpairedFraction()) +
+        int(m_data.GetConditions().GetImpairedAlveolarExchange()->HasSeverity());
+
+      if (total == 0)
+      {
+        /// \error Fatal: The Impaired Alveolar Exchange action must include a surface area, fraction, or severity.
+        Fatal("The Impaired Alveolar Exchange action must include a surface area, fraction, or severity.");
+      }
+
+      if (total > 1)
+      {
+        /// \error Warning: The Impaired Alveolar Exchange condition is defined with mulitple values. Defaulting to the surface area value first, impaired fraction next, and severity last.
+        Warning("The Impaired Alveolar Exchange condition is defined with mulitple values. Defaulting to the surface area value first, impaired fraction next, and severity last.");
+      }
+
+      if (m_data.GetConditions().GetImpairedAlveolarExchange()->HasImpairedSurfaceArea())
+      {
+        alveoliDiffusionArea_cm2 = alveoliDiffusionArea_cm2 - m_data.GetConditions().GetImpairedAlveolarExchange()->GetImpairedSurfaceArea(AreaUnit::cm2);
+      }
+      else if (m_data.GetConditions().GetImpairedAlveolarExchange()->HasImpairedFraction())
+      {
+        alveoliDiffusionArea_cm2 = (1.0 - m_data.GetConditions().GetImpairedAlveolarExchange()->GetImpairedFraction().GetValue()) * alveoliDiffusionArea_cm2;
+      }
+      else if (m_data.GetConditions().GetImpairedAlveolarExchange()->HasSeverity())
+      {
+        double severity = m_data.GetConditions().GetImpairedAlveolarExchange()->GetSeverity().GetValue();
+        double gasDiffusionScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.1, 1.0, severity);
+        alveoliDiffusionArea_cm2 *= gasDiffusionScalingFactor;
+      }
     }
   }
 
@@ -2995,7 +3042,29 @@ void Respiratory::UpdatePulmonaryCapillary()
 //--------------------------------------------------------------------------------------------------
 void Respiratory::UpdatePulmonaryShunt()
 {
-  double pulmonaryShuntScalingFactor = 1.0;
+  double combinedSeverity = 0.0;
+
+  //------------------------------------------------------------------------------------------------------
+  //PulmonaryShunt
+  //Exacerbation will overwrite the condition, even if it means improvement
+  if (m_data.GetConditions().HasPulmonaryShunt() || m_PatientActions->HasPulmonaryShuntExacerbation())
+  {
+    double severity = 0.0;
+    double leftLungFraction = 0.0;
+    double rightLungFraction = 0.0;
+    if (m_PatientActions->HasPulmonaryShuntExacerbation())
+    {
+      severity = m_PatientActions->GetLobarPneumoniaExacerbation()->GetSeverity().GetValue();
+    }
+    else
+    {
+      severity = m_data.GetConditions().GetPulmonaryShunt()->GetSeverity().GetValue();
+    }
+
+    combinedSeverity = severity;
+  }
+
+  //------------------------------------------------------------------------------------------------------
   //LobarPneumonia
   //Exacerbation will overwrite the condition, even if it means improvement
   if (m_data.GetConditions().HasLobarPneumonia() || m_PatientActions->HasLobarPneumoniaExacerbation())
@@ -3016,7 +3085,12 @@ void Respiratory::UpdatePulmonaryShunt()
       rightLungFraction = m_data.GetConditions().GetLobarPneumonia()->GetRightLungAffected().GetValue();
     }
 
-    pulmonaryShuntScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.01, 1.0, severity);
+    // Get the right and left lung ratios
+    double dRightLungRatio = m_data.GetCurrentPatient().GetRightLungRatio().GetValue();
+    double dLeftLungRatio = 1.0 - dRightLungRatio;
+
+    double scaledSeverity = severity * leftLungFraction * dLeftLungRatio + severity * rightLungFraction * dRightLungRatio;
+    combinedSeverity = MAX(combinedSeverity, scaledSeverity);
   }
 
   //------------------------------------------------------------------------------------------------------
@@ -3041,8 +3115,15 @@ void Respiratory::UpdatePulmonaryShunt()
       rightLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome()->GetRightLungAffected().GetValue();
     }
 
-    pulmonaryShuntScalingFactor = MIN(pulmonaryShuntScalingFactor, GeneralMath::ExponentialDecayFunction(10, 0.01, 1.0, severity));
+    // Get the right and left lung ratios
+    double dRightLungRatio = m_data.GetCurrentPatient().GetRightLungRatio().GetValue();
+    double dLeftLungRatio = 1.0 - dRightLungRatio;
+
+    double scaledSeverity = severity * leftLungFraction * dLeftLungRatio + severity * rightLungFraction * dRightLungRatio;
+    combinedSeverity = MAX(combinedSeverity, scaledSeverity);
   }
+
+  double pulmonaryShuntScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.01, 1.0, combinedSeverity);
 
   double rightPulmonaryShuntResistance = m_RightPulmonaryArteriesToVeins->GetNextResistance().GetValue(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   double leftPulmonaryShuntResistance = m_LeftPulmonaryArteriesToVeins->GetNextResistance().GetValue(PressureTimePerVolumeUnit::cmH2O_s_Per_L);

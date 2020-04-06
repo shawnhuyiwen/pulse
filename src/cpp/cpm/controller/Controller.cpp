@@ -4952,7 +4952,7 @@ void PulseController::SetupMechanicalVentilator()
   lConnection.MapNode(Connection);
 
   //Links
-  SELiquidCompartmentLink& lConnectionToMouth = m_Compartments->CreateLiquidLink(lConnection, *lMouth, pulse::MechanicalVentilationLink::ConnectionToMouth);
+  SELiquidCompartmentLink& lConnectionToMouth = m_Compartments->CreateLiquidLink(lConnection, *lMouth, pulse::MechanicalVentilatorLink::ConnectionToMouth);
   lConnectionToMouth.MapPath(ConnectionToMouth);
 
   SELiquidCompartmentLink& lVentilatorToExpiratoryValve = m_Compartments->CreateLiquidLink(lVentilator, lExpiratoryValve, pulse::MechanicalVentilatorLink::MechanicalVentilatorToExpiratoryValve);
@@ -5006,7 +5006,6 @@ void PulseController::SetupNasalCannula()
   SEFluidCircuit& cRespiratory = m_Circuits->GetRespiratoryCircuit();
   SEGasCompartmentGraph& gRespiratory = m_Compartments->GetRespiratoryGraph();
   double OpenResistance_cmH2O_s_Per_L = m_Config->GetDefaultOpenFlowResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L); //open switch resistance is super high (i.e., tight seal)
-  double SealResistance_cmH2O_s_Per_L = 0.001; //loose seal
   ///////////////////////
 
   //Combined Respiratory and Nasal Cannula Circuit
@@ -5026,7 +5025,7 @@ void PulseController::SetupNasalCannula()
   SEFluidCircuitPath& OxygenInlet = CombinedNasalCannula.CreatePath(OxygenSource, NasalCannula, pulse::NasalCannulaPath::NasalCannulaOxygenInlet);
   OxygenInlet.GetResistanceBaseline().SetValue(OpenResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   SEFluidCircuitPath& Seal = CombinedNasalCannula.CreatePath(NasalCannula, Ambient, pulse::NasalCannulaPath::NasalCannulaSeal);
-  //Seal.GetResistanceBaseline().SetValue(SealResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  //No resistance
   // Connect Path
   SEFluidCircuitPath& NasalCannulaToMouth = CombinedNasalCannula.CreatePath(NasalCannula, Mouth, pulse::NasalCannulaPath::NasalCannulaToMouth);
   CombinedNasalCannula.RemovePath(pulse::RespiratoryPath::EnvironmentToMouth);

@@ -409,14 +409,14 @@
       "Unit": "m^2"
     }]
   },
-  "AnyAction": [{
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 10.0,
-          "Unit": "min"
-        }
-      }
-    }
-  }]
+  "AnyAction": 
+  [
+    { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" }}}},
+	
+    { "PatientAction": { "ImpairedAlveolarExchangeExacerbation": {
+        "ImpairedFraction": { "Scalar0To1": { "Value": 0.2 } }
+    } } },	
+	
+    { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "min" }}}}
+  ]
 }

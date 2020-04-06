@@ -1,7 +1,22 @@
 {
-  "Name": "PressureControlContinuousMandatoryVentilationVaried",
-  "Description": "Apply a P-CMV mode ventilator.",
-  "StartType": { "PatientConfiguration": { "PatientFile": "StandardMale.json" }},
+  "Name": "ImpairedAlveolarExchangeSurfaceArea",
+  "Description": "Cause Acute Respiratory Distress by generically reducing the alveolar surface area.",
+  "StartType": {
+    "PatientConfiguration": {
+      "PatientFile": "StandardMale.json",
+      "Conditions": { "AnyCondition": [{
+        "PatientCondition": {
+          "PulmonaryShunt": {
+            "Severity": {
+              "Scalar0To1": {
+                "Value": 0.8
+              }
+            }
+          }
+        }
+      }]}
+    }
+  },
   "DataRequestManager":
   {
     "DataRequest":
@@ -61,8 +76,8 @@
       { "DecimalFormat": { "Precision": 2 }, "Category": "Substance", "SubstanceName": "CarbonDioxide", "PropertyName": "AlveolarTransfer",    "Unit": "mL/s" },
       { "DecimalFormat": { "Precision": 6 }, "Category": "Substance", "SubstanceName": "Epinephrine",   "PropertyName": "BloodConcentration",  "Unit": "ug/L" },
       { "DecimalFormat": { "Precision": 8 }, "Category": "Substance", "SubstanceName": "Epinephrine",   "PropertyName": "SystemicMassCleared", "Unit": "ug" },
-      
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "InspiratoryExpiratoryRatio",     "Unit": "unitless" },
+	  
+	  { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "InspiratoryExpiratoryRatio",     "Unit": "unitless" },
 	  { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ExpiratoryFlow",                 "Unit": "L/s" },
 	  { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "InspiratoryFlow",                "Unit": "L/s" },
 	  { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "PulmonaryCompliance",            "Unit": "L/cmH2O" },
@@ -73,80 +88,21 @@
 	  { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "ShuntFraction",                  "Unit": "unitless" },
 	  { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "AlveolarArterialGradient",       "Unit": "mmHg" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TransthoracicPressure",          "Unit": "cmH2O" },
-	  { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TotalPulmonaryVentilation",      "Unit": "L/min" },
+      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TotalPulmonaryVentilation",      "Unit": "L/min" },	  
 	  
 	  { "DecimalFormat": { "Precision": 2 }, "Category": "GasCompartment", "CompartmentName": "Carina", "PropertyName": "OutFlow", "Unit": "L/s" },
 	  
-	  { "DecimalFormat": { "Precision": 3 }, "Category": "Patient", "PropertyName": "AlveoliSurfaceArea", "Unit": "m^2" },
-	  
-	  { "DecimalFormat": { "Precision": 6 }, "Category": "Substance", "SubstanceName": "Albuterol", "PropertyName": "PlasmaConcentration", "Unit": "ug/L" }, 
-	  { "DecimalFormat": { "Precision": 2 }, "Category": "Substance", "SubstanceName": "Albuterol", "PropertyName": "SystemicMassCleared", "Unit": "ug" }, 
-	  { "DecimalFormat": { "Precision": 2 }, "Category": "Substance", "SubstanceName": "Albuterol", "PropertyName": "MassInBody", "Unit": "ug" }
+	  { "DecimalFormat": { "Precision": 3 }, "Category": "Patient", "PropertyName": "AlveoliSurfaceArea", "Unit": "m^2" }	  
     ]
   },
-  "AnyAction":
+  "AnyAction": 
   [
-    { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 30.0, "Unit": "s" } } } },
+    { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" }}}},
 	
-	{ "PatientAction": { "Dyspnea": { "Severity": { "Scalar0To1": { "Value": 1.0 } } } } },
+    { "PatientAction": { "PulmonaryShuntExacerbation": {
+        "Severity": { "Scalar0To1": { "Value": 0.2 } }
+    } } },	
 	
-	{ "AdvanceTime": { "Time": { "ScalarTime": { "Value": 30.0, "Unit": "s" } } } },
-	
-	{
-      "EquipmentAction": {
-        "MechanicalVentilatorConfiguration": {
-          "MechanicalVentilatorAction": { "EquipmentAction": { "Action": {
-                "Comment": "Attach the mechanical ventilator" }}},
-          "Configuration":
-          {
-            "BreathProfile": {
-              "Rate": { "ScalarFrequency": { "Value": 12.0, "Unit": "1/min" } },
-              "InspiratoryExpiratoryRatio": { "Value": 0.5, "Unit": "" }
-            },
-            "Connection": "Mask",
-            "Control": "P_CMV",
-            "DriverWaveform": "Square",
-            "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 10.0, "Unit": "cmH2O" } },
-            "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } },
-            "FractionInspiredGas": [
-              { "Name": "Nitrogen", "Amount": { "Scalar0To1": { "Value": 0.7896, "Unit": "" } } },
-              { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.21, "Unit": "" } } },
-              { "Name": "CarbonDioxide", "Amount": { "Scalar0To1": { "Value": 0.0004, "Unit": "" } } }
-            ]
-          }
-        }
-      }
-    },	
-	
-    { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" } } } },
-	
-	{ "PatientAction": { "Intubation": { "Type": "Tracheal" } } },
-	
-	{
-      "EquipmentAction": {
-        "MechanicalVentilatorConfiguration": {
-          "MechanicalVentilatorAction": { "EquipmentAction": { "Action": {
-                "Comment": "Attach the mechanical ventilator" }}},
-          "Configuration":
-          {
-            "BreathProfile": {
-              "Rate": { "ScalarFrequency": { "Value": 20.0, "Unit": "1/min" } },
-              "InspiratoryExpiratoryRatio": { "Value": 1.0, "Unit": "" }
-            },
-            "Connection": "Tube",
-            "Control": "P_CMV",
-            "DriverWaveform": "Square",
-            "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 20.0, "Unit": "cmH2O" } },
-            "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 10.0, "Unit": "cmH2O" } },
-            "FractionInspiredGas": [
-              { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.3, "Unit": "" } } } ],
-			"ConcentrationInspiredAerosol": [
-			  { "Name": "Albuterol", "Concentration": { "ScalarMassPerVolume": { "Value": 2500.0, "Unit": "mg/m^3" } } }]
-          }
-        }
-	  }
-    },
-	
-    { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" } } } }
+    { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "min" }}}}
   ]
 }
