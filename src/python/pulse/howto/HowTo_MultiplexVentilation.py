@@ -3,6 +3,7 @@
 
 from pulse.impl.bind.MultiplexVentilator_pb2 import  *
 from google.protobuf import json_format
+import itertools
 
 def HowTo_UseEngine():
     # Let's load up a data file from disk
@@ -102,5 +103,10 @@ def HowTo_UseEngine():
     json_format.Parse(json, multiplex_simulation_results)
     print("Multiplex ventilation patient 1 spO2 : " + str(multiplex_simulation_results.PatientComparisons[0].MultiplexVentilation.OxygenSaturation))
     print("Multiplex ventilation patient 2 spO2 : " + str(multiplex_simulation_results.PatientComparisons[1].MultiplexVentilation.OxygenSaturation))
+
+    # Here is all combinations of our generated patients
+    total_patients = len(patient_list.Patients)
+    combos = list(itertools.combinations(range(total_patients), 2))
+    print(combos)
 
 HowTo_UseEngine()

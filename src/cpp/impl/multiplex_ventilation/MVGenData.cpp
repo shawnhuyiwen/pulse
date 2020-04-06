@@ -46,7 +46,7 @@ bool GenerateStabilizedPatients()
   float minImpairment = 0.0;
   float maxImpairment = 1.0;
   float stepImpairment = 0.2f;
-  int minPEEP = 12;
+  int minPEEP = 10;
   int maxPEEP = 20;
   int stepPEEP = 2;
   int minPIP = 10;
@@ -95,17 +95,17 @@ bool GenerateStabilizedPatients()
     std::cout << "[" << level << "] " << filename << "::" << line << " " << message;
   });
 
-  for (int c=minCompliance; c<maxCompliance; c+=stepCompliance)
+  for (int c=minCompliance; c<=maxCompliance; c+=stepCompliance)
   {
     overrides.AddScalarProperty("LungCompliance", c, VolumePerPressureUnit::L_Per_cmH2O);
 
-    for (float i=minImpairment; i<maxImpairment; i+=stepImpairment)
+    for (float i=minImpairment; i<=maxImpairment; i+=stepImpairment)
     {
       // jbw Convert i to the appropriate action severity
       impairedAlveolarExchange.GetSeverity().SetValue(i);// jbw support severity!
       pulmonaryShunt.GetSeverity().SetValue(i);
 
-      for (int peep=minPEEP; peep<maxPEEP; peep+=stepPEEP)
+      for (int peep=minPEEP; peep<=maxPEEP; peep+=stepPEEP)
       {
         mv.GetInspiratoryExpiratoryRatio().SetValue(peep);
 
@@ -113,7 +113,7 @@ bool GenerateStabilizedPatients()
         baseName = "comp="+std::to_string(c)+"_imp="+to_scientific_notation(i)+"_peep="+std::to_string(peep);
         logger.Info("Creating engine " + baseName);
         auto pulse = CreatePulseEngine("./states/multiplex_ventilation/"+baseName+".log");
-        //pulse->SerializeFromFile("./states/StandardMale@0s.json", SerializationFormat::JSON);
+        pulse->SerializeFromFile("./states/StandardMale@0s.json", SerializationFormat::JSON);
 
         // Step the PIP until we get a TidalVolume between 6-8 mL
         for (int pip=minPIP; pip<maxPIP; pip+=stepPIP)
