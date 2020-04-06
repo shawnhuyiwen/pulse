@@ -3,7 +3,7 @@
 
 #include "MVController.h"
 
-void GenerateStabilizedPatients();
+bool GenerateStabilizedPatients();
 
 int main(int argc, char* argv[])
 {
@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
     std::for_each(mode.begin(), mode.end(), [](char& c) { c = ::tolower(c); });
     if (mode == "gendata")
     {
-      GenerateStabilizedPatients();
+      return !GenerateStabilizedPatients();
     }
     else if (mode == "combine")
     {
@@ -34,6 +34,7 @@ int main(int argc, char* argv[])
       else
       {
         std::cerr << "Provide more than one patient state to combine";
+        return 1;
       }
     }
   }

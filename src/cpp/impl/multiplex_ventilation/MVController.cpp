@@ -117,6 +117,7 @@ bool MVController::Run(std::vector<std::string>& patients)
     pc->GetEngineTracker().GetDataRequestManager().CreatePhysiologyDataRequest("EndTidalCarbonDioxidePressure", PressureUnit::cmH2O);
     pc->GetEngineTracker().GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
     pc->GetEngineTracker().GetDataRequestManager().CreatePhysiologyDataRequest("OxygenSaturation");
+    pc->GetEngineTracker().GetDataRequestManager().CreatePhysiologyDataRequest("CarricoIndex", PressureUnit::mmHg);
     pc->GetEngineTracker().GetDataRequestManager().CreatePhysiologyDataRequest("InspiratoryExpiratoryRatio");
     pc->GetEngineTracker().GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
     pc->GetEngineTracker().GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);

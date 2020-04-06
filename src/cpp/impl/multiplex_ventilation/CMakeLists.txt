@@ -4,4 +4,4 @@ add_executable_ex(MultiplexVentilationDriver main.cpp
                                              MVController.h
                                              MVGenData.cpp)
 
-target_link_libraries(MultiplexVentilationDriver CommonPulseModels)
+target_link_libraries(MultiplexVentilationDriver CommonPulseModels protobuf::libprotobuf)
