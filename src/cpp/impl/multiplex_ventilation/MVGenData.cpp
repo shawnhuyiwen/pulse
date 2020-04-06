@@ -87,6 +87,7 @@ bool GenerateStabilizedPatients()
   std::string baseName;
   pulse::multiplex_ventilator::bind::PatientStateListData patients;
   google::protobuf::util::JsonPrintOptions opts;
+  opts.add_whitespace = true;
   opts.preserve_proto_field_names = true;
   // Hook up protobuf error handler to our handler
   google::protobuf::SetLogHandler([](google::protobuf::LogLevel level, const char* filename, int line, const std::string& message)
@@ -131,7 +132,7 @@ bool GenerateStabilizedPatients()
         pulse->SerializeToFile("./states/multiplex_ventilation/"+baseName+".json",SerializationFormat::JSON);
         // Append to our "list" of generated states
         auto patientData = patients.add_patients();
-        patientData->set_statefile(baseName+".json");
+        patientData->set_statefile("./states/multiplex_ventilation/"+baseName+".json");
         patientData->set_compliance_l_per_cmh2o(c);
         patientData->set_impairmentfraction(i);
         patientData->set_peep_cmh2o(peep);
