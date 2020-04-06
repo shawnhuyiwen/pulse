@@ -113,7 +113,7 @@
               "InspiratoryExpiratoryRatio": { "Value": 0.5, "Unit": "" }
             },
             "Connection": "Tube",
-            "Control": "P_CMV",
+            "Control": "PC_CMV",
             "DriverWaveform": "Square",
             "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 20.0, "Unit": "cmH2O" } },
             "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 8.0, "Unit": "cmH2O" } },

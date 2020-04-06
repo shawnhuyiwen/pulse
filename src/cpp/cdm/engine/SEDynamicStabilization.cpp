@@ -145,7 +145,7 @@ bool SEDynamicStabilization::StabilizeConditions(Controller& engine, const SECon
   {
     if (!HasConditionConvergence(c->GetName()))
     {
-      Error("Engine does not support Condition "+c->GetName());
+      Error("Engine does not have convergence criteria for condition "+c->GetName());
       return false;
     }
     else
@@ -216,7 +216,7 @@ bool SEDynamicStabilization::Stabilize(Controller& engine, const SEDynamicStabil
   double stablizationTime_s = 0;
   double dT_s = engine.GetTimeStep(TimeUnit::s);
 
-  SEDynamicStabilizationLedger ledger(dT_s, Convergence);
+  SEDynamicStabilizationLedger ledger(dT_s, Convergence, GetLogger());
   while (!(ledger.HasConverged() && ledger.HasConvergedOptional()))
   {
     if (m_Cancelled)

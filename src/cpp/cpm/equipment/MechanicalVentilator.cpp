@@ -100,11 +100,11 @@ void MechanicalVentilator::StateChange()
     return;
   }
 
-  if (GetControl() != eMechanicalVentilator_Control::P_CMV)
+  if (GetControl() != eMechanicalVentilator_Control::PC_CMV)
   {
     //Only one option for now
     //jbw - error for unsupported
-    SetControl(eMechanicalVentilator_Control::P_CMV);
+    SetControl(eMechanicalVentilator_Control::PC_CMV);
   }
 
   if (GetDriverWaveform() != eMechanicalVentilator_DriverWaveform::Square)

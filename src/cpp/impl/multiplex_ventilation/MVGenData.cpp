@@ -42,10 +42,10 @@ bool GenerateStabilizedPatients()
 {
   int minCompliance = 10;
   int maxCompliance = 50;
-  int stepCompliance = 10;
+  int stepCompliance = 5;
   float minImpairment = 0.0;
   float maxImpairment = 1.0;
-  float stepImpairment = 0.1f;
+  float stepImpairment = 0.2f;
   int minPEEP = 12;
   int maxPEEP = 20;
   int stepPEEP = 2;
@@ -75,7 +75,7 @@ bool GenerateStabilizedPatients()
   SEMechanicalVentilatorConfiguration mvc(subMgr);
   auto& mv = mvc.GetConfiguration();
   mv.SetConnection(eMechanicalVentilator_Connection::Tube);
-  mv.SetControl(eMechanicalVentilator_Control::P_CMV);
+  mv.SetControl(eMechanicalVentilator_Control::PC_CMV);
   mv.SetDriverWaveform(eMechanicalVentilator_DriverWaveform::Square);
   mv.GetRespiratoryRate().SetValue(20, FrequencyUnit::Per_min);
   mv.GetInspiratoryExpiratoryRatio().SetValue(0.5);
@@ -152,5 +152,6 @@ bool GenerateStabilizedPatients()
     std::cerr << "Unable to write generated patients list file\n";
     return false;
   }
+  logger.Info("Created "+std::to_string(patients.patients_size()) + " patients");
   return WriteFile(out, "mv_solo_ventilated_patients.json", SerializationFormat::JSON);
 }

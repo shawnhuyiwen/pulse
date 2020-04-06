@@ -104,7 +104,7 @@
               "InspiratoryExpiratoryRatio": { "Value": 0.5, "Unit": "" }
             },
             "Connection": "Mask",
-            "Control": "P_CMV",
+            "Control": "PC_CMV",
             "DriverWaveform": "Square",
             "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 10.0, "Unit": "cmH2O" } },
             "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } },
@@ -134,7 +134,7 @@
               "InspiratoryExpiratoryRatio": { "Value": 1.0, "Unit": "" }
             },
             "Connection": "Tube",
-            "Control": "P_CMV",
+            "Control": "PC_CMV",
             "DriverWaveform": "Square",
             "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 20.0, "Unit": "cmH2O" } },
             "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 10.0, "Unit": "cmH2O" } },

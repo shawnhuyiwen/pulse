@@ -21,7 +21,7 @@ message MechanicalVentilatorData
   enum eControl
   {
     NullControl    = 0;/**<< Signals not provided, or no change */
-    P_CMV          = 1;/**<< Pressure Control Ventilation with Continuous Mandatory Ventilation */
+    PC_CMV         = 1;/**<< Pressure Control Ventilation with Continuous Mandatory Ventilation */
   }
   
   enum eDriverWaveform

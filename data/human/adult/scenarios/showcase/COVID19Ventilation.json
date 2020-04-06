@@ -8,7 +8,7 @@
             "Severity": { "Scalar0To1": { "Value": 0.6 } },
             "LeftLungAffected": { "Scalar0To1": { "Value": 1.0 } },
             "RightLungAffected": { "Scalar0To1": { "Value": 1.0 } } } } } 
-		] }
+    ] }
     }
   },
   "DataRequestManager":
@@ -31,58 +31,51 @@
       
       { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "Aorta",        "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
       { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "Aorta",        "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
-	  
-	  { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "InspiratoryExpiratoryRatio",     "Unit": "unitless" },
-	  { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ExpiratoryFlow",                 "Unit": "L/s" },
-	  { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "InspiratoryFlow",                "Unit": "L/s" },
-	  { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "PulmonaryCompliance",            "Unit": "L/cmH2O" },
+    
+    { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "InspiratoryExpiratoryRatio",     "Unit": "unitless" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ExpiratoryFlow",                 "Unit": "L/s" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "InspiratoryFlow",                "Unit": "L/s" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "PulmonaryCompliance",            "Unit": "L/cmH2O" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "InspiratoryPulmonaryResistance", "Unit": "cmH2O s/L" },
-	  { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ExpiratoryPulmonaryResistance",  "Unit": "cmH2O s/L" },
-	  { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "CarricoIndex",                   "Unit": "mmHg" },
-	  { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TransthoracicPressure",          "Unit": "cmH2O" },
-	  { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "ShuntFraction",                  "Unit": "unitless" },
-	  { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "AlveolarArterialGradient",       "Unit": "mmHg" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TotalPulmonaryVentilation",      "Unit": "L/min" },	  
-	  
-	  { "DecimalFormat": { "Precision": 3 }, "Category": "Patient", "PropertyName": "AlveoliSurfaceArea", "Unit": "m^2" }	  
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ExpiratoryPulmonaryResistance",  "Unit": "cmH2O s/L" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "CarricoIndex",                   "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TransthoracicPressure",          "Unit": "cmH2O" },
+    { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "ShuntFraction",                  "Unit": "unitless" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "AlveolarArterialGradient",       "Unit": "mmHg" },
+      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TotalPulmonaryVentilation",      "Unit": "L/min" },    
+    
+    { "DecimalFormat": { "Precision": 3 }, "Category": "Patient", "PropertyName": "AlveoliSurfaceArea", "Unit": "m^2" }    
     ]
   },
   "AnyAction":
   [  
-    //Segment 0
   
-    { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" } } } },
-	
-	{ "PatientAction": { "SupplementalOxygen": { "Device": "NasalCannula" } } },
-	
-	{ "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" } } } },
-	
-	//ToDo: Administer vasopressor	
-	
-	{ "AdvanceTime": { "Time": { "ScalarTime": { "Value": 10.0, "Unit": "min" } } } },
-	
-	//Segment 1	
-	//ToDo: Comment that is the next Day
-	
-	{ "PatientAction": { "AcuteRespiratoryDistressSyndromeExacerbation": 
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" } } } },
+  
+  { "PatientAction": { "SupplementalOxygen": { "Device": "NasalCannula" } } },
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" } } } },
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 10.0, "Unit": "min" } } } },
+  
+  
+  { "PatientAction": { "AcuteRespiratoryDistressSyndromeExacerbation": 
       {
         "Severity": { "Scalar0To1": { "Value": 0.9 }},
         "LeftLungAffected": { "Scalar0To1": { "Value": 1.0 }},
         "RightLungAffected": { "Scalar0To1": { "Value": 1.0 }}
       }}
     },
-	
-	{ "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "min" } } } },
-	
-	{ "PatientAction": { "SupplementalOxygen": { "Device": "None" } } },
-	
-	{ "AdvanceTime": { "Time": { "ScalarTime": { "Value": 30.0, "Unit": "s" } } } },
-	
-	//ToDo: Give sedative
-	
-	{ "AdvanceTime": { "Time": { "ScalarTime": { "Value": 30.0, "Unit": "s" } } } },
-	
-	{ "PatientAction": {
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "min" } } } },
+  
+  { "PatientAction": { "SupplementalOxygen": { "Device": "None" } } },
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 30.0, "Unit": "s" } } } },
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 30.0, "Unit": "s" } } } },
+  
+  { "PatientAction": {
       "SubstanceBolus": { "Substance": "Succinylcholine",
         "Concentration": { "ScalarMassPerVolume": {
             "Value": 1000.0,
@@ -92,12 +85,12 @@
             "Value": 77.0,
             "Unit": "mL"
     } } } } },
-	
-	{ "AdvanceTime": { "Time": { "ScalarTime": { "Value": 30.0, "Unit": "s" } } } },
-	
-	{ "PatientAction": { "Intubation": { "Type": "RightMainstem" } } },
-	
-	{
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 30.0, "Unit": "s" } } } },
+  
+  { "PatientAction": { "Intubation": { "Type": "RightMainstem" } } },
+  
+  {
       "EquipmentAction": {
         "MechanicalVentilatorConfiguration": {
           "MechanicalVentilatorAction": { "EquipmentAction": { "Action": {
@@ -109,7 +102,7 @@
               "InspiratoryExpiratoryRatio": { "Value": 0.5, "Unit": "" }
             },
             "Connection": "Tube",
-            "Control": "P_CMV",
+            "Control": "PC_CMV",
             "DriverWaveform": "Square",
             "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 10.0, "Unit": "cmH2O" } },
             "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 0.0, "Unit": "cmH2O" } },
@@ -120,16 +113,14 @@
         }
       }
     },
-	
-	{ "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" } } } },
-	
-	//Segment 2
-	
-	{ "PatientAction": { "Intubation": { "Type": "Tracheal" } } },
-	
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" } } } },
+  
+  { "PatientAction": { "Intubation": { "Type": "Tracheal" } } },
+  
     { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" } } } },
-	
-	{
+  
+  {
       "EquipmentAction": {
         "MechanicalVentilatorConfiguration": {
           "MechanicalVentilatorAction": { "EquipmentAction": { "Action": {
@@ -141,7 +132,7 @@
               "InspiratoryExpiratoryRatio": { "Value": 0.5, "Unit": "" }
             },
             "Connection": "Tube",
-            "Control": "P_CMV",
+            "Control": "PC_CMV",
             "DriverWaveform": "Square",
             "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 32.0, "Unit": "cmH2O" } },
             "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 15.0, "Unit": "cmH2O" } },
@@ -152,24 +143,20 @@
         }
       }
     },
-	
-	{ "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "min" } } } },
-	
-	//Segment 3
-	//ToDo: Comment that is several days later
-	
-	
-	{ "PatientAction": { "AcuteRespiratoryDistressSyndromeExacerbation": 
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "min" } } } },
+  
+  { "PatientAction": { "AcuteRespiratoryDistressSyndromeExacerbation": 
       {
         "Severity": { "Scalar0To1": { "Value": 0.6 }},
         "LeftLungAffected": { "Scalar0To1": { "Value": 1.0 }},
         "RightLungAffected": { "Scalar0To1": { "Value": 1.0 }}
       }}
     },
-	
-	{ "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "min" } } } },
-	
-	{
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "min" } } } },
+  
+  {
       "EquipmentAction": {
         "MechanicalVentilatorConfiguration": {
           "MechanicalVentilatorAction": { "EquipmentAction": { "Action": {
@@ -181,7 +168,7 @@
               "InspiratoryExpiratoryRatio": { "Value": 0.5, "Unit": "" }
             },
             "Connection": "Tube",
-            "Control": "P_CMV",
+            "Control": "PC_CMV",
             "DriverWaveform": "Square",
             "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 25.0, "Unit": "cmH2O" } },
             "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 10.0, "Unit": "cmH2O" } },
@@ -191,24 +178,21 @@
           }
         }
       }
-    },	
-	
+    },  
+  
     { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "min" } } } },
-	
-	//Segment 4
-	//ToDo: Comment that is several days later
-	
-	{ "PatientAction": { "AcuteRespiratoryDistressSyndromeExacerbation": 
+  
+  { "PatientAction": { "AcuteRespiratoryDistressSyndromeExacerbation": 
       {
         "Severity": { "Scalar0To1": { "Value": 0.3 }},
         "LeftLungAffected": { "Scalar0To1": { "Value": 1.0 }},
         "RightLungAffected": { "Scalar0To1": { "Value": 1.0 }}
       }}
     },
-	
-	{ "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "min" } } } },
-	
-	{
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "min" } } } },
+  
+  {
       "EquipmentAction": {
         "MechanicalVentilatorConfiguration": {
           "MechanicalVentilatorAction": { "EquipmentAction": { "Action": {
@@ -220,7 +204,7 @@
               "InspiratoryExpiratoryRatio": { "Value": 0.5, "Unit": "" }
             },
             "Connection": "Tube",
-            "Control": "P_CMV",
+            "Control": "PC_CMV",
             "DriverWaveform": "Square",
             "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 20.0, "Unit": "cmH2O" } },
             "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 8.0, "Unit": "cmH2O" } },
@@ -230,8 +214,8 @@
           }
         }
       }
-    },	
-	
+    },  
+  
     { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "min" } } } }
   ]
 }

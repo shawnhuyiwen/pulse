@@ -14,7 +14,7 @@ enum class eMechanicalVentilator_Connection { NullConnection = 0, Off, Mask, Tub
 extern const std::string& eMechanicalVentilator_Connection_Name(eMechanicalVentilator_Connection m);
 
 // Keep enums in sync with appropriate schema/cdm/MechanicalVentilator.proto file !!
-enum class eMechanicalVentilator_Control { NullControl = 0, P_CMV };
+enum class eMechanicalVentilator_Control { NullControl = 0, PC_CMV };
 extern const std::string& eMechanicalVentilator_Control_Name(eMechanicalVentilator_Control m);
 
 // Keep enums in sync with appropriate schema/cdm/MechanicalVentilator.proto file !!

@@ -286,7 +286,7 @@ bool SEConditionManager::ProcessCondition(const SECondition& condition)
   }
 
   /// \error Unsupported Condition
-  Error("Unsupported Condition");
+  Error(condition.GetName()+" is an unsupported Condition");
   return false;
 }
 
