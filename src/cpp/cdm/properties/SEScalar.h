@@ -6,6 +6,22 @@ See accompanying NOTICE file for details.*/
 
 #define ZERO_APPROX 1e-10
 
+class CDM_DECL SEScalarProperty
+{
+public:
+  SEScalarProperty(std::string n, double v, std::string u)
+  {
+    name  = n;
+    value = v;
+    unit  = u;
+  }
+  ~SEScalarProperty() = default;
+
+  std::string name;
+  double      value;
+  std::string unit;
+};
+
 class CDM_DECL NoUnit
 {
 public:

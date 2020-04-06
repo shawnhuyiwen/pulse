@@ -7,6 +7,7 @@
 #include "engine/SEEngineConfiguration.h"
 #include "patient/SEPatient.h"
 #include "substance/SESubstanceManager.h"
+#include "properties/SEScalar.h"
 #include "io/protobuf/PBEngine.h"
 
 SEPatientConfiguration::SEPatientConfiguration(SESubstanceManager& subMgr) : Loggable(subMgr.GetLogger()), m_SubMgr(subMgr)
@@ -51,7 +52,6 @@ bool SEPatientConfiguration::IsValid() const
     return false;
   return true;
 }
-
 
 std::string SEPatientConfiguration::GetPatientFile() const
 {
@@ -112,21 +112,29 @@ void SEPatientConfiguration::InvalidateConditions()
 
 bool SEPatientConfiguration::HasOverride() const
 {
-  return m_Overrides.size() > 1;
+  return m_ScalarOverrides.size() > 1;
 }
-void SEPatientConfiguration::AddOverride(const std::string& name, double value)
+void SEPatientConfiguration::AddScalarOverride(const std::string& name, double value)
 {
-  m_Overrides[name] = value;
+  m_ScalarOverrides.push_back(SEScalarProperty(name, value, ""));
 }
-std::map<std::string, double>& SEPatientConfiguration::GetOverrides()
+void SEPatientConfiguration::AddScalarOverride(const std::string& name, double value, std::string unit)
 {
-  return m_Overrides;
+  m_ScalarOverrides.push_back(SEScalarProperty(name, value, unit));
 }
-const std::map<std::string, double>& SEPatientConfiguration::GetOverrides() const
+void SEPatientConfiguration::AddScalarOverride(const std::string& name, double value, const CCompoundUnit& unit)
 {
-  return m_Overrides;
+  m_ScalarOverrides.push_back(SEScalarProperty(name, value, unit.GetString()));
+}
+std::vector<SEScalarProperty>& SEPatientConfiguration::GetScalarOverrides()
+{
+  return m_ScalarOverrides;
+}
+const std::vector<SEScalarProperty>& SEPatientConfiguration::GetScalarOverrides() const
+{
+  return m_ScalarOverrides;
 }
 void SEPatientConfiguration::RemoveOverrides()
 {
-  m_Overrides.clear();
+  m_ScalarOverrides.clear();
 }

@@ -109,7 +109,7 @@ message PatientConfigurationData
     string                                              PatientFile               = 2;
   }
   ConditionListData                                     Conditions                = 3;
-  repeated PropertyPairData                             Overrides                 = 4;
+  repeated ScalarPropertyData                           ScalarOverride            = 4;
 }
 
 message AutoSerializationData

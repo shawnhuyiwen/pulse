@@ -352,6 +352,12 @@ void PBEngine::Serialize(const CDM_BIND::PatientConfigurationData& src, SEPatien
   
   if (src.has_conditions())
     PBEngine::Load(src.conditions(), dst.GetConditions());
+
+  for (size_t i = 0; i < src.scalaroverride_size(); i++)
+  {
+    const CDM_BIND::ScalarPropertyData& sp = src.scalaroverride()[i];
+    dst.AddScalarOverride(sp.name(), sp.value(), sp.unit());
+  }
 }
 CDM_BIND::PatientConfigurationData* PBEngine::Unload(const SEPatientConfiguration& src)
 {
@@ -365,6 +371,14 @@ void PBEngine::Serialize(const SEPatientConfiguration& src, CDM_BIND::PatientCon
     dst.set_patientfile(src.m_PatientFile);
   else if (src.HasPatient())
     dst.set_allocated_patient(PBPatient::Unload(*src.m_Patient));
+
+  for (auto& sp : src.GetScalarOverrides())
+  {
+    CDM_BIND::ScalarPropertyData* so = dst.add_scalaroverride();
+    so->set_name(sp.name);
+    so->set_value(sp.value);
+    so->set_unit(sp.unit);
+  }
 
   dst.set_allocated_conditions(PBEngine::Unload(*src.GetConditions()));
 }
