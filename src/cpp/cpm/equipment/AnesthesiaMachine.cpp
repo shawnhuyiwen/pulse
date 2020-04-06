@@ -313,7 +313,7 @@ void AnesthesiaMachine::PreProcess()
 /// The current Pulse implementation has no specific process functionality for the anesthesia machine.
 /// Anesthesia machine processing is currently done in the Respiratory System with the combined circuit methodology.
 //--------------------------------------------------------------------------------------------------
-void AnesthesiaMachine::Process()
+void AnesthesiaMachine::Process(bool solve_and_transport)
 {
   if (GetConnection() != eAnesthesiaMachine_Connection::Off)
   {

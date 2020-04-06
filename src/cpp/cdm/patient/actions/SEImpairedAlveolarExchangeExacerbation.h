@@ -25,10 +25,15 @@ public:
   virtual SEScalar0To1& GetImpairedFraction();
   virtual double GetImpairedFraction() const;
 
+  virtual bool HasSeverity() const;
+  virtual SEScalar0To1& GetSeverity();
+  virtual double GetSeverity() const;
+
   virtual void ToString(std::ostream &str) const;
 
 protected:
   
   SEScalarArea*      m_ImpairedSurfaceArea;
   SEScalar0To1*      m_ImpairedFraction;
+  SEScalar0To1* m_Severity;
 };

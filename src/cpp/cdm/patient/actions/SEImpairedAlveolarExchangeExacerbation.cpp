@@ -10,6 +10,7 @@ SEImpairedAlveolarExchangeExacerbation::SEImpairedAlveolarExchangeExacerbation()
 {
   m_ImpairedSurfaceArea = nullptr;
   m_ImpairedFraction = nullptr;
+  m_Severity = nullptr;
 }
 
 SEImpairedAlveolarExchangeExacerbation::~SEImpairedAlveolarExchangeExacerbation()
@@ -21,6 +22,7 @@ void SEImpairedAlveolarExchangeExacerbation::Clear()
 {
   SAFE_DELETE(m_ImpairedSurfaceArea);
   SAFE_DELETE(m_ImpairedFraction);
+  SAFE_DELETE(m_Severity);
 }
 
 void SEImpairedAlveolarExchangeExacerbation::Copy(const SEImpairedAlveolarExchangeExacerbation & src)
@@ -40,6 +42,8 @@ bool SEImpairedAlveolarExchangeExacerbation::IsActive() const
   if (GetImpairedFraction() > 0)
     return true;
   if (m_ImpairedSurfaceArea!=nullptr && m_ImpairedSurfaceArea->IsPositive())
+    return true;
+  if (HasSeverity())
     return true;
   return false;
 }
@@ -78,12 +82,29 @@ double SEImpairedAlveolarExchangeExacerbation::GetImpairedFraction() const
   return m_ImpairedFraction->GetValue();
 }
 
+bool SEImpairedAlveolarExchangeExacerbation::HasSeverity() const
+{
+  return m_Severity == nullptr ? false : m_Severity->IsValid();
+}
+SEScalar0To1& SEImpairedAlveolarExchangeExacerbation::GetSeverity()
+{
+  if (m_Severity == nullptr)
+    m_Severity = new SEScalar0To1();
+  return *m_Severity;
+}
+double SEImpairedAlveolarExchangeExacerbation::GetSeverity() const
+{
+  if (m_Severity == nullptr)
+    return SEScalar::dNaN();
+  return m_Severity->GetValue();
+}
 
 void SEImpairedAlveolarExchangeExacerbation::ToString(std::ostream &str) const
 {
   str << "Impaired Alveoli Exchange Exacerbation:";
   str << "\n\tImpairedSurfaceArea :";HasImpairedSurfaceArea() ? str << *m_ImpairedSurfaceArea : str << "Not Provided";
   str << "\n\tImpairedFraction :"; HasImpairedFraction() ? str << *m_ImpairedFraction : str << "Not Provided";
+  str << "\n\tSeverity: "; HasSeverity() ? str << *m_Severity : str << "Not Provided";
 
   str << std::flush;
 }

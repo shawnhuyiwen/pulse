@@ -634,7 +634,7 @@ void Gastrointestinal::AbsorbMeal(double duration_min)
 /// \details
 /// The current Pulse implementation has no functionality in the process function for Gastrointestinal.
 //--------------------------------------------------------------------------------------------------
-void Gastrointestinal::Process()
+void Gastrointestinal::Process(bool solve_and_transport)
 {
   ComputeExposedModelParameters();
 }

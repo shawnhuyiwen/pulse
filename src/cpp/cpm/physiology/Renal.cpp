@@ -466,7 +466,7 @@ void Renal::PreProcess()
 /// occur in Cardiovascular::Process. This series of functions clears all of the necessary substances to 
 /// the bladder, restores bicarbonate if necessary and calculates the renal systemic outputs.
 //--------------------------------------------------------------------------------------------------
-void Renal::Process()
+void Renal::Process(bool solve_and_transport)
 {  
   //Circuit Processing is done on the entire circulatory circuit elsewhere
   CalculateActiveTransport();

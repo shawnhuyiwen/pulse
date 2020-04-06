@@ -247,7 +247,7 @@ void Inhaler::Administer()
 /// \details
 /// Currently not used.
 //--------------------------------------------------------------------------------------------------
-void Inhaler::Process()
+void Inhaler::Process(bool solve_and_transport)
 {
   ComputeExposedModelParameters();
 }

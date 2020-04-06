@@ -124,6 +124,9 @@ public:
 
   virtual void                          SetAdvanceHandler(SEAdvanceHandler* handler) { m_AdvanceHandler = handler; }
 
+  virtual bool                          HasOverride() const;
+  virtual const std::map<std::string, double>& GetOverrides() const;
+
   std::stringstream                                             m_ss;
 protected:
   EngineState                                                   m_State;
@@ -176,6 +179,8 @@ protected:
   SEAdvanceHandler*                                             m_AdvanceHandler;
 
   std::string                                                   m_DataDir;
+
+  std::map<std::string, double>                                 m_Overrides;
 
 };
 

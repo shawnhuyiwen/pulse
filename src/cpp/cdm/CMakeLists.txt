@@ -67,6 +67,7 @@ add_library_ex(CommonDataModel
     engine/SEEnvironmentActionCollection.h
     engine/SEEquipmentActionCollection.h
     engine/SEEventManager.h
+    engine/SEOverrides.h
     engine/SEPatientActionCollection.h
     engine/SEPatientConfiguration.h
     engine/SESerializeState.h
@@ -129,6 +130,7 @@ add_library_ex(CommonDataModel
     patient/actions/SEPatientAction.h
     patient/actions/SEPatientAssessmentRequest.h
     patient/actions/SEPericardialEffusion.h
+    patient/actions/SEPulmonaryShuntExacerbation.h
     patient/actions/SERespiratoryFatigue.h
     patient/actions/SESubstanceAdministration.h
     patient/actions/SESubstanceBolus.h
@@ -156,6 +158,7 @@ add_library_ex(CommonDataModel
     patient/conditions/SELobarPneumonia.h
     patient/conditions/SEPatientCondition.h
     patient/conditions/SEPulmonaryFibrosis.h
+    patient/conditions/SEPulmonaryShunt.h
     patient/conditions/SESepsis.h
     properties/SEArray.h
     properties/SEArrayPressure.h
@@ -380,6 +383,7 @@ add_library_ex(CommonDataModel
     engine/SEEnvironmentActionCollection.cpp
     engine/SEEquipmentActionCollection.cpp
     engine/SEEventManager.cpp
+    engine/SEOverrides.cpp
     engine/SEPatientActionCollection.cpp
     engine/SEPatientConfiguration.cpp
     engine/SESerializeState.cpp
@@ -455,6 +459,7 @@ add_library_ex(CommonDataModel
     patient/actions/SEPatientAction.cpp
     patient/actions/SEPatientAssessmentRequest.cpp
     patient/actions/SEPericardialEffusion.cpp
+    patient/actions/SEPulmonaryShuntExacerbation.cpp
     patient/actions/SERespiratoryFatigue.cpp
     patient/actions/SESubstanceAdministration.cpp
     patient/actions/SESubstanceBolus.cpp
@@ -482,6 +487,7 @@ add_library_ex(CommonDataModel
     patient/conditions/SELobarPneumonia.cpp
     patient/conditions/SEPatientCondition.cpp
     patient/conditions/SEPulmonaryFibrosis.cpp
+    patient/conditions/SEPulmonaryShunt.cpp
     patient/conditions/SESepsis.cpp
     #properties/SEArray.cpp
     #properties/SEArrayPressure.cpp

@@ -32,6 +32,7 @@
 #include "engine/SEEngineTracker.h"
 #include "engine/SEDataRequestManager.h"
 #include "engine/SESerializeState.h"
+#include "engine/SEOverrides.h"
 #include "engine/SEEventManager.h"
 #include "engine/SEAdvanceHandler.h"
 #include "engine/SEEngineStabilization.h"
@@ -235,6 +236,9 @@ const SEScalarTime& PulseData::GetEngineTime() const { return m_CurrentTime; }
 const SEScalarTime& PulseData::GetSimulationTime() const { return m_SimulationTime; }
 const SEScalarTime& PulseData::GetTimeStep() const { return m_Config->GetTimeStep(); }
 
+bool PulseData::HasOverride() const { return m_Overrides.size() > 1; }
+const std::map<std::string, double>& PulseData::GetOverrides() const { return m_Overrides; }
+
 PulseController::PulseController(const std::string& logFileName, const std::string& data_dir) : PulseController(new Logger(logFileName), data_dir)
 {
   // Directs to the ctor below
@@ -294,6 +298,11 @@ bool PulseController::InitializeEngine(const SEPatientConfiguration& patient_con
   }
   m_EngineTrack->ResetFile();
   m_State = EngineState::Initialization;
+  if(patient_configuration.HasOverride())
+  {
+    for (auto itr : patient_configuration.GetOverrides())
+      m_Overrides[itr.first] = itr.second;
+  }
   if (patient_configuration.HasPatient())
   {
     if (!PulseController::Initialize(pConfig, *patient_configuration.GetPatient()))
@@ -1116,6 +1125,8 @@ void PulseController::AdvanceModelTime()
 
   if (m_AdvanceHandler)
     m_AdvanceHandler->OnAdvance(m_CurrentTime.GetValue(TimeUnit::s));
+
+  m_Overrides.clear();
 }
 
 void PulseController::AdvanceModelTime(double time, const TimeUnit& unit)
@@ -1236,6 +1247,14 @@ bool PulseController::ProcessAction(const SEAction& action)
     }
     else
       return SerializeFromFile(serialize->GetFilename(), JSON);
+    return true;
+  }
+
+  const SEOverrides* overrides = dynamic_cast<const SEOverrides*>(&action);
+  if (overrides != nullptr)
+  {
+    for (auto itr : overrides->GetPairs())
+      m_Overrides[itr.first] = itr.second;
     return true;
   }
 

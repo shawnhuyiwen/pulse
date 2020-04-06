@@ -15,6 +15,7 @@
 #include "patient/conditions/SEImpairedAlveolarExchange.h"
 #include "patient/conditions/SELobarPneumonia.h"
 #include "patient/conditions/SEPulmonaryFibrosis.h"
+#include "patient/conditions/SEPulmonaryShunt.h"
 #include "patient/conditions/SESepsis.h"
 // Environment Conditions
 #include "system/environment/conditions/SEInitialEnvironmentalConditions.h"
@@ -33,6 +34,7 @@ SEConditionManager::SEConditionManager(SESubstanceManager& substances) : Loggabl
   m_LobarPneumonia = nullptr;
   m_PericardialEffusion = nullptr;
   m_PulmonaryFibrosis = nullptr;
+  m_PulmonaryShunt = nullptr;
   m_ImpairedAlveolarExchange = nullptr;
   m_InitialEnvironmentalConditions = nullptr;
   m_Sepsis = nullptr;
@@ -54,6 +56,7 @@ void SEConditionManager::Clear()
   SAFE_DELETE(m_LobarPneumonia);
   SAFE_DELETE(m_PericardialEffusion);
   SAFE_DELETE(m_PulmonaryFibrosis);
+  SAFE_DELETE(m_PulmonaryShunt);
   SAFE_DELETE(m_ImpairedAlveolarExchange);
   SAFE_DELETE(m_InitialEnvironmentalConditions);
   SAFE_DELETE(m_Sepsis);
@@ -239,6 +242,19 @@ bool SEConditionManager::ProcessCondition(const SECondition& condition)
       return true;
     }
 
+    const SEPulmonaryShunt* ps = dynamic_cast<const SEPulmonaryShunt*>(&condition);
+    if (ps != nullptr)
+    {
+      if (HasPulmonaryShunt())
+      {
+        Error("Cannot have multiple Pulmonary Shunt conditions");
+        return false;
+      }
+      m_PulmonaryShunt = new SEPulmonaryShunt();
+      m_PulmonaryShunt->Copy(*ps);
+      return true;
+    }
+
     const SESepsis* s = dynamic_cast<const SESepsis*>(&condition);
     if (s != nullptr)
     {
@@ -409,6 +425,19 @@ const SEPulmonaryFibrosis* SEConditionManager::GetPulmonaryFibrosis() const
   return m_PulmonaryFibrosis;
 }
 
+bool SEConditionManager::HasPulmonaryShunt() const
+{
+  return m_PulmonaryShunt == nullptr ? false : m_PulmonaryShunt->IsValid();
+}
+SEPulmonaryShunt* SEConditionManager::GetPulmonaryShunt()
+{
+  return m_PulmonaryShunt;
+}
+const SEPulmonaryShunt* SEConditionManager::GetPulmonaryShunt() const
+{
+  return m_PulmonaryShunt;
+}
+
 bool SEConditionManager::HasSepsis() const
 {
   return m_Sepsis == nullptr ? false : m_Sepsis->IsValid();
@@ -457,6 +486,8 @@ void SEConditionManager::GetAllConditions(std::vector<const SECondition*>& condi
     conditions.push_back(GetLobarPneumonia());
   if (HasPulmonaryFibrosis())
     conditions.push_back(GetPulmonaryFibrosis());
+  if (HasPulmonaryShunt())
+    conditions.push_back(GetPulmonaryShunt());
   if (HasSepsis())
     conditions.push_back(GetSepsis());
 
@@ -485,6 +516,8 @@ bool SEConditionManager::IsEmpty() const
   if (HasLobarPneumonia())
     return false;
   if (HasPulmonaryFibrosis())
+    return false;
+  if (HasPulmonaryShunt())
     return false;
   if (HasSepsis())
     return false;

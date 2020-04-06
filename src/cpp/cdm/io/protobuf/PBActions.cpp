@@ -16,6 +16,7 @@ POP_PROTO_WARNINGS()
 #include "system/equipment/SEEquipmentAction.h"
 #include "engine/SEAdvanceTime.h"
 #include "engine/SESerializeState.h"
+#include "engine/SEOverrides.h"
 #include "substance/SESubstanceManager.h"
 #include "properties/SEScalarTime.h"
 
@@ -41,6 +42,12 @@ SEAction* PBAction::Load(const CDM_BIND::AnyActionData& action, SESubstanceManag
     PBAction::Load(action.serialize(), *a);
     return a;
   }
+  case CDM_BIND::AnyActionData::kOverrides:
+  {
+    SEOverrides* a = new SEOverrides();
+    PBAction::Load(action.overrides(), *a);
+    return a;
+  }
   }
   subMgr.Error("Unknown Action");
   return nullptr;
@@ -59,6 +66,12 @@ CDM_BIND::AnyActionData* PBAction::Unload(const SEAction& action)
   if (ss != nullptr)
   {
     any->set_allocated_serialize(PBAction::Unload(*ss));
+    return any;
+  }
+  const SEOverrides* o = dynamic_cast<const SEOverrides*>(&action);
+  if (o != nullptr)
+  {
+    any->set_allocated_overrides(PBAction::Unload(*o));
     return any;
   }
 
@@ -145,4 +158,38 @@ void PBAction::Serialize(const SESerializeState& src, CDM_BIND::SerializeStateDa
   dst.set_type((CDM_BIND::SerializeStateData::eType)src.m_Type);
   if (src.HasFilename())
     dst.set_filename(src.m_Filename);
+}
+
+void PBAction::Load(const CDM_BIND::OverridesData& src, SEOverrides& dst)
+{
+  PBAction::Serialize(src, dst);
+}
+void PBAction::Serialize(const CDM_BIND::OverridesData& src, SEOverrides& dst)
+{
+  for (size_t i=0; i<src.propertypair_size(); i++)
+  {
+    const CDM_BIND::PropertyPairData& pp = src.propertypair()[i];
+    dst.GetPairs().insert(std::pair<std::string, double>(pp.name(), pp.value()));
+  }
+}
+CDM_BIND::OverridesData* PBAction::Unload(const SEOverrides& src)
+{
+  CDM_BIND::OverridesData* dst = new CDM_BIND::OverridesData();
+  PBAction::Serialize(src, *dst);
+  return dst;
+}
+void PBAction::Serialize(const SEOverrides& src, CDM_BIND::OverridesData& dst)
+{
+  for (auto itr : src.GetPairs())
+  {
+    CDM_BIND::PropertyPairData* pp = dst.add_propertypair();
+    pp->set_name(itr.first);
+    pp->set_value(itr.second);
+  }
+}
+void PBAction::Copy(const SEOverrides& src, SEOverrides& dst)
+{
+  CDM_BIND::OverridesData data;
+  PBAction::Serialize(src, data);
+  PBAction::Serialize(data, dst);
 }

@@ -151,7 +151,7 @@ void Drugs::PreProcess()
 /// The drug effects categories and system level drug effects are calculated and the values are set on the common data
 /// model for use in other systems. Drug effects are only calculated if the PD is enabled.
 //--------------------------------------------------------------------------------------------------
-void Drugs::Process()
+void Drugs::Process(bool solve_and_transport)
 {  
   CalculatePartitionCoefficients();
 

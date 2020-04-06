@@ -135,7 +135,7 @@ void Nervous::PreProcess()
 /// \details
 /// The only current Process-specific function checks the brain status to set events.
 //--------------------------------------------------------------------------------------------------
-void Nervous::Process()
+void Nervous::Process(bool solve_and_transport)
 {
   CheckBrainStatus();
   SetPupilEffects();

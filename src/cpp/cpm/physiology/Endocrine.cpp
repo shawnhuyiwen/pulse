@@ -80,7 +80,7 @@ void Endocrine::AtSteadyState()
 /// nervous system response. The masses of the hormones are increased in the kidneys' efferent arterioles. 
 /// The hormones will then circulate using the transport and substances methodology.
 //--------------------------------------------------------------------------------------------------
-void Endocrine::Process()
+void Endocrine::Process(bool solve_and_transport)
 {
   ReleaseEpinephrine();
   SynthesizeInsulin();

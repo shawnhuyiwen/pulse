@@ -70,7 +70,7 @@ void Hepatic::PreProcess()
 ///
 /// \details
 //--------------------------------------------------------------------------------------------------
-void Hepatic::Process()
+void Hepatic::Process(bool solve_and_transport)
 {
   ComputeExposedModelParameters();
 }

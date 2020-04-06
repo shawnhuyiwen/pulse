@@ -465,7 +465,7 @@ void Energy::Exercise()
 /// from the vascular to extravascular space. After this is complete, the vital signs of the patient are updated
 /// with regards to the new state.
 //--------------------------------------------------------------------------------------------------
-void Energy::Process()
+void Energy::Process(bool solve_and_transport)
 {
   m_circuitCalculator->Process(*m_TemperatureCircuit, m_dT_s);
   CalculateVitalSigns();

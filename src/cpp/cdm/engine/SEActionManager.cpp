@@ -102,6 +102,3 @@ void SEActionManager::GetAllActions(std::vector<const SEAction*>& actions) const
   m_EnvironmentActions->GetAllActions(actions);
   m_EquipmentActions->GetAllActions(actions);
 }
-
-
-

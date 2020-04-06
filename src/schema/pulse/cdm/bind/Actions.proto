@@ -33,3 +33,9 @@ message SerializeStateData
   eType                 Type     = 2;
   string                Filename = 3;
 }
+
+message OverridesData
+{
+  ActionData                Action       = 1;
+  repeated PropertyPairData PropertyPair = 2;
+}

@@ -617,10 +617,13 @@ void Cardiovascular::PreProcess()
 /// Finally, vitals sign data is computed and system data is populated in the 
 /// CalculateVitalSigns method.
 //--------------------------------------------------------------------------------------------------
-void Cardiovascular::Process()
+void Cardiovascular::Process(bool solve_and_transport)
 {
-  m_circuitCalculator->Process(*m_CirculatoryCircuit, m_dT_s);
-  m_transporter->Transport(*m_CirculatoryGraph, m_dT_s);
+  if (solve_and_transport)
+  {
+    m_circuitCalculator->Process(*m_CirculatoryCircuit, m_dT_s);
+    m_transporter->Transport(*m_CirculatoryGraph, m_dT_s);
+  }
   CalculateVitalSigns();
   ComputeExposedModelParameters();
 }

@@ -109,3 +109,24 @@ void SEPatientConfiguration::InvalidateConditions()
 {
   SAFE_DELETE(m_Conditions);
 }
+
+bool SEPatientConfiguration::HasOverride() const
+{
+  return m_Overrides.size() > 1;
+}
+void SEPatientConfiguration::AddOverride(const std::string& name, double value)
+{
+  m_Overrides[name] = value;
+}
+std::map<std::string, double>& SEPatientConfiguration::GetOverrides()
+{
+  return m_Overrides;
+}
+const std::map<std::string, double>& SEPatientConfiguration::GetOverrides() const
+{
+  return m_Overrides;
+}
+void SEPatientConfiguration::RemoveOverrides()
+{
+  m_Overrides.clear();
+}

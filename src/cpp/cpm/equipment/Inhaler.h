@@ -34,7 +34,7 @@ public:
   // main driver function responsible for calling the various ECG functions:
   void AtSteadyState() {}
   void PreProcess();
-  void Process();
+  void Process(bool solve_and_transport=true);
   void PostProcess();
 
   void StateChange();

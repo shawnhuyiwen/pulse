@@ -305,7 +305,7 @@ void Tissue::PreProcess()
 /// This function completes substance transport between systems by calculating the oxygen and carbon dioxide saturation
 /// throughout the cardiovascular system and calculating diffusion and alveoli transfer of substances.
 //--------------------------------------------------------------------------------------------------
-void Tissue::Process()
+void Tissue::Process(bool solve_and_transport)
 {
   CalculateMetabolicConsumptionAndProduction(m_Dt_s);
   CalculatePulmonaryCapillarySubstanceTransfer();

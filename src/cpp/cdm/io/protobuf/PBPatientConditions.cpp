@@ -21,6 +21,7 @@ POP_PROTO_WARNINGS()
 #include "patient/conditions/SEImpairedAlveolarExchange.h"
 #include "patient/conditions/SELobarPneumonia.h"
 #include "patient/conditions/SEPulmonaryFibrosis.h"
+#include "patient/conditions/SEPulmonaryShunt.h"
 #include "patient/conditions/SESepsis.h"
 
 void PBPatientCondition::Serialize(const CDM_BIND::PatientConditionData& src, SEPatientCondition& dst)
@@ -350,6 +351,35 @@ void PBPatientCondition::Copy(const SEPulmonaryFibrosis& src, SEPulmonaryFibrosi
   PBPatientCondition::Serialize(data, dst);
 }
 
+void PBPatientCondition::Load(const CDM_BIND::PulmonaryShuntData& src, SEPulmonaryShunt& dst)
+{
+  PBPatientCondition::Serialize(src, dst);
+}
+void PBPatientCondition::Serialize(const CDM_BIND::PulmonaryShuntData& src, SEPulmonaryShunt& dst)
+{
+  PBPatientCondition::Serialize(src.patientcondition(), dst);
+  if (src.has_severity())
+    PBProperty::Load(src.severity(), dst.GetSeverity());
+}
+CDM_BIND::PulmonaryShuntData* PBPatientCondition::Unload(const SEPulmonaryShunt& src)
+{
+  CDM_BIND::PulmonaryShuntData* dst = new CDM_BIND::PulmonaryShuntData();
+  PBPatientCondition::Serialize(src, *dst);
+  return dst;
+}
+void PBPatientCondition::Serialize(const SEPulmonaryShunt& src, CDM_BIND::PulmonaryShuntData& dst)
+{
+  PBPatientCondition::Serialize(src, *dst.mutable_patientcondition());
+  if (src.HasSeverity())
+    dst.set_allocated_severity(PBProperty::Unload(*src.m_Severity));
+}
+void PBPatientCondition::Copy(const SEPulmonaryShunt& src, SEPulmonaryShunt& dst)
+{
+  CDM_BIND::PulmonaryShuntData data;
+  PBPatientCondition::Serialize(src, data);
+  PBPatientCondition::Serialize(data, dst);
+}
+
 void PBPatientCondition::Load(const CDM_BIND::SepsisData& src, SESepsis& dst)
 {
   PBPatientCondition::Serialize(src, dst);
@@ -443,6 +473,12 @@ SEPatientCondition* PBPatientCondition::Load(const CDM_BIND::AnyPatientCondition
     PBPatientCondition::Load(any.pulmonaryfibrosis(), *a);
     return a;
   }
+  case CDM_BIND::AnyPatientConditionData::ConditionCase::kPulmonaryShunt:
+  {
+    SEPulmonaryShunt* a = new SEPulmonaryShunt();
+    PBPatientCondition::Load(any.pulmonaryshunt(), *a);
+    return a;
+  }
   case CDM_BIND::AnyPatientConditionData::ConditionCase::kSepsis:
   {
     SESepsis* a = new SESepsis();
@@ -514,6 +550,12 @@ CDM_BIND::AnyPatientConditionData* PBPatientCondition::Unload(const SEPatientCon
   if (pf != nullptr)
   {
     any->set_allocated_pulmonaryfibrosis(PBPatientCondition::Unload(*pf));
+    return any;
+  }
+  const SEPulmonaryShunt* ps = dynamic_cast<const SEPulmonaryShunt*>(&condition);
+  if (ps != nullptr)
+  {
+    any->set_allocated_pulmonaryshunt(PBPatientCondition::Unload(*ps));
     return any;
   }
   const SESepsis* s = dynamic_cast<const SESepsis*>(&condition);

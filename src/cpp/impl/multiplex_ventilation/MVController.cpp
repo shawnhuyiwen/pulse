@@ -3,6 +3,9 @@
 
 #include "MVController.h"
 
+#include "controller/Circuits.h"
+#include "controller/Compartments.h"
+#include "controller/Substances.h"
 #include "physiology/BloodChemistry.h"
 #include "physiology/Cardiovascular.h"
 #include "physiology/Drugs.h"
@@ -23,55 +26,90 @@
 
 #include "engine/SEEngineTracker.h"
 #include "engine/SEDataRequestManager.h"
+
+#include "substance/SESubstanceTransport.h"
+#include "circuit/fluid/SEFluidCircuitCalculator.h"
+#include "circuit/fluid/SEFluidCircuit.h"
+#include "circuit/fluid/SEFluidCircuitNode.h"
+#include "circuit/fluid/SEFluidCircuitPath.h"
+#include "compartment/fluid/SEGasCompartmentGraph.h"
+#include "compartment/fluid/SELiquidCompartmentGraph.h"
+
 #include "utils/DataTrack.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarFrequency.h"
-#include "properties/SEScalarPressure.h"
+#include "properties/SEScalarMass.h"
+#include "properties/SEScalarFrequency.h"
+#include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerPressure.h"
 
 MVController::MVController(const std::string& logFileName, const std::string& data_dir) : Loggable(new Logger(logFileName))
 {
-  m_TimeStep_s = 0.02;
-  m_CurrentTime_s = 0;
-  m_SpareAdvanceTime_s = 0;
+  m_BaseFileName = logFileName.substr(0, logFileName.length() - 4);
+}
+MVController::~MVController()
+{
 
-  m_SubMgr = new SESubstanceManager(GetLogger());
-  m_SubMgr->LoadSubstanceDirectory();
-  SESubstance* Oxygen = m_SubMgr->GetSubstance("Oxygen");
+}
 
-  m_Dyspnea = new SEDyspnea();
-  m_Dyspnea->GetSeverity().SetValue(1.0);
+bool MVController::Run(std::vector<std::string>& patients)
+{
+  SESubstanceManager* subMgr;
+  bool   enableMultiplexVentilation;
+  double timeStep_s = 0.02;
+  double currentTime_s = 0;
 
-  m_Intubation = new SEIntubation();
-  m_Intubation->SetType(eIntubation_Type::Tracheal);
+  SEFluidCircuit* multiplexVentilationCircuit;
+  SEGasCompartmentGraph* multiplexVentilationGraph;
+  SEFluidCircuitCalculator* calculator;
+  SEGasTransporter* transporter;
+  SELiquidTransporter* aerosolTransporter;
 
-  m_ImpairedAlveolarExchangeExacerbation = new SEImpairedAlveolarExchangeExacerbation();
-  m_ImpairedAlveolarExchangeExacerbation->GetImpairedFraction().SetValue(0.25);
+  std::vector<PulseController*> engines;
 
-  m_MechacicalVentilatorConfiguration = new SEMechanicalVentilatorConfiguration(*m_SubMgr);
-  auto& config = m_MechacicalVentilatorConfiguration->GetConfiguration();
-  config.SetConnection(eMechanicalVentilator_Connection::Tube);
-  config.SetControl(eMechanicalVentilator_Control::P_CMV);
-  config.SetDriverWaveform(eMechanicalVentilator_DriverWaveform::Square);
-  config.GetRespiratoryRate().SetValue(20, FrequencyUnit::Per_min);
-  config.GetInspiratoryExpiratoryRatio().SetValue(0.5);
-  config.GetPeakInspiratoryPressure().SetValue(28, PressureUnit::cmH2O);
-  config.GetPositiveEndExpiredPressure().SetValue(10, PressureUnit::cmH2O);
-  m_FiO2 = &config.GetFractionInspiredGas(*Oxygen);
-  m_FiO2->GetFractionAmount().SetValue(0.3);
+  calculator = new SEFluidCircuitCalculator(VolumePerPressureUnit::L_Per_cmH2O, VolumePerTimeUnit::L_Per_s,
+    PressureTimeSquaredPerVolumeUnit::cmH2O_s2_Per_L, PressureUnit::cmH2O,
+    VolumeUnit::L, PressureTimePerVolumeUnit::cmH2O_s_Per_L, GetLogger());
+  transporter = new SEGasTransporter(VolumePerTimeUnit::L_Per_s, VolumeUnit::L, VolumeUnit::L, GetLogger());
+  //aerosolTransporter = new SELiquidTransporter(VolumePerTimeUnit::mL_Per_s, VolumeUnit::mL, MassUnit::ug, MassPerVolumeUnit::ug_Per_mL, GetLogger());
 
-  std::string baseFileName = logFileName.substr(0, logFileName.length() - 4);
-  for (size_t i=0; i<2; i++)
+  // jbw Grab whatever nodes/compartments you need to connect everything
+  SEFluidCircuitNode* connectionNode = nullptr; // ex. Set this in a loop below
+  SEGasCompartment* connectionCmpt = nullptr;// ex. Set this in a loop below
+  int i=0;
+  for (std::string state : patients)
   {
-    PulseController* pc = new PulseController(baseFileName+"_p"+std::to_string(i)+".log", data_dir);
-    pc->SerializeFromFile("./states/StandardMale@0s.json", SerializationFormat::JSON);
+    PulseController* pc = new PulseController(m_BaseFileName+"_p"+std::to_string(i++)+".log");
+    pc->SerializeFromFile(state, SerializationFormat::JSON);
 
-    pc->GetEngineTracker().GetDataRequestManager().SetResultsFilename(baseFileName+"_p"+std::to_string(i)+".csv");
-    // FiO2 and Impaired Alveolar Exchange are also manually updated with a Probe below
-    pc->GetEngineTracker().GetDataTrack().Probe("AlveolarImpairmentSeverity",
-      m_ImpairedAlveolarExchangeExacerbation->GetImpairedFraction().GetValue());
-    pc->GetEngineTracker().GetDataTrack().Probe("FiO2", m_FiO2->GetFractionAmount().GetValue());
+    // Build our multiplex circuit
+    // Let's add the first mechanical ventilator circuit to our circuit
+    if (i == 0)
+    {
+      subMgr = &pc->GetSubstances();
+      for (SEFluidCircuitNode* node : pc->GetCircuits().GetMechanicalVentilatorCircuit().GetNodes())
+        multiplexVentilationCircuit->AddNode(*node);
+      for (SEFluidCircuitPath* path : pc->GetCircuits().GetMechanicalVentilatorCircuit().GetPaths())
+        multiplexVentilationCircuit->AddPath(*path);
+      for (SEGasCompartment* cmpt : pc->GetCompartments().GetMechanicalVentilatorGraph().GetCompartments())
+        multiplexVentilationGraph->AddCompartment(*cmpt);
+      for (SEGasCompartmentLink* link : pc->GetCompartments().GetMechanicalVentilatorGraph().GetLinks())
+        multiplexVentilationGraph->AddLink(*link);
+    }
+    // Add all the nodes/paths/compartments/links to our circuit/graph
+    for (SEFluidCircuitNode* node : pc->GetCircuits().GetRespiratoryCircuit().GetNodes())
+      multiplexVentilationCircuit->AddNode(*node);
+    for (SEFluidCircuitPath* path : pc->GetCircuits().GetRespiratoryCircuit().GetPaths())
+      multiplexVentilationCircuit->AddPath(*path);
+    for (SEGasCompartment* cmpt : pc->GetCompartments().GetRespiratoryGraph().GetCompartments())
+      multiplexVentilationGraph->AddCompartment(*cmpt);
+    for (SEGasCompartmentLink* link : pc->GetCompartments().GetRespiratoryGraph().GetLinks())
+      multiplexVentilationGraph->AddLink(*link);
+
+    // jbw Add new path/link to connect patient respiratory system to mechanical ventilator
+
+    pc->GetEngineTracker().GetDataRequestManager().SetResultsFilename(m_BaseFileName+"_p"+std::to_string(i)+".csv");
     pc->GetEngineTracker().GetDataRequestManager().CreateMechanicalVentilatorDataRequest("PeakInspiratoryPressure", PressureUnit::cmH2O);
     pc->GetEngineTracker().GetDataRequestManager().CreateMechanicalVentilatorDataRequest("PositiveEndExpiredPressure", PressureUnit::cmH2O);
     pc->GetEngineTracker().GetDataRequestManager().CreatePhysiologyDataRequest("TotalRespiratoryModelCompliance", VolumePerPressureUnit::L_Per_cmH2O);
@@ -83,151 +121,154 @@ MVController::MVController(const std::string& logFileName, const std::string& da
     pc->GetEngineTracker().GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
     pc->GetEngineTracker().GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
     pc->GetEngineTracker().GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
+    // TODO Add any probes we may want... 
     pc->GetEngineTracker().SetupRequests();
-
-    pc->ProcessAction(*m_Dyspnea);
-    pc->ProcessAction(*m_Intubation);
-    pc->ProcessAction(*m_ImpairedAlveolarExchangeExacerbation);
-    pc->ProcessAction(*m_MechacicalVentilatorConfiguration);
-    // TODO Compliance Override
-
-    m_Patients.push_back(pc);
+    engines.push_back(pc);
   }
+  multiplexVentilationCircuit->StateChange();
+  multiplexVentilationGraph->StateChange();
 
-  SetupMultiplexVentilation();
-}
+  SEMechanicalVentilatorConfiguration config(*subMgr);
 
-MVController::~MVController()
-{
-  SAFE_DELETE(m_SubMgr);
-  SAFE_DELETE(m_Dyspnea);
-  SAFE_DELETE(m_Intubation);
-  SAFE_DELETE(m_ImpairedAlveolarExchangeExacerbation);
-  SAFE_DELETE(m_MechacicalVentilatorConfiguration);
-  DELETE_VECTOR(m_Patients);
-}
-
-void MVController::SetupMultiplexVentilation()
-{
-  // TODO Copy all the Respiratory circuits to our circuit manager
-  // TODO Copy all the Respiratory graphs to our compartment manager
-}
-
-bool MVController::AdvanceModelTime(double time, const TimeUnit& unit)
-{
-  double time_s = Convert(time, unit, TimeUnit::s) + m_SpareAdvanceTime_s;
-  int count = (int)(time_s / m_TimeStep_s);
+  int vent_count;
+  int count = (int)(60 / timeStep_s);
   for (int i = 0; i < count; i++)
   {
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
     {
       if(pc->GetEvents().IsEventActive(eEvent::IrreversibleState))
         return false;
     }
     // PreProcess
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((Environment&)pc->GetEnvironment()).PreProcess();
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((Cardiovascular&)pc->GetCardiovascular()).PreProcess();
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((Inhaler&)pc->GetInhaler()).PreProcess();
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((Respiratory&)pc->GetRespiratory()).PreProcess();
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((AnesthesiaMachine&)pc->GetAnesthesiaMachine()).PreProcess();
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((MechanicalVentilator&)pc->GetMechanicalVentilator()).PreProcess();
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((Gastrointestinal&)pc->GetGastrointestinal()).PreProcess();
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((Hepatic&)pc->GetHepatic()).PreProcess();
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((Renal&)pc->GetRenal()).PreProcess();
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((Nervous&)pc->GetNervous()).PreProcess();
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((Energy&)pc->GetEnergy()).PreProcess();
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((Endocrine&)pc->GetEndocrine()).PreProcess();
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((Drugs&)pc->GetDrugs()).PreProcess();
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((Tissue&)pc->GetTissue()).PreProcess();
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((BloodChemistry&)pc->GetBloodChemistry()).PreProcess();
-    for (PulseController* pc : m_Patients)
+    // Since this is the last preprocess,
+    // Check if we are in mechanical ventilator mode
+    vent_count = 0;
+    enableMultiplexVentilation = false;
+    for (PulseController* pc : engines)
+    {
       ((ECG&)pc->GetECG()).PreProcess();
+      if (pc->GetAirwayMode() == eAirwayMode::MechanicalVentilator)
+        vent_count++;
+    }
+    if (vent_count > 0)
+    {
+      if (vent_count == engines.size())
+        enableMultiplexVentilation = true;
+      else
+      {
+        Fatal("Engines are out of sync");
+        return false;
+      }
+    }
 
     // Process
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((Environment&)pc->GetEnvironment()).Process();
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((Cardiovascular&)pc->GetCardiovascular()).Process();
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((Inhaler&)pc->GetInhaler()).Process();
-    for (PulseController* pc : m_Patients)
-      ((Respiratory&)pc->GetRespiratory()).Process();
-    for (PulseController* pc : m_Patients)
+    if (enableMultiplexVentilation)
+    {
+      // Solve the multiplex circuit
+      calculator->Process(*multiplexVentilationCircuit, timeStep_s);
+      // Transport the multiplex graph
+      transporter->Transport(*multiplexVentilationGraph, timeStep_s);
+      // TODO Consider adding aerosol support
+    }
+    for (PulseController* pc : engines)
+      ((Respiratory&)pc->GetRespiratory()).Process(!enableMultiplexVentilation);
+    for (PulseController* pc : engines)
       ((AnesthesiaMachine&)pc->GetAnesthesiaMachine()).Process();
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((MechanicalVentilator&)pc->GetMechanicalVentilator()).Process();
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((Gastrointestinal&)pc->GetGastrointestinal()).Process();
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((Hepatic&)pc->GetHepatic()).Process();
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((Renal&)pc->GetRenal()).Process();
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((Nervous&)pc->GetNervous()).Process();
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((Energy&)pc->GetEnergy()).Process();
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((Endocrine&)pc->GetEndocrine()).Process();
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((Drugs&)pc->GetDrugs()).Process();
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((Tissue&)pc->GetTissue()).Process();
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((BloodChemistry&)pc->GetBloodChemistry()).Process();
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((ECG&)pc->GetECG()).Process();
 
     // PostProcess
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((Environment&)pc->GetEnvironment()).PostProcess();
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((Cardiovascular&)pc->GetCardiovascular()).PostProcess();
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((Inhaler&)pc->GetInhaler()).PostProcess();
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((Respiratory&)pc->GetRespiratory()).PostProcess();
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((AnesthesiaMachine&)pc->GetAnesthesiaMachine()).PostProcess();
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((MechanicalVentilator&)pc->GetMechanicalVentilator()).PostProcess();
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((Gastrointestinal&)pc->GetGastrointestinal()).PostProcess();
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((Hepatic&)pc->GetHepatic()).PostProcess();
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((Renal&)pc->GetRenal()).PostProcess();
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((Nervous&)pc->GetNervous()).PostProcess();
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((Energy&)pc->GetEnergy()).PostProcess();
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((Endocrine&)pc->GetEndocrine()).PostProcess();
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((Drugs&)pc->GetDrugs()).PostProcess();
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((Tissue&)pc->GetTissue()).PostProcess();
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((BloodChemistry&)pc->GetBloodChemistry()).PostProcess();
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
       ((ECG&)pc->GetECG()).PostProcess();
 
     // Increment Times and track data
-    for (PulseController* pc : m_Patients)
+    for (PulseController* pc : engines)
     {
       pc->GetEvents().UpdateEvents(pc->GetTimeStep());
       ((SEScalarTime&)pc->GetEngineTime()).Increment(pc->GetTimeStep());
@@ -235,10 +276,13 @@ bool MVController::AdvanceModelTime(double time, const TimeUnit& unit)
       //pc->GetEngineTracker().GetDataTrack().Probe("AlveolarImpairmentSeverity",
       //  m_ImpairedAlveolarExchangeExacerbation->GetImpairedFraction().GetValue());
       //pc->GetEngineTracker().GetDataTrack().Probe("FiO2", m_FiO2->GetFractionAmount().GetValue());
-      pc->GetEngineTracker().TrackData(m_CurrentTime_s);
+      pc->GetEngineTracker().TrackData(currentTime_s);
     }
-    m_CurrentTime_s += m_TimeStep_s;
+    currentTime_s += timeStep_s;
+
+    // TODO Check to see if we are stable
   }
-  m_SpareAdvanceTime_s = time_s - (count * m_TimeStep_s);
+  // TODO Write out a results file
+  DELETE_VECTOR(engines);
   return true;
 }

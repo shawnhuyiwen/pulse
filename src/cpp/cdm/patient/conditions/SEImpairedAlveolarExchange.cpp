@@ -10,6 +10,7 @@ SEImpairedAlveolarExchange::SEImpairedAlveolarExchange() : SEPatientCondition()
 {
   m_ImpairedSurfaceArea = nullptr;
   m_ImpairedFraction = nullptr;
+  m_Severity = nullptr;
 }
 
 SEImpairedAlveolarExchange::~SEImpairedAlveolarExchange()
@@ -21,6 +22,7 @@ void SEImpairedAlveolarExchange::Clear()
 {
   SAFE_DELETE(m_ImpairedSurfaceArea);
   SAFE_DELETE(m_ImpairedFraction);
+  SAFE_DELETE(m_Severity);
 }
 
 void SEImpairedAlveolarExchange::Copy(const SEImpairedAlveolarExchange& src)
@@ -30,7 +32,7 @@ void SEImpairedAlveolarExchange::Copy(const SEImpairedAlveolarExchange& src)
 
 bool SEImpairedAlveolarExchange::IsValid() const
 {
-  return HasImpairedFraction() || HasImpairedSurfaceArea();
+  return HasImpairedFraction() || HasImpairedSurfaceArea() || HasSeverity();
 }
 
 bool SEImpairedAlveolarExchange::IsActive() const
@@ -40,6 +42,8 @@ bool SEImpairedAlveolarExchange::IsActive() const
   if (GetImpairedFraction() > 0)
     return true;
   if (m_ImpairedSurfaceArea!=nullptr && m_ImpairedSurfaceArea->IsPositive())
+    return true;
+  if (HasSeverity())
     return true;
   return false;
 }
@@ -78,12 +82,29 @@ double SEImpairedAlveolarExchange::GetImpairedFraction() const
   return m_ImpairedFraction->GetValue();
 }
 
+bool SEImpairedAlveolarExchange::HasSeverity() const
+{
+  return m_Severity == nullptr ? false : m_Severity->IsValid();
+}
+SEScalar0To1& SEImpairedAlveolarExchange::GetSeverity()
+{
+  if (m_Severity == nullptr)
+    m_Severity = new SEScalar0To1();
+  return *m_Severity;
+}
+double SEImpairedAlveolarExchange::GetSeverity() const
+{
+  if (m_Severity == nullptr)
+    return SEScalar::dNaN();
+  return m_Severity->GetValue();
+}
 
 void SEImpairedAlveolarExchange::ToString(std::ostream &str) const
 {
   str << "Impaired Alveoli Exchange :";
   str << "\n\tImpairedSurfaceArea :";HasImpairedSurfaceArea() ? str << *m_ImpairedSurfaceArea : str << "Not Provided";
   str << "\n\tImpairedFraction :"; HasImpairedFraction() ? str << *m_ImpairedFraction : str << "Not Provided";
+  str << "\n\tSeverity: "; HasSeverity() ? str << *m_Severity : str << "Not Provided";
 
   str << std::flush;
 }

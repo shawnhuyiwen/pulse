@@ -195,7 +195,7 @@ void BloodChemistry::PreProcess()
 /// or changed by other systems are set on the blood chemistry system data objects. Events 
 /// are triggered at specific blood concentrations of certain substances in CheckBloodGasLevels().
 //--------------------------------------------------------------------------------------------------
-void BloodChemistry::Process()
+void BloodChemistry::Process(bool solve_and_transport)
 {
   //Push the compartment values of O2 and CO2 partial pressures on the corresponding system data.
   GetOxygenSaturation().Set(m_aortaO2->GetSaturation());

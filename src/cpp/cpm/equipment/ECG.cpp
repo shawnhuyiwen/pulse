@@ -108,7 +108,7 @@ void ECG::PreProcess()
 /// reach the end of the interpolated waveform data. If there are no active iterators, the output
 /// defaults to 0 mV.
 //--------------------------------------------------------------------------------------------------
-void ECG::Process()
+void ECG::Process(bool solve_and_transport)
 {
   m_heartRhythmTime_s += m_dt_s;
   if (m_heartRhythmTime_s >= m_heartRhythmPeriod_s)

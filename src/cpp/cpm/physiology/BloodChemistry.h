@@ -38,7 +38,7 @@ public:
 
   void AtSteadyState();
   void PreProcess();
-  void Process();
+  void Process(bool solve_and_transport=true);
   void PostProcess();
 
   bool CalculateCompleteBloodCount(SECompleteBloodCount& cbc) const;

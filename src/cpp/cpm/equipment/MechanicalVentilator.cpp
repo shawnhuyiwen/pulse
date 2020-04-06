@@ -377,7 +377,7 @@ void MechanicalVentilator::PreProcess()
 /// The current Pulse implementation has no specific process functionality for the mechanical ventilator.
 /// Mechanical ventilator processing is currently done in the Respiratory System with the combined circuit methodology.
 //--------------------------------------------------------------------------------------------------
-void MechanicalVentilator::Process()
+void MechanicalVentilator::Process(bool solve_and_transport)
 {
   ComputeExposedModelParameters();
 }

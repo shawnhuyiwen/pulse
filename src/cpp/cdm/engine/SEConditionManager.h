@@ -15,6 +15,7 @@ class SEConsumeMeal;
 class SEImpairedAlveolarExchange;
 class SELobarPneumonia;
 class SEPulmonaryFibrosis;
+class SEPulmonaryShunt;
 class SESepsis;
 // Environment Conditions
 class SEInitialEnvironmentalConditions;
@@ -86,6 +87,10 @@ public:
   SEPulmonaryFibrosis* GetPulmonaryFibrosis();
   const SEPulmonaryFibrosis* GetPulmonaryFibrosis() const;
 
+  bool HasPulmonaryShunt() const;
+  SEPulmonaryShunt* GetPulmonaryShunt();
+  const SEPulmonaryShunt* GetPulmonaryShunt() const;
+
   bool HasSepsis() const;
   SESepsis* GetSepsis();
   const SESepsis* GetSepsis() const;
@@ -112,6 +117,7 @@ protected:
   SELobarPneumonia*                        m_LobarPneumonia;
   SEChronicRenalStenosis*                  m_RenalStenosis;
   SEPulmonaryFibrosis*                     m_PulmonaryFibrosis;
+  SEPulmonaryShunt*                        m_PulmonaryShunt;
   SESepsis*                                m_Sepsis;
 
   SEInitialEnvironmentalConditions*        m_InitialEnvironmentalConditions;

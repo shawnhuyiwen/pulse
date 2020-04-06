@@ -38,6 +38,7 @@ POP_PROTO_WARNINGS()
 #include "patient/actions/SEMechanicalVentilation.h"
 #include "patient/actions/SENeedleDecompression.h"
 #include "patient/actions/SEPericardialEffusion.h"
+#include "patient/actions/SEPulmonaryShuntExacerbation.h"
 #include "patient/actions/SERespiratoryFatigue.h"
 #include "patient/actions/SESubstanceBolus.h"
 #include "patient/actions/SESubstanceInfusion.h"
@@ -123,7 +124,6 @@ void PBPatientAction::Copy(const SEAcuteStress& src, SEAcuteStress& dst)
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
-
 
 void PBPatientAction::Load(const CDM_BIND::AirwayObstructionData& src, SEAirwayObstruction& dst)
 {
@@ -971,6 +971,35 @@ void PBPatientAction::Copy(const SEPericardialEffusion& src, SEPericardialEffusi
   PBPatientAction::Serialize(data, dst);
 }
 
+void PBPatientAction::Load(const CDM_BIND::PulmonaryShuntExacerbationData& src, SEPulmonaryShuntExacerbation& dst)
+{
+  PBPatientAction::Serialize(src, dst);
+}
+void PBPatientAction::Serialize(const CDM_BIND::PulmonaryShuntExacerbationData& src, SEPulmonaryShuntExacerbation& dst)
+{
+  PBPatientAction::Serialize(src.patientaction(), dst);
+  if (src.has_severity())
+    PBProperty::Load(src.severity(), dst.GetSeverity());
+}
+CDM_BIND::PulmonaryShuntExacerbationData* PBPatientAction::Unload(const SEPulmonaryShuntExacerbation& src)
+{
+  CDM_BIND::PulmonaryShuntExacerbationData* dst = new CDM_BIND::PulmonaryShuntExacerbationData();
+  PBPatientAction::Serialize(src, *dst);
+  return dst;
+}
+void PBPatientAction::Serialize(const SEPulmonaryShuntExacerbation& src, CDM_BIND::PulmonaryShuntExacerbationData& dst)
+{
+  PBPatientAction::Serialize(src, *dst.mutable_patientaction());
+  if (src.HasSeverity())
+    dst.set_allocated_severity(PBProperty::Unload(*src.m_Severity));
+}
+void PBPatientAction::Copy(const SEPulmonaryShuntExacerbation& src, SEPulmonaryShuntExacerbation& dst)
+{
+  CDM_BIND::PulmonaryShuntExacerbationData data;
+  PBPatientAction::Serialize(src, data);
+  PBPatientAction::Serialize(data, dst);
+}
+
 void PBPatientAction::Load(const CDM_BIND::RespiratoryFatigueData& src, SERespiratoryFatigue& dst)
 {
   PBPatientAction::Serialize(src, dst);
@@ -1400,6 +1429,12 @@ SEPatientAction* PBPatientAction::Load(const CDM_BIND::AnyPatientActionData& any
     PBPatientAction::Load(any.pericardialeffusion(), *a);
     return a;
   }
+  case CDM_BIND::AnyPatientActionData::ActionCase::kPulmonaryShuntExacerbation:
+  {
+    SEPulmonaryShuntExacerbation* a = new SEPulmonaryShuntExacerbation();
+    PBPatientAction::Load(any.pulmonaryshuntexacerbation(), *a);
+    return a;
+  }
   case CDM_BIND::AnyPatientActionData::ActionCase::kRespiratoryFatigue:
   {
     SERespiratoryFatigue* a = new SERespiratoryFatigue();
@@ -1603,6 +1638,12 @@ CDM_BIND::AnyPatientActionData* PBPatientAction::Unload(const SEPatientAction& a
   if (pe != nullptr)
   {
     any->set_allocated_pericardialeffusion(PBPatientAction::Unload(*pe));
+    return any;
+  }
+  const SEPulmonaryShuntExacerbation* pse = dynamic_cast<const SEPulmonaryShuntExacerbation*>(&action);
+  if (pse != nullptr)
+  {
+    any->set_allocated_pulmonaryshuntexacerbation(PBPatientAction::Unload(*pse));
     return any;
   }
   const SERespiratoryFatigue* rf = dynamic_cast<const SERespiratoryFatigue*>(&action);

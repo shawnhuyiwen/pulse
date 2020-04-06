@@ -23,7 +23,8 @@ message AnyPatientConditionData
     ImpairedAlveolarExchangeData              ImpairedAlveolarExchange              = 8;
     LobarPneumoniaData                        LobarPneumonia                        = 9;
     PulmonaryFibrosisData                     PulmonaryFibrosis                     = 10;
-    SepsisData                                Sepsis                                = 11;
+    PulmonaryShuntData                        PulmonaryShunt                        = 11;
+    SepsisData                                Sepsis                                = 12;
   }
 }
 
@@ -92,8 +93,12 @@ message ConsumeMealData
 message ImpairedAlveolarExchangeData
 {
   PatientConditionData                        PatientCondition                      = 1;
-  ScalarAreaData                              ImpairedSurfaceArea                   = 2;/**<< @brief Surface Area of the impaired alveoli. */
-  Scalar0To1Data                              ImpairedFraction                      = 3;/**<< @brief Surface Area Fraction of the impaired alveoli. */
+  oneof Value
+  {
+    ScalarAreaData                            ImpairedSurfaceArea                 = 2;/**<< @brief Surface Area of the impaired alveoli. */
+    Scalar0To1Data                            ImpairedFraction                    = 3;/**<< @brief Surface Area Fraction of the impaired alveoli. */
+    Scalar0To1Data                            Severity                            = 4;/**<< @brief Scale of affect, 0 being none, 1 being the highest possible. */
+  }
 }
 
 /** @brief Lobar pneumonia is a form of pneumonia that affects one or more lobes of the lungs. As fluid fills portions of the lung it becomes more difficult to breath and the gas diffusion surface area in the alveoli is reduced. */
@@ -110,6 +115,13 @@ message PulmonaryFibrosisData
 {
   PatientConditionData                        PatientCondition                      = 1;
   Scalar0To1Data                              Severity                              = 2;/**<< @brief Scale of affect, 0 being none, 1 being the highest possible. */
+}
+
+/** @brief Pulmonary shunt is when the alveoli of the lungs are perfused with blood as normal, but ventilation (the supply of air) fails to supply the perfused region */
+message PulmonaryShuntData
+{
+  PatientConditionData                        PatientCondition                      = 1;
+  Scalar0To1Data                              Severity                              = 2;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible.*/
 }
 
 /** @brief A potentially life-threatening condition caused by the body's response to an infection. */

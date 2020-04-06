@@ -16,6 +16,7 @@
 #include "patient/conditions/SEAcuteRespiratoryDistressSyndrome.h"
 // Actions
 #include "engine/SEActionManager.h"
+#include "engine/SEOverrides.h"
 #include "engine/SEPatientActionCollection.h"
 #include "patient/actions/SEAcuteRespiratoryDistressSyndromeExacerbation.h"
 #include "patient/actions/SEAirwayObstruction.h"
@@ -51,7 +52,6 @@
 #include "substance/SESubstanceFraction.h"
 #include "substance/SESubstanceTransport.h"
 #include "circuit/fluid/SEFluidCircuitCalculator.h"
-#include "circuit/fluid/SEFluidCircuit.h"
 #include "circuit/fluid/SEFluidCircuit.h"
 #include "circuit/fluid/SEFluidCircuitNode.h"
 #include "circuit/fluid/SEFluidCircuitPath.h"
@@ -450,6 +450,20 @@ void Respiratory::AtSteadyState()
 //--------------------------------------------------------------------------------------------------
 void Respiratory::PreProcess()
 {
+  //jbw
+  if (m_data.HasOverride())
+  {
+    // Look for any known overrides
+    for (auto itr : m_data.GetOverrides())
+    {
+      if (itr.first == "LungCompliance")
+      {
+        // String compares are expensive, set your own flag if need to remeber this.
+        // The overrides will be cleared after this time step
+      }
+    }
+  }
+
   CalculateWork();
   CalculateFatigue();
 
@@ -482,24 +496,26 @@ void Respiratory::PreProcess()
 /// Handles lung volume changes during alveolar gas transfer. 
 /// Calculates physiological parameters such as respiration rate, tidal volume and others that belonging to the respiratory system.
 //--------------------------------------------------------------------------------------------------
-void Respiratory::Process()
+void Respiratory::Process(bool solve_and_transport)
 {
-  // Respiration circuit changes based on if Anesthesia Machine is on or off
-  // When dynamic intercircuit connections work, we can stash off the respiration circuit in a member variable
-  SEFluidCircuit& RespirationCircuit = m_data.GetCircuits().GetActiveRespiratoryCircuit();
-  
-  // Calc the circuits
-  m_Calculator->Process(RespirationCircuit, m_dt_s);
-  
-  //ModifyPleuralVolume();
-  SEGasCompartmentGraph& RespirationGraph = m_data.GetCompartments().GetActiveRespiratoryGraph();
-  SELiquidCompartmentGraph& AerosolGraph = m_data.GetCompartments().GetActiveAerosolGraph();
-  
-  // Transport substances
-  m_GasTransporter->Transport(RespirationGraph, m_dt_s);
-  if(m_AerosolMouth->HasSubstanceQuantities())
-    m_AerosolTransporter->Transport(AerosolGraph, m_dt_s);
-  
+  if (solve_and_transport)
+  {
+    // Respiration circuit changes based on if Anesthesia Machine is on or off
+    // When dynamic intercircuit connections work, we can stash off the respiration circuit in a member variable
+    SEFluidCircuit& RespirationCircuit = m_data.GetCircuits().GetActiveRespiratoryCircuit();
+
+    // Calc the circuits
+    m_Calculator->Process(RespirationCircuit, m_dt_s);
+
+    //ModifyPleuralVolume();
+    SEGasCompartmentGraph& RespirationGraph = m_data.GetCompartments().GetActiveRespiratoryGraph();
+    SELiquidCompartmentGraph& AerosolGraph = m_data.GetCompartments().GetActiveAerosolGraph();
+
+    // Transport substances
+    m_GasTransporter->Transport(RespirationGraph, m_dt_s);
+    if (m_AerosolMouth->HasSubstanceQuantities())
+      m_AerosolTransporter->Transport(AerosolGraph, m_dt_s);
+  }
   //Update system data
   CalculateVitalSigns();
 

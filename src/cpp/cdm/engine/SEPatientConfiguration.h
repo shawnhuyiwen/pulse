@@ -37,9 +37,16 @@ public:
   virtual bool HasConditions() const;
   virtual void InvalidateConditions();
 
+  virtual bool HasOverride() const;
+  virtual void AddOverride(const std::string& name, double value);
+  virtual std::map<std::string, double>& GetOverrides();
+  virtual const std::map<std::string, double>& GetOverrides() const;
+  virtual void RemoveOverrides();
+
 protected:
   SEPatient*                      m_Patient;
   std::string                     m_PatientFile;
   SEConditionManager*             m_Conditions;
   SESubstanceManager&             m_SubMgr;
+  std::map<std::string, double>   m_Overrides;
 };

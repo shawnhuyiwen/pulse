@@ -254,7 +254,7 @@ void Environment::PreProcess()
 /// There is nothing to do here.  Processing the combined Energy-Environment circuit is handled by
 /// the Energy system.
 //--------------------------------------------------------------------------------------------------
-void Environment::Process()
+void Environment::Process(bool solve_and_transport)
 {
   ComputeExposedModelParameters();
 }

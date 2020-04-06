@@ -16,6 +16,7 @@ protected:
   /// Notify systems that steady state has been achieved
   virtual void AtSteadyState() = 0;
   virtual void PreProcess() = 0;
-  virtual void Process() = 0;
+  // This is where any circuits would be solved or graphs transported
+  virtual void Process(bool solve_and_transport=true) = 0;
   virtual void PostProcess() = 0;
 };
