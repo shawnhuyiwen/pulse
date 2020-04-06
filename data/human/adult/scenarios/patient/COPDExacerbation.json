@@ -1,23 +1,7 @@
 {
   "Name": "COPD Exacerbation",
   "Description": "",
-  "StartType":
-  {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json",
-      "Conditions": 
-      { 
-        "AnyCondition": 
-        [
-          { "PatientCondition": { "ChronicObstructivePulmonaryDisease": 
-          {
-            "BronchitisSeverity": { "Scalar0To1": { "Value": 0.1 }},
-            "EmphysemaSeverity": { "Scalar0To1": { "Value": 0.1 }}
-          }}}
-        ]
-      }
-    }
-  },
+  "StartType": { "PatientConfiguration": { "PatientFile": "StandardMale.json" }},
   "DataRequestManager":
   {
     "DataRequest":

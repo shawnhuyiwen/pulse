@@ -88,10 +88,7 @@
   "AnyAction":
   [
     { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" }}}},
-    { "PatientAction": { "MechanicalVentilation": 
-	  { "State": "On", "Pressure": 
-	    { "ScalarPressure": { "Value": 0.0, "Unit": "cmH2O" }}
-	  }}},
+    { "PatientAction": { "Intubation": { "Type": "Tracheal" } } },
     { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" }}}},
 	{ "PatientAction": { "ChronicObstructivePulmonaryDiseaseExacerbation": 
       {
@@ -137,9 +134,7 @@
         "RightLungAffected": { "Scalar0To1": { "Value": 0.0 }}
       }}
     },
-    { "PatientAction": { "MechanicalVentilation": 
-	  { "State": "Off" }
-	}}, 
+    { "PatientAction": { "Intubation": { "Type": "Off" } } },
     { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" }}}}
   ]
 }

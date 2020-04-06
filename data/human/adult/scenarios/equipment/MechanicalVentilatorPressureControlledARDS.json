@@ -1,7 +1,16 @@
 {
-  "Name": "Lobar Pneumonia Exacerbation",
-  "Description": "",
-  "StartType": { "PatientConfiguration": { "PatientFile": "StandardMale.json" }},
+  "Name": "PressureControlContinuousMandatoryVentilationARDS",
+  "Description": "Apply a P-CMV mode ventilator to treat a patient with ARDS.",
+  "StartType": { "PatientConfiguration": { "PatientFile": "StandardMale.json",
+  "Conditions": { "AnyCondition": [ {
+        "PatientCondition": {
+          "AcuteRespiratoryDistressSyndrome": {
+            "Severity": { "Scalar0To1": { "Value": 0.3 } },
+            "LeftLungAffected": { "Scalar0To1": { "Value": 1.0 } },
+            "RightLungAffected": { "Scalar0To1": { "Value": 1.0 } } } } } 
+		] }
+    }
+  },
   "DataRequestManager":
   {
     "DataRequest":
@@ -72,39 +81,118 @@
 	  { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TransthoracicPressure",          "Unit": "cmH2O" },
 	  { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "ShuntFraction",                  "Unit": "unitless" },
 	  { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "AlveolarArterialGradient",       "Unit": "mmHg" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TransthoracicPressure",          "Unit": "cmH2O" },	  
+      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TransthoracicPressure",          "Unit": "cmH2O" },
+      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TotalPulmonaryVentilation",      "Unit": "L/min" },	  
 	  
 	  { "DecimalFormat": { "Precision": 2 }, "Category": "GasCompartment", "CompartmentName": "Carina", "PropertyName": "OutFlow", "Unit": "L/s" },
 	  
 	  { "DecimalFormat": { "Precision": 3 }, "Category": "Patient", "PropertyName": "AlveoliSurfaceArea", "Unit": "m^2" }
-	]
+	  
+	  
+    ]
   },
   "AnyAction":
   [
-    { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 2.0, "Unit": "min" }}}},
-    { "PatientAction": { "LobarPneumoniaExacerbation": 
-      {
-        "Severity": { "Scalar0To1": { "Value": 0.3 }},
-        "LeftLungAffected": { "Scalar0To1": { "Value": 1.0 }},
-        "RightLungAffected": { "Scalar0To1": { "Value": 1.0 }}
-      }}
-    },
-    { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "min" }}}},
-	{ "PatientAction": { "LobarPneumoniaExacerbation": 
+    { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 30.0, "Unit": "s" } } } },
+	
+	{ "PatientAction": { "Intubation": { "Type": "Tracheal" } } },
+	
+	{ "AdvanceTime": { "Time": { "ScalarTime": { "Value": 30.0, "Unit": "s" } } } },
+	
+	{ "PatientAction": { "Dyspnea": { "Severity": { "Scalar0To1": { "Value": 1.0 } } } } },
+	
+	{
+      "EquipmentAction": {
+        "MechanicalVentilatorConfiguration": {
+          "MechanicalVentilatorAction": { "EquipmentAction": { "Action": {
+                "Comment": "Attach the mechanical ventilator" }}},
+          "Configuration":
+          {
+            "BreathProfile": {
+              "Rate": { "ScalarFrequency": { "Value": 20.0, "Unit": "1/min" } },
+              "InspiratoryExpiratoryRatio": { "Value": 0.5, "Unit": "" }
+            },
+            "Connection": "Tube",
+            "Control": "P_CMV",
+            "DriverWaveform": "Square",
+            "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 20.0, "Unit": "cmH2O" } },
+            "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 8.0, "Unit": "cmH2O" } },
+            "FractionInspiredGas": [
+              { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.25, "Unit": "" } } }
+            ]
+          }
+        }
+      }
+    },	
+	
+    { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "min" } } } },
+	
+	{ "PatientAction": { "AcuteRespiratoryDistressSyndromeExacerbation": 
       {
         "Severity": { "Scalar0To1": { "Value": 0.6 }},
         "LeftLungAffected": { "Scalar0To1": { "Value": 1.0 }},
         "RightLungAffected": { "Scalar0To1": { "Value": 1.0 }}
       }}
     },
-    { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "min" }}}},
-	{ "PatientAction": { "LobarPneumoniaExacerbation": 
+	
+	{
+      "EquipmentAction": {
+        "MechanicalVentilatorConfiguration": {
+          "MechanicalVentilatorAction": { "EquipmentAction": { "Action": {
+                "Comment": "Attach the mechanical ventilator" }}},
+          "Configuration":
+          {
+            "BreathProfile": {
+              "Rate": { "ScalarFrequency": { "Value": 20.0, "Unit": "1/min" } },
+              "InspiratoryExpiratoryRatio": { "Value": 0.5, "Unit": "" }
+            },
+            "Connection": "Tube",
+            "Control": "P_CMV",
+            "DriverWaveform": "Square",
+            "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 25.0, "Unit": "cmH2O" } },
+            "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 10.0, "Unit": "cmH2O" } },
+            "FractionInspiredGas": [
+              { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.5, "Unit": "" } } }
+            ]
+          }
+        }
+      }
+    },	
+	
+    { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "min" } } } },
+	
+	{ "PatientAction": { "AcuteRespiratoryDistressSyndromeExacerbation": 
       {
         "Severity": { "Scalar0To1": { "Value": 0.9 }},
         "LeftLungAffected": { "Scalar0To1": { "Value": 1.0 }},
         "RightLungAffected": { "Scalar0To1": { "Value": 1.0 }}
       }}
     },
-    { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "min" }}}}
+	
+	{
+      "EquipmentAction": {
+        "MechanicalVentilatorConfiguration": {
+          "MechanicalVentilatorAction": { "EquipmentAction": { "Action": {
+                "Comment": "Attach the mechanical ventilator" }}},
+          "Configuration":
+          {
+            "BreathProfile": {
+              "Rate": { "ScalarFrequency": { "Value": 20.0, "Unit": "1/min" } },
+              "InspiratoryExpiratoryRatio": { "Value": 0.5, "Unit": "" }
+            },
+            "Connection": "Tube",
+            "Control": "P_CMV",
+            "DriverWaveform": "Square",
+            "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 32.0, "Unit": "cmH2O" } },
+            "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 15.0, "Unit": "cmH2O" } },
+            "FractionInspiredGas": [
+              { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.9995, "Unit": "" } } }
+            ]
+          }
+        }
+      }
+    },	
+	
+    { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "min" } } } }
   ]
 }
