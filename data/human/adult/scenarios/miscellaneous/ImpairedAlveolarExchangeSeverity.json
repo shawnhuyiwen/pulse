@@ -7,10 +7,9 @@
       "Conditions": { "AnyCondition": [{
         "PatientCondition": {
           "ImpairedAlveolarExchange": {
-            "ImpairedSurfaceArea": {
-              "ScalarArea": {
-                "Value": 55.9896,
-                "Unit": "m^2"
+            "Severity": {
+              "Scalar0To1": {
+                "Value": 0.8
               }
             }
           }
@@ -415,7 +414,7 @@
     { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" }}}},
 	
     { "PatientAction": { "ImpairedAlveolarExchangeExacerbation": {
-        "ImpairedSurfaceArea": { "ScalarArea": { "Value": 25, "Unit": "m^2" } }
+        "Severity": { "Scalar0To1": { "Value": 0.2 } }
     } } },	
 	
     { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "min" }}}}

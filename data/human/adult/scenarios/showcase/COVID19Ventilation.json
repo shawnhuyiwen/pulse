@@ -59,7 +59,7 @@
 	
 	//ToDo: Administer vasopressor	
 	
-	{ "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" } } } },
+	{ "AdvanceTime": { "Time": { "ScalarTime": { "Value": 10.0, "Unit": "min" } } } },
 	
 	//Segment 1	
 	//ToDo: Comment that is the next Day
