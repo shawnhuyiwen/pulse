@@ -3,7 +3,7 @@
 
 from pulse.cdm.engine import eSerializationFormat
 from pulse.cdm.patient import SEPatientConfiguration
-from pulse.engine.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
 from pulse.cdm.environment_actions import SEChangeEnvironmentalConditions
 from pulse.cdm.scalars import LengthPerTimeUnit, TemperatureUnit, \
                               PressureUnit, HeatResistanceAreaUnit, \

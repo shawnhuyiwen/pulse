@@ -463,12 +463,14 @@ void Respiratory::PreProcess()
   if (m_data.HasOverride())
   {
     // Look for any known overrides
-    for (auto itr : m_data.GetOverrides())
+    for (auto& o : m_data.GetOverrides())
     {
-      if (itr.first == "LungCompliance")
+      if (o.name == "LungCompliance")
       {
         // String compares are expensive, set your own flag if need to remeber this.
         // The overrides will be cleared after this time step
+        // Get the value from the override in the unit we want
+        double v = Convert(o.value, VolumePerPressureUnit::GetCompoundUnit(o.unit), VolumePerPressureUnit::L_Per_cmH2O);
       }
     }
   }

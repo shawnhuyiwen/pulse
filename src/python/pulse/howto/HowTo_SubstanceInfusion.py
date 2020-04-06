@@ -4,7 +4,7 @@
 from pulse.cdm.engine import eSerializationFormat
 from pulse.cdm.scalars import VolumePerTimeUnit, MassPerVolumeUnit
 from pulse.cdm.patient_actions import SESubstanceInfusion
-from pulse.engine.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
 
 def HowTo_SubstanceInfusion():
     pulse = PulsePhysiologyEngine("pulse_SubstanceInfusion.log")

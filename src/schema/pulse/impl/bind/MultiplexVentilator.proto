@@ -4,69 +4,37 @@ option java_package = "pulse.multiplex_ventilator.bind";
 option csharp_namespace = "pulse.multiplex_ventilator.bind";
 option optimize_for = SPEED;
 
-import "pulse/cdm/bind/Engine.proto";
-import "pulse/cdm/bind/Properties.proto";
-import "pulse/cpm/bind/PulseConfiguration.proto";
-
-message MultiplexVentilatorData
+message PatientStateData
 {
-  message LungResistanceData
-  {
-    pulse.cdm.bind.ScalarPressureTimePerVolumeData   LeftLungResistance               = 1;
-    pulse.cdm.bind.ScalarPressureTimePerVolumeData   RightLungResistance              = 2;
-  }
-  
-  message BronchiAlveoliResistanceData
-  {
-    pulse.cdm.bind.ScalarPressureTimePerVolumeData   LeftBronchiResistance            = 1;
-    pulse.cdm.bind.ScalarPressureTimePerVolumeData   LeftAlveoliResistance            = 2;
-    pulse.cdm.bind.ScalarPressureTimePerVolumeData   RightBronchiResistance           = 3;
-    pulse.cdm.bind.ScalarPressureTimePerVolumeData   RightAlveoliResistance           = 4;
-  }
-  
-  message SideComplianceData
-  {
-    pulse.cdm.bind.ScalarVolumePerPressureData       LeftSideCompliance               = 1;
-    pulse.cdm.bind.ScalarVolumePerPressureData       RightSideCompliance              = 2;
-  }
-  
-  message LungComplianceData
-  {
-    pulse.cdm.bind.ScalarVolumePerPressureData       LeftChestWallCompliance          = 1;
-    pulse.cdm.bind.ScalarVolumePerPressureData       LeftLungCompliance               = 2;
-    pulse.cdm.bind.ScalarVolumePerPressureData       RightLungCompliance              = 3;
-    pulse.cdm.bind.ScalarVolumePerPressureData       RightChestWallCompliance         = 4;
-  }
-  
-  message PatientConfigurationData
-  {
-    uint32                                           ID                               = 1;
-    pulse.cdm.bind.EngineInitializationData          EngineInitialization             = 2;
-    pulse.cdm.bind.Scalar0To1Data                    DyspneaSeverity                  = 3;
-    pulse.cdm.bind.Scalar0To1Data                    ImpairedAlveolarExchangeFraction = 4;
-    
-    pulse.cdm.bind.ScalarPressureTimePerVolumeData   AirwayResistance                 = 5;
-    pulse.cdm.bind.ScalarPressureTimePerVolumeData   ExpiratoryLimbResistance         = 6;
-    pulse.cdm.bind.ScalarPressureTimePerVolumeData   InspiratoryLimbResistance        = 7;
-    
-    oneof ResistancesData
-    {
-       LungResistanceData                            LungResistance                   = 8;
-       BronchiAlveoliResistanceData                  BronchiAlveoliResistance         = 9;
-    }
-    
-    oneof ComplianceData
-    {
-       SideComplianceData                            SideCompliance                   = 10;
-       LungComplianceData                            LungCompliance                   = 11;
-    }
-  }
-  
-  message ScenarioData
-  {
-    repeated PatientConfigurationData                PatientConfiguration             = 1;
-    pulse.cdm.bind.DataRequestManagerData            DataRequestManager               = 2;
-    pulse.cpm.bind.ConfigurationData                 Configuration                    = 3;
-  }
+  string          StateFile                           = 1;
+  double          Compliance_L_Per_cmH2O              = 2;
+  double          ImpairmentFraction                  = 3;
+  double          PEEP_cmH2O                          = 4;
+  double          PIP_cmH2O                           = 5;
+  double          FiO2                                = 6;
+  double          OxygenSaturation                    = 7;
+  double          TidalVolume_L                       = 8;
+  double          EndTidalCarbonDioxidePressure_cmH2O = 9;
+  double          CarricoIndex                        = 10;
 }
 
+message PatientStateListData
+{
+  repeated PatientStateData Patients                  = 1;
+}
+
+message PatientComparisonData
+{
+  PatientStateData  SoloVentilation                   = 1;
+  PatientStateData  MultiplexVentilation              = 2;
+}
+
+message SimulationData
+{
+  double          RespirationRate_Per_min             = 1;
+  double          IERatio                             = 2;
+  double          PIP_cmH2O                           = 3;
+  double          PEEP_cmH2O                          = 4;
+  double          FiO2                                = 5;
+  repeated PatientComparisonData PatientComparisons   = 6;
+}

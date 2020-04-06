@@ -18,7 +18,7 @@ SEOverrides::~SEOverrides()
 void SEOverrides::Clear()
 {
   SEAction::Clear();
-  RemovePairs();
+  RemoveProperties();
 }
 
 void SEOverrides::Copy(const SEOverrides& src)
@@ -28,34 +28,47 @@ void SEOverrides::Copy(const SEOverrides& src)
 
 bool SEOverrides::IsValid() const
 { 
-  return HasPairs();
+  return HasProperty();
 }
 
 void SEOverrides::ToString(std::ostream &str) const
 {  
   if(HasComment())
     str<<"\n\tComment : "<<m_Comment;
-  for(auto itr : m_Pairs)
-    str << "Override " << itr.first << " with " << itr.second;
+  for (auto itr : m_ScalarProperties)
+  {
+    if(itr.unit.empty())
+      str << "Override " << itr.name << " with " << itr.value;
+    else
+      str << "Override " << itr.name << " with " << itr.value << "("<<itr.unit<<")";
+  }
 }
 
-bool SEOverrides::HasPairs() const
+bool SEOverrides::HasProperty() const
 {
-  return m_Pairs.size()>1;
+  return m_ScalarProperties.size()>1;
 }
-void SEOverrides::AddPair(const std::string& name, double value)
+void SEOverrides::AddScalarProperty(const std::string& name, double value)
 {
-  m_Pairs[name] = value;
+  m_ScalarProperties.push_back(SEScalarProperty(name, value, ""));
 }
-std::map<std::string, double>& SEOverrides::GetPairs()
+void SEOverrides::AddScalarProperty(const std::string& name, double value, std::string unit)
 {
-  return m_Pairs;
+  m_ScalarProperties.push_back(SEScalarProperty(name, value, unit));
 }
-const std::map<std::string, double>& SEOverrides::GetPairs() const
+void SEOverrides::AddScalarProperty(const std::string& name, double value, const CCompoundUnit& unit)
 {
-  return m_Pairs;
+  m_ScalarProperties.push_back(SEScalarProperty(name,value,unit.GetString()));
 }
-void SEOverrides::RemovePairs()
+std::vector<SEScalarProperty>& SEOverrides::GetScalarProperties()
 {
-  m_Pairs.clear();
+  return m_ScalarProperties;
+}
+const std::vector<SEScalarProperty>& SEOverrides::GetScalarProperties() const
+{
+  return m_ScalarProperties;
+}
+void SEOverrides::RemoveProperties()
+{
+  m_ScalarProperties.clear();
 }

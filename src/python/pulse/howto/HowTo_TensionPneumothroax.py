@@ -6,7 +6,7 @@ from pulse.cdm.patient_actions import SETensionPneumothorax, \
                                       SENeedleDecompression, \
                                       SEChestOcclusiveDressing, \
                                       eSwitch, eSide, eGate
-from pulse.engine.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
 
 def HowTo_TensionPneumothorax():
     pulse = PulsePhysiologyEngine("pulse_TensionPneumothorax.log")

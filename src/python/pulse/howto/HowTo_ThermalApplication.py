@@ -3,9 +3,8 @@
 
 from pulse.cdm.engine import eSerializationFormat, eSwitch
 from pulse.cdm.environment_actions import SEThermalApplication
-from pulse.engine.PulsePhysiologyEngine import PulsePhysiologyEngine
-from pulse.cdm.scalars import AreaUnit, PowerUnit, TemperatureUnit, \
-                              PressureUnit, HeatResistanceAreaUnit
+from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.cdm.scalars import AreaUnit, PowerUnit, TemperatureUnit
 
 def HowTo_ThermalApplication():
     pulse = PulsePhysiologyEngine("pulse_ThermalApplication.log")

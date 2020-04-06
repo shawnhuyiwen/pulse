@@ -2,9 +2,9 @@
 # See accompanying NOTICE file for details.
 
 from pulse.cdm.engine import eSerializationFormat
-from pulse.engine.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
 from pulse.cdm.mechanical_ventilator_actions import SEMechanicalVentilatorConfiguration
-from pulse.cdm.scalars import FrequencyUnit, PressureUnit, TimeUnit, MassPerVolumeUnit
+from pulse.cdm.scalars import FrequencyUnit, TimeUnit, MassPerVolumeUnit
 from pulse.cdm.mechanical_ventilator import eConnection, eControl, eDriverWaveform
 
 def HowTo_MechanicalVentilator():

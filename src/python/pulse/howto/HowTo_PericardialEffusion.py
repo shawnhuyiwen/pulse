@@ -4,7 +4,7 @@
 from pulse.cdm.engine import eSerializationFormat
 from pulse.cdm.scalars import VolumePerTimeUnit
 from pulse.cdm.patient_actions import SEPericardialEffusion
-from pulse.engine.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
 
 def HowTo_PericardalEffusion():
     pulse = PulsePhysiologyEngine("pulse_PericardialEffusion.log")

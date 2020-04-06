@@ -36,6 +36,6 @@ message SerializeStateData
 
 message OverridesData
 {
-  ActionData                Action       = 1;
-  repeated PropertyPairData PropertyPair = 2;
+  ActionData                  Action         = 1;
+  repeated ScalarPropertyData ScalarOverride = 2;
 }

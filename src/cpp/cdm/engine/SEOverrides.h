@@ -3,6 +3,7 @@
 
 #pragma once
 #include "engine/SEAction.h"
+#include "properties/SEScalar.h"
 
 class CDM_DECL SEOverrides : public SEAction
 {
@@ -19,12 +20,14 @@ public:
 
   virtual void ToString(std::ostream &str) const;
 
-  virtual bool HasPairs() const;
-  virtual void AddPair(const std::string& name, double value);
-  virtual std::map<std::string, double>& GetPairs();
-  virtual const std::map<std::string, double>& GetPairs() const;
-  virtual void RemovePairs();
+  virtual bool HasProperty() const;
+  virtual void AddScalarProperty(const std::string& name, double value);
+  virtual void AddScalarProperty(const std::string& name, double value, std::string unit);
+  virtual void AddScalarProperty(const std::string& name, double value, const CCompoundUnit& unit);
+  virtual std::vector<SEScalarProperty>& GetScalarProperties();
+  virtual const std::vector<SEScalarProperty>& GetScalarProperties() const;
+  virtual void RemoveProperties();
 
 protected:
-  std::map<std::string, double> m_Pairs;
+  std::vector<SEScalarProperty> m_ScalarProperties;
 };

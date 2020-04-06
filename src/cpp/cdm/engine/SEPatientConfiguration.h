@@ -6,6 +6,7 @@ class SEEngineConfiguration;
 class SEPatient;
 class SEConditionManager;
 class SESubstanceManager;
+class SEScalarProperty;
 
 class CDM_DECL SEPatientConfiguration : public Loggable
 {
@@ -38,9 +39,11 @@ public:
   virtual void InvalidateConditions();
 
   virtual bool HasOverride() const;
-  virtual void AddOverride(const std::string& name, double value);
-  virtual std::map<std::string, double>& GetOverrides();
-  virtual const std::map<std::string, double>& GetOverrides() const;
+  virtual void AddScalarOverride(const std::string& name, double value);
+  virtual void AddScalarOverride(const std::string& name, double value, std::string unit);
+  virtual void AddScalarOverride(const std::string& name, double value, const CCompoundUnit& unit);
+  virtual std::vector<SEScalarProperty>& GetScalarOverrides();
+  virtual const std::vector<SEScalarProperty>& GetScalarOverrides() const;
   virtual void RemoveOverrides();
 
 protected:
@@ -48,5 +51,5 @@ protected:
   std::string                     m_PatientFile;
   SEConditionManager*             m_Conditions;
   SESubstanceManager&             m_SubMgr;
-  std::map<std::string, double>   m_Overrides;
+  std::vector<SEScalarProperty>   m_ScalarOverrides;
 };

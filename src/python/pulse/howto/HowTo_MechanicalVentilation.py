@@ -3,9 +3,9 @@
 
 from enum import Enum
 from pulse.cdm.engine import eSerializationFormat
-from pulse.cdm.patient_actions import SERespiratoryFatigue, SEMechanicalVentilation, eSwitch
+from pulse.cdm.patient_actions import SEMechanicalVentilation, eSwitch
 from pulse.cdm.scalars import VolumePerTimeUnit, PressureUnit
-from pulse.engine.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
 
 def HowTo_MechanicalVentilation():
     pulse = PulsePhysiologyEngine("pulse_mechanical_ventilation.log")

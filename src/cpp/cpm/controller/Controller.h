@@ -125,7 +125,7 @@ public:
   virtual void                          SetAdvanceHandler(SEAdvanceHandler* handler) { m_AdvanceHandler = handler; }
 
   virtual bool                          HasOverride() const;
-  virtual const std::map<std::string, double>& GetOverrides() const;
+  virtual const std::vector<SEScalarProperty>& GetOverrides() const;
 
   std::stringstream                                             m_ss;
 protected:
@@ -180,7 +180,7 @@ protected:
 
   std::string                                                   m_DataDir;
 
-  std::map<std::string, double>                                 m_Overrides;
+  std::vector<SEScalarProperty>                                 m_ScalarOverrides;
 
 };
 

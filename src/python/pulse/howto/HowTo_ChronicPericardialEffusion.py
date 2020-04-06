@@ -1,10 +1,8 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-from pulse.cdm.engine import eSerializationFormat
 from pulse.cdm.patient import SEPatientConfiguration
-from pulse.cdm.patient_actions import SEExercise
-from pulse.engine.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
 
 def HowTo_UseChronicPericardialEffusion():
     pulse = PulsePhysiologyEngine("pulse_chronic_pericardial_effusion.log")

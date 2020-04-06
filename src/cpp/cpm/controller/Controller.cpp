@@ -236,8 +236,8 @@ const SEScalarTime& PulseData::GetEngineTime() const { return m_CurrentTime; }
 const SEScalarTime& PulseData::GetSimulationTime() const { return m_SimulationTime; }
 const SEScalarTime& PulseData::GetTimeStep() const { return m_Config->GetTimeStep(); }
 
-bool PulseData::HasOverride() const { return m_Overrides.size() > 1; }
-const std::map<std::string, double>& PulseData::GetOverrides() const { return m_Overrides; }
+bool PulseData::HasOverride() const { return m_ScalarOverrides.size() > 1; }
+const std::vector<SEScalarProperty>& PulseData::GetOverrides() const { return m_ScalarOverrides; }
 
 PulseController::PulseController(const std::string& logFileName, const std::string& data_dir) : PulseController(new Logger(logFileName), data_dir)
 {
@@ -300,8 +300,8 @@ bool PulseController::InitializeEngine(const SEPatientConfiguration& patient_con
   m_State = EngineState::Initialization;
   if(patient_configuration.HasOverride())
   {
-    for (auto itr : patient_configuration.GetOverrides())
-      m_Overrides[itr.first] = itr.second;
+    for (auto& so : patient_configuration.GetScalarOverrides())
+      m_ScalarOverrides.push_back(so);
   }
   if (patient_configuration.HasPatient())
   {
@@ -1126,7 +1126,8 @@ void PulseController::AdvanceModelTime()
   if (m_AdvanceHandler)
     m_AdvanceHandler->OnAdvance(m_CurrentTime.GetValue(TimeUnit::s));
 
-  m_Overrides.clear();
+  // TODO Figure out a way to track what overrides were used and which were not
+  m_ScalarOverrides.clear();
 }
 
 void PulseController::AdvanceModelTime(double time, const TimeUnit& unit)
@@ -1253,8 +1254,8 @@ bool PulseController::ProcessAction(const SEAction& action)
   const SEOverrides* overrides = dynamic_cast<const SEOverrides*>(&action);
   if (overrides != nullptr)
   {
-    for (auto itr : overrides->GetPairs())
-      m_Overrides[itr.first] = itr.second;
+    for (auto& so : overrides->GetScalarProperties())
+      m_ScalarOverrides.push_back(so);
     return true;
   }
 

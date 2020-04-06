@@ -4,7 +4,7 @@
 from pulse.cdm.engine import eSerializationFormat
 from pulse.cdm.scalars import VolumeUnit, VolumePerTimeUnit
 from pulse.cdm.patient_actions import SESupplementalOxygen, eDevice
-from pulse.engine.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
 
 def HowTo_SupplementalOxygen():
     pulse = PulsePhysiologyEngine("pulse_SupplementalOxygen.log")
