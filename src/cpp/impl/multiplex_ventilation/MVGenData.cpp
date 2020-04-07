@@ -89,6 +89,7 @@ bool MVController::GenerateStabilizedPatients()
         currentPIP_cmH2O = peep + 1.0;
         // Aaron - simulation for 2 breathPeriod_s
         // Test TV is at the target
+        // Make sure the TV has actually changed - sometimes when it's too low it won't register as a breath
         // currentTidalVolume_mL = get TV
       }
 

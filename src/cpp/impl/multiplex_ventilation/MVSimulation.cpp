@@ -24,9 +24,12 @@ bool MVController::RunSimulation(pulse::multiplex_ventilator::bind::SimulationDa
   transporter = new SEGasTransporter(VolumePerTimeUnit::L_Per_s, VolumeUnit::L, VolumeUnit::L, GetLogger());
   //aerosolTransporter = new SELiquidTransporter(VolumePerTimeUnit::mL_Per_s, VolumeUnit::mL, MassUnit::ug, MassPerVolumeUnit::ug_Per_mL, GetLogger());
 
-  // jbw Grab whatever nodes/compartments you need to connect everything
-  SEFluidCircuitNode* connectionNode = nullptr; // ex. Set this in a loop below
-  SEGasCompartment* connectionCmpt = nullptr;// ex. Set this in a loop below
+  SEFluidCircuitNode* inspiratoryConnectionNode = nullptr;
+  SEFluidCircuitNode* expiratoryConnectionNode = nullptr;
+
+  SEGasCompartment* inspiratoryConnectionCompartment = nullptr;
+  SEGasCompartment* expiratoryConnectionCompartment = nullptr;
+
   int i = 0;
   for (size_t p=0; p<sim.patientcomparisons_size(); p++)
   {
@@ -35,30 +38,68 @@ bool MVController::RunSimulation(pulse::multiplex_ventilator::bind::SimulationDa
     pc->SerializeFromFile(state, SerializationFormat::JSON);
 
     // Build our multiplex circuit
-    // Let's add the first mechanical ventilator circuit to our circuit
     if (i == 0)
     {
+      // Let's add the first mechanical ventilator circuit to our circuit
+      // This will add the ventialtor and the respiratory system
       subMgr = &pc->GetSubstances();
-      for (SEFluidCircuitNode* node : pc->GetCircuits().GetMechanicalVentilatorCircuit().GetNodes())
+      for (SEFluidCircuitNode* node : pc->GetCircuits().GetRespiratoryAndMechanicalVentilatorCircuit().GetNodes())
         multiplexVentilationCircuit->ForceAddNode(*node);
-      for (SEFluidCircuitPath* path : pc->GetCircuits().GetMechanicalVentilatorCircuit().GetPaths())
+      for (SEFluidCircuitPath* path : pc->GetCircuits().GetRespiratoryAndMechanicalVentilatorCircuit().GetPaths())
         multiplexVentilationCircuit->ForceAddPath(*path);
-      for (SEGasCompartment* cmpt : pc->GetCompartments().GetMechanicalVentilatorGraph().GetCompartments())
+      for (SEGasCompartment* cmpt : pc->GetCompartments().GetRespiratoryAndMechanicalVentilatorGraph().GetCompartments())
         multiplexVentilationGraph->ForceAddCompartment(*cmpt);
-      for (SEGasCompartmentLink* link : pc->GetCompartments().GetMechanicalVentilatorGraph().GetLinks())
+      for (SEGasCompartmentLink* link : pc->GetCompartments().GetRespiratoryAndMechanicalVentilatorGraph().GetLinks())
         multiplexVentilationGraph->ForceAddLink(*link);
-    }
-    // Add all the nodes/paths/compartments/links to our circuit/graph
-    for (SEFluidCircuitNode* node : pc->GetCircuits().GetRespiratoryCircuit().GetNodes())
-      multiplexVentilationCircuit->ForceAddNode(*node);
-    for (SEFluidCircuitPath* path : pc->GetCircuits().GetRespiratoryCircuit().GetPaths())
-      multiplexVentilationCircuit->ForceAddPath(*path);
-    for (SEGasCompartment* cmpt : pc->GetCompartments().GetRespiratoryGraph().GetCompartments())
-      multiplexVentilationGraph->ForceAddCompartment(*cmpt);
-    for (SEGasCompartmentLink* link : pc->GetCompartments().GetRespiratoryGraph().GetLinks())
-      multiplexVentilationGraph->ForceAddLink(*link);
 
-    // jbw Add new path/link to connect patient respiratory system to mechanical ventilator
+      inspiratoryConnectionNode = pc->GetCircuits().GetRespiratoryAndMechanicalVentilatorCircuit().GetNode(pulse::MechanicalVentilatorNode::InspiratoryValve);
+      expiratoryConnectionNode = pc->GetCircuits().GetRespiratoryAndMechanicalVentilatorCircuit().GetNode(pulse::MechanicalVentilatorNode::ExpiratoryValve);
+
+      inspiratoryConnectionCompartment = pc->GetCompartments().GetRespiratoryAndMechanicalVentilatorGraph().GetCompartment(pulse::MechanicalVentilatorCompartment::InspiratoryValve);
+      expiratoryConnectionCompartment = pc->GetCompartments().GetRespiratoryAndMechanicalVentilatorGraph().GetCompartment(pulse::MechanicalVentilatorCompartment::ExpiratoryValve);
+    }
+    else
+    {
+      // Add all the nodes/paths/compartments/links to our circuit/graph
+      for (SEFluidCircuitNode* node : pc->GetCircuits().GetRespiratoryAndMechanicalVentilatorCircuit().GetNodes())
+        multiplexVentilationCircuit->ForceAddNode(*node);
+      for (SEFluidCircuitPath* path : pc->GetCircuits().GetRespiratoryAndMechanicalVentilatorCircuit().GetPaths())
+        multiplexVentilationCircuit->ForceAddPath(*path);
+      for (SEGasCompartment* cmpt : pc->GetCompartments().GetRespiratoryAndMechanicalVentilatorGraph().GetCompartments())
+        multiplexVentilationGraph->ForceAddCompartment(*cmpt);
+      for (SEGasCompartmentLink* link : pc->GetCompartments().GetRespiratoryAndMechanicalVentilatorGraph().GetLinks())
+        multiplexVentilationGraph->ForceAddLink(*link);
+
+      // Remove the ventilator, since we're using the first patient's to share
+      // Aaron - Do these need a ForceRemove?
+      SEFluidCircuitNode* node = pc->GetCircuits().GetRespiratoryAndMechanicalVentilatorCircuit().GetNode(pulse::MechanicalVentilatorNode::Ventilator);
+      multiplexVentilationCircuit->RemoveNode(*node);
+      SEFluidCircuitPath* path = pc->GetCircuits().GetRespiratoryAndMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::EnvironmentToVentilator);
+      multiplexVentilationCircuit->RemovePath(*path);
+      path = pc->GetCircuits().GetRespiratoryAndMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::VentilatorToExpiratoryValve);
+      multiplexVentilationCircuit->RemovePath(*path);
+      path = pc->GetCircuits().GetRespiratoryAndMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::VentilatorToInspiratoryValve);
+      multiplexVentilationCircuit->RemovePath(*path);
+
+      SEGasCompartment* compartment = pc->GetCompartments().GetRespiratoryAndMechanicalVentilatorGraph().GetCompartment(pulse::MechanicalVentilatorCompartment::MechanicalVentilator);
+      multiplexVentilationGraph->RemoveCompartment(*compartment);
+      SEGasCompartmentLink* link = pc->GetCompartments().GetRespiratoryAndMechanicalVentilatorGraph().GetLink(pulse::MechanicalVentilatorLink::MechanicalVentilatorToExpiratoryValve);
+      multiplexVentilationGraph->RemoveLink(*link);
+      link = pc->GetCompartments().GetRespiratoryAndMechanicalVentilatorGraph().GetLink(pulse::MechanicalVentilatorLink::MechanicalVentilatorToInspiratoryValve);
+      multiplexVentilationGraph->RemoveLink(*link);
+
+      // Connect the tubes to the shared ventilator circuit/graph
+      node = pc->GetCircuits().GetRespiratoryAndMechanicalVentilatorCircuit().GetNode(pulse::MechanicalVentilatorNode::InspiratoryValve);
+      path = &multiplexVentilationCircuit->CreatePath(*inspiratoryConnectionNode, *node, "???"); //Aaron - this needs a unique name for this patient
+      node = pc->GetCircuits().GetRespiratoryAndMechanicalVentilatorCircuit().GetNode(pulse::MechanicalVentilatorNode::ExpiratoryValve);
+      path = &multiplexVentilationCircuit->CreatePath(*expiratoryConnectionNode, *node, "???"); //Aaron - this needs a unique name for this patient
+
+      //Aaron it doesn't like these commented out lines for some reason
+      compartment = pc->GetCompartments().GetRespiratoryAndMechanicalVentilatorGraph().GetCompartment(pulse::MechanicalVentilatorCompartment::InspiratoryValve);
+      //link = &multiplexVentilationGraph->CreateGasLink(*inspiratoryConnectionCompartment, *compartment, "???"); //Aaron - this needs a unique name for this patient
+      compartment = pc->GetCompartments().GetRespiratoryAndMechanicalVentilatorGraph().GetCompartment(pulse::MechanicalVentilatorCompartment::ExpiratoryValve);
+      ///link = &multiplexVentilationGraph->CreateGasLink(*expiratoryConnectionCompartment, *compartment, "???"); //Aaron - this needs a unique name for this patient
+    }
 
     TrackData(pc->GetEngineTracker(), m_BaseFileName+"_p"+std::to_string(i)+".csv");
     engines.push_back(pc);
