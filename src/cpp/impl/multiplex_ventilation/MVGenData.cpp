@@ -40,12 +40,12 @@ std::string to_scientific_notation(float f)
 //--------------------------------------------------------------------------------------------------
 bool GenerateStabilizedPatients()
 {
-  int minCompliance_L_Per_cmH2O = 0.010;
-  int maxCompliance_L_Per_cmH2O = 0.050;
-  int stepCompliance_L_Per_cmH2O = 0.005;
-  float minImpairment = 0.0;
-  float maxImpairment = 1.0;
-  float stepImpairment = 0.2f;
+  float minCompliance_L_Per_cmH2O = 0.010f;
+  float maxCompliance_L_Per_cmH2O = 0.050f;
+  float stepCompliance_L_Per_cmH2O = 0.005f;
+  float minImpairment = 3.0f;
+  float maxImpairment = 9.0f;
+  float stepImpairment = 0.3f;
   int minPEEP_cmH2O = 10;
   int maxPEEP_cmH2O = 20;
   int stepPEEP_cmH2O = 2;
@@ -103,7 +103,6 @@ bool GenerateStabilizedPatients()
 
     for (float i=minImpairment; i<=maxImpairment; i+=stepImpairment)
     {
-      // jbw Convert i to the appropriate action severity
       impairedAlveolarExchange.GetSeverity().SetValue(i);
       pulmonaryShunt.GetSeverity().SetValue(i);
 
