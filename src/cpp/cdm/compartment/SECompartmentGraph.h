@@ -20,6 +20,7 @@ public:
   virtual std::string GetName() const;
 
   virtual void AddCompartment(CompartmentType& cmpt);
+  virtual void ForceAddCompartment(CompartmentType& cmpt);// No check for cmpt with the same name
   virtual CompartmentType* GetCompartment(const std::string& name);
   virtual const CompartmentType* GetCompartment(const std::string& name) const;  
   virtual const std::vector<CompartmentType*>& GetCompartments() const;
@@ -27,6 +28,7 @@ public:
   virtual void RemoveCompartment(const std::string& name);
 
   virtual void AddLink(CompartmentLinkType& link);
+  virtual void ForceAddLink(CompartmentLinkType& link);// No check for link with the same name
   virtual CompartmentLinkType* GetLink(const std::string& name);
   virtual const CompartmentLinkType* GetLink(const std::string& name) const;
   virtual const std::vector<CompartmentLinkType*>& GetLinks() const;

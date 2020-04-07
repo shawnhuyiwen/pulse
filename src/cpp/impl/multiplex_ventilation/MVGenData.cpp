@@ -3,28 +3,6 @@
 
 #include "MVController.h"
 
-#include "engine/SEOverrides.h"
-#include "patient/actions/SEDyspnea.h"
-#include "patient/actions/SEIntubation.h"
-#include "patient/actions/SEImpairedAlveolarExchangeExacerbation.h"
-#include "patient/actions/SEPulmonaryShuntExacerbation.h"
-#include "system/physiology/SEBloodChemistrySystem.h"
-#include "system/physiology/SERespiratorySystem.h"
-#include "equipment/mechanical_ventilator/actions/SEMechanicalVentilatorConfiguration.h"
-#include "equipment/mechanical_ventilator/SEMechanicalVentilator.h"
-
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarFrequency.h"
-#include "properties/SEScalarMass.h"
-#include "properties/SEScalarFrequency.h"
-#include "properties/SEScalarMassPerVolume.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalarVolumePerPressure.h"
-#include "utils/FileUtils.h"
-
-#include "pulse/impl/bind/MultiplexVentilator.pb.h"
-#include <google/protobuf/util/json_util.h>
-
 std::string to_scientific_notation(float f)
 {
   char buffer[32];
@@ -38,7 +16,7 @@ std::string to_scientific_notation(float f)
 /// Generate a set of patients stabilized on a ventilator
 /// 1 ventilator for each patient
 //--------------------------------------------------------------------------------------------------
-bool GenerateStabilizedPatients()
+bool MVController::GenerateStabilizedPatients()
 {
   // Loop parameters
   float minCompliance_L_Per_cmH2O = 0.010f;
@@ -47,20 +25,11 @@ bool GenerateStabilizedPatients()
   int minPEEP_cmH2O = 10;
   int maxPEEP_cmH2O = 20;
   int stepPEEP_cmH2O = 2;
-  float minImpairment = 3.0f;
-  float maxImpairment = 9.0f;
+  float minImpairment = 0.3f;
+  float maxImpairment = 0.9f;
   float stepImpairment = 0.3f;
 
-  // Constants
-  int resistance_cmH2O_s_Per_L = 5;
-  int respirationRate_Per_Min = 20;
-  float IERatio = 0.5f;
-
-  // Initial Settings
-  float ambientFiO2 = 0.21f;
-
-  Logger logger("MultiplexVentilationGenData.log");
-  SESubstanceManager subMgr(&logger);
+  SESubstanceManager subMgr(GetLogger());
   subMgr.LoadSubstanceDirectory();
   SESubstance* Oxygen = subMgr.GetSubstance("Oxygen");
 
@@ -75,19 +44,19 @@ bool GenerateStabilizedPatients()
   SEImpairedAlveolarExchangeExacerbation impairedAlveolarExchange;
   SEPulmonaryShuntExacerbation pulmonaryShunt;
 
-  overrides.AddScalarProperty("RespiratoryResistance", resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  overrides.AddScalarProperty("RespiratoryResistance", m_Resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 
   SEMechanicalVentilatorConfiguration mvc(subMgr);
   auto& mv = mvc.GetConfiguration();
   mv.SetConnection(eMechanicalVentilator_Connection::Tube);
   mv.SetControl(eMechanicalVentilator_Control::PC_CMV);
   mv.SetDriverWaveform(eMechanicalVentilator_DriverWaveform::Square);
-  mv.GetRespiratoryRate().SetValue(respirationRate_Per_Min, FrequencyUnit::Per_min);
-  mv.GetInspiratoryExpiratoryRatio().SetValue(IERatio);
+  mv.GetRespiratoryRate().SetValue(m_RespirationRate_Per_Min, FrequencyUnit::Per_min);
+  mv.GetInspiratoryExpiratoryRatio().SetValue(m_IERatio);
   mv.GetPeakInspiratoryPressure().SetValue(minPEEP_cmH2O, PressureUnit::cmH2O);
   mv.GetPositiveEndExpiredPressure().SetValue(minPEEP_cmH2O, PressureUnit::cmH2O);
   SESubstanceFraction* FiO2 = &mv.GetFractionInspiredGas(*Oxygen);
-  FiO2->GetFractionAmount().SetValue(ambientFiO2);
+  FiO2->GetFractionAmount().SetValue(m_AmbientFiO2);
 
   std::string baseName;
   pulse::multiplex_ventilator::bind::PatientStateListData patients;
@@ -100,7 +69,7 @@ bool GenerateStabilizedPatients()
     std::cout << "[" << level << "] " << filename << "::" << line << " " << message;
   });
 
-  double breathPeriod_s = 60.0 / respirationRate_Per_Min;
+  double breathPeriod_s = 60.0 / m_RespirationRate_Per_Min;
 
   for (float c = minCompliance_L_Per_cmH2O; c <= maxCompliance_L_Per_cmH2O; c += stepCompliance_L_Per_cmH2O)
   {
@@ -118,22 +87,23 @@ bool GenerateStabilizedPatients()
       while (currentTidalVolume_mL < targetTidalVolume_mL)
       {
         currentPIP_cmH2O = peep + 1.0;
-        // Aaron - simulation for a breathPeriod_s
+        // Aaron - simulation for 2 breathPeriod_s
+        // Test TV is at the target
         // currentTidalVolume_mL = get TV
       }
 
       // This PIP is now good for all patients with this compliance and PEEP combination
       mv.GetPeakInspiratoryPressure().SetValue(currentPIP_cmH2O, PressureUnit::cmH2O);
 
-      double currentFiO2 = ambientFiO2;
+      double currentFiO2 = m_AmbientFiO2;
       for (float i = minImpairment; i <= maxImpairment; i += stepImpairment)
       {
         impairedAlveolarExchange.GetSeverity().SetValue(i);
         pulmonaryShunt.GetSeverity().SetValue(i);
 
         // Construct our engine name
-        baseName = "comp=" + std::to_string(c) + "_imp=" + to_scientific_notation(i) + "_peep=" + std::to_string(peep);
-        logger.Info("Creating engine " + baseName);
+        baseName = "comp="+std::to_string(c)+"_imp="+to_scientific_notation(i)+"_peep="+std::to_string(peep);
+        Info("Creating engine " + baseName);
         auto pulse = CreatePulseEngine("./states/multiplex_ventilation/" + baseName + ".log");
         pulse->SerializeFromFile("./states/StandardMale@0s.json", SerializationFormat::JSON);
 
@@ -164,7 +134,8 @@ bool GenerateStabilizedPatients()
         }
 
         // Save our state
-        logger.Info("Saving engine state" + baseName + ".json");
+        baseName += "_pip="+std::to_string(currentPIP_cmH2O)+"_FiO2="+std::to_string(currentFiO2);
+        Info("Saving engine state" + baseName+".json");
         pulse->SerializeToFile("./states/multiplex_ventilation/" + baseName + ".json", SerializationFormat::JSON);
         // Append to our "list" of generated states
         auto patientData = patients.add_patients();
@@ -188,6 +159,6 @@ bool GenerateStabilizedPatients()
     std::cerr << "Unable to write generated patients list file\n";
     return false;
   }
-  logger.Info("Created "+std::to_string(patients.patients_size()) + " patients");
+  Info("Created "+std::to_string(patients.patients_size()) + " patients");
   return WriteFile(out, "mv_solo_ventilated_patients.json", SerializationFormat::JSON);
 }
