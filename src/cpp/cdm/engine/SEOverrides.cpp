@@ -38,9 +38,9 @@ void SEOverrides::ToString(std::ostream &str) const
   for (auto itr : m_ScalarProperties)
   {
     if(itr.unit.empty())
-      str << "Override " << itr.name << " with " << itr.value;
+      str << "\n\tOverride " << itr.name << " with " << itr.value;
     else
-      str << "Override " << itr.name << " with " << itr.value << "("<<itr.unit<<")";
+      str << "\n\tOverride " << itr.name << " with " << itr.value << "("<<itr.unit<<")";
   }
 }
 

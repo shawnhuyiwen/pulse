@@ -26,6 +26,7 @@
 #include "equipment/Inhaler.h"
 #include "equipment/MechanicalVentilator.h"
 
+#include "patient/SEPatient.h"
 #include "patient/actions/SEDyspnea.h"
 #include "patient/actions/SEIntubation.h"
 #include "patient/actions/SEImpairedAlveolarExchangeExacerbation.h"
@@ -62,7 +63,7 @@
 #include "pulse/impl/bind/MultiplexVentilator.pb.h"
 #include <google/protobuf/util/json_util.h>
 
-class MVController : public Loggable
+class MVController : public Loggable, protected SEEventHandler
 {
 public:
   MVController(const std::string& logfileName, const std::string& data_dir = ".");
@@ -77,7 +78,9 @@ public:
   double DefaultRespirationRate_Per_Min() const { return m_RespirationRate_Per_Min; }
 
 protected:
+  std::string to_scientific_notation(float f);
   void TrackData(SEEngineTracker& trkr, const std::string& csv_filename);
+  void HandleEvent(eEvent e, bool active, const SEScalarTime* simTime = nullptr) override;
 
   std::string m_BaseFileName;
   // Constants

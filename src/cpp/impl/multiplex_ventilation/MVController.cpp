@@ -12,6 +12,14 @@ MVController::~MVController()
 
 }
 
+std::string MVController::to_scientific_notation(float f)
+{
+  char buffer[32];
+  memset(buffer, 0, sizeof(buffer));
+  snprintf(buffer, sizeof(buffer), "%g", f);
+  return std::string(buffer);
+}
+
 void MVController::TrackData(SEEngineTracker& trkr, const std::string& csv_filename)
 {
   trkr.GetDataRequestManager().SetResultsFilename(csv_filename);
@@ -31,4 +39,9 @@ void MVController::TrackData(SEEngineTracker& trkr, const std::string& csv_filen
   trkr.GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
   trkr.GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
   trkr.SetupRequests();
+}
+
+void MVController::HandleEvent(eEvent e, bool active, const SEScalarTime* simTime)
+{
+
 }

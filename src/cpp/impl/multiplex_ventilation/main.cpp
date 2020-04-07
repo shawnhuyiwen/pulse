@@ -12,19 +12,22 @@ int main(int argc, char* argv[])
     std::string file;
     if (argc <= 1)
     {
-      // Adjust comments to run what ever mode you want with out input
-
-      //mode = "genData";
-      mode = "state";
-      std::vector<std::string> state_files;
-      ListFiles("./states/multiplex_ventilation/", state_files, ".json");
-      if (state_files.empty())
+      // Adjust bools to run what ever mode you want with out input
+      if(true)
+       mode = "genData";
+      else if (true)
       {
-        std::cerr << "Need to provide run mode and associated parameters" << std::endl;
-        return 1;
+        mode = "state";
+        std::vector<std::string> state_files;
+        ListFiles("./states/multiplex_ventilation/", state_files, ".json");
+        if (state_files.empty())
+        {
+          std::cerr << "Need to provide run mode and associated parameters" << std::endl;
+          return 1;
+        }
+        else
+          file = state_files[0];
       }
-      else
-        file = state_files[0];
     }
     else
     {
