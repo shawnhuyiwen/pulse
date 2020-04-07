@@ -49,12 +49,17 @@ bool GenerateStabilizedPatients()
   int minPEEP_cmH2O = 10;
   int maxPEEP_cmH2O = 20;
   int stepPEEP_cmH2O = 2;
-  int minPIP_cmH2O = 10;
+  int resistance_cmH2O_s_Per_L = 5;
+
+  //TODO: These will be determined through a two-step stabilization process ----
+  //Instead of PIP, we should probably use driving pressure (PIP-PEEP)
+  int minPIP_cmH2O = 20;
   int maxPIP_cmH2O = 40;
   int stepPIP_cmH2O = 2;
   float minFiO2 = 0.10f;
-  float maxFiO2 = 0.60f;
-  float stepFiO2 = 0.05f;
+  float maxFiO2 = 0.95f;
+  float stepFiO2 = 0.5f;
+  //----------------------------------------------------------------------------
 
   Logger logger("MultiplexVentilationGenData.log");
   SESubstanceManager subMgr(&logger);
@@ -72,7 +77,7 @@ bool GenerateStabilizedPatients()
   SEImpairedAlveolarExchangeExacerbation impairedAlveolarExchange;
   SEPulmonaryShuntExacerbation pulmonaryShunt;
 
-  overrides.AddScalarProperty("RespiratoryResistance", 5.0, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  overrides.AddScalarProperty("RespiratoryResistance", resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 
   SEMechanicalVentilatorConfiguration mvc(subMgr);
   auto& mv = mvc.GetConfiguration();
