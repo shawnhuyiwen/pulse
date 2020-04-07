@@ -103,28 +103,35 @@ void MechanicalVentilator::StateChange()
   if (GetControl() != eMechanicalVentilator_Control::PC_CMV)
   {
     //Only one option for now
-    //jbw - error for unsupported
+    /// \error Error: Unknown ventilator control type.  Setting to PC-CMV.
+    Error("Unknown ventilator control type.  Setting to PC-CMV.");
     SetControl(eMechanicalVentilator_Control::PC_CMV);
   }
 
   if (GetDriverWaveform() != eMechanicalVentilator_DriverWaveform::Square)
   {
     //Only one option for now
-    //jbw - error for unsupported
+    /// \error Error: Unknown ventilator waveform type.  Setting to Square.
+    Error("Unknown ventilator waveform type.  Setting to Square.");
     SetDriverWaveform(eMechanicalVentilator_DriverWaveform::Square);
   }
 
   if (!HasPositiveEndExpiredPressure())
   {
-    //jbw - fatal - required
+    /// \error Error: PEEP not set.  Setting to 0.
+    Error("PEEP not set.  Setting to 0.");
+    GetPositiveEndExpiredPressure().SetValue(0.0, PressureUnit::cmH2O);
   }
 
   if (!HasPeakInspiratoryPressure())
   {
-    //jbw - fatal - required
+    /// \error Error: PIP not set.  Setting to 10 cmH2O above PEEP.
+    Error("PIP not set.  Setting to 10 cmH2O above PEEP.");
+    double PEEP_cmH2O = GetPositiveEndExpiredPressure(PressureUnit::cmH2O);
+    GetPositiveEndExpiredPressure().SetValue(10.0 + PEEP_cmH2O, PressureUnit::cmH2O);
   }
 
-  //jbw - add checks to alert when things are overriden
+  /// \todo Add checks to alert when things are overriden
   if (HasRespiratoryRate())
   {
     GetBreathPeriod().SetValue(1.0 / GetRespiratoryRate(FrequencyUnit::Per_s), TimeUnit::s);
@@ -141,7 +148,8 @@ void MechanicalVentilator::StateChange()
   }
   else
   {
-    //jbw - fatal - need one of these
+    /// \error Fatal: No ventilator breath frequency/period set.  Respiratory rate, breath period, or inspiratory + expiratory period needed.
+    Fatal("No ventilator breath frequency/period set.  Respiratory rate, breath period, or inspiratory + expiratory period needed.");
   }
 
   if (HasInspiratoryExpiratoryRatio())
@@ -170,7 +178,8 @@ void MechanicalVentilator::StateChange()
   }
   else
   {
-    //jbw - fatal - need one of these
+    /// \error Fatal: No ventilator inspiratory vs expiratory ratio/period set.  IE ratio, inspiratory period, or expiratory period needed.
+    Fatal("No ventilator inspiratory vs expiratory ratio/period set.  IE ratio, inspiratory period, or expiratory period needed.");
   }
 
   m_Inhaling = true;
@@ -216,9 +225,18 @@ void MechanicalVentilator::StateChange()
   double currentN2Fraction = m_Ventilator->GetSubstanceQuantity(m_data.GetSubstances().GetN2())->GetVolumeFraction().GetValue();
   if (currentN2Fraction + gasFractionDiff < 0.0)
   {
-    //jbw - error - not enough N2 to balance
+    double FiO2 = m_Ventilator->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetVolumeFraction().GetValue();
+
+    /// \error Error: FiO2 setting + ambient fractions other than N2 is greater than 1.0. Setting FiO2 to max value
+    m_ss << "FiO2 setting + ambient fractions other than N2 is greater than 1.0. Setting FiO2 to max value of " << FiO2 + currentN2Fraction + gasFractionDiff << ".";
+    Error(m_ss);
+    m_Ventilator->GetSubstanceQuantity(m_data.GetSubstances().GetN2())->GetVolumeFraction().SetValue(0.0);
+    m_Ventilator->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetVolumeFraction().SetValue(FiO2 + currentN2Fraction + gasFractionDiff);
   }
-  m_Ventilator->GetSubstanceQuantity(m_data.GetSubstances().GetN2())->GetVolumeFraction().SetValue(currentN2Fraction + gasFractionDiff);
+  else
+  {
+    m_Ventilator->GetSubstanceQuantity(m_data.GetSubstances().GetN2())->GetVolumeFraction().SetValue(currentN2Fraction + gasFractionDiff);
+  }
 
   //Set the aerosol concentrations ********************************************
   std::vector<SESubstanceConcentration*> liquidConcentrations = GetConcentrationInspiredAerosols();
@@ -310,8 +328,7 @@ void MechanicalVentilator::SetConnection()
   switch (m_data.GetAirwayMode())
   {
   case eAirwayMode::Free:
-    //Basically a full leak to ground
-    // TODO jbw
+    m_Connection = eMechanicalVentilator_Connection::Off;
     break;
   case eAirwayMode::MechanicalVentilator:
     if (m_Connection == eMechanicalVentilator_Connection::Mask)

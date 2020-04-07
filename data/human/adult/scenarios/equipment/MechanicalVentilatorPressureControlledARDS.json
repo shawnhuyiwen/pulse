@@ -1,5 +1,5 @@
 {
-  "Name": "PressureControlContinuousMandatoryVentilationARDS",
+  "Name": "MechanicalVentilatorPressureControlledARDS",
   "Description": "Apply a PM-CMV mode ventilator to treat a patient with ARDS.",
   "StartType": { "PatientConfiguration": { "PatientFile": "StandardMale.json",
   "Conditions": { "AnyCondition": [ {
