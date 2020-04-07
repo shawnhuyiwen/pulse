@@ -72,6 +72,9 @@ protected:
   void UpdateDiffusion();
   void UpdatePulmonaryCapillary();
   void UpdatePulmonaryShunt();
+  //Overrides
+  void SetRespiratoryResistance();
+  void SetRespiratoryCompliance();
 
   //Actions
   void Pneumothorax();
@@ -143,6 +146,10 @@ protected:
 
   //Conscious Respiration
   bool m_ActiveConsciousRespirationCommand;
+
+  //Overrides
+  double m_RespiratoryResistanceOverride_cmH2O_s_Per_L; //Aaron serialize
+  double m_RespiratoryComplianceOverride_L_Per_cmH2O; //Aaron serialize
 
   // Stateless member variable (Set in SetUp())
   double m_dt_s;

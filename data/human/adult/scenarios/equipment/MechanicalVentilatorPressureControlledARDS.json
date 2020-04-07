@@ -1,6 +1,6 @@
 {
   "Name": "PressureControlContinuousMandatoryVentilationARDS",
-  "Description": "Apply a P-CMV mode ventilator to treat a patient with ARDS.",
+  "Description": "Apply a PM-CMV mode ventilator to treat a patient with ARDS.",
   "StartType": { "PatientConfiguration": { "PatientFile": "StandardMale.json",
   "Conditions": { "AnyCondition": [ {
         "PatientCondition": {
@@ -147,7 +147,7 @@
               "InspiratoryExpiratoryRatio": { "Value": 0.5, "Unit": "" }
             },
             "Connection": "Tube",
-            "Control": "P_CMV",
+            "Control": "PM_CMV",
             "DriverWaveform": "Square",
             "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 25.0, "Unit": "cmH2O" } },
             "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 10.0, "Unit": "cmH2O" } },
@@ -181,7 +181,7 @@
               "InspiratoryExpiratoryRatio": { "Value": 0.5, "Unit": "" }
             },
             "Connection": "Tube",
-            "Control": "P_CMV",
+            "Control": "PM_CMV",
             "DriverWaveform": "Square",
             "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 32.0, "Unit": "cmH2O" } },
             "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 15.0, "Unit": "cmH2O" } },

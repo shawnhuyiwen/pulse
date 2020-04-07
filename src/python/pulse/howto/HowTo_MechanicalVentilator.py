@@ -33,7 +33,7 @@ def HowTo_MechanicalVentilator():
     # Not all properties have to be set
     # Properties not included will retain their current value
     mechanical_ventilator.set_connection(eConnection.Off)
-    mechanical_ventilator.set_control(eControl.P_CMV)
+    mechanical_ventilator.set_control(eControl.PM_CMV)
     mechanical_ventilator.set_driver_waveform(eDriverWaveform.Square)
     # You can set a breath profile by setting the respiration rate OR breath period
     mechanical_ventilator.get_respiration_rate().set_value(17, FrequencyUnit.Per_min)

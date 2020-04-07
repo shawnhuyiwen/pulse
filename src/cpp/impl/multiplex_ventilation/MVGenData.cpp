@@ -40,18 +40,18 @@ std::string to_scientific_notation(float f)
 //--------------------------------------------------------------------------------------------------
 bool GenerateStabilizedPatients()
 {
-  int minCompliance = 10;
-  int maxCompliance = 50;
-  int stepCompliance = 5;
+  int minCompliance_L_Per_cmH2O = 0.010;
+  int maxCompliance_L_Per_cmH2O = 0.050;
+  int stepCompliance_L_Per_cmH2O = 0.005;
   float minImpairment = 0.0;
   float maxImpairment = 1.0;
   float stepImpairment = 0.2f;
-  int minPEEP = 10;
-  int maxPEEP = 20;
-  int stepPEEP = 2;
-  int minPIP = 10;
-  int maxPIP = 40;
-  int stepPIP = 2;
+  int minPEEP_cmH2O = 10;
+  int maxPEEP_cmH2O = 20;
+  int stepPEEP_cmH2O = 2;
+  int minPIP_cmH2O = 10;
+  int maxPIP_cmH2O = 40;
+  int stepPIP_cmH2O = 2;
   float minFiO2 = 0.10f;
   float maxFiO2 = 0.60f;
   float stepFiO2 = 0.05f;
@@ -71,6 +71,8 @@ bool GenerateStabilizedPatients()
 
   SEImpairedAlveolarExchangeExacerbation impairedAlveolarExchange;
   SEPulmonaryShuntExacerbation pulmonaryShunt;
+
+  overrides.AddScalarProperty("RespiratoryResistance", 5.0, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 
   SEMechanicalVentilatorConfiguration mvc(subMgr);
   auto& mv = mvc.GetConfiguration();
@@ -95,17 +97,17 @@ bool GenerateStabilizedPatients()
     std::cout << "[" << level << "] " << filename << "::" << line << " " << message;
   });
 
-  for (int c=minCompliance; c<=maxCompliance; c+=stepCompliance)
+  for (int c=minCompliance_L_Per_cmH2O; c<=maxCompliance_L_Per_cmH2O; c+=stepCompliance_L_Per_cmH2O)
   {
-    overrides.AddScalarProperty("LungCompliance", c, VolumePerPressureUnit::L_Per_cmH2O);
+    overrides.AddScalarProperty("RespiratoryCompliance", c, VolumePerPressureUnit::L_Per_cmH2O);
 
     for (float i=minImpairment; i<=maxImpairment; i+=stepImpairment)
     {
       // jbw Convert i to the appropriate action severity
-      impairedAlveolarExchange.GetSeverity().SetValue(i);// jbw support severity!
+      impairedAlveolarExchange.GetSeverity().SetValue(i);
       pulmonaryShunt.GetSeverity().SetValue(i);
 
-      for (int peep=minPEEP; peep<=maxPEEP; peep+=stepPEEP)
+      for (int peep=minPEEP_cmH2O; peep<=maxPEEP_cmH2O; peep+=stepPEEP_cmH2O)
       {
         mv.GetInspiratoryExpiratoryRatio().SetValue(peep);
 
@@ -116,7 +118,7 @@ bool GenerateStabilizedPatients()
         pulse->SerializeFromFile("./states/StandardMale@0s.json", SerializationFormat::JSON);
 
         // Step the PIP until we get a TidalVolume between 6-8 mL
-        for (int pip=minPIP; pip<maxPIP; pip+=stepPIP)
+        for (int pip=minPIP_cmH2O; pip<maxPIP_cmH2O; pip+=stepPIP_cmH2O)
         {
           mv.GetPeakInspiratoryPressure().SetValue(pip, PressureUnit::cmH2O);
         }

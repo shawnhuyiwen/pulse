@@ -273,6 +273,8 @@ void Respiratory::Initialize()
   GetPulmonaryElastance().SetValue(1.0 / 0.1, PressurePerVolumeUnit::cmH2O_Per_L);
 
   GetTotalRespiratoryModelCompliance().SetValue(0.1, VolumePerPressureUnit::L_Per_cmH2O);
+  //Aaron - add this one
+  //GetTotalRespiratoryModelResistance().SetValue(1.5, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 
   // Muscle Pressure Waveform
   m_InspiratoryRiseFraction = 0;
@@ -285,6 +287,10 @@ void Respiratory::Initialize()
 
   //Conscious Respiration
   m_ActiveConsciousRespirationCommand = false;
+
+  //Overrides
+  m_RespiratoryResistanceOverride_cmH2O_s_Per_L = -1.0;
+  m_RespiratoryComplianceOverride_L_Per_cmH2O = -1.0;
 
   //Get the fluid mechanics to a good starting point
   TuneCircuit();
@@ -389,7 +395,6 @@ void Respiratory::SetUp()
   m_ConnectionToMouth = m_data.GetCircuits().GetRespiratoryAndMechanicalVentilationCircuit().GetPath(pulse::MechanicalVentilationPath::ConnectionToMouth);
   m_GroundToConnection = m_data.GetCircuits().GetRespiratoryAndMechanicalVentilationCircuit().GetPath(pulse::MechanicalVentilationPath::GroundToConnection);
 
-  //jbw & Aaron
   /// \todo figure out how to modify these resistances without getting the cv circuit - maybe add a parameter, like baroreceptors does
   //Venous Return
   m_RightPulmonaryCapillary = m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightPulmonaryCapillariesToRightPulmonaryVeins);
@@ -459,18 +464,19 @@ void Respiratory::AtSteadyState()
 //--------------------------------------------------------------------------------------------------
 void Respiratory::PreProcess()
 {
-  //jbw
   if (m_data.HasOverride())
   {
     // Look for any known overrides
     for (auto& o : m_data.GetOverrides())
     {
-      if (o.name == "LungCompliance")
+      // Aaron - How do these get cleared?
+      if (o.name == "RespiratoryResistance")
       {
-        // String compares are expensive, set your own flag if need to remeber this.
-        // The overrides will be cleared after this time step
-        // Get the value from the override in the unit we want
-        double v = Convert(o.value, VolumePerPressureUnit::GetCompoundUnit(o.unit), VolumePerPressureUnit::L_Per_cmH2O);
+        m_RespiratoryResistanceOverride_cmH2O_s_Per_L = Convert(o.value, PressureTimePerVolumeUnit::GetCompoundUnit(o.unit), PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      }
+      else if (o.name == "RespiratoryCompliance")
+      {
+        m_RespiratoryComplianceOverride_L_Per_cmH2O = Convert(o.value, VolumePerPressureUnit::GetCompoundUnit(o.unit), VolumePerPressureUnit::L_Per_cmH2O);
       }
     }
   }
@@ -494,6 +500,10 @@ void Respiratory::PreProcess()
   SupplementalOxygen();
 
   RespiratoryDriver();
+
+  //Do the overrides
+  SetRespiratoryResistance();
+  SetRespiratoryCompliance();
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -538,7 +548,26 @@ void Respiratory::Process(bool solve_and_transport)
 }
 void Respiratory::ComputeExposedModelParameters()
 {
-  GetTotalRespiratoryModelCompliance().SetValue(0, VolumePerPressureUnit::L_Per_cmH2O); // jbw
+  double leftChestWallCompliance_L_Per_cmH2O = m_LeftPleuralToRespiratoryMuscle->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
+  double rightChestWallCompliance_L_Per_cmH2O = m_RightPleuralToRespiratoryMuscle->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
+  double leftLungCompliance_L_Per_cmH2O = m_LeftAlveoliToLeftPleuralConnection->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
+  double rightLungCompliance_L_Per_cmH2O = m_RightAlveoliToRightPleuralConnection->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
+  double leftSideCompliance_L_Per_cmH2O = 1.0 / (1.0 / leftChestWallCompliance_L_Per_cmH2O + 1.0 / leftLungCompliance_L_Per_cmH2O);
+  double rightSideCompliance_L_Per_cmH2O = 1.0 / (1.0 / rightChestWallCompliance_L_Per_cmH2O + 1.0 / rightLungCompliance_L_Per_cmH2O);
+  double totalCompliance_L_Per_cmH2O = leftSideCompliance_L_Per_cmH2O + rightSideCompliance_L_Per_cmH2O;
+  GetTotalRespiratoryModelCompliance().SetValue(totalCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
+
+  double airwayResistance_cmH2O_s_Per_L = m_MouthToCarina->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  double leftBronchiResistance_cmH2O_s_Per_L = m_CarinaToLeftAnatomicDeadSpace->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  double rightBronchiResistance_cmH2O_s_Per_L = m_CarinaToRightAnatomicDeadSpace->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  double leftAlveoliDuctResistance_cmH2O_s_Per_L = m_LeftAnatomicDeadSpaceToLeftAlveolarDeadSpace->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  double rightAlveoliDuctResistance_cmH2O_s_Per_L = m_RightAnatomicDeadSpaceToRightAlveolarDeadSpace->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  double leftSideResistance_cmH2O_s_Per_L = leftBronchiResistance_cmH2O_s_Per_L + leftAlveoliDuctResistance_cmH2O_s_Per_L;
+  double rightSideResistance_cmH2O_s_Per_L = rightBronchiResistance_cmH2O_s_Per_L + rightAlveoliDuctResistance_cmH2O_s_Per_L;
+  double totalDownstreamResistance_cmH2O_s_Per_L = 1.0 / (1.0 / leftSideResistance_cmH2O_s_Per_L + 1.0 / rightSideResistance_cmH2O_s_Per_L);
+  double totalResistance_cmH2O_s_Per_L = airwayResistance_cmH2O_s_Per_L + totalDownstreamResistance_cmH2O_s_Per_L;
+  //Aaron - add this one
+  //GetTotalRespiratoryModelResistance().SetValue(totalResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -2999,14 +3028,14 @@ void Respiratory::UpdatePulmonaryCapillary()
     double dSlopePulResist = 1.66666; // hard-coded slope for line
     double dPulmonaryResistanceMultiplier = 1.0 + (dMaxSeverity*dSlopePulResist);
 
-    double dRightPulmonaryCapillaryResistance = m_RightPulmonaryCapillary->GetNextResistance().GetValue(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-    double dLeftPulmonaryCapillaryResistance = m_LeftPulmonaryCapillary->GetNextResistance().GetValue(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    double dRightPulmonaryCapillaryResistance = m_RightPulmonaryCapillary->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    double dLeftPulmonaryCapillaryResistance = m_LeftPulmonaryCapillary->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
 
     dRightPulmonaryCapillaryResistance *= dPulmonaryResistanceMultiplier;
     dLeftPulmonaryCapillaryResistance *= dPulmonaryResistanceMultiplier;
     
-    m_RightPulmonaryCapillary->GetNextResistance().SetValue(dRightPulmonaryCapillaryResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-    m_LeftPulmonaryCapillary->GetNextResistance().SetValue(dLeftPulmonaryCapillaryResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    m_RightPulmonaryCapillary->GetNextResistance().SetValue(dRightPulmonaryCapillaryResistance, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    m_LeftPulmonaryCapillary->GetNextResistance().SetValue(dLeftPulmonaryCapillaryResistance, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
   }
 
   //-------------------------------------------------------------------------------------------------------------------
@@ -3022,14 +3051,14 @@ void Respiratory::UpdatePulmonaryCapillary()
     double dSlopePulResist = 1.66666; // hard-coded slope for line
     double dPulmonaryResistanceMultiplier = 1.0 + (Severity*dSlopePulResist);
 
-    double dRightPulmonaryCapillaryResistance = m_RightPulmonaryCapillary->GetNextResistance().GetValue(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-    double dLeftPulmonaryCapillaryResistance = m_LeftPulmonaryCapillary->GetNextResistance().GetValue(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    double dRightPulmonaryCapillaryResistance = m_RightPulmonaryCapillary->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    double dLeftPulmonaryCapillaryResistance = m_LeftPulmonaryCapillary->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
 
     dRightPulmonaryCapillaryResistance *= dPulmonaryResistanceMultiplier;
     dLeftPulmonaryCapillaryResistance *= dPulmonaryResistanceMultiplier;
 
-    m_RightPulmonaryCapillary->GetNextResistance().SetValue(dRightPulmonaryCapillaryResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-    m_LeftPulmonaryCapillary->GetNextResistance().SetValue(dLeftPulmonaryCapillaryResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    m_RightPulmonaryCapillary->GetNextResistance().SetValue(dRightPulmonaryCapillaryResistance, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    m_LeftPulmonaryCapillary->GetNextResistance().SetValue(dLeftPulmonaryCapillaryResistance, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
   }
 }
 
@@ -3050,8 +3079,6 @@ void Respiratory::UpdatePulmonaryShunt()
   if (m_data.GetConditions().HasPulmonaryShunt() || m_PatientActions->HasPulmonaryShuntExacerbation())
   {
     double severity = 0.0;
-    double leftLungFraction = 0.0;
-    double rightLungFraction = 0.0;
     if (m_PatientActions->HasPulmonaryShuntExacerbation())
     {
       severity = m_PatientActions->GetLobarPneumoniaExacerbation()->GetSeverity().GetValue();
@@ -3125,14 +3152,14 @@ void Respiratory::UpdatePulmonaryShunt()
 
   double pulmonaryShuntScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.01, 1.0, combinedSeverity);
 
-  double rightPulmonaryShuntResistance = m_RightPulmonaryArteriesToVeins->GetNextResistance().GetValue(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  double leftPulmonaryShuntResistance = m_LeftPulmonaryArteriesToVeins->GetNextResistance().GetValue(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  double rightPulmonaryShuntResistance = m_RightPulmonaryArteriesToVeins->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+  double leftPulmonaryShuntResistance = m_LeftPulmonaryArteriesToVeins->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
 
   rightPulmonaryShuntResistance *= pulmonaryShuntScalingFactor;
   leftPulmonaryShuntResistance *= pulmonaryShuntScalingFactor;
 
-  m_RightPulmonaryArteriesToVeins->GetNextResistance().SetValue(rightPulmonaryShuntResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  m_LeftPulmonaryArteriesToVeins->GetNextResistance().SetValue(leftPulmonaryShuntResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  m_RightPulmonaryArteriesToVeins->GetNextResistance().SetValue(rightPulmonaryShuntResistance, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+  m_LeftPulmonaryArteriesToVeins->GetNextResistance().SetValue(leftPulmonaryShuntResistance, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -3278,6 +3305,51 @@ void Respiratory::ModifyDriverPressure()
 #ifdef DEBUG
   m_data.GetDataTrack().Probe("fatigueFactor", 1 - dyspneaSeverity);
 #endif  
+}
+
+void Respiratory::SetRespiratoryResistance()
+{
+  if (m_RespiratoryResistanceOverride_cmH2O_s_Per_L < 0.0)
+  {
+    return;
+  }
+
+  //Set the Airway resistance to get achieve this given value
+  double leftBronchiResistance_cmH2O_s_Per_L = m_CarinaToLeftAnatomicDeadSpace->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  double rightBronchiResistance_cmH2O_s_Per_L = m_CarinaToRightAnatomicDeadSpace->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  double leftAlveoliDuctResistance_cmH2O_s_Per_L = m_LeftAnatomicDeadSpaceToLeftAlveolarDeadSpace->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  double rightAlveoliDuctResistance_cmH2O_s_Per_L = m_RightAnatomicDeadSpaceToRightAlveolarDeadSpace->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+
+  //Do the circuit math
+  double leftSideResistance_cmH2O_s_Per_L = leftBronchiResistance_cmH2O_s_Per_L + leftAlveoliDuctResistance_cmH2O_s_Per_L;
+  double rightSideResistance_cmH2O_s_Per_L = rightBronchiResistance_cmH2O_s_Per_L + rightAlveoliDuctResistance_cmH2O_s_Per_L;
+  double totalDownstreamResistance_cmH2O_s_Per_L = 1.0 / (1.0 / leftSideResistance_cmH2O_s_Per_L + 1.0 / rightSideResistance_cmH2O_s_Per_L);
+  double airwayResistance_cmH2O_s_Per_L = m_RespiratoryResistanceOverride_cmH2O_s_Per_L - totalDownstreamResistance_cmH2O_s_Per_L;
+
+  if (airwayResistance_cmH2O_s_Per_L <= 0)
+  {
+    //jbw - add error
+  }
+
+  m_MouthToCarina->GetNextResistance().SetValue(airwayResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+}
+
+void Respiratory::SetRespiratoryCompliance()
+{
+  if (m_RespiratoryComplianceOverride_L_Per_cmH2O < 0.0)
+  {
+    return;
+  }
+
+  //Set all compliances the same
+  double RespiratorySideCompliance_L_Per_cmH2O = m_RespiratoryComplianceOverride_L_Per_cmH2O / 2.0;
+  double LungCompliance_L_Per_cmH2O = 2.0 * RespiratorySideCompliance_L_Per_cmH2O;
+  double ChestWallCompliance_L_Per_cmH2O = LungCompliance_L_Per_cmH2O;
+
+  m_LeftAlveoliToLeftPleuralConnection->GetNextCompliance().SetValue(LungCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
+  m_RightAlveoliToRightPleuralConnection->GetNextCompliance().SetValue(LungCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
+  m_LeftPleuralToRespiratoryMuscle->GetNextCompliance().SetValue(ChestWallCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
+  m_RightPleuralToRespiratoryMuscle->GetNextCompliance().SetValue(ChestWallCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
 }
 
 //--------------------------------------------------------------------------------------------------

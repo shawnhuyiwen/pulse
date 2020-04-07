@@ -18,7 +18,7 @@ namespace Pulse.CDM
     public enum Control : int
     {
       NullControl = 0,/** Signals not provided, or no change */
-      P_CMV
+      PM_CMV
     }
     // Keep enums in sync with appropriate schema/cdm/MechanicalVentilator.proto file !!
     public enum DriverWaveform : int

@@ -16,7 +16,7 @@ class eConnection(Enum):
 
 class eControl(Enum):
     NullControl = 0
-    P_CMV = 1
+    PM_CMV = 1
 
 class eDriverWaveform(Enum):
     NullDriverWaveform = 0
