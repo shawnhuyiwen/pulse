@@ -91,14 +91,25 @@ bool MVController::GenerateStabilizedPatients()
       double currentTidalVolume_mL = pip_stepper->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL);
       Info("Patient starting with a tidal volume of "+to_scientific_notation(currentTidalVolume_mL)+"(mL)");
       Info("Targeting a tidal volume of "+to_scientific_notation(targetTidalVolume_mL)+"(mL)");
-      while (currentTidalVolume_mL < targetTidalVolume_mL)
+      bool tidalVolumeRegistered = false;
+      while (currentTidalVolume_mL < targetTidalVolume_mL || !tidalVolumeRegistered)
       {
         currentPIP_cmH2O += stepPIP_cmH2O;
         Info("..Incrementing PIP to" + std::to_string(currentPIP_cmH2O) + "(cmH2O)");
         mv.GetPeakInspiratoryPressure().SetValue(currentPIP_cmH2O, PressureUnit::cmH2O);
         pip_stepper->ProcessAction(mvc);
         pip_stepper->AdvanceModelTime(breathPeriod_s*2, TimeUnit::s);
-        currentTidalVolume_mL = pip_stepper->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL);
+        double updatedTidalVolume_mL = pip_stepper->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL);
+        if (updatedTidalVolume_mL == currentTidalVolume_mL)
+        {
+          // The tidal volume was so low that it didnt' register a breath
+          tidalVolumeRegistered = false;
+        }
+        else
+        {
+          tidalVolumeRegistered = true;
+        }
+        currentTidalVolume_mL = updatedTidalVolume_mL;
         Info("..Patient is now at a tidal volume of "+std::to_string(currentTidalVolume_mL)+"(mL)");
       }
       Info("Stabilized to a tidal volume of "+to_scientific_notation(currentTidalVolume_mL)+"(mL), with a PIP of "+to_scientific_notation(currentPIP_cmH2O));
