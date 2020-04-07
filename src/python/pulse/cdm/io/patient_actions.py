@@ -91,6 +91,47 @@ def serialize_chest_occlusive_dressing_to_bind(src: SEChestOcclusiveDressing, ds
 def serialize_chest_occlusive_dressing_from_bind(src:ChestOcclusiveDressingData, dst: SEChestOcclusiveDressing):
     serialize_patient_action_from_bind(src.PatientAction, dst)
 
+def serialize_forced_exhale_to_bind(src:SEForcedExhale, dst: ForcedExhaleData):
+    serialize_scalar_time_to_bind(src.get_exhale_period(), dst.ExhalePeriod)
+    serialize_scalar_0to1_to_bind( src.get_expiratory_capacity_fraction(), dst.ExpiratoryReserveVolumeFraction)
+    if src.has_hold_period():
+        serialize_scalar_time_to_bind(src.get_hold_period(), dst.HoldPeriod)
+    if src.has_release_period():
+        serialize_scalar_time_to_bind(src.get_release_period(), dst.ReleasePeriod)
+def serialize_forced_inhale_to_bind(src:SEForcedInhale, dst: ForcedInhaleData):
+    serialize_scalar_time_to_bind(src.get_inhale_period(), dst.InhalePeriod)
+    serialize_scalar_0to1_to_bind( src.get_inspiratory_capacity_fraction(), dst.InspiratoryCapacityFraction)
+    if src.has_hold_period():
+        serialize_scalar_time_to_bind(src.get_hold_period(), dst.HoldPeriod)
+    if src.has_release_period():
+        serialize_scalar_time_to_bind(src.get_release_period(), dst.ReleasePeriod)
+
+def serialize_forced_pause_to_bind(src: SEForcedPause, dst: ForcedPauseData):
+    serialize_scalar_time_to_bind(src.get_period(), dst.Period)
+
+
+def serialize_conscious_respiration_command_to_bind(src, dst: AnyConsciousRespirationCommandData):
+    if isinstance(src, SEForcedInhale):
+        serialize_forced_inhale_to_bind(src, dst.ForcedInhale)
+        return ForcedInhaleData
+    elif isinstance(src, SEForcedExhale):
+        serialize_forced_exhale_to_bind(src, dst.ForcedExhale)
+        return ForcedExhaleData
+    elif isinstance(src, SEForcedPause):
+        serialize_forced_pause_to_bind(src, dst.ForcedPause)
+        return ForcedPauseData
+    else:
+        raise Exception("Unable to add Conscious Respiration Command")
+
+def serialize_conscious_respiration_to_bind(src: SEConsciousRespiration, dst: ConsciousRespirationData):
+    serialize_patient_action_to_bind(src, dst.PatientAction)
+    dst.StartImmediately = src.get_start_immediately()
+    for command in src.get_commands():
+        serialize_conscious_respiration_command_to_bind(command, dst.Command.add())
+
+def serialize_conscious_respiration_from_bind(src:ConsciousRespirationData, dst: SEConsciousRespiration):
+    serialize_patient_action_from_bind(src.PatientAction, dst)
+
 def serialize_dsypnea_to_bind(src: SEDyspnea, dst: DyspneaData):
     serialize_patient_action_to_bind(src, dst.PatientAction)
     serialize_scalar_0to1_to_bind(src.get_severity(), dst.Severity)

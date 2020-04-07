@@ -4,11 +4,26 @@ from enum import Enum
 from pulse.cdm.engine import SEAction, eSwitch, eSide, eGate
 from pulse.cdm.scalars import SEScalar0To1, SEScalarArea, \
                               SEScalarMassPerVolume, SEScalarPressure, \
-                              SEScalarVolumePerTime, SEScalarVolume
+                              SEScalarTime, SEScalarVolumePerTime, SEScalarVolume
 
 class SEPatientAction(SEAction):
     def __init__(self):
         super().__init__()
+
+class AnyConsciousRespirationCommand():
+    __slots__ = ["_comment"]
+
+    def __init__(self):
+        self._comment=""
+    def clear(self):
+        if self._comment is not None:
+         self._comment = ""
+    def set_comment(self, comment:str):
+        self._comment=comment
+    def get_comment(self):
+        return self._comment
+    def has_comment(self):
+        return self._comment is not None
 
 class SEAcuteRespiratoryDistressSyndromeExacerbation(SEPatientAction):
     __slots__ = ["_severity", "_left_lung_affected", "_right_lung_affected"]
@@ -245,6 +260,211 @@ class SEChestOcclusiveDressing(SEPatientAction):
         return ("Chest Occlusive Dressing\n"
                 "  State: {}\n"
                 "  Side: {}").format(self._state, self._side)
+
+
+class SEForcedPause(AnyConsciousRespirationCommand):
+    __slots__ = ["_period"]
+
+    def __init__(self, period: SEScalarTime = None):
+        super().__init__()
+        self._period = period
+    def clear(self):
+        super().clear()
+        if self._period is not None:
+            self._period.invalidate()
+    def is_valid(self):
+        return self.has_period()
+    def has_period(self):
+        return self._period is not None
+    def get_period(self):
+        if self._period is None:
+            self._period = SEScalarTime();
+        return self._period
+    def __repr__(self):
+        return ("Breath Hold\n"
+                "  Comment: {}\n"
+                "  Period: {}").format(self._comment, self._period)
+
+
+class SEUseInhaler(AnyConsciousRespirationCommand):
+    __slots__ = []
+    def __init__(self):
+        super().__init__()
+    def clear(self):
+        super().clear()
+    def __repr__(self):
+        return ("Use Inhaler\n"
+                "  Comment: {}").format(self._comment)
+
+
+class SEForcedInhale(AnyConsciousRespirationCommand):
+    __slots__ = ["_inhale_period", "_release_period", "_hold_period", "_inspiratory_capacity_fraction"]
+
+    def __init__(self,
+                 inhale_period: SEScalarTime = None,
+                 volume_fraction: SEScalar0To1 = None,
+                 hold_period: SEScalarTime = None,
+                 release_period: SEScalarTime = None):
+        super().__init__()
+        self._inhale_period = inhale_period
+        self._release_period = release_period
+        self._hold_period = hold_period
+        self._inspiratory_capacity_fraction = volume_fraction
+    def clear(self):
+        super().clear()
+        if self._inhale_period is not None:
+          self._inhale_period.invalidate()
+        if self._release_period is not None:
+          self._release_period.invalidate()
+        if self._hold_period is not None:
+          self._hold_period.invalidate()
+        if self._inspiratory_capacity_fraction is not None:
+          self._inspiratory_capacity_fraction.invalidate()
+    def is_valid(self):
+        return self.has_inspiratory_capacity_fraction() and self.has_inhale_period()
+    def get_hold_period(self):
+        if self._hold_period is None:
+            self._hold_period = SEScalarTime()
+        return self._hold_period
+    def has_hold_period(self):
+        return self._hold_period
+    def get_inhale_period(self):
+        if self._inhale_period is None:
+            self._inhale_period = SEScalarTime()
+        return self._inhale_period
+    def has_inhale_period(self):
+        return self._inhale_period
+    def get_release_period(self):
+        if self._release_period is None:
+            self._release_period = SEScalarTime()
+        return self._release_period
+    def has_release_period(self):
+        return self._release_period
+    def get_inspiratory_capacity_fraction(self):
+        if self._inspiratory_capacity_fraction is None:
+            self._inspiratory_capacity_fraction = SEScalar0To1()
+        return self._inspiratory_capacity_fraction
+    def has_inspiratory_capacity_fraction(self):
+        return self._inspiratory_capacity_fraction is not None
+    def __repr__(self):
+        return ("Forced Inhale\n"
+                "  Inspiratory Capacity Fraction: {}\n"
+                "  Inhale Period: {}\n"
+                "  Hold Period: {}\n"
+                "  Release Period: {}").format(self._inspiratory_capacity_fraction, self._inhale_period,
+                                              self._hold_period, self._release_period)
+
+
+class SEForcedExhale(AnyConsciousRespirationCommand):
+    __slots__ = ["_exhale_period", "_release_period", "_hold_period", "_expiratory_capacity_fraction"]
+
+    def __init__(self, exhale_period: SEScalarTime = None,
+                 volume_fraction:SEScalar0To1 = None,
+                 hold_period: SEScalarTime=None,
+                 release_period: SEScalarTime=None):
+        super().__init__()
+        self._exhale_period = exhale_period
+        self._release_period = release_period
+        self._hold_period = hold_period
+        self._expiratory_capacity_fraction = volume_fraction
+    def clear(self):
+        super().clear()
+        if self._exhale_period is not None:
+          self._exhale_period.invalidate()
+        if self._release_period is not None:
+          self._release_period.invalidate()
+        if self._hold_period is not None:
+          self._hold_period.invalidate()
+        if self._expiratory_capacity_fraction is not None:
+          self._expiratory_capacity_fraction.invalidate()
+    def is_valid(self):
+        return self.has_expiratory_capacity_fraction() and self.has_exhale_period()
+    def get_hold_period(self):
+        if self._hold_period is None:
+            self._hold_period = SEScalarTime()
+        return self._hold_period
+    def has_hold_period(self):
+        return self._hold_period
+    def get_exhale_period(self):
+        if self._exhale_period is None:
+            self._exhale_period = SEScalarTime()
+        return self._exhale_period
+    def has_exhale_period(self):
+        return self._exhale_period
+    def get_release_period(self):
+        if self._release_period is None:
+            self._release_period = SEScalarTime()
+        return self._release_period
+    def has_release_period(self):
+        return self._release_period
+    def get_expiratory_capacity_fraction(self):
+        if self._expiratory_capacity_fraction is None:
+            self._expiratory_capacity_fraction = SEScalar0To1()
+        return self._expiratory_capacity_fraction
+    def has_expiratory_capacity_fraction(self):
+        return self._expiratory_capacity_fraction is not None
+    def __repr__(self):
+        return ("Forced Exhale\n"
+                "  Expiratory Capacity Fraction: {}\n"
+                "  Exhale Period: {}\n"
+                "  Hold Period: {}\n"
+                "  Release Period: {}").format(self._expiratory_capacity_fraction, self._exhale_period,
+                                              self._hold_period, self._release_period)
+
+class SEConsciousRespiration(SEPatientAction):
+    __slots__ = ['_commands', "_start_immediately"]
+
+    def __init__(self):
+        super().__init__()
+        self._commands=[]
+        self._start_immediately = False
+    def clear(self):
+        super().clear()
+        if len(self._commands):
+            self._commands = []
+    def is_valid(self):
+        validity = len(self._commands) > 0
+        for command in self._commands:
+            validity = validity and command.is_valid()
+        return validity
+    def set_start_immediately(self, start: bool):
+        self._start_immediately = start
+    def get_start_immediately(self):
+        return self._start_immediately
+    def has_commands(self):
+        return len(self._commands) > 0
+    def get_commands(self):
+        return self._commands
+    def get_active_command(self):
+        if len(self._commands):
+            return self._commands[0]
+    def remove_command(self, index:int = 0):
+        del self._commands[index]
+    def remove_active_command(self):
+        self.remove_command(0)
+
+    def add_forced_inhale(self,inhale_period: SEScalarTime,
+                           volume_fraction: SEScalar0To1,
+                           hold_period:SEScalarTime = None,
+                           release_period:SEScalarTime = None):
+        self._commands.append(SEForcedInhale(inhale_period=inhale_period,
+                                             volume_fraction= volume_fraction,
+                                             hold_period=hold_period,
+                                             release_period=release_period))
+    def add_forced_exhale(self,exhale_period:SEScalarTime,
+                           volume_fraction:SEScalar0To1,
+                           hold_period:SEScalarTime = None,
+                           release_period:SEScalarTime = None):
+        self._commands.append(SEForcedExhale(exhale_period = exhale_period,
+                                             volume_fraction= volume_fraction,
+                                             hold_period=hold_period,
+                                             release_period=release_period))
+    def add_forced_pause(self, hold_period:SEScalarTime=None):
+        self._commands.append(SEForcedPause(hold_period))
+
+    def __repr__(self):
+        return ("Conscious Respiration:\n"
+                "  Commands: [{}]").format(self._commands)
 
 class SEDyspnea(SEPatientAction):
     def __init__(self):
