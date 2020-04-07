@@ -1,5 +1,5 @@
 {
-  "Name": "PressureControlContinuousMandatoryVentilationVaried",
+  "Name": "MechanicalVentilatorPressureControlledVaried",
   "Description": "Apply a PM-CMV mode ventilator.",
   "StartType": { "PatientConfiguration": { "PatientFile": "StandardMale.json" }},
   "DataRequestManager":

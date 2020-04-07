@@ -3067,7 +3067,9 @@ void Respiratory::UpdatePulmonaryCapillary()
 /// Update Pulmonary Shunt Resistance 
 ///
 /// \details
-/// jbw
+/// This decreases the pulmonary shunt resistance in the cardiovascular system.  The resistance is 
+/// inversely proportional to the severity.  The shunt allows deoxgenated blood to pass without
+/// participating in gas exchange.  This often occurs with alveoli filled with fluid.
 //--------------------------------------------------------------------------------------------------
 void Respiratory::UpdatePulmonaryShunt()
 {
@@ -3307,6 +3309,11 @@ void Respiratory::ModifyDriverPressure()
 #endif  
 }
 
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Override the total system resistance.
+///
+//--------------------------------------------------------------------------------------------------
 void Respiratory::SetRespiratoryResistance()
 {
   if (m_RespiratoryResistanceOverride_cmH2O_s_Per_L < 0.0)
@@ -3328,12 +3335,18 @@ void Respiratory::SetRespiratoryResistance()
 
   if (airwayResistance_cmH2O_s_Per_L <= 0)
   {
-    //jbw - add error
+    /// \error Error: Ignoring the resistance override.  The airway resistance cannot be lowered enough to meet the criteria.
+    Error("Ignoring the resistance override.  The airway resistance cannot be lowered enough to meet the criteria.");
   }
 
   m_MouthToCarina->GetNextResistance().SetValue(airwayResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 }
 
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Override the total system compliance.
+///
+//--------------------------------------------------------------------------------------------------
 void Respiratory::SetRespiratoryCompliance()
 {
   if (m_RespiratoryComplianceOverride_L_Per_cmH2O < 0.0)
