@@ -62,9 +62,9 @@ bool MVController::GenerateStabilizedPatients()
     std::cout << "[" << level << "] " << filename << "::" << line << " " << message;
   });
 
-  unsigned int totalIterations = rint((maxCompliance_L_Per_cmH2O - minCompliance_L_Per_cmH2O) / stepCompliance_L_Per_cmH2O) *
-    (maxPEEP_cmH2O - minPEEP_cmH2O) / stepPEEP_cmH2O *
-    rint((maxImpairment - minImpairment) / stepImpairment);
+  unsigned int totalIterations = (rint((maxCompliance_L_Per_cmH2O - minCompliance_L_Per_cmH2O) / stepCompliance_L_Per_cmH2O) + 1) *
+    ((maxPEEP_cmH2O - minPEEP_cmH2O) / stepPEEP_cmH2O + 1) *
+    (rint((maxImpairment - minImpairment) / stepImpairment + 1));
   
   unsigned int currentIteration = 0;
 

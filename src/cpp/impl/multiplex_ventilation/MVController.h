@@ -91,4 +91,5 @@ protected:
   int   m_RespirationRate_Per_Min = 20;
   float m_IERatio = 0.5f;
   float m_AmbientFiO2 = 0.21f;
+  float m_SpO2Target = 0.9f;
 };
