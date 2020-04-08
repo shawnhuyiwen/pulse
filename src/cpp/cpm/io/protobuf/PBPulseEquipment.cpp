@@ -98,8 +98,9 @@ void PBPulseEquipment::Serialize(const Inhaler& src, PULSE_BIND::InhalerData& ds
 
 void PBPulseEquipment::Load(const PULSE_BIND::MechanicalVentilatorData& src, MechanicalVentilator& dst)
 {
-  PBPulseEquipment::Serialize(src, dst);
+  dst.Clear();
   dst.SetUp();
+  PBPulseEquipment::Serialize(src, dst);
 }
 void PBPulseEquipment::Serialize(const PULSE_BIND::MechanicalVentilatorData& src, MechanicalVentilator& dst)
 {

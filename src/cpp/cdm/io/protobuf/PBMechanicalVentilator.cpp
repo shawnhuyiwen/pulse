@@ -17,11 +17,11 @@ POP_PROTO_WARNINGS()
 
 void PBMechanicalVentilator::Load(const CDM_BIND::MechanicalVentilatorData& src, SEMechanicalVentilator& dst)
 {
+  dst.Clear();
   PBMechanicalVentilator::Serialize(src, dst);
 }
 void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorData& src, SEMechanicalVentilator& dst)
 {
-  dst.Clear();
   if (src.has_breathprofile())
   {
     if(src.breathprofile().has_rate())

@@ -81,7 +81,7 @@ public:
 protected:
   std::string to_scientific_notation(float f);
   std::string to_scientific_notation(double d);
-  void StabilizeSpO2(PhysiologyEngine& eng);
+  bool StabilizeSpO2(PhysiologyEngine& eng);
   void TrackData(SEEngineTracker& trkr, const std::string& csv_filename);
   void HandleEvent(eEvent e, bool active, const SEScalarTime* simTime = nullptr) override;
 

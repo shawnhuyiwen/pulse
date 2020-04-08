@@ -50,7 +50,37 @@ void MVController::HandleEvent(eEvent e, bool active, const SEScalarTime* simTim
 
 }
 
-void MVController::StabilizeSpO2(PhysiologyEngine& eng)
+bool MVController::StabilizeSpO2(PhysiologyEngine& eng)
 {
-
+  // Let's shoot for with in 0.25% for 10s straight
+  double currentSpO2 = 0;
+  double previsouSpO2 = eng.GetBloodChemistrySystem()->GetOxygenSaturation();
+  int passes = 0;
+  int totalIterations = 0;
+  int passesUnder80 = 0;
+  while (passes < 5)
+  {
+    totalIterations++;
+    eng.AdvanceModelTime(2, TimeUnit::s);
+    currentSpO2 = eng.GetBloodChemistrySystem()->GetOxygenSaturation();
+    if (currentSpO2 < 0.8 && currentSpO2 <= previsouSpO2)
+    {
+      passesUnder80++;
+      if (passesUnder80 > 5)
+        return false;
+      // Just get out of here
+    }
+    else
+      passesUnder80 = 0;
+    double pctDiff = GeneralMath::PercentDifference(previsouSpO2, currentSpO2);
+    if (pctDiff < 0.25)
+      passes++;
+    else
+    {
+      passes = 0;
+      previsouSpO2 = currentSpO2;
+    }
+  }
+  Info("Engine stablized at an SpO2 of " + to_scientific_notation(currentSpO2)+" in "+std::to_string(totalIterations *2)+"(s)");
+  return true;
 }

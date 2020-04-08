@@ -3083,7 +3083,7 @@ void Respiratory::UpdatePulmonaryShunt()
     double severity = 0.0;
     if (m_PatientActions->HasPulmonaryShuntExacerbation())
     {
-      severity = m_PatientActions->GetLobarPneumoniaExacerbation()->GetSeverity().GetValue();
+      severity = m_PatientActions->GetPulmonaryShuntExacerbation()->GetSeverity().GetValue();
     }
     else
     {

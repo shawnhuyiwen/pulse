@@ -10,6 +10,7 @@
 //--------------------------------------------------------------------------------------------------
 bool MVController::GenerateStabilizedPatients()
 {
+  DeleteDirectory("./states/multiplex_ventilation", true);
   // Loop parameters
   float minCompliance_L_Per_cmH2O = 0.010f;
   float maxCompliance_L_Per_cmH2O = 0.050f;
@@ -77,8 +78,8 @@ bool MVController::GenerateStabilizedPatients()
 
       // Create an engine here to create a state we can reuse in the next for loop
       std::string baseCompPeepState = "comp="+to_scientific_notation(c)+"_peep="+std::to_string(peep);
-      Info("Creating engine " + baseCompPeepState);
-      auto pip_stepper = CreatePulseEngine("./states/multiplex_ventilation/"+baseCompPeepState+".log");
+      Info("\nCreating engine " + baseCompPeepState);
+      auto pip_stepper = CreatePulseEngine("./states/multiplex_ventilation/logs/"+baseCompPeepState+".log");
       pip_stepper->SerializeFromFile("./states/StandardMale@0s.json", SerializationFormat::JSON);
       // Add our initial actions
       pip_stepper->ProcessAction(dyspnea);
@@ -115,8 +116,6 @@ bool MVController::GenerateStabilizedPatients()
         currentTidalVolume_mL = pip_stepper->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL);
         Info("Patient is now at a tidal volume of "+ to_scientific_notation(currentTidalVolume_mL)+"(mL), with a target of "+to_scientific_notation(targetTidalVolume_mL));
         cnt++;
-
-        
       }
       Info("It took "+std::to_string(cnt)+" steps to achieve target tidal volume");
       Info("Stabilized to a tidal volume of "+to_scientific_notation(currentTidalVolume_mL)+"(mL), with a PIP of "+std::to_string(currentPIP_cmH2O));
@@ -126,16 +125,19 @@ bool MVController::GenerateStabilizedPatients()
       delete pip_stepper.release();
 
       double currentFiO2 = FiO2->GetFractionAmount().GetValue();
-      for (float i = minImpairment; i <= maxImpairment; i += stepImpairment)
+      for (float i = minImpairment; i <= 1.0; i += stepImpairment)
       {
         // Construct our engine
-        baseName = "comp="+std::to_string(c)+"_peep="+std::to_string(peep)+"_pip="+std::to_string(currentPIP_cmH2O)+"_imp="+to_scientific_notation(i);
-        Info("Creating engine " + baseName);
-        auto fio2_stepper = CreatePulseEngine("./states/multiplex_ventilation/"+baseName+".log");
+        baseName = "comp="+ to_scientific_notation(c)+"_peep="+std::to_string(peep)+"_pip="+std::to_string(currentPIP_cmH2O)+"_imp="+to_scientific_notation(i);
+        Info("\nCreating engine " + baseName);
+        auto fio2_stepper = CreatePulseEngine("./states/multiplex_ventilation/logs/"+baseName+".log");
         fio2_stepper->SerializeFromFile("./states/multiplex_ventilation/tmp/"+baseCompPeepState+".json", SerializationFormat::JSON);
 
         impairedAlveolarExchange.GetSeverity().SetValue(i);
         pulmonaryShunt.GetSeverity().SetValue(i);
+        fio2_stepper->ProcessAction(impairedAlveolarExchange);
+        fio2_stepper->ProcessAction(pulmonaryShunt);
+        fio2_stepper->ProcessAction(overrides);
 
         //Note we are always keeping the prvious loop iteration currentFiO2 because it should require a higher value to acheive our desired SpO2
         while (true)
@@ -145,14 +147,16 @@ bool MVController::GenerateStabilizedPatients()
             currentFiO2 = 0.995;
             break;
           }
-          StabilizeSpO2(*fio2_stepper);
-          double currentSpO2 = fio2_stepper->GetBloodChemistrySystem()->GetOxygenSaturation();
-          if (currentSpO2 >= 0.9)
-            break;
+          if (StabilizeSpO2(*fio2_stepper))
+          {
+            double currentSpO2 = fio2_stepper->GetBloodChemistrySystem()->GetOxygenSaturation();
+            if (currentSpO2 >= 0.9)
+              break;
+          }
           currentFiO2 += 0.01;
           FiO2->GetFractionAmount().SetValue(currentFiO2);
-          pip_stepper->ProcessAction(mvc);
-          Info("Setting FiO2 to " + to_scientific_notation(currentFiO2));
+          fio2_stepper->ProcessAction(mvc);
+          Info("Setting FiO2 to " + to_scientific_notation(currentFiO2)+" with an SpO2 of "+to_scientific_notation(fio2_stepper->GetBloodChemistrySystem()->GetOxygenSaturation()));
         }
 
         // Save our state
