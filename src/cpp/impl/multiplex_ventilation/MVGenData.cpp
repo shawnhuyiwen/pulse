@@ -62,102 +62,116 @@ bool MVController::GenerateStabilizedPatients()
     std::cout << "[" << level << "] " << filename << "::" << line << " " << message;
   });
 
-  double breathPeriod_s = 60.0 / m_RespirationRate_Per_Min;
+  unsigned int totalIterations = rint((maxCompliance_L_Per_cmH2O - minCompliance_L_Per_cmH2O) / stepCompliance_L_Per_cmH2O) *
+    (maxPEEP_cmH2O - minPEEP_cmH2O) / stepPEEP_cmH2O *
+    rint((maxImpairment - minImpairment) / stepImpairment);
+  
+  unsigned int currentIteration = 0;
 
-  for (float c = minCompliance_L_Per_cmH2O; c <= maxCompliance_L_Per_cmH2O; c += stepCompliance_L_Per_cmH2O)
+  for (float compliance_L_Per_cmH2O = minCompliance_L_Per_cmH2O; compliance_L_Per_cmH2O <= maxCompliance_L_Per_cmH2O; compliance_L_Per_cmH2O += stepCompliance_L_Per_cmH2O)
   {
-    overrides.AddScalarProperty("RespiratoryCompliance", c, VolumePerPressureUnit::L_Per_cmH2O);
+    overrides.AddScalarProperty("RespiratoryCompliance", compliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
 
-    int currentPIP_cmH2O = 0;
-    for (int peep = minPEEP_cmH2O; peep <= maxPEEP_cmH2O; peep += stepPEEP_cmH2O)
+    for (int PEEP_cmH2O = minPEEP_cmH2O; PEEP_cmH2O <= maxPEEP_cmH2O; PEEP_cmH2O += stepPEEP_cmH2O)
     {
-      mv.GetPeakInspiratoryPressure().SetValue(peep, PressureUnit::cmH2O);
-      mv.GetPositiveEndExpiredPressure().SetValue(peep, PressureUnit::cmH2O);
-      FiO2->GetFractionAmount().SetValue(m_AmbientFiO2);// Reset our FiO2 to Atmosphere
-      currentPIP_cmH2O = peep;
+      // RC circuit charging equation
+      // Assume tube resistances are negligable
+      double targetTidalVolume_mL = 6.0 * 75.3; // Aaron - What's the best way to get the ideal body weight from the patient?
+      double breathPeriod_s = 60.0 / m_RespirationRate_Per_Min;
+      double inspiratoryPeriod_s = m_IERatio * breathPeriod_s / (1 + m_IERatio);
+      double targetTidalVolume_L = targetTidalVolume_mL / 1000.0;
+      int PIP_cmH2O = int(targetTidalVolume_L / (compliance_L_Per_cmH2O * (1.0 - exp(-inspiratoryPeriod_s / (m_Resistance_cmH2O_s_Per_L * compliance_L_Per_cmH2O)))) + PEEP_cmH2O);
 
-      // Create an engine here to create a state we can reuse in the next for loop
-      std::string baseCompPeepState = "comp="+to_scientific_notation(c)+"_peep="+std::to_string(peep);
-      Info("\nCreating engine " + baseCompPeepState);
-      auto pip_stepper = CreatePulseEngine("./states/multiplex_ventilation/logs/"+baseCompPeepState+".log");
-      pip_stepper->SerializeFromFile("./states/StandardMale@0s.json", SerializationFormat::JSON);
-      // Add our initial actions
-      pip_stepper->ProcessAction(dyspnea);
-      pip_stepper->ProcessAction(intubation);
-      pip_stepper->ProcessAction(overrides);
-      pip_stepper->ProcessAction(mvc);
-      //pip_stepper->AdvanceModelTime(breathPeriod_s * 2, TimeUnit::s);
+      // Set up the ventilator
+      mv.GetPeakInspiratoryPressure().SetValue(PIP_cmH2O, PressureUnit::cmH2O);
+      mv.GetPositiveEndExpiredPressure().SetValue(PEEP_cmH2O, PressureUnit::cmH2O);
+      FiO2->GetFractionAmount().SetValue(m_AmbientFiO2); // Set our FiO2 to Atmosphere
 
-      // Step the PIP until we get a TidalVolume between 6 ml/kg (ideal body weight)
-      int cnt = 0;
-      double targetTidalVolume_mL = 6.0 * pip_stepper->GetPatient().GetIdealBodyWeight(MassUnit::kg);
-      double currentTidalVolume_mL = pip_stepper->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL);
-      Info("Patient starting with a tidal volume of "+to_scientific_notation(currentTidalVolume_mL)+"(mL)");
-      Info("Targeting a tidal volume of "+to_scientific_notation(targetTidalVolume_mL)+"(mL)");
-      while (true)
-      {
-        double pctDiff = GeneralMath::PercentDifference(targetTidalVolume_mL, currentTidalVolume_mL);
-        if (pctDiff < 2)
-          break;
-        if (currentTidalVolume_mL < targetTidalVolume_mL)
-          currentPIP_cmH2O += (int)(currentPIP_cmH2O *(pctDiff * 0.01));
-        else
-          currentPIP_cmH2O -= (int)(currentPIP_cmH2O * (pctDiff * 0.01));
-        if (currentPIP_cmH2O < peep)
-          currentPIP_cmH2O = peep;
-
-        mv.GetPeakInspiratoryPressure().SetValue(currentPIP_cmH2O, PressureUnit::cmH2O);
-        pip_stepper->ProcessAction(mvc);
-        Info("Setting PIP to " + std::to_string(currentPIP_cmH2O) + "(cmH2O)");
-        do
-        {// Keep going until we get a different tidal volume
-          pip_stepper->AdvanceModelTime(breathPeriod_s * 2, TimeUnit::s);
-        } while (currentTidalVolume_mL == pip_stepper->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL));
-        currentTidalVolume_mL = pip_stepper->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL);
-        Info("Patient is now at a tidal volume of "+ to_scientific_notation(currentTidalVolume_mL)+"(mL), with a target of "+to_scientific_notation(targetTidalVolume_mL));
-        cnt++;
-      }
-      Info("It took "+std::to_string(cnt)+" steps to achieve target tidal volume");
-      Info("Stabilized to a tidal volume of "+to_scientific_notation(currentTidalVolume_mL)+"(mL), with a PIP of "+std::to_string(currentPIP_cmH2O));
-      // Save this state out
-      Info("Saving engine state"+baseCompPeepState+".json");
-      pip_stepper->SerializeToFile("./states/multiplex_ventilation/tmp/"+baseCompPeepState+".json", SerializationFormat::JSON);
-      delete pip_stepper.release();
+      Info("Calculated PIP of " + std::to_string(PIP_cmH2O) + "(cmH2O) for a tidal volume of " + to_scientific_notation(targetTidalVolume_mL) + "(mL) and a PEEP of " + std::to_string(PEEP_cmH2O) + "(cmH2O)");
 
       double currentFiO2 = FiO2->GetFractionAmount().GetValue();
-      for (float i = minImpairment; i <= 1.0; i += stepImpairment)
+      for (float currentImpairment = minImpairment; currentImpairment <= 1.0; currentImpairment += stepImpairment) //Aaron - This needs to be maxImpairment instead of 1.0, but rounding screws it up
       {
-        // Construct our engine
-        baseName = "comp="+ to_scientific_notation(c)+"_peep="+std::to_string(peep)+"_pip="+std::to_string(currentPIP_cmH2O)+"_imp="+to_scientific_notation(i);
-        Info("\nCreating engine " + baseName);
-        auto fio2_stepper = CreatePulseEngine("./states/multiplex_ventilation/logs/"+baseName+".log");
-        fio2_stepper->SerializeFromFile("./states/multiplex_ventilation/tmp/"+baseCompPeepState+".json", SerializationFormat::JSON);
+        Info("\n########################### PATIENT " + std::to_string(currentIteration + 1) + " OF " + std::to_string(totalIterations) + " ###########################");
 
-        impairedAlveolarExchange.GetSeverity().SetValue(i);
-        pulmonaryShunt.GetSeverity().SetValue(i);
+        // Construct our engine
+        baseName = "comp="+ to_scientific_notation(compliance_L_Per_cmH2O)+"_peep="+std::to_string(PEEP_cmH2O)+"_pip="+std::to_string(PIP_cmH2O)+"_imp="+to_scientific_notation(currentImpairment);
+        Info("Creating engine " + baseName);
+        auto fio2_stepper = CreatePulseEngine("./states/multiplex_ventilation/logs/"+baseName+".log");
+        fio2_stepper->SerializeFromFile("./states/StandardMale@0s.json", SerializationFormat::JSON);
+
+        // Add our initial actions
+        impairedAlveolarExchange.GetSeverity().SetValue(currentImpairment);
+        pulmonaryShunt.GetSeverity().SetValue(currentImpairment);
+        fio2_stepper->ProcessAction(dyspnea);
+        fio2_stepper->ProcessAction(intubation);
+        fio2_stepper->ProcessAction(overrides);
+        fio2_stepper->ProcessAction(mvc);
         fio2_stepper->ProcessAction(impairedAlveolarExchange);
         fio2_stepper->ProcessAction(pulmonaryShunt);
-        fio2_stepper->ProcessAction(overrides);
 
-        //Note we are always keeping the prvious loop iteration currentFiO2 because it should require a higher value to acheive our desired SpO2
+        double currentFiO2 = FiO2->GetFractionAmount().GetValue();
+
+        double tolerance_Per_s = 0.001;
+        double FiO2_increment = 0.01;
+
+        double previousSpO2 = fio2_stepper->GetBloodChemistrySystem()->GetOxygenSaturation();
+
+        fio2_stepper->AdvanceModelTime(breathPeriod_s, TimeUnit::s);
+        double totalSimTime = breathPeriod_s;
+        double currentSpO2 = fio2_stepper->GetBloodChemistrySystem()->GetOxygenSaturation();
+        bool trendingUp = currentSpO2 > previousSpO2;
+
+        bool max = false;
+        double previousFiO2 = currentFiO2;
         while (true)
         {
-          if (currentFiO2 > 0.995)
+          fio2_stepper->AdvanceModelTime(breathPeriod_s, TimeUnit::s);
+          totalSimTime += breathPeriod_s;
+          currentSpO2 = fio2_stepper->GetBloodChemistrySystem()->GetOxygenSaturation();
+
+          if (!trendingUp && currentSpO2 < m_SpO2Target && !max)
           {
-            currentFiO2 = 0.995;
-            break;
+            if (currentSpO2 < m_SpO2Target - 0.1) //if it's 10% lower than the target, we can move faster
+            {
+              currentFiO2 += FiO2_increment;// *5.0;
+            }
+            else
+            {
+              currentFiO2 += FiO2_increment;
+            }
           }
-          if (StabilizeSpO2(*fio2_stepper))
+          else if ((trendingUp && currentSpO2 <= previousSpO2) ||
+            (abs(currentSpO2 - previousSpO2) < tolerance_Per_s * breathPeriod_s))
           {
-            double currentSpO2 = fio2_stepper->GetBloodChemistrySystem()->GetOxygenSaturation();
-            if (currentSpO2 >= 0.9)
+            if (currentSpO2 >= m_SpO2Target || max)
+            {
               break;
+            }
+            else
+            {
+              currentFiO2 += FiO2_increment;
+            }
           }
-          currentFiO2 += 0.01;
-          FiO2->GetFractionAmount().SetValue(currentFiO2);
-          fio2_stepper->ProcessAction(mvc);
-          Info("Setting FiO2 to " + to_scientific_notation(currentFiO2)+" with an SpO2 of "+to_scientific_notation(fio2_stepper->GetBloodChemistrySystem()->GetOxygenSaturation()));
+
+          if (currentFiO2 != previousFiO2)
+          {
+            if (currentFiO2 > 0.9995)
+            {
+              currentFiO2 = 0.9995;
+              max = true;
+            }
+            Info("Setting FiO2 to " + to_scientific_notation(currentFiO2) + " with an SpO2 of " + to_scientific_notation(currentSpO2));
+            FiO2->GetFractionAmount().SetValue(currentFiO2);
+            fio2_stepper->ProcessAction(mvc);
+          }
+
+          trendingUp = currentSpO2 > previousSpO2;
+          previousSpO2 = currentSpO2;
+          previousFiO2 = currentFiO2;
         }
+
+        Info("Engine stabilized at an SpO2 of " + to_scientific_notation(currentSpO2) + " in " + to_scientific_notation(totalSimTime) + "(s)");
 
         // Save our state
         baseName += "_FiO2="+to_scientific_notation(currentFiO2);
@@ -166,9 +180,9 @@ bool MVController::GenerateStabilizedPatients()
         // Append to our "list" of generated states
         auto patientData = patients.add_patients();
         patientData->set_statefile("./states/multiplex_ventilation/"+baseName + ".json");
-        patientData->set_compliance_l_per_cmh2o(c);
-        patientData->set_impairmentfraction(i);
-        patientData->set_peep_cmh2o(peep);
+        patientData->set_compliance_l_per_cmh2o(compliance_L_Per_cmH2O);
+        patientData->set_impairmentfraction(currentImpairment);
+        patientData->set_peep_cmh2o(PEEP_cmH2O);
         patientData->set_pip_cmh2o(mv.GetPeakInspiratoryPressure().GetValue(PressureUnit::cmH2O));
         patientData->set_fio2(FiO2->GetFractionAmount().GetValue());
         patientData->set_oxygensaturation(fio2_stepper->GetBloodChemistrySystem()->GetOxygenSaturation());
@@ -176,6 +190,8 @@ bool MVController::GenerateStabilizedPatients()
         patientData->set_endtidalcarbondioxidepressure_cmh2o(fio2_stepper->GetRespiratorySystem()->GetEndTidalCarbonDioxidePressure(PressureUnit::cmH2O));
         patientData->set_carricoindex(fio2_stepper->GetRespiratorySystem()->GetCarricoIndex(PressureUnit::mmHg));
         delete fio2_stepper.release();
+
+        currentIteration++;
       }
     }
   }
