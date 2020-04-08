@@ -19,6 +19,10 @@ std::string MVController::to_scientific_notation(float f)
   snprintf(buffer, sizeof(buffer), "%g", f);
   return std::string(buffer);
 }
+std::string MVController::to_scientific_notation(double d)
+{
+  return to_scientific_notation(float(d));
+}
 
 void MVController::TrackData(SEEngineTracker& trkr, const std::string& csv_filename)
 {
@@ -42,6 +46,11 @@ void MVController::TrackData(SEEngineTracker& trkr, const std::string& csv_filen
 }
 
 void MVController::HandleEvent(eEvent e, bool active, const SEScalarTime* simTime)
+{
+
+}
+
+void MVController::StabilizeSpO2(PhysiologyEngine& eng)
 {
 
 }
