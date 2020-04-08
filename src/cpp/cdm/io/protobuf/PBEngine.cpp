@@ -100,11 +100,11 @@ POP_PROTO_WARNINGS()
 
 void PBEngine::Load(const CDM_BIND::LogMessagesData& src, LogMessages& dst)
 {
+  dst.Clear();
   PBEngine::Serialize(src, dst);
 }
 void PBEngine::Serialize(const CDM_BIND::LogMessagesData& src, LogMessages& dst)
 {
-  dst.Clear();
   for (int i = 0; i < src.debugmessages_size(); i++)
     dst.debug_msgs.push_back(src.debugmessages()[i]);
   for (int i = 0; i < src.infogmessages_size(); i++)
@@ -153,6 +153,7 @@ bool PBEngine::SerializeToString(const LogMessages& src, std::string& output, Se
 
 void PBEngine::Load(const CDM_BIND::ConditionListData& src, SEConditionManager& dst)
 {
+  dst.Clear();
   PBEngine::Serialize(src, dst);
 }
 void PBEngine::Serialize(const CDM_BIND::ConditionListData& src, SEConditionManager& dst)
@@ -200,6 +201,7 @@ void PBEngine::Serialize(const SEConditionManager& src, CDM_BIND::ConditionListD
 
 void PBEngine::Load(const CDM_BIND::ActionListData& src, SEActionManager& dst)
 {
+  dst.Clear();
   PBEngine::Serialize(src, dst);
 }
 void PBEngine::Serialize(const CDM_BIND::ActionListData& src, SEActionManager& dst)
@@ -339,12 +341,11 @@ void PBEngine::Serialize(const SEPatientActionCollection& src, CDM_BIND::ActionL
 
 void PBEngine::Load(const CDM_BIND::PatientConfigurationData& src, SEPatientConfiguration& dst, SESubstanceManager& subMgr)
 {
+  dst.Clear();
   PBEngine::Serialize(src, dst, subMgr);
 }
 void PBEngine::Serialize(const CDM_BIND::PatientConfigurationData& src, SEPatientConfiguration& dst, SESubstanceManager& subMgr)
 {
-  dst.Clear();
-
   if (src.has_patient())
     PBPatient::Load(src.patient(), dst.GetPatient());
   else
@@ -416,6 +417,7 @@ bool PBEngine::SerializeFromFile(const std::string& filename, SEPatientConfigura
 
 void PBEngine::Load(const CDM_BIND::DataRequestData& src, SEDataRequest& dst)
 {
+  dst.Clear();
   PBEngine::Serialize(src, dst);
 }
 void PBEngine::Serialize(const CDM_BIND::DataRequestData& src, SEDataRequest& dst)
@@ -449,6 +451,7 @@ void PBEngine::Serialize(const SEDataRequest& src, CDM_BIND::DataRequestData& ds
 }
 void PBEngine::Copy(const SEDataRequest& src, SEDataRequest& dst)
 {
+  dst.Clear();
   CDM_BIND::DataRequestData data;
   PBEngine::Serialize(src, data);
   PBEngine::Serialize(data, dst);
@@ -456,11 +459,11 @@ void PBEngine::Copy(const SEDataRequest& src, SEDataRequest& dst)
 
 void PBEngine::Load(const CDM_BIND::DataRequestManagerData& src, SEDataRequestManager& dst, const SESubstanceManager& subMgr)
 {
+  dst.Clear();
   PBEngine::Serialize(src, dst, subMgr);
 }
 void PBEngine::Serialize(const CDM_BIND::DataRequestManagerData& src, SEDataRequestManager& dst, const SESubstanceManager& subMgr)
 {
-  dst.Clear();
   dst.m_ResultsFilename = src.resultsfilename();
   dst.m_SamplesPerSecond = src.samplespersecond();
   if (src.has_defaultdecimalformatting())
@@ -498,6 +501,7 @@ void PBEngine::Serialize(const SEDataRequestManager& src, CDM_BIND::DataRequestM
 }
 void PBEngine::Copy(const SEDataRequestManager& src, SEDataRequestManager& dst, const SESubstanceManager& subMgr)
 {
+  dst.Clear();
   CDM_BIND::DataRequestManagerData data;
   PBEngine::Serialize(src, data);
   PBEngine::Serialize(data, dst, subMgr);
@@ -505,11 +509,11 @@ void PBEngine::Copy(const SEDataRequestManager& src, SEDataRequestManager& dst, 
 
 void PBEngine::Load(const CDM_BIND::DecimalFormatData& src, SEDecimalFormat& dst)
 {
+  dst.Clear();
   PBEngine::Serialize(src, dst);
 }
 void PBEngine::Serialize(const CDM_BIND::DecimalFormatData& src, SEDecimalFormat& dst)
 {
-  dst.Clear();
   dst.SetNotation((eDecimalFormat_Type)src.type());
   dst.SetPrecision(src.precision());
 }
@@ -638,11 +642,11 @@ bool PBEngine::SerializeFromFile(const std::string& filename, SEDataRequestManag
 
 void PBEngine::Load(const CDM_BIND::AutoSerializationData& src, SEAutoSerialization& dst)
 {
+  dst.Clear();
   PBEngine::Serialize(src, dst);
 }
 void PBEngine::Serialize(const CDM_BIND::AutoSerializationData& src, SEAutoSerialization& dst)
 {
-  dst.Clear();
   if (src.has_period())
     PBProperty::Load(src.period(), dst.GetPeriod());
   if (src.periodtimestamps() != CDM_BIND::eSwitch::NullSwitch)
@@ -675,11 +679,11 @@ void PBEngine::Serialize(const SEAutoSerialization& src, CDM_BIND::AutoSerializa
 
 void PBEngine::Load(const CDM_BIND::DynamicStabilizationData& src, SEDynamicStabilization& dst)
 {
+  dst.Clear();
   PBEngine::Serialize(src, dst);
 }
 void PBEngine::Serialize(const CDM_BIND::DynamicStabilizationData& src, SEDynamicStabilization& dst)
 {
-  dst.Clear();
   if (src.trackingstabilization() != CDM_BIND::eSwitch::NullSwitch)
     dst.TrackStabilization((eSwitch)src.trackingstabilization());
   if (src.has_restingconvergence())
@@ -717,11 +721,11 @@ void PBEngine::Serialize(const SEDynamicStabilization& src, CDM_BIND::DynamicSta
 
 void PBEngine::Load(const CDM_BIND::DynamicStabilizationEngineConvergenceData& src, SEDynamicStabilizationEngineConvergence& dst)
 {
+  dst.Clear();
   PBEngine::Serialize(src, dst);
 }
 void PBEngine::Serialize(const CDM_BIND::DynamicStabilizationEngineConvergenceData& src, SEDynamicStabilizationEngineConvergence& dst)
 {
-  dst.Clear();
   // TODO Warn if these are not provided
   if (src.has_convergencetime())
     PBProperty::Load(src.convergencetime(), dst.GetConvergenceTime());
@@ -765,11 +769,11 @@ void PBEngine::Serialize(const SEDynamicStabilizationEngineConvergence& src, CDM
 
 void PBEngine::Load(const CDM_BIND::TimedStabilizationData& src, SETimedStabilization& dst)
 {
+  dst.Clear();
   PBEngine::Serialize(src, dst);
 }
 void PBEngine::Serialize(const CDM_BIND::TimedStabilizationData& src, SETimedStabilization& dst)
 {
-  dst.Clear();
   if (src.trackingstabilization() != CDM_BIND::eSwitch::NullSwitch)
     dst.TrackStabilization((eSwitch)src.trackingstabilization());
   if (src.has_restingstabilizationtime())

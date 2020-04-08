@@ -170,6 +170,9 @@ message RespiratoryData
   
   // Conscious Breathing
   bool                                     ActiveConsciousRespirationCommand                   = 43;
+  // Overrides
+  double                                   RespiratoryComplianceOverride_L_Per_cmH2O           = 44;
+  double                                   RespiratoryResistanceOverride_cmH2O_s_Per_L         = 45;
 }
 
 message TissueData

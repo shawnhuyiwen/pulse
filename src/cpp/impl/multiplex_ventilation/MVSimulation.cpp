@@ -31,7 +31,7 @@ bool MVController::RunSimulation(pulse::multiplex_ventilator::bind::SimulationDa
   SEGasCompartment* expiratoryConnectionCompartment = nullptr;
 
   int i = 0;
-  for (size_t p=0; p<sim.patientcomparisons_size(); p++)
+  for (int p=0; p<sim.patientcomparisons_size(); p++)
   {
     std::string state = sim.patientcomparisons()[p].soloventilation().statefile();
     PulseController* pc = new PulseController(m_BaseFileName + "_p" + std::to_string(i++) + ".log");

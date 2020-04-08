@@ -88,8 +88,10 @@ void SEMechanicalVentilator::Merge(const SEMechanicalVentilator& from)
     double total = 0;
     SESubstance* sub;
     SESubstanceFraction* sf;
-    for (auto my_sf : m_FractionInspiredGases)
-      my_sf->GetFractionAmount().SetValue(0);
+    // Since we are allowing only O2 to be specified
+    // Remove everything so we know what is intentionally not provided
+    // And what is intentially set to 0 (don't just set to 0)
+    RemoveFractionInspiredGases();
     for (SESubstanceFraction* osf : from.m_FractionInspiredGases)
     {
       if (&m_Substances != &from.m_Substances)
@@ -105,10 +107,12 @@ void SEMechanicalVentilator::Merge(const SEMechanicalVentilator& from)
       else
         sub = &osf->GetSubstance();
 
-      sf = &GetFractionInspiredGas(*sub);
+      sf = new SESubstanceFraction(*sub);
       sf->GetFractionAmount().Set(osf->GetFractionAmount());
       amt = sf->GetFractionAmount().GetValue();
       total += amt;
+      m_FractionInspiredGases.push_back(sf);
+      m_cFractionInspiredGases.push_back(sf);
       m_Substances.AddActiveSubstance((SESubstance&)sf->m_Substance);
     }
     

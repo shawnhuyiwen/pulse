@@ -39,6 +39,7 @@ POP_PROTO_WARNINGS()
 
 void PBSubstance::Load(const CDM_BIND::SubstanceData& src, SESubstance& dst)
 {
+  dst.Clear();
   PBSubstance::Serialize(src, dst);
 
   if (dst.HasClearance() && dst.HasPK() && dst.GetPK().HasPhysicochemicals() &&
@@ -50,7 +51,6 @@ void PBSubstance::Load(const CDM_BIND::SubstanceData& src, SESubstance& dst)
 }
 void PBSubstance::Serialize(const CDM_BIND::SubstanceData& src, SESubstance& dst)
 {
-  dst.Clear();
   dst.SetName(src.name());
   dst.SetState((eSubstance_State)src.state());
   if (src.has_density())
@@ -164,11 +164,11 @@ void PBSubstance::Serialize(const SESubstance& src, CDM_BIND::SubstanceData& dst
 
 void PBSubstance::Load(const CDM_BIND::SubstanceAerosolizationData& src, SESubstanceAerosolization& dst)
 {
+  dst.Clear();
   PBSubstance::Serialize(src, dst);
 }
 void PBSubstance::Serialize(const CDM_BIND::SubstanceAerosolizationData& src, SESubstanceAerosolization& dst)
 {
-  dst.Clear();
   if (src.has_bronchiolemodifier())
     PBProperty::Load(src.bronchiolemodifier(), dst.GetBronchioleModifier());
   if (src.has_inflammationcoefficient())
@@ -196,12 +196,11 @@ void PBSubstance::Serialize(const SESubstanceAerosolization& src, CDM_BIND::Subs
 
 void PBSubstance::Load(const CDM_BIND::SubstanceClearanceData& src, SESubstanceClearance& dst)
 {
+  dst.Clear();
   PBSubstance::Serialize(src, dst);
 }
 void PBSubstance::Serialize(const CDM_BIND::SubstanceClearanceData& src, SESubstanceClearance& dst)
 {
-  dst.Clear();
-
   // Make sure dups match
   if (src.has_systemicclearance() && src.systemicclearance().has_renalclearance() && src.systemicclearance().renalclearance().has_scalarvolumepertimemass() &&
     src.has_renalclearance() && src.renalclearance().has_clearance() && src.renalclearance().clearance().has_scalarvolumepertimemass() &&
@@ -318,11 +317,11 @@ void PBSubstance::Serialize(const SESubstanceClearance& src, CDM_BIND::Substance
 
 void PBSubstance::Load(const CDM_BIND::SubstanceCompoundData& src, SESubstanceCompound& dst, const SESubstanceManager& subMgr)
 {
+  dst.Clear();
   PBSubstance::Serialize(src, dst, subMgr);
 }
 void PBSubstance::Serialize(const CDM_BIND::SubstanceCompoundData& src, SESubstanceCompound& dst, const SESubstanceManager& subMgr)
 {
-  dst.Clear();
   dst.m_Name = src.name();
 
   std::string err;
@@ -364,12 +363,13 @@ void PBSubstance::Serialize(const SESubstanceCompound& src, CDM_BIND::SubstanceC
 void PBSubstance::Load(const CDM_BIND::SubstanceConcentrationData& src, SESubstanceConcentration& dst)
 {
   dst.Clear();
-  if (src.has_concentration())
-    PBProperty::Load(src.concentration(), dst.GetConcentration());
+  PBSubstance::Serialize(src, dst);
 }
 void PBSubstance::Serialize(const CDM_BIND::SubstanceConcentrationData& src, SESubstanceConcentration& dst)
 {
 
+  if (src.has_concentration())
+    PBProperty::Load(src.concentration(), dst.GetConcentration());
 }
 
 CDM_BIND::SubstanceConcentrationData* PBSubstance::Unload(const SESubstanceConcentration& src)
@@ -388,11 +388,11 @@ void PBSubstance::Serialize(const SESubstanceConcentration& src, CDM_BIND::Subst
 
 void PBSubstance::Load(const CDM_BIND::SubstanceFractionData& src, SESubstanceFraction& dst)
 {
+  dst.Clear();
   PBSubstance::Serialize(src, dst);
 }
 void PBSubstance::Serialize(const CDM_BIND::SubstanceFractionData& src, SESubstanceFraction& dst)
 {
-  dst.Clear();
   if (src.has_amount())
     PBProperty::Load(src.amount(), dst.GetFractionAmount());
 }
@@ -413,13 +413,11 @@ void PBSubstance::Serialize(const SESubstanceFraction& src, CDM_BIND::SubstanceF
 
 void PBSubstance::Load(const CDM_BIND::SubstancePharmacodynamicsData& src, SESubstancePharmacodynamics& dst)
 {
+  dst.Clear();
   PBSubstance::Serialize(src, dst);
-  dst.CalculateDerived();
 }
 void PBSubstance::Serialize(const CDM_BIND::SubstancePharmacodynamicsData& src, SESubstancePharmacodynamics& dst)
 {
-  dst.Clear();
-
   if (src.has_bronchodilation())
     PBProperty::Load(src.bronchodilation(), dst.GetBronchodilation());
   if (src.has_diastolicpressuremodifier())
@@ -444,6 +442,7 @@ void PBSubstance::Serialize(const CDM_BIND::SubstancePharmacodynamicsData& src, 
     PBProperty::Load(src.tidalvolumemodifier(), dst.GetTidalVolumeModifier());
   if (src.has_tubularpermeabilitymodifier())
     PBProperty::Load(src.tubularpermeabilitymodifier(), dst.GetTubularPermeabilityModifier());
+  dst.CalculateDerived();
 }
 
 CDM_BIND::SubstancePharmacodynamicsData* PBSubstance::Unload(const SESubstancePharmacodynamics& src)
@@ -485,12 +484,11 @@ void PBSubstance::Serialize(const SESubstancePharmacodynamics& src, CDM_BIND::Su
 
 void PBSubstance::Load(const CDM_BIND::SubstancePharmacokineticsData& src, SESubstancePharmacokinetics& dst)
 {
+  dst.Clear();
   PBSubstance::Serialize(src, dst);
 }
 void PBSubstance::Serialize(const CDM_BIND::SubstancePharmacokineticsData& src, SESubstancePharmacokinetics& dst)
 {
-  dst.Clear();
-
   if (src.has_physicochemicals())
     PBSubstance::Load(src.physicochemicals(), dst.GetPhysicochemicals());
 
@@ -524,11 +522,11 @@ void PBSubstance::Serialize(const SESubstancePharmacokinetics& src, CDM_BIND::Su
 
 void PBSubstance::Load(const CDM_BIND::SubstancePhysicochemicalsData& src, SESubstancePhysicochemicals& dst)
 {
+  dst.Clear();
   PBSubstance::Serialize(src, dst);
 }
 void PBSubstance::Serialize(const CDM_BIND::SubstancePhysicochemicalsData& src, SESubstancePhysicochemicals& dst)
 {
-  dst.Clear();
   if (src.has_aciddissociationconstant())
     PBProperty::Load(src.aciddissociationconstant(), dst.GetAcidDissociationConstant());
   dst.SetBindingProtein((eSubstance_BindingProtein)src.bindingprotein());
@@ -572,11 +570,11 @@ void PBSubstance::Serialize(const SESubstancePhysicochemicals& src, CDM_BIND::Su
 
 void PBSubstance::Load(const CDM_BIND::SubstanceTissuePharmacokineticsData& src, SESubstanceTissuePharmacokinetics& dst)
 {
+  dst.Clear();
   PBSubstance::Serialize(src, dst);
 }
 void PBSubstance::Serialize(const CDM_BIND::SubstanceTissuePharmacokineticsData& src, SESubstanceTissuePharmacokinetics& dst)
 {
-  dst.Clear();
   if (src.has_partitioncoefficient())
     PBProperty::Load(src.partitioncoefficient(), dst.GetPartitionCoefficient());
 }

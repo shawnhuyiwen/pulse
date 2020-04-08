@@ -54,6 +54,7 @@ void PBEquipmentAction::Serialize(const SEAnesthesiaMachineAction& src, CDM_BIND
 
 void PBEquipmentAction::Load(const CDM_BIND::AnesthesiaMachineConfigurationData& src, SEAnesthesiaMachineConfiguration& dst)
 {
+  dst.Clear();
   PBEquipmentAction::Serialize(src, dst);
 }
 void PBEquipmentAction::Serialize(const CDM_BIND::AnesthesiaMachineConfigurationData& src, SEAnesthesiaMachineConfiguration& dst)
@@ -80,6 +81,7 @@ void PBEquipmentAction::Serialize(const SEAnesthesiaMachineConfiguration& src, C
 }
 void PBEquipmentAction::Copy(const SEAnesthesiaMachineConfiguration& src, SEAnesthesiaMachineConfiguration& dst)
 {
+  dst.Clear();
   CDM_BIND::AnesthesiaMachineConfigurationData data;
   PBEquipmentAction::Serialize(src, data);
   PBEquipmentAction::Serialize(data, dst);
@@ -87,6 +89,7 @@ void PBEquipmentAction::Copy(const SEAnesthesiaMachineConfiguration& src, SEAnes
 
 void PBEquipmentAction::Load(const CDM_BIND::AnesthesiaMachineExpiratoryValveLeakData& src, SEAnesthesiaMachineExpiratoryValveLeak& dst)
 {
+  dst.Clear();
   PBEquipmentAction::Serialize(src, dst);
 }
 void PBEquipmentAction::Serialize(const CDM_BIND::AnesthesiaMachineExpiratoryValveLeakData& src, SEAnesthesiaMachineExpiratoryValveLeak& dst)
@@ -109,6 +112,7 @@ void PBEquipmentAction::Serialize(const SEAnesthesiaMachineExpiratoryValveLeak& 
 }
 void PBEquipmentAction::Copy(const SEAnesthesiaMachineExpiratoryValveLeak& src, SEAnesthesiaMachineExpiratoryValveLeak& dst)
 {
+  dst.Clear();
   CDM_BIND::AnesthesiaMachineExpiratoryValveLeakData data;
   PBEquipmentAction::Serialize(src, data);
   PBEquipmentAction::Serialize(data, dst);
@@ -116,6 +120,7 @@ void PBEquipmentAction::Copy(const SEAnesthesiaMachineExpiratoryValveLeak& src, 
 
 void PBEquipmentAction::Load(const CDM_BIND::AnesthesiaMachineExpiratoryValveObstructionData& src, SEAnesthesiaMachineExpiratoryValveObstruction& dst)
 {
+  dst.Clear();
   PBEquipmentAction::Serialize(src, dst);
 }
 void PBEquipmentAction::Serialize(const CDM_BIND::AnesthesiaMachineExpiratoryValveObstructionData& src, SEAnesthesiaMachineExpiratoryValveObstruction& dst)
@@ -138,6 +143,7 @@ void PBEquipmentAction::Serialize(const SEAnesthesiaMachineExpiratoryValveObstru
 }
 void PBEquipmentAction::Copy(const SEAnesthesiaMachineExpiratoryValveObstruction& src, SEAnesthesiaMachineExpiratoryValveObstruction& dst)
 {
+  dst.Clear();
   CDM_BIND::AnesthesiaMachineExpiratoryValveObstructionData data;
   PBEquipmentAction::Serialize(src, data);
   PBEquipmentAction::Serialize(data, dst);
@@ -145,6 +151,7 @@ void PBEquipmentAction::Copy(const SEAnesthesiaMachineExpiratoryValveObstruction
 
 void PBEquipmentAction::Load(const CDM_BIND::AnesthesiaMachineInspiratoryValveLeakData& src, SEAnesthesiaMachineInspiratoryValveLeak& dst)
 {
+  dst.Clear();
   PBEquipmentAction::Serialize(src, dst);
 }
 void PBEquipmentAction::Serialize(const CDM_BIND::AnesthesiaMachineInspiratoryValveLeakData& src, SEAnesthesiaMachineInspiratoryValveLeak& dst)
@@ -167,6 +174,7 @@ void PBEquipmentAction::Serialize(const SEAnesthesiaMachineInspiratoryValveLeak&
 }
 void PBEquipmentAction::Copy(const SEAnesthesiaMachineInspiratoryValveLeak& src, SEAnesthesiaMachineInspiratoryValveLeak& dst)
 {
+  dst.Clear();
   CDM_BIND::AnesthesiaMachineInspiratoryValveLeakData data;
   PBEquipmentAction::Serialize(src, data);
   PBEquipmentAction::Serialize(data, dst);
@@ -174,6 +182,7 @@ void PBEquipmentAction::Copy(const SEAnesthesiaMachineInspiratoryValveLeak& src,
 
 void PBEquipmentAction::Load(const CDM_BIND::AnesthesiaMachineInspiratoryValveObstructionData& src, SEAnesthesiaMachineInspiratoryValveObstruction& dst)
 {
+  dst.Clear();
   PBEquipmentAction::Serialize(src, dst);
 }
 void PBEquipmentAction::Serialize(const CDM_BIND::AnesthesiaMachineInspiratoryValveObstructionData& src, SEAnesthesiaMachineInspiratoryValveObstruction& dst)
@@ -196,6 +205,7 @@ void PBEquipmentAction::Serialize(const SEAnesthesiaMachineInspiratoryValveObstr
 }
 void PBEquipmentAction::Copy(const SEAnesthesiaMachineInspiratoryValveObstruction& src, SEAnesthesiaMachineInspiratoryValveObstruction& dst)
 {
+  dst.Clear();
   CDM_BIND::AnesthesiaMachineInspiratoryValveObstructionData data;
   PBEquipmentAction::Serialize(src, data);
   PBEquipmentAction::Serialize(data, dst);
@@ -203,6 +213,7 @@ void PBEquipmentAction::Copy(const SEAnesthesiaMachineInspiratoryValveObstructio
 
 void PBEquipmentAction::Load(const CDM_BIND::AnesthesiaMachineMaskLeakData& src, SEAnesthesiaMachineMaskLeak& dst)
 {
+  dst.Clear();
   PBEquipmentAction::Serialize(src, dst);
 }
 void PBEquipmentAction::Serialize(const CDM_BIND::AnesthesiaMachineMaskLeakData& src, SEAnesthesiaMachineMaskLeak& dst)
@@ -225,6 +236,7 @@ void PBEquipmentAction::Serialize(const SEAnesthesiaMachineMaskLeak& src, CDM_BI
 }
 void PBEquipmentAction::Copy(const SEAnesthesiaMachineMaskLeak& src, SEAnesthesiaMachineMaskLeak& dst)
 {
+  dst.Clear();
   CDM_BIND::AnesthesiaMachineMaskLeakData data;
   PBEquipmentAction::Serialize(src, data);
   PBEquipmentAction::Serialize(data, dst);
@@ -232,6 +244,7 @@ void PBEquipmentAction::Copy(const SEAnesthesiaMachineMaskLeak& src, SEAnesthesi
 
 void PBEquipmentAction::Load(const CDM_BIND::AnesthesiaMachineOxygenTankPressureLossData& src, SEAnesthesiaMachineOxygenTankPressureLoss& dst)
 {
+  dst.Clear();
   PBEquipmentAction::Serialize(src, dst);
 }
 void PBEquipmentAction::Serialize(const CDM_BIND::AnesthesiaMachineOxygenTankPressureLossData& src, SEAnesthesiaMachineOxygenTankPressureLoss& dst)
@@ -252,6 +265,7 @@ void PBEquipmentAction::Serialize(const SEAnesthesiaMachineOxygenTankPressureLos
 }
 void PBEquipmentAction::Copy(const SEAnesthesiaMachineOxygenTankPressureLoss& src, SEAnesthesiaMachineOxygenTankPressureLoss& dst)
 {
+  dst.Clear();
   CDM_BIND::AnesthesiaMachineOxygenTankPressureLossData data;
   PBEquipmentAction::Serialize(src, data);
   PBEquipmentAction::Serialize(data, dst);
@@ -259,6 +273,7 @@ void PBEquipmentAction::Copy(const SEAnesthesiaMachineOxygenTankPressureLoss& sr
 
 void PBEquipmentAction::Load(const CDM_BIND::AnesthesiaMachineOxygenWallPortPressureLossData& src, SEAnesthesiaMachineOxygenWallPortPressureLoss& dst)
 {
+  dst.Clear();
   PBEquipmentAction::Serialize(src, dst);
 }
 void PBEquipmentAction::Serialize(const CDM_BIND::AnesthesiaMachineOxygenWallPortPressureLossData& src, SEAnesthesiaMachineOxygenWallPortPressureLoss& dst)
@@ -279,6 +294,7 @@ void PBEquipmentAction::Serialize(const SEAnesthesiaMachineOxygenWallPortPressur
 }
 void PBEquipmentAction::Copy(const SEAnesthesiaMachineOxygenWallPortPressureLoss& src, SEAnesthesiaMachineOxygenWallPortPressureLoss& dst)
 {
+  dst.Clear();
   CDM_BIND::AnesthesiaMachineOxygenWallPortPressureLossData data;
   PBEquipmentAction::Serialize(src, data);
   PBEquipmentAction::Serialize(data, dst);
@@ -286,6 +302,7 @@ void PBEquipmentAction::Copy(const SEAnesthesiaMachineOxygenWallPortPressureLoss
 
 void PBEquipmentAction::Load(const CDM_BIND::AnesthesiaMachineSodaLimeFailureData& src, SEAnesthesiaMachineSodaLimeFailure& dst)
 {
+  dst.Clear();
   PBEquipmentAction::Serialize(src, dst);
 }
 void PBEquipmentAction::Serialize(const CDM_BIND::AnesthesiaMachineSodaLimeFailureData& src, SEAnesthesiaMachineSodaLimeFailure& dst)
@@ -308,6 +325,7 @@ void PBEquipmentAction::Serialize(const SEAnesthesiaMachineSodaLimeFailure& src,
 }
 void PBEquipmentAction::Copy(const SEAnesthesiaMachineSodaLimeFailure& src, SEAnesthesiaMachineSodaLimeFailure& dst)
 {
+  dst.Clear();
   CDM_BIND::AnesthesiaMachineSodaLimeFailureData data;
   PBEquipmentAction::Serialize(src, data);
   PBEquipmentAction::Serialize(data, dst);
@@ -315,6 +333,7 @@ void PBEquipmentAction::Copy(const SEAnesthesiaMachineSodaLimeFailure& src, SEAn
 
 void PBEquipmentAction::Load(const CDM_BIND::AnesthesiaMachineTubeCuffLeakData& src, SEAnesthesiaMachineTubeCuffLeak& dst)
 {
+  dst.Clear();
   PBEquipmentAction::Serialize(src, dst);
 }
 void PBEquipmentAction::Serialize(const CDM_BIND::AnesthesiaMachineTubeCuffLeakData& src, SEAnesthesiaMachineTubeCuffLeak& dst)
@@ -337,6 +356,7 @@ void PBEquipmentAction::Serialize(const SEAnesthesiaMachineTubeCuffLeak& src, CD
 }
 void PBEquipmentAction::Copy(const SEAnesthesiaMachineTubeCuffLeak& src, SEAnesthesiaMachineTubeCuffLeak& dst)
 {
+  dst.Clear();
   CDM_BIND::AnesthesiaMachineTubeCuffLeakData data;
   PBEquipmentAction::Serialize(src, data);
   PBEquipmentAction::Serialize(data, dst);
@@ -344,6 +364,7 @@ void PBEquipmentAction::Copy(const SEAnesthesiaMachineTubeCuffLeak& src, SEAnest
 
 void PBEquipmentAction::Load(const CDM_BIND::AnesthesiaMachineVaporizerFailureData& src, SEAnesthesiaMachineVaporizerFailure& dst)
 {
+  dst.Clear();
   PBEquipmentAction::Serialize(src, dst);
 }
 void PBEquipmentAction::Serialize(const CDM_BIND::AnesthesiaMachineVaporizerFailureData& src, SEAnesthesiaMachineVaporizerFailure& dst)
@@ -366,6 +387,7 @@ void PBEquipmentAction::Serialize(const SEAnesthesiaMachineVaporizerFailure& src
 }
 void PBEquipmentAction::Copy(const SEAnesthesiaMachineVaporizerFailure& src, SEAnesthesiaMachineVaporizerFailure& dst)
 {
+  dst.Clear();
   CDM_BIND::AnesthesiaMachineVaporizerFailureData data;
   PBEquipmentAction::Serialize(src, data);
   PBEquipmentAction::Serialize(data, dst);
@@ -373,6 +395,7 @@ void PBEquipmentAction::Copy(const SEAnesthesiaMachineVaporizerFailure& src, SEA
 
 void PBEquipmentAction::Load(const CDM_BIND::AnesthesiaMachineVentilatorPressureLossData& src, SEAnesthesiaMachineVentilatorPressureLoss& dst)
 {
+  dst.Clear();
   PBEquipmentAction::Serialize(src, dst);
 }
 void PBEquipmentAction::Serialize(const CDM_BIND::AnesthesiaMachineVentilatorPressureLossData& src, SEAnesthesiaMachineVentilatorPressureLoss& dst)
@@ -395,6 +418,7 @@ void PBEquipmentAction::Serialize(const SEAnesthesiaMachineVentilatorPressureLos
 }
 void PBEquipmentAction::Copy(const SEAnesthesiaMachineVentilatorPressureLoss& src, SEAnesthesiaMachineVentilatorPressureLoss& dst)
 {
+  dst.Clear();
   CDM_BIND::AnesthesiaMachineVentilatorPressureLossData data;
   PBEquipmentAction::Serialize(src, data);
   PBEquipmentAction::Serialize(data, dst);
@@ -402,6 +426,7 @@ void PBEquipmentAction::Copy(const SEAnesthesiaMachineVentilatorPressureLoss& sr
 
 void PBEquipmentAction::Load(const CDM_BIND::AnesthesiaMachineYPieceDisconnectData& src, SEAnesthesiaMachineYPieceDisconnect& dst)
 {
+  dst.Clear();
   PBEquipmentAction::Serialize(src, dst);
 }
 void PBEquipmentAction::Serialize(const CDM_BIND::AnesthesiaMachineYPieceDisconnectData& src, SEAnesthesiaMachineYPieceDisconnect& dst)
@@ -424,6 +449,7 @@ void PBEquipmentAction::Serialize(const SEAnesthesiaMachineYPieceDisconnect& src
 }
 void PBEquipmentAction::Copy(const SEAnesthesiaMachineYPieceDisconnect& src, SEAnesthesiaMachineYPieceDisconnect& dst)
 {
+  dst.Clear();
   CDM_BIND::AnesthesiaMachineYPieceDisconnectData data;
   PBEquipmentAction::Serialize(src, data);
   PBEquipmentAction::Serialize(data, dst);
@@ -444,6 +470,7 @@ void PBEquipmentAction::Serialize(const SEInhalerAction& src, CDM_BIND::InhalerA
 
 void PBEquipmentAction::Load(const CDM_BIND::InhalerConfigurationData& src, SEInhalerConfiguration& dst)
 {
+  dst.Clear();
   PBEquipmentAction::Serialize(src, dst);
 }
 void PBEquipmentAction::Serialize(const CDM_BIND::InhalerConfigurationData& src, SEInhalerConfiguration& dst)
@@ -470,6 +497,7 @@ void PBEquipmentAction::Serialize(const SEInhalerConfiguration& src, CDM_BIND::I
 }
 void PBEquipmentAction::Copy(const SEInhalerConfiguration& src, SEInhalerConfiguration& dst)
 {
+  dst.Clear();
   CDM_BIND::InhalerConfigurationData data;
   PBEquipmentAction::Serialize(src, data);
   PBEquipmentAction::Serialize(data, dst);
@@ -490,6 +518,7 @@ void PBEquipmentAction::Serialize(const SEMechanicalVentilatorAction& src, CDM_B
 
 void PBEquipmentAction::Load(const CDM_BIND::MechanicalVentilatorConfigurationData& src, SEMechanicalVentilatorConfiguration& dst)
 {
+  dst.Clear();
   PBEquipmentAction::Serialize(src, dst);
 }
 void PBEquipmentAction::Serialize(const CDM_BIND::MechanicalVentilatorConfigurationData& src, SEMechanicalVentilatorConfiguration& dst)
@@ -516,6 +545,7 @@ void PBEquipmentAction::Serialize(const SEMechanicalVentilatorConfiguration& src
 }
 void PBEquipmentAction::Copy(const SEMechanicalVentilatorConfiguration& src, SEMechanicalVentilatorConfiguration& dst)
 {
+  dst.Clear();
   CDM_BIND::MechanicalVentilatorConfigurationData data;
   PBEquipmentAction::Serialize(src, data);
   PBEquipmentAction::Serialize(data, dst);

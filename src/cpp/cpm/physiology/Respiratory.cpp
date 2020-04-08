@@ -273,8 +273,7 @@ void Respiratory::Initialize()
   GetPulmonaryElastance().SetValue(1.0 / 0.1, PressurePerVolumeUnit::cmH2O_Per_L);
 
   GetTotalRespiratoryModelCompliance().SetValue(0.1, VolumePerPressureUnit::L_Per_cmH2O);
-  //Aaron - add this one
-  //GetTotalRespiratoryModelResistance().SetValue(1.5, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  GetTotalRespiratoryModelResistance().SetValue(1.5, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 
   // Muscle Pressure Waveform
   m_InspiratoryRiseFraction = 0;
@@ -469,14 +468,19 @@ void Respiratory::PreProcess()
     // Look for any known overrides
     for (auto& o : m_data.GetOverrides())
     {
-      // Aaron - How do these get cleared?
       if (o.name == "RespiratoryResistance")
       {
-        m_RespiratoryResistanceOverride_cmH2O_s_Per_L = Convert(o.value, PressureTimePerVolumeUnit::GetCompoundUnit(o.unit), PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+        if (std::isnan(o.value))
+          m_RespiratoryResistanceOverride_cmH2O_s_Per_L = -1;
+        else
+          m_RespiratoryResistanceOverride_cmH2O_s_Per_L = Convert(o.value, PressureTimePerVolumeUnit::GetCompoundUnit(o.unit), PressureTimePerVolumeUnit::cmH2O_s_Per_L);
       }
       else if (o.name == "RespiratoryCompliance")
       {
-        m_RespiratoryComplianceOverride_L_Per_cmH2O = Convert(o.value, VolumePerPressureUnit::GetCompoundUnit(o.unit), VolumePerPressureUnit::L_Per_cmH2O);
+        if (std::isnan(o.value))
+          m_RespiratoryComplianceOverride_L_Per_cmH2O = -1;
+        else
+          m_RespiratoryComplianceOverride_L_Per_cmH2O = Convert(o.value, VolumePerPressureUnit::GetCompoundUnit(o.unit), VolumePerPressureUnit::L_Per_cmH2O);
       }
     }
   }
@@ -566,8 +570,8 @@ void Respiratory::ComputeExposedModelParameters()
   double rightSideResistance_cmH2O_s_Per_L = rightBronchiResistance_cmH2O_s_Per_L + rightAlveoliDuctResistance_cmH2O_s_Per_L;
   double totalDownstreamResistance_cmH2O_s_Per_L = 1.0 / (1.0 / leftSideResistance_cmH2O_s_Per_L + 1.0 / rightSideResistance_cmH2O_s_Per_L);
   double totalResistance_cmH2O_s_Per_L = airwayResistance_cmH2O_s_Per_L + totalDownstreamResistance_cmH2O_s_Per_L;
-  //Aaron - add this one
-  //GetTotalRespiratoryModelResistance().SetValue(totalResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+
+  GetTotalRespiratoryModelResistance().SetValue(totalResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 }
 
 //--------------------------------------------------------------------------------------------------

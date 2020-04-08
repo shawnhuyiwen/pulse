@@ -92,7 +92,7 @@ void AnesthesiaMachine::Initialize()
 {
   PulseSystem::Initialize();
 
-  SetConnection(eAnesthesiaMachine_Connection::Off);
+  SetConnection(eAnesthesiaMachine_Connection::NullConnection);
   GetInletFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
   GetRespiratoryRate().SetValue(12.0, FrequencyUnit::Per_min);
   GetPositiveEndExpiredPressure().SetValue(3.0, PressureUnit::cmH2O);
@@ -264,7 +264,8 @@ void AnesthesiaMachine::SetConnection()
     }
     break;
   default:
-    Fatal("Unhandled Airway Mode.");
+    // Something else is connected
+    break;
   }
 }
 
@@ -587,39 +588,34 @@ void AnesthesiaMachine::CalculateEquipmentLeak()
         m_pAnesthesiaConnectionToEnvironment->GetNextResistance().SetValue(dResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
       }
     }
-  else if (m_Connection == eAnesthesiaMachine_Connection::Mask)
-  {
-    if (m_actions->HasAnesthesiaMachineMaskLeak() || m_actions->HasAnesthesiaMachineYPieceDisconnect())
+    else if (m_Connection == eAnesthesiaMachine_Connection::Mask)
     {
-      double MaskLeakSeverity = 0.0;
-      double YPieceDisconnectSeverity = 0.0;
-      double TotalSeverity = 0.0;
-
-      if (m_actions->HasAnesthesiaMachineMaskLeak())
+      if (m_actions->HasAnesthesiaMachineMaskLeak() || m_actions->HasAnesthesiaMachineYPieceDisconnect())
       {
-        MaskLeakSeverity = m_actions->GetAnesthesiaMachineMaskLeak()->GetSeverity().GetValue();
-      }
-      if (m_actions->HasAnesthesiaMachineYPieceDisconnect())
-      {
-        YPieceDisconnectSeverity = m_actions->GetAnesthesiaMachineYPieceDisconnect()->GetSeverity().GetValue();
-      }
+        double MaskLeakSeverity = 0.0;
+        double YPieceDisconnectSeverity = 0.0;
+        double TotalSeverity = 0.0;
 
-      //Combine the severities
-      TotalSeverity = MaskLeakSeverity + YPieceDisconnectSeverity;
-      if (TotalSeverity > 1.0)
-      {
-        TotalSeverity = 1.0;
-      }
+        if (m_actions->HasAnesthesiaMachineMaskLeak())
+        {
+          MaskLeakSeverity = m_actions->GetAnesthesiaMachineMaskLeak()->GetSeverity().GetValue();
+        }
+        if (m_actions->HasAnesthesiaMachineYPieceDisconnect())
+        {
+          YPieceDisconnectSeverity = m_actions->GetAnesthesiaMachineYPieceDisconnect()->GetSeverity().GetValue();
+        }
 
-      double dResistance = GeneralMath::ExponentialDecayFunction(10.0, m_dValveClosedResistance_cmH2O_s_Per_L, m_dValveOpenResistance_cmH2O_s_Per_L, TotalSeverity);
-      m_pAnesthesiaConnectionToEnvironment->GetNextResistance().SetValue(dResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+        //Combine the severities
+        TotalSeverity = MaskLeakSeverity + YPieceDisconnectSeverity;
+        if (TotalSeverity > 1.0)
+        {
+          TotalSeverity = 1.0;
+        }
+
+        double dResistance = GeneralMath::ExponentialDecayFunction(10.0, m_dValveClosedResistance_cmH2O_s_Per_L, m_dValveOpenResistance_cmH2O_s_Per_L, TotalSeverity);
+        m_pAnesthesiaConnectionToEnvironment->GetNextResistance().SetValue(dResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      }
     }
-  }
-  }
-  else
-  {
-    /// \error Error: Invalid Airway Mode Encountered in Compute Equipment Leak function
-    Error("Invalid Airway Mode Encountered in Compute Equipment Leak function");
   }
 }
 

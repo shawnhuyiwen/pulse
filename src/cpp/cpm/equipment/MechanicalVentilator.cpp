@@ -65,7 +65,7 @@ void MechanicalVentilator::Clear()
 void MechanicalVentilator::Initialize()
 {
   PulseSystem::Initialize();
-  SetConnection(eMechanicalVentilator_Connection::Off);
+  SetConnection(eMechanicalVentilator_Connection::NullConnection);
   m_Inhaling = true;
   m_CurrentBreathingCycleTime_s = 0.0;
   StateChange();

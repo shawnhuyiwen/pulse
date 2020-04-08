@@ -14,11 +14,11 @@ POP_PROTO_WARNINGS()
 
 void PBPulse::Load(const PULSE_BIND::ScenarioData& src, PulseScenario& dst)
 {
+  dst.Clear();
   PBPulse::Serialize(src, dst);
 }
 void PBPulse::Serialize(const PULSE_BIND::ScenarioData& src, PulseScenario& dst)
 {
-  dst.Clear();
   PBScenario::Serialize(src.scenario(), dst);
 
   if (src.has_configuration())

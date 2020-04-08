@@ -11,8 +11,9 @@ POP_PROTO_WARNINGS()
 
 void PBPulseEnvironment::Load(const PULSE_BIND::EnvironmentData& src, Environment& dst)
 {
-  PBPulseEnvironment::Serialize(src, dst);
+  dst.Clear();
   dst.SetUp();
+  PBPulseEnvironment::Serialize(src, dst);
 }
 void PBPulseEnvironment::Serialize(const PULSE_BIND::EnvironmentData& src, Environment& dst)
 {

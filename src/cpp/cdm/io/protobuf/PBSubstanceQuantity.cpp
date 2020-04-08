@@ -15,7 +15,6 @@ POP_PROTO_WARNINGS()
 
 void PBSubstanceQuantity::Serialize(const CDM_BIND::SubstanceQuantityData& src, SESubstanceQuantity& dst)
 {
-  dst.Clear();
   // Name will be used to get substance for ctor
 }
 void PBSubstanceQuantity::Serialize(const SESubstanceQuantity& src, CDM_BIND::SubstanceQuantityData& dst)
@@ -25,6 +24,7 @@ void PBSubstanceQuantity::Serialize(const SESubstanceQuantity& src, CDM_BIND::Su
 
 void PBSubstanceQuantity::Load(const CDM_BIND::GasSubstanceQuantityData& src, SEGasSubstanceQuantity& dst)
 {
+  dst.Clear();
   PBSubstanceQuantity::Serialize(src, dst);
 }
 void PBSubstanceQuantity::Serialize(const CDM_BIND::GasSubstanceQuantityData& src, SEGasSubstanceQuantity& dst)
@@ -62,6 +62,7 @@ void PBSubstanceQuantity::Serialize(const SEGasSubstanceQuantity& src, CDM_BIND:
 
 void PBSubstanceQuantity::Load(const CDM_BIND::LiquidSubstanceQuantityData& src, SELiquidSubstanceQuantity& dst)
 {
+  dst.Clear();
   PBSubstanceQuantity::Serialize(src, dst);
 }
 void PBSubstanceQuantity::Serialize(const CDM_BIND::LiquidSubstanceQuantityData& src, SELiquidSubstanceQuantity& dst)

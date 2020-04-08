@@ -107,7 +107,6 @@ SEAction* PBAction::Copy(const SEAction& a, SESubstanceManager& subMgr)
 
 void PBAction::Serialize(const CDM_BIND::ActionData& src, SEAction& dst)
 {
-  dst.Clear();
   dst.SetComment(src.comment());
 }
 void PBAction::Serialize(const SEAction& src, CDM_BIND::ActionData& dst)
@@ -117,11 +116,11 @@ void PBAction::Serialize(const SEAction& src, CDM_BIND::ActionData& dst)
 
 void PBAction::Load(const CDM_BIND::AdvanceTimeData& src, SEAdvanceTime& dst)
 {
+  dst.Clear();
   PBAction::Serialize(src, dst);
 }
 void PBAction::Serialize(const CDM_BIND::AdvanceTimeData& src, SEAdvanceTime& dst)
 {
-  dst.Clear();
   if (src.has_time())
     PBProperty::Load(src.time(), dst.GetTime());
 }
@@ -139,11 +138,11 @@ void PBAction::Serialize(const SEAdvanceTime& src, CDM_BIND::AdvanceTimeData& ds
 
 void PBAction::Load(const CDM_BIND::SerializeStateData& src, SESerializeState& dst)
 {
+  dst.Clear();
   PBAction::Serialize(src, dst);
 }
 void PBAction::Serialize(const CDM_BIND::SerializeStateData& src, SESerializeState& dst)
 {
-  dst.Clear();
   dst.SetType((eSerialization_Type)src.type());
   dst.SetFilename(src.filename());
 }
@@ -162,6 +161,7 @@ void PBAction::Serialize(const SESerializeState& src, CDM_BIND::SerializeStateDa
 
 void PBAction::Load(const CDM_BIND::OverridesData& src, SEOverrides& dst)
 {
+  dst.Clear();
   PBAction::Serialize(src, dst);
 }
 void PBAction::Serialize(const CDM_BIND::OverridesData& src, SEOverrides& dst)
@@ -190,6 +190,7 @@ void PBAction::Serialize(const SEOverrides& src, CDM_BIND::OverridesData& dst)
 }
 void PBAction::Copy(const SEOverrides& src, SEOverrides& dst)
 {
+  dst.Clear();
   CDM_BIND::OverridesData data;
   PBAction::Serialize(src, data);
   PBAction::Serialize(data, dst);

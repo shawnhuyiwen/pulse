@@ -22,6 +22,7 @@ See accompanying NOTICE file for details.*/
 #include "system/equipment/mechanical_ventilator/SEMechanicalVentilator.h"
 
 #include "properties/SEScalarVolumePerPressure.h"
+#include "properties/SEScalarPressureTimePerVolume.h"
 
 // These classes are used to expose any methodology specific data to end users
 // This data would not belong in the cdm, and it's not a clinical assessment, nor on a compartment
@@ -232,11 +233,14 @@ public:
     // Check to see if this a model specific request
     if (name.compare("TotalRespiratoryModelCompliance") == 0)
       return &m_TotalRespiratoryModelCompliance;
+    if (name.compare("TotalRespiratoryModelResistance") == 0)
+      return &m_TotalRespiratoryModelResistance;
     return nullptr;
   }
   virtual void ComputeExposedModelParameters() = 0;
 
   DEFINE_UNIT_SCALAR(TotalRespiratoryModelCompliance, VolumePerPressure);
+  DEFINE_UNIT_SCALAR(TotalRespiratoryModelResistance, PressureTimePerVolume);
 };
 
 class PULSE_DECL PulseTissueSystem : public SETissueSystem, public PulseSystem

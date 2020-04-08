@@ -148,8 +148,8 @@ protected:
   bool m_ActiveConsciousRespirationCommand;
 
   //Overrides
-  double m_RespiratoryResistanceOverride_cmH2O_s_Per_L; //Aaron serialize
-  double m_RespiratoryComplianceOverride_L_Per_cmH2O; //Aaron serialize
+  double m_RespiratoryResistanceOverride_cmH2O_s_Per_L;
+  double m_RespiratoryComplianceOverride_L_Per_cmH2O;
 
   // Stateless member variable (Set in SetUp())
   double m_dt_s;

@@ -14,11 +14,11 @@ POP_PROTO_WARNINGS()
 
 void PBPatientNutrition::Load(const CDM_BIND::NutritionData& src, SENutrition& dst)
 {
+  dst.Clear();
   PBPatientNutrition::Serialize(src, dst);
 }
 void PBPatientNutrition::Serialize(const CDM_BIND::NutritionData& src, SENutrition& dst)
 {
-  dst.Clear();
   if (src.has_carbohydrate())
     PBProperty::Load(src.carbohydrate(), dst.GetCarbohydrate());
   if (src.has_carbohydratedigestionrate())
@@ -68,6 +68,7 @@ void PBPatientNutrition::Serialize(const SENutrition& src, CDM_BIND::NutritionDa
 }
 void PBPatientNutrition::Copy(const SENutrition& src, SENutrition& dst)
 {
+  dst.Clear();
   CDM_BIND::NutritionData data;
   PBPatientNutrition::Serialize(src, data);
   PBPatientNutrition::Serialize(data, dst);
@@ -106,12 +107,12 @@ bool PBPatientNutrition::SerializeFromFile(const std::string& filename, SENutrit
 
 void PBPatientNutrition::Load(const CDM_BIND::MealData& src, SEMeal& dst)
 {
+  dst.Clear();
   PBPatientNutrition::Serialize(src, dst);
 }
 void PBPatientNutrition::Serialize(const CDM_BIND::MealData& src, SEMeal& dst)
 {
   PBPatientNutrition::Serialize(src.nutrition(), dst);
-  dst.Clear();
   if (src.has_elapsedtime())
     PBProperty::Load(src.elapsedtime(), dst.GetElapsedTime());
 }
@@ -129,6 +130,7 @@ void PBPatientNutrition::Serialize(const SEMeal& src, CDM_BIND::MealData& dst)
 }
 void PBPatientNutrition::Copy(const SEMeal& src, SEMeal& dst)
 {
+  dst.Clear();
   CDM_BIND::MealData data;
   PBPatientNutrition::Serialize(src, data);
   PBPatientNutrition::Serialize(data, dst);
