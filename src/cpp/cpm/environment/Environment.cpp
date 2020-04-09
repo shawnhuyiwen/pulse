@@ -268,7 +268,7 @@ void Environment::ComputeExposedModelParameters()
 /// There is nothing to do here.  Postprocessing the combined Energy-Environment circuit is handled by
 /// the Energy system.
 //--------------------------------------------------------------------------------------------------
-void Environment::PostProcess()
+void Environment::PostProcess(bool solve_and_transport)
 {
   
 }

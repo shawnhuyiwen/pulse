@@ -5,11 +5,19 @@
 
 MVController::MVController(const std::string& logFileName, const std::string& data_dir) : Loggable(new Logger(logFileName))
 {
-  m_BaseFileName = logFileName.substr(0, logFileName.length() - 4);
+  m_BaseFileName = "./states/multiplex_ventilation/";
 }
 MVController::~MVController()
 {
 
+}
+
+std::string MVController::GetFileName(const std::string& filePath)
+{
+  std::string name = filePath;
+  name = name.substr(name.find_last_of("/") + 1);
+  name = name.substr(0, name.length() - 5);
+  return name;
 }
 
 std::string MVController::to_scientific_notation(float f)
@@ -28,11 +36,12 @@ void MVController::TrackData(SEEngineTracker& trkr, const std::string& csv_filen
 {
   trkr.GetDataRequestManager().SetResultsFilename(csv_filename);
   trkr.GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryCompliance", VolumePerPressureUnit::L_Per_cmH2O);
-  trkr.GetDataRequestManager().CreatePhysiologyDataRequest("ExpiratoryPulmonaryResistance ", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  trkr.GetDataRequestManager().CreatePhysiologyDataRequest("InspiratoryPulmonaryResistance ", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  trkr.GetDataRequestManager().CreatePhysiologyDataRequest("ExpiratoryPulmonaryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  trkr.GetDataRequestManager().CreatePhysiologyDataRequest("InspiratoryPulmonaryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   trkr.GetDataRequestManager().CreateMechanicalVentilatorDataRequest("PeakInspiratoryPressure", PressureUnit::cmH2O);
   trkr.GetDataRequestManager().CreateMechanicalVentilatorDataRequest("PositiveEndExpiredPressure", PressureUnit::cmH2O);
   trkr.GetDataRequestManager().CreatePhysiologyDataRequest("TotalRespiratoryModelCompliance", VolumePerPressureUnit::L_Per_cmH2O);
+  trkr.GetDataRequestManager().CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::L);
   trkr.GetDataRequestManager().CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::L);
   trkr.GetDataRequestManager().CreatePhysiologyDataRequest("EndTidalCarbonDioxidePressure", PressureUnit::cmH2O);
   trkr.GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
@@ -48,6 +57,46 @@ void MVController::TrackData(SEEngineTracker& trkr, const std::string& csv_filen
 void MVController::HandleEvent(eEvent e, bool active, const SEScalarTime* simTime)
 {
 
+}
+
+bool MVController::RunSoloState(const std::string& stateFile, const std::string& outDir)
+{
+  std::string baseName = "solo_"+GetFileName(stateFile);
+  std::string logFile = outDir+baseName+".log";
+  std::string dataFile = outDir+baseName+"Results.csv";
+
+  TimingProfile profiler;
+  profiler.Start("Total");
+  profiler.Start("Status");
+  double statusTime_s = 0;// Current time of this status cycle
+  double statusStep_s = 60;//How long did it take to simulate this much time
+
+  double timeStep_s = 0.02;
+  double currentTime_s = 0;
+
+  PulseController* pc = new PulseController(logFile);
+  pc->SerializeFromFile(stateFile, SerializationFormat::JSON);
+  TrackData(pc->GetEngineTracker(), dataFile);
+  int count = (int)(120 / timeStep_s);
+  for (int i = 0; i < count; i++)
+  {
+    if (pc->GetEvents().IsEventActive(eEvent::IrreversibleState))
+      return false;
+    pc->AdvanceModelTime();
+    pc->GetEngineTracker().TrackData(currentTime_s);
+    currentTime_s += timeStep_s;
+    statusTime_s += timeStep_s;
+    // How are we running?
+    if (statusTime_s > statusStep_s)
+    {
+      statusTime_s = 0;
+      Info("Current Time is " + to_scientific_notation(currentTime_s) + "s, it took " + to_scientific_notation(profiler.GetElapsedTime_s("Status")) + "s to simulate the past " + to_scientific_notation(statusStep_s) + "s");
+      profiler.Reset("Status");
+    }
+  }
+  Info("It took " + to_scientific_notation(profiler.GetElapsedTime_s("Total")) + "s to run this simulation");
+  profiler.Clear();
+  return true;
 }
 
 bool MVController::StabilizeSpO2(PhysiologyEngine& eng)

@@ -486,7 +486,7 @@ void Renal::ComputeExposedModelParameters()
 /// The renal circuit post processing occurs with the cardiovascular system's post process. There is 
 /// currently no other functionality needed for renal post process.
 //--------------------------------------------------------------------------------------------------
-void Renal::PostProcess()
+void Renal::PostProcess(bool solve_and_transport)
 {
   //Circuit PostProcessing is done on the entire circulatory circuit elsewhere
 }

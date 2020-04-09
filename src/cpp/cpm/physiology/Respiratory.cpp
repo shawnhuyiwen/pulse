@@ -582,12 +582,15 @@ void Respiratory::ComputeExposedModelParameters()
 /// Updates the current values of the gas volume fraction and gas volumes for the nodes in the respiratory circuit 
 /// or the nodes in the combined (respiratory + anesthesia machine) circuit when the anesthesia machine is turned on.
 //--------------------------------------------------------------------------------------------------
-void Respiratory::PostProcess()
+void Respiratory::PostProcess(bool solve_and_transport)
 {
-  // Respiration circuit changes based on if Anesthesia Machine is on or off
-  // When dynamic intercircuit connections work, we can stash off the respiration circuit in a member variable
-  SEFluidCircuit& RespirationCircuit = m_data.GetCircuits().GetActiveRespiratoryCircuit();  
-  m_Calculator->PostProcess(RespirationCircuit);  
+  if (solve_and_transport)
+  {
+    // Respiration circuit changes based on if Anesthesia Machine is on or off
+    // When dynamic intercircuit connections work, we can stash off the respiration circuit in a member variable
+    SEFluidCircuit& RespirationCircuit = m_data.GetCircuits().GetActiveRespiratoryCircuit();
+    m_Calculator->PostProcess(RespirationCircuit);
+  }
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -595,8 +598,8 @@ void Respiratory::PostProcess()
 /// Compute deposited mass, update localized PD effects 
 ///
 /// \details
-/// For each aerosol get the SIDE coefficient to determine deposited mass in each respiratory compartment. 
-/// Adjust the resistances between compartments as a function of deposited mass to reach validated data.  
+/// For each aerosol get the SIDE coefficient to determine deposited mass in each respiratory compartment.
+/// Adjust the resistances between compartments as a function of deposited mass to reach validated data.
 /// Liquid and solid aerosols are handeled here. 
 //--------------------------------------------------------------------------------------------------
 void Respiratory::ProcessAerosolSubstances()

@@ -60,6 +60,7 @@
 #include "properties/SEScalarVolumePerPressure.h"
 #include "utils/FileUtils.h"
 #include "utils/GeneralMath.h"
+#include "utils/TimingProfile.h"
 
 #include "pulse/impl/bind/MultiplexVentilator.pb.h"
 #include <google/protobuf/util/json_util.h>
@@ -70,20 +71,22 @@ public:
   MVController(const std::string& logfileName, const std::string& data_dir = ".");
   virtual ~MVController();
 
-
   bool GenerateStabilizedPatients();
 
-  bool RunSimulation(pulse::multiplex_ventilator::bind::SimulationData& sim);
-
+  bool RunSimulation(pulse::multiplex_ventilator::bind::SimulationData& sim, bool run_solo=false);
+  
   double DefaultIERatio() const { return m_IERatio; }
   double DefaultRespirationRate_Per_Min() const { return m_RespirationRate_Per_Min; }
 
 protected:
+  std::string GetFileName(const std::string& filePath);
   std::string to_scientific_notation(float f);
   std::string to_scientific_notation(double d);
   bool StabilizeSpO2(PhysiologyEngine& eng);
   void TrackData(SEEngineTracker& trkr, const std::string& csv_filename);
   void HandleEvent(eEvent e, bool active, const SEScalarTime* simTime = nullptr) override;
+  bool RunSoloState(const std::string& stateFile, const std::string& outDir);
+
 
   std::string m_BaseFileName;
   // Constants

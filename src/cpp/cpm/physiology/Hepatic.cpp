@@ -85,7 +85,7 @@ void Hepatic::ComputeExposedModelParameters()
 ///
 /// \details
 //--------------------------------------------------------------------------------------------------
-void Hepatic::PostProcess()
+void Hepatic::PostProcess(bool solve_and_transport)
 {
 
 }

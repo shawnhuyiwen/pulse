@@ -263,7 +263,7 @@ void Inhaler::ComputeExposedModelParameters()
 /// \details
 /// Currently not used.
 //--------------------------------------------------------------------------------------------------
-void Inhaler::PostProcess()
+void Inhaler::PostProcess(bool solve_and_transport)
 {
 
 }

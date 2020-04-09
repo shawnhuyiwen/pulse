@@ -639,9 +639,10 @@ void Cardiovascular::ComputeExposedModelParameters()
 /// \details
 /// The current time-step's circuit solution is set to the next time-step when it is passed to PostProcess.
 //--------------------------------------------------------------------------------------------------
-void Cardiovascular::PostProcess()
+void Cardiovascular::PostProcess(bool solve_and_transport)
 {
-  m_circuitCalculator->PostProcess(*m_CirculatoryCircuit);
+  if(solve_and_transport)
+    m_circuitCalculator->PostProcess(*m_CirculatoryCircuit);
 }
 
 //--------------------------------------------------------------------------------------------------

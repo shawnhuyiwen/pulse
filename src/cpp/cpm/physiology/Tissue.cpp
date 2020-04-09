@@ -341,7 +341,7 @@ void Tissue::ComputeExposedModelParameters()
 /// \details
 /// There are currently no postprocess steps in the tissue system.
 //--------------------------------------------------------------------------------------------------
-void Tissue::PostProcess()
+void Tissue::PostProcess(bool solve_and_transport)
 {
 
 }

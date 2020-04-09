@@ -13,13 +13,13 @@ int main(int argc, char* argv[])
     if (argc <= 1)
     {
       // Adjust bools to run what ever mode you want with out input
-      if(true)
+      if(false)
        mode = "genData";
       else if (true)
       {
         mode = "state";
         std::vector<std::string> state_files;
-        ListFiles("./states/multiplex_ventilation/", state_files, ".json");
+        ListFiles("./states/multiplex_ventilation/solo_states", state_files, ".json");
         if (state_files.empty())
         {
           std::cerr << "Need to provide run mode and associated parameters" << std::endl;
@@ -37,22 +37,26 @@ int main(int argc, char* argv[])
     std::for_each(mode.begin(), mode.end(), [](char& c) { c = ::tolower(c); });
     if (mode == "gendata")
     {
-      MVController mvc("MultiplexVentilationDataGen.log");
+      MVController mvc("./states/multiplex_ventilation/MultiplexVentilationDataGen.log");
       return !mvc.GenerateStabilizedPatients();
     }
     else if (mode == "scenario" || mode == "state")
     {
-      MVController mvc("MultiplexVentilation.log");
+      MVController mvc("./states/multiplex_ventilation/MultiplexVentilation.log");
       pulse::multiplex_ventilator::bind::SimulationData sim;
       if (mode == "state")
       {
-        
-        double pip = 0;
-        double FiO2 = 0;
         // Parse the file name to get our ventilator settings
+        // ex. comp=0.01_peep=10_pip=55_imp=0.3_FiO2=0.21
         size_t peepIdx = file.find("peep=")+5;
-        size_t _peepIdx = file.find(".", peepIdx);
+        size_t _peepIdx = file.find("_", peepIdx);
         double peep = std::atof(file.substr(peepIdx, _peepIdx).c_str());
+        size_t pipIdx = file.find("pip=") + 4;
+        size_t _pipIdx = file.find("_", pipIdx);
+        double pip = std::atof(file.substr(pipIdx, _pipIdx).c_str());
+        size_t FiO2Idx = file.find("FiO2=") + 5;
+        size_t _FiO2Idx = file.find(".", FiO2Idx);
+        double FiO2 = std::atof(file.substr(FiO2Idx, _FiO2Idx).c_str());
         sim.set_respirationrate_per_min(mvc.DefaultRespirationRate_Per_Min());
         sim.set_ieratio(mvc.DefaultIERatio());
         sim.set_pip_cmh2o(pip);
@@ -81,8 +85,7 @@ int main(int argc, char* argv[])
           return 1;
         }
       }
-
-      return !mvc.RunSimulation(sim);
+      return !mvc.RunSimulation(sim, true);
     }
   }
   catch (std::exception ex)

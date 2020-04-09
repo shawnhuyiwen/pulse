@@ -316,7 +316,7 @@ void BloodChemistry::ComputeExposedModelParameters()
 /// \details
 /// The current Pulse implementation has no specific postprocess functionality.
 //--------------------------------------------------------------------------------------------------
-void BloodChemistry::PostProcess()
+void BloodChemistry::PostProcess(bool solve_and_transport)
 {
 
 }

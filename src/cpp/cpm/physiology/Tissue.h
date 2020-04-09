@@ -41,7 +41,7 @@ public:
   void AtSteadyState();
   void PreProcess();
   void Process(bool solve_and_transport=true);
-  void PostProcess();
+  void PostProcess(bool solve_and_transport=true);
 
 protected:
   void ComputeExposedModelParameters() override;

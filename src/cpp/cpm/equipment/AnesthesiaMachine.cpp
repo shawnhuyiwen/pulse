@@ -336,7 +336,7 @@ void AnesthesiaMachine::ComputeExposedModelParameters()
 /// circuit during post process. 
 /// The ventilator volumes are updated based on the previously calculated nodal analysis.
 //--------------------------------------------------------------------------------------------------
-void AnesthesiaMachine::PostProcess()
+void AnesthesiaMachine::PostProcess(bool solve_and_transport)
 {
 
 }

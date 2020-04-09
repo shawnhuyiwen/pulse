@@ -650,7 +650,7 @@ void Gastrointestinal::ComputeExposedModelParameters()
 /// \details
 /// The current Pulse implementation has no specific postprocess functionality.
 //--------------------------------------------------------------------------------------------------
-void Gastrointestinal::PostProcess()
+void Gastrointestinal::PostProcess(bool solve_and_transport)
 {
   
 }

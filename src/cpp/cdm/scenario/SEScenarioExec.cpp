@@ -202,7 +202,7 @@ bool SEScenarioExec::ProcessActions(const SEScenario& scenario)
   }
   m_ss << "It took " << profiler.GetElapsedTime_s("Total") << "s to run this simulation";
   profiler.Clear();
-    Info(m_ss);
+  Info(m_ss);
 
   return !err;
 }

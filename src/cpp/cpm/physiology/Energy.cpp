@@ -467,7 +467,8 @@ void Energy::Exercise()
 //--------------------------------------------------------------------------------------------------
 void Energy::Process(bool solve_and_transport)
 {
-  m_circuitCalculator->Process(*m_TemperatureCircuit, m_dT_s);
+  if(solve_and_transport)
+    m_circuitCalculator->Process(*m_TemperatureCircuit, m_dT_s);
   CalculateVitalSigns();
   ComputeExposedModelParameters();
 }
@@ -484,9 +485,12 @@ void Energy::ComputeExposedModelParameters()
 /// Updates the resulting heat transfer rates, temperatures and nodal heat values; effectively moving
 /// the next values to the current ones before time can be advanced.
 //--------------------------------------------------------------------------------------------------
-void Energy::PostProcess()
+void Energy::PostProcess(bool solve_and_transport)
 {
-  m_circuitCalculator->PostProcess(*m_TemperatureCircuit);
+  if (solve_and_transport)
+  {
+    m_circuitCalculator->PostProcess(*m_TemperatureCircuit);
+  }
 }
 
 //--------------------------------------------------------------------------------------------------

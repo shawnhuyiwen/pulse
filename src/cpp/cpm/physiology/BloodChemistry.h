@@ -39,7 +39,7 @@ public:
   void AtSteadyState();
   void PreProcess();
   void Process(bool solve_and_transport=true);
-  void PostProcess();
+  void PostProcess(bool solve_and_transport=true);
 
   bool CalculateCompleteBloodCount(SECompleteBloodCount& cbc) const;
   bool CalculateComprehensiveMetabolicPanel(SEComprehensiveMetabolicPanel& cmp) const;

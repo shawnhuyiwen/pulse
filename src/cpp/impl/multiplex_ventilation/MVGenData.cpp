@@ -10,7 +10,8 @@
 //--------------------------------------------------------------------------------------------------
 bool MVController::GenerateStabilizedPatients()
 {
-  DeleteDirectory("./states/multiplex_ventilation", true);
+  DeleteDirectory(m_BaseFileName+"/solo_states", true);
+  DeleteDirectory(m_BaseFileName+"/solo_states_logs", true);
   // Loop parameters
   float minCompliance_L_Per_cmH2O = 0.010f;
   float maxCompliance_L_Per_cmH2O = 0.050f;
@@ -97,7 +98,7 @@ bool MVController::GenerateStabilizedPatients()
         // Construct our engine
         baseName = "comp="+ to_scientific_notation(compliance_L_Per_cmH2O)+"_peep="+std::to_string(PEEP_cmH2O)+"_pip="+std::to_string(PIP_cmH2O)+"_imp="+to_scientific_notation(currentImpairment);
         Info("Creating engine " + baseName);
-        auto fio2_stepper = CreatePulseEngine("./states/multiplex_ventilation/logs/"+baseName+".log");
+        auto fio2_stepper = CreatePulseEngine(m_BaseFileName + "/solo_states_logs/"+baseName+".log");
         fio2_stepper->SerializeFromFile("./states/StandardMale@0s.json", SerializationFormat::JSON);
 
         // Add our initial actions
@@ -176,10 +177,10 @@ bool MVController::GenerateStabilizedPatients()
         // Save our state
         baseName += "_FiO2="+to_scientific_notation(currentFiO2);
         Info("Saving engine state" + baseName+".json");
-        fio2_stepper->SerializeToFile("./states/multiplex_ventilation/"+baseName+".json", SerializationFormat::JSON);
+        fio2_stepper->SerializeToFile(m_BaseFileName+"/solo_states/"+baseName+".json", SerializationFormat::JSON);
         // Append to our "list" of generated states
         auto patientData = patients.add_patients();
-        patientData->set_statefile("./states/multiplex_ventilation/"+baseName + ".json");
+        patientData->set_statefile(m_BaseFileName+"/solo_states/"+baseName+".json");
         patientData->set_compliance_l_per_cmh2o(compliance_L_Per_cmH2O);
         patientData->set_impairmentfraction(currentImpairment);
         patientData->set_peep_cmh2o(PEEP_cmH2O);

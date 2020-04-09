@@ -418,7 +418,7 @@ void MechanicalVentilator::ComputeExposedModelParameters()
 /// circuit during post process. 
 /// The ventilator volumes are updated based on the previously calculated nodal analysis.
 //--------------------------------------------------------------------------------------------------
-void MechanicalVentilator::PostProcess()
+void MechanicalVentilator::PostProcess(bool solve_and_transport)
 {
 
 }

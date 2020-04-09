@@ -149,7 +149,7 @@ void ECG::ComputeExposedModelParameters()
 /// The PostProcess function is included to preserve our system methodology and as a placeholder for
 /// models developed in the future.
 //--------------------------------------------------------------------------------------------------
-void ECG::PostProcess()
+void ECG::PostProcess(bool solve_and_transport)
 {
 
 }

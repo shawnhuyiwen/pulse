@@ -153,7 +153,7 @@ void Nervous::ComputeExposedModelParameters()
 /// \details
 /// Currently no nervous postprocess methods.
 //--------------------------------------------------------------------------------------------------
-void Nervous::PostProcess()
+void Nervous::PostProcess(bool solve_and_transport)
 {
 
 }
