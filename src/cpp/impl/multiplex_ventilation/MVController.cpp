@@ -5,31 +5,14 @@
 
 MVController::MVController(const std::string& logFileName, const std::string& data_dir) : Loggable(new Logger(logFileName))
 {
-  m_BaseFileName = "./states/multiplex_ventilation/";
+  BaseDir = "./states/multiplex_ventilation/";
+  SoloDir = BaseDir+"solo_states/";
+  SoloLogDir = BaseDir + "solo_states_logs/";
+  ResultsDir = BaseDir + "simulations/";
 }
 MVController::~MVController()
 {
 
-}
-
-std::string MVController::GetFileName(const std::string& filePath)
-{
-  std::string name = filePath;
-  name = name.substr(name.find_last_of("/") + 1);
-  name = name.substr(0, name.length() - 5);
-  return name;
-}
-
-std::string MVController::to_scientific_notation(float f)
-{
-  char buffer[32];
-  memset(buffer, 0, sizeof(buffer));
-  snprintf(buffer, sizeof(buffer), "%g", f);
-  return std::string(buffer);
-}
-std::string MVController::to_scientific_notation(double d)
-{
-  return to_scientific_notation(float(d));
 }
 
 void MVController::TrackData(SEEngineTracker& trkr, const std::string& csv_filename)
@@ -54,16 +37,34 @@ void MVController::TrackData(SEEngineTracker& trkr, const std::string& csv_filen
   trkr.SetupRequests();
 }
 
+bool MVController::ExtractVentilatorSettings(const std::string& filePath, std::string& fileName, double& pip_cmH2O, double& peep_cmH2O, double& FiO2)
+{
+  // Parse the file name to get our ventilator settings
+  // ex. comp=0.01_peep=10_pip=55_imp=0.3_FiO2=0.21
+  size_t peepIdx = filePath.find("peep=") + 5;
+  size_t _peepIdx = filePath.find("_", peepIdx);
+  peep_cmH2O = std::atof(filePath.substr(peepIdx, _peepIdx).c_str());
+  size_t pipIdx = filePath.find("pip=") + 4;
+  size_t _pipIdx = filePath.find("_", pipIdx);
+  pip_cmH2O = std::atof(filePath.substr(pipIdx, _pipIdx).c_str());
+  size_t FiO2Idx = filePath.find("FiO2=") + 5;
+  size_t _FiO2Idx = filePath.find(".", FiO2Idx);
+  FiO2 = std::atof(filePath.substr(FiO2Idx, _FiO2Idx).c_str());
+
+  fileName = filePath.substr(filePath.find_last_of("/") + 1);
+  fileName = fileName.substr(0, fileName.length() - 5);
+  return true;
+}
+
 void MVController::HandleEvent(eEvent e, bool active, const SEScalarTime* simTime)
 {
 
 }
 
-bool MVController::RunSoloState(const std::string& stateFile, const std::string& outDir)
+bool MVController::RunSoloState(const std::string& stateFile, const std::string& resultBasePath, double duration_s)
 {
-  std::string baseName = "solo_"+GetFileName(stateFile);
-  std::string logFile = outDir+baseName+".log";
-  std::string dataFile = outDir+baseName+"Results.csv";
+  std::string logFile = resultBasePath+".log";
+  std::string dataFile = resultBasePath+"Results.csv";
 
   TimingProfile profiler;
   profiler.Start("Total");
@@ -77,7 +78,7 @@ bool MVController::RunSoloState(const std::string& stateFile, const std::string&
   PulseController* pc = new PulseController(logFile);
   pc->SerializeFromFile(stateFile, SerializationFormat::JSON);
   TrackData(pc->GetEngineTracker(), dataFile);
-  int count = (int)(120 / timeStep_s);
+  int count = (int)(duration_s / timeStep_s);
   for (int i = 0; i < count; i++)
   {
     if (pc->GetEvents().IsEventActive(eEvent::IrreversibleState))
@@ -132,4 +133,16 @@ bool MVController::StabilizeSpO2(PhysiologyEngine& eng)
   }
   Info("Engine stablized at an SpO2 of " + to_scientific_notation(currentSpO2)+" in "+std::to_string(totalIterations *2)+"(s)");
   return true;
+}
+
+std::string to_scientific_notation(float f)
+{
+  char buffer[32];
+  memset(buffer, 0, sizeof(buffer));
+  snprintf(buffer, sizeof(buffer), "%g", f);
+  return std::string(buffer);
+}
+std::string to_scientific_notation(double d)
+{
+  return to_scientific_notation(float(d));
 }

@@ -31,10 +31,11 @@ message PatientComparisonData
 
 message SimulationData
 {
-  double          RespirationRate_Per_min             = 1;
-  double          IERatio                             = 2;
-  double          PIP_cmH2O                           = 3;
-  double          PEEP_cmH2O                          = 4;
-  double          FiO2                                = 5;
-  repeated PatientComparisonData PatientComparisons   = 6;
+  string          OutputDir                           = 1;
+  double          RespirationRate_Per_min             = 2;
+  double          IERatio                             = 3;
+  double          PIP_cmH2O                           = 4;
+  double          PEEP_cmH2O                          = 5;
+  double          FiO2                                = 6;
+  repeated PatientComparisonData PatientComparisons   = 7;
 }

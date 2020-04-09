@@ -29,7 +29,8 @@ public class PlotDriver
   public static void main(String[] args) 
   {    
     jniBridge.initialize();
-    PlotDriver.subMgr = new SESubstanceManager();
+    if(PlotDriver.subMgr == null)
+      PlotDriver.subMgr = new SESubstanceManager();
     PlotDriver me = new PlotDriver();
     RunConfiguration cfg = new RunConfiguration();
     //invalid input
@@ -120,7 +121,7 @@ public class PlotDriver
   public int abbreviateContents = 0;
   public boolean isScenario = false;
   
-  protected static SESubstanceManager subMgr;
+  protected static SESubstanceManager subMgr=null;
   
   public class PlotJob extends LogListener
   {

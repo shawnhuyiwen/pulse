@@ -3,20 +3,12 @@
 
 #include "MVController.h"
 
-bool MVController::RunSimulation(pulse::multiplex_ventilator::bind::SimulationData& sim, bool run_solo)
+bool MVController::RunSimulation(pulse::multiplex_ventilator::bind::SimulationData& sim)
 {
   // Figure out where to put results
-  std::string outDir = "";
-  for (int p = 0; p < sim.patientcomparisons_size(); p++)
-  {
-    std::string name = sim.patientcomparisons()[p].soloventilation().statefile();
-    name = name.substr(name.find_last_of("/")+1);
-    name = name.substr(0, name.length() - 5);
-    if (p > 0)
-      outDir += "+";
-    outDir += name;
-  }
-  outDir = m_BaseFileName + outDir + "/";
+  std::string outDir = sim.outputdir();
+  if(outDir.empty())
+    outDir = ResultsDir;
 
   TimingProfile profiler;
   profiler.Start("Total");
@@ -50,17 +42,11 @@ bool MVController::RunSimulation(pulse::multiplex_ventilator::bind::SimulationDa
   SEGasCompartment* inspiratoryConnectionCompartment = nullptr;
   SEGasCompartment* expiratoryConnectionCompartment = nullptr;
 
-  std::set<std::string> soloRuns;
   for (int p=0; p<sim.patientcomparisons_size(); p++)
   {
     std::string state = sim.patientcomparisons()[p].soloventilation().statefile();
-    if (run_solo && soloRuns.find(state)==soloRuns.end())
-    {
-      Info("Running state file " + state + " by itself");
-      RunSoloState(state,outDir);
-      soloRuns.insert(state);
-    }
-    PulseController* pc = new PulseController(outDir+"multiplex_p"+std::to_string(p)+".log");
+
+    PulseController* pc = new PulseController(outDir+"multiplex_patient_"+std::to_string(p)+".log");
     pc->SerializeFromFile(state, SerializationFormat::JSON);
 
     // Build our multiplex circuit
@@ -133,7 +119,7 @@ bool MVController::RunSimulation(pulse::multiplex_ventilator::bind::SimulationDa
       inspiratoryConnectionLink.MapPath(inspiratoryConnectionPath);
       multiplexVentilationGraph.AddLink(inspiratoryConnectionLink);
     }
-    TrackData(pc->GetEngineTracker(), outDir+"multiplex_p"+std::to_string(p)+"Results.csv");
+    TrackData(pc->GetEngineTracker(), outDir+"multiplex_patient_"+std::to_string(p)+"Results.csv");
     engines.push_back(pc);
   }
   multiplexVentilationCircuit.StateChange();

@@ -65,30 +65,38 @@
 #include "pulse/impl/bind/MultiplexVentilator.pb.h"
 #include <google/protobuf/util/json_util.h>
 
+std::string to_scientific_notation(float f);
+std::string to_scientific_notation(double d);
+
 class MVController : public Loggable, protected SEEventHandler
 {
 public:
   MVController(const std::string& logfileName, const std::string& data_dir = ".");
   virtual ~MVController();
 
+  std::string BaseDir;
+  std::string SoloDir;
+  std::string SoloLogDir;
+  std::string ResultsDir;
+
   bool GenerateStabilizedPatients();
 
-  bool RunSimulation(pulse::multiplex_ventilator::bind::SimulationData& sim, bool run_solo=false);
+  bool RunSimulation(pulse::multiplex_ventilator::bind::SimulationData& sim);
+  bool RunSoloState(const std::string& stateFile, const std::string& outDir, double duration_s);
   
   double DefaultIERatio() const { return m_IERatio; }
   double DefaultRespirationRate_Per_Min() const { return m_RespirationRate_Per_Min; }
 
+  bool ExtractVentilatorSettings(const std::string& filePath, std::string& fileName, double& pip_cmH2O, double& peep_cmH2O, double& FiO2);
+
 protected:
-  std::string GetFileName(const std::string& filePath);
-  std::string to_scientific_notation(float f);
-  std::string to_scientific_notation(double d);
+
   bool StabilizeSpO2(PhysiologyEngine& eng);
   void TrackData(SEEngineTracker& trkr, const std::string& csv_filename);
   void HandleEvent(eEvent e, bool active, const SEScalarTime* simTime = nullptr) override;
-  bool RunSoloState(const std::string& stateFile, const std::string& outDir);
 
 
-  std::string m_BaseFileName;
+  
   // Constants
   int   m_Resistance_cmH2O_s_Per_L = 5;
   int   m_RespirationRate_Per_Min = 20;
