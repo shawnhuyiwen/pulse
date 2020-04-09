@@ -1,7 +1,7 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-from pulse.cdm.engine import SEDataRequestManager, SEDataRequest, SEConditionManager
+from pulse.cdm.engine import SEDataRequestManager, SEDataRequest, SEConditionManager, SEScalarOverride
 from pulse.cdm.bind.Engine_pb2 import ActionListData, AnyActionData, \
                                       AnyConditionData, ConditionListData, \
                                       PatientConfigurationData, \
@@ -180,6 +180,8 @@ def serialize_patient_configuration_to_bind(src: SEPatientConfiguration, dst: Pa
         dst.PatientFile = src.get_patient_file()
     if src.has_conditions():
         serialize_condition_manager_to_bind(src.get_conditions(), dst.Conditions)
+    for override in src.get_scalar_overrides():
+        serialize_scalar_property_to_bind(override, dst.ScalarOverride.add())
 
 def serialize_patient_configuration_from_bind(src: PatientConfigurationData, dst: SEPatientConfiguration):
     raise Exception("serialize_patient_configuration_from_bind not implemented")

@@ -2,6 +2,7 @@
 # See accompanying NOTICE file for details.
 from abc import ABC, abstractmethod
 from enum import Enum
+from pulse.cdm.scalars import SEScalarProperty
 
 class eSerializationFormat(Enum):
     BINARY = 0
@@ -53,6 +54,31 @@ class SEAction(ABC):
     @abstractmethod
     def is_valid(self):
         pass
+
+class SEScalarOverride(SEAction):
+    __slots__ = ["_action","_scalar_override"]
+
+    def __init__(self):
+        super().__init__()
+        self._action = None
+        self._scalar_overrides = []
+    def clear(self):
+        if self._action is not None:
+            self._action.invalidate()
+        if self._scalar_override is not None:
+            self._scalar_override.invalidate()
+    def set_action(self, action):
+        self._action = action
+    def has_action(self):
+        return self._action is not None
+    def get_action(self):
+        return self._action
+    def add_scalar_override(self, name: str, value: float, unit: str = ""):
+        self._scalar_overrides.append(SEScalarProperty(name, value, unit))
+    def has_scalar_overrides(self):
+        return self._scalar_override is not None
+    def get_scalar_overrides(self):
+        return self._scalar_override
 
 class SECondition(ABC):
     __slots__ = ["_comment"]
