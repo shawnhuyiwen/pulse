@@ -84,9 +84,9 @@ void HowToMechanicalVentilation()
   
   std::stringstream ss;
   // Create a Pulse Engine and load the standard patient
-  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowToMechanicalVentilation.log");
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowTo_MechanicalVentilation.log");
   
-  pe->GetLogger()->Info("HowToMechanicalVentilation");
+  pe->GetLogger()->Info("HowTo_MechanicalVentilation");
   
   //Initialize the patient with any conditions
   //Change the following true/false flags to give the patient different conditions

@@ -21,8 +21,8 @@
 void HowToScenarioBase()
 {
   // Create our engine
-  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowToScenarioBase.log");
-  pe->GetLogger()->Info("HowToScenarioBase");
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowTo_ScenarioBase.log");
+  pe->GetLogger()->Info("HowTo_ScenarioBase");
   
   
   //Let's read the scenario we want to base this engine on

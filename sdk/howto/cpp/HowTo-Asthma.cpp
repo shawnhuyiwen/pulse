@@ -33,8 +33,8 @@
 void HowToAsthmaAttack() 
 {
   // Create the engine and load the patient
-  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowToAsthma.log");
-  pe->GetLogger()->Info("HowToAsthmaAttack");
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowTo_Asthma.log");
+  pe->GetLogger()->Info("HowTo_Asthma");
   if (!pe->SerializeFromFile("./states/StandardMale@0s.json", JSON))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
@@ -45,8 +45,6 @@ void HowToAsthmaAttack()
   HowToTracker tracker(*pe);
 
   // Create data requests for each value that should be written to the output log as the engine is executing
-  // Physiology System Names are defined on the System Objects 
-  // defined in the Physiology.xsd file
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);

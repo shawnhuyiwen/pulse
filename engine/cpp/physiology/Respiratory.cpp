@@ -215,9 +215,9 @@ void Respiratory::Initialize()
   //Driver
   m_ElapsedBreathingCycleTime_min = 0.0;
   m_TopBreathElapsedTime_min = 0.0;
-  m_BreathingCycle = false;
-  m_BreathingCycleTime_s = 0.0;
+  m_BreathingCycle = false;  
   m_VentilationFrequency_Per_min = m_data.GetCurrentPatient().GetRespirationRateBaseline(FrequencyUnit::Per_min);
+  m_BreathingCycleTime_s = 60.0 / m_VentilationFrequency_Per_min + m_dt_s; //Make the engine start at the beginning of a breath
   m_DriverPressure_cmH2O = 0.0;
   m_VentilationToTidalVolumeSlope = 30.0;
   //The peak driver pressure is the pressure above the default pressure
@@ -308,7 +308,6 @@ void Respiratory::SetUp()
   m_CentralControlGainConstant = m_data.GetConfiguration().GetCentralVentilatoryControllerGain();
   m_VentilationTidalVolumeIntercept = m_data.GetConfiguration().GetVentilationTidalVolumeIntercept(VolumeUnit::L);
   m_VentilatoryOcclusionPressure_cmH2O = m_data.GetConfiguration().GetVentilatoryOcclusionPressure(PressureUnit::cmH2O); //This increases the absolute max driver pressure
-  m_PleuralComplianceSensitivity_Per_L = m_data.GetConfiguration().GetPleuralComplianceSensitivity(InverseVolumeUnit::Inverse_L);
   m_MinimumAllowableTidalVolume_L = m_data.GetConfiguration().GetMinimumAllowableTidalVolume(VolumeUnit::L);
   m_MinimumAllowableInpiratoryAndExpiratoryPeriod_s = m_data.GetConfiguration().GetMinimumAllowableInpiratoryAndExpiratoryPeriod(TimeUnit::s);
   //Compartments
@@ -503,7 +502,7 @@ void Respiratory::Process()
 
 #ifdef DEBUG
   Debugging(RespirationCircuit);
-#endif  
+#endif
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -1220,16 +1219,15 @@ void Respiratory::RespiratoryDriver()
     m_data.GetEvents().SetEvent(eEvent::StartOfExhale, true, m_data.GetSimulationTime());
   }
 
-  double tau = 0.0;
-  double tauDenominator = 4.0; //lower = "rounder"... too low (seems to be < 5) starts creating incontinuities
+  //double pi = 3.14159265359;
   if (m_BreathingCycleTime_s >= ResidueFractionTimeStart_s)
   {
     m_DriverPressure_cmH2O = 0.0;
   }
   else if (m_BreathingCycleTime_s >= ExpiratoryReleaseTimeStart_s)
   {
-    tau = m_ExpiratoryReleaseFraction * TotalBreathingCycleTime_s / tauDenominator;
-    m_DriverPressure_cmH2O = exp(-(m_BreathingCycleTime_s - ExpiratoryReleaseTimeStart_s) / tau) * m_PeakExpiratoryPressure_cmH2O;
+    double ventilationFrequency_Per_min = 60.0 / (m_ExpiratoryReleaseFraction * TotalBreathingCycleTime_s);
+    m_DriverPressure_cmH2O = m_PeakExpiratoryPressure_cmH2O * (exp(-((ventilationFrequency_Per_min + 4.0 * m_VentilatoryOcclusionPressure_cmH2O) / 10.0) * (m_BreathingCycleTime_s - ExpiratoryReleaseTimeStart_s)));
   }
   else if (m_BreathingCycleTime_s >= ExpiratoryHoldTimeStart_s)
   {
@@ -1237,8 +1235,8 @@ void Respiratory::RespiratoryDriver()
   }
   else if (m_BreathingCycleTime_s >= ExpiratoryRiseTimeStart_s)
   {
-    tau = m_ExpiratoryRiseFraction * TotalBreathingCycleTime_s / tauDenominator;
-    m_DriverPressure_cmH2O = (1.0 - exp(-(m_BreathingCycleTime_s - ExpiratoryRiseTimeStart_s) / tau)) * m_PeakExpiratoryPressure_cmH2O;
+    double ventilationFrequency_Per_min = 60.0 / (m_ExpiratoryRiseFraction * TotalBreathingCycleTime_s);
+    m_DriverPressure_cmH2O = m_PeakExpiratoryPressure_cmH2O * (1.0 - exp(-((ventilationFrequency_Per_min + m_VentilatoryOcclusionPressure_cmH2O / 2.0) / 10.0) * (m_BreathingCycleTime_s - ExpiratoryRiseTimeStart_s)));
   }
   else if (m_BreathingCycleTime_s >= InspiratoryToExpiratoryPauseTimeStart_s)
   {
@@ -1246,18 +1244,22 @@ void Respiratory::RespiratoryDriver()
   }
   else if (m_BreathingCycleTime_s >= InspiratoryReleaseTimeStart_s)
   {
-    tau = m_InspiratoryReleaseFraction * TotalBreathingCycleTime_s / tauDenominator;
-    m_DriverPressure_cmH2O = exp(-(m_BreathingCycleTime_s - InspiratoryReleaseTimeStart_s) / tau) * m_PeakInspiratoryPressure_cmH2O;
+    double ventilationFrequency_Per_min = 60.0 / (m_InspiratoryReleaseFraction * TotalBreathingCycleTime_s);
+    m_DriverPressure_cmH2O = m_PeakInspiratoryPressure_cmH2O * (exp(-((ventilationFrequency_Per_min + m_VentilatoryOcclusionPressure_cmH2O / 2.0) / 10.0) * (m_BreathingCycleTime_s - InspiratoryReleaseTimeStart_s)));
+    
+    //double segmentTime_s = InspiratoryToExpiratoryPauseTimeStart_s - InspiratoryReleaseTimeStart_s;
+    //m_DriverPressure_cmH2O = m_PeakInspiratoryPressure_cmH2O * sin(pi / 2.0 * (m_BreathingCycleTime_s + segmentTime_s - InspiratoryReleaseTimeStart_s) / (segmentTime_s));
   }
   else if (m_BreathingCycleTime_s >= InspiratoryHoldTimeStart_s)
   {
-    tau = m_InspiratoryHoldFraction * TotalBreathingCycleTime_s / tauDenominator;
     m_DriverPressure_cmH2O = m_PeakInspiratoryPressure_cmH2O;
   }
   else //(m_BreathingCycleTime_s >= InspiratoryRiseTimeStart_s)
   {
-    tau = m_InspiratoryRiseFraction * TotalBreathingCycleTime_s / tauDenominator;
-    m_DriverPressure_cmH2O = -(exp(-m_BreathingCycleTime_s / tau) - 1) * m_PeakInspiratoryPressure_cmH2O;
+    double ventilationFrequency_Per_min = 60.0 / (m_InspiratoryRiseFraction * TotalBreathingCycleTime_s);
+    m_DriverPressure_cmH2O = m_PeakInspiratoryPressure_cmH2O * (1.0 - exp(-((ventilationFrequency_Per_min + 4.0 * m_VentilatoryOcclusionPressure_cmH2O) / 10.0) * m_BreathingCycleTime_s));
+
+    //m_DriverPressure_cmH2O = m_PeakInspiratoryPressure_cmH2O * sin(pi / 2.0 * m_BreathingCycleTime_s / InspiratoryHoldTimeStart_s);
   }
 
   if (!m_PatientActions->HasConsciousRespiration())
@@ -1299,10 +1301,13 @@ void Respiratory::RespiratoryDriver()
 //--------------------------------------------------------------------------------------------------
 void Respiratory::SetBreathCycleFractions()
 {
-  //Healthy = 0.33 remaining, giving ~1:2 IE Ratio
-  m_InspiratoryRiseFraction = 0.33 * m_IERatioScaleFactor;
+  //Healthy = ~1:2 IE Ratio = 0.33 inpiration and 0.67 expiration
+  ///\cite Fresnel2014musclePressure
+  //Adjust for standard 12 bpm giving ~0.33 instead of 16 bpm by adding 4
+  m_InspiratoryRiseFraction = (0.0125 * (m_VentilationFrequency_Per_min + 4.0) + 0.125) * m_IERatioScaleFactor;
+  m_InspiratoryRiseFraction = LIMIT(m_InspiratoryRiseFraction, 0.1, 0.9);
   m_InspiratoryHoldFraction = 0.0;
-  m_InspiratoryReleaseFraction = MIN(0.33 / m_IERatioScaleFactor, 1.0 - m_InspiratoryRiseFraction);
+  m_InspiratoryReleaseFraction = 1.0 - m_InspiratoryRiseFraction;
   m_InspiratoryToExpiratoryPauseFraction = 0.0;
   m_ExpiratoryRiseFraction = 0.0;
   m_ExpiratoryHoldFraction = 0.0;
@@ -2611,14 +2616,17 @@ void Respiratory::UpdateAlveolarCompliances()
 void Respiratory::UpdateInspiratoryExpiratoryRatio()
 {
   //Adjust the inspiration/expiration ratio based on severity
-  double combinedSeverity = 0.0;
-  m_IERatioScaleFactor = 1.0;
+  double combinedObstructiveSeverity = 0.0;
+  double combinedRestrictiveSeverity = 0.0;
+
+  //------------------------------------------------------------------------------------------------------
+  //Obsructive = Decrease (prolonged expiration)
 
   //------------------------------------------------------------------------------------------------------
   //Asthma
   if (m_PatientActions->HasAsthmaAttack())
   {
-    combinedSeverity = m_PatientActions->GetAsthmaAttack()->GetSeverity().GetValue();
+    combinedObstructiveSeverity = m_PatientActions->GetAsthmaAttack()->GetSeverity().GetValue();
   }
 
   //------------------------------------------------------------------------------------------------------
@@ -2639,9 +2647,12 @@ void Respiratory::UpdateInspiratoryExpiratoryRatio()
       emphysemaSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease()->GetEmphysemaSeverity().GetValue();
     }
 
-    combinedSeverity = MAX(combinedSeverity, emphysemaSeverity);
-    combinedSeverity = MAX(combinedSeverity, bronchitisSeverity);
+    combinedObstructiveSeverity = MAX(combinedObstructiveSeverity, emphysemaSeverity);
+    combinedObstructiveSeverity = MAX(combinedObstructiveSeverity, bronchitisSeverity);
   }
+
+  //------------------------------------------------------------------------------------------------------
+  //Restrictive = Increase
 
   //------------------------------------------------------------------------------------------------------
   //LobarPneumonia
@@ -2669,7 +2680,7 @@ void Respiratory::UpdateInspiratoryExpiratoryRatio()
     double dLeftLungRatio = 1.0 - dRightLungRatio;
 
     double scaledSeverity = severity * leftLungFraction * dLeftLungRatio + severity * rightLungFraction * dRightLungRatio;
-    combinedSeverity = MAX(combinedSeverity, scaledSeverity);
+    combinedRestrictiveSeverity = MAX(combinedRestrictiveSeverity, scaledSeverity);
   }
 
   //------------------------------------------------------------------------------------------------------
@@ -2678,7 +2689,7 @@ void Respiratory::UpdateInspiratoryExpiratoryRatio()
   {
     double Severity = m_data.GetConditions().GetPulmonaryFibrosis()->GetSeverity().GetValue();
 
-    combinedSeverity = MAX(combinedSeverity, Severity);
+    combinedRestrictiveSeverity = MAX(combinedRestrictiveSeverity, Severity);
   }
 
   //------------------------------------------------------------------------------------------------------
@@ -2708,21 +2719,19 @@ void Respiratory::UpdateInspiratoryExpiratoryRatio()
     double dLeftLungRatio = 1.0 - dRightLungRatio;
 
     double scaledSeverity = severity * leftLungFraction * dLeftLungRatio + severity * rightLungFraction * dRightLungRatio;
-    combinedSeverity = MAX(combinedSeverity, scaledSeverity);
+    combinedRestrictiveSeverity = MAX(combinedRestrictiveSeverity, scaledSeverity);
   }
 
   //------------------------------------------------------------------------------------------------------
   //Set new value & Drugs/PD
-  if (combinedSeverity > 0.0)
-  {
-    //When albuterol is administered, the bronchodilation also causes the IE ratio to correct itself
-    m_IERatioScaleFactor = 1.0 - combinedSeverity;
-    m_IERatioScaleFactor *= exp(7728.4 * m_AverageLocalTissueBronchodilationEffects);
+  m_IERatioScaleFactor = 1.0 - combinedObstructiveSeverity;
+  //When albuterol is administered, the bronchodilation also causes the IE ratio to correct itself
+  m_IERatioScaleFactor *= exp(7728.4 * m_AverageLocalTissueBronchodilationEffects);
+  //Lower than 0.1 causes simulation instability
+  m_IERatioScaleFactor = LIMIT(m_IERatioScaleFactor, 0.1, 1.0);
 
-    // IE scale factor is constrained to a minimum of 0.1 and a maximum 1.0. Lower than 0.1 causes simulation instability.
-    // Greater than 1.0 is not possible for patients with these conditions
-    m_IERatioScaleFactor = LIMIT(m_IERatioScaleFactor, 0.1, 1.0);
-  }
+  m_IERatioScaleFactor += 1.5 * combinedRestrictiveSeverity;
+  m_IERatioScaleFactor = LIMIT(m_IERatioScaleFactor, 0.1, 10.0);
 }
 
 //--------------------------------------------------------------------------------------------------

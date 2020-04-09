@@ -1,9 +1,17 @@
 Publications {#published}
 =======
+To acknowledge the Pulse Physiology Engine as a platform, please cite the Pulse Website
 
-Note that some of these publications focus on the physiology engine precursor, BioGears.
+For work that uses or incorporates Pulse, please cite the following publication:
+
+- Bray, Aaron, Jeffrey B. Webb, Andinet Enquobahrie, Jared Vicory, Jerry Heneghan, Robert Hubal, Stephanie TerMaath, Philip Asare, and Rachel B. Clipp. "Pulse Physiology Engine: an Open-Source Software Platform for Computational Modeling of Human Medical Simulation." SN Comprehensive Clinical Medicine. 2019.  "
+
+We will add more publications as we get them targeted at specific systems<br>
+Please let us know if you have a publication you would like added to this list by emailing <a href="mailto:comm@kitware.com">comm@kitware.com</a>.
+
+Note that some of these publications focus on the physiology engine precursor, %BioGears.<br>
 Authors Clipp, Webb, and Bray have transitioned to the Pulse team.
-Please let us know if you have a publication you would like added to this list by emailing kitware@kitware.com.
+
 
 Pulse Publications:
 - Bray, Aaron, Jeffrey B. Webb, Andinet Enquobahrie, Jared Vicory, Jerry Heneghan, Robert Hubal, Stephanie TerMaath, Philip Asare, and Rachel B. Clipp. "Pulse Physiology Engine: an Open-Source Software Platform for Computational Modeling of Human Medical Simulation." SN Comprehensive Clinical Medicine. 2019.

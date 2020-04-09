@@ -40,9 +40,9 @@ void HowToBrainInjury()
 {
   std::stringstream ss;
   // Create a Pulse Engine and load the standard patient
-  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowToBrainInjury.log");
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowTo_BrainInjury.log");
   
-  pe->GetLogger()->Info("HowToBrainInjury");
+  pe->GetLogger()->Info("HowTo_BrainInjury");
   if (!pe->SerializeFromFile("./states/StandardMale@0s.json", JSON))
   {
     pe->GetLogger()->Error("Could not load state, check the error");

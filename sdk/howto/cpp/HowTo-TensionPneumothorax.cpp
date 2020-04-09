@@ -35,8 +35,8 @@
 void HowToTensionPneumothorax()
 {
   // Create the engine and load the patient
-  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowToTensionPneumothorax.log");
-  pe->GetLogger()->Info("HowToTensionPneumothorax");
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowTo_TensionPneumothorax.log");
+  pe->GetLogger()->Info("HowTo_TensionPneumothorax");
   if (!pe->SerializeFromFile("./states/StandardMale@0s.json", JSON))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
@@ -46,8 +46,6 @@ void HowToTensionPneumothorax()
   HowToTracker tracker(*pe);
 
   // Create data requests for each value that should be written to the output log as the engine is executing
-  // Physiology System Names are defined on the System Objects 
-  // defined in the Physiology.xsd file
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
@@ -76,14 +74,13 @@ void HowToTensionPneumothorax()
   
   // You can have a Closed or Open Tension Pneumothorax
   pneumo.SetType(eGate::Closed);
-  //pneumo.SetType(CDM::enumPneumothoraxType::Open);
+  //pneumo.SetType(eGate::Open);
   pneumo.GetSeverity().SetValue(0.75);
   
     // It can be on the Left or right side
   pneumo.SetSide(eSide::Right);  
-  //pneumo.SetSide(CDM::enumSide::Left);
+  //pneumo.SetSide(eSide::Left);
   pneumo.SetComment("ICD-9: 860.0");
-  //pneumo.SetComment('ICD-9: 860.0');
   pe->ProcessAction(pneumo);
 
   pe->GetLogger()->Info("Giving the patient a tension pneumothorax");
@@ -110,6 +107,7 @@ void HowToTensionPneumothorax()
   needleDecomp.SetSide(eSide::Right);
   //needleDecomp.SetSide(CDM::enumSide::Left);
   
+  needleDecomp.SetActive(true);
   pe->ProcessAction(needleDecomp);
   pe->GetLogger()->Info("Giving the patient a needle decompression");
 

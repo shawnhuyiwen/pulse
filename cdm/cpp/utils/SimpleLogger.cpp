@@ -264,24 +264,39 @@ void Logger::Fatal(std::ostream &msg, const std::string&  origin)
   Fatal(ss.str(), origin);
 }
 
-Loggable::Loggable()
-{
-  m_Logger = nullptr;
-}
-
 Loggable::Loggable(Logger* logger)
 {
+  myLogger = false;
   m_Logger = logger;
+  if (m_Logger == nullptr)
+  {
+    myLogger = true;
+    m_Logger = new Logger();
+  }
+}
+
+Loggable::Loggable(std::string const& logfile)
+{
+  myLogger = true;
+  m_Logger = new Logger(logfile);
 }
 
 Loggable::~Loggable()
 {
-
+  if (myLogger)
+    delete m_Logger;
 }
 
 Logger* Loggable::GetLogger() const
 {
   return m_Logger;
+}
+void Loggable::SetLogger(Logger& logger)
+{
+  if (myLogger)
+    delete m_Logger;
+  myLogger = false;
+  m_Logger = &logger;
 }
 
 void Loggable::Debug(const std::string& msg, const std::string& origin) const
