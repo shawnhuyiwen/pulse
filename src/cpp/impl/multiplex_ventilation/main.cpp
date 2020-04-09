@@ -12,7 +12,7 @@ int main(int argc, char* argv[])
     if (argc <= 1)
     {
       // Adjust comments to run the mode you want
-      //mode = "genData";
+      mode = "genData";
       //mode = "twinsy";
       //mode = "sim";
     }
@@ -105,11 +105,11 @@ int main(int argc, char* argv[])
         std::string solo_patient0_base_path = mvc.ResultsDir+p0_name+"+"+p1_name+"/pip="+to_scientific_notation(p0_pip_cmH2O)+
                                                                                  "_peep="+to_scientific_notation(p0_peep_cmH2O)+
                                                                                  "_FiO2="+to_scientific_notation(p0_FiO2)+"_solo_patient_0";
-        //mvc.RunSoloState(patient0, solo_patient0_base_path, 120);
+        mvc.RunSoloState(patient0, solo_patient0_base_path, 120);
         std::string solo_patient1_base_path = mvc.ResultsDir+p0_name+"+"+p1_name+"/pip="+to_scientific_notation(p1_pip_cmH2O)+
                                                                                  "_peep="+to_scientific_notation(p1_peep_cmH2O)+
                                                                                  "_FiO2="+to_scientific_notation(p1_FiO2)+"_solo_patient_1";
-        //mvc.RunSoloState(patient1, solo_patient1_base_path, 120);
+        mvc.RunSoloState(patient1, solo_patient1_base_path, 120);
 
         std::string sim0_base_path = mvc.ResultsDir+p0_name+"+"+p1_name+"/pip="+to_scientific_notation(p0_pip_cmH2O)+
                                                                         "_peep="+to_scientific_notation(p0_peep_cmH2O)+
@@ -120,7 +120,7 @@ int main(int argc, char* argv[])
         sim.set_fio2(p0_FiO2);
         sim.add_patientcomparisons()->mutable_soloventilation()->set_statefile(patient0);
         sim.add_patientcomparisons()->mutable_soloventilation()->set_statefile(patient1);
-        //mvc.RunSimulation(sim);
+        mvc.RunSimulation(sim);
 
         std::string sim1_base_path = mvc.ResultsDir+p0_name+"+"+p1_name+"/pip="+to_scientific_notation(p1_pip_cmH2O)+
                                                                         "_peep="+to_scientific_notation(p1_peep_cmH2O)+
@@ -129,7 +129,7 @@ int main(int argc, char* argv[])
         sim.set_pip_cmh2o(p1_pip_cmH2O);
         sim.set_peep_cmh2o(p1_peep_cmH2O);
         sim.set_fio2(p1_FiO2);
-        //mvc.RunSimulation(sim);
+        mvc.RunSimulation(sim);
 
 
         double pipAvg_cmH2O = (p0_pip_cmH2O+p1_pip_cmH2O)*0.5;
@@ -142,7 +142,7 @@ int main(int argc, char* argv[])
         sim.set_pip_cmh2o(pipAvg_cmH2O);
         sim.set_peep_cmh2o(peepAvg_cmH2O);
         sim.set_fio2(FiO2Avg);
-        //mvc.RunSimulation(sim);
+        mvc.RunSimulation(sim);
 
         std::ofstream plots;
         plots.open(mvc.ResultsDir + p0_name + "+" + p1_name + "/plot_pairs.config");

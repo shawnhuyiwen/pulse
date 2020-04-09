@@ -82,7 +82,7 @@ bool MVController::GenerateStabilizedPatients()
       // Assume tube resistances are negligable
       double targetTidalVolume_mL = 6.0 * 75.3; // Aaron - What's the best way to get the ideal body weight from the patient?
       double breathPeriod_s = 60.0 / m_RespirationRate_Per_Min;
-      double inspiratoryPeriod_s = m_IERatio * breathPeriod_s / (1 + m_IERatio);
+      double inspiratoryPeriod_s = m_IERatio * breathPeriod_s / (1.f + m_IERatio);
       double targetTidalVolume_L = targetTidalVolume_mL / 1000.0;
       int PIP_cmH2O = int(targetTidalVolume_L / (compliance_L_Per_cmH2O * (1.0 - exp(-inspiratoryPeriod_s / (m_Resistance_cmH2O_s_Per_L * compliance_L_Per_cmH2O)))) + PEEP_cmH2O);
 
@@ -101,38 +101,38 @@ bool MVController::GenerateStabilizedPatients()
         // Construct our engine
         baseName = "comp="+to_scientific_notation(compliance_L_Per_cmH2O)+"_peep="+std::to_string(PEEP_cmH2O)+"_pip="+std::to_string(PIP_cmH2O)+"_imp="+to_scientific_notation(currentImpairment);
         Info("Creating engine " + baseName);
-        auto fio2_stepper = CreatePulseEngine(SoloLogDir+baseName+".log");
-        fio2_stepper->SerializeFromFile("./states/StandardMale@0s.json", SerializationFormat::JSON);
+        auto engine = CreatePulseEngine(SoloLogDir+baseName+".log");
+        engine->SerializeFromFile("./states/StandardMale@0s.json", SerializationFormat::JSON);
 
         // Add our initial actions
         impairedAlveolarExchange.GetSeverity().SetValue(currentImpairment);
         pulmonaryShunt.GetSeverity().SetValue(currentImpairment);
-        fio2_stepper->ProcessAction(dyspnea);
-        fio2_stepper->ProcessAction(intubation);
-        fio2_stepper->ProcessAction(overrides);
-        fio2_stepper->ProcessAction(mvc);
-        fio2_stepper->ProcessAction(impairedAlveolarExchange);
-        fio2_stepper->ProcessAction(pulmonaryShunt);
+        engine->ProcessAction(dyspnea);
+        engine->ProcessAction(intubation);
+        engine->ProcessAction(overrides);
+        engine->ProcessAction(mvc);
+        engine->ProcessAction(impairedAlveolarExchange);
+        engine->ProcessAction(pulmonaryShunt);
 
         double currentFiO2 = FiO2->GetFractionAmount().GetValue();
 
         double tolerance_Per_s = 0.001;
         double FiO2_increment = 0.01;
 
-        double previousSpO2 = fio2_stepper->GetBloodChemistrySystem()->GetOxygenSaturation();
+        double previousSpO2 = engine->GetBloodChemistrySystem()->GetOxygenSaturation();
 
-        fio2_stepper->AdvanceModelTime(breathPeriod_s, TimeUnit::s);
+        engine->AdvanceModelTime(breathPeriod_s, TimeUnit::s);
         double totalSimTime = breathPeriod_s;
-        double currentSpO2 = fio2_stepper->GetBloodChemistrySystem()->GetOxygenSaturation();
+        double currentSpO2 = engine->GetBloodChemistrySystem()->GetOxygenSaturation();
         bool trendingUp = currentSpO2 > previousSpO2;
 
         bool max = false;
         double previousFiO2 = currentFiO2;
         while (true)
         {
-          fio2_stepper->AdvanceModelTime(breathPeriod_s, TimeUnit::s);
+          engine->AdvanceModelTime(breathPeriod_s, TimeUnit::s);
           totalSimTime += breathPeriod_s;
-          currentSpO2 = fio2_stepper->GetBloodChemistrySystem()->GetOxygenSaturation();
+          currentSpO2 = engine->GetBloodChemistrySystem()->GetOxygenSaturation();
 
           if (!trendingUp && currentSpO2 < m_SpO2Target && !max)
           {
@@ -167,7 +167,7 @@ bool MVController::GenerateStabilizedPatients()
             }
             Info("Setting FiO2 to " + to_scientific_notation(currentFiO2) + " with an SpO2 of " + to_scientific_notation(currentSpO2));
             FiO2->GetFractionAmount().SetValue(currentFiO2);
-            fio2_stepper->ProcessAction(mvc);
+            engine->ProcessAction(mvc);
           }
 
           trendingUp = currentSpO2 > previousSpO2;
@@ -180,7 +180,7 @@ bool MVController::GenerateStabilizedPatients()
         // Save our state
         baseName += "_FiO2="+to_scientific_notation(currentFiO2);
         Info("Saving engine state" + baseName+".json");
-        fio2_stepper->SerializeToFile(SoloDir+baseName+".json", SerializationFormat::JSON);
+        engine->SerializeToFile(SoloDir+baseName+".json", SerializationFormat::JSON);
         // Append to our "list" of generated states
         auto patientData = patients.add_patients();
         patientData->set_statefile(SoloDir+baseName+".json");
@@ -189,11 +189,11 @@ bool MVController::GenerateStabilizedPatients()
         patientData->set_peep_cmh2o(PEEP_cmH2O);
         patientData->set_pip_cmh2o(mv.GetPeakInspiratoryPressure().GetValue(PressureUnit::cmH2O));
         patientData->set_fio2(FiO2->GetFractionAmount().GetValue());
-        patientData->set_oxygensaturation(fio2_stepper->GetBloodChemistrySystem()->GetOxygenSaturation());
-        patientData->set_tidalvolume_l(fio2_stepper->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::L));
-        patientData->set_endtidalcarbondioxidepressure_cmh2o(fio2_stepper->GetRespiratorySystem()->GetEndTidalCarbonDioxidePressure(PressureUnit::cmH2O));
-        patientData->set_carricoindex(fio2_stepper->GetRespiratorySystem()->GetCarricoIndex(PressureUnit::mmHg));
-        delete fio2_stepper.release();
+        patientData->set_oxygensaturation(engine->GetBloodChemistrySystem()->GetOxygenSaturation());
+        patientData->set_tidalvolume_l(engine->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::L));
+        patientData->set_endtidalcarbondioxidepressure_cmh2o(engine->GetRespiratorySystem()->GetEndTidalCarbonDioxidePressure(PressureUnit::cmH2O));
+        patientData->set_carricoindex(engine->GetRespiratorySystem()->GetCarricoIndex(PressureUnit::mmHg));
+        delete engine.release();
 
         currentIteration++;
       }
