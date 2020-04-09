@@ -287,6 +287,28 @@ class SEPulmonaryFibrosis(SEPatientCondition):
         return ("Pulmonary Fibrosis\n"
                 "  Severity: {}\n").format(self._severity)
 
+
+class SEPulmonaryShunt(SEPatientCondition):
+    __slots__ = ["_severity"]
+
+    def __init__(self):
+        super().__init__()
+        self._severity = None
+    def clear(self):
+        if self._severity is not None:
+            self._severity.invalidate()
+    def is_valid(self):
+        return self.has_severity()
+    def has_severity(self):
+        return self._severity is not None
+    def get_severity(self):
+        if self._severity is None:
+            self._severity = SEScalar0To1()
+        return self._severity
+    def __repr__(self):
+        return ("Pulmonary Shunt\n"
+                "  Severity: {}\n").format(self._severity)
+
 class SESepsis(SEPatientCondition):
     __slots__ = ["_severity"]
 
