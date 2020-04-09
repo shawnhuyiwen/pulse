@@ -120,7 +120,7 @@ from pulse.cdm.patient_conditions import *
 class SEConditionManager():
     __slots__ = ["_ards", "_anemia", "_copd", "_cvsd", "_impaired_alveolar_exchange",
                  "_pericardial_effusion", "_lobar_pneumonia",
-                 "_pulmonary_fibrosis", "_renal_stenosis", "_sepsis",
+                 "_pulmonary_fibrosis", "_pulmonary_shunt", "_renal_stenosis", "_sepsis",
                  "_initial_environmental_conditions"]
 
     def __init__(self):
@@ -135,6 +135,7 @@ class SEConditionManager():
         self._pericardial_effusion = None
         self._lobar_pneumonia = None
         self._pulmonary_fibrosis = None
+        self._pulmonary_shunt = None
         self._renal_stenosis = None
         self._sepsis = None
         self._initial_environmental_conditions = None
@@ -157,6 +158,8 @@ class SEConditionManager():
         if self.has_lobar_pneumonia():
             return False
         if self.has_pulmonary_fibrosis():
+            return False
+        if self.has_pulmonary_shunt():
             return False
         if self.has_sepsis():
             return False
@@ -245,6 +248,14 @@ class SEConditionManager():
         return self._pulmonary_fibrosis
     def remove_pulmonary_fibrosis(self):
         self._pulmonary_fibrosis = None
+    def has_pulmonary_shunt(self):
+        return False if self._pulmonary_shunt is None else self._pulmonary_shunt.is_valid()
+    def get_pulmonary_shunt(self):
+        if self._pulmonary_shunt is None:
+            self._pulmonary_shunt = SEPulmonaryShunt()
+        return self._pulmonary_shunt
+    def remove_pulmonary_shunt(self):
+        self._pulmonary_shunt = None
 
     def has_renal_stenosis(self):
         return False if self._renal_stenosis is None else self._renal_stenosis.is_valid()

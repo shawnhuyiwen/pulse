@@ -111,6 +111,10 @@ def serialize_actions_to_string(actions: [], fmt: eSerializationFormat):
                 serialize_pericardial_effusion_to_bind(action, any_action.PatientAction.PericardialEffusion)
                 action_list.AnyAction.append(any_action)
                 continue
+            if isinstance(action, SEPulmonaryShuntExacerbation):
+                serialize_pulmonary_shunt_to_bind(action, any_action.PatientAction.PulmonaryShuntExacerbation)
+                action_list.AnyAction.append(any_action)
+                continue
             if isinstance(action, SERespiratoryFatigue):
                 serialize_respiratory_fatigue_to_bind(action, any_action.PatientAction.RespiratoryFatigue)
                 action_list.AnyAction.append(any_action)

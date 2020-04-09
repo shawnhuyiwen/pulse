@@ -770,6 +770,33 @@ class SEPericardialEffusion(SEPatientAction):
         return ("Pericardial Effusion\n"
                 "  Rate: {}").format(self._effusion_rate)
 
+
+class SEPulmonaryShuntExacerbation(SEPatientAction):
+    __slots__ = ["severity"]
+
+    def __init__(self):
+        super().__init__()
+        self._severity = None
+
+    def clear(self):
+        super().clear()
+        if self._severity is not None:
+            self._severity.invalidate()
+
+    def is_valid(self):
+        return self.has_severity()
+
+    def has_severity(self):
+        return self._severity is not None
+
+    def get_severity(self):
+        if self._severity is None:
+            self._severity = SEScalar0To1()
+        return self._severity
+    def __repr__(self):
+        return ("Pulmonary Shunt Exacerbation\n"
+                "  Severity: {}").format(self._severity)
+
 class SERespiratoryFatigue(SEPatientAction):
     def __init__(self):
         super().__init__()
