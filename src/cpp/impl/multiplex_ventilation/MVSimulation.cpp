@@ -51,7 +51,6 @@ bool MVController::RunSimulation(pulse::multiplex_ventilator::bind::SimulationDa
 
     PulseController* pc = new PulseController(outDir+"multiplex_patient_"+std::to_string(p)+".log");
     pc->SerializeFromFile(state, SerializationFormat::JSON);
-    
 
     // Fill out our initial solo ventilation data
     soloVentilation->set_oxygensaturation(pc->GetBloodChemistry().GetOxygenSaturation().GetValue());

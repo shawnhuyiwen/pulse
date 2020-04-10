@@ -1,8 +1,6 @@
-import argparse
-import copy
-import csv 
-import matplotlib.pyplot as plt
 import os
+import argparse
+import matplotlib.pyplot as plt
 import pandas as pd
 
 def read_csv_into_df(csv1, csv2):
