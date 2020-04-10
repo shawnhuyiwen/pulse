@@ -1,8 +1,6 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-from pulse.impl.bind.MultiplexVentilator_pb2 import  *
-from google.protobuf import json_format
 import pandas as pd
 import itertools
 import json

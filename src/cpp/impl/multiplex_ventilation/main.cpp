@@ -12,7 +12,7 @@ int main(int argc, char* argv[])
     if (argc <= 1)
     {
       // Adjust comments to run the mode you want
-      mode = "genData";
+      //mode = "genData";
       //mode = "twinsy";
       //mode = "sim";
     }
@@ -65,7 +65,12 @@ int main(int argc, char* argv[])
       }
       else if(mode == "sim")
       {
-        std::string simFile = "";
+        if (argc != 3)
+        {
+          std::cerr << "Please provide a SimulationData json file" << std::endl;
+          return 1;
+        }
+        std::string simFile = argv[2];
         google::protobuf::util::JsonParseOptions opts;
         google::protobuf::SetLogHandler([](google::protobuf::LogLevel level, const char* filename, int line, const std::string& message)
         {
@@ -84,6 +89,46 @@ int main(int argc, char* argv[])
           return 1;
         }
         return !mvc.RunSimulation(sim);
+      }
+      else if (mode == "sim_list")
+      {
+        if (argc != 3)
+        {
+          std::cerr << "Please provide a SimulationListData json file" << std::endl;
+          return 1;
+        }
+        pulse::multiplex_ventilator::bind::SimulationListData sim_list;
+        std::string simFile = argv[2];
+        google::protobuf::util::JsonParseOptions opts;
+        google::protobuf::SetLogHandler([](google::protobuf::LogLevel level, const char* filename, int line, const std::string& message)
+        {
+          std::cout << "[" << level << "] " << filename << "::" << line << " " << message;
+        });
+        std::string content = ReadFile(simFile, SerializationFormat::JSON);
+        if (content.empty())
+        {
+          std::cerr << "Unable to read file \n" << simFile;
+          return 1;
+        }
+        google::protobuf::util::Status stat = google::protobuf::util::JsonStringToMessage(content, &sim_list, opts);
+        if (!stat.ok())
+        {
+          std::cerr << "Unable to parse json in file \n" << simFile;
+          return 1;
+        }
+        for (int s = 0; s < sim_list.simulations_size(); s++)
+        {
+          pulse::multiplex_ventilator::bind::SimulationData* simulation = &(*sim_list.mutable_simulations())[s];
+          // TODO Thread this
+          // TODO Don't run if we already have run this simulation
+          if (!mvc.RunSimulation(*simulation))
+          {
+            std::cerr << "Error running simulation" << std::endl;
+          }
+        }
+        // Let's write the file back out
+        //std::string simFile
+
       }
       else // Manaual
       {
@@ -114,7 +159,7 @@ int main(int argc, char* argv[])
         std::string sim0_base_path = mvc.ResultsDir+p0_name+"+"+p1_name+"/pip="+to_scientific_notation(p0_pip_cmH2O)+
                                                                         "_peep="+to_scientific_notation(p0_peep_cmH2O)+
                                                                         "_FiO2="+to_scientific_notation(p0_FiO2)+"_";
-        sim.set_outputdir(sim0_base_path);
+        sim.set_outputbasefilename(sim0_base_path);
         sim.set_pip_cmh2o(p0_pip_cmH2O);
         sim.set_peep_cmh2o(p0_peep_cmH2O);
         sim.set_fio2(p0_FiO2);
@@ -125,7 +170,7 @@ int main(int argc, char* argv[])
         std::string sim1_base_path = mvc.ResultsDir+p0_name+"+"+p1_name+"/pip="+to_scientific_notation(p1_pip_cmH2O)+
                                                                         "_peep="+to_scientific_notation(p1_peep_cmH2O)+
                                                                         "_FiO2="+to_scientific_notation(p1_FiO2)+"_";
-        sim.set_outputdir(sim1_base_path);
+        sim.set_outputbasefilename(sim1_base_path);
         sim.set_pip_cmh2o(p1_pip_cmH2O);
         sim.set_peep_cmh2o(p1_peep_cmH2O);
         sim.set_fio2(p1_FiO2);
@@ -138,7 +183,7 @@ int main(int argc, char* argv[])
         std::string sim2_base_path =mvc.ResultsDir+p0_name+"+"+p1_name+"/pip="+to_scientific_notation(pipAvg_cmH2O)+
                                                                        "_peep="+to_scientific_notation(peepAvg_cmH2O)+
                                                                        "_FiO2="+to_scientific_notation(FiO2Avg)+"_";
-        sim.set_outputdir(sim2_base_path);
+        sim.set_outputbasefilename(sim2_base_path);
         sim.set_pip_cmh2o(pipAvg_cmH2O);
         sim.set_peep_cmh2o(peepAvg_cmH2O);
         sim.set_fio2(FiO2Avg);

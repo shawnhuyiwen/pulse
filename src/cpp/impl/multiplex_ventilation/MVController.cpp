@@ -5,7 +5,7 @@
 
 MVController::MVController(const std::string& logFileName, const std::string& data_dir) : Loggable(new Logger(logFileName))
 {
-  BaseDir = "./states/multiplex_ventilation/";
+  BaseDir = "./test_results/multiplex_ventilation/";
   SoloDir = BaseDir+"solo_states/";
   SoloLogDir = BaseDir + "solo_states_logs/";
   ResultsDir = BaseDir + "simulations/";

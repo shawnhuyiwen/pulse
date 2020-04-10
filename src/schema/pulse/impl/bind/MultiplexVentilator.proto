@@ -7,15 +7,21 @@ option optimize_for = SPEED;
 message PatientStateData
 {
   string          StateFile                           = 1;
+  // Initial Conditions
   double          Compliance_L_Per_cmH2O              = 2;
   double          ImpairmentFraction                  = 3;
-  double          PEEP_cmH2O                          = 4;
-  double          PIP_cmH2O                           = 5;
-  double          FiO2                                = 6;
-  double          OxygenSaturation                    = 7;
-  double          TidalVolume_L                       = 8;
-  double          EndTidalCarbonDioxidePressure_cmH2O = 9;
-  double          CarricoIndex                        = 10;
+  // Ventilator Settings
+  double          RespirationRate_Per_min             = 4;
+  double          IERatio                             = 5;
+  double          PEEP_cmH2O                          = 6;
+  double          PIP_cmH2O                           = 7;
+  double          FiO2                                = 8;
+  // Vitals
+  double          OxygenSaturation                    = 9;
+  double          TidalVolume_L                       = 10;
+  double          EndTidalCarbonDioxidePressure_cmH2O = 11;
+  double          ArterialOxygenPartialPressure_mmHg  = 12;
+  double          CarricoIndex                        = 13;
 }
 
 message PatientStateListData
@@ -31,11 +37,19 @@ message PatientComparisonData
 
 message SimulationData
 {
-  string          OutputDir                           = 1;
+  // A filename without an extension (can/should have path also)
+  // The engine will use this to create multiple output files (*.log and *.csv)
+  string          OutputBaseFilename                  = 1;
   double          RespirationRate_Per_min             = 2;
   double          IERatio                             = 3;
   double          PIP_cmH2O                           = 4;
   double          PEEP_cmH2O                          = 5;
   double          FiO2                                = 6;
   repeated PatientComparisonData PatientComparisons   = 7;
+}
+
+message SimulationListData
+{
+  string   OutputRootDir                              = 1;
+  repeated SimulationData Simulations                 = 2;
 }

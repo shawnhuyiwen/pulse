@@ -6,7 +6,7 @@
 bool MVController::RunSimulation(pulse::multiplex_ventilator::bind::SimulationData& sim)
 {
   // Figure out where to put results
-  std::string outDir = sim.outputdir();
+  std::string outDir = sim.outputbasefilename();
   if(outDir.empty())
     outDir = ResultsDir;
 
@@ -44,10 +44,20 @@ bool MVController::RunSimulation(pulse::multiplex_ventilator::bind::SimulationDa
 
   for (int p=0; p<sim.patientcomparisons_size(); p++)
   {
-    std::string state = sim.patientcomparisons()[p].soloventilation().statefile();
+    auto* soloVentilation = (*sim.mutable_patientcomparisons())[p].mutable_soloventilation();
+    auto* multiVentilation = (*sim.mutable_patientcomparisons())[p].mutable_multiplexventilation();
+
+    std::string state = soloVentilation->statefile();
 
     PulseController* pc = new PulseController(outDir+"multiplex_patient_"+std::to_string(p)+".log");
     pc->SerializeFromFile(state, SerializationFormat::JSON);
+
+    // Fill out our initial solo ventilation data
+    soloVentilation->set_oxygensaturation(pc->GetBloodChemistry().GetOxygenSaturation().GetValue());
+    soloVentilation->set_tidalvolume_l(pc->GetRespiratory().GetTidalVolume(VolumeUnit::L));
+    soloVentilation->set_endtidalcarbondioxidepressure_cmh2o(pc->GetRespiratory().GetEndTidalCarbonDioxidePressure(PressureUnit::cmH2O));
+    soloVentilation->set_carricoindex(pc->GetRespiratory().GetCarricoIndex(PressureUnit::mmHg));
+    // Copy our 
 
     // Build our multiplex circuit
     if (p == 0)
@@ -119,7 +129,7 @@ bool MVController::RunSimulation(pulse::multiplex_ventilator::bind::SimulationDa
       inspiratoryConnectionLink.MapPath(inspiratoryConnectionPath);
       multiplexVentilationGraph.AddLink(inspiratoryConnectionLink);
     }
-    TrackData(pc->GetEngineTracker(), outDir+"multiplex_patient_"+std::to_string(p)+"Results.csv");
+    TrackData(pc->GetEngineTracker(), outDir+"multiplex_patient_"+std::to_string(p)+"_results.csv");
     engines.push_back(pc);
   }
   multiplexVentilationCircuit.StateChange();
