@@ -34,6 +34,16 @@ void MVController::TrackData(SEEngineTracker& trkr, const std::string& csv_filen
   trkr.GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
   trkr.GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
   trkr.GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
+  trkr.GetDataRequestManager().CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::L_Per_min);
+  trkr.GetDataRequestManager().CreatePhysiologyDataRequest("ShuntFraction");
+  trkr.GetDataRequestManager().CreatePhysiologyDataRequest("AlveolarArterialGradient", PressureUnit::mmHg);
+
+  //Aaron - How do I get the engine to get the substances?
+  //SESubstance* O2 = pe->GetSubstanceManager().GetSubstance("Oxygen");
+  //SESubstance* CO2 = pe->GetSubstanceManager().GetSubstance("CarbonDioxide");
+  //trkr.GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, *O2, "Concentration", PressureUnit::mmHg);
+  //trkr.GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, *CO2, "Concentration", PressureUnit::mmHg);
+
   trkr.SetupRequests();
 }
 
