@@ -17,10 +17,7 @@ def create_plots_from_df(file_one_name: str, file_one_data: pd.DataFrame, file_t
         plt.xlabel("Time(s)")
         plt.ylabel(column)
         plt.title("%svsTime" % column)
-        ax = plt.gca()
-        import pdb; pdb.set_trace()
-        ax.ticklabel_format(style="sci")
-        plt.axes(ax)
+        plt.ticklabel_format(axis="y", style="sci", scilimits=(0, 0))
         # Math to set Y axis "buffer" zone
         min_val = file_two_data[column].min()
         max_val = file_two_data[column].max()
