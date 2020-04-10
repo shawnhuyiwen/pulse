@@ -99,7 +99,7 @@ int main(int argc, char* argv[])
         }
         pulse::multiplex_ventilator::bind::SimulationListData sim_list;
         std::string simFile = argv[2];
-        google::protobuf::util::JsonParseOptions opts;
+        google::protobuf::util::JsonParseOptions parseOpts;
         google::protobuf::SetLogHandler([](google::protobuf::LogLevel level, const char* filename, int line, const std::string& message)
         {
           std::cout << "[" << level << "] " << filename << "::" << line << " " << message;
@@ -110,25 +110,35 @@ int main(int argc, char* argv[])
           std::cerr << "Unable to read file \n" << simFile;
           return 1;
         }
-        google::protobuf::util::Status stat = google::protobuf::util::JsonStringToMessage(content, &sim_list, opts);
+        google::protobuf::util::Status stat = google::protobuf::util::JsonStringToMessage(content, &sim_list, parseOpts);
         if (!stat.ok())
         {
           std::cerr << "Unable to parse json in file \n" << simFile;
           return 1;
         }
+        std::ofstream plots;
+        plots.open(sim_list.outputrootdir() + "/plot_pairs.config");
         for (int s = 0; s < sim_list.simulations_size(); s++)
         {
           pulse::multiplex_ventilator::bind::SimulationData* simulation = &(*sim_list.mutable_simulations())[s];
           // TODO Thread this
           // TODO Don't run if we already have run this simulation
           if (!mvc.RunSimulation(*simulation))
-          {
-            std::cerr << "Error running simulation" << std::endl;
-          }
+            std::cerr << "Error running simulation " << simulation->outputbasefilename() << std::endl;
+          else
+            plots << simulation->outputbasefilename()<<"multiplex_patient_0_results.csv, "<<simulation->outputbasefilename()<<"multiplex_patient_1_results.csv\n";
         }
-        // Let's write the file back out
-        //std::string simFile
-
+        plots.close();
+        content.clear();
+        google::protobuf::util::JsonPrintOptions printOpts;
+        printOpts.add_whitespace = true;
+        printOpts.preserve_proto_field_names = true;
+        if (!google::protobuf::util::MessageToJsonString(sim_list, &content, printOpts).ok())
+        {
+          std::cerr << "Unable to serialize simulation list" << std::endl;
+          return 1;
+        }
+        WriteFile(content, simFile, SerializationFormat::JSON);
       }
       else // Manaual
       {

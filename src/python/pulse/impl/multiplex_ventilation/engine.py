@@ -97,7 +97,7 @@ def add_ventilation_comparison(sim_list: SimulationListData, patient0_state_file
     sim2.FiO2 = (sim0_p0.FiO2 + sim1_p1.FiO2) * 0.5
     # Create a string encoding based on ventilator settings name the results
     sim2_base = "pip=" + str(sim2.PIP_cmH2O) + "_peep=" + str(sim2.PEEP_cmH2O) + "_FiO2=" + str(sim2.FiO2) + "_"
-    sim1.OutputBaseFilename = simulation_results_root + "/" + sim2_base
+    sim2.OutputBaseFilename = simulation_results_root + "/" + sim2_base
 
 if __name__ == '__main__':
 

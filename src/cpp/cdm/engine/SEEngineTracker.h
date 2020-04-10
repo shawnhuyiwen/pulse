@@ -70,6 +70,7 @@ public:
   void Clear();// Remove all requests and close the results file
 
   DataTrack& GetDataTrack();
+  SESubstanceManager& GetSubstanceManager() { return m_SubMgr; }
   SEDataRequestManager& GetDataRequestManager() { return *m_DataRequestMgr; }
 
   // Add a system to look for data in

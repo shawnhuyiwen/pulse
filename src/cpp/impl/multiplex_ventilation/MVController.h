@@ -63,6 +63,7 @@
 #include "utils/TimingProfile.h"
 
 #include "pulse/impl/bind/MultiplexVentilator.pb.h"
+#include <google/protobuf/text_format.h>
 #include <google/protobuf/util/json_util.h>
 
 std::string to_scientific_notation(float f);

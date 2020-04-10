@@ -192,7 +192,9 @@ bool MVController::GenerateStabilizedPatients()
         patientData->set_oxygensaturation(engine->GetBloodChemistrySystem()->GetOxygenSaturation());
         patientData->set_tidalvolume_l(engine->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::L));
         patientData->set_endtidalcarbondioxidepressure_cmh2o(engine->GetRespiratorySystem()->GetEndTidalCarbonDioxidePressure(PressureUnit::cmH2O));
-        patientData->set_carricoindex(engine->GetRespiratorySystem()->GetCarricoIndex(PressureUnit::mmHg));
+        auto AortaO2 = engine->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta)->GetSubstanceQuantity(*engine->GetSubstanceManager().GetSubstance("Oxygen"));
+        patientData->set_arterialoxygenpartialpressure_mmhg(AortaO2->GetPartialPressure(PressureUnit::mmHg));
+        patientData->set_carricoindex_mmhg(engine->GetRespiratorySystem()->GetCarricoIndex(PressureUnit::mmHg));
         delete engine.release();
 
         currentIteration++;

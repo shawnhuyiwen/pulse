@@ -21,7 +21,7 @@ message PatientStateData
   double          TidalVolume_L                       = 10;
   double          EndTidalCarbonDioxidePressure_cmH2O = 11;
   double          ArterialOxygenPartialPressure_mmHg  = 12;
-  double          CarricoIndex                        = 13;
+  double          CarricoIndex_mmHg                   = 13;
 }
 
 message PatientStateListData
