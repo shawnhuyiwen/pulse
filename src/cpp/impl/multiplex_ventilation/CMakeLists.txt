@@ -3,6 +3,8 @@ add_executable_ex(MultiplexVentilationDriver main.cpp
                                              MVController.cpp
                                              MVController.h
                                              MVGenData.cpp
-                                             MVSimulation.cpp)
+                                             MVSimulation.cpp
+                                             MVRunner.cpp
+                                             MVRunner.h)
 
 target_link_libraries(MultiplexVentilationDriver CommonPulseModels protobuf::libprotobuf)

@@ -193,3 +193,9 @@ bool IsDirectory(struct dirent* ent)
 {
   return ent->d_type == DT_DIR;
 }
+
+bool FileExists(const std::string& filename)
+{
+  struct stat buffer;
+  return (stat(filename.c_str(), &buffer) == 0);
+}

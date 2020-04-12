@@ -14,7 +14,6 @@ bool MVController::GenerateStabilizedPatients()
   profiler.Start("Total");
 
   DeleteDirectory(SoloDir, true);
-  DeleteDirectory(SoloLogDir, true);
   // Loop parameters
   float minCompliance_L_Per_cmH2O = 0.010f;
   float maxCompliance_L_Per_cmH2O = 0.050f;
@@ -22,9 +21,9 @@ bool MVController::GenerateStabilizedPatients()
   int minPEEP_cmH2O = 10;
   int maxPEEP_cmH2O = 20;
   int stepPEEP_cmH2O = 2;
-  float minImpairment = 0.0f;
+  float minImpairment = 0.3f;
   float maxImpairment = 0.9f;
-  float stepImpairment = 0.3f;
+  float stepImpairment = 0.1f;
 
   SESubstanceManager subMgr(GetLogger());
   subMgr.LoadSubstanceDirectory();
@@ -101,8 +100,9 @@ bool MVController::GenerateStabilizedPatients()
         // Construct our engine
         baseName = "comp="+to_scientific_notation(compliance_L_Per_cmH2O)+"_peep="+std::to_string(PEEP_cmH2O)+"_pip="+std::to_string(PIP_cmH2O)+"_imp="+to_scientific_notation(currentImpairment);
         Info("Creating engine " + baseName);
-        auto engine = CreatePulseEngine(SoloLogDir+baseName+".log");
+        auto engine = CreatePulseEngine(SoloDir+"/log/"+baseName+".log");
         engine->SerializeFromFile("./states/StandardMale@0s.json", SerializationFormat::JSON);
+        TrackData(*engine->GetEngineTracker(), SoloDir+"/csv/"+baseName + ".csv");
 
         // Add our initial actions
         impairedAlveolarExchange.GetSeverity().SetValue(currentImpairment);
@@ -122,7 +122,6 @@ bool MVController::GenerateStabilizedPatients()
         double previousSpO2 = engine->GetBloodChemistrySystem()->GetOxygenSaturation();
 
         engine->AdvanceModelTime(breathPeriod_s, TimeUnit::s);
-        double totalSimTime = breathPeriod_s;
         double currentSpO2 = engine->GetBloodChemistrySystem()->GetOxygenSaturation();
         bool trendingUp = currentSpO2 > previousSpO2;
 
@@ -131,7 +130,6 @@ bool MVController::GenerateStabilizedPatients()
         while (true)
         {
           engine->AdvanceModelTime(breathPeriod_s, TimeUnit::s);
-          totalSimTime += breathPeriod_s;
           currentSpO2 = engine->GetBloodChemistrySystem()->GetOxygenSaturation();
 
           if (!trendingUp && currentSpO2 < m_SpO2Target && !max)
@@ -174,8 +172,8 @@ bool MVController::GenerateStabilizedPatients()
           previousSpO2 = currentSpO2;
           previousFiO2 = currentFiO2;
         }
-
-        Info("Engine stabilized at an SpO2 of " + to_scientific_notation(currentSpO2) + " in " + to_scientific_notation(totalSimTime) + "(s)");
+        StabilizeSpO2(*engine);
+        Info("Engine stabilized at an SpO2 of " + to_scientific_notation(currentSpO2));
 
         // Save our state
         baseName += "_FiO2="+to_scientific_notation(currentFiO2);

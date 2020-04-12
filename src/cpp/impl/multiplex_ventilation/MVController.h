@@ -2,6 +2,8 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
+#include <set>
+#include <thread>
 #include "PulsePhysiologyEngine.h"
 
 #include "controller/Controller.h"
@@ -72,12 +74,12 @@ std::string to_scientific_notation(double d);
 class MVController : public Loggable, protected SEEventHandler
 {
 public:
-  MVController(const std::string& logfileName, const std::string& data_dir = ".");
+  MVController(const std::string& data_dir);
+  MVController(const std::string& logfileName, const std::string& dataDir);
   virtual ~MVController();
 
   std::string BaseDir;
   std::string SoloDir;
-  std::string SoloLogDir;
   std::string ResultsDir;
 
   bool GenerateStabilizedPatients();
@@ -97,7 +99,7 @@ protected:
   void HandleEvent(eEvent e, bool active, const SEScalarTime* simTime = nullptr) override;
 
 
-  
+  std::string m_DataDir;
   // Constants
   int   m_Resistance_cmH2O_s_Per_L = 5;
   int   m_RespirationRate_Per_Min = 20;

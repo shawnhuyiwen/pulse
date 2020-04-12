@@ -3,11 +3,15 @@
 
 #include "MVController.h"
 
-MVController::MVController(const std::string& logFileName, const std::string& data_dir) : Loggable(new Logger(logFileName))
+MVController::MVController(const std::string& dataDir) : MVController("", dataDir)
 {
+
+}
+MVController::MVController(const std::string& logFileName, const std::string& dataDir) : Loggable(new Logger(logFileName))
+{
+  m_DataDir = dataDir;
   BaseDir = "./test_results/multiplex_ventilation/";
   SoloDir = BaseDir+"solo_states/";
-  SoloLogDir = BaseDir + "solo_states_logs/";
   ResultsDir = BaseDir + "simulations/";
 }
 MVController::~MVController()

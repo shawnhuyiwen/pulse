@@ -84,6 +84,11 @@ void Logger::LogToConsole(bool b)
   _log_lib->_log_to_console = b;
 }
 
+bool Logger::IsLoggingToConsole()
+{
+  return _log_lib->_log_to_console;
+}
+
 void Logger::ResetLogFile(const std::string& logFilename)
 {
   if (logFilename.empty())

@@ -13,8 +13,6 @@ bool MVController::RunSimulation(pulse::multiplex_ventilator::bind::SimulationDa
   TimingProfile profiler;
   profiler.Start("Total");
   profiler.Start("Status");
-  double statusTime_s = 0;// Current time of this status cycle
-  double statusStep_s = 60;//How long did it take to simulate this much time
 
   std::vector<PulseController*> engines;
   bool   enableMultiplexVentilation = false;
@@ -49,8 +47,13 @@ bool MVController::RunSimulation(pulse::multiplex_ventilator::bind::SimulationDa
 
     std::string state = soloVentilation->statefile();
 
-    PulseController* pc = new PulseController(outDir+"multiplex_patient_"+std::to_string(p)+".log");
-    pc->SerializeFromFile(state, SerializationFormat::JSON);
+    PulseController* pc = new PulseController(outDir+"multiplex_patient_"+std::to_string(p)+".log", m_DataDir);
+    if (!pc->SerializeFromFile(state, SerializationFormat::JSON))
+    {
+      Error("Unable to load file : " + state);
+      return false;
+    }
+    pc->GetLogger()->LogToConsole(GetLogger()->IsLoggingToConsole());
 
     // Fill out our initial solo ventilation data
     soloVentilation->set_oxygensaturation(pc->GetBloodChemistry().GetOxygenSaturation().GetValue());
@@ -158,10 +161,28 @@ bool MVController::RunSimulation(pulse::multiplex_ventilator::bind::SimulationDa
   for (PulseController* pc : engines)
     pc->ProcessAction(mvc);
 
+  int stabilizationPasses     = 0;
+  int totalIterations         = 0;
+  double stabilizationTimer_s = 0;
+  double stabilizationCheck_s = 2;
+  // Let's shoot for with in 0.25% for 10s straight
+  double pctDiffSpO2 = 0.25;
+  std::vector<double> previsouSpO2s;
+  for (PulseController* pc : engines)
+    previsouSpO2s.push_back(pc->GetBloodChemistry().GetOxygenSaturation().GetValue());
+
+  double statusTimer_s        = 0;  // Current time of this status cycle
+  double statusStep_s         = 60; // How long did it take to simulate this much time
+
   int vent_count;
-  int count = (int)(120 / timeStep_s);
-  for (int i = 0; i < count; i++)
+  int minIterations = (int)(60 / timeStep_s);
+  int maxIterations = (int)(300 / timeStep_s);
+  while (true)
   {
+    totalIterations++;
+    if(totalIterations == minIterations)
+      Info("Minimum Runtime Achieved");
+
     for (PulseController* pc : engines)
     {
       if (pc->GetEvents().IsEventActive(eEvent::IrreversibleState))
@@ -314,17 +335,57 @@ bool MVController::RunSimulation(pulse::multiplex_ventilator::bind::SimulationDa
       ((SEScalarTime&)pc->GetSimulationTime()).Increment(pc->GetTimeStep());
       pc->GetEngineTracker().TrackData(currentTime_s);
     }
+    // Increment our timers
     currentTime_s += timeStep_s;
-    statusTime_s += timeStep_s;
+    statusTimer_s += timeStep_s;
+    // Start stabilization timer after minimum run time
+    if (totalIterations > minIterations)
+      stabilizationTimer_s += timeStep_s;
+
     // How are we running?
-    if (statusTime_s > statusStep_s)
+    if (statusTimer_s > statusStep_s)
     {
-      statusTime_s = 0;
+      statusTimer_s = 0;
       Info("Current Time is "+to_scientific_notation(currentTime_s)+"s, it took "+to_scientific_notation(profiler.GetElapsedTime_s("Status"))+"s to simulate the past "+to_scientific_notation(statusStep_s)+"s");
       profiler.Reset("Status");
     }
 
-    // TODO Check to see if we are stable
+    // Check to see if we are stable
+    if (stabilizationTimer_s > stabilizationCheck_s)
+    {
+      size_t idx=0;
+      bool allPassed = true;
+      for (PulseController* pc : engines)
+      {
+        double currentSpO2 = pc->GetBloodChemistry().GetOxygenSaturation().GetValue();
+        double pctDiff = GeneralMath::PercentDifference(previsouSpO2s[idx++], currentSpO2);
+        if (pctDiff > pctDiffSpO2)
+          allPassed = false;
+      }
+      if (allPassed)
+        stabilizationPasses++;
+      else
+      {
+        idx = 0;
+        stabilizationPasses = 0;
+        for (PulseController* pc : engines)
+        {
+          previsouSpO2s[idx++]= pc->GetBloodChemistry().GetOxygenSaturation().GetValue();
+        }
+      }
+      stabilizationTimer_s = 0;
+      if (stabilizationPasses == 5)
+      {
+        break;
+        double stabilizationTime = (totalIterations - minIterations) * timeStep_s;
+        Info("Stabilization took " + to_scientific_notation(stabilizationTime) + "s to for this simulation");
+      }
+      if (totalIterations > maxIterations)
+      {
+        break;
+        Info("Reached maximum iterations. Ending simulation.");
+      }
+    }
   }
   // Add our results to the simulation data
   for (int p = 0; p < sim.patientcomparisons_size(); p++)
@@ -340,6 +401,7 @@ bool MVController::RunSimulation(pulse::multiplex_ventilator::bind::SimulationDa
   }
   DELETE_VECTOR(engines);
   Info("It took "+to_scientific_notation(profiler.GetElapsedTime_s("Total"))+"s to run this simulation");
+  
   profiler.Clear();
   return true;
 }

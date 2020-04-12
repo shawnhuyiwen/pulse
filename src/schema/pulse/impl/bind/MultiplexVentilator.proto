@@ -6,50 +6,60 @@ option optimize_for = SPEED;
 
 message PatientStateData
 {
-  string          StateFile                           = 1;
+  string          StateFile                              = 1;
   // Initial Conditions
-  double          Compliance_L_Per_cmH2O              = 2;
-  double          ImpairmentFraction                  = 3;
+  double          Compliance_L_Per_cmH2O                 = 2;
+  double          ImpairmentFraction                     = 3;
   // Ventilator Settings
-  double          RespirationRate_Per_min             = 4;
-  double          IERatio                             = 5;
-  double          PEEP_cmH2O                          = 6;
-  double          PIP_cmH2O                           = 7;
-  double          FiO2                                = 8;
+  double          RespirationRate_Per_min                = 4;
+  double          IERatio                                = 5;
+  double          PEEP_cmH2O                             = 6;
+  double          PIP_cmH2O                              = 7;
+  double          FiO2                                   = 8;
   // Vitals
-  double          OxygenSaturation                    = 9;
-  double          TidalVolume_L                       = 10;
-  double          EndTidalCarbonDioxidePressure_cmH2O = 11;
-  double          ArterialOxygenPartialPressure_mmHg  = 12;
-  double          CarricoIndex_mmHg                   = 13;
+  double          OxygenSaturation                       = 9;
+  double          TidalVolume_L                          = 10;
+  double          EndTidalCarbonDioxidePressure_cmH2O    = 11;
+  double          ArterialOxygenPartialPressure_mmHg     = 12;
+  double          CarricoIndex_mmHg                      = 13;
 }
 
 message PatientStateListData
 {
-  repeated PatientStateData Patients                  = 1;
+  repeated PatientStateData      Patients                = 1;
 }
 
 message PatientComparisonData
 {
-  PatientStateData  SoloVentilation                   = 1;
-  PatientStateData  MultiplexVentilation              = 2;
+  PatientStateData               SoloVentilation         = 1;
+  PatientStateData               MultiplexVentilation    = 2;
+}
+
+message LogData
+{
+  repeated string                Info                    = 1;
+  repeated string                Warning                 = 2;
+  repeated string                Error                   = 3;
+  repeated string                Fatal                   = 4;
 }
 
 message SimulationData
 {
   // A filename without an extension (can/should have path also)
   // The engine will use this to create multiple output files (*.log and *.csv)
-  string          OutputBaseFilename                  = 1;
-  double          RespirationRate_Per_min             = 2;
-  double          IERatio                             = 3;
-  double          PIP_cmH2O                           = 4;
-  double          PEEP_cmH2O                          = 5;
-  double          FiO2                                = 6;
-  repeated PatientComparisonData PatientComparisons   = 7;
+  uint32                         ID                      = 1;
+  string                         OutputBaseFilename      = 2;
+  double                         RespirationRate_Per_min = 3;
+  double                         IERatio                 = 4;
+  double                         PIP_cmH2O               = 5;
+  double                         PEEP_cmH2O              = 6;
+  double                         FiO2                    = 7;
+  LogData                        Log                     = 8;
+  repeated PatientComparisonData PatientComparisons      = 9;
 }
 
 message SimulationListData
 {
-  string   OutputRootDir                              = 1;
-  repeated SimulationData Simulations                 = 2;
+  string                         OutputRootDir           = 1;
+  repeated SimulationData        Simulations             = 2;
 }
