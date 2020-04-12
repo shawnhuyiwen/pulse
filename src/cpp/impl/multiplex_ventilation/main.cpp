@@ -176,8 +176,6 @@ int main(int argc, char* argv[])
           iter++;
         }
 
-        combined_name = "test";
-
         // Run solo patients
         iter = 0;
         for (std::string patient : patients)
