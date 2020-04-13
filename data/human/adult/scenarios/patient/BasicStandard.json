@@ -93,6 +93,8 @@
   },
   "AnyAction":
   [
-    { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 2.0, "Unit": "min" }}}}
+    { "AdvanceTime": { 
+    "Action": { "Comment": "Advance some time" },
+    "Time": { "ScalarTime": { "Value": 2.0, "Unit": "min" }}}}
   ]
 }

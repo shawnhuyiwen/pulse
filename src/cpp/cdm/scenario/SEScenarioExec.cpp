@@ -133,7 +133,7 @@ bool SEScenarioExec::ProcessActions(const SEScenario& scenario)
   Info("Executing Scenario");
 
   double dT_s=m_Engine.GetTimeStep(TimeUnit::s);
-  double scenarioTime_s;
+  double scenarioTime_s = 0;
   double statusTime_s = 0;// Current time of this status cycle
   double statusStep_s = 60;//How long did it take to simulate this much time
 
@@ -160,6 +160,9 @@ bool SEScenarioExec::ProcessActions(const SEScenario& scenario)
     adv=dynamic_cast<const SEAdvanceTime*>(a);
     if(adv!=nullptr)
     {
+      m_ss << "[Action] " << *a;
+      Info(m_ss);
+
       double time_s = adv->GetTime(TimeUnit::s);
       int count = (int)(time_s/dT_s);
       for(int i=0;i<=count;i++)

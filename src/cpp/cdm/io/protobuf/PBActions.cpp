@@ -121,6 +121,7 @@ void PBAction::Load(const CDM_BIND::AdvanceTimeData& src, SEAdvanceTime& dst)
 }
 void PBAction::Serialize(const CDM_BIND::AdvanceTimeData& src, SEAdvanceTime& dst)
 {
+  PBAction::Serialize(src.action(), dst);
   if (src.has_time())
     PBProperty::Load(src.time(), dst.GetTime());
 }
@@ -132,6 +133,7 @@ CDM_BIND::AdvanceTimeData* PBAction::Unload(const SEAdvanceTime& src)
 }
 void PBAction::Serialize(const SEAdvanceTime& src, CDM_BIND::AdvanceTimeData& dst)
 {
+  PBAction::Serialize(src, *dst.mutable_action());
   if (src.HasTime())
     dst.set_allocated_time(PBProperty::Unload(*src.m_Time));
 }
@@ -143,6 +145,7 @@ void PBAction::Load(const CDM_BIND::SerializeStateData& src, SESerializeState& d
 }
 void PBAction::Serialize(const CDM_BIND::SerializeStateData& src, SESerializeState& dst)
 {
+  PBAction::Serialize(src.action(), dst);
   dst.SetType((eSerialization_Type)src.type());
   dst.SetFilename(src.filename());
 }
@@ -154,6 +157,7 @@ CDM_BIND::SerializeStateData* PBAction::Unload(const SESerializeState& src)
 }
 void PBAction::Serialize(const SESerializeState& src, CDM_BIND::SerializeStateData& dst)
 {
+  PBAction::Serialize(src, *dst.mutable_action());
   dst.set_type((CDM_BIND::SerializeStateData::eType)src.m_Type);
   if (src.HasFilename())
     dst.set_filename(src.m_Filename);
@@ -166,6 +170,7 @@ void PBAction::Load(const CDM_BIND::OverridesData& src, SEOverrides& dst)
 }
 void PBAction::Serialize(const CDM_BIND::OverridesData& src, SEOverrides& dst)
 {
+  PBAction::Serialize(src.action(), dst);
   for (size_t i=0; i<src.scalaroverride_size(); i++)
   {
     const CDM_BIND::ScalarPropertyData& sp = src.scalaroverride()[i];
@@ -180,6 +185,7 @@ CDM_BIND::OverridesData* PBAction::Unload(const SEOverrides& src)
 }
 void PBAction::Serialize(const SEOverrides& src, CDM_BIND::OverridesData& dst)
 {
+  PBAction::Serialize(src, *dst.mutable_action());
   for (auto& sp : src.GetScalarProperties())
   {
     CDM_BIND::ScalarPropertyData* so = dst.add_scalaroverride();

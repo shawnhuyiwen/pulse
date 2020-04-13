@@ -242,7 +242,7 @@ public class CSVPlotTool
         {
           ValueAxis yAxis = plot.getRangeAxis();
           yAxis.setRange(resMin0 + 0.05*resMin0, resMax0 + 0.15*Math.abs(resMax0));//5% buffer so we can see top and bottom clearly
-        }          
+        }
       }
     }
 

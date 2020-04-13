@@ -233,7 +233,7 @@ public class CSVContents
         list=results.get(header);
         if(list==null)
         {
-          list=new ArrayList<Double>();          
+          list=new ArrayList<Double>();
           results.put(header, list);
         }
         d=this.rowDoubles.get(h++);
@@ -250,7 +250,7 @@ public class CSVContents
           {
             if(buff.readLine()==null)
             {
-              eof=true;          
+              eof=true;
               break;
             }
           }
