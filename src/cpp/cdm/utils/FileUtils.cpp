@@ -112,6 +112,9 @@ std::string ReadFile(const std::string& filename, SerializationFormat m)
 {
   std::ifstream input(filename);
   std::string content((std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());
+  if (content.empty() && !input.is_open())
+    std::cerr << "Unable to open file " << filename << " " << strerror(errno) << std::endl;
+  input.close();
   return content;
 }
 

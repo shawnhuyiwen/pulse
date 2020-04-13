@@ -121,6 +121,7 @@ bool PBCircuit::LoadCircuitManagerFile(SECircuitManager& mgr, const std::string&
   CDM_BIND::CircuitManagerData src;
   std::ifstream file_stream(filename, std::ios::in);
   std::string fmsg((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
+  file_stream.close();
   if (!PBUtils::SerializeFromString(fmsg, src, JSON, mgr.GetLogger()))
     return false;
   PBCircuit::Load(src, mgr);
@@ -129,6 +130,7 @@ bool PBCircuit::LoadCircuitManagerFile(SECircuitManager& mgr, const std::string&
   // If its a binary string in the file...
   //std::ifstream binary_istream(filename, std::ios::in | std::ios::binary);
   //src.ParseFromIstream(&binary_istream);
+  // binary_istream.close();
 }
 
 void PBCircuit::SaveCircuitManagerFile(const SECircuitManager& mgr, const std::string& filename)

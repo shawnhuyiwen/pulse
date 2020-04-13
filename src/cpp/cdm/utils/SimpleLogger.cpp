@@ -17,7 +17,8 @@ public:
   }
   virtual ~log_lib() 
   {
-    
+    if (_file.is_open())
+      _file.close();
   }
 
   bool log(Logger::level requested_level)

@@ -1821,7 +1821,7 @@ void Cardiovascular::TuneCircuit()
 
       if (!m_TuningFile.empty())
       {
-        circuitTrk.Track(time_s, *m_CirculatoryCircuit);        
+        circuitTrk.Track(time_s, *m_CirculatoryCircuit);
         circuitTrk.Track("MAP_mmHg", time_s, map_mmHg);
         circuitTrk.Track("Systolic_mmHg", time_s, systolic_mmHg);
         circuitTrk.Track("Diastolilc_mmHg", time_s, diastolic_mmHg);
@@ -1901,7 +1901,7 @@ void Cardiovascular::TuneCircuit()
     TunePaths(systemicResistanceScale, systemicComplianceScale, aortaResistanceScale, aortaComplianceScale, rightHeartResistanceScale, venaCavaComplianceScale);
   }
 
-
+  circuitFile.close();
   if (!success)
   {
     m_ss << "Unable to tune circuit to desired patient parameters. Final values : HeartRate(bpm):" << GetHeartRate(FrequencyUnit::Per_min) <<

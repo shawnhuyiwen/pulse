@@ -52,6 +52,7 @@ bool PBCompartment::LoadCompartmentManagerFile(SECompartmentManager& mgr, const 
   CDM_BIND::CompartmentManagerData src;
   std::ifstream file_stream(filename, std::ios::in);
   std::string fmsg((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
+  file_stream.close();
   if (!PBUtils::SerializeFromString(fmsg, src, JSON, mgr.GetLogger()))
     return false;
   PBCompartment::Load(src, mgr, circuits);
@@ -60,6 +61,7 @@ bool PBCompartment::LoadCompartmentManagerFile(SECompartmentManager& mgr, const 
   // If its a binary string in the file...
   //std::ifstream binary_istream(filename, std::ios::in | std::ios::binary);
   //src.ParseFromIstream(&binary_istream);
+  // binary_istream.close();
 }
 
 void PBCompartment::SaveCompartmentManagerFile(const SECompartmentManager& mgr, const std::string& filename)

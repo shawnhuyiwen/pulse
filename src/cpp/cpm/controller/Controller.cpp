@@ -156,7 +156,7 @@ PulseData::PulseData(Logger* logger, const std::string& data_dir) : Loggable(log
 }
 PulseData::~PulseData()
 {
-
+  SAFE_DELETE(m_EngineTrack);
 }
 
 void PulseData::AdvanceCallback(double time_s)
