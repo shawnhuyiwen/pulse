@@ -13,6 +13,7 @@ MVController::MVController(const std::string& logFileName, const std::string& da
   BaseDir = "./test_results/multiplex_ventilation/";
   SoloDir = BaseDir+"solo_states/";
   ResultsDir = BaseDir + "simulations/";
+  myLogger = true;
 }
 MVController::~MVController()
 {

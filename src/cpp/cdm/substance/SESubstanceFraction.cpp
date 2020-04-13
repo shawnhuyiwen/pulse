@@ -6,7 +6,7 @@
 #include "properties/SEScalar0To1.h"
 #include "substance/SESubstance.h"
 
-SESubstanceFraction::SESubstanceFraction(SESubstance& substance) : m_Substance(substance)
+SESubstanceFraction::SESubstanceFraction(SESubstance& substance) : Loggable(substance.GetLogger()), m_Substance(substance)
 {
   m_FractionAmount = nullptr;
 }

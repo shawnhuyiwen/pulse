@@ -83,6 +83,7 @@
 
 PulseData::PulseData(const std::string& logFileName, const std::string& data_dir) : PulseData(new Logger(logFileName), data_dir)
 {
+  myLogger = true;
   // Directs to the ctor below
 }
 PulseData::PulseData(Logger* logger, const std::string& data_dir) : Loggable(logger)
@@ -241,6 +242,7 @@ const std::vector<SEScalarProperty>& PulseData::GetOverrides() const { return m_
 
 PulseController::PulseController(const std::string& logFileName, const std::string& data_dir) : PulseController(new Logger(logFileName), data_dir)
 {
+  myLogger = true;
   // Directs to the ctor below
 }
 PulseController::PulseController(Logger* logger, const std::string& data_dir) : PulseData(logger, data_dir)
