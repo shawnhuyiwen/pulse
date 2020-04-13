@@ -1,67 +1,64 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
+import sys
 import numpy as np
 import pandas as pd
 from pathlib import Path
 import matplotlib.pyplot as plt
 
+class PlotSource():
+    __slots__ = ["label", "df", "style", "color"]
+    def __init__(self):
+        self.label = ""
+        self.df = None
+        self.color = "black"
+        self.style = "solid"
+
 def read_csv_into_df(csv1):
     df = pd.read_csv(csv1)
+    for column in df.columns[1:]:
+        # Convert any strings to NaN
+        df[column] = pd.to_numeric(df[column], errors='coerce')
+        # Replace slashes in units string
+        df.rename(columns={column: column.replace("/", "_Per_")}, inplace=True)
     return df
 
-def create_compare_plots(out_dir: str,
-                       expected_data: pd.DataFrame, computed_data: pd.DataFrame,
-                       expected_label_override: str=None, computed_label_override: str=None):
-    plot_list = {}
-    # Create our output directory
-    Path(out_dir).mkdir(parents=True, exist_ok=True)
-    # Files we create
-    generated_files = []
-    # Plot with X always being time
-    time_col = expected_data.columns[0]
-    if expected_label_override is None:
-        expected_label = 'Expected'
-    else:
-        expected_label = expected_label_override
-    if computed_label_override is None:
-        computed_label = 'Computed'
-    else:
-        computed_label = computed_label_override
-    for column in expected_data.columns[1:]:
-        # First Lables
-        figure = plt.figure()
-        plot = figure.add_subplot(1, 1, 1)
-        plot.set_xlabel("Time(s)")
-        plot.set_ylabel(column)
-        plot.set_title("%svsTime" % column)
-        plot.ticklabel_format(axis="y", style="sci", scilimits=(0, 0))
-        # Math to set Y axis "buffer" zone
-        e = expected_data[column]
-        c = computed_data[column]
-        min_val = min(e[np.isfinite(e)].min(), c[np.isfinite(c)].min())
-        max_val = max(e[np.isfinite(e)].max(), c[np.isfinite(c)].max())
-        # Set Y axis range and data
-        plot.set_ylim([min_val - (min_val * .15), max_val + (abs(max_val) * .05)])
-        plot.plot(time_col, column, data=computed_data, color="red", label=computed_label)
-        plot.plot(time_col, column, data=expected_data, linestyle="dashed", color="black", label=expected_label)
-        # create legend
-        plot.legend()
-        plot.grid(True)
-        # Set ticks on both sides of the Y axis
-        plot.tick_params(labelright=True)
+def create_plot(column: str, plot_sources: [PlotSource]):
+    plot_source0 = plot_sources[0]
+    # Time is always the first column
+    time_col = plot_source0.df.columns[0]
+    min_val = sys.float_info.max
+    max_val = -sys.float_info.max
+    for ps in plot_sources:
+        if ps.df.shape != plot_source0.df.shape or ps.df.size != plot_source0.df.size:
+            print("Data frames are not equal for plotting")
+            return False
+        d = ps.df[column]
+        min_val = min(min_val, d[np.isfinite(d)].min())
+        max_val = max(max_val, d[np.isfinite(d)].max())
+    plt.figure()
+    plt.xlabel("Time(s)")
+    plt.ylabel(column)
+    plt.title(column + "vs Time")
+    plt.ticklabel_format(axis="y", style="sci", scilimits=(0, 0))
+    # Set Y axis range and data
+    plt.ylim([min_val-(abs(min_val)*.15), max_val+(abs(max_val)*.05)])
+    for ps in plot_sources:
+        plt.plot(time_col, column, data=ps.df, linestyle=ps.style, color=ps.color, label=ps.label)
+    # create legend
+    plt.legend()
+    plt.grid(True)
+    # Set ticks on both sides of the Y axis
+    plt.tick_params(labelright=True)
+    return True
 
-        # Set output image size to 1600 x 800
-        # Coupled with 100DPI below, should create the right image size
-        figure.set_size_inches(16, 8)
-        plot_list[column] = figure
-    return plot_list
+def save_current_plot(filename: str, x:float=16, y:float=8, dpi:int=100):
+    figure = plt.gcf()
+    figure.set_size_inches(x, y)
+    figure.savefig(filename, dpi=dpi)
 
-def save_plots(out_dir, plot_list):
-    generated_files = []
-    for name,plot in plot_list:
-        outfile_name = out_dir + "/" + name.replace("/", "_Per_") + ".png"
-        print("Generating " + outfile_name)
-        plot.savefig(outfile_name, dpi=100)
-        generated_files.append(outfile_name)
-    return generated_files
+def clear_current_plot():
+    plt.close()
+    plt.clf()
+

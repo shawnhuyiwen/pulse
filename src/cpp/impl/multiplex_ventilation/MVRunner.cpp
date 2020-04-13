@@ -110,6 +110,7 @@ bool MVRunner::SerializeToString(pulse::multiplex_ventilator::bind::SimulationLi
   google::protobuf::util::JsonPrintOptions printOpts;
   printOpts.add_whitespace = true;
   printOpts.preserve_proto_field_names = true;
+  printOpts.always_print_primitive_fields = true;
   if (!google::protobuf::util::MessageToJsonString(src, &output, printOpts).ok())
   {
     Error("Unable to serialize simulation list");
@@ -156,7 +157,7 @@ bool MVRunner::SerializeFromFile(const std::string& filename, SerializationForma
   if(!SerializeFromString(content, *m_SimulationList, f))
     return false;
   // Let's try to read in a results file
-  m_SimulationResultsListFile = filename.substr(0, filename.length() - 4) + "_results.json";
+  m_SimulationResultsListFile = filename.substr(0, filename.length() - 5) + "_results.json";
   if (FileExists(m_SimulationResultsListFile))
   {
     std::string results_content = ReadFile(m_SimulationResultsListFile, SerializationFormat::JSON);

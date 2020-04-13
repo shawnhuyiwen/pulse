@@ -398,6 +398,8 @@ bool MVController::RunSimulation(pulse::multiplex_ventilator::bind::SimulationDa
     auto AortaO2 = pc->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta)->GetSubstanceQuantity(pc->GetSubstances().GetO2());
     multiVentilation->set_arterialoxygenpartialpressure_mmhg(AortaO2->GetPartialPressure(PressureUnit::mmHg));
     multiVentilation->set_carricoindex_mmhg(pc->GetRespiratory().GetCarricoIndex(PressureUnit::mmHg));
+    multiVentilation->set_achievedstabilization(!(totalIterations > maxIterations));
+    multiVentilation->set_stabilizationtime_s((totalIterations - minIterations)* timeStep_s);
   }
   DELETE_VECTOR(engines);
   Info("It took "+to_scientific_notation(profiler.GetElapsedTime_s("Total"))+"s to run this simulation");

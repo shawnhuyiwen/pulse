@@ -3,7 +3,6 @@
 
 from pulse.impl.bind.MultiplexVentilator_pb2 import *
 from google.protobuf import json_format
-import os
 import re
 import json
 import ntpath
@@ -27,7 +26,7 @@ def run_simulation_list(sim_list: SimulationListData, write_only=False):
         #FNULL = open(os.devnull, 'w')  # use this if you want to suppress output to stdout from the subprocess
         #subprocess.call(input_file, stdout=FNULL, stderr=FNULL, shell=False)
         subprocess.call(["MultiplexVentilationDriver","sim_list",input_file], shell=False, timeout=None)
-    results_file = ntpath.splitext(ntpath.basename(input_file))[0] + "_results.json"
+    results_file = sim_list.OutputRootDir + ntpath.splitext(ntpath.basename(input_file))[0] + "_results.json"
     return results_file
 
 # Our state files have a specific naming convention for encoding the PatientStateData
@@ -51,7 +50,7 @@ def extract_patient_data(filename: str, patient_state: PatientStateData):
 # 1. Both patients will be driven by one ventilator using the settings for patient 0
 # 2. Both patients will be driven by one ventilator using the settings for patient 1
 # 3. Both patients will be driven by one ventilator using the average of settings between both patients
-def add_ventilation_comparison(sim_list: SimulationListData, patient0_state_file: str, patient1_state_file: str):
+def add_ventilation_comparison(group_id: int, sim_list: SimulationListData, patient0_state_file: str, patient1_state_file: str):
 
     # Where results will be placed for multiplexing these patients
     # Create a new directory of the combination of their state file names
@@ -63,6 +62,7 @@ def add_ventilation_comparison(sim_list: SimulationListData, patient0_state_file
     id = len(sim_list.Simulations)
     sim0 = sim_list.Simulations.add()
     sim0.ID = id
+    sim0.GroupID = group_id
     #  Setup the first patient
     sim0_p0 = sim0.PatientComparisons.add().SoloVentilation
     extract_patient_data(patient0_state_file, sim0_p0)
@@ -84,6 +84,7 @@ def add_ventilation_comparison(sim_list: SimulationListData, patient0_state_file
         id = len(sim_list.Simulations)
         sim1 = sim_list.Simulations.add()
         sim1.ID = id
+        sim1.GroupID = group_id
         #  Setup the first patient
         sim1_p0 = sim1.PatientComparisons.add().SoloVentilation
         extract_patient_data(patient0_state_file, sim1_p0)
@@ -103,6 +104,7 @@ def add_ventilation_comparison(sim_list: SimulationListData, patient0_state_file
         id = len(sim_list.Simulations)
         sim2 = sim_list.Simulations.add()
         sim2.ID = id
+        sim2.GroupID = group_id
         #  Setup the first patient
         sim2_p0 = sim2.PatientComparisons.add().SoloVentilation
         extract_patient_data(patient0_state_file, sim2_p0)
@@ -161,11 +163,33 @@ def get_patient_pairs(solo_patients_file):
 
 def plot_simulation_results(simulations: SimulationListData):
     for sim in simulations.Simulations:
-        df0_label = ntpath.splitext(ntpath.basename(sim.PatientComparisons[0].SoloVentilation.StateFile))[0]
-        df0 = plotter.read_csv_into_df(sim.OutputBaseFilename+"multiplex_patient_0_results.csv")
-        df1_label = ntpath.splitext(ntpath.basename(sim.PatientComparisons[1].SoloVentilation.StateFile))[0]
-        df1 = plotter.read_csv_into_df(sim.OutputBaseFilename+"multiplex_patient_1_results.csv")
-        plotter.save_compare_plots(sim.OutputBaseFilename+"plots", df0, df1, df0_label, df1_label)
+        plot_set = set()
+        plot_sources = []
+        # TODO build out a crazy color table
+        c=0
+        plot_colors = ['black', 'red', 'blue', 'green', ]
+        for i in range(len(sim.PatientComparisons)):
+            p = sim.PatientComparisons[i]
+            if p.SoloVentilation.StateFile not in plot_set:
+                if c == len(plot_colors):
+                    c=0
+                plot_set.add(p.SoloVentilation.StateFile)
+                plot_source = plotter.PlotSource()
+                plot_source.label = ntpath.splitext(ntpath.basename(p.SoloVentilation.StateFile))[0]
+                plot_source.df = plotter.read_csv_into_df(sim.OutputBaseFilename+"multiplex_patient_"+str(i)+"_results.csv")
+                plot_source.color = plot_colors[c]
+                if i > 0:
+                    plot_source.style = "dashed"
+                plot_sources.append(plot_source)
+                c+=1
+        for column in plot_sources[0].df.columns[1:]:
+            if plotter.create_plot(column, plot_sources):
+                # Create our output directory
+                Path(sim.OutputBaseFilename+"plots/").mkdir(parents=True, exist_ok=True)
+                filename = sim.OutputBaseFilename+"plots/"+column
+                print("Creating plot : "+filename)
+                plotter.save_current_plot(filename)
+                plotter.clear_current_plot()
 
 if __name__ == '__main__':
     write_only = True
@@ -177,16 +201,16 @@ if __name__ == '__main__':
     simulations.OutputRootDir = BaseDir + "simulations/"
     if write_only:
         # Generate the whooooole list
+        group_id=0
         for pair in pairs:
-            add_ventilation_comparison(simulations, pair[0], pair[1])
+            group_id+=1
+            add_ventilation_comparison(group_id, simulations, pair[0], pair[1])
     else:
         # I bet you are testing and want to just run a select few
-        add_ventilation_comparison(simulations, pairs[0][0], pairs[0][1])
-        add_ventilation_comparison(simulations, pairs[1][0], pairs[1][1])
-        add_ventilation_comparison(simulations, pairs[2][0], pairs[2][1])
-        add_ventilation_comparison(simulations, pairs[3][0], pairs[3][1])
-        add_ventilation_comparison(simulations, pairs[4][0], pairs[4][1])
-        add_ventilation_comparison(simulations, pairs[5][0], pairs[5][1])
+        add_ventilation_comparison(1, simulations, pairs[0][0], pairs[0][1])
+        add_ventilation_comparison(2, simulations, pairs[1][0], pairs[1][1])
+        add_ventilation_comparison(3, simulations, pairs[2][0], pairs[2][1])
+        add_ventilation_comparison(4, simulations, pairs[3][0], pairs[3][1])
     print("Simulation List has "+str(len(simulations.Simulations))+" simulations to run")
     results_file = run_simulation_list(simulations, write_only)
     if not write_only:

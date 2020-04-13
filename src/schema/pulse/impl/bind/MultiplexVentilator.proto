@@ -22,6 +22,8 @@ message PatientStateData
   double          EndTidalCarbonDioxidePressure_cmH2O    = 11;
   double          ArterialOxygenPartialPressure_mmHg     = 12;
   double          CarricoIndex_mmHg                      = 13;
+  double          StabilizationTime_s                    = 14;
+  bool            AchievedStabilization                  = 15;
 }
 
 message PatientStateListData
@@ -48,14 +50,15 @@ message SimulationData
   // A filename without an extension (can/should have path also)
   // The engine will use this to create multiple output files (*.log and *.csv)
   uint32                         ID                      = 1;
-  string                         OutputBaseFilename      = 2;
-  double                         RespirationRate_Per_min = 3;
-  double                         IERatio                 = 4;
-  double                         PIP_cmH2O               = 5;
-  double                         PEEP_cmH2O              = 6;
-  double                         FiO2                    = 7;
-  LogData                        Log                     = 8;
-  repeated PatientComparisonData PatientComparisons      = 9;
+  uint32                         GroupID                 = 2;
+  string                         OutputBaseFilename      = 3;
+  double                         RespirationRate_Per_min = 4;
+  double                         IERatio                 = 5;
+  double                         PIP_cmH2O               = 6;
+  double                         PEEP_cmH2O              = 7;
+  double                         FiO2                    = 8;
+  LogData                        Log                     = 9;
+  repeated PatientComparisonData PatientComparisons      = 10;
 }
 
 message SimulationListData
