@@ -528,14 +528,14 @@
           "OxygenSource": "Wall",
           "PositiveEndExpiredPressure": {
             "ScalarPressure": {
-              "Value": 5,
+              "Value": 1,
               "Unit": "cmH2O"
             }
           },
           "PrimaryGas": "Nitrogen",
           "RespiratoryRate": {
             "ScalarFrequency": {
-              "Value": 16.0,
+              "Value": 10.0,
               "Unit": "1/min"
             }
           },

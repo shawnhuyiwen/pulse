@@ -2388,8 +2388,10 @@ void Respiratory::UpdateResistances()
   double esophagusResistance_cmH2O_s_Per_L = m_MouthToStomach->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   
   //------------------------------------------------------------------------------------------------------
-  //Artificial Airway
-  if (m_data.GetIntubation() == eSwitch::On)
+  //Positive Pressure Ventilation
+  if (m_data.GetAirwayMode() == eAirwayMode::AnesthesiaMachine ||
+    m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilation || 
+    m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilator)
   {
     tracheaResistance_cmH2O_s_Per_L *= 8.0;
   }
@@ -2555,8 +2557,10 @@ void Respiratory::UpdateAlveolarCompliances()
   double leftAlveoliCompliance_L_Per_cmH2O = m_LeftAlveoliToLeftPleuralConnection->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
 
   //------------------------------------------------------------------------------------------------------
-  //Artificial Airway
-  if (m_data.GetIntubation() == eSwitch::On)
+  //Positive Pressure Ventilation
+  if (m_data.GetAirwayMode() == eAirwayMode::AnesthesiaMachine ||
+    m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilation ||
+    m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilator)
   {
     rightAlveoliCompliance_L_Per_cmH2O *= 0.4;
     leftAlveoliCompliance_L_Per_cmH2O *= 0.4;

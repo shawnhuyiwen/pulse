@@ -54,7 +54,7 @@ int main(int argc, char* argv[])
       MVRunner mvr("./states/multiplex_ventilation/MultiplexVentilationRunner.log");
       return !mvr.Run(argv[2], SerializationFormat::JSON);
     }
-    else // Manaual
+    else // Manual
     {
       MVController mvc("./states/multiplex_ventilation/ManualMultiplexVentilation.log", ".");
       pulse::multiplex_ventilator::bind::SimulationData sim;
@@ -64,7 +64,8 @@ int main(int argc, char* argv[])
       std::vector<std::string> patients;
       patients.push_back("comp=0.025_peep=18_pip=36_imp=0.6_FiO2=0.21");
       patients.push_back("comp=0.035_peep=20_pip=32_imp=0.9_FiO2=0.9995");
-      //patients.push_back("comp=0.035_peep=18_pip=30_imp=0.3_FiO2=0.21");
+      patients.push_back("comp=0.035_peep=18_pip=30_imp=0.3_FiO2=0.21");
+      patients.push_back("comp=0.04_peep=12_pip=23_imp=0.9_FiO2=0.9995");
 
       double soloRunTime_s = 120;
 
@@ -94,6 +95,10 @@ int main(int argc, char* argv[])
         }
         iter++;
       }
+
+      // The combined name is too long for more than 2 patients
+      // This can be commented out if you have 2 patients
+      combined_name = "manual";
 
       // Run solo patients
       iter = 0;

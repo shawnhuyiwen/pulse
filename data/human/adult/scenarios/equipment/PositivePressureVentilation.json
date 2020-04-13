@@ -89,6 +89,11 @@
   [
     { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" }}}},
     { "PatientAction": { "Intubation": { "Type": "Tracheal" } } },
+	{ "PatientAction": {
+     "MechanicalVentilation": {
+       "State": "On",
+       "Pressure": { "ScalarPressure": { "Value": 0.0, "Unit": "cmH2O" } } } }
+    },
     { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" }}}},
 	{ "PatientAction": { "ChronicObstructivePulmonaryDiseaseExacerbation": 
       {
