@@ -59,7 +59,9 @@ namespace Pulse.CDM
           return PBPatientAction.Load(action.PatientAction);
         case pulse.cdm.bind.AnyActionData.ActionOneofCase.AnesthesiaMachineAction:
           return PBAnesthesiaMachineAction.Load(action.AnesthesiaMachineAction);
-      }
+        case pulse.cdm.bind.AnyActionData.ActionOneofCase.EnvironmentAction:
+            return PBEnvironmentAction.Load(action.EnvironmentAction);
+    }
       return null;
     }
     /** Create a new bind object, unload the action,
