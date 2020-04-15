@@ -17,6 +17,9 @@ MVRunner::~MVRunner()
 
 bool MVRunner::Run(const std::string& filename, SerializationFormat f)
 {
+  TimingProfile profiler;
+  profiler.Start("Total");
+
   if (!SerializeFromFile(filename, f))
     return false;
   // Get the ID's of simulations we need to run
@@ -57,6 +60,8 @@ bool MVRunner::Run(const std::string& filename, SerializationFormat f)
   for (size_t p = 0; p < processor_count; p++)
     m_Threads[p].join();
 
+  Info("It took " + to_scientific_notation(profiler.GetElapsedTime_s("Total")) + "s to run this simulation list");
+  profiler.Clear();
   return true;
 }
 

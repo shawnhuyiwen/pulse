@@ -6,24 +6,27 @@ option optimize_for = SPEED;
 
 message PatientStateData
 {
-  string          StateFile                              = 1;
+  string          StateFile                                 = 1;
   // Initial Conditions
-  double          Compliance_L_Per_cmH2O                 = 2;
-  double          ImpairmentFraction                     = 3;
+  double          Compliance_L_Per_cmH2O                    = 2;
+  double          ImpairmentFraction                        = 3;
   // Ventilator Settings
-  double          RespirationRate_Per_min                = 4;
-  double          IERatio                                = 5;
-  double          PEEP_cmH2O                             = 6;
-  double          PIP_cmH2O                              = 7;
-  double          FiO2                                   = 8;
+  double          RespirationRate_Per_min                   = 4;
+  double          IERatio                                   = 5;
+  double          PEEP_cmH2O                                = 6;
+  double          PIP_cmH2O                                 = 7;
+  double          FiO2                                      = 8;
   // Vitals
-  double          OxygenSaturation                       = 9;
-  double          TidalVolume_L                          = 10;
-  double          EndTidalCarbonDioxidePressure_cmH2O    = 11;
-  double          ArterialOxygenPartialPressure_mmHg     = 12;
-  double          CarricoIndex_mmHg                      = 13;
-  double          StabilizationTime_s                    = 14;
-  bool            AchievedStabilization                  = 15;
+  double          OxygenSaturation                          = 9;
+  double          TidalVolume_L                             = 10;
+  double          EndTidalCarbonDioxidePressure_cmH2O       = 11;
+  double          ArterialOxygenPartialPressure_mmHg        = 12;
+  double          ArterialCarbonDioxidePartialPressure_mmHg = 13;
+  double          CarricoIndex_mmHg                         = 14;
+  // Stabilization Information
+  bool            AchievedStabilization                     = 15;
+  double          StabilizationTime_s                       = 16;
+  double          OxygenSaturationStabilizationTrend        = 17;
 }
 
 message PatientStateListData
