@@ -21,6 +21,7 @@ public:
   virtual bool HasEnvironmentalConditions() const;
   virtual SEEnvironmentalConditions& GetEnvironmentalConditions();
   virtual const SEEnvironmentalConditions* GetEnvironmentalConditions() const;
+  virtual void InvalidateEnvironmentalConditions();
 
   virtual std::string GetEnvironmentalConditionsFile() const;
   virtual void SetEnvironmentalConditionsFile(const std::string& fileName);

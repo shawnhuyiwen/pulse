@@ -3,124 +3,89 @@
 
 namespace Pulse.CDM
 {
-    public class SEInitialEnvironmentalConditions : SEEnvironmentCondition
+  public class SEInitialEnvironmentalConditions : SEEnvironmentCondition
+  {
+    protected SEEnvironmentalConditions environmental_conditions;
+    protected string                    environmental_conditions_file;
+
+    public SEInitialEnvironmentalConditions()
     {
-        protected SEEnvironmentalConditions environmentalConditions;
-        protected string environmentalConditionsFile;
+      environmental_conditions = new SEEnvironmentalConditions();
+    }
 
-        public SEInitialEnvironmentalConditions()
-        {
-            environmentalConditions = new SEEnvironmentalConditions();
-        }
+    public SEInitialEnvironmentalConditions(SEInitialEnvironmentalConditions other)
+    {
+      Copy(other);
+    }
 
-        public SEInitialEnvironmentalConditions(SEInitialEnvironmentalConditions other)
-        {
-            Copy(other);
-        }
+    public void Copy(SEInitialEnvironmentalConditions other)
+    {
+      if (this == other)
+        return;
 
-        public void Copy(SEInitialEnvironmentalConditions other)
-        {
-            if (this == other)
-                return;
+      environmental_conditions.Copy(other.environmental_conditions);
+      environmental_conditions_file = other.environmental_conditions_file;
+    }
 
-            environmentalConditions.Copy(other.environmentalConditions);
-            environmentalConditionsFile = other.environmentalConditionsFile;
-        }
+    public override void Clear()
+    {
+      base.Clear();
+      environmental_conditions.Clear();
+      environmental_conditions_file = "";
+    }
 
-        public void Reset()
-        {
-
-            environmentalConditions.Reset();
-            environmentalConditionsFile = "";
-        }
-
-        public string GetName()
-        {
-            return "InitialEnvironmentalConditions";
-        }
-
-
-        public override bool IsValid()
-        {
-            return HasEnvironmentalConditions() || HasEnvironmentalConditionsFile();
-        }
-
-        public bool IsActive()
-        {
-            return IsValid();
-        }
-
-        //public static void load(InitialEnvironmentalConditionsData src, SEInitialEnvironmentalConditions dst, SESubstanceManager subMgr)
-        //{
-        //    SEEnvironmentCondition.load(src.getEnvironmentCondition(), dst);
-        //    switch (src.getOptionCase())
-        //    {
-        //        case ENVIRONMENTALCONDITIONSFILE:
-        //            dst.environmentalConditionsFile = src.getEnvironmentalConditionsFile();
-        //            break;
-        //        case ENVIRONMENTALCONDITIONS:
-        //            SEEnvironmentalConditions.load(src.getEnvironmentalConditions(), dst.getEnvironmentalConditions(), subMgr);
-        //            break;
-        //    }
-        //}
-        //public static InitialEnvironmentalConditionsData unload(SEInitialEnvironmentalConditions src)
-        //{
-        //    InitialEnvironmentalConditionsData.Builder dst = InitialEnvironmentalConditionsData.newBuilder();
-        //    unload(src, dst);
-        //    return dst.build();
-        //}
-        //protected static void unload(SEInitialEnvironmentalConditions src, InitialEnvironmentalConditionsData.Builder dst)
-        //{
-        //    SEEnvironmentCondition.unload(src, dst.getEnvironmentConditionBuilder());
-        //    if (src.hasEnvironmentalConditions())
-        //        dst.setEnvironmentalConditions(SEEnvironmentalConditions.unload(src.environmentalConditions));
-        //    else if (src.hasEnvironmentalConditionsFile())
-        //        dst.setEnvironmentalConditionsFile(src.environmentalConditionsFile);
-        //}
-
-        public bool HasEnvironmentalConditions()
-        {
-            return environmentalConditions != null;
-        }
-        public SEEnvironmentalConditions GetEnvironmentalConditions()
-        {
-            return environmentalConditions;
-        }
-
-        public bool HasEnvironmentalConditionsFile()
-        {
-            //return environmentalConditionsFile != null && environmentalConditionsFile.isEmpty();
-            return environmentalConditionsFile != null;
-        }
-
-        public void InvalidateEnvironmentalConditionsFile()
-        {
-            environmentalConditionsFile = null;
-        }
-
-
-
-        public string GetEnvironmentalConditionsFile()
-        {
-            return environmentalConditionsFile;
-        }
-        public void SetEnvironmentalConditionsFile(string s)
-        {
-            environmentalConditionsFile = s;
-        }
-
-        public new string ToString()
-        {
-            if (environmentalConditions != null)
-                return "Initial Environmental Conditions : " + environmentalConditions.ToString();
-            else if (HasEnvironmentalConditionsFile())
-                return "Initial Envriomental Conditions:"
-                    + "\n\tEnvironmentalConditionsFile: " + environmentalConditionsFile;
-            else
-                return "Condition not specified properly";
-        }
+    public string GetName()
+    {
+      return "InitialEnvironmentalConditions";
     }
 
 
-}
+    public override bool IsValid()
+    {
+      return HasEnvironmentalConditions() || HasEnvironmentalConditionsFile();
+    }
 
+    public bool IsActive()
+    {
+      return IsValid();
+    }
+
+    public bool HasEnvironmentalConditions()
+    {
+      return environmental_conditions != null;
+    }
+    public SEEnvironmentalConditions GetEnvironmentalConditions()
+    {
+      return environmental_conditions;
+    }
+
+    public bool HasEnvironmentalConditionsFile()
+    {
+      return environmental_conditions_file != null && environmental_conditions_file.Length > 0;
+    }
+    public string GetEnvironmentalConditionsFile()
+    {
+      return environmental_conditions_file;
+    }
+    public void SetEnvironmentalConditionsFile(string s)
+    {
+      environmental_conditions_file = s;
+    }
+    public void InvalidateEnvironmentalConditionsFile()
+    {
+      environmental_conditions_file = null;
+    }
+
+
+    public new string ToString()
+    {
+      if (environmental_conditions != null)
+        return "Initial Environmental Conditions : " + environmental_conditions.ToString();
+      else if (HasEnvironmentalConditionsFile())
+        return "Initial Envrionmental Conditions File : " + environmental_conditions_file;
+      else
+        return "Condition not specified properly";
+    }
+
+  }
+}

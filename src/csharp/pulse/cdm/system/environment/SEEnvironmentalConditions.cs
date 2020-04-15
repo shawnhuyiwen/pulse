@@ -5,484 +5,385 @@ using System.Collections.Generic;
 
 namespace Pulse.CDM
 {
-    public class SEEnvironmentalConditions
+  public class SEEnvironmentalConditions
+  {
+    public enum eSurroundingType : int
     {
-        public enum eSurroundingType : int
+      NullSurrounding = 0,
+      Air,
+      Water
+    }
+    protected eSurroundingType               surrounding_type;
+    protected SEScalarMassPerVolume          air_density;
+    protected SEScalarLengthPerTime          air_velocity;
+    protected SEScalarTemperature            ambient_temperature;
+    protected SEScalarPressure               atmospheric_pressure;
+    protected SEScalarHeatResistanceArea     clothing_resistance;
+    protected SEScalar0To1                   emissivity;
+    protected SEScalarTemperature            mean_radiant_temperature;
+    protected SEScalar0To1                   relative_humidity;
+    protected SEScalarTemperature            respiration_ambient_temperature;
+
+    protected List<SESubstanceFraction>      ambient_gases;
+    protected List<SESubstanceConcentration> ambient_aerosols;
+
+    public SEEnvironmentalConditions()
+    {
+      this.surrounding_type = 0;
+
+      this.air_density = null;
+      this.air_velocity = null;
+      this.ambient_temperature = null;
+      this.atmospheric_pressure = null;
+      this.clothing_resistance = null;
+      this.emissivity = null;
+      this.mean_radiant_temperature = null;
+      this.relative_humidity = null;
+      this.respiration_ambient_temperature = null;
+
+      this.ambient_gases = new List<SESubstanceFraction>();
+      this.ambient_aerosols = new List<SESubstanceConcentration>();
+    }
+
+    public void Clear()
+    {
+      surrounding_type = 0;
+      if (air_density != null)
+        air_density.Invalidate();
+      if (air_velocity != null)
+        air_velocity.Invalidate();
+      if (ambient_temperature != null)
+        ambient_temperature.Invalidate();
+      if (atmospheric_pressure != null)
+        atmospheric_pressure.Invalidate();
+      if (clothing_resistance != null)
+        clothing_resistance.Invalidate();
+      if (emissivity != null)
+        emissivity.Invalidate();
+      if (mean_radiant_temperature != null)
+        mean_radiant_temperature.Invalidate();
+      if (relative_humidity != null)
+        relative_humidity.Invalidate();
+      if (respiration_ambient_temperature != null)
+        respiration_ambient_temperature.Invalidate();
+
+      ambient_gases.Clear();
+      ambient_aerosols.Clear();
+    }
+
+    public void Copy(SEEnvironmentalConditions from)
+    {
+      Clear();
+      if (from.surrounding_type != eSurroundingType.NullSurrounding)
+        this.SetSurroundingType(from.surrounding_type);
+      if (from.HasAirDensity())
+        this.GetAirDensity().Set(from.GetAirDensity());
+      if (from.HasAirVelocity())
+        this.GetAirVelocity().Set(from.GetAirVelocity());
+      if (from.HasAmbientTemperature())
+        this.GetAmbientTemperature().Set(from.GetAmbientTemperature());
+      if (from.HasAtmosphericPressure())
+        this.GetAtmosphericPressure().Set(from.GetAtmosphericPressure());
+      if (from.HasClothingResistance())
+        this.GetClothingResistance().Set(from.GetClothingResistance());
+      if (from.HasEmissivity())
+        this.GetEmissivity().Set(from.GetEmissivity());
+      if (from.HasMeanRadiantTemperature())
+        this.GetMeanRadiantTemperature().Set(from.GetMeanRadiantTemperature());
+      if (from.HasRelativeHumidity())
+        this.GetRelativeHumidity().Set(from.GetRelativeHumidity());
+      if (from.HasRespirationAmbientTemperature())
+        this.GetRespirationAmbientTemperature().Set(from.GetRespirationAmbientTemperature());
+
+      if (from.ambient_gases != null)
+      {
+        SESubstanceFraction mine;
+        foreach (SESubstanceFraction sf in from.ambient_gases)
         {
-            NullSurrounding = 0,
-            Air,
-            Water
+          mine = this.CreateAmbientGas(sf.GetSubstance());
+          if (sf.HasFractionAmount())
+            mine.GetFractionAmount().Set(sf.GetFractionAmount());
         }
-        protected eSurroundingType surroundingType;
-        protected SEScalarMassPerVolume airDensity;
-        protected SEScalarLengthPerTime airVelocity;
-        protected SEScalarTemperature ambientTemperature;
-        protected SEScalarPressure atmosphericPressure;
-        protected SEScalarHeatResistanceArea clothingResistance;
-        protected SEScalar0To1 emissivity;
-        protected SEScalarTemperature meanRadiantTemperature;
-        protected SEScalar0To1 relativeHumidity;
-        protected SEScalarTemperature respirationAmbientTemperature;
+      }
 
-        protected List<SESubstanceFraction> ambientGases;
-        protected List<SESubstanceConcentration> ambientAerosols;
-
-
-        public SEEnvironmentalConditions()
+      if (from.ambient_aerosols != null)
+      {
+        SESubstanceConcentration mine;
+        foreach (SESubstanceConcentration sc in from.ambient_aerosols)
         {
-            this.surroundingType = 0;
-
-            this.airDensity = null;
-            this.airVelocity = null;
-            this.ambientTemperature = null;
-            this.atmosphericPressure = null;
-            this.clothingResistance = null;
-            this.emissivity = null;
-            this.meanRadiantTemperature = null;
-            this.relativeHumidity = null;
-            this.respirationAmbientTemperature = null;
-
-            this.ambientGases = new List<SESubstanceFraction>();
-            this.ambientAerosols = new List<SESubstanceConcentration>();
-
+          mine = this.CreateAmbientAerosol(sc.GetSubstance());
+          if (sc.HasConcentration())
+            mine.GetConcentration().Set(sc.GetConcentration());
         }
+      }
+    }
 
-        public void Reset()
-        {
-            surroundingType = 0;
-            if (airDensity != null)
-                airDensity.Invalidate();
-            if (airVelocity != null)
-                airVelocity.Invalidate();
-            if (ambientTemperature != null)
-                ambientTemperature.Invalidate();
-            if (atmosphericPressure != null)
-                atmosphericPressure.Invalidate();
-            if (clothingResistance != null)
-                clothingResistance.Invalidate();
-            if (emissivity != null)
-                emissivity.Invalidate();
-            if (meanRadiantTemperature != null)
-                meanRadiantTemperature.Invalidate();
-            if (relativeHumidity != null)
-                relativeHumidity.Invalidate();
-            if (respirationAmbientTemperature != null)
-                respirationAmbientTemperature.Invalidate();
+    public bool SerializeFromFile(string filename, SerializationFormat fmt)
+    {
+      try
+      {
+        string json = System.IO.File.ReadAllText(filename);
+        return SerializeFromString(json, SerializationFormat.JSON);
+      }
+      catch (System.Exception ex)
+      {
+        System.Console.WriteLine("Error Reading Envronment File! " + ex.ToString());
+        return false;
+      }
+    }
+    public bool SerializeFromString(string src, SerializationFormat fmt)
+    {
+      return PBEnvironment.SerializeFromString(src, this);
+    }
 
-            ambientGases.Clear();
-            ambientAerosols.Clear();
-        }
-
-        public void Copy(SEEnvironmentalConditions from)
-        {
-            Reset();
-            if (from.surroundingType != eSurroundingType.NullSurrounding)
-                this.SetSurroundingType(from.surroundingType);
-            if (from.HasAirDensity())
-                this.GetAirDensity().Set(from.GetAirDensity());
-            if (from.HasAirVelocity())
-                this.GetAirVelocity().Set(from.GetAirVelocity());
-            if (from.HasAmbientTemperature())
-                this.GetAmbientTemperature().Set(from.GetAmbientTemperature());
-            if (from.HasAtmosphericPressure())
-                this.GetAtmosphericPressure().Set(from.GetAtmosphericPressure());
-            if (from.HasClothingResistance())
-                this.GetClothingResistance().Set(from.GetClothingResistance());
-            if (from.HasEmissivity())
-                this.GetEmissivity().Set(from.GetEmissivity());
-            if (from.HasMeanRadiantTemperature())
-                this.GetMeanRadiantTemperature().Set(from.GetMeanRadiantTemperature());
-            if (from.HasRelativeHumidity())
-                this.GetRelativeHumidity().Set(from.GetRelativeHumidity());
-            if (from.HasRespirationAmbientTemperature())
-                this.GetRespirationAmbientTemperature().Set(from.GetRespirationAmbientTemperature());
-
-            if (from.ambientGases != null)
-            {
-                SESubstanceFraction mine;
-                foreach (SESubstanceFraction sf in from.ambientGases)
-                {
-                    mine = this.CreateAmbientGas(sf.GetSubstance());
-                    if (sf.HasFractionAmount())
-                        mine.GetFractionAmount().Set(sf.GetFractionAmount());
-                }
-            }
-
-            if (from.ambientAerosols != null)
-            {
-                SESubstanceConcentration mine;
-                foreach (SESubstanceConcentration sc in from.ambientAerosols)
-                {
-                    mine = this.CreateAmbientAerosol(sc.GetSubstance());
-                    if (sc.HasConcentration())
-                        mine.GetConcentration().Set(sc.GetConcentration());
-                }
-            }
-        }
-
-  //      public void readFile(String fileName, SESubstanceManager mgr) throws InvalidProtocolBufferException
-  //      {
-  //          EnvironmentalConditionsData.Builder builder = EnvironmentalConditionsData.newBuilder();
-  //  JsonFormat.parser().merge(FileUtils.readFile(fileName), builder);
-  //      SEEnvironmentalConditions.load(builder.build(), this, mgr);
-  //}
-  //  public void writeFile(String fileName) throws InvalidProtocolBufferException
-  //  {
-  //      FileUtils.writeFile(fileName, JsonFormat.printer().print(SEEnvironmentalConditions.unload(this)));
-    //}
-
-    //public static void load(EnvironmentalConditionsData src, SEEnvironmentalConditions dst, SESubstanceManager substances)
-    //{
-    //    dst.reset();
-    //    if (src.getSurroundingType() != eSurroundingType.UNRECOGNIZED)
-    //        dst.setSurroundingType(src.getSurroundingType());
-    //    if (src.hasAirDensity())
-    //        SEScalarMassPerVolume.load(src.getAirDensity(), dst.getAirDensity());
-    //    if (src.hasAirVelocity())
-    //        SEScalarLengthPerTime.load(src.getAirVelocity(), dst.getAirVelocity());
-    //    if (src.hasAmbientTemperature())
-    //        SEScalarTemperature.load(src.getAmbientTemperature(), dst.getAmbientTemperature());
-    //    if (src.hasAtmosphericPressure())
-    //        SEScalarPressure.load(src.getAtmosphericPressure(), dst.getAtmosphericPressure());
-    //    if (src.hasClothingResistance())
-    //        SEScalarHeatResistanceArea.load(src.getClothingResistance(), dst.getClothingResistance());
-    //    if (src.hasEmissivity())
-    //        SEScalar0To1.load(src.getEmissivity(), dst.getEmissivity());
-    //    if (src.hasMeanRadiantTemperature())
-    //        SEScalarTemperature.load(src.getMeanRadiantTemperature(), dst.getMeanRadiantTemperature());
-    //    if (src.hasRelativeHumidity())
-    //        SEScalar0To1.load(src.getRelativeHumidity(), dst.getRelativeHumidity());
-    //    if (src.hasRespirationAmbientTemperature())
-    //        SEScalarTemperature.load(src.getRespirationAmbientTemperature(), dst.getRespirationAmbientTemperature());
-
-    //    string sub;
-    //    if (src.getAmbientGasList() != null)
-    //    {
-    //        for (SubstanceFractionData subData : src.getAmbientGasList())
-    //        {
-    //            sub = substances.getSubstance(subData.getName());
-    //            if (sub == null)
-    //            {
-    //                Log.error("Substance does not exist for ambient gas : " + subData.getName());
-    //                continue;
-    //            }
-    //            if (sub.getState() != eState.Gas)
-    //            {
-    //                Log.error("Environment Ambient Gas must be a gas, " + subData.getName() + " is not a gas...");
-    //                continue;
-    //            }
-    //            SEScalar0To1.load(subData.getAmount(), dst.createAmbientGas(sub).getAmount());
-    //        }
-    //    }
-
-    //    if (src.getAmbientAerosolList() != null)
-    //    {
-    //        for (SubstanceConcentrationData subData : src.getAmbientAerosolList())
-    //        {
-    //            sub = substances.getSubstance(subData.getName());
-    //            if (sub == null)
-    //            {
-    //                Log.error("Substance does not exist for ambient aerosol : " + subData.getName());
-    //                continue;
-    //            }
-    //            if (sub.getState() != eState.Solid && sub.getState() != eState.Liquid)
-    //            {
-    //                Log.error("Environment Ambient Aerosol must be a liquid or a gas, " + subData.getName() + " is neither...");
-    //                continue;
-    //            }
-    //            SEScalarMassPerVolume.load(subData.getConcentration(), dst.createAmbientAerosol(sub).getConcentration());
-    //        }
-    //    }
-    //}
-    //public static EnvironmentalConditionsData unload(SEEnvironmentalConditions src)
-    //{
-    //    EnvironmentalConditionsData.Builder dst = EnvironmentalConditionsData.newBuilder();
-    //    unload(src, dst);
-    //    return dst.build();
-    //}
-    //protected static void unload(SEEnvironmentalConditions src, EnvironmentalConditionsData.Builder dst)
-    //{
-    //    if (src.hasSurroundingType())
-    //        dst.setSurroundingType(src.surroundingType);
-    //    if (src.hasAirDensity())
-    //        dst.setAirDensity(SEScalarMassPerVolume.unload(src.airDensity));
-    //    if (src.hasAirVelocity())
-    //        dst.setAirVelocity(SEScalarLengthPerTime.unload(src.airVelocity));
-    //    if (src.hasAmbientTemperature())
-    //        dst.setAmbientTemperature(SEScalarTemperature.unload(src.ambientTemperature));
-    //    if (src.hasAtmosphericPressure())
-    //        dst.setAtmosphericPressure(SEScalarPressure.unload(src.atmosphericPressure));
-    //    if (src.hasClothingResistance())
-    //        dst.setClothingResistance(SEScalarHeatResistanceArea.unload(src.clothingResistance));
-    //    if (src.hasEmissivity())
-    //        dst.setEmissivity(SEScalar0To1.unload(src.emissivity));
-    //    if (src.hasMeanRadiantTemperature())
-    //        dst.setMeanRadiantTemperature(SEScalarTemperature.unload(src.meanRadiantTemperature));
-    //    if (src.hasRelativeHumidity())
-    //        dst.setRelativeHumidity(SEScalar0To1.unload(src.relativeHumidity));
-    //    if (src.hasRespirationAmbientTemperature())
-    //        dst.setRespirationAmbientTemperature(SEScalarTemperature.unload(src.respirationAmbientTemperature));
-
-    //    for (SESubstanceFraction ambSub : src.ambientGases)
-    //        dst.addAmbientGas(SESubstanceFraction.unload(ambSub));
-
-    //    for (SESubstanceConcentration ambSub : src.ambientAerosols)
-    //        dst.addAmbientAerosol(SESubstanceConcentration.unload(ambSub));
-    //}
+    public bool SerializeToFile(string filename, SerializationFormat fmt)
+    {
+      string json = SerializeToString(SerializationFormat.JSON);
+      if (json == null || json.Length == 0)
+        return false;
+      try
+      {
+        System.IO.File.WriteAllText(filename, json);
+      }
+      catch (System.Exception ex)
+      {
+        System.Console.WriteLine("Error Writing Patient File! " + ex.ToString());
+        return false;
+      }
+      return true;
+    }
+    public string SerializeToString(SerializationFormat format)
+    {
+      return PBEnvironment.SerializeToString(this);
+    }
 
     public bool HasSurroundingType()
     {
-        return surroundingType != 0;
+      return surrounding_type != 0;
     }
     public eSurroundingType GetSurroundingType()
     {
-        return surroundingType;
+      return surrounding_type;
     }
     public void SetSurroundingType(eSurroundingType st)
     {
-        surroundingType = st;
+      surrounding_type = st;
     }
     public SEScalarMassPerVolume GetAirDensity()
     {
-        if (airDensity == null)
-            airDensity = new SEScalarMassPerVolume();
-        return airDensity;
+      if (air_density == null)
+        air_density = new SEScalarMassPerVolume();
+      return air_density;
     }
     public bool HasAirDensity()
     {
-        return airDensity == null ? false : airDensity.IsValid();
+      return air_density == null ? false : air_density.IsValid();
     }
 
     public SEScalarLengthPerTime GetAirVelocity()
     {
-        if (airVelocity == null)
-            airVelocity = new SEScalarLengthPerTime();
-        return airVelocity;
+      if (air_velocity == null)
+        air_velocity = new SEScalarLengthPerTime();
+      return air_velocity;
     }
     public bool HasAirVelocity()
     {
-        return airVelocity == null ? false : airVelocity.IsValid();
+      return air_velocity == null ? false : air_velocity.IsValid();
     }
 
     public SEScalarTemperature GetAmbientTemperature()
     {
-        if (ambientTemperature == null)
-            ambientTemperature = new SEScalarTemperature();
-        return ambientTemperature;
+      if (ambient_temperature == null)
+        ambient_temperature = new SEScalarTemperature();
+      return ambient_temperature;
     }
     public bool HasAmbientTemperature()
     {
-        return ambientTemperature == null ? false : ambientTemperature.IsValid();
+      return ambient_temperature == null ? false : ambient_temperature.IsValid();
     }
 
     public SEScalarPressure GetAtmosphericPressure()
     {
-        if (atmosphericPressure == null)
-            atmosphericPressure = new SEScalarPressure();
-        return atmosphericPressure;
+      if (atmospheric_pressure == null)
+        atmospheric_pressure = new SEScalarPressure();
+      return atmospheric_pressure;
     }
     public bool HasAtmosphericPressure()
     {
-        return atmosphericPressure == null ? false : atmosphericPressure.IsValid();
+      return atmospheric_pressure == null ? false : atmospheric_pressure.IsValid();
     }
 
     public SEScalarHeatResistanceArea GetClothingResistance()
     {
-        if (clothingResistance == null)
-            clothingResistance = new SEScalarHeatResistanceArea();
-        return clothingResistance;
+      if (clothing_resistance == null)
+        clothing_resistance = new SEScalarHeatResistanceArea();
+      return clothing_resistance;
     }
     public bool HasClothingResistance()
     {
-        return clothingResistance == null ? false : clothingResistance.IsValid();
+      return clothing_resistance == null ? false : clothing_resistance.IsValid();
     }
 
     public SEScalar0To1 GetEmissivity()
     {
-        if (emissivity == null)
-            emissivity = new SEScalar0To1();
-        return emissivity;
+      if (emissivity == null)
+        emissivity = new SEScalar0To1();
+      return emissivity;
     }
     public bool HasEmissivity()
     {
-        return emissivity == null ? false : emissivity.IsValid();
+      return emissivity == null ? false : emissivity.IsValid();
     }
 
     public SEScalarTemperature GetMeanRadiantTemperature()
     {
-        if (meanRadiantTemperature == null)
-            meanRadiantTemperature = new SEScalarTemperature();
-        return meanRadiantTemperature;
+      if (mean_radiant_temperature == null)
+        mean_radiant_temperature = new SEScalarTemperature();
+      return mean_radiant_temperature;
     }
     public bool HasMeanRadiantTemperature()
     {
-        return meanRadiantTemperature == null ? false : meanRadiantTemperature.IsValid();
+      return mean_radiant_temperature == null ? false : mean_radiant_temperature.IsValid();
     }
 
     public SEScalar0To1 GetRelativeHumidity()
     {
-        if (relativeHumidity == null)
-            relativeHumidity = new SEScalar0To1();
-        return relativeHumidity;
+      if (relative_humidity == null)
+        relative_humidity = new SEScalar0To1();
+      return relative_humidity;
     }
     public bool HasRelativeHumidity()
     {
-        return relativeHumidity == null ? false : relativeHumidity.IsValid();
+      return relative_humidity == null ? false : relative_humidity.IsValid();
     }
 
     public SEScalarTemperature GetRespirationAmbientTemperature()
     {
-        if (respirationAmbientTemperature == null)
-            respirationAmbientTemperature = new SEScalarTemperature();
-        return respirationAmbientTemperature;
+      if (respiration_ambient_temperature == null)
+        respiration_ambient_temperature = new SEScalarTemperature();
+      return respiration_ambient_temperature;
     }
     public bool HasRespirationAmbientTemperature()
     {
-        return respirationAmbientTemperature == null ? false : respirationAmbientTemperature.IsValid();
+      return respiration_ambient_temperature == null ? false : respiration_ambient_temperature.IsValid();
     }
 
     public SESubstanceFraction CreateAmbientGas(string substance)
     {
-        return GetAmbientGas(substance);
+      return GetAmbientGas(substance);
     }
     public SESubstanceFraction GetAmbientGas(string substance)
     {
-        foreach (SESubstanceFraction sf in ambientGases)
+      foreach (SESubstanceFraction sf in ambient_gases)
+      {
+        if (sf.GetSubstance() == substance)
         {
-            if (sf.GetSubstance() == substance)
-            {
-                return sf;
-            }
+          return sf;
         }
-        SESubstanceFraction nsf = new SESubstanceFraction(substance);
-        ambientGases.Add(nsf);
-        return nsf;
+      }
+      SESubstanceFraction nsf = new SESubstanceFraction(substance);
+      ambient_gases.Add(nsf);
+      return nsf;
     }
     public bool HasAmbientGas()
     {
-        return ambientGases.Count != 0;
+      return ambient_gases.Count != 0;
     }
     public bool HasAmbientGas(string substance)
     {
-        foreach (SESubstanceFraction sf in ambientGases)
+      foreach (SESubstanceFraction sf in ambient_gases)
+      {
+        if (sf.GetSubstance() == substance)
         {
-            if (sf.GetSubstance() == substance)
-            {
-                return true;
-            }
+          return true;
         }
-        return false;
+      }
+      return false;
     }
     public List<SESubstanceFraction> GetAmbientGas()
     {
-        return ambientGases;
+      return ambient_gases;
     }
     public void RemoveAmbientGas(string substance)
     {
-        foreach (SESubstanceFraction sf in ambientGases)
+      foreach (SESubstanceFraction sf in ambient_gases)
+      {
+        if (sf.GetSubstance() == substance)
         {
-            if (sf.GetSubstance() == substance)
-            {
-                ambientGases.Remove(sf);
-                return;
-            }
+          ambient_gases.Remove(sf);
+          return;
         }
+      }
     }
-
 
     public SESubstanceConcentration CreateAmbientAerosol(string substance)
     {
-        return GetAmbientAerosol(substance);
+      return GetAmbientAerosol(substance);
     }
     public SESubstanceConcentration GetAmbientAerosol(string substance)
     {
-        foreach (SESubstanceConcentration sc in ambientAerosols)
+      foreach (SESubstanceConcentration sc in ambient_aerosols)
+      {
+        if (sc.GetSubstance() == substance)
         {
-            if (sc.GetSubstance()== substance)
-            {
-                return sc;
-            }
+          return sc;
         }
-        SESubstanceConcentration nsc = new SESubstanceConcentration(substance);
-        ambientAerosols.Add(nsc);
-        return nsc;
+      }
+      SESubstanceConcentration nsc = new SESubstanceConcentration(substance);
+      ambient_aerosols.Add(nsc);
+      return nsc;
     }
     public bool HasAmbientAerosol()
     {
-        return ambientAerosols.Count != 0;
-        }
+      return ambient_aerosols.Count != 0;
+    }
     public bool HasAmbientAerosol(string substance)
     {
-        foreach (SESubstanceConcentration sc in ambientAerosols)
+      foreach (SESubstanceConcentration sc in ambient_aerosols)
+      {
+        if (sc.GetSubstance() == substance)
         {
-            if (sc.GetSubstance() == substance)
-            {
-                return true;
-            }
+          return true;
         }
-        return false;
+      }
+      return false;
     }
     public List<SESubstanceConcentration> GetAmbientAerosol()
     {
-        return ambientAerosols;
+      return ambient_aerosols;
     }
     public void RemoveAmbientAerosol(string substance)
     {
-        foreach (SESubstanceConcentration sc in ambientAerosols)
+      foreach (SESubstanceConcentration sc in ambient_aerosols)
+      {
+        if (sc.GetSubstance() == substance)
         {
-            if (sc.GetSubstance() == substance)
-            {
-                ambientAerosols.Remove(sc);
-                return;
-            }
+          ambient_aerosols.Remove(sc);
+          return;
         }
+      }
     }
-
-
-    //public void trim()
-    //{
-    //    SESubstanceConcentration sc;
-    //    Iterator<SESubstanceConcentration> icon = this.ambientAerosols.iterator();
-    //    while (icon.hasNext())
-    //    {
-    //        sc = icon.next();
-    //        if (sc.getConcentration().getValue() == 0)
-    //            icon.remove();
-    //    }
-
-    //    SESubstanceFraction sf;
-    //    Iterator<SESubstanceFraction> ifrac = this.ambientGases.iterator();
-    //    while (ifrac.hasNext())
-    //    {
-    //        sf = ifrac.next();
-    //        if (sf.getAmount().getValue() == 0)
-    //            ifrac.remove();
-    //    }
-    //}
 
     public new string ToString()
     {
-        string str = "Envriomental Conditions:"
-            + "\n\tSurroundingType: " + GetSurroundingType()
-            + "\n\tAirDensity: " + (HasAirDensity() ? GetAirDensity().ToString() : "None")
-            + "\n\tAirVelocity: " + (HasAirVelocity() ? GetAirVelocity().ToString() : "None")
-            + "\n\tAmbientTemperature: " + (HasAmbientTemperature() ? GetAmbientTemperature().ToString() : "None")
-            + "\n\tAtmosphericPressure: " + (HasAtmosphericPressure() ? GetAtmosphericPressure().ToString() : "None")
-            + "\n\tClothingResistance: " + (HasClothingResistance() ? GetClothingResistance().ToString() : "None")
-            + "\n\tEmissivity: " + (HasEmissivity() ? GetEmissivity().ToString() : "None")
-            + "\n\tMeanRadiantTemperature: " + (HasMeanRadiantTemperature() ? GetMeanRadiantTemperature().ToString() : "None")
-            + "\n\tRelativeHumidity: " + (HasRelativeHumidity() ? GetRelativeHumidity().ToString() : "None")
-            + "\n\tRespirationAmbientTemperature: " + (HasRespirationAmbientTemperature() ? GetRespirationAmbientTemperature().ToString() : "None");
-        foreach (SESubstanceFraction sf in this.ambientGases)
-            str += "\n\t" + sf.GetSubstance();
-        foreach (SESubstanceConcentration sc in this.ambientAerosols)
-            str += "\n\t" + sc.GetSubstance();
+      string str = "Envriomental Conditions:"
+          + "\n\tSurroundingType: " + GetSurroundingType()
+          + "\n\tAirDensity: " + (HasAirDensity() ? GetAirDensity().ToString() : "None")
+          + "\n\tAirVelocity: " + (HasAirVelocity() ? GetAirVelocity().ToString() : "None")
+          + "\n\tAmbientTemperature: " + (HasAmbientTemperature() ? GetAmbientTemperature().ToString() : "None")
+          + "\n\tAtmosphericPressure: " + (HasAtmosphericPressure() ? GetAtmosphericPressure().ToString() : "None")
+          + "\n\tClothingResistance: " + (HasClothingResistance() ? GetClothingResistance().ToString() : "None")
+          + "\n\tEmissivity: " + (HasEmissivity() ? GetEmissivity().ToString() : "None")
+          + "\n\tMeanRadiantTemperature: " + (HasMeanRadiantTemperature() ? GetMeanRadiantTemperature().ToString() : "None")
+          + "\n\tRelativeHumidity: " + (HasRelativeHumidity() ? GetRelativeHumidity().ToString() : "None")
+          + "\n\tRespirationAmbientTemperature: " + (HasRespirationAmbientTemperature() ? GetRespirationAmbientTemperature().ToString() : "None");
+      foreach (SESubstanceFraction sf in this.ambient_gases)
+        str += "\n\t" + sf.GetSubstance();
+      foreach (SESubstanceConcentration sc in this.ambient_aerosols)
+        str += "\n\t" + sc.GetSubstance();
 
-        return str;
+      return str;
     }
 
-
+  }
 }
-}
-
-

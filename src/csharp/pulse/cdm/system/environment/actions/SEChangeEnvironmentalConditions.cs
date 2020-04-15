@@ -3,117 +3,87 @@
 
 namespace Pulse.CDM
 {
-    public class SEChangeEnvironmentalConditions : SEEnvironmentAction
-    {
-  protected SEEnvironmentalConditions environmentalConditions;
-    protected string environmentalConditionsFile;
+  public class SEChangeEnvironmentalConditions : SEEnvironmentAction
+  {
+    protected SEEnvironmentalConditions environmental_conditions;
+    protected string                    environmental_conditions_file;
 
     public SEChangeEnvironmentalConditions()
     {
-        environmentalConditions = new SEEnvironmentalConditions();
+      environmental_conditions = null;
+      environmental_conditions_file = null;
     }
 
-        public override void Clear()
-        {
-            base.Clear();
-            environmentalConditions = null;
-            environmentalConditionsFile = null;
-
-        }
-        public SEChangeEnvironmentalConditions(SEChangeEnvironmentalConditions other)
+    public SEChangeEnvironmentalConditions(SEChangeEnvironmentalConditions other)
     {
-        Copy(other);
+      Copy(other);
     }
 
-        public void Copy(SEChangeEnvironmentalConditions other)
-        {
-            if (this == other)
-                return;
-            //base.Copy(other);
-            environmentalConditions.Copy(other.environmentalConditions);
-            environmentalConditionsFile = other.environmentalConditionsFile;
-        }
-
-        public void Reset()
-        {
-            
-            environmentalConditions.Reset();
-            environmentalConditionsFile = "";
-        }
-
-
-        public bool IsActive()
-        {
-            return true;
-        }
-
-
-        public override bool IsValid()
+    public override void Clear()
     {
-        return HasEnvironmentalConditions() || HasEnvironmentalConditionsFile();
+      base.Clear();
+      environmental_conditions = null;
+      environmental_conditions_file = null;
+
     }
 
-    //public static void load(ChangeEnvironmentalConditionsData src, SEChangeEnvironmentalConditions dst, SESubstanceManager subMgr)
-    //{
-    //    SEEnvironmentAction.load(src.getEnvironmentAction(), dst);
-    //    switch (src.getOptionCase())
-    //    {
-    //        case ENVIRONMENTALCONDITIONSFILE:
-    //            dst.environmentalConditionsFile = src.getEnvironmentalConditionsFile();
-    //            break;
-    //        case ENVIRONMENTALCONDITIONS:
-    //            SEEnvironmentalConditions.load(src.getEnvironmentalConditions(), dst.getEnvironmentalConditions(), subMgr);
-    //            break;
-    //    }
-    //}
-    //public static ChangeEnvironmentalConditionsData unload(SEChangeEnvironmentalConditions src)
-    //{
-    //    ChangeEnvironmentalConditionsData.Builder dst = ChangeEnvironmentalConditionsData.newBuilder();
-    //    unload(src, dst);
-    //    return dst.build();
-    //}
-    //protected static void unload(SEChangeEnvironmentalConditions src, ChangeEnvironmentalConditionsData.Builder dst)
-    //{
-    //    SEEnvironmentAction.unload(src, dst.getEnvironmentActionBuilder());
-    //    if (src.hasEnvironmentalConditions())
-    //        dst.setEnvironmentalConditions(SEEnvironmentalConditions.unload(src.environmentalConditions));
-    //    else if (src.hasEnvironmentalConditionsFile())
-    //        dst.setEnvironmentalConditionsFile(src.environmentalConditionsFile);
-    //}
+    public void Copy(SEChangeEnvironmentalConditions other)
+    {
+      if (this == other)
+        return;
+      base.Copy(other);
+      environmental_conditions.Copy(other.environmental_conditions);
+      environmental_conditions_file = other.environmental_conditions_file;
+    }
 
+    public bool IsActive()
+    {
+      return IsValid();
+    }
+
+    public override bool IsValid()
+    {
+      return HasEnvironmentalConditions() || HasEnvironmentalConditionsFile();
+    }
+    
     public bool HasEnvironmentalConditions()
     {
-        return environmentalConditions != null;
+      return environmental_conditions != null;
     }
     public SEEnvironmentalConditions GetEnvironmentalConditions()
     {
-        return environmentalConditions;
+      if (environmental_conditions == null)
+        environmental_conditions = new SEEnvironmentalConditions();
+      return environmental_conditions;
+    }
+    public void InvalidateEnvironmentalConditions()
+    {
+      environmental_conditions = null;
     }
 
     public bool HasEnvironmentalConditionsFile()
     {
-        return environmentalConditionsFile != null/* && !environmentalConditionsFile.isEmpty()*/;
+      return environmental_conditions_file != null && environmental_conditions_file.Length > 0;
     }
     public string GetEnvironmentalConditionsFile()
     {
-        return environmentalConditionsFile;
+      return environmental_conditions_file;
     }
     public void SetEnvironmentalConditionsFile(string s)
     {
-        environmentalConditionsFile = s;
+      environmental_conditions_file = s;
     }
 
     public new string ToString()
     {
-        if (environmentalConditions != null)
-            return "Environment Configuration : " + environmentalConditions.ToString();
-        else if (HasEnvironmentalConditionsFile())
-            return "Envrioment Configuration:"
-                + "\n\tEnvironmentalConditionsFile: " + environmentalConditionsFile;
-        else
-            return "Action not specified properly";
+      if (environmental_conditions != null)
+        return "Environment Configuration : " + environmental_conditions.ToString();
+      else if (HasEnvironmentalConditionsFile())
+        return "Envrioment Configuration:"
+            + "\n\tEnvironmentalConditionsFile: " + environmental_conditions_file;
+      else
+        return "Action not specified properly";
     }
-}
-}
 
-    
+  }
+}

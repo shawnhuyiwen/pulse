@@ -17,7 +17,7 @@ namespace Pulse.CDM
     protected SEChronicRenalStenosis renal_stenosis;
     protected SESepsis sepsis;
 
-    //protected SEInitialEnvironmentConditions* initial_environment_conditions;
+    protected SEInitialEnvironmentalConditions initial_environmental_conditions;
 
     public SEConditionManager()
     {
@@ -37,7 +37,7 @@ namespace Pulse.CDM
       pulmonary_fibrosis = null;
       renal_stenosis = null;
       sepsis = null;
-      //initial_environment_conditions = null;
+      initial_environmental_conditions = null;
     }
 
     public bool IsEmpty()
@@ -65,8 +65,8 @@ namespace Pulse.CDM
       if (HasSepsis())
         return false;
 
-      //if (HasInitialEnvironmentConditions())
-      //  return false;
+      if (HasInitialEnvironmentalConditions())
+        return false;
       return true;
     }
 
@@ -128,11 +128,11 @@ namespace Pulse.CDM
         return true;
       }
 
-      //if (c.GetType().IsAssignableFrom(typeof(SEInitialEnvironmentalConditions)))
-      //{
-      //  initial_environmental_conditions = (SEInitialEnvironmentalConditions)c;
-      //  return true;
-      //}
+      if (c.GetType().IsAssignableFrom(typeof(SEInitialEnvironmentalConditions)))
+      {
+        initial_environmental_conditions = (SEInitialEnvironmentalConditions)c;
+        return true;
+      }
       return false;
     }
 
@@ -295,8 +295,19 @@ namespace Pulse.CDM
     }
 
     // Environment Conditions
-    //public bool HasInitialEnvironmentalConditions()
-    //public SEInitialEnvironmentConditions GetInitialEnvironmentalConditions()
-    //public void RemoveInitialEnvironmentalConditions()
+    public bool HasInitialEnvironmentalConditions()
+    {
+      return initial_environmental_conditions == null ? false : initial_environmental_conditions.IsValid();
+    }
+    public SEInitialEnvironmentalConditions GetInitialEnvironmentalConditions()
+    {
+      if (initial_environmental_conditions == null)
+        initial_environmental_conditions = new SEInitialEnvironmentalConditions();
+      return initial_environmental_conditions;
+    }
+    public void RemoveInitialEnvironmentalConditions()
+    {
+      initial_environmental_conditions = null;
+    }
   }
 }
