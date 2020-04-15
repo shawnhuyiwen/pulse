@@ -21,7 +21,6 @@ public:
   virtual void Copy(const SESupplementalOxygen& src);
 
   virtual bool IsValid() const;
-  virtual bool IsActive() const;
 
   virtual eSupplementalOxygen_Device GetDevice() const;
   virtual void SetDevice(eSupplementalOxygen_Device name);

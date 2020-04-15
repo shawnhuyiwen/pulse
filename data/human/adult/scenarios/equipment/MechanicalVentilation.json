@@ -499,7 +499,11 @@
         }
       }
     }
-  }, {
+  }, 
+  
+  { "PatientAction": { "Intubation": { "Type": "Tracheal" } } },
+  
+  {
     "PatientAction": {
       "MechanicalVentilation": {
         "State": "On",

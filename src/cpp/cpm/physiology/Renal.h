@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "controller/System.h"
+#include "PulsePhysiologySystems.h"
 #include "system/physiology/SERenalSystem.h"
 class SEPatient;
 class SESubstance;
@@ -17,14 +17,14 @@ class SEUrinalysis;
 /**
  * @brief @copydoc Physiology_RenalSystemData
  */  
-class PULSE_DECL Renal : public SERenalSystem, public PulseRenalSystem, public PulseSystem
+class PULSE_DECL Renal : public PulseRenalSystem
 {
+  friend class PulseData;
   friend class PBPulsePhysiology;//friend the serialization class
-  friend class PulseController;
   friend class PulseEngineTest;
 protected:
-  Renal(PulseController& data);
-  PulseController& m_data;
+  Renal(PulseData& data);
+  PulseData& m_data;
 
   double m_dt;
   
@@ -33,7 +33,6 @@ public:
 
   void Clear();
 
-protected:
   // Set members to a stable homeostatic state
   void Initialize();
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
@@ -41,11 +40,14 @@ protected:
 
   void AtSteadyState();
   void PreProcess();
-  void Process();
-  void PostProcess();
+  void Process(bool solve_and_transport=true);
+  void PostProcess(bool solve_and_transport=true);
 
   // Assessments
   bool CalculateUrinalysis(SEUrinalysis& u) const;
+
+protected:
+  void ComputeExposedModelParameters() override;
 
   struct ActiveTransport
   {

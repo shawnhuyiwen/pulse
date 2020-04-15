@@ -23,6 +23,39 @@ public class MassPerVolumeUnit
   public static MassPerVolumeUnit kg_Per_mL = new MassPerVolumeUnit("kg/mL");
   public static MassPerVolumeUnit kg_Per_L = new MassPerVolumeUnit("kg/L");
 
+  public static MassPerVolumeUnit FromString(string u)
+  {
+    if (u == MassPerVolumeUnit.g_Per_dL.ToString())
+      return MassPerVolumeUnit.g_Per_dL;
+    if (u == MassPerVolumeUnit.g_Per_cm3.ToString())
+      return MassPerVolumeUnit.g_Per_cm3;
+    if (u == MassPerVolumeUnit.g_Per_m3.ToString())
+      return MassPerVolumeUnit.g_Per_m3;
+    if (u == MassPerVolumeUnit.ug_Per_mL.ToString())
+      return MassPerVolumeUnit.ug_Per_mL;
+    if (u == MassPerVolumeUnit.mg_Per_m3.ToString())
+      return MassPerVolumeUnit.mg_Per_m3;
+    if (u == MassPerVolumeUnit.kg_Per_m3.ToString())
+      return MassPerVolumeUnit.kg_Per_m3;
+    if (u == MassPerVolumeUnit.ug_Per_L.ToString())
+      return MassPerVolumeUnit.ug_Per_L;
+    if (u == MassPerVolumeUnit.g_Per_L.ToString())
+      return MassPerVolumeUnit.g_Per_L;
+    if (u == MassPerVolumeUnit.g_Per_mL.ToString())
+      return MassPerVolumeUnit.g_Per_mL;
+    if (u == MassPerVolumeUnit.mg_Per_mL.ToString())
+      return MassPerVolumeUnit.mg_Per_mL;
+    if (u == MassPerVolumeUnit.mg_Per_L.ToString())
+      return MassPerVolumeUnit.mg_Per_L;
+    if (u == MassPerVolumeUnit.mg_Per_dL.ToString())
+      return MassPerVolumeUnit.mg_Per_dL;
+    if (u == MassPerVolumeUnit.kg_Per_mL.ToString())
+      return MassPerVolumeUnit.kg_Per_mL;
+    if (u == MassPerVolumeUnit.kg_Per_L.ToString())
+      return MassPerVolumeUnit.kg_Per_L;
+
+    throw new System.ArgumentException(u + " is not a know mass per volume unit");
+  }
 }
 
 public class SEScalarMassPerVolume : SEScalar

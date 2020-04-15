@@ -30,7 +30,7 @@ void SEAdvanceTime::ToString(std::ostream &str) const
 {  
   if(HasComment())
     str<<"\n\tComment : "<<m_Comment;
-  str << "Advance Time : " << m_Time;
+  str << "\n\tAdvance Time : " << m_Time;
 }
 
 bool SEAdvanceTime::HasTime() const

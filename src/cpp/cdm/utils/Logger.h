@@ -67,6 +67,7 @@ public:
   static void Deinitialize();
 
   void LogToConsole(bool b);
+  bool IsLoggingToConsole();
 
   void ResetLogFile(std::string const&  logFilename = Loggable::empty);
 

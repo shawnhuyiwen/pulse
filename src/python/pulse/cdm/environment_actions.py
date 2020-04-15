@@ -94,7 +94,7 @@ class SEChangeEnvironmentalConditions(SEEnvironmentAction):
             raise Exception("Provided argument must be a SEChangeEnvironmentalConditions")
         self.clear()
         self._environmental_conditions_file = src._environmental_conditions_file
-        self._environmental_conditions = src._environmental_conditions
+        self._environmental_conditions.copy(src._environmental_conditions)
 
     def is_valid(self):
         return self.has_environmental_conditions() or self.has_environmental_conditions_file()

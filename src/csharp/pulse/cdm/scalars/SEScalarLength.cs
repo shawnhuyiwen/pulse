@@ -14,6 +14,24 @@ public class LengthUnit
   public static LengthUnit um = new LengthUnit("um");
   public static LengthUnit inch = new LengthUnit("in");
   public static LengthUnit ft = new LengthUnit("ft");
+
+  public static LengthUnit FromString(string u)
+  {
+    if (u == LengthUnit.m.ToString())
+      return LengthUnit.m;
+    if (u == LengthUnit.cm.ToString())
+      return LengthUnit.cm;
+    if (u == LengthUnit.mm.ToString())
+      return LengthUnit.mm;
+    if (u == LengthUnit.um.ToString())
+      return LengthUnit.um;
+    if (u == LengthUnit.inch.ToString())
+      return LengthUnit.inch;
+    if (u == LengthUnit.ft.ToString())
+      return LengthUnit.ft;
+
+    throw new System.ArgumentException(u+" is not a know length unit");
+  }
 }
 
 public class SEScalarLength : SEScalar

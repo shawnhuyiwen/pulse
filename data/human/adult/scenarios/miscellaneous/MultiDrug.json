@@ -791,8 +791,8 @@
       }
     }
   }, {
-    "InhalerAction": {
-      "Configuration": {
+    "EquipmentAction": {
+      "InhalerConfiguration": {
         "Configuration": {
           "Substance": "Albuterol",
           "MeteredDose": {

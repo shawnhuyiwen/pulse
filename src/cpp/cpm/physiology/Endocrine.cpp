@@ -23,7 +23,7 @@
 #include "properties/SEScalar0To1.h"
 #include "utils/GeneralMath.h"
 
-Endocrine::Endocrine(PulseController& data) : SEEndocrineSystem(data.GetLogger()), m_data(data)
+Endocrine::Endocrine(PulseData& data) : PulseEndocrineSystem(data.GetLogger()), m_data(data)
 {
   Clear();
 }
@@ -80,10 +80,15 @@ void Endocrine::AtSteadyState()
 /// nervous system response. The masses of the hormones are increased in the kidneys' efferent arterioles. 
 /// The hormones will then circulate using the transport and substances methodology.
 //--------------------------------------------------------------------------------------------------
-void Endocrine::Process()
+void Endocrine::Process(bool solve_and_transport)
 {
   ReleaseEpinephrine();
   SynthesizeInsulin();
+  ComputeExposedModelParameters();
+}
+void Endocrine::ComputeExposedModelParameters()
+{
+
 }
 
 //--------------------------------------------------------------------------------------------------

@@ -300,7 +300,7 @@ namespace Pulse.CDM
       }
       return false;
     }
-    public List<SESubstanceFraction> GetAmbientGas()
+    public List<SESubstanceFraction> GetAmbientGases()
     {
       return ambient_gases;
     }
@@ -314,6 +314,10 @@ namespace Pulse.CDM
           return;
         }
       }
+    }
+    public void RemoveAmbientGases()
+    {
+      ambient_gases.Clear();
     }
 
     public SESubstanceConcentration CreateAmbientAerosol(string substance)
@@ -348,7 +352,7 @@ namespace Pulse.CDM
       }
       return false;
     }
-    public List<SESubstanceConcentration> GetAmbientAerosol()
+    public List<SESubstanceConcentration> GetAmbientAerosols()
     {
       return ambient_aerosols;
     }
@@ -362,6 +366,10 @@ namespace Pulse.CDM
           return;
         }
       }
+    }
+    public void RemoveAmbientAerosols()
+    {
+      ambient_aerosols.Clear();
     }
 
     public new string ToString()

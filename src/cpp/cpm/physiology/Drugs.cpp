@@ -53,7 +53,7 @@
 #include "properties/SEScalarVolumePerTimePressure.h"
 #include "properties/SEScalarNegative1To1.h"
 
-Drugs::Drugs(PulseController& data) : SEDrugSystem(data.GetLogger()), m_data(data)
+Drugs::Drugs(PulseData& data) : PulseDrugSystem(data.GetLogger()), m_data(data)
 {
   Clear();
 }
@@ -151,7 +151,7 @@ void Drugs::PreProcess()
 /// The drug effects categories and system level drug effects are calculated and the values are set on the common data
 /// model for use in other systems. Drug effects are only calculated if the PD is enabled.
 //--------------------------------------------------------------------------------------------------
-void Drugs::Process()
+void Drugs::Process(bool solve_and_transport)
 {  
   CalculatePartitionCoefficients();
 
@@ -160,7 +160,12 @@ void Drugs::Process()
   CalculatePlasmaSubstanceConcentration();
 
   if (m_data.GetConfiguration().IsPDEnabled())  
-    CalculateDrugEffects();  
+    CalculateDrugEffects();
+  ComputeExposedModelParameters();
+}
+void Drugs::ComputeExposedModelParameters()
+{
+
 }
 
 //--------------------------------------------------------------------------------------------------

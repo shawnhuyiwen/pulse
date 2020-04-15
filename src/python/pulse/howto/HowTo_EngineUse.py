@@ -4,9 +4,8 @@
 from enum import Enum
 from pulse.cdm.engine import eSerializationFormat, SEDataRequestManager, SEDataRequest
 from pulse.cdm.patient import eSex, SEPatient, SEPatientConfiguration
-from pulse.cdm.patient_actions import eHemorrhageType
 from pulse.cdm.patient_actions import SEExercise, SEHemorrhage
-from pulse.engine.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
 from pulse.cdm.scalars import FrequencyUnit, LengthUnit, MassUnit, \
                               MassPerVolumeUnit, PressureUnit, TemperatureUnit, \
                               TimeUnit, VolumePerTimeUnit
@@ -122,6 +121,17 @@ def HowTo_UseEngine():
     # Advance some time and print out the vitals
     pulse.advance_time_s(30)
     results = pulse.pull_data()
+    data_req_mgr.to_console(results)
+    # Perform an action
+
+    exercise.set_comment("Stop star jumps")
+    exercise.get_intensity().set_value(0)
+    pulse.process_action(exercise)
+    # Advance some time and print out the vitals
+    # advance_time_r allows sampling rate change
+    #  Will advance time by total in first argument
+    #  and samples every second argument seconds
+    results = pulse.advance_time_r(45, 5)
     data_req_mgr.to_console(results)
 
 HowTo_UseEngine()

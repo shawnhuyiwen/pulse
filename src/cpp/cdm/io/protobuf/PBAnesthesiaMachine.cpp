@@ -8,9 +8,9 @@ POP_PROTO_WARNINGS()
 #include "io/protobuf/PBAnesthesiaMachine.h"
 #include "io/protobuf/PBProperties.h"
 #include "io/protobuf/PBUtils.h"
-#include "system/equipment/anesthesiamachine/SEAnesthesiaMachine.h"
-#include "system/equipment/anesthesiamachine/SEAnesthesiaMachineChamber.h"
-#include "system/equipment/anesthesiamachine/SEAnesthesiaMachineOxygenBottle.h"
+#include "system/equipment/anesthesia_machine/SEAnesthesiaMachine.h"
+#include "system/equipment/anesthesia_machine/SEAnesthesiaMachineChamber.h"
+#include "system/equipment/anesthesia_machine/SEAnesthesiaMachineOxygenBottle.h"
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceManager.h"
 #include "properties/SEScalarTime.h"
@@ -19,11 +19,11 @@ POP_PROTO_WARNINGS()
 
 void PBAnesthesiaMachine::Load(const CDM_BIND::AnesthesiaMachineData& src, SEAnesthesiaMachine& dst)
 {
+  dst.Clear();
   PBAnesthesiaMachine::Serialize(src, dst);
 }
 void PBAnesthesiaMachine::Serialize(const CDM_BIND::AnesthesiaMachineData& src, SEAnesthesiaMachine& dst)
 {
-  dst.Clear();
   dst.SetConnection((eAnesthesiaMachine_Connection)src.connection());
   if (src.has_inletflow())
     PBProperty::Load(src.inletflow(), dst.GetInletFlow());
@@ -33,6 +33,8 @@ void PBAnesthesiaMachine::Serialize(const CDM_BIND::AnesthesiaMachineData& src, 
     PBProperty::Load(src.oxygenfraction(), dst.GetOxygenFraction());
 
   dst.SetOxygenSource((eAnesthesiaMachine_OxygenSource)src.oxygensource());
+  if (src.has_peakinspiratorypressure())
+    PBProperty::Load(src.peakinspiratorypressure(), dst.GetPeakInspiratoryPressure());
   if (src.has_positiveendexpiredpressure())
     PBProperty::Load(src.positiveendexpiredpressure(), dst.GetPositiveEndExpiredPressure());
   dst.SetPrimaryGas((eAnesthesiaMachine_PrimaryGas)src.primarygas());
@@ -41,8 +43,6 @@ void PBAnesthesiaMachine::Serialize(const CDM_BIND::AnesthesiaMachineData& src, 
     PBProperty::Load(src.respiratoryrate(), dst.GetRespiratoryRate());
   if (src.has_reliefvalvepressure())
     PBProperty::Load(src.reliefvalvepressure(), dst.GetReliefValvePressure());
-  if (src.has_ventilatorpressure())
-    PBProperty::Load(src.ventilatorpressure(), dst.GetVentilatorPressure());
   if (src.has_leftchamber())
     PBAnesthesiaMachine::Load(src.leftchamber(), dst.GetLeftChamber());
   if (src.has_rightchamber())
@@ -72,6 +72,8 @@ void PBAnesthesiaMachine::Serialize(const SEAnesthesiaMachine& src, CDM_BIND::An
     dst.set_allocated_oxygenfraction(PBProperty::Unload(*src.m_OxygenFraction));
 
   dst.set_oxygensource((CDM_BIND::AnesthesiaMachineData::eOxygenSource)src.m_OxygenSource);
+  if (src.HasPeakInspiratoryPressure())
+    dst.set_allocated_peakinspiratorypressure(PBProperty::Unload(*src.m_PeakInspiratoryPressure));
   if (src.HasPositiveEndExpiredPressure())
     dst.set_allocated_positiveendexpiredpressure(PBProperty::Unload(*src.m_PositiveEndExpiredPressure));
   dst.set_primarygas((CDM_BIND::AnesthesiaMachineData::ePrimaryGas)src.m_PrimaryGas);
@@ -80,8 +82,6 @@ void PBAnesthesiaMachine::Serialize(const SEAnesthesiaMachine& src, CDM_BIND::An
     dst.set_allocated_respiratoryrate(PBProperty::Unload(*src.m_RespiratoryRate));
   if (src.HasReliefValvePressure())
     dst.set_allocated_reliefvalvepressure(PBProperty::Unload(*src.m_ReliefValvePressure));
-  if (src.HasVentilatorPressure())
-    dst.set_allocated_ventilatorpressure(PBProperty::Unload(*src.m_VentilatorPressure));
   if (src.HasLeftChamber())
     dst.set_allocated_leftchamber(PBAnesthesiaMachine::Unload(*src.m_LeftChamber));
   if (src.HasRightChamber())
@@ -94,11 +94,11 @@ void PBAnesthesiaMachine::Serialize(const SEAnesthesiaMachine& src, CDM_BIND::An
 
 void PBAnesthesiaMachine::Load(const CDM_BIND::AnesthesiaMachineChamberData& src, SEAnesthesiaMachineChamber& dst)
 {
+  dst.Clear();
   PBAnesthesiaMachine::Serialize(src, dst);
 }
 void PBAnesthesiaMachine::Serialize(const CDM_BIND::AnesthesiaMachineChamberData& src, SEAnesthesiaMachineChamber& dst)
 {
-  dst.Clear();
   if (src.state() != CDM_BIND::eSwitch::NullSwitch)
     dst.SetState((eSwitch)src.state());
   if (src.has_substancefraction())
@@ -131,11 +131,11 @@ void PBAnesthesiaMachine::Serialize(const SEAnesthesiaMachineChamber& src, CDM_B
 
 void PBAnesthesiaMachine::Load(const CDM_BIND::AnesthesiaMachineOxygenBottleData& src, SEAnesthesiaMachineOxygenBottle& dst)
 {
+  dst.Clear();
   PBAnesthesiaMachine::Serialize(src, dst);
 }
 void PBAnesthesiaMachine::Serialize(const CDM_BIND::AnesthesiaMachineOxygenBottleData& src, SEAnesthesiaMachineOxygenBottle& dst)
 {
-  dst.Clear();
   if (src.has_volume())
     PBProperty::Load(src.volume(), dst.GetVolume());
 }

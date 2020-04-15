@@ -30,7 +30,6 @@ POP_PROTO_WARNINGS()
 
 void PBCompartment::Serialize(const CDM_BIND::CompartmentData& src, SECompartment& dst)
 {
-  dst.Clear();
   // Name is set in ctor
 }
 void PBCompartment::Serialize(const SECompartment& src, CDM_BIND::CompartmentData& dst)
@@ -40,7 +39,6 @@ void PBCompartment::Serialize(const SECompartment& src, CDM_BIND::CompartmentDat
 
 void PBCompartment::Serialize(const CDM_BIND::CompartmentLinkData& src, SECompartmentLink& dst)
 {
-  dst.Clear();
   if (!src.name().empty())
     dst.m_Name = src.name();
 }
@@ -54,6 +52,7 @@ bool PBCompartment::LoadCompartmentManagerFile(SECompartmentManager& mgr, const 
   CDM_BIND::CompartmentManagerData src;
   std::ifstream file_stream(filename, std::ios::in);
   std::string fmsg((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
+  file_stream.close();
   if (!PBUtils::SerializeFromString(fmsg, src, JSON, mgr.GetLogger()))
     return false;
   PBCompartment::Load(src, mgr, circuits);
@@ -62,6 +61,7 @@ bool PBCompartment::LoadCompartmentManagerFile(SECompartmentManager& mgr, const 
   // If its a binary string in the file...
   //std::ifstream binary_istream(filename, std::ios::in | std::ios::binary);
   //src.ParseFromIstream(&binary_istream);
+  // binary_istream.close();
 }
 
 void PBCompartment::SaveCompartmentManagerFile(const SECompartmentManager& mgr, const std::string& filename)
@@ -78,13 +78,12 @@ void PBCompartment::SaveCompartmentManagerFile(const SECompartmentManager& mgr, 
 
 void PBCompartment::Load(const CDM_BIND::CompartmentManagerData& src, SECompartmentManager& dst, SECircuitManager* circuits)
 {
+  dst.Clear();
   PBCompartment::Serialize(src, dst, circuits);
   dst.StateChange();
 }
 void PBCompartment::Serialize(const CDM_BIND::CompartmentManagerData& src, SECompartmentManager& dst, SECircuitManager* circuits)
 {
-  dst.Clear();
-
   for (int i = 0; i < src.gascompartment_size(); i++)
   {
     auto& cData = src.gascompartment(i);
@@ -385,6 +384,7 @@ void PBCompartment::Serialize(const SEFluidCompartmentLink<FLUID_COMPARTMENT_LIN
 
 void PBCompartment::Load(const CDM_BIND::GasCompartmentData& src, SEGasCompartment& dst, SESubstanceManager& subMgr, SECircuitManager* circuits)
 {
+  dst.Clear();
   PBCompartment::Serialize(src, dst, subMgr, circuits);
 }
 void PBCompartment::Serialize(const CDM_BIND::GasCompartmentData& src, SEGasCompartment& dst, SESubstanceManager& subMgr, SECircuitManager* circuits)
@@ -423,6 +423,7 @@ void PBCompartment::Serialize(const SEGasCompartment& src, CDM_BIND::GasCompartm
 
 void PBCompartment::Load(const CDM_BIND::GasCompartmentGraphData& src, SEGasCompartmentGraph& dst, SECompartmentManager& cmptMgr)
 {
+  dst.Clear();
   PBCompartment::Serialize(src, dst, cmptMgr);
 }
 void PBCompartment::Serialize(const CDM_BIND::GasCompartmentGraphData& src, SEGasCompartmentGraph& dst, SECompartmentManager& cmptMgr)
@@ -469,6 +470,7 @@ void PBCompartment::Serialize(const SEGasCompartmentGraph& src, CDM_BIND::GasCom
 
 void PBCompartment::Load(const CDM_BIND::GasCompartmentLinkData& src, SEGasCompartmentLink& dst, SECircuitManager* circuits)
 {
+  dst.Clear();
   PBCompartment::Serialize(src, dst, circuits);
 }
 void PBCompartment::Serialize(const CDM_BIND::GasCompartmentLinkData& src, SEGasCompartmentLink& dst, SECircuitManager* circuits)
@@ -490,6 +492,7 @@ void PBCompartment::Serialize(const SEGasCompartmentLink& src, CDM_BIND::GasComp
 
 void PBCompartment::Load(const CDM_BIND::LiquidCompartmentData& src, SELiquidCompartment& dst, SESubstanceManager& subMgr, SECircuitManager* circuits)
 {
+  dst.Clear();
   PBCompartment::Serialize(src, dst, subMgr, circuits);
 }
 void PBCompartment::Serialize(const CDM_BIND::LiquidCompartmentData& src, SELiquidCompartment& dst, SESubstanceManager& subMgr, SECircuitManager* circuits)
@@ -537,6 +540,7 @@ void PBCompartment::Serialize(const SELiquidCompartment& src, CDM_BIND::LiquidCo
 
 void PBCompartment::Load(const CDM_BIND::LiquidCompartmentGraphData& src, SELiquidCompartmentGraph& dst, SECompartmentManager& cmptMgr)
 {
+  dst.Clear();
   PBCompartment::Serialize(src, dst, cmptMgr);
 }
 void PBCompartment::Serialize(const CDM_BIND::LiquidCompartmentGraphData& src, SELiquidCompartmentGraph& dst, SECompartmentManager& cmptMgr)
@@ -583,6 +587,7 @@ void PBCompartment::Serialize(const SELiquidCompartmentGraph& src, CDM_BIND::Liq
 
 void PBCompartment::Load(const CDM_BIND::LiquidCompartmentLinkData& src, SELiquidCompartmentLink& dst, SECircuitManager* circuits)
 {
+  dst.Clear();
   PBCompartment::Serialize(src, dst, circuits);
 }
 void PBCompartment::Serialize(const CDM_BIND::LiquidCompartmentLinkData& src, SELiquidCompartmentLink& dst, SECircuitManager* circuits)
@@ -608,6 +613,7 @@ void PBCompartment::Serialize(const SELiquidCompartmentLink& src, CDM_BIND::Liqu
 
 void PBCompartment::Load(const CDM_BIND::ThermalCompartmentData& src, SEThermalCompartment& dst, SECircuitManager* circuits)
 {
+  dst.Clear();
   PBCompartment::Serialize(src, dst, circuits);
 }
 void PBCompartment::Serialize(const CDM_BIND::ThermalCompartmentData& src, SEThermalCompartment& dst, SECircuitManager* circuits)
@@ -676,6 +682,7 @@ void PBCompartment::Serialize(const SEThermalCompartment& src, CDM_BIND::Thermal
 
 void PBCompartment::Load(const CDM_BIND::ThermalCompartmentLinkData& src, SEThermalCompartmentLink& dst, SECircuitManager* circuits)
 {
+  dst.Clear();
   PBCompartment::Serialize(src, dst, circuits);
 }
 void PBCompartment::Serialize(const CDM_BIND::ThermalCompartmentLinkData& src, SEThermalCompartmentLink& dst, SECircuitManager* circuits)
@@ -732,6 +739,7 @@ void PBCompartment::Serialize(const SEThermalCompartmentLink& src, CDM_BIND::The
 
 void PBCompartment::Load(const CDM_BIND::TissueCompartmentData& src, SETissueCompartment& dst)
 {
+  dst.Clear();
   PBCompartment::Serialize(src, dst);
 }
 void PBCompartment::Serialize(const CDM_BIND::TissueCompartmentData& src, SETissueCompartment& dst)

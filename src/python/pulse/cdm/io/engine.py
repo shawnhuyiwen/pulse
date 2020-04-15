@@ -1,22 +1,20 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-from pulse.cdm.engine import eSerializationFormat
-from google.protobuf import json_format
-
-from pulse.cdm.engine import SEDataRequestManager, SEDataRequest, SEConditionManager
+from pulse.cdm.engine import SEDataRequestManager, SEDataRequest, SEConditionManager, SEScalarOverride
 from pulse.cdm.bind.Engine_pb2 import ActionListData, AnyActionData, \
                                       AnyConditionData, ConditionListData, \
                                       PatientConfigurationData, \
                                       DataRequestData, DataRequestManagerData
 
 from pulse.cdm.patient import SEPatientConfiguration
+from pulse.cdm.equipment_actions import SEEquipmentAction
 
 from pulse.cdm.io.patient import *
 from pulse.cdm.io.patient_actions import *
-from pulse.cdm.io.patient_conditions import *
 from pulse.cdm.io.environment_actions import *
 from pulse.cdm.io.environment_conditions import *
+from pulse.cdm.io.mechanical_ventilator_actions import *
 
 def serialize_condition_manager_to_string(condition_manager: SEConditionManager, fmt: eSerializationFormat):
     dst = ConditionListData()
@@ -32,8 +30,6 @@ def serialize_condition_manager_to_bind(condition_manager: SEConditionManager, d
                                                             any_condition.EnvironmentCondition.InitialEnvironmentalConditions)
         dst.AnyCondition.append(any_condition)
 
-
-
 def serialize_actions_to_string(actions: [], fmt: eSerializationFormat):
     action_list = ActionListData()
     for action in actions:
@@ -43,14 +39,6 @@ def serialize_actions_to_string(actions: [], fmt: eSerializationFormat):
         print(action)
         any_action = AnyActionData()
         if isinstance(action, SEPatientAction):
-            if isinstance(action, SEExercise):
-                serialize_exercise_to_bind(action, any_action.PatientAction.Exercise)
-                action_list.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SEHemorrhage):
-                serialize_hemorrhage_to_bind(action, any_action.PatientAction.Hemorrhage)
-                action_list.AnyAction.append(any_action)
-                continue
             if isinstance(action, SEAsthmaAttack):
                 serialize_asthma_attack_to_bind(action, any_action.PatientAction.AsthmaAttack)
                 action_list.AnyAction.append(any_action)
@@ -71,12 +59,36 @@ def serialize_actions_to_string(actions: [], fmt: eSerializationFormat):
                 serialize_brain_injury_to_bind(action, any_action.PatientAction.BrainInjury)
                 action_list.AnyAction.append(any_action)
                 continue
-            if isinstance(action, SEBronchoConstriction):
-                serialize_broncho_constriction_to_bind(action, any_action.PatientAction.Bronchoconstriction)
+            if isinstance(action, SEBronchoconstriction):
+                serialize_bronchoconstriction_to_bind(action, any_action.PatientAction.Bronchoconstriction)
+                action_list.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SECardiacArrest):
+                serialize_cardiac_arrest_to_bind(action, any_action.PatientAction.CardiacArrest)
+                action_list.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SEChestOcclusiveDressing):
+                serialize_chest_occlusive_dressing_to_bind(action, any_action.PatientAction.ChestOcclusiveDressing)
+                action_list.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SEConsciousRespiration):
+                serialize_conscious_respiration_to_bind(action, any_action.PatientAction.ConsciousRespiration)
                 action_list.AnyAction.append(any_action)
                 continue
             if isinstance(action, SEDyspnea):
                 serialize_dsypnea_to_bind(action, any_action.PatientAction.Dyspnea)
+                action_list.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SEExercise):
+                serialize_exercise_to_bind(action, any_action.PatientAction.Exercise)
+                action_list.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SEHemorrhage):
+                serialize_hemorrhage_to_bind(action, any_action.PatientAction.Hemorrhage)
+                action_list.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SEImpairedAlveolarExchangeExacerbation):
+                serialize_impaired_alveolar_exchange_exacerbation_to_bind(action, any_action.PatientAction.ImpairedAlveolarExchangeExacerbation)
                 action_list.AnyAction.append(any_action)
                 continue
             if isinstance(action, SEIntubation):
@@ -87,12 +99,20 @@ def serialize_actions_to_string(actions: [], fmt: eSerializationFormat):
                 serialize_lobar_pneumonia_exacerbation_to_bind(action, any_action.PatientAction.LobarPneumoniaExacerbation)
                 action_list.AnyAction.append(any_action)
                 continue
+            if isinstance(action, SEMechanicalVentilation):
+                serialize_mechanical_ventilation_to_bind(action, any_action.PatientAction.MechanicalVentilation)
+                action_list.AnyAction.append(any_action)
+                continue
             if isinstance(action, SENeedleDecompression):
                 serialize_needle_decompression_to_bind(action, any_action.PatientAction.NeedleDecompression)
                 action_list.AnyAction.append(any_action)
                 continue
             if isinstance(action, SEPericardialEffusion):
                 serialize_pericardial_effusion_to_bind(action, any_action.PatientAction.PericardialEffusion)
+                action_list.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SEPulmonaryShuntExacerbation):
+                serialize_pulmonary_shunt_to_bind(action, any_action.PatientAction.PulmonaryShuntExacerbation)
                 action_list.AnyAction.append(any_action)
                 continue
             if isinstance(action, SERespiratoryFatigue):
@@ -128,6 +148,11 @@ def serialize_actions_to_string(actions: [], fmt: eSerializationFormat):
                 serialize_thermal_application_to_bind(action, any_action.EnvironmentAction.ThermalApplication)
                 action_list.AnyAction.append(any_action)
                 continue
+        if isinstance(action, SEEquipmentAction):
+            if isinstance(action, SEMechanicalVentilatorConfiguration):
+                serialize_mechanical_ventilator_configuration_to_bind(action, any_action.EquipmentAction.MechanicalVentilatorConfiguration)
+                action_list.AnyAction.append(any_action)
+                continue
     return json_format.MessageToJson(action_list,True,True)
 
 # Patient Configuration
@@ -159,6 +184,8 @@ def serialize_patient_configuration_to_bind(src: SEPatientConfiguration, dst: Pa
         dst.PatientFile = src.get_patient_file()
     if src.has_conditions():
         serialize_condition_manager_to_bind(src.get_conditions(), dst.Conditions)
+    for override in src.get_scalar_overrides():
+        serialize_scalar_property_to_bind(override, dst.ScalarOverride.add())
 
 def serialize_patient_configuration_from_bind(src: PatientConfigurationData, dst: SEPatientConfiguration):
     raise Exception("serialize_patient_configuration_from_bind not implemented")

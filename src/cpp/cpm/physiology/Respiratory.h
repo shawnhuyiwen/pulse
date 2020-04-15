@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "controller/System.h"
+#include "PulsePhysiologySystems.h"
 #include "system/physiology/SERespiratorySystem.h"
 #include "substance/SESubstanceTransport.h"
 class SEPatient;
@@ -29,22 +29,21 @@ class SEPulmonaryFunctionTest;
 * of gases in the lungs, and ensures the integration and flow of data between the
 * respiratory system and the anesthesia machine during mechanical ventilation.
 */
-class PULSE_DECL Respiratory : public SERespiratorySystem, public PulseRespiratorySystem, public PulseSystem
+class PULSE_DECL Respiratory : public PulseRespiratorySystem
 {
+  friend class PulseData;
   friend class PBPulsePhysiology;//friend the serialization class
-  friend class PulseController;
   friend class PulseEngineTest;
 protected:
 
-  Respiratory(PulseController& data);
-  PulseController& m_data;
+  Respiratory(PulseData& data);
+  PulseData& m_data;
 
 public:
   virtual ~Respiratory();
 
   void Clear();
 
-protected:
   // Set members to a stable homeostatic state
   void Initialize();
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
@@ -52,10 +51,12 @@ protected:
 
   void AtSteadyState();
   void PreProcess();
-  void Process();
-  void PostProcess();
-
+  void Process(bool solve_and_transport=true);
+  void PostProcess(bool solve_and_transport=true);
   bool CalculatePulmonaryFunctionTest(SEPulmonaryFunctionTest& pft) const;
+
+protected:
+  void ComputeExposedModelParameters() override;
 
   //Tuning
   void TuneCircuit();
@@ -70,6 +71,10 @@ protected:
   void UpdateInspiratoryExpiratoryRatio();
   void UpdateDiffusion();
   void UpdatePulmonaryCapillary();
+  void UpdatePulmonaryShunt();
+  //Overrides
+  void SetRespiratoryResistance();
+  void SetRespiratoryCompliance();
 
   //Actions
   void Pneumothorax();
@@ -142,6 +147,10 @@ protected:
   //Conscious Respiration
   bool m_ActiveConsciousRespirationCommand;
 
+  //Overrides
+  double m_RespiratoryResistanceOverride_cmH2O_s_Per_L;
+  double m_RespiratoryComplianceOverride_L_Per_cmH2O;
+
   // Stateless member variable (Set in SetUp())
   double m_dt_s;
   double m_dt_min;
@@ -185,8 +194,8 @@ protected:
   SEGasSubstanceQuantity* m_LeftAlveoliO2;
   SEGasSubstanceQuantity* m_RightAlveoliO2;
   std::vector<SELiquidCompartment*> m_AerosolEffects;
-  SEGasCompartment* m_MechanicalVentilatorConnection;
-  SELiquidCompartment* m_MechanicalVentilatorAerosolConnection;
+  SEGasCompartment* m_MechanicalVentilationConnection;
+  SELiquidCompartment* m_MechanicalVentilationAerosolConnection;
   SEGasCompartment* m_PleuralCavity;
   //Circuits
   SEFluidCircuit* m_RespiratoryCircuit;
@@ -225,6 +234,8 @@ protected:
   SEFluidCircuitPath* m_RightAlveoliToRightPleuralConnection;
   SEFluidCircuitPath* m_LeftPulmonaryCapillary;
   SEFluidCircuitPath* m_RightPulmonaryCapillary;
+  SEFluidCircuitPath* m_LeftPulmonaryArteriesToVeins;
+  SEFluidCircuitPath* m_RightPulmonaryArteriesToVeins;
   SEFluidCircuitPath* m_ConnectionToMouth;
   SEFluidCircuitPath* m_GroundToConnection;
 

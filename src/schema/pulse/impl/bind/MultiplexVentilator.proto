@@ -1,0 +1,71 @@
+syntax = "proto3";
+package pulse.multiplex_ventilator.bind;
+option java_package = "pulse.multiplex_ventilator.bind";
+option csharp_namespace = "pulse.multiplex_ventilator.bind";
+option optimize_for = SPEED;
+
+message PatientStateData
+{
+  string          StateFile                                 = 1;
+  // Initial Conditions
+  double          Compliance_L_Per_cmH2O                    = 2;
+  double          ImpairmentFraction                        = 3;
+  // Ventilator Settings
+  double          RespirationRate_Per_min                   = 4;
+  double          IERatio                                   = 5;
+  double          PEEP_cmH2O                                = 6;
+  double          PIP_cmH2O                                 = 7;
+  double          FiO2                                      = 8;
+  // Vitals
+  double          OxygenSaturation                          = 9;
+  double          TidalVolume_L                             = 10;
+  double          EndTidalCarbonDioxidePressure_cmH2O       = 11;
+  double          ArterialOxygenPartialPressure_mmHg        = 12;
+  double          ArterialCarbonDioxidePartialPressure_mmHg = 13;
+  double          CarricoIndex_mmHg                         = 14;
+  // Stabilization Information
+  bool            AchievedStabilization                     = 15;
+  double          StabilizationTime_s                       = 16;
+  double          OxygenSaturationStabilizationTrend        = 17;
+}
+
+message PatientStateListData
+{
+  repeated PatientStateData      Patients                = 1;
+}
+
+message PatientComparisonData
+{
+  PatientStateData               SoloVentilation         = 1;
+  PatientStateData               MultiplexVentilation    = 2;
+}
+
+message LogData
+{
+  repeated string                Info                    = 1;
+  repeated string                Warning                 = 2;
+  repeated string                Error                   = 3;
+  repeated string                Fatal                   = 4;
+}
+
+message SimulationData
+{
+  // A filename without an extension (can/should have path also)
+  // The engine will use this to create multiple output files (*.log and *.csv)
+  uint32                         ID                      = 1;
+  uint32                         GroupID                 = 2;
+  string                         OutputBaseFilename      = 3;
+  double                         RespirationRate_Per_min = 4;
+  double                         IERatio                 = 5;
+  double                         PIP_cmH2O               = 6;
+  double                         PEEP_cmH2O              = 7;
+  double                         FiO2                    = 8;
+  LogData                        Log                     = 9;
+  repeated PatientComparisonData PatientComparisons      = 10;
+}
+
+message SimulationListData
+{
+  string                         OutputRootDir           = 1;
+  repeated SimulationData        Simulations             = 2;
+}

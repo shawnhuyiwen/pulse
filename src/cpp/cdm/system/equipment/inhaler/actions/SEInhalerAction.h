@@ -1,12 +1,12 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 #pragma once
-#include "engine/SEAction.h"
+#include "system/equipment/SEEquipmentAction.h"
 class SESubstanceManager;
 
-class CDM_DECL SEInhalerAction : public SEAction
+class CDM_DECL SEInhalerAction : public SEEquipmentAction
 {
-  friend class PBInhalerAction;//friend the serialization class
+  friend class PBEquipmentAction;//friend the serialization class
 public:
 
   SEInhalerAction();

@@ -105,9 +105,6 @@ namespace Pulse.CDM
         }
         #endregion
 
-
-        // Add SEScalarHeatConductancePerArea for Environment Module
-
         #region SEScalarHeatConductancePerArea
         public static void Load(pulse.cdm.bind.ScalarHeatConductancePerAreaData src, SEScalarHeatConductancePerArea dst)
         {
@@ -133,9 +130,6 @@ namespace Pulse.CDM
         }
         #endregion
 
-
-        // Add SEScalarHeatResistanceArea for Environment Module
-
         #region SEScalarHeatResistanceArea
         public static void Load(pulse.cdm.bind.ScalarHeatResistanceAreaData src, SEScalarHeatResistanceArea dst)
         {
@@ -159,7 +153,6 @@ namespace Pulse.CDM
             dst.ScalarHeatResistanceArea.Unit = src.GetUnit().ToString();
         }
         #endregion
-
 
         #region SEScalarInversePressure
         public static void Load(pulse.cdm.bind.ScalarInversePressureData src, SEScalarInversePressure dst)
@@ -186,7 +179,6 @@ namespace Pulse.CDM
         }
         #endregion
 
-
         #region SEScalarLength
         public static void Load(pulse.cdm.bind.ScalarLengthData src, SEScalarLength dst)
         {
@@ -212,9 +204,6 @@ namespace Pulse.CDM
         }
         #endregion
 
-
-        // Add SEScalarLengthPerTime for Environment Module
-
         #region SEScalarLengthPerTime
         public static void Load(pulse.cdm.bind.ScalarLengthPerTimeData src, SEScalarLengthPerTime dst)
         {
@@ -238,7 +227,6 @@ namespace Pulse.CDM
             dst.ScalarLengthPerTime.Unit = src.GetUnit().ToString();
         }
         #endregion
-
 
         #region SEScalarMass
         public static void Load(pulse.cdm.bind.ScalarMassData src, SEScalarMass dst)
@@ -414,9 +402,6 @@ namespace Pulse.CDM
         }
         #endregion
 
-
-        // Add SEScalarTemperature for Environment Module
-
         #region SEScalarTemperature
         public static void Load(pulse.cdm.bind.ScalarTemperatureData src, SEScalarTemperature dst)
         {
@@ -440,7 +425,6 @@ namespace Pulse.CDM
             dst.ScalarTemperature.Unit = src.GetUnit().ToString();
         }
         #endregion
-
 
         #region SEScalarPower
         public static void Load(pulse.cdm.bind.ScalarPowerData src, SEScalarPower dst)

@@ -28,7 +28,7 @@ namespace Pulse.CDM
     public static pulse.cdm.bind.AnyEnvironmentActionData Unload(SEEnvironmentAction action)
     {
       pulse.cdm.bind.AnyEnvironmentActionData any = new pulse.cdm.bind.AnyEnvironmentActionData();
-      if (action.GetType().IsAssignableFrom(typeof(SEEnvironmentalConditions)))
+      if (action.GetType().IsAssignableFrom(typeof(SEChangeEnvironmentalConditions)))
       {
         any.ChangeEnvironmentalConditions = Unload((SEChangeEnvironmentalConditions)action);
         return any;
@@ -53,6 +53,7 @@ namespace Pulse.CDM
     }
     public static void Serialize(SEEnvironmentAction src, pulse.cdm.bind.EnvironmentActionData dst)
     {
+      dst.Action = new pulse.cdm.bind.ActionData();
       PBAction.Serialize(src, dst.Action);
     }
 
@@ -82,6 +83,7 @@ namespace Pulse.CDM
     }
     static void Serialize(SEChangeEnvironmentalConditions src, pulse.cdm.bind.ChangeEnvironmentalConditionsData dst)
     {
+      dst.EnvironmentAction = new pulse.cdm.bind.EnvironmentActionData();
       Serialize(src, dst.EnvironmentAction);
       if (src.HasEnvironmentalConditionsFile())
         dst.EnvironmentalConditionsFile = src.GetEnvironmentalConditionsFile();
@@ -100,7 +102,7 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.ThermalApplicationData src, SEThermalApplication dst)
     {
-      PBEnvironmentAction.Serialize(src.EnvironmentAction, dst);
+      Serialize(src.EnvironmentAction, dst);
       if (src.ActiveHeating != null)
         PBEnvironment.Load(src.ActiveHeating, dst.GetActiveHeating());
       if (src.ActiveCooling != null)
@@ -117,7 +119,9 @@ namespace Pulse.CDM
     }
     public static void Serialize(SEThermalApplication src, pulse.cdm.bind.ThermalApplicationData dst)
     {
-      PBEnvironmentAction.Serialize(src, dst.EnvironmentAction);
+
+      dst.EnvironmentAction = new pulse.cdm.bind.EnvironmentActionData();
+      Serialize(src, dst.EnvironmentAction);
       dst.AppendToPrevious = !src.GetClearContents();
 
       if (src.HasActiveHeating())

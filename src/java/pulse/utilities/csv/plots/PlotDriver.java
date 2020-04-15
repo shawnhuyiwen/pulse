@@ -29,7 +29,8 @@ public class PlotDriver
   public static void main(String[] args) 
   {    
     jniBridge.initialize();
-    PlotDriver.subMgr = new SESubstanceManager();
+    if(PlotDriver.subMgr == null)
+      PlotDriver.subMgr = new SESubstanceManager();
     PlotDriver me = new PlotDriver();
     RunConfiguration cfg = new RunConfiguration();
     //invalid input
@@ -58,9 +59,16 @@ public class PlotDriver
       {// Plotting from two results files (compare-type plotting)
         me.expectedFilePath = args[0];
         me.computedFilePath = args[1];
-        me.preload = args[2].equalsIgnoreCase("true") ? true : false;
-        me.onlyPlotFailures = args[3].equalsIgnoreCase("true") ? true : false;
-        me.abbreviateContents = Integer.parseInt(args[4]);
+        // Default 
+        me.preload = true;
+        me.onlyPlotFailures = false;
+        me.abbreviateContents = 0;
+        if (args.length > 2)
+          me.preload = args[2].equalsIgnoreCase("true") ? true : false;
+        if (args.length > 3)
+          me.onlyPlotFailures = args[3].equalsIgnoreCase("true") ? true : false;
+        if (args.length > 4)
+          me.abbreviateContents = Integer.parseInt(args[4]);
 
         if(me.preload)
         {
@@ -113,7 +121,7 @@ public class PlotDriver
   public int abbreviateContents = 0;
   public boolean isScenario = false;
   
-  protected static SESubstanceManager subMgr;
+  protected static SESubstanceManager subMgr=null;
   
   public class PlotJob extends LogListener
   {

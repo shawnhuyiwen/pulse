@@ -32,7 +32,7 @@
 
 // #define VERBOSE
 
-Nervous::Nervous(PulseController& data) : SENervousSystem(data.GetLogger()), m_data(data)
+Nervous::Nervous(PulseData& data) : PulseNervousSystem(data.GetLogger()), m_data(data)
 {
   Clear();
 }
@@ -135,10 +135,15 @@ void Nervous::PreProcess()
 /// \details
 /// The only current Process-specific function checks the brain status to set events.
 //--------------------------------------------------------------------------------------------------
-void Nervous::Process()
+void Nervous::Process(bool solve_and_transport)
 {
   CheckBrainStatus();
   SetPupilEffects();
+  ComputeExposedModelParameters();
+}
+void Nervous::ComputeExposedModelParameters()
+{
+
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -148,7 +153,7 @@ void Nervous::Process()
 /// \details
 /// Currently no nervous postprocess methods.
 //--------------------------------------------------------------------------------------------------
-void Nervous::PostProcess()
+void Nervous::PostProcess(bool solve_and_transport)
 {
 
 }

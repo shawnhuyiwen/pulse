@@ -3,7 +3,7 @@
 
 from pulse.cdm.engine import eSerializationFormat
 from pulse.cdm.patient import SEPatientConfiguration
-from pulse.engine.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
 from pulse.cdm.environment_actions import SEChangeEnvironmentalConditions
 from pulse.cdm.scalars import LengthPerTimeUnit, TemperatureUnit, \
                               PressureUnit, HeatResistanceAreaUnit, \
@@ -11,12 +11,10 @@ from pulse.cdm.scalars import LengthPerTimeUnit, TemperatureUnit, \
 
 from pulse.cdm.io.environment import serialize_environmental_conditions_from_file
 
-def HowTo_InitializeEnvironment():
-    pulse = PulsePhysiologyEngine("pulse_EnvironmentalConditions.log")
+def HowTo_EnvironmentalConditions():
+    pulse = PulsePhysiologyEngine("pulse_Environment.log")
 
-    # Configure the engine with some files
-    # You can always get objects and fill them out manually if you want
-    # See the HowTo_ChangeEnvironment for an example of using the SEEnvionmentalConditions object
+    # Initialize the environment to a specific envirionment
     pc = SEPatientConfiguration()
     pc.set_patient_file("./patients/Soldier.json")
     env = pc.get_conditions().get_initial_environmental_conditions()
@@ -36,11 +34,6 @@ def HowTo_InitializeEnvironment():
         return
 
     # Get some data from the engine
-    results = pulse.pull_data()
-    print(results)
-
-    # Advance some time and print out the vitals
-    pulse.advance_time_s(30)
     results = pulse.pull_data()
     print(results)
 
@@ -72,4 +65,4 @@ def HowTo_InitializeEnvironment():
     print(results)
 
 
-HowTo_InitializeEnvironment()
+HowTo_EnvironmentalConditions()

@@ -139,6 +139,7 @@ namespace Pulse
     public bool ProcessActions(List<SEAction> actions)
     {
       string any_action_list_str = PBAction.SerializeToString(actions);
+      //System.Console.Out.Write(any_action_list_str);
       return ProcessActions(pulse_cptr, any_action_list_str, (int)thunk_as);
     }
 

@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "physiology/Hepatic.h"
 
-Hepatic::Hepatic(PulseController& data) : SEHepaticSystem(data.GetLogger()), m_data(data)
+Hepatic::Hepatic(PulseData& data) : PulseHepaticSystem(data.GetLogger()), m_data(data)
 {
   Clear();
 }
@@ -70,9 +70,13 @@ void Hepatic::PreProcess()
 ///
 /// \details
 //--------------------------------------------------------------------------------------------------
-void Hepatic::Process()
-{  
-  
+void Hepatic::Process(bool solve_and_transport)
+{
+  ComputeExposedModelParameters();
+}
+void Hepatic::ComputeExposedModelParameters()
+{
+
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -81,7 +85,7 @@ void Hepatic::Process()
 ///
 /// \details
 //--------------------------------------------------------------------------------------------------
-void Hepatic::PostProcess()
+void Hepatic::PostProcess(bool solve_and_transport)
 {
 
 }

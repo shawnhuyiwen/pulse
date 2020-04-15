@@ -8,7 +8,7 @@ class SESubstanceManager;
 
 class CDM_DECL SEInhalerConfiguration : public SEInhalerAction
 {
-  friend class PBInhalerAction;//friend the serialization class
+  friend class PBEquipmentAction;//friend the serialization class
 public:
 
   SEInhalerConfiguration(SESubstanceManager& substances);

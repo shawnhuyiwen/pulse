@@ -8,7 +8,7 @@
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarVolume.h"
-#include "io/protobuf/PBInhalerActions.h"
+#include "io/protobuf/PBEquipmentActions.h"
 
 SEInhalerConfiguration::SEInhalerConfiguration(SESubstanceManager& substances) : SEInhalerAction(), m_Substances(substances)
 {
@@ -30,7 +30,7 @@ void SEInhalerConfiguration::Clear()
 
 void SEInhalerConfiguration::Copy(const SEInhalerConfiguration& src)
 {// Using Bindings to make a copy
-  PBInhalerAction::Copy(src, *this);
+  PBEquipmentAction::Copy(src, *this);
 }
 
 bool SEInhalerConfiguration::IsValid() const

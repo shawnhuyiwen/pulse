@@ -3,12 +3,11 @@
 
 package pulse.cdm.system.equipment.inhaler.actions;
 
-import org.jfree.util.Log;
-
 import pulse.cdm.bind.InhalerActions.InhalerConfigurationData;
 
 import pulse.cdm.substance.SESubstanceManager;
 import pulse.cdm.system.equipment.inhaler.SEInhaler;
+import pulse.utilities.Log;
 
 public class SEInhalerConfiguration extends SEInhalerAction
 {

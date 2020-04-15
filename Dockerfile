@@ -2,6 +2,8 @@ FROM debian:buster
 
 ENV TERM linux
 
+
+
 RUN apt-get update \
  && apt-get -y install git wget build-essential cmake java-common python3-pip
 
@@ -25,6 +27,11 @@ RUN export JAVA_HOME=/usr/lib/jvm/java-1.8.0-amazon-corretto/ \
  && cd / \
  && rm -rf /build \
  && rm java-1.8.0-amazon-corretto-jdk_8.232.09-1_amd64.deb
+ 
+ARG covid
+RUN if [ "x$covid" = "x" ] ; then echo Argument not provided ; else echo Argument is $arg ; fi
+RUN cd /pulse/install/bin \
+ && ./MultiplexVentilationDriver genData
 
 ENV PYTHONPATH /source/src/python:/pulse/bin
 

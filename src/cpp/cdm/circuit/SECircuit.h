@@ -25,6 +25,7 @@ public:
 
   // Nodes //
   virtual void AddNode(NodeType& node);
+  virtual void ForceAddNode(NodeType& node);// No check for node with the same name
   virtual bool HasNode(NodeType& node);
   virtual bool HasNode(const std::string& name);
   virtual NodeType* GetNode(const std::string& name);
@@ -35,6 +36,7 @@ public:
 
   // Paths //
   virtual void AddPath(PathType& node);
+  virtual void ForceAddPath(PathType& node);// No check for path with the same name
   virtual bool HasPath(PathType& node);
   virtual bool HasPath(const std::string& name);
   virtual PathType* GetPath(const std::string& name);

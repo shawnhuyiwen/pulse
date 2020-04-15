@@ -13,3 +13,4 @@ std::string CDM_DECL GetCurrentWorkingDirectory();
 void CDM_DECL MakeDirectory(std::string const& dir);
 void CDM_DECL DeleteDirectory(const std::string &dir, bool bDeleteSubdirectories=true);
 bool CDM_DECL IsDirectory(struct dirent* ent);
+bool CDM_DECL FileExists(const std::string& filename);

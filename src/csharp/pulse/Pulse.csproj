@@ -33,7 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Google.Protobuf">
-      <HintPath>..\..\..\..\..\Builds\pulse-engine\protobuf\src\protobuf\csharp\src\Google.Protobuf\bin\Release\net45\Google.Protobuf.dll</HintPath>
+      <HintPath>..\..\..\..\..\Builds\pulse-engine\External\protobuf\src\csharp\src\Google.Protobuf\bin\Debug\net45\Google.Protobuf.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -58,9 +58,12 @@
     <Compile Include="bind\Environment.cs" />
     <Compile Include="bind\EnvironmentActions.cs" />
     <Compile Include="bind\EnvironmentConditions.cs" />
+    <Compile Include="bind\EquipmentActions.cs" />
     <Compile Include="bind\Events.cs" />
     <Compile Include="bind\Inhaler.cs" />
     <Compile Include="bind\InhalerActions.cs" />
+    <Compile Include="bind\MechanicalVentilator.cs" />
+    <Compile Include="bind\MechanicalVentilatorActions.cs" />
     <Compile Include="bind\Patient.cs" />
     <Compile Include="bind\PatientActions.cs" />
     <Compile Include="bind\PatientAssessments.cs" />
@@ -89,7 +92,7 @@
     <Compile Include="cdm\engine\SEPatientConfiguration.cs" />
     <Compile Include="cdm\io\PBActions.cs" />
     <Compile Include="cdm\io\PBAnesthesiaMachine.cs" />
-    <Compile Include="cdm\io\PBAnesthesiaMachineActions.cs" />
+    <Compile Include="cdm\io\PBEquipmentActions.cs" />
     <Compile Include="cdm\io\PBConditions.cs" />
     <Compile Include="cdm\io\PBDataRequest.cs" />
     <Compile Include="cdm\io\PBEnvironment.cs" />
@@ -97,6 +100,7 @@
     <Compile Include="cdm\io\PBEnvironmentConditions.cs" />
     <Compile Include="cdm\io\PBEvents.cs" />
     <Compile Include="cdm\io\PBLogMessages.cs" />
+    <Compile Include="cdm\io\PBMechanicalVentilator.cs" />
     <Compile Include="cdm\io\PBPatient.cs" />
     <Compile Include="cdm\io\PBPatientActions.cs" />
     <Compile Include="cdm\io\PBPatientConditions.cs" />
@@ -188,6 +192,12 @@
     <Compile Include="cdm\system\equipment\anesthesia_machine\SEAnesthesiaMachine.cs" />
     <Compile Include="cdm\system\equipment\anesthesia_machine\SEAnesthesiaMachineChamber.cs" />
     <Compile Include="cdm\system\equipment\anesthesia_machine\SEAnesthesiaMachineOxygenBottle.cs" />
+    <Compile Include="cdm\system\equipment\mechanical_ventilator\actions\SEMechanicalVentilatorAction.cs" />
+    <Compile Include="cdm\system\equipment\mechanical_ventilator\actions\SEMechanicalVentilatorConfiguration.cs" />
+    <Compile Include="cdm\system\equipment\mechanical_ventilator\SEMechanicalVentilator.cs" />
+    <Compile Include="cdm\system\equipment\SEEquipment.cs" />
+    <Compile Include="cdm\system\equipment\SEEquipmentAction.cs" />
+    <Compile Include="cdm\system\SESystem.cs" />
     <Compile Include="engine\PulseEngine.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

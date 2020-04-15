@@ -1,4 +1,4 @@
-set(SRC_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
+set(SRC_ROOT "${CMAKE_CURRENT_SOURCE_DIR}")
 
 add_subdirectory(schema)
 add_subdirectory(cpp)

@@ -3,15 +3,11 @@
 
 package pulse.cdm.system.equipment.inhaler.actions;
 
-import org.jfree.util.Log;
-
-import pulse.cdm.bind.InhalerActions.AnyInhalerActionData;
 import pulse.cdm.bind.InhalerActions.InhalerActionData;
 
-import pulse.cdm.actions.SEAction;
-import pulse.cdm.substance.SESubstanceManager;
+import pulse.cdm.system.equipment.SEEquipmentAction;
 
-public abstract class SEInhalerAction extends SEAction
+public abstract class SEInhalerAction extends SEEquipmentAction
 {
   public SEInhalerAction()
   {
@@ -32,41 +28,11 @@ public abstract class SEInhalerAction extends SEAction
   
   public static void load(InhalerActionData src, SEInhalerAction dst) 
   {
-    SEAction.load(src.getAction(), dst);
+    SEEquipmentAction.load(src.getEquipmentAction(), dst);
   }
   protected static void unload(SEInhalerAction src, InhalerActionData.Builder dst)
   {
-    SEAction.unload(src, dst.getActionBuilder());
-  }
-  
-  public static SEInhalerAction ANY2CDM(AnyInhalerActionData c, SESubstanceManager subMgr) 
-  {
-    switch(c.getActionCase())
-    {
-    case CONFIGURATION:
-    {
-      SEInhalerConfiguration dst = new SEInhalerConfiguration();
-      SEInhalerConfiguration.load(c.getConfiguration(), dst, subMgr);
-      return dst;
-    }
-    case ACTION_NOT_SET:
-      Log.warn("AnyInhalerActionData was empty...was that intended?");
-      return null;
-    }
-    Log.error("Unsupported Inhaler Action type "+c.getActionCase());
-    return null;
-  }
-  public static AnyInhalerActionData CDM2ANY(SEInhalerAction c)
-  {
-    AnyInhalerActionData.Builder dst = AnyInhalerActionData.newBuilder();
-    
-    if(c instanceof SEInhalerConfiguration)
-    {
-      dst.setConfiguration(SEInhalerConfiguration.unload((SEInhalerConfiguration)c));
-      return dst.build();
-    }
-    Log.error("Unsupported Inhaler Action type "+c);
-    return dst.build();
+    SEEquipmentAction.unload(src, dst.getEquipmentActionBuilder());
   }
   
   public abstract String toString();

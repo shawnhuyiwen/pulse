@@ -37,11 +37,6 @@ bool SESupplementalOxygen::IsValid() const
   return SEPatientAction::IsValid();
 }
 
-bool SESupplementalOxygen::IsActive() const
-{
-  return IsValid() && m_Device != eSupplementalOxygen_Device::None;
-}
-
 eSupplementalOxygen_Device SESupplementalOxygen::GetDevice() const
 {
   return m_Device;

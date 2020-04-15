@@ -1,5 +1,6 @@
 
-set(from "${SCHEMA_SRC}")
+set(SCHEMA_SRC ${SRC_ROOT}/schema)
+
 if( Protobuf_PROTOC_EXECUTABLE )
   set(BINDER ${Protobuf_PROTOC_EXECUTABLE})
 else()#
@@ -15,36 +16,42 @@ else()
 endif()
 
 set(CDM_DIR "pulse/cdm/bind")
-set(ENGINE_DIR "pulse/engine/bind")
+set(CPM_DIR "pulse/cpm/bind")
+set(IMPL_DIR "pulse/impl/bind")
 # Let the build also know package locations
-set(CDM_PACKAGE ${CDM_DIR} PARENT_SCOPE)
-set(ENGINE_PACKAGE ${ENGINE_DIR} PARENT_SCOPE)
+get_directory_property(hasParent PARENT_DIRECTORY)
+if(hasParent)
+  set(CDM_PACKAGE ${CDM_DIR} PARENT_SCOPE)
+  set(CPM_PACKAGE ${CPM_DIR} PARENT_SCOPE)
+  set(IMPL_PACKAGE ${IMPL_DIR} PARENT_SCOPE)
+endif()
 
 macro(delete_bindings _root)
-  file(GLOB _OLD_CDM_BIND_FILES "${_root}/${CDM_DIR}/*")
-  if(_OLD_CDM_BIND_FILES)
-    file(REMOVE ${_OLD_CDM_BIND_FILES})
-  endif()
-  file(GLOB _OLD_ENGINE_BIND_FILES "${_root}/${ENGINE_DIR}/*")
-  if(_OLD_ENGINE_BIND_FILES)
-    file(REMOVE ${_OLD_ENGINE_BIND_FILES})
+  file(GLOB _OLD_BIND_FILES "${_root}/${CDM_DIR}/*" "${_root}/${CPM_DIR}/*" "${_root}/${IMPL_DIR}/*")
+  if(_OLD_BIND_FILES)
+    file(REMOVE ${_OLD_BIND_FILES})
   endif()
 endmacro()
 
 
 message(STATUS "Generating Schema Bindings" )
 message(STATUS "Using : ${BINDER}")
-message(STATUS "From ${from}")
+message(STATUS "SRC_ROOT: ${SRC_ROOT}")
+message(STATUS "SCHEMA_SRC: ${SCHEMA_SRC}")
 
-file(GLOB_RECURSE _FILES "${from}/*.proto")
+file(GLOB_RECURSE _FILES "${SCHEMA_SRC}/*.proto")
 
 set(_RUN_PROTOC OFF)
-foreach(f ${_FILES})
-  if(${f} IS_NEWER_THAN ${SCHEMA_SRC}/schema_last_built)
-    message(STATUS "${f} has changed since the last build")
-    set(_RUN_PROTOC ON)
-  endif()
-endforeach()
+if(EXISTS ${SCHEMA_SRC}/schema_last_built)
+  foreach(f ${_FILES})
+    if(${f} IS_NEWER_THAN ${SCHEMA_SRC}/schema_last_built)
+      message(STATUS "${f} has changed since the last build")
+      set(_RUN_PROTOC ON)
+    endif()
+  endforeach()
+else()
+  set(_RUN_PROTOC ON)
+endif()
 
 if(NOT _RUN_PROTOC)
   message(STATUS "Not generating bindings, nothing has changed since last build")
@@ -64,7 +71,7 @@ endif()
 
 foreach(f ${_FILES})
   message(STATUS "C++ Binding file ${f}")
-  execute_process(COMMAND ${BINDER} --proto_path=${from}
+  execute_process(COMMAND ${BINDER} --proto_path=${SCHEMA_SRC}
                                     --cpp_out=${cpp_bindings_DIR}
                                     # or 
                                     #--cpp_out=dllexport_decl=_DECL:${cpp_bindings_DIR}
@@ -150,7 +157,7 @@ if(Pulse_JAVA_API)
 
   foreach(f ${_FILES})
     message(STATUS "Java Binding file ${f}")
-    execute_process(COMMAND ${BINDER} --proto_path=${from}
+    execute_process(COMMAND ${BINDER} --proto_path=${SCHEMA_SRC}
                                       --java_out=${java_bindings_DIR}
                                       ${f})
   endforeach()
@@ -169,7 +176,7 @@ if(_OLD_BIND_FILES)
 endif()
 foreach(f ${_FILES})
   message(STATUS "C# Binding file ${f}")
-  execute_process(COMMAND ${BINDER} --proto_path=${from}
+  execute_process(COMMAND ${BINDER} --proto_path=${SCHEMA_SRC}
                                     --csharp_out=${csharp_bindings_DIR}
                                     ${f})
 endforeach()
@@ -191,14 +198,15 @@ if(Pulse_PYTHON_API)
     )
     foreach(f ${_FILES})
       message(STATUS "Python Binding file ${f}")
-      execute_process(COMMAND ${BINDER} --proto_path=${from}
+      execute_process(COMMAND ${BINDER} --proto_path=${SCHEMA_SRC}
                                         --python_out=${python_bindings_DIR}
                                         ${f})
     endforeach()
     # Hard coded for now, will need to be more clever on how it finds each file.
     # Necessary for setup.py file to find the bindings to install.
     file(COPY "${python_bindings_DIR}/__init__.py" DESTINATION "${python_bindings_DIR}/${CDM_DIR}")
-    file(COPY "${python_bindings_DIR}/__init__.py" DESTINATION "${python_bindings_DIR}/${ENGINE_DIR}")
+    file(COPY "${python_bindings_DIR}/__init__.py" DESTINATION "${python_bindings_DIR}/${CPM_DIR}")
+    file(COPY "${python_bindings_DIR}/__init__.py" DESTINATION "${python_bindings_DIR}/${IMPL_DIR}")
     message(STATUS "python bindings are here : ${python_bindings_DIR}" )
   endif()
 endif()

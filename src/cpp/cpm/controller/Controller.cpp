@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "controller/Controller.h"
+#include "io/protobuf/PBPulseState.h"
 #include "controller/Circuits.h"
 #include "controller/Compartments.h"
 #include "controller/Substances.h"
@@ -18,14 +19,23 @@
 #include "physiology/Respiratory.h"
 #include "physiology/Saturation.h"
 #include "physiology/Tissue.h"
-#include "equipment/AnesthesiaMachine.h"
 #include "environment/Environment.h"
+#include "equipment/AnesthesiaMachine.h"
 #include "equipment/ECG.h"
 #include "equipment/Inhaler.h"
+#include "equipment/MechanicalVentilator.h"
 #include "PulseConfiguration.h"
 
+#include "engine/SEPatientConfiguration.h"
 #include "engine/SEConditionManager.h"
 #include "engine/SEActionManager.h"
+#include "engine/SEEngineTracker.h"
+#include "engine/SEDataRequestManager.h"
+#include "engine/SESerializeState.h"
+#include "engine/SEOverrides.h"
+#include "engine/SEEventManager.h"
+#include "engine/SEAdvanceHandler.h"
+#include "engine/SEEngineStabilization.h"
 
 #include "substance/SESubstance.h"
 
@@ -48,6 +58,7 @@
 #include "compartment/tissue/SETissueCompartment.h"
 
 #include "patient/SEPatient.h"
+#include "patient/actions/SEPatientAssessmentRequest.h"
 #include "patient/assessments/SEPulmonaryFunctionTest.h"
 #include "patient/assessments/SECompleteBloodCount.h"
 #include "patient/assessments/SEComprehensiveMetabolicPanel.h"
@@ -66,31 +77,26 @@
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarPressurePerVolume.h"
 #include "properties/SEScalarTime.h"
-#include "engine/SEEventManager.h"
-#include "engine/SEAdvanceHandler.h"
 #include "utils/DataTrack.h"
 #include "utils/FileUtils.h"
 
 
-PulseController::PulseController(const std::string& logFileName, const std::string& data_dir) : PulseController(new Logger(logFileName), data_dir)
+PulseData::PulseData(const std::string& logFileName, const std::string& data_dir) : PulseData(new Logger(logFileName), data_dir)
 {
-
+  myLogger = true;
+  // Directs to the ctor below
 }
-
-PulseController::PulseController(Logger* logger, const std::string& data_dir) : Loggable(logger)
+PulseData::PulseData(Logger* logger, const std::string& data_dir) : Loggable(logger)
 {
-
+  m_State = EngineState::NotReady;
   m_DataDir = data_dir;
-  m_DataTrack = nullptr;
   m_AdvanceHandler = nullptr;
 
-  m_CurrentTime = std::unique_ptr<SEScalarTime>(new SEScalarTime());
-  m_SimulationTime = std::unique_ptr<SEScalarTime>(new SEScalarTime());
-  m_CurrentTime->SetValue(0, TimeUnit::s);
-  m_SimulationTime->SetValue(0, TimeUnit::s);
-  m_spareAdvanceTime_s = 0;
+  m_CurrentTime.SetValue(0, TimeUnit::s);
+  m_SimulationTime.SetValue(0, TimeUnit::s);
+  m_SpareAdvanceTime_s = 0;
 
-  m_Logger->SetLogTime(m_SimulationTime.get());
+  m_Logger->SetLogTime(&m_SimulationTime);
 
   m_Substances = std::unique_ptr<PulseSubstances>(new PulseSubstances(*this));
   m_Substances->LoadSubstanceDirectory(m_DataDir);
@@ -100,13 +106,11 @@ PulseController::PulseController(Logger* logger, const std::string& data_dir) : 
 
   m_Config = std::unique_ptr<PulseConfiguration>(new PulseConfiguration(*m_Substances));
   m_Config->Initialize(m_DataDir);
- 
+
   m_SaturationCalculator = std::unique_ptr<SaturationCalculator>(new SaturationCalculator(*this));
 
   m_Actions = std::unique_ptr<SEActionManager>(new SEActionManager(*m_Substances));
   m_Conditions = std::unique_ptr<SEConditionManager>(new SEConditionManager(*m_Substances));
-
-  m_Environment = std::unique_ptr<Environment>(new Environment(*this));
 
   m_BloodChemistrySystem = std::unique_ptr<BloodChemistry>(new BloodChemistry(*this));
   m_CardiovascularSystem = std::unique_ptr<Cardiovascular>(new Cardiovascular(*this));
@@ -120,24 +124,266 @@ PulseController::PulseController(Logger* logger, const std::string& data_dir) : 
   m_DrugSystem = std::unique_ptr<Drugs>(new Drugs(*this));
   m_TissueSystem = std::unique_ptr<Tissue>(new Tissue(*this));
 
-  m_ECG = std::unique_ptr<ECG>(new ECG(*this));
+  m_Environment = std::unique_ptr<Environment>(new Environment(*this));
 
   m_AnesthesiaMachine = std::unique_ptr<AnesthesiaMachine>(new AnesthesiaMachine(*this));
-
+  m_ECG = std::unique_ptr<ECG>(new ECG(*this));
   m_Inhaler = std::unique_ptr<Inhaler>(new Inhaler(*this));
+  m_MechanicalVentilator = std::unique_ptr<MechanicalVentilator>(new MechanicalVentilator(*this));
 
   m_EventManager = std::unique_ptr<SEEventManager>(new SEEventManager(GetLogger()));
 
   m_Compartments = std::unique_ptr<PulseCompartments>(new PulseCompartments(*this));
 
   m_Circuits = std::unique_ptr<PulseCircuits>(new PulseCircuits(*this));
+
+  m_EngineTrack = new SEEngineTracker(*m_CurrentPatient, *m_Substances, *m_Compartments, m_Logger);
+  m_EngineTrack->AddSystem(*m_BloodChemistrySystem);
+  m_EngineTrack->AddSystem(*m_CardiovascularSystem);
+  m_EngineTrack->AddSystem(*m_EndocrineSystem);
+  m_EngineTrack->AddSystem(*m_EnergySystem);
+  m_EngineTrack->AddSystem(*m_GastrointestinalSystem);
+  m_EngineTrack->AddSystem(*m_HepaticSystem);
+  m_EngineTrack->AddSystem(*m_NervousSystem);
+  m_EngineTrack->AddSystem(*m_RenalSystem);
+  m_EngineTrack->AddSystem(*m_RespiratorySystem);
+  m_EngineTrack->AddSystem(*m_DrugSystem);
+  m_EngineTrack->AddSystem(*m_TissueSystem);
+  m_EngineTrack->AddSystem(*m_Environment);
+  m_EngineTrack->AddSystem(*m_AnesthesiaMachine);
+  m_EngineTrack->AddSystem(*m_ECG);
+  m_EngineTrack->AddSystem(*m_Inhaler);
+  m_EngineTrack->AddSystem(*m_MechanicalVentilator);
+}
+PulseData::~PulseData()
+{
+  SAFE_DELETE(m_EngineTrack);
 }
 
-DataTrack& PulseController::GetDataTrack()
+void PulseData::AdvanceCallback(double time_s)
 {
-  if (m_DataTrack == nullptr)
-    m_DataTrack = new DataTrack();
-  return *m_DataTrack;
+  if (m_AdvanceHandler)
+  {
+    if (time_s >= 0 || m_AdvanceHandler->OnForStabilization())
+      m_AdvanceHandler->OnAdvance(time_s);
+  }
+}
+
+void PulseData::SetAirwayMode(eAirwayMode mode)
+{
+  if (mode == m_AirwayMode)
+    return;// do nazing!
+  if (mode != eAirwayMode::Free && m_AirwayMode != eAirwayMode::Free)
+    throw CommonDataModelException("Can only change airway mode from the Free mode, Disable other equipment first.");
+  if (mode != m_AirwayMode)
+    m_Compartments->UpdateAirwayGraph();
+  m_AirwayMode = mode;
+  std::stringstream ss;
+  ss << "Airway Mode : " << eAirwayMode_Name(m_AirwayMode);
+  Info(ss);
+}
+
+void PulseData::SetIntubation(eSwitch s)
+{
+  if (s == eSwitch::NullSwitch)
+    s = eSwitch::Off;
+  if (m_Intubation == s)
+    return;// do nazing!
+  if (m_AirwayMode == eAirwayMode::Inhaler)
+    throw CommonDataModelException("Cannot intubate if the inhaler is active.");
+  m_Intubation = s;
+}
+
+SEEngineTracker& PulseData::GetEngineTracker() const { return *m_EngineTrack; }
+DataTrack& PulseData::GetDataTrack() const { return m_EngineTrack->GetDataTrack(); }
+SaturationCalculator& PulseData::GetSaturationCalculator() const { return *m_SaturationCalculator; }
+
+PulseSubstances& PulseData::GetSubstances() const { return *m_Substances; }
+
+const SEPatient& PulseData::GetInitialPatient() const { return *m_InitialPatient; }
+SEPatient& PulseData::GetCurrentPatient() const { return *m_CurrentPatient; }
+
+SEBloodChemistrySystem& PulseData::GetBloodChemistry() const { return *m_BloodChemistrySystem; }
+SECardiovascularSystem& PulseData::GetCardiovascular() const { return *m_CardiovascularSystem; }
+SEDrugSystem& PulseData::GetDrugs() const { return *m_DrugSystem; }
+SEEndocrineSystem& PulseData::GetEndocrine() const { return *m_EndocrineSystem; }
+SEEnergySystem& PulseData::GetEnergy() const { return *m_EnergySystem; }
+SEGastrointestinalSystem& PulseData::GetGastrointestinal() const { return *m_GastrointestinalSystem; }
+SEHepaticSystem& PulseData::GetHepatic() const { return *m_HepaticSystem; }
+SENervousSystem& PulseData::GetNervous() const { return *m_NervousSystem; }
+SERenalSystem& PulseData::GetRenal() const { return *m_RenalSystem; }
+SERespiratorySystem& PulseData::GetRespiratory() const { return *m_RespiratorySystem; }
+SETissueSystem& PulseData::GetTissue() const { return *m_TissueSystem; }
+
+SEEnvironment& PulseData::GetEnvironment() const { return *m_Environment; }
+SEAnesthesiaMachine& PulseData::GetAnesthesiaMachine() const { return *m_AnesthesiaMachine; }
+SEElectroCardioGram& PulseData::GetECG() const { return *m_ECG; }
+SEInhaler& PulseData::GetInhaler() const { return *m_Inhaler; }
+SEMechanicalVentilator& PulseData::GetMechanicalVentilator() const { return *m_MechanicalVentilator; }
+
+SEActionManager& PulseData::GetActions() const { return *m_Actions; }
+
+SEConditionManager& PulseData::GetConditions() const { return *m_Conditions; }
+
+SEEventManager& PulseData::GetEvents() const { return *m_EventManager; }
+
+PulseCircuits& PulseData::GetCircuits() const { return *m_Circuits; }
+
+PulseCompartments& PulseData::GetCompartments() const { return *m_Compartments; }
+
+const PulseConfiguration& PulseData::GetConfiguration() const { return *m_Config; }
+
+const SEScalarTime& PulseData::GetEngineTime() const { return m_CurrentTime; }
+const SEScalarTime& PulseData::GetSimulationTime() const { return m_SimulationTime; }
+const SEScalarTime& PulseData::GetTimeStep() const { return m_Config->GetTimeStep(); }
+
+bool PulseData::HasOverride() const { return m_ScalarOverrides.size() > 1; }
+const std::vector<SEScalarProperty>& PulseData::GetOverrides() const { return m_ScalarOverrides; }
+
+PulseController::PulseController(const std::string& logFileName, const std::string& data_dir) : PulseController(new Logger(logFileName), data_dir)
+{
+  myLogger = true;
+  // Directs to the ctor below
+}
+PulseController::PulseController(Logger* logger, const std::string& data_dir) : PulseData(logger, data_dir)
+{
+  m_Stabilizer = new PulseStabilizationController(*this);
+}
+PulseController::~PulseController()
+{
+
+}
+
+bool PulseController::SerializeToString(std::string& output, SerializationFormat m) const
+{
+  return PBPulseState::SerializeToString(*this, output, m);
+}
+bool PulseController::SerializeToFile(const std::string& filename, SerializationFormat m) const
+{
+  return PBPulseState::SerializeToFile(*this, filename, m);
+}
+bool PulseController::SerializeFromString(const std::string& src, SerializationFormat m)
+{
+  return SerializeFromString(src, m, nullptr, nullptr);
+}
+bool PulseController::SerializeFromString(const std::string& src, SerializationFormat m, const SEScalarTime* simTime, const SEEngineConfiguration* config)
+{
+  return PBPulseState::SerializeFromString(src, *this, m, simTime, config);
+}
+bool PulseController::SerializeFromFile(const std::string& filename, SerializationFormat m)
+{
+  return SerializeFromFile(filename, m, nullptr, nullptr);
+}
+bool PulseController::SerializeFromFile(const std::string& filename, SerializationFormat m, const SEScalarTime* simTime, const SEEngineConfiguration* config)
+{
+  return PBPulseState::SerializeFromFile(filename, *this, m, simTime, config);
+}
+
+bool PulseController::InitializeEngine(const std::string& patient_configuration, SerializationFormat m, const SEEngineConfiguration* config)
+{
+  SEPatientConfiguration pc(*m_Substances);
+  pc.SerializeFromString(patient_configuration, m);
+  return InitializeEngine(pc, config);
+}
+
+bool PulseController::InitializeEngine(const SEPatientConfiguration& patient_configuration, const SEEngineConfiguration* config)
+{
+  const PulseConfiguration* pConfig = nullptr;
+  if (config != nullptr)
+  {
+    pConfig = dynamic_cast<const PulseConfiguration*>(config);
+    if (pConfig == nullptr)
+    {
+      Error("Configuration provided is not a Pulse Configuration Object");
+      return false;
+    }
+  }
+  m_EngineTrack->ResetFile();
+  m_State = EngineState::Initialization;
+  if(patient_configuration.HasOverride())
+  {
+    for (auto& so : patient_configuration.GetScalarOverrides())
+      m_ScalarOverrides.push_back(so);
+  }
+  if (patient_configuration.HasPatient())
+  {
+    if (!PulseController::Initialize(pConfig, *patient_configuration.GetPatient()))
+      return false;
+  }
+  else if (patient_configuration.HasPatientFile())
+  {
+    SEPatient patient(m_Logger);
+    std::string pFile = patient_configuration.GetPatientFile();
+    if (pFile.find("/patients") == std::string::npos)
+    {// Prepend the patient directory if it's not there
+      pFile = "./patients/";
+      pFile += patient_configuration.GetPatientFile();
+    }
+    if (!patient.SerializeFromFile(pFile, JSON))// TODO Support all serialization formats
+      return false;
+    if (!PulseController::Initialize(pConfig, patient))
+      return false;
+  }
+  else
+    return false;
+
+  // We don't capture events during initialization
+  SEEventHandler* event_handler = m_EventManager->GetEventHandler();
+  m_EventManager->ForwardEvents(nullptr);
+
+  // Stabilize the engine to a resting state (with a standard meal and environment)
+  if (!m_Config->HasStabilization())
+  {
+    Error("Pulse needs stabilization criteria, none provided in configuration file");
+    return false;
+  }
+
+  m_State = EngineState::InitialStabilization;
+  if (!m_Config->GetStabilization()->StabilizeRestingState(*m_Stabilizer))
+    return false;
+
+  // We need to copy conditions here, so systems can prepare for them in their AtSteadyState method
+  if (patient_configuration.HasConditions())
+    m_Conditions->Copy(*patient_configuration.GetConditions());
+  AtSteadyState(EngineState::AtInitialStableState);// This will peek at conditions
+
+  // Copy any changes to the current patient to the initial patient
+  m_InitialPatient->Copy(*m_CurrentPatient);
+
+  m_State = EngineState::SecondaryStabilization;
+  // Apply conditions and anything else to the physiology
+  // now that it's steady with provided patient, environment, and feedback
+  if (!m_Conditions->IsEmpty())
+  {// Now restabilize the patient with any conditions that were applied
+   // Push conditions into condition manager
+    if (!m_Config->GetStabilization()->StabilizeConditions(*m_Stabilizer, *m_Conditions))
+      return false;
+  }
+  else
+  {
+    if (!m_Config->GetStabilization()->StabilizeFeedbackState(*m_Stabilizer))
+      return false;
+  }
+  AtSteadyState(EngineState::AtSecondaryStableState);
+
+  m_State = EngineState::Active;
+  // Hook up the handlers (Note events will still be in the log)
+  m_EventManager->ForwardEvents(event_handler);
+  Info("Finalizing homeostasis");
+
+  // Run this again to clear out any bumps from systems resetting baselines in the last AtSteadyState call
+  AdvanceModelTime(30, TimeUnit::s); // I would rather run Feedback stablization again, but...
+  // This does not work for a few patients, they will not stay stable (???)  
+  //if (!m_Config->GetStabilizationCriteria()->StabilizeFeedbackState(*this))
+  //  return false;
+
+  if (!m_Config->GetStabilization()->IsTrackingStabilization())
+    m_SimulationTime.SetValue(0, TimeUnit::s);
+  // Don't allow any changes to Quantity/Potential/Flux values directly
+  // Use Quantity/Potential/Flux Sources
+  m_Circuits->SetReadOnly(true);
+
+  return true;
 }
 
 bool PulseController::Initialize(const PulseConfiguration* config, SEPatient const& patient)
@@ -192,12 +438,12 @@ bool PulseController::Initialize(const PulseConfiguration* config, SEPatient con
   Info("Creating Circuits and Compartments");
   CreateCircuitsAndCompartments();
 
-  m_spareAdvanceTime_s = 0;
+  m_SpareAdvanceTime_s = 0;
   m_AirwayMode = eAirwayMode::Free;
   m_Intubation = eSwitch::Off;
-  m_CurrentTime->SetValue(0, TimeUnit::s);
-  m_SimulationTime->SetValue(0, TimeUnit::s);
-  m_Logger->SetLogTime(m_SimulationTime.get());
+  m_CurrentTime.SetValue(0, TimeUnit::s);
+  m_SimulationTime.SetValue(0, TimeUnit::s);
+  m_Logger->SetLogTime(&m_SimulationTime);
 
   Info("Initializing Substances");
   m_Substances->InitializeSubstances(); // Sets all concentrations and such of all substances for all compartments, need to do this after we figure out what's in the environment
@@ -206,6 +452,7 @@ bool PulseController::Initialize(const PulseConfiguration* config, SEPatient con
   m_CardiovascularSystem->Initialize();
   m_RespiratorySystem->Initialize();
   m_AnesthesiaMachine->Initialize();
+  m_MechanicalVentilator->Initialize();
   m_GastrointestinalSystem->Initialize();
   m_HepaticSystem->Initialize();
   m_RenalSystem->Initialize();
@@ -221,63 +468,6 @@ bool PulseController::Initialize(const PulseConfiguration* config, SEPatient con
   AdvanceCallback(-1);
   return true;
 }
-
-EngineState               PulseController::GetState() { return m_State; }
-SaturationCalculator&     PulseController::GetSaturationCalculator() { return *m_SaturationCalculator; }
-PulseSubstances&          PulseController::GetSubstances() { return *m_Substances; }
-SEPatient&                PulseController::GetCurrentPatient() { return *m_CurrentPatient; }
-const SEPatient&          PulseController::GetInitialPatient() { return *m_InitialPatient; }
-SEBloodChemistrySystem&   PulseController::GetBloodChemistry() { return *m_BloodChemistrySystem; }
-SECardiovascularSystem&   PulseController::GetCardiovascular() { return *m_CardiovascularSystem; }
-SEDrugSystem&             PulseController::GetDrugs() { return *m_DrugSystem; }
-SEEndocrineSystem&        PulseController::GetEndocrine() { return *m_EndocrineSystem; }
-SEEnergySystem&           PulseController::GetEnergy() { return *m_EnergySystem; }
-SEGastrointestinalSystem& PulseController::GetGastrointestinal() { return *m_GastrointestinalSystem; }
-SEHepaticSystem&          PulseController::GetHepatic() { return *m_HepaticSystem; }
-SENervousSystem&          PulseController::GetNervous() { return *m_NervousSystem; }
-SERenalSystem&            PulseController::GetRenal() { return *m_RenalSystem; }
-SERespiratorySystem&      PulseController::GetRespiratory() { return *m_RespiratorySystem; }
-SETissueSystem&           PulseController::GetTissue() { return *m_TissueSystem; }
-SEEnvironment&            PulseController::GetEnvironment() { return *m_Environment; }
-SEAnesthesiaMachine&      PulseController::GetAnesthesiaMachine() { return *m_AnesthesiaMachine; }
-SEElectroCardioGram&      PulseController::GetECG() { return *m_ECG; }
-SEInhaler&                PulseController::GetInhaler() { return *m_Inhaler; }
-SEActionManager&          PulseController::GetActions() { return *m_Actions; }
-SEConditionManager&       PulseController::GetConditions() { return *m_Conditions; }
-SEEventManager&           PulseController::GetEvents() { return *m_EventManager; }
-PulseCircuits&            PulseController::GetCircuits() { return *m_Circuits; }
-PulseCompartments&        PulseController::GetCompartments() { return *m_Compartments; }
-const PulseConfiguration& PulseController::GetConfiguration() { return *m_Config; }
-const SEScalarTime&       PulseController::GetEngineTime() { return *m_CurrentTime; }
-const SEScalarTime&       PulseController::GetSimulationTime() { return *m_SimulationTime; }
-const SEScalarTime&       PulseController::GetTimeStep() { return m_Config->GetTimeStep(); }
-
-eAirwayMode  PulseController::GetAirwayMode() { return m_AirwayMode; }
-void PulseController::SetAirwayMode(eAirwayMode mode)
-{
-  if (mode == m_AirwayMode)
-    return;// do nazing!
-  if (mode != eAirwayMode::Free && m_AirwayMode != eAirwayMode::Free)
-    throw CommonDataModelException("Can only change airway mode from the Free mode, Disable other equipment first.");
-  if (mode != m_AirwayMode)
-    m_Compartments->UpdateAirwayGraph();
-  m_AirwayMode = mode;
-  std::stringstream ss;
-  ss << "Airway Mode : " << eAirwayMode_Name(m_AirwayMode);
-  Info(ss);
-}
-void PulseController::SetIntubation(eSwitch s)
-{
-  if (s == eSwitch::NullSwitch)
-    s = eSwitch::Off;
-  if (m_Intubation == s)
-    return;// do nazing!
-  if (m_AirwayMode == eAirwayMode::Inhaler)
-    throw CommonDataModelException("Cannot intubate if the inhaler is active.");
-  m_Intubation = s;
-}
-eSwitch PulseController::GetIntubation() { return m_Intubation; }
-
 
 bool PulseController::SetupPatient(SEPatient const& patient)
 {
@@ -910,9 +1100,45 @@ bool PulseController::SetupPatient(SEPatient const& patient)
   return true;
 }
 
-PulseController::~PulseController()
+bool PulseController::IsReady() const
 {
+  if (m_State == EngineState::NotReady)
+  {
+    Error("Engine is not ready to process, Initialize the engine or Load a state.");
+    return false;
+  }
+  return true;
+}
 
+void PulseController::AdvanceModelTime()
+{
+  if (!IsReady())
+    return;
+  if (m_EventManager->IsEventActive(eEvent::IrreversibleState))
+    return;
+
+  PreProcess();
+  Process();
+  PostProcess();
+
+  m_EventManager->UpdateEvents(m_Config->GetTimeStep());
+  m_CurrentTime.Increment(m_Config->GetTimeStep());
+  m_SimulationTime.Increment(m_Config->GetTimeStep());
+
+  if (m_AdvanceHandler)
+    m_AdvanceHandler->OnAdvance(m_CurrentTime.GetValue(TimeUnit::s));
+
+  // TODO Figure out a way to track what overrides were used and which were not
+  m_ScalarOverrides.clear();
+}
+
+void PulseController::AdvanceModelTime(double time, const TimeUnit& unit)
+{
+  double time_s = Convert(time, unit, TimeUnit::s) + m_SpareAdvanceTime_s;
+  int count = (int)(time_s / GetTimeStep().GetValue(TimeUnit::s));
+  for (int i = 0; i < count; i++)
+    AdvanceModelTime();
+  m_SpareAdvanceTime_s = time_s - (count * GetTimeStep().GetValue(TimeUnit::s));
 }
 
 void PulseController::AtSteadyState(EngineState state)
@@ -923,6 +1149,7 @@ void PulseController::AtSteadyState(EngineState state)
   m_Inhaler->AtSteadyState();
   m_RespiratorySystem->AtSteadyState();
   m_AnesthesiaMachine->AtSteadyState();
+  m_MechanicalVentilator->AtSteadyState();
   m_GastrointestinalSystem->AtSteadyState();
   m_HepaticSystem->AtSteadyState();
   m_RenalSystem->AtSteadyState();
@@ -942,6 +1169,7 @@ void PulseController::PreProcess()
   m_Inhaler->PreProcess();
   m_RespiratorySystem->PreProcess();
   m_AnesthesiaMachine->PreProcess();
+  m_MechanicalVentilator->PreProcess();
   m_GastrointestinalSystem->PreProcess();
   m_HepaticSystem->PreProcess();
   m_RenalSystem->PreProcess();
@@ -960,6 +1188,7 @@ void PulseController::Process()
   m_Inhaler->Process();
   m_RespiratorySystem->Process();
   m_AnesthesiaMachine->Process();
+  m_MechanicalVentilator->Process();
   m_GastrointestinalSystem->Process();
   m_HepaticSystem->Process();
   m_RenalSystem->Process();
@@ -978,6 +1207,7 @@ void PulseController::PostProcess()
   m_Inhaler->PostProcess();
   m_RespiratorySystem->PostProcess();
   m_AnesthesiaMachine->PostProcess();
+  m_MechanicalVentilator->PostProcess();
   m_GastrointestinalSystem->PostProcess();
   m_HepaticSystem->PostProcess();
   m_RenalSystem->PostProcess();
@@ -990,8 +1220,130 @@ void PulseController::PostProcess()
   m_ECG->PostProcess();
 }
 
+bool PulseController::ProcessAction(const SEAction& action)
+{
+  if (!IsReady())
+    return false;
+  m_ss << "[Action] " << m_SimulationTime << ", " << action;
+  Info(m_ss);
+
+  const SESerializeState* serialize = dynamic_cast<const SESerializeState*>(&action);
+  if (serialize != nullptr)
+  {
+    if (serialize->GetType() == eSerialization_Type::Save)
+    {
+      if (serialize->HasFilename())
+      {
+        SerializeToFile(serialize->GetFilename(), JSON);
+      }
+      else
+      {
+        std::stringstream ss;
+        MakeDirectory("./states");
+        ss << "./states/" << m_InitialPatient->GetName() << "@" << GetSimulationTime().GetValue(TimeUnit::s) << "s.json";
+        Info("Saving " + ss.str());
+        SerializeToFile(ss.str(), JSON);
+        // Debug code to make sure things are consistent
+        //SerializeFomFile(ss.str(),JSON);
+        //SerializeToFile("./states/AfterSave.json",JSON);
+      }
+    }
+    else
+      return SerializeFromFile(serialize->GetFilename(), JSON);
+    return true;
+  }
+
+  const SEOverrides* overrides = dynamic_cast<const SEOverrides*>(&action);
+  if (overrides != nullptr)
+  {
+    for (auto& so : overrides->GetScalarProperties())
+      m_ScalarOverrides.push_back(so);
+    return true;
+  }
+
+  const SEPatientAssessmentRequest* patientAss = dynamic_cast<const SEPatientAssessmentRequest*>(&action);
+  if (patientAss != nullptr)
+  {
+    switch (patientAss->GetType())
+    {
+    case ePatientAssessment_Type::PulmonaryFunctionTest:
+    {
+      SEPulmonaryFunctionTest pft(m_Logger);
+      GetPatientAssessment(pft);
+
+      // Write out the Assessement
+      std::string pftFile = GetEngineTracker().GetDataRequestManager().GetResultFilename();
+      if (pftFile.empty())
+        pftFile = "PulmonaryFunctionTest";
+      m_ss << "PFT@" << GetSimulationTime().GetValue(TimeUnit::s) << "s";
+      pftFile = Replace(pftFile, "Results", m_ss.str());
+      pftFile = Replace(pftFile, ".csv", ".json");
+      m_ss << "PulmonaryFunctionTest@" << GetSimulationTime().GetValue(TimeUnit::s) << "s.json";
+      pft.SerializeToFile(pftFile, JSON);
+      break;
+    }
+    case ePatientAssessment_Type::Urinalysis:
+    {
+      SEUrinalysis upan(m_Logger);
+      GetPatientAssessment(upan);
+
+      std::string upanFile = GetEngineTracker().GetDataRequestManager().GetResultFilename();
+      if (upanFile.empty())
+        upanFile = "Urinalysis";
+      m_ss << "Urinalysis@" << GetSimulationTime().GetValue(TimeUnit::s) << "s";
+      upanFile = Replace(upanFile, "Results", m_ss.str());
+      upanFile = Replace(upanFile, ".csv", ".json");
+      m_ss << "Urinalysis@" << GetSimulationTime().GetValue(TimeUnit::s) << "s.json";
+      upan.SerializeToFile(upanFile, JSON);
+      break;
+    }
+
+    case ePatientAssessment_Type::CompleteBloodCount:
+    {
+      SECompleteBloodCount cbc(m_Logger);
+      GetPatientAssessment(cbc);
+      std::string cbcFile = GetEngineTracker().GetDataRequestManager().GetResultFilename();
+      if (cbcFile.empty())
+        cbcFile = "CompleteBloodCount";
+      m_ss << "CBC@" << GetSimulationTime().GetValue(TimeUnit::s) << "s";
+      cbcFile = Replace(cbcFile, "Results", m_ss.str());
+      cbcFile = Replace(cbcFile, ".csv", ".json");
+      m_ss << "CompleteBloodCount@" << GetSimulationTime().GetValue(TimeUnit::s) << "s.json";
+      cbc.SerializeToFile(cbcFile, JSON);
+      break;
+    }
+
+    case ePatientAssessment_Type::ComprehensiveMetabolicPanel:
+    {
+      SEComprehensiveMetabolicPanel mp(m_Logger);
+      GetPatientAssessment(mp);
+      std::string mpFile = GetEngineTracker().GetDataRequestManager().GetResultFilename();
+      if (mpFile.empty())
+        mpFile = "ComprehensiveMetabolicPanel";
+      m_ss << "CMP@" << GetSimulationTime().GetValue(TimeUnit::s) << "s";
+      mpFile = Replace(mpFile, "Results", m_ss.str());
+      mpFile = Replace(mpFile, ".csv", ".json");
+      m_ss << "ComprehensiveMetabolicPanel@" << GetSimulationTime().GetValue(TimeUnit::s) << "s.json";
+      mp.SerializeToFile(mpFile, JSON);
+      break;
+    }
+    default:
+    {
+      m_ss << "Unsupported assessment request " << ePatientAssessment_Type_Name(patientAss->GetType());
+      Error(m_ss);
+      return false;
+    }
+    }
+    return true;
+  }
+
+  return GetActions().ProcessAction(action);
+}
+
 bool PulseController::GetPatientAssessment(SEPatientAssessment& assessment) const
 {
+  if (!IsReady())
+    return false;
   SEPulmonaryFunctionTest* pft = dynamic_cast<SEPulmonaryFunctionTest*>(&assessment);
   if (pft != nullptr)
     return m_RespiratorySystem->CalculatePulmonaryFunctionTest(*pft);
@@ -1082,10 +1434,11 @@ bool PulseController::CreateCircuitsAndCompartments()
   SetupRespiratory();
   SetupAnesthesiaMachine();
   SetupInhaler();
-  SetupNasalCannula();
-  SetupSimpleMask();
-  SetupNonRebreatherMask();
+  SetupMechanicalVentilation();
   SetupMechanicalVentilator();
+  SetupNasalCannula();
+  SetupNonRebreatherMask();
+  SetupSimpleMask();
 
   m_Compartments->StateChange();
   return true;
@@ -4088,7 +4441,7 @@ void PulseController::SetupAnesthesiaMachine()
   GasSource.GetVolumeBaseline().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::mL);
   //////////////////////////
   // AnesthesiaConnection //
-  SEFluidCircuitNode& AnesthesiaConnection = cAnesthesia.CreateNode(pulse::AnesthesiaMachineNode::AnesthesiaConnection);
+  SEFluidCircuitNode& AnesthesiaConnection = cAnesthesia.CreateNode(pulse::AnesthesiaMachineNode::Connection);
   AnesthesiaConnection.GetPressure().SetValue(AmbientPresure, PressureUnit::cmH2O);
   AnesthesiaConnection.GetVolumeBaseline().SetValue(0.01, VolumeUnit::L);
   /////////////////////
@@ -4155,10 +4508,10 @@ void PulseController::SetupAnesthesiaMachine()
   ExpiratoryLimbToSelector.GetResistanceBaseline().SetValue(dLowResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   //////////////////////////////////
   // YPieceToAnesthesiaConnection //
-  SEFluidCircuitPath& YPieceToAnesthesiaConnection = cAnesthesia.CreatePath(Ypiece, AnesthesiaConnection, pulse::AnesthesiaMachinePath::YPieceToAnesthesiaConnection);
+  SEFluidCircuitPath& YPieceToAnesthesiaConnection = cAnesthesia.CreatePath(Ypiece, AnesthesiaConnection, pulse::AnesthesiaMachinePath::YPieceToConnection);
   ///////////////////////////////////////
   // AnesthesiaConnectionToEnvironment //
-  SEFluidCircuitPath& AnesthesiaConnectionToEnvironment = cAnesthesia.CreatePath(AnesthesiaConnection, *Ambient, pulse::AnesthesiaMachinePath::AnesthesiaConnectionToEnvironment);
+  SEFluidCircuitPath& AnesthesiaConnectionToEnvironment = cAnesthesia.CreatePath(AnesthesiaConnection, *Ambient, pulse::AnesthesiaMachinePath::ConnectionToEnvironment);
   AnesthesiaConnectionToEnvironment.GetResistanceBaseline().SetValue(dSwitchOpenResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 
   cAnesthesia.SetNextAndCurrentFromBaselines();
@@ -4169,7 +4522,7 @@ void PulseController::SetupAnesthesiaMachine()
   cCombinedAnesthesia.AddCircuit(cRespiratory);
   cCombinedAnesthesia.AddCircuit(cAnesthesia);
   SEFluidCircuitNode& Mouth = *cCombinedAnesthesia.GetNode(pulse::RespiratoryNode::Mouth);
-  SEFluidCircuitPath& AnesthesiaConnectionToMouth = cCombinedAnesthesia.CreatePath(AnesthesiaConnection, Mouth, pulse::CombinedAnesthesiaMachinePath::AnesthesiaConnectionToMouth);
+  SEFluidCircuitPath& AnesthesiaConnectionToMouth = cCombinedAnesthesia.CreatePath(AnesthesiaConnection, Mouth, pulse::CombinedAnesthesiaMachinePath::ConnectionToMouth);
   cCombinedAnesthesia.RemovePath(pulse::RespiratoryPath::EnvironmentToMouth);
   cCombinedAnesthesia.SetNextAndCurrentFromBaselines();
   cCombinedAnesthesia.StateChange();
@@ -4177,7 +4530,7 @@ void PulseController::SetupAnesthesiaMachine()
   // Grab the Environment Compartment
   SEGasCompartment* eEnvironment = m_Compartments->GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
   // Anesthesia Machine Compartments
-  SEGasCompartment& aAnesthesiaConnection = m_Compartments->CreateGasCompartment(pulse::AnesthesiaMachineCompartment::AnesthesiaConnection);
+  SEGasCompartment& aAnesthesiaConnection = m_Compartments->CreateGasCompartment(pulse::AnesthesiaMachineCompartment::Connection);
   aAnesthesiaConnection.MapNode(AnesthesiaConnection);
   SEGasCompartment& aExpiratoryLimb = m_Compartments->CreateGasCompartment(pulse::AnesthesiaMachineCompartment::ExpiratoryLimb);
   aExpiratoryLimb.MapNode(ExpiratoryLimb);
@@ -4219,9 +4572,9 @@ void PulseController::SetupAnesthesiaMachine()
   aYPieceToExpiratoryLimb.MapPath(YPieceToExpiratoryLimb);
   SEGasCompartmentLink& aExpiratoryLimbToSelector = m_Compartments->CreateGasLink(aExpiratoryLimb, aSelector, pulse::AnesthesiaMachineLink::ExpiratoryLimbToSelector);
   aExpiratoryLimbToSelector.MapPath(ExpiratoryLimbToSelector);
-  SEGasCompartmentLink& aYPieceToAnesthesiaConnection = m_Compartments->CreateGasLink(aYPiece, aAnesthesiaConnection, pulse::AnesthesiaMachineLink::YPieceToAnesthesiaConnection);
+  SEGasCompartmentLink& aYPieceToAnesthesiaConnection = m_Compartments->CreateGasLink(aYPiece, aAnesthesiaConnection, pulse::AnesthesiaMachineLink::YPieceToConnection);
   aYPieceToAnesthesiaConnection.MapPath(YPieceToAnesthesiaConnection);
-  SEGasCompartmentLink& aAnesthesiaConnectionLeak = m_Compartments->CreateGasLink(aAnesthesiaConnection, *eEnvironment, pulse::AnesthesiaMachineLink::AnesthesiaConnectionLeak);
+  SEGasCompartmentLink& aAnesthesiaConnectionLeak = m_Compartments->CreateGasLink(aAnesthesiaConnection, *eEnvironment, pulse::AnesthesiaMachineLink::ConnectionLeak);
   aAnesthesiaConnectionLeak.MapPath(AnesthesiaConnectionToEnvironment);
 
   SEGasCompartmentGraph& gAnesthesia = m_Compartments->GetAnesthesiaMachineGraph();
@@ -4253,7 +4606,7 @@ void PulseController::SetupAnesthesiaMachine()
   //Now do the combined transport setup
   // Grab the mouth from pulmonary
   SEGasCompartment* pMouth = m_Compartments->GetGasCompartment(pulse::PulmonaryCompartment::Mouth);
-  SEGasCompartmentLink& aAnesthesiaConnectionToMouth = m_Compartments->CreateGasLink(aAnesthesiaConnection, *pMouth, pulse::AnesthesiaMachineLink::AnesthesiaConnectionToMouth);
+  SEGasCompartmentLink& aAnesthesiaConnectionToMouth = m_Compartments->CreateGasLink(aAnesthesiaConnection, *pMouth, pulse::AnesthesiaMachineLink::ConnectionToMouth);
   aAnesthesiaConnectionToMouth.MapPath(AnesthesiaConnectionToMouth);
 
   SEGasCompartmentGraph& gCombinedRespiratoryAnesthesia = m_Compartments->GetRespiratoryAndAnesthesiaMachineGraph();
@@ -4347,6 +4700,309 @@ void PulseController::SetupInhaler()
   lCombinedInhaler.StateChange();
 }
 
+void PulseController::SetupMechanicalVentilation()
+{
+  Info("Setting Up MechanicalVentilation");
+  /////////////////////// Circuit Interdependencies
+  SEFluidCircuit& cRespiratory = m_Circuits->GetRespiratoryCircuit();
+  SEGasCompartmentGraph& gRespiratory = m_Compartments->GetRespiratoryGraph();
+  SELiquidCompartmentGraph& lAerosol = m_Compartments->GetAerosolGraph();
+  ///////////////////////
+
+  //Combined Respiratory and Mechanical Ventilation Circuit
+  SEFluidCircuit& m_CombinedMechanicalVentilation = m_Circuits->GetRespiratoryAndMechanicalVentilationCircuit();
+  m_CombinedMechanicalVentilation.AddCircuit(cRespiratory);
+  // Grab connection points/nodes
+  SEFluidCircuitNode& Mouth = *cRespiratory.GetNode(pulse::RespiratoryNode::Mouth);
+  SEFluidCircuitNode& Ambient = *cRespiratory.GetNode(pulse::EnvironmentNode::Ambient);
+  // Define node on the combined graph, this is a simple circuit, no reason to make a independent circuit at this point
+  SEFluidCircuitNode& Connection = m_CombinedMechanicalVentilation.CreateNode(pulse::MechanicalVentilationNode::Connection);
+  Connection.GetPressure().Set(Ambient.GetPressure());
+  Connection.GetNextPressure().Set(Ambient.GetNextPressure());
+  Connection.GetVolumeBaseline().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::L);
+  // Paths
+  SEFluidCircuitPath& ConnectionToMouth = m_CombinedMechanicalVentilation.CreatePath(Connection, Mouth, pulse::MechanicalVentilationPath::ConnectionToMouth);
+  //ConnectionToMouth.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::L_Per_s); //We add this on the fly, it can only be there when explicitly set
+  SEFluidCircuitPath& GroundToConnection = m_CombinedMechanicalVentilation.CreatePath(Ambient, Connection, pulse::MechanicalVentilationPath::GroundToConnection);
+  GroundToConnection.GetPressureSourceBaseline().SetValue(0.0, PressureUnit::cmH2O);
+  m_CombinedMechanicalVentilation.RemovePath(pulse::RespiratoryPath::EnvironmentToMouth);
+  m_CombinedMechanicalVentilation.SetNextAndCurrentFromBaselines();
+  m_CombinedMechanicalVentilation.StateChange();
+
+  //////////////////////
+  // GAS COMPARTMENTS //
+  SEGasCompartment* gMouth = m_Compartments->GetGasCompartment(pulse::PulmonaryCompartment::Mouth);
+  SEGasCompartment* gAmbient = m_Compartments->GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
+  //////////////////
+  // Compartments //
+  SEGasCompartment& gConnection = m_Compartments->CreateGasCompartment(pulse::MechanicalVentilationCompartment::Connection);
+  gConnection.MapNode(Connection);
+  ///////////
+  // Links //  
+  SEGasCompartmentLink& gConnectionToMouth = m_Compartments->CreateGasLink(gConnection, *gMouth, pulse::MechanicalVentilationLink::ConnectionToMouth);
+  gConnectionToMouth.MapPath(ConnectionToMouth);
+  ///////////
+  // Graph //
+  SEGasCompartmentGraph& gCombinedMechanicalVentilation = m_Compartments->GetRespiratoryAndMechanicalVentilationGraph();
+  gCombinedMechanicalVentilation.AddGraph(gRespiratory);
+  gCombinedMechanicalVentilation.RemoveLink(pulse::PulmonaryLink::EnvironmentToMouth);
+  gCombinedMechanicalVentilation.AddCompartment(gConnection);
+  gCombinedMechanicalVentilation.AddLink(gConnectionToMouth);
+  gCombinedMechanicalVentilation.StateChange();
+
+  ///////////////////////////////////
+  // LIQUID (AEROSOL) COMPARTMENTS //
+  SELiquidCompartment* lMouth = m_Compartments->GetLiquidCompartment(pulse::PulmonaryCompartment::Mouth);
+  SELiquidCompartment* lAmbient = m_Compartments->GetLiquidCompartment(pulse::EnvironmentCompartment::Ambient);
+  //////////////////
+  // Compartments //
+  SELiquidCompartment& lConnection = m_Compartments->CreateLiquidCompartment(pulse::MechanicalVentilationCompartment::Connection);
+  lConnection.MapNode(Connection);
+  ///////////
+  // Links //  
+  SELiquidCompartmentLink& lConnectionToMouth = m_Compartments->CreateLiquidLink(lConnection, *lMouth, pulse::MechanicalVentilationLink::ConnectionToMouth);
+  lConnectionToMouth.MapPath(ConnectionToMouth);
+  ///////////
+  // Graph //
+  SELiquidCompartmentGraph& lCombinedMechanicalVentilation = m_Compartments->GetAerosolAndMechanicalVentilationGraph();
+  lCombinedMechanicalVentilation.AddGraph(lAerosol);
+  lCombinedMechanicalVentilation.RemoveLink(pulse::PulmonaryLink::EnvironmentToMouth);
+  lCombinedMechanicalVentilation.AddCompartment(lConnection);
+  lCombinedMechanicalVentilation.AddLink(lConnectionToMouth);
+  lCombinedMechanicalVentilation.StateChange();
+}
+
+void PulseController::SetupMechanicalVentilator()
+{
+  Info("Setting Up MechanicalVentilator");
+  /////////////////////// Circuit Interdependencies
+  SEFluidCircuit& cRespiratory = m_Circuits->GetRespiratoryCircuit();
+  SEGasCompartmentGraph& gRespiratory = m_Compartments->GetRespiratoryGraph();
+  SELiquidCompartmentGraph& lAerosol = m_Compartments->GetAerosolGraph();
+  ///////////////////////
+
+  double tubeVolume_L = 0.5; //4 total tubes - this is per tube
+                             //22mm ID * 36" length = pi * (0.022m / 2)^2 * 0.91m = 3.46e-4 m^3 = 0.346 L... so decent ballpark
+  double yPieceVolume_L = 0.1;
+  double connectioneVolume_L = 0.01;
+  double tubeResistance_cmH2O_s_Per_L = 0.01; //4 total tubes - this is per tube 
+                                              //this is pretty negligable
+
+  /////////////
+  // Circuit //
+  // Nodes
+  SEFluidCircuit& cMechanicalVentilator = m_Circuits->GetMechanicalVentilatorCircuit();
+  SEFluidCircuitNode& Ambient = *cRespiratory.GetNode(pulse::EnvironmentNode::Ambient);
+  cMechanicalVentilator.AddNode(Ambient);
+
+  SEFluidCircuitNode& Ventilator = cMechanicalVentilator.CreateNode(pulse::MechanicalVentilatorNode::Ventilator);
+  Ventilator.GetPressure().Set(Ambient.GetPressure());
+  Ventilator.GetVolumeBaseline().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::L);
+
+  SEFluidCircuitNode& ExpiratoryValve = cMechanicalVentilator.CreateNode(pulse::MechanicalVentilatorNode::ExpiratoryValve);
+  ExpiratoryValve.GetPressure().Set(Ambient.GetPressure());
+  ExpiratoryValve.GetVolumeBaseline().SetValue(tubeVolume_L, VolumeUnit::L);
+
+  SEFluidCircuitNode& InspiratoryValve = cMechanicalVentilator.CreateNode(pulse::MechanicalVentilatorNode::InspiratoryValve);
+  InspiratoryValve.GetPressure().Set(Ambient.GetPressure());
+  InspiratoryValve.GetVolumeBaseline().SetValue(tubeVolume_L, VolumeUnit::L);
+
+  SEFluidCircuitNode& ExpiratoryLimb = cMechanicalVentilator.CreateNode(pulse::MechanicalVentilatorNode::ExpiratoryLimb);
+  ExpiratoryLimb.GetPressure().Set(Ambient.GetPressure());
+  ExpiratoryLimb.GetVolumeBaseline().SetValue(tubeVolume_L, VolumeUnit::L);
+
+  SEFluidCircuitNode& InspiratoryLimb = cMechanicalVentilator.CreateNode(pulse::MechanicalVentilatorNode::InspiratoryLimb);
+  InspiratoryLimb.GetPressure().Set(Ambient.GetPressure());
+  InspiratoryLimb.GetVolumeBaseline().SetValue(tubeVolume_L, VolumeUnit::L);
+
+  SEFluidCircuitNode& YPiece = cMechanicalVentilator.CreateNode(pulse::MechanicalVentilatorNode::YPiece);
+  YPiece.GetPressure().Set(Ambient.GetPressure());
+  YPiece.GetVolumeBaseline().SetValue(yPieceVolume_L, VolumeUnit::L);
+
+  SEFluidCircuitNode& Connection = cMechanicalVentilator.CreateNode(pulse::MechanicalVentilatorNode::Connection);
+  Connection.GetPressure().Set(Ambient.GetPressure());
+  Connection.GetVolumeBaseline().SetValue(connectioneVolume_L, VolumeUnit::L);
+
+  //Paths
+  SEFluidCircuitPath& EnvironmentToVentilator = cMechanicalVentilator.CreatePath(Ambient, Ventilator, pulse::MechanicalVentilatorPath::EnvironmentToVentilator);
+  EnvironmentToVentilator.GetPressureSourceBaseline().SetValue(0.0, PressureUnit::cmH2O);
+
+  SEFluidCircuitPath& VentilatorToExpiratoryValve = cMechanicalVentilator.CreatePath(Ventilator, ExpiratoryValve, pulse::MechanicalVentilatorPath::VentilatorToExpiratoryValve);
+  VentilatorToExpiratoryValve.GetResistanceBaseline().SetValue(tubeResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+
+  SEFluidCircuitPath& VentilatorToInspiratoryValve = cMechanicalVentilator.CreatePath(Ventilator, InspiratoryValve, pulse::MechanicalVentilatorPath::VentilatorToInspiratoryValve);
+  VentilatorToInspiratoryValve.GetResistanceBaseline().SetValue(tubeResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+
+  SEFluidCircuitPath& ExpiratoryLimbToExpiratoryValve = cMechanicalVentilator.CreatePath(ExpiratoryLimb, ExpiratoryValve, pulse::MechanicalVentilatorPath::ExpiratoryLimbToExpiratoryValve);
+  ExpiratoryLimbToExpiratoryValve.SetNextValve(eGate::Open);
+
+  SEFluidCircuitPath& InspiratoryValveToInspiratoryLimb = cMechanicalVentilator.CreatePath(InspiratoryValve, InspiratoryLimb, pulse::MechanicalVentilatorPath::InspiratoryValveToInspiratoryLimb);
+  InspiratoryValveToInspiratoryLimb.SetNextValve(eGate::Open);
+
+  SEFluidCircuitPath& ExpiratoryLimbToYPiece = cMechanicalVentilator.CreatePath(ExpiratoryLimb, YPiece, pulse::MechanicalVentilatorPath::ExpiratoryLimbToYPiece);
+  ExpiratoryLimbToYPiece.GetResistanceBaseline().SetValue(tubeResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+
+  SEFluidCircuitPath& InspiratoryLimbToYPiece = cMechanicalVentilator.CreatePath(InspiratoryLimb, YPiece, pulse::MechanicalVentilatorPath::InspiratoryLimbToYPiece);
+  InspiratoryLimbToYPiece.GetResistanceBaseline().SetValue(tubeResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+
+  SEFluidCircuitPath& YPieceToConnection = cMechanicalVentilator.CreatePath(YPiece, Connection, pulse::MechanicalVentilatorPath::YPieceToConnection);
+
+  SEFluidCircuitPath& ConnectionToEnvironment = cMechanicalVentilator.CreatePath(Connection, Ambient, pulse::MechanicalVentilatorPath::ConnectionToEnvironment);
+
+  cMechanicalVentilator.SetNextAndCurrentFromBaselines();
+  cMechanicalVentilator.StateChange();
+
+  //Combined Respiratory and Mechanical Ventilator Circuit
+  SEFluidCircuit& cCombinedMechanicalVentilator = m_Circuits->GetRespiratoryAndMechanicalVentilatorCircuit();
+  cCombinedMechanicalVentilator.AddCircuit(cRespiratory);
+  cCombinedMechanicalVentilator.AddCircuit(cMechanicalVentilator);
+  SEFluidCircuitNode& Mouth = *cCombinedMechanicalVentilator.GetNode(pulse::RespiratoryNode::Mouth);
+  SEFluidCircuitPath& ConnectionToMouth = cCombinedMechanicalVentilator.CreatePath(Connection, Mouth, pulse::CombinedMechanicalVentilatorPath::ConnectionToMouth);
+  cCombinedMechanicalVentilator.RemovePath(pulse::RespiratoryPath::EnvironmentToMouth);
+  cCombinedMechanicalVentilator.RemovePath(pulse::MechanicalVentilatorPath::ConnectionToEnvironment);
+  cCombinedMechanicalVentilator.SetNextAndCurrentFromBaselines();
+  cCombinedMechanicalVentilator.StateChange();
+
+  //////////////////////
+  // GAS COMPARTMENTS //
+  // Grab the Environment Compartment
+  SEGasCompartment* eEnvironment = m_Compartments->GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
+  // Mechanical Ventilator Compartments
+  SEGasCompartment& mVentilator = m_Compartments->CreateGasCompartment(pulse::MechanicalVentilatorCompartment::MechanicalVentilator);
+  mVentilator.MapNode(Ventilator);
+  SEGasCompartment& mExpiratoryValve = m_Compartments->CreateGasCompartment(pulse::MechanicalVentilatorCompartment::ExpiratoryValve);
+  mExpiratoryValve.MapNode(ExpiratoryValve);
+  SEGasCompartment& mInspiratoryValve = m_Compartments->CreateGasCompartment(pulse::MechanicalVentilatorCompartment::InspiratoryValve);
+  mInspiratoryValve.MapNode(InspiratoryValve);
+  SEGasCompartment& mExpiratoryLimb = m_Compartments->CreateGasCompartment(pulse::MechanicalVentilatorCompartment::ExpiratoryLimb);
+  mExpiratoryLimb.MapNode(ExpiratoryLimb);
+  SEGasCompartment& mInspiratoryLimb = m_Compartments->CreateGasCompartment(pulse::MechanicalVentilatorCompartment::InspiratoryLimb);
+  mInspiratoryLimb.MapNode(InspiratoryLimb);
+  SEGasCompartment& mYPiece = m_Compartments->CreateGasCompartment(pulse::MechanicalVentilatorCompartment::YPiece);
+  mYPiece.MapNode(YPiece);
+  SEGasCompartment& mConnection = m_Compartments->CreateGasCompartment(pulse::MechanicalVentilatorCompartment::Connection);
+  mConnection.MapNode(Connection);
+
+  // Setup Links //
+  SEGasCompartmentLink& mVentilatorToExpiratoryValve = m_Compartments->CreateGasLink(mVentilator, mExpiratoryValve, pulse::MechanicalVentilatorLink::MechanicalVentilatorToExpiratoryValve);
+  mVentilatorToExpiratoryValve.MapPath(VentilatorToExpiratoryValve);
+  SEGasCompartmentLink& mVentilatorToInspiratoryValve = m_Compartments->CreateGasLink(mVentilator, mInspiratoryValve, pulse::MechanicalVentilatorLink::MechanicalVentilatorToInspiratoryValve);
+  mVentilatorToInspiratoryValve.MapPath(VentilatorToInspiratoryValve);
+  SEGasCompartmentLink& mExpiratoryLimbToExpiratoryValve = m_Compartments->CreateGasLink(mExpiratoryLimb, mExpiratoryValve, pulse::MechanicalVentilatorLink::ExpiratoryLimbToExpiratoryValve);
+  mExpiratoryLimbToExpiratoryValve.MapPath(ExpiratoryLimbToExpiratoryValve);
+  SEGasCompartmentLink& mInspiratoryValveToInspiratoryLimb = m_Compartments->CreateGasLink(mInspiratoryValve, mInspiratoryLimb, pulse::MechanicalVentilatorLink::InspiratoryValveToInspiratoryLimb);
+  mInspiratoryValveToInspiratoryLimb.MapPath(InspiratoryValveToInspiratoryLimb);
+  SEGasCompartmentLink& mExpiratoryLimbToYPiece = m_Compartments->CreateGasLink(mExpiratoryLimb, mYPiece, pulse::MechanicalVentilatorLink::ExpiratoryLimbToYPiece);
+  mExpiratoryLimbToYPiece.MapPath(ExpiratoryLimbToYPiece);
+  SEGasCompartmentLink& mInspiratoryLimbToYPiece = m_Compartments->CreateGasLink(mInspiratoryLimb, mYPiece, pulse::MechanicalVentilatorLink::InspiratoryLimbToYPiece);
+  mInspiratoryLimbToYPiece.MapPath(InspiratoryLimbToYPiece);
+  SEGasCompartmentLink& mYPieceToConnection = m_Compartments->CreateGasLink(mYPiece, mConnection, pulse::MechanicalVentilatorLink::YPieceToConnection);
+  mYPieceToConnection.MapPath(YPieceToConnection);
+  SEGasCompartmentLink& mConnectionToEnvironment = m_Compartments->CreateGasLink(mConnection, *eEnvironment, pulse::MechanicalVentilatorLink::ConnectionToEnvironment);
+  mConnectionToEnvironment.MapPath(ConnectionToEnvironment);
+
+  SEGasCompartmentGraph& gMechanicalVentilator = m_Compartments->GetMechanicalVentilatorGraph();
+  gMechanicalVentilator.AddCompartment(mVentilator);
+  gMechanicalVentilator.AddCompartment(mExpiratoryValve);
+  gMechanicalVentilator.AddCompartment(mInspiratoryValve);
+  gMechanicalVentilator.AddCompartment(mExpiratoryLimb);
+  gMechanicalVentilator.AddCompartment(mInspiratoryLimb);
+  gMechanicalVentilator.AddCompartment(mYPiece);
+  gMechanicalVentilator.AddCompartment(mConnection);
+  gMechanicalVentilator.AddLink(mVentilatorToExpiratoryValve);
+  gMechanicalVentilator.AddLink(mVentilatorToInspiratoryValve);
+  gMechanicalVentilator.AddLink(mExpiratoryLimbToExpiratoryValve);
+  gMechanicalVentilator.AddLink(mInspiratoryValveToInspiratoryLimb);
+  gMechanicalVentilator.AddLink(mExpiratoryLimbToYPiece);
+  gMechanicalVentilator.AddLink(mInspiratoryLimbToYPiece);
+  gMechanicalVentilator.AddLink(mYPieceToConnection);
+  gMechanicalVentilator.AddLink(mConnectionToEnvironment);
+  gMechanicalVentilator.StateChange();
+
+  //Now do the combined transport setup
+  // Grab the mouth from pulmonary
+  SEGasCompartment* pMouth = m_Compartments->GetGasCompartment(pulse::PulmonaryCompartment::Mouth);
+  SEGasCompartmentLink& mConnectionToMouth = m_Compartments->CreateGasLink(mConnection, *pMouth, pulse::MechanicalVentilatorLink::ConnectionToMouth);
+  mConnectionToMouth.MapPath(ConnectionToMouth);
+
+  SEGasCompartmentGraph& gCombinedRespiratoryMechanicalVentilator = m_Compartments->GetRespiratoryAndMechanicalVentilatorGraph();
+  gCombinedRespiratoryMechanicalVentilator.AddGraph(gRespiratory);
+  gCombinedRespiratoryMechanicalVentilator.AddGraph(gMechanicalVentilator);
+  gCombinedRespiratoryMechanicalVentilator.RemoveLink(pulse::PulmonaryLink::EnvironmentToMouth);
+  gCombinedRespiratoryMechanicalVentilator.RemoveLink(pulse::MechanicalVentilatorLink::ConnectionToEnvironment);
+  gCombinedRespiratoryMechanicalVentilator.AddLink(mConnectionToMouth);
+  gCombinedRespiratoryMechanicalVentilator.StateChange();
+
+  ///////////////////////////////////
+  // LIQUID (AEROSOL) COMPARTMENTS //
+  // Grab from pulmonary
+  SELiquidCompartment* lMouth = m_Compartments->GetLiquidCompartment(pulse::PulmonaryCompartment::Mouth);
+  SELiquidCompartment* lEnvironment = m_Compartments->GetLiquidCompartment(pulse::EnvironmentCompartment::Ambient);
+
+  // Mechanical Ventilator Compartments
+  SELiquidCompartment& lVentilator = m_Compartments->CreateLiquidCompartment(pulse::MechanicalVentilatorCompartment::MechanicalVentilator);
+  lVentilator.MapNode(Ventilator);
+  SELiquidCompartment& lExpiratoryValve = m_Compartments->CreateLiquidCompartment(pulse::MechanicalVentilatorCompartment::ExpiratoryValve);
+  lExpiratoryValve.MapNode(ExpiratoryValve);
+  SELiquidCompartment& lInspiratoryValve = m_Compartments->CreateLiquidCompartment(pulse::MechanicalVentilatorCompartment::InspiratoryValve);
+  lInspiratoryValve.MapNode(InspiratoryValve);
+  SELiquidCompartment& lExpiratoryLimb = m_Compartments->CreateLiquidCompartment(pulse::MechanicalVentilatorCompartment::ExpiratoryLimb);
+  lExpiratoryLimb.MapNode(ExpiratoryLimb);
+  SELiquidCompartment& lInspiratoryLimb = m_Compartments->CreateLiquidCompartment(pulse::MechanicalVentilatorCompartment::InspiratoryLimb);
+  lInspiratoryLimb.MapNode(InspiratoryLimb);
+  SELiquidCompartment& lYPiece = m_Compartments->CreateLiquidCompartment(pulse::MechanicalVentilatorCompartment::YPiece);
+  lYPiece.MapNode(YPiece);
+  SELiquidCompartment& lConnection = m_Compartments->CreateLiquidCompartment(pulse::MechanicalVentilatorCompartment::Connection);
+  lConnection.MapNode(Connection);
+
+  //Links
+  SELiquidCompartmentLink& lConnectionToMouth = m_Compartments->CreateLiquidLink(lConnection, *lMouth, pulse::MechanicalVentilatorLink::ConnectionToMouth);
+  lConnectionToMouth.MapPath(ConnectionToMouth);
+
+  SELiquidCompartmentLink& lVentilatorToExpiratoryValve = m_Compartments->CreateLiquidLink(lVentilator, lExpiratoryValve, pulse::MechanicalVentilatorLink::MechanicalVentilatorToExpiratoryValve);
+  lVentilatorToExpiratoryValve.MapPath(VentilatorToExpiratoryValve);
+  SELiquidCompartmentLink& lVentilatorToInspiratoryValve = m_Compartments->CreateLiquidLink(lVentilator, lInspiratoryValve, pulse::MechanicalVentilatorLink::MechanicalVentilatorToInspiratoryValve);
+  lVentilatorToInspiratoryValve.MapPath(VentilatorToInspiratoryValve);
+  SELiquidCompartmentLink& lExpiratoryLimbToExpiratoryValve = m_Compartments->CreateLiquidLink(lExpiratoryLimb, lExpiratoryValve, pulse::MechanicalVentilatorLink::ExpiratoryLimbToExpiratoryValve);
+  lExpiratoryLimbToExpiratoryValve.MapPath(ExpiratoryLimbToExpiratoryValve);
+  SELiquidCompartmentLink& lInspiratoryValveToInspiratoryLimb = m_Compartments->CreateLiquidLink(lInspiratoryValve, lInspiratoryLimb, pulse::MechanicalVentilatorLink::InspiratoryValveToInspiratoryLimb);
+  lInspiratoryValveToInspiratoryLimb.MapPath(InspiratoryValveToInspiratoryLimb);
+  SELiquidCompartmentLink& lExpiratoryLimbToYPiece = m_Compartments->CreateLiquidLink(lExpiratoryLimb, lYPiece, pulse::MechanicalVentilatorLink::ExpiratoryLimbToYPiece);
+  lExpiratoryLimbToYPiece.MapPath(ExpiratoryLimbToYPiece);
+  SELiquidCompartmentLink& lInspiratoryLimbToYPiece = m_Compartments->CreateLiquidLink(lInspiratoryLimb, lYPiece, pulse::MechanicalVentilatorLink::InspiratoryLimbToYPiece);
+  lInspiratoryLimbToYPiece.MapPath(InspiratoryLimbToYPiece);
+  SELiquidCompartmentLink& lYPieceToConnection = m_Compartments->CreateLiquidLink(lYPiece, lConnection, pulse::MechanicalVentilatorLink::YPieceToConnection);
+  lYPieceToConnection.MapPath(YPieceToConnection);
+  SELiquidCompartmentLink& lConnectionToEnvironment = m_Compartments->CreateLiquidLink(lConnection, *lEnvironment, pulse::MechanicalVentilatorLink::ConnectionToEnvironment);
+  lConnectionToEnvironment.MapPath(ConnectionToEnvironment);
+  
+  //Graph
+  SELiquidCompartmentGraph& lCombinedMechanicalVentilator = m_Compartments->GetAerosolAndMechanicalVentilatorGraph();
+  //Respiratory Graph
+  lCombinedMechanicalVentilator.AddGraph(lAerosol);
+  lCombinedMechanicalVentilator.RemoveLink(pulse::PulmonaryLink::EnvironmentToMouth);
+  //Mechanical Ventilator Additions
+  lCombinedMechanicalVentilator.AddCompartment(lVentilator);
+  lCombinedMechanicalVentilator.AddCompartment(lExpiratoryValve);
+  lCombinedMechanicalVentilator.AddCompartment(lInspiratoryValve);
+  lCombinedMechanicalVentilator.AddCompartment(lExpiratoryLimb);
+  lCombinedMechanicalVentilator.AddCompartment(lInspiratoryLimb);
+  lCombinedMechanicalVentilator.AddCompartment(lYPiece);
+  lCombinedMechanicalVentilator.AddCompartment(lConnection);
+  lCombinedMechanicalVentilator.AddLink(lVentilatorToExpiratoryValve);
+  lCombinedMechanicalVentilator.AddLink(lVentilatorToInspiratoryValve);
+  lCombinedMechanicalVentilator.AddLink(lExpiratoryLimbToExpiratoryValve);
+  lCombinedMechanicalVentilator.AddLink(lInspiratoryValveToInspiratoryLimb);
+  lCombinedMechanicalVentilator.AddLink(lExpiratoryLimbToYPiece);
+  lCombinedMechanicalVentilator.AddLink(lInspiratoryLimbToYPiece);
+  lCombinedMechanicalVentilator.AddLink(lYPieceToConnection);
+  //lCombinedMechanicalVentilator.AddLink(lConnectionToEnvironment);
+  //Connection to Respiratory
+  lCombinedMechanicalVentilator.AddLink(lConnectionToMouth);
+  //Set it
+  lCombinedMechanicalVentilator.StateChange();
+}
+
 void PulseController::SetupNasalCannula()
 {
   Info("Setting Up Nasal Cannula");
@@ -4354,7 +5010,6 @@ void PulseController::SetupNasalCannula()
   SEFluidCircuit& cRespiratory = m_Circuits->GetRespiratoryCircuit();
   SEGasCompartmentGraph& gRespiratory = m_Compartments->GetRespiratoryGraph();
   double OpenResistance_cmH2O_s_Per_L = m_Config->GetDefaultOpenFlowResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L); //open switch resistance is super high (i.e., tight seal)
-  double SealResistance_cmH2O_s_Per_L = 0.001; //loose seal
   ///////////////////////
 
   //Combined Respiratory and Nasal Cannula Circuit
@@ -4374,7 +5029,7 @@ void PulseController::SetupNasalCannula()
   SEFluidCircuitPath& OxygenInlet = CombinedNasalCannula.CreatePath(OxygenSource, NasalCannula, pulse::NasalCannulaPath::NasalCannulaOxygenInlet);
   OxygenInlet.GetResistanceBaseline().SetValue(OpenResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   SEFluidCircuitPath& Seal = CombinedNasalCannula.CreatePath(NasalCannula, Ambient, pulse::NasalCannulaPath::NasalCannulaSeal);
-  //Seal.GetResistanceBaseline().SetValue(SealResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  //No resistance
   // Connect Path
   SEFluidCircuitPath& NasalCannulaToMouth = CombinedNasalCannula.CreatePath(NasalCannula, Mouth, pulse::NasalCannulaPath::NasalCannulaToMouth);
   CombinedNasalCannula.RemovePath(pulse::RespiratoryPath::EnvironmentToMouth);
@@ -4410,80 +5065,6 @@ void PulseController::SetupNasalCannula()
   gCombinedNasalCannula.AddLink(gSeal);
   gCombinedNasalCannula.AddLink(gNasalCannulaToMouth);
   gCombinedNasalCannula.StateChange();
-}
-
-void PulseController::SetupSimpleMask()
-{
-  Info("Setting Up Simple Mask");
-  /////////////////////// Circuit Interdependencies
-  SEFluidCircuit& cRespiratory = m_Circuits->GetRespiratoryCircuit();
-  SEGasCompartmentGraph& gRespiratory = m_Compartments->GetRespiratoryGraph();
-  double OpenResistance_cmH2O_s_Per_L = m_Config->GetDefaultOpenFlowResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L); //open switch resistance is super high (i.e., tight seal)
-  double PortsResistance_cmH2O_s_Per_L = 0.1;
-  ///////////////////////
-
-  //Combined Respiratory and Simple Mask Circuit
-  SEFluidCircuit& CombinedSimpleMask = m_Circuits->GetRespiratoryAndSimpleMaskCircuit();
-  CombinedSimpleMask.AddCircuit(cRespiratory);
-  // Grab connection points/nodes
-  SEFluidCircuitNode& Mouth = *cRespiratory.GetNode(pulse::RespiratoryNode::Mouth);
-  SEFluidCircuitNode& Ambient = *cRespiratory.GetNode(pulse::EnvironmentNode::Ambient);
-  // Define node on the combined graph, this is a simple circuit, no reason to make a independent circuit at this point
-  SEFluidCircuitNode& Mask = CombinedSimpleMask.CreateNode(pulse::SimpleMaskNode::SimpleMask);
-  Mask.GetPressure().SetValue(0.0, PressureUnit::cmH2O);
-  Mask.GetNextPressure().SetValue(0.0, PressureUnit::cmH2O);
-  Mask.GetVolumeBaseline().SetValue(0.5, VolumeUnit::L);
-  SEFluidCircuitNode& OxygenSource = CombinedSimpleMask.CreateNode(pulse::SimpleMaskNode::SimpleMaskOxygenSource);
-  OxygenSource.GetPressure().SetValue(0.0, PressureUnit::cmH2O);
-  OxygenSource.GetNextPressure().SetValue(0.0, PressureUnit::cmH2O);
-  OxygenSource.GetVolumeBaseline().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::L);
-  // Define path on the combined graph, this is a simple circuit, no reason to make a independent circuit at this point
-  SEFluidCircuitPath& GroundToOxygenSource = CombinedSimpleMask.CreatePath(Ambient, OxygenSource, pulse::SimpleMaskPath::SimpleMaskPressure);
-  GroundToOxygenSource.GetPressureSourceBaseline().SetValue(2000.0, PressureUnit::psi);
-  SEFluidCircuitPath& OxygenInlet = CombinedSimpleMask.CreatePath(OxygenSource, Mask, pulse::SimpleMaskPath::SimpleMaskOxygenInlet);
-  OxygenInlet.GetResistanceBaseline().SetValue(OpenResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  SEFluidCircuitPath& Seal = CombinedSimpleMask.CreatePath(Ambient, Mask, pulse::SimpleMaskPath::SimpleMaskSeal);
-  Seal.GetResistanceBaseline().SetValue(OpenResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  SEFluidCircuitPath& Ports = CombinedSimpleMask.CreatePath(Mask, Ambient, pulse::SimpleMaskPath::SimpleMaskPorts);
-  Ports.GetResistanceBaseline().SetValue(PortsResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  // Connect Path
-  SEFluidCircuitPath& MaskToMouth = CombinedSimpleMask.CreatePath(Mask, Mouth, pulse::SimpleMaskPath::SimpleMaskToMouth);
-  CombinedSimpleMask.RemovePath(pulse::RespiratoryPath::EnvironmentToMouth);
-  CombinedSimpleMask.SetNextAndCurrentFromBaselines();
-  CombinedSimpleMask.StateChange();
-
-  //////////////////////
-  // GAS COMPARTMENTS //
-  SEGasCompartment* gMouth = m_Compartments->GetGasCompartment(pulse::PulmonaryCompartment::Mouth);
-  SEGasCompartment* gAmbient = m_Compartments->GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
-  //////////////////
-  // Compartments //
-  SEGasCompartment& gMask = m_Compartments->CreateGasCompartment(pulse::SimpleMaskCompartment::SimpleMask);
-  gMask.MapNode(Mask);
-  SEGasCompartment& gOxygenSource = m_Compartments->CreateGasCompartment(pulse::SimpleMaskCompartment::SimpleMaskOxygenSource);
-  gOxygenSource.MapNode(OxygenSource);
-  ///////////
-  // Links //
-  SEGasCompartmentLink& gOxygenInlet = m_Compartments->CreateGasLink(gOxygenSource, gMask, pulse::SimpleMaskLink::SimpleMaskOxygenInlet);
-  gOxygenInlet.MapPath(OxygenInlet);
-  SEGasCompartmentLink& gSeal = m_Compartments->CreateGasLink(*gAmbient, gMask, pulse::SimpleMaskLink::SimpleMaskSeal);
-  gSeal.MapPath(Seal);
-  SEGasCompartmentLink& gPorts = m_Compartments->CreateGasLink(gMask, *gAmbient, pulse::SimpleMaskLink::SimpleMaskPorts);
-  gPorts.MapPath(Ports);
-  SEGasCompartmentLink& gMaskToMouth = m_Compartments->CreateGasLink(gMask, *gMouth, pulse::SimpleMaskLink::SimpleMaskToMouth);
-  gMaskToMouth.MapPath(MaskToMouth);
-  ///////////
-  // Graph //
-  SEGasCompartmentGraph& gCombinedSimpleMask = m_Compartments->GetRespiratoryAndSimpleMaskGraph();
-  gCombinedSimpleMask.AddGraph(gRespiratory);
-  gCombinedSimpleMask.RemoveLink(pulse::PulmonaryLink::EnvironmentToMouth);
-  gCombinedSimpleMask.AddCompartment(gMask);
-  gCombinedSimpleMask.AddCompartment(gOxygenSource);
-  gCombinedSimpleMask.AddLink(gOxygenInlet);
-  gCombinedSimpleMask.AddLink(gSeal);
-  gCombinedSimpleMask.AddLink(gPorts);
-  gCombinedSimpleMask.AddLink(gMaskToMouth);
-  gCombinedSimpleMask.StateChange();
 }
 
 void PulseController::SetupNonRebreatherMask()
@@ -4582,34 +5163,45 @@ void PulseController::SetupNonRebreatherMask()
   gCombinedNonRebreatherMask.StateChange();
 }
 
-void PulseController::SetupMechanicalVentilator()
+void PulseController::SetupSimpleMask()
 {
-  Info("Setting Up MechanicalVentilator");
+  Info("Setting Up Simple Mask");
   /////////////////////// Circuit Interdependencies
   SEFluidCircuit& cRespiratory = m_Circuits->GetRespiratoryCircuit();
   SEGasCompartmentGraph& gRespiratory = m_Compartments->GetRespiratoryGraph();
-  SELiquidCompartmentGraph& lAerosol = m_Compartments->GetAerosolGraph();
+  double OpenResistance_cmH2O_s_Per_L = m_Config->GetDefaultOpenFlowResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L); //open switch resistance is super high (i.e., tight seal)
+  double PortsResistance_cmH2O_s_Per_L = 0.1;
   ///////////////////////
 
-  //Combined Respiratory and Mechanical Ventilator Circuit
-  SEFluidCircuit& m_CombinedMechanicalVentilator = m_Circuits->GetRespiratoryAndMechanicalVentilatorCircuit();
-  m_CombinedMechanicalVentilator.AddCircuit(cRespiratory);
+  //Combined Respiratory and Simple Mask Circuit
+  SEFluidCircuit& CombinedSimpleMask = m_Circuits->GetRespiratoryAndSimpleMaskCircuit();
+  CombinedSimpleMask.AddCircuit(cRespiratory);
   // Grab connection points/nodes
   SEFluidCircuitNode& Mouth = *cRespiratory.GetNode(pulse::RespiratoryNode::Mouth);
   SEFluidCircuitNode& Ambient = *cRespiratory.GetNode(pulse::EnvironmentNode::Ambient);
   // Define node on the combined graph, this is a simple circuit, no reason to make a independent circuit at this point
-  SEFluidCircuitNode& Connection = m_CombinedMechanicalVentilator.CreateNode(pulse::MechanicalVentilatorNode::Connection);
-  Connection.GetPressure().Set(Ambient.GetPressure());
-  Connection.GetNextPressure().Set(Ambient.GetNextPressure());
-  Connection.GetVolumeBaseline().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::L);
-  // Paths
-  SEFluidCircuitPath& ConnectionToMouth = m_CombinedMechanicalVentilator.CreatePath(Connection, Mouth, pulse::MechanicalVentilatorPath::ConnectionToMouth);
-  //ConnectionToMouth.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::L_Per_s); //We add this on the fly, it can only be there when explicitly set
-  SEFluidCircuitPath& GroundToConnection = m_CombinedMechanicalVentilator.CreatePath(Ambient, Connection, pulse::MechanicalVentilatorPath::GroundToConnection);
-  GroundToConnection.GetPressureSourceBaseline().SetValue(0.0, PressureUnit::cmH2O);
-  m_CombinedMechanicalVentilator.RemovePath(pulse::RespiratoryPath::EnvironmentToMouth);
-  m_CombinedMechanicalVentilator.SetNextAndCurrentFromBaselines();
-  m_CombinedMechanicalVentilator.StateChange();
+  SEFluidCircuitNode& Mask = CombinedSimpleMask.CreateNode(pulse::SimpleMaskNode::SimpleMask);
+  Mask.GetPressure().SetValue(0.0, PressureUnit::cmH2O);
+  Mask.GetNextPressure().SetValue(0.0, PressureUnit::cmH2O);
+  Mask.GetVolumeBaseline().SetValue(0.5, VolumeUnit::L);
+  SEFluidCircuitNode& OxygenSource = CombinedSimpleMask.CreateNode(pulse::SimpleMaskNode::SimpleMaskOxygenSource);
+  OxygenSource.GetPressure().SetValue(0.0, PressureUnit::cmH2O);
+  OxygenSource.GetNextPressure().SetValue(0.0, PressureUnit::cmH2O);
+  OxygenSource.GetVolumeBaseline().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::L);
+  // Define path on the combined graph, this is a simple circuit, no reason to make a independent circuit at this point
+  SEFluidCircuitPath& GroundToOxygenSource = CombinedSimpleMask.CreatePath(Ambient, OxygenSource, pulse::SimpleMaskPath::SimpleMaskPressure);
+  GroundToOxygenSource.GetPressureSourceBaseline().SetValue(2000.0, PressureUnit::psi);
+  SEFluidCircuitPath& OxygenInlet = CombinedSimpleMask.CreatePath(OxygenSource, Mask, pulse::SimpleMaskPath::SimpleMaskOxygenInlet);
+  OxygenInlet.GetResistanceBaseline().SetValue(OpenResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  SEFluidCircuitPath& Seal = CombinedSimpleMask.CreatePath(Ambient, Mask, pulse::SimpleMaskPath::SimpleMaskSeal);
+  Seal.GetResistanceBaseline().SetValue(OpenResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  SEFluidCircuitPath& Ports = CombinedSimpleMask.CreatePath(Mask, Ambient, pulse::SimpleMaskPath::SimpleMaskPorts);
+  Ports.GetResistanceBaseline().SetValue(PortsResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  // Connect Path
+  SEFluidCircuitPath& MaskToMouth = CombinedSimpleMask.CreatePath(Mask, Mouth, pulse::SimpleMaskPath::SimpleMaskToMouth);
+  CombinedSimpleMask.RemovePath(pulse::RespiratoryPath::EnvironmentToMouth);
+  CombinedSimpleMask.SetNextAndCurrentFromBaselines();
+  CombinedSimpleMask.StateChange();
 
   //////////////////////
   // GAS COMPARTMENTS //
@@ -4617,41 +5209,32 @@ void PulseController::SetupMechanicalVentilator()
   SEGasCompartment* gAmbient = m_Compartments->GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
   //////////////////
   // Compartments //
-  SEGasCompartment& gConnection = m_Compartments->CreateGasCompartment(pulse::MechanicalVentilatorCompartment::Connection);
-  gConnection.MapNode(Connection);
+  SEGasCompartment& gMask = m_Compartments->CreateGasCompartment(pulse::SimpleMaskCompartment::SimpleMask);
+  gMask.MapNode(Mask);
+  SEGasCompartment& gOxygenSource = m_Compartments->CreateGasCompartment(pulse::SimpleMaskCompartment::SimpleMaskOxygenSource);
+  gOxygenSource.MapNode(OxygenSource);
   ///////////
-  // Links //  
-  SEGasCompartmentLink& gConnectionToMouth = m_Compartments->CreateGasLink(gConnection, *gMouth, pulse::MechanicalVentilatorLink::ConnectionToMouth);
-  gConnectionToMouth.MapPath(ConnectionToMouth);
-  ///////////
-  // Graph //
-  SEGasCompartmentGraph& gCombinedMechanicalVentilator = m_Compartments->GetRespiratoryAndMechanicalVentilatorGraph();
-  gCombinedMechanicalVentilator.AddGraph(gRespiratory);
-  gCombinedMechanicalVentilator.RemoveLink(pulse::PulmonaryLink::EnvironmentToMouth);
-  gCombinedMechanicalVentilator.AddCompartment(gConnection);
-  gCombinedMechanicalVentilator.AddLink(gConnectionToMouth);
-  gCombinedMechanicalVentilator.StateChange();
-
-  ///////////////////////////////////
-  // LIQUID (AEROSOL) COMPARTMENTS //
-  SELiquidCompartment* lMouth = m_Compartments->GetLiquidCompartment(pulse::PulmonaryCompartment::Mouth);
-  SELiquidCompartment* lAmbient = m_Compartments->GetLiquidCompartment(pulse::EnvironmentCompartment::Ambient);
-  //////////////////
-  // Compartments //
-  SELiquidCompartment& lConnection = m_Compartments->CreateLiquidCompartment(pulse::MechanicalVentilatorCompartment::Connection);
-  lConnection.MapNode(Connection);
-  ///////////
-  // Links //  
-  SELiquidCompartmentLink& lConnectionToMouth = m_Compartments->CreateLiquidLink(lConnection, *lMouth, pulse::MechanicalVentilatorLink::ConnectionToMouth);
-  lConnectionToMouth.MapPath(ConnectionToMouth);
+  // Links //
+  SEGasCompartmentLink& gOxygenInlet = m_Compartments->CreateGasLink(gOxygenSource, gMask, pulse::SimpleMaskLink::SimpleMaskOxygenInlet);
+  gOxygenInlet.MapPath(OxygenInlet);
+  SEGasCompartmentLink& gSeal = m_Compartments->CreateGasLink(*gAmbient, gMask, pulse::SimpleMaskLink::SimpleMaskSeal);
+  gSeal.MapPath(Seal);
+  SEGasCompartmentLink& gPorts = m_Compartments->CreateGasLink(gMask, *gAmbient, pulse::SimpleMaskLink::SimpleMaskPorts);
+  gPorts.MapPath(Ports);
+  SEGasCompartmentLink& gMaskToMouth = m_Compartments->CreateGasLink(gMask, *gMouth, pulse::SimpleMaskLink::SimpleMaskToMouth);
+  gMaskToMouth.MapPath(MaskToMouth);
   ///////////
   // Graph //
-  SELiquidCompartmentGraph& lCombinedMechanicalVentilator = m_Compartments->GetAerosolAndMechanicalVentilatorGraph();
-  lCombinedMechanicalVentilator.AddGraph(lAerosol);
-  lCombinedMechanicalVentilator.RemoveLink(pulse::PulmonaryLink::EnvironmentToMouth);
-  lCombinedMechanicalVentilator.AddCompartment(lConnection);
-  lCombinedMechanicalVentilator.AddLink(lConnectionToMouth);
-  lCombinedMechanicalVentilator.StateChange();
+  SEGasCompartmentGraph& gCombinedSimpleMask = m_Compartments->GetRespiratoryAndSimpleMaskGraph();
+  gCombinedSimpleMask.AddGraph(gRespiratory);
+  gCombinedSimpleMask.RemoveLink(pulse::PulmonaryLink::EnvironmentToMouth);
+  gCombinedSimpleMask.AddCompartment(gMask);
+  gCombinedSimpleMask.AddCompartment(gOxygenSource);
+  gCombinedSimpleMask.AddLink(gOxygenInlet);
+  gCombinedSimpleMask.AddLink(gSeal);
+  gCombinedSimpleMask.AddLink(gPorts);
+  gCombinedSimpleMask.AddLink(gMaskToMouth);
+  gCombinedSimpleMask.StateChange();
 }
 
 void PulseController::SetupExternalTemperature()

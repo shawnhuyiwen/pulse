@@ -14,13 +14,13 @@ class SELiquidSubstanceQuantity;
 */
 class PULSE_DECL SaturationCalculator : public Loggable
 {
-protected:
+  friend class PulseData;
   friend error_functor;
-  friend PulseController;
   friend class PulseEngineTest;
+protected:
+  SaturationCalculator(PulseData& data);
+  PulseData& m_data;
 
-  SaturationCalculator(PulseController& data);
-  PulseController& m_data;
 public:
   virtual ~SaturationCalculator();
 
@@ -30,7 +30,8 @@ public:
   void CalculateBloodGasDistribution(SELiquidCompartment& cmpt);
   void CalculateCarbonMonoxideSpeciesDistribution(SELiquidCompartment& cmpt);
 
-protected:// Stewart Model + Dash-Bassingthwaighte Model + Henderson-Hasselbach Model
+protected:
+  // Stewart Model + Dash-Bassingthwaighte Model + Henderson-Hasselbach Model
   void CalculateHemoglobinSaturations(double O2PartialPressureGuess_mmHg, double CO2PartialPressureGuess_mmHg, double pH, double temperature_C, double  hematocrit, double& OxygenSaturation, double& CarbonDioxideSaturation, double CO2_scaling_factor);
   bool DistributeHemoglobinBySaturation();
 

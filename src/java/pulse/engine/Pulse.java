@@ -18,7 +18,7 @@ import pulse.cdm.substance.SESubstanceTissuePharmacokinetics;
 import pulse.cdm.substance.SESubstanceManager;
 import pulse.cdm.system.SESystem;
 import pulse.cdm.system.environment.*;
-import pulse.cdm.system.equipment.anesthesia.*;
+import pulse.cdm.system.equipment.anesthesia_machine.*;
 import pulse.cdm.system.equipment.electrocardiogram.*;
 import pulse.cdm.system.equipment.inhaler.*;
 import pulse.cdm.system.physiology.*;

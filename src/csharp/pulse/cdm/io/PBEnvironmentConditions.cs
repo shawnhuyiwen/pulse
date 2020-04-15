@@ -70,7 +70,7 @@ namespace Pulse.CDM
     }
     static void Serialize(SEInitialEnvironmentalConditions src, pulse.cdm.bind.InitialEnvironmentalConditionsData dst)
     {
-
+      dst.EnvironmentCondition = new pulse.cdm.bind.EnvironmentConditionData();
       Serialize(src, dst.EnvironmentCondition);
       if (src.HasEnvironmentalConditionsFile())
         dst.EnvironmentalConditionsFile = src.GetEnvironmentalConditionsFile();

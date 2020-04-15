@@ -12,6 +12,20 @@ public class InversePressureUnit
   public static InversePressureUnit Inverse_mmHg = new InversePressureUnit("1/mmHg");
   public static InversePressureUnit Inverse_cmH2O = new InversePressureUnit("1/cmH2O");
   public static InversePressureUnit Inverse_atm = new InversePressureUnit("1/atm");
+
+  public static InversePressureUnit FromString(string u)
+  {
+    if (u == InversePressureUnit.Inverse_Pa.ToString())
+      return InversePressureUnit.Inverse_Pa;
+    if (u == InversePressureUnit.Inverse_mmHg.ToString())
+      return InversePressureUnit.Inverse_mmHg;
+    if (u == InversePressureUnit.Inverse_cmH2O.ToString())
+      return InversePressureUnit.Inverse_cmH2O;
+    if (u == InversePressureUnit.Inverse_atm.ToString())
+      return InversePressureUnit.Inverse_atm;
+
+    throw new System.ArgumentException(u + " is not a know inverse pressure unit");
+  }
 }
 
 public class SEScalarInversePressure : SEScalar

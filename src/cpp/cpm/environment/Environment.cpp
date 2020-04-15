@@ -56,7 +56,7 @@
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarLength.h"
 
-Environment::Environment(PulseController& data) : SEEnvironment(data.GetSubstances()), m_data(data)
+Environment::Environment(PulseData& data) : PulseEnvironmentSystem(data.GetSubstances()), m_data(data)
 {
   Clear();
 }
@@ -254,9 +254,13 @@ void Environment::PreProcess()
 /// There is nothing to do here.  Processing the combined Energy-Environment circuit is handled by
 /// the Energy system.
 //--------------------------------------------------------------------------------------------------
-void Environment::Process()
+void Environment::Process(bool solve_and_transport)
 {
-  
+  ComputeExposedModelParameters();
+}
+void Environment::ComputeExposedModelParameters()
+{
+
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -264,7 +268,7 @@ void Environment::Process()
 /// There is nothing to do here.  Postprocessing the combined Energy-Environment circuit is handled by
 /// the Energy system.
 //--------------------------------------------------------------------------------------------------
-void Environment::PostProcess()
+void Environment::PostProcess(bool solve_and_transport)
 {
   
 }

@@ -14,11 +14,11 @@ POP_PROTO_WARNINGS()
 
 void PBScenario::Load(const CDM_BIND::ScenarioData& src, SEScenario& dst)
 {
+  dst.Clear();
   PBScenario::Serialize(src, dst);
 }
 void PBScenario::Serialize(const CDM_BIND::ScenarioData& src, SEScenario& dst)
 {
-  dst.Clear();
   dst.SetName(src.name());
   dst.SetDescription(src.description());
 

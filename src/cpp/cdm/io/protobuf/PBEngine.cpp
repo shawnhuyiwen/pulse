@@ -33,32 +33,33 @@ POP_PROTO_WARNINGS()
 #include "patient/conditions/SEChronicVentricularSystolicDysfunction.h"
 #include "patient/conditions/SEConsumeMeal.h"
 #include "patient/conditions/SEImpairedAlveolarExchange.h"
+#include "patient/conditions/SEPulmonaryShunt.h"
 #include "patient/conditions/SELobarPneumonia.h"
 #include "patient/conditions/SEPulmonaryFibrosis.h"
 #include "patient/conditions/SESepsis.h"
 #include "engine/SEAction.h"
 #include "engine/SEActionManager.h"
-#include "engine/SEAnesthesiaMachineActionCollection.h"
 #include "engine/SEEnvironmentActionCollection.h"
-#include "engine/SEInhalerActionCollection.h"
+#include "engine/SEEquipmentActionCollection.h"
 #include "engine/SEPatientActionCollection.h"
-#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineAction.h"
-#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineConfiguration.h"
-#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineOxygenWallPortPressureLoss.h"
-#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineOxygenTankPressureLoss.h"
-#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineExpiratoryValveLeak.h"
-#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineExpiratoryValveObstruction.h"
-#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineInspiratoryValveLeak.h"
-#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineInspiratoryValveObstruction.h"
-#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineMaskLeak.h"
-#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineSodaLimeFailure.h"
-#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineTubeCuffLeak.h"
-#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineVaporizerFailure.h"
-#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineVentilatorPressureLoss.h"
-#include "system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineYPieceDisconnect.h"
+#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineAction.h"
+#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineConfiguration.h"
+#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineOxygenWallPortPressureLoss.h"
+#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineOxygenTankPressureLoss.h"
+#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineExpiratoryValveLeak.h"
+#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineExpiratoryValveObstruction.h"
+#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineInspiratoryValveLeak.h"
+#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineInspiratoryValveObstruction.h"
+#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineMaskLeak.h"
+#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineSodaLimeFailure.h"
+#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineTubeCuffLeak.h"
+#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineVaporizerFailure.h"
+#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineVentilatorPressureLoss.h"
+#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineYPieceDisconnect.h"
 #include "system/environment/actions/SEChangeEnvironmentalConditions.h"
 #include "system/environment/actions/SEThermalApplication.h"
 #include "system/equipment/inhaler/actions/SEInhalerConfiguration.h"
+#include "system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorConfiguration.h"
 #include "patient/actions/SEPatientAssessmentRequest.h"
 #include "patient/actions/SEAcuteRespiratoryDistressSyndromeExacerbation.h"
 #include "patient/actions/SEAcuteStress.h"
@@ -80,11 +81,13 @@ POP_PROTO_WARNINGS()
 #include "patient/actions/SEDyspnea.h"
 #include "patient/actions/SEExercise.h"
 #include "patient/actions/SEHemorrhage.h"
+#include "patient/actions/SEImpairedAlveolarExchangeExacerbation.h"
 #include "patient/actions/SEIntubation.h"
 #include "patient/actions/SELobarPneumoniaExacerbation.h"
 #include "patient/actions/SEMechanicalVentilation.h"
 #include "patient/actions/SENeedleDecompression.h"
 #include "patient/actions/SEPericardialEffusion.h"
+#include "patient/actions/SEPulmonaryShuntExacerbation.h"
 #include "patient/actions/SERespiratoryFatigue.h"
 #include "patient/actions/SESubstanceBolus.h"
 #include "patient/actions/SESubstanceInfusion.h"
@@ -100,11 +103,11 @@ POP_PROTO_WARNINGS()
 
 void PBEngine::Load(const CDM_BIND::LogMessagesData& src, LogMessages& dst)
 {
+  dst.Clear();
   PBEngine::Serialize(src, dst);
 }
 void PBEngine::Serialize(const CDM_BIND::LogMessagesData& src, LogMessages& dst)
 {
-  dst.Clear();
   for (int i = 0; i < src.debugmessages_size(); i++)
     dst.debug_msgs.push_back(src.debugmessages()[i]);
   for (int i = 0; i < src.infogmessages_size(); i++)
@@ -153,6 +156,7 @@ bool PBEngine::SerializeToString(const LogMessages& src, std::string& output, Se
 
 void PBEngine::Load(const CDM_BIND::ConditionListData& src, SEConditionManager& dst)
 {
+  dst.Clear();
   PBEngine::Serialize(src, dst);
 }
 void PBEngine::Serialize(const CDM_BIND::ConditionListData& src, SEConditionManager& dst)
@@ -188,6 +192,8 @@ void PBEngine::Serialize(const SEConditionManager& src, CDM_BIND::ConditionListD
     dst.mutable_anycondition()->AddAllocated(PBCondition::Unload(*src.m_PericardialEffusion));
   if (src.HasPulmonaryFibrosis())
     dst.mutable_anycondition()->AddAllocated(PBCondition::Unload(*src.m_PulmonaryFibrosis));
+  if (src.HasPulmonaryShunt())
+    dst.mutable_anycondition()->AddAllocated(PBCondition::Unload(*src.m_PulmonaryShunt));
   if (src.HasLobarPneumonia())
     dst.mutable_anycondition()->AddAllocated(PBCondition::Unload(*src.m_LobarPneumonia));
   if (src.HasChronicRenalStenosis())
@@ -200,6 +206,7 @@ void PBEngine::Serialize(const SEConditionManager& src, CDM_BIND::ConditionListD
 
 void PBEngine::Load(const CDM_BIND::ActionListData& src, SEActionManager& dst)
 {
+  dst.Clear();
   PBEngine::Serialize(src, dst);
 }
 void PBEngine::Serialize(const CDM_BIND::ActionListData& src, SEActionManager& dst)
@@ -221,40 +228,43 @@ void PBEngine::Serialize(const SEActionManager& src, CDM_BIND::ActionListData& d
 {
   PBEngine::Serialize(*src.m_PatientActions, dst);
   PBEngine::Serialize(*src.m_EnvironmentActions, dst);
-  PBEngine::Serialize(*src.m_AnesthesiaMachineActions, dst);
-  PBEngine::Serialize(*src.m_InhalerActions, dst);
+  PBEngine::Serialize(*src.m_EquipmentActions, dst);
 }
 
-void PBEngine::Serialize(const SEAnesthesiaMachineActionCollection& src, CDM_BIND::ActionListData& dst)
+void PBEngine::Serialize(const SEEquipmentActionCollection& src, CDM_BIND::ActionListData& dst)
 {
-  if (src.HasConfiguration())
-    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_Configuration));
+  if (src.HasAnesthesiaMachineConfiguration())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_AnesthesiaMachineConfiguration));
+  if (src.HasInhalerConfiguration())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_InhalerConfiguration));
+  if (src.HasMechanicalVentilatorConfiguration())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_MechanicalVentilatorConfiguration));
 
-  if (src.HasOxygenTankPressureLoss())
-    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_OxygenTankPressureLoss));
-  if (src.HasOxygenWallPortPressureLoss())
-    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_OxygenWallPortPressureLoss));
+  if (src.HasAnesthesiaMachineOxygenTankPressureLoss())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_AnesthesiaMachineOxygenTankPressureLoss));
+  if (src.HasAnesthesiaMachineOxygenWallPortPressureLoss())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_AnesthesiaMachineOxygenWallPortPressureLoss));
 
-  if (src.HasExpiratoryValveLeak())
-    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_ExpiratoryValveLeak));
-  if (src.HasExpiratoryValveObstruction())
-    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_ExpiratoryValveObstruction));
-  if (src.HasInspiratoryValveLeak())
-    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_InspiratoryValveLeak));
-  if (src.HasInspiratoryValveObstruction())
-    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_InspiratoryValveObstruction));
-  if (src.HasMaskLeak())
-    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_MaskLeak));
-  if (src.HasSodaLimeFailure())
-    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_SodaLimeFailure));
-  if (src.HasTubeCuffLeak())
-    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_TubeCuffLeak));
-  if (src.HasVaporizerFailure())
-    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_VaporizerFailure));
-  if (src.HasVentilatorPressureLoss())
-    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_VentilatorPressureLoss));
-  if (src.HasYPieceDisconnect())
-    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_YPieceDisconnect));
+  if (src.HasAnesthesiaMachineExpiratoryValveLeak())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_AnesthesiaMachineExpiratoryValveLeak));
+  if (src.HasAnesthesiaMachineExpiratoryValveObstruction())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_AnesthesiaMachineExpiratoryValveObstruction));
+  if (src.HasAnesthesiaMachineInspiratoryValveLeak())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_AnesthesiaMachineInspiratoryValveLeak));
+  if (src.HasAnesthesiaMachineInspiratoryValveObstruction())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_AnesthesiaMachineInspiratoryValveObstruction));
+  if (src.HasAnesthesiaMachineMaskLeak())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_AnesthesiaMachineMaskLeak));
+  if (src.HasAnesthesiaMachineSodaLimeFailure())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_AnesthesiaMachineSodaLimeFailure));
+  if (src.HasAnesthesiaMachineTubeCuffLeak())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_AnesthesiaMachineTubeCuffLeak));
+  if (src.HasAnesthesiaMachineVaporizerFailure())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_AnesthesiaMachineVaporizerFailure));
+  if (src.HasAnesthesiaMachineVentilatorPressureLoss())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_AnesthesiaMachineVentilatorPressureLoss));
+  if (src.HasAnesthesiaMachineYPieceDisconnect())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_AnesthesiaMachineYPieceDisconnect));
 }
 void PBEngine::Serialize(const SEEnvironmentActionCollection& src, CDM_BIND::ActionListData& dst)
 {
@@ -262,11 +272,6 @@ void PBEngine::Serialize(const SEEnvironmentActionCollection& src, CDM_BIND::Act
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_ChangeEnvironmentalConditions));
   if (src.HasThermalApplication())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_ThermalApplication));
-}
-void PBEngine::Serialize(const SEInhalerActionCollection& src, CDM_BIND::ActionListData& dst)
-{
-  if (src.HasConfiguration())
-    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_Configuration));
 }
 
 void PBEngine::Serialize(const SEPatientActionCollection& src, CDM_BIND::ActionListData& dst)
@@ -306,6 +311,8 @@ void PBEngine::Serialize(const SEPatientActionCollection& src, CDM_BIND::ActionL
     for (auto itr : src.m_Hemorrhages)
       dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*itr.second));
   }
+  if (src.HasImpairedAlveolarExchangeExacerbation())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_ImpairedAlveolarExchangeExacerbation));
   if (src.HasIntubation())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_Intubation));
   if (src.HasLobarPneumoniaExacerbation())
@@ -318,6 +325,8 @@ void PBEngine::Serialize(const SEPatientActionCollection& src, CDM_BIND::ActionL
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_RightNeedleDecompression));
   if (src.HasPericardialEffusion())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_PericardialEffusion));
+  if (src.HasPulmonaryShuntExacerbation())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_PulmonaryShuntExacerbation));
   if (src.HasRespiratoryFatigue())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_RespiratoryFatigue));
   if (src.HasLeftClosedTensionPneumothorax())
@@ -341,12 +350,11 @@ void PBEngine::Serialize(const SEPatientActionCollection& src, CDM_BIND::ActionL
 
 void PBEngine::Load(const CDM_BIND::PatientConfigurationData& src, SEPatientConfiguration& dst, SESubstanceManager& subMgr)
 {
+  dst.Clear();
   PBEngine::Serialize(src, dst, subMgr);
 }
 void PBEngine::Serialize(const CDM_BIND::PatientConfigurationData& src, SEPatientConfiguration& dst, SESubstanceManager& subMgr)
 {
-  dst.Clear();
-
   if (src.has_patient())
     PBPatient::Load(src.patient(), dst.GetPatient());
   else
@@ -354,6 +362,12 @@ void PBEngine::Serialize(const CDM_BIND::PatientConfigurationData& src, SEPatien
   
   if (src.has_conditions())
     PBEngine::Load(src.conditions(), dst.GetConditions());
+
+  for (size_t i = 0; i < src.scalaroverride_size(); i++)
+  {
+    const CDM_BIND::ScalarPropertyData& sp = src.scalaroverride()[i];
+    dst.AddScalarOverride(sp.name(), sp.value(), sp.unit());
+  }
 }
 CDM_BIND::PatientConfigurationData* PBEngine::Unload(const SEPatientConfiguration& src)
 {
@@ -367,6 +381,14 @@ void PBEngine::Serialize(const SEPatientConfiguration& src, CDM_BIND::PatientCon
     dst.set_patientfile(src.m_PatientFile);
   else if (src.HasPatient())
     dst.set_allocated_patient(PBPatient::Unload(*src.m_Patient));
+
+  for (auto& sp : src.GetScalarOverrides())
+  {
+    CDM_BIND::ScalarPropertyData* so = dst.add_scalaroverride();
+    so->set_name(sp.name);
+    so->set_value(sp.value);
+    so->set_unit(sp.unit);
+  }
 
   dst.set_allocated_conditions(PBEngine::Unload(*src.GetConditions()));
 }
@@ -404,6 +426,7 @@ bool PBEngine::SerializeFromFile(const std::string& filename, SEPatientConfigura
 
 void PBEngine::Load(const CDM_BIND::DataRequestData& src, SEDataRequest& dst)
 {
+  dst.Clear();
   PBEngine::Serialize(src, dst);
 }
 void PBEngine::Serialize(const CDM_BIND::DataRequestData& src, SEDataRequest& dst)
@@ -437,6 +460,7 @@ void PBEngine::Serialize(const SEDataRequest& src, CDM_BIND::DataRequestData& ds
 }
 void PBEngine::Copy(const SEDataRequest& src, SEDataRequest& dst)
 {
+  dst.Clear();
   CDM_BIND::DataRequestData data;
   PBEngine::Serialize(src, data);
   PBEngine::Serialize(data, dst);
@@ -444,11 +468,11 @@ void PBEngine::Copy(const SEDataRequest& src, SEDataRequest& dst)
 
 void PBEngine::Load(const CDM_BIND::DataRequestManagerData& src, SEDataRequestManager& dst, const SESubstanceManager& subMgr)
 {
+  dst.Clear();
   PBEngine::Serialize(src, dst, subMgr);
 }
 void PBEngine::Serialize(const CDM_BIND::DataRequestManagerData& src, SEDataRequestManager& dst, const SESubstanceManager& subMgr)
 {
-  dst.Clear();
   dst.m_ResultsFilename = src.resultsfilename();
   dst.m_SamplesPerSecond = src.samplespersecond();
   if (src.has_defaultdecimalformatting())
@@ -486,6 +510,7 @@ void PBEngine::Serialize(const SEDataRequestManager& src, CDM_BIND::DataRequestM
 }
 void PBEngine::Copy(const SEDataRequestManager& src, SEDataRequestManager& dst, const SESubstanceManager& subMgr)
 {
+  dst.Clear();
   CDM_BIND::DataRequestManagerData data;
   PBEngine::Serialize(src, data);
   PBEngine::Serialize(data, dst, subMgr);
@@ -493,11 +518,11 @@ void PBEngine::Copy(const SEDataRequestManager& src, SEDataRequestManager& dst, 
 
 void PBEngine::Load(const CDM_BIND::DecimalFormatData& src, SEDecimalFormat& dst)
 {
+  dst.Clear();
   PBEngine::Serialize(src, dst);
 }
 void PBEngine::Serialize(const CDM_BIND::DecimalFormatData& src, SEDecimalFormat& dst)
 {
-  dst.Clear();
   dst.SetNotation((eDecimalFormat_Type)src.type());
   dst.SetPrecision(src.precision());
 }
@@ -626,11 +651,11 @@ bool PBEngine::SerializeFromFile(const std::string& filename, SEDataRequestManag
 
 void PBEngine::Load(const CDM_BIND::AutoSerializationData& src, SEAutoSerialization& dst)
 {
+  dst.Clear();
   PBEngine::Serialize(src, dst);
 }
 void PBEngine::Serialize(const CDM_BIND::AutoSerializationData& src, SEAutoSerialization& dst)
 {
-  dst.Clear();
   if (src.has_period())
     PBProperty::Load(src.period(), dst.GetPeriod());
   if (src.periodtimestamps() != CDM_BIND::eSwitch::NullSwitch)
@@ -663,11 +688,11 @@ void PBEngine::Serialize(const SEAutoSerialization& src, CDM_BIND::AutoSerializa
 
 void PBEngine::Load(const CDM_BIND::DynamicStabilizationData& src, SEDynamicStabilization& dst)
 {
+  dst.Clear();
   PBEngine::Serialize(src, dst);
 }
 void PBEngine::Serialize(const CDM_BIND::DynamicStabilizationData& src, SEDynamicStabilization& dst)
 {
-  dst.Clear();
   if (src.trackingstabilization() != CDM_BIND::eSwitch::NullSwitch)
     dst.TrackStabilization((eSwitch)src.trackingstabilization());
   if (src.has_restingconvergence())
@@ -705,11 +730,11 @@ void PBEngine::Serialize(const SEDynamicStabilization& src, CDM_BIND::DynamicSta
 
 void PBEngine::Load(const CDM_BIND::DynamicStabilizationEngineConvergenceData& src, SEDynamicStabilizationEngineConvergence& dst)
 {
+  dst.Clear();
   PBEngine::Serialize(src, dst);
 }
 void PBEngine::Serialize(const CDM_BIND::DynamicStabilizationEngineConvergenceData& src, SEDynamicStabilizationEngineConvergence& dst)
 {
-  dst.Clear();
   // TODO Warn if these are not provided
   if (src.has_convergencetime())
     PBProperty::Load(src.convergencetime(), dst.GetConvergenceTime());
@@ -753,11 +778,11 @@ void PBEngine::Serialize(const SEDynamicStabilizationEngineConvergence& src, CDM
 
 void PBEngine::Load(const CDM_BIND::TimedStabilizationData& src, SETimedStabilization& dst)
 {
+  dst.Clear();
   PBEngine::Serialize(src, dst);
 }
 void PBEngine::Serialize(const CDM_BIND::TimedStabilizationData& src, SETimedStabilization& dst)
 {
-  dst.Clear();
   if (src.trackingstabilization() != CDM_BIND::eSwitch::NullSwitch)
     dst.TrackStabilization((eSwitch)src.trackingstabilization());
   if (src.has_restingstabilizationtime())

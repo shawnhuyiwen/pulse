@@ -2,13 +2,13 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "system/SESystem.h"
+#include "system/equipment/SEEquipment.h"
 class Serializer; 
 class SESubstance;
 class SESubstanceManager;
 class SEInhalerConfiguration;
 
-class CDM_DECL SEInhaler : public SESystem
+class CDM_DECL SEInhaler : public SEEquipment
 {
   friend class PBInhaler;//friend the serialization class
 public:

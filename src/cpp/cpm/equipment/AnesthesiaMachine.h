@@ -2,9 +2,9 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "controller/System.h"
-#include "system/equipment/anesthesiamachine/SEAnesthesiaMachine.h"
-class SEAnesthesiaMachineActionCollection;
+#include "PulsePhysiologySystems.h"
+#include "system/equipment/anesthesia_machine/SEAnesthesiaMachine.h"
+class SEEquipmentActionCollection;
 class SEGasCompartment;
 class SEGasSubstanceQuantity;
 class SEFluidCircuitNode;
@@ -14,14 +14,14 @@ class SEFluidCircuitPath;
  * @brief 
  * Generic anesthesia machine for positive pressure ventilation.
  */    
-class PULSE_DECL AnesthesiaMachine : public SEAnesthesiaMachine, public PulseAnesthesiaMachine, public PulseSystem
+class PULSE_DECL AnesthesiaMachine : public PulseAnesthesiaMachine
 {
+  friend class PulseData;
   friend class PBPulseEquipment;//friend the serialization class
-  friend class PulseController;
   friend class PulseEngineTest;
 protected:
-  AnesthesiaMachine(PulseController& pc);
-  PulseController& m_data;
+  AnesthesiaMachine(PulseData& pc);
+  PulseData& m_data;
 
 public:
   virtual ~AnesthesiaMachine();
@@ -35,9 +35,13 @@ public:
 
   void StateChange();
 
+  void AtSteadyState() {}
   void PreProcess();
-  void Process();
-  void PostProcess();
+  void Process(bool solve_and_transport=true);
+  void PostProcess(bool solve_and_transport=true);
+
+protected:
+  void ComputeExposedModelParameters() override;
 
   void CalculateScrubber();
 
@@ -69,7 +73,7 @@ public:
   double m_dValveClosedResistance_cmH2O_s_Per_L;
   double m_dSwitchOpenResistance_cmH2O_s_Per_L;
   double m_dSwitchClosedResistance_cmH2O_s_Per_L;
-  SEAnesthesiaMachineActionCollection* m_actions;
+  SEEquipmentActionCollection*         m_actions;
   SEGasCompartment*                    m_ambient;
   SEGasSubstanceQuantity*              m_ambientCO2;
   SEGasSubstanceQuantity*              m_ambientN2;

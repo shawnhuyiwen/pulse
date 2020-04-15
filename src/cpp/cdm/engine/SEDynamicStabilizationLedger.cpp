@@ -8,7 +8,7 @@
 #include "engine/SEDynamicStabilizationPropertyConvergence.h"
 #include "properties/SEScalarTime.h"
 
-SEDynamicStabilizationLedger::SEDynamicStabilizationLedger(double timeStep_s, const SEDynamicStabilizationEngineConvergence& criteria) : m_properties(criteria.GetPropertyConvergence())
+SEDynamicStabilizationLedger::SEDynamicStabilizationLedger(double timeStep_s, const SEDynamicStabilizationEngineConvergence& criteria, Logger* logger) : Loggable(logger), m_properties(criteria.GetPropertyConvergence())
 {
   m_dT_s = timeStep_s;
   m_totTime_s = 0;

@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "controller/System.h"
+#include "PulsePhysiologySystems.h"
 #include "system/physiology/SECardiovascularSystem.h"
 #include "substance/SESubstanceTransport.h"
 class SEPatient;
@@ -28,21 +28,20 @@ class SEFluidCircuitCalculator;
 * with other systems, if alterations are made to the cardiovascular system then the feedback will be felt in the other physiologic systems.
 *
 */
-class PULSE_DECL Cardiovascular : public SECardiovascularSystem, public PulseCardiovascularSystem, public PulseSystem
+class PULSE_DECL Cardiovascular : public PulseCardiovascularSystem
 {
+  friend class PulseData;
   friend class PBPulsePhysiology;//friend the serialization class
-  friend class PulseController;
   friend class PulseEngineTest;
 protected:
-  Cardiovascular(PulseController& data);
-  PulseController& m_data;
+  Cardiovascular(PulseData& data);
+  PulseData& m_data;
 
 public:
   virtual ~Cardiovascular();
 
   void Clear();
 
-protected:
   // Set members to a stable homeostatic state
   void Initialize();
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
@@ -50,8 +49,11 @@ protected:
 
   void AtSteadyState();
   void PreProcess();
-  void Process();
-  void PostProcess();
+  void Process(bool solve_and_transport=true);
+  void PostProcess(bool solve_and_transport=true);
+
+protected:
+  void ComputeExposedModelParameters() override;
 
   //Condition Methods
   void ChronicRenalStenosis();

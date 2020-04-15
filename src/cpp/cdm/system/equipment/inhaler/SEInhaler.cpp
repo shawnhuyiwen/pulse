@@ -14,7 +14,7 @@
 
 #include "io/protobuf/PBInhaler.h"
 
-SEInhaler::SEInhaler(SESubstanceManager& substances) : SESystem(substances.GetLogger()), m_Substances(substances)
+SEInhaler::SEInhaler(SESubstanceManager& substances) : SEEquipment(substances.GetLogger()), m_Substances(substances)
 {
   m_State = eSwitch::Off;
   m_MeteredDose = nullptr;
@@ -30,7 +30,7 @@ SEInhaler::~SEInhaler()
 
 void SEInhaler::Clear()
 {
-  SESystem::Clear();
+  SEEquipment::Clear();
 
   m_State = eSwitch::Off;
   SAFE_DELETE(m_MeteredDose);

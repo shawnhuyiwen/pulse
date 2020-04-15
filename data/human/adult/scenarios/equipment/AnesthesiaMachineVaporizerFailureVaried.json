@@ -379,42 +379,42 @@
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
-      "CompartmentName": "Ventilator",
+      "CompartmentName": "AnesthesiaMachineVentilator",
       "PropertyName": "Volume",
       "Unit": "mL"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
-      "CompartmentName": "ReliefValve",
+      "CompartmentName": "AnesthesiaMachineReliefValve",
       "PropertyName": "InFlow",
       "Unit": "L/min"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
-      "CompartmentName": "Selector",
+      "CompartmentName": "AnesthesiaMachineSelector",
       "PropertyName": "Pressure",
       "Unit": "cmH2O"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
-      "CompartmentName": "Ventilator",
+      "CompartmentName": "AnesthesiaMachineVentilator",
       "PropertyName": "Pressure",
       "Unit": "cmH2O"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
-      "CompartmentName": "ExpiratoryLimb",
+      "CompartmentName": "AnesthesiaMachineExpiratoryLimb",
       "PropertyName": "InFlow",
       "Unit": "L/min"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
-      "CompartmentName": "InspiratoryLimb",
+      "CompartmentName": "AnesthesiaMachineInspiratoryLimb",
       "PropertyName": "InFlow",
       "Unit": "L/min"
     }, {
@@ -422,7 +422,7 @@
         "Precision": 3
       },
       "Category": "GasCompartment",
-      "CompartmentName": "GasInlet",
+      "CompartmentName": "AnesthesiaMachineGasInlet",
       "SubstanceName": "Oxygen",
       "PropertyName": "VolumeFraction"
     }, {
@@ -430,7 +430,7 @@
         "Precision": 4
       },
       "Category": "GasCompartment",
-      "CompartmentName": "GasInlet",
+      "CompartmentName": "AnesthesiaMachineGasInlet",
       "SubstanceName": "CarbonDioxide",
       "PropertyName": "VolumeFraction"
     }, {
@@ -453,8 +453,8 @@
       }
     }
   }, {
-    "AnesthesiaMachineAction": {
-      "Configuration": {
+    "EquipmentAction": {
+      "AnesthesiaMachineConfiguration": {
         "Configuration": {
           "Connection": "Mask",
           "InletFlow": {
@@ -484,7 +484,7 @@
               "Unit": "1/min"
             }
           },
-          "VentilatorPressure": {
+          "PeakInspiratoryPressure": {
             "ScalarPressure": {
               "Unit": "cmH2O"
             }
@@ -518,8 +518,8 @@
       }
     }
   }, {
-    "AnesthesiaMachineAction": {
-      "Configuration": {
+    "EquipmentAction": {
+      "AnesthesiaMachineConfiguration": {
         "Configuration": {
           "Connection": "Mask",
           "OxygenSource": "Wall",
@@ -537,8 +537,8 @@
       }
     }
   }, {
-    "AnesthesiaMachineAction": {
-      "VaporizerFailure": {
+    "EquipmentAction": {
+      "AnesthesiaMachineVaporizerFailure": {
         "Severity": {
           "Scalar0To1": {
             "Value": 1.0
@@ -556,8 +556,8 @@
       }
     }
   }, {
-    "AnesthesiaMachineAction": {
-      "VaporizerFailure": {
+    "EquipmentAction": {
+      "AnesthesiaMachineVaporizerFailure": {
         "Severity": {
           "Scalar0To1": {
             "Value": 0.5
@@ -575,8 +575,8 @@
       }
     }
   }, {
-    "AnesthesiaMachineAction": {
-      "VaporizerFailure": {
+    "EquipmentAction": {
+      "AnesthesiaMachineVaporizerFailure": {
         "Severity": {
           "Scalar0To1": {
           }

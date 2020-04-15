@@ -35,6 +35,11 @@ void SECompartmentGraph<COMPARTMENT_GRAPH_TYPES>::AddCompartment(CompartmentType
     m_Compartments.push_back(&cmpt); 
 }
 template<COMPARTMENT_GRAPH_TEMPLATE>
+void SECompartmentGraph<COMPARTMENT_GRAPH_TYPES>::ForceAddCompartment(CompartmentType& cmpt)
+{
+  m_Compartments.push_back(&cmpt);
+}
+template<COMPARTMENT_GRAPH_TEMPLATE>
 CompartmentType* SECompartmentGraph<COMPARTMENT_GRAPH_TYPES>::GetCompartment(const std::string& name)
 {
   for (CompartmentType* c : m_Compartments)
@@ -93,6 +98,11 @@ void SECompartmentGraph<COMPARTMENT_GRAPH_TYPES>::AddLink(CompartmentLinkType& l
 {
   if (GetLink(link.GetName()) == nullptr)
     m_CompartmentLinks.push_back(&link);
+}
+template<COMPARTMENT_GRAPH_TEMPLATE>
+void SECompartmentGraph<COMPARTMENT_GRAPH_TYPES>::ForceAddLink(CompartmentLinkType& link)
+{
+  m_CompartmentLinks.push_back(&link);
 }
 template<COMPARTMENT_GRAPH_TEMPLATE>
 CompartmentLinkType* SECompartmentGraph<COMPARTMENT_GRAPH_TYPES>::GetLink(const std::string& name)

@@ -13,6 +13,19 @@ public class VolumePerTimePressureUnit
   public static VolumePerTimePressureUnit L_Per_min_mmHg = new VolumePerTimePressureUnit("L/min mmHg");
   public static VolumePerTimePressureUnit mL_Per_min_mmHg = new VolumePerTimePressureUnit("mL/min mmHg");
 
+  public static VolumePerTimePressureUnit FromString(string u)
+  {
+    if (u == VolumePerTimePressureUnit.L_Per_s_mmHg.ToString())
+      return VolumePerTimePressureUnit.L_Per_s_mmHg;
+    if (u == VolumePerTimePressureUnit.mL_Per_s_mmHg.ToString())
+      return VolumePerTimePressureUnit.mL_Per_s_mmHg;
+    if (u == VolumePerTimePressureUnit.L_Per_min_mmHg.ToString())
+      return VolumePerTimePressureUnit.L_Per_min_mmHg;
+    if (u == VolumePerTimePressureUnit.mL_Per_min_mmHg.ToString())
+      return VolumePerTimePressureUnit.mL_Per_min_mmHg;
+
+    throw new System.ArgumentException(u + " is not a know volume per time pressure unit");
+  }
 }
 
 public class SEScalarVolumePerTimePressure : SEScalar

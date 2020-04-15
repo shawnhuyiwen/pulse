@@ -52,6 +52,7 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.AppliedTemperatureData src, SEAppliedTemperature dst)
     {
+      dst.SetState((eSwitch)(int)src.State);
       if (src.Temperature != null)
         PBProperty.Load(src.Temperature, dst.GetTemperature());
       if (src.SurfaceArea != null)
@@ -68,6 +69,7 @@ namespace Pulse.CDM
     }
     public static void Serialize(SEAppliedTemperature src, pulse.cdm.bind.AppliedTemperatureData dst)
     {
+      dst.State = (pulse.cdm.bind.eSwitch)(int)src.GetState();
       if (src.HasTemperature())
         dst.Temperature = PBProperty.Unload(src.GetTemperature());
       if (src.HasSurfaceArea())
@@ -146,7 +148,7 @@ namespace Pulse.CDM
       if (src.HasRespirationAmbientTemperature())
         dst.RespirationAmbientTemperature = PBProperty.Unload(src.GetRespirationAmbientTemperature());
 
-      foreach (SESubstanceFraction aGas in src.GetAmbientGas())
+      foreach (SESubstanceFraction aGas in src.GetAmbientGases())
       {
         pulse.cdm.bind.SubstanceFractionData sf = new pulse.cdm.bind.SubstanceFractionData();
         sf.Name = aGas.GetSubstance();
@@ -154,7 +156,7 @@ namespace Pulse.CDM
         dst.AmbientGas.Add(sf);
       }
 
-      foreach (SESubstanceConcentration aAerosol in src.GetAmbientAerosol())
+      foreach (SESubstanceConcentration aAerosol in src.GetAmbientAerosols())
       {
         pulse.cdm.bind.SubstanceConcentrationData sc = new pulse.cdm.bind.SubstanceConcentrationData();
         sc.Name = aAerosol.GetSubstance();

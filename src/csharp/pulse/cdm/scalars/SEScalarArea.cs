@@ -10,6 +10,16 @@ public class AreaUnit
 
   public static AreaUnit cm2 = new AreaUnit("cm^2");
   public static AreaUnit m2 = new AreaUnit("m^2");
+
+  public static AreaUnit FromString(string u)
+  {
+    if (u == AreaUnit.m2.ToString())
+      return AreaUnit.m2;
+    if (u == AreaUnit.cm2.ToString())
+      return AreaUnit.cm2;
+
+    throw new System.ArgumentException(u + " is not a know area unit");
+  }
 }
 
 public class SEScalarArea : SEScalar

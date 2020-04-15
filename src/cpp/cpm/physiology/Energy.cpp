@@ -55,7 +55,7 @@
 #include "properties/SEScalarVolumePerTimeMass.h"
 #include "properties/SERunningAverage.h"
 
-Energy::Energy(PulseController& data) : SEEnergySystem(data.GetLogger()), m_data(data)
+Energy::Energy(PulseData& data) : PulseEnergySystem(data.GetLogger()), m_data(data)
 {
   m_BloodpH = new SERunningAverage();
   m_BicarbonateMolarity_mmol_Per_L = new SERunningAverage();
@@ -465,10 +465,16 @@ void Energy::Exercise()
 /// from the vascular to extravascular space. After this is complete, the vital signs of the patient are updated
 /// with regards to the new state.
 //--------------------------------------------------------------------------------------------------
-void Energy::Process()
+void Energy::Process(bool solve_and_transport)
 {
-  m_circuitCalculator->Process(*m_TemperatureCircuit, m_dT_s);
+  if(solve_and_transport)
+    m_circuitCalculator->Process(*m_TemperatureCircuit, m_dT_s);
   CalculateVitalSigns();
+  ComputeExposedModelParameters();
+}
+void Energy::ComputeExposedModelParameters()
+{
+
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -479,9 +485,12 @@ void Energy::Process()
 /// Updates the resulting heat transfer rates, temperatures and nodal heat values; effectively moving
 /// the next values to the current ones before time can be advanced.
 //--------------------------------------------------------------------------------------------------
-void Energy::PostProcess()
+void Energy::PostProcess(bool solve_and_transport)
 {
-  m_circuitCalculator->PostProcess(*m_TemperatureCircuit);
+  if (solve_and_transport)
+  {
+    m_circuitCalculator->PostProcess(*m_TemperatureCircuit);
+  }
 }
 
 //--------------------------------------------------------------------------------------------------

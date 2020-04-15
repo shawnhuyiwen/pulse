@@ -97,6 +97,9 @@ namespace Pulse.CDM
         dst.AnyCondition.Add(PBCondition.Unload(src.GetLobarPneumonia()));
       if (src.HasSepsis())
         dst.AnyCondition.Add(PBCondition.Unload(src.GetSepsis()));
+
+      if (src.HasInitialEnvironmentalConditions())
+        dst.AnyCondition.Add(PBCondition.Unload(src.GetInitialEnvironmentalConditions()));
     }
     #endregion
   }

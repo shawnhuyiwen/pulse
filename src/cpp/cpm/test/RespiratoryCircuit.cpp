@@ -92,14 +92,14 @@ void PulseEngineTest::RespiratoryCircuitAndTransportTest(RespiratoryConfiguratio
       mouthpiece->Balance(BalanceLiquidBy::Mass);
     }
   }
-  else if (config == RespiratoryWithMechanicalVentilator)
+  else if (config == RespiratoryWithMechanicalVentilation)
   {
-    rCircuit = &pc.GetCircuits().GetRespiratoryAndMechanicalVentilatorCircuit();
-    rGraph = &pc.GetCompartments().GetRespiratoryAndMechanicalVentilatorGraph();
-    aGraph = &pc.GetCompartments().GetAerosolAndMechanicalVentilatorGraph();
-    sCircuitFileName = "/RespiratoryAndMechanicalVentilatorCircuitOutput.csv";
-    sTransportFileName = "/RespiratoryAndMechanicalVentilatorTransportOutput.csv";
-    sAerosolTxptFileName = "/AerosolMechanicalVentilatorTransportOutput.csv";
+    rCircuit = &pc.GetCircuits().GetRespiratoryAndMechanicalVentilationCircuit();
+    rGraph = &pc.GetCompartments().GetRespiratoryAndMechanicalVentilationGraph();
+    aGraph = &pc.GetCompartments().GetAerosolAndMechanicalVentilationGraph();
+    sCircuitFileName = "/RespiratoryAndMechanicalVentilationCircuitOutput.csv";
+    sTransportFileName = "/RespiratoryAndMechanicalVentilationTransportOutput.csv";
+    sAerosolTxptFileName = "/AerosolMechanicalVentilationTransportOutput.csv";
 
     // Get an aerosolized substance
     SESubstance* albuterol = pc.GetSubstances().GetSubstance("Albuterol");
@@ -110,7 +110,7 @@ void PulseEngineTest::RespiratoryCircuitAndTransportTest(RespiratoryConfiguratio
     else
     {
       pc.GetSubstances().AddActiveSubstance(*albuterol);
-      SELiquidCompartment* connection = pc.GetCompartments().GetLiquidCompartment(pulse::MechanicalVentilatorCompartment::Connection);
+      SELiquidCompartment* connection = pc.GetCompartments().GetLiquidCompartment(pulse::MechanicalVentilationCompartment::Connection);
       //It has a NaN volume, so this will keep the same volume fraction no matter what's going on around it
       connection->GetSubstanceQuantity(*albuterol)->GetConcentration().SetValue(10, MassPerVolumeUnit::ug_Per_L);
     }
@@ -197,9 +197,9 @@ void PulseEngineTest::RespiratoryWithInhalerCircuitAndTransportTest(const std::s
   RespiratoryCircuitAndTransportTest(RespiratoryWithInhaler, sTestDirectory);
 }
 
-void PulseEngineTest::RespiratoryWithMechanicalVentilatorCircuitAndTransportTest(const std::string& sTestDirectory)
+void PulseEngineTest::RespiratoryWithMechanicalVentilationCircuitAndTransportTest(const std::string& sTestDirectory)
 {
-  RespiratoryCircuitAndTransportTest(RespiratoryWithMechanicalVentilator, sTestDirectory);
+  RespiratoryCircuitAndTransportTest(RespiratoryWithMechanicalVentilation, sTestDirectory);
 }
 
 void PulseEngineTest::RespiratoryDriverTest(const std::string& sTestDirectory)

@@ -4,13 +4,19 @@
 #pragma once
 class SECondition;
 class SEConditionManager;
-class SEEngineTrack;
-class PhysiologyEngine;
+class SEEngineTracker;
 class SEEngineConfiguration;
 
 class CDM_DECL SEEngineStabilization : public Loggable
 {
 public:
+  class Controller
+  {
+  public:
+    virtual void AdvanceTime() = 0;
+    virtual SEEngineTracker* GetEngineTracker() = 0;
+    virtual double GetTimeStep(const TimeUnit& unit) = 0;
+  };
   SEEngineStabilization(Logger* logger);
   virtual ~SEEngineStabilization();
 
@@ -21,9 +27,9 @@ public:
   virtual bool SerializeFromString(const std::string& src, SerializationFormat) = 0;
   virtual bool SerializeFromFile(const std::string& filename, SerializationFormat) = 0;
 
-  virtual bool StabilizeRestingState(PhysiologyEngine& engine)=0;
-  virtual bool StabilizeFeedbackState(PhysiologyEngine& engine) = 0;
-  virtual bool StabilizeConditions(PhysiologyEngine& engine, const SEConditionManager& conditions)=0;
+  virtual bool StabilizeRestingState(Controller& engine)=0;
+  virtual bool StabilizeFeedbackState(Controller& engine) = 0;
+  virtual bool StabilizeConditions(Controller& engine, const SEConditionManager& conditions)=0;
   
   virtual void LogProgress(bool b);
 

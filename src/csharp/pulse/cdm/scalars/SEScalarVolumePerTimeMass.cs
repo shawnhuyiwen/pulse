@@ -14,6 +14,21 @@ public class VolumePerTimeMassUnit
   public static VolumePerTimeMassUnit mL_Per_s_kg = new VolumePerTimeMassUnit("mL/s kg");
   public static VolumePerTimeMassUnit uL_Per_min_kg = new VolumePerTimeMassUnit("uL/min kg");
 
+  public static VolumePerTimeMassUnit FromString(string u)
+  {
+    if (u == VolumePerTimeMassUnit.L_Per_s_g.ToString())
+      return VolumePerTimeMassUnit.L_Per_s_g;
+    if (u == VolumePerTimeMassUnit.mL_Per_s_g.ToString())
+      return VolumePerTimeMassUnit.mL_Per_s_g;
+    if (u == VolumePerTimeMassUnit.mL_Per_min_kg.ToString())
+      return VolumePerTimeMassUnit.mL_Per_min_kg;
+    if (u == VolumePerTimeMassUnit.mL_Per_s_kg.ToString())
+      return VolumePerTimeMassUnit.mL_Per_s_kg;
+    if (u == VolumePerTimeMassUnit.uL_Per_min_kg.ToString())
+      return VolumePerTimeMassUnit.uL_Per_min_kg;
+
+    throw new System.ArgumentException(u + " is not a know volume per time mass unit");
+  }
 }
 
 public class SEScalarVolumePerTimeMass : SEScalar

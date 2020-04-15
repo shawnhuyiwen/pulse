@@ -18,6 +18,7 @@ add_library_ex(CommonPulseModels
     equipment/AnesthesiaMachine.h
     equipment/ECG.h
     equipment/Inhaler.h
+    equipment/MechanicalVentilator.h
     physiology/BloodChemistry.h
     physiology/Cardiovascular.h
     physiology/Drugs.h
@@ -51,6 +52,7 @@ add_library_ex(CommonPulseModels
     equipment/AnesthesiaMachine.cpp
     equipment/ECG.cpp
     equipment/Inhaler.cpp
+    equipment/MechanicalVentilator.cpp
     physiology/BloodChemistry.cpp
     physiology/Cardiovascular.cpp
     physiology/Drugs.cpp

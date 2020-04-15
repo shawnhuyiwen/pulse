@@ -51,7 +51,6 @@ add_library_ex(CommonDataModel
     engine/SEActionManager.h
     engine/SEAdvanceHandler.h
     engine/SEAdvanceTime.h
-    engine/SEAnesthesiaMachineActionCollection.h
     engine/SEAutoSerialization.h
     engine/SECondition.h
     engine/SEConditionManager.h
@@ -66,15 +65,15 @@ add_library_ex(CommonDataModel
     engine/SEEngineStabilization.h
     engine/SEEngineTracker.h
     engine/SEEnvironmentActionCollection.h
+    engine/SEEquipmentActionCollection.h
     engine/SEEventManager.h
-    engine/SEInhalerActionCollection.h
+    engine/SEOverrides.h
     engine/SEPatientActionCollection.h
     engine/SEPatientConfiguration.h
     engine/SESerializeState.h
     engine/SETimedStabilization.h
     io/protobuf/PBActions.h
     io/protobuf/PBAnesthesiaMachine.h
-    io/protobuf/PBAnesthesiaMachineActions.h
     io/protobuf/PBCircuit.h
     io/protobuf/PBCompartment.h
     io/protobuf/PBConditions.h
@@ -83,9 +82,10 @@ add_library_ex(CommonDataModel
     io/protobuf/PBEnvironment.h
     io/protobuf/PBEnvironmentActions.h
     io/protobuf/PBEnvironmentConditions.h
+    io/protobuf/PBEquipmentActions.h
     io/protobuf/PBEvents.h
     io/protobuf/PBInhaler.h
-    io/protobuf/PBInhalerActions.h
+    io/protobuf/PBMechanicalVentilator.h
     io/protobuf/PBPatient.h
     io/protobuf/PBPatientActions.h
     io/protobuf/PBPatientAssessments.h
@@ -122,6 +122,7 @@ add_library_ex(CommonDataModel
     patient/actions/SEForcedInhale.h
     patient/actions/SEForcedPause.h
     patient/actions/SEHemorrhage.h
+    patient/actions/SEImpairedAlveolarExchangeExacerbation.h
     patient/actions/SEIntubation.h
     patient/actions/SELobarPneumoniaExacerbation.h
     patient/actions/SEMechanicalVentilation.h
@@ -129,6 +130,7 @@ add_library_ex(CommonDataModel
     patient/actions/SEPatientAction.h
     patient/actions/SEPatientAssessmentRequest.h
     patient/actions/SEPericardialEffusion.h
+    patient/actions/SEPulmonaryShuntExacerbation.h
     patient/actions/SERespiratoryFatigue.h
     patient/actions/SESubstanceAdministration.h
     patient/actions/SESubstanceBolus.h
@@ -156,6 +158,7 @@ add_library_ex(CommonDataModel
     patient/conditions/SELobarPneumonia.h
     patient/conditions/SEPatientCondition.h
     patient/conditions/SEPulmonaryFibrosis.h
+    patient/conditions/SEPulmonaryShunt.h
     patient/conditions/SESepsis.h
     properties/SEArray.h
     properties/SEArrayPressure.h
@@ -251,29 +254,34 @@ add_library_ex(CommonDataModel
     system/environment/actions/SEThermalApplication.h
     system/environment/conditions/SEEnvironmentCondition.h
     system/environment/conditions/SEInitialEnvironmentalConditions.h
-    system/equipment/anesthesiamachine/SEAnesthesiaMachine.h
-    system/equipment/anesthesiamachine/SEAnesthesiaMachineChamber.h
-    system/equipment/anesthesiamachine/SEAnesthesiaMachineOxygenBottle.h
-    system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineAction.h
-    system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineConfiguration.h
-    system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineExpiratoryValveLeak.h
-    system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineExpiratoryValveObstruction.h
-    system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineInspiratoryValveLeak.h
-    system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineInspiratoryValveObstruction.h
-    system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineMaskLeak.h
-    system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineOxygenTankPressureLoss.h
-    system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineOxygenWallPortPressureLoss.h
-    system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineSodaLimeFailure.h
-    system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineTubeCuffLeak.h
-    system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineVaporizerFailure.h
-    system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineVentilatorPressureLoss.h
-    system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineYPieceDisconnect.h
+    system/equipment/SEEquipment.h
+    system/equipment/SEEquipmentAction.h
+    system/equipment/anesthesia_machine/SEAnesthesiaMachine.h
+    system/equipment/anesthesia_machine/SEAnesthesiaMachineChamber.h
+    system/equipment/anesthesia_machine/SEAnesthesiaMachineOxygenBottle.h
+    system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineAction.h
+    system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineConfiguration.h
+    system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineExpiratoryValveLeak.h
+    system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineExpiratoryValveObstruction.h
+    system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineInspiratoryValveLeak.h
+    system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineInspiratoryValveObstruction.h
+    system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineMaskLeak.h
+    system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineOxygenTankPressureLoss.h
+    system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineOxygenWallPortPressureLoss.h
+    system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineSodaLimeFailure.h
+    system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineTubeCuffLeak.h
+    system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineVaporizerFailure.h
+    system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineVentilatorPressureLoss.h
+    system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineYPieceDisconnect.h
     system/equipment/electrocardiogram/SEElectroCardioGram.h
     system/equipment/electrocardiogram/SEElectroCardioGramWaveform.h
     system/equipment/electrocardiogram/SEElectroCardioGramWaveformInterpolator.h
     system/equipment/inhaler/SEInhaler.h
     system/equipment/inhaler/actions/SEInhalerAction.h
     system/equipment/inhaler/actions/SEInhalerConfiguration.h
+    system/equipment/mechanical_ventilator/SEMechanicalVentilator.h
+    system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorAction.h
+    system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorConfiguration.h
     system/physiology/SEBloodChemistrySystem.h
     system/physiology/SECardiovascularSystem.h
     system/physiology/SEDrugSystem.h
@@ -360,7 +368,6 @@ add_library_ex(CommonDataModel
     engine/SEAction.cpp
     engine/SEActionManager.cpp
     engine/SEAdvanceTime.cpp
-    engine/SEAnesthesiaMachineActionCollection.cpp
     engine/SEAutoSerialization.cpp
     engine/SECondition.cpp
     engine/SEConditionManager.cpp
@@ -374,8 +381,9 @@ add_library_ex(CommonDataModel
     engine/SEEngineStabilization.cpp
     engine/SEEngineTracker.cpp
     engine/SEEnvironmentActionCollection.cpp
+    engine/SEEquipmentActionCollection.cpp
     engine/SEEventManager.cpp
-    engine/SEInhalerActionCollection.cpp
+    engine/SEOverrides.cpp
     engine/SEPatientActionCollection.cpp
     engine/SEPatientConfiguration.cpp
     engine/SESerializeState.cpp
@@ -383,7 +391,6 @@ add_library_ex(CommonDataModel
     io/protobuf/PBActionEnums.cpp
     io/protobuf/PBActions.cpp
     io/protobuf/PBAnesthesiaMachine.cpp
-    io/protobuf/PBAnesthesiaMachineActions.cpp
     io/protobuf/PBAnesthesiaMachineEnums.cpp
     io/protobuf/PBCircuit.cpp
     io/protobuf/PBCompartment.cpp
@@ -398,9 +405,11 @@ add_library_ex(CommonDataModel
     io/protobuf/PBEnvironmentActions.cpp
     io/protobuf/PBEnvironmentConditions.cpp
     io/protobuf/PBEnvironmentEnums.cpp
+    io/protobuf/PBEquipmentActions.cpp
     io/protobuf/PBEvents.cpp
     io/protobuf/PBInhaler.cpp
-    io/protobuf/PBInhalerActions.cpp
+    io/protobuf/PBMechanicalVentilator.cpp
+    io/protobuf/PBMechanicalVentilatorEnums.cpp
     io/protobuf/PBPatient.cpp
     io/protobuf/PBPatientActionEnums.cpp
     io/protobuf/PBPatientActions.cpp
@@ -442,6 +451,7 @@ add_library_ex(CommonDataModel
     patient/actions/SEForcedInhale.cpp
     patient/actions/SEForcedPause.cpp
     patient/actions/SEHemorrhage.cpp
+    patient/actions/SEImpairedAlveolarExchangeExacerbation.cpp
     patient/actions/SEIntubation.cpp
     patient/actions/SELobarPneumoniaExacerbation.cpp
     patient/actions/SEMechanicalVentilation.cpp
@@ -449,6 +459,7 @@ add_library_ex(CommonDataModel
     patient/actions/SEPatientAction.cpp
     patient/actions/SEPatientAssessmentRequest.cpp
     patient/actions/SEPericardialEffusion.cpp
+    patient/actions/SEPulmonaryShuntExacerbation.cpp
     patient/actions/SERespiratoryFatigue.cpp
     patient/actions/SESubstanceAdministration.cpp
     patient/actions/SESubstanceBolus.cpp
@@ -476,6 +487,7 @@ add_library_ex(CommonDataModel
     patient/conditions/SELobarPneumonia.cpp
     patient/conditions/SEPatientCondition.cpp
     patient/conditions/SEPulmonaryFibrosis.cpp
+    patient/conditions/SEPulmonaryShunt.cpp
     patient/conditions/SESepsis.cpp
     #properties/SEArray.cpp
     #properties/SEArrayPressure.cpp
@@ -571,29 +583,34 @@ add_library_ex(CommonDataModel
     system/environment/actions/SEThermalApplication.cpp
     system/environment/conditions/SEEnvironmentCondition.cpp
     system/environment/conditions/SEInitialEnvironmentalConditions.cpp
-    system/equipment/anesthesiamachine/SEAnesthesiaMachine.cpp
-    system/equipment/anesthesiamachine/SEAnesthesiaMachineChamber.cpp
-    system/equipment/anesthesiamachine/SEAnesthesiaMachineOxygenBottle.cpp
-    system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineAction.cpp
-    system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineConfiguration.cpp
-    system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineExpiratoryValveLeak.cpp
-    system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineExpiratoryValveObstruction.cpp
-    system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineInspiratoryValveLeak.cpp
-    system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineInspiratoryValveObstruction.cpp
-    system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineMaskLeak.cpp
-    system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineOxygenTankPressureLoss.cpp
-    system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineOxygenWallPortPressureLoss.cpp
-    system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineSodaLimeFailure.cpp
-    system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineTubeCuffLeak.cpp
-    system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineVaporizerFailure.cpp
-    system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineVentilatorPressureLoss.cpp
-    system/equipment/anesthesiamachine/actions/SEAnesthesiaMachineYPieceDisconnect.cpp
+    system/equipment/SEEquipment.cpp
+    system/equipment/SEEquipmentAction.cpp
+    system/equipment/anesthesia_machine/SEAnesthesiaMachine.cpp
+    system/equipment/anesthesia_machine/SEAnesthesiaMachineChamber.cpp
+    system/equipment/anesthesia_machine/SEAnesthesiaMachineOxygenBottle.cpp
+    system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineAction.cpp
+    system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineConfiguration.cpp
+    system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineExpiratoryValveLeak.cpp
+    system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineExpiratoryValveObstruction.cpp
+    system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineInspiratoryValveLeak.cpp
+    system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineInspiratoryValveObstruction.cpp
+    system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineMaskLeak.cpp
+    system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineOxygenTankPressureLoss.cpp
+    system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineOxygenWallPortPressureLoss.cpp
+    system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineSodaLimeFailure.cpp
+    system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineTubeCuffLeak.cpp
+    system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineVaporizerFailure.cpp
+    system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineVentilatorPressureLoss.cpp
+    system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineYPieceDisconnect.cpp
     system/equipment/electrocardiogram/SEElectroCardioGram.cpp
     system/equipment/electrocardiogram/SEElectroCardioGramWaveform.cpp
     system/equipment/electrocardiogram/SEElectroCardioGramWaveformInterpolator.cpp
     system/equipment/inhaler/SEInhaler.cpp
     system/equipment/inhaler/actions/SEInhalerAction.cpp
     system/equipment/inhaler/actions/SEInhalerConfiguration.cpp
+    system/equipment/mechanical_ventilator/SEMechanicalVentilator.cpp
+    system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorAction.cpp
+    system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorConfiguration.cpp
     system/physiology/SEBloodChemistrySystem.cpp
     system/physiology/SECardiovascularSystem.cpp
     system/physiology/SEDrugSystem.cpp

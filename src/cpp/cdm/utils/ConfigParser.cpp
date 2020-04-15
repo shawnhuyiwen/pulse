@@ -77,6 +77,7 @@ void ConfigParser::ParseConfigFile(const std::string& verificationConfigFilePath
             }
         }
     }
+    file.close();
 }
 
 std::tuple<std::string, std::string> ConfigParser::ParseKeyValue(const std::string& line)

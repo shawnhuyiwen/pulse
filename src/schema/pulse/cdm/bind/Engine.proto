@@ -11,8 +11,7 @@ import "pulse/cdm/bind/PatientActions.proto";
 import "pulse/cdm/bind/PatientConditions.proto";
 import "pulse/cdm/bind/EnvironmentActions.proto";
 import "pulse/cdm/bind/EnvironmentConditions.proto";
-import "pulse/cdm/bind/AnesthesiaMachineActions.proto";
-import "pulse/cdm/bind/InhalerActions.proto";
+import "pulse/cdm/bind/EquipmentActions.proto";
 import "pulse/cdm/bind/Properties.proto";
 
 message DecimalFormatData
@@ -33,17 +32,18 @@ message DataRequestData
 {
   enum eCategory
   {
-    Patient            = 0;
-    Physiology         = 1;
-    Environment        = 2;
-    GasCompartment     = 3;
-    LiquidCompartment  = 4;
-    ThermalCompartment = 5;
-    TissueCompartment  = 6;
-    Substance          = 7;
-    AnesthesiaMachine  = 8;
-    ECG                = 9;
-    Inhaler            = 10;
+    Patient              = 0;
+    Physiology           = 1;
+    Environment          = 2;
+    GasCompartment       = 3;
+    LiquidCompartment    = 4;
+    ThermalCompartment   = 5;
+    TissueCompartment    = 6;
+    Substance            = 7;
+    AnesthesiaMachine    = 8;
+    ECG                  = 9;
+    Inhaler              = 10;
+    MechanicalVentilator = 11;
   }
   
   DecimalFormatData                                    DecimalFormat             = 1;/**<<@brief If writing to a file, specify the decimal formatting */
@@ -81,10 +81,10 @@ message AnyActionData
   {
     AdvanceTimeData                                     AdvanceTime               = 1;
     SerializeStateData                                  Serialize                 = 2;
-    AnyPatientActionData                                PatientAction             = 3;
-    AnyEnvironmentActionData                            EnvironmentAction         = 4;
-    AnyAnesthesiaMachineActionData                      AnesthesiaMachineAction   = 5;
-    AnyInhalerActionData                                InhalerAction             = 6;
+    OverridesData                                       Overrides                 = 3;
+    AnyPatientActionData                                PatientAction             = 4;
+    AnyEnvironmentActionData                            EnvironmentAction         = 5;
+    AnyEquipmentActionData                              EquipmentAction           = 6;
   }
 }
 message ActionListData
@@ -109,6 +109,7 @@ message PatientConfigurationData
     string                                              PatientFile               = 2;
   }
   ConditionListData                                     Conditions                = 3;
+  repeated ScalarPropertyData                           ScalarOverride            = 4;
 }
 
 message AutoSerializationData

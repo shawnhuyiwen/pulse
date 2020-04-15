@@ -17,7 +17,7 @@ Constructors
 ========================
 */
 
-ECG::ECG(PulseController& data) : SEElectroCardioGram(data.GetLogger()), m_data(data)
+ECG::ECG(PulseData& data) : PulseElectroCardioGram(data.GetLogger()), m_data(data)
 {
   Clear();
   m_interpolator = new SEElectroCardioGramWaveformInterpolator(data.GetLogger());
@@ -108,7 +108,7 @@ void ECG::PreProcess()
 /// reach the end of the interpolated waveform data. If there are no active iterators, the output
 /// defaults to 0 mV.
 //--------------------------------------------------------------------------------------------------
-void ECG::Process()
+void ECG::Process(bool solve_and_transport)
 {
   m_heartRhythmTime_s += m_dt_s;
   if (m_heartRhythmTime_s >= m_heartRhythmPeriod_s)
@@ -133,6 +133,11 @@ void ECG::Process()
     }
   }
   m_interpolator->CalculateWaveformsElectricPotential();
+  ComputeExposedModelParameters();
+}
+void ECG::ComputeExposedModelParameters()
+{
+
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -144,7 +149,7 @@ void ECG::Process()
 /// The PostProcess function is included to preserve our system methodology and as a placeholder for
 /// models developed in the future.
 //--------------------------------------------------------------------------------------------------
-void ECG::PostProcess()
+void ECG::PostProcess(bool solve_and_transport)
 {
 
 }

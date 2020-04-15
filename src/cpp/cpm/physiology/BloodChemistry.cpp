@@ -35,7 +35,7 @@
 #pragma warning(disable:4786)
 #pragma warning(disable:4275)
 
-BloodChemistry::BloodChemistry(PulseController& data) : SEBloodChemistrySystem(data.GetLogger()), m_data(data)
+BloodChemistry::BloodChemistry(PulseData& data) : PulseBloodChemistrySystem(data.GetLogger()), m_data(data)
 {
   m_ArterialOxygen_mmHg = new SERunningAverage();
   m_ArterialCarbonDioxide_mmHg = new SERunningAverage();
@@ -195,7 +195,7 @@ void BloodChemistry::PreProcess()
 /// or changed by other systems are set on the blood chemistry system data objects. Events 
 /// are triggered at specific blood concentrations of certain substances in CheckBloodGasLevels().
 //--------------------------------------------------------------------------------------------------
-void BloodChemistry::Process()
+void BloodChemistry::Process(bool solve_and_transport)
 {
   //Push the compartment values of O2 and CO2 partial pressures on the corresponding system data.
   GetOxygenSaturation().Set(m_aortaO2->GetSaturation());
@@ -302,6 +302,11 @@ void BloodChemistry::Process()
     sub->GetMassInBlood().SetValue(bloodMass_ug, MassUnit::ug);
     sub->GetMassInTissue().SetValue(tissueMass_ug, MassUnit::ug);
   }
+  ComputeExposedModelParameters();
+}
+void BloodChemistry::ComputeExposedModelParameters()
+{
+
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -311,7 +316,7 @@ void BloodChemistry::Process()
 /// \details
 /// The current Pulse implementation has no specific postprocess functionality.
 //--------------------------------------------------------------------------------------------------
-void BloodChemistry::PostProcess()
+void BloodChemistry::PostProcess(bool solve_and_transport)
 {
 
 }

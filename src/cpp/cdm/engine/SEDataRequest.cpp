@@ -87,7 +87,7 @@ bool SEDataRequest::IsValid()
       return true;
     }
     default:
-      return true;//??
+      return true;//Equipment
   }
 }
 

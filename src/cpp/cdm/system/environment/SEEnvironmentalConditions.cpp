@@ -141,7 +141,7 @@ void SEEnvironmentalConditions::Merge(const SEEnvironmentalConditions& from)
       else
         sub = &osf->GetSubstance();
 
-      sf = new SESubstanceFraction(*sub); 
+      sf = new SESubstanceFraction(*sub);
       sf->GetFractionAmount().Set(osf->GetFractionAmount());
       amt = sf->GetFractionAmount().GetValue();
       total += amt;

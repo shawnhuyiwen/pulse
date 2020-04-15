@@ -49,6 +49,7 @@ CDM_BIND::AnyEnvironmentConditionData* PBEnvironmentCondition::Unload(const SEEn
 
 void PBEnvironmentCondition::Load(const CDM_BIND::InitialEnvironmentalConditionsData& src, SEInitialEnvironmentalConditions& dst)
 {
+  dst.Clear();
   PBEnvironmentCondition::Serialize(src, dst);
 }
 void PBEnvironmentCondition::Serialize(const CDM_BIND::InitialEnvironmentalConditionsData& src, SEInitialEnvironmentalConditions& dst)
@@ -75,6 +76,7 @@ void PBEnvironmentCondition::Serialize(const SEInitialEnvironmentalConditions& s
 }
 void PBEnvironmentCondition::Copy(const SEInitialEnvironmentalConditions& src, SEInitialEnvironmentalConditions& dst)
 {
+  dst.Clear();
   CDM_BIND::InitialEnvironmentalConditionsData data;
   PBEnvironmentCondition::Serialize(src, data);
   PBEnvironmentCondition::Serialize(data, dst);

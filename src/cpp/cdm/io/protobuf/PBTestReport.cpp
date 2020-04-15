@@ -17,11 +17,11 @@ POP_PROTO_WARNINGS()
 
 void PBTestReport::Load(const CDM_BIND::TestCaseData& src, SETestCase& dst)
 {
+  dst.Clear();
   PBTestReport::Serialize(src, dst);
 }
 void PBTestReport::Serialize(const CDM_BIND::TestCaseData& src, SETestCase& dst)
 {
-  dst.Clear();
 
   dst.m_Name = src.name();
   if (src.has_duration())
@@ -58,15 +58,13 @@ void PBTestReport::Serialize(const SETestCase& src, CDM_BIND::TestCaseData& dst)
     dst.mutable_errorstats()->AddAllocated(PBTestReport::Unload(*s));
 }
 
-
 void PBTestReport::Load(const CDM_BIND::TestErrorStatisticsData& src, SETestErrorStatistics& dst)
 {
+  dst.Clear();
   PBTestReport::Serialize(src, dst);
 }
 void PBTestReport::Serialize(const CDM_BIND::TestErrorStatisticsData& src, SETestErrorStatistics& dst)
 {
-  dst.Clear();
-
   dst.m_PropertyName = src.propertyname();
   dst.m_PercentTolerance = src.percenttolerance();
   dst.m_NumberOfErrors = src.numberoferrors();
@@ -121,12 +119,11 @@ void PBTestReport::Serialize(const SETestErrorStatistics& src, CDM_BIND::TestErr
 
 void PBTestReport::Load(const CDM_BIND::TestReportData& src, SETestReport& dst)
 {
+  dst.Clear();
   PBTestReport::Serialize(src, dst);
 }
 void PBTestReport::Serialize(const CDM_BIND::TestReportData& src, SETestReport& dst)
 {
-  dst.Clear();
-
   SETestSuite* sx;
   for (int i = 0; i < src.testsuite_size(); i++)
   {
@@ -150,11 +147,11 @@ void PBTestReport::Serialize(const SETestReport& src, CDM_BIND::TestReportData& 
 
 void PBTestReport::Load(const CDM_BIND::TestSuiteData& src, SETestSuite& dst)
 {
+  dst.Clear();
   PBTestReport::Serialize(src, dst);
 }
 void PBTestReport::Serialize(const CDM_BIND::TestSuiteData& src, SETestSuite& dst)
 {
-  dst.Clear();
 
   dst.m_Name = src.name();
   dst.m_Performed = src.performed();

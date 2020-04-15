@@ -136,13 +136,13 @@
       }
     }
   }, {
-    "InhalerAction": {
-      "Configuration": {
-        "InhalerAction": {
+    "EquipmentAction": {
+      "InhalerConfiguration": {
+        "InhalerAction": { "EquipmentAction": {
           "Action": {
             "Comment": "Intervention: Administer bronchodilator (albuterol) through inhaler"
           }
-        },
+        }},
         "Configuration": {
           "Substance": "Albuterol",
           "MeteredDose": {
@@ -192,13 +192,13 @@
                 "Unit": "s"
               }
             },
-			"HoldPeriod": {
+            "HoldPeriod": {
               "ScalarTime": {
                 "Value": 3.0,
                 "Unit": "s"
               }
             },
-			"ReleasePeriod": {
+            "ReleasePeriod": {
               "ScalarTime": {
                 "Value": 5.0,
                 "Unit": "s"

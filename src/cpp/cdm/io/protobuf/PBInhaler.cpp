@@ -15,6 +15,7 @@ POP_PROTO_WARNINGS()
 
 void PBInhaler::Load(const CDM_BIND::InhalerData& src, SEInhaler& dst)
 {
+  dst.Clear();
   PBInhaler::Serialize(src, dst);
   dst.StateChange();
 }

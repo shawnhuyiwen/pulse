@@ -64,13 +64,17 @@ protected:
 class CDM_DECL SEEngineTracker : public Loggable
 {
 public:
-  SEEngineTracker(PhysiologyEngine& engine);
+  SEEngineTracker(SEPatient&, SESubstanceManager&, SECompartmentManager&, Logger* logger=nullptr);
   virtual ~SEEngineTracker();
 
   void Clear();// Remove all requests and close the results file
-    
+
   DataTrack& GetDataTrack();
+  SESubstanceManager& GetSubstanceManager() { return m_SubMgr; }
   SEDataRequestManager& GetDataRequestManager() { return *m_DataRequestMgr; }
+
+  // Add a system to look for data in
+  void AddSystem(SESystem& system);
 
   void ResetFile();// Close file, so next Track Data will re hook up everything and make a new file
 
@@ -86,6 +90,7 @@ public:
   TrackMode GetTrackMode() { return m_Mode; }
 
   double GetValue(const SEDataRequest& dr) const;
+
   
 protected:
   const SEDataRequestScalar* GetScalar(const SEDataRequest& dr) const;
@@ -102,10 +107,11 @@ protected:
   SESubstanceManager&          m_SubMgr;
   SECompartmentManager&        m_CmptMgr;
 
-  SEEnvironment*               m_Environment;
+  SEEnvironment*               m_Environment = nullptr;
   std::vector<SESystem*>       m_PhysiologySystems;
-  SESystem*                    m_AnesthesiaMachine;
-  SESystem*                    m_ECG;
-  SESystem*                    m_Inhaler;
+  SESystem*                    m_AnesthesiaMachine = nullptr;
+  SESystem*                    m_ECG = nullptr;
+  SESystem*                    m_Inhaler = nullptr;
+  SESystem*                    m_MechanicalVentilator = nullptr;
   std::map<const SEDataRequest*, SEDataRequestScalar*> m_Request2Scalar;
 };

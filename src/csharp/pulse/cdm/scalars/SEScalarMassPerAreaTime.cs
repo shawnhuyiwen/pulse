@@ -10,6 +10,13 @@ public class MassPerAreaTimeUnit
 
   public static MassPerAreaTimeUnit g_Per_cm2_s = new MassPerAreaTimeUnit("g/cm^2 s");
 
+  public static MassPerAreaTimeUnit FromString(string u)
+  {
+    if (u == MassPerAreaTimeUnit.g_Per_cm2_s.ToString())
+      return MassPerAreaTimeUnit.g_Per_cm2_s;
+
+    throw new System.ArgumentException(u + " is not a know mass per area time unit");
+  }
 }
 
 public class SEScalarMassPerAreaTime : SEScalar

@@ -32,7 +32,7 @@ class PULSE_DECL PulseSubstances : public SESubstanceManager
 {
   friend class PulseEngineTest;
 public:
-  PulseSubstances(PulseController& data);
+  PulseSubstances(PulseData& data);
   virtual ~PulseSubstances() = default;
 
   virtual void Clear();
@@ -131,6 +131,6 @@ protected:
 
   std::map<SESubstance*, SizeIndependentDepositionEfficencyCoefficient*> m_SIDECoefficients;
 
-  PulseController&     m_data;
+  PulseData&    m_data;
 };
 

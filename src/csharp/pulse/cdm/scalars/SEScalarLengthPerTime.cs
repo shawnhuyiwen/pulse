@@ -4,89 +4,79 @@
 public class LengthPerTimeUnit
 {
 
-    private LengthPerTimeUnit(string v) { Value = v; }
-    protected string Value { get; }
+  private LengthPerTimeUnit(string v) { Value = v; }
+  protected string Value { get; }
 
-    public new string ToString() { return Value; }
-    public static LengthPerTimeUnit m_Per_s = new LengthPerTimeUnit("m/s");
-    public static LengthPerTimeUnit ft_Per_s = new LengthPerTimeUnit("ft/s");
+  public new string ToString() { return Value; }
+  public static LengthPerTimeUnit m_Per_s = new LengthPerTimeUnit("m/s");
+  public static LengthPerTimeUnit ft_Per_s = new LengthPerTimeUnit("ft/s");
 
+  public static LengthPerTimeUnit FromString(string u)
+  {
+    if (u == LengthPerTimeUnit.m_Per_s.ToString())
+      return LengthPerTimeUnit.m_Per_s;
+    if (u == LengthPerTimeUnit.ft_Per_s.ToString())
+      return LengthPerTimeUnit.ft_Per_s;
+
+    throw new System.ArgumentException(u + " is not a know length per time unit");
+  }
 }
 
 
 public class SEScalarLengthPerTime : SEScalar
 {
-    protected LengthPerTimeUnit unit;
+  protected LengthPerTimeUnit unit;
 
-    public SEScalarLengthPerTime() : base()
+  public SEScalarLengthPerTime() : base()
+  {
+
+  }
+
+  public SEScalarLengthPerTime(SEScalarLengthPerTime from)
+  {
+    Set(from);
+  }
+
+  public SEScalarLengthPerTime(double value, LengthPerTimeUnit unit)
+  {
+    SetValue(value, unit);
+  }
+
+  public void Set(SEScalarLengthPerTime from)
+  {
+    if (from == null)
     {
-
+      Invalidate();
+      return;
     }
-
-    public SEScalarLengthPerTime(SEScalarLengthPerTime from)
-    {
-        Set(from);
-    }
-
-    public SEScalarLengthPerTime(double value, LengthPerTimeUnit unit)
-    {
-        SetValue(value, unit);
-    }
+    SetValue(from.value, from.unit);
+  }
 
 
-    //public static void load(ScalarLengthPerTimeData src, SEScalarLengthPerTime dst)
-    //{
-    //    SEScalar.load(src.getScalarLengthPerTime(), dst);
-    //}
-    //public static ScalarLengthPerTimeData unload(SEScalarLengthPerTime src)
-    //{
-    //    if (!src.isValid())
-    //        return null;
-    //    ScalarLengthPerTimeData.Builder dst = ScalarLengthPerTimeData.newBuilder();
-    //    unload(src, dst);
-    //    return dst.build();
-    //}
-    //protected static void unload(SEScalarLengthPerTime src, ScalarLengthPerTimeData.Builder dst)
-    //{
-    //    SEScalar.unload(src, dst.getScalarLengthPerTimeBuilder());
-    //}
+  public new void SetValue(double value)
+  {
+    throw new System.NotSupportedException("You must provide a unit");
+  }
 
-    public void Set(SEScalarLengthPerTime from)
-    {
-        if (from == null)
-        {
-            Invalidate();
-            return;
-        }
-        SetValue(from.value, from.unit);
-    }
+  public void SetValue(double value, LengthPerTimeUnit unit)
+  {
+    this.value = value;
+    this.unit = unit;
+  }
 
 
-    public new void SetValue(double value)
-    {
-        throw new System.NotSupportedException("You must provide a unit");
-    }
+  public double GetValue(LengthPerTimeUnit unit)
+  {
+    throw new System.NotImplementedException();
+  }
 
-    public void SetValue(double value, LengthPerTimeUnit unit)
-    {
-        this.value = value;
-        this.unit = unit;
-    }
+  public LengthPerTimeUnit GetUnit()
+  {
+    return unit;
+  }
 
-
-    public double GetValue(LengthPerTimeUnit unit)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public LengthPerTimeUnit GetUnit()
-    {
-        return unit;
-    }
-
-    public new string ToString()
-    {
-        return this.value + "(" + this.unit.ToString() + ")";
-    }
+  public new string ToString()
+  {
+    return this.value + "(" + this.unit.ToString() + ")";
+  }
 }
-

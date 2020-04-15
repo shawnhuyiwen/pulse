@@ -4,9 +4,8 @@
 #pragma once
 class SEAction;
 class SEPatientActionCollection;
-class SEAnesthesiaMachineActionCollection;
 class SEEnvironmentActionCollection;
-class SEInhalerActionCollection;
+class SEEquipmentActionCollection;
 class SESubstanceManager;
 
 class CDM_DECL SEActionManager : public Loggable
@@ -30,13 +29,11 @@ public:
 
   SEPatientActionCollection&                 GetPatientActions()           { return *m_PatientActions; }
   SEEnvironmentActionCollection&             GetEnvironmentActions()       { return *m_EnvironmentActions; }
-  SEAnesthesiaMachineActionCollection&       GetAnesthesiaMachineActions() { return *m_AnesthesiaMachineActions; }
-  SEInhalerActionCollection&                 GetInhalerActions()           { return *m_InhalerActions; }
+  SEEquipmentActionCollection&               GetEquipmentActions()         { return *m_EquipmentActions; }
 
   const SEPatientActionCollection&           GetPatientActions()           const { return *m_PatientActions; }
   const SEEnvironmentActionCollection&       GetEnvironmentActions()       const { return *m_EnvironmentActions; }
-  const SEAnesthesiaMachineActionCollection& GetAnesthesiaMachineActions() const { return *m_AnesthesiaMachineActions; }
-  const SEInhalerActionCollection&           GetInhalerActions()           const { return *m_InhalerActions; }
+  const SEEquipmentActionCollection&         GetEquipmentActions()         const { return *m_EquipmentActions; }
 
   void GetAllActions(std::vector<const SEAction*>& v) const;
 
@@ -45,8 +42,7 @@ protected:
   SESubstanceManager&                  m_Substances;
   SEPatientActionCollection*           m_PatientActions;
   SEEnvironmentActionCollection*       m_EnvironmentActions;
-  SEAnesthesiaMachineActionCollection* m_AnesthesiaMachineActions;
-  SEInhalerActionCollection*           m_InhalerActions;
+  SEEquipmentActionCollection*         m_EquipmentActions;
 
   std::stringstream m_ss;
 };

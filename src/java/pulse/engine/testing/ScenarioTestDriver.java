@@ -13,7 +13,7 @@ import pulse.utilities.Log;
 import pulse.cdm.testing.SETestDriver;
 import pulse.cdm.testing.SETestJob;
 import pulse.engine.PulseScenarioExec;
-import pulse.engine.bind.Pulse;
+import pulse.cpm.bind.Pulse;
 
 public class ScenarioTestDriver implements SETestDriver.Executor
 {

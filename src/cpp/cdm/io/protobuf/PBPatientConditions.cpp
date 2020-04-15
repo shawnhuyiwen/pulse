@@ -21,6 +21,7 @@ POP_PROTO_WARNINGS()
 #include "patient/conditions/SEImpairedAlveolarExchange.h"
 #include "patient/conditions/SELobarPneumonia.h"
 #include "patient/conditions/SEPulmonaryFibrosis.h"
+#include "patient/conditions/SEPulmonaryShunt.h"
 #include "patient/conditions/SESepsis.h"
 
 void PBPatientCondition::Serialize(const CDM_BIND::PatientConditionData& src, SEPatientCondition& dst)
@@ -34,6 +35,7 @@ void PBPatientCondition::Serialize(const SEPatientCondition& src, CDM_BIND::Pati
 
 void PBPatientCondition::Load(const CDM_BIND::AcuteRespiratoryDistressSyndromeData& src, SEAcuteRespiratoryDistressSyndrome& dst)
 {
+  dst.Clear();
   PBPatientCondition::Serialize(src, dst);
 }
 void PBPatientCondition::Serialize(const CDM_BIND::AcuteRespiratoryDistressSyndromeData& src, SEAcuteRespiratoryDistressSyndrome& dst)
@@ -64,6 +66,7 @@ void PBPatientCondition::Serialize(const SEAcuteRespiratoryDistressSyndrome& src
 }
 void PBPatientCondition::Copy(const SEAcuteRespiratoryDistressSyndrome& src, SEAcuteRespiratoryDistressSyndrome& dst)
 {
+  dst.Clear();
   CDM_BIND::AcuteRespiratoryDistressSyndromeData data;
   PBPatientCondition::Serialize(src, data);
   PBPatientCondition::Serialize(data, dst);
@@ -71,6 +74,7 @@ void PBPatientCondition::Copy(const SEAcuteRespiratoryDistressSyndrome& src, SEA
 
 void PBPatientCondition::Load(const CDM_BIND::ChronicAnemiaData& src, SEChronicAnemia& dst)
 {
+  dst.Clear();
   PBPatientCondition::Serialize(src, dst);
 }
 void PBPatientCondition::Serialize(const CDM_BIND::ChronicAnemiaData& src, SEChronicAnemia& dst)
@@ -93,6 +97,7 @@ void PBPatientCondition::Serialize(const SEChronicAnemia& src, CDM_BIND::Chronic
 }
 void PBPatientCondition::Copy(const SEChronicAnemia& src, SEChronicAnemia& dst)
 {
+  dst.Clear();
   CDM_BIND::ChronicAnemiaData data;
   PBPatientCondition::Serialize(src, data);
   PBPatientCondition::Serialize(data, dst);
@@ -100,6 +105,7 @@ void PBPatientCondition::Copy(const SEChronicAnemia& src, SEChronicAnemia& dst)
 
 void PBPatientCondition::Load(const CDM_BIND::ChronicObstructivePulmonaryDiseaseData& src, SEChronicObstructivePulmonaryDisease& dst)
 {
+  dst.Clear();
   PBPatientCondition::Serialize(src, dst);
 }
 void PBPatientCondition::Serialize(const CDM_BIND::ChronicObstructivePulmonaryDiseaseData& src, SEChronicObstructivePulmonaryDisease& dst)
@@ -126,6 +132,7 @@ void PBPatientCondition::Serialize(const SEChronicObstructivePulmonaryDisease& s
 }
 void PBPatientCondition::Copy(const SEChronicObstructivePulmonaryDisease& src, SEChronicObstructivePulmonaryDisease& dst)
 {
+  dst.Clear();
   CDM_BIND::ChronicObstructivePulmonaryDiseaseData data;
   PBPatientCondition::Serialize(src, data);
   PBPatientCondition::Serialize(data, dst);
@@ -133,6 +140,7 @@ void PBPatientCondition::Copy(const SEChronicObstructivePulmonaryDisease& src, S
 
 void PBPatientCondition::Load(const CDM_BIND::ChronicPericardialEffusionData& src, SEChronicPericardialEffusion& dst)
 {
+  dst.Clear();
   PBPatientCondition::Serialize(src, dst);
 }
 void PBPatientCondition::Serialize(const CDM_BIND::ChronicPericardialEffusionData& src, SEChronicPericardialEffusion& dst)
@@ -155,6 +163,7 @@ void PBPatientCondition::Serialize(const SEChronicPericardialEffusion& src, CDM_
 }
 void PBPatientCondition::Copy(const SEChronicPericardialEffusion& src, SEChronicPericardialEffusion& dst)
 {
+  dst.Clear();
   CDM_BIND::ChronicPericardialEffusionData data;
   PBPatientCondition::Serialize(src, data);
   PBPatientCondition::Serialize(data, dst);
@@ -162,6 +171,7 @@ void PBPatientCondition::Copy(const SEChronicPericardialEffusion& src, SEChronic
 
 void PBPatientCondition::Load(const CDM_BIND::ChronicRenalStenosisData& src, SEChronicRenalStenosis& dst)
 {
+  dst.Clear();
   PBPatientCondition::Serialize(src, dst);
 }
 void PBPatientCondition::Serialize(const CDM_BIND::ChronicRenalStenosisData& src, SEChronicRenalStenosis& dst)
@@ -188,6 +198,7 @@ void PBPatientCondition::Serialize(const SEChronicRenalStenosis& src, CDM_BIND::
 }
 void PBPatientCondition::Copy(const SEChronicRenalStenosis& src, SEChronicRenalStenosis& dst)
 {
+  dst.Clear();
   CDM_BIND::ChronicRenalStenosisData data;
   PBPatientCondition::Serialize(src, data);
   PBPatientCondition::Serialize(data, dst);
@@ -195,6 +206,7 @@ void PBPatientCondition::Copy(const SEChronicRenalStenosis& src, SEChronicRenalS
 
 void PBPatientCondition::Load(const CDM_BIND::ChronicVentricularSystolicDysfunctionData& src, SEChronicVentricularSystolicDysfunction& dst)
 {
+  dst.Clear();
   PBPatientCondition::Serialize(src, dst);
 }
 void PBPatientCondition::Serialize(const CDM_BIND::ChronicVentricularSystolicDysfunctionData& src, SEChronicVentricularSystolicDysfunction& dst)
@@ -213,6 +225,7 @@ void PBPatientCondition::Serialize(const SEChronicVentricularSystolicDysfunction
 }
 void PBPatientCondition::Copy(const SEChronicVentricularSystolicDysfunction& src, SEChronicVentricularSystolicDysfunction& dst)
 {
+  dst.Clear();
   CDM_BIND::ChronicVentricularSystolicDysfunctionData data;
   PBPatientCondition::Serialize(src, data);
   PBPatientCondition::Serialize(data, dst);
@@ -220,6 +233,7 @@ void PBPatientCondition::Copy(const SEChronicVentricularSystolicDysfunction& src
 
 void PBPatientCondition::Load(const CDM_BIND::ConsumeMealData& src, SEConsumeMeal& dst)
 {
+  dst.Clear();
   PBPatientCondition::Serialize(src, dst);
 }
 void PBPatientCondition::Serialize(const CDM_BIND::ConsumeMealData& src, SEConsumeMeal& dst)
@@ -246,6 +260,7 @@ void PBPatientCondition::Serialize(const SEConsumeMeal& src, CDM_BIND::ConsumeMe
 }
 void PBPatientCondition::Copy(const SEConsumeMeal& src, SEConsumeMeal& dst)
 {
+  dst.Clear();
   CDM_BIND::ConsumeMealData data;
   PBPatientCondition::Serialize(src, data);
   PBPatientCondition::Serialize(data, dst);
@@ -253,6 +268,7 @@ void PBPatientCondition::Copy(const SEConsumeMeal& src, SEConsumeMeal& dst)
 
 void PBPatientCondition::Load(const CDM_BIND::ImpairedAlveolarExchangeData& src, SEImpairedAlveolarExchange& dst)
 {
+  dst.Clear();
   PBPatientCondition::Serialize(src, dst);
 }
 void PBPatientCondition::Serialize(const CDM_BIND::ImpairedAlveolarExchangeData& src, SEImpairedAlveolarExchange& dst)
@@ -262,6 +278,8 @@ void PBPatientCondition::Serialize(const CDM_BIND::ImpairedAlveolarExchangeData&
     PBProperty::Load(src.impairedfraction(), dst.GetImpairedFraction());
   if (src.has_impairedsurfacearea())
     PBProperty::Load(src.impairedsurfacearea(), dst.GetImpairedSurfaceArea());
+  if (src.has_severity())
+    PBProperty::Load(src.severity(), dst.GetSeverity());
 }
 CDM_BIND::ImpairedAlveolarExchangeData* PBPatientCondition::Unload(const SEImpairedAlveolarExchange& src)
 {
@@ -276,9 +294,12 @@ void PBPatientCondition::Serialize(const SEImpairedAlveolarExchange& src, CDM_BI
     dst.set_allocated_impairedfraction(PBProperty::Unload(*src.m_ImpairedFraction));
   if (src.HasImpairedSurfaceArea())
     dst.set_allocated_impairedsurfacearea(PBProperty::Unload(*src.m_ImpairedSurfaceArea));
+  if (src.HasSeverity())
+    dst.set_allocated_severity(PBProperty::Unload(*src.m_Severity));
 }
 void PBPatientCondition::Copy(const SEImpairedAlveolarExchange& src, SEImpairedAlveolarExchange& dst)
 {
+  dst.Clear();
   CDM_BIND::ImpairedAlveolarExchangeData data;
   PBPatientCondition::Serialize(src, data);
   PBPatientCondition::Serialize(data, dst);
@@ -286,6 +307,7 @@ void PBPatientCondition::Copy(const SEImpairedAlveolarExchange& src, SEImpairedA
 
 void PBPatientCondition::Load(const CDM_BIND::LobarPneumoniaData& src, SELobarPneumonia& dst)
 {
+  dst.Clear();
   PBPatientCondition::Serialize(src, dst);
 }
 void PBPatientCondition::Serialize(const CDM_BIND::LobarPneumoniaData& src, SELobarPneumonia& dst)
@@ -316,6 +338,7 @@ void PBPatientCondition::Serialize(const SELobarPneumonia& src, CDM_BIND::LobarP
 }
 void PBPatientCondition::Copy(const SELobarPneumonia& src, SELobarPneumonia& dst)
 {
+  dst.Clear();
   CDM_BIND::LobarPneumoniaData data;
   PBPatientCondition::Serialize(src, data);
   PBPatientCondition::Serialize(data, dst);
@@ -323,6 +346,7 @@ void PBPatientCondition::Copy(const SELobarPneumonia& src, SELobarPneumonia& dst
 
 void PBPatientCondition::Load(const CDM_BIND::PulmonaryFibrosisData& src, SEPulmonaryFibrosis& dst)
 {
+  dst.Clear();
   PBPatientCondition::Serialize(src, dst);
 }
 void PBPatientCondition::Serialize(const CDM_BIND::PulmonaryFibrosisData& src, SEPulmonaryFibrosis& dst)
@@ -345,13 +369,46 @@ void PBPatientCondition::Serialize(const SEPulmonaryFibrosis& src, CDM_BIND::Pul
 }
 void PBPatientCondition::Copy(const SEPulmonaryFibrosis& src, SEPulmonaryFibrosis& dst)
 {
+  dst.Clear();
   CDM_BIND::PulmonaryFibrosisData data;
+  PBPatientCondition::Serialize(src, data);
+  PBPatientCondition::Serialize(data, dst);
+}
+
+void PBPatientCondition::Load(const CDM_BIND::PulmonaryShuntData& src, SEPulmonaryShunt& dst)
+{
+  dst.Clear();
+  PBPatientCondition::Serialize(src, dst);
+}
+void PBPatientCondition::Serialize(const CDM_BIND::PulmonaryShuntData& src, SEPulmonaryShunt& dst)
+{
+  PBPatientCondition::Serialize(src.patientcondition(), dst);
+  if (src.has_severity())
+    PBProperty::Load(src.severity(), dst.GetSeverity());
+}
+CDM_BIND::PulmonaryShuntData* PBPatientCondition::Unload(const SEPulmonaryShunt& src)
+{
+  CDM_BIND::PulmonaryShuntData* dst = new CDM_BIND::PulmonaryShuntData();
+  PBPatientCondition::Serialize(src, *dst);
+  return dst;
+}
+void PBPatientCondition::Serialize(const SEPulmonaryShunt& src, CDM_BIND::PulmonaryShuntData& dst)
+{
+  PBPatientCondition::Serialize(src, *dst.mutable_patientcondition());
+  if (src.HasSeverity())
+    dst.set_allocated_severity(PBProperty::Unload(*src.m_Severity));
+}
+void PBPatientCondition::Copy(const SEPulmonaryShunt& src, SEPulmonaryShunt& dst)
+{
+  dst.Clear();
+  CDM_BIND::PulmonaryShuntData data;
   PBPatientCondition::Serialize(src, data);
   PBPatientCondition::Serialize(data, dst);
 }
 
 void PBPatientCondition::Load(const CDM_BIND::SepsisData& src, SESepsis& dst)
 {
+  dst.Clear();
   PBPatientCondition::Serialize(src, dst);
 }
 void PBPatientCondition::Serialize(const CDM_BIND::SepsisData& src, SESepsis& dst)
@@ -374,6 +431,7 @@ void PBPatientCondition::Serialize(const SESepsis& src, CDM_BIND::SepsisData& ds
 }
 void PBPatientCondition::Copy(const SESepsis& src, SESepsis& dst)
 {
+  dst.Clear();
   CDM_BIND::SepsisData data;
   PBPatientCondition::Serialize(src, data);
   PBPatientCondition::Serialize(data, dst);
@@ -441,6 +499,12 @@ SEPatientCondition* PBPatientCondition::Load(const CDM_BIND::AnyPatientCondition
   {
     SEPulmonaryFibrosis* a = new SEPulmonaryFibrosis();
     PBPatientCondition::Load(any.pulmonaryfibrosis(), *a);
+    return a;
+  }
+  case CDM_BIND::AnyPatientConditionData::ConditionCase::kPulmonaryShunt:
+  {
+    SEPulmonaryShunt* a = new SEPulmonaryShunt();
+    PBPatientCondition::Load(any.pulmonaryshunt(), *a);
     return a;
   }
   case CDM_BIND::AnyPatientConditionData::ConditionCase::kSepsis:
@@ -514,6 +578,12 @@ CDM_BIND::AnyPatientConditionData* PBPatientCondition::Unload(const SEPatientCon
   if (pf != nullptr)
   {
     any->set_allocated_pulmonaryfibrosis(PBPatientCondition::Unload(*pf));
+    return any;
+  }
+  const SEPulmonaryShunt* ps = dynamic_cast<const SEPulmonaryShunt*>(&condition);
+  if (ps != nullptr)
+  {
+    any->set_allocated_pulmonaryshunt(PBPatientCondition::Unload(*ps));
     return any;
   }
   const SESepsis* s = dynamic_cast<const SESepsis*>(&condition);

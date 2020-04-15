@@ -17,7 +17,8 @@ public:
   }
   virtual ~log_lib() 
   {
-    
+    if (_file.is_open())
+      _file.close();
   }
 
   bool log(Logger::level requested_level)
@@ -82,6 +83,11 @@ Logger::Logger(const std::string& logFilename)
 void Logger::LogToConsole(bool b)
 {
   _log_lib->_log_to_console = b;
+}
+
+bool Logger::IsLoggingToConsole()
+{
+  return _log_lib->_log_to_console;
 }
 
 void Logger::ResetLogFile(const std::string& logFilename)

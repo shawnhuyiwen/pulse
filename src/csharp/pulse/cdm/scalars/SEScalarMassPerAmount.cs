@@ -20,6 +20,33 @@ public class MassPerAmountUnit
   public static MassPerAmountUnit ug_Per_ct = new MassPerAmountUnit("ug/ct");
   public static MassPerAmountUnit pg_Per_ct = new MassPerAmountUnit("pg/ct");
 
+  public static MassPerAmountUnit FromString(string u)
+  {
+    if (u == MassPerAmountUnit.g_Per_ct.ToString())
+      return MassPerAmountUnit.g_Per_ct;
+    if (u == MassPerAmountUnit.g_Per_mol.ToString())
+      return MassPerAmountUnit.g_Per_mol;
+    if (u == MassPerAmountUnit.g_Per_mmol.ToString())
+      return MassPerAmountUnit.g_Per_mmol;
+    if (u == MassPerAmountUnit.g_Per_umol.ToString())
+      return MassPerAmountUnit.g_Per_umol;
+    if (u == MassPerAmountUnit.mg_Per_mol.ToString())
+      return MassPerAmountUnit.mg_Per_mol;
+    if (u == MassPerAmountUnit.mg_Per_mmol.ToString())
+      return MassPerAmountUnit.mg_Per_mmol;
+    if (u == MassPerAmountUnit.kg_Per_mol.ToString())
+      return MassPerAmountUnit.kg_Per_mol;
+    if (u == MassPerAmountUnit.ug_Per_mmol.ToString())
+      return MassPerAmountUnit.ug_Per_mmol;
+    if (u == MassPerAmountUnit.ug_Per_mol.ToString())
+      return MassPerAmountUnit.ug_Per_mol;
+    if (u == MassPerAmountUnit.ug_Per_ct.ToString())
+      return MassPerAmountUnit.ug_Per_ct;
+    if (u == MassPerAmountUnit.pg_Per_ct.ToString())
+      return MassPerAmountUnit.pg_Per_ct;
+
+    throw new System.ArgumentException(u + " is not a know mass per amount unit");
+  }
 }
 
 public class SEScalarMassPerAmount : SEScalar

@@ -86,4 +86,6 @@ void CommonDataModelTest::ScalarTest(const std::string& sOutputDirectory)
   //std::cout<<"Testing Scalar "<<p.GetValue(PressureUnit::Pa)<<PressureUnit::Pa<<std::endl;
   //std::cout<<"Testing Scalar "<<p.GetValue(PressureUnit::mmHg)<<PressureUnit::mmHg<<std::endl;
   //std::cout<<"Testing Scalar "<<p.GetValue(PressureUnit::cmH2O)<<PressureUnit::cmH2O<<std::endl;
+
+  file.close();
 }
