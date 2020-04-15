@@ -47,6 +47,12 @@ void MVController::TrackData(SEEngineTracker& trkr, const std::string& csv_filen
   SESubstance* CO2 = trkr.GetSubstanceManager().GetSubstance("CarbonDioxide");
   trkr.GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, *O2, "PartialPressure", PressureUnit::mmHg);
   trkr.GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, *CO2, "PartialPressure", PressureUnit::mmHg);
+  trkr.GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::PulmonaryCompartment::Mouth, *O2, "PartialPressure", PressureUnit::mmHg);
+  trkr.GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::PulmonaryCompartment::Mouth, *CO2, "PartialPressure", PressureUnit::mmHg);
+  trkr.GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::PulmonaryCompartment::LeftAlveoli, *O2, "PartialPressure", PressureUnit::mmHg);
+  trkr.GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::PulmonaryCompartment::LeftAlveoli, *CO2, "PartialPressure", PressureUnit::mmHg);
+  trkr.GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::PulmonaryCompartment::RightAlveoli, *O2, "PartialPressure", PressureUnit::mmHg);
+  trkr.GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::PulmonaryCompartment::RightAlveoli, *CO2, "PartialPressure", PressureUnit::mmHg);
 
   trkr.SetupRequests();
 }

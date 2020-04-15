@@ -61,6 +61,7 @@ bool MVController::RunSimulation(pulse::multiplex_ventilator::bind::SimulationDa
     soloVentilation->set_endtidalcarbondioxidepressure_cmh2o(pc->GetRespiratory().GetEndTidalCarbonDioxidePressure(PressureUnit::cmH2O));
     auto AortaO2 = pc->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta)->GetSubstanceQuantity(pc->GetSubstances().GetO2());
     soloVentilation->set_arterialoxygenpartialpressure_mmhg(AortaO2->GetPartialPressure(PressureUnit::mmHg));
+    soloVentilation->set_arterialcarbondioxidepartialpressure_mmhg(AortaO2->GetPartialPressure(PressureUnit::mmHg));
     soloVentilation->set_carricoindex_mmhg(pc->GetRespiratory().GetCarricoIndex(PressureUnit::mmHg));
     // Copy our inital conditions and multiplex ventilator values to our multiVentilation structure for completeness
     multiVentilation->set_compliance_l_per_cmh2o(soloVentilation->compliance_l_per_cmh2o());
