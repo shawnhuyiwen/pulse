@@ -121,6 +121,7 @@ def add_ventilation_comparison(group_id: int, sim_list: SimulationListData, pati
         sim2_base = "pip=" + str(sim2.PIP_cmH2O) + "_peep=" + str(sim2.PEEP_cmH2O) + "_FiO2=" + str(sim2.FiO2) + "_"
         sim2.OutputBaseFilename = simulation_results_root + "/" + sim2_base
 
+# Sweep through the file describing all the solo states we created and pair up states for a multiplex run
 def get_patient_pairs(solo_patients_file):
     # values of patients to compare
     patient_pair_sweeps = {
@@ -138,12 +139,12 @@ def get_patient_pairs(solo_patients_file):
     patientsfile = open(solo_patients_file, 'r')
     # convert it to pandas dataframe (i.e. table)
     patientdata = json.load(patientsfile)['Patients']
+    patientsfile.close()
     patients = pd.read_json(path_or_buf=json.dumps(patientdata), orient='records')
 
     # correct no impairment case (from NaN to 0.0)
     patients.fillna(value=0.0, axis='columns', inplace=True)
     # find the patient records of interest (use df.query)
-    # handle non-exact impairments (0.2, 0.4, 0.6, 0.8)
     individuals = []
     for compliance in patient_pair_sweeps['Compliance_L_Per_cmH2O']:
         for PEEP in patient_pair_sweeps['PEEP_cmH2O']:
@@ -166,9 +167,6 @@ def get_patient_pairs(solo_patients_file):
 
     # return record of pairs
     return list(itertools.combinations_with_replacement(individuals, 2))
-
-def results_to_dataframe(results_filename: str):
-    pass
 
 def plot_simulation_results(simulations: SimulationListData):
     for sim in simulations.Simulations:
