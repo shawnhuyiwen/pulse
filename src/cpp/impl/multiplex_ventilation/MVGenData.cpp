@@ -17,13 +17,13 @@ bool MVController::GenerateStabilizedPatients()
   // Loop parameters
   float minCompliance_L_Per_cmH2O = 0.010f;
   float maxCompliance_L_Per_cmH2O = 0.050f;
-  float stepCompliance_L_Per_cmH2O = 0.005f;
+  float stepCompliance_L_Per_cmH2O = 0.01f;
   int minPEEP_cmH2O = 10;
   int maxPEEP_cmH2O = 20;
-  int stepPEEP_cmH2O = 2;
+  int stepPEEP_cmH2O = 5;
   float minImpairment = 0.3f;
   float maxImpairment = 0.9f;
-  float stepImpairment = 0.1f;
+  float stepImpairment = 0.025f;
 
   SESubstanceManager subMgr(GetLogger());
   subMgr.LoadSubstanceDirectory();
@@ -92,8 +92,7 @@ bool MVController::GenerateStabilizedPatients()
 
       Info("Calculated PIP of " + std::to_string(PIP_cmH2O) + "(cmH2O) for a tidal volume of " + to_scientific_notation(targetTidalVolume_mL) + "(mL) and a PEEP of " + std::to_string(PEEP_cmH2O) + "(cmH2O)");
 
-      double currentFiO2 = FiO2->GetFractionAmount().GetValue();
-      for (float currentImpairment = minImpairment; currentImpairment <= 1.0; currentImpairment += stepImpairment) //Aaron - This needs to be maxImpairment instead of 1.0, but rounding screws it up
+      for (float currentImpairment = minImpairment; currentImpairment <= maxImpairment; currentImpairment += stepImpairment) //Aaron - This needs to be maxImpairment instead of 1.0, but rounding screws it up
       {
         Info("\n########################### PATIENT " + std::to_string(currentIteration + 1) + " OF " + std::to_string(totalIterations) + " ###########################");
 
@@ -113,67 +112,53 @@ bool MVController::GenerateStabilizedPatients()
         engine->ProcessAction(mvc);
         engine->ProcessAction(impairedAlveolarExchange);
         engine->ProcessAction(pulmonaryShunt);
+        StabilizeSpO2(*engine);
 
-        double currentFiO2 = FiO2->GetFractionAmount().GetValue();
 
-        double tolerance_Per_s = 0.001;
-        double FiO2_increment = 0.01;
-
+        float  targetSpO2 = 0.92f;
+        double previousFiO2 = FiO2->GetFractionAmount().GetValue();
         double previousSpO2 = engine->GetBloodChemistrySystem()->GetOxygenSaturation();
+        double currentFiO2 = previousFiO2;
+        double currentSpO2 = previousSpO2;
+        Info("Starting stabilization at " + to_scientific_notation(previousSpO2) + " SpO2");
 
-        engine->AdvanceModelTime(breathPeriod_s, TimeUnit::s);
-        double currentSpO2 = engine->GetBloodChemistrySystem()->GetOxygenSaturation();
-        bool trendingUp = currentSpO2 > previousSpO2;
-
-        bool max = false;
-        double previousFiO2 = currentFiO2;
         while (true)
         {
-          engine->AdvanceModelTime(breathPeriod_s, TimeUnit::s);
+          StabilizeSpO2(*engine);
           currentSpO2 = engine->GetBloodChemistrySystem()->GetOxygenSaturation();
+          if (currentSpO2 >= targetSpO2)
+            break;
 
-          if (!trendingUp && currentSpO2 < m_SpO2Target && !max)
+          if (currentSpO2 < previousSpO2)// Going down...
           {
-            if (currentSpO2 < m_SpO2Target - 0.1) //if it's 10% lower than the target, we can move faster
-            {
-              currentFiO2 += FiO2_increment;// *5.0;
-            }
+            if (currentSpO2 < 0.85)
+              currentFiO2 += 0.1;
             else
-            {
-              currentFiO2 += FiO2_increment;
-            }
+              currentFiO2 += 0.025;
           }
-          else if ((trendingUp && currentSpO2 <= previousSpO2) ||
-            (abs(currentSpO2 - previousSpO2) < tolerance_Per_s * breathPeriod_s))
+          else
           {
-            if (currentSpO2 >= m_SpO2Target || max)
-            {
-              break;
-            }
+            if (currentSpO2 < 0.88)
+              currentFiO2 += 0.05;
             else
-            {
-              currentFiO2 += FiO2_increment;
-            }
+              currentFiO2 += 0.01;
           }
-
-          if (currentFiO2 != previousFiO2)
+          if (currentFiO2 > 0.9995)
           {
-            if (currentFiO2 > 0.9995)
-            {
-              currentFiO2 = 0.9995;
-              max = true;
-            }
-            Info("Setting FiO2 to " + to_scientific_notation(currentFiO2) + " with an SpO2 of " + to_scientific_notation(currentSpO2));
-            FiO2->GetFractionAmount().SetValue(currentFiO2);
-            engine->ProcessAction(mvc);
+            currentFiO2 = 0.9995;
+            break;
           }
 
-          trendingUp = currentSpO2 > previousSpO2;
+          if (currentFiO2 > 0.5)
+            targetSpO2 = 0.89f;
+
+          Info("Setting FiO2 to " + to_scientific_notation(currentFiO2) + " with an SpO2 of " + to_scientific_notation(currentSpO2));
+          FiO2->GetFractionAmount().SetValue(currentFiO2);
+          engine->ProcessAction(mvc);
           previousSpO2 = currentSpO2;
           previousFiO2 = currentFiO2;
         }
-        StabilizeSpO2(*engine);
-        Info("Engine stabilized at an SpO2 of " + to_scientific_notation(currentSpO2));
+        Info("Engine stabilized at an SpO2 of " + to_scientific_notation(currentSpO2)+"; FiO2 of "+to_scientific_notation(currentFiO2));
 
         // Save our state
         baseName += "_FiO2="+to_scientific_notation(currentFiO2);
@@ -194,6 +179,7 @@ bool MVController::GenerateStabilizedPatients()
         patientData->set_arterialoxygenpartialpressure_mmhg(AortaO2->GetPartialPressure(PressureUnit::mmHg));
         patientData->set_carricoindex_mmhg(engine->GetRespiratorySystem()->GetCarricoIndex(PressureUnit::mmHg));
         delete engine.release();
+        //RunSoloState(SoloDir+baseName+".json", SoloDir+"csv/ext/"+baseName+".json", 120);
 
         currentIteration++;
       }

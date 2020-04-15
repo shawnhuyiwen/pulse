@@ -29,13 +29,13 @@ int main(int argc, char* argv[])
     if (argc <= 1)
     {
       // Adjust comments to run the mode you want
-      //mode = "genData";
+      mode = "genData";
       //mode = "manual";
     }
     else
     {
       mode = argv[1];
-      //mode = "genData"
+      mode = "genData";
     };
     // convert string to back to lower case
     std::for_each(mode.begin(), mode.end(), [](char& c) { c = ::tolower(c); });
