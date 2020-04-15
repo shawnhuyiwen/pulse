@@ -57,7 +57,7 @@ def add_ventilation_comparison(group_id: int, sim_list: SimulationListData, pati
     p0_name = ntpath.splitext(ntpath.basename(patient0_state_file))[0]
     p1_name = ntpath.splitext(ntpath.basename(patient1_state_file))[0]
     simulation_results_root = sim_list.OutputRootDir+p0_name+"+"+p1_name+"/"
-    Path(simulation_results_root).mkdir(parents=True, exist_ok=True)
+    #Path(simulation_results_root).mkdir(parents=True, exist_ok=True)
 
     id = len(sim_list.Simulations)
     sim0 = sim_list.Simulations.add()
@@ -124,9 +124,15 @@ def add_ventilation_comparison(group_id: int, sim_list: SimulationListData, pati
 def get_patient_pairs(solo_patients_file):
     # values of patients to compare
     patient_pair_sweeps = {
-        'Compliance_L_Per_cmH2O': [0.01, 0.02, 0.05],
-        'PEEP_cmH2O': [10, 16, 20],
-        'ImpairmentFraction': [0.3,  0.6, 0.9],
+        'Compliance_L_Per_cmH2O': [0.01, 0.02, 0.04, 0.05],
+        'PEEP_cmH2O': [10, 15, 20],
+        'ImpairmentFraction': [0.3, 0.6, 0.7, 0.8]
+                               #0.3, 0.325, 0.35, 0.375,
+                               #0.4, 0.425, 0.45, 0.475,
+                               #0.5, 0.525, 0.55, 0.575,
+                               #0.6, 0.625, 0.65, 0.675,
+                               #0.7, 0.725, 0.75, 0.775,
+                               #0.8, 0.825, 0.85, 0.875]
     }
     # read in the patient json file
     patientsfile = open(solo_patients_file, 'r')
@@ -150,8 +156,8 @@ def get_patient_pairs(solo_patients_file):
                                 '.format(compliance_lower=(compliance-0.005),
                                          compliance_upper=(compliance+0.005),
                                          PEEP=PEEP,
-                                         impairment_lower=impairment,
-                                         impairment_upper=(impairment+0.1)
+                                         impairment_lower=(impairment-0.005),
+                                         impairment_upper=(impairment+0.005)
                                 )
                 patient_record = patients.query(
                                         query_string
@@ -160,6 +166,9 @@ def get_patient_pairs(solo_patients_file):
 
     # return record of pairs
     return list(itertools.combinations_with_replacement(individuals, 2))
+
+def results_to_dataframe(results_filename: str):
+    pass
 
 def plot_simulation_results(simulations: SimulationListData):
     for sim in simulations.Simulations:

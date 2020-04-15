@@ -89,16 +89,16 @@ bool MVController::RunSoloState(const std::string& stateFile, const std::string&
   double timeStep_s = 0.02;
   double currentTime_s = 0;
 
-  PulseController* pc = new PulseController(logFile);
-  pc->SerializeFromFile(stateFile, SerializationFormat::JSON);
-  TrackData(pc->GetEngineTracker(), dataFile);
+  PulseController pc(logFile);
+  pc.SerializeFromFile(stateFile, SerializationFormat::JSON);
+  TrackData(pc.GetEngineTracker(), dataFile);
   int count = (int)(duration_s / timeStep_s);
   for (int i = 0; i < count; i++)
   {
-    if (pc->GetEvents().IsEventActive(eEvent::IrreversibleState))
+    if (pc.GetEvents().IsEventActive(eEvent::IrreversibleState))
       return false;
-    pc->AdvanceModelTime();
-    pc->GetEngineTracker().TrackData(currentTime_s);
+    pc.AdvanceModelTime();
+    pc.GetEngineTracker().TrackData(currentTime_s);
     currentTime_s += timeStep_s;
     statusTime_s += timeStep_s;
     // How are we running?
@@ -117,8 +117,14 @@ bool MVController::RunSoloState(const std::string& stateFile, const std::string&
 bool MVController::StabilizeSpO2(PhysiologyEngine& eng)
 {
   // Let's shoot for with in 0.25% for 10s straight
+  SESubstance* Oxygen = eng.GetSubstanceManager().GetSubstance("Oxygen");
+  auto AortaO2 = eng.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta)->GetSubstanceQuantity(*Oxygen);
+
   double currentSpO2 = 0;
-  double previsouSpO2 = eng.GetBloodChemistrySystem()->GetOxygenSaturation();
+  double previousSpO2 = eng.GetBloodChemistrySystem()->GetOxygenSaturation();
+  double currentAortaO2 = 0;
+  double previousAortaO2 = AortaO2->GetPartialPressure(PressureUnit::mmHg);
+
   int passes = 0;
   int totalIterations = 0;
   int passesUnder80 = 0;
@@ -126,8 +132,9 @@ bool MVController::StabilizeSpO2(PhysiologyEngine& eng)
   {
     totalIterations++;
     eng.AdvanceModelTime(2, TimeUnit::s);
+    eng.GetEngineTracker()->TrackData(eng.GetSimulationTime(TimeUnit::s));
     currentSpO2 = eng.GetBloodChemistrySystem()->GetOxygenSaturation();
-    if (currentSpO2 < 0.8 && currentSpO2 <= previsouSpO2)
+    if (currentSpO2 < 0.8 && currentSpO2 <= previousSpO2)
     {
       passesUnder80++;
       if (passesUnder80 > 5)
@@ -136,13 +143,15 @@ bool MVController::StabilizeSpO2(PhysiologyEngine& eng)
     }
     else
       passesUnder80 = 0;
-    double pctDiff = GeneralMath::PercentDifference(previsouSpO2, currentSpO2);
+
+    currentAortaO2 = AortaO2->GetPartialPressure(PressureUnit::mmHg);
+    double pctDiff = GeneralMath::PercentDifference(previousAortaO2, currentAortaO2);
     if (pctDiff < 0.25)
       passes++;
     else
     {
       passes = 0;
-      previsouSpO2 = currentSpO2;
+      previousAortaO2 = currentAortaO2;
     }
   }
   Info("Engine stablized at an SpO2 of " + to_scientific_notation(currentSpO2)+" in "+std::to_string(totalIterations *2)+"(s)");

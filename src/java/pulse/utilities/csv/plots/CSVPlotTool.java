@@ -57,19 +57,24 @@ public class CSVPlotTool
   {
     if(args.length<1)
     {
-      Log.fatal("Expected inputs : [results file path]");
+      Log.fatal("Expected inputs : [results directory path]");
       return;
     }
-    File f = new File(args[0]);
-    if(!f.exists())
-    {
-      Log.fatal("Input file cannot be found");
-      return;
-    }
-    String reportDir = "./graph_results/"+f.getName();
-    reportDir=reportDir.substring(0,reportDir.lastIndexOf("."))+"/";  
     CSVPlotTool t = new CSVPlotTool();
-    t.graphResults(args[0],reportDir);
+    List<String> csvFiles = FileUtils.findFiles(args[0], "csv", true);
+    for(String csvFile : csvFiles)
+    {
+      File f = new File(csvFile);
+      if(!f.exists())
+      {
+        Log.fatal("Input file cannot be found");
+        continue;
+      }
+      String reportDir = "./graph_results/"+f.getName();
+      reportDir=reportDir.substring(0,reportDir.lastIndexOf("."))+"/";
+      Log.info("Creating plots at "+reportDir);
+      t.graphResults(csvFile,reportDir);
+    }
   }
 
   public boolean graphResults(String csvFile, String graphLocation)
