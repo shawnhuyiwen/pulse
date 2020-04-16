@@ -3,7 +3,7 @@
 
 #include "MVController.h"
 
-bool MVController::RunSimulation(pulse::multiplex_ventilator::bind::SimulationData& sim)
+bool MVController::RunSimulation(pulse::study::multiplex_ventilation::bind::SimulationData& sim)
 {
   // Figure out where to put results
   std::string outDir = sim.outputbasefilename();

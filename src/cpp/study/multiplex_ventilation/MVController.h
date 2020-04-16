@@ -64,7 +64,7 @@
 #include "utils/GeneralMath.h"
 #include "utils/TimingProfile.h"
 
-#include "pulse/impl/bind/MultiplexVentilator.pb.h"
+#include "pulse/study/multiplex_ventilation/bind/MultiplexVentilation.pb.h"
 #include <google/protobuf/text_format.h>
 #include <google/protobuf/util/json_util.h>
 
@@ -84,7 +84,7 @@ public:
 
   bool GenerateStabilizedPatients();
 
-  bool RunSimulation(pulse::multiplex_ventilator::bind::SimulationData& sim);
+  bool RunSimulation(pulse::study::multiplex_ventilation::bind::SimulationData& sim);
   bool RunSoloState(const std::string& stateFile, const std::string& outDir, double duration_s);
   
   double DefaultIERatio() const { return m_IERatio; }

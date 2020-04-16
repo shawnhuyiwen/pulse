@@ -69,7 +69,7 @@ void MVRunner::ControllerLoop()
 {
   MVController mvc(m_DataDir);
   mvc.GetLogger()->LogToConsole(false);
-  pulse::multiplex_ventilator::bind::SimulationData* sim;
+  pulse::study::multiplex_ventilation::bind::SimulationData* sim;
 
   while (true)
   {
@@ -81,10 +81,10 @@ void MVRunner::ControllerLoop()
   }
 }
 
-pulse::multiplex_ventilator::bind::SimulationData* MVRunner::GetNextSimulation()
+pulse::study::multiplex_ventilation::bind::SimulationData* MVRunner::GetNextSimulation()
 {
   m_mutex.lock();
-  pulse::multiplex_ventilator::bind::SimulationData* sim = nullptr;
+  pulse::study::multiplex_ventilation::bind::SimulationData* sim = nullptr;
   if (!m_SimulationsToRun.empty())
   {
     auto itr = m_SimulationsToRun.begin();
@@ -96,7 +96,7 @@ pulse::multiplex_ventilator::bind::SimulationData* MVRunner::GetNextSimulation()
   return sim;
 }
 
-void MVRunner::FinalizeSimulation(pulse::multiplex_ventilator::bind::SimulationData& sim)
+void MVRunner::FinalizeSimulation(pulse::study::multiplex_ventilation::bind::SimulationData& sim)
 {
   m_mutex.lock();
   auto rSim = m_SimulationResultsList->mutable_simulations()->Add();
@@ -110,7 +110,7 @@ void MVRunner::FinalizeSimulation(pulse::multiplex_ventilator::bind::SimulationD
   m_mutex.unlock();
 }
 
-bool MVRunner::SerializeToString(pulse::multiplex_ventilator::bind::SimulationListData& src, std::string& output, SerializationFormat f) const
+bool MVRunner::SerializeToString(pulse::study::multiplex_ventilation::bind::SimulationListData& src, std::string& output, SerializationFormat f) const
 {
   google::protobuf::util::JsonPrintOptions printOpts;
   printOpts.add_whitespace = true;
@@ -123,14 +123,14 @@ bool MVRunner::SerializeToString(pulse::multiplex_ventilator::bind::SimulationLi
   }
   return true;
 }
-bool MVRunner::SerializeToFile(pulse::multiplex_ventilator::bind::SimulationListData& src, const std::string& filename, SerializationFormat f) const
+bool MVRunner::SerializeToFile(pulse::study::multiplex_ventilation::bind::SimulationListData& src, const std::string& filename, SerializationFormat f) const
 {
   std::string content;
   if (!SerializeToString(src, content, f))
     return false;
   return WriteFile(content, filename, SerializationFormat::JSON);
 }
-bool MVRunner::SerializeFromString(const std::string& src, pulse::multiplex_ventilator::bind::SimulationListData& dst, SerializationFormat f)
+bool MVRunner::SerializeFromString(const std::string& src, pulse::study::multiplex_ventilation::bind::SimulationListData& dst, SerializationFormat f)
 {
   google::protobuf::util::JsonParseOptions parseOpts;
   google::protobuf::SetLogHandler([](google::protobuf::LogLevel level, const char* filename, int line, const std::string& message)
@@ -149,8 +149,8 @@ bool MVRunner::SerializeFromFile(const std::string& filename, SerializationForma
 {
   SAFE_DELETE(m_SimulationList);
   SAFE_DELETE(m_SimulationResultsList);
-  m_SimulationList = new pulse::multiplex_ventilator::bind::SimulationListData();
-  m_SimulationResultsList = new pulse::multiplex_ventilator::bind::SimulationListData();
+  m_SimulationList = new pulse::study::multiplex_ventilation::bind::SimulationListData();
+  m_SimulationResultsList = new pulse::study::multiplex_ventilation::bind::SimulationListData();
 
   std::string content = ReadFile(filename, SerializationFormat::JSON);
   if (content.empty())

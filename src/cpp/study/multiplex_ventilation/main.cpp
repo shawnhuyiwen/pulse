@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
     else // Manual
     {
       MVController mvc("./states/multiplex_ventilation/ManualMultiplexVentilation.log", ".");
-      pulse::multiplex_ventilator::bind::SimulationData sim;
+      pulse::study::multiplex_ventilation::bind::SimulationData sim;
       sim.set_respirationrate_per_min(mvc.DefaultRespirationRate_Per_Min());
       sim.set_ieratio(mvc.DefaultIERatio());
 

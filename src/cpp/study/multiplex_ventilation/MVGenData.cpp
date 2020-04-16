@@ -55,7 +55,7 @@ bool MVController::GenerateStabilizedPatients()
   FiO2->GetFractionAmount().SetValue(m_AmbientFiO2);
 
   std::string baseName;
-  pulse::multiplex_ventilator::bind::PatientStateListData patients;
+  pulse::study::multiplex_ventilation::bind::PatientStateListData patients;
   google::protobuf::util::JsonPrintOptions opts;
   opts.add_whitespace = true;
   opts.preserve_proto_field_names = true;
