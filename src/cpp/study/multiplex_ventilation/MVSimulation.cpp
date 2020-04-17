@@ -8,7 +8,7 @@ bool MVController::RunSimulation(pulse::study::multiplex_ventilation::bind::Simu
   // Figure out where to put results
   std::string outDir = sim.outputbasefilename();
   if(outDir.empty())
-    outDir = ResultsDir;
+    outDir = Dir::Results;
 
   TimingProfile profiler;
   profiler.Start("Total");
@@ -57,14 +57,14 @@ bool MVController::RunSimulation(pulse::study::multiplex_ventilation::bind::Simu
 
     // Fill out our initial solo ventilation data
     soloVentilation->set_oxygensaturation(pc->GetBloodChemistry().GetOxygenSaturation().GetValue());
-    soloVentilation->set_tidalvolume_l(pc->GetRespiratory().GetTidalVolume(VolumeUnit::L));
+    soloVentilation->set_tidalvolume_ml(pc->GetRespiratory().GetTidalVolume(VolumeUnit::mL));
     soloVentilation->set_endtidalcarbondioxidepressure_cmh2o(pc->GetRespiratory().GetEndTidalCarbonDioxidePressure(PressureUnit::cmH2O));
     auto AortaO2 = pc->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta)->GetSubstanceQuantity(pc->GetSubstances().GetO2());
     soloVentilation->set_arterialoxygenpartialpressure_mmhg(AortaO2->GetPartialPressure(PressureUnit::mmHg));
     soloVentilation->set_arterialcarbondioxidepartialpressure_mmhg(AortaO2->GetPartialPressure(PressureUnit::mmHg));
     soloVentilation->set_carricoindex_mmhg(pc->GetRespiratory().GetCarricoIndex(PressureUnit::mmHg));
     // Copy our inital conditions and multiplex ventilator values to our multiVentilation structure for completeness
-    multiVentilation->set_compliance_l_per_cmh2o(soloVentilation->compliance_l_per_cmh2o());
+    multiVentilation->set_compliance_ml_per_cmh2o(soloVentilation->compliance_ml_per_cmh2o());
     multiVentilation->set_impairmentfraction(soloVentilation->impairmentfraction());
     multiVentilation->set_respirationrate_per_min(soloVentilation->respirationrate_per_min());
     multiVentilation->set_ieratio(soloVentilation->ieratio());
@@ -153,8 +153,8 @@ bool MVController::RunSimulation(pulse::study::multiplex_ventilation::bind::Simu
   mv.SetConnection(eMechanicalVentilator_Connection::Tube);
   mv.SetControl(eMechanicalVentilator_Control::PC_CMV);
   mv.SetDriverWaveform(eMechanicalVentilator_DriverWaveform::Square);
-  mv.GetRespiratoryRate().SetValue(m_RespirationRate_Per_Min, FrequencyUnit::Per_min);
-  mv.GetInspiratoryExpiratoryRatio().SetValue(m_IERatio);
+  mv.GetRespiratoryRate().SetValue(sim.respirationrate_per_min(), FrequencyUnit::Per_min);
+  mv.GetInspiratoryExpiratoryRatio().SetValue(sim.ieratio());
   mv.GetPeakInspiratoryPressure().SetValue(sim.pip_cmh2o(), PressureUnit::cmH2O);
   mv.GetPositiveEndExpiredPressure().SetValue(sim.peep_cmh2o(), PressureUnit::cmH2O);
   SESubstanceFraction* FiO2 = &mv.GetFractionInspiredGas(*Oxygen);
@@ -395,7 +395,7 @@ bool MVController::RunSimulation(pulse::study::multiplex_ventilation::bind::Simu
     double SpO2 = pc->GetBloodChemistry().GetOxygenSaturation().GetValue();
     auto* multiVentilation = (*sim.mutable_patientcomparisons())[p].mutable_multiplexventilation();
     multiVentilation->set_oxygensaturation(SpO2);
-    multiVentilation->set_tidalvolume_l(pc->GetRespiratory().GetTidalVolume(VolumeUnit::L));
+    multiVentilation->set_tidalvolume_ml(pc->GetRespiratory().GetTidalVolume(VolumeUnit::mL));
     multiVentilation->set_endtidalcarbondioxidepressure_cmh2o(pc->GetRespiratory().GetEndTidalCarbonDioxidePressure(PressureUnit::cmH2O));
     auto AortaO2 = pc->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta)->GetSubstanceQuantity(pc->GetSubstances().GetO2());
     multiVentilation->set_arterialoxygenpartialpressure_mmhg(AortaO2->GetPartialPressure(PressureUnit::mmHg));

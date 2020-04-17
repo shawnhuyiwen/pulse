@@ -87,10 +87,15 @@ pulse::study::multiplex_ventilation::bind::SimulationData* MVRunner::GetNextSimu
   pulse::study::multiplex_ventilation::bind::SimulationData* sim = nullptr;
   if (!m_SimulationsToRun.empty())
   {
-    auto itr = m_SimulationsToRun.begin();
-    sim = &(*m_SimulationList->mutable_simulations())[*itr];
-    Info("Simulating ID " + std::to_string(*itr));
-    m_SimulationsToRun.erase(itr);
+    int id = *m_SimulationsToRun.begin();
+    for (int i = 0; i < m_SimulationList->simulations_size(); i++)
+    {
+      sim = &(*m_SimulationList->mutable_simulations())[i];
+      if (sim->id() == id)
+        break;
+    }
+    Info("Simulating ID " + std::to_string(id));
+    m_SimulationsToRun.erase(id);
   }
   m_mutex.unlock();
   return sim;

@@ -3,6 +3,10 @@
 
 #include "MVController.h"
 
+const std::string Dir::Base = "./test_results/multiplex_ventilation/";
+const std::string Dir::Solo = Dir::Base + "solo_states/";
+const std::string Dir::Results = Dir::Base + "simulations/";
+
 MVController::MVController(const std::string& dataDir) : MVController("", dataDir)
 {
 
@@ -10,9 +14,7 @@ MVController::MVController(const std::string& dataDir) : MVController("", dataDi
 MVController::MVController(const std::string& logFileName, const std::string& dataDir) : Loggable(new Logger(logFileName))
 {
   m_DataDir = dataDir;
-  BaseDir = "./test_results/multiplex_ventilation/";
-  SoloDir = BaseDir+"solo_states/";
-  ResultsDir = BaseDir + "simulations/";
+ 
   myLogger = true;
 }
 MVController::~MVController()
@@ -47,12 +49,12 @@ void MVController::TrackData(SEEngineTracker& trkr, const std::string& csv_filen
   SESubstance* CO2 = trkr.GetSubstanceManager().GetSubstance("CarbonDioxide");
   trkr.GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, *O2, "PartialPressure", PressureUnit::mmHg);
   trkr.GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, *CO2, "PartialPressure", PressureUnit::mmHg);
-  trkr.GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::PulmonaryCompartment::Mouth, *O2, "PartialPressure", PressureUnit::mmHg);
-  trkr.GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::PulmonaryCompartment::Mouth, *CO2, "PartialPressure", PressureUnit::mmHg);
-  trkr.GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::PulmonaryCompartment::LeftAlveoli, *O2, "PartialPressure", PressureUnit::mmHg);
-  trkr.GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::PulmonaryCompartment::LeftAlveoli, *CO2, "PartialPressure", PressureUnit::mmHg);
-  trkr.GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::PulmonaryCompartment::RightAlveoli, *O2, "PartialPressure", PressureUnit::mmHg);
-  trkr.GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::PulmonaryCompartment::RightAlveoli, *CO2, "PartialPressure", PressureUnit::mmHg);
+ trkr.GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Mouth, *O2, "PartialPressure", PressureUnit::cmH2O);
+ trkr.GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Mouth, *CO2, "PartialPressure", PressureUnit::cmH2O);
+ trkr.GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::LeftAlveoli, *O2, "PartialPressure", PressureUnit::cmH2O);
+ trkr.GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::LeftAlveoli, *CO2, "PartialPressure", PressureUnit::cmH2O);
+ trkr.GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::RightAlveoli, *O2, "PartialPressure", PressureUnit::cmH2O);
+ trkr.GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::RightAlveoli, *CO2, "PartialPressure", PressureUnit::cmH2O);
 
   trkr.SetupRequests();
 }

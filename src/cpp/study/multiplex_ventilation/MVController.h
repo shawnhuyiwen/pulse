@@ -71,6 +71,13 @@
 std::string to_scientific_notation(float f);
 std::string to_scientific_notation(double d);
 
+struct Dir
+{
+  static const std::string Base;
+  static const std::string Solo;
+  static const std::string Results;
+};
+
 class MVController : public Loggable, protected SEEventHandler
 {
 public:
@@ -78,17 +85,9 @@ public:
   MVController(const std::string& logfileName, const std::string& dataDir);
   virtual ~MVController();
 
-  std::string BaseDir;
-  std::string SoloDir;
-  std::string ResultsDir;
-
-  bool GenerateStabilizedPatients();
-
+  bool GenerateStabilizedPatient(pulse::study::multiplex_ventilation::bind::PatientStateData& pData);
   bool RunSimulation(pulse::study::multiplex_ventilation::bind::SimulationData& sim);
   bool RunSoloState(const std::string& stateFile, const std::string& outDir, double duration_s);
-  
-  double DefaultIERatio() const { return m_IERatio; }
-  double DefaultRespirationRate_Per_Min() const { return m_RespirationRate_Per_Min; }
 
   bool ExtractVentilatorSettings(const std::string& filePath, std::string& fileName, double& pip_cmH2O, double& peep_cmH2O, double& FiO2);
 
@@ -100,9 +99,4 @@ protected:
 
 
   std::string m_DataDir;
-  // Constants
-  int   m_Resistance_cmH2O_s_Per_L = 5;
-  int   m_RespirationRate_Per_Min = 20;
-  float m_IERatio = 0.5f;
-  float m_AmbientFiO2 = 0.21f;
 };

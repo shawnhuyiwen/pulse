@@ -6,27 +6,34 @@ option optimize_for = SPEED;
 
 message PatientStateData
 {
-  string          StateFile                                 = 1;
+  uint32          ID                                        = 1;
+  string          StateFile                                 = 2;
   // Initial Conditions
-  double          Compliance_L_Per_cmH2O                    = 2;
-  double          ImpairmentFraction                        = 3;
+  double          Compliance_mL_Per_cmH2O                   = 3;
+  double          Resistance_cmH2O_s_Per_L                  = 4;
+  double          ImpairmentFraction                        = 5;
   // Ventilator Settings
-  double          RespirationRate_Per_min                   = 4;
-  double          IERatio                                   = 5;
-  double          PEEP_cmH2O                                = 6;
-  double          PIP_cmH2O                                 = 7;
-  double          FiO2                                      = 8;
+  double          RespirationRate_Per_min                   = 6;
+  double          IERatio                                   = 7;
+  double          PEEP_cmH2O                                = 8;
+  double          PIP_cmH2O                                 = 9;
+  double          FiO2                                      = 10;
   // Vitals
-  double          OxygenSaturation                          = 9;
-  double          TidalVolume_L                             = 10;
-  double          EndTidalCarbonDioxidePressure_cmH2O       = 11;
-  double          ArterialOxygenPartialPressure_mmHg        = 12;
-  double          ArterialCarbonDioxidePartialPressure_mmHg = 13;
-  double          CarricoIndex_mmHg                         = 14;
+  
+  double          IdealBodyWeight_kg                        = 11;
+  double          OxygenSaturation                          = 12;
+  double          TidalVolume_mL                            = 13;
+  double          TotalLungVolume_mL                        = 14;
+  double          EndTidalCarbonDioxidePressure_cmH2O       = 15;
+  double          ArterialOxygenPartialPressure_mmHg        = 16;
+  double          ArterialCarbonDioxidePartialPressure_mmHg = 17;
+  double          CarricoIndex_mmHg                         = 18;
+  double          AirwayFlow_L_Per_m                        = 19;
+  double          AirwayPressure_cmH2O                      = 20;
   // Stabilization Information
-  bool            AchievedStabilization                     = 15;
-  double          StabilizationTime_s                       = 16;
-  double          OxygenSaturationStabilizationTrend        = 17;
+  bool            AchievedStabilization                     = 21;
+  double          StabilizationTime_s                       = 22;
+  double          OxygenSaturationStabilizationTrend        = 23;
 }
 
 message PatientStateListData

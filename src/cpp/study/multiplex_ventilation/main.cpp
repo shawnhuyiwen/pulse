@@ -2,6 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #include "MVRunner.h"
+#include "MVGenerator.h"
 
 int main(int argc, char* argv[])
 {
@@ -41,8 +42,9 @@ int main(int argc, char* argv[])
     std::for_each(mode.begin(), mode.end(), [](char& c) { c = ::tolower(c); });
     if (mode == "gendata")
     {
-      MVController mvc("./states/multiplex_ventilation/MultiplexVentilationDataGen.log");
-      return !mvc.GenerateStabilizedPatients();
+      //DeleteDirectory(SoloDir, true);
+      MVGenerator mvg("./states/multiplex_ventilation/MultiplexVentilationDataGen.log");
+      return !mvg.Run(Dir::Solo, Dir::Base+"solo_ventilated_states_list.json", SerializationFormat::JSON);
     }
     else if (mode == "sim_list")
     {
@@ -58,8 +60,8 @@ int main(int argc, char* argv[])
     {
       MVController mvc("./states/multiplex_ventilation/ManualMultiplexVentilation.log", ".");
       pulse::study::multiplex_ventilation::bind::SimulationData sim;
-      sim.set_respirationrate_per_min(mvc.DefaultRespirationRate_Per_Min());
-      sim.set_ieratio(mvc.DefaultIERatio());
+      sim.set_respirationrate_per_min(20);
+      sim.set_ieratio(0.5);
 
       std::vector<std::string> patients;
       patients.push_back("comp=0.025_peep=18_pip=36_imp=0.6_FiO2=0.21");
@@ -86,7 +88,7 @@ int main(int argc, char* argv[])
         double peep_cmH2O;
         double FiO2;
         std::string name;
-        patient = mvc.SoloDir + patient + ".json";
+        patient = Dir::Solo + patient + ".json";
         mvc.ExtractVentilatorSettings(patient, name, pip_cmH2O, peep_cmH2O, FiO2);
         combined_name += name;
         if (iter != patients.size() - 1)
@@ -108,10 +110,10 @@ int main(int argc, char* argv[])
         double peep_cmH2O;
         double FiO2;
         std::string name;
-        patient = mvc.SoloDir + patient + ".json";
+        patient = Dir::Solo + patient + ".json";
         mvc.ExtractVentilatorSettings(patient, name, pip_cmH2O, peep_cmH2O, FiO2);
 
-        std::string solo_patient_base_path = mvc.ResultsDir + combined_name + "/pip=" + to_scientific_notation(pip_cmH2O) +
+        std::string solo_patient_base_path = Dir::Results + combined_name + "/pip=" + to_scientific_notation(pip_cmH2O) +
           "_peep=" + to_scientific_notation(peep_cmH2O) +
           "_FiO2=" + to_scientific_notation(FiO2) + "_solo_patient_" + std::to_string(iter);
 
@@ -130,7 +132,7 @@ int main(int argc, char* argv[])
         iter++;
       }
 
-      plots.open(mvc.ResultsDir + combined_name + "/plot_pairs.config");
+      plots.open(Dir::Results + combined_name + "/plot_pairs.config");
 
       iter = 0;
       for (std::string solo_patient_base_path : solo_patient_base_paths)
@@ -156,7 +158,7 @@ int main(int argc, char* argv[])
         double peep_cmH2O = peeps_cmH2O.at(iter);
         double FiO2 = FiO2s.at(iter);
 
-        std::string sim_base_path = mvc.ResultsDir + combined_name + "/pip=" + to_scientific_notation(pip_cmH2O) +
+        std::string sim_base_path = Dir::Results + combined_name + "/pip=" + to_scientific_notation(pip_cmH2O) +
           "_peep=" + to_scientific_notation(peep_cmH2O) +
           "_FiO2=" + to_scientific_notation(FiO2) + "_";
         sim.set_outputbasefilename(sim_base_path);
@@ -200,7 +202,7 @@ int main(int argc, char* argv[])
       peepAvg_cmH2O /= double(iter);
       FiO2Avg /= double(iter);
 
-      std::string sim_base_path = mvc.ResultsDir + combined_name + "/pip=" + to_scientific_notation(pipAvg_cmH2O) +
+      std::string sim_base_path = Dir::Results + combined_name + "/pip=" + to_scientific_notation(pipAvg_cmH2O) +
         "_peep=" + to_scientific_notation(peepAvg_cmH2O) +
         "_FiO2=" + to_scientific_notation(FiO2Avg) + "_";
       sim.set_outputbasefilename(sim_base_path);
