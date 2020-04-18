@@ -512,17 +512,22 @@ bool MVEngine::GetSimulationState(pulse::study::multiplex_ventilation::bind::Sim
     multiVentilation->set_pip_cmh2o(pc->GetMechanicalVentilator().GetPeakInspiratoryPressure(PressureUnit::cmH2O));
     multiVentilation->set_fio2(pc->GetMechanicalVentilator().GetFractionInspiredGas(pc->GetSubstances().GetO2()).GetFractionAmount().GetValue());
     // Write out all the vitals
-    multiVentilation->set_idealbodyweight_kg(pc->GetCurrentPatient().GetIdealBodyWeight(MassUnit::kg));
-    multiVentilation->set_oxygensaturation(pc->GetBloodChemistry().GetOxygenSaturation().GetValue());
-    multiVentilation->set_tidalvolume_ml(pc->GetRespiratory().GetTidalVolume(VolumeUnit::mL));
-    multiVentilation->set_endtidalcarbondioxidepressure_cmh2o(pc->GetRespiratory().GetEndTidalCarbonDioxidePressure(PressureUnit::cmH2O));
     auto AortaO2 = pc->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta)->GetSubstanceQuantity(pc->GetSubstances().GetO2());
-    multiVentilation->set_arterialoxygenpartialpressure_mmhg(AortaO2->GetPartialPressure(PressureUnit::mmHg));
     auto AortaCO2 = pc->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta)->GetSubstanceQuantity(pc->GetSubstances().GetCO2());
-    multiVentilation->set_arterialcarbondioxidepartialpressure_mmhg(AortaCO2->GetPartialPressure(PressureUnit::mmHg));
-    multiVentilation->set_carricoindex_mmhg(pc->GetRespiratory().GetCarricoIndex(PressureUnit::mmHg));
     multiVentilation->set_airwayflow_l_per_min(pc->GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Mouth)->GetInFlow(VolumePerTimeUnit::L_Per_min));
     multiVentilation->set_airwaypressure_cmh2o(pc->GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Mouth)->GetPressure(PressureUnit::cmH2O));
+    multiVentilation->set_arterialcarbondioxidepartialpressure_mmhg(AortaCO2->GetPartialPressure(PressureUnit::mmHg));
+    multiVentilation->set_arterialoxygenpartialpressure_mmhg(AortaO2->GetPartialPressure(PressureUnit::mmHg));
+    multiVentilation->set_carricoindex_mmhg(pc->GetRespiratory().GetCarricoIndex(PressureUnit::mmHg));
+    multiVentilation->set_endtidalcarbondioxidepressure_cmh2o(pc->GetRespiratory().GetEndTidalCarbonDioxidePressure(PressureUnit::cmH2O));
+    multiVentilation->set_idealbodyweight_kg(pc->GetCurrentPatient().GetIdealBodyWeight(MassUnit::kg));
+    multiVentilation->set_meanairwaypressure_cmh2o(pc->GetRespiratory().GetMeanAirwayPressure(PressureUnit::cmH2O));
+    multiVentilation->set_oxygenationindex(pc->GetRespiratory().GetOxygenationIndex().GetValue());
+    multiVentilation->set_oxygensaturation(pc->GetBloodChemistry().GetOxygenSaturation().GetValue());
+    multiVentilation->set_oxygensaturationindex_cmh2o(pc->GetRespiratory().GetOxygenSaturationIndex().GetValue(PressureUnit::cmH2O));
+    multiVentilation->set_sfratio(pc->GetRespiratory().GetSaturationAndFractionOfInspiredOxygenRatio().GetValue());
+    multiVentilation->set_tidalvolume_ml(pc->GetRespiratory().GetTidalVolume(VolumeUnit::mL));
+    multiVentilation->set_totallungvolume_ml(pc->GetRespiratory().GetTotalLungVolume(VolumeUnit::mL));
   }
   return true;
 }

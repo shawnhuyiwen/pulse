@@ -19,59 +19,63 @@ message PatientStateData
   double          PIP_cmH2O                                 = 9;
   double          FiO2                                      = 10;
   // Vitals
-  double          IdealBodyWeight_kg                        = 11;
-  double          OxygenSaturation                          = 12;
-  double          TidalVolume_mL                            = 13;
-  double          TotalLungVolume_mL                        = 14;
-  double          EndTidalCarbonDioxidePressure_cmH2O       = 15;
-  double          ArterialOxygenPartialPressure_mmHg        = 16;
-  double          ArterialCarbonDioxidePartialPressure_mmHg = 17;
-  double          CarricoIndex_mmHg                         = 18;
-  double          AirwayFlow_L_Per_min                      = 19;
-  double          AirwayPressure_cmH2O                      = 20;
+  double          AirwayFlow_L_Per_min                      = 11;
+  double          AirwayPressure_cmH2O                      = 12;
+  double          ArterialCarbonDioxidePartialPressure_mmHg = 13;
+  double          ArterialOxygenPartialPressure_mmHg        = 14;
+  double          CarricoIndex_mmHg                         = 15;
+  double          EndTidalCarbonDioxidePressure_cmH2O       = 16;
+  double          IdealBodyWeight_kg                        = 17;
+  double          MeanAirwayPressure_cmH2O                  = 18;
+  double          OxygenationIndex                          = 19;
+  double          OxygenSaturation                          = 20;
+  double          OxygenSaturationIndex_cmH2O               = 21;
+  double          SFRatio                                   = 22;
+  double          TidalVolume_mL                            = 23;
+  double          TotalLungVolume_mL                        = 24;
   // Stabilization Information
-  bool            AchievedStabilization                     = 21;
-  double          StabilizationTime_s                       = 22;
-  double          OxygenSaturationStabilizationTrend        = 23;
+  bool            AchievedStabilization                     = 25;
+  double          StabilizationTime_s                       = 26;
+  double          OxygenSaturationStabilizationTrend        = 27;
 }
 
 message PatientStateListData
 {
-  repeated PatientStateData      Patients                = 1;
+  repeated PatientStateData      Patients                   = 1;
 }
 
 message PatientComparisonData
 {
-  PatientStateData               SoloVentilation         = 1;
-  PatientStateData               MultiplexVentilation    = 2;
+  PatientStateData               SoloVentilation            = 1;
+  PatientStateData               MultiplexVentilation       = 2;
 }
 
 message LogData
 {
-  repeated string                Info                    = 1;
-  repeated string                Warning                 = 2;
-  repeated string                Error                   = 3;
-  repeated string                Fatal                   = 4;
+  repeated string                Info                       = 1;
+  repeated string                Warning                    = 2;
+  repeated string                Error                      = 3;
+  repeated string                Fatal                      = 4;
 }
 
 message SimulationData
 {
   // A filename without an extension (can/should have path also)
   // The engine will use this to create multiple output files (*.log and *.csv)
-  uint32                         ID                      = 1;
-  uint32                         GroupID                 = 2;
-  string                         OutputBaseFilename      = 3;
-  double                         RespirationRate_Per_min = 4;
-  double                         IERatio                 = 5;
-  double                         PIP_cmH2O               = 6;
-  double                         PEEP_cmH2O              = 7;
-  double                         FiO2                    = 8;
-  LogData                        Log                     = 9;
-  repeated PatientComparisonData PatientComparisons      = 10;
+  uint32                         ID                         = 1;
+  uint32                         GroupID                    = 2;
+  string                         OutputBaseFilename         = 3;
+  double                         RespirationRate_Per_min    = 4;
+  double                         IERatio                    = 5;
+  double                         PIP_cmH2O                  = 6;
+  double                         PEEP_cmH2O                 = 7;
+  double                         FiO2                       = 8;
+  LogData                        Log                        = 9;
+  repeated PatientComparisonData PatientComparisons         = 10;
 }
 
 message SimulationListData
 {
-  string                         OutputRootDir           = 1;
-  repeated SimulationData        Simulations             = 2;
+  string                         OutputRootDir              = 1;
+  repeated SimulationData        Simulations                = 2;
 }
