@@ -8,19 +8,21 @@ class MVRunner : public Loggable
 {
   friend class MVController;
 public:
+  enum class Mode {StepFiO2, StableSpO2};
   MVRunner(const std::string& logfileName, const std::string& dataDir = ".");
   virtual ~MVRunner();
 
-  bool Run(const std::string& filename, SerializationFormat f);
-  bool Run(pulse::study::multiplex_ventilation::bind::SimulationListData& simList);
+  bool Run(const std::string& filename, SerializationFormat f, Mode m);
+  bool Run(pulse::study::multiplex_ventilation::bind::SimulationListData& simList, Mode m);
 
+  static bool StepSimulationFiO2(pulse::study::multiplex_ventilation::bind::SimulationData& sim, const std::string& dataDir = "./");
   static bool RunSimulationToStableSpO2(pulse::study::multiplex_ventilation::bind::SimulationData& sim, const std::string& dataDir="./");
 protected:
   bool Run();
   bool SerializeToString(pulse::study::multiplex_ventilation::bind::SimulationListData& src, std::string& dst, SerializationFormat f) const;
   bool SerializeToFile(pulse::study::multiplex_ventilation::bind::SimulationListData& src, const std::string& filename, SerializationFormat f) const;
   bool SerializeFromString(const std::string& src, pulse::study::multiplex_ventilation::bind::SimulationListData& dst, SerializationFormat f);
-  bool SerializeFromFile(const std::string& filename, SerializationFormat f);
+  bool SerializeFromFile(const std::string& filename, pulse::study::multiplex_ventilation::bind::SimulationListData& dst, SerializationFormat f);
 
   void ControllerLoop();
   void FinalizeSimulation(pulse::study::multiplex_ventilation::bind::SimulationData& sim);
@@ -28,6 +30,7 @@ protected:
 
   std::mutex  m_mutex;
   bool m_Running;
+  Mode m_Mode;
 
   std::string m_DataDir;
   std::string m_SimulationResultsListFile;

@@ -55,12 +55,12 @@ int main(int argc, char* argv[])
         return 1;
       }
       MVRunner mvr("./states/multiplex_ventilation/MultiplexVentilationRunner.log");
-      return !mvr.Run(argv[2], SerializationFormat::JSON);
+      return !mvr.Run(argv[2], SerializationFormat::JSON, MVRunner::Mode::StepFiO2);
     }
     else if (mode == "gensimlist")
     {
       pulse::study::multiplex_ventilation::bind::SimulationListData simList;
-      simList.set_outputrootdir("./test_results/multiplex_ventilation/simulations");
+      simList.set_outputrootdir(Dir::Base);
       // Loop parameters
       int minCompliance0_mL_Per_cmH2O = 10;
       int maxCompliance0_mL_Per_cmH2O = 50;
@@ -81,6 +81,8 @@ int main(int argc, char* argv[])
       double resistance_cmH2O_s_Per_mL = resistance.GetValue(PressureTimePerVolumeUnit::cmH2O_s_Per_mL);
 
       size_t id = 0;
+      size_t ignored = 0;
+      std::set<std::string> baseNames;
 
       // PEEP loop
       for (int PEEP_cmH2O = minPEEP_cmH2O; PEEP_cmH2O <= maxPEEP_cmH2O; PEEP_cmH2O += stepPEEP_cmH2O)
@@ -115,8 +117,34 @@ int main(int argc, char* argv[])
             {
               for (float impairment1 = minImpairment; impairment1 <= maxImpairment; impairment1 += stepImpairment)
               {
+                std::string baseName = "peep=" + std::to_string(PEEP_cmH2O) +
+                                       "_pip=" + std::to_string(PIP_cmH2O) +
+                                       "_c0=" + std::to_string(compliance0_mL_Per_cmH2O) +
+                                       "_c1=" + std::to_string(compliance1_mL_Per_cmH2O) +
+                                       "_i0=" + to_scientific_notation(impairment0) +
+                                       "_i1=" + to_scientific_notation(impairment1) + "/";
+                std::string inverted = "peep=" + std::to_string(PEEP_cmH2O) +
+                                       "_pip=" + std::to_string(PIP_cmH2O) +
+                                       "_c0=" + std::to_string(compliance0_mL_Per_cmH2O) +
+                                       "_c1=" + std::to_string(compliance1_mL_Per_cmH2O) +
+                                       "_i0=" + to_scientific_notation(impairment1) +
+                                       "_i1=" + to_scientific_notation(impairment0) + "/";
+                if (baseNames.find(baseName) != baseNames.end())
+                {
+                  std::cout << "Will already run a simulation for " << baseName << std::endl;
+                  continue;
+                }
+                if ((compliance0_mL_Per_cmH2O== compliance1_mL_Per_cmH2O) && baseNames.find(inverted) != baseNames.end())
+                {
+                  ignored++;
+                  //std::cout << "Impairment inversion found in " << inverted << std::endl;
+                  //std::cout << "Will already run a simulation for " << baseName << std::endl;
+                  continue;
+                }
+                baseNames.insert(baseName);
                 auto sim = simList.add_simulations();
                 sim->set_id(id++);
+                sim->set_outputbasefilename(Dir::Results+baseName);
                 // Ventilator Settings
                 sim->set_respirationrate_per_min(breathRate_bpm);
                 sim->set_ieratio(IERatio);
@@ -142,8 +170,9 @@ int main(int argc, char* argv[])
         }
       }
       // Run the new simlist
+      std::cout << "Generated " << id << " simulations, threw out " << ignored << std::endl;
       MVRunner mvr("./states/multiplex_ventilation/MultiplexVentilationRunner.log");
-      return !mvr.Run(simList);
+      return !mvr.Run(simList, MVRunner::Mode::StepFiO2);
     }
     else // Manual
     {

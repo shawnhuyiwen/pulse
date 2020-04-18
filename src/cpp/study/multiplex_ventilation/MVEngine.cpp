@@ -3,6 +3,7 @@
 
 #include "MVEngine.h"
 #include "engine/SEActionManager.h"
+#include "engine/SEPatientActionCollection.h"
 
 const std::string Dir::Base = "./test_results/multiplex_ventilation/";
 const std::string Dir::Solo = Dir::Base + "solo_states/";
@@ -24,7 +25,12 @@ MVEngine::MVEngine(std::string const& logfile, bool cout_enabled, std::string co
 
   m_DataDir = data_dir;
   m_SimulationData = nullptr;
+
+  m_MVC = nullptr;
+  m_FiO2 = nullptr;
+
   myLogger = true;
+  GetLogger()->LogToConsole(cout_enabled);
 }
 MVEngine::~MVEngine()
 {
@@ -47,6 +53,10 @@ void MVEngine::DestroyEngines()
   SAFE_DELETE(m_Transporter);
 
   DELETE_VECTOR(m_Engines);
+  m_AortaO2s.clear();
+  m_AortaCO2s.clear();
+  SAFE_DELETE(m_MVC);
+  m_FiO2 = nullptr;
 }
 
 void MVEngine::HandleEvent(eEvent e, bool active, const SEScalarTime* simTime)
@@ -109,6 +119,8 @@ bool MVEngine::CreateEngine(pulse::study::multiplex_ventilation::bind::Simulatio
         Error("Unable to load file : " + state);
         return false;
       }
+      pc->GetLogger()->LogToConsole(GetLogger()->IsLoggingToConsole());
+
       // Fill out our initial solo ventilation data
       soloVentilation->set_oxygensaturation(pc->GetBloodChemistry().GetOxygenSaturation().GetValue());
       soloVentilation->set_tidalvolume_ml(pc->GetRespiratory().GetTidalVolume(VolumeUnit::mL));
@@ -128,6 +140,8 @@ bool MVEngine::CreateEngine(pulse::study::multiplex_ventilation::bind::Simulatio
         Error("Unable to load file : StandardMale@0s.json");
         return false;
       }
+      pc->GetLogger()->LogToConsole(GetLogger()->IsLoggingToConsole());
+
       SEDyspnea dyspnea;
       dyspnea.GetSeverity().SetValue(1.0);
       pc->ProcessAction(dyspnea);
@@ -137,19 +151,16 @@ bool MVEngine::CreateEngine(pulse::study::multiplex_ventilation::bind::Simulatio
       pc->ProcessAction(intubation);
 
       SEOverrides overrides;
-      m_Compliance_mL_Per_cmH2O = multiVentilation->compliance_ml_per_cmh2o();
-      m_Resistance_cmH2O_s_Per_L = multiVentilation->resistance_cmh2o_s_per_l();
-      overrides.AddScalarProperty("RespiratoryCompliance", m_Compliance_mL_Per_cmH2O, VolumePerPressureUnit::mL_Per_cmH2O);
-      overrides.AddScalarProperty("RespiratoryResistance", m_Resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      overrides.AddScalarProperty("RespiratoryCompliance", multiVentilation->compliance_ml_per_cmh2o(), VolumePerPressureUnit::mL_Per_cmH2O);
+      overrides.AddScalarProperty("RespiratoryResistance", multiVentilation->resistance_cmh2o_s_per_l(), PressureTimePerVolumeUnit::cmH2O_s_Per_L);
       pc->ProcessAction(overrides);
 
-      m_ImpairmentFraction = multiVentilation->impairmentfraction();
       SEImpairedAlveolarExchangeExacerbation impairedAlveolarExchange;
-      impairedAlveolarExchange.GetSeverity().SetValue(m_ImpairmentFraction);
+      impairedAlveolarExchange.GetSeverity().SetValue(multiVentilation->impairmentfraction());
       pc->ProcessAction(impairedAlveolarExchange);
 
       SEPulmonaryShuntExacerbation pulmonaryShunt;
-      pulmonaryShunt.GetSeverity().SetValue(m_ImpairmentFraction);
+      pulmonaryShunt.GetSeverity().SetValue(multiVentilation->impairmentfraction());
       pc->ProcessAction(pulmonaryShunt);
     }
     else
@@ -157,7 +168,6 @@ bool MVEngine::CreateEngine(pulse::study::multiplex_ventilation::bind::Simulatio
       Error("Simulation does not have valid comparison object");
       return false;
     }
-    pc->GetLogger()->LogToConsole(GetLogger()->IsLoggingToConsole());
 
     // Build our multiplex circuit
     if (p == 0)
@@ -230,13 +240,17 @@ bool MVEngine::CreateEngine(pulse::study::multiplex_ventilation::bind::Simulatio
       m_MultiplexVentilationGraph->AddLink(inspiratoryConnectionLink);
     }
     TrackData(pc->GetEngineTracker(), outDir + "multiplex_patient_" + std::to_string(p) + "_results.csv");
+    auto AortaO2 = pc->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta)->GetSubstanceQuantity(pc->GetSubstances().GetO2());
+    auto AortaCO2 = pc->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta)->GetSubstanceQuantity(pc->GetSubstances().GetCO2());
+    m_AortaO2s.push_back(AortaO2);
+    m_AortaCO2s.push_back(AortaCO2);
     m_Engines.push_back(pc);
   }
   m_MultiplexVentilationCircuit->StateChange();
   m_MultiplexVentilationGraph->StateChange();
 
-  SEMechanicalVentilatorConfiguration mvc(*m_SubMgr);
-  auto& mv = mvc.GetConfiguration();
+  m_MVC = new SEMechanicalVentilatorConfiguration(*m_SubMgr);
+  auto& mv = m_MVC->GetConfiguration();
   mv.SetConnection(eMechanicalVentilator_Connection::Tube);
   mv.SetControl(eMechanicalVentilator_Control::PC_CMV);
   mv.SetDriverWaveform(eMechanicalVentilator_DriverWaveform::Square);
@@ -244,10 +258,9 @@ bool MVEngine::CreateEngine(pulse::study::multiplex_ventilation::bind::Simulatio
   mv.GetInspiratoryExpiratoryRatio().SetValue(sim.ieratio());
   mv.GetPeakInspiratoryPressure().SetValue(sim.pip_cmh2o(), PressureUnit::cmH2O);
   mv.GetPositiveEndExpiredPressure().SetValue(sim.peep_cmh2o(), PressureUnit::cmH2O);
-  SESubstanceFraction* FiO2 = &mv.GetFractionInspiredGas(*m_Oxygen);
-  FiO2->GetFractionAmount().SetValue(sim.fio2());
-  for (PulseController* pc : m_Engines)
-    pc->ProcessAction(mvc);
+  m_FiO2 = &mv.GetFractionInspiredGas(*m_Oxygen);
+  m_FiO2->GetFractionAmount().SetValue(sim.fio2());
+  ProcessAction(*m_MVC);
 
   m_CurrentTime_s = 0;
   m_SpareAdvanceTime_s = 0;
@@ -425,6 +438,12 @@ bool MVEngine::AdvanceTime(double time_s)
   return true;
 }
 
+void MVEngine::SetFiO2(double FiO2)
+{
+  m_FiO2->GetFractionAmount().SetValue(FiO2);
+  ProcessAction(*m_MVC);
+}
+
 bool MVEngine::ProcessAction(const SEAction& a)
 {
   if (m_Engines.empty())
@@ -501,10 +520,6 @@ bool MVEngine::GetSimulationState(pulse::study::multiplex_ventilation::bind::Sim
   {
     PulseController* pc = m_Engines[p];
     auto* multiVentilation = (*sim.mutable_patientcomparisons())[p].mutable_multiplexventilation();
-    // For Completeness, write out the overrides and impariment
-    multiVentilation->set_compliance_ml_per_cmh2o(m_Compliance_mL_Per_cmH2O);
-    multiVentilation->set_resistance_cmh2o_s_per_l(m_Resistance_cmH2O_s_Per_L);
-    multiVentilation->set_impairmentfraction(m_ImpairmentFraction);
     // For Completeness, Write out the ventilator settings
     multiVentilation->set_respirationrate_per_min(pc->GetMechanicalVentilator().GetRespiratoryRate(FrequencyUnit::Per_min));
     multiVentilation->set_ieratio(pc->GetMechanicalVentilator().GetInspiratoryExpiratoryRatio().GetValue());
@@ -512,12 +527,10 @@ bool MVEngine::GetSimulationState(pulse::study::multiplex_ventilation::bind::Sim
     multiVentilation->set_pip_cmh2o(pc->GetMechanicalVentilator().GetPeakInspiratoryPressure(PressureUnit::cmH2O));
     multiVentilation->set_fio2(pc->GetMechanicalVentilator().GetFractionInspiredGas(pc->GetSubstances().GetO2()).GetFractionAmount().GetValue());
     // Write out all the vitals
-    auto AortaO2 = pc->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta)->GetSubstanceQuantity(pc->GetSubstances().GetO2());
-    auto AortaCO2 = pc->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta)->GetSubstanceQuantity(pc->GetSubstances().GetCO2());
     multiVentilation->set_airwayflow_l_per_min(pc->GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Mouth)->GetInFlow(VolumePerTimeUnit::L_Per_min));
     multiVentilation->set_airwaypressure_cmh2o(pc->GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Mouth)->GetPressure(PressureUnit::cmH2O));
-    multiVentilation->set_arterialcarbondioxidepartialpressure_mmhg(AortaCO2->GetPartialPressure(PressureUnit::mmHg));
-    multiVentilation->set_arterialoxygenpartialpressure_mmhg(AortaO2->GetPartialPressure(PressureUnit::mmHg));
+    multiVentilation->set_arterialcarbondioxidepartialpressure_mmhg(m_AortaCO2s[p]->GetPartialPressure(PressureUnit::mmHg));
+    multiVentilation->set_arterialoxygenpartialpressure_mmhg(m_AortaO2s[p]->GetPartialPressure(PressureUnit::mmHg));
     multiVentilation->set_carricoindex_mmhg(pc->GetRespiratory().GetCarricoIndex(PressureUnit::mmHg));
     multiVentilation->set_endtidalcarbondioxidepressure_cmh2o(pc->GetRespiratory().GetEndTidalCarbonDioxidePressure(PressureUnit::cmH2O));
     multiVentilation->set_idealbodyweight_kg(pc->GetCurrentPatient().GetIdealBodyWeight(MassUnit::kg));
@@ -528,8 +541,43 @@ bool MVEngine::GetSimulationState(pulse::study::multiplex_ventilation::bind::Sim
     multiVentilation->set_sfratio(pc->GetRespiratory().GetSaturationAndFractionOfInspiredOxygenRatio().GetValue());
     multiVentilation->set_tidalvolume_ml(pc->GetRespiratory().GetTidalVolume(VolumeUnit::mL));
     multiVentilation->set_totallungvolume_ml(pc->GetRespiratory().GetTotalLungVolume(VolumeUnit::mL));
+    // Update the sim
+    if (p == 0)
+    {
+      sim.set_respirationrate_per_min(multiVentilation->respirationrate_per_min());
+      sim.set_ieratio(multiVentilation->ieratio());
+      sim.set_peep_cmh2o(multiVentilation->peep_cmh2o());
+      sim.set_pip_cmh2o(multiVentilation->pip_cmh2o());
+      sim.set_fio2(multiVentilation->fio2());
+    }
   }
   return true;
+}
+
+double MVEngine::GetMinSpO2()
+{
+  double SpO2;
+  double minSpO2 = 1.0;
+  for (PulseController* pc : m_Engines)
+  {
+    SpO2 = pc->GetBloodChemistry().GetOxygenSaturation().GetValue();
+    if (SpO2 < minSpO2)
+      minSpO2 = SpO2;
+  }
+  return minSpO2;
+}
+
+double MVEngine::GetMinPAO2_mmHg()
+{
+  double PAO2_mmHg;
+  double minPAO2_mmHg = 1000;
+  for (SELiquidSubstanceQuantity* aortaO2 : m_AortaO2s)
+  {
+    PAO2_mmHg = aortaO2->GetPartialPressure(PressureUnit::mmHg);
+    if (PAO2_mmHg < minPAO2_mmHg)
+      minPAO2_mmHg = PAO2_mmHg;
+  }
+  return minPAO2_mmHg;
 }
 
 void MVEngine::TrackData(SEEngineTracker& trkr, const std::string& csv_filename)

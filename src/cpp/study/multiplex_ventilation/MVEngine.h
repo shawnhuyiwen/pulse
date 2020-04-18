@@ -108,18 +108,23 @@ public:
   static bool SerializeFromString(const std::string& src, pulse::study::multiplex_ventilation::bind::SimulationData& dst, SerializationFormat f);
 
 protected:
+  void SetFiO2(double fio2);
+  double GetMinSpO2();
+  double GetMinPAO2_mmHg();
   void HandleEvent(eEvent e, bool active, const SEScalarTime* simTime = nullptr) override;
 
   
   std::string m_DataDir;
   std::vector<PulseController*> m_Engines;
+  std::vector<SELiquidSubstanceQuantity*> m_AortaO2s;
+  std::vector<SELiquidSubstanceQuantity*> m_AortaCO2s;
+  SEMechanicalVentilatorConfiguration* m_MVC;
+  SESubstanceFraction* m_FiO2;
+
 
   double                    m_TimeStep_s;
   double                    m_CurrentTime_s;
   double                    m_SpareAdvanceTime_s;
-  double                    m_Compliance_mL_Per_cmH2O;
-  double                    m_Resistance_cmH2O_s_Per_L;
-  double                    m_ImpairmentFraction;
   // Substances
   SESubstanceManager*       m_SubMgr;
   SESubstance*              m_Oxygen;

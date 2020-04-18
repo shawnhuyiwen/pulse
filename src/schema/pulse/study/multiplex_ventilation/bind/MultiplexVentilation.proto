@@ -35,7 +35,6 @@ message PatientStateData
   double          TotalLungVolume_mL                        = 24;
   // Stabilization Information
   bool            AchievedStabilization                     = 25;
-  double          StabilizationTime_s                       = 26;
   double          OxygenSaturationStabilizationTrend        = 27;
 }
 
@@ -65,13 +64,15 @@ message SimulationData
   uint32                         ID                         = 1;
   uint32                         GroupID                    = 2;
   string                         OutputBaseFilename         = 3;
-  double                         RespirationRate_Per_min    = 4;
-  double                         IERatio                    = 5;
-  double                         PIP_cmH2O                  = 6;
-  double                         PEEP_cmH2O                 = 7;
-  double                         FiO2                       = 8;
-  LogData                        Log                        = 9;
-  repeated PatientComparisonData PatientComparisons         = 10;
+  bool                           AchievedStabilization      = 4;
+  double                         StabilizationTime_s        = 5;
+  double                         RespirationRate_Per_min    = 6;
+  double                         IERatio                    = 7;
+  double                         PIP_cmH2O                  = 8;
+  double                         PEEP_cmH2O                 = 9;
+  double                         FiO2                       = 10;
+  LogData                        Log                        = 11;
+  repeated PatientComparisonData PatientComparisons         = 12;
 }
 
 message SimulationListData
