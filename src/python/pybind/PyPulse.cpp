@@ -11,7 +11,7 @@ void PhysiologyEngine(py::module&);
 // Studies
 void MultiplexVentilationEngine(py::module&);
 
-PYBIND11_MODULE(utils, m)
+PYBIND11_MODULE(PyPulse, m)
 {
    m.doc() = R"pbdoc(
         Pybind11 Pulse Physiology Engine
