@@ -16,25 +16,30 @@ def plot_compliance_vs_pf_ration_deltas(simulations: SimulationListData):
     for sim in simulations.Simulations:
         p0 = sim.PatientComparisons[0].MultiplexVentilation
         p1 = sim.PatientComparisons[1].MultiplexVentilation
-        p0_TV = p0.TidalVolume_L * 13.280
-        p1_TV = p1.TidalVolume_L * 13.280
-        if p0_TV <= 6.5 and \
-           p1_TV <= 6.5 and \
-           p0.OxygenSaturation >= 0.89 and p1.OxygenSaturation >= 0.89:
+        p0_TV = p0.TidalVolume_L * 13.280 # mL/kg ideal weight
+        p1_TV = p1.TidalVolume_L * 13.280 # mL/kg ideal weight
+        if 6.5 >= p0_TV >= 5.5 and \
+           6.5 >= p1_TV >= 5.5 and \
+           p0.OxygenSaturation >= 0.89 and p1.OxygenSaturation >= 0.89 and \
+           p0.ArterialOxygenPartialPressure_mmHg < 120 and p1.ArterialOxygenPartialPressure_mmHg < 120:
             x_green.append(abs(p0.Compliance_L_Per_cmH2O - p1.Compliance_L_Per_cmH2O))
             y_green.append(abs(p0.CarricoIndex_mmHg - p1.CarricoIndex_mmHg))
-        elif  p0_TV <= 7.5 and \
-              p1_TV <= 7.5 and \
-              p0.OxygenSaturation >= 0.89 and p1.OxygenSaturation >= 0.89:
-            x_yellow.append(abs(p0.Compliance_L_Per_cmH2O - p1.Compliance_L_Per_cmH2O))
-            y_yellow.append(abs(p0.CarricoIndex_mmHg - p1.CarricoIndex_mmHg))
+        elif ((7.5 >= p0_TV >= 6.5 or 5.5 >= p0_TV >= 4.5) and (7.5 >= p1_TV >= 4.5)) or \
+             ((7.5 >= p1_TV >= 6.5 or 5.5 >= p1_TV >= 4.5) and (7.5 >= p0_TV >= 4.5)) and \
+             p0.OxygenSaturation >= 0.89 and p1.OxygenSaturation >= 0.89 and \
+             p0.ArterialOxygenPartialPressure_mmHg < 200 and p1.ArterialOxygenPartialPressure_mmHg < 200:
+                x_yellow.append(abs(p0.Compliance_L_Per_cmH2O - p1.Compliance_L_Per_cmH2O))
+                y_yellow.append(abs(p0.CarricoIndex_mmHg - p1.CarricoIndex_mmHg))
+        elif (7.5 >= p0_TV >= 6.5 or 5.5 >= p0_TV >= 4.5) and (7.5 >= p1_TV >= 4.5):
+                x_yellow.append(abs(p0.Compliance_L_Per_cmH2O - p1.Compliance_L_Per_cmH2O))
+                y_yellow.append(abs(p0.CarricoIndex_mmHg - p1.CarricoIndex_mmHg))
         else:
             x_red.append(abs(p0.Compliance_L_Per_cmH2O - p1.Compliance_L_Per_cmH2O))
             y_red.append(abs(p0.CarricoIndex_mmHg - p1.CarricoIndex_mmHg))
     plt.style.use('seaborn-whitegrid')
-    plt.title("Compliance Delta vs CarricoIndex Delta")
+    plt.title("Compliance Delta vs PaO2/FiO2 Delta")
     plt.xlabel("Compliance Delta (L_Per_cmH2O)")
-    plt.ylabel("CarricoIndex Delta (mmHg)")
+    plt.ylabel("PaO2/FiO2 Delta (mmHg)")
     plt.ticklabel_format(axis="y", style="sci", scilimits=(0, 0))
     plt.plot(x_green, y_green, 'o', color='green')
     plt.plot(x_yellow, y_yellow, 'o', color='yellow')
