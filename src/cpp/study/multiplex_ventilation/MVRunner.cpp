@@ -146,7 +146,7 @@ bool MVRunner::StepSimulationFiO2(pulse::study::multiplex_ventilation::bind::Sim
   profiler.Start("Total");
   profiler.Start("Status");
 
-  MVEngine mve(sim.outputbasefilename() + "runner_thread.log", false, dataDir);
+  MVEngine mve(sim.outputbasefilename() + "runner_thread.log", true, dataDir);
   if (!mve.CreateEngine(sim))
     return false;
 
