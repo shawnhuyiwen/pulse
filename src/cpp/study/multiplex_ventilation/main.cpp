@@ -64,13 +64,14 @@ int main(int argc, char* argv[])
       // Loop parameters
       int minCompliance0_mL_Per_cmH2O = 10;
       int maxCompliance0_mL_Per_cmH2O = 50;
-      int stepCompliance0_mL_Per_cmH2O =5;
+      int stepCompliance0_mL_Per_cmH2O = 10;
       int minPEEP_cmH2O = 10;
       int maxPEEP_cmH2O = 20;
       int stepPEEP_cmH2O = 5;
       float minImpairment = 0.3f;
       float maxImpairment = 0.9f;
-      float stepImpairment = 0.05f;
+      float stepImpairment0 = 0.1f;
+      float stepImpairment1 = 0.2f;
 
       // Settings
       double breathRate_bpm = 20.0;
@@ -106,16 +107,17 @@ int main(int argc, char* argv[])
           double minCompliance1_mL_Per_cmH2O = lowestTargetTidalVolume_mL / (PIP_cmH2O - PEEP_cmH2O);
           double maxCompliance1_mL_Per_cmH2O = highestTargetTidalVolume_mL / (PIP_cmH2O - PEEP_cmH2O);
 
-          int stepCompliance1_mL_Per_cmH2O = 10;
+          int stepCompliance1_mL_Per_cmH2O = 2.0;
           minCompliance1_mL_Per_cmH2O -= stepCompliance1_mL_Per_cmH2O;
-          minCompliance1_mL_Per_cmH2O = MAX(minCompliance1_mL_Per_cmH2O, stepCompliance1_mL_Per_cmH2O);
+          minCompliance1_mL_Per_cmH2O = MAX(minCompliance1_mL_Per_cmH2O, minCompliance0_mL_Per_cmH2O);
           maxCompliance1_mL_Per_cmH2O += stepCompliance1_mL_Per_cmH2O;
+          maxCompliance1_mL_Per_cmH2O = MIN(maxCompliance1_mL_Per_cmH2O, maxCompliance0_mL_Per_cmH2O);
 
           for (int compliance1_mL_Per_cmH2O = minCompliance1_mL_Per_cmH2O; compliance1_mL_Per_cmH2O <= maxCompliance1_mL_Per_cmH2O; compliance1_mL_Per_cmH2O += stepCompliance1_mL_Per_cmH2O)
           {
-            for (float impairment0 = minImpairment; impairment0 <= maxImpairment; impairment0 += stepImpairment)
+            for (float impairment0 = minImpairment; impairment0 <= maxImpairment; impairment0 += stepImpairment0)
             {
-              for (float impairment1 = minImpairment; impairment1 <= maxImpairment; impairment1 += stepImpairment)
+              for (float impairment1 = minImpairment; impairment1 <= maxImpairment; impairment1 += stepImpairment1)
               {
                 std::string baseName = "peep=" + std::to_string(PEEP_cmH2O) +
                                        "_pip=" + std::to_string(PIP_cmH2O) +
