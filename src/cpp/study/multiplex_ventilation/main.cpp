@@ -59,10 +59,12 @@ int main(int argc, char* argv[])
     }
     else if (mode == "gensimlist")
     {
+      pulse::study::multiplex_ventilation::bind::SimulationListData simList;
+      simList.set_outputrootdir("./test_results/multiplex_ventilation/simulations");
       // Loop parameters
-      float minCompliance0_L_Per_cmH2O = 0.010f;
-      float maxCompliance0_L_Per_cmH2O = 0.050f;
-      float stepCompliance0_L_Per_cmH2O = 0.05f;
+      int minCompliance0_mL_Per_cmH2O = 10;
+      int maxCompliance0_mL_Per_cmH2O = 50;
+      int stepCompliance0_mL_Per_cmH2O =5;
       int minPEEP_cmH2O = 10;
       int maxPEEP_cmH2O = 20;
       int stepPEEP_cmH2O = 5;
@@ -73,13 +75,18 @@ int main(int argc, char* argv[])
       // Settings
       double breathRate_bpm = 20.0;
       double IERatio = 0.5;
-      double resistance_cmH2O_s_Per_L = 5;
+      double FiO2 = 0.21;
+      SEScalarPressureTimePerVolume resistance;
+      resistance.SetValue(5, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      double resistance_cmH2O_s_Per_mL = resistance.GetValue(PressureTimePerVolumeUnit::cmH2O_s_Per_mL);
+
+      size_t id = 0;
 
       // PEEP loop
       for (int PEEP_cmH2O = minPEEP_cmH2O; PEEP_cmH2O <= maxPEEP_cmH2O; PEEP_cmH2O += stepPEEP_cmH2O)
       {
         // Patient0 compliance loop
-        for (float compliance0_L_Per_cmH2O = minCompliance0_L_Per_cmH2O; compliance0_L_Per_cmH2O <= maxCompliance0_L_Per_cmH2O; compliance0_L_Per_cmH2O += stepCompliance0_L_Per_cmH2O)
+        for (int compliance0_mL_Per_cmH2O = minCompliance0_mL_Per_cmH2O; compliance0_mL_Per_cmH2O <= maxCompliance0_mL_Per_cmH2O; compliance0_mL_Per_cmH2O += stepCompliance0_mL_Per_cmH2O)
         {
           // RC circuit charging equation
           // Assume tube resistances are negligable
@@ -89,38 +96,54 @@ int main(int argc, char* argv[])
           double targetTidalVolume_mL = 6.0 * 75.3; // Aaron - What's the best way to get the ideal body weight from the patient?
           double targetTidalVolume_L = targetTidalVolume_mL / 1000.0;
 
-          int PIP_cmH2O = int(targetTidalVolume_L / (compliance0_L_Per_cmH2O * (1.0 - exp(-inspiratoryPeriod_s / (resistance_cmH2O_s_Per_L * compliance0_L_Per_cmH2O)))) + PEEP_cmH2O);
+          int PIP_cmH2O = int(targetTidalVolume_mL / (compliance0_mL_Per_cmH2O * (1.0 - exp(-inspiratoryPeriod_s / (resistance_cmH2O_s_Per_mL * compliance0_mL_Per_cmH2O)))) + PEEP_cmH2O);
 
-          double lowestTargetTidalVolume_mL = 4.5 * 75.3 / 1000.0;
-          double highestTargetTidalVolume_mL = 7.5 * 75.3 / 1000.0;
+          double lowestTargetTidalVolume_mL = 4.5 * 75.3;
+          double highestTargetTidalVolume_mL = 7.5 * 75.3;
 
-          float minCompliance1_L_Per_cmH2O = lowestTargetTidalVolume_mL / float(PIP_cmH2O - PEEP_cmH2O);
-          float maxCompliance1_L_Per_cmH2O = highestTargetTidalVolume_mL / float(PIP_cmH2O - PEEP_cmH2O);
+          double minCompliance1_mL_Per_cmH2O = lowestTargetTidalVolume_mL / (PIP_cmH2O - PEEP_cmH2O);
+          double maxCompliance1_mL_Per_cmH2O = highestTargetTidalVolume_mL / (PIP_cmH2O - PEEP_cmH2O);
 
-          float stepCompliance1_L_Per_cmH2O = 0.01f;
-          minCompliance1_L_Per_cmH2O -= stepCompliance1_L_Per_cmH2O;
-          minCompliance1_L_Per_cmH2O = MAX(minCompliance1_L_Per_cmH2O, stepCompliance1_L_Per_cmH2O);
-          maxCompliance1_L_Per_cmH2O += stepCompliance1_L_Per_cmH2O;
+          int stepCompliance1_mL_Per_cmH2O = 10;
+          minCompliance1_mL_Per_cmH2O -= stepCompliance1_mL_Per_cmH2O;
+          minCompliance1_mL_Per_cmH2O = MAX(minCompliance1_mL_Per_cmH2O, stepCompliance1_mL_Per_cmH2O);
+          maxCompliance1_mL_Per_cmH2O += stepCompliance1_mL_Per_cmH2O;
 
-          for (float compliance1_L_Per_cmH2O = minCompliance1_L_Per_cmH2O; compliance1_L_Per_cmH2O <= maxCompliance1_L_Per_cmH2O; compliance1_L_Per_cmH2O += stepCompliance1_L_Per_cmH2O)
+          for (int compliance1_mL_Per_cmH2O = minCompliance1_mL_Per_cmH2O; compliance1_mL_Per_cmH2O <= maxCompliance1_mL_Per_cmH2O; compliance1_mL_Per_cmH2O += stepCompliance1_mL_Per_cmH2O)
           {
             for (float impairment0 = minImpairment; impairment0 <= maxImpairment; impairment0 += stepImpairment)
             {
               for (float impairment1 = minImpairment; impairment1 <= maxImpairment; impairment1 += stepImpairment)
               {
-                // Things that go in the sim list
-                //All the Settings that don't change
-                //PEEP_cmH2O
-                //PIP_cmH2O
-                //compliance0_L_Per_cmH2O
-                //compliance1_L_Per_cmH2O
-                //impairment0
-                //impairment1
+                auto sim = simList.add_simulations();
+                sim->set_id(id++);
+                // Ventilator Settings
+                sim->set_respirationrate_per_min(breathRate_bpm);
+                sim->set_ieratio(IERatio);
+                sim->set_pip_cmh2o(PIP_cmH2O);
+                sim->set_peep_cmh2o(PEEP_cmH2O);
+                sim->set_fio2(FiO2);
+                // Patient 0
+                auto p0 = sim->add_patientcomparisons();
+                auto ps0 = p0->mutable_multiplexventilation();
+                ps0->set_compliance_ml_per_cmh2o(compliance0_mL_Per_cmH2O);
+                ps0->set_resistance_cmh2o_s_per_l(resistance.GetValue(PressureTimePerVolumeUnit::cmH2O_s_Per_L));
+                ps0->set_impairmentfraction(impairment0);
+                // Patient 1
+                auto p1 = sim->add_patientcomparisons();
+                auto ps1 = p1->mutable_multiplexventilation();
+                ps1->set_compliance_ml_per_cmh2o(compliance1_mL_Per_cmH2O);
+                ps1->set_resistance_cmh2o_s_per_l(resistance.GetValue(PressureTimePerVolumeUnit::cmH2O_s_Per_L));
+                ps1->set_impairmentfraction(impairment1);
+                
               }
             }
           }
         }
       }
+      // Run the new simlist
+      MVRunner mvr("./states/multiplex_ventilation/MultiplexVentilationRunner.log");
+      return !mvr.Run(simList);
     }
     else // Manual
     {

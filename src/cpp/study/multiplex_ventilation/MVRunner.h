@@ -12,10 +12,11 @@ public:
   virtual ~MVRunner();
 
   bool Run(const std::string& filename, SerializationFormat f);
+  bool Run(pulse::study::multiplex_ventilation::bind::SimulationListData& simList);
 
   static bool RunSimulationToStableSpO2(pulse::study::multiplex_ventilation::bind::SimulationData& sim, const std::string& dataDir="./");
 protected:
-
+  bool Run();
   bool SerializeToString(pulse::study::multiplex_ventilation::bind::SimulationListData& src, std::string& dst, SerializationFormat f) const;
   bool SerializeToFile(pulse::study::multiplex_ventilation::bind::SimulationListData& src, const std::string& filename, SerializationFormat f) const;
   bool SerializeFromString(const std::string& src, pulse::study::multiplex_ventilation::bind::SimulationListData& dst, SerializationFormat f);

@@ -15,28 +15,41 @@ MVRunner::~MVRunner()
   SAFE_DELETE(m_SimulationResultsList);
 }
 
+bool MVRunner::Run(pulse::study::multiplex_ventilation::bind::SimulationListData& simList)
+{
+  m_SimulationResultsListFile = simList.outputrootdir()+"/simlist_results.json";
+  SAFE_DELETE(m_SimulationList);
+  SAFE_DELETE(m_SimulationResultsList);
+  m_SimulationList = &simList;
+  m_SimulationResultsList = new pulse::study::multiplex_ventilation::bind::SimulationListData();
+  bool b = Run();
+  m_SimulationList = nullptr;
+  SAFE_DELETE(m_SimulationResultsList);
+  return b;
+}
+
 bool MVRunner::Run(const std::string& filename, SerializationFormat f)
+{
+  if (!SerializeFromFile(filename, f))
+    return false;
+  return Run();
+}
+bool MVRunner::Run()
 {
   TimingProfile profiler;
   profiler.Start("Total");
 
-  if (!SerializeFromFile(filename, f))
-    return false;
   // Get the ID's of simulations we need to run
   m_SimulationsToRun.clear();
   for (int i = 0; i < m_SimulationList->simulations_size(); i++)
-    m_SimulationsToRun.insert( m_SimulationList->simulations()[i].id());
+    m_SimulationsToRun.insert(m_SimulationList->simulations()[i].id());
   // Remove any id's we have in the results
   if (m_SimulationResultsList->simulations_size() > 0)
   {
-    Info("Found "+std::to_string(m_SimulationResultsList->simulations_size())+" previously run simulations");
+    Info("Found " + std::to_string(m_SimulationResultsList->simulations_size()) + " previously run simulations");
     for (int i = 0; i < m_SimulationResultsList->simulations_size(); i++)
       m_SimulationsToRun.erase(m_SimulationResultsList->simulations()[i].id());
   }
-
-  // Override to just run 1 calc for testing
-  m_SimulationsToRun.clear();
-  m_SimulationsToRun.insert(0);
 
   int numSimsToRun = m_SimulationList->simulations_size() - m_SimulationResultsList->simulations_size();
   if (numSimsToRun == 0)
@@ -56,7 +69,7 @@ bool MVRunner::Run(const std::string& filename, SerializationFormat f)
   // Let's not kick off more threads than we need
   if (processor_count > numSimsToRun)
     processor_count = numSimsToRun;
-  Info("Starting " + std::to_string(processor_count) + " Threads");
+  Info("Starting " + std::to_string(processor_count) + " Threads to run "+std::to_string(m_SimulationsToRun.size())+" simulations");
   // Crank up our threads
   for (size_t p = 0; p < processor_count; p++)
     m_Threads.push_back(std::thread(&MVRunner::ControllerLoop, this));
