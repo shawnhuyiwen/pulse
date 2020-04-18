@@ -34,13 +34,17 @@ bool MVRunner::Run(const std::string& filename, SerializationFormat f)
       m_SimulationsToRun.erase(m_SimulationResultsList->simulations()[i].id());
   }
 
+  // Override to just run 1 calc for testing
+  m_SimulationsToRun.clear();
+  m_SimulationsToRun.insert(0);
+
   int numSimsToRun = m_SimulationList->simulations_size() - m_SimulationResultsList->simulations_size();
   if (numSimsToRun == 0)
   {
     Info("All simulations are run in the results file");
     return true;
   }
-  size_t processor_count = std::thread::hardware_concurrency();
+  size_t processor_count = 1;// std::thread::hardware_concurrency();
   if (processor_count == 0)
   {
     Fatal("Unable to detect number of processors");
@@ -67,18 +71,120 @@ bool MVRunner::Run(const std::string& filename, SerializationFormat f)
 
 void MVRunner::ControllerLoop()
 {
-  MVController mvc(m_DataDir);
-  mvc.GetLogger()->LogToConsole(false);
   pulse::study::multiplex_ventilation::bind::SimulationData* sim;
-
   while (true)
   {
     sim = GetNextSimulation();
     if (sim == nullptr)
       break;
-    mvc.RunSimulation(*sim);
+    RunSimulationToStableSpO2(*sim);
     FinalizeSimulation(*sim);
   }
+}
+
+bool MVRunner::RunSimulationToStableSpO2(pulse::study::multiplex_ventilation::bind::SimulationData& sim, const std::string& dataDir)
+{
+  TimingProfile profiler;
+  profiler.Start("Total");
+  profiler.Start("Status");
+
+  MVEngine mve(sim.outputbasefilename() + ".log", false, dataDir);
+  if (!mve.CreateEngine(sim))
+    return false;
+
+  double timeStep_s = mve.m_TimeStep_s;
+  double currentTime_s = 0;
+
+  int stabilizationPasses = 0;
+  int totalIterations = 0;
+  double stabilizationTimer_s = 0;
+  double stabilizationCheck_s = 2;
+  // Let's shoot for with in 0.25% for 10s straight
+  double pctDiffSpO2 = 0.25;
+  std::vector<double> previsouSpO2s;
+  for (PulseController* pc : mve.m_Engines)
+    previsouSpO2s.push_back(pc->GetBloodChemistry().GetOxygenSaturation().GetValue());
+
+  double statusTimer_s = 0;  // Current time of this status cycle
+  double statusStep_s = 60; // How long did it take to simulate this much time
+
+  int minIterations = (int)(60 / timeStep_s);
+  int maxIterations = (int)(300 / timeStep_s);
+  while (true)
+  {
+    totalIterations++;
+    if (totalIterations == minIterations)
+      mve.GetLogger()->Info("Minimum Runtime Achieved");
+
+    if (!mve.AdvanceTime(timeStep_s))
+      return false;
+    // Increment our timers
+    currentTime_s += timeStep_s;
+    statusTimer_s += timeStep_s;
+    // Start stabilization timer after minimum run time
+    if (totalIterations > minIterations)
+      stabilizationTimer_s += timeStep_s;
+
+    // How are we running?
+    if (statusTimer_s > statusStep_s)
+    {
+      statusTimer_s = 0;
+      mve.GetLogger()->Info("Current Time is " + to_scientific_notation(currentTime_s) + "s, it took " + to_scientific_notation(profiler.GetElapsedTime_s("Status")) + "s to simulate the past " + to_scientific_notation(statusStep_s) + "s");
+      profiler.Reset("Status");
+    }
+
+    // Check to see if we are stable
+    if (stabilizationTimer_s > stabilizationCheck_s)
+    {
+      size_t idx = 0;
+      bool allPassed = true;
+      for (PulseController* pc : mve.m_Engines)
+      {
+        double currentSpO2 = pc->GetBloodChemistry().GetOxygenSaturation().GetValue();
+        double pctDiff = GeneralMath::PercentDifference(previsouSpO2s[idx++], currentSpO2);
+        if (pctDiff > pctDiffSpO2)
+          allPassed = false;
+      }
+      if (allPassed)
+        stabilizationPasses++;
+      else
+      {
+        idx = 0;
+        stabilizationPasses = 0;
+        for (PulseController* pc : mve.m_Engines)
+        {
+          previsouSpO2s[idx++] = pc->GetBloodChemistry().GetOxygenSaturation().GetValue();
+        }
+      }
+      stabilizationTimer_s = 0;
+      if (stabilizationPasses == 5)
+      {
+        break;
+        double stabilizationTime = (totalIterations - minIterations) * timeStep_s;
+        mve.GetLogger()->Info("Stabilization took " + to_scientific_notation(stabilizationTime) + "s to for this simulation");
+      }
+      if (totalIterations > maxIterations)
+      {
+        break;
+        mve.GetLogger()->Info("Reached maximum iterations. Ending simulation.");
+      }
+    }
+  }
+  mve.GetSimulationState(sim);
+  // Add our stabilization numbers to the results
+  for (int p = 0; p < sim.patientcomparisons_size(); p++)
+  {
+    PulseController* pc = mve.m_Engines[p];
+    double SpO2 = pc->GetBloodChemistry().GetOxygenSaturation().GetValue();
+    auto* multiVentilation = (*sim.mutable_patientcomparisons())[p].mutable_multiplexventilation();
+    multiVentilation->set_achievedstabilization(!(totalIterations > maxIterations));
+    multiVentilation->set_stabilizationtime_s((totalIterations - minIterations) * timeStep_s);
+    multiVentilation->set_oxygensaturationstabilizationtrend((SpO2 - previsouSpO2s[p]) / timeStep_s);
+  }
+  mve.GetLogger()->Info("It took " + to_scientific_notation(profiler.GetElapsedTime_s("Total")) + "s to run this simulation");
+
+  profiler.Clear();
+  return true;
 }
 
 pulse::study::multiplex_ventilation::bind::SimulationData* MVRunner::GetNextSimulation()
@@ -87,7 +193,7 @@ pulse::study::multiplex_ventilation::bind::SimulationData* MVRunner::GetNextSimu
   pulse::study::multiplex_ventilation::bind::SimulationData* sim = nullptr;
   if (!m_SimulationsToRun.empty())
   {
-    int id = *m_SimulationsToRun.begin();
+    size_t id = *m_SimulationsToRun.begin();
     for (int i = 0; i < m_SimulationList->simulations_size(); i++)
     {
       sim = &(*m_SimulationList->mutable_simulations())[i];
@@ -145,7 +251,7 @@ bool MVRunner::SerializeFromString(const std::string& src, pulse::study::multipl
   google::protobuf::util::Status stat = google::protobuf::util::JsonStringToMessage(src, &dst, parseOpts);
   if (!stat.ok())
   {
-    Error("Unable to parse json in string");
+    Error("Unable to parse json in string : "+ stat.ToString());
     return false;
   }
   return true;

@@ -36,7 +36,7 @@ int main(int argc, char* argv[])
     else
     {
       mode = argv[1];
-      mode = "genData";
+      //mode = "genData";
     };
     // convert string to back to lower case
     std::for_each(mode.begin(), mode.end(), [](char& c) { c = ::tolower(c); });
@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
     }
     else // Manual
     {
-      MVController mvc("./states/multiplex_ventilation/ManualMultiplexVentilation.log", ".");
+      Logger logger("./test_results/multiplex_ventilator/manual.log");
       pulse::study::multiplex_ventilation::bind::SimulationData sim;
       sim.set_respirationrate_per_min(20);
       sim.set_ieratio(0.5);
@@ -89,7 +89,7 @@ int main(int argc, char* argv[])
         double FiO2;
         std::string name;
         patient = Dir::Solo + patient + ".json";
-        mvc.ExtractVentilatorSettings(patient, name, pip_cmH2O, peep_cmH2O, FiO2);
+        ExtractVentilatorSettings(patient, name, pip_cmH2O, peep_cmH2O, FiO2);
         combined_name += name;
         if (iter != patients.size() - 1)
         {
@@ -111,13 +111,13 @@ int main(int argc, char* argv[])
         double FiO2;
         std::string name;
         patient = Dir::Solo + patient + ".json";
-        mvc.ExtractVentilatorSettings(patient, name, pip_cmH2O, peep_cmH2O, FiO2);
+        ExtractVentilatorSettings(patient, name, pip_cmH2O, peep_cmH2O, FiO2);
 
         std::string solo_patient_base_path = Dir::Results + combined_name + "/pip=" + to_scientific_notation(pip_cmH2O) +
           "_peep=" + to_scientific_notation(peep_cmH2O) +
           "_FiO2=" + to_scientific_notation(FiO2) + "_solo_patient_" + std::to_string(iter);
 
-        mvc.RunSoloState(patient, solo_patient_base_path, soloRunTime_s);
+        MVEngine::RunSoloState(patient, solo_patient_base_path, soloRunTime_s, &logger);
 
         sim.add_patientcomparisons()->mutable_soloventilation()->set_statefile(patient);
 
@@ -167,7 +167,7 @@ int main(int argc, char* argv[])
         sim.set_peep_cmh2o(peep_cmH2O);
         sim.set_fio2(FiO2);
 
-        mvc.RunSimulation(sim);
+        MVRunner::RunSimulationToStableSpO2(sim);
 
         unsigned int iter2 = 0;
         for (std::string patient : patients)
@@ -209,7 +209,7 @@ int main(int argc, char* argv[])
       sim.set_pip_cmh2o(pipAvg_cmH2O);
       sim.set_peep_cmh2o(peepAvg_cmH2O);
       sim.set_fio2(FiO2Avg);
-      mvc.RunSimulation(sim);
+      MVRunner::RunSimulationToStableSpO2(sim);
 
       unsigned int iter2 = 0;
       for (std::string patient : patients)

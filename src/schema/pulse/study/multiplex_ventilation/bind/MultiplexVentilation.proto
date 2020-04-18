@@ -19,7 +19,6 @@ message PatientStateData
   double          PIP_cmH2O                                 = 9;
   double          FiO2                                      = 10;
   // Vitals
-  
   double          IdealBodyWeight_kg                        = 11;
   double          OxygenSaturation                          = 12;
   double          TidalVolume_mL                            = 13;
@@ -28,7 +27,7 @@ message PatientStateData
   double          ArterialOxygenPartialPressure_mmHg        = 16;
   double          ArterialCarbonDioxidePartialPressure_mmHg = 17;
   double          CarricoIndex_mmHg                         = 18;
-  double          AirwayFlow_L_Per_m                        = 19;
+  double          AirwayFlow_L_Per_min                      = 19;
   double          AirwayPressure_cmH2O                      = 20;
   // Stabilization Information
   bool            AchievedStabilization                     = 21;

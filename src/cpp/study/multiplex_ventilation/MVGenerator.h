@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "MVController.h"
+#include "MVEngine.h"
 
 class MVGenerator : public Loggable
 {
@@ -18,6 +18,9 @@ public:
   bool Run(const std::string& stateDir, const std::string listFilename, SerializationFormat f);
 
 protected:
+  static bool StabilizeSpO2(PhysiologyEngine& eng);
+  static bool GenerateStabilizedPatient(pulse::study::multiplex_ventilation::bind::PatientStateData& pData, bool logToConsole);
+
   bool SerializeToString(pulse::study::multiplex_ventilation::bind::PatientStateListData& src, std::string& dst, SerializationFormat f) const;
   bool SerializeToFile(pulse::study::multiplex_ventilation::bind::PatientStateListData& src, const std::string& filename, SerializationFormat f) const;
   bool SerializeFromString(const std::string& src, pulse::study::multiplex_ventilation::bind::PatientStateListData& dst, SerializationFormat f);

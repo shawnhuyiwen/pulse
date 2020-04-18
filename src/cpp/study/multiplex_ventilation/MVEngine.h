@@ -2,8 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include <set>
-#include <thread>
+
 #include "PulsePhysiologyEngine.h"
 
 #include "controller/Controller.h"
@@ -64,12 +63,15 @@
 #include "utils/GeneralMath.h"
 #include "utils/TimingProfile.h"
 
+PUSH_PROTO_WARNINGS()
 #include "pulse/study/multiplex_ventilation/bind/MultiplexVentilation.pb.h"
 #include <google/protobuf/text_format.h>
 #include <google/protobuf/util/json_util.h>
+POP_PROTO_WARNINGS()
 
 std::string to_scientific_notation(float f);
 std::string to_scientific_notation(double d);
+bool ExtractVentilatorSettings(const std::string& filePath, std::string& fileName, double& pip_cmH2O, double& peep_cmH2O, double& FiO2);
 
 struct Dir
 {
@@ -78,25 +80,57 @@ struct Dir
   static const std::string Results;
 };
 
-class MVController : public Loggable, protected SEEventHandler
+class PULSE_DECL MVEngine : public Loggable, public SEEventHandler
 {
+  friend class MVRunner;
+  friend class MVGenerator;
 public:
-  MVController(const std::string& data_dir);
-  MVController(const std::string& logfileName, const std::string& dataDir);
-  virtual ~MVController();
+  MVEngine(std::string const& logfile = "", bool cout_enabled = true, std::string const& data_dir = "./");
+  ~MVEngine();
 
-  bool GenerateStabilizedPatient(pulse::study::multiplex_ventilation::bind::PatientStateData& pData);
-  bool RunSimulation(pulse::study::multiplex_ventilation::bind::SimulationData& sim);
-  bool RunSoloState(const std::string& stateFile, const std::string& outDir, double duration_s);
+  bool CreateEngine(const std::string& simulationDataStr, SerializationFormat fmt);
+  bool CreateEngine(pulse::study::multiplex_ventilation::bind::SimulationData& sim);
 
-  bool ExtractVentilatorSettings(const std::string& filePath, std::string& fileName, double& pip_cmH2O, double& peep_cmH2O, double& FiO2);
+  bool AdvanceTime(double time_s);
+
+  bool ProcessAction(const SEAction& action);
+  bool ProcessActions(std::string const& actions, SerializationFormat format);
+
+  std::string GetSimulationState(SerializationFormat fmt);
+  bool GetSimulationState(pulse::study::multiplex_ventilation::bind::SimulationData& sim);
+
+  void DestroyEngines();
+
+  static void TrackData(SEEngineTracker& trkr, const std::string& csv_filename);
+  static bool RunSoloState(const std::string& stateFile, const std::string& outDir, double duration_s, Logger* logger);
+
+  static bool SerializeToString(pulse::study::multiplex_ventilation::bind::SimulationData& src, std::string& dst, SerializationFormat f);
+  static bool SerializeFromString(const std::string& src, pulse::study::multiplex_ventilation::bind::SimulationData& dst, SerializationFormat f);
 
 protected:
-
-  bool StabilizeSpO2(PhysiologyEngine& eng);
-  void TrackData(SEEngineTracker& trkr, const std::string& csv_filename);
   void HandleEvent(eEvent e, bool active, const SEScalarTime* simTime = nullptr) override;
 
-
+  
   std::string m_DataDir;
+  std::vector<PulseController*> m_Engines;
+
+  double                    m_TimeStep_s;
+  double                    m_CurrentTime_s;
+  double                    m_SpareAdvanceTime_s;
+  double                    m_Compliance_mL_Per_cmH2O;
+  double                    m_Resistance_cmH2O_s_Per_L;
+  double                    m_ImpairmentFraction;
+  // Substances
+  SESubstanceManager*       m_SubMgr;
+  SESubstance*              m_Oxygen;
+  // Circuits
+  SECircuitManager*         m_CircuitMgr;
+  SEFluidCircuit*           m_MultiplexVentilationCircuit;
+  SEFluidCircuitCalculator* m_Calculator;
+  // Compartments
+  SECompartmentManager*     m_CmptMgr;
+  SEGasCompartmentGraph*    m_MultiplexVentilationGraph;
+  SEGasTransporter*         m_Transporter;
+
+  pulse::study::multiplex_ventilation::bind::SimulationData* m_SimulationData;
 };
