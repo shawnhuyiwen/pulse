@@ -1873,6 +1873,12 @@ void Respiratory::CalculateVitalSigns()
       m_TopBreathElapsedTime_min = m_ElapsedBreathingCycleTime_min;
       m_PeakAlveolarPressure_cmH2O = m_BottomBreathAlveoliPressure_cmH2O;
       m_MaximalAlveolarPressure_cmH2O = m_BottomBreathAlveoliPressure_cmH2O;
+
+      //We can approximate the mean here, since we got a full waveform
+      //It will be off a little when each breath isn't the same
+      //It's too hard to keep a runnning average otherwise
+      GetMeanAirwayPressure().SetValue(m_MeanAirwayPressure_cmH2O->Value(), PressureUnit::cmH2O);
+      m_MeanAirwayPressure_cmH2O->Clear();
     }
   }
   else //Inhaling
@@ -1888,12 +1894,6 @@ void Respiratory::CalculateVitalSigns()
       m_TopBreathAlveoliPressure_cmH2O = alveolarPressure_cmH2O;
       m_TopBreathDriverPressure_cmH2O = m_RespiratoryMuscle->GetNextPressure(PressureUnit::cmH2O);
       m_TopCarinaO2 = m_CarinaO2->GetVolumeFraction().GetValue();
-
-      //We can approximate the mean here, since we got a full waveform
-      //It will be off a little when each breath isn't the same
-      //It's too hard to keep a runnning average otherwise
-      GetMeanAirwayPressure().SetValue(m_MeanAirwayPressure_cmH2O->Value(), PressureUnit::cmH2O);
-      m_MeanAirwayPressure_cmH2O->Clear();
     }
 
     m_PeakAlveolarPressure_cmH2O = MAX(m_PeakAlveolarPressure_cmH2O, alveolarPressure_cmH2O);
