@@ -30,8 +30,9 @@ int main(int argc, char* argv[])
     if (argc <= 1)
     {
       // Adjust comments to run the mode you want
-      mode = "genData";
+      //mode = "genData";
       //mode = "manual";
+      mode = "gensimlist";
     }
     else
     {
@@ -55,6 +56,71 @@ int main(int argc, char* argv[])
       }
       MVRunner mvr("./states/multiplex_ventilation/MultiplexVentilationRunner.log");
       return !mvr.Run(argv[2], SerializationFormat::JSON);
+    }
+    else if (mode == "gensimlist")
+    {
+      // Loop parameters
+      float minCompliance0_L_Per_cmH2O = 0.010f;
+      float maxCompliance0_L_Per_cmH2O = 0.050f;
+      float stepCompliance0_L_Per_cmH2O = 0.05f;
+      int minPEEP_cmH2O = 10;
+      int maxPEEP_cmH2O = 20;
+      int stepPEEP_cmH2O = 5;
+      float minImpairment = 0.3f;
+      float maxImpairment = 0.9f;
+      float stepImpairment = 0.05f;
+
+      // Settings
+      double breathRate_bpm = 20.0;
+      double IERatio = 0.5;
+      double resistance_cmH2O_s_Per_L = 5;
+
+      // PEEP loop
+      for (int PEEP_cmH2O = minPEEP_cmH2O; PEEP_cmH2O <= maxPEEP_cmH2O; PEEP_cmH2O += stepPEEP_cmH2O)
+      {
+        // Patient0 compliance loop
+        for (float compliance0_L_Per_cmH2O = minCompliance0_L_Per_cmH2O; compliance0_L_Per_cmH2O <= maxCompliance0_L_Per_cmH2O; compliance0_L_Per_cmH2O += stepCompliance0_L_Per_cmH2O)
+        {
+          // RC circuit charging equation
+          // Assume tube resistances are negligable
+          double breathPeriod_s = 60.0 / breathRate_bpm;
+          double inspiratoryPeriod_s = IERatio * breathPeriod_s / (1.f + IERatio);
+
+          double targetTidalVolume_mL = 6.0 * 75.3; // Aaron - What's the best way to get the ideal body weight from the patient?
+          double targetTidalVolume_L = targetTidalVolume_mL / 1000.0;
+
+          int PIP_cmH2O = int(targetTidalVolume_L / (compliance0_L_Per_cmH2O * (1.0 - exp(-inspiratoryPeriod_s / (resistance_cmH2O_s_Per_L * compliance0_L_Per_cmH2O)))) + PEEP_cmH2O);
+
+          double lowestTargetTidalVolume_mL = 4.5 * 75.3 / 1000.0;
+          double highestTargetTidalVolume_mL = 7.5 * 75.3 / 1000.0;
+
+          float minCompliance1_L_Per_cmH2O = lowestTargetTidalVolume_mL / float(PIP_cmH2O - PEEP_cmH2O);
+          float maxCompliance1_L_Per_cmH2O = highestTargetTidalVolume_mL / float(PIP_cmH2O - PEEP_cmH2O);
+
+          float stepCompliance1_L_Per_cmH2O = 0.01f;
+          minCompliance1_L_Per_cmH2O -= stepCompliance1_L_Per_cmH2O;
+          minCompliance1_L_Per_cmH2O = MAX(minCompliance1_L_Per_cmH2O, stepCompliance1_L_Per_cmH2O);
+          maxCompliance1_L_Per_cmH2O += stepCompliance1_L_Per_cmH2O;
+
+          for (float compliance1_L_Per_cmH2O = minCompliance1_L_Per_cmH2O; compliance1_L_Per_cmH2O <= maxCompliance1_L_Per_cmH2O; compliance1_L_Per_cmH2O += stepCompliance1_L_Per_cmH2O)
+          {
+            for (float impairment0 = minImpairment; impairment0 <= maxImpairment; impairment0 += stepImpairment)
+            {
+              for (float impairment1 = minImpairment; impairment1 <= maxImpairment; impairment1 += stepImpairment)
+              {
+                // Things that go in the sim list
+                //All the Settings that don't change
+                //PEEP_cmH2O
+                //PIP_cmH2O
+                //compliance0_L_Per_cmH2O
+                //compliance1_L_Per_cmH2O
+                //impairment0
+                //impairment1
+              }
+            }
+          }
+        }
+      }
     }
     else // Manual
     {
