@@ -99,6 +99,7 @@
 Respiratory::Respiratory(PulseData& data) : PulseRespiratorySystem(data.GetLogger()), m_data(data)
 {
   m_BloodPHRunningAverage = new SERunningAverage();
+  m_MeanAirwayPressure_cmH2O = new SERunningAverage();
   m_ArterialO2RunningAverage_mmHg = new SERunningAverage();
   m_ArterialCO2RunningAverage_mmHg = new SERunningAverage();
 
@@ -112,6 +113,7 @@ Respiratory::~Respiratory()
 {
   Clear();
   delete m_BloodPHRunningAverage;
+  delete m_MeanAirwayPressure_cmH2O;
   delete m_ArterialO2RunningAverage_mmHg;
   delete m_ArterialCO2RunningAverage_mmHg;
 
@@ -184,6 +186,7 @@ void Respiratory::Clear()
   m_GroundToConnection = nullptr;
 
   m_BloodPHRunningAverage->Clear();
+  m_MeanAirwayPressure_cmH2O->Clear();
   m_ArterialO2RunningAverage_mmHg->Clear();
   m_ArterialCO2RunningAverage_mmHg->Clear();
 }
@@ -242,6 +245,11 @@ void Respiratory::Initialize()
   GetRespirationRate().SetValue(RespirationRate_Per_min, FrequencyUnit::Per_min);
   GetInspiratoryExpiratoryRatio().SetValue(0.5);
   GetCarricoIndex().SetValue(452.0, PressureUnit::mmHg);
+  GetFractionOfInsipredOxygen().SetValue(0.21);
+  GetSaturationAndFractionOfInspiredOxygenRatio().SetValue(0.0);
+  GetOxygenationIndex().SetValue(0.0);
+  GetOxygenSaturationIndex().SetValue(0.0, PressureUnit::cmH2O);
+  GetMeanAirwayPressure().SetValue(0.0, PressureUnit::cmH2O);
 
   double AnatomicDeadSpace_L = m_LeftAnatomicDeadSpace->GetVolumeBaseline(VolumeUnit::L) + m_RightAnatomicDeadSpace->GetVolumeBaseline(VolumeUnit::L);
   double AlveolarDeadSpace_L = m_LeftAlveolarDeadSpace->GetVolumeBaseline(VolumeUnit::L) + m_RightAlveolarDeadSpace->GetVolumeBaseline(VolumeUnit::L);
@@ -541,13 +549,14 @@ void Respiratory::Process(bool solve_and_transport)
     m_GasTransporter->Transport(RespirationGraph, m_dt_s);
     if (m_AerosolMouth->HasSubstanceQuantities())
       m_AerosolTransporter->Transport(AerosolGraph, m_dt_s);
+
+#ifdef DEBUG
+    Debugging(RespirationCircuit);
+#endif
   }
   //Update system data
   CalculateVitalSigns();
 
-#ifdef DEBUG
-  Debugging(RespirationCircuit);
-#endif
   ComputeExposedModelParameters();
 }
 void Respiratory::ComputeExposedModelParameters()
@@ -1772,6 +1781,8 @@ void Respiratory::CalculateVitalSigns()
   double averageAlveoliO2PartialPressure_mmHg = (m_LeftAlveoliO2->GetPartialPressure(PressureUnit::mmHg) + m_RightAlveoliO2->GetPartialPressure(PressureUnit::mmHg)) / 2.0;
   GetAlveolarArterialGradient().SetValue(averageAlveoliO2PartialPressure_mmHg - m_AortaO2->GetPartialPressure(PressureUnit::mmHg), PressureUnit::mmHg);
 
+  m_MeanAirwayPressure_cmH2O->Sample(airwayOpeningPressure_cmH2O - bodySurfacePressure_cmH2O);
+
   if (tracheaFlow_L_Per_s > ZERO_APPROX)
   {
     GetInspiratoryPulmonaryResistance().SetValue((airwayOpeningPressure_cmH2O - alveolarPressure_cmH2O) / tracheaFlow_L_Per_s, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
@@ -1877,6 +1888,12 @@ void Respiratory::CalculateVitalSigns()
       m_TopBreathAlveoliPressure_cmH2O = alveolarPressure_cmH2O;
       m_TopBreathDriverPressure_cmH2O = m_RespiratoryMuscle->GetNextPressure(PressureUnit::cmH2O);
       m_TopCarinaO2 = m_CarinaO2->GetVolumeFraction().GetValue();
+
+      //We can approximate the mean here, since we got a full waveform
+      //It will be off a little when each breath isn't the same
+      //It's too hard to keep a runnning average otherwise
+      GetMeanAirwayPressure().SetValue(m_MeanAirwayPressure_cmH2O->Value(), PressureUnit::cmH2O);
+      m_MeanAirwayPressure_cmH2O->Clear();
     }
 
     m_PeakAlveolarPressure_cmH2O = MAX(m_PeakAlveolarPressure_cmH2O, alveolarPressure_cmH2O);
@@ -1886,10 +1903,16 @@ void Respiratory::CalculateVitalSigns()
       && m_TopBreathElapsedTime_min > m_MinimumAllowableInpiratoryAndExpiratoryPeriod_s / 60.0 / 2.0) //We've waited a sufficient amount of time to transition
     {
       //Transition to exhaling
-      m_BreathingCycle = true;      
+      m_BreathingCycle = true;
 
       //We want the peak Carina O2 value - this should be the inspired value
-      GetCarricoIndex().SetValue(m_ArterialO2PartialPressure_mmHg / m_TopCarinaO2, PressureUnit::mmHg);
+      double FiO2 = m_TopCarinaO2;
+      GetFractionOfInsipredOxygen().SetValue(FiO2);
+      GetCarricoIndex().SetValue(m_ArterialO2PartialPressure_mmHg / FiO2, PressureUnit::mmHg);
+      GetSaturationAndFractionOfInspiredOxygenRatio().SetValue(m_data.GetBloodChemistry().GetOxygenSaturation().GetValue() / FiO2);
+      double meanAirwayPressure_mmHg = Convert(m_MeanAirwayPressure_cmH2O->Value(), PressureUnit::cmH2O, PressureUnit::mmHg);
+      GetOxygenationIndex().SetValue(FiO2 * meanAirwayPressure_mmHg * 100.0 / m_ArterialO2PartialPressure_mmHg);
+      GetOxygenSaturationIndex().SetValue(FiO2 * meanAirwayPressure_mmHg * 100.0 / m_data.GetBloodChemistry().GetOxygenSaturation().GetValue(), PressureUnit::cmH2O);
 
       m_BottomBreathTotalVolume_L = totalLungVolume_L;
       m_BottomBreathElapsedTime_min = m_ElapsedBreathingCycleTime_min - m_TopBreathElapsedTime_min;
@@ -1903,6 +1926,8 @@ void Respiratory::CalculateVitalSigns()
     GetTidalVolume().SetValue(0.0, VolumeUnit::L);
     GetTotalAlveolarVentilation().SetValue(0.0, VolumePerTimeUnit::L_Per_min);
     GetTotalPulmonaryVentilation().SetValue(0.0, VolumePerTimeUnit::L_Per_min);
+    GetMeanAirwayPressure().SetValue(m_MeanAirwayPressure_cmH2O->Value(), PressureUnit::cmH2O);
+    m_MeanAirwayPressure_cmH2O->Clear();
   }
 
  /// \todo Move to blood chemistry
@@ -3453,8 +3478,13 @@ void Respiratory::Debugging(SEFluidCircuit& RespirationCircuit)
   double diffusionSurfaceArea_m2 = m_data.GetCurrentPatient().GetAlveoliSurfaceArea(AreaUnit::m2);
   m_data.GetDataTrack().Probe("diffusionSurfaceArea_m2", diffusionSurfaceArea_m2);
 
-  double rightPulmonaryCapillaryResistance_cmH2O_s_Per_L = m_RightPulmonaryCapillary->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  double leftPulmonaryCapillaryResistance_cmH2O_s_Per_L = m_LeftPulmonaryCapillary->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  double averagePulmonaryCapillaryResistance_cmH2O_s_Per_L = (rightPulmonaryCapillaryResistance_cmH2O_s_Per_L + leftPulmonaryCapillaryResistance_cmH2O_s_Per_L) / 2.0;
-  m_data.GetDataTrack().Probe("averagePulmonaryCapillaryResistance_cmH2O_s_Per_L", averagePulmonaryCapillaryResistance_cmH2O_s_Per_L);
+  double rightPulmonaryCapillaryResistance_mmHg_s_Per_mL = m_RightPulmonaryCapillary->GetNextResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+  double leftPulmonaryCapillaryResistance_mmHg_s_Per_mL = m_LeftPulmonaryCapillary->GetNextResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+  double averagePulmonaryCapillaryResistance_mmHg_s_Per_mL = (rightPulmonaryCapillaryResistance_mmHg_s_Per_mL + leftPulmonaryCapillaryResistance_mmHg_s_Per_mL) / 2.0;
+  m_data.GetDataTrack().Probe("averagePulmonaryCapillaryResistance_mmHg_s_Per_mL", averagePulmonaryCapillaryResistance_mmHg_s_Per_mL);
+
+  double rightShuntResistance_mmHg_s_Per_mL = m_RightPulmonaryArteriesToVeins->GetNextResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+  double leftShuntResistance_mmHg_s_Per_mL = m_LeftPulmonaryArteriesToVeins->GetNextResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+  double averageShuntResistance_mmHg_s_Per_mL = (rightShuntResistance_mmHg_s_Per_mL + leftShuntResistance_mmHg_s_Per_mL) / 2.0;
+  m_data.GetDataTrack().Probe("averageShuntResistance_mmHg_s_Per_mL", averageShuntResistance_mmHg_s_Per_mL);
 }
