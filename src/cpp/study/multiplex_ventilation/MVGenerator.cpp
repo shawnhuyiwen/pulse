@@ -23,7 +23,7 @@ void MVGenerator::GeneratePatientList()
 
   unsigned int totalIterations = (((m_MaxCompliance_mL_Per_cmH2O - m_MinCompliance_mL_Per_cmH2O) / m_StepCompliance_mL_Per_cmH2O) + 1) *
                                   ((m_MaxPEEP_cmH2O - m_MinPEEP_cmH2O) / m_StepPEEP_cmH2O + 1) *
-                                  (unsigned int((m_MaxImpairment - m_MinImpairment) / m_StepImpairment + 1.0));
+                                  (rint((m_MaxImpairment - m_MinImpairment) / m_StepImpairment + 1.0));
 
   SEScalarPressureTimePerVolume r;
   r.SetValue(m_Resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);

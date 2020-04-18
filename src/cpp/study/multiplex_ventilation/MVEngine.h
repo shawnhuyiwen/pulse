@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-
+#include <thread>
 #include "PulsePhysiologyEngine.h"
 
 #include "controller/Controller.h"
