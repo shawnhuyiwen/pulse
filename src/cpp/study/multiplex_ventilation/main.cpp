@@ -65,21 +65,21 @@ int main(int argc, char* argv[])
       // Use these ventilator settings
       sim.set_respirationrate_per_min(20);
       sim.set_ieratio(0.5);
-      sim.set_pip_cmh2o(28);
+      sim.set_pip_cmh2o(25);
       sim.set_peep_cmh2o(10);
-      sim.set_fio2(0.23);
+      sim.set_fio2(0.21);
       // Add Patient 0
       auto p0 = sim.add_patientcomparisons()->mutable_multiplexventilation();
       p0->set_id(0);
-      p0->set_compliance_ml_per_cmh2o(20);
+      p0->set_compliance_ml_per_cmh2o(30);
       p0->set_resistance_cmh2o_s_per_l(5);
-      p0->set_impairmentfraction(0.3);
+      p0->set_impairmentfraction(0.5);
       // Add Patient 1);
       auto p1 = sim.add_patientcomparisons()->mutable_multiplexventilation();
       p1->set_id(1);
-      p1->set_compliance_ml_per_cmh2o(15);
+      p1->set_compliance_ml_per_cmh2o(22);
       p1->set_resistance_cmh2o_s_per_l(5);
-      p1->set_impairmentfraction(0.9);
+      p1->set_impairmentfraction(0.7);
       MVRunner::StepSimulationFiO2(sim);
     }
     else if (mode == "gensimlist")

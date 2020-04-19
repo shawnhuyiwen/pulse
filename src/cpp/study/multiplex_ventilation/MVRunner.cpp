@@ -167,8 +167,9 @@ bool MVRunner::StepSimulationFiO2(pulse::study::multiplex_ventilation::bind::Sim
   double statusTimer_s = 0;  // Current time of this status cycle
   double statusStep_s = 60; // How long did it take to simulate this much time
 
-  int minIterations = (int)(20 / timeStep_s);
-  int maxIterations = (int)(800 / timeStep_s);
+  // Minimum of 2 breaths befor we check stabilization
+  int minIterations = (int)(60 / sim.respirationrate_per_min() * 2 / timeStep_s);
+  int maxIterations = (int)(60 / timeStep_s);
   while (true)
   {
     totalIterations++;
@@ -222,7 +223,7 @@ bool MVRunner::StepSimulationFiO2(pulse::study::multiplex_ventilation::bind::Sim
           double stabilizationTime = (totalIterations - minIterations) * timeStep_s;
           mve.GetLogger()->Info("Stabilized SpO2 at "+to_scientific_notation(currentSpO2));
           mve.GetLogger()->Info("With FiO2 of " + to_scientific_notation(currentFiO2));
-          mve.GetLogger()->Info("It took " + to_scientific_notation(stabilizationTime) + "s o stabilize");
+          mve.GetLogger()->Info("It took " + to_scientific_notation(stabilizationTime) + "s to stabilize");
           break;
         }
         else
@@ -256,8 +257,12 @@ bool MVRunner::StepSimulationFiO2(pulse::study::multiplex_ventilation::bind::Sim
       }
       if (totalIterations > maxIterations)
       {
-        mve.GetLogger()->Info("Reached maximum iterations. Ending simulation.");
-        break;
+        currentFiO2 += 0.05;
+        totalIterations = 0;
+        stabilizationPasses = 0;
+        stabilizationTimer_s = 0;
+        mve.GetLogger()->Info("Reached maximum iterations, upping the FiO2 to " + to_scientific_notation(currentFiO2));
+        mve.SetFiO2(currentFiO2);
       }
     }
   }
