@@ -146,7 +146,7 @@ bool MVRunner::StepSimulationFiO2(pulse::study::multiplex_ventilation::bind::Sim
   profiler.Start("Total");
   profiler.Start("Status");
 
-  MVEngine mve(sim.outputbasefilename() + "runner_thread.log", true, dataDir);
+  MVEngine mve(sim.outputbasefilename() + "runner_thread.log", false, dataDir);
   if (!mve.CreateEngine(sim))
     return false;
 
@@ -261,6 +261,12 @@ bool MVRunner::StepSimulationFiO2(pulse::study::multiplex_ventilation::bind::Sim
         totalIterations = 0;
         stabilizationPasses = 0;
         stabilizationTimer_s = 0;
+        if (currentFiO2 >= 1.0)
+        {
+          currentFiO2 = 1.0;
+          mve.GetLogger()->Info("Reached maximum FiO2, unable to stabilize");
+          break;
+        }
         mve.GetLogger()->Info("Reached maximum iterations, upping the FiO2 to " + to_scientific_notation(currentFiO2));
         mve.SetFiO2(currentFiO2);
       }
