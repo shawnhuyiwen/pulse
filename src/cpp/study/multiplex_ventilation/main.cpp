@@ -146,7 +146,7 @@ int main(int argc, char* argv[])
           for (int complianceIterator = 0; complianceIterator < numComplianceIterations; complianceIterator++)
           {
             int compliance0_mL_Per_cmH2O = driveCompliance_mL_Per_cmH2O - complianceIterator * stepCompliance_mL_Per_cmH2O;
-            compliance0_mL_Per_cmH2O = MAX(minSetCompliance_mL_Per_cmH2O, minCompliance_mL_Per_cmH2O);
+            compliance0_mL_Per_cmH2O = MAX(compliance0_mL_Per_cmH2O, minCompliance_mL_Per_cmH2O);
             int compliance1_mL_Per_cmH2O = driveCompliance_mL_Per_cmH2O + complianceIterator * stepCompliance_mL_Per_cmH2O;
             compliance1_mL_Per_cmH2O = MIN(compliance1_mL_Per_cmH2O, maxCompliance_mL_Per_cmH2O);
 
