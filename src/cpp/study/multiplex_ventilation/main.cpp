@@ -87,16 +87,16 @@ int main(int argc, char* argv[])
       pulse::study::multiplex_ventilation::bind::SimulationListData simList;
       simList.set_outputrootdir(Dir::Base);
       // Loop parameters
-      int minCompliance0_mL_Per_cmH2O = 10;
-      int maxCompliance0_mL_Per_cmH2O = 50;
-      int stepCompliance0_mL_Per_cmH2O = 10;
+      int minCompliance_mL_Per_cmH2O = 10;
+      int maxCompliance_mL_Per_cmH2O = 50;
+      int stepCompliance_mL_Per_cmH2O = 10;
       int minPEEP_cmH2O = 10;
       int maxPEEP_cmH2O = 20;
       int stepPEEP_cmH2O = 5;
-      float minImpairment = 0.3f;
-      float maxImpairment = 0.9f;
-      float stepImpairment0 = 0.1f;
-      float stepImpairment1 = 0.2f;
+      int minImpairment_percent = 30; //=0.3 mild
+      int maxImpairment_percent = 90; //=0.9 severe
+      int stepImpairment0_percent = 10; //=0.1
+      int stepImpairment1_percent = 10; //=0.1
 
       // Settings
       double breathRate_bpm = 20.0;
@@ -114,54 +114,67 @@ int main(int argc, char* argv[])
       for (int PEEP_cmH2O = minPEEP_cmH2O; PEEP_cmH2O <= maxPEEP_cmH2O; PEEP_cmH2O += stepPEEP_cmH2O)
       {
         // Patient0 compliance loop
-        for (int compliance0_mL_Per_cmH2O = minCompliance0_mL_Per_cmH2O; compliance0_mL_Per_cmH2O <= maxCompliance0_mL_Per_cmH2O; compliance0_mL_Per_cmH2O += stepCompliance0_mL_Per_cmH2O)
+        for (int driveCompliance_mL_Per_cmH2O = minCompliance_mL_Per_cmH2O; driveCompliance_mL_Per_cmH2O <= maxCompliance_mL_Per_cmH2O; driveCompliance_mL_Per_cmH2O += stepCompliance_mL_Per_cmH2O)
         {
           // RC circuit charging equation
           // Assume tube resistances are negligable
           double breathPeriod_s = 60.0 / breathRate_bpm;
           double inspiratoryPeriod_s = IERatio * breathPeriod_s / (1.f + IERatio);
 
-          double targetTidalVolume_mL = 6.0 * 75.3; // Aaron - What's the best way to get the ideal body weight from the patient?
-          double targetTidalVolume_L = targetTidalVolume_mL / 1000.0;
+          double targetTidalVolume_mL = 6.0 * 75.3; /// \todo What's the best way to get the ideal body weight from the patient?
 
-          int PIP_cmH2O = int(targetTidalVolume_mL / (compliance0_mL_Per_cmH2O * (1.0 - exp(-inspiratoryPeriod_s / (resistance_cmH2O_s_Per_mL * compliance0_mL_Per_cmH2O)))) + PEEP_cmH2O);
+          int PIP_cmH2O = int(targetTidalVolume_mL / (driveCompliance_mL_Per_cmH2O * (1.0 - exp(-inspiratoryPeriod_s / (resistance_cmH2O_s_Per_mL * driveCompliance_mL_Per_cmH2O)))) + PEEP_cmH2O);
 
+          // Red bounds
           double lowestTargetTidalVolume_mL = 4.5 * 75.3;
           double highestTargetTidalVolume_mL = 7.5 * 75.3;
 
-          double minCompliance1_mL_Per_cmH2O = lowestTargetTidalVolume_mL / (PIP_cmH2O - PEEP_cmH2O);
-          double maxCompliance1_mL_Per_cmH2O = highestTargetTidalVolume_mL / (PIP_cmH2O - PEEP_cmH2O);
+          // Appriximate, assuming fully charged and discharged each cycle/breath
+          double minSetCompliance_mL_Per_cmH2O = lowestTargetTidalVolume_mL / (PIP_cmH2O - PEEP_cmH2O);
+          double maxSetCompliance_mL_Per_cmH2O = highestTargetTidalVolume_mL / (PIP_cmH2O - PEEP_cmH2O);
 
-          int stepCompliance1_mL_Per_cmH2O = 2.0;
-          minCompliance1_mL_Per_cmH2O -= stepCompliance1_mL_Per_cmH2O;
-          minCompliance1_mL_Per_cmH2O = MAX(minCompliance1_mL_Per_cmH2O, minCompliance0_mL_Per_cmH2O);
-          maxCompliance1_mL_Per_cmH2O += stepCompliance1_mL_Per_cmH2O;
-          maxCompliance1_mL_Per_cmH2O = MIN(maxCompliance1_mL_Per_cmH2O, maxCompliance0_mL_Per_cmH2O);
+          // Intelligently sweep the space set by red bounds
+          int stepCompliance_mL_Per_cmH2O = 1;
+          minSetCompliance_mL_Per_cmH2O -= stepCompliance_mL_Per_cmH2O;
+          minSetCompliance_mL_Per_cmH2O = MAX(minSetCompliance_mL_Per_cmH2O, minCompliance_mL_Per_cmH2O);
+          maxSetCompliance_mL_Per_cmH2O += stepCompliance_mL_Per_cmH2O;
+          maxSetCompliance_mL_Per_cmH2O = MIN(maxSetCompliance_mL_Per_cmH2O, maxCompliance_mL_Per_cmH2O);
 
-          for (int compliance1_mL_Per_cmH2O = minCompliance1_mL_Per_cmH2O; compliance1_mL_Per_cmH2O <= maxCompliance1_mL_Per_cmH2O; compliance1_mL_Per_cmH2O += stepCompliance1_mL_Per_cmH2O)
+          int numComplianceIterations = MIN((driveCompliance_mL_Per_cmH2O - minSetCompliance_mL_Per_cmH2O) / stepCompliance_mL_Per_cmH2O,
+            (maxSetCompliance_mL_Per_cmH2O - driveCompliance_mL_Per_cmH2O) / stepCompliance_mL_Per_cmH2O) + 1;
+
+          for (int complianceIterator = 0; complianceIterator < numComplianceIterations; complianceIterator++)
           {
-            for (float impairment0 = minImpairment; impairment0 <= maxImpairment; impairment0 += stepImpairment0)
+            int compliance0_mL_Per_cmH2O = driveCompliance_mL_Per_cmH2O - complianceIterator * stepCompliance_mL_Per_cmH2O;
+            compliance0_mL_Per_cmH2O = MAX(compliance0_mL_Per_cmH2O, minCompliance_mL_Per_cmH2O);
+            int compliance1_mL_Per_cmH2O = driveCompliance_mL_Per_cmH2O + complianceIterator * stepCompliance_mL_Per_cmH2O;
+            compliance1_mL_Per_cmH2O = MIN(compliance1_mL_Per_cmH2O, maxCompliance_mL_Per_cmH2O);
+
+            for (int impairment0_percent = minImpairment_percent; impairment0_percent <= maxImpairment_percent; impairment0_percent += stepImpairment0_percent)
             {
-              for (float impairment1 = minImpairment; impairment1 <= maxImpairment; impairment1 += stepImpairment1)
+              float impairment0 = float(impairment0_percent) / 100.0;
+              for (int impairment1_percent = minImpairment_percent; impairment1_percent <= maxImpairment_percent; impairment1_percent += stepImpairment1_percent)
               {
+                float impairment1 = float(impairment1_percent) / 100.0;
+
                 std::string baseName = "peep=" + std::to_string(PEEP_cmH2O) +
-                                       "_pip=" + std::to_string(PIP_cmH2O) +
-                                       "_c0=" + std::to_string(compliance0_mL_Per_cmH2O) +
-                                       "_c1=" + std::to_string(compliance1_mL_Per_cmH2O) +
-                                       "_i0=" + to_scientific_notation(impairment0) +
-                                       "_i1=" + to_scientific_notation(impairment1) + "/";
+                  "_pip=" + std::to_string(PIP_cmH2O) +
+                  "_c0=" + std::to_string(compliance0_mL_Per_cmH2O) +
+                  "_c1=" + std::to_string(compliance1_mL_Per_cmH2O) +
+                  "_i0=" + to_scientific_notation(impairment0) +
+                  "_i1=" + to_scientific_notation(impairment1) + "/";
                 std::string inverted = "peep=" + std::to_string(PEEP_cmH2O) +
-                                       "_pip=" + std::to_string(PIP_cmH2O) +
-                                       "_c0=" + std::to_string(compliance0_mL_Per_cmH2O) +
-                                       "_c1=" + std::to_string(compliance1_mL_Per_cmH2O) +
-                                       "_i0=" + to_scientific_notation(impairment1) +
-                                       "_i1=" + to_scientific_notation(impairment0) + "/";
+                  "_pip=" + std::to_string(PIP_cmH2O) +
+                  "_c0=" + std::to_string(compliance0_mL_Per_cmH2O) +
+                  "_c1=" + std::to_string(compliance1_mL_Per_cmH2O) +
+                  "_i0=" + to_scientific_notation(impairment0) +
+                  "_i1=" + to_scientific_notation(impairment1) + "/";
                 if (baseNames.find(baseName) != baseNames.end())
                 {
                   std::cout << "Will already run a simulation for " << baseName << std::endl;
                   continue;
                 }
-                if ((compliance0_mL_Per_cmH2O== compliance1_mL_Per_cmH2O) && baseNames.find(inverted) != baseNames.end())
+                if ((compliance0_mL_Per_cmH2O == compliance1_mL_Per_cmH2O) && baseNames.find(inverted) != baseNames.end())
                 {
                   ignored++;
                   //std::cout << "Impairment inversion found in " << inverted << std::endl;
@@ -171,7 +184,7 @@ int main(int argc, char* argv[])
                 baseNames.insert(baseName);
                 auto sim = simList.add_simulations();
                 sim->set_id(id++);
-                sim->set_outputbasefilename(Dir::Results+baseName);
+                sim->set_outputbasefilename(Dir::Results + baseName);
                 // Ventilator Settings
                 sim->set_respirationrate_per_min(breathRate_bpm);
                 sim->set_ieratio(IERatio);
@@ -190,9 +203,9 @@ int main(int argc, char* argv[])
                 ps1->set_compliance_ml_per_cmh2o(compliance1_mL_Per_cmH2O);
                 ps1->set_resistance_cmh2o_s_per_l(resistance.GetValue(PressureTimePerVolumeUnit::cmH2O_s_Per_L));
                 ps1->set_impairmentfraction(impairment1);
-                
               }
             }
+            
           }
         }
       }
