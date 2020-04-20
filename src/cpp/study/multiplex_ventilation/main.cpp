@@ -87,9 +87,9 @@ int main(int argc, char* argv[])
       pulse::study::multiplex_ventilation::bind::SimulationListData simList;
       simList.set_outputrootdir(Dir::Base);
       // Loop parameters
-      int minCompliance0_mL_Per_cmH2O = 10;
-      int maxCompliance0_mL_Per_cmH2O = 50;
-      int stepCompliance0_mL_Per_cmH2O = 10;
+      int minCompliance_mL_Per_cmH2O = 10;
+      int maxCompliance_mL_Per_cmH2O = 50;
+      int stepCompliance_mL_Per_cmH2O = 10;
       int minPEEP_cmH2O = 10;
       int maxPEEP_cmH2O = 20;
       int stepPEEP_cmH2O = 5;
@@ -114,7 +114,7 @@ int main(int argc, char* argv[])
       for (int PEEP_cmH2O = minPEEP_cmH2O; PEEP_cmH2O <= maxPEEP_cmH2O; PEEP_cmH2O += stepPEEP_cmH2O)
       {
         // Patient0 compliance loop
-        for (int compliance0_mL_Per_cmH2O = minCompliance0_mL_Per_cmH2O; compliance0_mL_Per_cmH2O <= maxCompliance0_mL_Per_cmH2O; compliance0_mL_Per_cmH2O += stepCompliance0_mL_Per_cmH2O)
+        for (int driveCompliance_mL_Per_cmH2O = minCompliance_mL_Per_cmH2O; driveCompliance_mL_Per_cmH2O <= maxCompliance_mL_Per_cmH2O; driveCompliance_mL_Per_cmH2O += stepCompliance_mL_Per_cmH2O)
         {
           // RC circuit charging equation
           // Assume tube resistances are negligable
@@ -123,25 +123,33 @@ int main(int argc, char* argv[])
 
           double targetTidalVolume_mL = 6.0 * 75.3; /// \todo What's the best way to get the ideal body weight from the patient?
 
-          int PIP_cmH2O = int(targetTidalVolume_mL / (compliance0_mL_Per_cmH2O * (1.0 - exp(-inspiratoryPeriod_s / (resistance_cmH2O_s_Per_mL * compliance0_mL_Per_cmH2O)))) + PEEP_cmH2O);
+          int PIP_cmH2O = int(targetTidalVolume_mL / (driveCompliance_mL_Per_cmH2O * (1.0 - exp(-inspiratoryPeriod_s / (resistance_cmH2O_s_Per_mL * driveCompliance_mL_Per_cmH2O)))) + PEEP_cmH2O);
 
           // Red bounds
           double lowestTargetTidalVolume_mL = 4.5 * 75.3;
           double highestTargetTidalVolume_mL = 7.5 * 75.3;
 
           // Appriximate, assuming fully charged and discharged each cycle/breath
-          double minCompliance1_mL_Per_cmH2O = lowestTargetTidalVolume_mL / (PIP_cmH2O - PEEP_cmH2O);
-          double maxCompliance1_mL_Per_cmH2O = highestTargetTidalVolume_mL / (PIP_cmH2O - PEEP_cmH2O);
+          double minSetCompliance_mL_Per_cmH2O = lowestTargetTidalVolume_mL / (PIP_cmH2O - PEEP_cmH2O);
+          double maxSetCompliance_mL_Per_cmH2O = highestTargetTidalVolume_mL / (PIP_cmH2O - PEEP_cmH2O);
 
           // Intelligently sweep the space set by red bounds
-          int stepCompliance1_mL_Per_cmH2O = 1;
-          minCompliance1_mL_Per_cmH2O -= stepCompliance1_mL_Per_cmH2O;
-          minCompliance1_mL_Per_cmH2O = MAX(minCompliance1_mL_Per_cmH2O, minCompliance0_mL_Per_cmH2O);
-          maxCompliance1_mL_Per_cmH2O += stepCompliance1_mL_Per_cmH2O;
-          maxCompliance1_mL_Per_cmH2O = MIN(maxCompliance1_mL_Per_cmH2O, maxCompliance0_mL_Per_cmH2O);
+          int stepCompliance_mL_Per_cmH2O = 1;
+          minSetCompliance_mL_Per_cmH2O -= stepCompliance_mL_Per_cmH2O;
+          minSetCompliance_mL_Per_cmH2O = MAX(minSetCompliance_mL_Per_cmH2O, minCompliance_mL_Per_cmH2O);
+          maxSetCompliance_mL_Per_cmH2O += stepCompliance_mL_Per_cmH2O;
+          maxSetCompliance_mL_Per_cmH2O = MIN(maxSetCompliance_mL_Per_cmH2O, maxCompliance_mL_Per_cmH2O);
 
-          for (int compliance1_mL_Per_cmH2O = minCompliance1_mL_Per_cmH2O; compliance1_mL_Per_cmH2O <= maxCompliance1_mL_Per_cmH2O; compliance1_mL_Per_cmH2O += stepCompliance1_mL_Per_cmH2O)
+          int numComplianceIterations = MIN((driveCompliance_mL_Per_cmH2O - minSetCompliance_mL_Per_cmH2O) / stepCompliance_mL_Per_cmH2O,
+            (maxSetCompliance_mL_Per_cmH2O - driveCompliance_mL_Per_cmH2O) / stepCompliance_mL_Per_cmH2O) + 1;
+
+          for (int complianceIterator = 0; complianceIterator < numComplianceIterations; complianceIterator++)
           {
+            int compliance0_mL_Per_cmH2O = driveCompliance_mL_Per_cmH2O - complianceIterator * stepCompliance_mL_Per_cmH2O;
+            compliance0_mL_Per_cmH2O = MAX(minSetCompliance_mL_Per_cmH2O, minCompliance_mL_Per_cmH2O);
+            int compliance1_mL_Per_cmH2O = driveCompliance_mL_Per_cmH2O + complianceIterator * stepCompliance_mL_Per_cmH2O;
+            compliance1_mL_Per_cmH2O = MIN(compliance1_mL_Per_cmH2O, maxCompliance_mL_Per_cmH2O);
+
             for (int impairment0_percent = minImpairment_percent; impairment0_percent <= maxImpairment_percent; impairment0_percent += stepImpairment0_percent)
             {
               float impairment0 = float(impairment0_percent) / 100.0;
