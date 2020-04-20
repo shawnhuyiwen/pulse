@@ -11,6 +11,8 @@ import scipy.optimize as opt
 import matplotlib.cm as cmx
 import matplotlib.tri as mtri
 from scipy import interpolate
+import seaborn as sns
+import pandas as pd
 
 
 def plot_all_parameters(simulations: SimulationListData):
@@ -231,9 +233,135 @@ def plot_interpolate(simulations: SimulationListData):
     Plot(x, y, z, xnew, ynew, znew)
 
 
+def parse_data2(simulations):
+    # This assumes there are 2 patients being compared
+
+    x = []
+    y = []
+    z_num = []
+    z_norm = []
+    index = []
+    for sim in simulations.Simulations:
+        p0 = sim.PatientComparisons[0].MultiplexVentilation
+        p1 = sim.PatientComparisons[1].MultiplexVentilation
+        p0_TV = p0.TidalVolume_mL / 75.3 # mL/kg ideal weight
+        p1_TV = p1.TidalVolume_mL / 75.3 # mL/kg ideal weight
+        if not (sim.FiO2 > 0.98 and (p0.OxygenSaturation < 0.89 or p1.OxygenSaturation < 0.89)):
+            if 6.5 >= p0_TV >= 5.5 and \
+               6.5 >= p1_TV >= 5.5 and \
+               p0.OxygenSaturation >= 0.89 and p1.OxygenSaturation >= 0.89 and \
+               p0.ArterialOxygenPartialPressure_mmHg < 120 and p1.ArterialOxygenPartialPressure_mmHg < 120:
+                x.append(p0.Compliance_mL_Per_cmH2O - p1.Compliance_mL_Per_cmH2O)
+                y.append(p0.OxygenSaturationIndex_cmH2O - p1.OxygenSaturationIndex_cmH2O)
+                z_norm.append(1.0)
+                index.append("green")
+            elif (7.5 >= p0_TV >= 4.5) and (7.5 >= p1_TV >= 4.5) and \
+                 p0.OxygenSaturation >= 0.89 and p1.OxygenSaturation >= 0.89 and \
+                 p0.ArterialOxygenPartialPressure_mmHg < 200 and p1.ArterialOxygenPartialPressure_mmHg < 200:
+                    x.append(p0.Compliance_mL_Per_cmH2O - p1.Compliance_mL_Per_cmH2O)
+                    y.append(p0.OxygenSaturationIndex_cmH2O - p1.OxygenSaturationIndex_cmH2O)
+                    z_norm.append(0.5)
+                    index.append("yellow")
+            else:
+                x.append(p0.Compliance_mL_Per_cmH2O - p1.Compliance_mL_Per_cmH2O)
+                y.append(p0.OxygenSaturationIndex_cmH2O - p1.OxygenSaturationIndex_cmH2O)
+                z_norm.append(0.0)
+                index.append("red")
+        else:
+            impairment0 = p0.ImpairmentFraction
+            impairment1 = p1.ImpairmentFraction
+            yep = True
+
+    #xy = np.column_stack((x, y))
+    #xy = np.transpose(xy)
+
+    x = np.asarray(x)
+    y = np.asarray(y)
+    z_norm = np.asarray(z_norm)
+
+    numpy_data = np.array([x, y, index])
+    numpy_data = np.transpose(numpy_data)
+    df = pd.DataFrame(data=numpy_data, columns=["x", "y", "color"])
+    df['x'] = df['x'].astype(float)
+    df['y'] = df['y'].astype(float)
+
+    return x, y, z_norm, df
+
+
+def Interpolate2(x, y, z):
+    x_bound = 15
+    y_bound = 600
+
+    xnew, ynew = np.mgrid[-x_bound:x_bound:100j, -y_bound:y_bound:100j]
+    tck = interpolate.bisplrep(x, y, z, kx=2, ky=2)
+    #jbw - get r squared value
+    znew = interpolate.bisplev(xnew[:, 0], ynew[0, :], tck)
+    #znew = znew / np.linalg.norm(znew)
+    #znew = (znew-np.min(znew))/np.ptp(znew)
+    znew = np.clip(znew, 0, 1)
+
+    return xnew, ynew, znew
+
+
+def Plot2(x, y, z, xnew, ynew, znew, df):
+    x_bound = 15
+    y_bound = 600
+
+    x_label = "Respiratory Compliance Difference (mL/cmH2O)"
+    y_label = "Oxygen Saturation Index Difference (mmHg)"
+
+    legend_title = "Outcome"
+    legend_green = "Positive"
+    legend_yellow = "Less Positive"
+    legend_red = "Negative"
+
+    grid = sns.JointGrid(x='x', y='y', data=df, xlim=(-x_bound, x_bound), ylim=(-y_bound, y_bound))
+    g = grid.plot_joint(sns.scatterplot, hue='color', data=df, alpha=0.3, palette=['green','yellow','red'])
+    g.set_axis_labels(x_label, y_label)
+    plt.legend(title=legend_title, loc='upper left', labels=[legend_green, legend_yellow, legend_red])
+
+    sns.kdeplot(df.loc[df['color'] == 'green', 'x'], ax=g.ax_marg_x, legend=False, color='green', shade=True)
+    sns.kdeplot(df.loc[df['color'] == 'yellow', 'x'], ax=g.ax_marg_x, legend=False, color='yellow', shade=True)
+    sns.kdeplot(df.loc[df['color'] == 'red', 'x'], ax=g.ax_marg_x, legend=False, color='red', shade=True)
+    sns.kdeplot(df.loc[df['color'] == 'green', 'y'], ax=g.ax_marg_y, vertical=True, legend=False, color='green', shade=True)
+    sns.kdeplot(df.loc[df['color'] == 'yellow', 'y'], ax=g.ax_marg_y, vertical=True, legend=False, color='yellow', shade=True)
+    sns.kdeplot(df.loc[df['color'] == 'red', 'y'], ax=g.ax_marg_y, vertical=True, legend=False, color='red', shade=True)
+
+    fig, axs = plt.subplots(1, 2)
+    fig.suptitle('Combined Outcomes: Patient 1 vs Patient 2 Clinical Measurements', fontsize=14)
+
+    axs[0].set_aspect=x_bound/y_bound
+    axs[0].scatter(x, y, marker='o', c=z, cmap='RdYlGn', alpha=0.3)
+    axs[0].set_xlim([-x_bound, x_bound])
+    axs[0].set_ylim([-y_bound, y_bound])
+    axs[0].set_title("Simulation Results")
+    axs[0].set_xlabel(x_label)
+    axs[0].set_ylabel(y_label)
+
+    axs[1].set_aspect=20/y_bound
+    axs[1].pcolor(xnew, ynew, znew, cmap='RdYlGn')
+    #axs[1].contour(xnew, ynew, znew, levels=[0.0, 0.25, 0.5, 0.75, 1.0], colors='k')
+    axs[1].contour(xnew, ynew, znew, colors='k')
+    axs[1].set_title("Interpolated Results")
+    axs[1].set_xlabel(x_label)
+    axs[1].set_ylabel(y_label)
+
+    plt.show()
+
+    #Save to disk
+
+
+def plot_interpolate2(simulations: SimulationListData):
+    x, y, z, df = parse_data2(simulations)
+
+    xnew, ynew, znew = Interpolate2(x, y, z)
+
+    Plot2(x, y, z, xnew, ynew, znew, df)
+
+
 if __name__ == '__main__':
     # Load up a result set
-    results_file = "./test_results/multiplex_ventilation/simulations/simlist_results.json"
+    results_file = "./test_results/multiplex_ventilation/simulations/simlist_results_10584.json"
     with open(results_file) as f:
         json = f.read()
     results = SimulationListData()
@@ -241,4 +369,4 @@ if __name__ == '__main__':
     # Make some plots
     #plot_all_parameters(results)
     #plot_by_parameter(results)
-    plot_interpolate(results)
+    plot_interpolate2(results)
