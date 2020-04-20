@@ -7,9 +7,14 @@ RUN apt-get update \
 
 # Replace with pip install -r requirements.txt
 # Or a setup.py
-RUN pip3 install six &&
-    pip3 install numpy &&
-    pip3 install pandas
+RUN pip3 install six \
+    && pip3 install numpy \
+    && pip3 install pandas \
+    && pip3 install matplotlib \
+    && pip3 install bqplot \
+    && pip3 install jupyter \
+    && pip3 install ipywidgets
+RUN jupyter nbextension enable --py bqplot
  
 # Pull in local source and build
 COPY . /source
