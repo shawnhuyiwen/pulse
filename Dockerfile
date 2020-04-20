@@ -21,7 +21,7 @@ RUN export JAVA_HOME=/usr/lib/jvm/java-1.8.0-amazon-corretto/ \
  && mkdir build \
  && mkdir pulse \
  && cd /build \
- && cmake -DPULSE_PYTHON_BINDINGS=ON -DCMAKE_INSTALL_PREFIX=/pulse /source \
+ && cmake -DPulse_PYTHON_API=ON -DCMAKE_INSTALL_PREFIX=/pulse /source \
  && cd /build \
  && make -j4 \
  && cd / \
