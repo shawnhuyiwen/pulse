@@ -36,7 +36,7 @@ def serialize_actions_to_string(actions: [], fmt: eSerializationFormat):
         if not action.is_valid():
             print("Skipping invalid action")
             continue
-        print(action)
+        #print(action)
         any_action = AnyActionData()
         if isinstance(action, SEPatientAction):
             if isinstance(action, SEAsthmaAttack):
