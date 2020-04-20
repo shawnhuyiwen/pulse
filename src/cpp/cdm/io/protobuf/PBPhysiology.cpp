@@ -838,6 +838,8 @@ void PBPhysiology::Serialize(const CDM_BIND::RespiratorySystemData& src, SERespi
     PBProperty::Load(src.expiratoryflow(), dst.GetExpiratoryFlow());
   if (src.has_expiratorypulmonaryresistance())
     PBProperty::Load(src.expiratorypulmonaryresistance(), dst.GetExpiratoryPulmonaryResistance());
+  if (src.has_fractionofinsipredoxygen())
+    PBProperty::Load(src.fractionofinsipredoxygen(), dst.GetFractionOfInsipredOxygen());
   if (src.has_imposedpowerofbreathing())
     PBProperty::Load(src.imposedpowerofbreathing(), dst.GetImposedPowerOfBreathing());
   if (src.has_imposedworkofbreathing())
@@ -856,6 +858,12 @@ void PBPhysiology::Serialize(const CDM_BIND::RespiratorySystemData& src, SERespi
     PBProperty::Load(src.lungcompliance(), dst.GetLungCompliance());
   if (src.has_maximalinspiratorypressure())
     PBProperty::Load(src.maximalinspiratorypressure(), dst.GetMaximalInspiratoryPressure());
+  if (src.has_meanairwaypressure())
+    PBProperty::Load(src.meanairwaypressure(), dst.GetMeanAirwayPressure());
+  if (src.has_oxygenationindex())
+    PBProperty::Load(src.oxygenationindex(), dst.GetOxygenationIndex());
+  if (src.has_oxygensaturationindex())
+    PBProperty::Load(src.oxygensaturationindex(), dst.GetOxygenSaturationIndex());
   if (src.has_patientpowerofbreathing())
     PBProperty::Load(src.patientpowerofbreathing(), dst.GetPatientPowerOfBreathing());
   if (src.has_patientworkofbreathing())
@@ -880,6 +888,8 @@ void PBPhysiology::Serialize(const CDM_BIND::RespiratorySystemData& src, SERespi
     PBProperty::Load(src.respiratorymusclefatigue(), dst.GetRespiratoryMuscleFatigue());
   if (src.has_respiratorymusclepressure())
     PBProperty::Load(src.respiratorymusclepressure(), dst.GetRespiratoryMusclePressure());
+  if (src.has_saturationandfractionofinspiredoxygenratio())
+    PBProperty::Load(src.saturationandfractionofinspiredoxygenratio(), dst.GetSaturationAndFractionOfInspiredOxygenRatio());
   if (src.has_specificventilation())
     PBProperty::Load(src.specificventilation(), dst.GetSpecificVentilation());
   if (src.has_tidalvolume())
@@ -946,6 +956,8 @@ void PBPhysiology::Serialize(const SERespiratorySystem& src, CDM_BIND::Respirato
     dst.set_allocated_expiratoryflow(PBProperty::Unload(*src.m_ExpiratoryFlow));
   if (src.HasExpiratoryPulmonaryResistance())
     dst.set_allocated_expiratorypulmonaryresistance(PBProperty::Unload(*src.m_ExpiratoryPulmonaryResistance));
+  if (src.HasFractionOfInsipredOxygen())
+    dst.set_allocated_fractionofinsipredoxygen(PBProperty::Unload(*src.m_FractionOfInsipredOxygen));
   if (src.HasImposedPowerOfBreathing())
     dst.set_allocated_imposedpowerofbreathing(PBProperty::Unload(*src.m_ImposedPowerOfBreathing));
   if (src.HasImposedWorkOfBreathing())
@@ -964,6 +976,12 @@ void PBPhysiology::Serialize(const SERespiratorySystem& src, CDM_BIND::Respirato
     dst.set_allocated_lungcompliance(PBProperty::Unload(*src.m_LungCompliance));
   if (src.HasMaximalInspiratoryPressure())
     dst.set_allocated_maximalinspiratorypressure(PBProperty::Unload(*src.m_MaximalInspiratoryPressure));
+  if (src.HasMeanAirwayPressure())
+    dst.set_allocated_meanairwaypressure(PBProperty::Unload(*src.m_MeanAirwayPressure));
+  if (src.HasOxygenationIndex())
+    dst.set_allocated_oxygenationindex(PBProperty::Unload(*src.m_OxygenationIndex));
+  if (src.HasOxygenSaturationIndex())
+    dst.set_allocated_oxygensaturationindex(PBProperty::Unload(*src.m_OxygenSaturationIndex));
   if (src.HasPatientPowerOfBreathing())
     dst.set_allocated_patientpowerofbreathing(PBProperty::Unload(*src.m_PatientPowerOfBreathing));
   if (src.HasPatientWorkOfBreathing())
@@ -988,6 +1006,8 @@ void PBPhysiology::Serialize(const SERespiratorySystem& src, CDM_BIND::Respirato
     dst.set_allocated_respiratorymusclefatigue(PBProperty::Unload(*src.m_RespiratoryMuscleFatigue));
   if (src.HasRespiratoryMusclePressure())
     dst.set_allocated_respiratorymusclepressure(PBProperty::Unload(*src.m_RespiratoryMusclePressure));
+  if (src.HasSaturationAndFractionOfInspiredOxygenRatio())
+    dst.set_allocated_saturationandfractionofinspiredoxygenratio(PBProperty::Unload(*src.m_SaturationAndFractionOfInspiredOxygenRatio));
   if (src.HasSpecificVentilation())
     dst.set_allocated_specificventilation(PBProperty::Unload(*src.m_SpecificVentilation));
   if (src.HasTidalVolume())
