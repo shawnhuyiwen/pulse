@@ -135,9 +135,9 @@ int main(int argc, char* argv[])
 
           // Intelligently sweep the space set by red bounds
           int stepCompliance_mL_Per_cmH2O = 1;
-          minSetCompliance_mL_Per_cmH2O -= stepCompliance_mL_Per_cmH2O;
+          minSetCompliance_mL_Per_cmH2O -= (stepCompliance_mL_Per_cmH2O * 2);
           minSetCompliance_mL_Per_cmH2O = MAX(minSetCompliance_mL_Per_cmH2O, minCompliance_mL_Per_cmH2O);
-          maxSetCompliance_mL_Per_cmH2O += stepCompliance_mL_Per_cmH2O;
+          maxSetCompliance_mL_Per_cmH2O += (stepCompliance_mL_Per_cmH2O * 2);
           maxSetCompliance_mL_Per_cmH2O = MIN(maxSetCompliance_mL_Per_cmH2O, maxCompliance_mL_Per_cmH2O);
 
           int numComplianceIterations = MIN((driveCompliance_mL_Per_cmH2O - minSetCompliance_mL_Per_cmH2O) / stepCompliance_mL_Per_cmH2O,
