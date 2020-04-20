@@ -93,10 +93,10 @@ int main(int argc, char* argv[])
       int minPEEP_cmH2O = 10;
       int maxPEEP_cmH2O = 20;
       int stepPEEP_cmH2O = 5;
-      float minImpairment = 0.3f; //mild
-      float maxImpairment = 0.9f; //severe
-      float stepImpairment0 = 0.1f;
-      float stepImpairment1 = 0.1f;
+      int minImpairment_percent = 30; //=0.3 mild
+      int maxImpairment_percent = 90; //=0.9 severe
+      int stepImpairment0_percent = 10; //=0.1
+      int stepImpairment1_percent = 10; //=0.1
 
       // Settings
       double breathRate_bpm = 20.0;
@@ -142,10 +142,13 @@ int main(int argc, char* argv[])
 
           for (int compliance1_mL_Per_cmH2O = minCompliance1_mL_Per_cmH2O; compliance1_mL_Per_cmH2O <= maxCompliance1_mL_Per_cmH2O; compliance1_mL_Per_cmH2O += stepCompliance1_mL_Per_cmH2O)
           {
-            for (float impairment0 = minImpairment; impairment0 <= maxImpairment; impairment0 += stepImpairment0)
+            for (int impairment0_percent = minImpairment_percent; impairment0_percent <= maxImpairment_percent; impairment0_percent += stepImpairment0_percent)
             {
-              for (float impairment1 = minImpairment; impairment1 <= maxImpairment; impairment1 += stepImpairment1)
+              float impairment0 = float(impairment0_percent) / 100.0;
+              for (int impairment1_percent = minImpairment_percent; impairment1_percent <= maxImpairment_percent; impairment1_percent += stepImpairment1_percent)
               {
+                float impairment1 = float(impairment1_percent) / 100.0;
+
                 std::string baseName = "peep=" + std::to_string(PEEP_cmH2O) +
                   "_pip=" + std::to_string(PIP_cmH2O) +
                   "_c0=" + std::to_string(compliance0_mL_Per_cmH2O) +
@@ -156,8 +159,8 @@ int main(int argc, char* argv[])
                   "_pip=" + std::to_string(PIP_cmH2O) +
                   "_c0=" + std::to_string(compliance0_mL_Per_cmH2O) +
                   "_c1=" + std::to_string(compliance1_mL_Per_cmH2O) +
-                  "_i0=" + to_scientific_notation(impairment1) +
-                  "_i1=" + to_scientific_notation(impairment0) + "/";
+                  "_i0=" + to_scientific_notation(impairment0) +
+                  "_i1=" + to_scientific_notation(impairment1) + "/";
                 if (baseNames.find(baseName) != baseNames.end())
                 {
                   std::cout << "Will already run a simulation for " << baseName << std::endl;
