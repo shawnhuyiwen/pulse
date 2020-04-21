@@ -135,20 +135,44 @@ int main(int argc, char* argv[])
 
           // Intelligently sweep the space set by red bounds
           int stepCompliance_mL_Per_cmH2O = 1;
-          minSetCompliance_mL_Per_cmH2O -= (stepCompliance_mL_Per_cmH2O * 2);
+          minSetCompliance_mL_Per_cmH2O -= (stepCompliance_mL_Per_cmH2O * 3);
           minSetCompliance_mL_Per_cmH2O = MAX(minSetCompliance_mL_Per_cmH2O, minCompliance_mL_Per_cmH2O);
-          maxSetCompliance_mL_Per_cmH2O += (stepCompliance_mL_Per_cmH2O * 2);
+          maxSetCompliance_mL_Per_cmH2O += (stepCompliance_mL_Per_cmH2O * 3);
           maxSetCompliance_mL_Per_cmH2O = MIN(maxSetCompliance_mL_Per_cmH2O, maxCompliance_mL_Per_cmH2O);
 
-          int numComplianceIterations = MIN((driveCompliance_mL_Per_cmH2O - minSetCompliance_mL_Per_cmH2O) / stepCompliance_mL_Per_cmH2O,
+          int numComplianceIterations = MAX((driveCompliance_mL_Per_cmH2O - minSetCompliance_mL_Per_cmH2O) / stepCompliance_mL_Per_cmH2O,
             (maxSetCompliance_mL_Per_cmH2O - driveCompliance_mL_Per_cmH2O) / stepCompliance_mL_Per_cmH2O) + 1;
+          numComplianceIterations *= 2;
 
+          // Move each compliance very other step
+          bool moveCompliance0 = true;
+          int compliance0_mL_Per_cmH2O = driveCompliance_mL_Per_cmH2O;
+          int compliance1_mL_Per_cmH2O = driveCompliance_mL_Per_cmH2O;
           for (int complianceIterator = 0; complianceIterator < numComplianceIterations; complianceIterator++)
           {
-            int compliance0_mL_Per_cmH2O = driveCompliance_mL_Per_cmH2O - complianceIterator * stepCompliance_mL_Per_cmH2O;
-            compliance0_mL_Per_cmH2O = MAX(compliance0_mL_Per_cmH2O, minCompliance_mL_Per_cmH2O);
-            int compliance1_mL_Per_cmH2O = driveCompliance_mL_Per_cmH2O + complianceIterator * stepCompliance_mL_Per_cmH2O;
-            compliance1_mL_Per_cmH2O = MIN(compliance1_mL_Per_cmH2O, maxCompliance_mL_Per_cmH2O);
+            if (complianceIterator != 0)
+            {
+              if (moveCompliance0)
+              {
+                compliance0_mL_Per_cmH2O += stepCompliance_mL_Per_cmH2O;
+                moveCompliance0 = false;
+                if (compliance0_mL_Per_cmH2O > maxCompliance_mL_Per_cmH2O)
+                {
+                  compliance0_mL_Per_cmH2O = maxCompliance_mL_Per_cmH2O;
+                  continue;
+                }
+              }
+              else
+              {
+                compliance1_mL_Per_cmH2O -= stepCompliance_mL_Per_cmH2O;
+                moveCompliance0 = true;
+                if (compliance1_mL_Per_cmH2O < minCompliance_mL_Per_cmH2O)
+                {
+                  compliance1_mL_Per_cmH2O = minCompliance_mL_Per_cmH2O;
+                  continue;
+                }
+              }
+            }
 
             for (int impairment0_percent = minImpairment_percent; impairment0_percent <= maxImpairment_percent; impairment0_percent += stepImpairment0_percent)
             {
@@ -205,7 +229,6 @@ int main(int argc, char* argv[])
                 ps1->set_impairmentfraction(impairment1);
               }
             }
-            
           }
         }
       }
