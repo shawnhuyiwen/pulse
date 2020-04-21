@@ -21,9 +21,9 @@ void MVGenerator::GeneratePatientList()
   SAFE_DELETE(m_PatientList);
   m_PatientList = new pulse::study::multiplex_ventilation::bind::PatientStateListData();
 
-  unsigned int totalIterations = (((m_MaxCompliance_mL_Per_cmH2O - m_MinCompliance_mL_Per_cmH2O) / m_StepCompliance_mL_Per_cmH2O) + 1) *
-                                  ((m_MaxPEEP_cmH2O - m_MinPEEP_cmH2O) / m_StepPEEP_cmH2O + 1) *
-                                  (rint((m_MaxImpairment - m_MinImpairment) / m_StepImpairment + 1.0));
+  //unsigned int totalIterations = (((m_MaxCompliance_mL_Per_cmH2O - m_MinCompliance_mL_Per_cmH2O) / m_StepCompliance_mL_Per_cmH2O) + 1) *
+  //                                ((m_MaxPEEP_cmH2O - m_MinPEEP_cmH2O) / m_StepPEEP_cmH2O + 1) *
+  //                                (rint((m_MaxImpairment - m_MinImpairment) / m_StepImpairment + 1.0));
 
   SEScalarPressureTimePerVolume r;
   r.SetValue(m_Resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
@@ -242,7 +242,7 @@ bool MVGenerator::GenerateStabilizedPatient(pulse::study::multiplex_ventilation:
   // Set Vitals
   pData.set_oxygensaturation(engine->GetBloodChemistrySystem()->GetOxygenSaturation());
   pData.set_tidalvolume_ml(engine->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL));
-  pData.set_endtidalcarbondioxidepressure_cmh2o(engine->GetRespiratorySystem()->GetEndTidalCarbonDioxidePressure(PressureUnit::cmH2O));
+  pData.set_endtidalcarbondioxidepressure_mmhg(engine->GetRespiratorySystem()->GetEndTidalCarbonDioxidePressure(PressureUnit::mmHg));
   auto AortaO2 = engine->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta)->GetSubstanceQuantity(*engine->GetSubstanceManager().GetSubstance("Oxygen"));
   pData.set_arterialoxygenpartialpressure_mmhg(AortaO2->GetPartialPressure(PressureUnit::mmHg));
   pData.set_carricoindex_mmhg(engine->GetRespiratorySystem()->GetCarricoIndex(PressureUnit::mmHg));
