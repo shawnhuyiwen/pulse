@@ -21,21 +21,23 @@ message PatientStateData
   // Vitals
   double          AirwayFlow_L_Per_min                      = 11;
   double          AirwayPressure_cmH2O                      = 12;
-  double          ArterialCarbonDioxidePartialPressure_mmHg = 13;
-  double          ArterialOxygenPartialPressure_mmHg        = 14;
-  double          CarricoIndex_mmHg                         = 15;
-  double          EndTidalCarbonDioxidePressure_cmH2O       = 16;
-  double          IdealBodyWeight_kg                        = 17;
-  double          MeanAirwayPressure_cmH2O                  = 18;
-  double          OxygenationIndex                          = 19;
-  double          OxygenSaturation                          = 20;
-  double          OxygenSaturationIndex_cmH2O               = 21;
-  double          SFRatio                                   = 22;
-  double          TidalVolume_mL                            = 23;
-  double          TotalLungVolume_mL                        = 24;
+  double          AlveolarArterialGradient_mmHg             = 13;
+  double          ArterialCarbonDioxidePartialPressure_mmHg = 14;
+  double          ArterialOxygenPartialPressure_mmHg        = 15;
+  double          CarricoIndex_mmHg                         = 16;
+  double          EndTidalCarbonDioxidePressure_cmH2O       = 17;
+  double          IdealBodyWeight_kg                        = 18;
+  double          MeanAirwayPressure_cmH2O                  = 19;
+  double          OxygenationIndex                          = 20;
+  double          OxygenSaturation                          = 21;
+  double          OxygenSaturationIndex_cmH2O               = 22;
+  double          SFRatio                                   = 23;
+  double          ShuntFraction                             = 24;
+  double          TidalVolume_mL                            = 25;
+  double          TotalLungVolume_mL                        = 26;
   // Stabilization Information
-  bool            AchievedStabilization                     = 25;
-  double          OxygenSaturationStabilizationTrend        = 27;
+  bool            AchievedStabilization                     = 27;
+  double          OxygenSaturationStabilizationTrend        = 28;
 }
 
 message PatientStateListData
