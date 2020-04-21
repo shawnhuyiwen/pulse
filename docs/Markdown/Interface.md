@@ -121,6 +121,7 @@ This initialization method is also the only way to specify any conditions (chron
   @refitem ConsumeMealTable "Consume Meal"
   @refitem ImpairedAlveolarExchangeTable "Impaired Alveolar Exchange"
   @refitem LobarPneumoniaTable "Lobar Pneumonia"
+  @refitem PulmonaryShuntTable "Pulmonary Shunt"
   @refitem SepsisTable "Sepsis"
 @endsecreflist
 
@@ -261,11 +262,13 @@ You will need to create an instance of an action class, fill it out with the nec
   @refitem DyspneaTable "Dyspnea"
   @refitem ExerciseTable "Exercise"
   @refitem HemorrhageTable "Hemorrhage"
+  @refitem ImpairedAlveolarExchangeExacerbationTable "Impaired Alveolar Exchange Exacerbation"
   @refitem IntubationTable "Intubation"
   @refitem LobarPneumoniaExacerbationTable "Lobar Pneumonia Exacerbation"
   @refitem MechanicalVentilationTable "Mechanical Ventilation"
   @refitem NeedleDecompressionTable "Needle Decompression"
   @refitem PericardialEffusionTable "Pericardial Effusion"
+  @refitem PulmonaryShuntExacerbationTable "Pulmonary Shunt Exacerbation"
   @refitem RespiratoryFatigueTable "Respiratory Fatigue"
   @refitem SubstanceBolusTable "Substance Bolus"
   @refitem SubstanceCompoundInfusionTable "Substance Compound Infusion"
@@ -284,23 +287,28 @@ You will need to create an instance of an action class, fill it out with the nec
 #### Anesthesia Machine Actions
 @secreflist
   @refitem AnesthesiaMachineConfigurationTable "Anesthesia Machine Configuration"
-  @refitem ExpiratoryValveLeakTable "Expiratory Valve Leak"
-  @refitem ExpiratoryValveObstructionTable "Expiratory Valve Obstruction"
-  @refitem InspiratoryValveLeakTable "Inspiratory Valve Leak"
-  @refitem InspiratoryValveObstructionTable "Inspiratory Valve Obstruction"
-  @refitem MaskLeakTable "Mask Leak"
-  @refitem OxygenTankPressureLossTable "Oxygen Tank Pressure Loss"
-  @refitem OxygenWallPortPressureLossTable "Oxygen Wall Port Pressure Loss"
-  @refitem SodaLimeFailureTable "SodaLime Failure"
-  @refitem TubeCuffLeakTable "Tube Cuff Leak"
-  @refitem VaporizerFailureTable "Vaporizer Failure"
-  @refitem VentilatorPressureLossTable "Ventilator Pressure Loss"
-  @refitem YPieceDisconnectTable "Y-Piece Disconnect"
+  @refitem AnesthesiaMachineExpiratoryValveLeakTable "Expiratory Valve Leak"
+  @refitem AnesthesiaMachineExpiratoryValveObstructionTable "Expiratory Valve Obstruction"
+  @refitem AnesthesiaMachineInspiratoryValveLeakTable "Inspiratory Valve Leak"
+  @refitem AnesthesiaMachineInspiratoryValveObstructionTable "Inspiratory Valve Obstruction"
+  @refitem AnesthesiaMachineMaskLeakTable "Mask Leak"
+  @refitem AnesthesiaMachineOxygenTankPressureLossTable "Oxygen Tank Pressure Loss"
+  @refitem AnesthesiaMachineOxygenWallPortPressureLossTable "Oxygen Wall Port Pressure Loss"
+  @refitem AnesthesiaMachineSodaLimeFailureTable "SodaLime Failure"
+  @refitem AnesthesiaMachineTubeCuffLeakTable "Tube Cuff Leak"
+  @refitem AnesthesiaMachineVaporizerFailureTable "Vaporizer Failure"
+  @refitem AnesthesiaMachineVentilatorPressureLossTable "Ventilator Pressure Loss"
+  @refitem AnesthesiaMachineYPieceDisconnectTable "Y-Piece Disconnect"
 @endsecreflist
 
 #### %Inhaler Actions
 @secreflist
   @refitem InhalerConfigurationTable "Inhaler Configuration"
+@endsecreflist
+
+#### Mechanical Ventilator Actions
+@secreflist
+  @refitem MechanicalVentilatorConfigurationTable "Mechanical Ventilator Configuration"
 @endsecreflist
 
 @anchor PatientState
