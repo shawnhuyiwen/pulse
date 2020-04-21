@@ -14,7 +14,7 @@
 class PulseEngineJNI : public LoggerForward, public SEAdvanceHandler, public SEEventHandler
 {
 public:
-  PulseEngineJNI(const std::string& logFile);
+  PulseEngineJNI(const std::string& logFile, const std::string& dataDir="./");
   ~PulseEngineJNI();
 
   void Reset();

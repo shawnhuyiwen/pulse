@@ -107,7 +107,7 @@ public class HowTo_EngineUse
    // The listener and callback objects are unique to this engine
    
    // Create a Pulse Engine
-   PulseEngine pe = new PulseEngine();// The engine log will be named based the provided string + ".log" 
+   PulseEngine pe = new PulseEngine();
    
    // I am going to create a listener that will get any log messages (Info, Warnings, Errors, Fatal Errors)
    // that come from the engine. The default listener will just put them into the log file
@@ -183,8 +183,10 @@ public class HowTo_EngineUse
       anemia.getReductionFactor().setValue(0.3);
       conditions.add(anemia);
       
-      // Allocate an engine
+      // Initialize an engine 
+      // Optionally, initializeEngine can take in a directory where Pulse looks for its required data files on disk
       pe.initializeEngine("./Scenarios/HowToDynamicEngine.log", patient_configuration, dataRequests);
+      //pe.initializeEngine("./Scenarios/HowToDynamicEngine.log", patient_configuration, dataRequests, "./");
        // This method will block while the engine stabilizes to meet the defined patient parameters
        break;
      }
@@ -195,13 +197,15 @@ public class HowTo_EngineUse
        // Optionally add conditions to the patient_configuration
        
        // Allocate an engine
-       pe.initializeEngine("./Scenarios/HowToDynamicEngine.log", patient_configuration, dataRequests);       
+       pe.initializeEngine("./Scenarios/HowToDynamicEngine.log", patient_configuration, dataRequests);
        // This method will block while the engine stabilizes to meet the defined patient parameters
        break;
      }
    case StateFile:
      {
+      // Optionally, serializeFromFile can take in a directory where Pulse looks for its required data files on disk
        pe.serializeFromFile("./Scenarios/HowToDynamicEngine.log", "./states/StandardMale@0s.json", dataRequests);
+       //pe.serializeFromFile("./Scenarios/HowToDynamicEngine.log", "./states/StandardMale@0s.json", dataRequests, "./");
        // This method method sets the engine to the provided state instantaneously and you are ready to process actions/advance time
        // You can alternatively specify the starting simTime of the engine       
        //pe.loadState("./Scenarios/HowToDynamicEngine.log", "./states/StandardMale@0s.json", time, dataRequests);

@@ -62,7 +62,7 @@ public class Pulse
   protected SEEventManager                eventManager = new SEEventManager();
   
   protected long nativeObj;
-  protected synchronized native long nativeAllocate(String logFile);
+  protected synchronized native long nativeAllocate(String logFile, String dataDir);
   protected synchronized native void nativeDelete(long nativeObj);
   
   protected List<Pair<SEDataRequest,SEScalar>> dataRequests = new ArrayList<Pair<SEDataRequest,SEScalar>>();  
