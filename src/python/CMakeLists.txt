@@ -16,6 +16,7 @@ endif()
 
 target_link_libraries(PyPulse
                       PUBLIC MultiplexVentilationEngine pybind11::module
+                      PRIVATE protobuf::libprotobuf
 )
 
 set_target_properties(PyPulse PROPERTIES

@@ -1,13 +1,20 @@
 
-add_library_ex(MultiplexVentilationEngine MVEngine.cpp
-                                          MVEngine.h
-                                          MVGenerator.cpp
-                                          MVGenerator.h
-                                          MVRunner.cpp
-                                          MVRunner.h)
+add_library_ex(MultiplexVentilationEngine
+  H_FILES
+    MVEngine.h
+    MVGenerator.h
+    MVRunner.h
+  CPP_FILES
+    MVEngine.cpp
+    MVGenerator.cpp
+    MVRunner.cpp
+  PUBLIC_DEPENDS
+    CommonPulseModels
+  PRIVATE_DEPENDS
+    protobuf::libprotobuf
+  )
 set_target_properties(MultiplexVentilationEngine PROPERTIES FOLDER "Studies//MultiplexVentilation")
-target_link_libraries(MultiplexVentilationEngine CommonPulseModels protobuf::libprotobuf)
 
 add_executable_ex(MultiplexVentilationDriver main.cpp)
 set_target_properties(MultiplexVentilationDriver PROPERTIES FOLDER "Studies//MultiplexVentilation")
-target_link_libraries(MultiplexVentilationDriver MultiplexVentilationEngine)
+target_link_libraries(MultiplexVentilationDriver MultiplexVentilationEngine protobuf::libprotobuf)
