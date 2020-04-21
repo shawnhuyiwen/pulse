@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
     if (mode == "gendata")
     {
       //DeleteDirectory(SoloDir, true);
-      MVGenerator mvg("./states/multiplex_ventilation/MultiplexVentilationDataGen.log");
+      MVGenerator mvg("./test_results/multiplex_ventilation/MultiplexVentilationDataGen.log");
       return !mvg.Run(Dir::Solo, Dir::Base+"solo_ventilated_states_list.json", SerializationFormat::JSON);
     }
     else if (mode == "sim_list")
@@ -54,7 +54,7 @@ int main(int argc, char* argv[])
         std::cerr << "Please provide a SimulationListData json file" << std::endl;
         return 1;
       }
-      MVRunner mvr("./states/multiplex_ventilation/MultiplexVentilationRunner.log");
+      MVRunner mvr("./test_results/multiplex_ventilation/MultiplexVentilationRunner.log");
       return !mvr.Run(argv[2], SerializationFormat::JSON, MVRunner::Mode::StepFiO2);
     }
     else if (mode == "single")
@@ -234,7 +234,7 @@ int main(int argc, char* argv[])
       }
       // Run the new simlist
       std::cout << "Generated " << id << " simulations, threw out " << ignored << std::endl;
-      MVRunner mvr("./states/multiplex_ventilation/MultiplexVentilationRunner.log");
+      MVRunner mvr("./test_results/multiplex_ventilation/MultiplexVentilationRunner.log");
       return !mvr.Run(simList, MVRunner::Mode::StepFiO2);
     }
     else // Manual
