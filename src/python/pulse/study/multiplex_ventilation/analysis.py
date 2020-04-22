@@ -13,6 +13,9 @@ import matplotlib.tri as mtri
 from scipy import interpolate
 import seaborn as sns
 import pandas as pd
+import matplotlib.gridspec as gridspec
+import matplotlib.image as mpimg
+from scipy import stats
 
 
 def plot_all_parameters(simulations: SimulationListData):
@@ -236,63 +239,190 @@ def plot_interpolate(simulations: SimulationListData):
 def parse_data2(simulations):
     # This assumes there are 2 patients being compared
 
-    x = []
-    y = []
-    z_num = []
+    delta_compliance = []
+    delta_O2SatIndex = []
+    delta_AirwayPressure_cmH2O = []
+    delta_ImpairmentFraction = []
+    delta_CarricoIndex_mmHg = []
+    delta_OxygenSaturation = []
+    delta_SFRatio = []
+    delta_OxygenationIndex = []
+    delta_EndTidalCarbonDioxidePressure_cmH2O = []
     z_norm = []
     index = []
+    tv_index = []
+    SpO2_index = []
+    PaO2_index = []
+    #max = 0
+
     for sim in simulations.Simulations:
         p0 = sim.PatientComparisons[0].MultiplexVentilation
         p1 = sim.PatientComparisons[1].MultiplexVentilation
         p0_TV = p0.TidalVolume_mL / 75.3 # mL/kg ideal weight
         p1_TV = p1.TidalVolume_mL / 75.3 # mL/kg ideal weight
-        if not (sim.FiO2 > 0.98 and (p0.OxygenSaturation < 0.89 or p1.OxygenSaturation < 0.89)):
+        if sim.FiO2 > 0.98 and (p0.OxygenSaturation < 0.89 or p1.OxygenSaturation < 0.89):
+            # Too impaired on their own
+            pass
+        else:
+            delta_compliance.append(abs(p0.Compliance_mL_Per_cmH2O - p1.Compliance_mL_Per_cmH2O))
+            delta_O2SatIndex.append(abs(p0.OxygenSaturationIndex_cmH2O - p1.OxygenSaturationIndex_cmH2O))
+            delta_AirwayPressure_cmH2O.append(abs(p0.AirwayPressure_cmH2O - p1.AirwayPressure_cmH2O))
+            delta_ImpairmentFraction.append(abs(p0.ImpairmentFraction - p1.ImpairmentFraction))
+            delta_CarricoIndex_mmHg.append(abs(p0.CarricoIndex_mmHg - p1.CarricoIndex_mmHg))
+            delta_OxygenSaturation.append(abs(p0.OxygenSaturation - p1.OxygenSaturation))
+            delta_SFRatio.append(abs(p0.SFRatio - p1.SFRatio))
+            delta_OxygenationIndex.append(abs(p0.OxygenationIndex - p1.OxygenationIndex))
+            delta_EndTidalCarbonDioxidePressure_cmH2O.append(abs(p0.EndTidalCarbonDioxidePressure_cmH2O - p1.EndTidalCarbonDioxidePressure_cmH2O))
+
+            # if max < p1.EndTidalCarbonDioxidePressure_cmH2O:
+            #     max = p1.EndTidalCarbonDioxidePressure_cmH2O
+
             if 6.5 >= p0_TV >= 5.5 and \
                6.5 >= p1_TV >= 5.5 and \
                p0.OxygenSaturation >= 0.89 and p1.OxygenSaturation >= 0.89 and \
                p0.ArterialOxygenPartialPressure_mmHg < 120 and p1.ArterialOxygenPartialPressure_mmHg < 120:
-                x.append(p0.Compliance_mL_Per_cmH2O - p1.Compliance_mL_Per_cmH2O)
-                y.append(p0.OxygenSaturationIndex_cmH2O - p1.OxygenSaturationIndex_cmH2O)
                 z_norm.append(1.0)
-                index.append("green")
+                index.append("Positive")
             elif (7.5 >= p0_TV >= 4.5) and (7.5 >= p1_TV >= 4.5) and \
                  p0.OxygenSaturation >= 0.89 and p1.OxygenSaturation >= 0.89 and \
                  p0.ArterialOxygenPartialPressure_mmHg < 200 and p1.ArterialOxygenPartialPressure_mmHg < 200:
-                    x.append(p0.Compliance_mL_Per_cmH2O - p1.Compliance_mL_Per_cmH2O)
-                    y.append(p0.OxygenSaturationIndex_cmH2O - p1.OxygenSaturationIndex_cmH2O)
                     z_norm.append(0.5)
-                    index.append("yellow")
+                    index.append("Less Positive")
             else:
-                x.append(p0.Compliance_mL_Per_cmH2O - p1.Compliance_mL_Per_cmH2O)
-                y.append(p0.OxygenSaturationIndex_cmH2O - p1.OxygenSaturationIndex_cmH2O)
                 z_norm.append(0.0)
-                index.append("red")
-        else:
-            impairment0 = p0.ImpairmentFraction
-            impairment1 = p1.ImpairmentFraction
-            yep = True
+                index.append("Negative")
+
+            # TV Only
+            if 6.5 >= p0_TV >= 5.5 and 6.5 >= p1_TV >= 5.5:
+                tv_index.append("Positive")
+            elif 7.5 >= p0_TV >= 4.5 and 7.5 >= p1_TV >= 4.5:
+                tv_index.append("Less Positive")
+            else:
+                tv_index.append("Negative")
+
+            # SpO2 Only
+            if p0.OxygenSaturation >= 0.89 and p1.OxygenSaturation >= 0.89:
+                SpO2_index.append("Positive")
+            else:
+                SpO2_index.append("Negative")
+
+            # PaO2 Only
+            if p0.ArterialOxygenPartialPressure_mmHg < 120 and p1.ArterialOxygenPartialPressure_mmHg < 120:
+                PaO2_index.append("Positive")
+            elif p0.ArterialOxygenPartialPressure_mmHg < 200 and p1.ArterialOxygenPartialPressure_mmHg < 200:
+                PaO2_index.append("Less Positive")
+            else:
+                PaO2_index.append("Negative")
 
     #xy = np.column_stack((x, y))
     #xy = np.transpose(xy)
 
-    x = np.asarray(x)
-    y = np.asarray(y)
+    delta_compliance = np.asarray(delta_compliance)
+    delta_O2SatIndex = np.asarray(delta_O2SatIndex)
     z_norm = np.asarray(z_norm)
 
-    numpy_data = np.array([x, y, index])
+    numpy_data = np.array([delta_compliance, delta_O2SatIndex, delta_AirwayPressure_cmH2O, delta_ImpairmentFraction, delta_CarricoIndex_mmHg, delta_SFRatio, delta_OxygenationIndex, delta_EndTidalCarbonDioxidePressure_cmH2O, index, tv_index, SpO2_index, PaO2_index])
     numpy_data = np.transpose(numpy_data)
-    df = pd.DataFrame(data=numpy_data, columns=["x", "y", "color"])
-    df['x'] = df['x'].astype(float)
-    df['y'] = df['y'].astype(float)
+    df = pd.DataFrame(data=numpy_data, columns=["delta_compliance", "delta_O2SatIndex", "delta_AirwayPressure_cmH2O", "delta_ImpairmentFraction", "delta_CarricoIndex_mmHg", "delta_SFRatio", "delta_OxygenationIndex", "delta_EndTidalCarbonDioxidePressure_cmH2O", "Outcome", "TV Outcome", "SpO2 Outcome", "PaO2 Outcome"])
+    df['delta_compliance'] = df['delta_compliance'].astype(float)
+    df['delta_O2SatIndex'] = df['delta_O2SatIndex'].astype(float)
+    df['delta_AirwayPressure_cmH2O'] = df['delta_AirwayPressure_cmH2O'].astype(float)
+    df['delta_ImpairmentFraction'] = df['delta_ImpairmentFraction'].astype(float)
+    df['delta_CarricoIndex_mmHg'] = df['delta_CarricoIndex_mmHg'].astype(float)
+    df['delta_SFRatio'] = df['delta_SFRatio'].astype(float)
 
-    return x, y, z_norm, df
+    corr_data = np.array([delta_compliance, delta_O2SatIndex, delta_AirwayPressure_cmH2O, delta_ImpairmentFraction,
+                           delta_CarricoIndex_mmHg, delta_SFRatio, delta_OxygenationIndex, delta_EndTidalCarbonDioxidePressure_cmH2O])
+    corr_data = np.transpose(corr_data)
+    corr_df = pd.DataFrame(data=corr_data, columns=["C Mismatch (cmH2O)", "SpO2 Index Mismatch", "MAP Mismatch (cmH2O)",
+                                                "Impairment Mismatch", "PaO2/FiO2 Mismatch (mmHg)",
+                                                "SpO2/FiO2 Mismatch", "Oxygenation Index Mismatch", "ETCO2 Mismatch (cmH2O)"])
+    df['delta_compliance'] = df['delta_compliance'].astype(float)
+    df['delta_O2SatIndex'] = df['delta_O2SatIndex'].astype(float)
+    df['delta_AirwayPressure_cmH2O'] = df['delta_AirwayPressure_cmH2O'].astype(float)
+    df['delta_ImpairmentFraction'] = df['delta_ImpairmentFraction'].astype(float)
+    df['delta_CarricoIndex_mmHg'] = df['delta_CarricoIndex_mmHg'].astype(float)
+    df['delta_SFRatio'] = df['delta_SFRatio'].astype(float)
+
+    #jbw - All this correlation stuff should be it's own function
+
+    # Because 3, can't use corr function
+    F, p = stats.f_oneway(df[df.Outcome == 'Positive'].delta_compliance,
+                          df[df.Outcome == 'Less Positive'].delta_compliance,
+                          df[df.Outcome == 'Negative'].delta_compliance)
+    print('delta_compliance: ', F)
+
+    F, p = stats.f_oneway(df[df.Outcome == 'Positive'].delta_O2SatIndex,
+                           df[df.Outcome == 'Less Positive'].delta_O2SatIndex,
+                           df[df.Outcome == 'Negative'].delta_O2SatIndex)
+    print('delta_O2SatIndex: ', F)
+
+    F, p = stats.f_oneway(df[df.Outcome == 'Positive'].delta_AirwayPressure_cmH2O,
+                          df[df.Outcome == 'Less Positive'].delta_AirwayPressure_cmH2O,
+                          df[df.Outcome == 'Negative'].delta_AirwayPressure_cmH2O)
+    print('delta_AirwayPressure_cmH2O: ', F)
+
+    F, p = stats.f_oneway(df[df.Outcome == 'Positive'].delta_ImpairmentFraction,
+                          df[df.Outcome == 'Less Positive'].delta_ImpairmentFraction,
+                          df[df.Outcome == 'Negative'].delta_ImpairmentFraction)
+    print('delta_ImpairmentFraction: ', F)
+
+    F, p = stats.f_oneway(df[df.Outcome == 'Positive'].delta_CarricoIndex_mmHg,
+                          df[df.Outcome == 'Less Positive'].delta_CarricoIndex_mmHg,
+                          df[df.Outcome == 'Negative'].delta_CarricoIndex_mmHg)
+    print('delta_CarricoIndex_mmHg: ', F)
+
+    # F, p = stats.f_oneway(df[df.Outcome == 'Positive'].delta_OxygenSaturation,
+    #                       df[df.Outcome == 'Less Positive'].delta_OxygenSaturation,
+    #                       df[df.Outcome == 'Negative'].delta_OxygenSaturation)
+    # print('delta_OxygenSaturation: ', F)
+
+    F, p = stats.f_oneway(df[df.Outcome == 'Positive'].delta_SFRatio,
+                          df[df.Outcome == 'Less Positive'].delta_SFRatio,
+                          df[df.Outcome == 'Negative'].delta_SFRatio)
+    print('delta_SFRatio: ', F)
+
+    F, p = stats.f_oneway(df[df.Outcome == 'Positive'].delta_OxygenationIndex,
+                          df[df.Outcome == 'Less Positive'].delta_OxygenationIndex,
+                          df[df.Outcome == 'Negative'].delta_OxygenationIndex)
+    print('delta_OxygenationIndex: ', F)
+
+    F, p = stats.f_oneway(df[df.Outcome == 'Positive'].delta_EndTidalCarbonDioxidePressure_cmH2O,
+                          df[df.Outcome == 'Less Positive'].delta_EndTidalCarbonDioxidePressure_cmH2O,
+                          df[df.Outcome == 'Negative'].delta_EndTidalCarbonDioxidePressure_cmH2O)
+    print('delta_EndTidalCarbonDioxidePressure_cmH2O: ', F)
+
+    #Need something measurable on their own ventilator, independent of ventilator setting changes (pressures and FiO2), consistent accross ventilator settings - O2 sat not good because of mismatch
+    #jbw - add ShuntFraction and AlveolarArterialGradient
+    #jbw - does o2 sat index change?
+    #feture coorelation (pearson)
+
+    #Axes?  Are they correlated with each other?  That's where you get compliance and O2SatIndex!!!
+    # Orthogonally coorolated, correlated in different dimension?
+
+    corr = corr_df.corr(method='pearson')
+
+    mask = np.zeros_like(corr, dtype=np.bool)
+    mask[np.triu_indices_from(mask)] = True
+    f, ax = plt.subplots(figsize=(15, 15))
+    heatmap = sns.heatmap(corr, mask=mask, square=True, linewidths=.5, cmap='coolwarm', cbar_kws={'shrink':.5, 'ticks':[-1, -.5, 0, 0.5, 1]}, vmin=-1, vmax=1, annot=True, annot_kws={'size': 10})
+    # add the column names as labels
+    ax.set_yticklabels(corr.columns, rotation=0)
+    ax.set_xticklabels(corr.columns)
+    sns.set_style({'xtick.bottom': True}, {'ytick.left': True})
+
+    plt.tight_layout()
+
+    f.savefig('Correlations.png')
+
+    return delta_compliance, delta_O2SatIndex, z_norm, df
 
 
 def Interpolate2(x, y, z):
-    x_bound = 15
-    y_bound = 600
+    x_bound = 18
+    y_bound = 400
 
-    xnew, ynew = np.mgrid[-x_bound:x_bound:100j, -y_bound:y_bound:100j]
+    xnew, ynew = np.mgrid[0:x_bound:100j, 0:y_bound:100j]
     tck = interpolate.bisplrep(x, y, z, kx=2, ky=2)
     #jbw - get r squared value
     znew = interpolate.bisplev(xnew[:, 0], ynew[0, :], tck)
@@ -304,51 +434,143 @@ def Interpolate2(x, y, z):
 
 
 def Plot2(x, y, z, xnew, ynew, znew, df):
-    x_bound = 15
-    y_bound = 600
+    x_bound = 22
+    y_bound = 800
 
-    x_label = "Respiratory Compliance Difference (mL/cmH2O)"
-    y_label = "Oxygen Saturation Index Difference (mmHg)"
+    x_label = "Respiratory Compliance Mismatch (mL/cmH2O)"
+    y_label = "Oxygen Saturation Index Mismatch (mmHg)"
 
-    legend_title = "Outcome"
-    legend_green = "Positive"
-    legend_yellow = "Less Positive"
-    legend_red = "Negative"
+    grid0 = sns.JointGrid(x='delta_compliance', y='delta_O2SatIndex', data=df, xlim=(0, x_bound), ylim=(0, y_bound))
+    # jbw - Update the pallet
+    g0 = grid0.plot_joint(sns.scatterplot, marker=1, s=150, hue='Outcome', hue_order=['Positive', 'Less Positive', 'Negative'],  data=df, palette=['green', 'yellow', 'red'])
+    g0.set_axis_labels(x_label, y_label)
+    g0.fig.suptitle("Combined Bounds Outcome")
 
-    grid = sns.JointGrid(x='x', y='y', data=df, xlim=(-x_bound, x_bound), ylim=(-y_bound, y_bound))
-    g = grid.plot_joint(sns.scatterplot, hue='color', data=df, alpha=0.3, palette=['green','yellow','red'])
-    g.set_axis_labels(x_label, y_label)
-    plt.legend(title=legend_title, loc='upper left', labels=[legend_green, legend_yellow, legend_red])
+    gridsize = 100
 
-    sns.kdeplot(df.loc[df['color'] == 'green', 'x'], ax=g.ax_marg_x, legend=False, color='green', shade=True)
-    sns.kdeplot(df.loc[df['color'] == 'yellow', 'x'], ax=g.ax_marg_x, legend=False, color='yellow', shade=True)
-    sns.kdeplot(df.loc[df['color'] == 'red', 'x'], ax=g.ax_marg_x, legend=False, color='red', shade=True)
-    sns.kdeplot(df.loc[df['color'] == 'green', 'y'], ax=g.ax_marg_y, vertical=True, legend=False, color='green', shade=True)
-    sns.kdeplot(df.loc[df['color'] == 'yellow', 'y'], ax=g.ax_marg_y, vertical=True, legend=False, color='yellow', shade=True)
-    sns.kdeplot(df.loc[df['color'] == 'red', 'y'], ax=g.ax_marg_y, vertical=True, legend=False, color='red', shade=True)
+    sns.kdeplot(df.loc[df['Outcome'] == 'Positive', 'delta_compliance'], ax=g0.ax_marg_x, legend=False, color='green', shade=True, gridsize=gridsize)
+    sns.kdeplot(df.loc[df['Outcome'] == 'Less Positive', 'delta_compliance'], ax=g0.ax_marg_x, legend=False, color='yellow', shade=True, gridsize=gridsize)
+    sns.kdeplot(df.loc[df['Outcome'] == 'Negative', 'delta_compliance'], ax=g0.ax_marg_x, legend=False, color='red', shade=True, gridsize=gridsize)
+    sns.kdeplot(df.loc[df['Outcome'] == 'Positive', 'delta_O2SatIndex'], ax=g0.ax_marg_y, vertical=True, legend=False, color='green', shade=True, gridsize=gridsize)
+    sns.kdeplot(df.loc[df['Outcome'] == 'Less Positive', 'delta_O2SatIndex'], ax=g0.ax_marg_y, vertical=True, legend=False, color='yellow', shade=True, gridsize=gridsize)
+    sns.kdeplot(df.loc[df['Outcome'] == 'Negative', 'delta_O2SatIndex'], ax=g0.ax_marg_y, vertical=True, legend=False, color='red', shade=True, gridsize=gridsize)
 
-    fig, axs = plt.subplots(1, 2)
+    grid1 = sns.JointGrid(x='delta_compliance', y='delta_O2SatIndex', data=df, xlim=(0, x_bound),
+                          ylim=(0, y_bound))
+    g1 = grid1.plot_joint(sns.scatterplot, marker=1, s=150, hue='TV Outcome', hue_order=['Positive', 'Less Positive', 'Negative'], data=df, palette=['green', 'yellow', 'red'])
+    g1.set_axis_labels(x_label, y_label)
+    g1.fig.suptitle("TV Bounds Outcome")
+
+    sns.kdeplot(df.loc[df['TV Outcome'] == 'Positive', 'delta_compliance'], ax=g1.ax_marg_x, legend=False, color='green',
+                shade=True, gridsize=gridsize)
+    sns.kdeplot(df.loc[df['TV Outcome'] == 'Less Positive', 'delta_compliance'], ax=g1.ax_marg_x, legend=False,
+                color='yellow', shade=True, gridsize=gridsize)
+    sns.kdeplot(df.loc[df['TV Outcome'] == 'Negative', 'delta_compliance'], ax=g1.ax_marg_x, legend=False, color='red',
+                shade=True, gridsize=gridsize)
+    sns.kdeplot(df.loc[df['TV Outcome'] == 'Positive', 'delta_O2SatIndex'], ax=g1.ax_marg_y, vertical=True, legend=False,
+                color='green', shade=True, gridsize=gridsize)
+    sns.kdeplot(df.loc[df['TV Outcome'] == 'Less Positive', 'delta_O2SatIndex'], ax=g1.ax_marg_y, vertical=True,
+                legend=False, color='yellow', shade=True, gridsize=gridsize)
+    sns.kdeplot(df.loc[df['TV Outcome'] == 'Negative', 'delta_O2SatIndex'], ax=g1.ax_marg_y, vertical=True, legend=False,
+                color='red', shade=True, gridsize=gridsize)
+
+    grid2 = sns.JointGrid(x='delta_compliance', y='delta_O2SatIndex', data=df, xlim=(0, x_bound),
+                          ylim=(0, y_bound))
+    g2 = grid2.plot_joint(sns.scatterplot, marker=1, s=150, hue='SpO2 Outcome', hue_order=['Positive', 'Negative'], data=df, palette=['green', 'red'])
+    g2.set_axis_labels(x_label, y_label)
+    g2.fig.suptitle("SpO2 Bounds Outcome")
+
+    sns.kdeplot(df.loc[df['SpO2 Outcome'] == 'Positive', 'delta_compliance'], ax=g2.ax_marg_x, legend=False,
+                color='green',
+                shade=True, gridsize=gridsize)
+    sns.kdeplot(df.loc[df['SpO2 Outcome'] == 'Negative', 'delta_compliance'], ax=g2.ax_marg_x, legend=False, color='red',
+                shade=True, gridsize=gridsize)
+    sns.kdeplot(df.loc[df['SpO2 Outcome'] == 'Positive', 'delta_O2SatIndex'], ax=g2.ax_marg_y, vertical=True,
+                legend=False,
+                color='green', shade=True, gridsize=gridsize)
+    sns.kdeplot(df.loc[df['SpO2 Outcome'] == 'Negative', 'delta_O2SatIndex'], ax=g2.ax_marg_y, vertical=True,
+                legend=False,
+                color='red', shade=True, gridsize=gridsize)
+
+    grid3 = sns.JointGrid(x='delta_compliance', y='delta_O2SatIndex', data=df, xlim=(0, x_bound),
+                          ylim=(0, y_bound))
+    g3 = grid3.plot_joint(sns.scatterplot, marker=1, s=150, hue='PaO2 Outcome', hue_order=['Positive', 'Less Positive', 'Negative'], data=df, palette=['green', 'yellow', 'red'])
+    g3.set_axis_labels(x_label, y_label)
+    g3.fig.suptitle("PaO2 Bounds Outcome")
+
+    sns.kdeplot(df.loc[df['PaO2 Outcome'] == 'Positive', 'delta_compliance'], ax=g3.ax_marg_x, legend=False,
+                color='green',
+                shade=True, gridsize=gridsize)
+    sns.kdeplot(df.loc[df['PaO2 Outcome'] == 'Less Positive', 'delta_compliance'], ax=g3.ax_marg_x, legend=False,
+                color='yellow', shade=True, gridsize=gridsize)
+    sns.kdeplot(df.loc[df['PaO2 Outcome'] == 'Negative', 'delta_compliance'], ax=g3.ax_marg_x, legend=False, color='red',
+                shade=True, gridsize=gridsize)
+    sns.kdeplot(df.loc[df['PaO2 Outcome'] == 'Positive', 'delta_O2SatIndex'], ax=g3.ax_marg_y, vertical=True,
+                legend=False,
+                color='green', shade=True, gridsize=gridsize)
+    sns.kdeplot(df.loc[df['PaO2 Outcome'] == 'Less Positive', 'delta_O2SatIndex'], ax=g3.ax_marg_y, vertical=True,
+                legend=False, color='yellow', shade=True, gridsize=gridsize)
+    sns.kdeplot(df.loc[df['PaO2 Outcome'] == 'Negative', 'delta_O2SatIndex'], ax=g3.ax_marg_y, vertical=True,
+                legend=False,
+                color='red', shade=True, gridsize=gridsize)
+
+    ############### 2. SAVE PLOTS IN MEMORY TEMPORALLY
+    g0.savefig('g0.png')
+    plt.close(g0.fig)
+
+    g1.savefig('g1.png')
+    plt.close(g1.fig)
+
+    g2.savefig('g2.png')
+    plt.close(g2.fig)
+
+    g3.savefig('g3.png')
+    plt.close(g3.fig)
+
+    ############### 3. CREATE YOUR SUBPLOTS FROM TEMPORAL IMAGES
+    f, axarr = plt.subplots(2, 2, figsize=(10, 10))
+    #f.suptitle("Combined Outcomes: Patient 1 vs Patient 2 Clinical Measurements")
+
+    axarr[0, 0].imshow(mpimg.imread('g0.png', format="png"))
+    axarr[0, 1].imshow(mpimg.imread('g1.png', format="png"))
+    axarr[1, 0].imshow(mpimg.imread('g3.png', format="png"))
+    axarr[1, 1].imshow(mpimg.imread('g2.png', format="png"))
+
+    # turn off x and y axis
+    [ax.set_axis_off() for ax in axarr.ravel()]
+
+    plt.tight_layout()
+
+    plt.savefig('Outcome_Bounds_Comparison.png')
+
+    x_bound = 18
+    y_bound = 400
+
+    fig, axs = plt.subplots(1, 2, figsize=(15, 6))
     fig.suptitle('Combined Outcomes: Patient 1 vs Patient 2 Clinical Measurements', fontsize=14)
 
     axs[0].set_aspect=x_bound/y_bound
-    axs[0].scatter(x, y, marker='o', c=z, cmap='RdYlGn', alpha=0.3)
-    axs[0].set_xlim([-x_bound, x_bound])
-    axs[0].set_ylim([-y_bound, y_bound])
+    axs[0].scatter(x, y, marker=1, s=250, c=z, cmap='RdYlGn')
+    axs[0].set_xlim([0, x_bound])
+    axs[0].set_ylim([0, y_bound])
     axs[0].set_title("Simulation Results")
     axs[0].set_xlabel(x_label)
     axs[0].set_ylabel(y_label)
 
     axs[1].set_aspect=20/y_bound
     axs[1].pcolor(xnew, ynew, znew, cmap='RdYlGn')
-    #axs[1].contour(xnew, ynew, znew, levels=[0.0, 0.25, 0.5, 0.75, 1.0], colors='k')
-    axs[1].contour(xnew, ynew, znew, colors='k')
+    #axs[1].contour(xnew, ynew, znew, colors='k')
     axs[1].set_title("Interpolated Results")
     axs[1].set_xlabel(x_label)
     axs[1].set_ylabel(y_label)
 
+    #plt.tight_layout()
+
+    plt.savefig('Interpolation.png')
+
     plt.show()
 
-    #Save to disk
+    #jbw - save to disk
 
 
 def plot_interpolate2(simulations: SimulationListData):
@@ -361,7 +583,10 @@ def plot_interpolate2(simulations: SimulationListData):
 
 if __name__ == '__main__':
     # Load up a result set
-    results_file = "./test_results/multiplex_ventilation/simulations/simlist_results_10584.json"
+    #results_file = "./test_results/multiplex_ventilation/simulations/simlist_results_4410.json"
+    #results_file = "./test_results/multiplex_ventilation/simulations/simlist_results_10584.json"
+    results_file = "./test_results/multiplex_ventilation/simulations/simlist_results_12642.json"
+
     with open(results_file) as f:
         json = f.read()
     results = SimulationListData()
