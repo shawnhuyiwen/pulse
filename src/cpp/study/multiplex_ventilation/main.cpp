@@ -239,19 +239,20 @@ int main(int argc, char* argv[])
     }
     else // Manual
     {
-      Logger logger("./test_results/multiplex_ventilator/manual.log");
+      Logger logger("./test_results/multiplex_ventilation/manual.log");
       pulse::study::multiplex_ventilation::bind::SimulationData sim;
-      sim.set_respirationrate_per_min(20);
-      sim.set_ieratio(0.5);
+      sim.set_respirationrate_per_min(MVGenerator::DefaultRespirationRate_Per_Min());
+      sim.set_ieratio(MVGenerator::DefaultIERatio());
 
       std::vector<std::string> patients;
-      patients.push_back("comp=0.025_peep=18_pip=36_imp=0.6_FiO2=0.21");
-      patients.push_back("comp=0.035_peep=20_pip=32_imp=0.9_FiO2=0.9995");
-      patients.push_back("comp=0.035_peep=18_pip=30_imp=0.3_FiO2=0.21");
-      patients.push_back("comp=0.04_peep=12_pip=23_imp=0.9_FiO2=0.9995");
+      // If FiO2, the file will not be found and we will generate the patient initial state
+      // And the FiO2 will be computed
+      patients.push_back("comp=25_peep=18_pip=36_imp=0.6_FiO2=0.0");
+      patients.push_back("comp=35_peep=20_pip=32_imp=0.9_FiO2=0.0");
+      patients.push_back("comp=35_peep=18_pip=30_imp=0.3_FiO2=0.0");
+      patients.push_back("comp=40_peep=12_pip=23_imp=0.9_FiO2=0.0");
 
       double soloRunTime_s = 120;
-
 
       std::vector<std::string> names;
       std::vector<double> pips_cmH2O;
@@ -293,6 +294,39 @@ int main(int argc, char* argv[])
         std::string name;
         patient = Dir::Solo + patient + ".json";
         ExtractVentilatorSettings(patient, name, pip_cmH2O, peep_cmH2O, FiO2);
+
+        if (!FileExists(patient))
+        {
+          logger.Info("Generating initial patient state");
+          double comp;
+          double imp;
+          ExtractInitialConditions(patient, comp, imp);
+          pulse::study::multiplex_ventilation::bind::PatientStateData pData;
+          pData.set_compliance_ml_per_cmh2o(comp);
+          pData.set_resistance_cmh2o_s_per_l(MVGenerator::DefaultResistance_cmH2O_s_Per_L());
+          pData.set_impairmentfraction(imp);
+          pData.set_respirationrate_per_min(MVGenerator::DefaultRespirationRate_Per_Min());
+          pData.set_ieratio(MVGenerator::DefaultIERatio());
+          pData.set_pip_cmh2o(pip_cmH2O);
+          pData.set_peep_cmh2o(peep_cmH2O);
+          MVGenerator::GenerateStabilizedPatient(pData, true);
+          if (FiO2 == 0)
+          {
+            patient = pData.statefile();
+            FiO2 = pData.fio2();
+          }
+          else
+          {
+            // Let's make sure the FiO2 came out to the same 
+            logger.Info("Expected FiO2 : " + to_scientific_notation(FiO2));
+            logger.Info("Computed FiO2 : " + to_scientific_notation(pData.fio2()));
+            if (!FileExists(patient))
+            {
+              logger.Error("Could not generate the solo state with the same FiO2");
+              return 1;
+            }
+          }
+        }
 
         std::string solo_patient_base_path = Dir::Results + combined_name + "/pip=" + to_scientific_notation(pip_cmH2O) +
           "_peep=" + to_scientific_notation(peep_cmH2O) +

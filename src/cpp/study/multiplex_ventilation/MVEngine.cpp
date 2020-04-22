@@ -713,6 +713,20 @@ bool MVEngine::RunSoloState(const std::string& stateFile, const std::string& res
   return true;
 }
 
+bool ExtractInitialConditions(const std::string& filePath, double& comp, double& imp)
+{
+  // Parse the file name to get our ventilator settings
+  // ex. comp=0.01_peep=10_pip=55_imp=0.3_FiO2=0.21
+  size_t compIdx = filePath.find("comp=") + 5;
+  size_t _compIdx = filePath.find("_", compIdx);
+  comp = std::atof(filePath.substr(compIdx, _compIdx).c_str());
+  size_t impIdx = filePath.find("imp=") + 4;
+  size_t _impIdx = filePath.find("_", impIdx);
+  imp = std::atof(filePath.substr(impIdx, _impIdx).c_str());
+
+  return true;
+}
+
 bool ExtractVentilatorSettings(const std::string& filePath, std::string& fileName, double& pip_cmH2O, double& peep_cmH2O, double& FiO2)
 {
   // Parse the file name to get our ventilator settings

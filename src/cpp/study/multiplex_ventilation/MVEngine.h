@@ -71,6 +71,7 @@ POP_PROTO_WARNINGS()
 
 std::string to_scientific_notation(float f);
 std::string to_scientific_notation(double d);
+bool ExtractInitialConditions(const std::string& filePath, double& comp, double& imp);
 bool ExtractVentilatorSettings(const std::string& filePath, std::string& fileName, double& pip_cmH2O, double& peep_cmH2O, double& FiO2);
 
 struct Dir

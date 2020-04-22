@@ -26,7 +26,7 @@ void MVGenerator::GeneratePatientList()
   //                                (rint((m_MaxImpairment - m_MinImpairment) / m_StepImpairment + 1.0));
 
   SEScalarPressureTimePerVolume r;
-  r.SetValue(m_Resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  r.SetValue(MVGenerator::DefaultResistance_cmH2O_s_Per_L(), PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   double m_Resistance_cmH2O_s_Per_mL = r.GetValue(PressureTimePerVolumeUnit::cmH2O_s_Per_mL);
 
   for (int compliance_mL_Per_cmH2O = m_MinCompliance_mL_Per_cmH2O; compliance_mL_Per_cmH2O <= m_MaxCompliance_mL_Per_cmH2O; compliance_mL_Per_cmH2O += m_StepCompliance_mL_Per_cmH2O)
@@ -36,8 +36,8 @@ void MVGenerator::GeneratePatientList()
       // RC circuit charging equation
       // Assume tube resistances are negligable
       double targetTidalVolume_mL = 6.0 * 75.3; // Aaron - What's the best way to get the ideal body weight from the patient?
-      double breathPeriod_s = 60.0 / m_RespirationRate_Per_Min;
-      double inspiratoryPeriod_s = m_IERatio * breathPeriod_s / (1.f + m_IERatio);
+      double breathPeriod_s = 60.0 / MVGenerator::DefaultRespirationRate_Per_Min();
+      double inspiratoryPeriod_s = MVGenerator::DefaultIERatio() * breathPeriod_s / (1.f + MVGenerator::DefaultIERatio());
       
       int PIP_cmH2O = int(targetTidalVolume_mL / (compliance_mL_Per_cmH2O * (1.0 - exp(-inspiratoryPeriod_s / (m_Resistance_cmH2O_s_Per_mL * compliance_mL_Per_cmH2O)))) + PEEP_cmH2O);
 
@@ -46,10 +46,10 @@ void MVGenerator::GeneratePatientList()
         auto patientData = m_PatientList->add_patients();
         patientData->set_id(id++);
         patientData->set_compliance_ml_per_cmh2o(compliance_mL_Per_cmH2O);
-        patientData->set_resistance_cmh2o_s_per_l(m_Resistance_cmH2O_s_Per_L);
+        patientData->set_resistance_cmh2o_s_per_l(MVGenerator::DefaultResistance_cmH2O_s_Per_L());
         patientData->set_impairmentfraction(currentImpairment);
-        patientData->set_respirationrate_per_min(m_RespirationRate_Per_Min);
-        patientData->set_ieratio(m_IERatio);
+        patientData->set_respirationrate_per_min(MVGenerator::DefaultRespirationRate_Per_Min());
+        patientData->set_ieratio(MVGenerator::DefaultIERatio());
         patientData->set_peep_cmh2o(PEEP_cmH2O);
         patientData->set_pip_cmh2o(PIP_cmH2O);
       }
@@ -141,6 +141,7 @@ bool MVGenerator::GenerateStabilizedPatient(pulse::study::multiplex_ventilation:
     "_pip=" + to_scientific_notation(pData.pip_cmh2o()) +
     "_imp=" + to_scientific_notation(pData.impairmentfraction());
 
+  MakeDirectory(Dir::Solo + "/csv/");
   auto engine = CreatePulseEngine(Dir::Solo + "/log/" + baseName + ".log");
   engine->SerializeFromFile("./states/StandardMale@0s.json", SerializationFormat::JSON);
   MVEngine::TrackData(*engine->GetEngineTracker(), Dir::Solo + "/csv/" + baseName + ".csv");
@@ -240,12 +241,25 @@ bool MVGenerator::GenerateStabilizedPatient(pulse::study::multiplex_ventilation:
   pData.set_statefile(Dir::Solo + baseName + ".json");
   pData.set_fio2(FiO2->GetFractionAmount().GetValue());
   // Set Vitals
-  pData.set_oxygensaturation(engine->GetBloodChemistrySystem()->GetOxygenSaturation());
-  pData.set_tidalvolume_ml(engine->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL));
-  pData.set_endtidalcarbondioxidepressure_mmhg(engine->GetRespiratorySystem()->GetEndTidalCarbonDioxidePressure(PressureUnit::mmHg));
   auto AortaO2 = engine->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta)->GetSubstanceQuantity(*engine->GetSubstanceManager().GetSubstance("Oxygen"));
+  auto AortaCO2 = engine->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta)->GetSubstanceQuantity(*engine->GetSubstanceManager().GetSubstance("CarbonDioxide"));
+
+  pData.set_airwayflow_l_per_min(engine->GetRespiratorySystem()->GetInspiratoryFlow(VolumePerTimeUnit::L_Per_min));
+  pData.set_airwaypressure_cmh2o(engine->GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Mouth)->GetPressure(PressureUnit::cmH2O));
+  pData.set_alveolararterialgradient_mmhg(engine->GetRespiratorySystem()->GetAlveolarArterialGradient(PressureUnit::mmHg));
+  pData.set_arterialcarbondioxidepartialpressure_mmhg(AortaCO2->GetPartialPressure(PressureUnit::mmHg));
   pData.set_arterialoxygenpartialpressure_mmhg(AortaO2->GetPartialPressure(PressureUnit::mmHg));
   pData.set_carricoindex_mmhg(engine->GetRespiratorySystem()->GetCarricoIndex(PressureUnit::mmHg));
+  pData.set_endtidalcarbondioxidepressure_mmhg(engine->GetRespiratorySystem()->GetEndTidalCarbonDioxidePressure(PressureUnit::mmHg));
+  pData.set_idealbodyweight_kg(engine->GetPatient().GetIdealBodyWeight(MassUnit::kg));
+  pData.set_meanairwaypressure_cmh2o(engine->GetRespiratorySystem()->GetMeanAirwayPressure(PressureUnit::cmH2O));
+  pData.set_oxygenationindex(engine->GetRespiratorySystem()->GetOxygenationIndex());
+  pData.set_oxygensaturation(engine->GetBloodChemistrySystem()->GetOxygenSaturation());
+  pData.set_oxygensaturationindex_cmh2o(engine->GetRespiratorySystem()->GetOxygenSaturationIndex(PressureUnit::cmH2O));
+  pData.set_sfratio(engine->GetRespiratorySystem()->GetSaturationAndFractionOfInspiredOxygenRatio());
+  pData.set_shuntfraction(engine->GetBloodChemistrySystem()->GetShuntFraction());
+  pData.set_tidalvolume_ml(engine->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL));
+  pData.set_totallungvolume_ml(engine->GetRespiratorySystem()->GetTotalLungVolume(VolumeUnit::mL));
   engine->GetLogger()->Info("#################################################################################################\n\n");
   delete engine.release();
   //RunSoloState(SoloDir+baseName+".json", SoloDir+"csv/ext/"+baseName+".json", 120);

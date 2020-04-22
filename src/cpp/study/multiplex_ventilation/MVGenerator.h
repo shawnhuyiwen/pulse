@@ -17,10 +17,14 @@ public:
 
   bool Run(const std::string& stateDir, const std::string listFilename, SerializationFormat f);
 
-protected:
   static bool StabilizeSpO2(PhysiologyEngine& eng);
   static bool GenerateStabilizedPatient(pulse::study::multiplex_ventilation::bind::PatientStateData& pData, bool logToConsole);
 
+
+  static double DefaultResistance_cmH2O_s_Per_L() { return 5; }
+  static double DefaultRespirationRate_Per_Min() { return 20; }
+  static double DefaultIERatio() { return 0.5; }
+protected:
   bool SerializeToString(pulse::study::multiplex_ventilation::bind::PatientStateListData& src, std::string& dst, SerializationFormat f) const;
   bool SerializeToFile(pulse::study::multiplex_ventilation::bind::PatientStateListData& src, const std::string& filename, SerializationFormat f) const;
   bool SerializeFromString(const std::string& src, pulse::study::multiplex_ventilation::bind::PatientStateListData& dst, SerializationFormat f);
@@ -44,9 +48,6 @@ protected:
   double m_StepImpairment = 0.025;
 
   // Constants
-  int   m_Resistance_cmH2O_s_Per_L = 5;
-  int   m_RespirationRate_Per_Min = 20;
-  float m_IERatio = 0.5f;
   float m_AmbientFiO2 = 0.21f;
 
   std::string m_DataDir;
