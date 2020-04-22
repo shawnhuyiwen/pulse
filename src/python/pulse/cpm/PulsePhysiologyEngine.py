@@ -1,19 +1,25 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 import math, copy
+import sys
+import json
 import PyPulse
 from pulse.cdm.patient import SEPatientConfiguration
 from pulse.cdm.engine import SEAction, eSerializationFormat, SEDataRequestManager, SEDataRequest
+from pulse.cdm.engine import SEEventChange
 from pulse.cdm.io.engine import serialize_actions_to_string, \
                                 serialize_patient_configuration_to_string, \
                                 serialize_data_request_manager_to_string
 
 class PulsePhysiologyEngine:
-    __slots__ = ['__pulse', "results"]
+    __slots__ = ['__pulse', "_event_handler", "results"]
 
-    def __init__(self, log_file="", write_to_console=True, data_root="."):
+    def __init__(self, log_file="", write_to_console=True, data_root=".", event_handler=None):
         self.results = {}
         self.__pulse = PyPulse.Engine(log_file, write_to_console, data_root)
+        if event_handler:
+            self._event_handler = event_handler
+            self.__pulse.keep_event_changes(True)
 
     def serialize_from_file(self, state_file: str, data_request_mgr: SEDataRequestManager, format: eSerializationFormat,
                             start_time: float = 0):
@@ -33,6 +39,7 @@ class PulsePhysiologyEngine:
 
     def advance_time(self):
         self.__pulse.advance_timestep()
+        self._process_events()
         return self.pull_data()
 
     def advance_time_s(self, duration_s: float):
@@ -40,6 +47,7 @@ class PulsePhysiologyEngine:
         num_steps = int(duration_s / 0.02)
         for n in range(num_steps):
             self.__pulse.advance_timestep()
+            self._process_events()
         return self.pull_data()
 
     def advance_time_r(self, duration_s: float, rate_s: float):
@@ -47,6 +55,7 @@ class PulsePhysiologyEngine:
         sample_times = range(0, num_steps, math.floor(rate_s / 0.02))
         # Deep copy used to avoid polluting the original set of requests
         result_summation = copy.deepcopy(self.results)
+        self._process_events()
         for n in range(num_steps):
             self.__pulse.advance_timestep()
             if n in sample_times:
@@ -57,6 +66,8 @@ class PulsePhysiologyEngine:
 
     def pull_data(self):
         values = self.__pulse.pull_data()
+
+
         # Deep copy used to avoid polluting the original  set of requests
         pull_result = copy.deepcopy(self.results)
         for i, key in enumerate(self.results.keys()):
@@ -95,4 +106,15 @@ class PulsePhysiologyEngine:
         print(json)
         self.__pulse.process_actions(json,PyPulse.serialization_format.json)
 
-
+    def _process_events(self):
+        if self._event_handler:
+            get_func = self.__pulse.pull_events
+            if self._event_handler._active:
+                get_func = self.__pulse.pull_actie_events
+            events = get_func(PyPulse.serialization_format.json)
+            if events:
+                event_json = json.loads(events)
+                for type, values in event_json.items():
+                    for event in values:
+                        event_object = SEEventChange.create_event_request_from_string(event)
+                        self._event_handler.handle_event(event_object)
