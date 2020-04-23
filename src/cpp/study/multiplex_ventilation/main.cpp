@@ -313,6 +313,7 @@ int main(int argc, char* argv[])
           if (FiO2 == 0)
           {
             patient = pData.statefile();
+            patients[iter] = patient;
             FiO2 = pData.fio2();
           }
           else
