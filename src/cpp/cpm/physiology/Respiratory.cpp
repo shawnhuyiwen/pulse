@@ -1912,7 +1912,7 @@ void Respiratory::CalculateVitalSigns()
       GetSaturationAndFractionOfInspiredOxygenRatio().SetValue(m_data.GetBloodChemistry().GetOxygenSaturation().GetValue() / FiO2);
       double meanAirwayPressure_mmHg = Convert(m_MeanAirwayPressure_cmH2O->Value(), PressureUnit::cmH2O, PressureUnit::mmHg);
       GetOxygenationIndex().SetValue(FiO2 * meanAirwayPressure_mmHg * 100.0 / m_ArterialO2PartialPressure_mmHg);
-      GetOxygenSaturationIndex().SetValue(FiO2 * meanAirwayPressure_mmHg * 100.0 / m_data.GetBloodChemistry().GetOxygenSaturation().GetValue(), PressureUnit::cmH2O);
+      GetOxygenSaturationIndex().SetValue(FiO2 * meanAirwayPressure_mmHg / m_data.GetBloodChemistry().GetOxygenSaturation().GetValue(), PressureUnit::cmH2O);
 
       m_BottomBreathTotalVolume_L = totalLungVolume_L;
       m_BottomBreathElapsedTime_min = m_ElapsedBreathingCycleTime_min - m_TopBreathElapsedTime_min;
