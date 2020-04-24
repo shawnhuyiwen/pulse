@@ -9,10 +9,11 @@ from pulse.cdm.io.engine import serialize_actions_to_string, \
                                 serialize_data_request_manager_to_string
 
 class PulsePhysiologyEngine:
-    __slots__ = ['__pulse', "results"]
+    __slots__ = ['__pulse', "_results", "_results_template"]
 
     def __init__(self, log_file="", write_to_console=True, data_root="."):
-        self.results = {}
+        self._results = {}
+        self._results_template = {}
         self.__pulse = PyPulse.Engine(log_file, write_to_console, data_root)
 
     def serialize_from_file(self, state_file: str, data_request_mgr: SEDataRequestManager, format: eSerializationFormat,
@@ -32,36 +33,42 @@ class PulsePhysiologyEngine:
         return self.__pulse.initialize_engine(pc, drm, PyPulse.serialization_format.json)
 
     def advance_time(self):
-        self.__pulse.advance_timestep()
-        return self.pull_data()
+        self._results = copy.deepcopy(self._results_template)
+        if self.__pulse.advance_timestep():
+            timestep_result = self.__pulse.pull_data()
+            for index, value in enumerate(self._results.keys()):
+                self._results[value].append(timestep_result[index])
+                return True
+        return False
 
     def advance_time_s(self, duration_s: float):
         # TODO this is assuming duration_s is a factor of 0.02
+        self._results = copy.deepcopy(self._results_template)
         num_steps = int(duration_s / 0.02)
         for n in range(num_steps):
-            self.__pulse.advance_timestep()
-        return self.pull_data()
+            if not self.__pulse.advance_timestep():
+                return False
+        timestep_result = self.__pulse.pull_data()
+        for index, value in enumerate(self._results.keys()):
+            self._results[value].append(timestep_result[index])
+        return True
 
     def advance_time_r(self, duration_s: float, rate_s: float):
         num_steps = int(duration_s / 0.02)
         sample_times = range(0, num_steps, math.floor(rate_s / 0.02))
         # Deep copy used to avoid polluting the original set of requests
-        result_summation = copy.deepcopy(self.results)
+        self._results = copy.deepcopy(self._results_template)
         for n in range(num_steps):
-            self.__pulse.advance_timestep()
+            if not self.__pulse.advance_timestep():
+                return False
             if n in sample_times:
-                timestep_result = self.pull_data()
-                for key, value in result_summation.items():
-                    value.extend(timestep_result[key])
-        return result_summation
+                timestep_result = self.__pulse.pull_data()
+                for index, value in enumerate(self._results.keys()):
+                    self._results[value].append(timestep_result[index])
+        return True
 
     def pull_data(self):
-        values = self.__pulse.pull_data()
-        # Deep copy used to avoid polluting the original  set of requests
-        pull_result = copy.deepcopy(self.results)
-        for i, key in enumerate(self.results.keys()):
-            pull_result[key].append(values[i])
-        return pull_result
+        return self._results
 
     def process_requests(self, data_request_mgr, fmt: eSerializationFormat):
         if data_request_mgr is None:
@@ -81,9 +88,9 @@ class PulsePhysiologyEngine:
                 SEDataRequest.create_physiology_request("BloodVolume", "mL")
             ])
         # Simulation time is always the first result.
-        self.results["SimulationTime(s)"] = []
+        self._results_template["SimulationTime(s)"] = []
         for data_request in data_request_mgr.get_data_requests():
-            self.results[data_request.to_string()] = []
+            self._results_template[data_request.to_string()] = []
         return serialize_data_request_manager_to_string(data_request_mgr, fmt)
 
     def process_action(self, action: SEAction):
