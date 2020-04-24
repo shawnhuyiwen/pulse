@@ -9,15 +9,32 @@ This multiplex ventilation engine was used to perform a sensitivity analysis for
 
 As well as the C++ provide in this folder, we also used severl python scripts that can be found [here]()
 
+---
+
 ### Building
 
 The multiplex engine will be built as part of the general Pulse build.
+
+---
 
 ### Data Model
 
 The data model for this study can be found [here]()
 
 The data requests used for CSV files can be found [here]()
+
+---
+
+### Data
+
+All data associated with our study can be found [here](https://data.kitware.com/#collection/59849c788d777f7d33e9c084/folder/5e979e5a9014a6d84e12b150)
+Zips include: json files of SimulationListData and PatientListData (as defined in our data model), as well as log and csv files for all patients.
+
+  - <b>multiplex_ventilation.zip</b> : All data generated for our initial study of the parameter space
+  - <b>multiplex_ventilation_final_full_study.zip</b> : All data generated for the full study 
+  - <b>MultiplexExampleRunPaperData.zip</b> : Individual runs used in creating tables and figures in our paper
+ 
+---
 
 ### Running
 
@@ -81,4 +98,11 @@ This will create the following folders :
 An accompanying SimulationListData json file will be created : bin/test_results/multiplex_ventilation/simulations/simlist_results.json
 
 This file was used for analyis using the algorithms implemented in the [analysis.py]() file
+
+### Other run modes
+
+The main method support two more arguments:
+
+  - single : This is used for testing purposes
+  - manual : This is coded to generate a single initial studay data set for 2 or more patients. This mode was used to generate the MultiplexExampleRunPaperData data set. 
 
