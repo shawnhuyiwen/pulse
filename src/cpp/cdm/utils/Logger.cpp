@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "io/protobuf/PBEngine.h"
+#include <cstring>
 
 bool LogMessages::SerializeToString(const LogMessages& msgs, std::string& output, SerializationFormat m, Logger* logger)
 {
