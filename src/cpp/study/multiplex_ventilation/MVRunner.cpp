@@ -185,12 +185,6 @@ bool MVRunner::StepSimulationFiO2(pulse::study::multiplex_ventilation::bind::Sim
     if (totalIterations > minIterations)
       stabilizationTimer_s += timeStep_s;
 
-    if (mve.GetMinPAO2_mmHg() >= 200)
-    {
-      mve.GetLogger()->Info("Reached maximum PAO2, unable to stabilize");
-      break;
-    }
-
     // How are we running?
     if (statusTimer_s > statusStep_s)
     {
