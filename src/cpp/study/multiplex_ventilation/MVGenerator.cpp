@@ -78,7 +78,7 @@ bool MVGenerator::Run(const std::string& stateDir, const std::string listFilenam
       return false;
     if (m_CompletedPatientList->patients_size() > 0)
     {
-      Info("Found " + std::to_string(m_CompletedPatientList->patients_size()) + " previously run Patients");
+      Info("Found " + to_string(m_CompletedPatientList->patients_size()) + " previously run Patients");
         for (int i = 0; i < m_CompletedPatientList->patients_size(); i++)
           m_PatientsToRun.erase(m_CompletedPatientList->patients()[i].id());
     }
@@ -102,7 +102,7 @@ bool MVGenerator::Run(const std::string& stateDir, const std::string listFilenam
   // Let's not kick off more threads than we need
   if (processor_count > numPatientsToRun)
     processor_count = numPatientsToRun;
-  Info("Starting " + std::to_string(processor_count) + " Threads to generate "+std::to_string(numPatientsToRun)+" patients");
+  Info("Starting " + to_string(processor_count) + " Threads to generate "+to_string(numPatientsToRun)+" patients");
   // Crank up our threads
   for (size_t p = 0; p < processor_count; p++)
     m_Threads.push_back(std::thread(&MVGenerator::ControllerLoop, this));
@@ -110,7 +110,7 @@ bool MVGenerator::Run(const std::string& stateDir, const std::string listFilenam
   for (size_t p = 0; p < processor_count; p++)
     m_Threads[p].join();
 
-  Info("It took " + to_scientific_notation(profiler.GetElapsedTime_s("Total")) + "s to run this Patient list");
+  Info("It took " + to_string(profiler.GetElapsedTime_s("Total")) + "s to run this Patient list");
   profiler.Clear();
   return true;
 }
@@ -136,10 +136,10 @@ void MVGenerator::ControllerLoop()
 bool MVGenerator::GenerateStabilizedPatient(pulse::study::multiplex_ventilation::bind::PatientStateData& pData, bool logToConsole)
 {
   // Construct our engine name
-  std::string baseName = "comp=" + to_scientific_notation(pData.compliance_ml_per_cmh2o()) +
-    "_peep=" + to_scientific_notation(pData.peep_cmh2o()) +
-    "_pip=" + to_scientific_notation(pData.pip_cmh2o()) +
-    "_imp=" + to_scientific_notation(pData.impairmentfraction());
+  std::string baseName = "comp=" + cdm::to_string(pData.compliance_ml_per_cmh2o()) +
+    "_peep=" + cdm::to_string(pData.peep_cmh2o()) +
+    "_pip=" + cdm::to_string(pData.pip_cmh2o()) +
+    "_imp=" + cdm::to_string(pData.impairmentfraction());
 
   MakeDirectory(Dir::Solo + "/csv/");
   auto engine = CreatePulseEngine(Dir::Solo + "/log/" + baseName + ".log");
@@ -193,7 +193,7 @@ bool MVGenerator::GenerateStabilizedPatient(pulse::study::multiplex_ventilation:
   double previousSpO2 = engine->GetBloodChemistrySystem()->GetOxygenSaturation();
   double currentFiO2 = previousFiO2;
   double currentSpO2 = previousSpO2;
-  engine->GetLogger()->Info("Starting stabilization at " + to_scientific_notation(previousSpO2) + " SpO2");
+  engine->GetLogger()->Info("Starting stabilization at " + cdm::to_string(previousSpO2) + " SpO2");
 
   while (true)
   {
@@ -225,16 +225,16 @@ bool MVGenerator::GenerateStabilizedPatient(pulse::study::multiplex_ventilation:
     if (currentFiO2 > 0.5)
       targetSpO2 = 0.89f;
 
-    engine->GetLogger()->Info("Setting FiO2 to " + to_scientific_notation(currentFiO2) + " with an SpO2 of " + to_scientific_notation(currentSpO2));
+    engine->GetLogger()->Info("Setting FiO2 to " + cdm::to_string(currentFiO2) + " with an SpO2 of " + cdm::to_string(currentSpO2));
     FiO2->GetFractionAmount().SetValue(currentFiO2);
     engine->ProcessAction(mvc);
     previousSpO2 = currentSpO2;
     previousFiO2 = currentFiO2;
   }
-  engine->GetLogger()->Info("Engine stabilized at an SpO2 of " + to_scientific_notation(currentSpO2) + "; FiO2 of " + to_scientific_notation(currentFiO2));
+  engine->GetLogger()->Info("Engine stabilized at an SpO2 of " + cdm::to_string(currentSpO2) + "; FiO2 of " + cdm::to_string(currentFiO2));
 
   // Save our state
-  baseName += "_FiO2=" + to_scientific_notation(currentFiO2);
+  baseName += "_FiO2=" + cdm::to_string(currentFiO2);
   engine->GetLogger()->Info("Saving engine state" + baseName + ".json");
   engine->SerializeToFile(Dir::Solo + baseName + ".json", SerializationFormat::JSON);
   // Append to our "list" of generated states
@@ -307,7 +307,7 @@ bool MVGenerator::StabilizeSpO2(PhysiologyEngine& eng)
       previousAortaO2 = currentAortaO2;
     }
   }
-  eng.GetLogger()->Info("Engine stablized at an SpO2 of " + to_scientific_notation(currentSpO2) + " in " + std::to_string(totalIterations * 2) + "(s)");
+  eng.GetLogger()->Info("Engine stablized at an SpO2 of " + cdm::to_string(currentSpO2) + " in " + cdm::to_string(totalIterations * 2) + "(s)");
   return true;
 }
 
@@ -324,7 +324,7 @@ pulse::study::multiplex_ventilation::bind::PatientStateData* MVGenerator::GetNex
       if (p->id() == id)
         break;
     }
-    Info("Generating Patient ID " + std::to_string(id));
+    Info("Generating Patient ID " + to_string(id));
     m_PatientsToRun.erase(id);
   }
   m_mutex.unlock();
@@ -337,7 +337,7 @@ void MVGenerator::FinalizePatient(pulse::study::multiplex_ventilation::bind::Pat
   auto ps = m_CompletedPatientList->mutable_patients()->Add();
   ps->CopyFrom(p);
   SerializeToFile(*m_CompletedPatientList, m_PatientStateListFile, SerializationFormat::JSON);
-  Info("Completed Patient " + std::to_string(m_CompletedPatientList->patients_size()) + " of " + std::to_string(m_PatientList->patients_size()));
+  Info("Completed Patient " + to_string(m_CompletedPatientList->patients_size()) + " of " + to_string(m_PatientList->patients_size()));
   m_mutex.unlock();
 }
 

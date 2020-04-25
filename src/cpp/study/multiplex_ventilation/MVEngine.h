@@ -69,8 +69,6 @@ PUSH_PROTO_WARNINGS()
 #include <google/protobuf/util/json_util.h>
 POP_PROTO_WARNINGS()
 
-std::string to_scientific_notation(float f);
-std::string to_scientific_notation(double d);
 bool ExtractInitialConditions(const std::string& filePath, double& comp, double& imp);
 bool ExtractVentilatorSettings(const std::string& filePath, std::string& fileName, double& pip_cmH2O, double& peep_cmH2O, double& FiO2);
 
@@ -103,7 +101,7 @@ public:
   void DestroyEngines();
 
   static void TrackData(SEEngineTracker& trkr, const std::string& csv_filename);
-  static bool RunSoloState(const std::string& stateFile, const std::string& outDir, double duration_s, Logger* logger);
+  static bool RunSoloState(const std::string& stateFile, const std::string& outDir, double duration_s, Logger& logger);
 
   static bool SerializeToString(pulse::study::multiplex_ventilation::bind::SimulationData& src, std::string& dst, SerializationFormat f);
   static bool SerializeFromString(const std::string& src, pulse::study::multiplex_ventilation::bind::SimulationData& dst, SerializationFormat f);

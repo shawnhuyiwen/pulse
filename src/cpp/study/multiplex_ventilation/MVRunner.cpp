@@ -69,7 +69,7 @@ bool MVRunner::Run()
   // Remove any id's we have in the results
   if (m_SimulationResultsList->simulations_size() > 0)
   {
-    Info("Found " + std::to_string(m_SimulationResultsList->simulations_size()) + " previously run simulations");
+    Info("Found " + to_string(m_SimulationResultsList->simulations_size()) + " previously run simulations");
     for (int i = 0; i < m_SimulationResultsList->simulations_size(); i++)
       m_SimulationsToRun.erase(m_SimulationResultsList->simulations()[i].id());
   }
@@ -92,7 +92,7 @@ bool MVRunner::Run()
   // Let's not kick off more threads than we need
   if (processor_count > numSimsToRun)
     processor_count = numSimsToRun;
-  Info("Starting " + std::to_string(processor_count) + " Threads to run "+std::to_string(m_SimulationsToRun.size())+" simulations");
+  Info("Starting " + to_string(processor_count) + " Threads to run "+ to_string(m_SimulationsToRun.size())+" simulations");
   // Crank up our threads
   for (size_t p = 0; p < processor_count; p++)
     m_Threads.push_back(std::thread(&MVRunner::ControllerLoop, this));
@@ -100,14 +100,14 @@ bool MVRunner::Run()
   for (size_t p = 0; p < processor_count; p++)
     m_Threads[p].join();
 
-  Info("It took " + to_scientific_notation(profiler.GetElapsedTime_s("Total")) + "s to run this simulation list");
+  Info("It took " + to_string(profiler.GetElapsedTime_s("Total")) + "s to run this simulation list");
   profiler.Clear();
   return true;
 }
 
 void MVRunner::ControllerLoop()
 {
-  pulse::study::multiplex_ventilation::bind::SimulationData* sim;
+  pulse::study::multiplex_ventilation::bind::SimulationData* sim=nullptr;
   while (true)
   {
     try
@@ -195,7 +195,7 @@ bool MVRunner::StepSimulationFiO2(pulse::study::multiplex_ventilation::bind::Sim
     if (statusTimer_s > statusStep_s)
     {
       statusTimer_s = 0;
-      mve.GetLogger()->Info("Current Time is " + to_scientific_notation(currentTime_s) + "s, it took " + to_scientific_notation(profiler.GetElapsedTime_s("Status")) + "s to simulate the past " + to_scientific_notation(statusStep_s) + "s");
+      mve.GetLogger()->Info("Current Time is " + cdm::to_string(currentTime_s) + "s, it took " + cdm::to_string(profiler.GetElapsedTime_s("Status")) + "s to simulate the past " + cdm::to_string(statusStep_s) + "s");
       profiler.Reset("Status");
     }
 
@@ -221,9 +221,9 @@ bool MVRunner::StepSimulationFiO2(pulse::study::multiplex_ventilation::bind::Sim
         {
           stabilized = true;
           double stabilizationTime = (totalIterations - minIterations) * timeStep_s;
-          mve.GetLogger()->Info("Stabilized SpO2 at "+to_scientific_notation(currentSpO2));
-          mve.GetLogger()->Info("With FiO2 of " + to_scientific_notation(currentFiO2));
-          mve.GetLogger()->Info("It took " + to_scientific_notation(stabilizationTime) + "s to stabilize");
+          mve.GetLogger()->Info("Stabilized SpO2 at "+ cdm::to_string(currentSpO2));
+          mve.GetLogger()->Info("With FiO2 of " + cdm::to_string(currentFiO2));
+          mve.GetLogger()->Info("It took " + cdm::to_string(stabilizationTime) + "s to stabilize");
           break;
         }
         else
@@ -251,8 +251,8 @@ bool MVRunner::StepSimulationFiO2(pulse::study::multiplex_ventilation::bind::Sim
           }
           mve.SetFiO2(currentFiO2);
           previousSpO2 = currentSpO2;
-          mve.GetLogger()->Info("Stabilized SpO2 at " + to_scientific_notation(currentSpO2));
-          mve.GetLogger()->Info("Increasing FiO2 to " + to_scientific_notation(currentFiO2));
+          mve.GetLogger()->Info("Stabilized SpO2 at " + cdm::to_string(currentSpO2));
+          mve.GetLogger()->Info("Increasing FiO2 to " + cdm::to_string(currentFiO2));
         }
       }
       if (totalIterations > maxIterations)
@@ -267,7 +267,7 @@ bool MVRunner::StepSimulationFiO2(pulse::study::multiplex_ventilation::bind::Sim
           mve.GetLogger()->Info("Reached maximum FiO2, unable to stabilize");
           break;
         }
-        mve.GetLogger()->Info("Reached maximum iterations, upping the FiO2 to " + to_scientific_notation(currentFiO2));
+        mve.GetLogger()->Info("Reached maximum iterations, upping the FiO2 to " + cdm::to_string(currentFiO2));
         mve.SetFiO2(currentFiO2);
       }
     }
@@ -285,7 +285,7 @@ bool MVRunner::StepSimulationFiO2(pulse::study::multiplex_ventilation::bind::Sim
   }
   sim.set_achievedstabilization(stabilized);
   sim.set_stabilizationtime_s((totalIterations - minIterations)* timeStep_s);
-  mve.GetLogger()->Info("It took " + to_scientific_notation(profiler.GetElapsedTime_s("Total")) + "s to run this simulation");
+  mve.GetLogger()->Info("It took " + cdm::to_string(profiler.GetElapsedTime_s("Total")) + "s to run this simulation");
 
   profiler.Clear();
   return true;
@@ -338,7 +338,7 @@ bool MVRunner::RunSimulationToStableSpO2(pulse::study::multiplex_ventilation::bi
     if (statusTimer_s > statusStep_s)
     {
       statusTimer_s = 0;
-      mve.GetLogger()->Info("Current Time is " + to_scientific_notation(currentTime_s) + "s, it took " + to_scientific_notation(profiler.GetElapsedTime_s("Status")) + "s to simulate the past " + to_scientific_notation(statusStep_s) + "s");
+      mve.GetLogger()->Info("Current Time is " + cdm::to_string(currentTime_s) + "s, it took " + cdm::to_string(profiler.GetElapsedTime_s("Status")) + "s to simulate the past " + cdm::to_string(statusStep_s) + "s");
       profiler.Reset("Status");
     }
 
@@ -370,7 +370,7 @@ bool MVRunner::RunSimulationToStableSpO2(pulse::study::multiplex_ventilation::bi
       {
         break;
         double stabilizationTime = (totalIterations - minIterations) * timeStep_s;
-        mve.GetLogger()->Info("Stabilization took " + to_scientific_notation(stabilizationTime) + "s to for this simulation");
+        mve.GetLogger()->Info("Stabilization took " + cdm::to_string(stabilizationTime) + "s to for this simulation");
       }
       if (totalIterations > maxIterations)
       {
@@ -389,7 +389,7 @@ bool MVRunner::RunSimulationToStableSpO2(pulse::study::multiplex_ventilation::bi
     multiVentilation->set_achievedstabilization(!(totalIterations > maxIterations));
     multiVentilation->set_oxygensaturationstabilizationtrend((SpO2 - previsouSpO2s[p]) / timeStep_s);
   }
-  mve.GetLogger()->Info("It took " + to_scientific_notation(profiler.GetElapsedTime_s("Total")) + "s to run this simulation");
+  mve.GetLogger()->Info("It took " + cdm::to_string(profiler.GetElapsedTime_s("Total")) + "s to run this simulation");
 
   profiler.Clear();
   return true;
@@ -408,7 +408,7 @@ pulse::study::multiplex_ventilation::bind::SimulationData* MVRunner::GetNextSimu
       if (sim->id() == id)
         break;
     }
-    Info("Simulating ID " + std::to_string(id)+" "+sim->outputbasefilename());
+    Info("Simulating ID " + to_string(id)+" "+sim->outputbasefilename());
     m_SimulationsToRun.erase(id);
   }
   m_mutex.unlock();
@@ -421,11 +421,11 @@ void MVRunner::FinalizeSimulation(pulse::study::multiplex_ventilation::bind::Sim
   auto rSim = m_SimulationResultsList->mutable_simulations()->Add();
   rSim->CopyFrom(sim);
   SerializeToFile(*m_SimulationResultsList, m_SimulationResultsListFile, SerializationFormat::JSON);
-  Info("Completed Simulation " + std::to_string(m_SimulationResultsList->simulations_size()) + " of " + std::to_string(m_SimulationList->simulations_size()));
+  Info("Completed Simulation " + to_string(m_SimulationResultsList->simulations_size()) + " of " + to_string(m_SimulationList->simulations_size()));
   if (sim.achievedstabilization())
-    Info("  Stabilized : " + sim.outputbasefilename() + "_fio2=" + to_scientific_notation(sim.fio2()));
+    Info("  Stabilized : " + sim.outputbasefilename() + "_fio2=" + to_string(sim.fio2()));
   else
-    Info("  FAILED STABILIZATION : " + sim.outputbasefilename() + "_fio2=" + to_scientific_notation(sim.fio2()));
+    Info("  FAILED STABILIZATION : " + sim.outputbasefilename() + "_fio2=" + to_string(sim.fio2()));
   std::ofstream plots;
   plots.open(m_SimulationList->outputrootdir() + "/plot_pairs.config", std::fstream::in | std::fstream::out | std::fstream::app);
   plots << sim.outputbasefilename() << "multiplex_patient_0_results.csv, " << sim.outputbasefilename() << "multiplex_patient_1_results.csv\n";
