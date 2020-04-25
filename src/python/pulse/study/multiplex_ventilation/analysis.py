@@ -247,13 +247,15 @@ def parse_data2(simulations):
     delta_OxygenSaturation = []
     delta_SFRatio = []
     delta_OxygenationIndex = []
-    delta_EndTidalCarbonDioxidePressure_cmH2O = []
+    delta_EndTidalCarbonDioxidePressure_mmHg = []
+    delta_AlveolarArterialGradient_mmHg = []
     z_norm = []
     index = []
     tv_index = []
     SpO2_index = []
     PaO2_index = []
-    #max = 0
+    count = 0
+    max = 0
 
     for sim in simulations.Simulations:
         p0 = sim.PatientComparisons[0].MultiplexVentilation
@@ -261,7 +263,7 @@ def parse_data2(simulations):
         p0_TV = p0.TidalVolume_mL / 75.3 # mL/kg ideal weight
         p1_TV = p1.TidalVolume_mL / 75.3 # mL/kg ideal weight
         if sim.FiO2 > 0.98 and (p0.OxygenSaturation < 0.89 or p1.OxygenSaturation < 0.89):
-            # Too impaired on their own
+            # Too impaired on their own, so it won't tell us anything
             pass
         else:
             delta_compliance.append(abs(p0.Compliance_mL_Per_cmH2O - p1.Compliance_mL_Per_cmH2O))
@@ -272,20 +274,26 @@ def parse_data2(simulations):
             delta_OxygenSaturation.append(abs(p0.OxygenSaturation - p1.OxygenSaturation))
             delta_SFRatio.append(abs(p0.SFRatio - p1.SFRatio))
             delta_OxygenationIndex.append(abs(p0.OxygenationIndex - p1.OxygenationIndex))
-            delta_EndTidalCarbonDioxidePressure_cmH2O.append(abs(p0.EndTidalCarbonDioxidePressure_cmH2O - p1.EndTidalCarbonDioxidePressure_cmH2O))
+            delta_EndTidalCarbonDioxidePressure_mmHg.append(abs(p0.EndTidalCarbonDioxidePressure_mmHg - p1.EndTidalCarbonDioxidePressure_mmHg))
+            delta_AlveolarArterialGradient_mmHg.append(abs(p0.AlveolarArterialGradient_mmHg - p1.AlveolarArterialGradient_mmHg))
 
-            # if max < p1.EndTidalCarbonDioxidePressure_cmH2O:
-            #     max = p1.EndTidalCarbonDioxidePressure_cmH2O
+            if p0.ArterialOxygenPartialPressure_mmHg >= 200 or p1.ArterialOxygenPartialPressure_mmHg >= 200:
+                count = count + 1
+
+            if p0.ArterialOxygenPartialPressure_mmHg > max:
+                max = p0.ArterialOxygenPartialPressure_mmHg
+            if p1.ArterialOxygenPartialPressure_mmHg > max:
+                max = p1.ArterialOxygenPartialPressure_mmHg
 
             if 6.5 >= p0_TV >= 5.5 and \
                6.5 >= p1_TV >= 5.5 and \
-               p0.OxygenSaturation >= 0.89 and p1.OxygenSaturation >= 0.89 and \
-               p0.ArterialOxygenPartialPressure_mmHg < 120 and p1.ArterialOxygenPartialPressure_mmHg < 120:
+               p0.OxygenSaturation >= 0.89 and p1.OxygenSaturation >= 0.89:# and \
+               #p0.ArterialOxygenPartialPressure_mmHg < 120 and p1.ArterialOxygenPartialPressure_mmHg < 120:
                 z_norm.append(1.0)
                 index.append("Positive")
             elif (7.5 >= p0_TV >= 4.5) and (7.5 >= p1_TV >= 4.5) and \
-                 p0.OxygenSaturation >= 0.89 and p1.OxygenSaturation >= 0.89 and \
-                 p0.ArterialOxygenPartialPressure_mmHg < 200 and p1.ArterialOxygenPartialPressure_mmHg < 200:
+                 p0.OxygenSaturation >= 0.89 and p1.OxygenSaturation >= 0.89:# and \
+                 #p0.ArterialOxygenPartialPressure_mmHg < 200 and p1.ArterialOxygenPartialPressure_mmHg < 200:
                     z_norm.append(0.5)
                     index.append("Less Positive")
             else:
@@ -309,8 +317,8 @@ def parse_data2(simulations):
             # PaO2 Only
             if p0.ArterialOxygenPartialPressure_mmHg < 120 and p1.ArterialOxygenPartialPressure_mmHg < 120:
                 PaO2_index.append("Positive")
-            elif p0.ArterialOxygenPartialPressure_mmHg < 200 and p1.ArterialOxygenPartialPressure_mmHg < 200:
-                PaO2_index.append("Less Positive")
+            # elif p0.ArterialOxygenPartialPressure_mmHg < 200 and p1.ArterialOxygenPartialPressure_mmHg < 200:
+            #     PaO2_index.append("Less Positive")
             else:
                 PaO2_index.append("Negative")
 
@@ -321,28 +329,34 @@ def parse_data2(simulations):
     delta_O2SatIndex = np.asarray(delta_O2SatIndex)
     z_norm = np.asarray(z_norm)
 
-    numpy_data = np.array([delta_compliance, delta_O2SatIndex, delta_AirwayPressure_cmH2O, delta_ImpairmentFraction, delta_CarricoIndex_mmHg, delta_SFRatio, delta_OxygenationIndex, delta_EndTidalCarbonDioxidePressure_cmH2O, index, tv_index, SpO2_index, PaO2_index])
+    numpy_data = np.array([delta_compliance, delta_O2SatIndex, delta_AirwayPressure_cmH2O, delta_ImpairmentFraction, delta_CarricoIndex_mmHg, delta_SFRatio, delta_OxygenationIndex, delta_EndTidalCarbonDioxidePressure_mmHg, delta_AlveolarArterialGradient_mmHg, index, tv_index, SpO2_index, PaO2_index])
     numpy_data = np.transpose(numpy_data)
-    df = pd.DataFrame(data=numpy_data, columns=["delta_compliance", "delta_O2SatIndex", "delta_AirwayPressure_cmH2O", "delta_ImpairmentFraction", "delta_CarricoIndex_mmHg", "delta_SFRatio", "delta_OxygenationIndex", "delta_EndTidalCarbonDioxidePressure_cmH2O", "Outcome", "TV Outcome", "SpO2 Outcome", "PaO2 Outcome"])
+    df = pd.DataFrame(data=numpy_data, columns=["delta_compliance", "delta_O2SatIndex", "delta_AirwayPressure_cmH2O", "delta_ImpairmentFraction", "delta_CarricoIndex_mmHg", "delta_SFRatio", "delta_OxygenationIndex", "delta_EndTidalCarbonDioxidePressure_mmHg", "delta_AlveolarArterialGradient_mmHg", "Outcome", "TV Outcome", "SpO2 Outcome", "PaO2 Outcome"])
     df['delta_compliance'] = df['delta_compliance'].astype(float)
     df['delta_O2SatIndex'] = df['delta_O2SatIndex'].astype(float)
     df['delta_AirwayPressure_cmH2O'] = df['delta_AirwayPressure_cmH2O'].astype(float)
     df['delta_ImpairmentFraction'] = df['delta_ImpairmentFraction'].astype(float)
     df['delta_CarricoIndex_mmHg'] = df['delta_CarricoIndex_mmHg'].astype(float)
     df['delta_SFRatio'] = df['delta_SFRatio'].astype(float)
+    df['delta_OxygenationIndex'] = df['delta_OxygenationIndex'].astype(float)
+    df['delta_EndTidalCarbonDioxidePressure_mmHg'] = df['delta_EndTidalCarbonDioxidePressure_mmHg'].astype(float)
+    df['delta_AlveolarArterialGradient_mmHg'] = df['delta_AlveolarArterialGradient_mmHg'].astype(float)
 
     corr_data = np.array([delta_compliance, delta_O2SatIndex, delta_AirwayPressure_cmH2O, delta_ImpairmentFraction,
-                           delta_CarricoIndex_mmHg, delta_SFRatio, delta_OxygenationIndex, delta_EndTidalCarbonDioxidePressure_cmH2O])
+                           delta_CarricoIndex_mmHg, delta_SFRatio, delta_OxygenationIndex, delta_EndTidalCarbonDioxidePressure_mmHg, delta_AlveolarArterialGradient_mmHg])
     corr_data = np.transpose(corr_data)
     corr_df = pd.DataFrame(data=corr_data, columns=["C Mismatch (cmH2O)", "SpO2 Index Mismatch", "MAP Mismatch (cmH2O)",
                                                 "Impairment Mismatch", "PaO2/FiO2 Mismatch (mmHg)",
-                                                "SpO2/FiO2 Mismatch", "Oxygenation Index Mismatch", "ETCO2 Mismatch (cmH2O)"])
-    df['delta_compliance'] = df['delta_compliance'].astype(float)
-    df['delta_O2SatIndex'] = df['delta_O2SatIndex'].astype(float)
-    df['delta_AirwayPressure_cmH2O'] = df['delta_AirwayPressure_cmH2O'].astype(float)
-    df['delta_ImpairmentFraction'] = df['delta_ImpairmentFraction'].astype(float)
-    df['delta_CarricoIndex_mmHg'] = df['delta_CarricoIndex_mmHg'].astype(float)
-    df['delta_SFRatio'] = df['delta_SFRatio'].astype(float)
+                                                "SpO2/FiO2 Mismatch", "O2 Index Mismatch", "ETCO2 Mismatch (mmHg)", "A-a Gradient Mismatch"])
+    corr_df['C Mismatch (cmH2O)'] = corr_df['C Mismatch (cmH2O)'].astype(float)
+    corr_df['SpO2 Index Mismatch'] = corr_df['SpO2 Index Mismatch'].astype(float)
+    corr_df['MAP Mismatch (cmH2O)'] = corr_df['MAP Mismatch (cmH2O)'].astype(float)
+    corr_df['Impairment Mismatch'] = corr_df['Impairment Mismatch'].astype(float)
+    corr_df['PaO2/FiO2 Mismatch (mmHg)'] = corr_df['PaO2/FiO2 Mismatch (mmHg)'].astype(float)
+    corr_df['SpO2/FiO2 Mismatch'] = corr_df['SpO2/FiO2 Mismatch'].astype(float)
+    corr_df['O2 Index Mismatch'] = corr_df['O2 Index Mismatch'].astype(float)
+    corr_df['ETCO2 Mismatch (mmHg)'] = corr_df['ETCO2 Mismatch (mmHg)'].astype(float)
+    corr_df['A-a Gradient Mismatch'] = corr_df['A-a Gradient Mismatch'].astype(float)
 
     #jbw - All this correlation stuff should be it's own function
 
@@ -387,25 +401,28 @@ def parse_data2(simulations):
                           df[df.Outcome == 'Negative'].delta_OxygenationIndex)
     print('delta_OxygenationIndex: ', F)
 
-    F, p = stats.f_oneway(df[df.Outcome == 'Positive'].delta_EndTidalCarbonDioxidePressure_cmH2O,
-                          df[df.Outcome == 'Less Positive'].delta_EndTidalCarbonDioxidePressure_cmH2O,
-                          df[df.Outcome == 'Negative'].delta_EndTidalCarbonDioxidePressure_cmH2O)
-    print('delta_EndTidalCarbonDioxidePressure_cmH2O: ', F)
+    F, p = stats.f_oneway(df[df.Outcome == 'Positive'].delta_EndTidalCarbonDioxidePressure_mmHg,
+                          df[df.Outcome == 'Less Positive'].delta_EndTidalCarbonDioxidePressure_mmHg,
+                          df[df.Outcome == 'Negative'].delta_EndTidalCarbonDioxidePressure_mmHg)
+    print('delta_EndTidalCarbonDioxidePressure_mmHg: ', F)
+
+    F, p = stats.f_oneway(df[df.Outcome == 'Positive'].delta_AlveolarArterialGradient_mmHg,
+                          df[df.Outcome == 'Less Positive'].delta_AlveolarArterialGradient_mmHg,
+                          df[df.Outcome == 'Negative'].delta_AlveolarArterialGradient_mmHg)
+    print('delta_AlveolarArterialGradient_mmHg: ', F)
 
     #Need something measurable on their own ventilator, independent of ventilator setting changes (pressures and FiO2), consistent accross ventilator settings - O2 sat not good because of mismatch
-    #jbw - add ShuntFraction and AlveolarArterialGradient
-    #jbw - does o2 sat index change?
-    #feture coorelation (pearson)
 
     #Axes?  Are they correlated with each other?  That's where you get compliance and O2SatIndex!!!
     # Orthogonally coorolated, correlated in different dimension?
 
     corr = corr_df.corr(method='pearson')
+    corr = corr.round(2)
 
     mask = np.zeros_like(corr, dtype=np.bool)
     mask[np.triu_indices_from(mask)] = True
     f, ax = plt.subplots(figsize=(15, 15))
-    heatmap = sns.heatmap(corr, mask=mask, square=True, linewidths=.5, cmap='coolwarm', cbar_kws={'shrink':.5, 'ticks':[-1, -.5, 0, 0.5, 1]}, vmin=-1, vmax=1, annot=True, annot_kws={'size': 10})
+    heatmap = sns.heatmap(corr, mask=mask, square=True, linewidths=.5, cmap='coolwarm', cbar_kws={'shrink':.5, 'ticks':[-1, -.5, 0, 0.5, 1]}, vmin=-1, vmax=1, annot=True, annot_kws={'size': 22})
     # add the column names as labels
     ax.set_yticklabels(corr.columns, rotation=0)
     ax.set_xticklabels(corr.columns)
@@ -420,11 +437,11 @@ def parse_data2(simulations):
 
 def Interpolate2(x, y, z):
     x_bound = 18
-    y_bound = 400
+    y_bound = 4
 
     xnew, ynew = np.mgrid[0:x_bound:100j, 0:y_bound:100j]
-    tck = interpolate.bisplrep(x, y, z, kx=2, ky=2)
-    #jbw - get r squared value
+    tck, fp, ier, msg = interpolate.bisplrep(x, y, z, kx=2, ky=2, full_output=1)
+    print('The weighted sum of squared residuals of the spline approximation = ',fp)
     znew = interpolate.bisplev(xnew[:, 0], ynew[0, :], tck)
     #znew = znew / np.linalg.norm(znew)
     #znew = (znew-np.min(znew))/np.ptp(znew)
@@ -435,7 +452,7 @@ def Interpolate2(x, y, z):
 
 def Plot2(x, y, z, xnew, ynew, znew, df):
     x_bound = 22
-    y_bound = 800
+    y_bound = 8
 
     x_label = "Respiratory Compliance Mismatch (mL/cmH2O)"
     y_label = "Oxygen Saturation Index Mismatch (mmHg)"
@@ -544,7 +561,7 @@ def Plot2(x, y, z, xnew, ynew, znew, df):
     plt.savefig('Outcome_Bounds_Comparison.png')
 
     x_bound = 18
-    y_bound = 400
+    y_bound = 4
 
     fig, axs = plt.subplots(1, 2, figsize=(15, 6))
     fig.suptitle('Combined Outcomes: Patient 1 vs Patient 2 Clinical Measurements', fontsize=14)
@@ -572,6 +589,41 @@ def Plot2(x, y, z, xnew, ynew, znew, df):
 
     #jbw - save to disk
 
+def box_plot(simulations):
+    # This assumes there are 2 patients being compared
+
+    O2SatIndex = []
+    ImpairmentFraction = []
+
+    for sim in simulations.Simulations:
+        p0 = sim.PatientComparisons[0].MultiplexVentilation
+        p1 = sim.PatientComparisons[1].MultiplexVentilation
+
+        O2SatIndex.append(p0.OxygenSaturationIndex_cmH2O)
+        O2SatIndex.append(p1.OxygenSaturationIndex_cmH2O)
+        ImpairmentFraction.append(p0.ImpairmentFraction)
+        ImpairmentFraction.append(p1.ImpairmentFraction)
+
+    O2SatIndex = np.asarray(O2SatIndex)
+    ImpairmentFraction = np.asarray(ImpairmentFraction)
+
+    numpy_data = np.array([ImpairmentFraction, O2SatIndex])
+    numpy_data = np.transpose(numpy_data)
+
+    numpy_data = np.sort(numpy_data, 0)
+    grouped_data = np.split(numpy_data[:, 1], np.cumsum(np.unique(numpy_data[:, 0], return_counts=True)[1])[:-1])
+    uniqueValues, indicesList = np.unique(numpy_data[:, 0], return_index=True)
+    uniqueValues = np.around(uniqueValues, decimals=1)
+
+    fig, ax = plt.subplots()
+    ax.boxplot(grouped_data, labels=uniqueValues)
+    ax.yaxis.grid(True, linestyle='-', which='major', color='lightgrey', alpha=0.5)
+    ax.set_title('Oxygen Saturation Index Distribution')
+    ax.set_xlabel('Diffusion Impairment Factor')
+    ax.set_ylabel('Oxygen Saturation Index (mmHg)')
+    plt.savefig('Distribution.png')
+    plt.show()
+
 
 def plot_interpolate2(simulations: SimulationListData):
     x, y, z, df = parse_data2(simulations)
@@ -583,9 +635,7 @@ def plot_interpolate2(simulations: SimulationListData):
 
 if __name__ == '__main__':
     # Load up a result set
-    #results_file = "./test_results/multiplex_ventilation/simulations/simlist_results_4410.json"
-    #results_file = "./test_results/multiplex_ventilation/simulations/simlist_results_10584.json"
-    results_file = "./test_results/multiplex_ventilation/simulations/simlist_results_12642.json"
+    results_file = "./test_results/multiplex_ventilation/simulations/simlist_results_Fix.json"
 
     with open(results_file) as f:
         json = f.read()
@@ -594,4 +644,5 @@ if __name__ == '__main__':
     # Make some plots
     #plot_all_parameters(results)
     #plot_by_parameter(results)
-    plot_interpolate2(results)
+    #plot_interpolate2(results)
+    box_plot(results)
