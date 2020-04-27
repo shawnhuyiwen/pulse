@@ -13,7 +13,7 @@ public:
   virtual ~MVRunner();
 
   bool Run(const std::string& filename, SerializationFormat f, Mode m);
-  bool Run(pulse::study::multiplex_ventilation::bind::SimulationListData& simList, Mode m);
+  bool Run(pulse::study::multiplex_ventilation::bind::SimulationListData& simList, Mode m, const std::string& resultsFilename);
 
   static bool StepSimulationFiO2(pulse::study::multiplex_ventilation::bind::SimulationData& sim, const std::string& dataDir = "./");
   static bool RunSimulationToStableSpO2(pulse::study::multiplex_ventilation::bind::SimulationData& sim, const std::string& dataDir="./");

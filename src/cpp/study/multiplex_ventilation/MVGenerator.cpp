@@ -255,7 +255,7 @@ bool MVGenerator::GenerateStabilizedPatient(pulse::study::multiplex_ventilation:
   pData.set_meanairwaypressure_cmh2o(engine->GetRespiratorySystem()->GetMeanAirwayPressure(PressureUnit::cmH2O));
   pData.set_oxygenationindex(engine->GetRespiratorySystem()->GetOxygenationIndex());
   pData.set_oxygensaturation(engine->GetBloodChemistrySystem()->GetOxygenSaturation());
-  pData.set_oxygensaturationindex_cmh2o(engine->GetRespiratorySystem()->GetOxygenSaturationIndex(PressureUnit::cmH2O));
+  pData.set_oxygensaturationindex_mmhg(engine->GetRespiratorySystem()->GetOxygenSaturationIndex(PressureUnit::mmHg));
   pData.set_sfratio(engine->GetRespiratorySystem()->GetSaturationAndFractionOfInspiredOxygenRatio());
   pData.set_shuntfraction(engine->GetBloodChemistrySystem()->GetShuntFraction());
   pData.set_tidalvolume_ml(engine->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL));

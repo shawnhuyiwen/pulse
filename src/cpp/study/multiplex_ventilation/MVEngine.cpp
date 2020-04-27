@@ -565,7 +565,7 @@ bool MVEngine::GetSimulationState(pulse::study::multiplex_ventilation::bind::Sim
     multiVentilation->set_meanairwaypressure_cmh2o(pc->GetRespiratory().GetMeanAirwayPressure(PressureUnit::cmH2O));
     multiVentilation->set_oxygenationindex(pc->GetRespiratory().GetOxygenationIndex().GetValue());
     multiVentilation->set_oxygensaturation(pc->GetBloodChemistry().GetOxygenSaturation().GetValue());
-    multiVentilation->set_oxygensaturationindex_cmh2o(pc->GetRespiratory().GetOxygenSaturationIndex().GetValue(PressureUnit::cmH2O));
+    multiVentilation->set_oxygensaturationindex_mmhg(pc->GetRespiratory().GetOxygenSaturationIndex().GetValue(PressureUnit::mmHg));
     multiVentilation->set_sfratio(pc->GetRespiratory().GetSaturationAndFractionOfInspiredOxygenRatio().GetValue());
     multiVentilation->set_shuntfraction(pc->GetBloodChemistry().GetShuntFraction().GetValue());
     multiVentilation->set_tidalvolume_ml(pc->GetRespiratory().GetTidalVolume(VolumeUnit::mL));

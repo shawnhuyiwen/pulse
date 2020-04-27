@@ -15,10 +15,10 @@ MVRunner::~MVRunner()
   SAFE_DELETE(m_SimulationResultsList);
 }
 
-bool MVRunner::Run(pulse::study::multiplex_ventilation::bind::SimulationListData& simList, Mode m)
+bool MVRunner::Run(pulse::study::multiplex_ventilation::bind::SimulationListData& simList, Mode m, const std::string& resultsFilename)
 {
   m_Mode = m;
-  m_SimulationResultsListFile = simList.outputrootdir()+"/simlist_results.json";
+  m_SimulationResultsListFile = simList.outputrootdir()+"/"+resultsFilename;
   SAFE_DELETE(m_SimulationList);
   SAFE_DELETE(m_SimulationResultsList);
   m_SimulationList = &simList;
@@ -184,6 +184,13 @@ bool MVRunner::StepSimulationFiO2(pulse::study::multiplex_ventilation::bind::Sim
     // Start stabilization timer after minimum run time
     if (totalIterations > minIterations)
       stabilizationTimer_s += timeStep_s;
+
+    // Generally, we do not enable this, but do take this into account in the data analysis
+    //if (mve.GetMinPAO2_mmHg() >= 200)
+    //{
+    //  mve.GetLogger()->Info("Reached maximum PAO2, unable to stabilize");
+    //  break;
+    //}
 
     // How are we running?
     if (statusTimer_s > statusStep_s)

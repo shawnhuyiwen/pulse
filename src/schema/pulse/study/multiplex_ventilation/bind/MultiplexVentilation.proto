@@ -30,7 +30,7 @@ message PatientStateData
   double          MeanAirwayPressure_cmH2O                  = 19;
   double          OxygenationIndex                          = 20;
   double          OxygenSaturation                          = 21;
-  double          OxygenSaturationIndex_cmH2O               = 22;
+  double          OxygenSaturationIndex_mmHg                = 22;
   double          SFRatio                                   = 23;
   double          ShuntFraction                             = 24;
   double          TidalVolume_mL                            = 25;
