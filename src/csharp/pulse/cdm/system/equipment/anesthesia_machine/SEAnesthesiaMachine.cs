@@ -3,9 +3,9 @@
 
 namespace Pulse.CDM
 {
-  public class SEAnesthesiaMachine // : SESystem
+  public class SEAnesthesiaMachine : SEEquipment
   {
-    // Keep enums in sync with appropriate schema/cdm/AnesthesiaMachineEnums.proto file !!
+    // Keep enums in sync with appropriate schema/cdm/AnesthesiaMachine.proto file !!
     public enum Connection : int
     {
       NullConnection = 0,/** Signals not provided, or no change */
@@ -13,7 +13,7 @@ namespace Pulse.CDM
       Mask,
       Tube
     }
-    // Keep enums in sync with appropriate schema/cdm/AnesthesiaMachineEnums.proto file !!
+    // Keep enums in sync with appropriate schema/cdm/AnesthesiaMachine.proto file !!
     public enum OxygenSource : int
     {
       NullSource = 0,/** Signals not provided, or no change */
@@ -22,7 +22,7 @@ namespace Pulse.CDM
       BottleOne,
       BottleTwo
     }
-    // Keep enums in sync with appropriate schema/cdm/AnesthesiaMachineEnums.proto file !!
+    // Keep enums in sync with appropriate schema/cdm/AnesthesiaMachine.proto file !!
     public enum PrimaryGas : int
     {
       NullGas = 0,/** Signals not provided, or no change */
@@ -36,12 +36,11 @@ namespace Pulse.CDM
     protected SEScalar inspiratoryExpiratoryRatio;
     protected SEScalar0To1 oxygenFraction;
     protected OxygenSource oxygenSource;
+    protected SEScalarPressure peakInspiratoryPressure;
     protected SEScalarPressure positiveEndExpiredPressure;
     protected PrimaryGas primaryGas;
     protected SEScalarFrequency respiratoryRate;
     protected SEScalarPressure reliefValvePressure;
-
-    protected SEScalarPressure ventilatorPressure;
 
     //protected SEAnesthesiaMachineChamber        leftChamber;
     //protected SEAnesthesiaMachineChamber        rightChamber;
@@ -58,12 +57,11 @@ namespace Pulse.CDM
       inspiratoryExpiratoryRatio = null;
       oxygenFraction = null;
       oxygenSource = OxygenSource.NullSource;
+      peakInspiratoryPressure = null;
       positiveEndExpiredPressure = null;
       primaryGas = PrimaryGas.NullGas;
       respiratoryRate = null;
       reliefValvePressure = null;
-
-      ventilatorPressure = null;
 
       //leftChamber = null;
       //rightChamber = null;
@@ -72,8 +70,9 @@ namespace Pulse.CDM
       //oxygenBottleTwo = null;
     }
 
-    public void Clear()
+    public override void Clear()
     {
+      base.Clear();
       connection = Connection.NullConnection;
       if (inletFlow != null)
         inletFlow.Invalidate();
@@ -82,6 +81,8 @@ namespace Pulse.CDM
       if (oxygenFraction != null)
         oxygenFraction.Invalidate();
       oxygenSource = OxygenSource.NullSource;
+      if (peakInspiratoryPressure != null)
+        peakInspiratoryPressure.Invalidate();
       if (positiveEndExpiredPressure != null)
         positiveEndExpiredPressure.Invalidate();
       primaryGas = PrimaryGas.NullGas;
@@ -89,8 +90,6 @@ namespace Pulse.CDM
         respiratoryRate.Invalidate();
       if (reliefValvePressure != null)
         reliefValvePressure.Invalidate();
-      if (ventilatorPressure != null)
-        ventilatorPressure.Invalidate();
 
       //if (HasLeftChamber())
       //  leftChamber.Clear();
@@ -210,6 +209,17 @@ namespace Pulse.CDM
       return oxygenSource != OxygenSource.NullSource;
     }
 
+    public SEScalarPressure GetPeakInspiratoryPressure()
+    {
+      if (peakInspiratoryPressure == null)
+        peakInspiratoryPressure = new SEScalarPressure();
+      return peakInspiratoryPressure;
+    }
+    public bool HasPeakInspiratoryPressure()
+    {
+      return peakInspiratoryPressure == null ? false : peakInspiratoryPressure.IsValid();
+    }
+
     public SEScalarPressure GetPositiveEndExpiredPressure()
     {
       if (positiveEndExpiredPressure == null)
@@ -255,18 +265,6 @@ namespace Pulse.CDM
     {
       return reliefValvePressure == null ? false : reliefValvePressure.IsValid();
     }
-
-    public SEScalarPressure GetVentilatorPressure()
-    {
-      if (ventilatorPressure == null)
-        ventilatorPressure = new SEScalarPressure();
-      return ventilatorPressure;
-    }
-    public bool HasVentilatorPressure()
-    {
-      return ventilatorPressure == null ? false : ventilatorPressure.IsValid();
-    }
-
 
     //public bool HasLeftChamber()
     //{
@@ -354,11 +352,11 @@ namespace Pulse.CDM
       + "\n\tInspiratoryExpiratoryRatio: " + GetInspiratoryExpiratoryRatio()
       + "\n\tOxygenFraction: " + GetOxygenFraction()
       + "\n\tOxygenSource: " + (HasOxygenSource() ? PBAnesthesiaMachine.OxygenSource_Name(GetOxygenSource()) : "NotProvided")
+      + "\n\tPeakInspiratoryPressure: " + GetPeakInspiratoryPressure()
       + "\n\tPositiveEndExpiredPressure: " + GetPositiveEndExpiredPressure()
       + "\n\tPrimaryGas: " + (HasPrimaryGas() ? PBAnesthesiaMachine.PrimaryGas_Name(GetPrimaryGas()) : "NotProvided")
       + "\n\tRespiratoryRate: " + GetRespiratoryRate()
       + "\n\tReliefValvePressure: " + GetReliefValvePressure()
-      + "\n\tVentilatorPressure: " + GetVentilatorPressure()
       + "\n\t" + leftChamber
       + "\n\t" + rightChamber
       + "\n\t" + o2BottleOne

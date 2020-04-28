@@ -6,6 +6,7 @@ CDM_BIND_DECL(AnyActionData)
 CDM_BIND_DECL2(Action)
 CDM_BIND_DECL2(AdvanceTime)
 CDM_BIND_DECL2(SerializeState)
+CDM_BIND_DECL2(Overrides)
 class SESubstanceManager;
 
 class CDM_DECL PBAction
@@ -31,4 +32,9 @@ public:
   static void Serialize(const CDM_BIND::SerializeStateData& src, SESerializeState& dst);
   static void Serialize(const SESerializeState& src, CDM_BIND::SerializeStateData& dst);
 
+  static void Load(const CDM_BIND::OverridesData& src, SEOverrides& dst);
+  static CDM_BIND::OverridesData* Unload(const SEOverrides& src);
+  static void Serialize(const CDM_BIND::OverridesData& src, SEOverrides& dst);
+  static void Serialize(const SEOverrides& src, CDM_BIND::OverridesData& dst);
+  static void Copy(const SEOverrides& src, SEOverrides& dst);
 };

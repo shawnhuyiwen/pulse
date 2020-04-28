@@ -4,7 +4,9 @@ endif()
 find_package(pybind11 CONFIG REQUIRED)
 
 pybind11_add_module(PyPulse
-  pybind/PyPulse.cpp)
+  pybind/PyPulse.cpp
+  pybind/PhysiologyEngine.cpp
+  pybind/MultiplexVentilation.cpp)
 
 target_include_directories(PyPulse PRIVATE ${pybind11_INCLUDE_DIRS})
 
@@ -13,7 +15,8 @@ if(APPLE)
 endif()
 
 target_link_libraries(PyPulse
-                      PUBLIC CommonPulseModels pybind11::module
+                      PUBLIC MultiplexVentilationEngine pybind11::module
+                      PRIVATE protobuf::libprotobuf
 )
 
 set_target_properties(PyPulse PROPERTIES

@@ -13,7 +13,7 @@ import pulse.cdm.bind.PatientAssessments.PulmonaryFunctionTestData;
 import pulse.cdm.bind.PatientAssessments.UrinalysisData;
 import pulse.cdm.bind.PatientAssessments.ePatientAssessmentType;
 import pulse.cdm.bind.Engine.ActionListData;
-import pulse.engine.bind.PulseState.StateData;
+import pulse.cpm.bind.PulseState.StateData;
 
 import pulse.cdm.actions.SEAction;
 import pulse.cdm.datarequests.SEDataRequestManager;
@@ -50,16 +50,23 @@ public class PulseEngine extends Pulse
   }
 
   // TODO Set a callback for patient events
-  
   public synchronized boolean serializeFromFile(String logFile, String stateFile, SEDataRequestManager dataRequests)
-  {    
-    return loadStateContents(logFile, stateFile, -1.0, dataRequests);
-  }  
+  {
+    return loadStateContents(logFile, stateFile, -1.0, dataRequests, "./");
+  }
+  public synchronized boolean serializeFromFile(String logFile, String stateFile, SEDataRequestManager dataRequests, String dataDir)
+  {
+    return loadStateContents(logFile, stateFile, -1.0, dataRequests, dataDir);
+  }
   public synchronized boolean serializeFromFile(String logFile, String stateFile, SEScalarTime simTime, SEDataRequestManager dataRequests)
-  {        
-    return loadStateContents(logFile, stateFile, simTime.getValue(TimeUnit.s), dataRequests);
+  {
+    return loadStateContents(logFile, stateFile, simTime.getValue(TimeUnit.s), dataRequests, "./");
   }  
-  protected synchronized boolean loadStateContents(String logFile, String stateFile, double simTime_s, SEDataRequestManager dataRequests)
+  public synchronized boolean serializeFromFile(String logFile, String stateFile, SEScalarTime simTime, SEDataRequestManager dataRequests, String dataDir)
+  {
+    return loadStateContents(logFile, stateFile, simTime.getValue(TimeUnit.s), dataRequests, dataDir);
+  }
+  protected synchronized boolean loadStateContents(String logFile, String stateFile, double simTime_s, SEDataRequestManager dataRequests, String dataDir)
   {
     this.reset();
     String dataRequestsStr = null;
@@ -73,7 +80,7 @@ public class PulseEngine extends Pulse
       return false;
     }
     this.requestData(dataRequests);
-    this.nativeObj = nativeAllocate(logFile);
+    this.nativeObj = nativeAllocate(logFile, dataDir);
     return nativeSerializeFromFile(this.nativeObj, stateFile, simTime_s, dataRequestsStr);
   }
   
@@ -86,6 +93,10 @@ public class PulseEngine extends Pulse
   }
 
   public synchronized boolean initializeEngine(String logFile, SEPatientConfiguration patient_configuration, SEDataRequestManager dataRequests)
+  {
+    return initializeEngine(logFile, patient_configuration, dataRequests, "./");
+  }
+  public synchronized boolean initializeEngine(String logFile, SEPatientConfiguration patient_configuration, SEDataRequestManager dataRequests, String dataDir)
   {    
     this.reset();
     
@@ -109,7 +120,7 @@ public class PulseEngine extends Pulse
       return false;
     }
     this.requestData(dataRequests);
-    this.nativeObj = nativeAllocate(logFile);
+    this.nativeObj = nativeAllocate(logFile, dataDir);
     this.deadEngine = !nativeInitializeEngine(this.nativeObj, patient_configurationStr, dataRequestsStr);
     if(this.deadEngine)
       Log.error("Unable to initialize engine");

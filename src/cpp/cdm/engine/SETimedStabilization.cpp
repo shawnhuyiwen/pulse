@@ -2,7 +2,6 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include "PhysiologyEngine.h"
 #include "engine/SETimedStabilization.h"
 #include "engine/SEEngineTracker.h"
 #include "engine/SECondition.h"
@@ -11,20 +10,20 @@
 #include "properties/SEScalarTime.h"
 #include "io/protobuf/PBEngine.h"
 
-bool SETimedStabilization::StabilizeRestingState(PhysiologyEngine& engine)
+bool SETimedStabilization::StabilizeRestingState(Controller& engine)
 {
   m_RestingStabilizationTime = new SEScalarTime();
   if (!GetRestingStabilizationTime().IsValid())
     return true;//No stabilization time requested
   return Stabilize(engine, GetRestingStabilizationTime());
 }
-bool SETimedStabilization::StabilizeFeedbackState(PhysiologyEngine& engine)
+bool SETimedStabilization::StabilizeFeedbackState(Controller& engine)
 {
   if (!HasFeedbackStabilizationTime())
     return true;//No stabilization time requested
   return Stabilize(engine, GetFeedbackStabilizationTime());
 }
-bool SETimedStabilization::StabilizeConditions(PhysiologyEngine& engine, const SEConditionManager& conditions)
+bool SETimedStabilization::StabilizeConditions(Controller& engine, const SEConditionManager& conditions)
 {
   if (conditions.IsEmpty())
     return true;
@@ -47,7 +46,7 @@ bool SETimedStabilization::StabilizeConditions(PhysiologyEngine& engine, const S
   time.SetValue(maxTime_s, TimeUnit::s);
   return Stabilize(engine, time);
 }
-bool SETimedStabilization::Stabilize(PhysiologyEngine& engine, const SEScalarTime& time)
+bool SETimedStabilization::Stabilize(Controller& engine, const SEScalarTime& time)
 {  
   double sTime_s = time.GetValue(TimeUnit::s);
   if (sTime_s == 0)
@@ -88,7 +87,7 @@ bool SETimedStabilization::Stabilize(PhysiologyEngine& engine, const SEScalarTim
     // We should have a method called AdvanceToRestingState
     // and it will advance time, AND check to see if it is at a Resting state or not
     // if it is we can break our loop. This will allow us to record our stabilization data
-    engine.AdvanceModelTime();
+    engine.AdvanceTime();
 
     m_currentTime_s += dT_s;
     if (m_currentTime_s == 0)

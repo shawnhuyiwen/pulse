@@ -212,8 +212,8 @@
         }
       }
     }, {
-      "AnesthesiaMachineAction": {
-        "Configuration": {
+      "EquipmentAction": {
+        "AnesthesiaMachineConfiguration": {
           "Configuration": {
             "Connection": "Mask",
             "InletFlow": {
@@ -243,7 +243,7 @@
                 "Unit": "1/min"
               }
             },
-            "VentilatorPressure": {
+            "PeakInspiratoryPressure": {
               "ScalarPressure": {
                 "Unit": "cmH2O"
               }
@@ -277,8 +277,8 @@
         }
       }
     }, {
-      "AnesthesiaMachineAction": {
-        "Configuration": {
+      "EquipmentAction": {
+        "AnesthesiaMachineConfiguration": {
           "Configuration": {
             "LeftChamber": {
               "State": "On",

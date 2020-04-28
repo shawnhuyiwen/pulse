@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "controller/System.h"
+#include "PulsePhysiologySystems.h"
 #include "system/physiology/SEEnergySystem.h"
 class SEPatient;
 class SELiquidSubstanceQuantity;
@@ -15,21 +15,20 @@ class SEThermalCircuitCalculator;
 /**
  * @brief @copydoc Physiology_EnergySystemData
  */  
-class PULSE_DECL Energy : public SEEnergySystem, public PulseEnergySystem, public PulseSystem
+class PULSE_DECL Energy : public PulseEnergySystem
 {
+  friend class PulseData;
   friend class PBPulsePhysiology;//friend the serialization class
-  friend class PulseController;
   friend class PulseEngineTest;
 protected:
-  Energy(PulseController& data);
-  PulseController& m_data;
+  Energy(PulseData& data);
+  PulseData& m_data;
 
 public:
   ~Energy(void);
 
   void Clear();
 
-protected:
   // Set members to a stable homeostatic state
   void Initialize();
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
@@ -37,8 +36,11 @@ protected:
 
   void AtSteadyState();
   void PreProcess();
-  void Process();
-  void PostProcess();
+  void Process(bool solve_and_transport=true);
+  void PostProcess(bool solve_and_transport=true);
+
+protected:
+  void ComputeExposedModelParameters() override;
 
   // Preprocess Methods
   void CalculateMetabolicHeatGeneration();

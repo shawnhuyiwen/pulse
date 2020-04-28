@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "controller/System.h"
+#include "PulsePhysiologySystems.h"
 #include "system/equipment/inhaler/SEInhaler.h"
 class SEGasCompartment;
 class SELiquidCompartment;
@@ -12,33 +12,36 @@ class SELiquidSubstanceQuantity;
 * @brief 
 * Generic inhaler for substance administration.
 */
-class PULSE_DECL Inhaler : public SEInhaler, public PulseInhaler, public PulseSystem
+class PULSE_DECL Inhaler : public PulseInhaler
 {
+  friend class PulseData;
   friend class PBPulseEquipment;//friend the serialization class
-  friend class PulseController;
   friend class PulseEngineTest;
 protected:
-  Inhaler(PulseController& pc);
-  PulseController& m_data;
+  Inhaler(PulseData& pc);
+  PulseData& m_data;
 
 public:
   virtual ~Inhaler();
 
   void Clear();
 
-protected:
   // Set members to a stable homeostatic state
   void Initialize();
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
   void SetUp();
 
   // main driver function responsible for calling the various ECG functions:
+  void AtSteadyState() {}
   void PreProcess();
-  void Process();
-  void PostProcess();
+  void Process(bool solve_and_transport=true);
+  void PostProcess(bool solve_and_transport=true);
 
   void StateChange();
   void Administer();
+
+protected:
+  void ComputeExposedModelParameters() override;
 
   // Serializable member variables (Set in Initialize and in schema)
 

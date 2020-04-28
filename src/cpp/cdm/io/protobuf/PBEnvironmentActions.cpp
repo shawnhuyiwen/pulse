@@ -23,6 +23,7 @@ void PBEnvironmentAction::Serialize(const SEEnvironmentAction& src, CDM_BIND::En
 
 void PBEnvironmentAction::Load(const CDM_BIND::ChangeEnvironmentalConditionsData& src, SEChangeEnvironmentalConditions& dst)
 {
+  dst.Clear();
   PBEnvironmentAction::Serialize(src, dst);
 }
 void PBEnvironmentAction::Serialize(const CDM_BIND::ChangeEnvironmentalConditionsData& src, SEChangeEnvironmentalConditions& dst)
@@ -49,6 +50,7 @@ void PBEnvironmentAction::Serialize(const SEChangeEnvironmentalConditions& src, 
 }
 void PBEnvironmentAction::Copy(const SEChangeEnvironmentalConditions& src, SEChangeEnvironmentalConditions& dst)
 {
+  dst.Clear();
   CDM_BIND::ChangeEnvironmentalConditionsData data;
   PBEnvironmentAction::Serialize(src, data);
   PBEnvironmentAction::Serialize(data, dst);
@@ -56,6 +58,7 @@ void PBEnvironmentAction::Copy(const SEChangeEnvironmentalConditions& src, SECha
 
 void PBEnvironmentAction::Load(const CDM_BIND::ThermalApplicationData& src, SEThermalApplication& dst)
 {
+  dst.Clear();
   PBEnvironmentAction::Serialize(src, dst);
 }
 void PBEnvironmentAction::Serialize(const CDM_BIND::ThermalApplicationData& src, SEThermalApplication& dst)
@@ -89,6 +92,7 @@ void PBEnvironmentAction::Serialize(const SEThermalApplication& src, CDM_BIND::T
 }
 void PBEnvironmentAction::Copy(const SEThermalApplication& src, SEThermalApplication& dst)
 {
+  dst.Clear();
   CDM_BIND::ThermalApplicationData data;
   PBEnvironmentAction::Serialize(src, data);
   PBEnvironmentAction::Serialize(data, dst);

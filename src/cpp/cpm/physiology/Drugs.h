@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "controller/System.h"
+#include "PulsePhysiologySystems.h"
 #include "system/physiology/SEDrugSystem.h"
 class SEFluidCircuitPath;
 class SELiquidCompartment;
@@ -15,21 +15,20 @@ class SETissueCompartment;
  * Drug transvascular transport is modeled with a physiologically-based pharmacokinetic (PBPK) model,
  * and the physiologic effects on the body are modeled with a low-fidelity pharmacodynamic (PD) model.
  */  
-class PULSE_DECL Drugs : public SEDrugSystem, public PulseDrugsSystem, public PulseSystem
+class PULSE_DECL Drugs : public PulseDrugSystem
 {
+  friend class PulseData;
   friend class PBPulsePhysiology;//friend the serialization class
-  friend class PulseController;
   friend class PulseEngineTest;
 protected:
-  Drugs(PulseController& data);
-  PulseController& m_data;
+  Drugs(PulseData& data);
+  PulseData& m_data;
 
 public:
   virtual ~Drugs();
 
   void Clear();
 
-protected:
   // Set members to a stable homeostatic state
   void Initialize();
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
@@ -37,8 +36,11 @@ protected:
 
   void AtSteadyState();
   void PreProcess();
-  void Process();
-  void PostProcess(){}
+  void Process(bool solve_and_transport=true);
+  void PostProcess(bool solve_and_transport=true){}
+
+protected:
+  void ComputeExposedModelParameters() override;
 
   void AdministerSubstanceBolus();
   void AdministerSubstanceInfusion();

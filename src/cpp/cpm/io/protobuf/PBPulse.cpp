@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 PUSH_PROTO_WARNINGS()
-#include "pulse/engine/bind/Pulse.pb.h"
+#include "pulse/cpm/bind/Pulse.pb.h"
 POP_PROTO_WARNINGS()
 #include "io/protobuf/PBPulse.h"
 #include "io/protobuf/PBPulseConfiguration.h"
@@ -14,11 +14,11 @@ POP_PROTO_WARNINGS()
 
 void PBPulse::Load(const PULSE_BIND::ScenarioData& src, PulseScenario& dst)
 {
+  dst.Clear();
   PBPulse::Serialize(src, dst);
 }
 void PBPulse::Serialize(const PULSE_BIND::ScenarioData& src, PulseScenario& dst)
 {
-  dst.Clear();
   PBScenario::Serialize(src.scenario(), dst);
 
   if (src.has_configuration())

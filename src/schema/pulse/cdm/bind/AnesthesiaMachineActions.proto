@@ -9,30 +9,9 @@ import "pulse/cdm/bind/Properties.proto";
 import "pulse/cdm/bind/AnesthesiaMachine.proto";
 import "pulse/cdm/bind/Actions.proto";
 
-/** @brief Anesthesia machine action container. */
-message AnyAnesthesiaMachineActionData
-{
-  oneof Action
-  {
-    AnesthesiaMachineConfigurationData                      Configuration               = 1;
-    AnesthesiaMachineExpiratoryValveLeakData                ExpiratoryValveLeak         = 2;
-    AnesthesiaMachineExpiratoryValveObstructionData         ExpiratoryValveObstruction  = 3;
-    AnesthesiaMachineInspiratoryValveLeakData               InspiratoryValveLeak        = 4;
-    AnesthesiaMachineInspiratoryValveObstructionData        InspiratoryValveObstruction = 5;
-    AnesthesiaMachineMaskLeakData                           MaskLeak                    = 6;
-    AnesthesiaMachineSodaLimeFailureData                    SodaLimeFailure             = 7;
-    AnesthesiaMachineTubeCuffLeakData                       TubeCuffLeak                = 8;
-    AnesthesiaMachineVaporizerFailureData                   VaporizerFailure            = 9;
-    AnesthesiaMachineVentilatorPressureLossData             VentilatorPressureLoss      = 10;
-    AnesthesiaMachineYPieceDisconnectData                   YPieceDisconnect            = 11;
-    AnesthesiaMachineOxygenWallPortPressureLossData         OxygenWallPortPressureLoss  = 12;
-    AnesthesiaMachineOxygenTankPressureLossData             OxygenTankPressureLoss      = 13;
-  }
-}
-
 message AnesthesiaMachineActionData
 {
-  ActionData                               Action                      = 1;
+  EquipmentActionData                      EquipmentAction             = 1;
 }
 
 /** @brief The configuration of the anesthesia machine to use. */

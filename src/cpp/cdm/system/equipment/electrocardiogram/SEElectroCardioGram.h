@@ -2,9 +2,9 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "system/SESystem.h"
+#include "system/equipment/SEEquipment.h"
 
-class CDM_DECL SEElectroCardioGram : public SESystem
+class CDM_DECL SEElectroCardioGram : public SEEquipment
 {
   friend class PBElectroCardioGram;//friend the serialization class
 protected:

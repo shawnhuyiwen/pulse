@@ -63,7 +63,7 @@
 #define GAS_ONLY_PRODCOM
 #define ZERO_APPROX 1e-10
 
-Tissue::Tissue(PulseController& data) : SETissueSystem(data.GetLogger()), m_data(data)
+Tissue::Tissue(PulseData& data) : PulseTissueSystem(data.GetLogger()), m_data(data)
 {
   Clear();
 }
@@ -305,7 +305,7 @@ void Tissue::PreProcess()
 /// This function completes substance transport between systems by calculating the oxygen and carbon dioxide saturation
 /// throughout the cardiovascular system and calculating diffusion and alveoli transfer of substances.
 //--------------------------------------------------------------------------------------------------
-void Tissue::Process()
+void Tissue::Process(bool solve_and_transport)
 {
   CalculateMetabolicConsumptionAndProduction(m_Dt_s);
   CalculatePulmonaryCapillarySubstanceTransfer();
@@ -327,6 +327,11 @@ void Tissue::Process()
     }
   }
   CalculateVitals();
+  ComputeExposedModelParameters();
+}
+void Tissue::ComputeExposedModelParameters()
+{
+
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -336,7 +341,7 @@ void Tissue::Process()
 /// \details
 /// There are currently no postprocess steps in the tissue system.
 //--------------------------------------------------------------------------------------------------
-void Tissue::PostProcess()
+void Tissue::PostProcess(bool solve_and_transport)
 {
 
 }

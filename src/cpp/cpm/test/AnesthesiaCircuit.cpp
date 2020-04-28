@@ -85,7 +85,7 @@ void PulseEngineTest::AnesthesiaMachineCircuitAndTransportTest(RespiratoryConfig
 
     //Allow things to flow to ground, since the respiratory circuit isn't here
     //This approximates the total respiratory system resistance
-    SEFluidCircuitPath* AnesthesiaConnectionToEnvironment = amCircuit->GetPath(pulse::AnesthesiaMachinePath::AnesthesiaConnectionToEnvironment);
+    SEFluidCircuitPath* AnesthesiaConnectionToEnvironment = amCircuit->GetPath(pulse::AnesthesiaMachinePath::ConnectionToEnvironment);
     AnesthesiaConnectionToEnvironment->GetResistanceBaseline().SetValue(1.5, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     AnesthesiaConnectionToEnvironment->GetNextResistance().SetValue(1.5, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   }

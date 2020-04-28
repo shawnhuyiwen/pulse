@@ -116,6 +116,12 @@ void SEEventManager::SetEvent(eEvent type, bool active, const SEScalarTime& time
       case eEvent::MetabolicAcidosis:
         m_ss << " The patient is in a state of metabolic acidosis";
         break;
+      case eEvent::ModerateHyperoxemia:
+        m_ss << " The patient is in a state of moderate hyperoxemia";
+        break;
+      case eEvent::ModerateHypocapnia:
+        m_ss << " The patient is in a state of moderate hypocapnia";
+        break;
       case eEvent::MetabolicAlkalosis:
         m_ss << " The patient is in a state of metabolic alkalosis";
         break;
@@ -130,6 +136,12 @@ void SEEventManager::SetEvent(eEvent type, bool active, const SEScalarTime& time
         break;
       case eEvent::RenalHypoperfusion:
         m_ss << " Patient has Renal Hypoperfusion";
+        break;
+      case eEvent::SevereHyperoxemia:
+        m_ss << " The patient is in a state of moderate hyperoxemia";
+        break;
+      case eEvent::SevereHypocapnia:
+        m_ss << " The patient is in a state of moderate hypocapnia";
         break;
       case eEvent::Tachycardia:
         m_ss << " Patient has Tachycardia";
@@ -244,6 +256,12 @@ void SEEventManager::SetEvent(eEvent type, bool active, const SEScalarTime& time
       case eEvent::MetabolicAlkalosis:
         m_ss << " The patient is no longer in a state of metabolic alkalosis";
         break;
+      case eEvent::ModerateHyperoxemia:
+        m_ss << " The patient is no longer in a state of moderate hyperoxemia";
+        break;
+      case eEvent::ModerateHypocapnia:
+        m_ss << " The patient is no longer in a state of moderate hypocapnia";
+        break;
       case eEvent::MyocardiumOxygenDeficit:
         m_ss << " Patient no longer has a Myocardium Oxygen Deficit";
         break;
@@ -255,6 +273,12 @@ void SEEventManager::SetEvent(eEvent type, bool active, const SEScalarTime& time
         break;
       case eEvent::RenalHypoperfusion:
         m_ss << " Patient no longer has Renal Hypoperfusion";
+        break;
+      case eEvent::SevereHyperoxemia:
+        m_ss << " The patient is no longer in a state of severe hyperoxemia";
+        break;
+      case eEvent::SevereHypocapnia:
+        m_ss << " The patient is no longer in a state of severe hypocapnia";
         break;
       case eEvent::Tachycardia:
         m_ss << " Patient no longer has Tachycardia";

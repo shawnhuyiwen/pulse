@@ -43,10 +43,11 @@
 #include "system/physiology/SERenalSystem.h"
 #include "system/physiology/SERespiratorySystem.h"
 #include "system/physiology/SETissueSystem.h"
-#include "system/equipment/anesthesiamachine/SEAnesthesiaMachine.h"
+#include "system/environment/SEEnvironment.h"
+#include "system/equipment/anesthesia_machine/SEAnesthesiaMachine.h"
 #include "system/equipment/electrocardiogram/SEElectroCardioGram.h"
 #include "system/equipment/inhaler/SEInhaler.h"
-#include "system/environment/SEEnvironment.h"
+#include "system/equipment/mechanical_ventilator/SEMechanicalVentilator.h"
 // Scalars
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolume.h"
@@ -69,51 +70,11 @@ std::string Space2Underscore(const std::string& str)
   return s;
 }
 
-SEEngineTracker::SEEngineTracker(PhysiologyEngine& engine) : Loggable(engine.GetLogger()),
-                                                                         m_DataRequestMgr(),
-                                                                         m_Patient((SEPatient&)engine.GetPatient()),
-                                                                         m_SubMgr((SESubstanceManager&)engine.GetSubstanceManager()),
-                                                                         m_CmptMgr((SECompartmentManager&)engine.GetCompartments())
-{  
-  m_DataTrack = new DataTrack(engine.GetLogger());
-  m_DataRequestMgr = new SEDataRequestManager(engine.GetLogger());
-  // TODO We are not handling nullptr well here... 
-  SEBloodChemistrySystem* bchem = (SEBloodChemistrySystem*)engine.GetBloodChemistrySystem();
-  if(bchem != nullptr)
-    m_PhysiologySystems.push_back(bchem);
-  SECardiovascularSystem* cv = (SECardiovascularSystem*)engine.GetCardiovascularSystem();
-  if (cv != nullptr)
-    m_PhysiologySystems.push_back(cv);
-  SEEndocrineSystem* endo = (SEEndocrineSystem*)engine.GetEndocrineSystem();
-  if (endo != nullptr)
-    m_PhysiologySystems.push_back(endo);
-  SEEnergySystem* energy = (SEEnergySystem*)engine.GetEnergySystem();
-  if (energy != nullptr)
-    m_PhysiologySystems.push_back(energy);
-  SERenalSystem* renal = (SERenalSystem*)engine.GetRenalSystem();
-  if (renal != nullptr)
-    m_PhysiologySystems.push_back(renal);
-  SEGastrointestinalSystem* gi = (SEGastrointestinalSystem*)engine.GetGastrointestinalSystem();
-  if (gi != nullptr)
-    m_PhysiologySystems.push_back(gi);
-  SERespiratorySystem* resp = (SERespiratorySystem*)engine.GetRespiratorySystem();
-  if (resp != nullptr)
-    m_PhysiologySystems.push_back(resp);
-  SEDrugSystem* drug = (SEDrugSystem*)engine.GetDrugSystem();
-  if (drug != nullptr)
-    m_PhysiologySystems.push_back(drug);
-  SETissueSystem* tissue = (SETissueSystem*)engine.GetTissueSystem();
-  if (tissue != nullptr)
-    m_PhysiologySystems.push_back(tissue);
-  SENervousSystem* nervous = (SENervousSystem*)engine.GetNervousSystem();
-  if (nervous != nullptr)
-    m_PhysiologySystems.push_back(nervous);
-
-  m_Environment = (SEEnvironment*)engine.GetEnvironment();
-
-  m_AnesthesiaMachine = (SEAnesthesiaMachine*)engine.GetAnesthesiaMachine();
-  m_ECG = (SEElectroCardioGram*)engine.GetElectroCardioGram();
-  m_Inhaler = (SEInhaler*)engine.GetInhaler();
+SEEngineTracker::SEEngineTracker(SEPatient& p, SESubstanceManager& s, SECompartmentManager& c, Logger* logger) : Loggable(logger),
+  m_Patient(p), m_SubMgr(s), m_CmptMgr(c)
+{
+  m_DataTrack = new DataTrack(logger);
+  m_DataRequestMgr = new SEDataRequestManager(logger);
   m_ForceConnection = false;
 }
 
@@ -130,6 +91,37 @@ void SEEngineTracker::Clear()
   m_ForceConnection = false;
   DELETE_MAP_SECOND(m_Request2Scalar);
   m_DataRequestMgr->Clear();
+}
+
+void SEEngineTracker::AddSystem(SESystem& sys)
+{
+  if (dynamic_cast<SEEnvironment*>(&sys) != nullptr)
+  {
+    m_Environment = dynamic_cast<SEEnvironment*>(&sys);
+    return;
+  }
+  if (dynamic_cast<SEAnesthesiaMachine*>(&sys) != nullptr)
+  {
+    m_AnesthesiaMachine = dynamic_cast<SEAnesthesiaMachine*>(&sys);
+    return;
+  }
+  if (dynamic_cast<SEElectroCardioGram*>(&sys) != nullptr)
+  {
+    m_ECG = dynamic_cast<SEElectroCardioGram*>(&sys);
+    return;
+  }
+  if (dynamic_cast<SEInhaler*>(&sys) != nullptr)
+  {
+    m_Inhaler = dynamic_cast<SEInhaler*>(&sys);
+    return;
+  }
+  if (dynamic_cast<SEMechanicalVentilator*>(&sys) != nullptr)
+  {
+    m_MechanicalVentilator = dynamic_cast<SEMechanicalVentilator*>(&sys);
+    return;
+  }
+  // Not equipment or environment, so it must be a physiology system
+  m_PhysiologySystems.push_back(&sys);
 }
 
 void SEEngineTracker::ResetFile()
@@ -265,6 +257,7 @@ bool SEEngineTracker::TrackRequest(SEDataRequest& dr)
     case eDataRequest_Category::AnesthesiaMachine:
     case eDataRequest_Category::ECG:
     case eDataRequest_Category::Inhaler:
+    case eDataRequest_Category::MechanicalVentilator:
     {
       if (!dr.GetUnit())
         m_ss << dr.GetPropertyName();
@@ -341,41 +334,59 @@ bool SEEngineTracker::TrackRequest(SEDataRequest& dr)
 
 bool SEEngineTracker::ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds)
 {
+  const SEScalar* s = nullptr;
   std::string propertyName = dr.GetPropertyName();
   switch (dr.GetCategory())
   {
     case eDataRequest_Category::Patient:
     {
-      // casting of the const to modify the patient
-      ds.SetScalar(m_Patient.GetScalar(propertyName), dr);
-      return true;
+      s = m_Patient.GetScalar(propertyName);
+      break;
     }
     case eDataRequest_Category::Physiology:
     {
-      // Make sure we mapped something
-      ds.SetScalar(SESystem::GetScalar(propertyName, &m_PhysiologySystems), dr);
-      return true;
+      s = SESystem::GetScalar(propertyName, &m_PhysiologySystems);
+      break;
     }    
     case eDataRequest_Category::Environment:
     {
-      // Make sure we mapped something
-      ds.SetScalar(m_Environment->GetScalar(propertyName), dr);
-      return true;
+      if (m_Environment != nullptr)
+        s = m_Environment->GetScalar(propertyName);
+      else
+        Error("Cannot track environment data as no environment was provide");
+      break;
     }
     case eDataRequest_Category::AnesthesiaMachine:
     {
-      ds.SetScalar(m_AnesthesiaMachine->GetScalar(propertyName), dr);
-      return true;
+      if (m_AnesthesiaMachine != nullptr)
+        s = m_AnesthesiaMachine->GetScalar(propertyName);
+      else
+        Error("Cannot track anesthesia machine data as no anesthesia machine was provide");
+      break;
     }
     case eDataRequest_Category::ECG:
     {
-      ds.SetScalar(m_ECG->GetScalar(propertyName), dr);
-      return true;
+      if (m_ECG != nullptr)
+        s = m_ECG->GetScalar(propertyName);
+      else
+        Error("Cannot track ECG data as no ECG was provide");
+      break;
     }
     case eDataRequest_Category::Inhaler:
     {
-      ds.SetScalar(m_Inhaler->GetScalar(propertyName), dr);
-      return true;
+      if (m_Inhaler != nullptr)
+        s = m_Inhaler->GetScalar(propertyName);
+      else
+        Error("Cannot track inhaler data as no inhaler was provide");
+      break;
+    }
+    case eDataRequest_Category::MechanicalVentilator:
+    {
+      if (m_MechanicalVentilator != nullptr)
+        s = m_MechanicalVentilator->GetScalar(propertyName);
+      else
+        Error("Cannot track mechanical ventilator data as no mechanical ventilator was provide");
+      break;
     }
     case eDataRequest_Category::GasCompartment:
     {
@@ -401,7 +412,7 @@ bool SEEngineTracker::ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds)
             ds.UpdateProperty = CompartmentUpdate::PartialPressure;
           ds.GasSubstance = gasCmpt->GetSubstanceQuantity(*sub);
         }
-        ds.SetScalar(gasCmpt->GetSubstanceQuantity(*sub)->GetScalar(propertyName), dr);
+        s = gasCmpt->GetSubstanceQuantity(*sub)->GetScalar(propertyName);
       }
       else
       {
@@ -420,9 +431,9 @@ bool SEEngineTracker::ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds)
             ds.UpdateProperty = CompartmentUpdate::OutFlow;
         }
         ds.GasCmpt = gasCmpt;
-        ds.SetScalar(gasCmpt->GetScalar(propertyName), dr);
+        s = gasCmpt->GetScalar(propertyName);
       }
-      return true;
+      break;
     }
     case eDataRequest_Category::LiquidCompartment:
     {
@@ -453,7 +464,7 @@ bool SEEngineTracker::ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds)
             ds.UpdateProperty = CompartmentUpdate::Saturation;
           ds.LiquidSubstance = liquidCmpt->GetSubstanceQuantity(*sub);
         }
-        ds.SetScalar(liquidCmpt->GetSubstanceQuantity(*sub)->GetScalar(propertyName), dr);
+        s = liquidCmpt->GetSubstanceQuantity(*sub)->GetScalar(propertyName);
       }
       else
       {
@@ -465,16 +476,16 @@ bool SEEngineTracker::ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds)
             ds.UpdateProperty = CompartmentUpdate::Pressure;
         }
 
-        {// Always Update these        
+        {// Always Update these
           if (propertyName == "InFlow")
             ds.UpdateProperty = CompartmentUpdate::InFlow;
           else if (propertyName == "OutFlow")
             ds.UpdateProperty = CompartmentUpdate::OutFlow;
         }
         ds.LiquidCmpt = liquidCmpt;
-        ds.SetScalar(liquidCmpt->GetScalar(propertyName), dr);
+        s = liquidCmpt->GetScalar(propertyName);
       }
-      return true;
+      break;
     }
     case eDataRequest_Category::ThermalCompartment:
     {
@@ -501,8 +512,8 @@ bool SEEngineTracker::ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds)
           ds.UpdateProperty = CompartmentUpdate::HeatTransferRateOut;
       }
       ds.ThermalCmpt = thermalCmpt;
-      ds.SetScalar(thermalCmpt->GetScalar(propertyName), dr);
-      return true;
+      s = thermalCmpt->GetScalar(propertyName);
+      break;
     }
     case eDataRequest_Category::TissueCompartment:
     {
@@ -513,8 +524,8 @@ bool SEEngineTracker::ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds)
       }
       // Removing const because I need to create objects in order to track those objects
       SETissueCompartment* tissueCmpt = (SETissueCompartment*)m_CmptMgr.GetTissueCompartment(dr.GetCompartmentName());
-      ds.SetScalar(tissueCmpt->GetScalar(propertyName), dr);
-      return true;
+      s = tissueCmpt->GetScalar(propertyName);
+      break;
     }
     case eDataRequest_Category::Substance:
     {
@@ -526,19 +537,25 @@ bool SEEngineTracker::ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds)
         if (dr.GetPropertyName() == "PartitionCoefficient")
         {
           SESubstanceTissuePharmacokinetics& tk = sub->GetPK().GetTissueKinetics(dr.GetCompartmentName());
-          ds.SetScalar(&tk.GetPartitionCoefficient(), dr);
-          return true;
+          s = &tk.GetPartitionCoefficient();
+          break;
         }
       }
       else
       {
-        ds.SetScalar(sub->GetScalar(propertyName), dr);
-        return true;
+        s = sub->GetScalar(propertyName);
+        break;
       }
     }
     default:
       m_ss << "Unhandled data request category: " << eDataRequest_Category_Name(dr.GetCategory()) << std::endl;
       Fatal(m_ss);
+  }
+
+  if (s != nullptr)
+  {
+    ds.SetScalar(s, dr);
+    return true;
   }
   m_ss << "Unhandled data request : " << propertyName << std::endl;
   Fatal(m_ss);

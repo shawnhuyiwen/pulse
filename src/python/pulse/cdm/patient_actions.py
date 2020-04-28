@@ -2,12 +2,28 @@
 # See accompanying NOTICE file for details.
 from enum import Enum
 from pulse.cdm.engine import SEAction, eSwitch, eSide, eGate
-from pulse.cdm.scalars import SEScalar0To1, SEScalarVolumePerTime, SEScalarVolume, SEScalarMassPerVolume
+from pulse.cdm.scalars import SEScalar0To1, SEScalarArea, \
+                              SEScalarMassPerVolume, SEScalarPressure, \
+                              SEScalarTime, SEScalarVolumePerTime, SEScalarVolume
 
 class SEPatientAction(SEAction):
     def __init__(self):
         super().__init__()
 
+class AnyConsciousRespirationCommand():
+    __slots__ = ["_comment"]
+
+    def __init__(self):
+        self._comment=""
+    def clear(self):
+        if self._comment is not None:
+         self._comment = ""
+    def set_comment(self, comment:str):
+        self._comment=comment
+    def get_comment(self):
+        return self._comment
+    def has_comment(self):
+        return self._comment is not None
 
 class SEAcuteRespiratoryDistressSyndromeExacerbation(SEPatientAction):
     __slots__ = ["_severity", "_left_lung_affected", "_right_lung_affected"]
@@ -55,7 +71,6 @@ class SEAcuteRespiratoryDistressSyndromeExacerbation(SEPatientAction):
                 "  Right Lung Affected: {}\n"
                 "  Left Lung Affected: {}").format(self._severity, self._right_lung_affected, self._left_lung_affected)
 
-
 class SEAcuteStress(SEPatientAction):
     def __init__(self):
         super().__init__()
@@ -80,7 +95,6 @@ class SEAcuteStress(SEPatientAction):
         return ("Acute Stress\n"
                 "  Severity: {}").format(self._severity)
 
-
 class SEAirwayObstruction(SEPatientAction):
     def __init__(self):
         super().__init__()
@@ -104,7 +118,6 @@ class SEAirwayObstruction(SEPatientAction):
     def __repr__(self):
         return ("Airway Obstruction\n"
                 "  Severity: {}").format(self._severity)
-
 
 class SEAsthmaAttack(SEPatientAction):
     def __init__(self):
@@ -134,7 +147,6 @@ class eBrainInjuryType(Enum):
     Diffuse = 0
     LeftFocal = 1
     RightFocal = 2
-
 class SEBrainInjury(SEPatientAction):
     __slots__ = ["_severity", "_injury_type"]
 
@@ -174,7 +186,7 @@ class SEBrainInjury(SEPatientAction):
                 "  Severity: {}\n"
                 "  Injury Type: {}").format(self._severity, self._injury_type)
 
-class SEBronchoConstriction(SEPatientAction):
+class SEBronchoconstriction(SEPatientAction):
     def __init__(self):
         super().__init__()
         self._severity = None
@@ -195,8 +207,264 @@ class SEBronchoConstriction(SEPatientAction):
             self._severity = SEScalar0To1()
         return self._severity
     def __repr__(self):
-        return ("BronchoConstriction\n"
+        return ("Bronchoconstriction\n"
                 "  Severity: {}").format(self._severity)
+
+class SECardiacArrest(SEPatientAction):
+    __slots__ = ["_state"]
+
+    def __init__(self):
+        super().__init__()
+        self._state = eSwitch.Off
+    def clear(self):
+        super().clear()
+        self._state = eSwitch.Off
+    def is_valid(self):
+        return True
+    def set_state(self, state: eSwitch):
+        self._state = state
+    def get_state(self):
+        return self._state
+    def __repr__(self):
+        return ("Cardiac Arrest\n"
+         "  State: {}").format(self._state)
+
+class SEChestOcclusiveDressing(SEPatientAction):
+    __slots__ = ["_state", "_side"]
+
+    def __init__(self):
+        super().__init__()
+        self._state = eSwitch.Off
+        self._side = eSide.NullSide
+
+    def clear(self):
+        super().clear()
+        self._state = eSwitch.Off
+        self._side = eSide.NullSide
+
+    def is_valid(self):
+        return self.has_side();
+    def get_side(self):
+        return self._side
+    def set_side(self, side: eSide):
+        self._side = side
+    def has_side(self):
+        return self._side is not eSide.NullSide
+    def get_state(self):
+        return self._state
+    def set_state(self, state: eSwitch):
+        self._state = state
+    def has_state(self):
+        return self._state is not eSwitch.NullSwitch
+    def __repr__(self):
+        return ("Chest Occlusive Dressing\n"
+                "  State: {}\n"
+                "  Side: {}").format(self._state, self._side)
+
+
+class SEForcedPause(AnyConsciousRespirationCommand):
+    __slots__ = ["_period"]
+
+    def __init__(self, period: SEScalarTime = None):
+        super().__init__()
+        self._period = period
+    def clear(self):
+        super().clear()
+        if self._period is not None:
+            self._period.invalidate()
+    def is_valid(self):
+        return self.has_period()
+    def has_period(self):
+        return self._period is not None
+    def get_period(self):
+        if self._period is None:
+            self._period = SEScalarTime();
+        return self._period
+    def __repr__(self):
+        return ("Breath Hold\n"
+                "  Comment: {}\n"
+                "  Period: {}").format(self._comment, self._period)
+
+
+class SEUseInhaler(AnyConsciousRespirationCommand):
+    __slots__ = []
+    def __init__(self):
+        super().__init__()
+    def clear(self):
+        super().clear()
+    def __repr__(self):
+        return ("Use Inhaler\n"
+                "  Comment: {}").format(self._comment)
+
+
+class SEForcedInhale(AnyConsciousRespirationCommand):
+    __slots__ = ["_inhale_period", "_release_period", "_hold_period", "_inspiratory_capacity_fraction"]
+
+    def __init__(self,
+                 inhale_period: SEScalarTime = None,
+                 volume_fraction: SEScalar0To1 = None,
+                 hold_period: SEScalarTime = None,
+                 release_period: SEScalarTime = None):
+        super().__init__()
+        self._inhale_period = inhale_period
+        self._release_period = release_period
+        self._hold_period = hold_period
+        self._inspiratory_capacity_fraction = volume_fraction
+    def clear(self):
+        super().clear()
+        if self._inhale_period is not None:
+          self._inhale_period.invalidate()
+        if self._release_period is not None:
+          self._release_period.invalidate()
+        if self._hold_period is not None:
+          self._hold_period.invalidate()
+        if self._inspiratory_capacity_fraction is not None:
+          self._inspiratory_capacity_fraction.invalidate()
+    def is_valid(self):
+        return self.has_inspiratory_capacity_fraction() and self.has_inhale_period()
+    def get_hold_period(self):
+        if self._hold_period is None:
+            self._hold_period = SEScalarTime()
+        return self._hold_period
+    def has_hold_period(self):
+        return self._hold_period
+    def get_inhale_period(self):
+        if self._inhale_period is None:
+            self._inhale_period = SEScalarTime()
+        return self._inhale_period
+    def has_inhale_period(self):
+        return self._inhale_period
+    def get_release_period(self):
+        if self._release_period is None:
+            self._release_period = SEScalarTime()
+        return self._release_period
+    def has_release_period(self):
+        return self._release_period
+    def get_inspiratory_capacity_fraction(self):
+        if self._inspiratory_capacity_fraction is None:
+            self._inspiratory_capacity_fraction = SEScalar0To1()
+        return self._inspiratory_capacity_fraction
+    def has_inspiratory_capacity_fraction(self):
+        return self._inspiratory_capacity_fraction is not None
+    def __repr__(self):
+        return ("Forced Inhale\n"
+                "  Inspiratory Capacity Fraction: {}\n"
+                "  Inhale Period: {}\n"
+                "  Hold Period: {}\n"
+                "  Release Period: {}").format(self._inspiratory_capacity_fraction, self._inhale_period,
+                                              self._hold_period, self._release_period)
+
+
+class SEForcedExhale(AnyConsciousRespirationCommand):
+    __slots__ = ["_exhale_period", "_release_period", "_hold_period", "_expiratory_capacity_fraction"]
+
+    def __init__(self, exhale_period: SEScalarTime = None,
+                 volume_fraction:SEScalar0To1 = None,
+                 hold_period: SEScalarTime=None,
+                 release_period: SEScalarTime=None):
+        super().__init__()
+        self._exhale_period = exhale_period
+        self._release_period = release_period
+        self._hold_period = hold_period
+        self._expiratory_capacity_fraction = volume_fraction
+    def clear(self):
+        super().clear()
+        if self._exhale_period is not None:
+          self._exhale_period.invalidate()
+        if self._release_period is not None:
+          self._release_period.invalidate()
+        if self._hold_period is not None:
+          self._hold_period.invalidate()
+        if self._expiratory_capacity_fraction is not None:
+          self._expiratory_capacity_fraction.invalidate()
+    def is_valid(self):
+        return self.has_expiratory_capacity_fraction() and self.has_exhale_period()
+    def get_hold_period(self):
+        if self._hold_period is None:
+            self._hold_period = SEScalarTime()
+        return self._hold_period
+    def has_hold_period(self):
+        return self._hold_period
+    def get_exhale_period(self):
+        if self._exhale_period is None:
+            self._exhale_period = SEScalarTime()
+        return self._exhale_period
+    def has_exhale_period(self):
+        return self._exhale_period
+    def get_release_period(self):
+        if self._release_period is None:
+            self._release_period = SEScalarTime()
+        return self._release_period
+    def has_release_period(self):
+        return self._release_period
+    def get_expiratory_capacity_fraction(self):
+        if self._expiratory_capacity_fraction is None:
+            self._expiratory_capacity_fraction = SEScalar0To1()
+        return self._expiratory_capacity_fraction
+    def has_expiratory_capacity_fraction(self):
+        return self._expiratory_capacity_fraction is not None
+    def __repr__(self):
+        return ("Forced Exhale\n"
+                "  Expiratory Capacity Fraction: {}\n"
+                "  Exhale Period: {}\n"
+                "  Hold Period: {}\n"
+                "  Release Period: {}").format(self._expiratory_capacity_fraction, self._exhale_period,
+                                              self._hold_period, self._release_period)
+
+class SEConsciousRespiration(SEPatientAction):
+    __slots__ = ['_commands', "_start_immediately"]
+
+    def __init__(self):
+        super().__init__()
+        self._commands=[]
+        self._start_immediately = False
+    def clear(self):
+        super().clear()
+        if len(self._commands):
+            self._commands = []
+    def is_valid(self):
+        validity = len(self._commands) > 0
+        for command in self._commands:
+            validity = validity and command.is_valid()
+        return validity
+    def set_start_immediately(self, start: bool):
+        self._start_immediately = start
+    def get_start_immediately(self):
+        return self._start_immediately
+    def has_commands(self):
+        return len(self._commands) > 0
+    def get_commands(self):
+        return self._commands
+    def get_active_command(self):
+        if len(self._commands):
+            return self._commands[0]
+    def remove_command(self, index:int = 0):
+        del self._commands[index]
+    def remove_active_command(self):
+        self.remove_command(0)
+
+    def add_forced_inhale(self,inhale_period: SEScalarTime,
+                           volume_fraction: SEScalar0To1,
+                           hold_period:SEScalarTime = None,
+                           release_period:SEScalarTime = None):
+        self._commands.append(SEForcedInhale(inhale_period=inhale_period,
+                                             volume_fraction= volume_fraction,
+                                             hold_period=hold_period,
+                                             release_period=release_period))
+    def add_forced_exhale(self,exhale_period:SEScalarTime,
+                           volume_fraction:SEScalar0To1,
+                           hold_period:SEScalarTime = None,
+                           release_period:SEScalarTime = None):
+        self._commands.append(SEForcedExhale(exhale_period = exhale_period,
+                                             volume_fraction= volume_fraction,
+                                             hold_period=hold_period,
+                                             release_period=release_period))
+    def add_forced_pause(self, hold_period:SEScalarTime=None):
+        self._commands.append(SEForcedPause(hold_period))
+
+    def __repr__(self):
+        return ("Conscious Respiration:\n"
+                "  Commands: [{}]").format(self._commands)
 
 class SEDyspnea(SEPatientAction):
     def __init__(self):
@@ -297,6 +565,37 @@ class SEHemorrhage(SEPatientAction):
                 "  Compartment: {}\n"
                 "  Rate: {}").format(self._type,self._compartment,self._rate)
 
+class SEImpairedAlveolarExchangeExacerbation(SEPatientAction):
+    __slots__ = ["_impaired_surface_area", "_impaired_fraction"]
+
+    def __init__(self):
+        super().__init__()
+        self._impaired_fraction = None
+        self._impaired_surface_area = None
+    def clear(self):
+        super().clear()
+        if self._impaired_fraction is not None:
+            self._impaired_fraction.invalidate()
+        if self._impaired_surface_area is not None:
+            self._impaired_surface_area.invalidate()
+    def is_valid(self):
+        return self.has_impaired_surface_area() and self.has_impaired_fraction()
+    def has_impaired_surface_area(self):
+        return self._impaired_surface_area is not None
+    def get_impaired_surface_area(self):
+        if self._impaired_surface_area is None:
+            self._impaired_surface_area = SEScalarArea()
+        return self._impaired_surface_area
+    def has_impaired_fraction(self):
+        return self._impaired_fraction is not None
+    def get_impaired_fraction(self):
+        if self._impaired_fraction is None:
+            self._impaired_fraction = SEScalar0To1
+        return self._impaired_fraction
+    def __repr__(self):
+        return ("Impaired Alveolar Exchange Exacerbation\n"
+                "  Impaired Fraction: {}\n"
+                "  Impaired Surface Area: {}").format(self._impaired_fraction, self._impaired_surface_area)
 
 class eIntubationType(Enum):
     Off = 0
@@ -304,7 +603,6 @@ class eIntubationType(Enum):
     LeftMainstem = 2
     RightMainstem = 3
     Tracheal = 4
-
 class SEIntubation(SEPatientAction):
     __slots__ = ["_type"]
 
@@ -328,7 +626,6 @@ class SEIntubation(SEPatientAction):
     def __repr__(self):
         return ("Intubation\n"
                 "  Type: {}\n").format(self._type)
-
 
 class SELobarPneumoniaExacerbation(SEPatientAction):
     __slots__ = ["_severity", "_left_lung_affected", "_right_lung_affected"]
@@ -380,6 +677,45 @@ class SELobarPneumoniaExacerbation(SEPatientAction):
                 "  Right Lung Affected: {}\n"
                 "  Left Lung Affected: {}").format(self._severity, self._right_lung_affected, self._left_lung_affected)
 
+class SEMechanicalVentilation(SEPatientAction):
+    __slots__ = ["_state", "_flow", "pressure"]
+    def __init__(self):
+        super().__init__()
+        self._state = eSwitch.Off
+        self._flow = None
+        self._pressure = None
+    def clear(self):
+        super().clear()
+        if self._state is not eSwitch.Off:
+            self._state = eSwitch.Off
+        if self._flow is not None:
+            self._flow.invalidate()
+        if self._pressure is not None:
+            self._pressure.invalidate()
+    def is_valid(self):
+        return self.has_pressure() and self.has_flow()
+    def get_pressure(self):
+        if self._pressure is None:
+            self._pressure = SEScalarPressure()
+        return self._pressure
+    def has_pressure(self):
+        return self._pressure is not None
+    def get_flow(self):
+        if self._flow is None:
+            self._flow = SEScalarVolumePerTime()
+        return self._flow
+    def has_flow(self):
+        return self._flow is not None
+    def set_state(self, state: eSwitch):
+        self._state = state
+    def get_state(self):
+        return self._state
+    def __repr__(self):
+        return ("Mechanical Ventilation\n"
+                "  State: {} \n"
+                "  Flow: {} \n"
+                "  Pressure: {}").format(self._state, self._flow, self._pressure)
+
 class SENeedleDecompression(SEPatientAction):
     __slots__ = ["_state", "_side"]
 
@@ -412,7 +748,6 @@ class SENeedleDecompression(SEPatientAction):
                 "  State: {}\n"
                 "  Side: {}").format(self._state, self._side)
 
-
 class SEPericardialEffusion(SEPatientAction):
     __slots__ = ['_effusion_rate']
 
@@ -434,6 +769,33 @@ class SEPericardialEffusion(SEPatientAction):
     def __repr__(self):
         return ("Pericardial Effusion\n"
                 "  Rate: {}").format(self._effusion_rate)
+
+
+class SEPulmonaryShuntExacerbation(SEPatientAction):
+    __slots__ = ["severity"]
+
+    def __init__(self):
+        super().__init__()
+        self._severity = None
+
+    def clear(self):
+        super().clear()
+        if self._severity is not None:
+            self._severity.invalidate()
+
+    def is_valid(self):
+        return self.has_severity()
+
+    def has_severity(self):
+        return self._severity is not None
+
+    def get_severity(self):
+        if self._severity is None:
+            self._severity = SEScalar0To1()
+        return self._severity
+    def __repr__(self):
+        return ("Pulmonary Shunt Exacerbation\n"
+                "  Severity: {}").format(self._severity)
 
 class SERespiratoryFatigue(SEPatientAction):
     def __init__(self):
@@ -527,6 +889,7 @@ class SESubstanceBolus(SEPatientAction):
                 "  Concentration: {}\n"
                 "  Dose: {}\n"
                 "  Substance: {}").format(self._concentration, self._dose, self._substance)
+
 class SESubstanceCompoundInfusion(SEPatientAction):
     __slots__ = ["_bag_volume", "_rate", "_compound"]
 
@@ -573,7 +936,6 @@ class SESubstanceCompoundInfusion(SEPatientAction):
                 "  Compound: {}\n"
                 "  Rate: {}").format(self._bag_volume, self._compound, self._rate)
 
-
 class SESubstanceInfusion(SEPatientAction):
     __slots__ = ["_concentration", "_rate", "_substance"]
 
@@ -619,6 +981,7 @@ class SESubstanceInfusion(SEPatientAction):
                 "  Concentration: {}\n"
                 "  Substance: {}\n"
                 "  Rate: {}").format(self._concentration, self._substance, self._rate)
+
 class eDevice(Enum):
     NullDevice = 0
     NasalCannula = 1

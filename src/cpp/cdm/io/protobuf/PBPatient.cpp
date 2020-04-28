@@ -15,11 +15,11 @@ POP_PROTO_WARNINGS()
 
 void PBPatient::Load(const CDM_BIND::PatientData& src, SEPatient& dst)
 {
+  dst.Clear();
   PBPatient::Serialize(src, dst);
 }
 void PBPatient::Serialize(const CDM_BIND::PatientData& src, SEPatient& dst)
 {
-  dst.Clear();
   dst.SetName(src.name());
   dst.SetSex((ePatient_Sex)src.sex());
   if (src.has_age())
@@ -153,6 +153,7 @@ void PBPatient::Serialize(const SEPatient& src, CDM_BIND::PatientData& dst)
 }
 void PBPatient::Copy(const SEPatient& src, SEPatient& dst)
 {
+  dst.Clear();
   CDM_BIND::PatientData data;
   PBPatient::Serialize(src, data);
   PBPatient::Serialize(data, dst);

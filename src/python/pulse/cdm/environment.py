@@ -1,7 +1,8 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
+
 from enum import Enum
-from pulse.cdm.engine import eSwitch, eSerializationFormat
+from pulse.cdm.engine import eSwitch
 from pulse.cdm.scalars import SEScalar0To1, SEScalarArea, \
                               SEScalarHeatResistanceArea, SEScalarLengthPerTime, \
                               SEScalarMassPerVolume, MassPerVolumeUnit, SEScalarPower, \

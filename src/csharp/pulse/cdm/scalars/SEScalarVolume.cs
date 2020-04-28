@@ -13,6 +13,19 @@ public class VolumeUnit
   public static VolumeUnit dL = new VolumeUnit("dL");
   public static VolumeUnit m3 = new VolumeUnit("m^3");
 
+  public static VolumeUnit FromString(string u)
+  {
+    if (u == VolumeUnit.L.ToString())
+      return VolumeUnit.L;
+    if (u == VolumeUnit.mL.ToString())
+      return VolumeUnit.mL;
+    if (u == VolumeUnit.dL.ToString())
+      return VolumeUnit.dL;
+    if (u == VolumeUnit.m3.ToString())
+      return VolumeUnit.m3;
+
+    throw new System.ArgumentException(u + " is not a know volume unit");
+  }
 }
 
 public class SEScalarVolume : SEScalar

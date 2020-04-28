@@ -25,8 +25,9 @@ class SERespiratorySystem;
 class SETissueSystem;
 class SEEnvironment;
 class SEAnesthesiaMachine;
-class SEInhaler;
 class SEElectroCardioGram;
+class SEInhaler;
+class SEMechanicalVentilator;
 class SECompartmentManager;
 class SEActionManager;
 class SEConditionManager;
@@ -334,6 +335,13 @@ public:
   ///
   //--------------------------------------------------------------------------------------------------
   virtual const SEInhaler* GetInhaler() const = 0;
+
+  //--------------------------------------------------------------------------------------------------
+ /// \brief
+ /// Returns the current state of the Mechanical ventilator
+ ///
+ //--------------------------------------------------------------------------------------------------
+  virtual const SEMechanicalVentilator* GetMechanicalVentilator() const = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief

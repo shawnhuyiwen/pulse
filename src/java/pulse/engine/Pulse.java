@@ -18,7 +18,7 @@ import pulse.cdm.substance.SESubstanceTissuePharmacokinetics;
 import pulse.cdm.substance.SESubstanceManager;
 import pulse.cdm.system.SESystem;
 import pulse.cdm.system.environment.*;
-import pulse.cdm.system.equipment.anesthesia.*;
+import pulse.cdm.system.equipment.anesthesia_machine.*;
 import pulse.cdm.system.equipment.electrocardiogram.*;
 import pulse.cdm.system.equipment.inhaler.*;
 import pulse.cdm.system.physiology.*;
@@ -62,7 +62,7 @@ public class Pulse
   protected SEEventManager                eventManager = new SEEventManager();
   
   protected long nativeObj;
-  protected synchronized native long nativeAllocate(String logFile);
+  protected synchronized native long nativeAllocate(String logFile, String dataDir);
   protected synchronized native void nativeDelete(long nativeObj);
   
   protected List<Pair<SEDataRequest,SEScalar>> dataRequests = new ArrayList<Pair<SEDataRequest,SEScalar>>();  

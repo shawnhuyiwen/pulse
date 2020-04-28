@@ -11,6 +11,15 @@ message RunningAverageData
   uint32 NumSamples  = 2;
 }
 
+
+/** @brief A scalar and its property name. */
+message ScalarPropertyData
+{
+  string Name        = 1;
+  double Value       = 2;
+  string Unit        = 3;
+}
+
 /** @brief A unitless scalar. */
 message ScalarData 
 {

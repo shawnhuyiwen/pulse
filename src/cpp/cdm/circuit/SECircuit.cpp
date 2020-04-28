@@ -151,6 +151,11 @@ void SECircuit<CIRCUIT_TYPES>::AddNode(NodeType& node)
     this->m_Nodes.push_back(&node);
 }
 template<CIRCUIT_TEMPLATE>
+void SECircuit<CIRCUIT_TYPES>::ForceAddNode(NodeType& node)
+{
+  this->m_Nodes.push_back(&node);
+}
+template<CIRCUIT_TEMPLATE>
 bool SECircuit<CIRCUIT_TYPES>::HasNode(NodeType& node)
 {
   return Contains(m_Nodes, node);
@@ -219,6 +224,11 @@ void SECircuit<CIRCUIT_TYPES>::AddPath(PathType& path)
 {
   if (!Contains(m_Paths, path))
     m_Paths.push_back(&path);
+}
+template<CIRCUIT_TEMPLATE>
+void SECircuit<CIRCUIT_TYPES>::ForceAddPath(PathType& path)
+{
+  m_Paths.push_back(&path);
 }
 template<CIRCUIT_TEMPLATE>
 bool SECircuit<CIRCUIT_TYPES>::HasPath(PathType& path)

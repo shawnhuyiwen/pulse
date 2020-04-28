@@ -6,7 +6,7 @@
 #include "circuit/fluid/SEFluidCircuitNode.h"
 #include "circuit/fluid/SEFluidCircuitPath.h"
 
-PulseCircuits::PulseCircuits(PulseController& data) : SECircuitManager(data.GetLogger()), m_data(data)
+PulseCircuits::PulseCircuits(PulseData& data) : SECircuitManager(data.GetLogger()), m_data(data)
 {
   Clear();
 }
@@ -24,11 +24,13 @@ void PulseCircuits::Clear()
   m_RenalCircuit = nullptr;
   m_RespiratoryCircuit = nullptr;
   m_AnesthesiaMachineCircuit = nullptr;
+  m_MechanicalVentilatorCircuit = nullptr;
   m_CombinedRespiratoryAnesthesiaCircuit = nullptr;
   m_CombinedRespiratoryInhalerCircuit = nullptr;
   m_CombinedRespiratoryNasalCannulaCircuit = nullptr;
   m_CombinedRespiratorySimpleMaskCircuit = nullptr;
   m_CombinedRespiratoryNonRebreatherMaskCircuit = nullptr;
+  m_CombinedRespiratoryMechanicalVentilationCircuit = nullptr;
   m_CombinedRespiratoryMechanicalVentilatorCircuit = nullptr;
   m_TemperatureCircuit = nullptr;
   m_InternalTemperatureCircuit = nullptr;
@@ -62,6 +64,11 @@ void PulseCircuits::StateChange()
   {
     Error("Could not find circuit : " + std::string(pulse::Circuits::AnesthesiaMachine));
   }
+  m_MechanicalVentilatorCircuit = GetFluidCircuit(pulse::Circuits::MechanicalVentilator);
+  if (m_MechanicalVentilatorCircuit == nullptr)
+  {
+    Error("Could not find circuit : " + std::string(pulse::Circuits::MechanicalVentilator));
+  }
   m_CombinedRespiratoryAnesthesiaCircuit = GetFluidCircuit(pulse::Circuits::RespiratoryAnesthesia);
   if (m_CombinedRespiratoryAnesthesiaCircuit == nullptr)
   {
@@ -71,6 +78,11 @@ void PulseCircuits::StateChange()
   if (m_CombinedRespiratoryInhalerCircuit == nullptr)
   {
     Error("Could not find circuit : " + std::string(pulse::Circuits::RespiratoryInhaler));
+  }
+  m_CombinedRespiratoryMechanicalVentilationCircuit = GetFluidCircuit(pulse::Circuits::RespiratoryMechanicalVentilation);
+  if (m_CombinedRespiratoryMechanicalVentilationCircuit == nullptr)
+  {
+    Error("Could not find circuit : " + std::string(pulse::Circuits::RespiratoryMechanicalVentilation));
   }
   m_CombinedRespiratoryMechanicalVentilatorCircuit = GetFluidCircuit(pulse::Circuits::RespiratoryMechanicalVentilator);
   if (m_CombinedRespiratoryMechanicalVentilatorCircuit == nullptr)
@@ -150,14 +162,16 @@ SEFluidCircuit& PulseCircuits::GetActiveRespiratoryCircuit()
     return *m_CombinedRespiratoryAnesthesiaCircuit;
   case eAirwayMode::Inhaler:
     return *m_CombinedRespiratoryInhalerCircuit;
+  case eAirwayMode::MechanicalVentilation:
+    return *m_CombinedRespiratoryMechanicalVentilationCircuit;
   case eAirwayMode::MechanicalVentilator:
     return *m_CombinedRespiratoryMechanicalVentilatorCircuit;
   case eAirwayMode::NasalCannula:
     return *m_CombinedRespiratoryNasalCannulaCircuit;
-  case eAirwayMode::SimpleMask:
-    return *m_CombinedRespiratorySimpleMaskCircuit;
   case eAirwayMode::NonRebreatherMask:
     return *m_CombinedRespiratoryNonRebreatherMaskCircuit;
+  case eAirwayMode::SimpleMask:
+    return *m_CombinedRespiratorySimpleMaskCircuit;
   default:
     throw CommonDataModelException("Unknown airway mode");
   }
@@ -174,6 +188,12 @@ SEFluidCircuit& PulseCircuits::GetAnesthesiaMachineCircuit()
     m_AnesthesiaMachineCircuit = &CreateFluidCircuit(pulse::Circuits::AnesthesiaMachine);
   return *m_AnesthesiaMachineCircuit;
 }
+SEFluidCircuit& PulseCircuits::GetMechanicalVentilatorCircuit()
+{
+  if (m_MechanicalVentilatorCircuit == nullptr)
+    m_MechanicalVentilatorCircuit = &CreateFluidCircuit(pulse::Circuits::MechanicalVentilator);
+  return *m_MechanicalVentilatorCircuit;
+}
 SEFluidCircuit& PulseCircuits::GetRespiratoryAndAnesthesiaMachineCircuit()
 {
   if (m_CombinedRespiratoryAnesthesiaCircuit == nullptr)
@@ -186,17 +206,23 @@ SEFluidCircuit& PulseCircuits::GetRespiratoryAndInhalerCircuit()
     m_CombinedRespiratoryInhalerCircuit = &CreateFluidCircuit(pulse::Circuits::RespiratoryInhaler);
   return *m_CombinedRespiratoryInhalerCircuit;
 }
+SEFluidCircuit& PulseCircuits::GetRespiratoryAndMechanicalVentilationCircuit()
+{
+  if (m_CombinedRespiratoryMechanicalVentilationCircuit == nullptr)
+    m_CombinedRespiratoryMechanicalVentilationCircuit = &CreateFluidCircuit(pulse::Circuits::RespiratoryMechanicalVentilation);
+  return *m_CombinedRespiratoryMechanicalVentilationCircuit;
+}
+SEFluidCircuit& PulseCircuits::GetRespiratoryAndMechanicalVentilatorCircuit()
+{
+  if (m_CombinedRespiratoryMechanicalVentilatorCircuit == nullptr)
+    m_CombinedRespiratoryMechanicalVentilatorCircuit = &CreateFluidCircuit(pulse::Circuits::RespiratoryMechanicalVentilator);
+  return *m_CombinedRespiratoryMechanicalVentilatorCircuit;
+}
 SEFluidCircuit& PulseCircuits::GetRespiratoryAndNasalCannulaCircuit()
 {
   if (m_CombinedRespiratoryNasalCannulaCircuit == nullptr)
     m_CombinedRespiratoryNasalCannulaCircuit = &CreateFluidCircuit(pulse::Circuits::RespiratoryNasalCannula);
   return *m_CombinedRespiratoryNasalCannulaCircuit;
-}
-SEFluidCircuit& PulseCircuits::GetRespiratoryAndSimpleMaskCircuit()
-{
-  if (m_CombinedRespiratorySimpleMaskCircuit == nullptr)
-    m_CombinedRespiratorySimpleMaskCircuit = &CreateFluidCircuit(pulse::Circuits::RespiratorySimpleMask);
-  return *m_CombinedRespiratorySimpleMaskCircuit;
 }
 SEFluidCircuit& PulseCircuits::GetRespiratoryAndNonRebreatherMaskCircuit()
 {
@@ -204,13 +230,13 @@ SEFluidCircuit& PulseCircuits::GetRespiratoryAndNonRebreatherMaskCircuit()
     m_CombinedRespiratoryNonRebreatherMaskCircuit = &CreateFluidCircuit(pulse::Circuits::RespiratoryNonRebreatherMask);
   return *m_CombinedRespiratoryNonRebreatherMaskCircuit;
 }
-
-SEFluidCircuit& PulseCircuits::GetRespiratoryAndMechanicalVentilatorCircuit()
+SEFluidCircuit& PulseCircuits::GetRespiratoryAndSimpleMaskCircuit()
 {
-  if (m_CombinedRespiratoryMechanicalVentilatorCircuit == nullptr)
-    m_CombinedRespiratoryMechanicalVentilatorCircuit = &CreateFluidCircuit(pulse::Circuits::RespiratoryMechanicalVentilator);
-  return *m_CombinedRespiratoryMechanicalVentilatorCircuit;
+  if (m_CombinedRespiratorySimpleMaskCircuit == nullptr)
+    m_CombinedRespiratorySimpleMaskCircuit = &CreateFluidCircuit(pulse::Circuits::RespiratorySimpleMask);
+  return *m_CombinedRespiratorySimpleMaskCircuit;
 }
+
 SEThermalCircuit& PulseCircuits::GetTemperatureCircuit()
 {
   if (m_TemperatureCircuit == nullptr)

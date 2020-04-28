@@ -35,7 +35,7 @@
 #pragma warning(disable:4786)
 #pragma warning(disable:4275)
 
-BloodChemistry::BloodChemistry(PulseController& data) : SEBloodChemistrySystem(data.GetLogger()), m_data(data)
+BloodChemistry::BloodChemistry(PulseData& data) : PulseBloodChemistrySystem(data.GetLogger()), m_data(data)
 {
   m_ArterialOxygen_mmHg = new SERunningAverage();
   m_ArterialCarbonDioxide_mmHg = new SERunningAverage();
@@ -195,7 +195,7 @@ void BloodChemistry::PreProcess()
 /// or changed by other systems are set on the blood chemistry system data objects. Events 
 /// are triggered at specific blood concentrations of certain substances in CheckBloodGasLevels().
 //--------------------------------------------------------------------------------------------------
-void BloodChemistry::Process()
+void BloodChemistry::Process(bool solve_and_transport)
 {
   //Push the compartment values of O2 and CO2 partial pressures on the corresponding system data.
   GetOxygenSaturation().Set(m_aortaO2->GetSaturation());
@@ -302,6 +302,11 @@ void BloodChemistry::Process()
     sub->GetMassInBlood().SetValue(bloodMass_ug, MassUnit::ug);
     sub->GetMassInTissue().SetValue(tissueMass_ug, MassUnit::ug);
   }
+  ComputeExposedModelParameters();
+}
+void BloodChemistry::ComputeExposedModelParameters()
+{
+
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -311,7 +316,7 @@ void BloodChemistry::Process()
 /// \details
 /// The current Pulse implementation has no specific postprocess functionality.
 //--------------------------------------------------------------------------------------------------
-void BloodChemistry::PostProcess()
+void BloodChemistry::PostProcess(bool solve_and_transport)
 {
 
 }
@@ -326,9 +331,6 @@ void BloodChemistry::PostProcess()
 //--------------------------------------------------------------------------------------------------
 void BloodChemistry::CheckBloodGasLevels()
 {
-  double hypoxiaFlag = 65.0; //Arterial O2 Partial Pressure in mmHg \cite Pierson2000Pathophysiology
-  double hypoxiaIrreversible = 15.0; // \cite hobler1973HypoxemiaCardiacOutput
-
   m_ArterialOxygen_mmHg->Sample(m_aortaO2->GetPartialPressure(PressureUnit::mmHg));
   m_ArterialCarbonDioxide_mmHg->Sample(m_aortaCO2->GetPartialPressure(PressureUnit::mmHg));
   //Only check these at the end of a cardiac cycle and reset at start of cardiac cycle 
@@ -363,6 +365,8 @@ void BloodChemistry::CheckBloodGasLevels()
       }
 
       // hypoxia check
+      double hypoxiaFlag = 65.0; //Arterial O2 Partial Pressure in mmHg \cite Pierson2000Pathophysiology
+      double hypoxiaIrreversible = 15.0; // \cite hobler1973HypoxemiaCardiacOutput
       if (arterialOxygen_mmHg <= hypoxiaFlag)
       {
         /// \event Patient: Hypoxia Event. The oxygen partial pressure has fallen below 65 mmHg, indicating that the patient is hypoxic.
@@ -381,6 +385,48 @@ void BloodChemistry::CheckBloodGasLevels()
         /// \event Patient: End Hypoxia Event. The oxygen partial pressure has rise above 68 mmHg. If this occurs when the patient is hypoxic, it will reverse the hypoxic event.
         /// The patient is no longer considered to be hypoxic.
         m_data.GetEvents().SetEvent(eEvent::Hypoxia, false, m_data.GetSimulationTime());
+      }
+
+      // hyperoxemia check
+      double hyperoxemiaModerateFlag = 120.0; //Arterial O2 Partial Pressure in mmHg
+      double hyperoxemiaSevereFlag = 200.0; //Arterial O2 Partial Pressure in mmHg
+      if (arterialOxygen_mmHg > hyperoxemiaSevereFlag)
+      {
+        /// \event Patient: Severe Hyperoxemia: Arterial O2 Partial Pressure is above 200 mmHg causing oxygen toxicity
+        m_data.GetEvents().SetEvent(eEvent::SevereHyperoxemia, true, m_data.GetSimulationTime());
+        m_data.GetEvents().SetEvent(eEvent::ModerateHyperoxemia, false, m_data.GetSimulationTime());
+      }
+      else if (arterialOxygen_mmHg > hyperoxemiaModerateFlag)
+      {
+        /// \event Patient: Moderate Hyperoxemia: Arterial O2 Partial Pressure is above 120 mmHg
+        m_data.GetEvents().SetEvent(eEvent::SevereHyperoxemia, false, m_data.GetSimulationTime());
+        m_data.GetEvents().SetEvent(eEvent::ModerateHyperoxemia, true, m_data.GetSimulationTime());
+      }
+      else if (arterialOxygen_mmHg < hyperoxemiaModerateFlag - 3)
+      {
+        m_data.GetEvents().SetEvent(eEvent::SevereHyperoxemia, false, m_data.GetSimulationTime());
+        m_data.GetEvents().SetEvent(eEvent::ModerateHyperoxemia, false, m_data.GetSimulationTime());
+      }
+
+      // hypocapnia check
+      double hypocapniaModerateFlag = 30.0; //Arterial CO2 Partial Pressure in mmHg
+      double hypocapniaSevereFlag = 15.0; //Arterial CO2 Partial Pressure in mmHg
+      if (arterialOxygen_mmHg < hypocapniaSevereFlag)
+      {
+        /// \event Patient: Severe Hypocapnia: Arterial CO2 Partial Pressure is below 15 mmHg
+        m_data.GetEvents().SetEvent(eEvent::SevereHypocapnia, true, m_data.GetSimulationTime());
+        m_data.GetEvents().SetEvent(eEvent::ModerateHypocapnia, false, m_data.GetSimulationTime());
+      }
+      else if (arterialOxygen_mmHg < hypocapniaModerateFlag)
+      {
+        /// \event Patient: Moderate Hypocapnia: Arterial CO2 Partial Pressure is below 30 mmHg
+        m_data.GetEvents().SetEvent(eEvent::SevereHypocapnia, false, m_data.GetSimulationTime());
+        m_data.GetEvents().SetEvent(eEvent::ModerateHypocapnia, true, m_data.GetSimulationTime());
+      }
+      else if (arterialOxygen_mmHg > hypocapniaModerateFlag + 3)
+      {
+        m_data.GetEvents().SetEvent(eEvent::SevereHypocapnia, false, m_data.GetSimulationTime());
+        m_data.GetEvents().SetEvent(eEvent::ModerateHypocapnia, false, m_data.GetSimulationTime());
       }
     }
 

@@ -3,6 +3,7 @@
 
 #pragma once
 #include "CommonDataModel.h"
+#include "engine/SEEngineStabilization.h"
 
 class PulseConfiguration;
 class PulseCircuits;
@@ -33,119 +34,108 @@ class Environment;
 class ECG;
 class AnesthesiaMachine;
 class Inhaler;
+class MechanicalVentilator;
 
 class SaturationCalculator;
 
 class PulseScenarioExec;
-enum class EngineState { NotReady=0, Initialization, InitialStabilization, AtInitialStableState, SecondaryStabilization, AtSecondaryStableState, Active };
+class PulseStabilizationController;
+
+enum class EngineState { NotReady=0,
+                         Initialization,
+                         InitialStabilization,
+                         AtInitialStableState,
+                         SecondaryStabilization,
+                         AtSecondaryStableState,
+                         Active };
 
 
 // Keep enums in sync with appropriate proto file !!
-enum class eAirwayMode{ Free=0, AnesthesiaMachine, Inhaler, MechanicalVentilator,
-                        NasalCannula, SimpleMask, NonRebreatherMask };
+enum class eAirwayMode{ Free=0, 
+                       AnesthesiaMachine,
+                       Inhaler,
+                       MechanicalVentilation,// Action
+                       MechanicalVentilator, // Equipment
+                       NasalCannula,
+                       NonRebreatherMask,
+                       SimpleMask};
 extern const std::string& eAirwayMode_Name(eAirwayMode m);
 
-/**
-* @brief Manages and controls execution of all data/systems in %Pulse
-*/
-class PULSE_DECL PulseController : public Loggable
+class PULSE_DECL PulseData : public Loggable
 {
-  friend class PulseEngineTest;
-  friend class PulseScenarioExec;
-protected:
-  EngineState m_State;
+  friend class PulseEngine;
 public:
-  
-  PulseController(Logger* logger, const std::string& data_dir=".");
-  PulseController(const std::string& logfileName, const std::string& data_dir=".");
-  virtual ~PulseController();
+  PulseData(Logger* logger, const std::string& data_dir = ".");
+  PulseData(const std::string& logFileName, const std::string& data_dir = ".");
+  virtual ~PulseData();
 
-  EngineState                             GetState();
+  virtual void                          AdvanceCallback(double time_s);
 
-  DataTrack&                              GetDataTrack();
-  SaturationCalculator&                   GetSaturationCalculator();
+  virtual EngineState                   GetState() const { return m_State; }
 
-  PulseSubstances&                        GetSubstances();
+  virtual SEEngineTracker&              GetEngineTracker() const;
+  virtual DataTrack&                    GetDataTrack() const;
+  virtual SaturationCalculator&         GetSaturationCalculator() const;
 
-  const SEPatient&                        GetInitialPatient();
-  SEPatient&                              GetCurrentPatient();
-  bool                                    GetPatientAssessment(SEPatientAssessment& assessment) const;
+  virtual PulseSubstances&              GetSubstances() const;
 
-  SEBloodChemistrySystem&                 GetBloodChemistry();
-  SECardiovascularSystem&                 GetCardiovascular();
-  SEDrugSystem&                           GetDrugs();
-  SEEndocrineSystem&                      GetEndocrine();
-  SEEnergySystem&                         GetEnergy();
-  SEGastrointestinalSystem&               GetGastrointestinal();
-  SEHepaticSystem&                        GetHepatic();
-  SENervousSystem&                        GetNervous();
-  SERenalSystem&                          GetRenal();
-  SERespiratorySystem&                    GetRespiratory();
-  SETissueSystem&                         GetTissue();
+  virtual const SEPatient&              GetInitialPatient() const;
+  virtual SEPatient&                    GetCurrentPatient() const;
 
-  SEEnvironment&                          GetEnvironment();
+  virtual SEBloodChemistrySystem&       GetBloodChemistry() const;
+  virtual SECardiovascularSystem&       GetCardiovascular() const;
+  virtual SEDrugSystem&                 GetDrugs() const;
+  virtual SEEndocrineSystem&            GetEndocrine() const;
+  virtual SEEnergySystem&               GetEnergy() const;
+  virtual SEGastrointestinalSystem&     GetGastrointestinal() const;
+  virtual SEHepaticSystem&              GetHepatic() const;
+  virtual SENervousSystem&              GetNervous() const;
+  virtual SERenalSystem&                GetRenal() const;
+  virtual SERespiratorySystem&          GetRespiratory() const;
+  virtual SETissueSystem&               GetTissue() const;
 
-  SEAnesthesiaMachine&                    GetAnesthesiaMachine();
+  virtual SEEnvironment&                GetEnvironment() const;
+  virtual SEAnesthesiaMachine&          GetAnesthesiaMachine() const;
+  virtual SEElectroCardioGram&          GetECG() const;
+  virtual SEInhaler&                    GetInhaler() const;
+  virtual SEMechanicalVentilator&       GetMechanicalVentilator() const;
 
-  SEElectroCardioGram&                    GetECG();
+  virtual SEActionManager&              GetActions() const;
 
-  SEInhaler&                              GetInhaler();
+  virtual SEConditionManager&           GetConditions() const;
 
-  SEActionManager&                        GetActions();
+  virtual SEEventManager&               GetEvents() const;
 
-  SEConditionManager&                     GetConditions();
+  virtual PulseCircuits&                GetCircuits() const;
 
-  SEEventManager&                         GetEvents();
+  virtual PulseCompartments&            GetCompartments() const;
 
-  PulseCircuits&                          GetCircuits();
+  virtual const PulseConfiguration&     GetConfiguration() const;
 
+  virtual const SEScalarTime&           GetEngineTime() const;
+  virtual const SEScalarTime&           GetSimulationTime() const;
+  virtual const SEScalarTime&           GetTimeStep() const;
 
-  PulseCompartments&                      GetCompartments();
+  virtual eAirwayMode                   GetAirwayMode() const { return m_AirwayMode; }
+  virtual void                          SetAirwayMode(eAirwayMode mode);
 
-  const PulseConfiguration&               GetConfiguration();
+  virtual eSwitch                       GetIntubation() const { return m_Intubation; }
+  virtual void                          SetIntubation(eSwitch s);
 
-  const SEScalarTime&                     GetEngineTime();
-  const SEScalarTime&                     GetSimulationTime();
-  const SEScalarTime&                     GetTimeStep();
+  virtual void                          SetAdvanceHandler(SEAdvanceHandler* handler) { m_AdvanceHandler = handler; }
 
-  eAirwayMode                             GetAirwayMode();
-  void                                    SetAirwayMode(eAirwayMode mode);
+  virtual bool                          HasOverride() const;
+  virtual const std::vector<SEScalarProperty>& GetOverrides() const;
 
-  eSwitch                                 GetIntubation();
-  void                                    SetIntubation(eSwitch s);
-
-  bool CreateCircuitsAndCompartments();
-  virtual void AdvanceCallback(double time_s) {};
+  std::stringstream                                             m_ss;
 protected:
-  void SetupCardiovascular();
-  void SetupRenal();
-  void SetupTissue();
-  void SetupGastrointestinal();
-  void SetupRespiratory();
-  void SetupAnesthesiaMachine();
-  void SetupInhaler();
-  void SetupNasalCannula();
-  void SetupSimpleMask();
-  void SetupNonRebreatherMask();
-  void SetupMechanicalVentilator();
-  void SetupExternalTemperature();
-  void SetupInternalTemperature();
-
-  bool Initialize(const PulseConfiguration* config, const SEPatient& patient);
-  bool SetupPatient(const SEPatient& patient);
-
-  // Notify systems that steady state has been achieved
-  virtual void AtSteadyState(EngineState state);
-  void PreProcess();
-  void Process();
-  void PostProcess();
-
-  void ForwardFatal(const std::string&  msg, const std::string&  origin);
-
+  EngineState                                                   m_State;
+  SEEngineTracker*                                              m_EngineTrack;
   DataTrack*                                                    m_DataTrack;
 
-  std::unique_ptr<SEScalarTime>                                 m_CurrentTime;
-  std::unique_ptr<SEScalarTime>                                 m_SimulationTime;
+  SEScalarTime                                                  m_CurrentTime;
+  SEScalarTime                                                  m_SimulationTime;
+  double                                                        m_SpareAdvanceTime_s;
   eAirwayMode                                                   m_AirwayMode;
   eSwitch                                                       m_Intubation;
 
@@ -179,14 +169,104 @@ protected:
 
   std::unique_ptr<Inhaler>                                      m_Inhaler;
 
+  std::unique_ptr<MechanicalVentilator>                         m_MechanicalVentilator;
+
   std::unique_ptr<SEPatient>                                    m_InitialPatient;
   std::unique_ptr<SEPatient>                                    m_CurrentPatient;
 
   std::unique_ptr<SEEventManager>                               m_EventManager;
 
-  double                                                        m_spareAdvanceTime_s;
   SEAdvanceHandler*                                             m_AdvanceHandler;
 
   std::string                                                   m_DataDir;
+
+  std::vector<SEScalarProperty>                                 m_ScalarOverrides;
+
 };
 
+/**
+* @brief Manages and controls execution of all data/systems in %Pulse
+*/
+class PULSE_DECL PulseController : public PulseData
+{
+  friend class PulseEngine;
+  friend class PulseEngineTest;
+  friend class PulseScenarioExec;
+  friend class PBPulseState;//friend the serialization class
+public:
+  
+  PulseController(Logger* logger, const std::string& data_dir=".");
+  PulseController(const std::string& logfileName, const std::string& data_dir=".");
+  virtual ~PulseController();
+
+  virtual const PulseData& GetData() const { return (*this); }
+
+  virtual bool SerializeFromFile(const std::string& file, SerializationFormat m);
+  virtual bool SerializeFromFile(const std::string& file, SerializationFormat m, const SEScalarTime* simTime, const SEEngineConfiguration* config);
+  virtual bool SerializeToFile(const std::string& file, SerializationFormat m) const;
+
+  virtual bool SerializeFromString(const std::string& state, SerializationFormat m);
+  virtual bool SerializeFromString(const std::string& state, SerializationFormat m, const SEScalarTime* simTime, const SEEngineConfiguration* config);
+  virtual bool SerializeToString(std::string& state, SerializationFormat m) const;
+
+  virtual bool InitializeEngine(const std::string& patient_configuration, SerializationFormat m, const SEEngineConfiguration* config = nullptr);
+  virtual bool InitializeEngine(const SEPatientConfiguration& patient_configuration, const SEEngineConfiguration* config = nullptr);
+  virtual bool IsReady() const;
+
+  virtual void  AdvanceModelTime();
+  virtual void  AdvanceModelTime(double time, const TimeUnit& unit);
+  virtual bool  ProcessAction(const SEAction& action);
+
+  virtual bool GetPatientAssessment(SEPatientAssessment& assessment) const;
+
+  virtual bool CreateCircuitsAndCompartments();
+protected:
+
+  virtual void SetupCardiovascular();
+  virtual void SetupRenal();
+  virtual void SetupTissue();
+  virtual void SetupGastrointestinal();
+  virtual void SetupRespiratory();
+  virtual void SetupAnesthesiaMachine();
+  virtual void SetupInhaler();
+  virtual void SetupMechanicalVentilation();
+  virtual void SetupMechanicalVentilator();
+  virtual void SetupNasalCannula();
+  virtual void SetupSimpleMask();
+  virtual void SetupNonRebreatherMask();
+  virtual void SetupExternalTemperature();
+  virtual void SetupInternalTemperature();
+
+  virtual bool Initialize(const PulseConfiguration* config, const SEPatient& patient);
+  virtual bool SetupPatient(const SEPatient& patient);
+
+  // Notify systems that steady state has been achieved
+  virtual void AtSteadyState(EngineState state);
+  virtual void PreProcess();
+  virtual void Process();
+  virtual void PostProcess();
+
+  virtual void ForwardFatal(const std::string&  msg, const std::string&  origin);
+
+  PulseStabilizationController* m_Stabilizer;
+};
+
+class PULSE_DECL PulseStabilizationController : public SEEngineStabilization::Controller
+{
+public:
+  PulseStabilizationController(PulseController& pc) : _pc(pc) {}
+  ~PulseStabilizationController() = default;
+
+  virtual void AdvanceTime() override { _pc.AdvanceModelTime(); }
+  virtual SEEngineTracker* GetEngineTracker() override
+  {
+    return &_pc.GetData().GetEngineTracker();
+  }
+  virtual double GetTimeStep(const TimeUnit& unit) override
+  {
+    return _pc.GetData().GetTimeStep().GetValue(unit);
+  }
+
+protected:
+  PulseController& _pc;
+};

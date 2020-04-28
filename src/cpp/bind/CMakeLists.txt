@@ -15,9 +15,12 @@ add_library_ex(DataModelBindings
     "${CDM_PACKAGE}/Environment.pb.h"
     "${CDM_PACKAGE}/EnvironmentActions.pb.h"
     "${CDM_PACKAGE}/EnvironmentConditions.pb.h"
+    "${CDM_PACKAGE}/EquipmentActions.pb.h"
     "${CDM_PACKAGE}/Events.pb.h"
     "${CDM_PACKAGE}/Inhaler.pb.h"
     "${CDM_PACKAGE}/InhalerActions.pb.h"
+    "${CDM_PACKAGE}/MechanicalVentilator.pb.h"
+    "${CDM_PACKAGE}/MechanicalVentilatorActions.pb.h"
     "${CDM_PACKAGE}/Patient.pb.h"
     "${CDM_PACKAGE}/PatientActions.pb.h"
     "${CDM_PACKAGE}/PatientAssessments.pb.h"
@@ -30,12 +33,15 @@ add_library_ex(DataModelBindings
     "${CDM_PACKAGE}/SubstanceQuantity.pb.h"
     "${CDM_PACKAGE}/TestReport.pb.h"
 # cpm bindings
-    "${ENGINE_PACKAGE}/Pulse.pb.h"
-    "${ENGINE_PACKAGE}/PulseConfiguration.pb.h"
-    "${ENGINE_PACKAGE}/PulseEnvironment.pb.h"
-    "${ENGINE_PACKAGE}/PulseEquipment.pb.h"
-    "${ENGINE_PACKAGE}/PulsePhysiology.pb.h"
-    "${ENGINE_PACKAGE}/PulseState.pb.h"
+    "${CPM_PACKAGE}/Pulse.pb.h"
+    "${CPM_PACKAGE}/PulseConfiguration.pb.h"
+    "${CPM_PACKAGE}/PulseEnvironment.pb.h"
+    "${CPM_PACKAGE}/PulseEquipment.pb.h"
+    "${CPM_PACKAGE}/PulsePhysiology.pb.h"
+    "${CPM_PACKAGE}/PulseState.pb.h"
+# impl bindings
+# study bindings
+    "${MV_STUDY_PACKAGE}/MultiplexVentilation.pb.h"
   CPP_FILES
 # cdm bindings
     "${CDM_PACKAGE}/Actions.pb.cc"
@@ -50,9 +56,12 @@ add_library_ex(DataModelBindings
     "${CDM_PACKAGE}/Environment.pb.cc"
     "${CDM_PACKAGE}/EnvironmentActions.pb.cc"
     "${CDM_PACKAGE}/EnvironmentConditions.pb.cc"
+    "${CDM_PACKAGE}/EquipmentActions.pb.cc"
     "${CDM_PACKAGE}/Events.pb.cc"
     "${CDM_PACKAGE}/Inhaler.pb.cc"
     "${CDM_PACKAGE}/InhalerActions.pb.cc"
+    "${CDM_PACKAGE}/MechanicalVentilator.pb.cc"
+    "${CDM_PACKAGE}/MechanicalVentilatorActions.pb.cc"
     "${CDM_PACKAGE}/Patient.pb.cc"
     "${CDM_PACKAGE}/PatientActions.pb.cc"
     "${CDM_PACKAGE}/PatientAssessments.pb.cc"
@@ -65,12 +74,15 @@ add_library_ex(DataModelBindings
     "${CDM_PACKAGE}/SubstanceQuantity.pb.cc"
     "${CDM_PACKAGE}/TestReport.pb.cc"
 # cpm bindings
-    "${ENGINE_PACKAGE}/Pulse.pb.cc"
-    "${ENGINE_PACKAGE}/PulseConfiguration.pb.cc"
-    "${ENGINE_PACKAGE}/PulseEnvironment.pb.cc"
-    "${ENGINE_PACKAGE}/PulseEquipment.pb.cc"
-    "${ENGINE_PACKAGE}/PulsePhysiology.pb.cc"
-    "${ENGINE_PACKAGE}/PulseState.pb.cc"
+    "${CPM_PACKAGE}/Pulse.pb.cc"
+    "${CPM_PACKAGE}/PulseConfiguration.pb.cc"
+    "${CPM_PACKAGE}/PulseEnvironment.pb.cc"
+    "${CPM_PACKAGE}/PulseEquipment.pb.cc"
+    "${CPM_PACKAGE}/PulsePhysiology.pb.cc"
+    "${CPM_PACKAGE}/PulseState.pb.cc"
+# impl bindings
+# study bindings
+    "${MV_STUDY_PACKAGE}/MultiplexVentilation.pb.cc"
   PRIVATE_DEPENDS
     protobuf::libprotobuf
   LIB_INSTALL_ONLY

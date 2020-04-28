@@ -5,7 +5,7 @@
 PUSH_PROTO_WARNINGS()
 #include "pulse/cdm/bind/AnesthesiaMachine.pb.h"
 POP_PROTO_WARNINGS()
-#include "system/equipment/anesthesiamachine/SEAnesthesiaMachine.h"
+#include "system/equipment/anesthesia_machine/SEAnesthesiaMachine.h"
 
 const std::string& eAnesthesiaMachine_OxygenSource_Name(eAnesthesiaMachine_OxygenSource m)
 {

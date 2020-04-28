@@ -9,7 +9,7 @@ class SEDynamicStabilizationPropertyConvergence;
 class CDM_DECL SEDynamicStabilizationLedger : public Loggable
 {
 public:
-  SEDynamicStabilizationLedger(double timeStep_s, const SEDynamicStabilizationEngineConvergence& convergence);
+  SEDynamicStabilizationLedger(double timeStep_s, const SEDynamicStabilizationEngineConvergence& convergence, Logger* logger);
   virtual ~SEDynamicStabilizationLedger() {};
 
   virtual void TestConvergence();

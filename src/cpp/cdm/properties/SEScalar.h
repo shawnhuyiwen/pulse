@@ -6,6 +6,22 @@ See accompanying NOTICE file for details.*/
 
 #define ZERO_APPROX 1e-10
 
+class CDM_DECL SEScalarProperty
+{
+public:
+  SEScalarProperty(std::string n, double v, std::string u)
+  {
+    name  = n;
+    value = v;
+    unit  = u;
+  }
+  ~SEScalarProperty() = default;
+
+  std::string name;
+  double      value;
+  std::string unit;
+};
+
 class CDM_DECL NoUnit
 {
 public:
@@ -273,3 +289,61 @@ inline void IncrementOverride(SEScalarQuantity<Unit>& s, double value, const Uni
   s.IncrementValue(value, unit);
   s.SetReadOnly(b);
 }
+
+#define DEFINE_SCALAR_PTR(name, type) \
+  public: \
+    bool Has##name() const \
+    { \
+      return m_##name==nullptr?false:m_##name->IsValid(); \
+    } \
+    SEScalar##type& Get##name() \
+    { \
+      if(m_##name==nullptr) \
+        m_##name = new SE##type(); \
+      return *m_##name; \
+    } \
+    double Get##name() const \
+    { \
+      if (m_##name == nullptr) \
+        return SEScalar::dNaN(); \
+      return m_##name->GetValue(); \
+    } \
+  protected: \
+    SEScalar##type m_##name;
+
+#define DEFINE_UNIT_SCALAR_PTR(name, type) \
+  public: \
+    bool Has##name() const \
+    { \
+      return m_##name==nullptr?false:m_##name->IsValid(); \
+    } \
+    SEScalar##type& Get##name() \
+    { \
+      if(m_##name==nullptr) \
+        m_##name = new SE##type(); \
+      return *m_##name; \
+    } \
+    double Get##name(const type##Unit& unit) const \
+    { \
+      if (m_##name == nullptr) \
+        return SEScalar::dNaN(); \
+      return m_##name->GetValue(unit); \
+    } \
+  protected: \
+    SEScalar##type m_##name;
+
+#define DEFINE_SCALAR(name, type) \
+  public: \
+    bool Has##name() const { return m_##name.IsValid(); } \
+    SEScalar##type& Get##name() { return m_##name; } \
+    double Get##name() const { return m_##name.GetValue(); } \
+  protected: \
+    SEScalar##type m_##name;
+
+#define DEFINE_UNIT_SCALAR(name, type) \
+  public: \
+    bool Has##name() const { return m_##name.IsValid(); } \
+    SEScalar##type& Get##name() { return m_##name; } \
+    double Get##name(const type##Unit& unit) const { return m_##name.GetValue(unit); } \
+  protected: \
+    SEScalar##type m_##name;

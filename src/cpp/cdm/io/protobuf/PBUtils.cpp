@@ -42,7 +42,10 @@ bool PBUtils::SerializeToString(const google::protobuf::Message& src, std::strin
   {
     g_logger = logger;
     google::protobuf::SetLogHandler(static_cast<google::protobuf::LogHandler*>(PBUtils::ProtobufLogHandler));
-    bool ret =  google::protobuf::util::MessageToJsonString(src, &output).ok();
+    google::protobuf::util::JsonPrintOptions opts;
+    opts.add_whitespace = true;
+    opts.preserve_proto_field_names = true;
+    bool ret =  google::protobuf::util::MessageToJsonString(src, &output, opts).ok();
     g_logger = nullptr;
     return ret;
     //return google::protobuf::TextFormat::PrintToString(data, &output);

@@ -4,13 +4,13 @@ See accompanying NOTICE file for details.*/
 #pragma once
 class SESubstance;
 class SESubstanceManager;
-class SEEnvironmentalConditions;
 CDM_BIND_DECL(SubstanceData_FractionAmountData)
 
 class CDM_DECL SESubstanceFraction : public Loggable
 {
   friend class PBSubstance;//friend the serialization class
-  friend SEEnvironmentalConditions;// So it can add substances to the manager
+  friend class SEEnvironmentalConditions;// So it can add substances to the manager
+  friend class SEMechanicalVentilator;// So it can add substances to the manager
 public:
 
   SESubstanceFraction(SESubstance&);

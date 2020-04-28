@@ -20,6 +20,7 @@ POP_PROTO_WARNINGS()
 
 void PBEnvironment::Load(const CDM_BIND::EnvironmentData& src, SEEnvironment& dst)
 {
+  dst.Clear();
   PBEnvironment::Serialize(src, dst);
   dst.StateChange();
 }
@@ -87,6 +88,7 @@ void PBEnvironment::Serialize(const SEEnvironment& src, CDM_BIND::EnvironmentDat
 }
 void PBEnvironment::Copy(const SEEnvironment& src, SEEnvironment& dst)
 {
+  dst.Clear();
   CDM_BIND::EnvironmentData data;
   PBEnvironment::Serialize(src, data);
   PBEnvironment::Serialize(data, dst);
@@ -94,11 +96,11 @@ void PBEnvironment::Copy(const SEEnvironment& src, SEEnvironment& dst)
 
 void PBEnvironment::Load(const CDM_BIND::EnvironmentalConditionsData& src, SEEnvironmentalConditions& dst)
 {
+  dst.Clear();
   PBEnvironment::Serialize(src, dst);
 }
 void PBEnvironment::Serialize(const CDM_BIND::EnvironmentalConditionsData& src, SEEnvironmentalConditions& dst)
 {
-  dst.Clear();
   dst.SetSurroundingType((eSurroundingType)src.surroundingtype());
   if (src.has_airdensity())
     PBProperty::Load(src.airdensity(), dst.GetAirDensity());
@@ -190,6 +192,7 @@ void PBEnvironment::Serialize(const SEEnvironmentalConditions& src, CDM_BIND::En
 }
 void PBEnvironment::Copy(const SEEnvironmentalConditions& src, SEEnvironmentalConditions& dst)
 {
+  dst.Clear();
   CDM_BIND::EnvironmentalConditionsData data;
   PBEnvironment::Serialize(src, data);
   PBEnvironment::Serialize(data, dst);
@@ -197,11 +200,11 @@ void PBEnvironment::Copy(const SEEnvironmentalConditions& src, SEEnvironmentalCo
 
 void PBEnvironment::Load(const CDM_BIND::AppliedTemperatureData& src, SEAppliedTemperature& dst)
 {
+  dst.Clear();
   PBEnvironment::Serialize(src, dst);
 }
 void PBEnvironment::Serialize(const CDM_BIND::AppliedTemperatureData& src, SEAppliedTemperature& dst)
 {
-  dst.Clear();
   if (src.state() != CDM_BIND::eSwitch::NullSwitch)
     dst.SetState((eSwitch)src.state());
   if (src.has_temperature())
@@ -229,6 +232,7 @@ void PBEnvironment::Serialize(const SEAppliedTemperature& src, CDM_BIND::Applied
 }
 void PBEnvironment::Copy(const SEAppliedTemperature& src, SEAppliedTemperature& dst)
 {
+  dst.Clear();
   CDM_BIND::AppliedTemperatureData data;
   PBEnvironment::Serialize(src, data);
   PBEnvironment::Serialize(data, dst);
@@ -236,11 +240,11 @@ void PBEnvironment::Copy(const SEAppliedTemperature& src, SEAppliedTemperature& 
 
 void PBEnvironment::Load(const CDM_BIND::ActiveConditioningData& src, SEActiveConditioning& dst)
 {
+  dst.Clear();
   PBEnvironment::Serialize(src, dst);
 }
 void PBEnvironment::Serialize(const CDM_BIND::ActiveConditioningData& src, SEActiveConditioning& dst)
 {
-  dst.Clear();
   if (src.has_power())
     PBProperty::Load(src.power(), dst.GetPower());
   if (src.has_surfacearea())
@@ -265,6 +269,7 @@ void PBEnvironment::Serialize(const SEActiveConditioning& src, CDM_BIND::ActiveC
 }
 void PBEnvironment::Copy(const SEActiveConditioning& src, SEActiveConditioning& dst)
 {
+  dst.Clear();
   CDM_BIND::ActiveConditioningData data;
   PBEnvironment::Serialize(src, data);
   PBEnvironment::Serialize(data, dst);

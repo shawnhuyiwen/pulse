@@ -20,9 +20,9 @@ public:
   bool SerializeFromString(const std::string& src, SerializationFormat m);
   bool SerializeFromFile(const std::string& filename, SerializationFormat m);
 
-  virtual bool StabilizeRestingState(PhysiologyEngine& engine);
-  virtual bool StabilizeFeedbackState(PhysiologyEngine& engine);
-  virtual bool StabilizeConditions(PhysiologyEngine& engine, const SEConditionManager& conditions);
+  virtual bool StabilizeRestingState(Controller& engine);
+  virtual bool StabilizeFeedbackState(Controller& engine);
+  virtual bool StabilizeConditions(Controller& engine, const SEConditionManager& conditions);
 
   virtual bool HasRestingStabilizationTime() const;
   virtual SEScalarTime& GetRestingStabilizationTime();
@@ -40,7 +40,7 @@ public:
 
 protected:
 
-  virtual bool Stabilize(PhysiologyEngine& engine, const SEScalarTime& time);
+  virtual bool Stabilize(Controller& engine, const SEScalarTime& time);
 
   SEScalarTime* m_RestingStabilizationTime;
   SEScalarTime* m_FeedbackStabilizationTime;

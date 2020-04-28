@@ -55,7 +55,7 @@
 #include "properties/SERunningAverage.h"
 #include "utils/GeneralMath.h"
 
-Renal::Renal(PulseController& data) : SERenalSystem(data.GetLogger()), m_data(data)
+Renal::Renal(PulseData& data) : PulseRenalSystem(data.GetLogger()), m_data(data)
 {
   m_spCleared = new SEScalarMass();
   m_urineProductionRate_mL_Per_min_runningAvg = new SERunningAverage();
@@ -466,11 +466,16 @@ void Renal::PreProcess()
 /// occur in Cardiovascular::Process. This series of functions clears all of the necessary substances to 
 /// the bladder, restores bicarbonate if necessary and calculates the renal systemic outputs.
 //--------------------------------------------------------------------------------------------------
-void Renal::Process()
+void Renal::Process(bool solve_and_transport)
 {  
   //Circuit Processing is done on the entire circulatory circuit elsewhere
   CalculateActiveTransport();
   CalculateVitalSigns();
+  ComputeExposedModelParameters();
+}
+void Renal::ComputeExposedModelParameters()
+{
+
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -481,7 +486,7 @@ void Renal::Process()
 /// The renal circuit post processing occurs with the cardiovascular system's post process. There is 
 /// currently no other functionality needed for renal post process.
 //--------------------------------------------------------------------------------------------------
-void Renal::PostProcess()
+void Renal::PostProcess(bool solve_and_transport)
 {
   //Circuit PostProcessing is done on the entire circulatory circuit elsewhere
 }

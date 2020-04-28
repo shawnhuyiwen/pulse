@@ -15,6 +15,7 @@ public:
 
   static const VolumePerPressureUnit L_Per_Pa;
   static const VolumePerPressureUnit L_Per_cmH2O;
+  static const VolumePerPressureUnit mL_Per_cmH2O;
   static const VolumePerPressureUnit m3_Per_Pa;
   static const VolumePerPressureUnit mL_Per_mmHg;
 };

@@ -18,7 +18,7 @@ POP_PROTO_WARNINGS()
 
 void PBPatientAssessment::Serialize(const CDM_BIND::PatientAssessmentData& src, SEPatientAssessment& dst)
 {
-  dst.Clear();
+
 }
 
 void PBPatientAssessment::Serialize(const SEPatientAssessment& src, CDM_BIND::PatientAssessmentData& dst)
@@ -43,6 +43,7 @@ bool PBPatientAssessment::SerializeToFile(const SECompleteBloodCount& src, const
 
 void PBPatientAssessment::Load(const CDM_BIND::CompleteBloodCountData& src, SECompleteBloodCount& dst)
 {
+  dst.Clear();
   PBPatientAssessment::Serialize(src, dst);
 }
 void PBPatientAssessment::Serialize(const CDM_BIND::CompleteBloodCountData& src, SECompleteBloodCount& dst)
@@ -110,6 +111,7 @@ bool PBPatientAssessment::SerializeToFile(const SEComprehensiveMetabolicPanel& s
 
 void PBPatientAssessment::Load(const CDM_BIND::ComprehensiveMetabolicPanelData& src, SEComprehensiveMetabolicPanel& dst)
 {
+  dst.Clear();
   PBPatientAssessment::Serialize(src, dst);
 }
 void PBPatientAssessment::Serialize(const CDM_BIND::ComprehensiveMetabolicPanelData& src, SEComprehensiveMetabolicPanel& dst)
@@ -203,6 +205,7 @@ bool PBPatientAssessment::SerializeToFile(const SEPulmonaryFunctionTest& src, co
 
 void PBPatientAssessment::Load(const CDM_BIND::PulmonaryFunctionTestData& src, SEPulmonaryFunctionTest& dst)
 {
+  dst.Clear();
   PBPatientAssessment::Serialize(src, dst);
 }
 void PBPatientAssessment::Serialize(const CDM_BIND::PulmonaryFunctionTestData& src, SEPulmonaryFunctionTest& dst)
@@ -292,6 +295,7 @@ bool PBPatientAssessment::SerializeToFile(const SEUrinalysis& src, const std::st
 
 void PBPatientAssessment::Load(const CDM_BIND::UrinalysisData& src, SEUrinalysis& dst)
 {
+  dst.Clear();
   PBPatientAssessment::Serialize(src, dst);
 }
 void PBPatientAssessment::Serialize(const CDM_BIND::UrinalysisData& src, SEUrinalysis& dst)
@@ -354,11 +358,11 @@ void PBPatientAssessment::Serialize(const SEUrinalysis& src, CDM_BIND::Urinalysi
 
 void PBPatientAssessment::Load(const CDM_BIND::UrinalysisMicroscopicData& src, SEUrinalysisMicroscopic& dst)
 {
+  dst.Clear();
   PBPatientAssessment::Serialize(src, dst);
 }
 void PBPatientAssessment::Serialize(const CDM_BIND::UrinalysisMicroscopicData& src, SEUrinalysisMicroscopic& dst)
 {
-  dst.Clear();
   dst.SetObservationType((eUrinalysis_MicroscopicObservationType)src.observationtype());
   dst.SetEpithelialCellsResult((eUrinalysis_MicroscopicObservationAmount)src.epithelialcells());
   dst.SetCrystalsResult((eUrinalysis_MicroscopicObservationAmount)src.crystals());

@@ -3,8 +3,8 @@
 
 #include "stdafx.h"
 PUSH_PROTO_WARNINGS()
-#include "pulse/engine/bind/Pulse.pb.h"
-#include "pulse/engine/bind/PulseState.pb.h"
+#include "pulse/cpm/bind/Pulse.pb.h"
+#include "pulse/cpm/bind/PulseState.pb.h"
 POP_PROTO_WARNINGS()
 #include "controller/Controller.h"
 

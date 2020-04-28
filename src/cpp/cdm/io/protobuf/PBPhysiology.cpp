@@ -23,11 +23,11 @@ POP_PROTO_WARNINGS()
 
 void PBPhysiology::Load(const CDM_BIND::BloodChemistrySystemData& src, SEBloodChemistrySystem& dst)
 {
+  dst.Clear();
   PBPhysiology::Serialize(src, dst);
 }
 void PBPhysiology::Serialize(const CDM_BIND::BloodChemistrySystemData& src, SEBloodChemistrySystem& dst)
 {
-  dst.Clear();
   if (src.has_blooddensity())
     PBProperty::Load(src.blooddensity(), dst.GetBloodDensity());
   if (src.has_bloodph())
@@ -152,11 +152,11 @@ void PBPhysiology::Serialize(const SEBloodChemistrySystem& src, CDM_BIND::BloodC
 
 void PBPhysiology::Load(const CDM_BIND::CardiovascularSystemData& src, SECardiovascularSystem& dst)
 {
+  dst.Clear();
   PBPhysiology::Serialize(src, dst);
 }
 void PBPhysiology::Serialize(const CDM_BIND::CardiovascularSystemData& src, SECardiovascularSystem& dst)
 {
-  dst.Clear();
   if (src.has_arterialpressure())
     PBProperty::Load(src.arterialpressure(), dst.GetArterialPressure());
   if (src.has_bloodvolume())
@@ -290,11 +290,11 @@ void PBPhysiology::Serialize(const SECardiovascularSystem& src, CDM_BIND::Cardio
 
 void PBPhysiology::Load(const CDM_BIND::DrugSystemData& src, SEDrugSystem& dst)
 {
+  dst.Clear();
   PBPhysiology::Serialize(src, dst);
 }
 void PBPhysiology::Serialize(const CDM_BIND::DrugSystemData& src, SEDrugSystem& dst)
 {
-  dst.Clear();
   if (src.has_bronchodilationlevel())
     PBProperty::Load(src.bronchodilationlevel(), dst.GetBronchodilationLevel());
   if (src.has_heartratechange())
@@ -350,11 +350,11 @@ void PBPhysiology::Serialize(const SEDrugSystem& src, CDM_BIND::DrugSystemData& 
 
 void PBPhysiology::Load(const CDM_BIND::EndocrineSystemData& src, SEEndocrineSystem& dst)
 {
+  dst.Clear();
   PBPhysiology::Serialize(src, dst);
 }
 void PBPhysiology::Serialize(const CDM_BIND::EndocrineSystemData& src, SEEndocrineSystem& dst)
 {
-  dst.Clear();
   if (src.has_insulinsynthesisrate())
     PBProperty::Load(src.insulinsynthesisrate(), dst.GetInsulinSynthesisRate());
 }
@@ -373,11 +373,11 @@ void PBPhysiology::Serialize(const SEEndocrineSystem& src, CDM_BIND::EndocrineSy
 
 void PBPhysiology::Load(const CDM_BIND::EnergySystemData& src, SEEnergySystem& dst)
 {
+  dst.Clear();
   PBPhysiology::Serialize(src, dst);
 }
 void PBPhysiology::Serialize(const CDM_BIND::EnergySystemData& src, SEEnergySystem& dst)
 {
-  dst.Clear();
   if (src.has_achievedexerciselevel())
     PBProperty::Load(src.achievedexerciselevel(), dst.GetAchievedExerciseLevel());
   if (src.has_coretemperature())
@@ -436,11 +436,11 @@ void PBPhysiology::Serialize(const SEEnergySystem& src, CDM_BIND::EnergySystemDa
 
 void PBPhysiology::Load(const CDM_BIND::GastrointestinalSystemData& src, SEGastrointestinalSystem& dst)
 {
+  dst.Clear();
   PBPhysiology::Serialize(src, dst);
 }
 void PBPhysiology::Serialize(const CDM_BIND::GastrointestinalSystemData& src, SEGastrointestinalSystem& dst)
 {
-  dst.Clear();
   if (src.has_chymeabsorptionrate())
     PBProperty::Load(src.chymeabsorptionrate(), dst.GetChymeAbsorptionRate());
   if (src.has_stomachcontents())
@@ -464,11 +464,11 @@ void PBPhysiology::Serialize(const SEGastrointestinalSystem& src, CDM_BIND::Gast
 
 void PBPhysiology::Load(const CDM_BIND::HepaticSystemData& src, SEHepaticSystem& dst)
 {
+  dst.Clear();
   PBPhysiology::Serialize(src, dst);
 }
 void PBPhysiology::Serialize(const CDM_BIND::HepaticSystemData& src, SEHepaticSystem& dst)
 {
-  dst.Clear();
 
 }
 
@@ -485,11 +485,11 @@ void PBPhysiology::Serialize(const SEHepaticSystem& src, CDM_BIND::HepaticSystem
 
 void PBPhysiology::Load(const CDM_BIND::NervousSystemData& src, SENervousSystem& dst)
 {
+  dst.Clear();
   PBPhysiology::Serialize(src, dst);
 }
 void PBPhysiology::Serialize(const CDM_BIND::NervousSystemData& src, SENervousSystem& dst)
 {
-  dst.Clear();
   if (src.has_baroreceptorheartratescale())
     PBProperty::Load(src.baroreceptorheartratescale(), dst.GetBaroreceptorHeartRateScale());
   if (src.has_baroreceptorheartelastancescale())
@@ -536,11 +536,11 @@ void PBPhysiology::Serialize(const SENervousSystem& src, CDM_BIND::NervousSystem
 
 void PBPhysiology::Load(const CDM_BIND::PupillaryResponseData& src, SEPupillaryResponse& dst)
 {
+  dst.Clear();
   PBPhysiology::Serialize(src, dst);
 }
 void PBPhysiology::Serialize(const CDM_BIND::PupillaryResponseData& src, SEPupillaryResponse& dst)
 {
-  dst.Clear();
   if (src.has_reactivitymodifier())
     PBProperty::Load(src.reactivitymodifier(), dst.GetReactivityModifier());
   if (src.has_shapemodifier())
@@ -566,11 +566,11 @@ void PBPhysiology::Serialize(const SEPupillaryResponse& src, CDM_BIND::Pupillary
 
 void PBPhysiology::Load(const CDM_BIND::RenalSystemData& src, SERenalSystem& dst)
 {
+  dst.Clear();
   PBPhysiology::Serialize(src, dst);
 }
 void PBPhysiology::Serialize(const CDM_BIND::RenalSystemData& src, SERenalSystem& dst)
 {
-  dst.Clear();
   if (src.has_glomerularfiltrationrate())
     PBProperty::Load(src.glomerularfiltrationrate(), dst.GetGlomerularFiltrationRate());
   if (src.has_filtrationfraction())
@@ -809,11 +809,11 @@ void PBPhysiology::Serialize(const SERenalSystem& src, CDM_BIND::RenalSystemData
 
 void PBPhysiology::Load(const CDM_BIND::RespiratorySystemData& src, SERespiratorySystem& dst)
 {
+  dst.Clear();
   PBPhysiology::Serialize(src, dst);
 }
 void PBPhysiology::Serialize(const CDM_BIND::RespiratorySystemData& src, SERespiratorySystem& dst)
 {
-  dst.Clear();
   if (src.has_alveolararterialgradient())
     PBProperty::Load(src.alveolararterialgradient(), dst.GetAlveolarArterialGradient());
   if (src.has_alveolardeadspace())
@@ -838,6 +838,8 @@ void PBPhysiology::Serialize(const CDM_BIND::RespiratorySystemData& src, SERespi
     PBProperty::Load(src.expiratoryflow(), dst.GetExpiratoryFlow());
   if (src.has_expiratorypulmonaryresistance())
     PBProperty::Load(src.expiratorypulmonaryresistance(), dst.GetExpiratoryPulmonaryResistance());
+  if (src.has_fractionofinsipredoxygen())
+    PBProperty::Load(src.fractionofinsipredoxygen(), dst.GetFractionOfInsipredOxygen());
   if (src.has_imposedpowerofbreathing())
     PBProperty::Load(src.imposedpowerofbreathing(), dst.GetImposedPowerOfBreathing());
   if (src.has_imposedworkofbreathing())
@@ -856,6 +858,12 @@ void PBPhysiology::Serialize(const CDM_BIND::RespiratorySystemData& src, SERespi
     PBProperty::Load(src.lungcompliance(), dst.GetLungCompliance());
   if (src.has_maximalinspiratorypressure())
     PBProperty::Load(src.maximalinspiratorypressure(), dst.GetMaximalInspiratoryPressure());
+  if (src.has_meanairwaypressure())
+    PBProperty::Load(src.meanairwaypressure(), dst.GetMeanAirwayPressure());
+  if (src.has_oxygenationindex())
+    PBProperty::Load(src.oxygenationindex(), dst.GetOxygenationIndex());
+  if (src.has_oxygensaturationindex())
+    PBProperty::Load(src.oxygensaturationindex(), dst.GetOxygenSaturationIndex());
   if (src.has_patientpowerofbreathing())
     PBProperty::Load(src.patientpowerofbreathing(), dst.GetPatientPowerOfBreathing());
   if (src.has_patientworkofbreathing())
@@ -880,6 +888,8 @@ void PBPhysiology::Serialize(const CDM_BIND::RespiratorySystemData& src, SERespi
     PBProperty::Load(src.respiratorymusclefatigue(), dst.GetRespiratoryMuscleFatigue());
   if (src.has_respiratorymusclepressure())
     PBProperty::Load(src.respiratorymusclepressure(), dst.GetRespiratoryMusclePressure());
+  if (src.has_saturationandfractionofinspiredoxygenratio())
+    PBProperty::Load(src.saturationandfractionofinspiredoxygenratio(), dst.GetSaturationAndFractionOfInspiredOxygenRatio());
   if (src.has_specificventilation())
     PBProperty::Load(src.specificventilation(), dst.GetSpecificVentilation());
   if (src.has_tidalvolume())
@@ -946,6 +956,8 @@ void PBPhysiology::Serialize(const SERespiratorySystem& src, CDM_BIND::Respirato
     dst.set_allocated_expiratoryflow(PBProperty::Unload(*src.m_ExpiratoryFlow));
   if (src.HasExpiratoryPulmonaryResistance())
     dst.set_allocated_expiratorypulmonaryresistance(PBProperty::Unload(*src.m_ExpiratoryPulmonaryResistance));
+  if (src.HasFractionOfInsipredOxygen())
+    dst.set_allocated_fractionofinsipredoxygen(PBProperty::Unload(*src.m_FractionOfInsipredOxygen));
   if (src.HasImposedPowerOfBreathing())
     dst.set_allocated_imposedpowerofbreathing(PBProperty::Unload(*src.m_ImposedPowerOfBreathing));
   if (src.HasImposedWorkOfBreathing())
@@ -964,6 +976,12 @@ void PBPhysiology::Serialize(const SERespiratorySystem& src, CDM_BIND::Respirato
     dst.set_allocated_lungcompliance(PBProperty::Unload(*src.m_LungCompliance));
   if (src.HasMaximalInspiratoryPressure())
     dst.set_allocated_maximalinspiratorypressure(PBProperty::Unload(*src.m_MaximalInspiratoryPressure));
+  if (src.HasMeanAirwayPressure())
+    dst.set_allocated_meanairwaypressure(PBProperty::Unload(*src.m_MeanAirwayPressure));
+  if (src.HasOxygenationIndex())
+    dst.set_allocated_oxygenationindex(PBProperty::Unload(*src.m_OxygenationIndex));
+  if (src.HasOxygenSaturationIndex())
+    dst.set_allocated_oxygensaturationindex(PBProperty::Unload(*src.m_OxygenSaturationIndex));
   if (src.HasPatientPowerOfBreathing())
     dst.set_allocated_patientpowerofbreathing(PBProperty::Unload(*src.m_PatientPowerOfBreathing));
   if (src.HasPatientWorkOfBreathing())
@@ -988,6 +1006,8 @@ void PBPhysiology::Serialize(const SERespiratorySystem& src, CDM_BIND::Respirato
     dst.set_allocated_respiratorymusclefatigue(PBProperty::Unload(*src.m_RespiratoryMuscleFatigue));
   if (src.HasRespiratoryMusclePressure())
     dst.set_allocated_respiratorymusclepressure(PBProperty::Unload(*src.m_RespiratoryMusclePressure));
+  if (src.HasSaturationAndFractionOfInspiredOxygenRatio())
+    dst.set_allocated_saturationandfractionofinspiredoxygenratio(PBProperty::Unload(*src.m_SaturationAndFractionOfInspiredOxygenRatio));
   if (src.HasSpecificVentilation())
     dst.set_allocated_specificventilation(PBProperty::Unload(*src.m_SpecificVentilation));
   if (src.HasTidalVolume())
@@ -1023,11 +1043,11 @@ void PBPhysiology::Serialize(const SERespiratorySystem& src, CDM_BIND::Respirato
 
 void PBPhysiology::Load(const CDM_BIND::TissueSystemData& src, SETissueSystem& dst)
 {
+  dst.Clear();
   PBPhysiology::Serialize(src, dst);
 }
 void PBPhysiology::Serialize(const CDM_BIND::TissueSystemData& src, SETissueSystem& dst)
 {
-  dst.Clear();
   if (src.has_carbondioxideproductionrate())
     PBProperty::Load(src.carbondioxideproductionrate(), dst.GetCarbonDioxideProductionRate());
   if (src.has_extracellularfluidvolume())

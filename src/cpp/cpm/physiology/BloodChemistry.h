@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "controller/System.h"
+#include "PulsePhysiologySystems.h"
 #include "system/physiology/SEBloodChemistrySystem.h"
 class SECompleteBloodCount;
 class SEComprehensiveMetabolicPanel;
@@ -17,21 +17,20 @@ class SELiquidSubstanceQuantity;
  * The blood chemistry system houses all of the blood concentrations and compositions needed to assess a patient's health. This system is under development
  * and will be improved in future releases to include more substances that can provide clinician level details and assessments, such as a CBC and blood panel.
  */           
-class PULSE_DECL BloodChemistry : public SEBloodChemistrySystem, public PulseBloodChemistrySystem, public PulseSystem
+class PULSE_DECL BloodChemistry : public PulseBloodChemistrySystem
 {
+  friend class PulseData;
   friend class PBPulsePhysiology;//friend the serialization class
-  friend class PulseController;
   friend class PulseEngineTest;
 protected:
-  BloodChemistry(PulseController& data);
-  PulseController& m_data;
+  BloodChemistry(PulseData& data);
+  PulseData& m_data;
 
 public:
   virtual ~BloodChemistry();
 
   void Clear();
 
-protected:
   // Set members to a stable homeostatic state
   void Initialize();
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
@@ -39,14 +38,16 @@ protected:
 
   void AtSteadyState();
   void PreProcess();
-  void Process();
-  void PostProcess();
+  void Process(bool solve_and_transport=true);
+  void PostProcess(bool solve_and_transport=true);
 
   bool CalculateCompleteBloodCount(SECompleteBloodCount& cbc) const;
   bool CalculateComprehensiveMetabolicPanel(SEComprehensiveMetabolicPanel& cmp) const;
 
+protected:
+  void ComputeExposedModelParameters() override;
+
   void CheckBloodGasLevels();
-  
   // Serializable member variables (Set in Initialize and in schema)
   SERunningAverage* m_ArterialOxygen_mmHg;
   SERunningAverage* m_ArterialCarbonDioxide_mmHg;

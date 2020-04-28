@@ -34,6 +34,8 @@ namespace Pulse.CDM
       if (src.OxygenFraction != null)
         PBProperty.Load(src.OxygenFraction, dst.GetOxygenFraction());
       dst.SetOxygenSource((SEAnesthesiaMachine.OxygenSource)src.OxygenSource);
+      if (src.PeakInspiratoryPressure != null)
+        PBProperty.Load(src.PeakInspiratoryPressure, dst.GetPeakInspiratoryPressure());
       if (src.PositiveEndExpiredPressure != null)
         PBProperty.Load(src.PositiveEndExpiredPressure, dst.GetPositiveEndExpiredPressure());
       dst.SetPrimaryGas((SEAnesthesiaMachine.PrimaryGas)src.PrimaryGas);
@@ -41,8 +43,6 @@ namespace Pulse.CDM
         PBProperty.Load(src.RespiratoryRate, dst.GetRespiratoryRate());
       if (src.ReliefValvePressure != null)
         PBProperty.Load(src.ReliefValvePressure, dst.GetReliefValvePressure());
-      if (src.VentilatorPressure != null)
-        PBProperty.Load(src.VentilatorPressure, dst.GetVentilatorPressure());
       //if (src.LeftChamber!=null)
       //  PBAnesthesiaMachine.Load(src.GetLeftChamber(), dst.GetLeftChamber(), subMgr);
       //if (src.RightChamber!=null)
@@ -69,6 +69,8 @@ namespace Pulse.CDM
       if (src.HasOxygenFraction())
         dst.OxygenFraction = PBProperty.Unload(src.GetOxygenFraction());
       dst.OxygenSource = (pulse.cdm.bind.AnesthesiaMachineData.Types.eOxygenSource)(int)src.GetOxygenSource();
+      if (src.HasPeakInspiratoryPressure())
+        dst.PeakInspiratoryPressure = PBProperty.Unload(src.GetPeakInspiratoryPressure());
       if (src.HasPositiveEndExpiredPressure())
         dst.PositiveEndExpiredPressure = PBProperty.Unload(src.GetPositiveEndExpiredPressure());
       dst.PrimaryGas = (pulse.cdm.bind.AnesthesiaMachineData.Types.ePrimaryGas)(int)src.GetPrimaryGas();
@@ -76,8 +78,6 @@ namespace Pulse.CDM
         dst.RespiratoryRate = PBProperty.Unload(src.GetRespiratoryRate());
       if (src.HasReliefValvePressure())
         dst.ReliefValvePressure = PBProperty.Unload(src.GetReliefValvePressure());
-      if (src.HasVentilatorPressure())
-        dst.VentilatorPressure = PBProperty.Unload(src.GetVentilatorPressure());
 
       //if (src.HasLeftChamber())
       //  dst.LeftChamber(SEAnesthesiaMachineChamber.Unload(src.leftChamber));

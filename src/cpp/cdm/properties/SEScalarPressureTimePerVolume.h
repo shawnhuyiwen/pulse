@@ -14,6 +14,7 @@ public:
   static const PressureTimePerVolumeUnit& GetCompoundUnit(const std::string& unit);
 
   static const PressureTimePerVolumeUnit cmH2O_s_Per_L;
+  static const PressureTimePerVolumeUnit cmH2O_s_Per_mL;
   static const PressureTimePerVolumeUnit mmHg_s_Per_mL;
   static const PressureTimePerVolumeUnit mmHg_min_Per_mL;
   static const PressureTimePerVolumeUnit mmHg_min_Per_L;

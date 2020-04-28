@@ -11,7 +11,7 @@ def serialize_patient_action_to_bind(src: SEPatientAction, dst: PatientActionDat
     serialize_action_to_bind(src,dst.Action)
 
 def serialize_patient_action_from_bind(src: PatientActionData, dst: SEPatientAction):
-    raise Exception("serialize_patient_action_from_bind not implemented")
+    serialize_action_from_bind(src.Action, dst)
 
 
 def serialize_exercise_to_bind(src: SEExercise, dst: ExerciseData):
@@ -69,14 +69,68 @@ def serialize_brain_injury_from_bind(src: BrainInjuryData, dst: SEBrainInjury):
     serialize_patient_action_from_bind(src.PatientAction, dst)
 
 
-def serialize_broncho_constriction_to_bind(src: SEBronchoConstriction, dst: BronchoconstrictionData):
+def serialize_bronchoconstriction_to_bind(src: SEBronchoconstriction, dst: BronchoconstrictionData):
     serialize_patient_action_to_bind(src, dst.PatientAction)
     serialize_scalar_0to1_to_bind(src.get_severity(), dst.Severity)
 
 
-def serialize_broncho_constriction_from_bind(src: BronchoconstrictionData, dst: SEBronchoConstriction):
+def serialize_bronchoconstriction_from_bind(src: BronchoconstrictionData, dst: SEBronchoconstriction):
     serialize_patient_action_from_bind(src.PatientAction, dst)
 
+def serialize_cardiac_arrest_to_bind(src: SECardiacArrest, dst: CardiacArrestData):
+    serialize_patient_action_to_bind(src, dst.PatientAction)
+    dst.State = src.get_state().value
+
+def serialize_cardiac_arrest_from_bind(src: CardiacArrestData, dst: SECardiacArrest):
+    serialize_patient_action_from_bind(src.PatientAction, dst)
+
+def serialize_chest_occlusive_dressing_to_bind(src: SEChestOcclusiveDressing, dst: ChestOcclusiveDressingData):
+    serialize_patient_action_to_bind(src, dst.PatientAction)
+    dst.Side = src.get_side().value
+    dst.State = src.get_state().value
+def serialize_chest_occlusive_dressing_from_bind(src:ChestOcclusiveDressingData, dst: SEChestOcclusiveDressing):
+    serialize_patient_action_from_bind(src.PatientAction, dst)
+
+def serialize_forced_exhale_to_bind(src:SEForcedExhale, dst: ForcedExhaleData):
+    serialize_scalar_time_to_bind(src.get_exhale_period(), dst.ExhalePeriod)
+    serialize_scalar_0to1_to_bind( src.get_expiratory_capacity_fraction(), dst.ExpiratoryReserveVolumeFraction)
+    if src.has_hold_period():
+        serialize_scalar_time_to_bind(src.get_hold_period(), dst.HoldPeriod)
+    if src.has_release_period():
+        serialize_scalar_time_to_bind(src.get_release_period(), dst.ReleasePeriod)
+def serialize_forced_inhale_to_bind(src:SEForcedInhale, dst: ForcedInhaleData):
+    serialize_scalar_time_to_bind(src.get_inhale_period(), dst.InhalePeriod)
+    serialize_scalar_0to1_to_bind( src.get_inspiratory_capacity_fraction(), dst.InspiratoryCapacityFraction)
+    if src.has_hold_period():
+        serialize_scalar_time_to_bind(src.get_hold_period(), dst.HoldPeriod)
+    if src.has_release_period():
+        serialize_scalar_time_to_bind(src.get_release_period(), dst.ReleasePeriod)
+
+def serialize_forced_pause_to_bind(src: SEForcedPause, dst: ForcedPauseData):
+    serialize_scalar_time_to_bind(src.get_period(), dst.Period)
+
+
+def serialize_conscious_respiration_command_to_bind(src, dst: AnyConsciousRespirationCommandData):
+    if isinstance(src, SEForcedInhale):
+        serialize_forced_inhale_to_bind(src, dst.ForcedInhale)
+        return ForcedInhaleData
+    elif isinstance(src, SEForcedExhale):
+        serialize_forced_exhale_to_bind(src, dst.ForcedExhale)
+        return ForcedExhaleData
+    elif isinstance(src, SEForcedPause):
+        serialize_forced_pause_to_bind(src, dst.ForcedPause)
+        return ForcedPauseData
+    else:
+        raise Exception("Unable to add Conscious Respiration Command")
+
+def serialize_conscious_respiration_to_bind(src: SEConsciousRespiration, dst: ConsciousRespirationData):
+    serialize_patient_action_to_bind(src, dst.PatientAction)
+    dst.StartImmediately = src.get_start_immediately()
+    for command in src.get_commands():
+        serialize_conscious_respiration_command_to_bind(command, dst.Command.add())
+
+def serialize_conscious_respiration_from_bind(src:ConsciousRespirationData, dst: SEConsciousRespiration):
+    serialize_patient_action_from_bind(src.PatientAction, dst)
 
 def serialize_dsypnea_to_bind(src: SEDyspnea, dst: DyspneaData):
     serialize_patient_action_to_bind(src, dst.PatientAction)
@@ -84,7 +138,6 @@ def serialize_dsypnea_to_bind(src: SEDyspnea, dst: DyspneaData):
 
 def serialize_dsypnea_from_bind(src:DyspneaData, dst: SEDyspnea):
     serialize_patient_action_from_bind(dst.PatientAction, src)
-
 
 def serialize_hemorrhage_to_bind(src: SEHemorrhage, dst: HemorrhageData):
     serialize_patient_action_to_bind(src, dst.PatientAction)
@@ -95,6 +148,12 @@ def serialize_hemorrhage_to_bind(src: SEHemorrhage, dst: HemorrhageData):
 def serialize_hemorrhage_from_bind(src: HemorrhageData, dst: SEHemorrhage):
     raise Exception("serialize_hemorrhage_from_bind not implemented")
 
+def serialize_impaired_alveolar_exchange_exacerbation_to_bind(src: SEImpairedAlveolarExchangeExacerbation , dst: ImpairedAlveolarExchangeExacerbationData):
+    serialize_patient_action_to_bind(src, dst.PatientAction)
+    serialize_scalar_0to1_to_bind(src.get_impaired_fraction(), dst.ImpairedFraction)
+    serialize_scalar_area_to_bind(src.get_impaired_surface_area(), dst.ImpairedSurfaceArea)
+def serialize_impaired_alveolar_exchange_exacerbation_from_bind(src: ImpairedAlveolarExchangeExacerbationData, dst: SEImpairedAlveolarExchangeExacerbation):
+    serialize_patient_action_from_bind(src.PatientAction, dst)
 
 def serialize_intubation_to_bind(src:SEIntubation, dst:IntubationData):
     serialize_patient_action_to_bind(src, dst.PatientAction)
@@ -109,6 +168,15 @@ def serialize_lobar_pneumonia_exacerbation_to_bind(src:SELobarPneumoniaExacerbat
     serialize_scalar_0to1_to_bind(src.get_left_lung_affected(), dst.LeftLungAffected)
 def serialize_lobar_pneumonia_exacerbation_from_bind(src:LobarPneumoniaExacerbationData, dst: SELobarPneumoniaExacerbation ):
     serialize_patient_action_from_bind(src.PatientAction, dst)
+
+def serialize_mechanical_ventilation_to_bind(src: SEMechanicalVentilation, dst: MechanicalVentilationData):
+    serialize_patient_action_to_bind(src, dst.PatientAction)
+    serialize_scalar_pressure_to_bind(src.get_pressure(), dst.Pressure)
+    serialize_scalar_volume_per_time_to_bind(src.get_flow(), dst.Flow)
+    dst.State = src.get_state().value
+def serialize_needle_decompression_from_bind(src:MechanicalVentilationData, dst: SEMechanicalVentilation):
+    serialize_patient_action_from_bind(src.PatientAction, dst)
+
 
 def serialize_needle_decompression_to_bind(src: SENeedleDecompression, dst: NeedleDecompressionData):
     serialize_patient_action_to_bind(src, dst.PatientAction)
@@ -128,6 +196,13 @@ def serialize_respiratory_fatigue_to_bind(src:SERespiratoryFatigue, dst: Respira
     serialize_scalar_0to1_to_bind(src.get_severity(), dst.Severity)
 
 def serialize_respiratory_fatigue_from_bind(src: RespiratoryFatigueData, dst: SERespiratoryFatigue):
+    serialize_patient_action_from_bind(src.PatientAction, dst)
+
+def serialize_pulmonary_shunt_to_bind(src:SEPulmonaryShuntExacerbation, dst: PulmonaryShuntExacerbationData):
+    serialize_patient_action_to_bind(src, dst.PatientAction)
+    serialize_scalar_0to1_to_bind(src.get_severity(), dst.Severity)
+
+def serialize_pulmonary_shunt_from_bind(src: PulmonaryShuntExacerbationData, dst: SEPulmonaryShuntExacerbation):
     serialize_patient_action_from_bind(src.PatientAction, dst)
 
 def serialize_substance_bolus_to_bind(src:SESubstanceBolus, dst: SubstanceBolusData):

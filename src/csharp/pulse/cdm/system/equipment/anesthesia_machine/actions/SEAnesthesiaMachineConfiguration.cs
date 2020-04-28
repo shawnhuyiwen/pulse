@@ -13,20 +13,17 @@ namespace Pulse.CDM
 
     }
 
-    //public SEAnesthesiaMachineConfiguration(SEAnesthesiaMachineConfiguration other)
-    //{
-    //  this();
-    //  copy(other);    
-    //}
+    public SEAnesthesiaMachineConfiguration(SEAnesthesiaMachineConfiguration other)
+    {
+      Copy(other);
+    }
 
-    //public void copy(SEAnesthesiaMachineConfiguration other)
-    //{
-    //  if(this==other)
-    //    return;
-    //  super.copy(other);
-    //  this.configuration.copy(other.configuration);
-    //  this.configurationFile=other.configurationFile;
-    //}
+    public void copy(SEAnesthesiaMachineConfiguration other)
+    {
+      base.Copy(other);
+      this.configuration.Copy(other.configuration);
+      this.configurationFile = other.configurationFile;
+    }
 
     public override void Clear()
     {

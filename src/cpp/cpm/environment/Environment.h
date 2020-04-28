@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "controller/System.h"
+#include "PulsePhysiologySystems.h"
 #include "system/environment/SEEnvironment.h"
 class SEPatient;
 class SEGasCompartment;
@@ -14,14 +14,14 @@ class SEThermalCircuitPath;
 /**
  * @brief The %Environment class characterizes the environment and manages interactions between the body its surroundings.
  */  
-class PULSE_DECL Environment : public SEEnvironment, public PulseEnvironmentSystem, public PulseSystem
+class PULSE_DECL Environment : public PulseEnvironmentSystem
 {
+  friend class PulseData;
   friend class PBPulseEnvironment;//friend the serialization class
-  friend class PulseController;
   friend class PulseEngineTest;
 protected:
-  Environment(PulseController& data);
-  PulseController& m_data;
+  Environment(PulseData& data);
+  PulseData& m_data;
 
 public:
   virtual ~Environment();
@@ -35,11 +35,14 @@ public:
 
   void AtSteadyState();
   void PreProcess();
-  void Process();
-  void PostProcess();
+  void Process(bool solve_and_transport = true);
+  void PostProcess(bool solve_and_transport = true);
 
   void StateChange();
-  
+
+protected:
+  void ComputeExposedModelParameters() override;
+
   void ProcessActions();
   void CalculateSupplementalValues();
   /**/double AntoineEquation(double dTemperature_C);

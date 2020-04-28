@@ -14,7 +14,7 @@
 #include "compartment/fluid/SEGasCompartment.h"
 #include "compartment/fluid/SELiquidCompartment.h"
 #include "engine/SEActionManager.h"
-#include "engine/SEInhalerActionCollection.h"
+#include "engine/SEEquipmentActionCollection.h"
 #include "engine/SEPatientActionCollection.h"
 #include "substance/SESubstance.h"
 #include "patient/actions/SEConsciousRespiration.h"
@@ -32,7 +32,7 @@ Constructors
 ========================
 */
 
-Inhaler::Inhaler(PulseController& data) : SEInhaler(data.GetSubstances()), m_data(data)
+Inhaler::Inhaler(PulseData& data) : PulseInhaler(data.GetSubstances()), m_data(data)
 {
   Clear();
 }
@@ -102,12 +102,12 @@ void Inhaler::SetUp()
 //--------------------------------------------------------------------------------------------------
 void Inhaler::PreProcess()
 {
-  if (m_data.GetActions().GetInhalerActions().HasConfiguration())
+  if (m_data.GetActions().GetEquipmentActions().HasInhalerConfiguration())
   {
     eSwitch state = GetState();
-    SEInhalerConfiguration* config = m_data.GetActions().GetInhalerActions().GetConfiguration();
+    SEInhalerConfiguration* config = m_data.GetActions().GetEquipmentActions().GetInhalerConfiguration();
     ProcessConfiguration(*config);
-    m_data.GetActions().GetInhalerActions().RemoveConfiguration();    
+    m_data.GetActions().GetEquipmentActions().RemoveInhalerConfiguration();
     if (state != m_State)
     {
       m_State = state;
@@ -247,9 +247,13 @@ void Inhaler::Administer()
 /// \details
 /// Currently not used.
 //--------------------------------------------------------------------------------------------------
-void Inhaler::Process()
+void Inhaler::Process(bool solve_and_transport)
 {
-  
+  ComputeExposedModelParameters();
+}
+void Inhaler::ComputeExposedModelParameters()
+{
+
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -259,7 +263,7 @@ void Inhaler::Process()
 /// \details
 /// Currently not used.
 //--------------------------------------------------------------------------------------------------
-void Inhaler::PostProcess()
+void Inhaler::PostProcess(bool solve_and_transport)
 {
 
 }

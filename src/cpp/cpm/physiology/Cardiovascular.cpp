@@ -61,7 +61,7 @@
 #include "utils/DataTrack.h"
 #include "utils/GeneralMath.h"
 
-Cardiovascular::Cardiovascular(PulseController& data) : SECardiovascularSystem(data.GetLogger()), m_data(data)
+Cardiovascular::Cardiovascular(PulseData& data) : PulseCardiovascularSystem(data.GetLogger()), m_data(data)
 {
   m_TuningFile = "";
   m_transporter = new SELiquidTransporter(VolumePerTimeUnit::mL_Per_s, VolumeUnit::mL, MassUnit::ug, MassPerVolumeUnit::ug_Per_mL, data.GetLogger());
@@ -617,11 +617,19 @@ void Cardiovascular::PreProcess()
 /// Finally, vitals sign data is computed and system data is populated in the 
 /// CalculateVitalSigns method.
 //--------------------------------------------------------------------------------------------------
-void Cardiovascular::Process()
+void Cardiovascular::Process(bool solve_and_transport)
 {
-  m_circuitCalculator->Process(*m_CirculatoryCircuit, m_dT_s);
-  m_transporter->Transport(*m_CirculatoryGraph, m_dT_s);
+  if (solve_and_transport)
+  {
+    m_circuitCalculator->Process(*m_CirculatoryCircuit, m_dT_s);
+    m_transporter->Transport(*m_CirculatoryGraph, m_dT_s);
+  }
   CalculateVitalSigns();
+  ComputeExposedModelParameters();
+}
+void Cardiovascular::ComputeExposedModelParameters()
+{
+
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -631,9 +639,10 @@ void Cardiovascular::Process()
 /// \details
 /// The current time-step's circuit solution is set to the next time-step when it is passed to PostProcess.
 //--------------------------------------------------------------------------------------------------
-void Cardiovascular::PostProcess()
+void Cardiovascular::PostProcess(bool solve_and_transport)
 {
-  m_circuitCalculator->PostProcess(*m_CirculatoryCircuit);
+  if(solve_and_transport)
+    m_circuitCalculator->PostProcess(*m_CirculatoryCircuit);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -1812,7 +1821,7 @@ void Cardiovascular::TuneCircuit()
 
       if (!m_TuningFile.empty())
       {
-        circuitTrk.Track(time_s, *m_CirculatoryCircuit);        
+        circuitTrk.Track(time_s, *m_CirculatoryCircuit);
         circuitTrk.Track("MAP_mmHg", time_s, map_mmHg);
         circuitTrk.Track("Systolic_mmHg", time_s, systolic_mmHg);
         circuitTrk.Track("Diastolilc_mmHg", time_s, diastolic_mmHg);
@@ -1892,7 +1901,7 @@ void Cardiovascular::TuneCircuit()
     TunePaths(systemicResistanceScale, systemicComplianceScale, aortaResistanceScale, aortaComplianceScale, rightHeartResistanceScale, venaCavaComplianceScale);
   }
 
-
+  circuitFile.close();
   if (!success)
   {
     m_ss << "Unable to tune circuit to desired patient parameters. Final values : HeartRate(bpm):" << GetHeartRate(FrequencyUnit::Per_min) <<

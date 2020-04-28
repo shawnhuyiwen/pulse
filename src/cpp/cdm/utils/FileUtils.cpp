@@ -112,6 +112,9 @@ std::string ReadFile(const std::string& filename, SerializationFormat m)
 {
   std::ifstream input(filename);
   std::string content((std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());
+  if (content.empty() && !input.is_open())
+    std::cerr << "Unable to open file " << filename << " " << strerror(errno) << std::endl;
+  input.close();
   return content;
 }
 
@@ -192,4 +195,10 @@ std::string GetCurrentWorkingDirectory()
 bool IsDirectory(struct dirent* ent)
 {
   return ent->d_type == DT_DIR;
+}
+
+bool FileExists(const std::string& filename)
+{
+  struct stat buffer;
+  return (stat(filename.c_str(), &buffer) == 0);
 }

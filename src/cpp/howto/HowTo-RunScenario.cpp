@@ -30,7 +30,7 @@ class MyCustomExec : public SEAdvanceHandler
 {
 public:
   MyCustomExec() : SEAdvanceHandler(false) { } // Nix callbacks during stabilization
-  void OnAdvance(double time_s, const PhysiologyEngine& engine)
+  void OnAdvance(double time_s)
   {
     // you are given the current scenairo time and the engine, so you can do what ever you want
   }

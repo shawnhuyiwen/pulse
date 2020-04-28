@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "controller/System.h"
+#include "PulsePhysiologySystems.h"
 #include "system/physiology/SETissueSystem.h"
 class SESubstance;
 class SEFluidCircuitNode;
@@ -19,30 +19,32 @@ class SELiquidSubstanceQuantity;
  * To capture this behavior, the System Interactions methodology was introduced. 
  * The primary function of this system is to capture the substance transport that occurs between systems.
  */  
-class PULSE_DECL Tissue : public SETissueSystem, public PulseTissueSystem, public PulseSystem
+class PULSE_DECL Tissue : public PulseTissueSystem
 {
+  friend class PulseData;
   friend class PBPulsePhysiology;//friend the serialization class
-  friend class PulseController;
   friend class PulseEngineTest;
 protected:
-  Tissue(PulseController& data);
-  PulseController& m_data;
+  Tissue(PulseData& data);
+  PulseData& m_data;
 
 public:
   virtual ~Tissue();
 
   void Clear();
 
-protected:
   // Set members to a stable homeostatic state
   void Initialize();
   // Set pointers and other member variables common to both homeostatic initialization and loading a state
   void SetUp();
 
-  void AtSteadyState();  
+  void AtSteadyState();
   void PreProcess();
-  void Process();
-  void PostProcess();
+  void Process(bool solve_and_transport=true);
+  void PostProcess(bool solve_and_transport=true);
+
+protected:
+  void ComputeExposedModelParameters() override;
 
   // Preprocess Methods
   void ProduceAlbumin(double duration_s);

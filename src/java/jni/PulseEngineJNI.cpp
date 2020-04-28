@@ -47,13 +47,15 @@ JNIEXPORT void JNICALL Java_pulse_engine_testing_EngineUnitTestDriver_nativeExec
 }
 
 extern "C"
-JNIEXPORT jlong JNICALL Java_pulse_engine_Pulse_nativeAllocate(JNIEnv *env, jobject obj, jstring logFile)
+JNIEXPORT jlong JNICALL Java_pulse_engine_Pulse_nativeAllocate(JNIEnv *env, jobject obj, jstring logFile, jstring dataDir)
 { 
   const char* logF = env->GetStringUTFChars(logFile, JNI_FALSE);
-  PulseEngineJNI *engineJNI = new PulseEngineJNI(logF);
+  const char* dataD = env->GetStringUTFChars(dataDir, JNI_FALSE);
+  PulseEngineJNI *engineJNI = new PulseEngineJNI(logF, dataD);
   engineJNI->jniEnv = env;
   engineJNI->jniObj = obj;
   env->ReleaseStringUTFChars(logFile, logF);
+  env->ReleaseStringUTFChars(dataDir, dataD);
   return reinterpret_cast<jlong>(engineJNI);
 }
 
@@ -380,10 +382,10 @@ JNIEXPORT jstring JNICALL Java_pulse_engine_PulseEngine_nativeGetAssessment(JNIE
   return assessment;
 }
 
-PulseEngineJNI::PulseEngineJNI(const std::string& logFile) : SEAdvanceHandler(), SEEventHandler()
+PulseEngineJNI::PulseEngineJNI(const std::string& logFile, const std::string& dataDir) : SEAdvanceHandler(), SEEventHandler()
 {// No logger needed for the event handler, at this point
-  Reset(); 
-  eng = std::unique_ptr<PulseEngine>((PulseEngine*)CreatePulseEngine(logFile).release());
+  Reset();
+  eng = std::unique_ptr<PulseEngine>((PulseEngine*)CreatePulseEngine(logFile, dataDir).release());
   eng->GetLogger()->SetForward(this);
   eng->GetLogger()->LogToConsole(false);
   trk=&eng->GetEngineTracker()->GetDataTrack();
@@ -409,7 +411,7 @@ void PulseEngineJNI::Reset()
   updateFrequency_cnt = 45;// About every half second
 }
 
-void PulseEngineJNI::OnAdvance(double time_s, const PhysiologyEngine& engine)
+void PulseEngineJNI::OnAdvance(double time_s)
 {
   if (update_cnt++ > updateFrequency_cnt)
   {    

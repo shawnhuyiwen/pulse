@@ -4,3 +4,5 @@ add_subdirectory(cpm)
 add_subdirectory(scenario_driver)
 add_subdirectory(howto)
 add_subdirectory(test)
+
+add_subdirectory(study/multiplex_ventilation)

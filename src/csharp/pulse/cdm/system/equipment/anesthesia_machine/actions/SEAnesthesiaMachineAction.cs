@@ -3,19 +3,17 @@
 
 namespace Pulse.CDM
 {
-  public abstract class SEAnesthesiaMachineAction : SEAction
+  public abstract class SEAnesthesiaMachineAction : SEEquipmentAction
   {
     public SEAnesthesiaMachineAction()
     {
 
     }
 
-    //public void Copy(SEAnesthesiaMachineAction other)
-    //{
-    //  if (this == other)
-    //    return;
-    //  base.Copy(other);
-    //}
+    public void Copy(SEAnesthesiaMachineAction other)
+    {
+      base.Copy(other);
+    }
 
     public override void Clear()
     {

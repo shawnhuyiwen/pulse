@@ -18,9 +18,8 @@ class SEAction;
 class SEActionManager;
 class SEConditionManager;
 class SESubstanceManager;
-class SEAnesthesiaMachineActionCollection;
 class SEEnvironmentActionCollection;
-class SEInhalerActionCollection;
+class SEEquipmentActionCollection;
 class SEPatientActionCollection;
 
 class CDM_DECL PBEngine
@@ -57,9 +56,8 @@ public:
   static CDM_BIND::ActionListData* Unload(const SEActionManager& src);
   static void Serialize(const CDM_BIND::ActionListData& src, SEActionManager& dst);
   static void Serialize(const SEActionManager& src, CDM_BIND::ActionListData& dst);
-  static void Serialize(const SEAnesthesiaMachineActionCollection& src, CDM_BIND::ActionListData& dst);
+  static void Serialize(const SEEquipmentActionCollection& src, CDM_BIND::ActionListData& dst);
   static void Serialize(const SEEnvironmentActionCollection& src, CDM_BIND::ActionListData& dst);
-  static void Serialize(const SEInhalerActionCollection& src, CDM_BIND::ActionListData& dst);
   static void Serialize(const SEPatientActionCollection& src, CDM_BIND::ActionListData& dst);
 
   static bool SerializeToString(const SEActionManager& src, std::string& output, SerializationFormat m);

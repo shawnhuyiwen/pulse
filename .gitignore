@@ -1,3 +1,6 @@
+# Ignore any compiled python files
+*.pyc
+
 # Auto concat'd files for doxygen html
 /docs/Doxygen/panel_header.html
 /docs/Doxygen/panel_footer.html
@@ -8,9 +11,11 @@ src/schema/schema_last_built
 /src/csharp/pulse/bind
 /src/java/com
 /src/java/pulse/cdm/bind
-/src/java/pulse/engine/bind
+/src/java/pulse/cpm/bind
+/src/java/pulse/study/multiplex_ventilation/bind
 /src/python/pulse/cdm/bind
-/src/python/pulse/engine/bind
+/src/python/pulse/cpm/bind
+/src/python/pulse/study/multiplex_ventilation/bind
 /src/python/google
 
 # Eclipse Build Directory

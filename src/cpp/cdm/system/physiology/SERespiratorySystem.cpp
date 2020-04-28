@@ -30,6 +30,7 @@ SERespiratorySystem::SERespiratorySystem(Logger* logger) : SESystem(logger)
   m_EndTidalOxygenPressure = nullptr;
   m_ExpiratoryFlow = nullptr;
   m_ExpiratoryPulmonaryResistance = nullptr;
+  m_FractionOfInsipredOxygen = nullptr;
   m_ImposedPowerOfBreathing = nullptr;
   m_ImposedWorkOfBreathing = nullptr;
   m_InspiratoryExpiratoryRatio = nullptr;
@@ -39,6 +40,9 @@ SERespiratorySystem::SERespiratorySystem(Logger* logger) : SESystem(logger)
   m_IntrapulmonaryPressure = nullptr;
   m_LungCompliance = nullptr;
   m_MaximalInspiratoryPressure = nullptr;
+  m_MeanAirwayPressure = nullptr;
+  m_OxygenationIndex = nullptr;
+  m_OxygenSaturationIndex = nullptr;
   m_PatientPowerOfBreathing = nullptr;
   m_PatientWorkOfBreathing = nullptr;
   m_PeakInspiratoryPressure = nullptr;
@@ -51,6 +55,7 @@ SERespiratorySystem::SERespiratorySystem(Logger* logger) : SESystem(logger)
   m_RespirationRate = nullptr;
   m_RespiratoryMuscleFatigue = nullptr;
   m_RespiratoryMusclePressure = nullptr;
+  m_SaturationAndFractionOfInspiredOxygenRatio = nullptr;
   m_SpecificVentilation = nullptr;
   m_TidalVolume = nullptr;
   m_TotalAlveolarVentilation = nullptr;
@@ -89,6 +94,7 @@ void SERespiratorySystem::Clear()
   SAFE_DELETE(m_EndTidalOxygenPressure);
   SAFE_DELETE(m_ExpiratoryFlow);
   SAFE_DELETE(m_ExpiratoryPulmonaryResistance);
+  SAFE_DELETE(m_FractionOfInsipredOxygen);
   SAFE_DELETE(m_ImposedPowerOfBreathing);
   SAFE_DELETE(m_ImposedWorkOfBreathing);
   SAFE_DELETE(m_InspiratoryExpiratoryRatio);
@@ -98,6 +104,9 @@ void SERespiratorySystem::Clear()
   SAFE_DELETE(m_IntrapulmonaryPressure);
   SAFE_DELETE(m_LungCompliance);
   SAFE_DELETE(m_MaximalInspiratoryPressure);
+  SAFE_DELETE(m_MeanAirwayPressure);
+  SAFE_DELETE(m_OxygenationIndex);
+  SAFE_DELETE(m_OxygenSaturationIndex);
   SAFE_DELETE(m_PatientPowerOfBreathing);
   SAFE_DELETE(m_PatientWorkOfBreathing);
   SAFE_DELETE(m_PeakInspiratoryPressure);
@@ -110,6 +119,7 @@ void SERespiratorySystem::Clear()
   SAFE_DELETE(m_RespirationRate);
   SAFE_DELETE(m_RespiratoryMuscleFatigue);
   SAFE_DELETE(m_RespiratoryMusclePressure);
+  SAFE_DELETE(m_SaturationAndFractionOfInspiredOxygenRatio);
   SAFE_DELETE(m_SpecificVentilation);
   SAFE_DELETE(m_TidalVolume);
   SAFE_DELETE(m_TotalAlveolarVentilation);
@@ -154,6 +164,8 @@ const SEScalar* SERespiratorySystem::GetScalar(const std::string& name)
     return &GetExpiratoryFlow();
   if (name.compare("ExpiratoryPulmonaryResistance") == 0)
     return &GetExpiratoryPulmonaryResistance();
+  if (name.compare("FractionOfInsipredOxygen") == 0)
+    return &GetFractionOfInsipredOxygen();
   if (name.compare("ImposedPowerOfBreathing") == 0)
     return &GetImposedPowerOfBreathing();
   if (name.compare("ImposedWorkOfBreathing") == 0)
@@ -172,6 +184,12 @@ const SEScalar* SERespiratorySystem::GetScalar(const std::string& name)
     return &GetLungCompliance();
   if (name.compare("MaximalInspiratoryPressure") == 0)
     return &GetMaximalInspiratoryPressure();
+  if (name.compare("MeanAirwayPressure") == 0)
+    return &GetMeanAirwayPressure();
+  if (name.compare("OxygenationIndex") == 0)
+    return &GetOxygenationIndex();
+  if (name.compare("OxygenSaturationIndex") == 0)
+    return &GetOxygenSaturationIndex();
   if (name.compare("PatientPowerOfBreathing") == 0)
     return &GetPatientPowerOfBreathing();
   if (name.compare("PatientWorkOfBreathing") == 0)
@@ -196,6 +214,8 @@ const SEScalar* SERespiratorySystem::GetScalar(const std::string& name)
     return &GetRespiratoryMuscleFatigue();
   if (name.compare("RespiratoryMusclePressure") == 0)
     return &GetRespiratoryMusclePressure();
+  if (name.compare("SaturationAndFractionOfInspiredOxygenRatio") == 0)
+    return &GetSaturationAndFractionOfInspiredOxygenRatio();
   if (name.compare("SpecificVentilation") == 0)
     return &GetSpecificVentilation();
   if (name.compare("TidalVolume") == 0)
@@ -433,6 +453,23 @@ double SERespiratorySystem::GetExpiratoryPulmonaryResistance(const PressureTimeP
   return m_ExpiratoryPulmonaryResistance->GetValue(unit);
 }
 
+bool SERespiratorySystem::HasFractionOfInsipredOxygen() const
+{
+  return m_FractionOfInsipredOxygen == nullptr ? false : m_FractionOfInsipredOxygen->IsValid();
+}
+SEScalar0To1& SERespiratorySystem::GetFractionOfInsipredOxygen()
+{
+  if (m_FractionOfInsipredOxygen == nullptr)
+    m_FractionOfInsipredOxygen = new SEScalar0To1();
+  return *m_FractionOfInsipredOxygen;
+}
+double SERespiratorySystem::GetFractionOfInsipredOxygen() const
+{
+  if (m_FractionOfInsipredOxygen == nullptr)
+    return SEScalar::dNaN();
+  return m_FractionOfInsipredOxygen->GetValue();
+}
+
 bool SERespiratorySystem::HasImposedPowerOfBreathing() const
 {
   return m_ImposedPowerOfBreathing == nullptr ? false : m_ImposedPowerOfBreathing->IsValid();
@@ -586,6 +623,56 @@ double SERespiratorySystem::GetMaximalInspiratoryPressure(const PressureUnit& un
   return m_MaximalInspiratoryPressure->GetValue(unit);
 }
 
+bool SERespiratorySystem::HasMeanAirwayPressure() const
+{
+  return m_MeanAirwayPressure == nullptr ? false : m_MeanAirwayPressure->IsValid();
+}
+SEScalarPressure& SERespiratorySystem::GetMeanAirwayPressure()
+{
+  if (m_MeanAirwayPressure == nullptr)
+    m_MeanAirwayPressure = new SEScalarPressure();
+  return *m_MeanAirwayPressure;
+}
+double SERespiratorySystem::GetMeanAirwayPressure(const PressureUnit& unit) const
+{
+  if (m_MeanAirwayPressure == nullptr)
+    return SEScalar::dNaN();
+  return m_MeanAirwayPressure->GetValue(unit);
+}
+
+bool SERespiratorySystem::HasOxygenationIndex() const
+{
+  return m_OxygenationIndex == nullptr ? false : m_OxygenationIndex->IsValid();
+}
+SEScalar& SERespiratorySystem::GetOxygenationIndex()
+{
+  if (m_OxygenationIndex == nullptr)
+    m_OxygenationIndex = new SEScalar();
+  return *m_OxygenationIndex;
+}
+double SERespiratorySystem::GetOxygenationIndex() const
+{
+  if (m_OxygenationIndex == nullptr)
+    return SEScalar::dNaN();
+  return m_OxygenationIndex->GetValue();
+}
+
+bool SERespiratorySystem::HasOxygenSaturationIndex() const
+{
+  return m_OxygenSaturationIndex == nullptr ? false : m_OxygenSaturationIndex->IsValid();
+}
+SEScalarPressure& SERespiratorySystem::GetOxygenSaturationIndex()
+{
+  if (m_OxygenSaturationIndex == nullptr)
+    m_OxygenSaturationIndex = new SEScalarPressure();
+  return *m_OxygenSaturationIndex;
+}
+double SERespiratorySystem::GetOxygenSaturationIndex(const PressureUnit& unit) const
+{
+  if (m_OxygenSaturationIndex == nullptr)
+    return SEScalar::dNaN();
+  return m_OxygenSaturationIndex->GetValue(unit);
+}
 bool SERespiratorySystem::HasPatientPowerOfBreathing() const
 {
   return m_PatientPowerOfBreathing == nullptr ? false : m_PatientPowerOfBreathing->IsValid();
@@ -790,6 +877,22 @@ double SERespiratorySystem::GetRespiratoryMusclePressure(const PressureUnit& uni
   return m_RespiratoryMusclePressure->GetValue(unit);
 }
 
+bool SERespiratorySystem::HasSaturationAndFractionOfInspiredOxygenRatio() const
+{
+  return m_SaturationAndFractionOfInspiredOxygenRatio == nullptr ? false : m_SaturationAndFractionOfInspiredOxygenRatio->IsValid();
+}
+SEScalar& SERespiratorySystem::GetSaturationAndFractionOfInspiredOxygenRatio()
+{
+  if (m_SaturationAndFractionOfInspiredOxygenRatio == nullptr)
+    m_SaturationAndFractionOfInspiredOxygenRatio = new SEScalar();
+  return *m_SaturationAndFractionOfInspiredOxygenRatio;
+}
+double SERespiratorySystem::GetSaturationAndFractionOfInspiredOxygenRatio() const
+{
+  if (m_SaturationAndFractionOfInspiredOxygenRatio == nullptr)
+    return SEScalar::dNaN();
+  return m_SaturationAndFractionOfInspiredOxygenRatio->GetValue();
+}
 
 bool SERespiratorySystem::HasSpecificVentilation() const
 {
@@ -797,7 +900,7 @@ bool SERespiratorySystem::HasSpecificVentilation() const
 }
 SEScalar& SERespiratorySystem::GetSpecificVentilation()
 {
-  if (m_SpecificVentilation== nullptr)
+  if (m_SpecificVentilation == nullptr)
     m_SpecificVentilation = new SEScalar();
   return *m_SpecificVentilation;
 }

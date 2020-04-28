@@ -1,10 +1,9 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-from enum import Enum
 from pulse.cdm.engine import eSerializationFormat
 from pulse.cdm.patient_actions import SEBrainInjury, eBrainInjuryType
-from pulse.engine.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
 
 def HowTo_BrainInjury():
     pulse = PulsePhysiologyEngine("pulse_BrainInjury.log")

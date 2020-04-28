@@ -43,7 +43,7 @@
 
 //#define logMeal
 
-Gastrointestinal::Gastrointestinal(PulseController& data) : SEGastrointestinalSystem(data.GetLogger()), m_data(data)
+Gastrointestinal::Gastrointestinal(PulseData& data) : PulseGastrointestinalSystem(data.GetLogger()), m_data(data)
 {
   Clear();
   m_CalciumDigestionRate = new SEScalarMassPerTime();
@@ -634,9 +634,13 @@ void Gastrointestinal::AbsorbMeal(double duration_min)
 /// \details
 /// The current Pulse implementation has no functionality in the process function for Gastrointestinal.
 //--------------------------------------------------------------------------------------------------
-void Gastrointestinal::Process()
+void Gastrointestinal::Process(bool solve_and_transport)
 {
-  
+  ComputeExposedModelParameters();
+}
+void Gastrointestinal::ComputeExposedModelParameters()
+{
+
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -646,7 +650,7 @@ void Gastrointestinal::Process()
 /// \details
 /// The current Pulse implementation has no specific postprocess functionality.
 //--------------------------------------------------------------------------------------------------
-void Gastrointestinal::PostProcess()
+void Gastrointestinal::PostProcess(bool solve_and_transport)
 {
   
 }

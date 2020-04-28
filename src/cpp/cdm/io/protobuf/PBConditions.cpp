@@ -48,7 +48,6 @@ CDM_BIND::AnyConditionData* PBCondition::Unload(const SECondition& condition)
 
 void PBCondition::Serialize(const CDM_BIND::ConditionData& src, SECondition& dst)
 {
-  dst.Clear();
   dst.SetComment(src.comment());
 }
 void PBCondition::Serialize(const SECondition& src, CDM_BIND::ConditionData& dst)

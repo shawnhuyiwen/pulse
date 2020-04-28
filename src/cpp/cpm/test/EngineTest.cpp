@@ -97,7 +97,7 @@ void PulseEngineTest::FillFunctionMap()
 
   bgeMap.insert(std::make_pair("RespiratoryWithInhalerCircuitAndTransportTest", &PulseEngineTest::RespiratoryWithInhalerCircuitAndTransportTest));
 
-  bgeMap.insert(std::make_pair("RespiratoryWithMechanicalVentilatorCircuitAndTransportTest", &PulseEngineTest::RespiratoryWithMechanicalVentilatorCircuitAndTransportTest));
+  bgeMap.insert(std::make_pair("RespiratoryWithMechanicalVentilationCircuitAndTransportTest", &PulseEngineTest::RespiratoryWithMechanicalVentilationCircuitAndTransportTest));
 
   bgeMap.insert(std::make_pair("InternalTemperatureVariableBMRCircuitTest", &PulseEngineTest::InternalTemperatureVariableBMRCircuitTest));
   bgeMap.insert(std::make_pair("InternalTemperatureVariableSkinCircuitTest", &PulseEngineTest::InternalTemperatureVariableSkinCircuitTest));

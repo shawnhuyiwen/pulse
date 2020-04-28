@@ -8,6 +8,16 @@ class SEScalarTime;
 class log_lib; // Encapsulates 3rd party logging library
 #include <sstream>
 
+namespace cdm
+{
+  // Not happy with how std does this for floats/doubles
+  std::string to_string(int i);
+  std::string to_string(unsigned int i);
+  std::string to_string(size_t t);
+  std::string to_string(float f);
+  std::string to_string(double d);
+}
+
 class CDM_DECL Loggable
 {
 public:
@@ -41,6 +51,12 @@ public:
   virtual void Fatal(std::stringstream &msg, std::string const&  origin = empty) const;
   virtual void Fatal(std::ostream &msg, std::string const&  origin = empty) const;
 
+  inline std::string to_string(int i) { return cdm::to_string(i); }
+  inline std::string to_string(unsigned int i) { return cdm::to_string(i); }
+  inline std::string to_string(size_t t) { return cdm::to_string(t); }
+  inline std::string to_string(float f) { return cdm::to_string(f); }
+  inline std::string to_string(double d) { return cdm::to_string(d); }
+
 protected:
   bool    myLogger;
   Logger* m_Logger;
@@ -67,6 +83,7 @@ public:
   static void Deinitialize();
 
   void LogToConsole(bool b);
+  bool IsLoggingToConsole();
 
   void ResetLogFile(std::string const&  logFilename = Loggable::empty);
 
@@ -106,6 +123,12 @@ public:
   virtual void Fatal(std::string const&  msg, std::string const&  origin = Loggable::empty);
   virtual void Fatal(std::stringstream &msg, std::string const&  origin = Loggable::empty);
   virtual void Fatal(std::ostream &msg, std::string const&  origin = Loggable::empty);
+
+  inline std::string to_string(int i) { return cdm::to_string(i); }
+  inline std::string to_string(unsigned int i) { return cdm::to_string(i); }
+  inline std::string to_string(size_t t) { return cdm::to_string(t); }
+  inline std::string to_string(float f) { return cdm::to_string(f); }
+  inline std::string to_string(double d) { return cdm::to_string(d); }
 
 protected:
 

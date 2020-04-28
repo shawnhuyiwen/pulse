@@ -3,9 +3,8 @@
 
 from enum import Enum
 from pulse.cdm.engine import eSerializationFormat
-from pulse.cdm.patient import SEPatientConfiguration
 from pulse.cdm.patient_actions import SEAcuteStress
-from pulse.engine.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
 
 def HowTo_AcuteStress():
     pulse = PulsePhysiologyEngine("pulse_AcuteStress.log")

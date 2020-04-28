@@ -57,8 +57,8 @@ namespace Pulse.CDM
       {
         case pulse.cdm.bind.AnyActionData.ActionOneofCase.PatientAction:
           return PBPatientAction.Load(action.PatientAction);
-        case pulse.cdm.bind.AnyActionData.ActionOneofCase.AnesthesiaMachineAction:
-          return PBAnesthesiaMachineAction.Load(action.AnesthesiaMachineAction);
+        case pulse.cdm.bind.AnyActionData.ActionOneofCase.EquipmentAction:
+          return PBEquipmentAction.Load(action.EquipmentAction);
       }
       return null;
     }
@@ -69,8 +69,8 @@ namespace Pulse.CDM
       pulse.cdm.bind.AnyActionData any = new pulse.cdm.bind.AnyActionData();
       if (action.GetType().IsSubclassOf(typeof(SEPatientAction)))
         any.PatientAction = PBPatientAction.Unload((SEPatientAction)action);
-      if (action.GetType().IsSubclassOf(typeof(SEAnesthesiaMachineAction)))
-        any.AnesthesiaMachineAction = PBAnesthesiaMachineAction.Unload((SEAnesthesiaMachineAction)action);
+      if (action.GetType().IsSubclassOf(typeof(SEEquipmentAction)))
+        any.EquipmentAction = PBEquipmentAction.Unload((SEEquipmentAction)action);
       return any;
     }
     #endregion
