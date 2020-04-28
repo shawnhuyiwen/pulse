@@ -11,7 +11,6 @@ import statsmodels.api as sm
 import seaborn as sns
 
 from google.protobuf import json_format
-from scipy import stats
 from scipy import interpolate
 from statsmodels.formula.api import ols
 
@@ -146,7 +145,7 @@ def parse_data(simulations):
     return delta_compliance, delta_O2SatIndex, z_norm, df, numpy_continuous, names_continuous, names_categorical
 
 
-def Interpolate(x, y, z):
+def plot_interpolation(x, y, z):
     x_bound = 22
     y_bound = 6
     x_label = "Respiratory Compliance Mismatch (mL/cmH2O)"
@@ -180,10 +179,10 @@ def Interpolate(x, y, z):
 
     # plt.tight_layout()
 
-    plt.savefig('Interpolation.png')
+    plt.savefig('Multiplex_Interpolated.png')
 
 
-def Plot(x, y, z, df):
+def plot_outcome_comparisons(x, y, z, df):
     x_bound = 22
     y_bound = 6
     x_label = "Respiratory Compliance Mismatch (mL/cmH2O)"
@@ -289,7 +288,7 @@ def Plot(x, y, z, df):
 
     plt.tight_layout()
 
-    plt.savefig('Outcome_Bounds_Comparison.png')
+    plt.savefig('Multiplex_Outcome_Comparisons.png')
 
 
 def plot_OSI_distribution(simulations):
@@ -324,7 +323,7 @@ def plot_OSI_distribution(simulations):
     ax.set_title('Oxygen Saturation Index Distribution')
     ax.set_xlabel('Diffusion Impairment Factor')
     ax.set_ylabel('Oxygen Saturation Index (mmHg)')
-    plt.savefig('Distribution.png')
+    plt.savefig('Multiplex_Oxygen_Saturation_Index_Distributions.png')
 
 
 def plot_FiO2_distribution(simulations):
@@ -354,21 +353,32 @@ def plot_FiO2_distribution(simulations):
     ax.set_title('Fraction of Inspired Oxygen Required to Achieve ~89% Oxygen Saturation')
     ax.set_xlabel('Diffusion Impairment Factor')
     ax.set_ylabel('Fraction of Inspired Oxygen')
-    plt.savefig('FiO2_Distribution.png')
+    plt.savefig('Multiplex_Fraction_Inspired_Oxygen_Distributions.png')
 
 
 def tabulate_FiO2_distribution(simulations):
-    total_simulations = 258  # This assumes 258 patients per impairment
-
-    file = open('InspiredOxygenDistribution.txt', 'w')
+    file = open('Multiplex_Inspired_Oxygen_Distribution.txt', 'w')
+    all_combinations = []
     FiO2 = []
     ImpairmentFraction = []
 
     for sim in simulations.Simulations:
+        compliance = sim.PatientComparisons[0].MultiplexVentilation.Compliance_mL_Per_cmH2O
+        impairment_fraction = sim.PatientComparisons[0].MultiplexVentilation.ImpairmentFraction
+        impairment_fraction = np.around(impairment_fraction, decimals=1)
+        all_combinations.append(f"comp={compliance}_imp={impairment_fraction}")
+
         # Only look at patients that achieved SpO2 >=0.89
         if sim.AchievedStabilization:
             FiO2.append(sim.FiO2)
-            ImpairmentFraction.append(sim.PatientComparisons[0].MultiplexVentilation.ImpairmentFraction)
+            ImpairmentFraction.append(impairment_fraction)
+
+    unique_list = []
+    for x in all_combinations:
+        # check if exists in unique_list or not
+        if x not in unique_list:
+            unique_list.append(x)
+    total_combinations = len(unique_list) # This should be 287 because 41 different compliances and 7 different impairments
 
     FiO2 = np.asarray(FiO2)
     ImpairmentFraction = np.asarray(ImpairmentFraction)
@@ -381,6 +391,11 @@ def tabulate_FiO2_distribution(simulations):
     uniqueValues, indicesList = np.unique(numpy_data[:, 0], return_index=True)
     uniqueValues = np.around(uniqueValues, decimals=1)
 
+    print('Total patients = ', total_combinations)
+    print('Total patients per impairment = ', total_combinations / 7) #jbw - Find the number of unique impairments better
+
+    total_simulations = 258
+
     text = 'Patients that achieved >89% SpO2: '
     print(text)
     print(text, file=file)
@@ -389,7 +404,7 @@ def tabulate_FiO2_distribution(simulations):
         num_stable = len(grouped_data[index])
         percent_stable = num_stable / total_simulations * 100
         mean = np.mean(grouped_data[index])
-        text = f"DIF = {DIF}: mean = {mean} for {num_stable} / {total_simulations} ({percent_stable}%)"
+        text = f"DIF = {DIF}: mean = {mean} for {percent_stable}%"
         print(text)
         print(text, file=file)
         index = index + 1
@@ -418,13 +433,13 @@ def map_parameter_correlation(numpy_continuous, names_continuous):
 
     plt.tight_layout()
 
-    f.savefig('FiO2Correlations.png')
+    f.savefig('Multiplex_Fraction_Inspired_Oxygen_Correlations.png')
 
 
 def tabulate_outcome_correlation(df, names_continuous):
     name = []
     eta_squared = []
-    file = open('OutcomeCorrelations.txt', 'w')
+    file = open('Multiplex_Outcome_Correlations.txt', 'w')
     for continuous_variable in names_continuous:
         mod = ols("Q(continuous_variable) ~ C(Q('Combined Outcome'))", data=df).fit()
         # print(mod.summary())
@@ -453,12 +468,65 @@ def tabulate_outcome_correlation(df, names_continuous):
     file.close()
 
 
+def tabulate_edge_cases(simulations):
+    green_combinations = []
+    yellow_combinations = []
+    red_combinations = []
+
+    for sim in simulations.Simulations:
+        p0 = sim.PatientComparisons[0].MultiplexVentilation
+        compliance = p0.Compliance_mL_Per_cmH2O
+        impairment_fraction = p0.ImpairmentFraction
+        impairment_fraction = np.around(impairment_fraction, decimals=1)
+        p0_TV_mL_Per_kg = p0.TidalVolume_mL / p0.IdealBodyWeight_kg
+        patient_string = f"comp={compliance}_imp={impairment_fraction}"
+        if 6.5 >= p0_TV_mL_Per_kg >= 5.5: # Green criteria
+            if sim.AchievedStabilization:
+                green_combinations.append(patient_string)
+            else:
+                # Red based on impairment alone
+                red_combinations.append(patient_string)
+        elif 7.5 >= p0_TV_mL_Per_kg >= 4.5: # Yellow criteria
+            if sim.AchievedStabilization:
+                yellow_combinations.append(patient_string)
+            else:
+                # Red based on impairment alone
+                red_combinations.append(patient_string)
+        # else they're red from tidal volume
+
+    unique_green_combinations = []
+    for x in green_combinations:
+        # check if exists in unique_list or not
+        if x not in unique_green_combinations:
+            unique_green_combinations.append(x)
+
+    unique_yellow_combinations = []
+    for x in yellow_combinations:
+        # check if exists in unique_list or not
+        if x not in unique_yellow_combinations:
+            unique_yellow_combinations.append(x)
+
+    unique_red_combinations = []
+    for x in red_combinations:
+        # check if exists in unique_list or not
+        if x not in unique_red_combinations:
+            unique_red_combinations.append(x)
+
+    yellow_edge_cases = list(set(unique_red_combinations).intersection(yellow_combinations))
+    yellow_edge_cases.sort()
+    print('Potential missed yellows:', yellow_edge_cases)
+
+    red_edge_cases = list(set(unique_red_combinations).intersection(green_combinations))
+    red_edge_cases.sort()
+    print('Potential missed greens:', red_edge_cases)
+
+
 if __name__ == '__main__':
     # Load up a result set
-    results_file = "./test_results/multiplex_ventilation/simulations/simlist_results_Fix.json"
+    paired_results_file = "./test_results/multiplex_ventilation/simulations/simlist_results_Fix.json"
     solo_results_file = "./test_results/multiplex_ventilation/simulations/solo_simlist_results.json"
 
-    with open(results_file) as f:
+    with open(paired_results_file) as f:
         json = f.read()
     results = SimulationListData()
     json_format.Parse(json, results)
@@ -470,11 +538,13 @@ if __name__ == '__main__':
 
     tabulate_FiO2_distribution(solo_results)
     plot_FiO2_distribution(solo_results)
+    tabulate_edge_cases(solo_results)
+
     plot_OSI_distribution(results)
 
     x, y, z, df, numpy_continuous, names_continuous, names_categorical = parse_data(results)
     tabulate_outcome_correlation(df, names_continuous)
     map_parameter_correlation(numpy_continuous, names_continuous)
-    Plot(x, y, z, df)
-    Interpolate(x, y, z)
+    plot_outcome_comparisons(x, y, z, df)
+    plot_interpolation(x, y, z)
     plt.show()
