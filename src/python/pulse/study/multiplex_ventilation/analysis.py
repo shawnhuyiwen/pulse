@@ -13,6 +13,7 @@ import seaborn as sns
 from google.protobuf import json_format
 from scipy import interpolate
 from statsmodels.formula.api import ols
+from mpl_toolkits.mplot3d import Axes3D
 
 
 def parse_data(simulations):
@@ -455,16 +456,9 @@ def map_parameter_correlation(numpy_continuous, names_continuous):
     corr = corr_df.corr(method='pearson')
     corr = corr.round(2)
 
-    mask = np.zeros_like(corr, dtype=np.bool)
-    mask[np.triu_indices_from(mask)] = True
-    f, ax = plt.subplots(figsize=(15, 15))
-    heatmap = sns.heatmap(corr, mask=mask, square=True, linewidths=.5, cmap='coolwarm',
-                          cbar_kws={'shrink': .5, 'ticks': [-1, -.5, 0, 0.5, 1]}, vmin=-1, vmax=1, annot=True,
-                          annot_kws={'size': 22})
-    # add the column names as labels
-    ax.set_yticklabels(corr.columns, rotation=0)
-    ax.set_xticklabels(corr.columns)
-    sns.set_style({'xtick.bottom': True}, {'ytick.left': True})
+    f, ax = plt.subplots(figsize=(10, 6))
+    hm = sns.heatmap(round(corr, 2), annot=True, ax=ax, cmap="coolwarm", fmt='.2f', linewidths=.05, square=True)
+    f.subplots_adjust(top=0.93)
 
     plt.tight_layout()
 
@@ -556,6 +550,32 @@ def tabulate_edge_cases(simulations):
     print('Potential missed greens:', red_edge_cases)
 
 
+def plot_OSI_surface():
+    num_increments = 10
+
+    FiO2 = np.arange(0.21, 1.0, (1.0-0.21)/num_increments)
+    SpO2_fraction = np.arange(0.5, 1.0, (1.0-0.5)/num_increments)
+    SpO2_percent = SpO2_fraction * 100
+    MAP_cmH2O = np.arange(0, 40, (40-0)/num_increments)
+    MAP_mmHg = MAP_cmH2O * 0.735559
+
+    x, y, z = np.meshgrid(FiO2, MAP_mmHg, SpO2_fraction, indexing='ij')
+    OSI_mmHg = x * y / z
+
+    x, y, z = np.meshgrid(FiO2, MAP_cmH2O, SpO2_percent, indexing='ij')
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.set_title("Oxygen Saturation Index")
+    ax.set_xlabel('FiO2')
+    ax.set_ylabel('MAP (cmH2O)')
+    ax.set_zlabel('SpO2 (%)')
+    p = ax.scatter(x, y, z, c=OSI_mmHg.flatten(), cmap='coolwarm')
+    fig.colorbar(p)
+
+    plt.savefig('OSI_Visualization.png')
+
+
 if __name__ == '__main__':
     # Load up a result set
     paired_results_file = "./test_results/multiplex_ventilation/simulations/multiplex_simlist_results.json"
@@ -582,4 +602,7 @@ if __name__ == '__main__':
     map_parameter_correlation(numpy_continuous, names_continuous)
     plot_outcome_comparisons(x, y, z, df)
     plot_interpolation(x, y, z)
+
+    #plot_OSI_surface()
+
     plt.show()
