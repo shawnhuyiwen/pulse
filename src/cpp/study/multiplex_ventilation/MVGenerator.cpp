@@ -35,13 +35,13 @@ void MVGenerator::GeneratePatientList()
     {
       // RC circuit charging equation
       // Assume tube resistances are negligable
-      double targetTidalVolume_mL = 6.0 * 75.3; // Aaron - What's the best way to get the ideal body weight from the patient?
+      double targetTidalVolume_mL = 6.0 * 75.3;  /// \todo What's the best way to get the ideal body weight from the patient?
       double breathPeriod_s = 60.0 / MVGenerator::DefaultRespirationRate_Per_Min();
       double inspiratoryPeriod_s = MVGenerator::DefaultIERatio() * breathPeriod_s / (1.f + MVGenerator::DefaultIERatio());
       
       int PIP_cmH2O = int(targetTidalVolume_mL / (compliance_mL_Per_cmH2O * (1.0 - exp(-inspiratoryPeriod_s / (m_Resistance_cmH2O_s_Per_mL * compliance_mL_Per_cmH2O)))) + PEEP_cmH2O);
 
-      for (double currentImpairment = m_MinImpairment; currentImpairment <= m_MaxImpairment; currentImpairment += m_StepImpairment) //Aaron - This needs to be maxImpairment instead of 1.0, but rounding screws it up
+      for (double currentImpairment = m_MinImpairment; currentImpairment <= m_MaxImpairment; currentImpairment += m_StepImpairment)
       {
         auto patientData = m_PatientList->add_patients();
         patientData->set_id(id++);

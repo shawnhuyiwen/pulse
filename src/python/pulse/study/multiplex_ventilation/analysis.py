@@ -24,7 +24,7 @@ def parse_data(simulations):
     delta_compliance = []
     names_continuous.append("C(stat) Mismatch (cmH2O)")
     delta_O2SatIndex = []
-    names_continuous.append("OSI Mismatch (cmH2O)")
+    names_continuous.append("OSI Mismatch (mmHg)")
     detla_MeanAirwayPressure_cmH2O = []
     names_continuous.append("MAP Mismatch (cmH2O)")
     delta_ImpairmentFraction = []
@@ -59,7 +59,11 @@ def parse_data(simulations):
     num_8_failed = 0
     num_7_failed = 0
 
+    total_simulations = 0
+    total_used_simulations = 0
+
     for sim in simulations.Simulations:
+        total_simulations = total_simulations + 1
         p0 = sim.PatientComparisons[0].MultiplexVentilation
         p1 = sim.PatientComparisons[1].MultiplexVentilation
         p0_TV_mL_Per_kg = p0.TidalVolume_mL / p0.IdealBodyWeight_kg
@@ -81,8 +85,9 @@ def parse_data(simulations):
             elif fraction > 0.65:
                 num_7_failed = num_7_failed + 1
         else:
+            total_used_simulations = total_used_simulations + 1
             delta_compliance.append(abs(p0.Compliance_mL_Per_cmH2O - p1.Compliance_mL_Per_cmH2O))
-            delta_O2SatIndex.append(abs(p0.OxygenSaturationIndex_cmH2O - p1.OxygenSaturationIndex_cmH2O))
+            delta_O2SatIndex.append(abs(p0.OxygenSaturationIndex_mmHg - p1.OxygenSaturationIndex_mmHg))
             detla_MeanAirwayPressure_cmH2O.append(abs(p0.MeanAirwayPressure_cmH2O - p1.MeanAirwayPressure_cmH2O))
             delta_ImpairmentFraction.append(abs(p0.ImpairmentFraction - p1.ImpairmentFraction))
             delta_CarricoIndex_mmHg.append(abs(p0.CarricoIndex_mmHg - p1.CarricoIndex_mmHg))
@@ -128,10 +133,19 @@ def parse_data(simulations):
             else:
                 PaO2_outcome.append("Negative")
 
+    print('total simulations = ', total_simulations)
+    print('total used simulations = ', total_used_simulations)
+    print('total unused simulations = ', total_simulations - total_used_simulations)
+    print('total impairment 0.9 fails = ', num_9_failed)
+    print('total impairment 0.8 fails = ', num_8_failed)
+    print('total impairment 0.7 fails = ', num_7_failed)
+
+    # Make sure this order matches names_continuous!
     numpy_continuous = np.array([delta_compliance, delta_O2SatIndex, detla_MeanAirwayPressure_cmH2O, delta_ImpairmentFraction,
                            delta_CarricoIndex_mmHg, delta_SFRatio, delta_OxygenationIndex,
                            delta_EndTidalCarbonDioxidePressure_mmHg, delta_AlveolarArterialGradient_mmHg])
     numpy_continuous = numpy_continuous.astype(float)
+    # Make sure this order matches names_categorical!
     numpy_data = np.concatenate((numpy_continuous, [combined_outcome, tv_outcome, SpO2_outcome, PaO2_outcome]))
     numpy_data = np.transpose(numpy_data)
     names = names_continuous + names_categorical
@@ -147,7 +161,7 @@ def parse_data(simulations):
 
 def plot_interpolation(x, y, z):
     x_bound = 22
-    y_bound = 6
+    y_bound = 4.5
     x_label = "Respiratory Compliance Mismatch (mL/cmH2O)"
     y_label = "Oxygen Saturation Index Mismatch (mmHg)"
 
@@ -184,84 +198,105 @@ def plot_interpolation(x, y, z):
 
 def plot_outcome_comparisons(x, y, z, df):
     x_bound = 22
-    y_bound = 6
+    y_bound = 4.5
     x_label = "Respiratory Compliance Mismatch (mL/cmH2O)"
     y_label = "Oxygen Saturation Index Mismatch (mmHg)"
 
-    grid0 = sns.JointGrid(x='C(stat) Mismatch (cmH2O)', y='OSI Mismatch (cmH2O)', data=df, xlim=(0, x_bound), ylim=(0, y_bound))
-    g0 = grid0.plot_joint(sns.scatterplot, marker=1, s=150, hue='Combined Outcome', hue_order=['Positive', 'Less Positive', 'Negative'],  data=df, palette=['green', 'yellow', 'red'])
+    grid0 = sns.JointGrid(x='C(stat) Mismatch (cmH2O)', y='OSI Mismatch (mmHg)', data=df, xlim=(0, x_bound),
+                          ylim=(0, y_bound))
+    g0 = grid0.plot_joint(sns.scatterplot, marker=1, s=150, hue='Combined Outcome',
+                          hue_order=['Positive', 'Less Positive', 'Negative'], data=df,
+                          palette=['green', 'yellow', 'red'])
     g0.set_axis_labels(x_label, y_label)
     g0.fig.suptitle("Combined Bounds Outcome")
 
     gridsize = 100
 
-    sns.kdeplot(df.loc[df['Combined Outcome'] == 'Positive', 'C(stat) Mismatch (cmH2O)'], ax=g0.ax_marg_x, legend=False, color='green', shade=True, gridsize=gridsize)
-    sns.kdeplot(df.loc[df['Combined Outcome'] == 'Less Positive', 'C(stat) Mismatch (cmH2O)'], ax=g0.ax_marg_x, legend=False, color='yellow', shade=True, gridsize=gridsize)
-    sns.kdeplot(df.loc[df['Combined Outcome'] == 'Negative', 'C(stat) Mismatch (cmH2O)'], ax=g0.ax_marg_x, legend=False, color='red', shade=True, gridsize=gridsize)
-    sns.kdeplot(df.loc[df['Combined Outcome'] == 'Positive', 'OSI Mismatch (cmH2O)'], ax=g0.ax_marg_y, vertical=True, legend=False, color='green', shade=True, gridsize=gridsize)
-    sns.kdeplot(df.loc[df['Combined Outcome'] == 'Less Positive', 'OSI Mismatch (cmH2O)'], ax=g0.ax_marg_y, vertical=True, legend=False, color='yellow', shade=True, gridsize=gridsize)
-    sns.kdeplot(df.loc[df['Combined Outcome'] == 'Negative', 'OSI Mismatch (cmH2O)'], ax=g0.ax_marg_y, vertical=True, legend=False, color='red', shade=True, gridsize=gridsize)
+    sns.kdeplot(df.loc[df['Combined Outcome'] == 'Positive', 'C(stat) Mismatch (cmH2O)'], ax=g0.ax_marg_x, legend=False,
+                color='green', shade=True, gridsize=gridsize)
+    sns.kdeplot(df.loc[df['Combined Outcome'] == 'Less Positive', 'C(stat) Mismatch (cmH2O)'], ax=g0.ax_marg_x,
+                legend=False, color='yellow', shade=True, gridsize=gridsize)
+    sns.kdeplot(df.loc[df['Combined Outcome'] == 'Negative', 'C(stat) Mismatch (cmH2O)'], ax=g0.ax_marg_x, legend=False,
+                color='red', shade=True, gridsize=gridsize)
+    sns.kdeplot(df.loc[df['Combined Outcome'] == 'Positive', 'OSI Mismatch (mmHg)'], ax=g0.ax_marg_y, vertical=True,
+                legend=False, color='green', shade=True, gridsize=gridsize)
+    sns.kdeplot(df.loc[df['Combined Outcome'] == 'Less Positive', 'OSI Mismatch (mmHg)'], ax=g0.ax_marg_y,
+                vertical=True, legend=False, color='yellow', shade=True, gridsize=gridsize)
+    sns.kdeplot(df.loc[df['Combined Outcome'] == 'Negative', 'OSI Mismatch (mmHg)'], ax=g0.ax_marg_y, vertical=True,
+                legend=False, color='red', shade=True, gridsize=gridsize)
 
-    grid1 = sns.JointGrid(x='C(stat) Mismatch (cmH2O)', y='OSI Mismatch (cmH2O)', data=df, xlim=(0, x_bound),
+    grid1 = sns.JointGrid(x='C(stat) Mismatch (cmH2O)', y='OSI Mismatch (mmHg)', data=df, xlim=(0, x_bound),
                           ylim=(0, y_bound))
-    g1 = grid1.plot_joint(sns.scatterplot, marker=1, s=150, hue='TV Outcome', hue_order=['Positive', 'Less Positive', 'Negative'], data=df, palette=['green', 'yellow', 'red'])
+    g1 = grid1.plot_joint(sns.scatterplot, marker=1, s=150, hue='TV Outcome',
+                          hue_order=['Positive', 'Less Positive', 'Negative'], data=df,
+                          palette=['green', 'yellow', 'red'])
     g1.set_axis_labels(x_label, y_label)
     g1.fig.suptitle("TV Bounds Outcome")
 
-    sns.kdeplot(df.loc[df['TV Outcome'] == 'Positive', 'C(stat) Mismatch (cmH2O)'], ax=g1.ax_marg_x, legend=False, color='green',
+    sns.kdeplot(df.loc[df['TV Outcome'] == 'Positive', 'C(stat) Mismatch (cmH2O)'], ax=g1.ax_marg_x, legend=False,
+                color='green',
                 shade=True, gridsize=gridsize)
     sns.kdeplot(df.loc[df['TV Outcome'] == 'Less Positive', 'C(stat) Mismatch (cmH2O)'], ax=g1.ax_marg_x, legend=False,
                 color='yellow', shade=True, gridsize=gridsize)
-    sns.kdeplot(df.loc[df['TV Outcome'] == 'Negative', 'C(stat) Mismatch (cmH2O)'], ax=g1.ax_marg_x, legend=False, color='red',
+    sns.kdeplot(df.loc[df['TV Outcome'] == 'Negative', 'C(stat) Mismatch (cmH2O)'], ax=g1.ax_marg_x, legend=False,
+                color='red',
                 shade=True, gridsize=gridsize)
-    sns.kdeplot(df.loc[df['TV Outcome'] == 'Positive', 'OSI Mismatch (cmH2O)'], ax=g1.ax_marg_y, vertical=True, legend=False,
+    sns.kdeplot(df.loc[df['TV Outcome'] == 'Positive', 'OSI Mismatch (mmHg)'], ax=g1.ax_marg_y, vertical=True,
+                legend=False,
                 color='green', shade=True, gridsize=gridsize)
-    sns.kdeplot(df.loc[df['TV Outcome'] == 'Less Positive', 'OSI Mismatch (cmH2O)'], ax=g1.ax_marg_y, vertical=True,
+    sns.kdeplot(df.loc[df['TV Outcome'] == 'Less Positive', 'OSI Mismatch (mmHg)'], ax=g1.ax_marg_y, vertical=True,
                 legend=False, color='yellow', shade=True, gridsize=gridsize)
-    sns.kdeplot(df.loc[df['TV Outcome'] == 'Negative', 'OSI Mismatch (cmH2O)'], ax=g1.ax_marg_y, vertical=True, legend=False,
+    sns.kdeplot(df.loc[df['TV Outcome'] == 'Negative', 'OSI Mismatch (mmHg)'], ax=g1.ax_marg_y, vertical=True,
+                legend=False,
                 color='red', shade=True, gridsize=gridsize)
 
-    grid2 = sns.JointGrid(x='C(stat) Mismatch (cmH2O)', y='OSI Mismatch (cmH2O)', data=df, xlim=(0, x_bound),
+    grid2 = sns.JointGrid(x='C(stat) Mismatch (cmH2O)', y='OSI Mismatch (mmHg)', data=df, xlim=(0, x_bound),
                           ylim=(0, y_bound))
-    g2 = grid2.plot_joint(sns.scatterplot, marker=1, s=150, hue='SpO2 Outcome', hue_order=['Positive', 'Negative'], data=df, palette=['green', 'red'])
+    g2 = grid2.plot_joint(sns.scatterplot, marker=1, s=150, hue='SpO2 Outcome', hue_order=['Positive', 'Negative'],
+                          data=df, palette=['green', 'red'])
     g2.set_axis_labels(x_label, y_label)
     g2.fig.suptitle("SpO2 Bounds Outcome")
 
     sns.kdeplot(df.loc[df['SpO2 Outcome'] == 'Positive', 'C(stat) Mismatch (cmH2O)'], ax=g2.ax_marg_x, legend=False,
                 color='green',
                 shade=True, gridsize=gridsize)
-    sns.kdeplot(df.loc[df['SpO2 Outcome'] == 'Negative', 'C(stat) Mismatch (cmH2O)'], ax=g2.ax_marg_x, legend=False, color='red',
+    sns.kdeplot(df.loc[df['SpO2 Outcome'] == 'Negative', 'C(stat) Mismatch (cmH2O)'], ax=g2.ax_marg_x, legend=False,
+                color='red',
                 shade=True, gridsize=gridsize)
-    sns.kdeplot(df.loc[df['SpO2 Outcome'] == 'Positive', 'OSI Mismatch (cmH2O)'], ax=g2.ax_marg_y, vertical=True,
+    sns.kdeplot(df.loc[df['SpO2 Outcome'] == 'Positive', 'OSI Mismatch (mmHg)'], ax=g2.ax_marg_y, vertical=True,
                 legend=False,
                 color='green', shade=True, gridsize=gridsize)
-    sns.kdeplot(df.loc[df['SpO2 Outcome'] == 'Negative', 'OSI Mismatch (cmH2O)'], ax=g2.ax_marg_y, vertical=True,
+    sns.kdeplot(df.loc[df['SpO2 Outcome'] == 'Negative', 'OSI Mismatch (mmHg)'], ax=g2.ax_marg_y, vertical=True,
                 legend=False,
                 color='red', shade=True, gridsize=gridsize)
 
-    grid3 = sns.JointGrid(x='C(stat) Mismatch (cmH2O)', y='OSI Mismatch (cmH2O)', data=df, xlim=(0, x_bound),
+    grid3 = sns.JointGrid(x='C(stat) Mismatch (cmH2O)', y='OSI Mismatch (mmHg)', data=df, xlim=(0, x_bound),
                           ylim=(0, y_bound))
-    g3 = grid3.plot_joint(sns.scatterplot, marker=1, s=150, hue='PaO2 Outcome', hue_order=['Positive', 'Less Positive', 'Negative'], data=df, palette=['green', 'yellow', 'red'])
+    g3 = grid3.plot_joint(sns.scatterplot, marker=1, s=150, hue='PaO2 Outcome',
+                          hue_order=['Positive', 'Less Positive', 'Negative'], data=df,
+                          palette=['green', 'yellow', 'red'])
     g3.set_axis_labels(x_label, y_label)
     g3.fig.suptitle("PaO2 Bounds Outcome")
 
     sns.kdeplot(df.loc[df['PaO2 Outcome'] == 'Positive', 'C(stat) Mismatch (cmH2O)'], ax=g3.ax_marg_x, legend=False,
                 color='green',
                 shade=True, gridsize=gridsize)
-    sns.kdeplot(df.loc[df['PaO2 Outcome'] == 'Less Positive', 'C(stat) Mismatch (cmH2O)'], ax=g3.ax_marg_x, legend=False,
+    sns.kdeplot(df.loc[df['PaO2 Outcome'] == 'Less Positive', 'C(stat) Mismatch (cmH2O)'], ax=g3.ax_marg_x,
+                legend=False,
                 color='yellow', shade=True, gridsize=gridsize)
-    sns.kdeplot(df.loc[df['PaO2 Outcome'] == 'Negative', 'C(stat) Mismatch (cmH2O)'], ax=g3.ax_marg_x, legend=False, color='red',
+    sns.kdeplot(df.loc[df['PaO2 Outcome'] == 'Negative', 'C(stat) Mismatch (cmH2O)'], ax=g3.ax_marg_x, legend=False,
+                color='red',
                 shade=True, gridsize=gridsize)
-    sns.kdeplot(df.loc[df['PaO2 Outcome'] == 'Positive', 'OSI Mismatch (cmH2O)'], ax=g3.ax_marg_y, vertical=True,
+    sns.kdeplot(df.loc[df['PaO2 Outcome'] == 'Positive', 'OSI Mismatch (mmHg)'], ax=g3.ax_marg_y, vertical=True,
                 legend=False,
                 color='green', shade=True, gridsize=gridsize)
-    sns.kdeplot(df.loc[df['PaO2 Outcome'] == 'Less Positive', 'OSI Mismatch (cmH2O)'], ax=g3.ax_marg_y, vertical=True,
+    sns.kdeplot(df.loc[df['PaO2 Outcome'] == 'Less Positive', 'OSI Mismatch (mmHg)'], ax=g3.ax_marg_y, vertical=True,
                 legend=False, color='yellow', shade=True, gridsize=gridsize)
-    sns.kdeplot(df.loc[df['PaO2 Outcome'] == 'Negative', 'OSI Mismatch (cmH2O)'], ax=g3.ax_marg_y, vertical=True,
+    sns.kdeplot(df.loc[df['PaO2 Outcome'] == 'Negative', 'OSI Mismatch (mmHg)'], ax=g3.ax_marg_y, vertical=True,
                 legend=False,
                 color='red', shade=True, gridsize=gridsize)
 
-    ############### 2. SAVE PLOTS IN MEMORY TEMPORALLY
+    # Save plots
     g0.savefig('g0.png')
     plt.close(g0.fig)
 
@@ -274,7 +309,7 @@ def plot_outcome_comparisons(x, y, z, df):
     g3.savefig('g3.png')
     plt.close(g3.fig)
 
-    ############### 3. CREATE YOUR SUBPLOTS FROM TEMPORAL IMAGES
+    # Create subplots from saved plots
     f, axarr = plt.subplots(2, 2, figsize=(10, 10))
     #f.suptitle("Combined Outcomes: Patient 1 vs Patient 2 Clinical Measurements")
 
@@ -301,8 +336,8 @@ def plot_OSI_distribution(simulations):
         p0 = sim.PatientComparisons[0].MultiplexVentilation
         p1 = sim.PatientComparisons[1].MultiplexVentilation
 
-        O2SatIndex.append(p0.OxygenSaturationIndex_cmH2O)
-        O2SatIndex.append(p1.OxygenSaturationIndex_cmH2O)
+        O2SatIndex.append(p0.OxygenSaturationIndex_mmHg)
+        O2SatIndex.append(p1.OxygenSaturationIndex_mmHg)
         ImpairmentFraction.append(p0.ImpairmentFraction)
         ImpairmentFraction.append(p1.ImpairmentFraction)
 
@@ -523,7 +558,7 @@ def tabulate_edge_cases(simulations):
 
 if __name__ == '__main__':
     # Load up a result set
-    paired_results_file = "./test_results/multiplex_ventilation/simulations/simlist_results_Fix.json"
+    paired_results_file = "./test_results/multiplex_ventilation/simulations/multiplex_simlist_results.json"
     solo_results_file = "./test_results/multiplex_ventilation/simulations/solo_simlist_results.json"
 
     with open(paired_results_file) as f:
