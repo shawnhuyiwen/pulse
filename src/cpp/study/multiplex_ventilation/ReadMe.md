@@ -1,13 +1,13 @@
 ## Multiplex Ventilation Study
 
-The COVID-19 pandemic is stretching medical resources internationally,including ventilator shortages.
+The COVID-19 pandemic is stretching medical resources internationally, including ventilator shortages.
 The possibility of needing to ventilate multiple patients with a single ventilator raises patient health concerns.
-This study explores patient compatibility and ventilator settings during multi-plex ventilation.
+This study explores patient compatibility and ventilator settings during multiplex ventilation.
 
 Provided is a new custom simulation engine capable of simulating simultaneous ventilation of two or more patients in parallel by a single ventilator.
 This multiplex ventilation engine was used to perform a sensitivity analysis for clinical parameters during pressure mode mechanical ventilation without flow modulation.
 
-As well as the C++ provide in this folder, we also used severl python scripts that can be found [here](https://gitlab.kitware.com/physiology/engine/-/tree/3.x/src/python/pulse/study/multiplex_ventilation)
+As well as the C++ provide in this folder, we also used several python scripts for simulation results analysis that can be found [here](https://gitlab.kitware.com/physiology/engine/-/tree/3.x/src/python/pulse/study/multiplex_ventilation).
 
 ---
 
@@ -19,15 +19,15 @@ The multiplex engine will be built as part of the general Pulse build.
 
 ### Data Model
 
-The data model for this study can be found [here](https://gitlab.kitware.com/physiology/engine/-/blob/3.x/src/schema/pulse/study/multiplex_ventilation/bind/MultiplexVentilation.proto)
+The data model for this study can be found [here](https://gitlab.kitware.com/physiology/engine/-/blob/3.x/src/schema/pulse/study/multiplex_ventilation/bind/MultiplexVentilation.proto).
 
-The data requests used for CSV files can be found [here](https://gitlab.kitware.com/physiology/engine/-/blob/3.x/src/cpp/study/multiplex_ventilation/MVEngine.cpp#L612)
+The data requests used for CSV files can be found [here](https://gitlab.kitware.com/physiology/engine/-/blob/3.x/src/cpp/study/multiplex_ventilation/MVEngine.cpp#L612).
 
 ---
 
 ### Data
 
-All data associated with our study can be found [here](https://data.kitware.com/#collection/59849c788d777f7d33e9c084/folder/5e979e5a9014a6d84e12b150)
+All data associated with our study can be found [here](https://data.kitware.com/#collection/59849c788d777f7d33e9c084/folder/5e979e5a9014a6d84e12b150).
 Zips include: json files of SimulationListData and PatientListData (as defined in our data model), as well as log and csv files for all patients.
 
   - <b>multiplex_ventilation.zip</b> : All data generated for our initial study of the parameter space
@@ -38,6 +38,7 @@ Zips include: json files of SimulationListData and PatientListData (as defined i
  
 In general, we only viewed plots from a random sampling of the CSV files to ensure our algorithms were performing as expected.
 The majority of our analysis was done using the multiplex and solo simlist json files in python. 
+
 ---
 
 ### Running
@@ -52,9 +53,9 @@ These simulations combined various ventilator PEEP settings with patient complia
 
 This was implemented as a two step process: 
   
-##### Simulation of patients with various levels of diseases states on their own ventilator
+##### 1) Simulation of patients with various levels of diseases states on their own ventilator
 
-We first generated a patient set with a combination of impairment, compliance and PEEP setting and increasing FiO2 values until they reach a homeostatic point with an SpO2 above 89% and serialize to disk.
+We first generated a patient set with a combination of impairment, compliance, and PEEP setting and increasing FiO2 values until they reach a homeostatic point with an SpO2 above 89% and serialize to disk.
 
 To generate this data set, execute the driver with the following arguments:
 
@@ -71,9 +72,11 @@ This will create the following folders :
 An accompanying PatientStateListData json file will be created : bin/test_results/multiplex_ventilation/solo_ventilated_states_list.json
 This file contains all the final patient values of interest for all generated patients
 
+##### 2) Simulation of paired patients with various ventilator settings
+
 A python script was then used to read in the generated python file, and generate a SimulationListData json file containing all the combinations needed for this initial study.
-For each patient comination, three separate simulations were added to the SimulationList using each patient’s individual ventilator settings and average values.
-Not that if the patient was combined with itself, only one simulation was added to the list. (Paired with itself)
+For each patient comination, three separate simulations were added to the SimulationList using each patient’s individual ventilator settings and average values; 
+unless the patient was paired with itself (i.e., exact twins), in which case, only one simulation was added to the list.
 
 To run the generated SimulationListData json file, execute the driver with the following arguments:
 
@@ -83,7 +86,7 @@ $ MultiplexEngineDriver sim_list ./test_results/multiplex_ventilation/sim_list.j
 
 This will generate a ./test_results/multiplex_ventilation/sim_list_results.json file that contains all the final stabilized values of patient combinations.
 
-This sim_list_results.json file was used in an ad hoc analysis that analysis lead to design our full study.
+This sim_list_results.json file was used in an ad hoc analysis and led to our full study design.
 
 #### Simulation of patient combinations where the PIP and FiO2 have the best chance of positive outcomes for both patients
 
