@@ -65,6 +65,10 @@ public:
   virtual SEScalarPressureTimePerVolume& GetExpiratoryPulmonaryResistance();
   virtual double GetExpiratoryPulmonaryResistance(const PressureTimePerVolumeUnit& unit) const;
 
+  virtual bool HasFractionOfInsipredOxygen() const;
+  virtual SEScalar0To1& GetFractionOfInsipredOxygen();
+  virtual double GetFractionOfInsipredOxygen() const;
+
   virtual bool HasImposedPowerOfBreathing() const;
   virtual SEScalarPower& GetImposedPowerOfBreathing();
   virtual double GetImposedPowerOfBreathing(const PowerUnit& unit) const;
@@ -100,6 +104,18 @@ public:
   virtual bool HasMaximalInspiratoryPressure() const;
   virtual SEScalarPressure& GetMaximalInspiratoryPressure();
   virtual double GetMaximalInspiratoryPressure(const PressureUnit& unit) const;
+  
+  virtual bool HasMeanAirwayPressure() const;
+  virtual SEScalarPressure& GetMeanAirwayPressure();
+  virtual double GetMeanAirwayPressure(const PressureUnit& unit) const;
+
+  virtual bool HasOxygenationIndex() const;
+  virtual SEScalar& GetOxygenationIndex();
+  virtual double GetOxygenationIndex() const;
+
+  virtual bool HasOxygenSaturationIndex() const;
+  virtual SEScalarPressure& GetOxygenSaturationIndex();
+  virtual double GetOxygenSaturationIndex(const PressureUnit& unit) const;
 
   virtual bool HasPatientPowerOfBreathing() const;
   virtual SEScalarPower& GetPatientPowerOfBreathing();
@@ -148,6 +164,10 @@ public:
   virtual bool HasRespiratoryMusclePressure() const;
   virtual SEScalarPressure& GetRespiratoryMusclePressure();
   virtual double GetRespiratoryMusclePressure(const PressureUnit& unit) const;
+
+  virtual bool HasSaturationAndFractionOfInspiredOxygenRatio() const;
+  virtual SEScalar& GetSaturationAndFractionOfInspiredOxygenRatio();
+  virtual double GetSaturationAndFractionOfInspiredOxygenRatio() const;
 
   virtual bool HasSpecificVentilation() const;
   virtual SEScalar& GetSpecificVentilation();
@@ -224,6 +244,7 @@ protected:
   SEScalarPressure*              m_EndTidalOxygenPressure;
   SEScalarVolumePerTime*         m_ExpiratoryFlow;
   SEScalarPressureTimePerVolume* m_ExpiratoryPulmonaryResistance;
+  SEScalar0To1*                  m_FractionOfInsipredOxygen;
   SEScalarPower*                 m_ImposedPowerOfBreathing;
   SEScalarEnergy*                m_ImposedWorkOfBreathing;
   SEScalar*                      m_InspiratoryExpiratoryRatio;
@@ -233,6 +254,9 @@ protected:
   SEScalarPressure*              m_IntrapulmonaryPressure;
   SEScalarVolumePerPressure*     m_LungCompliance;
   SEScalarPressure*              m_MaximalInspiratoryPressure;
+  SEScalarPressure*              m_MeanAirwayPressure;
+  SEScalar*                      m_OxygenationIndex;
+  SEScalarPressure*              m_OxygenSaturationIndex;
   SEScalarPower*                 m_PatientPowerOfBreathing;
   SEScalarEnergy*                m_PatientWorkOfBreathing;
   SEScalarPressure*              m_PeakInspiratoryPressure;
@@ -245,6 +269,7 @@ protected:
   SEScalarFrequency*             m_RespirationRate;
   SEScalar0To1*                  m_RespiratoryMuscleFatigue;
   SEScalarPressure*              m_RespiratoryMusclePressure;
+  SEScalar*                      m_SaturationAndFractionOfInspiredOxygenRatio;
   SEScalar*                      m_SpecificVentilation;
   SEScalarVolume*                m_TidalVolume;
   SEScalarVolumePerTime*         m_TotalAlveolarVentilation;

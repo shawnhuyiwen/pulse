@@ -19,7 +19,7 @@ public class PulseScenarioExec extends Pulse
   public void runScenario(String logFile, SEScenario scenario, String resultsFile, CDMUpdatedCallback callback)
   {    
     if(callback != null)
-      callback.drMgr = scenario.getDataRequestManager();    
+      callback.drMgr = scenario.getDataRequestManager();
     runScenario(logFile,SEScenario.unload(scenario).toString(),resultsFile,callback);
   }
   
@@ -42,7 +42,7 @@ public class PulseScenarioExec extends Pulse
       callbackFreq_s = callback.callbackFrequency_s;
       this.requestData(callback.drMgr);
     }
-    this.nativeObj = nativeAllocate(logFile);
+    this.nativeObj = nativeAllocate(logFile, "./");
     nativeExecuteScenario(this.nativeObj, scenario, resultsFile, callbackFreq_s);
     nativeDelete(this.nativeObj);
     this.nativeObj=0;

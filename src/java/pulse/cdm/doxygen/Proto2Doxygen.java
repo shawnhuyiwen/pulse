@@ -17,7 +17,7 @@ public class Proto2Doxygen
   {
     public String name;
     public String type;
-    public String comment;    
+    public String comment;
   }
   static class Message
   {
@@ -42,7 +42,7 @@ public class Proto2Doxygen
         {
           dDir.mkdir();
 
-          List<String> found = FileUtils.findFiles(sDir.getAbsolutePath(), "proto", true);      
+          List<String> found = FileUtils.findFiles(sDir.getAbsolutePath(), "proto", true);
           for (String fName : found)
           {        
             if(new File(fName).isDirectory())
@@ -153,7 +153,7 @@ public class Proto2Doxygen
         {
           child = new Message();
           message.children.add(child);
-          message = child;           
+          message = child;
         }
         messages.add(message);
         message.name = hierarchy_name+line.trim().split("\\s+")[1];
@@ -243,6 +243,3 @@ public class Proto2Doxygen
     return str.trim();
   }
 }
-
-
-

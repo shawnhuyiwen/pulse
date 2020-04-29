@@ -29,6 +29,7 @@ font-size: 1.15em !important;
 }
 
 .btn {
+  background: #fff;
   border-radius: 3px;
 }
 
@@ -386,6 +387,36 @@ input.gsc-input,
 
 /* Website Refresh Styles
 ================================== */
+.kw-alert {
+  background: #00529b;
+  color: #fff;
+  display: none;
+  position: relative;
+}
+
+.kw-alert .container {
+  align-items: center;
+  display: flex;
+  padding: 35px 0;
+}
+
+.kw-alert-text {
+  font-size: 20px;
+  font-weight: 500;
+  padding: 0 45px 0;
+}
+
+.kw-alert-close {
+  cursor: pointer;
+  display: block;
+  font-size: 42px;
+  font-weight: 300;
+  line-height: 24px;
+  overflow: hidden;
+  position: absolute;
+  right: 15px;
+  top: 15px;
+}
 
 /* Header */
 

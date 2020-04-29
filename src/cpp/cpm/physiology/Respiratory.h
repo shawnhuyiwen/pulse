@@ -119,6 +119,7 @@ protected:
   double m_PeakAlveolarPressure_cmH2O;
   double m_MaximalAlveolarPressure_cmH2O;
   SERunningAverage* m_BloodPHRunningAverage;
+  SERunningAverage* m_MeanAirwayPressure_cmH2O;
 
   // Respiratory Driver
   double m_ArterialO2PartialPressure_mmHg;

@@ -6,7 +6,8 @@ from pulse.cdm.io.scalars import serialize_scalar_property_to_bind, serialize_sc
 from pulse.cdm.bind.Actions_pb2 import ActionData, OverridesData
 
 def serialize_action_to_bind(src: SEAction, dst: ActionData):
-    dst.Comment = src.get_comment()
+    if src.has_comment():
+        dst.Comment = src.get_comment()
 
 def serialize_action_from_bind(src: ActionData, dst: SEAction):
     dst.set_comment(src.Comment)

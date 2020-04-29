@@ -429,6 +429,7 @@ void PBPulsePhysiology::Serialize(const PULSE_BIND::RespiratoryData& src, Respir
   dst.m_PeakAlveolarPressure_cmH2O = src.peakalveolarpressure_cmh2o();
   dst.m_MaximalAlveolarPressure_cmH2O = src.maximalalveolarpressure_cmh2o();
   PBProperty::Load(src.bloodphrunningaverage(), *dst.m_BloodPHRunningAverage);
+  PBProperty::Load(src.meanairwaypressure_cmh2o(), *dst.m_MeanAirwayPressure_cmH2O);
 
   dst.m_ArterialO2PartialPressure_mmHg = src.arterialo2partialpressure_mmhg();
   dst.m_ArterialCO2PartialPressure_mmHg = src.arterialco2partialpressure_mmhg();
@@ -488,6 +489,7 @@ void PBPulsePhysiology::Serialize(const Respiratory& src, PULSE_BIND::Respirator
   dst.set_peakalveolarpressure_cmh2o(src.m_PeakAlveolarPressure_cmH2O);
   dst.set_maximalalveolarpressure_cmh2o(src.m_MaximalAlveolarPressure_cmH2O);
   dst.set_allocated_bloodphrunningaverage(PBProperty::Unload(*src.m_BloodPHRunningAverage));
+  dst.set_allocated_meanairwaypressure_cmh2o(PBProperty::Unload(*src.m_MeanAirwayPressure_cmH2O));
 
   dst.set_arterialo2partialpressure_mmhg(src.m_ArterialO2PartialPressure_mmHg);
   dst.set_arterialco2partialpressure_mmhg(src.m_ArterialCO2PartialPressure_mmHg);

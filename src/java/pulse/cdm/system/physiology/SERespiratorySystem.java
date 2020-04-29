@@ -22,6 +22,7 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
   protected SEScalarPressure              endTidalOxygenPressure;
   protected SEScalarVolumePerTime         expiratoryFlow;
   protected SEScalarPressureTimePerVolume expiratoryPulmonaryResistance;
+  protected SEScalar0To1                  fractionOfInsipredOxygen;
   protected SEScalarPower                 imposedPowerOfBreathing;
   protected SEScalarEnergy                imposedWorkOfBreathing;
   protected SEScalar                      inspiratoryExpiratoryRatio;
@@ -31,6 +32,9 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
   protected SEScalarPressure              intrapulmonaryPressure;
   protected SEScalarVolumePerPressure     lungCompliance;
   protected SEScalarPressure              maximalInspiratoryPressure;
+  protected SEScalarPressure              meanAirwayPressure;
+  protected SEScalar                      oxygenationIndex;
+  protected SEScalarPressure              oxygenSaturationIndex;
   protected SEScalarPower                 patientPowerOfBreathing;
   protected SEScalarEnergy                patientWorkOfBreathing;
   protected SEScalarPressure              peakInspiratoryPressure;
@@ -43,6 +47,7 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
   protected SEScalarFrequency             respirationRate;
   protected SEScalar0To1                  respiratoryMuscleFatigue;
   protected SEScalarPressure              respiratoryMusclePressure;
+  protected SEScalar                      saturationAndFractionOfInspiredOxygenRatio;
   protected SEScalar                      specificVentilation;
   protected SEScalarVolume                tidalVolume;
   protected SEScalarVolumePerTime         totalAlveolarVentilation;
@@ -74,6 +79,7 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
     endTidalOxygenPressure = null;
     expiratoryFlow = null;
     expiratoryPulmonaryResistance = null;
+    fractionOfInsipredOxygen = null;
     imposedPowerOfBreathing = null;
     imposedWorkOfBreathing = null;
     inspiratoryExpiratoryRatio = null;
@@ -83,6 +89,9 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
     intrapulmonaryPressure = null;
     lungCompliance = null;
     maximalInspiratoryPressure = null;
+    meanAirwayPressure = null;
+    oxygenationIndex = null;
+    oxygenSaturationIndex = null;
     patientPowerOfBreathing = null;
     patientWorkOfBreathing = null;
     peakInspiratoryPressure = null;
@@ -95,6 +104,7 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
     respirationRate = null;
     respiratoryMuscleFatigue = null;
     respiratoryMusclePressure = null;
+    saturationAndFractionOfInspiredOxygenRatio = null;
     specificVentilation = null;
     tidalVolume = null;
     totalAlveolarVentilation = null;
@@ -138,6 +148,8 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
       expiratoryFlow.invalidate();
     if (expiratoryPulmonaryResistance != null)
       expiratoryPulmonaryResistance.invalidate();
+    if (fractionOfInsipredOxygen != null)
+      fractionOfInsipredOxygen.invalidate();
     if (imposedPowerOfBreathing != null)
       imposedPowerOfBreathing.invalidate();
     if (imposedWorkOfBreathing != null)
@@ -156,6 +168,12 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
       lungCompliance.invalidate();
     if (maximalInspiratoryPressure != null)
       maximalInspiratoryPressure.invalidate();
+    if (meanAirwayPressure != null)
+      meanAirwayPressure.invalidate();
+    if (oxygenationIndex != null)
+      oxygenationIndex.invalidate();
+    if (oxygenSaturationIndex != null)
+      oxygenSaturationIndex.invalidate();
     if (patientPowerOfBreathing != null)
       patientPowerOfBreathing.invalidate();
     if (patientWorkOfBreathing != null)
@@ -180,6 +198,8 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
       respiratoryMuscleFatigue.invalidate();
     if (respiratoryMusclePressure != null)
       respiratoryMusclePressure.invalidate();
+    if (saturationAndFractionOfInspiredOxygenRatio != null)
+      saturationAndFractionOfInspiredOxygenRatio.invalidate();
     if (specificVentilation != null)
       specificVentilation.invalidate();
     if (tidalVolume != null)
@@ -238,6 +258,8 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
       SEScalarVolumePerTime.load(src.getExpiratoryFlow(),dst.getExpiratoryFlow());
     if (src.hasExpiratoryPulmonaryResistance())
       SEScalarPressureTimePerVolume.load(src.getExpiratoryPulmonaryResistance(),dst.getExpiratoryPulmonaryResistance()); 
+    if (src.hasFractionOfInsipredOxygen())
+      SEScalar0To1.load(src.getFractionOfInsipredOxygen(),dst.getFractionOfInsipredOxygen()); 
     if (src.hasImposedPowerOfBreathing())
       SEScalarPower.load(src.getImposedPowerOfBreathing(),dst.getImposedPowerOfBreathing()); 
     if (src.hasImposedWorkOfBreathing())
@@ -251,11 +273,17 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
     if (src.hasIntrapleuralPressure())
       SEScalarPressure.load(src.getIntrapleuralPressure(),dst.getIntrapleuralPressure());
     if (src.hasIntrapulmonaryPressure())
-      SEScalarPressure.load(src.getIntrapulmonaryPressure(),dst.getIntrapulmonaryPressure()); 
+      SEScalarPressure.load(src.getIntrapulmonaryPressure(),dst.getIntrapulmonaryPressure());
     if (src.hasLungCompliance())
-      SEScalarVolumePerPressure.load(src.getLungCompliance(),dst.getLungCompliance()); 
+      SEScalarVolumePerPressure.load(src.getLungCompliance(),dst.getLungCompliance());
     if (src.hasMaximalInspiratoryPressure())
-      SEScalarPressure.load(src.getMaximalInspiratoryPressure(),dst.getMaximalInspiratoryPressure()); 
+      SEScalarPressure.load(src.getMaximalInspiratoryPressure(),dst.getMaximalInspiratoryPressure());
+    if (src.hasMeanAirwayPressure())
+      SEScalarPressure.load(src.getMeanAirwayPressure(),dst.getMeanAirwayPressure());
+    if (src.hasOxygenationIndex())
+      SEScalarPressure.load(src.getOxygenationIndex(),dst.getOxygenationIndex());
+    if (src.hasOxygenSaturationIndex())
+      SEScalarPressure.load(src.getOxygenSaturationIndex(),dst.getOxygenSaturationIndex());
     if (src.hasPatientPowerOfBreathing())
       SEScalarPower.load(src.getPatientPowerOfBreathing(),dst.getPatientPowerOfBreathing()); 
     if (src.hasPatientWorkOfBreathing())
@@ -280,6 +308,8 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
       SEScalar0To1.load(src.getRespiratoryMuscleFatigue(),dst.getRespiratoryMuscleFatigue());
     if (src.hasRespiratoryMusclePressure())
       SEScalarPressure.load(src.getRespiratoryMusclePressure(),dst.getRespiratoryMusclePressure());
+    if (src.hasSaturationAndFractionOfInspiredOxygenRatio())
+        SEScalar.load(src.getSaturationAndFractionOfInspiredOxygenRatio(),dst.getSaturationAndFractionOfInspiredOxygenRatio());
     if (src.hasSpecificVentilation())
       SEScalar.load(src.getSpecificVentilation(),dst.getSpecificVentilation());
     if (src.hasTidalVolume())
@@ -345,6 +375,8 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
       dst.setExpiratoryFlow(SEScalarVolumePerTime.unload(src.getExpiratoryFlow()));
     if (src.hasExpiratoryPulmonaryResistance())
       dst.setExpiratoryPulmonaryResistance(SEScalarPressureTimePerVolume.unload(src.getExpiratoryPulmonaryResistance()));
+    if (src.hasFractionOfInsipredOxygen())
+      dst.setFractionOfInsipredOxygen(SEScalar0To1.unload(src.getFractionOfInsipredOxygen()));
     if (src.hasImposedPowerOfBreathing())
       dst.setImposedPowerOfBreathing(SEScalarPower.unload(src.getImposedPowerOfBreathing()));
     if (src.hasImposedWorkOfBreathing())
@@ -363,6 +395,12 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
       dst.setLungCompliance(SEScalarVolumePerPressure.unload(src.getLungCompliance()));
     if (src.hasMaximalInspiratoryPressure())
       dst.setMaximalInspiratoryPressure(SEScalarPressure.unload(src.getMaximalInspiratoryPressure()));
+    if (src.hasMeanAirwayPressure())
+      dst.setMeanAirwayPressure(SEScalarPressure.unload(src.getMeanAirwayPressure()));
+    if (src.hasOxygenationIndex())
+      dst.setOxygenationIndex(SEScalar.unload(src.getOxygenationIndex()));
+    if (src.hasOxygenSaturationIndex())
+      dst.setOxygenSaturationIndex(SEScalarPressure.unload(src.getOxygenSaturationIndex()));
     if (src.hasPatientPowerOfBreathing())
       dst.setPatientPowerOfBreathing(SEScalarPower.unload(src.getPatientPowerOfBreathing()));
     if (src.hasPatientWorkOfBreathing())
@@ -387,6 +425,8 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
       dst.setRespiratoryMuscleFatigue(SEScalar0To1.unload(src.getRespiratoryMuscleFatigue()));
     if (src.hasRespiratoryMusclePressure())
       dst.setRespiratoryMusclePressure(SEScalarPressure.unload(src.getRespiratoryMusclePressure()));
+    if (src.hasSaturationAndFractionOfInspiredOxygenRatio())
+      dst.setSaturationAndFractionOfInspiredOxygenRatio(SEScalar.unload(src.getSaturationAndFractionOfInspiredOxygenRatio()));
     if (src.hasSpecificVentilation())
       dst.setSpecificVentilation(SEScalar.unload(src.getSpecificVentilation()));
     if (src.hasTidalVolume())
@@ -551,6 +591,16 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
     return expiratoryPulmonaryResistance;
   }
   
+  public boolean hasFractionOfInsipredOxygen()
+  {
+    return fractionOfInsipredOxygen == null ? false : fractionOfInsipredOxygen.isValid();
+  }
+  public SEScalar0To1 getFractionOfInsipredOxygen()
+  {
+    if (fractionOfInsipredOxygen == null)
+      fractionOfInsipredOxygen = new SEScalar0To1();
+    return fractionOfInsipredOxygen;
+  }
 
   public boolean hasImposedPowerOfBreathing()
   {
@@ -649,6 +699,39 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
     if (maximalInspiratoryPressure == null)
       maximalInspiratoryPressure = new SEScalarPressure();
     return maximalInspiratoryPressure;
+  }
+  
+  public boolean hasMeanAirwayPressure()
+  {
+    return meanAirwayPressure == null ? false : meanAirwayPressure.isValid();
+  }
+  public SEScalarPressure getMeanAirwayPressure()
+  {
+    if (meanAirwayPressure == null)
+      meanAirwayPressure = new SEScalarPressure();
+    return meanAirwayPressure;
+  }
+  
+  public boolean hasOxygenationIndex()
+  {
+    return oxygenationIndex == null ? false : oxygenationIndex.isValid();
+  }
+  public SEScalar getOxygenationIndex()
+  {
+    if (oxygenationIndex == null)
+      oxygenationIndex = new SEScalar();
+    return oxygenationIndex;
+  }
+  
+  public boolean hasOxygenSaturationIndex()
+  {
+    return oxygenSaturationIndex == null ? false : oxygenSaturationIndex.isValid();
+  }
+  public SEScalarPressure getOxygenSaturationIndex()
+  {
+    if (oxygenSaturationIndex == null)
+      oxygenSaturationIndex = new SEScalarPressure();
+    return oxygenSaturationIndex;
   }
   
   public boolean hasPatientPowerOfBreathing()
@@ -781,6 +864,17 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
     if (respiratoryMusclePressure == null)
       respiratoryMusclePressure = new SEScalarPressure();
     return respiratoryMusclePressure;
+  }
+
+  public boolean hasSaturationAndFractionOfInspiredOxygenRatio()
+  {
+    return saturationAndFractionOfInspiredOxygenRatio == null ? false : saturationAndFractionOfInspiredOxygenRatio.isValid();
+  }
+  public SEScalar getSaturationAndFractionOfInspiredOxygenRatio()
+  {
+    if (saturationAndFractionOfInspiredOxygenRatio == null)
+      saturationAndFractionOfInspiredOxygenRatio = new SEScalar();
+    return saturationAndFractionOfInspiredOxygenRatio;
   }
 
   public boolean hasSpecificVentilation()
