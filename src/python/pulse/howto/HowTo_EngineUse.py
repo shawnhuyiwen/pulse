@@ -155,7 +155,8 @@ def HowTo_UseEngine():
     # advance_time_r allows sampling rate change
     #  Will advance time by total in first argument
     #  and samples every second argument seconds
-    results = pulse.advance_time_r(45, 5)
+    pulse.advance_time_r(45, 5)
+    results = pulse.pull_data()
     data_req_mgr.to_console(results)
 
 HowTo_UseEngine()
