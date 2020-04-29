@@ -59,7 +59,9 @@ namespace Pulse.CDM
           return PBPatientAction.Load(action.PatientAction);
         case pulse.cdm.bind.AnyActionData.ActionOneofCase.EquipmentAction:
           return PBEquipmentAction.Load(action.EquipmentAction);
-      }
+        case pulse.cdm.bind.AnyActionData.ActionOneofCase.EnvironmentAction:
+            return PBEnvironmentAction.Load(action.EnvironmentAction);
+    }
       return null;
     }
     /** Create a new bind object, unload the action,
@@ -71,6 +73,8 @@ namespace Pulse.CDM
         any.PatientAction = PBPatientAction.Unload((SEPatientAction)action);
       if (action.GetType().IsSubclassOf(typeof(SEEquipmentAction)))
         any.EquipmentAction = PBEquipmentAction.Unload((SEEquipmentAction)action);
+      if (action.GetType().IsSubclassOf(typeof(SEEnvironmentAction)))
+        any.EnvironmentAction = PBEnvironmentAction.Unload((SEEnvironmentAction)action);
       return any;
     }
     #endregion

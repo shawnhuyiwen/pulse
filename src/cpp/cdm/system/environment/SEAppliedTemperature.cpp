@@ -103,7 +103,7 @@ void SEAppliedTemperature::SetState(eSwitch state)
 
 void SEAppliedTemperature::ToString(std::ostream &str) const
 {
-  str << "Applied Temperature :";  
+  str << "Applied Temperature :";
   str << "\n\tTemperature :";         HasTemperature() ? str << *m_Temperature : str << "NaN";
   str << "\n\tSurfaceArea :";         HasSurfaceArea() ? str << *m_SurfaceArea : str << "NaN";
   str << "\n\tSurfaceAreaFraction :"; HasSurfaceAreaFraction() ? str << *m_SurfaceAreaFraction : str << "NaN";

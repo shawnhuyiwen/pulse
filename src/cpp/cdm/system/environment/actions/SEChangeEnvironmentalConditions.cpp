@@ -62,6 +62,11 @@ const SEEnvironmentalConditions* SEChangeEnvironmentalConditions::GetEnvironment
 {
   return m_EnvironmentalConditions;
 }
+void SEChangeEnvironmentalConditions::InvalidateEnvironmentalConditions()
+{
+  SAFE_DELETE(m_EnvironmentalConditions);
+}
+
 
 std::string SEChangeEnvironmentalConditions::GetEnvironmentalConditionsFile() const
 {

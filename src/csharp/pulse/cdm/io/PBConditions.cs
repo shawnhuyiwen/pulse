@@ -57,8 +57,8 @@ namespace Pulse.CDM
       {
         case pulse.cdm.bind.AnyConditionData.ConditionOneofCase.PatientCondition:
           return PBPatientCondition.Load(Condition.PatientCondition);
-          //case pulse.cdm.bind.AnyConditionData.ConditionOneofCase.EnvironmentCondition:
-          //  return PBEnvironmentCondition.Load(Condition.EnvironmentCondition);
+        case pulse.cdm.bind.AnyConditionData.ConditionOneofCase.EnvironmentCondition:
+          return PBEnvironmentCondition.Load(Condition.EnvironmentCondition);
       }
       return null;
     }
@@ -69,8 +69,8 @@ namespace Pulse.CDM
       pulse.cdm.bind.AnyConditionData any = new pulse.cdm.bind.AnyConditionData();
       if (Condition.GetType().IsSubclassOf(typeof(SEPatientCondition)))
         any.PatientCondition = PBPatientCondition.Unload((SEPatientCondition)Condition);
-      //if (Condition.GetType().IsSubclassOf(typeof(SEEnvironmentCondition)))
-      //  any.EnvironmentCondition = PBEnvironmentCondition.Unload((SEEnvironmentCondition)Condition);
+      if (Condition.GetType().IsSubclassOf(typeof(SEEnvironmentCondition)))
+        any.EnvironmentCondition = PBEnvironmentCondition.Unload((SEEnvironmentCondition)Condition);
       return any;
     }
     #endregion
