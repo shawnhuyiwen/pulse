@@ -18,6 +18,8 @@ class PulsePhysiologyEngine:
     def __init__(self, log_file="", write_to_console=True, data_root=".", event_handler=None, logging_handler=None):
         self._results = {}
         self._results_template = {}
+        self._event_handler = None
+        self._logging_handler = None
         self.__pulse = PyPulse.Engine(log_file, write_to_console, data_root)
         if event_handler:
             self._event_handler = event_handler

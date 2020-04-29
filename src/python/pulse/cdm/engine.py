@@ -551,14 +551,3 @@ class IPythonLogging(ILoggingHandler):
             self.logger.fatal(msg)
         else:
             self.logger.info(msg)
-
-    #def forward_info(self, msg:str):
-    #    self.logger.info(msg)
-    #def forward_debug(self, msg:str):
-    #    self.logger.debug(msg)
-    #def forward_warning(self, msg:str):
-    #    self.logger.warning(msg)
-    #def forward_error(self, msg:str):
-    #    self.logger.error(msg)
-    #def forward_fatal(self, msg:str):
-    #    self.logger.fatal(msg)
