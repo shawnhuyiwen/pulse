@@ -1,13 +1,13 @@
 ## Multiplex Ventilation Study
 
-The SARS-CoV-2 pandemic is stretching medical resources internationally,including ventilator shortages.
+The COVID-19 pandemic is stretching medical resources internationally,including ventilator shortages.
 The possibility of needing to ventilate multiple patients with a single ventilator raises patient health concerns.
 This study explores patient compatibility and ventilator settings during multi-plex ventilation.
 
 Provided is a new custom simulation engine capable of simulating simultaneous ventilation of two or more patients in parallel by a single ventilator.
 This multiplex ventilation engine was used to perform a sensitivity analysis for clinical parameters during pressure mode mechanical ventilation without flow modulation.
 
-As well as the C++ provide in this folder, we also used severl python scripts that can be found [here]()
+As well as the C++ provide in this folder, we also used severl python scripts that can be found [here](https://gitlab.kitware.com/physiology/engine/-/tree/3.x/src/python/pulse/study/multiplex_ventilation)
 
 ---
 
@@ -19,9 +19,9 @@ The multiplex engine will be built as part of the general Pulse build.
 
 ### Data Model
 
-The data model for this study can be found [here]()
+The data model for this study can be found [here](https://gitlab.kitware.com/physiology/engine/-/blob/3.x/src/schema/pulse/study/multiplex_ventilation/bind/MultiplexVentilation.proto)
 
-The data requests used for CSV files can be found [here]()
+The data requests used for CSV files can be found [here](https://gitlab.kitware.com/physiology/engine/-/blob/3.x/src/cpp/study/multiplex_ventilation/MVEngine.cpp#L612)
 
 ---
 
@@ -33,7 +33,11 @@ Zips include: json files of SimulationListData and PatientListData (as defined i
   - <b>multiplex_ventilation.zip</b> : All data generated for our initial study of the parameter space
   - <b>multiplex_ventilation_final_full_study.zip</b> : All data generated for the full study 
   - <b>MultiplexExampleRunPaperData.zip</b> : Individual runs used in creating tables and figures in our paper
+  - <b>multiplex_simlist_results.json.zip</b> : Just the SimulationListData results json file
+  - <b>solo_simlist_results.json.zip</b> : Just the SimulationListData results json file
  
+In general, we only viewed plots from a random sampling of the CSV files to ensure our algorithms were performing as expected.
+The majority of our analysis was done using the multiplex and solo simlist json files in python. 
 ---
 
 ### Running
@@ -95,9 +99,13 @@ This will create the following folders :
 
   - <b>bin/test_results/multiplex_ventilation/simulations</b> : Will contain a folder for each run simulation that will containe both logs and csv files for each patient
 
-An accompanying SimulationListData json file will be created : bin/test_results/multiplex_ventilation/simulations/simlist_results.json
+Two accompanying SimulationListData json file will be created : 
+  - bin/test_results/multiplex_ventilation/simulations/multiplex_simlist_results.json
+  - bin/test_results/multiplex_ventilation/simulations/solo_simlist_results.json
 
-This file was used for analyis using the algorithms implemented in the [analysis.py]() file
+This file was used for analyis using the algorithms implemented in the [analysis.py](https://gitlab.kitware.com/physiology/engine/-/blob/3.x/src/python/pulse/study/multiplex_ventilation/analysis.py) file.
+Note we use PyCharm, and we provide a .idea project in the src/python directory.
+You will need to build Pulse with the Pulse_PYTHON_API CMake flag enabled, and add `install/bin` folder to your PyCharm interpreter path.
 
 ### Other run modes
 
