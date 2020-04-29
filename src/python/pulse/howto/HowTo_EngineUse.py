@@ -2,7 +2,7 @@
 # See accompanying NOTICE file for details.
 
 from enum import Enum
-from pulse.cdm.engine import eSerializationFormat, SEDataRequestManager, SEDataRequest
+from pulse.cdm.engine import eSerializationFormat, SEDataRequestManager, SEDataRequest, IEventHandler, SEEventChange
 from pulse.cdm.patient import eSex, SEPatient, SEPatientConfiguration
 from pulse.cdm.patient_actions import SEExercise, SEHemorrhage
 from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
@@ -24,8 +24,13 @@ class eStartType(Enum):
     Stabilize_PatientFile = 1
     Stabilize_PatientObject = 2
 
+class local_event_handler(IEventHandler):
+    # Overrides the default handle function which has no operations
+    def handle_event(self, change: SEEventChange):
+        print(change)
+
 def HowTo_UseEngine():
-    pulse = PulsePhysiologyEngine("pulse_EngineUse.log")
+    pulse = PulsePhysiologyEngine("pulse_EngineUse.log", event_handler=local_event_handler())
 
     # Data Requests are used to get access to the hundreds of parameters available in Pulse
     # To learn more about Data Requests please look at the data request section here:
