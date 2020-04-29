@@ -65,7 +65,6 @@ class PulsePhysiologyEngine:
                 return False
             self._process_events()
             self._process_logs()
-
         timestep_result = self.__pulse.pull_data()
         for index, value in enumerate(self._results.keys()):
             self._results[value].append(timestep_result[index])
