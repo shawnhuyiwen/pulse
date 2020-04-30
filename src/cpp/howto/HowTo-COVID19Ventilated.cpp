@@ -90,7 +90,14 @@ void HowToCOVID19Ventilated()
   pe->GetLogger()->Info(std::stringstream() << "Diastolic Pressure : " << pe->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
   pe->GetLogger()->Info(std::stringstream() << "Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
   pe->GetLogger()->Info(std::stringstream() << "Respiration Rate : " << pe->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min) << "bpm");
-  pe->GetLogger()->Info(std::stringstream() << "Oxygen Saturation : " << pe->GetBloodChemistrySystem()->GetOxygenSaturation());
+  pe->GetLogger()->Info(std::stringstream() << "Oxygen Saturation : " << pe->GetBloodChemistrySystem()->GetOxygenSaturation() * 100 << "%");
+  pe->GetLogger()->Info(std::stringstream() << "Pulmonary Compliance : " << pe->GetRespiratorySystem()->GetPulmonaryCompliance(VolumePerPressureUnit::mL_Per_cmH2O) << VolumePerPressureUnit::mL_Per_cmH2O);
+  pe->GetLogger()->Info(std::stringstream() << "End Tidal Carbon Dioxide Pressure : " << pe->GetRespiratorySystem()->GetEndTidalCarbonDioxidePressure(PressureUnit::mmHg) << PressureUnit::mmHg);
+  pe->GetLogger()->Info(std::stringstream() << "P/F Ratio : " << pe->GetRespiratorySystem()->GetCarricoIndex(PressureUnit::mmHg) << PressureUnit::mmHg);
+  pe->GetLogger()->Info(std::stringstream() << "Pulmonary Shunt Fraction : " << pe->GetBloodChemistrySystem()->GetShuntFraction() * 100 << "%");
+  pe->GetLogger()->Info(std::stringstream() << "Mean Airway Pressure : " << pe->GetRespiratorySystem()->GetMeanAirwayPressure(PressureUnit::cmH2O) << PressureUnit::cmH2O);
+  pe->GetLogger()->Info(std::stringstream() << "Oxygen Saturation Index : " << pe->GetRespiratorySystem()->GetOxygenSaturationIndex(PressureUnit::mmHg) << PressureUnit::mmHg);
+
 
   // Mimic a neuromuscular blockade by setting apnea (dyspnea = 1)
   // Alternatively, there are drugs in the library that can be administered that stop spontaneous breathing (e.g., succinylcholine)
@@ -131,7 +138,12 @@ void HowToCOVID19Ventilated()
   pe->GetLogger()->Info(std::stringstream() << "Diastolic Pressure : " << pe->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
   pe->GetLogger()->Info(std::stringstream() << "Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
   pe->GetLogger()->Info(std::stringstream() << "Respiration Rate : " << pe->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min) << "bpm");
-  pe->GetLogger()->Info(std::stringstream() << "Oxygen Saturation : " << pe->GetBloodChemistrySystem()->GetOxygenSaturation());
+  pe->GetLogger()->Info(std::stringstream() << "Oxygen Saturation : " << pe->GetBloodChemistrySystem()->GetOxygenSaturation() * 100 << "%");
+  pe->GetLogger()->Info(std::stringstream() << "Pulmonary Compliance : " << pe->GetRespiratorySystem()->GetPulmonaryCompliance(VolumePerPressureUnit::mL_Per_cmH2O) << VolumePerPressureUnit::mL_Per_cmH2O);
+  pe->GetLogger()->Info(std::stringstream() << "End Tidal Carbon Dioxide Pressure : " << pe->GetRespiratorySystem()->GetEndTidalCarbonDioxidePressure(PressureUnit::mmHg) << PressureUnit::mmHg);
+  pe->GetLogger()->Info(std::stringstream() << "P/F Ratio : " << pe->GetRespiratorySystem()->GetCarricoIndex(PressureUnit::mmHg) << PressureUnit::mmHg);
+  pe->GetLogger()->Info(std::stringstream() << "Pulmonary Shunt Fraction : " << pe->GetBloodChemistrySystem()->GetShuntFraction() * 100 << "%");
+  pe->GetLogger()->Info(std::stringstream() << "Mean Airway Pressure : " << pe->GetRespiratorySystem()->GetMeanAirwayPressure(PressureUnit::cmH2O) << PressureUnit::cmH2O);
+  pe->GetLogger()->Info(std::stringstream() << "Oxygen Saturation Index : " << pe->GetRespiratorySystem()->GetOxygenSaturationIndex(PressureUnit::mmHg) << PressureUnit::mmHg);
   pe->GetLogger()->Info("Finished");
-  pe->GetLogger()->Info(std::stringstream() << "Pulmonary Compliance : " << pe->GetRespiratorySystem()->GetPulmonaryCompliance(VolumePerPressureUnit::mL_Per_cmH2O) << "mL_Per_cmH2O");
 }
