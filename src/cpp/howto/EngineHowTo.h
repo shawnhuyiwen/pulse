@@ -20,6 +20,7 @@ void HowToBolusDrug();
 void HowToCombatMultitrauma();
 void HowToConsumeNutrients();
 void HowToCOPD();
+void HowToCOVID19Ventilated();
 void HowToCPR();
 void HowToEnvironmentChange();
 void HowToExercise();

@@ -20,19 +20,20 @@ int main()
   //HowToAirwayObstruction();
   //HowToAnesthesiaMachine();
   //HowToAsthmaAttack();
-  //HowToBrainInjury();
   //HowToBolusDrug();
+  //HowToBrainInjury();
   //HowToCombatMultitrauma();
   //HowToConsumeNutrients();
   //HowToCOPD();
+  //HowToCOVID19Ventilated();
   //HowToCPR(); 
   //HowToEnvironmentChange();
   //HowToExercise();
   //HowToHemorrhage();
   //HowToLobarPneumonia();
   //HowToMechanicalVentilation();
-  //HowToPulmonaryFunctionTest();
   //HowToPulmonaryFibrosis();
+  //HowToPulmonaryFunctionTest();  
   //HowToSmoke();
   //HowToTensionPneumothorax();
 
