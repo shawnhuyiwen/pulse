@@ -15,11 +15,13 @@ from pulse.cdm.io.engine import serialize_actions_to_string, \
 class PulsePhysiologyEngine:
     __slots__ = ['__pulse', "_is_ready", "_dt_s",
                  "_results", "_results_template",
-                 "_event_handler", "_log_forward"]
+                 "_event_handler", "_log_forward",
+                 "_spare_time"]
 
     def __init__(self, log_file="", write_to_console=True, data_root="."):
         self._is_ready = False
         self._results = {}
+        self._spare_time = 0
         self._results_template = {}
         self._event_handler = None
         self._log_forward = None
@@ -87,16 +89,19 @@ class PulsePhysiologyEngine:
         if not self._is_ready:
             return False
         self._results = copy.deepcopy(self._results_template)
-        num_steps = int(duration_s / self._dt_s)
+        total_time = duration_s + self._spare_time
+        num_steps = int(total_time / self._dt_s)
         for n in range(num_steps):
             if not self._advance_time_and_pull(True):
                 return False
+        self._spare_time = total_time - (num_steps * self._dt_s)
         return True
 
     def advance_time_r(self, duration_s: float, rate_s: float):
         if not self._is_ready:
             return False
-        num_steps = int(duration_s / self._dt_s)
+        total_time = duration_s + self._spare_time
+        num_steps = int(total_time / self._dt_s)
         sample_times = range(0, num_steps, math.floor(rate_s / self._dt_s))
         self._results = copy.deepcopy(self._results_template)
         for n in range(num_steps):
@@ -105,6 +110,7 @@ class PulsePhysiologyEngine:
                 pull = True
             if not self._advance_time_and_pull(pull):
                 return False
+        self._spare_time = total_time - (num_steps * self._dt_s)
         return True
 
     def pull_data(self):
