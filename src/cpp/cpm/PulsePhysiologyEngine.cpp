@@ -45,7 +45,6 @@ PulseEngineThunk::PulseEngineThunk(std::string const& logfile, bool cout_enabled
   data = new PulseEngineThunk::pimpl;
   data->eng = std::unique_ptr<PulseEngine>((PulseEngine*)CreatePulseEngine(logfile, data_dir).release());
   data->eng->GetLogger()->SetForward(this);
-  data->eng->GetLogger()->LogToConsole(false);
   data->eng->GetLogger()->LogToConsole(cout_enabled);
 }
 PulseEngineThunk::~PulseEngineThunk()
