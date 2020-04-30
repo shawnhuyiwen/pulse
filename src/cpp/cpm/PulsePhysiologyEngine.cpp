@@ -221,7 +221,11 @@ bool PulseEngineThunk::ProcessActions(std::string const& actions, SerializationF
 
   return success;
 }
-
+double PulseEngineThunk::GetTimeStep(std::string const& unit)
+{
+  TimeUnit time_unit = TimeUnit::GetCompoundUnit(unit);
+  return data->eng->GetTimeStep(time_unit);
+}
 bool PulseEngineThunk::AdvanceTimeStep()
 {
   bool success = true;

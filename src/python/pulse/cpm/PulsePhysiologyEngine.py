@@ -18,14 +18,13 @@ class PulsePhysiologyEngine:
                  "_event_handler", "_log_forward"]
 
     def __init__(self, log_file="", write_to_console=True, data_root="."):
-        self._dt_s = 0.02 # TODO this is assuming duration_s is a factor of 0.02
-        # PulseEngineThunk does not have a GetTimeStep method !?!?
         self._is_ready = False
         self._results = {}
         self._results_template = {}
         self._event_handler = None
         self._log_forward = None
         self.__pulse = PyPulse.Engine(log_file, write_to_console, data_root)
+        self._dt_s = self.__pulse.get_timestep("s")  # TODO this is assuming duration_s is a factor of 0.02
 
     def serialize_from_file(self, state_file: str,
                                   data_request_mgr: SEDataRequestManager,

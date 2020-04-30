@@ -26,6 +26,7 @@ void PhysiologyEngine(py::module &m)
     .def("pull_actie_events", &PulseEngineThunk::PullActiveEvents)
     .def("process_actions", &PulseEngineThunk::ProcessActions)
     .def("advance_timestep", &PulseEngineThunk::AdvanceTimeStep)
+    .def("get_timestep", &PulseEngineThunk::GetTimeStep)
     .def("pull_data", [](PulseEngineThunk& t) -> py::array {
        double* r = t.PullDataPtr();
        // This is a copy, but it's pretty small

@@ -53,6 +53,7 @@ public:
   bool ProcessActions(std::string const& actions, SerializationFormat format);
 
   bool AdvanceTimeStep();
+  double GetTimeStep(std::string const& unit);
 
   size_t DataLength() const;
   double* PullDataPtr();
