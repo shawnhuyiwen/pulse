@@ -237,7 +237,7 @@ const SEScalarTime& PulseData::GetEngineTime() const { return m_CurrentTime; }
 const SEScalarTime& PulseData::GetSimulationTime() const { return m_SimulationTime; }
 const SEScalarTime& PulseData::GetTimeStep() const { return m_Config->GetTimeStep(); }
 
-bool PulseData::HasOverride() const { return m_ScalarOverrides.size() > 1; }
+bool PulseData::HasOverride() const { return m_ScalarOverrides.size() > 0; }
 const std::vector<SEScalarProperty>& PulseData::GetOverrides() const { return m_ScalarOverrides; }
 
 PulseController::PulseController(const std::string& logFileName, const std::string& data_dir) : PulseController(new Logger(logFileName), data_dir)
