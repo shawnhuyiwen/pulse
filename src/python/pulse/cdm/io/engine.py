@@ -5,16 +5,53 @@ from pulse.cdm.engine import SEDataRequestManager, SEDataRequest, SEConditionMan
 from pulse.cdm.bind.Engine_pb2 import ActionListData, AnyActionData, \
                                       AnyConditionData, ConditionListData, \
                                       PatientConfigurationData, \
-                                      DataRequestData, DataRequestManagerData
+                                      DataRequestData, DataRequestManagerData, \
+                                      LogMessagesData
+from pulse.cdm.bind.Events_pb2 import EventChangeListData
 
 from pulse.cdm.patient import SEPatientConfiguration
 from pulse.cdm.equipment_actions import SEEquipmentAction
+from pulse.cdm.engine import SEEventChange
 
 from pulse.cdm.io.patient import *
 from pulse.cdm.io.patient_actions import *
 from pulse.cdm.io.environment_actions import *
 from pulse.cdm.io.environment_conditions import *
 from pulse.cdm.io.mechanical_ventilator_actions import *
+
+def serialize_event_change_list_to_bind(src: [], dst: EventChangeListData):
+    raise Exception("serialize_event_change_list_to_bind not implemented")
+def serialize_event_change_list_to_string(src: []):
+    raise Exception("serialize_event_change_list_to_string not implemented")
+
+def serialize_event_change_list_from_string(string: str, fmt: eSerializationFormat):
+    src = EventChangeListData()
+    json_format.Parse(string, src)
+    return serialize_event_change_list_from_bind(src)
+def serialize_event_change_list_from_bind(src: EventChangeListData):
+    event_changes = []
+    for ecd in src.Change:
+        ec = SEEventChange()
+        ec.event = ecd.Event
+        ec.active = ecd.Active
+        event_changes.append(ec)
+    return event_changes
+
+def serialize_log_messages_to_bind(src: {}, dst: LogMessagesData):
+    raise Exception("serialize_log_messages_to_bind not implemented")
+def serialize_log_messages_to_string(src: []):
+    raise Exception("serialize_log_messages_to_string not implemented")
+
+def serialize_log_messages_from_string(string: str, fmt: eSerializationFormat):
+    src = LogMessagesData()
+    json_format.Parse(string, src)
+    return serialize_log_messages_from_bind(src)
+def serialize_log_messages_from_bind(src: LogMessagesData):
+    log_messages = { 'Debug':[], 'etc':[] }
+    for msg in src.DebugMessages:
+        log_messages['Debug'].append(msg)
+    # etc...
+    return log_messages
 
 def serialize_condition_manager_to_string(condition_manager: SEConditionManager, fmt: eSerializationFormat):
     dst = ConditionListData()

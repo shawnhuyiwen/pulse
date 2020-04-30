@@ -1,9 +1,11 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
+import sys
+import logging
 from enum import Enum
 from pulse.cdm.engine import eSerializationFormat, SEDataRequestManager, SEDataRequest
-from pulse.cdm.engine import IEventHandler, SEEventChange, ILoggingHandler, IPythonLogging
+from pulse.cdm.engine import IEventHandler, SEEventChange, ILoggerForward
 
 from pulse.cdm.patient import eSex, SEPatient, SEPatientConfiguration
 from pulse.cdm.patient_actions import SEExercise, SEHemorrhage
@@ -15,41 +17,58 @@ from pulse.cdm.scalars import FrequencyUnit, LengthUnit, MassUnit, \
 from pulse.cdm.io.patient import serialize_patient_from_file
 from pulse.cdm.io.environment import serialize_environmental_conditions_from_file
 
-# TODO things that still need to be implemented:
-#    Getting Events from Pulse
-#    Getting log information from Pulse
-#    Requesting specific data from Pulse
-#    EngineThunk interface is incomplete
-
 class eStartType(Enum):
     State = 0
     Stabilize_PatientFile = 1
     Stabilize_PatientObject = 2
 
 class local_event_handler(IEventHandler):
-    # Overrides the default handle function which has no operations
     def handle_event(self, change: SEEventChange):
+        # TODO listen for particular events, not all
         print(change)
 
+class local_log_fowrwad(ILoggerForward):
+    def __init__(self):
+        super().__init__()
+        defaultLevel = logging.INFO
+        self.logger = logging.getLogger()
+        self.logger.setLevel(defaultLevel)
+        formatStr = '%(asctime)s %(levelname)s %(message)s'
+        formatter = logging.Formatter(formatStr)
+        console_handler = logging.StreamHandler(sys.stdout)
+        console_handler.setFormatter(formatter)
+        self.logger.addHandler(console_handler)
 
-#  Logging manipulation:
-#  Passing the logging_handler parameter to PulsePhysiologyEngine will allow you to control
-#  the logging of the engine.
-#
-#  A pre-existing class has been used here, which forwards the logging to the Python console via the
-#  logging package. Another instance which prints the message may look like this:
-#
-#  my_logging(ILoggingHandler):
-#    def handle_message(message: str):
-#      print(message)
-#
-#  pulse = PulsePhysiologyEngine("test.log", False, logging_handler=my_logging())
-#
+    def forward_debug(self, msg: str):
+        self.logger.debug(msg)
+        print(msg)
+    def forward_info(self, msg: str):
+        self.logger.info(msg)
+        print(msg)
+    def forward_warning(self, msg: str):
+        self.logger.warning(msg)
+        print(msg)
+    def forward_error(self, msg: str):
+        self.logger.error(msg)
+        print(msg)
+    def forward_fatal(self, msg: str):
+        self.logger.fatal(msg)
+        print(msg)
+
 def HowTo_UseEngine():
-    pulse = PulsePhysiologyEngine("pulse_EngineUse.log",
-                                  False,
-                                  event_handler=local_event_handler(),
-                                  logging_handler=IPythonLogging())
+
+    # We are telling Pulse to not create its own log file, and not to write log info to the console
+    # We will capture all log messages in our own logger and decide what to do with them
+    pulse = PulsePhysiologyEngine("", False)
+
+    # Let's print out events from the engine
+    pulse.set_event_handler(local_event_handler())
+
+    #  Logging manipulation:
+    #  Passing the log_forward object to PulsePhysiologyEngine will allow you to control the logging of the engine.
+    #  A pre-existing class has been used here,
+    #  which forwards the logging to the Python console via the logging package.
+    pulse.set_log_listener(local_log_fowrwad())
 
     # Data Requests are used to get access to the hundreds of parameters available in Pulse
     # To learn more about Data Requests please look at the data request section here:

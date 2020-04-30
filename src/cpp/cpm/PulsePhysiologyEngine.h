@@ -45,8 +45,8 @@ public:
 
   void KeepLogMessages(bool keep);
   std::string PullLogMessages(SerializationFormat format);
-  void KeepEventChanges(bool keep);
 
+  void KeepEventChanges(bool keep);
   std::string PullEvents(SerializationFormat format);
   std::string PullActiveEvents(SerializationFormat format);
 

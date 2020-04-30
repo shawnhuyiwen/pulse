@@ -1,13 +1,9 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
-import json
+
 from abc import ABC, abstractmethod
 from enum import Enum
-import logging
-from pulse.cdm.scalars import SEScalarProperty, SEScalarTime, TimeUnit
-import re
-import sys
-
+from pulse.cdm.scalars import SEScalarProperty, SEScalarTime
 
 class eSerializationFormat(Enum):
     BINARY = 0
@@ -33,6 +29,79 @@ class eCharge(Enum):
     Negative = 1
     Neutral = 2
     Positive = 3
+
+class eEvent(Enum):
+    Antidiuresis = 0
+    Asystole = 1
+    Bradycardia = 2
+    Bradypnea = 3
+    BrainOxygenDeficit = 4
+    CardiacArrest = 5
+    CardiogenicShock = 6
+    CriticalBrainOxygenDeficit = 7
+    Dehydration = 8
+    Diuresis = 9
+    Fasciculation = 10
+    Fatigue = 11
+    FunctionalIncontinence = 12
+    Hypercapnia = 13
+    Hyperglycemia = 14
+    Hyperthermia = 15
+    Hypoglycemia = 16
+    Hypothermia = 17
+    Hypoxia = 18
+    HypovolemicShock = 19
+    IntracranialHypertension = 20
+    IntracranialHypotension = 21
+    IrreversibleState = 22
+    Ketoacidosis = 23
+    LacticAcidosis = 24
+    MaximumPulmonaryVentilationRate = 25
+    MetabolicAcidosis = 26
+    MetabolicAlkalosis = 27
+    ModerateHyperoxemia = 28
+    ModerateHypocapnia = 29
+    MyocardiumOxygenDeficit = 30
+    Natriuresis = 31
+    NutritionDepleted = 32
+    RenalHypoperfusion = 33
+    RespiratoryAcidosis = 34
+    RespiratoryAlkalosis = 35
+    SevereHyperoxemia = 36
+    SevereHypocapnia = 37
+    StartOfCardiacCycle = 38
+    StartOfExhale = 39
+    StartOfInhale = 40
+    Tachycardia = 41
+    Tachypnea = 42
+
+    # Equipment
+    AnesthesiaMachineOxygenBottleOneExhausted = 1000
+    AnesthesiaMachineOxygenBottleTwoExhausted = 1001
+    AnesthesiaMachineReliefValveActive = 1002
+    SupplementalOxygenBottleExhausted = 1003
+    NonRebreatherMaskOxygenBagEmpty = 1004
+
+class SEEventChange:
+    __slots__ = ["event", "active", "sim_time_s"]
+
+    def __init__(self, e: eEvent, active:bool, sim_time: SEScalarTime):
+        self.event = e
+        self.active = active
+        self.sim_time = sim_time
+
+    def __repr__(self):
+        return_text = ("{} is {}").format(self.event, "Active" if self.active else "Inactive")
+        if self.sim_time_s.is_valid():
+            return_text += (" @ {}s").format(self.sim_time_s)
+        return return_text
+
+class IEventHandler:
+    def __init__(self, active_events_only=False):
+        self._active = active_events_only
+    def handle_event(self, change: SEEventChange):
+        pass
+
 
 class SEAction(ABC):
     __slots__ = ["_comment"]
@@ -403,93 +472,6 @@ class SEDataRequest:
     def get_unit(self):
         return self._unit
 
-class eEvent(Enum):
-    Antidiuresis = 0
-    Asystole = 1
-    Bradycardia = 2
-    Bradypnea = 3
-    BrainOxygenDeficit = 4
-    CardiacArrest = 5
-    CardiogenicShock = 6
-    CriticalBrainOxygenDeficit = 7
-    Dehydration = 8
-    Diuresis = 9
-    Fasciculation = 10
-    Fatigue = 11
-    FunctionalIncontinence = 12
-    Hypercapnia = 13
-    Hyperglycemia = 14
-    Hyperthermia = 15
-    Hypoglycemia = 16
-    Hypothermia = 17
-    Hypoxia = 18
-    HypovolemicShock = 19
-    IntracranialHypertension = 20
-    IntracranialHypotension = 21
-    IrreversibleState = 22
-    Ketoacidosis = 23
-    LacticAcidosis = 24
-    MaximumPulmonaryVentilationRate = 25
-    MetabolicAcidosis = 26
-    MetabolicAlkalosis = 27
-    ModerateHyperoxemia = 28
-    ModerateHypocapnia = 29
-    MyocardiumOxygenDeficit = 30
-    Natriuresis = 31
-    NutritionDepleted = 32
-    RenalHypoperfusion = 33
-    RespiratoryAcidosis = 34
-    RespiratoryAlkalosis = 35
-    SevereHyperoxemia = 36
-    SevereHypocapnia = 37
-    StartOfCardiacCycle = 38
-    StartOfExhale = 39
-    StartOfInhale = 40
-    Tachycardia = 41
-    Tachypnea = 42
-
-    # Equipment
-    AnesthesiaMachineOxygenBottleOneExhausted = 1000
-    AnesthesiaMachineOxygenBottleTwoExhausted = 1001
-    AnesthesiaMachineReliefValveActive = 1002
-    SupplementalOxygenBottleExhausted = 1003
-    NonRebreatherMaskOxygenBagEmpty = 1004
-
-class SEEventChange:
-    __slots__ = ["_event", "_active", "_sim_time"]
-
-    def __init__(self, e: eEvent, active:bool, sim_time: SEScalarTime):
-        self._event = e
-        self._active = active
-        self._sim_time = sim_time
-    def __repr__(self):
-        return_text = ("{} was {}").format(self._event, "Active" if self._active else "Inactive")
-        if self._sim_time.is_valid():
-            return_text += (" @ {}").format(self._sim_time)
-        return return_text
-    def get_event(self):
-        return self._event
-    def get_active(self):
-        return self._active
-    def get_sim_time(self):
-        return self._sim_time
-    @classmethod
-    def create_event_request_from_string(cls, event_dict):
-        active_event = False
-        time_key = "SimTime"
-        if "Duration" in event_dict:
-            time_key = "Duration"
-        sim_time_obj = SEScalarTime(event_dict[time_key]["ScalarTime"]["Value"],
-                                    TimeUnit.from_string(event_dict[time_key]["ScalarTime"]["Unit"]))
-        if "Active" in event_dict:
-            active_event = event_dict["Active"]
-        return cls(eEvent[event_dict["Event"]],active_event,  sim_time=sim_time_obj)
-class IEventHandler:
-    def __init__(self, active_events_only=False):
-        self._active = active_events_only
-    def handle_event(self, change: SEEventChange):
-        pass
-
 class SEDataRequestManager:
     __slots__ = ["_results_filename", "_samples_per_second", "_data_requests"]
 
@@ -513,41 +495,17 @@ class SEDataRequestManager:
         for key in data_values:
             print("{}={}".format(key, data_values[key]))
 
-
-class ILoggingHandler():
+class ILoggerForward():
     def __init__(self):
         pass
 
-    def handle_message(self, msg):
+    def forward_debug(self, msg):
         pass
-
-
-class IPythonLogging(ILoggingHandler):
-    def __init__(self):
-        super().__init__()
-        defaultLevel = logging.DEBUG
-        self.logger = logging.getLogger()
-        self.logger.setLevel(defaultLevel)
-        formatStr = '%(asctime)s %(levelname)s %(message)s'
-        formatter = logging.Formatter(formatStr)
-        console_handler = logging.StreamHandler(sys.stdout)
-        console_handler.setFormatter(formatter)
-        self.logger.addHandler(console_handler)
-
-    def handle_message(self, msg: str):
-        # Tries to grab message type from within the brackets of the
-        # incoming message
-        regex_match = re.search("\[([A-Za-z]+)\]", msg)
-        msg_type = ""
-        if regex_match:
-            msg_type = regex_match.group(1)
-        if msg_type == "WARNING":
-            self.logger.warning(msg)
-        elif msg_type == "DEBUG":
-            self.logger.debug(msg)
-        elif msg_type == "ERROR":
-            self.logger.error(msg)
-        elif msg_type == "FATAL":
-            self.logger.fatal(msg)
-        else:
-            self.logger.info(msg)
+    def forward_info(self, msg):
+        pass
+    def forward_warning(self, msg):
+        pass
+    def forward_error(self, msg):
+        pass
+    def forward_fatal(self, msg):
+        pass
