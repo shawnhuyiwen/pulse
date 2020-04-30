@@ -8,7 +8,8 @@ from pulse.cdm.engine import IEventHandler, ILoggerForward
 from pulse.cdm.io.engine import serialize_actions_to_string, \
                                 serialize_patient_configuration_to_string, \
                                 serialize_data_request_manager_to_string, \
-                                serialize_event_change_list_from_string
+                                serialize_event_change_list_from_string, \
+                                serialize_log_messages_from_string
 
 
 class PulsePhysiologyEngine:
@@ -31,7 +32,7 @@ class PulsePhysiologyEngine:
                                   format: eSerializationFormat,
                                   start_time: float = 0):
         # Process requests and setup our results structure
-        drm = self.process_requests(data_request_mgr, format)
+        drm = self._process_requests(data_request_mgr, format)
         if format == eSerializationFormat.BINARY:
             fmt = PyPulse.serialization_format.binary
         else:
@@ -64,7 +65,7 @@ class PulsePhysiologyEngine:
 
     def set_log_listener(self, log_forward: ILoggerForward):
         self._log_forward = log_forward
-        self.__pulse.keep_log_messages( self._event_handler is not None )
+        self.__pulse.keep_log_messages( self._log_forward is not None )
 
     def _advance_time_and_pull(self, pull: bool):
         if self.__pulse.advance_timestep():
@@ -159,8 +160,18 @@ class PulsePhysiologyEngine:
                     self._event_handler.handle_event(event_change)
 
     def _process_logs(self):
-        if self._is_ready and self._logging_handler:
+        if self._is_ready and self._log_forward:
             logs = self.__pulse.pull_log_messages(PyPulse.serialization_format.json)
             if logs:
                 log_msgs = serialize_log_messages_from_string(logs,eSerializationFormat.JSON)
+                for msg in log_msgs['Debug']:
+                    self._log_forward.forward_debug(msg)
+                for msg in log_msgs['Info']:
+                    self._log_forward.forward_info(msg)
+                for msg in log_msgs['Warning']:
+                    self._log_forward.forward_warning(msg)
+                for msg in log_msgs['Fatal']:
+                    self._log_forward.forward_fatal(msg)
+                for msg in log_msgs['Error']:
+                    self._log_forward.forward_error(msg)
                 # log_msgs can be a dict with 'Error' as a key to a [string]

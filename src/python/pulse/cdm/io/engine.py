@@ -11,7 +11,7 @@ from pulse.cdm.bind.Events_pb2 import EventChangeListData
 
 from pulse.cdm.patient import SEPatientConfiguration
 from pulse.cdm.equipment_actions import SEEquipmentAction
-from pulse.cdm.engine import SEEventChange
+from pulse.cdm.engine import SEEventChange, eEvent
 
 from pulse.cdm.io.patient import *
 from pulse.cdm.io.patient_actions import *
@@ -32,7 +32,7 @@ def serialize_event_change_list_from_bind(src: EventChangeListData):
     event_changes = []
     for ecd in src.Change:
         ec = SEEventChange()
-        ec.event = ecd.Event
+        ec.event = eEvent(ecd.Event).name
         ec.active = ecd.Active
         event_changes.append(ec)
     return event_changes
@@ -47,10 +47,18 @@ def serialize_log_messages_from_string(string: str, fmt: eSerializationFormat):
     json_format.Parse(string, src)
     return serialize_log_messages_from_bind(src)
 def serialize_log_messages_from_bind(src: LogMessagesData):
-    log_messages = { 'Debug':[], 'etc':[] }
+    log_messages = { 'Debug':[], 'Info':[], 'Warning':[], 'Fatal':[], 'Error':[], }
     for msg in src.DebugMessages:
         log_messages['Debug'].append(msg)
-    # etc...
+    for msg in src.InfogMessages:
+        log_messages['Info'].append(msg)
+    for msg in src.WarningMessages:
+        log_messages['Warning'].append(msg)
+    for msg in src.FatalMessages:
+        log_messages['Fatal'].append(msg)
+    for msg in src.ErrorMessages:
+        log_messages['Error'].append(msg)
+
     return log_messages
 
 def serialize_condition_manager_to_string(condition_manager: SEConditionManager, fmt: eSerializationFormat):

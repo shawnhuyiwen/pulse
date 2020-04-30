@@ -85,10 +85,10 @@ class eEvent(Enum):
 class SEEventChange:
     __slots__ = ["event", "active", "sim_time_s"]
 
-    def __init__(self, e: eEvent, active:bool, sim_time: SEScalarTime):
-        self.event = e
-        self.active = active
-        self.sim_time = sim_time
+    def __init__(self):
+        self.event = None
+        self.active = None
+        self.sim_time_s = SEScalarTime()
 
     def __repr__(self):
         return_text = ("{} is {}").format(self.event, "Active" if self.active else "Inactive")
