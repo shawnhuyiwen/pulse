@@ -167,6 +167,15 @@ def HowTo_UseEngine():
     data_req_mgr.to_console(results)
     # Perform an action
 
+    # Let's see what events are active
+    # This is on demand
+    # If you want a callback to notify you when an event becomes active
+    # Then create an event handler
+    active_events = pulse.pull_active_events()
+    # This is a map of event to duration (in seconds)
+    for event, duration_s in active_events.items():
+        print(event + " has been active for " + str(duration_s) + "s")
+
     exercise.set_comment("Stop star jumps")
     exercise.get_intensity().set_value(0)
     pulse.process_action(exercise)

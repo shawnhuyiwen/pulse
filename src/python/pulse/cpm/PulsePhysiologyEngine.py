@@ -9,6 +9,7 @@ from pulse.cdm.io.engine import serialize_actions_to_string, \
                                 serialize_patient_configuration_to_string, \
                                 serialize_data_request_manager_to_string, \
                                 serialize_event_change_list_from_string, \
+                                serialize_active_event_list_from_string, \
                                 serialize_log_messages_from_string
 
 
@@ -44,16 +45,31 @@ class PulsePhysiologyEngine:
         return self._is_ready
 
     def serialize_to_file(self, state_file: str, format: eSerializationFormat):
-        raise Exception("serialize_to_file not implemented")
+        if self._is_ready:
+            return self.__pulse.serialize_to_file(state_file, format)
+        return False
+
 
     def serialize_from_string(self, state: str,
                                     data_request_mgr: SEDataRequestManager,
                                     format: eSerializationFormat,
                                     start_time: float = 0):
-        raise Exception("serialize_from_string not implemented")
+        # Process requests and setup our results structure
+        drm = self._process_requests(data_request_mgr, format)
+        if format == eSerializationFormat.BINARY:
+            fmt = PyPulse.serialization_format.binary
+        else:
+            fmt = PyPulse.serialization_format.json
+        self._is_ready = self.__pulse.serialize_from_string(state, drm, fmt, start_time)
+        if self._is_ready:
+            self._pull(True)
+        return self._is_ready
 
-    def serialize_to_string(format: eSerializationFormat):
-        raise Exception("serialize_to_string not implemented")
+
+    def serialize_to_string(self, format: eSerializationFormat):
+        if self._is_ready:
+            return self.__pulse.serialize_to_string(format)
+        return None
 
     def initialize_engine(self, patient_configuration: SEPatientConfiguration, data_request_mgr: SEDataRequestManager):
         # Process requests and setup our results structure
@@ -125,7 +141,11 @@ class PulsePhysiologyEngine:
         return self._results
 
     def pull_active_events(self):
-        raise Exception("pull_active_events not implemented")
+        events = self.__pulse.pull_active_events(PyPulse.serialization_format.json)
+        if events:
+            active_events = serialize_active_event_list_from_string(events, eSerializationFormat.JSON)
+            return active_events
+        return None
 
     def _process_requests(self, data_request_mgr, fmt: eSerializationFormat):
         if data_request_mgr is None:

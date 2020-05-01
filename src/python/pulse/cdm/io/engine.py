@@ -1,13 +1,13 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-from pulse.cdm.engine import SEDataRequestManager, SEDataRequest, SEConditionManager, SEScalarOverride
+from pulse.cdm.engine import SEDataRequestManager, SEDataRequest, SEConditionManager
 from pulse.cdm.bind.Engine_pb2 import ActionListData, AnyActionData, \
                                       AnyConditionData, ConditionListData, \
                                       PatientConfigurationData, \
                                       DataRequestData, DataRequestManagerData, \
                                       LogMessagesData
-from pulse.cdm.bind.Events_pb2 import EventChangeListData
+from pulse.cdm.bind.Events_pb2 import ActiveEventListData, EventChangeListData
 
 from pulse.cdm.patient import SEPatientConfiguration
 from pulse.cdm.equipment_actions import SEEquipmentAction
@@ -37,6 +37,21 @@ def serialize_event_change_list_from_bind(src: EventChangeListData):
         ec.active = ecd.Active
         event_changes.append(ec)
     return event_changes
+
+def serialize_active_event_list_to_bind(src: [], dst: ActiveEventListData):
+    raise Exception("serialize_active_event_list_to_bind not implemented")
+def serialize_active_event_list_to_string(src: []):
+    raise Exception("serialize_active_event_list_to_string not implemented")
+
+def serialize_active_event_list_from_string(string: str, fmt: eSerializationFormat):
+    src = ActiveEventListData()
+    json_format.Parse(string, src)
+    return serialize_active_event_list_from_bind(src)
+def serialize_active_event_list_from_bind(src: ActiveEventListData):
+    active_events = {}
+    for ae in src.ActiveEvent:
+        active_events[eEvent(ae.Event).name] = ae.Duration.ScalarTime.Value
+    return active_events
 
 def serialize_log_messages_to_bind(src: {}, dst: LogMessagesData):
     raise Exception("serialize_log_messages_to_bind not implemented")
