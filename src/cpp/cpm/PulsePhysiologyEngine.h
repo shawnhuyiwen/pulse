@@ -45,14 +45,15 @@ public:
 
   void KeepLogMessages(bool keep);
   std::string PullLogMessages(SerializationFormat format);
-  void KeepEventChanges(bool keep);
 
+  void KeepEventChanges(bool keep);
   std::string PullEvents(SerializationFormat format);
   std::string PullActiveEvents(SerializationFormat format);
 
   bool ProcessActions(std::string const& actions, SerializationFormat format);
 
   bool AdvanceTimeStep();
+  double GetTimeStep(std::string const& unit);
 
   size_t DataLength() const;
   double* PullDataPtr();

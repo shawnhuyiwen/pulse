@@ -21,7 +21,7 @@ def HowTo_MechanicalVentilation():
 
     ventilation = SEMechanicalVentilation()
     ventilation.set_comment("Patient is placed on a mechanical ventilator")
-    ventilation.get_flow().set_value(50, VolumePerTimeUnit.mL_Per_day)
+    ventilation.get_flow().set_value(50, VolumePerTimeUnit.mL_Per_s)
     ventilation.get_pressure().set_value(.2, PressureUnit.psi)
     ventilation.set_state(eSwitch.On)
     pulse.process_action(ventilation)

@@ -2,7 +2,7 @@
 # See accompanying NOTICE file for details.
 
 from pulse.cdm.engine import SECondition
-from pulse.cdm.scalars import SEScalar0To1, SEScalarArea, SEScalarVolumePerTime
+from pulse.cdm.scalars import SEScalar0To1, SEScalarArea, SEScalarVolume
 
 class SEPatientCondition(SECondition):
     __slots__ = ["_active"]
@@ -127,7 +127,7 @@ class SEChronicObstructivePulmonaryDisease(SEPatientCondition):
             self._emphysema_severity = SEScalar0To1()
         return self._emphysema_severity
     def __repr__(self):
-        return ("Chronic COPD\n"
+        return ("COPD\n"
                 "  Emphysema Severity: {}]\n"
                 "  Bronchitis Severity: {}").format(self._emphysema_severity, self._bronchitis_severity)
 
@@ -147,7 +147,7 @@ class SEChronicPericardialEffusion(SEPatientCondition):
         return self._accumulated_volume is not None
     def get_accumulated_volume(self):
         if self._accumulated_volume is None:
-            self._accumulated_volume = SEScalar0To1()
+            self._accumulated_volume = SEScalarVolume()
         return self._accumulated_volume
     def __repr__(self):
         return ("Chronic Pericardial Effusion\n"
@@ -167,7 +167,7 @@ class SEChronicRenalStenosis(SEPatientCondition):
         if self._right_kidney_severity is not None:
             self._right_kidney_severity.invalidate()
     def is_valid(self):
-        return self.has_right_kidney_severity() and self._left_kidney_severity()
+        return self.has_right_kidney_severity() and self.has_left_kidney_severity()
     def has_right_kidney_severity(self):
         return self._right_kidney_severity is not None
     def get_right_kidney_severity(self):
@@ -190,24 +190,31 @@ class SEChronicVentricularSystolicDysfunction(SEPatientCondition):
 
     def __init__(self):
         super().__init__()
-        print("No Functionality in this condition")
-        pass
+    def __repr__(self):
+        return ("Chronic Ventricular Systolic Dysfunction\n")
+    def is_valid(self):
+        return True
 
 class SEImpairedAlveolarExchange(SEPatientCondition):
-    __slots__ = ["_impaired_surface_area", "_impaired_fraction"]
+    __slots__ = ["_impaired_surface_area", "_impaired_fraction", "_severity"]
 
     def __init__(self):
         super().__init__()
         self._impaired_fraction = None
         self._impaired_surface_area = None
+        self._severity = None
     def clear(self):
         super().clear()
         if self._impaired_fraction is not None:
             self._impaired_fraction.invalidate()
         if self._impaired_surface_area is not None:
             self._impaired_surface_area.invalidate()
+        if self._severity is not None:
+            self._severity.invalidate()
     def is_valid(self):
-        return self.has_impaired_surface_area() and self.has_impaired_fraction()
+        return self.has_impaired_surface_area() or \
+               self.has_impaired_fraction() or \
+               self.has_severity()
     def has_impaired_surface_area(self):
         return self._impaired_surface_area is not None
     def get_impaired_surface_area(self):
@@ -218,12 +225,19 @@ class SEImpairedAlveolarExchange(SEPatientCondition):
         return self._impaired_fraction is not None
     def get_impaired_fraction(self):
         if self._impaired_fraction is None:
-            self._impaired_fraction = SEScalar0To1
+            self._impaired_fraction = SEScalar0To1()
         return self._impaired_fraction
+    def has_severity(self):
+        return self._severity is not None
+    def get_severity(self):
+        if self._severity is None:
+            self._severity = SEScalar0To1()
+        return self._severity
     def __repr__(self):
         return ("Impaired Alveolar Exchange\n"
                 "  Impaired Fraction: {}\n"
-                "  Impaired Surface Area: {}").format(self._impaired_fraction, self._impaired_surface_area)
+                "  Impaired Surface Area: {}\n"
+                "  Severity: {}").format(self._impaired_fraction, self._impaired_surface_area, self._severity)
 
 class SELobarPneumonia(SEPatientCondition):
     __slots__ = ["_severity", "_left_lung_affected", "_right_lung_affected"]

@@ -51,11 +51,11 @@
 class MyLogger : public LoggerForward
 {
 public:
-  virtual void ForwardDebug  (const std::string& msg, const std::string& origin) {}
-  virtual void ForwardInfo   (const std::string& msg, const std::string& origin) {}
-  virtual void ForwardWarning(const std::string& msg, const std::string& origin) {}
-  virtual void ForwardError  (const std::string& msg, const std::string& origin) {}
-  virtual void ForwardFatal  (const std::string& msg, const std::string& origin) {}
+  virtual void ForwardDebug  (const std::string& msg, const std::string& origin) { std::cout << "[DEBUG] " << origin << msg << std::endl; }
+  virtual void ForwardInfo   (const std::string& msg, const std::string& origin) { std::cout << "[INFO] " << origin << msg << std::endl; }
+  virtual void ForwardWarning(const std::string& msg, const std::string& origin) { std::cout << "[WARN] " << origin << msg << std::endl; }
+  virtual void ForwardError  (const std::string& msg, const std::string& origin) { std::cout << "[ERROR] " << origin << msg << std::endl; }
+  virtual void ForwardFatal  (const std::string& msg, const std::string& origin) { std::cout << "[FATAL] " << origin << msg << std::endl; }
 };
 
 //--------------------------------------------------------------------------------------------------
@@ -90,10 +90,11 @@ void HowToEngineUse()
 {
   // Create an engine object
   // PulseEngines will always output log messages to stdout and a log file  
-  // If you want this engine to write a log file, include the name 
-  // of the log file. If nullptr is given, the engine will only output to the console
-  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowTo_EngineUse.log");
-  pe->GetLogger()->Info("HowTo_EngineUse");
+  // If you want this engine to write a log file, include the name
+  // of the log file. If nothing is given, the engine will only output to the console
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
+  // Let's turn that off too, and only process log info from our logger
+  pe->GetLogger()->LogToConsole(false);
 
   // This PulseEngine logger is based on log4cpp (which is based on log4j)
   // PulseEngine logs to several distinct, ordered
@@ -112,6 +113,8 @@ void HowToEngineUse()
   // You can specify a set of functions to be called for any one of the log levels
   MyLogger myLogger;
   pe->GetLogger()->SetForward(&myLogger);
+
+  pe->GetLogger()->Info("HowTo_EngineUse");
 
   // You can tell the PulseEngine to also notify you of any events as well
   // You can Poll objects for events, for example

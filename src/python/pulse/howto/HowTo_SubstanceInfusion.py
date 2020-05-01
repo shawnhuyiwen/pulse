@@ -21,7 +21,7 @@ def HowTo_SubstanceInfusion():
     # Perform an action
     infusion = SESubstanceInfusion()
     infusion.set_comment("Patient receives an infusion of <>")
-    infusion.set_substance("Calcium")
+    infusion.set_substance("Morphine")
     infusion.get_rate().set_value(100, VolumePerTimeUnit.mL_Per_min)
     infusion.get_concentration().set_value(1.0, MassPerVolumeUnit.from_string("g/L"))
     pulse.process_action(infusion)

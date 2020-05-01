@@ -7,10 +7,16 @@ from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
 def HowTo_UseSepsis():
     pulse = PulsePhysiologyEngine("pulse_sepsis.log")
 
+    # TODO Model is currently incomplete!
+
     pc = SEPatientConfiguration()
     pc.set_patient_file("./patients/StandardMale.json")
     sepsis = pc.get_conditions().get_sepsis()
     sepsis.get_severity().set_value(.7)
+
+    # Get some data from the engine
+    results = pulse.pull_data()
+    print(results)
 
     # Initialize the engine with our configuration
     # NOTE: No data requests are being provided, so Pulse will return the default vitals data

@@ -23,14 +23,12 @@ public:
 
   bool log(Logger::level requested_level)
   {
-    if (requested_level < _log_level)
-      return false;
-    if (!_log_to_console && !_log_to_file)
-      return false;
-    return true;
+    return requested_level >= _log_level;
   }
   void log(Logger::level requested_level, const std::string& out)
   {
+    if (!_log_to_console && !_log_to_file)
+      return;
     if (_last_requested_level != requested_level)
     {
       switch (requested_level)
@@ -98,8 +96,6 @@ void Logger::ResetLogFile(const std::string& logFilename)
     return;
   }
   _log_lib->_log_to_file = true;
-
-  SetLogLevel(level::Info);
 
   CreateFilePath(logFilename);
   _log_lib->_file.close();

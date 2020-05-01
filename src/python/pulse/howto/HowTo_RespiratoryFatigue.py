@@ -17,6 +17,8 @@ def HowTo_RepiratoryFatigue():
     results = pulse.pull_data()
     print(results)
 
+    # TODO Model is currently incomplete!
+
     # Perform an action
     fatigue = SERespiratoryFatigue()
     fatigue.set_comment("Patient undergoes respiratory fatigue")
