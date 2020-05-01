@@ -331,15 +331,6 @@ class SEConditionManager():
     def remove_pulmonary_shunt(self):
         self._pulmonary_shunt = None
 
-    def has_renal_stenosis(self):
-        return False if self._renal_stenosis is None else self._renal_stenosis.is_valid()
-    def get_renal_stenosis(self):
-        if self._renal_stenosis is None:
-            self._renal_stenosis = SEChronicRenalStenosis()
-        return self._renal_stenosis
-    def remove_renal_stenosis(self):
-        self._renal_stenosis = None
-
     def has_sepsis(self):
         return False if self._sepsis is None else self._sepsis.is_valid()
     def get_sepsis(self):

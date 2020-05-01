@@ -33,7 +33,7 @@ def HowTo_UseEngine():
     mve.create_engine(sim)
 
     for n in range(60):
-        sim = mve.advance_time_s(2)
+        mve.advance_time_s(2, sim)
         print("Patient0 SpO2 : "+str(sim.PatientComparisons[0].MultiplexVentilation.OxygenSaturation))
         print("Patient1 SpO2 : "+str(sim.PatientComparisons[1].MultiplexVentilation.OxygenSaturation))
 

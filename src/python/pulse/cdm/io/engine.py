@@ -15,6 +15,7 @@ from pulse.cdm.engine import SEEventChange, eEvent
 
 from pulse.cdm.io.patient import *
 from pulse.cdm.io.patient_actions import *
+from pulse.cdm.io.patient_conditions import *
 from pulse.cdm.io.environment_actions import *
 from pulse.cdm.io.environment_conditions import *
 from pulse.cdm.io.mechanical_ventilator_actions import *
@@ -69,10 +70,65 @@ def serialize_condition_manager_to_string(condition_manager: SEConditionManager,
 def serialize_condition_manager_to_bind(condition_manager: SEConditionManager, dst: ConditionListData):
     if (condition_manager.is_empty()):
         return ""
+    if condition_manager.has_acute_respiratory_distress_syndrome():
+        any_condition = AnyConditionData()
+        serialize_acute_respiratory_distress_syndrome_to_bind(condition_manager.get_acute_respiratory_distress_syndrome(),
+                                                            any_condition.PatientCondition.AcuteRespiratoryDistressSyndrome)
+        dst.AnyCondition.append(any_condition)
+    if condition_manager.has_chronic_anemia():
+        any_condition = AnyConditionData()
+        serialize_chronic_anemia_to_bind(condition_manager.get_chronic_anemia(),
+                                         any_condition.PatientCondition.ChronicAnemia)
+        dst.AnyCondition.append(any_condition)
+    if condition_manager.has_chronic_obstructive_pulmonary_disease():
+        any_condition = AnyConditionData()
+        serialize_chronic_obstructive_pulmonary_disease_to_bind(condition_manager.get_chronic_obstructive_pulmonary_disease(),
+                                                                any_condition.PatientCondition.ChronicObstructivePulmonaryDisease)
+        dst.AnyCondition.append(any_condition)
+    if condition_manager.has_chronic_pericardial_effusion():
+        any_condition = AnyConditionData()
+        serialize_chronic_pericardial_effusion_to_bind(condition_manager.get_chronic_pericardial_effusion(),
+                                                       any_condition.PatientCondition.ChronicPericardialEffusion)
+        dst.AnyCondition.append(any_condition)
+    if condition_manager.has_chronic_renal_stenosis():
+        any_condition = AnyConditionData()
+        serialize_chronic_renal_stenosis_to_bind(condition_manager.get_chronic_renal_stenosis(),
+                                                 any_condition.PatientCondition.ChronicRenalStenosis)
+        dst.AnyCondition.append(any_condition)
+    if condition_manager.has_chronic_ventricular_systolic_dysfunction():
+        any_condition = AnyConditionData()
+        serialize_chronic_ventricular_systolic_dysfunction_to_bind(condition_manager.get_chronic_ventricular_systolic_dysfunction(),
+                                                                   any_condition.PatientCondition.ChronicVentricularSystolicDysfunction)
+        dst.AnyCondition.append(any_condition)
+    if condition_manager.has_impaired_alveolar_exchange():
+        any_condition = AnyConditionData()
+        serialize_impaired_alveolar_exchange_to_bind(condition_manager.get_impaired_alveolar_exchange(),
+                                                     any_condition.PatientCondition.ImpairedAlveolarExchange)
+        dst.AnyCondition.append(any_condition)
+    if condition_manager.has_lobar_pneumonia():
+        any_condition = AnyConditionData()
+        serialize_lobar_pneumonia_to_bind(condition_manager.get_lobar_pneumonia(),
+                                          any_condition.PatientCondition.LobarPneumonia)
+        dst.AnyCondition.append(any_condition)
+    if condition_manager.has_pulmonary_fibrosis():
+        any_condition = AnyConditionData()
+        serialize_pulmonary_fibrosis_to_bind(condition_manager.get_pulmonary_fibrosis(),
+                                             any_condition.PatientCondition.PulmonaryFibrosis)
+        dst.AnyCondition.append(any_condition)
+    if condition_manager.has_pulmonary_shunt():
+        any_condition = AnyConditionData()
+        serialize_pulmonary_shunt_to_bind(condition_manager.get_pulmonary_shunt(),
+                                          any_condition.PatientCondition.PulmonaryShunt)
+        dst.AnyCondition.append(any_condition)
+    if condition_manager.has_sepsis():
+        any_condition = AnyConditionData()
+        serialize_sepsis_to_bind(condition_manager.get_sepsis(),
+                                 any_condition.PatientCondition.Sepsis)
+        dst.AnyCondition.append(any_condition)
     if condition_manager.has_initial_environmental_conditions():
         any_condition = AnyConditionData()
         serialize_initial_environmental_conditions_to_bind(condition_manager.get_initial_environmental_conditions(),
-                                                            any_condition.EnvironmentCondition.InitialEnvironmentalConditions)
+                                                           any_condition.EnvironmentCondition.InitialEnvironmentalConditions)
         dst.AnyCondition.append(any_condition)
 
 def serialize_actions_to_string(actions: [], fmt: eSerializationFormat):
@@ -89,7 +145,7 @@ def serialize_actions_to_string(actions: [], fmt: eSerializationFormat):
                 action_list.AnyAction.append(any_action)
                 continue
             if isinstance(action, SEAcuteRespiratoryDistressSyndromeExacerbation):
-                serialize_acute_respiratory_exacerbation_to_bind(action, any_action.PatientAction.AcuteRespiratoryDistressSyndromeExacerbation)
+                serialize_acute_respiratory_distress_syndrome_exacerbation_to_bind(action, any_action.PatientAction.AcuteRespiratoryDistressSyndromeExacerbation)
                 action_list.AnyAction.append(any_action)
                 continue
             if isinstance(action, SEAcuteStress):
@@ -114,6 +170,10 @@ def serialize_actions_to_string(actions: [], fmt: eSerializationFormat):
                 continue
             if isinstance(action, SEChestOcclusiveDressing):
                 serialize_chest_occlusive_dressing_to_bind(action, any_action.PatientAction.ChestOcclusiveDressing)
+                action_list.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SEChronicObstructivePulmonaryDiseaseExacerbation):
+                serialize_chronic_obstructive_pulmonary_disease_exacerbation_to_bind(action, any_action.PatientAction.ChronicObstructivePulmonaryDiseaseExacerbation)
                 action_list.AnyAction.append(any_action)
                 continue
             if isinstance(action, SEConsciousRespiration):
@@ -157,7 +217,7 @@ def serialize_actions_to_string(actions: [], fmt: eSerializationFormat):
                 action_list.AnyAction.append(any_action)
                 continue
             if isinstance(action, SEPulmonaryShuntExacerbation):
-                serialize_pulmonary_shunt_to_bind(action, any_action.PatientAction.PulmonaryShuntExacerbation)
+                serialize_pulmonary_shunt_exacerbation_to_bind(action, any_action.PatientAction.PulmonaryShuntExacerbation)
                 action_list.AnyAction.append(any_action)
                 continue
             if isinstance(action, SERespiratoryFatigue):

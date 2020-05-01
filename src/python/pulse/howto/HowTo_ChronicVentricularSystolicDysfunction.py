@@ -4,13 +4,12 @@
 from pulse.cdm.patient import SEPatientConfiguration
 from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
 
-def HowTo_UseChronicPericardialEffusion():
-    pulse = PulsePhysiologyEngine("pulse_chronic_pericardial_effusion.log")
+def HowTo_UseAnemia():
+    pulse = PulsePhysiologyEngine("pulse_ChronicVentricularSystolicDysfunction.log")
 
     pc = SEPatientConfiguration()
     pc.set_patient_file("./patients/StandardMale.json")
-    effusion = pc.get_conditions().get_chronic_pericardial_effusion()
-    effusion.get_accumulated_volume().set_value(.3)
+    cvsd = pc.get_conditions().get_chronic_ventricular_systolic_dysfunction()
 
     # Initialize the engine with our configuration
     # NOTE: No data requests are being provided, so Pulse will return the default vitals data
@@ -18,10 +17,14 @@ def HowTo_UseChronicPericardialEffusion():
         print("Unable to load stabilize engine")
         return
 
+    # Get some data from the engine
+    results = pulse.pull_data()
+    print(results)
+
     # Advance some time and print out the vitals
     pulse.advance_time_s(30)
     results = pulse.pull_data()
     print(results)
 
-HowTo_UseChronicPericardialEffusion()
+HowTo_UseAnemia()
 

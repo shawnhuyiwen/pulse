@@ -19,6 +19,10 @@ def HowTo_UseRenalStenosis():
         print("Unable to load stabilize engine")
         return
 
+    # Get some data from the engine
+    results = pulse.pull_data()
+    print(results)
+
     pulse.advance_time_s(30)
     results = pulse.pull_data()
     print(results)
