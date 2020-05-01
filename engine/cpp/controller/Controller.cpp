@@ -3004,7 +3004,7 @@ void PulseController::SetupTissue()
   SEFluidCircuitNode& FatT1 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::FatT1);
   SEFluidCircuitNode& FatT2 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::FatT2);
   SEFluidCircuitNode& FatT3 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::FatT3);
-  FatT1.GetPressure().SetValue(32.473, PressureUnit::mmHg);
+  FatT1.GetPressure().SetValue(15.0, PressureUnit::mmHg);
   FatT3.GetPressure().Set(Ground->GetPressure());
   FatT1.GetVolumeBaseline().SetValue(AdiposeEWFraction*AdiposeTissueVolume*1000.0, VolumeUnit::mL);
 
@@ -3051,7 +3051,7 @@ void PulseController::SetupTissue()
   SEFluidCircuitNode& BoneT1 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::BoneT1);
   SEFluidCircuitNode& BoneT2 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::BoneT2);
   SEFluidCircuitNode& BoneT3 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::BoneT3);
-  BoneT1.GetPressure().SetValue(32.469, PressureUnit::mmHg);
+  BoneT1.GetPressure().SetValue(15.0, PressureUnit::mmHg);
   BoneT3.GetPressure().Set(Ground->GetPressure());
   BoneT1.GetVolumeBaseline().SetValue(BoneEWFraction*BoneTissueVolume*1000.0, VolumeUnit::mL);
 
@@ -3098,7 +3098,7 @@ void PulseController::SetupTissue()
   SEFluidCircuitNode& BrainT1 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::BrainT1);
   SEFluidCircuitNode& BrainT2 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::BrainT2);
   SEFluidCircuitNode& BrainT3 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::BrainT3);
-  BrainT1.GetPressure().SetValue(8.97, PressureUnit::mmHg);
+  BrainT1.GetPressure().SetValue(15.0, PressureUnit::mmHg);
   BrainT3.GetPressure().Set(Ground->GetPressure());
   BrainT1.GetVolumeBaseline().SetValue(BrainEWFraction*BrainTissueVolume*1000.0, VolumeUnit::mL);
 
@@ -3147,7 +3147,7 @@ void PulseController::SetupTissue()
   SEFluidCircuitNode& GutT1 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::GutT1);
   SEFluidCircuitNode& GutT2 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::GutT2);
   SEFluidCircuitNode& GutT3 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::GutT3);
-  GutT1.GetPressure().SetValue(32.481, PressureUnit::mmHg);
+  GutT1.GetPressure().SetValue(15.0, PressureUnit::mmHg);
   GutT3.GetPressure().Set(Ground->GetPressure());
   GutT1.GetVolumeBaseline().SetValue(GutEWFraction*GutTissueVolume * 1000.0, VolumeUnit::mL);
 
@@ -3211,7 +3211,7 @@ void PulseController::SetupTissue()
   SEFluidCircuitNode& LeftKidneyT1 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::LeftKidneyT1);
   SEFluidCircuitNode& LeftKidneyT2 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::LeftKidneyT2);
   SEFluidCircuitNode& LeftKidneyT3 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::LeftKidneyT3);
-  LeftKidneyT1.GetPressure().SetValue(65.474, PressureUnit::mmHg);
+  LeftKidneyT1.GetPressure().SetValue(15.0, PressureUnit::mmHg);
   LeftKidneyT3.GetPressure().Set(Ground->GetPressure());
   LeftKidneyT1.GetVolumeBaseline().SetValue(LKidneyEWFraction*LKidneyTissueVolume*1000.0, VolumeUnit::mL);
 
@@ -3258,7 +3258,7 @@ void PulseController::SetupTissue()
   SEFluidCircuitNode& LeftLungT1 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::LeftLungT1);
   SEFluidCircuitNode& LeftLungT2 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::LeftLungT2);
   SEFluidCircuitNode& LeftLungT3 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::LeftLungT3);
-  LeftLungT1.GetPressure().SetValue(9.339, PressureUnit::mmHg);
+  LeftLungT1.GetPressure().SetValue(15.0, PressureUnit::mmHg);
   LeftLungT3.GetPressure().Set(Ground->GetPressure());
   LeftLungT1.GetVolumeBaseline().SetValue(LLungEWFraction*LLungTissueVolume*1000.0, VolumeUnit::mL);
 
@@ -3305,7 +3305,7 @@ void PulseController::SetupTissue()
   SEFluidCircuitNode& LiverT1 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::LiverT1);
   SEFluidCircuitNode& LiverT2 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::LiverT2);
   SEFluidCircuitNode& LiverT3 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::LiverT3);
-  LiverT1.GetPressure().SetValue(24.947, PressureUnit::mmHg);
+  LiverT1.GetPressure().SetValue(15.0, PressureUnit::mmHg);
   LiverT3.GetPressure().Set(Ground->GetPressure());
   LiverT1.GetVolumeBaseline().SetValue(LiverEWFraction*LiverTissueVolume*1000.0, VolumeUnit::mL);
 
@@ -3352,7 +3352,7 @@ void PulseController::SetupTissue()
   SEFluidCircuitNode& MuscleT1 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::MuscleT1);
   SEFluidCircuitNode& MuscleT2 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::MuscleT2);
   SEFluidCircuitNode& MuscleT3 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::MuscleT3);
-  MuscleT1.GetPressure().SetValue(32.9918684263157, PressureUnit::mmHg);
+  MuscleT1.GetPressure().SetValue(15.0, PressureUnit::mmHg);
   MuscleT3.GetPressure().Set(Ground->GetPressure());
   MuscleT1.GetVolumeBaseline().SetValue(MuscleEWFraction*MuscleTissueVolume*1000.0, VolumeUnit::mL);
 
@@ -3399,7 +3399,7 @@ void PulseController::SetupTissue()
   SEFluidCircuitNode& MyocardiumT1 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::MyocardiumT1);
   SEFluidCircuitNode& MyocardiumT2 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::MyocardiumT2);
   SEFluidCircuitNode& MyocardiumT3 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::MyocardiumT3);
-  MyocardiumT1.GetPressure().SetValue(32.4695, PressureUnit::mmHg);
+  MyocardiumT1.GetPressure().SetValue(15.0, PressureUnit::mmHg);
   MyocardiumT3.GetPressure().Set(Ground->GetPressure());
   MyocardiumT1.GetVolumeBaseline().SetValue(MyocardiumEWFraction*MyocardiumTissueVolume*1000.0, VolumeUnit::mL);
 
@@ -3451,7 +3451,7 @@ void PulseController::SetupTissue()
   SEFluidCircuitNode& RightKidneyT1 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::RightKidneyT1);
   SEFluidCircuitNode& RightKidneyT2 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::RightKidneyT2);
   SEFluidCircuitNode& RightKidneyT3 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::RightKidneyT3);
-  RightKidneyT1.GetPressure().SetValue(65.474, PressureUnit::mmHg);
+  RightKidneyT1.GetPressure().SetValue(15.0, PressureUnit::mmHg);
   RightKidneyT3.GetPressure().Set(Ground->GetPressure());
   RightKidneyT1.GetVolumeBaseline().SetValue(RKidneyEWFraction*RKidneyTissueVolume*1000.0, VolumeUnit::mL);
 
@@ -3498,7 +3498,7 @@ void PulseController::SetupTissue()
   SEFluidCircuitNode& RightLungT1 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::RightLungT1);
   SEFluidCircuitNode& RightLungT2 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::RightLungT2);
   SEFluidCircuitNode& RightLungT3 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::RightLungT3);
-  RightLungT1.GetPressure().SetValue(9.2621, PressureUnit::mmHg);
+  RightLungT1.GetPressure().SetValue(15.0, PressureUnit::mmHg);
   RightLungT3.GetPressure().Set(Ground->GetPressure());
   RightLungT1.GetVolumeBaseline().SetValue(RLungEWFraction*RLungTissueVolume*1000.0, VolumeUnit::mL);
 
@@ -3545,7 +3545,7 @@ void PulseController::SetupTissue()
   SEFluidCircuitNode& SkinT1 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::SkinT1);
   SEFluidCircuitNode& SkinT2 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::SkinT2);
   SEFluidCircuitNode& SkinT3 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::SkinT3);
-  SkinT1.GetPressure().SetValue(9.28115, PressureUnit::mmHg);
+  SkinT1.GetPressure().SetValue(15.0, PressureUnit::mmHg);
   SkinT3.GetPressure().Set(Ground->GetPressure());
   SkinT1.GetVolumeBaseline().SetValue(SkinEWFraction*SkinTissueVolume*1000.0, VolumeUnit::mL);
 
@@ -3595,7 +3595,7 @@ void PulseController::SetupTissue()
   SEFluidCircuitNode& SpleenT1 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::SpleenT1);
   SEFluidCircuitNode& SpleenT2 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::SpleenT2);
   SEFluidCircuitNode& SpleenT3 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::SpleenT3);
-  SpleenT1.GetPressure().SetValue(32.481, PressureUnit::mmHg);
+  SpleenT1.GetPressure().SetValue(15.0, PressureUnit::mmHg);
   SpleenT3.GetPressure().Set(Ground->GetPressure());
   SpleenT1.GetVolumeBaseline().SetValue(SpleenEWFraction*SpleenTissueVolume*1000.0, VolumeUnit::mL);
 
