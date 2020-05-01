@@ -180,10 +180,10 @@ def HowTo_UseEngine():
     exercise.get_intensity().set_value(0)
     pulse.process_action(exercise)
     # Advance some time and print out the vitals
-    # advance_time_r allows sampling rate change
+    # advance_time_sample_per_s allows getting data from pulse at a specified rate
     #  Will advance time by total in first argument
     #  and samples every second argument seconds
-    pulse.advance_time_r(45, 5)
+    pulse.advance_time_sample_per_s(45, 5)
     results = pulse.pull_data()
     data_req_mgr.to_console(results)
 

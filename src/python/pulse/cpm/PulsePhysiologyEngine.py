@@ -122,7 +122,7 @@ class PulsePhysiologyEngine:
         self._spare_time_s = total_time - (num_steps * self._dt_s)
         return True
 
-    def advance_time_r(self, duration_s: float, rate_s: float):
+    def advance_time_sample_per_s(self, duration_s: float, rate_s: float):
         if not self._is_ready:
             return False
         total_time = duration_s + self._spare_time_s
