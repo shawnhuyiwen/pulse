@@ -17,4 +17,6 @@ add_library_ex(CommonDataModelTests
     UnitsTest.cpp
   PUBLIC_DEPENDS
     CommonDataModel
+  INSTALL_HEADER_DIR
+    test/
 )

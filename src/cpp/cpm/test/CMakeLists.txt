@@ -21,4 +21,6 @@ add_library_ex(CommonPulseModelsTests
     TissueTests.cpp
   PUBLIC_DEPENDS
     CommonPulseModels
+  INSTALL_HEADER_DIR
+    test/
 )

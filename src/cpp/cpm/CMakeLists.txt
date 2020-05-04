@@ -75,8 +75,8 @@ add_library_ex(CommonPulseModels
   PUBLIC_DEPENDS
     CommonDataModel
   PRIVATE_DEPENDS
-    Eigen3::Eigen
     protobuf::libprotobuf
 )
+target_include_directories(CommonPulseModels PRIVATE ${EIGEN3_INCLUDE_DIR})
 
 add_subdirectory(test)
