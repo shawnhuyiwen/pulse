@@ -127,7 +127,7 @@ function(add_library_ex target)
     foreach(h ${target_H_FILES})
       #message(STATUS "Header at ${h}")
       get_filename_component(DEST_DIR ${h} DIRECTORY)
-      message(STATUS "Going to ${target_INSTALL_HEADER_DIR}/${DEST_DIR}")
+      #message(STATUS "Going to ${target_INSTALL_HEADER_DIR}/${DEST_DIR}")
       install(FILES
         ${h}
         DESTINATION include/${${PROJECT_NAME}_INSTALL_FOLDER}/${target_INSTALL_HEADER_DIR}/${DEST_DIR}
