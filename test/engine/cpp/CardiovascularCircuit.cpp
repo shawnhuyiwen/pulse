@@ -113,7 +113,7 @@ void PulseEngineTest::TuneCardiovascularCircuitTest(const std::string& sTestDire
             //Reduce Systolic as little as we can
             Sys = 1 / 0.75 * Dia;
           }
-        }        
+        }
 
         patient.GetHeartRateBaseline().SetValue(HR, FrequencyUnit::Per_min);
         patient.GetSystolicArterialPressureBaseline().SetValue(Sys, PressureUnit::mmHg);
@@ -141,8 +141,9 @@ void PulseEngineTest::TuneCardiovascularCircuitTest(SETestSuite& testSuite, cons
   testCase.SetName(sTestName);
 
   Cardiovascular& cv = (Cardiovascular&)pc.GetCardiovascular();
-  try {
-    // cv.m_TuningFile = sTestDirectory + "/Tune" + sTestName + "CircuitOutput.csv";//For Debugging
+  try
+  {
+    cv.m_TuningFile = sTestDirectory + "/Tune" + sTestName + "CircuitOutput.csv";//For Debugging
     cv.Initialize();
   }
   catch (PhysiologyEngineException ex)
@@ -496,7 +497,6 @@ void PulseEngineTest::CardiovascularCircuitAndTransportTest(CardiovascularDriver
         }
       }
 
-
       for (SEFluidCircuitNode* n : cvCircuit.GetNodes())
       {
         if (n->HasNextPressure())
@@ -605,7 +605,7 @@ void PulseEngineTest::CardiovascularCircuitAndTransportTest(CardiovascularDriver
     cvCompTrk.StreamTrackToFile(cvCompFile);
     cvResTrk.StreamTrackToFile(cvResFile);
 
-     cvPressureFile.close();
+    cvPressureFile.close();
     cvVolumeFile.close();
     cvNormVolumeFile.close();
     cvCompFlowFile.close();

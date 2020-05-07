@@ -28,14 +28,14 @@ int main(int argc, char* argv[])
       // Pulse Tests //
       ////////////////////
 
-      peTest.ReadScenarios(peDir);
+      //peTest.ReadScenarios(peDir);
 
       //peTest.CardiovascularCircuitAndTransportTest(peDir);
       //peTest.CardiovascularAndRenalCircuitAndTransportTest(peDir);
       //peTest.CardiovascularAndTissueCircuitAndTransportTest(peDir);
       //peTest.CardiovascularTissueAndRenalCircuitAndTransportTest(peDir);
       //peTest.CardiovascularBloodGasesTest(peDir);
-      //peTest.TuneCardiovascularCircuitTest(peDir);
+      peTest.TuneCardiovascularCircuitTest(peDir);
 
       //peTest.RenalCircuitAndTransportTest(peDir);
       //peTest.RenalTGFFeedbackTest(peDir);

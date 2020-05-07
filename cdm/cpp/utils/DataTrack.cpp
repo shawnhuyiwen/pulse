@@ -370,11 +370,11 @@ void DataTrack::Track(const std::string& name, double time, double value)
   {
     if(m_Logger != nullptr)
     {
-      m_Logger->Error("DataTrack array size error");
+      m_Logger->Error("DataTrack array size error for "+name);
     }
     else
     {
-      std::cout<<"DataTrack array size error";
+      std::cout<<"DataTrack array size error for " << name;
     }
   }
   else

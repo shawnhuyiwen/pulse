@@ -36,10 +36,11 @@ public:
 protected:
   // Set members to a stable homeostatic state
   void Initialize();
+
   // Set pointers and other member variables common to both homeostatic initialization and loading a state
   void SetUp();
 
-  void AtSteadyState();  
+  void AtSteadyState();
   void PreProcess();
   void Process();
   void PostProcess();
@@ -56,7 +57,7 @@ protected:
   void CalculatePulmonaryCapillarySubstanceTransfer();
   void CalculateVitals();
 
-  /*Postprocess Methods*/  
+  /*Postprocess Methods*/
 
   /*Diffusion Utilities*/
   void DistributeMassbyVolumeWeighted(SELiquidCompartment& cmpt, const SESubstance& sub, double mass, const MassUnit& unit);
@@ -79,7 +80,10 @@ protected:
   double m_RestingFluidMass_kg;
 
   // Stateless member variable (Set in SetUp())
-  double m_Dt_s;
+  double                      m_dt_s;
+  bool                        m_TuneCircuit = true;
+  std::string                 m_TuningFile;
+
   double m_AlbuminProdutionRate_g_Per_s;
   SESubstance*                m_Albumin;
   SESubstance*                m_Glucose;

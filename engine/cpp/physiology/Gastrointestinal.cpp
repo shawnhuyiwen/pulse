@@ -273,7 +273,7 @@ void Gastrointestinal::PreProcess()
       m_data.GetCurrentPatient().GetWeight().IncrementValue(c->GetNutrition().GetWeight(MassUnit::kg), MassUnit::kg);
       m_data.GetActions().GetPatientActions().RemoveConsumeNutrients();
     }
-    GastricSecretion(m_dT_s); // Move some water from the Gut EV fluids to the Stomach
+    //GastricSecretion(m_dT_s); // Move some water from the Gut EV fluids to the Stomach
     DigestStomachNutrients(m_dT_s);
   }
   else
@@ -319,7 +319,7 @@ void Gastrointestinal::DigestStomachNutrients(double duration_s)
   if (duration_s <= 0)
     return; // Nothing to do then
   if (!m_StomachContents->HasWater())
-    Fatal("There is no water in the Stomach??");// This is not good... what is going on?  
+    return;// Fatal("There is no water in the Stomach??");// This is not good... what is going on?  
 
   double digestedAmount;// either in g or mL
 

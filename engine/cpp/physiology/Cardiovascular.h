@@ -45,6 +45,10 @@ public:
 protected:
   // Set members to a stable homeostatic state
   void Initialize();
+  /**/void TuneCircuit();
+  /****/void TunePaths(double systemicResistanceScale, double systemicComplianceScale, double aortaResistanceScale, double aortaComplianceScale, double rightHeartResistanceScale, double venaCavaComplianceScale);
+  /**/void TuneTissue(double time_s, DataTrack& track, std::ofstream& circuitFile);
+
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
   void SetUp();
 
@@ -62,16 +66,11 @@ protected:
   // PreProcess:
   void HeartDriver();
   /**/void AdjustVascularTone();
+  /****/void MetabolicToneResponse();
   /**/void BeginCardiacCycle();
   /**/void CalculateHeartElastance();
-  /**/void UpdateHeartRhythm();
-  // IF STABILIZING
-  void TuneCircuit();
-  /**/void TunePaths(double systemicResistanceScale, double systemicComplianceScale, double aortaResistanceScale, double aortaComplianceScale, double rightHeartResistanceScale, double venaCavaComplianceScale);
-  // ELSE
-  void MetabolicToneResponse(); 
+  void UpdateHeartRhythm();
   void ProcessActions();
-  //Action methods
   /**/void CPR();
   /****/void CalculateAndSetCPRcompressionForce();
   /**/void Hemorrhage();
@@ -211,6 +210,7 @@ protected:
 
   std::vector<SEFluidCircuitPath*> m_systemicResistancePaths;
   std::vector<SEFluidCircuitPath*> m_systemicCompliancePaths;
+  std::vector<SEFluidCircuitPath*> m_TissueResistancePaths;
 
   //debugging hemorrhage
   double m_BloodVolumeEstimate;

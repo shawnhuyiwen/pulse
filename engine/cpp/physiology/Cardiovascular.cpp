@@ -611,6 +611,12 @@ void Cardiovascular::PreProcess()
   CalculatePleuralCavityVenousEffects();
 
   //Debugging
+  for (SEFluidCircuitPath* p : m_TissueResistancePaths)
+  {
+    m_data.GetDataTrack().Probe(p->GetName() + "_Flow(mL/min)", p->GetFlow(VolumePerTimeUnit::mL_Per_min));
+    m_data.GetDataTrack().Probe(p->GetName() + "_Pressure(mmHg)", p->GetTargetNode().GetPressure(PressureUnit::mmHg));
+  }
+
   m_data.GetDataTrack().Probe("BloodVolumeEstimate", m_BloodVolumeEstimate/1000.0);
 
   double percentageBloodLoss = ((m_data.GetCurrentPatient().GetBloodVolumeBaseline(VolumeUnit::mL) - GetBloodVolume().GetValue(VolumeUnit::mL)) / m_data.GetCurrentPatient().GetBloodVolumeBaseline(VolumeUnit::mL)) * 100;
@@ -621,6 +627,8 @@ void Cardiovascular::PreProcess()
 
   double normalizedMAP = GetMeanArterialPressure().GetValue(PressureUnit::mmHg) / m_data.GetCurrentPatient().GetMeanArterialPressureBaseline(PressureUnit::mmHg);
   m_data.GetDataTrack().Probe("NormalizedMAP", normalizedMAP);
+
+  m_data.GetDataTrack().Probe("GUT1-Volume", m_CirculatoryCircuit->GetNode(pulse::TissueNode::GutT1)->GetVolume(VolumeUnit::mL));
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -1753,284 +1761,6 @@ void Cardiovascular::MetabolicToneResponse()
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
-/// Tune the cardiovascular circuit during stabilization
-///
-/// \details
-/// Tunes the resistors and capacitors associated with tissue compartments during stabilization to achieve the requested patient parameters
-//--------------------------------------------------------------------------------------------------
-void Cardiovascular::TuneCircuit()
-{
-  DataTrack     circuitTrk;
-  std::ofstream circuitFile;
-
-  bool success = false;
-  double systolicTarget_mmHg = m_data.GetCurrentPatient().GetSystolicArterialPressureBaseline(PressureUnit::mmHg);
-  double diastolicTarget_mmHg = m_data.GetCurrentPatient().GetDiastolicArterialPressureBaseline(PressureUnit::mmHg);
-  double heartRateTarget_bpm = m_data.GetCurrentPatient().GetHeartRateBaseline(FrequencyUnit::Per_min);
-
-  m_ss << "Tuning to patient parameters : HeartRate(bpm):" << heartRateTarget_bpm << " Systolic(mmHg):" << systolicTarget_mmHg << " Diastolic(mmHg):" << diastolicTarget_mmHg;
-  Info(m_ss);
-
-  // Tuning variables  
-  double pressuretolerance = 0.01;
-  double stabPercentTolerance = 0.25;
-  double stabCheckTime_s = 15.0;
-  double srGain = 0.01; //Systemic is sensitive
-  double acGain1 = 0.06;//Gains are empirical
-  double acGain2 = 0.02;//Gains are empirical
-  double vrGain = 0.06; //Gains are empirical
-  
-  bool   stable;
-  double map_mmHg = 0, tgt_map_mmHg=0;
-  double systolic_mmHg = 0, tgt_systolic_mmHg=0;
-  double diastolic_mmHg = 0, tgt_diastolic_mmHg=0;
-  double cardiacOutput_mL_Per_min = 0, tgt_cardiacOutput_mL_Per_min=0;
-  double meanCVP_mmHg = 0, tgt_meanCVP_mmHg=0;
-  double blood_mL = 0, tgt_blood_mL=0;
-  
-  double time_s = 0;
-  double timeStep_s = m_data.GetTimeStep().GetValue(TimeUnit::s);
-  double stableTime_s;
-  double maxTime_s = 2000;
-  double maxConfigurations = 50;
-  for (int i = 0; i < maxConfigurations; i++)
-  {
-    stable = false;
-    stableTime_s = 0;
-    while (!stable)
-    {
-      m_data.AdvanceCallback(-1);
-      HeartDriver();
-      m_circuitCalculator->Process(*m_CirculatoryCircuit, m_dT_s);
-      CalculateVitalSigns();
-      m_circuitCalculator->PostProcess(*m_CirculatoryCircuit);
-      //return; //Skip stabelization for debugging
-
-      map_mmHg = GetMeanArterialPressure(PressureUnit::mmHg);
-      systolic_mmHg = GetSystolicArterialPressure(PressureUnit::mmHg);
-      diastolic_mmHg = GetDiastolicArterialPressure(PressureUnit::mmHg);
-      cardiacOutput_mL_Per_min = GetCardiacOutput(VolumePerTimeUnit::mL_Per_min);
-      meanCVP_mmHg = GetMeanCentralVenousPressure(PressureUnit::mmHg);
-      blood_mL = GetBloodVolume(VolumeUnit::mL);
-
-      stableTime_s += timeStep_s;
-      bool stableMAP = true;
-      if (GeneralMath::PercentDifference(tgt_map_mmHg, map_mmHg) > stabPercentTolerance)
-        { stableTime_s = 0; tgt_map_mmHg = map_mmHg; stableMAP = false;}
-      bool stableSystolic = true;
-      if (GeneralMath::PercentDifference(tgt_systolic_mmHg, systolic_mmHg) > stabPercentTolerance)
-        { stableTime_s = 0; tgt_systolic_mmHg = systolic_mmHg; stableSystolic = false; }
-      bool stableDiastolic = true;
-      if (GeneralMath::PercentDifference(tgt_diastolic_mmHg, diastolic_mmHg) > stabPercentTolerance)
-        { stableTime_s = 0; tgt_diastolic_mmHg = diastolic_mmHg; stableDiastolic = false; }
-      bool stableCO = true;
-      if (GeneralMath::PercentDifference(tgt_cardiacOutput_mL_Per_min, cardiacOutput_mL_Per_min) > stabPercentTolerance)
-        { stableTime_s = 0; tgt_cardiacOutput_mL_Per_min = cardiacOutput_mL_Per_min; stableCO = false; }
-      //bool stableMeanCVP = true;
-      //if (GeneralMath::PercentDifference(tgt_meanCVP_mmHg, meanCVP_mmHg) > 0.25)
-      //  { stableTime_s = 0; tgt_meanCVP_mmHg = meanCVP_mmHg; stableMeanCVP = false; }
-      bool stableBloodVol = true;
-      if (GeneralMath::PercentDifference(tgt_blood_mL, blood_mL) > stabPercentTolerance)
-        { stableTime_s = 0; tgt_blood_mL = blood_mL; stableBloodVol = false; }
-
-      if (stableTime_s > stabCheckTime_s)
-      {
-        stable = true;
-        m_ss << "We are stable at " << time_s;
-        Info(m_ss);
-      }
-      if (time_s > maxTime_s)
-      {
-        Error("Could not stabilize this configuration");
-        break;
-      }
-
-      if (!m_TuningFile.empty())
-      {
-        circuitTrk.Track(time_s, *m_CirculatoryCircuit);        
-        circuitTrk.Track("MAP_mmHg", time_s, map_mmHg);
-        circuitTrk.Track("Systolic_mmHg", time_s, systolic_mmHg);
-        circuitTrk.Track("Diastolilc_mmHg", time_s, diastolic_mmHg);
-        circuitTrk.Track("MeanCVP_mmHg", time_s, meanCVP_mmHg);
-        circuitTrk.Track("CardiacOutput_mL_per_s", time_s, cardiacOutput_mL_Per_min);
-        circuitTrk.Track("BloodVolume_mL", time_s, blood_mL);
-
-        if (time_s == 0)
-          circuitTrk.CreateFile(m_TuningFile.c_str(), circuitFile);
-         circuitTrk.StreamTrackToFile(circuitFile);
-      }
-      time_s += m_dT_s;
-    }
-    if (!m_TuneCircuit)
-    {
-      Info("Not tuning circuit");
-      success = true; // Assume this is what you want
-      break;
-    }
-
-    double systolicError_mmHg = systolicTarget_mmHg - systolic_mmHg;
-    double diastolicError_mmHg = diastolicTarget_mmHg - diastolic_mmHg;
-    if (stable)
-    {
-      // Compute the pressure errors     
-      if (std::abs(systolicError_mmHg / systolicTarget_mmHg) < pressuretolerance && std::abs(diastolicError_mmHg / diastolicTarget_mmHg) < pressuretolerance) //relative error check
-      {
-        success = true;
-        break; // We met our patient parameters
-      }
-    }
-
-    // This configuration did not meet the requests patient baselines, Tune the paths
-    double systemicResistanceScale = 1;
-    double systemicComplianceScale = 1;
-    double aortaResistanceScale = 1;
-    double aortaComplianceScale = 1;
-    double rightHeartResistanceScale = 1;
-    double venaCavaComplianceScale = 1;
-    if ((systolicError_mmHg > 0 && diastolicError_mmHg > 0) || (systolicError_mmHg < 0 && diastolicError_mmHg < 0)) // Same direction
-    {
-      if (cardiacOutput_mL_Per_min > 4000.0)
-      {
-        systemicResistanceScale += srGain * (systolicError_mmHg + diastolicError_mmHg);
-        BLIM(systemicResistanceScale, 0.5, 1.5);
-      }
-      else
-      {
-        rightHeartResistanceScale -= vrGain * (systolicError_mmHg + diastolicError_mmHg);
-        systemicResistanceScale += srGain * (systolicError_mmHg + diastolicError_mmHg);
-        BLIM(rightHeartResistanceScale, 0.5, 1.5);
-        BLIM(systemicResistanceScale, 0.5, 1.5);
-        Info("Using vena cava resistance gain.");
-      }
-    }
-    else if ((systolicError_mmHg > 0 && diastolicError_mmHg < 0) || (systolicError_mmHg < 0 && diastolicError_mmHg > 0)) // Opposite directions
-    {
-      // Widen or narrow based on both errors
-      if (meanCVP_mmHg < 2.0 || meanCVP_mmHg > 6.0) // Go ahead and do it but warn the user that CVP is out of normal range.
-        Warning("We're out of CVP range");
-      aortaComplianceScale -= acGain1 * systolicError_mmHg - acGain2 * diastolicError_mmHg;
-      BLIM(aortaComplianceScale, 0.5, 1.5);
-    }
-    else
-    {
-      // This means that both errors are zero, which means you shouldn't have called me
-      Error("Something is wrong with tuning logic");
-    }
-    m_ss << "Tuning paths, Current values : HeartRate(bpm):" << GetHeartRate(FrequencyUnit::Per_min) <<
-                                        " Systolic(mmHg):" << systolic_mmHg << 
-                                        " Diastolic(mmHg):" << diastolic_mmHg << 
-                                        " Cardiac Output(mL/min):" << cardiacOutput_mL_Per_min << 
-                                        " Mean CVP(mmHg):" << meanCVP_mmHg << 
-                                        " MAP(mmHg):" << GetMeanArterialPressure(PressureUnit::mmHg) << 
-                                        " BloodVolume(mL): " << blood_mL;
-    Info(m_ss);
-    TunePaths(systemicResistanceScale, systemicComplianceScale, aortaResistanceScale, aortaComplianceScale, rightHeartResistanceScale, venaCavaComplianceScale);
-  }
-
-
-  if (!success)
-  {
-    m_ss << "Unable to tune circuit to desired patient parameters. Final values : HeartRate(bpm):" << GetHeartRate(FrequencyUnit::Per_min) <<
-                                                                              " Systolic(mmHg):" << GetSystolicArterialPressure(PressureUnit::mmHg) << 
-                                                                              " Diastolic(mmHg):" << GetDiastolicArterialPressure(PressureUnit::mmHg) << 
-                                                                              " Cardiac Output(mL/min):" << GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << 
-                                                                              " Mean CVP(mmHg):" << GetMeanCentralVenousPressure(PressureUnit::mmHg) << 
-                                                                              " MAP(mmHg):" << GetMeanArterialPressure(PressureUnit::mmHg) << 
-                                                                              " BloodVolume(mL): " << blood_mL;
-    Fatal(m_ss);
-  }
-  else
-  {
-    m_ss << "Successfully tuned circuit. Final values : HeartRate(bpm):" << GetHeartRate(FrequencyUnit::Per_min) <<
-                                                    " Systolic(mmHg):" << GetSystolicArterialPressure(PressureUnit::mmHg) << 
-                                                    " Diastolic(mmHg):" << GetDiastolicArterialPressure(PressureUnit::mmHg) << 
-                                                    " Cardiac Output(mL/min):" << GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << 
-                                                    " Mean CVP(mmHg):" << GetMeanCentralVenousPressure(PressureUnit::mmHg) << 
-                                                    " MAP(mmHg):" << GetMeanArterialPressure(PressureUnit::mmHg) << 
-                                                    " BloodVolume(mL): " << blood_mL;
-    Info(m_ss);
-    // Reset our substance masses to the new volumes
-    for (SELiquidCompartment* c : m_data.GetCompartments().GetVascularLeafCompartments())
-    {
-      if (!c->HasVolume())
-        continue;
-      c->Balance(BalanceLiquidBy::Concentration);
-      if (m_CirculatoryGraph->GetCompartment(c->GetName()) == nullptr)
-        Info("Cardiovascular Graph does not have cmpt " + c->GetName());
-      if (c->HasSubstanceQuantity(m_data.GetSubstances().GetHb()))// Unit testing does not have any Hb
-        m_data.GetSaturationCalculator().CalculateBloodGasDistribution(*c);//so don't do this if we don't have Hb
-    }
-    for (SELiquidCompartment* c : m_data.GetCompartments().GetUrineLeafCompartments())
-    {
-      if (!c->HasVolume())
-        continue;
-      c->Balance(BalanceLiquidBy::Concentration);
-    }
-  }
-}
-//--------------------------------------------------------------------------------------------------
-/// \brief
-/// Method that changes path parameters during circuit tuning.
-///
-/// \details
-/// Method that changes path parameters during circuit tuning.
-//--------------------------------------------------------------------------------------------------
-void Cardiovascular::TunePaths(double systemicResistanceScale, double systemicComplianceScale, double aortaResistanceScale, double aortaComplianceScale, double rightHeartResistanceScale, double venaCavaComplianceScale)
-{
-  double sp1_mmHg_s_Per_mL;
-  if (systemicComplianceScale != 1.0)
-  {
-    for (SEFluidCircuitPath* p : m_systemicCompliancePaths)
-    {
-      sp1_mmHg_s_Per_mL = p->GetCapacitanceBaseline().GetValue(VolumePerPressureUnit::mL_Per_mmHg)*systemicComplianceScale;
-      p->GetCapacitanceBaseline().SetValue(sp1_mmHg_s_Per_mL, VolumePerPressureUnit::mL_Per_mmHg);
-      p->GetCapacitance().SetValue(sp1_mmHg_s_Per_mL, VolumePerPressureUnit::mL_Per_mmHg);
-      p->GetNextCapacitance().SetValue(sp1_mmHg_s_Per_mL, VolumePerPressureUnit::mL_Per_mmHg);
-    }
-  }
-  if (systemicResistanceScale != 1.0)
-  {
-    for (SEFluidCircuitPath *p : m_systemicResistancePaths)
-    {
-      sp1_mmHg_s_Per_mL = p->GetResistanceBaseline().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL)*systemicResistanceScale;
-
-      p->GetResistanceBaseline().SetValue(sp1_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-      p->GetResistance().SetValue(sp1_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-      p->GetNextResistance().SetValue(sp1_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-    }
-  }
-  if (aortaComplianceScale != 1)
-  {
-    sp1_mmHg_s_Per_mL = m_AortaCompliance->GetCapacitanceBaseline().GetValue(VolumePerPressureUnit::mL_Per_mmHg)*aortaComplianceScale;
-    m_AortaCompliance->GetCapacitanceBaseline().SetValue(sp1_mmHg_s_Per_mL, VolumePerPressureUnit::mL_Per_mmHg);
-    m_AortaCompliance->GetCapacitance().SetValue(sp1_mmHg_s_Per_mL, VolumePerPressureUnit::mL_Per_mmHg);
-    m_AortaCompliance->GetNextCapacitance().SetValue(sp1_mmHg_s_Per_mL, VolumePerPressureUnit::mL_Per_mmHg);
-  }
-  if (aortaResistanceScale != 1)
-  {
-    sp1_mmHg_s_Per_mL = m_AortaResistance->GetResistanceBaseline().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL)*aortaResistanceScale;
-    m_AortaResistance->GetResistanceBaseline().SetValue(sp1_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-    m_AortaResistance->GetResistance().SetValue(sp1_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-    m_AortaResistance->GetNextResistance().SetValue(sp1_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-  }
-  if (venaCavaComplianceScale != 1)
-  {
-    sp1_mmHg_s_Per_mL = m_VenaCavaCompliance->GetCapacitanceBaseline().GetValue(VolumePerPressureUnit::mL_Per_mmHg)*venaCavaComplianceScale;
-    m_VenaCavaCompliance->GetCapacitanceBaseline().SetValue(sp1_mmHg_s_Per_mL, VolumePerPressureUnit::mL_Per_mmHg);
-    m_VenaCavaCompliance->GetCapacitance().SetValue(sp1_mmHg_s_Per_mL, VolumePerPressureUnit::mL_Per_mmHg);
-    m_VenaCavaCompliance->GetNextCapacitance().SetValue(sp1_mmHg_s_Per_mL, VolumePerPressureUnit::mL_Per_mmHg);
-  }
-  if (rightHeartResistanceScale != 1)
-  {
-    sp1_mmHg_s_Per_mL = m_RightHeartResistance->GetResistanceBaseline().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL)*rightHeartResistanceScale;
-    m_RightHeartResistance->GetResistanceBaseline().SetValue(sp1_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-    m_RightHeartResistance->GetResistance().SetValue(sp1_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-    m_RightHeartResistance->GetNextResistance().SetValue(sp1_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-  }
-}
-
-//--------------------------------------------------------------------------------------------------
-/// \brief
 /// Adjusts vascular tone due to baroreceptor reflex, drug, and other effects
 ///
 /// \details
@@ -2184,4 +1914,508 @@ void Cardiovascular::CalculatePleuralCavityVenousEffects()
   //m_data.GetDataTrack().Probe("pleuralCavityPressureDiff_cmH2O", pleuralCavityPressureDiff_cmH2O);
   //m_data.GetDataTrack().Probe("resistanceMultiplier", resistanceMultiplier);
   //m_data.GetDataTrack().Probe("rightHeartResistance_mmHg_s_Per_mL", rightHeartResistance_mmHg_s_Per_mL);
+}
+
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Tune the cardiovascular circuit during stabilization
+///
+/// \details
+/// Tunes the resistors and capacitors associated with tissue compartments during stabilization to achieve the requested patient parameters
+//--------------------------------------------------------------------------------------------------
+void Cardiovascular::TuneCircuit()
+{
+  DataTrack     circuitTrk;
+  std::ofstream circuitFile;
+
+  bool success = false;
+  double systolicTarget_mmHg = m_data.GetCurrentPatient().GetSystolicArterialPressureBaseline(PressureUnit::mmHg);
+  double diastolicTarget_mmHg = m_data.GetCurrentPatient().GetDiastolicArterialPressureBaseline(PressureUnit::mmHg);
+  double heartRateTarget_bpm = m_data.GetCurrentPatient().GetHeartRateBaseline(FrequencyUnit::Per_min);
+
+  m_ss << "Tuning to patient parameters : HeartRate(bpm):" << heartRateTarget_bpm << " Systolic(mmHg):" << systolicTarget_mmHg << " Diastolic(mmHg):" << diastolicTarget_mmHg;
+  Info(m_ss);
+
+  // Tuning variables  
+  double pressuretolerance = 0.01;
+  double stabPercentTolerance = 0.25;
+  double stabCheckTime_s = 15.0;
+  double srGain = 0.01; //Systemic is sensitive
+  double acGain1 = 0.06;//Gains are empirical
+  double acGain2 = 0.02;//Gains are empirical
+  double vrGain = 0.06; //Gains are empirical
+
+  bool   stable;
+  double map_mmHg = 0, tgt_map_mmHg = 0;
+  double systolic_mmHg = 0, tgt_systolic_mmHg = 0;
+  double diastolic_mmHg = 0, tgt_diastolic_mmHg = 0;
+  double cardiacOutput_mL_Per_min = 0, tgt_cardiacOutput_mL_Per_min = 0;
+  double meanCVP_mmHg = 0, tgt_meanCVP_mmHg = 0;
+  double blood_mL = 0, tgt_blood_mL = 0;
+
+  double time_s = 0;
+  double stableTime_s;
+  double currentStableTime_s;
+  double maxStableTime_s = 800;
+  double maxConfigurations = 50;
+  for (int i = 0; i < maxConfigurations; i++)
+  {
+    stable = false;
+    stableTime_s = 0;
+    currentStableTime_s = 0;
+    while (!stable)
+    {
+      m_data.AdvanceCallback(-1);
+      HeartDriver();
+      m_circuitCalculator->Process(*m_CirculatoryCircuit, m_dT_s);
+      CalculateVitalSigns();
+      m_circuitCalculator->PostProcess(*m_CirculatoryCircuit);
+      //return; //Skip stabelization for debugging
+
+      map_mmHg = GetMeanArterialPressure(PressureUnit::mmHg);
+      systolic_mmHg = GetSystolicArterialPressure(PressureUnit::mmHg);
+      diastolic_mmHg = GetDiastolicArterialPressure(PressureUnit::mmHg);
+      cardiacOutput_mL_Per_min = GetCardiacOutput(VolumePerTimeUnit::mL_Per_min);
+      meanCVP_mmHg = GetMeanCentralVenousPressure(PressureUnit::mmHg);
+      blood_mL = GetBloodVolume(VolumeUnit::mL);
+
+      stableTime_s += m_dT_s;
+      currentStableTime_s += m_dT_s;
+      bool stableMAP = true;
+      if (GeneralMath::PercentDifference(tgt_map_mmHg, map_mmHg) > stabPercentTolerance)
+      {
+        stableTime_s = 0; tgt_map_mmHg = map_mmHg; stableMAP = false;
+      }
+      bool stableSystolic = true;
+      if (GeneralMath::PercentDifference(tgt_systolic_mmHg, systolic_mmHg) > stabPercentTolerance)
+      {
+        stableTime_s = 0; tgt_systolic_mmHg = systolic_mmHg; stableSystolic = false;
+      }
+      bool stableDiastolic = true;
+      if (GeneralMath::PercentDifference(tgt_diastolic_mmHg, diastolic_mmHg) > stabPercentTolerance)
+      {
+        stableTime_s = 0; tgt_diastolic_mmHg = diastolic_mmHg; stableDiastolic = false;
+      }
+      bool stableCO = true;
+      if (GeneralMath::PercentDifference(tgt_cardiacOutput_mL_Per_min, cardiacOutput_mL_Per_min) > stabPercentTolerance)
+      {
+        stableTime_s = 0; tgt_cardiacOutput_mL_Per_min = cardiacOutput_mL_Per_min; stableCO = false;
+      }
+      //bool stableMeanCVP = true;
+      //if (GeneralMath::PercentDifference(tgt_meanCVP_mmHg, meanCVP_mmHg) > 0.25)
+      //  { stableTime_s = 0; tgt_meanCVP_mmHg = meanCVP_mmHg; stableMeanCVP = false; }
+      bool stableBloodVol = true;
+      if (GeneralMath::PercentDifference(tgt_blood_mL, blood_mL) > stabPercentTolerance)
+      {
+        stableTime_s = 0; tgt_blood_mL = blood_mL; stableBloodVol = false;
+      }
+
+      if (stableTime_s > stabCheckTime_s)
+      {
+        stable = true;
+        m_ss << "We are stable at " << time_s;
+        Info(m_ss);
+      }
+      if (currentStableTime_s > maxStableTime_s)
+      {
+        Error("Could not stabilize this configuration");
+        break;
+      }
+
+      if (!m_TuningFile.empty())
+      {
+        circuitTrk.Track(time_s, *m_CirculatoryCircuit);
+        circuitTrk.Track("MAP_mmHg", time_s, map_mmHg);
+        circuitTrk.Track("Systolic_mmHg", time_s, systolic_mmHg);
+        circuitTrk.Track("Diastolilc_mmHg", time_s, diastolic_mmHg);
+        circuitTrk.Track("MeanCVP_mmHg", time_s, meanCVP_mmHg);
+        circuitTrk.Track("CardiacOutput_mL_per_s", time_s, cardiacOutput_mL_Per_min);
+        circuitTrk.Track("BloodVolume_mL", time_s, blood_mL);
+
+        if (time_s == 0)
+          circuitTrk.CreateFile(m_TuningFile.c_str(), circuitFile);
+        circuitTrk.StreamTrackToFile(circuitFile);
+      }
+      time_s += m_dT_s;
+    }
+    if (!m_TuneCircuit)
+    {
+      Info("Not tuning circuit");
+      success = true; // Assume this is what you want
+      break;
+    }
+
+    double systolicError_mmHg = systolicTarget_mmHg - systolic_mmHg;
+    double diastolicError_mmHg = diastolicTarget_mmHg - diastolic_mmHg;
+    if (stable)
+    {
+      // Compute the pressure errors     
+      if (std::abs(systolicError_mmHg / systolicTarget_mmHg) < pressuretolerance && std::abs(diastolicError_mmHg / diastolicTarget_mmHg) < pressuretolerance) //relative error check
+      {
+        success = true;
+        break; // We met our patient parameters
+      }
+    }
+
+    // This configuration did not meet the requests patient baselines, Tune the paths
+    double systemicResistanceScale = 1;
+    double systemicComplianceScale = 1;
+    double aortaResistanceScale = 1;
+    double aortaComplianceScale = 1;
+    double rightHeartResistanceScale = 1;
+    double venaCavaComplianceScale = 1;
+    if ((systolicError_mmHg > 0 && diastolicError_mmHg > 0) || (systolicError_mmHg < 0 && diastolicError_mmHg < 0)) // Same direction
+    {
+      if (cardiacOutput_mL_Per_min > 4000.0)
+      {
+        systemicResistanceScale += srGain * (systolicError_mmHg + diastolicError_mmHg);
+        BLIM(systemicResistanceScale, 0.5, 1.5);
+      }
+      else
+      {
+        rightHeartResistanceScale -= vrGain * (systolicError_mmHg + diastolicError_mmHg);
+        systemicResistanceScale += srGain * (systolicError_mmHg + diastolicError_mmHg);
+        BLIM(rightHeartResistanceScale, 0.5, 1.5);
+        BLIM(systemicResistanceScale, 0.5, 1.5);
+        Info("Using vena cava resistance gain.");
+      }
+    }
+    else if ((systolicError_mmHg > 0 && diastolicError_mmHg < 0) || (systolicError_mmHg < 0 && diastolicError_mmHg > 0)) // Opposite directions
+    {
+      // Widen or narrow based on both errors
+      if (meanCVP_mmHg < 2.0 || meanCVP_mmHg > 6.0) // Go ahead and do it but warn the user that CVP is out of normal range.
+        Warning("We're out of CVP range");
+      aortaComplianceScale -= acGain1 * systolicError_mmHg - acGain2 * diastolicError_mmHg;
+      BLIM(aortaComplianceScale, 0.5, 1.5);
+    }
+    else
+    {
+      // This means that both errors are zero, which means you shouldn't have called me
+      Error("Something is wrong with tuning logic");
+    }
+    m_ss << "Tuning paths, Current values : HeartRate(bpm):" << GetHeartRate(FrequencyUnit::Per_min) <<
+      " Systolic(mmHg):" << systolic_mmHg <<
+      " Diastolic(mmHg):" << diastolic_mmHg <<
+      " Cardiac Output(mL/min):" << cardiacOutput_mL_Per_min <<
+      " Mean CVP(mmHg):" << meanCVP_mmHg <<
+      " MAP(mmHg):" << GetMeanArterialPressure(PressureUnit::mmHg) <<
+      " BloodVolume(mL): " << blood_mL;
+    Info(m_ss);
+    TunePaths(systemicResistanceScale, systemicComplianceScale, aortaResistanceScale, aortaComplianceScale, rightHeartResistanceScale, venaCavaComplianceScale);
+  }
+  // Set the Tissue Pressure to the CV Pressures
+  // Loop to decrement the Tissue Resistance, check that the flow is under 5mL/min
+
+  if (!success)
+  {
+    m_ss << "Unable to tune circuit to desired patient parameters. Final values : HeartRate(bpm):" << GetHeartRate(FrequencyUnit::Per_min) <<
+      " Systolic(mmHg):" << GetSystolicArterialPressure(PressureUnit::mmHg) <<
+      " Diastolic(mmHg):" << GetDiastolicArterialPressure(PressureUnit::mmHg) <<
+      " Cardiac Output(mL/min):" << GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) <<
+      " Mean CVP(mmHg):" << GetMeanCentralVenousPressure(PressureUnit::mmHg) <<
+      " MAP(mmHg):" << GetMeanArterialPressure(PressureUnit::mmHg) <<
+      " BloodVolume(mL): " << blood_mL;
+    Fatal(m_ss);
+  }
+  else
+  {
+    m_ss << "Successfully tuned circuit. Final values : HeartRate(bpm):" << GetHeartRate(FrequencyUnit::Per_min) <<
+      " Systolic(mmHg):" << GetSystolicArterialPressure(PressureUnit::mmHg) <<
+      " Diastolic(mmHg):" << GetDiastolicArterialPressure(PressureUnit::mmHg) <<
+      " Cardiac Output(mL/min):" << GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) <<
+      " Mean CVP(mmHg):" << GetMeanCentralVenousPressure(PressureUnit::mmHg) <<
+      " MAP(mmHg):" << GetMeanArterialPressure(PressureUnit::mmHg) <<
+      " BloodVolume(mL): " << blood_mL;
+    Info(m_ss);
+    // Now tune the tissue nodes
+    TuneTissue(time_s, circuitTrk, circuitFile);
+    // Reset our substance masses to the new volumes
+    for (SELiquidCompartment* c : m_data.GetCompartments().GetVascularLeafCompartments())
+    {
+      if (!c->HasVolume())
+        continue;
+      c->Balance(BalanceLiquidBy::Concentration);
+      if (m_CirculatoryGraph->GetCompartment(c->GetName()) == nullptr)
+        Info("Cardiovascular Graph does not have cmpt " + c->GetName());
+      if (c->HasSubstanceQuantity(m_data.GetSubstances().GetHb()))// Unit testing does not have any Hb
+        m_data.GetSaturationCalculator().CalculateBloodGasDistribution(*c);//so don't do this if we don't have Hb
+    }
+    for (SELiquidCompartment* c : m_data.GetCompartments().GetUrineLeafCompartments())
+    {
+      if (!c->HasVolume())
+        continue;
+      c->Balance(BalanceLiquidBy::Concentration);
+    }
+  }
+}
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Method that changes path parameters during circuit tuning.
+///
+/// \details
+/// Method that changes path parameters during circuit tuning.
+//--------------------------------------------------------------------------------------------------
+void Cardiovascular::TunePaths(double systemicResistanceScale, double systemicComplianceScale, double aortaResistanceScale, double aortaComplianceScale, double rightHeartResistanceScale, double venaCavaComplianceScale)
+{
+  double sp1_mmHg_s_Per_mL;
+  if (systemicComplianceScale != 1.0)
+  {
+    for (SEFluidCircuitPath* p : m_systemicCompliancePaths)
+    {
+      sp1_mmHg_s_Per_mL = p->GetCapacitanceBaseline().GetValue(VolumePerPressureUnit::mL_Per_mmHg) * systemicComplianceScale;
+      p->GetCapacitanceBaseline().SetValue(sp1_mmHg_s_Per_mL, VolumePerPressureUnit::mL_Per_mmHg);
+      p->GetCapacitance().SetValue(sp1_mmHg_s_Per_mL, VolumePerPressureUnit::mL_Per_mmHg);
+      p->GetNextCapacitance().SetValue(sp1_mmHg_s_Per_mL, VolumePerPressureUnit::mL_Per_mmHg);
+    }
+  }
+  if (systemicResistanceScale != 1.0)
+  {
+    for (SEFluidCircuitPath* p : m_systemicResistancePaths)
+    {
+      sp1_mmHg_s_Per_mL = p->GetResistanceBaseline().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL) * systemicResistanceScale;
+
+      p->GetResistanceBaseline().SetValue(sp1_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+      p->GetResistance().SetValue(sp1_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+      p->GetNextResistance().SetValue(sp1_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    }
+  }
+  if (aortaComplianceScale != 1)
+  {
+    sp1_mmHg_s_Per_mL = m_AortaCompliance->GetCapacitanceBaseline().GetValue(VolumePerPressureUnit::mL_Per_mmHg) * aortaComplianceScale;
+    m_AortaCompliance->GetCapacitanceBaseline().SetValue(sp1_mmHg_s_Per_mL, VolumePerPressureUnit::mL_Per_mmHg);
+    m_AortaCompliance->GetCapacitance().SetValue(sp1_mmHg_s_Per_mL, VolumePerPressureUnit::mL_Per_mmHg);
+    m_AortaCompliance->GetNextCapacitance().SetValue(sp1_mmHg_s_Per_mL, VolumePerPressureUnit::mL_Per_mmHg);
+  }
+  if (aortaResistanceScale != 1)
+  {
+    sp1_mmHg_s_Per_mL = m_AortaResistance->GetResistanceBaseline().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL) * aortaResistanceScale;
+    m_AortaResistance->GetResistanceBaseline().SetValue(sp1_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    m_AortaResistance->GetResistance().SetValue(sp1_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    m_AortaResistance->GetNextResistance().SetValue(sp1_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+  }
+  if (venaCavaComplianceScale != 1)
+  {
+    sp1_mmHg_s_Per_mL = m_VenaCavaCompliance->GetCapacitanceBaseline().GetValue(VolumePerPressureUnit::mL_Per_mmHg) * venaCavaComplianceScale;
+    m_VenaCavaCompliance->GetCapacitanceBaseline().SetValue(sp1_mmHg_s_Per_mL, VolumePerPressureUnit::mL_Per_mmHg);
+    m_VenaCavaCompliance->GetCapacitance().SetValue(sp1_mmHg_s_Per_mL, VolumePerPressureUnit::mL_Per_mmHg);
+    m_VenaCavaCompliance->GetNextCapacitance().SetValue(sp1_mmHg_s_Per_mL, VolumePerPressureUnit::mL_Per_mmHg);
+  }
+  if (rightHeartResistanceScale != 1)
+  {
+    sp1_mmHg_s_Per_mL = m_RightHeartResistance->GetResistanceBaseline().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL) * rightHeartResistanceScale;
+    m_RightHeartResistance->GetResistanceBaseline().SetValue(sp1_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    m_RightHeartResistance->GetResistance().SetValue(sp1_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    m_RightHeartResistance->GetNextResistance().SetValue(sp1_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+  }
+}
+
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Tune the resistance between the CV circuit and Tissue Circuit during stabilization
+///
+/// \details
+/// Tunes the resistors associated with tissue compartments during stabilization to achieve the requested patient parameters
+//--------------------------------------------------------------------------------------------------
+void Cardiovascular::TuneTissue(double time_s, DataTrack& circuitTrk, std::ofstream& circuitFile)
+{
+  bool stable;
+  bool success = false;
+
+  // Copy all the CV pressures to the associated tissue nodes
+
+  std::vector<SEFluidCircuitNode*> m_TissuePressureCVSources;
+  m_TissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Bone1));
+  m_TissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Brain1));
+  m_TissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Fat1));
+  m_TissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::SmallIntestine1));
+  //m_TissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::LargeIntestine1));
+  //m_TissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Splanchnic1));
+  m_TissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Liver1));
+  m_TissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::RenalNode::LeftGlomerularCapillaries));
+  m_TissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::LeftPulmonaryCapillaries));
+  m_TissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Muscle1));
+  m_TissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Myocardium1));
+  m_TissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::RightPulmonaryCapillaries));
+  m_TissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::RenalNode::RightGlomerularCapillaries));
+  m_TissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Skin1));
+  m_TissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Spleen1));
+
+  // Get the tissue resistance paths to decrement until we get a flow of at least (TBD)
+  std::vector<double> flowMax;
+  std::vector<double> flowMin;
+  m_TissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::BoneT2ToBoneT1));
+  m_TissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::BrainT2ToBrainT1));
+  m_TissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::FatT2ToFatT1));
+  m_TissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::GutT2ToGutT1));
+  m_TissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::LiverT2ToLiverT1));
+  m_TissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::LeftKidneyT2ToLeftKidneyT1));
+  m_TissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::LeftLungT2ToLeftLungT1));
+  m_TissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::MuscleT2ToMuscleT1));
+  m_TissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::MyocardiumT2ToMyocardiumT1));
+  m_TissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::RightLungT2ToRightLungT1));
+  m_TissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::RightKidneyT2ToRightKidneyT1));
+  m_TissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::SkinT2ToSkinT1));
+  m_TissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::SpleenT2ToSpleenT1));
+  Info("Tuning Tissue resistances at "+std::to_string(time_s)+"s");
+  for (SEFluidCircuitPath* path : m_TissueResistancePaths)
+  {
+    size_t n = flowMax.size();
+    flowMax.push_back(0);
+    flowMin.push_back(0);
+    path->GetTargetNode().GetPressure().Set(m_TissuePressureCVSources[n]->GetPressure());
+    path->GetTargetNode().GetNextPressure().Set(m_TissuePressureCVSources[n]->GetNextPressure());
+    Info("  " + path->GetName() + " Flow : " + path->GetFlow().ToString());
+    Info("  " + path->GetName() + " Resistance : " + path->GetResistance().ToString());
+  }
+
+  // Tuning variables
+  double pressuretolerance = 0.01;
+  double stabPercentTolerance = 0.25;
+  double stabCheckTime_s = 15.0;
+
+  //double stableTime_s;
+  double currentStableTime_s;
+  double maxStableTime_s = 20;
+  double maxConfigurations = 50;
+  double resistanceScale = 1.0;
+  for (int i = 0; i < maxConfigurations; i++)
+  {
+    stable = false;
+    //stableTime_s = 0;
+    currentStableTime_s = 0;
+    for (size_t m=0; m< flowMax.size(); m++)
+    {
+      flowMax[m]=-1000;
+      flowMin[m]=1000;
+    }
+
+    while (!stable)
+    {
+      m_data.AdvanceCallback(-1);
+      HeartDriver();
+      m_circuitCalculator->Process(*m_CirculatoryCircuit, m_dT_s);
+      CalculateVitalSigns();
+      m_circuitCalculator->PostProcess(*m_CirculatoryCircuit);
+      //return; //Skip stabelization for debugging
+
+      time_s += m_dT_s;
+      //stableTime_s += m_dT_s;
+      currentStableTime_s += m_dT_s;
+      //// Are all the flows stable yet
+      //for (size_t p = 0; p < pressure_mmHg.size(); p++)
+      //{
+      //  double pressure = pressure_mmHg[p];
+      //  double current_pressure = m_TissueResistancePaths[p]->GetTargetNode().GetPressure(PressureUnit::mmHg);
+      //  if (GeneralMath::PercentDifference(pressure, current_pressure) > stabPercentTolerance) // Flows are pulsitile, not a good stable hurestic
+      //  {
+      //    stableTime_s = 0;
+      //    pressure_mmHg[p] = current_pressure;
+      //    break;
+      //  }
+      //}
+      //if (stableTime_s > stabCheckTime_s)
+      //{
+      //  stable = true;
+      //  m_ss << "We are stable at " << time_s;
+      //  Info(m_ss);
+      //}
+
+      for (size_t m=0; m<m_TissueResistancePaths.size(); m++)
+      {
+        SEFluidCircuitPath* path = m_TissueResistancePaths[m];
+        double max = flowMax[m];
+        double min = flowMin[m];
+        double current = path->GetFlow(VolumePerTimeUnit::mL_Per_s);
+        if (current > max)
+          flowMax[m] = current;
+        if (current < min)
+          flowMin[m] = current;
+      }
+
+      if (!m_TuningFile.empty())
+      {
+        circuitTrk.Track(time_s, *m_CirculatoryCircuit);
+        circuitTrk.Track("MAP_mmHg", time_s, GetMeanArterialPressure(PressureUnit::mmHg));
+        circuitTrk.Track("Systolic_mmHg", time_s, GetSystolicArterialPressure(PressureUnit::mmHg));
+        circuitTrk.Track("Diastolilc_mmHg", time_s, GetDiastolicArterialPressure(PressureUnit::mmHg));
+        circuitTrk.Track("MeanCVP_mmHg", time_s, GetMeanCentralVenousPressure(PressureUnit::mmHg));
+        circuitTrk.Track("CardiacOutput_mL_per_s", time_s, GetCardiacOutput(VolumePerTimeUnit::mL_Per_s));
+        circuitTrk.Track("BloodVolume_mL", time_s, GetBloodVolume(VolumeUnit::mL));
+        circuitTrk.StreamTrackToFile(circuitFile);
+      }
+      if (currentStableTime_s > maxStableTime_s)
+        break;
+    }
+
+    // This configuration did not meet the requests patient baselines, Reduce resistance on the paths
+    size_t pCnt = 0;
+    double sp1_mmHg_s_Per_mL;
+    resistanceScale = 0.5;
+    for (size_t m=0; m<m_TissueResistancePaths.size(); m++)
+    {
+      double flowWindow = fabs(flowMax[m] - flowMin[m]);
+      SEFluidCircuitPath* p = m_TissueResistancePaths[m];
+      sp1_mmHg_s_Per_mL = p->GetResistanceBaseline().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+      if (flowWindow < 0.03)//~2mL/min
+      {
+        pCnt++;
+        sp1_mmHg_s_Per_mL = sp1_mmHg_s_Per_mL - (sp1_mmHg_s_Per_mL * resistanceScale);
+      }
+      if (flowWindow > 0.08)//~5mL/min
+      {
+        pCnt++;
+        sp1_mmHg_s_Per_mL = sp1_mmHg_s_Per_mL + (sp1_mmHg_s_Per_mL * resistanceScale);
+      }
+      p->GetResistanceBaseline().SetValue(sp1_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+      p->GetResistance().SetValue(sp1_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+      p->GetNextResistance().SetValue(sp1_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+      //Info("  " + p->GetName() + " Resistance : " + p->GetResistance().ToString());
+      //Info("  " + p->GetName() + " Flow : " + p->GetFlow().ToString());
+    }
+    Info("Tuning " + std::to_string(pCnt) + "/" + std::to_string(m_TissueResistancePaths.size()) + " paths at " + std::to_string(time_s) + "s");
+
+    if (pCnt==0)
+    {
+      success = true;
+      break; // Tissue resistances are good
+    }
+  }
+
+  if (!success)
+  {
+    Fatal("Unable to tune circuit at " + std::to_string(time_s) + "s");
+  }
+  else
+  {
+    Info("Finalizing CV Circuit...");
+    // Let things settle a bit
+    double extra_s = time_s + 30;
+    while (time_s < extra_s)
+    {
+      m_data.AdvanceCallback(-1);
+      HeartDriver();
+      m_circuitCalculator->Process(*m_CirculatoryCircuit, m_dT_s);
+      CalculateVitalSigns();
+      m_circuitCalculator->PostProcess(*m_CirculatoryCircuit);
+      time_s += m_dT_s;
+      if (!m_TuningFile.empty())
+      {
+        circuitTrk.Track(time_s, *m_CirculatoryCircuit);
+        circuitTrk.Track("MAP_mmHg", time_s, GetMeanArterialPressure(PressureUnit::mmHg));
+        circuitTrk.Track("Systolic_mmHg", time_s, GetSystolicArterialPressure(PressureUnit::mmHg));
+        circuitTrk.Track("Diastolilc_mmHg", time_s, GetDiastolicArterialPressure(PressureUnit::mmHg));
+        circuitTrk.Track("MeanCVP_mmHg", time_s, GetMeanCentralVenousPressure(PressureUnit::mmHg));
+        circuitTrk.Track("CardiacOutput_mL_per_s", time_s, GetCardiacOutput(VolumePerTimeUnit::mL_Per_s));
+        circuitTrk.Track("BloodVolume_mL", time_s, GetBloodVolume(VolumeUnit::mL));
+        circuitTrk.StreamTrackToFile(circuitFile);
+      }
+    }
+    Info("Successfully tuned tissue circuit at " + std::to_string(time_s) + "s");
+  }
+  for (SEFluidCircuitPath* p : m_TissueResistancePaths)
+  {
+    Info("  " + p->GetName() + " Resistance : " + p->GetResistance().ToString());
+    Info("  " + p->GetName() + " Flow : " + p->GetFlow().ToString());
+  }
+  
 }

@@ -24,8 +24,9 @@
 /// \brief
 /// Calculates the concentration of a substance given mass and volume. concentration = mass / volume
 //--------------------------------------------------------------------------------------------------
-void GeneralMath::CalculateConcentration(const SEScalarMass& mass, const SEScalarVolume& volume, SEScalarMassPerVolume& concentration, Logger* logger)
+bool GeneralMath::CalculateConcentration(const SEScalarMass& mass, const SEScalarVolume& volume, SEScalarMassPerVolume& concentration, Logger* logger)
 {
+  bool ret = true;
   //concentration = mass/volume
   double mass_ug = mass.GetValue(MassUnit::ug);
   double  volume_mL = volume.GetValue(VolumeUnit::mL);
@@ -36,6 +37,7 @@ void GeneralMath::CalculateConcentration(const SEScalarMass& mass, const SEScala
     ss << "GeneralMath::CalculateConcentration: Mass is negative:" << mass_ug << " ug. Setting concentration to 0.";
     logger->Error(ss);
     mass_ug = 0.0;
+    ret = false;
   }
   if (volume_mL < 0.0)
   {
@@ -43,19 +45,22 @@ void GeneralMath::CalculateConcentration(const SEScalarMass& mass, const SEScala
     ss << "GeneralMath::CalculateConcentration: Volume is negative:" << volume_mL << " mL. Setting it to 0.";
     logger->Error(ss);
     volume_mL = 0.0;
+    ret = false;
   }
   if (volume_mL == 0.0)
     concentration.SetValue(0.0, MassPerVolumeUnit::ug_Per_mL);
   else
     concentration.SetValue(mass_ug / volume_mL, MassPerVolumeUnit::ug_Per_mL);
+  return ret;
 }
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
 /// Calculates the mass of a substance given concentration and volume. mass = concentration * volume
 //--------------------------------------------------------------------------------------------------
-void GeneralMath::CalculateMass(const SEScalarVolume& volume, const SEScalarMassPerVolume& concentration, SEScalarMass& mass, Logger* logger)
+bool GeneralMath::CalculateMass(const SEScalarVolume& volume, const SEScalarMassPerVolume& concentration, SEScalarMass& mass, Logger* logger)
 {
+  bool ret = true;
   // mass = concentration*volume
   double volume_mL = volume.GetValue(VolumeUnit::mL);
   double concentration_ug_Per_mL = concentration.GetValue(MassPerVolumeUnit::ug_Per_mL);
@@ -65,6 +70,7 @@ void GeneralMath::CalculateMass(const SEScalarVolume& volume, const SEScalarMass
     ss << "GeneralMath::CalculateMass: Mass is negative:" << concentration_ug_Per_mL << " ug/mL. Setting it to 0.";
     logger->Error(ss);
     concentration_ug_Per_mL = 0.0;
+    ret = false;
   }
   if (volume_mL < 0.0)
   {
@@ -72,16 +78,19 @@ void GeneralMath::CalculateMass(const SEScalarVolume& volume, const SEScalarMass
     ss << "GeneralMath::CalculateMass: Volume is negative:" << volume_mL << " mL. Setting it to 0.";
     logger->Error(ss);
     volume_mL = 0.0;
+    ret = false;
   }
   mass.SetValue(volume_mL*concentration_ug_Per_mL, MassUnit::ug);
+  return ret;
 }
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
 /// Calculates the mass of a substance given concentration and volume. mass = concentration * volume
 //--------------------------------------------------------------------------------------------------
-void GeneralMath::CalculateHenrysLawConcentration(const SESubstance& substance, const SEScalarPressure& partialPressure, SEScalarMassPerVolume& concentration, Logger* logger)
+bool GeneralMath::CalculateHenrysLawConcentration(const SESubstance& substance, const SEScalarPressure& partialPressure, SEScalarMassPerVolume& concentration, Logger* logger)
 {
+  bool ret = true;
   double pp_mmHg = partialPressure.GetValue(PressureUnit::mmHg);
   if (substance.GetState() != eSubstance_State::Gas)
     throw CommonDataModelException("Cannot calculate a molarity by Henry's law from partial pressure of a non gaseous substance in a liquid");
@@ -91,11 +100,13 @@ void GeneralMath::CalculateHenrysLawConcentration(const SESubstance& substance, 
     ss << "GeneralMath::CalculateHenrysLawConcentration: Pressure is negative:" << pp_mmHg << " mmHg. Setting it to 0.";
     logger->Error(ss);
     pp_mmHg = 0.0;
+    ret = false;
   }
   double density_ug_Per_mL = substance.GetDensity(MassPerVolumeUnit::ug_Per_mL);
   double solubilityCoefficient_Per_mmHg = substance.GetSolubilityCoefficient(InversePressureUnit::Inverse_mmHg);
   double concentration_ug_Per_mL = pp_mmHg * density_ug_Per_mL * solubilityCoefficient_Per_mmHg;
   concentration.SetValue(concentration_ug_Per_mL, MassPerVolumeUnit::ug_Per_mL);
+  return ret;
 }
 
 
@@ -122,8 +133,9 @@ void GeneralMath::CalculateOsmolality(const SEScalarAmountPerVolume& sodiumMolar
 /// \brief
 /// Calculates the partial pressure of a substance in gas based on the volumeFraction * pressure
 //--------------------------------------------------------------------------------------------------
-void GeneralMath::CalculatePartialPressureInGas(const SEScalar0To1& volumeFraction, const SEScalarPressure& pressure, SEScalarPressure& partialPressure, Logger* logger)
+bool GeneralMath::CalculatePartialPressureInGas(const SEScalar0To1& volumeFraction, const SEScalarPressure& pressure, SEScalarPressure& partialPressure, Logger* logger)
 {
+  bool ret = true;
   double VolumeFraction = volumeFraction.GetValue();
   double pressure_cmH2O = pressure.GetValue(PressureUnit::cmH2O);
   if (VolumeFraction < 0.0)
@@ -132,16 +144,19 @@ void GeneralMath::CalculatePartialPressureInGas(const SEScalar0To1& volumeFracti
     ss << "GeneralMath::CalculateConcentration: Volume Fraction is negative:" << VolumeFraction << ". Setting it to 0.";
     logger->Error(ss);
     VolumeFraction = 0.0;
+    ret = false;
   }
   partialPressure.SetValue(VolumeFraction*pressure_cmH2O, PressureUnit::cmH2O);
+  return ret;
 }
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
 /// Calculates the partial pressure of a substance in liquid using (density and solubility coefficient) and the concentration
 //--------------------------------------------------------------------------------------------------
-void GeneralMath::CalculatePartialPressureInLiquid(const SESubstance& substance, const SEScalarMassPerVolume& concentration, SEScalarPressure& partialPressure, Logger* logger)
+bool GeneralMath::CalculatePartialPressureInLiquid(const SESubstance& substance, const SEScalarMassPerVolume& concentration, SEScalarPressure& partialPressure, Logger* logger)
 {
+  bool ret = true;
   if (substance.GetState() != eSubstance_State::Gas)
     throw CommonDataModelException("Cannot calculate a partial pressure of a non gaseous substance in a liquid");
   double concentration_ug_Per_mL = concentration.GetValue(MassPerVolumeUnit::ug_Per_mL);
@@ -151,19 +166,22 @@ void GeneralMath::CalculatePartialPressureInLiquid(const SESubstance& substance,
     ss << "GeneralMath::CalculateConcentration: Concentration is negative:" << concentration_ug_Per_mL << " ug/mL. Setting it to 0.";
     logger->Error(ss);
     concentration_ug_Per_mL = 0.0;
+    ret = false;
   }
   double density_ug_Per_mL = substance.GetDensity(MassPerVolumeUnit::ug_Per_mL);
   double solubilityCoefficient_Per_mmHg = substance.GetSolubilityCoefficient(InversePressureUnit::Inverse_mmHg);
   double partialPressure_mmHg = (concentration_ug_Per_mL / density_ug_Per_mL) / solubilityCoefficient_Per_mmHg;
   partialPressure.SetValue(partialPressure_mmHg, PressureUnit::mmHg);
+  return ret;
 }
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
 // This function makes the assumption that the fluid medium is water to extrapolate that the fluid volume in mL is equivalent to the fluid weight in g  
 //--------------------------------------------------------------------------------------------------
-void GeneralMath::CalculateSpecificGravity(const SEScalarMass& mass, const SEScalarVolume& volume, SEScalar& specificGravity, Logger* logger)
+bool GeneralMath::CalculateSpecificGravity(const SEScalarMass& mass, const SEScalarVolume& volume, SEScalar& specificGravity, Logger* logger)
 {
+  bool ret = true;
   // compute density of given substance then divide by water density in g/mL (assuming 37 degrees C, body internal temp):
   double mass_g = mass.GetValue(MassUnit::g);
   double  volume_mL = volume.GetValue(VolumeUnit::mL);
@@ -176,6 +194,7 @@ void GeneralMath::CalculateSpecificGravity(const SEScalarMass& mass, const SESca
     ss << "GeneralMath::CalculateSpecificGravity: Mass is negative:" << totalmass_g << " ug. Setting it to 0.";
     logger->Error(ss);
     totalmass_g = 0.0;
+    ret = false;
   }
   if (volume_mL < 0.0)
   {
@@ -183,11 +202,13 @@ void GeneralMath::CalculateSpecificGravity(const SEScalarMass& mass, const SESca
     ss << "GeneralMath::CalculateSpecificGravity: Volume is negative:" << volume_mL << " mL. Setting it to 0.";
     logger->Error(ss);
     volume_mL = 0.0;
+    ret = false;
   }
   if (volume_mL == 0.0)
     specificGravity.SetValue(0.0);
   else
     specificGravity.SetValue((totalmass_g / volume_mL) / waterDensity_g_mL);
+  return ret;
 }
 
 double GeneralMath::PercentDifference(double expected, double calculated)
