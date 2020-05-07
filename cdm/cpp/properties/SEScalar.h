@@ -73,6 +73,7 @@ public:
 
   bool Equals(const SEScalar& to) const;
 
+  virtual std::string ToString() const;
   virtual void ToString(std::ostream &str) const;
 
   static double dNaN();
@@ -185,6 +186,7 @@ public:
   bool Equals(const SEScalar& to) const = delete;// Must provide a unit
   virtual bool Equals(const SEScalarQuantity<Unit>& to) const;
 
+  virtual std::string ToString() const;
   virtual void ToString(std::ostream &str) const;
 
 protected:

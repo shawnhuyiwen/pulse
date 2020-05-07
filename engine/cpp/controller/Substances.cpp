@@ -950,7 +950,8 @@ void PulseSubstances::CalculateGenericClearance(double VolumeCleared_mL, SETissu
   SEScalarMassPerVolume concentration;
   if (sub.HasPK())
   {
-    GeneralMath::CalculateConcentration(subQ->GetMass(), tissue.GetMatrixVolume(), concentration, m_Logger);
+    if(!GeneralMath::CalculateConcentration(subQ->GetMass(), tissue.GetMatrixVolume(), concentration, m_Logger))
+      Error("  Compartment : " + tissue.GetName() + ", Substance : " + sub.GetName());
     concentration_ug_Per_mL = concentration.GetValue(MassPerVolumeUnit::ug_Per_mL);
   }
   else
@@ -992,7 +993,8 @@ void PulseSubstances::CalculateGenericExcretion(double VascularFlow_mL_Per_s, SE
   SEScalarMassPerVolume concentration;
   if (sub.HasPK())
   {
-    GeneralMath::CalculateConcentration(subQ->GetMass(), tissue.GetMatrixVolume(), concentration, m_Logger);
+    if(!GeneralMath::CalculateConcentration(subQ->GetMass(), tissue.GetMatrixVolume(), concentration, m_Logger))
+      Error("  Compartment : " + tissue.GetName() + ", Substance : " + sub.GetName());
     concentration_ug_Per_mL = concentration.GetValue(MassPerVolumeUnit::ug_Per_mL);
   }
   else

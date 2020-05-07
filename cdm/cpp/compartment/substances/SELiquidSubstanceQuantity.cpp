@@ -190,7 +190,8 @@ void SELiquidSubstanceQuantity::Balance(BalanceLiquidBy by)
     {
       if (!volume.IsValid() || volume.IsInfinity() || !GetMass().IsValid() ||GetMass().IsInfinity())
         Fatal("Cannot balance by Mass if volume or mass is invalid or set to Infinity", "SELiquidSubstanceQuantity::Balance");
-      GeneralMath::CalculateConcentration(GetMass(),volume,GetConcentration(), m_Logger);
+      if(!GeneralMath::CalculateConcentration(GetMass(),volume,GetConcentration(), m_Logger))
+        Error("  Compartment : " + m_Compartment.GetName() + ", Substance : " + m_Substance.GetName());
       if (m_Substance.GetState() == eSubstance_State::Gas)
         GeneralMath::CalculatePartialPressureInLiquid(m_Substance, GetConcentration(), GetPartialPressure(), m_Logger);
       double molarity_mmol_Per_mL = GetMass(MassUnit::ug) / m_Substance.GetMolarMass(MassPerAmountUnit::ug_Per_mmol) / volume.GetValue(VolumeUnit::mL);
@@ -203,7 +204,8 @@ void SELiquidSubstanceQuantity::Balance(BalanceLiquidBy by)
         Fatal("Cannot balance by Molarity if volume or molarity is invalid or set to Infinity", "SELiquidSubstanceQuantity::Balance");
       double mass_ug = GetMolarity(AmountPerVolumeUnit::mmol_Per_mL) *  m_Substance.GetMolarMass(MassPerAmountUnit::ug_Per_mmol) * volume.GetValue(VolumeUnit::mL);
       GetMass().SetValue(mass_ug, MassUnit::ug);
-      GeneralMath::CalculateConcentration(GetMass(), volume, GetConcentration(), m_Logger);
+      if(!GeneralMath::CalculateConcentration(GetMass(), volume, GetConcentration(), m_Logger))
+        Error("  Compartment : " + m_Compartment.GetName() + ", Substance : " + m_Substance.GetName());
       if (m_Substance.GetState() == eSubstance_State::Gas)
         GeneralMath::CalculatePartialPressureInLiquid(m_Substance, GetConcentration(), GetPartialPressure(), m_Logger);
       break;
@@ -218,7 +220,8 @@ void SELiquidSubstanceQuantity::Balance(BalanceLiquidBy by)
       double density_ug_Per_mL = m_Substance.GetDensity(MassPerVolumeUnit::ug_Per_mL);
       double mass_ug = partialPressure_atm * m_Substance.GetSolubilityCoefficient(InversePressureUnit::Inverse_atm) * density_ug_Per_mL * volume.GetValue(VolumeUnit::mL);
       GetMass().SetValue(mass_ug, MassUnit::ug);
-      GeneralMath::CalculateConcentration(GetMass(), volume, GetConcentration(), m_Logger);
+      if(!GeneralMath::CalculateConcentration(GetMass(), volume, GetConcentration(), m_Logger))
+        Error("  Compartment : " + m_Compartment.GetName() + ", Substance : " + m_Substance.GetName());
       double molarity_mmol_Per_mL = GetMass(MassUnit::ug) / m_Substance.GetMolarMass(MassPerAmountUnit::ug_Per_mmol) / volume.GetValue(VolumeUnit::mL);
       GetMolarity().SetValue(molarity_mmol_Per_mL, AmountPerVolumeUnit::mmol_Per_mL);
       break;
