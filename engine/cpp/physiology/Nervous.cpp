@@ -102,7 +102,7 @@ void Nervous::SetUp()
 
 void Nervous::AtSteadyState()
 {
-  if (m_data.GetState() == EngineState::AtInitialStableState)
+  if (m_data.GetState() == EngineState::AtSecondaryStableState)
     m_FeedbackActive = true;
 
   // The set-points (Baselines) get reset at the end of each stabilization period.
