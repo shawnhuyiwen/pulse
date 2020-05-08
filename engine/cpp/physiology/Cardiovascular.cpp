@@ -498,7 +498,9 @@ void Cardiovascular::ChronicAnemia()
 void Cardiovascular::ChronicHeartFailure()
 {
   //Decrease left heart contractility
-  m_LeftHeartElastanceModifier = 0.27;
+  m_LeftHeartElastanceModifier *= 0.42;
+  double NewHeartDriverFrequency_Per_Min = 1.27 * m_data.GetCurrentPatient().GetHeartRateBaseline(FrequencyUnit::Per_min);
+  m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(NewHeartDriverFrequency_Per_Min, FrequencyUnit::Per_min);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -2363,12 +2365,12 @@ void Cardiovascular::TuneTissue(double time_s, DataTrack& circuitTrk, std::ofstr
       double flowWindow = fabs(flowMax[m] - flowMin[m]);
       SEFluidCircuitPath* p = m_TissueResistancePaths[m];
       sp1_mmHg_s_Per_mL = p->GetResistanceBaseline().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-      if (flowWindow < 0.03)//~2mL/min
+      if (flowWindow < 0.00005)// 0.003 mL/min
       {
         pCnt++;
         sp1_mmHg_s_Per_mL = sp1_mmHg_s_Per_mL - (sp1_mmHg_s_Per_mL * resistanceScale);
       }
-      if (flowWindow > 0.08)//~5mL/min
+      if (flowWindow > 0.0005)// 0.03 mL/min
       {
         pCnt++;
         sp1_mmHg_s_Per_mL = sp1_mmHg_s_Per_mL + (sp1_mmHg_s_Per_mL * resistanceScale);
