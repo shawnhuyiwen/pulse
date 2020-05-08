@@ -275,12 +275,12 @@ void Nervous::BaroreceptorFeedback()
       m_BaroreceptorSaturationStatus = true;
       Info("Baroreceptors Saturated ");
     }
-    if (normalizedMAP <= 0.98 && normalizedMAP >= 0.48)
+    if (normalizedMAP <= 0.985 && normalizedMAP >= 0.48)
     {
       //new baroreceptor effect curves
       if (previousBloodVolume_mL - m_data.GetCardiovascular().GetBloodVolume(VolumeUnit::mL) > 0)
       {
-        m_BaroreceptorEffectivenessParameter = -normalizedMAP*0.13;
+        m_BaroreceptorEffectivenessParameter = -normalizedMAP*0.06;
       }
       else
       {
@@ -288,7 +288,7 @@ void Nervous::BaroreceptorFeedback()
       }
       
     }
-    else if (normalizedMAP <= 0.47 && normalizedMAP >= 0.42)
+    else if (normalizedMAP <= 0.44 && normalizedMAP >= 0.42)
     {
       //last ditch effort
       //m_BaroreceptorEffectivenessParameter += 0.0001;
@@ -310,14 +310,14 @@ void Nervous::BaroreceptorFeedback()
     //Calculate the normalized change in heart rate
     double normalizedHeartRate = GetBaroreceptorHeartRateScale().GetValue();
     double tauHeartRate_s = m_data.GetConfiguration().GetHeartRateDistributedTimeDelay(TimeUnit::s);
-    double deltaNormalizedHeartRate = 0.25*m_BaroreceptorEffectivenessParameter*(1.0 / tauHeartRate_s)*(-normalizedHeartRate + m_NormalizedAlphaHeartRate*m_TotalSympatheticFraction - m_NormalizedBetaHeartRate*parasympatheticFraction + m_NormalizedGammaHeartRate)*m_dt_s;
+    double deltaNormalizedHeartRate = -1.3*m_BaroreceptorEffectivenessParameter*(1.0 / tauHeartRate_s)*(-normalizedHeartRate + m_NormalizedAlphaHeartRate*m_TotalSympatheticFraction - m_NormalizedBetaHeartRate*parasympatheticFraction + m_NormalizedGammaHeartRate)*m_dt_s;
     normalizedHeartRate += deltaNormalizedHeartRate;
     GetBaroreceptorHeartRateScale().SetValue(normalizedHeartRate);
 
     //Calculate the normalized change in heart elastance
     double normalizedHeartElastance = GetBaroreceptorHeartElastanceScale().GetValue();
     double tauElastance_s = m_data.GetConfiguration().GetHeartElastanceDistributedTimeDelay(TimeUnit::s);
-    double deltaNormalizedHeartElastance = 2.5*m_BaroreceptorEffectivenessParameter*(1.0 / tauElastance_s)*(-normalizedHeartElastance + m_NormalizedAlphaElastance*m_TotalSympatheticFraction + m_NormalizedGammaElastance)*m_dt_s;
+    double deltaNormalizedHeartElastance = 7.5*m_BaroreceptorEffectivenessParameter*(1.0 / tauElastance_s)*(-normalizedHeartElastance + m_NormalizedAlphaElastance*m_TotalSympatheticFraction + m_NormalizedGammaElastance)*m_dt_s;
     normalizedHeartElastance += deltaNormalizedHeartElastance;
     GetBaroreceptorHeartElastanceScale().SetValue(normalizedHeartElastance);
 
