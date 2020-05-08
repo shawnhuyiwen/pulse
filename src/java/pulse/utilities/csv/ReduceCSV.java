@@ -8,9 +8,7 @@ import pulse.utilities.Log;
 public class ReduceCSV
 {
   public static void main(String[] args) throws IOException
-  {    
-    Log.setFileName("ReduceHeaders.log");
-
+  {
     String filename = "BasicStandard12hrResults.csv";
 
     Log.info("Looking at file: " + filename);

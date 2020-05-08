@@ -5,8 +5,6 @@ package pulse.utilities.csv;
 import java.io.*;
 import java.util.*;
 
-import net.lingala.zip4j.core.ZipFile;
-import net.lingala.zip4j.model.FileHeader;
 import pulse.utilities.DoubleUtils;
 import pulse.utilities.Log;
 
@@ -21,7 +19,6 @@ public class CSVContents
   protected List<String>    headers = new ArrayList<String>();
   List<Double>              rowDoubles = new ArrayList<Double>();
 
-  protected ZipFile         zipFile = null;
   protected FileInputStream fStream = null;
   protected DataInputStream in      = null;
   protected BufferedReader  buff    = null;
@@ -84,30 +81,9 @@ public class CSVContents
     {
       if(in!=null)
         in.close();
-      zipFile = null;
-      fStream = null;
-      in = null;
-      buff = null;
-
-      if(resultsFile.endsWith(".zip"))
-      {
-        zipFile = new ZipFile(resultsFile);
-        List<FileHeader> headers = zipFile.getFileHeaders();
-        for(FileHeader header : headers)
-        {
-          if(header.getFileName().endsWith(".csv"))
-          {
-            buff = new BufferedReader(new InputStreamReader(zipFile.getInputStream(header)));
-            break;// We expect results zips to only contain 1 text file
-          }
-        } 
-      }
-      else
-      {
-        fStream = new FileInputStream(resultsFile);
-        in = new DataInputStream(fStream);
-        buff = new BufferedReader(new InputStreamReader(in));
-      }
+      fStream = new FileInputStream(resultsFile);
+      in = new DataInputStream(fStream);
+      buff = new BufferedReader(new InputStreamReader(in));
       if(!headers.isEmpty())
         buff.readLine();
     }

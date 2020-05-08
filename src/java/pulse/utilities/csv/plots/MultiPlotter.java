@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartUtilities;
+import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.LogarithmicAxis;
 import org.jfree.chart.axis.NumberAxis;
@@ -348,9 +348,9 @@ public class MultiPlotter implements Plotter
         filename = filename + ".jpg";
       File JPGFile = new File(filename);
       if(job.imageHeight != null && job.imageWidth != null)
-        ChartUtilities.saveChartAsJPEG(JPGFile, chart, job.imageWidth, job.imageHeight);
+        ChartUtils.saveChartAsJPEG(JPGFile, chart, job.imageWidth, job.imageHeight);
       else
-        ChartUtilities.saveChartAsJPEG(JPGFile, chart, 1600, 800);
+        ChartUtils.saveChartAsJPEG(JPGFile, chart, 1600, 800);
     }
     catch (IOException e)
     {
@@ -408,7 +408,7 @@ public class MultiPlotter implements Plotter
       for(int i = 0, cIndex = 0; i < dataSet1.getSeriesCount(); i++, cIndex++)
       {
         renderer1.setSeriesStroke(i, wideLine); 
-        renderer1.setBaseShapesVisible(false);
+        renderer1.setDefaultShapesVisible(false);//setBaseShapesVisible(false);
         if(cIndex > 9) cIndex = 0;
         renderer1.setSeriesFillPaint(i, variedColors[cIndex]); 
         renderer1.setSeriesPaint(i, variedColors[cIndex]);
@@ -423,7 +423,7 @@ public class MultiPlotter implements Plotter
       for(int i = 0, cIndex = 0; i < dataSet1.getSeriesCount(); i++, cIndex++)
       {
         renderer1.setSeriesStroke(i, wideLine); 
-        renderer1.setBaseShapesVisible(false);
+        renderer1.setDefaultShapesVisible(false);//setBaseShapesVisible(false);
         if(cIndex > 6) cIndex = 0;
         renderer1.setSeriesFillPaint(i, redColors[cIndex]); 
         renderer1.setSeriesPaint(i, redColors[cIndex]);

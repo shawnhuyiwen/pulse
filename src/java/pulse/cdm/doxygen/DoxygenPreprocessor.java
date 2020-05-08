@@ -14,7 +14,6 @@ public class DoxygenPreprocessor
   public static void main(String[] args)
   {
     jniBridge.initialize();
-    Log.setFileName("DoxygenPreprocessor.log");
     try
     {
       if(args.length==2 || args.length==3)

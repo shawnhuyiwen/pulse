@@ -11,8 +11,7 @@ import pulse.utilities.Log;
 public class RenameCSVHeaders
 {
   public static void main(String[] args) throws IOException
-  {    
-    Log.setFileName("RenameHeaders.log");
+  {
     Map<String,String> replaceWith = new HashMap<String,String>();
     //replaceWith.put("ECGWaveform", "Lead3ElectricPotential");
     boolean convertToCSV = true;
@@ -43,7 +42,7 @@ public class RenameCSVHeaders
           if(header.indexOf(replace)>-1)
           {
             rewriteFile = true;
-            newHeader=origHeader.replaceAll(replace, replaceWith.get(replace));            
+            newHeader=origHeader.replaceAll(replace, replaceWith.get(replace));
           }
         }
       }

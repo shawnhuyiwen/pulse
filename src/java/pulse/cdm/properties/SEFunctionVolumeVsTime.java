@@ -2,9 +2,6 @@
    See accompanying NOTICE file for details.*/
 package pulse.cdm.properties;
 
-import org.jfree.util.Log;
-
-import pulse.cdm.bind.Properties.DoubleArrayData;
 import pulse.cdm.bind.Properties.FunctionVolumeVsTimeData;
 
 import pulse.cdm.exceptions.InvalidUnitException;

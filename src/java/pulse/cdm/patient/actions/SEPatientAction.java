@@ -3,8 +3,6 @@
 
 package pulse.cdm.patient.actions;
 
-import org.jfree.util.Log;
-
 import pulse.cdm.bind.PatientActions.AnyPatientActionData;
 import pulse.cdm.bind.PatientActions.PatientActionData;
 
@@ -12,6 +10,7 @@ import pulse.cdm.actions.SEAction;
 import pulse.cdm.substance.SESubstance;
 import pulse.cdm.substance.SESubstanceCompound;
 import pulse.cdm.substance.SESubstanceManager;
+import pulse.utilities.Log;
 
 public abstract class SEPatientAction extends SEAction
 {

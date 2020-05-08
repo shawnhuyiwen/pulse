@@ -21,13 +21,6 @@ import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import net.lingala.zip4j.core.ZipFile;
-import net.lingala.zip4j.exception.ZipException;
-import net.lingala.zip4j.model.FileHeader;
-import net.lingala.zip4j.model.ZipParameters;
-import net.lingala.zip4j.util.Zip4jConstants;
-
-
 /**
  * The <code>FileUtils</code> contains support for writing and exporting files
  * 
@@ -737,6 +730,8 @@ public class FileUtils
    */
   public static String[] zipContents(String zipfileName)
   {
+    throw new UnsupportedOperationException("Change implementation to apache compress");
+    /*
     try 
     {
       // Initiate ZipFile object with the path/name of the zip file.
@@ -759,6 +754,7 @@ public class FileUtils
       Log.error("Zip Error",e);
     }
     return null;
+    */
   }
 
 
@@ -777,6 +773,8 @@ public class FileUtils
 
   public static void zipDirectory(String dirName, String zipFileName)
   {
+    throw new UnsupportedOperationException("Change implementation to apache compress");
+    /*
     try 
     {
       File file = new File(zipFileName);
@@ -807,6 +805,7 @@ public class FileUtils
     {
       e.printStackTrace();
     }
+    */
   }
 
   public static void zipDirectories(String[] directories, String zipFileName)
@@ -820,7 +819,9 @@ public class FileUtils
    * @param file
    */
   public static void zipDirectories(String[] directories, File zipFile)
-  {      
+  {
+    throw new UnsupportedOperationException("Change implementation to apache compress");
+    /*
     try
     {
       if (zipFile.exists() && zipFile.isFile())
@@ -852,6 +853,7 @@ public class FileUtils
     {
       Log.error("Unable to zip directories to  " + zipFile.getAbsolutePath(), e);
     }
+    */
   }
   
   /**
@@ -873,6 +875,8 @@ public class FileUtils
    */
   public static void zipFiles(String[] fileNames, String zipFileName, String zipPath)
   {
+    throw new UnsupportedOperationException("Change implementation to apache compress");
+    /*
     try
     {      
       Set<String> entries = new HashSet<String>();
@@ -931,6 +935,7 @@ public class FileUtils
     {
       Log.error("Error compressing files to " + zipFileName + "\n", e);
     }
+    */
   }
 
   /**
@@ -1000,6 +1005,8 @@ public class FileUtils
 
   public static void unzipToDirectory(File f, String toDirectory)
   {
+    throw new UnsupportedOperationException("Change implementation to apache compress");
+    /*
     try
     {
       ZipFile zipFile = new ZipFile(f);
@@ -1009,6 +1016,7 @@ public class FileUtils
     {
       Log.error("Zip Error",e);
     }
+    */
   }
 
   /**
@@ -1018,6 +1026,8 @@ public class FileUtils
    */
   public static int getUnzippedFileSize(String fileName)
   {
+    throw new UnsupportedOperationException("Change implementation to apache compress");
+    /*
     int size = 0;
     try
     {
@@ -1034,6 +1044,7 @@ public class FileUtils
       Log.error("Error inspecting zip file "+fileName);
     }
     return size;
+    */
   }
 
   // BLOCK_SIZE should probably a factor or multiple of the size of a disk sector/cluster.

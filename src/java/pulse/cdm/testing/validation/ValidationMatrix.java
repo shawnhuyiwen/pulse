@@ -7,9 +7,11 @@ import java.util.*;
 
 import pulse.utilities.Log;
 
-import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.ss.usermodel.Color;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.xssf.usermodel.XSSFColor;
-import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -56,11 +58,11 @@ public class ValidationMatrix
   public static class Sheet 
   {    
     public SheetSummary summary;
-    public List<List<Cell>> table = new ArrayList<List<Cell>>();
+    public List<List<SheetCell>> table = new ArrayList<List<SheetCell>>();
   }
-  public static class Cell
+  public static class SheetCell
   {
-    public Cell(String text, Agreement agreement, Map<String,String> refs)
+    public SheetCell(String text, Agreement agreement, Map<String,String> refs)
     {      
       this.agreement = agreement; 
       this.text = text;
@@ -109,7 +111,7 @@ public class ValidationMatrix
         int rows = xlSheet.getPhysicalNumberOfRows(); 
         for (int r = 1; r < rows; r++) 
         {
-          XSSFRow row = xlSheet.getRow(r);
+          Row row = xlSheet.getRow(r);
           if (row == null ) 
             continue;
           SheetSummary ss = new SheetSummary();
@@ -124,7 +126,7 @@ public class ValidationMatrix
         int rows = xlSheet.getPhysicalNumberOfRows(); 
         for (int r = 1; r < rows; r++) 
         {
-          XSSFRow row = xlSheet.getRow(r);
+          Row row = xlSheet.getRow(r);
           if (row == null ) 
             continue;
           refs.put("\\["+r+"\\]", "@cite "+row.getCell(1).getStringCellValue());
@@ -141,7 +143,7 @@ public class ValidationMatrix
 
         for (int r = 0; r < rows; r++) 
         {
-          XSSFRow row = xlSheet.getRow(r);
+          Row row = xlSheet.getRow(r);
           if (row == null ) 
             continue;
 
@@ -149,10 +151,10 @@ public class ValidationMatrix
 
           for (int c = 0; c < cells; c++) 
           {
-            List<Cell> column;
+            List<SheetCell> column;
             if(r==0)
             {
-              column = new ArrayList<Cell>();
+              column = new ArrayList<SheetCell>();
               sheet.table.add(column);
             }
             else
@@ -160,28 +162,28 @@ public class ValidationMatrix
               column = sheet.table.get(c);
             }
 
-            XSSFCell cell = row.getCell(c);
+            Cell cell = row.getCell(c);
             if(cell==null)
             {
-              column.add(new Cell("",Agreement.NA,refs));
+              column.add(new SheetCell("",Agreement.NA,refs));
               continue;
             }
             cellValue=null;
             switch(cell.getCellType())
             {          
-              case XSSFCell.CELL_TYPE_NUMERIC:
+              case NUMERIC:
                 cellValue = Double.toString(cell.getNumericCellValue());
                 break;
-              case XSSFCell.CELL_TYPE_STRING:
+              case STRING:
                 cellValue = cell.getStringCellValue();
                 break;
             }
             if(cellValue==null||cellValue.isEmpty())
-              column.add(new Cell("",Agreement.NA,refs));
+              column.add(new SheetCell("",Agreement.NA,refs));
             else
             {
               Agreement a = Agreement.NA;
-              XSSFColor color = cell.getCellStyle().getFillForegroundColorColor();
+              XSSFColor color = (XSSFColor)cell.getCellStyle().getFillBackgroundColorColor();
               if(color!=null)
               {
                 byte[] rgb = color.getRGB();
@@ -201,7 +203,7 @@ public class ValidationMatrix
                   sheet.summary.badAgreement++;
                 }
               }              
-              column.add(new Cell(cellValue,a,refs));             
+              column.add(new SheetCell(cellValue,a,refs));
             }
           }
         }

@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartUtilities;
+import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.LogarithmicAxis;
 import org.jfree.chart.axis.NumberAxis;
@@ -392,9 +392,9 @@ public class ConvexHullPlotter implements Plotter
         filename = filename + ".jpg";
       File JPGFile = new File(filename);
       if(job.imageHeight != null && job.imageWidth != null)
-        ChartUtilities.saveChartAsJPEG(JPGFile, chart, job.imageWidth, job.imageHeight);
+        ChartUtils.saveChartAsJPEG(JPGFile, chart, job.imageWidth, job.imageHeight);
       else
-        ChartUtilities.saveChartAsJPEG(JPGFile, chart, 1600, 800);
+        ChartUtils.saveChartAsJPEG(JPGFile, chart, 1600, 800);
     }
     catch (IOException e)
     {
@@ -449,7 +449,7 @@ public class ConvexHullPlotter implements Plotter
       for(int i = 0; i < dataSet1.getSeriesCount(); i++)
       {
         renderer1.setSeriesStroke(i, wideLine); 
-        renderer1.setBaseShapesVisible(false);
+        renderer1.setDefaultShapesVisible(false);//setBaseShapesVisible(false);
         renderer1.setSeriesFillPaint(i, Color.red); 
         renderer1.setSeriesPaint(i, Color.red);
         if(dataSet1.getSeries(i).getKey() != null && dataSet1.getSeries(i).getKey().toString().equalsIgnoreCase("REMOVE"))
@@ -465,7 +465,7 @@ public class ConvexHullPlotter implements Plotter
       for(int i = 0; i < dataSet1.getSeriesCount(); i++)
       {
         renderer1.setSeriesStroke(i, wideLine); 
-        renderer1.setBaseShapesVisible(false);
+        renderer1.setDefaultShapesVisible(false);//setBaseShapesVisible(false);
         renderer1.setSeriesFillPaint(i, Color.red); 
         renderer1.setSeriesPaint(i, Color.red);
         if(dataSet1.getSeries(i).getKey() != null && dataSet1.getSeries(i).getKey().toString().equalsIgnoreCase("REMOVE"))

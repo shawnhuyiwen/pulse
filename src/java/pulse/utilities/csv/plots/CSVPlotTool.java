@@ -17,7 +17,7 @@ import pulse.utilities.StringUtils;
 import pulse.utilities.csv.CSVContents;
 
 import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartUtilities;
+import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.LogarithmicAxis;
 import org.jfree.chart.axis.NumberAxis;
@@ -266,8 +266,8 @@ public class CSVPlotTool
           );
       renderer.setDrawSeriesLineAsPath(true);
       renderer.setUseFillPaint(true);
-    }  
-    renderer.setBaseShapesVisible(false);
+    }
+    renderer.setDefaultShapesVisible(false);//setBaseShapesVisible(false);
     renderer.setSeriesFillPaint(0, expectedLineColor); 
     renderer.setSeriesFillPaint(1, computedLineColor ); 
     renderer.setSeriesPaint(0, expectedLineColor); 
@@ -278,7 +278,7 @@ public class CSVPlotTool
       if(toDir==null||toDir.isEmpty())
         toDir=".";
       File JPGFile = new File(toDir+"/"+MakeFileName(title)+".jpg");
-      ChartUtilities.saveChartAsJPEG(JPGFile, chart, 1600, 800);
+      ChartUtils.saveChartAsJPEG(JPGFile, chart, 1600, 800);
     }
     catch (IOException e)
     {

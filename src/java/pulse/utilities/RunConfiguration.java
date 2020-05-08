@@ -3,8 +3,6 @@ package pulse.utilities;
 import java.io.*;
 import java.util.Properties;
 
-import org.jfree.util.Log;
-
 /**
  * Simple file to load up a config file and
  * provide access to the variables it contains

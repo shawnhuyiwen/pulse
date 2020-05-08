@@ -205,7 +205,6 @@ public class PlotDriver
   {  	
     this.name = configFile.getName();
     this.name = this.name.substring(0, this.name.lastIndexOf('.'));
-    Log.setFileName("./test_results/"+this.name+".log");
     
     String key;
     String value;

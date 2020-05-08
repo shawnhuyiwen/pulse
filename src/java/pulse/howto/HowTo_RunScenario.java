@@ -87,14 +87,6 @@ public class HowTo_RunScenario
   
   public static void example()
   {
-    // Create a log file for this example (by default, a Pulse.log will be made)
-    // NOTE the engine will have its own log, so there is a Java log and an Engine log!!
-    // You don't have to have a Java log, but if you want to, this is how you can do it.
-    Log.setFileName("./test_results/scenarios/HowTo_StaticEngineDriver.log");
-    // Note there is a single singleton logger in Java, but a log per engine in C++
-    // i.e. in Java, multiple engines will write to the same log, where as in C++, each engine will write to its own log
-    // The listener and callback objects are unique to this engine
-    
     // Create a Pulse Engine
     PulseScenarioExec pe = new PulseScenarioExec();
         

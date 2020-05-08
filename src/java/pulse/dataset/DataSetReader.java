@@ -6,9 +6,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.*;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -85,9 +85,9 @@ public class DataSetReader
         return;
       }
       Log.info("Generating data from "+xlsFile);
-      FileInputStream xlFile = new FileInputStream(xlsFile);    
+      FileInputStream xlFile = new FileInputStream(xlsFile);
       XSSFWorkbook xlWBook =  new XSSFWorkbook (xlFile);
-      evaluator = xlWBook.getCreationHelper().createFormulaEvaluator();   
+      evaluator = xlWBook.getCreationHelper().createFormulaEvaluator();
 
       List<SEPatient> patients = readPatients(xlWBook.getSheet("Patients"));
       for(SEPatient p : patients)
@@ -223,10 +223,10 @@ public class DataSetReader
     List<SEPatient> patients = new ArrayList<SEPatient>();
     try
     {
-      int rows = xlSheet.getPhysicalNumberOfRows();      
+      int rows = xlSheet.getPhysicalNumberOfRows();
       for (int r = 0; r < rows; r++) 
       {
-        XSSFRow row = xlSheet.getRow(r);
+        Row row = xlSheet.getRow(r);
         if (row == null) 
           continue;
         int cells = row.getPhysicalNumberOfCells();
@@ -242,13 +242,13 @@ public class DataSetReader
         for (int c = 1; c < cells; c++) 
         {
           String cellValue=null;
-          XSSFCell cell = row.getCell(c);
+          Cell cell = row.getCell(c);
           switch(cell.getCellType())
           {
-            case XSSFCell.CELL_TYPE_NUMERIC:
+            case NUMERIC:
               cellValue = Double.toString(cell.getNumericCellValue());
               break;
-            case XSSFCell.CELL_TYPE_STRING:
+            case STRING:
               cellValue = cell.getStringCellValue();
               break;
           }
@@ -451,7 +451,7 @@ public class DataSetReader
       int rows = xlSheet.getPhysicalNumberOfRows();      
       for (int r = 0; r < rows; r++) 
       {
-        XSSFRow row = xlSheet.getRow(r);
+        Row row = xlSheet.getRow(r);
         if (row == null) 
           continue;
         int cells = row.getPhysicalNumberOfCells();
@@ -478,22 +478,22 @@ public class DataSetReader
             continue;
           s++;
           String cellValue=null;
-          XSSFCell cell = row.getCell(c);
+          Cell cell = row.getCell(c);
           switch(cell.getCellType())
           {
-            case XSSFCell.CELL_TYPE_NUMERIC:
+            case NUMERIC:
               cellValue = Double.toString(cell.getNumericCellValue());
               break;
-            case XSSFCell.CELL_TYPE_STRING:
+            case STRING:
               cellValue = cell.getStringCellValue();
               break;
-            case XSSFCell.CELL_TYPE_FORMULA:
+            case FORMULA:
               switch(evaluator.evaluateFormulaCell(cell))
               {
-                case XSSFCell.CELL_TYPE_NUMERIC:
+                case NUMERIC:
                   cellValue = Double.toString(cell.getNumericCellValue());
                   break;
-                case XSSFCell.CELL_TYPE_STRING:
+                case STRING:
                   cellValue = cell.getStringCellValue();
                   break;
               }               
@@ -880,7 +880,7 @@ public class DataSetReader
       int rows = xlSheet.getPhysicalNumberOfRows();      
       for (int r = 0; r < rows; r++) 
       {
-        XSSFRow row = xlSheet.getRow(r);
+        Row row = xlSheet.getRow(r);
         if (row == null) 
           continue;
         int cells = row.getPhysicalNumberOfCells();
@@ -909,13 +909,13 @@ public class DataSetReader
             continue;
           skip++;
           String cellValue=null;
-          XSSFCell cell = row.getCell(c);
+          Cell cell = row.getCell(c);
           switch(cell.getCellType())
           {
-            case XSSFCell.CELL_TYPE_NUMERIC:
+            case NUMERIC:
               cellValue = Double.toString(cell.getNumericCellValue());
               break;
-            case XSSFCell.CELL_TYPE_STRING:
+            case STRING:
               cellValue = cell.getStringCellValue();
               break;
           }
@@ -995,7 +995,7 @@ public class DataSetReader
       int rows = xlSheet.getPhysicalNumberOfRows();      
       for (int r = 0; r < rows; r++) 
       {
-        XSSFRow row = xlSheet.getRow(r);
+        Row row = xlSheet.getRow(r);
         if (row == null) 
           continue;
         int cells = row.getPhysicalNumberOfCells();
@@ -1011,13 +1011,13 @@ public class DataSetReader
         for (int c = 1; c < cells; c++) 
         {
           String cellValue=null;
-          XSSFCell cell = row.getCell(c);
+          Cell cell = row.getCell(c);
           switch(cell.getCellType())
           {
-            case XSSFCell.CELL_TYPE_NUMERIC:
+            case NUMERIC:
               cellValue = Double.toString(cell.getNumericCellValue());
               break;
-            case XSSFCell.CELL_TYPE_STRING:
+            case STRING:
               cellValue = cell.getStringCellValue();
               break;
           }
@@ -1161,7 +1161,7 @@ public class DataSetReader
       int rows = xlSheet.getPhysicalNumberOfRows();      
       for (int r = 0; r < rows; r++) 
       {
-        XSSFRow row = xlSheet.getRow(r);
+        Row row = xlSheet.getRow(r);
         if (row == null) 
           continue;
         int cells = row.getPhysicalNumberOfCells();
@@ -1178,13 +1178,13 @@ public class DataSetReader
         for (int c = 1; c < cells; c+=colsPerObject)// Note, I am not doing anything with the references and notes here 
         {
           String cellValue=null;
-          XSSFCell cell = row.getCell(c);
+          Cell cell = row.getCell(c);
           switch(cell.getCellType())
           {
-            case XSSFCell.CELL_TYPE_NUMERIC:
+            case NUMERIC:
               cellValue = Double.toString(cell.getNumericCellValue());
               break;
-            case XSSFCell.CELL_TYPE_STRING:
+            case STRING:
               cellValue = cell.getStringCellValue();
               break;
           }
@@ -1298,7 +1298,7 @@ public class DataSetReader
       int rows = xlSheet.getPhysicalNumberOfRows();     
       for (int r = 0; r < rows; r++) 
       {
-        XSSFRow row = xlSheet.getRow(r);
+        Row row = xlSheet.getRow(r);
         if (row == null) 
           continue;
         property = row.getCell(0).getStringCellValue();
@@ -1394,7 +1394,7 @@ public class DataSetReader
       int rows = xlSheet.getPhysicalNumberOfRows();     
       for (int r = 0; r < rows; r++) 
       {
-        XSSFRow row = xlSheet.getRow(r);
+        Row row = xlSheet.getRow(r);
         if (row == null) 
           continue;
         property = row.getCell(0).getStringCellValue();

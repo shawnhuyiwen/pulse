@@ -1,10 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 package pulse.cdm.properties;
-import org.jfree.util.Log;
 
-import pulse.cdm.bind.Properties.DoubleArrayData;
-import pulse.cdm.bind.Properties.FunctionData;
 import pulse.cdm.bind.Properties.FunctionElectricPotentialVsTimeData;
 
 import pulse.cdm.exceptions.InvalidUnitException;

@@ -22,7 +22,6 @@ public class PatientValidation extends ValidationTool
   public static void main(String[] args)
   {
     jniBridge.initialize();
-    Log.setFileName("ValidationTool.log");
     Log.info("Running with agrs : "+Arrays.toString(args));
     PatientValidation me = new PatientValidation();
     if(args.length==0)

@@ -3,9 +3,6 @@
 
 package pulse.cdm.system.equipment;
 
-
-import org.jfree.util.Log;
-
 import pulse.cdm.bind.EquipmentActions.AnyEquipmentActionData;
 import pulse.cdm.bind.Actions.EquipmentActionData;
 
@@ -14,6 +11,7 @@ import pulse.cdm.substance.SESubstanceManager;
 import pulse.cdm.system.equipment.anesthesia_machine.actions.*;
 import pulse.cdm.system.equipment.inhaler.actions.*;
 import pulse.cdm.system.equipment.mechanical_ventilator.actions.*;
+import pulse.utilities.Log;
 
 public abstract class SEEquipmentAction extends SEAction
 {

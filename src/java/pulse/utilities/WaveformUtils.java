@@ -16,14 +16,14 @@ import java.util.Map;
 
 
 import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartUtilities;
+import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.chart.util.ShapeUtils;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import org.jfree.util.ShapeUtilities;
 
 import pulse.utilities.DoubleUtils;
 import pulse.utilities.Log;
@@ -202,7 +202,7 @@ public class WaveformUtils
       r.setSeriesLinesVisible(1, false);
       r.setSeriesShapesVisible(1, true);  
       r.setSeriesPaint(1, Color.green);
-      Shape maxShape = ShapeUtilities.createUpTriangle(10);
+      Shape maxShape = ShapeUtils.createUpTriangle(10);
       r.setSeriesShape(1, maxShape);
       for(int i=0; i<xMax.size(); i++)
         seriesMaxes.add(xMax.get(i),yMax.get(i));
@@ -212,7 +212,7 @@ public class WaveformUtils
       r.setSeriesLinesVisible(2, false);
       r.setSeriesShapesVisible(2, true);  
       r.setSeriesPaint(2, Color.red);
-      Shape minShape = ShapeUtilities.createDownTriangle(10);
+      Shape minShape = ShapeUtils.createDownTriangle(10);
       r.setSeriesShape(2, minShape);
       for(int i=0; i<xMin.size(); i++)
         seriesMins.add(xMin.get(i),yMin.get(i));
@@ -231,7 +231,7 @@ public class WaveformUtils
       if(toDir==null||toDir.isEmpty())
         toDir=".";
       File JPGFile = new File(toDir+"/"+StringUtils.removeParens(title)+".jpg");
-      ChartUtilities.saveChartAsJPEG(JPGFile, chart, 3200, 1600);
+      ChartUtils.saveChartAsJPEG(JPGFile, chart, 3200, 1600);
     }
     catch (IOException e)
     {

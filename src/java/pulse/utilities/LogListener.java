@@ -3,7 +3,7 @@
 
 package pulse.utilities;
 
-import org.apache.log4j.Level;
+import pulse.utilities.Log.Level;
 
 public abstract class LogListener 
 {
@@ -33,46 +33,11 @@ public abstract class LogListener
   {
     this.handleProgress=b;
   }
-  
-  public final void trace(String msg)
-  {
-    if(Level.TRACE.isGreaterOrEqual(this.level))
-    {
-      handleTrace(msg);
-    }
-  }
-  public void handleTrace(String msg){}
-  
-  public final void trace(String msg, String origin)
-  {
-    if(Level.TRACE.isGreaterOrEqual(this.level))
-    {
-      handleTrace(msg,origin);
-    }
-  }
-  public void handleTrace(String msg, String origin){handleTrace(origin + " : " + msg);}
-  
-  public final void trace(String msg, Throwable t)
-  {
-    if(Level.TRACE.isGreaterOrEqual(this.level))
-    {
-      handleTrace(msg,t);
-    }
-  }
-  public void handleTrace(String msg, Throwable t){handleTrace(msg+" "+t.getMessage());}
-  
-  public final void debug(String msg)
-  {
-    if(Level.DEBUG.isGreaterOrEqual(this.level))
-    {
-      handleDebug(msg);
-    }
-  }
   public void handleDebug(String msg){}
   
   public final void debug(String msg, String origin)
   {
-    if(Level.DEBUG.isGreaterOrEqual(this.level))
+    if(Log.isDebug(this.level))
     {
       handleDebug(msg,origin);
     }
@@ -81,7 +46,7 @@ public abstract class LogListener
   
   public final void debug(String msg, Throwable t)
   {
-    if(Level.DEBUG.isGreaterOrEqual(this.level))
+    if(Log.isDebug(this.level))
     {
       handleDebug(msg,t);
     }
@@ -90,7 +55,7 @@ public abstract class LogListener
   
   public final void info(String msg)
   {
-    if(Level.INFO.isGreaterOrEqual(this.level))
+    if(Log.isInfo(this.level))
     {
       handleInfo(msg);
     }
@@ -99,7 +64,7 @@ public abstract class LogListener
   
   public final void info(String msg, String origin)
   {
-    if(Level.INFO.isGreaterOrEqual(this.level))
+    if(Log.isInfo(this.level))
     {
       handleInfo(msg,origin);
     }
@@ -108,7 +73,7 @@ public abstract class LogListener
   
   public final void info(String msg, Throwable t)
   {
-    if(Level.INFO.isGreaterOrEqual(this.level))
+    if(Log.isInfo(this.level))
     {
       handleInfo(msg,t);
     }
@@ -117,7 +82,7 @@ public abstract class LogListener
   
   public final void warn(String msg)
   {
-    if(Level.WARN.isGreaterOrEqual(this.level))
+    if(Log.isWarn(this.level))
     {
       handleWarn(msg);
     }
@@ -126,7 +91,7 @@ public abstract class LogListener
   
   public final void warn(String msg, String origin)
   {
-    if(Level.WARN.isGreaterOrEqual(this.level))
+    if(Log.isWarn(this.level))
     {
       handleWarn(msg,origin);
     }
@@ -135,7 +100,7 @@ public abstract class LogListener
   
   public final void warn(String msg, Throwable t)
   {
-    if(Level.WARN.isGreaterOrEqual(this.level))
+    if(Log.isWarn(this.level))
     {
       handleWarn(msg,t);
     }
@@ -144,7 +109,7 @@ public abstract class LogListener
   
   public final void error(String msg)
   {
-    if(Level.ERROR.isGreaterOrEqual(this.level))
+    if(Log.isError(this.level))
     {
       handleError(msg);
     }
@@ -153,7 +118,7 @@ public abstract class LogListener
   
   public final void error(String msg, String origin)
   {
-    if(Level.ERROR.isGreaterOrEqual(this.level))
+    if(Log.isError(this.level))
     {
       handleError(msg,origin);
     }
@@ -162,7 +127,7 @@ public abstract class LogListener
   
   public final void error(String msg, Throwable t)
   {
-    if(Level.ERROR.isGreaterOrEqual(this.level))
+    if(Log.isError(this.level))
     {
       handleError(msg,t);
     }
@@ -171,7 +136,7 @@ public abstract class LogListener
   
   public final void error(Throwable t)
   {
-    if(Level.ERROR.isGreaterOrEqual(this.level))
+    if(Log.isError(this.level))
     {
       handleError(t);
     }
@@ -180,7 +145,7 @@ public abstract class LogListener
   
   public final void fatal(String msg)
   {
-    if(Level.FATAL.isGreaterOrEqual(this.level))
+    if(Log.isFatal(this.level))
     {
       handleFatal(msg);
     }
@@ -189,7 +154,7 @@ public abstract class LogListener
   
   public final void fatal(String msg, String origin)
   {
-    if(Level.FATAL.isGreaterOrEqual(this.level))
+    if(Log.isFatal(this.level))
     {
       handleFatal(msg,origin);
     }
@@ -198,7 +163,7 @@ public abstract class LogListener
   
   public final void fatal(String msg, Throwable t)
   {
-    if(Level.FATAL.isGreaterOrEqual(this.level))
+    if(Log.isFatal(this.level))
     {
       handleFatal(msg,t);
     }
@@ -207,7 +172,7 @@ public abstract class LogListener
   
   public final void fatal(Throwable t)
   {
-    if(Level.FATAL.isGreaterOrEqual(this.level))
+    if(Log.isFatal(this.level))
     {
       handleFatal(t);
     }

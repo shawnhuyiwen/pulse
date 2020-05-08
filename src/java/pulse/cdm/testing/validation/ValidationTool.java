@@ -23,8 +23,11 @@ import pulse.utilities.RunConfiguration;
 import pulse.utilities.StringUtils;
 import pulse.utilities.UnitConverter;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.xssf.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import pulse.cdm.bind.Properties.ScalarData;
@@ -259,11 +262,11 @@ public abstract class ValidationTool
             int rows = xlSheet.getPhysicalNumberOfRows();
             for (int r = 0; r < rows; r++) 
             {
-              XSSFRow row = xlSheet.getRow(r);
+              Row row = xlSheet.getRow(r);
               if (row == null) 
                 continue;
               int cells = 11;//row.getPhysicalNumberOfCells();
-              XSSFCell cell = row.getCell(0);
+              Cell cell = row.getCell(0);
               if(cell==null)
                 continue;
               // Check to see if this row is a header
@@ -285,19 +288,19 @@ public abstract class ValidationTool
                   continue;       
                 switch(cell.getCellType())
                 {
-                  case XSSFCell.CELL_TYPE_NUMERIC:
+                  case NUMERIC:
                     cellValue = Double.toString(cell.getNumericCellValue());
                     break;
-                  case XSSFCell.CELL_TYPE_STRING:
+                  case STRING:
                     cellValue = cell.getStringCellValue();
                     break;
-                  case XSSFCell.CELL_TYPE_FORMULA:
+                  case FORMULA:
                     switch(evaluator.evaluateFormulaCell(cell))
                     {
-                      case XSSFCell.CELL_TYPE_NUMERIC:
+                      case NUMERIC:
                         cellValue = String.format("%."+3+"g", cell.getNumericCellValue());
                         break;
-                      case XSSFCell.CELL_TYPE_STRING:
+                      case STRING:
                         cellValue = cell.getStringCellValue();
                         break;
                     }

@@ -6,9 +6,6 @@ import java.io.*;
 import java.util.*;
 import java.text.SimpleDateFormat;
 
-import org.eclipse.jgit.internal.storage.file.FileRepository;
-import org.eclipse.jgit.lib.ObjectId;
-
 import pulse.utilities.FileUtils;
 import pulse.utilities.jniBridge;
 import pulse.utilities.Log;
@@ -18,15 +15,17 @@ public class Rebase
 {
   public static void main(String[] args)
   {
+    String hash = null;
+    if(args.length != 0)
+      hash = args[0];
     jniBridge.initialize();
-    rebase();
+    rebase(hash);
     jniBridge.deinitialize();
   }
   
-  public static void rebase()
+  public static void rebase(String hash)
   {
     RunConfiguration cfg = new RunConfiguration();
-    Log.setFileName("Rebase.log");    
     String toDir = "./test_results/rebase/";
     List<String> configFiles = new ArrayList<String>();
     try
@@ -55,19 +54,8 @@ public class Rebase
     // Replace back slashes with forward slashes
     toDir = toDir.replaceAll("\\\\", "/");
     toDir += new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-    // Ask git what the current revision hash is
-    try
-    {
-      FileRepository repo = new FileRepository(cfg.getRootDirectory()+"/.git");
-      ObjectId head = repo.resolve("HEAD");
-      if(head!=null)
-        toDir += " - "+head.getName().substring(0,8);
-      repo.close();
-    }
-    catch(IOException ex)
-    {
-      Log.error("Unable to read git hash, check your run.config file root_dir");
-    }
+    if(hash != null && !hash.isEmpty())
+      toDir += " - "+hash;
     toDir += "/";
 
     Log.info("Rebasing to "+toDir);

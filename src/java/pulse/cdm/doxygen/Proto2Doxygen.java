@@ -30,7 +30,6 @@ public class Proto2Doxygen
   public static void main(String[] args) 
   {
     jniBridge.initialize();
-    Log.setFileName("Proto2Doxygen.log");
     try
     {
       if(args.length==2)

@@ -3,13 +3,12 @@
 
 package pulse.cdm.patient.conditions;
 
-import org.jfree.util.Log;
-
 import pulse.cdm.bind.PatientConditions.AnyPatientConditionData;
 import pulse.cdm.bind.PatientConditions.PatientConditionData;
 
 import pulse.cdm.conditions.SECondition;
 import pulse.cdm.substance.SESubstanceManager;
+import pulse.utilities.Log;
 
 public abstract class SEPatientCondition extends SECondition
 {

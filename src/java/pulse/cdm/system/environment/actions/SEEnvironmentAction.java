@@ -2,13 +2,12 @@
    See accompanying NOTICE file for details.*/
 package pulse.cdm.system.environment.actions;
 
-import org.jfree.util.Log;
-
 import pulse.cdm.bind.EnvironmentActions.EnvironmentActionData;
 import pulse.cdm.bind.EnvironmentActions.AnyEnvironmentActionData;
 
 import pulse.cdm.actions.SEAction;
 import pulse.cdm.substance.SESubstanceManager;
+import pulse.utilities.Log;
 
 public abstract class SEEnvironmentAction extends SEAction
 {

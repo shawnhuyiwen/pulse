@@ -47,7 +47,6 @@ public class SETestConfiguration
     String baselineDir = cfg.getVerificationDirectory();
     this.testName = configFile.getName();
     this.testName = this.testName.substring(0,this.testName.lastIndexOf('.'));
-    Log.setFileName("./test_results/"+this.testName+".log");
 
     String key;
     String value;

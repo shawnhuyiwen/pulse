@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartUtilities;
+import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.LegendItemCollection;
 import org.jfree.chart.LegendItemSource;
@@ -36,11 +36,11 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.title.LegendTitle;
+import org.jfree.chart.util.ShapeUtils;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import org.jfree.ui.RectangleEdge;
-import org.jfree.ui.RectangleInsets;
-import org.jfree.util.ShapeUtilities;
+import org.jfree.chart.ui.RectangleEdge;
+import org.jfree.chart.ui.RectangleInsets;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 
@@ -499,7 +499,7 @@ public class ActionEventPlotter implements Plotter
     if(expDataSet.getSeriesCount() != 0)
     {
       XYItemRenderer renderer1 = new XYLineAndShapeRenderer(false, true);   // Shapes only
-      renderer1.setSeriesShape(0,ShapeUtilities.createDiamond(8));
+      renderer1.setSeriesShape(0,ShapeUtils.createDiamond(8));
       plot.setDataset(1,expDataSet);
       plot.setRenderer(1,renderer1);
       plot.mapDatasetToDomainAxis(1, 0);
@@ -519,7 +519,7 @@ public class ActionEventPlotter implements Plotter
     {
       r.setSeriesStroke(i, wideLine); 
       XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot.getRenderer();
-      renderer.setBaseShapesVisible(false);
+      renderer.setDefaultShapesVisible(false);//setBaseShapesVisible(false);
       if(cIndex > 4) cIndex = 0;
       if(i<job.headers.size())  //Our actual data
       {
@@ -547,7 +547,7 @@ public class ActionEventPlotter implements Plotter
               );
           renderer.setDrawSeriesLineAsPath(true);
           renderer.setUseFillPaint(true);  
-          renderer.setBaseShapesVisible(false);
+          renderer.setDefaultShapesVisible(false);//setBaseShapesVisible(false);
           renderer.setSeriesFillPaint(i, Color.black); 
           renderer.setSeriesPaint(i, Color.black); 
         }
@@ -659,11 +659,11 @@ public class ActionEventPlotter implements Plotter
         filename = filename + ".jpg";
       File JPGFile = new File(filename);
       if(job.imageHeight != null && job.imageWidth != null)
-        ChartUtilities.saveChartAsJPEG(JPGFile, chart, job.imageWidth, job.imageHeight);
+        ChartUtils.saveChartAsJPEG(JPGFile, chart, job.imageWidth, job.imageHeight);
       else if(!job.hideAELegend && !job.removeAllLegends)
-        ChartUtilities.saveChartAsJPEG(JPGFile, chart, 1600, verticalPixels);
+        ChartUtils.saveChartAsJPEG(JPGFile, chart, 1600, verticalPixels);
       else
-        ChartUtilities.saveChartAsJPEG(JPGFile, chart, 1600, 800);
+        ChartUtils.saveChartAsJPEG(JPGFile, chart, 1600, 800);
     }
     catch (IOException e)
     {
