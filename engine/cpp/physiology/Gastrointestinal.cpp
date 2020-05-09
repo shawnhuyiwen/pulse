@@ -482,7 +482,7 @@ void Gastrointestinal::DefaultNutritionRates(SENutrition& n)
 //--------------------------------------------------------------------------------------------------
 void Gastrointestinal::AbsorbNutrients(double duration_s)
 {
-  double absorptionRate_mL_Per_min = 3.3; // Average water absorption rate Peronnet
+  double absorptionRate_mL_Per_min = 1.1; // Average water absorption rate Peronnet
 
   double absorbedVolume_mL = absorptionRate_mL_Per_min * duration_s / 60;
   double siVolume_mL = m_SmallIntestineChyme->GetVolume().GetValue(VolumeUnit::mL);

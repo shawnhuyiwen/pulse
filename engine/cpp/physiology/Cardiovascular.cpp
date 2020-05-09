@@ -252,8 +252,6 @@ void Cardiovascular::Initialize()
   TuneCircuit();
   systemicVascularResistance_mmHg_s_Per_mL = (GetMeanArterialPressure().GetValue(PressureUnit::mmHg) - GetMeanCentralVenousPressure().GetValue(PressureUnit::mmHg)) / GetCardiacOutput().GetValue(VolumePerTimeUnit::mL_Per_s);
   GetSystemicVascularResistance().SetValue(systemicVascularResistance_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-  m_LeftHeartElastanceMax_mmHg_Per_mL = m_data.GetConfiguration().GetLeftHeartElastanceMaximum(PressurePerVolumeUnit::mmHg_Per_mL);
-  m_RightHeartElastanceMax_mmHg_Per_mL = m_data.GetConfiguration().GetRightHeartElastanceMaximum(PressurePerVolumeUnit::mmHg_Per_mL);
 
   //Debugging
   m_CardiacOutputBaseline = m_CardiacOutput->GetValue(VolumePerTimeUnit::L_Per_min);
@@ -392,14 +390,31 @@ void Cardiovascular::SetUp()
 //--------------------------------------------------------------------------------------------------
 void Cardiovascular::AtSteadyState()
 {
-  m_data.GetCurrentPatient().GetHeartRateBaseline().Set(GetHeartRate());
-  m_data.GetCurrentPatient().GetDiastolicArterialPressureBaseline().Set(GetDiastolicArterialPressure());
-  m_data.GetCurrentPatient().GetSystolicArterialPressureBaseline().Set(GetSystolicArterialPressure());
-  m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().Set(GetMeanArterialPressure());
+  std::string typeString;
+  if (m_data.GetState() == EngineState::Active)
+    typeString = "Final Stabilization Homeostasis: ";
+  else
+  {
+    m_data.GetCurrentPatient().GetHeartRateBaseline().Set(GetHeartRate());
+    m_data.GetCurrentPatient().GetDiastolicArterialPressureBaseline().Set(GetDiastolicArterialPressure());
+    m_data.GetCurrentPatient().GetSystolicArterialPressureBaseline().Set(GetSystolicArterialPressure());
+    m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().Set(GetMeanArterialPressure());
 
-  std::string typeString = "Initial Stabilization Homeostasis: ";
-  if (m_data.GetState() == EngineState::AtSecondaryStableState)
-    typeString = "Secondary Stabilization Homeostasis: ";
+    if (m_data.GetState() == EngineState::AtInitialStableState)
+    {// At Resting State, apply conditions if we have them
+      typeString = "Initial Stabilization Homeostasis: ";
+      if (m_data.GetConditions().HasChronicAnemia())
+        ChronicAnemia();
+      if (m_data.GetConditions().HasChronicRenalStenosis())
+        ChronicRenalStenosis();
+      if (m_data.GetConditions().HasChronicVentricularSystolicDysfunction())
+        ChronicHeartFailure();
+      if (m_data.GetConditions().HasChronicPericardialEffusion())
+        ChronicPericardialEffusion();
+    }
+    else if (m_data.GetState() == EngineState::AtSecondaryStableState)
+      typeString = "Secondary Stabilization Homeostasis: ";
+  }
 
   m_ss << typeString << "Patient heart rate = " << GetHeartRate();
   Info(m_ss);
@@ -409,21 +424,6 @@ void Cardiovascular::AtSteadyState()
   Info(m_ss);
   m_ss << typeString << "Patient mean arterial pressure = " << GetMeanArterialPressure();
   Info(m_ss);
-
-  if (m_data.GetState() == EngineState::AtInitialStableState)
-  {// At Resting State, apply conditions if we have them
-    if (m_data.GetConditions().HasChronicAnemia())
-      ChronicAnemia();
-    if (m_data.GetConditions().HasChronicRenalStenosis())
-      ChronicRenalStenosis();
-    if (m_data.GetConditions().HasChronicVentricularSystolicDysfunction())
-      ChronicHeartFailure();
-    if (m_data.GetConditions().HasChronicPericardialEffusion())
-      ChronicPericardialEffusion();
-  }
-
-  m_LeftHeartElastanceMax_mmHg_Per_mL = m_data.GetConfiguration().GetLeftHeartElastanceMaximum(PressurePerVolumeUnit::mmHg_Per_mL);
-  m_RightHeartElastanceMax_mmHg_Per_mL = m_data.GetConfiguration().GetRightHeartElastanceMaximum(PressurePerVolumeUnit::mmHg_Per_mL);
 }
 
 //--------------------------------------------------------------------------------------------------

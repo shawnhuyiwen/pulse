@@ -193,19 +193,21 @@ bool PulseEngine::InitializeEngine(const SEPatientConfiguration& patient_configu
   // Copy any changes to the current patient to the initial patient
   m_InitialPatient->Copy(*m_CurrentPatient);
 
+  // Don't allow any changes to Quantity/Potential/Flux values directly
+  // Use Quantity/Potential/Flux Sources
+  m_Circuits->SetReadOnly(true);
+
   if (!m_Config->GetStabilization()->StabilizeFeedbackState(*this))
     return false;
 
   if (!m_Config->GetStabilization()->IsTrackingStabilization())
     m_SimulationTime->SetValue(0, TimeUnit::s);
-  // Don't allow any changes to Quantity/Potential/Flux values directly
-  // Use Quantity/Potential/Flux Sources
-  m_Circuits->SetReadOnly(true);
 
   m_State = EngineState::Active;
+  AtSteadyState(EngineState::Active);
+
   // Hook up the handlers (Note events will still be in the log)
   m_EventManager->ForwardEvents(event_handler);
-  AtSteadyState(EngineState::Active);
   return true;
 }
 
