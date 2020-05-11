@@ -270,6 +270,9 @@ void PBPulseConfiguration::Serialize(const PULSE_BIND::ConfigurationData& src, P
   if (src.has_nervousconfiguration())
   {
     const PULSE_BIND::ConfigurationData_NervousConfigurationData& config = src.nervousconfiguration();
+
+    if (config.enablefeedback() != CDM_BIND::eSwitch::NullSwitch)
+      dst.EnableNervousFeedback((eSwitch)config.enablefeedback());
     if (config.has_pupildiameterbaseline())
       PBProperty::Load(config.pupildiameterbaseline(), dst.GetPupilDiameterBaseline());
   }
@@ -519,6 +522,7 @@ void PBPulseConfiguration::Serialize(const PulseConfiguration& src, PULSE_BIND::
 
   // Nervous
   PULSE_BIND::ConfigurationData_NervousConfigurationData* n = dst.mutable_nervousconfiguration();
+  n->set_enablefeedback((CDM_BIND::eSwitch)src.m_NervousFeedbackEnabled);
   if (src.HasPupilDiameterBaseline())
     n->set_allocated_pupildiameterbaseline(PBProperty::Unload(*src.m_PupilDiameterBaseline));
 

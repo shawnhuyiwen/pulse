@@ -135,6 +135,7 @@ PulseConfiguration::PulseConfiguration(SESubstanceManager& substances) : SEEngin
   m_WaterDigestionRate = nullptr;
 
   // Nervous
+  m_NervousFeedbackEnabled = eSwitch::Off;
   m_PupilDiameterBaseline = nullptr;
   
   // Renal
@@ -267,6 +268,7 @@ void PulseConfiguration::Clear()
   SAFE_DELETE(m_WaterDigestionRate);
 
   // Nervous
+  m_NervousFeedbackEnabled = eSwitch::On;
   SAFE_DELETE(m_PupilDiameterBaseline);
 
   // Renal
@@ -418,6 +420,7 @@ void PulseConfiguration::Initialize(const std::string& data_dir)
   GetWaterDigestionRate().SetValue(0.417, VolumePerTimeUnit::mL_Per_s);// Peronnet2012Pharmacokinetic, Estimated from 300mL H20 being absorbed in 9.5-12m
   
   // Nervous
+  m_NervousFeedbackEnabled = eSwitch::On;
   GetPupilDiameterBaseline().SetValue(4, LengthUnit::mm);
 
   // Renal

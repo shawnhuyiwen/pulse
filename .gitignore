@@ -13,9 +13,11 @@ src/schema/schema_last_built
 /src/java/pulse/cdm/bind
 /src/java/pulse/cpm/bind
 /src/java/pulse/study/multiplex_ventilation/bind
+/src/java/pulse/study/sensitivity_analysis/bind
 /src/python/pulse/cdm/bind
 /src/python/pulse/cpm/bind
 /src/python/pulse/study/multiplex_ventilation/bind
+/src/python/pulse/study/sensitivity_analysis/bind
 /src/python/google
 
 # Eclipse Build Directory

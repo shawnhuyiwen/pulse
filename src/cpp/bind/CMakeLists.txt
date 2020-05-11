@@ -42,6 +42,7 @@ add_library_ex(DataModelBindings
 # impl bindings
 # study bindings
     "${MV_STUDY_PACKAGE}/MultiplexVentilation.pb.h"
+    "${SA_STUDY_PACKAGE}/SensitivityAnalysis.pb.h"
   CPP_FILES
 # cdm bindings
     "${CDM_PACKAGE}/Actions.pb.cc"
@@ -83,6 +84,7 @@ add_library_ex(DataModelBindings
 # impl bindings
 # study bindings
     "${MV_STUDY_PACKAGE}/MultiplexVentilation.pb.cc"
+    "${SA_STUDY_PACKAGE}/SensitivityAnalysis.pb.cc"
   PRIVATE_DEPENDS
     protobuf::libprotobuf
   LIB_INSTALL_ONLY

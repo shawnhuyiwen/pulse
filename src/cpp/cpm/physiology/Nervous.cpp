@@ -98,7 +98,7 @@ void Nervous::SetUp()
 void Nervous::AtSteadyState()
 {
   if (m_data.GetState() == EngineState::AtInitialStableState)
-    m_FeedbackActive = true;
+    m_FeedbackActive = m_data.GetConfiguration().IsNervousFeedbackEnabled();
 
   // The set-points (Baselines) get reset at the end of each stabilization period.
   m_ArterialOxygenBaseline_mmHg = m_data.GetBloodChemistry().GetArterialOxygenPressure(PressureUnit::mmHg);

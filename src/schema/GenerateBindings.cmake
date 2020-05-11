@@ -20,6 +20,7 @@ set(CPM_DIR "pulse/cpm/bind")
 set(IMPL_DIR "pulse/impl/bind")
 # Custom models for studies
 set(MV_STUDY_DIR "pulse/study/multiplex_ventilation/bind")
+set(SA_STUDY_DIR "pulse/study/sensitivity_analysis/bind")
 # Let the build also know package locations
 get_directory_property(hasParent PARENT_DIRECTORY)
 if(hasParent)
@@ -27,13 +28,15 @@ if(hasParent)
   set(CPM_PACKAGE ${CPM_DIR} PARENT_SCOPE)
   set(IMPL_PACKAGE ${IMPL_DIR} PARENT_SCOPE)
   set(MV_STUDY_PACKAGE ${MV_STUDY_DIR} PARENT_SCOPE)
+  set(SA_STUDY_PACKAGE ${SA_STUDY_DIR} PARENT_SCOPE)
 endif()
 
 macro(delete_bindings _root)
   file(GLOB _OLD_BIND_FILES "${_root}/${CDM_DIR}/*"
                             "${_root}/${CPM_DIR}/*"
                             "${_root}/${IMPL_DIR}/*"
-                            "${_root}/${MV_STUDY_DIR}/*")
+                            "${_root}/${MV_STUDY_DIR}/*"
+                            "${_root}/${SA_STUDY_DIR}/*")
   if(_OLD_BIND_FILES)
     file(REMOVE ${_OLD_BIND_FILES})
   endif()
@@ -214,6 +217,7 @@ if(Pulse_PYTHON_API)
     file(COPY "${python_bindings_DIR}/__init__.py" DESTINATION "${python_bindings_DIR}/${CPM_DIR}")
     file(COPY "${python_bindings_DIR}/__init__.py" DESTINATION "${python_bindings_DIR}/${IMPL_DIR}")
     file(COPY "${python_bindings_DIR}/__init__.py" DESTINATION "${python_bindings_DIR}/${MV_STUDY_DIR}")
+    file(COPY "${python_bindings_DIR}/__init__.py" DESTINATION "${python_bindings_DIR}/${SA_STUDY_DIR}")
     message(STATUS "python bindings are here : ${python_bindings_DIR}" )
   endif()
 endif()

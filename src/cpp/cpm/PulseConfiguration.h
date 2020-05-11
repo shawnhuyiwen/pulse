@@ -452,10 +452,16 @@ protected:
   /** Nervous */
   /////////////
 public:
+
+  virtual bool IsNervousFeedbackEnabled() const { return m_NervousFeedbackEnabled == eSwitch::On; }
+  virtual void EnableNervousFeedback(eSwitch s) { m_NervousFeedbackEnabled = (s == eSwitch::NullSwitch) ? eSwitch::On : s; }
+protected:
+
   virtual bool HasPupilDiameterBaseline() const;
   virtual SEScalarLength& GetPupilDiameterBaseline();
   virtual double GetPupilDiameterBaseline(const LengthUnit& unit) const;
 protected:
+  eSwitch                   m_NervousFeedbackEnabled;
   SEScalarLength*           m_PupilDiameterBaseline;
 
   ////////////
