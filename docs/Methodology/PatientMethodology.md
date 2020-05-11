@@ -4,7 +4,6 @@
 @anchor patient-overview
 Overview
 ========
-========
 
 Abstract
 --------

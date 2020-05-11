@@ -14,6 +14,8 @@ Authors Clipp, Webb, and Bray have transitioned to the Pulse team.
 
 
 Pulse Publications:
+- Jeffrey B. Webb, Aaron Bray, and Rachel B. Clipp. "Parameterization of Respiratory Physiology and Pathophysiology for Real-Time Simulation." 42nd Annual International Conference of the IEEE Engineering in Medicine and Biology Society (EMBC'20). 2020.
+ - Mrinali Kesavadas and Pavithra Rajeswaran, "Cyber Physical CPR Training System with Physiological Feedback." 41st Annual International Conference of the IEEE Engineering in Medicine & Biology Society (EMBC). 2019.
 - Bray, Aaron, Jeffrey B. Webb, Andinet Enquobahrie, Jared Vicory, Jerry Heneghan, Robert Hubal, Stephanie TerMaath, Philip Asare, and Rachel B. Clipp. "Pulse Physiology Engine: an Open-Source Software Platform for Computational Modeling of Human Medical Simulation." SN Comprehensive Clinical Medicine. 2019.
 - Gessa, Farooq M., "Testing and Validation Framework for Closed-Loop Physiology Management Systems for Critical and Perioperative Care" (2019). Master's Theses. 220. https://digitalcommons.bucknell.edu/masters_theses/220
 - Rodriquez Jr, Dario, Thomas Blakeman, Dina Gomaa, and Richard Branson. Advancing Mechanical Ventilation Management through Simulation. No. AFRL-SA-WP-SR-2019-0006. USAFSAM/FHE Wright-Patterson AFB United States, 2019. 

@@ -1079,17 +1079,17 @@ Disease states are applied to the simulated patient by modifying various paramet
 
 Growth/increasing functions define a as 1 and b as the maximum multiplier, while decay/decreasing functions define b as 1 and a as the minimum multiplier. Therefore, a severity of 0 will not change the healthy value and allows for an intuitive continuous function without any discontinuities. The respiratory system also includes logic to combine effects for each parameter when multiple insults/interventions are applied. 
 
-When an artificial airway is applied (i.e., mechanical ventilator or anesthesia machine), there is a change in the respiratory circuit's resistance and compliance @cite arnal2018parameters. Intubated patients will have these modifiers stacked/combined with all other action/condition modifiers.
+When positive pressure ventilation is applied (i.e., mechanical ventilator or anesthesia machine), there is a change in the respiratory circuit's resistance and compliance @cite arnal2018parameters. Intubated patients will have these modifiers stacked/combined with all other action/condition modifiers.
 
 <center><br>
-<i>Table 2. Property changes due to the application of respiratory diseases and an artificial airway. ARDS and COPD are applied by the user with a severity defined between 0 and 1 and mapped using with linear or exponential functions.  Mild severity = 0.3, moderate severity = 0.6, severe severity = 0.9. The fatigue factor is a multiplier on the muscle pressure source target that effectively reduces the tidal volume due to the increased effort of breathing.</i>
+<i>Table 2. Property changes due to the application of respiratory diseases and positive pressure ventilation. ARDS and COPD are applied by the user with a severity defined between 0 and 1 and mapped using with linear or exponential functions.  Mild severity = 0.3, moderate severity = 0.6, severe severity = 0.9. The fatigue factor is a multiplier on the muscle pressure source target that effectively reduces the tidal volume due to the increased effort of breathing.</i>
 </center>
 
 <table>
   <tr>
     <th>Parameter</th>
     <th>Standard Healthy</th>
-    <th>Artificial Airway</th>
+    <th>Positive Pressure Ventilation</th>
     <th colspan="4">Restrictive (ARDS)</th>
     <th colspan="4">Obstructive (COPD)</th>
   </tr>
@@ -1106,14 +1106,15 @@ When an artificial airway is applied (i.e., mechanical ventilator or anesthesia 
     <th>Moderate</th>
     <th>Severe</th>
   </tr>
-  <tr><td>Alveolar Dead Space (L)</td><td>0</td><td>0</td><td>N/A</td><td>0</td><td>0</td><td>0</td><td>Linear Growth</td><td>0.6</td><td>1.2</td><td>1.8</td></tr>
-  <tr><td>Airway Resistance (cmH20-s/L)</td><td>1.125</td><td>9</td><td>N/A</td><td>1.125</td><td>1.125</td><td>1.125</td><td>N/A</td><td>1.125</td><td>1.125</td><td>1.125</td></tr>
-  <tr><td>Bronchi Resistance (cmH20-s/L)</td><td>0.45</td><td>0.45</td><td>N/A</td><td>0.45</td><td>0.45</td><td>0.45</td><td>Exponential Growth</td><td>1.74</td><td>6.7</td><td>25.8</td></tr>
-  <tr><td>Lung Compliance (L/cmH2O)</td><td>0.1</td><td>0.04</td><td>Linear Decay</td><td>0.082</td><td>0.064</td><td>0.046</td><td>Linear Growth</td><td>0.13</td><td>0.16</td><td>0.19</td></tr>
-  <tr><td>Inspiratory-Expiratory Ratio</td><td>0.5</td><td>0.5</td><td>Exponential Growth</td><td>1.1</td><td>2.6</td><td>12.1</td><td>Linear Decay</td><td>0.3</td><td>0.15</td><td>0.03</td></tr>
-  <tr><td>Diffusion Surface Area (m^2)</td><td>68.3</td><td>68.3</td><td>Exponential Decay</td><td>34.3</td><td>17.2</td><td>8.6</td><td>Exponential Decay</td><td>34.3</td><td>17.2</td><td>8.6</td></tr>
-  <tr><td>Pulmonary Capilary Resistance (cmH20-s/L)</td><td>85.6</td><td>85.6</td><td>N/A</td><td>85.6</td><td>85.6</td><td>85.6</td><td>Linear Growth</td><td>128.4</td><td>171.2</td><td>214.0</td></tr>
-  <tr><td>Fatigue Factor</td><td>1</td><td>1</td><td>Linear Decay</td><td>0.76</td><td>0.52</td><td>0.28</td><td>Linear Decay</td><td>0.76</td><td>0.52</td><td>0.28</td></tr>
+  <tr><td>Alveolar Dead Space (L)</td><td>Respiratory</td><td>0</td><td>0</td><td>N/A</td><td>0</td><td>0</td><td>0</td><td>Linear Growth</td><td>0.6</td><td>1.2</td><td>1.8</td></tr>
+  <tr><td>Airway Resistance (cmH20-s/L)</td><td>Respiratory</td><td>1.125</td><td>9</td><td>N/A</td><td>1.125</td><td>1.125</td><td>1.125</td><td>N/A</td><td>1.125</td><td>1.125</td><td>1.125</td></tr>
+  <tr><td>Bronchi Resistance (cmH20-s/L)</td><td>Respiratory</td><td>0.45</td><td>0.45</td><td>N/A</td><td>0.45</td><td>0.45</td><td>0.45</td><td>Exponential Growth</td><td>1.74</td><td>6.7</td><td>25.8</td></tr>
+  <tr><td>Lung Compliance (L/cmH2O)</td><td>Respiratory</td><td>0.1</td><td>0.04</td><td>Linear Decay</td><td>0.082</td><td>0.064</td><td>0.046</td><td>Linear Growth</td><td>0.13</td><td>0.16</td><td>0.19</td></tr>
+  <tr><td>Inspiratory-Expiratory Ratio</td><td>Respiratory</td><td>0.5</td><td>0.5</td><td>Exponential Growth</td><td>1.1</td><td>2.6</td><td>12.1</td><td>Linear Decay</td><td>0.3</td><td>0.15</td><td>0.03</td></tr>
+  <tr><td>Diffusion Surface Area (m^2)</td><td>Respiratory</td><td>68.3</td><td>68.3</td><td>Exponential Decay</td><td>34.3</td><td>17.2</td><td>8.6</td><td>Exponential Decay</td><td>34.3</td><td>17.2</td><td>8.6</td></tr>
+  <tr><td>Pulmonary Capillary Resistance (mmHg-s/mL)</td><td>Cardiovascular</td><td>0.062</td><td>0.062</td><td>N/A</td><td>0.062</td><td>0.062</td><td>0.062</td><td>Linear Growth</td><td>0.094</td><td>0.126</td><td>0.157</td></tr>
+  <tr><td>Pulmonary Shunt Resistance (mmHg-s/mL)</td><td>Cardiovascular</td><td>8.9</td><td>8.9</td><td>Exponential Decay</td><td>2.23</td><td>0.56</td><td>0.14</td><td>N/A</td><td>8.9</td><td>8.9</td><td>8.9</td></tr>
+  <tr><td>Fatigue Factor</td><td>Respiratory</td><td>1</td><td>1</td><td>Linear Decay</td><td>0.76</td><td>0.52</td><td>0.28</td><td>Linear Decay</td><td>0.76</td><td>0.52</td><td>0.28</td></tr>
 </table>
 
 Modifications to respiratory circuit resistances and compliances can further be examined and validated through volume-flow curves, like those created during spirometry testing. Figure 17 shows results from a simulated pulmonary function test with the standard patient healthy and with moderate ARDS and COPD.
@@ -1145,6 +1146,10 @@ Additionally, The engine models destruction of lung tissue with an increase in a
 The destruction of the alveolar membranes also destroys the pulmonary capillaries embedded in the membranes. To model pulmonary capillary destruction, the engine increases the pulmonary capillary flow resistance based on severity. Although increased pulmonary capillary resistance is related to alveolar membrane destruction, and therefore associated with emphysema, the engine uses either emphysema severity or chronic bronchitis severity (whichever is higher) to determine the pulmonary capillary resistance multiplier. This was done in an attempt to model increased blood pressure and elevated heart rate, which are symptoms of both emphysema and chronic bronchitis. Increasing the capillary resistance should increase arterial blood pressure as the heart pumps harder to overcome the increased resistance in the lungs. 
 
 Decreased Inspiration-Expiration (IE) ratio is another pathophysiologic feature of COPD.  As with asthma, the normal IE ratio is scaled using a multiplier based on severity. Either chronic bronchitis severity or emphysema severity (whichever is higher) is used to determine the IE ratio scaling multiplier. 
+
+#### Acute Respiratory Distress Syndrome
+
+
 
 #### Lobar Pneumonia
 

@@ -1,6 +1,6 @@
 {
-  "Name": "ImpairedAlveolarExchangeSurfaceArea",
-  "Description": "Cause Acute Respiratory Distress by generically reducing the alveolar surface area.",
+  "Name": "PulmonaryShunt",
+  "Description": "Test pulmonary shunt condition and exacerbation action.",
   "StartType": {
     "PatientConfiguration": {
       "PatientFile": "StandardMale.json",
