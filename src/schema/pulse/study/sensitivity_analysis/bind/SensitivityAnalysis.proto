@@ -14,22 +14,30 @@ message SimulationData
   string                       OutputBaseFilename                      = 2;
   pulse.cdm.bind.OverridesData Overrides                               = 3;
   
-  double                       CardiacOutput_L_Per_min                 = 4;
+  double                       ArterialPressure_mmHg                   = 4;
   double                       BloodVolume_mL                          = 5;
-  double                       HeartRate_bpm                           = 6;
-  double                       HeartStrokeVolume_mL                    = 7;
-  double                       SystolicArterialPressure_mmHg           = 8;
-  double                       DiastolicArterialPressure_mmHg          = 9;
-  double                       ArterialPressure_mmHg                   = 10;
-  double                       MeanArterialPressure_mmHg               = 11;
-  double                       PulmonaryCapillariesWedgePressure_mmHg  = 12;
-  double                       CentralVenousPressure_mmHg              = 13;
-  double                       HeartEjectionFraction                   = 14;
-  double                       SystemicVascularResistance_mmHg_s_Per_L = 15;
-  
+  double                       CardiacOutput_L_Per_min                 = 6;
+  double                       CentralVenousPressure_mmHg              = 7;
+  double                       CerebralBloodFlow_L_Per_min             = 8;
+  double                       CerebralPerfusionPressure_mmHg          = 9;
+  double                       DiastolicArterialPressure_mmHg          = 10;
+  double                       HeartEjectionFraction                   = 11;
+  double                       HeartRate_bpm                           = 12;
+  double                       HeartStrokeVolume_mL                    = 13;
+  double                       IntracranialPressure_mmHg               = 14;
+  double                       MeanArterialPressure_mmHg               = 15;
+  double                       PulmonaryArterialPressure_mmHg          = 16;
+  double                       PulmonaryCapillariesWedgePressure_mmHg  = 17;
+  double                       PulmonaryDiastolicArterialPressure_mmHg = 18;
+  double                       PulmonaryMeanArterialPressure_mmHg      = 19;
+  double                       PulmonaryMeanCapillaryFlow_L_Per_min    = 20;
+  double                       PulmonarySystolicArterialPressure_mmHg  = 21;
+  double                       SystolicArterialPressure_mmHg           = 22;
+  double                       SystemicVascularResistance_mmHg_s_Per_L = 23;
+
   // Stabilization Information
-  bool                         AchievedStabilization                   = 16;
-  double                       StabilizationTime_s                     = 17;
+  bool                         AchievedStabilization                   = 24;
+  double                       StabilizationTime_s                     = 25;
   
 }
 

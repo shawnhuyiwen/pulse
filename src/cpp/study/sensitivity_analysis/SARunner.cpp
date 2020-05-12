@@ -150,88 +150,130 @@ bool SARunner::RunSimulationUntilStable(pulse::study::sensitivity_analysis::bind
     return false;
 
   // No logging to console (when threaded)
-  pulse->GetLogger()->LogToConsole(false);
+  pulse->GetLogger()->LogToConsole(true);
   // Setup data requests
+  pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("ArterialPressure", PressureUnit::mmHg);
+  pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
   pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::L_Per_min);
-  // TODO BF add everything we want in the csv file here
+  pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CentralVenousPressure", PressureUnit::mmHg);
+  pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CerebralBloodFlow", VolumePerTimeUnit::L_Per_min);
+  pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CerebralPerfusionPressure", PressureUnit::mmHg);
+  pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
+  pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartEjectionFraction");
+  pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
+  pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartStrokeVolume", VolumeUnit::mL);
+  pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("IntracranialPressure", PressureUnit::mmHg);
+  pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
+  pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryArterialPressure", PressureUnit::mmHg);
+  pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryCapillariesWedgePressure", PressureUnit::mmHg);
+  pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryDiastolicArterialPressure", PressureUnit::mmHg);
+  pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryMeanArterialPressure", PressureUnit::mmHg);
+  pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryMeanCapillaryFlow", VolumePerTimeUnit::L_Per_min);
+  pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonarySystolicArterialPressure", PressureUnit::mmHg);
+  pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
+  pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystemicVascularResistance", PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+
+  pulse->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("SensitivityAnalysis.csv");
+  pulse->GetEngineTracker()->SetupRequests();
 
   // Apply Overrides
   // Get Aaron when you get to this point
 
-  double timeStep_s = pulse->GetTimeStep(TimeUnit::s);
-  double currentTime_s = 0;
-
-  int stabilizationPasses = 0;
-  int totalIterations = 0;
-  double stabilizationTimer_s = 0;
-  double stabilizationCheck_s = 2;
-  // TODO BF Convert this to a CV based stabilization
+  // Run until stable
   // Let's shoot for with in 0.25% for 10s straight
-  double pctDiffSpO2 = 0.25;
 
-  double previousSpO2s;
-  previousSpO2s = pulse->GetBloodChemistrySystem()->GetOxygenSaturation();
+  double timeStep_s = pulse->GetTimeStep(TimeUnit::s);
+  double stabPercentTolerance = 0.25;
+  double stabCheckTime_s = 10.0;
+  double time_s = 0;
+  double maxTime_s = 2000;
 
-  double statusTimer_s = 0;  // Current time of this status cycle
-  double statusStep_s = 60; // How long did it take to simulate this much time
+  bool success = false;
+  double previoustMap_mmHg = pulse->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg);
+  double previousSystolic_mmHg = pulse->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg);
+  double previousDiastolic_mmHg = pulse->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg);
+  double previousCardiacOutput_mL_Per_min = pulse->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min);
+  //double previousMeanCVP_mmHg = pulse->GetCardiovascularSystem()->GetMeanCentralVenousPressure(PressureUnit::mmHg);
+  double previousBlood_mL = pulse->GetCardiovascularSystem()->GetBloodVolume(VolumeUnit::mL);
 
-  int minIterations = (int)(60 / timeStep_s);
-  int maxIterations = (int)(300 / timeStep_s);
-  while (true)
+  bool stable = false;
+  double stableTime_s = 0;
+  while (!stable)
   {
-    totalIterations++;
-    if (totalIterations == minIterations)
-      pulse->GetLogger()->Info("Minimum Runtime Achieved");
+      pulse->AdvanceModelTime(timeStep_s, TimeUnit::s);
 
-    pulse->AdvanceModelTime(timeStep_s, TimeUnit::s);
-    // Increment our timers
-    currentTime_s += timeStep_s;
-    statusTimer_s += timeStep_s;
-    // Start stabilization timer after minimum run time
-    if (totalIterations > minIterations)
-      stabilizationTimer_s += timeStep_s;
+      double currentMap_mmHg = pulse->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg);
+      double currentSystolic_mmHg = pulse->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg);
+      double currentDiastolic_mmHg = pulse->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg);
+      double currentCardiacOutput_mL_Per_min = pulse->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min);
+      //double currentMeanCVP_mmHg = pulse->GetCardiovascularSystem()->GetMeanCentralVenousPressure(PressureUnit::mmHg);
+      double currentBlood_mL = pulse->GetCardiovascularSystem()->GetBloodVolume(VolumeUnit::mL);
 
-    // How are we running?
-    if (statusTimer_s > statusStep_s)
-    {
-      statusTimer_s = 0;
-      pulse->GetLogger()->Info("Current Time is " + cdm::to_string(currentTime_s) + "s, it took " + cdm::to_string(profiler.GetElapsedTime_s("Status")) + "s to simulate the past " + cdm::to_string(statusStep_s) + "s");
-      profiler.Reset("Status");
-    }
-
-    // Check to see if we are stable
-    if (stabilizationTimer_s > stabilizationCheck_s)
-    {
-      double currentSpO2 = pulse->GetBloodChemistrySystem()->GetOxygenSaturation();
-      double pctDiff = GeneralMath::PercentDifference(previousSpO2s, currentSpO2);
-      if (pctDiff <= pctDiffSpO2)
-        stabilizationPasses++;
-      else
+      stableTime_s += timeStep_s;
+      bool stableMAP = true;
+      if (GeneralMath::PercentDifference(previoustMap_mmHg, currentMap_mmHg) > stabPercentTolerance)
       {
-        stabilizationPasses = 0;
-        previousSpO2s = currentSpO2;
+          stableTime_s = 0; previoustMap_mmHg = currentMap_mmHg; stableMAP = false;
+      }
+      bool stableSystolic = true;
+      if (GeneralMath::PercentDifference(previousSystolic_mmHg, currentSystolic_mmHg) > stabPercentTolerance)
+      {
+          stableTime_s = 0; previousSystolic_mmHg = currentSystolic_mmHg; stableSystolic = false;
+      }
+      bool stableDiastolic = true;
+      if (GeneralMath::PercentDifference(previousDiastolic_mmHg, currentDiastolic_mmHg) > stabPercentTolerance)
+      {
+          stableTime_s = 0; previousDiastolic_mmHg = currentDiastolic_mmHg; stableDiastolic = false;
+      }
+      bool stableCO = true;
+      if (GeneralMath::PercentDifference(previousCardiacOutput_mL_Per_min, currentCardiacOutput_mL_Per_min) > stabPercentTolerance)
+      {
+          stableTime_s = 0; previousCardiacOutput_mL_Per_min = currentCardiacOutput_mL_Per_min; stableCO = false;
+      }
+      //bool stableMeanCVP = true;
+      //if (GeneralMath::PercentDifference(tgt_meanCVP_mmHg, meanCVP_mmHg) > 0.25)
+      //  { stableTime_s = 0; tgt_meanCVP_mmHg = meanCVP_mmHg; stableMeanCVP = false; }
+      bool stableBloodVol = true;
+      if (GeneralMath::PercentDifference(previousBlood_mL, currentBlood_mL) > stabPercentTolerance)
+      {
+          stableTime_s = 0; previousBlood_mL = currentBlood_mL; stableBloodVol = false;
       }
 
-      stabilizationTimer_s = 0;
-      if (stabilizationPasses == 5)
+      if (stableTime_s > stabCheckTime_s)
       {
-        break;
-        double stabilizationTime = (totalIterations - minIterations) * timeStep_s;
-        pulse->GetLogger()->Info("Stabilization took " + cdm::to_string(stabilizationTime) + "s to for this simulation");
+          stable = true;
+          pulse->GetLogger()->Info("We are stable at " + cdm::to_string(time_s));
       }
-      if (totalIterations > maxIterations)
+      if (time_s > maxTime_s)
       {
-        pulse->GetLogger()->Info("Reached maximum iterations. Ending simulation.");
-        break;
+          pulse->GetLogger()->Info("Could not stabilize this configuration");
+          break;
       }
-    }
   }
 
   // Fill out our results
-  sim.set_achievedstabilization(!(totalIterations > maxIterations));
+  sim.set_achievedstabilization(stable);
   sim.set_stabilizationtime_s(profiler.GetElapsedTime_s("Total"));
+  sim.set_arterialpressure_mmhg(pulse->GetCardiovascularSystem()->GetArterialPressure(PressureUnit::mmHg));
+  sim.set_bloodvolume_ml(pulse->GetCardiovascularSystem()->GetBloodVolume(VolumeUnit::mL));
   sim.set_cardiacoutput_l_per_min(pulse->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::L_Per_min));
-  // TODO BF Add the rest of our outputs here
+  sim.set_centralvenouspressure_mmhg(pulse->GetCardiovascularSystem()->GetCentralVenousPressure(PressureUnit::mmHg));
+  sim.set_cerebralbloodflow_l_per_min(pulse->GetCardiovascularSystem()->GetCerebralBloodFlow(VolumePerTimeUnit::L_Per_min));
+  sim.set_cerebralperfusionpressure_mmhg(pulse->GetCardiovascularSystem()->GetCerebralPerfusionPressure(PressureUnit::mmHg));
+  sim.set_diastolicarterialpressure_mmhg(pulse->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg));
+  sim.set_heartejectionfraction(pulse->GetCardiovascularSystem()->GetHeartEjectionFraction());
+  sim.set_heartrate_bpm(pulse->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min));
+  sim.set_heartstrokevolume_ml(pulse->GetCardiovascularSystem()->GetHeartStrokeVolume(VolumeUnit::mL));
+  sim.set_intracranialpressure_mmhg(pulse->GetCardiovascularSystem()->GetIntracranialPressure(PressureUnit::mmHg));
+  sim.set_meanarterialpressure_mmhg(pulse->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg));
+  sim.set_pulmonaryarterialpressure_mmhg(pulse->GetCardiovascularSystem()->GetPulmonaryArterialPressure(PressureUnit::mmHg));
+  sim.set_pulmonarycapillarieswedgepressure_mmhg(pulse->GetCardiovascularSystem()->GetPulmonaryCapillariesWedgePressure(PressureUnit::mmHg));
+  sim.set_pulmonarydiastolicarterialpressure_mmhg(pulse->GetCardiovascularSystem()->GetPulmonaryDiastolicArterialPressure(PressureUnit::mmHg));
+  sim.set_pulmonarymeanarterialpressure_mmhg(pulse->GetCardiovascularSystem()->GetPulmonaryMeanArterialPressure(PressureUnit::mmHg));
+  sim.set_pulmonarymeancapillaryflow_l_per_min(pulse->GetCardiovascularSystem()->GetPulmonaryMeanCapillaryFlow(VolumePerTimeUnit::L_Per_min));
+  sim.set_pulmonarysystolicarterialpressure_mmhg(pulse->GetCardiovascularSystem()->GetPulmonarySystolicArterialPressure(PressureUnit::mmHg));
+  sim.set_systolicarterialpressure_mmhg(pulse->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg));
+  sim.set_systemicvascularresistance_mmhg_s_per_l(pulse->GetCardiovascularSystem()->GetSystemicVascularResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL));
   
   pulse->GetLogger()->Info("It took " + cdm::to_string(sim.stabilizationtime_s()) + "s to run this simulation");
 
