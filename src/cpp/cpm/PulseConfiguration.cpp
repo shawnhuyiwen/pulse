@@ -135,7 +135,7 @@ PulseConfiguration::PulseConfiguration(SESubstanceManager& substances) : SEEngin
   m_WaterDigestionRate = nullptr;
 
   // Nervous
-  m_NervousFeedbackEnabled = eSwitch::Off;
+  m_NervousFeedbackEnabled = eSwitch::On;
   m_PupilDiameterBaseline = nullptr;
   
   // Renal
