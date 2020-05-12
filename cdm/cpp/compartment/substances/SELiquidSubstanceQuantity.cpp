@@ -432,8 +432,10 @@ SEScalarPressure& SELiquidSubstanceQuantity::GetPartialPressure()
   {
     m_PartialPressure->SetReadOnly(false);
     if (HasConcentration())
-      if(!GeneralMath::CalculatePartialPressureInLiquid(m_Substance, GetConcentration(), *m_PartialPressure, m_Logger))
+    {
+      if (!GeneralMath::CalculatePartialPressureInLiquid(m_Substance, GetConcentration(), *m_PartialPressure, m_Logger))
         Error("  Compartment : " + m_Compartment.GetName() + ", Substance : " + m_Substance.GetName());
+    }
     else
       m_PartialPressure->Invalidate();
     m_PartialPressure->SetReadOnly(true);

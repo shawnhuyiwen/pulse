@@ -43,12 +43,16 @@
       { "DecimalFormat": {                }, "Category": "GasCompartment", "CompartmentName": "LeftAlveoli", "PropertyName": "Pressure", "Unit": "cmH2O" },
       { "DecimalFormat": {                }, "Category": "GasCompartment", "CompartmentName": "RightAlveoli", "PropertyName": "Pressure", "Unit": "cmH2O" },
       
+      { "DecimalFormat": {                }, "Category": "GasCompartment", "CompartmentName": "Carina",       "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "cmH2O" },
+      { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment", "CompartmentName": "Carina",       "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "cmH2O" },
+      { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment", "CompartmentName": "LeftLungPulmonary",  "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
+      { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment", "CompartmentName": "RightLungPulmonary", "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
+      { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment", "CompartmentName": "LeftLungPulmonary",  "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
+      { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment", "CompartmentName": "RightLungPulmonary", "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
       { "DecimalFormat": {                }, "Category": "GasCompartment", "CompartmentName": "LeftAlveoli",  "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
       { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment", "CompartmentName": "LeftAlveoli",  "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
       { "DecimalFormat": {                }, "Category": "GasCompartment", "CompartmentName": "RightAlveoli", "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
       { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment", "CompartmentName": "RightAlveoli", "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg"},
-      { "DecimalFormat": {                }, "Category": "GasCompartment", "CompartmentName": "Carina",       "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "cmH2O" },
-      { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment", "CompartmentName": "Carina",       "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "cmH2O" },
       
       { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "Aorta",        "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
       { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "Aorta",        "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },

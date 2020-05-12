@@ -197,8 +197,12 @@ bool PulseEngine::InitializeEngine(const SEPatientConfiguration& patient_configu
   // Use Quantity/Potential/Flux Sources
   m_Circuits->SetReadOnly(true);
 
-  if (!m_Config->GetStabilization()->StabilizeFeedbackState(*this))
-    return false;
+  // Run this again to clear out any bumps from systems resetting baselines in the last AtSteadyState call
+  AdvanceModelTime(30, TimeUnit::s); // I would rather run Feedback stablization again, but...
+  // This does not work for a few patients, they will not stay stable (???)
+  //if (!m_Config->GetStabilizationCriteria()->StabilizeFeedbackState(*this))
+  //  return false;
+
 
   if (!m_Config->GetStabilization()->IsTrackingStabilization())
     m_SimulationTime->SetValue(0, TimeUnit::s);

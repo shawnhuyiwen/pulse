@@ -98,8 +98,10 @@ SEScalarPressure& SEGasSubstanceQuantity::GetPartialPressure()
   {
     m_PartialPressure->SetReadOnly(false);
     if (HasVolumeFraction() && m_Compartment.HasPressure())
-      if(!GeneralMath::CalculatePartialPressureInGas(GetVolumeFraction(), m_Compartment.GetPressure(), *m_PartialPressure, m_Logger))
+    {
+      if (!GeneralMath::CalculatePartialPressureInGas(GetVolumeFraction(), m_Compartment.GetPressure(), *m_PartialPressure, m_Logger))
         Error("  Compartment : " + m_Compartment.GetName() + ", Substance : " + m_Substance.GetName());
+    }
     else
       m_PartialPressure->Invalidate();
     m_PartialPressure->SetReadOnly(true);

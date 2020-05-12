@@ -55,7 +55,6 @@ void SEGasCompartment::Balance(BalanceGasBy by)
           if(HasPressure())
             if(!GeneralMath::CalculatePartialPressureInGas(subQ->GetVolumeFraction(), GetPressure(), subQ->GetPartialPressure(), m_Logger))
               Error("  Compartment : " + GetName() + ", Substance : " + subQ->GetSubstance().GetName());
-
         }
       }
       break;

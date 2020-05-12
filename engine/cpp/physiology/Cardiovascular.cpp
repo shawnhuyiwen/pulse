@@ -498,9 +498,7 @@ void Cardiovascular::ChronicAnemia()
 void Cardiovascular::ChronicHeartFailure()
 {
   //Decrease left heart contractility
-  m_LeftHeartElastanceModifier *= 0.42;
-  double NewHeartDriverFrequency_Per_Min = 1.27 * m_data.GetCurrentPatient().GetHeartRateBaseline(FrequencyUnit::Per_min);
-  m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(NewHeartDriverFrequency_Per_Min, FrequencyUnit::Per_min);
+  m_LeftHeartElastanceModifier *= 0.27;
 }
 
 //--------------------------------------------------------------------------------------------------
