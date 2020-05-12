@@ -31,6 +31,7 @@
 #include "properties/SEScalarTime.h"
 #include "properties/SEScalarHeatCapacitancePerMass.h"
 #include "properties/SERunningAverage.h"
+#include "utils/DataTrack.h"
 
 #pragma warning(disable:4786)
 #pragma warning(disable:4275)
@@ -268,7 +269,7 @@ void BloodChemistry::Process()
   GetBloodPH().Set(m_aorta->GetPH());
 
   // Pressures
-  // arterial gas partial pressures -  
+  // arterial gas partial pressures
   GetArterialOxygenPressure().Set(m_aortaO2->GetPartialPressure());
   GetArterialCarbonDioxidePressure().Set(m_aortaCO2->GetPartialPressure());
   // pulmonary arteries
@@ -446,7 +447,7 @@ void BloodChemistry::CheckBloodGasLevels()
     }
 
     //Myocardium Oxygen Check
-    if (m_myocardiumO2->GetPartialPressure(PressureUnit::mmHg) < 25)
+    if (m_myocardiumO2->GetPartialPressure(PressureUnit::mmHg) < 5)
     {
       /// \event Patient: The heart is not receiving enough oxygen. Coronary arteries should dilate to increase blood flow to the heart.
       m_data.GetEvents().SetEvent(eEvent::MyocardiumOxygenDeficit, true, m_data.GetSimulationTime());
