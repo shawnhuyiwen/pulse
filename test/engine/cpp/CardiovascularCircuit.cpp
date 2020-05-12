@@ -143,7 +143,7 @@ void PulseEngineTest::TuneCardiovascularCircuitTest(SETestSuite& testSuite, cons
   Cardiovascular& cv = (Cardiovascular&)pc.GetCardiovascular();
   try
   {
-    cv.m_TuningFile = sTestDirectory + "/Tune" + sTestName + "CircuitOutput.csv";//For Debugging
+    //cv.m_TuningFile = sTestDirectory + "/Tune" + sTestName + "CircuitOutput.csv";//For Debugging
     cv.Initialize();
   }
   catch (PhysiologyEngineException ex)

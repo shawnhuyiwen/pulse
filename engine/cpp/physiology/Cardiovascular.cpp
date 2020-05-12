@@ -611,26 +611,6 @@ void Cardiovascular::PreProcess()
   ProcessActions();
   UpdateHeartRhythm();
   CalculatePleuralCavityVenousEffects();
-
-  //Debugging
-  for (SEFluidCircuitPath* p : m_TissueResistancePaths)
-  {
-    m_data.GetDataTrack().Probe(p->GetName() + "_Flow(mL/min)", p->GetFlow(VolumePerTimeUnit::mL_Per_min));
-    m_data.GetDataTrack().Probe(p->GetName() + "_Pressure(mmHg)", p->GetTargetNode().GetPressure(PressureUnit::mmHg));
-  }
-
-  m_data.GetDataTrack().Probe("BloodVolumeEstimate", m_BloodVolumeEstimate/1000.0);
-
-  double percentageBloodLoss = ((m_data.GetCurrentPatient().GetBloodVolumeBaseline(VolumeUnit::mL) - GetBloodVolume().GetValue(VolumeUnit::mL)) / m_data.GetCurrentPatient().GetBloodVolumeBaseline(VolumeUnit::mL)) * 100;
-  m_data.GetDataTrack().Probe("BloodLossPercentage", percentageBloodLoss);
-
-  double normalizedardiacOutput = GetCardiacOutput().GetValue(VolumePerTimeUnit::L_Per_min) / m_CardiacOutputBaseline;
-  m_data.GetDataTrack().Probe("NormalizedCardiacOutput", normalizedardiacOutput);
-
-  double normalizedMAP = GetMeanArterialPressure().GetValue(PressureUnit::mmHg) / m_data.GetCurrentPatient().GetMeanArterialPressureBaseline(PressureUnit::mmHg);
-  m_data.GetDataTrack().Probe("NormalizedMAP", normalizedMAP);
-
-  m_data.GetDataTrack().Probe("GUT1-Volume", m_CirculatoryCircuit->GetNode(pulse::TissueNode::GutT1)->GetVolume(VolumeUnit::mL));
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -1681,8 +1661,8 @@ void Cardiovascular::CalculateHeartElastance()
   m_LeftHeartElastance_mmHg_Per_mL = oxygenDeficitEffect * ((m_LeftHeartElastanceMax_mmHg_Per_mL - m_LeftHeartElastanceMin_mmHg_Per_mL)*elastanceShapeFunction + m_LeftHeartElastanceMin_mmHg_Per_mL);
   m_RightHeartElastance_mmHg_Per_mL = oxygenDeficitEffect * ((m_RightHeartElastanceMax_mmHg_Per_mL - m_RightHeartElastanceMin_mmHg_Per_mL)*elastanceShapeFunction + m_RightHeartElastanceMin_mmHg_Per_mL);
 
-  m_data.GetDataTrack().Probe("LeftHeartElastance", m_LeftHeartElastance_mmHg_Per_mL);
-  m_data.GetDataTrack().Probe("oxygendeficiteffect", oxygenDeficitEffect);
+  //m_data.GetDataTrack().Probe("LeftHeartElastance", m_LeftHeartElastance_mmHg_Per_mL);
+  //m_data.GetDataTrack().Probe("oxygendeficiteffect", oxygenDeficitEffect);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -2217,7 +2197,7 @@ void Cardiovascular::TunePaths(double systemicResistanceScale, double systemicCo
 /// Tune the resistance between the CV circuit and Tissue Circuit during stabilization
 ///
 /// \details
-/// Tunes the resistors associated with tissue compartments during stabilization to achieve the requested patient parameters
+/// Tunes the resistors to achieve a desired flow between tissue and blood compartments
 //--------------------------------------------------------------------------------------------------
 void Cardiovascular::TuneTissue(double time_s, DataTrack& circuitTrk, std::ofstream& circuitFile)
 {
@@ -2226,55 +2206,57 @@ void Cardiovascular::TuneTissue(double time_s, DataTrack& circuitTrk, std::ofstr
 
   // Copy all the CV pressures to the associated tissue nodes
 
-  std::vector<SEFluidCircuitNode*> m_TissuePressureCVSources;
-  m_TissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Bone1));
-  m_TissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Brain1));
-  m_TissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Fat1));
-  m_TissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::SmallIntestine1));
-  //m_TissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::LargeIntestine1));
-  //m_TissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Splanchnic1));
-  m_TissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Liver1));
+  std::vector<SEFluidCircuitNode*> tissuePressureCVSources;
+  tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Bone1));
+  tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Brain1));
+  tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Fat1));
+  tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::SmallIntestine1));
+  // Have to pick one of the 3 nodes GI is mapped to for pressure
+  //tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::LargeIntestine1));
+  //tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Splanchnic1));
+  tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Liver1));
   if (m_data.GetConfiguration().IsRenalEnabled())
-    m_TissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::RenalNode::LeftGlomerularCapillaries));
+    tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::RenalNode::LeftGlomerularCapillaries));
   else
-    m_TissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::LeftKidney1));
-  m_TissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::LeftPulmonaryCapillaries));
-  m_TissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Muscle1));
-  m_TissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Myocardium1));
-  m_TissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::RightPulmonaryCapillaries));
+    tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::LeftKidney1));
+  tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::LeftPulmonaryCapillaries));
+  tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Muscle1));
+  tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Myocardium1));
+  tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::RightPulmonaryCapillaries));
   if (m_data.GetConfiguration().IsRenalEnabled())
-    m_TissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::RenalNode::RightGlomerularCapillaries));
+    tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::RenalNode::RightGlomerularCapillaries));
   else
-    m_TissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::RightKidney1));
-  m_TissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Skin1));
-  m_TissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Spleen1));
+    tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::RightKidney1));
+  tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Skin1));
+  tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Spleen1));
 
   // Get the tissue resistance paths to decrement until we get a flow of at least (TBD)
   std::vector<double> flowMax;
   std::vector<double> flowMin;
-  m_TissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::BoneT2ToBoneT1));
-  m_TissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::BrainT2ToBrainT1));
-  m_TissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::FatT2ToFatT1));
-  m_TissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::GutT2ToGutT1));
-  m_TissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::LiverT2ToLiverT1));
-  m_TissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::LeftKidneyT2ToLeftKidneyT1));
-  m_TissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::LeftLungT2ToLeftLungT1));
-  m_TissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::MuscleT2ToMuscleT1));
-  m_TissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::MyocardiumT2ToMyocardiumT1));
-  m_TissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::RightLungT2ToRightLungT1));
-  m_TissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::RightKidneyT2ToRightKidneyT1));
-  m_TissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::SkinT2ToSkinT1));
-  m_TissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::SpleenT2ToSpleenT1));
+  std::vector<SEFluidCircuitPath*> tissueResistancePaths;
+  tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::BoneT2ToBoneT1));
+  tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::BrainT2ToBrainT1));
+  tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::FatT2ToFatT1));
+  tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::GutT2ToGutT1));
+  tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::LiverT2ToLiverT1));
+  tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::LeftKidneyT2ToLeftKidneyT1));
+  tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::LeftLungT2ToLeftLungT1));
+  tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::MuscleT2ToMuscleT1));
+  tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::MyocardiumT2ToMyocardiumT1));
+  tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::RightLungT2ToRightLungT1));
+  tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::RightKidneyT2ToRightKidneyT1));
+  tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::SkinT2ToSkinT1));
+  tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::SpleenT2ToSpleenT1));
   Info("Tuning Tissue resistances at "+std::to_string(time_s)+"s");
-  for (SEFluidCircuitPath* path : m_TissueResistancePaths)
+  for (SEFluidCircuitPath* path : tissueResistancePaths)
   {
     size_t n = flowMax.size();
     flowMax.push_back(0);
     flowMin.push_back(0);
-    path->GetTargetNode().GetPressure().Set(m_TissuePressureCVSources[n]->GetPressure());
-    path->GetTargetNode().GetNextPressure().Set(m_TissuePressureCVSources[n]->GetNextPressure());
-    Info("  " + path->GetName() + " Flow : " + path->GetFlow().ToString());
-    Info("  " + path->GetName() + " Resistance : " + path->GetResistance().ToString());
+    path->GetTargetNode().GetPressure().Set(tissuePressureCVSources[n]->GetPressure());
+    path->GetTargetNode().GetNextPressure().Set(tissuePressureCVSources[n]->GetNextPressure());
+    Info("  Initial " + path->GetName() + " Flow : " + path->GetFlow().ToString());
+    Info("  Initial " + path->GetName() + " Resistance : " + path->GetResistance().ToString());
   }
 
   // Tuning variables
@@ -2282,7 +2264,6 @@ void Cardiovascular::TuneTissue(double time_s, DataTrack& circuitTrk, std::ofstr
   double stabPercentTolerance = 0.25;
   double stabCheckTime_s = 15.0;
 
-  //double stableTime_s;
   double currentStableTime_s;
   double maxStableTime_s = 20;
   double maxConfigurations = 50;
@@ -2290,7 +2271,6 @@ void Cardiovascular::TuneTissue(double time_s, DataTrack& circuitTrk, std::ofstr
   for (int i = 0; i < maxConfigurations; i++)
   {
     stable = false;
-    //stableTime_s = 0;
     currentStableTime_s = 0;
     for (size_t m=0; m< flowMax.size(); m++)
     {
@@ -2308,30 +2288,11 @@ void Cardiovascular::TuneTissue(double time_s, DataTrack& circuitTrk, std::ofstr
       //return; //Skip stabelization for debugging
 
       time_s += m_dT_s;
-      //stableTime_s += m_dT_s;
       currentStableTime_s += m_dT_s;
-      //// Are all the flows stable yet
-      //for (size_t p = 0; p < pressure_mmHg.size(); p++)
-      //{
-      //  double pressure = pressure_mmHg[p];
-      //  double current_pressure = m_TissueResistancePaths[p]->GetTargetNode().GetPressure(PressureUnit::mmHg);
-      //  if (GeneralMath::PercentDifference(pressure, current_pressure) > stabPercentTolerance) // Flows are pulsitile, not a good stable hurestic
-      //  {
-      //    stableTime_s = 0;
-      //    pressure_mmHg[p] = current_pressure;
-      //    break;
-      //  }
-      //}
-      //if (stableTime_s > stabCheckTime_s)
-      //{
-      //  stable = true;
-      //  m_ss << "We are stable at " << time_s;
-      //  Info(m_ss);
-      //}
 
-      for (size_t m=0; m<m_TissueResistancePaths.size(); m++)
+      for (size_t m=0; m<tissueResistancePaths.size(); m++)
       {
-        SEFluidCircuitPath* path = m_TissueResistancePaths[m];
+        SEFluidCircuitPath* path = tissueResistancePaths[m];
         double max = flowMax[m];
         double min = flowMin[m];
         double current = path->GetFlow(VolumePerTimeUnit::mL_Per_s);
@@ -2360,10 +2321,10 @@ void Cardiovascular::TuneTissue(double time_s, DataTrack& circuitTrk, std::ofstr
     size_t pCnt = 0;
     double sp1_mmHg_s_Per_mL;
     resistanceScale = 0.5;
-    for (size_t m=0; m<m_TissueResistancePaths.size(); m++)
+    for (size_t m=0; m<tissueResistancePaths.size(); m++)
     {
       double flowWindow = fabs(flowMax[m] - flowMin[m]);
-      SEFluidCircuitPath* p = m_TissueResistancePaths[m];
+      SEFluidCircuitPath* p = tissueResistancePaths[m];
       sp1_mmHg_s_Per_mL = p->GetResistanceBaseline().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
       if (flowWindow < 0.00005)// 0.003 mL/min
       {
@@ -2381,7 +2342,7 @@ void Cardiovascular::TuneTissue(double time_s, DataTrack& circuitTrk, std::ofstr
       //Info("  " + p->GetName() + " Resistance : " + p->GetResistance().ToString());
       //Info("  " + p->GetName() + " Flow : " + p->GetFlow().ToString());
     }
-    Info("Tuning " + std::to_string(pCnt) + "/" + std::to_string(m_TissueResistancePaths.size()) + " paths at " + std::to_string(time_s) + "s");
+    Info("Tuning " + std::to_string(pCnt) + "/" + std::to_string(tissueResistancePaths.size()) + " paths at " + std::to_string(time_s) + "s");
 
     if (pCnt==0)
     {
@@ -2421,10 +2382,10 @@ void Cardiovascular::TuneTissue(double time_s, DataTrack& circuitTrk, std::ofstr
     }
     Info("Successfully tuned tissue circuit at " + std::to_string(time_s) + "s");
   }
-  for (SEFluidCircuitPath* p : m_TissueResistancePaths)
+  for (SEFluidCircuitPath* p : tissueResistancePaths)
   {
-    Info("  " + p->GetName() + " Resistance : " + p->GetResistance().ToString());
-    Info("  " + p->GetName() + " Flow : " + p->GetFlow().ToString());
+    Info("  Final " + p->GetName() + " Resistance : " + p->GetResistance().ToString());
+    Info("  Final " + p->GetName() + " Flow : " + p->GetFlow().ToString());
   }
   
 }

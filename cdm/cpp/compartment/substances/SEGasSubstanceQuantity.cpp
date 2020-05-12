@@ -46,6 +46,10 @@ void SEGasSubstanceQuantity::Clear()
   m_Children.clear();
 }
 
+std::string SEGasSubstanceQuantity::GetCompartmentName()
+{
+  return m_Compartment.GetName();
+}
 
 void SEGasSubstanceQuantity::SetToZero()
 {
@@ -94,7 +98,8 @@ SEScalarPressure& SEGasSubstanceQuantity::GetPartialPressure()
   {
     m_PartialPressure->SetReadOnly(false);
     if (HasVolumeFraction() && m_Compartment.HasPressure())
-      GeneralMath::CalculatePartialPressureInGas(GetVolumeFraction(), m_Compartment.GetPressure(), *m_PartialPressure, m_Logger);
+      if(!GeneralMath::CalculatePartialPressureInGas(GetVolumeFraction(), m_Compartment.GetPressure(), *m_PartialPressure, m_Logger))
+        Error("  Compartment : " + m_Compartment.GetName() + ", Substance : " + m_Substance.GetName());
     else
       m_PartialPressure->Invalidate();
     m_PartialPressure->SetReadOnly(true);
@@ -110,7 +115,8 @@ double SEGasSubstanceQuantity::GetPartialPressure(const PressureUnit& unit) cons
     SEScalar0To1 volFrac;
     SEScalarPressure partialPressure;
     volFrac.SetValue(const_cast<const SEGasSubstanceQuantity*>(this)->GetVolumeFraction());
-    GeneralMath::CalculatePartialPressureInGas(volFrac, m_Compartment.GetPressure(), partialPressure, m_Logger);
+    if(!GeneralMath::CalculatePartialPressureInGas(volFrac, m_Compartment.GetPressure(), partialPressure, m_Logger))
+      Error("  Compartment : " + m_Compartment.GetName() + ", Substance : " + m_Substance.GetName());
     return partialPressure.GetValue(unit);
   }
   if (m_PartialPressure == nullptr)

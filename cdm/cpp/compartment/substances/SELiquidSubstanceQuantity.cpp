@@ -84,6 +84,11 @@ void SELiquidSubstanceQuantity::Clear()
   m_Children.clear();
 }
 
+std::string SELiquidSubstanceQuantity::GetCompartmentName()
+{
+  return m_Compartment.GetName();
+}
+
 void SELiquidSubstanceQuantity::SetToZero()
 {
   auto& c = GetConcentration();
@@ -179,9 +184,11 @@ void SELiquidSubstanceQuantity::Balance(BalanceLiquidBy by)
       if (!volume.IsValid() || volume.IsInfinity())
         GetMass().SetValue(std::numeric_limits<double>::infinity(), MassUnit::ug);
       else
-        GeneralMath::CalculateMass(volume, GetConcentration(), GetMass(), m_Logger);
+        if(!GeneralMath::CalculateMass(volume, GetConcentration(), GetMass(), m_Logger))
+          Error("  Compartment : " + m_Compartment.GetName() + ", Substance : " + m_Substance.GetName());
       if (m_Substance.GetState() == eSubstance_State::Gas)
-        GeneralMath::CalculatePartialPressureInLiquid(m_Substance, GetConcentration(), GetPartialPressure(), m_Logger);
+        if(!GeneralMath::CalculatePartialPressureInLiquid(m_Substance, GetConcentration(), GetPartialPressure(), m_Logger))
+          Error("  Compartment : " + m_Compartment.GetName() + ", Substance : " + m_Substance.GetName());
       double molarity_mmol_Per_mL = GetMass(MassUnit::ug) / m_Substance.GetMolarMass(MassPerAmountUnit::ug_Per_mmol) / volume.GetValue(VolumeUnit::mL);
       GetMolarity().SetValue(molarity_mmol_Per_mL, AmountPerVolumeUnit::mmol_Per_mL);
       break;
@@ -193,7 +200,8 @@ void SELiquidSubstanceQuantity::Balance(BalanceLiquidBy by)
       if(!GeneralMath::CalculateConcentration(GetMass(),volume,GetConcentration(), m_Logger))
         Error("  Compartment : " + m_Compartment.GetName() + ", Substance : " + m_Substance.GetName());
       if (m_Substance.GetState() == eSubstance_State::Gas)
-        GeneralMath::CalculatePartialPressureInLiquid(m_Substance, GetConcentration(), GetPartialPressure(), m_Logger);
+        if(!GeneralMath::CalculatePartialPressureInLiquid(m_Substance, GetConcentration(), GetPartialPressure(), m_Logger))
+          Error("  Compartment : " + m_Compartment.GetName() + ", Substance : " + m_Substance.GetName());
       double molarity_mmol_Per_mL = GetMass(MassUnit::ug) / m_Substance.GetMolarMass(MassPerAmountUnit::ug_Per_mmol) / volume.GetValue(VolumeUnit::mL);
       GetMolarity().SetValue(molarity_mmol_Per_mL, AmountPerVolumeUnit::mmol_Per_mL);
       break;
@@ -207,7 +215,8 @@ void SELiquidSubstanceQuantity::Balance(BalanceLiquidBy by)
       if(!GeneralMath::CalculateConcentration(GetMass(), volume, GetConcentration(), m_Logger))
         Error("  Compartment : " + m_Compartment.GetName() + ", Substance : " + m_Substance.GetName());
       if (m_Substance.GetState() == eSubstance_State::Gas)
-        GeneralMath::CalculatePartialPressureInLiquid(m_Substance, GetConcentration(), GetPartialPressure(), m_Logger);
+        if(!GeneralMath::CalculatePartialPressureInLiquid(m_Substance, GetConcentration(), GetPartialPressure(), m_Logger))
+          Error("  Compartment : " + m_Compartment.GetName() + ", Substance : " + m_Substance.GetName());
       break;
     }
     case BalanceLiquidBy::PartialPressure:
@@ -423,7 +432,8 @@ SEScalarPressure& SELiquidSubstanceQuantity::GetPartialPressure()
   {
     m_PartialPressure->SetReadOnly(false);
     if (HasConcentration())
-      GeneralMath::CalculatePartialPressureInLiquid(m_Substance, GetConcentration(), *m_PartialPressure, m_Logger);
+      if(!GeneralMath::CalculatePartialPressureInLiquid(m_Substance, GetConcentration(), *m_PartialPressure, m_Logger))
+        Error("  Compartment : " + m_Compartment.GetName() + ", Substance : " + m_Substance.GetName());
     else
       m_PartialPressure->Invalidate();
     m_PartialPressure->SetReadOnly(true);
@@ -439,7 +449,8 @@ double SELiquidSubstanceQuantity::GetPartialPressure(const PressureUnit& unit) c
     SEScalarMassPerVolume concentration;
     SEScalarPressure      partialPressure;
     concentration.SetValue(GetConcentration(MassPerVolumeUnit::mg_Per_mL), MassPerVolumeUnit::mg_Per_mL);
-    GeneralMath::CalculatePartialPressureInLiquid(m_Substance, concentration, partialPressure);
+    if(!GeneralMath::CalculatePartialPressureInLiquid(m_Substance, concentration, partialPressure))
+      Error("  Compartment : " + m_Compartment.GetName() + ", Substance : " + m_Substance.GetName());
     return partialPressure.GetValue(unit);
   }
   if (m_PartialPressure == nullptr)

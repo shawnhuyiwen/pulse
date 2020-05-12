@@ -1431,7 +1431,8 @@ void Renal::CalculateVitalSigns()
   }
 
   //increment water mass onto substance mass to get total mass: 
-  GeneralMath::CalculateSpecificGravity(substanceMass, GetUrineVolume(), GetUrineSpecificGravity());
+  if (!GeneralMath::CalculateSpecificGravity(substanceMass, GetUrineVolume(), GetUrineSpecificGravity()))
+    Error("Unable to calculate specific gravity of bladder substances");
 
   // Urine osmolality is the osmotic pressure of sodium, glucose and urea over the weight of the fluid
   

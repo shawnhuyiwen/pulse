@@ -227,7 +227,7 @@ void Nervous::BaroreceptorFeedback()
   double parasympatheticFraction = 1 - m_TotalSympatheticFraction;
   m_LastMeanArterialPressure_mmHg = meanArterialPressure_mmHg;
 
-  m_data.GetDataTrack().Probe("SympatheticFraction", m_TotalSympatheticFraction);
+  //m_data.GetDataTrack().Probe("SympatheticFraction", m_TotalSympatheticFraction);
   //m_data.GetDataTrack().Probe("ParaSympatheticFraction", parasympatheticFraction);
   //m_data.GetDataTrack().Probe("CumulativeMAP", cumulativeMeanArterialPressure_mmHg);
   //m_data.GetDataTrack().Probe("baroreceptorPressure", baroreceptorPressure_mmHg);
@@ -337,9 +337,9 @@ void Nervous::BaroreceptorFeedback()
   }
   previousBloodVolume_mL = m_data.GetCardiovascular().GetBloodVolume(VolumeUnit::mL);
 
-  m_data.GetDataTrack().Probe("effectivenessParameter", m_BaroreceptorEffectivenessParameter);
-  m_data.GetDataTrack().Probe("normalizedMAPBaro", normalizedMAP);
-  
+  //m_data.GetDataTrack().Probe("effectivenessParameter", m_BaroreceptorEffectivenessParameter);
+  //m_data.GetDataTrack().Probe("normalizedMAPBaro", normalizedMAP);
+
 #ifdef VERBOSE
   m_data.GetDataTrack().Probe("normalizedHeartRate", normalizedHeartRate);
   m_data.GetDataTrack().Probe("normalizedHeartElastance", normalizedHeartElastance);

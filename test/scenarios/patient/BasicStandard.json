@@ -6,7 +6,7 @@
   {
     "DataRequest":
     [
-      { "DecimalFormat": { "Precision": 1 }, "PropertyName": "Weight", "Unit": "kg" },
+      { "DecimalFormat": { "Precision": 1 }, "Category": "Patient", "PropertyName": "Weight", "Unit": "kg" },
       
       { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "HeartRate", "Unit": "1/min" },
       
