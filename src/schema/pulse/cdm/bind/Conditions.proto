@@ -1,0 +1,10 @@
+syntax = "proto3";
+package pulse.cdm.bind;
+option java_package = "pulse.cdm.bind";
+option csharp_namespace = "pulse.cdm.bind";
+option optimize_for = SPEED;
+
+message ConditionData
+{
+  string                                  Comment                    = 1;
+}

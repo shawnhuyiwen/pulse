@@ -1,65 +1,256 @@
 cmake_minimum_required(VERSION 3.7)
-# Using SOURCE_SUBDIR which was first in 3.7
 
-set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/install CACHE PATH "Install location")
-
-project(Pulse-SuperBuild)
-
-# Policy to address @foo@ variable expansion
-if(POLICY CMP0053)
-  cmake_policy(SET CMP0053 NEW)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_CXX_EXTENSIONS False)
+if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+  set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} /EHsc")
 endif()
-
-MACRO(install_headers SRC_DIR DEST)
-  file(GLOB_RECURSE HEADER_LIST 
-    ${SRC_DIR}/*.h 
-    ${SRC_DIR}/*.hxx
-    ${SRC_DIR}/*.inl)
-  foreach(HEADER ${HEADER_LIST})
-    #message(STATUS "Header at ${HEADER}")
-    STRING(REPLACE ${SRC_DIR}/ "" REL_DIR ${HEADER})
-    #message(STATUS "Relative Path ${REL_DIR}")  
-    set(FULL_LOC ${CMAKE_INSTALL_PREFIX}/include/${DEST}/${REL_DIR})
-    #message(STATUS "File should goto ${FULL_LOC}")
-    get_filename_component(DEST_DIR ${FULL_LOC} PATH) 
-    #message(STATUS "Going to ${DEST_DIR}")
-    install(FILES ${HEADER} DESTINATION ${DEST_DIR})
-  endforeach()    
-ENDMACRO(install_headers)
-
-message(STATUS "Installing to ${CMAKE_INSTALL_PREFIX}")
-set(INSTALL_BIN ${CMAKE_INSTALL_PREFIX}/bin)
-set(INSTALL_LIB ${CMAKE_INSTALL_PREFIX}/lib)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 if(UNIX AND NOT APPLE)
-  set(LINUX TRUE)
+  set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib:$ORIGIN/")
 endif()
 
+if(NOT CMAKE_INSTALL_PREFIX OR CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+  message(STATUS "Setting install dir inside build dir ${CMAKE_BINARY_DIR} ")
+  set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/install CACHE PATH "Install location" FORCE)
+else()
+  message(STATUS "Using preset install directory ${CMAKE_INSTALL_PREFIX}")
+endif()
 
-if(NOT CMAKE_BUILD_TYPE)
+#------------------------------------------------------------------------------
+# Set a default build type if none was specified
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   message(STATUS "Setting build type to 'Release' as none was specified.")
   set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build." FORCE)
+  mark_as_advanced(CMAKE_BUILD_TYPE)
+  # Set the possible values of build type for cmake-gui
+  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
 
-set(PULSE_SUPERBUILD ON CACHE BOOL "Initial pull and build of all dependent libraries/executables")
-set(PULSE_SUPERBUILD_ALL_CFGS OFF CACHE BOOL "Support multiple configurations in the superbuild, when off, only the release configuration will be available")
-set(PULSE_DOWNLOAD_BASELINES OFF CACHE BOOL "Download all V&V Scenarios and their baseline result files")
-set(PULSE_BUILD_JAVA_UTILS ON CACHE BOOL "Build Java utils for data generation and testing")
-set(PULSE_PYTHON_BINDINGS OFF CACHE BOOL "Build Python Bindings [!!EXPERIMENTAL!!]")
+set(CMAKE_DEBUG_POSTFIX "d")
 
-# Unsupported build options, we may need in the future
-#if(MSVC)
-#  set(PULSE_BUILD_CLR OFF CACHE BOOL "Build the CLR interface, ensure visual studio was installed with the C++/CLR option enabled")
-#else()
-#  set(PULSE_BUILD_CLR OFF)
-#endif()
-#set (PULSE_IL2CPP_PATCH OFF CACHE BOOL "Patch Protobuf C# to be compatible with the Unity IL2CPP compiler")
-#mark_as_advanced(PULSE_IL2CPP_PATCH)
-set(PULSE_BUILD_CLR OFF)
-set(PULSE_IL2CPP_PATCH OFF)
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-if(PULSE_SUPERBUILD)
-  include(SuperBuild.cmake)
+project(Pulse VERSION 3.0.0 LANGUAGES C CXX)
+
+#-----------------------------------------------------------------------------
+# Project install directories
+#-----------------------------------------------------------------------------
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+  set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/install CACHE PATH "Install location" FORCE)
+endif()
+set(CMAKE_PREFIX_PATH ${CMAKE_INSTALL_PREFIX})
+# Let's go ahead and make these directories
+file(MAKE_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin)
+file(MAKE_DIRECTORY ${CMAKE_INSTALL_PREFIX}/include)
+file(MAKE_DIRECTORY ${CMAKE_INSTALL_PREFIX}/lib)
+
+#-----------------------------------------------------------------------------
+# Update CMake module path & cmake dir
+#-----------------------------------------------------------------------------
+set(CMAKE_MODULE_PATH
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/utilities
+    ${CMAKE_INSTALL_PREFIX}
+    ${CMAKE_INSTALL_PREFIX}/lib/cmake # Many packages install their cmake to lib
+    )
+set(${PROJECT_NAME}_CMAKE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+
+#-----------------------------------------------------------------------------
+# SUPERBUILD
+#-----------------------------------------------------------------------------
+option(${PROJECT_NAME}_SUPERBUILD "Initial pull and build of all dependent libraries/executables" ON)
+option(${PROJECT_NAME}_DOWNLOAD_BASELINES "Download all V&V Scenarios and their baseline result files" OFF)
+option(${PROJECT_NAME}_JAVA_API "Build Java utils for data generation and testing" ON)
+option(${PROJECT_NAME}_PYTHON_API "Build Python Bindings" OFF)
+option(${PROJECT_NAME}_SLAVE_BUILD "Pulse is being built as part of a different superbuild" OFF)
+
+if(${PROJECT_NAME}_SUPERBUILD)
+
+  #-----------------------------------------------------------------------------
+  # Define External dependencies
+  #-----------------------------------------------------------------------------
+  macro(define_dependency extProj)
+    list(APPEND ${PROJECT_NAME}_DEPENDENCIES ${extProj})
+    option(USE_SYSTEM_${extProj} "Exclude ${extProj} from superbuild and use an existing build." OFF)
+    mark_as_advanced(USE_SYSTEM_${extProj})
+  endmacro()
+  
+  define_dependency(Eigen3)
+  if(WIN32)
+    # *nix systems have this already
+    define_dependency(Dirent)
+  endif()
+  define_dependency(protobuf)
+  if(${PROJECT_NAME}_PYTHON_API)
+    find_package (Python3 COMPONENTS Interpreter Development)
+    if(Python3_FOUND)
+      define_dependency(pybind11)
+      else()
+        message(FATAL_ERROR "Unable to support Python API, cannot find Python3")
+    endif()
+  endif()
+  
+  if(${PROJECT_NAME}_DEPENDENCIES)
+    if(MSVC OR XCode)
+      if(NOT ${PROJECT_NAME}_SLAVE_BUILD)
+        message(STATUS "Optimizing your superbuild experience")
+        set(${PROJECT_NAME}_MULTI_BUILD ON)
+        set(CMAKE_CONFIGURATION_TYPES Release CACHE STRING INTERNAL FORCE)
+      else()
+        set(${PROJECT_NAME}_MULTI_BUILD OFF)
+        set(CMAKE_CONFIGURATION_TYPES Debug MinSizeRel Release RelWithDebInfo CACHE STRING INTERNAL FORCE)
+      endif()
+    endif()
+    #-----------------------------------------------------------------------------
+    # Solve project dependencies
+    #-----------------------------------------------------------------------------
+    # Call CMakeLists.txt in cmake/external which will solve the dependencies
+    # and add the external projects, including this one: this top-level
+    # CMakeLists.txt will be called back with SUPERBUILD=OFF, to execute
+    # the rest of the code below (INNERBUILD), which explains the `return`
+    add_subdirectory(cmake/external)
+    return()
+  else()
+    message(STATUS "No dependencies, skipping superbuild")
+  endif()
+endif()
+
+#-----------------------------------------------------------------------------
+#                               INNERBUILD
+#-----------------------------------------------------------------------------
+
+if(MSVC)  
+# Using MD as that seems to be what I run into alot, you could change these to /MT and /MTd if you want...
+  set(CMAKE_CXX_FLAGS_DEBUG "/D_DEBUG /MDd /Zi /Ob2 /Oi /Od /RTC1 /MP /EHsc" CACHE STRING INTERNAL FORCE)
+  set(CMAKE_CXX_FLAGS_RELEASE "/MD /MP /EHsc" CACHE STRING INTERNAL FORCE)
+  set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "/MDd /Zi /MP /EHsc" CACHE STRING INTERNAL FORCE)
+endif()
+if ( CMAKE_COMPILER_IS_GNUCC )
+  # Protobuf is not using the same variable name in its swap specificiation definitions
+  # Resulting in a LOT of warnings per file that includes protobuf headers, slowing the build down
+  set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wno-attributes")
+  if(CMAKE_BUILD_TYPE EQUAL "Debug")
+    set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wa,-mbig-obj")
+  endif()
+endif()
+
+
+set(${PROJECT_NAME}_INSTALL_FOLDER ${PROJECT_NAME}-${${PROJECT_NAME}_VERSION_MAJOR}.${${PROJECT_NAME}_VERSION_MINOR})
+
+include(Find)# Our find macros
+include(AddLibrary)# Extras to do when creating a library
+include(AddExecutable)# Extras to do when creating an executable
+
+#-----------------------------------------------------------------------------
+# Find external dependencies
+#-----------------------------------------------------------------------------
+
+find_package(Eigen3 REQUIRED)
+if(WIN32)
+  # *nix systems have this already
+  find_package(Dirent REQUIRED)
+endif()
+# Use the config written by protobuf
+set(protobuf_MODULE_COMPATIBLE ON CACHE BOOL "" FORCE)
+find_package(protobuf REQUIRED NO_DEFAULT_PATH)
+get_target_property(PROTOBUF_LIBRARY_RELEASE protobuf::libprotobuf LOCATION_RELEASE)
+get_target_property(PROTOBUF_LIBRARY_DEBUG protobuf::libprotobuf LOCATION_DEBUG)
+#message(STATUS "PROTOBUF_LIBRARY_RELEASE ${PROTOBUF_LIBRARY_RELEASE}")
+#message(STATUS "PROTOBUF_LIBRARY_DEBUG ${PROTOBUF_LIBRARY_DEBUG}")
+install(FILES ${PROTOBUF_LIBRARY_RELEASE} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib OPTIONAL)
+install(FILES ${PROTOBUF_LIBRARY_DEBUG} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib OPTIONAL)
+get_filename_component(PROTOBUF_LIBRARY_DEBUG ${PROTOBUF_LIBRARY_DEBUG} NAME)
+get_filename_component(PROTOBUF_LIBRARY_RELEASE ${PROTOBUF_LIBRARY_RELEASE} NAME)
+#message(STATUS "PROTOBUF_LIBRARY_RELEASE ${PROTOBUF_LIBRARY_RELEASE}")
+#message(STATUS "PROTOBUF_LIBRARY_DEBUG ${PROTOBUF_LIBRARY_DEBUG}")
+
+set(SCHEMA_SRC "${CMAKE_SOURCE_DIR}/schema")
+set(SCHEMA_DST "${CMAKE_SOURCE_DIR}/schema/bind")
+
+add_subdirectory(src)
+add_subdirectory(data)
+
+#--------------------------------------------------------------------------
+# Add setup script for *nix systems
+#--------------------------------------------------------------------------
+if(NOT WIN32)
+  # Create setup shell script to create an environment for running examples
+  set(LIBRARY_PATH_VAR "LD_LIBRARY_PATH")
+  if( APPLE )
+    set(LIBRARY_PATH_VAR "DYLD_FALLBACK_LIBRARY_PATH")
+  endif()
+endif()
+
+file(GLOB JSON_FILES ${CMAKE_SOURCE_DIR}/bin/*.json)
+file(COPY ${JSON_FILES} DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+file(COPY ${CMAKE_SOURCE_DIR}/bin/log4j.properties DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+if(WIN32)
+  file(COPY ${CMAKE_SOURCE_DIR}/bin/run.bat DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
 else()
-  include(Pulse.cmake)
+  file(COPY ${CMAKE_SOURCE_DIR}/bin/run.sh DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
 endif()
+file(COPY ${CMAKE_SOURCE_DIR}/bin/resource DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+configure_file(${CMAKE_SOURCE_DIR}/bin/rebase.py.in "${CMAKE_INSTALL_PREFIX}/bin/rebase.py" @ONLY)
+configure_file(${CMAKE_SOURCE_DIR}/bin/run.cmake.in "${CMAKE_INSTALL_PREFIX}/bin/run.cmake" @ONLY)
+configure_file(${CMAKE_SOURCE_DIR}/bin/run.config.in "${CMAKE_INSTALL_PREFIX}/bin/run.config" @ONLY)
+configure_file(${CMAKE_SOURCE_DIR}/docs/Doxygen/full.doxy.in ${CMAKE_INSTALL_PREFIX}/bin/docs/full.doxy @ONLY)
+
+
+#-----------------------------------------------------------------------------
+# This variable controls the prefix used to generate the following files:
+#  ${PROJECT_NAME}ConfigVersion.cmake
+#  ${PROJECT_NAME}Config.cmake
+#  ${PROJECT_NAME}Targets.cmake
+# and it also used to initialize ${PROJECT_NAME}_INSTALL_CONFIG_DIR value.
+set(export_config_name ${PROJECT_NAME})
+set(${PROJECT_NAME}_INSTALL_CONFIG_DIR "lib/cmake/${${PROJECT_NAME}_INSTALL_FOLDER}")
+file(MAKE_DIRECTORY ${CMAKE_INSTALL_PREFIX}/${${PROJECT_NAME}_INSTALL_CONFIG_DIR})
+#------------------------------------------------------------------------------
+# Configure ${PROJECT_NAME}ConfigVersion.cmake common to build and install tree
+include(CMakePackageConfigHelpers)
+set(config_version_file ${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake)
+write_basic_package_version_file(
+  ${config_version_file}
+  VERSION "${${PROJECT_NAME}_VERSION}"
+  COMPATIBILITY ExactVersion
+  )
+#------------------------------------------------------------------------------
+# Export '${PROJECT_NAME}Targets.cmake' for a build tree
+export(
+  EXPORT ${PROJECT_NAME}Targets
+  NAMESPACE Pulse::
+  FILE "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Targets.cmake"
+  )
+
+# Configure '${PROJECT_NAME}Config.cmake' for a build tree
+set(build_config ${CMAKE_BINARY_DIR}/${PROJECT_NAME}Config.cmake)
+configure_package_config_file(
+  cmake/${PROJECT_NAME}Config.cmake.in 
+  ${build_config}
+  INSTALL_DESTINATION "${PROJECT_BINARY_DIR}"
+  )
+
+#------------------------------------------------------------------------------
+# Export '${PROJECT_NAME}Targets.cmake' for an install tree
+install(
+  EXPORT ${PROJECT_NAME}Targets
+  NAMESPACE Pulse::
+  FILE ${PROJECT_NAME}Targets.cmake
+  DESTINATION ${${PROJECT_NAME}_INSTALL_CONFIG_DIR}
+  )
+
+set(install_config ${PROJECT_BINARY_DIR}/CMakeFiles/${PROJECT_NAME}Config.cmake)
+configure_package_config_file(
+  cmake/${PROJECT_NAME}Config.cmake.in 
+  ${install_config}
+  INSTALL_DESTINATION ${${PROJECT_NAME}_INSTALL_CONFIG_DIR}
+  )
+
+# Install config files
+install(
+  FILES ${config_version_file} ${install_config}
+  DESTINATION "${${PROJECT_NAME}_INSTALL_CONFIG_DIR}"
+  )

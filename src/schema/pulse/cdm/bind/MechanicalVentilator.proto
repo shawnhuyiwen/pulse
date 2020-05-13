@@ -1,0 +1,64 @@
+syntax = "proto3";
+package pulse.cdm.bind;
+option java_package = "pulse.cdm.bind";
+option csharp_namespace = "pulse.cdm.bind";
+option optimize_for = SPEED;
+
+import "pulse/cdm/bind/Properties.proto";
+import "pulse/cdm/bind/Substance.proto";
+
+message MechanicalVentilatorData
+{
+
+  enum eConnection
+  {
+    NullConnection = 0;/**<< Signals not provided, or no change */
+    Off            = 1;
+    Mask           = 2;
+    Tube           = 3;
+  }
+  
+  enum eControl
+  {
+    NullControl    = 0;/**<< Signals not provided, or no change */
+    PC_CMV         = 1;/**<< Pressure Control Ventilation with Continuous Mandatory Ventilation */
+  }
+  
+  enum eDriverWaveform
+  {
+    NullDriverWaveform = 0;/**<< Signals not provided, or no change */
+    Square             = 1;/**<<  */
+  }
+  
+  message BreathProfileData
+  {
+    oneof Breath
+    {
+      ScalarFrequencyData             Rate                          = 1; /**<< @brief . */
+      ScalarTimeData                  Period                        = 2; /**<< @brief . */
+    }
+    
+    ScalarData                        InspiratoryExpiratoryRatio    = 3; /**<< @brief The ratio of time spent in the inspiratory phase vs the expiratory phase of respiration. */
+  }
+  
+  message InspiratoryExpiratoryPeriodData
+  {
+    ScalarTimeData                    ExpiratoryPeriod              = 1; /**<< @brief . */
+    ScalarTimeData                    InspiratoryPeriod             = 2; /**<< @brief . */
+  }
+  
+  oneof BreathingControl
+  {
+    BreathProfileData                 BreathProfile                 = 1; /**<< @brief . */
+    InspiratoryExpiratoryPeriodData   InspiratoryExpiratoryPeriod   = 2; /**<< @brief . */
+  }
+  eConnection                         Connection                    = 3; /**<< @brief @ref MechanicalVentilatorData_eConnectionTable */
+  eControl                            Control                       = 4; /**<< @brief @ref MechanicalVentilatorData_eControlTable */
+  eDriverWaveform                     DriverWaveform                = 5; /**<< @brief @ref MechanicalVentilatorData_eDriverWaveformTable */
+  
+  ScalarPressureData                  PeakInspiratoryPressure       = 6; /**<< @brief */
+  ScalarPressureData                  PositiveEndExpiredPressure    = 7; /**<< @brief The pressure above atmospheric pressure that exists in the lungs at the end of expiration.*/
+  
+  repeated SubstanceFractionData      FractionInspiredGas           = 8;/**<< @brief Break down of the gasses such as FiO2. */
+  repeated SubstanceConcentrationData ConcentrationInspiredAerosol  = 9;/**<< @brief Concentration of added aerosolized substances. */
+}

@@ -1,0 +1,204 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{573097F1-FBB8-494A-9AE8-7B487784D65E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>
+    </AppDesignerFolder>
+    <RootNamespace>Pulse</RootNamespace>
+    <AssemblyName>Pulse</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Google.Protobuf">
+      <HintPath>..\..\..\..\..\Builds\pulse-engine\External\protobuf\src\csharp\src\Google.Protobuf\bin\Debug\net45\Google.Protobuf.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="bind\Actions.cs" />
+    <Compile Include="bind\AnesthesiaMachine.cs" />
+    <Compile Include="bind\AnesthesiaMachineActions.cs" />
+    <Compile Include="bind\Circuit.cs" />
+    <Compile Include="bind\Compartment.cs" />
+    <Compile Include="bind\Conditions.cs" />
+    <Compile Include="bind\ElectroCardioGram.cs" />
+    <Compile Include="bind\Engine.cs" />
+    <Compile Include="bind\Enums.cs" />
+    <Compile Include="bind\Environment.cs" />
+    <Compile Include="bind\EnvironmentActions.cs" />
+    <Compile Include="bind\EnvironmentConditions.cs" />
+    <Compile Include="bind\EquipmentActions.cs" />
+    <Compile Include="bind\Events.cs" />
+    <Compile Include="bind\Inhaler.cs" />
+    <Compile Include="bind\InhalerActions.cs" />
+    <Compile Include="bind\MechanicalVentilator.cs" />
+    <Compile Include="bind\MechanicalVentilatorActions.cs" />
+    <Compile Include="bind\Patient.cs" />
+    <Compile Include="bind\PatientActions.cs" />
+    <Compile Include="bind\PatientAssessments.cs" />
+    <Compile Include="bind\PatientConditions.cs" />
+    <Compile Include="bind\PatientNutrition.cs" />
+    <Compile Include="bind\Physiology.cs" />
+    <Compile Include="bind\Properties.cs" />
+    <Compile Include="bind\Pulse.cs" />
+    <Compile Include="bind\PulseConfiguration.cs" />
+    <Compile Include="bind\PulseEnvironment.cs" />
+    <Compile Include="bind\PulseEquipment.cs" />
+    <Compile Include="bind\PulsePhysiology.cs" />
+    <Compile Include="bind\PulseState.cs" />
+    <Compile Include="bind\Scenario.cs" />
+    <Compile Include="bind\Substance.cs" />
+    <Compile Include="bind\SubstanceQuantity.cs" />
+    <Compile Include="bind\TestReport.cs" />
+    <Compile Include="cdm\CommonDataModel.cs" />
+    <Compile Include="cdm\engine\SEAction.cs" />
+    <Compile Include="cdm\engine\SECondition.cs" />
+    <Compile Include="cdm\engine\SEConditionManager.cs" />
+    <Compile Include="cdm\engine\SEDataRequest.cs" />
+    <Compile Include="cdm\engine\SEDataRequestManager.cs" />
+    <Compile Include="cdm\engine\SEEvents.cs" />
+    <Compile Include="cdm\engine\SELogger.cs" />
+    <Compile Include="cdm\engine\SEPatientConfiguration.cs" />
+    <Compile Include="cdm\io\PBActions.cs" />
+    <Compile Include="cdm\io\PBAnesthesiaMachine.cs" />
+    <Compile Include="cdm\io\PBEquipmentActions.cs" />
+    <Compile Include="cdm\io\PBConditions.cs" />
+    <Compile Include="cdm\io\PBDataRequest.cs" />
+    <Compile Include="cdm\io\PBEnvironment.cs" />
+    <Compile Include="cdm\io\PBEnvironmentActions.cs" />
+    <Compile Include="cdm\io\PBEnvironmentConditions.cs" />
+    <Compile Include="cdm\io\PBEvents.cs" />
+    <Compile Include="cdm\io\PBLogMessages.cs" />
+    <Compile Include="cdm\io\PBMechanicalVentilator.cs" />
+    <Compile Include="cdm\io\PBPatient.cs" />
+    <Compile Include="cdm\io\PBPatientActions.cs" />
+    <Compile Include="cdm\io\PBPatientConditions.cs" />
+    <Compile Include="cdm\io\PBPatientConfiguration.cs" />
+    <Compile Include="cdm\io\PBProperties.cs" />
+    <Compile Include="cdm\patient\actions\SEAcuteRespiratoryDistressSyndromeExacerbation.cs" />
+    <Compile Include="cdm\patient\actions\SEAcuteStress.cs" />
+    <Compile Include="cdm\patient\actions\SEAirwayObstruction.cs" />
+    <Compile Include="cdm\patient\actions\SEAsthmaAttack.cs" />
+    <Compile Include="cdm\patient\actions\SEBrainInjury.cs" />
+    <Compile Include="cdm\patient\actions\SEBronchoconstriction.cs" />
+    <Compile Include="cdm\patient\actions\SECardiacArrest.cs" />
+    <Compile Include="cdm\patient\actions\SEChronicObstructivePulmonaryDiseaseExacerbation.cs" />
+    <Compile Include="cdm\patient\actions\SEDyspnea.cs" />
+    <Compile Include="cdm\patient\actions\SEExercise.cs" />
+    <Compile Include="cdm\patient\actions\SEHemorrhage.cs" />
+    <Compile Include="cdm\patient\actions\SEIntubation.cs" />
+    <Compile Include="cdm\patient\actions\SELobarPneumoniaExacerbation.cs" />
+    <Compile Include="cdm\patient\actions\SENeedleDecompression.cs" />
+    <Compile Include="cdm\patient\actions\SEPatientAction.cs" />
+    <Compile Include="cdm\patient\actions\SEPericardialEffusion.cs" />
+    <Compile Include="cdm\patient\actions\SERespiratoryFatigue.cs" />
+    <Compile Include="cdm\patient\actions\SESubstanceBolus.cs" />
+    <Compile Include="cdm\patient\actions\SESubstanceCompoundInfusion.cs" />
+    <Compile Include="cdm\patient\actions\SESubstanceInfusion.cs" />
+    <Compile Include="cdm\patient\actions\SESupplementalOxygen.cs" />
+    <Compile Include="cdm\patient\actions\SETensionPneumothorax.cs" />
+    <Compile Include="cdm\patient\conditions\SEAcuteRespiratoryDistressSyndrome.cs" />
+    <Compile Include="cdm\patient\conditions\SEChronicAnemia.cs" />
+    <Compile Include="cdm\patient\conditions\SEChronicHeartFailure.cs" />
+    <Compile Include="cdm\patient\conditions\SEChronicObstructivePulmonaryDisease.cs" />
+    <Compile Include="cdm\patient\conditions\SEChronicPericardialEffusion.cs" />
+    <Compile Include="cdm\patient\conditions\SEChronicRenalStenosis.cs" />
+    <Compile Include="cdm\patient\conditions\SEChronicVentricularSystolicDysfunction.cs" />
+    <Compile Include="cdm\patient\conditions\SEImpairedAlveolarExchange.cs" />
+    <Compile Include="cdm\patient\conditions\SELobarPneumonia.cs" />
+    <Compile Include="cdm\patient\conditions\SEPatientCondition.cs" />
+    <Compile Include="cdm\patient\conditions\SEPulmonaryFibrosis.cs" />
+    <Compile Include="cdm\patient\conditions\SESepsis.cs" />
+    <Compile Include="cdm\patient\SEPatient.cs" />
+    <Compile Include="cdm\scalars\SEProperty.cs" />
+    <Compile Include="cdm\scalars\SEScalar.cs" />
+    <Compile Include="cdm\scalars\SEScalar0To1.cs" />
+    <Compile Include="cdm\scalars\SEScalarArea.cs" />
+    <Compile Include="cdm\scalars\SEScalarFrequency.cs" />
+    <Compile Include="cdm\scalars\SEScalarHeatConductancePerArea.cs" />
+    <Compile Include="cdm\scalars\SEScalarHeatResistanceArea.cs" />
+    <Compile Include="cdm\scalars\SEScalarInversePressure.cs" />
+    <Compile Include="cdm\scalars\SEScalarLength.cs" />
+    <Compile Include="cdm\scalars\SEScalarLengthPerTime.cs" />
+    <Compile Include="cdm\scalars\SEScalarMass.cs" />
+    <Compile Include="cdm\scalars\SEScalarMassPerAmount.cs" />
+    <Compile Include="cdm\scalars\SEScalarMassPerAreaTime.cs" />
+    <Compile Include="cdm\scalars\SEScalarMassPerTime.cs" />
+    <Compile Include="cdm\scalars\SEScalarMassPerVolume.cs" />
+    <Compile Include="cdm\scalars\SEScalarNegative1To1.cs" />
+    <Compile Include="cdm\scalars\SEScalarPower.cs" />
+    <Compile Include="cdm\scalars\SEScalarPressure.cs" />
+    <Compile Include="cdm\scalars\SEScalarTemperature.cs" />
+    <Compile Include="cdm\scalars\SEScalarTime.cs" />
+    <Compile Include="cdm\scalars\SEScalarVolume.cs" />
+    <Compile Include="cdm\scalars\SEScalarVolumePerTime.cs" />
+    <Compile Include="cdm\scalars\SEScalarVolumePerTimeMass.cs" />
+    <Compile Include="cdm\scalars\SEScalarVolumePerTimePressure.cs" />
+    <Compile Include="cdm\substance\SESubstanceConcentration.cs" />
+    <Compile Include="cdm\substance\SESubstanceFraction.cs" />
+    <Compile Include="cdm\system\environment\actions\SEChangeEnvironmentalConditions.cs" />
+    <Compile Include="cdm\system\environment\actions\SEEnvironmentAction.cs" />
+    <Compile Include="cdm\system\environment\actions\SEThermalApplication.cs" />
+    <Compile Include="cdm\system\environment\conditions\SEEnvironmentCondition.cs" />
+    <Compile Include="cdm\system\environment\conditions\SEInitialEnvironmentalConditions.cs" />
+    <Compile Include="cdm\system\environment\SEActiveConditioning.cs" />
+    <Compile Include="cdm\system\environment\SEAppliedTemperature.cs" />
+    <Compile Include="cdm\system\environment\SEEnvironmentalConditions.cs" />
+    <Compile Include="cdm\system\equipment\anesthesia_machine\actions\SEAnesthesiaMachineAction.cs" />
+    <Compile Include="cdm\system\equipment\anesthesia_machine\actions\SEAnesthesiaMachineConfiguration.cs" />
+    <Compile Include="cdm\system\equipment\anesthesia_machine\actions\SEAnesthesiaMachineExpiratoryValveLeak.cs" />
+    <Compile Include="cdm\system\equipment\anesthesia_machine\actions\SEAnesthesiaMachineExpiratoryValveObstruction.cs" />
+    <Compile Include="cdm\system\equipment\anesthesia_machine\actions\SEAnesthesiaMachineInspiratoryValveLeak.cs" />
+    <Compile Include="cdm\system\equipment\anesthesia_machine\actions\SEAnesthesiaMachineInspiratoryValveObstruction.cs" />
+    <Compile Include="cdm\system\equipment\anesthesia_machine\actions\SEAnesthesiaMachineMaskLeak.cs" />
+    <Compile Include="cdm\system\equipment\anesthesia_machine\actions\SEAnesthesiaMachineOxygenTankPressureLoss.cs" />
+    <Compile Include="cdm\system\equipment\anesthesia_machine\actions\SEAnesthesiaMachineOxygenWallPortPressureLoss.cs" />
+    <Compile Include="cdm\system\equipment\anesthesia_machine\actions\SEAnesthesiaMachineSodaLimeFailure.cs" />
+    <Compile Include="cdm\system\equipment\anesthesia_machine\actions\SEAnesthesiaMachineTubeCuffLeak.cs" />
+    <Compile Include="cdm\system\equipment\anesthesia_machine\actions\SEAnesthesiaMachineVaporizerFailure.cs" />
+    <Compile Include="cdm\system\equipment\anesthesia_machine\actions\SEAnesthesiaMachineVentilatorPressureLoss.cs" />
+    <Compile Include="cdm\system\equipment\anesthesia_machine\actions\SEAnesthesiaMachineYPieceDisconnect.cs" />
+    <Compile Include="cdm\system\equipment\anesthesia_machine\SEAnesthesiaMachine.cs" />
+    <Compile Include="cdm\system\equipment\anesthesia_machine\SEAnesthesiaMachineChamber.cs" />
+    <Compile Include="cdm\system\equipment\anesthesia_machine\SEAnesthesiaMachineOxygenBottle.cs" />
+    <Compile Include="cdm\system\equipment\mechanical_ventilator\actions\SEMechanicalVentilatorAction.cs" />
+    <Compile Include="cdm\system\equipment\mechanical_ventilator\actions\SEMechanicalVentilatorConfiguration.cs" />
+    <Compile Include="cdm\system\equipment\mechanical_ventilator\SEMechanicalVentilator.cs" />
+    <Compile Include="cdm\system\equipment\SEEquipment.cs" />
+    <Compile Include="cdm\system\equipment\SEEquipmentAction.cs" />
+    <Compile Include="cdm\system\SESystem.cs" />
+    <Compile Include="engine\PulseEngine.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

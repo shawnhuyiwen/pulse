@@ -1,0 +1,21 @@
+
+add_library_ex(CommonDataModelUnitTests
+  H_FILES
+    cdm/cpp/CommonDataModelTest.h
+  CPP_FILES
+    cdm/cpp/AdvancedCircuitTest.cpp
+    cdm/cpp/BasicCircuitTest.cpp
+    cdm/cpp/CommonDataModelTest.cpp
+    cdm/cpp/GasCompartmentTest.cpp
+    cdm/cpp/LiquidCompartmentTest.cpp
+    cdm/cpp/ReadPatientDirectory.cpp
+    cdm/cpp/ReadSubstanceDirectory.cpp
+    cdm/cpp/ScalarTest.cpp
+    cdm/cpp/SubstanceTransport.cpp
+    cdm/cpp/ThermalCompartmentTest.cpp
+    cdm/cpp/TissueCompartmentTest.cpp
+    cdm/cpp/UnitsTest.cpp
+  PUBLIC_DEPENDS
+    PulseEngine
+  #VERBOSE
+)

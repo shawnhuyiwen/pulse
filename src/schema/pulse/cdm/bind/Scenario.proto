@@ -1,0 +1,16 @@
+syntax = "proto3";
+package pulse.cdm.bind;
+option java_package = "pulse.cdm.bind";
+option csharp_namespace = "pulse.cdm.bind";
+option optimize_for = SPEED;
+
+import "pulse/cdm/bind/Engine.proto";
+
+message ScenarioData
+{
+  string                           Name                      = 1;
+  string                           Description               = 2;
+  EngineInitializationData         StartType                 = 3;
+  DataRequestManagerData           DataRequestManager        = 4;
+  repeated AnyActionData           AnyAction                 = 5;
+}
