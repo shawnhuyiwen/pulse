@@ -7,6 +7,7 @@
 #include "PulsePhysiologyEngine.h"
 #include "PulseConfiguration.h"
 
+#include "controller/Engine.h"
 #include "controller/Controller.h"
 #include "controller/Circuits.h"
 #include "controller/Compartments.h"
@@ -65,6 +66,7 @@
 #include "utils/GeneralMath.h"
 #include "utils/TimingProfile.h"
 
+#include "io/protobuf/PBActions.h"
 PUSH_PROTO_WARNINGS()
 #include "pulse/study/sensitivity_analysis/bind/SensitivityAnalysis.pb.h"
 #include <google/protobuf/text_format.h>
@@ -80,7 +82,7 @@ public:
   bool Run(const std::string& filename, SerializationFormat f);
   bool Run(pulse::study::sensitivity_analysis::bind::SimulationListData& simList);
 
-  static bool RunSimulationUntilStable(std::string const& outDir, pulse::study::sensitivity_analysis::bind::SimulationData& sim, const std::string& dataDir="./");
+  bool RunSimulationUntilStable(std::string const& outDir, pulse::study::sensitivity_analysis::bind::SimulationData& sim, const std::string& dataDir="./");
 protected:
   bool Run();
   bool SerializeToString(pulse::study::sensitivity_analysis::bind::SimulationListData& src, std::string& dst, SerializationFormat f) const;

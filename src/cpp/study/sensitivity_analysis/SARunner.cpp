@@ -180,8 +180,40 @@ bool SARunner::RunSimulationUntilStable(std::string const& outDir, pulse::study:
   pulse->GetEngineTracker()->GetDataRequestManager().SetResultsFilename(outDir+"/"+cdm::to_string(sim.id())+" - "+sim.name()+".csv");
   pulse->GetEngineTracker()->SetupRequests();
 
-  // Apply Overrides
-  // Get Aaron when you get to this point
+  // Serialize Overrides
+  SEOverrides overrides;
+  PBAction::Load(sim.overrides(), overrides);
+  // Apply Overrides (Note using Force, as these values are locked (for good reason)
+  // But we know what we are doing, right?
+  PulseController* pc = ((PulseEngine*)pulse.get())->GetController();
+  SEFluidCircuit& cv = pc->GetCircuits().GetActiveCardiovascularCircuit();
+  for (auto& sp : overrides.GetScalarProperties())
+  {
+    SEFluidCircuitPath* path = cv.GetPath(sp.name);
+    if (path == nullptr)
+    {
+      Error("No path found for override "+sp.name+", for "+cdm::to_string(sim.id())+" - "+sim.name());
+      return false;
+    }
+    if (PressureTimePerVolumeUnit::IsValidUnit(sp.unit))
+    {// Assume its a resistor
+      const PressureTimePerVolumeUnit& u = PressureTimePerVolumeUnit::GetCompoundUnit(sp.unit);
+      path->GetResistance().ForceValue(sp.value, u);
+      path->GetResistanceBaseline().ForceValue(sp.value, u);
+    }
+    else if (VolumePerPressureUnit::IsValidUnit(sp.unit))
+    {
+      const VolumePerPressureUnit& u = VolumePerPressureUnit::GetCompoundUnit(sp.unit);
+      path->GetCompliance().ForceValue(sp.value, u);
+      path->GetNextCompliance().ForceValue(sp.value, u);
+      path->GetComplianceBaseline().ForceValue(sp.value, u);
+    }
+    else
+    {
+      Error("Could not process override " + sp.name + ", for " + cdm::to_string(sim.id()) + " - " + sim.name());
+      return false;
+    }
+  }
 
   // Run until stable
   // Let's shoot for with in 0.25% for 10s straight
@@ -252,6 +284,10 @@ bool SARunner::RunSimulationUntilStable(std::string const& outDir, pulse::study:
           break;
       }
   }
+
+  // TODO BF Check that what we overrided is still set to the same value
+  // This ensures the engine did not do anything to our resistances for some reason
+  // If they are different, we need to return false and look into why
 
   // Fill out our results
   sim.set_achievedstabilization(stable);
