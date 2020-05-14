@@ -52,7 +52,5 @@ const VolumePerTimeUnit& VolumePerTimeUnit::GetCompoundUnit(const std::string& u
     return mL_Per_min;
   if (mL_Per_hr.GetString().compare(unit) == 0)
     return mL_Per_hr;
-  std::stringstream err;
-  err << unit << " is not a valid VolumePerTime unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid VolumePerTime unit");
 }

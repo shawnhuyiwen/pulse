@@ -27,7 +27,5 @@ const PressureTimePerVolumeAreaUnit& PressureTimePerVolumeAreaUnit::GetCompoundU
     return mmHg_s_Per_mL_m2;
   if (dyn_s_Per_cm5_m2.GetString().compare(unit) == 0)
     return dyn_s_Per_cm5_m2;
-  std::stringstream err;
-  err << unit << " is not a valid PressureTimePerVolumeArea unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid PressureTimePerVolumeArea unit");
 }

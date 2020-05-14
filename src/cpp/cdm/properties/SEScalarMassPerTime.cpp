@@ -52,7 +52,5 @@ const MassPerTimeUnit& MassPerTimeUnit::GetCompoundUnit(const std::string& unit)
     return kg_Per_s;
   if (ug_Per_min.GetString().compare(unit) == 0)
     return ug_Per_min;
-  std::stringstream err;
-  err << unit << " is not a valid MassPerTime unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid MassPerTime unit");
 }

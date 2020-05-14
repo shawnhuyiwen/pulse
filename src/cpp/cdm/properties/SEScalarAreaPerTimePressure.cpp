@@ -32,7 +32,5 @@ const AreaPerTimePressureUnit& AreaPerTimePressureUnit::GetCompoundUnit(const st
     return m2_Per_min_mmHg;
   if (cm2_Per_min_mmHg.GetString().compare(unit) == 0)
     return cm2_Per_min_mmHg;
-  std::stringstream err;
-  err << unit << " is not a valid AreaPerTimePressure unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid  AreaPerTimePressure unit");
 }

@@ -37,7 +37,5 @@ const MassUnit& MassUnit::GetCompoundUnit(const std::string& unit)
     return kg;
   if (lb.GetString().compare(unit) == 0)
     return lb;
-  std::stringstream err;
-  err << unit << " is not a valid Mass unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid Mass unit");
 }

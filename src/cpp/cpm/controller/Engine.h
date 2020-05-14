@@ -75,6 +75,7 @@ public:
 
   virtual const SEEventManager&                        GetEventManager() const;
 
+  PulseController* GetController() { return m_PulseController; }
 protected:
   PulseController* m_PulseController;
 };

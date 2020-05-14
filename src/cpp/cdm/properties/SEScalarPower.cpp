@@ -42,7 +42,5 @@ const PowerUnit& PowerUnit::GetCompoundUnit(const std::string& unit)
     return J_Per_s;
   if (BTU_Per_hr.GetString().compare(unit) == 0)
     return BTU_Per_hr;
-  std::stringstream err;
-  err << unit << " is not a valid Power unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid Power unit");
 }

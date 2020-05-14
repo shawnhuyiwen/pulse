@@ -32,7 +32,5 @@ const HeatConductanceUnit& HeatConductanceUnit::GetCompoundUnit(const std::strin
     return kcal_Per_K_s;
   if (kcal_Per_C_s.GetString().compare(unit) == 0)
     return kcal_Per_C_s;
-  std::stringstream err;
-  err << unit << " is not a valid HeatConductance unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid HeatConductance unit");
 }

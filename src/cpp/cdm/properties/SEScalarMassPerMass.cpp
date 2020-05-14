@@ -22,7 +22,5 @@ const MassPerMassUnit& MassPerMassUnit::GetCompoundUnit(const std::string& unit)
     return ug_Per_kg;
   if (mg_Per_g.GetString().compare(unit) == 0)
     return mg_Per_g;
-  std::stringstream err;
-  err << unit << " is not a valid MassPerMass unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid MassPerMass unit");
 }

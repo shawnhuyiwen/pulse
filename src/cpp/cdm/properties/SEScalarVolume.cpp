@@ -37,7 +37,5 @@ const VolumeUnit& VolumeUnit::GetCompoundUnit(const std::string& unit)
     return dL;
   if (uL.GetString().compare(unit) == 0)
     return uL;
-  std::stringstream err;
-  err << unit << " is not a valid Volume unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid Volume unit");
 }

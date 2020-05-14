@@ -22,7 +22,5 @@ const EnergyPerAmountUnit& EnergyPerAmountUnit::GetCompoundUnit(const std::strin
     return kcal_Per_mol;
   if (kJ_Per_mol.GetString().compare(unit) == 0)
     return kJ_Per_mol;
-  std::stringstream err;
-  err << unit << " is not a valid EnergyPerAmount unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid EnergyPerAmount unit");
 }

@@ -27,7 +27,5 @@ const ForceUnit& ForceUnit::GetCompoundUnit(const std::string& unit)
     return lbf;
   if (dyn.GetString().compare(unit) == 0)
     return dyn;
-  std::stringstream err;
-  err << unit << " is not a valid Force unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid Force unit");
 }

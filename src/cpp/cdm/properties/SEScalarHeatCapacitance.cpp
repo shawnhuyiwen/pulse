@@ -32,7 +32,5 @@ const HeatCapacitanceUnit& HeatCapacitanceUnit::GetCompoundUnit(const std::strin
     return kcal_Per_K;
   if (kcal_Per_C.GetString().compare(unit) == 0)
     return kcal_Per_C;
-  std::stringstream err;
-  err << unit << " is not a valid HeatCapacitance unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid HeatCapacitance unit");
 }

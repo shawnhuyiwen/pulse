@@ -17,7 +17,5 @@ const MassPerAreaTimeUnit& MassPerAreaTimeUnit::GetCompoundUnit(const std::strin
 {
   if (g_Per_cm2_s.GetString().compare(unit) == 0)
     return g_Per_cm2_s;
-  std::stringstream err;
-  err << unit << " is not a valid MassPerAreaTime unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid MassPerAreaTime unit");
 }

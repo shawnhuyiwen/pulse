@@ -32,7 +32,5 @@ const HeatResistanceUnit& HeatResistanceUnit::GetCompoundUnit(const std::string&
     return K_s_Per_kcal;
   if (C_s_Per_kcal.GetString().compare(unit) == 0)
     return C_s_Per_kcal;
-  std::stringstream err;
-  err << unit << " is not a valid HeatResistance unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid HeatResistance unit");
 }

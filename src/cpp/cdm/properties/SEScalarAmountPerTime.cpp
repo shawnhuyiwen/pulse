@@ -42,7 +42,5 @@ const AmountPerTimeUnit& AmountPerTimeUnit::GetCompoundUnit(const std::string& u
     return pmol_Per_min;
   if (umol_Per_min.GetString().compare(unit) == 0)
     return umol_Per_min;
-  std::stringstream err;
-  err << unit << " is not a valid AmountPerTime unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid  AmountPerTime unit");
 }

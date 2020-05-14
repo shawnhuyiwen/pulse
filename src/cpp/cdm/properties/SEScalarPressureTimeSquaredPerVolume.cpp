@@ -37,7 +37,5 @@ const PressureTimeSquaredPerVolumeUnit& PressureTimeSquaredPerVolumeUnit::GetCom
     return cmH2O_s2_Per_L;
   if (Pa_s2_Per_m3.GetString().compare(unit) == 0)
     return Pa_s2_Per_m3;
-  std::stringstream err;
-  err << unit << " is not a valid PressureTimeSquaredPerVolume unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid PressureTimeSquaredPerVolume unit");
 }

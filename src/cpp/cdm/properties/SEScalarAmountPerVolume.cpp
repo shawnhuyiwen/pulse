@@ -42,7 +42,5 @@ const AmountPerVolumeUnit& AmountPerVolumeUnit::GetCompoundUnit(const std::strin
     return ct_Per_L;
   if (ct_Per_uL.GetString().compare(unit) == 0)
     return ct_Per_uL;
-  std::stringstream err;
-  err << unit << " is not a valid AmountPerVolume unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid AmountPerVolume unit");
 }
