@@ -15,9 +15,10 @@ SARunner::~SARunner()
   SAFE_DELETE(m_SimulationResultsList);
 }
 
-bool SARunner::Run(pulse::study::sensitivity_analysis::bind::SimulationListData& simList, const std::string& resultsFilename)
+bool SARunner::Run(pulse::study::sensitivity_analysis::bind::SimulationListData& simList)
 {
-  m_SimulationResultsListFile = simList.outputrootdir()+"/"+resultsFilename;
+  m_OutDir = simList.outputrootdir();
+  m_SimulationResultsListFile = m_OutDir+"/simlist_results.json";
   SAFE_DELETE(m_SimulationList);
   SAFE_DELETE(m_SimulationResultsList);
   m_SimulationList = &simList;
@@ -45,7 +46,8 @@ bool SARunner::Run(const std::string& filename, SerializationFormat f)
   if (!SerializeFromFile(filename, *m_SimulationList, f))
     return false;
   // Let's try to read in a results file
-  m_SimulationResultsListFile = filename.substr(0, filename.length() - 5) + "_results.json";
+  m_OutDir = m_SimulationList->outputrootdir();
+  m_SimulationResultsListFile = m_OutDir+"/simlist_results.json";
   if (FileExists(m_SimulationResultsListFile))
   {
     if (!SerializeFromFile(m_SimulationResultsListFile, *m_SimulationResultsList, f))
@@ -59,6 +61,9 @@ bool SARunner::Run()
 {
   TimingProfile profiler;
   profiler.Start("Total");
+
+  // Ensure our output dir exists
+  CreateFilePath(m_OutDir);
 
   // Get the ID's of simulations we need to run
   m_SimulationsToRun.clear();
@@ -113,37 +118,37 @@ void SARunner::ControllerLoop()
       sim = GetNextSimulation();
       if (sim == nullptr)
         break;
-      RunSimulationUntilStable(*sim);
+      RunSimulationUntilStable(m_OutDir, *sim);
       FinalizeSimulation(*sim);
     }
     catch (CommonDataModelException& cdm_ex)
     {
-      GetLogger()->Fatal("Exception caught runnning simulation " + sim->outputbasefilename());
+      GetLogger()->Fatal("Exception caught runnning simulation " + sim->name());
       GetLogger()->Fatal(cdm_ex.what());
       std::cerr << cdm_ex.what() << std::endl;
     }
     catch (std::exception ex)
     {
-      GetLogger()->Fatal("Exception caught runnning simulation " + sim->outputbasefilename());
+      GetLogger()->Fatal("Exception caught runnning simulation " + sim->name());
       GetLogger()->Fatal(ex.what());
       std::cerr << ex.what() << std::endl;
     }
     catch (...)
     {
-      std::cerr << "Unable to run simulation " << sim->outputbasefilename() << std::endl;
+      std::cerr << "Unable to run simulation " << sim->name() << std::endl;
     }
   }
 }
 
-bool SARunner::RunSimulationUntilStable(pulse::study::sensitivity_analysis::bind::SimulationData& sim, const std::string& dataDir)
+bool SARunner::RunSimulationUntilStable(std::string const& outDir, pulse::study::sensitivity_analysis::bind::SimulationData& sim, const std::string& dataDir)
 {
   TimingProfile profiler;
   profiler.Start("Total");
   profiler.Start("Status");
 
-  auto pulse = CreatePulseEngine(sim.outputbasefilename() + ".log", dataDir);
+  auto pulse = CreatePulseEngine(outDir+"/"+cdm::to_string(sim.id())+" - "+sim.name()+".log", dataDir);
 
-  // TODO amb Clean this up
+  // TODO amb Clean this up (cfg should have a default ctor that makes its own Sub Mgr)
   PulseConfiguration cfg(pulse->GetSubstanceManager());
   cfg.EnableNervousFeedback(eSwitch::Off); // Turn off nervous system feedback (ex. baroreceptors)
   if (!pulse->SerializeFromFile("./states/StandardMale@0s.json", SerializationFormat::JSON, nullptr, &cfg))
@@ -172,8 +177,7 @@ bool SARunner::RunSimulationUntilStable(pulse::study::sensitivity_analysis::bind
   pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonarySystolicArterialPressure", PressureUnit::mmHg);
   pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
   pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystemicVascularResistance", PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-
-  pulse->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("SensitivityAnalysis.csv");
+  pulse->GetEngineTracker()->GetDataRequestManager().SetResultsFilename(outDir+"/"+cdm::to_string(sim.id())+" - "+sim.name()+".csv");
   pulse->GetEngineTracker()->SetupRequests();
 
   // Apply Overrides
@@ -181,14 +185,12 @@ bool SARunner::RunSimulationUntilStable(pulse::study::sensitivity_analysis::bind
 
   // Run until stable
   // Let's shoot for with in 0.25% for 10s straight
-
   double timeStep_s = pulse->GetTimeStep(TimeUnit::s);
   double stabPercentTolerance = 0.25;
   double stabCheckTime_s = 10.0;
   double time_s = 0;
   double maxTime_s = 2000;
-
-  bool success = false;
+  // Here are our variable we will check for stability
   double previoustMap_mmHg = pulse->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg);
   double previousSystolic_mmHg = pulse->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg);
   double previousDiastolic_mmHg = pulse->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg);
@@ -294,7 +296,7 @@ pulse::study::sensitivity_analysis::bind::SimulationData* SARunner::GetNextSimul
       if (sim->id() == id)
         break;
     }
-    Info("Simulating ID " + to_string(id)+" "+sim->outputbasefilename());
+    Info("Simulating Run " + to_string(id)+" : "+sim->name());
     m_SimulationsToRun.erase(id);
   }
   m_mutex.unlock();
@@ -309,9 +311,9 @@ void SARunner::FinalizeSimulation(pulse::study::sensitivity_analysis::bind::Simu
   SerializeToFile(*m_SimulationResultsList, m_SimulationResultsListFile, SerializationFormat::JSON);
   Info("Completed Simulation " + to_string(m_SimulationResultsList->simulation_size()) + " of " + to_string(m_SimulationList->simulation_size()));
   if (sim.achievedstabilization())
-    Info("  Stabilized : " + sim.outputbasefilename());
+    Info("  Stabilized Run " + to_string(sim.id()) + " : " + sim.name());
   else
-    Info("  FAILED STABILIZATION : " + sim.outputbasefilename());
+    Info("  FAILED STABILIZATION FOR RUN " + to_string(sim.id()) + " : " + sim.name());
   m_mutex.unlock();
 }
 

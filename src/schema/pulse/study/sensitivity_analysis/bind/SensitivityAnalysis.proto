@@ -11,7 +11,7 @@ message SimulationData
   // A filename without an extension (can/should have path also)
   // The engine will use this to create multiple output files (*.log and *.csv)
   uint32                       ID                                      = 1;
-  string                       OutputBaseFilename                      = 2;
+  string                       Name                                    = 2;
   pulse.cdm.bind.OverridesData Overrides                               = 3;
   
   double                       ArterialPressure_mmHg                   = 4;

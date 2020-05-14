@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
       simList.set_outputrootdir("./test_results/sesitivity_analysis/");
       auto sim = simList.add_simulation();
       sim->set_id(42);
-      sim->set_outputbasefilename("single");
+      sim->set_name("single");
       // Add some overrides
       auto c = sim->mutable_overrides()->add_scalaroverride();
       c->set_name("Compliance");
@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
       r->set_value(0.5);
       r->set_unit(PressureTimePerVolumeUnit::mmHg_s_Per_mL.GetString());
 
-      sar.Run(simList,"_simlist.json");
+      sar.Run(simList);
     }
     else if (mode == "gensimlist")
     {
@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
       // TODO Lots of loops adding runs to our simList
 
       std::cout << "Generated " << simList.simulation_size() << " simulations" << std::endl;
-      return !sar.Run(simList, "simlist_results.json");
+      return !sar.Run(simList);
     }
   }
   catch (std::exception ex)

@@ -78,9 +78,9 @@ public:
   virtual ~SARunner();
 
   bool Run(const std::string& filename, SerializationFormat f);
-  bool Run(pulse::study::sensitivity_analysis::bind::SimulationListData& simList, const std::string& resultsFilename);
+  bool Run(pulse::study::sensitivity_analysis::bind::SimulationListData& simList);
 
-  static bool RunSimulationUntilStable(pulse::study::sensitivity_analysis::bind::SimulationData& sim, const std::string& dataDir="./");
+  static bool RunSimulationUntilStable(std::string const& outDir, pulse::study::sensitivity_analysis::bind::SimulationData& sim, const std::string& dataDir="./");
 protected:
   bool Run();
   bool SerializeToString(pulse::study::sensitivity_analysis::bind::SimulationListData& src, std::string& dst, SerializationFormat f) const;
@@ -95,6 +95,7 @@ protected:
   std::mutex  m_mutex;
   bool m_Running;
 
+  std::string m_OutDir;
   std::string m_DataDir;
   std::string m_SimulationResultsListFile;
   std::set<int> m_SimulationsToRun;
