@@ -30,7 +30,7 @@
       { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "MyocardiumTissueExtracellular",  "PropertyName": "Volume", "Unit": "mL" },
       { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "SkinTissueExtracellular",        "PropertyName": "Volume", "Unit": "mL" },
       { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "SpleenTissueExtracellular",      "PropertyName": "Volume", "Unit": "mL" },
-	  { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "FatTissueExtracellular",         "PropertyName": "Pressure", "Unit": "mmHg" },
+      { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "FatTissueExtracellular",         "PropertyName": "Pressure", "Unit": "mmHg" },
       { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "BoneTissueExtracellular",        "PropertyName": "Pressure", "Unit": "mmHg" },
       { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "BrainTissueExtracellular",       "PropertyName": "Pressure", "Unit": "mmHg" },
       { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "GutTissueExtracellular",         "PropertyName": "Pressure", "Unit": "mmHg" },
@@ -43,7 +43,7 @@
       { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "MyocardiumTissueExtracellular",  "PropertyName": "Pressure", "Unit": "mmHg" },
       { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "SkinTissueExtracellular",        "PropertyName": "Pressure", "Unit": "mmHg" },
       { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "SpleenTissueExtracellular",      "PropertyName": "Pressure", "Unit": "mmHg" },
-	  { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "FatTissueExtracellular",         "PropertyName": "InFlow", "Unit": "mL/s" },
+      { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "FatTissueExtracellular",         "PropertyName": "InFlow", "Unit": "mL/s" },
       { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "BoneTissueExtracellular",        "PropertyName": "InFlow", "Unit": "mL/s" },
       { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "BrainTissueExtracellular",       "PropertyName": "InFlow", "Unit": "mL/s" },
       { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "GutTissueExtracellular",         "PropertyName": "InFlow", "Unit": "mL/s" },
@@ -73,5 +73,6 @@
   },
   "AnyAction": 
   [
+    { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 2.0, "Unit": "min" }}} }
   ]
 }
