@@ -169,6 +169,9 @@ bool SARunner::RunSimulationUntilStable(std::string const& outDir, pulse::study:
   pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartStrokeVolume", VolumeUnit::mL);
   pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("IntracranialPressure", PressureUnit::mmHg);
   pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
+  pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanCentralVenousPressure", PressureUnit::mmHg);
+  pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanCerebralBloodFlow", VolumePerTimeUnit::L_Per_min);
+  pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanCerebralPerfusionPressure", PressureUnit::mmHg);
   pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryArterialPressure", PressureUnit::mmHg);
   pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryCapillariesWedgePressure", PressureUnit::mmHg);
   pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryDiastolicArterialPressure", PressureUnit::mmHg);
@@ -243,7 +246,10 @@ bool SARunner::RunSimulationUntilStable(std::string const& outDir, pulse::study:
       //double currentMeanCVP_mmHg = pulse->GetCardiovascularSystem()->GetMeanCentralVenousPressure(PressureUnit::mmHg);
       double currentBlood_mL = pulse->GetCardiovascularSystem()->GetBloodVolume(VolumeUnit::mL);
 
+      pulse->GetEngineTracker()->TrackData(time_s);
+
       stableTime_s += timeStep_s;
+      time_s += timeStep_s;
       bool stableMAP = true;
       if (GeneralMath::PercentDifference(previoustMap_mmHg, currentMap_mmHg) > stabPercentTolerance)
       {
@@ -285,10 +291,6 @@ bool SARunner::RunSimulationUntilStable(std::string const& outDir, pulse::study:
       }
   }
 
-  // TODO BF Check that what we overrided is still set to the same value
-  // This ensures the engine did not do anything to our resistances for some reason
-  // If they are different, we need to return false and look into why
-
   // Fill out our results
   sim.set_achievedstabilization(stable);
   sim.set_stabilizationtime_s(profiler.GetElapsedTime_s("Total"));
@@ -304,6 +306,9 @@ bool SARunner::RunSimulationUntilStable(std::string const& outDir, pulse::study:
   sim.set_heartstrokevolume_ml(pulse->GetCardiovascularSystem()->GetHeartStrokeVolume(VolumeUnit::mL));
   sim.set_intracranialpressure_mmhg(pulse->GetCardiovascularSystem()->GetIntracranialPressure(PressureUnit::mmHg));
   sim.set_meanarterialpressure_mmhg(pulse->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg));
+  sim.set_meancentralvenouspressure_mmhg(pulse->GetCardiovascularSystem()->GetMeanCentralVenousPressure(PressureUnit::mmHg));
+  sim.set_meancerebralbloodflow_l_per_min(pulse->GetCardiovascularSystem()->GetMeanCerebralBloodFlow(VolumePerTimeUnit::L_Per_min));
+  sim.set_meancerebralperfusionpressure_mmhg(pulse->GetCardiovascularSystem()->GetMeanCerebralPerfusionPressure(PressureUnit::mmHg));
   sim.set_pulmonaryarterialpressure_mmhg(pulse->GetCardiovascularSystem()->GetPulmonaryArterialPressure(PressureUnit::mmHg));
   sim.set_pulmonarycapillarieswedgepressure_mmhg(pulse->GetCardiovascularSystem()->GetPulmonaryCapillariesWedgePressure(PressureUnit::mmHg));
   sim.set_pulmonarydiastolicarterialpressure_mmhg(pulse->GetCardiovascularSystem()->GetPulmonaryDiastolicArterialPressure(PressureUnit::mmHg));

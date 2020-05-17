@@ -26,18 +26,21 @@ message SimulationData
   double                       HeartStrokeVolume_mL                    = 13;
   double                       IntracranialPressure_mmHg               = 14;
   double                       MeanArterialPressure_mmHg               = 15;
-  double                       PulmonaryArterialPressure_mmHg          = 16;
-  double                       PulmonaryCapillariesWedgePressure_mmHg  = 17;
-  double                       PulmonaryDiastolicArterialPressure_mmHg = 18;
-  double                       PulmonaryMeanArterialPressure_mmHg      = 19;
-  double                       PulmonaryMeanCapillaryFlow_L_Per_min    = 20;
-  double                       PulmonarySystolicArterialPressure_mmHg  = 21;
-  double                       SystolicArterialPressure_mmHg           = 22;
-  double                       SystemicVascularResistance_mmHg_s_Per_L = 23;
+  double                       MeanCentralVenousPressure_mmHg          = 16;
+  double                       MeanCerebralBloodFlow_L_Per_min         = 17;
+  double                       MeanCerebralPerfusionPressure_mmHg      = 18;
+  double                       PulmonaryArterialPressure_mmHg          = 19;
+  double                       PulmonaryCapillariesWedgePressure_mmHg  = 20;
+  double                       PulmonaryDiastolicArterialPressure_mmHg = 21;
+  double                       PulmonaryMeanArterialPressure_mmHg      = 22;
+  double                       PulmonaryMeanCapillaryFlow_L_Per_min    = 23;
+  double                       PulmonarySystolicArterialPressure_mmHg  = 24;
+  double                       SystolicArterialPressure_mmHg           = 25;
+  double                       SystemicVascularResistance_mmHg_s_Per_L = 26;
 
   // Stabilization Information
-  bool                         AchievedStabilization                   = 24;
-  double                       StabilizationTime_s                     = 25;
+  bool                         AchievedStabilization                   = 27;
+  double                       StabilizationTime_s                     = 28;
   
 }
 

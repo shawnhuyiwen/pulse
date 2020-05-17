@@ -94,6 +94,8 @@ void PBPulsePhysiology::Serialize(const PULSE_BIND::CardiovascularData& src, Car
   PBProperty::Load(src.cardiaccyclepulmonaryshuntflow_ml_per_s(), *dst.m_CardiacCyclePulmonaryShuntFlow_mL_Per_s);
   PBProperty::Load(src.cardiaccyclepulmonaryarterypressure_mmhg(), *dst.m_CardiacCyclePulmonaryArteryPressure_mmHg);
   PBProperty::Load(src.cardiaccyclecentralvenouspressure_mmhg(), *dst.m_CardiacCycleCentralVenousPressure_mmHg);
+  PBProperty::Load(src.cardiaccyclecerebralbloodflow_ml_per_s(), *dst.m_CardiacCycleCerebralBloodFlow_mL_Per_s);
+  PBProperty::Load(src.cardiaccyclecerebralperfusionpressure_mmhg(), *dst.m_CardiacCycleCerebralPerfusionPressure_mmHg);
   PBProperty::Load(src.cardiaccycleskinflow_ml_per_s(), *dst.m_CardiacCycleSkinFlow_mL_Per_s);
 
   // As these are dynamically added to the system during run time,
@@ -182,6 +184,8 @@ void PBPulsePhysiology::Serialize(const Cardiovascular& src, PULSE_BIND::Cardiov
   dst.set_allocated_cardiaccyclepulmonaryshuntflow_ml_per_s(PBProperty::Unload(*src.m_CardiacCyclePulmonaryShuntFlow_mL_Per_s));
   dst.set_allocated_cardiaccyclepulmonaryarterypressure_mmhg(PBProperty::Unload(*src.m_CardiacCyclePulmonaryArteryPressure_mmHg));
   dst.set_allocated_cardiaccyclecentralvenouspressure_mmhg(PBProperty::Unload(*src.m_CardiacCycleCentralVenousPressure_mmHg));
+  dst.set_allocated_cardiaccyclecerebralbloodflow_ml_per_s(PBProperty::Unload(*src.m_CardiacCycleCerebralBloodFlow_mL_Per_s));
+  dst.set_allocated_cardiaccyclecerebralperfusionpressure_mmhg(PBProperty::Unload(*src.m_CardiacCycleCerebralPerfusionPressure_mmHg));
   dst.set_allocated_cardiaccycleskinflow_ml_per_s(PBProperty::Unload(*src.m_CardiacCycleSkinFlow_mL_Per_s));
 
   for (auto* l : src.m_HemorrhageLinks)

@@ -73,6 +73,8 @@ Cardiovascular::Cardiovascular(PulseData& data) : PulseCardiovascularSystem(data
   m_CardiacCyclePulmonaryShuntFlow_mL_Per_s = new SERunningAverage();
   m_CardiacCyclePulmonaryArteryPressure_mmHg = new SERunningAverage();
   m_CardiacCycleCentralVenousPressure_mmHg = new SERunningAverage();
+  m_CardiacCycleCerebralBloodFlow_mL_Per_s = new SERunningAverage();
+  m_CardiacCycleCerebralPerfusionPressure_mmHg = new SERunningAverage();
   m_CardiacCycleSkinFlow_mL_Per_s = new SERunningAverage();
   Clear();
 }
@@ -89,6 +91,8 @@ Cardiovascular::~Cardiovascular()
   delete m_CardiacCyclePulmonaryShuntFlow_mL_Per_s;
   delete m_CardiacCyclePulmonaryArteryPressure_mmHg;
   delete m_CardiacCycleCentralVenousPressure_mmHg;
+  delete m_CardiacCycleCerebralBloodFlow_mL_Per_s;
+  delete m_CardiacCycleCerebralPerfusionPressure_mmHg;
   delete m_CardiacCycleSkinFlow_mL_Per_s;
 }
 
@@ -168,6 +172,8 @@ void Cardiovascular::Clear()
   m_CardiacCyclePulmonaryShuntFlow_mL_Per_s->Clear();
   m_CardiacCyclePulmonaryArteryPressure_mmHg->Clear();
   m_CardiacCycleCentralVenousPressure_mmHg->Clear();
+  m_CardiacCycleCerebralBloodFlow_mL_Per_s->Clear();
+  m_CardiacCycleCerebralPerfusionPressure_mmHg->Clear();
   m_CardiacCycleSkinFlow_mL_Per_s->Clear();
 
   m_HemorrhageLinks.clear();
@@ -223,6 +229,8 @@ void Cardiovascular::Initialize()
   
   // Set system data based on physiology norms
   GetMeanCentralVenousPressure().SetValue(5.0, PressureUnit::mmHg);
+  GetMeanCerebralBloodFlow().SetValue(0, VolumePerTimeUnit::mL_Per_s);
+  GetMeanCerebralPerfusionPressure().SetValue(85, PressureUnit::mmHg);
   m_CardiacCycleArterialCO2PartialPressure_mmHg->Sample(60.0);
   m_LastCardiacCycleMeanArterialCO2PartialPressure_mmHg = 60.0;
   GetMeanArterialCarbonDioxidePartialPressure().SetValue(60, PressureUnit::mmHg);
@@ -661,6 +669,8 @@ void Cardiovascular::CalculateVitalSigns()
   // Grab data from the circuit in order to calculate a running mean
   double AortaNodePressure_mmHg = m_Aorta->GetPressure(PressureUnit::mmHg);
   double AortaNodeCO2PartialPressure_mmHg = m_AortaCO2 == nullptr ? 0 : m_AortaCO2->GetPartialPressure(PressureUnit::mmHg); // This is here so we can Tune circuit w/o substances
+  double BrainFlow_mL_Per_s = m_Brain->GetInFlow(VolumePerTimeUnit::mL_Per_s);
+  double BrainNodePerfusionPressure_mmHg = AortaNodePressure_mmHg - m_Brain->GetPressure(PressureUnit::mmHg);
   double LeftPulmonaryArteryVolume_mL = m_LeftPulmonaryArteries->GetVolume(VolumeUnit::mL);
   double RightPulmonaryArteryVolume_mL = m_RightPulmonaryArteries->GetVolume(VolumeUnit::mL);
   double TotalPulmonaryArteryVolume_mL = LeftPulmonaryArteryVolume_mL + RightPulmonaryArteryVolume_mL;
@@ -685,7 +695,6 @@ void Cardiovascular::CalculateVitalSigns()
   double SkinFlow_mL_Per_s = m_pAortaToSkin->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
   double LHeartFlow_mL_Per_s = m_LeftHeartToAorta->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
   double LHeartVolume_mL = m_LeftHeart->GetVolume(VolumeUnit::mL);
-
   double muscleFlow_mL_Per_s = m_pAortaToMuscle->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
 
   double gutFlow_mL_Per_s = m_pAortaToLargeIntestine->GetNextFlow(VolumePerTimeUnit::mL_Per_s) +
@@ -726,6 +735,8 @@ void Cardiovascular::CalculateVitalSigns()
   m_CardiacCyclePulmonaryShuntFlow_mL_Per_s->Sample(PulmShuntFlow_mL_Per_s);
   m_CardiacCyclePulmonaryArteryPressure_mmHg->Sample(PulmonaryArteryNodePressure_mmHg);
   m_CardiacCycleCentralVenousPressure_mmHg->Sample(VenaCavaPressure_mmHg);
+  m_CardiacCycleCerebralBloodFlow_mL_Per_s->Sample(BrainFlow_mL_Per_s);
+  m_CardiacCycleCerebralPerfusionPressure_mmHg->Sample(BrainNodePerfusionPressure_mmHg);
   m_CardiacCycleSkinFlow_mL_Per_s->Sample(SkinFlow_mL_Per_s);
 
   /// \todo Make sure irreversible state is hit before we get here.
@@ -882,6 +893,12 @@ void Cardiovascular::RecordAndResetCardiacCycle()
   // Mean Central Venous Pressure
   GetMeanCentralVenousPressure().SetValue(m_CardiacCycleCentralVenousPressure_mmHg->Value(), PressureUnit::mmHg);
   m_CardiacCycleCentralVenousPressure_mmHg->Clear();
+  // Mean Cerebral Blood Flow
+  GetMeanCerebralBloodFlow().SetValue(m_CardiacCycleCerebralBloodFlow_mL_Per_s->Value(), VolumePerTimeUnit::mL_Per_s);
+  m_CardiacCycleCerebralBloodFlow_mL_Per_s->Clear();
+  // Mean Cerebral Perfusion Pressure
+  GetMeanCerebralPerfusionPressure().SetValue(m_CardiacCycleCerebralPerfusionPressure_mmHg->Value(), PressureUnit::mmHg);
+  m_CardiacCycleCerebralPerfusionPressure_mmHg->Clear();
   // Mean Skin Flow
   GetMeanSkinFlow().SetValue(m_CardiacCycleSkinFlow_mL_Per_s->Value(), VolumePerTimeUnit::mL_Per_s);
   m_CardiacCycleSkinFlow_mL_Per_s->Clear();
@@ -2019,26 +2036,29 @@ void Cardiovascular::AdjustVascularTone()
   double UpdatedCompliance_mL_Per_mmHg = 0.0;
   double totalResistanceChange_mmHg_s_Per_mL = 0.0;
   double totalComplianceChange_mL_Per_mmHg = 0.0;
-  if (m_data.GetNervous().HasBaroreceptorResistanceScale())
+  if (m_data.GetConfiguration().IsNervousFeedbackEnabled())
   {
-    for (SEFluidCircuitPath* Path : m_systemicResistancePaths)
+    if (m_data.GetNervous().HasBaroreceptorResistanceScale())
     {
-      /// \todo We are treating all systemic resistance paths equally, including the brain.
-      UpdatedResistance_mmHg_s_Per_mL = m_data.GetNervous().GetBaroreceptorResistanceScale().GetValue()*Path->GetResistanceBaseline(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-      if (UpdatedResistance_mmHg_s_Per_mL < m_minIndividialSystemicResistance__mmHg_s_Per_mL)
+      for (SEFluidCircuitPath* Path : m_systemicResistancePaths)
       {
-        UpdatedResistance_mmHg_s_Per_mL = m_minIndividialSystemicResistance__mmHg_s_Per_mL;
+        /// \todo We are treating all systemic resistance paths equally, including the brain.
+        UpdatedResistance_mmHg_s_Per_mL = m_data.GetNervous().GetBaroreceptorResistanceScale().GetValue() * Path->GetResistanceBaseline(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+        if (UpdatedResistance_mmHg_s_Per_mL < m_minIndividialSystemicResistance__mmHg_s_Per_mL)
+        {
+          UpdatedResistance_mmHg_s_Per_mL = m_minIndividialSystemicResistance__mmHg_s_Per_mL;
+        }
+        Path->GetNextResistance().SetValue(UpdatedResistance_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
       }
-      Path->GetNextResistance().SetValue(UpdatedResistance_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
     }
-  }
 
-  if (m_data.GetNervous().HasBaroreceptorComplianceScale())
-  {
-    for (SEFluidCircuitPath* Path : m_systemicCompliancePaths)
+    if (m_data.GetNervous().HasBaroreceptorComplianceScale())
     {
-      UpdatedCompliance_mL_Per_mmHg = m_data.GetNervous().GetBaroreceptorComplianceScale().GetValue()*Path->GetComplianceBaseline(VolumePerPressureUnit::mL_Per_mmHg);
-      Path->GetNextCompliance().SetValue(UpdatedCompliance_mL_Per_mmHg, VolumePerPressureUnit::mL_Per_mmHg);
+      for (SEFluidCircuitPath* Path : m_systemicCompliancePaths)
+      {
+        UpdatedCompliance_mL_Per_mmHg = m_data.GetNervous().GetBaroreceptorComplianceScale().GetValue() * Path->GetComplianceBaseline(VolumePerPressureUnit::mL_Per_mmHg);
+        Path->GetNextCompliance().SetValue(UpdatedCompliance_mL_Per_mmHg, VolumePerPressureUnit::mL_Per_mmHg);
+      }
     }
   }
 

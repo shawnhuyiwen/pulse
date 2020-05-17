@@ -129,6 +129,8 @@ protected:
   SERunningAverage* m_CardiacCyclePulmonaryShuntFlow_mL_Per_s;
   SERunningAverage* m_CardiacCyclePulmonaryArteryPressure_mmHg;
   SERunningAverage* m_CardiacCycleCentralVenousPressure_mmHg;
+  SERunningAverage* m_CardiacCycleCerebralBloodFlow_mL_Per_s;
+  SERunningAverage* m_CardiacCycleCerebralPerfusionPressure_mmHg;
   SERunningAverage* m_CardiacCycleSkinFlow_mL_Per_s;
   
   // Stateless member variable (Set in SetUp())

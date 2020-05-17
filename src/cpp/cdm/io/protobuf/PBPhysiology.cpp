@@ -190,6 +190,10 @@ void PBPhysiology::Serialize(const CDM_BIND::CardiovascularSystemData& src, SECa
     PBProperty::Load(src.meanarterialcarbondioxidepartialpressuredelta(), dst.GetMeanArterialCarbonDioxidePartialPressureDelta());
   if (src.has_meancentralvenouspressure())
     PBProperty::Load(src.meancentralvenouspressure(), dst.GetMeanCentralVenousPressure());
+  if (src.has_meancerebralbloodflow())
+    PBProperty::Load(src.meancerebralbloodflow(), dst.GetMeanCerebralBloodFlow());
+  if (src.has_meancerebralperfusionpressure())
+    PBProperty::Load(src.meancerebralperfusionpressure(), dst.GetMeanCerebralPerfusionPressure());
   if (src.has_meanskinflow())
     PBProperty::Load(src.meanskinflow(), dst.GetMeanSkinFlow());
   if (src.has_pulmonaryarterialpressure())
@@ -259,6 +263,10 @@ void PBPhysiology::Serialize(const SECardiovascularSystem& src, CDM_BIND::Cardio
     dst.set_allocated_meanarterialcarbondioxidepartialpressuredelta(PBProperty::Unload(*src.m_MeanArterialCarbonDioxidePartialPressureDelta));
   if (src.HasMeanCentralVenousPressure())
     dst.set_allocated_meancentralvenouspressure(PBProperty::Unload(*src.m_MeanCentralVenousPressure));
+  if (src.HasMeanCerebralBloodFlow())
+    dst.set_allocated_meancerebralbloodflow(PBProperty::Unload(*src.m_MeanCerebralBloodFlow));
+  if (src.HasMeanCerebralPerfusionPressure())
+    dst.set_allocated_meancerebralperfusionpressure(PBProperty::Unload(*src.m_MeanCerebralPerfusionPressure));
   if (src.HasMeanSkinFlow())
     dst.set_allocated_meanskinflow(PBProperty::Unload(*src.m_MeanSkinFlow));
   if (src.HasPulmonaryArterialPressure())

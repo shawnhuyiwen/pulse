@@ -87,6 +87,14 @@ public:
   virtual SEScalarPressure& GetMeanCentralVenousPressure();
   virtual double GetMeanCentralVenousPressure(const PressureUnit& unit) const;
 
+  virtual bool HasMeanCerebralBloodFlow() const;
+  virtual SEScalarVolumePerTime& GetMeanCerebralBloodFlow();
+  virtual double GetMeanCerebralBloodFlow(const VolumePerTimeUnit& unit) const;
+
+  virtual bool HasMeanCerebralPerfusionPressure() const;
+  virtual SEScalarPressure& GetMeanCerebralPerfusionPressure();
+  virtual double GetMeanCerebralPerfusionPressure(const PressureUnit& unit) const;
+
   virtual bool HasMeanSkinFlow() const;
   virtual SEScalarVolumePerTime& GetMeanSkinFlow();
   virtual double GetMeanSkinFlow(const VolumePerTimeUnit& unit) const;
@@ -158,6 +166,8 @@ protected:
   SEScalarPressure*                      m_MeanArterialCarbonDioxidePartialPressure;
   SEScalarPressure*                      m_MeanArterialCarbonDioxidePartialPressureDelta;
   SEScalarPressure*                      m_MeanCentralVenousPressure;
+  SEScalarVolumePerTime*                 m_MeanCerebralBloodFlow;
+  SEScalarPressure*                      m_MeanCerebralPerfusionPressure;
   SEScalarVolumePerTime*                 m_MeanSkinFlow;
   SEScalarPressure*                      m_PulmonaryArterialPressure;
   SEScalarPressure*                      m_PulmonaryCapillariesWedgePressure;
@@ -166,9 +176,9 @@ protected:
   SEScalarVolumePerTime*                 m_PulmonaryMeanCapillaryFlow;
   SEScalarVolumePerTime*                 m_PulmonaryMeanShuntFlow;
   SEScalarPressure*                      m_PulmonarySystolicArterialPressure;
-  SEScalarPressureTimePerVolume*                m_PulmonaryVascularResistance;
+  SEScalarPressureTimePerVolume*         m_PulmonaryVascularResistance;
   SEScalarPressureTimePerVolumeArea*     m_PulmonaryVascularResistanceIndex;
   SEScalarPressure*                      m_PulsePressure;
   SEScalarPressure*                      m_SystolicArterialPressure;
-  SEScalarPressureTimePerVolume*                m_SystemicVascularResistance;
+  SEScalarPressureTimePerVolume*         m_SystemicVascularResistance;
 };

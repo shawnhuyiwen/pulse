@@ -33,6 +33,8 @@ SECardiovascularSystem::SECardiovascularSystem(Logger* logger) : SESystem(logger
   m_MeanArterialCarbonDioxidePartialPressure = nullptr;
   m_MeanArterialCarbonDioxidePartialPressureDelta = nullptr;
   m_MeanCentralVenousPressure = nullptr;
+  m_MeanCerebralBloodFlow = nullptr;
+  m_MeanCerebralPerfusionPressure = nullptr;
   m_MeanSkinFlow = nullptr;
   m_PulmonaryArterialPressure = nullptr;
   m_PulmonaryCapillariesWedgePressure = nullptr;
@@ -74,6 +76,8 @@ void SECardiovascularSystem::Clear()
   SAFE_DELETE(m_MeanArterialCarbonDioxidePartialPressure);
   SAFE_DELETE(m_MeanArterialCarbonDioxidePartialPressureDelta);
   SAFE_DELETE(m_MeanCentralVenousPressure);
+  SAFE_DELETE(m_MeanCerebralBloodFlow);
+  SAFE_DELETE(m_MeanCerebralPerfusionPressure);
   SAFE_DELETE(m_MeanSkinFlow);
   SAFE_DELETE(m_PulmonaryArterialPressure);
   SAFE_DELETE(m_PulmonaryCapillariesWedgePressure);
@@ -123,6 +127,10 @@ const SEScalar* SECardiovascularSystem::GetScalar(const std::string& name)
     return &GetMeanArterialCarbonDioxidePartialPressureDelta();
   if (name.compare("MeanCentralVenousPressure") == 0)
     return &GetMeanCentralVenousPressure();
+  if (name.compare("MeanCerebralBloodFlow") == 0)
+      return &GetMeanCerebralBloodFlow();
+  if (name.compare("MeanCerebralPerfusionPressure") == 0)
+      return &GetMeanCerebralPerfusionPressure();
   if (name.compare("MeanSkinFlow") == 0)
     return &GetMeanSkinFlow();
   if (name.compare("PulmonaryArterialPressure") == 0)
@@ -431,6 +439,40 @@ double SECardiovascularSystem::GetMeanCentralVenousPressure(const PressureUnit& 
   if (m_MeanCentralVenousPressure == nullptr)
     return SEScalar::dNaN();
   return m_MeanCentralVenousPressure->GetValue(unit);
+}
+
+bool SECardiovascularSystem::HasMeanCerebralBloodFlow() const
+{
+    return m_MeanCerebralBloodFlow == nullptr ? false : m_MeanCerebralBloodFlow->IsValid();
+}
+SEScalarVolumePerTime& SECardiovascularSystem::GetMeanCerebralBloodFlow()
+{
+    if (m_MeanCerebralBloodFlow == nullptr)
+        m_MeanCerebralBloodFlow = new SEScalarVolumePerTime();
+    return *m_MeanCerebralBloodFlow;
+}
+double SECardiovascularSystem::GetMeanCerebralBloodFlow(const VolumePerTimeUnit& unit) const
+{
+    if (m_MeanCerebralBloodFlow == nullptr)
+        return SEScalar::dNaN();
+    return m_MeanCerebralBloodFlow->GetValue(unit);
+}
+
+bool SECardiovascularSystem::HasMeanCerebralPerfusionPressure() const
+{
+    return m_MeanCerebralPerfusionPressure == nullptr ? false : m_MeanCerebralPerfusionPressure->IsValid();
+}
+SEScalarPressure& SECardiovascularSystem::GetMeanCerebralPerfusionPressure()
+{
+    if (m_MeanCerebralPerfusionPressure == nullptr)
+        m_MeanCerebralPerfusionPressure = new SEScalarPressure();
+    return *m_MeanCerebralPerfusionPressure;
+}
+double SECardiovascularSystem::GetMeanCerebralPerfusionPressure(const PressureUnit& unit) const
+{
+    if (m_MeanCerebralPerfusionPressure == nullptr)
+        return SEScalar::dNaN();
+    return m_MeanCerebralPerfusionPressure->GetValue(unit);
 }
 
 bool SECardiovascularSystem::HasMeanSkinFlow() const
