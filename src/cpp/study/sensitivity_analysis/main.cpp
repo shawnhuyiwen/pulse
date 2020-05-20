@@ -49,8 +49,6 @@ int main(int argc, char* argv[])
       pulse::study::sensitivity_analysis::bind::SimulationListData simList;
       simList.set_outputrootdir("./test_results/sesitivity_analysis");
 
-      // TODO Lots of loops adding runs to our simList
-
       std::cout << "Generated " << simList.simulation_size() << " simulations" << std::endl;
       return !sar.Run(simList);
     }

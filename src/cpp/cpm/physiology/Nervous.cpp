@@ -84,6 +84,7 @@ void Nervous::Initialize()
 void Nervous::SetUp()
 {
   m_dt_s = m_data.GetTimeStep().GetValue(TimeUnit::s);
+  m_FeedbackActive            = m_data.GetConfiguration().IsNervousFeedbackEnabled();
   m_NormalizedGammaHeartRate  = m_data.GetConfiguration().GetNormalizedHeartRateIntercept();
   m_NormalizedGammaElastance  = m_data.GetConfiguration().GetNormalizedHeartElastanceIntercept();
   m_NormalizedGammaCompliance = m_data.GetConfiguration().GetNormalizedComplianceIntercept();
