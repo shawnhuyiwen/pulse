@@ -360,26 +360,21 @@ bool PulseController::InitializeEngine(const SEPatientConfiguration& patient_con
       return false;
   }
   AtSteadyState(EngineState::AtSecondaryStableState);
-  
-  // Copy any changes to the current patient to the initial patient
-  m_InitialPatient->Copy(*m_CurrentPatient);
-  
+ 
   // Don't allow any changes to Quantity/Potential/Flux values directly
   // Use Quantity/Potential/Flux Sources
   m_Circuits->SetReadOnly(true);
 
+  AtSteadyState(EngineState::Active);
   Info("Finalizing homeostasis...");
   // Run this again to clear out any bumps from systems resetting baselines in the last AtSteadyState call
-  AdvanceModelTime(30, TimeUnit::s); // I would rather run Feedback stablization again, but...
+  // AdvanceModelTime(30, TimeUnit::s); // I would rather run Feedback stablization again, but...
   // This does not work for a few patients, they will not stay stable (???)  
   //if (!m_Config->GetStabilizationCriteria()->StabilizeFeedbackState(*this))
   //  return false;
 
   if (!m_Config->GetStabilization()->IsTrackingStabilization())
     m_SimulationTime.SetValue(0, TimeUnit::s);
-  
-  AtSteadyState(EngineState::Active);
-
   // Hook up the handlers (Note events will still be in the log)
   m_EventManager->ForwardEvents(event_handler);
   return true;
@@ -3213,7 +3208,7 @@ void PulseController::SetupTissue()
   /// \todo Put Initial Circuit/Compartment data values into the configuration file.
 
   //Density (kg/L)
-  double AdiposeTissueDensity = 0.92;
+  double AdiposeTissueDensity = 1.03;
   double BoneTissueDensity = 1.3;
   double BrainTissueDensity = 1.0;
   double GutTissueDensity = 1.0;
@@ -4350,7 +4345,7 @@ void PulseController::SetupGastrointestinal()
 
   SEFluidCircuitNode& SmallIntestineC1 = cCombinedCardiovascular.CreateNode(pulse::ChymeNode::SmallIntestineC1);
   SmallIntestineC1.GetPressure().SetValue(0, PressureUnit::mmHg);
-  SmallIntestineC1.GetVolumeBaseline().SetValue(100, VolumeUnit::mL);
+  SmallIntestineC1.GetVolumeBaseline().SetValue(10, VolumeUnit::mL);
 
   SEFluidCircuitNode* SmallIntestine1 = cCombinedCardiovascular.GetNode(pulse::CardiovascularNode::SmallIntestine1);
   SEFluidCircuitNode* Ground = cCombinedCardiovascular.GetNode(pulse::CardiovascularNode::Ground);

@@ -1,29 +1,18 @@
-{
-  "Name": "EnergyValidation",
-  "Description": "Validation of Energy data.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json"
-    }
-  },
-  "DataRequestManager": {
-    "DataRequest": [{
-      "DecimalFormat": {
-        "Precision": 2
-      },
-      "Category": "Physiology",
-      "PropertyName": "ChymeAbsorptionRate",
-      "Unit": "mL/min"
-    }]
-  },
-  "AnyAction": [{
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 2.0,
-          "Unit": "min"
-        }
-      }
-    }
-  }]
+{ "Scenario":
+  {
+    "Name": "GastrointestinalValidation",
+    "Description": "Validation of Gastrointestinal data.",
+    "StartType": { "PatientConfiguration": { "PatientFile": "StandardMale.json"}},
+    "DataRequestManager":
+    { 
+      "DataRequest":
+      [
+        { "DecimalFormat": { }, "Category": "Physiology", "PropertyName": "WaterAbsorptionRate", "Unit": "mL/min" }
+      ]
+    },
+    "AnyAction": 
+    [
+      { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 2.0, "Unit": "min" }}} }
+    ]
+  }
 }

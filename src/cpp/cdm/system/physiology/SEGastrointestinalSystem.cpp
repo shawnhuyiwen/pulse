@@ -11,7 +11,7 @@
 
 SEGastrointestinalSystem::SEGastrointestinalSystem(Logger* logger) : SESystem(logger)
 {
-  m_ChymeAbsorptionRate = nullptr;
+  m_WaterAbsorptionRate = nullptr;
   m_StomachContents     = nullptr;
 }
 
@@ -23,15 +23,15 @@ SEGastrointestinalSystem::~SEGastrointestinalSystem()
 void SEGastrointestinalSystem::Clear()
 {
   SESystem::Clear();
-  SAFE_DELETE(m_ChymeAbsorptionRate);
+  SAFE_DELETE(m_WaterAbsorptionRate);
   SAFE_DELETE(m_StomachContents);
 }
 
 
 const SEScalar* SEGastrointestinalSystem::GetScalar(const std::string& name)
 {
-  if(name.compare("ChymeAbsorptionRate") == 0)
-    return &GetChymeAbsorptionRate();
+  if(name.compare("WaterAbsorptionRate") == 0)
+    return &GetWaterAbsorptionRate();
 
   size_t split = name.find('-');
   if (split != name.npos)
@@ -44,21 +44,21 @@ const SEScalar* SEGastrointestinalSystem::GetScalar(const std::string& name)
   return nullptr;
 }
 
-bool SEGastrointestinalSystem::HasChymeAbsorptionRate() const
+bool SEGastrointestinalSystem::HasWaterAbsorptionRate() const
 {
-  return m_ChymeAbsorptionRate == nullptr ? false : m_ChymeAbsorptionRate->IsValid();
+  return m_WaterAbsorptionRate == nullptr ? false : m_WaterAbsorptionRate->IsValid();
 }
-SEScalarVolumePerTime& SEGastrointestinalSystem::GetChymeAbsorptionRate()
+SEScalarVolumePerTime& SEGastrointestinalSystem::GetWaterAbsorptionRate()
 {
-  if (m_ChymeAbsorptionRate == nullptr)
-    m_ChymeAbsorptionRate = new SEScalarVolumePerTime();
-  return *m_ChymeAbsorptionRate;
+  if (m_WaterAbsorptionRate == nullptr)
+    m_WaterAbsorptionRate = new SEScalarVolumePerTime();
+  return *m_WaterAbsorptionRate;
 }
-double SEGastrointestinalSystem::GetChymeAbsorptionRate(const VolumePerTimeUnit& unit) const
+double SEGastrointestinalSystem::GetWaterAbsorptionRate(const VolumePerTimeUnit& unit) const
 {
-  if (m_ChymeAbsorptionRate == nullptr)
+  if (m_WaterAbsorptionRate == nullptr)
     return SEScalar::dNaN();
-  return m_ChymeAbsorptionRate->GetValue(unit);
+  return m_WaterAbsorptionRate->GetValue(unit);
 }
 
 bool SEGastrointestinalSystem::HasStomachContents() const

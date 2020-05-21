@@ -390,7 +390,7 @@ void PulseConfiguration::Initialize(const std::string& data_dir)
   GetCalciumAbsorptionFraction().SetValue(0.25);// Net fractional calcium absorption is 24.9 ± 12.4% (Hunt and Johnson 2007)
   GetCalciumDigestionRate().SetValue(2.7, MassPerTimeUnit::mg_Per_min);// Wasserman1992Intestinal
   GetCarbohydrateAbsorptionFraction().SetValue(0.80);// Guyton p790
-  GetDefaultCarbohydrateDigestionRate().SetValue(0.5, MassPerTimeUnit::g_Per_min);// Guyton (About 4.25hr to digest the carbs in default meal)
+  GetDefaultCarbohydrateDigestionRate().SetValue(0.87, MassPerTimeUnit::g_Per_min);// Go through 130g in about 2 hrs, glucose levels should return to basal 2hrs after that
   GetDefaultFatDigestionRate().SetValue(0.055, MassPerTimeUnit::g_Per_min);// Guyton (About 8hr to digest the fat in the default meal)
   GetDefaultProteinDigestionRate().SetValue(0.071, MassPerTimeUnit::g_Per_min);// Dangin2001Digestion (About 5hr to digest the protein in the default meal)
   GetDefaultStomachContents().SerializeFromFile(data_dir+"/nutrition/Standard.json",JSON);// Refs are in the data spreadsheet

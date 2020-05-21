@@ -194,6 +194,10 @@ void Respiratory::Clear()
 //--------------------------------------------------------------------------------------------------
 /// \brief
 /// Initializes system properties to valid homeostatic values.
+///
+/// \details
+/// For stabilization only!
+/// Called AFTER Setup when stabilizing a new patient
 //--------------------------------------------------------------------------------------------------
 void Respiratory::Initialize()
 {
@@ -307,8 +311,10 @@ void Respiratory::Initialize()
 /// \brief
 /// Initializes parameters for Respiratory Class
 ///
-///  \details
-///   Initializes member variables and system level values on the common data model.
+/// \details
+/// Called during both State loading and Patient Stabilization
+/// Pull and setup up our data (can be from other systems)
+/// Initialize will be called after this and can overwrite any of this data (only if stabilizing)
 //--------------------------------------------------------------------------------------------------
 void Respiratory::SetUp()
 {
@@ -435,18 +441,10 @@ void Respiratory::AtSteadyState()
   double functionalResidualCapacity_L = m_data.GetCurrentPatient().GetFunctionalResidualCapacity(VolumeUnit::L);
   double inspiratoryReserveVolume_L = totalLungCapacity_L - functionalResidualCapacity_L - tidalVolumeBaseline_L;
 
-  std::string typeString = "Initial Stabilization Homeostasis: ";
-  if (m_data.GetState() == EngineState::AtSecondaryStableState)
-    typeString = "Secondary Stabilization Homeostasis: ";
-
-  std::stringstream ss;
-  ss << typeString << "Patient tidal volume = " << tidalVolumeBaseline_L << " L.";
-  Info(ss);
-  ss << typeString << "Patient inspiratory reserve volume = " << inspiratoryReserveVolume_L << " L.";
-  Info(ss);
-
+  std::string typeString;
   if (m_data.GetState() == EngineState::AtInitialStableState)
   {
+    typeString = "Initial Stabilization Homeostasis: ";
     //At Resting State
     //Note: Respiratory conditions are applied each timestep to handle combined effects properly
 
@@ -456,6 +454,16 @@ void Respiratory::AtSteadyState()
     m_data.GetCurrentPatient().GetTidalVolumeBaseline().SetValue(tidalVolumeBaseline_L, VolumeUnit::L);
     m_data.GetCurrentPatient().GetInspiratoryReserveVolume().SetValue(inspiratoryReserveVolume_L, VolumeUnit::L);
   }
+  else if (m_data.GetState() == EngineState::AtSecondaryStableState)
+    typeString = "Secondary Stabilization Homeostasis: ";
+  else if (m_data.GetState() == EngineState::Active)
+    typeString = "Final Stabilization Homeostasis: ";
+
+  std::stringstream ss;
+  ss << typeString << "Patient tidal volume = " << tidalVolumeBaseline_L << " L.";
+  Info(ss);
+  ss << typeString << "Patient inspiratory reserve volume = " << inspiratoryReserveVolume_L << " L.";
+  Info(ss);
 }
 
 //--------------------------------------------------------------------------------------------------

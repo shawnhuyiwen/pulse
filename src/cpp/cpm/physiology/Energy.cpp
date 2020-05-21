@@ -89,6 +89,10 @@ void Energy::Clear()
 //--------------------------------------------------------------------------------------------------
 /// \brief
 /// Initializes system properties to valid homeostatic values.
+///
+/// \details
+/// For stabilization only!
+/// Called AFTER Setup when stabilizing a new patient
 //--------------------------------------------------------------------------------------------------
 void Energy::Initialize()
 {
@@ -124,6 +128,10 @@ void Energy::Initialize()
 /// Initializes the energy specific quantities
 ///
 /// \details
+/// Called during both State loading and Patient Stabilization
+/// Pull and setup up our data (can be from other systems)
+/// Initialize will be called after this and can overwrite any of this data (only if stabilizing)
+///
 /// The energy local member variables, system level quantities, and metabolic-specific substance
 /// quantities are initialized here. These variables are used in the numerous metabolic and thermal regulation
 /// functions contained in the energy system. Encompassing them in this function allows for easy initialization

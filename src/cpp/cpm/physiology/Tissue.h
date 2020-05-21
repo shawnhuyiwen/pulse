@@ -74,9 +74,9 @@ protected:
 
   // Serializable member variables (Set in Initialize and in schema
   double m_RestingTissueGlucose_g;
-  double m_RestingBloodGlucose_g_Per_L;
-  double m_RestingBloodLipid_g_Per_L;
-  double m_RestingBloodInsulin_g_Per_L;
+  double m_RestingBloodGlucose_mg_Per_mL;
+  double m_RestingBloodLipid_mg_Per_mL;
+  double m_RestingBloodInsulin_mg_Per_mL;
   double m_RestingPatientMass_kg;
   double m_RestingFluidMass_kg;
 
@@ -99,6 +99,7 @@ protected:
   SEFluidCircuitNode*         m_GutT1;
   SEFluidCircuitPath*         m_GutT1ToGutT3;
 
+  SELiquidSubstanceQuantity*  m_LiverAcetoacetate;
   SELiquidSubstanceQuantity*  m_LiverTissueAlbumin;
   SETissueCompartment*        m_LeftLungTissue;
   SETissueCompartment*        m_RightLungTissue;

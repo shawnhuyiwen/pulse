@@ -17,6 +17,7 @@ public:
   static AmountPerVolumeUnit mol_Per_mL;
   static AmountPerVolumeUnit mmol_Per_L;
   static AmountPerVolumeUnit mmol_Per_mL;
+  static AmountPerVolumeUnit pmol_Per_L;
   static AmountPerVolumeUnit ct_Per_L;
   static AmountPerVolumeUnit ct_Per_uL;
 };
