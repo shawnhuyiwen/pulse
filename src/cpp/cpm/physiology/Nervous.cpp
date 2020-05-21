@@ -60,7 +60,8 @@ void Nervous::Clear()
 void Nervous::Initialize()
 {
   PulseSystem::Initialize();
-  m_FeedbackActive = false;
+  SetBaroreceptorFeedback(eSwitch::Off);
+  SetChemoreceptorFeedback(eSwitch::Off);
   GetBaroreceptorHeartRateScale().SetValue(1.0);
   GetBaroreceptorHeartElastanceScale().SetValue(1.0);
   GetBaroreceptorResistanceScale().SetValue(1.0);
@@ -96,23 +97,28 @@ void Nervous::Initialize()
 void Nervous::SetUp()
 {
   m_dt_s = m_data.GetTimeStep().GetValue(TimeUnit::s);
-  m_FeedbackActive            = m_data.GetConfiguration().IsNervousFeedbackEnabled();
-  m_NormalizedGammaHeartRate  = m_data.GetConfiguration().GetNormalizedHeartRateIntercept();
-  m_NormalizedGammaElastance  = m_data.GetConfiguration().GetNormalizedHeartElastanceIntercept();
-  m_NormalizedGammaCompliance = m_data.GetConfiguration().GetNormalizedComplianceIntercept();
-  m_NormalizedGammaResistance = m_data.GetConfiguration().GetNormalizedResistanceIntercept();
-  m_NormalizedAlphaHeartRate  = m_data.GetConfiguration().GetNormalizedHeartRateSympatheticSlope();
-  m_NormalizedAlphaElastance  = m_data.GetConfiguration().GetNormalizedHeartElastanceSympatheticSlope();
-  m_NormalizedAlphaCompliance = m_data.GetConfiguration().GetNormalizedComplianceParasympatheticSlope();
-  m_NormalizedAlphaResistance = m_data.GetConfiguration().GetNormalizedResistanceSympatheticSlope();
-  m_NormalizedBetaHeartRate   = m_data.GetConfiguration().GetNormalizedHeartRateParasympatheticSlope();
+  SetBaroreceptorFeedback(m_data.GetConfiguration().GetBaroreceptorFeedback());
+  SetChemoreceptorFeedback(m_data.GetConfiguration().GetChemoreceptorFeedback());
+  m_NormalizedGammaHeartRate    = m_data.GetConfiguration().GetNormalizedHeartRateIntercept();
+  m_NormalizedGammaElastance    = m_data.GetConfiguration().GetNormalizedHeartElastanceIntercept();
+  m_NormalizedGammaCompliance   = m_data.GetConfiguration().GetNormalizedComplianceIntercept();
+  m_NormalizedGammaResistance   = m_data.GetConfiguration().GetNormalizedResistanceIntercept();
+  m_NormalizedAlphaHeartRate    = m_data.GetConfiguration().GetNormalizedHeartRateSympatheticSlope();
+  m_NormalizedAlphaElastance    = m_data.GetConfiguration().GetNormalizedHeartElastanceSympatheticSlope();
+  m_NormalizedAlphaCompliance   = m_data.GetConfiguration().GetNormalizedComplianceParasympatheticSlope();
+  m_NormalizedAlphaResistance   = m_data.GetConfiguration().GetNormalizedResistanceSympatheticSlope();
+  m_NormalizedBetaHeartRate     = m_data.GetConfiguration().GetNormalizedHeartRateParasympatheticSlope();
 }
 
 void Nervous::AtSteadyState()
 {
-  if (m_data.GetState() == EngineState::AtSecondaryStableState)
+  if (m_data.GetState() == EngineState::AtInitialStableState)
   {
-    m_FeedbackActive = m_data.GetConfiguration().IsNervousFeedbackEnabled();
+    SetChemoreceptorFeedback(m_data.GetConfiguration().GetChemoreceptorFeedback());
+  }
+  else if (m_data.GetState() == EngineState::AtSecondaryStableState)
+  {
+    SetBaroreceptorFeedback(m_data.GetConfiguration().GetBaroreceptorFeedback());
     // The set-points (Baselines) get reset at the end of each stabilization period.
     m_ArterialOxygenBaseline_mmHg = m_data.GetBloodChemistry().GetArterialOxygenPressure(PressureUnit::mmHg);
     m_ArterialCarbonDioxideBaseline_mmHg = m_data.GetBloodChemistry().GetArterialCarbonDioxidePressure(PressureUnit::mmHg);
@@ -133,11 +139,10 @@ void Nervous::AtSteadyState()
 //--------------------------------------------------------------------------------------------------
 void Nervous::PreProcess()
 {
-  if (m_FeedbackActive)
-  {
+  if(m_BaroreceptorFeedback ==eSwitch::On)
     BaroreceptorFeedback();
+  if(m_ChemoreceptorFeedback ==eSwitch::On)
     ChemoreceptorFeedback();
-  }
 }
 
 //--------------------------------------------------------------------------------------------------

@@ -4,6 +4,7 @@ option java_package = "pulse.cdm.bind";
 option csharp_namespace = "pulse.cdm.bind";
 option optimize_for = SPEED;
 
+import "pulse/cdm/bind/Enums.proto";
 import "pulse/cdm/bind/Properties.proto";
 import "pulse/cdm/bind/PatientNutrition.proto";
 
@@ -38,7 +39,7 @@ message BloodChemistrySystemData
   Scalar0To1Data                      CarbonMonoxideSaturation                       = 6; /**<< @brief The fraction of hemoglobin that is carbon monoxide bound.*/  
   Scalar0To1Data                      Hematocrit                                     = 7; /**<< @brief Volume percentage of red blood cells in the blood.*/
   ScalarMassData                      HemoglobinContent                              = 8; /**<< @brief The total amount of hemoglobin in the blood.*/
-  Scalar0To1Data                      OxygenSaturation                               = 9;/**<< @brief The fraction of hemoglobin that is oxygen bound.*/
+  Scalar0To1Data                      OxygenSaturation                               = 9; /**<< @brief The fraction of hemoglobin that is oxygen bound.*/
   ScalarAmountPerVolumeData           Phosphate                                      = 10;/**<< @brief Sum of all inorganic phosphate in the blood.*/
   ScalarVolumeData                    PlasmaVolume                                   = 11;/**<< @brief Volume of the plasma.*/
   Scalar0To1Data                      PulseOximetry                                  = 12;/**<< @brief The fraction of hemoglobin with bound oxygen as measured optically, which can include Carbon Monoxide.*/
@@ -163,14 +164,16 @@ message HepaticSystemData
  */
 message NervousSystemData
 {
-  ScalarData                          BaroreceptorHeartRateScale                     = 1;/**<< @brief Heart rate multiplier used to scale the heart rate due to baroreceptor feedback*/
-  ScalarData                          BaroreceptorHeartElastanceScale                = 2;/**<< @brief Heart elastance multiplier used to scale the heart rate due to baroreceptor feedback*/
-  ScalarData                          BaroreceptorResistanceScale                    = 3;/**<< @brief %Cardiovascular resistance multiplier used to scale the heart rate due to baroreceptor feedback*/
-  ScalarData                          BaroreceptorComplianceScale                    = 4;/**<< @brief %Cardiovascular compliance multiplier used to scale the heart rate due to baroreceptor feedback*/  
-  PupillaryResponseData               LeftEyePupillaryResponse                       = 5;/**<< @brief */  
-  PupillaryResponseData               RightEyePupillaryResponse                      = 6;/**<< @brief */                    
-  ScalarData                          ChemoreceptorHeartRateScale                    = 7;/**<< @brief Heart rate multiplier used to scale the heart rate due to baroreceptor feedback*/
-  ScalarData                          ChemoreceptorHeartElastanceScale               = 8;/**<< @brief Heart elastance multiplier used to scale the heart rate due to baroreceptor feedback*/
+  eSwitch                             ChemoreceptorFeedback                          = 1;/**<< @brief Signals if the Chemoreceptors are on or off. */
+  ScalarData                          ChemoreceptorHeartRateScale                    = 2;/**<< @brief Heart rate multiplier used to scale the heart rate due to baroreceptor feedback*/
+  ScalarData                          ChemoreceptorHeartElastanceScale               = 3;/**<< @brief Heart elastance multiplier used to scale the heart rate due to baroreceptor feedback*/
+  eSwitch                             BaroreceptorFeedback                           = 4;/**<< @brief Signals if the Baroreceptors are on or off. */
+  ScalarData                          BaroreceptorHeartRateScale                     = 5;/**<< @brief Heart rate multiplier used to scale the heart rate due to baroreceptor feedback*/
+  ScalarData                          BaroreceptorHeartElastanceScale                = 6;/**<< @brief Heart elastance multiplier used to scale the heart rate due to baroreceptor feedback*/
+  ScalarData                          BaroreceptorResistanceScale                    = 7;/**<< @brief %Cardiovascular resistance multiplier used to scale the heart rate due to baroreceptor feedback*/
+  ScalarData                          BaroreceptorComplianceScale                    = 8;/**<< @brief %Cardiovascular compliance multiplier used to scale the heart rate due to baroreceptor feedback*/  
+  PupillaryResponseData               LeftEyePupillaryResponse                       = 9;/**<< @brief */  
+  PupillaryResponseData               RightEyePupillaryResponse                      = 10;/**<< @brief */
 }
 
 /** @brief Provides kidney function by clearing and maintaining substances in the blood

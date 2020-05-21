@@ -76,6 +76,6 @@
   [
     { "AdvanceTime": { 
     "Action": { "Comment": "Advance some time" },
-    "Time": { "ScalarTime": { "Value": 2, "Unit": "hr" }}}}
+    "Time": { "ScalarTime": { "Value": 2, "Unit": "min" }}}}
   ]
 }

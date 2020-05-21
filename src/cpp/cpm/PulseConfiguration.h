@@ -376,8 +376,11 @@ protected:
   /** Nervous */
   /////////////
 public:
-  virtual bool IsNervousFeedbackEnabled() const { return m_NervousFeedbackEnabled == eSwitch::On; }
-  virtual void EnableNervousFeedback(eSwitch s) { m_NervousFeedbackEnabled = (s == eSwitch::NullSwitch) ? eSwitch::On : s; }
+  virtual eSwitch GetBaroreceptorFeedback() const { return m_BaroreceptorFeedback; }
+  virtual void SetBaroreceptorFeedback(eSwitch s) { m_BaroreceptorFeedback = (s == eSwitch::NullSwitch) ? eSwitch::On : s; }
+
+  virtual eSwitch GetChemoreceptorFeedback() const { return m_ChemoreceptorFeedback; }
+  virtual void SetChemoreceptorFeedback(eSwitch s) { m_ChemoreceptorFeedback = (s == eSwitch::NullSwitch) ? eSwitch::On : s; }
 
   virtual bool HasHeartElastanceDistributedTimeDelay() const;
   virtual SEScalarTime& GetHeartElastanceDistributedTimeDelay();
@@ -440,7 +443,8 @@ public:
   virtual double GetVenousComplianceDistributedTimeDelay(const TimeUnit& unit) const;
 
 protected:
-  eSwitch         m_NervousFeedbackEnabled;
+  eSwitch         m_ChemoreceptorFeedback;
+  eSwitch         m_BaroreceptorFeedback;
   SEScalarTime*   m_HeartElastanceDistributedTimeDelay;
   SEScalarTime*   m_HeartRateDistributedTimeDelay;
   SEScalar*       m_NormalizedHeartRateIntercept;

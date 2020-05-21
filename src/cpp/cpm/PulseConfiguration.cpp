@@ -119,7 +119,8 @@ PulseConfiguration::PulseConfiguration(SESubstanceManager& substances) : SEEngin
   m_WaterDigestionRate = nullptr;
 
   // Nervous
-  m_NervousFeedbackEnabled = eSwitch::On;
+  m_BaroreceptorFeedback = eSwitch::On;
+  m_ChemoreceptorFeedback = eSwitch::On;
   m_HeartElastanceDistributedTimeDelay = nullptr;
   m_HeartRateDistributedTimeDelay = nullptr;
   m_NormalizedHeartRateIntercept = nullptr;
@@ -250,7 +251,8 @@ void PulseConfiguration::Clear()
   SAFE_DELETE(m_WaterDigestionRate);
 
   // Nervous
-  m_NervousFeedbackEnabled = eSwitch::On;
+  m_BaroreceptorFeedback = eSwitch::On;
+  m_ChemoreceptorFeedback = eSwitch::On;
   SAFE_DELETE(m_HeartElastanceDistributedTimeDelay);
   SAFE_DELETE(m_HeartRateDistributedTimeDelay);
   SAFE_DELETE(m_NormalizedHeartRateIntercept);
@@ -400,7 +402,8 @@ void PulseConfiguration::Initialize(const std::string& data_dir)
   GetWaterDigestionRate().SetValue(0.417, VolumePerTimeUnit::mL_Per_s);// Peronnet2012Pharmacokinetic, Estimated from 300mL H20 being absorbed in 9.5-12m
   
   // Nervous
-  m_NervousFeedbackEnabled = eSwitch::On;
+  m_BaroreceptorFeedback = eSwitch::On;
+  m_ChemoreceptorFeedback = eSwitch::On;
   GetHeartElastanceDistributedTimeDelay().SetValue(20.0, TimeUnit::s);
   GetHeartRateDistributedTimeDelay().SetValue(20.0, TimeUnit::s);
   GetNormalizedHeartRateIntercept().SetValue(0.26); //Gamma Heart Rate

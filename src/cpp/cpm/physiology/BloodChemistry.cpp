@@ -300,10 +300,10 @@ void BloodChemistry::CheckBloodGasLevels()
 
         if (arterialCarbonDioxide_mmHg > carbonDioxideToxicity)
         {
-          m_ss << "Arterial Carbon Dioxide partial pressure is " << arterialCarbonDioxide_mmHg << ". This is beyond 80 mmHg triggering extreme Hypercapnia, patient is in an irreversible state.";
-          Warning(m_ss);
           /// \irreversible The carbon dioxide partial pressure is greater than 80 mmHg. 
           m_data.GetEvents().SetEvent(eEvent::IrreversibleState, true, m_data.GetSimulationTime());
+          m_ss << "Arterial Carbon Dioxide partial pressure is " << arterialCarbonDioxide_mmHg << ". This is beyond 80 mmHg triggering extreme Hypercapnia, patient is in an irreversible state.";
+          Fatal(m_ss);
         }
       }
       else if (m_data.GetEvents().IsEventActive(eEvent::Hypercapnia) && arterialCarbonDioxide_mmHg < (hypercapniaFlag - 3))
@@ -323,10 +323,10 @@ void BloodChemistry::CheckBloodGasLevels()
 
         if (arterialOxygen_mmHg < hypoxiaIrreversible)
         {
-          m_ss << "Arterial Oxygen partial pressure is " << arterialOxygen_mmHg << ". This is below 15 mmHg triggering extreme Hypoxia, patient is in an irreversible state.";
-          Warning(m_ss);
           /// \irreversible Arterial oxygen partial pressure has been critically reduced to below 15 mmHg.
           m_data.GetEvents().SetEvent(eEvent::IrreversibleState, true, m_data.GetSimulationTime());
+          m_ss << "Arterial Oxygen partial pressure is " << arterialOxygen_mmHg << ". This is below 15 mmHg triggering extreme Hypoxia, patient is in an irreversible state.";
+          Fatal(m_ss);
         }
       }
       else if (arterialOxygen_mmHg > (hypoxiaFlag + 3))
@@ -402,11 +402,11 @@ void BloodChemistry::CheckBloodGasLevels()
         // Irreversible damage occurs if the deficit has gone on too long
         if (m_data.GetEvents().GetEventDuration(eEvent::CriticalBrainOxygenDeficit, TimeUnit::s) > 1800)
         {
-          m_ss << "Brain Oxygen partial pressure is " << m_brainO2->GetPartialPressure(PressureUnit::mmHg) << " and has been below the danger threshold for " <<
-            m_data.GetEvents().GetEventDuration(eEvent::CriticalBrainOxygenDeficit, TimeUnit::s) << " seconds. Damage is irreversible.";
-          Warning(m_ss);
           /// \irreversible Brain oxygen pressure has been dangerously low for more than 30 minutes.
           m_data.GetEvents().SetEvent(eEvent::IrreversibleState, true, m_data.GetSimulationTime());
+          m_ss << "Brain Oxygen partial pressure is " << m_brainO2->GetPartialPressure(PressureUnit::mmHg) << " and has been below the danger threshold for " <<
+            m_data.GetEvents().GetEventDuration(eEvent::CriticalBrainOxygenDeficit, TimeUnit::s) << " seconds. Damage is irreversible.";
+          Fatal(m_ss);
         }
 
         /// \event Patient: Critical Brain Oxygen Deficit Event. The oxygen partial pressure in the brain has dropped to a critically low level.
@@ -436,11 +436,11 @@ void BloodChemistry::CheckBloodGasLevels()
 
       if (m_data.GetEvents().GetEventDuration(eEvent::MyocardiumOxygenDeficit, TimeUnit::s) > 2400)  // \cite murry1986preconditioning
       {
-        m_ss << "Myocardium oxygen partial pressure is  " << m_myocardiumO2->GetPartialPressure(PressureUnit::mmHg) << " and has been sustained for " << m_data.GetEvents().GetEventDuration(eEvent::MyocardiumOxygenDeficit, TimeUnit::s) <<
-          "patient heart muscle has experienced necrosis and is in an irreversible state.";
-        Warning(m_ss);
         /// \irreversible Heart has not been receiving enough oxygen for more than 40 min.
         m_data.GetEvents().SetEvent(eEvent::IrreversibleState, true, m_data.GetSimulationTime());
+        m_ss << "Myocardium oxygen partial pressure is  " << m_myocardiumO2->GetPartialPressure(PressureUnit::mmHg) << " and has been sustained for " << m_data.GetEvents().GetEventDuration(eEvent::MyocardiumOxygenDeficit, TimeUnit::s) <<
+          "patient heart muscle has experienced necrosis and is in an irreversible state.";
+        Fatal(m_ss);
       }
     }
     else if (m_myocardiumO2->GetPartialPressure(PressureUnit::mmHg) > 8)
