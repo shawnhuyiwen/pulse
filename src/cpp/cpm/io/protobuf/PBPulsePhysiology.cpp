@@ -277,8 +277,6 @@ void PBPulsePhysiology::Load(const PULSE_BIND::GastrointestinalData& src, Gastro
   dst.Clear();
   dst.SetUp();
   PBPulsePhysiology::Serialize(src, dst);
-  // We assume state is from after all stabilization
-  dst.m_DecrementNutrients = true;
 }
 void PBPulsePhysiology::Serialize(const PULSE_BIND::GastrointestinalData& src, Gastrointestinal& dst)
 {
@@ -540,10 +538,9 @@ void PBPulsePhysiology::Serialize(const PULSE_BIND::TissueData& src, Tissue& dst
 {
   PBPhysiology::Serialize(src.common(), dst);
   dst.m_RestingTissueGlucose_g = src.restingtissueglucose_g();
-  dst.m_RestingBloodGlucose_g_Per_L = src.restingbloodglucose_g_per_l();
-  dst.m_RestingBloodLipid_g_Per_L = src.restingbloodlipid_g_per_l();
-  dst.m_RestingBloodInsulin_g_Per_L = src.restingbloodinsulin_g_per_l();
-  dst.m_RestingPatientMass_kg = src.restingpatientmass_kg();
+  dst.m_RestingBloodGlucose_mg_Per_mL = src.restingbloodglucose_mg_per_ml();
+  dst.m_RestingBloodLipid_mg_Per_mL = src.restingbloodlipid_mg_per_ml();
+  dst.m_RestingBloodInsulin_mg_Per_mL = src.restingbloodinsulin_mg_per_ml();
   dst.m_RestingFluidMass_kg = src.restingfluidmass_kg();
 }
 PULSE_BIND::TissueData* PBPulsePhysiology::Unload(const Tissue& src)
@@ -556,9 +553,8 @@ void PBPulsePhysiology::Serialize(const Tissue& src, PULSE_BIND::TissueData& dst
 {
   PBPhysiology::Serialize(src, *dst.mutable_common());
   dst.set_restingtissueglucose_g(src.m_RestingTissueGlucose_g);
-  dst.set_restingbloodglucose_g_per_l(src.m_RestingBloodGlucose_g_Per_L);
-  dst.set_restingbloodlipid_g_per_l(src.m_RestingBloodLipid_g_Per_L);
-  dst.set_restingbloodinsulin_g_per_l(src.m_RestingBloodInsulin_g_Per_L);
-  dst.set_restingpatientmass_kg(src.m_RestingPatientMass_kg);
+  dst.set_restingbloodglucose_mg_per_ml(src.m_RestingBloodGlucose_mg_Per_mL);
+  dst.set_restingbloodlipid_mg_per_ml(src.m_RestingBloodLipid_mg_Per_mL);
+  dst.set_restingbloodinsulin_mg_per_ml(src.m_RestingBloodInsulin_mg_Per_mL);
   dst.set_restingfluidmass_kg(src.m_RestingFluidMass_kg);
 }

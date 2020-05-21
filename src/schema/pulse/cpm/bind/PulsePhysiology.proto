@@ -186,9 +186,8 @@ message TissueData
 {
   pulse.cdm.bind.TissueSystemData          Common                                              = 1;
   double                                   RestingTissueGlucose_g                              = 2;
-  double                                   RestingBloodGlucose_g_Per_L                         = 3;
-  double                                   RestingBloodLipid_g_Per_L                           = 4;
-  double                                   RestingBloodInsulin_g_Per_L                         = 5;
-  double                                   RestingPatientMass_kg                               = 6;
-  double                                   RestingFluidMass_kg                                 = 7;
+  double                                   RestingBloodGlucose_mg_Per_mL                       = 3;
+  double                                   RestingBloodLipid_mg_Per_mL                         = 4;
+  double                                   RestingBloodInsulin_mg_Per_mL                       = 5;
+  double                                   RestingFluidMass_kg                                 = 6;
 }

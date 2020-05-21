@@ -360,26 +360,21 @@ bool PulseController::InitializeEngine(const SEPatientConfiguration& patient_con
       return false;
   }
   AtSteadyState(EngineState::AtSecondaryStableState);
-  
-  // Copy any changes to the current patient to the initial patient
-  m_InitialPatient->Copy(*m_CurrentPatient);
-  
+ 
   // Don't allow any changes to Quantity/Potential/Flux values directly
   // Use Quantity/Potential/Flux Sources
   m_Circuits->SetReadOnly(true);
 
+  AtSteadyState(EngineState::Active);
   Info("Finalizing homeostasis...");
   // Run this again to clear out any bumps from systems resetting baselines in the last AtSteadyState call
-  AdvanceModelTime(30, TimeUnit::s); // I would rather run Feedback stablization again, but...
+  // AdvanceModelTime(30, TimeUnit::s); // I would rather run Feedback stablization again, but...
   // This does not work for a few patients, they will not stay stable (???)  
   //if (!m_Config->GetStabilizationCriteria()->StabilizeFeedbackState(*this))
   //  return false;
 
   if (!m_Config->GetStabilization()->IsTrackingStabilization())
     m_SimulationTime.SetValue(0, TimeUnit::s);
-  
-  AtSteadyState(EngineState::Active);
-
   // Hook up the handlers (Note events will still be in the log)
   m_EventManager->ForwardEvents(event_handler);
   return true;
@@ -1507,7 +1502,7 @@ void PulseController::SetupCardiovascular()
   double ResistanceBone = 1.02 * (systolicPressureTarget_mmHg - VascularPressureTargetBone) / VascularFlowTargetBone, ResistanceBoneVenous = (VascularPressureTargetBone - VascularPressureTargetVenaCava) / VascularFlowTargetBone;
   double ResistanceBrain = 1.0 * (systolicPressureTarget_mmHg - VascularPressureTargetBrain) / VascularFlowTargetBrain, ResistanceBrainVenous = (VascularPressureTargetBrain - VascularPressureTargetVenaCava) / VascularFlowTargetBrain;
   double ResistanceFat = 1.02 * (systolicPressureTarget_mmHg - VascularPressureTargetFat) / VascularFlowTargetFat, ResistanceFatVenous = (VascularPressureTargetFat - VascularPressureTargetVenaCava) / VascularFlowTargetFat;
-  double ResistanceHeartLeft = 0.008;                                                                                                          /*No Downstream Resistance HeartLeft*/
+  double ResistanceHeartLeft = 0.0008;                                                                                                          /*No Downstream Resistance HeartLeft*/
   double ResistanceHeartRight = (0.04225*systolicPressureTarget_mmHg - VascularPressureTargetVenaCava) / cardiacOutputTarget_mL_Per_s; // Describes the flow resistance between the systemic vasculature and the right atrium    /*No Downstream Resistance Heart Right*/
   double ResistanceKidney = 1.5 * (systolicPressureTarget_mmHg - VascularPressureTargetKidney) / VascularFlowTargetKidney, ResistanceKidneyVenous = (VascularPressureTargetKidney - VascularPressureTargetVenaCava) / VascularFlowTargetKidney;
   double ResistanceLargeIntestine = 1.05 * (systolicPressureTarget_mmHg - VascularPressureTargetLargeIntestine) / VascularFlowTargetLargeIntestine, ResistanceLargeIntestineVenous = (VascularPressureTargetLargeIntestine - VascularPressureTargetLiver) / VascularFlowTargetLargeIntestine;
@@ -3213,7 +3208,7 @@ void PulseController::SetupTissue()
   /// \todo Put Initial Circuit/Compartment data values into the configuration file.
 
   //Density (kg/L)
-  double AdiposeTissueDensity = 0.92;
+  double AdiposeTissueDensity = 1.03;
   double BoneTissueDensity = 1.3;
   double BrainTissueDensity = 1.0;
   double GutTissueDensity = 1.0;
@@ -4350,7 +4345,7 @@ void PulseController::SetupGastrointestinal()
 
   SEFluidCircuitNode& SmallIntestineC1 = cCombinedCardiovascular.CreateNode(pulse::ChymeNode::SmallIntestineC1);
   SmallIntestineC1.GetPressure().SetValue(0, PressureUnit::mmHg);
-  SmallIntestineC1.GetVolumeBaseline().SetValue(100, VolumeUnit::mL);
+  SmallIntestineC1.GetVolumeBaseline().SetValue(10, VolumeUnit::mL);
 
   SEFluidCircuitNode* SmallIntestine1 = cCombinedCardiovascular.GetNode(pulse::CardiovascularNode::SmallIntestine1);
   SEFluidCircuitNode* Ground = cCombinedCardiovascular.GetNode(pulse::CardiovascularNode::Ground);

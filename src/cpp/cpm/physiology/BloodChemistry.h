@@ -59,7 +59,6 @@ protected:
   SELiquidSubstanceQuantity* m_aortaO2;
   SELiquidSubstanceQuantity* m_aortaCO2;
   SELiquidSubstanceQuantity* m_aortaCO;
-  SELiquidSubstanceQuantity* m_aortaBicarbonate;
   SELiquidSubstanceQuantity* m_brainO2;
   SELiquidSubstanceQuantity* m_myocardiumO2;
   SELiquidSubstanceQuantity* m_pulmonaryArteriesO2;
@@ -69,18 +68,4 @@ protected:
   SELiquidCompartment*       m_venaCava;
   SELiquidSubstanceQuantity* m_venaCavaO2;
   SELiquidSubstanceQuantity* m_venaCavaCO2;
-  SELiquidSubstanceQuantity* m_venaCavaAcetoacetate;
-  SELiquidSubstanceQuantity* m_venaCavaAlbumin;
-  SELiquidSubstanceQuantity* m_venaCavaBicarbonate;
-  SELiquidSubstanceQuantity* m_venaCavaCalcium;
-  SELiquidSubstanceQuantity* m_venaCavaChloride;
-  SELiquidSubstanceQuantity* m_venaCavaCreatinine;
-  SELiquidSubstanceQuantity* m_venaCavaEpinephrine;
-  SELiquidSubstanceQuantity* m_venaCavaGlucose;
-  SELiquidSubstanceQuantity* m_venaCavaInsulin;
-  SELiquidSubstanceQuantity* m_venaCavaLactate;
-  SELiquidSubstanceQuantity* m_venaCavaPotassium;
-  SELiquidSubstanceQuantity* m_venaCavaSodium;
-  SELiquidSubstanceQuantity* m_venaCavaTristearin;
-  SELiquidSubstanceQuantity* m_venaCavaUrea;  
 };

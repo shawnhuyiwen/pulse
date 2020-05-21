@@ -1,7 +1,7 @@
 {
   "Name": "BasicStandard",
   "Description": "Basic scenario measuring standard male patient vitals with no conditions, insults, or interventions.",
-  "StartType": { "PatientConfiguration": { "PatientFile": "StandardMale.json" }},
+  "StartType":{ "PatientConfiguration": { "PatientFile": "StandardMale.json" }},
   "DataRequestManager":
   {
     "DataRequest":
@@ -66,29 +66,6 @@
       { "DecimalFormat": { "Precision": 6 }, "Category": "Substance", "SubstanceName": "Epinephrine",   "PropertyName": "BloodConcentration",  "Unit": "ug/L" },
       { "DecimalFormat": { "Precision": 8 }, "Category": "Substance", "SubstanceName": "Epinephrine",   "PropertyName": "SystemicMassCleared", "Unit": "ug" },
       
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "ChymeAbsorptionRate",          "Unit": "mL/min" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "StomachContents-Carbohydrate", "Unit": "g" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "StomachContents-Fat",          "Unit": "g" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "StomachContents-Protein",      "Unit": "g" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "StomachContents-Calcium",      "Unit": "g" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "StomachContents-Sodium",       "Unit": "g" },
-      { "DecimalFormat": {                }, "Category": "Physiology", "PropertyName": "StomachContents-Water",        "Unit": "mL" },
-      
-      { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "SmallIntestineChyme",       "PropertyName": "Volume", "Unit": "mL" },
-      { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "SmallIntestineVasculature", "PropertyName": "Volume", "Unit": "mL" },
-      { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "SmallIntestineVasculature", "PropertyName": "Pressure", "Unit": "mmHg" },
-      
-      { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "SmallIntestineChyme",       "SubstanceName": "Glucose",    "PropertyName": "Mass",          "Unit": "g" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "SmallIntestineChyme",       "SubstanceName": "Tristearin", "PropertyName": "Mass",          "Unit": "g" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "SmallIntestineChyme",       "SubstanceName": "Calcium",    "PropertyName": "Mass",          "Unit": "g" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "SmallIntestineChyme",       "SubstanceName": "Sodium",     "PropertyName": "Mass",          "Unit": "g" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "SmallIntestineChyme",       "SubstanceName": "Urea",       "PropertyName": "Mass",          "Unit": "g" },
-      { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "SmallIntestineVasculature", "SubstanceName": "Glucose",    "PropertyName": "Concentration", "Unit": "mg/dL" },
-      { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "SmallIntestineVasculature", "SubstanceName": "Tristearin", "PropertyName": "Concentration", "Unit": "mg/dL" },
-      { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "SmallIntestineVasculature", "SubstanceName": "Calcium",    "PropertyName": "Concentration", "Unit": "mg/L" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "SmallIntestineVasculature", "SubstanceName": "Sodium",     "PropertyName": "Concentration", "Unit": "g/L" },
-      { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "SmallIntestineVasculature", "SubstanceName": "Urea",       "PropertyName": "Concentration", "Unit": "mg/dL" },
-      
       { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "HeartEjectionFraction" },
       { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "SystemicVascularResistance", "Unit": "mmHg s/mL" },
       { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "Pericardium", "PropertyName": "Volume", "Unit": "mL" },
@@ -99,6 +76,6 @@
   [
     { "AdvanceTime": { 
     "Action": { "Comment": "Advance some time" },
-    "Time": { "ScalarTime": { "Value": 2.0, "Unit": "min" }}}}
+    "Time": { "ScalarTime": { "Value": 2, "Unit": "hr" }}}}
   ]
 }

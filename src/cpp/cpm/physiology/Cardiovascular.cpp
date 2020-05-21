@@ -180,6 +180,10 @@ void Cardiovascular::Clear()
 //--------------------------------------------------------------------------------------------------
 /// \brief
 /// Initializes system properties.
+///
+/// \details
+/// For stabilization only!
+/// Called AFTER Setup when stabilizing a new patient
 //--------------------------------------------------------------------------------------------------
 void Cardiovascular::Initialize()
 {
@@ -260,8 +264,10 @@ void Cardiovascular::Initialize()
 /// \brief
 /// Initializes parameters for Cardiovascular Class
 ///
-///  \details
-///   Initializes member variables and system level values on the common data model.
+/// \details
+/// Called during both State loading and Patient Stabilization
+/// Pull and setup up our data (can be from other systems)
+/// Initialize will be called after this and can overwrite any of this data (only if stabilizing)
 //--------------------------------------------------------------------------------------------------
 void Cardiovascular::SetUp()
 {
@@ -751,7 +757,7 @@ void Cardiovascular::CalculateVitalSigns()
   GetIntracranialPressure().Set(m_Brain->GetPressure());
   GetCerebralPerfusionPressure().SetValue(GetMeanArterialPressure(PressureUnit::mmHg) - GetIntracranialPressure(PressureUnit::mmHg), PressureUnit::mmHg);
 
-  if (m_data.GetState() > EngineState::InitialStabilization)
+  if (m_data.GetState() > EngineState::AtSecondaryStableState)
   {// Don't throw events if we are initializing
 
   // Check for hypovolemic shock
@@ -1564,24 +1570,20 @@ void Cardiovascular::BeginCardiacCycle()
   // Changes to the heart rate and other hemodynamic parameters are applied at the top of the cardiac cycle.
   // Parameters cannot change during the cardiac cycle because the heart beat is modeled as a changing compliance.
 
+  double HeartDriverFrequency_Per_Min = m_data.GetCurrentPatient().GetHeartRateBaseline(FrequencyUnit::Per_min);
+  m_LeftHeartElastanceMax_mmHg_Per_mL = m_data.GetConfiguration().GetLeftHeartElastanceMaximum(PressurePerVolumeUnit::mmHg_Per_mL);
+  m_RightHeartElastanceMax_mmHg_Per_mL = m_data.GetConfiguration().GetRightHeartElastanceMaximum(PressurePerVolumeUnit::mmHg_Per_mL);
+  
   // Apply baroreceptor reflex effects
   /// \todo need to reset the heart elastance min and max at the end of each stabiliation period in AtSteadyState()
-  m_LeftHeartElastanceMax_mmHg_Per_mL = m_data.GetConfiguration().GetLeftHeartElastanceMaximum(PressurePerVolumeUnit::mmHg_Per_mL);
-  if (m_data.GetNervous().HasBaroreceptorHeartElastanceScale())
+  if (m_data.GetConfiguration().IsNervousFeedbackEnabled() && m_data.GetState() > EngineState::AtSecondaryStableState)
+  {
     m_LeftHeartElastanceMax_mmHg_Per_mL *= m_data.GetNervous().GetBaroreceptorHeartElastanceScale().GetValue();
-
-  m_RightHeartElastanceMax_mmHg_Per_mL = m_data.GetConfiguration().GetRightHeartElastanceMaximum(PressurePerVolumeUnit::mmHg_Per_mL);
-  if (m_data.GetNervous().HasBaroreceptorHeartElastanceScale())
     m_RightHeartElastanceMax_mmHg_Per_mL *= m_data.GetNervous().GetBaroreceptorHeartElastanceScale().GetValue();
-
-  double HeartDriverFrequency_Per_Min = m_data.GetCurrentPatient().GetHeartRateBaseline(FrequencyUnit::Per_min);
-  if (m_data.GetNervous().HasBaroreceptorHeartRateScale())
     HeartDriverFrequency_Per_Min *= m_data.GetNervous().GetBaroreceptorHeartRateScale().GetValue();
-
-  // Chemoreceptor and drug effects are deltas rather than multipliers, so they are added.
-  // Apply chemoreceptor effects
-  if (m_data.GetNervous().HasChemoreceptorHeartRateScale())
+    // Chemoreceptor and drug effects are deltas rather than multipliers, so they are added.
     HeartDriverFrequency_Per_Min += m_data.GetNervous().GetChemoreceptorHeartRateScale().GetValue();
+  }
 
   // Apply drug effects
   if (m_data.GetDrugs().HasHeartRateChange())
@@ -1741,7 +1743,7 @@ void Cardiovascular::AdjustVascularTone()
   double UpdatedCompliance_mL_Per_mmHg = 0.0;
   double totalResistanceChange_mmHg_s_Per_mL = 0.0;
   double totalComplianceChange_mL_Per_mmHg = 0.0;
-  if (m_data.GetNervous().HasBaroreceptorResistanceScale())
+  if (m_data.GetConfiguration().IsNervousFeedbackEnabled() && m_data.GetState() > EngineState::AtSecondaryStableState)
   {
     for (SEFluidCircuitPath* Path : m_systemicResistancePaths)
     {
@@ -1753,10 +1755,7 @@ void Cardiovascular::AdjustVascularTone()
       }
       Path->GetNextResistance().SetValue(UpdatedResistance_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
     }
-  }
 
-  if (m_data.GetNervous().HasBaroreceptorComplianceScale())
-  {
     for (SEFluidCircuitPath* Path : m_systemicCompliancePaths)
     {
       UpdatedCompliance_mL_Per_mmHg = m_data.GetNervous().GetBaroreceptorComplianceScale().GetValue()*Path->GetComplianceBaseline(VolumePerPressureUnit::mL_Per_mmHg);
@@ -2080,22 +2079,32 @@ void Cardiovascular::TuneCircuit()
       " Cardiac Output(mL/min):" << GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) <<
       " Mean CVP(mmHg):" << GetMeanCentralVenousPressure(PressureUnit::mmHg) <<
       " MAP(mmHg):" << GetMeanArterialPressure(PressureUnit::mmHg) <<
-      " BloodVolume(mL): " << blood_mL;
+      " BloodVolume(mL): " << GetBloodVolume(VolumeUnit::mL);
     Fatal(m_ss);
   }
   else
   {
-    m_ss << "Successfully tuned circuit. Final values : HeartRate(bpm):" << GetHeartRate(FrequencyUnit::Per_min) <<
+    m_ss << "Successfully tuned circuit (No Tissues). Final values : HeartRate(bpm):" << GetHeartRate(FrequencyUnit::Per_min) <<
       " Systolic(mmHg):" << GetSystolicArterialPressure(PressureUnit::mmHg) <<
       " Diastolic(mmHg):" << GetDiastolicArterialPressure(PressureUnit::mmHg) <<
       " Cardiac Output(mL/min):" << GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) <<
       " Mean CVP(mmHg):" << GetMeanCentralVenousPressure(PressureUnit::mmHg) <<
       " MAP(mmHg):" << GetMeanArterialPressure(PressureUnit::mmHg) <<
-      " BloodVolume(mL): " << blood_mL;
+      " BloodVolume(mL): " << GetBloodVolume(VolumeUnit::mL);
     Info(m_ss);
     // Now tune the tissue nodes
-    if(m_data.GetConfiguration().IsTissueEnabled())
+    if (m_data.GetConfiguration().IsTissueEnabled())
+    {
       TuneTissue(time_s, circuitTrk, circuitFile);
+      m_ss << "Successfully tuned circuit with tissue resistances. Final values : HeartRate(bpm):" << GetHeartRate(FrequencyUnit::Per_min) <<
+        " Systolic(mmHg):" << GetSystolicArterialPressure(PressureUnit::mmHg) <<
+        " Diastolic(mmHg):" << GetDiastolicArterialPressure(PressureUnit::mmHg) <<
+        " Cardiac Output(mL/min):" << GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) <<
+        " Mean CVP(mmHg):" << GetMeanCentralVenousPressure(PressureUnit::mmHg) <<
+        " MAP(mmHg):" << GetMeanArterialPressure(PressureUnit::mmHg) <<
+        " BloodVolume(mL): " << GetBloodVolume(VolumeUnit::mL);
+      Info(m_ss);
+    }
     // Reset our substance masses to the new volumes
     for (SELiquidCompartment* c : m_data.GetCompartments().GetVascularLeafCompartments())
     {

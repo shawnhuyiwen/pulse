@@ -52,6 +52,10 @@ void Nervous::Clear()
 //--------------------------------------------------------------------------------------------------
 /// \brief
 /// Initializes system properties to valid homeostatic values.
+///
+/// \details
+/// For stabilization only!
+/// Called AFTER Setup when stabilizing a new patient
 //--------------------------------------------------------------------------------------------------
 void Nervous::Initialize()
 {
@@ -61,6 +65,7 @@ void Nervous::Initialize()
   GetBaroreceptorHeartElastanceScale().SetValue(1.0);
   GetBaroreceptorResistanceScale().SetValue(1.0);
   GetBaroreceptorComplianceScale().SetValue(1.0);
+  GetChemoreceptorHeartRateScale().SetValue(1.0);
   GetLeftEyePupillaryResponse().GetSizeModifier().SetValue(0);
   GetLeftEyePupillaryResponse().GetShapeModifier().SetValue(0);
   GetLeftEyePupillaryResponse().GetReactivityModifier().SetValue(0);
@@ -84,7 +89,9 @@ void Nervous::Initialize()
 /// Initializes the nervous specific quantities
 ///
 /// \details
-/// Initializes the nervous system.
+/// Called during both State loading and Patient Stabilization
+/// Pull and setup up our data (can be from other systems)
+/// Initialize will be called after this and can overwrite any of this data (only if stabilizing)
 //--------------------------------------------------------------------------------------------------
 void Nervous::SetUp()
 {
@@ -104,20 +111,16 @@ void Nervous::SetUp()
 void Nervous::AtSteadyState()
 {
   if (m_data.GetState() == EngineState::AtSecondaryStableState)
+  {
     m_FeedbackActive = m_data.GetConfiguration().IsNervousFeedbackEnabled();
-
-  // The set-points (Baselines) get reset at the end of each stabilization period.
-  m_ArterialOxygenBaseline_mmHg = m_data.GetBloodChemistry().GetArterialOxygenPressure(PressureUnit::mmHg);
-  m_ArterialCarbonDioxideBaseline_mmHg = m_data.GetBloodChemistry().GetArterialCarbonDioxidePressure(PressureUnit::mmHg);
-  m_BaroreceptorMeanArterialPressureBaseline_mmHg = m_data.GetCurrentPatient().GetMeanArterialPressureBaseline(PressureUnit::mmHg);
-  // The baroreceptor scales need to be reset any time the baselines are reset.
-  GetBaroreceptorHeartRateScale().SetValue(1.0);
-  GetBaroreceptorHeartElastanceScale().SetValue(1.0);
-  GetBaroreceptorResistanceScale().SetValue(1.0);
-  GetBaroreceptorComplianceScale().SetValue(1.0);
-  m_LastMeanArterialPressure_mmHg = m_data.GetCardiovascular().GetMeanArterialPressure(PressureUnit::mmHg);
-  m_TotalSympatheticFraction = 1.0 / (1.0 + pow(m_LastMeanArterialPressure_mmHg / m_BaroreceptorMeanArterialPressureBaseline_mmHg, m_data.GetConfiguration().GetResponseSlope()));
-  m_PreviousBloodVolume_mL = m_data.GetCardiovascular().GetBloodVolume(VolumeUnit::mL);
+    // The set-points (Baselines) get reset at the end of each stabilization period.
+    m_ArterialOxygenBaseline_mmHg = m_data.GetBloodChemistry().GetArterialOxygenPressure(PressureUnit::mmHg);
+    m_ArterialCarbonDioxideBaseline_mmHg = m_data.GetBloodChemistry().GetArterialCarbonDioxidePressure(PressureUnit::mmHg);
+    m_BaroreceptorMeanArterialPressureBaseline_mmHg = m_data.GetCurrentPatient().GetMeanArterialPressureBaseline(PressureUnit::mmHg);
+    m_LastMeanArterialPressure_mmHg = m_data.GetCardiovascular().GetMeanArterialPressure(PressureUnit::mmHg);
+    m_TotalSympatheticFraction = 1.0 / (1.0 + pow(m_LastMeanArterialPressure_mmHg / m_BaroreceptorMeanArterialPressureBaseline_mmHg, m_data.GetConfiguration().GetResponseSlope()));
+    m_PreviousBloodVolume_mL = m_data.GetCardiovascular().GetBloodVolume(VolumeUnit::mL);
+  }
 }
 
 //--------------------------------------------------------------------------------------------------

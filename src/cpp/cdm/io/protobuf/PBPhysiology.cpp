@@ -441,8 +441,8 @@ void PBPhysiology::Load(const CDM_BIND::GastrointestinalSystemData& src, SEGastr
 }
 void PBPhysiology::Serialize(const CDM_BIND::GastrointestinalSystemData& src, SEGastrointestinalSystem& dst)
 {
-  if (src.has_chymeabsorptionrate())
-    PBProperty::Load(src.chymeabsorptionrate(), dst.GetChymeAbsorptionRate());
+  if (src.has_waterabsorptionrate())
+    PBProperty::Load(src.waterabsorptionrate(), dst.GetWaterAbsorptionRate());
   if (src.has_stomachcontents())
     PBPatientNutrition::Load(src.stomachcontents(), dst.GetStomachContents());
 }
@@ -455,8 +455,8 @@ CDM_BIND::GastrointestinalSystemData* PBPhysiology::Unload(const SEGastrointesti
 }
 void PBPhysiology::Serialize(const SEGastrointestinalSystem& src, CDM_BIND::GastrointestinalSystemData& dst)
 {
-  if (src.HasChymeAbsorptionRate())
-    dst.set_allocated_chymeabsorptionrate(PBProperty::Unload(*src.m_ChymeAbsorptionRate));
+  if (src.HasWaterAbsorptionRate())
+    dst.set_allocated_waterabsorptionrate(PBProperty::Unload(*src.m_WaterAbsorptionRate));
   if (src.HasStomachContents())
     dst.set_allocated_stomachcontents(PBPatientNutrition::Unload(*src.m_StomachContents));
 }
