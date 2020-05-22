@@ -812,10 +812,10 @@ void Cardiovascular::CalculateVitalSigns()
     /// \event Patient: Irreversible State: heart has been in asystole for over 45 min:
     if (m_data.GetEvents().GetEventDuration(eEvent::Asystole, TimeUnit::s) > 2700.0) // \cite: Zijlmans2002EpilepticSeizuresAsystole
     {
-      m_ss << "Asystole has occurred for " << m_data.GetEvents().GetEventDuration(eEvent::Asystole, TimeUnit::s) << " seconds, patient is in irreversible state.";
-      Warning(m_ss);
       /// \irreversible Heart has been in asystole for over 45 min
       m_data.GetEvents().SetEvent(eEvent::IrreversibleState, true, m_data.GetSimulationTime());
+      m_ss << "Asystole has occurred for " << m_data.GetEvents().GetEventDuration(eEvent::Asystole, TimeUnit::s) << " seconds, patient is in irreversible state.";
+      Fatal(m_ss);
     }
   }
 
@@ -1576,11 +1576,14 @@ void Cardiovascular::BeginCardiacCycle()
   
   // Apply baroreceptor reflex effects
   /// \todo need to reset the heart elastance min and max at the end of each stabiliation period in AtSteadyState()
-  if (m_data.GetConfiguration().IsNervousFeedbackEnabled() && m_data.GetState() > EngineState::AtSecondaryStableState)
+  if (m_data.GetNervous().GetBaroreceptorFeedback() == eSwitch::On)
   {
     m_LeftHeartElastanceMax_mmHg_Per_mL *= m_data.GetNervous().GetBaroreceptorHeartElastanceScale().GetValue();
     m_RightHeartElastanceMax_mmHg_Per_mL *= m_data.GetNervous().GetBaroreceptorHeartElastanceScale().GetValue();
     HeartDriverFrequency_Per_Min *= m_data.GetNervous().GetBaroreceptorHeartRateScale().GetValue();
+  }
+  if (m_data.GetNervous().GetChemoreceptorFeedback() == eSwitch::On)
+  {
     // Chemoreceptor and drug effects are deltas rather than multipliers, so they are added.
     HeartDriverFrequency_Per_Min += m_data.GetNervous().GetChemoreceptorHeartRateScale().GetValue();
   }
@@ -1743,7 +1746,7 @@ void Cardiovascular::AdjustVascularTone()
   double UpdatedCompliance_mL_Per_mmHg = 0.0;
   double totalResistanceChange_mmHg_s_Per_mL = 0.0;
   double totalComplianceChange_mL_Per_mmHg = 0.0;
-  if (m_data.GetConfiguration().IsNervousFeedbackEnabled() && m_data.GetState() > EngineState::AtSecondaryStableState)
+  if (m_data.GetNervous().GetBaroreceptorFeedback() == eSwitch::On)
   {
     for (SEFluidCircuitPath* Path : m_systemicResistancePaths)
     {

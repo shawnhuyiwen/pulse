@@ -115,22 +115,23 @@ message ConfigurationData
   
   message NervousConfigurationData
   {
-    pulse.cdm.bind.eSwitch                             EnableFeedback                                       = 1;
-    pulse.cdm.bind.ScalarTimeData                      HeartElastanceDistributedTimeDelay                   = 2;
-    pulse.cdm.bind.ScalarTimeData                      HeartRateDistributedTimeDelay                        = 3;
-    pulse.cdm.bind.ScalarData                          NormalizedHeartRateIntercept                         = 4;
-    pulse.cdm.bind.ScalarData                          NormalizedHeartRateSympatheticSlope                  = 5;
-    pulse.cdm.bind.ScalarData                          NormalizedHeartRateParasympatheticSlope              = 6;
-    pulse.cdm.bind.ScalarData                          NormalizedHeartElastanceIntercept                    = 7;
-    pulse.cdm.bind.ScalarData                          NormalizedHeartElastanceSympatheticSlope             = 8;
-    pulse.cdm.bind.ScalarData                          NormalizedResistanceIntercept                        = 9;
-    pulse.cdm.bind.ScalarData                          NormalizedResistanceSympatheticSlope                 = 10;
-    pulse.cdm.bind.ScalarData                          NormalizedComplianceIntercept                        = 11;
-    pulse.cdm.bind.ScalarData                          NormalizedComplianceParasympatheticSlope             = 12;
-    pulse.cdm.bind.ScalarLengthData                    PupilDiameterBaseline                                = 13;
-    pulse.cdm.bind.ScalarData                          ResponseSlope                                        = 14;
-    pulse.cdm.bind.ScalarTimeData                      SystemicResistanceDistributedTimeDelay               = 15;
-    pulse.cdm.bind.ScalarTimeData                      VenousComplianceDistributedTimeDelay                 = 16;
+    pulse.cdm.bind.eSwitch                             ChemoreceptorFeedback                                = 1;
+    pulse.cdm.bind.eSwitch                             BaroreceptorFeedback                                 = 2;
+    pulse.cdm.bind.ScalarTimeData                      HeartElastanceDistributedTimeDelay                   = 3;
+    pulse.cdm.bind.ScalarTimeData                      HeartRateDistributedTimeDelay                        = 4;
+    pulse.cdm.bind.ScalarData                          NormalizedHeartRateIntercept                         = 5;
+    pulse.cdm.bind.ScalarData                          NormalizedHeartRateSympatheticSlope                  = 6;
+    pulse.cdm.bind.ScalarData                          NormalizedHeartRateParasympatheticSlope              = 7;
+    pulse.cdm.bind.ScalarData                          NormalizedHeartElastanceIntercept                    = 8;
+    pulse.cdm.bind.ScalarData                          NormalizedHeartElastanceSympatheticSlope             = 9;
+    pulse.cdm.bind.ScalarData                          NormalizedResistanceIntercept                        = 10;
+    pulse.cdm.bind.ScalarData                          NormalizedResistanceSympatheticSlope                 = 11;
+    pulse.cdm.bind.ScalarData                          NormalizedComplianceIntercept                        = 12;
+    pulse.cdm.bind.ScalarData                          NormalizedComplianceParasympatheticSlope             = 13;
+    pulse.cdm.bind.ScalarLengthData                    PupilDiameterBaseline                                = 14;
+    pulse.cdm.bind.ScalarData                          ResponseSlope                                        = 15;
+    pulse.cdm.bind.ScalarTimeData                      SystemicResistanceDistributedTimeDelay               = 16;
+    pulse.cdm.bind.ScalarTimeData                      VenousComplianceDistributedTimeDelay                 = 17;
   }
   
   message RenalConfigurationData

@@ -17,6 +17,9 @@ public:
   
   virtual const SEScalar* GetScalar(const std::string& name);
 
+  virtual eSwitch GetBaroreceptorFeedback() const;
+  virtual void SetBaroreceptorFeedback(eSwitch s);
+
   virtual bool HasBaroreceptorHeartRateScale() const;
   virtual SEScalar& GetBaroreceptorHeartRateScale();
   virtual double GetBaroreceptorHeartRateScale() const;
@@ -32,6 +35,9 @@ public:
   virtual bool HasBaroreceptorComplianceScale() const;
   virtual SEScalar& GetBaroreceptorComplianceScale();
   virtual double GetBaroreceptorComplianceScale() const;
+
+  virtual eSwitch GetChemoreceptorFeedback() const;
+  virtual void SetChemoreceptorFeedback(eSwitch s);
 
   virtual bool HasChemoreceptorHeartRateScale() const;
   virtual SEScalar& GetChemoreceptorHeartRateScale();
@@ -54,12 +60,14 @@ public:
 
 protected:
 
+  eSwitch                m_BaroreceptorFeedback;
   SEScalar*              m_BaroreceptorHeartRateScale;
   SEScalar*              m_BaroreceptorHeartElastanceScale;
   SEScalar*              m_BaroreceptorResistanceScale;
   SEScalar*              m_BaroreceptorComplianceScale;
-  SEPupillaryResponse*   m_LeftEyePupillaryResponse;
-  SEPupillaryResponse*   m_RightEyePupillaryResponse;
+  eSwitch                m_ChemoreceptorFeedback;
   SEScalar*              m_ChemoreceptorHeartRateScale;
   SEScalar*              m_ChemoreceptorHeartElastanceScale;
+  SEPupillaryResponse*   m_LeftEyePupillaryResponse;
+  SEPupillaryResponse*   m_RightEyePupillaryResponse;
 };

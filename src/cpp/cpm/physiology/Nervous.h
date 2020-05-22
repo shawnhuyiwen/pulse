@@ -55,8 +55,7 @@ protected:
 
   // Stateless member variable (Set in SetUp())
   double m_dt_s;
-  // Configuration fractions representing the amount by which each quantity can change due to baroreceptors;
-  bool   m_FeedbackActive;
+  // Configuration fractions representing the amount by which each quantity can change due to feedback;
   double m_NormalizedGammaHeartRate;
   double m_NormalizedGammaElastance;
   double m_NormalizedGammaCompliance;

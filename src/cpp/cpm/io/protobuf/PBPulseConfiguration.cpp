@@ -236,8 +236,10 @@ void PBPulseConfiguration::Serialize(const PULSE_BIND::ConfigurationData& src, P
   if (src.has_nervousconfiguration())
   {
     const PULSE_BIND::ConfigurationData_NervousConfigurationData& config = src.nervousconfiguration();
-    if (config.enablefeedback() != CDM_BIND::eSwitch::NullSwitch)
-      dst.EnableNervousFeedback((eSwitch)config.enablefeedback());
+    if (config.baroreceptorfeedback() != CDM_BIND::eSwitch::NullSwitch)
+      dst.SetBaroreceptorFeedback((eSwitch)config.baroreceptorfeedback());
+    if (config.chemoreceptorfeedback() != CDM_BIND::eSwitch::NullSwitch)
+      dst.SetChemoreceptorFeedback((eSwitch)config.chemoreceptorfeedback());
     if (config.has_heartelastancedistributedtimedelay())
       PBProperty::Load(config.heartelastancedistributedtimedelay(), dst.GetHeartElastanceDistributedTimeDelay());
     if (config.has_heartratedistributedtimedelay())
@@ -484,7 +486,8 @@ void PBPulseConfiguration::Serialize(const PulseConfiguration& src, PULSE_BIND::
 
   // Nervous
   PULSE_BIND::ConfigurationData_NervousConfigurationData* n = dst.mutable_nervousconfiguration();
-  n->set_enablefeedback((CDM_BIND::eSwitch)src.m_NervousFeedbackEnabled);
+  n->set_baroreceptorfeedback((CDM_BIND::eSwitch)src.m_BaroreceptorFeedback);
+  n->set_chemoreceptorfeedback((CDM_BIND::eSwitch)src.m_ChemoreceptorFeedback);
   if (src.HasHeartElastanceDistributedTimeDelay())
     n->set_allocated_heartelastancedistributedtimedelay(PBProperty::Unload(*src.m_HeartElastanceDistributedTimeDelay));
   if (src.HasHeartRateDistributedTimeDelay())
