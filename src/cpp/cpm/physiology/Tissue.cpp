@@ -1380,6 +1380,7 @@ void Tissue::AlveolarPartialPressureGradientDiffusion(SEGasCompartment& pulmonar
     {
       //Move all we can
       DiffusedMass_ug = -vMass_ug;
+      DiffusedMass_ug *= 0.99; /// \todo Why is this needed? It seems to prevent some sort of numerical issue.
       DiffusedVolume_mL = DiffusedMass_ug / sub.GetDensity(MassPerVolumeUnit::ug_Per_mL);
     }
   }

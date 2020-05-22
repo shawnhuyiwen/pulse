@@ -1852,7 +1852,7 @@ void Cardiovascular::CalculatePleuralCavityVenousEffects()
   double pleuralCavityPressureDiff_cmH2O = std::abs(m_leftPleuralCavity->GetPressure(PressureUnit::cmH2O) - m_rightPleuralCavity->GetPressure(PressureUnit::cmH2O));
   
   double maxPressureDiff_cmH2O = 20.0;
-  double maxResistanceMultiplier = 7.8;
+  double maxResistanceMultiplier = 10.0;
   pleuralCavityPressureDiff_cmH2O = MIN(pleuralCavityPressureDiff_cmH2O, maxPressureDiff_cmH2O);
 
   //Interpolate into a parabola to effect things much more at larger differences
