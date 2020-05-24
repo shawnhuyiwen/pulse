@@ -47,7 +47,7 @@ bool GeneralMath::CalculateConcentration(const SEScalarMass& mass, const SEScala
     volume_mL = 0.0;
     ret = false;
   }
-  if (volume_mL == 0.0)
+  if (SEScalar::IsZero(volume_mL,ZERO_APPROX))
     concentration.SetValue(0.0, MassPerVolumeUnit::ug_Per_mL);
   else
     concentration.SetValue(mass_ug / volume_mL, MassPerVolumeUnit::ug_Per_mL);
@@ -204,7 +204,7 @@ bool GeneralMath::CalculateSpecificGravity(const SEScalarMass& mass, const SESca
     volume_mL = 0.0;
     ret = false;
   }
-  if (volume_mL == 0.0)
+  if (SEScalar::IsZero(volume_mL, ZERO_APPROX))
     specificGravity.SetValue(0.0);
   else
     specificGravity.SetValue((totalmass_g / volume_mL) / waterDensity_g_mL);
@@ -213,13 +213,13 @@ bool GeneralMath::CalculateSpecificGravity(const SEScalarMass& mass, const SESca
 
 double GeneralMath::PercentDifference(double expected, double calculated)
 {
-  if (calculated == 0.0&&expected == 0.0)
+  if (SEScalar::IsZero(calculated, ZERO_APPROX) && SEScalar::IsZero(expected, ZERO_APPROX))
     return 0.0;
 
   double difference = (calculated - expected);
   double average = (calculated + expected) / 2.0;
 
-  if (average == 0.0)
+  if (SEScalar::IsZero(average, ZERO_APPROX))
   {
     return SEScalar::dNaN();
   }
@@ -228,9 +228,9 @@ double GeneralMath::PercentDifference(double expected, double calculated)
 
 double GeneralMath::PercentTolerance(double expected, double calculated, double epsilon)
 {
-  if (expected == 0.0)
+  if (SEScalar::IsZero(expected, ZERO_APPROX))
   {
-    if (calculated == 0.0)
+    if (SEScalar::IsZero(calculated, ZERO_APPROX))
       return 0.0;
     else
     {

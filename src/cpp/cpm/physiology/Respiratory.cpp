@@ -1245,7 +1245,7 @@ void Respiratory::RespiratoryDriver()
 
       //Respiration Rate (i.e. Driver frequency) *************************************************************************
       //Calculate the Respiration Rate given the Alveolar Ventilation and the Target Tidal Volume
-      if (dTargetTidalVolume_L == 0.0) //Can't divide by zero
+      if (SEScalar::IsZero(dTargetTidalVolume_L, ZERO_APPROX)) //Can't divide by zero
       {
         m_VentilationFrequency_Per_min = 0.0;
         m_NotBreathing = true;
@@ -1296,7 +1296,7 @@ void Respiratory::RespiratoryDriver()
   double ExpiratoryReleaseTimeStart_s = ExpiratoryHoldTimeStart_s + m_ExpiratoryHoldFraction * TotalBreathingCycleTime_s;
   double ResidueFractionTimeStart_s = ExpiratoryReleaseTimeStart_s + m_ExpiratoryReleaseFraction * TotalBreathingCycleTime_s;
 
-  if (m_BreathingCycleTime_s == 0.0 &&
+  if (SEScalar::IsZero(m_BreathingCycleTime_s, ZERO_APPROX) &&
     m_InspiratoryRiseFraction != 0.0) //Only call this once per cycle - needed here for conscious respiration
   {
     m_data.GetEvents().SetEvent(eEvent::StartOfInhale, true, m_data.GetSimulationTime());
@@ -1644,7 +1644,7 @@ void Respiratory::ConsciousRespiration()
 
     double totalPeriod = risePeriod_s + holdPeriod_s + releasePeriod_s;
 
-    if (totalPeriod == 0.0)
+    if (SEScalar::IsZero(totalPeriod, ZERO_APPROX))
     {
       m_VentilationFrequency_Per_min = 0.0;
       m_InspiratoryRiseFraction = 0.0;
@@ -1693,7 +1693,7 @@ void Respiratory::ConsciousRespiration()
     m_PeakExpiratoryPressure_cmH2O = VolumeToDriverPressure(TargetVolume_L);
 
     double totalPeriod = risePeriod_s + holdPeriod_s + releasePeriod_s;
-    if (totalPeriod == 0.0)
+    if (SEScalar::IsZero(totalPeriod, ZERO_APPROX))
     {
       m_VentilationFrequency_Per_min = 0.0;
       m_ExpiratoryRiseFraction = 0.0;
@@ -1720,7 +1720,7 @@ void Respiratory::ConsciousRespiration()
       period_s = fp->GetPeriod().GetValue(TimeUnit::s);
     }
 
-    m_VentilationFrequency_Per_min = (period_s == 0.0) ? 0.0 : 60.0 / period_s;
+    m_VentilationFrequency_Per_min = (SEScalar::IsZero(period_s, ZERO_APPROX)) ? 0.0 : 60.0 / period_s;
     m_InspiratoryToExpiratoryPauseFraction = 1.0;
 
     return;
@@ -2243,7 +2243,7 @@ void Respiratory::UpdateChestWallCompliances()
         sideCompliance_L_Per_cmH2O = (lungVolume_L - volumeAtZeroPressure) / expectedPressure_cmH2O;
       }
 
-      if (sideCompliance_L_Per_cmH2O == 0.0)
+      if (SEScalar::IsZero(sideCompliance_L_Per_cmH2O,ZERO_APPROX))
       {
         sideCompliance_L_Per_cmH2O = healthySideCompliance_L_Per_cmH2O;
       }

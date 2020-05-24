@@ -892,7 +892,7 @@ void Cardiovascular::RecordAndResetCardiacCycle()
   GetSystemicVascularResistance().SetValue(systemicVascularResistance_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
 
   // Computed pulmonary Vascular Resistances
-  if (cardiacOutput_mL_Per_s == 0.0)
+  if (SEScalar::IsZero(cardiacOutput_mL_Per_s, ZERO_APPROX))
   {
     GetPulmonaryVascularResistance().SetValue(0.0, PressureTimePerVolumeUnit::mmHg_min_Per_mL);
     GetPulmonaryVascularResistanceIndex().SetValue(0.0, PressureTimePerVolumeAreaUnit::mmHg_min_Per_mL_m2);
@@ -1183,7 +1183,7 @@ void Cardiovascular::Hemorrhage()
   unsigned int hIter = 0;
   while (hIter < m_HemorrhagePaths.size())
   {
-    if (m_HemorrhagePaths.at(hIter)->GetNextFlowSource(VolumePerTimeUnit::mL_Per_s) == 0.0)
+    if (m_HemorrhagePaths.at(hIter)->GetNextFlowSource().IsZero())
     {
       m_CirculatoryCircuit->RemovePath(*m_HemorrhagePaths.at(hIter));
       m_HemorrhagePaths.erase(m_HemorrhagePaths.begin() + hIter);
@@ -1690,7 +1690,7 @@ void Cardiovascular::MetabolicToneResponse()
   double metabolicModifier = 1.0;
   //The metabolic multiplier is used as a tuned response to represent cardiovascular resistance effects during exercise
   double sp0 = 1.5;
-  double divisor = 7.0;
+  double divisor = 2.5;
   double metabolicMultiplier = (sp0*metabolicFraction + (divisor - sp0)) / divisor;
 
   // Max delta approx. 20% of baseline \cite christie1997cardiac \cite foster1999left
