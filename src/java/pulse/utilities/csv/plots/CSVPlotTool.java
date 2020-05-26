@@ -6,9 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import pulse.utilities.DoubleUtils;
 import pulse.utilities.FileUtils;
@@ -57,23 +55,40 @@ public class CSVPlotTool
   {
     if(args.length<1)
     {
-      Log.fatal("Expected inputs : [results directory path]");
+      Log.fatal("Expected inputs : [csv filename]");
       return;
     }
     CSVPlotTool t = new CSVPlotTool();
-    List<String> csvFiles = FileUtils.findFiles(args[0], "csv", true);
+    
+    List<String> csvFiles = new ArrayList<String>();
+    
+    for(String arg : args)
+    {
+      if(arg.endsWith(".csv"))
+        csvFiles.add(args[0]);
+      else
+        csvFiles.addAll(FileUtils.findFiles(arg, "csv", true));
+    }
+    if(csvFiles.isEmpty())
+    {
+      Log.fatal("No csv files found, check provided inputs...");
+      return;
+    }
     for(String csvFile : csvFiles)
     {
       File f = new File(csvFile);
       if(!f.exists())
       {
-        Log.fatal("Input file cannot be found");
+        Log.fatal("Input file cannot be found : " + csvFile);
         continue;
       }
-      String reportDir = "./graph_results/"+f.getName();
-      reportDir=reportDir.substring(0,reportDir.lastIndexOf("."))+"/";
-      Log.info("Creating plots at "+reportDir);
-      t.graphResults(csvFile,reportDir);
+      Log.info("Creating plots for "+csvFile);
+      String path = f.getAbsolutePath().replaceAll("\\\\", "/");
+      path = path.substring(0,path.lastIndexOf("/"));
+      String name = f.getName().substring(0,f.getName().lastIndexOf("."));
+      String plotDir = path+"/"+name+"_plots";
+      Log.info("Creating plots at "+plotDir);
+      t.graphResults(csvFile,plotDir);
     }
   }
 

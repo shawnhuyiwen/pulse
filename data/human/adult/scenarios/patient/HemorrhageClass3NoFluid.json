@@ -1,5 +1,5 @@
 {
-  "Name": "HemorrhageCM1",
+  "Name": "HemorrhageClass3NoFluidLongTerm",
   "Description": "",
   "StartType":
   {
@@ -85,7 +85,7 @@
         "Compartment": "RightLegVasculature",
         "Rate": {
           "ScalarVolumePerTime": {
-            "Value": 80.0,
+            "Value": 75.0,
             "Unit": "mL/min"
           }
         }
@@ -97,7 +97,7 @@
         "Compartment": "VenaCava",
         "Rate": {
           "ScalarVolumePerTime": {
-            "Value": 70.0,
+            "Value": 125.0,
             "Unit": "mL/min"
           }
         }
@@ -107,7 +107,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 600.0,
+          "Value": 575.0,
           "Unit": "s"
         }
       }
@@ -118,18 +118,8 @@
         "Compartment": "RightLegVasculature",
         "Rate": {
           "ScalarVolumePerTime": {
-            "Value": 20.0,
             "Unit": "mL/min"
           }
-        }
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 60.0,
-          "Unit": "s"
         }
       }
     }
@@ -148,54 +138,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 240.0,
-          "Unit": "s"
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "Hemorrhage": {
-        "Compartment": "RightLegVasculature",
-        "Rate": {
-          "ScalarVolumePerTime": {
-            "Unit": "mL/min"
-          }
-        }
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 240.0,
-          "Unit": "s"
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "SubstanceCompoundInfusion": {
-        "SubstanceCompound": "Saline",
-        "BagVolume": {
-          "ScalarVolume": {
-            "Value": 500.0,
-            "Unit": "mL"
-          }
-        },
-        "Rate": {
-          "ScalarVolumePerTime": {
-            "Value": 100.0,
-            "Unit": "mL/min"
-          }
-        }
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 300.0,
+          "Value": 500.0,
           "Unit": "s"
         }
       }

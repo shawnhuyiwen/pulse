@@ -65,11 +65,13 @@ public:
     if (co2_mM > 0.0 && o2_mM > 0.0 && bicarb_mM > 0.0)
     {
       concentration.SetValue(m_SatCalc.m_O2->GetMolarMass(MassPerAmountUnit::g_Per_mmol) * o2_mM, MassPerVolumeUnit::g_Per_L);
-      GeneralMath::CalculatePartialPressureInLiquid(*m_SatCalc.m_O2, concentration, partialPressure, m_SatCalc.GetLogger());
+      if(!GeneralMath::CalculatePartialPressureInLiquid(*m_SatCalc.m_O2, concentration, partialPressure, m_SatCalc.GetLogger()))
+        m_SatCalc.Error("  Compartment : " + m_SatCalc.m_subCO2Q->GetCompartmentName() + ", Substance : Oxygen");
       double O2PartialPressureGuess_mmHg = partialPressure.GetValue(PressureUnit::mmHg);
 
       concentration.SetValue(m_SatCalc.m_CO2->GetMolarMass(MassPerAmountUnit::g_Per_mmol) * co2_mM, MassPerVolumeUnit::g_Per_L);
-      GeneralMath::CalculatePartialPressureInLiquid(*m_SatCalc.m_CO2, concentration, partialPressure, m_SatCalc.GetLogger());
+      if(!GeneralMath::CalculatePartialPressureInLiquid(*m_SatCalc.m_CO2, concentration, partialPressure, m_SatCalc.GetLogger()))
+        m_SatCalc.Error("  Compartment : " + m_SatCalc.m_subCO2Q->GetCompartmentName() + ", Substance : CarbonDioxide");
       double CO2PartialPressureGuess_mmHg = partialPressure.GetValue(PressureUnit::mmHg);
 
       //calculate a scaling factor for the CO2 saturation curve based on total CO2

@@ -82,10 +82,22 @@
   }, {
     "PatientAction": {
       "Hemorrhage": {
-        "Compartment": "RightLeg",
+        "Compartment": "RightLegVasculature",
         "Rate": {
           "ScalarVolumePerTime": {
-            "Value": 250.0,
+            "Value": 90.0,
+            "Unit": "mL/min"
+          }
+        }
+      }
+    }
+  }, {
+    "PatientAction": {
+      "Hemorrhage": {
+        "Compartment": "VenaCava",
+        "Rate": {
+          "ScalarVolumePerTime": {
+            "Value": 50.0,
             "Unit": "mL/min"
           }
         }
@@ -95,7 +107,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 240.0,
+          "Value": 590.0,
           "Unit": "s"
         }
       }
@@ -103,7 +115,7 @@
   }, {
     "PatientAction": {
       "Hemorrhage": {
-        "Compartment": "RightLeg",
+        "Compartment": "RightLegVasculature",
         "Rate": {
           "ScalarVolumePerTime": {
             "Unit": "mL/min"
@@ -112,11 +124,13 @@
       }
     }
   }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 120.0,
-          "Unit": "s"
+    "PatientAction": {
+      "Hemorrhage": {
+        "Compartment": "VenaCava",
+        "Rate": {
+          "ScalarVolumePerTime": {
+            "Unit": "mL/min"
+          }
         }
       }
     }

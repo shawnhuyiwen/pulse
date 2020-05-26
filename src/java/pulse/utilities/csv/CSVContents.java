@@ -26,6 +26,8 @@ public class CSVContents
   protected DataInputStream in      = null;
   protected BufferedReader  buff    = null;
   
+  protected boolean         contentMismatchErrorReported = false;
+  
   public int abreviateContents = 0;
   
   public static void main(String[] args) throws IOException
@@ -233,7 +235,7 @@ public class CSVContents
         list=results.get(header);
         if(list==null)
         {
-          list=new ArrayList<Double>();
+          list=new ArrayList<Double>();          
           results.put(header, list);
         }
         d=this.rowDoubles.get(h++);
@@ -250,7 +252,7 @@ public class CSVContents
           {
             if(buff.readLine()==null)
             {
-              eof=true;
+              eof=true;          
               break;
             }
           }
@@ -284,8 +286,9 @@ public class CSVContents
       return null;
     String aLine2 = aLine.replaceAll("\\s+", "");
     row=aLine2.split(",");
-    if(!this.headers.isEmpty()&&this.headers.size()!=row.length)
+    if(!this.headers.isEmpty()&&this.headers.size()!=row.length&&!this.contentMismatchErrorReported)
     {
+      this.contentMismatchErrorReported = true; // Don't repeat this error endlessly
       Log.error(this.resultsFile+" did not find the expected number of results on line, there are "+this.headers.size()+" headers and "+row.length+" data columns on this row");
     }  
     return row;

@@ -107,7 +107,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 800.0,
+          "Value": 590.0,
           "Unit": "s"
         }
       }
@@ -138,7 +138,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 1500.0,
+          "Value": 500.0,
           "Unit": "s"
         }
       }

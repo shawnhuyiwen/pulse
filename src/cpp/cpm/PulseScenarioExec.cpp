@@ -10,16 +10,29 @@
 #include "PulseConfiguration.h"
 #include "properties/SEScalarTime.h"
 #include "utils/FileUtils.h"
+#include "utils/ConfigParser.h"
 
 void PulseScenarioExec::Run(const std::string& scenarioFile)
 {
-  // Set up the log file
-  std::string logFile = scenarioFile;
-  logFile = Replace(logFile, "verification", "test_results");
+  std::string logFile=scenarioFile;
+  std::string dataFile= scenarioFile;
+  // Try to read our config file to properly place results in a development structure
+  std::string scenario_dir;
+  ConfigSet* config = ConfigParser::FileToConfigSet("run.config");
+  if (config->HasKey("scenario_dir"))
+  {
+    scenario_dir = config->GetValue("scenario_dir");
+    std::string output = scenarioFile;
+    std::replace(output.begin(), output.end(), '\\', '/');
+    if (output.find(scenario_dir) != std::string::npos)
+    {
+      output = output.substr(scenario_dir.length());
+      logFile = "./test_results/scenarios" + output;
+      dataFile = "./test_results/scenarios" + output;
+    }
+  }
+  delete config;
   logFile = Replace(logFile, ".json", ".log");
-  // Set up the verification output file  
-  std::string dataFile = scenarioFile;
-  dataFile = Replace(dataFile, "verification", "test_results");
   dataFile = Replace(dataFile, ".json", "Results.csv");
   // What are we creating?
   std::cout << "Log File : " << logFile << std::endl;
