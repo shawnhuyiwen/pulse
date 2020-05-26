@@ -14,24 +14,6 @@ import "pulse/cdm/bind/ElectroCardioGram.proto";
 message ConfigurationData
 
 {
-  message BaroreceptorConfigurationData
-  {
-    pulse.cdm.bind.ScalarData                          ResponseSlope                                         = 1;
-    pulse.cdm.bind.ScalarTimeData                      HeartRateDistributedTimeDelay                         = 2;
-    pulse.cdm.bind.ScalarTimeData                      HeartElastanceDistributedTimeDelay                    = 3;
-    pulse.cdm.bind.ScalarTimeData                      SystemicResistanceDistributedTimeDelay                = 4;
-    pulse.cdm.bind.ScalarTimeData                      VenousComplianceDistributedTimeDelay                  = 5;
-    pulse.cdm.bind.ScalarData                          NormalizedHeartRateIntercept                          = 6;
-    pulse.cdm.bind.ScalarData                          NormalizedHeartRateSympatheticSlope                   = 7;
-    pulse.cdm.bind.ScalarData                          NormalizedHeartRateParasympatheticSlope               = 8;
-    pulse.cdm.bind.ScalarData                          NormalizedHeartElastanceIntercept                     = 9;
-    pulse.cdm.bind.ScalarData                          NormalizedHeartElastanceSympatheticSlope              = 10;
-    pulse.cdm.bind.ScalarData                          NormalizedResistanceIntercept                         = 11;
-    pulse.cdm.bind.ScalarData                          NormalizedResistanceSympatheticSlope                  = 12;
-    pulse.cdm.bind.ScalarData                          NormalizedComplianceIntercept                         = 13;
-    pulse.cdm.bind.ScalarData                          NormalizedComplianceParasympatheticSlope              = 14;
-  }
-  
   message BloodChemistryConfigurationData
   {
     pulse.cdm.bind.ScalarMassPerAmountData             MeanCorpuscularHemoglobin                             = 1;
@@ -133,8 +115,23 @@ message ConfigurationData
   
   message NervousConfigurationData
   {
-    pulse.cdm.bind.eSwitch                             EnableFeedback                                       = 1;
-    pulse.cdm.bind.ScalarLengthData                    PupilDiameterBaseline                                = 2;
+    pulse.cdm.bind.eSwitch                             ChemoreceptorFeedback                                = 1;
+    pulse.cdm.bind.eSwitch                             BaroreceptorFeedback                                 = 2;
+    pulse.cdm.bind.ScalarTimeData                      HeartElastanceDistributedTimeDelay                   = 3;
+    pulse.cdm.bind.ScalarTimeData                      HeartRateDistributedTimeDelay                        = 4;
+    pulse.cdm.bind.ScalarData                          NormalizedHeartRateIntercept                         = 5;
+    pulse.cdm.bind.ScalarData                          NormalizedHeartRateSympatheticSlope                  = 6;
+    pulse.cdm.bind.ScalarData                          NormalizedHeartRateParasympatheticSlope              = 7;
+    pulse.cdm.bind.ScalarData                          NormalizedHeartElastanceIntercept                    = 8;
+    pulse.cdm.bind.ScalarData                          NormalizedHeartElastanceSympatheticSlope             = 9;
+    pulse.cdm.bind.ScalarData                          NormalizedResistanceIntercept                        = 10;
+    pulse.cdm.bind.ScalarData                          NormalizedResistanceSympatheticSlope                 = 11;
+    pulse.cdm.bind.ScalarData                          NormalizedComplianceIntercept                        = 12;
+    pulse.cdm.bind.ScalarData                          NormalizedComplianceParasympatheticSlope             = 13;
+    pulse.cdm.bind.ScalarLengthData                    PupilDiameterBaseline                                = 14;
+    pulse.cdm.bind.ScalarData                          ResponseSlope                                        = 15;
+    pulse.cdm.bind.ScalarTimeData                      SystemicResistanceDistributedTimeDelay               = 16;
+    pulse.cdm.bind.ScalarTimeData                      VenousComplianceDistributedTimeDelay                 = 17;
   }
   
   message RenalConfigurationData
@@ -186,19 +183,18 @@ message ConfigurationData
   }
   pulse.cdm.bind.eSwitch                               WritePatientBaselineFile                             = 5;/**<< @brief Inform execution to write out patient object after stabilization completes. */
   pulse.cdm.bind.AutoSerializationData                 AutoSerialization                                    = 6;
-  BaroreceptorConfigurationData                        BaroreceptorConfiguration                            = 7;
-  BloodChemistryConfigurationData                      BloodChemistryConfiguration                          = 8;
-  CardiovascularConfigurationData                      CardiovascularConfiguration                          = 9;
-  CircuitConfigurationData                             CircuitConfiguration                                 = 10;
-  ConstantsConfigurationData                           ConstantsConfiguration                               = 11;
-  DrugsConfigurationData                               DrugsConfiguration                                   = 12;
-  ECGConfigurationData                                 ECGConfiguration                                     = 13;
-  EnergyConfigurationData                              EnergyConfiguration                                  = 14;
-  EnvironmentConfigurationData                         EnvironmentConfiguration                             = 15;
-  GastrointestinalConfigurationData                    GastrointestinalConfiguration                        = 16;
-  NervousConfigurationData                             NervousConfiguration                                 = 17;
-  RenalConfigurationData                               RenalConfiguration                                   = 18;
-  RespiratoryConfigurationData                         RespiratoryConfiguration                             = 19;
-  TissueConfigurationData                              TissueConfiguration                                  = 20;
+  BloodChemistryConfigurationData                      BloodChemistryConfiguration                          = 7;
+  CardiovascularConfigurationData                      CardiovascularConfiguration                          = 8;
+  CircuitConfigurationData                             CircuitConfiguration                                 = 9;
+  ConstantsConfigurationData                           ConstantsConfiguration                               = 10;
+  DrugsConfigurationData                               DrugsConfiguration                                   = 11;
+  ECGConfigurationData                                 ECGConfiguration                                     = 12;
+  EnergyConfigurationData                              EnergyConfiguration                                  = 13;
+  EnvironmentConfigurationData                         EnvironmentConfiguration                             = 14;
+  GastrointestinalConfigurationData                    GastrointestinalConfiguration                        = 15;
+  NervousConfigurationData                             NervousConfiguration                                 = 16;
+  RenalConfigurationData                               RenalConfiguration                                   = 17;
+  RespiratoryConfigurationData                         RespiratoryConfiguration                             = 18;
+  TissueConfigurationData                              TissueConfiguration                                  = 19;
 }
  

@@ -370,11 +370,11 @@ void DataTrack::Track(const std::string& name, double time, double value)
   {
     if(m_Logger != nullptr)
     {
-      m_Logger->Error("DataTrack array size error");
+      m_Logger->Error("DataTrack array size error for "+name);
     }
     else
     {
-      std::cout<<"DataTrack array size error";
+      std::cout<<"DataTrack array size error for " << name;
     }
   }
   else
@@ -678,7 +678,7 @@ std::vector<double>& DataTrack::GetTimes()
 std::vector<std::string> DataTrack::ReadTrackFromFile(const char* fileName)
 {
   m_Track.clear();
-  std::string line;
+  std::string line;  
   std::ifstream infile(fileName);
   // Grab the headings from the first line
   std::getline(infile, line);
@@ -699,8 +699,8 @@ std::vector<std::string> DataTrack::ReadTrackFromFile(const char* fileName)
     while (pos < line.size())
       if ((pos = line.find_first_of(',', pos)) != std::string::npos)
         line[pos] = ' ';
-    std::istringstream iss2(line);
-    copy(std::istream_iterator<double>(iss2),
+    std::istringstream iss(line);
+    copy(std::istream_iterator<double>(iss),
              std::istream_iterator<double>(),
              std::back_inserter<std::vector<double>>(values));
     double time = values[0];
@@ -718,9 +718,8 @@ std::vector<std::string> DataTrack::ReadTrackFromFile(const char* fileName)
 std::vector<std::string> DataTrack::StreamDataFromFile(const char* fileName)
 {
   Reset();
-  std::string line;
-  if(!m_FileStream.is_open())
-    m_FileStream.open(fileName);
+  std::string line;  
+  m_FileStream.open(fileName);
   // Grab the headings from the first line
   std::getline(m_FileStream, line);
   std::size_t pos = 0;
@@ -762,8 +761,7 @@ double DataTrack::StreamDataFromFile(std::vector<std::string>* headings)
 
 void DataTrack::CreateFile(const char* fileName, std::ofstream& file)
 {
-  if(!file.is_open())
-    file.open(fileName, std::ofstream::out | std::ofstream::trunc);
+  file.open(fileName, std::ofstream::out | std::ofstream::trunc);
   // Write our headers  
   file<<"Time(s)"<<m_Delimiter;
   for (unsigned int i = 0; i < m_HeadingOrder.size(); i++)
@@ -780,7 +778,7 @@ void DataTrack::WriteTrackToFile(const char* fileName)
 {
   std::ofstream file;
   file.open(fileName, std::ofstream::out | std::ofstream::trunc);
-  // Write our headers
+  // Write our headers  
   file << "Time(s)" << m_Delimiter;
   for (unsigned int i = 0; i < m_HeadingOrder.size(); i++)
   {
@@ -791,7 +789,6 @@ void DataTrack::WriteTrackToFile(const char* fileName)
   file<<std::endl;
   file.flush();
   StreamTrackToFile(file);
-  file.close();
 }
 
 

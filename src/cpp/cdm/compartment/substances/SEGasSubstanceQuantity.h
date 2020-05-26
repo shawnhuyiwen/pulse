@@ -18,6 +18,8 @@ public:
   virtual void Clear();
   virtual void Invalidate();
 
+  virtual std::string GetCompartmentName() override;
+
   virtual void SetToZero();
   virtual const SEScalar* GetScalar(const std::string& name);
 

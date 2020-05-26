@@ -54,6 +54,11 @@ public:
 
 protected:
   void ComputeExposedModelParameters() override;
+  
+  // Initialize
+  void TuneCircuit();
+  /**/void TunePaths(double systemicResistanceScale, double systemicComplianceScale, double aortaResistanceScale, double aortaComplianceScale, double rightHeartResistanceScale, double venaCavaComplianceScale);
+  /**/void TuneTissue(double time_s, DataTrack& track, std::ofstream& circuitFile);
 
   //Condition Methods
   void ChronicRenalStenosis();
@@ -64,14 +69,10 @@ protected:
   // PreProcess:
   void HeartDriver();
   /**/void AdjustVascularTone();
+  /****/void MetabolicToneResponse();
   /**/void BeginCardiacCycle();
   /**/void CalculateHeartElastance();
   /**/void UpdateHeartRhythm();
-  // IF STABILIZING
-  void TuneCircuit();
-  /**/void TunePaths(double systemicResistanceScale, double systemicComplianceScale, double aortaResistanceScale, double aortaComplianceScale, double rightHeartResistanceScale, double venaCavaComplianceScale);
-  // ELSE
-  void MetabolicToneResponse(); 
   void ProcessActions();
   //Action methods
   /**/void CPR();
@@ -213,8 +214,8 @@ protected:
 
   std::vector<SEFluidCircuitPath*> m_systemicResistancePaths;
   std::vector<SEFluidCircuitPath*> m_systemicCompliancePaths;
+  
+  //debugging hemorrhage
+  double m_BloodVolumeEstimate;
+  double m_CardiacOutputBaseline;
 };
-
-
-
-

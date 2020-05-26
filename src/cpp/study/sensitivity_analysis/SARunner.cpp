@@ -150,7 +150,8 @@ bool SARunner::RunSimulationUntilStable(std::string const& outDir, pulse::study:
 
   // TODO amb Clean this up (cfg should have a default ctor that makes its own Sub Mgr)
   PulseConfiguration cfg(pulse->GetSubstanceManager());
-  cfg.EnableNervousFeedback(eSwitch::Off); // Turn off nervous system feedback (ex. baroreceptors)
+  cfg.SetBaroreceptorFeedback(eSwitch::Off);
+  cfg.SetChemoreceptorFeedback(eSwitch::Off);
   if (!pulse->SerializeFromFile("./states/StandardMale@0s.json", SerializationFormat::JSON, nullptr, &cfg))
     return false;
 

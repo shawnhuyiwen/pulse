@@ -1,28 +1,19 @@
-{
-  "Name": "EnergyValidation",
-  "Description": "Validation of Energy data.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json"
-    }
+{ "Scenario":
+  {
+    "Name": "EnergyValidation",
+    "Description": "Validation of Energy data.",
+    "StartType": { "PatientConfiguration": { "PatientFile": "StandardMale.json"}},
+    "DataRequestManager":
+    { 
+      "DataRequest":
+      [
+        { "DecimalFormat": { }, "Category": "Physiology", "PropertyName": "InsulinSynthesisRate", "Unit": "pmol/min" }
+      ]
+    },
+    "AnyAction": 
+    [
+      { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 2.0, "Unit": "min" }}} }
+    ]
   },
-  "DataRequestManager": {
-    "DataRequest": [{
-      "DecimalFormat": {
-      },
-      "Category": "Physiology",
-      "PropertyName": "InsulinSynthesisRate",
-      "Unit": "pmol/min"
-    }]
-  },
-  "AnyAction": [{
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 2.0,
-          "Unit": "min"
-        }
-      }
-    }
-  }]
+  "Configuration": { "GastrointestinalConfiguration": { "InitialStomachContents": { }}}
 }

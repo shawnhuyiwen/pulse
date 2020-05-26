@@ -56,40 +56,6 @@ void PBPulseConfiguration::Serialize(const PULSE_BIND::ConfigurationData& src, P
   if (src.writepatientbaselinefile() != CDM_BIND::eSwitch::NullSwitch)
     dst.EnableWritePatientBaselineFile((eSwitch)src.writepatientbaselinefile());
 
-  //Barorecptors
-  if (src.has_baroreceptorconfiguration())
-  {
-    const PULSE_BIND::ConfigurationData_BaroreceptorConfigurationData& config = src.baroreceptorconfiguration();
-    if (config.has_responseslope())
-      PBProperty::Load(config.responseslope(), dst.GetResponseSlope());
-    if (config.has_heartratedistributedtimedelay())
-      PBProperty::Load(config.heartratedistributedtimedelay(), dst.GetHeartRateDistributedTimeDelay());
-    if (config.has_heartelastancedistributedtimedelay())
-      PBProperty::Load(config.heartelastancedistributedtimedelay(), dst.GetHeartElastanceDistributedTimeDelay());
-    if (config.has_systemicresistancedistributedtimedelay())
-      PBProperty::Load(config.systemicresistancedistributedtimedelay(), dst.GetSystemicResistanceDistributedTimeDelay());
-    if (config.has_venouscompliancedistributedtimedelay())
-      PBProperty::Load(config.venouscompliancedistributedtimedelay(), dst.GetVenousComplianceDistributedTimeDelay());
-    if (config.has_normalizedheartrateintercept())
-      PBProperty::Load(config.normalizedheartrateintercept(), dst.GetNormalizedHeartRateIntercept());
-    if (config.has_normalizedheartratesympatheticslope())
-      PBProperty::Load(config.normalizedheartratesympatheticslope(), dst.GetNormalizedHeartRateSympatheticSlope());
-    if (config.has_normalizedheartrateparasympatheticslope())
-      PBProperty::Load(config.normalizedheartrateparasympatheticslope(), dst.GetNormalizedHeartRateParasympatheticSlope());
-    if (config.has_normalizedheartelastanceintercept())
-      PBProperty::Load(config.normalizedheartelastanceintercept(), dst.GetNormalizedHeartElastanceIntercept());
-    if (config.has_normalizedheartelastancesympatheticslope())
-      PBProperty::Load(config.normalizedheartelastancesympatheticslope(), dst.GetNormalizedHeartElastanceSympatheticSlope());
-    if (config.has_normalizedresistanceintercept())
-      PBProperty::Load(config.normalizedresistanceintercept(), dst.GetNormalizedResistanceIntercept());
-    if (config.has_normalizedresistancesympatheticslope())
-      PBProperty::Load(config.normalizedresistancesympatheticslope(), dst.GetNormalizedResistanceSympatheticSlope());
-    if (config.has_normalizedcomplianceintercept())
-      PBProperty::Load(config.normalizedcomplianceintercept(), dst.GetNormalizedComplianceIntercept());
-    if (config.has_normalizedcomplianceparasympatheticslope())
-      PBProperty::Load(config.normalizedcomplianceparasympatheticslope(), dst.GetNormalizedComplianceParasympatheticSlope());
-  }
-
   // Blood Chemistry
   if (src.has_bloodchemistryconfiguration())
   {
@@ -270,11 +236,40 @@ void PBPulseConfiguration::Serialize(const PULSE_BIND::ConfigurationData& src, P
   if (src.has_nervousconfiguration())
   {
     const PULSE_BIND::ConfigurationData_NervousConfigurationData& config = src.nervousconfiguration();
-
-    if (config.enablefeedback() != CDM_BIND::eSwitch::NullSwitch)
-      dst.EnableNervousFeedback((eSwitch)config.enablefeedback());
+    if (config.baroreceptorfeedback() != CDM_BIND::eSwitch::NullSwitch)
+      dst.SetBaroreceptorFeedback((eSwitch)config.baroreceptorfeedback());
+    if (config.chemoreceptorfeedback() != CDM_BIND::eSwitch::NullSwitch)
+      dst.SetChemoreceptorFeedback((eSwitch)config.chemoreceptorfeedback());
+    if (config.has_heartelastancedistributedtimedelay())
+      PBProperty::Load(config.heartelastancedistributedtimedelay(), dst.GetHeartElastanceDistributedTimeDelay());
+    if (config.has_heartratedistributedtimedelay())
+      PBProperty::Load(config.heartratedistributedtimedelay(), dst.GetHeartRateDistributedTimeDelay());
+    if (config.has_normalizedheartrateintercept())
+      PBProperty::Load(config.normalizedheartrateintercept(), dst.GetNormalizedHeartRateIntercept());
+    if (config.has_normalizedheartratesympatheticslope())
+      PBProperty::Load(config.normalizedheartratesympatheticslope(), dst.GetNormalizedHeartRateSympatheticSlope());
+    if (config.has_normalizedheartrateparasympatheticslope())
+      PBProperty::Load(config.normalizedheartrateparasympatheticslope(), dst.GetNormalizedHeartRateParasympatheticSlope());
+    if (config.has_normalizedheartelastanceintercept())
+      PBProperty::Load(config.normalizedheartelastanceintercept(), dst.GetNormalizedHeartElastanceIntercept());
+    if (config.has_normalizedheartelastancesympatheticslope())
+      PBProperty::Load(config.normalizedheartelastancesympatheticslope(), dst.GetNormalizedHeartElastanceSympatheticSlope());
+    if (config.has_normalizedresistanceintercept())
+      PBProperty::Load(config.normalizedresistanceintercept(), dst.GetNormalizedResistanceIntercept());
+    if (config.has_normalizedresistancesympatheticslope())
+      PBProperty::Load(config.normalizedresistancesympatheticslope(), dst.GetNormalizedResistanceSympatheticSlope());
+    if (config.has_normalizedcomplianceintercept())
+      PBProperty::Load(config.normalizedcomplianceintercept(), dst.GetNormalizedComplianceIntercept());
+    if (config.has_normalizedcomplianceparasympatheticslope())
+      PBProperty::Load(config.normalizedcomplianceparasympatheticslope(), dst.GetNormalizedComplianceParasympatheticSlope());
+    if (config.has_responseslope())
+      PBProperty::Load(config.responseslope(), dst.GetResponseSlope());
     if (config.has_pupildiameterbaseline())
       PBProperty::Load(config.pupildiameterbaseline(), dst.GetPupilDiameterBaseline());
+    if (config.has_systemicresistancedistributedtimedelay())
+      PBProperty::Load(config.systemicresistancedistributedtimedelay(), dst.GetSystemicResistanceDistributedTimeDelay());
+    if (config.has_venouscompliancedistributedtimedelay())
+      PBProperty::Load(config.venouscompliancedistributedtimedelay(), dst.GetVenousComplianceDistributedTimeDelay());
   }
 
   // Renal
@@ -365,37 +360,6 @@ void PBPulseConfiguration::Serialize(const PulseConfiguration& src, PULSE_BIND::
   if (src.HasAutoSerialization())
     dst.set_allocated_autoserialization(PBEngine::Unload(*src.m_AutoSerialization));
   dst.set_writepatientbaselinefile((CDM_BIND::eSwitch)src.m_WritePatientBaselineFile);
-
-  // Barorecptor
-  PULSE_BIND::ConfigurationData_BaroreceptorConfigurationData* baro = dst.mutable_baroreceptorconfiguration();
-  if (src.HasResponseSlope())
-    baro->set_allocated_responseslope(PBProperty::Unload(*src.m_ResponseSlope));
-  if (src.HasHeartRateDistributedTimeDelay())
-    baro->set_allocated_heartratedistributedtimedelay(PBProperty::Unload(*src.m_HeartRateDistributedTimeDelay));
-  if (src.HasHeartElastanceDistributedTimeDelay())
-    baro->set_allocated_heartelastancedistributedtimedelay(PBProperty::Unload(*src.m_HeartElastanceDistributedTimeDelay));
-  if (src.HasSystemicResistanceDistributedTimeDelay())
-    baro->set_allocated_systemicresistancedistributedtimedelay(PBProperty::Unload(*src.m_SystemicResistanceDistributedTimeDelay));
-  if (src.HasVenousComplianceDistributedTimeDelay())
-    baro->set_allocated_venouscompliancedistributedtimedelay(PBProperty::Unload(*src.m_VenousComplianceDistributedTimeDelay));
-  if (src.HasNormalizedHeartRateIntercept())
-    baro->set_allocated_normalizedheartrateintercept(PBProperty::Unload(*src.m_NormalizedHeartRateIntercept));
-  if (src.HasNormalizedHeartRateSympatheticSlope())
-    baro->set_allocated_normalizedheartratesympatheticslope(PBProperty::Unload(*src.m_NormalizedHeartRateSympatheticSlope));
-  if (src.HasNormalizedHeartRateParasympatheticSlope())
-    baro->set_allocated_normalizedheartrateparasympatheticslope(PBProperty::Unload(*src.m_NormalizedHeartRateParasympatheticSlope));
-  if (src.HasNormalizedHeartElastanceIntercept())
-    baro->set_allocated_normalizedheartelastanceintercept(PBProperty::Unload(*src.m_NormalizedHeartElastanceIntercept));
-  if (src.HasNormalizedHeartElastanceSympatheticSlope())
-    baro->set_allocated_normalizedheartelastancesympatheticslope(PBProperty::Unload(*src.m_NormalizedHeartElastanceSympatheticSlope));
-  if (src.HasNormalizedResistanceIntercept())
-    baro->set_allocated_normalizedresistanceintercept(PBProperty::Unload(*src.m_NormalizedResistanceIntercept));
-  if (src.HasNormalizedResistanceSympatheticSlope())
-    baro->set_allocated_normalizedresistancesympatheticslope(PBProperty::Unload(*src.m_NormalizedResistanceSympatheticSlope));
-  if (src.HasNormalizedComplianceIntercept())
-    baro->set_allocated_normalizedcomplianceintercept(PBProperty::Unload(*src.m_NormalizedComplianceIntercept));
-  if (src.HasNormalizedComplianceParasympatheticSlope())
-    baro->set_allocated_normalizedcomplianceparasympatheticslope(PBProperty::Unload(*src.m_NormalizedComplianceParasympatheticSlope));
 
   // Blood Chemistry
   PULSE_BIND::ConfigurationData_BloodChemistryConfigurationData* bc = dst.mutable_bloodchemistryconfiguration();
@@ -522,9 +486,38 @@ void PBPulseConfiguration::Serialize(const PulseConfiguration& src, PULSE_BIND::
 
   // Nervous
   PULSE_BIND::ConfigurationData_NervousConfigurationData* n = dst.mutable_nervousconfiguration();
-  n->set_enablefeedback((CDM_BIND::eSwitch)src.m_NervousFeedbackEnabled);
+  n->set_baroreceptorfeedback((CDM_BIND::eSwitch)src.m_BaroreceptorFeedback);
+  n->set_chemoreceptorfeedback((CDM_BIND::eSwitch)src.m_ChemoreceptorFeedback);
+  if (src.HasHeartElastanceDistributedTimeDelay())
+    n->set_allocated_heartelastancedistributedtimedelay(PBProperty::Unload(*src.m_HeartElastanceDistributedTimeDelay));
+  if (src.HasHeartRateDistributedTimeDelay())
+    n->set_allocated_heartratedistributedtimedelay(PBProperty::Unload(*src.m_HeartRateDistributedTimeDelay));
+  if (src.HasNormalizedHeartRateIntercept())
+    n->set_allocated_normalizedheartrateintercept(PBProperty::Unload(*src.m_NormalizedHeartRateIntercept));
+  if (src.HasNormalizedHeartRateSympatheticSlope())
+    n->set_allocated_normalizedheartratesympatheticslope(PBProperty::Unload(*src.m_NormalizedHeartRateSympatheticSlope));
+  if (src.HasNormalizedHeartRateParasympatheticSlope())
+    n->set_allocated_normalizedheartrateparasympatheticslope(PBProperty::Unload(*src.m_NormalizedHeartRateParasympatheticSlope));
+  if (src.HasNormalizedHeartElastanceIntercept())
+    n->set_allocated_normalizedheartelastanceintercept(PBProperty::Unload(*src.m_NormalizedHeartElastanceIntercept));
+  if (src.HasNormalizedHeartElastanceSympatheticSlope())
+    n->set_allocated_normalizedheartelastancesympatheticslope(PBProperty::Unload(*src.m_NormalizedHeartElastanceSympatheticSlope));
+  if (src.HasNormalizedResistanceIntercept())
+    n->set_allocated_normalizedresistanceintercept(PBProperty::Unload(*src.m_NormalizedResistanceIntercept));
+  if (src.HasNormalizedResistanceSympatheticSlope())
+    n->set_allocated_normalizedresistancesympatheticslope(PBProperty::Unload(*src.m_NormalizedResistanceSympatheticSlope));
+  if (src.HasNormalizedComplianceIntercept())
+    n->set_allocated_normalizedcomplianceintercept(PBProperty::Unload(*src.m_NormalizedComplianceIntercept));
+  if (src.HasNormalizedComplianceParasympatheticSlope())
+    n->set_allocated_normalizedcomplianceparasympatheticslope(PBProperty::Unload(*src.m_NormalizedComplianceParasympatheticSlope));
+  if (src.HasResponseSlope())
+    n->set_allocated_responseslope(PBProperty::Unload(*src.m_ResponseSlope));
   if (src.HasPupilDiameterBaseline())
     n->set_allocated_pupildiameterbaseline(PBProperty::Unload(*src.m_PupilDiameterBaseline));
+  if (src.HasSystemicResistanceDistributedTimeDelay())
+    n->set_allocated_systemicresistancedistributedtimedelay(PBProperty::Unload(*src.m_SystemicResistanceDistributedTimeDelay));
+  if (src.HasVenousComplianceDistributedTimeDelay())
+    n->set_allocated_venouscompliancedistributedtimedelay(PBProperty::Unload(*src.m_VenousComplianceDistributedTimeDelay));
 
   // Renal
   PULSE_BIND::ConfigurationData_RenalConfigurationData* renal = dst.mutable_renalconfiguration();

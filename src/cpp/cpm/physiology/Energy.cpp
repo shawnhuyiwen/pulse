@@ -89,6 +89,10 @@ void Energy::Clear()
 //--------------------------------------------------------------------------------------------------
 /// \brief
 /// Initializes system properties to valid homeostatic values.
+///
+/// \details
+/// For stabilization only!
+/// Called AFTER Setup when stabilizing a new patient
 //--------------------------------------------------------------------------------------------------
 void Energy::Initialize()
 {
@@ -124,6 +128,10 @@ void Energy::Initialize()
 /// Initializes the energy specific quantities
 ///
 /// \details
+/// Called during both State loading and Patient Stabilization
+/// Pull and setup up our data (can be from other systems)
+/// Initialize will be called after this and can overwrite any of this data (only if stabilizing)
+///
 /// The energy local member variables, system level quantities, and metabolic-specific substance
 /// quantities are initialized here. These variables are used in the numerous metabolic and thermal regulation
 /// functions contained in the energy system. Encompassing them in this function allows for easy initialization
@@ -520,9 +528,9 @@ void Energy::CalculateVitalSigns()
     /// \irreversible State: Core temperature has fallen below 20 degrees Celsius.
     if (coreTemperature_degC < coreTempIrreversible_degC)
     {
-      ss << "Core temperature is " << coreTemperature_degC << ". This is below 20 degrees C, patient is experiencing extreme hypothermia and is in an irreversible state.";
-      Warning(ss);
       m_data.GetEvents().SetEvent(eEvent::IrreversibleState, true, m_data.GetSimulationTime());
+      ss << "Core temperature is " << coreTemperature_degC << ". This is below 20 degrees C, patient is experiencing extreme hypothermia and is in an irreversible state.";
+      Fatal(ss);
     }
 
   }
@@ -565,9 +573,9 @@ void Energy::CalculateVitalSigns()
       /// \irreversible State: arterial blood pH has dropped below 6.5.
       if (bloodPH < lowPh)
       {
-        ss << " Arterial blood PH is " << bloodPH << ". This is below 6.5, patient is experiencing extreme metabolic acidosis and is in an irreversible state.";
-        Warning(ss);
         m_data.GetEvents().SetEvent(eEvent::IrreversibleState, true, m_data.GetSimulationTime());
+        ss << " Arterial blood PH is " << bloodPH << ". This is below 6.5, patient is experiencing extreme metabolic acidosis and is in an irreversible state.";
+        Fatal(ss);
       }
       else if (bloodPH > 7.38 && bloodBicarbonate_mmol_Per_L > 23.0)
         /// \event The patient has exited the state state of metabolic acidosis
@@ -580,9 +588,9 @@ void Energy::CalculateVitalSigns()
       /// \irreversible State: arterial blood pH has increased above 8.5.
       if (bloodPH > highPh)
       {
-        ss << " Arterial blood PH is " << bloodPH << ". This is above 8.5, patient is experiencing extreme metabolic Alkalosis and is in an irreversible state.";
-        Warning(ss);
         m_data.GetEvents().SetEvent(eEvent::IrreversibleState, true, m_data.GetSimulationTime());
+        ss << " Arterial blood PH is " << bloodPH << ". This is above 8.5, patient is experiencing extreme metabolic Alkalosis and is in an irreversible state.";
+        Fatal(ss);
       }
 
       else if (bloodPH < 7.42 && bloodBicarbonate_mmol_Per_L < 25.0)

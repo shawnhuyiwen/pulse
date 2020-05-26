@@ -321,7 +321,7 @@ void PulseSubstances::InitializeLiquidCompartmentGases()
   
   SEScalarMassPerVolume concentration;
   concentration.SetValue(0.146448, MassPerVolumeUnit::g_Per_dL);
-  SetSubstanceConcentration(*m_HCO3, cmpts.GetUrineLeafCompartments(), concentration);    
+  SetSubstanceConcentration(*m_HCO3, cmpts.GetUrineLeafCompartments(), concentration);
 }
 void PulseSubstances::InitializeBloodGases(SELiquidCompartment& cmpt, double Hb_total_mM, double O2_sat, double O2_mmol_Per_L, double CO2_sat, double CO2_mmol_Per_L, double HCO3_mmol_Per_L, double pH, bool distribute)
 {
@@ -600,7 +600,7 @@ void PulseSubstances::InitializeLiquidCompartmentNonGases()
   SetSubstanceMolarity(*m_epi, tissue, molarity1);
   
   // GLUCOSE //
-  concentration.SetValue(80, MassPerVolumeUnit::mg_Per_dL);
+  concentration.SetValue(95, MassPerVolumeUnit::mg_Per_dL);
   SetSubstanceConcentration(*m_glucose, vascular, concentration);
   //Overwriting initialization for liver glucose since acts as the glucose pool for the body
   //subQ = liver->GetExtracellularFluid().GetSubstanceQuantity(*m_glucose);
@@ -629,12 +629,12 @@ void PulseSubstances::InitializeLiquidCompartmentNonGases()
   rightUreter->GetSubstanceQuantity(*m_glucose)->SetToZero();
   bladder->GetSubstanceQuantity(*m_glucose)->SetToZero();
   // Tissue
-  molarity1.SetValue(5.9, AmountPerVolumeUnit::mmol_Per_L);
+  molarity1.SetValue(5.27321, AmountPerVolumeUnit::mmol_Per_L);//95 mg/dL
   molarity2.SetValue(0, AmountPerVolumeUnit::mmol_Per_L);
   SetSubstanceMolarity(*m_glucose, tissue, molarity1, molarity2);
 
-  // INSULIN //
-  concentration.SetValue(0.412, MassPerVolumeUnit::ug_Per_L);
+  // INSULIN // Should be from 70-380 pmol/L (0.40656 - 2.20704 ug/L)
+  concentration.SetValue(0.40656, MassPerVolumeUnit::ug_Per_L);
   SetSubstanceConcentration(*m_insulin, vascular, concentration);
   // None in Urine
   leftBowmansCapsules->GetSubstanceQuantity(*m_insulin)->SetToZero();
@@ -645,7 +645,7 @@ void PulseSubstances::InitializeLiquidCompartmentNonGases()
   rightUreter->GetSubstanceQuantity(*m_insulin)->SetToZero();
   bladder->GetSubstanceQuantity(*m_insulin)->SetToZero();
   // Tissue
-  molarity1.SetValue(7.1e-8, AmountPerVolumeUnit::mmol_Per_L);
+  molarity1.SetValue(71, AmountPerVolumeUnit::pmol_Per_L);
   SetSubstanceMolarity(*m_insulin, tissue, molarity1);
 
   // LACTATE //
@@ -730,7 +730,7 @@ void PulseSubstances::InitializeLiquidCompartmentNonGases()
   SetSubstanceMolarity(*m_tristearin, tissue, molarity1);
 
   // UREA //
-  concentration.SetValue(270.0, MassPerVolumeUnit::mg_Per_L);
+  concentration.SetValue(23.0, MassPerVolumeUnit::mg_Per_dL);
   SetSubstanceConcentration(*m_urea, vascular, concentration);
   // Set Urine
   concentration.SetValue(0.2, MassPerVolumeUnit::mg_Per_dL);
@@ -752,7 +752,7 @@ void PulseSubstances::InitializeLiquidCompartmentNonGases()
   subQ->Balance(BalanceLiquidBy::Concentration);
   subQ = rightUreter->GetSubstanceQuantity(*m_urea);
   subQ->GetConcentration().Set(concentration);
-  subQ->Balance(BalanceLiquidBy::Concentration);  
+  subQ->Balance(BalanceLiquidBy::Concentration);
   subQ = bladder->GetSubstanceQuantity(*m_urea);
   subQ->GetConcentration().Set(concentration);
   subQ->Balance(BalanceLiquidBy::Concentration);
@@ -950,7 +950,8 @@ void PulseSubstances::CalculateGenericClearance(double VolumeCleared_mL, SETissu
   SEScalarMassPerVolume concentration;
   if (sub.HasPK())
   {
-    GeneralMath::CalculateConcentration(subQ->GetMass(), tissue.GetMatrixVolume(), concentration, m_Logger);
+    if(!GeneralMath::CalculateConcentration(subQ->GetMass(), tissue.GetMatrixVolume(), concentration, m_Logger))
+      Error("  Compartment : " + tissue.GetName() + ", Substance : " + sub.GetName());
     concentration_ug_Per_mL = concentration.GetValue(MassPerVolumeUnit::ug_Per_mL);
   }
   else
@@ -992,7 +993,8 @@ void PulseSubstances::CalculateGenericExcretion(double VascularFlow_mL_Per_s, SE
   SEScalarMassPerVolume concentration;
   if (sub.HasPK())
   {
-    GeneralMath::CalculateConcentration(subQ->GetMass(), tissue.GetMatrixVolume(), concentration, m_Logger);
+    if(!GeneralMath::CalculateConcentration(subQ->GetMass(), tissue.GetMatrixVolume(), concentration, m_Logger))
+      Error("  Compartment : " + tissue.GetName() + ", Substance : " + sub.GetName());
     concentration_ug_Per_mL = concentration.GetValue(MassPerVolumeUnit::ug_Per_mL);
   }
   else
@@ -1086,6 +1088,7 @@ void PulseSubstances::SetSubstanceConcentration(SESubstance& sub, const std::vec
     subQ = cmpt->GetSubstanceQuantity(sub);
     subQ->GetConcentration().Set(concentration);
     subQ->Balance(BalanceLiquidBy::Concentration);
+    //std::cout << sub.GetName() << " " << subQ->GetMolarity(AmountPerVolumeUnit::mmol_Per_L) <<"\n";
   }
 }
 void PulseSubstances::SetSubstanceConcentration(SESubstance& sub, const std::vector<SETissueCompartment*>& cmpts, const SEScalarMassPerVolume& concentration)
@@ -1139,6 +1142,7 @@ void PulseSubstances::SetSubstanceMolarity(SESubstance& sub, const std::vector<S
     subQ = itr.second->GetSubstanceQuantity(sub);
     subQ->GetMolarity().Set(molarity);
     subQ->Balance(BalanceLiquidBy::Molarity);
+    //std::cout << sub.GetName() << " " << subQ->GetConcentration(MassPerVolumeUnit::ug_Per_L) <<"\n";
   }
   for (auto itr : m_data.GetCompartments().GetIntracellularFluid())
   {
@@ -1155,6 +1159,7 @@ void PulseSubstances::SetSubstanceMolarity(SESubstance& sub, const std::vector<S
     subQ = itr.second->GetSubstanceQuantity(sub);
     subQ->GetMolarity().Set(extracellular);
     subQ->Balance(BalanceLiquidBy::Molarity);
+    //std::cout << sub.GetName() << subQ->GetConcentration(MassPerVolumeUnit::mg_Per_dL) << " mg/dL \n";
   }
   for (auto itr : m_data.GetCompartments().GetIntracellularFluid())
   {

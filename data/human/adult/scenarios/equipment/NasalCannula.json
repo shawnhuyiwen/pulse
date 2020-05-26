@@ -374,13 +374,6 @@
         "Precision": 2
       },
       "Category": "Physiology",
-      "PropertyName": "ChymeAbsorptionRate",
-      "Unit": "mL/min"
-    }, {
-      "DecimalFormat": {
-        "Precision": 2
-      },
-      "Category": "Physiology",
       "PropertyName": "StomachContents-Carbohydrate",
       "Unit": "g"
     }, {

@@ -337,7 +337,7 @@
       "Unit": "mmHg"
     }, {
       "DecimalFormat": {
-        "Precision": 2
+        "Precision": 4
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "RightTubules",
@@ -346,7 +346,7 @@
       "Unit": "g/L"
     }, {
       "DecimalFormat": {
-        "Precision": 2
+        "Precision": 4
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LeftTubules",

@@ -68,82 +68,6 @@ protected:
   SEAutoSerialization*       m_AutoSerialization;
   eSwitch                    m_WritePatientBaselineFile;
 
-  ////////////////////
-  /** Baroreceptors */
-  ////////////////////
-public:
-  virtual bool HasResponseSlope() const;
-  virtual SEScalar& GetResponseSlope();
-  virtual double GetResponseSlope() const;
-
-  virtual bool HasHeartRateDistributedTimeDelay() const;
-  virtual SEScalarTime& GetHeartRateDistributedTimeDelay();
-  virtual double GetHeartRateDistributedTimeDelay(const TimeUnit& unit) const;
-
-  virtual bool HasHeartElastanceDistributedTimeDelay() const;
-  virtual SEScalarTime& GetHeartElastanceDistributedTimeDelay();
-  virtual double GetHeartElastanceDistributedTimeDelay(const TimeUnit& unit) const;
-
-  virtual bool HasSystemicResistanceDistributedTimeDelay() const;
-  virtual SEScalarTime& GetSystemicResistanceDistributedTimeDelay();
-  virtual double GetSystemicResistanceDistributedTimeDelay(const TimeUnit& unit) const;
-
-  virtual bool HasVenousComplianceDistributedTimeDelay() const;
-  virtual SEScalarTime& GetVenousComplianceDistributedTimeDelay();
-  virtual double GetVenousComplianceDistributedTimeDelay(const TimeUnit& unit) const;
-
-  virtual bool HasNormalizedHeartRateIntercept() const;
-  virtual SEScalar& GetNormalizedHeartRateIntercept();
-  virtual double GetNormalizedHeartRateIntercept() const;
-
-  virtual bool HasNormalizedHeartRateSympatheticSlope() const;
-  virtual SEScalar& GetNormalizedHeartRateSympatheticSlope();
-  virtual double GetNormalizedHeartRateSympatheticSlope() const;
-
-  virtual bool HasNormalizedHeartRateParasympatheticSlope() const;
-  virtual SEScalar& GetNormalizedHeartRateParasympatheticSlope();
-  virtual double GetNormalizedHeartRateParasympatheticSlope() const;
-
-  virtual bool HasNormalizedHeartElastanceIntercept() const;
-  virtual SEScalar& GetNormalizedHeartElastanceIntercept();
-  virtual double GetNormalizedHeartElastanceIntercept() const;
-
-  virtual bool HasNormalizedHeartElastanceSympatheticSlope() const;
-  virtual SEScalar& GetNormalizedHeartElastanceSympatheticSlope();
-  virtual double GetNormalizedHeartElastanceSympatheticSlope() const;
-
-  virtual bool HasNormalizedResistanceIntercept() const;
-  virtual SEScalar& GetNormalizedResistanceIntercept();
-  virtual double GetNormalizedResistanceIntercept() const;
-
-  virtual bool HasNormalizedResistanceSympatheticSlope() const;
-  virtual SEScalar& GetNormalizedResistanceSympatheticSlope();
-  virtual double GetNormalizedResistanceSympatheticSlope() const;
-
-  virtual bool HasNormalizedComplianceIntercept() const;
-  virtual SEScalar& GetNormalizedComplianceIntercept();
-  virtual double GetNormalizedComplianceIntercept() const;
-
-  virtual bool HasNormalizedComplianceParasympatheticSlope() const;
-  virtual SEScalar& GetNormalizedComplianceParasympatheticSlope();
-  virtual double GetNormalizedComplianceParasympatheticSlope() const;
-
-protected:
-  SEScalar*             m_ResponseSlope;
-  SEScalarTime*         m_HeartRateDistributedTimeDelay;
-  SEScalarTime*         m_HeartElastanceDistributedTimeDelay;
-  SEScalarTime*         m_SystemicResistanceDistributedTimeDelay;
-  SEScalarTime*         m_VenousComplianceDistributedTimeDelay;
-  SEScalar*             m_NormalizedHeartRateIntercept;
-  SEScalar*             m_NormalizedHeartRateSympatheticSlope;
-  SEScalar*             m_NormalizedHeartRateParasympatheticSlope;
-  SEScalar*             m_NormalizedHeartElastanceIntercept;
-  SEScalar*             m_NormalizedHeartElastanceSympatheticSlope;
-  SEScalar*             m_NormalizedResistanceIntercept;
-  SEScalar*             m_NormalizedResistanceSympatheticSlope;
-  SEScalar*             m_NormalizedComplianceIntercept;
-  SEScalar*             m_NormalizedComplianceParasympatheticSlope;
-
   //////////////////////
   /** Blood Chemistry */
   //////////////////////
@@ -452,17 +376,90 @@ protected:
   /** Nervous */
   /////////////
 public:
+  virtual eSwitch GetBaroreceptorFeedback() const { return m_BaroreceptorFeedback; }
+  virtual void SetBaroreceptorFeedback(eSwitch s) { m_BaroreceptorFeedback = (s == eSwitch::NullSwitch) ? eSwitch::On : s; }
 
-  virtual bool IsNervousFeedbackEnabled() const { return m_NervousFeedbackEnabled == eSwitch::On; }
-  virtual void EnableNervousFeedback(eSwitch s) { m_NervousFeedbackEnabled = (s == eSwitch::NullSwitch) ? eSwitch::On : s; }
-protected:
+  virtual eSwitch GetChemoreceptorFeedback() const { return m_ChemoreceptorFeedback; }
+  virtual void SetChemoreceptorFeedback(eSwitch s) { m_ChemoreceptorFeedback = (s == eSwitch::NullSwitch) ? eSwitch::On : s; }
+
+  virtual bool HasHeartElastanceDistributedTimeDelay() const;
+  virtual SEScalarTime& GetHeartElastanceDistributedTimeDelay();
+  virtual double GetHeartElastanceDistributedTimeDelay(const TimeUnit& unit) const;
+
+  virtual bool HasHeartRateDistributedTimeDelay() const;
+  virtual SEScalarTime& GetHeartRateDistributedTimeDelay();
+  virtual double GetHeartRateDistributedTimeDelay(const TimeUnit& unit) const;
+
+  virtual bool HasNormalizedHeartRateIntercept() const;
+  virtual SEScalar& GetNormalizedHeartRateIntercept();
+  virtual double GetNormalizedHeartRateIntercept() const;
+
+  virtual bool HasNormalizedHeartRateSympatheticSlope() const;
+  virtual SEScalar& GetNormalizedHeartRateSympatheticSlope();
+  virtual double GetNormalizedHeartRateSympatheticSlope() const;
+
+  virtual bool HasNormalizedHeartRateParasympatheticSlope() const;
+  virtual SEScalar& GetNormalizedHeartRateParasympatheticSlope();
+  virtual double GetNormalizedHeartRateParasympatheticSlope() const;
+
+  virtual bool HasNormalizedHeartElastanceIntercept() const;
+  virtual SEScalar& GetNormalizedHeartElastanceIntercept();
+  virtual double GetNormalizedHeartElastanceIntercept() const;
+
+  virtual bool HasNormalizedHeartElastanceSympatheticSlope() const;
+  virtual SEScalar& GetNormalizedHeartElastanceSympatheticSlope();
+  virtual double GetNormalizedHeartElastanceSympatheticSlope() const;
+
+  virtual bool HasNormalizedResistanceIntercept() const;
+  virtual SEScalar& GetNormalizedResistanceIntercept();
+  virtual double GetNormalizedResistanceIntercept() const;
+
+  virtual bool HasNormalizedResistanceSympatheticSlope() const;
+  virtual SEScalar& GetNormalizedResistanceSympatheticSlope();
+  virtual double GetNormalizedResistanceSympatheticSlope() const;
+
+  virtual bool HasNormalizedComplianceIntercept() const;
+  virtual SEScalar& GetNormalizedComplianceIntercept();
+  virtual double GetNormalizedComplianceIntercept() const;
+
+  virtual bool HasNormalizedComplianceParasympatheticSlope() const;
+  virtual SEScalar& GetNormalizedComplianceParasympatheticSlope();
+  virtual double GetNormalizedComplianceParasympatheticSlope() const;
 
   virtual bool HasPupilDiameterBaseline() const;
   virtual SEScalarLength& GetPupilDiameterBaseline();
   virtual double GetPupilDiameterBaseline(const LengthUnit& unit) const;
+
+  virtual bool HasResponseSlope() const;
+  virtual SEScalar& GetResponseSlope();
+  virtual double GetResponseSlope() const;
+
+  virtual bool HasSystemicResistanceDistributedTimeDelay() const;
+  virtual SEScalarTime& GetSystemicResistanceDistributedTimeDelay();
+  virtual double GetSystemicResistanceDistributedTimeDelay(const TimeUnit& unit) const;
+
+  virtual bool HasVenousComplianceDistributedTimeDelay() const;
+  virtual SEScalarTime& GetVenousComplianceDistributedTimeDelay();
+  virtual double GetVenousComplianceDistributedTimeDelay(const TimeUnit& unit) const;
+
 protected:
-  eSwitch                   m_NervousFeedbackEnabled;
-  SEScalarLength*           m_PupilDiameterBaseline;
+  eSwitch         m_ChemoreceptorFeedback;
+  eSwitch         m_BaroreceptorFeedback;
+  SEScalarTime*   m_HeartElastanceDistributedTimeDelay;
+  SEScalarTime*   m_HeartRateDistributedTimeDelay;
+  SEScalar*       m_NormalizedHeartRateIntercept;
+  SEScalar*       m_NormalizedHeartRateSympatheticSlope;
+  SEScalar*       m_NormalizedHeartRateParasympatheticSlope;
+  SEScalar*       m_NormalizedHeartElastanceIntercept;
+  SEScalar*       m_NormalizedHeartElastanceSympatheticSlope;
+  SEScalar*       m_NormalizedResistanceIntercept;
+  SEScalar*       m_NormalizedResistanceSympatheticSlope;
+  SEScalar*       m_NormalizedComplianceIntercept;
+  SEScalar*       m_NormalizedComplianceParasympatheticSlope;
+  SEScalarLength* m_PupilDiameterBaseline;
+  SEScalar*       m_ResponseSlope;
+  SEScalarTime*   m_SystemicResistanceDistributedTimeDelay;
+  SEScalarTime*   m_VenousComplianceDistributedTimeDelay;
 
   ////////////
   /** Renal */

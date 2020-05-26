@@ -89,11 +89,12 @@ public:
 
   bool Equals(const SEScalar& to) const;
 
+  virtual std::string ToString() const;
   virtual void ToString(std::ostream &str) const;
 
   static double dNaN();
-  static bool IsNumber(double d);
   static unsigned long long int NaN;
+  static bool IsNumber(double d);
   static bool IsZero(double value, double limit);
   static bool IsValue(double target, double value);
 };
@@ -202,6 +203,7 @@ public:
   bool Equals(const SEScalar& to) const = delete;// Must provide a unit
   virtual bool Equals(const SEScalarQuantity<Unit>& to) const;
 
+  virtual std::string ToString() const;
   virtual void ToString(std::ostream &str) const;
 
 protected:
@@ -347,3 +349,4 @@ inline void IncrementOverride(SEScalarQuantity<Unit>& s, double value, const Uni
     double Get##name(const type##Unit& unit) const { return m_##name.GetValue(unit); } \
   protected: \
     SEScalar##type m_##name;
+
