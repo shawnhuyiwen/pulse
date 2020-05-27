@@ -141,32 +141,14 @@ namespace pulse {
   class CerebrospinalFluidCompartment
   {
   public:
-    DEFINE_STATIC_STRING_EX(SmallIntestine, SmallIntestineChyme);
+    DEFINE_STATIC_STRING(IntracranialSpace);
 
     static const std::vector<std::string>& GetValues()
     {
       ScopedMutex lock;
       if (_values.empty())
       {
-        _values.push_back(SmallIntestine);
-      }
-      return _values;
-    }
-  protected:
-    static std::vector<std::string> _values;
-  };
-
-  class CerebrospinalFluidLink
-  {
-  public:
-    DEFINE_STATIC_STRING(SmallIntestineChymeToVasculature);
-
-    static const std::vector<std::string>& GetValues()
-    {
-      ScopedMutex lock;
-      if (_values.empty())
-      {
-        _values.push_back(SmallIntestineChymeToVasculature);
+        _values.push_back(IntracranialSpace);
       }
       return _values;
     }

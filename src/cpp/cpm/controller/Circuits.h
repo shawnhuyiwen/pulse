@@ -115,19 +115,17 @@ namespace pulse {
   // Cerebrospinal Fluid Circuit Enums //
   ///////////////////////////////////////
 
-  // TODO Rachel
   class CerebrospinalFluidNode
   {
   public:
-    DEFINE_STATIC_STRING(SmallIntestineC1);
+    DEFINE_STATIC_STRING(IntracranialSpace);
   };
 
   class CerebrospinalFluidPath
   {
   public:
-    DEFINE_STATIC_STRING(SmallIntestineC1ToSmallIntestine1);
-    DEFINE_STATIC_STRING(GroundToSmallIntestineC1);
-    DEFINE_STATIC_STRING(GutT1ToGround);
+    DEFINE_STATIC_STRING(IntracranialSpaceToGround);
+    DEFINE_STATIC_STRING(GroundToIntracranialSpace);
   };
 
   ///////////////////////////

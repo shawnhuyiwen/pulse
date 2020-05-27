@@ -3998,35 +3998,28 @@ void PulseController::SetupCerebrospinalFluid()
 
   SEFluidCircuitNode* Ground = cCombinedCardiovascular.GetNode(pulse::CardiovascularNode::Ground);
 
-  SEFluidCircuitNode& SmallIntestineC1 = cCombinedCardiovascular.CreateNode(pulse::CerebrospinalFluidNode::SmallIntestineC1);
-  SmallIntestineC1.GetPressure().SetValue(0, PressureUnit::mmHg);
-  SmallIntestineC1.GetVolumeBaseline().SetValue(10, VolumeUnit::mL);
+  //Initialize these values based on height/weight
+  SEFluidCircuitNode& IntracranialSpace = cCombinedCardiovascular.CreateNode(pulse::CerebrospinalFluidNode::IntracranialSpace);
+  IntracranialSpace.GetPressure().SetValue(1.0, PressureUnit::mmHg);
+  IntracranialSpace.GetVolumeBaseline().SetValue(10.0, VolumeUnit::mL);
 
-  SEFluidCircuitNode* SmallIntestine1 = cCombinedCardiovascular.GetNode(pulse::CardiovascularNode::SmallIntestine1);
-  SEFluidCircuitNode* Ground = cCombinedCardiovascular.GetNode(pulse::CardiovascularNode::Ground);
+  SEFluidCircuitNode* Brain = cCombinedCardiovascular.GetNode(pulse::CardiovascularNode::Brain1);
 
-  SEFluidCircuitPath& SmallIntestineC1ToSmallIntestine1 = cCombinedCardiovascular.CreatePath(SmallIntestineC1, *SmallIntestine1, pulse::CerebrospinalFluidPath::SmallIntestineC1ToSmallIntestine1);
-  SmallIntestineC1ToSmallIntestine1.GetFlowSourceBaseline().SetValue(0, VolumePerTimeUnit::mL_Per_min);
-  SEFluidCircuitPath& GroundToSmallIntestineC1 = cCombinedCardiovascular.CreatePath(*Ground, SmallIntestineC1, pulse::CerebrospinalFluidPath::GroundToSmallIntestineC1);
+  SEFluidCircuitPath& IntracranialSpaceToGround = cCardiovascular.CreatePath(IntracranialSpace, *Ground, pulse::CerebrospinalFluidPath::IntracranialSpaceToGround);
+  SEFluidCircuitPath& GroundToIntracranialSpace = cCardiovascular.CreatePath(*Ground, IntracranialSpace, pulse::CerebrospinalFluidPath::GroundToIntracranialSpace);
+  GroundToIntracranialSpace.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);
 
-  SEFluidCircuitNode* GutT1 = cCombinedCardiovascular.GetNode(pulse::TissueNode::GutT1);
-  SEFluidCircuitPath& GutT1ToGround = cCombinedCardiovascular.CreatePath(*GutT1, *Ground, pulse::CerebrospinalFluidPath::GutT1ToGround);
-  GutT1ToGround.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);
+  IntracranialSpaceToGround.GetComplianceBaseline().SetValue(100.0, VolumePerPressureUnit::mL_Per_mmHg);
 
   cCombinedCardiovascular.SetNextAndCurrentFromBaselines();
   cCombinedCardiovascular.StateChange();
 
   // Compartment
-  SELiquidCompartment& cSmallIntestine = m_Compartments->CreateLiquidCompartment(pulse::CerebrospinalFluidCompartment::SmallIntestine);
-  cSmallIntestine.MapNode(SmallIntestineC1);
-
-  SELiquidCompartment* vSmallIntestine = m_Compartments->GetLiquidCompartment(pulse::VascularCompartment::SmallIntestine);
-  SELiquidCompartmentLink& lSmallIntestineChymeToVasculature = m_Compartments->CreateLiquidLink(cSmallIntestine, *vSmallIntestine, pulse::CerebrospinalFluidLink::SmallIntestineChymeToVasculature);
-  lSmallIntestineChymeToVasculature.MapPath(SmallIntestineC1ToSmallIntestine1);
+  SELiquidCompartment& cIntracranialSpace = m_Compartments->CreateLiquidCompartment(pulse::CerebrospinalFluidCompartment::IntracranialSpace);
+  cIntracranialSpace.MapNode(IntracranialSpace);
 
   SELiquidCompartmentGraph& gCombinedCardiovascular = m_Compartments->GetActiveCardiovascularGraph();
-  gCombinedCardiovascular.AddCompartment(cSmallIntestine);
-  gCombinedCardiovascular.AddLink(lSmallIntestineChymeToVasculature);
+  gCombinedCardiovascular.AddCompartment(cIntracranialSpace);
   gCombinedCardiovascular.StateChange();
 }
 
