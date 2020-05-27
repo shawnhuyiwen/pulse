@@ -1769,10 +1769,12 @@ void PulseController::SetupCardiovascular()
   Aorta1ToBrain1.GetResistanceBaseline().SetValue(systemicResistanceModifier*ResistanceBrain, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
   SEFluidCircuitPath& Brain1ToGround = cCardiovascular.CreatePath(Brain1, Ground, pulse::CardiovascularPath::Brain1ToGround);
   Brain1ToGround.GetComplianceBaseline().SetValue(0.0, VolumePerPressureUnit::mL_Per_mmHg);
+  /*SEFluidCircuitPath& GroundToBrain1 = cCardiovascular.CreatePath(Ground, Brain1, pulse::CardiovascularPath::GroundToBrain1);
+  GroundToBrain1.GetPressureSourceBaseline().SetValue(1.0, PressureUnit::mmHg);*/
   SEFluidCircuitPath& Brain1ToBrain2 = cCardiovascular.CreatePath(Brain1, Brain2, pulse::CardiovascularPath::Brain1ToBrain2);
   Brain1ToBrain2.GetResistanceBaseline().SetValue(systemicResistanceModifier*ResistanceBrainVenous, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
   SEFluidCircuitPath& Brain2ToVenaCava = cCardiovascular.CreatePath(Brain2, VenaCava, pulse::CardiovascularPath::Brain2ToVenaCava);
-
+  
   SEFluidCircuitPath& Aorta1ToBone1 = cCardiovascular.CreatePath(Aorta1, Bone1, pulse::CardiovascularPath::Aorta1ToBone1);
   Aorta1ToBone1.GetResistanceBaseline().SetValue(systemicResistanceModifier*ResistanceBone, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
   SEFluidCircuitPath& Bone1ToGround = cCardiovascular.CreatePath(Bone1, Ground, pulse::CardiovascularPath::Bone1ToGround);
@@ -4002,13 +4004,11 @@ void PulseController::SetupCerebrospinalFluid()
   IntracranialSpace.GetPressure().SetValue(1.0, PressureUnit::mmHg);
   IntracranialSpace.GetVolumeBaseline().SetValue(10.0, VolumeUnit::mL);
 
-  SEFluidCircuitNode* Brain = cCombinedCardiovascular.GetNode(pulse::CardiovascularNode::Brain1);
-
   SEFluidCircuitPath& IntracranialSpaceToGround = cCombinedCardiovascular.CreatePath(IntracranialSpace, *Ground, pulse::CerebrospinalFluidPath::IntracranialSpaceToGround);
   IntracranialSpaceToGround.GetComplianceBaseline().SetValue(100.0, VolumePerPressureUnit::mL_Per_mmHg);
   SEFluidCircuitPath& GroundToIntracranialSpace = cCombinedCardiovascular.CreatePath(*Ground, IntracranialSpace, pulse::CerebrospinalFluidPath::GroundToIntracranialSpace);
   GroundToIntracranialSpace.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);
-
+  
   cCombinedCardiovascular.SetNextAndCurrentFromBaselines();
   cCombinedCardiovascular.StateChange();
 

@@ -4,6 +4,10 @@
 #pragma once
 #include "PulsePhysiologySystems.h"
 #include "system/physiology/SENervousSystem.h"
+class SEFluidCircuitNode;
+class SEFluidCircuitPath;
+class SEFluidCircuit;
+
 /**
  * @brief 
  * The nervous class holds models of the peripheral and central nervous system. Currently, on the baroreceptor reflex is modeled.
@@ -39,6 +43,7 @@ protected:
   void CheckBrainStatus();
   void ChemoreceptorFeedback();
   void SetPupilEffects();
+  void CerebralSpinalFluidUpdates();
 
   // Serializable member variables (Set in Initialize and in schema)
   bool   m_BaroreceptorFeedbackStatus;
@@ -53,6 +58,10 @@ protected:
   double m_PreviousBloodVolume_mL;
   double m_TotalSympatheticFraction;
 
+  //SERIALIZE THESE AARON - should be system values
+  double m_CSFAbsorptionRate_mLPermin;
+  double m_CSFProductionRate_mlPermin;
+
   // Stateless member variable (Set in SetUp())
   double m_dt_s;
   // Configuration fractions representing the amount by which each quantity can change due to feedback;
@@ -65,4 +74,8 @@ protected:
   double m_NormalizedAlphaCompliance;
   double m_NormalizedAlphaResistance;
   double m_NormalizedBetaHeartRate;
+
+  SEFluidCircuitNode* m_IntracranialSpace;
+  SEFluidCircuitPath* m_CSFProductAbsorptionPath;
+  SEFluidCircuitPath* m_CSFToBrain;
 };

@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "physiology/Nervous.h"
 #include "PulseConfiguration.h"
+#include "controller/Circuits.h"
 // Actions
 #include "engine/SEActionManager.h"
 #include "engine/SEPatientActionCollection.h"
@@ -17,6 +18,7 @@
 #include "system/physiology/SEDrugSystem.h"
 // CDM
 #include "engine/SEEventManager.h"
+#include "circuit/fluid/SEFluidCircuit.h"
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarPressurePerVolume.h"
@@ -83,6 +85,15 @@ void Nervous::Initialize()
   m_BaroreceptorSaturationStatus = false;
   m_BaroreceptorSaturationTime_s = 0.0;
   m_BaroreceptorEffectivenessParameter = 1.0;
+
+  //CSF circuit
+  m_IntracranialSpace = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetNode(pulse::CerebrospinalFluidNode::IntracranialSpace);
+  m_CSFProductAbsorptionPath = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(pulse::CerebrospinalFluidPath::GroundToIntracranialSpace);
+  m_CSFToBrain = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(pulse::CardiovascularPath::GroundToBrain1);
+  
+  m_CSFAbsorptionRate_mLPermin = 0;
+  m_CSFProductionRate_mlPermin = 0;
+
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -143,6 +154,8 @@ void Nervous::PreProcess()
     BaroreceptorFeedback();
   if(m_ChemoreceptorFeedback ==eSwitch::On)
     ChemoreceptorFeedback();
+  //CerebralSpinalFluidUpdates();
+
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -172,6 +185,28 @@ void Nervous::ComputeExposedModelParameters()
 //--------------------------------------------------------------------------------------------------
 void Nervous::PostProcess(bool solve_and_transport)
 {
+
+}
+
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// The CSF pressure application function calculates the pressure applied to the brain due to CSF pressure.
+///
+/// \details
+/// The pressure applied to the brain is dictated by the pressure in the intranial space.
+//--------------------------------------------------------------------------------------------------
+void Nervous::CerebralSpinalFluidUpdates()
+{
+    //Update CSF Production and Absorption Rates
+    m_CSFProductAbsorptionPath->GetNextFlowSource().SetValue(m_CSFAbsorptionRate_mLPermin - m_CSFProductionRate_mlPermin, VolumePerTimeUnit::mL_Per_min);
+    
+    double intracranialPressure_mmHg = m_IntracranialSpace->GetPressure(PressureUnit::mmHg);
+
+    double pressureResponseFraction = 1.0; //Tuning the pressure applied to the brain - figure this out
+
+    //Set the pressure on the brain based on the intracranial pressure
+    //could do this by setting a pressure source or could alter the brain vascular compliance/resistance
+    m_CSFToBrain->GetNextPressureSource().SetValue(pressureResponseFraction * intracranialPressure_mmHg, PressureUnit::mmHg);
 
 }
 
