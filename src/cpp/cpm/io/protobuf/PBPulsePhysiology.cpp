@@ -317,8 +317,8 @@ void PBPulsePhysiology::Serialize(const Hepatic& src, PULSE_BIND::HepaticData& d
 void PBPulsePhysiology::Load(const PULSE_BIND::NervousData& src, Nervous& dst)
 {
   dst.Clear();
-  dst.SetUp();
   PBPulsePhysiology::Serialize(src, dst);
+  dst.SetUp();
 }
 void PBPulsePhysiology::Serialize(const PULSE_BIND::NervousData& src, Nervous& dst)
 {
