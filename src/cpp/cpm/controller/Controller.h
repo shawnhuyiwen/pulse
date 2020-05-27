@@ -225,6 +225,7 @@ protected:
   virtual void SetupCardiovascular();
   virtual void SetupRenal();
   virtual void SetupTissue();
+  virtual void SetupCerebrospinalFluid();
   virtual void SetupGastrointestinal();
   virtual void SetupRespiratory();
   virtual void SetupAnesthesiaMachine();

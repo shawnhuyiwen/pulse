@@ -376,6 +376,9 @@ protected:
   /** Nervous */
   /////////////
 public:
+  virtual bool IsCerebrospinalFluidEnabled() const { return m_CerebrospinalFluidEnabled == eSwitch::On; }
+  virtual void EnableCerebrospinalFluid(eSwitch s) { m_CerebrospinalFluidEnabled = (s == eSwitch::NullSwitch) ? eSwitch::On : s; }
+
   virtual eSwitch GetBaroreceptorFeedback() const { return m_BaroreceptorFeedback; }
   virtual void SetBaroreceptorFeedback(eSwitch s) { m_BaroreceptorFeedback = (s == eSwitch::NullSwitch) ? eSwitch::On : s; }
 
@@ -443,6 +446,7 @@ public:
   virtual double GetVenousComplianceDistributedTimeDelay(const TimeUnit& unit) const;
 
 protected:
+  eSwitch         m_CerebrospinalFluidEnabled;
   eSwitch         m_ChemoreceptorFeedback;
   eSwitch         m_BaroreceptorFeedback;
   SEScalarTime*   m_HeartElastanceDistributedTimeDelay;

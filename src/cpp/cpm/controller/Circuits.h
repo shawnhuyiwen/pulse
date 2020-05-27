@@ -111,6 +111,25 @@ namespace pulse {
     DEFINE_STATIC_STRING(ExternalTemperature);
   };
 
+  ///////////////////////////////////////
+  // Cerebrospinal Fluid Circuit Enums //
+  ///////////////////////////////////////
+
+  // TODO Rachel
+  class CerebrospinalFluidNode
+  {
+  public:
+    DEFINE_STATIC_STRING(SmallIntestineC1);
+  };
+
+  class CerebrospinalFluidPath
+  {
+  public:
+    DEFINE_STATIC_STRING(SmallIntestineC1ToSmallIntestine1);
+    DEFINE_STATIC_STRING(GroundToSmallIntestineC1);
+    DEFINE_STATIC_STRING(GutT1ToGround);
+  };
+
   ///////////////////////////
   // Chyme Circuit Enums //
   ///////////////////////////
@@ -129,6 +148,9 @@ namespace pulse {
     DEFINE_STATIC_STRING(GutT1ToGround);
   };
 
+  ////////////////////////////////
+  // Respiratoruy Circuit Enums //
+  ////////////////////////////////
 
   class RespiratoryNode
   {

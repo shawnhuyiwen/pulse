@@ -33,7 +33,8 @@ int main(int argc, char* argv[])
       //peTest.CardiovascularCircuitAndTransportTest(peDir);
       //peTest.CardiovascularAndRenalCircuitAndTransportTest(peDir);
       //peTest.CardiovascularAndTissueCircuitAndTransportTest(peDir);
-      //peTest.CardiovascularTissueAndRenalCircuitAndTransportTest(peDir);
+      peTest.CardiovascularAndCerebrospinalFluidCircuitAndTransportTest(peDir);
+      peTest.FullCardiovascularCircuitAndTransportTest(peDir);
       //peTest.CardiovascularBloodGasesTest(peDir);
       //peTest.TuneCardiovascularCircuitTest(peDir);
 
@@ -45,7 +46,7 @@ int main(int argc, char* argv[])
 
       //peTest.RespiratoryCircuitAndTransportTest(peDir);
       //peTest.RespiratoryDriverTest(peDir);
-      peTest.AnesthesiaMachineCircuitAndTransportTest(peDir);
+      //peTest.AnesthesiaMachineCircuitAndTransportTest(peDir);
       //peTest.RespiratoryWithAnesthesiaMachineCircuitAndTransportTest(peDir);
       //peTest.RespiratoryWithInhalerCircuitAndTransportTest(peDir); 
       //peTest.RespiratoryWithMechanicalVentilatorCircuitAndTransportTest(peDir);
