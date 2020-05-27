@@ -3993,7 +3993,6 @@ void PulseController::SetupCerebrospinalFluid()
 {
   // TODO Rachel
   Info("Setting Up Cerebrospinal Fluid");
-  SEFluidCircuit& cCardiovascular = m_Circuits->GetCardiovascularCircuit();
   SEFluidCircuit& cCombinedCardiovascular = m_Circuits->GetActiveCardiovascularCircuit();
 
   SEFluidCircuitNode* Ground = cCombinedCardiovascular.GetNode(pulse::CardiovascularNode::Ground);
@@ -4005,11 +4004,10 @@ void PulseController::SetupCerebrospinalFluid()
 
   SEFluidCircuitNode* Brain = cCombinedCardiovascular.GetNode(pulse::CardiovascularNode::Brain1);
 
-  SEFluidCircuitPath& IntracranialSpaceToGround = cCardiovascular.CreatePath(IntracranialSpace, *Ground, pulse::CerebrospinalFluidPath::IntracranialSpaceToGround);
-  SEFluidCircuitPath& GroundToIntracranialSpace = cCardiovascular.CreatePath(*Ground, IntracranialSpace, pulse::CerebrospinalFluidPath::GroundToIntracranialSpace);
-  GroundToIntracranialSpace.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);
-
+  SEFluidCircuitPath& IntracranialSpaceToGround = cCombinedCardiovascular.CreatePath(IntracranialSpace, *Ground, pulse::CerebrospinalFluidPath::IntracranialSpaceToGround);
   IntracranialSpaceToGround.GetComplianceBaseline().SetValue(100.0, VolumePerPressureUnit::mL_Per_mmHg);
+  SEFluidCircuitPath& GroundToIntracranialSpace = cCombinedCardiovascular.CreatePath(*Ground, IntracranialSpace, pulse::CerebrospinalFluidPath::GroundToIntracranialSpace);
+  GroundToIntracranialSpace.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);
 
   cCombinedCardiovascular.SetNextAndCurrentFromBaselines();
   cCombinedCardiovascular.StateChange();
