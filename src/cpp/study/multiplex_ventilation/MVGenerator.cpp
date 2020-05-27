@@ -245,7 +245,7 @@ bool MVGenerator::GenerateStabilizedPatient(pulse::study::multiplex_ventilation:
   auto AortaCO2 = engine->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta)->GetSubstanceQuantity(*engine->GetSubstanceManager().GetSubstance("CarbonDioxide"));
 
   pData.set_airwayflow_l_per_min(engine->GetRespiratorySystem()->GetInspiratoryFlow(VolumePerTimeUnit::L_Per_min));
-  pData.set_airwaypressure_cmh2o(engine->GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Mouth)->GetPressure(PressureUnit::cmH2O));
+  pData.set_airwaypressure_cmh2o(engine->GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Airway)->GetPressure(PressureUnit::cmH2O));
   pData.set_alveolararterialgradient_mmhg(engine->GetRespiratorySystem()->GetAlveolarArterialGradient(PressureUnit::mmHg));
   pData.set_arterialcarbondioxidepartialpressure_mmhg(AortaCO2->GetPartialPressure(PressureUnit::mmHg));
   pData.set_arterialoxygenpartialpressure_mmhg(AortaO2->GetPartialPressure(PressureUnit::mmHg));

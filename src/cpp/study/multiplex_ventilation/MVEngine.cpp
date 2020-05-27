@@ -555,7 +555,7 @@ bool MVEngine::GetSimulationState(pulse::study::multiplex_ventilation::bind::Sim
     multiVentilation->set_fio2(pc->GetMechanicalVentilator().GetFractionInspiredGas(pc->GetSubstances().GetO2()).GetFractionAmount().GetValue());
     // Write out all the vitals
     multiVentilation->set_airwayflow_l_per_min(pc->GetRespiratory().GetInspiratoryFlow(VolumePerTimeUnit::L_Per_min));
-    multiVentilation->set_airwaypressure_cmh2o(pc->GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Mouth)->GetPressure(PressureUnit::cmH2O));
+    multiVentilation->set_airwaypressure_cmh2o(pc->GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Airway)->GetPressure(PressureUnit::cmH2O));
     multiVentilation->set_alveolararterialgradient_mmhg(pc->GetRespiratory().GetAlveolarArterialGradient(PressureUnit::mmHg));
     multiVentilation->set_arterialcarbondioxidepartialpressure_mmhg(m_AortaCO2s[p]->GetPartialPressure(PressureUnit::mmHg));
     multiVentilation->set_arterialoxygenpartialpressure_mmhg(m_AortaO2s[p]->GetPartialPressure(PressureUnit::mmHg));
@@ -635,14 +635,14 @@ void MVEngine::TrackData(SEEngineTracker& trkr, const std::string& csv_filename)
   trkr.GetDataRequestManager().CreatePhysiologyDataRequest("TransrespiratoryPressure", PressureUnit::cmH2O);
 
 
-  trkr.GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::PulmonaryCompartment::Mouth, "Pressure", PressureUnit::cmH2O);
+  trkr.GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::PulmonaryCompartment::Airway, "Pressure", PressureUnit::cmH2O);
 
   SESubstance* O2 = trkr.GetSubstanceManager().GetSubstance("Oxygen");
   SESubstance* CO2 = trkr.GetSubstanceManager().GetSubstance("CarbonDioxide");
   trkr.GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, *O2, "PartialPressure", PressureUnit::mmHg);
   trkr.GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, *CO2, "PartialPressure", PressureUnit::mmHg);
-  trkr.GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Mouth, *O2, "PartialPressure", PressureUnit::mmHg);
-  trkr.GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Mouth, *CO2, "PartialPressure", PressureUnit::mmHg);
+  trkr.GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Airway, *O2, "PartialPressure", PressureUnit::mmHg);
+  trkr.GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Airway, *CO2, "PartialPressure", PressureUnit::mmHg);
   trkr.GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::LeftAlveoli, *O2, "PartialPressure", PressureUnit::mmHg);
   trkr.GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::LeftAlveoli, *CO2, "PartialPressure", PressureUnit::mmHg);
   trkr.GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::RightAlveoli, *O2, "PartialPressure", PressureUnit::mmHg);

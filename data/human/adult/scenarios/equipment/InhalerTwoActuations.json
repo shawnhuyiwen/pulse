@@ -463,7 +463,7 @@
         "Precision": 4
       },
       "Category": "LiquidCompartment",
-      "CompartmentName": "Mouth",
+      "CompartmentName": "Airway",
       "SubstanceName": "Albuterol",
       "PropertyName": "Concentration",
       "Unit": "ug/L"
@@ -517,7 +517,7 @@
         "Precision": 4
       },
       "Category": "LiquidCompartment",
-      "CompartmentName": "Mouth",
+      "CompartmentName": "Airway",
       "SubstanceName": "Albuterol",
       "PropertyName": "MassDeposited",
       "Unit": "ug"

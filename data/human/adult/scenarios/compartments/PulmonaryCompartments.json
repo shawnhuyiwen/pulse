@@ -80,35 +80,35 @@
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
-      "CompartmentName": "Mouth",
+      "CompartmentName": "Airway",
       "PropertyName": "InFlow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
-      "CompartmentName": "Mouth",
+      "CompartmentName": "Airway",
       "PropertyName": "OutFlow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
-      "CompartmentName": "Mouth",
+      "CompartmentName": "Airway",
       "PropertyName": "Pressure",
       "Unit": "mmHg"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
-      "CompartmentName": "Mouth",
+      "CompartmentName": "Airway",
       "PropertyName": "Volume",
       "Unit": "mL"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
-      "CompartmentName": "Mouth",
+      "CompartmentName": "Airway",
       "SubstanceName": "Oxygen",
       "PropertyName": "Volume",
       "Unit": "mL"
@@ -117,14 +117,14 @@
         "Precision": 3
       },
       "Category": "GasCompartment",
-      "CompartmentName": "Mouth",
+      "CompartmentName": "Airway",
       "SubstanceName": "Oxygen",
       "PropertyName": "VolumeFraction"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
-      "CompartmentName": "Mouth",
+      "CompartmentName": "Airway",
       "SubstanceName": "Oxygen",
       "PropertyName": "PartialPressure",
       "Unit": "mmHg"
@@ -132,7 +132,7 @@
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
-      "CompartmentName": "Mouth",
+      "CompartmentName": "Airway",
       "SubstanceName": "CarbonDioxide",
       "PropertyName": "Volume",
       "Unit": "mL"
@@ -141,14 +141,14 @@
         "Precision": 4
       },
       "Category": "GasCompartment",
-      "CompartmentName": "Mouth",
+      "CompartmentName": "Airway",
       "SubstanceName": "CarbonDioxide",
       "PropertyName": "VolumeFraction"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
-      "CompartmentName": "Mouth",
+      "CompartmentName": "Airway",
       "SubstanceName": "CarbonDioxide",
       "PropertyName": "PartialPressure",
       "Unit": "mmHg"
@@ -156,7 +156,7 @@
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
-      "CompartmentName": "Mouth",
+      "CompartmentName": "Airway",
       "SubstanceName": "Nitrogen",
       "PropertyName": "Volume",
       "Unit": "mL"
@@ -165,14 +165,14 @@
         "Precision": 3
       },
       "Category": "GasCompartment",
-      "CompartmentName": "Mouth",
+      "CompartmentName": "Airway",
       "SubstanceName": "Nitrogen",
       "PropertyName": "VolumeFraction"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
-      "CompartmentName": "Mouth",
+      "CompartmentName": "Airway",
       "SubstanceName": "Nitrogen",
       "PropertyName": "PartialPressure",
       "Unit": "mmHg"
