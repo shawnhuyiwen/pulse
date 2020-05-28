@@ -156,30 +156,24 @@ bool SARunner::RunSimulationUntilStable(std::string const& outDir, pulse::study:
     return false;
 
   // No logging to console (when threaded)
-  pulse->GetLogger()->LogToConsole(true);
+  pulse->GetLogger()->LogToConsole(false);
   // Setup data requests
-  pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("ArterialPressure", PressureUnit::mmHg);
   pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
-  pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::L_Per_min);
-  pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CentralVenousPressure", PressureUnit::mmHg);
-  pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CerebralBloodFlow", VolumePerTimeUnit::L_Per_min);
-  pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CerebralPerfusionPressure", PressureUnit::mmHg);
+  pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
   pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
   pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartEjectionFraction");
   pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
   pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartStrokeVolume", VolumeUnit::mL);
-  pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("IntracranialPressure", PressureUnit::mmHg);
+  pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialCarbonDioxidePartialPressure", PressureUnit::mmHg);
   pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
-  pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryArterialPressure", PressureUnit::mmHg);
-  pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryCapillariesWedgePressure", PressureUnit::mmHg);
   pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryDiastolicArterialPressure", PressureUnit::mmHg);
   pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryMeanArterialPressure", PressureUnit::mmHg);
-  pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryMeanCapillaryFlow", VolumePerTimeUnit::L_Per_min);
+  pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryMeanCapillaryFlow", VolumePerTimeUnit::mL_Per_min);
   pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonarySystolicArterialPressure", PressureUnit::mmHg);
   pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
   pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystemicVascularResistance", PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-  pulse->GetEngineTracker()->GetDataRequestManager().SetResultsFilename(outDir+"/"+cdm::to_string(sim.id())+" - "+sim.name()+".csv");
-  pulse->GetEngineTracker()->SetupRequests();
+
+  pulse->GetEngineTracker()->GetDataRequestManager().SetResultsFilename(outDir + "/" + cdm::to_string(sim.id()) + " - " + sim.name() + ".csv");
 
   // Serialize Overrides
   SEOverrides overrides;
@@ -188,18 +182,29 @@ bool SARunner::RunSimulationUntilStable(std::string const& outDir, pulse::study:
   // But we know what we are doing, right?
   PulseController* pc = ((PulseEngine*)pulse.get())->GetController();
   SEFluidCircuit& cv = pc->GetCircuits().GetActiveCardiovascularCircuit();
+  SEFluidCircuit& resp = pc->GetCircuits().GetActiveRespiratoryCircuit();
+
   for (auto& sp : overrides.GetScalarProperties())
   {
-    SEFluidCircuitPath* path = cv.GetPath(sp.name);
+    SEFluidCircuitPath* path = nullptr;
+    if (resp.HasPath(sp.name))
+    {
+      path = resp.GetPath(sp.name);
+    }
+    else if (cv.HasPath(sp.name))
+    {
+      path = cv.GetPath(sp.name);
+    }
     if (path == nullptr)
     {
-      Error("No path found for override "+sp.name+", for "+cdm::to_string(sim.id())+" - "+sim.name());
+      Error("No path found for override " + sp.name + ", for " + cdm::to_string(sim.id()) + " - " + sim.name());
       return false;
     }
     if (PressureTimePerVolumeUnit::IsValidUnit(sp.unit))
     {// Assume its a resistor
       const PressureTimePerVolumeUnit& u = PressureTimePerVolumeUnit::GetCompoundUnit(sp.unit);
       path->GetResistance().ForceValue(sp.value, u);
+      path->GetNextResistance().ForceValue(sp.value, u);
       path->GetResistanceBaseline().ForceValue(sp.value, u);
     }
     else if (VolumePerPressureUnit::IsValidUnit(sp.unit))
@@ -216,8 +221,53 @@ bool SARunner::RunSimulationUntilStable(std::string const& outDir, pulse::study:
     }
   }
 
+  MyEventHandler myEventHandler;
+  pulse->GetEventManager().ForwardEvents(&myEventHandler);
+
+  std::unordered_map<std::string, RunningAverages> runningAverages = {
+  {"MeanAortaInFlow_mL_Per_s", {0, pulse::VascularCompartment::Aorta, VolumePerTimeUnit::mL_Per_s.GetString()}},
+  {"MeanArterialOxygenPartialPressure_mmHg", {0, pulse::VascularCompartment::Aorta, PressureUnit::mmHg.GetString()}},
+  {"MeanBoneVasculatureInFlow_mL_Per_s", {0, pulse::VascularCompartment::Bone, VolumePerTimeUnit::mL_Per_s.GetString()}},
+  {"MeanBrainVasculatureInFlow_mL_Per_s", {0, pulse::VascularCompartment::Brain, VolumePerTimeUnit::mL_Per_s.GetString()}},
+  {"MeanFatVasculatureInFlow_mL_Per_s", {0, pulse::VascularCompartment::Fat, VolumePerTimeUnit::mL_Per_s.GetString()}},
+  {"MeanKidneyVasculatureInFlow_mL_Per_s", {0, pulse::VascularCompartment::Kidneys, VolumePerTimeUnit::mL_Per_s.GetString()}},
+  {"MeanLargeIntestineVasculatureInFlow_mL_Per_s", {0, pulse::VascularCompartment::LargeIntestine, VolumePerTimeUnit::mL_Per_s.GetString()}},
+  {"MeanLeftArmVasculatureInFlow_mL_Per_s", {0, pulse::VascularCompartment::LeftArm, VolumePerTimeUnit::mL_Per_s.GetString()}},
+  {"MeanLeftHeartInFlow_mL_Per_s", {0, pulse::VascularCompartment::LeftHeart, VolumePerTimeUnit::mL_Per_s.GetString()}},
+  {"MeanLeftHeartPressure_mmHg", {0, pulse::VascularCompartment::LeftHeart, PressureUnit::mmHg.GetString()}},
+  {"MeanLeftKidneyVasculatureInFlow_mL_Per_s", {0, pulse::VascularCompartment::LeftKidney, VolumePerTimeUnit::mL_Per_s.GetString()}},
+  {"MeanLeftLegVasculatureInFlow_mL_Per_s", {0, pulse::VascularCompartment::LeftLeg, VolumePerTimeUnit::mL_Per_s.GetString()}},
+  {"MeanLeftPulmonaryArteriesInFlow_mL_Per_s", {0, pulse::VascularCompartment::LeftPulmonaryArteries, VolumePerTimeUnit::mL_Per_s.GetString()}},
+  {"MeanLeftPulmonaryCapillariesInFlow_mL_Per_s", {0, pulse::VascularCompartment::LeftPulmonaryCapillaries, VolumePerTimeUnit::mL_Per_s.GetString()}},
+  {"MeanLeftPulmonaryVeinsInFlow_mL_Per_s", {0, pulse::VascularCompartment::LeftPulmonaryVeins, VolumePerTimeUnit::mL_Per_s.GetString()}},
+  {"MeanLiverVasculatureInFlow_mL_Per_s", {0, pulse::VascularCompartment::Liver, VolumePerTimeUnit::mL_Per_s.GetString()}},
+  {"MeanMuscleVasculatureInFlow_mL_Per_s", {0, pulse::VascularCompartment::Muscle, VolumePerTimeUnit::mL_Per_s.GetString()}},
+  {"MeanMyocardiumVasculatureInFlow_mL_Per_s", {0, pulse::VascularCompartment::Myocardium, VolumePerTimeUnit::mL_Per_s.GetString()}},
+  {"MeanPulmonaryArteriesInFlow_mL_Per_s", {0, pulse::VascularCompartment::PulmonaryArteries, VolumePerTimeUnit::mL_Per_s.GetString()}},
+  {"MeanPulmonaryCapillariesPressure_mmHg", {0, pulse::VascularCompartment::PulmonaryCapillaries, PressureUnit::mmHg.GetString()}},
+  {"MeanPulmonaryVeinsInFlow_mL_Per_s", {0, pulse::VascularCompartment::PulmonaryVeins, VolumePerTimeUnit::mL_Per_s.GetString()}},
+  {"MeanPulmonaryVeinsPressure_mmHg", {0, pulse::VascularCompartment::PulmonaryVeins, PressureUnit::mmHg.GetString()}},
+  {"MeanRightArmVasculatureInFlow_mL_Per_s", {0, pulse::VascularCompartment::RightArm, VolumePerTimeUnit::mL_Per_s.GetString()}},
+  {"MeanRightHeartInFlow_mL_Per_s", {0, pulse::VascularCompartment::RightHeart, VolumePerTimeUnit::mL_Per_s.GetString()}},
+  {"MeanRightHeartPressure_mmHg", {0, pulse::VascularCompartment::RightHeart, PressureUnit::mmHg.GetString()}},
+  {"MeanRightKidneyVasculatureInFlow_mL_Per_s", {0, pulse::VascularCompartment::RightKidney, VolumePerTimeUnit::mL_Per_s.GetString()}},
+  {"MeanRightLegVasculatureInFlow_mL_Per_s", {0, pulse::VascularCompartment::RightLeg, VolumePerTimeUnit::mL_Per_s.GetString()}},
+  {"MeanRightPulmonaryArteriesInFlow_mL_Per_s", {0, pulse::VascularCompartment::RightPulmonaryArteries, VolumePerTimeUnit::mL_Per_s.GetString()}},
+  {"MeanRightPulmonaryCapillariesInFlow_mL_Per_s", {0, pulse::VascularCompartment::RightPulmonaryCapillaries, VolumePerTimeUnit::mL_Per_s.GetString()}},
+  {"MeanRightPulmonaryVeinsInFlow_mL_Per_s", {0, pulse::VascularCompartment::RightPulmonaryVeins, VolumePerTimeUnit::mL_Per_s.GetString()}},
+  {"MeanSkinVasculatureInFlow_mL_Per_s", {0, pulse::VascularCompartment::Skin, VolumePerTimeUnit::mL_Per_s.GetString()}},
+  {"MeanSmallIntestineVasculatureInFlow_mL_Per_s", {0, pulse::VascularCompartment::SmallIntestine, VolumePerTimeUnit::mL_Per_s.GetString()}},
+  {"MeanSplanchnicVasculatureInFlow_mL_Per_s", {0, pulse::VascularCompartment::Splanchnic, VolumePerTimeUnit::mL_Per_s.GetString()}},
+  {"MeanSpleenVasculatureInFlow_mL_Per_s", {0, pulse::VascularCompartment::Spleen, VolumePerTimeUnit::mL_Per_s.GetString()}},
+  {"MeanVenaCavaInFlow_mL_Per_s", {0, pulse::VascularCompartment::VenaCava, VolumePerTimeUnit::mL_Per_s.GetString()}}
+  };
+
+  ClearRunningAverages(runningAverages);
+  SampleRunningAverages(pulse, runningAverages);
+  SetRunningAverages(runningAverages);
+
   // Run until stable
-  // Let's shoot for with in 0.25% for 10s straight
+  // Let's shoot for within 0.25% for 10s straight
   double timeStep_s = pulse->GetTimeStep(TimeUnit::s);
   double stabPercentTolerance = 0.25;
   double stabCheckTime_s = 10.0;
@@ -233,93 +283,175 @@ bool SARunner::RunSimulationUntilStable(std::string const& outDir, pulse::study:
 
   bool stable = false;
   double stableTime_s = 0;
+
   while (!stable)
   {
-      pulse->AdvanceModelTime(timeStep_s, TimeUnit::s);
+    if (pulse->GetEventManager().IsEventActive(eEvent::StartOfCardiacCycle))
+    {
+      SetRunningAverages(runningAverages);
+      ClearRunningAverages(runningAverages);
+    }
+    SampleRunningAverages(pulse, runningAverages);
+    ProbeRunningAverages(pulse, runningAverages);
 
-      double currentMap_mmHg = pulse->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg);
-      double currentSystolic_mmHg = pulse->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg);
-      double currentDiastolic_mmHg = pulse->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg);
-      double currentCardiacOutput_mL_Per_min = pulse->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min);
-      //double currentMeanCVP_mmHg = pulse->GetCardiovascularSystem()->GetMeanCentralVenousPressure(PressureUnit::mmHg);
-      double currentBlood_mL = pulse->GetCardiovascularSystem()->GetBloodVolume(VolumeUnit::mL);
+    pulse->AdvanceModelTime(timeStep_s, TimeUnit::s);
 
-      pulse->GetEngineTracker()->TrackData(time_s);
-      time_s += timeStep_s;
-      stableTime_s += timeStep_s;
-      bool stableMAP = true;
-      if (GeneralMath::PercentDifference(previoustMap_mmHg, currentMap_mmHg) > stabPercentTolerance)
-      {
-          stableTime_s = 0; previoustMap_mmHg = currentMap_mmHg; stableMAP = false;
-      }
-      bool stableSystolic = true;
-      if (GeneralMath::PercentDifference(previousSystolic_mmHg, currentSystolic_mmHg) > stabPercentTolerance)
-      {
-          stableTime_s = 0; previousSystolic_mmHg = currentSystolic_mmHg; stableSystolic = false;
-      }
-      bool stableDiastolic = true;
-      if (GeneralMath::PercentDifference(previousDiastolic_mmHg, currentDiastolic_mmHg) > stabPercentTolerance)
-      {
-          stableTime_s = 0; previousDiastolic_mmHg = currentDiastolic_mmHg; stableDiastolic = false;
-      }
-      bool stableCO = true;
-      if (GeneralMath::PercentDifference(previousCardiacOutput_mL_Per_min, currentCardiacOutput_mL_Per_min) > stabPercentTolerance)
-      {
-          stableTime_s = 0; previousCardiacOutput_mL_Per_min = currentCardiacOutput_mL_Per_min; stableCO = false;
-      }
-      //bool stableMeanCVP = true;
-      //if (GeneralMath::PercentDifference(tgt_meanCVP_mmHg, meanCVP_mmHg) > 0.25)
-      //  { stableTime_s = 0; tgt_meanCVP_mmHg = meanCVP_mmHg; stableMeanCVP = false; }
-      bool stableBloodVol = true;
-      if (GeneralMath::PercentDifference(previousBlood_mL, currentBlood_mL) > stabPercentTolerance)
-      {
-          stableTime_s = 0; previousBlood_mL = currentBlood_mL; stableBloodVol = false;
-      }
+    double currentMap_mmHg = pulse->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg);
+    double currentSystolic_mmHg = pulse->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg);
+    double currentDiastolic_mmHg = pulse->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg);
+    double currentCardiacOutput_mL_Per_min = pulse->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min);
+    //double currentMeanCVP_mmHg = pulse->GetCardiovascularSystem()->GetMeanCentralVenousPressure(PressureUnit::mmHg);
+    double currentBlood_mL = pulse->GetCardiovascularSystem()->GetBloodVolume(VolumeUnit::mL);
 
-      if (stableTime_s > stabCheckTime_s)
-      {
-          stable = true;
-          pulse->GetLogger()->Info("We are stable at " + cdm::to_string(time_s));
-      }
-      if (time_s > maxTime_s)
-      {
-          pulse->GetLogger()->Info("Could not stabilize this configuration");
-          break;
-      }
+    // uncomment to get CSV output data
+    //pulse->GetEngineTracker()->TrackData(time_s);
+    time_s += timeStep_s;
+    stableTime_s += timeStep_s;
+    bool stableMAP = true;
+    if (GeneralMath::PercentDifference(previoustMap_mmHg, currentMap_mmHg) > stabPercentTolerance)
+    {
+      stableTime_s = 0; previoustMap_mmHg = currentMap_mmHg; stableMAP = false;
+    }
+    bool stableSystolic = true;
+    if (GeneralMath::PercentDifference(previousSystolic_mmHg, currentSystolic_mmHg) > stabPercentTolerance)
+    {
+      stableTime_s = 0; previousSystolic_mmHg = currentSystolic_mmHg; stableSystolic = false;
+    }
+    bool stableDiastolic = true;
+    if (GeneralMath::PercentDifference(previousDiastolic_mmHg, currentDiastolic_mmHg) > stabPercentTolerance)
+    {
+      stableTime_s = 0; previousDiastolic_mmHg = currentDiastolic_mmHg; stableDiastolic = false;
+    }
+    bool stableCO = true;
+    if (GeneralMath::PercentDifference(previousCardiacOutput_mL_Per_min, currentCardiacOutput_mL_Per_min) > stabPercentTolerance)
+    {
+      stableTime_s = 0; previousCardiacOutput_mL_Per_min = currentCardiacOutput_mL_Per_min; stableCO = false;
+    }
+    //bool stableMeanCVP = true;
+    //if (GeneralMath::PercentDifference(tgt_meanCVP_mmHg, meanCVP_mmHg) > 0.25)
+    //  { stableTime_s = 0; tgt_meanCVP_mmHg = meanCVP_mmHg; stableMeanCVP = false; }
+    bool stableBloodVol = true;
+    if (GeneralMath::PercentDifference(previousBlood_mL, currentBlood_mL) > stabPercentTolerance)
+    {
+      stableTime_s = 0; previousBlood_mL = currentBlood_mL; stableBloodVol = false;
+    }
+
+    if (stableTime_s > stabCheckTime_s)
+    {
+      stable = true;
+      pulse->GetLogger()->Info("We are stable at " + cdm::to_string(time_s));
+    }
+    if (time_s > maxTime_s)
+    {
+      pulse->GetLogger()->Info("Could not stabilize this configuration");
+      break;
+    }
   }
-
-  // TODO BF Check that what we overrided is still set to the same value
-  // This ensures the engine did not do anything to our resistances for some reason
-  // If they are different, we need to return false and look into why
 
   // Fill out our results
   sim.set_achievedstabilization(stable);
   sim.set_stabilizationtime_s(profiler.GetElapsedTime_s("Total"));
-  sim.set_arterialpressure_mmhg(pulse->GetCardiovascularSystem()->GetArterialPressure(PressureUnit::mmHg));
+  sim.set_totalsimulationtime_s(time_s);
+
   sim.set_bloodvolume_ml(pulse->GetCardiovascularSystem()->GetBloodVolume(VolumeUnit::mL));
-  sim.set_cardiacoutput_l_per_min(pulse->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::L_Per_min));
-  sim.set_centralvenouspressure_mmhg(pulse->GetCardiovascularSystem()->GetCentralVenousPressure(PressureUnit::mmHg));
-  sim.set_cerebralbloodflow_l_per_min(pulse->GetCardiovascularSystem()->GetCerebralBloodFlow(VolumePerTimeUnit::L_Per_min));
-  sim.set_cerebralperfusionpressure_mmhg(pulse->GetCardiovascularSystem()->GetCerebralPerfusionPressure(PressureUnit::mmHg));
+  sim.set_cardiacoutput_ml_per_min(pulse->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min));
   sim.set_diastolicarterialpressure_mmhg(pulse->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg));
   sim.set_heartejectionfraction(pulse->GetCardiovascularSystem()->GetHeartEjectionFraction());
-  sim.set_heartrate_bpm(pulse->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min));
   sim.set_heartstrokevolume_ml(pulse->GetCardiovascularSystem()->GetHeartStrokeVolume(VolumeUnit::mL));
-  sim.set_intracranialpressure_mmhg(pulse->GetCardiovascularSystem()->GetIntracranialPressure(PressureUnit::mmHg));
+  sim.set_meanaortainflow_ml_per_s(runningAverages.at("MeanAortaInFlow_mL_Per_s").instantaneousAverage); 
+  sim.set_meanarterialcarbondioxidepartialpressure_mmhg(pulse->GetCardiovascularSystem()->GetMeanArterialCarbonDioxidePartialPressure(PressureUnit::mmHg));
+  sim.set_meanarterialoxygenpartialpressure_mmhg(runningAverages.at("MeanArterialOxygenPartialPressure_mmHg").instantaneousAverage);
   sim.set_meanarterialpressure_mmhg(pulse->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg));
-  sim.set_pulmonaryarterialpressure_mmhg(pulse->GetCardiovascularSystem()->GetPulmonaryArterialPressure(PressureUnit::mmHg));
-  sim.set_pulmonarycapillarieswedgepressure_mmhg(pulse->GetCardiovascularSystem()->GetPulmonaryCapillariesWedgePressure(PressureUnit::mmHg));
+  sim.set_meanbonevasculatureinflow_ml_per_s(runningAverages.at("MeanBoneVasculatureInFlow_mL_Per_s").instantaneousAverage);
+  sim.set_meanbrainvasculatureinflow_ml_per_s(runningAverages.at("MeanBrainVasculatureInFlow_mL_Per_s").instantaneousAverage);
+  sim.set_meancentralvenouspressure_mmhg(pulse->GetCardiovascularSystem()->GetMeanCentralVenousPressure(PressureUnit::mmHg));
+  sim.set_meanfatvasculatureinflow_ml_per_s(runningAverages.at("MeanFatVasculatureInFlow_mL_Per_s").instantaneousAverage);
+  sim.set_meankidneyvasculatureinflow_ml_per_s(runningAverages.at("MeanKidneyVasculatureInFlow_mL_Per_s").instantaneousAverage);
+  sim.set_meanlargeintestinevasculatureinflow_ml_per_s(runningAverages.at("MeanLargeIntestineVasculatureInFlow_mL_Per_s").instantaneousAverage);
+  sim.set_meanleftarmvasculatureinflow_ml_per_s(runningAverages.at("MeanLeftArmVasculatureInFlow_mL_Per_s").instantaneousAverage);
+  sim.set_meanleftheartinflow_ml_per_s(runningAverages.at("MeanLeftHeartInFlow_mL_Per_s").instantaneousAverage);
+  sim.set_meanleftheartpressure_mmhg(runningAverages.at("MeanLeftHeartPressure_mmHg").instantaneousAverage);
+  sim.set_meanleftkidneyvasculatureinflow_ml_per_s(runningAverages.at("MeanLeftKidneyVasculatureInFlow_mL_Per_s").instantaneousAverage);
+  sim.set_meanleftlegvasculatureinflow_ml_per_s(runningAverages.at("MeanLeftLegVasculatureInFlow_mL_Per_s").instantaneousAverage);
+  sim.set_meanleftpulmonaryarteriesinflow_ml_per_s(runningAverages.at("MeanLeftPulmonaryArteriesInFlow_mL_Per_s").instantaneousAverage);
+  sim.set_meanleftpulmonarycapillariesinflow_ml_per_s(runningAverages.at("MeanLeftPulmonaryCapillariesInFlow_mL_Per_s").instantaneousAverage);
+  sim.set_meanleftpulmonaryveinsinflow_ml_per_s(runningAverages.at("MeanLeftPulmonaryVeinsInFlow_mL_Per_s").instantaneousAverage);
+  sim.set_meanlivervasculatureinflow_ml_per_s(runningAverages.at("MeanLiverVasculatureInFlow_mL_Per_s").instantaneousAverage);
+  sim.set_meanmusclevasculatureinflow_ml_per_s(runningAverages.at("MeanMuscleVasculatureInFlow_mL_Per_s").instantaneousAverage);
+  sim.set_meanmyocardiumvasculatureinflow_ml_per_s(runningAverages.at("MeanMyocardiumVasculatureInFlow_mL_Per_s").instantaneousAverage);
+  sim.set_meanpulmonaryarteriesinflow_ml_per_s(runningAverages.at("MeanPulmonaryArteriesInFlow_mL_Per_s").instantaneousAverage);
+  sim.set_meanpulmonarycapillariespressure_mmhg(runningAverages.at("MeanPulmonaryCapillariesPressure_mmHg").instantaneousAverage);
+  sim.set_meanpulmonaryveinsinflow_ml_per_s(runningAverages.at("MeanPulmonaryVeinsInFlow_mL_Per_s").instantaneousAverage);
+  sim.set_meanpulmonaryveinspressure_mmhg(runningAverages.at("MeanPulmonaryVeinsPressure_mmHg").instantaneousAverage);
+  sim.set_meanrightarmvasculatureinflow_ml_per_s(runningAverages.at("MeanRightArmVasculatureInFlow_mL_Per_s").instantaneousAverage);
+  sim.set_meanrightheartinflow_ml_per_s(runningAverages.at("MeanRightHeartInFlow_mL_Per_s").instantaneousAverage);
+  sim.set_meanrightheartpressure_mmhg(runningAverages.at("MeanRightHeartPressure_mmHg").instantaneousAverage);
+  sim.set_meanrightkidneyvasculatureinflow_ml_per_s(runningAverages.at("MeanRightKidneyVasculatureInFlow_mL_Per_s").instantaneousAverage);
+  sim.set_meanrightlegvasculatureinflow_ml_per_s(runningAverages.at("MeanRightLegVasculatureInFlow_mL_Per_s").instantaneousAverage);
+  sim.set_meanrightpulmonaryarteriesinflow_ml_per_s(runningAverages.at("MeanRightPulmonaryArteriesInFlow_mL_Per_s").instantaneousAverage);
+  sim.set_meanrightpulmonarycapillariesinflow_ml_per_s(runningAverages.at("MeanRightPulmonaryCapillariesInFlow_mL_Per_s").instantaneousAverage);
+  sim.set_meanrightpulmonaryveinsinflow_ml_per_s(runningAverages.at("MeanRightPulmonaryVeinsInFlow_mL_Per_s").instantaneousAverage);
+  sim.set_meanskinvasculatureinflow_ml_per_s(runningAverages.at("MeanSkinVasculatureInFlow_mL_Per_s").instantaneousAverage);
+  sim.set_meansmallintestinevasculatureinflow_ml_per_s(runningAverages.at("MeanSmallIntestineVasculatureInFlow_mL_Per_s").instantaneousAverage);
+  sim.set_meanspleenvasculatureinflow_ml_per_s(runningAverages.at("MeanSpleenVasculatureInFlow_mL_Per_s").instantaneousAverage);
+  sim.set_meanvenacavainflow_ml_per_s(runningAverages.at("MeanVenaCavaInFlow_mL_Per_s").instantaneousAverage);
   sim.set_pulmonarydiastolicarterialpressure_mmhg(pulse->GetCardiovascularSystem()->GetPulmonaryDiastolicArterialPressure(PressureUnit::mmHg));
   sim.set_pulmonarymeanarterialpressure_mmhg(pulse->GetCardiovascularSystem()->GetPulmonaryMeanArterialPressure(PressureUnit::mmHg));
-  sim.set_pulmonarymeancapillaryflow_l_per_min(pulse->GetCardiovascularSystem()->GetPulmonaryMeanCapillaryFlow(VolumePerTimeUnit::L_Per_min));
+  sim.set_pulmonarymeancapillaryflow_ml_per_s(pulse->GetCardiovascularSystem()->GetPulmonaryMeanCapillaryFlow(VolumePerTimeUnit::mL_Per_s));
   sim.set_pulmonarysystolicarterialpressure_mmhg(pulse->GetCardiovascularSystem()->GetPulmonarySystolicArterialPressure(PressureUnit::mmHg));
   sim.set_systolicarterialpressure_mmhg(pulse->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg));
   sim.set_systemicvascularresistance_mmhg_s_per_l(pulse->GetCardiovascularSystem()->GetSystemicVascularResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL));
-  
+
   pulse->GetLogger()->Info("It took " + cdm::to_string(sim.stabilizationtime_s()) + "s to run this simulation");
 
   profiler.Clear();
   return true;
+}
+
+void SARunner::ClearRunningAverages(std::unordered_map<std::string, RunningAverages> & runningAverages)
+{
+  for (auto &element : runningAverages)
+  {
+    element.second.runningAverage.Clear();
+  }
+}
+
+void SARunner::ProbeRunningAverages(std::unique_ptr<PhysiologyEngine>& pulse, std::unordered_map<std::string, RunningAverages>& runningAverages)
+{
+  for (auto &element : runningAverages)
+  {
+    pulse->GetEngineTracker()->GetDataTrack().Probe(element.first, element.second.instantaneousAverage);
+  }
+}
+
+void SARunner::SampleRunningAverages(std::unique_ptr<PhysiologyEngine>& pulse, std::unordered_map<std::string, RunningAverages>& runningAverages)
+{
+  for (auto &element : runningAverages)
+  {
+    // for now, deal with oxygen separately
+    if (element.first == "MeanArterialOxygenPartialPressure_mmHg")
+    {
+      SESubstance* O2 = pulse->GetEngineTracker()->GetSubstanceManager().GetSubstance("Oxygen");
+      auto AortaO2 = pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta)->GetSubstanceQuantity(*O2);
+      element.second.runningAverage.Sample(AortaO2->GetPartialPressure(PressureUnit::mmHg));
+    }
+    else if (PressureUnit::IsValidUnit(element.second.unit))
+    {
+      element.second.runningAverage.Sample(pulse->GetCompartments().GetLiquidCompartment(element.second.compartment)->GetPressure(element.second.unit));
+    }
+    else if (VolumePerTimeUnit::IsValidUnit(element.second.unit))
+    {
+      element.second.runningAverage.Sample(pulse->GetCompartments().GetLiquidCompartment(element.second.compartment)->GetInFlow(element.second.unit));
+    }
+  }
+}
+
+void SARunner::SetRunningAverages(std::unordered_map<std::string, RunningAverages>& runningAverages)
+{
+  for (auto &element : runningAverages)
+  {
+    element.second.instantaneousAverage = element.second.runningAverage.Value();
+  }
 }
 
 pulse::study::sensitivity_analysis::bind::SimulationData* SARunner::GetNextSimulation()

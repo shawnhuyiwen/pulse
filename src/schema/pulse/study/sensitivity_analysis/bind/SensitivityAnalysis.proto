@@ -10,39 +10,71 @@ message SimulationData
 {
   // A filename without an extension (can/should have path also)
   // The engine will use this to create multiple output files (*.log and *.csv)
-  uint32                       ID                                      = 1;
-  string                       Name                                    = 2;
-  pulse.cdm.bind.OverridesData Overrides                               = 3;
+  uint32                       ID                                     		 = 1;
+  string                       Name                                     	 = 2;
+  pulse.cdm.bind.OverridesData Overrides                              	     = 3;
   
-  double                       ArterialPressure_mmHg                   = 4;
-  double                       BloodVolume_mL                          = 5;
-  double                       CardiacOutput_L_Per_min                 = 6;
-  double                       CentralVenousPressure_mmHg              = 7;
-  double                       CerebralBloodFlow_L_Per_min             = 8;
-  double                       CerebralPerfusionPressure_mmHg          = 9;
-  double                       DiastolicArterialPressure_mmHg          = 10;
-  double                       HeartEjectionFraction                   = 11;
-  double                       HeartRate_bpm                           = 12;
-  double                       HeartStrokeVolume_mL                    = 13;
-  double                       IntracranialPressure_mmHg               = 14;
-  double                       MeanArterialPressure_mmHg               = 15;
-  double                       PulmonaryArterialPressure_mmHg          = 16;
-  double                       PulmonaryCapillariesWedgePressure_mmHg  = 17;
-  double                       PulmonaryDiastolicArterialPressure_mmHg = 18;
-  double                       PulmonaryMeanArterialPressure_mmHg      = 19;
-  double                       PulmonaryMeanCapillaryFlow_L_Per_min    = 20;
-  double                       PulmonarySystolicArterialPressure_mmHg  = 21;
-  double                       SystolicArterialPressure_mmHg           = 22;
-  double                       SystemicVascularResistance_mmHg_s_Per_L = 23;
+  // New mean variables
+  double                       MeanAortaInFlow_mL_Per_s                      = 4;
+  double                       MeanArterialOxygenPartialPressure_mmHg        = 5;
+  double                       MeanBoneVasculatureInFlow_mL_Per_s            = 6;
+  double                       MeanBrainVasculatureInFlow_mL_Per_s           = 7;
+  double                       MeanFatVasculatureInFlow_mL_Per_s             = 8;
+  double                       MeanKidneyVasculatureInFlow_mL_Per_s          = 9;
+  double                       MeanLargeIntestineVasculatureInFlow_mL_Per_s  = 10;
+  double                       MeanLeftArmVasculatureInFlow_mL_Per_s         = 11;
+  double                       MeanLeftHeartInFlow_mL_Per_s                  = 12;
+  double                       MeanLeftHeartPressure_mmHg                    = 13;
+  double                       MeanLeftKidneyVasculatureInFlow_mL_Per_s      = 14;
+  double                       MeanLeftLegVasculatureInFlow_mL_Per_s         = 15;
+  double                       MeanLeftPulmonaryArteriesInFlow_mL_Per_s      = 16;
+  double                       MeanLeftPulmonaryCapillariesInFlow_mL_Per_s   = 17;
+  double                       MeanLeftPulmonaryVeinsInFlow_mL_Per_s         = 18;
+  double                       MeanLiverVasculatureInFlow_mL_Per_s           = 19;
+  double                       MeanMuscleVasculatureInFlow_mL_Per_s          = 20;
+  double                       MeanMyocardiumVasculatureInFlow_mL_Per_s      = 21;
+  double                       MeanPulmonaryArteriesInFlow_mL_Per_s          = 22;
+  double                       MeanPulmonaryCapillariesPressure_mmHg         = 23;
+  double                       MeanPulmonaryVeinsInFlow_mL_Per_s             = 24;
+  double                       MeanPulmonaryVeinsPressure_mmHg               = 25;
+  double                       MeanRightArmVasculatureInFlow_mL_Per_s        = 26;
+  double                       MeanRightHeartInFlow_mL_Per_s                 = 27;
+  double                       MeanRightHeartPressure_mmHg                   = 28;
+  double                       MeanRightKidneyVasculatureInFlow_mL_Per_s     = 29;
+  double                       MeanRightLegVasculatureInFlow_mL_Per_s        = 30;
+  double                       MeanRightPulmonaryArteriesInFlow_mL_Per_s     = 31;
+  double                       MeanRightPulmonaryCapillariesInFlow_mL_Per_s  = 32;
+  double                       MeanRightPulmonaryVeinsInFlow_mL_Per_s        = 33;
+  double                       MeanSkinVasculatureInFlow_mL_Per_s            = 34;
+  double                       MeanSmallIntestineVasculatureInFlow_mL_Per_s  = 35;
+  double                       MeanSpleenVasculatureInFlow_mL_Per_s          = 36;
+  double                       MeanVenaCavaInFlow_mL_Per_s                   = 37;
+  
+  // System variables
+  double                       BloodVolume_mL                            	 = 38;
+  double                       CardiacOutput_mL_Per_min                		 = 39;
+  double                       DiastolicArterialPressure_mmHg         		 = 40;
+  double                       HeartEjectionFraction                  		 = 41;
+  double                       HeartStrokeVolume_mL                   		 = 42;
+  double                       MeanArterialCarbonDioxidePartialPressure_mmHg = 43;
+  double                       MeanArterialPressure_mmHg              		 = 44;
+  double                       MeanCentralVenousPressure_mmHg         		 = 45;
+  double                       PulmonaryDiastolicArterialPressure_mmHg 		 = 46;
+  double                       PulmonaryMeanArterialPressure_mmHg     		 = 47;
+  double                       PulmonaryMeanCapillaryFlow_mL_Per_s   		 = 48;
+  double                       PulmonarySystolicArterialPressure_mmHg 		 = 49;
+  double                       SystolicArterialPressure_mmHg          		 = 50;
+  double                       SystemicVascularResistance_mmHg_s_Per_L		 = 51;
 
   // Stabilization Information
-  bool                         AchievedStabilization                   = 24;
-  double                       StabilizationTime_s                     = 25;
+  bool                         AchievedStabilization                 		 = 52;
+  double                       StabilizationTime_s                    		 = 53;
+  double                       TotalSimulationTime_s                  		 = 54;
   
 }
 
 message SimulationListData
 {
-  string                       OutputRootDir                           = 1;
-  repeated SimulationData      Simulation                              = 2;
+  string                       OutputRootDir                          		 = 1;
+  repeated SimulationData      Simulation                             		 = 2;
 }

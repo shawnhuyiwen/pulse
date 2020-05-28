@@ -54,6 +54,7 @@
 #include "compartment/fluid/SELiquidCompartmentGraph.h"
 
 #include "utils/DataTrack.h"
+#include "properties/SERunningAverage.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEScalarMass.h"
@@ -72,6 +73,13 @@ PUSH_PROTO_WARNINGS()
 #include <google/protobuf/text_format.h>
 #include <google/protobuf/util/json_util.h>
 POP_PROTO_WARNINGS()
+
+class MyEventHandler : public SEEventHandler
+{
+public:
+  MyEventHandler() : SEEventHandler() {}
+  virtual void HandleEvent(eEvent type, bool active, const SEScalarTime* time = nullptr) {}
+};
 
 class SARunner : public Loggable
 {
@@ -104,4 +112,19 @@ protected:
   std::vector<std::thread>   m_Threads;
   pulse::study::sensitivity_analysis::bind::SimulationListData* m_SimulationList;
   pulse::study::sensitivity_analysis::bind::SimulationListData* m_SimulationResultsList;
+
+private:
+  // struct to hold new running average data
+  struct RunningAverages
+  {
+    double instantaneousAverage;
+    char const* compartment;
+    std::string unit;
+    SERunningAverage runningAverage;
+  };
+
+  void ClearRunningAverages(std::unordered_map<std::string, RunningAverages>& runningAverages);
+  void ProbeRunningAverages(std::unique_ptr<PhysiologyEngine>& pulse, std::unordered_map<std::string, RunningAverages>& runningAverages);
+  void SampleRunningAverages(std::unique_ptr<PhysiologyEngine>& pulse, std::unordered_map<std::string, RunningAverages>& runningAverages);
+  void SetRunningAverages(std::unordered_map<std::string, RunningAverages>& runningAverages);
 };
