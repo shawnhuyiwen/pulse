@@ -89,8 +89,9 @@ void Nervous::Initialize()
   //CSF circuit
   m_IntracranialSpace = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetNode(pulse::CerebrospinalFluidNode::IntracranialSpace);
   m_CSFProductAbsorptionPath = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(pulse::CerebrospinalFluidPath::GroundToIntracranialSpace);
-  m_CSFToBrain = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(pulse::CardiovascularPath::GroundToBrain1);
-  
+  m_BrainVasculatureCompliancePath = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(pulse::CardiovascularPath::Brain1ToGround);
+  m_BrainVasculatureResistancePath = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(pulse::CardiovascularPath::Brain1ToBrain2);
+
   m_CSFAbsorptionRate_mLPermin = 0;
   m_CSFProductionRate_mlPermin = 0;
 
@@ -202,11 +203,12 @@ void Nervous::CerebralSpinalFluidUpdates()
     
     double intracranialPressure_mmHg = m_IntracranialSpace->GetPressure(PressureUnit::mmHg);
 
-    double pressureResponseFraction = 1.0; //Tuning the pressure applied to the brain - figure this out
+    double pressureResponseFraction = 1.0; //Tuning the pressure applied to the brain - figure this out - may need one for compliance and one for resistance
 
     //Set the pressure on the brain based on the intracranial pressure
     //could do this by setting a pressure source or could alter the brain vascular compliance/resistance
-    m_CSFToBrain->GetNextPressureSource().SetValue(pressureResponseFraction * intracranialPressure_mmHg, PressureUnit::mmHg);
+    m_BrainVasculatureCompliancePath->GetNextCompliance().MultiplyValue(pressureResponseFraction * intracranialPressure_mmHg, VolumePerPressureUnit::mL_Per_mmHg);
+    m_BrainVasculatureResistancePath->GetNextResistance().MultiplyValue(pressureResponseFraction * intracranialPressure_mmHg, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
 
 }
 

@@ -77,5 +77,6 @@ protected:
 
   SEFluidCircuitNode* m_IntracranialSpace;
   SEFluidCircuitPath* m_CSFProductAbsorptionPath;
-  SEFluidCircuitPath* m_CSFToBrain;
+  SEFluidCircuitPath* m_BrainVasculatureCompliancePath;
+  SEFluidCircuitPath* m_BrainVasculatureResistancePath;
 };
