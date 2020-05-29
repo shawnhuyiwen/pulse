@@ -35,6 +35,8 @@ void PulseEngineTest::ReadScenarios(const std::string& rptDirectory)
   }
   run_config.close();
 
+  size_t num = 0;
+  size_t err = 0;
   SETestReport testReport(m_Logger);
   SETestSuite&  testSuite = testReport.CreateTestSuite();
   testSuite.SetName(testName);
@@ -63,19 +65,25 @@ void PulseEngineTest::ReadScenarios(const std::string& rptDirectory)
         Info(it->c_str());
         try
         {
+          num++;
           if (scenario.SerializeFromFile(*it, JSON))
           {
             if (!scenario.IsValid())
+            {
+              err++;
               testCase.AddFailure(*it + " is not a valid scenario!");
+            }
             // todo check to see that all compartment, substances, property names are valid
           }
           else
           {
+            err++;
             testCase.AddFailure(*it + " has failed to load!");
           }
         }
         catch (...)
         {
+          err++;
           testCase.AddFailure(*it + " has failed to load! unknown exception.");
         }
         testCase.GetDuration().SetValue(pTimer.GetElapsedTime_s("Case"), TimeUnit::s);
@@ -83,5 +91,6 @@ void PulseEngineTest::ReadScenarios(const std::string& rptDirectory)
       }
     }
   }
-  testReport.SerializeToFile(rptDirectory + "/" + testName + "Report.json",JSON);  
+  testReport.SerializeToFile(rptDirectory + "/" + testName + "Report.json",JSON);
+  m_Logger->Info("Opened "+std::to_string(num-err)+" of "+std::to_string(num)+" scenarios");
 }

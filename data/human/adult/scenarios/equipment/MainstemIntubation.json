@@ -1,11 +1,7 @@
 {
   "Name": "MainstemIntubation",
   "Description": "A patient is injected with succinylcholine and an endotracheal tube is inserted first in the right mainstem, then corrected, then in the left mainstem, then corrected once again.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json"
-    }
-  },
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": [{
       "DecimalFormat": {

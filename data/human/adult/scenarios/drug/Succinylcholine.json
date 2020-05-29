@@ -1,11 +1,7 @@
 {
   "Name": "Succinylcholine",
   "Description": "Inject standard patient with Succinylcholine.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json"
-    }
-  },
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": [{
       "DecimalFormat": {

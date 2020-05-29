@@ -1,11 +1,7 @@
 {
   "Name": "CarbonMonoxideThreshold",
   "Description": "Exposure to carbon monoxide at 200ppm.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json"
-    }
-  },
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": [{
       "DecimalFormat": {

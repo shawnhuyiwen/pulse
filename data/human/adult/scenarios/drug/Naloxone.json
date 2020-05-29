@@ -1,11 +1,7 @@
 {
   "Name": "Naloxone",
   "Description": "Inject standard patient with Naloxone.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json"
-    }
-  },
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": [{
       "DecimalFormat": {

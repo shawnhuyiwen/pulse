@@ -1,10 +1,8 @@
 {
   "Name": "Joel",
   "Description": "Airway obstruction occurs at the beginning of the scenario. The airway obstruction is removed. A Ventilator mask is placed on Joel and oxygen is supplied from an anesthesia machine. Etomidate and succinylcholine are administered and the Ventilator mask is removed. An endotracheal tube is placed.",
-  "StartType": {
-    "PatientConfiguration": {
+  "PatientConfiguration": {
       "PatientFile": "Joel.json"
-    }
   },
   "DataRequestManager": {
     "DataRequest": [{

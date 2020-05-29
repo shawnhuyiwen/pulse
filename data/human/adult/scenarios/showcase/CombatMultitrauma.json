@@ -1,11 +1,7 @@
 {
   "Name": "CombatMultitrauma",
   "Description": "Showcase scenario: Soldier with closed tension pneumothorax and severe bleeding.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "Soldier.json"
-    }
-  },
+    "PatientConfiguration": { "PatientFile": "Soldier.json" },
   "DataRequestManager": {
     "DataRequest": [{
       "DecimalFormat": {

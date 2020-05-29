@@ -1,11 +1,7 @@
 {
   "Name": "OxygenWallPressureLoss",
   "Description": "Patient is injected with succinylcholine prior to the administration of oxygen via a Ventilator mask. The primary oxygen feed tank loses begins to lose pressure. The patient is injected with additional succinylcholine and the oxygen feed is switched to the secondary tank.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json"
-    }
-  },
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": [{
       "DecimalFormat": {
