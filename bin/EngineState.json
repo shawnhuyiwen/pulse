@@ -1,7 +1,7 @@
 {
   "Name":"BasicStandard",
   "Description":"Basic scenario measuring patient vitals with no insults or interventions",
-  "StartType":{"EngineStateFile":"./states/StandardMale@0s.json"},
+  "EngineStateFile":"./states/StandardMale@0s.json",
   "DataRequestManager": {"DataRequest":[
     {"DecimalFormat":{"Precision":1},"Category":"Patient",     "PropertyName":"Weight",                            "Unit":"kg"},
     

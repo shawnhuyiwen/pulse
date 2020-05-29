@@ -117,7 +117,8 @@ bool MVEngine::CreateEngine(pulse::study::multiplex_ventilation::bind::Simulatio
       {
         auto* soloVentilation = comparison.mutable_soloventilation();
         std::string state = soloVentilation->statefile();
-        pc = new PulseController(outDir + "multiplex_patient_" + to_string(p) + ".log", m_DataDir);
+        pc = new PulseController();
+        pc->GetLogger()->SetLogFile(outDir + "multiplex_patient_" + to_string(p) + ".log");
         if (!pc->SerializeFromFile(state, SerializationFormat::JSON))
         {
           Error("Unable to load file : " + state);
@@ -138,7 +139,8 @@ bool MVEngine::CreateEngine(pulse::study::multiplex_ventilation::bind::Simulatio
       {
         auto* multiVentilation = comparison.mutable_multiplexventilation();
 
-        pc = new PulseController(outDir + "multiplex_patient_" + to_string(p) + ".log", m_DataDir);
+        pc = new PulseController();
+        pc->GetLogger()->SetLogFile(outDir + "multiplex_patient_" + to_string(p) + ".log");
         if (!pc->SerializeFromFile(m_DataDir + "/states/StandardMale@0s.json", SerializationFormat::JSON))
         {
           Error("Unable to load file : StandardMale@0s.json");
@@ -690,7 +692,8 @@ bool MVEngine::RunSoloState(const std::string& stateFile, const std::string& res
   double timeStep_s = 0.02;
   double currentTime_s = 0;
 
-  PulseController pc(logFile);
+  PulseController pc;
+  pc.GetLogger()->SetLogFile(logFile);
   pc.SerializeFromFile(stateFile, SerializationFormat::JSON);
   MVEngine::TrackData(pc.GetEngineTracker(), dataFile);
   int count = (int)(duration_s / timeStep_s);

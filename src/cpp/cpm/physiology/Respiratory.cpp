@@ -949,7 +949,7 @@ void Respiratory::SupplementalOxygen()
       {
         flow_L_Per_min = 3.5;
         so->GetFlow().SetValue(flow_L_Per_min, VolumePerTimeUnit::L_Per_min);
-        Info("Supplemental oxygen flow not set. Using default value of " + std::to_string(flow_L_Per_min) + " L/min.");
+        Info("Supplemental oxygen flow not set. Using default value of " + cdm::to_string(flow_L_Per_min) + " L/min.");
       }
       RespirationCircuit = &m_data.GetCircuits().GetActiveRespiratoryCircuit();
       OxygenInlet = RespirationCircuit->GetPath(pulse::NasalCannulaPath::NasalCannulaOxygenInlet);
@@ -963,7 +963,7 @@ void Respiratory::SupplementalOxygen()
       {
         flow_L_Per_min = 10.0;
         so->GetFlow().SetValue(flow_L_Per_min, VolumePerTimeUnit::L_Per_min);
-        Info("Supplemental oxygen flow not set. Using default value of " + std::to_string(flow_L_Per_min) + " L/min.");
+        Info("Supplemental oxygen flow not set. Using default value of " + cdm::to_string(flow_L_Per_min) + " L/min.");
       }
       RespirationCircuit = &m_data.GetCircuits().GetActiveRespiratoryCircuit();
       OxygenInlet = RespirationCircuit->GetPath(pulse::NonRebreatherMaskPath::NonRebreatherMaskOxygenInlet);
@@ -977,7 +977,7 @@ void Respiratory::SupplementalOxygen()
       {
         flow_L_Per_min = 7.5;
         so->GetFlow().SetValue(flow_L_Per_min, VolumePerTimeUnit::L_Per_min);
-        Info("Supplemental oxygen flow not set. Using default value of " + std::to_string(flow_L_Per_min) + " L/min.");
+        Info("Supplemental oxygen flow not set. Using default value of " + cdm::to_string(flow_L_Per_min) + " L/min.");
       }
       RespirationCircuit = &m_data.GetCircuits().GetActiveRespiratoryCircuit();
       OxygenInlet = RespirationCircuit->GetPath(pulse::SimpleMaskPath::SimpleMaskOxygenInlet);

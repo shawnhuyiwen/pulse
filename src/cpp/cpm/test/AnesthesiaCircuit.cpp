@@ -49,7 +49,8 @@ void PulseEngineTest::AnesthesiaMachineCircuitAndTransportTest(RespiratoryConfig
   std::ofstream fileCircuit;
   std::ofstream fileGraph;
   
-  PulseController pc(sTestDirectory + "/AnesthesiaMachineCircuitAndTransportTest.log");
+  PulseController pc;
+  pc.GetLogger()->SetLogFile(sTestDirectory + "/AnesthesiaMachineCircuitAndTransportTest.log");
   SEPatient patient(pc.GetLogger());
   patient.SerializeFromFile("./patients/StandardMale.json", JSON);
   pc.SetupPatient(patient);

@@ -142,7 +142,8 @@ bool MVGenerator::GenerateStabilizedPatient(pulse::study::multiplex_ventilation:
     "_imp=" + cdm::to_string(pData.impairmentfraction());
 
   MakeDirectory(Dir::Solo + "/csv/");
-  auto engine = CreatePulseEngine(Dir::Solo + "/log/" + baseName + ".log");
+  auto engine = CreatePulseEngine();
+  engine->GetLogger()->SetLogFile(Dir::Solo + "/log/" + baseName + ".log");
   engine->SerializeFromFile("./states/StandardMale@0s.json", SerializationFormat::JSON);
   MVEngine::TrackData(*engine->GetEngineTracker(), Dir::Solo + "/csv/" + baseName + ".csv");
   engine->GetLogger()->LogToConsole(logToConsole);

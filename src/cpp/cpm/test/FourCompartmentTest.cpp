@@ -79,7 +79,7 @@ void PulseEngineTest::FourCompartmentTest(bool usingAcidBase, bool usingProducti
   {
     outputName = "/AcidBaseFiveCompartmentTestWithProductionConsumptionAndDiffusion";
   }
-  m_Logger->ResetLogFile(rptDirectory + outputName + ".log");
+  m_Logger->SetLogFile(rptDirectory + outputName + ".log");
   std::ofstream file;
   SELiquidTransporter txpt(VolumePerTimeUnit::mL_Per_s, VolumeUnit::mL, MassUnit::ug, MassPerVolumeUnit::ug_Per_mL, m_Logger);
   SEFluidCircuitCalculator calc(VolumePerPressureUnit::mL_Per_mmHg, VolumePerTimeUnit::mL_Per_s, PressureTimeSquaredPerVolumeUnit::mmHg_s2_Per_mL, PressureUnit::mmHg, VolumeUnit::mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL, m_Logger);

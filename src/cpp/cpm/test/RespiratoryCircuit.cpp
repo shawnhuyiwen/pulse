@@ -44,7 +44,8 @@ void PulseEngineTest::RespiratoryCircuitAndTransportTest(RespiratoryConfiguratio
   std::ofstream fileGraph;
   std::ofstream fAerosolGraph;
 
-  PulseController pc(sTestDirectory + "/RespiratoryCircuitAndTransportTest.log");
+  PulseController pc;
+  pc.GetLogger()->SetLogFile(sTestDirectory + "/RespiratoryCircuitAndTransportTest.log");
   SEPatient patient(pc.GetLogger());
   patient.SerializeFromFile("./patients/StandardMale.json", JSON);
   pc.SetupPatient(patient);
@@ -206,7 +207,8 @@ void PulseEngineTest::RespiratoryDriverTest(const std::string& sTestDirectory)
 {
   TimingProfile tmr;
   tmr.Start("Test");
-  PulseController pc(sTestDirectory + "/RespiratoryDriverTest.log");
+  PulseController pc;
+  pc.GetLogger()->SetLogFile(sTestDirectory + "/RespiratoryDriverTest.log");
   SEPatient patient(pc.GetLogger());
   patient.SerializeFromFile("./patients/StandardMale.json", JSON);
   pc.SetupPatient(patient);

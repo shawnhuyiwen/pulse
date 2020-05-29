@@ -28,14 +28,6 @@
 
 SECompartmentManager::SECompartmentManager(SESubstanceManager& subMgr) : Loggable(subMgr.GetLogger()), m_subMgr(subMgr)
 {
-  m_O2      = subMgr.GetSubstance("Oxygen");
-  m_CO2     = subMgr.GetSubstance("CarbonDioxide");
-  m_CO      = subMgr.GetSubstance("CarbonMonoxide");
-  m_Hb      = subMgr.GetSubstance("Hemoglobin");
-  m_HbO2    = subMgr.GetSubstance("Oxyhemoglobin");
-  m_HbCO2   = subMgr.GetSubstance("Carbaminohemoglobin");
-  m_HbO2CO2 = subMgr.GetSubstance("OxyCarbaminohemoglobin");
-  m_HbCO    = subMgr.GetSubstance("Carboxyhemoglobin");
   Clear();
 }
 SECompartmentManager::~SECompartmentManager()
@@ -43,8 +35,28 @@ SECompartmentManager::~SECompartmentManager()
   Clear();
 }
 
+void SECompartmentManager::Setup()
+{
+  m_O2      = m_subMgr.GetSubstance("Oxygen");
+  m_CO2     = m_subMgr.GetSubstance("CarbonDioxide");
+  m_CO      = m_subMgr.GetSubstance("CarbonMonoxide");
+  m_Hb      = m_subMgr.GetSubstance("Hemoglobin");
+  m_HbO2    = m_subMgr.GetSubstance("Oxyhemoglobin");
+  m_HbCO2   = m_subMgr.GetSubstance("Carbaminohemoglobin");
+  m_HbO2CO2 = m_subMgr.GetSubstance("OxyCarbaminohemoglobin");
+  m_HbCO    = m_subMgr.GetSubstance("Carboxyhemoglobin");
+}
+
 void SECompartmentManager::Clear()
 {
+  m_O2      = nullptr;
+  m_CO2     = nullptr;
+  m_CO      = nullptr;
+  m_Hb      = nullptr;
+  m_HbO2    = nullptr;
+  m_HbCO2   = nullptr;
+  m_HbO2CO2 = nullptr;
+  m_HbCO    = nullptr;
   DELETE_VECTOR(m_GasCompartments);
   m_GasName2Compartments.clear();
   m_GasLeafCompartments.clear();

@@ -40,23 +40,20 @@ public:
   double* requestedData = nullptr;
 };
 
-PulseEngineThunk::PulseEngineThunk(std::string const& logfile, bool cout_enabled, std::string const& data_dir) : SEEventHandler()
+PulseEngineThunk::PulseEngineThunk() : SEEventHandler()
 {
   data = new PulseEngineThunk::pimpl;
-  data->eng = std::unique_ptr<PulseEngine>((PulseEngine*)CreatePulseEngine(logfile, data_dir).release());
+  data->eng = std::unique_ptr<PulseEngine>((PulseEngine*)CreatePulseEngine().release());
   data->eng->GetLogger()->SetForward(this);
-  data->eng->GetLogger()->LogToConsole(cout_enabled);
 }
 PulseEngineThunk::~PulseEngineThunk()
 {
   delete data;
 }
 
-bool PulseEngineThunk::SerializeFromFile(std::string const& filename, std::string const& data_requests, SerializationFormat format, double sim_time_s)
+bool PulseEngineThunk::SerializeFromFile(std::string const& filename, std::string const& data_requests, SerializationFormat format)
 {
-  SEScalarTime simTime;
-  simTime.SetValue(sim_time_s, TimeUnit::s);
-  if (!data->eng->SerializeFromFile(filename, format, &simTime, nullptr))
+  if (!data->eng->SerializeFromFile(filename, format))
     return false;
   data->eng->GetEventManager().ForwardEvents(this);
 
@@ -84,11 +81,9 @@ bool PulseEngineThunk::SerializeToFile(std::string const& filename, Serializatio
 }
 
 
-bool PulseEngineThunk::SerializeFromString(std::string const& state, std::string const& data_requests, SerializationFormat format, double sim_time_s)
+bool PulseEngineThunk::SerializeFromString(std::string const& state, std::string const& data_requests, SerializationFormat format)
 {
-  SEScalarTime simTime;
-  simTime.SetValue(sim_time_s, TimeUnit::s);
-  if (!data->eng->SerializeFromString(state, format, &simTime, nullptr))
+  if (!data->eng->SerializeFromString(state, format))
     return false;
   data->eng->GetEventManager().ForwardEvents(this);
 
@@ -116,7 +111,7 @@ std::string PulseEngineThunk::SerializeToString(SerializationFormat format)
   return state;
 }
 
-bool PulseEngineThunk::InitializeEngine(std::string const& patient_configuration, std::string const& data_requests, SerializationFormat format)
+bool PulseEngineThunk::InitializeEngine(std::string const& patient_configuration, std::string const& data_requests, SerializationFormat format, std::string const& data_dir)
 {
   SEPatientConfiguration pc(data->eng->GetSubstanceManager());
   if (!pc.SerializeFromString(patient_configuration, format))
@@ -144,11 +139,18 @@ bool PulseEngineThunk::InitializeEngine(std::string const& patient_configuration
   return true;
 }
 
+void PulseEngineThunk::LogToConsole(bool b)
+{
+  data->eng->GetLogger()->LogToConsole(b);
+}
 void PulseEngineThunk::KeepLogMessages(bool keep)
 {
   data->keep_log_msgs = keep;
 }
-
+void PulseEngineThunk::SetLogFilename(std::string const& logfile)
+{
+  data->eng->GetLogger()->SetLogFile(logfile);
+}
 std::string PulseEngineThunk::PullLogMessages(SerializationFormat format)
 {
   std::string log_msgs;

@@ -48,7 +48,8 @@ void HowToRunScenario()
   // PulseEngines will always output log messages to stdout and a log file  
   // If you want this engine to write a log file, include the name 
   // of the log file. If nullptr is given, the engine will only output to the console
-  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowTo_RunScenario.log");
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
+  pe->GetLogger()->SetLogFile("./test_results/HowTo_RunScenario.log");
   pe->GetLogger()->Info("HowTo_RunScenario");
 
   // Let's do something everytime the engine advances
@@ -61,14 +62,14 @@ void HowToRunScenario()
   // If set to INFO, you will not recieve DEBUG, but everything else
   // If set to WARN, you will not recieve DEBUG and INFO, but everything else
   // You can specify which level you would like the engine to log
-  pe->GetLogger()->SetLogLevel(Logger::level::Info);
+  pe->GetLogger()->SetLogLevel(Logger::Level::Info);
 
   // You can forward logs as demonstrated in HowTo-EngineUse
 
   // Create a Scenario Executor
-  SEScenarioExec executor(*pe);
+  SEScenarioExec executor(pe->GetLogger());
   // Let's make a scenario (you could just point the executor to a scenario json file on disk as well)
-  SEScenario sce(pe->GetSubstanceManager());
+  SEScenario sce(pe->GetLogger());
   sce.SetName("HowToRunScenario");
   sce.SetDescription("Simple Scenario to demonstraight building a scenario by the CDM API");
   sce.GetPatientConfiguration().SetPatientFile("StandardMale.json");
@@ -92,5 +93,5 @@ void HowToRunScenario()
   adv.GetTime().SetValue(2, TimeUnit::min);
   sce.AddAction(adv);
 
-  executor.Execute(sce, "./HowTo-RunScenarioResults.csv");
+  executor.Execute(*pe, sce, "./HowTo-RunScenarioResults.csv");
 }

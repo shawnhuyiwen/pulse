@@ -19,7 +19,6 @@ public:
   SystemLoadTest(size_t tId) : thread_id(tId) {}
   virtual ~SystemLoadTest() = default;
 
-  std::stringstream ss;
   size_t thread_id;
   size_t engine_count = 4;
   std::thread thread;
@@ -33,9 +32,8 @@ public:
     do
     {
       // Make the engines to test
-      ss.str("");
-      ss << "Pulse_t" << thread_id << "_e" << engines.size() << ".log";
-      std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine(ss.str());
+      std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
+      pe->GetLogger()->SetLogFile("./test_results/Pulse_t"+std::to_string(thread_id)+"_of_"+std::to_string(engines.size())+".log");
       if (!pe->SerializeFromFile("./states/StandardMale@0s.json", JSON))
       {
         pe->GetLogger()->Error("Could not load state, check the error");

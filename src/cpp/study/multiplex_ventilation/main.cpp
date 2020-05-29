@@ -12,13 +12,13 @@ int main(int argc, char* argv[])
     //for (int i = 0; i < 2000; i++)
     //{
     //  std::cout << "Creating patient " << i << std::endl;
-    //  PulseController* pc = new PulseController("./test/multiplex_patient_" + std::to_string(i) + ".log", ".");
+    //  PulseController* pc = new PulseController("./test/multiplex_patient_" + cdm::to_string(i) + ".log", ".");
     //  if (!pc->SerializeFromFile("./test_results/multiplex_ventilation/solo_states/comp=0.01_peep=10_pip=55_imp=0.3_FiO2=0.21.json", SerializationFormat::JSON))
     //  {
     //    std::cerr << "Unable to load file " << std::endl;
     //    return 1;
     //  }
-    //  pc->GetEngineTracker().GetDataRequestManager().SetResultsFilename("./test/multiplex_patient_" + std::to_string(i) + ".csv");
+    //  pc->GetEngineTracker().GetDataRequestManager().SetResultsFilename("./test/multiplex_patient_" + cdm::to_string(i) + ".csv");
     //  pc->GetEngineTracker().GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryCompliance", VolumePerPressureUnit::L_Per_cmH2O);
     //  pc->GetEngineTracker().SetupRequests();
     //  pc->AdvanceModelTime();
