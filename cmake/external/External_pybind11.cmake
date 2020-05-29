@@ -5,8 +5,8 @@
 include(AddExternalProject)
 define_external_dirs_ex(pybind11)
 add_external_project_ex( pybind11
-  URL https://github.com/pybind/pybind11/archive/v2.4.3.tar.gz
-  URL_MD5 62254c40f89925bb894be421fe4cdef2
+  URL https://github.com/pybind/pybind11/archive/v2.5.0.zip
+  URL_MD5 dd28542bc9d676972e202482f55676e4
   CMAKE_CACHE_ARGS
     -DCMAKE_INSTALL_PREFIX:STRING=${pybind11_PREFIX}/install
     -DPYBIND11_TEST:BOOL=OFF 
