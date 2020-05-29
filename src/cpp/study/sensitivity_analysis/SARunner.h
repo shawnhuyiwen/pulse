@@ -74,13 +74,6 @@ PUSH_PROTO_WARNINGS()
 #include <google/protobuf/util/json_util.h>
 POP_PROTO_WARNINGS()
 
-class MyEventHandler : public SEEventHandler
-{
-public:
-  MyEventHandler() : SEEventHandler() {}
-  virtual void HandleEvent(eEvent type, bool active, const SEScalarTime* time = nullptr) {}
-};
-
 class SARunner : public Loggable
 {
 public:
@@ -117,14 +110,40 @@ private:
   // struct to hold new running average data
   struct RunningAverages
   {
-    double instantaneousAverage;
-    char const* compartment;
-    std::string unit;
+    RunningAverages(const SELiquidCompartment* c, const PressureUnit& u)
+    {
+      cmpt = c;
+      pUnit = &u;
+    }
+    RunningAverages(const SELiquidCompartment* c, const VolumePerTimeUnit& u)
+    {
+      cmpt = c;
+      fUnit = &u;
+    }
+    RunningAverages(const SELiquidSubstanceQuantity* sq, const PressureUnit& u)
+    {
+      subQ = sq;
+      pUnit = &u;
+    }
+    double instantaneousAverage=0.;
+    const SELiquidCompartment* cmpt = nullptr;
+    const SELiquidSubstanceQuantity* subQ = nullptr;
+    const PressureUnit* pUnit = nullptr;
+    const VolumePerTimeUnit* fUnit = nullptr;
     SERunningAverage runningAverage;
-  };
 
-  void ClearRunningAverages(std::unordered_map<std::string, RunningAverages>& runningAverages);
-  void ProbeRunningAverages(std::unique_ptr<PhysiologyEngine>& pulse, std::unordered_map<std::string, RunningAverages>& runningAverages);
-  void SampleRunningAverages(std::unique_ptr<PhysiologyEngine>& pulse, std::unordered_map<std::string, RunningAverages>& runningAverages);
-  void SetRunningAverages(std::unordered_map<std::string, RunningAverages>& runningAverages);
+    double Sample()
+    {
+      if (cmpt != nullptr)
+      {
+        if (fUnit != nullptr)
+          return runningAverage.Sample(cmpt->GetInFlow(*fUnit));
+        else if (pUnit != nullptr)
+          return runningAverage.Sample(cmpt->GetPressure(*pUnit));
+      }
+      else if(subQ != nullptr)
+        return runningAverage.Sample(subQ->GetPartialPressure(*pUnit));
+      return 0;// We should not get here
+    }
+  };
 };

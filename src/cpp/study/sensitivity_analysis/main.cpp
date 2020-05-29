@@ -24,9 +24,9 @@ int main(int argc, char* argv[])
     std::for_each(mode.begin(), mode.end(), [](char& c) { c = ::tolower(c); });
     if (mode == "single")
     {
-      SARunner sar("./test_results/sesitivity_analysis/SensitivityAnalysisRunner.log");
+      SARunner sar("./test_results/sensitivity_analysis/SensitivityAnalysisRunner.log");
       pulse::study::bind::sensitivity_analysis::SimulationListData simList;
-      simList.set_outputrootdir("./test_results/sesitivity_analysis/");
+      simList.set_outputrootdir("./test_results/sensitivity_analysis/");
 
       auto sim = simList.add_simulation();
       sim->set_id(42);
@@ -46,9 +46,9 @@ int main(int argc, char* argv[])
     }
     else if (mode == "gensimlist")
     {
-      SARunner sar("./test_results/sesitivity_analysis/SensitivityAnalysisRunner.log");
+      SARunner sar("./test_results/sensitivity_analysis/SensitivityAnalysisRunner.log");
       pulse::study::bind::sensitivity_analysis::SimulationListData simList;
-      simList.set_outputrootdir("./test_results/sesitivity_analysis");
+      simList.set_outputrootdir("./test_results/sensitivity_analysis");
 
       std::cout << "Generated " << simList.simulation_size() << " simulations" << std::endl;
       return !sar.Run(simList);
@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
         return 1;
       }
 
-      SARunner sar("./test_results/sesitivity_analysis/SensitivityAnalysisRunner.log");
+      SARunner sar("./test_results/sensitivity_analysis/SensitivityAnalysisRunner.log");
       sar.Run(argv[2], SerializationFormat::JSON);
     }
   }
