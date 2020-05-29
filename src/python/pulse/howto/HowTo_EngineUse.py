@@ -57,9 +57,7 @@ class local_log_fowrwad(ILoggerForward):
 
 def HowTo_UseEngine():
 
-    # We are telling Pulse to not create its own log file, and not to write log info to the console
-    # We will capture all log messages in our own logger and decide what to do with them
-    pulse = PulsePhysiologyEngine("", False)
+    pulse = PulsePhysiologyEngine()
 
     # Let's print out events from the engine
     pulse.set_event_handler(local_event_handler())
@@ -68,7 +66,19 @@ def HowTo_UseEngine():
     #  Passing the log_forward object to PulsePhysiologyEngine will allow you to control the logging of the engine.
     #  A pre-existing class has been used here,
     #  which forwards the logging to the Python console via the logging package.
+    # This is the recommended approach to logging
     pulse.set_log_listener(local_log_fowrwad())
+
+    # You can have pulse make a log file for you,
+    # Pulse will only write a log if you pass a filename
+    pulse.set_log_filename("./test_results/HowTo_EngineUse.py.log");
+
+    # You can also have Pulse write to the console (std::cout)
+    # By default this is off
+    pulse.log_to_console(True)
+
+    # By default, NOTHING is written to file/log/pulled to python
+    # You must explictly do one or more of the above to get log messages somewhere
 
     # Data Requests are used to get access to the hundreds of parameters available in Pulse
     # To learn more about Data Requests please look at the data request section here:
@@ -96,11 +106,14 @@ def HowTo_UseEngine():
     ]
     data_req_mgr = SEDataRequestManager(data_requests)
     # NOTE: If No data requests are being provided, Pulse will return the default vitals data
+    # In addition to getting this data back via this API
+    # You can have Pulse write the data you have requested to a CSV file
+    data_req_mgr.set_results_filename("./test_results/HowTo_EngineUse.py.csv")
 
     # There are several ways to initialize an engine to a patient
     start_type = eStartType.State
     if start_type is eStartType.State: # The engine is ready instantaneously
-        if not pulse.serialize_from_file("./states/Soldier@0s.json", data_req_mgr, eSerializationFormat.JSON, 0):
+        if not pulse.serialize_from_file("./states/Soldier@0s.json", data_req_mgr, eSerializationFormat.JSON):
             print("Unable to load initial state file")
             return
         # Stabilization will require the engine to run for several minutes
@@ -142,6 +155,7 @@ def HowTo_UseEngine():
         env.get_environmental_conditions().get_respiration_ambient_temperature().set_value(33, TemperatureUnit.C)
 
         # Initialize the engine with our configuration
+        # Optionally you can provide a data_dir root where Pulse will look for required data files
         if not pulse.initialize_engine(pc, data_req_mgr):
             print("Unable to load stabilize engine")
             return

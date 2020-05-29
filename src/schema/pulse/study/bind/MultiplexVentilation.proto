@@ -1,0 +1,84 @@
+syntax = "proto3";
+package pulse.study.multiplex_ventilation.bind;
+option java_package = "pulse.study.multiplex_ventilation.bind";
+option csharp_namespace = "pulse.study.multiplex_ventilation.bind";
+option optimize_for = SPEED;
+
+message PatientStateData
+{
+  uint32          ID                                        = 1;
+  string          StateFile                                 = 2;
+  // Initial Conditions
+  double          Compliance_mL_Per_cmH2O                   = 3;
+  double          Resistance_cmH2O_s_Per_L                  = 4;
+  double          ImpairmentFraction                        = 5;
+  // Ventilator Settings
+  double          RespirationRate_Per_min                   = 6;
+  double          IERatio                                   = 7;
+  double          PEEP_cmH2O                                = 8;
+  double          PIP_cmH2O                                 = 9;
+  double          FiO2                                      = 10;
+  // Vitals
+  double          AirwayFlow_L_Per_min                      = 11;
+  double          AirwayPressure_cmH2O                      = 12;
+  double          AlveolarArterialGradient_mmHg             = 13;
+  double          ArterialCarbonDioxidePartialPressure_mmHg = 14;
+  double          ArterialOxygenPartialPressure_mmHg        = 15;
+  double          CarricoIndex_mmHg                         = 16;
+  double          EndTidalCarbonDioxidePressure_mmHg        = 17;
+  double          IdealBodyWeight_kg                        = 18;
+  double          MeanAirwayPressure_cmH2O                  = 19;
+  double          OxygenationIndex                          = 20;
+  double          OxygenSaturation                          = 21;
+  double          OxygenSaturationIndex_mmHg                = 22;
+  double          SFRatio                                   = 23;
+  double          ShuntFraction                             = 24;
+  double          TidalVolume_mL                            = 25;
+  double          TotalLungVolume_mL                        = 26;
+  // Stabilization Information
+  bool            AchievedStabilization                     = 27;
+  double          OxygenSaturationStabilizationTrend        = 28;
+}
+
+message PatientStateListData
+{
+  repeated PatientStateData      Patients                   = 1;
+}
+
+message PatientComparisonData
+{
+  PatientStateData               SoloVentilation            = 1;
+  PatientStateData               MultiplexVentilation       = 2;
+}
+
+message LogData
+{
+  repeated string                Info                       = 1;
+  repeated string                Warning                    = 2;
+  repeated string                Error                      = 3;
+  repeated string                Fatal                      = 4;
+}
+
+message SimulationData
+{
+  // A filename without an extension (can/should have path also)
+  // The engine will use this to create multiple output files (*.log and *.csv)
+  uint32                         ID                         = 1;
+  uint32                         GroupID                    = 2;
+  string                         OutputBaseFilename         = 3;
+  bool                           AchievedStabilization      = 4;
+  double                         StabilizationTime_s        = 5;
+  double                         RespirationRate_Per_min    = 6;
+  double                         IERatio                    = 7;
+  double                         PIP_cmH2O                  = 8;
+  double                         PEEP_cmH2O                 = 9;
+  double                         FiO2                       = 10;
+  LogData                        Log                        = 11;
+  repeated PatientComparisonData PatientComparisons         = 12;
+}
+
+message SimulationListData
+{
+  string                         OutputRootDir              = 1;
+  repeated SimulationData        Simulations                = 2;
+}

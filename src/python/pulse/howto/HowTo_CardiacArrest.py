@@ -6,10 +6,12 @@ from pulse.cdm.patient_actions import SECardiacArrest, eSwitch
 from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
 
 def HowTo_CardiacArrest():
-    pulse = PulsePhysiologyEngine("pulse_cardiac_arrest.log", True)
+    pulse = PulsePhysiologyEngine()
+    pulse.set_log_filename("./test_results/pypulse_cardiac_arrest.log")
+    pulse.log_to_console(True)
 
     # NOTE: No data requests are being provided, so Pulse will return the default vitals data
-    if not pulse.serialize_from_file("./states/Soldier@0s.json", None, eSerializationFormat.JSON, 0):
+    if not pulse.serialize_from_file("./states/Soldier@0s.json", None, eSerializationFormat.JSON):
         print("Unable to load initial state file")
         return
 

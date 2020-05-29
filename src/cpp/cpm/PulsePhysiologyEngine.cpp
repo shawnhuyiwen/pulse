@@ -44,6 +44,7 @@ PulseEngineThunk::PulseEngineThunk() : SEEventHandler()
 {
   data = new PulseEngineThunk::pimpl;
   data->eng = std::unique_ptr<PulseEngine>((PulseEngine*)CreatePulseEngine().release());
+  data->eng->GetLogger()->LogToConsole(false);
   data->eng->GetLogger()->SetForward(this);
 }
 PulseEngineThunk::~PulseEngineThunk()

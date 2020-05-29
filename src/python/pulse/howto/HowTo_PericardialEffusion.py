@@ -7,7 +7,9 @@ from pulse.cdm.patient_actions import SEPericardialEffusion
 from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
 
 def HowTo_PericardalEffusion():
-    pulse = PulsePhysiologyEngine("pulse_PericardialEffusion.log")
+    pulse = PulsePhysiologyEngine()
+    pulse.set_log_filename("./test_results/pypulse_PericardialEffusion.log")
+    pulse.log_to_console(True)
 
     pc = SEPatientConfiguration()
     pc.set_patient_file("./patients/StandardMale.json")

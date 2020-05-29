@@ -69,11 +69,12 @@ bool PBPulseState::Serialize(const PULSE_BIND::StateData& src, PulseController& 
     dst.m_Substances->AddActiveSubstance(*sub);
   }
   // Load up our Compounds //
-  for (int i = 0; i < src.activecompound_size(); i++)
+  for (int i = 0; i < src.compound_size(); i++)
   {
     const CDM_BIND::SubstanceCompoundData& cmpdData = src.compound()[i];
     SESubstanceCompound* cmpd = new SESubstanceCompound(dst.GetLogger());
     PBSubstance::Load(cmpdData, *cmpd, *dst.m_Substances);
+    dst.m_Substances->AddCompound(*cmpd);
   }
   for (int i = 0; i < src.activecompound_size(); i++)
   {
