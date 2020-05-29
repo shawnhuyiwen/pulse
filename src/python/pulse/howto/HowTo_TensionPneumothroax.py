@@ -9,10 +9,12 @@ from pulse.cdm.patient_actions import SETensionPneumothorax, \
 from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
 
 def HowTo_TensionPneumothorax():
-    pulse = PulsePhysiologyEngine("pulse_TensionPneumothorax.log")
+    pulse = PulsePhysiologyEngine()
+    pulse.set_log_filename("./test_results/pypulse_TensionPneumothorax.log")
+    pulse.log_to_console(True)
 
     # NOTE: No data requests are being provided, so Pulse will return the default vitals data
-    if not pulse.serialize_from_file("./states/Soldier@0s.json", None, eSerializationFormat.JSON, 0):
+    if not pulse.serialize_from_file("./states/Soldier@0s.json", None, eSerializationFormat.JSON):
         print("Unable to load initial state file")
         return
 

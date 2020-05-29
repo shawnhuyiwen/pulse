@@ -92,24 +92,19 @@ message ActionListData
   repeated AnyActionData                                AnyAction                 = 1;
 }
 
-message EngineInitializationData
-{
-  oneof StartType
-  {
-    string                                              EngineStateFile           = 1;
-    PatientConfigurationData                            PatientConfiguration      = 2;
-  }
-  string                                                LogFile                   = 3;
-}
+// message DataSetsData // This could hold all on disk data sets (Stabilization Criteria, Substances, Stabilization, Nutrition, Environments, ECG, patients, etc.)
+// At this point I am fine with having to have files on disk to create a new patient configuration
+
 message PatientConfigurationData
 {
+  string                                                DataRoot                  = 1;
   oneof PatientType
   {
-    PatientData                                         Patient                   = 1;
-    string                                              PatientFile               = 2;
+    PatientData                                         Patient                   = 2;
+    string                                              PatientFile               = 3;
   }
-  ConditionListData                                     Conditions                = 3;
-  repeated ScalarPropertyData                           ScalarOverride            = 4;
+  ConditionListData                                     Conditions                = 4;
+  repeated ScalarPropertyData                           ScalarOverride            = 5;
 }
 
 message AutoSerializationData

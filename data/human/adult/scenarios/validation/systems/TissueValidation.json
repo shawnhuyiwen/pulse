@@ -2,7 +2,7 @@
   {
     "Name": "TissueValidation",
     "Description": "Validation of Tissue data.",
-    "StartType": { "PatientConfiguration": { "PatientFile": "StandardMale.json" }},
+    "PatientConfiguration": { "PatientFile": "StandardMale.json" },
     "DataRequestManager":
     {
       "DataRequest": 

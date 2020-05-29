@@ -27,7 +27,7 @@
 
 void CommonDataModelTest::LargeFlowTransportTest(const std::string& sTestDirectory)
 {
-  m_Logger->ResetLogFile(sTestDirectory + "/LargeFlowTransportTest.log");
+  m_Logger->SetLogFile(sTestDirectory + "/LargeFlowTransportTest.log");
   SEFluidCircuit& circuit = m_Circuits->CreateFluidCircuit("Circuit");
   SEFluidCircuitCalculator CircuitCalculator(m_Logger);
 

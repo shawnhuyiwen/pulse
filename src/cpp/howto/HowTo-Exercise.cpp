@@ -36,7 +36,8 @@
 void HowToExercise() 
 {
   // Create the engine and load the patient
-  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowTo_Exercise.log");
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
+  pe->GetLogger()->SetLogFile("./test_results/HowTo_Exercise.log");
   pe->GetLogger()->Info("HowTo_Exercise");
   if (!pe->SerializeFromFile("./states/StandardMale@0s.json", JSON))
   {

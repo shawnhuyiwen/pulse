@@ -12,13 +12,13 @@ int main(int argc, char* argv[])
     //for (int i = 0; i < 2000; i++)
     //{
     //  std::cout << "Creating patient " << i << std::endl;
-    //  PulseController* pc = new PulseController("./test/multiplex_patient_" + std::to_string(i) + ".log", ".");
+    //  PulseController* pc = new PulseController("./test/multiplex_patient_" + cdm::to_string(i) + ".log", ".");
     //  if (!pc->SerializeFromFile("./test_results/multiplex_ventilation/solo_states/comp=0.01_peep=10_pip=55_imp=0.3_FiO2=0.21.json", SerializationFormat::JSON))
     //  {
     //    std::cerr << "Unable to load file " << std::endl;
     //    return 1;
     //  }
-    //  pc->GetEngineTracker().GetDataRequestManager().SetResultsFilename("./test/multiplex_patient_" + std::to_string(i) + ".csv");
+    //  pc->GetEngineTracker().GetDataRequestManager().SetResultsFilename("./test/multiplex_patient_" + cdm::to_string(i) + ".csv");
     //  pc->GetEngineTracker().GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryCompliance", VolumePerPressureUnit::L_Per_cmH2O);
     //  pc->GetEngineTracker().SetupRequests();
     //  pc->AdvanceModelTime();
@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
     }
     else if (mode == "single")
     {
-      pulse::study::multiplex_ventilation::bind::SimulationData sim;
+      pulse::study::bind::multiplex_ventilation::SimulationData sim;
       sim.set_id(42);
       sim.set_outputbasefilename("./test_results/multiplex_ventilation/mvpy");
       // Use these ventilator settings
@@ -85,9 +85,9 @@ int main(int argc, char* argv[])
     else if (mode == "gensimlist")
     {
       MVRunner mvr("./test_results/multiplex_ventilation/MultiplexVentilationRunner.log");
-      pulse::study::multiplex_ventilation::bind::SimulationListData muliplexSimList;
+      pulse::study::bind::multiplex_ventilation::SimulationListData muliplexSimList;
       muliplexSimList.set_outputrootdir(Dir::Base);
-      pulse::study::multiplex_ventilation::bind::SimulationListData soloSimList;
+      pulse::study::bind::multiplex_ventilation::SimulationListData soloSimList;
       soloSimList.set_outputrootdir(Dir::Base);
       // Loop parameters
       int minCompliance_mL_Per_cmH2O = 10;
@@ -311,7 +311,7 @@ int main(int argc, char* argv[])
     else // Manual
     {
       Logger logger("./test_results/multiplex_ventilation/manual.log");
-      pulse::study::multiplex_ventilation::bind::SimulationData sim;
+      pulse::study::bind::multiplex_ventilation::SimulationData sim;
       sim.set_respirationrate_per_min(MVGenerator::DefaultRespirationRate_Per_Min());
       sim.set_ieratio(MVGenerator::DefaultIERatio());
 
@@ -372,7 +372,7 @@ int main(int argc, char* argv[])
           double comp;
           double imp;
           ExtractInitialConditions(patient, comp, imp);
-          pulse::study::multiplex_ventilation::bind::PatientStateData pData;
+          pulse::study::bind::multiplex_ventilation::PatientStateData pData;
           pData.set_compliance_ml_per_cmh2o(comp);
           pData.set_resistance_cmh2o_s_per_l(MVGenerator::DefaultResistance_cmH2O_s_Per_L());
           pData.set_impairmentfraction(imp);

@@ -37,7 +37,8 @@
 void HowToHemorrhage() 
 {
   // Create the engine and load the patient
-  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowTo_Hemorrhage.log");
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
+  pe->GetLogger()->SetLogFile("./test_results/HowTo_Hemorrhage.log");
   pe->GetLogger()->Info("HowTo_Hemorrhage");
   if (!pe->SerializeFromFile("./states/StandardMale@0s.json", JSON))
   {

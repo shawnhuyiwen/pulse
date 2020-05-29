@@ -1,22 +1,20 @@
 {
   "Name": "EffusionConditionPlus",
   "Description": "A chronic Pericardial Effusion is applied to the patient. Then an acute Pericardial Effusion occurs.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json",
-      "Conditions": { "AnyCondition": [{
-        "PatientCondition": {
-          "ChronicPericardialEffusion": {
-            "AccumulatedVolume": {
-              "ScalarVolume": {
-                "Value": 500.0,
-                "Unit": "mL"
-              }
+  "PatientConfiguration": {
+    "PatientFile": "StandardMale.json",
+    "Conditions": { "AnyCondition": [{
+      "PatientCondition": {
+        "ChronicPericardialEffusion": {
+          "AccumulatedVolume": {
+            "ScalarVolume": {
+              "Value": 500.0,
+              "Unit": "mL"
             }
           }
         }
-      }]}
-    }
+      }
+    }]}
   },
   "DataRequestManager": {
     "DataRequest": [{

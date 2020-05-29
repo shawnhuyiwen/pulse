@@ -1,11 +1,7 @@
 {
   "Name": "Inhaler_OneActuationWithSpacer",
   "Description": "Patient actuates the inhaler once using a spacer.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json"
-    }
-  },
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": [{
       "DecimalFormat": {

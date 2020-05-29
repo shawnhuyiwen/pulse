@@ -2,7 +2,7 @@
   {
     "Name": "EnergyValidation",
     "Description": "Validation of Energy data.",
-    "StartType": { "PatientConfiguration": { "PatientFile": "StandardMale.json"}},
+    "PatientConfiguration": { "PatientFile": "StandardMale.json" },
     "DataRequestManager":
     {
       "DataRequest":

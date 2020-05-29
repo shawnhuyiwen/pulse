@@ -1,7 +1,7 @@
 {
   "Name": "TensionPneumothoraxBilateral",
   "Description": "Patient is afflicted with an open pneumothorax at the left lung and a closed pneumothorax at the right lung. An occlusive dressing is applied to the open wound, and then needle decompression is given to both sides.",
-  "StartType": { "PatientConfiguration": { "PatientFile": "StandardMale.json" }},
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager":
   {
     "DataRequest":

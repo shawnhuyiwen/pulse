@@ -6,7 +6,9 @@ from pulse.cdm.patient_actions import SEChronicObstructivePulmonaryDiseaseExacer
 from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
 
 def HowTo_UseCOPD():
-    pulse = PulsePhysiologyEngine("pulse_COPD.log")
+    pulse = PulsePhysiologyEngine()
+    pulse.set_log_filename("./test_results/pypulse_COPD.log")
+    pulse.log_to_console(True)
 
     pc = SEPatientConfiguration()
     pc.set_patient_file("./patients/StandardMale.json")

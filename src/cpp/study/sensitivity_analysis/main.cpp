@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
     if (mode == "single")
     {
       SARunner sar("./test_results/sesitivity_analysis/SensitivityAnalysisRunner.log");
-      pulse::study::sensitivity_analysis::bind::SimulationListData simList;
+      pulse::study::bind::sensitivity_analysis::SimulationListData simList;
       simList.set_outputrootdir("./test_results/sesitivity_analysis/");
 
       auto sim = simList.add_simulation();
@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
     else if (mode == "gensimlist")
     {
       SARunner sar("./test_results/sesitivity_analysis/SensitivityAnalysisRunner.log");
-      pulse::study::sensitivity_analysis::bind::SimulationListData simList;
+      pulse::study::bind::sensitivity_analysis::SimulationListData simList;
       simList.set_outputrootdir("./test_results/sesitivity_analysis");
 
       std::cout << "Generated " << simList.simulation_size() << " simulations" << std::endl;

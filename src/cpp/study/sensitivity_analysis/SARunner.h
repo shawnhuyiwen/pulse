@@ -69,7 +69,7 @@
 
 #include "io/protobuf/PBActions.h"
 PUSH_PROTO_WARNINGS()
-#include "pulse/study/sensitivity_analysis/bind/SensitivityAnalysis.pb.h"
+#include "pulse/study/bind/SensitivityAnalysis.pb.h"
 #include <google/protobuf/text_format.h>
 #include <google/protobuf/util/json_util.h>
 POP_PROTO_WARNINGS()
@@ -88,19 +88,19 @@ public:
   virtual ~SARunner();
 
   bool Run(const std::string& filename, SerializationFormat f);
-  bool Run(pulse::study::sensitivity_analysis::bind::SimulationListData& simList);
+  bool Run(pulse::study::bind::sensitivity_analysis::SimulationListData& simList);
 
-  bool RunSimulationUntilStable(std::string const& outDir, pulse::study::sensitivity_analysis::bind::SimulationData& sim, const std::string& dataDir="./");
+  bool RunSimulationUntilStable(std::string const& outDir, pulse::study::bind::sensitivity_analysis::SimulationData& sim, const std::string& dataDir="./");
 protected:
   bool Run();
-  bool SerializeToString(pulse::study::sensitivity_analysis::bind::SimulationListData& src, std::string& dst, SerializationFormat f) const;
-  bool SerializeToFile(pulse::study::sensitivity_analysis::bind::SimulationListData& src, const std::string& filename, SerializationFormat f) const;
-  bool SerializeFromString(const std::string& src, pulse::study::sensitivity_analysis::bind::SimulationListData& dst, SerializationFormat f);
-  bool SerializeFromFile(const std::string& filename, pulse::study::sensitivity_analysis::bind::SimulationListData& dst, SerializationFormat f);
+  bool SerializeToString(pulse::study::bind::sensitivity_analysis::SimulationListData& src, std::string& dst, SerializationFormat f) const;
+  bool SerializeToFile(pulse::study::bind::sensitivity_analysis::SimulationListData& src, const std::string& filename, SerializationFormat f) const;
+  bool SerializeFromString(const std::string& src, pulse::study::bind::sensitivity_analysis::SimulationListData& dst, SerializationFormat f);
+  bool SerializeFromFile(const std::string& filename, pulse::study::bind::sensitivity_analysis::SimulationListData& dst, SerializationFormat f);
 
   void ControllerLoop();
-  void FinalizeSimulation(pulse::study::sensitivity_analysis::bind::SimulationData& sim);
-  pulse::study::sensitivity_analysis::bind::SimulationData* GetNextSimulation();
+  void FinalizeSimulation(pulse::study::bind::sensitivity_analysis::SimulationData& sim);
+  pulse::study::bind::sensitivity_analysis::SimulationData* GetNextSimulation();
 
   std::mutex  m_mutex;
   bool m_Running;
@@ -110,8 +110,8 @@ protected:
   std::string m_SimulationResultsListFile;
   std::set<int> m_SimulationsToRun;
   std::vector<std::thread>   m_Threads;
-  pulse::study::sensitivity_analysis::bind::SimulationListData* m_SimulationList;
-  pulse::study::sensitivity_analysis::bind::SimulationListData* m_SimulationResultsList;
+  pulse::study::bind::sensitivity_analysis::SimulationListData* m_SimulationList;
+  pulse::study::bind::sensitivity_analysis::SimulationListData* m_SimulationResultsList;
 
 private:
   // struct to hold new running average data

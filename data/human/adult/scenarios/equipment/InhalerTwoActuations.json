@@ -1,11 +1,7 @@
 {
   "Name": "Inhaler_TwoActuations",
   "Description": "Patient actuates the inhaler twice.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json"
-    }
-  },
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": [{
       "DecimalFormat": {

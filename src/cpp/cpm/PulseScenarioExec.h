@@ -14,17 +14,17 @@ class SEAutoSerialization;
 class PULSE_DECL PulseScenarioExec : public SEScenarioExec
 {
 public:
-  PulseScenarioExec(PulseEngine& engine);
+  PulseScenarioExec(Logger* logger);
   virtual ~PulseScenarioExec();
 
-  virtual bool Execute(const std::string& scenarioFile, const std::string& resultsFile);
-  virtual bool Execute(const PulseScenario& scenario, const std::string& resultsFile);
+  virtual bool ExecuteFile(PhysiologyEngine& engine, const std::string& scenarioFile, SerializationFormat f, const std::string& resultsFile, std::string const& dataDir = "./");
+  virtual bool Execute(PhysiologyEngine& engine, const std::string& scenario, SerializationFormat f, const std::string& resultsFile, std::string const& dataDir = "./");
+  virtual bool Execute(PhysiologyEngine& engine, const PulseScenario& scenario, const std::string& resultsFile);
 
   static void Run(const std::string& scenarioFile);
 
 protected:
-  PulseConfiguration         m_PulseConfiguration;
-
+  PulseScenario*             m_PulseScenario;
   double                     m_AutoSerializationPeriod_s;
   double                     m_AutoSerializationTime_s;
   eSwitch                    m_AutoSerializationTimeStamps;
@@ -35,7 +35,7 @@ protected:
   std::stringstream          m_AutoSerializationOutput;
   std::stringstream          m_AutoSerializationActions;
 
-  virtual bool ProcessActions(const SEScenario& scenario);
-  virtual bool ProcessAction(const SEAction& action);
-  virtual void AdvanceEngine();
+  virtual bool ProcessActions(PulseEngine& engine, const SEScenario& scenario);
+  virtual bool ProcessAction(PulseEngine& engine, const SEAction& action);
+  virtual void AdvanceEngine(PulseEngine& engine);
 };

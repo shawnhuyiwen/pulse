@@ -1,11 +1,7 @@
 {
   "Name": "AsthmaAttack",
   "Description": "Showcase scenario: Patient is afflicted with an severe acute asthma attack. Albuterol is administered.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "Carol.json"
-    }
-  },
+    "PatientConfiguration": { "PatientFile": "Carol.json" },
   "DataRequestManager": {
     "DataRequest": [{
       "DecimalFormat": {

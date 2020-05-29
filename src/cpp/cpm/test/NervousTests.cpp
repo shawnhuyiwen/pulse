@@ -64,7 +64,8 @@ void PulseEngineTest::BrainInjuryTest(const std::string& sTestDirectory)
   DataTrack outTrk;
   std::ofstream file;
 
-  PulseController pc(sTestDirectory + "/" + tName + ".log");
+  PulseController pc;
+  pc.GetLogger()->SetLogFile(sTestDirectory + "/" + tName + ".log");
   pc.GetLogger()->Info("Running " + tName);
   SEPatient patient(pc.GetLogger());
   patient.SerializeFromFile("./patients/StandardMale.json", JSON);

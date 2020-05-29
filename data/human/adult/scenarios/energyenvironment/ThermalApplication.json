@@ -1,11 +1,7 @@
 {
   "Name": "ThermalApplication",
   "Description": "Tests various combinations of applied heat and cold.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json"
-    }
-  },
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": [{
       "DecimalFormat": {

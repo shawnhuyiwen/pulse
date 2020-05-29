@@ -1,7 +1,7 @@
 {
   "Name":"Nutrition",
   "Description":"A look at the substances from the default meal and how they behave.",
-  "StartType":{ "PatientConfiguration": { "PatientFile": "StandardMale.json" }},
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": { "SamplesPerSecond": 1.0, "DataRequest":
   [
     {"DecimalFormat":{"Precision":1},"Category":"Patient",     "PropertyName":"Weight",                            "Unit":"kg"},

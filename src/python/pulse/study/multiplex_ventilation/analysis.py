@@ -1,7 +1,7 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-from pulse.study.multiplex_ventilation.bind.MultiplexVentilation_pb2 import *
+from pulse.study.bind.MultiplexVentilation_pb2 import *
 
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg

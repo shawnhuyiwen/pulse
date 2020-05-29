@@ -44,9 +44,9 @@ C_EXPORT void C_CALL PulseDeinitialize()
 }
 
 extern "C"
-C_EXPORT PulseEngineThunk* C_CALL Allocate(const char* logFile="", bool cout_enabled=true, const char* data_dir=".")
+C_EXPORT PulseEngineThunk* C_CALL Allocate()
 {
-  return new PulseEngineThunk(logFile==nullptr?"":logFile, cout_enabled, data_dir==nullptr?"":data_dir);
+  return new PulseEngineThunk();
 }
 
 extern "C"
@@ -56,9 +56,9 @@ C_EXPORT void C_CALL Deallocate(PulseEngineThunk* thunk)
 }
 
 extern "C"
-C_EXPORT bool C_CALL SerializeFromFile(PulseEngineThunk* thunk, const char* filename, const char* data_requests, int format, double sim_time_s)
+C_EXPORT bool C_CALL SerializeFromFile(PulseEngineThunk* thunk, const char* filename, const char* data_requests, int format)
 {
-  return thunk->SerializeFromFile(filename==nullptr?"":filename, data_requests==nullptr?"":data_requests, (SerializationFormat)format, sim_time_s);
+  return thunk->SerializeFromFile(filename==nullptr?"":filename, data_requests==nullptr?"":data_requests, (SerializationFormat)format);
 }
 extern "C"
 C_EXPORT bool C_CALL SerializeToFile(PulseEngineThunk* thunk, const char* filename, int format)
@@ -67,9 +67,9 @@ C_EXPORT bool C_CALL SerializeToFile(PulseEngineThunk* thunk, const char* filena
 }
 
 extern "C"
-C_EXPORT bool C_CALL SerializeFromString(PulseEngineThunk* thunk, const char* state, const char* data_requests, int format, double sim_time_s)
+C_EXPORT bool C_CALL SerializeFromString(PulseEngineThunk* thunk, const char* state, const char* data_requests, int format)
 {
-  return thunk->SerializeFromString(state==nullptr?"":state, data_requests==nullptr?"":data_requests, (SerializationFormat)format, sim_time_s);
+  return thunk->SerializeFromString(state==nullptr?"":state, data_requests==nullptr?"":data_requests, (SerializationFormat)format);
 }
 extern "C"
 C_EXPORT bool C_CALL SerializeToString(PulseEngineThunk* thunk, int format, char** state_str)
@@ -80,17 +80,26 @@ C_EXPORT bool C_CALL SerializeToString(PulseEngineThunk* thunk, int format, char
 }
 
 extern "C"
-C_EXPORT bool C_CALL InitializeEngine(PulseEngineThunk* thunk, const char* patient_configuration, const char* data_requests, int format)
+C_EXPORT bool C_CALL InitializeEngine(PulseEngineThunk* thunk, const char* patient_configuration, const char* data_requests, int format, const char* data_dir = ".")
 {
-  return thunk->InitializeEngine(patient_configuration==nullptr?"":patient_configuration, data_requests==nullptr?"":data_requests, (SerializationFormat)format);
+  return thunk->InitializeEngine(patient_configuration==nullptr?"":patient_configuration, data_requests==nullptr?"":data_requests, (SerializationFormat)format, data_dir==nullptr?"./":data_dir);
 }
 
 extern "C"
-C_EXPORT void C_CALL KeepLogMessages(PulseEngineThunk* thunk, bool keep)
+C_EXPORT void C_CALL LogToConsole(PulseEngineThunk* thunk, bool b)
+{
+  thunk->LogToConsole(b);
+}
+extern "C"
+C_EXPORT void C_CALL KeepLogMessages(PulseEngineThunk * thunk, bool keep)
 {
   thunk->KeepLogMessages(keep);
 }
-
+extern "C"
+C_EXPORT void C_CALL SetLogFilename(PulseEngineThunk * thunk, const char* filename)
+{
+  thunk->SetLogFilename(filename==nullptr?"":filename);
+}
 extern "C"
 C_EXPORT bool C_CALL PullLogMessages(PulseEngineThunk* thunk, int format, char** str_addr)
 {
@@ -106,7 +115,6 @@ C_EXPORT void C_CALL KeepEventChanges(PulseEngineThunk* thunk, bool keep)
 {
   thunk->KeepEventChanges(true);
 }
-
 extern "C"
 C_EXPORT bool C_CALL PullEvents(PulseEngineThunk* thunk, int format, char** str_addr)
 {
@@ -116,7 +124,6 @@ C_EXPORT bool C_CALL PullEvents(PulseEngineThunk* thunk, int format, char** str_
   *str_addr = c_strdup(event_changes.c_str(), event_changes.length());
   return true;
 }
-
 extern "C"
 C_EXPORT bool C_CALL PullActiveEvents(PulseEngineThunk* thunk, int format, char** active)
 {
@@ -140,10 +147,14 @@ C_EXPORT bool C_CALL AdvanceTimeStep(PulseEngineThunk* thunk)
 {
   return thunk->AdvanceTimeStep();
 }
+extern "C"
+C_EXPORT bool C_CALL GetTimeStep(PulseEngineThunk * thunk, const char* unit)
+{
+  return thunk->GetTimeStep(unit==nullptr?"":unit);
+}
 
 extern "C"
 C_EXPORT double* C_CALL PullData(PulseEngineThunk* thunk)
 {
   return thunk->PullDataPtr();
 }
-

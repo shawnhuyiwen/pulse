@@ -10,5 +10,6 @@
 class Task
 {
 public:
-    virtual void Run() = 0;
+  virtual ~Task() = default;
+  virtual void Run() = 0;
 };

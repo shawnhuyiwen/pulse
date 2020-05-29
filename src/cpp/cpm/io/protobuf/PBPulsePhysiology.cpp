@@ -28,8 +28,8 @@ POP_PROTO_WARNINGS()
 void PBPulsePhysiology::Load(const PULSE_BIND::BloodChemistryData& src, BloodChemistry& dst)
 {
   dst.Clear();
-  dst.SetUp();
   PBPulsePhysiology::Serialize(src, dst);
+  dst.SetUp();
 }
 void PBPulsePhysiology::Serialize(const PULSE_BIND::BloodChemistryData& src, BloodChemistry& dst)
 {
@@ -55,8 +55,8 @@ void PBPulsePhysiology::Serialize(const BloodChemistry& src, PULSE_BIND::BloodCh
 void PBPulsePhysiology::Load(const PULSE_BIND::CardiovascularData& src, Cardiovascular& dst)
 {
   dst.Clear();
-  dst.SetUp();
   PBPulsePhysiology::Serialize(src, dst);
+  dst.SetUp();
 }
 void PBPulsePhysiology::Serialize(const PULSE_BIND::CardiovascularData& src, Cardiovascular& dst)
 {
@@ -198,8 +198,8 @@ void PBPulsePhysiology::Serialize(const Cardiovascular& src, PULSE_BIND::Cardiov
 void PBPulsePhysiology::Load(const PULSE_BIND::DrugData& src, Drugs& dst)
 {
   dst.Clear();
-  dst.SetUp();
   PBPulsePhysiology::Serialize(src, dst);
+  dst.SetUp();
 }
 void PBPulsePhysiology::Serialize(const PULSE_BIND::DrugData& src, Drugs& dst)
 {
@@ -219,8 +219,8 @@ void PBPulsePhysiology::Serialize(const Drugs& src, PULSE_BIND::DrugData& dst)
 void PBPulsePhysiology::Load(const PULSE_BIND::EndocrineData& src, Endocrine& dst)
 {
   dst.Clear();
-  dst.SetUp();
   PBPulsePhysiology::Serialize(src, dst);
+  dst.SetUp();
 }
 void PBPulsePhysiology::Serialize(const PULSE_BIND::EndocrineData& src, Endocrine& dst)
 {
@@ -240,8 +240,8 @@ void PBPulsePhysiology::Serialize(const Endocrine& src, PULSE_BIND::EndocrineDat
 void PBPulsePhysiology::Load(const PULSE_BIND::EnergyData& src, Energy& dst)
 {
   dst.Clear();
-  dst.SetUp();
   PBPulsePhysiology::Serialize(src, dst);
+  dst.SetUp();
 }
 void PBPulsePhysiology::Serialize(const PULSE_BIND::EnergyData& src, Energy& dst)
 {
@@ -275,8 +275,8 @@ void PBPulsePhysiology::Serialize(const Energy& src, PULSE_BIND::EnergyData& dst
 void PBPulsePhysiology::Load(const PULSE_BIND::GastrointestinalData& src, Gastrointestinal& dst)
 {
   dst.Clear();
-  dst.SetUp();
   PBPulsePhysiology::Serialize(src, dst);
+  dst.SetUp();
 }
 void PBPulsePhysiology::Serialize(const PULSE_BIND::GastrointestinalData& src, Gastrointestinal& dst)
 {
@@ -296,8 +296,8 @@ void PBPulsePhysiology::Serialize(const Gastrointestinal& src, PULSE_BIND::Gastr
 void PBPulsePhysiology::Load(const PULSE_BIND::HepaticData& src, Hepatic& dst)
 {
   dst.Clear();
-  dst.SetUp();
   PBPulsePhysiology::Serialize(src, dst);
+  dst.SetUp();
 }
 void PBPulsePhysiology::Serialize(const PULSE_BIND::HepaticData& src, Hepatic& dst)
 {
@@ -361,8 +361,8 @@ void PBPulsePhysiology::Serialize(const Nervous& src, PULSE_BIND::NervousData& d
 void PBPulsePhysiology::Load(const PULSE_BIND::RenalData& src, Renal& dst)
 {
   dst.Clear();
-  dst.SetUp();
   PBPulsePhysiology::Serialize(src, dst);
+  dst.SetUp();
 }
 void PBPulsePhysiology::Serialize(const PULSE_BIND::RenalData& src, Renal& dst)
 {
@@ -410,8 +410,8 @@ void PBPulsePhysiology::Serialize(const Renal& src, PULSE_BIND::RenalData& dst)
 void PBPulsePhysiology::Load(const PULSE_BIND::RespiratoryData& src, Respiratory& dst)
 {
   dst.Clear();
-  dst.SetUp();
   PBPulsePhysiology::Serialize(src, dst);
+  dst.SetUp();
 }
 void PBPulsePhysiology::Serialize(const PULSE_BIND::RespiratoryData& src, Respiratory& dst)
 {
@@ -531,8 +531,8 @@ void PBPulsePhysiology::Serialize(const Respiratory& src, PULSE_BIND::Respirator
 void PBPulsePhysiology::Load(const PULSE_BIND::TissueData& src, Tissue& dst)
 {
   dst.Clear();
-  dst.SetUp();
   PBPulsePhysiology::Serialize(src, dst);
+  dst.SetUp();
 }
 void PBPulsePhysiology::Serialize(const PULSE_BIND::TissueData& src, Tissue& dst)
 {

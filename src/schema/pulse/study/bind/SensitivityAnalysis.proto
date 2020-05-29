@@ -1,7 +1,7 @@
 syntax = "proto3";
-package pulse.study.sensitivity_analysis.bind;
-option java_package = "pulse.study.sensitivity_analysis.bind";
-option csharp_namespace = "pulse.study.sensitivity_analysis.bind";
+package pulse.study.bind.sensitivity_analysis;
+option java_package = "pulse.study.bind.sensitivity_analysis";
+option csharp_namespace = "pulse.study.bind.sensitivity_analysis";
 option optimize_for = SPEED;
 
 import "pulse/cdm/bind/Actions.proto";
@@ -10,9 +10,9 @@ message SimulationData
 {
   // A filename without an extension (can/should have path also)
   // The engine will use this to create multiple output files (*.log and *.csv)
-  uint32                       ID                                     		 = 1;
-  string                       Name                                     	 = 2;
-  pulse.cdm.bind.OverridesData Overrides                              	     = 3;
+  uint32                       ID                                            = 1;
+  string                       Name                                          = 2;
+  pulse.cdm.bind.OverridesData Overrides                                     = 3;
   
   // New mean variables
   double                       MeanAortaInFlow_mL_Per_s                      = 4;
@@ -51,30 +51,30 @@ message SimulationData
   double                       MeanVenaCavaInFlow_mL_Per_s                   = 37;
   
   // System variables
-  double                       BloodVolume_mL                            	 = 38;
-  double                       CardiacOutput_mL_Per_min                		 = 39;
-  double                       DiastolicArterialPressure_mmHg         		 = 40;
-  double                       HeartEjectionFraction                  		 = 41;
-  double                       HeartStrokeVolume_mL                   		 = 42;
+  double                       BloodVolume_mL                                = 38;
+  double                       CardiacOutput_mL_Per_min                      = 39;
+  double                       DiastolicArterialPressure_mmHg                = 40;
+  double                       HeartEjectionFraction                         = 41;
+  double                       HeartStrokeVolume_mL                          = 42;
   double                       MeanArterialCarbonDioxidePartialPressure_mmHg = 43;
-  double                       MeanArterialPressure_mmHg              		 = 44;
-  double                       MeanCentralVenousPressure_mmHg         		 = 45;
-  double                       PulmonaryDiastolicArterialPressure_mmHg 		 = 46;
-  double                       PulmonaryMeanArterialPressure_mmHg     		 = 47;
-  double                       PulmonaryMeanCapillaryFlow_mL_Per_s   		 = 48;
-  double                       PulmonarySystolicArterialPressure_mmHg 		 = 49;
-  double                       SystolicArterialPressure_mmHg          		 = 50;
-  double                       SystemicVascularResistance_mmHg_s_Per_L		 = 51;
+  double                       MeanArterialPressure_mmHg                     = 44;
+  double                       MeanCentralVenousPressure_mmHg                = 45;
+  double                       PulmonaryDiastolicArterialPressure_mmHg       = 46;
+  double                       PulmonaryMeanArterialPressure_mmHg            = 47;
+  double                       PulmonaryMeanCapillaryFlow_mL_Per_s           = 48;
+  double                       PulmonarySystolicArterialPressure_mmHg        = 49;
+  double                       SystolicArterialPressure_mmHg                 = 50;
+  double                       SystemicVascularResistance_mmHg_s_Per_L       = 51;
 
   // Stabilization Information
-  bool                         AchievedStabilization                 		 = 52;
-  double                       StabilizationTime_s                    		 = 53;
-  double                       TotalSimulationTime_s                  		 = 54;
+  bool                         AchievedStabilization                         = 52;
+  double                       StabilizationTime_s                           = 53;
+  double                       TotalSimulationTime_s                         = 54;
   
 }
 
 message SimulationListData
 {
-  string                       OutputRootDir                          		 = 1;
-  repeated SimulationData      Simulation                             		 = 2;
+  string                       OutputRootDir                                 = 1;
+  repeated SimulationData      Simulation                                    = 2;
 }

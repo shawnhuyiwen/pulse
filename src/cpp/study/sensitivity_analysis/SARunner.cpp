@@ -15,14 +15,14 @@ SARunner::~SARunner()
   SAFE_DELETE(m_SimulationResultsList);
 }
 
-bool SARunner::Run(pulse::study::sensitivity_analysis::bind::SimulationListData& simList)
+bool SARunner::Run(pulse::study::bind::sensitivity_analysis::SimulationListData& simList)
 {
   m_OutDir = simList.outputrootdir();
   m_SimulationResultsListFile = m_OutDir+"/simlist_results.json";
   SAFE_DELETE(m_SimulationList);
   SAFE_DELETE(m_SimulationResultsList);
   m_SimulationList = &simList;
-  m_SimulationResultsList = new pulse::study::sensitivity_analysis::bind::SimulationListData();
+  m_SimulationResultsList = new pulse::study::bind::sensitivity_analysis::SimulationListData();
   if (FileExists(m_SimulationResultsListFile))
   {
     if (!SerializeFromFile(m_SimulationResultsListFile, *m_SimulationResultsList, SerializationFormat::JSON))
@@ -40,8 +40,8 @@ bool SARunner::Run(const std::string& filename, SerializationFormat f)
 {
   SAFE_DELETE(m_SimulationList);
   SAFE_DELETE(m_SimulationResultsList);
-  m_SimulationList = new pulse::study::sensitivity_analysis::bind::SimulationListData();
-  m_SimulationResultsList = new pulse::study::sensitivity_analysis::bind::SimulationListData();
+  m_SimulationList = new pulse::study::bind::sensitivity_analysis::SimulationListData();
+  m_SimulationResultsList = new pulse::study::bind::sensitivity_analysis::SimulationListData();
 
   if (!SerializeFromFile(filename, *m_SimulationList, f))
     return false;
@@ -110,7 +110,7 @@ bool SARunner::Run()
 
 void SARunner::ControllerLoop()
 {
-  pulse::study::sensitivity_analysis::bind::SimulationData* sim=nullptr;
+  pulse::study::bind::sensitivity_analysis::SimulationData* sim=nullptr;
   while (true)
   {
     try
@@ -140,19 +140,21 @@ void SARunner::ControllerLoop()
   }
 }
 
-bool SARunner::RunSimulationUntilStable(std::string const& outDir, pulse::study::sensitivity_analysis::bind::SimulationData& sim, const std::string& dataDir)
+bool SARunner::RunSimulationUntilStable(std::string const& outDir, pulse::study::bind::sensitivity_analysis::SimulationData& sim, const std::string& dataDir)
 {
   TimingProfile profiler;
   profiler.Start("Total");
   profiler.Start("Status");
 
-  auto pulse = CreatePulseEngine(outDir+"/"+cdm::to_string(sim.id())+" - "+sim.name()+".log", dataDir);
+  auto pulse = CreatePulseEngine();
+  pulse->GetLogger()->SetLogFile(outDir + "/" + cdm::to_string(sim.id()) + " - " + sim.name() + ".log");
 
   // TODO amb Clean this up (cfg should have a default ctor that makes its own Sub Mgr)
   PulseConfiguration cfg(pulse->GetSubstanceManager());
   cfg.SetBaroreceptorFeedback(eSwitch::Off);
   cfg.SetChemoreceptorFeedback(eSwitch::Off);
-  if (!pulse->SerializeFromFile("./states/StandardMale@0s.json", SerializationFormat::JSON, nullptr, &cfg))
+  pulse->SetConfigurationOverride(&cfg);
+  if (!pulse->SerializeFromFile("./states/StandardMale@0s.json", SerializationFormat::JSON))
     return false;
 
   // No logging to console (when threaded)
@@ -454,10 +456,10 @@ void SARunner::SetRunningAverages(std::unordered_map<std::string, RunningAverage
   }
 }
 
-pulse::study::sensitivity_analysis::bind::SimulationData* SARunner::GetNextSimulation()
+pulse::study::bind::sensitivity_analysis::SimulationData* SARunner::GetNextSimulation()
 {
   m_mutex.lock();
-  pulse::study::sensitivity_analysis::bind::SimulationData* sim = nullptr;
+  pulse::study::bind::sensitivity_analysis::SimulationData* sim = nullptr;
   if (!m_SimulationsToRun.empty())
   {
     size_t id = *m_SimulationsToRun.begin();
@@ -474,7 +476,7 @@ pulse::study::sensitivity_analysis::bind::SimulationData* SARunner::GetNextSimul
   return sim;
 }
 
-void SARunner::FinalizeSimulation(pulse::study::sensitivity_analysis::bind::SimulationData& sim)
+void SARunner::FinalizeSimulation(pulse::study::bind::sensitivity_analysis::SimulationData& sim)
 {
   m_mutex.lock();
   auto rSim = m_SimulationResultsList->mutable_simulation()->Add();
@@ -488,7 +490,7 @@ void SARunner::FinalizeSimulation(pulse::study::sensitivity_analysis::bind::Simu
   m_mutex.unlock();
 }
 
-bool SARunner::SerializeToString(pulse::study::sensitivity_analysis::bind::SimulationListData& src, std::string& output, SerializationFormat f) const
+bool SARunner::SerializeToString(pulse::study::bind::sensitivity_analysis::SimulationListData& src, std::string& output, SerializationFormat f) const
 {
   google::protobuf::util::JsonPrintOptions printOpts;
   printOpts.add_whitespace = true;
@@ -501,14 +503,14 @@ bool SARunner::SerializeToString(pulse::study::sensitivity_analysis::bind::Simul
   }
   return true;
 }
-bool SARunner::SerializeToFile(pulse::study::sensitivity_analysis::bind::SimulationListData& src, const std::string& filename, SerializationFormat f) const
+bool SARunner::SerializeToFile(pulse::study::bind::sensitivity_analysis::SimulationListData& src, const std::string& filename, SerializationFormat f) const
 {
   std::string content;
   if (!SerializeToString(src, content, f))
     return false;
   return WriteFile(content, filename, SerializationFormat::JSON);
 }
-bool SARunner::SerializeFromString(const std::string& src, pulse::study::sensitivity_analysis::bind::SimulationListData& dst, SerializationFormat f)
+bool SARunner::SerializeFromString(const std::string& src, pulse::study::bind::sensitivity_analysis::SimulationListData& dst, SerializationFormat f)
 {
   google::protobuf::util::JsonParseOptions parseOpts;
   google::protobuf::SetLogHandler([](google::protobuf::LogLevel level, const char* filename, int line, const std::string& message)
@@ -523,7 +525,7 @@ bool SARunner::SerializeFromString(const std::string& src, pulse::study::sensiti
   }
   return true;
 }
-bool SARunner::SerializeFromFile(const std::string& filename, pulse::study::sensitivity_analysis::bind::SimulationListData& dst, SerializationFormat f)
+bool SARunner::SerializeFromFile(const std::string& filename, pulse::study::bind::sensitivity_analysis::SimulationListData& dst, SerializationFormat f)
 {
   std::string content = ReadFile(filename, SerializationFormat::JSON);
   if (content.empty())

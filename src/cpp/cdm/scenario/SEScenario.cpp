@@ -11,16 +11,19 @@
 #include "io/protobuf/PBScenario.h"
 #include "io/protobuf/PBActions.h"
 
-SEScenario::SEScenario(SESubstanceManager& subMgr) : Loggable(subMgr.GetLogger()), m_SubMgr(subMgr)
+SEScenario::SEScenario(Logger* logger, std::string const& dataDir) : Loggable(logger)
 {
   m_PatientConfiguration = nullptr;
-  m_DataRequestMgr = new SEDataRequestManager(subMgr.GetLogger());
+  m_SubMgr = new SESubstanceManager(logger);
+  m_SubMgr->LoadSubstanceDirectory(dataDir);
+  m_DataRequestMgr = new SEDataRequestManager(logger);
   Clear();
 }
 
 SEScenario::~SEScenario()
 {
   Clear();
+  delete m_SubMgr;
   delete m_DataRequestMgr;
 }
 
@@ -119,7 +122,7 @@ SEPatientConfiguration& SEScenario::GetPatientConfiguration()
 {
   InvalidateEngineStateFile();
   if (m_PatientConfiguration == nullptr)
-    m_PatientConfiguration = new SEPatientConfiguration(m_SubMgr);
+    m_PatientConfiguration = new SEPatientConfiguration(*m_SubMgr);
   return *m_PatientConfiguration;
 }
 const SEPatientConfiguration* SEScenario::GetPatientConfiguration() const
@@ -138,7 +141,7 @@ void SEScenario::InvalidatePatientConfiguration()
 void SEScenario::AddAction(const SEAction& a)
 {
   // Make a copy using the bindings
-  m_Actions.push_back(PBAction::Copy(a,m_SubMgr));
+  m_Actions.push_back(PBAction::Copy(a,*m_SubMgr));
 }
 const std::vector<const SEAction*>& SEScenario::GetActions() const
 {

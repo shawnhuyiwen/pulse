@@ -1,12 +1,7 @@
 {
   "Name": "HemorrhageClass3NoFluidLongTerm",
   "Description": "",
-  "StartType":
-  {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json"
-    }
-  },
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager":
   {
     "DataRequest":

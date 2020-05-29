@@ -47,7 +47,8 @@ void PulseEngineTest::RenalCircuitAndTransportTest(const std::string& sTestDirec
   DataTrack     graphTrk;
   std::ofstream graphFile;
 
-  PulseController pc(sTestDirectory + "/RenalCircuitAndTransportTest.log");
+  PulseController pc;
+  pc.GetLogger()->SetLogFile(sTestDirectory + "/RenalCircuitAndTransportTest.log");
   SEPatient patient(pc.GetLogger());
   patient.SerializeFromFile("./patients/StandardMale.json",JSON);
   pc.SetupPatient(patient);
@@ -174,7 +175,8 @@ void PulseEngineTest::RenalFeedbackTest(RenalFeedback feedback, const std::strin
 {
   TimingProfile tmr;
   tmr.Start("Test");
-  PulseController pc(sTestDirectory + "/RenalFeedbackTest.log");
+  PulseController pc;
+  pc.GetLogger()->SetLogFile(sTestDirectory + "/RenalFeedbackTest.log");
   SEPatient patient(pc.GetLogger());
   patient.SerializeFromFile("./patients/StandardMale.json", JSON);
   pc.SetupPatient(patient);
@@ -489,7 +491,8 @@ void PulseEngineTest::RenalSystemTest(RenalSystems systemtest, const std::string
 
   TimingProfile tmr;
   tmr.Start("Test");
-  PulseController pc(sTestDirectory + "/RenalSystemTest.log");
+  PulseController pc;
+  pc.GetLogger()->SetLogFile(sTestDirectory + "/RenalSystemTest.log");
   SEPatient patient(pc.GetLogger());
   patient.SerializeFromFile("./patients/StandardMale.json", JSON);
   pc.SetupPatient(patient);

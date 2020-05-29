@@ -79,6 +79,7 @@ void PBCompartment::SaveCompartmentManagerFile(const SECompartmentManager& mgr, 
 void PBCompartment::Load(const CDM_BIND::CompartmentManagerData& src, SECompartmentManager& dst, SECircuitManager* circuits)
 {
   dst.Clear();
+  dst.Setup();
   PBCompartment::Serialize(src, dst, circuits);
   dst.StateChange();
 }
@@ -510,7 +511,7 @@ void PBCompartment::Serialize(const CDM_BIND::LiquidCompartmentData& src, SELiqu
         dst.Error("Could not find a substance for " + d.substancequantity().substance());
         continue;
       }
-      PBSubstanceQuantity::Load(d, dst.CreateSubstanceQuantity(*sub));
+      PBSubstanceQuantity::Serialize(d, dst.CreateSubstanceQuantity(*sub));
     }
   }
   if (src.has_ph())

@@ -89,12 +89,17 @@ public:
 void HowToEngineUse()
 {
   // Create an engine object
-  // PulseEngines will always output log messages to stdout and a log file  
-  // If you want this engine to write a log file, include the name
-  // of the log file. If nothing is given, the engine will only output to the console
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
-  // Let's turn that off too, and only process log info from our logger
+
+
+  // By default, PulseEngines will always output log messages to stdout
+  // You can turn that off and on like this
   pe->GetLogger()->LogToConsole(false);
+  // If you want this engine to write a log file,provided a log filename
+  // By default, no log file will be created (no default name)
+  pe->GetLogger()->SetLogFile("HowTo_EngineUse.log");
+  // You can change this at any time, 
+  // Use nullptr or empty string to disable writing to a log file
 
   // This PulseEngine logger is based on log4cpp (which is based on log4j)
   // PulseEngine logs to several distinct, ordered
@@ -104,7 +109,7 @@ void HowToEngineUse()
   // If set to WARN, you will not recieve DEBUG and INFO, but everything else
   // You can specify which level you would like the engine to log
   // By Default the LogLevel is INFO
-  // pe->GetLogger()->SetLogLevel(log4cpp::Priority::INFO);
+  pe->GetLogger()->SetLogLevel(Logger::Level::Info);
 
   // You can tell the PulseEngine to also direct any output
   // to your own function. For example if you want to capture and process messages
@@ -113,28 +118,28 @@ void HowToEngineUse()
   // You can specify a set of functions to be called for any one of the log levels
   MyLogger myLogger;
   pe->GetLogger()->SetForward(&myLogger);
-
   pe->GetLogger()->Info("HowTo_EngineUse");
 
   // You can tell the PulseEngine to also notify you of any events as well
   // You can Poll objects for events, for example
-  // pe->GetPatient().
+  pe->GetEventManager().IsEventActive(eEvent::BrainOxygenDeficit);
 
   // NOTE, setting the LogLevel, Forwarder, EventHandler can be done after initialize and as many times as you want
 
   // The first order of business is to initialize the engine by loading a patient state.
   // Patient states provided in the SDK are the state of the engine at the time they stabilize
   // More details on creating a patient and stabilizing the engine can be found in HowTo-CreateAPatient.cpp
-  SEScalarTime startTime;
-  // You can optionally specify a specific simulation time for the engine to use as its initial simulation time
-  // If no time is provided, the simulation time that is in the state file will be used
-  // Note the provided state files are named to include what is simulation time is
-  startTime.SetValue(0, TimeUnit::s);
-  if (!pe->SerializeFromFile("./states/Soldier@0s.json", JSON, &startTime, nullptr))
+  if (!pe->SerializeFromFile("./states/Soldier@0s.json", JSON))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
   }
+  // You can specify a specific simulation time for the engine to use as its initial simulation time
+  // If no time is provided, the simulation time that is in the state file will be used
+  // Note the provided state files are named to include what is simulation time is
+  SEScalarTime startTime;
+  startTime.SetValue(0, TimeUnit::s);
+  pe->SetSimulationTime(startTime);
   // See below on how to save a state
 
   // There are specific events that can occur while the engine runs and you submit various actions

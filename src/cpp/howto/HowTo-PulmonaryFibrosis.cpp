@@ -35,7 +35,8 @@
 void HowToPulmonaryFibrosis()
 {
   // Create the engine and load the patient
-  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowTo_PulmonaryFibrosis.log");
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
+  pe->GetLogger()->SetLogFile("./test_results/HowTo_PulmonaryFibrosis.log");
   pe->GetLogger()->Info("HowTo_PulmonaryFibrosis");
 
   // Since this is a condition, we do not provide a starting state

@@ -1,7 +1,7 @@
 {
   "Name": "Lobar Pneumonia Exacerbation",
   "Description": "",
-  "StartType": { "PatientConfiguration": { "PatientFile": "StandardMale.json" }},
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager":
   {
     "DataRequest":
