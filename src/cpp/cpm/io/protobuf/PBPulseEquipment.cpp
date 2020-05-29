@@ -22,8 +22,8 @@ POP_PROTO_WARNINGS()
 void PBPulseEquipment::Load(const PULSE_BIND::AnesthesiaMachineData& src, AnesthesiaMachine& dst)
 {
   dst.Clear();
-  dst.SetUp();
   PBPulseEquipment::Serialize(src, dst);
+  dst.SetUp();
 }
 void PBPulseEquipment::Serialize(const PULSE_BIND::AnesthesiaMachineData& src, AnesthesiaMachine& dst)
 {
@@ -53,8 +53,8 @@ void PBPulseEquipment::Serialize(const AnesthesiaMachine& src, PULSE_BIND::Anest
 void PBPulseEquipment::Load(const PULSE_BIND::ElectroCardioGramData& src, ECG& dst)
 {
   dst.Clear();
-  dst.SetUp();
   PBPulseEquipment::Serialize(src, dst);
+  dst.SetUp();
 }
 void PBPulseEquipment::Serialize(const PULSE_BIND::ElectroCardioGramData& src, ECG& dst)
 {
@@ -81,8 +81,8 @@ void PBPulseEquipment::Serialize(const ECG& src, PULSE_BIND::ElectroCardioGramDa
 void PBPulseEquipment::Load(const PULSE_BIND::InhalerData& src, Inhaler& dst)
 {
   dst.Clear();
-  dst.SetUp();
   PBPulseEquipment::Serialize(src, dst);
+  dst.SetUp();
 }
 void PBPulseEquipment::Serialize(const PULSE_BIND::InhalerData& src, Inhaler& dst)
 {
@@ -102,8 +102,8 @@ void PBPulseEquipment::Serialize(const Inhaler& src, PULSE_BIND::InhalerData& ds
 void PBPulseEquipment::Load(const PULSE_BIND::MechanicalVentilatorData& src, MechanicalVentilator& dst)
 {
   dst.Clear();
-  dst.SetUp();
   PBPulseEquipment::Serialize(src, dst);
+  dst.SetUp();
 }
 void PBPulseEquipment::Serialize(const PULSE_BIND::MechanicalVentilatorData& src, MechanicalVentilator& dst)
 {

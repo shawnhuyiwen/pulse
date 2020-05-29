@@ -63,6 +63,138 @@ void PulseSubstances::Clear()
   m_urea = nullptr;
 }
 
+bool PulseSubstances::Setup()
+{
+  m_O2 = GetSubstance("Oxygen");
+  m_CO = GetSubstance("CarbonMonoxide");
+  m_CO2 = GetSubstance("CarbonDioxide");
+  m_N2 = GetSubstance("Nitrogen");
+  m_Hb = GetSubstance("Hemoglobin");
+  m_HbO2 = GetSubstance("Oxyhemoglobin");
+  m_HbCO2 = GetSubstance("Carbaminohemoglobin");
+  m_HbCO = GetSubstance("Carboxyhemoglobin");
+  m_HbO2CO2 = GetSubstance("OxyCarbaminohemoglobin");
+  m_HCO3 = GetSubstance("Bicarbonate");
+  m_epi = GetSubstance("Epinephrine");
+
+  if (m_O2 == nullptr)
+  {
+    Error("Oxygen Definition not found");
+    return false;
+  }
+  if (m_CO == nullptr)
+  {
+    Error("CarbonMonoxide Definition not found");
+    return false;
+  }
+  if (m_CO2 == nullptr)
+  {
+    Error("CarbonDioxide Definition not found");
+    return false;
+  }
+  if (m_N2 == nullptr)
+  {
+    Error("Nitrogen Definition not found");
+    return false;
+  }
+  if (m_Hb == nullptr)
+  {
+    Error("Hemoglobin Definition not found");
+    return false;
+  }
+  if (m_HbO2 == nullptr)
+  {
+    Error("Oxyhemoglobin Definition not found");
+    return false;
+  }
+  if (m_HbCO2 == nullptr)
+  {
+    Error("Carbaminohemoglobin Definition not found");
+    return false;
+  }
+  if (m_HbCO == nullptr)
+  {
+    Error("Carboxyhemoglobin Definition not found");
+    return false;
+  }
+  if (m_HbO2CO2 == nullptr)
+  {
+    Error("OxyCarbaminohemoglobin Definition not found");
+    return false;
+  }
+  if (m_HCO3 == nullptr)
+  {
+    Error("Bicarbonate Definition not found");
+    return false;
+  }
+  if (m_epi == nullptr)
+  {
+    Error("Epinephrine Definition not found");
+    return false;
+  }
+
+  if (m_O2 == nullptr || m_CO == nullptr || m_CO2 == nullptr || m_N2 == nullptr ||
+    m_Hb == nullptr || m_HbO2 == nullptr || m_HbCO2 == nullptr || m_HbCO == nullptr || m_HbO2CO2 == nullptr ||
+    m_epi == nullptr || m_HCO3 == nullptr)
+    return false;
+
+  m_acetoacetate = GetSubstance("Acetoacetate");
+  m_albumin = GetSubstance("Albumin");
+  m_calcium = GetSubstance("Calcium");
+  m_chloride = GetSubstance("Chloride");
+  m_creatinine = GetSubstance("Creatinine");
+  m_globulin = GetSubstance("Globulin");
+  m_glucose = GetSubstance("Glucose");
+  m_insulin = GetSubstance("Insulin");
+  m_lactate = GetSubstance("Lactate");
+  m_potassium = GetSubstance("Potassium");
+  m_sodium = GetSubstance("Sodium");
+  m_tristearin = GetSubstance("Tristearin");
+  m_urea = GetSubstance("Urea");
+
+  if (m_acetoacetate == nullptr)
+    Error("Acetoacetate Definition not found");
+  if (m_albumin == nullptr)
+    Error("Albumin Definition not found");
+  if (m_calcium == nullptr)
+    Error("Calcium Definition not found");
+  if (m_chloride == nullptr)
+    Error("Chloride Definition not found");
+  if (m_creatinine == nullptr)
+    Error("Creatinine Definition not found");
+  if (m_globulin == nullptr)
+    Error("Globulin Definition not found");
+  if (m_glucose == nullptr)
+    Error("Glucose Definition not found");
+  if (m_insulin == nullptr)
+    Error("Insulin Definition not found");
+  if (m_lactate == nullptr)
+    Error("Lactate Definition not found");
+  if (m_potassium == nullptr)
+    Error("Potassium Definition not found");
+  if (m_sodium == nullptr)
+    Error("Sodium Definition not found");
+  if (m_tristearin == nullptr)
+    Error("Tristearin Definition not found");
+  if (m_urea == nullptr)
+    Error("Urea Definition not found");
+  // These metabolites will be activated in initialization
+
+  // Check that drugs have what we need
+  for (SESubstance* sub : m_Substances)
+  {
+    if (sub->HasPD())
+    {
+      if (sub->GetPD().GetEC50().IsZero() || sub->GetPD().GetEC50().IsNegative())
+      {
+        Error(sub->GetName() + " cannot have EC50 <= 0");
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
 void PulseSubstances::InitializeSubstances()
 {  
   // NOTE!!
@@ -168,7 +300,7 @@ void PulseSubstances::InitializeGasCompartments()
   Stomach->GetSubstanceQuantity(*m_O2)->GetVolumeFraction().SetValue(0.0);
   Stomach->Balance(BalanceGasBy::VolumeFraction);
 
-  //Initialize the compartments to Ambient values  
+  //Initialize the compartments to Ambient values
   for (SEGasCompartment* cmpt : m_data.GetCompartments().GetAnesthesiaMachineLeafCompartments())
   {
     if (cmpt->HasVolume())
@@ -765,104 +897,7 @@ bool PulseSubstances::LoadSubstanceDirectory(const std::string& data_dir)
 {
   if (!SESubstanceManager::LoadSubstanceDirectory(data_dir))
     return false;
-
-  m_O2 = GetSubstance("Oxygen");
-  m_CO = GetSubstance("CarbonMonoxide");
-  m_CO2 = GetSubstance("CarbonDioxide");
-  m_N2 = GetSubstance("Nitrogen");
-  m_Hb = GetSubstance("Hemoglobin");
-  m_HbO2 = GetSubstance("Oxyhemoglobin");
-  m_HbCO2 = GetSubstance("Carbaminohemoglobin");
-  m_HbCO = GetSubstance("Carboxyhemoglobin");
-  m_HbO2CO2 = GetSubstance("OxyCarbaminohemoglobin");
-  m_HCO3 = GetSubstance("Bicarbonate");
-  m_epi = GetSubstance("Epinephrine");
-
-  if (m_O2 == nullptr)
-    Error("Oxygen Definition not found");
-  if (m_CO == nullptr)
-    Error("CarbonMonoxide Definition not found");
-  if (m_CO2 == nullptr)
-    Error("CarbonDioxide Definition not found");
-  if (m_N2 == nullptr)
-    Error("Nitrogen Definition not found");
-  if (m_Hb == nullptr)
-    Error("Hemoglobin Definition not found");
-  if (m_HbO2 == nullptr)
-    Error("Oxyhemoglobin Definition not found");
-  if (m_HbCO2 == nullptr)
-    Error("Carbaminohemoglobin Definition not found");
-  if (m_HbCO == nullptr)
-    Error("Carboxyhemoglobin Definition not found");
-  if (m_HbO2CO2 == nullptr)
-    Error("OxyCarbaminohemoglobin Definition not found");
-  if (m_HCO3 == nullptr)
-    Error("Bicarbonate Definition not found");
-  if (m_epi == nullptr)
-    Error("Epinephrine Definition not found");
-
-  if (m_O2 == nullptr || m_CO == nullptr || m_CO2 == nullptr || m_N2 == nullptr ||
-    m_Hb == nullptr || m_HbO2 == nullptr || m_HbCO2 == nullptr || m_HbCO == nullptr || m_HbO2CO2 == nullptr ||
-    m_epi == nullptr || m_HCO3 == nullptr)
-    return false;
-
-  m_acetoacetate = GetSubstance("Acetoacetate");
-  m_albumin = GetSubstance("Albumin");
-  m_calcium = GetSubstance("Calcium");
-  m_chloride = GetSubstance("Chloride");
-  m_creatinine = GetSubstance("Creatinine");
-  m_globulin = GetSubstance("Globulin");
-  m_glucose = GetSubstance("Glucose");
-  m_insulin = GetSubstance("Insulin");
-  m_lactate = GetSubstance("Lactate");
-  m_potassium = GetSubstance("Potassium");
-  m_sodium = GetSubstance("Sodium");
-  m_tristearin = GetSubstance("Tristearin");
-  m_urea = GetSubstance("Urea");
-
-  if (m_acetoacetate == nullptr)
-    Error("Acetoacetate Definition not found");
-  if (m_albumin == nullptr)
-    Error("Albumin Definition not found");
-  if (m_calcium == nullptr)
-    Error("Calcium Definition not found");
-  if (m_chloride == nullptr)
-    Error("Chloride Definition not found");
-  if (m_creatinine == nullptr)
-    Error("Creatinine Definition not found");
-  if (m_globulin == nullptr)
-    Error("Globulin Definition not found");
-  if (m_glucose == nullptr)
-    Error("Glucose Definition not found");
-  if (m_insulin == nullptr)
-    Error("Insulin Definition not found");
-  if (m_lactate == nullptr)
-    Error("Lactate Definition not found");
-  if (m_potassium == nullptr)
-    Error("Potassium Definition not found");
-  if (m_sodium == nullptr)
-    Error("Sodium Definition not found");
-  if (m_tristearin == nullptr)
-    Error("Tristearin Definition not found");
-  if (m_urea == nullptr)
-    Error("Urea Definition not found");
-  // These metabolites will be activated in initialization
-
-  // Check that drugs have what we need
-  for (SESubstance* sub : m_Substances)
-  {
-    if (sub->HasPD())
-    {
-      if (sub->GetPD().GetEC50().IsZero() || sub->GetPD().GetEC50().IsNegative())
-      {
-        std::stringstream ss;
-        ss << sub->GetName() << " cannot have EC50 <= 0";
-        Fatal(ss);
-      }
-    }
-  }
-
-  return true;
+  return Setup();
 }
 
 void PulseSubstances::AddActiveSubstance(SESubstance& substance)

@@ -32,7 +32,5 @@ const HeatCapacitancePerMassUnit& HeatCapacitancePerMassUnit::GetCompoundUnit(co
     return kcal_Per_K_kg;
   if (kcal_Per_C_kg.GetString().compare(unit) == 0)
     return kcal_Per_C_kg;
-  std::stringstream err;
-  err << unit << " is not a valid HeatCapacitancePerMass unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid HeatCapacitancePerMass unit");
 }

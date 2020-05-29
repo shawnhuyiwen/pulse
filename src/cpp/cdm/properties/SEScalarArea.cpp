@@ -22,7 +22,5 @@ const AreaUnit& AreaUnit::GetCompoundUnit(const std::string& unit)
     return cm2;
   if (m2.GetString().compare(unit) == 0)
     return m2;
-  std::stringstream err;
-  err << unit << " is not a valid Area unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid  Area unit");
 }

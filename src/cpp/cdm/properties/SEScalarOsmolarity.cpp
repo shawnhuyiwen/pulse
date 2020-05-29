@@ -22,7 +22,5 @@ const OsmolarityUnit& OsmolarityUnit::GetCompoundUnit(const std::string& unit)
     return Osm_Per_L;
   if (mOsm_Per_L.GetString().compare(unit) == 0)
     return mOsm_Per_L;
-  std::stringstream err;
-  err << unit << " is not a valid Osmolarity unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid Osmolarity unit");
 }

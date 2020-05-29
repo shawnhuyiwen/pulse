@@ -80,16 +80,14 @@ public class PulseEngine extends Pulse
       return false;
     }
     this.requestData(dataRequests);
-    this.nativeObj = nativeAllocate(logFile, dataDir);
-    return nativeSerializeFromFile(this.nativeObj, stateFile, simTime_s, dataRequestsStr);
+    this.nativeObj = nativeAllocate();
+    nativeSetLogFilename(this.nativeObj, logFile);
+    return nativeSerializeFromFile(this.nativeObj, stateFile, dataRequestsStr, 1);
   }
   
-  public synchronized StateData serializeToFile(String stateFile) throws InvalidProtocolBufferException
+  public synchronized boolean serializeToFile(String stateFile) throws InvalidProtocolBufferException
   {
-    String str = nativeSerializeToFile(this.nativeObj, stateFile);
-    StateData.Builder sd = StateData.newBuilder();
-    JsonFormat.parser().merge(str, sd);
-    return sd.build();
+    return nativeSerializeToFile(this.nativeObj, stateFile, 1);
   }
 
   public synchronized boolean initializeEngine(String logFile, SEPatientConfiguration patient_configuration, SEDataRequestManager dataRequests)
@@ -120,8 +118,9 @@ public class PulseEngine extends Pulse
       return false;
     }
     this.requestData(dataRequests);
-    this.nativeObj = nativeAllocate(logFile, dataDir);
-    this.deadEngine = !nativeInitializeEngine(this.nativeObj, patient_configurationStr, dataRequestsStr);
+    this.nativeObj = nativeAllocate();
+    nativeSetLogFilename(this.nativeObj, logFile);
+    this.deadEngine = !nativeInitializeEngine(this.nativeObj, patient_configurationStr, dataRequestsStr, 1, dataDir);
     if(this.deadEngine)
       Log.error("Unable to initialize engine");
     return !this.deadEngine;
@@ -239,11 +238,18 @@ public class PulseEngine extends Pulse
    */
   protected native void nativeReset(long nativeObj);
   
-  protected native boolean nativeInitializeEngine(long nativeObj, String patient_configuration, String dataRequests);
-  protected native boolean nativeSerializeFromFile(long nativeObj, String stateFile, double simTime_s, String dataRequests);// pass <0 as simTime to use the time in the file
-  protected native String  nativeSerializeToFile(long nativeObj, String stateFile);
+  protected native boolean nativeSerializeFromFile(long nativeObj, String stateFile, String dataRequests, int format);
+  protected native boolean nativeSerializeToFile(long nativeObj, String stateFile, int format);
+  
+  protected native boolean nativeSerializeFromString(long nativeObj, String state, String dataRequests, int format);
+  protected native String  nativeSerializeToString(long nativeObj, String stateFile);
+  
+  protected native boolean nativeInitializeEngine(long nativeObj, String patient_configuration, String dataRequests, int format, String dataDir);
+  
   protected native boolean nativeAdvanceTimeStep(long nativeObj);
   protected native boolean nativeAdvanceTime(long nativeObj, double time_s);
+  
   protected native boolean nativeProcessActions(long nativeObj, String actions);
+  
   protected native String nativeGetAssessment(long nativeObj, int type);
 }

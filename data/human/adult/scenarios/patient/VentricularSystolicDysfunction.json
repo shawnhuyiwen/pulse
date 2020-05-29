@@ -1,16 +1,14 @@
 {
   "Name": "VentricularSystolicDysfunction",
   "Description": "Heart failure event.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json",
-      "Conditions": { "AnyCondition": [{
-        "PatientCondition": {
-          "ChronicVentricularSystolicDysfunction": {
-          }
+  "PatientConfiguration": {
+    "PatientFile": "StandardMale.json",
+    "Conditions": { "AnyCondition": [{
+      "PatientCondition": {
+        "ChronicVentricularSystolicDysfunction": {
         }
-      }]}
-    }
+      }
+    }]}
   },
   "DataRequestManager": {
     "DataRequest": [{

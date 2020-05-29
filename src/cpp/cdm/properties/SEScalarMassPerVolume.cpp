@@ -82,7 +82,5 @@ const MassPerVolumeUnit& MassPerVolumeUnit::GetCompoundUnit(const std::string& u
     return kg_Per_mL;
   if (kg_Per_L.GetString().compare(unit) == 0)
     return kg_Per_L;
-  std::stringstream err;
-  err << unit << " is not a valid MassPerVolume unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid MassPerVolume unit");
 }

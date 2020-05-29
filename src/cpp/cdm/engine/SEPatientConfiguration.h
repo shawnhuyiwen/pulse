@@ -23,6 +23,9 @@ public:
 
   virtual bool IsValid()const;
 
+  virtual std::string GetDataRoot() const;
+  virtual void SetDataRoot(const std::string& rootDir);
+
   virtual std::string GetPatientFile() const;
   virtual void SetPatientFile(const std::string& patientFile);
   virtual bool HasPatientFile() const;
@@ -47,6 +50,7 @@ public:
   virtual void RemoveOverrides();
 
 protected:
+  std::string                     m_DataRoot;
   SEPatient*                      m_Patient;
   std::string                     m_PatientFile;
   SEConditionManager*             m_Conditions;

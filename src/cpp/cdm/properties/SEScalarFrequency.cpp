@@ -27,7 +27,5 @@ const FrequencyUnit& FrequencyUnit::GetCompoundUnit(const std::string& unit)
     return Per_s;
   if (Hz.GetString().compare(unit) == 0)
     return Hz;
-  std::stringstream err;
-  err << unit << " is not a valid Frequency unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid Frequency unit");
 }

@@ -111,9 +111,6 @@ void BloodChemistry::SetUp()
   m_redBloodCellVolume_mL = ConfigData.GetMeanCorpuscularVolume(VolumeUnit::mL);
   m_HbPerRedBloodCell_ug_Per_ct = ConfigData.GetMeanCorpuscularHemoglobin(MassPerAmountUnit::ug_Per_ct);
 
-  //Substance
- 
-
   m_aorta = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta);
   m_aortaO2 = m_aorta->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
   m_aortaCO2 = m_aorta->GetSubstanceQuantity(m_data.GetSubstances().GetCO2());

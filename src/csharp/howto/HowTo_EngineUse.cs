@@ -13,7 +13,8 @@ namespace HowTo_UseEngine
   {
     public void HandleEvent(SEEventChange change)
     {
-      Console.WriteLine(change.ToString());
+      if (change.Event == eEvent.HypovolemicShock && change.Active)
+        Console.WriteLine(change.ToString());
     }
   }
 
@@ -53,16 +54,29 @@ namespace HowTo_UseEngine
         SEDataRequest.CreateECGRequest("Lead3ElectricPotential", "mV"),
       };
       SEDataRequestManager data_mgr = new SEDataRequestManager(data_requests);
+      // In addition to getting this data back via this API
+      // You can have Pulse write the data you have requested to a CSV file
+      data_mgr.SetResultsFilename("./test_results/HowTo_EngineUse.cs.csv");
       // Create a reference to a double[] that will contain the data returned from Pulse
       double[] data_values;
       // data_values[0] is ALWAYS the simulation time in seconds
       // The rest of the data values are in order of the data_requests list provided
 
       // Instantiate a Pulse engine
-      //PulseEngine pulse = new PulseEngine("pulse.log", ".");
-      // Pass null or empty sting to not get a log file,
-      // and turn off cout via a bool
-      PulseEngine pulse = new PulseEngine(null, true, ".");
+      PulseEngine pulse = new PulseEngine();
+
+      // You can ask Pulse to write out a log file if you want
+      // By default, no log file is written
+      pulse.SetLogFilename("./test_results/HowTo_EngineUse.cs.log");
+      // You can also have pulse log to the console (std::cout)
+      // By default, console logging is turned off
+      //pulse.LogToConsole(true);
+      // It is recommended to listen and  manage the log messages yourself
+      // With a listener, you can add messages to a log, display, or write them to console
+      pulse.SetLogListener(new MyLogListener());
+      // Listen for events, this is optional
+      // You must provide an event listener to get events
+      pulse.SetEventHandler(new MyEventHandler());
 
       InitializationType initType = InitializationType.StateFileName;
       switch (initType)
@@ -70,7 +84,7 @@ namespace HowTo_UseEngine
         case InitializationType.StateFileName:
           {
             // Load a state file
-            if (!pulse.SerializeFromFile("./states/Soldier@0s.json", data_mgr, 0, SerializationFormat.JSON))
+            if (!pulse.SerializeFromFile("./states/Soldier@0s.json", data_mgr, SerializationFormat.JSON))
             {
               Console.WriteLine("Error Initializing Pulse!");
               return;
@@ -80,7 +94,7 @@ namespace HowTo_UseEngine
         case InitializationType.StateString:
           {
             string file_content = File.ReadAllText("./states/Soldier@0s.json");
-            if (!pulse.SerializeFromString(file_content, data_mgr, 0, SerializationFormat.JSON))
+            if (!pulse.SerializeFromString(file_content, data_mgr, SerializationFormat.JSON))
             {
               Console.WriteLine("Error Initializing Pulse!");
               return;
@@ -101,6 +115,11 @@ namespace HowTo_UseEngine
             cfg.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetSeverity().SetValue(0.2);
             cfg.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetLeftLungAffected().SetValue(1.0);
             cfg.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetRightLungAffected().SetValue(1.0);
+            // Initialization requires that you have all data files on disk for Pulse to find when creating a patient
+            //   - Patient file (if not creating an inline patient definition)
+            //   - Substance, Stabilization (config folder), nutrition, environments, ecg files
+            // The data_dir field can be changed in the InitializeEngine method
+            // If you have those folders in another location
             if (!pulse.InitializeEngine(cfg, data_mgr))
             {
               Console.WriteLine("Error Initializing Pulse!");
@@ -130,6 +149,11 @@ namespace HowTo_UseEngine
             // Optionally, you can add conditions to the patient
             cfg.GetConditions().GetChronicObstructivePulmonaryDisease().GetBronchitisSeverity().SetValue(0.45);
             cfg.GetConditions().GetChronicObstructivePulmonaryDisease().GetEmphysemaSeverity().SetValue(0.20);
+            // Initialization requires that you have all data files on disk for Pulse to find when creating a patient
+            //   - Patient file (if not creating an inline patient definition)
+            //   - Substance, Stabilization (config folder), nutrition, environments, ecg files
+            // The data_dir field can be changed in the InitializeEngine method
+            // If you have those folders in another location
             if (!pulse.InitializeEngine(cfg, data_mgr))
             {
               Console.WriteLine("Error Initializing Pulse!");
@@ -142,10 +166,6 @@ namespace HowTo_UseEngine
       // DOES ANYONE WANT TO BE ABLE TO CHANGE DATA REQUESTS IN THE MIDDLE OF A RUN?
       // NOTE ANY CSV FILE BEING WRITTEN OUT WOULD NOT SUPPORT CHANGING DATA IN THE MIDDLE OF A RUN
       // BUT IF YOU ARE NOT WRITING A CSV OUT, I COULD SEE THIS BEING USEFUL...
-
-      // Create our Log and Event handling objects
-      pulse.SetEventHandler(new MyEventHandler());
-      pulse.SetLogListener(new MyLogListener());
 
       // Now we can start telling the engine what to do
       // All the same concepts apply from the C++ HowTo files, so look there if you want to see more examples

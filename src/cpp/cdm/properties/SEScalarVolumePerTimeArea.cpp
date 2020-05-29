@@ -27,7 +27,5 @@ const VolumePerTimeAreaUnit& VolumePerTimeAreaUnit::GetCompoundUnit(const std::s
     return mL_Per_s_m2;
   if (L_Per_min_m2.GetString().compare(unit) == 0)
     return L_Per_min_m2;
-  std::stringstream err;
-  err << unit << " is not a valid VolumePerTimeArea unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid VolumePerTimeArea unit");
 }

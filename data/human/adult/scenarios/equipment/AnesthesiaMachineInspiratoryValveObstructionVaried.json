@@ -1,11 +1,7 @@
 {
   "Name": "InspiratoryValveObstructionVaried",
   "Description": "Testing inspiratory valve obstruction severity.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json"
-    }
-  },
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": [{
       "DecimalFormat": {

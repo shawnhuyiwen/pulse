@@ -1,11 +1,7 @@
 {
   "Name": "TBIandDrugs",
   "Description": "The patient receives a TBI and then gets a bolus Fentanyl.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json"
-    }
-  },
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": [{
       "DecimalFormat": {

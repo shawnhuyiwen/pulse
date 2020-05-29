@@ -68,12 +68,12 @@ void MVEngine::HandleEvent(eEvent e, bool active, const SEScalarTime* simTime)
 bool MVEngine::CreateEngine(const std::string& simulationDataStr, SerializationFormat fmt)
 {
   SAFE_DELETE(m_SimulationData);
-  m_SimulationData = new pulse::study::multiplex_ventilation::bind::SimulationData();
+  m_SimulationData = new pulse::study::bind::multiplex_ventilation::SimulationData();
   SerializeFromString(simulationDataStr, *m_SimulationData, fmt);
   return CreateEngine(*m_SimulationData);
 }
 
-bool MVEngine::CreateEngine(pulse::study::multiplex_ventilation::bind::SimulationData& sim)
+bool MVEngine::CreateEngine(pulse::study::bind::multiplex_ventilation::SimulationData& sim)
 {
   try
   {
@@ -117,7 +117,8 @@ bool MVEngine::CreateEngine(pulse::study::multiplex_ventilation::bind::Simulatio
       {
         auto* soloVentilation = comparison.mutable_soloventilation();
         std::string state = soloVentilation->statefile();
-        pc = new PulseController(outDir + "multiplex_patient_" + to_string(p) + ".log", m_DataDir);
+        pc = new PulseController();
+        pc->GetLogger()->SetLogFile(outDir + "multiplex_patient_" + to_string(p) + ".log");
         if (!pc->SerializeFromFile(state, SerializationFormat::JSON))
         {
           Error("Unable to load file : " + state);
@@ -138,7 +139,8 @@ bool MVEngine::CreateEngine(pulse::study::multiplex_ventilation::bind::Simulatio
       {
         auto* multiVentilation = comparison.mutable_multiplexventilation();
 
-        pc = new PulseController(outDir + "multiplex_patient_" + to_string(p) + ".log", m_DataDir);
+        pc = new PulseController();
+        pc->GetLogger()->SetLogFile(outDir + "multiplex_patient_" + to_string(p) + ".log");
         if (!pc->SerializeFromFile(m_DataDir + "/states/StandardMale@0s.json", SerializationFormat::JSON))
         {
           Error("Unable to load file : StandardMale@0s.json");
@@ -534,7 +536,7 @@ std::string MVEngine::GetSimulationState(SerializationFormat fmt)
   SerializeToString(*m_SimulationData, content, SerializationFormat::JSON);
   return content;
 }
-bool MVEngine::GetSimulationState(pulse::study::multiplex_ventilation::bind::SimulationData& sim)
+bool MVEngine::GetSimulationState(pulse::study::bind::multiplex_ventilation::SimulationData& sim)
 {
   if (m_Engines.empty())
   {
@@ -651,7 +653,7 @@ void MVEngine::TrackData(SEEngineTracker& trkr, const std::string& csv_filename)
   trkr.SetupRequests();
 }
 
-bool MVEngine::SerializeToString(pulse::study::multiplex_ventilation::bind::SimulationData& src, std::string& dst, SerializationFormat f)
+bool MVEngine::SerializeToString(pulse::study::bind::multiplex_ventilation::SimulationData& src, std::string& dst, SerializationFormat f)
 {
   google::protobuf::util::JsonPrintOptions printOpts;
   printOpts.add_whitespace = true;
@@ -659,7 +661,7 @@ bool MVEngine::SerializeToString(pulse::study::multiplex_ventilation::bind::Simu
   printOpts.always_print_primitive_fields = true;
   return google::protobuf::util::MessageToJsonString(src, &dst, printOpts).ok();
 }
-bool MVEngine::SerializeFromString(const std::string& src, pulse::study::multiplex_ventilation::bind::SimulationData& dst, SerializationFormat f)
+bool MVEngine::SerializeFromString(const std::string& src, pulse::study::bind::multiplex_ventilation::SimulationData& dst, SerializationFormat f)
 {
   google::protobuf::util::JsonParseOptions parseOpts;
   google::protobuf::SetLogHandler([](google::protobuf::LogLevel level, const char* filename, int line, const std::string& message)
@@ -690,7 +692,8 @@ bool MVEngine::RunSoloState(const std::string& stateFile, const std::string& res
   double timeStep_s = 0.02;
   double currentTime_s = 0;
 
-  PulseController pc(logFile);
+  PulseController pc;
+  pc.GetLogger()->SetLogFile(logFile);
   pc.SerializeFromFile(stateFile, SerializationFormat::JSON);
   MVEngine::TrackData(pc.GetEngineTracker(), dataFile);
   int count = (int)(duration_s / timeStep_s);

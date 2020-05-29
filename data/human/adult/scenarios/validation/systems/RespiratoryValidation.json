@@ -2,7 +2,7 @@
   {
     "Name": "RespiratoryValidation",
     "Description": "Validation of Respiratory Ssytem data.",
-    "StartType": { "PatientConfiguration": { "PatientFile": "StandardMale.json" } },
+    "PatientConfiguration": { "PatientFile": "StandardMale.json" },
     "DataRequestManager":
     {
       "DataRequest": 

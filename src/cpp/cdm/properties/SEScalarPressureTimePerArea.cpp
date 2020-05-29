@@ -22,7 +22,5 @@ const PressureTimePerAreaUnit& PressureTimePerAreaUnit::GetCompoundUnit(const st
     return mmHg_Per_mL_m2;
   if (cmH2O_Per_mL_m2.GetString().compare(unit) == 0)
     return cmH2O_Per_mL_m2;
-  std::stringstream err;
-  err << unit << " is not a valid PressureTimePerArea unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid PressureTimePerArea unit");
 }

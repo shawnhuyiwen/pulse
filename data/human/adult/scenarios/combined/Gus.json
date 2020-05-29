@@ -1,10 +1,8 @@
 {
   "Name": "Gus",
   "Description": "A Ventilator mask is placed on Gus and an anesthesia machine administers oxygen. Succinylcholine is injected and the Ventilator mask is removed. A failed endotracheal intubation occurs, before a successful tube is set and oxygen flow is readministered via the anesthesia machine..",
-  "StartType": {
-    "PatientConfiguration": {
+  "PatientConfiguration": {
       "PatientFile": "Gus.json"
-    }
   },
   "DataRequestManager": {
     "DataRequest": [{

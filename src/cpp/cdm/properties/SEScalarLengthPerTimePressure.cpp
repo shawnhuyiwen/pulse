@@ -32,7 +32,5 @@ const LengthPerTimePressureUnit& LengthPerTimePressureUnit::GetCompoundUnit(cons
     return m_Per_min_mmHg;
   if (cm_Per_min_mmHg.GetString().compare(unit) == 0)
     return cm_Per_min_mmHg;
-  std::stringstream err;
-  err << unit << " is not a valid LengthPerTimePressure unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid LengthPerTimePressure unit");
 }

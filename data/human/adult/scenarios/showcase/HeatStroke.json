@@ -1,11 +1,7 @@
 {
   "Name": "HeatStroke",
   "Description": "Showcase scenario: Heat Stroke showcase scenario.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "Jeff.json"
-    }
-  },
+    "PatientConfiguration": { "PatientFile": "Jeff.json" },
   "DataRequestManager": {
     "DataRequest": [{
       "DecimalFormat": {

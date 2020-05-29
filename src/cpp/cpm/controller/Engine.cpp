@@ -6,24 +6,15 @@
 #include "Substances.h"
 #include "Compartments.h"
 
-PULSE_DECL std::unique_ptr<PhysiologyEngine> CreatePulseEngine(const std::string& logfile, const std::string& data_dir)
+
+PULSE_DECL std::unique_ptr<PhysiologyEngine> CreatePulseEngine(Logger* logger)
 {
-  return std::unique_ptr<PulseEngine>(new PulseEngine(logfile, data_dir));
+  return std::unique_ptr<PulseEngine>(new PulseEngine(logger));
 }
 
-PULSE_DECL std::unique_ptr<PhysiologyEngine> CreatePulseEngine(Logger* logger, const std::string& data_dir)
+PulseEngine::PulseEngine(Logger* logger)
 {
-  return std::unique_ptr<PulseEngine>(new PulseEngine(logger, data_dir));
-}
-
-PulseEngine::PulseEngine(Logger* logger, const std::string& data_dir)
-{
-  m_PulseController = new PulseController(logger, data_dir);
-}
-
-PulseEngine::PulseEngine(const std::string& logFileName, const std::string& data_dir)
-{
-  m_PulseController = new PulseController(logFileName, data_dir);
+  m_PulseController = new PulseController(logger);
 }
 
 PulseEngine::~PulseEngine()
@@ -31,29 +22,36 @@ PulseEngine::~PulseEngine()
   SAFE_DELETE(m_PulseController);
 }
 
-bool PulseEngine::SerializeToString(std::string& output, SerializationFormat m) const
+bool PulseEngine::SerializeFromFile(const std::string& filename, SerializationFormat m)
 {
-  return m_PulseController->SerializeToString(output, m);
+  return m_PulseController->SerializeFromFile(filename, m);
 }
 bool PulseEngine::SerializeToFile(const std::string& filename, SerializationFormat m) const
 {
   return m_PulseController->SerializeToFile(filename, m);
 }
+
 bool PulseEngine::SerializeFromString(const std::string& src, SerializationFormat m)
 {
-  return SerializeFromString(src, m, nullptr, nullptr);
+  return SerializeFromString(src, m);
 }
-bool PulseEngine::SerializeFromString(const std::string& src, SerializationFormat m, const SEScalarTime* simTime, const SEEngineConfiguration* config)
+bool PulseEngine::SerializeToString(std::string& output, SerializationFormat m) const
 {
-  return m_PulseController->SerializeFromString(src, m, simTime, config);
+  return m_PulseController->SerializeToString(output, m);
 }
-bool PulseEngine::SerializeFromFile(const std::string& filename, SerializationFormat m)
+
+bool PulseEngine::InitializeEngine(const std::string& patient_configuration, SerializationFormat m)
 {
-  return SerializeFromFile(filename, m, nullptr, nullptr);
+  return m_PulseController->InitializeEngine(patient_configuration, m);
 }
-bool PulseEngine::SerializeFromFile(const std::string& filename, SerializationFormat m, const SEScalarTime* simTime, const SEEngineConfiguration* config)
+bool PulseEngine::InitializeEngine(const SEPatientConfiguration& patient_configuration)
 {
-  return m_PulseController->SerializeFromFile(filename, m, simTime, config);
+  return m_PulseController->InitializeEngine(patient_configuration);
+}
+
+bool PulseEngine::SetConfigurationOverride(const SEEngineConfiguration* config)
+{
+  return m_PulseController->SetConfigurationOverride(config);
 }
 
 Logger* PulseEngine::GetLogger() const
@@ -66,15 +64,6 @@ SEEngineTracker* PulseEngine::GetEngineTracker() const
   return &m_PulseController->GetData().GetEngineTracker();
 }
 
-bool PulseEngine::InitializeEngine(const std::string& patient_configuration, SerializationFormat m, const SEEngineConfiguration* config)
-{
-  return m_PulseController->InitializeEngine(patient_configuration, m , config);
-}
-
-bool PulseEngine::InitializeEngine(const SEPatientConfiguration& patient_configuration, const SEEngineConfiguration* config)
-{
-  return m_PulseController->InitializeEngine(patient_configuration, config);
-}
 
 const SEConditionManager&  PulseEngine::GetConditionManager() const
 {
@@ -89,6 +78,10 @@ double PulseEngine::GetTimeStep(const TimeUnit& unit) const
 double PulseEngine::GetSimulationTime(const TimeUnit& unit) const
 {
   return  m_PulseController->GetData().GetSimulationTime().GetValue(unit);
+}
+void PulseEngine::SetSimulationTime(const SEScalarTime& time)
+{
+  return  m_PulseController->SetSimulationTime(time);
 }
 
 void PulseEngine::AdvanceModelTime()

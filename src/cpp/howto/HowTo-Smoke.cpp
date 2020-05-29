@@ -47,7 +47,8 @@
 void HowToSmoke()
 {
   // Create the engine and load the patient
-  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowTo_Smoke.log");
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
+  pe->GetLogger()->SetLogFile("./test_results/HowTo_Smoke.log");
   pe->GetLogger()->Info("HowTo_Smoke");
   /*
   // Smoke is made up of many things.

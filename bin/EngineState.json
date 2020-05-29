@@ -1,7 +1,7 @@
 {
   "Name":"BasicStandard",
   "Description":"Basic scenario measuring patient vitals with no insults or interventions",
-  "StartType":{"EngineStateFile":"./states/StandardMale@0s.json"},
+  "EngineStateFile":"./states/StandardMale@0s.json",
   "DataRequestManager": {"DataRequest":[
     {"DecimalFormat":{"Precision":1},"Category":"Patient",     "PropertyName":"Weight",                            "Unit":"kg"},
     
@@ -63,7 +63,7 @@
     
     {"DecimalFormat":{"Precision":8}, "Category":"Substance", "SubstanceName":"Epinephrine",   "PropertyName":"SystemicMassCleared", "Unit":"ug"},
     
-    {"DecimalFormat":{"Precision":2}, "Category":"Physiology", "PropertyName":"ChymeAbsorptionRate",          "Unit":"mL/min"},
+    {"DecimalFormat":{"Precision":2}, "Category":"Physiology", "PropertyName":"WaterAbsorptionRate",          "Unit":"mL/min"},
     {"DecimalFormat":{"Precision":2}, "Category":"Physiology", "PropertyName":"StomachContents-Carbohydrate", "Unit":"g"},
     {"DecimalFormat":{"Precision":2}, "Category":"Physiology", "PropertyName":"StomachContents-Fat",          "Unit":"g"},
     {"DecimalFormat":{"Precision":2}, "Category":"Physiology", "PropertyName":"StomachContents-Protein",      "Unit":"g"},

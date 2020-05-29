@@ -32,7 +32,5 @@ const HeatResistanceAreaUnit& HeatResistanceAreaUnit::GetCompoundUnit(const std:
     return rValue;
   if (tog.GetString().compare(unit) == 0)
     return tog;
-  std::stringstream err;
-  err << unit << " is not a valid HeatResistanceArea unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid HeatResistanceArea unit");
 }

@@ -1,12 +1,12 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-from pulse.study.multiplex_ventilation.bind.MultiplexVentilation_pb2 import  *
+from pulse.study.bind.MultiplexVentilation_pb2 import  *
 from pulse.study.multiplex_ventilation.engine import MVEngine
 
 def HowTo_UseEngine():
     # Create an engine
-    mve = MVEngine("MVEngine.log", True)
+    mve = MVEngine("./test_results/multiplex_ventilation/MVEngine.log", True)
 
     sim = SimulationData()
     sim.ID = 42

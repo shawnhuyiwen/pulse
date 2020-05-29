@@ -47,7 +47,5 @@ const LengthPerTimeUnit& LengthPerTimeUnit::GetCompoundUnit(const std::string& u
     return ft_Per_min;
   if (km_Per_hr.GetString().compare(unit) == 0)
     return km_Per_hr;
-  std::stringstream err;
-  err << unit << " is not a valid LengthPerTime unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid LengthPerTime unit");
 }

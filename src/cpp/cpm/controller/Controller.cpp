@@ -80,16 +80,9 @@
 #include "utils/DataTrack.h"
 #include "utils/FileUtils.h"
 
-
-PulseData::PulseData(const std::string& logFileName, const std::string& data_dir) : PulseData(new Logger(logFileName), data_dir)
-{
-  myLogger = true;
-  // Directs to the ctor below
-}
-PulseData::PulseData(Logger* logger, const std::string& data_dir) : Loggable(logger)
+PulseData::PulseData(Logger* logger) : Loggable(logger)
 {
   m_State = EngineState::NotReady;
-  m_DataDir = data_dir;
   m_AdvanceHandler = nullptr;
 
   m_CurrentTime.SetValue(0, TimeUnit::s);
@@ -99,13 +92,11 @@ PulseData::PulseData(Logger* logger, const std::string& data_dir) : Loggable(log
   m_Logger->SetLogTime(&m_SimulationTime);
 
   m_Substances = std::unique_ptr<PulseSubstances>(new PulseSubstances(*this));
-  m_Substances->LoadSubstanceDirectory(m_DataDir);
 
   m_InitialPatient = std::unique_ptr<SEPatient>(new SEPatient(GetLogger()));
   m_CurrentPatient = std::unique_ptr<SEPatient>(new SEPatient(GetLogger()));
 
   m_Config = std::unique_ptr<PulseConfiguration>(new PulseConfiguration(*m_Substances));
-  m_Config->Initialize(m_DataDir);
 
   m_SaturationCalculator = std::unique_ptr<SaturationCalculator>(new SaturationCalculator(*this));
 
@@ -240,13 +231,9 @@ const SEScalarTime& PulseData::GetTimeStep() const { return m_Config->GetTimeSte
 bool PulseData::HasOverride() const { return m_ScalarOverrides.size() > 0; }
 const std::vector<SEScalarProperty>& PulseData::GetOverrides() const { return m_ScalarOverrides; }
 
-PulseController::PulseController(const std::string& logFileName, const std::string& data_dir) : PulseController(new Logger(logFileName), data_dir)
+PulseController::PulseController(Logger* logger) : PulseData(logger)
 {
-  myLogger = true;
-  // Directs to the ctor below
-}
-PulseController::PulseController(Logger* logger, const std::string& data_dir) : PulseData(logger, data_dir)
-{
+  m_ConfigOverride = nullptr;
   m_Stabilizer = new PulseStabilizationController(*this);
 }
 PulseController::~PulseController()
@@ -254,50 +241,49 @@ PulseController::~PulseController()
 
 }
 
-bool PulseController::SerializeToString(std::string& output, SerializationFormat m) const
-{
-  return PBPulseState::SerializeToString(*this, output, m);
-}
-bool PulseController::SerializeToFile(const std::string& filename, SerializationFormat m) const
-{
-  return PBPulseState::SerializeToFile(*this, filename, m);
-}
-bool PulseController::SerializeFromString(const std::string& src, SerializationFormat m)
-{
-  return SerializeFromString(src, m, nullptr, nullptr);
-}
-bool PulseController::SerializeFromString(const std::string& src, SerializationFormat m, const SEScalarTime* simTime, const SEEngineConfiguration* config)
-{
-  return PBPulseState::SerializeFromString(src, *this, m, simTime, config);
-}
-bool PulseController::SerializeFromFile(const std::string& filename, SerializationFormat m)
-{
-  return SerializeFromFile(filename, m, nullptr, nullptr);
-}
-bool PulseController::SerializeFromFile(const std::string& filename, SerializationFormat m, const SEScalarTime* simTime, const SEEngineConfiguration* config)
-{
-  return PBPulseState::SerializeFromFile(filename, *this, m, simTime, config);
-}
-
-bool PulseController::InitializeEngine(const std::string& patient_configuration, SerializationFormat m, const SEEngineConfiguration* config)
-{
-  SEPatientConfiguration pc(*m_Substances);
-  pc.SerializeFromString(patient_configuration, m);
-  return InitializeEngine(pc, config);
-}
-
-bool PulseController::InitializeEngine(const SEPatientConfiguration& patient_configuration, const SEEngineConfiguration* config)
+bool PulseController::SetConfigurationOverride(const SEEngineConfiguration* config)
 {
   const PulseConfiguration* pConfig = nullptr;
   if (config != nullptr)
   {
-    pConfig = dynamic_cast<const PulseConfiguration*>(config);
-    if (pConfig == nullptr)
+    m_ConfigOverride = dynamic_cast<const PulseConfiguration*>(config);
+    if (m_ConfigOverride == nullptr)
     {
       Error("Configuration provided is not a Pulse Configuration Object");
       return false;
     }
   }
+  return true;
+}
+
+bool PulseController::SerializeFromFile(const std::string& filename, SerializationFormat m)
+{
+  return PBPulseState::SerializeFromFile(filename, *this, m, m_ConfigOverride);
+}
+bool PulseController::SerializeToFile(const std::string& filename, SerializationFormat m) const
+{
+  return PBPulseState::SerializeToFile(*this, filename, m);
+}
+
+bool PulseController::SerializeFromString(const std::string& src, SerializationFormat m)
+{
+  return PBPulseState::SerializeFromString(src, *this, m);
+}
+bool PulseController::SerializeToString(std::string& output, SerializationFormat m) const
+{
+  return PBPulseState::SerializeToString(*this, output, m);
+}
+
+bool PulseController::InitializeEngine(const std::string& patient_configuration, SerializationFormat m)
+{
+  SEPatientConfiguration pc(*m_Substances);
+  pc.SerializeFromString(patient_configuration, m);
+  return InitializeEngine(pc);
+}
+
+bool PulseController::InitializeEngine(const SEPatientConfiguration& patient_configuration)
+{
+  m_DataDir = patient_configuration.GetDataRoot();
   m_EngineTrack->ResetFile();
   m_State = EngineState::Initialization;
   if(patient_configuration.HasOverride())
@@ -307,7 +293,7 @@ bool PulseController::InitializeEngine(const SEPatientConfiguration& patient_con
   }
   if (patient_configuration.HasPatient())
   {
-    if (!PulseController::Initialize(pConfig, *patient_configuration.GetPatient()))
+    if (!PulseController::Initialize(*patient_configuration.GetPatient()))
       return false;
   }
   else if (patient_configuration.HasPatientFile())
@@ -321,7 +307,7 @@ bool PulseController::InitializeEngine(const SEPatientConfiguration& patient_con
     }
     if (!patient.SerializeFromFile(pFile, JSON))// TODO Support all serialization formats
       return false;
-    if (!PulseController::Initialize(pConfig, patient))
+    if (!PulseController::Initialize(patient))
       return false;
   }
   else
@@ -380,7 +366,7 @@ bool PulseController::InitializeEngine(const SEPatientConfiguration& patient_con
   return true;
 }
 
-bool PulseController::Initialize(const PulseConfiguration* config, SEPatient const& patient)
+bool PulseController::Initialize(SEPatient const& patient)
 {
   m_State = EngineState::NotReady;
   Info("Configuring patient");
@@ -388,7 +374,7 @@ bool PulseController::Initialize(const PulseConfiguration* config, SEPatient con
     return false;
 
   Info("Resetting Substances");
-  m_Substances->Reset();
+  m_Substances->LoadSubstanceDirectory(m_DataDir);
 
   // Clear all substances and reload the original data
   // This clears out all engine specific data stored in the substance
@@ -405,10 +391,10 @@ bool PulseController::Initialize(const PulseConfiguration* config, SEPatient con
   m_Config->Merge(cFile);
 
   // Now, override anything with a configuration provided by the user or scenario
-  if (config != nullptr)
+  if (m_ConfigOverride != nullptr)
   {
     Info("Merging Provided Configuration");
-    m_Config->Merge(*config);
+    m_Config->Merge(*m_ConfigOverride);
   }
 
   if (!m_Config->IsPDEnabled())
@@ -422,7 +408,7 @@ bool PulseController::Initialize(const PulseConfiguration* config, SEPatient con
     m_CurrentPatient->SerializeToFile(stableDir + m_CurrentPatient->GetName() + ".json",JSON);
   }
 
-  m_SaturationCalculator->Initialize(*m_Substances);
+  m_SaturationCalculator->Setup();
 
   m_Actions->Clear();
   m_Conditions->Clear();
@@ -455,12 +441,17 @@ bool PulseController::Initialize(const PulseConfiguration* config, SEPatient con
   m_DrugSystem->Initialize();
   m_EnergySystem->Initialize();
   m_BloodChemistrySystem->Initialize();
-  m_TissueSystem->Initialize(); // Depends on some parameters that Blood Chemistry initializes,needs to be after  
+  m_TissueSystem->Initialize(); // Depends on some parameters that Blood Chemistry initializes,needs to be after
   m_ECG->Initialize();
   m_Inhaler->Initialize();
 
   AdvanceCallback(-1);
   return true;
+}
+
+void PulseController::SetSimulationTime(const SEScalarTime& time)
+{
+  m_SimulationTime.Set(time);
 }
 
 bool PulseController::SetupPatient(SEPatient const& patient)
@@ -1373,7 +1364,7 @@ bool PulseController::CreateCircuitsAndCompartments()
 {
   m_Circuits->Clear();
   m_Compartments->Clear();
-
+  m_Compartments->Setup();
   SetupCardiovascular();
   if (m_Config->IsRenalEnabled())
     SetupRenal();

@@ -17,7 +17,5 @@ const ElectricChargeUnit& ElectricChargeUnit::GetCompoundUnit(const std::string&
 {
   if (C.GetString().compare(unit) == 0)
     return C;
-  std::stringstream err;
-  err << unit << " is not a valid ElectricCharge unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid ElectricCharge unit");
 }

@@ -1,7 +1,7 @@
 {
   "Name": "TensionPneumothoraxClosedVaried",
   "Description": "Patient is afflicted with a closed pneumothorax at the right lung. A needle decompression is applied.",
-  "StartType": { "PatientConfiguration": { "PatientFile": "StandardMale.json" }},
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager":
   {
     "DataRequest":

@@ -32,7 +32,5 @@ const EnergyPerMassUnit& EnergyPerMassUnit::GetCompoundUnit(const std::string& u
     return mJ_Per_kg;
   if (kcal_Per_kg.GetString().compare(unit) == 0)
     return kcal_Per_kg;
-  std::stringstream err;
-  err << unit << " is not a valid EnergyPerMass unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid EnergyPerMass unit");
 }

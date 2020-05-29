@@ -1,11 +1,7 @@
 {
   "Name": "AsthmaAttackDeath",
   "Description": "Patient is afflicted with an untreated life threatening acute asthma attack.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json"
-    }
-  },
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager":
   {
     "DataRequest":

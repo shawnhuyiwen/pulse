@@ -511,7 +511,7 @@ bool SELiquidSubstanceQuantity::HasSaturation() const
           return false;
       }
       if (!subQ->HasMolarity())
-        return false;     
+        return false;
     }
     return true;
   }

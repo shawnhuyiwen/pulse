@@ -41,7 +41,7 @@
 
 void PulseEngineTest::AerosolTest(const std::string& sOutputDirectory)
 {
-  m_Logger->ResetLogFile(sOutputDirectory + "/AerosolTest.log");
+  m_Logger->SetLogFile(sOutputDirectory + "/AerosolTest.log");
 
   SETestReport testReport = SETestReport(m_Logger);
 

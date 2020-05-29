@@ -49,9 +49,9 @@ message ConfigurationData
   
   message ConstantsConfigurationData
   {
-    pulse.cdm.bind.ScalarData                                   OxygenMetabolicConstant                              = 1;
-    pulse.cdm.bind.ScalarPowerPerAreaTemperatureToTheFourthData StefanBoltzmann                                      = 2;
-    pulse.cdm.bind.ScalarHeatCapacitancePerAmountData           UniversalGasConstant                                 = 3;
+    pulse.cdm.bind.ScalarData                                   OxygenMetabolicConstant                     = 1;
+    pulse.cdm.bind.ScalarPowerPerAreaTemperatureToTheFourthData StefanBoltzmann                             = 2;
+    pulse.cdm.bind.ScalarHeatCapacitancePerAmountData           UniversalGasConstant                        = 3;
   }
   
   message DrugsConfigurationData

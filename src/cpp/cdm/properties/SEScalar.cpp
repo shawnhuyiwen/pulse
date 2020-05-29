@@ -148,8 +148,6 @@ void SEScalar::SetValue(double d)
 }
 void SEScalar::ForceValue(double d)
 {
-  if (m_readOnly)
-    throw CommonDataModelException("Scalar is marked read-only");
   m_value = d;
   m_isnan = false;
   m_isinf = false;
@@ -223,7 +221,7 @@ bool SEScalar::Equals(const SEScalar& to) const
 
 std::string SEScalar::ToString() const
 {
-  return std::to_string(m_value);
+  return cdm::to_string(m_value);
 }                                      
 void SEScalar::ToString(std::ostream &str) const
 {
@@ -376,8 +374,6 @@ void SEScalarQuantity<Unit>::SetValue(double d, const Unit& unit)
 template<typename Unit>
 void SEScalarQuantity<Unit>::ForceValue(double d, const Unit& unit)
 {
-  if (m_readOnly)
-    throw CommonDataModelException("Scalar is marked read-only");
   m_value = d;
   m_isnan = false;
   m_isinf = false;
@@ -404,7 +400,7 @@ void SEScalarQuantity<Unit>::ForceValue(double d, const CCompoundUnit& unit)
   const Unit* u = dynamic_cast<const Unit*>(&unit);
   if (u == nullptr)
     throw CommonDataModelException("Provided unit is not of proper quantity type");
-  this->SetValue(d, *u);
+  this->ForceValue(d, *u);
 }
 
 template<typename Unit>
@@ -496,9 +492,9 @@ template<typename Unit>
 std::string SEScalarQuantity<Unit>::ToString() const
 {
   if (m_isnan || m_isinf)
-    return std::to_string(m_value);
+    return cdm::to_string(m_value);
   else
-    return std::to_string(m_value) + "(" + m_unit->GetString() + ")";
+    return cdm::to_string(m_value) + "(" + m_unit->GetString() + ")";
 }
 template<typename Unit>
 void SEScalarQuantity<Unit>::ToString(std::ostream& str) const

@@ -173,7 +173,5 @@ const CCompoundUnit& GetUnit(const std::string& unit)
   IS_A(VolumePerTimePressureUnit);
   IS_A(VolumePerTimePressureAreaUnit);
 
-  std::stringstream err;
-  err << "Could not map unit " << unit << " to any CDM Unit Type";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException("Could not map unit " + unit + " to any CDM Unit Type");
 }

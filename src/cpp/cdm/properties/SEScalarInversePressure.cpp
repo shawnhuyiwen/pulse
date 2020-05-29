@@ -32,7 +32,5 @@ const InversePressureUnit& InversePressureUnit::GetCompoundUnit(const std::strin
     return Inverse_cmH2O;
   if (Inverse_atm.GetString().compare(unit) == 0)
     return Inverse_atm;
-  std::stringstream err;
-  err << unit << " is not a valid InversePressure unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid InversePressure unit");
 }

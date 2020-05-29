@@ -10,7 +10,11 @@ message ScenarioData
 {
   string                           Name                      = 1;
   string                           Description               = 2;
-  EngineInitializationData         StartType                 = 3;
-  DataRequestManagerData           DataRequestManager        = 4;
-  repeated AnyActionData           AnyAction                 = 5;
+  oneof StartType
+  {
+    string                         EngineStateFile           = 3;
+    PatientConfigurationData       PatientConfiguration      = 4;
+  }
+  DataRequestManagerData           DataRequestManager        = 5;
+  repeated AnyActionData           AnyAction                 = 6;
 }

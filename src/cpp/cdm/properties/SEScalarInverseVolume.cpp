@@ -22,7 +22,5 @@ const InverseVolumeUnit& InverseVolumeUnit::GetCompoundUnit(const std::string& u
     return Inverse_L;
   if (Inverse_mL.GetString().compare(unit) == 0)
     return Inverse_mL;
-  std::stringstream err;
-  err << unit << " is not a valid Volume unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid InverseVolume unit");
 }

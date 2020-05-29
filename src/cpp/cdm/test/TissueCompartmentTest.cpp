@@ -27,7 +27,7 @@ void CommonDataModelTest::TissueCompartmentTest(const std::string& rptDirectory)
 {
   TimingProfile pTimer;
 
-  m_Logger->ResetLogFile(rptDirectory + "/TissueCompartmentTest.log");
+  m_Logger->SetLogFile(rptDirectory + "/TissueCompartmentTest.log");
   SESubstanceManager subMgr(m_Logger);
   subMgr.LoadSubstanceDirectory();
 

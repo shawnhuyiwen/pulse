@@ -6,25 +6,20 @@
 #include "CommonDataModel.h"
 // CDM Features in use
 #include "PhysiologyEngine.h"
-#include "utils/ScopedMutex.h"
 #include "engine/SEEventManager.h"
+#include "utils/ScopedMutex.h"
+#define PULSE_DECL CDM_DECL
 
-#include <memory>
-
-#define PULSE_DECL
-#ifdef SHARED_PULSE
-  #if defined(__clang__)
-    #define PULSE_DECL
-  #elif defined(__gnu_linux__)
-    #define PULSE_DECL __attribute__ ((visibility ("default")))
-  #else
-    #ifdef SHARED_PULSE
-      #define PULSE_DECL __declspec(dllexport)
-    #else
-      #define PULSE_DECL __declspec(dllimport)
-    #endif
-  #endif
-#endif
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Creates a Pulse Engine.
+///
+/// \details
+/// The state can be saved as JSON or bytes in the given string.
+/// Note that the bytes are binary, not text; we only use the string class as a convenient container.
+/// Engine will be in a cleared state if this method fails.
+//--------------------------------------------------------------------------------------------------
+PULSE_DECL std::unique_ptr<PhysiologyEngine> CreatePulseEngine(Logger* logger=nullptr);
 
 /**
  * An instance of Pulse where the interface is define in stl and base data types.
@@ -33,17 +28,22 @@
 class PULSE_DECL PulseEngineThunk : public LoggerForward, public SEEventHandler
 {
 public:
-  PulseEngineThunk(std::string const& logfile = "", bool cout_enabled = true, std::string const& data_dir = ".");
+  PulseEngineThunk();
   ~PulseEngineThunk();
 
-  bool SerializeFromFile(std::string const& filename, std::string const& data_requests, SerializationFormat format, double sim_time_s);
+  // void SetConfigurationOverride(std::string const& config); // Not Implemented
+
+  bool SerializeFromFile(std::string const& filename, std::string const& data_requests, SerializationFormat format);
   bool SerializeToFile(std::string const& filename, SerializationFormat format);
-  bool SerializeFromString(std::string const& state, std::string const& data_requests, SerializationFormat format, double sim_time_s);
+
+  bool SerializeFromString(std::string const& state, std::string const& data_requests, SerializationFormat format);
   std::string SerializeToString(SerializationFormat format);
 
-  bool InitializeEngine(std::string const& patient_configuration, std::string const& data_requests, SerializationFormat format);
+  bool InitializeEngine(std::string const& patient_configuration, std::string const& data_requests, SerializationFormat format, std::string const& data_dir = "./");
 
-  void KeepLogMessages(bool keep);
+  void LogToConsole(bool b);
+  void KeepLogMessages(bool keep);// Set this to true if you are going to pull messages from the engine
+  void SetLogFilename(std::string const& logfile);// Set to empty if no log file is wanted
   std::string PullLogMessages(SerializationFormat format);
 
   void KeepEventChanges(bool keep);
@@ -74,9 +74,6 @@ private:
   class pimpl;
   pimpl* data;
 };
-
-PULSE_DECL std::unique_ptr<PhysiologyEngine> CreatePulseEngine(const std::string& logfile, const std::string& data_dir = ".");
-PULSE_DECL std::unique_ptr<PhysiologyEngine> CreatePulseEngine(Logger* logger = nullptr, const std::string& data_dir =".");
 
 #define PULSE_BIND pulse::cpm::bind
 #define PULSE_BIND_DECL(type) \

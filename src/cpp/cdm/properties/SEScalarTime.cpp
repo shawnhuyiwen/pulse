@@ -40,7 +40,5 @@ const TimeUnit& TimeUnit::GetCompoundUnit(const std::string& unit)
     return day;
   if(yr.GetString().compare(unit)==0)
     return yr;
-  std::stringstream err;
-  err << unit << " is not a valid Amount unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid Time unit");
 }

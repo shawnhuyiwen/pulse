@@ -37,7 +37,5 @@ const VolumePerTimeMassUnit& VolumePerTimeMassUnit::GetCompoundUnit(const std::s
     return mL_Per_s_kg;
   if (uL_Per_min_kg.GetString().compare(unit) == 0)
     return uL_Per_min_kg;
-  std::stringstream err;
-  err << unit << " is not a valid VolumePerTimeMass unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid VolumePerTimeMass unit");
 }

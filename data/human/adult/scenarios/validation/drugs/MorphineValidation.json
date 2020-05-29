@@ -2,11 +2,7 @@
   "Scenario": {
     "Name": "MorphineValidation",
     "Description": "Inject standard patient with Morphine.",
-    "StartType": {
-      "PatientConfiguration": {
-        "PatientFile": "StandardMale.json"
-      }
-    },
+    "PatientConfiguration": { "PatientFile": "StandardMale.json" },
     "DataRequestManager": {
       "SamplesPerSecond": 1.0,
       "DataRequest": [{

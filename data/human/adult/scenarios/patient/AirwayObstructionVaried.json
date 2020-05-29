@@ -1,11 +1,7 @@
 {
   "Name": "AirwayObstructionVaried",
   "Description": "Test the Airway Obstruction action by giving various severities and ensuring trends back to stable physiology when removed.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json"
-    }
-  },
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager":
   {
     "DataRequest":

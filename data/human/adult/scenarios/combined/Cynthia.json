@@ -1,10 +1,8 @@
 {
   "Name": "Cynthia",
   "Description": "Inject Cynthia with Midazolam. Reaction to sedative causes an airway obstruction. An anesthesia machine mask is applied to attempt to supply Oxygen. Ketamine is administered and the airway obstruction is cleared. Rocuronium is administered. Patient is then intubated.",
-  "StartType": {
-    "PatientConfiguration": {
+  "PatientConfiguration": {
       "PatientFile": "Cynthia.json"
-    }
   },
   "DataRequestManager": {
     "DataRequest": [{
