@@ -186,6 +186,7 @@ namespace Pulse.CDM
     }
     protected static void Serialize(SEEquipmentAction src, pulse.cdm.bind.EquipmentActionData dst)
     {
+      dst.Action = new pulse.cdm.bind.ActionData();
       PBAction.Serialize(src, dst.Action);
     }
     #endregion
@@ -197,6 +198,7 @@ namespace Pulse.CDM
     }
     protected static void Serialize(SEAnesthesiaMachineAction src, pulse.cdm.bind.AnesthesiaMachineActionData dst)
     {
+      dst.EquipmentAction = new pulse.cdm.bind.EquipmentActionData();
       PBEquipmentAction.Serialize(src, dst.EquipmentAction);
     }
     #endregion
@@ -558,6 +560,7 @@ namespace Pulse.CDM
     }
     protected static void Serialize(SEMechanicalVentilatorAction src, pulse.cdm.bind.MechanicalVentilatorActionData dst)
     {
+      dst.EquipmentAction = new pulse.cdm.bind.EquipmentActionData();
       PBEquipmentAction.Serialize(src, dst.EquipmentAction);
     }
     #endregion

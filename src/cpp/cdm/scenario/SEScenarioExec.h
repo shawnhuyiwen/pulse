@@ -11,28 +11,26 @@ class SEEngineConfiguration;
 class CDM_DECL SEScenarioExec : public Loggable
 {
 public:
-  SEScenarioExec(PhysiologyEngine& engine);
+  SEScenarioExec(Logger* logger);
   virtual ~SEScenarioExec();
 
-  virtual PhysiologyEngine& GetEngine(){ return m_Engine; }
 
   virtual void Cancel();
 
-  virtual bool Execute(const std::string& scenarioFile, const std::string& resultsFile);
-  virtual bool Execute(const SEScenario& scenario,      const std::string& resultsFile);
+  virtual bool ExecuteFile(PhysiologyEngine& pe, const std::string& scenarioFile, SerializationFormat format, const std::string& resultsFile, const SEEngineConfiguration* ec=nullptr, std::string const& dataDir="./");
+  virtual bool Execute(PhysiologyEngine& pe, const std::string& scenario, SerializationFormat format, const std::string& resultsFile, const SEEngineConfiguration* ec = nullptr, std::string const& dataDir = "./");
+  virtual bool Execute(PhysiologyEngine& pe, const SEScenario& scenario,      const std::string& resultsFile, const SEEngineConfiguration* ec=nullptr);
   
 protected:
 
-  virtual bool ProcessActions(const SEScenario& scenario);
+  virtual bool ProcessActions(PhysiologyEngine& pe, const SEScenario& scenario);
   /// This does not include advance time actions
   /// To override default functionality with those 
   /// actions override the ProcessActions method
-  virtual bool ProcessAction(const SEAction& action);
-  virtual void AdvanceEngine();
+  virtual bool ProcessAction(PhysiologyEngine& pe, const SEAction& action);
+  virtual void AdvanceEngine(PhysiologyEngine& pe);
 
-  bool                         m_Cancel;
-  PhysiologyEngine&            m_Engine;
-  const SEEngineConfiguration* m_EngineConfiguration;
-
+  bool                  m_Cancel;
+  SEScenario*           m_Scenario;
   std::stringstream     m_ss;
 };

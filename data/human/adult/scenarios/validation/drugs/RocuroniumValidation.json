@@ -2,11 +2,7 @@
   "Scenario": {
     "Name": "RocuroniumValidation",
     "Description": "Inject standard patient with Rocuronium.",
-    "StartType": {
-      "PatientConfiguration": {
-        "PatientFile": "StandardMale.json"
-      }
-    },
+    "PatientConfiguration": { "PatientFile": "StandardMale.json" },
     "DataRequestManager": {
       "SamplesPerSecond": 1.0,
       "DataRequest": [{

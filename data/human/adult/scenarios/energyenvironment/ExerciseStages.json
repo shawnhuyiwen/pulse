@@ -1,11 +1,7 @@
 {
   "Name": "ExerciseStages",
   "Description": "Tests exercise physiology by increasing intensity.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json"
-    }
-  },
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": [{
       "DecimalFormat": {

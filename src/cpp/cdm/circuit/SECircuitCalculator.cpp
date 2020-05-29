@@ -427,13 +427,13 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
   //std::cout << "estimated error: " << Solver.error()      << std::endl;
   //std::cout << "PrePotential" << std::endl;
   std::ofstream  fout;
-  fout.open("./test_results/unit_tests/pulse/PrePotential_aMatrix" + std::to_string(currentTime_s) + ".csv");
+  fout.open("./test_results/unit_tests/pulse/PrePotential_aMatrix" + cdm::to_string(currentTime_s) + ".csv");
   fout << _eigen->AMatrix << std::endl;
   fout.close();
-  fout.open("./test_results/unit_tests/pulse/PrePotential_bVector" + std::to_string(currentTime_s) + ".csv");
+  fout.open("./test_results/unit_tests/pulse/PrePotential_bVector" + cdm::to_string(currentTime_s) + ".csv");
   fout << _eigen->bVector << std::endl;
   fout.close();
-  fout.open("./test_results/unit_tests/pulse/PrePotential_xVector" + std::to_string(currentTime_s) + ".csv");
+  fout.open("./test_results/unit_tests/pulse/PrePotential_xVector" + cdm::to_string(currentTime_s) + ".csv");
   fout << _eigen->xVector << std::endl;
   fout.close();
 #endif
@@ -484,13 +484,13 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::Solve()
   //std::cout << "estimated error: " << Solver.error()      << std::endl;
   //std::cout << "PreSolve" << std::endl;std::ostream fout;
   std::ofstream  fout;
-  fout.open("./test_results/unit_tests/pulse/PreSolve_aMatrix" + std::to_string(currentTime_s) + ".csv");
+  fout.open("./test_results/unit_tests/pulse/PreSolve_aMatrix" + cdm::to_string(currentTime_s) + ".csv");
   fout << _eigen->AMatrix << std::endl;
   fout.close();
-  fout.open("./test_results/unit_tests/pulse/PreSolve_bVector" + std::to_string(currentTime_s) + ".csv");
+  fout.open("./test_results/unit_tests/pulse/PreSolve_bVector" + cdm::to_string(currentTime_s) + ".csv");
   fout << _eigen->bVector << std::endl;
   fout.close();
-  fout.open("./test_results/unit_tests/pulse/PreSolve_xVector" + std::to_string(currentTime_s) + ".csv");
+  fout.open("./test_results/unit_tests/pulse/PreSolve_xVector" + cdm::to_string(currentTime_s) + ".csv");
   fout << _eigen->xVector << std::endl;
   fout.close();
 #endif
@@ -610,13 +610,13 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::Solve()
   //std::cout << "#iterations:     " << Solver.iterations() << std::endl;
   //std::cout << "estimated error: " << Solver.error()      << std::endl;
   //std::cout << "PostSolve" << std::endl;std::ostream fout;
-  fout.open("./test_results/unit_tests/pulse/PostSolve_aMatrix" + std::to_string(currentTime_s) + ".csv");
+  fout.open("./test_results/unit_tests/pulse/PostSolve_aMatrix" + cdm::to_string(currentTime_s) + ".csv");
   fout << _eigen->AMatrix << std::endl;
   fout.close();
-  fout.open("./test_results/unit_tests/pulse/PostSolve_bVector" + std::to_string(currentTime_s) + ".csv");
+  fout.open("./test_results/unit_tests/pulse/PostSolve_bVector" + cdm::to_string(currentTime_s) + ".csv");
   fout << _eigen->bVector << std::endl;
   fout.close();
-  fout.open("./test_results/unit_tests/pulse/PostSolve_xVector" + std::to_string(currentTime_s) + ".csv");
+  fout.open("./test_results/unit_tests/pulse/PostSolve_xVector" + cdm::to_string(currentTime_s) + ".csv");
   fout << _eigen->xVector << std::endl;
   fout.close();
 #endif

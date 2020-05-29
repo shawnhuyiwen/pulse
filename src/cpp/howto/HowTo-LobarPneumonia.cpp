@@ -35,7 +35,8 @@
 void HowToLobarPneumonia()
 {
   // Create the engine and load the patient
-  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowTo_LobarPneumonia.log");
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
+  pe->GetLogger()->SetLogFile("./test_results/HowTo_LobarPneumonia.log");
   pe->GetLogger()->Info("HowTo_LobarPneumonia");
   
   // Lobar pneumonia is a form of pneumonia that affects one or more lobes of the lungs.  

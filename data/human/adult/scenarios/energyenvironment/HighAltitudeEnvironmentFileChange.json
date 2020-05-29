@@ -1,11 +1,7 @@
 {
   "Name": "HighAltitudeEnvironmentFileChange",
   "Description": "The environment is changed to mimic high altitude conditions by loading an json file.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json"
-    }
-  },
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": [{
       "DecimalFormat": {

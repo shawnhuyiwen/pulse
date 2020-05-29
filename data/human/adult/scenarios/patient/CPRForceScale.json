@@ -1,11 +1,7 @@
 {
   "Name": "CPRForceScale",
   "Description": "This scenario tests the force scale. Cardiac function is terminated and then successive chest compressions are performed.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json"
-    }
-  },
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": [{
       "DecimalFormat": {

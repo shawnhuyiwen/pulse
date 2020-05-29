@@ -1,11 +1,7 @@
 {
   "Name": "TemperatureCompartments",
   "Description": "Output everything from every property from these compartments.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json"
-    }
-  },
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": [{
       "DecimalFormat": {

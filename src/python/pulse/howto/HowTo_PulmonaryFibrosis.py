@@ -5,7 +5,9 @@ from pulse.cdm.patient import SEPatientConfiguration
 from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
 
 def HowTo_UsePulmonaryFibrosis():
-    pulse = PulsePhysiologyEngine("pulse_pulmonary_fibrosis.log")
+    pulse = PulsePhysiologyEngine()
+    pulse.set_log_filename("./test_results/pypulse_pulmonary_fibrosis.log")
+    pulse.log_to_console(True)
 
     pc = SEPatientConfiguration()
     pc.set_patient_file("./patients/StandardMale.json")

@@ -35,7 +35,8 @@
 void HowToTensionPneumothorax()
 {
   // Create the engine and load the patient
-  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowTo_TensionPneumothorax.log");
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
+  pe->GetLogger()->SetLogFile("./test_results/HowTo_TensionPneumothorax.log");
   pe->GetLogger()->Info("HowTo_TensionPneumothorax");
   if (!pe->SerializeFromFile("./states/StandardMale@0s.json", JSON))
   {

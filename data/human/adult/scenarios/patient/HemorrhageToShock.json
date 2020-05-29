@@ -1,12 +1,7 @@
 {
   "Name": "HemorrhageToShock",
   "Description": "Greater than 40% blood loss with no intervention.",
-  "StartType":
-  {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json"
-    }
-  },
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager":
   {
     "DataRequest":

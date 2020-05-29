@@ -12,8 +12,7 @@ public:
   virtual ~SESubstanceManager();
 
   virtual void                                     Clear();
-  virtual void                                     Reset();
-  virtual bool                                     LoadSubstanceDirectory(const std::string& data_dir=".");
+  virtual bool                                     LoadSubstanceDirectory(const std::string& data_dir="./");
 
   virtual const std::vector<SESubstance*>&         GetSubstances() const;
   virtual SESubstance*                             GetSubstance(const std::string& name) const;  
@@ -61,9 +60,4 @@ protected:
 
   std::vector<SESubstanceCompound*>  m_Compounds;
   std::vector<SESubstanceCompound*>  m_ActiveCompounds;
-
-private:
-  std::map<SESubstance*, std::string> m_OriginalSubstanceData;
-  std::map<SESubstanceCompound*, std::string> m_OriginalCompoundData;
-
 };

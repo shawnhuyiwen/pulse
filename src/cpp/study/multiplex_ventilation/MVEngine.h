@@ -64,7 +64,7 @@
 #include "utils/TimingProfile.h"
 
 PUSH_PROTO_WARNINGS()
-#include "pulse/study/multiplex_ventilation/bind/MultiplexVentilation.pb.h"
+#include "pulse/study/bind/MultiplexVentilation.pb.h"
 #include <google/protobuf/text_format.h>
 #include <google/protobuf/util/json_util.h>
 POP_PROTO_WARNINGS()

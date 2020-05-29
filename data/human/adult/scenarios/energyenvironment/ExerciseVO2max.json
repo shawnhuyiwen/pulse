@@ -1,11 +1,7 @@
 {
   "Name": "ExerciseVO2max",
   "Description": "Exercise at about the anaerobic threshold.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json"
-    }
-  },
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": [{
       "DecimalFormat": {

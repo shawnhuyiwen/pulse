@@ -1,7 +1,7 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-from pulse.study.multiplex_ventilation.bind.MultiplexVentilation_pb2 import *
+from pulse.study.bind.MultiplexVentilation_pb2 import *
 from google.protobuf import json_format
 import re
 import json

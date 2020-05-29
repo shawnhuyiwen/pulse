@@ -66,7 +66,7 @@ void PulseEngineTest::CardiovascularBloodGasesTest(const std::string& sTestDirec
 
 void PulseEngineTest::TuneCardiovascularCircuitTest(const std::string& sTestDirectory)
 {
-  m_Logger->ResetLogFile(sTestDirectory + "/TuneCardiovascularCircuit.log");
+  m_Logger->SetLogFile(sTestDirectory + "/TuneCardiovascularCircuit.log");
 
   SETestReport testReport = SETestReport(m_Logger);
   SETestSuite& testSuite = testReport.CreateTestSuite();
@@ -194,7 +194,8 @@ void PulseEngineTest::CardiovascularCircuitAndTransportTest(CardiovascularDriver
   double circuit_s = 0;
   double transport_s = 0;
   double binding_s = 0;
-  PulseController pc(sTestDirectory + "/" + tName.str() + "CircuitAndTransportTest.log");
+  PulseController pc;
+  pc.GetLogger()->SetLogFile(sTestDirectory + "/" + tName.str() + "CircuitAndTransportTest.log");
   pc.GetLogger()->Info("Running " + tName.str());
   SEPatient patient(pc.GetLogger());
   patient.SerializeFromFile("./patients/StandardMale.json", JSON);

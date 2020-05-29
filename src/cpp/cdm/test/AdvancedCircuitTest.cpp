@@ -100,7 +100,7 @@ void CommonDataModelTest::FluidPreProcess(SEFluidCircuit& c, double dT)
 
 void CommonDataModelTest::ElectricalCircuitTest(const std::string& sTestDirectory)
 {
-  m_Logger->ResetLogFile(sTestDirectory + "/ElectricalCircuitTest.log");
+  m_Logger->SetLogFile(sTestDirectory + "/ElectricalCircuitTest.log");
   double timeStep_s = 1.0 / 165.0;
   Info("Electric Circuit");
   SEElectricalCircuit* ElectricalCircuit = &m_Circuits->CreateElectricalCircuit("Electric");
@@ -166,7 +166,7 @@ void CommonDataModelTest::ElectricalCircuitTest(const std::string& sTestDirector
 
 void CommonDataModelTest::FluidCircuitTest(const std::string& sTestDirectory)
 {
-  m_Logger->ResetLogFile(sTestDirectory + "/FluidCircuitTest.log");
+  m_Logger->SetLogFile(sTestDirectory + "/FluidCircuitTest.log");
   double timeStep_s = 1.0 / 165.0;
   Info("Fluid Circuit");
   SEFluidCircuit*  fluidCircuit = &m_Circuits->CreateFluidCircuit("Fluid");
@@ -232,7 +232,7 @@ void CommonDataModelTest::FluidCircuitTest(const std::string& sTestDirectory)
 
 void CommonDataModelTest::ThermalCircuitTest(const std::string& sTestDirectory)
 {
-  m_Logger->ResetLogFile(sTestDirectory + "/ThermalCircuitTest.log");
+  m_Logger->SetLogFile(sTestDirectory + "/ThermalCircuitTest.log");
   double timeStep_s = 1.0 / 165.0;
   Info("Thermal Circuit");
   SEThermalCircuit* ThermalCircuit = &m_Circuits->CreateThermalCircuit("Thermal");
@@ -321,7 +321,7 @@ void CommonDataModelTest::ThermalCircuitTest(const std::string& sTestDirectory)
 void CommonDataModelTest::CombinedCircuitTest(const std::string& sTestDirectory)
 {
   std::cout << "CombinedCircuitTest\n";
-  m_Logger->ResetLogFile(sTestDirectory + "/CombinedCircuitTest.log");
+  m_Logger->SetLogFile(sTestDirectory + "/CombinedCircuitTest.log");
   TimingProfile p;
   double timeStep_s = 1.0 / 165.0;
   double currentTime_s = 0.0;
@@ -425,7 +425,7 @@ void CommonDataModelTest::InterCircuitComparisonTest(const std::string& sTestDir
 {
   std::cout << "InterComparisonCircuitTest\n";
 
-  m_Logger->ResetLogFile(sTestDirectory + "/InterCircuitComparisonTest.log");
+  m_Logger->SetLogFile(sTestDirectory + "/InterCircuitComparisonTest.log");
   TimingProfile p;
   double timeStep_s = 1.0 / 165.0;
   double currentTime_s = 0.0;
@@ -494,7 +494,7 @@ void CommonDataModelTest::InterCircuitIndividualTest(const std::string& sTestDir
 {
   std::cout << "InterCircuitIndividualTest\n";
 
-  m_Logger->ResetLogFile(sTestDirectory + "/InterCircuitIndividualTest.log");
+  m_Logger->SetLogFile(sTestDirectory + "/InterCircuitIndividualTest.log");
   TimingProfile p;
   double timeStep_s = 1.0 / 165.0;
   double currentTime_s = 0.0;
@@ -593,7 +593,7 @@ void InterCircuitTest(const std::string& sTestDirectory)
 {
   std::cout << "InterCircuitTest\n";
 
-  m_Logger->ResetLogFile(sTestDirectory + "/InterCircuitTest.log");
+  m_Logger->SetLogFile(sTestDirectory + "/InterCircuitTest.log");
   TimingProfile p;
   double dDT = 1.0/165.0;
   double dT = 0.0;
@@ -667,7 +667,7 @@ void CommonDataModelTest::CircuitErrorTest(const std::string& sTestDirectory)
 {
   std::cout << "CircuitErrorTest\n";
   //Setup a basic circuit
-  m_Logger->ResetLogFile(sTestDirectory + "/CombinedCircuitTest.log");
+  m_Logger->SetLogFile(sTestDirectory + "/CombinedCircuitTest.log");
   double timeStep_s = 1.0 / 165.0;
   SEFluidCircuitCalculator fluidCalculator(m_Logger);
   SEFluidCircuit* fluidCircuit = &m_Circuits->CreateFluidCircuit("Fluid");
@@ -720,7 +720,7 @@ void CommonDataModelTest::CircuitErrorTest(const std::string& sTestDirectory)
 void CommonDataModelTest::DynamicallyChangingCircuitTest(const std::string& sTestDirectory)
 {
   std::cout << "DynamicallyChangingCircuitTest\n";
-  m_Logger->ResetLogFile(sTestDirectory + "/DynamicallyChangingCircuitTest.log");
+  m_Logger->SetLogFile(sTestDirectory + "/DynamicallyChangingCircuitTest.log");
   TimingProfile p;
   double timeStep_s = 1.0 / 165.0;
   DataTrack trk1;
@@ -823,7 +823,7 @@ void CommonDataModelTest::DynamicallyChangingCircuitTest(const std::string& sTes
 void CommonDataModelTest::NonZeroReferencePositive(const std::string& sTestDirectory)
 {
   std::cout << "NonZeroReferencePositive\n";
-  m_Logger->ResetLogFile(sTestDirectory + "/NonZeroReferencePositive.log");
+  m_Logger->SetLogFile(sTestDirectory + "/NonZeroReferencePositive.log");
   TimingProfile p;
   double timeStep_s = 1.0 / 165.0;
   DataTrack trk1;
@@ -897,7 +897,7 @@ void CommonDataModelTest::NonZeroReferencePositive(const std::string& sTestDirec
 void CommonDataModelTest::NonZeroReferenceNegative(const std::string& sTestDirectory)
 {
   std::cout << "NonZeroReferenceNegative\n";
-  m_Logger->ResetLogFile(sTestDirectory + "/NonZeroReferenceNegative.log");
+  m_Logger->SetLogFile(sTestDirectory + "/NonZeroReferenceNegative.log");
   TimingProfile p;
   double timeStep_s = 1.0 / 165.0;
   DataTrack trk1;
@@ -973,7 +973,7 @@ void CommonDataModelTest::NonZeroReferenceNegative(const std::string& sTestDirec
 void CommonDataModelTest::PolarizedCapacitorTest(const std::string& sTestDirectory)
 {
   std::cout << "PolarizedCapacitorTest\n";
-  m_Logger->ResetLogFile(sTestDirectory + "/PolarizedCapacitorTest.log");
+  m_Logger->SetLogFile(sTestDirectory + "/PolarizedCapacitorTest.log");
   TimingProfile p;
   double timeStep_s = 1.0 / 100.0;
   double currentTime_s = 0.0;
@@ -1041,7 +1041,7 @@ void CommonDataModelTest::PolarizedCapacitorTest(const std::string& sTestDirecto
 void CommonDataModelTest::PreChargeComplianceZeroVolume(const std::string& sTestDirectory)
 {
   std::cout << "PreChargeComplianceZeroVolume\n";
-  m_Logger->ResetLogFile(sTestDirectory + "/PreChargeComplianceZeroVolume.log");
+  m_Logger->SetLogFile(sTestDirectory + "/PreChargeComplianceZeroVolume.log");
   TimingProfile p;
   double timeStep_s = 1.0 / 165.0;
   double currentTime_s = 0.0;
@@ -1089,7 +1089,7 @@ void CommonDataModelTest::PreChargeComplianceZeroVolume(const std::string& sTest
 void CommonDataModelTest::PreChargeComplianceNonZeroVolume(const std::string& sTestDirectory)
 {
   std::cout << "PreChargeComplianceNonZeroVolume\n";
-  m_Logger->ResetLogFile(sTestDirectory + "/PreChargeComplianceNonZeroVolume.log");
+  m_Logger->SetLogFile(sTestDirectory + "/PreChargeComplianceNonZeroVolume.log");
   TimingProfile p;
   double timeStep_s = 1.0 / 165.0;
   double currentTime_s = 0.0;
@@ -1137,7 +1137,7 @@ void CommonDataModelTest::PreChargeComplianceNonZeroVolume(const std::string& sT
 void CommonDataModelTest::ComplianceVolumeChange(const std::string& sTestDirectory)
 {
   std::cout << "ComplianceVolumeChange\n";
-  m_Logger->ResetLogFile(sTestDirectory + "/ComplianceVolumeChange.log");
+  m_Logger->SetLogFile(sTestDirectory + "/ComplianceVolumeChange.log");
   TimingProfile p;
   double timeStep_s = 1.0 / 50.0;
   double currentTime_s = 0.0;
@@ -1218,7 +1218,7 @@ void CommonDataModelTest::CircuitLockingTest(const std::string& sOutputDirectory
   
   std::cout << "CircuitLockingTestTest\n";
 
-  m_Logger->ResetLogFile(sOutputDirectory + "/CircuitLockingTest.log");
+  m_Logger->SetLogFile(sOutputDirectory + "/CircuitLockingTest.log");
  
   SEFluidCircuit* fluidCircuit = &m_Circuits->CreateFluidCircuit("Fluid");
   //-----------------------------------------------------------

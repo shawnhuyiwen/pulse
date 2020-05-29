@@ -1,12 +1,7 @@
 {
   "Name": "HemorrhageGroup4",
   "Description": "35% Blood Loss",
-  "StartType":
-  {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json"
-    }
-  },
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager":
   {
     "DataRequest":

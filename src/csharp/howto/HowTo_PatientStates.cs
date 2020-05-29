@@ -36,7 +36,8 @@ namespace HowTo_PatientStates
       // data_values[0] is ALWAYS the simulation time in seconds
       // The rest of the data values are in order of the data_requests list provided
 
-      PulseEngine pulse = new PulseEngine(null, true, ".");
+      PulseEngine pulse = new PulseEngine();
+      pulse.LogToConsole(true);// Easily view what is happening
       double ms_to_s = 0.001;
 
       // Keep these 2 lists in sync
@@ -67,7 +68,7 @@ namespace HowTo_PatientStates
       {
         Console.WriteLine("Creating states for inury set : " + injury_set_names[i]);
         // Loop over how many patients we have and the various injury combinations
-        if (!pulse.SerializeFromFile("./states/Soldier@0s.json", data_mgr, 0, SerializationFormat.JSON))
+        if (!pulse.SerializeFromFile("./states/Soldier@0s.json", data_mgr, SerializationFormat.JSON))
         {
           Console.WriteLine("Error Initializing Pulse!");
           return;

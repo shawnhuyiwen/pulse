@@ -1,11 +1,7 @@
 {
   "Name": "TissueCompartments",
   "Description": "Output everything from every tissue compartment for O2, CO2, and Succs.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json"
-    }
-  },
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": [{
       "DecimalFormat": {

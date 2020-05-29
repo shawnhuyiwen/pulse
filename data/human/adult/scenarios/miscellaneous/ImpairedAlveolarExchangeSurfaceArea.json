@@ -1,8 +1,7 @@
 {
   "Name": "ImpairedAlveolarExchangeSurfaceArea",
   "Description": "Cause Acute Respiratory Distress by generically reducing the alveolar surface area.",
-  "StartType": {
-    "PatientConfiguration": {
+  "PatientConfiguration": {
       "PatientFile": "StandardMale.json",
       "Conditions": { "AnyCondition": [{
         "PatientCondition": {
@@ -16,7 +15,6 @@
           }
         }
       }]}
-    }
   },
   "DataRequestManager": {
     "DataRequest": [{

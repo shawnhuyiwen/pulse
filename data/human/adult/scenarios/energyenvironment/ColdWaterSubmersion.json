@@ -1,11 +1,7 @@
 {
   "Name": "ColdWaterSubmersionScenario",
   "Description": "Patient is submerged in freezing water for five minutes.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json"
-    }
-  },
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": [{
       "DecimalFormat": {

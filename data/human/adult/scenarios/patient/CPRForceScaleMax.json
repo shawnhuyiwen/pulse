@@ -1,11 +1,7 @@
 {
   "Name": "CPRForceScaleMax",
   "Description": "This scenario tests the maximum possible CPR force, and it tests the force period functionality.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json"
-    }
-  },
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": [{
       "DecimalFormat": {

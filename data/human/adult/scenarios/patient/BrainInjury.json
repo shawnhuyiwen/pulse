@@ -1,11 +1,7 @@
 {
   "Name": "BrainInjury",
   "Description": "The patient receives three successive brain injuries of increasing severity with a rest period in between them.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json"
-    }
-  },
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": [{
       "DecimalFormat": {

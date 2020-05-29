@@ -1,8 +1,7 @@
 {
   "Name": "InitialHighAltitudeEnvironmentState",
   "Description": "The patient is stabilized to an environment that mimics high altitude conditions.",
-  "StartType": {
-    "PatientConfiguration": {
+  "PatientConfiguration": {
       "PatientFile": "StandardMale.json",
       "Conditions": { "AnyCondition": [{
         "EnvironmentCondition": {
@@ -80,7 +79,6 @@
           }
         }
       }]}
-    }
   },
   "DataRequestManager": {
     "DataRequest": [{

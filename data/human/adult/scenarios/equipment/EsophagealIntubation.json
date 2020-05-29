@@ -1,11 +1,7 @@
 {
   "Name": "EsophagealIntubation",
   "Description": "A patient is injected with succinylcholine and an endotracheal tube is inserted, but is set in the esophagus. Oxygen is administered following this, but fails to reach the lungs. The tube is then removed and reset in the trachea.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json"
-    }
-  },
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": [{
       "DecimalFormat": {

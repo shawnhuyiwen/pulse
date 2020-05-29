@@ -13,7 +13,8 @@ namespace HowTo_Environment
     public static void Run()
     {
       // Create our pulse engine
-      PulseEngine pulse = new PulseEngine(null, true, ".");
+      PulseEngine pulse = new PulseEngine();
+      pulse.LogToConsole(true);// Easily view what is happening
 
       List<SEDataRequest> data_requests = new List<SEDataRequest>
       {

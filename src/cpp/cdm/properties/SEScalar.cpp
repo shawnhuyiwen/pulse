@@ -223,7 +223,7 @@ bool SEScalar::Equals(const SEScalar& to) const
 
 std::string SEScalar::ToString() const
 {
-  return std::to_string(m_value);
+  return cdm::to_string(m_value);
 }                                      
 void SEScalar::ToString(std::ostream &str) const
 {
@@ -496,9 +496,9 @@ template<typename Unit>
 std::string SEScalarQuantity<Unit>::ToString() const
 {
   if (m_isnan || m_isinf)
-    return std::to_string(m_value);
+    return cdm::to_string(m_value);
   else
-    return std::to_string(m_value) + "(" + m_unit->GetString() + ")";
+    return cdm::to_string(m_value) + "(" + m_unit->GetString() + ")";
 }
 template<typename Unit>
 void SEScalarQuantity<Unit>::ToString(std::ostream& str) const
