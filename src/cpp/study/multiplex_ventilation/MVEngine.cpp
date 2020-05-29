@@ -68,12 +68,12 @@ void MVEngine::HandleEvent(eEvent e, bool active, const SEScalarTime* simTime)
 bool MVEngine::CreateEngine(const std::string& simulationDataStr, SerializationFormat fmt)
 {
   SAFE_DELETE(m_SimulationData);
-  m_SimulationData = new pulse::study::multiplex_ventilation::bind::SimulationData();
+  m_SimulationData = new pulse::study::bind::multiplex_ventilation::SimulationData();
   SerializeFromString(simulationDataStr, *m_SimulationData, fmt);
   return CreateEngine(*m_SimulationData);
 }
 
-bool MVEngine::CreateEngine(pulse::study::multiplex_ventilation::bind::SimulationData& sim)
+bool MVEngine::CreateEngine(pulse::study::bind::multiplex_ventilation::SimulationData& sim)
 {
   try
   {
@@ -536,7 +536,7 @@ std::string MVEngine::GetSimulationState(SerializationFormat fmt)
   SerializeToString(*m_SimulationData, content, SerializationFormat::JSON);
   return content;
 }
-bool MVEngine::GetSimulationState(pulse::study::multiplex_ventilation::bind::SimulationData& sim)
+bool MVEngine::GetSimulationState(pulse::study::bind::multiplex_ventilation::SimulationData& sim)
 {
   if (m_Engines.empty())
   {
@@ -653,7 +653,7 @@ void MVEngine::TrackData(SEEngineTracker& trkr, const std::string& csv_filename)
   trkr.SetupRequests();
 }
 
-bool MVEngine::SerializeToString(pulse::study::multiplex_ventilation::bind::SimulationData& src, std::string& dst, SerializationFormat f)
+bool MVEngine::SerializeToString(pulse::study::bind::multiplex_ventilation::SimulationData& src, std::string& dst, SerializationFormat f)
 {
   google::protobuf::util::JsonPrintOptions printOpts;
   printOpts.add_whitespace = true;
@@ -661,7 +661,7 @@ bool MVEngine::SerializeToString(pulse::study::multiplex_ventilation::bind::Simu
   printOpts.always_print_primitive_fields = true;
   return google::protobuf::util::MessageToJsonString(src, &dst, printOpts).ok();
 }
-bool MVEngine::SerializeFromString(const std::string& src, pulse::study::multiplex_ventilation::bind::SimulationData& dst, SerializationFormat f)
+bool MVEngine::SerializeFromString(const std::string& src, pulse::study::bind::multiplex_ventilation::SimulationData& dst, SerializationFormat f)
 {
   google::protobuf::util::JsonParseOptions parseOpts;
   google::protobuf::SetLogHandler([](google::protobuf::LogLevel level, const char* filename, int line, const std::string& message)

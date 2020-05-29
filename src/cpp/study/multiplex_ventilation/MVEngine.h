@@ -88,7 +88,7 @@ public:
   ~MVEngine();
 
   bool CreateEngine(const std::string& simulationDataStr, SerializationFormat fmt);
-  bool CreateEngine(pulse::study::multiplex_ventilation::bind::SimulationData& sim);
+  bool CreateEngine(pulse::study::bind::multiplex_ventilation::SimulationData& sim);
 
   bool AdvanceTime(double time_s);
 
@@ -96,15 +96,15 @@ public:
   bool ProcessActions(std::string const& actions, SerializationFormat format);
 
   std::string GetSimulationState(SerializationFormat fmt);
-  bool GetSimulationState(pulse::study::multiplex_ventilation::bind::SimulationData& sim);
+  bool GetSimulationState(pulse::study::bind::multiplex_ventilation::SimulationData& sim);
 
   void DestroyEngines();
 
   static void TrackData(SEEngineTracker& trkr, const std::string& csv_filename);
   static bool RunSoloState(const std::string& stateFile, const std::string& outDir, double duration_s, Logger& logger);
 
-  static bool SerializeToString(pulse::study::multiplex_ventilation::bind::SimulationData& src, std::string& dst, SerializationFormat f);
-  static bool SerializeFromString(const std::string& src, pulse::study::multiplex_ventilation::bind::SimulationData& dst, SerializationFormat f);
+  static bool SerializeToString(pulse::study::bind::multiplex_ventilation::SimulationData& src, std::string& dst, SerializationFormat f);
+  static bool SerializeFromString(const std::string& src, pulse::study::bind::multiplex_ventilation::SimulationData& dst, SerializationFormat f);
 
 protected:
   void SetFiO2(double fio2);
@@ -136,5 +136,5 @@ protected:
   SEGasCompartmentGraph*    m_MultiplexVentilationGraph;
   SEGasTransporter*         m_Transporter;
 
-  pulse::study::multiplex_ventilation::bind::SimulationData* m_SimulationData;
+  pulse::study::bind::multiplex_ventilation::SimulationData* m_SimulationData;
 };

@@ -1,7 +1,7 @@
 syntax = "proto3";
-package pulse.study.bind;
-option java_package = "pulse.study.bind";
-option csharp_namespace = "pulse.study.bind";
+package pulse.study.bind.multiplex_ventilation;
+option java_package = "pulse.study.bind.multiplex_ventilation";
+option csharp_namespace = "pulse.study.bind.multiplex_ventilation";
 option optimize_for = SPEED;
 
 message PatientStateData
