@@ -28,20 +28,6 @@ void SESubstanceManager::Clear()
   m_ActiveCompounds.clear();
   m_ActiveGases.clear();
   m_ActiveLiquids.clear();
-  m_OriginalCompoundData.clear();
-  m_OriginalSubstanceData.clear();
-}
-
-void SESubstanceManager::Reset()
-{
-  m_ActiveCompounds.clear();
-  m_ActiveSubstances.clear();
-  m_ActiveGases.clear();
-  m_ActiveLiquids.clear();
-  for (auto itr : m_OriginalSubstanceData)
-    itr.first->SerializeFromString(itr.second, BINARY);
-  for (auto itr : m_OriginalCompoundData)
-    itr.first->SerializeFromString(itr.second, *this, BINARY);
 }
 
 /**
@@ -283,7 +269,6 @@ bool SESubstanceManager::LoadSubstanceDirectory(const std::string& data_dir)
               Error("Unable to serialize substance " + ss.str());
               continue;
             }
-            m_OriginalSubstanceData[sub] = binary;
             AddSubstance(*sub);
           }
         }
@@ -323,7 +308,6 @@ bool SESubstanceManager::LoadSubstanceDirectory(const std::string& data_dir)
               Error("Unable to serialize substance compound " + ss.str());
               continue;
             }
-            m_OriginalCompoundData[cmpd] = binary;
             AddCompound(*cmpd);
           }
         }

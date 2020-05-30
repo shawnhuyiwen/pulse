@@ -1,11 +1,7 @@
 {
   "Name": "AsthmaAttackSevereAcute",
   "Description": "Patient is afflicted with an severe acute asthma attack.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json"
-    }
-  },
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager":
   {
     "DataRequest":

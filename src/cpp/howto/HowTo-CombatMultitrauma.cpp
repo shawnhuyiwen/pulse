@@ -32,7 +32,8 @@
 void CreateState()
 {
   // Create the engine and load the patient
-  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowTo_CombatMultitrauma_CreateState.log");
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
+  pe->GetLogger()->SetLogFile("./test_results/HowTo_CombatMultitrauma_CreateState.log");
   pe->GetLogger()->Info("HowTo_CombatMultitrauma_CreateState");
 
   // Load the Soldier patient
@@ -126,7 +127,8 @@ void CreateState()
 void LoadState()
 {
   // Create the engine and load the patient
-  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowTo_CombatMultitrauma_LoadState.log");
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
+  pe->GetLogger()->SetLogFile("./test_results/HowTo_CombatMultitrauma_LoadState.log");
   pe->GetLogger()->Info("HowTo_CombatMultitrauma_LoadState");
 
   //Load the injured state we created

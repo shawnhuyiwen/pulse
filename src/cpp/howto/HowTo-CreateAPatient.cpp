@@ -36,7 +36,8 @@
 //--------------------------------------------------------------------------------------------------
 void HowToCreateAPatient()
 {
-  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowTo_CreateAPatient.log");
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
+  pe->GetLogger()->SetLogFile("./test_results/HowTo_CreateAPatient.log");
   pe->GetLogger()->Info("HowTo_CreateAPatient");
 
   SEPatientConfiguration pc(pe->GetSubstanceManager());

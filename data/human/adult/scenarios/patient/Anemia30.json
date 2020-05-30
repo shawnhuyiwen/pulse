@@ -1,21 +1,19 @@
 {
   "Name": "Anemia30",
   "Description": "Anemia onset, leading to 30% reduction in hemoglobin content.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json",
-      "Conditions": { "AnyCondition": [{
-        "PatientCondition": {
-          "ChronicAnemia": {
-            "ReductionFactor": {
-              "Scalar0To1": {
-                "Value": 0.3
-              }
+  "PatientConfiguration": {
+    "PatientFile": "StandardMale.json",
+    "Conditions": { "AnyCondition": [{
+      "PatientCondition": {
+        "ChronicAnemia": {
+          "ReductionFactor": {
+            "Scalar0To1": {
+              "Value": 0.3
             }
           }
         }
-      }]}
-    }
+      }
+    }]}
   },
   "DataRequestManager": {
     "DataRequest": [{

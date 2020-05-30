@@ -26,6 +26,7 @@ POP_PROTO_WARNINGS()
 #include "controller/Substances.h"
 #include "controller/Circuits.h"
 #include "controller/Compartments.h"
+#include "physiology/Saturation.h"
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceCompound.h"
 #include "engine/SEEngineTracker.h"
@@ -39,39 +40,56 @@ POP_PROTO_WARNINGS()
 #include "utils/FileUtils.h"
 
 
-void PBPulseState::Load(const PULSE_BIND::StateData& src, PulseController& dst, const SEScalarTime* simTime, const SEEngineConfiguration* config)
+void PBPulseState::Load(const PULSE_BIND::StateData& src, PulseController& dst, const SEEngineConfiguration* config)
 {
-  PBPulseState::Serialize(src, dst,simTime,config);
+  PBPulseState::Serialize(src, dst,config);
 }
-bool PBPulseState::Serialize(const PULSE_BIND::StateData& src, PulseController& dst, const SEScalarTime* simTime, const SEEngineConfiguration* config)
+bool PBPulseState::Serialize(const PULSE_BIND::StateData& src, PulseController& dst, const SEEngineConfiguration* config)
 {
   std::stringstream ss;
   dst.m_State = EngineState::NotReady;
   // First Get the substances reset and ready
-  dst.m_Substances->Reset();
-  // Substances //
+  dst.m_Substances->Clear();
+  // Load up our Substances //
+  for (int i = 0; i < src.substance_size(); i++)
+  {
+    const CDM_BIND::SubstanceData& subData = src.substance()[i];
+    SESubstance* sub = new SESubstance(dst.GetLogger());
+    PBSubstance::Load(subData, *sub);
+    dst.m_Substances->AddSubstance(*sub);
+  }
   for (int i = 0; i < src.activesubstance_size(); i++)
   {
-    const CDM_BIND::SubstanceData& subData = src.activesubstance()[i];
-    SESubstance* sub = dst.m_Substances->GetSubstance(subData.name());
+    SESubstance* sub = dst.m_Substances->GetSubstance(src.activesubstance()[i]);
     if (sub == nullptr)
     {
-      sub = new SESubstance(dst.GetLogger());
-      dst.m_Substances->AddSubstance(*sub);
+      dst.Error("Active substance not found : " + src.activesubstance()[i]);
+      return false;
     }
-    PBSubstance::Load(subData, *sub);
     dst.m_Substances->AddActiveSubstance(*sub);
   }
-  // Compounds //
+  // Load up our Compounds //
+  for (int i = 0; i < src.compound_size(); i++)
+  {
+    const CDM_BIND::SubstanceCompoundData& cmpdData = src.compound()[i];
+    SESubstanceCompound* cmpd = new SESubstanceCompound(dst.GetLogger());
+    PBSubstance::Load(cmpdData, *cmpd, *dst.m_Substances);
+    dst.m_Substances->AddCompound(*cmpd);
+  }
   for (int i = 0; i < src.activecompound_size(); i++)
   {
-    const CDM_BIND::SubstanceCompoundData& cmpdData = src.activecompound()[i];
-    SESubstanceCompound* cmpd = dst.m_Substances->GetCompound(cmpdData.name());
+    SESubstanceCompound* cmpd = dst.m_Substances->GetCompound(src.activecompound()[i]);
     if (cmpd == nullptr)
-      cmpd = new SESubstanceCompound(dst.GetLogger());
-    PBSubstance::Load(cmpdData, *cmpd, *dst.m_Substances);
+    {
+      dst.Error("Active substance compound not found : " + src.activecompound()[i]);
+      return false;
+    }
     dst.m_Substances->AddActiveCompound(*cmpd);
   }
+  if (!dst.m_Substances->Setup())
+    return false;
+  if(!dst.m_SaturationCalculator->Setup())
+    return false;
 
   // We could preserve the tracker, but I think I want to force the user to set it up
   // again, they should have the data tracks (or easily get them), and they should
@@ -83,30 +101,23 @@ bool PBPulseState::Serialize(const PULSE_BIND::StateData& src, PulseController& 
     dst.m_EngineTrack->ForceConnection();// I don't want to rest the file because I would loose all my data
   }
 
-  if (simTime != nullptr)
+  if (src.has_simulationtime())
   {
-    dst.m_CurrentTime.Set(*simTime);
-    dst.m_SimulationTime.Set(*simTime);
+    PBProperty::Load(src.simulationtime(), dst.m_CurrentTime);
+    PBProperty::Load(src.simulationtime(), dst.m_SimulationTime);
   }
   else
   {
-    if (src.has_simulationtime())
-    {
-      PBProperty::Load(src.simulationtime(), dst.m_CurrentTime);
-      PBProperty::Load(src.simulationtime(), dst.m_SimulationTime);
-    }
-    else
-    {
-      dst.m_CurrentTime.SetValue(0, TimeUnit::s);
-      dst.m_SimulationTime.SetValue(0, TimeUnit::s);
-    }
+    dst.m_CurrentTime.SetValue(0, TimeUnit::s);
+    dst.m_SimulationTime.SetValue(0, TimeUnit::s);
   }
+
   dst.m_AirwayMode = (eAirwayMode)src.airwaymode();
   if (src.intubation() == (CDM_BIND::eSwitch)eSwitch::NullSwitch)
     ss << "Pulse State must have none null intubation state";
   dst.m_Intubation = (eSwitch)src.intubation();
 
-  /// Patient //  
+  /// Patient //
   if (!src.has_currentpatient() || !src.has_initialpatient())
     ss << "PulseState must have a patient" << std::endl;
   else
@@ -182,7 +193,6 @@ bool PBPulseState::Serialize(const PULSE_BIND::StateData& src, PulseController& 
       dst.m_Config->Merge(*peConfig);
     }
   }
-
   /////////////
   // Systems //
   /////////////
@@ -266,8 +276,8 @@ bool PBPulseState::Serialize(const PULSE_BIND::StateData& src, PulseController& 
     dst.SetAdvanceHandler(dst.m_AdvanceHandler);
 
 
-  // It helps to unload what you just loaded and to a compare if you have issues
-  //SaveState("WhatIJustLoaded.json");
+  // It helps to unload what you just loaded and do a compare if you have issues
+  //SerializeToFile(dst, "WhatIJustLoaded.json", SerializationFormat::JSON);
 
   // Good to go, save it off and carry on!
   dst.m_State = EngineState::Active;
@@ -307,11 +317,16 @@ bool PBPulseState::Serialize(const PulseController& src, PULSE_BIND::StateData& 
     time.SetValue(src.m_EventManager->GetEventDuration(itr.first, TimeUnit::s), TimeUnit::s);
     eData->set_allocated_duration(PBProperty::Unload(time));
   }
-  // Active Substances/Compounds
+  // Add all Substances/Compunds
+  for (SESubstance* s : src.m_Substances->GetSubstances())
+    dst.mutable_substance()->AddAllocated(PBSubstance::Unload(*s));
+  for (SESubstanceCompound* c : src.m_Substances->GetCompounds())
+    dst.mutable_compound()->AddAllocated(PBSubstance::Unload(*c));
+  // Track the active Substances/Compounds
   for (SESubstance* s : src.m_Substances->GetActiveSubstances())
-    dst.mutable_activesubstance()->AddAllocated(PBSubstance::Unload(*s));
+    dst.mutable_activesubstance()->Add(s->GetName());
   for (SESubstanceCompound* c : src.m_Substances->GetActiveCompounds())
-    dst.mutable_activecompound()->AddAllocated(PBSubstance::Unload(*c));
+    dst.mutable_activecompound()->Add(c->GetName());
   // Systems
   dst.set_allocated_bloodchemistry(PBPulsePhysiology::Unload(*src.m_BloodChemistrySystem));
   dst.set_allocated_cardiovascular(PBPulsePhysiology::Unload(*src.m_CardiovascularSystem));
@@ -338,11 +353,12 @@ bool PBPulseState::Serialize(const PulseController& src, PULSE_BIND::StateData& 
   return true;
 }
 
-bool PBPulseState::SerializeToString(const PulseController& src, std::string& output, SerializationFormat m)
+bool PBPulseState::SerializeFromFile(const std::string& filename, PulseController& dst, SerializationFormat m, const SEEngineConfiguration* config)
 {
-  PULSE_BIND::StateData data;
-  PBPulseState::Serialize(src, data);
-  return PBUtils::SerializeToString(data, output, m, src.GetLogger());
+  std::string content = ReadFile(filename, m);
+  if (content.empty())
+    return false;
+  return PBPulseState::SerializeFromString(content, dst, m, config);
 }
 bool PBPulseState::SerializeToFile(const PulseController& src, const std::string& filename, SerializationFormat m)
 {
@@ -350,18 +366,18 @@ bool PBPulseState::SerializeToFile(const PulseController& src, const std::string
   PBPulseState::SerializeToString(src, content, m);
   return WriteFile(content, filename, m);
 }
-bool PBPulseState::SerializeFromString(const std::string& src, PulseController& dst, SerializationFormat m, const SEScalarTime* simTime, const SEEngineConfiguration* config)
+
+bool PBPulseState::SerializeToString(const PulseController& src, std::string& output, SerializationFormat m)
+{
+  PULSE_BIND::StateData data;
+  PBPulseState::Serialize(src, data);
+  return PBUtils::SerializeToString(data, output, m, src.GetLogger());
+}
+bool PBPulseState::SerializeFromString(const std::string& src, PulseController& dst, SerializationFormat m, const SEEngineConfiguration* config)
 {
   PULSE_BIND::StateData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
     return false;
-  PBPulseState::Load(data, dst, simTime, config);
+  PBPulseState::Load(data, dst, config);
   return true;
-}
-bool PBPulseState::SerializeFromFile(const std::string& filename, PulseController& dst, SerializationFormat m, const SEScalarTime* simTime, const SEEngineConfiguration* config)
-{
-  std::string content = ReadFile(filename, m);
-  if (content.empty())
-    return false;
-  return PBPulseState::SerializeFromString(content, dst, m, simTime, config);
 }

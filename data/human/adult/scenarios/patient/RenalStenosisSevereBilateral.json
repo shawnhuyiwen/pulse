@@ -1,26 +1,24 @@
 {
   "Name": "RenalStenosisSevereBilateral",
   "Description": "90% occlusion of the left and right renal artery leading to bilateral stenosis.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json",
-      "Conditions": { "AnyCondition": [{
-        "PatientCondition": {
-          "ChronicRenalStenosis": {
-            "LeftKidneySeverity": {
-              "Scalar0To1": {
-                "Value": 0.9
-              }
-            },
-            "RightKidneySeverity": {
-              "Scalar0To1": {
-                "Value": 0.9
-              }
+  "PatientConfiguration": {
+    "PatientFile": "StandardMale.json",
+    "Conditions": { "AnyCondition": [{
+      "PatientCondition": {
+        "ChronicRenalStenosis": {
+          "LeftKidneySeverity": {
+            "Scalar0To1": {
+              "Value": 0.9
+            }
+          },
+          "RightKidneySeverity": {
+            "Scalar0To1": {
+              "Value": 0.9
             }
           }
         }
-      }]}
-    }
+      }
+    }]}
   },
   "DataRequestManager": {
     "DataRequest": [{
@@ -337,7 +335,7 @@
       "Unit": "mmHg"
     }, {
       "DecimalFormat": {
-        "Precision": 2
+        "Precision": 4
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "RightTubules",
@@ -346,7 +344,7 @@
       "Unit": "g/L"
     }, {
       "DecimalFormat": {
-        "Precision": 2
+        "Precision": 4
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LeftTubules",

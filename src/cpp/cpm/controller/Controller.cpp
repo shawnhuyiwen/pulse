@@ -80,16 +80,9 @@
 #include "utils/DataTrack.h"
 #include "utils/FileUtils.h"
 
-
-PulseData::PulseData(const std::string& logFileName, const std::string& data_dir) : PulseData(new Logger(logFileName), data_dir)
-{
-  myLogger = true;
-  // Directs to the ctor below
-}
-PulseData::PulseData(Logger* logger, const std::string& data_dir) : Loggable(logger)
+PulseData::PulseData(Logger* logger) : Loggable(logger)
 {
   m_State = EngineState::NotReady;
-  m_DataDir = data_dir;
   m_AdvanceHandler = nullptr;
 
   m_CurrentTime.SetValue(0, TimeUnit::s);
@@ -99,13 +92,11 @@ PulseData::PulseData(Logger* logger, const std::string& data_dir) : Loggable(log
   m_Logger->SetLogTime(&m_SimulationTime);
 
   m_Substances = std::unique_ptr<PulseSubstances>(new PulseSubstances(*this));
-  m_Substances->LoadSubstanceDirectory(m_DataDir);
 
   m_InitialPatient = std::unique_ptr<SEPatient>(new SEPatient(GetLogger()));
   m_CurrentPatient = std::unique_ptr<SEPatient>(new SEPatient(GetLogger()));
 
   m_Config = std::unique_ptr<PulseConfiguration>(new PulseConfiguration(*m_Substances));
-  m_Config->Initialize(m_DataDir);
 
   m_SaturationCalculator = std::unique_ptr<SaturationCalculator>(new SaturationCalculator(*this));
 
@@ -240,13 +231,9 @@ const SEScalarTime& PulseData::GetTimeStep() const { return m_Config->GetTimeSte
 bool PulseData::HasOverride() const { return m_ScalarOverrides.size() > 0; }
 const std::vector<SEScalarProperty>& PulseData::GetOverrides() const { return m_ScalarOverrides; }
 
-PulseController::PulseController(const std::string& logFileName, const std::string& data_dir) : PulseController(new Logger(logFileName), data_dir)
+PulseController::PulseController(Logger* logger) : PulseData(logger)
 {
-  myLogger = true;
-  // Directs to the ctor below
-}
-PulseController::PulseController(Logger* logger, const std::string& data_dir) : PulseData(logger, data_dir)
-{
+  m_ConfigOverride = nullptr;
   m_Stabilizer = new PulseStabilizationController(*this);
 }
 PulseController::~PulseController()
@@ -254,50 +241,49 @@ PulseController::~PulseController()
 
 }
 
-bool PulseController::SerializeToString(std::string& output, SerializationFormat m) const
-{
-  return PBPulseState::SerializeToString(*this, output, m);
-}
-bool PulseController::SerializeToFile(const std::string& filename, SerializationFormat m) const
-{
-  return PBPulseState::SerializeToFile(*this, filename, m);
-}
-bool PulseController::SerializeFromString(const std::string& src, SerializationFormat m)
-{
-  return SerializeFromString(src, m, nullptr, nullptr);
-}
-bool PulseController::SerializeFromString(const std::string& src, SerializationFormat m, const SEScalarTime* simTime, const SEEngineConfiguration* config)
-{
-  return PBPulseState::SerializeFromString(src, *this, m, simTime, config);
-}
-bool PulseController::SerializeFromFile(const std::string& filename, SerializationFormat m)
-{
-  return SerializeFromFile(filename, m, nullptr, nullptr);
-}
-bool PulseController::SerializeFromFile(const std::string& filename, SerializationFormat m, const SEScalarTime* simTime, const SEEngineConfiguration* config)
-{
-  return PBPulseState::SerializeFromFile(filename, *this, m, simTime, config);
-}
-
-bool PulseController::InitializeEngine(const std::string& patient_configuration, SerializationFormat m, const SEEngineConfiguration* config)
-{
-  SEPatientConfiguration pc(*m_Substances);
-  pc.SerializeFromString(patient_configuration, m);
-  return InitializeEngine(pc, config);
-}
-
-bool PulseController::InitializeEngine(const SEPatientConfiguration& patient_configuration, const SEEngineConfiguration* config)
+bool PulseController::SetConfigurationOverride(const SEEngineConfiguration* config)
 {
   const PulseConfiguration* pConfig = nullptr;
   if (config != nullptr)
   {
-    pConfig = dynamic_cast<const PulseConfiguration*>(config);
-    if (pConfig == nullptr)
+    m_ConfigOverride = dynamic_cast<const PulseConfiguration*>(config);
+    if (m_ConfigOverride == nullptr)
     {
       Error("Configuration provided is not a Pulse Configuration Object");
       return false;
     }
   }
+  return true;
+}
+
+bool PulseController::SerializeFromFile(const std::string& filename, SerializationFormat m)
+{
+  return PBPulseState::SerializeFromFile(filename, *this, m, m_ConfigOverride);
+}
+bool PulseController::SerializeToFile(const std::string& filename, SerializationFormat m) const
+{
+  return PBPulseState::SerializeToFile(*this, filename, m);
+}
+
+bool PulseController::SerializeFromString(const std::string& src, SerializationFormat m)
+{
+  return PBPulseState::SerializeFromString(src, *this, m);
+}
+bool PulseController::SerializeToString(std::string& output, SerializationFormat m) const
+{
+  return PBPulseState::SerializeToString(*this, output, m);
+}
+
+bool PulseController::InitializeEngine(const std::string& patient_configuration, SerializationFormat m)
+{
+  SEPatientConfiguration pc(*m_Substances);
+  pc.SerializeFromString(patient_configuration, m);
+  return InitializeEngine(pc);
+}
+
+bool PulseController::InitializeEngine(const SEPatientConfiguration& patient_configuration)
+{
+  m_DataDir = patient_configuration.GetDataRoot();
   m_EngineTrack->ResetFile();
   m_State = EngineState::Initialization;
   if(patient_configuration.HasOverride())
@@ -307,7 +293,7 @@ bool PulseController::InitializeEngine(const SEPatientConfiguration& patient_con
   }
   if (patient_configuration.HasPatient())
   {
-    if (!PulseController::Initialize(pConfig, *patient_configuration.GetPatient()))
+    if (!PulseController::Initialize(*patient_configuration.GetPatient()))
       return false;
   }
   else if (patient_configuration.HasPatientFile())
@@ -321,7 +307,7 @@ bool PulseController::InitializeEngine(const SEPatientConfiguration& patient_con
     }
     if (!patient.SerializeFromFile(pFile, JSON))// TODO Support all serialization formats
       return false;
-    if (!PulseController::Initialize(pConfig, patient))
+    if (!PulseController::Initialize(patient))
       return false;
   }
   else
@@ -359,34 +345,28 @@ bool PulseController::InitializeEngine(const SEPatientConfiguration& patient_con
     if (!m_Config->GetStabilization()->StabilizeConditions(*m_Stabilizer, *m_Conditions))
       return false;
   }
-  else
-  {
-    if (!m_Config->GetStabilization()->StabilizeFeedbackState(*m_Stabilizer))
-      return false;
-  }
   AtSteadyState(EngineState::AtSecondaryStableState);
+ 
+  // Don't allow any changes to Quantity/Potential/Flux values directly
+  // Use Quantity/Potential/Flux Sources
+  m_Circuits->SetReadOnly(true);
 
-  m_State = EngineState::Active;
-  // Hook up the handlers (Note events will still be in the log)
-  m_EventManager->ForwardEvents(event_handler);
-  Info("Finalizing homeostasis");
-
+  AtSteadyState(EngineState::Active);
+  Info("Finalizing homeostasis...");
   // Run this again to clear out any bumps from systems resetting baselines in the last AtSteadyState call
-  AdvanceModelTime(30, TimeUnit::s); // I would rather run Feedback stablization again, but...
+  // AdvanceModelTime(30, TimeUnit::s); // I would rather run Feedback stablization again, but...
   // This does not work for a few patients, they will not stay stable (???)  
   //if (!m_Config->GetStabilizationCriteria()->StabilizeFeedbackState(*this))
   //  return false;
 
   if (!m_Config->GetStabilization()->IsTrackingStabilization())
     m_SimulationTime.SetValue(0, TimeUnit::s);
-  // Don't allow any changes to Quantity/Potential/Flux values directly
-  // Use Quantity/Potential/Flux Sources
-  m_Circuits->SetReadOnly(true);
-
+  // Hook up the handlers (Note events will still be in the log)
+  m_EventManager->ForwardEvents(event_handler);
   return true;
 }
 
-bool PulseController::Initialize(const PulseConfiguration* config, SEPatient const& patient)
+bool PulseController::Initialize(SEPatient const& patient)
 {
   m_State = EngineState::NotReady;
   Info("Configuring patient");
@@ -394,7 +374,7 @@ bool PulseController::Initialize(const PulseConfiguration* config, SEPatient con
     return false;
 
   Info("Resetting Substances");
-  m_Substances->Reset();
+  m_Substances->LoadSubstanceDirectory(m_DataDir);
 
   // Clear all substances and reload the original data
   // This clears out all engine specific data stored in the substance
@@ -411,10 +391,10 @@ bool PulseController::Initialize(const PulseConfiguration* config, SEPatient con
   m_Config->Merge(cFile);
 
   // Now, override anything with a configuration provided by the user or scenario
-  if (config != nullptr)
+  if (m_ConfigOverride != nullptr)
   {
     Info("Merging Provided Configuration");
-    m_Config->Merge(*config);
+    m_Config->Merge(*m_ConfigOverride);
   }
 
   if (!m_Config->IsPDEnabled())
@@ -428,7 +408,7 @@ bool PulseController::Initialize(const PulseConfiguration* config, SEPatient con
     m_CurrentPatient->SerializeToFile(stableDir + m_CurrentPatient->GetName() + ".json",JSON);
   }
 
-  m_SaturationCalculator->Initialize(*m_Substances);
+  m_SaturationCalculator->Setup();
 
   m_Actions->Clear();
   m_Conditions->Clear();
@@ -461,12 +441,17 @@ bool PulseController::Initialize(const PulseConfiguration* config, SEPatient con
   m_DrugSystem->Initialize();
   m_EnergySystem->Initialize();
   m_BloodChemistrySystem->Initialize();
-  m_TissueSystem->Initialize(); // Depends on some parameters that Blood Chemistry initializes,needs to be after  
+  m_TissueSystem->Initialize(); // Depends on some parameters that Blood Chemistry initializes,needs to be after
   m_ECG->Initialize();
   m_Inhaler->Initialize();
 
   AdvanceCallback(-1);
   return true;
+}
+
+void PulseController::SetSimulationTime(const SEScalarTime& time)
+{
+  m_SimulationTime.Set(time);
 }
 
 bool PulseController::SetupPatient(SEPatient const& patient)
@@ -1379,7 +1364,7 @@ bool PulseController::CreateCircuitsAndCompartments()
 {
   m_Circuits->Clear();
   m_Compartments->Clear();
-
+  m_Compartments->Setup();
   SetupCardiovascular();
   if (m_Config->IsRenalEnabled())
     SetupRenal();
@@ -1474,7 +1459,7 @@ void PulseController::SetupCardiovascular()
   // Volume fractions and flow rates from \cite valtin1995renal
   // Pressure targets derived from information available in \cite guyton2006medical and \cite van2013davis
   double VolumeFractionAorta = 0.05,                     VascularPressureTargetAorta = 1.0*systolicPressureTarget_mmHg, VascularFlowTargetAorta = 1.0*cardiacOutputTarget_mL_Per_s;
-  double VolumeFractionArmLeft = 0.01,                   VascularPressureTargetArmLeft = 0.33*systolicPressureTarget_mmHg, VascularFlowTargetArmLeft = male ? 0.00724*cardiacOutputTarget_mL_Per_s : 0.0083*cardiacOutputTarget_mL_Per_s;
+  double VolumeFractionArmLeft = 0.01,                   VascularPressureTargetArmLeft = 0.33*systolicPressureTarget_mmHg, VascularFlowTargetArmLeft = male ? 0.01448*cardiacOutputTarget_mL_Per_s : 0.01664*cardiacOutputTarget_mL_Per_s;
   double VolumeFractionArmRight = VolumeFractionArmLeft, VascularPressureTargetArmRight = 0.33*systolicPressureTarget_mmHg, VascularFlowTargetArmRight = VascularFlowTargetArmLeft;
   double VolumeFractionBone = 0.07,                      VascularPressureTargetBone = 0.33*systolicPressureTarget_mmHg, VascularFlowTargetBone = 0.05*cardiacOutputTarget_mL_Per_s;
   double VolumeFractionBrain = 0.012,                    VascularPressureTargetBrain = 0.08*systolicPressureTarget_mmHg, VascularFlowTargetBrain = 0.12*cardiacOutputTarget_mL_Per_s;
@@ -1483,7 +1468,7 @@ void PulseController::SetupCardiovascular()
   double VolumeFractionHeartRight = 0.0025,               VascularPressureTargetHeartRight = 0.16667*systolicPressureTarget_mmHg;     /*No flow targets heart left*/
   double VolumeFractionKidney = 0.0202,                  VascularPressureTargetKidney = 0.33*systolicPressureTarget_mmHg, VascularFlowTargetKidney = male ? 0.098*cardiacOutputTarget_mL_Per_s : 0.088*cardiacOutputTarget_mL_Per_s;
   double VolumeFractionLargeIntestine = 0.019,           VascularPressureTargetLargeIntestine = 0.33*systolicPressureTarget_mmHg, VascularFlowTargetLargeIntestine = male ? 0.04*cardiacOutputTarget_mL_Per_s : 0.05*cardiacOutputTarget_mL_Per_s;
-  double VolumeFractionLegLeft = 0.0151,                 VascularPressureTargetLegLeft = 0.33*systolicPressureTarget_mmHg, VascularFlowTargetLegLeft = male ? 0.01086*cardiacOutputTarget_mL_Per_s : 0.01245*cardiacOutputTarget_mL_Per_s;
+  double VolumeFractionLegLeft = 0.0151,                 VascularPressureTargetLegLeft = 0.33*systolicPressureTarget_mmHg, VascularFlowTargetLegLeft = male ? 0.02872*cardiacOutputTarget_mL_Per_s : 0.0330*cardiacOutputTarget_mL_Per_s;
   double VolumeFractionLegRight = VolumeFractionLegLeft, VascularPressureTargetLegRight = 0.33*systolicPressureTarget_mmHg, VascularFlowTargetLegRight = VascularFlowTargetLegLeft;
   double VolumeFractionLiver = 0.106,                    VascularPressureTargetLiver = 0.25*systolicPressureTarget_mmHg, VascularFlowTargetLiver = 0.075*cardiacOutputTarget_mL_Per_s;
   double VolumeFractionMuscle = male ? 0.14 : 0.105,     VascularPressureTargetMuscle = 0.33*systolicPressureTarget_mmHg, VascularFlowTargetMuscle = male ? 0.17*cardiacOutputTarget_mL_Per_s : 0.12*cardiacOutputTarget_mL_Per_s;
@@ -1502,31 +1487,31 @@ void PulseController::SetupCardiovascular()
   /*Portal Vein is path only*/                    double VascularPressureTargetPortalVein = 0.25*systolicPressureTarget_mmHg, VascularFlowTargetPortalVein = VascularFlowTargetLargeIntestine + VascularFlowTargetSmallIntestine + VascularFlowTargetSplanchnic + VascularFlowTargetSpleen;
 
   // Compute resistances from mean flow rates and pressure targets
-  double ResistanceAorta = (VascularPressureTargetHeartLeft - systolicPressureTarget_mmHg) / VascularFlowTargetAorta;                        /*No Downstream Resistance Aorta*/
-  double ResistanceArmLeft = (systolicPressureTarget_mmHg - VascularPressureTargetArmLeft) / VascularFlowTargetArmLeft, ResistanceArmLeftVenous = (VascularPressureTargetArmLeft - VascularPressureTargetVenaCava) / VascularFlowTargetArmLeft;
+  double ResistanceAorta = 1.12 * (VascularPressureTargetHeartLeft - systolicPressureTarget_mmHg) / VascularFlowTargetAorta;                        /*No Downstream Resistance Aorta*/
+  double ResistanceArmLeft = 1.15 * (systolicPressureTarget_mmHg - VascularPressureTargetArmLeft) / VascularFlowTargetArmLeft, ResistanceArmLeftVenous = (VascularPressureTargetArmLeft - VascularPressureTargetVenaCava) / VascularFlowTargetArmLeft;
   double ResistanceArmRight = ResistanceArmLeft, ResistanceArmRightVenous = ResistanceArmLeftVenous;
-  double ResistanceBone = (systolicPressureTarget_mmHg - VascularPressureTargetBone) / VascularFlowTargetBone, ResistanceBoneVenous = (VascularPressureTargetBone - VascularPressureTargetVenaCava) / VascularFlowTargetBone;
-  double ResistanceBrain = (systolicPressureTarget_mmHg - VascularPressureTargetBrain) / VascularFlowTargetBrain, ResistanceBrainVenous = (VascularPressureTargetBrain - VascularPressureTargetVenaCava) / VascularFlowTargetBrain;
-  double ResistanceFat = (systolicPressureTarget_mmHg - VascularPressureTargetFat) / VascularFlowTargetFat, ResistanceFatVenous = (VascularPressureTargetFat - VascularPressureTargetVenaCava) / VascularFlowTargetFat;
-  double ResistanceHeartLeft = 0.000002;                                                                                                          /*No Downstream Resistance HeartLeft*/
+  double ResistanceBone = 1.02 * (systolicPressureTarget_mmHg - VascularPressureTargetBone) / VascularFlowTargetBone, ResistanceBoneVenous = (VascularPressureTargetBone - VascularPressureTargetVenaCava) / VascularFlowTargetBone;
+  double ResistanceBrain = 1.0 * (systolicPressureTarget_mmHg - VascularPressureTargetBrain) / VascularFlowTargetBrain, ResistanceBrainVenous = (VascularPressureTargetBrain - VascularPressureTargetVenaCava) / VascularFlowTargetBrain;
+  double ResistanceFat = 1.02 * (systolicPressureTarget_mmHg - VascularPressureTargetFat) / VascularFlowTargetFat, ResistanceFatVenous = (VascularPressureTargetFat - VascularPressureTargetVenaCava) / VascularFlowTargetFat;
+  double ResistanceHeartLeft = 0.0008;                                                                                                          /*No Downstream Resistance HeartLeft*/
   double ResistanceHeartRight = (0.04225*systolicPressureTarget_mmHg - VascularPressureTargetVenaCava) / cardiacOutputTarget_mL_Per_s; // Describes the flow resistance between the systemic vasculature and the right atrium    /*No Downstream Resistance Heart Right*/
-  double ResistanceKidney = (systolicPressureTarget_mmHg - VascularPressureTargetKidney) / VascularFlowTargetKidney, ResistanceKidneyVenous = (VascularPressureTargetKidney - VascularPressureTargetVenaCava) / VascularFlowTargetKidney;
-  double ResistanceLargeIntestine = (systolicPressureTarget_mmHg - VascularPressureTargetLargeIntestine) / VascularFlowTargetLargeIntestine, ResistanceLargeIntestineVenous = (VascularPressureTargetLargeIntestine - VascularPressureTargetLiver) / VascularFlowTargetLargeIntestine;
-  double ResistanceLegLeft = (systolicPressureTarget_mmHg - VascularPressureTargetLegLeft) / VascularFlowTargetLegLeft, ResistanceLegLeftVenous = (VascularPressureTargetLegLeft - VascularPressureTargetVenaCava) / VascularFlowTargetLegLeft;
-  double ResistanceLegRight = ResistanceLegLeft, ResistanceLegRightVenous = ResistanceLegLeftVenous;
-  double ResistanceLiver = (systolicPressureTarget_mmHg - VascularPressureTargetLiver) / VascularFlowTargetLiver, ResistanceLiverVenous = (VascularPressureTargetLiver - VascularPressureTargetVenaCava) / (VascularFlowTargetLiver + VascularFlowTargetPortalVein);
-  double ResistanceMuscle = (systolicPressureTarget_mmHg - VascularPressureTargetMuscle) / VascularFlowTargetMuscle, ResistanceMuscleVenous = (VascularPressureTargetMuscle - VascularPressureTargetVenaCava) / VascularFlowTargetMuscle;
-  double ResistanceMyocardium = (systolicPressureTarget_mmHg - VascularPressureTargetMyocardium) / VascularFlowTargetMyocardium, ResistanceMyocardiumVenous = (VascularPressureTargetMyocardium - VascularPressureTargetVenaCava) / VascularFlowTargetMyocardium;
-  double ResistancePulmArtRight = (VascularPressureTargetHeartRight - VascularPressureTargetPulmArtRight) / VascularFlowTargetPulmArtRight;        /*No Downstream Resistance PulmArt*/
-  double ResistancePulmCapRight = (VascularPressureTargetPulmArtRight - VascularPressureTargetPulmCapRight) / VascularFlowTargetPulmCapRight;      /*No Downstream Resistance PulmCap*/
-  double ResistancePulmVeinsRight = (VascularPressureTargetPulmCapRight - VascularPressureTargetPulmVeinsRight) / VascularFlowTargetPulmVeinsRight;/*No Downstream Resistance PulmVeins*/
-  double ResistancePulmArtLeft = (VascularPressureTargetHeartRight - VascularPressureTargetPulmArtLeft) / VascularFlowTargetPulmArtLeft;           /*No Downstream Resistance PulmArt*/
-  double ResistancePulmCapLeft = (VascularPressureTargetPulmArtLeft - VascularPressureTargetPulmCapLeft) / VascularFlowTargetPulmCapLeft;          /*No Downstream Resistance PulmCap*/
-  double ResistancePulmVeinsLeft = (VascularPressureTargetPulmCapLeft - VascularPressureTargetPulmVeinsLeft) / VascularFlowTargetPulmVeinsLeft;    /*No Downstream Resistance PulmVeins*/
-  double ResistanceSkin = (systolicPressureTarget_mmHg - VascularPressureTargetSkin) / VascularFlowTargetSkin, ResistanceSkinVenous = (VascularPressureTargetSkin - VascularPressureTargetVenaCava) / VascularFlowTargetSkin;
-  double ResistanceSmallIntestine = (systolicPressureTarget_mmHg - VascularPressureTargetSmallIntestine) / VascularFlowTargetSmallIntestine, ResistanceSmallIntestineVenous = (VascularPressureTargetArmLeft - VascularPressureTargetLiver) / VascularFlowTargetSmallIntestine;
-  double ResistanceSplanchnic = (systolicPressureTarget_mmHg - VascularPressureTargetSplanchnic) / VascularFlowTargetSplanchnic, ResistanceSplanchnicVenous = (VascularPressureTargetArmLeft - VascularPressureTargetLiver) / VascularFlowTargetSplanchnic;
-  double ResistanceSpleen = (systolicPressureTarget_mmHg - VascularPressureTargetSpleen) / VascularFlowTargetSpleen, ResistanceSpleenVenous = (VascularPressureTargetArmLeft - VascularPressureTargetLiver) / VascularFlowTargetSpleen;
+  double ResistanceKidney = 1.5 * (systolicPressureTarget_mmHg - VascularPressureTargetKidney) / VascularFlowTargetKidney, ResistanceKidneyVenous = (VascularPressureTargetKidney - VascularPressureTargetVenaCava) / VascularFlowTargetKidney;
+  double ResistanceLargeIntestine = 1.05 * (systolicPressureTarget_mmHg - VascularPressureTargetLargeIntestine) / VascularFlowTargetLargeIntestine, ResistanceLargeIntestineVenous = (VascularPressureTargetLargeIntestine - VascularPressureTargetLiver) / VascularFlowTargetLargeIntestine;
+  double ResistanceLegLeft = 1.1 * (systolicPressureTarget_mmHg - VascularPressureTargetLegLeft) / VascularFlowTargetLegLeft, ResistanceLegLeftVenous = (VascularPressureTargetLegLeft - VascularPressureTargetVenaCava) / VascularFlowTargetLegLeft;
+  double ResistanceLegRight = 1.00 * ResistanceLegLeft, ResistanceLegRightVenous = ResistanceLegLeftVenous;
+  double ResistanceLiver = 1.1 * (systolicPressureTarget_mmHg - VascularPressureTargetLiver) / VascularFlowTargetLiver, ResistanceLiverVenous = (VascularPressureTargetLiver - VascularPressureTargetVenaCava) / (VascularFlowTargetLiver + VascularFlowTargetPortalVein);
+  double ResistanceMuscle = 1.15 * (systolicPressureTarget_mmHg - VascularPressureTargetMuscle) / VascularFlowTargetMuscle, ResistanceMuscleVenous = (VascularPressureTargetMuscle - VascularPressureTargetVenaCava) / VascularFlowTargetMuscle;
+  double ResistanceMyocardium = 0.95 * (systolicPressureTarget_mmHg - VascularPressureTargetMyocardium) / VascularFlowTargetMyocardium, ResistanceMyocardiumVenous = (VascularPressureTargetMyocardium - VascularPressureTargetVenaCava) / VascularFlowTargetMyocardium;
+  double ResistancePulmArtRight = 1.0 * (VascularPressureTargetHeartRight - VascularPressureTargetPulmArtRight) / VascularFlowTargetPulmArtRight;        /*No Downstream Resistance PulmArt*/
+  double ResistancePulmCapRight = 1.0 * (VascularPressureTargetPulmArtRight - VascularPressureTargetPulmCapRight) / VascularFlowTargetPulmCapRight;      /*No Downstream Resistance PulmCap*/
+  double ResistancePulmVeinsRight = 1.0 * (VascularPressureTargetPulmCapRight - VascularPressureTargetPulmVeinsRight) / VascularFlowTargetPulmVeinsRight;/*No Downstream Resistance PulmVeins*/
+  double ResistancePulmArtLeft = 1.0 * (VascularPressureTargetHeartRight - VascularPressureTargetPulmArtLeft) / VascularFlowTargetPulmArtLeft;           /*No Downstream Resistance PulmArt*/
+  double ResistancePulmCapLeft = 1.0 * (VascularPressureTargetPulmArtLeft - VascularPressureTargetPulmCapLeft) / VascularFlowTargetPulmCapLeft;          /*No Downstream Resistance PulmCap*/
+  double ResistancePulmVeinsLeft = 1.0 * (VascularPressureTargetPulmCapLeft - VascularPressureTargetPulmVeinsLeft) / VascularFlowTargetPulmVeinsLeft;    /*No Downstream Resistance PulmVeins*/
+  double ResistanceSkin = 1.0 * (systolicPressureTarget_mmHg - VascularPressureTargetSkin) / VascularFlowTargetSkin, ResistanceSkinVenous = (VascularPressureTargetSkin - VascularPressureTargetVenaCava) / VascularFlowTargetSkin;
+  double ResistanceSmallIntestine = 1.14 * (systolicPressureTarget_mmHg - VascularPressureTargetSmallIntestine) / VascularFlowTargetSmallIntestine, ResistanceSmallIntestineVenous = (VascularPressureTargetArmLeft - VascularPressureTargetLiver) / VascularFlowTargetSmallIntestine;
+  double ResistanceSplanchnic = 0.95 * (systolicPressureTarget_mmHg - VascularPressureTargetSplanchnic) / VascularFlowTargetSplanchnic, ResistanceSplanchnicVenous = (VascularPressureTargetArmLeft - VascularPressureTargetLiver) / VascularFlowTargetSplanchnic;
+  double ResistanceSpleen =0.95 * (systolicPressureTarget_mmHg - VascularPressureTargetSpleen) / VascularFlowTargetSpleen, ResistanceSpleenVenous = (VascularPressureTargetArmLeft - VascularPressureTargetLiver) / VascularFlowTargetSpleen;
 
   // Portal vein and shunt are just paths - only have resistance
   double ResistancePortalVein = 0.001; // The portal vein is just a pathway in Pulse. The pressure across this path does not represent portal vein pressure (if it did our patient would always be portal hypertensive)
@@ -1933,7 +1918,7 @@ void PulseController::SetupCardiovascular()
     }
   }
   // The vena cava compliance needs to be decreased to ensure proper return
-  double venaCavaComplianceTuning = 1.0;
+  double venaCavaComplianceTuning = 0.9;
   VenaCavaToGround.GetCapacitanceBaseline().SetValue(venaCavaComplianceTuning*VenaCavaToGround.GetComplianceBaseline().GetValue(VolumePerPressureUnit::mL_Per_mmHg), VolumePerPressureUnit::mL_Per_mmHg);
 
   // Hearts and pericardium have special compliance computations
@@ -3209,12 +3194,12 @@ void PulseController::SetupTissue()
 
   // The assumption for the vascular-tissue convection drag is that the resistance is inversely proportional to the tissue mass.
   // This is the proportionality constant
-  double resistanceConstant = 1.0;
+  double resistanceConstant = 20000.0; // Large resistance to prevent fluid from freely moving into the vascular space
 
   /// \todo Put Initial Circuit/Compartment data values into the configuration file.
 
   //Density (kg/L)
-  double AdiposeTissueDensity = 0.92;
+  double AdiposeTissueDensity = 1.03;
   double BoneTissueDensity = 1.3;
   double BrainTissueDensity = 1.0;
   double GutTissueDensity = 1.0;
@@ -3357,7 +3342,7 @@ void PulseController::SetupTissue()
   SEFluidCircuitNode& FatT1 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::FatT1);
   SEFluidCircuitNode& FatT2 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::FatT2);
   SEFluidCircuitNode& FatT3 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::FatT3);
-  FatT1.GetPressure().SetValue(32.473, PressureUnit::mmHg);
+  FatT1.GetPressure().Set(Fat1->GetPressure());
   FatT3.GetPressure().Set(Ground->GetPressure());
   FatT1.GetVolumeBaseline().SetValue(AdiposeEWFraction*AdiposeTissueVolume*1000.0, VolumeUnit::mL);
 
@@ -3404,7 +3389,7 @@ void PulseController::SetupTissue()
   SEFluidCircuitNode& BoneT1 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::BoneT1);
   SEFluidCircuitNode& BoneT2 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::BoneT2);
   SEFluidCircuitNode& BoneT3 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::BoneT3);
-  BoneT1.GetPressure().SetValue(32.469, PressureUnit::mmHg);
+  BoneT1.GetPressure().Set(Bone1->GetPressure());
   BoneT3.GetPressure().Set(Ground->GetPressure());
   BoneT1.GetVolumeBaseline().SetValue(BoneEWFraction*BoneTissueVolume*1000.0, VolumeUnit::mL);
 
@@ -3451,7 +3436,7 @@ void PulseController::SetupTissue()
   SEFluidCircuitNode& BrainT1 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::BrainT1);
   SEFluidCircuitNode& BrainT2 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::BrainT2);
   SEFluidCircuitNode& BrainT3 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::BrainT3);
-  BrainT1.GetPressure().SetValue(8.97, PressureUnit::mmHg);
+  BrainT1.GetPressure().Set(Brain1->GetPressure());
   BrainT3.GetPressure().Set(Ground->GetPressure());
   BrainT1.GetVolumeBaseline().SetValue(BrainEWFraction*BrainTissueVolume*1000.0, VolumeUnit::mL);
 
@@ -3500,7 +3485,7 @@ void PulseController::SetupTissue()
   SEFluidCircuitNode& GutT1 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::GutT1);
   SEFluidCircuitNode& GutT2 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::GutT2);
   SEFluidCircuitNode& GutT3 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::GutT3);
-  GutT1.GetPressure().SetValue(32.481, PressureUnit::mmHg);
+  GutT1.GetPressure().Set(SmallIntestine->GetPressure());
   GutT3.GetPressure().Set(Ground->GetPressure());
   GutT1.GetVolumeBaseline().SetValue(GutEWFraction*GutTissueVolume * 1000.0, VolumeUnit::mL);
 
@@ -3564,7 +3549,7 @@ void PulseController::SetupTissue()
   SEFluidCircuitNode& LeftKidneyT1 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::LeftKidneyT1);
   SEFluidCircuitNode& LeftKidneyT2 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::LeftKidneyT2);
   SEFluidCircuitNode& LeftKidneyT3 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::LeftKidneyT3);
-  LeftKidneyT1.GetPressure().SetValue(65.474, PressureUnit::mmHg);
+  LeftKidneyT1.GetPressure().Set(LeftKidney1->GetPressure());
   LeftKidneyT3.GetPressure().Set(Ground->GetPressure());
   LeftKidneyT1.GetVolumeBaseline().SetValue(LKidneyEWFraction*LKidneyTissueVolume*1000.0, VolumeUnit::mL);
 
@@ -3611,7 +3596,7 @@ void PulseController::SetupTissue()
   SEFluidCircuitNode& LeftLungT1 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::LeftLungT1);
   SEFluidCircuitNode& LeftLungT2 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::LeftLungT2);
   SEFluidCircuitNode& LeftLungT3 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::LeftLungT3);
-  LeftLungT1.GetPressure().SetValue(9.339, PressureUnit::mmHg);
+  LeftLungT1.GetPressure().Set(LeftLung1->GetPressure());
   LeftLungT3.GetPressure().Set(Ground->GetPressure());
   LeftLungT1.GetVolumeBaseline().SetValue(LLungEWFraction*LLungTissueVolume*1000.0, VolumeUnit::mL);
 
@@ -3658,7 +3643,7 @@ void PulseController::SetupTissue()
   SEFluidCircuitNode& LiverT1 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::LiverT1);
   SEFluidCircuitNode& LiverT2 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::LiverT2);
   SEFluidCircuitNode& LiverT3 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::LiverT3);
-  LiverT1.GetPressure().SetValue(24.947, PressureUnit::mmHg);
+  LiverT1.GetPressure().Set(Liver1->GetPressure());
   LiverT3.GetPressure().Set(Ground->GetPressure());
   LiverT1.GetVolumeBaseline().SetValue(LiverEWFraction*LiverTissueVolume*1000.0, VolumeUnit::mL);
 
@@ -3705,7 +3690,7 @@ void PulseController::SetupTissue()
   SEFluidCircuitNode& MuscleT1 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::MuscleT1);
   SEFluidCircuitNode& MuscleT2 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::MuscleT2);
   SEFluidCircuitNode& MuscleT3 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::MuscleT3);
-  MuscleT1.GetPressure().SetValue(32.9918684263157, PressureUnit::mmHg);
+  MuscleT1.GetPressure().Set(Muscle1->GetPressure());
   MuscleT3.GetPressure().Set(Ground->GetPressure());
   MuscleT1.GetVolumeBaseline().SetValue(MuscleEWFraction*MuscleTissueVolume*1000.0, VolumeUnit::mL);
 
@@ -3752,7 +3737,7 @@ void PulseController::SetupTissue()
   SEFluidCircuitNode& MyocardiumT1 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::MyocardiumT1);
   SEFluidCircuitNode& MyocardiumT2 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::MyocardiumT2);
   SEFluidCircuitNode& MyocardiumT3 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::MyocardiumT3);
-  MyocardiumT1.GetPressure().SetValue(32.4695, PressureUnit::mmHg);
+  MyocardiumT1.GetPressure().Set(Myocardium1->GetPressure());
   MyocardiumT3.GetPressure().Set(Ground->GetPressure());
   MyocardiumT1.GetVolumeBaseline().SetValue(MyocardiumEWFraction*MyocardiumTissueVolume*1000.0, VolumeUnit::mL);
 
@@ -3804,7 +3789,7 @@ void PulseController::SetupTissue()
   SEFluidCircuitNode& RightKidneyT1 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::RightKidneyT1);
   SEFluidCircuitNode& RightKidneyT2 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::RightKidneyT2);
   SEFluidCircuitNode& RightKidneyT3 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::RightKidneyT3);
-  RightKidneyT1.GetPressure().SetValue(65.474, PressureUnit::mmHg);
+  RightKidneyT1.GetPressure().Set(RightKidney1->GetPressure());
   RightKidneyT3.GetPressure().Set(Ground->GetPressure());
   RightKidneyT1.GetVolumeBaseline().SetValue(RKidneyEWFraction*RKidneyTissueVolume*1000.0, VolumeUnit::mL);
 
@@ -3851,7 +3836,7 @@ void PulseController::SetupTissue()
   SEFluidCircuitNode& RightLungT1 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::RightLungT1);
   SEFluidCircuitNode& RightLungT2 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::RightLungT2);
   SEFluidCircuitNode& RightLungT3 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::RightLungT3);
-  RightLungT1.GetPressure().SetValue(9.2621, PressureUnit::mmHg);
+  RightLungT1.GetPressure().Set(RightLung1->GetPressure());
   RightLungT3.GetPressure().Set(Ground->GetPressure());
   RightLungT1.GetVolumeBaseline().SetValue(RLungEWFraction*RLungTissueVolume*1000.0, VolumeUnit::mL);
 
@@ -3898,7 +3883,7 @@ void PulseController::SetupTissue()
   SEFluidCircuitNode& SkinT1 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::SkinT1);
   SEFluidCircuitNode& SkinT2 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::SkinT2);
   SEFluidCircuitNode& SkinT3 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::SkinT3);
-  SkinT1.GetPressure().SetValue(9.28115, PressureUnit::mmHg);
+  SkinT1.GetPressure().Set(Skin1->GetPressure());
   SkinT3.GetPressure().Set(Ground->GetPressure());
   SkinT1.GetVolumeBaseline().SetValue(SkinEWFraction*SkinTissueVolume*1000.0, VolumeUnit::mL);
 
@@ -3948,7 +3933,7 @@ void PulseController::SetupTissue()
   SEFluidCircuitNode& SpleenT1 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::SpleenT1);
   SEFluidCircuitNode& SpleenT2 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::SpleenT2);
   SEFluidCircuitNode& SpleenT3 =cCombinedCardiovascular.CreateNode(pulse::TissueNode::SpleenT3);
-  SpleenT1.GetPressure().SetValue(32.481, PressureUnit::mmHg);
+  SpleenT1.GetPressure().Set(Spleen->GetPressure());
   SpleenT3.GetPressure().Set(Ground->GetPressure());
   SpleenT1.GetVolumeBaseline().SetValue(SpleenEWFraction*SpleenTissueVolume*1000.0, VolumeUnit::mL);
 
@@ -4351,7 +4336,7 @@ void PulseController::SetupGastrointestinal()
 
   SEFluidCircuitNode& SmallIntestineC1 = cCombinedCardiovascular.CreateNode(pulse::ChymeNode::SmallIntestineC1);
   SmallIntestineC1.GetPressure().SetValue(0, PressureUnit::mmHg);
-  SmallIntestineC1.GetVolumeBaseline().SetValue(100, VolumeUnit::mL);
+  SmallIntestineC1.GetVolumeBaseline().SetValue(10, VolumeUnit::mL);
 
   SEFluidCircuitNode* SmallIntestine1 = cCombinedCardiovascular.GetNode(pulse::CardiovascularNode::SmallIntestine1);
   SEFluidCircuitNode* Ground = cCombinedCardiovascular.GetNode(pulse::CardiovascularNode::Ground);

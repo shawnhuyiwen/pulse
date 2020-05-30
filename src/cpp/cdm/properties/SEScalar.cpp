@@ -27,8 +27,8 @@ double SEScalar::dNaN()
 // Opposite of isnan which can be slow
 bool SEScalar::IsNumber(double d)
 {
-  if (d >= std::numeric_limits<double>::min()&&
-      d <= std::numeric_limits<double>::max())
+  if (d >= -std::numeric_limits<double>::max()&&
+      d <=  std::numeric_limits<double>::max())
     return true;
   return false;
 }
@@ -221,6 +221,10 @@ bool SEScalar::Equals(const SEScalar& to) const
   return std::abs(GeneralMath::PercentDifference(m_value, to.m_value)) <= 1e-15;
 }
 
+std::string SEScalar::ToString() const
+{
+  return cdm::to_string(m_value);
+}                                      
 void SEScalar::ToString(std::ostream &str) const
 {
   str<<m_value<<std::flush;
@@ -488,6 +492,14 @@ const CCompoundUnit* SEScalarQuantity<Unit>::GetCompoundUnit(const std::string& 
   return &Unit::GetCompoundUnit(unit);
 }
 
+template<typename Unit>
+std::string SEScalarQuantity<Unit>::ToString() const
+{
+  if (m_isnan || m_isinf)
+    return cdm::to_string(m_value);
+  else
+    return cdm::to_string(m_value) + "(" + m_unit->GetString() + ")";
+}
 template<typename Unit>
 void SEScalarQuantity<Unit>::ToString(std::ostream& str) const
 {

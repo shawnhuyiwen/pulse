@@ -1,20 +1,17 @@
 {
   "Name": "Sepsis",
   "Description": "",
-  "StartType":
-  {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json",
-      "Conditions": 
-      { 
-        "AnyCondition": 
-        [
-          { "PatientCondition": { "Sepsis": 
-          {
-            "Severity": { "Scalar0To1": { "Value": 0.5 }}
-          }}}
-        ]
-      }
+  "PatientConfiguration": {
+    "PatientFile": "StandardMale.json",
+    "Conditions": 
+    { 
+      "AnyCondition": 
+      [
+        { "PatientCondition": { "Sepsis": 
+        {
+          "Severity": { "Scalar0To1": { "Value": 0.5 }}
+        }}}
+      ]
     }
   },
   "DataRequestManager":

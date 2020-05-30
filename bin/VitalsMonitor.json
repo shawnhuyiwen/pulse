@@ -1,7 +1,7 @@
 {
   "Name": "Vitals Monitor",
   "Description": "Data associated with a vitals monitor.",
-  "StartType": { "PatientConfiguration": { "PatientFile": "StandardMale.json" } },
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": [
       

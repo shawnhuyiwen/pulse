@@ -1,30 +1,28 @@
 {
   "Name": "LobarPneumoniaSevereRightLung",
   "Description": "Moderate Lobar Pneumonia in both lungs.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json",
-      "Conditions": { "AnyCondition": [{
-        "PatientCondition": {
-          "LobarPneumonia": {
-            "Severity": {
-              "Scalar0To1": {
-                "Value": 0.9
-              }
-            },
-            "LeftLungAffected": {
-              "Scalar0To1": {
-              }
-            },
-            "RightLungAffected": {
-              "Scalar0To1": {
-                "Value": 1.0
-              }
+  "PatientConfiguration": {
+    "PatientFile": "StandardMale.json",
+    "Conditions": { "AnyCondition": [{
+      "PatientCondition": {
+        "LobarPneumonia": {
+          "Severity": {
+            "Scalar0To1": {
+              "Value": 0.9
+            }
+          },
+          "LeftLungAffected": {
+            "Scalar0To1": {
+            }
+          },
+          "RightLungAffected": {
+            "Scalar0To1": {
+              "Value": 1.0
             }
           }
         }
-      }]}
-    }
+      }
+    }]}
   },
   "DataRequestManager":
   {

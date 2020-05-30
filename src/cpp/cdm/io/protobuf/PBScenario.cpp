@@ -22,22 +22,17 @@ void PBScenario::Serialize(const CDM_BIND::ScenarioData& src, SEScenario& dst)
   dst.SetName(src.name());
   dst.SetDescription(src.description());
 
-  if (src.has_starttype())
-  {
-    if (src.starttype().has_patientconfiguration())
-      PBEngine::Load(src.starttype().patientconfiguration(), dst.GetPatientConfiguration(), dst.m_SubMgr);
-    else
-    {
-      dst.SetEngineStateFile(src.starttype().enginestatefile());
-    }
-  }
+  if (src.has_patientconfiguration())
+    PBEngine::Load(src.patientconfiguration(), dst.GetPatientConfiguration(), *dst.m_SubMgr);
+  else 
+    dst.SetEngineStateFile(src.enginestatefile());
 
   if (src.has_datarequestmanager())
-    PBEngine::Load(src.datarequestmanager(), dst.GetDataRequestManager(), dst.m_SubMgr);
+    PBEngine::Load(src.datarequestmanager(), dst.GetDataRequestManager(), *dst.m_SubMgr);
 
   for (int i = 0; i < src.anyaction_size(); i++)
   {
-    SEAction* a = PBAction::Load(src.anyaction()[i], dst.m_SubMgr);
+    SEAction* a = PBAction::Load(src.anyaction()[i], *dst.m_SubMgr);
     if(a != nullptr)
       dst.m_Actions.push_back(a);
   }
@@ -55,11 +50,9 @@ void PBScenario::Serialize(const SEScenario& src, CDM_BIND::ScenarioData& dst)
   dst.set_description(src.m_Description);
 
   if (src.HasEngineStateFile())
-  {
-    dst.mutable_starttype()->set_enginestatefile(src.m_EngineStateFile);
-  }
+    dst.set_enginestatefile(src.m_EngineStateFile);
   else if (src.HasPatientConfiguration())
-    dst.mutable_starttype()->set_allocated_patientconfiguration(PBEngine::Unload(*src.m_PatientConfiguration));
+    dst.set_allocated_patientconfiguration(PBEngine::Unload(*src.m_PatientConfiguration));
 
   dst.set_allocated_datarequestmanager(PBEngine::Unload(*src.m_DataRequestMgr));
 

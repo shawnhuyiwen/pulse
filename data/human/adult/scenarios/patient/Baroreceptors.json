@@ -1,11 +1,7 @@
 {
   "Name": "Baroreceptors",
   "Description": "Test the Baroreceptors.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json"
-    }
-  },
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": [{
       "DecimalFormat": {

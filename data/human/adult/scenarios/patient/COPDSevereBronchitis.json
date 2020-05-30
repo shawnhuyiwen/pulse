@@ -1,26 +1,24 @@
 {
   "Name": "COPDSevereBronchitis",
   "Description": "COPD manifesting as Severe Chronic Bronchitis.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json",
-      "Conditions": { "AnyCondition": [{
-        "PatientCondition": {
-          "ChronicObstructivePulmonaryDisease": {
-            "BronchitisSeverity": {
-              "Scalar0To1": {
-                "Value": 0.7
-              }
-            },
-            "EmphysemaSeverity": {
-              "Scalar0To1": {
-                "Value": 0.5
-              }
+  "PatientConfiguration": {
+    "PatientFile": "StandardMale.json",
+    "Conditions": { "AnyCondition": [{
+      "PatientCondition": {
+        "ChronicObstructivePulmonaryDisease": {
+          "BronchitisSeverity": {
+            "Scalar0To1": {
+              "Value": 0.7
+            }
+          },
+          "EmphysemaSeverity": {
+            "Scalar0To1": {
+              "Value": 0.5
             }
           }
         }
-      }]}
-    }
+      }
+    }]}
   },
   "DataRequestManager":
   {

@@ -1,11 +1,7 @@
 {
   "Name": "MultiDrug",
   "Description": "Give lots of drugs, smoke, and CO at the same time to ensure stability using all available routes.  Note: The current PK/PD model does not include drug-on-drug interactions.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json"
-    }
-  },
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": [{
       "DecimalFormat": {
@@ -369,13 +365,6 @@
       "SubstanceName": "Epinephrine",
       "PropertyName": "SystemicMassCleared",
       "Unit": "ug"
-    }, {
-      "DecimalFormat": {
-        "Precision": 2
-      },
-      "Category": "Physiology",
-      "PropertyName": "ChymeAbsorptionRate",
-      "Unit": "mL/min"
     }, {
       "DecimalFormat": {
         "Precision": 2

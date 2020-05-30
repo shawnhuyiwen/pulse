@@ -1325,10 +1325,68 @@ public class DataSetReader
         }         
         else if(property.equals("Criteria"))
         {
-        	// Note it is assumed that the all criteria are physiology requests
-        	SEDataRequest dr = new SEDataRequest();
-        	dr.setPropertyName(row.getCell(2).getStringCellValue());
-        	dr.setCategory(eCategory.Physiology);
+          // Note I could add more checks here, but I assume users filling out the xls know what they are doing
+          SEDataRequest dr = new SEDataRequest();
+          dr.setPropertyName(row.getCell(2).getStringCellValue());
+          String requestType = row.getCell(3).getStringCellValue();
+          String compartment = row.getCell(4).getStringCellValue();
+          String substance = row.getCell(5).getStringCellValue();
+          if(requestType.equals(eCategory.Physiology.name()))
+            dr.setCategory(eCategory.Physiology);
+          else if(requestType.equals(eCategory.Patient.name()))
+            dr.setCategory(eCategory.Patient);
+          else if(requestType.equals(eCategory.Environment.name()))
+            dr.setCategory(eCategory.Environment);
+          else if(requestType.equals(eCategory.GasCompartment.name()))
+          {
+            dr.setCategory(eCategory.GasCompartment);
+            if(!substance.isEmpty())
+              dr.setSubstanceName(substance);
+            if(compartment.isEmpty())
+              Log.error("You must provide a Compartment Name for a Gas Compartment Type");
+            else
+              dr.setCompartmentName(compartment);
+          }
+          else if(requestType.equals(eCategory.LiquidCompartment.name()))
+          {
+            dr.setCategory(eCategory.LiquidCompartment);
+            if(!substance.isEmpty())
+              dr.setSubstanceName(substance);
+            if(compartment.isEmpty())
+              Log.error("You must provide a Compartment Name for a Liquid Compartmet Type");
+            else
+              dr.setCompartmentName(compartment);
+          }
+          else if(requestType.equals(eCategory.ThermalCompartment.name()))
+          {
+            dr.setCategory(eCategory.ThermalCompartment);
+            if(compartment.isEmpty())
+              Log.error("You must provide a Compartment Name for a Thermal Compartment Type");
+            else
+              dr.setCompartmentName(compartment);
+          }
+          else if(requestType.equals(eCategory.TissueCompartment.name()))
+          {
+            dr.setCategory(eCategory.TissueCompartment);
+            if(compartment.isEmpty())
+              Log.error("You must provide a Compartment Name for a Tissue Compartment Type");
+            else
+              dr.setCompartmentName(compartment);
+          }
+          else if(requestType.equals(eCategory.Substance.name()))
+            dr.setCategory(eCategory.Substance);
+          else if(requestType.equals(eCategory.AnesthesiaMachine.name()))
+            dr.setCategory(eCategory.AnesthesiaMachine);
+          else if(requestType.equals(eCategory.ECG.name()))
+            dr.setCategory(eCategory.ECG);
+          else if(requestType.equals(eCategory.Inhaler.name()))
+            dr.setCategory(eCategory.Inhaler);
+          else if(requestType.equals(eCategory.MechanicalVentilator.name()))
+            dr.setCategory(eCategory.MechanicalVentilator);
+          
+          else
+          {
+          }
           criteria.createProperty(row.getCell(1).getNumericCellValue(),dr);
         }
         else if(property.equals("ConvergenceTime"))

@@ -71,7 +71,8 @@ void RunScenarioTask::Run()
   remove(dataFile.c_str());
 
   ms_initializationMutex.lock();
-  std::unique_ptr<PhysiologyEngine> Pulse = CreatePulseEngine(logFile.c_str());
+  std::unique_ptr<PhysiologyEngine> Pulse = CreatePulseEngine();
+  Pulse->GetLogger()->SetLogFile(logFile);
   ms_initializationMutex.unlock();
 
   if (!Pulse)
@@ -79,8 +80,8 @@ void RunScenarioTask::Run()
     std::cerr << "Unable to create PulseEngine" << std::endl;
     return;
   }
-  SEScenarioExec exec(*Pulse);
-  exec.Execute(m_scenarioFile.c_str(), dataFile.c_str());
+  SEScenarioExec exec(Pulse->GetLogger());
+  exec.Execute(*Pulse, m_scenarioFile, SerializationFormat::JSON, dataFile);
 }
 
 void PulseEngineTest::MultiEngineTest(const std::string& sTestDirectory)

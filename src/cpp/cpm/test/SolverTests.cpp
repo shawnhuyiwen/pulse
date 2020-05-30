@@ -33,7 +33,7 @@ std::chrono::microseconds::rep vectorAverage(std::vector<std::chrono::microsecon
 
 void PulseEngineTest::SolverSpeedTest(const std::string& rptDirectory)
 {
-  m_Logger->ResetLogFile(rptDirectory + "/SolverSpeedTest.log");
+  m_Logger->SetLogFile(rptDirectory + "/SolverSpeedTest.log");
 
   // Set up our test report
   SETestReport testReport = SETestReport(m_Logger);

@@ -5,7 +5,7 @@ import PyPulse
 from pulse.cdm.engine import SEAction, eSerializationFormat
 from pulse.cdm.io.engine import serialize_actions_to_string
 
-from pulse.study.multiplex_ventilation.bind.MultiplexVentilation_pb2 import *
+from pulse.study.bind.MultiplexVentilation_pb2 import *
 from google.protobuf import json_format
 
 class MVEngine:

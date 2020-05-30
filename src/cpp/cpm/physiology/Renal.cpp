@@ -186,6 +186,10 @@ void Renal::Clear()
 //--------------------------------------------------------------------------------------------------
 /// \brief
 /// Initializes system properties to valid homeostatic values.
+///
+/// \details
+/// For stabilization only!
+/// Called AFTER Setup when stabilizing a new patient
 //--------------------------------------------------------------------------------------------------
 void Renal::Initialize()
 {
@@ -283,6 +287,15 @@ void Renal::Initialize()
   }
 }
 
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Initializes parameters for Renal Class
+///
+/// \details
+/// Called during both State loading and Patient Stabilization
+/// Pull and setup up our data (can be from other systems)
+/// Initialize will be called after this and can overwrite any of this data (only if stabilizing)
+//--------------------------------------------------------------------------------------------------
 void Renal::SetUp()
 {
   m_dt = m_data.GetTimeStep().GetValue(TimeUnit::s);
@@ -434,7 +447,7 @@ void Renal::AtSteadyState()
     renalGraph->StateChange();
     combinedCardiovascularGraph->RemoveLink(pulse::UrineLink::BladderToGroundSource);
     combinedCardiovascularGraph->StateChange();
-  }  
+  }
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -1436,7 +1449,8 @@ void Renal::CalculateVitalSigns()
   }
 
   //increment water mass onto substance mass to get total mass: 
-  GeneralMath::CalculateSpecificGravity(substanceMass, GetUrineVolume(), GetUrineSpecificGravity());
+  if (!GeneralMath::CalculateSpecificGravity(substanceMass, GetUrineVolume(), GetUrineSpecificGravity()))
+    Error("Unable to calculate specific gravity of bladder substances");
 
   // Urine osmolality is the osmotic pressure of sodium, glucose and urea over the weight of the fluid
   

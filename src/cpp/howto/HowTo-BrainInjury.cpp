@@ -40,7 +40,8 @@ void HowToBrainInjury()
 {
   std::stringstream ss;
   // Create a Pulse Engine and load the standard patient
-  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowTo_BrainInjury.log");
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
+  pe->GetLogger()->SetLogFile("./test_results/HowTo_BrainInjury.log");
   
   pe->GetLogger()->Info("HowTo_BrainInjury");
   if (!pe->SerializeFromFile("./states/StandardMale@0s.json", JSON))

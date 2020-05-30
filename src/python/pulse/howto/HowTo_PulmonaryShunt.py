@@ -6,7 +6,9 @@ from pulse.cdm.patient_actions import SEPulmonaryShuntExacerbation
 from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
 
 def HowTo_PulmonaryShunt():
-    pulse = PulsePhysiologyEngine("pulse_pulmonary_shunt.log")
+    pulse = PulsePhysiologyEngine()
+    pulse.set_log_filename("./test_results/pypulse_pulmonary_shunt.log")
+    pulse.log_to_console(True)
 
     pc = SEPatientConfiguration()
     pc.set_patient_file("./patients/StandardMale.json")

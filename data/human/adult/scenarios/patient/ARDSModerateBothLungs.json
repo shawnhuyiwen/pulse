@@ -1,31 +1,29 @@
 {
   "Name": "ARDSModerateBothLungs",
   "Description": "Moderate Acute Respiratory Distress in both lungs.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json",
-      "Conditions": { "AnyCondition": [{
-        "PatientCondition": {
-          "AcuteRespiratoryDistressSyndrome": {
-            "Severity": {
-              "Scalar0To1": {
-                "Value": 0.6
-              }
-            },
-            "LeftLungAffected": {
-              "Scalar0To1": {
-                "Value": 1.0
-              }
-            },
-            "RightLungAffected": {
-              "Scalar0To1": {
-                "Value": 1.0
-              }
+  "PatientConfiguration": {
+    "PatientFile": "StandardMale.json",
+    "Conditions": { "AnyCondition": [{
+      "PatientCondition": {
+        "AcuteRespiratoryDistressSyndrome": {
+          "Severity": {
+            "Scalar0To1": {
+              "Value": 0.6
+            }
+          },
+          "LeftLungAffected": {
+            "Scalar0To1": {
+              "Value": 1.0
+            }
+          },
+          "RightLungAffected": {
+            "Scalar0To1": {
+              "Value": 1.0
             }
           }
         }
-      }]}
-    }
+      }
+    }]}
   },
   "DataRequestManager":
   {

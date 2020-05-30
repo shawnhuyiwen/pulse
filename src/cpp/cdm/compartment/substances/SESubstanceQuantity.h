@@ -14,6 +14,7 @@ public:
   virtual void Clear() = 0; //clear memory
   virtual void Invalidate() = 0;
 
+  virtual std::string GetCompartmentName() = 0;
   virtual SESubstance& GetSubstance() const { return m_Substance; }
 
   virtual void SetToZero() = 0;

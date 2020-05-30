@@ -24,7 +24,7 @@ protected:
 public:
   virtual ~SaturationCalculator();
 
-  void Initialize(SESubstanceManager& substances);
+  bool Setup();
 
   void SetBodyState(const SEScalarMassPerVolume& AlbuminConcentration, const SEScalar0To1& Hematocrit, const SEScalarTemperature& Temperature, const SEScalarAmountPerVolume& StrongIonDifference, const SEScalarAmountPerVolume& Phosphate);
   void CalculateBloodGasDistribution(SELiquidCompartment& cmpt);

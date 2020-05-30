@@ -41,18 +41,21 @@ protected:
   void SetPupilEffects();
 
   // Serializable member variables (Set in Initialize and in schema)
+  bool   m_BaroreceptorFeedbackStatus;
+  bool   m_BaroreceptorSaturationStatus;
   double m_ArterialOxygenBaseline_mmHg;
   double m_ArterialCarbonDioxideBaseline_mmHg;
-  //Baroreceptor threshold parameters
-  bool   m_BaroreceptorFeedbackStatus;
   double m_BaroreceptorActiveTime_s;
+  double m_BaroreceptorEffectivenessParameter;
   double m_BaroreceptorMeanArterialPressureBaseline_mmHg;
+  double m_BaroreceptorSaturationTime_s;
+  double m_LastMeanArterialPressure_mmHg;
+  double m_PreviousBloodVolume_mL;
+  double m_TotalSympatheticFraction;
 
   // Stateless member variable (Set in SetUp())
-  bool m_FeedbackActive; // An overall flag used to turn off baro/chemo receptors during stabilization
   double m_dt_s;
-
-  // Configuration fractions representing the amount by which each quantity can change due to baroreceptors;
+  // Configuration fractions representing the amount by which each quantity can change due to feedback;
   double m_NormalizedGammaHeartRate;
   double m_NormalizedGammaElastance;
   double m_NormalizedGammaCompliance;

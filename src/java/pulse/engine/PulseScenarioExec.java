@@ -42,8 +42,9 @@ public class PulseScenarioExec extends Pulse
       callbackFreq_s = callback.callbackFrequency_s;
       this.requestData(callback.drMgr);
     }
-    this.nativeObj = nativeAllocate(logFile, "./");
-    nativeExecuteScenario(this.nativeObj, scenario, resultsFile, callbackFreq_s);
+    this.nativeObj = nativeAllocate();
+    nativeSetLogFilename(this.nativeObj, logFile);
+    nativeExecuteScenario(this.nativeObj, scenario, Pulse.SerializationType.JSON.value(), resultsFile, callbackFreq_s);
     nativeDelete(this.nativeObj);
     this.nativeObj=0;
     this.cdmCallback = null;
@@ -56,7 +57,7 @@ public class PulseScenarioExec extends Pulse
     Log.info("Cancelling execution");
   }
   
-  protected native void nativeExecuteScenario(long nativeObj, String scenario, String resultsFile, double updateFreq_s);
+  protected native void nativeExecuteScenario(long nativeObj, String scenario, int format, String csvFile, double updateFreq_s);
   protected native void nativeCancelScenario(long nativeObj);
   
 }

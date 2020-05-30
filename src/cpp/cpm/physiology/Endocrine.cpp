@@ -44,12 +44,25 @@ void Endocrine::Clear()
 //--------------------------------------------------------------------------------------------------
 /// \brief
 /// Initializes system properties to valid homeostatic values.
+///
+/// \details
+/// For stabilization only!
+/// Called AFTER Setup when stabilizing a new patient
 //--------------------------------------------------------------------------------------------------
 void Endocrine::Initialize()
 {
   PulseSystem::Initialize();
 }
 
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Initializes parameters for Endocrine Class
+///
+/// \details
+/// Called during both State loading and Patient Stabilization
+/// Pull and setup up our data (can be from other systems)
+/// Initialize will be called after this and can overwrite any of this data (only if stabilizing)
+//--------------------------------------------------------------------------------------------------
 void Endocrine::SetUp()
 {
   m_dt_s = m_data.GetTimeStep().GetValue(TimeUnit::s);
@@ -100,21 +113,18 @@ void Endocrine::ComputeExposedModelParameters()
 /// (representative of the body). The equation for insulin production is from \cite tolic2000insulin
 //--------------------------------------------------------------------------------------------------
 void Endocrine::SynthesizeInsulin()
-{  
-  double bloodGlucoseConcentration_g_Per_L = m_aortaGlucose->GetConcentration(MassPerVolumeUnit::g_Per_L);
-  // 2.0 = upperConcentration_g_Per_L
-  // 0.3 = lowerConcentration_g_Per_l
-  // 65.421 = amplitudeRate_mU_Per_min
+{
+  double insulinMassDelta_g = 0;
+  double bloodGlucoseConcentration_mg_Per_dL = m_data.GetSubstances().GetGlucose().GetBloodConcentration(MassPerVolumeUnit::mg_Per_dL);
+  if (bloodGlucoseConcentration_mg_Per_dL >= 80)
+  {
+    // Linear function for blood glucose between 80-150 mg/dL and insulin synthesis of 100-475 pmol/min
+    double insulinSynthesisRate_pmol_Per_min = (5.357 * bloodGlucoseConcentration_mg_Per_dL) - 328.56;
+    GetInsulinSynthesisRate().SetValue(insulinSynthesisRate_pmol_Per_min, AmountPerTimeUnit::pmol_Per_min);
 
-  double insulinSynthesisRate_pmol_Per_min = 65.421
-                                    / (1.0 + exp((2.0 - 2.0*bloodGlucoseConcentration_g_Per_L) / 0.3))
-                                    * 6.67;// = insulinConversionToAmount_pmol_Per_mU (Figure out where to put this units of pmol/mU)
-
-  GetInsulinSynthesisRate().SetValue(insulinSynthesisRate_pmol_Per_min, AmountPerTimeUnit::pmol_Per_min);
-  
-  double insulinMassDelta_g = Convert(insulinSynthesisRate_pmol_Per_min, AmountPerTimeUnit::pmol_Per_min, AmountPerTimeUnit::mol_Per_s);
-  insulinMassDelta_g *= m_insulinMolarMass_g_Per_mol*m_dt_s;
-  
+    insulinMassDelta_g = Convert(insulinSynthesisRate_pmol_Per_min, AmountPerTimeUnit::pmol_Per_min, AmountPerTimeUnit::mol_Per_s);
+    insulinMassDelta_g *= m_insulinMolarMass_g_Per_mol * m_dt_s;
+  }
   m_splanchnicInsulin->GetMass().IncrementValue(insulinMassDelta_g, MassUnit::g);
   m_splanchnicInsulin->Balance(BalanceLiquidBy::Mass);
 }

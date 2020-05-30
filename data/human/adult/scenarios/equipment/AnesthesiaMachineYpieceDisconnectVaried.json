@@ -1,11 +1,7 @@
 {
   "Name": "YPieceDisconnectVaried",
   "Description": "Testing Y piece disconnect severity.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json"
-    }
-  },
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": [{
       "DecimalFormat": {

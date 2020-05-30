@@ -2,11 +2,7 @@
   "Scenario": {
     "Name": "FurosemideValidation",
     "Description": "Inject standard patient with Furosemide.",
-    "StartType": {
-      "PatientConfiguration": {
-        "PatientFile": "StandardMale.json"
-      }
-    },
+    "PatientConfiguration": { "PatientFile": "StandardMale.json" },
     "DataRequestManager": {
       "SamplesPerSecond": 1.0,
       "DataRequest": [{
