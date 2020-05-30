@@ -27,8 +27,8 @@ double SEScalar::dNaN()
 // Opposite of isnan which can be slow
 bool SEScalar::IsNumber(double d)
 {
-  if (d >= std::numeric_limits<double>::min()&&
-      d <= std::numeric_limits<double>::max())
+  if (d >= -std::numeric_limits<double>::max()&&
+      d <=  std::numeric_limits<double>::max())
     return true;
   return false;
 }

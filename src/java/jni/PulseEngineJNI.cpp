@@ -152,7 +152,7 @@ JNIEXPORT jboolean JNICALL Java_pulse_engine_PulseEngine_nativeSerializeFromStri
   return false;
 }
 extern "C"
-JNIEXPORT jstring JNICALL Java_pulse_engine_PulseEngine_nativeSerializeToString(JNIEnv * env, jobject obj, jlong ptr, jint format)
+JNIEXPORT jboolean JNICALL Java_pulse_engine_PulseEngine_nativeSerializeToString(JNIEnv * env, jobject obj, jlong ptr, jint format)
 {
   return false;
 }
