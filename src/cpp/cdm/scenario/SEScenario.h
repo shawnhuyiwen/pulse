@@ -51,6 +51,9 @@ public:
   virtual SEDataRequestManager& GetDataRequestManager() { return *m_DataRequestMgr; }
   virtual const SEDataRequestManager& GetDataRequestManager() const { return *m_DataRequestMgr; }
 
+  virtual SESubstanceManager& GetSubstanceManager() { return *m_SubMgr; }
+  virtual const SESubstanceManager& GetSubstanceManager() const { return *m_SubMgr; }
+
 protected:
   SESubstanceManager*                         m_SubMgr;
   std::string                                 m_Name;
