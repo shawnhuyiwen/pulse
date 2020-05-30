@@ -5,5 +5,6 @@ add_subdirectory(scenario_driver)
 add_subdirectory(howto)
 add_subdirectory(test)
 
+add_subdirectory(study/hydrocephalus)
 add_subdirectory(study/multiplex_ventilation)
 add_subdirectory(study/sensitivity_analysis)

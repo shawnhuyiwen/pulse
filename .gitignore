@@ -12,6 +12,7 @@ src/schema/schema_last_built
 /src/java/com
 /src/java/pulse/cdm/bind
 /src/java/pulse/cpm/bind
+/src/java/pulse/study/bind/hydrocephalus
 /src/java/pulse/study/bind/multiplex_ventilation
 /src/java/pulse/study/bind/sensitivity_analysis
 /src/python/pulse/cdm/bind
