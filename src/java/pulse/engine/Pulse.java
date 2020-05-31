@@ -199,7 +199,14 @@ public class Pulse
    */
   protected void handleEvent(int type, int event, boolean active, double time_s)
   {
-    this.getEventManager().setEvent(eEvent.values()[event],active,new SEScalarTime(time_s,TimeUnit.s));
+    try
+    {
+      this.getEventManager().setEvent(eEvent.forNumber(event),active,new SEScalarTime(time_s,TimeUnit.s));
+    }
+    catch(Exception ex)
+    {
+      LogError("Processing event "+event, "handleEvent");
+    }
   }
   
   public List<Pair<SEDataRequest,SEScalar>> getDataRequestPairs()
