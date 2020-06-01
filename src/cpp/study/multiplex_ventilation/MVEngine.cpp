@@ -257,12 +257,20 @@ bool MVEngine::CreateEngine(pulse::study::multiplex_ventilation::bind::Simulatio
     m_MVC = new SEMechanicalVentilatorConfiguration(*m_SubMgr);
     auto& mv = m_MVC->GetConfiguration();
     mv.SetConnection(eMechanicalVentilator_Connection::Tube);
-    mv.SetControl(eMechanicalVentilator_Control::PC_CMV);
-    mv.SetDriverWaveform(eMechanicalVentilator_DriverWaveform::Square);
-    mv.GetRespiratoryRate().SetValue(sim.respirationrate_per_min(), FrequencyUnit::Per_min);
-    mv.GetInspiratoryExpiratoryRatio().SetValue(sim.ieratio());
+    mv.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
+    mv.SetExpirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
     mv.GetPeakInspiratoryPressure().SetValue(sim.pip_cmh2o(), PressureUnit::cmH2O);
-    mv.GetPositiveEndExpiredPressure().SetValue(sim.peep_cmh2o(), PressureUnit::cmH2O);
+    mv.GetPositiveEndExpiredPressure().SetValue(sim.peep_cmh2o(), PressureUnit::cmH2O);   
+    double respirationRate_per_min = sim.respirationrate_per_min();
+    double IERatio = sim.ieratio();
+
+    // Translate ventilator settings
+    double totalPeriod_s = 60.0 / respirationRate_per_min;
+    double inspiratoryPeriod_s = IERatio * totalPeriod_s / (1 + IERatio);
+    double expiratoryPeriod_s = totalPeriod_s - inspiratoryPeriod_s;
+    mv.GetInspirationTriggerTime().SetValue(expiratoryPeriod_s, TimeUnit::s);
+    mv.GetExpirationCycleTime().SetValue(inspiratoryPeriod_s, TimeUnit::s);
+
     m_FiO2 = &mv.GetFractionInspiredGas(*m_Oxygen);
     m_FiO2->GetFractionAmount().SetValue(sim.fio2());
     Info("Processing Action");
@@ -548,8 +556,14 @@ bool MVEngine::GetSimulationState(pulse::study::multiplex_ventilation::bind::Sim
     auto* multiVentilation = (*sim.mutable_patientcomparisons())[p].mutable_multiplexventilation();
     // For Completeness, Write out the ventilator settings
 
-    multiVentilation->set_respirationrate_per_min(pc->GetMechanicalVentilator().GetRespiratoryRate(FrequencyUnit::Per_min));
-    multiVentilation->set_ieratio(pc->GetMechanicalVentilator().GetInspiratoryExpiratoryRatio().GetValue());
+    // Translate ventilator settings
+    double expiratoryPeriod_s = pc->GetMechanicalVentilator().GetInspirationTriggerTime(TimeUnit::s);
+    double inspiratoryPeriod_s = pc->GetMechanicalVentilator().GetExpirationCycleTime(TimeUnit::s);
+    double respirationRate_per_min = 60.0 / (inspiratoryPeriod_s + inspiratoryPeriod_s);
+    double IERatio = inspiratoryPeriod_s / expiratoryPeriod_s;
+
+    multiVentilation->set_respirationrate_per_min(respirationRate_per_min);
+    multiVentilation->set_ieratio(IERatio);
     multiVentilation->set_peep_cmh2o(pc->GetMechanicalVentilator().GetPositiveEndExpiredPressure(PressureUnit::cmH2O));
     multiVentilation->set_pip_cmh2o(pc->GetMechanicalVentilator().GetPeakInspiratoryPressure(PressureUnit::cmH2O));
     multiVentilation->set_fio2(pc->GetMechanicalVentilator().GetFractionInspiredGas(pc->GetSubstances().GetO2()).GetFractionAmount().GetValue());

@@ -96,18 +96,16 @@
       "EquipmentAction": {
         "MechanicalVentilatorConfiguration": {
           "MechanicalVentilatorAction": { "EquipmentAction": { "Action": {
-                "Comment": "Attach the mechanical ventilator" }}},
+                "Comment": "Attach the mechanical ventilator with rate = 12 bpm and I:E Ratio = 1:2" }}},
           "Configuration":
           {
-            "BreathProfile": {
-              "Rate": { "ScalarFrequency": { "Value": 12.0, "Unit": "1/min" } },
-              "InspiratoryExpiratoryRatio": { "Value": 0.5, "Unit": "" }
-            },
             "Connection": "Mask",
-            "Control": "PC_CMV",
-            "DriverWaveform": "Square",
+            "InspirationWaveform": "Square",
+			"ExpirationWaveform": "Square",
             "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 10.0, "Unit": "cmH2O" } },
             "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } },
+			"InspirationTriggerTime": { "ScalarTime": { "Value": 3.33, "Unit": "s" } },
+			"ExpirationCycleTime": { "ScalarTime": { "Value": 1.67, "Unit": "s" } },
             "FractionInspiredGas": [
               { "Name": "Nitrogen", "Amount": { "Scalar0To1": { "Value": 0.7896, "Unit": "" } } },
               { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.21, "Unit": "" } } },
@@ -126,18 +124,16 @@
       "EquipmentAction": {
         "MechanicalVentilatorConfiguration": {
           "MechanicalVentilatorAction": { "EquipmentAction": { "Action": {
-                "Comment": "Attach the mechanical ventilator" }}},
+                "Comment": "Attach the mechanical ventilator with rate = 20 bpm and I:E Ratio = 1:1" }}},
           "Configuration":
           {
-            "BreathProfile": {
-              "Rate": { "ScalarFrequency": { "Value": 20.0, "Unit": "1/min" } },
-              "InspiratoryExpiratoryRatio": { "Value": 1.0, "Unit": "" }
-            },
             "Connection": "Tube",
-            "Control": "PC_CMV",
-            "DriverWaveform": "Square",
+            "InspirationWaveform": "Square",
+			"ExpirationWaveform": "Square",
             "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 20.0, "Unit": "cmH2O" } },
             "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 10.0, "Unit": "cmH2O" } },
+			"InspirationTriggerTime": { "ScalarTime": { "Value": 1.5, "Unit": "s" } },
+			"ExpirationCycleTime": { "ScalarTime": { "Value": 1.5, "Unit": "s" } },
             "FractionInspiredGas": [
               { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.3, "Unit": "" } } } ],
 			"ConcentrationInspiredAerosol": [

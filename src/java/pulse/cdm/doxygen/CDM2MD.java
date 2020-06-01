@@ -191,7 +191,6 @@ public class CDM2MD
       for(Class<?> c : mvActions)
         WriteDoxyTable(c, "", writer, skipProperties);
       WriteDoxyTable(MechanicalVentilatorData.eConnection.class, "MechanicalVentilatorData_", writer, skipProperties);
-      WriteDoxyTable(MechanicalVentilatorData.eControl.class, "MechanicalVentilatorData_", writer, skipProperties);
       WriteDoxyTable(MechanicalVentilatorData.eDriverWaveform.class, "MechanicalVentilatorData_", writer, skipProperties);
 
       // SUBSTSANCE

@@ -11,6 +11,7 @@ add_executable_ex(HowToDriver
   HowTo-ConcurrentEngines.cpp
   HowTo-ConsumeNutrients.cpp
   HowTo-COPD.cpp
+  HowTo-COVID19Ventilated.cpp
   HowTo-CPR.cpp
   HowTo-CreateAPatient.cpp
   HowTo-EngineUse.cpp
