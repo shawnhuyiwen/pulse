@@ -7,12 +7,11 @@
 
 #include <chrono>
 
-class CDM_DECL TimingProfile : public Loggable
+class CDM_DECL TimingProfile
 {
 
 public:
     TimingProfile() {}
-    TimingProfile(Logger* logger) : Loggable(logger) {}
     virtual ~TimingProfile() {}
 
     void Clear();
@@ -45,31 +44,24 @@ public:
     double GetElapsedTime_s(const std::string& label);
 
     /**
-     * Prints the time from a call to Profile to console
-     * If nullptr is passed, all labels will be computed and printed
-     */
-    void Print(const std::string& label);
-
-    /**
      * Returns the elapsed time for a particular timer
      */
     template<typename Duration>
     typename Duration::rep GetElapsedTime(const std::string& label)
     {
-        State state = m_timers[label].state;
-
-        if (state == State::Running)
-        {
-            return std::chrono::duration_cast<Duration>(Clock::now() - m_timers[label].start).count();
-        }
-        else if (state == State::Ran)
-        {
-            return std::chrono::duration_cast<Duration>(m_timers[label].end - m_timers[label].start).count();
-        }
-        else
-        {
-            return typename Duration::rep(0);
-        }
+      Timer timer = m_timers[label];
+      if (timer.state == State::Running)
+      {
+          return std::chrono::duration_cast<Duration>(Clock::now() - timer.start).count();
+      }
+      else if (timer.state == State::Ran)
+      {
+          return std::chrono::duration_cast<Duration>(timer.end - timer.start).count();
+      }
+      else
+      {
+          return typename Duration::rep(0);
+      }
     }
 
 private:
@@ -91,6 +83,4 @@ private:
   };
 
   std::map<std::string, Timer> m_timers;
-
-  std::stringstream m_ss;
 };

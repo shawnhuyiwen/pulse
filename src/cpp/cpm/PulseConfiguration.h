@@ -123,10 +123,10 @@ public:
 protected:
   SEScalarPressurePerVolume* m_LeftHeartElastanceMaximum; 
   SEScalarPressurePerVolume* m_LeftHeartElastanceMinimum; 
-  SEScalar0To1*          m_MinimumBloodVolumeFraction;
+  SEScalar0To1*              m_MinimumBloodVolumeFraction;
   SEScalarPressurePerVolume* m_RightHeartElastanceMaximum; 
   SEScalarPressurePerVolume* m_RightHeartElastanceMinimum;
-  SEScalar*              m_StandardPulmonaryCapillaryCoverage;
+  SEScalar*                  m_StandardPulmonaryCapillaryCoverage;
 
   //////////////
   /** Circuit */
@@ -519,7 +519,7 @@ public:
   virtual bool HasTargetSodiumDelivery();
   virtual SEScalarMassPerTime& GetTargetSodiumDelivery();
 protected:
-  eSwitch                         m_RenalEnabled;
+  eSwitch                              m_RenalEnabled;
 
   SEScalarMassPerVolume*               m_PlasmaSodiumConcentrationSetPoint;
   SEScalarMassPerVolume*               m_PeritubularPotassiumConcentrationSetPoint;
@@ -534,8 +534,8 @@ protected:
   SEScalarArea*                        m_RightTubularReabsorptionFilteringSurfaceAreaBaseline;
   SEScalarVolumePerTimePressureArea*   m_RightTubularReabsorptionFluidPermeabilityBaseline;
    
-  SEScalarPressureTimePerVolume*              m_MaximumAfferentResistance;
-  SEScalarPressureTimePerVolume*              m_MinimumAfferentResistance;
+  SEScalarPressureTimePerVolume*       m_MaximumAfferentResistance;
+  SEScalarPressureTimePerVolume*       m_MinimumAfferentResistance;
   
   SEScalarMassPerTime*                 m_TargetSodiumDelivery;
 
