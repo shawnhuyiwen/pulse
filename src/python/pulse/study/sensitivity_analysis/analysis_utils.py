@@ -47,18 +47,19 @@ def sample_parameters(results_dir):
     return param_values_df
 
 
-def load_and_parse_results(results_dir):
+def load_and_parse_results(results_dir, phys_systems):
     """
     Parse JSON results file.
     :param results_dir: String - output directory
     :return: Pandas DataFrame - holds results
     """
 
-    # for now, we are assuming results are separated into many results files - this may change in the future.
+    # for now, we are assuming results are separated into many results files - this may change in the future once
+    # we settle on a serialization method
     file_nums = []
     for file in os.listdir(os.path.join(results_dir, "simulations")):
         if file.endswith(".json") and file.startswith("simlist_results"):
-            file_nums.append(int(between("sim_list_testing_", ".json", file)))
+            file_nums.append(int(between("results_", ".json", file)))
 
     if not file_nums:
         raise ValueError("No results files found.")
@@ -68,28 +69,37 @@ def load_and_parse_results(results_dir):
     print("Counted {} total simulations.".format(num_sims))
 
     # store results in DataFrame
-    file = open(os.path.join(results_dir, "simulations/simlist_results_sim_list_testing_500.json"))
+    file = open(os.path.join(results_dir, "simulations/simlist_results_500.json"))
     results_file = json.load(file)
     file.close()
 
     col_list = []
     for key in results_file["Simulation"][0]:
-        if key not in ["ID", "Name", "Overrides", "AchievedStabilization", "StabilizationTime_s",
-                       "TotalSimulationTime_s"]:
-            col_list.append(key)
+        if phys_systems == "cv":
+            if key not in ["ID", "Name", "Overrides", "AchievedStabilization", "StabilizationTime_s",
+                           "TotalSimulationTime_s"]:
+                col_list.append(key)
+        elif phys_systems == "combined":
+            if key in ["MeanArterialOxygenPartialPressure_mmHg", "MeanArterialCarbonDioxidePartialPressure_mmHg"]:
+                col_list.append(key)
 
     count_unstable = 0
     total_sim_time = 0
     df = pd.DataFrame(np.nan, columns=col_list, index=list(range(num_sims)))
     for num in file_nums:
-        file = open(os.path.join(results_dir, "simulations/simlist_results_sim_list_testing_{}.json".format(num)))
+        file = open(os.path.join(results_dir, "simulations/simlist_results_{}.json".format(num)))
         results_file = json.load(file)
         file.close()
         for index, sim in enumerate(results_file["Simulation"]):
             for key in sim:
-                if key not in ["ID", "Name", "Overrides", "AchievedStabilization", "StabilizationTime_s",
-                               "TotalSimulationTime_s"]:
-                    df.at[sim["ID"], key] = sim[key]
+                if phys_systems == "cv":
+                    if key not in ["ID", "Name", "Overrides", "AchievedStabilization", "StabilizationTime_s",
+                                   "TotalSimulationTime_s"]:
+                        df.at[sim["ID"], key] = sim[key]
+                elif phys_systems == "combined":
+                    if key in ["MeanArterialOxygenPartialPressure_mmHg",
+                               "MeanArterialCarbonDioxidePartialPressure_mmHg"]:
+                        df.at[sim["ID"], key] = sim[key]
             if not sim["AchievedStabilization"]:
                 count_unstable += 1
             total_sim_time += sim["TotalSimulationTime_s"]

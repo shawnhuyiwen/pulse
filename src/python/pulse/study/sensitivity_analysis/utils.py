@@ -1,13 +1,15 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-from pulse.study.bind.sensitivity_analysis.SensitivityAnalysis_pb2 import *
+from pulse.study.bind.SensitivityAnalysis_pb2 import *
 from google.protobuf import json_format
 
 import json
 import matplotlib.pyplot as plt
+import numpy as np
 import os
 import pandas as pd
+import sys
 
 from SALib.sample import saltelli
 
@@ -40,8 +42,8 @@ def run_simulation_list(param_values_df, sobol_params_dict, output_dir):
 
     # this method will be updated once we settle on a better serialization method
     print("Population simulation list object ...")
-    # sim_list = SimulationListData()
-    # sim_list.OutputRootDir = BaseDir + "simulations/"
+    sim_list = SimulationListData()
+    sim_list.OutputRootDir = output_dir + "simulations/"
 
     # Write out that as a json object
     count = 0
@@ -62,8 +64,67 @@ def run_simulation_list(param_values_df, sobol_params_dict, output_dir):
             file.write(out)
             file.close()
             sim_list = SimulationListData()
-            sim_list.OutputRootDir = BaseDir + "simulations/"
+            sim_list.OutputRootDir = output_dir + "simulations/"
         count += 1
+
+    print("Writing simulation list object {} to {}...".format(
+        param_values_df.shape[0] - param_values_df.shape[0] % 500, param_values_df.shape[0]))
+    out = json_format.MessageToJson(sim_list)
+    file = open(os.path.join(output_dir, "sim_list_{}.json".format(param_values_df.shape[0])), "w")
+    file.write(out)
+    file.close()
+
+
+def gen_local_sa_sim_list(percent_variation, baseline_file, distribution, output_dir, compartment):
+    """
+    Generate the simulation list.
+    :param percent_variation: Float - variation for each parameter
+    :param baseline_file: String - patient state file to read baseline vales
+    :param distribution: String - "normal or "uniform"
+    :param output_dir: String - output directory
+    :return: Pandas DataFrame - holds sampled parameters, dictionary - holds parameter units
+    """
+
+    sobol_params_dict = get_paths_and_values(percent_variation, baseline_file, distribution, compartment)
+    problem_size = 100
+
+    sobol_params_dict_to_write = {"problem_size": problem_size, "paths": sobol_params_dict["paths"]}
+    with open(os.path.join(output_dir, 'local_sa_problem.json'), 'w') as fp:
+        json.dump(sobol_params_dict_to_write, fp)
+
+    param_values_df = pd.DataFrame(columns=['Path', 'Value', 'Unit'])
+    for index, path in enumerate(sobol_params_dict["paths"]):
+        path_values = [path] * problem_size
+        unit_values = [sobol_params_dict["unit"][index]] * problem_size
+        values = np.linspace(sobol_params_dict["bounds"][index][0], sobol_params_dict["bounds"][index][1], problem_size)
+        param_values_df = pd.concat([param_values_df,
+                                     pd.DataFrame(data={"Path": path_values, "Value": values, "Unit": unit_values},
+                                                  columns=["Path", "Value", "Unit"])], ignore_index=True)
+    print("Created {} simulations from {} parameters.".format(param_values_df.size, param_values_df.shape[1]))
+
+    # this method will be updated once we settle on a better serialization method
+    print("Population simulation list object ...")
+    sim_list = SimulationListData()
+    sim_list.OutputRootDir = output_dir + "simulations/"
+
+    # Write out that as a json object
+    # This will be updated once we settle on a serialization method
+    for index, row in param_values_df.iterrows():
+        sim = sim_list.Simulation.add()
+        sim.ID = index
+        sim.Name = "Simulation{}".format(index)
+        sim0 = sim.Overrides.ScalarOverride.add()
+        sim0.Name = row["Path"]
+        sim0.Value = row["Value"]
+        sim0.Unit = row["Unit"]
+        if index % 500 == 0 and index > 0:
+            print("Writing simulation list object {} to {}...".format(index - 500, index))
+            out = json_format.MessageToJson(sim_list)
+            file = open(os.path.join(output_dir, "sim_list_{}.json".format(index)), "w")
+            file.write(out)
+            file.close()
+            sim_list = SimulationListData()
+            sim_list.OutputRootDir = output_dir + "simulations/"
 
     print("Writing simulation list object {} to {}...".format(
         param_values_df.shape[0] - param_values_df.shape[0] % 500, param_values_df.shape[0]))
@@ -258,24 +319,30 @@ if __name__ == '__main__':
     write_only = True
     percent_variation = 10.0
     distribution = "normal"
+    output_dir = "./test_results/sensitivity_analysis/"
     baseline_file = "./states/StandardMale@0s.json"
-    BaseDir = "./test_results/sesitivity_analysis/"
+    sensitivity_analysis = "local"
 
-    # simulations = SimulationListData()
-    # simulations.OutputRootDir = BaseDir + "simulations/"
-    create_sim_list = False
-    if write_only:
-        # Generate the whole list
-        sample_params_df, sobol_param_dict = gen_sim_list_from_defaults(percent_variation, baseline_file, distribution,
-                                                                        BaseDir, sys.argv[1])
-        create_sim_list = True
-    else:
-        if not os.path.exists(os.path.join(BaseDir, "sensitivity_analysis_bounds_list.json")):
-            gen_bounds_file(percent_variation, baseline_file, distribution, BaseDir)
-        else:
-            sample_params_df, sobol_param_dict = gen_sim_list_from_manual_edits(BaseDir)
+    if sensitivity_analysis == "global":
+        print("Global sensitivity analysis")
+        # simulations = SimulationListData()
+        # simulations.OutputRootDir = BaseDir + "simulations/"
+        create_sim_list = False
+        if write_only:
+            # Generate the whole list
+            sample_params_df, sobol_param_dict = gen_sim_list_from_defaults(percent_variation, baseline_file, distribution,
+                                                                            output_dir, sys.argv[1])
             create_sim_list = True
+        else:
+            if not os.path.exists(os.path.join(output_dir, "sensitivity_analysis_bounds_list.json")):
+                gen_bounds_file(percent_variation, baseline_file, distribution, output_dir)
+            else:
+                sample_params_df, sobol_param_dict = gen_sim_list_from_manual_edits(output_dir)
+                create_sim_list = True
 
-    if create_sim_list:
-        create_histograms(sample_params_df, BaseDir)
-        run_simulation_list(sample_params_df, sobol_param_dict, BaseDir)
+        if create_sim_list:
+            create_histograms(sample_params_df, output_dir)
+            run_simulation_list(sample_params_df, sobol_param_dict, output_dir)
+    elif sensitivity_analysis == "local":
+        print("Local sensitivity analysis")
+        gen_local_sa_sim_list(percent_variation, baseline_file, distribution, output_dir, sys.argv[1])

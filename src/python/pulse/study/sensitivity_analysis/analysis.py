@@ -2,6 +2,7 @@
 # See accompanying NOTICE file for details.
 
 
+import json
 import matplotlib.pyplot as plt
 import numpy as np
 import os
@@ -69,6 +70,44 @@ def save_heatmap(df, results_dir, sobol_index):
     plt.title(sobol_index)
 
     plt.savefig(os.path.join(results_dir, "global_sensitivity_indices", "heatmap_{}".format(sobol_index)))
+
+
+def compute_local_sensitivity(parsed_results_df, results_dir):
+    """
+    Compute local sensitivity indices.
+    :param parsed_results_df: DataFrame - simulation results
+    :param results_dir: string - results directory
+    :return: None
+    """
+
+    file = open(os.path.join(results_dir, "local_sa_problem.json"))
+    sa_problem = json.load(file)
+    file.close()
+
+    values = np.zeros((sa_problem["problem_size"], 1))
+    std_dev_df = pd.DataFrame(np.nan, columns=parsed_results_df.columns, index=sa_problem["paths"])
+    counter = 0
+    for col in parsed_results_df:
+        for index, value in enumerate(parsed_results_df[col]):
+            if (index + 1) % 100 == 0 and index > 0:
+                path = sa_problem["paths"][(index + 1) // 100 - 1]
+                std_dev_df.at[path, col] = np.std(values)
+                counter = 0
+            values[counter] = value
+            counter += 1
+
+    for col in std_dev_df:
+        std_dev_df[col] = std_dev_df[col] / std_dev_df[col].max()
+    print(std_dev_df.head())
+
+    std_dev_df.to_csv(os.path.join(results_dir, "local_sensitivity_indices", "normal_std_dev.csv"))
+
+    plt.figure(figsize=(16, 16))
+    sns.heatmap(std_dev_df)
+    plt.tight_layout()
+    plt.title("STD Local Sensitivity")
+
+    plt.savefig(os.path.join(results_dir, "local_sensitivity_indices", "heatmap_normal_std_dev.png"))
 
 
 def compute_sobol_indices_without_ml(parsed_results_df, results_dir):
@@ -144,10 +183,22 @@ def compute_sobol_indices_with_ml(parsed_results_df, model_type, quantity_of_int
 
 
 if __name__ == '__main__':
-    results_dir = "../test_results/sesitivity_analysis/"
-    parsed_results_df = analysis.load_and_parse_results(results_dir)
-    if not os.path.exists(os.path.join(results_dir, "global_sensitivity_indices")):
-        os.mkdir(os.path.join(results_dir, "global_sensitivity_indices"))
+    results_dir = "./test_results/sensitivity_analysis/"
+
+    # cv or combined
+    phys_systems = "cv"
+    sensitivity_analysis = "local"
+
+    parsed_results_df = analysis.load_and_parse_results(results_dir, phys_systems)
+
+    if sensitivity_analysis == "local":
+        if not os.path.exists(os.path.join(results_dir, "local_sensitivity_indices")):
+            os.mkdir(os.path.join(results_dir, "local_sensitivity_indices"))
+    elif sensitivity_analysis == "global":
+        if not os.path.exists(os.path.join(results_dir, "global_sensitivity_indices")):
+            os.mkdir(os.path.join(results_dir, "global_sensitivity_indices"))
+    else:
+        raise ValueError("Sensitivity analysis type must be either 'local' or 'global'.")
 
     if len(sys.argv) == 1:
         """
@@ -155,7 +206,12 @@ if __name__ == '__main__':
         Often, this requires a very large number of simulations. To use this method, run this script 
         as follows: python3 analysis.py
         """
-        compute_sobol_indices_without_ml(parsed_results_df, results_dir)
+        if sensitivity_analysis == 'local':
+            print("Computing local sensitivity parameters ...")
+            compute_local_sensitivity(parsed_results_df, results_dir)
+        elif sensitivity_analysis == "global":
+            print("Computing global sensitivity indices ...")
+            compute_sobol_indices_without_ml(parsed_results_df, results_dir)
     elif len(sys.argv) == 3:
         """
         If you ran a subset of the simulations that you need, you can build a surrogate machine learning

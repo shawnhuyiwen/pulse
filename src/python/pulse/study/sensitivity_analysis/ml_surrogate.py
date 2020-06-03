@@ -356,7 +356,7 @@ if __name__ == '__main__':
     arg2: quantity of interest (ex: MeanArterialPressure_mmHg)
     """
 
-    results_dir = "./test_results/sesitivity_analysis/"
+    results_dir = "./test_results/ntivity_analysis/"
     if len(sys.argv) != 3:
         raise ValueError("Please enter the machine learning model type and the quantity of interest as command line "
                          "arguments (ex: python3 ml_surrogate.py NeuralNetwork MeanArterialPressure_mmHg)")
@@ -364,7 +364,8 @@ if __name__ == '__main__':
     quantity_of_interest = sys.argv[2]
 
     # load and parse the simulation results
-    parsed_results_df = analysis.load_and_parse_results(results_dir)
+    phys_systems = "combined"
+    parsed_results_df = analysis.load_and_parse_results(results_dir, phys_systems)
 
     # create our input parameter space
     # this should precisely match the input parameter space we used to run our simulations
