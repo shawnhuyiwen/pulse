@@ -49,27 +49,29 @@ message SimulationData
   double                       MeanSmallIntestineVasculatureInFlow_mL_Per_s  = 35;
   double                       MeanSpleenVasculatureInFlow_mL_Per_s          = 36;
   double                       MeanVenaCavaInFlow_mL_Per_s                   = 37;
+  double                       MeanVenousCarbonDioxidePartialPressure_mmHg   = 38;
+  double                       MeanVenousOxygenPartialPressure_mmHg          = 39;
   
   // System variables
-  double                       BloodVolume_mL                                = 38;
-  double                       CardiacOutput_mL_Per_min                      = 39;
-  double                       DiastolicArterialPressure_mmHg                = 40;
-  double                       HeartEjectionFraction                         = 41;
-  double                       HeartStrokeVolume_mL                          = 42;
-  double                       MeanArterialCarbonDioxidePartialPressure_mmHg = 43;
-  double                       MeanArterialPressure_mmHg                     = 44;
-  double                       MeanCentralVenousPressure_mmHg                = 45;
-  double                       PulmonaryDiastolicArterialPressure_mmHg       = 46;
-  double                       PulmonaryMeanArterialPressure_mmHg            = 47;
-  double                       PulmonaryMeanCapillaryFlow_mL_Per_s           = 48;
-  double                       PulmonarySystolicArterialPressure_mmHg        = 49;
-  double                       SystolicArterialPressure_mmHg                 = 50;
-  double                       SystemicVascularResistance_mmHg_s_Per_L       = 51;
+  double                       BloodVolume_mL                                = 40;
+  double                       CardiacOutput_mL_Per_min                      = 41;
+  double                       DiastolicArterialPressure_mmHg                = 42;
+  double                       HeartEjectionFraction                         = 43;
+  double                       HeartStrokeVolume_mL                          = 44;
+  double                       MeanArterialCarbonDioxidePartialPressure_mmHg = 45;
+  double                       MeanArterialPressure_mmHg                     = 46;
+  double                       MeanCentralVenousPressure_mmHg                = 47;
+  double                       PulmonaryDiastolicArterialPressure_mmHg       = 48;
+  double                       PulmonaryMeanArterialPressure_mmHg            = 49;
+  double                       PulmonaryMeanCapillaryFlow_mL_Per_s           = 50;
+  double                       PulmonarySystolicArterialPressure_mmHg        = 51;
+  double                       SystolicArterialPressure_mmHg                 = 52;
+  double                       SystemicVascularResistance_mmHg_s_Per_L       = 53;
 
   // Stabilization Information
-  bool                         AchievedStabilization                         = 52;
-  double                       StabilizationTime_s                           = 53;
-  double                       TotalSimulationTime_s                         = 54;
+  bool                         AchievedStabilization                         = 54;
+  double                       StabilizationTime_s                           = 55;
+  double                       TotalSimulationTime_s                         = 56;
   
 }
 
