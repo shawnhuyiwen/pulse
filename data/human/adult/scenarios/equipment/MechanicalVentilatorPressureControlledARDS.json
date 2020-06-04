@@ -106,15 +106,13 @@
               "Comment": "Attach the mechanical ventilator" }}},
         "Configuration":
         {
-          "BreathProfile": {
-            "Rate": { "ScalarFrequency": { "Value": 20.0, "Unit": "1/min" } },
-            "InspiratoryExpiratoryRatio": { "Value": 0.5, "Unit": "" }
-          },
           "Connection": "Tube",
-          "Control": "PC_CMV",
-          "DriverWaveform": "Square",
+          "InspirationWaveform": "Square",
+		  "ExpirationWaveform": "Square",
           "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 20.0, "Unit": "cmH2O" } },
           "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 8.0, "Unit": "cmH2O" } },
+		  "InspirationTriggerTime": { "ScalarTime": { "Value": 2.0, "Unit": "s" } },
+		  "ExpirationCycleTime": { "ScalarTime": { "Value": 1.0, "Unit": "s" } },
           "FractionInspiredGas": [
             { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.25, "Unit": "" } } }
           ]
@@ -140,15 +138,13 @@
               "Comment": "Attach the mechanical ventilator" }}},
         "Configuration":
         {
-          "BreathProfile": {
-            "Rate": { "ScalarFrequency": { "Value": 20.0, "Unit": "1/min" } },
-            "InspiratoryExpiratoryRatio": { "Value": 0.5, "Unit": "" }
-          },
           "Connection": "Tube",
-          "Control": "PC_CMV",
-          "DriverWaveform": "Square",
+          "InspirationWaveform": "Square",
+		  "ExpirationWaveform": "Square",
           "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 25.0, "Unit": "cmH2O" } },
           "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 10.0, "Unit": "cmH2O" } },
+		  "InspirationTriggerTime": { "ScalarTime": { "Value": 2.0, "Unit": "s" } },
+		  "ExpirationCycleTime": { "ScalarTime": { "Value": 1.0, "Unit": "s" } },
           "FractionInspiredGas": [
             { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.5, "Unit": "" } } }
           ]
@@ -174,15 +170,13 @@
                 "Comment": "Attach the mechanical ventilator" }}},
           "Configuration":
           {
-            "BreathProfile": {
-              "Rate": { "ScalarFrequency": { "Value": 20.0, "Unit": "1/min" } },
-              "InspiratoryExpiratoryRatio": { "Value": 0.5, "Unit": "" }
-            },
             "Connection": "Tube",
-            "Control": "PC_CMV",
-            "DriverWaveform": "Square",
+            "InspirationWaveform": "Square",
+		    "ExpirationWaveform": "Square",
             "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 32.0, "Unit": "cmH2O" } },
             "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 15.0, "Unit": "cmH2O" } },
+			"InspirationTriggerTime": { "ScalarTime": { "Value": 2.0, "Unit": "s" } },
+		    "ExpirationCycleTime": { "ScalarTime": { "Value": 1.0, "Unit": "s" } },
             "FractionInspiredGas": [
               { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.9995, "Unit": "" } } }
             ]

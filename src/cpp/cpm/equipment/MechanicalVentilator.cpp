@@ -311,6 +311,8 @@ void MechanicalVentilator::PreProcess()
   CalculateExpiration();
   SetVentilatorPressure();
   SetResistances();
+
+  m_CurrentBreathingCycleTime_s += m_dt_s;
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -420,13 +422,13 @@ void MechanicalVentilator::CalculateInspiration()
   // Check trigger
   if (HasExpirationCycleTime())
   {
-    if (GetExpirationCycleTime(TimeUnit::s) + pauseTime_s >= m_CurrentBreathingCycleTime_s)
+    if (m_CurrentBreathingCycleTime_s >= GetExpirationCycleTime(TimeUnit::s) + pauseTime_s)
     {
       m_CurrentBreathingCycleTime_s = 0.0;
       m_Inhaling = false;
       return;
     }
-    else if (GetExpirationCycleTime(TimeUnit::s) >= m_CurrentBreathingCycleTime_s)
+    else if (m_CurrentBreathingCycleTime_s >= GetExpirationCycleTime(TimeUnit::s))
     {
       // Apply pause
       // Don't change the driver pressure
@@ -482,7 +484,7 @@ void MechanicalVentilator::CalculateExpiration()
   // Check trigger
   if (HasInspirationTriggerTime())
   {
-    if (GetInspirationTriggerTime(TimeUnit::s) >= m_CurrentBreathingCycleTime_s)
+    if (m_CurrentBreathingCycleTime_s >= GetInspirationTriggerTime(TimeUnit::s))
     {
       m_CurrentBreathingCycleTime_s = 0.0;
       m_Inhaling = true;
