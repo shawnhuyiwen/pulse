@@ -43,6 +43,7 @@ void CommonDataModelTest::TestLiquidFlows(SETestSuite& testSuite, SESubstanceMan
   // Volumes and Pressures are just one to one mapping to a single scalar
  
   SECompartmentManager cmptMgr(subMgr);
+  cmptMgr.Setup();
   // Left Compartment
   SELiquidCompartment* left = &cmptMgr.CreateLiquidCompartment("Left");
   // Middle Compartment
@@ -181,6 +182,7 @@ void CommonDataModelTest::TestLiquidHierarchyFlows(SETestSuite& testSuite, SESub
   //                                 They define the L0 and L1 Level compartment input/output links
 
   SECompartmentManager cmptMgr(subMgr);
+  cmptMgr.Setup();
   SELiquidCompartment* L0C0 = &cmptMgr.CreateLiquidCompartment("L0C0");
   SELiquidCompartment* L1C0 = &cmptMgr.CreateLiquidCompartment("L1C0");
   SELiquidCompartment* L1C1 = &cmptMgr.CreateLiquidCompartment("L1C1");
@@ -319,6 +321,7 @@ void CommonDataModelTest::TestLiquidHierarchy(SETestSuite& testSuite, SESubstanc
   // L2C0  L2C1 L2C3 L2C4 <-- Only these cmpts have data
 
   SECompartmentManager cmptMgr(subMgr);
+  cmptMgr.Setup();
   // Level 0
   SELiquidCompartment* L0C0 = &cmptMgr.CreateLiquidCompartment("L0C0");
   // Level 1
@@ -688,6 +691,7 @@ void CommonDataModelTest::TestLiquidCircuitVolumesPressuresAndFlows(SETestSuite&
   circuit.StateChange();
 
   SECompartmentManager cmptMgr(subMgr);
+  cmptMgr.Setup();
   // Left Compartment
   SELiquidCompartment* left = &cmptMgr.CreateLiquidCompartment("Left");
   left->MapNode(l1);
@@ -836,6 +840,7 @@ void CommonDataModelTest::TestLiquidHierarchySaturation(SETestSuite& testSuite, 
   // L2C0  L2C1 L2C3 L2C4 <-- Only these cmpts have data
 
   SECompartmentManager cmptMgr(subMgr);
+  cmptMgr.Setup();
   // Level 0
   SELiquidCompartment* L0C0 = &cmptMgr.CreateLiquidCompartment("Level0Compartment0");
   // Level 1
@@ -1267,7 +1272,7 @@ void CommonDataModelTest::TestUpdateLiquidLinks(SETestSuite& testSuite, SESubsta
   pTimer.Start("Test");
 
   SECompartmentManager cmptMgr(subMgr);
-
+  cmptMgr.Setup();
   SELiquidCompartment& venaCava = cmptMgr.CreateLiquidCompartment("Vena Cava");
   SELiquidCompartment& rightHeart = cmptMgr.CreateLiquidCompartment("Right Heart");
   SELiquidCompartment& IVbag = cmptMgr.CreateLiquidCompartment("IV");

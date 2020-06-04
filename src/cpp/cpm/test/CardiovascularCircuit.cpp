@@ -200,6 +200,9 @@ void PulseEngineTest::CardiovascularCircuitAndTransportTest(CardiovascularDriver
   SEPatient patient(pc.GetLogger());
   patient.SerializeFromFile("./patients/StandardMale.json", JSON);
   pc.SetupPatient(patient);
+  pc.GetSubstances().LoadSubstanceDirectory("./");
+  pc.GetSaturationCalculator().Setup();
+  pc.m_Config->Initialize("./");
   if (heartRate_bpm <= 0)
     heartRate_bpm = pc.GetCurrentPatient().GetHeartRateBaseline(FrequencyUnit::Per_min);
   else

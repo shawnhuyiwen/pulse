@@ -3,8 +3,10 @@
 #include "EngineTest.h"
 #include "controller/Controller.h"
 #include "controller/Circuits.h"
+#include "controller/Substances.h"
 #include "environment/Environment.h"
 #include "physiology/Energy.h"
+#include "physiology/Saturation.h"
 #include "PulseConfiguration.h"
 
 #include "patient/SEPatient.h"
@@ -41,6 +43,9 @@ void PulseEngineTest::InternalTemperatureVariableBMRCircuitTest(const std::strin
   SEPatient patient(pc.GetLogger());
   patient.SerializeFromFile("./patients/StandardMale.json", JSON);
   pc.SetupPatient(patient);
+  pc.GetSubstances().LoadSubstanceDirectory("./");
+  pc.GetSaturationCalculator().Setup();
+  pc.m_Config->Initialize("./");
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
@@ -117,6 +122,9 @@ void PulseEngineTest::InternalTemperatureVariableSkinCircuitTest(const std::stri
   SEPatient patient(pc.GetLogger());
   patient.SerializeFromFile("./patients/StandardMale.json", JSON);
   pc.SetupPatient(patient);
+  pc.GetSubstances().LoadSubstanceDirectory("./");
+  pc.GetSaturationCalculator().Setup();
+  pc.m_Config->Initialize("./");
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
@@ -216,6 +224,9 @@ void PulseEngineTest::InternalTemperatureVariableCoreCircuitTest(const std::stri
   SEPatient patient(pc.GetLogger());
   patient.SerializeFromFile("./patients/StandardMale.json", JSON);
   pc.SetupPatient(patient);
+  pc.GetSubstances().LoadSubstanceDirectory("./");
+  pc.GetSaturationCalculator().Setup();
+  pc.m_Config->Initialize("./");
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
@@ -314,6 +325,9 @@ void PulseEngineTest::EnvironmentVariableTemperatureCircuitTest(const std::strin
   SEPatient patient(pc.GetLogger());
   patient.SerializeFromFile("./patients/StandardMale.json", JSON);
   pc.SetupPatient(patient);
+  pc.GetSubstances().LoadSubstanceDirectory("./");
+  pc.GetSaturationCalculator().Setup();
+  pc.m_Config->Initialize("./");
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
@@ -440,6 +454,9 @@ void PulseEngineTest::CombinedInternalAndEnvironmentVariableBMRandTemperatureCir
   SEPatient patient(pc.GetLogger());
   patient.SerializeFromFile("./patients/StandardMale.json", JSON);
   pc.SetupPatient(patient);
+  pc.GetSubstances().LoadSubstanceDirectory("./");
+  pc.GetSaturationCalculator().Setup();
+  pc.m_Config->Initialize("./");
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
@@ -596,6 +613,9 @@ void PulseEngineTest::CombinedInternalAndEnvironmentSkinTempDropCircuitTest(cons
   SEPatient patient(pc.GetLogger());
   patient.SerializeFromFile("./patients/StandardMale.json", JSON);
   pc.SetupPatient(patient);
+  pc.GetSubstances().LoadSubstanceDirectory("./");
+  pc.GetSaturationCalculator().Setup();
+  pc.m_Config->Initialize("./");
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
@@ -692,6 +712,9 @@ void PulseEngineTest::EnvironmentISO7730ComparisonTest(const std::string& sTestD
   SEPatient patient(pc.GetLogger());
   patient.SerializeFromFile("./patients/StandardMale.json", JSON);
   pc.SetupPatient(patient);
+  pc.GetSubstances().LoadSubstanceDirectory("./");
+  pc.GetSaturationCalculator().Setup();
+  pc.m_Config->Initialize("./");
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();

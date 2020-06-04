@@ -88,6 +88,9 @@ void PulseEngineTest::FourCompartmentTest(bool usingAcidBase, bool usingProducti
   SEPatient patient(pc.GetLogger());
   patient.SerializeFromFile("./patients/StandardMale.json", JSON);
   pc.SetupPatient(patient);
+  pc.GetSubstances().LoadSubstanceDirectory("./");
+  pc.GetSaturationCalculator().Setup();
+  pc.m_Config->Initialize("./");
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();

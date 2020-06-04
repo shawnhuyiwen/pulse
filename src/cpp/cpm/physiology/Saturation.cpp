@@ -189,6 +189,7 @@ bool SaturationCalculator::Setup()
   m_HbO2_g_Per_mol = m_HbO2->GetMolarMass(MassPerAmountUnit::g_Per_mol);
   m_HbCO2_g_Per_mol = m_HbCO2->GetMolarMass(MassPerAmountUnit::g_Per_mol);
   m_HbO2CO2_g_Per_mol = m_HbO2CO2->GetMolarMass(MassPerAmountUnit::g_Per_mol);
+  return true;
 }
 
 SaturationCalculator::~SaturationCalculator()

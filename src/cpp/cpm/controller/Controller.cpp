@@ -97,6 +97,7 @@ PulseData::PulseData(Logger* logger) : Loggable(logger)
   m_CurrentPatient = std::unique_ptr<SEPatient>(new SEPatient(GetLogger()));
 
   m_Config = std::unique_ptr<PulseConfiguration>(new PulseConfiguration(*m_Substances));
+  m_Config->Initialize("");//Setup defaults that don't need files on disk
 
   m_SaturationCalculator = std::unique_ptr<SaturationCalculator>(new SaturationCalculator(*this));
 

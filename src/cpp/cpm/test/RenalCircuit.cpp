@@ -8,6 +8,7 @@
 #include "controller/Circuits.h"
 #include "controller/Compartments.h"
 #include "controller/Substances.h"
+#include "physiology/Saturation.h"
 #include "PulseConfiguration.h"
 #include "physiology/Renal.h"
 
@@ -52,6 +53,9 @@ void PulseEngineTest::RenalCircuitAndTransportTest(const std::string& sTestDirec
   SEPatient patient(pc.GetLogger());
   patient.SerializeFromFile("./patients/StandardMale.json",JSON);
   pc.SetupPatient(patient);
+  pc.GetSubstances().LoadSubstanceDirectory("./");
+  pc.GetSaturationCalculator().Setup();
+  pc.m_Config->Initialize("./");
   pc.m_Config->EnableRenal(eSwitch::On);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
@@ -180,6 +184,9 @@ void PulseEngineTest::RenalFeedbackTest(RenalFeedback feedback, const std::strin
   SEPatient patient(pc.GetLogger());
   patient.SerializeFromFile("./patients/StandardMale.json", JSON);
   pc.SetupPatient(patient);
+  pc.GetSubstances().LoadSubstanceDirectory("./");
+  pc.GetSaturationCalculator().Setup();
+  pc.m_Config->Initialize("./");
   pc.m_Config->EnableRenal(eSwitch::On);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
@@ -496,6 +503,9 @@ void PulseEngineTest::RenalSystemTest(RenalSystems systemtest, const std::string
   SEPatient patient(pc.GetLogger());
   patient.SerializeFromFile("./patients/StandardMale.json", JSON);
   pc.SetupPatient(patient);
+  pc.GetSubstances().LoadSubstanceDirectory("./");
+  pc.GetSaturationCalculator().Setup();
+  pc.m_Config->Initialize("./");
   pc.m_Config->EnableRenal(eSwitch::On);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();

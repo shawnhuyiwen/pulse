@@ -3,9 +3,10 @@
 
 #include "EngineTest.h"
 #include "controller/Controller.h"
-#include "controller/Substances.h"
 #include "controller/Circuits.h"
 #include "controller/Compartments.h"
+#include "controller/Substances.h"
+#include "physiology/Saturation.h"
 #include "PulseConfiguration.h"
 #include "utils/TimingProfile.h"
 #include "utils/testing/SETestReport.h"
@@ -264,6 +265,9 @@ void PulseEngineTest::DepositionFractionTest(SETestSuite& suite, SESubstance& su
   SEPatient patient(pc.GetLogger());
   patient.SerializeFromFile("./patients/StandardMale.json", JSON);
   pc.SetupPatient(patient);
+  pc.GetSubstances().LoadSubstanceDirectory("./");
+  pc.GetSaturationCalculator().Setup();
+  pc.m_Config->Initialize("./");
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
