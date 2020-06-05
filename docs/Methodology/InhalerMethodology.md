@@ -125,6 +125,7 @@ When the pMDI is used by a patient, there is a direct connection that allows air
 #### Important drug properties
 Losses due to drug deposition in the oropharynx region are estimated based on the droplet diameter and density. The droplet density used by the model is the density of the suspension (liquid solution including the drug).  Typically, the density of these suspensions is close to that of water @cite yeh1996comparisons .  Droplet diameters typically range between 0.5 and 6.0 &mu;m. 
 @anchor inhaler-dependencies
+
 ### Dependencies
 The pMDI interacts with the %Respiratory System through a connection that delivers atmospheric air and drugs into the %Respiratory System (@ref RespiratoryMethodology). The two systems are connected to each other at the mouth node through a path that connects the mouth node of the %Respiratory System to the inhaler node (see Figure 2). Before and after the pMDI is actuated, the mouth node of the %Respiratory System is connected to the atmosphere through the %Environment System that serves as a ground node for the %Respiratory System. 
 
@@ -138,6 +139,7 @@ Assumptions and Limitations
 - The system transport of the administered drug is treated as a gas. As a result, the model does not address drug deposition and absorption through respiratory airway surfaces other than the alveoli. All diffusion into the bloodstream occurs as a result of gas transfer from the alveoli into the pulmonary capillaries. Other transport mechanisms, such as the dissolving of deposited mass into the mucous membranes or the ingestion of orally-deposited drug mass are not addressed. 
 - The re-inhalation of exhaled drug mass is not addressed. Drug mass that is exhaled is presumed lost.
 - Losses due to drug deposition on airway surfaces during exhalation are not addressed. Although losses during inhalation are handled, the flow geometry is more complex during exhalation and is more difficult to model. 
+
 @anchor inhaler-actions
 Actions
 -------
