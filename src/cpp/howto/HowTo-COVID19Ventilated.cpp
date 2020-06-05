@@ -41,7 +41,8 @@ void HowToCOVID19Ventilated()
 {
   std::stringstream ss;
   // Create a Pulse Engine and load the standard patient
-  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowTo_COVID19Ventilated.log");
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
+  pe->GetLogger()->SetLogFile("HowTo_COVID19Ventilated.log");
   
   pe->GetLogger()->Info("HowTo_COVID19Ventilated");
   if (!pe->SerializeFromFile("./states/StandardMale@0s.json", JSON))

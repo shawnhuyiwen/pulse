@@ -23,7 +23,7 @@ import pulse.utilities.Log;
 public class SEMechanicalVentilator extends SEEquipment
 {
   protected eConnection                       connection;
-  protected SEScalarPressureTimePerVolume     endoTrachealTubeResistance;
+  protected SEScalarPressureTimePerVolume     endotrachealTubeResistance;
   
   // Expiratory Baseline Properties (Only set 1)
   protected SEScalarPressure                  positiveEndExpiredPressure;
@@ -66,7 +66,7 @@ public class SEMechanicalVentilator extends SEEquipment
   public SEMechanicalVentilator()
   {
     connection = null;
-    endoTrachealTubeResistance = null;
+    endotrachealTubeResistance = null;
 
     positiveEndExpiredPressure = null;
     functionalResidualCapacity = null;
@@ -103,8 +103,8 @@ public class SEMechanicalVentilator extends SEEquipment
   public void reset()
   {
     connection = null;
-    if (endoTrachealTubeResistance != null)
-      endoTrachealTubeResistance.invalidate();
+    if (endotrachealTubeResistance != null)
+      endotrachealTubeResistance.invalidate();
 
     if (positiveEndExpiredPressure != null)
       positiveEndExpiredPressure.invalidate();
@@ -161,8 +161,8 @@ public class SEMechanicalVentilator extends SEEquipment
     reset();
     if(from.connection!=null && from.connection != eConnection.NullConnection)
     	this.connection=from.connection;
-    if(from.hasEndoTrachealTubeResistance())
-      this.getEndoTrachealTubeResistance().set(from.getEndoTrachealTubeResistance());
+    if(from.hasEndotrachealTubeResistance())
+      this.getEndotrachealTubeResistance().set(from.getEndotrachealTubeResistance());
     
     if(from.hasPositiveEndExpiredPressure())
       this.getPositiveEndExpiredPressure().set(from.getPositiveEndExpiredPressure());
@@ -406,15 +406,15 @@ public class SEMechanicalVentilator extends SEEquipment
     return connection != null;
   }
   
-  public SEScalarPressureTimePerVolume getEndoTrachealTubeResistance()
+  public SEScalarPressureTimePerVolume getEndotrachealTubeResistance()
   {
-    if (endoTrachealTubeResistance == null)
-      endoTrachealTubeResistance = new SEScalarPressureTimePerVolume();
-    return endoTrachealTubeResistance;
+    if (endotrachealTubeResistance == null)
+      endotrachealTubeResistance = new SEScalarPressureTimePerVolume();
+    return endotrachealTubeResistance;
   }
-  public boolean hasEndoTrachealTubeResistance()
+  public boolean hasEndotrachealTubeResistance()
   {
-    return endoTrachealTubeResistance == null ? false : endoTrachealTubeResistance.isValid();
+    return endotrachealTubeResistance == null ? false : endotrachealTubeResistance.isValid();
   }
   
   public SEScalarPressure getPositiveEndExpiredPressure()
@@ -758,7 +758,7 @@ public class SEMechanicalVentilator extends SEEquipment
     String str = "Mechanical Ventilator"
         + "\n\tConnection: " + (hasConnection()?getConnection():"NotProvided")
         
-        + "\n\tEndoTrachealTubeResistance: " + (hasEndoTrachealTubeResistance()?getEndoTrachealTubeResistance():"NotProvided")
+        + "\n\tEndotrachealTubeResistance: " + (hasEndotrachealTubeResistance()?getEndotrachealTubeResistance():"NotProvided")
         
         + "\n\tPositiveEndExpiredPressure: " + (hasPositiveEndExpiredPressure()?getPositiveEndExpiredPressure():"NotProvided")
         + "\n\tFunctionalResidualCapacity: " + (hasFunctionalResidualCapacity()?getFunctionalResidualCapacity():"NotProvided")

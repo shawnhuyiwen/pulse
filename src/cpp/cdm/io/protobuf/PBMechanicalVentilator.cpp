@@ -25,7 +25,7 @@ void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorData&
   dst.SetConnection((eMechanicalVentilator_Connection)src.connection());
 
   if (src.has_endotrachealtuberesistance())
-    PBProperty::Load(src.endotrachealtuberesistance(), dst.GetEndoTrachealTubeResistance());
+    PBProperty::Load(src.endotrachealtuberesistance(), dst.GetEndotrachealTubeResistance());
 
   if (src.has_positiveendexpiredpressure())
     PBProperty::Load(src.positiveendexpiredpressure(), dst.GetPositiveEndExpiredPressure());
@@ -121,8 +121,8 @@ void PBMechanicalVentilator::Serialize(const SEMechanicalVentilator& src, CDM_BI
 {
   dst.set_connection((CDM_BIND::MechanicalVentilatorData::eConnection)src.m_Connection);
 
-  if (src.HasEndoTrachealTubeResistance())
-    dst.set_allocated_endotrachealtuberesistance(PBProperty::Unload(*src.m_EndoTrachealTubeResistance));
+  if (src.HasEndotrachealTubeResistance())
+    dst.set_allocated_endotrachealtuberesistance(PBProperty::Unload(*src.m_EndotrachealTubeResistance));
 
   if (src.HasPositiveEndExpiredPressure())
     dst.set_allocated_positiveendexpiredpressure(PBProperty::Unload(*src.m_PositiveEndExpiredPressure));

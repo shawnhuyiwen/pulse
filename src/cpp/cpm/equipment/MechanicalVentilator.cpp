@@ -528,10 +528,10 @@ void MechanicalVentilator::CalculateExpiration()
 //--------------------------------------------------------------------------------------------------
 void MechanicalVentilator::SetResistances()
 {
-  if (HasEndoTrachealTubeResistance())
+  if (HasEndotrachealTubeResistance())
   {
     /// \todo Figure out how to do this without having to access the respiratory circuit
-    m_data.GetCircuits().GetRespiratoryCircuit().GetPath(pulse::RespiratoryPath::AirwayToCarina)->GetNextResistance().Set(GetEndoTrachealTubeResistance());
+    m_data.GetCircuits().GetRespiratoryCircuit().GetPath(pulse::RespiratoryPath::AirwayToCarina)->GetNextResistance().Set(GetEndotrachealTubeResistance());
   }
 
   if (HasExpirationTubeResistance())

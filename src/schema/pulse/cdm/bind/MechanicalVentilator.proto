@@ -29,7 +29,7 @@ message MechanicalVentilatorData
   }
   
   eConnection                         Connection                    = 1; /**<< @brief @ref MechanicalVentilatorData_eControlTable */
-  ScalarPressureTimePerVolumeData     EndoTrachealTubeResistance    = 2; /**<< @brief Total connection resistance. */
+  ScalarPressureTimePerVolumeData     EndotrachealTubeResistance    = 2; /**<< @brief Total connection resistance. */
   
   oneof ExpiratoryBaseline
   {

@@ -56,9 +56,9 @@ public:
   virtual eMechanicalVentilator_Connection GetConnection() const;
   virtual void SetConnection(eMechanicalVentilator_Connection c);
 
-  virtual bool HasEndoTrachealTubeResistance() const;
-  virtual SEScalarPressureTimePerVolume& GetEndoTrachealTubeResistance();
-  virtual double GetEndoTrachealTubeResistance(const PressureTimePerVolumeUnit& unit) const;
+  virtual bool HasEndotrachealTubeResistance() const;
+  virtual SEScalarPressureTimePerVolume& GetEndotrachealTubeResistance();
+  virtual double GetEndotrachealTubeResistance(const PressureTimePerVolumeUnit& unit) const;
 
   virtual bool HasPositiveEndExpiredPressure() const;
   virtual SEScalarPressure& GetPositiveEndExpiredPressure();
@@ -159,7 +159,7 @@ public:
 protected:
   
   eMechanicalVentilator_Connection             m_Connection;
-  SEScalarPressureTimePerVolume*               m_EndoTrachealTubeResistance;
+  SEScalarPressureTimePerVolume*               m_EndotrachealTubeResistance;
 
   // Expiratory Baseline Properties (Only set 1)
   SEScalarPressure*                            m_PositiveEndExpiredPressure;
