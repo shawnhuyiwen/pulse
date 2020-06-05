@@ -6,7 +6,9 @@ from pulse.cdm.patient_actions import SEAcuteRespiratoryDistressSyndromeExacerba
 from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
 
 def HowTo_ARDS():
-    pulse = PulsePhysiologyEngine("pulse_ARDS.log")
+    pulse = PulsePhysiologyEngine()
+    pulse.set_log_filename("./test_results/pypulse_ARDS.log")
+    pulse.log_to_console(True)
 
     pc = SEPatientConfiguration()
     pc.set_patient_file("./patients/StandardMale.json")

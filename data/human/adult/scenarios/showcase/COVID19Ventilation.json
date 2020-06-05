@@ -1,15 +1,16 @@
 {
   "Name": "COVID-19Ventilation",
   "Description": "Showcase scenario: Patient with ARDS caused by infection SARS-CoV-2.",
-  "StartType": { "PatientConfiguration": { "PatientFile": "Gus.json",
-  "Conditions": { "AnyCondition": [ {
+  "PatientConfiguration":
+  {
+    "PatientFile": "Gus.json",
+    "Conditions": { "AnyCondition": [ {
         "PatientCondition": {
           "AcuteRespiratoryDistressSyndrome": {
             "Severity": { "Scalar0To1": { "Value": 0.6 } },
             "LeftLungAffected": { "Scalar0To1": { "Value": 1.0 } },
             "RightLungAffected": { "Scalar0To1": { "Value": 1.0 } } } } } 
-    ] }
-    }
+    ]}
   },
   "DataRequestManager":
   {

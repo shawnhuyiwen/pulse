@@ -111,10 +111,11 @@ void PulseEngineTest::InhalerState(PhysiologyEngine* pc, HowToTracker& tracker)
   std::string state;
   pc->SerializeToString(state,BINARY);
   now.SetValue(pc->GetSimulationTime(TimeUnit::s), TimeUnit::s);
-  pc->SerializeFromString(state,BINARY, &now);
+  pc->SerializeFromString(state,BINARY);
+  pc->SetSimulationTime(now);
 
   // Change the results file
-  pc->GetLogger()->ResetLogFile("InhalerSerialization.log");
+  pc->GetLogger()->SetLogFile("InhalerSerialization.log");
   std::remove("InhalerSerializationResults.csv");
   pc->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("InhalerSerializationResults.csv");
 
@@ -142,14 +143,15 @@ void PulseEngineTest::InjectSuccsState(PhysiologyEngine* pc, HowToTracker& track
   SEScalarTime now;// Make sure to tell the engine that we are at the same time
 
   // Change our results file name
-  pc->GetLogger()->ResetLogFile("InjectSuccsSerialization.log");
+  pc->GetLogger()->SetLogFile("InjectSuccsSerialization.log");
   std::remove("InjectSuccsSerialization.csv");
   pc->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("InjectSuccsSerialization.csv");
 
   // Save and Load the Engine State
   pc->SerializeToFile("./MidBolusState.json",JSON);
   now.SetValue(pc->GetSimulationTime(TimeUnit::s), TimeUnit::s);
-  pc->SerializeFromFile("./MidBolusState.json",JSON,&now);
+  pc->SerializeFromFile("./MidBolusState.json",JSON);
+  pc->SetSimulationTime(now);
 
   tracker.AdvanceModelTime(15);
 
@@ -171,7 +173,8 @@ void PulseEngineTest::InjectSuccsState(PhysiologyEngine* pc, HowToTracker& track
 
   pc->SerializeToFile("./AnesthesiaMachineState.json",BINARY);
   now.SetValue(pc->GetSimulationTime(TimeUnit::s), TimeUnit::s);
-  pc->SerializeFromFile("./AnesthesiaMachineState.json",BINARY,&now);
+  pc->SerializeFromFile("./AnesthesiaMachineState.json",BINARY);
+  pc->SetSimulationTime(now);
 
   tracker.AdvanceModelTime(40);
 }
@@ -179,7 +182,8 @@ void PulseEngineTest::InjectSuccsState(PhysiologyEngine* pc, HowToTracker& track
 void PulseEngineTest::SerializationTest(const std::string& sTestDirectory)
 {
   // Create the engine and load the patient
-  std::unique_ptr<PhysiologyEngine> pc = CreatePulseEngine("SerializationTestSetup.log");
+  std::unique_ptr<PhysiologyEngine> pc = CreatePulseEngine();
+  pc->GetLogger()->SetLogFile("SerializationTestSetup.log");
   HowToTracker tracker(*pc);
 
   SESubstance* O2 = pc->GetSubstanceManager().GetSubstance("Oxygen");
@@ -302,7 +306,7 @@ void PulseEngineTest::SerializationTest(const std::string& sTestDirectory)
 
     // Run Basic Standard State
     {
-      pc->GetLogger()->ResetLogFile("BasicStandardStateResults.log");
+      pc->GetLogger()->SetLogFile("BasicStandardStateResults.log");
       pc->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("BasicStandardStateResults.csv");
       pc->SerializeFromFile("./BasicStandardState@60s.json",JSON);
       tracker.AdvanceModelTime(60);

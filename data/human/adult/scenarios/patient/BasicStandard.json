@@ -1,7 +1,7 @@
 {
   "Name": "BasicStandard",
   "Description": "Basic scenario measuring standard male patient vitals with no conditions, insults, or interventions.",
-  "StartType":{ "PatientConfiguration": { "PatientFile": "StandardMale.json" }},
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager":
   {
     "DataRequest":

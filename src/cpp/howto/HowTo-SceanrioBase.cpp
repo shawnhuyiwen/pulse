@@ -21,12 +21,13 @@
 void HowToScenarioBase()
 {
   // Create our engine
-  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine("HowTo_ScenarioBase.log");
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
+  pe->GetLogger()->SetLogFile("./test_results/HowTo_ScenarioBase.log");
   pe->GetLogger()->Info("HowTo_ScenarioBase");
   
   
   //Let's read the scenario we want to base this engine on
-  SEScenario sce(pe->GetSubstanceManager());
+  SEScenario sce(pe->GetLogger());
   sce.SerializeFromFile("YourScenario.json",JSON);
 
   if (sce.HasEngineStateFile())

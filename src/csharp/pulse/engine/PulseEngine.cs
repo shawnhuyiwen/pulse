@@ -11,16 +11,16 @@ namespace Pulse
   // C# class that wraps the PulseC API
   public class PulseEngine
   {
-    private const string PulseLib = "PulseC";  // Name of our Pulse library (PulseC or PulseCd)
-    readonly IntPtr pulse_cptr;           // Pointer to the pulse engine in C
-    private double[] data_values;          // Data coming back from the engine
-    private double time_step_s = 0.02;   // Time step (TODO Get this from engine)
-    private double extra_time_s = 0;     // Time remainder from spliting requested time into time steps
-    private ILogListener log_listener = null;  // Forward log messages to this object
+    private const string PulseLib = "PulseC";   // Name of our Pulse library (PulseC or PulseCd)
+    readonly IntPtr pulse_cptr;                 // Pointer to the pulse engine in C
+    private double[] data_values;               // Data coming back from the engine
+    private double time_step_s = 0.02;          // Time step (TODO Get this from engine)
+    private double extra_time_s = 0;            // Time remainder from spliting requested time into time steps
+    private ILogListener log_listener = null;   // Forward log messages to this object
     private SELogMessages log_messages = new SELogMessages();
     private IEventHandler event_handler = null; // Forware events to this object
     private List<SEEventChange> event_changes = new List<SEEventChange>();
-    private IntPtr str_addr;             // Used to hold data between C# and C
+    private IntPtr str_addr;                    // Used to hold data between C# and C
     private SerializationFormat thunk_as = SerializationFormat.JSON;
     // TODO when we allow binary thunking, add many if/switchs below!
 
@@ -31,15 +31,10 @@ namespace Pulse
     public static extern void Deinitialize();
 
     [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-    static extern IntPtr Allocate(string log_filename, bool enable_cout, string data_dir);
-    PulseEngine() { } // make default constructor private
-    public PulseEngine(string log_filename, string data_dir)
+    static extern IntPtr Allocate();
+    public PulseEngine()
     {
-      pulse_cptr = Allocate(log_filename, true, data_dir);
-    }
-    public PulseEngine(string log_filename, bool enable_cout, string data_dir)
-    {
-      pulse_cptr = Allocate(log_filename, enable_cout, data_dir);
+      pulse_cptr = Allocate();
     }
 
     [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
@@ -50,12 +45,12 @@ namespace Pulse
     }
 
     [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-    static extern bool SerializeFromFile(IntPtr pulse, string filename, string data_mgr, int format, double sim_time_s);
-    public bool SerializeFromFile(string filename, SEDataRequestManager data_mgr, double sim_time_s, SerializationFormat format)
+    static extern bool SerializeFromFile(IntPtr pulse, string filename, string data_mgr, int format);
+    public bool SerializeFromFile(string filename, SEDataRequestManager data_mgr, SerializationFormat format)
     {
       data_values = new double[data_mgr.GetDataRequests().Count + 1];
       string data_mgr_str = PBDataRequest.SerializeToString(data_mgr);
-      return SerializeFromFile(pulse_cptr, filename, data_mgr_str, (int)format, sim_time_s);
+      return SerializeFromFile(pulse_cptr, filename, data_mgr_str, (int)format);
     }
 
     [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
@@ -66,12 +61,12 @@ namespace Pulse
     }
 
     [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-    static extern bool SerializeFromString(IntPtr pulse, string state, string data_mgr, int format, double sim_time_s);
-    public bool SerializeFromString(string state, SEDataRequestManager data_mgr, double sim_time_s, SerializationFormat format)
+    static extern bool SerializeFromString(IntPtr pulse, string state, string data_mgr, int format);
+    public bool SerializeFromString(string state, SEDataRequestManager data_mgr, SerializationFormat format)
     {
       data_values = new double[data_mgr.GetDataRequests().Count + 1];
       string data_mgr_str = PBDataRequest.SerializeToString(data_mgr);
-      return SerializeFromString(pulse_cptr, state, data_mgr_str, (int)format, sim_time_s);
+      return SerializeFromString(pulse_cptr, state, data_mgr_str, (int)format);
     }
 
     [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
@@ -85,24 +80,38 @@ namespace Pulse
     }
 
     [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-    static extern bool InitializeEngine(IntPtr pulse, string patient_configuration, string data_requests, int format);
-    public bool InitializeEngine(SEPatientConfiguration patient_configuration, SEDataRequestManager data_mgr)
+    static extern bool InitializeEngine(IntPtr pulse, string patient_configuration, string data_requests, int format, string data_dir);
+    public bool InitializeEngine(SEPatientConfiguration patient_configuration, SEDataRequestManager data_mgr, string data_dir="./")
     {
       data_values = new double[data_mgr.GetDataRequests().Count + 1];
       string patient_configuration_str = PBPatientConfiguration.SerializeToString(patient_configuration);
       string data_mgr_str = PBDataRequest.SerializeToString(data_mgr);
-      return InitializeEngine(pulse_cptr, patient_configuration_str, data_mgr_str, (int)thunk_as);
+      return InitializeEngine(pulse_cptr, patient_configuration_str, data_mgr_str, (int)thunk_as, data_dir);
+    }
+
+    [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
+    static extern void LogToConsole(IntPtr pulse, bool b);
+    public void LogToConsole(bool b)
+    {
+      LogToConsole(pulse_cptr, b);
+    }
+
+    [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
+    static extern void SetLogFilename(IntPtr pulse, string filename);
+    public void SetLogFilename(string filename)
+    {
+      SetLogFilename(pulse_cptr, filename);
     }
 
     [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
     static extern void KeepLogMessages(IntPtr pulse, bool save);// Let the engine know to save log msgs or not
+    [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
+    static extern bool PullLogMessages(IntPtr pulse, int format, out IntPtr event_changes); 
     public void SetLogListener(ILogListener listener)
     {
       log_listener = listener;
       KeepLogMessages(pulse_cptr, log_listener != null);
     }
-    [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-    static extern bool PullLogMessages(IntPtr pulse, int format, out IntPtr event_changes);
 
     [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
     static extern void KeepEventChanges(IntPtr pulse, bool keep);// Let the engine know to save events or not
@@ -139,7 +148,7 @@ namespace Pulse
     public bool ProcessActions(List<SEAction> actions)
     {
       string any_action_list_str = PBAction.SerializeToString(actions);
-      //System.Console.Out.Write(any_action_list_str);
+      //System.Console.Out.WriteLine(any_action_list_str);
       return ProcessActions(pulse_cptr, any_action_list_str, (int)thunk_as);
     }
 

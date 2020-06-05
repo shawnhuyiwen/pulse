@@ -120,40 +120,67 @@ public:
 
 SaturationCalculator::SaturationCalculator(PulseData& data) : Loggable(data.GetLogger()), m_data(data)
 {
-  Initialize(data.GetSubstances());
+
 }
 
-void SaturationCalculator::Initialize(SESubstanceManager& substances)
+bool SaturationCalculator::Setup()
 {
-  m_Logger = substances.GetLogger();
-  m_O2 = substances.GetSubstance("Oxygen");
-  m_CO2 = substances.GetSubstance("CarbonDioxide");
-  m_CO = substances.GetSubstance("CarbonMonoxide");
-  m_Hb = substances.GetSubstance("Hemoglobin");
-  m_HbO2 = substances.GetSubstance("Oxyhemoglobin");
-  m_HbCO2 = substances.GetSubstance("Carbaminohemoglobin");
-  m_HbCO = substances.GetSubstance("Carboxyhemoglobin");
-  m_HbO2CO2 = substances.GetSubstance("OxyCarbaminohemoglobin");
-  m_HCO3 = substances.GetSubstance("Bicarbonate");
+  auto& subMgr = m_data.GetSubstances();
+  m_O2 = subMgr.GetSubstance("Oxygen");
+  m_CO2 = subMgr.GetSubstance("CarbonDioxide");
+  m_CO = subMgr.GetSubstance("CarbonMonoxide");
+  m_Hb = subMgr.GetSubstance("Hemoglobin");
+  m_HbO2 = subMgr.GetSubstance("Oxyhemoglobin");
+  m_HbCO2 = subMgr.GetSubstance("Carbaminohemoglobin");
+  m_HbCO = subMgr.GetSubstance("Carboxyhemoglobin");
+  m_HbO2CO2 = subMgr.GetSubstance("OxyCarbaminohemoglobin");
+  m_HCO3 = subMgr.GetSubstance("Bicarbonate");
 
   if (m_O2 == nullptr)
+  {
     Fatal("Oxygen Definition not found");
+    return false;
+  }
   if (m_CO2 == nullptr)
+  {
     Fatal("CarbonDioxide Definition not found");
+    return false;
+  }
   if (m_CO == nullptr)
+  {
     Fatal("CarbonMonoxide Definition not found");
+    return false;
+  }
   if (m_Hb == nullptr)
+  {
     Fatal("Hemoglobin Definition not found");
+    return false;
+  }
   if (m_HbO2 == nullptr)
+  {
     Fatal("Oxyhemoglobin Definition not found");
+    return false;
+  }
   if (m_HbCO2 == nullptr)
+  {
     Fatal("Carbaminohemoglobin Definition not found");
+    return false;
+  }
   if (m_HbCO == nullptr)
+  {
     Fatal("Carboxyhemoglobin Definition not found");
+    return false;
+  }
   if (m_HbO2CO2 == nullptr)
+  {
     Fatal("OxyCarbaminohemoglobin Definition not found");
+    return false;
+  }
   if (m_HCO3 == nullptr)
+  {
     Fatal("Bicarbonate Definition not found");
+    return false;
+  }
 
   m_O2_g_Per_mol = m_O2->GetMolarMass(MassPerAmountUnit::g_Per_mol);
   m_CO2_g_Per_mol = m_CO2->GetMolarMass(MassPerAmountUnit::g_Per_mol);
@@ -162,6 +189,7 @@ void SaturationCalculator::Initialize(SESubstanceManager& substances)
   m_HbO2_g_Per_mol = m_HbO2->GetMolarMass(MassPerAmountUnit::g_Per_mol);
   m_HbCO2_g_Per_mol = m_HbCO2->GetMolarMass(MassPerAmountUnit::g_Per_mol);
   m_HbO2CO2_g_Per_mol = m_HbO2CO2->GetMolarMass(MassPerAmountUnit::g_Per_mol);
+  return true;
 }
 
 SaturationCalculator::~SaturationCalculator()

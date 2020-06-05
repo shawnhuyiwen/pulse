@@ -1,11 +1,7 @@
 {
   "Name": "AnesthesiaMachineVariedConfiguration",
   "Description": "Vary the Anaesthesia Machine settings.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json"
-    }
-  },
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": [{
       "DecimalFormat": {

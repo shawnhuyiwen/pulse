@@ -2,7 +2,7 @@
   {
     "Name": "BloodChemistryValidation",
     "Description": "Validation of Blood Chemistry data.",
-    "StartType": { "PatientConfiguration": { "PatientFile": "StandardMale.json"}},
+    "PatientConfiguration": { "PatientFile": "StandardMale.json" },
     "DataRequestManager": 
     {
       "DataRequest": 

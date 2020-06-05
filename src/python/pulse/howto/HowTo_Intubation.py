@@ -6,10 +6,12 @@ from pulse.cdm.patient_actions import SEIntubation, eIntubationType
 from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
 
 def HowTo_Intubation():
-    pulse = PulsePhysiologyEngine("pulse_Intubation.log")
+    pulse = PulsePhysiologyEngine()
+    pulse.set_log_filename("./test_results/pypulse_Intubation.log")
+    pulse.log_to_console(True)
 
     # NOTE: No data requests are being provided, so Pulse will return the default vitals data
-    if not pulse.serialize_from_file("./states/Soldier@0s.json", None, eSerializationFormat.JSON, 0):
+    if not pulse.serialize_from_file("./states/Soldier@0s.json", None, eSerializationFormat.JSON):
         print("Unable to load initial state file")
         return
 

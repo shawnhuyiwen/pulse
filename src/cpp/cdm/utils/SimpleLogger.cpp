@@ -21,11 +21,11 @@ public:
       _file.close();
   }
 
-  bool log(Logger::level requested_level)
+  bool log(Logger::Level requested_level)
   {
     return requested_level >= _log_level;
   }
-  void log(Logger::level requested_level, const std::string& out)
+  void log(Logger::Level requested_level, const std::string& out)
   {
     if (!_log_to_console && !_log_to_file)
       return;
@@ -33,19 +33,19 @@ public:
     {
       switch (requested_level)
       {
-      case Logger::level::Debug:
+      case Logger::Level::Debug:
         _str_requested_level = "[DEBUG]";
         break;
-      case Logger::level::Info:
+      case Logger::Level::Info:
         _str_requested_level = "[INFO]";
         break;
-      case Logger::level::Warn:
+      case Logger::Level::Warn:
         _str_requested_level = "[WARN]";
         break;
-      case Logger::level::Error:
+      case Logger::Level::Error:
         _str_requested_level = "[ERROR]";
         break;
-      case Logger::level::Fatal:
+      case Logger::Level::Fatal:
         _str_requested_level = "[FATAL]";
         break;
       }
@@ -59,9 +59,9 @@ public:
 
   bool _log_to_console = true;
   bool _log_to_file = true;
-  Logger::level _log_level = Logger::level::Info;
+  Logger::Level _log_level = Logger::Level::Info;
   std::string _str_requested_level = "[INFO]";
-  Logger::level _last_requested_level = Logger::level::Info;
+  Logger::Level _last_requested_level = Logger::Level::Info;
 
   std::ofstream _file;
 };
@@ -75,7 +75,7 @@ Logger::Logger(const std::string& logFilename)
   m_Forward = nullptr;
   m_time = nullptr;
   _log_lib = new log_lib();
-  ResetLogFile(logFilename);
+  SetLogFile(logFilename);
 }
 
 void Logger::LogToConsole(bool b)
@@ -88,7 +88,7 @@ bool Logger::IsLoggingToConsole()
   return _log_lib->_log_to_console;
 }
 
-void Logger::ResetLogFile(const std::string& logFilename)
+void Logger::SetLogFile(const std::string& logFilename)
 {
   if (logFilename.empty())
   {
@@ -114,13 +114,13 @@ void Logger::SetLogTime(const SEScalarTime* time)
 }
 
 //This function will change the priority of the logger
-void Logger::SetLogLevel(Logger::level l)
+void Logger::SetLogLevel(Logger::Level l)
 {
   _log_lib->_log_level = l;
 }
 
 //This function will return the priority of the logger
-Logger::level Logger::GetLogLevel()
+Logger::Level Logger::GetLogLevel()
 {
   return _log_lib->_log_level;
 }
@@ -150,9 +150,9 @@ std::string Logger::FormatLogMessage(const std::string&  msg, const std::string&
 
 void Logger::Debug(std::string const&  msg, const std::string&  origin)
 {
-  if (_log_lib->log(level::Debug))
+  if (_log_lib->log(Level::Debug))
   {
-    _log_lib->log(level::Debug, FormatLogMessage(msg, origin));
+    _log_lib->log(Level::Debug, FormatLogMessage(msg, origin));
     if (m_Forward != nullptr)
       m_Forward->ForwardDebug(m_ss.str().c_str(), origin.c_str());
   }
@@ -173,9 +173,9 @@ void Logger::Debug(std::ostream &msg, const std::string&  origin)
 
 void Logger::Info(const std::string&  msg, const std::string&  origin)
 {
-  if (_log_lib->log(level::Info))
+  if (_log_lib->log(Level::Info))
   {
-    _log_lib->log(level::Info, FormatLogMessage(msg, origin));
+    _log_lib->log(Level::Info, FormatLogMessage(msg, origin));
     if (m_Forward != nullptr)
       m_Forward->ForwardInfo(m_ss.str().c_str(), origin.c_str());
   }
@@ -202,9 +202,9 @@ void Logger::Info(std::ostream &msg, const std::string&  origin)
 
 void Logger::Warning(const std::string&  msg, const std::string&  origin)
 {
-  if (_log_lib->log(level::Warn))
+  if (_log_lib->log(Level::Warn))
   {
-    _log_lib->log(level::Warn, FormatLogMessage(msg, origin));
+    _log_lib->log(Level::Warn, FormatLogMessage(msg, origin));
     if (m_Forward != nullptr)
       m_Forward->ForwardWarning(m_ss.str().c_str(), origin.c_str());
   }
@@ -224,9 +224,9 @@ void Logger::Warning(std::ostream &msg, const std::string&  origin)
 
 void Logger::Error(const std::string&  msg, const std::string&  origin)
 {
-  if (_log_lib->log(level::Error))
+  if (_log_lib->log(Level::Error))
   {
-    _log_lib->log(level::Error, FormatLogMessage(msg, origin));
+    _log_lib->log(Level::Error, FormatLogMessage(msg, origin));
     if (m_Forward != nullptr)
       m_Forward->ForwardError(m_ss.str().c_str(), origin.c_str());
   }
@@ -246,9 +246,9 @@ void Logger::Error(std::ostream &msg, const std::string&  origin)
 
 void Logger::Fatal(const std::string&  msg, const std::string&  origin)
 {
-  if (_log_lib->log(level::Fatal))
+  if (_log_lib->log(Level::Fatal))
   {
-    _log_lib->log(level::Fatal, FormatLogMessage(msg, origin));
+    _log_lib->log(Level::Fatal, FormatLogMessage(msg, origin));
     if (m_Forward != nullptr)
       m_Forward->ForwardFatal(m_ss.str().c_str(), origin.c_str());
   }

@@ -29,6 +29,18 @@ import pulse.utilities.Pair;
 
 public class Pulse
 {
+  public enum SerializationType 
+  { JSON(1), BINARY(0);
+    private final int value;
+    private SerializationType(int value) 
+    {
+      this.value = value;
+    }
+    public int value() 
+    {
+       return value;
+    }}
+  
   public SEScalarTime                     timeStep;
   public SEScalarTime                     currentTime;
   
@@ -62,13 +74,18 @@ public class Pulse
   protected SEEventManager                eventManager = new SEEventManager();
   
   protected long nativeObj;
-  protected synchronized native long nativeAllocate(String logFile, String dataDir);
+  protected synchronized native long nativeAllocate();
   protected synchronized native void nativeDelete(long nativeObj);
+  protected synchronized native void nativeLogToConsole(long nativeObj, boolean b);
+  protected synchronized native void nativeForwardLogMessages(long nativeObj, boolean b);
+  protected synchronized native void nativeSetLogFilename(long nativeObj, String logFilename);
+
+  protected native void    nativeForwardEvents(long nativeObj, boolean b);
   
   protected List<Pair<SEDataRequest,SEScalar>> dataRequests = new ArrayList<Pair<SEDataRequest,SEScalar>>();  
   
   static
-  {        
+  {
     jniBridge.initialize();
   }
 
@@ -182,7 +199,14 @@ public class Pulse
    */
   protected void handleEvent(int type, int event, boolean active, double time_s)
   {
-    this.getEventManager().setEvent(eEvent.values()[event],active,new SEScalarTime(time_s,TimeUnit.s));
+    try
+    {
+      this.getEventManager().setEvent(eEvent.forNumber(event),active,new SEScalarTime(time_s,TimeUnit.s));
+    }
+    catch(Exception ex)
+    {
+      LogError("Processing event "+event, "handleEvent");
+    }
   }
   
   public List<Pair<SEDataRequest,SEScalar>> getDataRequestPairs()

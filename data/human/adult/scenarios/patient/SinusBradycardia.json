@@ -1,11 +1,7 @@
 {
   "Name": "SinusBradycardia",
   "Description": "A patient is initialized with sinus bradycardia.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "Bradycardic.json"
-    }
-  },
+  "PatientConfiguration": { "PatientFile": "Bradycardic.json" },
   "DataRequestManager": {
     "DataRequest": [{
       "DecimalFormat": {

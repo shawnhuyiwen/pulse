@@ -2,11 +2,7 @@
   "Scenario": {
     "Name": "AlbuterolValidation",
     "Description": "Patient using Albuterol with an inhaler.",
-    "StartType": {
-      "PatientConfiguration": {
-        "PatientFile": "StandardMale.json"
-      }
-    },
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
     "DataRequestManager": {
       "SamplesPerSecond": 1.0,
       "DataRequest": [{

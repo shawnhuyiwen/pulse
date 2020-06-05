@@ -1,11 +1,7 @@
 {
   "Name": "HouseFireSmoke",
   "Description": "High concentrations of particulate and CO concentrations.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json"
-    }
-  },
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": [{
       "DecimalFormat": {

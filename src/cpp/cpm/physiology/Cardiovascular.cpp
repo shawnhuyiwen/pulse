@@ -2244,7 +2244,7 @@ void Cardiovascular::TuneTissue(double time_s, DataTrack& circuitTrk, std::ofstr
   tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::RightKidneyT2ToRightKidneyT1));
   tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::SkinT2ToSkinT1));
   tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::SpleenT2ToSpleenT1));
-  Info("Tuning Tissue resistances at "+std::to_string(time_s)+"s");
+  Info("Tuning Tissue resistances at "+cdm::to_string(time_s)+"s");
   for (SEFluidCircuitPath* path : tissueResistancePaths)
   {
     size_t n = flowMax.size();
@@ -2339,7 +2339,7 @@ void Cardiovascular::TuneTissue(double time_s, DataTrack& circuitTrk, std::ofstr
       //Info("  " + p->GetName() + " Resistance : " + p->GetResistance().ToString());
       //Info("  " + p->GetName() + " Flow : " + p->GetFlow().ToString());
     }
-    Info("Tuning " + std::to_string(pCnt) + "/" + std::to_string(tissueResistancePaths.size()) + " paths at " + std::to_string(time_s) + "s");
+    Info("Tuning " + cdm::to_string(pCnt) + "/" + cdm::to_string(tissueResistancePaths.size()) + " paths at " + cdm::to_string(time_s) + "s");
 
     if (pCnt==0)
     {
@@ -2350,7 +2350,7 @@ void Cardiovascular::TuneTissue(double time_s, DataTrack& circuitTrk, std::ofstr
 
   if (!success)
   {
-    Fatal("Unable to tune circuit at " + std::to_string(time_s) + "s");
+    Fatal("Unable to tune circuit at " + cdm::to_string(time_s) + "s");
   }
   else
   {
@@ -2377,7 +2377,7 @@ void Cardiovascular::TuneTissue(double time_s, DataTrack& circuitTrk, std::ofstr
         circuitTrk.StreamTrackToFile(circuitFile);
       }
     }
-    Info("Successfully tuned tissue circuit at " + std::to_string(time_s) + "s");
+    Info("Successfully tuned tissue circuit at " + cdm::to_string(time_s) + "s");
   }
   for (SEFluidCircuitPath* p : tissueResistancePaths)
   {

@@ -1,8 +1,7 @@
 {
   "Name": "Firefighter",
   "Description": "Simulates a forest firefighter experiencing smoke and CO inhalation during work. Respiratory data is collected before and after smoke and CO inhalation.",
-  "StartType": {
-    "PatientConfiguration": {
+  "PatientConfiguration": {
       "PatientFile": "StandardMale.json",
       "Conditions": { "AnyCondition": [{
         "EnvironmentCondition": {
@@ -11,7 +10,6 @@
           }
         }
       }]}
-    }
   },
   "DataRequestManager": {
     "DataRequest": [{

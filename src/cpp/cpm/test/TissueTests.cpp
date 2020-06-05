@@ -963,7 +963,7 @@ void PulseEngineTest::GenericExcretionTest(SETestSuite& testSuite)
 void PulseEngineTest::DiffusionClearanceExcretionTests(const std::string& rptDirectory)
 {
 
-  m_Logger->ResetLogFile(rptDirectory + "/DiffusionClearanceExcretionTests.log");
+  m_Logger->SetLogFile(rptDirectory + "/DiffusionClearanceExcretionTests.log");
   // Set up our test report
   
   SETestReport testReport = SETestReport(m_Logger);

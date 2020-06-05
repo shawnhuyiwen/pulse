@@ -5,7 +5,9 @@ from pulse.cdm.patient import SEPatientConfiguration
 from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
 
 def HowTo_UseAnemia():
-    pulse = PulsePhysiologyEngine("pulse_Anemia.log")
+    pulse = PulsePhysiologyEngine()
+    pulse.set_log_filename("./test_results/pypulse_Anemia.log")
+    pulse.log_to_console(True)
 
     pc = SEPatientConfiguration()
     pc.set_patient_file("./patients/StandardMale.json")

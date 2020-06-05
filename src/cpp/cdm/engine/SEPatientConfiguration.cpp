@@ -41,6 +41,7 @@ bool SEPatientConfiguration::SerializeFromFile(const std::string& filename, Seri
 
 void SEPatientConfiguration::Clear()
 {
+  m_DataRoot = "./";
   m_PatientFile = "";
   SAFE_DELETE(m_Patient);
   SAFE_DELETE(m_Conditions);
@@ -51,6 +52,15 @@ bool SEPatientConfiguration::IsValid() const
   if(!HasPatientFile() && !HasPatient())
     return false;
   return true;
+}
+
+std::string SEPatientConfiguration::GetDataRoot() const
+{
+  return m_DataRoot;
+}
+void SEPatientConfiguration::SetDataRoot(const std::string& rootDir)
+{
+  m_DataRoot = rootDir;
 }
 
 std::string SEPatientConfiguration::GetPatientFile() const

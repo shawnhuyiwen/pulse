@@ -1,10 +1,8 @@
 {
   "Name": "Hassan",
   "Description": "A Ventilator mask is placed and oxygen is supplied from an anesthesia machine. Ketamine and succinylcholine are administered and the ventilator mask is removed. A right main intubation occurs due to misplacement of the endotracheal tube. The tube placement is then corrected.",
-  "StartType": {
-    "PatientConfiguration": {
+  "PatientConfiguration": {
       "PatientFile": "Hassan.json"
-    }
   },
   "DataRequestManager": {
     "DataRequest": [{

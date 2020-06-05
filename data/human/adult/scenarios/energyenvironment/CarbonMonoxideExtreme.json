@@ -1,8 +1,7 @@
 {
   "Name": "CarbonMonoxideExtreme",
   "Description": "Exposure to carbon monoxide at 200ppm.",
-  "StartType": {
-    "PatientConfiguration": {
+  "PatientConfiguration": {
       "PatientFile": "StandardMale.json",
       "Conditions": { "AnyCondition": [{
         "EnvironmentCondition": {
@@ -11,7 +10,6 @@
           }
         }
       }]}
-    }
   },
   "DataRequestManager": {
     "DataRequest": [{

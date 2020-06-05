@@ -38,6 +38,7 @@ public:
   virtual void Clear();
   virtual bool LoadSubstanceDirectory(const std::string& data_dir=".");
 
+  virtual bool Setup();
   virtual void InitializeSubstances();
 
   virtual void AddActiveSubstance(SESubstance& substance);

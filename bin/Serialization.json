@@ -12,7 +12,7 @@
   "Scenario": {
     "Name":"SerializationTest",
     "Description":"Basic scenario testing serialization",
-    "StartType":{"EngineStateFile":"./states/StandardMale@0s.json"},
+    "EngineStateFile":"./states/StandardMale@0s.json",
     
     
     "DataRequestManager": {

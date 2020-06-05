@@ -24,13 +24,17 @@ While the provided cmake superbuild automatically pulls many libraries it needs 
 you will still need to have the following tools installed (along with your choice of C++ compiler) :
 
 ### CMake
-Currently, the code requires CMake 3.7 or greater to properly build
+Currently, the code requires CMake 3.12 or greater to properly build
 Go to the cmake website, <a href="https://cmake.org/download">https://cmake.org/download</a>, and download the appropriate distribution.
 Ensure that cmake bin is on your PATH and available in your cmd/bash shell.
 
-#### Building CMake
+#### On Linux
 
-If you are on a Linux-based system that requires you to build CMake for the latest version, the <a href="https://cmake.org/download/">CMake Download page</a> provides source releases.  
+If you are on a Debian/Ubuntu system, please install the latest cmake on your system by <a href="https://apt.kitware.com/">following thes instructions</a>.
+
+##### Building CMake
+
+If you need to build CMake for the latest version, the <a href="https://cmake.org/download/">CMake Download page</a> provides source releases.  
 The following should get you through the build process for CMake:
 
 ~~~bash
@@ -42,10 +46,10 @@ $ sudo apt-get install libqt4-dev qt4-dev-tools libncurses5-dev
 # Get the code link for the cmake download
 # I used 'Copy Link Address' from my browser on the tar.gz source download link...
 # Run the following commands from the directory you wish to build CMake
-$ wget https://cmake.org/files/v3.11/cmake-3.11.0-rc2.tar.gz
+$ wget https://github.com/Kitware/CMake/releases/download/v3.17.3/cmake-3.17.3-Linux-x86_64.tar.gz
 # Extract the source
-$ tar -zxvf cmake-3.11.0-rc2.tar.gz
-$ cd cmake-3.11.0-rc2
+$ tar -zxvf cmake-3.17.3-Linux-x86_64.tar.gz
+$ cd cmake-3.17.3-Linux-x86_64.tar.gz
 # Run the bootstrap, build and install the code
 $ ./bootstrap --system-curl --qt-gui
 # Remove the --qt-gui if you do not want to build the CMake GUI

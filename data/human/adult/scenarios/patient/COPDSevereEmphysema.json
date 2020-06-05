@@ -1,26 +1,24 @@
 {
   "Name": "COPDSevereEmphysema",
   "Description": "GOLD Stage III Emphysema.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json",
-      "Conditions": { "AnyCondition": [{
-        "PatientCondition": {
-          "ChronicObstructivePulmonaryDisease": {
-            "BronchitisSeverity": {
-              "Scalar0To1": {
-                "Value": 0.5
-              }
-            },
-            "EmphysemaSeverity": {
-              "Scalar0To1": {
-                "Value": 0.7
-              }
+  "PatientConfiguration": {
+    "PatientFile": "StandardMale.json",
+    "Conditions": { "AnyCondition": [{
+      "PatientCondition": {
+        "ChronicObstructivePulmonaryDisease": {
+          "BronchitisSeverity": {
+            "Scalar0To1": {
+              "Value": 0.5
+            }
+          },
+          "EmphysemaSeverity": {
+            "Scalar0To1": {
+              "Value": 0.7
             }
           }
         }
-      }]}
-    }
+      }
+    }]}
   },
   "DataRequestManager":
   {

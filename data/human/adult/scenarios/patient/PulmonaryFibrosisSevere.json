@@ -1,21 +1,19 @@
 {
   "Name": "SeverPulmonaryFibrosis",
   "Description": "Severe pulmonary fibrosis in both lungs.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json",
-      "Conditions": { "AnyCondition": [{
-        "PatientCondition": {
-          "PulmonaryFibrosis": {
-            "Severity": {
-              "Scalar0To1": {
-                "Value": 0.9
-              }
+  "PatientConfiguration": {
+    "PatientFile": "StandardMale.json",
+    "Conditions": { "AnyCondition": [{
+      "PatientCondition": {
+        "PulmonaryFibrosis": {
+          "Severity": {
+            "Scalar0To1": {
+              "Value": 0.9
             }
           }
         }
-      }]}
-    }
+      }
+    }]}
   },
   "DataRequestManager": {
     "DataRequest": [{

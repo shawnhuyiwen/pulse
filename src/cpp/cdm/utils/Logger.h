@@ -85,9 +85,9 @@ public:
   void LogToConsole(bool b);
   bool IsLoggingToConsole();
 
-  void ResetLogFile(std::string const&  logFilename = Loggable::empty);
+  void SetLogFile(std::string const&  logFilename = Loggable::empty);
 
-  enum class level
+  enum class Level
   {
     Debug,
     Info,
@@ -95,8 +95,8 @@ public:
     Error,
     Fatal
   };
-  void SetLogLevel(level  level);
-  level GetLogLevel();
+  void SetLogLevel(Level  level);
+  Level GetLogLevel();
 
   virtual void SetLogTime(const SEScalarTime* time);
 

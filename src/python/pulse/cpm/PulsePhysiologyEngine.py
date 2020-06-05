@@ -19,27 +19,28 @@ class PulsePhysiologyEngine:
                  "_event_handler", "_log_forward",
                  "_spare_time_s"]
 
-    def __init__(self, log_file="", write_to_console=True, data_root="."):
+    def __init__(self):
         self._is_ready = False
         self._log_forward = None
         self._event_handler = None
         self._results = {}
         self._results_template = {}
-        self.__pulse = PyPulse.Engine(log_file, write_to_console, data_root)
+        self.__pulse = PyPulse.Engine()
         self._spare_time_s = 0
-        self._dt_s = self.__pulse.get_timestep("s")
+        self._dt_s = 0.02 # self.__pulse.get_timestep("s")
+        # Timestep only gets set after on load/initialize
 
     def serialize_from_file(self, state_file: str,
                                   data_request_mgr: SEDataRequestManager,
-                                  format: eSerializationFormat,
-                                  start_time: float = 0):
+                                  format: eSerializationFormat):
         # Process requests and setup our results structure
         drm = self._process_requests(data_request_mgr, format)
         if format == eSerializationFormat.BINARY:
             fmt = PyPulse.serialization_format.binary
         else:
             fmt = PyPulse.serialization_format.json
-        self._is_ready = self.__pulse.serialize_from_file(state_file, drm, fmt, start_time)
+        self._is_ready = self.__pulse.serialize_from_file(state_file, drm, fmt)
+        self._dt_s = self.__pulse.get_timestep("s")
         if self._is_ready:
             self._pull(True)
         return self._is_ready
@@ -52,30 +53,32 @@ class PulsePhysiologyEngine:
 
     def serialize_from_string(self, state: str,
                                     data_request_mgr: SEDataRequestManager,
-                                    format: eSerializationFormat,
-                                    start_time: float = 0):
+                                    format: eSerializationFormat):
         # Process requests and setup our results structure
         drm = self._process_requests(data_request_mgr, format)
         if format == eSerializationFormat.BINARY:
             fmt = PyPulse.serialization_format.binary
         else:
             fmt = PyPulse.serialization_format.json
-        self._is_ready = self.__pulse.serialize_from_string(state, drm, fmt, start_time)
+        self._is_ready = self.__pulse.serialize_from_string(state, drm, fmt)
+        self._dt_s = self.__pulse.get_timestep("s")
         if self._is_ready:
             self._pull(True)
         return self._is_ready
-
 
     def serialize_to_string(self, format: eSerializationFormat):
         if self._is_ready:
             return self.__pulse.serialize_to_string(format)
         return None
 
-    def initialize_engine(self, patient_configuration: SEPatientConfiguration, data_request_mgr: SEDataRequestManager):
+    def initialize_engine(self, patient_configuration: SEPatientConfiguration,
+                                data_request_mgr: SEDataRequestManager,
+                                data_dir: str="./"):
         # Process requests and setup our results structure
         drm = self._process_requests(data_request_mgr, eSerializationFormat.JSON)
         pc = serialize_patient_configuration_to_string(patient_configuration, eSerializationFormat.JSON)
-        self._is_ready =  self.__pulse.initialize_engine(pc, drm, PyPulse.serialization_format.json)
+        self._is_ready = self.__pulse.initialize_engine(pc, drm, PyPulse.serialization_format.json, data_dir)
+        self._dt_s = self.__pulse.get_timestep("s")
         if self._is_ready:
             self._pull(True)
         return self._is_ready
@@ -87,6 +90,12 @@ class PulsePhysiologyEngine:
     def set_log_listener(self, log_forward: ILoggerForward):
         self._log_forward = log_forward
         self.__pulse.keep_log_messages( self._log_forward is not None )
+
+    def log_to_console(self, b: bool):
+        self.__pulse.log_to_console( b )
+
+    def set_log_filename(self, filename: str):
+        self.__pulse.set_log_filename( filename )
 
     def _advance_time(self):
         if self.__pulse.advance_timestep():
