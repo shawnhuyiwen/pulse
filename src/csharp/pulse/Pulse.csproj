@@ -158,6 +158,7 @@
     <Compile Include="cdm\scalars\SEScalarMassPerVolume.cs" />
     <Compile Include="cdm\scalars\SEScalarNegative1To1.cs" />
     <Compile Include="cdm\scalars\SEScalarPower.cs" />
+    <Compile Include="cdm\scalars\SEScalarPressureTimePerVolume.cs" />
     <Compile Include="cdm\scalars\SEScalarPressure.cs" />
     <Compile Include="cdm\scalars\SEScalarTemperature.cs" />
     <Compile Include="cdm\scalars\SEScalarTime.cs" />

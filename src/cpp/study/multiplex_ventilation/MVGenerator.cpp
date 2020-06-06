@@ -167,15 +167,24 @@ bool MVGenerator::GenerateStabilizedPatient(pulse::study::bind::multiplex_ventil
   SEPulmonaryShuntExacerbation pulmonaryShunt;
   pulmonaryShunt.GetSeverity().SetValue(pData.impairmentfraction());
 
+  // Setup the PC-CMV ventilator
   SEMechanicalVentilatorConfiguration mvc(engine->GetSubstanceManager());
   auto& mv = mvc.GetConfiguration();
   mv.SetConnection(eMechanicalVentilator_Connection::Tube);
-  mv.SetControl(eMechanicalVentilator_Control::PC_CMV);
-  mv.SetDriverWaveform(eMechanicalVentilator_DriverWaveform::Square);
-  mv.GetRespiratoryRate().SetValue(pData.respirationrate_per_min(), FrequencyUnit::Per_min);
-  mv.GetInspiratoryExpiratoryRatio().SetValue(pData.ieratio());
+  mv.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
+  mv.SetExpirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
   mv.GetPeakInspiratoryPressure().SetValue(pData.pip_cmh2o(), PressureUnit::cmH2O);
   mv.GetPositiveEndExpiredPressure().SetValue(pData.peep_cmh2o(), PressureUnit::cmH2O);
+  double respirationRate_per_min = pData.respirationrate_per_min();
+  double IERatio = pData.ieratio();
+
+  // Translate ventilator settings
+  double totalPeriod_s = 60.0 / respirationRate_per_min;
+  double inspiratoryPeriod_s = IERatio * totalPeriod_s / (1 + IERatio);
+  double expiratoryPeriod_s = totalPeriod_s - inspiratoryPeriod_s;
+  mv.GetInspirationTriggerTime().SetValue(expiratoryPeriod_s, TimeUnit::s);
+  mv.GetExpirationCycleTime().SetValue(inspiratoryPeriod_s, TimeUnit::s);
+
   // Start at Atmospheric FiO2
   SESubstanceFraction* FiO2 = &mv.GetFractionInspiredGas(*Oxygen);
   FiO2->GetFractionAmount().SetValue(0.21);
@@ -246,7 +255,7 @@ bool MVGenerator::GenerateStabilizedPatient(pulse::study::bind::multiplex_ventil
   auto AortaCO2 = engine->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta)->GetSubstanceQuantity(*engine->GetSubstanceManager().GetSubstance("CarbonDioxide"));
 
   pData.set_airwayflow_l_per_min(engine->GetRespiratorySystem()->GetInspiratoryFlow(VolumePerTimeUnit::L_Per_min));
-  pData.set_airwaypressure_cmh2o(engine->GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Mouth)->GetPressure(PressureUnit::cmH2O));
+  pData.set_airwaypressure_cmh2o(engine->GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Airway)->GetPressure(PressureUnit::cmH2O));
   pData.set_alveolararterialgradient_mmhg(engine->GetRespiratorySystem()->GetAlveolarArterialGradient(PressureUnit::mmHg));
   pData.set_arterialcarbondioxidepartialpressure_mmhg(AortaCO2->GetPartialPressure(PressureUnit::mmHg));
   pData.set_arterialoxygenpartialpressure_mmhg(AortaO2->GetPartialPressure(PressureUnit::mmHg));
