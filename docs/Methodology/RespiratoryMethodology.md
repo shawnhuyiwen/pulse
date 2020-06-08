@@ -1088,6 +1088,7 @@ When positive pressure ventilation is applied (i.e., mechanical ventilator or an
 <table>
   <tr>
     <th>Parameter</th>
+	<th>System</th>
     <th>Standard Healthy</th>
     <th>Positive Pressure Ventilation</th>
     <th colspan="4">Restrictive (ARDS)</th>
@@ -1095,6 +1096,7 @@ When positive pressure ventilation is applied (i.e., mechanical ventilator or an
   </tr>
   <tr>
     <th></th>
+	<th></th>
 	<th></th>
 	<th></th>
 	<th>Severity Mapping</th>
@@ -1147,9 +1149,9 @@ The destruction of the alveolar membranes also destroys the pulmonary capillarie
 
 Decreased Inspiration-Expiration (IE) ratio is another pathophysiologic feature of COPD.  As with asthma, the normal IE ratio is scaled using a multiplier based on severity. Either chronic bronchitis severity or emphysema severity (whichever is higher) is used to determine the IE ratio scaling multiplier. 
 
-#### Acute Respiratory Distress Syndrome
+#### Acute %Respiratory Distress Syndrome
 
-
+Acute %Respiratory Distress Syndrome (ARDS) is modeled in the engine as a generic impairment of the alveoli's ability to exchange oxygen and carbon dioxide.  The specific cause (i.e., sepsis, pneumonia, etc.) is not specified.  The model is implemented to meet the PaO2/FiO2 Berlin Criteria combined with accepted pulmonary shunt fractions when mechanically ventilated.  A severity value is mapped to various model parameters to achieve mild, moderate, and severe symptoms at severities of 0.3, 0.6, and 0.9 respectively.  Direct modifiers are implemented as shown in Table 2.
 
 #### Lobar Pneumonia
 
@@ -1330,6 +1332,10 @@ Conscious respiration has any number of potential applications and is likely to 
 literature determined by a voluntary cough immediately following office-based vocal fold medialization injections @cite ruddy2014improved.</i>
 </center><br>
 
+#### Exacerbations
+
+Several respiratory conditions have exacerbation actions defined to allow for increased/decreased severities during runtime, including COPD, ARDS, and Lobar Pneumonia.  These exacerbation actions will instantaneously (i.e., during the simulation/scenario runtime) change the values shown in Table 2, based on the severity provided.  Exacerbations can either degrade or improve the patient's current condition.
+
 @anchor respiratory-events
 Events
 ------
@@ -1409,6 +1415,7 @@ The actions and interventions associated with the %Respiratory System were valid
 |	AsthmaAttackLifeThreateningAcute	|	Life threatening acute asthma attack	|<span class="success">	16	</span>|<span class="warning">	3	</span>|<span class="danger">	0	</span>|
 |	COPDSevereEmphysema	|	GOLD Stage III Emphysema	|<span class="success">	5	</span>|<span class="warning">	3	</span>|<span class="danger">	1	</span>|
 |	COPDSevereBronchitisLeft	|	Severe Chronic Bronchitis	|<span class="success">	7	</span>|<span class="warning">	1	</span>|<span class="danger">	1	</span>|
+|	ARDSModerateBothLungs	|	Moderate Acute Respiratory Distress Syndrome	|<span class="success">	9	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	LobarPneumoniaSevereLeftLobe	|	Severe Lobar Pneumonia in one lobe in the left lung	|<span class="success">	2	</span>|<span class="warning">	5	</span>|<span class="danger">	2	</span>|
 |	LobarPneumoniaSevereRightLung	|	Severe Lobar Pneumonia in two lobes of right lung	|<span class="success">	4	</span>|<span class="warning">	3	</span>|<span class="danger">	2	</span>|
 |	LobarPneumoniaModerateBothLungs	|	Moderate Lobar Pneumonia in both lungs	|<span class="success">	6	</span>|<span class="warning">	1	</span>|<span class="danger">	2	</span>|
@@ -1417,11 +1424,11 @@ The actions and interventions associated with the %Respiratory System were valid
 |	TensionPneumothoraxClosedVaried	|	Varied closed pneumothorax severities and interventions	|<span class="success">	32	</span>|<span class="warning">	1	</span>|<span class="danger">	2	</span>|
 |	AirwayObstructionVaried	|	Airway Obstruction with varying severities	|<span class="success">	27	</span>|<span class="warning">	0	</span>|<span class="danger">	3	</span>|
 |	Bronchoconstriction	|	Bronchoconstriction with varying severities	|<span class="success">	25	</span>|<span class="warning">	0	</span>|<span class="danger">	5	</span>|
-|	MainstemIntubation	|	Right and left mainstem intubation and correction (with Succs)	|<span class="success">	25	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|	EsophagealIntubation	|	Esophageal intubation and correction (with Succs)	|<span class="success">	15	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
+|	MainstemIntubation	|	Right and left mainstem intubation and correction (with Succs)	|<span class="success">	20	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
+|	EsophagealIntubation	|	Esophageal intubation and correction (with Succs)	|<span class="success">	10	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	Dyspnea	|	Varied severities of respiratory apnea	|<span class="success">	6	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	Supplemental Oxygen	|	Nasal cannula, simple mask, and non-rebreather mask	|<span class="success">	3	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|		|	Total	|<span class="success">	251	</span>|<span class="warning">	22	</span>|<span class="danger">	22	</span>|
+|		|	Total	|<span class="success">	250	</span>|<span class="warning">	22	</span>|<span class="danger">	22	</span>|
 
 @anchor respiratory-conditionvalidation
 Validation - Conditions
@@ -1446,6 +1453,18 @@ The COPD condition was validated against two scenarios. The severe emphysema sce
 |	Segment	|	Notes	|	Sampled Scenario Time (s)	|	Trachea Flow - Peak Expiratory Flow  (L/min)	|	Respiration Rate (breaths/min)	|	Tidal Volume (mL)	|	Heart Rate (beats/min)	|	Systolic Pressure (mmHg)	|	Oxygen Saturation	|	PaO2 (mmHg)	|	PaCO2 (mmHg)	|	IERatio	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
 |	Severe Chronic Bronchitis: Bronchitis Severity = 0.65 Emphysema Severity = 0.5 Both Lungs 100%	|		|	120	|<span class="success">	Decrease @cite bergeronSME	</span>|<span class="success">	> 20 @cite bergeronSME	</span>|<span class="success">	< 60% of normal @cite bergeronSME	</span>|<span class="success">	Increase,  Tachycardia @cite bergeronSME	</span>|<span class="danger">	Increase,  Pulmonary Hypertension,  > 140 mm Hg @cite bergeronSME	</span>|<span class="success">	< 90% @cite bergeronSME	</span>|<span class="success">	Decrease,  Hypoxemia,  < 55 mm Hg  @cite bergeronSME	</span>|<span class="warning">	Increase,   Hypercapnia > 55 mmHg   @cite bergeronSME	</span>|<span class="success">	Decrease @cite van1991physical, @cite bergeronSME	</span>|
+
+### Acute %Respiratory Distress Syndrome
+
+The ARDS condition was validated against a moderate severity scenario.  Further validation of ARDS while ventilated can be found in the @ref MechanicalVentilatorMethodology validation.
+
+<center><br>
+<i>Table 8. Validation matrix for moderate ARDS in both lungs. The table shows the engine output compared to validation data for respiratory and hemodynamic values.</i>
+</center>
+
+|	Segment	|	Notes	|	Sampled Scenario Time (s)	|	Pulmonary Compliance (L/cmH2O)	|	Respiration Rate (breaths/min)	|	Shunt Fraction	|	Heart Rate (beats/min)	|	Total Pulmonary Ventilation (L/min) 	|	Oxygen Saturation	|	PaO2 (mmHg)	|	PaCO2 (mmHg)	|	Carrico Index [PaO2/FiO2] (mmHg)	|
+|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
+|	Moderate ARDS Severity = 0.6 Left Lung = 100% Right Lung  = 100%	|	Chronic condition	|	120	|<span class="success">	Reduced @cite mortelliti2002acute	</span>|<span class="success">	Tachypnea @cite mortelliti2002acute	</span>|<span class="success">	>20% @cite radermacher2017fifty	</span>|<span class="success">	Tachycardia @cite mortelliti2002acute	</span>|<span class="success">	Increased @ cite mortelliti2002acute	</span>|<span class="success">	Hypoxia @cite mortelliti2002acute	</span>|<span class="success">	Hypoxemia @cite radermacher2017fifty	</span>|<span class="success">	Normal or near normal @cite mortelliti2002acute	</span>|<span class="success">	<300 @cite mortelliti2002acute	</span>|
 
 ### Lobar Pneumonia
 
@@ -1899,6 +1918,12 @@ RR - Respiration rate
 V<sup><b>.</b></sup><sub>E</sub> - Minute ventilation
 
 V<sup><b>.</b></sup><sub>A</sub> - Alveolar ventilation
+
+PaO2 - Arterial blood oxygen partial pressure
+
+FiO2 - Fraction of inspired oxygen
+
+IE Ratio - Inspiratory:Expiratory Ratio
 
 Data Model Implementation
 -------------------------
