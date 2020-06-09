@@ -65,9 +65,11 @@ class PULSE_DECL PulseData : public Loggable
 {
   friend class PulseEngine;
 public:
-  PulseData(Logger* logger, const std::string& data_dir = ".");
-  PulseData(const std::string& logFileName, const std::string& data_dir = ".");
+  PulseData(Logger* logger=nullptr);
   virtual ~PulseData();
+
+  virtual std::string GetDataRoot() const { return m_DataDir; }
+  virtual void SetDataRoot(const std::string& dir) { m_DataDir = dir; }
 
   virtual void                          AdvanceCallback(double time_s);
 
@@ -112,9 +114,9 @@ public:
 
   virtual const PulseConfiguration&     GetConfiguration() const;
 
+  virtual const SEScalarTime&           GetTimeStep() const;
   virtual const SEScalarTime&           GetEngineTime() const;
   virtual const SEScalarTime&           GetSimulationTime() const;
-  virtual const SEScalarTime&           GetTimeStep() const;
 
   virtual eAirwayMode                   GetAirwayMode() const { return m_AirwayMode; }
   virtual void                          SetAirwayMode(eAirwayMode mode);
@@ -195,23 +197,25 @@ class PULSE_DECL PulseController : public PulseData
   friend class PBPulseState;//friend the serialization class
 public:
   
-  PulseController(Logger* logger, const std::string& data_dir=".");
-  PulseController(const std::string& logfileName, const std::string& data_dir=".");
+  PulseController(Logger* logger=nullptr);
   virtual ~PulseController();
 
+  virtual PulseData& GetData() { return (*this); }
   virtual const PulseData& GetData() const { return (*this); }
 
   virtual bool SerializeFromFile(const std::string& file, SerializationFormat m);
-  virtual bool SerializeFromFile(const std::string& file, SerializationFormat m, const SEScalarTime* simTime, const SEEngineConfiguration* config);
   virtual bool SerializeToFile(const std::string& file, SerializationFormat m) const;
 
   virtual bool SerializeFromString(const std::string& state, SerializationFormat m);
-  virtual bool SerializeFromString(const std::string& state, SerializationFormat m, const SEScalarTime* simTime, const SEEngineConfiguration* config);
   virtual bool SerializeToString(std::string& state, SerializationFormat m) const;
 
-  virtual bool InitializeEngine(const std::string& patient_configuration, SerializationFormat m, const SEEngineConfiguration* config = nullptr);
-  virtual bool InitializeEngine(const SEPatientConfiguration& patient_configuration, const SEEngineConfiguration* config = nullptr);
+  virtual bool InitializeEngine(const std::string& patient_configuration, SerializationFormat m);
+  virtual bool InitializeEngine(const SEPatientConfiguration& patient_configuration);
   virtual bool IsReady() const;
+
+  virtual bool SetConfigurationOverride(const SEEngineConfiguration* config);
+
+  virtual void SetSimulationTime(const SEScalarTime& time);
 
   virtual void  AdvanceModelTime();
   virtual void  AdvanceModelTime(double time, const TimeUnit& unit);
@@ -237,7 +241,7 @@ protected:
   virtual void SetupExternalTemperature();
   virtual void SetupInternalTemperature();
 
-  virtual bool Initialize(const PulseConfiguration* config, const SEPatient& patient);
+  virtual bool Initialize(const SEPatient& patient);
   virtual bool SetupPatient(const SEPatient& patient);
 
   // Notify systems that steady state has been achieved
@@ -248,6 +252,7 @@ protected:
 
   virtual void ForwardFatal(const std::string&  msg, const std::string&  origin);
 
+  PulseConfiguration const* m_ConfigOverride;
   PulseStabilizationController* m_Stabilizer;
 };
 

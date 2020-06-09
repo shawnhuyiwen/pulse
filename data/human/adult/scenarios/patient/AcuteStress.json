@@ -1,11 +1,7 @@
 {
   "Name": "AcuteStress",
   "Description": "The patient receives varying levels of acute stress.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json"
-    }
-  },
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": [{
       "DecimalFormat": {

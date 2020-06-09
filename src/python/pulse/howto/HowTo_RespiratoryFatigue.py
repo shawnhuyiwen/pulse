@@ -6,16 +6,20 @@ from pulse.cdm.patient_actions import SERespiratoryFatigue
 from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
 
 def HowTo_RepiratoryFatigue():
-    pulse = PulsePhysiologyEngine("pulse_RespiratoryFatigue.log")
+    pulse = PulsePhysiologyEngine()
+    pulse.set_log_filename("./test_results/pypulse_RespiratoryFatigue.log")
+    pulse.log_to_console(True)
 
     # NOTE: No data requests are being provided, so Pulse will return the default vitals data
-    if not pulse.serialize_from_file("./states/Soldier@0s.json", None, eSerializationFormat.JSON, 0):
+    if not pulse.serialize_from_file("./states/Soldier@0s.json", None, eSerializationFormat.JSON):
         print("Unable to load initial state file")
         return
 
     # Get some data from the engine
     results = pulse.pull_data()
     print(results)
+
+    # TODO Model is currently incomplete!
 
     # Perform an action
     fatigue = SERespiratoryFatigue()

@@ -6,25 +6,20 @@
 #include "CommonDataModel.h"
 // CDM Features in use
 #include "PhysiologyEngine.h"
-#include "utils/ScopedMutex.h"
 #include "engine/SEEventManager.h"
+#include "utils/ScopedMutex.h"
+#define PULSE_DECL CDM_DECL
 
-#include <memory>
-
-#define PULSE_DECL
-#ifdef SHARED_PULSE
-  #if defined(__clang__)
-    #define PULSE_DECL
-  #elif defined(__gnu_linux__)
-    #define PULSE_DECL __attribute__ ((visibility ("default")))
-  #else
-    #ifdef SHARED_PULSE
-      #define PULSE_DECL __declspec(dllexport)
-    #else
-      #define PULSE_DECL __declspec(dllimport)
-    #endif
-  #endif
-#endif
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Creates a Pulse Engine.
+///
+/// \details
+/// The state can be saved as JSON or bytes in the given string.
+/// Note that the bytes are binary, not text; we only use the string class as a convenient container.
+/// Engine will be in a cleared state if this method fails.
+//--------------------------------------------------------------------------------------------------
+PULSE_DECL std::unique_ptr<PhysiologyEngine> CreatePulseEngine(Logger* logger=nullptr);
 
 /**
  * An instance of Pulse where the interface is define in stl and base data types.
@@ -33,26 +28,32 @@
 class PULSE_DECL PulseEngineThunk : public LoggerForward, public SEEventHandler
 {
 public:
-  PulseEngineThunk(std::string const& logfile = "", bool cout_enabled = true, std::string const& data_dir = ".");
+  PulseEngineThunk();
   ~PulseEngineThunk();
 
-  bool SerializeFromFile(std::string const& filename, std::string const& data_requests, SerializationFormat format, double sim_time_s);
+  // void SetConfigurationOverride(std::string const& config); // Not Implemented
+
+  bool SerializeFromFile(std::string const& filename, std::string const& data_requests, SerializationFormat format);
   bool SerializeToFile(std::string const& filename, SerializationFormat format);
-  bool SerializeFromString(std::string const& state, std::string const& data_requests, SerializationFormat format, double sim_time_s);
+
+  bool SerializeFromString(std::string const& state, std::string const& data_requests, SerializationFormat format);
   std::string SerializeToString(SerializationFormat format);
 
-  bool InitializeEngine(std::string const& patient_configuration, std::string const& data_requests, SerializationFormat format);
+  bool InitializeEngine(std::string const& patient_configuration, std::string const& data_requests, SerializationFormat format, std::string const& data_dir = "./");
 
-  void KeepLogMessages(bool keep);
+  void LogToConsole(bool b);
+  void KeepLogMessages(bool keep);// Set this to true if you are going to pull messages from the engine
+  void SetLogFilename(std::string const& logfile);// Set to empty if no log file is wanted
   std::string PullLogMessages(SerializationFormat format);
-  void KeepEventChanges(bool keep);
 
+  void KeepEventChanges(bool keep);
   std::string PullEvents(SerializationFormat format);
   std::string PullActiveEvents(SerializationFormat format);
 
   bool ProcessActions(std::string const& actions, SerializationFormat format);
 
   bool AdvanceTimeStep();
+  double GetTimeStep(std::string const& unit);
 
   size_t DataLength() const;
   double* PullDataPtr();
@@ -73,9 +74,6 @@ private:
   class pimpl;
   pimpl* data;
 };
-
-PULSE_DECL std::unique_ptr<PhysiologyEngine> CreatePulseEngine(const std::string& logfile, const std::string& data_dir = ".");
-PULSE_DECL std::unique_ptr<PhysiologyEngine> CreatePulseEngine(Logger* logger = nullptr, const std::string& data_dir =".");
 
 #define PULSE_BIND pulse::cpm::bind
 #define PULSE_BIND_DECL(type) \
@@ -175,7 +173,7 @@ namespace pulse {
   class PulmonaryCompartment
   {
   public:
-    DEFINE_STATIC_STRING(Mouth);
+    DEFINE_STATIC_STRING(Airway);
     DEFINE_STATIC_STRING(Stomach);
     DEFINE_STATIC_STRING(Carina);
     DEFINE_STATIC_STRING_EX(Lungs, PulmonaryLungs);
@@ -201,7 +199,7 @@ namespace pulse {
       ScopedMutex lock;
       if (_values.empty())
       {
-        _values.push_back(Mouth);
+        _values.push_back(Airway);
         _values.push_back(Stomach);
         _values.push_back(Carina);
         _values.push_back(Lungs);
@@ -230,9 +228,9 @@ namespace pulse {
   class PulmonaryLink
   {
   public:
-    DEFINE_STATIC_STRING(EnvironmentToMouth);
-    DEFINE_STATIC_STRING(MouthToCarina);
-    DEFINE_STATIC_STRING(MouthToStomach);
+    DEFINE_STATIC_STRING(EnvironmentToAirway);
+    DEFINE_STATIC_STRING(AirwayToCarina);
+    DEFINE_STATIC_STRING(AirwayToStomach);
     DEFINE_STATIC_STRING(CarinaToLeftAnatomicDeadSpace);
     DEFINE_STATIC_STRING(LeftAnatomicDeadSpaceToLeftAlveolarDeadSpace);
     DEFINE_STATIC_STRING(LeftAlveolarDeadSpaceToLeftAlveoli);
@@ -255,9 +253,9 @@ namespace pulse {
       ScopedMutex lock;
       if (_values.empty())
       {
-        _values.push_back(EnvironmentToMouth);
-        _values.push_back(MouthToCarina);
-        _values.push_back(MouthToStomach);
+        _values.push_back(EnvironmentToAirway);
+        _values.push_back(AirwayToCarina);
+        _values.push_back(AirwayToStomach);
         _values.push_back(CarinaToLeftAnatomicDeadSpace);
         _values.push_back(LeftAnatomicDeadSpaceToLeftAlveolarDeadSpace);
         _values.push_back(LeftAlveolarDeadSpaceToLeftAlveoli);
@@ -1004,7 +1002,7 @@ namespace pulse {
     DEFINE_STATIC_STRING_EX(ExpiratoryLimbToSelector, AnesthesiaMachineExpiratoryLimbToSelector);
     DEFINE_STATIC_STRING_EX(YPieceToConnection, AnesthesiaMachineYPieceToConnection);
     DEFINE_STATIC_STRING_EX(ConnectionLeak, AnesthesiaMachineConnectionLeak);
-    DEFINE_STATIC_STRING_EX(ConnectionToMouth, AnesthesiaMachineConnectionToMouth);
+    DEFINE_STATIC_STRING_EX(ConnectionToAirway, AnesthesiaMachineConnectionToAirway);
 
     static const std::vector<std::string>& GetValues()
     {
@@ -1023,7 +1021,7 @@ namespace pulse {
         _values.push_back(ExpiratoryLimbToSelector);
         _values.push_back(YPieceToConnection);
         _values.push_back(ConnectionLeak);
-        _values.push_back(ConnectionToMouth);
+        _values.push_back(ConnectionToAirway);
       }
       return _values;
     }
@@ -1053,7 +1051,7 @@ namespace pulse {
   {
   public:
     DEFINE_STATIC_STRING_EX(EnvironmentToMouthpiece, EnvironmentToInhalerMouthpiece);
-    DEFINE_STATIC_STRING_EX(MouthpieceToMouth, InhalerMouthpieceToMouth);
+    DEFINE_STATIC_STRING_EX(MouthpieceToAirway, InhalerMouthpieceToAirway);
 
     static const std::vector<std::string>& GetValues()
     {
@@ -1061,7 +1059,7 @@ namespace pulse {
       if (_values.empty())
       {
         _values.push_back(EnvironmentToMouthpiece);
-        _values.push_back(MouthpieceToMouth);
+        _values.push_back(MouthpieceToAirway);
       }
       return _values;
     }
@@ -1090,14 +1088,14 @@ namespace pulse {
   class MechanicalVentilationLink
   {
   public:
-    DEFINE_STATIC_STRING_EX(ConnectionToMouth, MechanicalVentilationConnectionToMouth);
+    DEFINE_STATIC_STRING_EX(ConnectionToAirway, MechanicalVentilationConnectionToAirway);
 
     static const std::vector<std::string>& GetValues()
     {
       ScopedMutex lock;
       if (_values.empty())
       {
-        _values.push_back(ConnectionToMouth);
+        _values.push_back(ConnectionToAirway);
       }
       return _values;
     }
@@ -1146,7 +1144,7 @@ namespace pulse {
     DEFINE_STATIC_STRING_EX(InspiratoryLimbToYPiece, MechanicalVentilatorInspiratoryLimbToYPiece);
     DEFINE_STATIC_STRING_EX(YPieceToConnection, MechanicalVentilatorYPieceToConnection);
     DEFINE_STATIC_STRING_EX(ConnectionToEnvironment, MechanicalVentilatorConnectionToEnvironment);
-    DEFINE_STATIC_STRING_EX(ConnectionToMouth, MechanicalVentilatorConnectionToMouth);
+    DEFINE_STATIC_STRING_EX(ConnectionToAirway, MechanicalVentilatorConnectionToAirway);
 
     static const std::vector<std::string>& GetValues()
     {
@@ -1161,7 +1159,7 @@ namespace pulse {
         _values.push_back(InspiratoryLimbToYPiece);
         _values.push_back(YPieceToConnection);
         _values.push_back(ConnectionToEnvironment);
-        _values.push_back(ConnectionToMouth);
+        _values.push_back(ConnectionToAirway);
       }
       return _values;
     }
@@ -1194,7 +1192,7 @@ namespace pulse {
   public:
     DEFINE_STATIC_STRING(NasalCannulaOxygenInlet);
     DEFINE_STATIC_STRING(NasalCannulaSeal);
-    DEFINE_STATIC_STRING(NasalCannulaToMouth);
+    DEFINE_STATIC_STRING(NasalCannulaToAirway);
 
     static const std::vector<std::string>& GetValues()
     {
@@ -1203,7 +1201,7 @@ namespace pulse {
       {
         _values.push_back(NasalCannulaOxygenInlet);
         _values.push_back(NasalCannulaSeal);
-        _values.push_back(NasalCannulaToMouth);
+        _values.push_back(NasalCannulaToAirway);
       }
       return _values;
     }
@@ -1243,7 +1241,7 @@ namespace pulse {
     DEFINE_STATIC_STRING(NonRebreatherMaskSeal);
     DEFINE_STATIC_STRING(NonRebreatherMaskExhalationValves);
     DEFINE_STATIC_STRING(NonRebreatherMaskExhalation);
-    DEFINE_STATIC_STRING(NonRebreatherMaskToMouth);
+    DEFINE_STATIC_STRING(NonRebreatherMaskToAirway);
 
     static const std::vector<std::string>& GetValues()
     {
@@ -1255,7 +1253,7 @@ namespace pulse {
         _values.push_back(NonRebreatherMaskSeal);
         _values.push_back(NonRebreatherMaskExhalationValves);
         _values.push_back(NonRebreatherMaskExhalation);
-        _values.push_back(NonRebreatherMaskToMouth);
+        _values.push_back(NonRebreatherMaskToAirway);
       }
       return _values;
     }
@@ -1289,7 +1287,7 @@ namespace pulse {
     DEFINE_STATIC_STRING(SimpleMaskOxygenInlet);
     DEFINE_STATIC_STRING(SimpleMaskSeal);
     DEFINE_STATIC_STRING(SimpleMaskPorts);
-    DEFINE_STATIC_STRING(SimpleMaskToMouth);
+    DEFINE_STATIC_STRING(SimpleMaskToAirway);
 
     static const std::vector<std::string>& GetValues()
     {
@@ -1299,7 +1297,7 @@ namespace pulse {
         _values.push_back(SimpleMaskOxygenInlet);
         _values.push_back(SimpleMaskSeal);
         _values.push_back(SimpleMaskPorts);
-        _values.push_back(SimpleMaskToMouth);
+        _values.push_back(SimpleMaskToAirway);
       }
       return _values;
     }

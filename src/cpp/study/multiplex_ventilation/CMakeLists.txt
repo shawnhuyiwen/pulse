@@ -12,6 +12,8 @@ add_library_ex(MultiplexVentilationEngine
     CommonPulseModels
   PRIVATE_DEPENDS
     protobuf::libprotobuf
+  INSTALL_HEADER_DIR
+    study/multiplex_ventilation
   )
 set_target_properties(MultiplexVentilationEngine PROPERTIES FOLDER "Studies//MultiplexVentilation")
 

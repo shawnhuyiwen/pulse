@@ -49,22 +49,6 @@ PulseConfiguration::PulseConfiguration(SESubstanceManager& substances) : SEEngin
   m_AutoSerialization = nullptr;
   m_WritePatientBaselineFile = eSwitch::Off;
 
-  // Barorecptors
-  m_ResponseSlope = nullptr;
-  m_HeartRateDistributedTimeDelay = nullptr;
-  m_HeartElastanceDistributedTimeDelay = nullptr;
-  m_SystemicResistanceDistributedTimeDelay = nullptr;
-  m_VenousComplianceDistributedTimeDelay = nullptr;
-  m_NormalizedHeartRateIntercept = nullptr;
-  m_NormalizedHeartRateSympatheticSlope = nullptr;
-  m_NormalizedHeartRateParasympatheticSlope = nullptr;
-  m_NormalizedHeartElastanceIntercept = nullptr;
-  m_NormalizedHeartElastanceSympatheticSlope = nullptr;
-  m_NormalizedResistanceIntercept = nullptr;
-  m_NormalizedResistanceSympatheticSlope = nullptr;
-  m_NormalizedComplianceIntercept = nullptr;
-  m_NormalizedComplianceParasympatheticSlope = nullptr;
-
   // Blood Chemistry
   m_MeanCorpuscularHemoglobin = nullptr;
   m_MeanCorpuscularVolume = nullptr;
@@ -135,8 +119,24 @@ PulseConfiguration::PulseConfiguration(SESubstanceManager& substances) : SEEngin
   m_WaterDigestionRate = nullptr;
 
   // Nervous
+  m_BaroreceptorFeedback = eSwitch::On;
+  m_ChemoreceptorFeedback = eSwitch::On;
+  m_HeartElastanceDistributedTimeDelay = nullptr;
+  m_HeartRateDistributedTimeDelay = nullptr;
+  m_NormalizedHeartRateIntercept = nullptr;
+  m_NormalizedHeartRateSympatheticSlope = nullptr;
+  m_NormalizedHeartRateParasympatheticSlope = nullptr;
+  m_NormalizedHeartElastanceIntercept = nullptr;
+  m_NormalizedHeartElastanceSympatheticSlope = nullptr;
+  m_NormalizedResistanceIntercept = nullptr;
+  m_NormalizedResistanceSympatheticSlope = nullptr;
+  m_NormalizedComplianceIntercept = nullptr;
+  m_NormalizedComplianceParasympatheticSlope = nullptr;
   m_PupilDiameterBaseline = nullptr;
-  
+  m_ResponseSlope = nullptr;
+  m_SystemicResistanceDistributedTimeDelay = nullptr;
+  m_VenousComplianceDistributedTimeDelay = nullptr;
+
   // Renal
   m_RenalEnabled = eSwitch::On;
   m_PlasmaSodiumConcentrationSetPoint = nullptr;
@@ -180,22 +180,6 @@ void PulseConfiguration::Clear()
   RemoveStabilization();
   SAFE_DELETE(m_AutoSerialization);
   m_WritePatientBaselineFile = eSwitch::Off;
-
-  // Barorecptors
-  SAFE_DELETE(m_ResponseSlope);
-  SAFE_DELETE(m_HeartRateDistributedTimeDelay);
-  SAFE_DELETE(m_HeartElastanceDistributedTimeDelay);
-  SAFE_DELETE(m_SystemicResistanceDistributedTimeDelay);
-  SAFE_DELETE(m_VenousComplianceDistributedTimeDelay);
-  SAFE_DELETE(m_NormalizedHeartRateIntercept);
-  SAFE_DELETE(m_NormalizedHeartRateSympatheticSlope);
-  SAFE_DELETE(m_NormalizedHeartRateParasympatheticSlope);
-  SAFE_DELETE(m_NormalizedHeartElastanceIntercept);
-  SAFE_DELETE(m_NormalizedHeartElastanceSympatheticSlope);
-  SAFE_DELETE(m_NormalizedResistanceIntercept);
-  SAFE_DELETE(m_NormalizedResistanceSympatheticSlope);
-  SAFE_DELETE(m_NormalizedComplianceIntercept);
-  SAFE_DELETE(m_NormalizedComplianceParasympatheticSlope);
   
   // Blood Chemistry
   SAFE_DELETE(m_MeanCorpuscularHemoglobin);
@@ -267,7 +251,23 @@ void PulseConfiguration::Clear()
   SAFE_DELETE(m_WaterDigestionRate);
 
   // Nervous
+  m_BaroreceptorFeedback = eSwitch::On;
+  m_ChemoreceptorFeedback = eSwitch::On;
+  SAFE_DELETE(m_HeartElastanceDistributedTimeDelay);
+  SAFE_DELETE(m_HeartRateDistributedTimeDelay);
+  SAFE_DELETE(m_NormalizedHeartRateIntercept);
+  SAFE_DELETE(m_NormalizedHeartRateSympatheticSlope);
+  SAFE_DELETE(m_NormalizedHeartRateParasympatheticSlope);
+  SAFE_DELETE(m_NormalizedHeartElastanceIntercept);
+  SAFE_DELETE(m_NormalizedHeartElastanceSympatheticSlope);
+  SAFE_DELETE(m_NormalizedResistanceIntercept);
+  SAFE_DELETE(m_NormalizedResistanceSympatheticSlope);
+  SAFE_DELETE(m_NormalizedComplianceIntercept);
+  SAFE_DELETE(m_NormalizedComplianceParasympatheticSlope);
   SAFE_DELETE(m_PupilDiameterBaseline);
+  SAFE_DELETE(m_ResponseSlope);
+  SAFE_DELETE(m_SystemicResistanceDistributedTimeDelay);
+  SAFE_DELETE(m_VenousComplianceDistributedTimeDelay);
 
   // Renal
   m_RenalEnabled = eSwitch::On;
@@ -329,26 +329,13 @@ void PulseConfiguration::Initialize(const std::string& data_dir)
 
   // Reset to default values
   GetTimeStep().SetValue(1.0 / 50.0, TimeUnit::s);
-  GetECGInterpolator().SerializeFromFile(data_dir+"/ecg/StandardECG.json",JSON,&GetTimeStep());
-  GetDynamicStabilization().SerializeFromFile(data_dir+"/config/DynamicStabilization.json",JSON);
-  //GetTimedStabilization().SerializeFromFile(data_dir+"/config/TimedStabilization.json",JSON);
+  if (!data_dir.empty())
+  {
+    GetECGInterpolator().SerializeFromFile(data_dir + "/ecg/StandardECG.json", JSON, &GetTimeStep());
+    GetDynamicStabilization().SerializeFromFile(data_dir + "/config/DynamicStabilization.json", JSON);
+    //GetTimedStabilization().SerializeFromFile(data_dir+"/config/TimedStabilization.json",JSON);
+  }
   //GetDynamicStabilization().TrackStabilization(eSwitch::On);// Hard coded override for debugging
-  
-  // Baroreceptors
-  GetResponseSlope().SetValue(12.0); //nu
-  GetHeartRateDistributedTimeDelay().SetValue(20.0, TimeUnit::s);
-  GetHeartElastanceDistributedTimeDelay().SetValue(20.0, TimeUnit::s);
-  GetSystemicResistanceDistributedTimeDelay().SetValue(30.0, TimeUnit::s);
-  GetVenousComplianceDistributedTimeDelay().SetValue(60.0, TimeUnit::s);
-  GetNormalizedHeartRateIntercept().SetValue(0.26); //Gamma Heart Rate
-  GetNormalizedHeartRateSympatheticSlope().SetValue(1.73); //Alpha Heart Rate
-  GetNormalizedHeartRateParasympatheticSlope().SetValue(0.25); //Beta Heart Rate
-  GetNormalizedHeartElastanceIntercept().SetValue(0.95); //Gamma Heart Elastance
-  GetNormalizedHeartElastanceSympatheticSlope().SetValue(0.1); //Alpha Elastance
-  GetNormalizedResistanceIntercept().SetValue(0.4); //Gamma Resistance
-  GetNormalizedResistanceSympatheticSlope().SetValue(1.2); //Alpha Resistance
-  GetNormalizedComplianceIntercept().SetValue(0.7); //Gamma Compliance
-  GetNormalizedComplianceParasympatheticSlope().SetValue(0.6); //Alpha Compliance
 
   //Blood Chemistry
   GetMeanCorpuscularVolume().SetValue(9.e-8, VolumeUnit::uL);// Guyton p419
@@ -401,24 +388,42 @@ void PulseConfiguration::Initialize(const std::string& data_dir)
   GetAirSpecificHeat().SetValue(1.0035, HeatCapacitancePerMassUnit::kJ_Per_K_kg);
   GetMolarMassOfDryAir().SetValue(0.028964, MassPerAmountUnit::kg_Per_mol);
   GetMolarMassOfWaterVapor().SetValue(0.018016, MassPerAmountUnit::kg_Per_mol);
-  GetInitialEnvironmentalConditions().SerializeFromFile(data_dir+"/environments/Standard.json",JSON);
+  if (!data_dir.empty())
+    GetInitialEnvironmentalConditions().SerializeFromFile(data_dir+"/environments/Standard.json",JSON);
   GetWaterDensity().SetValue(1000, MassPerVolumeUnit::kg_Per_m3);
 
   // Gastrointestinal
   GetCalciumAbsorptionFraction().SetValue(0.25);// Net fractional calcium absorption is 24.9 ± 12.4% (Hunt and Johnson 2007)
   GetCalciumDigestionRate().SetValue(2.7, MassPerTimeUnit::mg_Per_min);// Wasserman1992Intestinal
   GetCarbohydrateAbsorptionFraction().SetValue(0.80);// Guyton p790
-  GetDefaultCarbohydrateDigestionRate().SetValue(0.5, MassPerTimeUnit::g_Per_min);// Guyton (About 4.25hr to digest the carbs in default meal)
+  GetDefaultCarbohydrateDigestionRate().SetValue(0.87, MassPerTimeUnit::g_Per_min);// Go through 130g in about 2 hrs, glucose levels should return to basal 2hrs after that
   GetDefaultFatDigestionRate().SetValue(0.055, MassPerTimeUnit::g_Per_min);// Guyton (About 8hr to digest the fat in the default meal)
   GetDefaultProteinDigestionRate().SetValue(0.071, MassPerTimeUnit::g_Per_min);// Dangin2001Digestion (About 5hr to digest the protein in the default meal)
-  GetDefaultStomachContents().SerializeFromFile(data_dir+"/nutrition/Standard.json",JSON);// Refs are in the data spreadsheet
+  if (!data_dir.empty())
+    GetDefaultStomachContents().SerializeFromFile(data_dir+"/nutrition/Standard.json",JSON);// Refs are in the data spreadsheet
   GetFatAbsorptionFraction().SetValue(0.248);// Guyton p797 and the recommended daily value for saturated fat intake according to the AHA //TODO: Add this reference
   // We should be making 30 grams of urea per 100 grams of protein haussinger1990nitrogen
   GetProteinToUreaFraction().SetValue(0.405);// BUT, We should excrete 24.3 g/day on average. Guyton p 328. With an average intake of 60 g/day, that works out to approximately 40%. 
   GetWaterDigestionRate().SetValue(0.417, VolumePerTimeUnit::mL_Per_s);// Peronnet2012Pharmacokinetic, Estimated from 300mL H20 being absorbed in 9.5-12m
   
   // Nervous
+  m_BaroreceptorFeedback = eSwitch::On;
+  m_ChemoreceptorFeedback = eSwitch::On;
+  GetHeartElastanceDistributedTimeDelay().SetValue(20.0, TimeUnit::s);
+  GetHeartRateDistributedTimeDelay().SetValue(20.0, TimeUnit::s);
+  GetNormalizedHeartRateIntercept().SetValue(0.26); //Gamma Heart Rate
+  GetNormalizedHeartRateSympatheticSlope().SetValue(1.73); //Alpha Heart Rate
+  GetNormalizedHeartRateParasympatheticSlope().SetValue(0.25); //Beta Heart Rate
+  GetNormalizedHeartElastanceIntercept().SetValue(0.95); //Gamma Heart Elastance
+  GetNormalizedHeartElastanceSympatheticSlope().SetValue(0.1); //Alpha Elastance
+  GetNormalizedResistanceIntercept().SetValue(0.4); //Gamma Resistance
+  GetNormalizedResistanceSympatheticSlope().SetValue(1.2); //Alpha Resistance
+  GetNormalizedComplianceIntercept().SetValue(0.7); //Gamma Compliance
+  GetNormalizedComplianceParasympatheticSlope().SetValue(0.6); //Alpha Compliance
   GetPupilDiameterBaseline().SetValue(4, LengthUnit::mm);
+  GetResponseSlope().SetValue(12.0); //nu
+  GetSystemicResistanceDistributedTimeDelay().SetValue(30.0, TimeUnit::s);
+  GetVenousComplianceDistributedTimeDelay().SetValue(60.0, TimeUnit::s);
 
   // Renal
   m_RenalEnabled = eSwitch::On;
@@ -543,248 +548,6 @@ const SEAutoSerialization* PulseConfiguration::GetAutoSerialization() const
 void PulseConfiguration::RemoveAutoSerialization()
 {
   SAFE_DELETE(m_AutoSerialization);
-}
-
-////////////////////
-/** Baroreceptors */
-////////////////////
-bool PulseConfiguration::HasResponseSlope() const
-{
-  return m_ResponseSlope == nullptr ? false : m_ResponseSlope->IsValid();
-}
-SEScalar& PulseConfiguration::GetResponseSlope()
-{
-  if (m_ResponseSlope == nullptr)
-    m_ResponseSlope = new SEScalar();
-  return *m_ResponseSlope;
-}
-double PulseConfiguration::GetResponseSlope() const
-{
-  if (m_ResponseSlope == nullptr)
-    return SEScalar::dNaN();
-  return m_ResponseSlope->GetValue();
-}
-
-bool PulseConfiguration::HasHeartRateDistributedTimeDelay() const
-{
-  return m_HeartRateDistributedTimeDelay == nullptr ? false : m_HeartRateDistributedTimeDelay->IsValid();
-}
-SEScalarTime& PulseConfiguration::GetHeartRateDistributedTimeDelay()
-{
-  if (m_HeartRateDistributedTimeDelay == nullptr)
-    m_HeartRateDistributedTimeDelay = new SEScalarTime();
-  return *m_HeartRateDistributedTimeDelay;
-}
-double PulseConfiguration::GetHeartRateDistributedTimeDelay(const TimeUnit& unit) const
-{
-  if (m_HeartRateDistributedTimeDelay == nullptr)
-    return SEScalar::dNaN();    
-  return m_HeartRateDistributedTimeDelay->GetValue(unit);
-}
-
-bool PulseConfiguration::HasHeartElastanceDistributedTimeDelay() const
-{
-  return m_HeartElastanceDistributedTimeDelay == nullptr ? false : m_HeartElastanceDistributedTimeDelay->IsValid();
-}
-SEScalarTime& PulseConfiguration::GetHeartElastanceDistributedTimeDelay()
-{
-  if (m_HeartElastanceDistributedTimeDelay == nullptr)
-    m_HeartElastanceDistributedTimeDelay = new SEScalarTime();
-  return *m_HeartElastanceDistributedTimeDelay;
-}
-double PulseConfiguration::GetHeartElastanceDistributedTimeDelay(const TimeUnit& unit) const
-{
-  if (m_HeartElastanceDistributedTimeDelay == nullptr)
-    return SEScalar::dNaN();
-  return m_HeartElastanceDistributedTimeDelay->GetValue(unit);
-}
-
-bool PulseConfiguration::HasSystemicResistanceDistributedTimeDelay() const
-{
-  return m_SystemicResistanceDistributedTimeDelay == nullptr ? false : m_SystemicResistanceDistributedTimeDelay->IsValid();
-}
-SEScalarTime& PulseConfiguration::GetSystemicResistanceDistributedTimeDelay()
-{
-  if (m_SystemicResistanceDistributedTimeDelay == nullptr)
-    m_SystemicResistanceDistributedTimeDelay = new SEScalarTime();
-  return *m_SystemicResistanceDistributedTimeDelay;
-}
-double PulseConfiguration::GetSystemicResistanceDistributedTimeDelay(const TimeUnit& unit) const
-{
-  if (m_SystemicResistanceDistributedTimeDelay == nullptr)
-    return SEScalar::dNaN();
-  return m_SystemicResistanceDistributedTimeDelay->GetValue(unit);
-}
-
-
-bool PulseConfiguration::HasVenousComplianceDistributedTimeDelay() const
-{
-  return m_VenousComplianceDistributedTimeDelay == nullptr ? false : m_VenousComplianceDistributedTimeDelay->IsValid();
-}
-SEScalarTime& PulseConfiguration::GetVenousComplianceDistributedTimeDelay()
-{
-  if (m_VenousComplianceDistributedTimeDelay == nullptr)
-    m_VenousComplianceDistributedTimeDelay = new SEScalarTime();
-  return *m_VenousComplianceDistributedTimeDelay;
-}
-double PulseConfiguration::GetVenousComplianceDistributedTimeDelay(const TimeUnit& unit) const
-{
-  if (m_VenousComplianceDistributedTimeDelay == nullptr)
-    return SEScalar::dNaN();
-  return m_VenousComplianceDistributedTimeDelay->GetValue(unit);
-}
-
-bool PulseConfiguration::HasNormalizedHeartRateIntercept() const
-{
-  return m_NormalizedHeartRateIntercept == nullptr ? false : m_NormalizedHeartRateIntercept->IsValid();
-}
-SEScalar& PulseConfiguration::GetNormalizedHeartRateIntercept()
-{
-  if (m_NormalizedHeartRateIntercept == nullptr)
-    m_NormalizedHeartRateIntercept = new SEScalar();
-  return *m_NormalizedHeartRateIntercept;
-}
-double PulseConfiguration::GetNormalizedHeartRateIntercept() const
-{
-  if (m_NormalizedHeartRateIntercept == nullptr)
-    return SEScalar::dNaN();
-  return m_NormalizedHeartRateIntercept->GetValue();
-}
-
-bool PulseConfiguration::HasNormalizedHeartRateSympatheticSlope() const
-{
-  return m_NormalizedHeartRateSympatheticSlope == nullptr ? false : m_NormalizedHeartRateSympatheticSlope->IsValid();
-}
-SEScalar& PulseConfiguration::GetNormalizedHeartRateSympatheticSlope()
-{
-  if (m_NormalizedHeartRateSympatheticSlope == nullptr)
-    m_NormalizedHeartRateSympatheticSlope = new SEScalar();
-  return *m_NormalizedHeartRateSympatheticSlope;
-}
-double PulseConfiguration::GetNormalizedHeartRateSympatheticSlope() const
-{
-  if (m_NormalizedHeartRateSympatheticSlope == nullptr)
-    return SEScalar::dNaN();
-  return m_NormalizedHeartRateSympatheticSlope->GetValue();
-}
-
-bool PulseConfiguration::HasNormalizedHeartRateParasympatheticSlope() const
-{
-  return m_NormalizedHeartRateParasympatheticSlope == nullptr ? false : m_NormalizedHeartRateParasympatheticSlope->IsValid();
-}
-SEScalar& PulseConfiguration::GetNormalizedHeartRateParasympatheticSlope()
-{
-  if (m_NormalizedHeartRateParasympatheticSlope == nullptr)
-    m_NormalizedHeartRateParasympatheticSlope = new SEScalar();
-  return *m_NormalizedHeartRateParasympatheticSlope;
-}
-double PulseConfiguration::GetNormalizedHeartRateParasympatheticSlope() const
-{
-  if (m_NormalizedHeartRateParasympatheticSlope == nullptr)
-    return SEScalar::dNaN();
-  return m_NormalizedHeartRateParasympatheticSlope->GetValue();
-}
-
-bool PulseConfiguration::HasNormalizedHeartElastanceIntercept() const
-{
-  return m_NormalizedHeartElastanceIntercept == nullptr ? false : m_NormalizedHeartElastanceIntercept->IsValid();
-}
-SEScalar& PulseConfiguration::GetNormalizedHeartElastanceIntercept()
-{
-  if (m_NormalizedHeartElastanceIntercept == nullptr)
-    m_NormalizedHeartElastanceIntercept = new SEScalar();
-  return *m_NormalizedHeartElastanceIntercept;
-}
-double PulseConfiguration::GetNormalizedHeartElastanceIntercept() const
-{
-  if (m_NormalizedHeartElastanceIntercept == nullptr)
-    return SEScalar::dNaN();
-  return m_NormalizedHeartElastanceIntercept->GetValue();
-}
-
-bool PulseConfiguration::HasNormalizedHeartElastanceSympatheticSlope() const
-{
-  return m_NormalizedHeartElastanceSympatheticSlope == nullptr ? false : m_NormalizedHeartElastanceSympatheticSlope->IsValid();
-}
-SEScalar& PulseConfiguration::GetNormalizedHeartElastanceSympatheticSlope()
-{
-  if (m_NormalizedHeartElastanceSympatheticSlope == nullptr)
-    m_NormalizedHeartElastanceSympatheticSlope = new SEScalar();
-  return *m_NormalizedHeartElastanceSympatheticSlope;
-}
-double PulseConfiguration::GetNormalizedHeartElastanceSympatheticSlope() const
-{
-  if (m_NormalizedHeartElastanceSympatheticSlope == nullptr)
-    return SEScalar::dNaN();
-  return m_NormalizedHeartElastanceSympatheticSlope->GetValue();
-}
-
-bool PulseConfiguration::HasNormalizedResistanceIntercept() const
-{
-  return m_NormalizedResistanceIntercept == nullptr ? false : m_NormalizedResistanceIntercept->IsValid();
-}
-SEScalar& PulseConfiguration::GetNormalizedResistanceIntercept()
-{
-  if (m_NormalizedResistanceIntercept == nullptr)
-    m_NormalizedResistanceIntercept = new SEScalar();
-  return *m_NormalizedResistanceIntercept;
-}
-double PulseConfiguration::GetNormalizedResistanceIntercept() const
-{
-  if (m_NormalizedResistanceIntercept == nullptr)
-    return SEScalar::dNaN();
-  return m_NormalizedResistanceIntercept->GetValue();
-}
-
-bool PulseConfiguration::HasNormalizedResistanceSympatheticSlope() const
-{
-  return m_NormalizedResistanceSympatheticSlope == nullptr ? false : m_NormalizedResistanceSympatheticSlope->IsValid();
-}
-SEScalar& PulseConfiguration::GetNormalizedResistanceSympatheticSlope()
-{
-  if (m_NormalizedResistanceSympatheticSlope == nullptr)
-    m_NormalizedResistanceSympatheticSlope = new SEScalar();
-  return *m_NormalizedResistanceSympatheticSlope;
-}
-double PulseConfiguration::GetNormalizedResistanceSympatheticSlope() const
-{
-  if (m_NormalizedResistanceSympatheticSlope == nullptr)
-    return SEScalar::dNaN();
-  return m_NormalizedResistanceSympatheticSlope->GetValue();
-}
-
-bool PulseConfiguration::HasNormalizedComplianceIntercept() const
-{
-  return m_NormalizedComplianceIntercept == nullptr ? false : m_NormalizedComplianceIntercept->IsValid();
-}
-SEScalar& PulseConfiguration::GetNormalizedComplianceIntercept()
-{
-  if (m_NormalizedComplianceIntercept == nullptr)
-    m_NormalizedComplianceIntercept = new SEScalar();
-  return *m_NormalizedComplianceIntercept;
-}
-double PulseConfiguration::GetNormalizedComplianceIntercept() const
-{
-  if (m_NormalizedComplianceIntercept == nullptr)
-    return SEScalar::dNaN();
-  return m_NormalizedComplianceIntercept->GetValue();
-}
-
-bool PulseConfiguration::HasNormalizedComplianceParasympatheticSlope() const
-{
-  return m_NormalizedComplianceParasympatheticSlope == nullptr ? false : m_NormalizedComplianceParasympatheticSlope->IsValid();
-}
-SEScalar& PulseConfiguration::GetNormalizedComplianceParasympatheticSlope()
-{
-  if (m_NormalizedComplianceParasympatheticSlope == nullptr)
-    m_NormalizedComplianceParasympatheticSlope = new SEScalar();
-  return *m_NormalizedComplianceParasympatheticSlope;
-}
-double PulseConfiguration::GetNormalizedComplianceParasympatheticSlope() const
-{
-  if (m_NormalizedComplianceParasympatheticSlope == nullptr)
-    return SEScalar::dNaN();
-  return m_NormalizedComplianceParasympatheticSlope->GetValue();
 }
 
 //////////////////////
@@ -1666,6 +1429,193 @@ double PulseConfiguration::GetWaterDigestionRate(const VolumePerTimeUnit& unit) 
 /** Nervous */
 /////////////
 
+bool PulseConfiguration::HasHeartElastanceDistributedTimeDelay() const
+{
+  return m_HeartElastanceDistributedTimeDelay == nullptr ? false : m_HeartElastanceDistributedTimeDelay->IsValid();
+}
+SEScalarTime& PulseConfiguration::GetHeartElastanceDistributedTimeDelay()
+{
+  if (m_HeartElastanceDistributedTimeDelay == nullptr)
+    m_HeartElastanceDistributedTimeDelay = new SEScalarTime();
+  return *m_HeartElastanceDistributedTimeDelay;
+}
+double PulseConfiguration::GetHeartElastanceDistributedTimeDelay(const TimeUnit& unit) const
+{
+  if (m_HeartElastanceDistributedTimeDelay == nullptr)
+    return SEScalar::dNaN();
+  return m_HeartElastanceDistributedTimeDelay->GetValue(unit);
+}
+
+bool PulseConfiguration::HasHeartRateDistributedTimeDelay() const
+{
+  return m_HeartRateDistributedTimeDelay == nullptr ? false : m_HeartRateDistributedTimeDelay->IsValid();
+}
+SEScalarTime& PulseConfiguration::GetHeartRateDistributedTimeDelay()
+{
+  if (m_HeartRateDistributedTimeDelay == nullptr)
+    m_HeartRateDistributedTimeDelay = new SEScalarTime();
+  return *m_HeartRateDistributedTimeDelay;
+}
+double PulseConfiguration::GetHeartRateDistributedTimeDelay(const TimeUnit& unit) const
+{
+  if (m_HeartRateDistributedTimeDelay == nullptr)
+    return SEScalar::dNaN();
+  return m_HeartRateDistributedTimeDelay->GetValue(unit);
+}
+
+bool PulseConfiguration::HasNormalizedHeartRateIntercept() const
+{
+  return m_NormalizedHeartRateIntercept == nullptr ? false : m_NormalizedHeartRateIntercept->IsValid();
+}
+SEScalar& PulseConfiguration::GetNormalizedHeartRateIntercept()
+{
+  if (m_NormalizedHeartRateIntercept == nullptr)
+    m_NormalizedHeartRateIntercept = new SEScalar();
+  return *m_NormalizedHeartRateIntercept;
+}
+double PulseConfiguration::GetNormalizedHeartRateIntercept() const
+{
+  if (m_NormalizedHeartRateIntercept == nullptr)
+    return SEScalar::dNaN();
+  return m_NormalizedHeartRateIntercept->GetValue();
+}
+
+bool PulseConfiguration::HasNormalizedHeartRateSympatheticSlope() const
+{
+  return m_NormalizedHeartRateSympatheticSlope == nullptr ? false : m_NormalizedHeartRateSympatheticSlope->IsValid();
+}
+SEScalar& PulseConfiguration::GetNormalizedHeartRateSympatheticSlope()
+{
+  if (m_NormalizedHeartRateSympatheticSlope == nullptr)
+    m_NormalizedHeartRateSympatheticSlope = new SEScalar();
+  return *m_NormalizedHeartRateSympatheticSlope;
+}
+double PulseConfiguration::GetNormalizedHeartRateSympatheticSlope() const
+{
+  if (m_NormalizedHeartRateSympatheticSlope == nullptr)
+    return SEScalar::dNaN();
+  return m_NormalizedHeartRateSympatheticSlope->GetValue();
+}
+
+bool PulseConfiguration::HasNormalizedHeartRateParasympatheticSlope() const
+{
+  return m_NormalizedHeartRateParasympatheticSlope == nullptr ? false : m_NormalizedHeartRateParasympatheticSlope->IsValid();
+}
+SEScalar& PulseConfiguration::GetNormalizedHeartRateParasympatheticSlope()
+{
+  if (m_NormalizedHeartRateParasympatheticSlope == nullptr)
+    m_NormalizedHeartRateParasympatheticSlope = new SEScalar();
+  return *m_NormalizedHeartRateParasympatheticSlope;
+}
+double PulseConfiguration::GetNormalizedHeartRateParasympatheticSlope() const
+{
+  if (m_NormalizedHeartRateParasympatheticSlope == nullptr)
+    return SEScalar::dNaN();
+  return m_NormalizedHeartRateParasympatheticSlope->GetValue();
+}
+
+bool PulseConfiguration::HasNormalizedHeartElastanceIntercept() const
+{
+  return m_NormalizedHeartElastanceIntercept == nullptr ? false : m_NormalizedHeartElastanceIntercept->IsValid();
+}
+SEScalar& PulseConfiguration::GetNormalizedHeartElastanceIntercept()
+{
+  if (m_NormalizedHeartElastanceIntercept == nullptr)
+    m_NormalizedHeartElastanceIntercept = new SEScalar();
+  return *m_NormalizedHeartElastanceIntercept;
+}
+double PulseConfiguration::GetNormalizedHeartElastanceIntercept() const
+{
+  if (m_NormalizedHeartElastanceIntercept == nullptr)
+    return SEScalar::dNaN();
+  return m_NormalizedHeartElastanceIntercept->GetValue();
+}
+
+bool PulseConfiguration::HasNormalizedHeartElastanceSympatheticSlope() const
+{
+  return m_NormalizedHeartElastanceSympatheticSlope == nullptr ? false : m_NormalizedHeartElastanceSympatheticSlope->IsValid();
+}
+SEScalar& PulseConfiguration::GetNormalizedHeartElastanceSympatheticSlope()
+{
+  if (m_NormalizedHeartElastanceSympatheticSlope == nullptr)
+    m_NormalizedHeartElastanceSympatheticSlope = new SEScalar();
+  return *m_NormalizedHeartElastanceSympatheticSlope;
+}
+double PulseConfiguration::GetNormalizedHeartElastanceSympatheticSlope() const
+{
+  if (m_NormalizedHeartElastanceSympatheticSlope == nullptr)
+    return SEScalar::dNaN();
+  return m_NormalizedHeartElastanceSympatheticSlope->GetValue();
+}
+
+bool PulseConfiguration::HasNormalizedResistanceIntercept() const
+{
+  return m_NormalizedResistanceIntercept == nullptr ? false : m_NormalizedResistanceIntercept->IsValid();
+}
+SEScalar& PulseConfiguration::GetNormalizedResistanceIntercept()
+{
+  if (m_NormalizedResistanceIntercept == nullptr)
+    m_NormalizedResistanceIntercept = new SEScalar();
+  return *m_NormalizedResistanceIntercept;
+}
+double PulseConfiguration::GetNormalizedResistanceIntercept() const
+{
+  if (m_NormalizedResistanceIntercept == nullptr)
+    return SEScalar::dNaN();
+  return m_NormalizedResistanceIntercept->GetValue();
+}
+
+bool PulseConfiguration::HasNormalizedResistanceSympatheticSlope() const
+{
+  return m_NormalizedResistanceSympatheticSlope == nullptr ? false : m_NormalizedResistanceSympatheticSlope->IsValid();
+}
+SEScalar& PulseConfiguration::GetNormalizedResistanceSympatheticSlope()
+{
+  if (m_NormalizedResistanceSympatheticSlope == nullptr)
+    m_NormalizedResistanceSympatheticSlope = new SEScalar();
+  return *m_NormalizedResistanceSympatheticSlope;
+}
+double PulseConfiguration::GetNormalizedResistanceSympatheticSlope() const
+{
+  if (m_NormalizedResistanceSympatheticSlope == nullptr)
+    return SEScalar::dNaN();
+  return m_NormalizedResistanceSympatheticSlope->GetValue();
+}
+
+bool PulseConfiguration::HasNormalizedComplianceIntercept() const
+{
+  return m_NormalizedComplianceIntercept == nullptr ? false : m_NormalizedComplianceIntercept->IsValid();
+}
+SEScalar& PulseConfiguration::GetNormalizedComplianceIntercept()
+{
+  if (m_NormalizedComplianceIntercept == nullptr)
+    m_NormalizedComplianceIntercept = new SEScalar();
+  return *m_NormalizedComplianceIntercept;
+}
+double PulseConfiguration::GetNormalizedComplianceIntercept() const
+{
+  if (m_NormalizedComplianceIntercept == nullptr)
+    return SEScalar::dNaN();
+  return m_NormalizedComplianceIntercept->GetValue();
+}
+
+bool PulseConfiguration::HasNormalizedComplianceParasympatheticSlope() const
+{
+  return m_NormalizedComplianceParasympatheticSlope == nullptr ? false : m_NormalizedComplianceParasympatheticSlope->IsValid();
+}
+SEScalar& PulseConfiguration::GetNormalizedComplianceParasympatheticSlope()
+{
+  if (m_NormalizedComplianceParasympatheticSlope == nullptr)
+    m_NormalizedComplianceParasympatheticSlope = new SEScalar();
+  return *m_NormalizedComplianceParasympatheticSlope;
+}
+double PulseConfiguration::GetNormalizedComplianceParasympatheticSlope() const
+{
+  if (m_NormalizedComplianceParasympatheticSlope == nullptr)
+    return SEScalar::dNaN();
+  return m_NormalizedComplianceParasympatheticSlope->GetValue();
+}
+
 bool PulseConfiguration::HasPupilDiameterBaseline() const
 {
   return m_PupilDiameterBaseline == nullptr ? false : m_PupilDiameterBaseline->IsValid();
@@ -1681,6 +1631,57 @@ double PulseConfiguration::GetPupilDiameterBaseline(const LengthUnit& unit) cons
   if (m_PupilDiameterBaseline == nullptr)
     return SEScalar::dNaN();
   return m_PupilDiameterBaseline->GetValue(unit);
+}
+
+bool PulseConfiguration::HasResponseSlope() const
+{
+  return m_ResponseSlope == nullptr ? false : m_ResponseSlope->IsValid();
+}
+SEScalar& PulseConfiguration::GetResponseSlope()
+{
+  if (m_ResponseSlope == nullptr)
+    m_ResponseSlope = new SEScalar();
+  return *m_ResponseSlope;
+}
+double PulseConfiguration::GetResponseSlope() const
+{
+  if (m_ResponseSlope == nullptr)
+    return SEScalar::dNaN();
+  return m_ResponseSlope->GetValue();
+}
+
+bool PulseConfiguration::HasSystemicResistanceDistributedTimeDelay() const
+{
+  return m_SystemicResistanceDistributedTimeDelay == nullptr ? false : m_SystemicResistanceDistributedTimeDelay->IsValid();
+}
+SEScalarTime& PulseConfiguration::GetSystemicResistanceDistributedTimeDelay()
+{
+  if (m_SystemicResistanceDistributedTimeDelay == nullptr)
+    m_SystemicResistanceDistributedTimeDelay = new SEScalarTime();
+  return *m_SystemicResistanceDistributedTimeDelay;
+}
+double PulseConfiguration::GetSystemicResistanceDistributedTimeDelay(const TimeUnit& unit) const
+{
+  if (m_SystemicResistanceDistributedTimeDelay == nullptr)
+    return SEScalar::dNaN();
+  return m_SystemicResistanceDistributedTimeDelay->GetValue(unit);
+}
+
+bool PulseConfiguration::HasVenousComplianceDistributedTimeDelay() const
+{
+  return m_VenousComplianceDistributedTimeDelay == nullptr ? false : m_VenousComplianceDistributedTimeDelay->IsValid();
+}
+SEScalarTime& PulseConfiguration::GetVenousComplianceDistributedTimeDelay()
+{
+  if (m_VenousComplianceDistributedTimeDelay == nullptr)
+    m_VenousComplianceDistributedTimeDelay = new SEScalarTime();
+  return *m_VenousComplianceDistributedTimeDelay;
+}
+double PulseConfiguration::GetVenousComplianceDistributedTimeDelay(const TimeUnit& unit) const
+{
+  if (m_VenousComplianceDistributedTimeDelay == nullptr)
+    return SEScalar::dNaN();
+  return m_VenousComplianceDistributedTimeDelay->GetValue(unit);
 }
 
 ////////////

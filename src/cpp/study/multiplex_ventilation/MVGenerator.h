@@ -18,22 +18,22 @@ public:
   bool Run(const std::string& stateDir, const std::string listFilename, SerializationFormat f);
 
   static bool StabilizeSpO2(PhysiologyEngine& eng);
-  static bool GenerateStabilizedPatient(pulse::study::multiplex_ventilation::bind::PatientStateData& pData, bool logToConsole);
+  static bool GenerateStabilizedPatient(pulse::study::bind::multiplex_ventilation::PatientStateData& pData, bool logToConsole);
 
 
   static double DefaultResistance_cmH2O_s_Per_L() { return 5; }
   static double DefaultRespirationRate_Per_Min() { return 20; }
   static double DefaultIERatio() { return 0.5; }
 protected:
-  bool SerializeToString(pulse::study::multiplex_ventilation::bind::PatientStateListData& src, std::string& dst, SerializationFormat f) const;
-  bool SerializeToFile(pulse::study::multiplex_ventilation::bind::PatientStateListData& src, const std::string& filename, SerializationFormat f) const;
-  bool SerializeFromString(const std::string& src, pulse::study::multiplex_ventilation::bind::PatientStateListData& dst, SerializationFormat f);
+  bool SerializeToString(pulse::study::bind::multiplex_ventilation::PatientStateListData& src, std::string& dst, SerializationFormat f) const;
+  bool SerializeToFile(pulse::study::bind::multiplex_ventilation::PatientStateListData& src, const std::string& filename, SerializationFormat f) const;
+  bool SerializeFromString(const std::string& src, pulse::study::bind::multiplex_ventilation::PatientStateListData& dst, SerializationFormat f);
   bool SerializeFromFile(const std::string& filename, SerializationFormat f);
 
   void GeneratePatientList();
   void ControllerLoop();
-  void FinalizePatient(pulse::study::multiplex_ventilation::bind::PatientStateData& sim);
-  pulse::study::multiplex_ventilation::bind::PatientStateData* GetNextPatient();
+  void FinalizePatient(pulse::study::bind::multiplex_ventilation::PatientStateData& sim);
+  pulse::study::bind::multiplex_ventilation::PatientStateData* GetNextPatient();
 
   int m_MinCompliance_mL_Per_cmH2O  = 10;
   int m_MaxCompliance_mL_Per_cmH2O  = 50;
@@ -57,6 +57,6 @@ protected:
   std::string m_PatientStateListFile;
   std::set<int> m_PatientsToRun;
   std::vector<std::thread>   m_Threads;
-  pulse::study::multiplex_ventilation::bind::PatientStateListData* m_PatientList;
-  pulse::study::multiplex_ventilation::bind::PatientStateListData* m_CompletedPatientList;
+  pulse::study::bind::multiplex_ventilation::PatientStateListData* m_PatientList;
+  pulse::study::bind::multiplex_ventilation::PatientStateListData* m_CompletedPatientList;
 };

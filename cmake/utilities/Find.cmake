@@ -56,7 +56,7 @@ macro(find_header_ex package header)
     message(FATAL_ERROR "Could not find ${${package}_INCLUDE_DIR}/${header}")
   endif()
   #message(STATUS "${package}_INCLUDE_DIRS : ${${package}_INCLUDE_DIRS}")
-  unset(${package}_INCLUDE_DIR CACHE)
+  #unset(${package}_INCLUDE_DIR CACHE)
 endmacro()
 
 #-----------------------------------------------------------------------------

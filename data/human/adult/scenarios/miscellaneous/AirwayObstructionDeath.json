@@ -1,11 +1,7 @@
 {
   "Name": "AirwayObstructionDeath",
   "Description": "Airway obstruction with no interventions.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json"
-    }
-  },
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager":
   {
     "DataRequest":

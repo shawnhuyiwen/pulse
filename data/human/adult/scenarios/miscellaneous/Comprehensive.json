@@ -1,8 +1,7 @@
 {
   "Name": "Comprehensive",
   "Description": "Do a bunch of stuff together to test the stability of the engine.",
-  "StartType": {
-    "PatientConfiguration": {
+  "PatientConfiguration": {
       "PatientFile": "StandardMale.json",
       "Conditions": { "AnyCondition": [{
         "PatientCondition": {
@@ -91,7 +90,6 @@
           }
         }
       }]}
-    }
   },
   "DataRequestManager": {
     "DataRequest": [{

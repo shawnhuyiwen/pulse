@@ -271,13 +271,10 @@ public class SEScenario
     dst.name = src.getName();
     dst.description = src.getDescription();
 
-    if(src.hasStartType())
-    {
-      if(src.getStartType().hasPatientConfiguration())
-        SEPatientConfiguration.load(src.getStartType().getPatientConfiguration(),dst.getPatientConfiguration(),dst.subMgr);
-      else 
-        dst.engineStateFile = src.getStartType().getEngineStateFile();
-    }
+    if(src.hasPatientConfiguration())
+      SEPatientConfiguration.load(src.getPatientConfiguration(),dst.getPatientConfiguration(),dst.subMgr);
+    else 
+      dst.engineStateFile = src.getEngineStateFile();
 
     if(src.hasDataRequestManager())
       SEDataRequestManager.load(src.getDataRequestManager(), dst.getDataRequestManager());
@@ -303,9 +300,9 @@ public class SEScenario
       dst.setDescription(src.description);
 
     if(src.hasPatientConfiguration())
-      dst.getStartTypeBuilder().setPatientConfiguration(SEPatientConfiguration.unload(src.params));
+      dst.setPatientConfiguration(SEPatientConfiguration.unload(src.params));
     else if(src.hasEngineState())
-      dst.getStartTypeBuilder().setEngineStateFile(src.engineStateFile);
+      dst.setEngineStateFile(src.engineStateFile);
 
     if(!src.drMgr.getRequestedData().isEmpty())
       dst.setDataRequestManager(SEDataRequestManager.unload(src.drMgr));

@@ -7,10 +7,12 @@ from pulse.cdm.patient_actions import SESubstanceInfusion
 from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
 
 def HowTo_SubstanceInfusion():
-    pulse = PulsePhysiologyEngine("pulse_SubstanceInfusion.log")
+    pulse = PulsePhysiologyEngine()
+    pulse.set_log_filename("./test_results/pypulse_SubstanceInfusion.log")
+    pulse.log_to_console(True)
 
     # NOTE: No data requests are being provided, so Pulse will return the default vitals data
-    if not pulse.serialize_from_file("./states/Soldier@0s.json", None, eSerializationFormat.JSON, 0):
+    if not pulse.serialize_from_file("./states/Soldier@0s.json", None, eSerializationFormat.JSON):
         print("Unable to load initial state file")
         return
 
@@ -21,7 +23,7 @@ def HowTo_SubstanceInfusion():
     # Perform an action
     infusion = SESubstanceInfusion()
     infusion.set_comment("Patient receives an infusion of <>")
-    infusion.set_substance("Calcium")
+    infusion.set_substance("Morphine")
     infusion.get_rate().set_value(100, VolumePerTimeUnit.mL_Per_min)
     infusion.get_concentration().set_value(1.0, MassPerVolumeUnit.from_string("g/L"))
     pulse.process_action(infusion)

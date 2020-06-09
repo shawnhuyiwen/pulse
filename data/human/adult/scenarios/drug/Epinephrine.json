@@ -1,11 +1,7 @@
 {
   "Name": "Epinephrine",
   "Description": "Inject standard patient with Epinephrine.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json"
-    }
-  },
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": [{
       "DecimalFormat": {

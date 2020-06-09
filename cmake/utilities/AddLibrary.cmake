@@ -13,7 +13,7 @@ function(add_library_ex target)
 
   set(options VERBOSE SHARED LIB_INSTALL_ONLY)
   set(oneValueArgs)
-  set(multiValueArgs H_FILES CPP_FILES SUBDIR_LIST PUBLIC_DEPENDS PRIVATE_DEPENDS)
+  set(multiValueArgs H_FILES CPP_FILES SUBDIR_LIST PUBLIC_DEPENDS PRIVATE_DEPENDS INSTALL_HEADER_DIR)
   include(CMakeParseArguments)
   cmake_parse_arguments(target "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
 
@@ -41,7 +41,7 @@ function(add_library_ex target)
       list(REMOVE_ITEM target_CPP_FILES ${testing_FILES})
     endif()
   endif()
-
+  
   if( NOT target_SUBDIR_LIST )
     _subdir_list(target_SUBDIR_LIST ${CMAKE_CURRENT_SOURCE_DIR})
   endif()
@@ -67,6 +67,7 @@ function(add_library_ex target)
     ${target_H_FILES}
     ${target_CPP_FILES}
     )
+    
 
   if(target_SHARED)
     add_custom_command(TARGET ${target} POST_BUILD
@@ -125,11 +126,11 @@ function(add_library_ex target)
     #-----------------------------------------------------------------------------
     foreach(h ${target_H_FILES})
       #message(STATUS "Header at ${h}")
-      get_filename_component(DEST_DIR ${h} PATH) 
-      #message(STATUS "Going to ${DEST_DIR}")
+      get_filename_component(DEST_DIR ${h} DIRECTORY)
+      #message(STATUS "Going to ${target_INSTALL_HEADER_DIR}/${DEST_DIR}")
       install(FILES
         ${h}
-        DESTINATION include/${${PROJECT_NAME}_INSTALL_FOLDER}/${DEST_DIR}
+        DESTINATION include/${${PROJECT_NAME}_INSTALL_FOLDER}/${target_INSTALL_HEADER_DIR}/${DEST_DIR}
         COMPONENT Development
       )
     endforeach()

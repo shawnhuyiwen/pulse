@@ -61,5 +61,6 @@ void SEChronicPericardialEffusion::ToString(std::ostream &str) const
   str << "Patient Condition : Pericardial Effusion";
   if (HasComment())
     str << "\n\tComment: " << m_Comment;
+  str << "\n\tAccumulatedVolume: "; HasAccumulatedVolume() ? str << *m_AccumulatedVolume : str << "NaN";
   str << std::flush;
 }

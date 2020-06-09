@@ -1,25 +1,23 @@
 {
   "Name": "RenalStenosisModerateUnilateral",
   "Description": "60% occlusion of the left renal artery leading to unilateral stenosis.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json",
-      "Conditions": { "AnyCondition": [{
-        "PatientCondition": {
-          "ChronicRenalStenosis": {
-            "LeftKidneySeverity": {
-              "Scalar0To1": {
-                "Value": 0.6
-              }
-            },
-            "RightKidneySeverity": {
-              "Scalar0To1": {
-              }
+  "PatientConfiguration": {
+    "PatientFile": "StandardMale.json",
+    "Conditions": { "AnyCondition": [{
+      "PatientCondition": {
+        "ChronicRenalStenosis": {
+          "LeftKidneySeverity": {
+            "Scalar0To1": {
+              "Value": 0.6
+            }
+          },
+          "RightKidneySeverity": {
+            "Scalar0To1": {
             }
           }
         }
-      }]}
-    }
+      }
+    }]}
   },
   "DataRequestManager": {
     "DataRequest": [{
@@ -336,7 +334,7 @@
       "Unit": "mmHg"
     }, {
       "DecimalFormat": {
-        "Precision": 2
+        "Precision": 4
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "RightTubules",
@@ -345,7 +343,7 @@
       "Unit": "g/L"
     }, {
       "DecimalFormat": {
-        "Precision": 2
+        "Precision": 4
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LeftTubules",

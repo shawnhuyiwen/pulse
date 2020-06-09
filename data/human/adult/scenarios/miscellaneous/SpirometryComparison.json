@@ -1,7 +1,7 @@
 {
   "Name": "Spirometry",
   "Description": "Perform a spirometry breath.",
-  "StartType": { "PatientConfiguration": { "PatientFile": "StandardMale.json" }},
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager":
   {
     "DataRequest":

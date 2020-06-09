@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.7)
+cmake_minimum_required(VERSION 3.12)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -33,7 +33,7 @@ set(CMAKE_DEBUG_POSTFIX "d")
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-project(Pulse VERSION 2.3.0 LANGUAGES C CXX)
+project(Pulse VERSION 3.0.0 LANGUAGES C CXX)
 
 #-----------------------------------------------------------------------------
 # Project install directories
@@ -156,6 +156,16 @@ endif()
 # Use the config written by protobuf
 set(protobuf_MODULE_COMPATIBLE ON CACHE BOOL "" FORCE)
 find_package(protobuf REQUIRED NO_DEFAULT_PATH)
+get_target_property(PROTOBUF_LIBRARY_RELEASE protobuf::libprotobuf LOCATION_RELEASE)
+get_target_property(PROTOBUF_LIBRARY_DEBUG protobuf::libprotobuf LOCATION_DEBUG)
+#message(STATUS "PROTOBUF_LIBRARY_RELEASE ${PROTOBUF_LIBRARY_RELEASE}")
+#message(STATUS "PROTOBUF_LIBRARY_DEBUG ${PROTOBUF_LIBRARY_DEBUG}")
+install(FILES ${PROTOBUF_LIBRARY_RELEASE} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib OPTIONAL)
+install(FILES ${PROTOBUF_LIBRARY_DEBUG} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib OPTIONAL)
+get_filename_component(PROTOBUF_LIBRARY_DEBUG ${PROTOBUF_LIBRARY_DEBUG} NAME)
+get_filename_component(PROTOBUF_LIBRARY_RELEASE ${PROTOBUF_LIBRARY_RELEASE} NAME)
+#message(STATUS "PROTOBUF_LIBRARY_RELEASE ${PROTOBUF_LIBRARY_RELEASE}")
+#message(STATUS "PROTOBUF_LIBRARY_DEBUG ${PROTOBUF_LIBRARY_DEBUG}")
 
 set(SCHEMA_SRC "${CMAKE_SOURCE_DIR}/schema")
 set(SCHEMA_DST "${CMAKE_SOURCE_DIR}/schema/bind")
@@ -182,6 +192,7 @@ if(WIN32)
 else()
   file(COPY ${CMAKE_SOURCE_DIR}/bin/run.sh DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
 endif()
+file(COPY ${CMAKE_SOURCE_DIR}/bin/resource DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
 configure_file(${CMAKE_SOURCE_DIR}/bin/rebase.py.in "${CMAKE_INSTALL_PREFIX}/bin/rebase.py" @ONLY)
 configure_file(${CMAKE_SOURCE_DIR}/bin/run.cmake.in "${CMAKE_INSTALL_PREFIX}/bin/run.cmake" @ONLY)
 configure_file(${CMAKE_SOURCE_DIR}/bin/run.config.in "${CMAKE_INSTALL_PREFIX}/bin/run.config" @ONLY)
@@ -210,6 +221,7 @@ write_basic_package_version_file(
 # Export '${PROJECT_NAME}Targets.cmake' for a build tree
 export(
   EXPORT ${PROJECT_NAME}Targets
+  NAMESPACE Pulse::
   FILE "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Targets.cmake"
   )
 
@@ -225,6 +237,7 @@ configure_package_config_file(
 # Export '${PROJECT_NAME}Targets.cmake' for an install tree
 install(
   EXPORT ${PROJECT_NAME}Targets
+  NAMESPACE Pulse::
   FILE ${PROJECT_NAME}Targets.cmake
   DESTINATION ${${PROJECT_NAME}_INSTALL_CONFIG_DIR}
   )

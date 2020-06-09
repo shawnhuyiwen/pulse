@@ -15,7 +15,7 @@ void CommonDataModelTest::ReadSubstanceDirectory(const std::string& rptDirectory
 {
   TimingProfile pTimer;
   std::string testName = "ReadSubstanceDirectory";
-  m_Logger->ResetLogFile(rptDirectory + "/" + testName + ".log");
+  m_Logger->SetLogFile(rptDirectory + "/" + testName + ".log");
   SESubstance obj(m_Logger);
 
   std::string dir = GetCurrentWorkingDirectory();

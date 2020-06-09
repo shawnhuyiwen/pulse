@@ -28,6 +28,7 @@ public:
   SECompartmentManager(SESubstanceManager& subMgr);
   virtual ~SECompartmentManager();
 
+  virtual void Setup();
   virtual void Clear(); //clear memory
 
   virtual void                                                StateChange();// Identify leaves and other bookkeeping

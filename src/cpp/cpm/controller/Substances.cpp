@@ -63,6 +63,138 @@ void PulseSubstances::Clear()
   m_urea = nullptr;
 }
 
+bool PulseSubstances::Setup()
+{
+  m_O2 = GetSubstance("Oxygen");
+  m_CO = GetSubstance("CarbonMonoxide");
+  m_CO2 = GetSubstance("CarbonDioxide");
+  m_N2 = GetSubstance("Nitrogen");
+  m_Hb = GetSubstance("Hemoglobin");
+  m_HbO2 = GetSubstance("Oxyhemoglobin");
+  m_HbCO2 = GetSubstance("Carbaminohemoglobin");
+  m_HbCO = GetSubstance("Carboxyhemoglobin");
+  m_HbO2CO2 = GetSubstance("OxyCarbaminohemoglobin");
+  m_HCO3 = GetSubstance("Bicarbonate");
+  m_epi = GetSubstance("Epinephrine");
+
+  if (m_O2 == nullptr)
+  {
+    Error("Oxygen Definition not found");
+    return false;
+  }
+  if (m_CO == nullptr)
+  {
+    Error("CarbonMonoxide Definition not found");
+    return false;
+  }
+  if (m_CO2 == nullptr)
+  {
+    Error("CarbonDioxide Definition not found");
+    return false;
+  }
+  if (m_N2 == nullptr)
+  {
+    Error("Nitrogen Definition not found");
+    return false;
+  }
+  if (m_Hb == nullptr)
+  {
+    Error("Hemoglobin Definition not found");
+    return false;
+  }
+  if (m_HbO2 == nullptr)
+  {
+    Error("Oxyhemoglobin Definition not found");
+    return false;
+  }
+  if (m_HbCO2 == nullptr)
+  {
+    Error("Carbaminohemoglobin Definition not found");
+    return false;
+  }
+  if (m_HbCO == nullptr)
+  {
+    Error("Carboxyhemoglobin Definition not found");
+    return false;
+  }
+  if (m_HbO2CO2 == nullptr)
+  {
+    Error("OxyCarbaminohemoglobin Definition not found");
+    return false;
+  }
+  if (m_HCO3 == nullptr)
+  {
+    Error("Bicarbonate Definition not found");
+    return false;
+  }
+  if (m_epi == nullptr)
+  {
+    Error("Epinephrine Definition not found");
+    return false;
+  }
+
+  if (m_O2 == nullptr || m_CO == nullptr || m_CO2 == nullptr || m_N2 == nullptr ||
+    m_Hb == nullptr || m_HbO2 == nullptr || m_HbCO2 == nullptr || m_HbCO == nullptr || m_HbO2CO2 == nullptr ||
+    m_epi == nullptr || m_HCO3 == nullptr)
+    return false;
+
+  m_acetoacetate = GetSubstance("Acetoacetate");
+  m_albumin = GetSubstance("Albumin");
+  m_calcium = GetSubstance("Calcium");
+  m_chloride = GetSubstance("Chloride");
+  m_creatinine = GetSubstance("Creatinine");
+  m_globulin = GetSubstance("Globulin");
+  m_glucose = GetSubstance("Glucose");
+  m_insulin = GetSubstance("Insulin");
+  m_lactate = GetSubstance("Lactate");
+  m_potassium = GetSubstance("Potassium");
+  m_sodium = GetSubstance("Sodium");
+  m_tristearin = GetSubstance("Tristearin");
+  m_urea = GetSubstance("Urea");
+
+  if (m_acetoacetate == nullptr)
+    Error("Acetoacetate Definition not found");
+  if (m_albumin == nullptr)
+    Error("Albumin Definition not found");
+  if (m_calcium == nullptr)
+    Error("Calcium Definition not found");
+  if (m_chloride == nullptr)
+    Error("Chloride Definition not found");
+  if (m_creatinine == nullptr)
+    Error("Creatinine Definition not found");
+  if (m_globulin == nullptr)
+    Error("Globulin Definition not found");
+  if (m_glucose == nullptr)
+    Error("Glucose Definition not found");
+  if (m_insulin == nullptr)
+    Error("Insulin Definition not found");
+  if (m_lactate == nullptr)
+    Error("Lactate Definition not found");
+  if (m_potassium == nullptr)
+    Error("Potassium Definition not found");
+  if (m_sodium == nullptr)
+    Error("Sodium Definition not found");
+  if (m_tristearin == nullptr)
+    Error("Tristearin Definition not found");
+  if (m_urea == nullptr)
+    Error("Urea Definition not found");
+  // These metabolites will be activated in initialization
+
+  // Check that drugs have what we need
+  for (SESubstance* sub : m_Substances)
+  {
+    if (sub->HasPD())
+    {
+      if (sub->GetPD().GetEC50().IsZero() || sub->GetPD().GetEC50().IsNegative())
+      {
+        Error(sub->GetName() + " cannot have EC50 <= 0");
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
 void PulseSubstances::InitializeSubstances()
 {  
   // NOTE!!
@@ -114,11 +246,11 @@ void PulseSubstances::InitializeGasCompartments()
   double AmbientCO2VF = Ambient->GetSubstanceQuantity(*m_CO2)->GetVolumeFraction().GetValue();
   double AmbientN2VF = Ambient->GetSubstanceQuantity(*m_N2)->GetVolumeFraction().GetValue();
 
-  SEGasCompartment* Mouth = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Mouth);
-  Mouth->GetSubstanceQuantity(*m_CO2)->GetVolumeFraction().SetValue(AmbientCO2VF);
-  Mouth->GetSubstanceQuantity(*m_N2)->GetVolumeFraction().SetValue(AmbientN2VF);
-  Mouth->GetSubstanceQuantity(*m_O2)->GetVolumeFraction().SetValue(AmbientO2VF);
-  Mouth->Balance(BalanceGasBy::VolumeFraction);
+  SEGasCompartment* Airway = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Airway);
+  Airway->GetSubstanceQuantity(*m_CO2)->GetVolumeFraction().SetValue(AmbientCO2VF);
+  Airway->GetSubstanceQuantity(*m_N2)->GetVolumeFraction().SetValue(AmbientN2VF);
+  Airway->GetSubstanceQuantity(*m_O2)->GetVolumeFraction().SetValue(AmbientO2VF);
+  Airway->Balance(BalanceGasBy::VolumeFraction);
   SEGasCompartment* Carina = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Carina);
   Carina->GetSubstanceQuantity(*m_CO2)->GetVolumeFraction().SetValue(AmbientCO2VF);
   Carina->GetSubstanceQuantity(*m_N2)->GetVolumeFraction().SetValue(AmbientN2VF);
@@ -168,7 +300,7 @@ void PulseSubstances::InitializeGasCompartments()
   Stomach->GetSubstanceQuantity(*m_O2)->GetVolumeFraction().SetValue(0.0);
   Stomach->Balance(BalanceGasBy::VolumeFraction);
 
-  //Initialize the compartments to Ambient values  
+  //Initialize the compartments to Ambient values
   for (SEGasCompartment* cmpt : m_data.GetCompartments().GetAnesthesiaMachineLeafCompartments())
   {
     if (cmpt->HasVolume())
@@ -321,7 +453,7 @@ void PulseSubstances::InitializeLiquidCompartmentGases()
   
   SEScalarMassPerVolume concentration;
   concentration.SetValue(0.146448, MassPerVolumeUnit::g_Per_dL);
-  SetSubstanceConcentration(*m_HCO3, cmpts.GetUrineLeafCompartments(), concentration);    
+  SetSubstanceConcentration(*m_HCO3, cmpts.GetUrineLeafCompartments(), concentration);
 }
 void PulseSubstances::InitializeBloodGases(SELiquidCompartment& cmpt, double Hb_total_mM, double O2_sat, double O2_mmol_Per_L, double CO2_sat, double CO2_mmol_Per_L, double HCO3_mmol_Per_L, double pH, bool distribute)
 {
@@ -600,7 +732,7 @@ void PulseSubstances::InitializeLiquidCompartmentNonGases()
   SetSubstanceMolarity(*m_epi, tissue, molarity1);
   
   // GLUCOSE //
-  concentration.SetValue(80, MassPerVolumeUnit::mg_Per_dL);
+  concentration.SetValue(95, MassPerVolumeUnit::mg_Per_dL);
   SetSubstanceConcentration(*m_glucose, vascular, concentration);
   //Overwriting initialization for liver glucose since acts as the glucose pool for the body
   //subQ = liver->GetExtracellularFluid().GetSubstanceQuantity(*m_glucose);
@@ -629,12 +761,12 @@ void PulseSubstances::InitializeLiquidCompartmentNonGases()
   rightUreter->GetSubstanceQuantity(*m_glucose)->SetToZero();
   bladder->GetSubstanceQuantity(*m_glucose)->SetToZero();
   // Tissue
-  molarity1.SetValue(5.9, AmountPerVolumeUnit::mmol_Per_L);
+  molarity1.SetValue(5.27321, AmountPerVolumeUnit::mmol_Per_L);//95 mg/dL
   molarity2.SetValue(0, AmountPerVolumeUnit::mmol_Per_L);
   SetSubstanceMolarity(*m_glucose, tissue, molarity1, molarity2);
 
-  // INSULIN //
-  concentration.SetValue(0.412, MassPerVolumeUnit::ug_Per_L);
+  // INSULIN // Should be from 70-380 pmol/L (0.40656 - 2.20704 ug/L)
+  concentration.SetValue(0.40656, MassPerVolumeUnit::ug_Per_L);
   SetSubstanceConcentration(*m_insulin, vascular, concentration);
   // None in Urine
   leftBowmansCapsules->GetSubstanceQuantity(*m_insulin)->SetToZero();
@@ -645,7 +777,7 @@ void PulseSubstances::InitializeLiquidCompartmentNonGases()
   rightUreter->GetSubstanceQuantity(*m_insulin)->SetToZero();
   bladder->GetSubstanceQuantity(*m_insulin)->SetToZero();
   // Tissue
-  molarity1.SetValue(7.1e-8, AmountPerVolumeUnit::mmol_Per_L);
+  molarity1.SetValue(71, AmountPerVolumeUnit::pmol_Per_L);
   SetSubstanceMolarity(*m_insulin, tissue, molarity1);
 
   // LACTATE //
@@ -730,7 +862,7 @@ void PulseSubstances::InitializeLiquidCompartmentNonGases()
   SetSubstanceMolarity(*m_tristearin, tissue, molarity1);
 
   // UREA //
-  concentration.SetValue(270.0, MassPerVolumeUnit::mg_Per_L);
+  concentration.SetValue(23.0, MassPerVolumeUnit::mg_Per_dL);
   SetSubstanceConcentration(*m_urea, vascular, concentration);
   // Set Urine
   concentration.SetValue(0.2, MassPerVolumeUnit::mg_Per_dL);
@@ -752,7 +884,7 @@ void PulseSubstances::InitializeLiquidCompartmentNonGases()
   subQ->Balance(BalanceLiquidBy::Concentration);
   subQ = rightUreter->GetSubstanceQuantity(*m_urea);
   subQ->GetConcentration().Set(concentration);
-  subQ->Balance(BalanceLiquidBy::Concentration);  
+  subQ->Balance(BalanceLiquidBy::Concentration);
   subQ = bladder->GetSubstanceQuantity(*m_urea);
   subQ->GetConcentration().Set(concentration);
   subQ->Balance(BalanceLiquidBy::Concentration);
@@ -765,104 +897,7 @@ bool PulseSubstances::LoadSubstanceDirectory(const std::string& data_dir)
 {
   if (!SESubstanceManager::LoadSubstanceDirectory(data_dir))
     return false;
-
-  m_O2 = GetSubstance("Oxygen");
-  m_CO = GetSubstance("CarbonMonoxide");
-  m_CO2 = GetSubstance("CarbonDioxide");
-  m_N2 = GetSubstance("Nitrogen");
-  m_Hb = GetSubstance("Hemoglobin");
-  m_HbO2 = GetSubstance("Oxyhemoglobin");
-  m_HbCO2 = GetSubstance("Carbaminohemoglobin");
-  m_HbCO = GetSubstance("Carboxyhemoglobin");
-  m_HbO2CO2 = GetSubstance("OxyCarbaminohemoglobin");
-  m_HCO3 = GetSubstance("Bicarbonate");
-  m_epi = GetSubstance("Epinephrine");
-
-  if (m_O2 == nullptr)
-    Error("Oxygen Definition not found");
-  if (m_CO == nullptr)
-    Error("CarbonMonoxide Definition not found");
-  if (m_CO2 == nullptr)
-    Error("CarbonDioxide Definition not found");
-  if (m_N2 == nullptr)
-    Error("Nitrogen Definition not found");
-  if (m_Hb == nullptr)
-    Error("Hemoglobin Definition not found");
-  if (m_HbO2 == nullptr)
-    Error("Oxyhemoglobin Definition not found");
-  if (m_HbCO2 == nullptr)
-    Error("Carbaminohemoglobin Definition not found");
-  if (m_HbCO == nullptr)
-    Error("Carboxyhemoglobin Definition not found");
-  if (m_HbO2CO2 == nullptr)
-    Error("OxyCarbaminohemoglobin Definition not found");
-  if (m_HCO3 == nullptr)
-    Error("Bicarbonate Definition not found");
-  if (m_epi == nullptr)
-    Error("Epinephrine Definition not found");
-
-  if (m_O2 == nullptr || m_CO == nullptr || m_CO2 == nullptr || m_N2 == nullptr ||
-    m_Hb == nullptr || m_HbO2 == nullptr || m_HbCO2 == nullptr || m_HbCO == nullptr || m_HbO2CO2 == nullptr ||
-    m_epi == nullptr || m_HCO3 == nullptr)
-    return false;
-
-  m_acetoacetate = GetSubstance("Acetoacetate");
-  m_albumin = GetSubstance("Albumin");
-  m_calcium = GetSubstance("Calcium");
-  m_chloride = GetSubstance("Chloride");
-  m_creatinine = GetSubstance("Creatinine");
-  m_globulin = GetSubstance("Globulin");
-  m_glucose = GetSubstance("Glucose");
-  m_insulin = GetSubstance("Insulin");
-  m_lactate = GetSubstance("Lactate");
-  m_potassium = GetSubstance("Potassium");
-  m_sodium = GetSubstance("Sodium");
-  m_tristearin = GetSubstance("Tristearin");
-  m_urea = GetSubstance("Urea");
-
-  if (m_acetoacetate == nullptr)
-    Error("Acetoacetate Definition not found");
-  if (m_albumin == nullptr)
-    Error("Albumin Definition not found");
-  if (m_calcium == nullptr)
-    Error("Calcium Definition not found");
-  if (m_chloride == nullptr)
-    Error("Chloride Definition not found");
-  if (m_creatinine == nullptr)
-    Error("Creatinine Definition not found");
-  if (m_globulin == nullptr)
-    Error("Globulin Definition not found");
-  if (m_glucose == nullptr)
-    Error("Glucose Definition not found");
-  if (m_insulin == nullptr)
-    Error("Insulin Definition not found");
-  if (m_lactate == nullptr)
-    Error("Lactate Definition not found");
-  if (m_potassium == nullptr)
-    Error("Potassium Definition not found");
-  if (m_sodium == nullptr)
-    Error("Sodium Definition not found");
-  if (m_tristearin == nullptr)
-    Error("Tristearin Definition not found");
-  if (m_urea == nullptr)
-    Error("Urea Definition not found");
-  // These metabolites will be activated in initialization
-
-  // Check that drugs have what we need
-  for (SESubstance* sub : m_Substances)
-  {
-    if (sub->HasPD())
-    {
-      if (sub->GetPD().GetEC50().IsZero() || sub->GetPD().GetEC50().IsNegative())
-      {
-        std::stringstream ss;
-        ss << sub->GetName() << " cannot have EC50 <= 0";
-        Fatal(ss);
-      }
-    }
-  }
-
-  return true;
+  return Setup();
 }
 
 void PulseSubstances::AddActiveSubstance(SESubstance& substance)
@@ -950,7 +985,8 @@ void PulseSubstances::CalculateGenericClearance(double VolumeCleared_mL, SETissu
   SEScalarMassPerVolume concentration;
   if (sub.HasPK())
   {
-    GeneralMath::CalculateConcentration(subQ->GetMass(), tissue.GetMatrixVolume(), concentration, m_Logger);
+    if(!GeneralMath::CalculateConcentration(subQ->GetMass(), tissue.GetMatrixVolume(), concentration, m_Logger))
+      Error("  Compartment : " + tissue.GetName() + ", Substance : " + sub.GetName());
     concentration_ug_Per_mL = concentration.GetValue(MassPerVolumeUnit::ug_Per_mL);
   }
   else
@@ -992,7 +1028,8 @@ void PulseSubstances::CalculateGenericExcretion(double VascularFlow_mL_Per_s, SE
   SEScalarMassPerVolume concentration;
   if (sub.HasPK())
   {
-    GeneralMath::CalculateConcentration(subQ->GetMass(), tissue.GetMatrixVolume(), concentration, m_Logger);
+    if(!GeneralMath::CalculateConcentration(subQ->GetMass(), tissue.GetMatrixVolume(), concentration, m_Logger))
+      Error("  Compartment : " + tissue.GetName() + ", Substance : " + sub.GetName());
     concentration_ug_Per_mL = concentration.GetValue(MassPerVolumeUnit::ug_Per_mL);
   }
   else
@@ -1086,6 +1123,7 @@ void PulseSubstances::SetSubstanceConcentration(SESubstance& sub, const std::vec
     subQ = cmpt->GetSubstanceQuantity(sub);
     subQ->GetConcentration().Set(concentration);
     subQ->Balance(BalanceLiquidBy::Concentration);
+    //std::cout << sub.GetName() << " " << subQ->GetMolarity(AmountPerVolumeUnit::mmol_Per_L) <<"\n";
   }
 }
 void PulseSubstances::SetSubstanceConcentration(SESubstance& sub, const std::vector<SETissueCompartment*>& cmpts, const SEScalarMassPerVolume& concentration)
@@ -1139,6 +1177,7 @@ void PulseSubstances::SetSubstanceMolarity(SESubstance& sub, const std::vector<S
     subQ = itr.second->GetSubstanceQuantity(sub);
     subQ->GetMolarity().Set(molarity);
     subQ->Balance(BalanceLiquidBy::Molarity);
+    //std::cout << sub.GetName() << " " << subQ->GetConcentration(MassPerVolumeUnit::ug_Per_L) <<"\n";
   }
   for (auto itr : m_data.GetCompartments().GetIntracellularFluid())
   {
@@ -1155,6 +1194,7 @@ void PulseSubstances::SetSubstanceMolarity(SESubstance& sub, const std::vector<S
     subQ = itr.second->GetSubstanceQuantity(sub);
     subQ->GetMolarity().Set(extracellular);
     subQ->Balance(BalanceLiquidBy::Molarity);
+    //std::cout << sub.GetName() << subQ->GetConcentration(MassPerVolumeUnit::mg_Per_dL) << " mg/dL \n";
   }
   for (auto itr : m_data.GetCompartments().GetIntracellularFluid())
   {
@@ -1191,12 +1231,12 @@ const SizeIndependentDepositionEfficencyCoefficient& PulseSubstances::GetSizeInd
     Fatal("Particle distribution histogram is not valid");
 
   // First we need compartment-specific deposition fractions for each size
-  SEHistogramFractionVsLength depositionsMouth;
+  SEHistogramFractionVsLength depositionsAirway;
   SEHistogramFractionVsLength depositionsCarina;
   SEHistogramFractionVsLength depositionsAnatomicalDeadspace;
   SEHistogramFractionVsLength depositionsAlveoli;
   // Copy sizes
-  depositionsMouth.GetLength() = concentrations.GetLength();
+  depositionsAirway.GetLength() = concentrations.GetLength();
   depositionsCarina.GetLength() = concentrations.GetLength();
   depositionsAnatomicalDeadspace.GetLength() = concentrations.GetLength();
   depositionsAlveoli.GetLength() = concentrations.GetLength();
@@ -1221,34 +1261,34 @@ const SizeIndependentDepositionEfficencyCoefficient& PulseSubstances::GetSizeInd
       sumAlveoli += 0.0155 / aerodynamicDiameter*(exp(-0.416*pow((log(aerodynamicDiameter) + 2.84), 2)) + 19.11*exp(-0.482*pow((log(aerodynamicDiameter) - 1.362), 2)));
     }
     // Mean this region
-    depositionsMouth.GetFraction().push_back(sumHeadAirways / numPerRegion);
+    depositionsAirway.GetFraction().push_back(sumHeadAirways / numPerRegion);
     depositionsAnatomicalDeadspace.GetFraction().push_back(sumAnatomicalDeadspace / numPerRegion);
     depositionsAlveoli.GetFraction().push_back(sumAlveoli / numPerRegion);
     // If any fractions are more than one, weight the error and distribute
     // More than 1.0 can happen with small particles, possibly due to
     // truncation in the equations in @cite Rostami2009computational.
-    if (depositionsMouth.GetFraction()[i] + depositionsAnatomicalDeadspace.GetFraction()[i] + depositionsAlveoli.GetFraction()[i] > 1.0)
+    if (depositionsAirway.GetFraction()[i] + depositionsAnatomicalDeadspace.GetFraction()[i] + depositionsAlveoli.GetFraction()[i] > 1.0)
     {
-      double mag = depositionsMouth.GetFraction()[i] + depositionsAnatomicalDeadspace.GetFraction()[i] + depositionsAlveoli.GetFraction()[i];
+      double mag = depositionsAirway.GetFraction()[i] + depositionsAnatomicalDeadspace.GetFraction()[i] + depositionsAlveoli.GetFraction()[i];
       double delta = 1.0 - mag;
-      depositionsMouth.GetFraction()[i] = depositionsMouth.GetFraction()[i] * (1. + delta / mag);
+      depositionsAirway.GetFraction()[i] = depositionsAirway.GetFraction()[i] * (1. + delta / mag);
       depositionsAnatomicalDeadspace.GetFraction()[i] = depositionsAnatomicalDeadspace.GetFraction()[i] * (1. + delta / mag);
       depositionsAlveoli.GetFraction()[i] = depositionsAlveoli.GetFraction()[i] * (1. + delta / mag);
     }
-    // Head airways are split between mouth and carina
+    // Head airways are split between Airway and carina
     double carinaFraction = 0.5;
-    depositionsCarina.GetFraction().push_back(depositionsMouth.GetFraction()[i] * carinaFraction);
-    depositionsMouth.GetFraction()[i] *= (1 - carinaFraction);
+    depositionsCarina.GetFraction().push_back(depositionsAirway.GetFraction()[i] * carinaFraction);
+    depositionsAirway.GetFraction()[i] *= (1 - carinaFraction);
   }
 
   // Now we can compute the size-independent deposition efficiencies for each compartment
-  // The fraction of the total that deposits in the mouth is equal to the sum of the 
-  // products of the fraction of each size times the deposition fractions of each size for the mouth.
+  // The fraction of the total that deposits in the Airway is equal to the sum of the 
+  // products of the fraction of each size times the deposition fractions of each size for the Airway.
   // The fraction of the total that deposits in each subsequent windward compartment is the sum of the 
   // products of the fraction of each size times the deposition fractions of each size for the compartment
   // divided by the sum of (1-deposition fraction)*concentration fraction for the leeward compartment.
-  double sumMouthProducts = 0.;
-  double sumMouthOneMinusProducts = 0.;
+  double sumAirwayProducts = 0.;
+  double sumAirwayOneMinusProducts = 0.;
   double sumCarinaProducts = 0.;
   double sumCarinaOneMinusProducts = 0.;
   double sumDeadspaceProducts = 0.;
@@ -1257,8 +1297,8 @@ const SizeIndependentDepositionEfficencyCoefficient& PulseSubstances::GetSizeInd
 
   for (size_t i = 0; i < concentrations.NumberOfBins(); i++)
   {
-    sumMouthProducts += concentrations.GetFraction()[i] * depositionsMouth.GetFraction()[i];
-    sumMouthOneMinusProducts += concentrations.GetFraction()[i] * (1 - depositionsMouth.GetFraction()[i]);
+    sumAirwayProducts += concentrations.GetFraction()[i] * depositionsAirway.GetFraction()[i];
+    sumAirwayOneMinusProducts += concentrations.GetFraction()[i] * (1 - depositionsAirway.GetFraction()[i]);
     sumCarinaProducts += concentrations.GetFraction()[i] * depositionsCarina.GetFraction()[i];
     sumCarinaOneMinusProducts += concentrations.GetFraction()[i] * (1 - depositionsCarina.GetFraction()[i]);
     sumDeadspaceProducts += concentrations.GetFraction()[i] * depositionsAnatomicalDeadspace.GetFraction()[i];
@@ -1267,8 +1307,8 @@ const SizeIndependentDepositionEfficencyCoefficient& PulseSubstances::GetSizeInd
   }
 
   SizeIndependentDepositionEfficencyCoefficient* SIDECoefficients = new SizeIndependentDepositionEfficencyCoefficient();
-  SIDECoefficients->m_mouth = sumMouthProducts;
-  SIDECoefficients->m_carina    = (sumMouthOneMinusProducts < 1.0e-12) ? 0 : sumCarinaProducts / sumMouthOneMinusProducts;
+  SIDECoefficients->m_airway = sumAirwayProducts;
+  SIDECoefficients->m_carina    = (sumAirwayOneMinusProducts < 1.0e-12) ? 0 : sumCarinaProducts / sumAirwayOneMinusProducts;
   SIDECoefficients->m_deadSpace = (sumCarinaOneMinusProducts < 1.0e-12) ? 0 : sumDeadspaceProducts / sumCarinaOneMinusProducts;
   SIDECoefficients->m_alveoli   = (sumDeadspaceOneMinusProducts < 1.0e-12) ? 0 : sumAlveoliProducts / sumDeadspaceOneMinusProducts;
   m_SIDECoefficients[&substance] = SIDECoefficients;

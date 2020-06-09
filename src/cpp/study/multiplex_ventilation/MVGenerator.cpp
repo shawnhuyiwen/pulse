@@ -19,7 +19,7 @@ void MVGenerator::GeneratePatientList()
 {
   int id = 0;
   SAFE_DELETE(m_PatientList);
-  m_PatientList = new pulse::study::multiplex_ventilation::bind::PatientStateListData();
+  m_PatientList = new pulse::study::bind::multiplex_ventilation::PatientStateListData();
 
   //unsigned int totalIterations = (((m_MaxCompliance_mL_Per_cmH2O - m_MinCompliance_mL_Per_cmH2O) / m_StepCompliance_mL_Per_cmH2O) + 1) *
   //                                ((m_MaxPEEP_cmH2O - m_MinPEEP_cmH2O) / m_StepPEEP_cmH2O + 1) *
@@ -71,7 +71,7 @@ bool MVGenerator::Run(const std::string& stateDir, const std::string listFilenam
 
   // Remove any id's we have in the results
   SAFE_DELETE(m_CompletedPatientList);
-  m_CompletedPatientList = new pulse::study::multiplex_ventilation::bind::PatientStateListData();
+  m_CompletedPatientList = new pulse::study::bind::multiplex_ventilation::PatientStateListData();
   if (FileExists(listFilename))
   {
     if (!SerializeFromFile(listFilename, f))
@@ -117,7 +117,7 @@ bool MVGenerator::Run(const std::string& stateDir, const std::string listFilenam
 
 void MVGenerator::ControllerLoop()
 {
-  pulse::study::multiplex_ventilation::bind::PatientStateData* p;
+  pulse::study::bind::multiplex_ventilation::PatientStateData* p;
   while (true)
   {
     p = GetNextPatient();
@@ -133,7 +133,7 @@ void MVGenerator::ControllerLoop()
 /// Generate a set of patients stabilized on a ventilator
 /// 1 ventilator for each patient
 //--------------------------------------------------------------------------------------------------
-bool MVGenerator::GenerateStabilizedPatient(pulse::study::multiplex_ventilation::bind::PatientStateData& pData, bool logToConsole)
+bool MVGenerator::GenerateStabilizedPatient(pulse::study::bind::multiplex_ventilation::PatientStateData& pData, bool logToConsole)
 {
   // Construct our engine name
   std::string baseName = "comp=" + cdm::to_string(pData.compliance_ml_per_cmh2o()) +
@@ -142,7 +142,8 @@ bool MVGenerator::GenerateStabilizedPatient(pulse::study::multiplex_ventilation:
     "_imp=" + cdm::to_string(pData.impairmentfraction());
 
   MakeDirectory(Dir::Solo + "/csv/");
-  auto engine = CreatePulseEngine(Dir::Solo + "/log/" + baseName + ".log");
+  auto engine = CreatePulseEngine();
+  engine->GetLogger()->SetLogFile(Dir::Solo + "/log/" + baseName + ".log");
   engine->SerializeFromFile("./states/StandardMale@0s.json", SerializationFormat::JSON);
   MVEngine::TrackData(*engine->GetEngineTracker(), Dir::Solo + "/csv/" + baseName + ".csv");
   engine->GetLogger()->LogToConsole(logToConsole);
@@ -166,15 +167,24 @@ bool MVGenerator::GenerateStabilizedPatient(pulse::study::multiplex_ventilation:
   SEPulmonaryShuntExacerbation pulmonaryShunt;
   pulmonaryShunt.GetSeverity().SetValue(pData.impairmentfraction());
 
+  // Setup the PC-CMV ventilator
   SEMechanicalVentilatorConfiguration mvc(engine->GetSubstanceManager());
   auto& mv = mvc.GetConfiguration();
   mv.SetConnection(eMechanicalVentilator_Connection::Tube);
-  mv.SetControl(eMechanicalVentilator_Control::PC_CMV);
-  mv.SetDriverWaveform(eMechanicalVentilator_DriverWaveform::Square);
-  mv.GetRespiratoryRate().SetValue(pData.respirationrate_per_min(), FrequencyUnit::Per_min);
-  mv.GetInspiratoryExpiratoryRatio().SetValue(pData.ieratio());
+  mv.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
+  mv.SetExpirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
   mv.GetPeakInspiratoryPressure().SetValue(pData.pip_cmh2o(), PressureUnit::cmH2O);
   mv.GetPositiveEndExpiredPressure().SetValue(pData.peep_cmh2o(), PressureUnit::cmH2O);
+  double respirationRate_per_min = pData.respirationrate_per_min();
+  double IERatio = pData.ieratio();
+
+  // Translate ventilator settings
+  double totalPeriod_s = 60.0 / respirationRate_per_min;
+  double inspiratoryPeriod_s = IERatio * totalPeriod_s / (1 + IERatio);
+  double expiratoryPeriod_s = totalPeriod_s - inspiratoryPeriod_s;
+  mv.GetInspirationTriggerTime().SetValue(expiratoryPeriod_s, TimeUnit::s);
+  mv.GetExpirationCycleTime().SetValue(inspiratoryPeriod_s, TimeUnit::s);
+
   // Start at Atmospheric FiO2
   SESubstanceFraction* FiO2 = &mv.GetFractionInspiredGas(*Oxygen);
   FiO2->GetFractionAmount().SetValue(0.21);
@@ -245,7 +255,7 @@ bool MVGenerator::GenerateStabilizedPatient(pulse::study::multiplex_ventilation:
   auto AortaCO2 = engine->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta)->GetSubstanceQuantity(*engine->GetSubstanceManager().GetSubstance("CarbonDioxide"));
 
   pData.set_airwayflow_l_per_min(engine->GetRespiratorySystem()->GetInspiratoryFlow(VolumePerTimeUnit::L_Per_min));
-  pData.set_airwaypressure_cmh2o(engine->GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Mouth)->GetPressure(PressureUnit::cmH2O));
+  pData.set_airwaypressure_cmh2o(engine->GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Airway)->GetPressure(PressureUnit::cmH2O));
   pData.set_alveolararterialgradient_mmhg(engine->GetRespiratorySystem()->GetAlveolarArterialGradient(PressureUnit::mmHg));
   pData.set_arterialcarbondioxidepartialpressure_mmhg(AortaCO2->GetPartialPressure(PressureUnit::mmHg));
   pData.set_arterialoxygenpartialpressure_mmhg(AortaO2->GetPartialPressure(PressureUnit::mmHg));
@@ -311,10 +321,10 @@ bool MVGenerator::StabilizeSpO2(PhysiologyEngine& eng)
   return true;
 }
 
-pulse::study::multiplex_ventilation::bind::PatientStateData* MVGenerator::GetNextPatient()
+pulse::study::bind::multiplex_ventilation::PatientStateData* MVGenerator::GetNextPatient()
 {
   m_mutex.lock();
-  pulse::study::multiplex_ventilation::bind::PatientStateData* p = nullptr;
+  pulse::study::bind::multiplex_ventilation::PatientStateData* p = nullptr;
   if (!m_PatientsToRun.empty())
   {
     size_t id = *m_PatientsToRun.begin();
@@ -331,7 +341,7 @@ pulse::study::multiplex_ventilation::bind::PatientStateData* MVGenerator::GetNex
   return p;
 }
 
-void MVGenerator::FinalizePatient(pulse::study::multiplex_ventilation::bind::PatientStateData& p)
+void MVGenerator::FinalizePatient(pulse::study::bind::multiplex_ventilation::PatientStateData& p)
 {
   m_mutex.lock();
   auto ps = m_CompletedPatientList->mutable_patients()->Add();
@@ -341,7 +351,7 @@ void MVGenerator::FinalizePatient(pulse::study::multiplex_ventilation::bind::Pat
   m_mutex.unlock();
 }
 
-bool MVGenerator::SerializeToString(pulse::study::multiplex_ventilation::bind::PatientStateListData& src, std::string& output, SerializationFormat f) const
+bool MVGenerator::SerializeToString(pulse::study::bind::multiplex_ventilation::PatientStateListData& src, std::string& output, SerializationFormat f) const
 {
   google::protobuf::util::JsonPrintOptions printOpts;
   printOpts.add_whitespace = true;
@@ -354,14 +364,14 @@ bool MVGenerator::SerializeToString(pulse::study::multiplex_ventilation::bind::P
   }
   return true;
 }
-bool MVGenerator::SerializeToFile(pulse::study::multiplex_ventilation::bind::PatientStateListData& src, const std::string& filename, SerializationFormat f) const
+bool MVGenerator::SerializeToFile(pulse::study::bind::multiplex_ventilation::PatientStateListData& src, const std::string& filename, SerializationFormat f) const
 {
   std::string content;
   if (!SerializeToString(src, content, f))
     return false;
   return WriteFile(content, filename, SerializationFormat::JSON);
 }
-bool MVGenerator::SerializeFromString(const std::string& src, pulse::study::multiplex_ventilation::bind::PatientStateListData& dst, SerializationFormat f)
+bool MVGenerator::SerializeFromString(const std::string& src, pulse::study::bind::multiplex_ventilation::PatientStateListData& dst, SerializationFormat f)
 {
   google::protobuf::util::JsonParseOptions parseOpts;
   google::protobuf::SetLogHandler([](google::protobuf::LogLevel level, const char* filename, int line, const std::string& message)

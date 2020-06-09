@@ -13,7 +13,7 @@ class CDM_DECL SEScenario : public Loggable
   friend class PBScenario;//friend the serialization class
 public:
 
-  SEScenario(SESubstanceManager& subMgr);
+  SEScenario(Logger* logger, std::string const& dataDir="./");
   virtual ~SEScenario();
   
   virtual void Clear(); //clear memory
@@ -51,8 +51,11 @@ public:
   virtual SEDataRequestManager& GetDataRequestManager() { return *m_DataRequestMgr; }
   virtual const SEDataRequestManager& GetDataRequestManager() const { return *m_DataRequestMgr; }
 
+  virtual SESubstanceManager& GetSubstanceManager() { return *m_SubMgr; }
+  virtual const SESubstanceManager& GetSubstanceManager() const { return *m_SubMgr; }
+
 protected:
-  SESubstanceManager&                         m_SubMgr;
+  SESubstanceManager*                         m_SubMgr;
   std::string                                 m_Name;
   std::string                                 m_Description;
   std::string                                 m_EngineStateFile;

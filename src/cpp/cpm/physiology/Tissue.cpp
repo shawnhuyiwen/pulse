@@ -54,6 +54,7 @@
 #include "properties/SEScalarVolumePerTime.h"
 #include "properties/SEScalarVolumePerTimePressure.h"
 #include "properties/SEScalarVolumePerTimeMass.h"
+#include "utils/DataTrack.h"
 #include "utils/GeneralMath.h"
 
 #pragma warning(disable:4786)
@@ -89,6 +90,7 @@ void Tissue::Clear()
   m_Calcium = nullptr;
   m_Insulin = nullptr;
 
+  m_LiverAcetoacetate = nullptr;
   m_LiverTissueAlbumin = nullptr;
   m_LeftLungTissue = nullptr;
   m_RightLungTissue = nullptr;
@@ -111,6 +113,10 @@ void Tissue::Clear()
 //--------------------------------------------------------------------------------------------------
 /// \brief
 /// Initializes system properties to valid homeostatic values.
+///
+/// \details
+/// For stabilization only!
+/// Called AFTER Setup when stabilizing a new patient
 //--------------------------------------------------------------------------------------------------
 void Tissue::Initialize()
 {
@@ -134,10 +140,9 @@ void Tissue::Initialize()
     m_RestingFluidMass_kg += intracellular.GetVolume(VolumeUnit::mL)*m_data.GetConfiguration().GetWaterDensity(MassPerVolumeUnit::kg_Per_mL);
     m_RestingFluidMass_kg += extracellular.GetVolume(VolumeUnit::mL)*m_data.GetConfiguration().GetWaterDensity(MassPerVolumeUnit::kg_Per_mL);
   }
-  m_RestingBloodGlucose_g_Per_L = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::VenaCava)->GetSubstanceQuantity(*m_Glucose)->GetConcentration(MassPerVolumeUnit::g_Per_L);
-  m_RestingBloodLipid_g_Per_L = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::VenaCava)->GetSubstanceQuantity(*m_Tristearin)->GetConcentration(MassPerVolumeUnit::g_Per_L);
-  m_RestingBloodInsulin_g_Per_L = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::VenaCava)->GetSubstanceQuantity(*m_Insulin)->GetConcentration(MassPerVolumeUnit::g_Per_L);
-  m_RestingPatientMass_kg = m_data.GetCurrentPatient().GetWeight(MassUnit::kg);
+  m_RestingBloodGlucose_mg_Per_mL = m_data.GetSubstances().GetGlucose().GetBloodConcentration(MassPerVolumeUnit::mg_Per_mL);
+  m_RestingBloodLipid_mg_Per_mL = m_data.GetSubstances().GetTristearin().GetBloodConcentration(MassPerVolumeUnit::mg_Per_mL);
+  m_RestingBloodInsulin_mg_Per_mL = m_data.GetSubstances().GetInsulin().GetBloodConcentration(MassPerVolumeUnit::mg_Per_mL);
   GetIntracellularFluidPH().SetValue(7.0);
 
   /// \cite guyton2006medical
@@ -151,27 +156,33 @@ void Tissue::Initialize()
 /// Initializes the tissue specific quantities
 ///
 /// \details
-/// Initializes substance concentrations and other data in the tissues.
+/// Called during both State loading and Patient Stabilization
+/// Pull and setup up our data (can be from other systems)
+/// Initialize will be called after this and can overwrite any of this data (only if stabilizing)
 //--------------------------------------------------------------------------------------------------
 void Tissue::SetUp()
 {
-  m_Dt_s = m_data.GetTimeStep().GetValue(TimeUnit::s);
+  m_dt_s = m_data.GetTimeStep().GetValue(TimeUnit::s);
+  m_RestingPatientMass_kg = m_data.GetInitialPatient().GetWeight(MassUnit::kg);
+
+  m_Acetoacetate = &m_data.GetSubstances().GetAcetoacetate();
+  m_LiverAcetoacetate = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Liver)->GetSubstanceQuantity(*m_Acetoacetate);
 
   m_AlbuminProdutionRate_g_Per_s = 1.5e-4; /// \cite jarnum1972plasma
   m_Albumin = &m_data.GetSubstances().GetAlbumin();
   m_LiverTissueAlbumin = m_data.GetCompartments().GetLiquidCompartment(pulse::ExtravascularCompartment::LiverExtracellular)->GetSubstanceQuantity(*m_Albumin);
   m_Glucose = &m_data.GetSubstances().GetGlucose();
 
-  m_Tristearin = &m_data.GetSubstances().GetTristearin();
   m_O2 = &m_data.GetSubstances().GetO2();
   m_CO2 = &m_data.GetSubstances().GetCO2();
   m_CO = &m_data.GetSubstances().GetCO();
+
   m_Lactate = &m_data.GetSubstances().GetLactate();
-  m_Acetoacetate = &m_data.GetSubstances().GetAcetoacetate();
   m_Creatinine = &m_data.GetSubstances().GetCreatinine();
   m_Sodium = &m_data.GetSubstances().GetSodium();
   m_Calcium = &m_data.GetSubstances().GetCalcium();
   m_Insulin = &m_data.GetSubstances().GetInsulin();
+  m_Tristearin = &m_data.GetSubstances().GetTristearin();
 
   m_GutT1 = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetNode(pulse::TissueNode::GutT1);
   m_GutT1ToGutT3 = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(pulse::TissuePath::GutT1ToGutT3);
@@ -182,7 +193,6 @@ void Tissue::SetUp()
   m_FatVascularLipid = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Fat)->GetSubstanceQuantity(*m_Tristearin);
   m_LiverVascularGlucose = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Liver)->GetSubstanceQuantity(*m_Glucose);
   m_MuscleVascularGlucose = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Muscle)->GetSubstanceQuantity(*m_Glucose);
-
 
   m_LeftLungTissue = m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::LeftLung);
   m_RightLungTissue = m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::RightLung);
@@ -292,9 +302,9 @@ void Tissue::AtSteadyState()
 //--------------------------------------------------------------------------------------------------
 void Tissue::PreProcess()
 {
-  ProduceAlbumin(m_Dt_s);
+  ProduceAlbumin(m_dt_s);
   // Glucose and lipid control is currently deactivated for model improvements.
-  // GlucoseLipidControl(m_Dt_s);  
+  // GlucoseLipidControl(m_dt_s);  
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -307,7 +317,7 @@ void Tissue::PreProcess()
 //--------------------------------------------------------------------------------------------------
 void Tissue::Process(bool solve_and_transport)
 {
-  CalculateMetabolicConsumptionAndProduction(m_Dt_s);
+  CalculateMetabolicConsumptionAndProduction(m_dt_s);
   CalculatePulmonaryCapillarySubstanceTransfer();
   CalculateDiffusion();
   SEScalarMassPerVolume albuminConcentration;
@@ -387,7 +397,7 @@ void Tissue::CalculateDiffusion()
       {
         if (!tissueKinetics->HasPartitionCoefficient())
           continue;// wtf...? why would it not have it?
-        PerfusionLimitedDiffusion(*tissue, *vascular, *sub, tissueKinetics->GetPartitionCoefficient(), m_Dt_s); //Balance happens in the method      
+        PerfusionLimitedDiffusion(*tissue, *vascular, *sub, tissueKinetics->GetPartitionCoefficient(), m_dt_s); //Balance happens in the method      
       }
       // Otherwise, the diffusion is computed by either:
       // Instantaneous diffusion (gases and very small molecules), Simple diffusion (all substances), Facilitated diffusion (glucose), or Active diffusion (pumps)
@@ -405,7 +415,7 @@ void Tissue::CalculateDiffusion()
           // Sodium is special. We need to diffuse for renal function.
           // We will not treat sodium any differently once diffusion functionality is fully implemented.
           if (sub == m_Sodium)
-            double moved_ug = MoveMassByInstantDiffusion(*vascular, extracellular, *sub, m_Dt_s);
+            double moved_ug = MoveMassByInstantDiffusion(*vascular, extracellular, *sub, m_dt_s);
 
           continue;
         }
@@ -416,7 +426,7 @@ void Tissue::CalculateDiffusion()
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         // --- First, instant diffusion ---
-        moved_ug = MoveMassByInstantDiffusion(*vascular, extracellular, *sub, m_Dt_s);
+        moved_ug = MoveMassByInstantDiffusion(*vascular, extracellular, *sub, m_dt_s);
 
         // --- Second, simple diffusion ---
           // Compute the vascular to extracellular permeability coefficient
@@ -434,7 +444,7 @@ void Tissue::CalculateDiffusion()
         double vToECpermeabilityCoefficient_mL_Per_s = vToECpermeabilityCoefficient_mL_Per_s_g * tissue->GetTotalMass(MassUnit::g);
           // A tuning factor helps tune the dynamics - note that concentrations will ALWAYS equilibrate in steady state given enough time regardless of the permeability
         double vToECPermeabilityTuningFactor = 1.0; 
-        moved_ug = MoveMassBySimpleDiffusion(*vascular, extracellular, *sub, vToECPermeabilityTuningFactor*vToECpermeabilityCoefficient_mL_Per_s, m_Dt_s);
+        moved_ug = MoveMassBySimpleDiffusion(*vascular, extracellular, *sub, vToECPermeabilityTuningFactor*vToECpermeabilityCoefficient_mL_Per_s, m_dt_s);
 
         // --- Third facilitated diffusion ---
         if (sub->HasMaximumDiffusionFlux())
@@ -443,13 +453,13 @@ void Tissue::CalculateDiffusion()
           double capCoverage_cm2 = massToAreaCoefficient_cm2_Per_g * tissue->GetTotalMass(MassUnit::g);
           double maximumMassFlux = sub->GetMaximumDiffusionFlux(MassPerAreaTimeUnit::g_Per_cm2_s);
           double combinedCoefficient_g_Per_s = maximumMassFlux*capCoverage_cm2;
-          moved_ug = MoveMassByFacilitatedDiffusion(*vascular, extracellular, *sub, combinedCoefficient_g_Per_s, m_Dt_s);
+          moved_ug = MoveMassByFacilitatedDiffusion(*vascular, extracellular, *sub, combinedCoefficient_g_Per_s, m_dt_s);
         }
 
         // --- Fourth, and final vascular to EV-EC, Active diffusion ---
         double pumpRate_g_Per_s = 0.0;
         /// \todo Compute the pump rate from an empirically-determined baseline pump rate.
-        moved_ug = MoveMassByActiveTransport(*vascular, extracellular, *sub, pumpRate_g_Per_s, m_Dt_s);
+        moved_ug = MoveMassByActiveTransport(*vascular, extracellular, *sub, pumpRate_g_Per_s, m_dt_s);
         
 #ifdef PROBE_BLOOD_GASES
         if (sub == &m_data.GetSubstances().GetO2() || sub == &m_data.GetSubstances().GetCO2())
@@ -465,12 +475,12 @@ void Tissue::CalculateDiffusion()
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         // --- First, instant diffusion ---
-        moved_ug = MoveMassByInstantDiffusion(extracellular, intracellular, *sub, m_Dt_s);
+        moved_ug = MoveMassByInstantDiffusion(extracellular, intracellular, *sub, m_dt_s);
 
         // --- Second, simple diffusion ---
           // Assuming that the capillary permeability coefficient is proportional to the cellular membrane permeability coefficient for a given tissue and substance
         double ECtoICPermeabilityFactor = 1.0; // This is the permeability constant
-        moved_ug = MoveMassBySimpleDiffusion(extracellular, intracellular, *sub, ECtoICPermeabilityFactor*vToECpermeabilityCoefficient_mL_Per_s, m_Dt_s);
+        moved_ug = MoveMassBySimpleDiffusion(extracellular, intracellular, *sub, ECtoICPermeabilityFactor*vToECpermeabilityCoefficient_mL_Per_s, m_dt_s);
 
         // --- Third facilitated diffusion ---
           // In Pulse, only glucose moves by facilitated diffusion, and it is assumed that all glucose that gets to the 
@@ -480,7 +490,7 @@ void Tissue::CalculateDiffusion()
         // --- Fourth, and final vascular to EV-EC, Active diffusion ---
         pumpRate_g_Per_s = 0.0;
         /// \todo Compute the pump rate from an empirically-determined baseline pump rate.
-        moved_ug = MoveMassByActiveTransport(extracellular, intracellular, *sub, pumpRate_g_Per_s, m_Dt_s);        
+        moved_ug = MoveMassByActiveTransport(extracellular, intracellular, *sub, pumpRate_g_Per_s, m_dt_s);        
 
 #ifdef PROBE_BLOOD_GASES
         if (sub == &m_data.GetSubstances().GetO2() || sub == &m_data.GetSubstances().GetCO2())
@@ -540,11 +550,11 @@ void Tissue::CalculatePulmonaryCapillarySubstanceTransfer()
 
     //Left Side Alveoli Transfer
     DiffusingCapacityPerSide_mLPerSPermmHg = StandardDiffusingCapacityOfOxygen_mLPersPermmHg * (1 - RightLungRatio);
-    AlveolarPartialPressureGradientDiffusion(*m_LeftAlveoli, *m_LeftPulmonaryCapillaries, *sub, DiffusingCapacityPerSide_mLPerSPermmHg, m_Dt_s);
+    AlveolarPartialPressureGradientDiffusion(*m_LeftAlveoli, *m_LeftPulmonaryCapillaries, *sub, DiffusingCapacityPerSide_mLPerSPermmHg, m_dt_s);
 
     //Right Side Alveoli Transfer
     DiffusingCapacityPerSide_mLPerSPermmHg = StandardDiffusingCapacityOfOxygen_mLPersPermmHg * RightLungRatio;
-    AlveolarPartialPressureGradientDiffusion(*m_RightAlveoli, *m_RightPulmonaryCapillaries, *sub, DiffusingCapacityPerSide_mLPerSPermmHg, m_Dt_s);
+    AlveolarPartialPressureGradientDiffusion(*m_RightAlveoli, *m_RightPulmonaryCapillaries, *sub, DiffusingCapacityPerSide_mLPerSPermmHg, m_dt_s);
 
     if (m_LeftAlveoli->GetSubstanceQuantity(*sub)->GetVolume(VolumeUnit::mL) < 0.0 || m_LeftPulmonaryCapillaries->GetSubstanceQuantity(*sub)->GetMass(MassUnit::ug) < 0.0 ||
       m_RightAlveoli->GetSubstanceQuantity(*sub)->GetVolume(VolumeUnit::mL) < 0.0 || m_RightPulmonaryCapillaries->GetSubstanceQuantity(*sub)->GetMass(MassUnit::ug) < 0.0)
@@ -624,6 +634,9 @@ void Tissue::CalculateMetabolicConsumptionAndProduction(double time_s)
 
   double exerciseTuningFactor = 1.0; // 2.036237;           // A tuning factor to adjust production and consumption during exercise
 
+  double insulinConc_ug_Per_L = m_data.GetSubstances().GetInsulin().GetBloodConcentration(MassPerVolumeUnit::ug_Per_L);
+
+
   /// The respiratory quotient (RQ) is calculated as a value between 0.7 and 1.0 and linearly increasing 
   /// with the ratio of current glucose to resting glucose at a rate of 0.15. As stored glucose levels
   /// increase, the RQ shifts towards glucose, reaching 1.0 when glucose stores are twice resting.
@@ -652,6 +665,8 @@ void Tissue::CalculateMetabolicConsumptionAndProduction(double time_s)
     }
   }
   RespiratoryQuotient = MIN(RespiratoryQuotient, 1.0);
+  //m_data.GetDataTrack().Probe("RespiratoryQuotient", RespiratoryQuotient);
+  //m_data.GetDataTrack().Probe("CurrentTotalGlucoseStored_g", currentTotalGlucoseStored_g);
 
   // The fraction of glucose consumed is determined from a linear relation of the non-protein respiratory quotient.
   // A respiratory quotient of 0.7 would specify that the metabolism is completely derived from lipids,
@@ -672,12 +687,12 @@ void Tissue::CalculateMetabolicConsumptionAndProduction(double time_s)
   /// \todo Remove this temporary blood increment when diffusion is operational (0.125 is tuning factor)
   double acetoacetateIncrement_mg = 0.375 * KetoneProductionRate_mmol_Per_kg_s * m_Acetoacetate->GetMolarMass(MassPerAmountUnit::mg_Per_mmol) 
     * m_data.GetCurrentPatient().GetWeight(MassUnit::kg) * time_s;
-  m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Liver)->GetSubstanceQuantity(*m_Acetoacetate)->GetMass().IncrementValue(acetoacetateIncrement_mg, MassUnit::mg);
-  if (m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Liver)->GetSubstanceQuantity(*m_Acetoacetate)->GetMass(MassUnit::ug) < ZERO_APPROX)
+  m_LiverAcetoacetate->GetMass().IncrementValue(acetoacetateIncrement_mg, MassUnit::mg);
+  if (m_LiverAcetoacetate->GetMass(MassUnit::ug) < ZERO_APPROX)
   {
-    m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Liver)->GetSubstanceQuantity(*m_Acetoacetate)->GetMass().SetValue(0.0, MassUnit::ug);
+    m_LiverAcetoacetate->GetMass().SetValue(0.0, MassUnit::ug);
   }
-  m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Liver)->GetSubstanceQuantity(*m_Acetoacetate)->Balance(BalanceLiquidBy::Mass);
+  m_LiverAcetoacetate->Balance(BalanceLiquidBy::Mass);
   // End temporary blood increment
 
   // Lactate production is computed per tissue
@@ -711,9 +726,10 @@ void Tissue::CalculateMetabolicConsumptionAndProduction(double time_s)
       totalFlowRate_mL_Per_min += vascular->GetInFlow(VolumePerTimeUnit::mL_Per_min);
   }
 
+  double glucoseConsumed_mg = 0;
   double oxygenConsumptionRate_g_Per_s = 0.0;
   double carbonDioxideProductionRate_g_Per_s = 0.0;
-  double arterialGlucose_mg_Per_dL = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta)->GetSubstanceQuantity(*m_Glucose)->GetConcentration(MassPerVolumeUnit::mg_Per_dL);
+  double bloodGlucose_mg_Per_dL = m_data.GetSubstances().GetGlucose().GetBloodConcentration(MassPerVolumeUnit::mg_Per_dL);
 
   for (SETissueCompartment* tissue : m_ConsumptionProdutionTissues)
   {
@@ -804,24 +820,27 @@ void Tissue::CalculateMetabolicConsumptionAndProduction(double time_s)
       ///////////////////////////////////////////////////////////////
       /////// Non-gas substance consumption /////////////////////////
       ///////////////////////////////////////////////////////////////
-      double glucoseConsumption_mol_Per_s = FractionCarbConsumed*LocalATPUseRate_mol_Per_s*(anaerobicWeight*FractionOfGlucoseToATP + (1.0 - anaerobicWeight)*FractionOfLactateToGlucose);
-      massConverted_g = glucoseConsumption_mol_Per_s*(m_Glucose->GetMolarMass(MassPerAmountUnit::g_Per_mol))*time_s;
+      double glucoseConsumption_mol_Per_s = FractionCarbConsumed * LocalATPUseRate_mol_Per_s* (anaerobicWeight * FractionOfGlucoseToATP + (1.0 - anaerobicWeight) * FractionOfLactateToGlucose);
+      double glucoseConsumption_mg_Per_s = glucoseConsumption_mol_Per_s * m_Glucose->GetMolarMass(MassPerAmountUnit::g_Per_mol);
+      massConverted_g = glucoseConsumption_mg_Per_s*time_s;
       massConverted_g = MIN(massConverted_g, TissueGlucose->GetMass(MassUnit::g));
       TissueGlucose->GetMass().IncrementValue(-massConverted_g, MassUnit::g);
 
       /// \todo Remove this temporary blood increment when diffusion is fully operational 
       // The insulin effect is based on the insulin dependent term in the model described in \cite tolic2000modeling
-      double insulinConc_ug_Per_L = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Liver)->GetSubstanceQuantity(*m_Insulin)->GetConcentration(MassPerVolumeUnit::ug_Per_L);
-      double InsulinIndependRate_mg_Per_s = 0.0017623 * glucoseConsumption_mol_Per_s * m_Glucose->GetMolarMass(MassPerAmountUnit::mg_Per_mol); // Tuning parameter to convert existing model max to values found in \cite keener2009mathematical
-      double insulinDependMax = 0.01; //0.015667;
-      double insulinEffectTimeK = 0.8;
-      double insulinDependRate_mg_Per_s = (insulinDependMax - insulinDependMax / exp(insulinEffectTimeK*insulinConc_ug_Per_L));
-      double glucoseIncrement_mg = -(insulinDependRate_mg_Per_s + InsulinIndependRate_mg_Per_s) * arterialGlucose_mg_Per_dL * time_s;
+      // Tuning parameter to convert existing model max to values found in \cite keener2009mathematical
+      double InsulinIndependRate_mg_Per_s = 1.0 * glucoseConsumption_mg_Per_s;
+      double insulinDependMax = 0.01; // 0.01
+      double insulinEffectTimeK = 0.8; // 0.8
+      double insulinDependRate_mg_Per_s = insulinDependMax - (insulinDependMax / exp(insulinEffectTimeK*insulinConc_ug_Per_L));
+      double glucoseIncrement_mg = -(insulinDependRate_mg_Per_s + InsulinIndependRate_mg_Per_s) * bloodGlucose_mg_Per_dL * time_s;
       if (glucoseIncrement_mg < 0.)
         DistributeMassbyMassWeighted(*vascular, *m_Glucose, glucoseIncrement_mg, MassUnit::mg);
       else
         DistributeMassbyVolumeWeighted(*vascular, *m_Glucose, glucoseIncrement_mg, MassUnit::mg);
       vascular->GetSubstanceQuantity(*m_Glucose)->Balance(BalanceLiquidBy::Mass);
+      glucoseConsumed_mg += -glucoseIncrement_mg;
+      //m_data.GetDataTrack().Probe("GlucoseConsumedBy_"+vascular->GetName()+"_mg", -glucoseIncrement_mg);
       // End temporary blood increment
 
       if (std::abs(TissueGlucose->GetMass(MassUnit::ug)) < ZERO_APPROX)
@@ -871,6 +890,7 @@ void Tissue::CalculateMetabolicConsumptionAndProduction(double time_s)
       }
       else if (tissue == m_LiverTissue)
       {
+        massConverted_g = 0;
         if (TissueLactate->GetMass(MassUnit::g) > 0.0)
         {
           massConverted_g = lactateConsumptionTuningParameter*FractionOfLactateToGlucose*(TissueLactate->GetMass(MassUnit::g) /
@@ -882,17 +902,19 @@ void Tissue::CalculateMetabolicConsumptionAndProduction(double time_s)
             TissueGlucose->GetMass().SetValue(0.0, MassUnit::ug);
           }
         }
+        //m_data.GetDataTrack().Probe("Glucose_Stored_mg", massConverted_g * 1000);
         /// \todo Fully implement endocrine glucose control and remove this temporary blood increment once diffusion is fully operational
         // If blood glucose is low, glucose will be pulled from the liver tissue into the vascular region. This is the equivalent of a glucagon response.
-        // 0.05 is a time tuning factor.
-        
-        if (arterialGlucose_mg_Per_dL < 60.0)
+        // 0.02 is a time tuning factor.
+        double massReleased_mg = 0;
+        if (bloodGlucose_mg_Per_dL < 80.0)
         {
-          double massReleased_mg = 0.02*(60.0 - arterialGlucose_mg_Per_dL)*vascular->GetVolume(VolumeUnit::dL)*time_s;
+          massReleased_mg = 0.02*(80.0 - bloodGlucose_mg_Per_dL)*vascular->GetVolume(VolumeUnit::dL)*time_s;
           //double massReleased_mg = 1.68 * time_s;
           DistributeMassbyVolumeWeighted(*vascular, *m_Glucose, massReleased_mg, MassUnit::mg);
           vascular->GetSubstanceQuantity(*m_Glucose)->Balance(BalanceLiquidBy::Mass);
         } // End temporary endocrine control of glucose
+        //m_data.GetDataTrack().Probe("Glucose_Released_mg", massReleased_mg);
 
         massConverted_g = acidDissociationFraction*KetoneProductionRate_mmol_Per_kg_s * m_data.GetCurrentPatient().GetWeight(MassUnit::kg)
           * m_Acetoacetate->GetMolarMass(MassPerAmountUnit::g_Per_mmol);
@@ -942,6 +964,7 @@ void Tissue::CalculateMetabolicConsumptionAndProduction(double time_s)
 #endif
 
   }
+  //m_data.GetDataTrack().Probe("Glucose_Consumed_mg", glucoseConsumed_mg);
   double oxygenConsumptionRate__mL_Per_s = oxygenConsumptionRate_g_Per_s / m_O2->GetDensity(MassPerVolumeUnit::g_Per_mL);
   double carbonDioxideProductionRate_mL_Per_s = carbonDioxideProductionRate_g_Per_s / m_CO2->GetDensity(MassPerVolumeUnit::g_Per_mL);
   GetOxygenConsumptionRate().SetValue(oxygenConsumptionRate__mL_Per_s, VolumePerTimeUnit::mL_Per_s);
@@ -971,9 +994,9 @@ void Tissue::GlucoseLipidControl(double time_s)
   double currentBloodLipid_mg_Per_mL = m_data.GetSubstances().GetTristearin().GetBloodConcentration(MassPerVolumeUnit::mg_Per_mL);
   double currentInsulinConcentration_mg_Per_mL = m_data.GetSubstances().GetInsulin().GetBloodConcentration(MassPerVolumeUnit::mg_Per_mL);
 
-  double bloodGlucoseDelta_mg_Per_mL = (currentBloodGlucose_mg_Per_mL - m_RestingBloodGlucose_g_Per_L);
-  double bloodLipidDelta_mg_Per_mL = (currentBloodLipid_mg_Per_mL - m_RestingBloodLipid_g_Per_L);
-  double insulinFeedback = currentInsulinConcentration_mg_Per_mL / m_RestingBloodInsulin_g_Per_L;
+  double bloodGlucoseDelta_mg_Per_mL = (currentBloodGlucose_mg_Per_mL - m_RestingBloodGlucose_mg_Per_mL);
+  double bloodLipidDelta_mg_Per_mL = (currentBloodLipid_mg_Per_mL - m_RestingBloodLipid_mg_Per_mL);
+  double insulinFeedback = currentInsulinConcentration_mg_Per_mL / m_RestingBloodInsulin_mg_Per_mL;
   double massDelta_mg = 0.0;
   double evFlow_mL_Per_s = 0.0;
   double vascularVolume = 0.0;
@@ -1137,6 +1160,8 @@ void Tissue::CalculateVitals()
 //--------------------------------------------------------------------------------------------------
 void Tissue::DistributeMassbyVolumeWeighted(SELiquidCompartment& cmpt, const SESubstance& sub, double mass, const MassUnit& unit)
 {
+  if (mass == 0)
+    return;
   SELiquidSubstanceQuantity* subQ = cmpt.GetSubstanceQuantity(sub);
   if (mass < 0.0)
   {
@@ -1254,7 +1279,8 @@ double Tissue::PerfusionLimitedDiffusion(SETissueCompartment& tissue, SELiquidCo
   if (tSubQ == nullptr)
     throw CommonDataModelException("No Tissue-Intracellular Substance Quantity found for substance " + sub.GetName());
   SEScalarMassPerVolume tissueConcentration;
-  GeneralMath::CalculateConcentration(tSubQ->GetMass(), tissue.GetMatrixVolume(), tissueConcentration, m_Logger);
+  if (!GeneralMath::CalculateConcentration(tSubQ->GetMass(), tissue.GetMatrixVolume(), tissueConcentration, m_Logger))
+    Error("  Compartment : " + tissue.GetName() + ", Substance : " + sub.GetName());
   double TissueConcentration_ug_Per_mL = tissueConcentration.GetValue(MassPerVolumeUnit::ug_Per_mL);
   double MassIncrement_ug = 0;
   if (partitionCoeff != 0)
@@ -1354,6 +1380,7 @@ void Tissue::AlveolarPartialPressureGradientDiffusion(SEGasCompartment& pulmonar
     {
       //Move all we can
       DiffusedMass_ug = -vMass_ug;
+      DiffusedMass_ug *= 0.99; /// \todo Why is this needed? It seems to prevent some sort of numerical issue.
       DiffusedVolume_mL = DiffusedMass_ug / sub.GetDensity(MassPerVolumeUnit::ug_Per_mL);
     }
   }

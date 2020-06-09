@@ -1,31 +1,84 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
+import sys
+import logging
 from enum import Enum
 from pulse.cdm.engine import eSerializationFormat, SEDataRequestManager, SEDataRequest
+from pulse.cdm.engine import IEventHandler, SEEventChange, ILoggerForward, eEvent
+
 from pulse.cdm.patient import eSex, SEPatient, SEPatientConfiguration
-from pulse.cdm.patient_actions import SEExercise, SEHemorrhage
+from pulse.cdm.patient_actions import SEExercise
 from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
-from pulse.cdm.scalars import FrequencyUnit, LengthUnit, MassUnit, \
-                              MassPerVolumeUnit, PressureUnit, TemperatureUnit, \
-                              TimeUnit, VolumePerTimeUnit
+from pulse.cdm.scalars import FrequencyUnit, LengthUnit, MassUnit, MassPerVolumeUnit, \
+                              PressureUnit, TemperatureUnit, TimeUnit
 
 from pulse.cdm.io.patient import serialize_patient_from_file
 from pulse.cdm.io.environment import serialize_environmental_conditions_from_file
-
-# TODO things that still need to be implemented:
-#    Getting Events from Pulse
-#    Getting log information from Pulse
-#    Requesting specific data from Pulse
-#    EngineThunk interface is incomplete
 
 class eStartType(Enum):
     State = 0
     Stabilize_PatientFile = 1
     Stabilize_PatientObject = 2
 
+class local_event_handler(IEventHandler):
+    def handle_event(self, change: SEEventChange):
+        # Listen for specific event states you are interested in
+        if change.event == eEvent.StartOfInhale and change.active:
+            print(change)
+
+class local_log_fowrwad(ILoggerForward):
+    def __init__(self):
+        super().__init__()
+        defaultLevel = logging.INFO
+        self.logger = logging.getLogger()
+        self.logger.setLevel(defaultLevel)
+        formatStr = '%(asctime)s %(levelname)s %(message)s'
+        formatter = logging.Formatter(formatStr)
+        console_handler = logging.StreamHandler(sys.stdout)
+        console_handler.setFormatter(formatter)
+        self.logger.addHandler(console_handler)
+
+    def forward_debug(self, msg: str):
+        self.logger.debug(msg)
+        print(msg)
+    def forward_info(self, msg: str):
+        self.logger.info(msg)
+        print(msg)
+    def forward_warning(self, msg: str):
+        self.logger.warning(msg)
+        print(msg)
+    def forward_error(self, msg: str):
+        self.logger.error(msg)
+        print(msg)
+    def forward_fatal(self, msg: str):
+        self.logger.fatal(msg)
+        print(msg)
+
 def HowTo_UseEngine():
-    pulse = PulsePhysiologyEngine("pulse_EngineUse.log")
+
+    pulse = PulsePhysiologyEngine()
+
+    # Let's print out events from the engine
+    pulse.set_event_handler(local_event_handler())
+
+    #  Logging manipulation:
+    #  Passing the log_forward object to PulsePhysiologyEngine will allow you to control the logging of the engine.
+    #  A pre-existing class has been used here,
+    #  which forwards the logging to the Python console via the logging package.
+    # This is the recommended approach to logging
+    pulse.set_log_listener(local_log_fowrwad())
+
+    # You can have pulse make a log file for you,
+    # Pulse will only write a log if you pass a filename
+    pulse.set_log_filename("./test_results/HowTo_EngineUse.py.log");
+
+    # You can also have Pulse write to the console (std::cout)
+    # By default this is off
+    pulse.log_to_console(True)
+
+    # By default, NOTHING is written to file/log/pulled to python
+    # You must explictly do one or more of the above to get log messages somewhere
 
     # Data Requests are used to get access to the hundreds of parameters available in Pulse
     # To learn more about Data Requests please look at the data request section here:
@@ -53,11 +106,14 @@ def HowTo_UseEngine():
     ]
     data_req_mgr = SEDataRequestManager(data_requests)
     # NOTE: If No data requests are being provided, Pulse will return the default vitals data
+    # In addition to getting this data back via this API
+    # You can have Pulse write the data you have requested to a CSV file
+    data_req_mgr.set_results_filename("./test_results/HowTo_EngineUse.py.csv")
 
     # There are several ways to initialize an engine to a patient
     start_type = eStartType.State
     if start_type is eStartType.State: # The engine is ready instantaneously
-        if not pulse.serialize_from_file("./states/Soldier@0s.json", data_req_mgr, eSerializationFormat.JSON, 0):
+        if not pulse.serialize_from_file("./states/Soldier@0s.json", data_req_mgr, eSerializationFormat.JSON):
             print("Unable to load initial state file")
             return
         # Stabilization will require the engine to run for several minutes
@@ -99,6 +155,7 @@ def HowTo_UseEngine():
         env.get_environmental_conditions().get_respiration_ambient_temperature().set_value(33, TemperatureUnit.C)
 
         # Initialize the engine with our configuration
+        # Optionally you can provide a data_dir root where Pulse will look for required data files
         if not pulse.initialize_engine(pc, data_req_mgr):
             print("Unable to load stabilize engine")
             return
@@ -124,14 +181,24 @@ def HowTo_UseEngine():
     data_req_mgr.to_console(results)
     # Perform an action
 
+    # Let's see what events are active
+    # This is on demand
+    # If you want a callback to notify you when an event becomes active
+    # Then create an event handler
+    active_events = pulse.pull_active_events()
+    # This is a map of event to duration (in seconds)
+    for event, duration_s in active_events.items():
+        print(event + " has been active for " + str(duration_s) + "s")
+
     exercise.set_comment("Stop star jumps")
     exercise.get_intensity().set_value(0)
     pulse.process_action(exercise)
     # Advance some time and print out the vitals
-    # advance_time_r allows sampling rate change
+    # advance_time_sample_per_s allows getting data from pulse at a specified rate
     #  Will advance time by total in first argument
     #  and samples every second argument seconds
-    results = pulse.advance_time_r(45, 5)
+    pulse.advance_time_sample_per_s(45, 5)
+    results = pulse.pull_data()
     data_req_mgr.to_console(results)
 
 HowTo_UseEngine()

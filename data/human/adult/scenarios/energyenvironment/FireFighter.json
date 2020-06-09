@@ -1,8 +1,7 @@
 {
   "Name": "Firefighter",
   "Description": "Simulates a forest firefighter experiencing smoke and CO inhalation during work. Respiratory data is collected before and after smoke and CO inhalation.",
-  "StartType": {
-    "PatientConfiguration": {
+  "PatientConfiguration": {
       "PatientFile": "StandardMale.json",
       "Conditions": { "AnyCondition": [{
         "EnvironmentCondition": {
@@ -11,7 +10,6 @@
           }
         }
       }]}
-    }
   },
   "DataRequestManager": {
     "DataRequest": [{
@@ -382,7 +380,7 @@
         "Precision": 4
       },
       "Category": "LiquidCompartment",
-      "CompartmentName": "Mouth",
+      "CompartmentName": "Airway",
       "SubstanceName": "ForestFireParticulate",
       "PropertyName": "Concentration",
       "Unit": "ug/L"
@@ -436,7 +434,7 @@
         "Precision": 4
       },
       "Category": "LiquidCompartment",
-      "CompartmentName": "Mouth",
+      "CompartmentName": "Airway",
       "SubstanceName": "ForestFireParticulate",
       "PropertyName": "MassDeposited",
       "Unit": "ug"

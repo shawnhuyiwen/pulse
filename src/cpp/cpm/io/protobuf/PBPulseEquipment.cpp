@@ -22,8 +22,8 @@ POP_PROTO_WARNINGS()
 void PBPulseEquipment::Load(const PULSE_BIND::AnesthesiaMachineData& src, AnesthesiaMachine& dst)
 {
   dst.Clear();
-  dst.SetUp();
   PBPulseEquipment::Serialize(src, dst);
+  dst.SetUp();
 }
 void PBPulseEquipment::Serialize(const PULSE_BIND::AnesthesiaMachineData& src, AnesthesiaMachine& dst)
 {
@@ -53,8 +53,8 @@ void PBPulseEquipment::Serialize(const AnesthesiaMachine& src, PULSE_BIND::Anest
 void PBPulseEquipment::Load(const PULSE_BIND::ElectroCardioGramData& src, ECG& dst)
 {
   dst.Clear();
-  dst.SetUp();
   PBPulseEquipment::Serialize(src, dst);
+  dst.SetUp();
 }
 void PBPulseEquipment::Serialize(const PULSE_BIND::ElectroCardioGramData& src, ECG& dst)
 {
@@ -81,8 +81,8 @@ void PBPulseEquipment::Serialize(const ECG& src, PULSE_BIND::ElectroCardioGramDa
 void PBPulseEquipment::Load(const PULSE_BIND::InhalerData& src, Inhaler& dst)
 {
   dst.Clear();
-  dst.SetUp();
   PBPulseEquipment::Serialize(src, dst);
+  dst.SetUp();
 }
 void PBPulseEquipment::Serialize(const PULSE_BIND::InhalerData& src, Inhaler& dst)
 {
@@ -102,14 +102,17 @@ void PBPulseEquipment::Serialize(const Inhaler& src, PULSE_BIND::InhalerData& ds
 void PBPulseEquipment::Load(const PULSE_BIND::MechanicalVentilatorData& src, MechanicalVentilator& dst)
 {
   dst.Clear();
-  dst.SetUp();
   PBPulseEquipment::Serialize(src, dst);
+  dst.SetUp();
 }
 void PBPulseEquipment::Serialize(const PULSE_BIND::MechanicalVentilatorData& src, MechanicalVentilator& dst)
 {
   PBMechanicalVentilator::Serialize(src.common(), dst);
   dst.m_Inhaling = src.inhaling();
   dst.m_CurrentBreathingCycleTime_s = src.currentbreathingcycletime_s();
+  dst.m_PressureTarget_cmH2O = src.pressuretarget_cmh2o();
+  dst.m_PressureBaseline_cmH2O = src.pressurebaseline_cmh2o();
+  dst.m_DriverPressure_cmH2O = src.driverpressure_cmh2o();
 }
 PULSE_BIND::MechanicalVentilatorData* PBPulseEquipment::Unload(const MechanicalVentilator& src)
 {
@@ -122,4 +125,7 @@ void PBPulseEquipment::Serialize(const MechanicalVentilator& src, PULSE_BIND::Me
   PBMechanicalVentilator::Serialize(src, *dst.mutable_common());
   dst.set_inhaling(src.m_Inhaling);
   dst.set_currentbreathingcycletime_s(src.m_CurrentBreathingCycleTime_s);
+  dst.set_pressuretarget_cmh2o(src.m_PressureTarget_cmH2O);
+  dst.set_pressurebaseline_cmh2o(src.m_PressureBaseline_cmH2O);
+  dst.set_driverpressure_cmh2o(src.m_DriverPressure_cmH2O);
 }

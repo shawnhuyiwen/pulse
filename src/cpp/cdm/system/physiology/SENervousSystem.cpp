@@ -10,12 +10,14 @@
 
 SENervousSystem::SENervousSystem(Logger* logger) : SESystem(logger)
 {
+  m_ChemoreceptorFeedback = eSwitch::NullSwitch;
+  m_ChemoreceptorHeartRateScale = nullptr;
+  m_ChemoreceptorHeartElastanceScale = nullptr;
+  m_BaroreceptorFeedback = eSwitch::NullSwitch;
   m_BaroreceptorHeartRateScale = nullptr;
   m_BaroreceptorHeartElastanceScale = nullptr;
   m_BaroreceptorResistanceScale = nullptr;
   m_BaroreceptorComplianceScale = nullptr;
-  m_ChemoreceptorHeartRateScale = nullptr;
-  m_ChemoreceptorHeartElastanceScale = nullptr;
   m_LeftEyePupillaryResponse = nullptr;
   m_RightEyePupillaryResponse = nullptr;
 }
@@ -28,10 +30,12 @@ SENervousSystem::~SENervousSystem()
 void SENervousSystem::Clear()
 {
   SESystem::Clear();
+  m_BaroreceptorFeedback = eSwitch::NullSwitch;
   SAFE_DELETE(m_BaroreceptorHeartRateScale);
   SAFE_DELETE(m_BaroreceptorHeartElastanceScale);
   SAFE_DELETE(m_BaroreceptorResistanceScale);
   SAFE_DELETE(m_BaroreceptorComplianceScale);
+  m_ChemoreceptorFeedback = eSwitch::NullSwitch;
   SAFE_DELETE(m_ChemoreceptorHeartRateScale);
   SAFE_DELETE(m_ChemoreceptorHeartElastanceScale);
   SAFE_DELETE(m_LeftEyePupillaryResponse);
@@ -64,6 +68,15 @@ const SEScalar* SENervousSystem::GetScalar(const std::string& name)
       return GetRightEyePupillaryResponse().GetScalar(prop);
   }
   return nullptr;
+}
+
+eSwitch SENervousSystem::GetBaroreceptorFeedback() const
+{
+  return m_BaroreceptorFeedback;
+}
+void SENervousSystem::SetBaroreceptorFeedback(eSwitch s)
+{
+  m_BaroreceptorFeedback = (s == eSwitch::NullSwitch) ? eSwitch::On : s;
 }
 
 bool SENervousSystem::HasBaroreceptorHeartRateScale() const
@@ -132,6 +145,15 @@ double SENervousSystem::GetBaroreceptorComplianceScale() const
   if (m_BaroreceptorComplianceScale == nullptr)
     return SEScalar::dNaN();
   return m_BaroreceptorComplianceScale->GetValue();
+}
+
+eSwitch SENervousSystem::GetChemoreceptorFeedback() const
+{
+  return m_ChemoreceptorFeedback;
+}
+void SENervousSystem::SetChemoreceptorFeedback(eSwitch s)
+{
+  m_ChemoreceptorFeedback = (s == eSwitch::NullSwitch) ? eSwitch::On : s;
 }
 
 bool SENervousSystem::HasChemoreceptorHeartRateScale() const

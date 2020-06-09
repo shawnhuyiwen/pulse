@@ -1,12 +1,7 @@
 {
   "Name": "HemorrhageClass2Saline",
   "Description": "",
-  "StartType":
-  {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json"
-    }
-  },
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager":
   {
     "DataRequest":
@@ -85,7 +80,7 @@
         "Compartment": "RightLegVasculature",
         "Rate": {
           "ScalarVolumePerTime": {
-            "Value": 100.0,
+            "Value": 90.0,
             "Unit": "mL/min"
           }
         }
@@ -107,7 +102,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 480.0,
+          "Value": 590.0,
           "Unit": "s"
         }
       }

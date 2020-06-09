@@ -1,11 +1,7 @@
 {
   "Name": "Inhaler_OneActuationWithSpacer",
   "Description": "Patient actuates the inhaler once using a spacer.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json"
-    }
-  },
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": [{
       "DecimalFormat": {
@@ -463,7 +459,7 @@
         "Precision": 4
       },
       "Category": "LiquidCompartment",
-      "CompartmentName": "Mouth",
+      "CompartmentName": "Airway",
       "SubstanceName": "Albuterol",
       "PropertyName": "Concentration",
       "Unit": "ug/L"
@@ -517,7 +513,7 @@
         "Precision": 4
       },
       "Category": "LiquidCompartment",
-      "CompartmentName": "Mouth",
+      "CompartmentName": "Airway",
       "SubstanceName": "Albuterol",
       "PropertyName": "MassDeposited",
       "Unit": "ug"

@@ -5,7 +5,9 @@ from pulse.cdm.patient import SEPatientConfiguration
 from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
 
 def HowTo_UseRenalStenosis():
-    pulse = PulsePhysiologyEngine("pulse_RenalStenosis.log")
+    pulse = PulsePhysiologyEngine()
+    pulse.set_log_filename("./test_results/pypulse_RenalStenosis.log")
+    pulse.log_to_console(True)
 
     pc = SEPatientConfiguration()
     pc.set_patient_file("./patients/StandardMale.json")
@@ -18,6 +20,10 @@ def HowTo_UseRenalStenosis():
     if not pulse.initialize_engine(pc, None):
         print("Unable to load stabilize engine")
         return
+
+    # Get some data from the engine
+    results = pulse.pull_data()
+    print(results)
 
     pulse.advance_time_s(30)
     results = pulse.pull_data()

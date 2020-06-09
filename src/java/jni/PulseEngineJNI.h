@@ -14,7 +14,7 @@
 class PulseEngineJNI : public LoggerForward, public SEAdvanceHandler, public SEEventHandler
 {
 public:
-  PulseEngineJNI(const std::string& logFile, const std::string& dataDir="./");
+  PulseEngineJNI();
   ~PulseEngineJNI();
 
   void Reset();
@@ -34,6 +34,8 @@ public:
   DataTrack* trk;
   PulseScenarioExec* exec;
   bool       firstUpdate;
+  bool       forwardLogMessages;
+  bool       forwardEvents;
   int        update_cnt;
   int        updateFrequency_cnt;
   std::unique_ptr<PulseEngine> eng;

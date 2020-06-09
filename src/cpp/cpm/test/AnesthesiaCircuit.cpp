@@ -5,9 +5,10 @@
 
 #include "EngineTest.h"
 #include "controller/Controller.h"
-#include "controller/Substances.h"
 #include "controller/Circuits.h"
 #include "controller/Compartments.h"
+#include "controller/Substances.h"
+#include "physiology/Saturation.h"
 #include "PulseConfiguration.h"
 #include "patient/SEPatient.h"
 #include "substance/SESubstanceFraction.h"
@@ -49,10 +50,14 @@ void PulseEngineTest::AnesthesiaMachineCircuitAndTransportTest(RespiratoryConfig
   std::ofstream fileCircuit;
   std::ofstream fileGraph;
   
-  PulseController pc(sTestDirectory + "/AnesthesiaMachineCircuitAndTransportTest.log");
+  PulseController pc;
+  pc.GetLogger()->SetLogFile(sTestDirectory + "/AnesthesiaMachineCircuitAndTransportTest.log");
   SEPatient patient(pc.GetLogger());
   patient.SerializeFromFile("./patients/StandardMale.json", JSON);
   pc.SetupPatient(patient);
+  pc.GetSubstances().LoadSubstanceDirectory("./");
+  pc.GetSaturationCalculator().Setup();
+  pc.m_Config->Initialize("./");
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();

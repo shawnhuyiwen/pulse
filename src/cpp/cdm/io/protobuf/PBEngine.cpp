@@ -431,7 +431,8 @@ void PBEngine::Load(const CDM_BIND::DataRequestData& src, SEDataRequest& dst)
 }
 void PBEngine::Serialize(const CDM_BIND::DataRequestData& src, SEDataRequest& dst)
 {
-  PBEngine::Serialize(src.decimalformat(), dst);
+  if(src.has_decimalformat())
+    PBEngine::Serialize(src.decimalformat(), dst);
   dst.m_CompartmentName = src.compartmentname();
   dst.m_SubstanceName = src.substancename();
   dst.m_PropertyName = src.propertyname();

@@ -1,11 +1,7 @@
 {
   "Name": "HouseFireSmoke",
   "Description": "High concentrations of particulate and CO concentrations.",
-  "StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json"
-    }
-  },
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": [{
       "DecimalFormat": {
@@ -375,7 +371,7 @@
         "Precision": 4
       },
       "Category": "LiquidCompartment",
-      "CompartmentName": "Mouth",
+      "CompartmentName": "Airway",
       "SubstanceName": "ForestFireParticulate",
       "PropertyName": "Concentration",
       "Unit": "ug/L"
@@ -429,7 +425,7 @@
         "Precision": 4
       },
       "Category": "LiquidCompartment",
-      "CompartmentName": "Mouth",
+      "CompartmentName": "Airway",
       "SubstanceName": "ForestFireParticulate",
       "PropertyName": "MassDeposited",
       "Unit": "ug"

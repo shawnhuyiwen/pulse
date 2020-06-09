@@ -48,11 +48,6 @@ public class ScenarioTestDriver implements SETestDriver.Executor
 	    	return false;
 	    }
     }
-    if(!builder.hasStartType())
-    {
-    	Log.error("Scenario does not have a start type");
-    	return false;
-    }
     
     if(job.patientFile==null)
     {
@@ -65,24 +60,24 @@ public class ScenarioTestDriver implements SETestDriver.Executor
       log = outputFile.replaceAll(".json", "-"+patientName+".log");
       results = outputFile.replaceAll(".json", "-"+patientName+"Results.csv");
       
-      if(builder.getStartType().hasPatientConfiguration())
+      if(builder.hasPatientConfiguration())
       {
-      	  builder.getStartTypeBuilder().getPatientConfigurationBuilder().clearPatient();
-          builder.getStartTypeBuilder().getPatientConfigurationBuilder().setPatientFile(job.patientFile);
+      	  builder.getPatientConfigurationBuilder().clearPatient();
+          builder.getPatientConfigurationBuilder().setPatientFile(job.patientFile);
       }
       else
       {
-      		builder.getStartTypeBuilder().clearEngineStateFile();
-          builder.getStartTypeBuilder().getPatientConfigurationBuilder().setPatientFile(job.patientFile);
+      		builder.clearEngineStateFile();
+          builder.getPatientConfigurationBuilder().setPatientFile(job.patientFile);
       }      
     }
-    if(job.useState && builder.getStartType().hasPatientConfiguration())
+    if(job.useState && builder.hasPatientConfiguration())
     {
-      	String pFile = pBuilder.getScenario().getStartType().getPatientConfiguration().getPatientFile();
+      	String pFile = pBuilder.getScenario().getPatientConfiguration().getPatientFile();
       	pFile =  pFile.substring(0, pFile.indexOf(".json"));
       	pFile = "./states/"+pFile+"@0s.json";
-      	builder.getStartTypeBuilder().clearPatientConfiguration();
-      	builder.getStartTypeBuilder().setEngineStateFile(pFile);
+      	builder.clearPatientConfiguration();
+      	builder.setEngineStateFile(pFile);
     }
 
     if(job.autoSerialization!=null)
@@ -99,7 +94,7 @@ public class ScenarioTestDriver implements SETestDriver.Executor
     }
     //System.out.println(json);
     PulseScenarioExec pse = new PulseScenarioExec();
-    pse.setListener(job);      
+    pse.setListener(job);
     pse.runScenario(log, json, results);
     Log.info("Completed running "+job.name);
     pse=null;

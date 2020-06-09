@@ -13,20 +13,20 @@ public:
   virtual ~MVRunner();
 
   bool Run(const std::string& filename, SerializationFormat f, Mode m);
-  bool Run(pulse::study::multiplex_ventilation::bind::SimulationListData& simList, Mode m, const std::string& resultsFilename);
+  bool Run(pulse::study::bind::multiplex_ventilation::SimulationListData& simList, Mode m, const std::string& resultsFilename);
 
-  static bool StepSimulationFiO2(pulse::study::multiplex_ventilation::bind::SimulationData& sim, const std::string& dataDir = "./");
-  static bool RunSimulationToStableSpO2(pulse::study::multiplex_ventilation::bind::SimulationData& sim, const std::string& dataDir="./");
+  static bool StepSimulationFiO2(pulse::study::bind::multiplex_ventilation::SimulationData& sim, const std::string& dataDir = "./");
+  static bool RunSimulationToStableSpO2(pulse::study::bind::multiplex_ventilation::SimulationData& sim, const std::string& dataDir="./");
 protected:
   bool Run();
-  bool SerializeToString(pulse::study::multiplex_ventilation::bind::SimulationListData& src, std::string& dst, SerializationFormat f) const;
-  bool SerializeToFile(pulse::study::multiplex_ventilation::bind::SimulationListData& src, const std::string& filename, SerializationFormat f) const;
-  bool SerializeFromString(const std::string& src, pulse::study::multiplex_ventilation::bind::SimulationListData& dst, SerializationFormat f);
-  bool SerializeFromFile(const std::string& filename, pulse::study::multiplex_ventilation::bind::SimulationListData& dst, SerializationFormat f);
+  bool SerializeToString(pulse::study::bind::multiplex_ventilation::SimulationListData& src, std::string& dst, SerializationFormat f) const;
+  bool SerializeToFile(pulse::study::bind::multiplex_ventilation::SimulationListData& src, const std::string& filename, SerializationFormat f) const;
+  bool SerializeFromString(const std::string& src, pulse::study::bind::multiplex_ventilation::SimulationListData& dst, SerializationFormat f);
+  bool SerializeFromFile(const std::string& filename, pulse::study::bind::multiplex_ventilation::SimulationListData& dst, SerializationFormat f);
 
   void ControllerLoop();
-  void FinalizeSimulation(pulse::study::multiplex_ventilation::bind::SimulationData& sim);
-  pulse::study::multiplex_ventilation::bind::SimulationData* GetNextSimulation();
+  void FinalizeSimulation(pulse::study::bind::multiplex_ventilation::SimulationData& sim);
+  pulse::study::bind::multiplex_ventilation::SimulationData* GetNextSimulation();
 
   std::mutex  m_mutex;
   bool m_Running;
@@ -36,6 +36,6 @@ protected:
   std::string m_SimulationResultsListFile;
   std::set<int> m_SimulationsToRun;
   std::vector<std::thread>   m_Threads;
-  pulse::study::multiplex_ventilation::bind::SimulationListData* m_SimulationList;
-  pulse::study::multiplex_ventilation::bind::SimulationListData* m_SimulationResultsList;
+  pulse::study::bind::multiplex_ventilation::SimulationListData* m_SimulationList;
+  pulse::study::bind::multiplex_ventilation::SimulationListData* m_SimulationResultsList;
 };

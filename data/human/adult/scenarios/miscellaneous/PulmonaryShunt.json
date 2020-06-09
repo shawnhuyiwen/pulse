@@ -1,8 +1,7 @@
 {
   "Name": "PulmonaryShunt",
   "Description": "Test pulmonary shunt condition and exacerbation action.",
-  "StartType": {
-    "PatientConfiguration": {
+  "PatientConfiguration": {
       "PatientFile": "StandardMale.json",
       "Conditions": { "AnyCondition": [{
         "PatientCondition": {
@@ -15,7 +14,6 @@
           }
         }
       }]}
-    }
   },
   "DataRequestManager":
   {

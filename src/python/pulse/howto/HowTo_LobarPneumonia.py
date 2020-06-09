@@ -6,7 +6,9 @@ from pulse.cdm.patient_actions import SELobarPneumoniaExacerbation
 from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
 
 def HowTo_UseLPE():
-    pulse = PulsePhysiologyEngine("pulse_LobarPneumonia.log")
+    pulse = PulsePhysiologyEngine()
+    pulse.set_log_filename("./test_results/pypulse_LobarPneumonia.log")
+    pulse.log_to_console(True)
 
     pc = SEPatientConfiguration()
     pc.set_patient_file("./patients/StandardMale.json")
@@ -20,6 +22,10 @@ def HowTo_UseLPE():
     if not pulse.initialize_engine(pc, None):
         print("Unable to load stabilize engine")
         return
+
+    # Get some data from the engine
+    results = pulse.pull_data()
+    print(results)
 
     # Perform an action to exacerbate the initial condition state
     exacerbation = SELobarPneumoniaExacerbation()

@@ -10,23 +10,53 @@
 #include "PulseConfiguration.h"
 #include "properties/SEScalarTime.h"
 #include "utils/FileUtils.h"
+#include "utils/ConfigParser.h"
+
+PulseScenarioExec::PulseScenarioExec(Logger* logger) : SEScenarioExec(logger)
+{
+  m_PulseScenario = nullptr;
+  m_AutoSerializationTime_s = 0;
+  m_AutoSerializationPeriod_s = 0;
+  m_AutoSerializationTimeStamps = eSwitch::Off;
+  m_AutoSerializationAfterActions = eSwitch::Off;
+  m_AutoSerializationReload = eSwitch::Off;
+  m_AutoSerializationFileName = "";
+}
+
+PulseScenarioExec::~PulseScenarioExec()
+{
+  SAFE_DELETE(m_PulseScenario);
+}
 
 void PulseScenarioExec::Run(const std::string& scenarioFile)
 {
-  // Set up the log file
-  std::string logFile = scenarioFile;
-  logFile = Replace(logFile, "verification", "test_results");
+  std::string logFile=scenarioFile;
+  std::string csvFile=scenarioFile;
+  // Try to read our config file to properly place results in a development structure
+  std::string scenario_dir;
+  ConfigSet* config = ConfigParser::FileToConfigSet("run.config");
+  if (config->HasKey("scenario_dir"))
+  {
+    scenario_dir = config->GetValue("scenario_dir");
+    std::string output = scenarioFile;
+    std::replace(output.begin(), output.end(), '\\', '/');
+    if (output.find(scenario_dir) != std::string::npos)
+    {
+      output = output.substr(scenario_dir.length());
+      logFile = "./test_results/scenarios" + output;
+      csvFile = "./test_results/scenarios" + output;
+    }
+  }
+  delete config;
   logFile = Replace(logFile, ".json", ".log");
-  // Set up the verification output file  
-  std::string dataFile = scenarioFile;
-  dataFile = Replace(dataFile, "verification", "test_results");
-  dataFile = Replace(dataFile, ".json", "Results.csv");
+  csvFile = Replace(csvFile, ".json", "Results.csv");
   // What are we creating?
   std::cout << "Log File : " << logFile << std::endl;
-  std::cout << "Results File : " << dataFile << std::endl;
+  std::cout << "Results File : " << csvFile << std::endl;
   // Delete any results file that may be there
-  remove(dataFile.c_str());
-  std::unique_ptr<PhysiologyEngine> Pulse = CreatePulseEngine(logFile.c_str());
+  remove(csvFile.c_str());
+  std::unique_ptr<PhysiologyEngine> Pulse = CreatePulseEngine();
+  Pulse->GetLogger()->SetLogFile(logFile.c_str());
   if (!Pulse)
   {
     std::cerr << "Unable to create PulseEngine" << std::endl;
@@ -34,8 +64,8 @@ void PulseScenarioExec::Run(const std::string& scenarioFile)
   }
   try
   {
-    PulseScenarioExec exec(*((PulseEngine*)Pulse.get()));
-    exec.Execute(scenarioFile.c_str(), dataFile.c_str());
+    PulseScenarioExec exec(Pulse->GetLogger());
+    exec.ExecuteFile(*Pulse, scenarioFile, SerializationFormat::JSON, csvFile);
   }
   catch (CommonDataModelException ex)
   {
@@ -51,43 +81,21 @@ void PulseScenarioExec::Run(const std::string& scenarioFile)
   }
 }
 
-PulseScenarioExec::PulseScenarioExec(PulseEngine& engine) : SEScenarioExec(engine), m_PulseConfiguration(engine.GetSubstanceManager())
-{
-  m_EngineConfiguration = &m_PulseConfiguration;
-  m_AutoSerializationTime_s = 0;
-  m_AutoSerializationPeriod_s = 0;
-  m_AutoSerializationTimeStamps = eSwitch::Off;
-  m_AutoSerializationAfterActions = eSwitch::Off;
-  m_AutoSerializationReload = eSwitch::Off;
-  m_AutoSerializationFileName = "";
-}
-
-PulseScenarioExec::~PulseScenarioExec()
-{
-  
-}
-
-bool PulseScenarioExec::Execute(const std::string& scenarioFile, const std::string& resultsFile)
+bool PulseScenarioExec::Execute(PhysiologyEngine& engine, const std::string& scenario, SerializationFormat f, const std::string& resultsFile, std::string const& dataDir)
 {
   try
   {
-    m_ss << "Executing scenario file : " << scenarioFile << std::endl;
     Info(m_ss);
     m_Cancel = false;
+    if (m_PulseScenario == nullptr)
+      m_PulseScenario = new PulseScenario(GetLogger(), dataDir);
 
-    PulseScenario scenario(m_Engine.GetSubstanceManager());
-    if (!scenario.SerializeFromFile(scenarioFile,JSON))
+    if (!m_PulseScenario->SerializeFromString(scenario, f))
     {
-        Error("Unable to load scenario file : " + scenarioFile);
-        return false;
+      Error("Unable to load scenario : " + scenario);
+      return false;
     }
-    std::string rFile = resultsFile;
-    if (rFile.empty())
-    {
-      rFile = scenarioFile;
-      rFile += ".csv";
-    }
-    return Execute(scenario, rFile);
+    return Execute(engine, *m_PulseScenario, resultsFile);
   }
   catch (CommonDataModelException& ex)
   {
@@ -99,33 +107,66 @@ bool PulseScenarioExec::Execute(const std::string& scenarioFile, const std::stri
   }
   return false;
 }
-bool PulseScenarioExec::Execute(const PulseScenario& scenario, const std::string& resultsFile)
+bool PulseScenarioExec::ExecuteFile(PhysiologyEngine& engine, const std::string& scenarioFile, SerializationFormat f, const std::string& resultsFile, std::string const& dataDir)
+{
+  try
+  {
+    m_ss << "Executing scenario file : " << scenarioFile << std::endl;
+    Info(m_ss);
+    m_Cancel = false;
+    if (m_PulseScenario == nullptr)
+      m_PulseScenario = new PulseScenario(GetLogger(), dataDir);
+
+    if (!m_PulseScenario->SerializeFromFile(scenarioFile,f))
+    {
+        Error("Unable to load scenario file : " + scenarioFile);
+        return false;
+    }
+    std::string rFile = resultsFile;
+    if (rFile.empty())
+    {
+      rFile = scenarioFile;
+      rFile += ".csv";
+    }
+    return Execute(engine, *m_PulseScenario, rFile);
+  }
+  catch (CommonDataModelException& ex)
+  {
+    Error(ex.what());
+  }
+  catch (...)
+  {
+    Error("Caught unknown exception, ending simulation");
+  }
+  return false;
+}
+bool PulseScenarioExec::Execute(PhysiologyEngine& engine, const PulseScenario& scenario, const std::string& resultsFile)
 {
   // If any configuration parameters were provided, use them over what we had
   if (scenario.HasConfiguration())
   {
-    m_PulseConfiguration.Merge(*scenario.GetConfiguration());
-    if (m_PulseConfiguration.HasAutoSerialization())
+    auto* cfg = scenario.GetConfiguration();
+    if (cfg->HasAutoSerialization())
     {
-      m_AutoSerializationPeriod_s     = m_PulseConfiguration.GetAutoSerialization().GetPeriod(TimeUnit::s);
-      m_AutoSerializationTimeStamps   = m_PulseConfiguration.GetAutoSerialization().GetPeriodTimeStamps();
-      m_AutoSerializationAfterActions = m_PulseConfiguration.GetAutoSerialization().GetAfterActions();
-      m_AutoSerializationReload       = m_PulseConfiguration.GetAutoSerialization().GetReloadState();
-      m_AutoSerializationFileName     = m_PulseConfiguration.GetAutoSerialization().GetFileName();
-      m_AutoSerializationDirectory    = m_PulseConfiguration.GetAutoSerialization().GetDirectory();
+      m_AutoSerializationPeriod_s     = cfg->GetAutoSerialization()->GetPeriod(TimeUnit::s);
+      m_AutoSerializationTimeStamps   = cfg->GetAutoSerialization()->GetPeriodTimeStamps();
+      m_AutoSerializationAfterActions = cfg->GetAutoSerialization()->GetAfterActions();
+      m_AutoSerializationReload       = cfg->GetAutoSerialization()->GetReloadState();
+      m_AutoSerializationFileName     = cfg->GetAutoSerialization()->GetFileName();
+      m_AutoSerializationDirectory    = cfg->GetAutoSerialization()->GetDirectory();
       CreateFilePath(m_AutoSerializationDirectory);
       Info("Exeucting Scenario with AutoSerialization");
     }
   }
-  bool success = SEScenarioExec::Execute(scenario, resultsFile);
+  bool success = SEScenarioExec::Execute(engine, scenario, resultsFile, scenario.GetConfiguration());
   return success;
 }
 
-bool PulseScenarioExec::ProcessActions(const SEScenario& scenario)
+bool PulseScenarioExec::ProcessActions(PulseEngine& engine, const SEScenario& scenario)
 {
-  return SEScenarioExec::ProcessActions(scenario);
+  return SEScenarioExec::ProcessActions(engine, scenario);
 }
-bool PulseScenarioExec::ProcessAction(const SEAction& action)
+bool PulseScenarioExec::ProcessAction(PulseEngine& engine, const SEAction& action)
 {
   if (m_AutoSerializationAfterActions == eSwitch::On)
   {
@@ -135,14 +176,14 @@ bool PulseScenarioExec::ProcessAction(const SEAction& action)
      m_AutoSerializationActions << "-" << m_ss.str().substr(start, end - start);
      m_ss.str("");
   }
-  return SEScenarioExec::ProcessAction(action);
+  return SEScenarioExec::ProcessAction(engine, action);
 }
 
-void PulseScenarioExec::AdvanceEngine()
+void PulseScenarioExec::AdvanceEngine(PulseEngine& engine)
 {
   if (m_AutoSerializationPeriod_s > 0)
   {
-    m_AutoSerializationTime_s += m_Engine.GetTimeStep(TimeUnit::s);
+    m_AutoSerializationTime_s += engine.GetTimeStep(TimeUnit::s);
     if (m_AutoSerializationTime_s >= m_AutoSerializationPeriod_s)
     {
       Info("Serializing state after requested period : " + m_AutoSerializationActions.str());
@@ -150,28 +191,28 @@ void PulseScenarioExec::AdvanceEngine()
       m_AutoSerializationOutput.str("");
       m_AutoSerializationOutput << m_AutoSerializationDirectory <<"/"<< m_AutoSerializationFileName;
       if (m_AutoSerializationTimeStamps == eSwitch::On)
-        m_AutoSerializationOutput << "@" << m_Engine.GetSimulationTime(TimeUnit::s);
-      m_Engine.SerializeToFile(m_AutoSerializationOutput.str() + ".json", SerializationFormat::JSON);
+        m_AutoSerializationOutput << "@" << engine.GetSimulationTime(TimeUnit::s);
+      engine.SerializeToFile(m_AutoSerializationOutput.str() + ".json", SerializationFormat::JSON);
       if (m_AutoSerializationReload == eSwitch::On)
       {
-        m_Engine.SerializeFromFile(m_AutoSerializationOutput.str() + ".json", SerializationFormat::JSON);
-        m_Engine.SerializeToFile(m_AutoSerializationOutput.str() + ".Reloaded.json", SerializationFormat::JSON);
+        engine.SerializeFromFile(m_AutoSerializationOutput.str() + ".json", SerializationFormat::JSON);
+        engine.SerializeToFile(m_AutoSerializationOutput.str() + ".Reloaded.json", SerializationFormat::JSON);
       }
     }
   }
-  m_Engine.AdvanceModelTime();
+  engine.AdvanceModelTime();
   if (m_AutoSerializationActions.str().length() > 0)
   {
     Info("Serializing state after actions : " + m_AutoSerializationActions.str());
     m_AutoSerializationOutput.str("");
     m_AutoSerializationOutput << m_AutoSerializationDirectory <<"/"<< m_AutoSerializationFileName<<m_AutoSerializationActions.str();
     if (m_AutoSerializationTimeStamps == eSwitch::On)
-      m_AutoSerializationOutput << "@" << m_Engine.GetSimulationTime(TimeUnit::s);
-    m_Engine.SerializeToFile(m_AutoSerializationOutput.str() + ".json", SerializationFormat::JSON);
+      m_AutoSerializationOutput << "@" << engine.GetSimulationTime(TimeUnit::s);
+    engine.SerializeToFile(m_AutoSerializationOutput.str() + ".json", SerializationFormat::JSON);
     if (m_AutoSerializationReload == eSwitch::On)
     {
-      m_Engine.SerializeFromFile(m_AutoSerializationOutput.str() + ".json", SerializationFormat::JSON);
-      m_Engine.SerializeToFile(m_AutoSerializationOutput.str() + ".Reloaded.json", SerializationFormat::JSON);
+      engine.SerializeFromFile(m_AutoSerializationOutput.str() + ".json", SerializationFormat::JSON);
+      engine.SerializeToFile(m_AutoSerializationOutput.str() + ".Reloaded.json", SerializationFormat::JSON);
     }
     m_AutoSerializationActions.str("");
   }

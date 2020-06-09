@@ -1,7 +1,7 @@
 {
   "Name": "TensionPneumothoraxOpenVaried",
   "Description": "Patient is afflicted with an open pneumothorax at the left lung. An occlusive dressing is applied to the wound, and then needle decompression occurs.",
-  "StartType": { "PatientConfiguration": { "PatientFile": "StandardMale.json" }},
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager":
   {
     "DataRequest":

@@ -13,13 +13,13 @@ class PULSE_DECL SizeIndependentDepositionEfficencyCoefficient
    SizeIndependentDepositionEfficencyCoefficient() {};
   ~SizeIndependentDepositionEfficencyCoefficient() {}
 
-  double GetMouth() const { return m_mouth; }
+  double GetAirway() const { return m_airway; }
   double GetCarina() const { return m_carina; }
   double GetDeadSpace() const { return m_deadSpace; }
   double GetAlveoli() const { return m_alveoli; }
 
 protected:
-  double m_mouth=0;
+  double m_airway =0;
   double m_carina=0;
   double m_deadSpace=0;
   double m_alveoli=0;
@@ -38,6 +38,7 @@ public:
   virtual void Clear();
   virtual bool LoadSubstanceDirectory(const std::string& data_dir=".");
 
+  virtual bool Setup();
   virtual void InitializeSubstances();
 
   virtual void AddActiveSubstance(SESubstance& substance);

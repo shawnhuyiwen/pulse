@@ -31,6 +31,7 @@
 #include "properties/SEScalarTime.h"
 #include "properties/SEScalarHeatCapacitancePerMass.h"
 #include "properties/SERunningAverage.h"
+#include "utils/DataTrack.h"
 
 #pragma warning(disable:4786)
 #pragma warning(disable:4275)
@@ -56,7 +57,6 @@ void BloodChemistry::Clear()
   m_aortaO2 = nullptr;
   m_aortaCO2 = nullptr;
   m_aortaCO = nullptr;
-  m_aortaBicarbonate = nullptr;
   m_brainO2 = nullptr;
   m_myocardiumO2 = nullptr;
   m_pulmonaryArteriesO2 = nullptr;
@@ -66,20 +66,6 @@ void BloodChemistry::Clear()
   m_venaCava = nullptr;
   m_venaCavaO2 = nullptr;
   m_venaCavaCO2 = nullptr;
-  m_venaCavaAcetoacetate = nullptr;
-  m_venaCavaAlbumin = nullptr;
-  m_venaCavaBicarbonate = nullptr;
-  m_venaCavaCalcium = nullptr;
-  m_venaCavaChloride = nullptr;
-  m_venaCavaCreatinine = nullptr;
-  m_venaCavaEpinephrine = nullptr;
-  m_venaCavaGlucose = nullptr;
-  m_venaCavaInsulin = nullptr;
-  m_venaCavaLactate = nullptr;
-  m_venaCavaPotassium = nullptr;
-  m_venaCavaSodium = nullptr;
-  m_venaCavaTristearin = nullptr;
-  m_venaCavaUrea = nullptr;
   m_ArterialOxygen_mmHg->Clear();
   m_ArterialCarbonDioxide_mmHg->Clear();
 }
@@ -87,6 +73,10 @@ void BloodChemistry::Clear()
 //--------------------------------------------------------------------------------------------------
 /// \brief
 /// Initializes system properties.
+///
+/// \details
+/// For stabilization only!
+/// Called AFTER Setup when stabilizing a new patient
 //--------------------------------------------------------------------------------------------------
 void BloodChemistry::Initialize()
 {
@@ -110,8 +100,10 @@ void BloodChemistry::Initialize()
 /// \brief
 /// Initializes parameters for BloodChemistry Class
 ///
-///  \details
-///   Initializes member variables and system level values on the common data model.
+/// \details
+/// Called during both State loading and Patient Stabilization
+/// Pull and setup up our data (can be from other systems)
+/// Initialize will be called after this and can overwrite any of this data (only if stabilizing)
 //--------------------------------------------------------------------------------------------------
 void BloodChemistry::SetUp()
 {
@@ -119,26 +111,9 @@ void BloodChemistry::SetUp()
   m_redBloodCellVolume_mL = ConfigData.GetMeanCorpuscularVolume(VolumeUnit::mL);
   m_HbPerRedBloodCell_ug_Per_ct = ConfigData.GetMeanCorpuscularHemoglobin(MassPerAmountUnit::ug_Per_ct);
 
-  //Substance
-  SESubstance* acetoacetate = &m_data.GetSubstances().GetAcetoacetate();
-  SESubstance* albumin = &m_data.GetSubstances().GetAlbumin();
-  SESubstance* bicarbonate = &m_data.GetSubstances().GetBicarbonate();
-  SESubstance* calcium = &m_data.GetSubstances().GetCalcium();
-  SESubstance* chloride = &m_data.GetSubstances().GetChloride();
-  SESubstance* creatinine = &m_data.GetSubstances().GetCreatinine();
-  SESubstance* epinephrine = &m_data.GetSubstances().GetEpi();
-  SESubstance* glucose = &m_data.GetSubstances().GetGlucose();
-  SESubstance* insulin = &m_data.GetSubstances().GetInsulin();
-  SESubstance* lactate = &m_data.GetSubstances().GetLactate();
-  SESubstance* potassium = &m_data.GetSubstances().GetPotassium();
-  SESubstance* sodium = &m_data.GetSubstances().GetSodium();
-  SESubstance* tristearin = &m_data.GetSubstances().GetTristearin();
-  SESubstance* urea = &m_data.GetSubstances().GetUrea();
-
   m_aorta = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta);
   m_aortaO2 = m_aorta->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
   m_aortaCO2 = m_aorta->GetSubstanceQuantity(m_data.GetSubstances().GetCO2());
-  m_aortaBicarbonate = m_aorta->GetSubstanceQuantity(m_data.GetSubstances().GetHCO3());
 
   m_brainO2 = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain)->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
   m_myocardiumO2 = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Myocardium)->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
@@ -146,20 +121,6 @@ void BloodChemistry::SetUp()
   m_venaCava = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::VenaCava);
   m_venaCavaO2 = m_venaCava->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
   m_venaCavaCO2 = m_venaCava->GetSubstanceQuantity(m_data.GetSubstances().GetCO2());
-  m_venaCavaAcetoacetate = m_venaCava->GetSubstanceQuantity(*acetoacetate);
-  m_venaCavaAlbumin = m_venaCava->GetSubstanceQuantity(*albumin);
-  m_venaCavaBicarbonate = m_venaCava->GetSubstanceQuantity(*bicarbonate);
-  m_venaCavaCalcium = m_venaCava->GetSubstanceQuantity(*calcium);
-  m_venaCavaChloride = m_venaCava->GetSubstanceQuantity(*chloride);
-  m_venaCavaCreatinine = m_venaCava->GetSubstanceQuantity(*creatinine);
-  m_venaCavaEpinephrine = m_venaCava->GetSubstanceQuantity(*epinephrine);
-  m_venaCavaGlucose = m_venaCava->GetSubstanceQuantity(*glucose);
-  m_venaCavaInsulin = m_venaCava->GetSubstanceQuantity(*insulin);
-  m_venaCavaLactate = m_venaCava->GetSubstanceQuantity(*lactate);
-  m_venaCavaPotassium = m_venaCava->GetSubstanceQuantity(*potassium);
-  m_venaCavaSodium = m_venaCava->GetSubstanceQuantity(*sodium);
-  m_venaCavaTristearin = m_venaCava->GetSubstanceQuantity(*tristearin);
-  m_venaCavaUrea = m_venaCava->GetSubstanceQuantity(*urea);
 
   SELiquidCompartment* pulmonaryArteries = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::PulmonaryArteries);
   m_pulmonaryArteriesO2 = pulmonaryArteries->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
@@ -172,7 +133,7 @@ void BloodChemistry::SetUp()
 
 void BloodChemistry::AtSteadyState()
 {
- 
+
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -238,35 +199,12 @@ void BloodChemistry::Process(bool solve_and_transport)
   GetRedBloodCellCount().SetValue(RedBloodCellCount_ct / m_data.GetCardiovascular().GetBloodVolume(VolumeUnit::L), AmountPerVolumeUnit::ct_Per_L);
   GetPlasmaVolume().SetValue(TotalBloodVolume_mL - RedBloodCellVolume_mL, VolumeUnit::mL);
 
-  // Concentrations
-  m_data.GetSubstances().GetAcetoacetate().GetBloodConcentration().Set(m_venaCavaAcetoacetate->GetConcentration());
-  double albuminConcentration_ug_Per_mL = m_venaCavaAlbumin->GetConcentration(MassPerVolumeUnit::ug_Per_mL);
-  m_data.GetSubstances().GetAlbumin().GetBloodConcentration().Set(m_venaCavaAlbumin->GetConcentration());
-  m_data.GetSubstances().GetBicarbonate().GetBloodConcentration().Set(m_venaCavaBicarbonate->GetConcentration());
-  GetBloodUreaNitrogenConcentration().SetValue(m_venaCavaUrea->GetConcentration(MassPerVolumeUnit::ug_Per_mL) / 2.14, MassPerVolumeUnit::ug_Per_mL);
-  m_data.GetSubstances().GetCalcium().GetBloodConcentration().Set(m_venaCavaCalcium->GetConcentration());
-  m_data.GetSubstances().GetChloride().GetBloodConcentration().Set(m_venaCavaChloride->GetConcentration());
-  m_data.GetSubstances().GetCreatinine().GetBloodConcentration().Set(m_venaCavaCreatinine->GetConcentration());
-  m_data.GetSubstances().GetEpi().GetBloodConcentration().Set(m_venaCavaEpinephrine->GetConcentration());
-  m_data.GetSubstances().GetGlobulin().GetBloodConcentration().SetValue(albuminConcentration_ug_Per_mL*1.6 - albuminConcentration_ug_Per_mL, MassPerVolumeUnit::ug_Per_mL);
-  m_data.GetSubstances().GetGlucose().GetBloodConcentration().Set(m_venaCavaGlucose->GetConcentration());
-  double HemoglobinConcentration = totalHemoglobinO2Hemoglobin_g / TotalBloodVolume_mL;
-  m_data.GetSubstances().GetHb().GetBloodConcentration().SetValue(HemoglobinConcentration, MassPerVolumeUnit::g_Per_mL);
-  m_data.GetSubstances().GetInsulin().GetBloodConcentration().Set(m_venaCavaInsulin->GetConcentration());
-  m_data.GetSubstances().GetLactate().GetBloodConcentration().Set(m_venaCavaLactate->GetConcentration());
-  m_data.GetSubstances().GetPotassium().GetBloodConcentration().Set(m_venaCavaPotassium->GetConcentration());
-  m_data.GetSubstances().GetSodium().GetBloodConcentration().Set(m_venaCavaSodium->GetConcentration());
-  GetTotalProteinConcentration().SetValue(albuminConcentration_ug_Per_mL*1.6, MassPerVolumeUnit::ug_Per_mL);
-  m_data.GetSubstances().GetTristearin().GetBloodConcentration().Set(m_venaCavaTristearin->GetConcentration());
-  m_data.GetSubstances().GetUrea().GetBloodConcentration().Set(m_venaCavaUrea->GetConcentration());
-  // 1.6 comes from reading http://www.drkaslow.com/html/proteins_-_albumin-_globulins-_etc.html
-
   // Calculate pH 
   /// \todo Change system data so that we have ArterialBloodPH (from aorta) and VenousBloodPH (from vena cava)
   GetBloodPH().Set(m_aorta->GetPH());
 
   // Pressures
-  // arterial gas partial pressures -  
+  // arterial gas partial pressures
   GetArterialOxygenPressure().Set(m_aortaO2->GetPartialPressure());
   GetArterialCarbonDioxidePressure().Set(m_aortaCO2->GetPartialPressure());
   // pulmonary arteries
@@ -301,7 +239,16 @@ void BloodChemistry::Process(bool solve_and_transport)
     sub->GetMassInBody().SetValue(bloodMass_ug + tissueMass_ug, MassUnit::ug);
     sub->GetMassInBlood().SetValue(bloodMass_ug, MassUnit::ug);
     sub->GetMassInTissue().SetValue(tissueMass_ug, MassUnit::ug);
+    sub->GetBloodConcentration().SetValue(bloodMass_ug / TotalBloodVolume_mL, MassPerVolumeUnit::ug_Per_mL);
   }
+  // Compute Special Concentrations
+  GetBloodUreaNitrogenConcentration().SetValue(m_data.GetSubstances().GetUrea().GetBloodConcentration(MassPerVolumeUnit::ug_Per_mL) / 2.14, MassPerVolumeUnit::ug_Per_mL);
+  double albuminConcentration_ug_Per_mL = m_data.GetSubstances().GetAlbumin().GetBloodConcentration(MassPerVolumeUnit::ug_Per_mL);
+  m_data.GetSubstances().GetGlobulin().GetBloodConcentration().SetValue(albuminConcentration_ug_Per_mL * 1.6 - albuminConcentration_ug_Per_mL, MassPerVolumeUnit::ug_Per_mL);
+  double HemoglobinConcentration = totalHemoglobinO2Hemoglobin_g / TotalBloodVolume_mL;
+  m_data.GetSubstances().GetHb().GetBloodConcentration().SetValue(HemoglobinConcentration, MassPerVolumeUnit::g_Per_mL);
+  GetTotalProteinConcentration().SetValue(albuminConcentration_ug_Per_mL * 1.6, MassPerVolumeUnit::ug_Per_mL);
+  // 1.6 comes from reading http://www.drkaslow.com/html/proteins_-_albumin-_globulins-_etc.html
   ComputeExposedModelParameters();
 }
 void BloodChemistry::ComputeExposedModelParameters()
@@ -336,11 +283,10 @@ void BloodChemistry::CheckBloodGasLevels()
   //Only check these at the end of a cardiac cycle and reset at start of cardiac cycle 
   if (m_data.GetEvents().IsEventActive(eEvent::StartOfCardiacCycle))
   {
-    double arterialOxygen_mmHg = m_ArterialOxygen_mmHg->Value();
-    double arterialCarbonDioxide_mmHg = m_ArterialCarbonDioxide_mmHg->Value();
-
-    if (m_data.GetState() > EngineState::InitialStabilization)
+    if (m_data.GetState() == EngineState::Active)
     {// Don't throw events if we are initializing
+      double arterialOxygen_mmHg = m_ArterialOxygen_mmHg->Value();
+      double arterialCarbonDioxide_mmHg = m_ArterialCarbonDioxide_mmHg->Value();
       // hypercapnia check
       double hypercapniaFlag = 60.0; // \cite Guyton11thEd p.531 
       double carbonDioxideToxicity = 80.0;  // \cite labertsen1971CarbonDioxideToxicity
@@ -351,10 +297,10 @@ void BloodChemistry::CheckBloodGasLevels()
 
         if (arterialCarbonDioxide_mmHg > carbonDioxideToxicity)
         {
-          m_ss << "Arterial Carbon Dioxide partial pressure is " << arterialCarbonDioxide_mmHg << ". This is beyond 80 mmHg triggering extreme Hypercapnia, patient is in an irreversible state.";
-          Warning(m_ss);
           /// \irreversible The carbon dioxide partial pressure is greater than 80 mmHg. 
           m_data.GetEvents().SetEvent(eEvent::IrreversibleState, true, m_data.GetSimulationTime());
+          m_ss << "Arterial Carbon Dioxide partial pressure is " << arterialCarbonDioxide_mmHg << ". This is beyond 80 mmHg triggering extreme Hypercapnia, patient is in an irreversible state.";
+          Fatal(m_ss);
         }
       }
       else if (m_data.GetEvents().IsEventActive(eEvent::Hypercapnia) && arterialCarbonDioxide_mmHg < (hypercapniaFlag - 3))
@@ -374,10 +320,10 @@ void BloodChemistry::CheckBloodGasLevels()
 
         if (arterialOxygen_mmHg < hypoxiaIrreversible)
         {
-          m_ss << "Arterial Oxygen partial pressure is " << arterialOxygen_mmHg << ". This is below 15 mmHg triggering extreme Hypoxia, patient is in an irreversible state.";
-          Warning(m_ss);
           /// \irreversible Arterial oxygen partial pressure has been critically reduced to below 15 mmHg.
           m_data.GetEvents().SetEvent(eEvent::IrreversibleState, true, m_data.GetSimulationTime());
+          m_ss << "Arterial Oxygen partial pressure is " << arterialOxygen_mmHg << ". This is below 15 mmHg triggering extreme Hypoxia, patient is in an irreversible state.";
+          Fatal(m_ss);
         }
       }
       else if (arterialOxygen_mmHg > (hypoxiaFlag + 3))
@@ -442,24 +388,24 @@ void BloodChemistry::CheckBloodGasLevels()
     // If the oxygen tension in the brain remains below the thresholds for the specified amount of time, the body
     // will go into an irreversible state. The threshold values are chosen based on empirical data reviewed in summary in @cite dhawan2011neurointensive 
     // and from data presented in @cite purins2012brain and @cite doppenberg1998determination.
-    if (m_brainO2->GetPartialPressure(PressureUnit::mmHg) < 21.0)
+    if (m_brainO2->GetPartialPressure(PressureUnit::mmHg) < 19.0) // We are using the mean from dhawan
     {     
       /// \event Patient: Brain Oxygen Deficit Event. The oxygen partial pressure in the brain has dropped to a dangerously low level.
       m_data.GetEvents().SetEvent(eEvent::BrainOxygenDeficit, true, m_data.GetSimulationTime());
 
-      // Irreversible damage occurs if the deficit has gone on too long
-      if (m_data.GetEvents().GetEventDuration(eEvent::BrainOxygenDeficit, TimeUnit::s) > 1800)
-      {
-        m_ss << "Brain Oxygen partial pressure is " << m_brainO2->GetPartialPressure(PressureUnit::mmHg) << " and has been below the danger threshold for " <<
-          m_data.GetEvents().GetEventDuration(eEvent::BrainOxygenDeficit, TimeUnit::s) << " seconds. Damage is irreversible.";
-        Warning(m_ss);
-        /// \irreversible Brain oxygen pressure has been dangerously low for more than 30 minutes.
-        m_data.GetEvents().SetEvent(eEvent::IrreversibleState, true, m_data.GetSimulationTime());
-      }
-
       // If the O2 tension is below a critical threshold, the irreversible damage occurs more quickly
       if (m_brainO2->GetPartialPressure(PressureUnit::mmHg) < 10.0)
       {
+        // Irreversible damage occurs if the deficit has gone on too long
+        if (m_data.GetEvents().GetEventDuration(eEvent::CriticalBrainOxygenDeficit, TimeUnit::s) > 1800)
+        {
+          /// \irreversible Brain oxygen pressure has been dangerously low for more than 30 minutes.
+          m_data.GetEvents().SetEvent(eEvent::IrreversibleState, true, m_data.GetSimulationTime());
+          m_ss << "Brain Oxygen partial pressure is " << m_brainO2->GetPartialPressure(PressureUnit::mmHg) << " and has been below the danger threshold for " <<
+            m_data.GetEvents().GetEventDuration(eEvent::CriticalBrainOxygenDeficit, TimeUnit::s) << " seconds. Damage is irreversible.";
+          Fatal(m_ss);
+        }
+
         /// \event Patient: Critical Brain Oxygen Deficit Event. The oxygen partial pressure in the brain has dropped to a critically low level.
         m_data.GetEvents().SetEvent(eEvent::CriticalBrainOxygenDeficit, true, m_data.GetSimulationTime());
       }
@@ -468,16 +414,6 @@ void BloodChemistry::CheckBloodGasLevels()
         /// \event Patient: End Brain Oxygen Deficit Event. The oxygen partial pressure has risen above 12 mmHg in the brain. If this occurs when the patient has a critical brain oxygen deficit event, it will reverse the event.
         /// The brain is not in a critical oxygen deficit.
         m_data.GetEvents().SetEvent(eEvent::CriticalBrainOxygenDeficit, false, m_data.GetSimulationTime());
-      }
-
-      // Irreversible damage occurs if the critical deficit has gone on too long
-      if (m_data.GetEvents().GetEventDuration(eEvent::CriticalBrainOxygenDeficit, TimeUnit::s) > 600)
-      {
-        m_ss << "Brain Oxygen partial pressure is " << m_brainO2->GetPartialPressure(PressureUnit::mmHg) << " and has been below the critical threshold for " <<
-          m_data.GetEvents().GetEventDuration(eEvent::BrainOxygenDeficit, TimeUnit::s) << " seconds. Damage is irreversible.";
-        Warning(m_ss);
-        /// \irreversible Brain oxygen pressure has been critically low for more than 10 minutes.
-        m_data.GetEvents().SetEvent(eEvent::IrreversibleState, true, m_data.GetSimulationTime());
       }
     }
     else if (m_brainO2->GetPartialPressure(PressureUnit::mmHg) > 25.0)
@@ -497,11 +433,11 @@ void BloodChemistry::CheckBloodGasLevels()
 
       if (m_data.GetEvents().GetEventDuration(eEvent::MyocardiumOxygenDeficit, TimeUnit::s) > 2400)  // \cite murry1986preconditioning
       {
-        m_ss << "Myocardium oxygen partial pressure is  " << m_myocardiumO2->GetPartialPressure(PressureUnit::mmHg) << " and has been sustained for " << m_data.GetEvents().GetEventDuration(eEvent::MyocardiumOxygenDeficit, TimeUnit::s) <<
-          "patient heart muscle has experienced necrosis and is in an irreversible state.";
-        Warning(m_ss);
         /// \irreversible Heart has not been receiving enough oxygen for more than 40 min.
         m_data.GetEvents().SetEvent(eEvent::IrreversibleState, true, m_data.GetSimulationTime());
+        m_ss << "Myocardium oxygen partial pressure is  " << m_myocardiumO2->GetPartialPressure(PressureUnit::mmHg) << " and has been sustained for " << m_data.GetEvents().GetEventDuration(eEvent::MyocardiumOxygenDeficit, TimeUnit::s) <<
+          "patient heart muscle has experienced necrosis and is in an irreversible state.";
+        Fatal(m_ss);
       }
     }
     else if (m_myocardiumO2->GetPartialPressure(PressureUnit::mmHg) > 8)

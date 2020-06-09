@@ -57,13 +57,10 @@ public:
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Reset engine and set it to the state in the provided file.
-  /// You may provided a Simulation Time to be used if desired.
-  /// It will be reflected in the GetSimulationTime method.
   /// Return value indicates engine was able to load provided state file.
   /// Engine will be in a cleared state if this method fails.
-  /// Note the provided configuration will overwrite any configuration options in the state with its contents (Use with caution!)
   //--------------------------------------------------------------------------------------------------
-  virtual bool SerializeFromFile(const std::string& filename, SerializationFormat m, const SEScalarTime* simTime=nullptr, const SEEngineConfiguration* config = nullptr) = 0;
+  virtual bool SerializeFromFile(const std::string& filename, SerializationFormat m) = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -75,20 +72,17 @@ public:
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Reset engine and set it to the state in the provided string.
-  /// The state is saved as bytes in the given string.
-  /// Note that the bytes are binary, not text; we only use the string class as a convenient container.
-  /// You may provided a Simulation Time to be used if desired.
-  /// It will be reflected in the GetSimulationTime method.
+  /// The string can contain JSON or binary.
+  /// Note that a string of bytes are binary, not text; we only use the string class as a convenient container.
   /// Return value indicates engine was able to load provided state file.
   /// Engine will be in a cleared state if this method fails.
-  /// Note the provided configuration will overwrite any configuration options in the state with its contents (Use with caution!)
   //--------------------------------------------------------------------------------------------------
-  virtual bool SerializeFromString(const std::string& state, SerializationFormat m, const SEScalarTime* simTime = nullptr, const SEEngineConfiguration* config = nullptr) = 0;
+  virtual bool SerializeFromString(const std::string& state, SerializationFormat m) = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Save the current state of the engine.
-  /// The state is saved as bytes in the given string.
+  /// The state can be saved as JSON or bytes in the given string.
   /// Note that the bytes are binary, not text; we only use the string class as a convenient container.
   /// Engine will be in a cleared state if this method fails.
   //--------------------------------------------------------------------------------------------------
@@ -96,14 +90,14 @@ public:
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
-  /// locates the json patient file and reads in the values. 
+  /// Initialize an engine based on the engines initialization structure
   ///
-  /// This will create an engine that you can send instructions (patient,actions,conditions) to dynamically.
-  /// The return value will indicate success failure of the creation of the engine.  
-  /// Some combinations of patients and conditions may prevent the engine from stabilizing
+  /// An initialization structure is up to every engine.
+  /// It should have a SEPatientConfiguration (or derivative)
+  /// But it may also have more stuctures associated with it, it's up to the engine.
   ///
   //--------------------------------------------------------------------------------------------------
-  virtual bool InitializeEngine(const std::string& patient_configuration, SerializationFormat m, const SEEngineConfiguration* config = nullptr) = 0;
+  virtual bool InitializeEngine(const std::string& patient_configuration, SerializationFormat m) = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -113,7 +107,17 @@ public:
   /// Some combinations of patients and conditions may prevent the engine from stabilizing
   ///
   //--------------------------------------------------------------------------------------------------
-  virtual bool InitializeEngine(const SEPatientConfiguration& patient_configuration, const SEEngineConfiguration* config = nullptr) = 0;
+  virtual bool InitializeEngine(const SEPatientConfiguration& patient_configuration) = 0;
+
+  //--------------------------------------------------------------------------------------------------
+  /// \brief
+  /// Engines can have a configuration for allowing a user to set certain internal parameters
+  /// Engines with configurations will have all configuration parameters defaulted,
+  /// This allow you to change one or more or those parameters.
+  /// The parameters provided will be applied during SerializeFrom* and InitializeEngine methods.
+  /// Use with caution! (Use nullptr to revert back to using all engine defaults)
+  //--------------------------------------------------------------------------------------------------
+  virtual bool SetConfigurationOverride(const SEEngineConfiguration* config) = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -139,22 +143,29 @@ public:
   
   //--------------------------------------------------------------------------------------------------
   /// \brief
-  /// returns the engine configuration.   
+  /// returns the engine configuration.
   //--------------------------------------------------------------------------------------------------
   virtual const SEEngineConfiguration* GetConfiguration() const = 0;
   
   //--------------------------------------------------------------------------------------------------
   /// \brief
-  /// returns the engine time step that is used when advancing time. 
+  /// returns the engine time step that is used when advancing time.
   ///
   //--------------------------------------------------------------------------------------------------
   virtual double GetTimeStep(const TimeUnit& unit) const = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
-  /// returns the current time of the simulation.   
+  /// returns the current time of the simulation.
   //--------------------------------------------------------------------------------------------------
   virtual double GetSimulationTime(const TimeUnit& unit) const = 0;
+
+  //--------------------------------------------------------------------------------------------------
+  /// \brief
+  /// Set the current time of the simulation.
+  /// Engine Simulation time will be advanced from this time point
+  //--------------------------------------------------------------------------------------------------
+  virtual void SetSimulationTime(const SEScalarTime& time) = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief

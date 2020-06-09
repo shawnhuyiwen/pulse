@@ -1095,7 +1095,7 @@ void CommonDataModelTest::GasCompartmentTest(const std::string& rptDirectory)
   m_PercentTolerance = 2.0;
   m_OutDirectory = rptDirectory;
 
-  m_Logger->ResetLogFile(rptDirectory + "/GasCompartmentTest.log");
+  m_Logger->SetLogFile(rptDirectory + "/GasCompartmentTest.log");
   SETestReport testReport(m_Logger);
 
   SESubstanceManager subMgr(m_Logger);

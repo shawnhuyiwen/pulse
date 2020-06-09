@@ -68,12 +68,12 @@ void MVEngine::HandleEvent(eEvent e, bool active, const SEScalarTime* simTime)
 bool MVEngine::CreateEngine(const std::string& simulationDataStr, SerializationFormat fmt)
 {
   SAFE_DELETE(m_SimulationData);
-  m_SimulationData = new pulse::study::multiplex_ventilation::bind::SimulationData();
+  m_SimulationData = new pulse::study::bind::multiplex_ventilation::SimulationData();
   SerializeFromString(simulationDataStr, *m_SimulationData, fmt);
   return CreateEngine(*m_SimulationData);
 }
 
-bool MVEngine::CreateEngine(pulse::study::multiplex_ventilation::bind::SimulationData& sim)
+bool MVEngine::CreateEngine(pulse::study::bind::multiplex_ventilation::SimulationData& sim)
 {
   try
   {
@@ -117,7 +117,8 @@ bool MVEngine::CreateEngine(pulse::study::multiplex_ventilation::bind::Simulatio
       {
         auto* soloVentilation = comparison.mutable_soloventilation();
         std::string state = soloVentilation->statefile();
-        pc = new PulseController(outDir + "multiplex_patient_" + to_string(p) + ".log", m_DataDir);
+        pc = new PulseController();
+        pc->GetLogger()->SetLogFile(outDir + "multiplex_patient_" + to_string(p) + ".log");
         if (!pc->SerializeFromFile(state, SerializationFormat::JSON))
         {
           Error("Unable to load file : " + state);
@@ -138,7 +139,8 @@ bool MVEngine::CreateEngine(pulse::study::multiplex_ventilation::bind::Simulatio
       {
         auto* multiVentilation = comparison.mutable_multiplexventilation();
 
-        pc = new PulseController(outDir + "multiplex_patient_" + to_string(p) + ".log", m_DataDir);
+        pc = new PulseController();
+        pc->GetLogger()->SetLogFile(outDir + "multiplex_patient_" + to_string(p) + ".log");
         if (!pc->SerializeFromFile(m_DataDir + "/states/StandardMale@0s.json", SerializationFormat::JSON))
         {
           Error("Unable to load file : StandardMale@0s.json");
@@ -257,12 +259,20 @@ bool MVEngine::CreateEngine(pulse::study::multiplex_ventilation::bind::Simulatio
     m_MVC = new SEMechanicalVentilatorConfiguration(*m_SubMgr);
     auto& mv = m_MVC->GetConfiguration();
     mv.SetConnection(eMechanicalVentilator_Connection::Tube);
-    mv.SetControl(eMechanicalVentilator_Control::PC_CMV);
-    mv.SetDriverWaveform(eMechanicalVentilator_DriverWaveform::Square);
-    mv.GetRespiratoryRate().SetValue(sim.respirationrate_per_min(), FrequencyUnit::Per_min);
-    mv.GetInspiratoryExpiratoryRatio().SetValue(sim.ieratio());
+    mv.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
+    mv.SetExpirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
     mv.GetPeakInspiratoryPressure().SetValue(sim.pip_cmh2o(), PressureUnit::cmH2O);
-    mv.GetPositiveEndExpiredPressure().SetValue(sim.peep_cmh2o(), PressureUnit::cmH2O);
+    mv.GetPositiveEndExpiredPressure().SetValue(sim.peep_cmh2o(), PressureUnit::cmH2O);   
+    double respirationRate_per_min = sim.respirationrate_per_min();
+    double IERatio = sim.ieratio();
+
+    // Translate ventilator settings
+    double totalPeriod_s = 60.0 / respirationRate_per_min;
+    double inspiratoryPeriod_s = IERatio * totalPeriod_s / (1 + IERatio);
+    double expiratoryPeriod_s = totalPeriod_s - inspiratoryPeriod_s;
+    mv.GetInspirationTriggerTime().SetValue(expiratoryPeriod_s, TimeUnit::s);
+    mv.GetExpirationCycleTime().SetValue(inspiratoryPeriod_s, TimeUnit::s);
+
     m_FiO2 = &mv.GetFractionInspiredGas(*m_Oxygen);
     m_FiO2->GetFractionAmount().SetValue(sim.fio2());
     Info("Processing Action");
@@ -534,7 +544,7 @@ std::string MVEngine::GetSimulationState(SerializationFormat fmt)
   SerializeToString(*m_SimulationData, content, SerializationFormat::JSON);
   return content;
 }
-bool MVEngine::GetSimulationState(pulse::study::multiplex_ventilation::bind::SimulationData& sim)
+bool MVEngine::GetSimulationState(pulse::study::bind::multiplex_ventilation::SimulationData& sim)
 {
   if (m_Engines.empty())
   {
@@ -548,14 +558,20 @@ bool MVEngine::GetSimulationState(pulse::study::multiplex_ventilation::bind::Sim
     auto* multiVentilation = (*sim.mutable_patientcomparisons())[p].mutable_multiplexventilation();
     // For Completeness, Write out the ventilator settings
 
-    multiVentilation->set_respirationrate_per_min(pc->GetMechanicalVentilator().GetRespiratoryRate(FrequencyUnit::Per_min));
-    multiVentilation->set_ieratio(pc->GetMechanicalVentilator().GetInspiratoryExpiratoryRatio().GetValue());
+    // Translate ventilator settings
+    double expiratoryPeriod_s = pc->GetMechanicalVentilator().GetInspirationTriggerTime(TimeUnit::s);
+    double inspiratoryPeriod_s = pc->GetMechanicalVentilator().GetExpirationCycleTime(TimeUnit::s);
+    double respirationRate_per_min = 60.0 / (inspiratoryPeriod_s + inspiratoryPeriod_s);
+    double IERatio = inspiratoryPeriod_s / expiratoryPeriod_s;
+
+    multiVentilation->set_respirationrate_per_min(respirationRate_per_min);
+    multiVentilation->set_ieratio(IERatio);
     multiVentilation->set_peep_cmh2o(pc->GetMechanicalVentilator().GetPositiveEndExpiredPressure(PressureUnit::cmH2O));
     multiVentilation->set_pip_cmh2o(pc->GetMechanicalVentilator().GetPeakInspiratoryPressure(PressureUnit::cmH2O));
     multiVentilation->set_fio2(pc->GetMechanicalVentilator().GetFractionInspiredGas(pc->GetSubstances().GetO2()).GetFractionAmount().GetValue());
     // Write out all the vitals
     multiVentilation->set_airwayflow_l_per_min(pc->GetRespiratory().GetInspiratoryFlow(VolumePerTimeUnit::L_Per_min));
-    multiVentilation->set_airwaypressure_cmh2o(pc->GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Mouth)->GetPressure(PressureUnit::cmH2O));
+    multiVentilation->set_airwaypressure_cmh2o(pc->GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Airway)->GetPressure(PressureUnit::cmH2O));
     multiVentilation->set_alveolararterialgradient_mmhg(pc->GetRespiratory().GetAlveolarArterialGradient(PressureUnit::mmHg));
     multiVentilation->set_arterialcarbondioxidepartialpressure_mmhg(m_AortaCO2s[p]->GetPartialPressure(PressureUnit::mmHg));
     multiVentilation->set_arterialoxygenpartialpressure_mmhg(m_AortaO2s[p]->GetPartialPressure(PressureUnit::mmHg));
@@ -635,14 +651,14 @@ void MVEngine::TrackData(SEEngineTracker& trkr, const std::string& csv_filename)
   trkr.GetDataRequestManager().CreatePhysiologyDataRequest("TransrespiratoryPressure", PressureUnit::cmH2O);
 
 
-  trkr.GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::PulmonaryCompartment::Mouth, "Pressure", PressureUnit::cmH2O);
+  trkr.GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::PulmonaryCompartment::Airway, "Pressure", PressureUnit::cmH2O);
 
   SESubstance* O2 = trkr.GetSubstanceManager().GetSubstance("Oxygen");
   SESubstance* CO2 = trkr.GetSubstanceManager().GetSubstance("CarbonDioxide");
   trkr.GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, *O2, "PartialPressure", PressureUnit::mmHg);
   trkr.GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, *CO2, "PartialPressure", PressureUnit::mmHg);
-  trkr.GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Mouth, *O2, "PartialPressure", PressureUnit::mmHg);
-  trkr.GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Mouth, *CO2, "PartialPressure", PressureUnit::mmHg);
+  trkr.GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Airway, *O2, "PartialPressure", PressureUnit::mmHg);
+  trkr.GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Airway, *CO2, "PartialPressure", PressureUnit::mmHg);
   trkr.GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::LeftAlveoli, *O2, "PartialPressure", PressureUnit::mmHg);
   trkr.GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::LeftAlveoli, *CO2, "PartialPressure", PressureUnit::mmHg);
   trkr.GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::RightAlveoli, *O2, "PartialPressure", PressureUnit::mmHg);
@@ -651,7 +667,7 @@ void MVEngine::TrackData(SEEngineTracker& trkr, const std::string& csv_filename)
   trkr.SetupRequests();
 }
 
-bool MVEngine::SerializeToString(pulse::study::multiplex_ventilation::bind::SimulationData& src, std::string& dst, SerializationFormat f)
+bool MVEngine::SerializeToString(pulse::study::bind::multiplex_ventilation::SimulationData& src, std::string& dst, SerializationFormat f)
 {
   google::protobuf::util::JsonPrintOptions printOpts;
   printOpts.add_whitespace = true;
@@ -659,7 +675,7 @@ bool MVEngine::SerializeToString(pulse::study::multiplex_ventilation::bind::Simu
   printOpts.always_print_primitive_fields = true;
   return google::protobuf::util::MessageToJsonString(src, &dst, printOpts).ok();
 }
-bool MVEngine::SerializeFromString(const std::string& src, pulse::study::multiplex_ventilation::bind::SimulationData& dst, SerializationFormat f)
+bool MVEngine::SerializeFromString(const std::string& src, pulse::study::bind::multiplex_ventilation::SimulationData& dst, SerializationFormat f)
 {
   google::protobuf::util::JsonParseOptions parseOpts;
   google::protobuf::SetLogHandler([](google::protobuf::LogLevel level, const char* filename, int line, const std::string& message)
@@ -690,7 +706,8 @@ bool MVEngine::RunSoloState(const std::string& stateFile, const std::string& res
   double timeStep_s = 0.02;
   double currentTime_s = 0;
 
-  PulseController pc(logFile);
+  PulseController pc;
+  pc.GetLogger()->SetLogFile(logFile);
   pc.SerializeFromFile(stateFile, SerializationFormat::JSON);
   MVEngine::TrackData(pc.GetEngineTracker(), dataFile);
   int count = (int)(duration_s / timeStep_s);

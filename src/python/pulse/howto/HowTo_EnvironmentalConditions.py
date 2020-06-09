@@ -12,7 +12,9 @@ from pulse.cdm.scalars import LengthPerTimeUnit, TemperatureUnit, \
 from pulse.cdm.io.environment import serialize_environmental_conditions_from_file
 
 def HowTo_EnvironmentalConditions():
-    pulse = PulsePhysiologyEngine("pulse_Environment.log")
+    pulse = PulsePhysiologyEngine()
+    pulse.set_log_filename("./test_results/pypulse_Environment.log")
+    pulse.log_to_console(True)
 
     # Initialize the environment to a specific envirionment
     pc = SEPatientConfiguration()

@@ -3,6 +3,8 @@
 #include "EngineTest.h"
 #include "controller/Controller.h"
 #include "controller/Circuits.h"
+#include "controller/Substances.h"
+#include "physiology/Saturation.h"
 #include "PulseConfiguration.h"
 
 #include "patient/SEPatient.h"
@@ -33,7 +35,7 @@ std::chrono::microseconds::rep vectorAverage(std::vector<std::chrono::microsecon
 
 void PulseEngineTest::SolverSpeedTest(const std::string& rptDirectory)
 {
-  m_Logger->ResetLogFile(rptDirectory + "/SolverSpeedTest.log");
+  m_Logger->SetLogFile(rptDirectory + "/SolverSpeedTest.log");
 
   // Set up our test report
   SETestReport testReport = SETestReport(m_Logger);
@@ -49,6 +51,9 @@ void PulseEngineTest::SolverSpeedTest(const std::string& rptDirectory)
   SEPatient patient(pc.GetLogger());
   patient.SerializeFromFile("./patients/StandardMale.json", JSON);
   pc.SetupPatient(patient);
+  pc.GetSubstances().LoadSubstanceDirectory("./");
+  pc.GetSaturationCalculator().Setup();
+  pc.m_Config->Initialize("./");
   pc.m_Config->EnableRenal(eSwitch::On);
   pc.m_Config->EnableTissue(eSwitch::On);
   pc.CreateCircuitsAndCompartments();
