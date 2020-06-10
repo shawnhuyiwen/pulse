@@ -47,6 +47,8 @@ int main(int argc, char* argv[])
       //peTest.RespiratoryDriverTest(peDir);
       //peTest.AnesthesiaMachineCircuitAndTransportTest(peDir);
       //peTest.RespiratoryWithAnesthesiaMachineCircuitAndTransportTest(peDir);
+      //peTest.MechanicalVentilatorCircuitAndTransportTest(peDir);
+      //peTest.RespiratoryWithMechanicalVentilatorCircuitAndTransportTest(peDir);
       //peTest.RespiratoryWithInhalerCircuitAndTransportTest(peDir); 
       //peTest.RespiratoryWithMechanicalVentilatorCircuitAndTransportTest(peDir);
 

@@ -582,19 +582,18 @@ scenarios indicating a very good agreement with the validation data.
 </center>
 |	Scenario 	|	Description	|	Good	|	Decent	|	Bad	|
 |	---	|	---	|	---	|	---	|	---	|
-|	SalineIngestion	|	Patient ingests 1L of hypertonic saline	|<span class="success">	1	</span>|<span class="warning">	1	</span>|<span class="danger">	0	</span>|
 |	RenalStenosisModerateUnilateral	|	60% occlusion of left kidney	|<span class="success">	7	</span>|<span class="warning">	1	</span>|<span class="danger">	0	</span>|
 |	RenalStenosisSevereBilateral	|	90 % occlusion of both kidneys	|<span class="success">	7	</span>|<span class="warning">	1	</span>|<span class="danger">	0	</span>|
-|	HemorrhageClass2NoFluid	|	250 mL/min hemorrhage for 240 seconds	|<span class="success">	8	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|	HemorrhageClass4NoFluid	|	250 mL/min hemorrhage for 490 seconds	|<span class="success">	8	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|	HighAltitudeEnvironmentChange	|	High altitude environment change for 900s 	|<span class="success">	3	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|	WaterIngestion	|	Patient ingests 1 L of fluid	|<span class="success">	1	</span>|<span class="warning">	3	</span>|<span class="danger">	0	</span>|
+|	HemorrhageClass2NoFluid	|	140 mL/min hemorrhage for 10 minutes	|<span class="success">	8	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
+|	HemorrhageClass3NoFluid	|	250 mL/min hemorrhage for 10 minutes	|<span class="success">	8	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
+|	HighAltitudeEnvironmentChange	|	High altitude environment change	|<span class="success">	3	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
+|	SalineIngestion	|	Patient ingests 1L of hypertonic saline	|<span class="success">	1	</span>|<span class="warning">	1	</span>|<span class="danger">	0	</span>|
+|	WaterIngestion	|	Patient ingests 1 L of water	|<span class="success">	1	</span>|<span class="warning">	3	</span>|<span class="danger">	0	</span>|
 |		|	Total	|<span class="success">	35	</span>|<span class="warning">	6	</span>|<span class="danger">	0	</span>|
-
 
 ### Hemorrhage - Action
 
-The renal system regulates glomerular filtration and renal blood flow through the tubuloglomerular feedback mechanism. This mechanism is modeled through constriction and dilation of the afferent arteriole as a function of sodium flow rate into the tubules. This mechanism is tested through two different hemorrhage scenarios: HemorrhageClass2NoFluid and HemorrhageClass4NoFluid. In each scenario, the body loses blood at a rate of 250 mL/min with the differences in class being the length of the bleeding. As the patient bleeds, blood volume and mean arterial pressure decrease, causing a reduction in blood flow to the renal system. As this decrease happens, the TGF system tries to compensate by dilating the afferent arteriole, reducing the resistance to flow into the glomerular capillaries. This balances the filtrate up to a point, but as blood volume and pressure continue to decrease, renal blood flow and glomerular filtration rate see reductions in line with past research @cite corcoran1943effects. This is more pronounced as the hemorrhage is allowed to persist. Qualitatively, the renal system in engine displays the mechanical trends seen in past research. 
+The renal system regulates glomerular filtration and renal blood flow through the tubuloglomerular feedback mechanism. This mechanism is modeled through constriction and dilation of the afferent arteriole as a function of sodium flow rate into the tubules. This mechanism is tested through two different hemorrhage scenarios. As the patient bleeds, blood volume and mean arterial pressure decrease, causing a reduction in blood flow to the renal system. As this decrease happens, the TGF system tries to compensate by dilating the afferent arteriole, reducing the resistance to flow into the glomerular capillaries. This balances the filtrate up to a point, but as blood volume and pressure continue to decrease, renal blood flow and glomerular filtration rate see reductions in line with past research @cite corcoran1943effects. This is more pronounced as the hemorrhage is allowed to persist. Qualitatively, the renal system in engine displays the mechanical trends seen in past research. 
 
 Table 9 shows the effect seen in the %Renal system. For a complete write-up of the hemorrhage scenarios, see the @ref CardiovascularMethodology.
 
@@ -604,25 +603,23 @@ Table 9. In this scenario, the patient is given a class II hemorrhage, which cau
 Quantification of the renal system during and after the bleed ends are displayed here. The renal system shows responses in line with actual patients.
 </i>
 </center>
-|	Action	|	Notes	|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Glomerular Filtration Rate (mL/min)	|	Mean Arterial Pressure (mmHg)	|	Renal Blood Flow(mL/min)	|	Urine Production Rate (mL/min)	|
+|	Action	|	Notes	|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Glomerular Filtration Rate (mL/min)	|	Mean Arterial Pressure (mmHg)	|	%Renal Blood Flow(mL/min)	|	Urine Production Rate (mL/min)	|
 |	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
-|	Initiate 250 mL/min Hemorrhage	|		|	30	|	270	|<span class="success">	Decrease @cite corcoran1943effects	</span>|<span class="success">	Decrease @cite corcoran1943effects	</span>|<span class="success">	decrease @cite corcoran1943effects	</span>|<span class="success">	Decrease @cite corcoran1943effects	</span>|
-|	Stop Hemorrhage	|		|	270	|	670	|<span class="success">	Slight Increase @cite corcoran1943effects	</span>|<span class="success">	Steady @cite corcoran1943effects	</span>|<span class="success">	Slight Increase @cite corcoran1943effects	</span>|<span class="success">	Steady @cite corcoran1943effects	</span>|
+|	Initiate 140 mL/min Hemorrhage	|		|	30	|	600	|<span class="success">	Decrease @cite corcoran1943effects	</span>|<span class="success">	Decrease @cite corcoran1943effects	</span>|<span class="success">	Decrease @cite corcoran1943effects	</span>|<span class="success">	Decrease @cite corcoran1943effects	</span>|
+|	Stop Hemorrhage	|		|	620	|	1000	|<span class="success">	Slight Increase @cite corcoran1943effects	</span>|<span class="success">	Steady @cite corcoran1943effects	</span>|<span class="success">	Slight Increase @cite corcoran1943effects	</span>|<span class="success">	Steady @cite corcoran1943effects	</span>|
 
-
-The class 4 hemorrhage as the same bleed rate but the bleeding persists for a longer duration: 490 seconds. %Renal function displays the same trends but with a further reduction in glomerular filtration and renal blood flow due to the duration of the bleed action. 
+For the class III hemorrhage, the renal function displays the same trends but with a further reduction in glomerular filtration and renal blood flow due to the duration of the bleed action. 
 
 <center>
 <i>
-Table 10. In this scenario the patient is given a class IV hemorrhage, which causes changes in MAP and blood volume as the bleeding progresses.
+Table 10. In this scenario the patient is given a class III hemorrhage, which causes changes in MAP and blood volume as the bleeding progresses.
 Quantification of the renal system during and after the bleed ends are displayed here. The renal system shows responses in line with actual patients.
 </i>
 </center>
-|	Action	|	Notes	|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Glomerular Filtration Rate (mL/min)	|	Mean Arterial Pressure (mmHg)	|	Renal Blood Flow(mL/min)	|	Urine Production Rate (mL/min)	|
+|	Action	|	Notes	|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Glomerular Filtration Rate (mL/min)	|	Mean Arterial Pressure (mmHg)	|	%Renal Blood Flow(mL/min)	|	Urine Production Rate (mL/min)	|
 |	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
-|	Initiate 250 mL/min Hemorrhage	|		|	30	|	520	|<span class="success">	Decrease @cite corcoran1943effects	</span>|<span class="success">	Decrease @cite corcoran1943effects	</span>|<span class="success">	decrease @cite corcoran1943effects	</span>|<span class="success">	Decrease @cite corcoran1943effects	</span>|
-|	Stop Hemorrhage	|		|	520	|	500	|<span class="success">	Slight Increase @cite corcoran1943effects	</span>|<span class="success">	Steady @cite corcoran1943effects	</span>|<span class="success">	Slight Increase @cite corcoran1943effects	</span>|<span class="success">	Steady @cite corcoran1943effects	</span>|
-
+|	Initiate 250 mL/min Hemorrhage	|		|	30	|	600	|<span class="success">	Decrease @cite corcoran1943effects	</span>|<span class="success">	Decrease @cite corcoran1943effects	</span>|<span class="success">	Decrease @cite corcoran1943effects	</span>|<span class="success">	Decrease @cite corcoran1943effects	</span>|
+|	Stop Hemorrhage	|		|	605	|	1000	|<span class="success">	Slight Increase @cite corcoran1943effects	</span>|<span class="success">	Steady @cite corcoran1943effects	</span>|<span class="success">	Slight Increase @cite corcoran1943effects	</span>|<span class="success">	Steady @cite corcoran1943effects</span>	</span>|
 
 <center>
 <table border="0">
@@ -639,7 +636,7 @@ Quantification of the renal system during and after the bleed ends are displayed
 </tr>
 </table>
 </center>
-<center><i>Figure 16. In this scenario the patient is given a class IV hemorrhage, which causes changes in MAP as the bleeding progresses.
+<center><i>Figure 16. In this scenario the patient is given a class III hemorrhage, which causes changes in MAP as the bleeding progresses.
 The top left figure shows the mean arterial pressure response to the hemorrhage. The top right and bottom left figures display the glomerular filtration and renal blood flow  
 dropping with the pressure drop. This response is mitigated through dilation of the afferent arteriole, seen in the bottom right figure.</i>
 </center><br>
@@ -656,7 +653,7 @@ Table 11 shows the effect seen in the %Renal system. For a complete write-up of 
 <center>
 <i>
 Table 11. In this scenario, the patient environment is changed to simulate the effects of altitude. The acute response increases MAP,
-as shown in the top-left plot. The bottom-right plot shows the afferent arteriole resistance increasing by about 30% to accommodate the changes in input pressure. The other two plots show
+as shown in the top-left plot. The bottom-right plot shows the afferent arteriole resistance increasing to accommodate the changes in input pressure. The other two plots show
 the resulting affects on GFR and renal blood flow. Note the increases in renal blood flow and GFR just before 100 seconds, which
 are attenuated as the afferent arteriole resistance increases.
 </i>
@@ -719,6 +716,7 @@ Table 13. Urine production rate and plasma sodium concentrations behave as expec
 |	After stabilization patient given 1L of water	|		|	0	|	14400	|<span class="success">	Increase @cite baldes1934effect	</span>|<span class="success">	No Change @cite baldes1934effect	</span>|<span class="success">	Decrease @cite baldes1934effect	</span>|<span class="warning">	Decrease Then Slight increase @cite baldes1934effect	</span>|
 
 
+<!-- We will probably want to add these back in some form in the future
 
 ### Dehydration
 The engine does not currently support this functionality, although scenarios can be made and run for days at a time without fluid intake, simulating dehydration.
@@ -760,6 +758,8 @@ calcium, and creatinine are due to an unvalidated drop in urine production rate,
 |	Action	|	Notes	|	Action Occurrence Time (s)	|	Sampled Scenario Time (days)	|	Urine Sodium Concentration (mmol/L)	|	Urine Calcium Concentration (mmol/L)	|	Creatinine Concentration (mmol/L)	|	Urine Creatinine Clearance (mL/min)	|
 |	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
 |	Patient is experiencing starvation	|		|	0	|	4	|<span class="warning">	Decrease @cite sapir1975ketones	</span>|<span class="warning">	Decrease @cite sapir1975ketones	</span>|<span class="success">	Increase @cite sapir1975ketones	</span>|<span class="success">	Decrease @cite sapir1975ketones	</span>|
+
+-->
 
 ### %Renal Stenosis - Condition
 
@@ -820,6 +820,7 @@ These are some recommended improvements and additions:
 - Catheterization
 - Kidney stones
 - Dialysis machine model
+- Add dehydration and starvation for further %Renal System validation
 
 @anchor renal-appendices
 Appendices
