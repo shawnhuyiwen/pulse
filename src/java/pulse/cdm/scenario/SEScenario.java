@@ -230,7 +230,7 @@ public class SEScenario
 
   protected String                        name;
   protected String                        description;
-  protected SEPatientConfiguration   params;
+  protected SEPatientConfiguration        params;
   protected String                        engineStateFile;
   protected SEDataRequestManager          drMgr = new SEDataRequestManager();
   protected List<SEAction>                actions = new ArrayList<SEAction>();

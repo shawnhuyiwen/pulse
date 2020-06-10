@@ -44,6 +44,7 @@ import pulse.cdm.properties.CommonUnits.VolumeUnit;
 import pulse.cdm.properties.SEFunctionVolumeVsTime;
 import pulse.cdm.scenario.SEScenario;
 import pulse.cdm.substance.SESubstanceManager;
+import pulse.engine.PulseScenario;
 import pulse.utilities.DoubleUtils;
 import pulse.utilities.FileUtils;
 import pulse.utilities.Log;
@@ -92,13 +93,14 @@ public class RespiratoryPFTPlotter implements Plotter
     {
       try
       {
-        this.scenario = new SEScenario(subMgr);
+        this.scenario = new PulseScenario(subMgr);
         this.scenario.readFile(job.scenarioPath + job.scenarioFile);
         actions = scenario.getActions();
       } 
       catch(InvalidProtocolBufferException ex)
       {
-        Log.error("Could not analyze scenario file " + job.scenarioPath + job.scenarioFile);
+        Log.error("Could not analyze scenario file " + job.scenarioPath + job.scenarioFile, ex);
+        return;
       }
     }
     
