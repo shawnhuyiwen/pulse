@@ -10,6 +10,7 @@ add_library_ex(PulseEngineUnitTests
     engine/cpp/ConditionsTest.cpp
     engine/cpp/EngineTest.cpp
     engine/cpp/FourCompartmentTest.cpp
+	engine/cpp/MechanicalVentilatorCircuit.cpp
     engine/cpp/MultiEngineTest.cpp
     engine/cpp/NervousTests.cpp
     engine/cpp/ReadScenarios.cpp

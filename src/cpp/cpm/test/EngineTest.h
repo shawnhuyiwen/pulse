@@ -92,7 +92,7 @@ public:
   void RespiratoryCircuitAndTransportTest(const std::string& sTestDirectory);
   void RespiratoryDriverTest(const std::string& sTestDirectory);
 protected:
-  enum RespiratoryConfiguration { RespiratorySolo, AnesthesiaMachineSolo, RespiratoryWithAnesthesiaMachine, RespiratoryWithInhaler, RespiratoryWithMechanicalVentilation
+  enum RespiratoryConfiguration { RespiratorySolo, AnesthesiaMachineSolo, RespiratoryWithAnesthesiaMachine, RespiratoryWithInhaler, RespiratoryWithMechanicalVentilation, MechanicalVentilatorSolo, RespiratoryWithMechanicalVentilator
   };
   void RespiratoryCircuitAndTransportTest(RespiratoryConfiguration config, const std::string& sTestDirectory);
 
@@ -103,6 +103,14 @@ public:
   void RespiratoryWithAnesthesiaMachineCircuitAndTransportTest(const std::string& sTestDirectory);
 protected:
   void AnesthesiaMachineCircuitAndTransportTest(RespiratoryConfiguration config, const std::string& sTestDirectory);
+
+public:
+  ///////////////////////////
+  // Mechanical Ventilator //
+  void MechanicalVentilatorCircuitAndTransportTest(const std::string& sTestDirectory);
+  void RespiratoryWithMechanicalVentilatorCircuitAndTransportTest(const std::string& sTestDirectory);
+protected:
+  void MechanicalVentilatorCircuitAndTransportTest(RespiratoryConfiguration config, const std::string& sTestDirectory);
 
 public:
   /////////////

@@ -24,6 +24,36 @@
           }
         }
       }, {
+	    "PatientCondition": {
+          "AcuteRespiratoryDistressSyndrome": {
+            "Severity": {
+              "Scalar0To1": {
+                "Value": 0.03
+              }
+            },
+            "LeftLungAffected": {
+              "Scalar0To1": {
+                "Value": 0.4
+              }
+            },
+            "RightLungAffected": {
+              "Scalar0To1": {
+                "Value": 0.7
+              }
+            }
+          }
+        }
+	  }, {
+	    "PatientCondition": {
+          "PulmonaryFibrosis": {
+            "Severity": {
+              "Scalar0To1": {
+                "Value": 0.02
+              }
+            }
+          }
+        }
+	  }, {
         "PatientCondition": {
           "ChronicObstructivePulmonaryDisease": {
             "BronchitisSeverity": {
@@ -85,6 +115,16 @@
               "ScalarVolume": {
                 "Value": 50.0,
                 "Unit": "mL"
+              }
+            }
+          }
+        }
+	  }, {
+      "PatientCondition": {
+          "PulmonaryShunt": {
+            "Severity": {
+              "Scalar0To1": {
+                "Value": 0.8
               }
             }
           }
@@ -485,7 +525,15 @@
         "Severity": { "Scalar0To1": { "Value": 0.0 }}
       }
 	}  
-  }, {
+  }, 
+  { "PatientAction": { "AcuteRespiratoryDistressSyndromeExacerbation": 
+      {
+        "Severity": { "Scalar0To1": { "Value": 0.1 }},
+        "LeftLungAffected": { "Scalar0To1": { "Value": 0.9 }},
+        "RightLungAffected": { "Scalar0To1": { "Value": 0.4 }}
+      }}
+  },
+  {
     "EnvironmentAction": {
       "ThermalApplication": {
         "ActiveHeating": {
@@ -1077,7 +1125,11 @@
         }
       }
     }
-  }, {
+  }, 
+  { "PatientAction": { "PulmonaryShuntExacerbation": {
+        "Severity": { "Scalar0To1": { "Value": 0.1 } }
+    } } },  
+  {
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
