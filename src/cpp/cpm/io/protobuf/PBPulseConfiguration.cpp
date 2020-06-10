@@ -5,6 +5,7 @@
 PUSH_PROTO_WARNINGS()
 #include "pulse/cpm/bind/PulseConfiguration.pb.h"
 POP_PROTO_WARNINGS()
+#include "io/protobuf/PBActions.h"
 #include "io/protobuf/PBPulseConfiguration.h"
 #include "io/protobuf/PBEngine.h"
 #include "io/protobuf/PBEnvironment.h"
@@ -55,6 +56,9 @@ void PBPulseConfiguration::Serialize(const PULSE_BIND::ConfigurationData& src, P
     PBEngine::Load(src.autoserialization(), dst.GetAutoSerialization());
   if (src.writepatientbaselinefile() != CDM_BIND::eSwitch::NullSwitch)
     dst.EnableWritePatientBaselineFile((eSwitch)src.writepatientbaselinefile());
+
+  if (src.has_initialoverrides())
+    PBAction::Load(src.initialoverrides(), dst.GetInitialOverrides());
 
   // Blood Chemistry
   if (src.has_bloodchemistryconfiguration())
@@ -360,6 +364,8 @@ void PBPulseConfiguration::Serialize(const PulseConfiguration& src, PULSE_BIND::
   if (src.HasAutoSerialization())
     dst.set_allocated_autoserialization(PBEngine::Unload(*src.m_AutoSerialization));
   dst.set_writepatientbaselinefile((CDM_BIND::eSwitch)src.m_WritePatientBaselineFile);
+  if (src.HasInitialOverrides())
+    dst.set_allocated_initialoverrides(PBAction::Unload(*src.m_InitialOverrides));
 
   // Blood Chemistry
   PULSE_BIND::ConfigurationData_BloodChemistryConfigurationData* bc = dst.mutable_bloodchemistryconfiguration();

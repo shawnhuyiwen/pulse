@@ -12,6 +12,7 @@
 #include "engine/SEAutoSerialization.h"
 #include "system/environment/SEEnvironmentalConditions.h"
 #include "system/equipment/electrocardiogram/SEElectroCardioGramWaveformInterpolator.h"
+#include "engine/SEOverrides.h"
 
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarArea.h"
@@ -48,6 +49,7 @@ PulseConfiguration::PulseConfiguration(SESubstanceManager& substances) : SEEngin
   m_DynamicStabilization = nullptr;
   m_AutoSerialization = nullptr;
   m_WritePatientBaselineFile = eSwitch::Off;
+  m_InitialOverrides = nullptr;
 
   // Blood Chemistry
   m_MeanCorpuscularHemoglobin = nullptr;
@@ -180,6 +182,7 @@ void PulseConfiguration::Clear()
   RemoveStabilization();
   SAFE_DELETE(m_AutoSerialization);
   m_WritePatientBaselineFile = eSwitch::Off;
+  SAFE_DELETE(m_InitialOverrides);
   
   // Blood Chemistry
   SAFE_DELETE(m_MeanCorpuscularHemoglobin);
@@ -543,6 +546,25 @@ const SEAutoSerialization* PulseConfiguration::GetAutoSerialization() const
 void PulseConfiguration::RemoveAutoSerialization()
 {
   SAFE_DELETE(m_AutoSerialization);
+}
+
+bool PulseConfiguration::HasInitialOverrides() const
+{
+  return m_InitialOverrides != nullptr;
+}
+SEOverrides& PulseConfiguration::GetInitialOverrides()
+{
+  if (m_InitialOverrides == nullptr)
+    m_InitialOverrides = new SEOverrides();
+  return *m_InitialOverrides;
+}
+const SEOverrides* PulseConfiguration::GetInitialOverrides() const
+{
+  return m_InitialOverrides;
+}
+void PulseConfiguration::RemoveInitialOverrides()
+{
+  SAFE_DELETE(m_InitialOverrides);
 }
 
 //////////////////////

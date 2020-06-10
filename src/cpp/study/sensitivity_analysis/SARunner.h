@@ -41,6 +41,7 @@
 #include "engine/SEOverrides.h"
 #include "engine/SEEngineTracker.h"
 #include "engine/SEDataRequestManager.h"
+#include "engine/SEPatientConfiguration.h"
 
 #include "substance/SESubstanceManager.h"
 #include "substance/SESubstanceFraction.h"
@@ -84,6 +85,8 @@ public:
   bool Run(pulse::study::bind::sensitivity_analysis::SimulationListData& simList);
 
   bool RunSimulationUntilStable(std::string const& outDir, pulse::study::bind::sensitivity_analysis::SimulationData& sim, const std::string& dataDir="./");
+  bool RunSimulation(std::string const& outDir, pulse::study::bind::sensitivity_analysis::SimulationData& sim, const std::string& dataDir = "./");
+
 protected:
   bool Run();
   bool SerializeToString(pulse::study::bind::sensitivity_analysis::SimulationListData& src, std::string& dst, SerializationFormat f) const;

@@ -224,6 +224,7 @@ public:
   virtual bool GetPatientAssessment(SEPatientAssessment& assessment) const;
 
   virtual bool CreateCircuitsAndCompartments();
+  virtual bool OverrideCircuits();
 protected:
 
   virtual void SetupCardiovascular();
