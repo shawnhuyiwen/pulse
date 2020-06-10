@@ -94,9 +94,9 @@ The Mechanical Ventilator parameters were defined to allow for setting all types
 	- Concentration of inspired aerosol (albuterol, etc.)
 - Circuit Resistances
 	- Inspiration tube resistance: Total resistance of inspiratory limb tubing
-    - Inspiration valve resistance: Total resistance of inspiratory valves
+	- Inspiration valve resistance: Total resistance of inspiratory valves
 	- Expiration tube resistance: Total resistance of expiratory limb tubing
-    - Expiration valve resistance: Total resistance of expiratory valves
+	- Expiration valve resistance: Total resistance of expiratory valves
 	- Endotracheal tube resistance: Total connection resistance
 
 While the parameter list is meant to be all encompassing for all ventilator modes, some typical settings are required to be translated by the user or application.  For example, the respiration rate (<i>RR</i>) and I:E Ratio (<i>IE</i>)settings can be translated to an inspiratory period (<i>P<sub>ins</sub></i>) and expiratory period (<i>P<sub>exp</sub></i>) by:
