@@ -3117,7 +3117,8 @@ void Respiratory::UpdatePulmonaryCapillary()
 //--------------------------------------------------------------------------------------------------
 void Respiratory::UpdatePulmonaryShunt()
 {
-  double combinedSeverity = 0.0;
+  double rightSeverity = 0.0;
+  double leftSeverity = 0.0;
 
   //------------------------------------------------------------------------------------------------------
   //PulmonaryShunt
@@ -3134,7 +3135,8 @@ void Respiratory::UpdatePulmonaryShunt()
       severity = m_data.GetConditions().GetPulmonaryShunt()->GetSeverity().GetValue();
     }
 
-    combinedSeverity = severity;
+    rightSeverity = severity;
+    leftSeverity = severity;
   }
 
   //------------------------------------------------------------------------------------------------------
@@ -3162,8 +3164,10 @@ void Respiratory::UpdatePulmonaryShunt()
     double dRightLungRatio = m_data.GetCurrentPatient().GetRightLungRatio().GetValue();
     double dLeftLungRatio = 1.0 - dRightLungRatio;
 
-    double scaledSeverity = severity * leftLungFraction * dLeftLungRatio + severity * rightLungFraction * dRightLungRatio;
-    combinedSeverity = MAX(combinedSeverity, scaledSeverity);
+    double rightScaledSeverity = severity * rightLungFraction;
+    double leftScaledSeverity = severity * leftLungFraction;
+    rightSeverity = MAX(rightSeverity, rightScaledSeverity);
+    leftSeverity = MAX(leftSeverity, leftScaledSeverity);
   }
 
   //------------------------------------------------------------------------------------------------------
@@ -3192,17 +3196,20 @@ void Respiratory::UpdatePulmonaryShunt()
     double dRightLungRatio = m_data.GetCurrentPatient().GetRightLungRatio().GetValue();
     double dLeftLungRatio = 1.0 - dRightLungRatio;
 
-    double scaledSeverity = severity * leftLungFraction * dLeftLungRatio + severity * rightLungFraction * dRightLungRatio;
-    combinedSeverity = MAX(combinedSeverity, scaledSeverity);
+    double rightScaledSeverity = severity * rightLungFraction;
+    double leftScaledSeverity = severity * leftLungFraction;
+    rightSeverity = MAX(rightSeverity, rightScaledSeverity);
+    leftSeverity = MAX(leftSeverity, leftScaledSeverity);
   }
 
-  double pulmonaryShuntScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.01, 1.0, combinedSeverity);
+  double rightPulmonaryShuntScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.01, 1.0, rightSeverity);
+  double leftPulmonaryShuntScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.01, 1.0, leftSeverity);
 
   double rightPulmonaryShuntResistance = m_RightPulmonaryArteriesToVeins->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
   double leftPulmonaryShuntResistance = m_LeftPulmonaryArteriesToVeins->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
 
-  rightPulmonaryShuntResistance *= pulmonaryShuntScalingFactor;
-  leftPulmonaryShuntResistance *= pulmonaryShuntScalingFactor;
+  rightPulmonaryShuntResistance *= rightPulmonaryShuntScalingFactor;
+  leftPulmonaryShuntResistance *= leftPulmonaryShuntScalingFactor;
 
   m_RightPulmonaryArteriesToVeins->GetNextResistance().SetValue(rightPulmonaryShuntResistance, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
   m_LeftPulmonaryArteriesToVeins->GetNextResistance().SetValue(leftPulmonaryShuntResistance, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
