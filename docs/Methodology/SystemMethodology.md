@@ -34,7 +34,7 @@ integrated with all other types of physiologic software. Models at
 any anatomical level can be implemented within the existing
 infrastructure.
 
-@image html SystemFidelity.png
+<img src="./Images/System/SystemFidelity.png" width="650">
 <center>
 *Figure 1. The engine uses a top-down approach to model development with bottom-up hooks for expansion.*
 </center><br>
