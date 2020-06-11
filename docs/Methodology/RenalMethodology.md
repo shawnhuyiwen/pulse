@@ -698,9 +698,9 @@ becomes hyperosmotic relative to the plasma and contains a high concentration of
 Table 12. Urine production rate stays steady. Kidney doesn't quite respond accordingly due to such slight sodium changes. Chronic salt loading causes much more pronounced changed in renal function in patients, something the engine isn't meant to handle now.
 </i>
 </center>
-|	Actions	|	Notes	|	Occurrence Time (s)	|	Urine Production Rate (mL/min)	|	Mean Arterial Pressure (mmHg)	|	Urine Chloride Concentration (g/L)	|	Urine Urea Concentration (g/L)	|
-|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
-|	After stabilization patient given 1L of water with 100g NaCl 	|		|	0	|<span class="warning">	Slight Decrease @cite dean1949renal	</span>|<span class="success">	No Change @cite dean1949renal	</span>|<span class="Warning">	Increased Then Normal @cite dean1949renal	</span>|<span class="Warning">	Increase @cite dean1949renal	</span>|
+|	Actions	|	Notes	|	Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Urine Production Rate (mL/min)	|	Mean Arterial Pressure (mmHg)	|	Bladder Chloride Concentration (g/L)	|	Bladder Urea Concentration (g/L)	|
+|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
+|	After stabilization patient given 1L of water with 100g NaCl 	|		|	0	|	3600	|<span class="success">	Slight Increase @cite dean1949renal	</span>|<span class="success">	No Change @cite dean1949renal	</span>|<span class="success">	Increased Then Normal @cite dean1949renal	</span>|<span class="danger">	Increase @cite dean1949renal	</span>|
 
 ### Water Ingestion - Action
 
@@ -711,9 +711,9 @@ The water ingestion scenario simulates the patient drinking 1 liter of water wit
 Table 13. Urine production rate and plasma sodium concentrations behave as expected. Bladder substance handling is still not quite in line with experimental results.
 </i>
 </center>
-|	Action	|	Notes	|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Urine Production Rate (mL/min)	|	Mean Arterial Pressure (mmHg)	|	Plasma Sodium Concentration (mg/L)	|	Urine sodium concentration (mg/L)	|
+|	Action	|	Notes	|	Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Urine Production Rate (mL/min)	|	Mean Arterial Pressure (mmHg)	|	Plasma Sodium Concentration (mg/L)	|	Bladder sodium concentration (mg/L)	|
 |	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
-|	After stabilization patient given 1L of water	|		|	0	|	14400	|<span class="success">	Increase @cite baldes1934effect	</span>|<span class="success">	No Change @cite baldes1934effect	</span>|<span class="success">	Decrease @cite baldes1934effect	</span>|<span class="warning">	Decrease Then Slight increase @cite baldes1934effect	</span>|
+|	After stabilization patient given 1L of water	|		|	0	|	3600	|<span class="success">	Increase @cite baldes1934effect	</span>|<span class="success">	No Change @cite baldes1934effect	</span>|<span class="success">	Decrease @cite baldes1934effect	</span>|<span class="success">	Decrease Then Slight increase @cite baldes1934effect	</span>|
 
 
 <!-- We will probably want to add these back in some form in the future
