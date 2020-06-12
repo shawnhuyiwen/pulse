@@ -78,7 +78,7 @@ namespace HowTo_UseEngine
       // You must provide an event listener to get events
       pulse.SetEventHandler(new MyEventHandler());
 
-      InitializationType initType = InitializationType.StateFileName;
+      InitializationType initType = InitializationType.StateString;
       switch (initType)
       {
         case InitializationType.StateFileName:

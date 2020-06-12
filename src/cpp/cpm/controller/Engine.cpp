@@ -33,7 +33,7 @@ bool PulseEngine::SerializeToFile(const std::string& filename, SerializationForm
 
 bool PulseEngine::SerializeFromString(const std::string& src, SerializationFormat m)
 {
-  return SerializeFromString(src, m);
+  return m_PulseController->SerializeFromString(src, m);
 }
 bool PulseEngine::SerializeToString(std::string& output, SerializationFormat m) const
 {
