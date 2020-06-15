@@ -118,14 +118,17 @@ namespace pulse {
   class CerebrospinalFluidNode
   {
   public:
-    DEFINE_STATIC_STRING(IntracranialSpace);
+    DEFINE_STATIC_STRING(IntracranialSpace1);
+    DEFINE_STATIC_STRING(IntracranialSpace2);
   };
 
   class CerebrospinalFluidPath
   {
   public:
-    DEFINE_STATIC_STRING(IntracranialSpaceToGround);
-    DEFINE_STATIC_STRING(GroundToIntracranialSpace);
+    DEFINE_STATIC_STRING(IntracranialSpace2ToGround);
+    DEFINE_STATIC_STRING(GroundToIntracranialSpace1);
+    DEFINE_STATIC_STRING(Brain1ToIntracranialSpace1);
+    DEFINE_STATIC_STRING(IntracranialSpace1ToIntracranialSpace2);
   };
 
   ///////////////////////////

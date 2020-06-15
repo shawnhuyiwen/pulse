@@ -198,16 +198,8 @@ void Nervous::PostProcess(bool solve_and_transport)
 void Nervous::CerebralSpinalFluidUpdates()
 {
     //Update CSF Production and Absorption Rates
-    m_CSFProductAbsorptionPath->GetNextFlowSource().SetValue(m_CSFAbsorptionRate_mLPermin - m_CSFProductionRate_mlPermin, VolumePerTimeUnit::mL_Per_min);
+    m_CSFProductAbsorptionPath->GetNextFlowSource().SetValue(m_CSFProductionRate_mlPermin - m_CSFAbsorptionRate_mLPermin, VolumePerTimeUnit::mL_Per_min);
     
-    double intracranialPressure_mmHg = m_IntracranialSpace->GetPressure(PressureUnit::mmHg);
-
-    double pressureResponseFraction = 1.0; //Tuning the pressure applied to the brain - figure this out - may need one for compliance and one for resistance
-
-    //Set the pressure on the brain based on the intracranial pressure
-    //could do this by setting a pressure source or could alter the brain vascular compliance/resistance
-    m_BrainVasculatureCompliancePath->GetNextCompliance().MultiplyValue(pressureResponseFraction * intracranialPressure_mmHg, VolumePerPressureUnit::mL_Per_mmHg);
-    m_BrainVasculatureResistancePath->GetNextResistance().MultiplyValue(pressureResponseFraction * intracranialPressure_mmHg, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
 }
 
 //--------------------------------------------------------------------------------------------------
