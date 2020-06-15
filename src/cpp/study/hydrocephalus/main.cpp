@@ -30,10 +30,10 @@ int main(int argc, char* argv[])
       auto sim = simList.add_simulation();
       sim->set_id(42);
       sim->set_name("single");
-      sim->set_cerebrospinalfluidabsorptionrate_ml_per_min(0);
-      sim->set_cerebrospinalfluidproductionrate_ml_per_min(0);
-      sim->set_intracranialspacecompliance_ml_per_mmhg(10);
-      sim->set_intracranialspacevolume_ml(100);
+      sim->set_cerebrospinalfluidabsorptionrate_ml_per_min(50);
+      sim->set_cerebrospinalfluidproductionrate_ml_per_min(10);
+      sim->set_intracranialspacecompliance_ml_per_mmhg(70);
+      sim->set_intracranialspacevolume_ml(150);
       hr.Run(simList);
       return 0;
     }
