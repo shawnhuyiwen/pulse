@@ -312,6 +312,17 @@ void PulseSubstances::InitializeGasCompartments()
     }
   }
 
+  for (SEGasCompartment* cmpt : m_data.GetCompartments().GetMechanicalVentilatorLeafCompartments())
+  {
+    if (cmpt->HasVolume())
+    {
+      cmpt->GetSubstanceQuantity(*m_O2)->GetVolumeFraction().SetValue(AmbientO2VF);
+      cmpt->GetSubstanceQuantity(*m_CO2)->GetVolumeFraction().SetValue(AmbientCO2VF);
+      cmpt->GetSubstanceQuantity(*m_N2)->GetVolumeFraction().SetValue(AmbientN2VF);
+      cmpt->Balance(BalanceGasBy::VolumeFraction);
+    }
+  }
+
   for (SEGasCompartment* cmpt : m_data.GetCompartments().GetInhalerLeafCompartments())
   {
     if (cmpt->HasVolume())
