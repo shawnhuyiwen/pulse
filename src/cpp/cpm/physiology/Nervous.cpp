@@ -114,11 +114,8 @@ void Nervous::SetUp()
   m_NormalizedAlphaResistance   = m_data.GetConfiguration().GetNormalizedResistanceSympatheticSlope();
   m_NormalizedBetaHeartRate     = m_data.GetConfiguration().GetNormalizedHeartRateParasympatheticSlope();
 
-  //CSF circuit
-  m_IntracranialSpace = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetNode(pulse::CerebrospinalFluidNode::IntracranialSpace);
-  m_CSFProductAbsorptionPath = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(pulse::CerebrospinalFluidPath::GroundToIntracranialSpace);
-  m_BrainVasculatureCompliancePath = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(pulse::CardiovascularPath::Brain1ToGround);
-  m_BrainVasculatureResistancePath = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(pulse::CardiovascularPath::Brain1ToBrain2);
+  
+  m_CSFProductAbsorptionPath = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(pulse::CerebrospinalFluidPath::GroundToIntracranialSpace1);
 }
 
 void Nervous::AtSteadyState()

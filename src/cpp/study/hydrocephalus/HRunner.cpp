@@ -185,9 +185,9 @@ bool HRunner::RunSimulationUntilStable(std::string const& outDir, pulse::study::
   // But we know what we are doing, right?
   PulseController* pc = ((PulseEngine*)pulse.get())->GetController();
   SEFluidCircuit& cv = pc->GetCircuits().GetActiveCardiovascularCircuit();
-  SEFluidCircuitNode* csfNode = cv.GetNode(pulse::CerebrospinalFluidNode::IntracranialSpace);
+  SEFluidCircuitNode* csfNode = cv.GetNode(pulse::CerebrospinalFluidNode::IntracranialSpace2);
   csfNode->GetVolumeBaseline().ForceValue(sim.intracranialspacevolume_ml(), VolumeUnit::mL);
-  SEFluidCircuitPath* csfPath = cv.GetPath(pulse::CerebrospinalFluidPath::IntracranialSpaceToGround);
+  SEFluidCircuitPath* csfPath = cv.GetPath(pulse::CerebrospinalFluidPath::GroundToIntracranialSpace1);
   csfPath->GetComplianceBaseline().ForceValue(sim.intracranialspacecompliance_ml_per_mmhg(), VolumePerPressureUnit::mL_Per_mmHg);
 
   std::unordered_map<std::string, RunningAverages> runningAverages = 
