@@ -23,7 +23,7 @@
 #include "substance/SESubstanceManager.h"
 #include "io/protobuf/PBEngine.h"
 
-SEConditionManager::SEConditionManager(const SESubstanceManager& subMgr) : Loggable(subMgr.GetLogger()), m_Substances(m_Substances)
+SEConditionManager::SEConditionManager(const SESubstanceManager& subMgr) : Loggable(subMgr.GetLogger()), m_Substances(subMgr)
 {
   m_ARDS = nullptr;
   m_Anemia = nullptr;
