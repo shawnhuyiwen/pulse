@@ -83,7 +83,7 @@ const std::vector<const SESubstance*>& SESubstanceManager::GetSubstances() const
 
 bool SESubstanceManager::IsActive(const SESubstance& substance) const
 {
-  for (SESubstance* s : m_Substances)
+  for (SESubstance* s : m_ActiveSubstances)
   {
     if(s==&substance)
       return true;
@@ -155,7 +155,7 @@ void SESubstanceManager::RemoveActiveSubstance(const SESubstance& substance)
 
 void SESubstanceManager::RemoveActiveSubstances(const std::vector<SESubstance*>& substances)
 {
-  for(SESubstance* sub : substances)
+  for(SESubstance* sub : m_ActiveSubstances)
     RemoveActiveSubstance(*sub);
 }
 
@@ -227,7 +227,7 @@ const std::vector<const SESubstanceCompound*>& SESubstanceManager::GetCompounds(
 
 bool SESubstanceManager::IsActive(const SESubstanceCompound& compound) const
 {
-  for (SESubstanceCompound* c : m_Compounds)
+  for (SESubstanceCompound* c : m_ActiveCompounds)
   {
     if(c==&compound)
       return true;
@@ -246,7 +246,7 @@ const std::vector<const SESubstanceCompound*>& SESubstanceManager::GetActiveComp
 
 void SESubstanceManager::AddActiveCompound(const SESubstanceCompound& compound) 
 {
-  for (SESubstanceCompound* c : m_Compounds)
+  for (SESubstanceCompound* c : m_ActiveCompounds)
   {
     if(c==&compound)
       return;
@@ -306,10 +306,13 @@ bool SESubstanceManager::LoadSubstanceDirectory(const std::string& data_dir)
       {
         try
         {
+
           // I am assuming the filename is also the substance name
           // If we don't want to make that assumption, we need to have
           // a map of filename to substance ptr and use it rather than GetSubstance by name.
-          SESubstance* sub = GetSubstance(ent->d_name);
+          std::string name(ent->d_name);
+          name=name.substr(0, name.size()-ext.size());
+          SESubstance* sub = GetSubstance(name);
           if (!sub->SerializeFromFile(ss.str(), JSON))
           {
             Error("Unable to read substance " + ss.str());

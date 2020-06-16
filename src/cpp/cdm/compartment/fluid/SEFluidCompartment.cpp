@@ -338,6 +338,7 @@ const SubstanceQuantityType* SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::GetSub
   }
   return nullptr;
 }
+
 template<FLUID_COMPARTMENT_TEMPLATE>
 const std::vector<SubstanceQuantityType*>& SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::GetSubstanceQuantities()
 {
