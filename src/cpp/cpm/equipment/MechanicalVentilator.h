@@ -49,7 +49,7 @@ protected:
   void InvalidateConnection();
 
   void ApplyBaseline();
-  void ApplyTarget();  
+  void ApplyTarget();
   void CalculateInspiration();
   void CalculateExpiration();
   void SetVentilatorPressure();

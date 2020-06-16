@@ -9,7 +9,7 @@ class CDM_DECL SEPatientAction : public SEAction
   friend class PBPatientAction;//friend the serialization class
 public:
 
-  SEPatientAction();
+  SEPatientAction(Logger* logger=nullptr);
   virtual ~SEPatientAction();
 
   virtual void Clear(); //clear memory

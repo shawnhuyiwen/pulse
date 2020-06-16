@@ -456,7 +456,7 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
   const SESubstanceBolus* bolus = dynamic_cast<const SESubstanceBolus*>(&action);
   if (bolus != nullptr)
   {
-    SESubstance* sub = m_Substances.GetSubstance(bolus->GetSubstance().GetName());
+    const SESubstance* sub = m_Substances.GetSubstance(bolus->GetSubstance().GetName());
     if (sub == nullptr)//Make sure this substance manager has it
     {
       Error("Ignoring SESubstanceBolus action due to unknown substance in action: " + bolus->GetSubstance().GetName());
@@ -478,7 +478,7 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
   const SESubstanceInfusion* subInfusion = dynamic_cast<const SESubstanceInfusion*>(&action);
   if (subInfusion != nullptr)
   {
-    SESubstance* sub = m_Substances.GetSubstance(subInfusion->GetSubstance().GetName());
+    const SESubstance* sub = m_Substances.GetSubstance(subInfusion->GetSubstance().GetName());
     if (sub == nullptr)//Make sure this substance manager has it
     {
       Error("Ignoring SESubstanceInfusion action due to unknown substance in action: " + subInfusion->GetSubstance().GetName());
@@ -500,7 +500,7 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
   const SESubstanceCompoundInfusion* cSubInfusion = dynamic_cast<const SESubstanceCompoundInfusion*>(&action);
   if (cSubInfusion != nullptr)
   {
-    SESubstanceCompound* cmpd = m_Substances.GetCompound(cSubInfusion->GetSubstanceCompound().GetName());
+    const SESubstanceCompound* cmpd = m_Substances.GetCompound(cSubInfusion->GetSubstanceCompound().GetName());
     if (cmpd == nullptr)//Make sure this substance manager has it
     {
       Error("Ignoring SESubstanceCompoundInfusion action due to unknown substance in action: " + cSubInfusion->GetSubstanceCompound().GetName());

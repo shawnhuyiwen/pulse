@@ -6,7 +6,7 @@ See accompanying NOTICE file for details.*/
 #include "properties/SEScalarTime.h"
 #include "io/protobuf/PBPatientActions.h"
 
-SEForcedPause::SEForcedPause() : SEConsciousRespirationCommand()
+SEForcedPause::SEForcedPause(Logger* logger) : SEConsciousRespirationCommand(logger)
 {
   m_Period = nullptr;
 }

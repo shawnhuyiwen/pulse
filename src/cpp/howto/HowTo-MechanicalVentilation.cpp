@@ -179,10 +179,10 @@ void HowToMechanicalVentilation()
   pe->GetEngineTracker()->GetDataRequestManager().CreatePatientDataRequest("VitalCapacity", VolumeUnit::L);
   //Compartment data
   //Arteriole bicarbonate
-  SESubstance* HCO3 = pe->GetSubstanceManager().GetSubstance("Bicarbonate");
+  const SESubstance* HCO3 = pe->GetSubstanceManager().GetSubstance("Bicarbonate");
   pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, *HCO3, "Concentration", MassPerVolumeUnit::ug_Per_mL);
   //Lactate - this should have a relationship to lactic acid
-  SESubstance* Lactate = pe->GetSubstanceManager().GetSubstance("Lactate");
+  const SESubstance* Lactate = pe->GetSubstanceManager().GetSubstance("Lactate");
   pe->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest(*Lactate, "BloodConcentration", MassPerVolumeUnit::ug_Per_mL);
   
   pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToMechanicalVentilation.csv");
@@ -268,7 +268,7 @@ void HowToMechanicalVentilation()
   pe->ProcessAction(tbi);
 
   //Environment change
-  SEChangeEnvironmentalConditions env(pe->GetSubstanceManager());
+  SEChangeEnvironmentalConditions env(pe->GetLogger());
   SEEnvironmentalConditions& envConditions = env.GetEnvironmentalConditions();
   envConditions.GetAirVelocity().SetValue(2.0, LengthPerTimeUnit::m_Per_s);
   envConditions.GetAmbientTemperature().SetValue(15.0, TemperatureUnit::C);

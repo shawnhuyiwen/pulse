@@ -17,12 +17,12 @@ POP_PROTO_WARNINGS()
 #include "utils/FileUtils.h"
 
 
-void PBAnesthesiaMachine::Load(const CDM_BIND::AnesthesiaMachineData& src, SEAnesthesiaMachine& dst)
+void PBAnesthesiaMachine::Load(const CDM_BIND::AnesthesiaMachineData& src, SEAnesthesiaMachine& dst, const SESubstanceManager& subMgr)
 {
   dst.Clear();
-  PBAnesthesiaMachine::Serialize(src, dst);
+  PBAnesthesiaMachine::Serialize(src, dst, subMgr);
 }
-void PBAnesthesiaMachine::Serialize(const CDM_BIND::AnesthesiaMachineData& src, SEAnesthesiaMachine& dst)
+void PBAnesthesiaMachine::Serialize(const CDM_BIND::AnesthesiaMachineData& src, SEAnesthesiaMachine& dst, const SESubstanceManager& subMgr)
 {
   dst.SetConnection((eAnesthesiaMachine_Connection)src.connection());
   if (src.has_inletflow())
@@ -44,13 +44,13 @@ void PBAnesthesiaMachine::Serialize(const CDM_BIND::AnesthesiaMachineData& src, 
   if (src.has_reliefvalvepressure())
     PBProperty::Load(src.reliefvalvepressure(), dst.GetReliefValvePressure());
   if (src.has_leftchamber())
-    PBAnesthesiaMachine::Load(src.leftchamber(), dst.GetLeftChamber());
+    PBAnesthesiaMachine::Load(src.leftchamber(), dst.GetLeftChamber(), subMgr);
   if (src.has_rightchamber())
-    PBAnesthesiaMachine::Load(src.rightchamber(), dst.GetRightChamber());
+    PBAnesthesiaMachine::Load(src.rightchamber(), dst.GetRightChamber(), subMgr);
   if (src.has_oxygenbottleone())
-    PBAnesthesiaMachine::Load(src.oxygenbottleone(), dst.GetOxygenBottleOne());
+    PBAnesthesiaMachine::Load(src.oxygenbottleone(), dst.GetOxygenBottleOne(), subMgr);
   if (src.has_oxygenbottletwo())
-    PBAnesthesiaMachine::Load(src.oxygenbottletwo(), dst.GetOxygenBottleTwo());
+    PBAnesthesiaMachine::Load(src.oxygenbottletwo(), dst.GetOxygenBottleTwo(), subMgr);
 
   dst.StateChange();
 }
@@ -92,12 +92,12 @@ void PBAnesthesiaMachine::Serialize(const SEAnesthesiaMachine& src, CDM_BIND::An
     dst.set_allocated_oxygenbottletwo(PBAnesthesiaMachine::Unload(*src.m_OxygenBottleTwo));
 }
 
-void PBAnesthesiaMachine::Load(const CDM_BIND::AnesthesiaMachineChamberData& src, SEAnesthesiaMachineChamber& dst)
+void PBAnesthesiaMachine::Load(const CDM_BIND::AnesthesiaMachineChamberData& src, SEAnesthesiaMachineChamber& dst, const SESubstanceManager& subMgr)
 {
   dst.Clear();
-  PBAnesthesiaMachine::Serialize(src, dst);
+  PBAnesthesiaMachine::Serialize(src, dst, subMgr);
 }
-void PBAnesthesiaMachine::Serialize(const CDM_BIND::AnesthesiaMachineChamberData& src, SEAnesthesiaMachineChamber& dst)
+void PBAnesthesiaMachine::Serialize(const CDM_BIND::AnesthesiaMachineChamberData& src, SEAnesthesiaMachineChamber& dst, const SESubstanceManager& subMgr)
 {
   if (src.state() != CDM_BIND::eSwitch::NullSwitch)
     dst.SetState((eSwitch)src.state());
@@ -106,7 +106,7 @@ void PBAnesthesiaMachine::Serialize(const CDM_BIND::AnesthesiaMachineChamberData
 
   if (!src.substance().empty())
   {
-    dst.m_Substance = dst.m_Substances.GetSubstance(src.substance());
+    dst.m_Substance = subMgr.GetSubstance(src.substance());
     if (dst.m_Substance == nullptr)
     {
       dst.Error("Do not have substance : " + src.substance(), "SEAnesthesiaMachineChamber::Serialize");
@@ -129,12 +129,12 @@ void PBAnesthesiaMachine::Serialize(const SEAnesthesiaMachineChamber& src, CDM_B
     dst.set_substance(src.m_Substance->GetName());
 }
 
-void PBAnesthesiaMachine::Load(const CDM_BIND::AnesthesiaMachineOxygenBottleData& src, SEAnesthesiaMachineOxygenBottle& dst)
+void PBAnesthesiaMachine::Load(const CDM_BIND::AnesthesiaMachineOxygenBottleData& src, SEAnesthesiaMachineOxygenBottle& dst, const SESubstanceManager& subMgr)
 {
   dst.Clear();
-  PBAnesthesiaMachine::Serialize(src, dst);
+  PBAnesthesiaMachine::Serialize(src, dst, subMgr);
 }
-void PBAnesthesiaMachine::Serialize(const CDM_BIND::AnesthesiaMachineOxygenBottleData& src, SEAnesthesiaMachineOxygenBottle& dst)
+void PBAnesthesiaMachine::Serialize(const CDM_BIND::AnesthesiaMachineOxygenBottleData& src, SEAnesthesiaMachineOxygenBottle& dst, const SESubstanceManager& subMgr)
 {
   if (src.has_volume())
     PBProperty::Load(src.volume(), dst.GetVolume());
@@ -167,18 +167,18 @@ bool PBAnesthesiaMachine::SerializeToFile(const SEAnesthesiaMachine& src, const 
   return WriteFile(content, filename, m);
 }
 
-bool PBAnesthesiaMachine::SerializeFromString(const std::string& src, SEAnesthesiaMachine& dst, SerializationFormat m)
+bool PBAnesthesiaMachine::SerializeFromString(const std::string& src, SEAnesthesiaMachine& dst, SerializationFormat m, const SESubstanceManager& subMgr)
 {
   CDM_BIND::AnesthesiaMachineData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
     return false;
-  PBAnesthesiaMachine::Load(data, dst);
+  PBAnesthesiaMachine::Load(data, dst, subMgr);
   return true;
 }
-bool PBAnesthesiaMachine::SerializeFromFile(const std::string& filename, SEAnesthesiaMachine& dst, SerializationFormat m)
+bool PBAnesthesiaMachine::SerializeFromFile(const std::string& filename, SEAnesthesiaMachine& dst, SerializationFormat m, const SESubstanceManager& subMgr)
 {
   std::string content = ReadFile(filename, m);
   if (content.empty())
     return false;
-  return PBAnesthesiaMachine::SerializeFromString(content, dst, m);
+  return PBAnesthesiaMachine::SerializeFromString(content, dst, m, subMgr);
 }

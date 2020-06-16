@@ -15,7 +15,8 @@ public:
   virtual void Invalidate() = 0;
 
   virtual std::string GetCompartmentName() = 0;
-  virtual SESubstance& GetSubstance() const { return m_Substance; }
+  virtual SESubstance& GetSubstance() { return m_Substance; }
+  virtual const SESubstance& GetSubstance() const { return m_Substance; }
 
   virtual void SetToZero() = 0;
   virtual const SEScalar* GetScalar(const std::string& name) = 0;

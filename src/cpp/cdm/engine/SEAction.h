@@ -9,7 +9,7 @@ class CDM_DECL SEAction : public Loggable
   friend class PBAction;//friend the serialization class
 public:
 
-  SEAction();
+  SEAction(Logger* logger);
   virtual ~SEAction();
 
   virtual void Clear();// Deletes all members

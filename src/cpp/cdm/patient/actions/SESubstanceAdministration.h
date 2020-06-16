@@ -24,7 +24,7 @@ class CDM_DECL SESubstanceAdministration : public SEPatientAction
   friend class PBPatientAction;//friend the serialization class
 public:
 
-  SESubstanceAdministration();
+  SESubstanceAdministration(Logger* logger);
   virtual ~SESubstanceAdministration();
 
   virtual void Clear(); //clear memory

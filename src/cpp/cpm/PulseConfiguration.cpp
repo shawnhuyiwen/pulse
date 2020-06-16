@@ -389,7 +389,7 @@ void PulseConfiguration::Initialize(const std::string& data_dir)
   GetMolarMassOfDryAir().SetValue(0.028964, MassPerAmountUnit::kg_Per_mol);
   GetMolarMassOfWaterVapor().SetValue(0.018016, MassPerAmountUnit::kg_Per_mol);
   if (!data_dir.empty())
-    GetInitialEnvironmentalConditions().SerializeFromFile(data_dir+"/environments/Standard.json",JSON);
+    GetInitialEnvironmentalConditions().SerializeFromFile(data_dir+"/environments/Standard.json",JSON, m_Substances);
   GetWaterDensity().SetValue(1000, MassPerVolumeUnit::kg_Per_m3);
 
   // Gastrointestinal
@@ -1228,7 +1228,7 @@ bool PulseConfiguration::HasInitialEnvironmentalConditions() const
 SEEnvironmentalConditions& PulseConfiguration::GetInitialEnvironmentalConditions()
 {
   if (m_InitialEnvironmentalConditions == nullptr)
-    m_InitialEnvironmentalConditions = new SEEnvironmentalConditions(m_Substances);
+    m_InitialEnvironmentalConditions = new SEEnvironmentalConditions(GetLogger());
   return *m_InitialEnvironmentalConditions;
 }
 const SEEnvironmentalConditions* PulseConfiguration::GetInitialEnvironmentalConditions() const

@@ -9,7 +9,7 @@ class CDM_DECL SERespiratoryFatigue : public SEPatientAction
   friend class PBPatientAction;//friend the serialization class
 public:
 
-  SERespiratoryFatigue();
+  SERespiratoryFatigue(Logger* logger=nullptr);
   virtual ~SERespiratoryFatigue();
 
   virtual void Clear();

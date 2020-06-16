@@ -10,11 +10,11 @@ class CDM_DECL SEAnesthesiaMachineConfiguration : public SEAnesthesiaMachineActi
   friend class PBEquipmentAction;//friend the serialization class
 public:
 
-  SEAnesthesiaMachineConfiguration(SESubstanceManager& substances);
+  SEAnesthesiaMachineConfiguration(Logger* logger=nullptr);
   virtual ~SEAnesthesiaMachineConfiguration();
 
   virtual void Clear();
-  virtual void Copy(const SEAnesthesiaMachineConfiguration& src);
+  virtual void Copy(const SEAnesthesiaMachineConfiguration& src, const SESubstanceManager& subMgr);
 
   virtual bool IsValid() const;
 
@@ -30,7 +30,6 @@ public:
   virtual void ToString(std::ostream &str) const;
 
 protected:
-  SESubstanceManager&  m_Substances;
 
   std::string          m_ConfigurationFile;
   SEAnesthesiaMachine* m_Configuration;

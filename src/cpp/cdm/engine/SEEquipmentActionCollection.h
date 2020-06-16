@@ -3,7 +3,6 @@
 
 #pragma once
 class SEAction;
-class SESubstanceManager;
 class SEEquipmentAction;
 class SEAnesthesiaMachine;
 class SEAnesthesiaMachineAction;
@@ -26,6 +25,7 @@ class SEInhalerConfiguration;
 class SEMechanicalVentilator;
 class SEMechanicalVentilatorAction;
 class SEMechanicalVentilatorConfiguration;
+class SESubstanceManager;
 CDM_BIND_DECL(ActionListData)
 CDM_BIND_DECL(AnyEquipmentActionData)
 
@@ -123,6 +123,7 @@ public:
 protected:
   void Clear();
   bool ProcessAction(const SEEquipmentAction& action);
+  SESubstanceManager& m_Substances;
 
   SEAnesthesiaMachineConfiguration*                            m_AnesthesiaMachineConfiguration;
   //Anesthesia Machine Incidents
@@ -144,6 +145,4 @@ protected:
   SEInhalerConfiguration*                                      m_InhalerConfiguration;
 
   SEMechanicalVentilatorConfiguration*                         m_MechanicalVentilatorConfiguration;
-  // General
-  SESubstanceManager& m_Substances;
 };

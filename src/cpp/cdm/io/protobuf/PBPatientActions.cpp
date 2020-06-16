@@ -869,7 +869,7 @@ void PBPatientAction::Serialize(const CDM_BIND::MechanicalVentilationData& src, 
 
   dst.m_GasFractions.clear();
   dst.m_cGasFractions.clear();
-  SESubstance* sub;
+  const SESubstance* sub;
   for (int i = 0; i < src.gasfraction_size(); i++)
   {
     const CDM_BIND::SubstanceFractionData& sfData = src.gasfraction()[i];
@@ -1360,7 +1360,7 @@ void PBPatientAction::Copy(const SEUseInhaler& src, SEUseInhaler& dst)
 }
 
 
-SEPatientAction* PBPatientAction::Load(const CDM_BIND::AnyPatientActionData& any, SESubstanceManager& subMgr)
+SEPatientAction* PBPatientAction::Load(const CDM_BIND::AnyPatientActionData& any, const SESubstanceManager& subMgr)
 {
   switch (any.Action_case())
   {
@@ -1516,7 +1516,7 @@ SEPatientAction* PBPatientAction::Load(const CDM_BIND::AnyPatientActionData& any
   }
   case CDM_BIND::AnyPatientActionData::ActionCase::kSubstanceBolus:
   {
-    SESubstance* sub = subMgr.GetSubstance(any.substancebolus().substance());
+    const SESubstance* sub = subMgr.GetSubstance(any.substancebolus().substance());
     if (sub == nullptr)
     {
       subMgr.Error("Unknown substance " + any.substancebolus().substance(), "PBPatientAction::Load");
@@ -1528,7 +1528,7 @@ SEPatientAction* PBPatientAction::Load(const CDM_BIND::AnyPatientActionData& any
   }
   case CDM_BIND::AnyPatientActionData::ActionCase::kSubstanceInfusion:
   {
-    SESubstance* sub = subMgr.GetSubstance(any.substanceinfusion().substance());
+    const SESubstance* sub = subMgr.GetSubstance(any.substanceinfusion().substance());
     if (sub == nullptr)
     {
       subMgr.Error("Unknown substance " + any.substanceinfusion().substance(), "PBPatientAction::Load");
@@ -1540,7 +1540,7 @@ SEPatientAction* PBPatientAction::Load(const CDM_BIND::AnyPatientActionData& any
   }
   case CDM_BIND::AnyPatientActionData::ActionCase::kSubstanceCompoundInfusion:
   {
-    SESubstanceCompound* subC = subMgr.GetCompound(any.substancecompoundinfusion().substancecompound());
+    const SESubstanceCompound* subC = subMgr.GetCompound(any.substancecompoundinfusion().substancecompound());
     if (subC == nullptr)
     {
       subMgr.Error("Unknown substance compound " + any.substancecompoundinfusion().substancecompound(), "PBPatientAction::Load");

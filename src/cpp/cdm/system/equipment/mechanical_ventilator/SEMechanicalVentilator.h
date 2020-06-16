@@ -14,10 +14,6 @@ enum class eMechanicalVentilator_Connection { NullConnection = 0, Off, Mask, Tub
 extern const std::string& eMechanicalVentilator_Connection_Name(eMechanicalVentilator_Connection m);
 
 // Keep enums in sync with appropriate schema/cdm/MechanicalVentilator.proto file !!
-enum class eMechanicalVentilator_Control { NullControl = 0, PC_CMV };
-extern const std::string& eMechanicalVentilator_Control_Name(eMechanicalVentilator_Control m);
-
-// Keep enums in sync with appropriate schema/cdm/MechanicalVentilator.proto file !!
 enum class eMechanicalVentilator_DriverWaveform { NullDriverWaveform = 0, Square };
 extern const std::string& eMechanicalVentilator_DriverWaveform_Name(eMechanicalVentilator_DriverWaveform m);
 
@@ -28,15 +24,15 @@ protected:
   friend SEMechanicalVentilatorConfiguration;
 public:
 
-  SEMechanicalVentilator(SESubstanceManager& substances);
+  SEMechanicalVentilator(Logger* logger);
   virtual ~SEMechanicalVentilator();
 
   virtual void Clear();
 
   bool SerializeToString(std::string& output, SerializationFormat m) const;
   bool SerializeToFile(const std::string& filename, SerializationFormat m) const;
-  bool SerializeFromString(const std::string& src, SerializationFormat m);
-  bool SerializeFromFile(const std::string& filename, SerializationFormat m);
+  bool SerializeFromString(const std::string& src, SerializationFormat m, const SESubstanceManager& subMgr);
+  bool SerializeFromFile(const std::string& filename, SerializationFormat m, const SESubstanceManager& subMgr);
 
 protected:
 
@@ -46,8 +42,8 @@ protected:
   *            Engine specific methodology can then update their logic.
   */
   virtual void StateChange(){};
-  virtual void Merge(const SEMechanicalVentilator& from);
-  virtual void ProcessConfiguration(SEMechanicalVentilatorConfiguration& config);
+  virtual void Merge(const SEMechanicalVentilator& from, SESubstanceManager& subMgr);
+  virtual void ProcessConfiguration(SEMechanicalVentilatorConfiguration& config, SESubstanceManager& subMgr);
 
 public:
 
@@ -142,7 +138,7 @@ public:
   bool HasFractionInspiredGas(const SESubstance& substance) const;
   const std::vector<SESubstanceFraction*>& GetFractionInspiredGases();
   const std::vector<const SESubstanceFraction*>& GetFractionInspiredGases() const;
-  SESubstanceFraction& GetFractionInspiredGas(SESubstance& substance);
+  SESubstanceFraction& GetFractionInspiredGas(const SESubstance& substance);
   const SESubstanceFraction* GetFractionInspiredGas(const SESubstance& substance) const;
   void RemoveFractionInspiredGas(const SESubstance& substance);
   void RemoveFractionInspiredGases();
@@ -151,7 +147,7 @@ public:
   bool HasConcentrationInspiredAerosol(const SESubstance& substance) const;
   const std::vector<SESubstanceConcentration*>& GetConcentrationInspiredAerosols();
   const std::vector<const SESubstanceConcentration*>& GetConcentrationInspiredAerosols() const;
-  SESubstanceConcentration& GetConcentrationInspiredAerosol(SESubstance& substance);
+  SESubstanceConcentration& GetConcentrationInspiredAerosol(const SESubstance& substance);
   const SESubstanceConcentration* GetConcentrationInspiredAerosol(const SESubstance& substance) const;
   void RemoveConcentrationInspiredAerosol(const SESubstance& substance);
   void RemoveConcentrationInspiredAerosols();
@@ -199,6 +195,4 @@ protected:
 
   std::vector<SESubstanceConcentration*>       m_ConcentrationInspiredAerosols;
   std::vector<const SESubstanceConcentration*> m_cConcentrationInspiredAerosols;
-
-  SESubstanceManager&                          m_Substances;
 };

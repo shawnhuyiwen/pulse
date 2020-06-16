@@ -8,21 +8,21 @@
 #include "properties/SEScalarMassPerVolume.h"
 #include "io/protobuf/PBSubstance.h"
 
-SESubstanceCompound::SESubstanceCompound(Logger* logger) : Loggable(logger)
+SESubstanceCompound::SESubstanceCompound(const std::string& name, Logger* logger) : Loggable(logger)
 {
-  m_Name = "";
+  m_Name = name;
 }
 
 SESubstanceCompound::~SESubstanceCompound()
 {
-  Clear();
+  DELETE_VECTOR(m_Components);
+  m_cComponents.clear();
 }
 
 void SESubstanceCompound::Clear()
 {
-  m_Name = "";
-  DELETE_VECTOR(m_Components);
-  m_cComponents.clear();
+  for (SESubstanceConcentration* sq : m_Components)
+    sq->Clear();
 }
 
 bool SESubstanceCompound::SerializeToString(std::string& output, SerializationFormat m) const
@@ -45,18 +45,6 @@ bool SESubstanceCompound::SerializeFromFile(const std::string& filename, const S
 std::string SESubstanceCompound::GetName() const
 {
   return m_Name;
-}
-void SESubstanceCompound::SetName(const std::string& name)
-{
-  m_Name = name;
-}
-bool SESubstanceCompound::HasName() const
-{
-  return m_Name.empty()?false:true;
-}
-void SESubstanceCompound::InvalidateName()
-{
-  m_Name = "";
 }
 
 bool SESubstanceCompound::HasComponent() const

@@ -10,7 +10,7 @@ class CDM_DECL SEOverrides : public SEAction
   friend class PBAction;//friend the serialization class
 public:
 
-  SEOverrides();
+  SEOverrides(Logger* logger=nullptr);
   virtual ~SEOverrides();
 
   virtual void Clear(); //clear memory

@@ -8,7 +8,7 @@ class CDM_DECL SEAnesthesiaMachineYPieceDisconnect : public SEAnesthesiaMachineA
   friend class PBEquipmentAction;//friend the serialization class
 public:
 
-  SEAnesthesiaMachineYPieceDisconnect();
+  SEAnesthesiaMachineYPieceDisconnect(Logger* logger=nullptr);
   virtual ~SEAnesthesiaMachineYPieceDisconnect();
 
   virtual void Clear();

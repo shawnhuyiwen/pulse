@@ -9,7 +9,7 @@ class CDM_DECL SEPatientCondition : public SECondition
   friend class PBPatientCondition;//friend the serialization class
 public:
 
-  SEPatientCondition();
+  SEPatientCondition(Logger* logger);
   virtual ~SEPatientCondition();
 
   virtual void Clear(); //clear memory

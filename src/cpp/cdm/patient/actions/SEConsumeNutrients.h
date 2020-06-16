@@ -11,7 +11,7 @@ class CDM_DECL SEConsumeNutrients : public SEPatientAction
   friend class PBPatientAction;//friend the serialization class
 public:
 
-  SEConsumeNutrients();
+  SEConsumeNutrients(Logger* logger=nullptr);
   virtual ~SEConsumeNutrients();
 
   virtual void Clear(); //clear memory

@@ -20,7 +20,7 @@
 #include "properties/SEScalarTime.h"
 #include "io/protobuf/PBMechanicalVentilator.h"
 
-SEMechanicalVentilator::SEMechanicalVentilator(SESubstanceManager& substances) : SEEquipment(substances.GetLogger()), m_Substances(substances)
+SEMechanicalVentilator::SEMechanicalVentilator(Logger* logger) : SEEquipment(logger)
 {
   m_Connection = eMechanicalVentilator_Connection::NullConnection;
   m_EndotrachealTubeResistance = nullptr;
@@ -103,7 +103,22 @@ void SEMechanicalVentilator::Clear()
   m_ConcentrationInspiredAerosols.clear();
 }
 
-void SEMechanicalVentilator::Merge(const SEMechanicalVentilator& from)
+
+void SEMechanicalVentilator::ProcessConfiguration(SEMechanicalVentilatorConfiguration& config, SESubstanceManager& subMgr)
+{
+  if (config.HasConfiguration())
+    Merge(config.GetConfiguration(), subMgr);
+  else if (config.HasConfigurationFile())
+  {
+    // Update the action with the file contents
+    std::string cfg_file = config.GetConfigurationFile();
+    if (!config.GetConfiguration().SerializeFromFile(cfg_file, JSON, subMgr))
+      Error("Unable to load configuration file", "SEMechanicalVentilator::ProcessConfiguration");
+    Merge(config.GetConfiguration(), subMgr);
+  }
+  StateChange();
+}
+void SEMechanicalVentilator::Merge(const SEMechanicalVentilator& from, SESubstanceManager& subMgr)
 {
   if(from.m_Connection!=eMechanicalVentilator_Connection::NullConnection)
     SetConnection(from.m_Connection);
@@ -144,7 +159,7 @@ void SEMechanicalVentilator::Merge(const SEMechanicalVentilator& from)
   {
     double amt;
     double total = 0;
-    SESubstance* sub;
+    const SESubstance* sub;
     SESubstanceFraction* sf;
     // Since we are allowing only O2 to be specified
     // Remove everything so we know what is intentionally not provided
@@ -152,26 +167,16 @@ void SEMechanicalVentilator::Merge(const SEMechanicalVentilator& from)
     RemoveFractionInspiredGases();
     for (SESubstanceFraction* osf : from.m_FractionInspiredGases)
     {
-      if (&m_Substances != &from.m_Substances)
-      {
-        sub = m_Substances.GetSubstance(osf->GetSubstance().GetName());
-        if (sub == nullptr)
-        {
-          std::stringstream ss;
-          ss << "Do not have substance : " << osf->GetSubstance().GetName();
-          Error(ss);
-        }
-      }
-      else
-        sub = &osf->GetSubstance();
-
+      sub = subMgr.GetSubstance(osf->GetSubstance().GetName());
+      if (sub == nullptr)
+        Error("Do not have substance : " + osf->GetSubstance().GetName());
       sf = new SESubstanceFraction(*sub);
       sf->GetFractionAmount().Set(osf->GetFractionAmount());
       amt = sf->GetFractionAmount().GetValue();
       total += amt;
       m_FractionInspiredGases.push_back(sf);
       m_cFractionInspiredGases.push_back(sf);
-      m_Substances.AddActiveSubstance((SESubstance&)sf->m_Substance);
+      subMgr.AddActiveSubstance((SESubstance&)sf->m_Substance);
     }
     
     // It's Ok if you ONLY set Oxygen, i.e. FiO2
@@ -206,28 +211,13 @@ bool SEMechanicalVentilator::SerializeToFile(const std::string& filename, Serial
 {
   return PBMechanicalVentilator::SerializeToFile(*this, filename, m);
 }
-bool SEMechanicalVentilator::SerializeFromString(const std::string& src, SerializationFormat m)
+bool SEMechanicalVentilator::SerializeFromString(const std::string& src, SerializationFormat m, const SESubstanceManager& subMgr)
 {
-  return PBMechanicalVentilator::SerializeFromString(src, *this, m);
+  return PBMechanicalVentilator::SerializeFromString(src, *this, m, subMgr);
 }
-bool SEMechanicalVentilator::SerializeFromFile(const std::string& filename, SerializationFormat m)
+bool SEMechanicalVentilator::SerializeFromFile(const std::string& filename, SerializationFormat m, const SESubstanceManager& subMgr)
 {
-  return PBMechanicalVentilator::SerializeFromFile(filename, *this, m);
-}
-
-void SEMechanicalVentilator::ProcessConfiguration(SEMechanicalVentilatorConfiguration& config)
-{
-  if (config.HasConfiguration())
-    Merge(config.GetConfiguration());
-  else if (config.HasConfigurationFile())
-  {
-    // Update the action with the file contents
-    std::string cfg_file = config.GetConfigurationFile();
-    if (!config.GetConfiguration().SerializeFromFile(cfg_file, JSON))
-      Error("Unable to load configuration file", "SEMechanicalVentilator::ProcessConfiguration");
-    Merge(config.GetConfiguration());
-  }
-  StateChange();
+  return PBMechanicalVentilator::SerializeFromFile(filename, *this, m, subMgr);
 }
 
 const SEScalar* SEMechanicalVentilator::GetScalar(const std::string& name)
@@ -654,7 +644,7 @@ const std::vector<const SESubstanceFraction*>& SEMechanicalVentilator::GetFracti
 {
   return m_cFractionInspiredGases;
 }
-SESubstanceFraction& SEMechanicalVentilator::GetFractionInspiredGas(SESubstance& s)
+SESubstanceFraction& SEMechanicalVentilator::GetFractionInspiredGas(const SESubstance& s)
 {
   for (SESubstanceFraction* sf : m_FractionInspiredGases)
   {
@@ -719,7 +709,7 @@ const std::vector<const SESubstanceConcentration*>& SEMechanicalVentilator::GetC
 {
   return m_cConcentrationInspiredAerosols;
 }
-SESubstanceConcentration& SEMechanicalVentilator::GetConcentrationInspiredAerosol(SESubstance& substance)
+SESubstanceConcentration& SEMechanicalVentilator::GetConcentrationInspiredAerosol(const SESubstance& substance)
 {
   for (SESubstanceConcentration* sc : m_ConcentrationInspiredAerosols)
   {

@@ -13,7 +13,7 @@ class CDM_DECL SESubstanceFraction : public Loggable
   friend class SEMechanicalVentilator;// So it can add substances to the manager
 public:
 
-  SESubstanceFraction(SESubstance&);
+  SESubstanceFraction(const SESubstance&);
   virtual ~SESubstanceFraction();
 
   virtual void Clear();
@@ -22,10 +22,10 @@ public:
   virtual SEScalar0To1& GetFractionAmount();
   virtual double GetFractionAmount() const;
 
-  virtual SESubstance& GetSubstance() const;
+  virtual const SESubstance& GetSubstance() const;
 
 protected:
 
-  SESubstance&       m_Substance;
-  SEScalar0To1*  m_FractionAmount;
+  const SESubstance& m_Substance;
+  SEScalar0To1*      m_FractionAmount;
 };  

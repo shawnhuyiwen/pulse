@@ -8,7 +8,7 @@
 #include "substance/SESubstanceManager.h"
 
 
-SEAction::SEAction() : Loggable()
+SEAction::SEAction(Logger* logger) : Loggable(logger)
 {
   m_Comment="";
 }

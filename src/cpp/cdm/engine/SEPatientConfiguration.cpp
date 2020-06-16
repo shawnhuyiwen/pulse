@@ -10,7 +10,7 @@
 #include "properties/SEScalar.h"
 #include "io/protobuf/PBEngine.h"
 
-SEPatientConfiguration::SEPatientConfiguration(SESubstanceManager& subMgr) : Loggable(subMgr.GetLogger()), m_SubMgr(subMgr)
+SEPatientConfiguration::SEPatientConfiguration(const SESubstanceManager& subMgr) : Loggable(subMgr.GetLogger()), m_Substances(subMgr)
 {
   m_Patient = nullptr;
   m_Conditions = nullptr;
@@ -32,11 +32,11 @@ bool SEPatientConfiguration::SerializeToFile(const std::string& filename, Serial
 }
 bool SEPatientConfiguration::SerializeFromString(const std::string& src, SerializationFormat m)
 {
-  return PBEngine::SerializeFromString(src, *this, m, m_SubMgr);
+  return PBEngine::SerializeFromString(src, *this, m);
 }
 bool SEPatientConfiguration::SerializeFromFile(const std::string& filename, SerializationFormat m)
 {
-  return PBEngine::SerializeFromFile(filename, *this, m, m_SubMgr);
+  return PBEngine::SerializeFromFile(filename, *this, m);
 }
 
 void SEPatientConfiguration::Clear()
@@ -104,7 +104,7 @@ void SEPatientConfiguration::InvalidatePatient()
 SEConditionManager& SEPatientConfiguration::GetConditions()
 {
   if (m_Conditions == nullptr)
-    m_Conditions = new SEConditionManager(m_SubMgr);
+    m_Conditions = new SEConditionManager(m_Substances);
   return *m_Conditions;
 }
 const SEConditionManager* SEPatientConfiguration::GetConditions() const

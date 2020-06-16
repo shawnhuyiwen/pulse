@@ -8,7 +8,7 @@ class CDM_DECL SEAnesthesiaMachineVaporizerFailure : public SEAnesthesiaMachineA
   friend class PBEquipmentAction;//friend the serialization class
 public:
 
-  SEAnesthesiaMachineVaporizerFailure();
+  SEAnesthesiaMachineVaporizerFailure(Logger* logger=nullptr);
   virtual ~SEAnesthesiaMachineVaporizerFailure();
 
   virtual void Clear();

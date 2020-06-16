@@ -217,8 +217,8 @@ void PulseEngineTest::CardiovascularCircuitAndTransportTest(CardiovascularDriver
   std::vector<SESubstance*> subs2Track;
   if (balanceBloodGases)
   {
-    SEEnvironmentalConditions env(pc.GetSubstances());
-    env.SerializeFromFile("./environments/Standard.json",JSON);
+    SEEnvironmentalConditions env(pc.GetLogger());
+    env.SerializeFromFile("./environments/Standard.json",JSON, pc.GetSubstances());
     SEGasCompartment* cEnv = pc.GetCompartments().GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
     for (SESubstanceFraction* subFrac : env.GetAmbientGases())
     {

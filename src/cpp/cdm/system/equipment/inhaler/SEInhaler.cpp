@@ -14,7 +14,7 @@
 
 #include "io/protobuf/PBInhaler.h"
 
-SEInhaler::SEInhaler(SESubstanceManager& substances) : SEEquipment(substances.GetLogger()), m_Substances(substances)
+SEInhaler::SEInhaler(Logger* logger) : SEEquipment(logger)
 {
   m_State = eSwitch::Off;
   m_MeteredDose = nullptr;
@@ -47,13 +47,13 @@ bool SEInhaler::SerializeToFile(const std::string& filename, SerializationFormat
 {
   return PBInhaler::SerializeToFile(*this, filename, m);
 }
-bool SEInhaler::SerializeFromString(const std::string& src, SerializationFormat m)
+bool SEInhaler::SerializeFromString(const std::string& src, SerializationFormat m, const SESubstanceManager& subMgr)
 {
-  return PBInhaler::SerializeFromString(src, *this, m);
+  return PBInhaler::SerializeFromString(src, *this, m, subMgr);
 }
-bool SEInhaler::SerializeFromFile(const std::string& filename, SerializationFormat m)
+bool SEInhaler::SerializeFromFile(const std::string& filename, SerializationFormat m, const SESubstanceManager& subMgr)
 {
-  return PBInhaler::SerializeFromFile(filename, *this, m);
+  return PBInhaler::SerializeFromFile(filename, *this, m, subMgr);
 }
 
 const SEScalar* SEInhaler::GetScalar(const std::string& name)
@@ -67,39 +67,28 @@ const SEScalar* SEInhaler::GetScalar(const std::string& name)
   return nullptr;
 }
 
-void SEInhaler::Merge(const SEInhaler& from)
+void SEInhaler::Merge(const SEInhaler& from, SESubstanceManager& subMgr)
 {
   SetState(from.m_State);
   COPY_PROPERTY(MeteredDose);
   COPY_PROPERTY(NozzleLoss);
   COPY_PROPERTY(SpacerVolume);
-  if (from.m_Substance != nullptr)
-  {
-    if (&m_Substances != &from.m_Substances)
-    {
-      m_Substance = m_Substances.GetSubstance(from.m_Substance->GetName());
-      if (m_Substance == nullptr)
-      {
-        m_ss << "Do not have substance : " << from.m_Substance->GetName();
-        Error(m_ss);
-      }
-    }
-    else
-      m_Substance = from.m_Substance;
-  }
+  m_Substance = subMgr.GetSubstance(from.m_Substance->GetName());
+    if (m_Substance == nullptr)
+      Error("Do not have substance : " + from.m_Substance->GetName());
 }
 
-void SEInhaler::ProcessConfiguration(SEInhalerConfiguration& config)
+void SEInhaler::ProcessConfiguration(SEInhalerConfiguration& config, SESubstanceManager& subMgr)
 {
   if (config.HasConfiguration())
-    Merge(config.GetConfiguration());
+    Merge(config.GetConfiguration(), subMgr);
   else if (config.HasConfigurationFile())
   {
     // Update the action with the file contents
     std::string cfg_file = config.GetConfigurationFile();
-    if (!config.GetConfiguration().SerializeFromFile(cfg_file, JSON))
+    if (!config.GetConfiguration().SerializeFromFile(cfg_file, JSON, subMgr))
       Error("Unable to load configuration file", "SEInhaler::ProcessConfiguration");
-    Merge(config.GetConfiguration());// Preserve our pointers!
+    Merge(config.GetConfiguration(), subMgr);// Preserve our pointers!
   }
   StateChange();
 }

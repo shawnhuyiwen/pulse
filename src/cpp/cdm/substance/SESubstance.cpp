@@ -19,9 +19,9 @@
 #include "properties/SEScalarVolumePerTimePressure.h"
 #include "io/protobuf/PBSubstance.h"
 
-SESubstance::SESubstance(Logger* logger) : Loggable(logger)
+SESubstance::SESubstance(const std::string& name, Logger* logger) : Loggable(logger)
 {
-  m_Name = "";
+  m_Name = name;
   m_State = eSubstance_State::NullState;
   m_Density = nullptr;
   m_MolarMass = nullptr;
@@ -57,33 +57,36 @@ SESubstance::~SESubstance()
 
 void SESubstance::Clear()
 {
-  m_Name = "";
   m_State = eSubstance_State::NullState;
-  SAFE_DELETE(m_Density); 
-  SAFE_DELETE(m_MolarMass);
+  INVALIDATE_PROPERTY(m_Density);
+  INVALIDATE_PROPERTY(m_MolarMass);
   
-  SAFE_DELETE(m_MaximumDiffusionFlux);
-  SAFE_DELETE(m_MichaelisCoefficient);
+  INVALIDATE_PROPERTY(m_MaximumDiffusionFlux);
+  INVALIDATE_PROPERTY(m_MichaelisCoefficient);
 
-  SAFE_DELETE(m_BloodConcentration);
-  SAFE_DELETE(m_MassInBody);
-  SAFE_DELETE(m_MassInBlood);
-  SAFE_DELETE(m_MassInTissue);
-  SAFE_DELETE(m_PlasmaConcentration);
-  SAFE_DELETE(m_SystemicMassCleared);
-  SAFE_DELETE(m_TissueConcentration);
+  INVALIDATE_PROPERTY(m_BloodConcentration);
+  INVALIDATE_PROPERTY(m_MassInBody);
+  INVALIDATE_PROPERTY(m_MassInBlood);
+  INVALIDATE_PROPERTY(m_MassInTissue);
+  INVALIDATE_PROPERTY(m_PlasmaConcentration);
+  INVALIDATE_PROPERTY(m_SystemicMassCleared);
+  INVALIDATE_PROPERTY(m_TissueConcentration);
 
-  SAFE_DELETE(m_AlveolarTransfer);
-  SAFE_DELETE(m_DiffusingCapacity);
-  SAFE_DELETE(m_EndTidalFraction);
-  SAFE_DELETE(m_EndTidalPressure);
-  SAFE_DELETE(m_SolubilityCoefficient);
-  SAFE_DELETE(m_RelativeDiffusionCoefficient);
+  INVALIDATE_PROPERTY(m_AlveolarTransfer);
+  INVALIDATE_PROPERTY(m_DiffusingCapacity);
+  INVALIDATE_PROPERTY(m_EndTidalFraction);
+  INVALIDATE_PROPERTY(m_EndTidalPressure);
+  INVALIDATE_PROPERTY(m_SolubilityCoefficient);
+  INVALIDATE_PROPERTY(m_RelativeDiffusionCoefficient);
 
-  SAFE_DELETE(m_Aerosolization);
-  SAFE_DELETE(m_Clearance);
-  SAFE_DELETE(m_PK);
-  SAFE_DELETE(m_PD);
+  if (m_Aerosolization != nullptr)
+    m_Aerosolization->Clear();
+  if (m_Clearance != nullptr)
+    m_Clearance->Clear();
+  if (m_PK != nullptr)
+    m_PK->Clear();
+  if (m_PD != nullptr)
+    m_PD->Clear();
 }
 
 bool SESubstance::SerializeToString(std::string& output, SerializationFormat m) const
@@ -165,18 +168,6 @@ const SEScalar* SESubstance::GetScalar(const std::string& name)
 std::string SESubstance::GetName() const
 {
   return m_Name;
-}
-void SESubstance::SetName(const std::string& name)
-{
-  m_Name = name;
-}
-bool SESubstance::HasName() const
-{
-  return m_Name.empty() ? false : true;
-}
-void SESubstance::InvalidateName()
-{
-  m_Name = "";
 }
 
 eSubstance_State SESubstance::GetState() const

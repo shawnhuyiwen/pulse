@@ -61,8 +61,8 @@ void PulseEngineTest::MechanicalVentilatorCircuitAndTransportTest(RespiratoryCon
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
-  SEEnvironmentalConditions env(pc.GetSubstances());
-  env.SerializeFromFile("./environments/Standard.json",JSON);
+  SEEnvironmentalConditions env(pc.GetLogger());
+  env.SerializeFromFile("./environments/Standard.json",JSON, pc.GetSubstances());
   SEGasCompartment* cEnv = pc.GetCompartments().GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
   for (SESubstanceFraction* subFrac : env.GetAmbientGases())
   {

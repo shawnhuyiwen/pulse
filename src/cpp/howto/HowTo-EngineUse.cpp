@@ -154,8 +154,8 @@ void HowToEngineUse()
   // So it's a good idea to cache this pointer so you can reuse it when asking at various time steps
   // You can find all substances defined in json files in the substances directory of your working directory
   // Names are in those json files. ALL substance json files are loaded into a substance managers when the engine is created
-  SESubstance* O2 = pe->GetSubstanceManager().GetSubstance("Oxygen");
-  SESubstance* CO2 = pe->GetSubstanceManager().GetSubstance("CarbonDioxide");
+  const SESubstance* O2 = pe->GetSubstanceManager().GetSubstance("Oxygen");
+  const SESubstance* CO2 = pe->GetSubstanceManager().GetSubstance("CarbonDioxide");
 
   // The tracker is responsible for advancing the engine time AND outputting the data requests below at each time step
   // If you do not wish to write data to a file, you do not need to make any data requests

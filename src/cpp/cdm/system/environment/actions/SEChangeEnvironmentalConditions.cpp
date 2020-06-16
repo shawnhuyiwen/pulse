@@ -19,7 +19,7 @@
 #include "io/protobuf/PBEnvironmentActions.h"
 
 
-SEChangeEnvironmentalConditions::SEChangeEnvironmentalConditions(SESubstanceManager& substances) : SEEnvironmentAction(), m_Substances(substances)
+SEChangeEnvironmentalConditions::SEChangeEnvironmentalConditions(Logger* logger) : SEEnvironmentAction(logger)
 {
   m_EnvironmentalConditions = nullptr;
   InvalidateEnvironmentalConditionsFile();
@@ -37,9 +37,9 @@ void SEChangeEnvironmentalConditions::Clear()
   SAFE_DELETE(m_EnvironmentalConditions);
 }
 
-void SEChangeEnvironmentalConditions::Copy(const SEChangeEnvironmentalConditions& src)
+void SEChangeEnvironmentalConditions::Copy(const SEChangeEnvironmentalConditions& src, const SESubstanceManager& subMgr)
 {// Using Bindings to make a copy
-  PBEnvironmentAction::Copy(src, *this);
+  PBEnvironmentAction::Copy(src, *this, subMgr);
 }
 
 bool SEChangeEnvironmentalConditions::IsValid() const
@@ -55,7 +55,7 @@ SEEnvironmentalConditions& SEChangeEnvironmentalConditions::GetEnvironmentalCond
 {
   m_EnvironmentalConditionsFile = "";
   if (m_EnvironmentalConditions == nullptr)
-    m_EnvironmentalConditions = new SEEnvironmentalConditions(m_Substances);
+    m_EnvironmentalConditions = new SEEnvironmentalConditions(GetLogger());
   return *m_EnvironmentalConditions;
 }
 const SEEnvironmentalConditions* SEChangeEnvironmentalConditions::GetEnvironmentalConditions() const

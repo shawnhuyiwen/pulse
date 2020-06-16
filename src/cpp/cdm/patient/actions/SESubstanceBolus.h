@@ -5,11 +5,11 @@
 #include "patient/actions/SESubstanceAdministration.h"
 class SESubstance;
 
-class CDM_DECL SESubstanceBolusState
+class CDM_DECL SESubstanceBolusState : public Loggable
 {
   friend class PBPatientAction;//friend the serialization class
 public:
-  SESubstanceBolusState(const SESubstance& sub);
+  SESubstanceBolusState(const SESubstance& sub, Logger* logger=nullptr);
   ~SESubstanceBolusState();
 
   virtual void Clear();
@@ -31,7 +31,7 @@ class CDM_DECL SESubstanceBolus : public SESubstanceAdministration
   friend class PBPatientAction;//friend the serialization class
 public:
 
-  SESubstanceBolus(const SESubstance& substance);
+  SESubstanceBolus(const SESubstance& substance, Logger* logger=nullptr);
   virtual ~SESubstanceBolus();
 
   virtual void Clear(); //clear memory

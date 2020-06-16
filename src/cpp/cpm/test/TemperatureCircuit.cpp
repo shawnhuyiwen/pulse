@@ -720,7 +720,7 @@ void PulseEngineTest::EnvironmentISO7730ComparisonTest(const std::string& sTestD
   pc.CreateCircuitsAndCompartments();
   Environment &env = (Environment&)pc.GetEnvironment();
   env.Initialize();
-  env.GetEnvironmentalConditions().SerializeFromFile("./environments/Standard.json",JSON);
+  env.GetEnvironmentalConditions().SerializeFromFile("./environments/Standard.json",JSON, pc.GetSubstances());
   env.StateChange();
 
   pc.GetEnergy().GetCoreTemperature().SetValue(37.0, TemperatureUnit::C);

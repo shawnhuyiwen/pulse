@@ -6,7 +6,7 @@
 #include "properties/SEScalar0To1.h"
 #include "io/protobuf/PBPatientActions.h"
 
-SEChronicObstructivePulmonaryDiseaseExacerbation::SEChronicObstructivePulmonaryDiseaseExacerbation() : SEPatientAction()
+SEChronicObstructivePulmonaryDiseaseExacerbation::SEChronicObstructivePulmonaryDiseaseExacerbation(Logger* logger) : SEPatientAction(logger)
 {
   m_BronchitisSeverity = nullptr;
   m_EmphysemaSeverity = nullptr;

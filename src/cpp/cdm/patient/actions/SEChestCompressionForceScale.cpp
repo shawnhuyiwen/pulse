@@ -7,7 +7,7 @@
 #include "properties/SEScalarTime.h"
 #include "io/protobuf/PBPatientActions.h"
 
-SEChestCompressionForceScale::SEChestCompressionForceScale() : SEChestCompression()
+SEChestCompressionForceScale::SEChestCompressionForceScale(Logger* logger) : SEChestCompression(logger)
 {
   m_ForceScale = nullptr;
   m_ForcePeriod = nullptr;

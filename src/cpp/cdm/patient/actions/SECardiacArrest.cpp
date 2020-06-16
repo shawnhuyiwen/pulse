@@ -5,7 +5,7 @@
 #include "patient/actions/SECardiacArrest.h"
 #include "io/protobuf/PBPatientActions.h"
 
-SECardiacArrest::SECardiacArrest() : SEPatientAction()
+SECardiacArrest::SECardiacArrest(Logger* logger) : SEPatientAction(logger)
 {
   m_State = eSwitch::Off;
 }

@@ -6,7 +6,7 @@
 #include "properties/SEScalar0To1.h"
 #include "io/protobuf/PBPatientActions.h"
 
-SEImpairedAlveolarExchangeExacerbation::SEImpairedAlveolarExchangeExacerbation() : SEPatientAction()
+SEImpairedAlveolarExchangeExacerbation::SEImpairedAlveolarExchangeExacerbation(Logger* logger) : SEPatientAction(logger)
 {
   m_ImpairedSurfaceArea = nullptr;
   m_ImpairedFraction = nullptr;

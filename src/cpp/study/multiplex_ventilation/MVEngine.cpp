@@ -256,7 +256,7 @@ bool MVEngine::CreateEngine(pulse::study::bind::multiplex_ventilation::Simulatio
     m_MultiplexVentilationGraph->StateChange();
 
     Info("Configuring Mechanical Ventilator");
-    m_MVC = new SEMechanicalVentilatorConfiguration(*m_SubMgr);
+    m_MVC = new SEMechanicalVentilatorConfiguration(GetLogger());
     auto& mv = m_MVC->GetConfiguration();
     mv.SetConnection(eMechanicalVentilator_Connection::Tube);
     mv.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Square);

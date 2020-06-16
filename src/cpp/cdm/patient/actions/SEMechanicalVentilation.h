@@ -16,7 +16,7 @@ protected:
 
 public:
 
-  SEMechanicalVentilation();
+  SEMechanicalVentilation(Logger* logger=nullptr);
   virtual ~SEMechanicalVentilation();
 
   virtual void Clear();
@@ -40,7 +40,7 @@ public:
   bool HasGasFraction(const SESubstance& substance) const;
   const std::vector<SESubstanceFraction*>& GetGasFractions();
   const std::vector<const SESubstanceFraction*>& GetGasFractions() const;
-  SESubstanceFraction& GetGasFraction(SESubstance& substance);
+  SESubstanceFraction& GetGasFraction(const SESubstance& substance);
   const SESubstanceFraction* GetGasFraction(const SESubstance& substance) const;
   void RemoveGasFraction(const SESubstance& substance);
   void RemoveGasFractions();
@@ -49,7 +49,7 @@ public:
   bool HasAerosol(const SESubstance& substance) const;
   const std::vector<SESubstanceConcentration*>& GetAerosols();
   const std::vector<const SESubstanceConcentration*>& GetAerosols() const;
-  SESubstanceConcentration& GetAerosol(SESubstance& substance);
+  SESubstanceConcentration& GetAerosol(const SESubstance& substance);
   const SESubstanceConcentration* GetAerosol(const SESubstance& substance) const;
   void RemoveAerosol(const SESubstance& substance);
   void RemoveAerosols();

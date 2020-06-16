@@ -832,7 +832,7 @@ void Respiratory::MechanicalVentilation()
       //Has fractions defined
       for (auto f : gasFractions)
       {
-        SESubstance& sub = f->GetSubstance();
+        const SESubstance& sub = f->GetSubstance();
         double fraction = f->GetFractionAmount().GetValue();
 
         //Do this, just in case it's something new
@@ -856,7 +856,7 @@ void Respiratory::MechanicalVentilation()
       //Has fractions defined
       for (auto f : liquidConcentrations)
       {
-        SESubstance& sub = f->GetSubstance();
+        const SESubstance& sub = f->GetSubstance();
         SEScalarMassPerVolume concentration = f->GetConcentration();
 
         //Do this, just in case it's something new

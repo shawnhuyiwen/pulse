@@ -26,7 +26,7 @@ class CDM_DECL SEConditionManager : public Loggable
   friend class PBEngine;//friend the serialization class
 public:
 
-  SEConditionManager(SESubstanceManager&);
+  SEConditionManager(const SESubstanceManager&);
   ~SEConditionManager();
 
   void Clear();
@@ -105,8 +105,8 @@ public:
   void GetAllConditions(std::vector<const SECondition*>& v) const;
 
 protected:
+  const SESubstanceManager& m_Substances;
 
-  SESubstanceManager&                      m_Substances;
   SEAcuteRespiratoryDistressSyndrome*      m_ARDS;
   SEChronicAnemia*                         m_Anemia;
   SEConsumeMeal*                           m_ConsumeMeal;

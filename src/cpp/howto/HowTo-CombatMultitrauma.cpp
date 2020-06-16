@@ -191,7 +191,7 @@ void LoadState()
   tracker.AdvanceModelTime(30);
 
   // Give an IV
-  SESubstanceCompound* saline = pe->GetSubstanceManager().GetCompound("Saline");
+  const SESubstanceCompound* saline = pe->GetSubstanceManager().GetCompound("Saline");
   SESubstanceCompoundInfusion iVSaline(*saline);
   iVSaline.GetBagVolume().SetValue(500, VolumeUnit::mL);//the total volume in the bag of Saline
   iVSaline.GetRate().SetValue(100, VolumePerTimeUnit::mL_Per_min);//The rate to admnister the compound in the bag in this case saline

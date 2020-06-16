@@ -1412,7 +1412,7 @@ bool PulseController::CreateCircuitsAndCompartments()
   Ambient.SetAsReferenceNode();
 
   m_Environment->Initialize();
-  m_Environment->GetEnvironmentalConditions().Copy(m_Config->GetInitialEnvironmentalConditions());
+  m_Environment->GetEnvironmentalConditions().Copy(m_Config->GetInitialEnvironmentalConditions(), *m_Substances);
   m_Environment->StateChange();
   // Update the environment pressures on all the 'air' circuits to match what the environment was set to
   gEnvironment.GetPressure().Set(m_Environment->GetEnvironmentalConditions().GetAtmosphericPressure());

@@ -13,7 +13,7 @@ class CDM_DECL SESerializeState : public SEAction
   friend class PBAction;//friend the serialization class
 public:
 
-  SESerializeState();
+  SESerializeState(Logger* logger=nullptr);
   virtual ~SESerializeState();
 
   virtual void Clear(); //clear memory

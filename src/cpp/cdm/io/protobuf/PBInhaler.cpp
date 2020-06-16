@@ -13,13 +13,13 @@ POP_PROTO_WARNINGS()
 #include "substance/SESubstanceManager.h"
 #include "utils/FileUtils.h"
 
-void PBInhaler::Load(const CDM_BIND::InhalerData& src, SEInhaler& dst)
+void PBInhaler::Load(const CDM_BIND::InhalerData& src, SEInhaler& dst, const SESubstanceManager& subMgr)
 {
   dst.Clear();
-  PBInhaler::Serialize(src, dst);
+  PBInhaler::Serialize(src, dst, subMgr);
   dst.StateChange();
 }
-void PBInhaler::Serialize(const CDM_BIND::InhalerData& src, SEInhaler& dst)
+void PBInhaler::Serialize(const CDM_BIND::InhalerData& src, SEInhaler& dst, const SESubstanceManager& subMgr)
 {
   if (src.state() != CDM_BIND::eSwitch::NullSwitch)
     dst.SetState((eSwitch)src.state());
@@ -30,7 +30,7 @@ void PBInhaler::Serialize(const CDM_BIND::InhalerData& src, SEInhaler& dst)
   if (src.has_spacervolume())
     PBProperty::Load(src.spacervolume(), dst.GetSpacerVolume());
   if (!src.substance().empty())
-    dst.SetSubstance(dst.m_Substances.GetSubstance(src.substance()));
+    dst.SetSubstance(subMgr.GetSubstance(src.substance()));
 }
 
 CDM_BIND::InhalerData* PBInhaler::Unload(const SEInhaler& src)
@@ -67,18 +67,18 @@ bool PBInhaler::SerializeToFile(const SEInhaler& src, const std::string& filenam
   return WriteFile(content, filename, m);
 }
 
-bool PBInhaler::SerializeFromString(const std::string& src, SEInhaler& dst, SerializationFormat m)
+bool PBInhaler::SerializeFromString(const std::string& src, SEInhaler& dst, SerializationFormat m, const SESubstanceManager& subMgr)
 {
   CDM_BIND::InhalerData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
     return false;
-  PBInhaler::Load(data, dst);
+  PBInhaler::Load(data, dst, subMgr);
   return true;
 }
-bool PBInhaler::SerializeFromFile(const std::string& filename, SEInhaler& dst, SerializationFormat m)
+bool PBInhaler::SerializeFromFile(const std::string& filename, SEInhaler& dst, SerializationFormat m, const SESubstanceManager& subMgr)
 {
   std::string content = ReadFile(filename, m);
   if (content.empty())
     return false;
-  return PBInhaler::SerializeFromString(content, dst, m);
+  return PBInhaler::SerializeFromString(content, dst, m, subMgr);
 }

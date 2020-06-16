@@ -9,7 +9,7 @@ class CDM_DECL SEUrinate : public SEPatientAction
   friend class PBPatientAction;//friend the serialization class
 public:
 
-  SEUrinate();
+  SEUrinate(Logger* logger=nullptr);
   virtual ~SEUrinate();
 
   virtual void Clear(); //clear memory

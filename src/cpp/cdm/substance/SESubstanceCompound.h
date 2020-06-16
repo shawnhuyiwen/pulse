@@ -9,9 +9,10 @@ class SESubstanceConcentration;
 class CDM_DECL SESubstanceCompound : public Loggable
 {
   friend class PBSubstance;//friend the serialization class
+  friend class SESubstanceManager;
+protected:
+  SESubstanceCompound(const std::string& name, Logger* logger);
 public:
-
-  SESubstanceCompound(Logger* logger);
   virtual ~SESubstanceCompound();
 
   virtual void Clear();
@@ -22,9 +23,6 @@ public:
   bool SerializeFromFile(const std::string& filename, const SESubstanceManager& subMgr, SerializationFormat m);
 
   virtual std::string GetName() const;
-  virtual void SetName(const std::string& name);
-  virtual bool HasName() const;
-  virtual void InvalidateName();
 
   bool HasComponent() const;
   bool HasComponent(const SESubstance& substance) const;

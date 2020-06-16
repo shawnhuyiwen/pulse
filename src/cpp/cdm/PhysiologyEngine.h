@@ -216,7 +216,6 @@ public:
   /// Retrieves the associated substance manager.
   ///
   //--------------------------------------------------------------------------------------------------
-  virtual SESubstanceManager& GetSubstanceManager() = 0;
   virtual const SESubstanceManager& GetSubstanceManager() const = 0;
 
   //--------------------------------------------------------------------------------------------------

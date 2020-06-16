@@ -9,7 +9,7 @@ class CDM_DECL SEPulmonaryShunt : public SEPatientCondition
   friend class PBPatientCondition;//friend the serialization class
 public:
 
-  SEPulmonaryShunt();
+  SEPulmonaryShunt(Logger* logger=nullptr);
   virtual ~SEPulmonaryShunt();
 
   virtual void Clear(); //clear memory

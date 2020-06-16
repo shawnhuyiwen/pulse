@@ -47,7 +47,6 @@ public:
   virtual bool  ProcessAction(const SEAction& action) override;
   virtual const SEActionManager& GetActionManager() const override;
 
-  virtual SESubstanceManager& GetSubstanceManager() override;
   virtual const SESubstanceManager& GetSubstanceManager() const override;
   virtual void SetAdvanceHandler(SEAdvanceHandler* handler) override;
   virtual const SEPatient& GetPatient() const override;

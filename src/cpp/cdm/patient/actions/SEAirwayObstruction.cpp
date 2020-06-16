@@ -6,7 +6,7 @@
 #include "properties/SEScalar0To1.h"
 #include "io/protobuf/PBPatientActions.h"
 
-SEAirwayObstruction::SEAirwayObstruction() : SEPatientAction()
+SEAirwayObstruction::SEAirwayObstruction(Logger* logger) : SEPatientAction(logger)
 {
   m_Severity=nullptr;
 }

@@ -20,7 +20,7 @@ POP_PROTO_WARNINGS()
 #include "substance/SESubstanceManager.h"
 #include "properties/SEScalarTime.h"
 
-SEAction* PBAction::Load(const CDM_BIND::AnyActionData& action, SESubstanceManager& subMgr)
+SEAction* PBAction::Load(const CDM_BIND::AnyActionData& action, const SESubstanceManager& subMgr)
 {
   switch (action.Action_case())
   {
@@ -97,7 +97,7 @@ CDM_BIND::AnyActionData* PBAction::Unload(const SEAction& action)
   delete any;
   return nullptr;
 }
-SEAction* PBAction::Copy(const SEAction& a, SESubstanceManager& subMgr)
+SEAction* PBAction::Copy(const SEAction& a, const SESubstanceManager& subMgr)
 {
   CDM_BIND::AnyActionData* data = PBAction::Unload(a);
   SEAction* copy = PBAction::Load(*data, subMgr);

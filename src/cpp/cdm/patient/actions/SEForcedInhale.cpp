@@ -7,7 +7,7 @@
 #include "properties/SEScalarTime.h"
 #include "io/protobuf/PBPatientActions.h"
 
-SEForcedInhale::SEForcedInhale() : SEConsciousRespirationCommand()
+SEForcedInhale::SEForcedInhale(Logger* logger) : SEConsciousRespirationCommand(logger)
 {
   m_InspiratoryCapacityFraction = nullptr;
   m_InhalePeriod = nullptr;

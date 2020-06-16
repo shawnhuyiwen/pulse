@@ -6,7 +6,7 @@
 #include "properties/SEScalar0To1.h"
 #include "io/protobuf/PBPatientConditions.h"
 
-SEChronicAnemia::SEChronicAnemia() : SEPatientCondition()
+SEChronicAnemia::SEChronicAnemia(Logger* logger) : SEPatientCondition(logger)
 {
   m_ReductionFactor=nullptr;
 }

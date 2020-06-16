@@ -573,7 +573,7 @@ double SELiquidSubstanceQuantity::GetSaturation() const
     return SEScalar::dNaN();
   return m_Saturation->GetValue();
 }
-void SELiquidSubstanceQuantity::SetHemoglobins(SESubstance& Hb, SESubstance& HbO2, SESubstance& HbCO2, SESubstance& HbO2CO2, SESubstance& HbCO)
+void SELiquidSubstanceQuantity::SetHemoglobins(const SESubstance& Hb, const SESubstance& HbO2, const SESubstance& HbCO2, const SESubstance& HbO2CO2, const SESubstance& HbCO)
 {
   if (!m_isO2 && !m_isCO2 && !m_isCO)
     Error("Only Oxygen, CarbonDioxide, and CarbonMonoxide have Saturation, why are you setting Hemoglobins?");

@@ -9,7 +9,7 @@ class CDM_DECL SEAdvanceTime : public SEAction
   friend class PBAction;//friend the serialization class
 public:
 
-  SEAdvanceTime();
+  SEAdvanceTime(Logger* logger=nullptr);
   virtual ~SEAdvanceTime();
 
   virtual void Clear(); //clear memory

@@ -76,7 +76,7 @@ void HowToAnesthesiaMachine()
 
   // Turn the anesthesia machine on and get it configured for spontaneous breathing
   // Create an Anesthesia Machine and configure it as needed
-  SEAnesthesiaMachineConfiguration AMConfig(pe->GetSubstanceManager());
+  SEAnesthesiaMachineConfiguration AMConfig(pe->GetLogger());
 
   // You can set configuration by modifing the configuration class directly
   // Or you can point to an json with configuration data.

@@ -6,7 +6,7 @@
 #include "properties/SEScalar0To1.h"
 #include "io/protobuf/PBPatientActions.h"
 
-SEAcuteStress::SEAcuteStress() : SEPatientAction()
+SEAcuteStress::SEAcuteStress(Logger* logger) : SEPatientAction(logger)
 {
   m_Severity=nullptr;
 }

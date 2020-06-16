@@ -5,7 +5,7 @@
 #include "patient/actions/SESubstanceAdministration.h"
 #include "io/protobuf/PBPatientActions.h"
 
-SESubstanceAdministration::SESubstanceAdministration() : SEPatientAction()
+SESubstanceAdministration::SESubstanceAdministration(Logger* logger) : SEPatientAction(logger)
 {
 }
 

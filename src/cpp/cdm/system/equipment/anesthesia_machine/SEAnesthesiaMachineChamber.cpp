@@ -7,7 +7,7 @@
 #include "substance/SESubstanceManager.h"
 #include "properties/SEScalar0To1.h"
 
-SEAnesthesiaMachineChamber::SEAnesthesiaMachineChamber(SESubstanceManager& substances) : Loggable(substances.GetLogger()), m_Substances(substances)
+SEAnesthesiaMachineChamber::SEAnesthesiaMachineChamber(Logger* logger) : Loggable(logger)
 {
   m_State = eSwitch::Off;
   m_SubstanceFraction = nullptr;
@@ -26,26 +26,14 @@ void SEAnesthesiaMachineChamber::Clear()
   m_Substance=nullptr;
 }
 
-void SEAnesthesiaMachineChamber::Merge(const SEAnesthesiaMachineChamber& from)
+void SEAnesthesiaMachineChamber::Merge(const SEAnesthesiaMachineChamber& from, SESubstanceManager& subMgr)
 {
   SetState(from.m_State);
   if (from.HasSubstanceFraction())
     GetSubstanceFraction().Set(*from.m_SubstanceFraction);
-  if (from.m_Substance != nullptr)
-  {
-    if (&m_Substances != &from.m_Substances)
-    {
-      m_Substance = m_Substances.GetSubstance(from.m_Substance->GetName());
-      if (m_Substance == nullptr)
-      {
-        std::stringstream ss;
-        ss << "Do not have substance : " << from.m_Substance->GetName();
-        Error(ss);
-      }
-    }
-    else
-      m_Substance = from.m_Substance;
-  }
+  m_Substance = subMgr.GetSubstance(from.m_Substance->GetName());
+  if (m_Substance == nullptr)
+    Error("Do not have substance : " + from.m_Substance->GetName());
 }
 
 const SEScalar* SEAnesthesiaMachineChamber::GetScalar(const std::string& name)

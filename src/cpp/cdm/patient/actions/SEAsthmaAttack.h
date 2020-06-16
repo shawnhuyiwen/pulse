@@ -9,7 +9,7 @@ class CDM_DECL SEAsthmaAttack : public SEPatientAction
   friend class PBPatientAction;//friend the serialization class
 public:
 
-  SEAsthmaAttack();
+  SEAsthmaAttack(Logger* logger=nullptr);
   virtual ~SEAsthmaAttack();
 
   virtual void Clear(); //clear memory

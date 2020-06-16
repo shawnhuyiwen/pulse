@@ -174,14 +174,14 @@ void PBPulseConfiguration::Serialize(const PULSE_BIND::ConfigurationData& src, P
       PBProperty::Load(config.molarmassofwatervapor(), dst.GetMolarMassOfWaterVapor());
     if (!config.initialconditionsfile().empty())
     {
-      if (!dst.GetInitialEnvironmentalConditions().SerializeFromFile(config.initialconditionsfile(),JSON))
+      if (!dst.GetInitialEnvironmentalConditions().SerializeFromFile(config.initialconditionsfile(),JSON, dst.m_Substances))
       {
         dst.Error("Unable to load InitialEnvironmentalConditions file");
       }
     }
     else if (config.has_initialconditions())
     {
-      PBEnvironment::Load(config.initialconditions(), dst.GetInitialEnvironmentalConditions());
+      PBEnvironment::Load(config.initialconditions(), dst.GetInitialEnvironmentalConditions(), dst.m_Substances);
     }
     if (config.has_waterdensity())
       PBProperty::Load(config.waterdensity(), dst.GetWaterDensity());

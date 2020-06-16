@@ -256,7 +256,7 @@ void PBCompartment::Serialize(const SECompartmentManager& src, CDM_BIND::Compart
     dst.mutable_liquidlink()->AddAllocated(PBCompartment::Unload(*link));
   for (SELiquidCompartmentGraph* graph : src.m_LiquidGraphs)
     dst.mutable_liquidgraph()->AddAllocated(PBCompartment::Unload(*graph));
-  for (SESubstance* sub : src.m_LiquidSubstances)
+  for (const SESubstance* sub : src.m_LiquidSubstances)
     dst.mutable_liquidsubstance()->Add(sub->GetName());
 
   for (SEGasCompartment* cmpt : src.m_GasCompartments)
@@ -265,7 +265,7 @@ void PBCompartment::Serialize(const SECompartmentManager& src, CDM_BIND::Compart
     dst.mutable_gaslink()->AddAllocated(PBCompartment::Unload(*link));
   for (SEGasCompartmentGraph* graph : src.m_GasGraphs)
     dst.mutable_gasgraph()->AddAllocated(PBCompartment::Unload(*graph));
-  for (SESubstance* sub : src.m_GasSubstances)
+  for (const SESubstance* sub : src.m_GasSubstances)
     dst.mutable_gassubstance()->Add(sub->GetName());
 
   for (SEThermalCompartment* cmpt : src.m_ThermalCompartments)

@@ -56,7 +56,7 @@
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarLength.h"
 
-Environment::Environment(PulseData& data) : PulseEnvironmentSystem(data.GetSubstances()), m_data(data)
+Environment::Environment(PulseData& data) : PulseEnvironmentSystem(data.GetLogger()), m_data(data)
 {
   Clear();
 }
@@ -160,7 +160,7 @@ void Environment::StateChange()
     double totalFraction = 0.0;
     for (auto s : GetEnvironmentalConditions().GetAmbientGases())
     {
-      SESubstance& sub = s->GetSubstance();
+      const SESubstance& sub = s->GetSubstance();
       totalFraction += s->GetFractionAmount().GetValue();
       m_data.GetSubstances().AddActiveSubstance(sub);
     }
@@ -191,7 +191,7 @@ void Environment::StateChange()
   // you need to provide a zero concentration.
   for (auto s : GetEnvironmentalConditions().GetAmbientAerosols())
   {
-    SESubstance& sub = s->GetSubstance();
+    const SESubstance& sub = s->GetSubstance();
     if (!sub.HasAerosolization())
     {
       Error("Ignorning environment aerosol as it does not have any aerosol data : " + sub.GetName());
@@ -208,7 +208,7 @@ void Environment::AtSteadyState()
   if (m_data.GetState() == EngineState::AtInitialStableState)
   {
     if (m_data.GetConditions().HasInitialEnvironmentalConditions())
-      ProcessChange(*m_data.GetConditions().GetInitialEnvironmentalConditions());
+      ProcessChange(*m_data.GetConditions().GetInitialEnvironmentalConditions(), m_data.GetSubstances());
   }
 }
 
@@ -224,7 +224,7 @@ void Environment::PreProcess()
 {
   if (m_data.GetActions().GetEnvironmentActions().HasChangeEnvironmentalConditions())
   {
-    ProcessChange(*m_data.GetActions().GetEnvironmentActions().GetChangeEnvironmentalConditions());
+    ProcessChange(*m_data.GetActions().GetEnvironmentActions().GetChangeEnvironmentalConditions(), m_data.GetSubstances());
     m_data.GetActions().GetEnvironmentActions().RemoveChangeEnvironmentalConditions();
   }
 

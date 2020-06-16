@@ -60,7 +60,7 @@ public:
   virtual const SEGasCompartmentGraph*                        GetGasGraph(const std::string& name) const;
   virtual const std::vector<SEGasCompartmentGraph*>&          GetGasGraphs();
   virtual void                                                AddGasCompartmentSubstance(SESubstance& sub);
-  virtual const std::vector<SESubstance*>&                    GetGasCompartmentSubstances() const;
+  virtual const std::vector<SESubstance*>&                    GetGasCompartmentSubstances();
 
   virtual SELiquidCompartment&                                CreateLiquidCompartment(const std::string& name);
   virtual void                                                DeleteLiquidCompartment(const std::string& name);
@@ -82,7 +82,7 @@ public:
   virtual const SELiquidCompartmentGraph*                     GetLiquidGraph(const std::string& name) const;
   virtual const std::vector<SELiquidCompartmentGraph*>&       GetLiquidGraphs();
   virtual void                                                AddLiquidCompartmentSubstance(SESubstance& sub);
-  virtual const std::vector<SESubstance*>&                    GetLiquidCompartmentSubstances() const;
+  virtual const std::vector<SESubstance*>&                    GetLiquidCompartmentSubstances();
   
   virtual SEThermalCompartment&                               CreateThermalCompartment(const std::string& name);
   virtual void                                                DeleteThermalCompartment(const std::string& name);

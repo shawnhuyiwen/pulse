@@ -7,19 +7,19 @@
 #include "substance/SESubstanceConcentration.h"
 #include "properties/SEScalarMassPerVolume.h"
 
-SESubstanceConcentration::SESubstanceConcentration(SESubstance& substance) : Loggable(substance.GetLogger()), m_Substance(substance)
+SESubstanceConcentration::SESubstanceConcentration(const SESubstance& substance) : Loggable(substance.GetLogger()), m_Substance(substance)
 {
   m_Concentration=nullptr;
 }
 
 SESubstanceConcentration::~SESubstanceConcentration()
 {
-  Clear();
+  SAFE_DELETE(m_Concentration);
 }
 
 void SESubstanceConcentration::Clear()
 {
-  SAFE_DELETE(m_Concentration);
+  INVALIDATE_PROPERTY(m_Concentration);
 }
 
 bool SESubstanceConcentration::HasConcentration() const
@@ -39,7 +39,7 @@ double SESubstanceConcentration::GetConcentration(const MassPerVolumeUnit& unit)
   return m_Concentration->GetValue(unit);
 }
 
-SESubstance& SESubstanceConcentration::GetSubstance() const
+const SESubstance& SESubstanceConcentration::GetSubstance() const
 {
   return m_Substance;
 }

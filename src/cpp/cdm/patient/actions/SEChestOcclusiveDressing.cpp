@@ -5,7 +5,7 @@
 #include "patient/actions/SEChestOcclusiveDressing.h"
 #include "io/protobuf/PBPatientActions.h"
 
-SEChestOcclusiveDressing::SEChestOcclusiveDressing() : SEPatientAction()
+SEChestOcclusiveDressing::SEChestOcclusiveDressing(Logger* logger) : SEPatientAction(logger)
 {
   m_State = eSwitch::Off;
   m_Side= eSide::NullSide;

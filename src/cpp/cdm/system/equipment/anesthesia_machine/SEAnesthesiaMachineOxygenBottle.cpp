@@ -21,7 +21,7 @@ void SEAnesthesiaMachineOxygenBottle::Clear()
   SAFE_DELETE(m_Volume);
 }
 
-void SEAnesthesiaMachineOxygenBottle::Merge(const SEAnesthesiaMachineOxygenBottle& from)
+void SEAnesthesiaMachineOxygenBottle::Merge(const SEAnesthesiaMachineOxygenBottle& from, SESubstanceManager& subMgr)
 {
   COPY_PROPERTY(Volume);
 }

@@ -149,7 +149,7 @@ bool MVGenerator::GenerateStabilizedPatient(pulse::study::bind::multiplex_ventil
   engine->GetLogger()->LogToConsole(logToConsole);
   engine->GetLogger()->Info("Creating engine " + baseName);
 
-  SESubstance* Oxygen = engine->GetSubstanceManager().GetSubstance("Oxygen");
+  const SESubstance* Oxygen = engine->GetSubstanceManager().GetSubstance("Oxygen");
 
   SEDyspnea dyspnea;
   dyspnea.GetSeverity().SetValue(1.0);
@@ -168,7 +168,7 @@ bool MVGenerator::GenerateStabilizedPatient(pulse::study::bind::multiplex_ventil
   pulmonaryShunt.GetSeverity().SetValue(pData.impairmentfraction());
 
   // Setup the PC-CMV ventilator
-  SEMechanicalVentilatorConfiguration mvc(engine->GetSubstanceManager());
+  SEMechanicalVentilatorConfiguration mvc(engine->GetLogger());
   auto& mv = mvc.GetConfiguration();
   mv.SetConnection(eMechanicalVentilator_Connection::Tube);
   mv.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
@@ -280,7 +280,7 @@ bool MVGenerator::GenerateStabilizedPatient(pulse::study::bind::multiplex_ventil
 bool MVGenerator::StabilizeSpO2(PhysiologyEngine& eng)
 {
   // Let's shoot for with in 0.25% for 10s straight
-  SESubstance* Oxygen = eng.GetSubstanceManager().GetSubstance("Oxygen");
+  const SESubstance* Oxygen = eng.GetSubstanceManager().GetSubstance("Oxygen");
   auto AortaO2 = eng.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta)->GetSubstanceQuantity(*Oxygen);
 
   double currentSpO2 = 0;

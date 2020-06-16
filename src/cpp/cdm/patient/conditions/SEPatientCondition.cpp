@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "SEPatientCondition.h"
 
-SEPatientCondition::SEPatientCondition() : SECondition()
+SEPatientCondition::SEPatientCondition(Logger* logger) : SECondition(logger)
 {
   
 }

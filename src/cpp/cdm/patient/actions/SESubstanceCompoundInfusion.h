@@ -10,7 +10,7 @@ class CDM_DECL SESubstanceCompoundInfusion : public SESubstanceAdministration
   friend class PBPatientAction;//friend the serialization class
 public:
 
-  SESubstanceCompoundInfusion(const SESubstanceCompound& compound);
+  SESubstanceCompoundInfusion(const SESubstanceCompound& compound, Logger* logger=nullptr);
   virtual ~SESubstanceCompoundInfusion();
 
   virtual void Clear(); //clear memory

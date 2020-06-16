@@ -23,7 +23,7 @@ public:
   bool SerializeFromString(const std::string& src, SerializationFormat m);
   bool SerializeFromFile(const std::string& filename, SerializationFormat m);
 
-  static bool SerializeFromString(const std::string& src, std::vector<SEAction*>& dst, SerializationFormat m, SESubstanceManager& subMgr);
+  static bool SerializeFromString(const std::string& src, std::vector<SEAction*>& dst, SerializationFormat m, const SESubstanceManager& subMgr);
 
   bool ProcessAction(const SEAction& action);// Will make a copy
 
@@ -38,8 +38,8 @@ public:
   void GetAllActions(std::vector<const SEAction*>& v) const;
 
 protected:
+  SESubstanceManager& m_Substances;
 
-  SESubstanceManager&                  m_Substances;
   SEPatientActionCollection*           m_PatientActions;
   SEEnvironmentActionCollection*       m_EnvironmentActions;
   SEEquipmentActionCollection*         m_EquipmentActions;

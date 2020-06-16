@@ -18,7 +18,7 @@
 #include "properties/SEScalarTime.h"
 #include "io/protobuf/PBAnesthesiaMachine.h"
 
-SEAnesthesiaMachine::SEAnesthesiaMachine(SESubstanceManager& substances) : SEEquipment(substances.GetLogger()), m_Substances(substances)
+SEAnesthesiaMachine::SEAnesthesiaMachine(Logger* logger) : SEEquipment(logger)
 {
   m_Connection = eAnesthesiaMachine_Connection::NullConnection;
   m_InletFlow = nullptr;
@@ -61,7 +61,21 @@ void SEAnesthesiaMachine::Clear()
   SAFE_DELETE(m_OxygenBottleTwo);
 }
 
-void SEAnesthesiaMachine::Merge(const SEAnesthesiaMachine& from)
+void SEAnesthesiaMachine::ProcessConfiguration(SEAnesthesiaMachineConfiguration& config, SESubstanceManager& subMgr)
+{
+  if (config.HasConfiguration())
+    Merge(config.GetConfiguration(), subMgr);
+  else if (config.HasConfigurationFile())
+  {
+    // Update the action with the file contents
+    std::string cfg_file = config.GetConfigurationFile();
+    if (!config.GetConfiguration().SerializeFromFile(cfg_file, JSON, subMgr))
+      Error("Unable to load configuration file", "SEAnesthesiaMachine::ProcessConfiguration");
+    Merge(config.GetConfiguration(), subMgr);
+  }
+  StateChange();
+}
+void SEAnesthesiaMachine::Merge(const SEAnesthesiaMachine& from, SESubstanceManager& subMgr)
 {
   if(from.m_Connection!=eAnesthesiaMachine_Connection::NullConnection)
     SetConnection(from.m_Connection);
@@ -77,11 +91,11 @@ void SEAnesthesiaMachine::Merge(const SEAnesthesiaMachine& from)
   COPY_PROPERTY(RespiratoryRate);
   COPY_PROPERTY(ReliefValvePressure);
 
-  MERGE_CHILD(LeftChamber);
-  MERGE_CHILD(RightChamber);
+  MERGE_CHILD(LeftChamber, subMgr);
+  MERGE_CHILD(RightChamber, subMgr);
  
-  MERGE_CHILD(OxygenBottleOne);
-  MERGE_CHILD(OxygenBottleTwo);
+  MERGE_CHILD(OxygenBottleOne, subMgr);
+  MERGE_CHILD(OxygenBottleTwo, subMgr);
 }
 
 bool SEAnesthesiaMachine::SerializeToString(std::string& output, SerializationFormat m) const
@@ -92,29 +106,15 @@ bool SEAnesthesiaMachine::SerializeToFile(const std::string& filename, Serializa
 {
   return PBAnesthesiaMachine::SerializeToFile(*this, filename, m);
 }
-bool SEAnesthesiaMachine::SerializeFromString(const std::string& src, SerializationFormat m)
+bool SEAnesthesiaMachine::SerializeFromString(const std::string& src, SerializationFormat m, const SESubstanceManager& subMgr)
 {
-  return PBAnesthesiaMachine::SerializeFromString(src, *this, m);
+  return PBAnesthesiaMachine::SerializeFromString(src, *this, m, subMgr);
 }
-bool SEAnesthesiaMachine::SerializeFromFile(const std::string& filename, SerializationFormat m)
+bool SEAnesthesiaMachine::SerializeFromFile(const std::string& filename, SerializationFormat m, const SESubstanceManager& subMgr)
 {
-  return PBAnesthesiaMachine::SerializeFromFile(filename, *this, m);
+  return PBAnesthesiaMachine::SerializeFromFile(filename, *this, m, subMgr);
 }
 
-void SEAnesthesiaMachine::ProcessConfiguration(SEAnesthesiaMachineConfiguration& config)
-{
-  if (config.HasConfiguration())
-    Merge(config.GetConfiguration());
-  else if (config.HasConfigurationFile())
-  {
-    // Update the action with the file contents
-    std::string cfg_file = config.GetConfigurationFile();
-    if (!config.GetConfiguration().SerializeFromFile(cfg_file, JSON))
-      Error("Unable to load configuration file", "SEAnesthesiaMachine::ProcessConfiguration");
-    Merge(config.GetConfiguration());
-  }
-  StateChange();
-}
 
 const SEScalar* SEAnesthesiaMachine::GetScalar(const std::string& name)
 {
@@ -304,7 +304,7 @@ bool SEAnesthesiaMachine::HasLeftChamber() const
 SEAnesthesiaMachineChamber& SEAnesthesiaMachine::GetLeftChamber()
 {
   if (m_LeftChamber == nullptr)
-    m_LeftChamber = new SEAnesthesiaMachineChamber(m_Substances);
+    m_LeftChamber = new SEAnesthesiaMachineChamber(GetLogger());
   return *m_LeftChamber;
 }
 const SEAnesthesiaMachineChamber* SEAnesthesiaMachine::GetLeftChamber() const
@@ -323,7 +323,7 @@ bool SEAnesthesiaMachine::HasRightChamber() const
 SEAnesthesiaMachineChamber& SEAnesthesiaMachine::GetRightChamber()
 {
   if (m_RightChamber == nullptr)
-    m_RightChamber = new SEAnesthesiaMachineChamber(m_Substances);
+    m_RightChamber = new SEAnesthesiaMachineChamber(GetLogger());
   return *m_RightChamber;
 }
 const SEAnesthesiaMachineChamber* SEAnesthesiaMachine::GetRightChamber() const

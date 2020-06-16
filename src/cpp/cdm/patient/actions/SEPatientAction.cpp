@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "patient/actions/SEPatientAction.h"
 
-SEPatientAction::SEPatientAction() : SEAction()
+SEPatientAction::SEPatientAction(Logger* logger) : SEAction(logger)
 {
   
 }

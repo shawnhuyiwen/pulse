@@ -23,7 +23,7 @@
 #include "substance/SESubstanceManager.h"
 #include "io/protobuf/PBEngine.h"
 
-SEConditionManager::SEConditionManager(SESubstanceManager& substances) : Loggable(substances.GetLogger()), m_Substances(substances)
+SEConditionManager::SEConditionManager(const SESubstanceManager& subMgr) : Loggable(subMgr.GetLogger()), m_Substances(m_Substances)
 {
   m_ARDS = nullptr;
   m_Anemia = nullptr;
@@ -279,8 +279,8 @@ bool SEConditionManager::ProcessCondition(const SECondition& condition)
         Error("Cannot have multiple Initial Environmental conditions");
         return false;
       }
-      m_InitialEnvironmentalConditions = new SEInitialEnvironmentalConditions(m_Substances);
-      m_InitialEnvironmentalConditions->Copy(*ie);
+      m_InitialEnvironmentalConditions = new SEInitialEnvironmentalConditions(GetLogger());
+      m_InitialEnvironmentalConditions->Copy(*ie, m_Substances);
       return true;
     }
   }

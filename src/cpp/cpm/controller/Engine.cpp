@@ -135,10 +135,6 @@ const SEEnvironment* PulseEngine::GetEnvironment() const
   return &m_PulseController->GetData().GetEnvironment();
 }
 
-SESubstanceManager& PulseEngine::GetSubstanceManager()
-{
-  return m_PulseController->GetData().GetSubstances();
-}
 const SESubstanceManager& PulseEngine::GetSubstanceManager() const
 {
   return m_PulseController->GetData().GetSubstances();

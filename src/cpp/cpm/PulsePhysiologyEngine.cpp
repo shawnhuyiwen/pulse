@@ -314,7 +314,7 @@ void PulseEngineThunk::SetupDefaultDataRequests()
   data->eng->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("EndTidalCarbonDioxidePressure", PressureUnit::mmHg);
   data->eng->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
   data->eng->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CoreTemperature", TemperatureUnit::C);
-  SESubstance* CO2 = data->eng->GetSubstanceManager().GetSubstance("CarbonDioxide");
+  const SESubstance* CO2 = data->eng->GetSubstanceManager().GetSubstance("CarbonDioxide");
   data->eng->GetEngineTracker()->GetDataRequestManager().CreateGasCompartmentDataRequest("Carina", *CO2, "PartialPressure", PressureUnit::mmHg);
   data->eng->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
 }

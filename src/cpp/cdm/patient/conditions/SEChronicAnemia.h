@@ -9,7 +9,7 @@ class CDM_DECL SEChronicAnemia : public SEPatientCondition
   friend class PBPatientCondition;//friend the serialization class
 public:
 
-  SEChronicAnemia();
+  SEChronicAnemia(Logger* logger=nullptr);
   virtual ~SEChronicAnemia();
 
   virtual void Clear(); //clear memory

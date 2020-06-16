@@ -5,7 +5,7 @@
 #include "patient/actions/SEUrinate.h"
 #include "io/protobuf/PBPatientActions.h"
 
-SEUrinate::SEUrinate() : SEPatientAction()
+SEUrinate::SEUrinate(Logger* logger) : SEPatientAction(logger)
 {
 
 }

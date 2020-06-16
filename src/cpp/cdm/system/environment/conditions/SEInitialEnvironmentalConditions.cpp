@@ -17,7 +17,7 @@
 #include "properties/SEScalarHeatResistanceArea.h"
 #include "io/protobuf/PBEnvironmentConditions.h"
 
-SEInitialEnvironmentalConditions::SEInitialEnvironmentalConditions(SESubstanceManager& substances) : SEEnvironmentCondition(), m_Substances(substances)
+SEInitialEnvironmentalConditions::SEInitialEnvironmentalConditions(Logger* logger) : SEEnvironmentCondition(logger)
 {
   m_EnvironmentalConditions = nullptr;
   InvalidateEnvironmentalConditionsFile();
@@ -35,9 +35,9 @@ void SEInitialEnvironmentalConditions::Clear()
   SAFE_DELETE(m_EnvironmentalConditions);
 }
 
-void SEInitialEnvironmentalConditions::Copy(const SEInitialEnvironmentalConditions& src)
+void SEInitialEnvironmentalConditions::Copy(const SEInitialEnvironmentalConditions& src, const SESubstanceManager& subMgr)
 {// Using Bindings to make a copy
-  PBEnvironmentCondition::Copy(src, *this);
+  PBEnvironmentCondition::Copy(src, *this, subMgr);
 }
 
 bool SEInitialEnvironmentalConditions::IsValid() const
@@ -58,7 +58,7 @@ SEEnvironmentalConditions& SEInitialEnvironmentalConditions::GetEnvironmentalCon
 {
   m_EnvironmentalConditionsFile = "";
   if (m_EnvironmentalConditions == nullptr)
-    m_EnvironmentalConditions = new SEEnvironmentalConditions(m_Substances);
+    m_EnvironmentalConditions = new SEEnvironmentalConditions(GetLogger());
   return *m_EnvironmentalConditions;
 }
 const SEEnvironmentalConditions* SEInitialEnvironmentalConditions::GetEnvironmentalConditions() const

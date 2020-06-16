@@ -8,7 +8,7 @@ class CDM_DECL SEEnvironmentCondition : public SECondition
 public:
   friend class PBEnvironmentCondition;//friend the serialization class
 
-  SEEnvironmentCondition();
+  SEEnvironmentCondition(Logger* logger);
   virtual ~SEEnvironmentCondition();
 
   virtual void Clear();

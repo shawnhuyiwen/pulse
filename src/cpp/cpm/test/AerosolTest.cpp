@@ -43,13 +43,13 @@
 void PulseEngineTest::AerosolTest(const std::string& sOutputDirectory)
 {
   m_Logger->SetLogFile(sOutputDirectory + "/AerosolTest.log");
+  SESubstanceManager subMgr(m_Logger);
 
   SETestReport testReport = SETestReport(m_Logger);
 
   //// Create a suite
   //SETestSuite& albuteroluite = testReport.CreateTestSuite();
   //albuteroluite.SetName("Albuterol");
-  //SESubstanceManager subMgr(m_Logger);
   //subMgr.LoadSubstanceDirectory();
   //SESubstance* albuterol = subMgr.GetSubstance("Albuterol");
   //SizeIndependentDepositionEfficencyCoefficientsTest(albuteroluite, *albuterol, 0.043737, 0.045737, 0.090432, 0.3115);
@@ -58,7 +58,7 @@ void PulseEngineTest::AerosolTest(const std::string& sOutputDirectory)
   // Create a suite
   SETestSuite& normalDistributionSuite = testReport.CreateTestSuite();
   normalDistributionSuite.SetName("NormalDistribution");
-  SESubstance normalDistributedSubstance(m_Logger);
+  SESubstance& normalDistributedSubstance = *subMgr.GetSubstance("NormalDistribution");
   normalDistributedSubstance.GetAerosolization().GetBronchioleModifier().SetValue(0);//Need something here...
   normalDistributedSubstance.GetAerosolization().GetInflammationCoefficient().SetValue(0.5);//Need something here...
   SEHistogramFractionVsLength& concentrations = normalDistributedSubstance.GetAerosolization().GetParticulateSizeDistribution();
@@ -89,7 +89,7 @@ void PulseEngineTest::AerosolTest(const std::string& sOutputDirectory)
   // Create a suite
   SETestSuite& monodispersedSuite = testReport.CreateTestSuite();
   monodispersedSuite.SetName("Monodispersed");
-  SESubstance monodispersedSubstance(m_Logger);
+  SESubstance& monodispersedSubstance = *subMgr.GetSubstance("MonoDispersed");
   monodispersedSubstance.GetAerosolization().GetBronchioleModifier().SetValue(0);//Need something here...
   monodispersedSubstance.GetAerosolization().GetInflammationCoefficient().SetValue(0.5);//Need something here...
   SEHistogramFractionVsLength& monoConcentrations = monodispersedSubstance.GetAerosolization().GetParticulateSizeDistribution();
@@ -117,7 +117,7 @@ void PulseEngineTest::AerosolTest(const std::string& sOutputDirectory)
   // Create a suite
   SETestSuite& mono2Suite = testReport.CreateTestSuite();
   mono2Suite.SetName("Monodispersed_2");
-  SESubstance mono2Substance(m_Logger);
+  SESubstance& mono2Substance = *subMgr.GetSubstance("MonoDispersed2");
   mono2Substance.GetAerosolization().GetBronchioleModifier().SetValue(0);//Need something here...
   mono2Substance.GetAerosolization().GetInflammationCoefficient().SetValue(0.5);//Need something here...
   SEHistogramFractionVsLength& mono2Concentrations = mono2Substance.GetAerosolization().GetParticulateSizeDistribution();
@@ -145,7 +145,7 @@ void PulseEngineTest::AerosolTest(const std::string& sOutputDirectory)
   // Create a suite
   SETestSuite& mono3Suite = testReport.CreateTestSuite();
   mono3Suite.SetName("Monodispersed_3");
-  SESubstance mono3Substance(m_Logger);
+  SESubstance& mono3Substance = *subMgr.GetSubstance("Monodispersed3");
   mono3Substance.GetAerosolization().GetBronchioleModifier().SetValue(0);//Need something here...
   mono3Substance.GetAerosolization().GetInflammationCoefficient().SetValue(0.5);//Need something here...
   SEHistogramFractionVsLength& mono3Concentrations = mono3Substance.GetAerosolization().GetParticulateSizeDistribution();
@@ -173,7 +173,7 @@ void PulseEngineTest::AerosolTest(const std::string& sOutputDirectory)
   // Create a suite
   SETestSuite& zhangDispersion = testReport.CreateTestSuite();
   zhangDispersion.SetName("ZhangDispersion");
-  SESubstance zhangSubstance(m_Logger);
+  SESubstance& zhangSubstance = *subMgr.GetSubstance("Zhang");
   zhangSubstance.GetAerosolization().GetBronchioleModifier().SetValue(0);//Need something here...
   zhangSubstance.GetAerosolization().GetInflammationCoefficient().SetValue(0.5);//Need something here...
   SEHistogramFractionVsLength& zhangConcentrations = zhangSubstance.GetAerosolization().GetParticulateSizeDistribution();

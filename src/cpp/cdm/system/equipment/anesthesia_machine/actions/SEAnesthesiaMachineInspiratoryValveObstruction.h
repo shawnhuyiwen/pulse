@@ -8,7 +8,7 @@ class CDM_DECL SEAnesthesiaMachineInspiratoryValveObstruction : public SEAnesthe
   friend class PBEquipmentAction;//friend the serialization class
 public:
 
-  SEAnesthesiaMachineInspiratoryValveObstruction();
+  SEAnesthesiaMachineInspiratoryValveObstruction(Logger* logger=nullptr);
   virtual ~SEAnesthesiaMachineInspiratoryValveObstruction();
 
   virtual void Clear();

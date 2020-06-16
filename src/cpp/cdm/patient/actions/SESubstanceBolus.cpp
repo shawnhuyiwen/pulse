@@ -9,7 +9,7 @@
 #include "properties/SEScalarTime.h"
 #include "io/protobuf/PBPatientActions.h"
 
-SESubstanceBolus::SESubstanceBolus(const SESubstance& substance) : SESubstanceAdministration(), m_Substance(substance), m_State(substance)
+SESubstanceBolus::SESubstanceBolus(const SESubstance& substance, Logger* logger) : SESubstanceAdministration(logger), m_Substance(substance), m_State(substance)
 {
   m_AdminRoute=eSubstanceAdministration_Route::Intravenous;
   m_Dose=nullptr;
@@ -110,7 +110,7 @@ void SESubstanceBolus::ToString(std::ostream &str) const
   str << std::flush;
 }
 
-SESubstanceBolusState::SESubstanceBolusState(const SESubstance& sub) : m_Substance(sub)
+SESubstanceBolusState::SESubstanceBolusState(const SESubstance& sub, Logger* logger) : Loggable(logger), m_Substance(sub)
 {
   m_ElapsedTime = new SEScalarTime();
   m_AdministeredDose = new SEScalarVolume();

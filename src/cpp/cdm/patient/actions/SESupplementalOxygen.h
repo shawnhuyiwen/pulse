@@ -14,7 +14,7 @@ class CDM_DECL SESupplementalOxygen : public SEPatientAction
   friend class PBPatientAction;//friend the serialization class
 public:
 
-  SESupplementalOxygen();
+  SESupplementalOxygen(Logger* logger=nullptr);
   virtual ~SESupplementalOxygen();
 
   virtual void Clear(); //clear memory

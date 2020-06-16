@@ -15,12 +15,12 @@ POP_PROTO_WARNINGS()
 #include "properties/SEScalarTime.h"
 #include "utils/FileUtils.h"
 
-void PBMechanicalVentilator::Load(const CDM_BIND::MechanicalVentilatorData& src, SEMechanicalVentilator& dst)
+void PBMechanicalVentilator::Load(const CDM_BIND::MechanicalVentilatorData& src, SEMechanicalVentilator& dst, const SESubstanceManager& subMgr)
 {
   dst.Clear();
-  PBMechanicalVentilator::Serialize(src, dst);
+  PBMechanicalVentilator::Serialize(src, dst, subMgr);
 }
-void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorData& src, SEMechanicalVentilator& dst)
+void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorData& src, SEMechanicalVentilator& dst, const SESubstanceManager& subMgr)
 {
   dst.SetConnection((eMechanicalVentilator_Connection)src.connection());
 
@@ -73,11 +73,11 @@ void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorData&
     PBProperty::Load(src.inspirationvalveresistance(), dst.GetInspirationValveResistance());
   dst.SetInspirationWaveform((eMechanicalVentilator_DriverWaveform)src.inspirationwaveform());
 
-  SESubstance* sub;
+  const SESubstance* sub;
   for (int i = 0; i < src.fractioninspiredgas_size(); i++)
   {
     const CDM_BIND::SubstanceFractionData& sfData = src.fractioninspiredgas()[i];
-    sub = dst.m_Substances.GetSubstance(sfData.name());
+    sub = subMgr.GetSubstance(sfData.name());
     if (sub == nullptr)
     {
       dst.Error("Ignoring a mechanical ventilator fraction inspired gas that was not found : " + sfData.name());
@@ -94,7 +94,7 @@ void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorData&
   for (int i = 0; i < src.concentrationinspiredaerosol_size(); i++)
   {
     const CDM_BIND::SubstanceConcentrationData& scData = src.concentrationinspiredaerosol()[i];
-    sub = dst.m_Substances.GetSubstance(scData.name());
+    sub = subMgr.GetSubstance(scData.name());
     if (sub == nullptr)
     {
       dst.Error("Ignoring an mechanical ventilator aerosol concentration that was not found : " + scData.name());
@@ -192,18 +192,18 @@ bool PBMechanicalVentilator::SerializeToFile(const SEMechanicalVentilator& src, 
   return WriteFile(content, filename, m);
 }
 
-bool PBMechanicalVentilator::SerializeFromString(const std::string& src, SEMechanicalVentilator& dst, SerializationFormat m)
+bool PBMechanicalVentilator::SerializeFromString(const std::string& src, SEMechanicalVentilator& dst, SerializationFormat m, const SESubstanceManager& subMgr)
 {
   CDM_BIND::MechanicalVentilatorData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
     return false;
-  PBMechanicalVentilator::Load(data, dst);
+  PBMechanicalVentilator::Load(data, dst, subMgr);
   return true;
 }
-bool PBMechanicalVentilator::SerializeFromFile(const std::string& filename, SEMechanicalVentilator& dst, SerializationFormat m)
+bool PBMechanicalVentilator::SerializeFromFile(const std::string& filename, SEMechanicalVentilator& dst, SerializationFormat m, const SESubstanceManager& subMgr)
 {
   std::string content = ReadFile(filename, m);
   if (content.empty())
     return false;
-  return PBMechanicalVentilator::SerializeFromString(content, dst, m);
+  return PBMechanicalVentilator::SerializeFromString(content, dst, m, subMgr);
 }

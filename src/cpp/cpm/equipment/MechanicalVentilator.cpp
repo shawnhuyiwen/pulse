@@ -39,7 +39,7 @@
 ========================
 */
 
-MechanicalVentilator::MechanicalVentilator(PulseData& data) : PulseMechanicalVentilator(data.GetSubstances()), m_data(data)
+MechanicalVentilator::MechanicalVentilator(PulseData& data) : PulseMechanicalVentilator(data.GetLogger()), m_data(data)
 {
   Clear();
 }
@@ -124,7 +124,7 @@ void MechanicalVentilator::StateChange()
   //Has fractions defined
   for (auto f : gasFractions)
   {
-    SESubstance& sub = f->GetSubstance();
+    const SESubstance& sub = f->GetSubstance();
     double fraction = f->GetFractionAmount().GetValue();
 
     //Do this, just in case it's something new
@@ -171,12 +171,11 @@ void MechanicalVentilator::StateChange()
     //Has fractions defined
     for (auto f : liquidConcentrations)
     {
-      SESubstance& sub = f->GetSubstance();
+      const SESubstance& sub = f->GetSubstance();
       SEScalarMassPerVolume concentration = f->GetConcentration();
 
       //Do this, just in case it's something new
       m_data.GetSubstances().AddActiveSubstance(sub);
-  //
       //Now set it on the connection compartment
       //It has infinite volume, so this will keep the same volume fraction no matter what's going on around it
       m_VentilatorAerosol->GetSubstanceQuantity(sub)->GetConcentration().Set(concentration);
@@ -293,7 +292,7 @@ void MechanicalVentilator::PreProcess()
 {
   if (m_data.GetActions().GetEquipmentActions().HasMechanicalVentilatorConfiguration())
   {
-    ProcessConfiguration(*m_data.GetActions().GetEquipmentActions().GetMechanicalVentilatorConfiguration());
+    ProcessConfiguration(*m_data.GetActions().GetEquipmentActions().GetMechanicalVentilatorConfiguration(), m_data.GetSubstances());
     m_data.GetActions().GetEquipmentActions().RemoveMechanicalVentilatorConfiguration();
   }
   //Do nothing if the ventilator is off and not initialized
