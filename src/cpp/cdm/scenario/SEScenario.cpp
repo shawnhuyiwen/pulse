@@ -9,7 +9,6 @@
 #include "engine/SEPatientConfiguration.h"
 #include "substance/SESubstanceManager.h"
 #include "io/protobuf/PBScenario.h"
-#include "io/protobuf/PBActions.h"
 
 SEScenario::SEScenario(Logger* logger, std::string const& dataDir) : Loggable(logger)
 {
@@ -141,7 +140,7 @@ void SEScenario::InvalidatePatientConfiguration()
 void SEScenario::AddAction(const SEAction& a)
 {
   // Make a copy using the bindings
-  m_Actions.push_back(PBAction::Copy(a,*m_SubMgr));
+  m_Actions.push_back(SEAction::Copy(a,*m_SubMgr));
 }
 const std::vector<const SEAction*>& SEScenario::GetActions() const
 {

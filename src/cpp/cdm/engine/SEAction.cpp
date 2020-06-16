@@ -6,6 +6,7 @@
 #include "engine/SEAdvanceTime.h"
 #include "engine/SESerializeState.h"
 #include "substance/SESubstanceManager.h"
+#include "io/protobuf/PBActions.h"
 
 
 SEAction::SEAction(Logger* logger) : Loggable(logger)
@@ -38,4 +39,9 @@ bool SEAction::HasComment() const
 void SEAction::InvalidateComment()
 {
   m_Comment = "";
+}
+
+SEAction* SEAction::Copy(const SEAction& action, const SESubstanceManager& subMgr)
+{
+  return PBAction::Copy(action, subMgr);
 }

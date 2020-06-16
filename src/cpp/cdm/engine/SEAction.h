@@ -13,6 +13,7 @@ public:
   virtual ~SEAction();
 
   virtual void Clear();// Deletes all members
+  static SEAction* Copy(const SEAction&, const SESubstanceManager&);
   
   /** Test if the action has all data it needs */
   virtual bool IsValid() const { return true; }
