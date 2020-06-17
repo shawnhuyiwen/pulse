@@ -4,6 +4,9 @@ package pulse.howto;
 
 import java.util.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.protobuf.InvalidProtocolBufferException;
 import pulse.cdm.bind.Events.eEvent;
 import pulse.cdm.bind.Patient.PatientData.eSex;
@@ -39,7 +42,7 @@ import pulse.utilities.jniBridge;
  */
 public class HowTo_EngineUse
 {
-//Create a listener that will catch any messages logged in C++
+ // Create a listener that will catch any messages logged in C++
  // This class will take the messages and add them to the log created in Java
  protected static class MyListener extends LogListener
  {
@@ -49,7 +52,7 @@ public class HowTo_EngineUse
      // Since we are just pushing this data into the log
      // We set listen to false, when you create a LogListener
      // is will automatically register itself with the static Log class,
-     // and when ever a Log even class is called, this will be called
+     // and whenever a Log even class is called, this will be called
      // and since this just calls the Log to log you will get into a recursive infinite loop.
      // This is just because I use the LogListener interface to listen to any log messages coming
      // from C++. Technically it is a LogListener as it is 'listening' to log events in C++.
@@ -64,6 +67,19 @@ public class HowTo_EngineUse
    public void handleWarn(String msg)  { Log.warn(msg); }
    public void handleError(String msg) { Log.error(msg); }
    public void handleFatal(String msg) { Log.fatal(msg); }
+ }
+ 
+ // Create a listener that will catch any messages logged in C++
+ // This class will take the messages and forward them to slf4j,
+ // so they can be logged with whatever logger a user may want to use
+ protected static class ForwardToSlf4jListener extends LogListener {
+   private static final Logger LOG = LoggerFactory.getLogger("CppPulseEngine"); // select a name that makes it clear where these logs are coming from
+   
+   public void handleDebug(String msg) { LOG.debug(msg); }
+   public void handleInfo(String msg)  { LOG.info(msg); }
+   public void handleWarn(String msg)  { LOG.warn(msg); }
+   public void handleError(String msg) { LOG.error(msg); }
+   public void handleFatal(String msg) { LOG.error("FATAL: {}", msg); }
  }
  
  protected static class MyEventHandler implements SEEventHandler
@@ -103,6 +119,9 @@ public class HowTo_EngineUse
    // that come from the engine. The default listener will just put them into the log file
    // If you want to do custom logic that occurs when the engine throws an error (or any other message type), just create a class just like this one
    pe.setListener(new MyListener());
+   
+   // This forwards log messages to an SLF4J logger
+   pe.setListener(new ForwardToSlf4jListener());
    
    // I want to know when ever the patient and anesthesia machine(if used) enters and exits a particular state
    pe.getEventManager().forwardEvents(new MyEventHandler());
