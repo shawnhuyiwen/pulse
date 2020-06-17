@@ -24,7 +24,7 @@
           }
         }
       }, {
-	    "PatientCondition": {
+        "PatientCondition": {
           "AcuteRespiratoryDistressSyndrome": {
             "Severity": {
               "Scalar0To1": {
@@ -43,8 +43,8 @@
             }
           }
         }
-	  }, {
-	    "PatientCondition": {
+      }, {
+        "PatientCondition": {
           "PulmonaryFibrosis": {
             "Severity": {
               "Scalar0To1": {
@@ -53,7 +53,7 @@
             }
           }
         }
-	  }, {
+      }, {
         "PatientCondition": {
           "ChronicObstructivePulmonaryDisease": {
             "BronchitisSeverity": {
@@ -69,7 +69,7 @@
           }
         }
       }, {
-	    "PatientCondition": {
+        "PatientCondition": {
           "ImpairedAlveolarExchange": {
             "ImpairedFraction": {
               "Scalar0To1": {
@@ -119,7 +119,7 @@
             }
           }
         }
-	  }, {
+      }, {
       "PatientCondition": {
           "PulmonaryShunt": {
             "Severity": {
@@ -517,14 +517,14 @@
           }
         }
       }
-	}
+    }
   }, {
     "PatientAction": { 
-	  "RespiratoryFatigue": 
+      "RespiratoryFatigue": 
       {
         "Severity": { "Scalar0To1": { "Value": 0.0 }}
       }
-	}  
+    }  
   }, 
   { "PatientAction": { "AcuteRespiratoryDistressSyndromeExacerbation": 
       {
@@ -962,13 +962,13 @@
                 "Unit": "s"
               }
             },
-			"HoldPeriod": {
+            "HoldPeriod": {
               "ScalarTime": {
                 "Value": 3.0,
                 "Unit": "s"
               }
             },
-			"ReleasePeriod": {
+            "ReleasePeriod": {
               "ScalarTime": {
                 "Value": 5.0,
                 "Unit": "s"
@@ -1300,7 +1300,7 @@
         "RightLungAffected": { "Scalar0To1": { "Value": 0.77 }}
       }}
     },
-	{ "PatientAction": { "ChronicObstructivePulmonaryDiseaseExacerbation": 
+    { "PatientAction": { "ChronicObstructivePulmonaryDiseaseExacerbation": 
       {
         "BronchitisSeverity": { "Scalar0To1": { "Value": 0.215 }},
         "EmphysemaSeverity": { "Scalar0To1": { "Value": 0.333 }}

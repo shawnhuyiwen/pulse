@@ -89,12 +89,12 @@
         { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "Bladder", "SubstanceName":"Sodium", "PropertyName":"Concentration", "Unit": "g/L" },
         { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "RightUreter", "PropertyName": "InFlow", "Unit": "mL/min" },
         { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "LeftUreter",  "PropertyName": "InFlow", "Unit": "mL/min" },
-		
-		{ "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "Bladder", "SubstanceName": "Chloride",     "PropertyName": "Concentration", "Unit": "g/L"  },
+        
+        { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "Bladder", "SubstanceName": "Chloride",     "PropertyName": "Concentration", "Unit": "g/L"  },
         { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "Bladder", "SubstanceName": "Urea",         "PropertyName": "Concentration", "Unit": "g/L"  },
-		
-		{ "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "RightAfferentArterioleResistance",               "Unit": "mmHg min/mL" },
-		{ "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "LeftAfferentArterioleResistance",               "Unit": "mmHg min/mL" }
+        
+        { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "RightAfferentArterioleResistance",               "Unit": "mmHg min/mL" },
+        { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "LeftAfferentArterioleResistance",               "Unit": "mmHg min/mL" }
       ]
     },
     "AnyAction":

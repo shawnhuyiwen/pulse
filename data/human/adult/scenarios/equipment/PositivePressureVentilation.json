@@ -74,39 +74,39 @@
       { "DecimalFormat": { "Precision": 2 }, "Category": "Substance", "SubstanceName": "CarbonDioxide", "PropertyName": "AlveolarTransfer",    "Unit": "mL/s" },
       { "DecimalFormat": { "Precision": 6 }, "Category": "Substance", "SubstanceName": "Epinephrine",   "PropertyName": "BloodConcentration",  "Unit": "ug/L" },
       { "DecimalFormat": { "Precision": 8 }, "Category": "Substance", "SubstanceName": "Epinephrine",   "PropertyName": "SystemicMassCleared", "Unit": "ug" },
-	  
-	  { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "InspiratoryExpiratoryRatio",     "Unit": "unitless" },
-	  { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ExpiratoryFlow",                 "Unit": "L/s" },
-	  { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "InspiratoryFlow",                "Unit": "L/s" },
-	  { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "PulmonaryCompliance",            "Unit": "L/cmH2O" },
+      
+      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "InspiratoryExpiratoryRatio",     "Unit": "unitless" },
+      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ExpiratoryFlow",                 "Unit": "L/s" },
+      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "InspiratoryFlow",                "Unit": "L/s" },
+      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "PulmonaryCompliance",            "Unit": "L/cmH2O" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "InspiratoryPulmonaryResistance", "Unit": "cmH2O s/L" },
-	  { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ExpiratoryPulmonaryResistance",  "Unit": "cmH2O s/L" }
-	]
+      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ExpiratoryPulmonaryResistance",  "Unit": "cmH2O s/L" }
+    ]
   },
   "AnyAction":
   [
     { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" }}}},
     { "PatientAction": { "Intubation": { "Type": "Tracheal" } } },
-	{ "PatientAction": {
+    { "PatientAction": {
      "MechanicalVentilation": {
        "State": "On",
        "Pressure": { "ScalarPressure": { "Value": 0.0, "Unit": "cmH2O" } } } }
     },
     { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" }}}},
-	{ "PatientAction": { "ChronicObstructivePulmonaryDiseaseExacerbation": 
+    { "PatientAction": { "ChronicObstructivePulmonaryDiseaseExacerbation": 
       {
         "BronchitisSeverity": { "Scalar0To1": { "Value": 0.6 }},
         "EmphysemaSeverity": { "Scalar0To1": { "Value": 0.6 }}
       }}
-	},
-	{ "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" }}}},
+    },
+    { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" }}}},
     { "PatientAction": { "ChronicObstructivePulmonaryDiseaseExacerbation": 
       {
         "BronchitisSeverity": { "Scalar0To1": { "Value": 0.0 }},
         "EmphysemaSeverity": { "Scalar0To1": { "Value": 0.0 }}
       }}
-	},	
-	{ "PatientAction": { "LobarPneumoniaExacerbation": 
+    },    
+    { "PatientAction": { "LobarPneumoniaExacerbation": 
       {
         "Severity": { "Scalar0To1": { "Value": 0.3 }},
         "LeftLungAffected": { "Scalar0To1": { "Value": 1.0 }},
@@ -114,7 +114,7 @@
       }}
     },
     { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" }}}},
-	{ "PatientAction": { "LobarPneumoniaExacerbation": 
+    { "PatientAction": { "LobarPneumoniaExacerbation": 
       {
         "Severity": { "Scalar0To1": { "Value": 0.6 }},
         "LeftLungAffected": { "Scalar0To1": { "Value": 1.0 }},
@@ -122,15 +122,15 @@
       }}
     },
     { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" }}}},
-	{ "PatientAction": { "LobarPneumoniaExacerbation": 
+    { "PatientAction": { "LobarPneumoniaExacerbation": 
       {
         "Severity": { "Scalar0To1": { "Value": 0.9 }},
         "LeftLungAffected": { "Scalar0To1": { "Value": 1.0 }},
         "RightLungAffected": { "Scalar0To1": { "Value": 1.0 }}
       }}
     },
-	{ "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" }}}},
-	{ "PatientAction": { "LobarPneumoniaExacerbation": 
+    { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" }}}},
+    { "PatientAction": { "LobarPneumoniaExacerbation": 
       {
         "Severity": { "Scalar0To1": { "Value": 0.0 }},
         "LeftLungAffected": { "Scalar0To1": { "Value": 0.0 }},
