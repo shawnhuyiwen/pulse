@@ -236,6 +236,7 @@ PulseController::PulseController(Logger* logger) : PulseData(logger)
 {
   m_ConfigOverride = nullptr;
   m_Stabilizer = new PulseStabilizationController(*this);
+  m_Logger->LogToConsole(true);
 }
 PulseController::~PulseController()
 {

@@ -342,7 +342,9 @@ bool SESubstanceManager::LoadSubstanceDirectory(const std::string& data_dir)
           // I am assuming the filename is also the substance name
           // If we don't want to make that assumption, we need to have
           // a map of filename to substance ptr and use it rather than GetSubstance by name.
-          SESubstanceCompound* cmpd = GetCompound(ent->d_name);
+          std::string name(ent->d_name);
+          name = name.substr(0, name.size() - ext.size());
+          SESubstanceCompound* cmpd = GetCompound(name);
           if (!cmpd->SerializeFromFile(ss.str(), *this, JSON))
           {
             Error("Unable to read substance compound " + ss.str());
