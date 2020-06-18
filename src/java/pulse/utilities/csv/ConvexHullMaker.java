@@ -75,7 +75,7 @@ public class ConvexHullMaker
   {
     ArrayList<Point> convexHull = new ArrayList<Point>();
     if (points.size() < 3)
-      return (ArrayList) points.clone();
+      return new ArrayList<Point>(points);
 
     int minPoint = -1, maxPoint = -1;
     double minX = Double.MAX_VALUE;
