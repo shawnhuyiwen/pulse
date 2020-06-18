@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 
 import pulse.cdm.bind.Enums.eSwitch;
-
 import pulse.cdm.engine.SEAutoSerialization;
 import pulse.cdm.properties.CommonUnits.TimeUnit;
 import pulse.utilities.FileUtils;
@@ -35,7 +34,7 @@ public class SETestConfiguration
   protected boolean plotResults=true;
 
   protected Map<String,String> macros = new HashMap<String,String>();
-  protected Map<String,Class<SETestDriver.Executor>> executors = new HashMap<String,Class<SETestDriver.Executor>>();
+  protected Map<String,Class<? extends SETestDriver.Executor>> executors = new HashMap<>();
   protected List<SETestJob> jobs = new ArrayList<SETestJob>();  
 
   protected Map<SETestJob,String> job2groups = new HashMap<SETestJob,String>();
@@ -126,10 +125,10 @@ public class SETestConfiguration
         }       
         if(key.equalsIgnoreCase("Executor"))
         {
-          Class<SETestDriver.Executor> clazz = null;
+          Class<? extends SETestDriver.Executor> clazz = null;
           try
           {
-            clazz = (Class<SETestDriver.Executor>)Class.forName(value);
+            clazz = Class.forName(value).asSubclass(SETestDriver.Executor.class);
             this.executors.put(clazz.getSimpleName(), clazz);
           } 
           catch(Exception e){Log.error("Could not find Executor "+value);}

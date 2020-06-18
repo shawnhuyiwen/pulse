@@ -110,10 +110,10 @@ public class PlotDriver
   }
   
   protected String name;
-  protected Map<String,Class<Plotter>> plotters = new HashMap<String,Class<Plotter>>();
+  protected Map<String,Class<? extends Plotter>> plotters = new HashMap<>();
   protected Map<String,String> macros = new HashMap<String,String>();
   protected List<PlotJob> jobs = new ArrayList<PlotJob>();
-  protected Map<String,Map<String,List<Double>>> compareData = new HashMap<String,Map<String,List<Double>>>();
+  protected Map<String,Map<String,List<Double>>> compareData = new HashMap<>();
   public boolean preload = false;
   public boolean onlyPlotFailures = false;
   protected String computedFilePath = "";
@@ -248,10 +248,10 @@ public class PlotDriver
         //add functionality for any config keywords here
         if(key.equalsIgnoreCase("Plotter"))
         {
-          Class<Plotter> clazz = null;
+          Class<? extends Plotter> clazz = null;
           try
           {
-            clazz = (Class<Plotter>)Class.forName(value);
+            clazz = (Class<? extends Plotter>)Class.forName(value).asSubclass(Plotter.class);
             this.plotters.put(clazz.getSimpleName(), clazz);
           } 
           catch(Exception e){Log.error("Could not find Plotter "+value);}

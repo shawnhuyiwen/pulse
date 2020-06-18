@@ -23,8 +23,8 @@ public class CurrentClass extends SecurityManager
   {
     int i=-1;
     boolean skip;
-    Class[] classes = getClassContext();
-    for(Class clazz : classes)
+    Class<?>[] classes = getClassContext();
+    for(Class<?> clazz : classes)
     {
       i++;
       if(clazz.getName().indexOf("CurrentClass")>=0)
@@ -48,8 +48,8 @@ public class CurrentClass extends SecurityManager
   {
     int i=-1;
     boolean skip;
-    Class[] classes = getClassContext();
-    for(Class clazz : classes)
+    Class<?>[] classes = getClassContext();
+    for(Class<?> clazz : classes)
     {
       i++;
       if(clazz.getName().indexOf("CurrentClass")>=0)
