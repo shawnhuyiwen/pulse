@@ -4,11 +4,12 @@
 package pulse.cdm.patient.conditions;
 
 import pulse.cdm.bind.PatientConditions.ChronicObstructivePulmonaryDiseaseData;
-
 import pulse.cdm.properties.SEScalar0To1;
 
 public class SEChronicObstructivePulmonaryDisease extends SEPatientCondition
 {
+
+  private static final long serialVersionUID = 143498768711182994L;
   protected SEScalar0To1 bronchitisSeverity;
   protected SEScalar0To1 emphysemaSeverity;
   

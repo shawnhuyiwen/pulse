@@ -4,12 +4,12 @@
 package pulse.cdm.patient.actions;
 
 import pulse.cdm.bind.PatientActions.ExerciseData;
-
-import pulse.cdm.properties.SEScalar;
 import pulse.cdm.properties.SEScalar0To1;
 
 public class SEExercise extends SEPatientAction
 {
+
+  private static final long serialVersionUID = 7493462620069995893L;
   protected SEScalar0To1 intensity;
   
   public SEExercise()

@@ -4,11 +4,12 @@
 package pulse.cdm.system.equipment.anesthesia_machine.actions;
 
 import pulse.cdm.bind.AnesthesiaMachineActions.AnesthesiaMachineVaporizerFailureData;
-
 import pulse.cdm.properties.SEScalar0To1;
 
 public class SEAnesthesiaMachineVaporizerFailure extends SEAnesthesiaMachineAction
 {
+
+  private static final long serialVersionUID = -7291568468320301722L;
   protected SEScalar0To1 severity;
   
   public SEAnesthesiaMachineVaporizerFailure()

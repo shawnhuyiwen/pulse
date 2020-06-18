@@ -10,6 +10,8 @@ import pulse.cdm.properties.SEScalar0To1;
 
 public class SEChronicRenalStenosis extends SEPatientCondition
 {
+
+  private static final long serialVersionUID = -4917822281366252892L;
   protected SEScalar0To1 leftKidneySeverity;
   protected SEScalar0To1 rightKidneySeverity;
   

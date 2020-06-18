@@ -7,6 +7,10 @@ import pulse.cdm.bind.PatientActions.UrinateData;
 
 public class SEUrinate extends SEPatientAction
 {
+
+  private static final long serialVersionUID = -4138221836818938148L;
+
+
   public SEUrinate()
   {
 

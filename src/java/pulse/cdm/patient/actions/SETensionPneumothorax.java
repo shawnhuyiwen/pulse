@@ -11,6 +11,8 @@ import pulse.cdm.properties.SEScalar0To1;
 
 public class SETensionPneumothorax extends SEPatientAction
 {
+  private static final long serialVersionUID = 4051212107004337111L;
+  
   protected eGate type;
   protected eSide side;
   protected SEScalar0To1 severity;

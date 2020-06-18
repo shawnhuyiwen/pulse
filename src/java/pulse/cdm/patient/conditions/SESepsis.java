@@ -4,11 +4,12 @@
 package pulse.cdm.patient.conditions;
 
 import pulse.cdm.bind.PatientConditions.SepsisData;
-
 import pulse.cdm.properties.SEScalar0To1;
 
 public class SESepsis extends SEPatientCondition
 {
+
+  private static final long serialVersionUID = 8862611857864194588L;
   protected SEScalar0To1 severity;
   
   public SESepsis()

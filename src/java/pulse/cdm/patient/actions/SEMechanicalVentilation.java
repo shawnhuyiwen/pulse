@@ -21,6 +21,8 @@ import pulse.utilities.DoubleUtils;
 
 public class SEMechanicalVentilation extends SEPatientAction
 {
+
+  private static final long serialVersionUID = -1840027159469073231L;
   protected SEScalarVolumePerTime flow;
   protected SEScalarPressure      pressure;
   protected eSwitch               state;

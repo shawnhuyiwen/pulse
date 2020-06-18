@@ -4,13 +4,14 @@
 package pulse.cdm.system.equipment.inhaler.actions;
 
 import pulse.cdm.bind.InhalerActions.InhalerConfigurationData;
-
 import pulse.cdm.substance.SESubstanceManager;
 import pulse.cdm.system.equipment.inhaler.SEInhaler;
 import pulse.utilities.Log;
 
 public class SEInhalerConfiguration extends SEInhalerAction
 {
+
+  private static final long serialVersionUID = 1236980982027471365L;
   protected SEInhaler configuration;
   protected String    configurationFile;
   

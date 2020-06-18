@@ -17,6 +17,9 @@ import java.util.List;
  */
 public class DoubleUtils implements Serializable
 {
+  private static final long serialVersionUID = 7249115321624825024L;
+
+
   public static void main(String[] args)
   {
     System.out.println(truncate(0.004999999999999999,2));

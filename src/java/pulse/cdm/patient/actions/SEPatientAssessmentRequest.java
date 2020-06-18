@@ -8,6 +8,8 @@ import pulse.cdm.bind.PatientAssessments.ePatientAssessmentType;
 
 public class SEPatientAssessmentRequest extends SEPatientAction
 {
+
+  private static final long serialVersionUID = -3104761170947638289L;
   protected ePatientAssessmentType type;
   
   public SEPatientAssessmentRequest()

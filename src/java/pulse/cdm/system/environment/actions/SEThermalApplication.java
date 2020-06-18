@@ -9,6 +9,8 @@ import pulse.cdm.system.environment.*;
 
 public class SEThermalApplication extends SEEnvironmentAction
 {
+
+  private static final long serialVersionUID = 3085122872742747423L;
   protected SEActiveConditioning activeHeating;
   protected SEActiveConditioning activeCooling;
   protected SEAppliedTemperature appliedTemperature;

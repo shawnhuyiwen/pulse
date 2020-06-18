@@ -8,6 +8,9 @@ import pulse.cdm.system.equipment.SEEquipmentAction;
 
 public abstract class SEMechanicalVentilatorAction extends SEEquipmentAction
 {
+
+  private static final long serialVersionUID = -7237768261378630458L;
+
   public SEMechanicalVentilatorAction()
   {
     

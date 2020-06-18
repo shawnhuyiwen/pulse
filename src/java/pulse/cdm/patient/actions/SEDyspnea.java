@@ -4,11 +4,12 @@
 package pulse.cdm.patient.actions;
 
 import pulse.cdm.bind.PatientActions.DyspneaData;
-
 import pulse.cdm.properties.SEScalar0To1;
 
 public class SEDyspnea extends SEPatientAction
 {
+
+  private static final long serialVersionUID = 4569172078077405942L;
   protected SEScalar0To1 severity;
   
   public SEDyspnea()

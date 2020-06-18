@@ -4,11 +4,12 @@
 package pulse.cdm.patient.actions;
 
 import pulse.cdm.bind.PatientActions.LobarPneumoniaExacerbationData;
-
 import pulse.cdm.properties.SEScalar0To1;
 
 public class SELobarPneumoniaExacerbation extends SEPatientAction
 {
+
+  private static final long serialVersionUID = 1944980065425173914L;
   protected SEScalar0To1 severity;
   protected SEScalar0To1 leftLungAffected;
   protected SEScalar0To1 rightLungAffected;

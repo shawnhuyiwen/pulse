@@ -4,11 +4,12 @@
 package pulse.cdm.actions;
 
 import pulse.cdm.bind.Actions.AdvanceTimeData;
-
 import pulse.cdm.properties.SEScalarTime;
 
 public class SEAdvanceTime extends SEAction 
 {
+  private static final long serialVersionUID = -8603576930859749559L;
+  
   protected SEScalarTime time;
   
   public SEAdvanceTime() 

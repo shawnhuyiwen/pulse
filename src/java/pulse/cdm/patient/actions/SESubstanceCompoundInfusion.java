@@ -11,6 +11,8 @@ import pulse.cdm.substance.SESubstanceCompound;
 
 public class SESubstanceCompoundInfusion extends SEPatientAction
 {
+
+  private static final long serialVersionUID = -8462874362131575884L;
   protected SEScalarVolume bagVolume;
   protected SEScalarVolumePerTime rate;
   protected SESubstanceCompound compound;

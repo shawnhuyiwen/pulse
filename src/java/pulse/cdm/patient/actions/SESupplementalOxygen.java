@@ -10,6 +10,8 @@ import pulse.cdm.properties.SEScalarVolumePerTime;
 
 public  class SESupplementalOxygen extends SEPatientAction
 {
+  private static final long serialVersionUID = -5281046855472339125L;
+  
   protected eDevice               device;
   protected SEScalarVolumePerTime flow;
   protected SEScalarVolume        volume;

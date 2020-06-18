@@ -4,11 +4,12 @@
 package pulse.cdm.system.equipment.anesthesia_machine.actions;
 
 import pulse.cdm.bind.AnesthesiaMachineActions.AnesthesiaMachineYPieceDisconnectData;
-
 import pulse.cdm.properties.SEScalar0To1;
 
 public class SEAnesthesiaMachineYPieceDisconnect extends SEAnesthesiaMachineAction
 {
+
+  private static final long serialVersionUID = 2778402103997300639L;
   protected SEScalar0To1 severity;
   
   public SEAnesthesiaMachineYPieceDisconnect()

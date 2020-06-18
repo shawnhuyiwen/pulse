@@ -8,6 +8,8 @@ import pulse.cdm.bind.Enums.eSwitch;
 
 public class SEAnesthesiaMachineOxygenWallPortPressureLoss extends SEAnesthesiaMachineAction
 {
+
+  private static final long serialVersionUID = -7922046988182673148L;
   protected eSwitch state;
   
   public SEAnesthesiaMachineOxygenWallPortPressureLoss()

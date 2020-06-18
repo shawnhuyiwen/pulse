@@ -19,6 +19,9 @@ import pulse.utilities.StringUtils;
  */
 public class SEEqualOptions extends DoubleUtils
 {
+
+  private static final long serialVersionUID = -7262519228429035715L;
+
   /**
    * Use this as the name when a derived class
    * calls a parent class.equals method, so 

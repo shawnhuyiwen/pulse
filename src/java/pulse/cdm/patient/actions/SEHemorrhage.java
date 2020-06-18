@@ -9,6 +9,8 @@ import pulse.cdm.properties.SEScalarVolumePerTime;
 
 public class SEHemorrhage extends SEPatientAction
 {
+
+  private static final long serialVersionUID = -1654353830396880L;
   protected String compartment;
   protected eType type;
   protected SEScalarVolumePerTime rate;

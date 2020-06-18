@@ -4,11 +4,12 @@
 package pulse.cdm.patient.actions;
 
 import pulse.cdm.bind.PatientActions.AcuteRespiratoryDistressSyndromeExacerbationData;
-
 import pulse.cdm.properties.SEScalar0To1;
 
 public class SEAcuteRespiratoryDistressSyndromeExacerbation extends SEPatientAction
 {
+  private static final long serialVersionUID = 8405714651383110396L;
+  
   protected SEScalar0To1 severity;
   protected SEScalar0To1 leftLungAffected;
   protected SEScalar0To1 rightLungAffected;

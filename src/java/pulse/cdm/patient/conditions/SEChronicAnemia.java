@@ -4,11 +4,12 @@
 package pulse.cdm.patient.conditions;
 
 import pulse.cdm.bind.PatientConditions.ChronicAnemiaData;
-
 import pulse.cdm.properties.SEScalar0To1;
 
 public class SEChronicAnemia extends SEPatientCondition
 {
+
+  private static final long serialVersionUID = -3748129373804790787L;
   protected SEScalar0To1 reductionFactor;
   
   public SEChronicAnemia()

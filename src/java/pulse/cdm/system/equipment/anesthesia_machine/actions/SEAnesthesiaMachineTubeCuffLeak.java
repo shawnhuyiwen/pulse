@@ -4,11 +4,12 @@
 package pulse.cdm.system.equipment.anesthesia_machine.actions;
 
 import pulse.cdm.bind.AnesthesiaMachineActions.AnesthesiaMachineTubeCuffLeakData;
-
 import pulse.cdm.properties.SEScalar0To1;
 
 public class SEAnesthesiaMachineTubeCuffLeak extends SEAnesthesiaMachineAction
 {
+
+  private static final long serialVersionUID = 4526580483594659547L;
   protected SEScalar0To1 severity;
   
   public SEAnesthesiaMachineTubeCuffLeak()

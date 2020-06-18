@@ -9,10 +9,10 @@ import java.util.List;
 import pulse.cdm.bind.PatientActions.AnyConsciousRespirationCommandData;
 import pulse.cdm.bind.PatientActions.ConsciousRespirationData;
 
-import pulse.cdm.substance.SESubstanceFraction;
-
 public class SEConsciousRespiration extends SEPatientAction
 {
+  private static final long serialVersionUID = 846068910422793098L;
+  
   protected List<SEConsciousRespirationCommand> commands;
   protected Boolean                             startImmediately;
   

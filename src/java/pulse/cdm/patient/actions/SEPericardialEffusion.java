@@ -9,6 +9,8 @@ import pulse.cdm.properties.SEScalarVolumePerTime;
 
 public class SEPericardialEffusion extends SEPatientAction
 {
+
+  private static final long serialVersionUID = -6623642458278591692L;
   protected SEScalarVolumePerTime effusionRate;
   
   public SEPericardialEffusion()

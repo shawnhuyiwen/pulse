@@ -15,6 +15,9 @@ import pulse.utilities.Log;
 
 public abstract class SEEquipmentAction extends SEAction
 {
+
+  private static final long serialVersionUID = 2322082255225125060L;
+
   public SEEquipmentAction()
   {
     

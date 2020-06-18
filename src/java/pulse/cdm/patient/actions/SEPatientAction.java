@@ -14,6 +14,9 @@ import pulse.utilities.Log;
 
 public abstract class SEPatientAction extends SEAction
 {
+
+  private static final long serialVersionUID = -28145404473115862L;
+
   public SEPatientAction()
   {
     

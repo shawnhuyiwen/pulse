@@ -4,12 +4,12 @@
 package pulse.cdm.patient.conditions;
 
 import pulse.cdm.bind.PatientConditions.ChronicPericardialEffusionData;
-
-import pulse.cdm.properties.SEScalar0To1;
 import pulse.cdm.properties.SEScalarVolume;
 
 public class SEChronicPericardialEffusion extends SEPatientCondition
 {
+
+  private static final long serialVersionUID = -7316735155803652740L;
   protected SEScalarVolume accumulatedVolume;
   
   public SEChronicPericardialEffusion()

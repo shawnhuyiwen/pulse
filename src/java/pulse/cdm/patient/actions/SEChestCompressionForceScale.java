@@ -4,12 +4,13 @@
 package pulse.cdm.patient.actions;
 
 import pulse.cdm.bind.PatientActions.ChestCompressionForceScaleData;
-
 import pulse.cdm.properties.SEScalar0To1;
 import pulse.cdm.properties.SEScalarTime;
 
 public class SEChestCompressionForceScale extends SEPatientAction
 {
+  private static final long serialVersionUID = -6588886334741792326L;
+  
   protected SEScalar0To1 forceScale;
   protected SEScalarTime forcePeriod;   
   

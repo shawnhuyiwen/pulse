@@ -11,6 +11,8 @@ import pulse.cdm.substance.SESubstance;
 
 public class SESubstanceBolus extends SEPatientAction
 {
+
+  private static final long serialVersionUID = -2177347285157137770L;
   protected eRoute adminRoute;
   protected SEScalarMassPerVolume concentration;
   protected SEScalarVolume dose;

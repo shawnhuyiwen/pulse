@@ -10,6 +10,8 @@ import pulse.utilities.Log;
 
 public class SEMechanicalVentilatorConfiguration extends SEMechanicalVentilatorAction
 {
+
+  private static final long serialVersionUID = -1487014080271791164L;
   protected SEMechanicalVentilator configuration;
   protected String                 configurationFile;
   

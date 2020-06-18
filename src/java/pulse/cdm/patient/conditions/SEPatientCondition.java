@@ -5,13 +5,14 @@ package pulse.cdm.patient.conditions;
 
 import pulse.cdm.bind.PatientConditions.AnyPatientConditionData;
 import pulse.cdm.bind.PatientConditions.PatientConditionData;
-
 import pulse.cdm.conditions.SECondition;
 import pulse.cdm.substance.SESubstanceManager;
 import pulse.utilities.Log;
 
 public abstract class SEPatientCondition extends SECondition
 {
+
+  private static final long serialVersionUID = -4005416863982138600L;
   public SEPatientCondition()
   {
     

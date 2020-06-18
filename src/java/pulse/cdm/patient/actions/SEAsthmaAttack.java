@@ -4,11 +4,12 @@
 package pulse.cdm.patient.actions;
 
 import pulse.cdm.bind.PatientActions.AsthmaAttackData;
-
 import pulse.cdm.properties.SEScalar0To1;
 
 public class SEAsthmaAttack extends SEPatientAction
 {
+  private static final long serialVersionUID = -6357431990769735817L;
+  
   protected SEScalar0To1 severity;
   
   public SEAsthmaAttack()

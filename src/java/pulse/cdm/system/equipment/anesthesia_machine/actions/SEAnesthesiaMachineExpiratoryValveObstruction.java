@@ -4,11 +4,12 @@
 package pulse.cdm.system.equipment.anesthesia_machine.actions;
 
 import pulse.cdm.bind.AnesthesiaMachineActions.AnesthesiaMachineExpiratoryValveObstructionData;
-
 import pulse.cdm.properties.SEScalar0To1;
 
 public class SEAnesthesiaMachineExpiratoryValveObstruction extends SEAnesthesiaMachineAction
 {
+
+  private static final long serialVersionUID = 3986218535936243784L;
   protected SEScalar0To1 severity;
   
   public SEAnesthesiaMachineExpiratoryValveObstruction()

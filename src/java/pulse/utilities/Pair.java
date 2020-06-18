@@ -9,6 +9,8 @@ import java.io.Serializable;
  */
 public class Pair<L,R> implements Serializable
 {
+  private static final long serialVersionUID = -2791959188291906115L;
+  
   private L l;
   private R r;
   

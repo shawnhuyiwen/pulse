@@ -4,13 +4,14 @@
 package pulse.cdm.patient.actions;
 
 import pulse.cdm.bind.PatientActions.SubstanceInfusionData;
-
 import pulse.cdm.properties.SEScalarMassPerVolume;
 import pulse.cdm.properties.SEScalarVolumePerTime;
 import pulse.cdm.substance.SESubstance;
 
 public class SESubstanceInfusion extends SEPatientAction
 {
+
+  private static final long serialVersionUID = 8029916816858227270L;
   protected SEScalarMassPerVolume concentration;
   protected SEScalarVolumePerTime rate;
   protected SESubstance substance;

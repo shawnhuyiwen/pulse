@@ -4,11 +4,13 @@
 package pulse.cdm.system.equipment.inhaler.actions;
 
 import pulse.cdm.bind.InhalerActions.InhalerActionData;
-
 import pulse.cdm.system.equipment.SEEquipmentAction;
 
 public abstract class SEInhalerAction extends SEEquipmentAction
 {
+
+  private static final long serialVersionUID = 6841036589043042143L;
+
   public SEInhalerAction()
   {
     

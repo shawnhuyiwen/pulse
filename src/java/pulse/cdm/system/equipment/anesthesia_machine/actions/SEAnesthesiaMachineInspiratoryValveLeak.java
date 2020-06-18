@@ -4,11 +4,12 @@
 package pulse.cdm.system.equipment.anesthesia_machine.actions;
 
 import pulse.cdm.bind.AnesthesiaMachineActions.AnesthesiaMachineInspiratoryValveLeakData;
-
 import pulse.cdm.properties.SEScalar0To1;
 
 public class SEAnesthesiaMachineInspiratoryValveLeak extends SEAnesthesiaMachineAction
 {
+
+  private static final long serialVersionUID = -5073406968309010540L;
   protected SEScalar0To1 severity;
   
   public SEAnesthesiaMachineInspiratoryValveLeak()

@@ -4,11 +4,12 @@
 package pulse.cdm.patient.conditions;
 
 import pulse.cdm.bind.PatientConditions.ConsumeMealData;
-
 import pulse.cdm.patient.nutrition.SEMeal;
 
 public class SEConsumeMeal extends SEPatientCondition
 {
+
+  private static final long serialVersionUID = -44596470205969619L;
   protected SEMeal       meal;
   protected String       mealFile;
   

@@ -4,11 +4,12 @@
 package pulse.cdm.patient.conditions;
 
 import pulse.cdm.bind.PatientConditions.AcuteRespiratoryDistressSyndromeData;
-
 import pulse.cdm.properties.SEScalar0To1;
 
 public class SEAcuteRespiratoryDistressSyndrome extends SEPatientCondition
 {
+  private static final long serialVersionUID = -5802058892372324645L;
+  
   protected SEScalar0To1 severity;
   protected SEScalar0To1 leftLungAffected;
   protected SEScalar0To1 rightLungAffected;

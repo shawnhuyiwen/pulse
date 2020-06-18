@@ -7,6 +7,8 @@ import pulse.cdm.bind.Actions.SerializeStateData;
 
 public class SESerializeState extends SEAction 
 {
+  private static final long serialVersionUID = 3176123488867413596L;
+  
   protected String              filename;
   protected SerializeStateData.eType type;
   

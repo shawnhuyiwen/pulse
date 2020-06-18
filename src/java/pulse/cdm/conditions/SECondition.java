@@ -7,7 +7,6 @@ import java.io.Serializable;
 
 import pulse.cdm.bind.Conditions.ConditionData;
 import pulse.cdm.bind.Engine.AnyConditionData;
-
 import pulse.cdm.patient.conditions.SEPatientCondition;
 import pulse.cdm.substance.SESubstanceManager;
 import pulse.cdm.system.environment.conditions.SEEnvironmentCondition;
@@ -15,6 +14,8 @@ import pulse.utilities.Log;
 
 public abstract class SECondition implements Serializable
 {
+  private static final long serialVersionUID = -1566830492504081551L;
+  
   protected String comment;
   
   public SECondition() 

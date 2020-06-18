@@ -9,6 +9,8 @@ import pulse.cdm.properties.SEScalar0To1;
 
 public class SERespiratoryFatigue extends SEPatientAction
 {
+
+  private static final long serialVersionUID = -8967263581748846332L;
   protected SEScalar0To1 severity;
   
   public SERespiratoryFatigue()

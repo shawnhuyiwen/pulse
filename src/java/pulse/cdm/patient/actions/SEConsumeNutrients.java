@@ -4,11 +4,12 @@
 package pulse.cdm.patient.actions;
 
 import pulse.cdm.bind.PatientActions.ConsumeNutrientsData;
-
 import pulse.cdm.patient.nutrition.SENutrition;
 
 public class SEConsumeNutrients extends SEPatientAction
 {
+
+  private static final long serialVersionUID = 3049429585113617869L;
   protected SENutrition nutrition;
   protected String nutritionFile;
   

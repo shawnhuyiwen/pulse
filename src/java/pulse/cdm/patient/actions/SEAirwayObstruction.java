@@ -4,11 +4,12 @@
 package pulse.cdm.patient.actions;
 
 import pulse.cdm.bind.PatientActions.AirwayObstructionData;
-
 import pulse.cdm.properties.SEScalar0To1;
 
 public class SEAirwayObstruction extends SEPatientAction
 {
+  private static final long serialVersionUID = 447938500845345205L;
+  
   protected SEScalar0To1 severity;
   
   public SEAirwayObstruction()

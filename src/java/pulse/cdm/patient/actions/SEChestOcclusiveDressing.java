@@ -3,12 +3,14 @@
 
 package pulse.cdm.patient.actions;
 
-import pulse.cdm.bind.PatientActions.ChestOcclusiveDressingData;
 import pulse.cdm.bind.Enums.eSide;
 import pulse.cdm.bind.Enums.eSwitch;
+import pulse.cdm.bind.PatientActions.ChestOcclusiveDressingData;
 
 public class SEChestOcclusiveDressing extends SEPatientAction
 {
+  private static final long serialVersionUID = -3935497566365734767L;
+  
   protected eSide side;
   protected eSwitch state;
   

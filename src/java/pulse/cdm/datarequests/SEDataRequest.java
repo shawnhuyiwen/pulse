@@ -11,6 +11,8 @@ import pulse.cdm.bind.Engine.DecimalFormatData.eType;
 
 public class SEDataRequest implements Serializable
 {
+  private static final long serialVersionUID = -6340908837323396480L;
+  
   protected String                  propertyName;
   protected String                  unit;
   protected eCategory               category;

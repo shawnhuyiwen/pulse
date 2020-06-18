@@ -7,18 +7,17 @@ import java.io.Serializable;
 
 import pulse.cdm.bind.Actions.ActionData;
 import pulse.cdm.bind.Engine.AnyActionData;
-
 import pulse.cdm.patient.actions.SEPatientAction;
 import pulse.cdm.properties.SEScalarTime;
 import pulse.cdm.substance.SESubstanceManager;
 import pulse.cdm.system.environment.actions.SEEnvironmentAction;
 import pulse.cdm.system.equipment.SEEquipmentAction;
-import pulse.cdm.system.equipment.anesthesia_machine.actions.SEAnesthesiaMachineAction;
-import pulse.cdm.system.equipment.inhaler.actions.SEInhalerAction;
 import pulse.utilities.Log;
 
 public abstract class SEAction implements Serializable
 {
+  private static final long serialVersionUID = -6897889189834880647L;
+  
   protected String comment;
   protected SEScalarTime scenarioTime;
   

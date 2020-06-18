@@ -9,6 +9,8 @@ import pulse.cdm.bind.Enums.eSwitch;
 
 public class SENeedleDecompression extends SEPatientAction
 {
+
+  private static final long serialVersionUID = 67814696179604859L;
   protected eSwitch state;
   protected eSide side;
   

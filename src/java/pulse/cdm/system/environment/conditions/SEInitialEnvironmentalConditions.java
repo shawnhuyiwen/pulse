@@ -4,12 +4,13 @@
 package pulse.cdm.system.environment.conditions;
 
 import pulse.cdm.bind.EnvironmentConditions.InitialEnvironmentalConditionsData;
-
 import pulse.cdm.substance.SESubstanceManager;
 import pulse.cdm.system.environment.SEEnvironmentalConditions;
 
 public class SEInitialEnvironmentalConditions extends SEEnvironmentCondition
 {
+
+  private static final long serialVersionUID = 735720711996975921L;
   protected SEEnvironmentalConditions environmentalConditions;
   protected String                    environmentalConditionsFile;
   

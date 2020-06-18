@@ -13,6 +13,8 @@ import pulse.utilities.Log;
 
 public abstract class SEEnvironmentCondition extends SECondition
 {
+
+  private static final long serialVersionUID = -2406029753819904480L;
   public SEEnvironmentCondition()
   {
     

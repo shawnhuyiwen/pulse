@@ -4,11 +4,12 @@
 package pulse.cdm.patient.actions;
 
 import pulse.cdm.bind.PatientActions.ChronicObstructivePulmonaryDiseaseExacerbationData;
-
 import pulse.cdm.properties.SEScalar0To1;
 
 public class SEChronicObstructivePulmonaryDiseaseExacerbation extends SEPatientAction
 {
+  private static final long serialVersionUID = 1407502636682534465L;
+  
   protected SEScalar0To1 bronchitisSeverity;
   protected SEScalar0To1 emphysemaSeverity;
   

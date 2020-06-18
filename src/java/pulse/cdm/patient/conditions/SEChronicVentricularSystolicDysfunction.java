@@ -7,6 +7,9 @@ import pulse.cdm.bind.PatientConditions.ChronicVentricularSystolicDysfunctionDat
 
 public class SEChronicVentricularSystolicDysfunction extends SEPatientCondition
 {
+
+  private static final long serialVersionUID = -7871986033442360506L;
+
   public SEChronicVentricularSystolicDysfunction()
   {
     

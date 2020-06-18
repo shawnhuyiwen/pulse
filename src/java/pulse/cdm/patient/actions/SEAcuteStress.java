@@ -4,11 +4,12 @@
 package pulse.cdm.patient.actions;
 
 import pulse.cdm.bind.PatientActions.AcuteStressData;
-
 import pulse.cdm.properties.SEScalar0To1;
 
 public class SEAcuteStress extends SEPatientAction
 {
+  private static final long serialVersionUID = 1086982565287954007L;
+  
   protected SEScalar0To1 severity;
   
   public SEAcuteStress()

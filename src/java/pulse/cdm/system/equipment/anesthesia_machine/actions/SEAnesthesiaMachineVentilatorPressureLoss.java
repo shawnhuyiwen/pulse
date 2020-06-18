@@ -4,11 +4,12 @@
 package pulse.cdm.system.equipment.anesthesia_machine.actions;
 
 import pulse.cdm.bind.AnesthesiaMachineActions.AnesthesiaMachineVentilatorPressureLossData;
-
 import pulse.cdm.properties.SEScalar0To1;
 
 public class SEAnesthesiaMachineVentilatorPressureLoss extends SEAnesthesiaMachineAction
 {
+
+  private static final long serialVersionUID = -7214143013719559191L;
   protected SEScalar0To1 severity;
   
   public SEAnesthesiaMachineVentilatorPressureLoss()

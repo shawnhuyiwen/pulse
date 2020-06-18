@@ -3,13 +3,14 @@
 
 package pulse.cdm.system.equipment.anesthesia_machine.actions;
 import pulse.cdm.bind.AnesthesiaMachineActions.AnesthesiaMachineConfigurationData;
-
 import pulse.cdm.substance.SESubstanceManager;
 import pulse.cdm.system.equipment.anesthesia_machine.SEAnesthesiaMachine;
 import pulse.utilities.Log;
 
 public class SEAnesthesiaMachineConfiguration extends SEAnesthesiaMachineAction
 {
+
+  private static final long serialVersionUID = 7917788116628472277L;
   protected SEAnesthesiaMachine configuration;
   protected String              configurationFile;
   

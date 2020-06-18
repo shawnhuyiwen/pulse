@@ -9,6 +9,8 @@ import pulse.cdm.properties.SEScalar0To1;
 
 public class SEBrainInjury extends SEPatientAction
 {
+  private static final long serialVersionUID = -2562160026757269439L;
+  
   protected SEScalar0To1  severity;
   protected eType         type;
   

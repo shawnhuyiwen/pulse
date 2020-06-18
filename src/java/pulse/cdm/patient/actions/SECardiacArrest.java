@@ -3,11 +3,13 @@
 
 package pulse.cdm.patient.actions;
 
-import pulse.cdm.bind.PatientActions.CardiacArrestData;
 import pulse.cdm.bind.Enums.eSwitch;
+import pulse.cdm.bind.PatientActions.CardiacArrestData;
 
 public class SECardiacArrest extends SEPatientAction
 {
+  private static final long serialVersionUID = 875699095552953525L;
+  
   protected eSwitch state;
   
   public SECardiacArrest()

@@ -4,11 +4,12 @@
 package pulse.cdm.patient.actions;
 
 import pulse.cdm.bind.PatientActions.BronchoconstrictionData;
-
 import pulse.cdm.properties.SEScalar0To1;
 
 public class SEBronchoconstriction extends SEPatientAction
 {
+  private static final long serialVersionUID = -3173204376090087459L;
+  
   protected SEScalar0To1 severity;
   
   public SEBronchoconstriction()

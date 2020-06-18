@@ -4,11 +4,12 @@
 package pulse.cdm.patient.conditions;
 
 import pulse.cdm.bind.PatientConditions.PulmonaryFibrosisData;
-
 import pulse.cdm.properties.SEScalar0To1;
 
 public class SEPulmonaryFibrosis extends SEPatientCondition
 {
+
+  private static final long serialVersionUID = -2186578906373865449L;
   protected SEScalar0To1 severity;
   
   public SEPulmonaryFibrosis()

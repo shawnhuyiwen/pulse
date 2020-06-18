@@ -8,6 +8,8 @@ import pulse.cdm.bind.PatientActions.IntubationData.eType;
 
 public  class SEIntubation extends SEPatientAction
 {
+
+  private static final long serialVersionUID = -7814100167946869768L;
   protected eType type;
   
   public SEIntubation()

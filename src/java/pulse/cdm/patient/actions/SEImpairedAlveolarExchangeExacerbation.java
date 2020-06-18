@@ -4,12 +4,13 @@
 package pulse.cdm.patient.actions;
 
 import pulse.cdm.bind.PatientActions.ImpairedAlveolarExchangeExacerbationData;
-
 import pulse.cdm.properties.SEScalar0To1;
 import pulse.cdm.properties.SEScalarArea;
 
 public class SEImpairedAlveolarExchangeExacerbation extends SEPatientAction
 {
+
+  private static final long serialVersionUID = 5044648250444265871L;
   protected SEScalarArea impairedSurfaceArea;
   protected SEScalar0To1 impairedFraction;
   
