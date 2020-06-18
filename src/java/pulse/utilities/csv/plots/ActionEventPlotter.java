@@ -50,7 +50,6 @@ import pulse.cdm.substance.SESubstanceManager;
 import pulse.utilities.DoubleUtils;
 import pulse.utilities.FileUtils;
 import pulse.utilities.Log;
-import pulse.utilities.LogListener;
 import pulse.utilities.csv.CSVContents;
 import pulse.utilities.csv.plots.PlotDriver.PlotJob;
 
@@ -67,10 +66,9 @@ public class ActionEventPlotter implements Plotter
     PlotDriver.main(args);
   }
   
-  public void plot(LogListener listener, SESubstanceManager subMgr)
+  public void plot(PlotJob job, SESubstanceManager subMgr)
   {    
     //fill PlotJob with needed data if it doesn't exist
-    PlotJob job = (PlotJob)listener;
     if(job.dataPath == null || job.dataPath.isEmpty())
     {job.dataPath = job.verificationDirectory+"/";}
     if(job.logPath == null || job.logPath.isEmpty())
@@ -704,8 +702,9 @@ public class ActionEventPlotter implements Plotter
 
     plot.setDomainCrosshairVisible(true);
     plot.setRangeCrosshairVisible(true);
-
-    chart.getLegend().setItemFont(new Font("SansSerif", Font.PLAIN, 15));
+    
+    XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot.getRenderer();
+    renderer.setBaseLegendTextFont(new Font("SansSerif", Font.PLAIN, job.legendFontSize));
     chart.getTitle().setFont(new Font("SansSerif", Font.PLAIN, job.fontSize));
     chart.getTitle().setPaint(job.bgColor==Color.red?Color.white:Color.black);
   }

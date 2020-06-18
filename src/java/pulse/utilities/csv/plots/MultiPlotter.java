@@ -31,7 +31,6 @@ import pulse.cdm.substance.SESubstanceManager;
 import pulse.utilities.DoubleUtils;
 import pulse.utilities.FileUtils;
 import pulse.utilities.Log;
-import pulse.utilities.LogListener;
 import pulse.utilities.csv.CSVContents;
 import pulse.utilities.csv.plots.PlotDriver.PlotJob;
 
@@ -46,10 +45,9 @@ public class MultiPlotter implements Plotter
   }
 
   @Override
-  public void plot(LogListener listener, SESubstanceManager subMgr)
+  public void plot(PlotJob job, SESubstanceManager subMgr)
   {
     //fill PlotJob with needed data if it doesn't exist
-    PlotJob job = (PlotJob)listener;
     if(job.dataPath == null || job.dataPath.isEmpty())
     {job.dataPath = job.verificationDirectory+"/";}
     if(job.dataFile == null || job.dataFile.isEmpty())
@@ -64,10 +62,25 @@ public class MultiPlotter implements Plotter
         csv.abreviateContents = job.resultsSkipNum;
         for (int i = 0; i < job.headers.size(); i++)
         {
+          if(data.containsKey(job.headers.get(i)))
+            continue;
           List<Double> headerData = new ArrayList<Double>();
           csv.readHeader(csv.unitUnderscoreToSpace(job.headers.get(i)), headerData);
+          if(job.percentOfBaseline)
+          {
+            double baseline = headerData.get(0);
+            boolean invertX = job.headers.get(i).contentEquals(job.X1header);
+            for(int j=0; j < headerData.size(); j++)
+            {
+              if(invertX)// And convert to %
+                headerData.set(j, (1-(headerData.get(j)/baseline))*100);
+              else
+                headerData.set(j, headerData.get(j)/baseline);
+            }
+          }
           data.put(job.headers.get(i), headerData);
-        }        
+        }
+        
       } catch (IOException e)
       {
         Log.error("Could not analyze file " + job.dataPath + job.dataFile);
@@ -174,7 +187,7 @@ public class MultiPlotter implements Plotter
     //set labels
     String XAxisLabel = job.X1header;
     String YAxisLabel = job.Y1headers.get(0);
-
+    
     JFreeChart chart = ChartFactory.createXYLineChart(
         job.titleOverride!=null&&job.titleOverride.equalsIgnoreCase("None")?"":title,           // chart title
         XAxisLabel,         // x axis label
@@ -186,7 +199,7 @@ public class MultiPlotter implements Plotter
         false                      // urls
         );
     
-    Log.info("Creating Graph "+title);   
+    Log.info("Creating Graph "+title);
     XYPlot plot = (XYPlot) chart.getPlot();
     
     if (!job.logAxis)
@@ -398,7 +411,7 @@ public class MultiPlotter implements Plotter
     plot.setDomainCrosshairVisible(true);
     plot.setRangeCrosshairVisible(true);
 
-    chart.getLegend().setItemFont(new Font("SansSerif", Font.PLAIN, 15));
+    renderer1.setBaseLegendTextFont(new Font("SansSerif", Font.PLAIN, job.legendFontSize));
     chart.getTitle().setFont(new Font("SansSerif", Font.PLAIN, job.fontSize));
     chart.getTitle().setPaint(job.bgColor==Color.red?Color.white:Color.black);
     
@@ -418,6 +431,7 @@ public class MultiPlotter implements Plotter
     else
     {
       StandardXYItemRenderer renderer2 = new StandardXYItemRenderer();
+      renderer2.setBaseLegendTextFont(new Font("SansSerif", Font.PLAIN, job.legendFontSize));
       plot.setRenderer(1, renderer2);
       
       for(int i = 0, cIndex = 0; i < dataSet1.getSeriesCount(); i++, cIndex++)

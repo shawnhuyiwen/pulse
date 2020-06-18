@@ -43,6 +43,6 @@ public class ReduceCSV
       }
     }       
     bIn.close();
-    bOut.close();          
+    bOut.close();
   }
 }
