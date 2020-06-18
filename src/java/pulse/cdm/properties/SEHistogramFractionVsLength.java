@@ -34,6 +34,7 @@ public class SEHistogramFractionVsLength extends SEHistogram
     SEHistogram.unload(src,dst.getHistogramFractionVsLengthBuilder());
   }
 
+  @Override
   public boolean isValidDependentUnit(String unit)
   {
     if(unit == null || unit.isEmpty())
@@ -41,6 +42,7 @@ public class SEHistogramFractionVsLength extends SEHistogram
     return false;
   }
   
+  @Override
   public boolean isValidIndependentUnit(String unit)
   {
     return LengthUnit.validUnit(unit);

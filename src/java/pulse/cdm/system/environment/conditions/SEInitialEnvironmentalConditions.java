@@ -34,6 +34,7 @@ public class SEInitialEnvironmentalConditions extends SEEnvironmentCondition
     this.environmentalConditionsFile=other.environmentalConditionsFile;
   }
   
+  @Override
   public void reset()
   {
     super.reset();
@@ -97,6 +98,7 @@ public class SEInitialEnvironmentalConditions extends SEEnvironmentCondition
     this.environmentalConditionsFile = s;
   }
   
+  @Override
   public String toString()
   {
     if (environmentalConditions != null)

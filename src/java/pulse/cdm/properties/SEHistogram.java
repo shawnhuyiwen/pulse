@@ -33,6 +33,7 @@ public class SEHistogram extends SEFunction
     SEFunction.unload(src,dst.getHistogramBuilder());
   }
   
+  @Override
   public boolean isValid()
   {
     if(this.dependent.length==0||this.independent.length==0)

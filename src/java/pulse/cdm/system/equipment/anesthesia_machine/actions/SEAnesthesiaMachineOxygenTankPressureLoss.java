@@ -16,12 +16,14 @@ public class SEAnesthesiaMachineOxygenTankPressureLoss extends SEAnesthesiaMachi
     state = eSwitch.Off;
   }
 
+  @Override
   public void reset()
   {
     super.reset();
     state = eSwitch.Off;
   }
 
+  @Override
   public boolean isValid()
   {
     return true;
@@ -57,6 +59,7 @@ public class SEAnesthesiaMachineOxygenTankPressureLoss extends SEAnesthesiaMachi
   	this.state = (s==eSwitch.NullSwitch) ? eSwitch.Off : s;
   }
 
+  @Override
   public String toString()
   {
     return "Oxygen Tank Pressure Loss"

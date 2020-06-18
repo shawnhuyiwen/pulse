@@ -50,5 +50,6 @@ public abstract class SEConsciousRespirationCommand
   }
   
   public abstract boolean isValid();
+  @Override
   public abstract String toString();
 }

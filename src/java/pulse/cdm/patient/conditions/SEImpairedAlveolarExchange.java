@@ -35,6 +35,7 @@ public class SEImpairedAlveolarExchange extends SEPatientCondition
       impairedFraction.invalidate();
   }
   
+  @Override
   public void reset()
   {
     super.reset();
@@ -96,6 +97,7 @@ public class SEImpairedAlveolarExchange extends SEPatientCondition
     return impairedFraction;
   }
   
+  @Override
   public String toString()
   {
     if (impairedFraction != null)

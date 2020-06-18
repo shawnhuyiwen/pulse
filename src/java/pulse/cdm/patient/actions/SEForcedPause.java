@@ -23,6 +23,7 @@ public class SEForcedPause extends SEConsciousRespirationCommand
     period = other.period;
   }
   
+  @Override
   public SEConsciousRespirationCommand getCopy()
   {
     SEConsciousRespirationCommand command = new SEForcedPause();
@@ -31,6 +32,7 @@ public class SEForcedPause extends SEConsciousRespirationCommand
     return command;
   }
   
+  @Override
   public void reset()
   {
     super.reset();
@@ -39,6 +41,7 @@ public class SEForcedPause extends SEConsciousRespirationCommand
       period.invalidate();
   }
   
+  @Override
   public boolean isValid()
   {
     return hasPeriod();
@@ -76,6 +79,7 @@ public class SEForcedPause extends SEConsciousRespirationCommand
     return period;
   }
   
+  @Override
   public String toString()
   {
     if (period != null)

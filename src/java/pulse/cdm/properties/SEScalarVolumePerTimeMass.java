@@ -86,6 +86,7 @@ public class SEScalarVolumePerTimeMass extends SEScalar
     return this.getValue(unit.toString());
   }
 
+  @Override
   public boolean validUnit(String unit)
   {
     if(VolumePerTimeMassUnit.validUnit(unit))

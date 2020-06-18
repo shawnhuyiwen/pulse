@@ -24,11 +24,13 @@ public class EngineUnitTestDriver implements SETestDriver.Executor
     this.nativeObj = nativeAllocate();
   }
   
+  @Override
   protected void finalize()
   {
     nativeDelete(this.nativeObj);
   }
   
+  @Override
   public boolean ExecuteTest(SETestJob job)
   {
     nativeExecute(this.nativeObj,job.name,job.computedDirectory);

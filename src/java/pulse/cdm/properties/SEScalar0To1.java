@@ -46,6 +46,7 @@ public class SEScalar0To1 extends SEScalar
     SEScalar.unload(src,dst.getScalar0To1Builder());
   }
 
+  @Override
   public boolean validUnit(String unit)
   {
     if(unit==null||unit.isEmpty()||unit.compareTo("unitless") == 0)
@@ -53,6 +54,7 @@ public class SEScalar0To1 extends SEScalar
     return false;
   }
   
+  @Override
   public void setValue(double d)
   {
     if(d>1)

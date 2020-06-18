@@ -21,6 +21,7 @@ public class SEAcuteRespiratoryDistressSyndrome extends SEPatientCondition
     rightLungAffected = null;
   }
   
+  @Override
   public void reset()
   {
     super.reset();
@@ -107,6 +108,7 @@ public class SEAcuteRespiratoryDistressSyndrome extends SEPatientCondition
     return rightLungAffected;
   }
   
+  @Override
   public String toString()
   {
     return "ARDS" 

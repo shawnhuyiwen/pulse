@@ -27,6 +27,7 @@ public class SEComprehensiveMetabolicPanel extends SEPatientAssessment
   protected SEScalarMassPerVolume   totalBilirubin;
   protected SEScalarMassPerVolume   totalProtein;
   
+  @Override
   public void clear()
   {
     super.clear();
@@ -46,6 +47,7 @@ public class SEComprehensiveMetabolicPanel extends SEPatientAssessment
     this.totalProtein = null;
   }
   
+  @Override
   public void reset()
   {
     super.reset();

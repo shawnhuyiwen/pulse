@@ -86,6 +86,7 @@ public class SEScalarMassPerTime extends SEScalar
     return this.getValue(unit.toString());
   }
 
+  @Override
   public boolean validUnit(String unit)
   {
     if(MassPerTimeUnit.validUnit(unit))

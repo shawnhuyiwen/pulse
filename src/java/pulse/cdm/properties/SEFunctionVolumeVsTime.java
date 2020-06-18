@@ -35,11 +35,13 @@ public class SEFunctionVolumeVsTime extends SEFunction
     SEFunction.unload(src,dst.getFunctionVolumeVsTimeBuilder());
   }
 
+  @Override
   public boolean isValidDependentUnit(String unit)
   {    
     return VolumeUnit.validUnit(unit);
   }
   
+  @Override
   public boolean isValidIndependentUnit(String unit)
   {
     return TimeUnit.validUnit(unit);

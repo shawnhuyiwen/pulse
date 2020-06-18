@@ -37,6 +37,7 @@ public class SEForcedExhale extends SEConsciousRespirationCommand
       getExpiratoryReserveVolumeFraction().set(other.expiratoryReserveVolumeFraction);
   }
   
+  @Override
   public SEConsciousRespirationCommand getCopy()
   {
     SEConsciousRespirationCommand command = new SEForcedExhale();
@@ -45,6 +46,7 @@ public class SEForcedExhale extends SEConsciousRespirationCommand
     return command;
   }
   
+  @Override
   public void reset()
   {
     super.reset();
@@ -58,6 +60,7 @@ public class SEForcedExhale extends SEConsciousRespirationCommand
       releasePeriod.invalidate();
   }
   
+  @Override
   public boolean isValid()
   {
     return hasExpiratoryReserveVolumeFraction() && hasExhalePeriod();
@@ -140,6 +143,7 @@ public class SEForcedExhale extends SEConsciousRespirationCommand
     return releasePeriod;
   }
   
+  @Override
   public String toString()
   {
       return "Forced Exhale" 

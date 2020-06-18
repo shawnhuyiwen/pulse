@@ -28,6 +28,7 @@ public class SEUrinalysis extends SEPatientAssessment
   protected ePresenceIndicator     nitrite;
   protected ePresenceIndicator     leukocyteEsterase;
   
+  @Override
   public void clear()
   {
     super.clear();
@@ -45,6 +46,7 @@ public class SEUrinalysis extends SEPatientAssessment
     this.leukocyteEsterase = null;
   }
   
+  @Override
   public void reset()
   {
     super.reset();

@@ -24,6 +24,7 @@ public class SELiquidCompartment extends SEFluidCompartment
     this.substanceQuantities=new ArrayList<SELiquidSubstanceQuantity>();
   }
   
+  @Override
   public void reset()
   {
     super.reset();

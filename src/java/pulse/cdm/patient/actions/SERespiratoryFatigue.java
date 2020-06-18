@@ -17,6 +17,7 @@ public class SERespiratoryFatigue extends SEPatientAction
     severity = null;
   }
   
+  @Override
   public void reset()
   {
     super.reset();
@@ -35,6 +36,7 @@ public class SERespiratoryFatigue extends SEPatientAction
       severity.invalidate();
   }
   
+  @Override
   public boolean isValid()
   {
     return hasSeverity();
@@ -72,6 +74,7 @@ public class SERespiratoryFatigue extends SEPatientAction
     return severity;
   }
 
+  @Override
   public String toString()
   {
     if (severity != null)

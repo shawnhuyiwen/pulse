@@ -86,6 +86,7 @@ public class SEScalarTemperature extends SEScalar
     return this.getValue(unit.toString());
   }
 
+  @Override
   public boolean validUnit(String unit)
   {
     if(TemperatureUnit.validUnit(unit))

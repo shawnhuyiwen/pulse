@@ -87,6 +87,7 @@ public class SEEqualOptions extends DoubleUtils
       return str.toString();
     }
     
+    @Override
     public int hashCode()
     {
       return this.CDMPath.hashCode() + 
@@ -94,6 +95,7 @@ public class SEEqualOptions extends DoubleUtils
              this.toIDPath.hashCode(); 
     }
     
+    @Override
     public boolean equals(Object o)
     {
       if(o==this) 

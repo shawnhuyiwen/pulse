@@ -15,6 +15,7 @@ public class SEEndocrineSystem extends SEPhysiologySystem implements SESystem
     insulinSynthesisRate = null;
   }
 
+  @Override
   public void reset()
   {    
     if (insulinSynthesisRate != null)

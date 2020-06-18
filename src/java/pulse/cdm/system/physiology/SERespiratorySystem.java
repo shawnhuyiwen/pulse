@@ -131,6 +131,7 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
     transthoracicPressure = null;
   }
 
+  @Override
   public void reset()
   {
     if (alveolarArterialGradient != null)

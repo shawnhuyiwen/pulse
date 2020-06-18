@@ -21,6 +21,7 @@ public class SELobarPneumonia extends SEPatientCondition
     rightLungAffected = null;
   }
   
+  @Override
   public void reset()
   {
     super.reset();
@@ -107,6 +108,7 @@ public class SELobarPneumonia extends SEPatientCondition
     return rightLungAffected;
   }
   
+  @Override
   public String toString()
   {
     return "Lobar Pneumonia" 

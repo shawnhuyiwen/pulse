@@ -17,6 +17,7 @@ public class SEChronicPericardialEffusion extends SEPatientCondition
     accumulatedVolume = null;
   }
   
+  @Override
   public void reset()
   {
     super.reset();
@@ -67,6 +68,7 @@ public class SEChronicPericardialEffusion extends SEPatientCondition
     return accumulatedVolume;
   }
   
+  @Override
   public String toString()
   {
     return "Pericardial Effusion" 

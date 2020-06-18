@@ -76,6 +76,7 @@ public class SEDataRequest implements Serializable
       dst.getDecimalFormatBuilder().setPrecision(src.precision);    
   }
   
+  @Override
   public int hashCode()
   {
     int c = 17;

@@ -35,6 +35,7 @@ public class SEMechanicalVentilatorConfiguration extends SEMechanicalVentilatorA
     this.configurationFile=other.configurationFile;
   }
   
+  @Override
   public void reset()
   {
     super.reset();
@@ -45,6 +46,7 @@ public class SEMechanicalVentilatorConfiguration extends SEMechanicalVentilatorA
       this.configurationFile="";
   }
   
+  @Override
   public boolean isValid()
   {
     return hasConfiguration() || hasConfigurationFile();
@@ -104,6 +106,7 @@ public class SEMechanicalVentilatorConfiguration extends SEMechanicalVentilatorA
     this.configurationFile = s;
   }
   
+  @Override
   public String toString()
   {
     String str = "Mechanical Ventilator Configuration";

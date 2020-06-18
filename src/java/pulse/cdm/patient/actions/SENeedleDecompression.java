@@ -29,6 +29,7 @@ public class SENeedleDecompression extends SEPatientAction
     side = other.side;
   }
   
+  @Override
   public void reset()
   {
     super.reset();
@@ -36,6 +37,7 @@ public class SENeedleDecompression extends SEPatientAction
     side = null;
   }
   
+  @Override
   public boolean isValid()
   {
     return hasSide();
@@ -89,6 +91,7 @@ public class SENeedleDecompression extends SEPatientAction
     return side == null ? false : true;
   }
   
+  @Override
   public String toString()
   {
     return "Needle Decompression"

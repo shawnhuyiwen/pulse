@@ -44,6 +44,7 @@ public class SEMechanicalVentilation extends SEPatientAction
     this.aerosols=new ArrayList<SESubstanceConcentration>();
   }
 
+  @Override
   public void reset()
   {
     state = eSwitch.Off;
@@ -88,6 +89,7 @@ public class SEMechanicalVentilation extends SEPatientAction
     }    
   }
   
+  @Override
   public boolean isValid()
   {
     if (getState() == eSwitch.Off)
@@ -290,6 +292,7 @@ public class SEMechanicalVentilation extends SEPatientAction
     }  
   }
   
+  @Override
   public String toString()
   {
     String cnts = "Mechanical Ventilation"

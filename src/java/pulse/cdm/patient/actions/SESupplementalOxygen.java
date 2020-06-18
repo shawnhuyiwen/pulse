@@ -41,6 +41,7 @@ public  class SESupplementalOxygen extends SEPatientAction
       volume.invalidate();
   }
   
+  @Override
   public void reset()
   {
     super.reset();
@@ -51,6 +52,7 @@ public  class SESupplementalOxygen extends SEPatientAction
       volume.invalidate();
   }
   
+  @Override
   public boolean isValid()
   {
     return hasDevice();
@@ -120,6 +122,7 @@ public  class SESupplementalOxygen extends SEPatientAction
     return volume;
   }
   
+  @Override
   public String toString() 
   {
     return "Supplemental Oxygen"

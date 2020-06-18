@@ -22,6 +22,7 @@ public class SEGasSubstanceQuantity extends SESubstanceQuantity
     volumeFraction = null;
   }
 
+  @Override
   public void reset()
   {
     super.reset();

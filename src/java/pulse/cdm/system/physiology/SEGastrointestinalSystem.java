@@ -18,6 +18,7 @@ public class SEGastrointestinalSystem extends SEPhysiologySystem implements SESy
     stomachContents = null;
   }
 
+  @Override
   public void reset()
   {    
     if (waterAbsorptionRate != null)

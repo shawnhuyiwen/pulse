@@ -62,6 +62,7 @@ public class CSVContents
       throw new IOException("Results file not found : "+resultsFile);
   }
   
+  @Override
   protected void finalize() throws IOException
   {
     if(in!=null)

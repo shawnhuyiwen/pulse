@@ -63,6 +63,7 @@ public class SEMechanicalVentilator extends SEEquipment
     this.concentrationInspiredAerosol=new ArrayList<SESubstanceConcentration>();
   }
 
+  @Override
   public void reset()
   {
     if (breathPeriod != null)
@@ -474,6 +475,7 @@ public class SEMechanicalVentilator extends SEEquipment
     }    
   }
 
+  @Override
   public String toString()
   {
     String str = "Mechanical Ventilator"

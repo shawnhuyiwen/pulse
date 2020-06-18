@@ -23,6 +23,7 @@ public abstract class SEEnvironmentCondition extends SECondition
     super.copy(other);
   }
   
+  @Override
   public void reset()
   {
     super.reset();
@@ -37,6 +38,7 @@ public abstract class SEEnvironmentCondition extends SECondition
     SECondition.unload(src, dst.getConditionBuilder());
   }
   
+  @Override
   public abstract String toString();
 
   public static SEEnvironmentCondition ANY2CDM(AnyEnvironmentConditionData c, SESubstanceManager subMgr) 

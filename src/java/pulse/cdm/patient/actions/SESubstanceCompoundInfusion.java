@@ -41,6 +41,7 @@ public class SESubstanceCompoundInfusion extends SEPatientAction
       bagVolume.invalidate();
   }
   
+  @Override
   public void reset()
   {
     super.reset();
@@ -50,6 +51,7 @@ public class SESubstanceCompoundInfusion extends SEPatientAction
       bagVolume.invalidate();
   }
   
+  @Override
   public boolean isValid()
   {
     return hasRate() && hasBagVolume() && hasSubstanceCompound();
@@ -109,6 +111,7 @@ public class SESubstanceCompoundInfusion extends SEPatientAction
     return compound;
   }
   
+  @Override
   public String toString()
   {
     if (rate != null || compound != null)

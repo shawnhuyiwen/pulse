@@ -253,6 +253,7 @@ public class RespiratoryPFTPlotter implements Plotter
       public List<Double> YVals = new ArrayList<Double>();
       public String type = "";
       
+      @Override
       public int compareTo(AEEntry entry)
       {
         return times.get(0) < entry.times.get(0) ? -1
@@ -521,6 +522,7 @@ public class RespiratoryPFTPlotter implements Plotter
           lic.addAll(dataLegendCollection);
       }
 
+      @Override
       public LegendItemCollection getLegendItems() 
       {
           return lic;
@@ -541,6 +543,7 @@ public class RespiratoryPFTPlotter implements Plotter
           lic.addAll(remainingLegendCollection);
       }
 
+      @Override
       public LegendItemCollection getLegendItems() 
       {
           return lic;

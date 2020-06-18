@@ -20,6 +20,7 @@ public class SEBrainInjury extends SEPatientAction
     type     = null;
   }
   
+  @Override
   public void reset()
   {
     super.reset();
@@ -40,6 +41,7 @@ public class SEBrainInjury extends SEPatientAction
     this.type = other.type;
   }
   
+  @Override
   public boolean isValid()
   {
     return hasSeverity() && hasType();
@@ -94,6 +96,7 @@ public class SEBrainInjury extends SEPatientAction
     return severity;
   }  
 
+  @Override
   public String toString()
   {
     if (severity != null)

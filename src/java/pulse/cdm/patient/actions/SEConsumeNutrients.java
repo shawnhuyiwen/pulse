@@ -33,6 +33,7 @@ public class SEConsumeNutrients extends SEPatientAction
     this.nutritionFile=other.nutritionFile;
   }
   
+  @Override
   public void reset()
   {
     super.reset();
@@ -40,6 +41,7 @@ public class SEConsumeNutrients extends SEPatientAction
     this.nutritionFile="";
   }
   
+  @Override
   public boolean isValid()
   {
     return hasNutrition() || hasNutritionFile();
@@ -97,6 +99,7 @@ public class SEConsumeNutrients extends SEPatientAction
     this.nutritionFile = s;
   }
   
+  @Override
   public String toString()
   {
     String str="Consume Nutrients:";

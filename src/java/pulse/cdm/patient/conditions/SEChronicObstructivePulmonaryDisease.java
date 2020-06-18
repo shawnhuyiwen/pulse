@@ -19,6 +19,7 @@ public class SEChronicObstructivePulmonaryDisease extends SEPatientCondition
     emphysemaSeverity = null;
   }
   
+  @Override
   public void reset()
   {
     super.reset();
@@ -86,6 +87,7 @@ public class SEChronicObstructivePulmonaryDisease extends SEPatientCondition
     return emphysemaSeverity;
   }
   
+  @Override
   public String toString()
   {
     return "COPD" 

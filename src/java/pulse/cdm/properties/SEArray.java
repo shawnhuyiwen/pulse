@@ -85,6 +85,7 @@ public class SEArray extends SEProperty
       dst.getValueBuilder().addAllValue(src.dList);
   }
   
+  @Override
   public  int hashCode()
   {
     if(this.dData!=null)
@@ -94,6 +95,7 @@ public class SEArray extends SEProperty
     return 0;
   }
 
+  @Override
   public boolean equals(Object to)
   {
     if ((to == null) || !(to instanceof SEArray))
@@ -953,6 +955,7 @@ public class SEArray extends SEProperty
     return sub;
   }
   
+  @Override
   public String toString()
   {
     return Arrays.toString(getDoubleData()) + unit;

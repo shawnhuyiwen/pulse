@@ -17,6 +17,7 @@ public class SEUseInhaler extends SEConsciousRespirationCommand
       return;
   }
   
+  @Override
   public SEUseInhaler getCopy()
   {
     SEUseInhaler command = new SEUseInhaler();
@@ -25,11 +26,13 @@ public class SEUseInhaler extends SEConsciousRespirationCommand
     return command;
   }
   
+  @Override
   public void reset()
   {
     super.reset();
   }
   
+  @Override
   public boolean isValid()
   {
     return true;
@@ -52,6 +55,7 @@ public class SEUseInhaler extends SEConsciousRespirationCommand
     //SEConsciousRespirationCommand.unload(src, dst.getConsciousRespirationCommand());
   }
   
+  @Override
   public String toString()
   {
     return "Use Inhaler";

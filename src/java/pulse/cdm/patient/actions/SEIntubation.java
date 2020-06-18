@@ -25,12 +25,14 @@ public  class SEIntubation extends SEPatientAction
     type = other.type;
   }  
   
+  @Override
   public void reset()
   {
     super.reset();
     type = null;
   }
   
+  @Override
   public boolean isValid()
   {
     return hasType();
@@ -70,6 +72,7 @@ public  class SEIntubation extends SEPatientAction
     return type == null ? false : true;
   }
   
+  @Override
   public String toString() 
   {
     return "Intubation"

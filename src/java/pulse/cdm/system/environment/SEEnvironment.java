@@ -43,6 +43,7 @@ public class SEEnvironment implements SESystem
     appliedTemperature=null;
   }
   
+  @Override
   public void reset()
   {    
     if (convectiveHeatLoss != null)

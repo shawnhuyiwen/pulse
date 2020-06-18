@@ -86,6 +86,7 @@ public class CSVComparePlotter
     {
       File toDir = FileUtils.createDirectory(plotDir);
       File[] files = toDir.listFiles(new FilenameFilter() {
+        @Override
         public boolean accept(File dir, String name) {
             return name.toLowerCase().endsWith(".jpg");
         }

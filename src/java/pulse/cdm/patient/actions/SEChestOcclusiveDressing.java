@@ -29,6 +29,7 @@ public class SEChestOcclusiveDressing extends SEPatientAction
     this.side = other.side;
   }
   
+  @Override
   public void reset()
   {
     super.reset();
@@ -36,6 +37,7 @@ public class SEChestOcclusiveDressing extends SEPatientAction
     side = null;
   }
   
+  @Override
   public boolean isValid()
   {
     return hasSide();
@@ -91,6 +93,7 @@ public class SEChestOcclusiveDressing extends SEPatientAction
     return state == null ? false : state!=eSwitch.NullSwitch;
   }
   
+  @Override
   public String toString()
   {
     if (side != null)

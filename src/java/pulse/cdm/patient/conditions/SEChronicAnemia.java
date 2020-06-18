@@ -17,6 +17,7 @@ public class SEChronicAnemia extends SEPatientCondition
     reductionFactor = null;
   }
   
+  @Override
   public void reset()
   {
     super.reset();
@@ -67,6 +68,7 @@ public class SEChronicAnemia extends SEPatientCondition
     return reductionFactor;
   }
   
+  @Override
   public String toString()
   {
     return "Chronic Anemia" 

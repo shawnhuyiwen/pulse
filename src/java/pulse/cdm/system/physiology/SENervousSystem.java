@@ -29,6 +29,7 @@ public class SENervousSystem extends SEPhysiologySystem implements SESystem
     chemoreceptorHeartElastanceScale=null;
   }
 
+  @Override
   public void reset()
   {    
     if(baroreceptorHeartRateScale!=null)

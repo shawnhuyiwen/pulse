@@ -65,6 +65,7 @@ public class SESubstanceFraction
     return this.substance;
   }
   
+  @Override
   public String toString()
   {
     if(!hasSubstance())

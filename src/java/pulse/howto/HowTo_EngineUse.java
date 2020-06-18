@@ -92,6 +92,7 @@ public class HowTo_EngineUse
  
  protected static class MyEventHandler implements SEEventHandler
  {
+  @Override
   public void handleEvent(eEvent e, boolean active, SEScalarTime time)
   {
     // Here is how you test against an event of interest and do something

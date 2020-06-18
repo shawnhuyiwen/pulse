@@ -17,6 +17,7 @@ public class SEPulmonaryFibrosis extends SEPatientCondition
     severity = null;
   }
   
+  @Override
   public void reset()
   {
     super.reset();
@@ -67,6 +68,7 @@ public class SEPulmonaryFibrosis extends SEPatientCondition
     return severity;
   }
   
+  @Override
   public String toString()
   {
     return "Pulmonary Fibrosis" 

@@ -27,6 +27,7 @@ public class SESerializeState extends SEAction
     this.type = other.type;
   }
   
+  @Override
   public void reset() 
   {
     super.reset();
@@ -34,6 +35,7 @@ public class SESerializeState extends SEAction
     type = null;
   }
   
+  @Override
   public boolean isValid()
   {
     return hasType();
@@ -96,6 +98,7 @@ public class SESerializeState extends SEAction
     this.type = null;
   }
   
+  @Override
   public String toString() 
   {
     return "Save State" 

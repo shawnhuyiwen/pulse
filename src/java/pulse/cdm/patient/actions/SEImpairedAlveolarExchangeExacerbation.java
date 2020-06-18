@@ -35,6 +35,7 @@ public class SEImpairedAlveolarExchangeExacerbation extends SEPatientAction
       impairedFraction.invalidate();
   }
   
+  @Override
   public void reset()
   {
     super.reset();
@@ -44,6 +45,7 @@ public class SEImpairedAlveolarExchangeExacerbation extends SEPatientAction
       impairedFraction.invalidate();
   }
   
+  @Override
   public boolean isValid()
   {
     return hasImpairedSurfaceArea() || hasImpairedFraction();
@@ -96,6 +98,7 @@ public class SEImpairedAlveolarExchangeExacerbation extends SEPatientAction
     return impairedFraction;
   }
   
+  @Override
   public String toString()
   {
     if (impairedFraction != null)

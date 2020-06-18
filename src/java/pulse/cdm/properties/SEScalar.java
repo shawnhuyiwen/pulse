@@ -81,6 +81,7 @@ public class SEScalar
       dst.setValue(src.value); 
   }
 
+  @Override
   public boolean equals(Object other)
   {
     if ((other == null) || !(SEScalar.class.isAssignableFrom(this.getClass())))
@@ -138,6 +139,7 @@ public class SEScalar
       return false;
     return true;
   }
+  @Override
   public int hashCode()
   {
     int result = 1;
@@ -266,6 +268,7 @@ public class SEScalar
     this.setValue(val,unit);
   }
   
+  @Override
   public String toString()
   {
     return this.value+this.unit;

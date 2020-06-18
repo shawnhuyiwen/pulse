@@ -19,6 +19,7 @@ public class SEChronicObstructivePulmonaryDiseaseExacerbation extends SEPatientA
     emphysemaSeverity = null;
   }
   
+  @Override
   public void reset()
   {
     super.reset();
@@ -39,6 +40,7 @@ public class SEChronicObstructivePulmonaryDiseaseExacerbation extends SEPatientA
       getEmphysemaSeverity().set(other.getEmphysemaSeverity());
   }
   
+  @Override
   public boolean isValid()
   {
     return hasBronchitisSeverity() && hasEmphysemaSeverity();
@@ -91,6 +93,7 @@ public class SEChronicObstructivePulmonaryDiseaseExacerbation extends SEPatientA
     return emphysemaSeverity;
   }
   
+  @Override
   public String toString()
   {
     return "COPD Exacerbation" 

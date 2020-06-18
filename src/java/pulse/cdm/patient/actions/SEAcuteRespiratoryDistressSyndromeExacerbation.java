@@ -21,6 +21,7 @@ public class SEAcuteRespiratoryDistressSyndromeExacerbation extends SEPatientAct
     rightLungAffected = null;
   }
   
+  @Override
   public void reset()
   {
     super.reset();
@@ -45,6 +46,7 @@ public class SEAcuteRespiratoryDistressSyndromeExacerbation extends SEPatientAct
       getRightLungAffected().set(other.getRightLungAffected());
   }
   
+  @Override
   public boolean isValid()
   {
     return hasSeverity() && hasLeftLungAffected() && hasRightLungAffected();
@@ -112,6 +114,7 @@ public class SEAcuteRespiratoryDistressSyndromeExacerbation extends SEPatientAct
     return rightLungAffected;
   }
   
+  @Override
   public String toString()
   {
     return "ARDS Exacerbation" 

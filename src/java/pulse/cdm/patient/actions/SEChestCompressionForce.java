@@ -31,6 +31,7 @@ public class SEChestCompressionForce extends SEPatientAction
       force.invalidate();
   }
   
+  @Override
   public void reset()
   {
     super.reset();
@@ -38,6 +39,7 @@ public class SEChestCompressionForce extends SEPatientAction
       force.invalidate();
   }
   
+  @Override
   public boolean isValid()
   {
     return hasForce();
@@ -75,6 +77,7 @@ public class SEChestCompressionForce extends SEPatientAction
     return force;
   }
   
+  @Override
   public String toString()
   {
     if (force != null)

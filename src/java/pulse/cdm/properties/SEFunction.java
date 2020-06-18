@@ -39,6 +39,7 @@ public class SEFunction
     return true;
   }
   
+  @Override
   public int hashCode()
   {
     int code=1;
@@ -108,6 +109,7 @@ public class SEFunction
     this.independentUnit="";
   }
 
+  @Override
   public boolean equals(Object to)
   {
     if ((to == null) || !(to instanceof SEFunction))

@@ -23,6 +23,7 @@ public abstract class SEAnesthesiaMachineAction extends SEEquipmentAction
     super.copy(other);
   }
   
+  @Override
   public void reset()
   {
     super.reset();
@@ -37,5 +38,6 @@ public abstract class SEAnesthesiaMachineAction extends SEEquipmentAction
     SEEquipmentAction.unload(src, dst.getEquipmentActionBuilder());
   }
   
+  @Override
   public abstract String toString();
 }

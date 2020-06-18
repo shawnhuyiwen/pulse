@@ -23,6 +23,7 @@ public class SEThermalCompartment extends SECompartment
     heat = null;
   }
 
+  @Override
   public void reset()
   {
     super.reset();

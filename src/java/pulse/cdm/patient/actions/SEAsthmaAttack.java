@@ -28,6 +28,7 @@ public class SEAsthmaAttack extends SEPatientAction
       severity.invalidate();
   }
   
+  @Override
   public void reset()
   {
     super.reset();
@@ -35,6 +36,7 @@ public class SEAsthmaAttack extends SEPatientAction
       severity.invalidate();
   }
   
+  @Override
   public boolean isValid()
   {
     return hasSeverity();
@@ -72,6 +74,7 @@ public class SEAsthmaAttack extends SEPatientAction
     return severity;
   }
   
+  @Override
   public String toString()
   {
     if (severity != null)

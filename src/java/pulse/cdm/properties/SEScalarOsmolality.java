@@ -86,6 +86,7 @@ public class SEScalarOsmolality extends SEScalar
     return this.getValue(unit.toString());
   }
 
+  @Override
   public boolean validUnit(String unit)
   {
     if(OsmolalityUnit.validUnit(unit))

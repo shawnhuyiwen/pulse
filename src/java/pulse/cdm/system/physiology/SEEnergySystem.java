@@ -40,6 +40,7 @@ public class SEEnergySystem extends SEPhysiologySystem implements SESystem
     totalWorkRateLevel = null;
   }
 
+  @Override
   public void reset()
   {    
     if (coreTemperature != null)

@@ -111,6 +111,7 @@ public class Pulse
     this.nativeObj=0;
   }
 
+  @Override
   public void finalize()
   {
     this.cleanUp();

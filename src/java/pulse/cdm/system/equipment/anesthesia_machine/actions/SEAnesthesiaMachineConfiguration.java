@@ -34,6 +34,7 @@ public class SEAnesthesiaMachineConfiguration extends SEAnesthesiaMachineAction
     this.configurationFile=other.configurationFile;
   }
   
+  @Override
   public void reset()
   {
     super.reset();
@@ -44,6 +45,7 @@ public class SEAnesthesiaMachineConfiguration extends SEAnesthesiaMachineAction
       this.configurationFile="";
   }
   
+  @Override
   public boolean isValid()
   {
     return hasConfiguration() || hasConfigurationFile();
@@ -103,6 +105,7 @@ public class SEAnesthesiaMachineConfiguration extends SEAnesthesiaMachineAction
     this.configurationFile = s;
   }
   
+  @Override
   public String toString()
   {
     String str = "Anesthesia Machine Configuration";

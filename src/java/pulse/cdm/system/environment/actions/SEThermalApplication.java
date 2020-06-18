@@ -44,6 +44,7 @@ public class SEThermalApplication extends SEEnvironmentAction
       appliedTemperature.reset();
   }
   
+  @Override
   public void reset()
   {
     super.reset();
@@ -56,6 +57,7 @@ public class SEThermalApplication extends SEEnvironmentAction
       appliedTemperature.reset();
   }
   
+  @Override
   public boolean isValid()
   {
     return hasActiveCooling() || hasActiveHeating() || hasAppliedTemperature();
@@ -128,6 +130,7 @@ public class SEThermalApplication extends SEEnvironmentAction
     return appliedTemperature;
   }
   
+  @Override
   public String toString() 
   {
       return "Thermal Application:" 

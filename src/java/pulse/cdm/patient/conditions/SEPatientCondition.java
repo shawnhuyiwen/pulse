@@ -23,6 +23,7 @@ public abstract class SEPatientCondition extends SECondition
     super.copy(other);
   }
   
+  @Override
   public void reset()
   {
     super.reset();
@@ -38,6 +39,7 @@ public abstract class SEPatientCondition extends SECondition
     SECondition.unload(src,dst.getConditionBuilder());
   }
   
+  @Override
   public abstract String toString();
 
   public static SEPatientCondition ANY2CDM(AnyPatientConditionData c, SESubstanceManager subMgr) 

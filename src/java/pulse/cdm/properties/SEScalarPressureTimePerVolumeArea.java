@@ -86,6 +86,7 @@ public class SEScalarPressureTimePerVolumeArea extends SEScalar
     return this.getValue(unit.toString());
   }
 
+  @Override
   public boolean validUnit(String unit)
   {
     if(PressureTimePerVolumeAreaUnit.validUnit(unit))

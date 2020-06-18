@@ -151,6 +151,7 @@ public class SETestDriver
   public class ExecuteThread extends Thread
   {
     public SETestJob job;
+    @Override
     public void run()
     {          
       for(String toCompute : job.computedFiles)
@@ -206,6 +207,7 @@ public class SETestDriver
   public class CompareThread extends Thread
   {
     public SETestJob job;
+    @Override
     public void run()
     {
       if(job.PlottableResults && !job.skipPlot)

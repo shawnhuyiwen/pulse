@@ -22,6 +22,7 @@ public class SEGasCompartment extends SEFluidCompartment
     this.substanceQuantities=new ArrayList<SEGasSubstanceQuantity>();
   }
   
+  @Override
   public void reset()
   {
     super.reset();

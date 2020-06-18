@@ -45,6 +45,7 @@ public class SESubstanceBolus extends SEPatientAction
       concentration.invalidate();
   }
   
+  @Override
   public void reset()
   {
     super.reset();
@@ -55,6 +56,7 @@ public class SESubstanceBolus extends SEPatientAction
       concentration.invalidate();
   }
   
+  @Override
   public boolean isValid()
   {
     return hasAdministrationRoute() && hasDose() && hasConcentration() && hasSubstance();
@@ -133,6 +135,7 @@ public class SESubstanceBolus extends SEPatientAction
   }
   public boolean hasSubstance() { return substance != null; }
   
+  @Override
   public String toString()
   {
     if (dose != null || concentration != null)

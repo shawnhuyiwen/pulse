@@ -35,6 +35,7 @@ public class PulseEngine extends Pulse
     super();
   }
   
+  @Override
   public synchronized void reset()
   {
     super.reset();

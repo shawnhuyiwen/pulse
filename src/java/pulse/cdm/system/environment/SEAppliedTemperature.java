@@ -129,6 +129,7 @@ public class SEAppliedTemperature
   }
 
 
+  @Override
   public String toString() 
   {
     return "Thermal Application:" 

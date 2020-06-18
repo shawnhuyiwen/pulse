@@ -86,6 +86,7 @@ public class SEScalarHeatResistanceArea extends SEScalar
     return this.getValue(unit.toString());
   }
   
+  @Override
   public boolean validUnit(String unit)
   {
     if(HeatResistanceAreaUnit.validUnit(unit))

@@ -86,6 +86,7 @@ public class SEScalarHeatConductancePerArea extends SEScalar
     return this.getValue(unit.toString());
   }
 
+  @Override
   public boolean validUnit(String unit)
   {
     if(HeatConductancePerAreaUnit.validUnit(unit))

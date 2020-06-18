@@ -87,6 +87,7 @@ public class SEScalarAmountPerTime extends SEScalar
   }
   
 
+  @Override
   public boolean validUnit(String unit)
   {
     if(AmountPerTimeUnit.validUnit(unit))

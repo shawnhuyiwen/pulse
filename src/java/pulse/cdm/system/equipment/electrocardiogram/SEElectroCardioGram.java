@@ -16,6 +16,7 @@ public class SEElectroCardioGram implements SESystem
     lead3ElectricPotential = null;
   }
   
+  @Override
   public void reset()
   {
     if (hasLead3ElectricPotential())

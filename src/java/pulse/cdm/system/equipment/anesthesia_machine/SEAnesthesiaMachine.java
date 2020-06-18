@@ -57,6 +57,7 @@ public class SEAnesthesiaMachine extends SEEquipment
     oxygenBottleTwo = null;
   }
 
+  @Override
   public void reset()
   {
     connection = null;
@@ -404,6 +405,7 @@ public class SEAnesthesiaMachine extends SEEquipment
     return oxygenBottleTwo == null ? false : true;
   }
   
+  @Override
   public String toString()
   {
     String leftChamber = "Left Chamber: NotProvided";

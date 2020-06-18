@@ -41,6 +41,7 @@ public abstract class SEEquipmentAction extends SEAction
     super.copy(other);
   }
   
+  @Override
   public void reset()
   {
     super.reset();
@@ -238,5 +239,6 @@ public abstract class SEEquipmentAction extends SEAction
     return dst.build();
   }
   
+  @Override
   public abstract String toString();
 }

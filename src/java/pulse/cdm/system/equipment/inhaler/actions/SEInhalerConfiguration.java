@@ -34,6 +34,7 @@ public class SEInhalerConfiguration extends SEInhalerAction
     this.configurationFile=other.configurationFile;
   }
   
+  @Override
   public void reset()
   {
     super.reset();
@@ -44,6 +45,7 @@ public class SEInhalerConfiguration extends SEInhalerAction
       this.configurationFile="";
   }
   
+  @Override
   public boolean isValid()
   {
     return hasConfiguration() || hasConfigurationFile();
@@ -102,6 +104,7 @@ public class SEInhalerConfiguration extends SEInhalerAction
     this.configurationFile = s;
   }
   
+  @Override
   public String toString()
   {
     String str = "Inhaler Configuration";

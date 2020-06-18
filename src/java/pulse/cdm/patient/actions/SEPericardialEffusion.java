@@ -28,6 +28,7 @@ public class SEPericardialEffusion extends SEPatientAction
       effusionRate.invalidate();
   }
   
+  @Override
   public void reset()
   {
     super.reset();
@@ -35,6 +36,7 @@ public class SEPericardialEffusion extends SEPatientAction
       effusionRate.invalidate();
   }
   
+  @Override
   public boolean isValid()
   {
     return hasEffusionRate();
@@ -72,6 +74,7 @@ public class SEPericardialEffusion extends SEPatientAction
     return effusionRate;
   }
   
+  @Override
   public String toString() 
   {
     if (effusionRate != null)

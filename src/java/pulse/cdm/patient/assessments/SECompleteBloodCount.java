@@ -24,6 +24,7 @@ public class SECompleteBloodCount extends SEPatientAssessment
   protected SEScalarAmountPerVolume redBloodCellCount;
   protected SEScalarAmountPerVolume whiteBloodCellCount;
   
+  @Override
   public void clear()
   {
     super.clear();
@@ -37,6 +38,7 @@ public class SECompleteBloodCount extends SEPatientAssessment
     this.whiteBloodCellCount = null;
   }
   
+  @Override
   public void reset()
   {
     super.reset();

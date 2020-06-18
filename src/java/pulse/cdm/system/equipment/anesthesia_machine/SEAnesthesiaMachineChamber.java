@@ -95,6 +95,7 @@ public class SEAnesthesiaMachineChamber
     this.substance = substance;
   }
 
+  @Override
   public String toString()
   {
       return "Anesthesia Machine Chamber"

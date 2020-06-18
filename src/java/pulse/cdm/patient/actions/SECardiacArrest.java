@@ -25,12 +25,14 @@ public class SECardiacArrest extends SEPatientAction
     state = other.state;
   }
   
+  @Override
   public void reset()
   {
     super.reset();
     state = eSwitch.Off;
   }
   
+  @Override
   public boolean isValid()
   {
     return true;
@@ -69,6 +71,7 @@ public class SECardiacArrest extends SEPatientAction
     return this.state==null || this.state==eSwitch.NullSwitch ? false : true;
   }
   
+  @Override
   public String toString()
   {
     return "Cardiac Arrest"

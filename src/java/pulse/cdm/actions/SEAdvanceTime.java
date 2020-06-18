@@ -24,6 +24,7 @@ public class SEAdvanceTime extends SEAction
     super.copy(other);
   }
   
+  @Override
   public void reset() 
   {
     super.reset();
@@ -31,6 +32,7 @@ public class SEAdvanceTime extends SEAction
       time.invalidate();
   }
   
+  @Override
   public boolean isValid()
   {
     return hasTime();
@@ -66,6 +68,7 @@ public class SEAdvanceTime extends SEAction
     return time;
   }
   
+  @Override
   public String toString() 
   {
     return "Advance Time" 

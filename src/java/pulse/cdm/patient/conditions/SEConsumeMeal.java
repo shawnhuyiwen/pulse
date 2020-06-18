@@ -33,6 +33,7 @@ public class SEConsumeMeal extends SEPatientCondition
     this.mealFile=other.mealFile;
   }
   
+  @Override
   public void reset()
   {
     super.reset();  
@@ -92,6 +93,7 @@ public class SEConsumeMeal extends SEPatientCondition
     this.mealFile = s;
   }
   
+  @Override
   public String toString()
   {
     String str="Consume Meal:";

@@ -33,6 +33,7 @@ public class SEInhaler extends SEEquipment
     substance = null;
   }
 
+  @Override
   public void reset()
   {
     state = eSwitch.Off;
@@ -143,6 +144,7 @@ public class SEInhaler extends SEEquipment
     return substance == null ? false : true;
   }
   
+  @Override
   public String toString()
   {
     String str = "Inhaler:";

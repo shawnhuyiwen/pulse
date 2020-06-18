@@ -23,11 +23,13 @@ public class SEUrinate extends SEPatientAction
     super.copy(other);    
   }
   
+  @Override
   public void reset()
   {
     super.reset();
   }
   
+  @Override
   public boolean isValid()
   {
     return true;
@@ -51,6 +53,7 @@ public class SEUrinate extends SEPatientAction
   }
   
   
+  @Override
   public String toString() 
   {
       return "Urinate";

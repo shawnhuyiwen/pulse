@@ -39,6 +39,7 @@ public class SEChestCompressionForceScale extends SEPatientAction
       forcePeriod.invalidate();
   }
   
+  @Override
   public void reset()
   {
     super.reset();
@@ -48,6 +49,7 @@ public class SEChestCompressionForceScale extends SEPatientAction
       forcePeriod.invalidate();
   }
   
+  @Override
   public boolean isValid()
   {
     return hasForceScale() && hasForcePeriod();
@@ -100,6 +102,7 @@ public class SEChestCompressionForceScale extends SEPatientAction
     return forcePeriod;
   }
   
+  @Override
   public String toString()
   {
     if (forceScale != null)

@@ -37,6 +37,7 @@ public class SEDrugSystem extends SEPhysiologySystem implements SESystem
     tubularPermeabilityChange = null;
   }
 
+  @Override
   public void reset()
   {
     if (bronchodilationLevel != null)

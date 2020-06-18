@@ -15,6 +15,7 @@ public class SEChronicVentricularSystolicDysfunction extends SEPatientCondition
     
   }
   
+  @Override
   public void reset()
   {
     super.reset();
@@ -44,6 +45,7 @@ public class SEChronicVentricularSystolicDysfunction extends SEPatientCondition
     SEPatientCondition.unload(src, dst.getPatientConditionBuilder());
   }
   
+  @Override
   public String toString()
   {
     return "Chronic Ventricular Systolic Dysfunction";

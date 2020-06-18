@@ -86,6 +86,7 @@ public class SEScalarLengthPerTime extends SEScalar
     return this.getValue(unit.toString());
   }
 
+  @Override
   public boolean validUnit(String unit)
   {
     if(LengthPerTimeUnit.validUnit(unit))

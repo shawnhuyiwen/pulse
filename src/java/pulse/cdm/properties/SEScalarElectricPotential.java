@@ -86,6 +86,7 @@ public class SEScalarElectricPotential extends SEScalar
     return this.getValue(unit.toString());
   }
 
+  @Override
   public boolean validUnit(String unit)
   {
     if(ElectricPotentialUnit.validUnit(unit))

@@ -35,6 +35,7 @@ public class SEHemorrhage extends SEPatientAction
     type = other.type;
   }
   
+  @Override
   public void reset()
   {
     super.reset();
@@ -44,6 +45,7 @@ public class SEHemorrhage extends SEPatientAction
     type = eType.External;
   }
   
+  @Override
   public boolean isValid()
   {
     return hasRate() && hasCompartment();
@@ -116,6 +118,7 @@ public class SEHemorrhage extends SEPatientAction
     return type != null;
   }
   
+  @Override
   public String toString()
   {
     if (rate != null)

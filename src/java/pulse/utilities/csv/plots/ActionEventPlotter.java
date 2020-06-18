@@ -67,6 +67,7 @@ public class ActionEventPlotter implements Plotter
     PlotDriver.main(args);
   }
   
+  @Override
   public void plot(LogListener listener, SESubstanceManager subMgr)
   {    
     //fill PlotJob with needed data if it doesn't exist
@@ -592,6 +593,7 @@ public class ActionEventPlotter implements Plotter
           lic.addAll(dataLegendCollection);
       }
 
+      @Override
       public LegendItemCollection getLegendItems() 
       {
           return lic;
@@ -612,6 +614,7 @@ public class ActionEventPlotter implements Plotter
           lic.addAll(remainingLegendCollection);
       }
 
+      @Override
       public LegendItemCollection getLegendItems() 
       {
           return lic;
@@ -636,11 +639,13 @@ public class ActionEventPlotter implements Plotter
     {
       private static final long serialVersionUID = -628117496047176276L;
       
+      @Override
       public void draw(Graphics2D arg0, Rectangle2D arg1, Point2D arg2,
           PlotState arg3, PlotRenderingInfo arg4)
       {
         
       }
+      @Override
       public String getPlotType()
       {
         return null;

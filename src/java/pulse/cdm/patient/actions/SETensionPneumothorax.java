@@ -36,6 +36,7 @@ public class SETensionPneumothorax extends SEPatientAction
       severity.invalidate();
   }
   
+  @Override
   public void reset()
   {
     super.reset();
@@ -45,6 +46,7 @@ public class SETensionPneumothorax extends SEPatientAction
       severity.invalidate();
   }
   
+  @Override
   public boolean isValid()
   {
     return hasType() && hasSide() && hasSeverity();
@@ -116,6 +118,7 @@ public class SETensionPneumothorax extends SEPatientAction
     return severity;
   }
   
+  @Override
   public String toString() 
   {
     if (severity != null)

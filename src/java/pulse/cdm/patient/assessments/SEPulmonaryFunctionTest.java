@@ -28,6 +28,7 @@ public class SEPulmonaryFunctionTest extends SEPatientAssessment
   protected SEScalarVolume         vitalCapacity;
   protected SEFunctionVolumeVsTime lungVolumePlot;
   
+  @Override
   public void clear()
   {
     super.clear();
@@ -47,6 +48,7 @@ public class SEPulmonaryFunctionTest extends SEPatientAssessment
     this.lungVolumePlot = null;
   }
   
+  @Override
   public void reset()
   {
     super.reset();

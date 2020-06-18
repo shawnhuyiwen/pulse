@@ -15,6 +15,7 @@ public class InvalidUnitException extends RuntimeException
     this.type=type;
   }
   
+  @Override
   public String toString()
   {
     return "InvalidUnitException: Unit '" + badUnit + "' is not compatible with " + type;

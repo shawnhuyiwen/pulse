@@ -32,6 +32,7 @@ public class HowTo_RunScenario
       this.pe = pe;
     }
     
+    @Override
     public void update(double time_s)
     {
       // Note only the data requested (As a DataRequest) in the scenario file will be updated in the Pulse CDM objects
@@ -62,10 +63,15 @@ public class HowTo_RunScenario
       // don't get into an infinite recursive loop
       listen(false);
     }    
+    @Override
     public void handleDebug(String msg) { Log.debug(msg); }
+    @Override
     public void handleInfo(String msg)  { Log.info(msg); }
+    @Override
     public void handleWarn(String msg)  { Log.warn(msg); }
+    @Override
     public void handleError(String msg) { Log.error(msg); }
+    @Override
     public void handleFatal(String msg) { Log.fatal(msg); }
   }
   

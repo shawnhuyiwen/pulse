@@ -35,6 +35,7 @@ public class SETissueCompartment extends SECompartment
     totalMass = null;
   }
   
+  @Override
   public void reset()
   {
     super.reset();

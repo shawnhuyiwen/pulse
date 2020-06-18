@@ -15,6 +15,7 @@ public class SEMeal extends SENutrition
     this.elapsedTime=null;
   }
   
+  @Override
   public void reset()
   {
     super.reset();

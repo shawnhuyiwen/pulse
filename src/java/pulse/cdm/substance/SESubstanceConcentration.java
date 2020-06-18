@@ -57,6 +57,7 @@ public class SESubstanceConcentration
     return this.substance;
   }
   
+  @Override
   public String toString()
   {
     if(!hasSubstance())

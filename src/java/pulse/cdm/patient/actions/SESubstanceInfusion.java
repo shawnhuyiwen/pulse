@@ -41,6 +41,7 @@ public class SESubstanceInfusion extends SEPatientAction
       concentration.invalidate();
   }
   
+  @Override
   public void reset()
   {
     super.reset();
@@ -50,6 +51,7 @@ public class SESubstanceInfusion extends SEPatientAction
       concentration.invalidate();
   }
   
+  @Override
   public boolean isValid()
   {
     return hasRate() && hasConcentration() && hasSubstance();
@@ -109,6 +111,7 @@ public class SESubstanceInfusion extends SEPatientAction
     return substance;
   }
   
+  @Override
   public String toString()
   {
     if (rate != null || concentration != null)  

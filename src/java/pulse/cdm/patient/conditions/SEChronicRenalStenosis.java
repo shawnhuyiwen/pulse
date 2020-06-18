@@ -19,6 +19,7 @@ public class SEChronicRenalStenosis extends SEPatientCondition
     rightKidneySeverity = null;
   }
   
+  @Override
   public void reset()
   {
     super.reset();
@@ -91,6 +92,7 @@ public class SEChronicRenalStenosis extends SEPatientCondition
     return rightKidneySeverity;
   }
   
+  @Override
   public String toString()
   {
     return "Chronic Renal Stenosis" 

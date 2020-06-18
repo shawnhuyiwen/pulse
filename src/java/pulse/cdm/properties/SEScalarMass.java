@@ -86,6 +86,7 @@ public class SEScalarMass extends SEScalar
     return this.getValue(unit.toString());
   }
 
+  @Override
   public boolean validUnit(String unit)
   {
     if(MassUnit.validUnit(unit))

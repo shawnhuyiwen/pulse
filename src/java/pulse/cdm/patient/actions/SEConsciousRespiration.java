@@ -38,6 +38,7 @@ public class SEConsciousRespiration extends SEPatientAction
       }
   }  
   
+  @Override
   public void reset()
   {
     super.reset();
@@ -45,6 +46,7 @@ public class SEConsciousRespiration extends SEPatientAction
     startImmediately = false;
   }
   
+  @Override
   public boolean isValid()
   {
     if(!hasCommands())
@@ -146,6 +148,7 @@ public class SEConsciousRespiration extends SEPatientAction
     return commands;
   }
   
+  @Override
   public String toString()
   {
     String str = "ConsciousRespiration";    

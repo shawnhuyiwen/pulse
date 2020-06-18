@@ -35,11 +35,13 @@ public class SEFunctionElectricPotentialVsTime extends SEFunction
     SEFunction.unload(src,dst.getFunctionElectricPotentialVsTimeBuilder());
   }
 
+  @Override
   public boolean isValidDependentUnit(String unit)
   {
     return ElectricPotentialUnit.validUnit(unit);
   }
   
+  @Override
   public boolean isValidIndependentUnit(String unit)
   {
     return TimeUnit.validUnit(unit);

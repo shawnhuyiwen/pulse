@@ -17,6 +17,7 @@ public class SESepsis extends SEPatientCondition
     severity = null;
   }
   
+  @Override
   public void reset()
   {
     super.reset();
@@ -67,6 +68,7 @@ public class SESepsis extends SEPatientCondition
     return severity;
   }
   
+  @Override
   public String toString()
   {
     return "Sepsis" 

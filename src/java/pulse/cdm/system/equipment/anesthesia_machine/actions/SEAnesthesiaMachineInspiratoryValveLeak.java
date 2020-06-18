@@ -17,6 +17,7 @@ public class SEAnesthesiaMachineInspiratoryValveLeak extends SEAnesthesiaMachine
     severity = null;
   }
   
+  @Override
   public void reset()
   {
     super.reset();
@@ -24,6 +25,7 @@ public class SEAnesthesiaMachineInspiratoryValveLeak extends SEAnesthesiaMachine
       severity.invalidate();
   }
   
+  @Override
   public boolean isValid()
   {
     return hasSeverity();
@@ -62,6 +64,7 @@ public class SEAnesthesiaMachineInspiratoryValveLeak extends SEAnesthesiaMachine
     return severity;
   }
   
+  @Override
   public String toString()
   {
     if (severity != null)

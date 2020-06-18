@@ -28,6 +28,7 @@ public class SEExercise extends SEPatientAction
       intensity.invalidate();    
   }
   
+  @Override
   public void reset()
   {
     super.reset();
@@ -35,6 +36,7 @@ public class SEExercise extends SEPatientAction
       intensity.invalidate();
   }
   
+  @Override
   public boolean isValid()
   {
     return hasIntensity();
@@ -72,6 +74,7 @@ public class SEExercise extends SEPatientAction
     return intensity;
   }
   
+  @Override
   public String toString() 
   {
     if (hasIntensity())
