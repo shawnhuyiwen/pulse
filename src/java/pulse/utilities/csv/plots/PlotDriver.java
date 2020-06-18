@@ -193,6 +193,14 @@ public class PlotDriver
       Y2headers = null;
       plotter = null;
     }
+
+
+    // Don't actually log anything
+    @Override protected void handleDebug(String msg) {}
+    @Override protected void handleInfo(String msg) {}
+    @Override protected void handleWarn(String msg) {}
+    @Override protected void handleError(String msg) {}
+    @Override protected void handleFatal(String msg) {}
   }
   
   public void setupComparison()

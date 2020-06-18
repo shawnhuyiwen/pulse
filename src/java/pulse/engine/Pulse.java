@@ -496,26 +496,26 @@ public class Pulse
  protected void LogDebug(String msg, String origin)
  {
    if(this.listener!=null)
-     this.listener.handleDebug(msg, origin);
+     this.listener.debug(msg, origin);
  }
  protected void LogInfo(String msg, String origin)
  {
    if(this.listener!=null)
-     this.listener.handleInfo(msg, origin);
+     this.listener.info(msg, origin);
  }
  protected void LogWarning(String msg, String origin)
  {
    if(this.listener!=null)
-     this.listener.handleWarn(msg, origin);
+     this.listener.warn(msg, origin);
  }
  protected void LogError(String msg, String origin)
  {
    if(this.listener!=null)
-     this.listener.handleError(msg, origin);
+     this.listener.error(msg, origin);
  }
  protected void LogFatal(String msg, String origin)
  {
    if(this.listener!=null)
-     this.listener.handleFatal(msg, origin);
+     this.listener.fatal(msg, origin);
  }
 }

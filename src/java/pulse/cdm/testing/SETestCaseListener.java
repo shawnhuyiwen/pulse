@@ -32,6 +32,7 @@ public class SETestCaseListener extends LogListener
     this.testCase=tc;
   }
 
+  @Override
   public void handleError(String msg)
   {
     if (testCase != null)
@@ -40,6 +41,7 @@ public class SETestCaseListener extends LogListener
     }
   }
   
+  @Override
   public void handleFatal(String msg)
   {
   	if (testCase != null)
@@ -47,4 +49,13 @@ public class SETestCaseListener extends LogListener
     	testCase.AddFailure(msg);
     }
   }
+
+  @Override
+  protected void handleDebug(String msg) {}
+
+  @Override
+  protected void handleInfo(String msg) {}
+
+  @Override
+  protected void handleWarn(String msg) {}
 }

@@ -33,7 +33,7 @@ public abstract class LogListener
   {
     this.handleProgress=b;
   }
-  public void handleDebug(String msg){}
+  abstract protected void handleDebug(String msg);
   
   public final void debug(String msg, String origin)
   {
@@ -42,7 +42,7 @@ public abstract class LogListener
       handleDebug(msg,origin);
     }
   }
-  public void handleDebug(String msg, String origin){handleDebug(origin + " : " + msg);}
+  protected void handleDebug(String msg, String origin){handleDebug(origin + " : " + msg);}
   
   public final void debug(String msg, Throwable t)
   {
@@ -51,7 +51,7 @@ public abstract class LogListener
       handleDebug(msg,t);
     }
   }
-  public void handleDebug(String msg, Throwable t){handleDebug(msg+" "+t.getMessage());}
+  protected void handleDebug(String msg, Throwable t){handleDebug(msg+" "+t.getMessage());}
   
   public final void info(String msg)
   {
@@ -60,7 +60,7 @@ public abstract class LogListener
       handleInfo(msg);
     }
   }
-  public void handleInfo(String msg){}
+  abstract protected void handleInfo(String msg);
   
   public final void info(String msg, String origin)
   {
@@ -69,7 +69,7 @@ public abstract class LogListener
       handleInfo(msg,origin);
     }
   }
-  public void handleInfo(String msg, String origin){handleInfo(origin + " : " + msg);}
+  protected void handleInfo(String msg, String origin){handleInfo(origin + " : " + msg);}
   
   public final void info(String msg, Throwable t)
   {
@@ -78,7 +78,7 @@ public abstract class LogListener
       handleInfo(msg,t);
     }
   }
-  public void handleInfo(String msg, Throwable t){handleInfo(msg+" "+t.getMessage());}
+  protected void handleInfo(String msg, Throwable t){handleInfo(msg+" "+t.getMessage());}
   
   public final void warn(String msg)
   {
@@ -87,7 +87,7 @@ public abstract class LogListener
       handleWarn(msg);
     }
   }
-  public void handleWarn(String msg){}
+  abstract protected void handleWarn(String msg);
   
   public final void warn(String msg, String origin)
   {
@@ -96,7 +96,7 @@ public abstract class LogListener
       handleWarn(msg,origin);
     }
   }
-  public void handleWarn(String msg, String origin){handleWarn(origin + " : " + msg);}
+  protected void handleWarn(String msg, String origin){handleWarn(origin + " : " + msg);}
   
   public final void warn(String msg, Throwable t)
   {
@@ -105,7 +105,7 @@ public abstract class LogListener
       handleWarn(msg,t);
     }
   }
-  public void handleWarn(String msg, Throwable t){handleWarn(msg+" "+t.getMessage());}
+  protected void handleWarn(String msg, Throwable t){handleWarn(msg+" "+t.getMessage());}
   
   public final void error(String msg)
   {
@@ -114,7 +114,7 @@ public abstract class LogListener
       handleError(msg);
     }
   }
-  public void handleError(String msg){}
+  abstract protected void handleError(String msg);
   
   public final void error(String msg, String origin)
   {
@@ -123,7 +123,7 @@ public abstract class LogListener
       handleError(msg,origin);
     }
   }
-  public void handleError(String msg, String origin){handleError(origin + " : " + msg);}
+  protected void handleError(String msg, String origin){handleError(origin + " : " + msg);}
   
   public final void error(String msg, Throwable t)
   {
@@ -132,7 +132,7 @@ public abstract class LogListener
       handleError(msg,t);
     }
   }
-  public void handleError(String msg, Throwable t){handleError(msg+" "+t.getMessage());}
+  protected void handleError(String msg, Throwable t){handleError(msg+" "+t.getMessage());}
   
   public final void error(Throwable t)
   {
@@ -141,7 +141,7 @@ public abstract class LogListener
       handleError(t);
     }
   }
-  public void handleError(Throwable t){handleError(t.getMessage());}
+  protected void handleError(Throwable t){handleError(t.getMessage());}
   
   public final void fatal(String msg)
   {
@@ -150,7 +150,7 @@ public abstract class LogListener
       handleFatal(msg);
     }
   }
-  public void handleFatal(String msg){}
+  abstract protected void handleFatal(String msg);
   
   public final void fatal(String msg, String origin)
   {
@@ -159,7 +159,7 @@ public abstract class LogListener
       handleFatal(msg,origin);
     }
   }
-  public void handleFatal(String msg, String origin){handleFatal(origin + " : " + msg);}
+  protected void handleFatal(String msg, String origin){handleFatal(origin + " : " + msg);}
   
   public final void fatal(String msg, Throwable t)
   {
@@ -168,7 +168,7 @@ public abstract class LogListener
       handleFatal(msg,t);
     }
   }
-  public void handleFatal(String msg, Throwable t){handleFatal(msg+" "+t.getMessage());}
+  protected void handleFatal(String msg, Throwable t){handleFatal(msg+" "+t.getMessage());}
   
   public final void fatal(Throwable t)
   {
@@ -177,7 +177,7 @@ public abstract class LogListener
       handleFatal(t);
     }
   }
-  public void handleFatal(Throwable t){handleFatal(t.getMessage());}
+  protected void handleFatal(Throwable t){handleFatal(t.getMessage());}
   
   public final void progress(String state, String info, float percent)
   {
@@ -186,5 +186,7 @@ public abstract class LogListener
       handleProgress(state, info, percent);
     }
   }
-  public void handleProgress(String status, String info, float percent){}
+  
+  // since the default is not to handle progress, leaving this with a default nop implementation
+  protected void handleProgress(String status, String info, float percent) {}
 }
