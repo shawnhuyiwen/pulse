@@ -50,7 +50,8 @@ public class SEConsumeMeal extends SEPatientCondition
       break;
     case MEALFILE:
       dst.setMealFile(src.getMealFile());
-    }      
+    default: // do nothing
+    }
   }
   
   public static ConsumeMealData unload(SEConsumeMeal src)

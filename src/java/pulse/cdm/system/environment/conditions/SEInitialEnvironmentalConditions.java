@@ -57,6 +57,7 @@ public class SEInitialEnvironmentalConditions extends SEEnvironmentCondition
     case ENVIRONMENTALCONDITIONS:
       SEEnvironmentalConditions.load(src.getEnvironmentalConditions(),dst.getEnvironmentalConditions(),subMgr);
       break;
+    default: // do nothing
     }
   }
   public static InitialEnvironmentalConditionsData unload(SEInitialEnvironmentalConditions src)

@@ -91,7 +91,8 @@ public class SEConsciousRespiration extends SEPatientAction
           dst.commands.add(command);
           break;
         }
-      }    
+        default: // do nothing
+      }
     }
   }
   

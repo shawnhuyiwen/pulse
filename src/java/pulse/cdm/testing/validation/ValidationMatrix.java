@@ -83,8 +83,8 @@ public class ValidationMatrix
         case Bad:
           this.text = danger + this.text + endSpan;
           break;
+        default: // do nothing
       }
-      int i=0;
       for(String key : refs.keySet())
         this.text = this.text.replaceAll(key, refs.get(key));
     }
@@ -177,6 +177,7 @@ public class ValidationMatrix
               case STRING:
                 cellValue = cell.getStringCellValue();
                 break;
+              default: // do nothing
             }
             if(cellValue==null||cellValue.isEmpty())
               column.add(new SheetCell("",Agreement.NA,refs));

@@ -38,9 +38,10 @@ public class SECompartmentManager
       case Thermal:
         return GetThermalCompartment(name);
       case Tissue:
-        return GetTissueCompartment(name);     
+        return GetTissueCompartment(name);
+      default:
+        return null;
     }
-    return null;
   }
   
   public boolean HasGasCompartment(String name)

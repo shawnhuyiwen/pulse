@@ -57,6 +57,7 @@ public class SEChangeEnvironmentalConditions extends SEEnvironmentAction
     case ENVIRONMENTALCONDITIONS:
       SEEnvironmentalConditions.load(src.getEnvironmentalConditions(),dst.getEnvironmentalConditions(),subMgr);
       break;
+    default: // do nothing
     }
   }
   public static ChangeEnvironmentalConditionsData unload(SEChangeEnvironmentalConditions src)

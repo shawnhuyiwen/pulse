@@ -251,6 +251,7 @@ public class DataSetReader
             case STRING:
               cellValue = cell.getStringCellValue();
               break;
+            default: // do nothing
           }
           if(cellValue==null||cellValue.isEmpty())
             continue;
@@ -496,7 +497,9 @@ public class DataSetReader
                 case STRING:
                   cellValue = cell.getStringCellValue();
                   break;
-              }               
+                default: // do nothing
+              }
+            default: // do nothing
           }
           if(cellValue==null)
             continue;
@@ -918,6 +921,7 @@ public class DataSetReader
             case STRING:
               cellValue = cell.getStringCellValue();
               break;
+            default: // do nothing
           }
           if(cellValue==null||cellValue.isEmpty())
             continue;
@@ -1020,6 +1024,7 @@ public class DataSetReader
             case STRING:
               cellValue = cell.getStringCellValue();
               break;
+            default: // do nothing
           }
           if(cellValue==null||cellValue.isEmpty())
             continue;
@@ -1187,6 +1192,7 @@ public class DataSetReader
             case STRING:
               cellValue = cell.getStringCellValue();
               break;
+            default: // do nothing
           }
           if(cellValue==null||cellValue.isEmpty())
             continue;

@@ -55,6 +55,7 @@ public class SEConsumeNutrients extends SEPatientAction
       break;
     case NUTRITIONFILE:
       dst.setNutritionFile(src.getNutritionFile());
+    default: // do nothing
     }
   }
   

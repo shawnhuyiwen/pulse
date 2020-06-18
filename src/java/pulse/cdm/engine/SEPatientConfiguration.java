@@ -47,6 +47,7 @@ public class SEPatientConfiguration
     }
     case PATIENTFILE:
       dst.setPatientFile(src.getPatientFile());
+    default: // do nothing
     }
     
     for(AnyConditionData cData : src.getConditions().getAnyConditionList())

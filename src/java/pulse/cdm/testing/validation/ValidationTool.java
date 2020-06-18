@@ -303,8 +303,9 @@ public abstract class ValidationTool
                       case STRING:
                         cellValue = cell.getStringCellValue();
                         break;
+                      default: // do nothing 
                     }
-                    
+                  default: // do nothing
                 }
 
                 switch(c)
