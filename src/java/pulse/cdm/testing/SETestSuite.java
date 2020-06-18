@@ -13,8 +13,8 @@ public class SETestSuite
 {
 	protected String             name;
 	protected boolean            performed;
-	protected List<String>       requirements = new ArrayList<String>();
-	protected List<SETestCase>   testCases = new ArrayList<SETestCase>();
+	protected List<String>       requirements = new ArrayList<>();
+	protected List<SETestCase>   testCases = new ArrayList<>();
 	
 	protected SETestCase         activeCase;
 	protected SETestCaseListener activeCaseListener = new SETestCaseListener();

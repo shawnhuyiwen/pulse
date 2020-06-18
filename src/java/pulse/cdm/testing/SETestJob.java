@@ -26,15 +26,16 @@ public class SETestJob extends LogListener
   public boolean      PlottableResults = false;
   public PlotType     plotType = PlotType.FastPlot;//Only plot every nth data point
   public double       percentDifference;
-  public List<String> scenarioFiles = new ArrayList<String>();
+  public List<String> scenarioFiles = new ArrayList<>();
   public String       scenarioDirectory = null;
-  public List<String> baselineFiles = new ArrayList<String>();
+  public List<String> baselineFiles = new ArrayList<>();
   public String       baselineDirectory = null;
-  public List<String> computedFiles = new ArrayList<String>();
+  public List<String> computedFiles = new ArrayList<>();
   public String       computedDirectory = null;
-  public List<String> reportFiles = new ArrayList<String>();
+  public List<String> reportFiles = new ArrayList<>();
   public String       resultsFiles = null;
 
+  @Override
   public SETestJob clone()
   {
   	SETestJob copy = new SETestJob();

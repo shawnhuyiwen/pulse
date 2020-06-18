@@ -32,7 +32,7 @@ public class Rebase
   {
     RunConfiguration cfg = new RunConfiguration();
     String toDir = "./test_results/rebase/";
-    List<String> configFiles = new ArrayList<String>();
+    List<String> configFiles = new ArrayList<>();
     try
     {
       File file = new File(cfg.getTestConfigDirectory()+"/Rebase.config");
@@ -81,7 +81,7 @@ public class Rebase
 
     String log_file;
     String result_path;
-    List<String> result_files = new ArrayList<String>();
+    List<String> result_files = new ArrayList<>();
 
     for(String configFile : configFiles)
     {

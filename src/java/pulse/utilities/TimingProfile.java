@@ -20,7 +20,7 @@ public class TimingProfile
     double start=0;
     double elapsed=0;
   }
-  private static Map<String,Timing> fProfiles = new HashMap<String,Timing>();   
+  private static Map<String,Timing> fProfiles = new HashMap<>();   
   
   /**
    * Clears all labels and times

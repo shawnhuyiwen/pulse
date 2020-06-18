@@ -37,8 +37,8 @@ import pulse.utilities.csv.plots.PlotDriver.PlotJob;
 
 public class MultiPlotter implements Plotter
 {
-  protected Map<String,List<Double>> data = new HashMap<String,List<Double>>();
-  protected Map<String,List<Double>> expData = new HashMap<String,List<Double>>();
+  protected Map<String,List<Double>> data = new HashMap<>();
+  protected Map<String,List<Double>> expData = new HashMap<>();
   
   public static void main(String[] args)
   {
@@ -64,7 +64,7 @@ public class MultiPlotter implements Plotter
         csv.abreviateContents = job.resultsSkipNum;
         for (int i = 0; i < job.headers.size(); i++)
         {
-          List<Double> headerData = new ArrayList<Double>();
+          List<Double> headerData = new ArrayList<>();
           csv.readHeader(csv.unitUnderscoreToSpace(job.headers.get(i)), headerData);
           data.put(job.headers.get(i), headerData);
         }        
@@ -100,21 +100,21 @@ public class MultiPlotter implements Plotter
         //Get data from X1 and Y1, which should always be from our normal data file
         for (int i = 0; i < job.Y1headers.size(); i++)
         {
-          List<Double> headerData = new ArrayList<Double>();
+          List<Double> headerData = new ArrayList<>();
           dataCsv.readHeader(dataCsv.unitUnderscoreToSpace(job.Y1headers.get(i)), headerData);
           data.put(job.Y1headers.get(i), headerData);
         }
-        List<Double> headerData = new ArrayList<Double>();
+        List<Double> headerData = new ArrayList<>();
         dataCsv.readHeader(dataCsv.unitUnderscoreToSpace(job.X1header), headerData);
         data.put(job.X1header, headerData);  
         
         for (int i = 0; i < job.Y2headers.size(); i++)
         {
-          List<Double> headerData2 = new ArrayList<Double>();
+          List<Double> headerData2 = new ArrayList<>();
           expCsv.readHeader(expCsv.unitUnderscoreToSpace(job.Y2headers.get(i)), headerData2);
           expData.put(job.Y2headers.get(i), headerData2);
         }
-        List<Double> headerData2 = new ArrayList<Double>();
+        List<Double> headerData2 = new ArrayList<>();
         expCsv.readHeader(expCsv.unitUnderscoreToSpace(job.X2header), headerData2);
         expData.put(job.X2header, headerData2);  
       } catch (Exception e)

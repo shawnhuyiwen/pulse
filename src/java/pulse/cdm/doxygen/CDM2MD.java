@@ -72,7 +72,7 @@ public class CDM2MD
     jniBridge.deinitialize();
   }
   
-  protected static Set<String> tableNameLinks = new HashSet<String>();
+  protected static Set<String> tableNameLinks = new HashSet<>();
   
   public static void convert(String destDir)
   {
@@ -86,7 +86,7 @@ public class CDM2MD
       writer.append("CDM Tables {#CDMTables}\n");
       writer.append("=======================\n");
 
-      List<String> skipProperties = new ArrayList<String>();
+      List<String> skipProperties = new ArrayList<>();
       skipProperties.add("Comment");
       skipProperties.add("ScenarioTime");
 

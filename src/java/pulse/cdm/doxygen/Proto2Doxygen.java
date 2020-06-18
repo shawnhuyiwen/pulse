@@ -24,8 +24,8 @@ public class Proto2Doxygen
   {
     public String         name;
     public String         comment;
-    public List<Message>  children   = new ArrayList<Message>();
-    public List<Property> properties = new ArrayList<Property>();
+    public List<Message>  children   = new ArrayList<>();
+    public List<Property> properties = new ArrayList<>();
   }
 
   public static void main(String[] args) 
@@ -74,8 +74,8 @@ public class Proto2Doxygen
     String comment = "";
     Message message = null;
     Message child   = null;
-    List<Message> messages = new ArrayList<Message>();
-    List<Message> hierarchy = new ArrayList<Message>();
+    List<Message> messages = new ArrayList<>();
+    List<Message> hierarchy = new ArrayList<>();
     boolean looking4comment = false;
     Log.info("Processing file : "+fName);
     FileReader in = new FileReader(fName);

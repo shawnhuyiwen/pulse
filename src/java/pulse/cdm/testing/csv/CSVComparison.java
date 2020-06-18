@@ -101,7 +101,7 @@ public class CSVComparison extends SETestReport
     report=report.substring(0, report.length()-4)+"Report.json";    
     this.setFullReportPath(report);
         
-    Set<String> failures = new HashSet<String>();
+    Set<String> failures = new HashSet<>();
     try
     {
       FileUtils.delete(this.reportDir);

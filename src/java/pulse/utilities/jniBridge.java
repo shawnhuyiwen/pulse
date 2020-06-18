@@ -11,7 +11,7 @@ public class jniBridge
     if(loaded)
       return;
   	String location = System.getProperty("user.dir");
-    if(!FileUtils.loadLibraries(new ArrayList<String>(Arrays.asList("PulseJNI")),location))
+    if(!FileUtils.loadLibraries(new ArrayList<>(Arrays.asList("PulseJNI")),location))
       throw new RuntimeException("Could not load PulseJNI library");
      nativeInitialize();
      loaded = true;
@@ -19,7 +19,7 @@ public class jniBridge
   // Specify the location to find the PulseJNI library
   public static void initialize(String lib_dir)
   {
-    if(!FileUtils.loadLibraries(new ArrayList<String>(Arrays.asList("PulseJNI")),lib_dir))
+    if(!FileUtils.loadLibraries(new ArrayList<>(Arrays.asList("PulseJNI")),lib_dir))
       throw new RuntimeException("Could not load PulseJNI library");
      nativeInitialize();
   }

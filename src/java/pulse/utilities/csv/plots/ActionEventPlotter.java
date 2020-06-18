@@ -56,10 +56,10 @@ import pulse.utilities.csv.plots.PlotDriver.PlotJob;
 
 public class ActionEventPlotter implements Plotter
 {
-  protected List<LogEvent> events = new ArrayList<LogEvent>();
-  protected List<List<Double>> data = new ArrayList<List<Double>>();
-  protected List<List<Double>> timeData = new ArrayList<List<Double>>();
-  protected List<SEAction> actions = new ArrayList<SEAction>();
+  protected List<LogEvent> events = new ArrayList<>();
+  protected List<List<Double>> data = new ArrayList<>();
+  protected List<List<Double>> timeData = new ArrayList<>();
+  protected List<SEAction> actions = new ArrayList<>();
   protected SEScenario scenario;
 
   public static void main(String[] args)
@@ -113,12 +113,12 @@ public class ActionEventPlotter implements Plotter
         csv.abreviateContents = job.resultsSkipNum;
         for (int i = 0; i < job.headers.size(); i++)
         {
-          List<Double> headerData = new ArrayList<Double>();
+          List<Double> headerData = new ArrayList<>();
           csv.readHeader(csv.unitUnderscoreToSpace(job.headers.get(i)), headerData);
-          data.add((ArrayList<Double>) headerData);
-          List<Double> timeHeaderData = new ArrayList<Double>();
+          data.add(headerData);
+          List<Double> timeHeaderData = new ArrayList<>();
           csv.readHeader("Time(s)", timeHeaderData);
-          timeData.add((ArrayList<Double>) timeHeaderData);
+          timeData.add(timeHeaderData);
         }
         if(job.computedDataFile != null)
         {
@@ -126,12 +126,12 @@ public class ActionEventPlotter implements Plotter
           csv.abreviateContents = job.resultsSkipNum;
           for (int i = 0; i < job.headers.size(); i++)
           {
-            List<Double> headerData = new ArrayList<Double>();
+            List<Double> headerData = new ArrayList<>();
             csv.readHeader(csv.unitUnderscoreToSpace(job.headers.get(i)), headerData);
-            data.add((ArrayList<Double>) headerData);
-            List<Double> timeHeaderData = new ArrayList<Double>();
+            data.add(headerData);
+            List<Double> timeHeaderData = new ArrayList<>();
             csv.readHeader("Time(s)", timeHeaderData);
-            timeData.add((ArrayList<Double>) timeHeaderData);
+            timeData.add(timeHeaderData);
           }
         }
         
@@ -147,7 +147,7 @@ public class ActionEventPlotter implements Plotter
   
   public List<LogEvent> getEventsFromLog(String file)
   {
-    List<LogEvent> events = new ArrayList<LogEvent>();
+    List<LogEvent> events = new ArrayList<>();
     
     try
     {
@@ -239,10 +239,11 @@ public class ActionEventPlotter implements Plotter
     class AEEntry implements Comparable<AEEntry>
     {
       public String name;
-      public List<Double> times = new ArrayList<Double>();
-      public List<Double> YVals = new ArrayList<Double>();
+      public List<Double> times = new ArrayList<>();
+      public List<Double> YVals = new ArrayList<>();
       public String type = "";
       
+      @Override
       public int compareTo(AEEntry entry)
       {
         return times.get(0) < entry.times.get(0) ? -1
@@ -251,7 +252,7 @@ public class ActionEventPlotter implements Plotter
       }
     }
     
-    List<AEEntry> allActionsAndEvents = new ArrayList<AEEntry>();
+    List<AEEntry> allActionsAndEvents = new ArrayList<>();
     
     if (!job.skipAllEvents)
     {
@@ -350,8 +351,8 @@ public class ActionEventPlotter implements Plotter
     XYSeriesCollection expDataSet = new XYSeriesCollection();
     if(job.experimentalData != null && !job.experimentalData.isEmpty())
     {
-      Map<String,List<Double>> expData = new HashMap<String,List<Double>>();
-      List<String> expHeaders = new ArrayList<String>();
+      Map<String,List<Double>> expData = new HashMap<>();
+      List<String> expHeaders = new ArrayList<>();
       
       try
       {
@@ -367,7 +368,7 @@ public class ActionEventPlotter implements Plotter
       
       if(!expData.isEmpty() && !expHeaders.isEmpty())
       {
-        List<Double> expTimeData = new ArrayList<Double>();
+        List<Double> expTimeData = new ArrayList<>();
         expTimeData = expData.get("Time(s)");
         
         for(String h : expHeaders)  //Will assume all headers from exp file will be on same Y axis vs time

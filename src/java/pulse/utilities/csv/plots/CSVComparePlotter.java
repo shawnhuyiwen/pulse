@@ -114,10 +114,10 @@ public class CSVComparePlotter
     CSVContents computedResults = null;
     List<String> expectedHeaders = null;
     List<String> computedHeaders = null;
-    List<Double> expectedData=new ArrayList<Double>();
-    List<Double> computedData=new ArrayList<Double>();
-    Map<String,List<Double>> allExpected=new HashMap<String,List<Double>>();
-    Map<String,List<Double>> allComputed=new HashMap<String,List<Double>>();
+    List<Double> expectedData=new ArrayList<>();
+    List<Double> computedData=new ArrayList<>();
+    Map<String,List<Double>> allExpected=new HashMap<>();
+    Map<String,List<Double>> allComputed=new HashMap<>();
     
     try
     {
@@ -211,8 +211,8 @@ public class CSVComparePlotter
         {
           if(expectedTime == null)
           {
-            expectedTime = new ArrayList<Double>();
-            computedTime = new ArrayList<Double>();          
+            expectedTime = new ArrayList<>();
+            computedTime = new ArrayList<>();          
             expectedResults.readHeader("Time(s)",expectedTime);
             computedResults.readHeader("Time(s)",computedTime);
           }

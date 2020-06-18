@@ -77,7 +77,7 @@ public abstract class ValidationTool
   // PerWeight calculates the expected value based on the patient weight
   
   protected SEPatient                       patient;
-  protected Map<String,List<Double>>        resultData = new HashMap<String,List<Double>>();
+  protected Map<String,List<Double>>        resultData = new HashMap<>();
   protected Map<String,SEPatientAssessment> assessments;
 
   protected class SummaryRow
@@ -191,18 +191,18 @@ public abstract class ValidationTool
       XSSFWorkbook xlWBook =  new XSSFWorkbook (xlFile);
       
       FormulaEvaluator evaluator = xlWBook.getCreationHelper().createFormulaEvaluator();
-      List<ValidationRow> badSheets = new ArrayList<ValidationRow>();
-      Map<String,List<ValidationRow>> tables = new HashMap<String,List<ValidationRow>>();
-      Map<String,List<ValidationRow>> tableErrors = new HashMap<String,List<ValidationRow>>();
-      List<ValidationRow> allRows = new ArrayList<ValidationRow>();
-      Map<String,SummaryRow> summary = new TreeMap<String, SummaryRow>();
+      List<ValidationRow> badSheets = new ArrayList<>();
+      Map<String,List<ValidationRow>> tables = new HashMap<>();
+      Map<String,List<ValidationRow>> tableErrors = new HashMap<>();
+      List<ValidationRow> allRows = new ArrayList<>();
+      Map<String,SummaryRow> summary = new TreeMap<>();
       for(int i=0; i<xlWBook.getNumberOfSheets(); i++)
       {
         XSSFSheet xlSheet = xlWBook.getSheetAt(i);
         Log.info("Processing Sheet : " + xlSheet.getSheetName());
         String sheetName = xlSheet.getSheetName().trim().replaceAll(" ", "");
         
-        List<String> sheetFiles = new ArrayList<String>();
+        List<String> sheetFiles = new ArrayList<>();
         String rSheetName = sheetName+"ValidationResults.csv";
         File rFile = new File(rSheetName);
         if(!rFile.exists())
@@ -224,7 +224,7 @@ public abstract class ValidationTool
             CSVContents results = new CSVContents("./"+csv_root+"/scenarios/validation/"+VALIDATION_FOLDER+"/"+resultsName);
             results.readAll(resultData);
             // Find any assessments
-            assessments = new HashMap<String,SEPatientAssessment>();
+            assessments = new HashMap<>();
             for(String vFile : vFiles)
             {
               if(vFile.indexOf(sheetName)>-1 && vFile.indexOf('@')>-1)
@@ -473,7 +473,7 @@ public abstract class ValidationTool
             WriteDoxyTable(t,name,destinationDirectory);
             if(name.equalsIgnoreCase(sheetName))
             {
-              List<String> properties = new ArrayList<String>();
+              List<String> properties = new ArrayList<>();
               for(ValidationRow vRow : t)  
                 properties.add(vRow.name);
               for(ValidationRow vRow : tableErrors.get(name))  
@@ -647,8 +647,8 @@ public abstract class ValidationTool
     }
     else
     {// It's more than one value,intervals, this is where things get tricky.
-      List<String> cites = new ArrayList<String>();
-      List<Double> values = new ArrayList<Double>();
+      List<String> cites = new ArrayList<>();
+      List<Double> values = new ArrayList<>();
 
       int cIdx=0;
       for(int i=0; i<rVals.length; i++)
@@ -789,7 +789,7 @@ public abstract class ValidationTool
       }
       case MeanPerWeight:
       {
-        List<Double> resultPerWeight = new ArrayList<Double>();
+        List<Double> resultPerWeight = new ArrayList<>();
         for(int i=0; i<vRow.results.size(); i++)
         {
           resultPerWeight.add(vRow.results.get(i) / vRow.weight.get(i));
@@ -800,12 +800,12 @@ public abstract class ValidationTool
       }
       case WaveformMinPerWeight:
       {
-        List<Double> xMin = new ArrayList<Double>();
-        List<Double> yMin = new ArrayList<Double>();
-        List<Double> xMax = new ArrayList<Double>();
-        List<Double> yMax = new ArrayList<Double>();
+        List<Double> xMin = new ArrayList<>();
+        List<Double> yMin = new ArrayList<>();
+        List<Double> xMax = new ArrayList<>();
+        List<Double> yMax = new ArrayList<>();
         WaveformUtils.getPeriodBounds(vRow.weight, vRow.results, xMin, yMin, xMax, yMax);
-        List<Double> resultPerWeight = new ArrayList<Double>();
+        List<Double> resultPerWeight = new ArrayList<>();
         for(int i=0; i<yMin.size(); i++)
         {
           resultPerWeight.add(yMin.get(i) / xMin.get(i));
@@ -816,12 +816,12 @@ public abstract class ValidationTool
       }
       case WaveformMaxPerWeight:
       {
-        List<Double> xMin = new ArrayList<Double>();
-        List<Double> yMin = new ArrayList<Double>();
-        List<Double> xMax = new ArrayList<Double>();
-        List<Double> yMax = new ArrayList<Double>();    
+        List<Double> xMin = new ArrayList<>();
+        List<Double> yMin = new ArrayList<>();
+        List<Double> xMax = new ArrayList<>();
+        List<Double> yMax = new ArrayList<>();    
         WaveformUtils.getPeriodBounds(vRow.weight, vRow.results, xMin, yMin, xMax, yMax);
-        List<Double> resultPerWeight = new ArrayList<Double>();
+        List<Double> resultPerWeight = new ArrayList<>();
         for(int i=0; i<yMax.size(); i++)
         {
           resultPerWeight.add(yMax.get(i) / xMax.get(i));
@@ -838,7 +838,7 @@ public abstract class ValidationTool
       }
       case MeanPerIdealWeight:
       {
-        List<Double> resultPerWeight = new ArrayList<Double>();
+        List<Double> resultPerWeight = new ArrayList<>();
         for(int i=0; i<vRow.results.size(); i++)
         {
           resultPerWeight.add(vRow.results.get(i) / vRow.idealWeight.get(i));
@@ -855,12 +855,12 @@ public abstract class ValidationTool
       }
       case WaveformMinPerIdealWeight:
       {
-        List<Double> xMin = new ArrayList<Double>();
-        List<Double> yMin = new ArrayList<Double>();
-        List<Double> xMax = new ArrayList<Double>();
-        List<Double> yMax = new ArrayList<Double>();
+        List<Double> xMin = new ArrayList<>();
+        List<Double> yMin = new ArrayList<>();
+        List<Double> xMax = new ArrayList<>();
+        List<Double> yMax = new ArrayList<>();
         WaveformUtils.getPeriodBounds(vRow.idealWeight, vRow.results, xMin, yMin, xMax, yMax);
-        List<Double> resultPerWeight = new ArrayList<Double>();
+        List<Double> resultPerWeight = new ArrayList<>();
         for(int i=0; i<yMin.size(); i++)
         {
           resultPerWeight.add(yMin.get(i) / xMin.get(i));
@@ -870,12 +870,12 @@ public abstract class ValidationTool
       }
       case WaveformMaxPerIdealWeight:
       {
-        List<Double> xMin = new ArrayList<Double>();
-        List<Double> yMin = new ArrayList<Double>();
-        List<Double> xMax = new ArrayList<Double>();
-        List<Double> yMax = new ArrayList<Double>();
+        List<Double> xMin = new ArrayList<>();
+        List<Double> yMin = new ArrayList<>();
+        List<Double> xMax = new ArrayList<>();
+        List<Double> yMax = new ArrayList<>();
         WaveformUtils.getPeriodBounds(vRow.idealWeight, vRow.results, xMin, yMin, xMax, yMax);
-        List<Double> resultPerWeight = new ArrayList<Double>();
+        List<Double> resultPerWeight = new ArrayList<>();
         for(int i=0; i<yMax.size(); i++)
         {
           resultPerWeight.add(yMax.get(i) / xMax.get(i));
@@ -1071,7 +1071,7 @@ public abstract class ValidationTool
                 vRow.error = danger+vRow.name+", Not Valid In Assessment!"+endSpan;
                 return false;
               }
-              vRow.results = new ArrayList<Double>();
+              vRow.results = new ArrayList<>();
               vRow.results.add(scalar.getValue(vRow.unit));
             }
             else if(r.getClass().isEnum())
@@ -1352,7 +1352,7 @@ public abstract class ValidationTool
       Log.error("Cannot map sheet "+sheetName+" to a CDM class.",ex);
       return;
     }
-    Set<String> cdm = new HashSet<String>();
+    Set<String> cdm = new HashSet<>();
     // Grab all scalar data property names from the bind class
     for(Method m : c.getMethods())
     {

@@ -22,7 +22,7 @@ public class SEDynamicStabilizationEngineConvergence
   protected SEScalarTime convergenceTime;
   protected SEScalarTime minimumReactionTime;
   protected SEScalarTime maximumAllowedStabilizationTime;
-  protected List<PropertyConvergence> properties=new ArrayList<PropertyConvergence>();
+  protected List<PropertyConvergence> properties=new ArrayList<>();
   
   public void reset()
   {

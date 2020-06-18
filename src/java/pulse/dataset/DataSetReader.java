@@ -227,7 +227,7 @@ public class DataSetReader
   protected static List<SEPatient> readPatients(XSSFSheet xlSheet)
   {
     String property,value,unit;
-    List<SEPatient> patients = new ArrayList<SEPatient>();
+    List<SEPatient> patients = new ArrayList<>();
     try
     {
       int rows = xlSheet.getPhysicalNumberOfRows();
@@ -451,8 +451,8 @@ public class DataSetReader
     String property,value,unit;
     SESubstance substance=null;
     SESubstanceTissuePharmacokinetics fx=null;
-    List<SESubstance> substances = new ArrayList<SESubstance>();
-    Set<Integer> skipColumns = new HashSet<Integer>();
+    List<SESubstance> substances = new ArrayList<>();
+    Set<Integer> skipColumns = new HashSet<>();
     
     try
     {
@@ -556,7 +556,7 @@ public class DataSetReader
       Log.error("Error reading XLS",ex);
       return null;
     }    
-    Map<String,SESubstance> map = new HashMap<String,SESubstance>();
+    Map<String,SESubstance> map = new HashMap<>();
     for(SESubstance sub : substances)
       map.put(sub.getName(), sub);
     return map;
@@ -882,9 +882,9 @@ public class DataSetReader
     String property,value,unit;
     SESubstance s;
     SESubstanceCompound compound=null;
-    List<SESubstanceCompound> compounds = new ArrayList<SESubstanceCompound>();
+    List<SESubstanceCompound> compounds = new ArrayList<>();
     List<SESubstanceConcentration> currentComponent = null;
-    Set<Integer> skipColumns = new HashSet<Integer>();
+    Set<Integer> skipColumns = new HashSet<>();
     try
     {
       int rows = xlSheet.getPhysicalNumberOfRows();      
@@ -904,7 +904,7 @@ public class DataSetReader
             else if(property.equals("SubstanceCompound"))
               compounds.add(new SESubstanceCompound());
           }        
-          currentComponent = new ArrayList<SESubstanceConcentration>(cells);
+          currentComponent = new ArrayList<>(cells);
         }
         property = row.getCell(0).getStringCellValue();
         if(property==null||property.isEmpty())
@@ -998,9 +998,9 @@ public class DataSetReader
   {
     String property,value,unit;
     SEEnvironmentalConditions environment;
-    Map<String,SEEnvironmentalConditions> map = new HashMap<String,SEEnvironmentalConditions>();    
-    Map<Integer,AmbientSubstance> columnSubstances = new HashMap<Integer,AmbientSubstance>();
-    List<SEEnvironmentalConditions> environments = new ArrayList<SEEnvironmentalConditions>();
+    Map<String,SEEnvironmentalConditions> map = new HashMap<>();    
+    Map<Integer,AmbientSubstance> columnSubstances = new HashMap<>();
+    List<SEEnvironmentalConditions> environments = new ArrayList<>();
     try
     {
       int rows = xlSheet.getPhysicalNumberOfRows();      
@@ -1165,8 +1165,8 @@ public class DataSetReader
   {
     String property,value,unit;
     SENutrition meal;
-    Map<String,SENutrition> map = new HashMap<String,SENutrition>();    
-    List<SENutrition> meals = new ArrayList<SENutrition>();
+    Map<String,SENutrition> map = new HashMap<>();    
+    List<SENutrition> meals = new ArrayList<>();
     int colsPerObject = 1;// 1 columns per object (value, reference, notes)
     try
     {
@@ -1295,7 +1295,7 @@ public class DataSetReader
   {
     int split;
     // Fields are expected data we must have
-    Set<String> fields = new HashSet<String>();
+    Set<String> fields = new HashSet<>();
     fields.add("Criteria");
     fields.add("ConvergenceTime");
     fields.add("MinimumReactionTime");
@@ -1448,7 +1448,7 @@ public class DataSetReader
   {
     int split;
     // Fields are expected data we must have
-    Set<String> fields = new HashSet<String>();
+    Set<String> fields = new HashSet<>();
     fields.add("Description");
     fields.add("Lead");
     fields.add("Rhythm");
@@ -1459,7 +1459,7 @@ public class DataSetReader
     eHeartRhythm rhythm=eHeartRhythm.NormalSinus;
        
     SEElectroCardioGramWaveformList ecg=null;
-    Map<String,SEElectroCardioGramWaveformList> map = new HashMap<String,SEElectroCardioGramWaveformList>();
+    Map<String,SEElectroCardioGramWaveformList> map = new HashMap<>();
     try
     {
       int rows = xlSheet.getPhysicalNumberOfRows();     

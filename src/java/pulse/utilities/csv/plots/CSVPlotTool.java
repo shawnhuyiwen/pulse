@@ -62,7 +62,7 @@ public class CSVPlotTool
     }
     CSVPlotTool t = new CSVPlotTool();
     
-    List<String> csvFiles = new ArrayList<String>();
+    List<String> csvFiles = new ArrayList<>();
     
     for(String arg : args)
     {
@@ -116,7 +116,7 @@ public class CSVPlotTool
       FileUtils.createDirectory(graphLocation);
 
       CSVContents result = new CSVContents(csvFile);
-      Map<String, List<Double>> data = new HashMap<String, List<Double>>();
+      Map<String, List<Double>> data = new HashMap<>();
       if(!result.readAll(data))
         return false;
       if(!data.containsKey("Time(s)"))

@@ -234,7 +234,7 @@ public class SEScenario
   protected SEPatientConfiguration   params;
   protected String                        engineStateFile;
   protected SEDataRequestManager          drMgr = new SEDataRequestManager();
-  protected List<SEAction>                actions = new ArrayList<SEAction>();
+  protected List<SEAction>                actions = new ArrayList<>();
 
   protected SESubstanceManager            subMgr;
 

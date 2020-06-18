@@ -22,7 +22,7 @@ public class RenameCSVHeaders
 {
   public static void main(String[] args) throws IOException
   {
-    Map<String,String> replaceWith = new HashMap<String,String>();
+    Map<String,String> replaceWith = new HashMap<>();
     //replaceWith.put("ECGWaveform", "Lead3ElectricPotential");
     boolean convertToCSV = true;
     

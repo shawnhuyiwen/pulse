@@ -62,7 +62,7 @@ public class CSVAnalysis
   {
     CSVContents csv = new CSVContents(fileName);
     
-    Map<String, List<Double>> results = new HashMap<String, List<Double>>();
+    Map<String, List<Double>> results = new HashMap<>();
     csv.readAll(results);
 
     int subsetStartTimestep = -1;  //use -1 to deactivate (will look at all timesteps in this case)

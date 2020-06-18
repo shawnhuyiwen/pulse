@@ -47,16 +47,16 @@ public class SEEqualOptions extends DoubleUtils
     
     public PathTrack()
     {
-      this.fromIDPath = new ArrayList<String>();
-      this.toIDPath = new ArrayList<String>();
-      this.CDMPath = new ArrayList<String>();
+      this.fromIDPath = new ArrayList<>();
+      this.toIDPath = new ArrayList<>();
+      this.CDMPath = new ArrayList<>();
     }
     
     public PathTrack(PathTrack pt)
     {
-      this.fromIDPath = new ArrayList<String>(pt.fromIDPath);
-      this.toIDPath = new ArrayList<String>(pt.toIDPath);
-      this.CDMPath = new ArrayList<String>(pt.CDMPath);
+      this.fromIDPath = new ArrayList<>(pt.fromIDPath);
+      this.toIDPath = new ArrayList<>(pt.toIDPath);
+      this.CDMPath = new ArrayList<>(pt.CDMPath);
       
       for(int i=0; i<this.CDMPath.size();)
       {
@@ -121,14 +121,14 @@ public class SEEqualOptions extends DoubleUtils
     
     public Track()
     {
-      this.differences = new ArrayList<String>();
-      this.equalError = new ArrayList<Double>();
+      this.differences = new ArrayList<>();
+      this.equalError = new ArrayList<>();
     }
     
     protected Track(Track t)
     {
-      this.differences = new ArrayList<String>(t.differences);
-      this.equalError = new ArrayList<Double>(t.equalError);
+      this.differences = new ArrayList<>(t.differences);
+      this.equalError = new ArrayList<>(t.equalError);
     }
     
     public List<String> getDifferences()
@@ -149,7 +149,7 @@ public class SEEqualOptions extends DoubleUtils
   }
   protected Track tmpTrack;
 
-  protected Map<PathTrack, Track> mapTrack = new HashMap<PathTrack, Track>();
+  protected Map<PathTrack, Track> mapTrack = new HashMap<>();
   
   public SEEqualOptions()
   {

@@ -13,8 +13,8 @@ import pulse.utilities.Log;
 
 public class SESubstanceManager 
 {
-	protected List<SESubstance>         substances     = new ArrayList<SESubstance>();  
-	protected List<SESubstanceCompound> compounds      = new ArrayList<SESubstanceCompound>();
+	protected List<SESubstance>         substances     = new ArrayList<>();  
+	protected List<SESubstanceCompound> compounds      = new ArrayList<>();
 
 	public SESubstanceManager()
 	{

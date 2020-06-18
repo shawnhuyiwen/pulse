@@ -99,7 +99,7 @@ public class Pulse
 
   protected native void    nativeForwardEvents(long nativeObj, boolean b);
   
-  protected List<Pair<SEDataRequest,SEScalar>> dataRequests = new ArrayList<Pair<SEDataRequest,SEScalar>>();  
+  protected List<Pair<SEDataRequest,SEScalar>> dataRequests = new ArrayList<>();  
   
   static
   {
@@ -151,7 +151,7 @@ public class Pulse
       
       compartments = new SECompartmentManager();
       
-      dataRequests = new ArrayList<Pair<SEDataRequest,SEScalar>>();
+      dataRequests = new ArrayList<>();
     }
     currentTime.invalidate();
     substanceManager.loadSubstanceDirectory();
@@ -274,7 +274,7 @@ public class Pulse
     dataRequests.clear();
     
     // Gather our systems up into a list to make things easier
-    List<SESystem> systems = new ArrayList<SESystem>();
+    List<SESystem> systems = new ArrayList<>();
     systems.add(bloodChemistry);
     systems.add(cardiovascular);
     systems.add(endocrine);
@@ -287,7 +287,7 @@ public class Pulse
     systems.add(drug);
     systems.add(energy);
     
-    List<SESystem> equipment = new ArrayList<SESystem>();
+    List<SESystem> equipment = new ArrayList<>();
     equipment.add(anesthesiaMachine);
     equipment.add(ecg);
     equipment.add(inhaler);
@@ -304,7 +304,7 @@ public class Pulse
             scalar = SEScalar.getScalar(sys,dr.getPropertyName());
             if (scalar != null)
             {
-              dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,scalar));
+              dataRequests.add(new Pair<>(dr,scalar));
               break;
             }
             // Check to see if the request is for a child class
@@ -319,7 +319,7 @@ public class Pulse
               scalar = SEScalar.getScalar(nutrition, scalarNameWithoutStomach);
               if (scalar != null)
               {
-                dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,scalar));
+                dataRequests.add(new Pair<>(dr,scalar));
                 break;
               }
             }
@@ -332,7 +332,7 @@ public class Pulse
               scalar = SEScalar.getScalar(pupillaryResponse, propertyName);
               if (scalar != null)
               {
-                dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,scalar));
+                dataRequests.add(new Pair<>(dr,scalar));
                 break;
               }
             }
@@ -351,7 +351,7 @@ public class Pulse
               scalar = SEScalar.getScalar(pupillaryResponse, propertyName);
               if (scalar != null)
               {
-                dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,scalar));
+                dataRequests.add(new Pair<>(dr,scalar));
                 break;
               }
             }
@@ -367,12 +367,12 @@ public class Pulse
           if(dr.hasSubstanceName())
           {
             SESubstance sub = this.substanceManager.getSubstance(dr.getSubstanceName());
-            dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,SEScalar.getScalar(cmpt.getSubstanceQuantity(sub), dr.getPropertyName())));
+            dataRequests.add(new Pair<>(dr,SEScalar.getScalar(cmpt.getSubstanceQuantity(sub), dr.getPropertyName())));
             continue;
           }
           else
           {
-            dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,SEScalar.getScalar(cmpt, dr.getPropertyName())));
+            dataRequests.add(new Pair<>(dr,SEScalar.getScalar(cmpt, dr.getPropertyName())));
             continue;
           }
         }
@@ -382,25 +382,25 @@ public class Pulse
           if(dr.hasSubstanceName())
           {
             SESubstance sub = this.substanceManager.getSubstance(dr.getSubstanceName());
-            dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,SEScalar.getScalar(cmpt.getSubstanceQuantity(sub), dr.getPropertyName())));
+            dataRequests.add(new Pair<>(dr,SEScalar.getScalar(cmpt.getSubstanceQuantity(sub), dr.getPropertyName())));
             continue;
           }
           else
           {
-            dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,SEScalar.getScalar(cmpt, dr.getPropertyName())));
+            dataRequests.add(new Pair<>(dr,SEScalar.getScalar(cmpt, dr.getPropertyName())));
             continue;
           }
         }
         case ThermalCompartment:
         {
           SEThermalCompartment cmpt = compartments.GetThermalCompartment(dr.getCompartmentName());        
-          dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,SEScalar.getScalar(cmpt, dr.getPropertyName())));
+          dataRequests.add(new Pair<>(dr,SEScalar.getScalar(cmpt, dr.getPropertyName())));
           continue;
         }      
         case TissueCompartment:
         {
           SETissueCompartment cmpt = compartments.GetTissueCompartment(dr.getCompartmentName()); 
-          dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,SEScalar.getScalar(cmpt, dr.getPropertyName())));
+          dataRequests.add(new Pair<>(dr,SEScalar.getScalar(cmpt, dr.getPropertyName())));
           continue;
         }
         case Patient:
@@ -411,7 +411,7 @@ public class Pulse
           SEScalar scalar = SEScalar.getScalar(this.patient, name);
           if (scalar != null)
           {
-            dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,scalar));
+            dataRequests.add(new Pair<>(dr,scalar));
             continue;
           }
           Log.error("Unable to find patient property " + dr.getPropertyName());
@@ -425,7 +425,7 @@ public class Pulse
             if(dr.getPropertyName().equals("PartitionCoefficient"))
             {
               SESubstanceTissuePharmacokinetics subTk = sub.getPK().getTissueKinetics(dr.getCompartmentName());
-              dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,subTk.getPartitionCoefficient()));
+              dataRequests.add(new Pair<>(dr,subTk.getPartitionCoefficient()));
               continue;
             }
             else
@@ -439,7 +439,7 @@ public class Pulse
             SEScalar scalar = SEScalar.getScalar(sub, dr.getPropertyName());
             if (scalar != null)
             {
-              dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,scalar));
+              dataRequests.add(new Pair<>(dr,scalar));
               continue;
             }
           }
@@ -451,7 +451,7 @@ public class Pulse
           SEScalar scalar = SEScalar.getScalar(environment, dr.getPropertyName());
           if (scalar != null)
           {
-            dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,scalar));
+            dataRequests.add(new Pair<>(dr,scalar));
             continue;
           }
           Log.error("Unable to find environment property " + dr.getPropertyName());
@@ -462,7 +462,7 @@ public class Pulse
           SEScalar scalar = SEScalar.getScalar(anesthesiaMachine, dr.getPropertyName());
           if (scalar != null)
           {
-            dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,scalar));          
+            dataRequests.add(new Pair<>(dr,scalar));          
             continue;
           }
           Log.error("Unable to find anesthesia machine property " + dr.getPropertyName());
@@ -473,7 +473,7 @@ public class Pulse
           SEScalar scalar = SEScalar.getScalar(ecg, dr.getPropertyName());
           if (scalar != null)
           {
-            dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,scalar));          
+            dataRequests.add(new Pair<>(dr,scalar));          
             continue;
           }
           Log.error("Unable to find ecg property " + dr.getPropertyName());
@@ -484,7 +484,7 @@ public class Pulse
           SEScalar scalar = SEScalar.getScalar(inhaler, dr.getPropertyName());
           if (scalar != null)
           {
-            dataRequests.add(new Pair<SEDataRequest,SEScalar>(dr,scalar));          
+            dataRequests.add(new Pair<>(dr,scalar));          
             continue;
           }
           Log.error("Unable to find inhaler property " + dr.getPropertyName());

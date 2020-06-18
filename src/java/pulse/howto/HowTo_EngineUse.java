@@ -200,7 +200,7 @@ public class HowTo_EngineUse
       // If I wanted to make set a condition on the patient
       // Note that while you can have multiple conditions on a patient
       // It is more than likely not tested and the engine may or may not converge
-      List<SECondition> conditions = new ArrayList<SECondition>();
+      List<SECondition> conditions = new ArrayList<>();
       SEChronicAnemia anemia = new SEChronicAnemia();// One of these days I will prefix these with SE...
       anemia.getReductionFactor().setValue(0.3);
       conditions.add(anemia);

@@ -43,8 +43,8 @@ public class MutliResultTool
   {
     public String resultDir;
     public String baseline;
-    public Map<String,String> divisors = new HashMap<String,String>();
-    public List<String> sort = new ArrayList<String>();
+    public Map<String,String> divisors = new HashMap<>();
+    public List<String> sort = new ArrayList<>();
   }
   protected static class ResultSummary
   {
@@ -69,7 +69,7 @@ public class MutliResultTool
       return null;
     }
     
-    Map<String,List<ResultSummary>> quotient = new HashMap<String,List<ResultSummary>>();
+    Map<String,List<ResultSummary>> quotient = new HashMap<>();
     
     for(String key : numerator.keySet())
     {
@@ -89,7 +89,7 @@ public class MutliResultTool
       }
       ResultSummary d = dList.get(0);
       
-      List<ResultSummary> qList = new ArrayList<ResultSummary>();
+      List<ResultSummary> qList = new ArrayList<>();
       quotient.put(key, qList);
       for(int i=0; i<nList.size(); i++)
       {
@@ -115,7 +115,7 @@ public class MutliResultTool
   }
   public static Map<String,List<ResultSummary>> divideResultSummary(Map<String,List<ResultSummary>> numerator, List<ResultSummary> dList, String keyFilter)
   {
-    Map<String,List<ResultSummary>> quotient = new HashMap<String,List<ResultSummary>>();
+    Map<String,List<ResultSummary>> quotient = new HashMap<>();
     for(String key : numerator.keySet())
     {
       if(key.indexOf(keyFilter)==-1)
@@ -129,7 +129,7 @@ public class MutliResultTool
         Log.error("Number of results does not match");
         return null;
       }
-      List<ResultSummary> qList = new ArrayList<ResultSummary>();
+      List<ResultSummary> qList = new ArrayList<>();
       quotient.put(key, qList);
       for(int i=0; i<nList.size(); i++)
       {
@@ -163,6 +163,7 @@ public class MutliResultTool
   
   protected class ResultSummaryComparator implements Comparator<ResultSummary>
   {
+    @Override
     public int compare(ResultSummary r1, ResultSummary r2) 
     {
       if (r1.xValue < r2.xValue) 
@@ -238,12 +239,12 @@ public class MutliResultTool
       Map<String,List<ResultSummary>> baselineSummaries = null;
       if(rs.baseline!=null)
       {
-        baselineSummaries = new HashMap<String,List<ResultSummary>>();
+        baselineSummaries = new HashMap<>();
         processResultsFile(rs.resultDir,rs.baseline+"Results.csv",baselineSummaries,null,null);
       }
       
       CSVPlotTool plotter = new CSVPlotTool();
-      Map<String,List<ResultSummary>> resultSummaries = new HashMap<String,List<ResultSummary>>();
+      Map<String,List<ResultSummary>> resultSummaries = new HashMap<>();
             
       String resultUnit  = null;
       File vdir = new File(rs.resultDir);
@@ -258,7 +259,7 @@ public class MutliResultTool
         if(!xUnit.equals(resultUnit))
           Log.error("The results file "+rs.resultDir+cFile+" has units of "+xUnit+", but I expected units of "+resultUnit);
       }
-      List<String> groundPaths = new ArrayList<String>();
+      List<String> groundPaths = new ArrayList<>();
       for(String key : resultSummaries.keySet())
       {
         List<ResultSummary> l = resultSummaries.get(key);
@@ -284,7 +285,7 @@ public class MutliResultTool
         Map<String,List<ResultSummary>> normalized = divideResultSummary(resultSummaries,baselineSummaries);
         WriteCSV(rs.resultDir+"Summary/",resultUnit+"-Normalized", resultUnit, rs.sort, normalized,CellContent.Value);
       }
-      List<String> sortBy = new ArrayList<String>();
+      List<String> sortBy = new ArrayList<>();
       for(String divisor : rs.divisors.keySet())
       {
         sortBy.clear();
@@ -352,7 +353,7 @@ public class MutliResultTool
         Log.error("Ignoring file does not follow expected naming convention (No xValue) " + resultsFile);
         return xUnit;
       }
-      Map<String,List<Double>> resultData= new HashMap<String,List<Double>>();
+      Map<String,List<Double>> resultData= new HashMap<>();
       sceResults.readAll(resultData);     
       if(plotter!=null)
       {
@@ -373,7 +374,7 @@ public class MutliResultTool
         List<ResultSummary> rsList = resultSummaries.get(key);
         if(rsList==null)
         {
-          rsList = new ArrayList<ResultSummary>();
+          rsList = new ArrayList<>();
           resultSummaries.put(key, rsList);
         }
         
@@ -481,7 +482,7 @@ public class MutliResultTool
     {
       rsList = resultSummaries.values().iterator().next();
       if(sortBy==null)
-        sortBy = new ArrayList<String>();
+        sortBy = new ArrayList<>();
       if(sortBy.isEmpty())
         sortBy.add("All");
       for(String sort : sortBy)
@@ -491,7 +492,7 @@ public class MutliResultTool
           sorted = resultSummaries;
         else
         {
-          sorted= new HashMap<String,List<ResultSummary>>();
+          sorted= new HashMap<>();
 
           for(String key : resultSummaries.keySet())
           {          
@@ -500,7 +501,7 @@ public class MutliResultTool
             sorted.put(key,resultSummaries.get(key));
           }
         }
-        Map<String,PrintWriter> writers = new HashMap<String,PrintWriter>();
+        Map<String,PrintWriter> writers = new HashMap<>();
         writers.put("Mean",new PrintWriter(resultsDir+"/"+resultsName+"-"+sort+"-Mean.csv", "UTF-8"));
         writers.put("Max",new PrintWriter(resultsDir+"/"+resultsName+"-"+sort+"-Max.csv", "UTF-8"));
         writers.put("Min",new PrintWriter(resultsDir+"/"+resultsName+"-"+sort+"-Min.csv", "UTF-8"));

@@ -110,8 +110,8 @@ public class PlotDriver
   
   protected String name;
   protected Map<String,Class<? extends Plotter>> plotters = new HashMap<>();
-  protected Map<String,String> macros = new HashMap<String,String>();
-  protected List<PlotJob> jobs = new ArrayList<PlotJob>();
+  protected Map<String,String> macros = new HashMap<>();
+  protected List<PlotJob> jobs = new ArrayList<>();
   protected Map<String,Map<String,List<Double>>> compareData = new HashMap<>();
   public boolean preload = false;
   public boolean onlyPlotFailures = false;
@@ -126,7 +126,7 @@ public class PlotDriver
   {
     public PlotJob(){ listen(false);  }
     public String         name;
-    public List<String>   headers = new ArrayList<String>();
+    public List<String>   headers = new ArrayList<>();
     public Plotter        plotter = null;
     public String         titleOverride;
     public boolean        ignore = false;
@@ -156,15 +156,15 @@ public class PlotDriver
     public boolean        skipAllEvents = false;
     public boolean        hideAELegend = false;
     public boolean        legendOnly = false;
-    public List<String>   eventOmissions = new ArrayList<String>();
-    public List<String>   actionOmissions = new ArrayList<String>();
+    public List<String>   eventOmissions = new ArrayList<>();
+    public List<String>   actionOmissions = new ArrayList<>();
 
     public boolean        isComparePlot = false;
     public String         computedDataPath = null;  //only used when comparing AND not preloading
     public String         computedDataFile = null;
     
-    public List<String>   Y1headers = new ArrayList<String>();
-    public List<String>   Y2headers = new ArrayList<String>();
+    public List<String>   Y1headers = new ArrayList<>();
+    public List<String>   Y2headers = new ArrayList<>();
     public String         X1header = null;
     public String         X2header = null;
     public Double         X1LowerBound;
@@ -250,7 +250,7 @@ public class PlotDriver
           Class<? extends Plotter> clazz = null;
           try
           {
-            clazz = (Class<? extends Plotter>)Class.forName(value).asSubclass(Plotter.class);
+            clazz = Class.forName(value).asSubclass(Plotter.class);
             this.plotters.put(clazz.getSimpleName(), clazz);
           } 
           catch(Exception e){Log.error("Could not find Plotter "+value);}
@@ -452,8 +452,8 @@ public class PlotDriver
   {    
     CSVContents expectedResults = null;
     CSVContents computedResults = null;
-    Map<String,List<Double>> allExpected=new HashMap<String,List<Double>>();
-    Map<String,List<Double>> allComputed=new HashMap<String,List<Double>>();
+    Map<String,List<Double>> allExpected=new HashMap<>();
+    Map<String,List<Double>> allComputed=new HashMap<>();
     
     //If expected results aren't present, still try to plot computed results
     try
@@ -495,7 +495,7 @@ public class PlotDriver
     {
       try
       {
-        expectedHeaders = new ArrayList<String>(compareData.get(expectedFilePath).keySet());
+        expectedHeaders = new ArrayList<>(compareData.get(expectedFilePath).keySet());
       }
       catch(Exception e)
       {
@@ -503,7 +503,7 @@ public class PlotDriver
       }
       try
       {
-        computedHeaders = new ArrayList<String>(compareData.get(computedFilePath).keySet());
+        computedHeaders = new ArrayList<>(compareData.get(computedFilePath).keySet());
       }
       catch(Exception e)
       {

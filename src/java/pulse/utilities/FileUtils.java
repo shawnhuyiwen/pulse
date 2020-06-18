@@ -494,7 +494,7 @@ public class FileUtils
    */
   public static List<String> findFiles(String directory, String search, boolean recursive)
   {
-    List<String> files = new ArrayList<String>(); 
+    List<String> files = new ArrayList<>(); 
     File dir = new File(directory);
     if(!dir.isDirectory())
     {

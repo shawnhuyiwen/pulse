@@ -22,7 +22,7 @@ public class SEPatientConfiguration
   {
     this.patient = null;
     this.patientFile = "";
-    this.conditions = new ArrayList<SECondition>();
+    this.conditions = new ArrayList<>();
   }
   
   public void reset() 

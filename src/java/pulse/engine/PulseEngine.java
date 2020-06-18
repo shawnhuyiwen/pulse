@@ -152,7 +152,7 @@ public class PulseEngine extends Pulse
   
   public synchronized boolean processAction(SEAction action)
   {
-    List <SEAction> actions = new ArrayList<SEAction>(); 
+    List <SEAction> actions = new ArrayList<>(); 
     actions.add(action);
     return processActions(actions);
   }

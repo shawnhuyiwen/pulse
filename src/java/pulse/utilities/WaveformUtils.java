@@ -53,7 +53,7 @@ public class WaveformUtils
     try
     {
       CSVContents results = new CSVContents(resultsFile);
-      Map<String,List<Double>> resultData=new HashMap<String,List<Double>>();
+      Map<String,List<Double>> resultData=new HashMap<>();
       results.readAll(resultData);
       if(resultsName==null)// Grab whatever from the results
         resultsName = resultData.keySet().iterator().next();        
@@ -71,10 +71,10 @@ public class WaveformUtils
   }
   public static List<Double> getMinimums(List<Double> data)
   {
-    List<Double> xMin = new ArrayList<Double>();
-    List<Double> yMin = new ArrayList<Double>();
-    List<Double> xMax = new ArrayList<Double>();
-    List<Double> yMax = new ArrayList<Double>();    
+    List<Double> xMin = new ArrayList<>();
+    List<Double> yMin = new ArrayList<>();
+    List<Double> xMax = new ArrayList<>();
+    List<Double> yMax = new ArrayList<>();    
     getPeriodBounds(data,data,xMin,yMin,xMax,yMax);
     return xMin;
   }
@@ -85,10 +85,10 @@ public class WaveformUtils
   }
   public static List<Double> getMaximums(List<Double> data)
   {
-    List<Double> xMin = new ArrayList<Double>();
-    List<Double> yMin = new ArrayList<Double>();
-    List<Double> xMax = new ArrayList<Double>();
-    List<Double> yMax = new ArrayList<Double>();    
+    List<Double> xMin = new ArrayList<>();
+    List<Double> yMin = new ArrayList<>();
+    List<Double> xMax = new ArrayList<>();
+    List<Double> yMax = new ArrayList<>();    
     getPeriodBounds(data,data,xMin,yMin,xMax,yMax);
     return xMax;
   }
@@ -185,10 +185,10 @@ public class WaveformUtils
       dataSet.addSeries(plotter.createXYSeries(title,xData,yData));
       
       // Pull out our max and mins
-      List<Double> xMin = new ArrayList<Double>();
-      List<Double> yMin = new ArrayList<Double>();
-      List<Double> xMax = new ArrayList<Double>();
-      List<Double> yMax = new ArrayList<Double>();
+      List<Double> xMin = new ArrayList<>();
+      List<Double> yMin = new ArrayList<>();
+      List<Double> xMax = new ArrayList<>();
+      List<Double> yMax = new ArrayList<>();
       
       WaveformUtils.getPeriodBounds(xData, yData, xMin, yMin, xMax, yMax);
       

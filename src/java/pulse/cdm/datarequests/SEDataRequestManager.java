@@ -12,7 +12,7 @@ public class SEDataRequestManager
 {
   protected String                        resultsFilename;
   // TODO Decimal Formatting Data
-  protected List<SEDataRequest>           dataRequests = new ArrayList<SEDataRequest>();  
+  protected List<SEDataRequest>           dataRequests = new ArrayList<>();  
   protected double                        samplesPerSecond;
   
   public SEDataRequestManager()

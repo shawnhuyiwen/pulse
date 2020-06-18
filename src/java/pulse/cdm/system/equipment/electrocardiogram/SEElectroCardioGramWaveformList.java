@@ -16,7 +16,7 @@ import pulse.utilities.FileUtils;
 
 public class SEElectroCardioGramWaveformList
 {
-  Map<eWaveformLead,Map<eHeartRhythm,SEElectroCardioGramWaveform>> waveforms = new HashMap<eWaveformLead, Map<eHeartRhythm,SEElectroCardioGramWaveform>>();
+  Map<eWaveformLead,Map<eHeartRhythm,SEElectroCardioGramWaveform>> waveforms = new HashMap<>();
  
   public SEElectroCardioGramWaveformList()
   {
@@ -49,7 +49,7 @@ public class SEElectroCardioGramWaveformList
       Map<eHeartRhythm, SEElectroCardioGramWaveform> leads = dst.waveforms.get(w.getLead());
       if(leads == null)
       {
-        leads = new HashMap<eHeartRhythm, SEElectroCardioGramWaveform>();
+        leads = new HashMap<>();
         dst.waveforms.put(w.getLead(), leads);
       }
       leads.put(w.getRhythm(), w);
@@ -75,7 +75,7 @@ public class SEElectroCardioGramWaveformList
     Map<eHeartRhythm, SEElectroCardioGramWaveform> leads = this.waveforms.get(lead);
     if(leads == null)
     {
-      leads = new HashMap<eHeartRhythm, SEElectroCardioGramWaveform>();
+      leads = new HashMap<>();
       this.waveforms.put(lead, leads);
     }
     if(!leads.containsKey(rhythm))

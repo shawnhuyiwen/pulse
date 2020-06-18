@@ -12,7 +12,7 @@ public class SETestCase
 {
 	protected String         name;
 	protected SEScalarTime   duration;
-	protected List<String>   failures = new ArrayList<String>();
+	protected List<String>   failures = new ArrayList<>();
 
   protected SEEqualOptions eqOpts;
 	

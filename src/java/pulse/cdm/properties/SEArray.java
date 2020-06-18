@@ -54,7 +54,7 @@ public class SEArray extends SEProperty
     else if (ary.dList != null && !ary.dList.isEmpty())
     {
       if (this.dList == null)
-        this.dList = new ArrayList<Double>();
+        this.dList = new ArrayList<>();
       this.dList.addAll(ary.dList);
     }
     return true;
@@ -151,7 +151,7 @@ public class SEArray extends SEProperty
         }
         else if(from.dList!=null)
         {
-          List<Double> todList=new ArrayList<Double>();
+          List<Double> todList=new ArrayList<>();
           to.getDoubleData(todList);
           if(options != null)
             options.popTrack();//The SEArray.equals will track the name again
@@ -604,7 +604,7 @@ public class SEArray extends SEProperty
       d=UnitConverter.convert(d, unit, this.unit);
     }
     if (this.dList == null)
-      this.dList = new ArrayList<Double>();
+      this.dList = new ArrayList<>();
     this.dList.add(d);
     return true;
   }
@@ -628,7 +628,7 @@ public class SEArray extends SEProperty
       array=UnitConverter.convert(array, unit, this.unit);
     }
     if (this.dList == null)
-      this.dList = new ArrayList<Double>();
+      this.dList = new ArrayList<>();
     addArrayToList(this.dList, array);
     return true;
   }

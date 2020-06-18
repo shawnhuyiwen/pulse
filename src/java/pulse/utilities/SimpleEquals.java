@@ -20,7 +20,7 @@ public class SimpleEquals
       return false;
     }
     
-    List<Field> fieldList = new ArrayList<Field>();
+    List<Field> fieldList = new ArrayList<>();
     Class<?> tmpClass = A.getClass();
     while (tmpClass != null) 
     {

@@ -40,8 +40,8 @@ public class SEMechanicalVentilation extends SEPatientAction
     flow = null;
     pressure = null;
     state = eSwitch.Off;
-    this.gasFractions=new ArrayList<SESubstanceFraction>();
-    this.aerosols=new ArrayList<SESubstanceConcentration>();
+    this.gasFractions=new ArrayList<>();
+    this.aerosols=new ArrayList<>();
   }
 
   @Override

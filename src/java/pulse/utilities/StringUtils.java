@@ -33,7 +33,7 @@ public class StringUtils
     return true;
   }
   
-  private static Map<Integer,DecimalFormat> formatters=new HashMap<Integer,DecimalFormat>();
+  private static Map<Integer,DecimalFormat> formatters=new HashMap<>();
  
   public static DecimalFormat getFormatter(int precision)
   {
@@ -49,7 +49,7 @@ public class StringUtils
     return df;
   }
   
-  private static Map<Integer,DecimalFormat> scientificFormatters=new HashMap<Integer,DecimalFormat>();
+  private static Map<Integer,DecimalFormat> scientificFormatters=new HashMap<>();
   
   public static DecimalFormat getScientificFormatter(int precision)
   {
@@ -155,7 +155,7 @@ public class StringUtils
   
   public static double[] toArray(String dataString, int precision)
   {
-    List<String> ary = new ArrayList<String>(); 
+    List<String> ary = new ArrayList<>(); 
 
     String val;
     int start = 0, end = 0;    
@@ -196,7 +196,7 @@ public class StringUtils
   public static void toList(String dataString, List<Double> list)
   {
     list.clear();
-    List<String> ary = new ArrayList<String>(); 
+    List<String> ary = new ArrayList<>(); 
 
     String val;
     int start = 0, end = 0;    

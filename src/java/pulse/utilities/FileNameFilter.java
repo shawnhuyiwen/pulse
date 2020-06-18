@@ -17,7 +17,7 @@ import java.util.Set;
 public class FileNameFilter implements FilenameFilter
 {
   String filename;
-  Set<String> ignoredExtensions=new HashSet<String>();
+  Set<String> ignoredExtensions=new HashSet<>();
   
   public FileNameFilter(String filename)
   {

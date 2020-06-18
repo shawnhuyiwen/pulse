@@ -60,8 +60,8 @@ public class SEEnvironmentalConditions
     this.relativeHumidity=null;
     this.respirationAmbientTemperature=null;
 
-    this.ambientGases=new ArrayList<SESubstanceFraction>();
-    this.ambientAerosols=new ArrayList<SESubstanceConcentration>();
+    this.ambientGases=new ArrayList<>();
+    this.ambientAerosols=new ArrayList<>();
 
   }
   

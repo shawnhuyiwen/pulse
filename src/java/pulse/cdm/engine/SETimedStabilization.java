@@ -23,7 +23,7 @@ public class SETimedStabilization
   public SETimedStabilization()
   {
     super();
-    this.conditionStabilizationTimes=new HashMap<String,SEScalarTime>();
+    this.conditionStabilizationTimes=new HashMap<>();
   }
   
   public void reset()

@@ -19,7 +19,7 @@ public class SEGasCompartment extends SEFluidCompartment
   
   public SEGasCompartment()
   {
-    this.substanceQuantities=new ArrayList<SEGasSubstanceQuantity>();
+    this.substanceQuantities=new ArrayList<>();
   }
   
   @Override

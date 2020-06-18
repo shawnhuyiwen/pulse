@@ -59,8 +59,8 @@ public class SEMechanicalVentilator extends SEEquipment
     positiveEndExpiredPressure = null;
     respiratoryRate = null;
 
-    this.fractionInspiredGases=new ArrayList<SESubstanceFraction>();
-    this.concentrationInspiredAerosol=new ArrayList<SESubstanceConcentration>();
+    this.fractionInspiredGases=new ArrayList<>();
+    this.concentrationInspiredAerosol=new ArrayList<>();
   }
 
   @Override

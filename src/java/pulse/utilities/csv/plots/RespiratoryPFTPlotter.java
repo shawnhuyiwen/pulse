@@ -53,10 +53,10 @@ import pulse.utilities.csv.plots.PlotDriver.PlotJob;
 
 public class RespiratoryPFTPlotter implements Plotter
 {
-  protected List<LogEvent> events = new ArrayList<LogEvent>();
-  protected Map<String,List<Double>> data = new HashMap<String,List<Double>>();
-  protected Map<String,List<Double>> PFTData = new HashMap<String,List<Double>>();  //might be able to get rid of this
-  protected List<SEAction> actions = new ArrayList<SEAction>();
+  protected List<LogEvent> events = new ArrayList<>();
+  protected Map<String,List<Double>> data = new HashMap<>();
+  protected Map<String,List<Double>> PFTData = new HashMap<>();  //might be able to get rid of this
+  protected List<SEAction> actions = new ArrayList<>();
   protected SEScenario scenario;
   protected SEPulmonaryFunctionTest pft;
 
@@ -65,6 +65,7 @@ public class RespiratoryPFTPlotter implements Plotter
     PlotDriver.main(args);
   }
   
+  @Override
   public void plot(LogListener listener, SESubstanceManager subMgr)
   {    
     //fill PlotJob with needed data if it doesn't exist
@@ -117,12 +118,12 @@ public class RespiratoryPFTPlotter implements Plotter
           
           SEFunctionVolumeVsTime points = this.pft.getLungVolumePlot();
                    
-          List<Double> timeValues = new ArrayList<Double>();
+          List<Double> timeValues = new ArrayList<>();
           for(double d : points.getTime(TimeUnit.s))
           {
             timeValues.add(d+PFTtime_s);  
           }
-          List<Double> volumeValues = new ArrayList<Double>();
+          List<Double> volumeValues = new ArrayList<>();
           for(double d : points.getVolume(VolumeUnit.mL))
           {
             volumeValues.add(d);
@@ -147,11 +148,11 @@ public class RespiratoryPFTPlotter implements Plotter
         csv.abreviateContents = job.resultsSkipNum;
         for (int i = 0; i < job.headers.size(); i++)
         {
-          List<Double> headerData = new ArrayList<Double>();
+          List<Double> headerData = new ArrayList<>();
           csv.readHeader(csv.unitUnderscoreToSpace(job.headers.get(i)), headerData);
           data.put(job.headers.get(i), headerData);
         }      
-        List<Double> timeHeaderData = new ArrayList<Double>();
+        List<Double> timeHeaderData = new ArrayList<>();
         csv.readHeader("Time(s)", timeHeaderData);
         data.put("Time(s)", timeHeaderData);
       } catch (IOException e)
@@ -166,7 +167,7 @@ public class RespiratoryPFTPlotter implements Plotter
   
   public List<LogEvent> getEventsFromLog(String file)
   {
-    List<LogEvent> events = new ArrayList<LogEvent>();
+    List<LogEvent> events = new ArrayList<>();
     
     try
     {
@@ -249,8 +250,8 @@ public class RespiratoryPFTPlotter implements Plotter
     class AEEntry implements Comparable<AEEntry>
     {
       public String name;
-      public List<Double> times = new ArrayList<Double>();
-      public List<Double> YVals = new ArrayList<Double>();
+      public List<Double> times = new ArrayList<>();
+      public List<Double> YVals = new ArrayList<>();
       public String type = "";
       
       @Override
@@ -262,7 +263,7 @@ public class RespiratoryPFTPlotter implements Plotter
       }
     }
     
-    List<AEEntry> allActionsAndEvents = new ArrayList<AEEntry>();
+    List<AEEntry> allActionsAndEvents = new ArrayList<>();
     
     if (!job.skipAllEvents)
     {

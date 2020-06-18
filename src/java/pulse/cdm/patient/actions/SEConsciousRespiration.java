@@ -19,7 +19,7 @@ public class SEConsciousRespiration extends SEPatientAction
   public SEConsciousRespiration()
   {
     startImmediately = false;
-    commands = new ArrayList<SEConsciousRespirationCommand>();
+    commands = new ArrayList<>();
   }
   
   public void copy(SEConsciousRespiration other)

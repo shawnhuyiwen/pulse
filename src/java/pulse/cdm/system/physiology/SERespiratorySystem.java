@@ -291,7 +291,7 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
     if (src.hasMeanAirwayPressure())
       SEScalarPressure.load(src.getMeanAirwayPressure(),dst.getMeanAirwayPressure());
     if (src.hasOxygenationIndex())
-      SEScalarPressure.load(src.getOxygenationIndex(),dst.getOxygenationIndex());
+      SEScalar.load(src.getOxygenationIndex(),dst.getOxygenationIndex());
     if (src.hasOxygenSaturationIndex())
       SEScalarPressure.load(src.getOxygenSaturationIndex(),dst.getOxygenSaturationIndex());
     if (src.hasPatientPowerOfBreathing())

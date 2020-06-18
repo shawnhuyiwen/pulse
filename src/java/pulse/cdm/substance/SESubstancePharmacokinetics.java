@@ -13,7 +13,7 @@ import pulse.cdm.bind.Substance.SubstanceTissuePharmacokineticsData;
 public class SESubstancePharmacokinetics
 {
   protected SESubstancePhysicochemicals physicochemicals;  
-  protected Map<String,SESubstanceTissuePharmacokinetics> TissueKinetics = new HashMap<String,SESubstanceTissuePharmacokinetics>();
+  protected Map<String,SESubstanceTissuePharmacokinetics> TissueKinetics = new HashMap<>();
     
   public SESubstancePharmacokinetics()
   {

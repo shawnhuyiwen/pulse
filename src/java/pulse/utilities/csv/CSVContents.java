@@ -25,8 +25,8 @@ public class CSVContents
 {
   // The file
   protected String          resultsFile;
-  protected List<String>    headers = new ArrayList<String>();
-  List<Double>              rowDoubles = new ArrayList<Double>();
+  protected List<String>    headers = new ArrayList<>();
+  List<Double>              rowDoubles = new ArrayList<>();
 
   protected FileInputStream fStream = null;
   protected DataInputStream in      = null;
@@ -39,14 +39,14 @@ public class CSVContents
   public static void main(String[] args) throws IOException
   {
     CSVContents regular = new CSVContents("./scenarios/showcase/CombatMultitraumaResults.csv");
-    List<Double> regularData = new ArrayList<Double>();
+    List<Double> regularData = new ArrayList<>();
     regular.readHeader("Lead3ElectricPotential(mV)", regularData);
     double regularMax = DoubleUtils.getMax(regularData);
     double regularMin = DoubleUtils.getMin(regularData);
     System.out.println("Regular : Max : "+regularMax+" Min : "+regularMin);
     
     CSVContents nonInterp = new CSVContents("./scenarios/showcase/CombatMultitraumaResults-NoInterp.csv");
-    List<Double> nonInterpData = new ArrayList<Double>();
+    List<Double> nonInterpData = new ArrayList<>();
     nonInterp.readHeader("Lead3ElectricPotential(mV)", nonInterpData);
     double nonInterpMax = DoubleUtils.getMax(nonInterpData);
     double nonInterpMin = DoubleUtils.getMin(nonInterpData);
@@ -221,7 +221,7 @@ public class CSVContents
         list=results.get(header);
         if(list==null)
         {
-          list=new ArrayList<Double>();          
+          list=new ArrayList<>();          
           results.put(header, list);
         }
         d=this.rowDoubles.get(h++);

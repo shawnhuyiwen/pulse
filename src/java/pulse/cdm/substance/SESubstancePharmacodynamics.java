@@ -121,7 +121,7 @@ public class SESubstancePharmacodynamics
     if(src.hasEC50())
       dst.setEC50(SEScalarMassPerVolume.unload(src.getEC50()));
     if(src.hasEMaxShapeParameter())
-      dst.setEMaxShapeParameter(SEScalarNegative1To1.unload(src.getEMaxShapeParameter()));
+      dst.setEMaxShapeParameter(SEScalar.unload(src.getEMaxShapeParameter()));
     if(src.hasHeartRateModifier())
       dst.setHeartRateModifier(SEScalarNegative1To1.unload(src.getHeartRateModifier()));
     if(src.hasNeuromuscularBlock())

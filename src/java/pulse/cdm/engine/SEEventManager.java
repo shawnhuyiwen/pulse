@@ -12,8 +12,8 @@ import pulse.cdm.properties.SEScalarTime;
 public class SEEventManager
 {
   SEEventHandler handler;
-  protected Map<eEvent,Boolean> states = new HashMap<eEvent,Boolean>();
-  protected Map<eEvent,Double> durations = new HashMap<eEvent,Double>();
+  protected Map<eEvent,Boolean> states = new HashMap<>();
+  protected Map<eEvent,Double> durations = new HashMap<>();
   
   public SEEventManager()
   {

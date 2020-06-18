@@ -36,13 +36,14 @@ public class SETestReport
     public int             runs;
     public int             errors;
     public double          duration_s;
-    public List<String>    failures = new ArrayList<String>();
-    public List<String>    requirements = new ArrayList<String>();
+    public List<String>    failures = new ArrayList<>();
+    public List<String>    requirements = new ArrayList<>();
     public StringBuilder   html=new StringBuilder();
   }
 
   private class DataComparator implements Comparator<Data>
   {
+    @Override
     public int compare(Data o1, Data o2) 
     {
       return o1.name.compareTo(o2.name);
@@ -53,8 +54,8 @@ public class SETestReport
   {
     this.reportDir="./";
     setFileName("TestReport.json");
-    testSuites = new ArrayList<SETestSuite>();
-    knownFailingSuites = new ArrayList<String>();
+    testSuites = new ArrayList<>();
+    knownFailingSuites = new ArrayList<>();
   }
   
   public void reset()
@@ -226,8 +227,8 @@ public class SETestReport
 
     if(groups == null)
     {
-      groups = new HashMap<String,List<String>>();
-      List<String> all = new ArrayList<String>();
+      groups = new HashMap<>();
+      List<String> all = new ArrayList<>();
       for(SETestSuite ts : this.testSuites)
         all.add(ts.getName());
       groups.put(this.name, all);
@@ -256,8 +257,8 @@ public class SETestReport
       int totalRuns=0;
       int totalErrors=0;
       double totalDuration_s=0;
-      List<SETestReport.Data> errorData = new ArrayList<SETestReport.Data>();
-      List<SETestReport.Data> passedData = new ArrayList<SETestReport.Data>();
+      List<SETestReport.Data> errorData = new ArrayList<>();
+      List<SETestReport.Data> passedData = new ArrayList<>();
 
       SETestReport.Data data;
       for(SETestSuite ts : this.testSuites)

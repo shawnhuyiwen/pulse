@@ -39,7 +39,7 @@ import pulse.utilities.csv.plots.PlotDriver.PlotJob;
 public class ConvexHullPlotter implements Plotter
 {
 
-  protected Map<String,List<Double>> data = new HashMap<String,List<Double>>();
+  protected Map<String,List<Double>> data = new HashMap<>();
   
   public static void main(String[] args)
   {
@@ -53,15 +53,15 @@ public class ConvexHullPlotter implements Plotter
     //We want two set of points, the ones that extend from the maximum X value to the minimum on bottom, and then the ones on the way back
     //So that our plot is continuous, we'll include the min and max X points in both sets
     
-    List<Double> bottomXVals = new ArrayList<Double>();
-    List<Double> bottomYVals = new ArrayList<Double>();
-    List<Double> topXVals = new ArrayList<Double>();
-    List<Double> topYVals = new ArrayList<Double>();
-    List<Double> leftXVals = new ArrayList<Double>();
-    List<Double> leftYVals = new ArrayList<Double>();
-    List<Double> rightXVals = new ArrayList<Double>();
-    List<Double> rightYVals = new ArrayList<Double>();
-    List<List<Double>> splitVals = new ArrayList<List<Double>>();
+    List<Double> bottomXVals = new ArrayList<>();
+    List<Double> bottomYVals = new ArrayList<>();
+    List<Double> topXVals = new ArrayList<>();
+    List<Double> topYVals = new ArrayList<>();
+    List<Double> leftXVals = new ArrayList<>();
+    List<Double> leftYVals = new ArrayList<>();
+    List<Double> rightXVals = new ArrayList<>();
+    List<Double> rightYVals = new ArrayList<>();
+    List<List<Double>> splitVals = new ArrayList<>();
     
     int minXindex = 0;
     
@@ -103,6 +103,7 @@ public class ConvexHullPlotter implements Plotter
     return splitVals;
   }
 
+  @Override
   public void plot(LogListener listener, SESubstanceManager subMgr)
   {
     //fill PlotJob with needed data if it doesn't exist
@@ -121,7 +122,7 @@ public class ConvexHullPlotter implements Plotter
         csv.abreviateContents = job.resultsSkipNum;
         for (int i = 0; i < job.headers.size(); i++)
         {
-          List<Double> headerData = new ArrayList<Double>();
+          List<Double> headerData = new ArrayList<>();
           csv.readHeader(csv.unitUnderscoreToSpace(job.headers.get(i)), headerData);
           data.put(job.headers.get(i), headerData);
         }        
@@ -156,8 +157,8 @@ public class ConvexHullPlotter implements Plotter
       
       //For convex hulls, we have to reorder points before inserting into the dataset
       ConvexHullMaker maker = new ConvexHullMaker();
-      List<List<Double>> newVals = new ArrayList<List<Double>>();
-      List<List<Double>> splitVals = new ArrayList<List<Double>>();
+      List<List<Double>> newVals = new ArrayList<>();
+      List<List<Double>> splitVals = new ArrayList<>();
       newVals = maker.make(data.get(job.X1header), data.get(job.Y1headers.get(i)));
       splitVals = splitHull(newVals);
       dataSeriesTop = plotTool.createXYSeries(job.Y1headers.get(i),splitVals.get(0),splitVals.get(1));
@@ -186,8 +187,8 @@ public class ConvexHullPlotter implements Plotter
       XYSeries dataSeriesRight;
       
       ConvexHullMaker maker = new ConvexHullMaker();
-      List<List<Double>> newVals = new ArrayList<List<Double>>();
-      List<List<Double>> splitVals = new ArrayList<List<Double>>();
+      List<List<Double>> newVals = new ArrayList<>();
+      List<List<Double>> splitVals = new ArrayList<>();
       newVals = maker.make(data.get(job.X2header), data.get(job.Y2headers.get(i)));
       splitVals = splitHull(newVals);
       dataSeriesTop = plotTool.createXYSeries(job.Y2headers.get(i),splitVals.get(0),splitVals.get(1));

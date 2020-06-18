@@ -21,7 +21,7 @@ public class SELiquidCompartment extends SEFluidCompartment
   
   public SELiquidCompartment()
   {
-    this.substanceQuantities=new ArrayList<SELiquidSubstanceQuantity>();
+    this.substanceQuantities=new ArrayList<>();
   }
   
   @Override

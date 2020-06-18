@@ -48,7 +48,7 @@ public class FindObjects
   }
   public static Set<Class<? extends Object>> findAllClasses(String packageName)
   {
-    List<ClassLoader> classLoadersList = new LinkedList<ClassLoader>();
+    List<ClassLoader> classLoadersList = new LinkedList<>();
     classLoadersList.add(ClasspathHelper.contextClassLoader());
     classLoadersList.add(ClasspathHelper.staticClassLoader());
 
@@ -65,7 +65,7 @@ public class FindObjects
   public static Set<Class<?>> findAssignableClassInArchive(String arPath, String packageName, Class<?> target) throws IOException
   {
     Class<?> found;
-    Set<Class<?>> classes = new HashSet<Class<?>>();
+    Set<Class<?>> classes = new HashSet<>();
     
     String className;
     String path = packageName.replace(".", "/");
@@ -77,7 +77,7 @@ public class FindObjects
     
     while (e.hasMoreElements())
     {
-      ae = (ZipEntry) e.nextElement();
+      ae = e.nextElement();
       itemName = ae.getName();
       try
       {
@@ -105,7 +105,7 @@ public class FindObjects
   public static Set<File> findFile(String fileName, File directory)
   {
     
-    Set<File> found = new HashSet<File>();
+    Set<File> found = new HashSet<>();
     if(directory.isFile())
     {
       Log.warn("findFile needs a directory to search, not a file");
@@ -146,7 +146,7 @@ public class FindObjects
     //  Log.info("break");
     // Get all methods we care about (get and has methods)
     String methodName;
-    Map<String,Method> methodMap = new HashMap<String,Method>();
+    Map<String,Method> methodMap = new HashMap<>();
     Method[] methods=clazz.getMethods();
     // Let's get all method names of methods we care about
     // Or at least with out ones we don't care about...
@@ -170,7 +170,7 @@ public class FindObjects
     
     // Now bin them by type name:
     String property;    
-    List<BagMethod> bagMethods = new ArrayList<BagMethod>();
+    List<BagMethod> bagMethods = new ArrayList<>();
     for (String name : methodMap.keySet())
     {
       if (name.startsWith("has"))

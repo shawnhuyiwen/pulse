@@ -43,7 +43,7 @@ public class ConvexHullMaker
       return null;
     }
     
-    ArrayList<Point> points = new ArrayList<Point>();
+    ArrayList<Point> points = new ArrayList<>();
     
     for(int i = 0; i < xVals.size(); i++)
     {
@@ -56,9 +56,9 @@ public class ConvexHullMaker
   
   public List<List<Double>> pointsToLists(ArrayList<Point> points)
   {    
-    List<List<Double>> lists = new ArrayList<List<Double>>();
-    List<Double> xVals = new ArrayList<Double>();
-    List<Double> yVals = new ArrayList<Double>();
+    List<List<Double>> lists = new ArrayList<>();
+    List<Double> xVals = new ArrayList<>();
+    List<Double> yVals = new ArrayList<>();
     
     for(int i = 0; i < points.size(); i++)
     {
@@ -74,9 +74,9 @@ public class ConvexHullMaker
   
   public ArrayList<Point> quickHull(ArrayList<Point> points)
   {
-    ArrayList<Point> convexHull = new ArrayList<Point>();
+    ArrayList<Point> convexHull = new ArrayList<>();
     if (points.size() < 3)
-      return new ArrayList<Point>(points);
+      return new ArrayList<>(points);
 
     int minPoint = -1, maxPoint = -1;
     double minX = Double.MAX_VALUE;
@@ -109,8 +109,8 @@ public class ConvexHullMaker
     points.remove(A);
     points.remove(B);
     
-    ArrayList<Point> leftSet = new ArrayList<Point>();
-    ArrayList<Point> rightSet = new ArrayList<Point>();
+    ArrayList<Point> leftSet = new ArrayList<>();
+    ArrayList<Point> rightSet = new ArrayList<>();
     
     for (int i = 0; i < points.size(); i++)
     {
@@ -174,7 +174,7 @@ public class ConvexHullMaker
     hull.add(insertPosition, P);
 
     // Determine who's to the left of AP
-    ArrayList<Point> leftSetAP = new ArrayList<Point>();
+    ArrayList<Point> leftSetAP = new ArrayList<>();
     for (int i = 0; i < set.size(); i++)
     {
       Point M = set.get(i);
@@ -185,7 +185,7 @@ public class ConvexHullMaker
     }
 
     // Determine who's to the left of PB
-    ArrayList<Point> leftSetPB = new ArrayList<Point>();
+    ArrayList<Point> leftSetPB = new ArrayList<>();
     for (int i = 0; i < set.size(); i++)
     {
       Point M = set.get(i);

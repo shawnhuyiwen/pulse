@@ -20,7 +20,7 @@ public class SEReportResults
     {
       // Here are the files we are looking for
       // And the order we want them in full report
-      List<String> files = new ArrayList<String>();
+      List<String> files = new ArrayList<>();
       files.add("CDMUnitTests.html");
       files.add("EngineUnitTests.html");
       files.add("ScenarioVerification.html");

@@ -33,12 +33,12 @@ public class SETestConfiguration
   protected boolean executeJobs=true;
   protected boolean plotResults=true;
 
-  protected Map<String,String> macros = new HashMap<String,String>();
+  protected Map<String,String> macros = new HashMap<>();
   protected Map<String,Class<? extends SETestDriver.Executor>> executors = new HashMap<>();
-  protected List<SETestJob> jobs = new ArrayList<SETestJob>();  
+  protected List<SETestJob> jobs = new ArrayList<>();  
 
-  protected Map<SETestJob,String> job2groups = new HashMap<SETestJob,String>();
-  protected Map<String,List<String>> groups = new LinkedHashMap<String,List<String>>();
+  protected Map<SETestJob,String> job2groups = new HashMap<>();
+  protected Map<String,List<String>> groups = new LinkedHashMap<>();
 
   public void processConfigFile(File configFile, RunConfiguration cfg)
   {
@@ -262,7 +262,7 @@ public class SETestConfiguration
         else
         {
           String[] patientFiles = this.patientFiles.split(",");
-          patientFileNames = new ArrayList<String>();
+          patientFileNames = new ArrayList<>();
           for(String patientFile : patientFiles)
           {
             patientFile = patientFile.trim();
@@ -272,7 +272,7 @@ public class SETestConfiguration
           }
         }
 
-        List<SETestJob> oldJobs = new ArrayList<SETestJob>(jobs);
+        List<SETestJob> oldJobs = new ArrayList<>(jobs);
         jobs.clear();
         SETestJob copy;
 

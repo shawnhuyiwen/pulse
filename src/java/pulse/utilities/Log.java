@@ -52,7 +52,7 @@ public class Log
   private static Level level=Level.INFO;
   public static boolean output2Console = true;
   private static String currentLoggerName;
-  private static Set<String> ignoreClasses=new HashSet<String>();
+  private static Set<String> ignoreClasses=new HashSet<>();
   static
   {
     ignoreClasses.add("Log");
@@ -60,7 +60,7 @@ public class Log
   }
 
   /** Key is the thread ID you want this listener to listen to*/
-  private static Map<String,Set<LogListener>> appenders=new HashMap<String,Set<LogListener>>(); 
+  private static Map<String,Set<LogListener>> appenders=new HashMap<>(); 
 
   public synchronized static void addAppender(LogListener appender)
   {
@@ -68,7 +68,7 @@ public class Log
     Set<LogListener> listeners = appenders.get(tName);
     if(listeners==null)
     {
-      listeners = new HashSet<LogListener>();
+      listeners = new HashSet<>();
       appenders.put(tName, listeners);
     }
     listeners.add(appender);
@@ -79,7 +79,7 @@ public class Log
     Set<LogListener> listeners = appenders.get(threadName);
     if(listeners==null)
     {
-      listeners = new HashSet<LogListener>();
+      listeners = new HashSet<>();
       appenders.put(threadName, listeners);
     }
     listeners.add(appender);

@@ -9,10 +9,10 @@ import pulse.cdm.bind.Compartment.CompartmentData;
 
 public class SECompartmentManager
 {
-  protected Map<String,SEGasCompartment>        gas=new HashMap<String,SEGasCompartment>();
-  protected Map<String,SELiquidCompartment>     liquid=new HashMap<String,SELiquidCompartment>();
-  protected Map<String,SEThermalCompartment>    thermal=new HashMap<String,SEThermalCompartment>();
-  protected Map<String,SETissueCompartment>     tissue=new HashMap<String,SETissueCompartment>();
+  protected Map<String,SEGasCompartment>        gas=new HashMap<>();
+  protected Map<String,SELiquidCompartment>     liquid=new HashMap<>();
+  protected Map<String,SEThermalCompartment>    thermal=new HashMap<>();
+  protected Map<String,SETissueCompartment>     tissue=new HashMap<>();
   
   public SECompartmentManager()
   {

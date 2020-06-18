@@ -62,7 +62,7 @@ public class ValidationMatrix
   public static class Sheet 
   {    
     public SheetSummary summary;
-    public List<List<SheetCell>> table = new ArrayList<List<SheetCell>>();
+    public List<List<SheetCell>> table = new ArrayList<>();
   }
   public static class SheetCell
   {
@@ -101,10 +101,10 @@ public class ValidationMatrix
     FileInputStream xlFile = new FileInputStream(new File(from));
     // Read workbook into HSSFWorkbook
     XSSFWorkbook xlWBook = new XSSFWorkbook(xlFile);
-    List<SheetSummary> sheetSummaries = new ArrayList<SheetSummary>();// has to be an ordered list as sheet names can only be so long
-    Map<String,String> refs = new HashMap<String,String>();
+    List<SheetSummary> sheetSummaries = new ArrayList<>();// has to be an ordered list as sheet names can only be so long
+    Map<String,String> refs = new HashMap<>();
     
-    List<Sheet> Sheets = new ArrayList<Sheet>();
+    List<Sheet> Sheets = new ArrayList<>();
     
     for(int s=0; s<xlWBook.getNumberOfSheets(); s++)
     {
@@ -158,7 +158,7 @@ public class ValidationMatrix
             List<SheetCell> column;
             if(r==0)
             {
-              column = new ArrayList<SheetCell>();
+              column = new ArrayList<>();
               sheet.table.add(column);
             }
             else

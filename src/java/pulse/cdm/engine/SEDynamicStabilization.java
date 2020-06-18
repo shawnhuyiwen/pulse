@@ -21,7 +21,7 @@ public class SEDynamicStabilization
   
   public SEDynamicStabilization()
   {
-    this.conditionConvergence=new HashMap<String,SEDynamicStabilizationEngineConvergence>();
+    this.conditionConvergence=new HashMap<>();
   }
   
   public void reset()

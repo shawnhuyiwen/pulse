@@ -86,7 +86,7 @@ public class SESubstanceCompound
   public List<SESubstanceConcentration> getComponents() 
   { 
     if(this.components==null)
-      this.components=new ArrayList<SESubstanceConcentration>();
+      this.components=new ArrayList<>();
     return this.components;
   }  
   public boolean hasComponents() {return this.components==null?false:this.components.size()>0;}
