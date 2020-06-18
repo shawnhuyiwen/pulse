@@ -261,7 +261,6 @@ public class CDM2MD
     {
       for(Object o : c.getEnumConstants())
       {
-        Method m;
         //Enum<?> e = (Enum<?>)o;
         try
         { 
