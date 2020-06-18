@@ -289,7 +289,7 @@ public class PlotDriver
           {
             if(plotters.containsKey(directive))
             {
-              try{job.plotter = plotters.get(directive).newInstance();}
+              try{job.plotter = plotters.get(directive).getConstructor().newInstance();}
               catch (Exception e)
               {
                 job.ignore = true;

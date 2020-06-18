@@ -185,7 +185,7 @@ public class SETestConfiguration
           {
             if(executors.containsKey(directive))
             {
-              try{job.executor = executors.get(directive).newInstance();}
+              try{job.executor = executors.get(directive).getConstructor().newInstance();}
               catch (Exception e)
               {
                 job.knownFailure = true;

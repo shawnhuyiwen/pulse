@@ -8,7 +8,7 @@ package pulse.utilities;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Collections;
+import java.math.RoundingMode;
 import java.util.List;
 
 /**
@@ -263,7 +263,7 @@ public class DoubleUtils implements Serializable
     
     double new_d;
     BigDecimal bd = new BigDecimal(d);
-    bd = bd.setScale(mantissaLengthcopy, BigDecimal.ROUND_HALF_UP);
+    bd = bd.setScale(mantissaLengthcopy, RoundingMode.HALF_UP);
     new_d = bd.doubleValue(); 
     //String s = StringUtils.toString(new_d,mantissaLength);
     //double e = Double.parseDouble(s);
@@ -277,7 +277,7 @@ public class DoubleUtils implements Serializable
    * @param bigDecimalRoundMode
    * @return
    */
-  public static double truncate(double d, int mantissaLength, int bigDecimalRoundMode)
+  public static double truncate(double d, int mantissaLength, RoundingMode bigDecimalRoundMode)
   {
     if(Double.isNaN(d))
       return d;

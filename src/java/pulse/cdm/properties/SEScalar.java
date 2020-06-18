@@ -75,7 +75,7 @@ public class SEScalar
     if(src.precision!=-1)
     {
       BigDecimal d = new BigDecimal(src.value);
-      dst.setValue(Double.valueOf(d.setScale(3, BigDecimal.ROUND_CEILING).toString()));
+      dst.setValue(Double.valueOf(d.setScale(3, RoundingMode.CEILING).toString()));
     }
     else
       dst.setValue(src.value); 
