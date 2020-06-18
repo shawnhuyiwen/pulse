@@ -8,14 +8,20 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.jfree.data.xy.XYSeries;
 
+import nu.studer.java.util.OrderedProperties;
 import pulse.utilities.DoubleUtils;
 import pulse.utilities.FileUtils;
 import pulse.utilities.Log;
-import pulse.utilities.OrderedProperties;
 import pulse.utilities.WaveformUtils;
 import pulse.utilities.csv.CSVContents;
 import pulse.utilities.csv.plots.CSVPlotTool;
@@ -177,10 +183,10 @@ public class MutliResultTool
       InputStream is = new ByteArrayInputStream(str.getBytes());
       OrderedProperties props = new OrderedProperties();
       props.load(is);
-      Set<String> keySet = props.keySet();
+      Set<String> keySet = props.stringPropertyNames();
       for(String key : keySet)
       {        
-        String[] p = props.get(key).split(",");
+        String[] p = props.getProperty(key).split(",");
         if(p.length>0)
           rs.resultDir = p[0].trim();
         else

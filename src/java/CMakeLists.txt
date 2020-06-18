@@ -37,6 +37,7 @@ add_jar(PulseJava ${JAVA_FILES}
       "jar/poi-ooxml-schemas-4.1.2.jar"
       "jar/reflections-0.9.12.jar"
       "jar/xmlbeans-3.1.0.jar"
+      "jar/java-ordered-properties-1.0.3.jar"
       "jar/slf4j-api-1.7.30.jar"
       "jar/logback-classic-1.2.3.jar"
       "jar/logback-core-1.2.3.jar"
