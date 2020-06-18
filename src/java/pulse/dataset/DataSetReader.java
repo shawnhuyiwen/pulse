@@ -86,128 +86,126 @@ public class DataSetReader
       }
       Log.info("Generating data from "+xlsFile);
       FileInputStream xlFile = new FileInputStream(xlsFile);
-      XSSFWorkbook xlWBook =  new XSSFWorkbook (xlFile);
-      evaluator = xlWBook.getCreationHelper().createFormulaEvaluator();
-
-      List<SEPatient> patients = readPatients(xlWBook.getSheet("Patients"));
-      for(SEPatient p : patients)
-      {
-        String fileName = "./patients/"+p.getName()+".json";
-        Log.info("Writing : "+fileName);
-        p.writeFile(fileName);
-        SEPatient check = new SEPatient();
-        check.readFile(fileName);
-        Log.info("Checking : "+fileName);
-        
-        if(!SEPatient.unload(p).toString().equals(SEPatient.unload(check).toString()))
-          throw new RuntimeException("Serialization is not matching, something is wrong in the load/unload for patients");
-      }
-      
-      Map<String,SESubstance> substances=readSubstances(xlWBook.getSheet("Substances"));
-      for(SESubstance s : substances.values())  
-      {
-        String fileName = "./substances/"+s.getName()+".json";
-        Log.info("Writing : "+fileName);
-        s.writeFile(fileName);
-        SESubstance check = new SESubstance();
-        check.readFile(fileName);
-        Log.info("Checking : "+fileName);
-        
-        if(!SESubstance.unload(s).toString().equals(SESubstance.unload(check).toString()))
-          throw new RuntimeException("Serialization is not matching, something is wrong in the load/unload for substances");
-      }
-      
-      SESubstanceManager subMgr = new SESubstanceManager();
-      subMgr.loadSubstanceDirectory();// We need a substance manager to check compounds
-      List<SESubstanceCompound> compounds = readCompounds(xlWBook.getSheet("Compounds"), substances);
-      for(SESubstanceCompound c : compounds)
-      {
-        String fileName = "./substances/compounds/"+c.getName()+".json";
-        Log.info("Writing : "+fileName);
-        c.writeFile(fileName);  
-        SESubstanceCompound check = new SESubstanceCompound();
-        check.readFile(fileName,subMgr);
-        Log.info("Checking : "+fileName);        
-        if(!SESubstanceCompound.unload(c).toString().equals(SESubstanceCompound.unload(check).toString()))
-          throw new RuntimeException("Serialization is not matching, something is wrong in the load/unload for substance compounds");
-      }
-      // Make sure we can read it back in
-      subMgr.loadSubstanceDirectory();
-      
-      Map<String,SEEnvironmentalConditions> environments = readEnvironments(xlWBook.getSheet("Environment"), substances);
-      for(String name : environments.keySet())
-      {
-        String fileName = "./environments/"+name+".json";
-        Log.info("Writing : "+fileName);
-        SEEnvironmentalConditions e = environments.get(name);
-        e.writeFile(fileName);  
-        SEEnvironmentalConditions check = new SEEnvironmentalConditions();
-        check.readFile(fileName,subMgr);
-        Log.info("Checking : "+fileName);        
-        if(!SEEnvironmentalConditions.unload(e).toString().equals(SEEnvironmentalConditions.unload(check).toString()))
-          throw new RuntimeException("Serialization is not matching, something is wrong in the load/unload for environmental conditions");
-      }
-      
-      Map<String,SENutrition> meals = readNutrition(xlWBook.getSheet("Nutrition"));
-      for(String name : meals.keySet())
-      {
-        SENutrition n = meals.get(name);
-        String fileName = "./nutrition/"+name+".json";
-        Log.info("Writing : "+fileName);
-        n.writeFile(fileName);
-        SENutrition check = new SENutrition();
-        check.readFile(fileName);
-        Log.info("Checking : "+fileName);
-        
-        if(!SENutrition.unload(n).toString().equals(SENutrition.unload(check).toString()))
-          throw new RuntimeException("Serialization is not matching, something is wrong in the load/unload for nutrition");
-      }
-      
-      SETimedStabilization timed = new SETimedStabilization();
-      SEDynamicStabilization dynamic = new SEDynamicStabilization();
-      if(readStabilization(xlWBook.getSheet("Stabilization"),timed,dynamic))
-      {
-        String fileName = "./config/TimedStabilization.json";
-        Log.info("Writing : "+fileName);
-        timed.writeFile(fileName);
-        SETimedStabilization checkTimed = new SETimedStabilization();
-        checkTimed.readFile(fileName);
-        Log.info("Checking : "+fileName);
-        
-        if(!SETimedStabilization.unload(timed).toString().equals(SETimedStabilization.unload(checkTimed).toString()))
-          throw new RuntimeException("Serialization is not matching, something is wrong in the load/unload for timed stabilization");
-        
-        fileName = "./config/DynamicStabilization.json";
-        Log.info("Writing : "+fileName);
-        dynamic.writeFile(fileName);
-        SEDynamicStabilization checkDynamic = new SEDynamicStabilization();
-        checkDynamic.readFile(fileName);
-        Log.info("Checking : "+fileName);
-        
-        if(!SEDynamicStabilization.unload(dynamic).toString().equals(SEDynamicStabilization.unload(checkDynamic).toString()))
-          throw new RuntimeException("Serialization is not matching, something is wrong in the load/unload for dynamic stabilization");
-      }
-      
-      Map<String,SEElectroCardioGramWaveformList> ecg = readECG(xlWBook.getSheet("ECG"));
-      if(ecg!=null)
-      {
-        for(String name : ecg.keySet())
+      try(XSSFWorkbook xlWBook =  new XSSFWorkbook (xlFile)) {
+        evaluator = xlWBook.getCreationHelper().createFormulaEvaluator();
+  
+        List<SEPatient> patients = readPatients(xlWBook.getSheet("Patients"));
+        for(SEPatient p : patients)
         {
-          SEElectroCardioGramWaveformList i = ecg.get(name);
-          String fileName = "./ecg/"+name+".json";
+          String fileName = "./patients/"+p.getName()+".json";
           Log.info("Writing : "+fileName);
-          i.writeFile(fileName);
-          SEElectroCardioGramWaveformList check = new SEElectroCardioGramWaveformList();
+          p.writeFile(fileName);
+          SEPatient check = new SEPatient();
           check.readFile(fileName);
           Log.info("Checking : "+fileName);
-
-          if(!SEElectroCardioGramWaveformList.unload(i).toString().equals(SEElectroCardioGramWaveformList.unload(check).toString()))
-            throw new RuntimeException("Serialization is not matching, something is wrong in the load/unload for ECG Interpolator");
+          
+          if(!SEPatient.unload(p).toString().equals(SEPatient.unload(check).toString()))
+            throw new RuntimeException("Serialization is not matching, something is wrong in the load/unload for patients");
+        }
+        
+        Map<String,SESubstance> substances=readSubstances(xlWBook.getSheet("Substances"));
+        for(SESubstance s : substances.values())  
+        {
+          String fileName = "./substances/"+s.getName()+".json";
+          Log.info("Writing : "+fileName);
+          s.writeFile(fileName);
+          SESubstance check = new SESubstance();
+          check.readFile(fileName);
+          Log.info("Checking : "+fileName);
+          
+          if(!SESubstance.unload(s).toString().equals(SESubstance.unload(check).toString()))
+            throw new RuntimeException("Serialization is not matching, something is wrong in the load/unload for substances");
+        }
+        
+        SESubstanceManager subMgr = new SESubstanceManager();
+        subMgr.loadSubstanceDirectory();// We need a substance manager to check compounds
+        List<SESubstanceCompound> compounds = readCompounds(xlWBook.getSheet("Compounds"), substances);
+        for(SESubstanceCompound c : compounds)
+        {
+          String fileName = "./substances/compounds/"+c.getName()+".json";
+          Log.info("Writing : "+fileName);
+          c.writeFile(fileName);  
+          SESubstanceCompound check = new SESubstanceCompound();
+          check.readFile(fileName,subMgr);
+          Log.info("Checking : "+fileName);        
+          if(!SESubstanceCompound.unload(c).toString().equals(SESubstanceCompound.unload(check).toString()))
+            throw new RuntimeException("Serialization is not matching, something is wrong in the load/unload for substance compounds");
+        }
+        // Make sure we can read it back in
+        subMgr.loadSubstanceDirectory();
+        
+        Map<String,SEEnvironmentalConditions> environments = readEnvironments(xlWBook.getSheet("Environment"), substances);
+        for(String name : environments.keySet())
+        {
+          String fileName = "./environments/"+name+".json";
+          Log.info("Writing : "+fileName);
+          SEEnvironmentalConditions e = environments.get(name);
+          e.writeFile(fileName);  
+          SEEnvironmentalConditions check = new SEEnvironmentalConditions();
+          check.readFile(fileName,subMgr);
+          Log.info("Checking : "+fileName);        
+          if(!SEEnvironmentalConditions.unload(e).toString().equals(SEEnvironmentalConditions.unload(check).toString()))
+            throw new RuntimeException("Serialization is not matching, something is wrong in the load/unload for environmental conditions");
+        }
+        
+        Map<String,SENutrition> meals = readNutrition(xlWBook.getSheet("Nutrition"));
+        for(String name : meals.keySet())
+        {
+          SENutrition n = meals.get(name);
+          String fileName = "./nutrition/"+name+".json";
+          Log.info("Writing : "+fileName);
+          n.writeFile(fileName);
+          SENutrition check = new SENutrition();
+          check.readFile(fileName);
+          Log.info("Checking : "+fileName);
+          
+          if(!SENutrition.unload(n).toString().equals(SENutrition.unload(check).toString()))
+            throw new RuntimeException("Serialization is not matching, something is wrong in the load/unload for nutrition");
+        }
+        
+        SETimedStabilization timed = new SETimedStabilization();
+        SEDynamicStabilization dynamic = new SEDynamicStabilization();
+        if(readStabilization(xlWBook.getSheet("Stabilization"),timed,dynamic))
+        {
+          String fileName = "./config/TimedStabilization.json";
+          Log.info("Writing : "+fileName);
+          timed.writeFile(fileName);
+          SETimedStabilization checkTimed = new SETimedStabilization();
+          checkTimed.readFile(fileName);
+          Log.info("Checking : "+fileName);
+          
+          if(!SETimedStabilization.unload(timed).toString().equals(SETimedStabilization.unload(checkTimed).toString()))
+            throw new RuntimeException("Serialization is not matching, something is wrong in the load/unload for timed stabilization");
+          
+          fileName = "./config/DynamicStabilization.json";
+          Log.info("Writing : "+fileName);
+          dynamic.writeFile(fileName);
+          SEDynamicStabilization checkDynamic = new SEDynamicStabilization();
+          checkDynamic.readFile(fileName);
+          Log.info("Checking : "+fileName);
+          
+          if(!SEDynamicStabilization.unload(dynamic).toString().equals(SEDynamicStabilization.unload(checkDynamic).toString()))
+            throw new RuntimeException("Serialization is not matching, something is wrong in the load/unload for dynamic stabilization");
+        }
+        
+        Map<String,SEElectroCardioGramWaveformList> ecg = readECG(xlWBook.getSheet("ECG"));
+        if(ecg!=null)
+        {
+          for(String name : ecg.keySet())
+          {
+            SEElectroCardioGramWaveformList i = ecg.get(name);
+            String fileName = "./ecg/"+name+".json";
+            Log.info("Writing : "+fileName);
+            i.writeFile(fileName);
+            SEElectroCardioGramWaveformList check = new SEElectroCardioGramWaveformList();
+            check.readFile(fileName);
+            Log.info("Checking : "+fileName);
+  
+            if(!SEElectroCardioGramWaveformList.unload(i).toString().equals(SEElectroCardioGramWaveformList.unload(check).toString()))
+              throw new RuntimeException("Serialization is not matching, something is wrong in the load/unload for ECG Interpolator");
+          }
         }
       }
-
-      xlWBook.close();
-      xlFile.close();
     }
     catch(Exception ex)
     {
