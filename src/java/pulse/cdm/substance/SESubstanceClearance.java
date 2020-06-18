@@ -4,13 +4,14 @@
 package pulse.cdm.substance;
 import pulse.cdm.bind.Enums.eCharge;
 import pulse.cdm.bind.Substance.SubstanceClearanceData;
-import pulse.cdm.bind.Substance.SubstanceData;
 import pulse.cdm.bind.Substance.SubstanceRenalClearanceData;
 import pulse.cdm.bind.Substance.SubstanceRenalClearanceData.DynamicsCase;
 import pulse.cdm.bind.Substance.SubstanceRenalRegulationData;
 import pulse.cdm.bind.Substance.SubstanceSystemicClearanceData;
-
-import pulse.cdm.properties.*;
+import pulse.cdm.properties.SEScalar;
+import pulse.cdm.properties.SEScalar0To1;
+import pulse.cdm.properties.SEScalarMassPerTime;
+import pulse.cdm.properties.SEScalarVolumePerTimeMass;
 import pulse.utilities.Log;
 
 public class SESubstanceClearance

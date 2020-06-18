@@ -4,7 +4,14 @@ package pulse.cdm.system.physiology;
 
 import pulse.cdm.bind.Physiology.CardiovascularSystemData;
 import pulse.cdm.bind.Physiology.eHeartRhythm;
-import pulse.cdm.properties.*;
+import pulse.cdm.properties.SEScalar0To1;
+import pulse.cdm.properties.SEScalarFrequency;
+import pulse.cdm.properties.SEScalarPressure;
+import pulse.cdm.properties.SEScalarPressureTimePerVolume;
+import pulse.cdm.properties.SEScalarPressureTimePerVolumeArea;
+import pulse.cdm.properties.SEScalarVolume;
+import pulse.cdm.properties.SEScalarVolumePerTime;
+import pulse.cdm.properties.SEScalarVolumePerTimeArea;
 import pulse.cdm.system.SESystem;
 
 public class SECardiovascularSystem extends SEPhysiologySystem implements SESystem

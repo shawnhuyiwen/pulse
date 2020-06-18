@@ -4,9 +4,7 @@
 package pulse.cdm.substance;
 
 import pulse.cdm.bind.Substance.SubstanceConcentrationData;
-import pulse.cdm.bind.Substance.SubstanceData;
-
-import pulse.cdm.properties.*;
+import pulse.cdm.properties.SEScalarMassPerVolume;
 
 public class SESubstanceConcentration
 {

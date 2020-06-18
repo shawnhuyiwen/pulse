@@ -6,21 +6,22 @@ package pulse.cdm.scenario;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.protobuf.*;
-import com.google.protobuf.util.*;
-import pulse.cdm.bind.Enums.eSide;
-import pulse.cdm.bind.Enums.eSwitch;
-import pulse.cdm.bind.PatientAssessments.ePatientAssessmentType;
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.util.JsonFormat;
+
+import pulse.cdm.actions.SEAction;
+import pulse.cdm.actions.SEAdvanceTime;
 import pulse.cdm.bind.AnesthesiaMachine.AnesthesiaMachineData.eConnection;
 import pulse.cdm.bind.AnesthesiaMachine.AnesthesiaMachineData.eOxygenSource;
 import pulse.cdm.bind.AnesthesiaMachine.AnesthesiaMachineData.ePrimaryGas;
 import pulse.cdm.bind.Engine.AnyActionData;
 import pulse.cdm.bind.Engine.DataRequestData.eCategory;
+import pulse.cdm.bind.Enums.eSide;
+import pulse.cdm.bind.Enums.eSwitch;
+import pulse.cdm.bind.PatientAssessments.ePatientAssessmentType;
 import pulse.cdm.bind.Scenario.ScenarioData;
-
-import pulse.cdm.actions.SEAction;
-import pulse.cdm.actions.SEAdvanceTime;
-import pulse.cdm.datarequests.*;
+import pulse.cdm.datarequests.SEDataRequest;
+import pulse.cdm.datarequests.SEDataRequestManager;
 import pulse.cdm.engine.SEPatientConfiguration;
 import pulse.cdm.patient.actions.SEBronchoconstriction;
 import pulse.cdm.patient.actions.SENeedleDecompression;

@@ -2,11 +2,10 @@
    See accompanying NOTICE file for details.*/
 package pulse.engine.testing;
 
-import pulse.utilities.jniBridge;
-import pulse.utilities.Log;
-
 import pulse.cdm.testing.SETestDriver;
 import pulse.cdm.testing.SETestJob;
+import pulse.utilities.Log;
+import pulse.utilities.jniBridge;
 
 public class EngineUnitTestDriver implements SETestDriver.Executor
 {

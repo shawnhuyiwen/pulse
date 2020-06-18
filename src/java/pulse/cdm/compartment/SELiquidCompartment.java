@@ -9,9 +9,7 @@ import java.util.List;
 
 import pulse.cdm.bind.Compartment.LiquidCompartmentData;
 import pulse.cdm.bind.SubstanceQuantity.LiquidSubstanceQuantityData;
-
 import pulse.cdm.properties.SEScalar;
-import pulse.cdm.properties.SEScalarTemperature;
 import pulse.cdm.substance.SESubstance;
 import pulse.cdm.substance.SESubstanceManager;
 import pulse.cdm.substance.quantity.SELiquidSubstanceQuantity;

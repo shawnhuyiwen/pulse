@@ -3,8 +3,6 @@
 package pulse.cdm.testing;
 
 import pulse.utilities.Log;
-import pulse.cdm.testing.SETestDriver;
-import pulse.cdm.testing.SETestJob;
 
 public class CDMUnitTestDriver implements SETestDriver.Executor
 {

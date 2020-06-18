@@ -3,8 +3,7 @@
 package pulse.cdm.system.physiology;
 
 import pulse.cdm.bind.Physiology.EndocrineSystemData;
-
-import pulse.cdm.properties.*;
+import pulse.cdm.properties.SEScalarAmountPerTime;
 import pulse.cdm.system.SESystem;
 
 public class SEEndocrineSystem extends SEPhysiologySystem implements SESystem

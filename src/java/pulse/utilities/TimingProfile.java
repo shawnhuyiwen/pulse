@@ -3,7 +3,8 @@
 
 package pulse.utilities;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The <code>TimingProfile</code>

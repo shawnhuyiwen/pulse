@@ -4,7 +4,6 @@
 package pulse.cdm.properties;
 
 import pulse.cdm.bind.Properties.ScalarNegative1To1Data;
-
 import pulse.utilities.Log;
 
 /**

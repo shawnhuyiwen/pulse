@@ -4,7 +4,6 @@
 package pulse.cdm.patient.actions;
 
 import pulse.cdm.bind.PatientActions.ForcedInhaleData;
-
 import pulse.cdm.properties.SEScalar0To1;
 import pulse.cdm.properties.SEScalarTime;
 

@@ -5,7 +5,8 @@ package pulse.cdm.datarequests;
 import java.util.ArrayList;
 import java.util.List;
 
-import pulse.cdm.bind.Engine.*;
+import pulse.cdm.bind.Engine.DataRequestData;
+import pulse.cdm.bind.Engine.DataRequestManagerData;
 
 public class SEDataRequestManager
 {

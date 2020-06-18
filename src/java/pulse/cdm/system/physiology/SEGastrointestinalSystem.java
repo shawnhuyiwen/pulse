@@ -3,9 +3,8 @@
 package pulse.cdm.system.physiology;
 
 import pulse.cdm.bind.Physiology.GastrointestinalSystemData;
-
 import pulse.cdm.patient.nutrition.SENutrition;
-import pulse.cdm.properties.*;
+import pulse.cdm.properties.SEScalarVolumePerTime;
 import pulse.cdm.system.SESystem;
 
 public class SEGastrointestinalSystem extends SEPhysiologySystem implements SESystem

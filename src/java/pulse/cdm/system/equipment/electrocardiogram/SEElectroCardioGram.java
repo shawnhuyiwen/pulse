@@ -4,8 +4,7 @@
 package pulse.cdm.system.equipment.electrocardiogram;
 
 import pulse.cdm.bind.ElectroCardioGram.ElectroCardioGramData;
-
-import pulse.cdm.properties.*;
+import pulse.cdm.properties.SEScalarElectricPotential;
 import pulse.cdm.system.SESystem;
 
 public class SEElectroCardioGram implements SESystem

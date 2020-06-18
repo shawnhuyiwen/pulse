@@ -2,30 +2,47 @@
    See accompanying NOTICE file for details.*/
 package pulse.engine;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import pulse.cdm.bind.Events.eEvent;
-import pulse.cdm.compartment.*;
-import pulse.cdm.datarequests.*;
-import pulse.cdm.engine.SEEventHandler;
+import pulse.cdm.compartment.SECompartmentManager;
+import pulse.cdm.compartment.SEGasCompartment;
+import pulse.cdm.compartment.SELiquidCompartment;
+import pulse.cdm.compartment.SEThermalCompartment;
+import pulse.cdm.compartment.SETissueCompartment;
+import pulse.cdm.datarequests.SEDataRequest;
+import pulse.cdm.datarequests.SEDataRequestManager;
 import pulse.cdm.engine.SEEventManager;
 import pulse.cdm.patient.SEPatient;
 import pulse.cdm.patient.nutrition.SENutrition;
-import pulse.cdm.properties.*;
 import pulse.cdm.properties.CommonUnits.TimeUnit;
+import pulse.cdm.properties.SEScalar;
+import pulse.cdm.properties.SEScalarTime;
 import pulse.cdm.substance.SESubstance;
-import pulse.cdm.substance.SESubstanceTissuePharmacokinetics;
 import pulse.cdm.substance.SESubstanceManager;
+import pulse.cdm.substance.SESubstanceTissuePharmacokinetics;
 import pulse.cdm.system.SESystem;
-import pulse.cdm.system.environment.*;
-import pulse.cdm.system.equipment.anesthesia_machine.*;
-import pulse.cdm.system.equipment.electrocardiogram.*;
-import pulse.cdm.system.equipment.inhaler.*;
-import pulse.cdm.system.physiology.*;
-import pulse.utilities.jniBridge;
+import pulse.cdm.system.environment.SEEnvironment;
+import pulse.cdm.system.equipment.anesthesia_machine.SEAnesthesiaMachine;
+import pulse.cdm.system.equipment.electrocardiogram.SEElectroCardioGram;
+import pulse.cdm.system.equipment.inhaler.SEInhaler;
+import pulse.cdm.system.physiology.SEBloodChemistrySystem;
+import pulse.cdm.system.physiology.SECardiovascularSystem;
+import pulse.cdm.system.physiology.SEDrugSystem;
+import pulse.cdm.system.physiology.SEEndocrineSystem;
+import pulse.cdm.system.physiology.SEEnergySystem;
+import pulse.cdm.system.physiology.SEGastrointestinalSystem;
+import pulse.cdm.system.physiology.SENervousSystem;
+import pulse.cdm.system.physiology.SEPupillaryResponse;
+import pulse.cdm.system.physiology.SERenalSystem;
+import pulse.cdm.system.physiology.SERespiratorySystem;
+import pulse.cdm.system.physiology.SETissueSystem;
 import pulse.utilities.Log;
 import pulse.utilities.LogListener;
 import pulse.utilities.Pair;
+import pulse.utilities.jniBridge;
 
 public class Pulse
 {

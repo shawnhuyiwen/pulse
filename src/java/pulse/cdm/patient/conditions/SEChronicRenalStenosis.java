@@ -4,8 +4,6 @@
 package pulse.cdm.patient.conditions;
 
 import pulse.cdm.bind.PatientConditions.ChronicRenalStenosisData;
-import pulse.cdm.bind.PatientConditions.ChronicVentricularSystolicDysfunctionData;
-
 import pulse.cdm.properties.SEScalar0To1;
 
 public class SEChronicRenalStenosis extends SEPatientCondition

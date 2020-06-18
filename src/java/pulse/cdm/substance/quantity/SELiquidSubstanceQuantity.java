@@ -2,18 +2,15 @@
    See accompanying NOTICE file for details.*/
 package pulse.cdm.substance.quantity;
 
+import pulse.cdm.bind.SubstanceQuantity.LiquidSubstanceQuantityData;
 import pulse.cdm.properties.CommonUnits.AmountPerVolumeUnit;
 import pulse.cdm.properties.CommonUnits.MassPerAmountUnit;
-import pulse.cdm.properties.SEScalarAmountPerVolume;
-
-import pulse.cdm.bind.SubstanceQuantity.GasSubstanceQuantityData;
-import pulse.cdm.bind.SubstanceQuantity.LiquidSubstanceQuantityData;
-
+import pulse.cdm.properties.CommonUnits.MassPerVolumeUnit;
 import pulse.cdm.properties.SEScalar0To1;
+import pulse.cdm.properties.SEScalarAmountPerVolume;
 import pulse.cdm.properties.SEScalarMass;
 import pulse.cdm.properties.SEScalarMassPerVolume;
 import pulse.cdm.properties.SEScalarPressure;
-import pulse.cdm.properties.CommonUnits.MassPerVolumeUnit;
 import pulse.cdm.substance.SESubstance;
 
 public class SELiquidSubstanceQuantity extends SESubstanceQuantity

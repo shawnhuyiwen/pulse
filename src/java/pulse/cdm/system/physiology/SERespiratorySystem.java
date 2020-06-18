@@ -4,8 +4,17 @@
 package pulse.cdm.system.physiology;
 
 import pulse.cdm.bind.Physiology.RespiratorySystemData;
-
-import pulse.cdm.properties.*;
+import pulse.cdm.properties.SEScalar;
+import pulse.cdm.properties.SEScalar0To1;
+import pulse.cdm.properties.SEScalarEnergy;
+import pulse.cdm.properties.SEScalarFrequency;
+import pulse.cdm.properties.SEScalarPower;
+import pulse.cdm.properties.SEScalarPressure;
+import pulse.cdm.properties.SEScalarPressurePerVolume;
+import pulse.cdm.properties.SEScalarPressureTimePerVolume;
+import pulse.cdm.properties.SEScalarVolume;
+import pulse.cdm.properties.SEScalarVolumePerPressure;
+import pulse.cdm.properties.SEScalarVolumePerTime;
 import pulse.cdm.system.SESystem;
 
 public class SERespiratorySystem extends SEPhysiologySystem implements SESystem

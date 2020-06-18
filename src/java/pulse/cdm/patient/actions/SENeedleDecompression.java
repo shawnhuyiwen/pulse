@@ -3,9 +3,9 @@
 
 package pulse.cdm.patient.actions;
 
-import pulse.cdm.bind.PatientActions.NeedleDecompressionData;
 import pulse.cdm.bind.Enums.eSide;
 import pulse.cdm.bind.Enums.eSwitch;
+import pulse.cdm.bind.PatientActions.NeedleDecompressionData;
 
 public class SENeedleDecompression extends SEPatientAction
 {

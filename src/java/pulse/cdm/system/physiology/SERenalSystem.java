@@ -3,8 +3,18 @@
 package pulse.cdm.system.physiology;
 
 import pulse.cdm.bind.Physiology.RenalSystemData;
-
-import pulse.cdm.properties.*;
+import pulse.cdm.properties.SEScalar;
+import pulse.cdm.properties.SEScalar0To1;
+import pulse.cdm.properties.SEScalarArea;
+import pulse.cdm.properties.SEScalarMassPerVolume;
+import pulse.cdm.properties.SEScalarOsmolality;
+import pulse.cdm.properties.SEScalarOsmolarity;
+import pulse.cdm.properties.SEScalarPressure;
+import pulse.cdm.properties.SEScalarPressureTimePerVolume;
+import pulse.cdm.properties.SEScalarVolume;
+import pulse.cdm.properties.SEScalarVolumePerTime;
+import pulse.cdm.properties.SEScalarVolumePerTimePressure;
+import pulse.cdm.properties.SEScalarVolumePerTimePressureArea;
 import pulse.cdm.system.SESystem;
 
 public class SERenalSystem extends SEPhysiologySystem implements SESystem

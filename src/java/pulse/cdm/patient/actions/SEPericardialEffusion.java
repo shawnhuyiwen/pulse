@@ -4,7 +4,6 @@
 package pulse.cdm.patient.actions;
 
 import pulse.cdm.bind.PatientActions.PericardialEffusionData;
-
 import pulse.cdm.properties.SEScalarVolumePerTime;
 
 public class SEPericardialEffusion extends SEPatientAction

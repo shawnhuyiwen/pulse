@@ -16,12 +16,11 @@ import java.util.Map;
 import java.util.Set;
 
 import pulse.cdm.substance.SESubstanceManager;
-import pulse.utilities.jniBridge;
 import pulse.utilities.Log;
 import pulse.utilities.LogListener;
 import pulse.utilities.RunConfiguration;
+import pulse.utilities.jniBridge;
 import pulse.utilities.csv.CSVContents;
-import pulse.utilities.csv.plots.Plotter;
 
 public class PlotDriver 
 {

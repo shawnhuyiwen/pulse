@@ -2,14 +2,19 @@
    See accompanying NOTICE file for details.*/
 package pulse.cdm.testing;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import pulse.utilities.FileUtils;
-import pulse.utilities.jniBridge;
 import pulse.utilities.Log;
 import pulse.utilities.RunConfiguration;
+import pulse.utilities.jniBridge;
 
 public class Rebase
 {

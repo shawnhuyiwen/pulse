@@ -5,7 +5,8 @@ package pulse.utilities;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Filters out names that do not equal given "filename" and are not files(directories)

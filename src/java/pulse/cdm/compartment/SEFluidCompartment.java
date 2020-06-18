@@ -4,7 +4,6 @@
 package pulse.cdm.compartment;
 
 import pulse.cdm.bind.Compartment.FluidCompartmentData;
-
 import pulse.cdm.properties.SEScalarPressure;
 import pulse.cdm.properties.SEScalarVolume;
 import pulse.cdm.properties.SEScalarVolumePerTime;

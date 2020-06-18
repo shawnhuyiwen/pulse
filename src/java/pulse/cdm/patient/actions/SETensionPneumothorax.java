@@ -3,10 +3,9 @@
 
 package pulse.cdm.patient.actions;
 
-import pulse.cdm.bind.PatientActions.TensionPneumothoraxData;
 import pulse.cdm.bind.Enums.eGate;
 import pulse.cdm.bind.Enums.eSide;
-
+import pulse.cdm.bind.PatientActions.TensionPneumothoraxData;
 import pulse.cdm.properties.SEScalar0To1;
 
 public class SETensionPneumothorax extends SEPatientAction

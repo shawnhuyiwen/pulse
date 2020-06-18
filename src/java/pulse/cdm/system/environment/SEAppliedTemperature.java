@@ -2,9 +2,8 @@
    See accompanying NOTICE file for details.*/
 package pulse.cdm.system.environment;
 
-import pulse.cdm.bind.Environment.AppliedTemperatureData;
 import pulse.cdm.bind.Enums.eSwitch;
-
+import pulse.cdm.bind.Environment.AppliedTemperatureData;
 import pulse.cdm.properties.SEScalar0To1;
 import pulse.cdm.properties.SEScalarArea;
 import pulse.cdm.properties.SEScalarTemperature;

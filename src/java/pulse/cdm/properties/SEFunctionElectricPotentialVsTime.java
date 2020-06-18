@@ -3,10 +3,9 @@
 package pulse.cdm.properties;
 
 import pulse.cdm.bind.Properties.FunctionElectricPotentialVsTimeData;
-
 import pulse.cdm.exceptions.InvalidUnitException;
-import pulse.cdm.properties.CommonUnits.TimeUnit;
 import pulse.cdm.properties.CommonUnits.ElectricPotentialUnit;
+import pulse.cdm.properties.CommonUnits.TimeUnit;
 
 
 /**

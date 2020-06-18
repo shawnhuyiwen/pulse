@@ -9,10 +9,8 @@ import java.util.List;
 
 import pulse.cdm.bind.Compartment.GasCompartmentData;
 import pulse.cdm.bind.SubstanceQuantity.GasSubstanceQuantityData;
-
 import pulse.cdm.substance.SESubstance;
 import pulse.cdm.substance.SESubstanceManager;
-import pulse.cdm.substance.quantity.SEGasSubstanceQuantity;
 import pulse.cdm.substance.quantity.SEGasSubstanceQuantity;
 
 public class SEGasCompartment extends SEFluidCompartment

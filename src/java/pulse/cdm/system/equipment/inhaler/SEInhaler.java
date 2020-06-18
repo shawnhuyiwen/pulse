@@ -2,10 +2,11 @@
    See accompanying NOTICE file for details.*/
 package pulse.cdm.system.equipment.inhaler;
 
-import pulse.cdm.bind.Inhaler.InhalerData;
 import pulse.cdm.bind.Enums.eSwitch;
-
-import pulse.cdm.properties.*;
+import pulse.cdm.bind.Inhaler.InhalerData;
+import pulse.cdm.properties.SEScalar0To1;
+import pulse.cdm.properties.SEScalarMass;
+import pulse.cdm.properties.SEScalarVolume;
 import pulse.cdm.substance.SESubstance;
 import pulse.cdm.substance.SESubstanceManager;
 import pulse.cdm.system.equipment.SEEquipment;

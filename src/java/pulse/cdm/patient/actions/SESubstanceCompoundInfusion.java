@@ -4,7 +4,6 @@
 package pulse.cdm.patient.actions;
 
 import pulse.cdm.bind.PatientActions.SubstanceCompoundInfusionData;
-
 import pulse.cdm.properties.SEScalarVolume;
 import pulse.cdm.properties.SEScalarVolumePerTime;
 import pulse.cdm.substance.SESubstanceCompound;

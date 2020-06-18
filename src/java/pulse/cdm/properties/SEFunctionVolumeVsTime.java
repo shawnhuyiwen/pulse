@@ -3,7 +3,6 @@
 package pulse.cdm.properties;
 
 import pulse.cdm.bind.Properties.FunctionVolumeVsTimeData;
-
 import pulse.cdm.exceptions.InvalidUnitException;
 import pulse.cdm.properties.CommonUnits.TimeUnit;
 import pulse.cdm.properties.CommonUnits.VolumeUnit;

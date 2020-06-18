@@ -7,8 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.google.protobuf.*;
-import com.google.protobuf.util.*;
+import com.google.protobuf.InvalidProtocolBufferException;
 
 import pulse.utilities.Log;
 

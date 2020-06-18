@@ -2,13 +2,14 @@
    See accompanying NOTICE file for details.*/
 package pulse.cdm.engine;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
-import com.google.protobuf.*;
-import com.google.protobuf.util.*;
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.util.JsonFormat;
+
 import pulse.cdm.bind.Engine.TimedStabilizationData;
 import pulse.cdm.bind.Enums.eSwitch;
-
 import pulse.cdm.properties.SEScalarTime;
 import pulse.utilities.FileUtils;
 

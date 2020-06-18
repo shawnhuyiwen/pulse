@@ -5,10 +5,7 @@
    See accompanying NOTICE file for details.*/
 package pulse.cdm.compartment;
 
-import java.util.*;
-
 import pulse.cdm.bind.Compartment.TissueCompartmentData;
-
 import pulse.cdm.properties.SEScalar;
 import pulse.cdm.properties.SEScalar0To1;
 import pulse.cdm.properties.SEScalarMass;

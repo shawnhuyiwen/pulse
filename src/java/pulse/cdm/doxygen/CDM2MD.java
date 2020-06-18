@@ -3,32 +3,36 @@
 package pulse.cdm.doxygen;
 
 import java.io.PrintWriter;
-import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import pulse.cdm.bind.AnesthesiaMachine.AnesthesiaMachineData;
-import pulse.cdm.bind.Enums.*;
+import pulse.cdm.bind.Enums.eCharge;
+import pulse.cdm.bind.Enums.eGate;
+import pulse.cdm.bind.Enums.eSide;
+import pulse.cdm.bind.Enums.eSwitch;
 import pulse.cdm.bind.Environment.EnvironmentalConditionsData;
-import pulse.cdm.bind.Patient.PatientData;
-import pulse.cdm.bind.Patient.PatientData.eSex;
 import pulse.cdm.bind.Events.eEvent;
 import pulse.cdm.bind.MechanicalVentilator.MechanicalVentilatorData;
+import pulse.cdm.bind.Patient.PatientData;
 import pulse.cdm.bind.PatientActions.BrainInjuryData;
 import pulse.cdm.bind.PatientActions.HemorrhageData;
 import pulse.cdm.bind.PatientActions.IntubationData;
 import pulse.cdm.bind.PatientActions.SubstanceBolusData;
 import pulse.cdm.bind.PatientActions.SupplementalOxygenData;
-import pulse.cdm.bind.PatientAssessments.PatientAssessmentData;
 import pulse.cdm.bind.PatientAssessments.UrinalysisData.eClarityIndicator;
 import pulse.cdm.bind.PatientAssessments.UrinalysisData.ePresenceIndicator;
 import pulse.cdm.bind.PatientAssessments.UrinalysisData.eUrineColor;
 import pulse.cdm.bind.PatientAssessments.UrinalysisMicroscopicData.eObservationAmount;
 import pulse.cdm.bind.PatientAssessments.UrinalysisMicroscopicData.eObservationType;
+import pulse.cdm.bind.PatientAssessments.ePatientAssessmentType;
 import pulse.cdm.bind.Physiology.eHeartRhythm;
 import pulse.cdm.bind.Substance.SubstanceData;
 import pulse.cdm.bind.Substance.SubstancePhysicochemicalsData;
-import pulse.cdm.bind.PatientAssessments.ePatientAssessmentType;
 import pulse.cdm.compartment.SECompartment;
 import pulse.cdm.patient.SEPatient;
 import pulse.cdm.patient.actions.SEConsciousRespirationCommand;
@@ -45,9 +49,9 @@ import pulse.cdm.system.equipment.mechanical_ventilator.actions.SEMechanicalVent
 import pulse.utilities.FileUtils;
 import pulse.utilities.FindObjects;
 import pulse.utilities.FindObjects.BagMethod;
-import pulse.utilities.jniBridge;
 import pulse.utilities.Log;
 import pulse.utilities.StringUtils;
+import pulse.utilities.jniBridge;
 
 /**
  * This class will generate markdown tables

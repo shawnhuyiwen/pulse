@@ -3,9 +3,8 @@
 
 package pulse.cdm.properties;
 
-import pulse.utilities.Log;
-
 import pulse.cdm.bind.Properties.Scalar0To1Data;
+import pulse.utilities.Log;
 
 /**
  * @author abray

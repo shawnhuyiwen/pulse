@@ -3,8 +3,7 @@
 package pulse.cdm.system.physiology;
 
 import pulse.cdm.bind.Physiology.NervousSystemData;
-
-import pulse.cdm.properties.*;
+import pulse.cdm.properties.SEScalar;
 import pulse.cdm.system.SESystem;
 
 public class SENervousSystem extends SEPhysiologySystem implements SESystem

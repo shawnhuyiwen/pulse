@@ -4,7 +4,10 @@
 package pulse.utilities;
 
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The <code>StringUtils</code> provides utils for creating string overviews

@@ -4,7 +4,6 @@
 package pulse.cdm.properties;
 
 import pulse.cdm.bind.Properties.ScalarForceData;
-
 import pulse.cdm.properties.CommonUnits.ForceUnit;
 
 /**

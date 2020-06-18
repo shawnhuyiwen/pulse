@@ -2,14 +2,22 @@
    See accompanying NOTICE file for details.*/
 package pulse.cdm.patient;
 
-import java.util.*;
-
-import pulse.cdm.properties.*;
-import pulse.utilities.FileUtils;
-import com.google.protobuf.util.*;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.util.JsonFormat;
+
 import pulse.cdm.bind.Patient.PatientData;
 import pulse.cdm.bind.Patient.PatientData.eSex;
+import pulse.cdm.properties.SEScalar0To1;
+import pulse.cdm.properties.SEScalarArea;
+import pulse.cdm.properties.SEScalarFrequency;
+import pulse.cdm.properties.SEScalarLength;
+import pulse.cdm.properties.SEScalarMass;
+import pulse.cdm.properties.SEScalarMassPerVolume;
+import pulse.cdm.properties.SEScalarPower;
+import pulse.cdm.properties.SEScalarPressure;
+import pulse.cdm.properties.SEScalarTime;
+import pulse.cdm.properties.SEScalarVolume;
+import pulse.utilities.FileUtils;
 
 public class SEPatient
 {

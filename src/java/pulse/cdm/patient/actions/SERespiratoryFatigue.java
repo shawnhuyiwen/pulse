@@ -4,7 +4,6 @@
 package pulse.cdm.patient.actions;
 
 import pulse.cdm.bind.PatientActions.RespiratoryFatigueData;
-
 import pulse.cdm.properties.SEScalar0To1;
 
 public class SERespiratoryFatigue extends SEPatientAction

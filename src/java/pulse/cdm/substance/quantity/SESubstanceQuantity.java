@@ -4,7 +4,6 @@
 package pulse.cdm.substance.quantity;
 
 import pulse.cdm.bind.SubstanceQuantity.SubstanceQuantityData;
-
 import pulse.cdm.substance.SESubstance;
 
 public abstract class SESubstanceQuantity 

@@ -2,9 +2,7 @@
    See accompanying NOTICE file for details.*/
 package pulse.cdm.properties;
 
-import pulse.cdm.bind.Properties.HistogramData;
 import pulse.cdm.bind.Properties.HistogramFractionVsLengthData;
-
 import pulse.cdm.exceptions.InvalidUnitException;
 import pulse.cdm.properties.CommonUnits.LengthUnit;
 

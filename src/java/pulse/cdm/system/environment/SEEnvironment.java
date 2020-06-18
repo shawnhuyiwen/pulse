@@ -4,8 +4,8 @@
 package pulse.cdm.system.environment;
 
 import pulse.cdm.bind.Environment.EnvironmentData;
-
-import pulse.cdm.properties.*;
+import pulse.cdm.properties.SEScalarHeatConductancePerArea;
+import pulse.cdm.properties.SEScalarPower;
 import pulse.cdm.substance.SESubstanceManager;
 import pulse.cdm.system.SESystem;
 

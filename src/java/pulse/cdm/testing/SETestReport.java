@@ -2,10 +2,16 @@
    See accompanying NOTICE file for details.*/
 package pulse.cdm.testing;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
+
 import pulse.cdm.bind.TestReport.TestReportData;
 import pulse.cdm.bind.TestReport.TestSuiteData;
 import pulse.cdm.properties.CommonUnits.TimeUnit;

@@ -4,7 +4,6 @@
 package pulse.cdm.compartment;
 
 import pulse.cdm.bind.Compartment.ThermalCompartmentData;
-
 import pulse.cdm.properties.SEScalarEnergy;
 import pulse.cdm.properties.SEScalarPower;
 import pulse.cdm.properties.SEScalarTemperature;

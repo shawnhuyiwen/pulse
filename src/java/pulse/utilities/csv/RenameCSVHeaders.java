@@ -2,8 +2,18 @@
    See accompanying NOTICE file for details.*/
 package pulse.utilities.csv;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import pulse.utilities.FileUtils;
 import pulse.utilities.Log;

@@ -3,7 +3,6 @@
 package pulse.cdm.substance.quantity;
 
 import pulse.cdm.bind.SubstanceQuantity.GasSubstanceQuantityData;
-
 import pulse.cdm.properties.SEScalar0To1;
 import pulse.cdm.properties.SEScalarPressure;
 import pulse.cdm.properties.SEScalarVolume;

@@ -3,14 +3,25 @@
 
 package pulse.cdm.system.equipment;
 
-import pulse.cdm.bind.EquipmentActions.AnyEquipmentActionData;
-import pulse.cdm.bind.Actions.EquipmentActionData;
-
 import pulse.cdm.actions.SEAction;
+import pulse.cdm.bind.Actions.EquipmentActionData;
+import pulse.cdm.bind.EquipmentActions.AnyEquipmentActionData;
 import pulse.cdm.substance.SESubstanceManager;
-import pulse.cdm.system.equipment.anesthesia_machine.actions.*;
-import pulse.cdm.system.equipment.inhaler.actions.*;
-import pulse.cdm.system.equipment.mechanical_ventilator.actions.*;
+import pulse.cdm.system.equipment.anesthesia_machine.actions.SEAnesthesiaMachineConfiguration;
+import pulse.cdm.system.equipment.anesthesia_machine.actions.SEAnesthesiaMachineExpiratoryValveLeak;
+import pulse.cdm.system.equipment.anesthesia_machine.actions.SEAnesthesiaMachineExpiratoryValveObstruction;
+import pulse.cdm.system.equipment.anesthesia_machine.actions.SEAnesthesiaMachineInspiratoryValveLeak;
+import pulse.cdm.system.equipment.anesthesia_machine.actions.SEAnesthesiaMachineInspiratoryValveObstruction;
+import pulse.cdm.system.equipment.anesthesia_machine.actions.SEAnesthesiaMachineMaskLeak;
+import pulse.cdm.system.equipment.anesthesia_machine.actions.SEAnesthesiaMachineOxygenTankPressureLoss;
+import pulse.cdm.system.equipment.anesthesia_machine.actions.SEAnesthesiaMachineOxygenWallPortPressureLoss;
+import pulse.cdm.system.equipment.anesthesia_machine.actions.SEAnesthesiaMachineSodaLimeFailure;
+import pulse.cdm.system.equipment.anesthesia_machine.actions.SEAnesthesiaMachineTubeCuffLeak;
+import pulse.cdm.system.equipment.anesthesia_machine.actions.SEAnesthesiaMachineVaporizerFailure;
+import pulse.cdm.system.equipment.anesthesia_machine.actions.SEAnesthesiaMachineVentilatorPressureLoss;
+import pulse.cdm.system.equipment.anesthesia_machine.actions.SEAnesthesiaMachineYPieceDisconnect;
+import pulse.cdm.system.equipment.inhaler.actions.SEInhalerConfiguration;
+import pulse.cdm.system.equipment.mechanical_ventilator.actions.SEMechanicalVentilatorConfiguration;
 import pulse.utilities.Log;
 
 public abstract class SEEquipmentAction extends SEAction

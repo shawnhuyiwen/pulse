@@ -5,8 +5,6 @@ package pulse.cdm.system.environment.conditions;
 
 import pulse.cdm.bind.EnvironmentConditions.AnyEnvironmentConditionData;
 import pulse.cdm.bind.EnvironmentConditions.EnvironmentConditionData;
-import pulse.cdm.bind.Engine.AnyConditionData;
-
 import pulse.cdm.conditions.SECondition;
 import pulse.cdm.substance.SESubstanceManager;
 import pulse.utilities.Log;

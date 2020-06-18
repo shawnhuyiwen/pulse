@@ -3,8 +3,14 @@
 package pulse.cdm.system.physiology;
 
 import pulse.cdm.bind.Physiology.BloodChemistrySystemData;
-
-import pulse.cdm.properties.*;
+import pulse.cdm.properties.SEScalar;
+import pulse.cdm.properties.SEScalar0To1;
+import pulse.cdm.properties.SEScalarAmountPerVolume;
+import pulse.cdm.properties.SEScalarHeatCapacitancePerMass;
+import pulse.cdm.properties.SEScalarMass;
+import pulse.cdm.properties.SEScalarMassPerVolume;
+import pulse.cdm.properties.SEScalarPressure;
+import pulse.cdm.properties.SEScalarVolume;
 import pulse.cdm.system.SESystem;
 
 public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESystem

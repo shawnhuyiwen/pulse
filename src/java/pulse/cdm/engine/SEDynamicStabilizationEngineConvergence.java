@@ -2,9 +2,10 @@
    See accompanying NOTICE file for details.*/
 package pulse.cdm.engine;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-import pulse.cdm.bind.Engine.DynamicStabilizationData;
 import pulse.cdm.bind.Engine.DynamicStabilizationEngineConvergenceData;
 import pulse.cdm.bind.Engine.DynamicStabilizationPropertyConvergenceData;
 import pulse.cdm.datarequests.SEDataRequest;

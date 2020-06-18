@@ -3,8 +3,11 @@
 package pulse.cdm.system.physiology;
 
 import pulse.cdm.bind.Physiology.DrugSystemData;
-
-import pulse.cdm.properties.*;
+import pulse.cdm.properties.SEScalar0To1;
+import pulse.cdm.properties.SEScalarFrequency;
+import pulse.cdm.properties.SEScalarNegative1To1;
+import pulse.cdm.properties.SEScalarPressure;
+import pulse.cdm.properties.SEScalarVolume;
 import pulse.cdm.system.SESystem;
 
 public class SEDrugSystem extends SEPhysiologySystem implements SESystem

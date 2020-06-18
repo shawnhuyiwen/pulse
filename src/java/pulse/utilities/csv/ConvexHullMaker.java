@@ -4,6 +4,7 @@ package pulse.utilities.csv;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import pulse.utilities.Log;
 
 public class ConvexHullMaker

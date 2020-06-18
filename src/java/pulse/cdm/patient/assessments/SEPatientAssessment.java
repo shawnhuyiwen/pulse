@@ -5,8 +5,8 @@ package pulse.cdm.patient.assessments;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
-import pulse.cdm.bind.PatientAssessments.PatientAssessmentData;
 
+import pulse.cdm.bind.PatientAssessments.PatientAssessmentData;
 import pulse.utilities.FileUtils;
 import pulse.utilities.Log;
 

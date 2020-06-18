@@ -3,10 +3,8 @@
 
 package pulse.cdm.substance;
 
-import pulse.cdm.bind.Substance.SubstanceData;
 import pulse.cdm.bind.Substance.SubstanceTissuePharmacokineticsData;
-
-import pulse.cdm.properties.*;
+import pulse.cdm.properties.SEScalar;
 
 public class SESubstanceTissuePharmacokinetics 
 {

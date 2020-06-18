@@ -2,10 +2,12 @@
    See accompanying NOTICE file for details.*/
 package pulse.cdm.system.equipment.electrocardiogram;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
-import com.google.protobuf.*;
-import com.google.protobuf.util.*;
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.util.JsonFormat;
+
 import pulse.cdm.bind.ElectroCardioGram.ElectroCardioGramWaveformData;
 import pulse.cdm.bind.ElectroCardioGram.ElectroCardioGramWaveformData.eWaveformLead;
 import pulse.cdm.bind.ElectroCardioGram.ElectroCardioGramWaveformListData;

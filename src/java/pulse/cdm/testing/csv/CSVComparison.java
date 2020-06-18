@@ -3,15 +3,20 @@
 
 package pulse.cdm.testing.csv;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-import pulse.utilities.SEEqualOptions;
-import pulse.utilities.*;
-import pulse.utilities.csv.*;
-import pulse.utilities.csv.plots.*;
 import pulse.cdm.testing.SETestReport;
 import pulse.cdm.testing.SETestSuite;
+import pulse.utilities.DoubleUtils;
+import pulse.utilities.FileUtils;
+import pulse.utilities.Log;
+import pulse.utilities.SEEqualOptions;
+import pulse.utilities.csv.CSVContents;
+import pulse.utilities.csv.plots.PlotDriver;
 
 /**
  * Compare 2 CSV files and create a report on the differences

@@ -2,11 +2,13 @@
    See accompanying NOTICE file for details.*/
 package pulse.cdm.patient.assessments;
 
-import com.google.protobuf.*;
-import com.google.protobuf.util.*;
-import pulse.cdm.bind.PatientAssessments.PulmonaryFunctionTestData;
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.util.JsonFormat;
 
-import pulse.cdm.properties.*;
+import pulse.cdm.bind.PatientAssessments.PulmonaryFunctionTestData;
+import pulse.cdm.properties.SEFunctionVolumeVsTime;
+import pulse.cdm.properties.SEScalarVolume;
+import pulse.cdm.properties.SEScalarVolumePerTime;
 import pulse.utilities.FileUtils;
 
 public class SEPulmonaryFunctionTest extends SEPatientAssessment

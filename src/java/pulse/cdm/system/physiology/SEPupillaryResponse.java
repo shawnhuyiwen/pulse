@@ -3,7 +3,6 @@
 package pulse.cdm.system.physiology;
 
 import pulse.cdm.bind.Physiology.PupillaryResponseData;
-
 import pulse.cdm.properties.SEScalarNegative1To1;
 
 public class SEPupillaryResponse

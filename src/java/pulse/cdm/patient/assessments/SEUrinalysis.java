@@ -2,12 +2,15 @@
    See accompanying NOTICE file for details.*/
 package pulse.cdm.patient.assessments;
 
-import com.google.protobuf.*;
-import com.google.protobuf.util.*;
-import pulse.cdm.bind.PatientAssessments.UrinalysisData;
-import pulse.cdm.bind.PatientAssessments.UrinalysisData.*;
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.util.JsonFormat;
 
-import pulse.cdm.properties.*;
+import pulse.cdm.bind.PatientAssessments.UrinalysisData;
+import pulse.cdm.bind.PatientAssessments.UrinalysisData.eClarityIndicator;
+import pulse.cdm.bind.PatientAssessments.UrinalysisData.ePresenceIndicator;
+import pulse.cdm.bind.PatientAssessments.UrinalysisData.eUrineColor;
+import pulse.cdm.properties.SEScalar;
+import pulse.cdm.properties.SEScalarMassPerVolume;
 import pulse.utilities.FileUtils;
 
 public class SEUrinalysis extends SEPatientAssessment

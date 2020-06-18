@@ -4,8 +4,8 @@
 package pulse.cdm.system.environment.actions;
 
 import pulse.cdm.bind.EnvironmentActions.ThermalApplicationData;
-
-import pulse.cdm.system.environment.*;
+import pulse.cdm.system.environment.SEActiveConditioning;
+import pulse.cdm.system.environment.SEAppliedTemperature;
 
 public class SEThermalApplication extends SEEnvironmentAction
 {

@@ -3,24 +3,31 @@
 
 package pulse.cdm.system.environment;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
-import com.google.protobuf.*;
-import com.google.protobuf.util.*;
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.util.JsonFormat;
+
 import pulse.cdm.bind.Environment.EnvironmentalConditionsData;
 import pulse.cdm.bind.Environment.EnvironmentalConditionsData.eSurroundingType;
 import pulse.cdm.bind.Substance.SubstanceConcentrationData;
 import pulse.cdm.bind.Substance.SubstanceData.eState;
 import pulse.cdm.bind.Substance.SubstanceFractionData;
-
-import pulse.utilities.FileUtils;
-import pulse.utilities.Log;
-
-import pulse.cdm.properties.*;
+import pulse.cdm.properties.SEScalar0To1;
+import pulse.cdm.properties.SEScalarHeatResistanceArea;
+import pulse.cdm.properties.SEScalarLengthPerTime;
+import pulse.cdm.properties.SEScalarMassPerVolume;
+import pulse.cdm.properties.SEScalarPressure;
+import pulse.cdm.properties.SEScalarTemperature;
 import pulse.cdm.substance.SESubstance;
 import pulse.cdm.substance.SESubstanceConcentration;
 import pulse.cdm.substance.SESubstanceFraction;
 import pulse.cdm.substance.SESubstanceManager;
+import pulse.utilities.FileUtils;
+import pulse.utilities.Log;
 
 public class SEEnvironmentalConditions
 {

@@ -6,7 +6,6 @@ import pulse.cdm.bind.ElectroCardioGram.ElectroCardioGramWaveformData;
 import pulse.cdm.bind.Physiology.eHeartRhythm;
 import pulse.cdm.properties.SEFunctionElectricPotentialVsTime;
 import pulse.cdm.properties.SEScalarTime;
-import pulse.utilities.Log;
 
 public class SEElectroCardioGramWaveform
 {

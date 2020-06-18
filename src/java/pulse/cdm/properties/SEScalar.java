@@ -5,13 +5,13 @@ package pulse.cdm.properties;
 
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import pulse.cdm.bind.Properties.ScalarData;
-
-import pulse.utilities.SEEqualOptions;
 import pulse.cdm.exceptions.InvalidUnitException;
 import pulse.utilities.DoubleUtils;
 import pulse.utilities.Log;
+import pulse.utilities.SEEqualOptions;
 import pulse.utilities.UnitConverter;
 
 /**

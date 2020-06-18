@@ -2,8 +2,8 @@
    See accompanying NOTICE file for details.*/
 package pulse.howto;
 
-import pulse.cdm.bind.Engine.DataRequestData.eCategory;
 import pulse.cdm.actions.SEAdvanceTime;
+import pulse.cdm.bind.Engine.DataRequestData.eCategory;
 import pulse.cdm.datarequests.SEDataRequest;
 import pulse.cdm.properties.CommonUnits.FrequencyUnit;
 import pulse.cdm.properties.CommonUnits.TimeUnit;

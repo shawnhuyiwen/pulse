@@ -3,7 +3,9 @@
 package pulse.cdm.system.equipment.anesthesia_machine;
 
 import pulse.cdm.bind.AnesthesiaMachine.AnesthesiaMachineData;
-import pulse.cdm.bind.AnesthesiaMachine.AnesthesiaMachineData.*;
+import pulse.cdm.bind.AnesthesiaMachine.AnesthesiaMachineData.eConnection;
+import pulse.cdm.bind.AnesthesiaMachine.AnesthesiaMachineData.eOxygenSource;
+import pulse.cdm.bind.AnesthesiaMachine.AnesthesiaMachineData.ePrimaryGas;
 import pulse.cdm.properties.SEScalar;
 import pulse.cdm.properties.SEScalar0To1;
 import pulse.cdm.properties.SEScalarFrequency;

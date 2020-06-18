@@ -5,19 +5,19 @@ package pulse.cdm.patient.actions;
 import java.util.ArrayList;
 import java.util.List;
 
-import pulse.cdm.bind.PatientActions.MechanicalVentilationData;
 import pulse.cdm.bind.Enums.eSwitch;
-import pulse.cdm.bind.Substance.SubstanceData;
+import pulse.cdm.bind.PatientActions.MechanicalVentilationData;
 import pulse.cdm.bind.Substance.SubstanceData.eState;
 import pulse.cdm.bind.Substance.SubstanceFractionData;
-
-import pulse.utilities.Log;
-import pulse.cdm.properties.*;
+import pulse.cdm.properties.SEScalar0To1;
+import pulse.cdm.properties.SEScalarPressure;
+import pulse.cdm.properties.SEScalarVolumePerTime;
 import pulse.cdm.substance.SESubstance;
 import pulse.cdm.substance.SESubstanceConcentration;
 import pulse.cdm.substance.SESubstanceFraction;
 import pulse.cdm.substance.SESubstanceManager;
 import pulse.utilities.DoubleUtils;
+import pulse.utilities.Log;
 
 public class SEMechanicalVentilation extends SEPatientAction
 {

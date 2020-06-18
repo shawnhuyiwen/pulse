@@ -3,14 +3,10 @@
 
 package pulse.cdm.substance;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import pulse.cdm.bind.Substance.SubstanceAerosolizationData;
-import pulse.cdm.bind.Substance.SubstanceData;
-
-import pulse.cdm.properties.*;
-import pulse.utilities.StringUtils;
+import pulse.cdm.properties.SEHistogramFractionVsLength;
+import pulse.cdm.properties.SEScalar0To1;
+import pulse.cdm.properties.SEScalarNegative1To1;
 
 public class SESubstanceAerosolization
 {

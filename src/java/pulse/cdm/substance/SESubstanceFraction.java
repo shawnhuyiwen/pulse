@@ -4,10 +4,8 @@
 package pulse.cdm.substance;
 
 
-import pulse.cdm.bind.Substance.SubstanceData;
 import pulse.cdm.bind.Substance.SubstanceFractionData;
-
-import pulse.cdm.properties.*;
+import pulse.cdm.properties.SEScalar0To1;
 
 public class SESubstanceFraction
 {

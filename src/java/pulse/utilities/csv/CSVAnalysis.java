@@ -3,7 +3,9 @@
 package pulse.utilities.csv;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import pulse.utilities.DoubleUtils;
 import pulse.utilities.Log;

@@ -13,8 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
-
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
@@ -25,9 +23,6 @@ import org.jfree.chart.util.ShapeUtils;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-import pulse.utilities.DoubleUtils;
-import pulse.utilities.Log;
-import pulse.utilities.StringUtils;
 import pulse.utilities.csv.CSVContents;
 import pulse.utilities.csv.plots.CSVPlotTool;
 

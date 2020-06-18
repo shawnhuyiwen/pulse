@@ -4,8 +4,8 @@ package pulse.cdm.testing.validation;
 
 import java.util.Arrays;
 
-import pulse.utilities.jniBridge;
 import pulse.utilities.Log;
+import pulse.utilities.jniBridge;
 
 public class SystemValidation extends ValidationTool
 {

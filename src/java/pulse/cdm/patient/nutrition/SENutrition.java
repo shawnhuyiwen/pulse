@@ -2,16 +2,13 @@
    See accompanying NOTICE file for details.*/
 package pulse.cdm.patient.nutrition;
 
-import com.google.protobuf.*;
-import com.google.protobuf.util.*;
-import pulse.cdm.bind.Environment.EnvironmentData;
-import pulse.cdm.bind.PatientNutrition.NutritionData;
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.util.JsonFormat;
 
+import pulse.cdm.bind.PatientNutrition.NutritionData;
 import pulse.cdm.properties.SEScalarMass;
 import pulse.cdm.properties.SEScalarMassPerTime;
 import pulse.cdm.properties.SEScalarVolume;
-import pulse.cdm.substance.SESubstanceManager;
-import pulse.cdm.system.environment.SEEnvironmentalConditions;
 import pulse.utilities.FileUtils;
 
 public class SENutrition 

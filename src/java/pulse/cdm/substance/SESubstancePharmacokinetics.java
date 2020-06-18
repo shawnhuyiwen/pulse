@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import pulse.cdm.bind.Substance.SubstanceData;
 import pulse.cdm.bind.Substance.SubstancePharmacokineticsData;
 import pulse.cdm.bind.Substance.SubstanceTissuePharmacokineticsData;
 

@@ -4,14 +4,11 @@
 package pulse.cdm.substance;
 
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
-import pulse.cdm.bind.Substance.SubstanceData;
 import pulse.cdm.bind.Substance.SubstancePhysicochemicalsData;
-import pulse.cdm.bind.Substance.SubstancePhysicochemicalsData.*;
-import pulse.cdm.properties.*;
+import pulse.cdm.bind.Substance.SubstancePhysicochemicalsData.eBindingProtein;
+import pulse.cdm.bind.Substance.SubstancePhysicochemicalsData.eIonicState;
+import pulse.cdm.properties.SEScalar;
+import pulse.cdm.properties.SEScalar0To1;
 
 public class SESubstancePhysicochemicals
 {

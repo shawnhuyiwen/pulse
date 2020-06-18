@@ -3,8 +3,6 @@
 package pulse.cdm.system.physiology;
 
 import pulse.cdm.bind.Physiology.HepaticSystemData;
-
-import pulse.cdm.properties.*;
 import pulse.cdm.system.SESystem;
 
 public class SEHepaticSystem extends SEPhysiologySystem implements SESystem

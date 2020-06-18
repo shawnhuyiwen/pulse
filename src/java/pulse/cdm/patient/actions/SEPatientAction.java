@@ -3,10 +3,9 @@
 
 package pulse.cdm.patient.actions;
 
+import pulse.cdm.actions.SEAction;
 import pulse.cdm.bind.PatientActions.AnyPatientActionData;
 import pulse.cdm.bind.PatientActions.PatientActionData;
-
-import pulse.cdm.actions.SEAction;
 import pulse.cdm.substance.SESubstance;
 import pulse.cdm.substance.SESubstanceCompound;
 import pulse.cdm.substance.SESubstanceManager;

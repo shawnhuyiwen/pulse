@@ -1,6 +1,6 @@
 package pulse.utilities.csv.plots;
 
-import java.util.*;
+import java.util.List;
 
 import pulse.utilities.FileUtils;
 import pulse.utilities.Log;

@@ -6,7 +6,6 @@ package pulse.cdm.engine;
 
 import pulse.cdm.bind.Engine.AutoSerializationData;
 import pulse.cdm.bind.Enums.eSwitch;
-
 import pulse.cdm.properties.SEScalarTime;
 
 public class SEAutoSerialization 

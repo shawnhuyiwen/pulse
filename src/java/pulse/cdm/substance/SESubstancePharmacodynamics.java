@@ -3,10 +3,10 @@
 
 package pulse.cdm.substance;
 
-import pulse.cdm.bind.Substance.SubstanceData;
 import pulse.cdm.bind.Substance.SubstancePharmacodynamicsData;
-
-import pulse.cdm.properties.*;
+import pulse.cdm.properties.SEScalar;
+import pulse.cdm.properties.SEScalarMassPerVolume;
+import pulse.cdm.properties.SEScalarNegative1To1;
 import pulse.cdm.system.physiology.SEPupillaryResponse;
 
 public class SESubstancePharmacodynamics

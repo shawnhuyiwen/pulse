@@ -8,10 +8,14 @@ import java.util.Iterator;
 import java.util.List;
 
 import pulse.cdm.bind.MechanicalVentilator.MechanicalVentilatorData;
-import pulse.cdm.bind.MechanicalVentilator.MechanicalVentilatorData.*;
+import pulse.cdm.bind.MechanicalVentilator.MechanicalVentilatorData.BreathProfileData;
+import pulse.cdm.bind.MechanicalVentilator.MechanicalVentilatorData.InspiratoryExpiratoryPeriodData;
+import pulse.cdm.bind.MechanicalVentilator.MechanicalVentilatorData.eConnection;
+import pulse.cdm.bind.MechanicalVentilator.MechanicalVentilatorData.eControl;
+import pulse.cdm.bind.MechanicalVentilator.MechanicalVentilatorData.eDriverWaveform;
 import pulse.cdm.bind.Substance.SubstanceConcentrationData;
-import pulse.cdm.bind.Substance.SubstanceFractionData;
 import pulse.cdm.bind.Substance.SubstanceData.eState;
+import pulse.cdm.bind.Substance.SubstanceFractionData;
 import pulse.cdm.properties.SEScalar;
 import pulse.cdm.properties.SEScalar0To1;
 import pulse.cdm.properties.SEScalarFrequency;

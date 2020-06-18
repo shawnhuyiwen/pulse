@@ -6,14 +6,11 @@ package pulse.cdm.substance;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.protobuf.*;
-import com.google.protobuf.util.*;
-import pulse.cdm.bind.Patient.PatientData;
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.util.JsonFormat;
+
 import pulse.cdm.bind.Substance.SubstanceCompoundData;
 import pulse.cdm.bind.Substance.SubstanceConcentrationData;
-import pulse.cdm.bind.Substance.SubstanceData;
-
-import pulse.cdm.patient.SEPatient;
 import pulse.utilities.FileUtils;
 import pulse.utilities.StringUtils;
 

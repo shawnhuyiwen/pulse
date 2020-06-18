@@ -9,28 +9,35 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.PrintWriter;
-import java.lang.reflect.*;
-import java.util.*;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.TreeMap;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import com.google.protobuf.InvalidProtocolBufferException;
+
+import pulse.cdm.bind.Properties.ScalarData;
 import pulse.cdm.patient.SEPatient;
 import pulse.cdm.patient.assessments.SEPatientAssessment;
 import pulse.cdm.properties.SEScalar;
-import pulse.utilities.WaveformUtils;
-import pulse.utilities.csv.CSVContents;
 import pulse.utilities.DoubleUtils;
 import pulse.utilities.Log;
 import pulse.utilities.RunConfiguration;
 import pulse.utilities.StringUtils;
 import pulse.utilities.UnitConverter;
-
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import com.google.protobuf.InvalidProtocolBufferException;
-import pulse.cdm.bind.Properties.ScalarData;
+import pulse.utilities.WaveformUtils;
+import pulse.utilities.csv.CSVContents;
 
 public abstract class ValidationTool
 {

@@ -5,14 +5,17 @@ package pulse.cdm.testing;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
+import com.google.protobuf.InvalidProtocolBufferException;
+
+import pulse.cdm.testing.csv.CSVComparison;
 import pulse.utilities.FileUtils;
-import pulse.utilities.jniBridge;
 import pulse.utilities.Log;
 import pulse.utilities.RunConfiguration;
-import com.google.protobuf.InvalidProtocolBufferException;
-import pulse.cdm.testing.csv.CSVComparison;
+import pulse.utilities.jniBridge;
 import pulse.utilities.csv.plots.CSVComparePlotter;
 import pulse.utilities.csv.plots.CSVComparePlotter.PlotType;
 

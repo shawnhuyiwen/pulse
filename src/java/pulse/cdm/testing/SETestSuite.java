@@ -1,11 +1,13 @@
 package pulse.cdm.testing;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import pulse.cdm.bind.TestReport.TestCaseData;
 import pulse.cdm.bind.TestReport.TestSuiteData;
-
-import pulse.utilities.SEEqualOptions;
 import pulse.cdm.properties.CommonUnits.TimeUnit;
+import pulse.utilities.SEEqualOptions;
 
 public class SETestSuite 
 {

@@ -5,8 +5,8 @@ package pulse.cdm.testing.validation;
 import java.io.PrintWriter;
 import java.util.Arrays;
 
-import pulse.utilities.jniBridge;
 import pulse.utilities.Log;
+import pulse.utilities.jniBridge;
 
 public class PatientValidation extends ValidationTool
 {

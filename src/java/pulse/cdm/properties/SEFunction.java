@@ -3,19 +3,12 @@
 
 package pulse.cdm.properties;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
-import com.google.protobuf.Internal.DoubleList;
-import pulse.cdm.bind.Properties.ArrayData;
-import pulse.cdm.bind.Properties.DoubleArrayData;
-import pulse.cdm.bind.Properties.DoubleArrayData.Builder;
 import pulse.cdm.bind.Properties.FunctionData;
-
-import pulse.utilities.SEEqualOptions;
 import pulse.cdm.exceptions.InvalidUnitException;
-import pulse.utilities.DoubleUtils;
 import pulse.utilities.Log;
+import pulse.utilities.SEEqualOptions;
 import pulse.utilities.StringUtils;
 import pulse.utilities.UnitConverter;
 

@@ -4,7 +4,6 @@ package pulse.cdm.system.equipment.anesthesia_machine;
 
 import pulse.cdm.bind.AnesthesiaMachine.AnesthesiaMachineChamberData;
 import pulse.cdm.bind.Enums.eSwitch;
-
 import pulse.cdm.properties.SEScalar0To1;
 import pulse.cdm.substance.SESubstance;
 import pulse.cdm.substance.SESubstanceManager;

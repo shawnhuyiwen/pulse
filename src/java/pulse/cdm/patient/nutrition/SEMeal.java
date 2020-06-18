@@ -3,7 +3,6 @@
 package pulse.cdm.patient.nutrition;
 
 import pulse.cdm.bind.PatientNutrition.MealData;
-
 import pulse.cdm.properties.SEScalarTime;
 
 public class SEMeal extends SENutrition

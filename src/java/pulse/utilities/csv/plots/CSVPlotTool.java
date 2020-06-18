@@ -2,17 +2,18 @@
    See accompanying NOTICE file for details.*/
 package pulse.utilities.csv.plots;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Paint;
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.*;
-
-import pulse.utilities.DoubleUtils;
-import pulse.utilities.FileUtils;
-import pulse.utilities.Log;
-import pulse.utilities.StringUtils;
-import pulse.utilities.csv.CSVContents;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtils;
@@ -27,10 +28,11 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-import java.awt.BasicStroke;
-import java.awt.Font;
-import java.awt.Color;
-import java.awt.Paint;
+import pulse.utilities.DoubleUtils;
+import pulse.utilities.FileUtils;
+import pulse.utilities.Log;
+import pulse.utilities.StringUtils;
+import pulse.utilities.csv.CSVContents;
 
 /**
  * @author abray

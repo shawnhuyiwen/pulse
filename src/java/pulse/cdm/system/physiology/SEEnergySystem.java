@@ -3,8 +3,12 @@
 package pulse.cdm.system.physiology;
 
 import pulse.cdm.bind.Physiology.EnergySystemData;
-
-import pulse.cdm.properties.*;
+import pulse.cdm.properties.SEScalar0To1;
+import pulse.cdm.properties.SEScalarAmountPerTime;
+import pulse.cdm.properties.SEScalarMassPerTime;
+import pulse.cdm.properties.SEScalarPower;
+import pulse.cdm.properties.SEScalarPressure;
+import pulse.cdm.properties.SEScalarTemperature;
 import pulse.cdm.system.SESystem;
 
 public class SEEnergySystem extends SEPhysiologySystem implements SESystem

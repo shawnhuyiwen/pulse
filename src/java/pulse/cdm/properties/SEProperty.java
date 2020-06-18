@@ -3,9 +3,6 @@
 
 package pulse.cdm.properties;
 
-import java.lang.reflect.*;
-import java.util.*;
-
 public class SEProperty
 {
   

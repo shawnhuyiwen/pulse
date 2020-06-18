@@ -3,12 +3,21 @@
 
 package pulse.cdm.substance;
 
-import com.google.protobuf.*;
-import com.google.protobuf.util.*;
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.util.JsonFormat;
+
 import pulse.cdm.bind.Substance.SubstanceData;
 import pulse.cdm.bind.Substance.SubstanceData.eState;
-
-import pulse.cdm.properties.*;
+import pulse.cdm.properties.SEScalar;
+import pulse.cdm.properties.SEScalar0To1;
+import pulse.cdm.properties.SEScalarInversePressure;
+import pulse.cdm.properties.SEScalarMass;
+import pulse.cdm.properties.SEScalarMassPerAmount;
+import pulse.cdm.properties.SEScalarMassPerAreaTime;
+import pulse.cdm.properties.SEScalarMassPerVolume;
+import pulse.cdm.properties.SEScalarPressure;
+import pulse.cdm.properties.SEScalarVolumePerTime;
+import pulse.cdm.properties.SEScalarVolumePerTimePressure;
 import pulse.utilities.FileUtils;
 import pulse.utilities.StringUtils;
 

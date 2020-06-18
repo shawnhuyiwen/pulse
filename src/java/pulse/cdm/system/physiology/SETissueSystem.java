@@ -3,8 +3,9 @@
 package pulse.cdm.system.physiology;
 
 import pulse.cdm.bind.Physiology.TissueSystemData;
-
-import pulse.cdm.properties.*;
+import pulse.cdm.properties.SEScalar;
+import pulse.cdm.properties.SEScalarVolume;
+import pulse.cdm.properties.SEScalarVolumePerTime;
 import pulse.cdm.system.SESystem;
 
 public class SETissueSystem extends SEPhysiologySystem implements SESystem

@@ -5,11 +5,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import pulse.utilities.FileUtils;
-import pulse.utilities.jniBridge;
 import pulse.utilities.Log;
+import pulse.utilities.jniBridge;
 
 public class Proto2Doxygen 
 {
