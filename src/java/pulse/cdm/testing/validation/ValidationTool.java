@@ -955,9 +955,9 @@ public abstract class ValidationTool
     {    
       String span;
       double abs = Math.abs(vRow.resultError);
-      if(abs<vRow.successTolerance)
+      if(abs<ValidationRow.successTolerance)
         span = success;
-      else if(abs<vRow.warningTolerance)
+      else if(abs<ValidationRow.warningTolerance)
         span = warning; 
       else
         span = danger;

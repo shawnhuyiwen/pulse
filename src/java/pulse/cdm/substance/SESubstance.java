@@ -231,7 +231,7 @@ public class SESubstance
   
   public eState  getState() { return this.state;}
   public void    setState(eState state){this.state=state;}
-  public boolean hasState(){return this.state==null?false:state!=state.NullState;}
+  public boolean hasState(){return this.state==null?false:state!=eState.NullState;}
   
   public SEScalarMassPerVolume getDensity() 
   { 
