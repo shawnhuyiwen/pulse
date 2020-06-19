@@ -8,7 +8,7 @@ class CDM_DECL SEEquipmentAction : public SEAction
   friend class PBEquipmentAction;//friend the serialization class
 public:
 
-  SEEquipmentAction();
+  SEEquipmentAction(Logger* logger);
   virtual ~SEEquipmentAction();
 
   virtual void Clear();

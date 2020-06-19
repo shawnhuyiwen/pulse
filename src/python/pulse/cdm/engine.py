@@ -468,7 +468,7 @@ class SEDataRequestManager:
 
     def __init__(self, data_requests=None):
         self._data_requests = data_requests
-        self._results_filename = None
+        self._results_filename = ""
         self._samples_per_second = 0
 
     def has_data_requests(self): return len(self._data_requests)

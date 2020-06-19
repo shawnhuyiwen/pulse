@@ -15,7 +15,7 @@ public:
   static void Copy(const SEPatient& src, SEPatient& dst);
 
   static bool SerializeToString(const SEPatient& src, std::string& output, SerializationFormat m);
-  static bool SerializeToFile(const SEPatient& src, const std::string& filename, SerializationFormat m);
+  static bool SerializeToFile(const SEPatient& src, const std::string& filename);
   static bool SerializeFromString(const std::string& src, SEPatient& dst, SerializationFormat m);
-  static bool SerializeFromFile(const std::string& filename, SEPatient& dst, SerializationFormat m);
+  static bool SerializeFromFile(const std::string& filename, SEPatient& dst);
 };

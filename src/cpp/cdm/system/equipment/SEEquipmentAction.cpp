@@ -3,7 +3,7 @@
 #include "stdafx.h"
 #include "system/equipment/SEEquipmentAction.h"
 
-SEEquipmentAction::SEEquipmentAction() : SEAction()
+SEEquipmentAction::SEEquipmentAction(Logger* logger) : SEAction(logger)
 {
 
 }

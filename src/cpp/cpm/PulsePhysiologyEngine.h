@@ -33,8 +33,8 @@ public:
 
   // void SetConfigurationOverride(std::string const& config); // Not Implemented
 
-  bool SerializeFromFile(std::string const& filename, std::string const& data_requests, SerializationFormat format);
-  bool SerializeToFile(std::string const& filename, SerializationFormat format);
+  bool SerializeFromFile(std::string const& filename, std::string const& data_requests, SerializationFormat data_requests_format);
+  bool SerializeToFile(std::string const& filename);
 
   bool SerializeFromString(std::string const& state, std::string const& data_requests, SerializationFormat format);
   std::string SerializeToString(SerializationFormat format);
@@ -173,7 +173,7 @@ namespace pulse {
   class PulmonaryCompartment
   {
   public:
-    DEFINE_STATIC_STRING(Mouth);
+    DEFINE_STATIC_STRING(Airway);
     DEFINE_STATIC_STRING(Stomach);
     DEFINE_STATIC_STRING(Carina);
     DEFINE_STATIC_STRING_EX(Lungs, PulmonaryLungs);
@@ -199,7 +199,7 @@ namespace pulse {
       ScopedMutex lock;
       if (_values.empty())
       {
-        _values.push_back(Mouth);
+        _values.push_back(Airway);
         _values.push_back(Stomach);
         _values.push_back(Carina);
         _values.push_back(Lungs);
@@ -228,9 +228,9 @@ namespace pulse {
   class PulmonaryLink
   {
   public:
-    DEFINE_STATIC_STRING(EnvironmentToMouth);
-    DEFINE_STATIC_STRING(MouthToCarina);
-    DEFINE_STATIC_STRING(MouthToStomach);
+    DEFINE_STATIC_STRING(EnvironmentToAirway);
+    DEFINE_STATIC_STRING(AirwayToCarina);
+    DEFINE_STATIC_STRING(AirwayToStomach);
     DEFINE_STATIC_STRING(CarinaToLeftAnatomicDeadSpace);
     DEFINE_STATIC_STRING(LeftAnatomicDeadSpaceToLeftAlveolarDeadSpace);
     DEFINE_STATIC_STRING(LeftAlveolarDeadSpaceToLeftAlveoli);
@@ -253,9 +253,9 @@ namespace pulse {
       ScopedMutex lock;
       if (_values.empty())
       {
-        _values.push_back(EnvironmentToMouth);
-        _values.push_back(MouthToCarina);
-        _values.push_back(MouthToStomach);
+        _values.push_back(EnvironmentToAirway);
+        _values.push_back(AirwayToCarina);
+        _values.push_back(AirwayToStomach);
         _values.push_back(CarinaToLeftAnatomicDeadSpace);
         _values.push_back(LeftAnatomicDeadSpaceToLeftAlveolarDeadSpace);
         _values.push_back(LeftAlveolarDeadSpaceToLeftAlveoli);
@@ -1002,7 +1002,7 @@ namespace pulse {
     DEFINE_STATIC_STRING_EX(ExpiratoryLimbToSelector, AnesthesiaMachineExpiratoryLimbToSelector);
     DEFINE_STATIC_STRING_EX(YPieceToConnection, AnesthesiaMachineYPieceToConnection);
     DEFINE_STATIC_STRING_EX(ConnectionLeak, AnesthesiaMachineConnectionLeak);
-    DEFINE_STATIC_STRING_EX(ConnectionToMouth, AnesthesiaMachineConnectionToMouth);
+    DEFINE_STATIC_STRING_EX(ConnectionToAirway, AnesthesiaMachineConnectionToAirway);
 
     static const std::vector<std::string>& GetValues()
     {
@@ -1021,7 +1021,7 @@ namespace pulse {
         _values.push_back(ExpiratoryLimbToSelector);
         _values.push_back(YPieceToConnection);
         _values.push_back(ConnectionLeak);
-        _values.push_back(ConnectionToMouth);
+        _values.push_back(ConnectionToAirway);
       }
       return _values;
     }
@@ -1051,7 +1051,7 @@ namespace pulse {
   {
   public:
     DEFINE_STATIC_STRING_EX(EnvironmentToMouthpiece, EnvironmentToInhalerMouthpiece);
-    DEFINE_STATIC_STRING_EX(MouthpieceToMouth, InhalerMouthpieceToMouth);
+    DEFINE_STATIC_STRING_EX(MouthpieceToAirway, InhalerMouthpieceToAirway);
 
     static const std::vector<std::string>& GetValues()
     {
@@ -1059,7 +1059,7 @@ namespace pulse {
       if (_values.empty())
       {
         _values.push_back(EnvironmentToMouthpiece);
-        _values.push_back(MouthpieceToMouth);
+        _values.push_back(MouthpieceToAirway);
       }
       return _values;
     }
@@ -1088,14 +1088,14 @@ namespace pulse {
   class MechanicalVentilationLink
   {
   public:
-    DEFINE_STATIC_STRING_EX(ConnectionToMouth, MechanicalVentilationConnectionToMouth);
+    DEFINE_STATIC_STRING_EX(ConnectionToAirway, MechanicalVentilationConnectionToAirway);
 
     static const std::vector<std::string>& GetValues()
     {
       ScopedMutex lock;
       if (_values.empty())
       {
-        _values.push_back(ConnectionToMouth);
+        _values.push_back(ConnectionToAirway);
       }
       return _values;
     }
@@ -1144,7 +1144,7 @@ namespace pulse {
     DEFINE_STATIC_STRING_EX(InspiratoryLimbToYPiece, MechanicalVentilatorInspiratoryLimbToYPiece);
     DEFINE_STATIC_STRING_EX(YPieceToConnection, MechanicalVentilatorYPieceToConnection);
     DEFINE_STATIC_STRING_EX(ConnectionToEnvironment, MechanicalVentilatorConnectionToEnvironment);
-    DEFINE_STATIC_STRING_EX(ConnectionToMouth, MechanicalVentilatorConnectionToMouth);
+    DEFINE_STATIC_STRING_EX(ConnectionToAirway, MechanicalVentilatorConnectionToAirway);
 
     static const std::vector<std::string>& GetValues()
     {
@@ -1159,7 +1159,7 @@ namespace pulse {
         _values.push_back(InspiratoryLimbToYPiece);
         _values.push_back(YPieceToConnection);
         _values.push_back(ConnectionToEnvironment);
-        _values.push_back(ConnectionToMouth);
+        _values.push_back(ConnectionToAirway);
       }
       return _values;
     }
@@ -1192,7 +1192,7 @@ namespace pulse {
   public:
     DEFINE_STATIC_STRING(NasalCannulaOxygenInlet);
     DEFINE_STATIC_STRING(NasalCannulaSeal);
-    DEFINE_STATIC_STRING(NasalCannulaToMouth);
+    DEFINE_STATIC_STRING(NasalCannulaToAirway);
 
     static const std::vector<std::string>& GetValues()
     {
@@ -1201,7 +1201,7 @@ namespace pulse {
       {
         _values.push_back(NasalCannulaOxygenInlet);
         _values.push_back(NasalCannulaSeal);
-        _values.push_back(NasalCannulaToMouth);
+        _values.push_back(NasalCannulaToAirway);
       }
       return _values;
     }
@@ -1241,7 +1241,7 @@ namespace pulse {
     DEFINE_STATIC_STRING(NonRebreatherMaskSeal);
     DEFINE_STATIC_STRING(NonRebreatherMaskExhalationValves);
     DEFINE_STATIC_STRING(NonRebreatherMaskExhalation);
-    DEFINE_STATIC_STRING(NonRebreatherMaskToMouth);
+    DEFINE_STATIC_STRING(NonRebreatherMaskToAirway);
 
     static const std::vector<std::string>& GetValues()
     {
@@ -1253,7 +1253,7 @@ namespace pulse {
         _values.push_back(NonRebreatherMaskSeal);
         _values.push_back(NonRebreatherMaskExhalationValves);
         _values.push_back(NonRebreatherMaskExhalation);
-        _values.push_back(NonRebreatherMaskToMouth);
+        _values.push_back(NonRebreatherMaskToAirway);
       }
       return _values;
     }
@@ -1287,7 +1287,7 @@ namespace pulse {
     DEFINE_STATIC_STRING(SimpleMaskOxygenInlet);
     DEFINE_STATIC_STRING(SimpleMaskSeal);
     DEFINE_STATIC_STRING(SimpleMaskPorts);
-    DEFINE_STATIC_STRING(SimpleMaskToMouth);
+    DEFINE_STATIC_STRING(SimpleMaskToAirway);
 
     static const std::vector<std::string>& GetValues()
     {
@@ -1297,7 +1297,7 @@ namespace pulse {
         _values.push_back(SimpleMaskOxygenInlet);
         _values.push_back(SimpleMaskSeal);
         _values.push_back(SimpleMaskPorts);
-        _values.push_back(SimpleMaskToMouth);
+        _values.push_back(SimpleMaskToAirway);
       }
       return _values;
     }

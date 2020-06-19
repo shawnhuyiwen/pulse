@@ -14,14 +14,17 @@ SESubstancePharmacokinetics::SESubstancePharmacokinetics(Logger* logger) : Logga
 
 SESubstancePharmacokinetics::~SESubstancePharmacokinetics()
 {
-  Clear();
+  SAFE_DELETE(m_Physicochemicals);
+  DELETE_MAP_SECOND(m_TissueKinetics);
+  m_TissueKinetics.clear();
 }
 
 void SESubstancePharmacokinetics::Clear()
 {
-  SAFE_DELETE(m_Physicochemicals);
-  DELETE_MAP_SECOND(m_TissueKinetics);
-  m_TissueKinetics.clear();
+  if(m_Physicochemicals!=nullptr)
+  m_Physicochemicals->Clear();
+  for (auto itr : m_TissueKinetics)
+    itr.second->Clear();
 }
 
 bool SESubstancePharmacokinetics::IsValid() const

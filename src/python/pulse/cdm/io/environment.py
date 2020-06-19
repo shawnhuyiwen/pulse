@@ -19,8 +19,8 @@ def serialize_environmental_conditions_to_string(src: SEEnvironmentalConditions,
     serialize_environmental_conditions_to_bind(src, dst)
     return json_format.MessageToJson(dst, True, True)
 
-def serialize_environmental_conditions_to_file(src: SEEnvironmentalConditions, filename: str, fmt: eSerializationFormat):
-    string = serialize_environmental_conditions_to_string(src, fmt)
+def serialize_environmental_conditions_to_file(src: SEEnvironmentalConditions, filename: str):
+    string = serialize_environmental_conditions_to_string(src, eSerializationFormat.JSON)
     file = open(filename, "w")
     n = file.write(string)
     file.close()
@@ -30,10 +30,10 @@ def serialize_environmental_conditions_from_string(string: str, dst: SEEnvironme
     json_format.Parse(string, src)
     serialize_environmental_conditions_from_bind(src,dst)
 
-def serialize_environmental_conditions_from_file(filename: str, dst: SEEnvironmentalConditions, fmt: eSerializationFormat):
+def serialize_environmental_conditions_from_file(filename: str, dst: SEEnvironmentalConditions):
     with open(filename) as f:
         string = f.read()
-    serialize_environmental_conditions_from_string(string, dst, fmt)
+    serialize_environmental_conditions_from_string(string, dst, eSerializationFormat.JSON)
 
 def serialize_environmental_conditions_to_bind(src: SEEnvironmentalConditions, dst: EnvironmentalConditionsData):
     dst.SurroundingType = src.get_surrounding_type().value

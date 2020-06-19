@@ -42,7 +42,7 @@ void HowToAnesthesiaMachine()
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
   pe->GetLogger()->SetLogFile("./test_results/HowTo_AnesthesiaMachine.log");
   pe->GetLogger()->Info("HowTo_AnesthesiaMachine");
-  if (!pe->SerializeFromFile("./states/StandardMale@0s.json", JSON))
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
@@ -76,7 +76,7 @@ void HowToAnesthesiaMachine()
 
   // Turn the anesthesia machine on and get it configured for spontaneous breathing
   // Create an Anesthesia Machine and configure it as needed
-  SEAnesthesiaMachineConfiguration AMConfig(pe->GetSubstanceManager());
+  SEAnesthesiaMachineConfiguration AMConfig(pe->GetLogger());
 
   // You can set configuration by modifing the configuration class directly
   // Or you can point to an json with configuration data.

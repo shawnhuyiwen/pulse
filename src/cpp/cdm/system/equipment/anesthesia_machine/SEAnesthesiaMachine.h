@@ -31,15 +31,15 @@ protected:
   friend SEAnesthesiaMachineConfiguration;
 public:
 
-  SEAnesthesiaMachine(SESubstanceManager& substances);
+  SEAnesthesiaMachine(Logger* logger);
   virtual ~SEAnesthesiaMachine();
 
   virtual void Clear();
 
   bool SerializeToString(std::string& output, SerializationFormat m) const;
-  bool SerializeToFile(const std::string& filename, SerializationFormat m) const;
-  bool SerializeFromString(const std::string& src, SerializationFormat m);
-  bool SerializeFromFile(const std::string& filename, SerializationFormat m);
+  bool SerializeToFile(const std::string& filename) const;
+  bool SerializeFromString(const std::string& src, SerializationFormat m, const SESubstanceManager& subMgr);
+  bool SerializeFromFile(const std::string& filename, const SESubstanceManager& subMgr);
 
 protected:
 
@@ -49,8 +49,8 @@ protected:
   *            Engine specific methodology can then update their logic.
   */
   virtual void StateChange(){};
-  virtual void Merge(const SEAnesthesiaMachine& from);
-  virtual void ProcessConfiguration(SEAnesthesiaMachineConfiguration& config);
+  virtual void Merge(const SEAnesthesiaMachine& from, SESubstanceManager& subMgr);
+  virtual void ProcessConfiguration(SEAnesthesiaMachineConfiguration& config, SESubstanceManager& subMgr);
 
 public:
 
@@ -118,9 +118,9 @@ protected:
   eAnesthesiaMachine_Connection                          m_Connection;
   SEScalarVolumePerTime*                                 m_InletFlow;
   SEScalar*                                              m_InspiratoryExpiratoryRatio;
-  SEScalar0To1*                                          m_OxygenFraction;  
+  SEScalar0To1*                                          m_OxygenFraction;
   eAnesthesiaMachine_OxygenSource                        m_OxygenSource;
-  SEScalarPressure*                                      m_PositiveEndExpiredPressure;  
+  SEScalarPressure*                                      m_PositiveEndExpiredPressure;
   eAnesthesiaMachine_PrimaryGas                          m_PrimaryGas;
   SEScalarFrequency*                                     m_RespiratoryRate;
   SEScalarPressure*                                      m_ReliefValvePressure;
@@ -132,6 +132,4 @@ protected:
 
   SEAnesthesiaMachineOxygenBottle*                       m_OxygenBottleOne;
   SEAnesthesiaMachineOxygenBottle*                       m_OxygenBottleTwo;
-
-  SESubstanceManager&                                    m_Substances;
 };

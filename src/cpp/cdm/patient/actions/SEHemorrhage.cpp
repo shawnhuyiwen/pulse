@@ -6,7 +6,7 @@
 #include "properties/SEScalarVolumePerTime.h"
 #include "io/protobuf/PBPatientActions.h"
 
-SEHemorrhage::SEHemorrhage() : SEPatientAction()
+SEHemorrhage::SEHemorrhage(Logger* logger) : SEPatientAction(logger)
 {
   m_Compartment = "";
   m_Rate=nullptr;

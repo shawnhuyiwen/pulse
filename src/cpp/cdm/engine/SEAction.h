@@ -9,10 +9,11 @@ class CDM_DECL SEAction : public Loggable
   friend class PBAction;//friend the serialization class
 public:
 
-  SEAction();
+  SEAction(Logger* logger);
   virtual ~SEAction();
 
   virtual void Clear();// Deletes all members
+  static SEAction* Copy(const SEAction&, const SESubstanceManager&);
   
   /** Test if the action has all data it needs */
   virtual bool IsValid() const { return true; }

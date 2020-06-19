@@ -21,16 +21,16 @@ void PBEnvironmentAction::Serialize(const SEEnvironmentAction& src, CDM_BIND::En
   PBAction::Serialize(src, *dst.mutable_action());
 }
 
-void PBEnvironmentAction::Load(const CDM_BIND::ChangeEnvironmentalConditionsData& src, SEChangeEnvironmentalConditions& dst)
+void PBEnvironmentAction::Load(const CDM_BIND::ChangeEnvironmentalConditionsData& src, SEChangeEnvironmentalConditions& dst, const SESubstanceManager& subMgr)
 {
   dst.Clear();
-  PBEnvironmentAction::Serialize(src, dst);
+  PBEnvironmentAction::Serialize(src, dst, subMgr);
 }
-void PBEnvironmentAction::Serialize(const CDM_BIND::ChangeEnvironmentalConditionsData& src, SEChangeEnvironmentalConditions& dst)
+void PBEnvironmentAction::Serialize(const CDM_BIND::ChangeEnvironmentalConditionsData& src, SEChangeEnvironmentalConditions& dst, const SESubstanceManager& subMgr)
 {
   PBEnvironmentAction::Serialize(src.environmentaction(), dst);
   if (src.has_environmentalconditions())
-    PBEnvironment::Load(src.environmentalconditions(), dst.GetEnvironmentalConditions());
+    PBEnvironment::Load(src.environmentalconditions(), dst.GetEnvironmentalConditions(), subMgr);
   else
     dst.SetEnvironmentalConditionsFile(src.environmentalconditionsfile());
 }
@@ -48,12 +48,12 @@ void PBEnvironmentAction::Serialize(const SEChangeEnvironmentalConditions& src, 
   else if (src.HasEnvironmentalConditionsFile())
     dst.set_environmentalconditionsfile(src.m_EnvironmentalConditionsFile);
 }
-void PBEnvironmentAction::Copy(const SEChangeEnvironmentalConditions& src, SEChangeEnvironmentalConditions& dst)
+void PBEnvironmentAction::Copy(const SEChangeEnvironmentalConditions& src, SEChangeEnvironmentalConditions& dst, const SESubstanceManager& subMgr)
 {
   dst.Clear();
   CDM_BIND::ChangeEnvironmentalConditionsData data;
   PBEnvironmentAction::Serialize(src, data);
-  PBEnvironmentAction::Serialize(data, dst);
+  PBEnvironmentAction::Serialize(data, dst, subMgr);
 }
 
 void PBEnvironmentAction::Load(const CDM_BIND::ThermalApplicationData& src, SEThermalApplication& dst)
@@ -98,14 +98,14 @@ void PBEnvironmentAction::Copy(const SEThermalApplication& src, SEThermalApplica
   PBEnvironmentAction::Serialize(data, dst);
 }
 
-SEEnvironmentAction* PBEnvironmentAction::Load(const CDM_BIND::AnyEnvironmentActionData& any, SESubstanceManager& subMgr)
+SEEnvironmentAction* PBEnvironmentAction::Load(const CDM_BIND::AnyEnvironmentActionData& any, const SESubstanceManager& subMgr)
 {
   switch (any.Action_case())
   {
   case CDM_BIND::AnyEnvironmentActionData::ActionCase::kChangeEnvironmentalConditions:
   {
-    SEChangeEnvironmentalConditions* a = new SEChangeEnvironmentalConditions(subMgr);
-    PBEnvironmentAction::Load(any.changeenvironmentalconditions(), *a);
+    SEChangeEnvironmentalConditions* a = new SEChangeEnvironmentalConditions(subMgr.GetLogger());
+    PBEnvironmentAction::Load(any.changeenvironmentalconditions(), *a, subMgr);
     return a;
   }
   case CDM_BIND::AnyEnvironmentActionData::ActionCase::kThermalApplication:

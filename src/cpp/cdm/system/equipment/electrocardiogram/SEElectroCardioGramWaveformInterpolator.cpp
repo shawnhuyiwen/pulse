@@ -38,9 +38,9 @@ bool SEElectroCardioGramWaveformInterpolator::SerializeToString(std::string& out
 {
   return PBElectroCardioGram::SerializeToString(*this, output, m);
 }
-bool SEElectroCardioGramWaveformInterpolator::SerializeToFile(const std::string& filename, SerializationFormat m) const
+bool SEElectroCardioGramWaveformInterpolator::SerializeToFile(const std::string& filename) const
 {
-  return PBElectroCardioGram::SerializeToFile(*this, filename, m);
+  return PBElectroCardioGram::SerializeToFile(*this, filename);
 }
 bool SEElectroCardioGramWaveformInterpolator::SerializeFromString(const std::string& src, SerializationFormat m, const SEScalarTime* timeStep)
 {
@@ -50,9 +50,9 @@ bool SEElectroCardioGramWaveformInterpolator::SerializeFromString(const std::str
     Interpolate(*timeStep);
   return true;
 }
-bool SEElectroCardioGramWaveformInterpolator::SerializeFromFile(const std::string& filename, SerializationFormat m, const SEScalarTime* timeStep)
+bool SEElectroCardioGramWaveformInterpolator::SerializeFromFile(const std::string& filename, const SEScalarTime* timeStep)
 {
-  if (!PBElectroCardioGram::SerializeFromFile(filename, *this, m))
+  if (!PBElectroCardioGram::SerializeFromFile(filename, *this))
     return false;
   if (timeStep != nullptr)
     Interpolate(*timeStep);

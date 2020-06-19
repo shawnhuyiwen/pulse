@@ -39,7 +39,7 @@
 ========================
 */
 
-MechanicalVentilator::MechanicalVentilator(PulseData& data) : PulseMechanicalVentilator(data.GetSubstances()), m_data(data)
+MechanicalVentilator::MechanicalVentilator(PulseData& data) : PulseMechanicalVentilator(data.GetLogger()), m_data(data)
 {
   Clear();
 }
@@ -68,6 +68,9 @@ void MechanicalVentilator::Initialize()
   SetConnection(eMechanicalVentilator_Connection::NullConnection);
   m_Inhaling = true;
   m_CurrentBreathingCycleTime_s = 0.0;
+  m_PressureTarget_cmH2O = 0.0;
+  m_PressureBaseline_cmH2O = 0.0;
+  m_DriverPressure_cmH2O = 0.0;
   StateChange();
 }
 
@@ -100,88 +103,6 @@ void MechanicalVentilator::StateChange()
     return;
   }
 
-  if (GetControl() != eMechanicalVentilator_Control::PC_CMV)
-  {
-    //Only one option for now
-    /// \error Error: Unknown ventilator control type.  Setting to PC-CMV.
-    Error("Unknown ventilator control type.  Setting to PC-CMV.");
-    SetControl(eMechanicalVentilator_Control::PC_CMV);
-  }
-
-  if (GetDriverWaveform() != eMechanicalVentilator_DriverWaveform::Square)
-  {
-    //Only one option for now
-    /// \error Error: Unknown ventilator waveform type.  Setting to Square.
-    Error("Unknown ventilator waveform type.  Setting to Square.");
-    SetDriverWaveform(eMechanicalVentilator_DriverWaveform::Square);
-  }
-
-  if (!HasPositiveEndExpiredPressure())
-  {
-    /// \error Error: PEEP not set.  Setting to 0.
-    Error("PEEP not set.  Setting to 0.");
-    GetPositiveEndExpiredPressure().SetValue(0.0, PressureUnit::cmH2O);
-  }
-
-  if (!HasPeakInspiratoryPressure())
-  {
-    /// \error Error: PIP not set.  Setting to 10 cmH2O above PEEP.
-    Error("PIP not set.  Setting to 10 cmH2O above PEEP.");
-    double PEEP_cmH2O = GetPositiveEndExpiredPressure(PressureUnit::cmH2O);
-    GetPositiveEndExpiredPressure().SetValue(10.0 + PEEP_cmH2O, PressureUnit::cmH2O);
-  }
-
-  /// \todo Add checks to alert when things are overriden
-  if (HasRespiratoryRate())
-  {
-    GetBreathPeriod().SetValue(1.0 / GetRespiratoryRate(FrequencyUnit::Per_s), TimeUnit::s);
-  }
-  else if (HasBreathPeriod())
-  {
-    GetRespiratoryRate().SetValue(1.0 / GetBreathPeriod(TimeUnit::min), FrequencyUnit::Per_min);
-  }
-  else if (HasInspiratoryPeriod() && HasExpiratoryPeriod())
-  {
-    double totalPeriod_s = GetInspiratoryPeriod(TimeUnit::s) + GetExpiratoryPeriod(TimeUnit::s);
-    GetBreathPeriod().SetValue(totalPeriod_s, TimeUnit::s);
-    GetRespiratoryRate().SetValue(60.0 / totalPeriod_s, FrequencyUnit::Per_min);
-  }
-  else
-  {
-    /// \error Fatal: No ventilator breath frequency/period set.  Respiratory rate, breath period, or inspiratory + expiratory period needed.
-    Fatal("No ventilator breath frequency/period set.  Respiratory rate, breath period, or inspiratory + expiratory period needed.");
-  }
-
-  if (HasInspiratoryExpiratoryRatio())
-  {
-    double IERatio = GetInspiratoryExpiratoryRatio().GetValue();
-    double totalPeriod_s = GetBreathPeriod(TimeUnit::s);
-    double inspiratoryPeriod_s = IERatio * totalPeriod_s / (1 + IERatio);
-    GetInspiratoryPeriod().SetValue(inspiratoryPeriod_s, TimeUnit::s);
-    GetExpiratoryPeriod().SetValue(totalPeriod_s - inspiratoryPeriod_s, TimeUnit::s);
-  }
-  else if (HasInspiratoryPeriod())
-  {
-    double inspiratoryPeriod_s = GetInspiratoryPeriod(TimeUnit::s);
-    double totalPeriod_s = GetBreathPeriod(TimeUnit::s);
-    double expiratoryPeriod_s = totalPeriod_s - inspiratoryPeriod_s;
-    GetExpiratoryPeriod().SetValue(expiratoryPeriod_s, TimeUnit::s);
-    GetInspiratoryExpiratoryRatio().SetValue(inspiratoryPeriod_s / expiratoryPeriod_s);
-  }
-  else if (HasExpiratoryPeriod())
-  {
-    double expiratoryPeriod_s = GetInspiratoryPeriod(TimeUnit::s);
-    double totalPeriod_s = GetBreathPeriod(TimeUnit::s);
-    double inspiratoryPeriod_s = totalPeriod_s - expiratoryPeriod_s;
-    GetInspiratoryPeriod().SetValue(inspiratoryPeriod_s, TimeUnit::s);
-    GetInspiratoryExpiratoryRatio().SetValue(inspiratoryPeriod_s / expiratoryPeriod_s);
-  }
-  else
-  {
-    /// \error Fatal: No ventilator inspiratory vs expiratory ratio/period set.  IE ratio, inspiratory period, or expiratory period needed.
-    Fatal("No ventilator inspiratory vs expiratory ratio/period set.  IE ratio, inspiratory period, or expiratory period needed.");
-  }
-
   m_Inhaling = true;
   m_CurrentBreathingCycleTime_s = 0.0;
 
@@ -203,7 +124,7 @@ void MechanicalVentilator::StateChange()
   //Has fractions defined
   for (auto f : gasFractions)
   {
-    SESubstance& sub = f->GetSubstance();
+    const SESubstance& sub = f->GetSubstance();
     double fraction = f->GetFractionAmount().GetValue();
 
     //Do this, just in case it's something new
@@ -250,12 +171,11 @@ void MechanicalVentilator::StateChange()
     //Has fractions defined
     for (auto f : liquidConcentrations)
     {
-      SESubstance& sub = f->GetSubstance();
+      const SESubstance& sub = f->GetSubstance();
       SEScalarMassPerVolume concentration = f->GetConcentration();
 
       //Do this, just in case it's something new
       m_data.GetSubstances().AddActiveSubstance(sub);
-  //
       //Now set it on the connection compartment
       //It has infinite volume, so this will keep the same volume fraction no matter what's going on around it
       m_VentilatorAerosol->GetSubstanceQuantity(sub)->GetConcentration().Set(concentration);
@@ -366,17 +286,13 @@ void MechanicalVentilator::SetConnection()
 /// Mechanical ventilator preprocess function
 ///
 /// \details
-/// Checks the mechanical ventilator settings to ensure all are within the acceptable ranges. 
-/// Processes all equipment failures.
-/// Verifies the oxygen source.
-/// Processes any failures with the oxygen source. 
-/// Calculates the gas inlet volume fractions based on equipment failures and gas sources.
+/// Applies all the settings and calculates the instantaneous driver value.
 //--------------------------------------------------------------------------------------------------
 void MechanicalVentilator::PreProcess()
 {
   if (m_data.GetActions().GetEquipmentActions().HasMechanicalVentilatorConfiguration())
   {
-    ProcessConfiguration(*m_data.GetActions().GetEquipmentActions().GetMechanicalVentilatorConfiguration());
+    ProcessConfiguration(*m_data.GetActions().GetEquipmentActions().GetMechanicalVentilatorConfiguration(), m_data.GetSubstances());
     m_data.GetActions().GetEquipmentActions().RemoveMechanicalVentilatorConfiguration();
   }
   //Do nothing if the ventilator is off and not initialized
@@ -388,8 +304,14 @@ void MechanicalVentilator::PreProcess()
   }
   
   SetConnection();
-  CalculateCyclePhase();
-  CalculateVentilatorPressure();
+  ApplyBaseline();
+  ApplyTarget();
+  CalculateInspiration();
+  CalculateExpiration();
+  SetVentilatorPressure();
+  SetResistances();
+
+  m_CurrentBreathingCycleTime_s += m_dt_s;
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -425,55 +347,209 @@ void MechanicalVentilator::PostProcess(bool solve_and_transport)
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
-/// Calculates respiration cycle
-///
-/// \details
-/// The inspiratory and expiratory phase times are calculated based on
-/// a pre-set respiration rate and inspiration-expiration ratio parameters. These parameters are selected as
-/// input parameters for the anesthesia machine configurations.
+/// Set the instantaneous driver pressure on the circuit pressure source.
 //--------------------------------------------------------------------------------------------------
-void MechanicalVentilator::CalculateCyclePhase()
+void MechanicalVentilator::SetVentilatorPressure()
 {
-  //Determine where we are in the cycle
-  m_CurrentBreathingCycleTime_s += m_dt_s;
-  if (m_CurrentBreathingCycleTime_s > GetBreathPeriod(TimeUnit::s)) //End of the cycle
-  {
-    m_CurrentBreathingCycleTime_s = 0.0;
-  }
+  m_EnvironmentToVentilator->GetNextPressureSource().SetValue(m_DriverPressure_cmH2O, PressureUnit::cmH2O);
+}
 
-  if (m_CurrentBreathingCycleTime_s < GetInspiratoryPeriod(TimeUnit::s)) //Inspiration
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Parse the baseline value.
+//--------------------------------------------------------------------------------------------------
+void MechanicalVentilator::ApplyBaseline()
+{
+  m_PressureBaseline_cmH2O = 0.0;
+  if (HasPositiveEndExpiredPressure())
   {
-    m_Inhaling = true;
+    m_PressureBaseline_cmH2O = GetPositiveEndExpiredPressure(PressureUnit::cmH2O);
   }
-  else //Expiration
+  else if (HasFunctionalResidualCapacity())
   {
-    m_Inhaling = false;
+    /// \error Error: FRC baseline is not yet supported.
+    Error("FRC baseline is not yet supported.");
+  }
+  else
+  {
+    /// \error Error: No expiration baseline defined.
+    Error("No expiration baseline defined.");
   }
 }
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
-/// Calculates ventilator pressure
-///
-/// \details
-/// The Anesthesia machine employs pressure-control ventilation mode. This method calculates the 
-/// control ventilator pressure that drives the gas flow in the breathing circle. During inspiration,
-/// the ventilator pressure is set to pre-defined constant value to serve as an input pressure source.
-/// This causes gas to flow into the inspiratory limb path. The pressure is dropped to much low pressure during the expiration 
-/// phase to allow gas return to the ventilator.
+/// Parse the target value.
 //--------------------------------------------------------------------------------------------------
-void MechanicalVentilator::CalculateVentilatorPressure()
+void MechanicalVentilator::ApplyTarget()
 {
-  //Calculate the driver pressure
-  double dDriverPressure = 0.0;
-  if (m_Inhaling)
+  m_PressureTarget_cmH2O = m_PressureBaseline_cmH2O;
+
+  if (HasPeakInspiratoryPressure())
   {
-    dDriverPressure = GetPeakInspiratoryPressure(PressureUnit::cmH2O);
+    m_PressureTarget_cmH2O = GetPeakInspiratoryPressure(PressureUnit::cmH2O);
+  }
+  else if (HasEndTidalCarbonDioxidePressure())
+  {
+    /// \error Error: EtCO2 target is not yet supported.
+    Error("EtCO2 target is not yet supported.");
   }
   else
   {
-    //Exhaling
-    dDriverPressure = GetPositiveEndExpiredPressure(PressureUnit::cmH2O);
+    /// \error Error: No inspiration trigger defined.
+    Error("No inspiration target defined.");
   }
-  m_EnvironmentToVentilator->GetNextPressureSource().SetValue(dDriverPressure, PressureUnit::cmH2O);
+}
+
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Determine the instantaneous driver pressure during inspiration.
+//--------------------------------------------------------------------------------------------------
+void MechanicalVentilator::CalculateInspiration()
+{
+  if (!m_Inhaling)
+  {
+    return;
+  }
+
+  double pauseTime_s = 0.0;
+  if (HasInspirationPauseTime())
+  {
+    pauseTime_s = GetInspirationPauseTime(TimeUnit::s);
+  }
+
+  // Check trigger
+  if (HasExpirationCycleTime())
+  {
+    if (m_CurrentBreathingCycleTime_s >= GetExpirationCycleTime(TimeUnit::s) + pauseTime_s)
+    {
+      m_CurrentBreathingCycleTime_s = 0.0;
+      m_Inhaling = false;
+      return;
+    }
+    else if (m_CurrentBreathingCycleTime_s >= GetExpirationCycleTime(TimeUnit::s))
+    {
+      // Apply pause
+      // Don't change the driver pressure
+      return;
+    }
+  }
+  else if (HasExpirationCyclePressure())
+  {
+    /// \error Error: Expiration pressure cycle is not yet supported.
+    Error("Expiration pressure cycle is not yet supported.");
+  }
+  else if (HasExpirationCycleFlow())
+  {
+    /// \error Error: Expiration flow cycle is not yet supported.
+    Error("Expiration flow cycle is not yet supported.");
+  }
+  else
+  {
+    /// \error Error: No expiration cycle defined.
+    Error("No expiration cycle defined.");
+  }
+
+  // Check limit
+  if (HasInspirationLimitPressure() || HasInspirationLimitFlow() || HasInspirationLimitVolume())
+  {
+    /// \error Error: Limits are not yet supported.
+    Error("Limits are not yet supported.");
+  }
+
+  // Apply waveform
+  if (GetInspirationWaveform() == eMechanicalVentilator_DriverWaveform::Square)
+  {
+    m_DriverPressure_cmH2O = m_PressureTarget_cmH2O;
+  }
+  else
+  {
+    /// \error Error: Non-square waveforms are not yet supported.
+    Error("Non-square waveforms are not yet supported.");
+  }
+}
+
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Determine the instantaneous driver pressure during expiration.
+//--------------------------------------------------------------------------------------------------
+void MechanicalVentilator::CalculateExpiration()
+{
+  if (m_Inhaling)
+  {
+    return;
+  }
+
+  // Check trigger
+  if (HasInspirationTriggerTime())
+  {
+    if (m_CurrentBreathingCycleTime_s >= GetInspirationTriggerTime(TimeUnit::s))
+    {
+      m_CurrentBreathingCycleTime_s = 0.0;
+      m_Inhaling = true;
+      return;
+    }
+  }
+  else if (HasInspirationTriggerPressure())
+  {
+    /// \error Error: Inspiration pressure trigger is not yet supported.
+    Error("Inspiration pressure trigger is not yet supported.");
+  }
+  else if (HasInspirationTriggerFlow())
+  {
+    /// \error Error: Inspiration flow trigger is not yet supported.
+    Error("Inspiration flow trigger is not yet supported.");
+  }
+  else
+  {
+    /// \error Error: No inspiration trigger defined.
+    Error("No inspiration trigger defined.");
+  }
+
+  // Apply waveform
+  if (GetExpirationWaveform() == eMechanicalVentilator_DriverWaveform::Square)
+  {
+    m_DriverPressure_cmH2O = m_PressureBaseline_cmH2O;
+  }
+  else
+  {
+    /// \error Error: Non-square waveforms are not yet supported.
+    Error("Non-square waveforms are not yet supported.");
+  }
+}
+
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Set ventilator circuit resistances.
+///
+/// \details
+/// If no values are specified, defaults will be used.
+//--------------------------------------------------------------------------------------------------
+void MechanicalVentilator::SetResistances()
+{
+  if (HasEndotrachealTubeResistance())
+  {
+    /// \todo Figure out how to do this without having to access the respiratory circuit
+    m_data.GetCircuits().GetRespiratoryCircuit().GetPath(pulse::RespiratoryPath::AirwayToCarina)->GetNextResistance().Set(GetEndotrachealTubeResistance());
+  }
+
+  if (HasExpirationTubeResistance())
+  {
+    m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::VentilatorToExpiratoryValve)->GetNextResistance().Set(GetExpirationTubeResistance());
+  }
+
+  if (HasInspirationTubeResistance())
+  {
+    m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::VentilatorToInspiratoryValve)->GetNextResistance().Set(GetInspirationTubeResistance());
+  }
+
+  if (HasExpirationValveResistance())
+  {
+    m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::ExpiratoryLimbToYPiece)->GetNextResistance().Set(GetExpirationValveResistance());
+  }
+
+  if (HasInspirationValveResistance())
+  {
+    m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::InspiratoryLimbToYPiece)->GetNextResistance().Set(GetInspirationValveResistance());
+  }
 }

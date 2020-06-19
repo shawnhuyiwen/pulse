@@ -8,7 +8,7 @@
 #include "properties/SEScalarVolume.h"
 #include "io/protobuf/PBPatientActions.h"
 
-SESubstanceCompoundInfusion::SESubstanceCompoundInfusion(const SESubstanceCompound& compound) : SESubstanceAdministration(), m_Compound(compound)
+SESubstanceCompoundInfusion::SESubstanceCompoundInfusion(const SESubstanceCompound& compound, Logger* logger) : SESubstanceAdministration(logger), m_Compound(compound)
 {
   m_Rate=nullptr;
   m_BagVolume=nullptr;

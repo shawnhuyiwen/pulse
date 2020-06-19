@@ -14,8 +14,8 @@ def serialize_patient_to_string(src: SEPatient, fmt: eSerializationFormat):
     serialize_patient_to_bind(src, dst)
     return json_format.MessageToJson(dst, True, True)
 
-def serialize_patient_to_file(src: SEPatient, filename: str, fmt: eSerializationFormat):
-    string = serialize_patient_to_string(src, fmt)
+def serialize_patient_to_file(src: SEPatient, filename: str):
+    string = serialize_patient_to_string(src, eSerializationFormat.JSON)
     file = open(filename, "w")
     n = file.write(string)
     file.close()
@@ -25,10 +25,10 @@ def serialize_patient_from_string(string: str, dst: SEPatient, fmt: eSerializati
     json_format.Parse(string, src)
     serialize_patient_from_bind(src,dst)
 
-def serialize_patient_from_file(filename: str, dst: SEPatient, fmt: eSerializationFormat):
+def serialize_patient_from_file(filename: str, dst: SEPatient):
     with open(filename) as f:
         string = f.read()
-    serialize_patient_from_string(string, dst, fmt)
+    serialize_patient_from_string(string, dst, eSerializationFormat.JSON)
 
 def serialize_patient_to_bind(src: SEPatient, dst: PatientData):
     dst.Name = src.get_name()

@@ -6,7 +6,7 @@
 #include "properties/SEScalar0To1.h"
 #include "io/protobuf/PBPatientActions.h"
 
-SETensionPneumothorax::SETensionPneumothorax() : SEPatientAction()
+SETensionPneumothorax::SETensionPneumothorax(Logger* logger) : SEPatientAction(logger)
 {
   m_Type=eGate::NullGate;
   m_Side=eSide::NullSide;

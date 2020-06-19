@@ -5,16 +5,18 @@
 #include "system/equipment/mechanical_ventilator/SEMechanicalVentilator.h"
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceManager.h"
+#include "substance/SESubstanceConcentration.h"
 #include "substance/SESubstanceFraction.h"
 #include "properties/SEScalar0To1.h"
-#include "properties/SEScalarFrequency.h"
+#include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarPressure.h"
-#include "properties/SEScalarTime.h"
-#include "properties/SEScalarVolume.h"
+#include "properties/SEScalarPressureTimePerVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
+#include "properties/SEScalarVolume.h"
+#include "properties/SEScalarTime.h"
 #include "io/protobuf/PBEquipmentActions.h"
 
-SEMechanicalVentilatorConfiguration::SEMechanicalVentilatorConfiguration(SESubstanceManager& substances) : SEMechanicalVentilatorAction(), m_Substances(substances)
+SEMechanicalVentilatorConfiguration::SEMechanicalVentilatorConfiguration(Logger* logger) : SEMechanicalVentilatorAction(logger)
 {
   m_Configuration = nullptr;
   InvalidateConfigurationFile();
@@ -32,9 +34,9 @@ void SEMechanicalVentilatorConfiguration::Clear()
   SAFE_DELETE(m_Configuration);
 }
 
-void SEMechanicalVentilatorConfiguration::Copy(const SEMechanicalVentilatorConfiguration& src)
+void SEMechanicalVentilatorConfiguration::Copy(const SEMechanicalVentilatorConfiguration& src, const SESubstanceManager& subMgr)
 {// Using Bindings to make a copy
-  PBEquipmentAction::Copy(src, *this);
+  PBEquipmentAction::Copy(src, *this, subMgr);
 }
 
 bool SEMechanicalVentilatorConfiguration::IsValid() const
@@ -50,7 +52,7 @@ SEMechanicalVentilator& SEMechanicalVentilatorConfiguration::GetConfiguration()
 {
   m_ConfigurationFile = "";
   if (m_Configuration == nullptr)
-    m_Configuration = new SEMechanicalVentilator(m_Substances);
+    m_Configuration = new SEMechanicalVentilator(GetLogger());
   return *m_Configuration;
 }
 const SEMechanicalVentilator* SEMechanicalVentilatorConfiguration::GetConfiguration() const
@@ -86,16 +88,28 @@ void SEMechanicalVentilatorConfiguration::ToString(std::ostream &str) const
     str << "\n\tConfiguration File: "; str << m_ConfigurationFile;
   if (HasConfiguration())
   {
-    str << "\n\tBreath Period: "; m_Configuration->HasBreathPeriod() ? str << m_Configuration->GetBreathPeriod() : str << "NaN";
     str << "\n\tConnection: " << eMechanicalVentilator_Connection_Name(m_Configuration->GetConnection());
-    str << "\n\tControl: " << eMechanicalVentilator_Control_Name(m_Configuration->GetControl());
-    str << "\n\tDriver Waveform: " << eMechanicalVentilator_DriverWaveform_Name(m_Configuration->GetDriverWaveform());
-    str << "\n\tInspiratory Expiratory Ratio: "; m_Configuration->HasInspiratoryExpiratoryRatio() ? str << m_Configuration->GetInspiratoryExpiratoryRatio() : str << "NaN";
-    str << "\n\tExpiratory Period: "; m_Configuration->HasExpiratoryPeriod() ? str << m_Configuration->GetExpiratoryPeriod() : str << "NaN";
-    str << "\n\tInspiratory Period: "; m_Configuration->HasInspiratoryPeriod() ? str << m_Configuration->GetInspiratoryPeriod() : str << "NaN";
-    str << "\n\tPeak Inspiratory Pressure: "; m_Configuration->HasPeakInspiratoryPressure() ? str << m_Configuration->GetPeakInspiratoryPressure() : str << "NaN";
-    str << "\n\tPositive End Expired Pressure: "; m_Configuration->HasPositiveEndExpiredPressure() ? str << m_Configuration->GetPositiveEndExpiredPressure() : str << "NaN";
-    str << "\n\tRespiratory Rate: "; m_Configuration->HasRespiratoryRate() ? str << m_Configuration->GetRespiratoryRate() : str << "NaN";
+    str << "\n\tEndotrachealTubeResistance: "; m_Configuration->HasEndotrachealTubeResistance() ? str << m_Configuration->GetEndotrachealTubeResistance() : str << "NaN";
+    str << "\n\tPositiveEndExpiredPressure: "; m_Configuration->HasPositiveEndExpiredPressure() ? str << m_Configuration->GetPositiveEndExpiredPressure() : str << "NaN";
+    str << "\n\tFunctionalResidualCapacity: "; m_Configuration->HasFunctionalResidualCapacity() ? str << m_Configuration->GetFunctionalResidualCapacity() : str << "NaN";
+    str << "\n\tExpirationCycleFlow: "; m_Configuration->HasExpirationCycleFlow() ? str << m_Configuration->GetExpirationCycleFlow() : str << "NaN";
+    str << "\n\tExpirationCyclePressure: "; m_Configuration->HasExpirationCyclePressure() ? str << m_Configuration->GetExpirationCyclePressure() : str << "NaN";
+    str << "\n\tExpirationCycleTime: "; m_Configuration->HasExpirationCycleTime() ? str << m_Configuration->GetExpirationCycleTime() : str << "NaN";
+    str << "\n\tExpirationTubeResistance: "; m_Configuration->HasExpirationTubeResistance() ? str << m_Configuration->GetExpirationTubeResistance() : str << "NaN";
+    str << "\n\tExpirationValveResistance: "; m_Configuration->HasExpirationValveResistance() ? str << m_Configuration->GetExpirationValveResistance() : str << "NaN";
+    str << "\n\tExpirationWaveform: " << eMechanicalVentilator_DriverWaveform_Name(m_Configuration->GetExpirationWaveform());
+    str << "\n\tInspirationLimitFlow: "; m_Configuration->HasInspirationLimitFlow() ? str << m_Configuration->GetInspirationLimitFlow() : str << "NaN";
+    str << "\n\tInspirationLimitPressure: "; m_Configuration->HasInspirationLimitPressure() ? str << m_Configuration->GetInspirationLimitPressure() : str << "NaN";
+    str << "\n\tInspirationLimitVolume: "; m_Configuration->HasInspirationLimitVolume() ? str << m_Configuration->GetInspirationLimitVolume() : str << "NaN";
+    str << "\n\tInspirationPauseTime: "; m_Configuration->HasInspirationPauseTime() ? str << m_Configuration->GetInspirationPauseTime() : str << "NaN";
+    str << "\n\tPeakInspiratoryPressure: "; m_Configuration->HasPeakInspiratoryPressure() ? str << m_Configuration->GetPeakInspiratoryPressure() : str << "NaN";
+    str << "\n\tEndTidalCarbonDioxidePressure: "; m_Configuration->HasEndTidalCarbonDioxidePressure() ? str << m_Configuration->GetEndTidalCarbonDioxidePressure() : str << "NaN";
+    str << "\n\tInspirationTriggerFlow: "; m_Configuration->HasInspirationTriggerFlow() ? str << m_Configuration->GetInspirationTriggerFlow() : str << "NaN";
+    str << "\n\tInspirationTriggerPressure: "; m_Configuration->HasInspirationTriggerPressure() ? str << m_Configuration->GetInspirationTriggerPressure() : str << "NaN";
+    str << "\n\tInspirationTriggerTime: "; m_Configuration->HasInspirationTriggerTime() ? str << m_Configuration->GetInspirationTriggerTime() : str << "NaN";
+    str << "\n\tInspirationTubeResistance: "; m_Configuration->HasInspirationTubeResistance() ? str << m_Configuration->GetInspirationTubeResistance() : str << "NaN";
+    str << "\n\tInspirationValveResistance: "; m_Configuration->HasInspirationValveResistance() ? str << m_Configuration->GetInspirationValveResistance() : str << "NaN";
+    str << "\n\tInspirationWaveform: " << eMechanicalVentilator_DriverWaveform_Name(m_Configuration->GetInspirationWaveform());
     if (m_Configuration->HasFractionInspiredGas())
     {
       for (SESubstanceFraction* sf : m_Configuration->GetFractionInspiredGases())
@@ -103,7 +117,13 @@ void SEMechanicalVentilatorConfiguration::ToString(std::ostream &str) const
         str << "\n\tSubstance : " << sf->GetSubstance().GetName() << " Fraction Amount " << sf->GetFractionAmount();
       }
     }
-
+    if (m_Configuration->HasConcentrationInspiredAerosol())
+    {
+      for (SESubstanceConcentration* sc : m_Configuration->GetConcentrationInspiredAerosols())
+      {
+        str << "\n\tSubstance : " << sc->GetSubstance().GetName() << " Concentration " << sc->GetConcentration();
+      }
+    }
   }
   str << std::flush;
 }

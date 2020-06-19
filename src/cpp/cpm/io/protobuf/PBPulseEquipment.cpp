@@ -27,7 +27,7 @@ void PBPulseEquipment::Load(const PULSE_BIND::AnesthesiaMachineData& src, Anesth
 }
 void PBPulseEquipment::Serialize(const PULSE_BIND::AnesthesiaMachineData& src, AnesthesiaMachine& dst)
 {
-  PBAnesthesiaMachine::Serialize(src.common(), dst);
+  PBAnesthesiaMachine::Serialize(src.common(), dst, (SESubstanceManager&)dst.m_data.GetSubstances());
   dst.m_inhaling = src.inhaling();
   dst.m_currentbreathingCycleTime_s = src.currentbreathingcycletime_s();
   dst.m_inspirationTime_s = src.inspirationtime_s();
@@ -86,7 +86,7 @@ void PBPulseEquipment::Load(const PULSE_BIND::InhalerData& src, Inhaler& dst)
 }
 void PBPulseEquipment::Serialize(const PULSE_BIND::InhalerData& src, Inhaler& dst)
 {
-  PBInhaler::Serialize(src.common(), dst);
+  PBInhaler::Serialize(src.common(), dst, (SESubstanceManager&)dst.m_data.GetSubstances());
 }
 PULSE_BIND::InhalerData* PBPulseEquipment::Unload(const Inhaler& src)
 {
@@ -107,9 +107,12 @@ void PBPulseEquipment::Load(const PULSE_BIND::MechanicalVentilatorData& src, Mec
 }
 void PBPulseEquipment::Serialize(const PULSE_BIND::MechanicalVentilatorData& src, MechanicalVentilator& dst)
 {
-  PBMechanicalVentilator::Serialize(src.common(), dst);
+  PBMechanicalVentilator::Serialize(src.common(), dst, (SESubstanceManager&)dst.m_data.GetSubstances());
   dst.m_Inhaling = src.inhaling();
   dst.m_CurrentBreathingCycleTime_s = src.currentbreathingcycletime_s();
+  dst.m_PressureTarget_cmH2O = src.pressuretarget_cmh2o();
+  dst.m_PressureBaseline_cmH2O = src.pressurebaseline_cmh2o();
+  dst.m_DriverPressure_cmH2O = src.driverpressure_cmh2o();
 }
 PULSE_BIND::MechanicalVentilatorData* PBPulseEquipment::Unload(const MechanicalVentilator& src)
 {
@@ -122,4 +125,7 @@ void PBPulseEquipment::Serialize(const MechanicalVentilator& src, PULSE_BIND::Me
   PBMechanicalVentilator::Serialize(src, *dst.mutable_common());
   dst.set_inhaling(src.m_Inhaling);
   dst.set_currentbreathingcycletime_s(src.m_CurrentBreathingCycleTime_s);
+  dst.set_pressuretarget_cmh2o(src.m_PressureTarget_cmH2O);
+  dst.set_pressurebaseline_cmh2o(src.m_PressureBaseline_cmH2O);
+  dst.set_driverpressure_cmh2o(src.m_DriverPressure_cmH2O);
 }

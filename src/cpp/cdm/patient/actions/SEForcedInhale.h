@@ -8,7 +8,7 @@ class CDM_DECL SEForcedInhale : public SEConsciousRespirationCommand
 {
   friend class PBPatientAction;//friend the serialization class
   friend class SEConsciousRespiration;
-  SEForcedInhale();
+  SEForcedInhale(Logger* logger);
 public:
 
   virtual ~SEForcedInhale();

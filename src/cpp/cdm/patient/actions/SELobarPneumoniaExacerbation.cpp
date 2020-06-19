@@ -6,7 +6,7 @@
 #include "properties/SEScalar0To1.h"
 #include "io/protobuf/PBPatientActions.h"
 
-SELobarPneumoniaExacerbation::SELobarPneumoniaExacerbation() : SEPatientAction()
+SELobarPneumoniaExacerbation::SELobarPneumoniaExacerbation(Logger* logger) : SEPatientAction(logger)
 {
   m_Severity = nullptr;
   m_LeftLungAffected = nullptr;

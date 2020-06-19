@@ -13,7 +13,7 @@
 #include "properties/SEScalar0To1.h"
 #include "io/protobuf/PBPatientActions.h"
 
-SEMechanicalVentilation::SEMechanicalVentilation() : SEPatientAction()
+SEMechanicalVentilation::SEMechanicalVentilation(Logger* logger) : SEPatientAction(logger)
 {
   m_State = eSwitch::Off;
   m_Flow = nullptr;
@@ -141,7 +141,7 @@ const std::vector<const SESubstanceFraction*>& SEMechanicalVentilation::GetGasFr
 {
   return m_cGasFractions;
 }
-SESubstanceFraction& SEMechanicalVentilation::GetGasFraction(SESubstance& s)
+SESubstanceFraction& SEMechanicalVentilation::GetGasFraction(const SESubstance& s)
 {
   for (SESubstanceFraction* sf : m_GasFractions)
   {
@@ -206,7 +206,7 @@ const std::vector<const SESubstanceConcentration*>& SEMechanicalVentilation::Get
 {
   return m_cAerosols;
 }
-SESubstanceConcentration& SEMechanicalVentilation::GetAerosol(SESubstance& substance)
+SESubstanceConcentration& SEMechanicalVentilation::GetAerosol(const SESubstance& substance)
 {
   for (SESubstanceConcentration* sc : m_Aerosols)
   {

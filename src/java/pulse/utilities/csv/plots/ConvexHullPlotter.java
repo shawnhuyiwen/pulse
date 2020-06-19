@@ -31,7 +31,6 @@ import pulse.cdm.substance.SESubstanceManager;
 import pulse.utilities.DoubleUtils;
 import pulse.utilities.FileUtils;
 import pulse.utilities.Log;
-import pulse.utilities.LogListener;
 import pulse.utilities.csv.CSVContents;
 import pulse.utilities.csv.ConvexHullMaker;
 import pulse.utilities.csv.plots.PlotDriver.PlotJob;
@@ -103,11 +102,9 @@ public class ConvexHullPlotter implements Plotter
     return splitVals;
   }
 
-  @Override
-  public void plot(LogListener listener, SESubstanceManager subMgr)
+  public void plot(PlotJob job, SESubstanceManager subMgr)
   {
     //fill PlotJob with needed data if it doesn't exist
-    PlotJob job = (PlotJob)listener;
     if(job.dataPath == null || job.dataPath.isEmpty())
     {job.dataPath = job.verificationDirectory+"/";}
     if(job.dataFile == null || job.dataFile.isEmpty())
@@ -440,7 +437,7 @@ public class ConvexHullPlotter implements Plotter
     plot.setDomainCrosshairVisible(true);
     plot.setRangeCrosshairVisible(true);
 
-    chart.getLegend().setItemFont(new Font("SansSerif", Font.PLAIN, 15));
+    renderer1.setDefaultLegendTextFont(new Font("SansSerif", Font.PLAIN, job.legendFontSize));
     chart.getTitle().setFont(new Font("SansSerif", Font.PLAIN, job.fontSize));
     chart.getTitle().setPaint(job.bgColor==Color.red?Color.white:Color.black);
     
@@ -461,6 +458,7 @@ public class ConvexHullPlotter implements Plotter
     else
     {
       StandardXYItemRenderer renderer2 = new StandardXYItemRenderer();
+      renderer2.setDefaultLegendTextFont(new Font("SansSerif", Font.PLAIN, job.legendFontSize));
       plot.setRenderer(1, renderer2);
       
       for(int i = 0; i < dataSet1.getSeriesCount(); i++)

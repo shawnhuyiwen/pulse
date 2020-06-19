@@ -9,7 +9,7 @@ class CDM_DECL SELobarPneumonia : public SEPatientCondition
   friend class PBPatientCondition;//friend the serialization class
 public:
 
-  SELobarPneumonia();
+  SELobarPneumonia(Logger* logger=nullptr);
   virtual ~SELobarPneumonia();
 
   virtual void Clear(); //clear memory

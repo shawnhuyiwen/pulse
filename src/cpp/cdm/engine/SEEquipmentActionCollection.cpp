@@ -87,8 +87,8 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
     if (config != nullptr)
     {
       if (m_MechanicalVentilatorConfiguration == nullptr)
-        m_MechanicalVentilatorConfiguration = new SEMechanicalVentilatorConfiguration(m_Substances);
-      m_MechanicalVentilatorConfiguration->Copy(*config);
+        m_MechanicalVentilatorConfiguration = new SEMechanicalVentilatorConfiguration(GetLogger());
+      m_MechanicalVentilatorConfiguration->Copy(*config, m_Substances);
       if (!m_MechanicalVentilatorConfiguration->IsActive())
         RemoveMechanicalVentilatorConfiguration();
       return true;
@@ -102,8 +102,8 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
     if (config != nullptr)
     {
       if (m_AnesthesiaMachineConfiguration == nullptr)
-        m_AnesthesiaMachineConfiguration = new SEAnesthesiaMachineConfiguration(m_Substances);
-      m_AnesthesiaMachineConfiguration->Copy(*config);
+        m_AnesthesiaMachineConfiguration = new SEAnesthesiaMachineConfiguration(GetLogger());
+      m_AnesthesiaMachineConfiguration->Copy(*config, m_Substances);
       if (!m_AnesthesiaMachineConfiguration->IsActive())
         RemoveAnesthesiaMachineConfiguration();
       return true;
@@ -249,8 +249,8 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
     if (config != nullptr)
     {
       if (m_InhalerConfiguration == nullptr)
-        m_InhalerConfiguration = new SEInhalerConfiguration(m_Substances);
-      m_InhalerConfiguration->Copy(*config);
+        m_InhalerConfiguration = new SEInhalerConfiguration(GetLogger());
+      m_InhalerConfiguration->Copy(*config, m_Substances);
       if (!m_InhalerConfiguration->IsActive())
         RemoveInhalerConfiguration();
       return true;

@@ -10,7 +10,7 @@ class CDM_DECL SEChestCompression : public SEPatientAction
   friend class PBPatientAction;//friend the serialization class
 public:
 
-  SEChestCompression();
+  SEChestCompression(Logger* logger);
   virtual ~SEChestCompression();
 
   virtual void Clear(); //clear memory

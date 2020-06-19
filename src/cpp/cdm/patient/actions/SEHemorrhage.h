@@ -13,7 +13,7 @@ class CDM_DECL SEHemorrhage : public SEPatientAction
   friend class PBPatientAction;//friend the serialization class
 public:
 
-  SEHemorrhage();
+  SEHemorrhage(Logger* logger=nullptr);
   virtual ~SEHemorrhage();
 
   virtual void Clear(); //clear memory

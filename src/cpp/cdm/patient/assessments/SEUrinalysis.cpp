@@ -61,9 +61,9 @@ bool SEUrinalysis::SerializeToString(std::string& output, SerializationFormat m)
 {
   return PBPatientAssessment::SerializeToString(*this, output, m);
 }
-bool SEUrinalysis::SerializeToFile(const std::string& filename, SerializationFormat m) const
+bool SEUrinalysis::SerializeToFile(const std::string& filename) const
 {
-  return PBPatientAssessment::SerializeToFile(*this, filename, m);
+  return PBPatientAssessment::SerializeToFile(*this, filename);
 }
 
 bool SEUrinalysis::HasColorResult() const

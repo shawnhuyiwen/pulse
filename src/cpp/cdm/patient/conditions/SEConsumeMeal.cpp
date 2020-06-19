@@ -8,7 +8,7 @@
 #include "properties/SEScalarVolume.h"
 #include "io/protobuf/PBPatientConditions.h"
 
-SEConsumeMeal::SEConsumeMeal() : SEPatientCondition()
+SEConsumeMeal::SEConsumeMeal(Logger* logger) : SEPatientCondition(logger)
 {
   m_Meal = nullptr;
   InvalidateMealFile();

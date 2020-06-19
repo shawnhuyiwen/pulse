@@ -122,9 +122,9 @@ public class PlotDriver
   
   protected static SESubstanceManager subMgr=null;
   
-  public class PlotJob extends LogListener
+  public class PlotJob
   {
-    public PlotJob(){ listen(false);  }
+    public PlotJob(){ }
     public String         name;
     public List<String>   headers = new ArrayList<>();
     public Plotter        plotter = null;
@@ -143,14 +143,14 @@ public class PlotDriver
     public String         scenarioPath;
     public String         scenarioFile = null;
     public String         verificationDirectory;
-    public String         X1Label = null;
-    public String         Y1Label = null;
     public String         experimentalData = null;
     public String         outputDir = "../verification/Plots/";
     public Integer        imageWidth = null;
     public Integer        imageHeight = null;
     public Integer        fontSize = 22;
+    public Integer        legendFontSize = 15;
     public String         outputFilename = null;
+    public boolean        percentOfBaseline = false;
 
     public boolean        skipAllActions = false;
     public boolean        skipAllEvents = false;
@@ -175,6 +175,8 @@ public class PlotDriver
     public Double         Y2LowerBound;
     public Double         Y1UpperBound;
     public Double         Y2UpperBound;
+    public String         X1Label = null;
+    public String         Y1Label = null;
     public String         X2Label = null;
     public String         Y2Label = null;
     
@@ -192,14 +194,6 @@ public class PlotDriver
       Y2headers = null;
       plotter = null;
     }
-
-
-    // Don't actually log anything
-    @Override protected void handleDebug(String msg) {}
-    @Override protected void handleInfo(String msg) {}
-    @Override protected void handleWarn(String msg) {}
-    @Override protected void handleError(String msg) {}
-    @Override protected void handleFatal(String msg) {}
   }
   
   public void setupComparison()
@@ -313,6 +307,8 @@ public class PlotDriver
             { job.hideAELegend = true; job.removeAllLegends = true; continue; }
             else if(directive.equalsIgnoreCase("LegendOnly")) 
             { job.legendOnly = true; continue; }
+            else if(directive.equalsIgnoreCase("PercentOfBaseline")) 
+            { job.percentOfBaseline = true; continue; }
           }
           else
           {
@@ -432,6 +428,8 @@ public class PlotDriver
             {job.outputDir = value; continue;}
             else if(key.equalsIgnoreCase("FontSize"))
             {job.fontSize = Integer.parseInt(value); continue;}
+            else if(key.equalsIgnoreCase("LegendFontSize"))
+            {job.legendFontSize = Integer.parseInt(value); continue;}
             else
             {
               Log.warn("Unrecognized config directive: "+directive);
@@ -589,7 +587,7 @@ public class PlotDriver
           job.logAxis = true;
         
         //Set other job members
-        job.plotter = new ActionEventPlotter();        
+        job.plotter = new ActionEventPlotter();
         job.resultsSkipNum = this.abbreviateContents;
         job.skipAllActions = !isScenario;  //unit tests don't have scenario files with actions
         job.skipAllEvents = !isScenario;  //unit tests won't have events in their logs
@@ -679,7 +677,7 @@ public class PlotDriver
         job.logAxis = true;
       
       //Set other job members
-      job.plotter = new ActionEventPlotter();        
+      job.plotter = new ActionEventPlotter();
       job.resultsSkipNum = this.abbreviateContents;
       job.skipAllActions = !isScenario;  //unit tests don't have scenario files with actions
       job.skipAllEvents = !isScenario;  //unit tests won't have events in their logs

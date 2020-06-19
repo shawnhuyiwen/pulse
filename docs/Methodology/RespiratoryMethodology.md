@@ -1079,22 +1079,24 @@ Disease states are applied to the simulated patient by modifying various paramet
 
 Growth/increasing functions define a as 1 and b as the maximum multiplier, while decay/decreasing functions define b as 1 and a as the minimum multiplier. Therefore, a severity of 0 will not change the healthy value and allows for an intuitive continuous function without any discontinuities. The respiratory system also includes logic to combine effects for each parameter when multiple insults/interventions are applied. 
 
-When an artificial airway is applied (i.e., mechanical ventilator or anesthesia machine), there is a change in the respiratory circuit's resistance and compliance @cite arnal2018parameters. Intubated patients will have these modifiers stacked/combined with all other action/condition modifiers.
+When positive pressure ventilation is applied (i.e., mechanical ventilator or anesthesia machine), there is a change in the respiratory circuit's resistance and compliance @cite arnal2018parameters. Intubated patients will have these modifiers stacked/combined with all other action/condition modifiers.
 
 <center><br>
-<i>Table 2. Property changes due to the application of respiratory diseases and an artificial airway. ARDS and COPD are applied by the user with a severity defined between 0 and 1 and mapped using with linear or exponential functions.  Mild severity = 0.3, moderate severity = 0.6, severe severity = 0.9. The fatigue factor is a multiplier on the muscle pressure source target that effectively reduces the tidal volume due to the increased effort of breathing.</i>
+<i>Table 2. Property changes due to the application of respiratory diseases and positive pressure ventilation. ARDS and COPD are applied by the user with a severity defined between 0 and 1 and mapped using with linear or exponential functions.  Mild severity = 0.3, moderate severity = 0.6, severe severity = 0.9. The fatigue factor is a multiplier on the muscle pressure source target that effectively reduces the tidal volume due to the increased effort of breathing.</i>
 </center>
 
 <table>
   <tr>
     <th>Parameter</th>
+	<th>System</th>
     <th>Standard Healthy</th>
-    <th>Artificial Airway</th>
+    <th>Positive Pressure Ventilation</th>
     <th colspan="4">Restrictive (ARDS)</th>
     <th colspan="4">Obstructive (COPD)</th>
   </tr>
   <tr>
     <th></th>
+	<th></th>
 	<th></th>
 	<th></th>
 	<th>Severity Mapping</th>
@@ -1106,14 +1108,15 @@ When an artificial airway is applied (i.e., mechanical ventilator or anesthesia 
     <th>Moderate</th>
     <th>Severe</th>
   </tr>
-  <tr><td>Alveolar Dead Space (L)</td><td>0</td><td>0</td><td>N/A</td><td>0</td><td>0</td><td>0</td><td>Linear Growth</td><td>0.6</td><td>1.2</td><td>1.8</td></tr>
-  <tr><td>Airway Resistance (cmH20-s/L)</td><td>1.125</td><td>9</td><td>N/A</td><td>1.125</td><td>1.125</td><td>1.125</td><td>N/A</td><td>1.125</td><td>1.125</td><td>1.125</td></tr>
-  <tr><td>Bronchi Resistance (cmH20-s/L)</td><td>0.45</td><td>0.45</td><td>N/A</td><td>0.45</td><td>0.45</td><td>0.45</td><td>Exponential Growth</td><td>1.74</td><td>6.7</td><td>25.8</td></tr>
-  <tr><td>Lung Compliance (L/cmH2O)</td><td>0.1</td><td>0.04</td><td>Linear Decay</td><td>0.082</td><td>0.064</td><td>0.046</td><td>Linear Growth</td><td>0.13</td><td>0.16</td><td>0.19</td></tr>
-  <tr><td>Inspiratory-Expiratory Ratio</td><td>0.5</td><td>0.5</td><td>Exponential Growth</td><td>1.1</td><td>2.6</td><td>12.1</td><td>Linear Decay</td><td>0.3</td><td>0.15</td><td>0.03</td></tr>
-  <tr><td>Diffusion Surface Area (m^2)</td><td>68.3</td><td>68.3</td><td>Exponential Decay</td><td>34.3</td><td>17.2</td><td>8.6</td><td>Exponential Decay</td><td>34.3</td><td>17.2</td><td>8.6</td></tr>
-  <tr><td>Pulmonary Capilary Resistance (cmH20-s/L)</td><td>85.6</td><td>85.6</td><td>N/A</td><td>85.6</td><td>85.6</td><td>85.6</td><td>Linear Growth</td><td>128.4</td><td>171.2</td><td>214.0</td></tr>
-  <tr><td>Fatigue Factor</td><td>1</td><td>1</td><td>Linear Decay</td><td>0.76</td><td>0.52</td><td>0.28</td><td>Linear Decay</td><td>0.76</td><td>0.52</td><td>0.28</td></tr>
+  <tr><td>Alveolar Dead Space (L)</td><td>Respiratory</td><td>0</td><td>0</td><td>N/A</td><td>0</td><td>0</td><td>0</td><td>Linear Growth</td><td>0.6</td><td>1.2</td><td>1.8</td></tr>
+  <tr><td>Airway Resistance (cmH20-s/L)</td><td>Respiratory</td><td>1.125</td><td>9</td><td>N/A</td><td>1.125</td><td>1.125</td><td>1.125</td><td>N/A</td><td>1.125</td><td>1.125</td><td>1.125</td></tr>
+  <tr><td>Bronchi Resistance (cmH20-s/L)</td><td>Respiratory</td><td>0.45</td><td>0.45</td><td>N/A</td><td>0.45</td><td>0.45</td><td>0.45</td><td>Exponential Growth</td><td>1.74</td><td>6.7</td><td>25.8</td></tr>
+  <tr><td>Lung Compliance (L/cmH2O)</td><td>Respiratory</td><td>0.1</td><td>0.04</td><td>Linear Decay</td><td>0.082</td><td>0.064</td><td>0.046</td><td>Linear Growth</td><td>0.13</td><td>0.16</td><td>0.19</td></tr>
+  <tr><td>Inspiratory-Expiratory Ratio</td><td>Respiratory</td><td>0.5</td><td>0.5</td><td>Exponential Growth</td><td>1.1</td><td>2.6</td><td>12.1</td><td>Linear Decay</td><td>0.3</td><td>0.15</td><td>0.03</td></tr>
+  <tr><td>Diffusion Surface Area (m^2)</td><td>Respiratory</td><td>68.3</td><td>68.3</td><td>Exponential Decay</td><td>34.3</td><td>17.2</td><td>8.6</td><td>Exponential Decay</td><td>34.3</td><td>17.2</td><td>8.6</td></tr>
+  <tr><td>Pulmonary Capillary Resistance (mmHg-s/mL)</td><td>Cardiovascular</td><td>0.062</td><td>0.062</td><td>N/A</td><td>0.062</td><td>0.062</td><td>0.062</td><td>Linear Growth</td><td>0.094</td><td>0.126</td><td>0.157</td></tr>
+  <tr><td>Pulmonary Shunt Resistance (mmHg-s/mL)</td><td>Cardiovascular</td><td>8.9</td><td>8.9</td><td>Exponential Decay</td><td>2.23</td><td>0.56</td><td>0.14</td><td>N/A</td><td>8.9</td><td>8.9</td><td>8.9</td></tr>
+  <tr><td>Fatigue Factor</td><td>Respiratory</td><td>1</td><td>1</td><td>Linear Decay</td><td>0.76</td><td>0.52</td><td>0.28</td><td>Linear Decay</td><td>0.76</td><td>0.52</td><td>0.28</td></tr>
 </table>
 
 Modifications to respiratory circuit resistances and compliances can further be examined and validated through volume-flow curves, like those created during spirometry testing. Figure 17 shows results from a simulated pulmonary function test with the standard patient healthy and with moderate ARDS and COPD.
@@ -1145,6 +1148,10 @@ Additionally, The engine models destruction of lung tissue with an increase in a
 The destruction of the alveolar membranes also destroys the pulmonary capillaries embedded in the membranes. To model pulmonary capillary destruction, the engine increases the pulmonary capillary flow resistance based on severity. Although increased pulmonary capillary resistance is related to alveolar membrane destruction, and therefore associated with emphysema, the engine uses either emphysema severity or chronic bronchitis severity (whichever is higher) to determine the pulmonary capillary resistance multiplier. This was done in an attempt to model increased blood pressure and elevated heart rate, which are symptoms of both emphysema and chronic bronchitis. Increasing the capillary resistance should increase arterial blood pressure as the heart pumps harder to overcome the increased resistance in the lungs. 
 
 Decreased Inspiration-Expiration (IE) ratio is another pathophysiologic feature of COPD.  As with asthma, the normal IE ratio is scaled using a multiplier based on severity. Either chronic bronchitis severity or emphysema severity (whichever is higher) is used to determine the IE ratio scaling multiplier. 
+
+#### Acute %Respiratory Distress Syndrome
+
+Acute %Respiratory Distress Syndrome (ARDS) is modeled in the engine as a generic impairment of the alveoli's ability to exchange oxygen and carbon dioxide.  The specific cause (i.e., sepsis, pneumonia, etc.) is not specified.  The model is implemented to meet the PaO2/FiO2 Berlin Criteria combined with accepted pulmonary shunt fractions when mechanically ventilated.  A severity value is mapped to various model parameters to achieve mild, moderate, and severe symptoms at severities of 0.3, 0.6, and 0.9 respectively.  Direct modifiers are implemented as shown in Table 2.
 
 #### Lobar Pneumonia
 
@@ -1325,6 +1332,10 @@ Conscious respiration has any number of potential applications and is likely to 
 literature determined by a voluntary cough immediately following office-based vocal fold medialization injections @cite ruddy2014improved.</i>
 </center><br>
 
+#### Exacerbations
+
+Several respiratory conditions have exacerbation actions defined to allow for increased/decreased severities during runtime, including COPD, ARDS, and Lobar Pneumonia.  These exacerbation actions will instantaneously (i.e., during the simulation/scenario runtime) change the values shown in Table 2, based on the severity provided.  Exacerbations can either degrade or improve the patient's current condition.
+
 @anchor respiratory-events
 Events
 ------
@@ -1404,6 +1415,7 @@ The actions and interventions associated with the %Respiratory System were valid
 |	AsthmaAttackLifeThreateningAcute	|	Life threatening acute asthma attack	|<span class="success">	16	</span>|<span class="warning">	3	</span>|<span class="danger">	0	</span>|
 |	COPDSevereEmphysema	|	GOLD Stage III Emphysema	|<span class="success">	5	</span>|<span class="warning">	3	</span>|<span class="danger">	1	</span>|
 |	COPDSevereBronchitisLeft	|	Severe Chronic Bronchitis	|<span class="success">	7	</span>|<span class="warning">	1	</span>|<span class="danger">	1	</span>|
+|	ARDSModerateBothLungs	|	Moderate Acute Respiratory Distress Syndrome	|<span class="success">	9	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	LobarPneumoniaSevereLeftLobe	|	Severe Lobar Pneumonia in one lobe in the left lung	|<span class="success">	2	</span>|<span class="warning">	5	</span>|<span class="danger">	2	</span>|
 |	LobarPneumoniaSevereRightLung	|	Severe Lobar Pneumonia in two lobes of right lung	|<span class="success">	4	</span>|<span class="warning">	3	</span>|<span class="danger">	2	</span>|
 |	LobarPneumoniaModerateBothLungs	|	Moderate Lobar Pneumonia in both lungs	|<span class="success">	6	</span>|<span class="warning">	1	</span>|<span class="danger">	2	</span>|
@@ -1412,11 +1424,11 @@ The actions and interventions associated with the %Respiratory System were valid
 |	TensionPneumothoraxClosedVaried	|	Varied closed pneumothorax severities and interventions	|<span class="success">	32	</span>|<span class="warning">	1	</span>|<span class="danger">	2	</span>|
 |	AirwayObstructionVaried	|	Airway Obstruction with varying severities	|<span class="success">	27	</span>|<span class="warning">	0	</span>|<span class="danger">	3	</span>|
 |	Bronchoconstriction	|	Bronchoconstriction with varying severities	|<span class="success">	25	</span>|<span class="warning">	0	</span>|<span class="danger">	5	</span>|
-|	MainstemIntubation	|	Right and left mainstem intubation and correction (with Succs)	|<span class="success">	25	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|	EsophagealIntubation	|	Esophageal intubation and correction (with Succs)	|<span class="success">	15	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
+|	MainstemIntubation	|	Right and left mainstem intubation and correction (with Succs)	|<span class="success">	20	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
+|	EsophagealIntubation	|	Esophageal intubation and correction (with Succs)	|<span class="success">	10	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	Dyspnea	|	Varied severities of respiratory apnea	|<span class="success">	6	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	Supplemental Oxygen	|	Nasal cannula, simple mask, and non-rebreather mask	|<span class="success">	3	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|		|	Total	|<span class="success">	251	</span>|<span class="warning">	22	</span>|<span class="danger">	22	</span>|
+|		|	Total	|<span class="success">	250	</span>|<span class="warning">	22	</span>|<span class="danger">	22	</span>|
 
 @anchor respiratory-conditionvalidation
 Validation - Conditions
@@ -1441,6 +1453,18 @@ The COPD condition was validated against two scenarios. The severe emphysema sce
 |	Segment	|	Notes	|	Sampled Scenario Time (s)	|	Trachea Flow - Peak Expiratory Flow  (L/min)	|	Respiration Rate (breaths/min)	|	Tidal Volume (mL)	|	Heart Rate (beats/min)	|	Systolic Pressure (mmHg)	|	Oxygen Saturation	|	PaO2 (mmHg)	|	PaCO2 (mmHg)	|	IERatio	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
 |	Severe Chronic Bronchitis: Bronchitis Severity = 0.65 Emphysema Severity = 0.5 Both Lungs 100%	|		|	120	|<span class="success">	Decrease @cite bergeronSME	</span>|<span class="success">	> 20 @cite bergeronSME	</span>|<span class="success">	< 60% of normal @cite bergeronSME	</span>|<span class="success">	Increase,  Tachycardia @cite bergeronSME	</span>|<span class="danger">	Increase,  Pulmonary Hypertension,  > 140 mm Hg @cite bergeronSME	</span>|<span class="success">	< 90% @cite bergeronSME	</span>|<span class="success">	Decrease,  Hypoxemia,  < 55 mm Hg  @cite bergeronSME	</span>|<span class="warning">	Increase,   Hypercapnia > 55 mmHg   @cite bergeronSME	</span>|<span class="success">	Decrease @cite van1991physical, @cite bergeronSME	</span>|
+
+### Acute %Respiratory Distress Syndrome
+
+The ARDS condition was validated against a moderate severity scenario.  Further validation of ARDS while ventilated can be found in the @ref MechanicalVentilatorMethodology validation.
+
+<center><br>
+<i>Table 8. Validation matrix for moderate ARDS in both lungs. The table shows the engine output compared to validation data for respiratory and hemodynamic values.</i>
+</center>
+
+|	Segment	|	Notes	|	Sampled Scenario Time (s)	|	Pulmonary Compliance (L/cmH2O)	|	Respiration Rate (breaths/min)	|	Shunt Fraction	|	Heart Rate (beats/min)	|	Total Pulmonary Ventilation (L/min) 	|	Oxygen Saturation	|	PaO2 (mmHg)	|	PaCO2 (mmHg)	|	Carrico Index [PaO2/FiO2] (mmHg)	|
+|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
+|	Moderate ARDS Severity = 0.6 Left Lung = 100% Right Lung  = 100%	|	Chronic condition	|	120	|<span class="success">	Reduced @cite mortelliti2002acute	</span>|<span class="success">	Tachypnea @cite mortelliti2002acute	</span>|<span class="success">	>20% @cite radermacher2017fifty	</span>|<span class="success">	Tachycardia @cite mortelliti2002acute	</span>|<span class="success">	Increased @ cite mortelliti2002acute	</span>|<span class="success">	Hypoxia @cite mortelliti2002acute	</span>|<span class="success">	Hypoxemia @cite radermacher2017fifty	</span>|<span class="success">	Normal or near normal @cite mortelliti2002acute	</span>|<span class="success">	<300 @cite mortelliti2002acute	</span>|
 
 ### Lobar Pneumonia
 
@@ -1894,6 +1918,12 @@ RR - Respiration rate
 V<sup><b>.</b></sup><sub>E</sub> - Minute ventilation
 
 V<sup><b>.</b></sup><sub>A</sub> - Alveolar ventilation
+
+PaO2 - Arterial blood oxygen partial pressure
+
+FiO2 - Fraction of inspired oxygen
+
+IE Ratio - Inspiratory:Expiratory Ratio
 
 Data Model Implementation
 -------------------------

@@ -5,7 +5,7 @@
 #include "properties/SEScalar0To1.h"
 #include "io/protobuf/PBEquipmentActions.h"
 
-SEAnesthesiaMachineOxygenWallPortPressureLoss::SEAnesthesiaMachineOxygenWallPortPressureLoss() : SEAnesthesiaMachineAction()
+SEAnesthesiaMachineOxygenWallPortPressureLoss::SEAnesthesiaMachineOxygenWallPortPressureLoss(Logger* logger) : SEAnesthesiaMachineAction(logger)
 {
   m_State = eSwitch::Off;
 }

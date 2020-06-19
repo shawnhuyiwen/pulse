@@ -9,7 +9,7 @@ class CDM_DECL SEChestOcclusiveDressing : public SEPatientAction
   friend class PBPatientAction;//friend the serialization class
 public:
 
-  SEChestOcclusiveDressing();
+  SEChestOcclusiveDressing(Logger* logger=nullptr);
   virtual ~SEChestOcclusiveDressing();
 
   virtual void Clear(); //clear memory

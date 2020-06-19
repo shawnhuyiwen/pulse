@@ -58,9 +58,9 @@ bool SEComprehensiveMetabolicPanel::SerializeToString(std::string& output, Seria
 {
   return PBPatientAssessment::SerializeToString(*this, output, m);
 }
-bool SEComprehensiveMetabolicPanel::SerializeToFile(const std::string& filename, SerializationFormat m) const
+bool SEComprehensiveMetabolicPanel::SerializeToFile(const std::string& filename) const
 {
-  return PBPatientAssessment::SerializeToFile(*this, filename, m);
+  return PBPatientAssessment::SerializeToFile(*this, filename);
 }
 
 bool SEComprehensiveMetabolicPanel::HasAlbumin() const

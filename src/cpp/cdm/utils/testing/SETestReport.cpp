@@ -30,17 +30,17 @@ bool SETestReport::SerializeToString(std::string& output, SerializationFormat m)
 {
   return PBTestReport::SerializeToString(*this, output, m);
 }
-bool SETestReport::SerializeToFile(const std::string& filename, SerializationFormat m) const
+bool SETestReport::SerializeToFile(const std::string& filename) const
 {
-  return PBTestReport::SerializeToFile(*this, filename, m);
+  return PBTestReport::SerializeToFile(*this, filename);
 }
 bool SETestReport::SerializeFromString(const std::string& src, SerializationFormat m)
 {
   return PBTestReport::SerializeFromString(src, *this, m);
 }
-bool SETestReport::SerializeFromFile(const std::string& filename, SerializationFormat m)
+bool SETestReport::SerializeFromFile(const std::string& filename)
 {
-  return PBTestReport::SerializeFromFile(filename, *this, m);
+  return PBTestReport::SerializeFromFile(filename, *this);
 }
 
 SETestSuite& SETestReport::CreateTestSuite()

@@ -5,7 +5,7 @@
 #include "patient/conditions/SEChronicVentricularSystolicDysfunction.h"
 #include "io/protobuf/PBPatientConditions.h"
 
-SEChronicVentricularSystolicDysfunction::SEChronicVentricularSystolicDysfunction() : SEChronicHeartFailure()
+SEChronicVentricularSystolicDysfunction::SEChronicVentricularSystolicDysfunction(Logger* logger) : SEChronicHeartFailure(logger)
 {
 }
 

@@ -5,7 +5,7 @@
 #include "engine/SEOverrides.h"
 #include "io/protobuf/PBActions.h"
 
-SEOverrides::SEOverrides() : SEAction()
+SEOverrides::SEOverrides(Logger* logger) : SEAction(logger)
 {
   
 }

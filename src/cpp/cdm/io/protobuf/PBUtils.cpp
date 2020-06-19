@@ -7,6 +7,7 @@ PUSH_PROTO_WARNINGS()
 #include <google/protobuf/util/json_util.h>
 POP_PROTO_WARNINGS()
 #include "io/protobuf/PBUtils.h"
+#include "utils/FileUtils.h"
 
 std::mutex log_mutex;
 Logger* g_logger = nullptr;
@@ -35,38 +36,64 @@ void PBUtils::ProtobufLogHandler(google::protobuf::LogLevel level, const char* f
   g_logger = nullptr;
 }
 
-bool PBUtils::SerializeToString(const google::protobuf::Message& src, std::string& output, SerializationFormat m, Logger* logger)
+bool PBUtils::SerializeFromFile(const std::string& filename, google::protobuf::Message& dst, Logger* logger)
 {
-  std::lock_guard<std::mutex> guard(log_mutex);
-  if (m == JSON)
+  if (!FileExists(filename))
+    return false;
+  if (IsJSONFile(filename))
   {
-    g_logger = logger;
-    google::protobuf::SetLogHandler(static_cast<google::protobuf::LogHandler*>(PBUtils::ProtobufLogHandler));
-    google::protobuf::util::JsonPrintOptions opts;
-    opts.add_whitespace = true;
-    opts.preserve_proto_field_names = true;
-    bool ret =  google::protobuf::util::MessageToJsonString(src, &output, opts).ok();
-    g_logger = nullptr;
-    return ret;
-    //return google::protobuf::TextFormat::PrintToString(data, &output);
+    std::string content;
+    if (!ReadFile(filename, content))
+      return false;
+    if (!SerializeFromString(content, dst, JSON, logger))
+      return false;
+    return true;
   }
-  else
-    return src.SerializeToString(&output);
+  std::ifstream input(filename, std::ios::binary);
+  if (!input.is_open())
+    return false;
+  std::lock_guard<std::mutex> guard(log_mutex);
+  g_logger = logger;
+  google::protobuf::SetLogHandler(static_cast<google::protobuf::LogHandler*>(PBUtils::ProtobufLogHandler));
+  bool b = dst.ParseFromIstream(&input);
+  g_logger = nullptr;
+  input.close();
+  return b;
 }
+
+bool PBUtils::SerializeToFile(const google::protobuf::Message& src, const std::string& filename, Logger* logger)
+{
+  if (IsJSONFile(filename))
+  {
+    std::string content;
+    if (!SerializeToString(src, content, JSON, logger))
+      return false;
+    return WriteFile(content, filename);
+  }
+  std::lock_guard<std::mutex> guard(log_mutex);
+  g_logger = logger;
+  google::protobuf::SetLogHandler(static_cast<google::protobuf::LogHandler*>(PBUtils::ProtobufLogHandler));
+  std::ofstream output(filename, std::ios::binary);
+  bool b = src.SerializeToOstream(&output);
+  g_logger = nullptr;
+  output.close();
+  return b;
+}
+
 
 bool PBUtils::SerializeFromString(const std::string& src, google::protobuf::Message& dst, SerializationFormat m, Logger* logger)
 {
   std::lock_guard<std::mutex> guard(log_mutex);
+  bool ret = true;
   if (m == JSON)
   {
-    bool ret = true;
     g_logger = logger;
     google::protobuf::SetLogHandler(static_cast<google::protobuf::LogHandler*>(PBUtils::ProtobufLogHandler));
     google::protobuf::util::JsonParseOptions opts;
     google::protobuf::util::Status stat = google::protobuf::util::JsonStringToMessage(src, &dst, opts);
     if (!stat.ok())
     {
-      if(logger != nullptr)
+      if (logger != nullptr)
         logger->Warning("Protobuf " + stat.ToString());
       else
         std::cerr << stat.ToString() << std::endl;
@@ -77,11 +104,33 @@ bool PBUtils::SerializeFromString(const std::string& src, google::protobuf::Mess
       // logger->Info("Checking to see if string is in google text format...");
       // ret = google::protobuf::TextFormat::ParseFromString(src, &dst);
     }
-    g_logger = nullptr;
-    return ret;
   }
   else
   {
-    return dst.ParseFromString(src);
+    ret = dst.ParseFromString(src);
   }
+  g_logger = nullptr;
+  return ret;
+}
+
+bool PBUtils::SerializeToString(const google::protobuf::Message& src, std::string& output, SerializationFormat m, Logger* logger)
+{
+  std::lock_guard<std::mutex> guard(log_mutex);
+  bool ret = true;
+  if (m == JSON)
+  {
+    g_logger = logger;
+    google::protobuf::SetLogHandler(static_cast<google::protobuf::LogHandler*>(PBUtils::ProtobufLogHandler));
+    google::protobuf::util::JsonPrintOptions opts;
+    opts.add_whitespace = true;
+    opts.preserve_proto_field_names = true;
+    //bool ret = google::protobuf::TextFormat::PrintToString(src, &output);
+    ret =  google::protobuf::util::MessageToJsonString(src, &output, opts).ok();
+  }
+  else
+  {
+    ret = src.SerializeToString(&output);
+  }
+  g_logger = nullptr;
+  return ret;
 }

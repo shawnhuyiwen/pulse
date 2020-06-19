@@ -8,7 +8,7 @@
 #include "properties/SEScalarVolume.h"
 #include "io/protobuf/PBPatientActions.h"
 
-SEUseInhaler::SEUseInhaler() : SEConsciousRespirationCommand()
+SEUseInhaler::SEUseInhaler(Logger* logger) : SEConsciousRespirationCommand(logger)
 {
   
 }

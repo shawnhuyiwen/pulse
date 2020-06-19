@@ -4,7 +4,9 @@
 #include "EngineTest.h"
 #include "controller/Controller.h"
 #include "controller/Circuits.h"
+#include "controller/Substances.h"
 #include "physiology/Cardiovascular.h"
+#include "physiology/Saturation.h"
 #include "PulseConfiguration.h"
 
 #include "patient/SEPatient.h"
@@ -68,9 +70,11 @@ void PulseEngineTest::BrainInjuryTest(const std::string& sTestDirectory)
   pc.GetLogger()->SetLogFile(sTestDirectory + "/" + tName + ".log");
   pc.GetLogger()->Info("Running " + tName);
   SEPatient patient(pc.GetLogger());
-  patient.SerializeFromFile("./patients/StandardMale.json", JSON);
+  patient.SerializeFromFile("./patients/StandardMale.json");
   pc.SetupPatient(patient);
-
+  pc.GetSubstances().LoadSubstanceDirectory("./");
+  pc.GetSaturationCalculator().Setup();
+  pc.m_Config->Initialize("./");
   //Renal and Tissue are on
   pc.m_Config->EnableRenal(eSwitch::On);
   pc.m_Config->EnableTissue(eSwitch::On);

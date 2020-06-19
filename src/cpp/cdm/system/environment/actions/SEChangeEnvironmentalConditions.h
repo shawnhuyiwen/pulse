@@ -10,11 +10,11 @@ class CDM_DECL SEChangeEnvironmentalConditions : public SEEnvironmentAction
   friend class PBEnvironmentAction;//friend the serialization class
 public:
 
-  SEChangeEnvironmentalConditions(SESubstanceManager& substances);
+  SEChangeEnvironmentalConditions(Logger* logger=nullptr);
   virtual ~SEChangeEnvironmentalConditions();
 
   virtual void Clear();
-  virtual void Copy(const SEChangeEnvironmentalConditions& src);
+  virtual void Copy(const SEChangeEnvironmentalConditions& src, const SESubstanceManager& subMgr);
 
   virtual bool IsValid() const;
 
@@ -31,7 +31,6 @@ public:
   virtual void ToString(std::ostream &str) const;
 
 protected:
-  SESubstanceManager&  m_Substances;
 
   std::string                m_EnvironmentalConditionsFile;
   SEEnvironmentalConditions* m_EnvironmentalConditions;

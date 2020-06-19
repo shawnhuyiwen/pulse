@@ -5,7 +5,7 @@
 #include "engine/SEAdvanceTime.h"
 #include "properties/SEScalarTime.h"
 
-SEAdvanceTime::SEAdvanceTime() : SEAction()
+SEAdvanceTime::SEAdvanceTime(Logger* logger) : SEAction(logger)
 {
   m_Time=nullptr;
 }

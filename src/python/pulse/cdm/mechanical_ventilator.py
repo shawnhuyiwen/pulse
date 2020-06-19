@@ -5,8 +5,9 @@ from enum import Enum
 from pulse.cdm.equipment import SEEquipment
 from pulse.cdm.substance import SESubstanceFraction, \
                                 SESubstanceConcentration
-from pulse.cdm.scalars import SEScalar, SEScalarFrequency, \
-                              SEScalarPressure, SEScalarTime, MassPerVolumeUnit
+from pulse.cdm.scalars import SEScalarPressureTimePerVolume, SEScalarVolumePerTime, \
+                              SEScalarPressure, SEScalarTime, SEScalarVolume, \
+                              MassPerVolumeUnit
 
 class eConnection(Enum):
     NullConnection = 0
@@ -14,46 +15,104 @@ class eConnection(Enum):
     Mask = 2
     Tube = 3
 
-class eControl(Enum):
-    NullControl = 0
-    PM_CMV = 1
-
 class eDriverWaveform(Enum):
     NullDriverWaveform = 0
     Square = 1
+    Exponential = 2
+    Ramp = 3
+    Sinusoidal = 4
+    Sigmoidal = 5
 
 class SEMechanicalVentilator(SEEquipment):
-    __slots__ = ["_breath_period", "_connection", "_control", "_driver_waveform",
-                 "_expiratory_period", "_inspiratory_experiatory_ratio", "_inspriatory_period",
-                 "_peak_inspriatory_pressure", "_positive_end_expired_pressure", "_respiration_rate",
-                 "_fraction_inspired_gasses", "_concentration_inspired_aerosol"]
+    __slots__ = ["_connection",
+                 "_endotracheal_tube_resistance",
+                 # One of
+                 "_positive_end_expired_pressure",
+                 "_functional_residual_capacity",
+                 # One of
+                 "_expiration_cycle_flow",
+                 "_expiration_cycle_pressure",
+                 "_expiration_cycle_time",
+
+                 "_expiration_tube_resistance",
+                 "_expiration_valve_resistance",
+                 "_expiration_waveform",
+
+                 # One of
+                 "_inspiration_limit_flow",
+                 "_inspiration_limit_pressure",
+                 "_inspiration_limit_volume",
+
+                 "_inspiration_pause_time",
+                 # One of
+                 "_peak_inpiratory_pressure",
+                 "_end_tidal_carbon_dioxide_pressure",
+                 # One of
+                 "_inspiration_trigger_flow",
+                 "_inspiration_trigger_pressure",
+                 "_inspiration_trigger_time",
+
+                 "_inspiration_tube_resistance",
+                 "_inspiration_valve_resistance",
+                 "_inspiration_waveform",
+
+                 "_fraction_inspired_gasses",
+                 "_concentration_inspired_aerosol"]
 
     def __init__(self):
         super().__init__()
-        self._breath_period = None
         self._connection = eConnection.NullConnection
-        self._control = eControl.NullControl
-        self._driver_waveform = eDriverWaveform.NullDriverWaveform
-        self._expiratory_period = None
-        self._inspiratory_experiatory_ratio = None
-        self._inspriatory_period = None
-        self._peak_inspriatory_pressure = None
+        self._endotracheal_tube_resistance = None
         self._positive_end_expired_pressure = None
-        self._respiration_rate = None
+        self._functional_residual_capacity = None
+        self._expiration_cycle_flow = None
+        self._expiration_cycle_pressure = None
+        self._expiration_cycle_time = None
+        self._expiration_tube_resistance = None
+        self._expiration_valve_resistance = None
+        self._expiration_waveform = eDriverWaveform.NullDriverWaveform
+
+        self._inspiration_limit_flow = None
+        self._inspiration_limit_pressure = None
+        self._inspiration_limit_volume = None
+        self._inspiration_pause_time = None
+        self._peak_inpiratory_pressure = None
+        self._end_tidal_carbon_dioxide_pressure = None
+        self._inspiration_trigger_flow = None
+        self._inspiration_trigger_pressure = None
+        self._inspiration_trigger_time = None
+        self._inspiration_tube_resistance = None
+        self._inspiration_valve_resistance = None
+        self._inspiration_waveform = eDriverWaveform.NullDriverWaveform
+
         self._fraction_inspired_gasses = []
         self._concentration_inspired_aerosol = []
 
     def clear(self):
-        if self._breath_period is not None: self._breath_period.invalidate()
         self._connection = eConnection.NullConnection
-        self._control = eControl.NullControl
-        self._driver_waveform = eDriverWaveform.NullDriverWaveform
-        if self._expiratory_period is not None: self._expiratory_period.invalidate()
-        if self._inspiratory_experiatory_ratio is not None: self._inspiratory_experiatory_ratio.invalidate()
-        if self._inspriatory_period is not None: self._inspriatory_period.invalidate()
-        if self._peak_inspriatory_pressure is not None: self._peak_inspriatory_pressure.invalidate()
+        if self._endotracheal_tube_resistance is not None: self._endotracheal_tube_resistance.invalidate()
         if self._positive_end_expired_pressure is not None: self._positive_end_expired_pressure.invalidate()
-        if self._respiration_rate is not None: self._respiration_rate.invalidate()
+        if self._functional_residual_capacity is not None: self._functional_residual_capacity.invalidate()
+        if self._expiration_cycle_flow is not None: self._expiration_cycle_flow.invalidate()
+        if self._expiration_cycle_pressure is not None: self._expiration_cycle_pressure.invalidate()
+        if self._expiration_cycle_time is not None: self._expiration_cycle_time.invalidate()
+        if self._expiration_tube_resistance is not None: self._expiration_tube_resistance.invalidate()
+        if self._expiration_valve_resistance is not None: self._expiration_valve_resistance.invalidate()
+        self._expiration_waveform = eDriverWaveform.NullDriverWaveform
+
+        if self._inspiration_limit_flow is not None: self._inspiration_limit_flow.invalidate()
+        if self._inspiration_limit_pressure is not None: self._inspiration_limit_pressure.invalidate()
+        if self._inspiration_limit_volume is not None: self._inspiration_limit_volume.invalidate()
+        if self._inspiration_pause_time is not None: self._inspiration_pause_time.invalidate()
+        if self._peak_inpiratory_pressure is not None: self._peak_inpiratory_pressure.invalidate()
+        if self._end_tidal_carbon_dioxide_pressure is not None: self._end_tidal_carbon_dioxide_pressure.invalidate()
+        if self._inspiration_trigger_flow is not None: self._inspiration_trigger_flow.invalidate()
+        if self._inspiration_trigger_pressure is not None: self._inspiration_trigger_pressure.invalidate()
+        if self._inspiration_trigger_time is not None: self._inspiration_trigger_time.invalidate()
+        if self._inspiration_tube_resistance is not None: self._inspiration_tube_resistance.invalidate()
+        if self._inspiration_valve_resistance is not None: self._inspiration_valve_resistance.invalidate()
+        self._inspiration_waveform = eDriverWaveform.NullDriverWaveform
+
         self._fraction_inspired_gasses = []
         self._concentration_inspired_aerosol = []
 
@@ -61,88 +120,183 @@ class SEMechanicalVentilator(SEEquipment):
         if not isinstance(SEMechanicalVentilator, src):
             raise Exception("Provided argument must be a SEMechanicalVentilator")
         self.clear()
-        if src.has_breath_period(): self.get_breath_period().set(src._breath_period)
         self._connection = src._connection
-        self._control = src._control
-        self._driver_waveform = src._driver_waveform
-        if src.has_expiratory_period(): self.get_expiratory_period().set(src._expiratory_period)
-        if src.has_inspiratory_experiatory_ratio(): self.get_inspiratory_experiatory_ratio().set(
-            src._inspiratory_experiatory_ratio)
-        if src.has_inspriatory_period(): self.get_inspriatory_period().set(src._inspriatory_period)
-        if src.has_peak_inspriatory_pressure(): self.get_peak_inspriatory_pressure().set(src._peak_inspriatory_pressure)
-        if src.has_positive_end_expired_pressure(): self.get_positive_end_expired_pressure().set(
-            src._positive_end_expired_pressure)
-        if src.has_respiration_rate(): self.get_respiration_rate().set(src._respiration_rate)
+        if src.has_endotracheal_tube_resistance(): self.get_endotracheal_tube_resistance().set(src._endotracheal_tube_resistance)
+        if src.has_positive_end_expired_pressure(): self.get_positive_end_expired_pressure().set(src._positive_end_expired_pressure)
+        if src.has_functional_residual_capacity(): self.get_functional_residual_capacity().set(src._functional_residual_capacity)
+        if src.has_expiration_cycle_flow(): self.get_expiration_cycle_flow().set(src._expiration_cycle_flow)
+        if src.has_expiration_cycle_pressure(): self.get_expiration_cycle_pressure().set(src._expiration_cycle_pressure)
+        if src.has_expiration_cycle_time(): self.get_expiration_cycle_time().set(src._expiration_cycle_time)
+        if src.has_expiration_tube_resistance(): self.get_expiration_tube_resistance().set(src._expiration_tube_resistance)
+        if src.has_expiration_valve_resistance(): self.get_expiration_valve_resistance().set(src._expiration_valve_resistance)
+        self._expiration_waveform = src._expiration_waveform
+
+        if src.has_inspiration_limit_flow(): self.get_inspiration_limit_flow().set(src._inspiration_limit_flow)
+        if src.has_inspiration_limit_pressure(): self.get_inspiration_limit_pressure().set(src._inspiration_limit_pressure)
+        if src.has_inspiration_limit_volume(): self.get_inspiration_limit_volume().set(src._inspiration_limit_volume)
+        if src.has_inspiration_pause_time(): self.get_inspiration_pause_time().set(src._inspiration_pause_time)
+        if src.has_peak_inpiratory_pressure(): self.get_peak_inpiratory_pressure().set(src._peak_inpiratory_pressure)
+        if src.has_end_tidal_carbon_dioxide_pressure(): self.get_end_tidal_carbon_dioxide_pressure().set(src._end_tidal_carbon_dioxide_pressure)
+        if src.has_inspiration_trigger_flow(): self.get_inspiration_trigger_flow().set(src._inspiration_trigger_flow)
+        if src.has_inspiration_trigger_pressure(): self.get_inspiration_trigger_pressure().set(src._inspiration_trigger_pressure)
+        if src.has_inspiration_trigger_time(): self.get_inspiration_trigger_time().set(src._inspiration_trigger_time)
+        if src.has_inspiration_tube_resistance(): self.get_inspiration_tube_resistance().set(src._inspiration_tube_resistance)
+        if src.has_inspiration_valve_resistance(): self.get_inspiration_valve_resistance().set(src._inspiration_valve_resistance)
+        self._inspiration_waveform = src._inspiration_waveform
 
         if src.has_fraction_inspired_gasses:
             self._fraction_inspired_gasses.append(src._fraction_inspired_gasses[:])
         if src.has_concentration_inspired_aerosol:
             self._concentration_inspired_aerosol.append(src._concentration_inspired_aerosol[:])
 
-    def has_breath_period(self):
-        return False if self._breath_period is None else self._breath_period.is_valid()
-    def get_breath_period(self):
-        if self._breath_period is None:
-            self._breath_period = SEScalarTime()
-        return self._breath_period
-
     def get_connection(self):
         return self._connection
     def set_connection(self, t: eConnection):
         self._connection = t
 
-    def get_control(self):
-        return self._control
-    def set_control(self, t: eControl):
-        self._control = t
-
-    def get_driver_waveform(self):
-        return self._driver_waveform
-    def set_driver_waveform(self, t: eDriverWaveform):
-        self._driver_waveform = t
-
-    def has_expiratory_period(self):
-        return False if self._expiratory_period is None else self._expiratory_period.is_valid()
-    def get_expiratory_period(self):
-        if self._expiratory_period is None:
-            self._expiratory_period = SEScalarTime()
-        return self._expiratory_period
-
-    def has_inspiratory_experiatory_ratioy(self):
-        return False if self._inspiratory_experiatory_ratio is None else self._inspiratory_experiatory_ratio.is_valid()
-    def get_inspiratory_experiatory_ratio(self):
-        if self._inspiratory_experiatory_ratio is None:
-            self._inspiratory_experiatory_ratio = SEScalar()
-        return self._inspiratory_experiatory_ratio
-
-    def has_inspriatory_period(self):
-        return False if self._inspriatory_period is None else self._inspriatory_period.is_valid()
-    def get_inspriatory_period(self):
-        if self._inspriatory_period is None:
-            self._inspriatory_period = SEScalarTime()
-        return self._inspriatory_period
-
-    def has_peak_inspriatory_pressure(self):
-        return False if self._peak_inspriatory_pressure is None else self._peak_inspriatory_pressure.is_valid()
-    def get_peak_inspriatory_pressure(self):
-        if self._peak_inspriatory_pressure is None:
-            self._peak_inspriatory_pressure = SEScalarPressure()
-        return self._peak_inspriatory_pressure
-
+    def has_endotracheal_tube_resistance(self):
+        return False if self._endotracheal_tube_resistance is None else self._endotracheal_tube_resistance.is_valid()
+    def get_endotracheal_tube_resistance(self):
+        if self._endotracheal_tube_resistance is None:
+            self._endotracheal_tube_resistance = SEScalarPressureTimePerVolume()
+        return self._endotracheal_tube_resistance
+    
     def has_positive_end_expired_pressure(self):
         return False if self._positive_end_expired_pressure is None else self._positive_end_expired_pressure.is_valid()
     def get_positive_end_expired_pressure(self):
         if self._positive_end_expired_pressure is None:
             self._positive_end_expired_pressure = SEScalarPressure()
         return self._positive_end_expired_pressure
+    
+    def has_functional_residual_capacity(self):
+        return False if self._functional_residual_capacity is None else self._functional_residual_capacity.is_valid()
+    def get_functional_residual_capacity(self):
+        if self._functional_residual_capacity is None:
+            self._functional_residual_capacity = SEScalarPressure()
+        return self._functional_residual_capacity
+    
+    def has_expiration_cycle_flow(self):
+        return False if self._expiration_cycle_flow is None else self._expiration_cycle_flow.is_valid()
+    def get_expiration_cycle_flow(self):
+        if self._expiration_cycle_flow is None:
+            self._expiration_cycle_flow = SEScalarVolumePerTime()
+        return self._expiration_cycle_flow
+    
+    def has_expiration_cycle_pressure(self):
+        return False if self._expiration_cycle_pressure is None else self._expiration_cycle_pressure.is_valid()
+    def get_expiration_cycle_pressure(self):
+        if self._expiration_cycle_pressure is None:
+            self._expiration_cycle_pressure = SEScalarPressure()
+        return self._expiration_cycle_pressure
+    
+    def has_expiration_cycle_time(self):
+        return False if self._expiration_cycle_time is None else self._expiration_cycle_time.is_valid()
+    def get_expiration_cycle_time(self):
+        if self._expiration_cycle_time is None:
+            self._expiration_cycle_time = SEScalarTime()
+        return self._expiration_cycle_time
+    
+    def has_expiration_tube_resistance(self):
+        return False if self._expiration_tube_resistance is None else self._expiration_tube_resistance.is_valid()
+    def get_expiration_tube_resistance(self):
+        if self._expiration_tube_resistance is None:
+            self._expiration_tube_resistance = SEScalarPressureTimePerVolume()
+        return self._expiration_tube_resistance
+    
+    def has_expiration_valve_resistance(self):
+        return False if self._expiration_valve_resistance is None else self._expiration_valve_resistance.is_valid()
+    def get_expiration_valve_resistance(self):
+        if self._expiration_valve_resistance is None:
+            self._expiration_valve_resistance = SEScalarPressureTimePerVolume()
+        return self._expiration_valve_resistance
 
-    def has_respiration_rate(self):
-        return False if self._respiration_rate is None else self._respiration_rate.is_valid()
-    def get_respiration_rate(self):
-        if self._respiration_rate is None:
-            self._respiration_rate = SEScalarFrequency()
-        return self._respiration_rate
+    def get_expiration_waveform(self):
+        return self._expiration_waveform
+    def set_expiration_waveform(self, t: eDriverWaveform):
+        self._expiration_waveform = t
+        
+    def has_inspiration_limit_flow(self):
+        return False if self._inspiration_limit_flow is None else self._inspiration_limit_flow.is_valid()
+    def get_inspiration_limit_flow(self):
+        if self._inspiration_limit_flow is None:
+            self._inspiration_limit_flow = SEScalarVolumePerTime()
+        return self._inspiration_limit_flow
 
+    def has_inspiration_limit_pressure(self):
+        return False if self._inspiration_limit_pressure is None else self._inspiration_limit_pressure.is_valid()
+    def get_inspiration_limit_pressure(self):
+        if self._inspiration_limit_pressure is None:
+            self._inspiration_limit_pressure = SEScalarPressure()
+        return self._inspiration_limit_pressure
+
+    def has_inspiration_limit_volume(self):
+        return False if self._inspiration_limit_volume is None else self._inspiration_limit_volume.is_valid()
+    def get_inspiration_limit_volume(self):
+        if self._inspiration_limit_volume is None:
+            self._inspiration_limit_volume = SEScalarVolume()
+        return self._inspiration_limit_volume
+        
+    def has_inspiration_pause_time(self):
+        return False if self._inspiration_pause_time is None else self._inspiration_pause_time.is_valid()
+    def get_inspiration_pause_time(self):
+        if self._inspiration_pause_time is None:
+            self._inspiration_pause_time = SEScalarTime()
+        return self._inspiration_pause_time
+
+    def has_peak_inpiratory_pressure(self):
+        return False if self._peak_inpiratory_pressure is None else self._peak_inpiratory_pressure.is_valid()
+    def get_peak_inpiratory_pressure(self):
+        if self._peak_inpiratory_pressure is None:
+            self._peak_inpiratory_pressure = SEScalarPressure()
+        return self._peak_inpiratory_pressure
+
+    def has_end_tidal_carbon_dioxide_pressure(self):
+        return False if self._end_tidal_carbon_dioxide_pressure is None else self._end_tidal_carbon_dioxide_pressure.is_valid()
+    def get_end_tidal_carbon_dioxide_pressure(self):
+        if self._end_tidal_carbon_dioxide_pressure is None:
+            self._end_tidal_carbon_dioxide_pressure = SEScalarPressure()
+        return self._end_tidal_carbon_dioxide_pressure
+
+    def has_inspiration_trigger_flow(self):
+        return False if self._inspiration_trigger_flow is None else self._inspiration_trigger_flow.is_valid()
+    def get_inspiration_trigger_flow(self):
+        if self._inspiration_trigger_flow is None:
+            self._inspiration_trigger_flow = SEScalarVolumePerTime()
+        return self._inspiration_trigger_flow
+
+    def has_inspiration_trigger_pressure(self):
+        return False if self._inspiration_trigger_pressure is None else self._inspiration_trigger_pressure.is_valid()
+    def get_inspiration_trigger_pressure(self):
+        if self._inspiration_trigger_pressure is None:
+            self._inspiration_trigger_pressure = SEScalarPressure()
+        return self._inspiration_trigger_pressure
+
+    def has_inspiration_trigger_time(self):
+        return False if self._inspiration_trigger_time is None else self._inspiration_trigger_time.is_valid()
+    def get_inspiration_trigger_time(self):
+        if self._inspiration_trigger_time is None:
+            self._inspiration_trigger_time = SEScalarTime()
+        return self._inspiration_trigger_time
+
+    def has_inspiration_tube_resistance(self):
+        return False if self._inspiration_tube_resistance is None else self._inspiration_tube_resistance.is_valid()
+    def get_inspiration_tube_resistance(self):
+        if self._inspiration_tube_resistance is None:
+            self._inspiration_tube_resistance = SEScalarPressureTimePerVolume()
+        return self._inspiration_tube_resistance
+
+    def has_inspiration_valve_resistance(self):
+        return False if self._inspiration_valve_resistance is None else self._inspiration_valve_resistance.is_valid()
+    def get_inspiration_valve_resistance(self):
+        if self._inspiration_valve_resistance is None:
+            self._inspiration_valve_resistance = SEScalarPressureTimePerVolume()
+        return self._inspiration_valve_resistance
+
+    def get_inspiration_waveform(self):
+        return self._inspiration_waveform
+    def set_inspiration_waveform(self, t: eDriverWaveform):
+        self._inspiration_waveform = t
+        
     def has_fraction_inspired_gas(self, substance_name: str = None):
         if substance_name is None:
             return len(self._fraction_inspired_gasses) > 0

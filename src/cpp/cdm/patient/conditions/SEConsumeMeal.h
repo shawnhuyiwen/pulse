@@ -10,7 +10,7 @@ class CDM_DECL SEConsumeMeal : public SEPatientCondition
   friend class PBPatientCondition;//friend the serialization class
 public:
 
-  SEConsumeMeal();
+  SEConsumeMeal(Logger* logger=nullptr);
   virtual ~SEConsumeMeal();
 
   virtual void Clear(); //clear memory

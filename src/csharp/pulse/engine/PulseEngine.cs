@@ -45,19 +45,19 @@ namespace Pulse
     }
 
     [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-    static extern bool SerializeFromFile(IntPtr pulse, string filename, string data_mgr, int format);
-    public bool SerializeFromFile(string filename, SEDataRequestManager data_mgr, SerializationFormat format)
+    static extern bool SerializeFromFile(IntPtr pulse, string filename, string data_mgr, int data_mgr_format);
+    public bool SerializeFromFile(string filename, SEDataRequestManager data_mgr)
     {
       data_values = new double[data_mgr.GetDataRequests().Count + 1];
-      string data_mgr_str = PBDataRequest.SerializeToString(data_mgr);
-      return SerializeFromFile(pulse_cptr, filename, data_mgr_str, (int)format);
+      string data_mgr_str = PBDataRequest.SerializeToString(data_mgr, SerializationFormat.JSON);
+      return SerializeFromFile(pulse_cptr, filename, data_mgr_str, (int)SerializationFormat.JSON);
     }
 
     [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-    static extern bool SerializeToFile(IntPtr pulse, string filename, int format);
-    public bool SerializeToFile(string filename, SerializationFormat format)
+    static extern bool SerializeToFile(IntPtr pulse, string filename);
+    public bool SerializeToFile(string filename)
     {
-      return SerializeToFile(pulse_cptr, filename, (int)format);
+      return SerializeToFile(pulse_cptr, filename);
     }
 
     [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
@@ -65,7 +65,7 @@ namespace Pulse
     public bool SerializeFromString(string state, SEDataRequestManager data_mgr, SerializationFormat format)
     {
       data_values = new double[data_mgr.GetDataRequests().Count + 1];
-      string data_mgr_str = PBDataRequest.SerializeToString(data_mgr);
+      string data_mgr_str = PBDataRequest.SerializeToString(data_mgr, format);
       return SerializeFromString(pulse_cptr, state, data_mgr_str, (int)format);
     }
 
@@ -80,12 +80,12 @@ namespace Pulse
     }
 
     [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-    static extern bool InitializeEngine(IntPtr pulse, string patient_configuration, string data_requests, int format, string data_dir);
+    static extern bool InitializeEngine(IntPtr pulse, string patient_configuration, string data_mgr, int data_mgr_format, string data_dir);
     public bool InitializeEngine(SEPatientConfiguration patient_configuration, SEDataRequestManager data_mgr, string data_dir="./")
     {
       data_values = new double[data_mgr.GetDataRequests().Count + 1];
       string patient_configuration_str = PBPatientConfiguration.SerializeToString(patient_configuration);
-      string data_mgr_str = PBDataRequest.SerializeToString(data_mgr);
+      string data_mgr_str = PBDataRequest.SerializeToString(data_mgr, thunk_as);
       return InitializeEngine(pulse_cptr, patient_configuration_str, data_mgr_str, (int)thunk_as, data_dir);
     }
 

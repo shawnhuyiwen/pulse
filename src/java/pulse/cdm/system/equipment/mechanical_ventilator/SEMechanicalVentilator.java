@@ -8,20 +8,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import pulse.cdm.bind.MechanicalVentilator.MechanicalVentilatorData;
-import pulse.cdm.bind.MechanicalVentilator.MechanicalVentilatorData.BreathProfileData;
-import pulse.cdm.bind.MechanicalVentilator.MechanicalVentilatorData.InspiratoryExpiratoryPeriodData;
 import pulse.cdm.bind.MechanicalVentilator.MechanicalVentilatorData.eConnection;
-import pulse.cdm.bind.MechanicalVentilator.MechanicalVentilatorData.eControl;
 import pulse.cdm.bind.MechanicalVentilator.MechanicalVentilatorData.eDriverWaveform;
 import pulse.cdm.bind.Substance.SubstanceConcentrationData;
 import pulse.cdm.bind.Substance.SubstanceData.eState;
 import pulse.cdm.bind.Substance.SubstanceFractionData;
-import pulse.cdm.properties.SEScalar;
-import pulse.cdm.properties.SEScalar0To1;
-import pulse.cdm.properties.SEScalarFrequency;
-import pulse.cdm.properties.SEScalarMassPerVolume;
-import pulse.cdm.properties.SEScalarPressure;
-import pulse.cdm.properties.SEScalarTime;
+import pulse.cdm.properties.*;
 import pulse.cdm.substance.SESubstance;
 import pulse.cdm.substance.SESubstanceConcentration;
 import pulse.cdm.substance.SESubstanceFraction;
@@ -31,16 +23,42 @@ import pulse.utilities.Log;
 
 public class SEMechanicalVentilator extends SEEquipment
 {
-  protected SEScalarTime                      breathPeriod;
   protected eConnection                       connection;
-  protected eControl                          control;
-  protected eDriverWaveform                   driverWaveform;
-  protected SEScalar                          inspiratoryExpiratoryRatio;
-  protected SEScalarTime                      inspiratoryPeriod;
-  protected SEScalarTime                      expiratoryPeriod;
-  protected SEScalarPressure                  peakInspiratoryPressure;
+  protected SEScalarPressureTimePerVolume     endotrachealTubeResistance;
+  
+  // Expiratory Baseline Properties (Only set 1)
   protected SEScalarPressure                  positiveEndExpiredPressure;
-  protected SEScalarFrequency                 respiratoryRate;
+  protected SEScalarPressure                  functionalResidualCapacity;
+  
+  // Expriatory Cycle Properties (Only Set 1)
+  protected SEScalarVolumePerTime             expirationCycleFlow;
+  protected SEScalarPressure                  expirationCyclePressure;
+  protected SEScalarTime                      expirationCycleTime;
+  
+  protected SEScalarPressureTimePerVolume     expirationTubeResistance;
+  protected SEScalarPressureTimePerVolume     expirationValveResistance;
+  protected eDriverWaveform                   expirationWaveform;
+
+  // Inspiratory Limit Properties (Only set 1)
+  protected SEScalarVolumePerTime             inspirationLimitFlow;
+  protected SEScalarPressure                  inspirationLimitPressure;
+  protected SEScalarVolume                    inspirationLimitVolume;
+  
+
+  protected SEScalarTime                      inspirationPauseTime;
+  
+  // Inspiratory Target Properties (Only set 1)
+  protected SEScalarPressure                  peakInspiratoryPressure;
+  protected SEScalarPressure                  endTidalCarbonDioxidePressure;
+  
+  // Inspiratory Trigger Properties (Only set 1)
+  protected SEScalarVolumePerTime             inspirationTriggerFlow;
+  protected SEScalarPressure                  inspirationTriggerPressure;
+  protected SEScalarTime                      inspirationTriggerTime;
+
+  protected SEScalarPressureTimePerVolume     inspirationTubeResistance;
+  protected SEScalarPressureTimePerVolume     inspirationValveResistance;
+  protected eDriverWaveform                   inspirationWaveform;
   
   protected List<SESubstanceFraction>         fractionInspiredGases;
   protected List<SESubstanceConcentration>    concentrationInspiredAerosol;
@@ -48,41 +66,93 @@ public class SEMechanicalVentilator extends SEEquipment
 
   public SEMechanicalVentilator()
   {
-    breathPeriod = null;
     connection = null;
-    control = null;
-    driverWaveform = null;
-    expiratoryPeriod = null;
-    inspiratoryExpiratoryRatio = null;
-    inspiratoryPeriod = null;
-    peakInspiratoryPressure = null;
-    positiveEndExpiredPressure = null;
-    respiratoryRate = null;
+    endotrachealTubeResistance = null;
 
-    this.fractionInspiredGases=new ArrayList<>();
-    this.concentrationInspiredAerosol=new ArrayList<>();
+    positiveEndExpiredPressure = null;
+    functionalResidualCapacity = null;
+
+    expirationCycleFlow = null;
+    expirationCyclePressure = null;
+    expirationCycleTime = null;
+
+    expirationTubeResistance = null;
+    expirationValveResistance = null;
+    expirationWaveform = null;
+
+    inspirationLimitFlow = null;
+    inspirationLimitPressure = null;
+    inspirationLimitVolume = null;
+
+    inspirationPauseTime = null;
+
+    peakInspiratoryPressure = null;
+    endTidalCarbonDioxidePressure = null;
+
+    inspirationTriggerFlow = null;
+    inspirationTriggerPressure = null;
+    inspirationTriggerTime = null;
+
+    inspirationTubeResistance = null;
+    inspirationValveResistance = null;
+    inspirationWaveform = null;
+
+    this.fractionInspiredGases=new ArrayList<SESubstanceFraction>();
+    this.concentrationInspiredAerosol=new ArrayList<SESubstanceConcentration>();
   }
 
   @Override
   public void reset()
   {
-    if (breathPeriod != null)
-      breathPeriod.invalidate();
     connection = null;
-    control = null;
-    driverWaveform = null;
-    if (expiratoryPeriod != null)
-      expiratoryPeriod.invalidate();
-    if (inspiratoryExpiratoryRatio != null)
-      inspiratoryExpiratoryRatio.invalidate();
-    if (inspiratoryPeriod != null)
-      inspiratoryPeriod.invalidate();
-    if (peakInspiratoryPressure != null)
-      peakInspiratoryPressure.invalidate();
+    if (endotrachealTubeResistance != null)
+      endotrachealTubeResistance.invalidate();
+
     if (positiveEndExpiredPressure != null)
       positiveEndExpiredPressure.invalidate();
-    if (respiratoryRate != null)
-      respiratoryRate.invalidate();
+    if (functionalResidualCapacity != null)
+      functionalResidualCapacity.invalidate();
+
+    if (expirationCycleFlow != null)
+      expirationCycleFlow.invalidate();
+    if (expirationCyclePressure != null)
+      expirationCyclePressure.invalidate();
+    if (expirationCycleTime != null)
+      expirationCycleTime.invalidate();
+
+    if (expirationTubeResistance != null)
+      expirationTubeResistance.invalidate();
+    if (expirationValveResistance != null)
+      expirationValveResistance.invalidate();
+    expirationWaveform = null;
+
+    if (inspirationLimitFlow != null)
+      inspirationLimitFlow.invalidate();
+    if (inspirationLimitPressure != null)
+      inspirationLimitPressure.invalidate();
+    if (inspirationLimitVolume != null)
+      inspirationLimitVolume.invalidate();
+
+    if (inspirationPauseTime != null)
+      inspirationPauseTime.invalidate();
+
+    if (peakInspiratoryPressure != null)
+      peakInspiratoryPressure.invalidate();
+    if (endTidalCarbonDioxidePressure != null)
+      endTidalCarbonDioxidePressure.invalidate();
+
+    if (inspirationTriggerFlow != null)
+      inspirationTriggerFlow.invalidate();
+    if (inspirationTriggerPressure != null)
+      inspirationTriggerPressure.invalidate();
+    if (inspirationTriggerTime != null)
+      inspirationTriggerTime.invalidate();
+
+    if (inspirationTubeResistance != null)
+      inspirationTubeResistance.invalidate();
+    if (inspirationValveResistance != null)
+      inspirationValveResistance.invalidate();
+    inspirationWaveform = null;
     
     this.fractionInspiredGases.clear();
     this.concentrationInspiredAerosol.clear();
@@ -91,26 +161,58 @@ public class SEMechanicalVentilator extends SEEquipment
   public void copy(SEMechanicalVentilator from)
   {
     reset();
-    if(from.hasBreathPeriod())
-      this.getBreathPeriod().set(from.getBreathPeriod());
     if(from.connection!=null && from.connection != eConnection.NullConnection)
     	this.connection=from.connection;
-    if(from.control!=null && from.control != eControl.NullControl)
-      this.control=from.control;
-    if(from.driverWaveform!=null && from.driverWaveform != eDriverWaveform.NullDriverWaveform)
-      this.driverWaveform=from.driverWaveform;
-    if(from.hasExpiratoryPeriod())
-      this.getExpiratoryPeriod().set(from.getExpiratoryPeriod());
-    if(from.hasInspiratoryExpiratoryRatio())
-      this.getInspiratoryExpiratoryRatio().set(from.getInspiratoryExpiratoryRatio());
-    if(from.hasInspiratoryPeriod())
-      this.getInspiratoryPeriod().set(from.getInspiratoryPeriod());
-    if(from.hasPeakInspiratoryPressure())
-      this.getPeakInspiratoryPressure().set(from.getPeakInspiratoryPressure());
+    if(from.hasEndotrachealTubeResistance())
+      this.getEndotrachealTubeResistance().set(from.getEndotrachealTubeResistance());
+    
     if(from.hasPositiveEndExpiredPressure())
       this.getPositiveEndExpiredPressure().set(from.getPositiveEndExpiredPressure());
-    if(from.hasRespiratoryRate())
-      this.getRespiratoryRate().set(from.getRespiratoryRate());
+    if(from.hasFunctionalResidualCapacity())
+      this.getFunctionalResidualCapacity().set(from.getFunctionalResidualCapacity());
+    
+    if(from.hasExpirationCycleFlow())
+      this.getExpirationCycleFlow().set(from.getExpirationCycleFlow());
+    if(from.hasExpirationCyclePressure())
+      this.getExpirationCyclePressure().set(from.getExpirationCyclePressure());
+    if(from.hasExpirationCycleTime())
+      this.getExpirationCycleTime().set(from.getExpirationCycleTime());
+    
+    if(from.hasExpirationTubeResistance())
+      this.getExpirationTubeResistance().set(from.getExpirationTubeResistance());
+    if(from.hasExpirationValveResistance())
+      this.getExpirationValveResistance().set(from.getExpirationValveResistance());
+    if(from.expirationWaveform!=null && from.expirationWaveform != eDriverWaveform.NullDriverWaveform)
+      this.expirationWaveform=from.expirationWaveform;
+    
+    if(from.hasInspirationLimitFlow())
+      this.getInspirationLimitFlow().set(from.getInspirationLimitFlow());
+    if(from.hasInspirationLimitPressure())
+      this.getInspirationLimitPressure().set(from.getInspirationLimitPressure());
+    if(from.hasInspirationLimitVolume())
+      this.getInspirationLimitVolume().set(from.getInspirationLimitVolume());
+    
+    if(from.hasInspirationPauseTime())
+      this.getInspirationPauseTime().set(from.getInspirationPauseTime());
+    
+    if(from.hasPeakInspiratoryPressure())
+      this.getPeakInspiratoryPressure().set(from.getPeakInspiratoryPressure());
+    if(from.hasEndTidalCarbonDioxidePressure())
+      this.getEndTidalCarbonDioxidePressure().set(from.getEndTidalCarbonDioxidePressure());
+    
+    if(from.hasInspirationTriggerFlow())
+      this.getInspirationTriggerFlow().set(from.getInspirationTriggerFlow());
+    if(from.hasInspirationTriggerPressure())
+      this.getInspirationTriggerPressure().set(from.getInspirationTriggerPressure());
+    if(from.hasInspirationTriggerTime())
+      this.getInspirationTriggerTime().set(from.getInspirationTriggerTime());
+    
+    if(from.hasInspirationTubeResistance())
+      this.getInspirationTubeResistance().set(from.getInspirationTubeResistance());
+    if(from.hasInspirationValveResistance())
+      this.getInspirationValveResistance().set(from.getInspirationValveResistance());
+    if(from.inspirationWaveform!=null && from.inspirationWaveform != eDriverWaveform.NullDriverWaveform)
+      this.inspirationWaveform=from.inspirationWaveform;
     
     if(from.fractionInspiredGases!=null)
     {
@@ -137,34 +239,56 @@ public class SEMechanicalVentilator extends SEEquipment
   public static void load(MechanicalVentilatorData src, SEMechanicalVentilator dst, SESubstanceManager subMgr)
   {
     dst.reset();
-    if(src.hasBreathProfile())
-    {
-      if (src.getBreathProfile().hasPeriod())
-        SEScalarTime.load(src.getBreathProfile().getPeriod(), dst.getBreathPeriod());
-      else if (src.getBreathProfile().hasRate())
-        SEScalarFrequency.load(src.getBreathProfile().getRate(), dst.getRespiratoryRate());
-      
-      if(src.getBreathProfile().hasInspiratoryExpiratoryRatio())
-        SEScalar.load(src.getBreathProfile().getInspiratoryExpiratoryRatio(), dst.getInspiratoryExpiratoryRatio());
-    }
-    else if(src.hasInspiratoryExpiratoryPeriod())
-    {
-      if(src.getInspiratoryExpiratoryPeriod().hasExpiratoryPeriod())
-        SEScalarTime.load(src.getInspiratoryExpiratoryPeriod().getExpiratoryPeriod(), dst.getExpiratoryPeriod());
-      if(src.getInspiratoryExpiratoryPeriod().hasInspiratoryPeriod())
-        SEScalarTime.load(src.getInspiratoryExpiratoryPeriod().getInspiratoryPeriod(), dst.getInspiratoryPeriod());
-    }
-    
     if (src.getConnection()!=eConnection.UNRECOGNIZED)
       dst.setConnection(src.getConnection());
-    if (src.getControl()!=eControl.UNRECOGNIZED)
-      dst.setControl(src.getControl());
-    if (src.getDriverWaveform()!=eDriverWaveform.UNRECOGNIZED)
-      dst.setDriverWaveform(src.getDriverWaveform());
-    if (src.hasPeakInspiratoryPressure())
-      SEScalarPressure.load(src.getPeakInspiratoryPressure(), dst.getPeakInspiratoryPressure());
+    
     if (src.hasPositiveEndExpiredPressure())
       SEScalarPressure.load(src.getPositiveEndExpiredPressure(), dst.getPositiveEndExpiredPressure());
+    else if (src.hasFunctionalResidualCapacity())
+      SEScalarPressure.load(src.getFunctionalResidualCapacity(), dst.getFunctionalResidualCapacity());
+    
+    if (src.hasExpirationCycleFlow())
+      SEScalarVolumePerTime.load(src.getExpirationCycleFlow(), dst.getExpirationCycleFlow());
+    else if (src.hasExpirationCyclePressure())
+      SEScalarPressure.load(src.getExpirationCyclePressure(), dst.getExpirationCyclePressure());
+    else if (src.hasExpirationCycleTime())
+      SEScalarTime.load(src.getExpirationCycleTime(), dst.getExpirationCycleTime());
+    
+    if (src.hasExpirationTubeResistance())
+      SEScalarPressureTimePerVolume.load(src.getExpirationTubeResistance(), dst.getExpirationTubeResistance());
+    if (src.hasExpirationValveResistance())
+      SEScalarPressureTimePerVolume.load(src.getExpirationValveResistance(), dst.getExpirationValveResistance());
+    if (src.getExpirationWaveform()!=eDriverWaveform.UNRECOGNIZED)
+      dst.setExpirationWaveform(src.getExpirationWaveform());
+    
+    if (src.hasInspirationLimitFlow())
+      SEScalarVolumePerTime.load(src.getInspirationLimitFlow(), dst.getInspirationLimitFlow());
+    else if (src.hasInspirationLimitPressure())
+      SEScalarPressure.load(src.getInspirationLimitPressure(), dst.getInspirationLimitPressure());
+    else if (src.hasInspirationLimitVolume())
+      SEScalarVolume.load(src.getInspirationLimitVolume(), dst.getInspirationLimitVolume());
+    
+    if (src.hasInspirationPauseTime())
+      SEScalarTime.load(src.getInspirationPauseTime(), dst.getInspirationPauseTime());
+    
+    if (src.hasPeakInspiratoryPressure())
+      SEScalarPressure.load(src.getPeakInspiratoryPressure(), dst.getPeakInspiratoryPressure());
+    else if (src.hasEndTidalCarbonDioxidePressure())
+      SEScalarPressure.load(src.getEndTidalCarbonDioxidePressure(), dst.getEndTidalCarbonDioxidePressure());
+    
+    if (src.hasInspirationTriggerFlow())
+      SEScalarVolumePerTime.load(src.getInspirationTriggerFlow(), dst.getInspirationTriggerFlow());
+    else if (src.hasInspirationTriggerPressure())
+      SEScalarPressure.load(src.getInspirationTriggerPressure(), dst.getInspirationTriggerPressure());
+    else if (src.hasInspirationTriggerTime())
+      SEScalarTime.load(src.getInspirationTriggerTime(), dst.getInspirationTriggerTime());
+    
+    if (src.hasInspirationTubeResistance())
+      SEScalarPressureTimePerVolume.load(src.getInspirationTubeResistance(), dst.getInspirationTubeResistance());
+    if (src.hasInspirationValveResistance())
+      SEScalarPressureTimePerVolume.load(src.getInspirationValveResistance(), dst.getInspirationValveResistance());
+    if (src.getInspirationWaveform()!=eDriverWaveform.UNRECOGNIZED)
+      dst.setInspirationWaveform(src.getInspirationWaveform());
     
     SESubstance sub;
     if(src.getFractionInspiredGasList()!=null)
@@ -215,50 +339,60 @@ public class SEMechanicalVentilator extends SEEquipment
   {
     if (src.hasConnection())
       dst.setConnection(src.connection);
-    if (src.hasControl())
-      dst.setControl(src.control);
-    if (src.hasDriverWaveform())
-      dst.setDriverWaveform(src.driverWaveform);
     
-    if( (src.hasBreathPeriod() || src.hasRespiratoryRate()) && src.hasInspiratoryExpiratoryRatio())
-    {
-      BreathProfileData.Builder builder = dst.getBreathProfileBuilder();
-      builder.setInspiratoryExpiratoryRatio(SEScalar.unload(src.inspiratoryExpiratoryRatio));
-      
-      if (src.hasRespiratoryRate())
-        builder.setRate(SEScalarFrequency.unload(src.respiratoryRate));
-      else if(src.hasBreathPeriod())
-        builder.setPeriod(SEScalarTime.unload(src.breathPeriod));
-    }
-    else if(src.hasExpiratoryPeriod() && src.hasInspiratoryPeriod())
-    {
-      InspiratoryExpiratoryPeriodData.Builder builder = dst.getInspiratoryExpiratoryPeriodBuilder();
-      
-      builder.setInspiratoryPeriod(SEScalarTime.unload(src.inspiratoryPeriod));
-      builder.setExpiratoryPeriod(SEScalarTime.unload(src.expiratoryPeriod));
-    }
-
-    if (src.hasPeakInspiratoryPressure())
-      dst.setPeakInspiratoryPressure(SEScalarPressure.unload(src.peakInspiratoryPressure));
-    if (src.hasPositiveEndExpiredPressure())
-      dst.setPositiveEndExpiredPressure(SEScalarPressure.unload(src.positiveEndExpiredPressure));
+    if(src.hasPositiveEndExpiredPressure())
+      dst.setPositiveEndExpiredPressure(SEScalarPressure.unload(src.getPositiveEndExpiredPressure()));
+    else if (src.hasFunctionalResidualCapacity())
+      dst.setFunctionalResidualCapacity(SEScalarPressure.unload(src.getFunctionalResidualCapacity()));
+    
+    if(src.hasExpirationCycleFlow())
+      dst.setExpirationCycleFlow(SEScalarVolumePerTime.unload(src.getExpirationCycleFlow()));
+    else if (src.hasExpirationCyclePressure())
+      dst.setExpirationCyclePressure(SEScalarPressure.unload(src.getExpirationCyclePressure()));
+    else if (src.hasExpirationCycleTime())
+      dst.setExpirationCycleTime(SEScalarTime.unload(src.getExpirationCycleTime()));
+    
+    if(src.hasExpirationTubeResistance())
+      dst.setExpirationTubeResistance(SEScalarPressureTimePerVolume.unload(src.getExpirationTubeResistance()));
+    if(src.hasExpirationValveResistance())
+      dst.setExpirationValveResistance(SEScalarPressureTimePerVolume.unload(src.getExpirationValveResistance()));
+    if (src.hasExpirationWaveform())
+      dst.setExpirationWaveform(src.expirationWaveform);
+    
+    if(src.hasInspirationLimitFlow())
+      dst.setInspirationLimitFlow(SEScalarVolumePerTime.unload(src.getInspirationLimitFlow()));
+    else if (src.hasInspirationLimitPressure())
+      dst.setInspirationLimitPressure(SEScalarPressure.unload(src.getInspirationLimitPressure()));
+    else if (src.hasInspirationLimitVolume())
+      dst.setInspirationLimitVolume(SEScalarVolume.unload(src.getInspirationLimitVolume()));
+    
+    if(src.hasInspirationPauseTime())
+      dst.setInspirationPauseTime(SEScalarTime.unload(src.getInspirationPauseTime()));
+    
+    if(src.hasPeakInspiratoryPressure())
+      dst.setPeakInspiratoryPressure(SEScalarPressure.unload(src.getPeakInspiratoryPressure()));
+    else if (src.hasEndTidalCarbonDioxidePressure())
+      dst.setEndTidalCarbonDioxidePressure(SEScalarPressure.unload(src.getEndTidalCarbonDioxidePressure()));
+    
+    if(src.hasInspirationTriggerFlow())
+      dst.setInspirationTriggerFlow(SEScalarVolumePerTime.unload(src.getInspirationTriggerFlow()));
+    else if (src.hasInspirationTriggerPressure())
+      dst.setInspirationTriggerPressure(SEScalarPressure.unload(src.getInspirationTriggerPressure()));
+    else if (src.hasInspirationTriggerTime())
+      dst.setInspirationTriggerTime(SEScalarTime.unload(src.getInspirationTriggerTime()));
+    
+    if(src.hasInspirationTubeResistance())
+      dst.setInspirationTubeResistance(SEScalarPressureTimePerVolume.unload(src.getInspirationTubeResistance()));
+    if(src.hasInspirationValveResistance())
+      dst.setInspirationValveResistance(SEScalarPressureTimePerVolume.unload(src.getInspirationValveResistance()));
+    if (src.hasInspirationWaveform())
+      dst.setInspirationWaveform(src.inspirationWaveform);
     
     for(SESubstanceFraction ambSub : src.fractionInspiredGases)
       dst.addFractionInspiredGas(SESubstanceFraction.unload(ambSub));
     
     for(SESubstanceConcentration ambSub : src.concentrationInspiredAerosol)
       dst.addConcentrationInspiredAerosol(SESubstanceConcentration.unload(ambSub));
-  }
-  
-  public SEScalarTime getBreathPeriod()
-  {
-    if (breathPeriod == null)
-      breathPeriod = new SEScalarTime();
-    return breathPeriod;
-  }
-  public boolean hasBreathPeriod()
-  {
-    return breathPeriod == null ? false : breathPeriod.isValid();
   }
   
   public eConnection getConnection()
@@ -274,63 +408,148 @@ public class SEMechanicalVentilator extends SEEquipment
     return connection != null;
   }
   
-  public eControl getControl()
+  public SEScalarPressureTimePerVolume getEndotrachealTubeResistance()
   {
-    return control;
+    if (endotrachealTubeResistance == null)
+      endotrachealTubeResistance = new SEScalarPressureTimePerVolume();
+    return endotrachealTubeResistance;
   }
-  public void setControl(eControl c)
+  public boolean hasEndotrachealTubeResistance()
   {
-    control = (c == eControl.UNRECOGNIZED) ? null : c;
-  }
-  public boolean hasControl()
-  {
-    return control != null;
+    return endotrachealTubeResistance == null ? false : endotrachealTubeResistance.isValid();
   }
   
-  public eDriverWaveform getDriverWaveform()
+  public SEScalarPressure getPositiveEndExpiredPressure()
   {
-    return driverWaveform;
+    if (positiveEndExpiredPressure == null)
+      positiveEndExpiredPressure = new SEScalarPressure();
+    return positiveEndExpiredPressure;
   }
-  public void setDriverWaveform(eDriverWaveform w)
+  public boolean hasPositiveEndExpiredPressure()
   {
-    driverWaveform = (w == eDriverWaveform.UNRECOGNIZED) ? null : w;
-  }
-  public boolean hasDriverWaveform()
-  {
-    return driverWaveform != null;
+    return positiveEndExpiredPressure == null ? false : positiveEndExpiredPressure.isValid();
   }
   
-  public SEScalarTime getExpiratoryPeriod()
+  public SEScalarPressure getFunctionalResidualCapacity()
   {
-    if (expiratoryPeriod == null)
-      expiratoryPeriod = new SEScalarTime();
-    return expiratoryPeriod;
-  }
-  public boolean hasExpiratoryPeriod()
+    if (functionalResidualCapacity == null)
+      functionalResidualCapacity = new SEScalarPressure();
+    return functionalResidualCapacity;
+  }public boolean hasFunctionalResidualCapacity()
   {
-    return expiratoryPeriod == null ? false : expiratoryPeriod.isValid();
-  }
-
-  public SEScalar getInspiratoryExpiratoryRatio()
-  {
-    if (inspiratoryExpiratoryRatio == null)
-      inspiratoryExpiratoryRatio = new SEScalar();
-    return inspiratoryExpiratoryRatio;
-  }
-  public boolean hasInspiratoryExpiratoryRatio()
-  {
-    return inspiratoryExpiratoryRatio == null ? false : inspiratoryExpiratoryRatio.isValid();
+    return functionalResidualCapacity == null ? false : functionalResidualCapacity.isValid();
   }
   
-  public SEScalarTime getInspiratoryPeriod()
+  public SEScalarVolumePerTime getExpirationCycleFlow()
   {
-    if (inspiratoryPeriod == null)
-      inspiratoryPeriod = new SEScalarTime();
-    return inspiratoryPeriod;
+    if (expirationCycleFlow == null)
+      expirationCycleFlow = new SEScalarVolumePerTime();
+    return expirationCycleFlow;
   }
-  public boolean hasInspiratoryPeriod()
+  public boolean hasExpirationCycleFlow()
   {
-    return inspiratoryPeriod == null ? false : inspiratoryPeriod.isValid();
+    return expirationCycleFlow == null ? false : expirationCycleFlow.isValid();
+  }
+  
+  public SEScalarPressure getExpirationCyclePressure()
+  {
+    if (expirationCyclePressure == null)
+      expirationCyclePressure = new SEScalarPressure();
+    return expirationCyclePressure;
+  }
+  public boolean hasExpirationCyclePressure()
+  {
+    return expirationCyclePressure == null ? false : expirationCyclePressure.isValid();
+  }
+  
+  public SEScalarTime getExpirationCycleTime()
+  {
+    if (expirationCycleTime == null)
+      expirationCycleTime = new SEScalarTime();
+    return expirationCycleTime;
+  }
+  public boolean hasExpirationCycleTime()
+  {
+    return expirationCycleTime == null ? false : expirationCycleTime.isValid();
+  }
+  
+  public SEScalarPressureTimePerVolume getExpirationTubeResistance()
+  {
+    if (expirationTubeResistance == null)
+      expirationTubeResistance = new SEScalarPressureTimePerVolume();
+    return expirationTubeResistance;
+  }
+  public boolean hasExpirationTubeResistance()
+  {
+    return expirationTubeResistance == null ? false : expirationTubeResistance.isValid();
+  }
+  
+  public SEScalarPressureTimePerVolume getExpirationValveResistance()
+  {
+    if (expirationValveResistance == null)
+      expirationValveResistance = new SEScalarPressureTimePerVolume();
+    return expirationValveResistance;
+  }
+  public boolean hasExpirationValveResistance()
+  {
+    return expirationValveResistance == null ? false : expirationValveResistance.isValid();
+  }
+  
+  public eDriverWaveform getExpirationWaveform()
+  {
+    return expirationWaveform;
+  }
+  public void setExpirationWaveform(eDriverWaveform w)
+  {
+    expirationWaveform = (w == eDriverWaveform.UNRECOGNIZED) ? null : w;
+  }
+  public boolean hasExpirationWaveform()
+  {
+    return expirationWaveform != null;
+  }
+  
+  public SEScalarVolumePerTime getInspirationLimitFlow()
+  {
+    if (inspirationLimitFlow == null)
+      inspirationLimitFlow = new SEScalarVolumePerTime();
+    return inspirationLimitFlow;
+  }
+  public boolean hasInspirationLimitFlow()
+  {
+    return inspirationLimitFlow == null ? false : inspirationLimitFlow.isValid();
+  }
+  
+  public SEScalarPressure getInspirationLimitPressure()
+  {
+    if (inspirationLimitPressure == null)
+      inspirationLimitPressure = new SEScalarPressure();
+    return inspirationLimitPressure;
+  }
+  public boolean hasInspirationLimitPressure()
+  {
+    return inspirationLimitPressure == null ? false : inspirationLimitPressure.isValid();
+  }
+  
+  public SEScalarVolume getInspirationLimitVolume()
+  {
+    if (inspirationLimitVolume == null)
+      inspirationLimitVolume = new SEScalarVolume();
+    return inspirationLimitVolume;
+  }
+  public boolean hasInspirationLimitVolume()
+  {
+    return inspirationLimitVolume == null ? false : inspirationLimitVolume.isValid();
+  }
+  
+  public SEScalarTime getInspirationPauseTime()
+  {
+    if (inspirationPauseTime == null)
+      inspirationPauseTime = new SEScalarTime();
+    return inspirationPauseTime;
+  }
+  public boolean hasInspirationPauseTime()
+  {
+    return inspirationPauseTime == null ? false : inspirationPauseTime.isValid();
   }
 
   public SEScalarPressure getPeakInspiratoryPressure()
@@ -343,28 +562,89 @@ public class SEMechanicalVentilator extends SEEquipment
   {
     return peakInspiratoryPressure == null ? false : peakInspiratoryPressure.isValid();
   }
-
-  public SEScalarPressure getPositiveEndExpiredPressure()
+  
+  public SEScalarPressure getEndTidalCarbonDioxidePressure()
   {
-    if (positiveEndExpiredPressure == null)
-      positiveEndExpiredPressure = new SEScalarPressure();
-    return positiveEndExpiredPressure;
+    if (endTidalCarbonDioxidePressure == null)
+      endTidalCarbonDioxidePressure = new SEScalarPressure();
+    return endTidalCarbonDioxidePressure;
   }
-  public boolean hasPositiveEndExpiredPressure()
+  public boolean hasEndTidalCarbonDioxidePressure()
   {
-    return positiveEndExpiredPressure == null ? false : positiveEndExpiredPressure.isValid();
+    return endTidalCarbonDioxidePressure == null ? false : endTidalCarbonDioxidePressure.isValid();
   }
-
-  public SEScalarFrequency getRespiratoryRate()
+  
+  public SEScalarVolumePerTime getInspirationTriggerFlow()
   {
-    if (respiratoryRate == null)
-      respiratoryRate = new SEScalarFrequency();
-    return respiratoryRate;
+    if (inspirationTriggerFlow == null)
+      inspirationTriggerFlow = new SEScalarVolumePerTime();
+    return inspirationTriggerFlow;
   }
-  public boolean hasRespiratoryRate()
+  public boolean hasInspirationTriggerFlow()
   {
-    return respiratoryRate == null ? false : respiratoryRate.isValid();
+    return inspirationTriggerFlow == null ? false : inspirationTriggerFlow.isValid();
   }
+  
+  public SEScalarPressure getInspirationTriggerPressure()
+  {
+    if (inspirationTriggerPressure == null)
+      inspirationTriggerPressure = new SEScalarPressure();
+    return inspirationTriggerPressure;
+  }
+  public boolean hasInspirationTriggerPressure()
+  {
+    return inspirationTriggerPressure == null ? false : inspirationTriggerPressure.isValid();
+  }
+  
+  public SEScalarTime getInspirationTriggerTime()
+  {
+    if (inspirationTriggerTime == null)
+      inspirationTriggerTime = new SEScalarTime();
+    return inspirationTriggerTime;
+  }
+  public boolean hasInspirationTriggerTime()
+  {
+    return inspirationTriggerTime == null ? false : inspirationTriggerTime.isValid();
+  }
+  
+  public SEScalarPressureTimePerVolume getInspirationTubeResistance()
+  {
+    if (inspirationTubeResistance == null)
+      inspirationTubeResistance = new SEScalarPressureTimePerVolume();
+    return inspirationTubeResistance;
+  }
+  public boolean hasInspirationTubeResistance()
+  {
+    return inspirationTubeResistance == null ? false : inspirationTubeResistance.isValid();
+  }
+  
+  public SEScalarPressureTimePerVolume getInspirationValveResistance()
+  {
+    if (inspirationValveResistance == null)
+      inspirationValveResistance = new SEScalarPressureTimePerVolume();
+    return inspirationValveResistance;
+  }
+  public boolean hasInspirationValveResistance()
+  {
+    return inspirationValveResistance == null ? false : inspirationValveResistance.isValid();
+  }
+  
+  public eDriverWaveform getInspirationWaveform()
+  {
+    return inspirationWaveform;
+  }
+  public void setInspirationWaveform(eDriverWaveform w)
+  {
+    inspirationWaveform = (w == eDriverWaveform.UNRECOGNIZED) ? null : w;
+  }
+  public boolean hasInspirationWaveform()
+  {
+    return inspirationWaveform != null;
+  }
+  
+  //////////////////////////////
+  // Fraction Of Inspired Gas //
+  //////////////////////////////
   
   public SESubstanceFraction createFractionInspiredGas(SESubstance substance)
   {
@@ -479,16 +759,38 @@ public class SEMechanicalVentilator extends SEEquipment
   public String toString()
   {
     String str = "Mechanical Ventilator"
-        + "\n\tBreathPeriod: " + getBreathPeriod()
         + "\n\tConnection: " + (hasConnection()?getConnection():"NotProvided")
-        + "\n\tControl: " + (hasConnection()?getConnection():"NotProvided")
-        + "\n\tDriverWaveform: " + (hasConnection()?getConnection():"NotProvided")
-        + "\n\tExpiratoryPeriod: " + getExpiratoryPeriod()
-        + "\n\tInspiratoryExpiratoryRatio: " + getInspiratoryExpiratoryRatio()
-        + "\n\tInspiratoryPeriod: " + getInspiratoryPeriod()
-        + "\n\tPeakInspiratoryPressure: " + getPeakInspiratoryPressure()
-        + "\n\tPositiveEndExpiredPressure: " + getPositiveEndExpiredPressure()
-        + "\n\tRespiratoryRate: " + getRespiratoryRate();
+        
+        + "\n\tEndotrachealTubeResistance: " + (hasEndotrachealTubeResistance()?getEndotrachealTubeResistance():"NotProvided")
+        
+        + "\n\tPositiveEndExpiredPressure: " + (hasPositiveEndExpiredPressure()?getPositiveEndExpiredPressure():"NotProvided")
+        + "\n\tFunctionalResidualCapacity: " + (hasFunctionalResidualCapacity()?getFunctionalResidualCapacity():"NotProvided")
+        
+        + "\n\tExpirationCycleFlow: " + (hasExpirationCycleFlow()?getExpirationCycleFlow():"NotProvided")
+        + "\n\tExpirationCyclePressure: " + (hasExpirationCyclePressure()?getExpirationCyclePressure():"NotProvided")
+        + "\n\tExpirationCycleTime: " + (hasExpirationCycleTime()?getExpirationCycleTime():"NotProvided")
+        
+        + "\n\tExpirationTubeResistance: " + (hasExpirationTubeResistance()?getExpirationTubeResistance():"NotProvided")
+        + "\n\tExpirationValveResistance: " + (hasExpirationValveResistance()?getExpirationValveResistance():"NotProvided")
+        + "\n\tExpirationWaveform: " + (hasExpirationWaveform()?getExpirationWaveform():"NotProvided")
+        
+        + "\n\tInspirationLimitFlow: " + (hasInspirationLimitFlow()?getInspirationLimitFlow():"NotProvided")
+        + "\n\tInspirationLimitPressure: " + (hasInspirationLimitPressure()?getInspirationLimitPressure():"NotProvided")
+        + "\n\tInspirationLimitVolume: " + (hasInspirationLimitVolume()?getInspirationLimitVolume():"NotProvided")
+        
+        + "\n\tInspirationPauseTime: " + (hasInspirationPauseTime()?getInspirationPauseTime():"NotProvided")
+        
+        + "\n\tPeakInspiratoryPressure: " + (hasPeakInspiratoryPressure()?getPeakInspiratoryPressure():"NotProvided")
+        + "\n\tEndTidalCarbonDioxidePressure: " + (hasEndTidalCarbonDioxidePressure()?getEndTidalCarbonDioxidePressure():"NotProvided")
+        
+        + "\n\tInspirationTriggerFlow: " + (hasInspirationTriggerFlow()?getInspirationTriggerFlow():"NotProvided")
+        + "\n\tInspirationTriggerPressure: " + (hasInspirationTriggerPressure()?getInspirationTriggerPressure():"NotProvided")
+        + "\n\tInspirationTriggerTime: " + (hasInspirationTriggerTime()?getInspirationTriggerTime():"NotProvided")
+        
+        + "\n\tInspirationTubeResistance: " + (hasInspirationTubeResistance()?getInspirationTubeResistance():"NotProvided")
+        + "\n\tInspirationValveResistance: " + (hasInspirationValveResistance()?getInspirationValveResistance():"NotProvided")
+        + "\n\tInspirationWaveform: " + (hasInspirationWaveform()?getInspirationWaveform():"NotProvided");
+        
     for(SESubstanceFraction sf : this.fractionInspiredGases)
       str += "\n\t"+sf.toString();
     for(SESubstanceConcentration sc : this.concentrationInspiredAerosol)

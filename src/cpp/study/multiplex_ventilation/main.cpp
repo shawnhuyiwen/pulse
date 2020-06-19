@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
     {
       //DeleteDirectory(SoloDir, true);
       MVGenerator mvg("./test_results/multiplex_ventilation/MultiplexVentilationDataGen.log");
-      return !mvg.Run(Dir::Solo, Dir::Base+"solo_ventilated_states_list.json", SerializationFormat::JSON);
+      return !mvg.Run(Dir::Solo, Dir::Base+"solo_ventilated_states_list.json");
     }
     else if (mode == "sim_list")
     {
@@ -55,7 +55,7 @@ int main(int argc, char* argv[])
         return 1;
       }
       MVRunner mvr("./test_results/multiplex_ventilation/MultiplexVentilationRunner.log");
-      return !mvr.Run(argv[2], SerializationFormat::JSON, MVRunner::Mode::StepFiO2);
+      return !mvr.Run(argv[2], MVRunner::Mode::StepFiO2);
     }
     else if (mode == "single")
     {

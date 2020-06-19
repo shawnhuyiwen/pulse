@@ -124,7 +124,7 @@ void PulseEngineTest::TuneCardiovascularCircuitTest(const std::string& sTestDire
       }
     }
   }
-  testReport.SerializeToFile(sTestDirectory + "/TuneCardiovascularCircuitReport.json",JSON);
+  testReport.SerializeToFile(sTestDirectory + "/TuneCardiovascularCircuitReport.json");
 }
 void PulseEngineTest::TuneCardiovascularCircuitTest(SETestSuite& testSuite, const std::string& sTestDirectory, const std::string& sTestName, SEPatient& patient)
 {
@@ -198,8 +198,11 @@ void PulseEngineTest::CardiovascularCircuitAndTransportTest(CardiovascularDriver
   pc.GetLogger()->SetLogFile(sTestDirectory + "/" + tName.str() + "CircuitAndTransportTest.log");
   pc.GetLogger()->Info("Running " + tName.str());
   SEPatient patient(pc.GetLogger());
-  patient.SerializeFromFile("./patients/StandardMale.json", JSON);
+  patient.SerializeFromFile("./patients/StandardMale.json");
   pc.SetupPatient(patient);
+  pc.GetSubstances().LoadSubstanceDirectory("./");
+  pc.GetSaturationCalculator().Setup();
+  pc.m_Config->Initialize("./");
   if (heartRate_bpm <= 0)
     heartRate_bpm = pc.GetCurrentPatient().GetHeartRateBaseline(FrequencyUnit::Per_min);
   else
@@ -214,8 +217,8 @@ void PulseEngineTest::CardiovascularCircuitAndTransportTest(CardiovascularDriver
   std::vector<SESubstance*> subs2Track;
   if (balanceBloodGases)
   {
-    SEEnvironmentalConditions env(pc.GetSubstances());
-    env.SerializeFromFile("./environments/Standard.json",JSON);
+    SEEnvironmentalConditions env(pc.GetLogger());
+    env.SerializeFromFile("./environments/Standard.json", pc.GetSubstances());
     SEGasCompartment* cEnv = pc.GetCompartments().GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
     for (SESubstanceFraction* subFrac : env.GetAmbientGases())
     {

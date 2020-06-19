@@ -9,7 +9,7 @@ class CDM_DECL SEChronicPericardialEffusion : public SEPatientCondition
   friend class PBPatientCondition;//friend the serialization class
 public:
 
-  SEChronicPericardialEffusion();
+  SEChronicPericardialEffusion(Logger* logger=nullptr);
   virtual ~SEChronicPericardialEffusion();
 
   virtual void Clear();

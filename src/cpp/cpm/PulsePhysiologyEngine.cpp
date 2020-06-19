@@ -52,16 +52,16 @@ PulseEngineThunk::~PulseEngineThunk()
   delete data;
 }
 
-bool PulseEngineThunk::SerializeFromFile(std::string const& filename, std::string const& data_requests, SerializationFormat format)
+bool PulseEngineThunk::SerializeFromFile(std::string const& filename, std::string const& data_requests, SerializationFormat data_requests_format)
 {
-  if (!data->eng->SerializeFromFile(filename, format))
+  if (!data->eng->SerializeFromFile(filename))
     return false;
   data->eng->GetEventManager().ForwardEvents(this);
 
   // Load up the data requests
   if (!data_requests.empty())
   {
-    if (!data->eng->GetEngineTracker()->GetDataRequestManager().SerializeFromString(data_requests, format, data->eng->GetSubstanceManager()))
+    if (!data->eng->GetEngineTracker()->GetDataRequestManager().SerializeFromString(data_requests, data_requests_format, data->eng->GetSubstanceManager()))
     {
       data->eng->GetLogger()->Error("Unable to load data requests string");
       return false;
@@ -76,9 +76,9 @@ bool PulseEngineThunk::SerializeFromFile(std::string const& filename, std::strin
   return true;
 }
 
-bool PulseEngineThunk::SerializeToFile(std::string const& filename, SerializationFormat format)
+bool PulseEngineThunk::SerializeToFile(std::string const& filename)
 {
-  return data->eng->SerializeToFile(filename, format);
+  return data->eng->SerializeToFile(filename);
 }
 
 
@@ -314,7 +314,7 @@ void PulseEngineThunk::SetupDefaultDataRequests()
   data->eng->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("EndTidalCarbonDioxidePressure", PressureUnit::mmHg);
   data->eng->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
   data->eng->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CoreTemperature", TemperatureUnit::C);
-  SESubstance* CO2 = data->eng->GetSubstanceManager().GetSubstance("CarbonDioxide");
+  const SESubstance* CO2 = data->eng->GetSubstanceManager().GetSubstance("CarbonDioxide");
   data->eng->GetEngineTracker()->GetDataRequestManager().CreateGasCompartmentDataRequest("Carina", *CO2, "PartialPressure", PressureUnit::mmHg);
   data->eng->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
 }

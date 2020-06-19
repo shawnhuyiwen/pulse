@@ -3,9 +3,9 @@
 package pulse.utilities.csv.plots;
 
 import pulse.cdm.substance.SESubstanceManager;
-import pulse.utilities.LogListener;
+import pulse.utilities.csv.plots.PlotDriver.PlotJob;
 
 public interface Plotter 
 {
-  void plot(LogListener listener, SESubstanceManager subMgr);
+  void plot(PlotJob job, SESubstanceManager subMgr);
 }

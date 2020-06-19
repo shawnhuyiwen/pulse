@@ -31,32 +31,27 @@ class PulsePhysiologyEngine:
         # Timestep only gets set after on load/initialize
 
     def serialize_from_file(self, state_file: str,
-                                  data_request_mgr: SEDataRequestManager,
-                                  format: eSerializationFormat):
+                                  data_request_mgr: SEDataRequestManager):
         # Process requests and setup our results structure
-        drm = self._process_requests(data_request_mgr, format)
-        if format == eSerializationFormat.BINARY:
-            fmt = PyPulse.serialization_format.binary
-        else:
-            fmt = PyPulse.serialization_format.json
-        self._is_ready = self.__pulse.serialize_from_file(state_file, drm, fmt)
+        drm = self._process_requests(data_request_mgr, eSerializationFormat.JSON)
+        self._is_ready = self.__pulse.serialize_from_file(state_file, drm, PyPulse.serialization_format.json)
         self._dt_s = self.__pulse.get_timestep("s")
         if self._is_ready:
             self._pull(True)
         return self._is_ready
 
-    def serialize_to_file(self, state_file: str, format: eSerializationFormat):
+    def serialize_to_file(self, state_file: str):
         if self._is_ready:
-            return self.__pulse.serialize_to_file(state_file, format)
+            return self.__pulse.serialize_to_file(state_file)
         return False
 
 
     def serialize_from_string(self, state: str,
                                     data_request_mgr: SEDataRequestManager,
-                                    format: eSerializationFormat):
+                                    state_format: eSerializationFormat):
         # Process requests and setup our results structure
-        drm = self._process_requests(data_request_mgr, format)
-        if format == eSerializationFormat.BINARY:
+        drm = self._process_requests(data_request_mgr, state_format)
+        if state_format == eSerializationFormat.BINARY:
             fmt = PyPulse.serialization_format.binary
         else:
             fmt = PyPulse.serialization_format.json

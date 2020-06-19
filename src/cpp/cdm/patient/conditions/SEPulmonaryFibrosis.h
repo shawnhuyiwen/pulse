@@ -9,7 +9,7 @@ class CDM_DECL SEPulmonaryFibrosis : public SEPatientCondition
   friend class PBPatientCondition;//friend the serialization class
 public:
 
-  SEPulmonaryFibrosis();
+  SEPulmonaryFibrosis(Logger* logger=nullptr);
   virtual ~SEPulmonaryFibrosis();
 
   virtual void Clear(); //clear memory

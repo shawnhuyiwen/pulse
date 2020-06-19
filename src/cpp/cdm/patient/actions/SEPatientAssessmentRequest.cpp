@@ -5,7 +5,7 @@
 #include "patient/actions/SEPatientAssessmentRequest.h"
 #include "io/protobuf/PBPatientActions.h"
 
-SEPatientAssessmentRequest::SEPatientAssessmentRequest() : SEPatientAction()
+SEPatientAssessmentRequest::SEPatientAssessmentRequest(Logger* logger) : SEPatientAction(logger)
 {
   m_Type=ePatientAssessment_Type::CompleteBloodCount;
 }

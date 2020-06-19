@@ -20,18 +20,18 @@ class CDM_DECL SEEnvironmentalConditions : public Loggable
   friend class SEInitialEnvironmentConditions;
 public:
 
-  SEEnvironmentalConditions(SESubstanceManager& substances);
+  SEEnvironmentalConditions(Logger* logger);
   virtual ~SEEnvironmentalConditions();
 
   virtual void Clear();
-  virtual void Copy(const SEEnvironmentalConditions&);
+  virtual void Copy(const SEEnvironmentalConditions&, const SESubstanceManager&);
 
   bool SerializeToString(std::string& output, SerializationFormat m) const;
-  bool SerializeToFile(const std::string& filename, SerializationFormat m) const;
-  bool SerializeFromString(const std::string& src, SerializationFormat m);
-  bool SerializeFromFile(const std::string& filename, SerializationFormat m);
+  bool SerializeToFile(const std::string& filename) const;
+  bool SerializeFromString(const std::string& src, SerializationFormat m, const SESubstanceManager& subMgr);
+  bool SerializeFromFile(const std::string& filename, const SESubstanceManager& subMgr);
 
-   virtual void Merge(const SEEnvironmentalConditions& from);
+   virtual void Merge(const SEEnvironmentalConditions& from, SESubstanceManager& subMgr);
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
@@ -78,7 +78,7 @@ public:
   bool HasAmbientGas(const SESubstance& substance) const;
   const std::vector<SESubstanceFraction*>& GetAmbientGases();
   const std::vector<const SESubstanceFraction*>& GetAmbientGases() const;
-  SESubstanceFraction& GetAmbientGas(SESubstance& substance);
+  SESubstanceFraction& GetAmbientGas(const SESubstance& substance);
   const SESubstanceFraction* GetAmbientGas(const SESubstance& substance) const;
   void RemoveAmbientGas(const SESubstance& substance);
   void RemoveAmbientGases();
@@ -87,7 +87,7 @@ public:
   bool HasAmbientAerosol(const SESubstance& substance) const;
   const std::vector<SESubstanceConcentration*>& GetAmbientAerosols();
   const std::vector<const SESubstanceConcentration*>& GetAmbientAerosols() const;
-  SESubstanceConcentration& GetAmbientAerosol(SESubstance& substance);
+  SESubstanceConcentration& GetAmbientAerosol(const SESubstance& substance);
   const SESubstanceConcentration* GetAmbientAerosol(const SESubstance& substance) const;
   void RemoveAmbientAerosol(const SESubstance& substance);
   void RemoveAmbientAerosols();
@@ -111,6 +111,4 @@ protected:
 
   std::vector<SESubstanceConcentration*>       m_AmbientAerosols;
   std::vector<const SESubstanceConcentration*> m_cAmbientAerosols;
-
-  SESubstanceManager&               m_Substances;
 };

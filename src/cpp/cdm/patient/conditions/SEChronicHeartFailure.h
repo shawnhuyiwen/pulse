@@ -9,7 +9,7 @@ class CDM_DECL SEChronicHeartFailure : public SEPatientCondition
   friend class PBPatientCondition;//friend the serialization class
 public:
 
-  SEChronicHeartFailure();
+  SEChronicHeartFailure(Logger* logger=nullptr);
   virtual ~SEChronicHeartFailure();
 
   virtual void Clear(); //clear memory

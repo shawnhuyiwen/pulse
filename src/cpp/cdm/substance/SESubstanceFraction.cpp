@@ -6,19 +6,19 @@
 #include "properties/SEScalar0To1.h"
 #include "substance/SESubstance.h"
 
-SESubstanceFraction::SESubstanceFraction(SESubstance& substance) : Loggable(substance.GetLogger()), m_Substance(substance)
+SESubstanceFraction::SESubstanceFraction(const SESubstance& substance) : Loggable(substance.GetLogger()), m_Substance(substance)
 {
   m_FractionAmount = nullptr;
 }
 
 SESubstanceFraction::~SESubstanceFraction()
 {
-  Clear();
+  SAFE_DELETE(m_FractionAmount);
 }
 
 void SESubstanceFraction::Clear()
 {
-  SAFE_DELETE(m_FractionAmount);
+  INVALIDATE_PROPERTY(m_FractionAmount);
 }
 
 bool SESubstanceFraction::HasFractionAmount() const
@@ -34,11 +34,11 @@ SEScalar0To1& SESubstanceFraction::GetFractionAmount()
 double SESubstanceFraction::GetFractionAmount() const
 {
   if (m_FractionAmount == nullptr)
-    SEScalar::dNaN();
+    return SEScalar::dNaN();
   return m_FractionAmount->GetValue();
 }
 
-SESubstance& SESubstanceFraction::GetSubstance() const
+const SESubstance& SESubstanceFraction::GetSubstance() const
 {
   return m_Substance;
 }

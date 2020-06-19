@@ -8,7 +8,7 @@ class CDM_DECL SEAnesthesiaMachineMaskLeak : public SEAnesthesiaMachineAction
   friend class PBEquipmentAction;//friend the serialization class
 public:
 
-  SEAnesthesiaMachineMaskLeak();
+  SEAnesthesiaMachineMaskLeak(Logger* logger=nullptr);
   virtual ~SEAnesthesiaMachineMaskLeak();
 
   virtual void Clear();

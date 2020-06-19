@@ -22,8 +22,7 @@ def HowTo_EnvironmentalConditions():
     env = pc.get_conditions().get_initial_environmental_conditions()
     # Let's  load up a file from disk (You don't have to start with a file)
     serialize_environmental_conditions_from_file("./environments/ExerciseEnvironment.json",
-                                                    env.get_environmental_conditions(),
-                                                    eSerializationFormat.JSON)
+                                                    env.get_environmental_conditions())
     # Now let's modify a few properties
     env.get_environmental_conditions().get_air_density().set_value(1.225, MassPerVolumeUnit.kg_Per_m3)
     env.get_environmental_conditions().get_ambient_temperature().set_value(33, TemperatureUnit.C)

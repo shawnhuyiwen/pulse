@@ -18,13 +18,13 @@ POP_PROTO_WARNINGS()
 #include "properties/SEScalarPower.h"
 #include "utils/FileUtils.h"
 
-void PBEnvironment::Load(const CDM_BIND::EnvironmentData& src, SEEnvironment& dst)
+void PBEnvironment::Load(const CDM_BIND::EnvironmentData& src, SEEnvironment& dst, const SESubstanceManager& subMgr)
 {
   dst.Clear();
-  PBEnvironment::Serialize(src, dst);
+  PBEnvironment::Serialize(src, dst, subMgr);
   dst.StateChange();
 }
-void PBEnvironment::Serialize(const CDM_BIND::EnvironmentData& src, SEEnvironment& dst)
+void PBEnvironment::Serialize(const CDM_BIND::EnvironmentData& src, SEEnvironment& dst, const SESubstanceManager& subMgr)
 {
   if (src.has_convectiveheatloss())
     PBProperty::Load(src.convectiveheatloss(), dst.GetConvectiveHeatLoss());
@@ -44,7 +44,7 @@ void PBEnvironment::Serialize(const CDM_BIND::EnvironmentData& src, SEEnvironmen
     PBProperty::Load(src.skinheatloss(), dst.GetSkinHeatLoss());
 
   if (src.has_environmentalconditions())
-    PBEnvironment::Load(src.environmentalconditions(), dst.GetEnvironmentalConditions());
+    PBEnvironment::Load(src.environmentalconditions(), dst.GetEnvironmentalConditions(), subMgr);
   if (src.has_activeheating())
     PBEnvironment::Load(src.activeheating(), dst.GetActiveHeating());
   if (src.has_activecooling())
@@ -86,20 +86,20 @@ void PBEnvironment::Serialize(const SEEnvironment& src, CDM_BIND::EnvironmentDat
   if (src.HasEnvironmentalConditions())
     dst.set_allocated_environmentalconditions(PBEnvironment::Unload(*src.m_EnvironmentalConditions));
 }
-void PBEnvironment::Copy(const SEEnvironment& src, SEEnvironment& dst)
+void PBEnvironment::Copy(const SEEnvironment& src, SEEnvironment& dst, const SESubstanceManager& subMgr)
 {
   dst.Clear();
   CDM_BIND::EnvironmentData data;
   PBEnvironment::Serialize(src, data);
-  PBEnvironment::Serialize(data, dst);
+  PBEnvironment::Serialize(data, dst, subMgr);
 }
 
-void PBEnvironment::Load(const CDM_BIND::EnvironmentalConditionsData& src, SEEnvironmentalConditions& dst)
+void PBEnvironment::Load(const CDM_BIND::EnvironmentalConditionsData& src, SEEnvironmentalConditions& dst, const SESubstanceManager& subMgr)
 {
   dst.Clear();
-  PBEnvironment::Serialize(src, dst);
+  PBEnvironment::Serialize(src, dst, subMgr);
 }
-void PBEnvironment::Serialize(const CDM_BIND::EnvironmentalConditionsData& src, SEEnvironmentalConditions& dst)
+void PBEnvironment::Serialize(const CDM_BIND::EnvironmentalConditionsData& src, SEEnvironmentalConditions& dst, const SESubstanceManager& subMgr)
 {
   dst.SetSurroundingType((eSurroundingType)src.surroundingtype());
   if (src.has_airdensity())
@@ -121,11 +121,11 @@ void PBEnvironment::Serialize(const CDM_BIND::EnvironmentalConditionsData& src, 
   if (src.has_respirationambienttemperature())
     PBProperty::Load(src.respirationambienttemperature(), dst.GetRespirationAmbientTemperature());
 
-  SESubstance* sub;
+  const SESubstance* sub;
   for (int i = 0; i < src.ambientgas_size(); i++)
   {
     const CDM_BIND::SubstanceFractionData& sfData = src.ambientgas()[i];
-    sub = dst.m_Substances.GetSubstance(sfData.name());
+    sub = subMgr.GetSubstance(sfData.name());
     if (sub == nullptr)
     {
       dst.Error("Ignoring an environmental conditions ambient gas that was not found : " + sfData.name());
@@ -142,7 +142,7 @@ void PBEnvironment::Serialize(const CDM_BIND::EnvironmentalConditionsData& src, 
   for (int i = 0; i < src.ambientaerosol_size(); i++)
   {
     const CDM_BIND::SubstanceConcentrationData& scData = src.ambientaerosol()[i];
-    sub = dst.m_Substances.GetSubstance(scData.name());
+    sub = subMgr.GetSubstance(scData.name());
     if (sub == nullptr)
     {
       dst.Error("Ignoring an environmental conditions ambient aerosol that was not found : " + scData.name());
@@ -190,12 +190,12 @@ void PBEnvironment::Serialize(const SEEnvironmentalConditions& src, CDM_BIND::En
   for (SESubstanceConcentration *sc : src.m_AmbientAerosols)
     dst.mutable_ambientaerosol()->AddAllocated(PBSubstance::Unload(*sc));
 }
-void PBEnvironment::Copy(const SEEnvironmentalConditions& src, SEEnvironmentalConditions& dst)
+void PBEnvironment::Copy(const SEEnvironmentalConditions& src, SEEnvironmentalConditions& dst, const SESubstanceManager& subMgr)
 {
   dst.Clear();
   CDM_BIND::EnvironmentalConditionsData data;
   PBEnvironment::Serialize(src, data);
-  PBEnvironment::Serialize(data, dst);
+  PBEnvironment::Serialize(data, dst, subMgr);
 }
 
 void PBEnvironment::Load(const CDM_BIND::AppliedTemperatureData& src, SEAppliedTemperature& dst)
@@ -281,27 +281,26 @@ bool PBEnvironment::SerializeToString(const SEEnvironmentalConditions& src, std:
   PBEnvironment::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
-bool PBEnvironment::SerializeToFile(const SEEnvironmentalConditions& src, const std::string& filename, SerializationFormat m)
+bool PBEnvironment::SerializeToFile(const SEEnvironmentalConditions& src, const std::string& filename)
 {
   CDM_BIND::EnvironmentalConditionsData data;
   PBEnvironment::Serialize(src, data);
-  std::string content;
-  PBEnvironment::SerializeToString(src, content, m);
-  return WriteFile(content, filename, m);
+  return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
 
-bool PBEnvironment::SerializeFromString(const std::string& src, SEEnvironmentalConditions& dst, SerializationFormat m)
+bool PBEnvironment::SerializeFromString(const std::string& src, SEEnvironmentalConditions& dst, SerializationFormat m, const SESubstanceManager& subMgr)
 {
   CDM_BIND::EnvironmentalConditionsData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
     return false;
-  PBEnvironment::Load(data, dst);
+  PBEnvironment::Load(data, dst, subMgr);
   return true;
 }
-bool PBEnvironment::SerializeFromFile(const std::string& filename, SEEnvironmentalConditions& dst, SerializationFormat m)
+bool PBEnvironment::SerializeFromFile(const std::string& filename, SEEnvironmentalConditions& dst, const SESubstanceManager& subMgr)
 {
-  std::string content = ReadFile(filename, m);
-  if (content.empty())
+  CDM_BIND::EnvironmentalConditionsData data;
+  if (!PBUtils::SerializeFromFile(filename, data, dst.GetLogger()))
     return false;
-  return PBEnvironment::SerializeFromString(content, dst, m);
+  PBEnvironment::Load(data, dst, subMgr);
+  return true;
 }

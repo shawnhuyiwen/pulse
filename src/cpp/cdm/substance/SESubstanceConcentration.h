@@ -13,20 +13,20 @@ class CDM_DECL SESubstanceConcentration : public Loggable
   friend SEEnvironmentalConditions;// So it can add substances to the manager
 public:
 
-  SESubstanceConcentration(SESubstance& substance);
+  SESubstanceConcentration(const SESubstance& substance);
   virtual ~SESubstanceConcentration();
 
   virtual void Clear();
 
   virtual bool HasConcentration() const;
-  virtual SEScalarMassPerVolume& GetConcentration();  
+  virtual SEScalarMassPerVolume& GetConcentration();
   virtual double GetConcentration(const MassPerVolumeUnit& unit) const;
 
-  virtual SESubstance& GetSubstance() const;
+  virtual const SESubstance& GetSubstance() const;
   
 protected: 
 
-  SESubstance&           m_Substance;
+  const SESubstance&     m_Substance;
   SEScalarMassPerVolume* m_Concentration;
   
 };

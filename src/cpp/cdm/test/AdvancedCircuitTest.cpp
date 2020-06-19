@@ -1468,6 +1468,6 @@ void CommonDataModelTest::CircuitLockingTest(const std::string& sOutputDirectory
       type = " Unlocked";
     }
   }
-  testReport.SerializeToFile(sOutputDirectory + "/CircuitLockingTestReport.json",JSON);
+  testReport.SerializeToFile(sOutputDirectory + "/CircuitLockingTestReport.json");
   m_Circuits->Clear();
 }

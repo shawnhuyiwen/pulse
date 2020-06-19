@@ -1121,5 +1121,5 @@ void CommonDataModelTest::GasCompartmentTest(const std::string& rptDirectory)
   UpdateGasLinks.SetName("UpdateGasLinks");
   TestUpdateGasLinks(UpdateGasLinks, subMgr);
 
-  testReport.SerializeToFile(rptDirectory + "/GasCompartmentTestReport.json",JSON);
+  testReport.SerializeToFile(rptDirectory + "/GasCompartmentTestReport.json");
 }

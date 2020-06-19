@@ -12,11 +12,6 @@ const std::string& eMechanicalVentilator_Connection_Name(eMechanicalVentilator_C
   return CDM_BIND::MechanicalVentilatorData::eConnection_Name((CDM_BIND::MechanicalVentilatorData::eConnection)c);
 }
 
-const std::string& eMechanicalVentilator_Control_Name(eMechanicalVentilator_Control c)
-{
-  return CDM_BIND::MechanicalVentilatorData::eControl_Name((CDM_BIND::MechanicalVentilatorData::eControl)c);
-}
-
 const std::string& eMechanicalVentilator_DriverWaveform_Name(eMechanicalVentilator_DriverWaveform w)
 {
   return CDM_BIND::MechanicalVentilatorData::eDriverWaveform_Name((CDM_BIND::MechanicalVentilatorData::eDriverWaveform)w);

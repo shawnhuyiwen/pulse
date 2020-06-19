@@ -8,7 +8,7 @@ class CDM_DECL SEEnvironmentAction : public SEAction
   friend class PBEnvironmentAction;//friend the serialization class
 public:
 
-  SEEnvironmentAction();
+  SEEnvironmentAction(Logger* logger);
   virtual ~SEEnvironmentAction();
 
   virtual void Clear();

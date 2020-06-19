@@ -17,9 +17,9 @@ public:
   void Copy(const SEDataRequestManager& src, const SESubstanceManager& subMgr);
 
   bool SerializeToString(std::string& output, SerializationFormat m) const;
-  bool SerializeToFile(const std::string& filename, SerializationFormat m) const;
+  bool SerializeToFile(const std::string& filename) const;
   bool SerializeFromString(const std::string& src, SerializationFormat m, const SESubstanceManager& subMgr);
-  bool SerializeFromFile(const std::string& filename, SerializationFormat m, const SESubstanceManager& subMgr);
+  bool SerializeFromFile(const std::string& filename, const SESubstanceManager& subMgr);
 
   bool HasResultsFilename() const { return !m_ResultsFilename.empty(); }
   std::string GetResultFilename() const { return m_ResultsFilename; }

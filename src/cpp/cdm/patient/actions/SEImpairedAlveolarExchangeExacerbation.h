@@ -8,7 +8,7 @@ class CDM_DECL SEImpairedAlveolarExchangeExacerbation : public SEPatientAction
   friend class PBPatientAction;//friend the serialization class
 public:
 
-  SEImpairedAlveolarExchangeExacerbation();
+  SEImpairedAlveolarExchangeExacerbation(Logger* logger=nullptr);
   virtual ~SEImpairedAlveolarExchangeExacerbation();
   
   virtual void Clear();

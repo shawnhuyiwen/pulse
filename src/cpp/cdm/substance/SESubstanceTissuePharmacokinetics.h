@@ -23,6 +23,6 @@ public:
 
 
 protected:
-  std::string    m_Name;
+  std::string   m_Name;
   SEScalar*     m_PartitionCoefficient;
 };
