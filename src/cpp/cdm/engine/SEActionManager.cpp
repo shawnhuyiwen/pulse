@@ -39,17 +39,17 @@ bool SEActionManager::SerializeToString(std::string& output, SerializationFormat
 {
   return PBEngine::SerializeToString(*this, output, m);
 }
-bool SEActionManager::SerializeToFile(const std::string& filename, SerializationFormat m) const
+bool SEActionManager::SerializeToFile(const std::string& filename) const
 {
-  return PBEngine::SerializeToFile(*this, filename, m);
+  return PBEngine::SerializeToFile(*this, filename);
 }
 bool SEActionManager::SerializeFromString(const std::string& src, SerializationFormat m)
 {
   return PBEngine::SerializeFromString(src, *this, m);
 }
-bool SEActionManager::SerializeFromFile(const std::string& filename, SerializationFormat m)
+bool SEActionManager::SerializeFromFile(const std::string& filename)
 {
-  return PBEngine::SerializeFromFile(filename, *this, m);
+  return PBEngine::SerializeFromFile(filename, *this);
 }
 
 // A raw serialize method

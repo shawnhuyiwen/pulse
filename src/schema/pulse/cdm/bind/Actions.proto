@@ -29,6 +29,7 @@ message SerializeStateData
     Save = 0;
     Load = 1;
   }
+  
   ActionData            Action   = 1;
   eType                 Type     = 2;
   string                Filename = 3;

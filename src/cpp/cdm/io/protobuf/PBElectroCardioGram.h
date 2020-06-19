@@ -28,8 +28,8 @@ public:
   static void Copy(const SEElectroCardioGramWaveformInterpolator& src, SEElectroCardioGramWaveformInterpolator& dst);
 
   static bool SerializeToString(const SEElectroCardioGramWaveformInterpolator& src, std::string& output, SerializationFormat m);
-  static bool SerializeToFile(const SEElectroCardioGramWaveformInterpolator& src, const std::string& filename, SerializationFormat m);
+  static bool SerializeToFile(const SEElectroCardioGramWaveformInterpolator& src, const std::string& filename);
   static bool SerializeFromString(const std::string& src, SEElectroCardioGramWaveformInterpolator& dst, SerializationFormat m);
-  static bool SerializeFromFile(const std::string& filename, SEElectroCardioGramWaveformInterpolator& dst, SerializationFormat m);
+  static bool SerializeFromFile(const std::string& filename, SEElectroCardioGramWaveformInterpolator& dst);
 
 };

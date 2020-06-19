@@ -158,13 +158,11 @@ bool PBAnesthesiaMachine::SerializeToString(const SEAnesthesiaMachine& src, std:
   PBAnesthesiaMachine::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
-bool PBAnesthesiaMachine::SerializeToFile(const SEAnesthesiaMachine& src, const std::string& filename, SerializationFormat m)
+bool PBAnesthesiaMachine::SerializeToFile(const SEAnesthesiaMachine& src, const std::string& filename)
 {
   CDM_BIND::AnesthesiaMachineData data;
   PBAnesthesiaMachine::Serialize(src, data);
-  std::string content;
-  PBAnesthesiaMachine::SerializeToString(src, content, m);
-  return WriteFile(content, filename, m);
+  return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
 
 bool PBAnesthesiaMachine::SerializeFromString(const std::string& src, SEAnesthesiaMachine& dst, SerializationFormat m, const SESubstanceManager& subMgr)
@@ -175,10 +173,11 @@ bool PBAnesthesiaMachine::SerializeFromString(const std::string& src, SEAnesthes
   PBAnesthesiaMachine::Load(data, dst, subMgr);
   return true;
 }
-bool PBAnesthesiaMachine::SerializeFromFile(const std::string& filename, SEAnesthesiaMachine& dst, SerializationFormat m, const SESubstanceManager& subMgr)
+bool PBAnesthesiaMachine::SerializeFromFile(const std::string& filename, SEAnesthesiaMachine& dst, const SESubstanceManager& subMgr)
 {
-  std::string content = ReadFile(filename, m);
-  if (content.empty())
+  CDM_BIND::AnesthesiaMachineData data;
+  if (!PBUtils::SerializeFromFile(filename, data, dst.GetLogger()))
     return false;
-  return PBAnesthesiaMachine::SerializeFromString(content, dst, m, subMgr);
+  PBAnesthesiaMachine::Load(data, dst, subMgr);
+  return true;
 }

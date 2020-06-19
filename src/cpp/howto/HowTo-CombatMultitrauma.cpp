@@ -39,7 +39,7 @@ void CreateState()
   // Load the Soldier patient
   // You can alternatively define your own patient (see HowTo-CreateAPatient) and apply conditions (see HowTo-LobarPneumonia) 
   // This would require runnning stabilization rather than loading an existing state
-  if (!pe->SerializeFromFile("./states/Soldier@0s.json", JSON))
+  if (!pe->SerializeFromFile("./states/Soldier@0s.json"))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
@@ -119,7 +119,7 @@ void CreateState()
 
   // Save this state out.
   // You an then load this state in your application
-  pe->SerializeToFile("./states/CombatMultirauma_Initial_Injuries.json", SerializationFormat::JSON);
+  pe->SerializeToFile("./states/CombatMultirauma_Initial_Injuries.json");
 
   pe->GetLogger()->Info("State saved");
 }
@@ -132,7 +132,7 @@ void LoadState()
   pe->GetLogger()->Info("HowTo_CombatMultitrauma_LoadState");
 
   //Load the injured state we created
-  if (!pe->SerializeFromFile("./states/CombatMultirauma_Initial_Injuries.json", JSON))
+  if (!pe->SerializeFromFile("./states/CombatMultirauma_Initial_Injuries.json"))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
@@ -225,7 +225,7 @@ void LoadState()
 
   // Save this state out.
   // You an then load this state in your application
-  pe->SerializeToFile("./states/CombatMultirauma_Treated_Injuries.json", SerializationFormat::JSON);
+  pe->SerializeToFile("./states/CombatMultirauma_Treated_Injuries.json");
 
   pe->GetLogger()->Info("Finished");
 }

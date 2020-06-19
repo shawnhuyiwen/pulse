@@ -49,7 +49,7 @@ void PulseEngineTest::SolverSpeedTest(const std::string& rptDirectory)
 
   PulseController pc(tsSolverSpeed.GetLogger());
   SEPatient patient(pc.GetLogger());
-  patient.SerializeFromFile("./patients/StandardMale.json", JSON);
+  patient.SerializeFromFile("./patients/StandardMale.json");
   pc.SetupPatient(patient);
   pc.GetSubstances().LoadSubstanceDirectory("./");
   pc.GetSaturationCalculator().Setup();

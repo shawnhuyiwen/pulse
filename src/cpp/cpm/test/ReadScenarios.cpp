@@ -66,7 +66,7 @@ void PulseEngineTest::ReadScenarios(const std::string& rptDirectory)
         try
         {
           num++;
-          if (scenario.SerializeFromFile(*it, JSON))
+          if (scenario.SerializeFromFile(*it))
           {
             if (!scenario.IsValid())
             {
@@ -91,6 +91,6 @@ void PulseEngineTest::ReadScenarios(const std::string& rptDirectory)
       }
     }
   }
-  testReport.SerializeToFile(rptDirectory + "/" + testName + "Report.json",JSON);
+  testReport.SerializeToFile(rptDirectory + "/" + testName + "Report.json");
   m_Logger->Info("Opened "+std::to_string(num-err)+" of "+std::to_string(num)+" scenarios");
 }

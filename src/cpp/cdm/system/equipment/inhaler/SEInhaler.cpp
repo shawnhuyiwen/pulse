@@ -43,17 +43,17 @@ bool SEInhaler::SerializeToString(std::string& output, SerializationFormat m) co
 {
   return PBInhaler::SerializeToString(*this, output, m);
 }
-bool SEInhaler::SerializeToFile(const std::string& filename, SerializationFormat m) const
+bool SEInhaler::SerializeToFile(const std::string& filename) const
 {
-  return PBInhaler::SerializeToFile(*this, filename, m);
+  return PBInhaler::SerializeToFile(*this, filename);
 }
 bool SEInhaler::SerializeFromString(const std::string& src, SerializationFormat m, const SESubstanceManager& subMgr)
 {
   return PBInhaler::SerializeFromString(src, *this, m, subMgr);
 }
-bool SEInhaler::SerializeFromFile(const std::string& filename, SerializationFormat m, const SESubstanceManager& subMgr)
+bool SEInhaler::SerializeFromFile(const std::string& filename, const SESubstanceManager& subMgr)
 {
-  return PBInhaler::SerializeFromFile(filename, *this, m, subMgr);
+  return PBInhaler::SerializeFromFile(filename, *this, subMgr);
 }
 
 const SEScalar* SEInhaler::GetScalar(const std::string& name)
@@ -86,7 +86,7 @@ void SEInhaler::ProcessConfiguration(SEInhalerConfiguration& config, SESubstance
   {
     // Update the action with the file contents
     std::string cfg_file = config.GetConfigurationFile();
-    if (!config.GetConfiguration().SerializeFromFile(cfg_file, JSON, subMgr))
+    if (!config.GetConfiguration().SerializeFromFile(cfg_file, subMgr))
       Error("Unable to load configuration file", "SEInhaler::ProcessConfiguration");
     Merge(config.GetConfiguration(), subMgr);// Preserve our pointers!
   }

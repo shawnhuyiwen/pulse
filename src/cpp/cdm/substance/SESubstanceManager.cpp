@@ -313,7 +313,7 @@ bool SESubstanceManager::LoadSubstanceDirectory(const std::string& data_dir)
           std::string name(ent->d_name);
           name=name.substr(0, name.size()-ext.size());
           SESubstance* sub = GetSubstance(name);
-          if (!sub->SerializeFromFile(ss.str(), JSON))
+          if (!sub->SerializeFromFile(ss.str()))
           {
             Error("Unable to read substance " + ss.str());
             continue;
@@ -345,7 +345,7 @@ bool SESubstanceManager::LoadSubstanceDirectory(const std::string& data_dir)
           std::string name(ent->d_name);
           name = name.substr(0, name.size() - ext.size());
           SESubstanceCompound* cmpd = GetCompound(name);
-          if (!cmpd->SerializeFromFile(ss.str(), *this, JSON))
+          if (!cmpd->SerializeFromFile(ss.str(), *this))
           {
             Error("Unable to read substance compound " + ss.str());
             continue;

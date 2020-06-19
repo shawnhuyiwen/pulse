@@ -22,13 +22,13 @@ PulseEngine::~PulseEngine()
   SAFE_DELETE(m_PulseController);
 }
 
-bool PulseEngine::SerializeFromFile(const std::string& filename, SerializationFormat m)
+bool PulseEngine::SerializeFromFile(const std::string& filename)
 {
-  return m_PulseController->SerializeFromFile(filename, m);
+  return m_PulseController->SerializeFromFile(filename);
 }
-bool PulseEngine::SerializeToFile(const std::string& filename, SerializationFormat m) const
+bool PulseEngine::SerializeToFile(const std::string& filename) const
 {
-  return m_PulseController->SerializeToFile(filename, m);
+  return m_PulseController->SerializeToFile(filename);
 }
 
 bool PulseEngine::SerializeFromString(const std::string& src, SerializationFormat m)

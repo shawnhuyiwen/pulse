@@ -20,8 +20,8 @@ public:
   PulseEngine(Logger* logger=nullptr);
   virtual ~PulseEngine();
 
-  virtual bool SerializeFromFile(const std::string& file, SerializationFormat m) override;
-  virtual bool SerializeToFile(const std::string& file, SerializationFormat m) const override;
+  virtual bool SerializeFromFile(const std::string& file) override;
+  virtual bool SerializeToFile(const std::string& file) const override;
 
   virtual bool SerializeFromString(const std::string& state, SerializationFormat m) override;
   virtual bool SerializeToString(std::string& state, SerializationFormat m) const override;

@@ -36,17 +36,17 @@ bool SEDataRequestManager::SerializeToString(std::string& output, SerializationF
 {
   return PBEngine::SerializeToString(*this, output, m);
 }
-bool SEDataRequestManager::SerializeToFile(const std::string& filename, SerializationFormat m) const
+bool SEDataRequestManager::SerializeToFile(const std::string& filename) const
 {
-  return PBEngine::SerializeToFile(*this, filename, m);
+  return PBEngine::SerializeToFile(*this, filename);
 }
 bool SEDataRequestManager::SerializeFromString(const std::string& src, SerializationFormat m, const SESubstanceManager& subMgr)
 {
   return PBEngine::SerializeFromString(src, *this, m, subMgr);
 }
-bool SEDataRequestManager::SerializeFromFile(const std::string& filename, SerializationFormat m, const SESubstanceManager& subMgr)
+bool SEDataRequestManager::SerializeFromFile(const std::string& filename, const SESubstanceManager& subMgr)
 {
-  return PBEngine::SerializeFromFile(filename, *this, m, subMgr);
+  return PBEngine::SerializeFromFile(filename, *this, subMgr);
 }
 
 bool SEDataRequestManager::HasDefaultDecimalFormatting() const

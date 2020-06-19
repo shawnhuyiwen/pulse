@@ -49,17 +49,17 @@ bool SENutrition::SerializeToString(std::string& output, SerializationFormat m) 
 {
   return PBPatientNutrition::SerializeToString(*this, output, m);
 }
-bool SENutrition::SerializeToFile(const std::string& filename, SerializationFormat m) const
+bool SENutrition::SerializeToFile(const std::string& filename) const
 {
-  return PBPatientNutrition::SerializeToFile(*this, filename, m);
+  return PBPatientNutrition::SerializeToFile(*this, filename);
 }
 bool SENutrition::SerializeFromString(const std::string& src, SerializationFormat m)
 {
   return PBPatientNutrition::SerializeFromString(src, *this, m);
 }
-bool SENutrition::SerializeFromFile(const std::string& filename, SerializationFormat m)
+bool SENutrition::SerializeFromFile(const std::string& filename)
 {
-  return PBPatientNutrition::SerializeFromFile(filename, *this, m);
+  return PBPatientNutrition::SerializeFromFile(filename, *this);
 }
 
 

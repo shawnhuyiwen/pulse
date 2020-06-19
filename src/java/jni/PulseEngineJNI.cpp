@@ -74,7 +74,7 @@ JNIEXPORT void JNICALL Java_pulse_engine_PulseEngine_nativeReset(JNIEnv *env, jo
 }
 
 extern "C"
-JNIEXPORT void JNICALL Java_pulse_engine_PulseScenarioExec_nativeExecuteScenario(JNIEnv *env, jobject obj, jlong ptr, jstring scenario, jint format, jstring csvFile, double updateFreq_s)
+JNIEXPORT void JNICALL Java_pulse_engine_PulseScenarioExec_nativeExecuteScenario(JNIEnv *env, jobject obj, jlong ptr, jstring scenario, jint scenario_format, jstring csvFile, double updateFreq_s)
 {
   const char* sceStr = env->GetStringUTFChars(scenario, JNI_FALSE);
   const char* csvF = env->GetStringUTFChars(csvFile,JNI_FALSE);
@@ -86,7 +86,7 @@ JNIEXPORT void JNICALL Java_pulse_engine_PulseScenarioExec_nativeExecuteScenario
     // Load up the json and run the scenario
     if (engineJNI->exec == nullptr)
       engineJNI->exec = new PulseScenarioExec(engineJNI->eng->GetLogger());
-    engineJNI->exec->Execute(*engineJNI->eng, sceStr, format==1?SerializationFormat::JSON:SerializationFormat::BINARY, csvF);
+    engineJNI->exec->Execute(*engineJNI->eng, sceStr, scenario_format==1?SerializationFormat::JSON:SerializationFormat::BINARY, csvF);
   }
   catch (...)
   {
@@ -107,7 +107,7 @@ JNIEXPORT void JNICALL Java_pulse_engine_PulseScenarioExec_nativeCancelScenario(
 }
 
 extern "C"
-JNIEXPORT jboolean JNICALL Java_pulse_engine_PulseEngine_nativeSerializeFromFile(JNIEnv *env, jobject obj, jlong ptr, jstring stateFilename, jstring dataRequests, jint format)
+JNIEXPORT jboolean JNICALL Java_pulse_engine_PulseEngine_nativeSerializeFromFile(JNIEnv *env, jobject obj, jlong ptr, jstring stateFilename, jstring dataRequests, jint dataRequestsFormat)
 {
   PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
   engineJNI->jniEnv = env;
@@ -117,7 +117,7 @@ JNIEXPORT jboolean JNICALL Java_pulse_engine_PulseEngine_nativeSerializeFromFile
   if (dataRequests != nullptr)
   {
     const char* drmStr = env->GetStringUTFChars(dataRequests, JNI_FALSE);
-    if (!engineJNI->eng->GetEngineTracker()->GetDataRequestManager().SerializeFromString(drmStr, JSON, engineJNI->eng->GetSubstanceManager()))
+    if (!engineJNI->eng->GetEngineTracker()->GetDataRequestManager().SerializeFromString(drmStr, dataRequestsFormat==1?SerializationFormat::JSON:SerializationFormat::BINARY, engineJNI->eng->GetSubstanceManager()))
     {
       env->ReleaseStringUTFChars(dataRequests, drmStr);
       std::cerr << "Unable to load datarequest string" << std::endl;
@@ -128,20 +128,20 @@ JNIEXPORT jboolean JNICALL Java_pulse_engine_PulseEngine_nativeSerializeFromFile
 
   // Ok, crank 'er up!
   const char* pStateFilename = env->GetStringUTFChars(stateFilename, JNI_FALSE);
-  jboolean bRet = engineJNI->eng->SerializeFromFile(pStateFilename, JSON);
+  jboolean bRet = engineJNI->eng->SerializeFromFile(pStateFilename);
 
   env->ReleaseStringUTFChars(stateFilename, pStateFilename);
   return bRet;
 }
 extern "C"
-JNIEXPORT jboolean JNICALL Java_pulse_engine_PulseEngine_nativeSerializeToFile(JNIEnv *env, jobject obj, jlong ptr, jstring stateFilename, jint format)
+JNIEXPORT jboolean JNICALL Java_pulse_engine_PulseEngine_nativeSerializeToFile(JNIEnv *env, jobject obj, jlong ptr, jstring stateFilename)
 {
   jboolean bRet;
   PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
   engineJNI->jniEnv = env; 
   engineJNI->jniObj = obj;
   const char* pStateFilename = env->GetStringUTFChars(stateFilename, JNI_FALSE);
-  bRet = engineJNI->eng->SerializeToFile(pStateFilename,JSON);
+  bRet = engineJNI->eng->SerializeToFile(pStateFilename);
   env->ReleaseStringUTFChars(stateFilename, pStateFilename);
   return bRet;
 }
@@ -158,7 +158,7 @@ JNIEXPORT jboolean JNICALL Java_pulse_engine_PulseEngine_nativeSerializeToString
 }
 
 extern "C"
-JNIEXPORT jboolean JNICALL Java_pulse_engine_PulseEngine_nativeInitializeEngine(JNIEnv *env, jobject obj, jlong ptr, jstring patient_configuration, jstring dataRequests, jint format, jstring dataDir)
+JNIEXPORT jboolean JNICALL Java_pulse_engine_PulseEngine_nativeInitializeEngine(JNIEnv *env, jobject obj, jlong ptr, jstring patient_configuration, jstring dataRequests, jint dataRequestsFormat, jstring dataDir)
 {
   bool ret = false;
   try
@@ -184,7 +184,7 @@ JNIEXPORT jboolean JNICALL Java_pulse_engine_PulseEngine_nativeInitializeEngine(
     if (dataRequests != nullptr)
     {
       const char* drmStr = env->GetStringUTFChars(dataRequests, JNI_FALSE);
-      if (!engineJNI->eng->GetEngineTracker()->GetDataRequestManager().SerializeFromString(drmStr, JSON, engineJNI->eng->GetSubstanceManager()))
+      if (!engineJNI->eng->GetEngineTracker()->GetDataRequestManager().SerializeFromString(drmStr, dataRequestsFormat==1?SerializationFormat::JSON:SerializationFormat::BINARY, engineJNI->eng->GetSubstanceManager()))
       {
         env->ReleaseStringUTFChars(dataRequests, drmStr);
         std::cerr << "Unable to load datarequest string" << std::endl;

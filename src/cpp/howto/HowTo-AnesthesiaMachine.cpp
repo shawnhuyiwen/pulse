@@ -42,7 +42,7 @@ void HowToAnesthesiaMachine()
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
   pe->GetLogger()->SetLogFile("./test_results/HowTo_AnesthesiaMachine.log");
   pe->GetLogger()->Info("HowTo_AnesthesiaMachine");
-  if (!pe->SerializeFromFile("./states/StandardMale@0s.json", JSON))
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;

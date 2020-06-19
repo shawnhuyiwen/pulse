@@ -281,13 +281,11 @@ bool PBEnvironment::SerializeToString(const SEEnvironmentalConditions& src, std:
   PBEnvironment::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
-bool PBEnvironment::SerializeToFile(const SEEnvironmentalConditions& src, const std::string& filename, SerializationFormat m)
+bool PBEnvironment::SerializeToFile(const SEEnvironmentalConditions& src, const std::string& filename)
 {
   CDM_BIND::EnvironmentalConditionsData data;
   PBEnvironment::Serialize(src, data);
-  std::string content;
-  PBEnvironment::SerializeToString(src, content, m);
-  return WriteFile(content, filename, m);
+  return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
 
 bool PBEnvironment::SerializeFromString(const std::string& src, SEEnvironmentalConditions& dst, SerializationFormat m, const SESubstanceManager& subMgr)
@@ -298,10 +296,11 @@ bool PBEnvironment::SerializeFromString(const std::string& src, SEEnvironmentalC
   PBEnvironment::Load(data, dst, subMgr);
   return true;
 }
-bool PBEnvironment::SerializeFromFile(const std::string& filename, SEEnvironmentalConditions& dst, SerializationFormat m, const SESubstanceManager& subMgr)
+bool PBEnvironment::SerializeFromFile(const std::string& filename, SEEnvironmentalConditions& dst, const SESubstanceManager& subMgr)
 {
-  std::string content = ReadFile(filename, m);
-  if (content.empty())
+  CDM_BIND::EnvironmentalConditionsData data;
+  if (!PBUtils::SerializeFromFile(filename, data, dst.GetLogger()))
     return false;
-  return PBEnvironment::SerializeFromString(content, dst, m, subMgr);
+  PBEnvironment::Load(data, dst, subMgr);
+  return true;
 }

@@ -67,17 +67,17 @@ bool SEEnvironmentalConditions::SerializeToString(std::string& output, Serializa
 {
   return PBEnvironment::SerializeToString(*this, output, m);
 }
-bool SEEnvironmentalConditions::SerializeToFile(const std::string& filename, SerializationFormat m) const
+bool SEEnvironmentalConditions::SerializeToFile(const std::string& filename) const
 {
-  return PBEnvironment::SerializeToFile(*this, filename, m);
+  return PBEnvironment::SerializeToFile(*this, filename);
 }
 bool SEEnvironmentalConditions::SerializeFromString(const std::string& src, SerializationFormat m, const SESubstanceManager& subMgr)
 {
   return PBEnvironment::SerializeFromString(src, *this, m, subMgr);
 }
-bool SEEnvironmentalConditions::SerializeFromFile(const std::string& filename, SerializationFormat m, const SESubstanceManager& subMgr)
+bool SEEnvironmentalConditions::SerializeFromFile(const std::string& filename, const SESubstanceManager& subMgr)
 {
-  return PBEnvironment::SerializeFromFile(filename, *this, m, subMgr);
+  return PBEnvironment::SerializeFromFile(filename, *this, subMgr);
 }
 
 const SEScalar* SEEnvironmentalConditions::GetScalar(const std::string& name)

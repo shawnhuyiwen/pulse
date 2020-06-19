@@ -93,17 +93,17 @@ bool SESubstance::SerializeToString(std::string& output, SerializationFormat m) 
 {
   return PBSubstance::SerializeToString(*this, output, m);
 }
-bool SESubstance::SerializeToFile(const std::string& filename, SerializationFormat m) const
+bool SESubstance::SerializeToFile(const std::string& filename) const
 {
-  return PBSubstance::SerializeToFile(*this, filename, m);
+  return PBSubstance::SerializeToFile(*this, filename);
 }
 bool SESubstance::SerializeFromString(const std::string& src, SerializationFormat m)
 {
   return PBSubstance::SerializeFromString(src, *this, m);
 }
-bool SESubstance::SerializeFromFile(const std::string& filename, SerializationFormat m)
+bool SESubstance::SerializeFromFile(const std::string& filename)
 {
-  return PBSubstance::SerializeFromFile(filename, *this, m);
+  return PBSubstance::SerializeFromFile(filename, *this);
 }
 
 const SEScalar* SESubstance::GetScalar(const std::string& name)

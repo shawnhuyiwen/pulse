@@ -26,17 +26,17 @@ bool SEMeal::SerializeToString(std::string& output, SerializationFormat m) const
 {
   return PBPatientNutrition::SerializeToString(*this, output, m);
 }
-bool SEMeal::SerializeToFile(const std::string& filename, SerializationFormat m) const
+bool SEMeal::SerializeToFile(const std::string& filename) const
 {
-  return PBPatientNutrition::SerializeToFile(*this, filename, m);
+  return PBPatientNutrition::SerializeToFile(*this, filename);
 }
 bool SEMeal::SerializeFromString(const std::string& src, SerializationFormat m)
 {
   return PBPatientNutrition::SerializeFromString(src, *this, m);
 }
-bool SEMeal::SerializeFromFile(const std::string& filename, SerializationFormat m)
+bool SEMeal::SerializeFromFile(const std::string& filename)
 {
-  return PBPatientNutrition::SerializeFromFile(filename, *this, m);
+  return PBPatientNutrition::SerializeFromFile(filename, *this);
 }
 
 bool SEMeal::HasElapsedTime() const

@@ -60,14 +60,14 @@ public:
   /// Return value indicates engine was able to load provided state file.
   /// Engine will be in a cleared state if this method fails.
   //--------------------------------------------------------------------------------------------------
-  virtual bool SerializeFromFile(const std::string& filename, SerializationFormat m) = 0;
+  virtual bool SerializeFromFile(const std::string& filename) = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Save the current state of the engine to provided filename.
   /// Engine will be in a cleared state if this method fails.
   //--------------------------------------------------------------------------------------------------
-  virtual bool SerializeToFile(const std::string& filename, SerializationFormat m) const = 0;
+  virtual bool SerializeToFile(const std::string& filename) const = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief

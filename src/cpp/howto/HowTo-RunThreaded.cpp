@@ -63,7 +63,7 @@ PulseThread::PulseThread(const std::string& logfile) : m_thread()
   m_pe->GetLogger()->SetLogFile(logfile);
   const SESubstanceCompound* saline = m_pe->GetSubstanceManager().GetCompound("Saline");
 
-  if (!m_pe->SerializeFromFile("./states/StandardMale@0s.json", JSON))
+  if (!m_pe->SerializeFromFile("./states/StandardMale@0s.json"))
   {
     m_pe->GetLogger()->Error("Could not load state, check the error");
     return;

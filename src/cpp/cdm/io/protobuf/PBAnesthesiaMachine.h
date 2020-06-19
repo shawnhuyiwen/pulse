@@ -17,9 +17,9 @@ public:
   static void Serialize(const SEAnesthesiaMachine& src, CDM_BIND::AnesthesiaMachineData& dst);
 
   static bool SerializeToString(const SEAnesthesiaMachine& src, std::string& output, SerializationFormat m);
-  static bool SerializeToFile(const SEAnesthesiaMachine& src, const std::string& filename, SerializationFormat m);
+  static bool SerializeToFile(const SEAnesthesiaMachine& src, const std::string& filename);
   static bool SerializeFromString(const std::string& src, SEAnesthesiaMachine& dst, SerializationFormat m, const SESubstanceManager& subMgr);
-  static bool SerializeFromFile(const std::string& filename, SEAnesthesiaMachine& dst, SerializationFormat m, const SESubstanceManager& subMgr);
+  static bool SerializeFromFile(const std::string& filename, SEAnesthesiaMachine& dst, const SESubstanceManager& subMgr);
 
   static void Load(const CDM_BIND::AnesthesiaMachineChamberData& src, SEAnesthesiaMachineChamber& dst, const SESubstanceManager& subMgr);
   static CDM_BIND::AnesthesiaMachineChamberData* Unload(const SEAnesthesiaMachineChamber& src);

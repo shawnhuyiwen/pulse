@@ -17,7 +17,7 @@ public:
 
   virtual void Cancel();
 
-  virtual bool ExecuteFile(PhysiologyEngine& pe, const std::string& scenarioFile, SerializationFormat format, const std::string& resultsFile, const SEEngineConfiguration* ec=nullptr, std::string const& dataDir="./");
+  virtual bool ExecuteFile(PhysiologyEngine& pe, const std::string& scenarioFile, const std::string& resultsFile, const SEEngineConfiguration* ec=nullptr, std::string const& dataDir="./");
   virtual bool Execute(PhysiologyEngine& pe, const std::string& scenario, SerializationFormat format, const std::string& resultsFile, const SEEngineConfiguration* ec = nullptr, std::string const& dataDir = "./");
   virtual bool Execute(PhysiologyEngine& pe, const SEScenario& scenario,      const std::string& resultsFile, const SEEngineConfiguration* ec=nullptr);
   

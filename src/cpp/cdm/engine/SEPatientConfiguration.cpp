@@ -26,17 +26,17 @@ bool SEPatientConfiguration::SerializeToString(std::string& output, Serializatio
 {
   return PBEngine::SerializeToString(*this, output, m);
 }
-bool SEPatientConfiguration::SerializeToFile(const std::string& filename, SerializationFormat m) const
+bool SEPatientConfiguration::SerializeToFile(const std::string& filename) const
 {
-  return PBEngine::SerializeToFile(*this, filename, m);
+  return PBEngine::SerializeToFile(*this, filename);
 }
 bool SEPatientConfiguration::SerializeFromString(const std::string& src, SerializationFormat m)
 {
   return PBEngine::SerializeFromString(src, *this, m);
 }
-bool SEPatientConfiguration::SerializeFromFile(const std::string& filename, SerializationFormat m)
+bool SEPatientConfiguration::SerializeFromFile(const std::string& filename)
 {
-  return PBEngine::SerializeFromFile(filename, *this, m);
+  return PBEngine::SerializeFromFile(filename, *this);
 }
 
 void SEPatientConfiguration::Clear()

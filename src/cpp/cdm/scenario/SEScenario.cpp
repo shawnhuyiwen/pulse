@@ -40,17 +40,17 @@ bool SEScenario::SerializeToString(std::string& output, SerializationFormat m) c
 {
   return PBScenario::SerializeToString(*this, output, m);
 }
-bool SEScenario::SerializeToFile(const std::string& filename, SerializationFormat m) const
+bool SEScenario::SerializeToFile(const std::string& filename) const
 {
-  return PBScenario::SerializeToFile(*this, filename, m);
+  return PBScenario::SerializeToFile(*this, filename);
 }
 bool SEScenario::SerializeFromString(const std::string& src, SerializationFormat m)
 {
   return PBScenario::SerializeFromString(src, *this, m);
 }
-bool SEScenario::SerializeFromFile(const std::string& filename, SerializationFormat m)
+bool SEScenario::SerializeFromFile(const std::string& filename)
 {
-  return PBScenario::SerializeFromFile(filename, *this, m);
+  return PBScenario::SerializeFromFile(filename, *this);
 }
 
 bool SEScenario::IsValid() const
