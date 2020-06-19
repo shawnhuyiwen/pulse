@@ -158,6 +158,7 @@ CDM_BIND::SerializeStateData* PBAction::Unload(const SESerializeState& src)
 void PBAction::Serialize(const SESerializeState& src, CDM_BIND::SerializeStateData& dst)
 {
   PBAction::Serialize(src, *dst.mutable_action());
+
   dst.set_type((CDM_BIND::SerializeStateData::eType)src.m_Type);
   if (src.HasFilename())
     dst.set_filename(src.m_Filename);

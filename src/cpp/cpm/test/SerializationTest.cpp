@@ -148,9 +148,9 @@ void PulseEngineTest::InjectSuccsState(PhysiologyEngine* pc, HowToTracker& track
   pc->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("InjectSuccsSerialization.csv");
 
   // Save and Load the Engine State
-  pc->SerializeToFile("./MidBolusState.json",JSON);
+  pc->SerializeToFile("./MidBolusState.json");
   now.SetValue(pc->GetSimulationTime(TimeUnit::s), TimeUnit::s);
-  pc->SerializeFromFile("./MidBolusState.json",JSON);
+  pc->SerializeFromFile("./MidBolusState.json");
   pc->SetSimulationTime(now);
 
   tracker.AdvanceModelTime(15);
@@ -171,9 +171,9 @@ void PulseEngineTest::InjectSuccsState(PhysiologyEngine* pc, HowToTracker& track
   pc->ProcessAction(amConfig);
   tracker.AdvanceModelTime(5);
 
-  pc->SerializeToFile("./AnesthesiaMachineState.json",BINARY);
+  pc->SerializeToFile("./AnesthesiaMachineState.json");
   now.SetValue(pc->GetSimulationTime(TimeUnit::s), TimeUnit::s);
-  pc->SerializeFromFile("./AnesthesiaMachineState.json",BINARY);
+  pc->SerializeFromFile("./AnesthesiaMachineState.json");
   pc->SetSimulationTime(now);
 
   tracker.AdvanceModelTime(40);
@@ -308,7 +308,7 @@ void PulseEngineTest::SerializationTest(const std::string& sTestDirectory)
     {
       pc->GetLogger()->SetLogFile("BasicStandardStateResults.log");
       pc->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("BasicStandardStateResults.csv");
-      pc->SerializeFromFile("./BasicStandardState@60s.json",JSON);
+      pc->SerializeFromFile("./BasicStandardState@60s.json");
       tracker.AdvanceModelTime(60);
     }
   }
@@ -331,5 +331,5 @@ void PulseEngineTest::SerializationTest(const std::string& sTestDirectory)
     pc->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest("BrainTissueExtracellular", *Succs, "Concentration", MassPerVolumeUnit::ug_Per_mL);
     InjectSuccsState(pc.get(), tracker, *Succs);
   }
-  pc->SerializeToFile("./FinalEngineState.json",JSON);
+  pc->SerializeToFile("./FinalEngineState.json");
 }

@@ -711,5 +711,5 @@ void CommonDataModelTest::ThermalCompartmentTest(const std::string& rptDirectory
   CircuitHeatTemperatureAndFlows.SetName("ThermalCompartmentHeatTemperatureAndFlows");
   TestCircuitHeatTemperatureAndFlows(CircuitHeatTemperatureAndFlows, subMgr);
 
-  testReport.SerializeToFile(rptDirectory + "/ThermalCompartmentTestReport.json",JSON);
+  testReport.SerializeToFile(rptDirectory + "/ThermalCompartmentTestReport.json");
 }

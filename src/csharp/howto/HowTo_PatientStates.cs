@@ -68,7 +68,7 @@ namespace HowTo_PatientStates
       {
         Console.WriteLine("Creating states for inury set : " + injury_set_names[i]);
         // Loop over how many patients we have and the various injury combinations
-        if (!pulse.SerializeFromFile("./states/Soldier@0s.json", data_mgr, SerializationFormat.JSON))
+        if (!pulse.SerializeFromFile("./states/Soldier@0s.pbb", data_mgr))
         {
           Console.WriteLine("Error Initializing Pulse!");
           return;
@@ -102,7 +102,7 @@ namespace HowTo_PatientStates
             {
               Console.WriteLine(active_event.ToString());
             }
-            pulse.SerializeToFile(state_filename, SerializationFormat.JSON);
+            pulse.SerializeToFile(state_filename);
 
             watch.Stop();
             var elapsed_ms = watch.ElapsedMilliseconds;

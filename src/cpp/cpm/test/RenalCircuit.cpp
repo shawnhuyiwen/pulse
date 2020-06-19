@@ -51,7 +51,7 @@ void PulseEngineTest::RenalCircuitAndTransportTest(const std::string& sTestDirec
   PulseController pc;
   pc.GetLogger()->SetLogFile(sTestDirectory + "/RenalCircuitAndTransportTest.log");
   SEPatient patient(pc.GetLogger());
-  patient.SerializeFromFile("./patients/StandardMale.json",JSON);
+  patient.SerializeFromFile("./patients/StandardMale.json");
   pc.SetupPatient(patient);
   pc.GetSubstances().LoadSubstanceDirectory("./");
   pc.GetSaturationCalculator().Setup();
@@ -182,7 +182,7 @@ void PulseEngineTest::RenalFeedbackTest(RenalFeedback feedback, const std::strin
   PulseController pc;
   pc.GetLogger()->SetLogFile(sTestDirectory + "/RenalFeedbackTest.log");
   SEPatient patient(pc.GetLogger());
-  patient.SerializeFromFile("./patients/StandardMale.json", JSON);
+  patient.SerializeFromFile("./patients/StandardMale.json");
   pc.SetupPatient(patient);
   pc.GetSubstances().LoadSubstanceDirectory("./");
   pc.GetSaturationCalculator().Setup();
@@ -501,7 +501,7 @@ void PulseEngineTest::RenalSystemTest(RenalSystems systemtest, const std::string
   PulseController pc;
   pc.GetLogger()->SetLogFile(sTestDirectory + "/RenalSystemTest.log");
   SEPatient patient(pc.GetLogger());
-  patient.SerializeFromFile("./patients/StandardMale.json", JSON);
+  patient.SerializeFromFile("./patients/StandardMale.json");
   pc.SetupPatient(patient);
   pc.GetSubstances().LoadSubstanceDirectory("./");
   pc.GetSaturationCalculator().Setup();

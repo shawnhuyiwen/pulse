@@ -58,13 +58,11 @@ bool PBInhaler::SerializeToString(const SEInhaler& src, std::string& output, Ser
   PBInhaler::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
-bool PBInhaler::SerializeToFile(const SEInhaler& src, const std::string& filename, SerializationFormat m)
+bool PBInhaler::SerializeToFile(const SEInhaler& src, const std::string& filename)
 {
   CDM_BIND::InhalerData data;
   PBInhaler::Serialize(src, data);
-  std::string content;
-  PBInhaler::SerializeToString(src, content, m);
-  return WriteFile(content, filename, m);
+  return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
 
 bool PBInhaler::SerializeFromString(const std::string& src, SEInhaler& dst, SerializationFormat m, const SESubstanceManager& subMgr)
@@ -75,10 +73,11 @@ bool PBInhaler::SerializeFromString(const std::string& src, SEInhaler& dst, Seri
   PBInhaler::Load(data, dst, subMgr);
   return true;
 }
-bool PBInhaler::SerializeFromFile(const std::string& filename, SEInhaler& dst, SerializationFormat m, const SESubstanceManager& subMgr)
+bool PBInhaler::SerializeFromFile(const std::string& filename, SEInhaler& dst, const SESubstanceManager& subMgr)
 {
-  std::string content = ReadFile(filename, m);
-  if (content.empty())
+  CDM_BIND::InhalerData data;
+  if (!PBUtils::SerializeFromFile(filename, data, dst.GetLogger()))
     return false;
-  return PBInhaler::SerializeFromString(content, dst, m, subMgr);
+  PBInhaler::Load(data, dst, subMgr);
+  return true;
 }

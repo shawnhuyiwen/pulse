@@ -153,7 +153,7 @@ namespace Pulse.CDM
       if (src.HasVitalCapacity()) { GetVitalCapacity().Set(src.vital_capacity); }
     }
 
-    public bool SerializeFromFile(string filename, SerializationFormat fmt)
+    public bool SerializeFromFile(string filename)
     {
       try
       {
@@ -171,7 +171,7 @@ namespace Pulse.CDM
       return PBPatient.SerializeFromString(src, this);
     }
 
-    public bool SerializeToFile(string filename, SerializationFormat fmt)
+    public bool SerializeToFile(string filename)
     {
       string json = SerializeToString(SerializationFormat.JSON);
       if (json == null || json.Length == 0)

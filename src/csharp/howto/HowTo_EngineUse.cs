@@ -84,7 +84,7 @@ namespace HowTo_UseEngine
         case InitializationType.StateFileName:
           {
             // Load a state file
-            if (!pulse.SerializeFromFile("./states/Soldier@0s.json", data_mgr, SerializationFormat.JSON))
+            if (!pulse.SerializeFromFile("./states/Soldier@0s.pbb", data_mgr))
             {
               Console.WriteLine("Error Initializing Pulse!");
               return;
@@ -110,7 +110,7 @@ namespace HowTo_UseEngine
             // (Maybe the Pulse engine is on hosted on another machine)
             //cfg.SetPatientFile("./patients/Soldier.json");
             // Or, ou can load up a local file on disk
-            cfg.GetPatient().SerializeFromFile("./patients/Soldier.json", SerializationFormat.JSON);
+            cfg.GetPatient().SerializeFromFile("./patients/Soldier.json");
             // Optionally, you can add conditions to the patient
             cfg.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetSeverity().SetValue(0.2);
             cfg.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetLeftLungAffected().SetValue(1.0);

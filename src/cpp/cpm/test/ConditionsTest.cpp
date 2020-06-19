@@ -66,6 +66,6 @@ void PulseEngineTest::ConditionCombinations(const std::string& rptDirectory)
       }  
     }
   }
-  testReport.SerializeToFile("ConditionsPermutationsReport.json",JSON);
+  testReport.SerializeToFile("ConditionsPermutationsReport.json");
 
 }

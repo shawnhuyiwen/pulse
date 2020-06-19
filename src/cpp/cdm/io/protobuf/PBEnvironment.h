@@ -37,7 +37,7 @@ public:
   static void Copy(const SEEnvironmentalConditions& src, SEEnvironmentalConditions& dst, const SESubstanceManager& subMgr);
 
   static bool SerializeToString(const SEEnvironmentalConditions& src, std::string& output, SerializationFormat m);
-  static bool SerializeToFile(const SEEnvironmentalConditions& src, const std::string& filename, SerializationFormat m);
+  static bool SerializeToFile(const SEEnvironmentalConditions& src, const std::string& filename);
   static bool SerializeFromString(const std::string& src, SEEnvironmentalConditions& dst, SerializationFormat m, const SESubstanceManager& subMgr);
-  static bool SerializeFromFile(const std::string& filename, SEEnvironmentalConditions& dst, SerializationFormat m, const SESubstanceManager& subMgr);
+  static bool SerializeFromFile(const std::string& filename, SEEnvironmentalConditions& dst, const SESubstanceManager& subMgr);
 };

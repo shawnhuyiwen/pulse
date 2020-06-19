@@ -23,9 +23,9 @@ public:
   virtual void Clear();
 
   virtual bool SerializeToString(std::string& output, SerializationFormat) const = 0;
-  virtual bool SerializeToFile(const std::string& filename, SerializationFormat) const = 0;
+  virtual bool SerializeToFile(const std::string& filename) const = 0;
   virtual bool SerializeFromString(const std::string& src, SerializationFormat) = 0;
-  virtual bool SerializeFromFile(const std::string& filename, SerializationFormat) = 0;
+  virtual bool SerializeFromFile(const std::string& filename) = 0;
 
   virtual bool StabilizeRestingState(Controller& engine)=0;
   virtual bool StabilizeFeedbackState(Controller& engine) = 0;

@@ -61,9 +61,9 @@ bool SEPulmonaryFunctionTest::SerializeToString(std::string& output, Serializati
 {
   return PBPatientAssessment::SerializeToString(*this, output, m);
 }
-bool SEPulmonaryFunctionTest::SerializeToFile(const std::string& filename, SerializationFormat m) const
+bool SEPulmonaryFunctionTest::SerializeToFile(const std::string& filename) const
 {
-  return PBPatientAssessment::SerializeToFile(*this, filename, m);
+  return PBPatientAssessment::SerializeToFile(*this, filename);
 }
 
 bool SEPulmonaryFunctionTest::HasExpiratoryReserveVolume() const

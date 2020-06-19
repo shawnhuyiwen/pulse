@@ -19,9 +19,9 @@ public:
   virtual void Clear();
 
   bool SerializeToString(std::string& output, SerializationFormat m) const;
-  bool SerializeToFile(const std::string& filename, SerializationFormat m) const;
+  bool SerializeToFile(const std::string& filename) const;
   bool SerializeFromString(const std::string& src, SerializationFormat m, const SESubstanceManager& subMgr);
-  bool SerializeFromFile(const std::string& filename, SerializationFormat m, const SESubstanceManager& subMgr);
+  bool SerializeFromFile(const std::string& filename, const SESubstanceManager& subMgr);
 
   /** @name GetScalar
   *   @brief - A reflextion type call that will return the Scalar associated

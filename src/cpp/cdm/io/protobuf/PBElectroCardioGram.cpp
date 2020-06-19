@@ -156,13 +156,11 @@ bool PBElectroCardioGram::SerializeToString(const SEElectroCardioGramWaveformInt
   PBElectroCardioGram::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
-bool PBElectroCardioGram::SerializeToFile(const SEElectroCardioGramWaveformInterpolator& src, const std::string& filename, SerializationFormat m)
+bool PBElectroCardioGram::SerializeToFile(const SEElectroCardioGramWaveformInterpolator& src, const std::string& filename)
 {
   CDM_BIND::ElectroCardioGramWaveformListData data;
   PBElectroCardioGram::Serialize(src, data);
-  std::string content;
-  PBElectroCardioGram::SerializeToString(src, content, m);
-  return WriteFile(content, filename, m);
+  return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
 bool PBElectroCardioGram::SerializeFromString(const std::string& src, SEElectroCardioGramWaveformInterpolator& dst, SerializationFormat m)
 {
@@ -172,11 +170,11 @@ bool PBElectroCardioGram::SerializeFromString(const std::string& src, SEElectroC
   PBElectroCardioGram::Load(data, dst);
   return true;
 }
-bool PBElectroCardioGram::SerializeFromFile(const std::string& filename, SEElectroCardioGramWaveformInterpolator& dst, SerializationFormat m)
+bool PBElectroCardioGram::SerializeFromFile(const std::string& filename, SEElectroCardioGramWaveformInterpolator& dst)
 {
-  std::string content = ReadFile(filename, m);
-  if (content.empty())
+  CDM_BIND::ElectroCardioGramWaveformListData data;
+  if (!PBUtils::SerializeFromFile(filename, data, dst.GetLogger()))
     return false;
-  return PBElectroCardioGram::SerializeFromString(content, dst, m);
+  PBElectroCardioGram::Load(data, dst);
+  return true;
 }
-

@@ -33,8 +33,8 @@ public:
 
   // void SetConfigurationOverride(std::string const& config); // Not Implemented
 
-  bool SerializeFromFile(std::string const& filename, std::string const& data_requests, SerializationFormat format);
-  bool SerializeToFile(std::string const& filename, SerializationFormat format);
+  bool SerializeFromFile(std::string const& filename, std::string const& data_requests, SerializationFormat data_requests_format);
+  bool SerializeToFile(std::string const& filename);
 
   bool SerializeFromString(std::string const& state, std::string const& data_requests, SerializationFormat format);
   std::string SerializeToString(SerializationFormat format);

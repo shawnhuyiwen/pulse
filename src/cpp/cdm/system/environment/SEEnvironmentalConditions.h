@@ -27,9 +27,9 @@ public:
   virtual void Copy(const SEEnvironmentalConditions&, const SESubstanceManager&);
 
   bool SerializeToString(std::string& output, SerializationFormat m) const;
-  bool SerializeToFile(const std::string& filename, SerializationFormat m) const;
+  bool SerializeToFile(const std::string& filename) const;
   bool SerializeFromString(const std::string& src, SerializationFormat m, const SESubstanceManager& subMgr);
-  bool SerializeFromFile(const std::string& filename, SerializationFormat m, const SESubstanceManager& subMgr);
+  bool SerializeFromFile(const std::string& filename, const SESubstanceManager& subMgr);
 
    virtual void Merge(const SEEnvironmentalConditions& from, SESubstanceManager& subMgr);
 

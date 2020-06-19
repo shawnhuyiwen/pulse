@@ -26,17 +26,17 @@ bool PulseScenario::SerializeToString(std::string& output, SerializationFormat m
 {
   return PBPulse::SerializeToString(*this, output, m);
 }
-bool PulseScenario::SerializeToFile(const std::string& filename, SerializationFormat m) const
+bool PulseScenario::SerializeToFile(const std::string& filename) const
 {
-  return PBPulse::SerializeToFile(*this, filename, m);
+  return PBPulse::SerializeToFile(*this, filename);
 }
 bool PulseScenario::SerializeFromString(const std::string& src, SerializationFormat m)
 {
   return PBPulse::SerializeFromString(src, *this, m);
 }
-bool PulseScenario::SerializeFromFile(const std::string& filename, SerializationFormat m)
+bool PulseScenario::SerializeFromFile(const std::string& filename)
 {
-  return PBPulse::SerializeFromFile(filename, *this, m);
+  return PBPulse::SerializeFromFile(filename, *this);
 }
 
 

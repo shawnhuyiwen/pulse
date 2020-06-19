@@ -15,8 +15,8 @@ public:
   static void Serialize(const SEMechanicalVentilator& src, CDM_BIND::MechanicalVentilatorData& dst);
 
   static bool SerializeToString(const SEMechanicalVentilator& src, std::string& output, SerializationFormat m);
-  static bool SerializeToFile(const SEMechanicalVentilator& src, const std::string& filename, SerializationFormat m);
+  static bool SerializeToFile(const SEMechanicalVentilator& src, const std::string& filename);
   static bool SerializeFromString(const std::string& src, SEMechanicalVentilator& dst, SerializationFormat m, const SESubstanceManager& subMgr);
-  static bool SerializeFromFile(const std::string& filename, SEMechanicalVentilator& dst, SerializationFormat m, const SESubstanceManager& subMgr);
+  static bool SerializeFromFile(const std::string& filename, SEMechanicalVentilator& dst, const SESubstanceManager& subMgr);
 
 };

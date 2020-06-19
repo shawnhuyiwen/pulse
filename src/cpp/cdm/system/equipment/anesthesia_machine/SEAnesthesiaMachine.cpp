@@ -69,7 +69,7 @@ void SEAnesthesiaMachine::ProcessConfiguration(SEAnesthesiaMachineConfiguration&
   {
     // Update the action with the file contents
     std::string cfg_file = config.GetConfigurationFile();
-    if (!config.GetConfiguration().SerializeFromFile(cfg_file, JSON, subMgr))
+    if (!config.GetConfiguration().SerializeFromFile(cfg_file, subMgr))
       Error("Unable to load configuration file", "SEAnesthesiaMachine::ProcessConfiguration");
     Merge(config.GetConfiguration(), subMgr);
   }
@@ -102,17 +102,17 @@ bool SEAnesthesiaMachine::SerializeToString(std::string& output, SerializationFo
 {
   return PBAnesthesiaMachine::SerializeToString(*this, output, m);
 }
-bool SEAnesthesiaMachine::SerializeToFile(const std::string& filename, SerializationFormat m) const
+bool SEAnesthesiaMachine::SerializeToFile(const std::string& filename) const
 {
-  return PBAnesthesiaMachine::SerializeToFile(*this, filename, m);
+  return PBAnesthesiaMachine::SerializeToFile(*this, filename);
 }
 bool SEAnesthesiaMachine::SerializeFromString(const std::string& src, SerializationFormat m, const SESubstanceManager& subMgr)
 {
   return PBAnesthesiaMachine::SerializeFromString(src, *this, m, subMgr);
 }
-bool SEAnesthesiaMachine::SerializeFromFile(const std::string& filename, SerializationFormat m, const SESubstanceManager& subMgr)
+bool SEAnesthesiaMachine::SerializeFromFile(const std::string& filename, const SESubstanceManager& subMgr)
 {
-  return PBAnesthesiaMachine::SerializeFromFile(filename, *this, m, subMgr);
+  return PBAnesthesiaMachine::SerializeFromFile(filename, *this, subMgr);
 }
 
 

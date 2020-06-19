@@ -15,7 +15,7 @@ public:
   static void Serialize(const SEInhaler& src, CDM_BIND::InhalerData& dst);
 
   static bool SerializeToString(const SEInhaler& src, std::string& output, SerializationFormat m);
-  static bool SerializeToFile(const SEInhaler& src, const std::string& filename, SerializationFormat m);
+  static bool SerializeToFile(const SEInhaler& src, const std::string& filename);
   static bool SerializeFromString(const std::string& src, SEInhaler& dst, SerializationFormat m, const SESubstanceManager& subMgr);
-  static bool SerializeFromFile(const std::string& filename, SEInhaler& dst, SerializationFormat m, const SESubstanceManager& subMgr);
+  static bool SerializeFromFile(const std::string& filename, SEInhaler& dst, const SESubstanceManager& subMgr);
 };

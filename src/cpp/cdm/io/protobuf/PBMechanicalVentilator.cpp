@@ -183,13 +183,11 @@ bool PBMechanicalVentilator::SerializeToString(const SEMechanicalVentilator& src
   PBMechanicalVentilator::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
-bool PBMechanicalVentilator::SerializeToFile(const SEMechanicalVentilator& src, const std::string& filename, SerializationFormat m)
+bool PBMechanicalVentilator::SerializeToFile(const SEMechanicalVentilator& src, const std::string& filename)
 {
   CDM_BIND::MechanicalVentilatorData data;
   PBMechanicalVentilator::Serialize(src, data);
-  std::string content;
-  PBMechanicalVentilator::SerializeToString(src, content, m);
-  return WriteFile(content, filename, m);
+  return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
 
 bool PBMechanicalVentilator::SerializeFromString(const std::string& src, SEMechanicalVentilator& dst, SerializationFormat m, const SESubstanceManager& subMgr)
@@ -200,10 +198,11 @@ bool PBMechanicalVentilator::SerializeFromString(const std::string& src, SEMecha
   PBMechanicalVentilator::Load(data, dst, subMgr);
   return true;
 }
-bool PBMechanicalVentilator::SerializeFromFile(const std::string& filename, SEMechanicalVentilator& dst, SerializationFormat m, const SESubstanceManager& subMgr)
+bool PBMechanicalVentilator::SerializeFromFile(const std::string& filename, SEMechanicalVentilator& dst, const SESubstanceManager& subMgr)
 {
-  std::string content = ReadFile(filename, m);
-  if (content.empty())
+  CDM_BIND::MechanicalVentilatorData data;
+  if (!PBUtils::SerializeFromFile(filename, data, dst.GetLogger()))
     return false;
-  return PBMechanicalVentilator::SerializeFromString(content, dst, m, subMgr);
+  PBMechanicalVentilator::Load(data, dst, subMgr);
+  return true;
 }

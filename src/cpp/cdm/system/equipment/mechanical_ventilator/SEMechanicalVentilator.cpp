@@ -112,7 +112,7 @@ void SEMechanicalVentilator::ProcessConfiguration(SEMechanicalVentilatorConfigur
   {
     // Update the action with the file contents
     std::string cfg_file = config.GetConfigurationFile();
-    if (!config.GetConfiguration().SerializeFromFile(cfg_file, JSON, subMgr))
+    if (!config.GetConfiguration().SerializeFromFile(cfg_file, subMgr))
       Error("Unable to load configuration file", "SEMechanicalVentilator::ProcessConfiguration");
     Merge(config.GetConfiguration(), subMgr);
   }
@@ -207,17 +207,17 @@ bool SEMechanicalVentilator::SerializeToString(std::string& output, Serializatio
 {
   return PBMechanicalVentilator::SerializeToString(*this, output, m);
 }
-bool SEMechanicalVentilator::SerializeToFile(const std::string& filename, SerializationFormat m) const
+bool SEMechanicalVentilator::SerializeToFile(const std::string& filename) const
 {
-  return PBMechanicalVentilator::SerializeToFile(*this, filename, m);
+  return PBMechanicalVentilator::SerializeToFile(*this, filename);
 }
 bool SEMechanicalVentilator::SerializeFromString(const std::string& src, SerializationFormat m, const SESubstanceManager& subMgr)
 {
   return PBMechanicalVentilator::SerializeFromString(src, *this, m, subMgr);
 }
-bool SEMechanicalVentilator::SerializeFromFile(const std::string& filename, SerializationFormat m, const SESubstanceManager& subMgr)
+bool SEMechanicalVentilator::SerializeFromFile(const std::string& filename, const SESubstanceManager& subMgr)
 {
-  return PBMechanicalVentilator::SerializeFromFile(filename, *this, m, subMgr);
+  return PBMechanicalVentilator::SerializeFromFile(filename, *this, subMgr);
 }
 
 const SEScalar* SEMechanicalVentilator::GetScalar(const std::string& name)

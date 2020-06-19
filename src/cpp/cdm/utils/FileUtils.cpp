@@ -87,35 +87,29 @@ bool CreateFilePath(const std::string& path)
   return true;
 }
 
-bool WriteFile(const std::string& content, const std::string& filename, SerializationFormat m)
+bool WriteFile(const std::string& content, const std::string& filename)
 {
   if (!CreateFilePath(filename))
     return false;
-  if (m == JSON)
-  {
-    std::ofstream ascii_ostream(filename, std::ios::out | std::ios::trunc);
-    ascii_ostream << content;
-    ascii_ostream.flush();
-    ascii_ostream.close();
-  }
-  else
-  {
-    std::ofstream ascii_ostream(filename, std::ios::out | std::ios::trunc | std::ios::binary);
-    ascii_ostream << content;
-    ascii_ostream.flush();
-    ascii_ostream.close();
-  }
+  std::ofstream ascii_ostream(filename, std::ios::out | std::ios::trunc);
+  ascii_ostream << content;
+  ascii_ostream.flush();
+  ascii_ostream.close();
   return true;
 }
 
-std::string ReadFile(const std::string& filename, SerializationFormat m)
+bool ReadFile(const std::string& filename, std::string& content)
 {
+  if (!FileExists(filename))
+    return false;
+
   std::ifstream input(filename);
-  std::string content((std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());
-  if (content.empty() && !input.is_open())
-    std::cerr << "Unable to open file " << filename << " " << strerror(errno) << std::endl;
+  if (!input.is_open())
+    return false;
+  std::string buff((std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());
   input.close();
-  return content;
+  content = buff;
+  return true;
 }
 
 void ListFiles(const std::string& dir, std::vector<std::string>& files, const std::string& mask)
@@ -201,4 +195,10 @@ bool FileExists(const std::string& filename)
 {
   struct stat buffer;
   return (stat(filename.c_str(), &buffer) == 0);
+}
+
+bool IsJSONFile(const std::string& filename)
+{
+  size_t ext = filename.find_last_of(".");
+  return filename.substr(ext) == ".json";
 }

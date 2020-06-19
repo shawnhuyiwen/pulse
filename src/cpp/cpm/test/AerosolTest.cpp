@@ -206,7 +206,7 @@ void PulseEngineTest::AerosolTest(const std::string& sOutputDirectory)
   SizeIndependentDepositionEfficencyCoefficientsTest(zhangDispersion, zhangSubstance, 0.25368, 0.3399, 0.00013825, 0.00022882);
   DepositionFractionTest(zhangDispersion, zhangSubstance, 0.333249, 0.423409, 0.000104601, 0.000108576, 0.000105119, 0.000109058);
 
-  testReport.SerializeToFile(sOutputDirectory + "/AerosolTestReport.json",JSON);
+  testReport.SerializeToFile(sOutputDirectory + "/AerosolTestReport.json");
 }
 
 void PulseEngineTest::SizeIndependentDepositionEfficencyCoefficientsTest(SETestSuite& suite, SESubstance& substance, 
@@ -263,7 +263,7 @@ void PulseEngineTest::DepositionFractionTest(SETestSuite& suite, SESubstance& su
 
   PulseController pc(m_Logger);
   SEPatient patient(pc.GetLogger());
-  patient.SerializeFromFile("./patients/StandardMale.json", JSON);
+  patient.SerializeFromFile("./patients/StandardMale.json");
   pc.SetupPatient(patient);
   pc.GetSubstances().LoadSubstanceDirectory("./");
   pc.GetSaturationCalculator().Setup();

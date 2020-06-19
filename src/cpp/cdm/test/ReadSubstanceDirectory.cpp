@@ -41,5 +41,5 @@ void CommonDataModelTest::ReadSubstanceDirectory(const std::string& rptDirectory
   testCase2.GetDuration().SetValue(pTimer.GetElapsedTime_s("Case"), TimeUnit::s);
   testCase2.SetName("Second Load");
 
-  testReport.SerializeToFile(rptDirectory +"/"+testName+"Report.json",JSON);
+  testReport.SerializeToFile(rptDirectory +"/"+testName+"Report.json");
 }

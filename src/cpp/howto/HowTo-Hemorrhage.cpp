@@ -40,7 +40,7 @@ void HowToHemorrhage()
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
   pe->GetLogger()->SetLogFile("./test_results/HowTo_Hemorrhage.log");
   pe->GetLogger()->Info("HowTo_Hemorrhage");
-  if (!pe->SerializeFromFile("./states/StandardMale@0s.json", JSON))
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;

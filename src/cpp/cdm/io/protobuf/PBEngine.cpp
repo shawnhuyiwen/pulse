@@ -400,13 +400,11 @@ bool PBEngine::SerializeToString(const SEPatientConfiguration& src, std::string&
   PBEngine::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
-bool PBEngine::SerializeToFile(const SEPatientConfiguration& src, const std::string& filename, SerializationFormat m)
+bool PBEngine::SerializeToFile(const SEPatientConfiguration& src, const std::string& filename)
 {
   CDM_BIND::PatientConfigurationData data;
   PBEngine::Serialize(src, data);
-  std::string content;
-  PBEngine::SerializeToString(src, content, m);
-  return WriteFile(content, filename, m);
+  return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
 bool PBEngine::SerializeFromString(const std::string& src, SEPatientConfiguration& dst, SerializationFormat m)
 {
@@ -416,12 +414,13 @@ bool PBEngine::SerializeFromString(const std::string& src, SEPatientConfiguratio
   PBEngine::Load(data, dst);
   return true;
 }
-bool PBEngine::SerializeFromFile(const std::string& filename, SEPatientConfiguration& dst, SerializationFormat m)
+bool PBEngine::SerializeFromFile(const std::string& filename, SEPatientConfiguration& dst)
 {
-  std::string content = ReadFile(filename, m);
-  if (content.empty())
+  CDM_BIND::PatientConfigurationData data;
+  if (!PBUtils::SerializeFromFile(filename, data, dst.GetLogger()))
     return false;
-  return PBEngine::SerializeFromString(content, dst, m);
+  PBEngine::Load(data, dst);
+  return true;
 }
 
 void PBEngine::Load(const CDM_BIND::DataRequestData& src, SEDataRequest& dst)
@@ -545,13 +544,11 @@ bool PBEngine::SerializeToString(const SEConditionManager& src, std::string& out
   PBEngine::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
-bool PBEngine::SerializeToFile(const SEConditionManager& src, const std::string& filename, SerializationFormat m)
+bool PBEngine::SerializeToFile(const SEConditionManager& src, const std::string& filename)
 {
   CDM_BIND::ConditionListData data;
   PBEngine::Serialize(src, data);
-  std::string content;
-  PBEngine::SerializeToString(src, content, m);
-  return WriteFile(content, filename, m);
+  return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
 bool PBEngine::SerializeFromString(const std::string& src, SEConditionManager& dst, SerializationFormat m)
 {
@@ -561,12 +558,13 @@ bool PBEngine::SerializeFromString(const std::string& src, SEConditionManager& d
   PBEngine::Load(data, dst);
   return true;
 }
-bool PBEngine::SerializeFromFile(const std::string& filename, SEConditionManager& dst, SerializationFormat m)
+bool PBEngine::SerializeFromFile(const std::string& filename, SEConditionManager& dst)
 {
-  std::string content = ReadFile(filename, m);
-  if (content.empty())
+  CDM_BIND::ConditionListData data;
+  if (!PBUtils::SerializeFromFile(filename, data, dst.GetLogger()))
     return false;
-  return PBEngine::SerializeFromString(content, dst, m);
+  PBEngine::Load(data, dst);
+  return true;
 }
 
 bool PBEngine::SerializeToString(const SEActionManager& src, std::string& output, SerializationFormat m)
@@ -575,13 +573,11 @@ bool PBEngine::SerializeToString(const SEActionManager& src, std::string& output
   PBEngine::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
-bool PBEngine::SerializeToFile(const SEActionManager& src, const std::string& filename, SerializationFormat m)
+bool PBEngine::SerializeToFile(const SEActionManager& src, const std::string& filename)
 {
   CDM_BIND::ActionListData data;
   PBEngine::Serialize(src, data);
-  std::string content;
-  PBEngine::SerializeToString(src, content, m);
-  return WriteFile(content, filename, m);
+  return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
 bool PBEngine::SerializeFromString(const std::string& src, SEActionManager& dst, SerializationFormat m)
 {
@@ -591,12 +587,13 @@ bool PBEngine::SerializeFromString(const std::string& src, SEActionManager& dst,
   PBEngine::Load(data, dst);
   return true;
 }
-bool PBEngine::SerializeFromFile(const std::string& filename, SEActionManager& dst, SerializationFormat m)
+bool PBEngine::SerializeFromFile(const std::string& filename, SEActionManager& dst)
 {
-  std::string content = ReadFile(filename, m);
-  if (content.empty())
+  CDM_BIND::ActionListData data;
+  if (!PBUtils::SerializeFromFile(filename, data, dst.GetLogger()))
     return false;
-  return PBEngine::SerializeFromString(content, dst, m);
+  PBEngine::Load(data, dst);
+  return true;
 }
 
 bool PBEngine::SerializeFromString(const std::string& src, std::vector<SEAction*>& dst, SerializationFormat m, const SESubstanceManager& subMgr)
@@ -626,13 +623,11 @@ bool PBEngine::SerializeToString(const SEDataRequestManager& src, std::string& o
   PBEngine::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
-bool PBEngine::SerializeToFile(const SEDataRequestManager& src, const std::string& filename, SerializationFormat m)
+bool PBEngine::SerializeToFile(const SEDataRequestManager& src, const std::string& filename)
 {
   CDM_BIND::DataRequestManagerData data;
   PBEngine::Serialize(src, data);
-  std::string content;
-  PBEngine::SerializeToString(src, content, m);
-  return WriteFile(content, filename, m);
+  return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
 bool PBEngine::SerializeFromString(const std::string& src, SEDataRequestManager& dst, SerializationFormat m, const SESubstanceManager& subMgr)
 {
@@ -642,12 +637,13 @@ bool PBEngine::SerializeFromString(const std::string& src, SEDataRequestManager&
   PBEngine::Load(data, dst, subMgr);
   return true;
 }
-bool PBEngine::SerializeFromFile(const std::string& filename, SEDataRequestManager& dst, SerializationFormat m, const SESubstanceManager& subMgr)
+bool PBEngine::SerializeFromFile(const std::string& filename, SEDataRequestManager& dst, const SESubstanceManager& subMgr)
 {
-  std::string content = ReadFile(filename, m);
-  if (content.empty())
+  CDM_BIND::DataRequestManagerData data;
+  if (!PBUtils::SerializeFromFile(filename, data, dst.GetLogger()))
     return false;
-  return PBEngine::SerializeFromString(content, dst, m, subMgr);
+  PBEngine::Load(data, dst, subMgr);
+  return true;
 }
 
 void PBEngine::Load(const CDM_BIND::AutoSerializationData& src, SEAutoSerialization& dst)
@@ -825,13 +821,11 @@ bool PBEngine::SerializeToString(const SEDynamicStabilization& src, std::string&
   PBEngine::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
-bool PBEngine::SerializeToFile(const SEDynamicStabilization& src, const std::string& filename, SerializationFormat m)
+bool PBEngine::SerializeToFile(const SEDynamicStabilization& src, const std::string& filename)
 {
   CDM_BIND::DynamicStabilizationData data;
   PBEngine::Serialize(src, data);
-  std::string content;
-  PBEngine::SerializeToString(src, content, m);
-  return WriteFile(content, filename, m);
+  return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
 bool PBEngine::SerializeFromString(const std::string& src, SEDynamicStabilization& dst, SerializationFormat m)
 {
@@ -841,12 +835,13 @@ bool PBEngine::SerializeFromString(const std::string& src, SEDynamicStabilizatio
   PBEngine::Load(data, dst);
   return true;
 }
-bool PBEngine::SerializeFromFile(const std::string& filename, SEDynamicStabilization& dst, SerializationFormat m)
+bool PBEngine::SerializeFromFile(const std::string& filename, SEDynamicStabilization& dst)
 {
-  std::string content = ReadFile(filename, m);
-  if (content.empty())
+  CDM_BIND::DynamicStabilizationData data;
+  if (!PBUtils::SerializeFromFile(filename, data, dst.GetLogger()))
     return false;
-  return PBEngine::SerializeFromString(content, dst, m);
+  PBEngine::Load(data, dst);
+  return true;
 }
 
 bool PBEngine::SerializeToString(const SETimedStabilization& src, std::string& output, SerializationFormat m)
@@ -855,13 +850,11 @@ bool PBEngine::SerializeToString(const SETimedStabilization& src, std::string& o
   PBEngine::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
-bool PBEngine::SerializeToFile(const SETimedStabilization& src, const std::string& filename, SerializationFormat m)
+bool PBEngine::SerializeToFile(const SETimedStabilization& src, const std::string& filename)
 {
   CDM_BIND::TimedStabilizationData data;
   PBEngine::Serialize(src, data);
-  std::string content;
-  PBEngine::SerializeToString(src, content, m);
-  return WriteFile(content, filename, m);
+  return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
 bool PBEngine::SerializeFromString(const std::string& src, SETimedStabilization& dst, SerializationFormat m)
 {
@@ -871,11 +864,11 @@ bool PBEngine::SerializeFromString(const std::string& src, SETimedStabilization&
   PBEngine::Load(data, dst);
   return true;
 }
-bool PBEngine::SerializeFromFile(const std::string& filename, SETimedStabilization& dst, SerializationFormat m)
+bool PBEngine::SerializeFromFile(const std::string& filename, SETimedStabilization& dst)
 {
-  std::string content = ReadFile(filename, m);
-  if (content.empty())
+  CDM_BIND::TimedStabilizationData data;
+  if (!PBUtils::SerializeFromFile(filename, data, dst.GetLogger()))
     return false;
-  return PBEngine::SerializeFromString(content, dst, m);
+  PBEngine::Load(data, dst);
+  return true;
 }
-

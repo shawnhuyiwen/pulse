@@ -165,13 +165,11 @@ bool PBPatient::SerializeToString(const SEPatient& src, std::string& output, Ser
   PBPatient::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
-bool PBPatient::SerializeToFile(const SEPatient& src, const std::string& filename, SerializationFormat m)
+bool PBPatient::SerializeToFile(const SEPatient& src, const std::string& filename)
 {
   CDM_BIND::PatientData data;
   PBPatient::Serialize(src, data);
-  std::string content;
-  PBPatient::SerializeToString(src, content, m);
-  return WriteFile(content, filename, m);
+  return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
 
 bool PBPatient::SerializeFromString(const std::string& src, SEPatient& dst, SerializationFormat m)
@@ -182,10 +180,11 @@ bool PBPatient::SerializeFromString(const std::string& src, SEPatient& dst, Seri
   PBPatient::Load(data, dst);
   return true;
 }
-bool PBPatient::SerializeFromFile(const std::string& filename, SEPatient& dst, SerializationFormat m)
+bool PBPatient::SerializeFromFile(const std::string& filename, SEPatient& dst)
 {
-  std::string content = ReadFile(filename, m);
-  if (content.empty())
+  CDM_BIND::PatientData data;
+  if (!PBUtils::SerializeFromFile(filename, data, dst.GetLogger()))
     return false;
-  return PBPatient::SerializeFromString(content, dst, m);
+  PBPatient::Load(data, dst);
+  return true;
 }

@@ -597,13 +597,11 @@ bool PBSubstance::SerializeToString(const SESubstance& src, std::string& output,
   PBSubstance::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
-bool PBSubstance::SerializeToFile(const SESubstance& src, const std::string& filename, SerializationFormat m)
+bool PBSubstance::SerializeToFile(const SESubstance& src, const std::string& filename)
 {
   CDM_BIND::SubstanceData data;
   PBSubstance::Serialize(src, data);
-  std::string content;
-  PBSubstance::SerializeToString(src, content, m);
-  return WriteFile(content, filename, m);
+  return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
 
 bool PBSubstance::SerializeFromString(const std::string& src, SESubstance& dst, SerializationFormat m)
@@ -614,12 +612,13 @@ bool PBSubstance::SerializeFromString(const std::string& src, SESubstance& dst, 
   PBSubstance::Load(data, dst);
   return true;
 }
-bool PBSubstance::SerializeFromFile(const std::string& filename, SESubstance& dst, SerializationFormat m)
+bool PBSubstance::SerializeFromFile(const std::string& filename, SESubstance& dst)
 {
-  std::string content = ReadFile(filename, m);
-  if (content.empty())
+  CDM_BIND::SubstanceData data;
+  if (!PBUtils::SerializeFromFile(filename, data, dst.GetLogger()))
     return false;
-  return PBSubstance::SerializeFromString(content, dst, m);
+  PBSubstance::Load(data, dst);
+  return true;
 }
 
 bool PBSubstance::SerializeToString(const SESubstanceCompound& src, std::string& output, SerializationFormat m)
@@ -628,13 +627,11 @@ bool PBSubstance::SerializeToString(const SESubstanceCompound& src, std::string&
   PBSubstance::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
-bool PBSubstance::SerializeToFile(const SESubstanceCompound& src, const std::string& filename, SerializationFormat m)
+bool PBSubstance::SerializeToFile(const SESubstanceCompound& src, const std::string& filename)
 {
   CDM_BIND::SubstanceCompoundData data;
   PBSubstance::Serialize(src, data);
-  std::string content;
-  PBSubstance::SerializeToString(src, content, m);
-  return WriteFile(content, filename, m);
+  return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
 
 bool PBSubstance::SerializeFromString(const std::string& src, SESubstanceCompound& dst, const SESubstanceManager& subMgr, SerializationFormat m)
@@ -645,10 +642,11 @@ bool PBSubstance::SerializeFromString(const std::string& src, SESubstanceCompoun
   PBSubstance::Load(data, dst, subMgr);
   return true;
 }
-bool PBSubstance::SerializeFromFile(const std::string& filename, SESubstanceCompound& dst, const SESubstanceManager& subMgr, SerializationFormat m)
+bool PBSubstance::SerializeFromFile(const std::string& filename, SESubstanceCompound& dst, const SESubstanceManager& subMgr)
 {
-  std::string content = ReadFile(filename, m);
-  if (content.empty())
+  CDM_BIND::SubstanceCompoundData data;
+  if (!PBUtils::SerializeFromFile(filename, data, dst.GetLogger()))
     return false;
-  return PBSubstance::SerializeFromString(content, dst, subMgr, m);
+  PBSubstance::Load(data, dst, subMgr);
+  return true;
 }

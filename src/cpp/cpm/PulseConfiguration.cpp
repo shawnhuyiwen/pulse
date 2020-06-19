@@ -309,17 +309,17 @@ bool PulseConfiguration::SerializeToString(std::string& output, SerializationFor
 {
   return PBPulseConfiguration::SerializeToString(*this, output, m);
 }
-bool PulseConfiguration::SerializeToFile(const std::string& filename, SerializationFormat m) const
+bool PulseConfiguration::SerializeToFile(const std::string& filename) const
 {
-  return PBPulseConfiguration::SerializeToFile(*this, filename, m);
+  return PBPulseConfiguration::SerializeToFile(*this, filename);
 }
 bool PulseConfiguration::SerializeFromString(const std::string& src, SerializationFormat m)
 {
   return PBPulseConfiguration::SerializeFromString(src, *this, m);
 }
-bool PulseConfiguration::SerializeFromFile(const std::string& filename, SerializationFormat m)
+bool PulseConfiguration::SerializeFromFile(const std::string& filename)
 {
-  return PBPulseConfiguration::SerializeFromFile(filename, *this, m);
+  return PBPulseConfiguration::SerializeFromFile(filename, *this);
 }
 
 void PulseConfiguration::Initialize(const std::string& data_dir)
@@ -331,9 +331,9 @@ void PulseConfiguration::Initialize(const std::string& data_dir)
   GetTimeStep().SetValue(1.0 / 50.0, TimeUnit::s);
   if (!data_dir.empty())
   {
-    GetECGInterpolator().SerializeFromFile(data_dir + "/ecg/StandardECG.json", JSON, &GetTimeStep());
-    GetDynamicStabilization().SerializeFromFile(data_dir + "/config/DynamicStabilization.json", JSON);
-    //GetTimedStabilization().SerializeFromFile(data_dir+"/config/TimedStabilization.json",JSON);
+    GetECGInterpolator().SerializeFromFile(data_dir + "/ecg/StandardECG.json", &GetTimeStep());
+    GetDynamicStabilization().SerializeFromFile(data_dir + "/config/DynamicStabilization.json");
+    //GetTimedStabilization().SerializeFromFile(data_dir+"/config/TimedStabilization.json");
   }
   //GetDynamicStabilization().TrackStabilization(eSwitch::On);// Hard coded override for debugging
 
@@ -389,7 +389,7 @@ void PulseConfiguration::Initialize(const std::string& data_dir)
   GetMolarMassOfDryAir().SetValue(0.028964, MassPerAmountUnit::kg_Per_mol);
   GetMolarMassOfWaterVapor().SetValue(0.018016, MassPerAmountUnit::kg_Per_mol);
   if (!data_dir.empty())
-    GetInitialEnvironmentalConditions().SerializeFromFile(data_dir+"/environments/Standard.json",JSON, m_Substances);
+    GetInitialEnvironmentalConditions().SerializeFromFile(data_dir+"/environments/Standard.json", m_Substances);
   GetWaterDensity().SetValue(1000, MassPerVolumeUnit::kg_Per_m3);
 
   // Gastrointestinal
@@ -400,7 +400,7 @@ void PulseConfiguration::Initialize(const std::string& data_dir)
   GetDefaultFatDigestionRate().SetValue(0.055, MassPerTimeUnit::g_Per_min);// Guyton (About 8hr to digest the fat in the default meal)
   GetDefaultProteinDigestionRate().SetValue(0.071, MassPerTimeUnit::g_Per_min);// Dangin2001Digestion (About 5hr to digest the protein in the default meal)
   if (!data_dir.empty())
-    GetDefaultStomachContents().SerializeFromFile(data_dir+"/nutrition/Standard.json",JSON);// Refs are in the data spreadsheet
+    GetDefaultStomachContents().SerializeFromFile(data_dir+"/nutrition/Standard.json");// Refs are in the data spreadsheet
   GetFatAbsorptionFraction().SetValue(0.248);// Guyton p797 and the recommended daily value for saturated fat intake according to the AHA //TODO: Add this reference
   // We should be making 30 grams of urea per 100 grams of protein haussinger1990nitrogen
   GetProteinToUreaFraction().SetValue(0.405);// BUT, We should excrete 24.3 g/day on average. Guyton p 328. With an average intake of 60 g/day, that works out to approximately 40%. 

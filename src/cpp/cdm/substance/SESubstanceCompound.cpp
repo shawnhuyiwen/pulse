@@ -29,17 +29,17 @@ bool SESubstanceCompound::SerializeToString(std::string& output, SerializationFo
 {
   return PBSubstance::SerializeToString(*this, output, m);
 }
-bool SESubstanceCompound::SerializeToFile(const std::string& filename, SerializationFormat m) const
+bool SESubstanceCompound::SerializeToFile(const std::string& filename) const
 {
-  return PBSubstance::SerializeToFile(*this, filename, m);
+  return PBSubstance::SerializeToFile(*this, filename);
 }
 bool SESubstanceCompound::SerializeFromString(const std::string& src, const SESubstanceManager& subMgr, SerializationFormat m)
 {
   return PBSubstance::SerializeFromString(src, *this, subMgr, m);
 }
-bool SESubstanceCompound::SerializeFromFile(const std::string& filename, const SESubstanceManager& subMgr, SerializationFormat m)
+bool SESubstanceCompound::SerializeFromFile(const std::string& filename, const SESubstanceManager& subMgr)
 {
-  return PBSubstance::SerializeFromFile(filename, *this, subMgr, m);
+  return PBSubstance::SerializeFromFile(filename, *this, subMgr);
 }
 
 std::string SESubstanceCompound::GetName() const

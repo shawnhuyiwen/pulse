@@ -164,7 +164,7 @@ void Gastrointestinal::PreProcess()
       if (c->HasNutritionFile())
       {// Grab file, then load it (note GetNutrition will remove the file name, so get it first)
         std::string file = c->GetNutritionFile();
-        if (!c->GetNutrition().SerializeFromFile(file, JSON))
+        if (!c->GetNutrition().SerializeFromFile(file))
         {
           /// \error Unable to read consume meal action file
           Error("Could not read provided nutrition file", "Gastrointestinal::PreProcess");

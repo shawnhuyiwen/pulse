@@ -281,8 +281,8 @@ def serialize_patient_configuration_to_string(src: SEPatientConfiguration, fmt: 
     serialize_patient_configuration_to_bind(src, dst)
     return json_format.MessageToJson(dst, True, True)
 
-def serialize_patient_configuration_to_file(src: SEPatientConfiguration, filename: str, fmt: eSerializationFormat):
-    string = serialize_patient_configuration_to_string(src, fmt)
+def serialize_patient_configuration_to_file(src: SEPatientConfiguration, filename: str):
+    string = serialize_patient_configuration_to_string(src, eSerializationFormat.JSON)
     file = open(filename, "w")
     n = file.write(string)
     file.close()
@@ -292,10 +292,10 @@ def serialize_patient_configuration_from_string(string: str, dst: SEPatientConfi
     json_format.Parse(string, src)
     serialize_patient_configuration_from_bind(src,dst)
 
-def serialize_patient_configuration_from_file(filename: str, dst: SEPatientConfiguration, fmt: eSerializationFormat):
+def serialize_patient_configuration_from_file(filename: str, dst: SEPatientConfiguration):
     with open(filename) as f:
         string = f.read()
-    serialize_patient_configuration_from_string(string, dst, fmt)
+    serialize_patient_configuration_from_string(string, dst, eSerializationFormat.JSON)
 
 def serialize_patient_configuration_to_bind(src: SEPatientConfiguration, dst: PatientConfigurationData):
     if src.has_patient():
