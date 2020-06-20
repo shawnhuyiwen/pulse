@@ -59,9 +59,9 @@ public class Rebase
     // Replace back slashes with forward slashes
     toDir = toDir.replaceAll("\\\\", "/");
     toDir += new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-    if(hash != null && !hash.isEmpty())
-      toDir += " - "+hash;
-    toDir += "/";
+    if(hash==null || hash.isEmpty())
+      hash = "nogithash";
+    toDir += " - "+hash+"/";
 
     Log.info("Rebasing to "+toDir);
 
@@ -159,6 +159,8 @@ public class Rebase
         String[] files = new String[result_files.size()];
         files = result_files.toArray(files);
         FileUtils.zipFiles(files, newFile,prepend+".zip");
+        // Test our zip is what we expect it to be
+        //FileUtils.unzipToDirectory(newFile, newFile.substring(0,newFile.lastIndexOf("/")));
       }
     }
   }

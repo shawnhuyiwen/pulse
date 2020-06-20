@@ -107,7 +107,19 @@ elseif(TYPE STREQUAL "protoc")
 elseif(TYPE STREQUAL "updateBaselines")
   execute_process(COMMAND ${CMAKE_COMMAND} --build "@CMAKE_CURRENT_BINARY_DIR@" --target UpdateVerification)
 elseif(TYPE STREQUAL "rebase")
-  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" pulse.cdm.testing.Rebase)
+  # find Git and if available set GIT_HASH variable
+  find_package(Git QUIET)
+  if(GIT_FOUND)
+    execute_process(
+      COMMAND ${GIT_EXECUTABLE} log -1 --pretty=format:%h
+      OUTPUT_VARIABLE GIT_HASH
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      ERROR_QUIET
+      WORKING_DIRECTORY
+        @CMAKE_SOURCE_DIR@
+      )
+  endif()
+  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" pulse.cdm.testing.Rebase ${GIT_HASH})
 elseif(TYPE STREQUAL "FullReport")
   execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" pulse.cdm.testing.SEReportResults)
 elseif(TYPE STREQUAL "plotter")

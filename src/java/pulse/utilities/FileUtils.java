@@ -6,19 +6,17 @@ package pulse.utilities;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
+import java.nio.file.Paths;
+import java.util.*;
+
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.ArchiveInputStream;
+import org.apache.commons.compress.archivers.ArchiveOutputStream;
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.commons.compress.utils.IOUtils;
 
 /**
  * The <code>FileUtils</code> contains support for writing and exporting files
@@ -720,139 +718,6 @@ public class FileUtils
     FilenameFilter filenameFilter = new FileNameFilter(filename, ignoreExtensions);
     return file.list(filenameFilter);
   }
-
-  /**
-   * returns an array of files in zipfileName(fileName.zip)
-   * @param zipfileName
-   * @return
-   */
-  public static String[] zipContents(String zipfileName)
-  {
-    throw new UnsupportedOperationException("Change implementation to apache compress");
-    /*
-    try 
-    {
-      // Initiate ZipFile object with the path/name of the zip file.
-      ZipFile zipFile = new ZipFile(zipfileName);
-
-      // Get the list of file headers from the zip file
-      List<FileHeader> headers = zipFile.getFileHeaders();
-      String[] fileNames = new String[headers.size()];
-
-      // Loop through the file headers
-      for(int i = 0; i < headers.size(); i++) 
-      {
-        FileHeader header = headers.get(i);
-        fileNames[i] = header.getFileName();
-      }
-      return fileNames;
-    } 
-    catch (ZipException e) 
-    {
-      Log.error("Zip Error",e);
-    }
-    return null;
-    */
-  }
-
-
-
-  /**
-   * Zip all files of given directory, and the directory
-   * @param dirName
-   * @param recursive
-   * @return Creates a zip file named dirName+".zip", this file name is returned;
-   */
-  public static String zipDirectory(String dirName)
-  {
-    zipDirectory(dirName,dirName);
-    return dirName+".zip";
-  }
-
-  public static void zipDirectory(String dirName, String zipFileName)
-  {
-    throw new UnsupportedOperationException("Change implementation to apache compress");
-    /*
-    try 
-    {
-      File file = new File(zipFileName);
-      if (file.exists() && file.isFile())
-      {
-        Log.warn(file.getName() + "Already exists, deleting old file");
-        FileUtils.delete(new File(file.getName()));
-      }
-
-      // Initiate ZipFile object with the path/name of the zip file.
-      ZipFile zipFile = new ZipFile(zipFileName);
-
-      // Initiate Zip Parameters which define various properties such
-      // as compression method, etc.
-      ZipParameters parameters = new ZipParameters();
-
-      // set compression method to store compression
-      parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
-
-      // Set the compression level
-      parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_ULTRA);
-
-      // Add folder to the zip file
-      parameters.setRootFolderInZip(dirName);
-      zipFile.addFolder(dirName, parameters);  
-    } 
-    catch (ZipException e) 
-    {
-      e.printStackTrace();
-    }
-    */
-  }
-
-  public static void zipDirectories(String[] directories, String zipFileName)
-  {
-    File f = new File(zipFileName);
-    zipDirectories(directories,f);
-  }
-
-  /**
-   * @param directoriesToZip
-   * @param file
-   */
-  public static void zipDirectories(String[] directories, File zipFile)
-  {
-    throw new UnsupportedOperationException("Change implementation to apache compress");
-    /*
-    try
-    {
-      if (zipFile.exists() && zipFile.isFile())
-      {
-        Log.warn(zipFile.getName() + "Already exists, deleting old file");
-        FileUtils.delete(new File(zipFile.getName()));
-      }
-
-      ZipFile zip = new ZipFile(zipFile);
-
-      // Initiate Zip Parameters which define various properties such
-      // as compression method, etc.
-      ZipParameters parameters = new ZipParameters();
-
-      // set compression method to store compression
-      parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
-
-      // Set the compression level
-      parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL);
-
-      // Add folder to the zip file
-      for(String dir : directories)
-      {
-        parameters.setRootFolderInZip(dir);
-        zip.addFolder(dir, parameters);
-      }
-    }
-    catch (Exception e)
-    {
-      Log.error("Unable to zip directories to  " + zipFile.getAbsolutePath(), e);
-    }
-    */
-  }
   
   /**
   * Zips all files in fileNames array
@@ -860,80 +725,59 @@ public class FileUtils
   * @param zipFileName
   * @return
   */
- public static void zipFiles(String[] fileNames, String zipFileName)
- {
-  	zipFiles(fileNames,zipFileName,null);
- }
+  public static void zipFiles(String[] fileNames, String zipFileName)
+  {
+   	zipFiles(fileNames,zipFileName,null);
+  }
 
   /**
    * Zips all files in fileNames array
    * @param fileNames
    * @param zipFileName
+   * @param zipPath directory structure to put in the zip
    * @return
    */
   public static void zipFiles(String[] fileNames, String zipFileName, String zipPath)
   {
-    throw new UnsupportedOperationException("Change implementation to apache compress");
-    /*
     try
-    {      
-      Set<String> entries = new HashSet<String>();
-      byte[] buffer = new byte[1024];
+    {
       new File(zipFileName).delete();
-      FileOutputStream f = new FileOutputStream(zipFileName);
-      ZipOutputStream zip = new ZipOutputStream(new BufferedOutputStream(f));
-      zip.setLevel(Zip4jConstants.DEFLATE_LEVEL_ULTRA);
-      zip.setMethod(Zip4jConstants.COMP_DEFLATE);
+      OutputStream fo = Files.newOutputStream(Paths.get(zipFileName));
+      ArchiveOutputStream o = new ZipArchiveOutputStream(fo);
 
-      // Build the list of files to be added in the array list
-      // Objects of type File have to be added to the ArrayList
-      String path;
-      String fileName;
-      for(String file : fileNames)
+      for (String fileName : fileNames)
       {
-        if(file.startsWith("./"))
-          file = file.substring(2);
+        String path;
+        File file = new File(fileName);
+        if (!file.isFile())
+          continue;
+        if(fileName.startsWith("./"))
+          fileName = fileName.substring(2);
         
-        fileName = file.substring(file.lastIndexOf("/")+1);
+        fileName = fileName.substring(fileName.lastIndexOf("/")+1);
         if(zipPath==null||zipPath.isEmpty())
         {
-          path = file.substring(0,file.lastIndexOf("/")+1);
+          path = fileName.substring(0,fileName.lastIndexOf("/")+1);
         }
         else
         {
-        	path = zipPath.substring(0,zipPath.lastIndexOf("/")+1);
+          path = zipPath.substring(0,zipPath.lastIndexOf("/")+1);
         }
-        
-        if(!entries.contains(path))
+        ArchiveEntry entry = o.createArchiveEntry(file, path+fileName);
+        // potentially add more flags to entry
+        o.putArchiveEntry(entry);
+        try (InputStream i = Files.newInputStream(file.toPath()))
         {
-          entries.add(path);
-          zip.putNextEntry(new ZipEntry(path));
-          zip.closeEntry();
+            IOUtils.copy(i, o);
         }
-        
-        FileInputStream fin = new FileInputStream(file);
-        fileName=fileName.replaceAll(".txt", ".csv");
-        zip.putNextEntry(new ZipEntry(path+fileName));
-        int length;
-        while ((length = fin.read(buffer)) > 0) 
-        {
-          zip.write(buffer, 0, length);
-        }
-        zip.closeEntry();
+        o.closeArchiveEntry();
       }
-
-      // Now add files to the zip file
-      // Note: To add a single file, the method addFile can be used
-      // Note: If the zip file already exists and if this zip file is a split file
-      // then this method throws an exception as Zip Format Specification does not 
-      // allow updating split zip files
-      zip.close();
-    } 
+      o.finish();
+    }
     catch (IOException e) 
     {
       Log.error("Error compressing files to " + zipFileName + "\n", e);
     }
-    */
   }
 
   /**
@@ -972,7 +816,7 @@ public class FileUtils
       {
         if(s.getAbsolutePath().endsWith(extension))
         {
-          String zipTo = t.getAbsolutePath().substring(0, t.getAbsolutePath().length()-4);          
+          String zipTo = t.getAbsolutePath().substring(0, t.getAbsolutePath().length()-4);
           FileUtils.zipFiles(new String[]{s.getAbsolutePath()}, zipTo);
         }
       }
@@ -1003,46 +847,45 @@ public class FileUtils
 
   public static void unzipToDirectory(File f, String toDirectory)
   {
-    throw new UnsupportedOperationException("Change implementation to apache compress");
-    /*
     try
     {
-      ZipFile zipFile = new ZipFile(f);
-      zipFile.extractAll(toDirectory);
-    }
-    catch(Exception e)
-    {
-      Log.error("Zip Error",e);
-    }
-    */
-  }
+      InputStream fi = Files.newInputStream(Paths.get(f.getPath()));
+      ArchiveInputStream i = new ZipArchiveInputStream(fi);
 
-  /**
-   * 
-   * @param resultsFilename of the zip (including ext.)
-   * @return integer, total unpacked size of all the files that are in the zipfile 
-   */
-  public static int getUnzippedFileSize(String fileName)
-  {
-    throw new UnsupportedOperationException("Change implementation to apache compress");
-    /*
-    int size = 0;
-    try
-    {
-      ZipFile zipfile = new ZipFile(fileName);
-      List<FileHeader> headers = zipfile.getFileHeaders();
-
-      for(FileHeader header : headers)
+      ArchiveEntry entry = null;
+      while ((entry = i.getNextEntry()) != null)
       {
-        size += header.getUncompressedSize();
+        if (!i.canReadEntryData(entry))
+        {
+          // log something?
+          continue;
+        }
+        String name = toDirectory+"/"+entry;
+        File file = new File(name);
+        if (entry.isDirectory())
+        {
+          if (!file.isDirectory() && !file.mkdirs())
+          {
+            throw new IOException("failed to create directory " + f);
+          }
+        }
+        else
+        {
+          File parent = file.getParentFile();
+          if (!parent.isDirectory() && !parent.mkdirs()) {
+            throw new IOException("failed to create directory " + parent);
+          }
+          try (OutputStream o = Files.newOutputStream(file.toPath()))
+          {
+            IOUtils.copy(i, o);
+          }
+        }
       }
     }
-    catch(Exception e)
+    catch (Exception e)
     {
-      Log.error("Error inspecting zip file "+fileName);
+      Log.error(e.getMessage());
     }
-    return size;
-    */
   }
 
   // BLOCK_SIZE should probably a factor or multiple of the size of a disk sector/cluster.

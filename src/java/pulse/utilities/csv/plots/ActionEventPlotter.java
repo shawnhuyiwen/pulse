@@ -633,7 +633,7 @@ public class ActionEventPlotter implements Plotter
     int verticalPixels = 800 + 170*(allActionsAndEvents.size()/5);
     
     //This is a little hacky, but if we want only the legend, just extend Plot() and remove the draw functionality so it makes a blank plot
-    class legendPlot extends Plot
+    class LegendPlot extends Plot
     {
       private static final long serialVersionUID = -628117496047176276L;
       
@@ -652,7 +652,7 @@ public class ActionEventPlotter implements Plotter
     //Then add the legend to that and throw away the original plot
     if(job.legendOnly)
     {
-      chart = new JFreeChart("", null, new legendPlot(), false);
+      chart = new JFreeChart("", null, new LegendPlot(), false);
       chart.addLegend(actionEventsLegend);
     }
 
