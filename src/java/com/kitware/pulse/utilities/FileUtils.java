@@ -60,11 +60,10 @@ public class FileUtils
     if(location==null || location.isEmpty())
       location = System.getProperty("user.dir");
     Log.info("Could not find library on path, looking for library in "+location);
-    // With out '.' we cant tell diff between libName.dll and libNameXYZ.dll
+    // With out '.' we can't tell diff between libName.dll and libNameXYZ.dll
     List<String> files = FileUtils.findFiles(location, libName+".", true);
     for(String file : files)
     {
-      Log.info("Found "+file);
       if(file.endsWith(libName+".dll") ||
          file.endsWith(libName+".so")  ||
          file.endsWith(libName+".dylib"))
