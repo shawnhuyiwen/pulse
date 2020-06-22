@@ -8,8 +8,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.protobuf.InvalidProtocolBufferException;
-
 import pulse.cdm.bind.Engine.DataRequestData.eCategory;
 import pulse.cdm.bind.Events.eEvent;
 import pulse.cdm.bind.Patient.PatientData.eSex;
@@ -33,7 +31,6 @@ import pulse.cdm.properties.CommonUnits.TimeUnit;
 import pulse.cdm.properties.CommonUnits.VolumePerTimeUnit;
 import pulse.cdm.properties.CommonUnits.VolumeUnit;
 import pulse.cdm.properties.SEScalarTime;
-import pulse.cdm.substance.SESubstanceCompound;
 import pulse.engine.PulseCompartments;
 import pulse.engine.PulseEngine;
 import pulse.utilities.Log;
@@ -131,6 +128,15 @@ public class HowTo_EngineUse
    // By default, no log file is written
    pe.setLogFilename("./test_results/HowTo_EngineUse.java.log");
    
+   // The Pulse API provides a Log class
+   // It can be used to write to easily forward messages to the console and any LogListener
+   // So messages from this example, and the Pulse Engine will both goto the same slf4j logger
+   // If you use the Log (like this example), it by default outputs logged messages to the console
+   // We are using a slf4j listener that is also going to write to the console.
+   // We are going to turn off console writing by the Log class, and it will only
+   // direct log messages to our Listener, which will write them to the console
+   Log.output2Console = false;
+   
    // Create a listener that will get any log messages that come from the engine.
    // (Info, Warnings, Errors, Fatal Errors)
    
@@ -172,7 +178,7 @@ public class HowTo_EngineUse
    // data_values[0] is ALWAYS the simulation time in seconds
    // The rest of the data values are in order of the data_requests list provided
    
-   InitializationType initType = InitializationType.PatientObject;
+   InitializationType initType = InitializationType.StateFile;
    // INITIALIZE THE ENGINE WITH A PATIENT
    switch(initType)
    {

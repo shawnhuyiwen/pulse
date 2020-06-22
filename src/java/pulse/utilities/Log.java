@@ -51,7 +51,6 @@ public class Log
   
   private static Level level=Level.INFO;
   public static boolean output2Console = true;
-  private static String currentLoggerName;
   private static Set<String> ignoreClasses=new HashSet<>();
   static
   {
@@ -136,7 +135,7 @@ public class Log
     if(listeners!=null)
     {
       for(LogListener a : listeners)
-        a.debug(msg,currentLoggerName);
+        a.debug(msg);
     }
   }
 
@@ -175,7 +174,7 @@ public class Log
     if(listeners!=null)
     {
       for(LogListener a : listeners)
-        a.info(msg,currentLoggerName);
+        a.info(msg);
     }
   }
 
@@ -214,7 +213,7 @@ public class Log
     if(listeners!=null)
     {
       for(LogListener a : listeners)
-        a.warn(msg,currentLoggerName);
+        a.warn(msg);
     }
   }
 
@@ -253,7 +252,7 @@ public class Log
     if(listeners!=null)
     {
       for(LogListener a : listeners)
-        a.error(msg,currentLoggerName);
+        a.error(msg);
     }
   }
 
@@ -305,7 +304,7 @@ public class Log
     if(listeners!=null)
     {
       for(LogListener a : listeners)
-        a.fatal(msg,currentLoggerName);
+        a.fatal(msg);
     }
   }
 

@@ -33,6 +33,14 @@ public abstract class LogListener
   {
     this.handleProgress=b;
   }
+  
+  public final void debug(String msg)
+  {
+    if(Log.isDebug(this.level))
+    {
+      handleDebug(msg);
+    }
+  }
   abstract protected void handleDebug(String msg);
   
   public final void debug(String msg, String origin)
