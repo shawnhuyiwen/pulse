@@ -65,9 +65,9 @@ public class FileUtils
     for(String file : files)
     {
       Log.info("Found "+file);
-      if(file.equals(libName+".dll") ||
-         file.equals(libName+".so")  ||
-         file.equals(libName+".dylib"))
+      if(file.endsWith(libName+".dll") ||
+         file.endsWith(libName+".so")  ||
+         file.endsWith(libName+".dylib"))
       {
         try
         {
