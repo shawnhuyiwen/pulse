@@ -28,7 +28,7 @@ public class FileUtils
   public static void main(String[] args)
   {
     for(String file : FileUtils.findFiles("./new_baselines", ".csv", false))
-      FileUtils.zipFiles(new String[]{file}, file.replaceAll(".csv", ".zip"));    
+      FileUtils.zipFiles(new String[]{file}, file.replaceAll(".csv", ".zip"));
   }
 
   public static boolean loadLibraries(List<String> libs, String location)
@@ -44,37 +44,41 @@ public class FileUtils
   }
   public static boolean loadLibrary(String libName, String location)
   {
-    Log.info("Loading native library : "+location+"/"+libName);
-    if(location==null || location.isEmpty())
-      location = System.getProperty("user.dir");
-    // With out '.' we cant tell diff between CommonDataModel.dll and CommonDataModelJNI.dll
-    List<String> files = FileUtils.findFiles(location, libName+".", true);
-    List<String> dfiles = FileUtils.findFiles(location, libName+"d.", true);
+    Log.info("Loading native library : "+libName);
+    // See if we can get the library from the JVM/java.library.path
     try
     {
-      //Log.info("Found files at "+files);
-      if (files.size()==1)
-      {
-        System.load(files.get(0));
-      }
-      else if (dfiles.size()==1)
-      {
-        Log.warn("Loading debug version of "+libName+", performace may be reduced");
-        System.load(dfiles.get(0));
-      }
-      else// Attempt to load and hope for the best...
-      {
-        //Log.info("loadLibrary() "+libName+"from "+location);
-        System.loadLibrary(libName);
-      }
+      System.loadLibrary(libName);
+      return true;
     }
     catch(UnsatisfiedLinkError ex)
     {
-      Log.error("Unable to load "+location+"/"+libName, ex);
-      return false;
+      // Ok, its not on the java.library.path,
+      // Let's try to look for it in the location provided
     }
 
-    return true;
+    if(location==null || location.isEmpty())
+      location = System.getProperty("user.dir");
+    // With out '.' we cant tell diff between libName.dll and libNameXYZ.dll
+    List<String> files = FileUtils.findFiles(location, libName+".", true);
+    for(String file : files)
+    {
+      if(file.equals(libName+".dll") ||
+         file.equals(libName+".so")  ||
+         file.equals(libName+".dylib"))
+      {
+        try
+        {
+          System.load(file);
+          return true;
+        }
+        catch(UnsatisfiedLinkError ex)
+        {
+          // Keep looking...
+        }
+      }
+    }
+    return false;
   }
 
   /** 
