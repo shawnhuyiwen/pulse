@@ -59,22 +59,26 @@ public class FileUtils
 
     if(location==null || location.isEmpty())
       location = System.getProperty("user.dir");
+    Log.info("Could not find library on path, looking for library in "+location);
     // With out '.' we cant tell diff between libName.dll and libNameXYZ.dll
     List<String> files = FileUtils.findFiles(location, libName+".", true);
     for(String file : files)
     {
+      Log.info("Found "+file);
       if(file.equals(libName+".dll") ||
          file.equals(libName+".so")  ||
          file.equals(libName+".dylib"))
       {
         try
         {
+          Log.info("Loading "+file);
           System.load(file);
           return true;
         }
         catch(UnsatisfiedLinkError ex)
         {
           // Keep looking...
+          Log.error("Could not load "+file);
         }
       }
     }
