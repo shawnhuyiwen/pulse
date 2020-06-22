@@ -19,9 +19,12 @@ public class jniBridge
   // Specify the location to find the PulseJNI library
   public static void initialize(String lib_dir)
   {
+    if(loaded)
+      return;
     if(!FileUtils.loadLibraries(new ArrayList<>(Arrays.asList("PulseJNI")),lib_dir))
       throw new RuntimeException("Could not load PulseJNI library");
      nativeInitialize();
+     loaded = true;
   }
   private static native void nativeInitialize();
   
