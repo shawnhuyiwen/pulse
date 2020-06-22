@@ -1,15 +1,6 @@
 # Scripts to assist developers
 # Mostly these are calling the test suite driver and validator classes in Java
 
-# TODO More Test Targets
-# Rebasing
-# com.kitware.physiology.utilities.testing.Rebase [from to (config|ALL)]
-#
-# Ploting
-# com.kitware.physiology.utilities.csv.plots.PlotDriver
-#
-# Reconfigure the config file (in memory) so we can test serialization
-# com.kitware.physiology.utilities.testing.Reconfiguration
 
 find_package(Java REQUIRED)
 include(UseJava)
@@ -43,22 +34,22 @@ endif()
 
 if(TYPE STREQUAL "tests" OR TYPE STREQUAL "SystemValidation" OR TYPE STREQUAL "PatientValidation")
   if(TYPE STREQUAL "tests")
-    execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" pulse.cdm.testing.SETestDriver CDMUnitTests.config)
-    execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" pulse.cdm.testing.SETestDriver EngineUnitTests.config)
-    execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" pulse.cdm.testing.SETestDriver ScenarioVerification.config)
+    execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.pulse.cdm.testing.SETestDriver CDMUnitTests.config)
+    execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.pulse.cdm.testing.SETestDriver EngineUnitTests.config)
+    execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.pulse.cdm.testing.SETestDriver ScenarioVerification.config)
   endif()
   if(TYPE STREQUAL "SystemValidation" OR TYPE STREQUAL "tests")
-    execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" pulse.cdm.testing.SETestDriver SystemVerification.config)
-    execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" pulse.cdm.testing.validation.SystemValidation TEST)
+    execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.pulse.cdm.testing.SETestDriver SystemVerification.config)
+    execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.pulse.cdm.testing.validation.SystemValidation TEST)
   endif()
   if(TYPE STREQUAL "PatientValidation" OR TYPE STREQUAL "tests")
-    execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" pulse.cdm.testing.SETestDriver PatientVerification.config)
-    execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" pulse.cdm.testing.validation.PatientValidation TEST)
+    execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.pulse.cdm.testing.SETestDriver PatientVerification.config)
+    execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.pulse.cdm.testing.validation.PatientValidation TEST)
   endif()
 elseif(TYPE STREQUAL "genData")
-  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" pulse.dataset.DataSetReader)
+  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.pulse.dataset.DataSetReader)
 elseif(TYPE STREQUAL "genStates")
-  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" pulse.cdm.testing.SETestDriver InitialPatientStates.config)
+  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.pulse.cdm.testing.SETestDriver InitialPatientStates.config)
 elseif(TYPE STREQUAL "doxygen")
   file(READ @CMAKE_SOURCE_DIR@/docs/Doxygen/header.html HEADER)
   file(READ @CMAKE_SOURCE_DIR@/docs/Doxygen/footer.html FOOTER)
@@ -85,13 +76,13 @@ elseif(TYPE STREQUAL "doxygen")
   file(WRITE  @CMAKE_SOURCE_DIR@/docs/Doxygen/panel_footer.html "${FOOTER_PANEL}")
   file(APPEND @CMAKE_SOURCE_DIR@/docs/Doxygen/panel_footer.html "${FOOTER}")
   # These are run above
-  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" pulse.cdm.testing.validation.SystemValidation BASELINE)
-  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" pulse.cdm.testing.validation.PatientValidation BASELINE)
-  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" pulse.cdm.doxygen.DoxygenPreprocessor "@CMAKE_SOURCE_DIR@/docs/Markdown" ./docs/markdown)
-  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" pulse.cdm.doxygen.DoxygenPreprocessor "@CMAKE_SOURCE_DIR@/docs/Methodology" ./docs/markdown ./test_results/tables)
-  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" pulse.cdm.doxygen.Proto2Doxygen "@CMAKE_SOURCE_DIR@/src/schema" ./docs/markdown)
-  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" pulse.cdm.doxygen.CDM2MD ./docs/markdown)
-  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" pulse.utilities.csv.plots.PlotDriver PlotRun.config)
+  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.pulse.cdm.testing.validation.SystemValidation BASELINE)
+  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.pulse.cdm.testing.validation.PatientValidation BASELINE)
+  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.pulse.cdm.doxygen.DoxygenPreprocessor "@CMAKE_SOURCE_DIR@/docs/Markdown" ./docs/markdown)
+  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.pulse.cdm.doxygen.DoxygenPreprocessor "@CMAKE_SOURCE_DIR@/docs/Methodology" ./docs/markdown ./test_results/tables)
+  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.pulse.cdm.doxygen.Proto2Doxygen "@CMAKE_SOURCE_DIR@/src/schema" ./docs/markdown)
+  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.pulse.cdm.doxygen.CDM2MD ./docs/markdown)
+  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.pulse.utilities.csv.plots.PlotDriver PlotRun.config)
   execute_process(COMMAND doxygen ./docs/full.doxy)
   # Build our landing files
   setup_landing_page(index.html)
@@ -120,15 +111,15 @@ elseif(TYPE STREQUAL "rebase")
         @CMAKE_SOURCE_DIR@
       )
   endif()
-  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" pulse.cdm.testing.Rebase ${GIT_HASH})
+  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.pulse.cdm.testing.Rebase ${GIT_HASH})
 elseif(TYPE STREQUAL "FullReport")
-  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" pulse.cdm.testing.SEReportResults)
+  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.pulse.cdm.testing.SEReportResults)
 elseif(TYPE STREQUAL "plotter")
-  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" pulse.utilities.csv.plots.CSVPlotTool ${ARG1})
+  execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.pulse.utilities.csv.plots.CSVPlotTool ${ARG1})
 else()
   if(${TYPE} MATCHES "Plot")
-    execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" pulse.utilities.csv.plots.PlotDriver ${TYPE}.config)
+    execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.pulse.utilities.csv.plots.PlotDriver ${TYPE}.config)
   else()
-    execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" pulse.cdm.testing.SETestDriver ${TYPE}.config)
+    execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.pulse.cdm.testing.SETestDriver ${TYPE}.config)
   endif()
 endif()

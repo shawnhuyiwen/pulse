@@ -19,10 +19,10 @@ add_library_ex(PulseJNI SHARED
 target_include_directories(PulseJNI PRIVATE ${JNI_INCLUDE_DIRS})
 set_target_properties (PulseJNI PROPERTIES FOLDER ${PROJECT_NAME})
 
-file(GLOB_RECURSE JAVA_FILES
-  "com/*.java"
-  "pulse/*.java")
-add_jar(PulseJava ${JAVA_FILES}
+include(PulseFiles.cmake)
+# Still going to glob google protobuf java files
+file(GLOB_RECURSE GOOGLE_JAVA_FILES "com/google/*.java")
+add_jar(PulseJava ${PULSE_JAVA_FILES} ${GOOGLE_JAVA_FILES}
     INCLUDE_JARS 
       "jar/commons-collections4-4.4.jar"
       "jar/commons-compress-1.19.jar"

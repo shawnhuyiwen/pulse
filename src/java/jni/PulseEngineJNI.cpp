@@ -11,21 +11,21 @@
   /////////////////////
 
 extern "C"
-JNIEXPORT jlong JNICALL Java_pulse_engine_testing_EngineUnitTestDriver_nativeAllocate(JNIEnv *env, jobject obj)
+JNIEXPORT jlong JNICALL Java_com_kitware_pulse_engine_testing_EngineUnitTestDriver_nativeAllocate(JNIEnv *env, jobject obj)
 {
   PulseEngineTest *executor = new PulseEngineTest();
   return reinterpret_cast<jlong>(executor);
 }
 
 extern "C"
-JNIEXPORT void JNICALL Java_pulse_engine_testing_EngineUnitTestDriver_nativeDelete(JNIEnv *env, jobject obj, jlong ptr)
+JNIEXPORT void JNICALL Java_com_kitware_pulse_engine_testing_EngineUnitTestDriver_nativeDelete(JNIEnv *env, jobject obj, jlong ptr)
 {
   PulseEngineTest *executor = reinterpret_cast<PulseEngineTest*>(ptr);
   SAFE_DELETE(executor);
 }
 
 extern "C"
-JNIEXPORT void JNICALL Java_pulse_engine_testing_EngineUnitTestDriver_nativeExecute(JNIEnv * env, jobject obj, jlong ptr, jstring test, jstring toDir)
+JNIEXPORT void JNICALL Java_com_kitware_pulse_engine_testing_EngineUnitTestDriver_nativeExecute(JNIEnv * env, jobject obj, jlong ptr, jstring test, jstring toDir)
 {
   const char* testName = env->GetStringUTFChars(test, JNI_FALSE);
   const char* outputDir = env->GetStringUTFChars(toDir, JNI_FALSE);
@@ -40,7 +40,7 @@ JNIEXPORT void JNICALL Java_pulse_engine_testing_EngineUnitTestDriver_nativeExec
   ////////////////////
 
 extern "C"
-JNIEXPORT jlong JNICALL Java_pulse_engine_PulseEngine_nativeAllocate(JNIEnv *env, jobject obj)
+JNIEXPORT jlong JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeAllocate(JNIEnv *env, jobject obj)
 { 
   PulseEngineJNI *engineJNI = new PulseEngineJNI();
   engineJNI->jniEnv = env;
@@ -50,7 +50,7 @@ JNIEXPORT jlong JNICALL Java_pulse_engine_PulseEngine_nativeAllocate(JNIEnv *env
 }
 
 extern "C"
-JNIEXPORT void JNICALL Java_pulse_engine_PulseEngine_nativeDelete(JNIEnv *env, jobject obj, jlong ptr)
+JNIEXPORT void JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeDelete(JNIEnv *env, jobject obj, jlong ptr)
 {
   PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
   engineJNI->jniEnv = env;
@@ -63,7 +63,7 @@ JNIEXPORT void JNICALL Java_pulse_engine_PulseEngine_nativeDelete(JNIEnv *env, j
 //////////////////////
 
 extern "C"
-JNIEXPORT jboolean JNICALL Java_pulse_engine_PulseEngine_nativeExecuteScenario(JNIEnv * env, jobject obj, jlong ptr, jstring scenario, jint scenario_format, jstring csvFilename, jstring logFilename, jstring dataDir)
+JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeExecuteScenario(JNIEnv * env, jobject obj, jlong ptr, jstring scenario, jint scenario_format, jstring csvFilename, jstring logFilename, jstring dataDir)
 {
   PulseEngineJNI* engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
   engineJNI->jniEnv = env;
@@ -93,7 +93,7 @@ JNIEXPORT jboolean JNICALL Java_pulse_engine_PulseEngine_nativeExecuteScenario(J
 //////////////////
 
 extern "C"
-JNIEXPORT jboolean JNICALL Java_pulse_engine_PulseEngine_nativeSerializeFromFile(JNIEnv *env, jobject obj, jlong ptr, jstring stateFilename, jstring dataRequests, jint dataRequestsFormat)
+JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeSerializeFromFile(JNIEnv *env, jobject obj, jlong ptr, jstring stateFilename, jstring dataRequests, jint dataRequestsFormat)
 {
   PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
   engineJNI->jniEnv = env;
@@ -111,7 +111,7 @@ JNIEXPORT jboolean JNICALL Java_pulse_engine_PulseEngine_nativeSerializeFromFile
   return bRet;
 }
 extern "C"
-JNIEXPORT jboolean JNICALL Java_pulse_engine_PulseEngine_nativeSerializeToFile(JNIEnv *env, jobject obj, jlong ptr, jstring stateFilename)
+JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeSerializeToFile(JNIEnv *env, jobject obj, jlong ptr, jstring stateFilename)
 {
   jboolean bRet;
   PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
@@ -126,7 +126,7 @@ JNIEXPORT jboolean JNICALL Java_pulse_engine_PulseEngine_nativeSerializeToFile(J
 }
 
 extern "C"
-JNIEXPORT jboolean JNICALL Java_pulse_engine_PulseEngine_nativeSerializeFromString(JNIEnv * env, jobject obj, jlong ptr, jstring state, jstring dataRequests, jint format)
+JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeSerializeFromString(JNIEnv * env, jobject obj, jlong ptr, jstring state, jstring dataRequests, jint format)
 {
   jboolean bRet;
   PulseEngineJNI* engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
@@ -145,7 +145,7 @@ JNIEXPORT jboolean JNICALL Java_pulse_engine_PulseEngine_nativeSerializeFromStri
   return bRet;
 }
 extern "C"
-JNIEXPORT jstring JNICALL Java_pulse_engine_PulseEngine_nativeSerializeToString(JNIEnv * env, jobject obj, jlong ptr, jint format)
+JNIEXPORT jstring JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeSerializeToString(JNIEnv * env, jobject obj, jlong ptr, jint format)
 {
   PulseEngineJNI* engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
   engineJNI->jniEnv = env;
@@ -158,7 +158,7 @@ JNIEXPORT jstring JNICALL Java_pulse_engine_PulseEngine_nativeSerializeToString(
 
 
 extern "C"
-JNIEXPORT jboolean JNICALL Java_pulse_engine_PulseEngine_nativeInitializeEngine(JNIEnv *env, jobject obj, jlong ptr, jstring patient_configuration, jstring dataRequests, jint format, jstring dataDir)
+JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeInitializeEngine(JNIEnv *env, jobject obj, jlong ptr, jstring patient_configuration, jstring dataRequests, jint format, jstring dataDir)
 {
   PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
   engineJNI->jniEnv = env;
@@ -188,7 +188,7 @@ JNIEXPORT jboolean JNICALL Java_pulse_engine_PulseEngine_nativeInitializeEngine(
 }
 
 extern "C"
-JNIEXPORT jstring JNICALL Java_pulse_engine_PulseEngine_nativeGetInitialPatient(JNIEnv * env, jobject obj, jlong ptr, jint format)
+JNIEXPORT jstring JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeGetInitialPatient(JNIEnv * env, jobject obj, jlong ptr, jint format)
 {
   PulseEngineJNI* engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
   engineJNI->jniEnv = env;
@@ -200,7 +200,7 @@ JNIEXPORT jstring JNICALL Java_pulse_engine_PulseEngine_nativeGetInitialPatient(
 }
 
 extern "C"
-JNIEXPORT jstring JNICALL Java_pulse_engine_PulseEngine_nativeGetAssessment(JNIEnv * env, jobject obj, jlong ptr, jint type, jint format)
+JNIEXPORT jstring JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeGetAssessment(JNIEnv * env, jobject obj, jlong ptr, jint type, jint format)
 {
   PulseEngineJNI* engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
   engineJNI->jniEnv = env;
@@ -212,7 +212,7 @@ JNIEXPORT jstring JNICALL Java_pulse_engine_PulseEngine_nativeGetAssessment(JNIE
 }
 
 extern "C"
-JNIEXPORT void JNICALL Java_pulse_engine_PulseEngine_nativeForwardLogMessages(JNIEnv * env, jobject obj, jlong ptr, jboolean b)
+JNIEXPORT void JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeForwardLogMessages(JNIEnv * env, jobject obj, jlong ptr, jboolean b)
 {
   PulseEngineJNI* engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
   engineJNI->jniEnv = env;
@@ -220,7 +220,7 @@ JNIEXPORT void JNICALL Java_pulse_engine_PulseEngine_nativeForwardLogMessages(JN
   engineJNI->KeepLogMessages(b);
 }
 extern "C"
-JNIEXPORT void JNICALL Java_pulse_engine_PulseEngine_nativeSetLogFilename(JNIEnv * env, jobject obj, jlong ptr, jstring logFilename)
+JNIEXPORT void JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeSetLogFilename(JNIEnv * env, jobject obj, jlong ptr, jstring logFilename)
 {
   PulseEngineJNI* engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
   engineJNI->jniEnv = env;
@@ -231,7 +231,7 @@ JNIEXPORT void JNICALL Java_pulse_engine_PulseEngine_nativeSetLogFilename(JNIEnv
 }
 
 extern "C"
-JNIEXPORT void JNICALL Java_pulse_engine_PulseEngine_nativeKeepEventChanges(JNIEnv * env, jobject obj, jlong ptr, jboolean b)
+JNIEXPORT void JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeKeepEventChanges(JNIEnv * env, jobject obj, jlong ptr, jboolean b)
 {
   PulseEngineJNI* engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
   engineJNI->jniEnv = env;
@@ -239,7 +239,7 @@ JNIEXPORT void JNICALL Java_pulse_engine_PulseEngine_nativeKeepEventChanges(JNIE
   engineJNI->KeepEventChanges(b);
 }
 extern "C"
-JNIEXPORT jstring JNICALL Java_pulse_engine_PulseEngine_nativePullEvents(JNIEnv * env, jobject obj, jlong ptr, jint format)
+JNIEXPORT jstring JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativePullEvents(JNIEnv * env, jobject obj, jlong ptr, jint format)
 {
   PulseEngineJNI* engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
   engineJNI->jniEnv = env;
@@ -250,7 +250,7 @@ JNIEXPORT jstring JNICALL Java_pulse_engine_PulseEngine_nativePullEvents(JNIEnv 
   return events;
 }
 extern "C"
-JNIEXPORT jstring JNICALL Java_pulse_engine_PulseEngine_nativePullActiveEvents(JNIEnv * env, jobject obj, jlong ptr, jint format)
+JNIEXPORT jstring JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativePullActiveEvents(JNIEnv * env, jobject obj, jlong ptr, jint format)
 {
   PulseEngineJNI* engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
   engineJNI->jniEnv = env;
@@ -262,7 +262,7 @@ JNIEXPORT jstring JNICALL Java_pulse_engine_PulseEngine_nativePullActiveEvents(J
 }
 
 extern "C"
-JNIEXPORT jboolean JNICALL Java_pulse_engine_PulseEngine_nativeProcessActions(JNIEnv * env, jobject obj, jlong ptr, jstring actions, jint format)
+JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeProcessActions(JNIEnv * env, jobject obj, jlong ptr, jstring actions, jint format)
 {
   if (actions == nullptr)
     return true;
@@ -277,7 +277,7 @@ JNIEXPORT jboolean JNICALL Java_pulse_engine_PulseEngine_nativeProcessActions(JN
 }
 
 extern "C"
-JNIEXPORT jdouble JNICALL Java_pulse_engine_PulseEngine_nativeGetTimeStep(JNIEnv * env, jobject obj, jlong ptr, jstring unit, jint format)
+JNIEXPORT jdouble JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeGetTimeStep(JNIEnv * env, jobject obj, jlong ptr, jstring unit, jint format)
 {
   PulseEngineJNI* engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
   engineJNI->jniEnv = env;
@@ -292,7 +292,7 @@ JNIEXPORT jdouble JNICALL Java_pulse_engine_PulseEngine_nativeGetTimeStep(JNIEnv
 }
 
 extern "C"
-JNIEXPORT bool JNICALL Java_pulse_engine_PulseEngine_nativeAdvanceTimeStep(JNIEnv *env, jobject obj, jlong ptr)
+JNIEXPORT bool JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeAdvanceTimeStep(JNIEnv *env, jobject obj, jlong ptr)
 {
   PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
   engineJNI->jniEnv = env;
@@ -302,7 +302,7 @@ JNIEXPORT bool JNICALL Java_pulse_engine_PulseEngine_nativeAdvanceTimeStep(JNIEn
 }
 
 extern "C"
-JNIEXPORT jdoubleArray JNICALL Java_pulse_engine_PulseEngine_nativePullData(JNIEnv * env, jobject obj, jlong ptr)
+JNIEXPORT jdoubleArray JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativePullData(JNIEnv * env, jobject obj, jlong ptr)
 {
   PulseEngineJNI* engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
   engineJNI->jniEnv = env;
