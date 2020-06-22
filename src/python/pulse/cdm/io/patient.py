@@ -89,6 +89,7 @@ def serialize_patient_to_bind(src: SEPatient, dst: PatientData):
         serialize_scalar_volume_to_bind(src.get_vital_capacity(), dst.VitalCapacity)
 
 def serialize_patient_from_bind(src: PatientData, dst: SEPatient):
+    dst.clear()
     dst.set_name(src.Name)
     dst.set_sex(eSex(src.Sex))
     if src.HasField("Age"):

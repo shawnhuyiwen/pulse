@@ -35,4 +35,9 @@ public class SEScalarNegative1To1 : SEScalar
     else
       throw new System.Exception("Value must be [0-1]");
   }
+
+  public new string ToString()
+  {
+    return this.value + "";
+  }
 }

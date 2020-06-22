@@ -86,6 +86,16 @@ C_EXPORT bool C_CALL InitializeEngine(PulseEngineThunk* thunk, const char* patie
 }
 
 extern "C"
+C_EXPORT bool C_CALL GetInitialPatient(PulseEngineThunk * thunk, int format, char** str_addr)
+{
+  std::string initial_patient = thunk->GetInitialPatient((SerializationFormat)format);
+  if (initial_patient.empty())
+    return false;
+  *str_addr = c_strdup(initial_patient.c_str(), initial_patient.length());
+  return true;
+}
+
+extern "C"
 C_EXPORT void C_CALL LogToConsole(PulseEngineThunk* thunk, bool b)
 {
   thunk->LogToConsole(b);
