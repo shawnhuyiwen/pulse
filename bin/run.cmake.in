@@ -98,6 +98,8 @@ elseif(TYPE STREQUAL "protoc")
                                            -P "@CMAKE_SOURCE_DIR@/src/schema/GenerateBindings.cmake")
 elseif(TYPE STREQUAL "updateBaselines")
   execute_process(COMMAND ${CMAKE_COMMAND} --build "@CMAKE_CURRENT_BINARY_DIR@" --target UpdateVerification)
+elseif(TYPE STREQUAL "jar")
+  execute_process(COMMAND ${CMAKE_COMMAND} --build "@CMAKE_CURRENT_BINARY_DIR@" --target PulseJava)
 elseif(TYPE STREQUAL "rebase")
   # find Git and if available set GIT_HASH variable
   find_package(Git QUIET)
