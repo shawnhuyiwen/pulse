@@ -43,7 +43,6 @@ import pulse.cdm.properties.CommonUnits.TimeUnit;
 import pulse.cdm.properties.CommonUnits.VolumeUnit;
 import pulse.cdm.properties.SEFunctionVolumeVsTime;
 import pulse.cdm.scenario.SEScenario;
-import pulse.cdm.substance.SESubstanceManager;
 import pulse.engine.PulseScenario;
 import pulse.utilities.DoubleUtils;
 import pulse.utilities.FileUtils;
@@ -65,7 +64,7 @@ public class RespiratoryPFTPlotter implements Plotter
     PlotDriver.main(args);
   }
   
-  public void plot(PlotJob job, SESubstanceManager subMgr)
+  public void plot(PlotJob job)
   {    
     //fill PlotJob with needed data if it doesn't exist
     if(job.dataPath == null || job.dataPath.isEmpty())
@@ -91,7 +90,7 @@ public class RespiratoryPFTPlotter implements Plotter
     {
       try
       {
-        this.scenario = new PulseScenario(subMgr);
+        this.scenario = new PulseScenario();
         this.scenario.readFile(job.scenarioPath + job.scenarioFile);
         actions = scenario.getActions();
       } 

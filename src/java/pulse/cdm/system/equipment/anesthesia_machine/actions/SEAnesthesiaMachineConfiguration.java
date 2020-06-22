@@ -3,7 +3,6 @@
 
 package pulse.cdm.system.equipment.anesthesia_machine.actions;
 import pulse.cdm.bind.AnesthesiaMachineActions.AnesthesiaMachineConfigurationData;
-import pulse.cdm.substance.SESubstanceManager;
 import pulse.cdm.system.equipment.anesthesia_machine.SEAnesthesiaMachine;
 import pulse.utilities.Log;
 
@@ -51,7 +50,7 @@ public class SEAnesthesiaMachineConfiguration extends SEAnesthesiaMachineAction
     return hasConfiguration() || hasConfigurationFile();
   }
   
-  public static void load(AnesthesiaMachineConfigurationData src, SEAnesthesiaMachineConfiguration dst, SESubstanceManager subMgr)
+  public static void load(AnesthesiaMachineConfigurationData src, SEAnesthesiaMachineConfiguration dst)
   {
     SEAnesthesiaMachineAction.load(src.getAnesthesiaMachineAction(),dst);
     switch(src.getOptionCase())
@@ -60,7 +59,7 @@ public class SEAnesthesiaMachineConfiguration extends SEAnesthesiaMachineAction
       dst.configurationFile = src.getConfigurationFile();
       break;
     case CONFIGURATION:
-      SEAnesthesiaMachine.load(src.getConfiguration(),dst.getConfiguration(),subMgr);
+      SEAnesthesiaMachine.load(src.getConfiguration(),dst.getConfiguration());
       break;
     default:
     	Log.error("Unknown AnesthesiaMachineConfigurationData Option");

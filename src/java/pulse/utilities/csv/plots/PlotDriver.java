@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import pulse.cdm.substance.SESubstanceManager;
 import pulse.utilities.Log;
 import pulse.utilities.LogListener;
 import pulse.utilities.RunConfiguration;
@@ -28,8 +27,6 @@ public class PlotDriver
   public static void main(String[] args) 
   {    
     jniBridge.initialize();
-    if(PlotDriver.subMgr == null)
-      PlotDriver.subMgr = new SESubstanceManager();
     PlotDriver me = new PlotDriver();
     RunConfiguration cfg = new RunConfiguration();
     //invalid input
@@ -95,7 +92,7 @@ public class PlotDriver
       {
         try
         {
-          job.plotter.plot(job, subMgr);
+          job.plotter.plot(job);
         }
         catch(Exception e)
         {
@@ -119,8 +116,6 @@ public class PlotDriver
   protected String expectedFilePath = "";
   public int abbreviateContents = 0;
   public boolean isScenario = false;
-  
-  protected static SESubstanceManager subMgr=null;
   
   public class PlotJob
   {

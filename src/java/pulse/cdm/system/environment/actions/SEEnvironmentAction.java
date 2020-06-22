@@ -5,7 +5,6 @@ package pulse.cdm.system.environment.actions;
 import pulse.cdm.actions.SEAction;
 import pulse.cdm.bind.EnvironmentActions.AnyEnvironmentActionData;
 import pulse.cdm.bind.EnvironmentActions.EnvironmentActionData;
-import pulse.cdm.substance.SESubstanceManager;
 import pulse.utilities.Log;
 
 public abstract class SEEnvironmentAction extends SEAction
@@ -40,14 +39,14 @@ public abstract class SEEnvironmentAction extends SEAction
     SEAction.unload(src, dst.getActionBuilder());
   }
   
-  public static SEEnvironmentAction ANY2CDM(AnyEnvironmentActionData c, SESubstanceManager subMgr) 
+  public static SEEnvironmentAction ANY2CDM(AnyEnvironmentActionData c) 
   {
     switch(c.getActionCase())
     {
     case CHANGEENVIRONMENTALCONDITIONS:
     {
       SEChangeEnvironmentalConditions dst = new SEChangeEnvironmentalConditions();
-      SEChangeEnvironmentalConditions.load(c.getChangeEnvironmentalConditions(), dst, subMgr);
+      SEChangeEnvironmentalConditions.load(c.getChangeEnvironmentalConditions(), dst);
       return dst;
     }
     case THERMALAPPLICATION:

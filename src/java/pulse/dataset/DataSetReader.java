@@ -135,7 +135,7 @@ public class DataSetReader
           Log.info("Writing : "+fileName);
           c.writeFile(fileName);  
           SESubstanceCompound check = new SESubstanceCompound();
-          check.readFile(fileName,subMgr);
+          check.readFile(fileName);
           Log.info("Checking : "+fileName);        
           if(!SESubstanceCompound.unload(c).toString().equals(SESubstanceCompound.unload(check).toString()))
             throw new RuntimeException("Serialization is not matching, something is wrong in the load/unload for substance compounds");
@@ -151,7 +151,7 @@ public class DataSetReader
           SEEnvironmentalConditions e = environments.get(name);
           e.writeFile(fileName);  
           SEEnvironmentalConditions check = new SEEnvironmentalConditions();
-          check.readFile(fileName,subMgr);
+          check.readFile(fileName);
           Log.info("Checking : "+fileName);        
           if(!SEEnvironmentalConditions.unload(e).toString().equals(SEEnvironmentalConditions.unload(check).toString()))
             throw new RuntimeException("Serialization is not matching, something is wrong in the load/unload for environmental conditions");
@@ -880,14 +880,13 @@ public class DataSetReader
   protected static List<SESubstanceCompound> readCompounds(XSSFSheet xlSheet, Map<String,SESubstance> substances)
   {
     String property,value,unit;
-    SESubstance s;
     SESubstanceCompound compound=null;
     List<SESubstanceCompound> compounds = new ArrayList<>();
     List<SESubstanceConcentration> currentComponent = null;
     Set<Integer> skipColumns = new HashSet<>();
     try
     {
-      int rows = xlSheet.getPhysicalNumberOfRows();      
+      int rows = xlSheet.getPhysicalNumberOfRows();
       for (int r = 0; r < rows; r++) 
       {
         Row row = xlSheet.getRow(r);
@@ -952,8 +951,7 @@ public class DataSetReader
           }
           if(property.equals("Component Name"))
           {
-            s = substances.get(value);
-            SESubstanceConcentration component = compound.getComponent(s);
+            SESubstanceConcentration component = compound.getComponent(value);
             currentComponent.add(c-(3*skip)-1, component);
             continue;
           }
@@ -1064,13 +1062,13 @@ public class DataSetReader
             continue;
           }
           if(property.equals("Substance"))
-          {// NOTE THIS ASSUMES THAT A ROW IS ALL ASSOCIATED WITH THE SAME SUBSTANCE            
+          {// NOTE THIS ASSUMES THAT A ROW IS ALL ASSOCIATED WITH THE SAME SUBSTANCE
             
             AmbientSubstance as = columnSubstances.get(c);
             if(as.type==AmbientType.Gas)
-              as.subFrac = environment.createAmbientGas(substances.get(value));
+              as.subFrac = environment.createAmbientGas(value);
             else if(as.type==AmbientType.Aerosol)
-              as.subConc = environment.createAmbientAerosol(substances.get(value));            
+              as.subConc = environment.createAmbientAerosol(value);
             continue;
           }
           if(!setProperty(environment,columnSubstances.get(c),property,value,unit))

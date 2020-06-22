@@ -56,7 +56,7 @@ public class SEDataRequest implements Serializable
   {
     DataRequestData.Builder dst = DataRequestData.newBuilder();
     unload(src,dst);
-    return dst.build();    
+    return dst.build();
   }
   protected static void unload(SEDataRequest src, DataRequestData.Builder dst)
   {
@@ -73,7 +73,7 @@ public class SEDataRequest implements Serializable
     if(src.hasFormat())
       dst.getDecimalFormatBuilder().setType(src.format);
     if(src.hasPrecision())
-      dst.getDecimalFormatBuilder().setPrecision(src.precision);    
+      dst.getDecimalFormatBuilder().setPrecision(src.precision);
   }
   
   @Override

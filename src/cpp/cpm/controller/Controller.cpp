@@ -245,7 +245,6 @@ PulseController::~PulseController()
 
 bool PulseController::SetConfigurationOverride(const SEEngineConfiguration* config)
 {
-  const PulseConfiguration* pConfig = nullptr;
   if (config != nullptr)
   {
     m_ConfigOverride = dynamic_cast<const PulseConfiguration*>(config);

@@ -32,7 +32,7 @@ public class SEPatientConfiguration
     conditions.clear();
   }
   
-  public static void load(PatientConfigurationData src, SEPatientConfiguration dst, SESubstanceManager subMgr)
+  public static void load(PatientConfigurationData src, SEPatientConfiguration dst)
   {
     dst.reset();
     
@@ -51,7 +51,7 @@ public class SEPatientConfiguration
     }
     
     for(AnyConditionData cData : src.getConditions().getAnyConditionList())
-      dst.conditions.add(SECondition.ANY2CDM(cData, subMgr));
+      dst.conditions.add(SECondition.ANY2CDM(cData));
   }
   
   public static PatientConfigurationData unload(SEPatientConfiguration src)

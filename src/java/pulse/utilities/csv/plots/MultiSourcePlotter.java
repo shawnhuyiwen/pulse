@@ -18,7 +18,6 @@ import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-import pulse.cdm.substance.SESubstanceManager;
 import pulse.utilities.FileUtils;
 import pulse.utilities.Log;
 import pulse.utilities.csv.CSVContents;
@@ -34,7 +33,7 @@ public class MultiSourcePlotter implements Plotter
   }
   
   @Override
-  public void plot(PlotJob job, SESubstanceManager subMgr)
+  public void plot(PlotJob job)
   {
     CSVPlotTool plotTool = new CSVPlotTool();  //to leverage existing functions
     XYSeriesCollection xySeries = new XYSeriesCollection();

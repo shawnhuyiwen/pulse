@@ -5,150 +5,307 @@ package pulse.engine;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
 
+import pulse.SerializationType;
 import pulse.cdm.actions.SEAction;
 import pulse.cdm.bind.Engine.ActionListData;
+import pulse.cdm.bind.Engine.LogMessagesData;
+import pulse.cdm.bind.Events.ActiveEventData;
+import pulse.cdm.bind.Events.ActiveEventListData;
+import pulse.cdm.bind.Events.EventChangeData;
+import pulse.cdm.bind.Events.EventChangeListData;
+import pulse.cdm.bind.Patient.PatientData;
 import pulse.cdm.bind.PatientAssessments.CompleteBloodCountData;
 import pulse.cdm.bind.PatientAssessments.ComprehensiveMetabolicPanelData;
 import pulse.cdm.bind.PatientAssessments.PulmonaryFunctionTestData;
 import pulse.cdm.bind.PatientAssessments.UrinalysisData;
 import pulse.cdm.bind.PatientAssessments.ePatientAssessmentType;
 import pulse.cdm.datarequests.SEDataRequestManager;
+import pulse.cdm.engine.SEActiveEvent;
+import pulse.cdm.engine.SEEventHandler;
 import pulse.cdm.engine.SEPatientConfiguration;
 import pulse.cdm.patient.assessments.SECompleteBloodCount;
 import pulse.cdm.patient.assessments.SEComprehensiveMetabolicPanel;
 import pulse.cdm.patient.assessments.SEPatientAssessment;
 import pulse.cdm.patient.assessments.SEPulmonaryFunctionTest;
 import pulse.cdm.patient.assessments.SEUrinalysis;
-import pulse.cdm.properties.CommonUnits.TimeUnit;
 import pulse.cdm.properties.SEScalarTime;
+import pulse.cdm.properties.CommonUnits.TimeUnit;
+import pulse.cdm.patient.SEPatient;
 import pulse.utilities.Log;
+import pulse.utilities.LogListener;
+import pulse.utilities.jniBridge;
 
-public class PulseEngine extends Pulse
+public class PulseEngine
 {
-  protected boolean deadEngine = false;
-  
+
+  protected boolean        alive  = false;
+  protected double         timeStep_s = 0.02;
+  protected double         timeRemainder = 0;
+  protected LogListener    logListener = null;
+  protected SEEventHandler eventHandler = null;
+  protected double[]       data=null;
+
   public PulseEngine()
   {
-    super();
-  }
-  
-  @Override
-  public synchronized void reset()
-  {
-    super.reset();
-    if(this.nativeObj!=0)
-      this.nativeReset(this.nativeObj);
-    this.deadEngine = false;
-  }
-  
-  public synchronized boolean isDead()
-  {
-    return deadEngine;
+    jniBridge.initialize();
+    nativeObj=nativeAllocate();
+    timeStep_s = nativeGetTimeStep(nativeObj,"s");
   }
 
-  // TODO Set a callback for patient events
-  public synchronized boolean serializeFromFile(String logFile, String stateFile, SEDataRequestManager dataRequests)
+  public void finalize()
   {
-    return loadStateContents(logFile, stateFile, -1.0, dataRequests, "./");
-  }
-  public synchronized boolean serializeFromFile(String logFile, String stateFile, SEDataRequestManager dataRequests, String dataDir)
-  {
-    return loadStateContents(logFile, stateFile, -1.0, dataRequests, dataDir);
-  }
-  public synchronized boolean serializeFromFile(String logFile, String stateFile, SEScalarTime simTime, SEDataRequestManager dataRequests)
-  {
-    return loadStateContents(logFile, stateFile, simTime.getValue(TimeUnit.s), dataRequests, "./");
-  }  
-  public synchronized boolean serializeFromFile(String logFile, String stateFile, SEScalarTime simTime, SEDataRequestManager dataRequests, String dataDir)
-  {
-    return loadStateContents(logFile, stateFile, simTime.getValue(TimeUnit.s), dataRequests, dataDir);
-  }
-  protected synchronized boolean loadStateContents(String logFile, String stateFile, double simTime_s, SEDataRequestManager dataRequests, String dataDir)
-  {
-    this.reset();
-    String dataRequestsStr = null;
-    if(dataRequests !=null && !dataRequests.getRequestedData().isEmpty())
-      try {
-        dataRequestsStr = JsonFormat.printer().print(SEDataRequestManager.unload(dataRequests));
-       } catch (Exception ex) { Log.error("Could not convert Data Requests provided to json",ex); return false; }
-    if(dataRequestsStr == null)
-    {
-      Log.error("Invalid/No data requests provided");
-      return false;
-    }
-    this.requestData(dataRequests);
-    this.nativeObj = nativeAllocate();
-    nativeSetLogFilename(this.nativeObj, logFile);
-    return nativeSerializeFromFile(this.nativeObj, stateFile, dataRequestsStr, 1);
-  }
-  
-  public synchronized boolean serializeToFile(String stateFile) throws InvalidProtocolBufferException
-  {
-    return nativeSerializeToFile(this.nativeObj, stateFile, 1);
+    this.cleanUp();
   }
 
-  public synchronized boolean initializeEngine(String logFile, SEPatientConfiguration patient_configuration, SEDataRequestManager dataRequests)
+  public void cleanUp()
   {
-    return initializeEngine(logFile, patient_configuration, dataRequests, "./");
-  }
-  public synchronized boolean initializeEngine(String logFile, SEPatientConfiguration patient_configuration, SEDataRequestManager dataRequests, String dataDir)
-  {    
-    this.reset();
-    
-    String patient_configurationStr;
-    try { 
-      patient_configurationStr =  JsonFormat.printer().print(SEPatientConfiguration.unload(patient_configuration));
-    } catch (Exception ex) { Log.error("Could not convert configuration provided to json",ex); return false; }
-    if(patient_configurationStr == null || patient_configurationStr.isEmpty())
+    if(nativeObj!=0)
     {
-      Log.error("Invalid/No patient configuration provided");
+      nativeDelete(nativeObj);
+      nativeObj=0;
+    }
+    this.alive = false;
+    this.logListener = null;
+    this.eventHandler = null;
+  }
+  
+  ////////////////////
+  // STATE FILE I/O //
+  ////////////////////
+  
+  public boolean serializeFromFile(String stateFile, SEDataRequestManager dataRequests)
+  {
+    try
+    {
+      String drString = JsonFormat.printer().print(SEDataRequestManager.unload(dataRequests));
+      alive = nativeSerializeFromFile(nativeObj, stateFile, drString, thunkType.value());
+    }
+    catch(Exception ex)
+    {
+      if(logListener!=null)
+        logListener.error("Unable to serialize state file", ex);
+      alive = false;
+    }
+    return alive;
+  }
+  public boolean serializeToFile(String stateFile)
+  {
+    if(!alive)
+    {
+      Log.error("Engine has not been initialized");
+      return alive;
+    }
+    return nativeSerializeToFile(nativeObj, stateFile);
+  }
+
+  ////////////////////////
+  // STRING/STREAM I/O //
+  ///////////////////////
+  
+  public boolean serializeFromString(String state, SEDataRequestManager dataRequests)
+  {
+    try
+    {
+      String drString = JsonFormat.printer().print(SEDataRequestManager.unload(dataRequests));
+      alive = nativeSerializeFromString(nativeObj, state, drString, thunkType.value());
+    }
+    catch(Exception ex)
+    {
+      if(logListener!=null)
+        logListener.error("Unable to serialize state file", ex);
+      alive = false;
+    }
+    return alive;
+  }
+  public String serializeToString(String stateFile, SerializationType format)
+  {
+    if(!alive)
+    {
+      Log.error("Engine has not been initialized");
+      return "";
+    }
+    return nativeSerializeToString(nativeObj, stateFile, format.value());
+  }
+
+  //////////////////////
+  // PATIENT CREATION //
+  //////////////////////
+  
+  public boolean initializeEngine(SEPatientConfiguration patientConfiguration, SEDataRequestManager dataRequests)
+  {
+    return initializeEngine(patientConfiguration, dataRequests, "./");
+  }
+  public boolean initializeEngine(SEPatientConfiguration patientConfiguration, SEDataRequestManager dataRequests, String dataDir)
+  {
+    try
+    {
+      String pcString = JsonFormat.printer().print(SEPatientConfiguration.unload(patientConfiguration));
+      String drString = JsonFormat.printer().print(SEDataRequestManager.unload(dataRequests));
+      alive = nativeInitializeEngine(nativeObj, pcString, drString, thunkType.value(), dataDir);
+    }
+    catch(Exception ex)
+    {
+      if(logListener!=null)
+        logListener.error("Unable to initialize enging", ex);
+      alive = false;
+    }
+    return alive;
+  }
+
+  public boolean getInitialPatient(SEPatient p)
+  {
+    if(!alive)
+    {
+      Log.error("Engine has not been initialized");
+      return alive;
+    }
+    try
+    {
+      PatientData.Builder b = PatientData.newBuilder();
+      String str = nativeGetInitialPatient(nativeObj, thunkType.value());
+      JsonFormat.parser().merge(str, b);
+      SEPatient.load(b.build(),p);
+    }
+    catch(Exception ex)
+    {
+      if(logListener!=null)
+        logListener.error("Unable to get initial patient", ex);
       return false;
     }
-    String dataRequestsStr = null;
-    if(dataRequests !=null && !dataRequests.getRequestedData().isEmpty())
-      try {
-    	 dataRequestsStr = JsonFormat.printer().print(SEDataRequestManager.unload(dataRequests));
-      } catch (Exception ex) { Log.error("Could not convert Data Requests provided to json",ex); return false; }
-    if(dataRequestsStr == null)
-    {
-      Log.error("Invalid/No data requests provided");
-      return false;
-    }
-    this.requestData(dataRequests);
-    this.nativeObj = nativeAllocate();
-    nativeSetLogFilename(this.nativeObj, logFile);
-    this.deadEngine = !nativeInitializeEngine(this.nativeObj, patient_configurationStr, dataRequestsStr, 1, dataDir);
-    if(this.deadEngine)
-      Log.error("Unable to initialize engine");
-    return !this.deadEngine;
+    return true;
   }
+  
+  public boolean getPatientAssessment(SEPatientAssessment assessment)
+  {
+    if(!alive)
+    {
+      Log.error("Engine has not been initialized");
+      return alive;
+    }
+    try
+    {
+      if(assessment instanceof SEPulmonaryFunctionTest)
+      {
+        PulmonaryFunctionTestData.Builder b = PulmonaryFunctionTestData.newBuilder();
+        String str = nativeGetAssessment(nativeObj, ePatientAssessmentType.PulmonaryFunctionTest.ordinal(), thunkType.value());
+        JsonFormat.parser().merge(str, b);
+        SEPulmonaryFunctionTest.load(b.build(),((SEPulmonaryFunctionTest)assessment));
+        return true;
+      }
+      
+      if(assessment instanceof SECompleteBloodCount)
+      {
+        CompleteBloodCountData.Builder b = CompleteBloodCountData.newBuilder();
+        String str = nativeGetAssessment(nativeObj, ePatientAssessmentType.CompleteBloodCount.ordinal(), thunkType.value());
+        JsonFormat.parser().merge(str, b);
+        SECompleteBloodCount.load(b.build(),((SECompleteBloodCount)assessment));
+        return true;
+      }
+      
+      if(assessment instanceof SEComprehensiveMetabolicPanel)
+      {
+        ComprehensiveMetabolicPanelData.Builder b = ComprehensiveMetabolicPanelData.newBuilder();
+        String str = nativeGetAssessment(nativeObj, ePatientAssessmentType.ComprehensiveMetabolicPanel.ordinal(), thunkType.value());
+        JsonFormat.parser().merge(str, b);
+        SEComprehensiveMetabolicPanel.load(b.build(),((SEComprehensiveMetabolicPanel)assessment));
+        return true;
+      }
+      
+      if(assessment instanceof SEUrinalysis)
+      {
+        UrinalysisData.Builder b = UrinalysisData.newBuilder();
+        String str = nativeGetAssessment(nativeObj, ePatientAssessmentType.Urinalysis.ordinal(), thunkType.value());
+        JsonFormat.parser().merge(str, b);
+        SEUrinalysis.load(b.build(),((SEUrinalysis)assessment));
+        return true;
+      }
+    }
+    catch(Exception ex)
+    {
+      if(logListener!=null)
+        logListener.error("Unable to get patient assessment", ex);
+    }
+    return false;
+  }
+  
+  /////////////////////
+  // ADVANCE SUPPORT //
+  /////////////////////
   
   public synchronized boolean advanceTime()
   {
-    if(this.deadEngine)
+    if(!alive)
     {
-      Log.error("Engine has died");
-      return false;
+      Log.error("Engine has not been initialized");
+      return alive;
     }
-    if(!nativeAdvanceTimeStep(this.nativeObj))
-      deadEngine=true;
-    return !deadEngine;
+    if(!nativeAdvanceTimeStep(nativeObj))
+    {
+      Log.error("Engine could not advance time");
+      alive=false;
+    }
+    // Grab any event changes and pass them to handler
+    if (eventHandler != null)
+    {
+      String evts = nativePullEvents(nativeObj, thunkType.value());
+      if(evts!=null && !evts.isEmpty())
+      {
+        try
+        {
+          SEScalarTime time = new SEScalarTime();
+          EventChangeListData.Builder b = EventChangeListData.newBuilder();
+          JsonFormat.parser().merge(evts, b);
+          for(EventChangeData change : b.getChangeList())
+          {
+            time.invalidate();
+            if(change.hasSimTime())
+              SEScalarTime.load(change.getSimTime(), time);
+            eventHandler.handleEvent(change.getEvent(), change.getActive(), time);
+          }
+        }
+        catch(Exception ex)
+        {
+          Log.error("Unable to process log messages", ex);
+        }
+      }
+    }
+    return alive;
   }
   
   public synchronized boolean advanceTime(SEScalarTime time)
   {
-    if(this.deadEngine)
+    if(!alive)
     {
-      Log.error("Engine has died");
-      return false;
+      Log.error("Engine has not been initialized");
+      return alive;
     }
-    if(!nativeAdvanceTime(this.nativeObj, time.getValue(TimeUnit.s)))
-      deadEngine=true;
-    return !deadEngine;
+    timeRemainder += time.getValue(TimeUnit.s);
+    int cnt = (int)(timeRemainder/timeStep_s);
+    timeRemainder = timeRemainder - (timeStep_s*cnt);
+    for(int i=0; i<cnt; i++)
+    {
+      if(!advanceTime())
+        return alive;
+    }
+    return true;
   }
+  
+  public double[] pullData()
+  {
+    if(!alive)
+    {
+      Log.error("Engine has not been initialized");
+      return null;
+    }
+    data = nativePullData(nativeObj);
+    return data;
+  }
+  
+  ////////////////////
+  // ACTION SUPPORT //
+  ////////////////////
   
   public synchronized boolean processAction(SEAction action)
   {
@@ -156,100 +313,142 @@ public class PulseEngine extends Pulse
     actions.add(action);
     return processActions(actions);
   }
-  
   public synchronized boolean processActions(List<SEAction> actions)
   {
-    if(this.deadEngine)
+    if(!alive)
     {
-      Log.error("Engine has died");
-      return false;
+      Log.error("Engine has not been initialized");
+      return alive;
     }
     if(actions !=null && !actions.isEmpty())
     {
       ActionListData.Builder aData = ActionListData.newBuilder();
       for(SEAction a : actions)
-      	aData.addAnyAction(SEAction.CDM2ANY(a));
-      try 
+        aData.addAnyAction(SEAction.CDM2ANY(a));
+      try
       {
         String actionsStr = JsonFormat.printer().print(aData);
-        if(!nativeProcessActions(this.nativeObj,actionsStr))
-          deadEngine=true;
-        return !deadEngine;
+        if(!nativeProcessActions(nativeObj,actionsStr, thunkType.value()))
+        {
+          Log.error("Engine could not process actions");
+          alive=false;
+        }
       }
       catch(Exception ex)
       {
         Log.error("Unable to convert action to json",ex);
-        return false;
+        alive = false;
       }
-      
     }
-    return true;
+    return alive;
   }
   
-  public synchronized boolean getPatientAssessment(SEPatientAssessment assessment) throws InvalidProtocolBufferException
+  ///////////////////////
+  // LISTENER/HANDLERS //
+  ///////////////////////
+  
+  public void setLogListener(LogListener listener)
   {
-    if(this.deadEngine)
-    {
-      Log.error("Engine has died");
-      return false;
-    }
-    if(assessment instanceof SEPulmonaryFunctionTest)
-    {
-    	PulmonaryFunctionTestData.Builder b = PulmonaryFunctionTestData.newBuilder();
-      String str = nativeGetAssessment(this.nativeObj, ePatientAssessmentType.PulmonaryFunctionTest.ordinal());
-      JsonFormat.parser().merge(str, b);
-      SEPulmonaryFunctionTest.load(b.build(),((SEPulmonaryFunctionTest)assessment));
-      return true;
-    }
-    
-    if(assessment instanceof SECompleteBloodCount)
-    {
-    	CompleteBloodCountData.Builder b = CompleteBloodCountData.newBuilder();
-      String str = nativeGetAssessment(this.nativeObj, ePatientAssessmentType.CompleteBloodCount.ordinal());
-      JsonFormat.parser().merge(str, b);
-      SECompleteBloodCount.load(b.build(),((SECompleteBloodCount)assessment));
-      return true;
-    }
-    
-    if(assessment instanceof SEComprehensiveMetabolicPanel)
-    {
-    	ComprehensiveMetabolicPanelData.Builder b = ComprehensiveMetabolicPanelData.newBuilder();
-      String str = nativeGetAssessment(this.nativeObj, ePatientAssessmentType.ComprehensiveMetabolicPanel.ordinal());
-      JsonFormat.parser().merge(str, b);
-      SEComprehensiveMetabolicPanel.load(b.build(),((SEComprehensiveMetabolicPanel)assessment));
-      return true;
-    }
-    
-    if(assessment instanceof SEUrinalysis)
-    {
-    	UrinalysisData.Builder b = UrinalysisData.newBuilder();
-      String str = nativeGetAssessment(this.nativeObj, ePatientAssessmentType.Urinalysis.ordinal());
-      JsonFormat.parser().merge(str, b);
-      SEUrinalysis.load(b.build(),((SEUrinalysis)assessment));
-      return true;
-    }
-    
-    return false;
+    logListener = listener;
+    nativeForwardLogMessages(nativeObj, logListener!=null);
+  }
+  public void setLogFilename(String logFilename)
+  {
+    nativeSetLogFilename(nativeObj, logFilename);
   }
   
-  /**
-   * Used for C++ communication for calculation outside of the java language
-   * @return - success flag from calculate
-   */
-  protected native void nativeReset(long nativeObj);
+  protected void LogDebug(String msg, String origin)
+  {
+    if(this.logListener!=null)
+      this.logListener.debug(msg, origin);
+  }
+  protected void LogInfo(String msg, String origin)
+  {
+    if(this.logListener!=null)
+      this.logListener.info(msg, origin);
+  }
+  protected void LogWarning(String msg, String origin)
+  {
+    if(this.logListener!=null)
+      this.logListener.warn(msg, origin);
+  }
+  protected void LogError(String msg, String origin)
+  {
+    if(this.logListener!=null)
+      this.logListener.error(msg, origin);
+  }
+  protected void LogFatal(String msg, String origin)
+  {
+    if(this.logListener!=null)
+      this.logListener.fatal(msg, origin);
+  }
+
   
-  protected native boolean nativeSerializeFromFile(long nativeObj, String stateFile, String dataRequests, int format);
-  protected native boolean nativeSerializeToFile(long nativeObj, String stateFile, int format);
+  public void setEventHandler(SEEventHandler eh)
+  {
+    this.eventHandler = eh;
+    nativeKeepEventChanges(nativeObj, eventHandler!=null);
+  }
+  
+  public void getActiveEvents(List<SEActiveEvent> activeEvents)
+  {
+    try
+    {
+      activeEvents.clear();
+      String aEvents = nativePullActiveEvents(nativeObj, thunkType.value());
+      if(aEvents == null || aEvents.isEmpty())
+        return;
+      ActiveEventListData.Builder b = ActiveEventListData.newBuilder();
+      JsonFormat.parser().merge(aEvents, b);
+      for(ActiveEventData ae : b.getActiveEventList())
+      {
+        SEActiveEvent active = new SEActiveEvent();
+        active.type = ae.getEvent();
+        SEScalarTime.load(ae.getDuration(), active.duration);
+        activeEvents.add(active);
+      }
+    }
+    catch(Exception ex)
+    {
+      Log.error("Unable to pull active events",ex);
+    }
+    
+  }
+  
+  ////////////
+  // NATIVE //
+  ////////////
+  
+  protected long nativeObj;
+  protected SerializationType thunkType = SerializationType.JSON;
+  protected native long nativeAllocate();
+  protected native void nativeDelete(long nativeObj);
+
+  protected native double nativeGetTimeStep(long nativeObj, String unit);
+  
+  protected native boolean nativeSerializeFromFile(long nativeObj, String stateFile, String dataRequests, int dataRequestsFormat);
+  protected native boolean nativeSerializeToFile(long nativeObj, String stateFile);
   
   protected native boolean nativeSerializeFromString(long nativeObj, String state, String dataRequests, int format);
-  protected native String  nativeSerializeToString(long nativeObj, String stateFile);
+  protected native String  nativeSerializeToString(long nativeObj, String stateFile, int format);
   
-  protected native boolean nativeInitializeEngine(long nativeObj, String patient_configuration, String dataRequests, int format, String dataDir);
+  protected native boolean nativeInitializeEngine(long nativeObj, String patient_configuration, String dataRequests, int thunk_format, String dataDir);
+  
+  protected native void nativeLogToConsole(long nativeObj, boolean b);
+  protected native void nativeSetLogFilename(long nativeObj, String filename);
+  protected native void nativeForwardLogMessages(long nativeObj, boolean b);
+  
+  protected native void nativeKeepEventChanges(long nativeObj, boolean b);
+  protected native String nativePullEvents(long nativeObj, int format);
+  protected native String nativePullActiveEvents(long nativeObj, int format);
+  
+  protected native boolean nativeProcessActions(long nativeObj, String actions, int format);
   
   protected native boolean nativeAdvanceTimeStep(long nativeObj);
-  protected native boolean nativeAdvanceTime(long nativeObj, double time_s);
+  protected native double[] nativePullData(long nativeObj);
   
-  protected native boolean nativeProcessActions(long nativeObj, String actions);
+  protected native String nativeGetInitialPatient(long nativeObj, int format);
+  protected native String nativeGetAssessment(long nativeObj, int type, int format);
   
-  protected native String nativeGetAssessment(long nativeObj, int type);
+  protected native boolean nativeExecuteScenario(long nativeObj, String scenario, int format, String csvFile, String logFile, String dataDir);
 }

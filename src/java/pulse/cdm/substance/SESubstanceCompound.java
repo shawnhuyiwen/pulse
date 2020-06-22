@@ -32,18 +32,18 @@ public class SESubstanceCompound
       this.components.clear();
   }
   
-  public void readFile(String fileName, SESubstanceManager mgr) throws InvalidProtocolBufferException
+  public void readFile(String fileName) throws InvalidProtocolBufferException
   {
     SubstanceCompoundData.Builder builder = SubstanceCompoundData.newBuilder();
     JsonFormat.parser().merge(FileUtils.readFile(fileName), builder);
-    SESubstanceCompound.load(builder.build(), this, mgr);
+    SESubstanceCompound.load(builder.build(), this);
   }
   public void writeFile(String fileName) throws InvalidProtocolBufferException
   {
     FileUtils.writeFile(fileName, JsonFormat.printer().print(SESubstanceCompound.unload(this)));
   }
   
-  public static void load(SubstanceCompoundData src, SESubstanceCompound dst, SESubstanceManager mgr)
+  public static void load(SubstanceCompoundData src, SESubstanceCompound dst)
   {
     dst.reset();
     if(src.getName()!=null)
@@ -53,7 +53,7 @@ public class SESubstanceCompound
     {      
       for(SubstanceConcentrationData cData : src.getComponentList())
       {
-        SESubstanceConcentration.load(cData,dst.createComponent(mgr.getSubstance(cData.getName())));
+        SESubstanceConcentration.load(cData,dst.createComponent(cData.getName()));
       }
     }
   } 
@@ -79,7 +79,7 @@ public class SESubstanceCompound
   public void    setName(String name){this.name=name;}
   public boolean hasName(){return StringUtils.exists(this.name);}
   
-  public SESubstanceConcentration createComponent(SESubstance s) 
+  public SESubstanceConcentration createComponent(String s) 
   { 
     return getComponent(s);
   }  
@@ -90,7 +90,7 @@ public class SESubstanceCompound
     return this.components;
   }  
   public boolean hasComponents() {return this.components==null?false:this.components.size()>0;}
-  public boolean hasComponent(SESubstance s) 
+  public boolean hasComponent(String s) 
   {
     if(this.components==null)
       return false;
@@ -101,7 +101,7 @@ public class SESubstanceCompound
     }
     return false;
   }
-  public SESubstanceConcentration getComponent(SESubstance s) 
+  public SESubstanceConcentration getComponent(String s) 
   {    
     for(SESubstanceConcentration c : getComponents())
     {

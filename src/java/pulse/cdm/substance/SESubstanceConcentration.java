@@ -9,9 +9,9 @@ import pulse.cdm.properties.SEScalarMassPerVolume;
 public class SESubstanceConcentration
 {
   protected SEScalarMassPerVolume  concentration;
-  protected SESubstance            substance;
+  protected String                 substance;
   
-  public SESubstanceConcentration(SESubstance s)
+  public SESubstanceConcentration(String s)
   {
     if(s==null)
       throw new RuntimeException("Must provide a valid substance");
@@ -38,7 +38,7 @@ public class SESubstanceConcentration
   }
   protected static void unload(SESubstanceConcentration src, SubstanceConcentrationData.Builder dst)
   {
-    dst.setName(src.substance.getName());
+    dst.setName(src.substance);
     if(src.hasConcentration())
       dst.setConcentration(SEScalarMassPerVolume.unload(src.concentration)); 
   }
@@ -52,7 +52,7 @@ public class SESubstanceConcentration
   public boolean hasConcentration() {return this.concentration==null?false:this.concentration.isValid();}
   
   public boolean hasSubstance() { return substance != null; }
-  public SESubstance getSubstance() 
+  public String getSubstance() 
   { 
     return this.substance;
   }
@@ -62,7 +62,7 @@ public class SESubstanceConcentration
   {
     if(!hasSubstance())
       return "";
-    String str = "Concentration of "+this.substance.getName()+": "+(hasConcentration()?getConcentration():"None");      
+    String str = "Concentration of "+this.substance+": "+(hasConcentration()?getConcentration():"None");      
     return str;
   }
 }

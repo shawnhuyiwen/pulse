@@ -6,7 +6,6 @@ package pulse.cdm.system.environment;
 import pulse.cdm.bind.Environment.EnvironmentData;
 import pulse.cdm.properties.SEScalarHeatConductancePerArea;
 import pulse.cdm.properties.SEScalarPower;
-import pulse.cdm.substance.SESubstanceManager;
 import pulse.cdm.system.SESystem;
 
 public class SEEnvironment implements SESystem
@@ -72,7 +71,7 @@ public class SEEnvironment implements SESystem
       appliedTemperature.reset();
   }
   
-  public static void load(EnvironmentData src, SEEnvironment dst, SESubstanceManager subMgr)
+  public static void load(EnvironmentData src, SEEnvironment dst)
   {    
     dst.reset();
     if (src.hasConvectiveHeatLoss())
@@ -93,7 +92,7 @@ public class SEEnvironment implements SESystem
       SEScalarPower.load(src.getSkinHeatLoss(),dst.getSkinHeatLoss());  
     
     if (src.hasEnvironmentalConditions())
-      SEEnvironmentalConditions.load(src.getEnvironmentalConditions(),dst.getEnvironmentalConditions(),subMgr); 
+      SEEnvironmentalConditions.load(src.getEnvironmentalConditions(),dst.getEnvironmentalConditions()); 
     if (src.hasActiveHeating())
       SEActiveConditioning.load(src.getActiveHeating(),dst.getActiveHeating());
     if (src.hasActiveCooling())

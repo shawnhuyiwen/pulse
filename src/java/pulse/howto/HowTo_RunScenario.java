@@ -2,6 +2,7 @@
    See accompanying NOTICE file for details.*/
 package pulse.howto;
 
+import pulse.SerializationType;
 import pulse.cdm.actions.SEAdvanceTime;
 import pulse.cdm.bind.Engine.DataRequestData.eCategory;
 import pulse.cdm.datarequests.SEDataRequest;
@@ -9,39 +10,15 @@ import pulse.cdm.properties.CommonUnits.FrequencyUnit;
 import pulse.cdm.properties.CommonUnits.TimeUnit;
 import pulse.cdm.properties.CommonUnits.VolumeUnit;
 import pulse.cdm.scenario.SEScenario;
-import pulse.engine.CDMUpdatedCallback;
-import pulse.engine.Pulse;
 import pulse.engine.PulseScenarioExec;
 import pulse.utilities.FileUtils;
 import pulse.utilities.Log;
 import pulse.utilities.LogListener;
+import pulse.utilities.RunConfiguration;
 import pulse.utilities.jniBridge;
 
 public class HowTo_RunScenario
 {
-  // Create a callback object that Pulse will call at the specified update frequency.
-  // Note the time provided refers to simulation time, not real time
-  // For example, if you request a callback every second, it will be called
-  // every time 1 second is simulated
-  protected static class MyCallback extends CDMUpdatedCallback
-  {
-    protected Pulse pe;
-    protected MyCallback(Pulse pe, double updateFrequency_s)
-    {
-      super(updateFrequency_s);
-      this.pe = pe;
-    }
-    
-    @Override
-    public void update(double time_s)
-    {
-      // Note only the data requested (As a DataRequest) in the scenario file will be updated in the Pulse CDM objects
-      // All data is pulled from the engine at callback time, so when we get here, the CDM objects have the latest values      
-      Log.info("Heart Rate " + pe.cardiovascular.getHeartRate());
-      Log.info("Respiration Rate " + pe.respiratory.getRespirationRate());
-      Log.info("Total Lung Volume " + pe.respiratory.getTotalLungVolume());      
-    }    
-  }
   
   // Create a listener that will catch any messages logged in C++
   // This class will take the messages and add them to the log created in Java
@@ -77,44 +54,25 @@ public class HowTo_RunScenario
   
   public static void main(String[] args)
   {
-    // Initialize the JNI bridge between Java and C++
-    // While not required (yet), it's recommended for program completeness
+    // Load all Pulse native libraries
     jniBridge.initialize();
     example();
-    // Shutdown all C++ classes
-    // Since Pulse supports running multiple engines within the same process
-    // (Each could be on its own thread as well)
-    // deinitialize the C++ so it can properly clean up resources
-    // Generally this is not needed, but I did find it necessary on windows using mingw
-    // If not, the JVM would find itself in a threadlock condition due to threadpool deconstruction
-    // So if your Java app using Pulse has shutdown issues, use this method at your apps end of life
     jniBridge.deinitialize();
   }
   
   public static void example()
   {
-    // Create a Pulse Engine
-    PulseScenarioExec pe = new PulseScenarioExec();
-        
-    // I am going to create a listener that will get any log messages (Info, Warnings, Errors, Fatal Errors)
-    // that come from the engine. The default listener will just put them into the log file
-    // If you want to do custom logic that occurs when the engine throws an error (or any other message type), just create a class just like this one
-    pe.setListener(new MyListener());
+    RunConfiguration cfg = new RunConfiguration();
+    // Load and run a scenario
+    PulseScenarioExec pse = new PulseScenarioExec();
+    String json = FileUtils.readFile(cfg.getScenarioDirectory()+"/patient/BasicStandard.json");
+    pse.runScenario(json, SerializationType.JSON, "./test_results/scenarios/patient/BasicStandardResults.csv", "./test_results/scenarios/patient/BasicStandardResults.log");
     
-    // Static Execution refers to fact that the engine is only going to execute and record outputs as defined in a predefined scenario file
-    // You cannot request different data from the engine, and you cannot give any new actions to the engine.
-    // You provide the name of the log file to associate with running this scenario,
-    // the scenario file, 
-    // the name and location of a results file
-    // an optional callback that will be called so you can get the latest data values and do some custom logic
-    String json = FileUtils.readFile("./verification/scenarios/patient/BasicStandard.json");
-    pe.runScenario("./test_results/scenarios/patient/BasicStandard.log", json,"./test_results/scenarios/patient/BasicStandardResults.csv", null);// No Callback, just write out the file
-    
-    // You could create and provide an SEScenario object as well
-    SEScenario sce = new SEScenario(pe.substanceManager);
+    // Create and run a scenario
+    SEScenario sce = new SEScenario();
     sce.setName("HowTo_StaticEngine");
     sce.setDescription("Simple Scenario to demonstraight building a scenario by the CDM API");
-    sce.getPatientConfiguration().setPatientFile("Standard.json");
+    sce.getPatientConfiguration().setPatientFile("./patients/StandardMale.json");
     // When filling out a data request, units are optional
     // The units will be set to whatever units the engine uses.
     SEDataRequest hr = new SEDataRequest();
@@ -136,12 +94,6 @@ public class HowTo_RunScenario
     SEAdvanceTime adv = new SEAdvanceTime();
     adv.getTime().setValue(2,TimeUnit.min);
     sce.getActions().add(adv);
-    pe.runScenario("./test_results/scenarios/HowToStaticEngine.log",sce,"./test_results/scenarios/HowToStaticEngineResults.json", new MyCallback(pe,1.0));// Callback with new data every simulated second
-    
-    // Note if your engine is running in another thread, you can call pe.cancelScenario to halt the engine
-    
-    // Be nice to your memory and deallocate the native memory associated with this engine if you are done with it
-    pe.cleanUp();
-    // Note you can now run a static (scenario) or another dynamic engine with the pe object, it will allocate and manage a new C++ engine 
+    pse.runScenario(sce,"./test_results/HowToStaticEngineResults.csv", "./test_results/HowToStaticEngineResults.log");
   }
 }

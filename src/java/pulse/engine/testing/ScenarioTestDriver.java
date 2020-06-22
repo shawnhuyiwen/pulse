@@ -5,11 +5,13 @@ package pulse.engine.testing;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
 
+import pulse.SerializationType;
 import pulse.cdm.bind.Scenario.ScenarioData;
 import pulse.cdm.engine.SEAutoSerialization;
 import pulse.cdm.testing.SETestDriver;
 import pulse.cdm.testing.SETestJob;
 import pulse.cpm.bind.Pulse;
+import pulse.engine.PulseEngine;
 import pulse.engine.PulseScenarioExec;
 import pulse.utilities.FileUtils;
 import pulse.utilities.Log;
@@ -20,9 +22,9 @@ public class ScenarioTestDriver implements SETestDriver.Executor
   @Override
   public boolean ExecuteTest(SETestJob job)
   {
+    String logFilename;
+    String resultsFilename;
     String outputFile = job.computedDirectory+"/"+job.name;
-    String log;
-    String results;
     String json = FileUtils.readFile(job.scenarioDirectory+"/"+job.name);
     if(json==null)
     {
@@ -52,14 +54,14 @@ public class ScenarioTestDriver implements SETestDriver.Executor
     
     if(job.patientFile==null)
     {
-      log = outputFile.replaceAll("json", "log");
-      results = outputFile.replaceAll(".json", "Results.csv");
+      logFilename = outputFile.replaceAll("json", "log");
+      resultsFilename = outputFile.replaceAll(".json", "Results.csv");
     }
     else
     {
       String patientName = job.patientFile.substring(0,job.patientFile.length()-5);
-      log = outputFile.replaceAll(".json", "-"+patientName+".log");
-      results = outputFile.replaceAll(".json", "-"+patientName+"Results.csv");
+      logFilename = outputFile.replaceAll(".json", "-"+patientName+".log");
+      resultsFilename = outputFile.replaceAll(".json", "-"+patientName+"Results.csv");
       
       if(builder.hasPatientConfiguration())
       {
@@ -95,8 +97,7 @@ public class ScenarioTestDriver implements SETestDriver.Executor
     }
     //System.out.println(json);
     PulseScenarioExec pse = new PulseScenarioExec();
-    pse.setListener(job);
-    pse.runScenario(log, json, results);
+    pse.runScenario(json, SerializationType.JSON, resultsFilename, logFilename);
     Log.info("Completed running "+job.name);
     pse=null;
     return true;

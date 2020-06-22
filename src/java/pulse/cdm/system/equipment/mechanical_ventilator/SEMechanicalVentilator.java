@@ -14,10 +14,8 @@ import pulse.cdm.bind.Substance.SubstanceConcentrationData;
 import pulse.cdm.bind.Substance.SubstanceData.eState;
 import pulse.cdm.bind.Substance.SubstanceFractionData;
 import pulse.cdm.properties.*;
-import pulse.cdm.substance.SESubstance;
 import pulse.cdm.substance.SESubstanceConcentration;
 import pulse.cdm.substance.SESubstanceFraction;
-import pulse.cdm.substance.SESubstanceManager;
 import pulse.cdm.system.equipment.SEEquipment;
 import pulse.utilities.Log;
 
@@ -236,7 +234,7 @@ public class SEMechanicalVentilator extends SEEquipment
     }
   }
 
-  public static void load(MechanicalVentilatorData src, SEMechanicalVentilator dst, SESubstanceManager subMgr)
+  public static void load(MechanicalVentilatorData src, SEMechanicalVentilator dst)
   {
     dst.reset();
     if (src.getConnection()!=eConnection.UNRECOGNIZED)
@@ -290,23 +288,11 @@ public class SEMechanicalVentilator extends SEEquipment
     if (src.getInspirationWaveform()!=eDriverWaveform.UNRECOGNIZED)
       dst.setInspirationWaveform(src.getInspirationWaveform());
     
-    SESubstance sub;
     if(src.getFractionInspiredGasList()!=null)
     {
       for(SubstanceFractionData subData : src.getFractionInspiredGasList())
       {
-        sub = subMgr.getSubstance(subData.getName());
-        if(sub == null)
-        {
-          Log.error("Substance does not exist for ambient gas : "+subData.getName());
-          continue;
-        }
-        if(sub.getState() != eState.Gas)
-        {
-          Log.error("Environment Ambient Gas must be a gas, "+subData.getName()+" is not a gas...");
-          continue;
-        }
-        SEScalar0To1.load(subData.getAmount(),dst.createFractionInspiredGas(sub).getAmount());
+        SEScalar0To1.load(subData.getAmount(),dst.createFractionInspiredGas(subData.getName()).getAmount());
       }
     }
     
@@ -314,18 +300,7 @@ public class SEMechanicalVentilator extends SEEquipment
     {
       for(SubstanceConcentrationData subData : src.getConcentrationInspiredAerosolList())
       {
-        sub = subMgr.getSubstance(subData.getName());
-        if(sub == null)
-        {
-          Log.error("Substance does not exist for ambient aerosol : "+subData.getName());
-          continue;
-        }
-        if(sub.getState() != eState.Solid && sub.getState() != eState.Liquid)
-        {
-          Log.error("Environment Ambient Aerosol must be a liquid or a gas, "+subData.getName()+" is neither...");
-          continue;
-        }
-        SEScalarMassPerVolume.load(subData.getConcentration(),dst.createConcentrationInspiredAerosol(sub).getConcentration());
+        SEScalarMassPerVolume.load(subData.getConcentration(),dst.createConcentrationInspiredAerosol(subData.getName()).getConcentration());
       }
     }
   }
@@ -646,15 +621,15 @@ public class SEMechanicalVentilator extends SEEquipment
   // Fraction Of Inspired Gas //
   //////////////////////////////
   
-  public SESubstanceFraction createFractionInspiredGas(SESubstance substance)
+  public SESubstanceFraction createFractionInspiredGas(String substance)
   {
     return getFractionInspiredGas(substance);
   }
-  public SESubstanceFraction getFractionInspiredGas(SESubstance substance)
+  public SESubstanceFraction getFractionInspiredGas(String substance)
   {
     for(SESubstanceFraction sf : this.fractionInspiredGases)
     {
-      if(sf.getSubstance().getName().equals(substance.getName()))
+      if(sf.getSubstance().equals(substance))
       {        
         return sf;
       }
@@ -667,11 +642,11 @@ public class SEMechanicalVentilator extends SEEquipment
   {
     return !this.fractionInspiredGases.isEmpty();
   }
-  public boolean hasFractionInspiredGas(SESubstance substance)
+  public boolean hasFractionInspiredGas(String substance)
   {
     for(SESubstanceFraction sf : this.fractionInspiredGases)
     {
-      if(sf.getSubstance()==substance)
+      if(sf.getSubstance().equals(substance))
       {        
         return true;
       }
@@ -682,11 +657,11 @@ public class SEMechanicalVentilator extends SEEquipment
   {
     return this.fractionInspiredGases;
   }
-  public void removeFractionInspiredGas(SESubstance substance)
+  public void removeFractionInspiredGas(String substance)
   {
     for(SESubstanceFraction sf : this.fractionInspiredGases)
     {
-      if(sf.getSubstance()==substance)
+      if(sf.getSubstance().equals(substance))
       {
         this.fractionInspiredGases.remove(sf);
         return;
@@ -695,16 +670,16 @@ public class SEMechanicalVentilator extends SEEquipment
   }
   
 
-  public SESubstanceConcentration createConcentrationInspiredAerosol(SESubstance substance)
+  public SESubstanceConcentration createConcentrationInspiredAerosol(String substance)
   {
     return getConcentrationInspiredAerosol(substance);
   }
-  public SESubstanceConcentration getConcentrationInspiredAerosol(SESubstance substance)
+  public SESubstanceConcentration getConcentrationInspiredAerosol(String substance)
   {
     for(SESubstanceConcentration sc : this.concentrationInspiredAerosol)
     {
-      if(sc.getSubstance().getName().equals(substance.getName()))
-      {        
+      if(sc.getSubstance().equals(substance))
+      {
         return sc;
       }
     }    
@@ -716,12 +691,12 @@ public class SEMechanicalVentilator extends SEEquipment
   {
     return !this.concentrationInspiredAerosol.isEmpty();
   }
-  public boolean hasConcentrationInspiredAerosol(SESubstance substance)
+  public boolean hasConcentrationInspiredAerosol(String substance)
   {
     for(SESubstanceConcentration sc : this.concentrationInspiredAerosol)
     {
-      if(sc.getSubstance()==substance)
-      {        
+      if(sc.getSubstance().equals(substance))
+      {
         return true;
       }
     }
@@ -731,11 +706,11 @@ public class SEMechanicalVentilator extends SEEquipment
   {
     return Collections.unmodifiableList(this.concentrationInspiredAerosol);
   }
-  public void removeConcentrationInspiredAerosol(SESubstance substance)
+  public void removeConcentrationInspiredAerosol(String substance)
   {
     for(SESubstanceConcentration sc : this.concentrationInspiredAerosol)
     {
-      if(sc.getSubstance()==substance)
+      if(sc.getSubstance().equals(substance))
       {
         this.concentrationInspiredAerosol.remove(sc);
         return;

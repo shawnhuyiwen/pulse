@@ -6,9 +6,6 @@ package pulse.cdm.patient.actions;
 import pulse.cdm.actions.SEAction;
 import pulse.cdm.bind.PatientActions.AnyPatientActionData;
 import pulse.cdm.bind.PatientActions.PatientActionData;
-import pulse.cdm.substance.SESubstance;
-import pulse.cdm.substance.SESubstanceCompound;
-import pulse.cdm.substance.SESubstanceManager;
 import pulse.utilities.Log;
 
 public abstract class SEPatientAction extends SEAction
@@ -41,7 +38,7 @@ public abstract class SEPatientAction extends SEAction
     SEAction.unload(src, dst.getActionBuilder());
   }
   
-  public static SEPatientAction ANY2CDM(AnyPatientActionData c, SESubstanceManager subMgr) 
+  public static SEPatientAction ANY2CDM(AnyPatientActionData c)
   {
     switch(c.getActionCase())
     {
@@ -168,7 +165,7 @@ public abstract class SEPatientAction extends SEAction
     case MECHANICALVENTILATION:
     {
       SEMechanicalVentilation dst = new SEMechanicalVentilation();
-      SEMechanicalVentilation.load(c.getMechanicalVentilation(), dst, subMgr);
+      SEMechanicalVentilation.load(c.getMechanicalVentilation(), dst);
       return dst;
     }
     case NEEDLEDECOMPRESSION:
@@ -191,22 +188,19 @@ public abstract class SEPatientAction extends SEAction
     }
     case SUBSTANCEBOLUS:
     {
-      SESubstance sub = subMgr.getSubstance(c.getSubstanceBolus().getSubstance());
-      SESubstanceBolus dst = new SESubstanceBolus(sub);
+      SESubstanceBolus dst = new SESubstanceBolus();
       SESubstanceBolus.load(c.getSubstanceBolus(), dst);
       return dst;
     }
     case SUBSTANCECOMPOUNDINFUSION:
     {
-      SESubstanceCompound cmpd = subMgr.getCompound(c.getSubstanceCompoundInfusion().getSubstanceCompound());
-      SESubstanceCompoundInfusion dst = new SESubstanceCompoundInfusion(cmpd);
+      SESubstanceCompoundInfusion dst = new SESubstanceCompoundInfusion();
       SESubstanceCompoundInfusion.load(c.getSubstanceCompoundInfusion(), dst);
       return dst;
     }
     case SUBSTANCEINFUSION:
     {
-      SESubstance sub = subMgr.getSubstance(c.getSubstanceInfusion().getSubstance());
-      SESubstanceInfusion dst = new SESubstanceInfusion(sub);
+      SESubstanceInfusion dst = new SESubstanceInfusion();
       SESubstanceInfusion.load(c.getSubstanceInfusion(), dst);
       return dst;
     }

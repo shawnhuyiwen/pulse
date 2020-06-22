@@ -80,7 +80,7 @@ namespace Pulse
     }
 
     [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-    static extern bool InitializeEngine(IntPtr pulse, string patient_configuration, string data_mgr, int data_mgr_format, string data_dir);
+    static extern bool InitializeEngine(IntPtr pulse, string patient_configuration, string data_mgr, int thunk_format, string data_dir);
     public bool InitializeEngine(SEPatientConfiguration patient_configuration, SEDataRequestManager data_mgr, string data_dir="./")
     {
       data_values = new double[data_mgr.GetDataRequests().Count + 1];

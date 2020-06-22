@@ -6,7 +6,6 @@ package pulse.cdm.patient.actions;
 import pulse.cdm.bind.PatientActions.SubstanceCompoundInfusionData;
 import pulse.cdm.properties.SEScalarVolume;
 import pulse.cdm.properties.SEScalarVolumePerTime;
-import pulse.cdm.substance.SESubstanceCompound;
 
 public class SESubstanceCompoundInfusion extends SEPatientAction
 {
@@ -14,13 +13,13 @@ public class SESubstanceCompoundInfusion extends SEPatientAction
   private static final long serialVersionUID = -8462874362131575884L;
   protected SEScalarVolume bagVolume;
   protected SEScalarVolumePerTime rate;
-  protected SESubstanceCompound compound;
+  protected String compound;
   
-  public SESubstanceCompoundInfusion(SESubstanceCompound compound)
+  public SESubstanceCompoundInfusion()
   {
     this.rate = null;
     this.bagVolume = null;
-    this.compound = compound;
+    this.compound = "";
   }
 
   public void copy(SESubstanceCompoundInfusion other)
@@ -60,6 +59,7 @@ public class SESubstanceCompoundInfusion extends SEPatientAction
   public static void load(SubstanceCompoundInfusionData src, SESubstanceCompoundInfusion dst)
   {
     SEPatientAction.load(src.getPatientAction(), dst);
+    dst.setSubstanceCompound(src.getSubstanceCompound());
     if(src.hasRate())
       SEScalarVolumePerTime.load(src.getRate(),dst.getRate());
     if(src.hasBagVolume())
@@ -80,7 +80,7 @@ public class SESubstanceCompoundInfusion extends SEPatientAction
       dst.setRate(SEScalarVolumePerTime.unload(src.rate));
     if (src.hasBagVolume())
       dst.setBagVolume(SEScalarVolume.unload(src.bagVolume));
-    dst.setSubstanceCompound(src.getSubstanceCompound().getName());
+    dst.setSubstanceCompound(src.getSubstanceCompound());
   }
   
   public boolean hasBagVolume()
@@ -105,8 +105,12 @@ public class SESubstanceCompoundInfusion extends SEPatientAction
     return rate;
   }
   
-  public boolean hasSubstanceCompound(){return true;}
-  public SESubstanceCompound getSubstanceCompound()
+  public boolean hasSubstanceCompound(){return !compound.isEmpty();}
+  public void setSubstanceCompound(String name)
+  {
+    compound = name==null?"":name;
+  }
+  public String getSubstanceCompound()
   {
     return compound;
   }
@@ -116,9 +120,9 @@ public class SESubstanceCompoundInfusion extends SEPatientAction
   {
     if (rate != null || compound != null)
       return "Compound Infusion "
-          + "\n\tRate: " + getRate() 
-          + "\n\tBag Volume: " + getBagVolume() 
-          + "\n\tSubstance Compound: " + getSubstanceCompound().getName();
+          + "\n\tRate: " + getRate()
+          + "\n\tBag Volume: " + getBagVolume()
+          + "\n\tSubstance Compound: " + getSubstanceCompound();
     else
       return "Action not specified properly";
   }

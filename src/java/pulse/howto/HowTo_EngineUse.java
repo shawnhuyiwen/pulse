@@ -17,6 +17,7 @@ import pulse.cdm.bind.PatientActions.HemorrhageData;
 import pulse.cdm.conditions.SECondition;
 import pulse.cdm.datarequests.SEDataRequest;
 import pulse.cdm.datarequests.SEDataRequestManager;
+import pulse.cdm.engine.SEActiveEvent;
 import pulse.cdm.engine.SEEventHandler;
 import pulse.cdm.engine.SEPatientConfiguration;
 import pulse.cdm.patient.SEPatient;
@@ -75,7 +76,8 @@ public class HowTo_EngineUse
  // Create a listener that will catch any messages logged in C++
  // This class will take the messages and forward them to slf4j,
  // so they can be logged with whatever logger a user may want to use
- protected static class ForwardToSlf4jListener extends LogListener {
+ protected static class ForwardToSlf4jListener extends LogListener
+ {
    private static final Logger LOG = LoggerFactory.getLogger("CppPulseEngine"); // select a name that makes it clear where these logs are coming from
    
    @Override public void handleDebug(String msg) { LOG.debug(msg); }
@@ -96,8 +98,8 @@ public class HowTo_EngineUse
   public void handleEvent(eEvent e, boolean active, SEScalarTime time)
   {
     // Here is how you test against an event of interest and do something
-    //if(type == ePatient.Event.StartOfCardiacCycle && active)
-      //Log.info("Patient started a new heart beat at time "+time);    
+   if(e == eEvent.CardiacArrest && active)
+      Log.info("Patient is in cardiac arrest "+time);
   }
  }
  
@@ -105,18 +107,7 @@ public class HowTo_EngineUse
  
  public static void main(String[] args)
  {
-   // Initialize the JNI bridge between Java and C++
-   // While not required (yet), it's recommended for program completeness
-   jniBridge.initialize();
    example();
-   // Shutdown all C++ classes
-   // Since Pulse supports running multiple engines within the same process
-   // (Each could be on its own thread as well)
-   // deinitialize the C++ so it can properly clean up resources
-   // Generally this is not needed, but I did find it necessary on windows using mingw
-   // If not, the JVM would find itself in a threadlock condition due to threadpool deconstruction
-   // So if your Java app using Pulse has shutdown issues, use this method at your apps end of life
-   jniBridge.deinitialize();
  }
  
  public static void example()
@@ -124,25 +115,21 @@ public class HowTo_EngineUse
    // Create a Pulse Engine
    PulseEngine pe = new PulseEngine();
    
-   // I am going to create a listener that will get any log messages (Info, Warnings, Errors, Fatal Errors)
-   // that come from the engine.
+   // By default, no log file is written
+   pe.setLogFilename("./test_results/HowTo_EngineUse.java.log");
    
-   // The default listener will just put them into the log file
-   // If you want to do custom logic that occurs when the engine throws an error (or any other message type), just create a class just like this one
-   // pe.setListener(new MyListener());
+   // Create a listener that will get any log messages that come from the engine.
+   // (Info, Warnings, Errors, Fatal Errors)
    
    // This forwards log messages to an SLF4J logger
    // Note that pulse comes with the logback logger so slf4j will print something for this example
    // If you would rather use a different logger, you can delete the logback jars and substitute something else
-   pe.setListener(new ForwardToSlf4jListener());
+   pe.setLogListener(new ForwardToSlf4jListener());
    
-   // I want to know when ever the patient and anesthesia machine(if used) enters and exits a particular state
-   pe.getEventManager().forwardEvents(new MyEventHandler());
+   // If you want to know whenever the engine enters and exits a particular state
+   pe.setEventHandler(new MyEventHandler());
    
-   // Here are the data I want back from the engine
-   // The CDM objects on the pe object will be updated 
-   // at the end of AdvanceTime calls (which are blocking)
-   // No other data values will have data in Java classes
+   // Here is how to specify the data to get back from the engine
    SEDataRequestManager dataRequests = new SEDataRequestManager();
    SEDataRequest hr = new SEDataRequest();
    hr.setCategory(eCategory.Physiology);
@@ -164,12 +151,13 @@ public class HowTo_EngineUse
    bv.setPropertyName("BloodVolume");
    bv.setUnit(VolumeUnit.mL.toString());
    dataRequests.getRequestedData().add(bv);
-   
-   ////////////////////////////////////////////////////
-   // NOTE All serialization is assumed to be ASCII  //
-   // Binary is available, but the JAVA API does not //
-   // currently support it.                          //
-   ////////////////////////////////////////////////////
+   // In addition to getting this data back via this API
+   // You can have Pulse write the data you have requested to a CSV file
+   dataRequests.setResultsFilename("./test_results/HowTo_EngineUse.java.csv");
+   // Create a reference to a double[] that will contain the data returned from Pulse
+   double[] dataValues;
+   // data_values[0] is ALWAYS the simulation time in seconds
+   // The rest of the data values are in order of the data_requests list provided
    
    InitializationType initType = InitializationType.PatientObject;
    // INITIALIZE THE ENGINE WITH A PATIENT
@@ -207,8 +195,8 @@ public class HowTo_EngineUse
       
       // Initialize an engine 
       // Optionally, initializeEngine can take in a directory where Pulse looks for its required data files on disk
-      pe.initializeEngine("./Scenarios/HowToDynamicEngine.log", patient_configuration, dataRequests);
-      //pe.initializeEngine("./Scenarios/HowToDynamicEngine.log", patient_configuration, dataRequests, "./");
+      pe.initializeEngine(patient_configuration, dataRequests);
+      //pe.initializeEngine(patient_configuration, dataRequests, "./");
        // This method will block while the engine stabilizes to meet the defined patient parameters
        break;
      }
@@ -219,22 +207,28 @@ public class HowTo_EngineUse
        // Optionally add conditions to the patient_configuration
        
        // Allocate an engine
-       pe.initializeEngine("./Scenarios/HowToDynamicEngine.log", patient_configuration, dataRequests);
+       pe.initializeEngine(patient_configuration, dataRequests);
        // This method will block while the engine stabilizes to meet the defined patient parameters
        break;
      }
    case StateFile:
      {
-      // Optionally, serializeFromFile can take in a directory where Pulse looks for its required data files on disk
-       pe.serializeFromFile("./Scenarios/HowToDynamicEngine.log", "./states/StandardMale@0s.json", dataRequests);
-       //pe.serializeFromFile("./Scenarios/HowToDynamicEngine.log", "./states/StandardMale@0s.json", dataRequests, "./");
+       pe.serializeFromFile("./states/StandardMale@0s.json", dataRequests);
        // This method method sets the engine to the provided state instantaneously and you are ready to process actions/advance time
-       // You can alternatively specify the starting simTime of the engine       
-       //pe.loadState("./Scenarios/HowToDynamicEngine.log", "./states/StandardMale@0s.json", time, dataRequests);
        break;
      }
    }
-      
+   
+   // You can get the initial patient at any time
+   // But it will not change, so once is good
+   // All values will be set to what the engine stabilized to
+   SEPatient initialPatient = new SEPatient();
+   pe.getInitialPatient(initialPatient);
+   Log.info("Sex " + initialPatient.getSex());
+   Log.info("Age(yr) " + initialPatient.getAge().getValue(TimeUnit.yr));
+   Log.info("Height(cm) " + initialPatient.getHeight().getValue(LengthUnit.cm));
+   Log.info("Weight(lb) " + initialPatient.getWeight().getValue(MassUnit.lb));
+   
    // Now we can start telling the engine what to do
    // All the same concepts apply from the C++ HowTo files, so look there if you want to see more examples
    
@@ -243,49 +237,29 @@ public class HowTo_EngineUse
      Log.info("Something bad happened");
      return;
    }
-   // The CDM objects contained in pe will be automatically updated after this method returns
-   // NOTE ONLY THE CDM PROPERTIES ASSOCIATED WITH THE DATA REQUESTS PROVIDED IN initializeEngine WILL BE UPDATED
-   // it would be pretty slow to push EVERYTHING from the engine into Java if you are not using it all.
-   // This is just a limitation of the Java interface, let me know if you think we can push everything or have some other idea for pushing..
-   // SO this does mean that you have to know up front everything you are going to use from the engine, there may be ways to make it more
-   // dynamic it getting data back from the engine, but at this time, I am not going to support that, not that it cannot be done, again let's talk if you want it...
    
-   Log.info("Heart Rate " + pe.cardiovascular.getHeartRate());
-   Log.info("Respiration Rate " + pe.respiratory.getRespirationRate());
-   Log.info("Total Lung Volume " + pe.respiratory.getTotalLungVolume());
-   Log.info("Blood Volume " + pe.cardiovascular.getBloodVolume());    
+   dataValues = pe.pullData();
+   Log.info("Simulation Time(s) " + dataValues[0]);
+   Log.info("Heart Rate(bpm) " + dataValues[1]);
+   Log.info("Respiration Rate(bpm) " + dataValues[2]);
+   Log.info("Total Lung Volume(mL) " + dataValues[3]);
+   Log.info("Blood Volume(mL) " + dataValues[4]);
    
-   // Let's get an assessment from the engine
-   // Assessments can involve extra calculation to generate the data necessary for the specified assessment
-   SECompleteBloodCount cbc = new SECompleteBloodCount();
-   try
-   {
-  	 pe.getPatientAssessment(cbc);
-   }
-   catch(InvalidProtocolBufferException ex)
-   {
-  	 Log.error("Failed to get patient assessment",ex);
-   }
-   Log.info("Red Blood Count "+cbc.getRedBloodCellCount());
-   Log.info("White Blood Count "+cbc.getWhiteBloodCellCount());
-   
-   // You can check if the patient is in a specific state/event
-   if(pe.getEventManager().isEventActive(eEvent.CardiacArrest))
-     Log.info("CODE BLUE!");
-
    SEScalarTime time = new SEScalarTime(0, TimeUnit.s);
    time.setValue(1, TimeUnit.s);
+   Log.info("Advancing "+time+"...");
    if(!pe.advanceTime(time)) // Simulate one second
    {
      Log.info("Something bad happened");
      return;
    }
-   // Again, the CDM is updated after this call
    
-   Log.info("Heart Rate " + pe.cardiovascular.getHeartRate());
-   Log.info("Respiration Rate " + pe.respiratory.getRespirationRate());
-   Log.info("Total Lung Volume " + pe.respiratory.getTotalLungVolume());   
-   Log.info("Blood Volume " + pe.cardiovascular.getBloodVolume());      
+   dataValues = pe.pullData();
+   Log.info("Simulation Time(s) " + dataValues[0]);
+   Log.info("Heart Rate(bpm) " + dataValues[1]);
+   Log.info("Respiration Rate(bpm) " + dataValues[2]);
+   Log.info("Total Lung Volume(mL) " + dataValues[3]);
+   Log.info("Blood Volume(mL) " + dataValues[4]);
    
    // Let's do something to the patient, you can either send actions over one at a time, or pass in a List<SEAction>
    SEHemorrhage h = new SEHemorrhage();
@@ -297,21 +271,22 @@ public class HowTo_EngineUse
      Log.error("Engine was unable to process requested actions");
      return;
    }
-   // Note CDM is not updated after this call, you have to advance some time
 
    for(int i=1; i<=2; i++)
    {
-  	 time.setValue(i,TimeUnit.min);
+  	 time.setValue(1,TimeUnit.min);
+     Log.info("Advancing "+time+"...");
 	   if(!pe.advanceTime(time)) // Simulate one minute
 	   {
 	     Log.error("Engine was unable to stay within modeling parameters with requested actions");
 	     return;
 	   }
-	   // Again, the CDM is updated after this call
-	   Log.info("Heart Rate " + pe.cardiovascular.getHeartRate());
-	   Log.info("Respiration Rate " + pe.respiratory.getRespirationRate());
-	   Log.info("Total Lung Volume " + pe.respiratory.getTotalLungVolume());
-	   Log.info("Blood Volume " + pe.cardiovascular.getBloodVolume());  
+	   dataValues = pe.pullData();
+	   Log.info("Simulation Time(s) " + dataValues[0]);
+	   Log.info("Heart Rate(bpm) " + dataValues[1]);
+	   Log.info("Respiration Rate(bpm) " + dataValues[2]);
+	   Log.info("Total Lung Volume(mL) " + dataValues[3]);
+	   Log.info("Blood Volume(mL) " + dataValues[4]);
    }
    
    // Stop the hemorrhage
@@ -324,22 +299,24 @@ public class HowTo_EngineUse
    
    for(int i=1; i<=1; i++)
    {
-     time.setValue(i,TimeUnit.min);
+     time.setValue(1,TimeUnit.min);
+     Log.info("Advancing "+time+"...");
      if(!pe.advanceTime(time)) // Simulate one minute
      {
        Log.error("Engine was unable to stay within modeling parameters with requested actions");
        return;
      }
-     // Again, the CDM is updated after this call
-     Log.info("Heart Rate " + pe.cardiovascular.getHeartRate());
-     Log.info("Respiration Rate " + pe.respiratory.getRespirationRate());
-     Log.info("Total Lung Volume " + pe.respiratory.getTotalLungVolume());     
-     Log.info("Blood Volume " + pe.cardiovascular.getBloodVolume());  
+     dataValues = pe.pullData();
+     Log.info("Simulation Time(s) " + dataValues[0]);
+     Log.info("Heart Rate(bpm) " + dataValues[1]);
+     Log.info("Respiration Rate(bpm) " + dataValues[2]);
+     Log.info("Total Lung Volume(mL) " + dataValues[3]);
+     Log.info("Blood Volume(mL) " + dataValues[4]);
    }
    
    // Infuse some fluids
-   SESubstanceCompound saline = pe.substanceManager.getCompound("Saline");
-   SESubstanceCompoundInfusion ivFluids= new SESubstanceCompoundInfusion(saline);
+   SESubstanceCompoundInfusion ivFluids= new SESubstanceCompoundInfusion();
+   ivFluids.setSubstanceCompound("Saline");
    ivFluids.getBagVolume().setValue(500,VolumeUnit.mL);
    ivFluids.getRate().setValue(100,VolumePerTimeUnit.mL_Per_min);
    if(!pe.processAction(ivFluids))
@@ -350,19 +327,35 @@ public class HowTo_EngineUse
    
    for(int i=1; i<=5; i++)
    {
-     time.setValue(i,TimeUnit.min);
+     time.setValue(1,TimeUnit.min);
+     Log.info("Advancing "+time+"...");
      if(!pe.advanceTime(time)) // Simulate one minute
      {
        Log.error("Engine was unable to stay within modeling parameters with requested actions");
        return;
      }
-     // Again, the CDM is updated after this call
-     Log.info("Heart Rate " + pe.cardiovascular.getHeartRate());
-     Log.info("Respiration Rate " + pe.respiratory.getRespirationRate());
-     Log.info("Total Lung Volume " + pe.respiratory.getTotalLungVolume());     
-     Log.info("Blood Volume " + pe.cardiovascular.getBloodVolume());  
+     dataValues = pe.pullData();
+     Log.info("Simulation Time(s) " + dataValues[0]);
+     Log.info("Heart Rate(bpm) " + dataValues[1]);
+     Log.info("Respiration Rate(bpm) " + dataValues[2]);
+     Log.info("Total Lung Volume(mL) " + dataValues[3]);
+     Log.info("Blood Volume(mL) " + dataValues[4]);
    }
-     
+   
+   // You can explicitly check if the patient is in a specific state/event
+   List<SEActiveEvent> activeEvents = new ArrayList<SEActiveEvent>();
+   pe.getActiveEvents(activeEvents);
+   for(SEActiveEvent ae : activeEvents)
+     Log.info(ae.type+" has been active for "+ae.duration);
+   
+   // Let's get an assessment from the engine
+   // Assessments can involve extra calculation to generate the data necessary for the specified assessment
+   SECompleteBloodCount cbc = new SECompleteBloodCount();
+   if(!pe.getPatientAssessment(cbc))
+     Log.error("Failed to get patient assessment");
+   Log.info("Red Blood Count "+cbc.getRedBloodCellCount());
+   Log.info("White Blood Count "+cbc.getWhiteBloodCellCount());
+   
    // Be nice to your memory and deallocate the native memory associated with this engine if you are done with it
    pe.cleanUp();
    // Note you can now run a static (scenario) or another dynamic engine with the pe object, it will allocate and manage a new C++ engine 

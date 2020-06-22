@@ -7,15 +7,16 @@ import java.util.List;
 
 import pulse.cdm.bind.Enums.eSwitch;
 import pulse.cdm.bind.PatientActions.MechanicalVentilationData;
+import pulse.cdm.bind.Substance.SubstanceConcentrationData;
 import pulse.cdm.bind.Substance.SubstanceData.eState;
 import pulse.cdm.bind.Substance.SubstanceFractionData;
 import pulse.cdm.properties.SEScalar0To1;
+import pulse.cdm.properties.SEScalarMassPerVolume;
 import pulse.cdm.properties.SEScalarPressure;
 import pulse.cdm.properties.SEScalarVolumePerTime;
 import pulse.cdm.substance.SESubstance;
 import pulse.cdm.substance.SESubstanceConcentration;
 import pulse.cdm.substance.SESubstanceFraction;
-import pulse.cdm.substance.SESubstanceManager;
 import pulse.utilities.DoubleUtils;
 import pulse.utilities.Log;
 
@@ -120,9 +121,9 @@ public class SEMechanicalVentilation extends SEPatientAction
     return true;
   }
 
-  public static void load(MechanicalVentilationData src, SEMechanicalVentilation dst, SESubstanceManager substances)
+  public static void load(MechanicalVentilationData src, SEMechanicalVentilation dst)
   {
-    SEPatientAction.load(src.getPatientAction(), dst);   
+    SEPatientAction.load(src.getPatientAction(), dst);
     if(src.getState()!=eSwitch.UNRECOGNIZED && src.getState()!=eSwitch.NullSwitch)
     	dst.setState(src.getState());
     if (src.hasFlow())
@@ -130,19 +131,13 @@ public class SEMechanicalVentilation extends SEPatientAction
     if (src.hasPressure())
       SEScalarPressure.load(src.getPressure(),dst.getPressure());
     
-    SESubstance sub;
     for(SubstanceFractionData subData : src.getGasFractionList())
     {
-      sub = substances.getSubstance(subData.getName());
-      if(sub == null)
-      {
-        Log.error("Substance does not exist : "+subData.getName());
-      }
-      if(sub.getState() != eState.Gas)
-      {
-        Log.error("Gas Fraction substance must be a gas, "+subData.getName()+" is not a gas...");
-      }
-      SEScalar0To1.load(subData.getAmount(),dst.createGasFraction(sub).getAmount());
+      SEScalar0To1.load(subData.getAmount(),dst.createGasFraction(subData.getName()).getAmount());
+    }
+    for(SubstanceConcentrationData subData : src.getAerosolList())
+    {
+      SEScalarMassPerVolume.load(subData.getConcentration(),dst.createAerosol(subData.getName()).getConcentration());
     }
   }
 
@@ -163,6 +158,8 @@ public class SEMechanicalVentilation extends SEPatientAction
     
     for(SESubstanceFraction gf : src.gasFractions)
       dst.addGasFraction(SESubstanceFraction.unload(gf));
+    for(SESubstanceConcentration a : src.aerosols)
+      dst.addAerosol(SESubstanceConcentration.unload(a));
   }
 
   public eSwitch getState()
@@ -196,20 +193,20 @@ public class SEMechanicalVentilation extends SEPatientAction
     return pressure;
   }
   
-  public SESubstanceFraction createGasFraction(SESubstance substance)
+  public SESubstanceFraction createGasFraction(String substance)
   {
     return getGasFraction(substance);
   }
-  public SESubstanceFraction getGasFraction(SESubstance substance)
+  public SESubstanceFraction getGasFraction(String substance)
   {
     for(SESubstanceFraction sf : this.gasFractions)
     {
-      if(sf.getSubstance().getName().equals(substance.getName()))
+      if(sf.getSubstance().equals(substance))
       {        
         return sf;
       }
     }    
-    SESubstanceFraction sf = new SESubstanceFraction(substance);    
+    SESubstanceFraction sf = new SESubstanceFraction(substance);
     this.gasFractions.add(sf);
     return sf;
   }
@@ -221,7 +218,7 @@ public class SEMechanicalVentilation extends SEPatientAction
   {
     for(SESubstanceFraction sf : this.gasFractions)
     {
-      if(sf.getSubstance()==substance)
+      if(sf.getSubstance().equals(substance))
       {        
         return true;
       }
@@ -236,7 +233,7 @@ public class SEMechanicalVentilation extends SEPatientAction
   {
     for(SESubstanceFraction sf : this.gasFractions)
     {
-      if(sf.getSubstance()==substance)
+      if(sf.getSubstance().equals(substance))
       {
         this.gasFractions.remove(sf);
         return;
@@ -244,20 +241,20 @@ public class SEMechanicalVentilation extends SEPatientAction
     }  
   }
 
-  public SESubstanceConcentration createAerosol(SESubstance substance)
+  public SESubstanceConcentration createAerosol(String substance)
   {
     return getAerosol(substance);
   }
-  public SESubstanceConcentration getAerosol(SESubstance substance)
+  public SESubstanceConcentration getAerosol(String substance)
   {
     for(SESubstanceConcentration sc : this.aerosols)
     {
-      if(sc.getSubstance().getName().equals(substance.getName()))
+      if(sc.getSubstance().equals(substance))
       {        
         return sc;
       }
     }    
-    SESubstanceConcentration sc = new SESubstanceConcentration(substance);    
+    SESubstanceConcentration sc = new SESubstanceConcentration(substance);
     this.aerosols.add(sc);
     return sc;
   }
@@ -269,7 +266,7 @@ public class SEMechanicalVentilation extends SEPatientAction
   {
     for(SESubstanceConcentration sc : this.aerosols)
     {
-      if(sc.getSubstance()==substance)
+      if(sc.getSubstance().equals(substance))
       {        
         return true;
       }
@@ -284,7 +281,7 @@ public class SEMechanicalVentilation extends SEPatientAction
   {
     for(SESubstanceConcentration sc : this.aerosols)
     {
-      if(sc.getSubstance()==substance)
+      if(sc.getSubstance().equals(substance))
       {
         this.aerosols.remove(sc);
         return;
@@ -300,9 +297,9 @@ public class SEMechanicalVentilation extends SEPatientAction
         + "\n\tFlow: " + (hasFlow() ? getFlow() : "Not Provided")
         + "\n\tPressure: " + (hasPressure() ? getPressure() : "Not Provided");
     for(SESubstanceFraction sf : this.gasFractions)
-      cnts += "\n\tSubstanceFraction: " + sf.getSubstance().getName() + " : " + sf.getAmount();
+      cnts += "\n\tSubstanceFraction: " + sf.getSubstance() + " : " + sf.getAmount();
     for(SESubstanceConcentration sc : this.aerosols)
-        cnts += "\n\tSubstanceConcentration: " + sc.getSubstance().getName() + " : " + sc.getConcentration();
+        cnts += "\n\tSubstanceConcentration: " + sc.getSubstance() + " : " + sc.getConcentration();
     
     return cnts;
   }

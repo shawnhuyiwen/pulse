@@ -10,9 +10,9 @@ import pulse.cdm.properties.SEScalar0To1;
 public class SESubstanceFraction
 {
   protected SEScalar0To1  amount;
-  protected SESubstance   substance;
+  protected String        substance;
   
-  public SESubstanceFraction(SESubstance s)
+  public SESubstanceFraction(String s)
   {
     if(s==null)
       throw new RuntimeException("Must provide a valid substance");
@@ -46,7 +46,7 @@ public class SESubstanceFraction
   }
   protected static void unload(SESubstanceFraction src, SubstanceFractionData.Builder dst)
   {
-    dst.setName(src.substance.getName());
+    dst.setName(src.substance);
     if(src.hasAmount())
       dst.setAmount(SEScalar0To1.unload(src.amount)); 
   }
@@ -60,7 +60,7 @@ public class SESubstanceFraction
   public boolean hasAmount() {return this.amount==null?false:this.amount.isValid();}
   
   public boolean hasSubstance() { return substance != null; }
-  public SESubstance getSubstance() 
+  public String getSubstance() 
   { 
     return this.substance;
   }
@@ -70,7 +70,7 @@ public class SESubstanceFraction
   {
     if(!hasSubstance())
       return "";
-    String str = "Amount of "+this.substance.getName()+": "+(hasAmount()?getAmount():"None");      
+    String str = "Amount of "+this.substance+": "+(hasAmount()?getAmount():"None");      
     return str;
   }
 }

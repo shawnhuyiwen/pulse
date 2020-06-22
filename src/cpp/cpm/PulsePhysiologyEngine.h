@@ -33,6 +33,8 @@ public:
 
   // void SetConfigurationOverride(std::string const& config); // Not Implemented
 
+  bool ExecuteScenario(std::string const& scenario, SerializationFormat format, std::string const& csvFile, std::string const& logFile, std::string const& dataDir="./");
+
   bool SerializeFromFile(std::string const& filename, std::string const& data_requests, SerializationFormat data_requests_format);
   bool SerializeToFile(std::string const& filename);
 
@@ -40,6 +42,9 @@ public:
   std::string SerializeToString(SerializationFormat format);
 
   bool InitializeEngine(std::string const& patient_configuration, std::string const& data_requests, SerializationFormat format, std::string const& data_dir = "./");
+
+  std::string GetInitialPatient(SerializationFormat format);
+  std::string GetPatientAssessment(int type, SerializationFormat format);
 
   void LogToConsole(bool b);
   void KeepLogMessages(bool keep);// Set this to true if you are going to pull messages from the engine
@@ -59,17 +64,19 @@ public:
   double* PullDataPtr();
   void PullData(std::vector<double>& data);
 
-  void ForwardDebug(const std::string& msg, const std::string& origin);
-  void ForwardInfo(const std::string& msg, const std::string& origin);
-  void ForwardWarning(const std::string& msg, const std::string& origin);
-  void ForwardError(const std::string& msg, const std::string& origin);
-  void ForwardFatal(const std::string& msg, const std::string& origin);
+  virtual void ForwardDebug(const std::string& msg, const std::string& origin);
+  virtual void ForwardInfo(const std::string& msg, const std::string& origin);
+  virtual void ForwardWarning(const std::string& msg, const std::string& origin);
+  virtual void ForwardError(const std::string& msg, const std::string& origin);
+  virtual void ForwardFatal(const std::string& msg, const std::string& origin);
 
   void HandleEvent(eEvent type, bool active, const SEScalarTime* time = nullptr);
+
 
 protected:
   void SetupDefaultDataRequests();
 
+  PhysiologyEngine& GetPhysiologyEngine();
 private:
   class pimpl;
   pimpl* data;

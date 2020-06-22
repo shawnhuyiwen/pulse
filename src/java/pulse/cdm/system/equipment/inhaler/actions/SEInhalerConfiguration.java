@@ -4,7 +4,6 @@
 package pulse.cdm.system.equipment.inhaler.actions;
 
 import pulse.cdm.bind.InhalerActions.InhalerConfigurationData;
-import pulse.cdm.substance.SESubstanceManager;
 import pulse.cdm.system.equipment.inhaler.SEInhaler;
 import pulse.utilities.Log;
 
@@ -51,7 +50,7 @@ public class SEInhalerConfiguration extends SEInhalerAction
     return hasConfiguration() || hasConfigurationFile();
   }
   
-  public static void load(InhalerConfigurationData src, SEInhalerConfiguration dst, SESubstanceManager subMgr)
+  public static void load(InhalerConfigurationData src, SEInhalerConfiguration dst)
   {
     dst.reset();
     switch(src.getOptionCase())
@@ -60,7 +59,7 @@ public class SEInhalerConfiguration extends SEInhalerAction
       dst.configurationFile = src.getConfigurationFile();
       break;
     case CONFIGURATION:
-      SEInhaler.load(src.getConfiguration(),dst.getConfiguration(),subMgr);
+      SEInhaler.load(src.getConfiguration(),dst.getConfiguration());
       break;
     default:
     	Log.error("Unknown InhalerConfiguationData OptionCase");

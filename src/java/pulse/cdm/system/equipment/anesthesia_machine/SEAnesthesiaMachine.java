@@ -11,7 +11,6 @@ import pulse.cdm.properties.SEScalar0To1;
 import pulse.cdm.properties.SEScalarFrequency;
 import pulse.cdm.properties.SEScalarPressure;
 import pulse.cdm.properties.SEScalarVolumePerTime;
-import pulse.cdm.substance.SESubstanceManager;
 import pulse.cdm.system.equipment.SEEquipment;
 
 public class SEAnesthesiaMachine extends SEEquipment
@@ -123,7 +122,7 @@ public class SEAnesthesiaMachine extends SEEquipment
       getOxygenBottleTwo().copy(from.getOxygenBottleTwo());
   }
 
-  public static void load(AnesthesiaMachineData src, SEAnesthesiaMachine dst, SESubstanceManager subMgr)
+  public static void load(AnesthesiaMachineData src, SEAnesthesiaMachine dst)
   {
     dst.reset();
     if (src.getConnection()!=eConnection.UNRECOGNIZED)
@@ -147,9 +146,9 @@ public class SEAnesthesiaMachine extends SEEquipment
     if (src.hasPeakInspiratoryPressure())
       SEScalarPressure.load(src.getPeakInspiratoryPressure(), dst.getPeakInspiratoryPressure());
     if (src.hasLeftChamber())
-      SEAnesthesiaMachineChamber.load(src.getLeftChamber(), dst.getLeftChamber(),subMgr);
+      SEAnesthesiaMachineChamber.load(src.getLeftChamber(), dst.getLeftChamber());
     if (src.hasRightChamber())
-      SEAnesthesiaMachineChamber.load(src.getRightChamber(), dst.getRightChamber(),subMgr);
+      SEAnesthesiaMachineChamber.load(src.getRightChamber(), dst.getRightChamber());
     if (src.hasOxygenBottleOne())
       SEAnesthesiaMachineOxygenBottle.load(src.getOxygenBottleOne(), dst.getOxygenBottleOne());
     if (src.hasOxygenBottleTwo())

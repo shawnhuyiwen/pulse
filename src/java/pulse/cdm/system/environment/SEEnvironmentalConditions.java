@@ -22,10 +22,8 @@ import pulse.cdm.properties.SEScalarLengthPerTime;
 import pulse.cdm.properties.SEScalarMassPerVolume;
 import pulse.cdm.properties.SEScalarPressure;
 import pulse.cdm.properties.SEScalarTemperature;
-import pulse.cdm.substance.SESubstance;
 import pulse.cdm.substance.SESubstanceConcentration;
 import pulse.cdm.substance.SESubstanceFraction;
-import pulse.cdm.substance.SESubstanceManager;
 import pulse.utilities.FileUtils;
 import pulse.utilities.Log;
 
@@ -138,18 +136,18 @@ public class SEEnvironmentalConditions
     }    
   }
   
-  public void readFile(String fileName, SESubstanceManager mgr) throws InvalidProtocolBufferException
+  public void readFile(String fileName) throws InvalidProtocolBufferException
   {
     EnvironmentalConditionsData.Builder builder = EnvironmentalConditionsData.newBuilder();
     JsonFormat.parser().merge(FileUtils.readFile(fileName), builder);
-    SEEnvironmentalConditions.load(builder.build(), this, mgr);
+    SEEnvironmentalConditions.load(builder.build(), this);
   }
   public void writeFile(String fileName) throws InvalidProtocolBufferException
   {
     FileUtils.writeFile(fileName, JsonFormat.printer().print(SEEnvironmentalConditions.unload(this)));
   }
   
-  public static void load(EnvironmentalConditionsData src, SEEnvironmentalConditions dst, SESubstanceManager substances)
+  public static void load(EnvironmentalConditionsData src, SEEnvironmentalConditions dst)
   {
     dst.reset();
     if (src.getSurroundingType() != eSurroundingType.UNRECOGNIZED)
@@ -173,23 +171,11 @@ public class SEEnvironmentalConditions
     if (src.hasRespirationAmbientTemperature())
       SEScalarTemperature.load(src.getRespirationAmbientTemperature(),dst.getRespirationAmbientTemperature());
     
-    SESubstance sub;
     if(src.getAmbientGasList()!=null)
     {
       for(SubstanceFractionData subData : src.getAmbientGasList())
       {
-        sub = substances.getSubstance(subData.getName());
-        if(sub == null)
-        {
-          Log.error("Substance does not exist for ambient gas : "+subData.getName());
-          continue;
-        }
-        if(sub.getState() != eState.Gas)
-        {
-          Log.error("Environment Ambient Gas must be a gas, "+subData.getName()+" is not a gas...");
-          continue;
-        }
-        SEScalar0To1.load(subData.getAmount(),dst.createAmbientGas(sub).getAmount());
+        SEScalar0To1.load(subData.getAmount(),dst.createAmbientGas(subData.getName()).getAmount());
       }
     }
     
@@ -197,18 +183,7 @@ public class SEEnvironmentalConditions
     {
       for(SubstanceConcentrationData subData : src.getAmbientAerosolList())
       {
-        sub = substances.getSubstance(subData.getName());
-        if(sub == null)
-        {
-          Log.error("Substance does not exist for ambient aerosol : "+subData.getName());
-          continue;
-        }
-        if(sub.getState() != eState.Solid && sub.getState() != eState.Liquid)
-        {
-          Log.error("Environment Ambient Aerosol must be a liquid or a gas, "+subData.getName()+" is neither...");
-          continue;
-        }
-        SEScalarMassPerVolume.load(subData.getConcentration(),dst.createAmbientAerosol(sub).getConcentration());
+        SEScalarMassPerVolume.load(subData.getConcentration(),dst.createAmbientAerosol(subData.getName()).getConcentration());
       }
     }
   }
@@ -229,7 +204,7 @@ public class SEEnvironmentalConditions
     if (src.hasAmbientTemperature())
       dst.setAmbientTemperature(SEScalarTemperature.unload(src.ambientTemperature));
     if (src.hasAtmosphericPressure())
-      dst.setAtmosphericPressure(SEScalarPressure.unload(src.atmosphericPressure));    
+      dst.setAtmosphericPressure(SEScalarPressure.unload(src.atmosphericPressure));
     if (src.hasClothingResistance())
       dst.setClothingResistance(SEScalarHeatResistanceArea.unload(src.clothingResistance));
     if (src.hasEmissivity())
@@ -359,15 +334,15 @@ public class SEEnvironmentalConditions
     return respirationAmbientTemperature == null ? false : respirationAmbientTemperature.isValid();
   }
   
-  public SESubstanceFraction createAmbientGas(SESubstance substance)
+  public SESubstanceFraction createAmbientGas(String substance)
   {
     return getAmbientGas(substance);
   }
-  public SESubstanceFraction getAmbientGas(SESubstance substance)
+  public SESubstanceFraction getAmbientGas(String substance)
   {
     for(SESubstanceFraction sf : this.ambientGases)
     {
-      if(sf.getSubstance().getName().equals(substance.getName()))
+      if(sf.getSubstance().equals(substance))
       {        
         return sf;
       }
@@ -380,11 +355,11 @@ public class SEEnvironmentalConditions
   {
     return !this.ambientGases.isEmpty();
   }
-  public boolean hasAmbientGas(SESubstance substance)
+  public boolean hasAmbientGas(String substance)
   {
     for(SESubstanceFraction sf : this.ambientGases)
     {
-      if(sf.getSubstance()==substance)
+      if(sf.getSubstance().equals(substance))
       {        
         return true;
       }
@@ -395,11 +370,11 @@ public class SEEnvironmentalConditions
   {
     return this.ambientGases;
   }
-  public void removeAmbientGas(SESubstance substance)
+  public void removeAmbientGas(String substance)
   {
     for(SESubstanceFraction sf : this.ambientGases)
     {
-      if(sf.getSubstance()==substance)
+      if(sf.getSubstance().equals(substance))
       {
         this.ambientGases.remove(sf);
         return;
@@ -408,16 +383,16 @@ public class SEEnvironmentalConditions
   }
 
   
-  public SESubstanceConcentration createAmbientAerosol(SESubstance substance)
+  public SESubstanceConcentration createAmbientAerosol(String substance)
   {
     return getAmbientAerosol(substance);
   }
-  public SESubstanceConcentration getAmbientAerosol(SESubstance substance)
+  public SESubstanceConcentration getAmbientAerosol(String substance)
   {
     for(SESubstanceConcentration sc : this.ambientAerosols)
     {
-      if(sc.getSubstance().getName().equals(substance.getName()))
-      {        
+      if(sc.getSubstance().equals(substance))
+      {
         return sc;
       }
     }    
@@ -429,12 +404,12 @@ public class SEEnvironmentalConditions
   {
     return !this.ambientAerosols.isEmpty();
   }
-  public boolean hasAmbientAerosol(SESubstance substance)
+  public boolean hasAmbientAerosol(String substance)
   {
     for(SESubstanceConcentration sc : this.ambientAerosols)
     {
-      if(sc.getSubstance()==substance)
-      {        
+      if(sc.getSubstance().equals(substance))
+      {
         return true;
       }
     }
@@ -444,11 +419,11 @@ public class SEEnvironmentalConditions
   {
     return Collections.unmodifiableList(this.ambientAerosols);
   }
-  public void removeAmbientAerosol(SESubstance substance)
+  public void removeAmbientAerosol(String substance)
   {
     for(SESubstanceConcentration sc : this.ambientAerosols)
     {
-      if(sc.getSubstance()==substance)
+      if(sc.getSubstance().equals(substance))
       {
         this.ambientAerosols.remove(sc);
         return;

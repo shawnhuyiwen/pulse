@@ -4,7 +4,6 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
 
 import pulse.cdm.scenario.SEScenario;
-import pulse.cdm.substance.SESubstanceManager;
 import pulse.cpm.bind.Pulse.ScenarioData;
 import pulse.utilities.FileUtils;
 
@@ -13,9 +12,9 @@ public class PulseScenario extends SEScenario
 {
   protected PulseConfiguration config = null;
 
-  public PulseScenario(SESubstanceManager subMgr)
+  public PulseScenario()
   {
-    super(subMgr);
+    super();
   }
 
   public void reset() 

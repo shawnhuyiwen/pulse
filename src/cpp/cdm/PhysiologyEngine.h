@@ -234,6 +234,13 @@ public:
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
+  /// Returns the initial simulation patient object used by the engine 
+  ///
+  //--------------------------------------------------------------------------------------------------
+  virtual const SEPatient& GetInitialPatient() const = 0;
+
+  //--------------------------------------------------------------------------------------------------
+  /// \brief
   /// Determines the assessment type and fills the data object with current data. 
   ///
   /// Assessments can be queried at any point in the calculation and as many times are desired. 

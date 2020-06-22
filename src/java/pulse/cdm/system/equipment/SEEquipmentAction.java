@@ -6,7 +6,6 @@ package pulse.cdm.system.equipment;
 import pulse.cdm.actions.SEAction;
 import pulse.cdm.bind.Actions.EquipmentActionData;
 import pulse.cdm.bind.EquipmentActions.AnyEquipmentActionData;
-import pulse.cdm.substance.SESubstanceManager;
 import pulse.cdm.system.equipment.anesthesia_machine.actions.SEAnesthesiaMachineConfiguration;
 import pulse.cdm.system.equipment.anesthesia_machine.actions.SEAnesthesiaMachineExpiratoryValveLeak;
 import pulse.cdm.system.equipment.anesthesia_machine.actions.SEAnesthesiaMachineExpiratoryValveObstruction;
@@ -56,14 +55,14 @@ public abstract class SEEquipmentAction extends SEAction
     SEAction.unload(src, dst.getActionBuilder());
   }
   
-  public static SEEquipmentAction ANY2CDM(AnyEquipmentActionData c, SESubstanceManager subMgr) 
+  public static SEEquipmentAction ANY2CDM(AnyEquipmentActionData c) 
   {
     switch(c.getActionCase())
     {
     case ANESTHESIAMACHINECONFIGURATION:
     {
       SEAnesthesiaMachineConfiguration dst = new SEAnesthesiaMachineConfiguration();
-      SEAnesthesiaMachineConfiguration.load(c.getAnesthesiaMachineConfiguration(), dst, subMgr);
+      SEAnesthesiaMachineConfiguration.load(c.getAnesthesiaMachineConfiguration(), dst);
       return dst;
     }
     case ANESTHESIAMACHINEEXPIRATORYVALVELEAK:
@@ -141,13 +140,13 @@ public abstract class SEEquipmentAction extends SEAction
     case INHALERCONFIGURATION:
     {
       SEInhalerConfiguration dst = new SEInhalerConfiguration();
-      SEInhalerConfiguration.load(c.getInhalerConfiguration(), dst, subMgr);
+      SEInhalerConfiguration.load(c.getInhalerConfiguration(), dst);
       return dst;
     }
     case MECHANICALVENTILATORCONFIGURATION:
     {
       SEMechanicalVentilatorConfiguration dst = new SEMechanicalVentilatorConfiguration();
-      SEMechanicalVentilatorConfiguration.load(c.getMechanicalVentilatorConfiguration(), dst, subMgr);
+      SEMechanicalVentilatorConfiguration.load(c.getMechanicalVentilatorConfiguration(), dst);
       return dst;
     }
     case ACTION_NOT_SET:

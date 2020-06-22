@@ -46,7 +46,6 @@ import com.google.protobuf.InvalidProtocolBufferException;
 
 import pulse.cdm.actions.SEAction;
 import pulse.cdm.scenario.SEScenario;
-import pulse.cdm.substance.SESubstanceManager;
 import pulse.utilities.DoubleUtils;
 import pulse.utilities.FileUtils;
 import pulse.utilities.Log;
@@ -66,7 +65,7 @@ public class ActionEventPlotter implements Plotter
     PlotDriver.main(args);
   }
   
-  public void plot(PlotJob job, SESubstanceManager subMgr)
+  public void plot(PlotJob job)
   {    
     //fill PlotJob with needed data if it doesn't exist
     if(job.dataPath == null || job.dataPath.isEmpty())
@@ -91,7 +90,7 @@ public class ActionEventPlotter implements Plotter
       //Get all actions from scenario file
       try
       {
-        this.scenario = new SEScenario(subMgr);
+        this.scenario = new SEScenario();
         this.scenario.readFile(job.scenarioPath+"/"+job.scenarioFile);
         actions = scenario.getActions();
       } 

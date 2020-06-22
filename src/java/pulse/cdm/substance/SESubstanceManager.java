@@ -169,7 +169,7 @@ public class SESubstanceManager
 				try
 				{
 					SESubstanceCompound c = new SESubstanceCompound();
-					c.readFile(cFile.getAbsolutePath(),this);
+					c.readFile(cFile.getAbsolutePath());
 					addCompound(c);
 				}
 				catch(InvalidProtocolBufferException ex)

@@ -8,7 +8,6 @@ import java.io.Serializable;
 import pulse.cdm.bind.Conditions.ConditionData;
 import pulse.cdm.bind.Engine.AnyConditionData;
 import pulse.cdm.patient.conditions.SEPatientCondition;
-import pulse.cdm.substance.SESubstanceManager;
 import pulse.cdm.system.environment.conditions.SEEnvironmentCondition;
 import pulse.utilities.Log;
 
@@ -63,14 +62,14 @@ public abstract class SECondition implements Serializable
     this.comment = null;
   }
   
-  public static SECondition ANY2CDM(AnyConditionData any, SESubstanceManager subMgr)
+  public static SECondition ANY2CDM(AnyConditionData any)
   {
     switch(any.getConditionCase())
     {
       case PATIENTCONDITION:
-        return SEPatientCondition.ANY2CDM(any.getPatientCondition(), subMgr);
+        return SEPatientCondition.ANY2CDM(any.getPatientCondition());
       case ENVIRONMENTCONDITION:
-        return SEEnvironmentCondition.ANY2CDM(any.getEnvironmentCondition(), subMgr);
+        return SEEnvironmentCondition.ANY2CDM(any.getEnvironmentCondition());
       case CONDITION_NOT_SET:
         Log.warn("AnyConditionData is empty...was that intended?");
         return null;

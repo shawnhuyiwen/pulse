@@ -6,7 +6,6 @@ package pulse.cdm.system.environment.conditions;
 import pulse.cdm.bind.EnvironmentConditions.AnyEnvironmentConditionData;
 import pulse.cdm.bind.EnvironmentConditions.EnvironmentConditionData;
 import pulse.cdm.conditions.SECondition;
-import pulse.cdm.substance.SESubstanceManager;
 import pulse.utilities.Log;
 
 public abstract class SEEnvironmentCondition extends SECondition
@@ -41,13 +40,13 @@ public abstract class SEEnvironmentCondition extends SECondition
   @Override
   public abstract String toString();
 
-  public static SEEnvironmentCondition ANY2CDM(AnyEnvironmentConditionData c, SESubstanceManager subMgr) 
+  public static SEEnvironmentCondition ANY2CDM(AnyEnvironmentConditionData c) 
   {
     switch(c.getConditionCase())
     {
     case INITIALENVIRONMENTALCONDITIONS:
       SEInitialEnvironmentalConditions newC = new SEInitialEnvironmentalConditions();
-      SEInitialEnvironmentalConditions.load(c.getInitialEnvironmentalConditions(), newC, subMgr);
+      SEInitialEnvironmentalConditions.load(c.getInitialEnvironmentalConditions(), newC);
       return newC;
     case CONDITION_NOT_SET:
       Log.warn("AnyEnvironmentConditionData was empty...was that intended?");

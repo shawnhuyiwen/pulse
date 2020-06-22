@@ -27,7 +27,6 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-import pulse.cdm.substance.SESubstanceManager;
 import pulse.utilities.DoubleUtils;
 import pulse.utilities.FileUtils;
 import pulse.utilities.Log;
@@ -45,7 +44,7 @@ public class MultiPlotter implements Plotter
   }
 
   @Override
-  public void plot(PlotJob job, SESubstanceManager subMgr)
+  public void plot(PlotJob job)
   {
     //fill PlotJob with needed data if it doesn't exist
     if(job.dataPath == null || job.dataPath.isEmpty())

@@ -6,7 +6,6 @@ package pulse.cdm.patient.conditions;
 import pulse.cdm.bind.PatientConditions.AnyPatientConditionData;
 import pulse.cdm.bind.PatientConditions.PatientConditionData;
 import pulse.cdm.conditions.SECondition;
-import pulse.cdm.substance.SESubstanceManager;
 import pulse.utilities.Log;
 
 public abstract class SEPatientCondition extends SECondition
@@ -42,7 +41,7 @@ public abstract class SEPatientCondition extends SECondition
   @Override
   public abstract String toString();
 
-  public static SEPatientCondition ANY2CDM(AnyPatientConditionData c, SESubstanceManager subMgr) 
+  public static SEPatientCondition ANY2CDM(AnyPatientConditionData c) 
   {
     switch(c.getConditionCase())
     {

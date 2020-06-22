@@ -7,7 +7,6 @@ import pulse.cdm.bind.PatientActions.SubstanceBolusData;
 import pulse.cdm.bind.PatientActions.SubstanceBolusData.eRoute;
 import pulse.cdm.properties.SEScalarMassPerVolume;
 import pulse.cdm.properties.SEScalarVolume;
-import pulse.cdm.substance.SESubstance;
 
 public class SESubstanceBolus extends SEPatientAction
 {
@@ -16,14 +15,14 @@ public class SESubstanceBolus extends SEPatientAction
   protected eRoute adminRoute;
   protected SEScalarMassPerVolume concentration;
   protected SEScalarVolume dose;
-  protected SESubstance substance;
+  protected String substance;
   
-  public SESubstanceBolus(SESubstance substance)
+  public SESubstanceBolus()
   {
     this.adminRoute = null;
     this.dose = null;
     this.concentration = null;
-    this.substance = substance;
+    this.substance = "";
   }
   
   public void copy(SESubstanceBolus other)
@@ -65,6 +64,7 @@ public class SESubstanceBolus extends SEPatientAction
   public static void load(SubstanceBolusData src, SESubstanceBolus dst)
   {
     SEPatientAction.load(src.getPatientAction(), dst);
+    dst.setSubstance(src.getSubstance());
     if(src.hasDose())
       SEScalarVolume.load(src.getDose(),dst.getDose());
     if(src.hasConcentration())
@@ -90,7 +90,7 @@ public class SESubstanceBolus extends SEPatientAction
     if (src.hasAdministrationRoute())
       dst.setAdministrationRoute(src.adminRoute);
     if (src.hasSubstance())
-      dst.setSubstance(src.substance.getName());
+      dst.setSubstance(src.substance);
   }
 
   public eRoute getAdministrationRoute()
@@ -129,20 +129,24 @@ public class SESubstanceBolus extends SEPatientAction
     return dose;
   }
   
-  public SESubstance getSubstance()
+  public boolean hasSubstance(){return !substance.isEmpty();}
+  public void setSubstance(String name)
+  {
+    substance = name==null?"":name;
+  }
+  public String getSubstance()
   {
     return substance;
   }
-  public boolean hasSubstance() { return substance != null; }
   
   @Override
   public String toString()
   {
     if (dose != null || concentration != null)
-      return "Substance Bolus" 
+      return "Substance Bolus"
           + "\n\tDose: " + getDose()
           + "\n\tConcentration: " + getConcentration()
-          + "\n\tSubstance: " + getSubstance().getName() 
+          + "\n\tSubstance: " + getSubstance()
           + "\n\tAdministration Route: " + getAdministrationRoute();
     else
       return "Action not specified properly";

@@ -32,8 +32,6 @@ import pulse.cdm.properties.CommonUnits.PressureUnit;
 import pulse.cdm.properties.CommonUnits.TimeUnit;
 import pulse.cdm.properties.CommonUnits.VolumePerTimeUnit;
 import pulse.cdm.properties.CommonUnits.VolumeUnit;
-import pulse.cdm.substance.SESubstance;
-import pulse.cdm.substance.SESubstanceManager;
 import pulse.cdm.system.equipment.anesthesia_machine.actions.SEAnesthesiaMachineConfiguration;
 import pulse.cpm.bind.Pulse;
 import pulse.utilities.FileUtils;
@@ -44,13 +42,8 @@ public class SEScenario
 {
   public static void main(String[] args)
   {
-    jniBridge.initialize();
-    
-    SESubstanceManager mgr = new SESubstanceManager();
-    mgr.loadSubstanceDirectory();
-
     {
-      SEScenario s = new SEScenario(mgr);
+      SEScenario s = new SEScenario();
       s.setName("Test");
       s.setDescription("Description");
       s.getPatientConfiguration().setPatientFile("StandardMale.json");
@@ -75,7 +68,6 @@ public class SEScenario
       bc.getSeverity().setValue(0.5);
       s.getActions().add(bc);
 
-      SESubstance sub = mgr.getSubstance("Oxygen");
       SEAnesthesiaMachineConfiguration anes = new SEAnesthesiaMachineConfiguration();
       anes.getConfiguration().setConnection(eConnection.Tube);
       anes.getConfiguration().getInletFlow().setValue(5.0, VolumePerTimeUnit.L_Per_min);
@@ -89,10 +81,10 @@ public class SEScenario
       anes.getConfiguration().getOxygenBottleOne().getVolume().setValue(660.0, VolumeUnit.L);
       anes.getConfiguration().getOxygenBottleTwo().getVolume().setValue(660.0, VolumeUnit.L);      
       anes.getConfiguration().getRightChamber().setState(eSwitch.On);
-      anes.getConfiguration().getRightChamber().setSubstance(sub); 
+      anes.getConfiguration().getRightChamber().setSubstance("Oxygen"); 
       anes.getConfiguration().getRightChamber().getSubstanceFraction().setValue(0.5);
       anes.getConfiguration().getLeftChamber().setState(eSwitch.On);
-      anes.getConfiguration().getLeftChamber().setSubstance(sub);
+      anes.getConfiguration().getLeftChamber().setSubstance("Oxygen");
       s.getActions().add(anes);
 
       //SECompleteBloodCount cbc = new SECompleteBloodCount();
@@ -115,7 +107,7 @@ public class SEScenario
         e1.printStackTrace();
       }
 
-      SEScenario s2 = new SEScenario(mgr);
+      SEScenario s2 = new SEScenario();
       try 
       {
         s2.readFile("TestScenario.json");
@@ -158,7 +150,7 @@ public class SEScenario
       catch(Exception ex)
       {
         Log.info("Testing scenario file "+file);
-        SEScenario sce1 = new SEScenario(mgr);
+        SEScenario sce1 = new SEScenario();
         try
         {
           sce1.readFile(file);
@@ -236,11 +228,9 @@ public class SEScenario
   protected SEDataRequestManager          drMgr = new SEDataRequestManager();
   protected List<SEAction>                actions = new ArrayList<>();
 
-  protected SESubstanceManager            subMgr;
-
-  public SEScenario(SESubstanceManager subMgr)
+  public SEScenario()
   {
-    this.subMgr = subMgr; 
+    jniBridge.initialize();
     reset();
   }
 
@@ -273,7 +263,7 @@ public class SEScenario
     dst.description = src.getDescription();
 
     if(src.hasPatientConfiguration())
-      SEPatientConfiguration.load(src.getPatientConfiguration(),dst.getPatientConfiguration(),dst.subMgr);
+      SEPatientConfiguration.load(src.getPatientConfiguration(),dst.getPatientConfiguration());
     else 
       dst.engineStateFile = src.getEngineStateFile();
 
@@ -281,7 +271,7 @@ public class SEScenario
       SEDataRequestManager.load(src.getDataRequestManager(), dst.getDataRequestManager());
 
     for(AnyActionData aData : src.getAnyActionList())
-      dst.actions.add(SEAction.ANY2CDM(aData,dst.subMgr)); 
+      dst.actions.add(SEAction.ANY2CDM(aData)); 
     dst.deriveActionTimes();
   }
 
@@ -395,11 +385,6 @@ public class SEScenario
   public SEDataRequestManager getDataRequestManager() 
   {
     return this.drMgr;
-  }
-
-  public SESubstanceManager getSubstanceManager()
-  {
-    return this.subMgr;
   }
 
   public void deriveActionTimes()

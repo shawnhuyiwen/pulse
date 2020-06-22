@@ -7,8 +7,6 @@ import pulse.cdm.bind.Inhaler.InhalerData;
 import pulse.cdm.properties.SEScalar0To1;
 import pulse.cdm.properties.SEScalarMass;
 import pulse.cdm.properties.SEScalarVolume;
-import pulse.cdm.substance.SESubstance;
-import pulse.cdm.substance.SESubstanceManager;
 import pulse.cdm.system.equipment.SEEquipment;
 
 public class SEInhaler extends SEEquipment
@@ -17,7 +15,7 @@ public class SEInhaler extends SEEquipment
   protected SEScalarMass   meteredDose;
   protected SEScalar0To1   nozzleLoss;
   protected SEScalarVolume spacerVolume;
-  protected SESubstance    substance;
+  protected String         substance;
 
   public SEInhaler()
   {
@@ -30,7 +28,7 @@ public class SEInhaler extends SEEquipment
     meteredDose = null;
     nozzleLoss = null;
     spacerVolume = null;
-    substance = null;
+    substance = "";
   }
 
   @Override
@@ -43,7 +41,7 @@ public class SEInhaler extends SEEquipment
       nozzleLoss.invalidate();
     if (spacerVolume != null)
       spacerVolume.invalidate();
-    substance = null;
+    substance = "";
   }
 
   public void copy(SEInhaler from)
@@ -57,7 +55,7 @@ public class SEInhaler extends SEEquipment
     substance = from.substance;
   }
 
-  public static void load(InhalerData src, SEInhaler dst, SESubstanceManager subMgr)
+  public static void load(InhalerData src, SEInhaler dst)
   {
     if (src.getState()!=eSwitch.UNRECOGNIZED && src.getState()!=eSwitch.NullSwitch)
       dst.setState(src.getState());
@@ -68,7 +66,7 @@ public class SEInhaler extends SEEquipment
     if (src.hasSpacerVolume())
       SEScalarVolume.load(src.getSpacerVolume(),dst.getSpacerVolume());
     if (src.getSubstance() != null)
-      dst.setSubstance(subMgr.getSubstance(src.getSubstance()));
+      dst.setSubstance(src.getSubstance());
   }
   public static InhalerData unload(SEInhaler src)
   {
@@ -86,7 +84,7 @@ public class SEInhaler extends SEEquipment
     if (src.hasSpacerVolume())
       dst.setSpacerVolume(SEScalarVolume.unload(src.spacerVolume));
     if (src.hasSubstance())
-      dst.setSubstance(src.substance.getName());
+      dst.setSubstance(src.substance);
   }
 
   public eSwitch getState()
@@ -131,13 +129,13 @@ public class SEInhaler extends SEEquipment
     return spacerVolume;
   }
 
-  public SESubstance getSubstance()
+  public String getSubstance()
   {
     return substance;
   }
-  public void setSubstance(SESubstance s)
+  public void setSubstance(String s)
   {
-    this.substance = s;
+    this.substance = s==null?"":s;
   }
   public boolean hasSubstance() 
   {
@@ -152,7 +150,7 @@ public class SEInhaler extends SEEquipment
     str += "\n\tMetered Dose: "; str += this.hasMeteredDose()?this.getMeteredDose():"Not Supplied";
     str += "\n\tNozzle Loss: "; str += this.hasNozzleLoss()?this.getNozzleLoss():"Not Supplied";
     str += "\n\tSpacer Volume: "; str += this.hasSpacerVolume()?this.getSpacerVolume():"Not Supplied";    
-    str += "\n\tSubstance: "; str += this.hasSubstance()?this.getSubstance().getName():"Not Supplied";
+    str += "\n\tSubstance: "; str += this.hasSubstance()?this.getSubstance():"Not Supplied";
     return str;
   }
 }

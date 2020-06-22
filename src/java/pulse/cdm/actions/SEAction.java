@@ -9,7 +9,6 @@ import pulse.cdm.bind.Actions.ActionData;
 import pulse.cdm.bind.Engine.AnyActionData;
 import pulse.cdm.patient.actions.SEPatientAction;
 import pulse.cdm.properties.SEScalarTime;
-import pulse.cdm.substance.SESubstanceManager;
 import pulse.cdm.system.environment.actions.SEEnvironmentAction;
 import pulse.cdm.system.equipment.SEEquipmentAction;
 import pulse.utilities.Log;
@@ -79,7 +78,7 @@ public abstract class SEAction implements Serializable
     return this.scenarioTime;
   }
   
-  public static SEAction ANY2CDM(AnyActionData any, SESubstanceManager subMgr)
+  public static SEAction ANY2CDM(AnyActionData any)
   {
     switch(any.getActionCase())
     {
@@ -90,11 +89,11 @@ public abstract class SEAction implements Serializable
         return dst;
       }
       case PATIENTACTION:
-        return SEPatientAction.ANY2CDM(any.getPatientAction(), subMgr);
+        return SEPatientAction.ANY2CDM(any.getPatientAction());
       case ENVIRONMENTACTION:
-        return SEEnvironmentAction.ANY2CDM(any.getEnvironmentAction(), subMgr);
+        return SEEnvironmentAction.ANY2CDM(any.getEnvironmentAction());
       case EQUIPMENTACTION:
-        return SEEquipmentAction.ANY2CDM(any.getEquipmentAction(), subMgr);
+        return SEEquipmentAction.ANY2CDM(any.getEquipmentAction());
       case SERIALIZE:
       {
         SESerializeState dst = new SESerializeState();

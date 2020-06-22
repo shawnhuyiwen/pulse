@@ -5,25 +5,24 @@ package pulse.cdm.system.equipment.anesthesia_machine;
 import pulse.cdm.bind.AnesthesiaMachine.AnesthesiaMachineChamberData;
 import pulse.cdm.bind.Enums.eSwitch;
 import pulse.cdm.properties.SEScalar0To1;
-import pulse.cdm.substance.SESubstance;
-import pulse.cdm.substance.SESubstanceManager;
 
 public class SEAnesthesiaMachineChamber 
 {
   protected eSwitch state;
-  protected SESubstance substance;
+  protected String substance;
   protected SEScalar0To1 substanceFraction;
 
   public SEAnesthesiaMachineChamber()
   {
     this.state = eSwitch.Off;
-    this.substance = null;
+    this.substance = "";
     this.substanceFraction = null;
   }
 
   public void reset()
   {
     state = eSwitch.Off;
+    substance = "";
     if (substanceFraction != null)
       substanceFraction.invalidate();
   }
@@ -34,16 +33,16 @@ public class SEAnesthesiaMachineChamber
     this.state=from.state;
     this.substance=from.substance;
     if(from.hasSubstanceFraction())
-      this.getSubstanceFraction().set(from.substanceFraction);      
+      this.getSubstanceFraction().set(from.substanceFraction);
   }
 
-  public static void load( AnesthesiaMachineChamberData src, SEAnesthesiaMachineChamber dst, SESubstanceManager subMgr)
+  public static void load( AnesthesiaMachineChamberData src, SEAnesthesiaMachineChamber dst)
   {
     dst.reset();
     if (src.getState() != eSwitch.UNRECOGNIZED && src.getState()!=eSwitch.NullSwitch)
       dst.setState(src.getState());
     if (src.getSubstance()!=null)
-      dst.setSubstance(subMgr.getSubstance(src.getSubstance()));
+      dst.setSubstance(src.getSubstance());
     if (src.hasSubstanceFraction())
       SEScalar0To1.load(src.getSubstanceFraction(),dst.getSubstanceFraction());
   }
@@ -56,7 +55,7 @@ public class SEAnesthesiaMachineChamber
   protected static void unload(SEAnesthesiaMachineChamber src, AnesthesiaMachineChamberData.Builder dst)
   {
     if(src.hasSubstance())
-      dst.setSubstance(src.substance.getName());
+      dst.setSubstance(src.substance);
     dst.setState(src.state);
     if (src.hasSubstanceFraction())
       dst.setSubstanceFraction(SEScalar0To1.unload(src.substanceFraction));
@@ -86,13 +85,13 @@ public class SEAnesthesiaMachineChamber
   {
     return this.substance!=null;
   }
-  public SESubstance getSubstance()
+  public String getSubstance()
   {
     return substance;
   }
-  public void setSubstance(SESubstance substance)
+  public void setSubstance(String substance)
   {
-    this.substance = substance;
+    this.substance = substance==null?"":substance;
   }
 
   @Override
@@ -101,6 +100,6 @@ public class SEAnesthesiaMachineChamber
       return "Anesthesia Machine Chamber"
       + "\n\tState: " + getState()
       + "\n\tSubstance Fraction: " + getSubstanceFraction()
-      + "\n\tSubstance: " + (hasSubstance()?getSubstance().getName():"NotProvided");
+      + "\n\tSubstance: " + (hasSubstance()?getSubstance():"NotProvided");
   }
 }

@@ -2,10 +2,13 @@
    See accompanying NOTICE file for details.*/
 package pulse.engine;
 
-import pulse.cdm.engine.SEEventHandler;
+import com.google.protobuf.util.JsonFormat;
+
+import pulse.SerializationType;
 import pulse.cdm.scenario.SEScenario;
 import pulse.utilities.Log;
 import pulse.utilities.LogListener;
+import pulse.utilities.jniBridge;
 
 /**
  * This is a class that will run a scenario through Pulse
@@ -14,50 +17,61 @@ import pulse.utilities.LogListener;
  * but this may work for most of your needs.
  * @author abray
  */
-public class PulseScenarioExec extends Pulse
+public class PulseScenarioExec
 {
-  public void runScenario(String logFile, SEScenario scenario, String resultsFile, CDMUpdatedCallback callback)
-  {    
-    if(callback != null)
-      callback.drMgr = scenario.getDataRequestManager();
-    runScenario(logFile,SEScenario.unload(scenario).toString(),resultsFile,callback);
-  }
   
-  public void runScenario(String logFile, String scenario, String resultsFile)
+  protected static class MyListener extends LogListener
   {
-    runScenario(logFile, scenario, resultsFile, null);
+    protected MyListener()
+    {
+      super();
+      listen(false);
+    }    
+    @Override public void handleDebug(String msg) { Log.debug(msg); }
+    @Override public void handleInfo(String msg)  { Log.info(msg); }
+    @Override public void handleWarn(String msg)  { Log.warn(msg); }
+    @Override public void handleError(String msg) { Log.error(msg); }
+    @Override public void handleFatal(String msg) { Log.fatal(msg); }
+  }
+  public PulseScenarioExec()
+  {
+    jniBridge.initialize();
+    engine=new PulseEngine();
+    engine.setLogListener(new MyListener());
   }
   
-  public void runScenario(String logFile, String scenario, String resultsFile, CDMUpdatedCallback callback)
-  {    
-    double callbackFreq_s = 0;
-    if(callback!=null)
-    { 
-      LogListener l = this.listener;
-      SEEventHandler eh = this.eventManager.getHandler();
-      reset();// Only create our CDM objects if we have a callback to fill data out (also save off listener and event handler)
-      this.listener = l;
-      this.eventManager.forwardEvents(eh);
-      this.cdmCallback = callback;
-      callbackFreq_s = callback.callbackFrequency_s;
-      this.requestData(callback.drMgr);
+  public void finalize()
+  {
+    engine.cleanUp();
+    engine = null;
+  }
+  
+  public boolean runScenario(SEScenario scenario, String resultsFile, String logFile)
+  {
+    return runScenario(scenario, resultsFile, logFile, "./");
+  }
+  public boolean runScenario(SEScenario scenario, String resultsFile, String logFile, String dataDir)
+  {
+    try
+    {
+      String sString =  JsonFormat.printer().print(SEScenario.unload(scenario));
+      return runScenario(sString, SerializationType.JSON, resultsFile, logFile, dataDir);
     }
-    this.nativeObj = nativeAllocate();
-    nativeSetLogFilename(this.nativeObj, logFile);
-    nativeExecuteScenario(this.nativeObj, scenario, Pulse.SerializationType.JSON.value(), resultsFile, callbackFreq_s);
-    nativeDelete(this.nativeObj);
-    this.nativeObj=0;
-    this.cdmCallback = null;
+    catch(Exception ex)
+    {
+      Log.error("Unable to run scenario");
+    }
+    return false;
   }
   
-  public void cancelScenario()
+  public boolean runScenario(String scenario, SerializationType format, String resultsFile, String logFile)
   {
-    if(this.nativeObj!=0)
-      nativeCancelScenario(this.nativeObj);
-    Log.info("Cancelling execution");
+    return runScenario(scenario, format, resultsFile, logFile, "./");
+  }
+  public boolean runScenario(String scenario, SerializationType format, String resultsFile, String logFile, String dataDir)
+  {
+    return engine.nativeExecuteScenario(engine.nativeObj, scenario, format.value(), resultsFile, logFile, dataDir);
   }
   
-  protected native void nativeExecuteScenario(long nativeObj, String scenario, int format, String csvFile, double updateFreq_s);
-  protected native void nativeCancelScenario(long nativeObj);
-  
+  protected PulseEngine engine;
 }

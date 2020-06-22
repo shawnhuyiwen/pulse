@@ -6,7 +6,6 @@ package pulse.cdm.patient.actions;
 import pulse.cdm.bind.PatientActions.SubstanceInfusionData;
 import pulse.cdm.properties.SEScalarMassPerVolume;
 import pulse.cdm.properties.SEScalarVolumePerTime;
-import pulse.cdm.substance.SESubstance;
 
 public class SESubstanceInfusion extends SEPatientAction
 {
@@ -14,13 +13,13 @@ public class SESubstanceInfusion extends SEPatientAction
   private static final long serialVersionUID = 8029916816858227270L;
   protected SEScalarMassPerVolume concentration;
   protected SEScalarVolumePerTime rate;
-  protected SESubstance substance;
+  protected String substance;
   
-  public SESubstanceInfusion(SESubstance substance)
+  public SESubstanceInfusion()
   {
     this.rate = null;
     this.concentration = null;
-    this.substance = substance;
+    this.substance = "";
   }
   
   public void copy(SESubstanceInfusion other)
@@ -60,6 +59,7 @@ public class SESubstanceInfusion extends SEPatientAction
   public static void load(SubstanceInfusionData src, SESubstanceInfusion dst)
   {
     SEPatientAction.load(src.getPatientAction(), dst);
+    dst.setSubstance(src.getSubstance());
     if(src.hasRate())
       SEScalarVolumePerTime.load(src.getRate(),dst.getRate());
     if(src.hasConcentration())
@@ -80,7 +80,7 @@ public class SESubstanceInfusion extends SEPatientAction
       dst.setRate(SEScalarVolumePerTime.unload(src.rate));
     if (src.hasConcentration())
       dst.setConcentration(SEScalarMassPerVolume.unload(src.concentration));
-    dst.setSubstance(src.substance.getName());
+    dst.setSubstance(src.substance);
   }
   
   public boolean hasConcentration()
@@ -106,7 +106,11 @@ public class SESubstanceInfusion extends SEPatientAction
   }
   
   public boolean hasSubstance() { return substance != null; }
-  public SESubstance getSubstance()
+  public void setSubstance(String name)
+  {
+    substance = name==null?"":name;
+  }
+  public String getSubstance()
   {
     return substance;
   }
@@ -115,10 +119,10 @@ public class SESubstanceInfusion extends SEPatientAction
   public String toString()
   {
     if (rate != null || concentration != null)  
-      return "Substance Infusion" 
-          + "\n\tRate: " + getRate() 
-          + "\n\tConcentration: " + getConcentration() 
-          + "\n\tSubstance: " + getSubstance().getName() ;
+      return "Substance Infusion"
+          + "\n\tRate: " + getRate()
+          + "\n\tConcentration: " + getConcentration()
+          + "\n\tSubstance: " + getSubstance();
     else
       return "Action not specified properly";
   }

@@ -50,6 +50,7 @@ public:
   virtual const SESubstanceManager& GetSubstanceManager() const override;
   virtual void SetAdvanceHandler(SEAdvanceHandler* handler) override;
   virtual const SEPatient& GetPatient() const override;
+  virtual const SEPatient& GetInitialPatient() const override;
   virtual bool GetPatientAssessment(SEPatientAssessment& assessment) const override;
 
   virtual const SEEnvironment*                         GetEnvironment() const override;

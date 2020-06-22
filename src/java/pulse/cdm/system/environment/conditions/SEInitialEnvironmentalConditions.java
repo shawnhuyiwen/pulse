@@ -4,7 +4,6 @@
 package pulse.cdm.system.environment.conditions;
 
 import pulse.cdm.bind.EnvironmentConditions.InitialEnvironmentalConditionsData;
-import pulse.cdm.substance.SESubstanceManager;
 import pulse.cdm.system.environment.SEEnvironmentalConditions;
 
 public class SEInitialEnvironmentalConditions extends SEEnvironmentCondition
@@ -47,7 +46,7 @@ public class SEInitialEnvironmentalConditions extends SEEnvironmentCondition
     return hasEnvironmentalConditions() || hasEnvironmentalConditionsFile();
   }
   
-  public static void load(InitialEnvironmentalConditionsData src, SEInitialEnvironmentalConditions dst, SESubstanceManager subMgr)
+  public static void load(InitialEnvironmentalConditionsData src, SEInitialEnvironmentalConditions dst)
   {
     SEEnvironmentCondition.load(src.getEnvironmentCondition(), dst);
     switch(src.getOptionCase())
@@ -56,7 +55,7 @@ public class SEInitialEnvironmentalConditions extends SEEnvironmentCondition
       dst.environmentalConditionsFile = src.getEnvironmentalConditionsFile();
       break;
     case ENVIRONMENTALCONDITIONS:
-      SEEnvironmentalConditions.load(src.getEnvironmentalConditions(),dst.getEnvironmentalConditions(),subMgr);
+      SEEnvironmentalConditions.load(src.getEnvironmentalConditions(),dst.getEnvironmentalConditions());
       break;
     default: // do nothing
     }

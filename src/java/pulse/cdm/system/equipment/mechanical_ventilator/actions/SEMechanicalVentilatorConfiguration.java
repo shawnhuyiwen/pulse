@@ -4,7 +4,6 @@
 package pulse.cdm.system.equipment.mechanical_ventilator.actions;
 
 import pulse.cdm.bind.MechanicalVentilatorActions.MechanicalVentilatorConfigurationData;
-import pulse.cdm.substance.SESubstanceManager;
 import pulse.cdm.system.equipment.mechanical_ventilator.SEMechanicalVentilator;
 import pulse.utilities.Log;
 
@@ -52,7 +51,7 @@ public class SEMechanicalVentilatorConfiguration extends SEMechanicalVentilatorA
     return hasConfiguration() || hasConfigurationFile();
   }
   
-  public static void load(MechanicalVentilatorConfigurationData src, SEMechanicalVentilatorConfiguration dst, SESubstanceManager subMgr)
+  public static void load(MechanicalVentilatorConfigurationData src, SEMechanicalVentilatorConfiguration dst)
   {
     SEMechanicalVentilatorAction.load(src.getMechanicalVentilatorAction(),dst);
     switch(src.getOptionCase())
@@ -61,7 +60,7 @@ public class SEMechanicalVentilatorConfiguration extends SEMechanicalVentilatorA
       dst.configurationFile = src.getConfigurationFile();
       break;
     case CONFIGURATION:
-      SEMechanicalVentilator.load(src.getConfiguration(),dst.getConfiguration(),subMgr);
+      SEMechanicalVentilator.load(src.getConfiguration(),dst.getConfiguration());
       break;
     default:
     	Log.error("Unknown MechanicalVentilatorConfigurationData Option");
