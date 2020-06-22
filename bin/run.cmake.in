@@ -30,6 +30,7 @@ set(JAVA_CLASSPATH Pulse.jar
         "@CMAKE_SOURCE_DIR@/src/java/jar/gson-2.8.6.jar"
         "@CMAKE_SOURCE_DIR@/src/java/jar/guava-29.0-jre.jar"
         "@CMAKE_SOURCE_DIR@/src/java/jar/jfreechart-1.5.0.jar"
+        "@CMAKE_SOURCE_DIR@/src/java/jar/javassist.jar"
         "@CMAKE_SOURCE_DIR@/src/java/jar/poi-4.1.2.jar"
         "@CMAKE_SOURCE_DIR@/src/java/jar/poi-ooxml-4.1.2.jar"
         "@CMAKE_SOURCE_DIR@/src/java/jar/poi-ooxml-schemas-4.1.2.jar"

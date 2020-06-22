@@ -60,7 +60,6 @@ import pulse.utilities.jniBridge;
  */
 public class CDM2MD
 {
-
   public static void main(String[] args)
   {
     jniBridge.initialize();

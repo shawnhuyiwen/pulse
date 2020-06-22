@@ -22,5 +22,6 @@
 	<classpathentry kind="lib" path="jar/logback-classic-1.2.3.jar"/>
 	<classpathentry kind="lib" path="jar/logback-core-1.2.3.jar"/>
 	<classpathentry kind="lib" path="jar/java-ordered-properties-1.0.3.jar"/>
+	<classpathentry kind="lib" path="jar/javassist.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

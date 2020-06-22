@@ -631,23 +631,6 @@ public class ActionEventPlotter implements Plotter
     
     int verticalPixels = 800 + 170*(allActionsAndEvents.size()/5);
     
-    //This is a little hacky, but if we want only the legend, just extend Plot() and remove the draw functionality so it makes a blank plot
-    class LegendPlot extends Plot
-    {
-      private static final long serialVersionUID = -628117496047176276L;
-      
-      @Override
-      public void draw(Graphics2D arg0, Rectangle2D arg1, Point2D arg2,
-          PlotState arg3, PlotRenderingInfo arg4)
-      {
-        
-      }
-      @Override
-      public String getPlotType()
-      {
-        return null;
-      }
-    }
     //Then add the legend to that and throw away the original plot
     if(job.legendOnly)
     {
