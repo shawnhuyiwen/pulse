@@ -18,7 +18,7 @@ import java.util.Set;
 import com.kitware.pulse.utilities.Log;
 import com.kitware.pulse.utilities.LogListener;
 import com.kitware.pulse.utilities.RunConfiguration;
-import com.kitware.pulse.utilities.jniBridge;
+import com.kitware.pulse.utilities.JNIBridge;
 import com.kitware.pulse.utilities.csv.CSVContents;
 
 public class PlotDriver 
@@ -26,7 +26,7 @@ public class PlotDriver
 
   public static void main(String[] args) 
   {    
-    jniBridge.initialize();
+    JNIBridge.initialize();
     PlotDriver me = new PlotDriver();
     RunConfiguration cfg = new RunConfiguration();
     //invalid input

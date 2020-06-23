@@ -14,7 +14,7 @@ import java.util.List;
 import com.kitware.pulse.utilities.FileUtils;
 import com.kitware.pulse.utilities.Log;
 import com.kitware.pulse.utilities.RunConfiguration;
-import com.kitware.pulse.utilities.jniBridge;
+import com.kitware.pulse.utilities.JNIBridge;
 
 public class Rebase
 {
@@ -23,7 +23,7 @@ public class Rebase
     String hash = null;
     if(args.length != 0)
       hash = args[0];
-    jniBridge.initialize();
+    JNIBridge.initialize();
     rebase(hash);
   }
   

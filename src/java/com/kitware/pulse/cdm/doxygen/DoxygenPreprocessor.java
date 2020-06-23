@@ -11,13 +11,13 @@ import java.util.List;
 
 import com.kitware.pulse.utilities.FileUtils;
 import com.kitware.pulse.utilities.Log;
-import com.kitware.pulse.utilities.jniBridge;
+import com.kitware.pulse.utilities.JNIBridge;
 
 public class DoxygenPreprocessor
 {
   public static void main(String[] args)
   {
-    jniBridge.initialize();
+    JNIBridge.initialize();
     try
     {
       if(args.length==2 || args.length==3)

@@ -35,7 +35,7 @@ import com.kitware.pulse.engine.PulseCompartments;
 import com.kitware.pulse.engine.PulseEngine;
 import com.kitware.pulse.utilities.Log;
 import com.kitware.pulse.utilities.LogListener;
-import com.kitware.pulse.utilities.jniBridge;
+import com.kitware.pulse.utilities.JNIBridge;
 
 /**
  * How to use the Java interface to the Pulse Physiology Engine
@@ -111,16 +111,16 @@ public class HowTo_EngineUse
  {
    // As Pulse is a C++ library, a JNI bridge is necessary to pass data between C++ and Java
    // Pulse is contained in a single dynamic/shared library, that will need to be loaded into the JVM
-   // By default an instantiation of the PulseEngine will look for and load the Pulse library in the java.library.path
+   // By default, an instantiation of the PulseEngine will look for and load the Pulse library in the java.library.path
    
-   // If the library is not found in java.library.path,
-   // it will look in a directory you provide or user.dir if not directory is provided
-   //jniBridge.initialize("/path/to/pulse/library");
-   // This should also be called manually if you are using the Pulse API (such as Scalars) without the PulseEngine
-   // Currently, the jniBridge.deinitialize() method is not necessary to call
-   
+   // If you are using this Pulse API for other things (such as Scalars) (not instantiating an engine right away),
+   // you can manually load the native Pulse library like so
+   JNIBridge.initialize();
+   // If the library is not found in java.library.path, it will look in a the user.dir
+   // if you would like to specify the directory where it should look, you can with this call:
+   //JNIBridge.initialize("/path/to/pulse/library");
    // If you would like to run against debug library (PulseJNId), you can do initialize like this
-   //jniBridge.initializeDebug();
+   //JNIBridge.initializeDebug();
    
    // Create a Pulse Engine
    PulseEngine pe = new PulseEngine();

@@ -6,14 +6,14 @@ import com.google.protobuf.util.JsonFormat;
 import com.kitware.pulse.cdm.substance.SESubstanceManager;
 import com.kitware.pulse.utilities.FileUtils;
 import com.kitware.pulse.utilities.Log;
-import com.kitware.pulse.utilities.jniBridge;
+import com.kitware.pulse.utilities.JNIBridge;
 
 public class BindingConverter 
 {
 
   public static void main(String[] args) 
   {
-    jniBridge.initialize();
+    JNIBridge.initialize();
 
     SESubstanceManager mgr = new SESubstanceManager();
     mgr.loadSubstanceDirectory();

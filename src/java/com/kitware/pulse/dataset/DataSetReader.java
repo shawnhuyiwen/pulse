@@ -45,7 +45,7 @@ import com.kitware.pulse.cdm.system.equipment.electrocardiogram.SEElectroCardioG
 import com.kitware.pulse.utilities.FileUtils;
 import com.kitware.pulse.utilities.Log;
 import com.kitware.pulse.utilities.RunConfiguration;
-import com.kitware.pulse.utilities.jniBridge;
+import com.kitware.pulse.utilities.JNIBridge;
 
 public class DataSetReader
 {
@@ -54,7 +54,7 @@ public class DataSetReader
 
   public static void main(String[] args)
   {
-    jniBridge.initialize();
+    JNIBridge.initialize();
     cfg = new RunConfiguration();
     loadData(cfg.getDataDirectory()+"/Data.xlsx");
   }

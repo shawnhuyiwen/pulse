@@ -51,7 +51,7 @@ import com.kitware.pulse.utilities.FindObjects;
 import com.kitware.pulse.utilities.FindObjects.BagMethod;
 import com.kitware.pulse.utilities.Log;
 import com.kitware.pulse.utilities.StringUtils;
-import com.kitware.pulse.utilities.jniBridge;
+import com.kitware.pulse.utilities.JNIBridge;
 
 /**
  * This class will generate markdown tables
@@ -62,7 +62,7 @@ public class CDM2MD
 {
   public static void main(String[] args)
   {
-    jniBridge.initialize();
+    JNIBridge.initialize();
     // Table names that link to classes (and we don't want them to)
     tableNameLinks.add("Environment");
     tableNameLinks.add("Inhaler");

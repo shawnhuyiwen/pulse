@@ -5,13 +5,13 @@ package com.kitware.pulse.engine.testing;
 import com.kitware.pulse.cdm.testing.SETestDriver;
 import com.kitware.pulse.cdm.testing.SETestJob;
 import com.kitware.pulse.utilities.Log;
-import com.kitware.pulse.utilities.jniBridge;
+import com.kitware.pulse.utilities.JNIBridge;
 
 public class EngineUnitTestDriver implements SETestDriver.Executor
 {
   static
   {
-    jniBridge.initialize();
+    JNIBridge.initialize();
   }
   
   protected long nativeObj;

@@ -8,14 +8,14 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.kitware.pulse.utilities.jniBridge;
+import com.kitware.pulse.utilities.JNIBridge;
 
 /** Going to gather up all the html files in the test_results directory and make one big html report */
 public class SEReportResults 
 {
   public static void main(String[] args)
   {
-    jniBridge.initialize();
+    JNIBridge.initialize();
     try
     {
       // Here are the files we are looking for

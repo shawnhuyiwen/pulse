@@ -15,7 +15,7 @@ import com.kitware.pulse.cdm.testing.csv.CSVComparison;
 import com.kitware.pulse.utilities.FileUtils;
 import com.kitware.pulse.utilities.Log;
 import com.kitware.pulse.utilities.RunConfiguration;
-import com.kitware.pulse.utilities.jniBridge;
+import com.kitware.pulse.utilities.JNIBridge;
 import com.kitware.pulse.utilities.csv.plots.CSVComparePlotter;
 import com.kitware.pulse.utilities.csv.plots.CSVComparePlotter.PlotType;
 
@@ -30,7 +30,7 @@ public class SETestDriver
 
   public static void main(String[] args)
   {
-    jniBridge.initialize();
+    JNIBridge.initialize();
     SETestDriver me = new SETestDriver();
     if(args.length > 0)
     {

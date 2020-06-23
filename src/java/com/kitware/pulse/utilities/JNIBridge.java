@@ -3,7 +3,7 @@ package com.kitware.pulse.utilities;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class jniBridge 
+public class JNIBridge 
 { 
   private static boolean loaded  =  false;
   private static String  libName = "PulseJNI";

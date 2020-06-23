@@ -6,7 +6,7 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 
 import com.kitware.pulse.utilities.Log;
-import com.kitware.pulse.utilities.jniBridge;
+import com.kitware.pulse.utilities.JNIBridge;
 
 public class PatientValidation extends ValidationTool
 {
@@ -21,7 +21,7 @@ public class PatientValidation extends ValidationTool
   }
   public static void main(String[] args)
   {
-    jniBridge.initialize();
+    JNIBridge.initialize();
     Log.info("Running with agrs : "+Arrays.toString(args));
     PatientValidation me = new PatientValidation();
     if(args.length==0)

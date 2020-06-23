@@ -8,7 +8,7 @@ import com.kitware.pulse.SerializationType;
 import com.kitware.pulse.cdm.scenario.SEScenario;
 import com.kitware.pulse.utilities.Log;
 import com.kitware.pulse.utilities.LogListener;
-import com.kitware.pulse.utilities.jniBridge;
+import com.kitware.pulse.utilities.JNIBridge;
 
 /**
  * This is a class that will run a scenario through Pulse
@@ -35,7 +35,7 @@ public class PulseScenarioExec
   }
   public PulseScenarioExec()
   {
-    jniBridge.initialize();
+    JNIBridge.initialize();
     engine=new PulseEngine();
     engine.setLogListener(new MyListener());
   }

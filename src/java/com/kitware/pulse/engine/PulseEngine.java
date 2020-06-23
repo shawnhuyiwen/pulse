@@ -35,7 +35,7 @@ import com.kitware.pulse.cdm.properties.CommonUnits.TimeUnit;
 import com.kitware.pulse.cdm.patient.SEPatient;
 import com.kitware.pulse.utilities.Log;
 import com.kitware.pulse.utilities.LogListener;
-import com.kitware.pulse.utilities.jniBridge;
+import com.kitware.pulse.utilities.JNIBridge;
 
 public class PulseEngine
 {
@@ -48,7 +48,7 @@ public class PulseEngine
 
   public PulseEngine()
   {
-    jniBridge.initialize();
+    JNIBridge.initialize();
     nativeObj=nativeAllocate();
     timeStep_s = nativeGetTimeStep(nativeObj,"s");
   }

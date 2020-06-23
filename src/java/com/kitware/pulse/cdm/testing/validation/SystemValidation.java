@@ -5,7 +5,7 @@ package com.kitware.pulse.cdm.testing.validation;
 import java.util.Arrays;
 
 import com.kitware.pulse.utilities.Log;
-import com.kitware.pulse.utilities.jniBridge;
+import com.kitware.pulse.utilities.JNIBridge;
 
 public class SystemValidation extends ValidationTool
 {
@@ -19,7 +19,7 @@ public class SystemValidation extends ValidationTool
   }
   public static void main(String[] args)
   {
-    jniBridge.initialize();
+    JNIBridge.initialize();
     Log.info("Running with agrs : "+Arrays.toString(args));
     SystemValidation me = new SystemValidation();
     if(args.length==0)

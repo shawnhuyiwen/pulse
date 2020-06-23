@@ -36,7 +36,7 @@ import com.kitware.pulse.cdm.system.equipment.anesthesia_machine.actions.SEAnest
 import com.kitware.pulse.cpm.bind.Pulse;
 import com.kitware.pulse.utilities.FileUtils;
 import com.kitware.pulse.utilities.Log;
-import com.kitware.pulse.utilities.jniBridge;
+import com.kitware.pulse.utilities.JNIBridge;
 
 public class SEScenario 
 {
@@ -230,7 +230,7 @@ public class SEScenario
 
   public SEScenario()
   {
-    jniBridge.initialize();
+    JNIBridge.initialize();
     reset();
   }
 

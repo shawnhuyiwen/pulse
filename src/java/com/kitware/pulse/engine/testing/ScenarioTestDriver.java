@@ -15,7 +15,7 @@ import com.kitware.pulse.engine.PulseEngine;
 import com.kitware.pulse.engine.PulseScenarioExec;
 import com.kitware.pulse.utilities.FileUtils;
 import com.kitware.pulse.utilities.Log;
-import com.kitware.pulse.utilities.jniBridge;
+import com.kitware.pulse.utilities.JNIBridge;
 
 public class ScenarioTestDriver implements SETestDriver.Executor
 {
@@ -105,7 +105,7 @@ public class ScenarioTestDriver implements SETestDriver.Executor
   
   public static void main(String[] args)
   {
-    jniBridge.initialize();
+    JNIBridge.initialize();
     SETestDriver.main(args);
   }
 }

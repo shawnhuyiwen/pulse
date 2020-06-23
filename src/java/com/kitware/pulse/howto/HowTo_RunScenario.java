@@ -16,7 +16,7 @@ import com.kitware.pulse.utilities.FileUtils;
 import com.kitware.pulse.utilities.Log;
 import com.kitware.pulse.utilities.LogListener;
 import com.kitware.pulse.utilities.RunConfiguration;
-import com.kitware.pulse.utilities.jniBridge;
+import com.kitware.pulse.utilities.JNIBridge;
 
 public class HowTo_RunScenario
 {
@@ -56,7 +56,7 @@ public class HowTo_RunScenario
   public static void main(String[] args)
   {
     // Load all Pulse native libraries
-    jniBridge.initialize();
+    JNIBridge.initialize();
     example();
   }
   
