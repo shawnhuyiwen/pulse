@@ -171,6 +171,9 @@ bool HRunner::RunSimulationUntilStable(std::string const& outDir, pulse::study::
   pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("IntracranialPressure", PressureUnit::mmHg);
   pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CerebralPerfusionPressure", PressureUnit::mmHg);
   pulse->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Brain, "Pressure", PressureUnit::mmHg);
+  pulse->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Brain, "Volume", VolumeUnit::mL);
+  pulse->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::CerebrospinalFluidCompartment::IntracranialSpace, "Volume", VolumeUnit::mL);
+  pulse->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::CerebrospinalFluidCompartment::IntracranialSpace, "Pressure", PressureUnit::mmHg);
   pulse->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Brain, "InFlow", VolumePerTimeUnit::mL_Per_min);
   pulse->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Brain, *O2, "PartialPressure");
   //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryDiastolicArterialPressure", PressureUnit::mmHg);
@@ -187,7 +190,7 @@ bool HRunner::RunSimulationUntilStable(std::string const& outDir, pulse::study::
   SEFluidCircuit& cv = pc->GetCircuits().GetActiveCardiovascularCircuit();
   SEFluidCircuitNode* csfNode = cv.GetNode(pulse::CerebrospinalFluidNode::IntracranialSpace2);
   csfNode->GetVolumeBaseline().ForceValue(sim.intracranialspacevolume_ml(), VolumeUnit::mL);
-  SEFluidCircuitPath* csfPath = cv.GetPath(pulse::CerebrospinalFluidPath::GroundToIntracranialSpace1);
+  SEFluidCircuitPath* csfPath = cv.GetPath(pulse::CerebrospinalFluidPath::IntracranialSpace1ToIntracranialSpace2);
   csfPath->GetComplianceBaseline().ForceValue(sim.intracranialspacecompliance_ml_per_mmhg(), VolumePerPressureUnit::mL_Per_mmHg);
 
   std::unordered_map<std::string, RunningAverages> runningAverages = 

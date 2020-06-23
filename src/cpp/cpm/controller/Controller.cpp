@@ -3992,25 +3992,31 @@ void PulseController::SetupCerebrospinalFluid()
   SEFluidCircuitNode* Brain1 = cCombinedCardiovascular.GetNode(pulse::CardiovascularNode::Brain1);
 
   double brainVascularCompliance = cCombinedCardiovascular.GetPath(pulse::CardiovascularPath::Brain1ToGround)->GetComplianceBaseline().GetValue(VolumePerPressureUnit::mL_Per_mmHg);
+  double brainVascularPressure = Brain1->GetPressure().GetValue(PressureUnit::mmHg);
 
   m_Circuits->DeleteFluidPath(pulse::CardiovascularPath::Brain1ToGround);
 
+  SEFluidCircuitNode& VascularCSFBarrier = cCombinedCardiovascular.CreateNode(pulse::CerebrospinalFluidNode::VascularCSFBarrier);
+  VascularCSFBarrier.GetPressure().SetValue(brainVascularPressure, PressureUnit::mmHg);
+
   //Initialize these values based on height/weight
   SEFluidCircuitNode& IntracranialSpace1 = cCombinedCardiovascular.CreateNode(pulse::CerebrospinalFluidNode::IntracranialSpace1);
-  IntracranialSpace1.GetPressure().SetValue(1.0, PressureUnit::mmHg);
-  IntracranialSpace1.GetVolumeBaseline().SetValue(10.0, VolumeUnit::mL);
+  IntracranialSpace1.GetPressure().SetValue(7.0, PressureUnit::mmHg);
+  IntracranialSpace1.GetVolumeBaseline().SetValue(0.0, VolumeUnit::mL);
   SEFluidCircuitNode& IntracranialSpace2 = cCombinedCardiovascular.CreateNode(pulse::CerebrospinalFluidNode::IntracranialSpace2);
-  IntracranialSpace2.GetPressure().SetValue(1.0, PressureUnit::mmHg);
+  IntracranialSpace2.GetPressure().SetValue(7.0, PressureUnit::mmHg);
   IntracranialSpace2.GetVolumeBaseline().SetValue(100.0, VolumeUnit::mL);
 
-  SEFluidCircuitPath& Brain1ToIntracranialSpace1 = cCombinedCardiovascular.CreatePath(*Brain1, IntracranialSpace1, pulse::CerebrospinalFluidPath::Brain1ToIntracranialSpace1);
-  Brain1ToIntracranialSpace1.GetComplianceBaseline().SetValue(brainVascularCompliance, VolumePerPressureUnit::mL_Per_mmHg); //Vascular Volume
+  SEFluidCircuitPath& Brain1ToVascularCSFBarrier = cCombinedCardiovascular.CreatePath(*Brain1, VascularCSFBarrier, pulse::CerebrospinalFluidPath::Brain1ToVascularCSFBarrier);
+  Brain1ToVascularCSFBarrier.GetComplianceBaseline().SetValue(brainVascularCompliance, VolumePerPressureUnit::mL_Per_mmHg); //Vascular Volume
+  
+  SEFluidCircuitPath& VascularCSFBarrierToIntracranialSpace1 = cCombinedCardiovascular.CreatePath(VascularCSFBarrier, IntracranialSpace1, pulse::CerebrospinalFluidPath::VascularCSFBarrierToIntracranialSpace1);
   
   SEFluidCircuitPath& GroundToIntracranialSpace1 = cCombinedCardiovascular.CreatePath(*Ground, IntracranialSpace1, pulse::CerebrospinalFluidPath::GroundToIntracranialSpace1);
   GroundToIntracranialSpace1.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);  //Absorption/Production Path
   
   SEFluidCircuitPath& IntracranialSpace1ToIntracranialSpace2 = cCombinedCardiovascular.CreatePath(IntracranialSpace1, IntracranialSpace2, pulse::CerebrospinalFluidPath::IntracranialSpace1ToIntracranialSpace2);
-  Brain1ToIntracranialSpace1.GetComplianceBaseline().SetValue(70, VolumePerPressureUnit::mL_Per_mmHg); //CSF Volume
+  IntracranialSpace1ToIntracranialSpace2.GetComplianceBaseline().SetValue(70.0, VolumePerPressureUnit::mL_Per_mmHg); //CSF Volume
 
   SEFluidCircuitPath& IntracranialSpace2ToGround = cCombinedCardiovascular.CreatePath(IntracranialSpace2, *Ground, pulse::CerebrospinalFluidPath::IntracranialSpace2ToGround);
 
