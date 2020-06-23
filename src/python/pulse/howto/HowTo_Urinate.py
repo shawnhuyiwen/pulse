@@ -1,13 +1,12 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-from pulse.cdm.engine import eSerializationFormat
-from pulse.cdm.patient_actions import SECardiacArrest, eSwitch
+from pulse.cdm.patient_actions import SEUrinate
 from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
 
-def HowTo_CardiacArrest():
+def HowTo_Urinate():
     pulse = PulsePhysiologyEngine()
-    pulse.set_log_filename("./test_results/pypulse_cardiac_arrest.log")
+    pulse.set_log_filename("./test_results/pypulse_Urinate.log")
     pulse.log_to_console(True)
 
     # NOTE: No data requests are being provided, so Pulse will return the default vitals data
@@ -19,15 +18,14 @@ def HowTo_CardiacArrest():
     results = pulse.pull_data()
     print(results)
 
-    arrest = SECardiacArrest()
-    arrest.set_comment("Patient experiences cardiac arrest")
-    arrest.set_state(eSwitch.On)
-    pulse.process_action(arrest)
+    urinate = SEUrinate()
+    urinate.set_comment("Patient goes to the restroom")
+    pulse.process_action(urinate)
 
     # Advance some time and print out the vitals
-    pulse.advance_time_s(30)
+    pulse.advance_time_s(60)
     results = pulse.pull_data()
     print(results)
 
-HowTo_CardiacArrest()
+HowTo_Urinate()
 
