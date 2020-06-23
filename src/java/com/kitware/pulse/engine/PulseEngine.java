@@ -5,12 +5,12 @@ package com.kitware.pulse.engine;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.primitives.Doubles;
 import com.google.protobuf.util.JsonFormat;
 import com.kitware.pulse.SerializationType;
 
 import com.kitware.pulse.cdm.actions.SEAction;
 import com.kitware.pulse.cdm.bind.Engine.ActionListData;
-import com.kitware.pulse.cdm.bind.Engine.LogMessagesData;
 import com.kitware.pulse.cdm.bind.Events.ActiveEventData;
 import com.kitware.pulse.cdm.bind.Events.ActiveEventListData;
 import com.kitware.pulse.cdm.bind.Events.EventChangeData;
@@ -45,7 +45,6 @@ public class PulseEngine
   protected double         timeRemainder = 0;
   protected LogListener    logListener = null;
   protected SEEventHandler eventHandler = null;
-  protected double[]       data=null;
 
   public PulseEngine()
   {
@@ -292,15 +291,14 @@ public class PulseEngine
     return true;
   }
   
-  public double[] pullData()
+  public List<Double> pullData()
   {
     if(!alive)
     {
       Log.error("Engine has not been initialized");
       return null;
     }
-    data = nativePullData(nativeObj);
-    return data;
+    return Doubles.asList(nativePullData(nativeObj));
   }
   
   ////////////////////

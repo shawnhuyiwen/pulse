@@ -92,7 +92,6 @@ public class SEReportResults
     {
       System.out.println("Unable to write report file");
     }
-    jniBridge.deinitialize();
   }
 
 }

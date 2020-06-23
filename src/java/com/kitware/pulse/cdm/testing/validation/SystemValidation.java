@@ -30,7 +30,6 @@ public class SystemValidation extends ValidationTool
     {
       me.loadData(args[0]);
     }
-    jniBridge.deinitialize();
   }
 
 }

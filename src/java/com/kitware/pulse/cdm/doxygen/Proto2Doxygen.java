@@ -64,7 +64,6 @@ public class Proto2Doxygen
     {
       Log.error("Unable to create single validation table file.",ex);
     }
-    jniBridge.deinitialize();
   }
 
   protected static void processFile(String fName, File sDir, File dDir) throws IOException

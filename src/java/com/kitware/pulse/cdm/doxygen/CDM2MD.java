@@ -68,7 +68,6 @@ public class CDM2MD
     tableNameLinks.add("Inhaler");
     tableNameLinks.add("AnesthesiaMachine");
     convert(args.length> 0 ? args[0] : "./docs/markdown");
-    jniBridge.deinitialize();
   }
   
   protected static Set<String> tableNameLinks = new HashSet<>();

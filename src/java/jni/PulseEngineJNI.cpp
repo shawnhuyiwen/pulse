@@ -69,21 +69,24 @@ JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeExecu
   engineJNI->jniEnv = env;
   engineJNI->jniObj = obj;
 
-
-  std::string sceStr = env->GetStringUTFChars(scenario, JNI_FALSE);
-  std::string csvStr = env->GetStringUTFChars(csvFilename, JNI_FALSE);
-  std::string logStr = env->GetStringUTFChars(logFilename, JNI_FALSE);
-  std::string ddStr;
+  jboolean bRet;
+  const char* sceStr = env->GetStringUTFChars(scenario, JNI_FALSE);
+  const char* csvStr = env->GetStringUTFChars(csvFilename, JNI_FALSE);
+  const char* logStr = env->GetStringUTFChars(logFilename, JNI_FALSE);
+  const char* ddStr = nullptr;
   if (dataDir != nullptr)
+  {
     ddStr = env->GetStringUTFChars(dataDir, JNI_FALSE);
+    bRet = engineJNI->ExecuteScenario(sceStr, (SerializationFormat)scenario_format, csvStr, logStr, ddStr);
+  }
+  else
+    bRet = engineJNI->ExecuteScenario(sceStr, (SerializationFormat)scenario_format, csvStr, logStr);
 
-  jboolean bRet = engineJNI->ExecuteScenario(sceStr, (SerializationFormat)scenario_format, csvStr, logStr, ddStr);
-
-  env->ReleaseStringUTFChars(scenario, sceStr.c_str());
-  env->ReleaseStringUTFChars(csvFilename, csvStr.c_str());
-  env->ReleaseStringUTFChars(logFilename, logStr.c_str());
-  if (dataDir != nullptr)
-    env->ReleaseStringUTFChars(dataDir, ddStr.c_str());
+  env->ReleaseStringUTFChars(scenario, sceStr);
+  env->ReleaseStringUTFChars(csvFilename, csvStr);
+  env->ReleaseStringUTFChars(logFilename, logStr);
+  if (ddStr != nullptr)
+    env->ReleaseStringUTFChars(dataDir, ddStr);
 
   return bRet;
 }
@@ -160,6 +163,7 @@ JNIEXPORT jstring JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeSerial
 extern "C"
 JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeInitializeEngine(JNIEnv *env, jobject obj, jlong ptr, jstring patient_configuration, jstring dataRequests, jint format, jstring dataDir)
 {
+  bool bRet;
   PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
   engineJNI->jniEnv = env;
   engineJNI->jniObj = obj;
@@ -173,10 +177,13 @@ JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeIniti
     drStr = env->GetStringUTFChars(dataRequests, JNI_FALSE);
 
   const char* ddStr = nullptr;
-  if(dataDir != nullptr)
+  if (dataDir != nullptr)
+  {
     ddStr = env->GetStringUTFChars(dataDir, JNI_FALSE);
-
-  bool bRet = engineJNI->InitializeEngine(pcStr, drStr, (SerializationFormat)format, ddStr);
+    bRet = engineJNI->InitializeEngine(pcStr, drStr, (SerializationFormat)format, ddStr);
+  }
+  else
+    bRet = engineJNI->InitializeEngine(pcStr, drStr, (SerializationFormat)format);
 
   env->ReleaseStringUTFChars(patient_configuration, pcStr);
   if(drStr != nullptr)

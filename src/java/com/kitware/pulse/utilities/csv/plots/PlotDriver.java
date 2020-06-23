@@ -80,7 +80,6 @@ public class PlotDriver
     {
       Log.error("No files specified");
     }
-    jniBridge.deinitialize();
   }
   
   public void execute()

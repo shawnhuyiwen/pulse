@@ -29,7 +29,7 @@ class PULSE_DECL PulseEngineThunk : public LoggerForward, public SEEventHandler
 {
 public:
   PulseEngineThunk();
-  ~PulseEngineThunk();
+  virtual ~PulseEngineThunk();
 
   // void SetConfigurationOverride(std::string const& config); // Not Implemented
 

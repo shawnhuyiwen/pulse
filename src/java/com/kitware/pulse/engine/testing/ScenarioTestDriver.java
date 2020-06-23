@@ -107,6 +107,5 @@ public class ScenarioTestDriver implements SETestDriver.Executor
   {
     jniBridge.initialize();
     SETestDriver.main(args);
-    jniBridge.deinitialize();
   }
 }

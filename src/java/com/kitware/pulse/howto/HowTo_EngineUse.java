@@ -174,7 +174,7 @@ public class HowTo_EngineUse
    // You can have Pulse write the data you have requested to a CSV file
    dataRequests.setResultsFilename("./test_results/HowTo_EngineUse.java.csv");
    // Create a reference to a double[] that will contain the data returned from Pulse
-   double[] dataValues;
+   List<Double> dataValues;
    // data_values[0] is ALWAYS the simulation time in seconds
    // The rest of the data values are in order of the data_requests list provided
    
@@ -258,11 +258,11 @@ public class HowTo_EngineUse
    }
    
    dataValues = pe.pullData();
-   Log.info("Simulation Time(s) " + dataValues[0]);
-   Log.info("Heart Rate(bpm) " + dataValues[1]);
-   Log.info("Respiration Rate(bpm) " + dataValues[2]);
-   Log.info("Total Lung Volume(mL) " + dataValues[3]);
-   Log.info("Blood Volume(mL) " + dataValues[4]);
+   Log.info("Simulation Time(s) " + dataValues.get(0));
+   Log.info("Heart Rate(bpm) " + dataValues.get(1));
+   Log.info("Respiration Rate(bpm) " + dataValues.get(2));
+   Log.info("Total Lung Volume(mL) " + dataValues.get(3));
+   Log.info("Blood Volume(mL) " + dataValues.get(4));
    
    SEScalarTime time = new SEScalarTime(0, TimeUnit.s);
    time.setValue(1, TimeUnit.s);
@@ -274,11 +274,11 @@ public class HowTo_EngineUse
    }
    
    dataValues = pe.pullData();
-   Log.info("Simulation Time(s) " + dataValues[0]);
-   Log.info("Heart Rate(bpm) " + dataValues[1]);
-   Log.info("Respiration Rate(bpm) " + dataValues[2]);
-   Log.info("Total Lung Volume(mL) " + dataValues[3]);
-   Log.info("Blood Volume(mL) " + dataValues[4]);
+   Log.info("Simulation Time(s) " + dataValues.get(0));
+   Log.info("Heart Rate(bpm) " + dataValues.get(1));
+   Log.info("Respiration Rate(bpm) " + dataValues.get(2));
+   Log.info("Total Lung Volume(mL) " + dataValues.get(3));
+   Log.info("Blood Volume(mL) " + dataValues.get(4));
    
    // Let's do something to the patient, you can either send actions over one at a time, or pass in a List<SEAction>
    SEHemorrhage h = new SEHemorrhage();
@@ -301,11 +301,11 @@ public class HowTo_EngineUse
 	     return;
 	   }
 	   dataValues = pe.pullData();
-	   Log.info("Simulation Time(s) " + dataValues[0]);
-	   Log.info("Heart Rate(bpm) " + dataValues[1]);
-	   Log.info("Respiration Rate(bpm) " + dataValues[2]);
-	   Log.info("Total Lung Volume(mL) " + dataValues[3]);
-	   Log.info("Blood Volume(mL) " + dataValues[4]);
+	   Log.info("Simulation Time(s) " + dataValues.get(0));
+	   Log.info("Heart Rate(bpm) " + dataValues.get(1));
+	   Log.info("Respiration Rate(bpm) " + dataValues.get(2));
+	   Log.info("Total Lung Volume(mL) " + dataValues.get(3));
+	   Log.info("Blood Volume(mL) " + dataValues.get(4));
    }
    
    // Stop the hemorrhage
@@ -326,11 +326,11 @@ public class HowTo_EngineUse
        return;
      }
      dataValues = pe.pullData();
-     Log.info("Simulation Time(s) " + dataValues[0]);
-     Log.info("Heart Rate(bpm) " + dataValues[1]);
-     Log.info("Respiration Rate(bpm) " + dataValues[2]);
-     Log.info("Total Lung Volume(mL) " + dataValues[3]);
-     Log.info("Blood Volume(mL) " + dataValues[4]);
+     Log.info("Simulation Time(s) " + dataValues.get(0));
+     Log.info("Heart Rate(bpm) " + dataValues.get(1));
+     Log.info("Respiration Rate(bpm) " + dataValues.get(2));
+     Log.info("Total Lung Volume(mL) " + dataValues.get(3));
+     Log.info("Blood Volume(mL) " + dataValues.get(4));
    }
    
    // Infuse some fluids
@@ -354,11 +354,11 @@ public class HowTo_EngineUse
        return;
      }
      dataValues = pe.pullData();
-     Log.info("Simulation Time(s) " + dataValues[0]);
-     Log.info("Heart Rate(bpm) " + dataValues[1]);
-     Log.info("Respiration Rate(bpm) " + dataValues[2]);
-     Log.info("Total Lung Volume(mL) " + dataValues[3]);
-     Log.info("Blood Volume(mL) " + dataValues[4]);
+     Log.info("Simulation Time(s) " + dataValues.get(0));
+     Log.info("Heart Rate(bpm) " + dataValues.get(1));
+     Log.info("Respiration Rate(bpm) " + dataValues.get(2));
+     Log.info("Total Lung Volume(mL) " + dataValues.get(3));
+     Log.info("Blood Volume(mL) " + dataValues.get(4));
    }
    
    // You can explicitly check if the patient is in a specific state/event

@@ -32,7 +32,6 @@ public class PatientValidation extends ValidationTool
     {      
       me.loadData(args[0]);
     }
-    jniBridge.deinitialize();
   }
   
   @Override

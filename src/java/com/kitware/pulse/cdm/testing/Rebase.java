@@ -25,7 +25,6 @@ public class Rebase
       hash = args[0];
     jniBridge.initialize();
     rebase(hash);
-    jniBridge.deinitialize();
   }
   
   public static void rebase(String hash)

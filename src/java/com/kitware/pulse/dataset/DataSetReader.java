@@ -57,7 +57,6 @@ public class DataSetReader
     jniBridge.initialize();
     cfg = new RunConfiguration();
     loadData(cfg.getDataDirectory()+"/Data.xlsx");
-    jniBridge.deinitialize();
   }
 
   public static void loadData(String xlsFile)

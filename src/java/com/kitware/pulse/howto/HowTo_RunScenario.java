@@ -58,7 +58,6 @@ public class HowTo_RunScenario
     // Load all Pulse native libraries
     jniBridge.initialize();
     example();
-    jniBridge.deinitialize();
   }
   
   public static void example()

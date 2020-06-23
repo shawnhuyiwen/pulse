@@ -21,11 +21,11 @@ public class jniBridge
   // Support looking in a specific location not on the java.library.path
   public static void initialize(String libDir)
   {
-    jniBridge.initialize(libDir, false);
+    initialize(libDir, false);
   }
   public static void initializeDebug(String libDir)
   {
-    jniBridge.initialize(libDir, true);
+    initialize(libDir, true);
   }
   
   
@@ -36,14 +36,6 @@ public class jniBridge
     String lib = debugMode?libName+"d":libName;
     if(!FileUtils.loadLibraries(new ArrayList<>(Arrays.asList(lib)),libDir))
       throw new RuntimeException("Could not load PulseJNI library");
-     nativeInitialize();
      loaded = true;
   }
-  private static native void nativeInitialize();
-  
-  public static void deinitialize()
-  {
-    nativeDeinitialize();
-  }
-  private static native void nativeDeinitialize();
 }

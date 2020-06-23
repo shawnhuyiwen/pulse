@@ -55,7 +55,6 @@ public class DoxygenPreprocessor
     {
       Log.error("Unable to create single validation table file.",ex);
     }
-    jniBridge.deinitialize();
   }
 
   protected static void processFile(String fName, File tDir, File dDir) throws IOException

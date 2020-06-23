@@ -45,7 +45,6 @@ public class SETestDriver
     }
     else
       Log.error("No configFile specified");
-    jniBridge.deinitialize();
   }
   
   public void test()
@@ -94,9 +93,9 @@ public class SETestDriver
         }
       }
       if(!isPlotting && activeThreads != engineThreads)
-      {// Look for a job to compare first    
+      {// Look for a job to compare first
         for(SETestJob job : this.cfg.jobs)
-        {                      
+        {
           if(job.state == SETestJob.State.Executed)
           {
             if(job.PlottableResults && !job.skipPlot)
@@ -153,7 +152,7 @@ public class SETestDriver
     public SETestJob job;
     @Override
     public void run()
-    {          
+    {
       for(String toCompute : job.computedFiles)
       {
         if(job.PlottableResults)
@@ -211,7 +210,7 @@ public class SETestDriver
     public void run()
     {
       if(job.PlottableResults && !job.skipPlot)
-      {          
+      {
         for(int i=0; i<job.baselineFiles.size(); i++)
         {
           CSVComparison compare = new CSVComparison();
