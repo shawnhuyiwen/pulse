@@ -32,8 +32,8 @@ message AnyPatientActionData
     DyspneaData                                        Dyspnea                                        = 15;
     ExerciseData                                       Exercise                                       = 16;
     HemorrhageData                                     Hemorrhage                                     = 17;
-    IntubationData                                     Intubation                                     = 18;
-    ImpairedAlveolarExchangeExacerbationData           ImpairedAlveolarExchangeExacerbation           = 19;
+    ImpairedAlveolarExchangeExacerbationData           ImpairedAlveolarExchangeExacerbation           = 18;
+    IntubationData                                     Intubation                                     = 19;
     LobarPneumoniaExacerbationData                     LobarPneumoniaExacerbation                     = 20;
     MechanicalVentilationData                          MechanicalVentilation                          = 21;
     NeedleDecompressionData                            NeedleDecompression                            = 22;

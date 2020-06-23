@@ -180,6 +180,13 @@ public abstract class SEPatientAction extends SEAction
       SEPericardialEffusion.load(c.getPericardialEffusion(), dst);
       return dst;
     }
+    case PULMONARYSHUNTEXACERBATION:
+    {
+      SEPulmonaryShuntExacerbation dst = new SEPulmonaryShuntExacerbation();
+      SEPulmonaryShuntExacerbation.load(c.getPulmonaryShuntExacerbation(), dst);
+      return dst;
+      
+    }
     case RESPIRATORYFATIGUE:
     {
       SERespiratoryFatigue dst = new SERespiratoryFatigue();
@@ -202,6 +209,12 @@ public abstract class SEPatientAction extends SEAction
     {
       SESubstanceInfusion dst = new SESubstanceInfusion();
       SESubstanceInfusion.load(c.getSubstanceInfusion(), dst);
+      return dst;
+    }
+    case SUPPLEMENTALOXYGEN:
+    {
+      SESupplementalOxygen dst = new SESupplementalOxygen();
+      SESupplementalOxygen.load(c.getSupplementalOxygen(), dst);
       return dst;
     }
     case TENSIONPNEUMOTHORAX:
@@ -341,6 +354,11 @@ public abstract class SEPatientAction extends SEAction
       dst.setPericardialEffusion(SEPericardialEffusion.unload((SEPericardialEffusion)c));
       return dst.build();
     }
+    if(c instanceof SEPulmonaryShuntExacerbation)
+    {
+      dst.setPulmonaryShuntExacerbation(SEPulmonaryShuntExacerbation.unload((SEPulmonaryShuntExacerbation)c));
+      return dst.build();
+    }
     if(c instanceof SERespiratoryFatigue)
     {
       dst.setRespiratoryFatigue(SERespiratoryFatigue.unload((SERespiratoryFatigue)c));
@@ -359,6 +377,11 @@ public abstract class SEPatientAction extends SEAction
     if(c instanceof SESubstanceInfusion)
     {
       dst.setSubstanceInfusion(SESubstanceInfusion.unload((SESubstanceInfusion)c));
+      return dst.build();
+    }
+    if(c instanceof SESupplementalOxygen)
+    {
+      dst.setSupplementalOxygen(SESupplementalOxygen.unload((SESupplementalOxygen)c));
       return dst.build();
     }
     if(c instanceof SETensionPneumothorax)

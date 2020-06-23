@@ -105,6 +105,12 @@ public abstract class SEPatientCondition extends SECondition
       SEPulmonaryFibrosis.load(c.getPulmonaryFibrosis(), newC);
       return newC;
     }
+    case PULMONARYSHUNT:
+    {
+      SEPulmonaryShunt newC = new SEPulmonaryShunt();
+      SEPulmonaryShunt.load(c.getPulmonaryShunt(), newC);
+      return newC;
+    }
     case SEPSIS:
     {
       SESepsis newC = new SESepsis();
@@ -169,6 +175,11 @@ public abstract class SEPatientCondition extends SECondition
     if(c instanceof SEPulmonaryFibrosis)
     {
       dst.setPulmonaryFibrosis(SEPulmonaryFibrosis.unload((SEPulmonaryFibrosis)c));
+      return dst.build();
+    }
+    if(c instanceof SEPulmonaryShunt)
+    {
+      dst.setPulmonaryShunt(SEPulmonaryShunt.unload((SEPulmonaryShunt)c));
       return dst.build();
     }
     if(c instanceof SESepsis)
