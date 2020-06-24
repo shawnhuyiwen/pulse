@@ -34,4 +34,4 @@ public:
 protected:
   SENutrition* m_Nutrition;
   std::string  m_NutritionFile;
-};      
+};

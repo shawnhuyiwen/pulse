@@ -21,5 +21,5 @@ public:
   virtual void ToString(std::ostream &str) const;
 
 protected:
-  
-};      
+
+};

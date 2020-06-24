@@ -51,11 +51,41 @@ namespace Pulse.CDM
         Serialize(any.CardiacArrest, ca);
         return ca;
       }
+      if (any.ChestCompressionForce != null)
+      {
+        SEChestCompressionForce cprF = new SEChestCompressionForce();
+        Serialize(any.ChestCompressionForce, cprF);
+        return cprF;
+      }
+      if (any.ChestCompressionForceScale != null)
+      {
+        SEChestCompressionForceScale cprFS = new SEChestCompressionForceScale();
+        Serialize(any.ChestCompressionForceScale, cprFS);
+        return cprFS;
+      }
+      if (any.ChestOcclusiveDressing != null)
+      {
+        SEChestOcclusiveDressing cod = new SEChestOcclusiveDressing();
+        Serialize(any.ChestOcclusiveDressing, cod);
+        return cod;
+      }
       if (any.ChronicObstructivePulmonaryDiseaseExacerbation != null)
       {
         SEChronicObstructivePulmonaryDiseaseExacerbation copd = new SEChronicObstructivePulmonaryDiseaseExacerbation();
         Serialize(any.ChronicObstructivePulmonaryDiseaseExacerbation, copd);
         return copd;
+      }
+      if (any.ConsciousRespiration != null)
+      {
+        SEConsciousRespiration cr = new SEConsciousRespiration();
+        Serialize(any.ConsciousRespiration, cr);
+        return cr;
+      }
+      if (any.ConsumeNutrients != null)
+      {
+        SEConsumeNutrients cn = new SEConsumeNutrients();
+        Serialize(any.ConsumeNutrients, cn);
+        return cn;
       }
       if (any.Dyspnea != null)
       {
@@ -75,6 +105,12 @@ namespace Pulse.CDM
         Serialize(any.Hemorrhage, h);
         return h;
       }
+      if (any.ImpairedAlveolarExchangeExacerbation != null)
+      {
+        SEImpairedAlveolarExchangeExacerbation iae = new SEImpairedAlveolarExchangeExacerbation();
+        Serialize(any.ImpairedAlveolarExchangeExacerbation, iae);
+        return iae;
+      }
       if (any.Intubation != null)
       {
         SEIntubation i = new SEIntubation();
@@ -87,6 +123,12 @@ namespace Pulse.CDM
         Serialize(any.LobarPneumoniaExacerbation, lp);
         return lp;
       }
+      if (any.MechanicalVentilation != null)
+      {
+        SEMechanicalVentilation mv = new SEMechanicalVentilation();
+        Serialize(any.MechanicalVentilation, mv);
+        return mv;
+      }
       if (any.NeedleDecompression != null)
       {
         SENeedleDecompression n = new SENeedleDecompression();
@@ -98,6 +140,12 @@ namespace Pulse.CDM
         SEPericardialEffusion pe = new SEPericardialEffusion();
         Serialize(any.PericardialEffusion, pe);
         return pe;
+      }
+      if (any.PulmonaryShuntExacerbation != null)
+      {
+        SEPulmonaryShuntExacerbation pse = new SEPulmonaryShuntExacerbation();
+        Serialize(any.PulmonaryShuntExacerbation, pse);
+        return pse;
       }
       if (any.RespiratoryFatigue != null)
       {
@@ -134,6 +182,12 @@ namespace Pulse.CDM
         SETensionPneumothorax tp = new SETensionPneumothorax();
         Serialize(any.TensionPneumothorax, tp);
         return tp;
+      }
+      if (any.Urinate != null)
+      {
+        SEUrinate u = new SEUrinate();
+        Serialize(any.Urinate, u);
+        return u;
       }
       return null;
     }
@@ -177,9 +231,34 @@ namespace Pulse.CDM
         any.CardiacArrest = Unload((SECardiacArrest)action);
         return any;
       }
+      if (action.GetType().IsAssignableFrom(typeof(SEChestCompressionForce)))
+      {
+        any.ChestCompressionForce = Unload((SEChestCompressionForce)action);
+        return any;
+      }
+      if (action.GetType().IsAssignableFrom(typeof(SEChestCompressionForceScale)))
+      {
+        any.ChestCompressionForceScale = Unload((SEChestCompressionForceScale)action);
+        return any;
+      }
+      if (action.GetType().IsAssignableFrom(typeof(SEChestOcclusiveDressing)))
+      {
+        any.ChestOcclusiveDressing = Unload((SEChestOcclusiveDressing)action);
+        return any;
+      }
       if (action.GetType().IsAssignableFrom(typeof(SEChronicObstructivePulmonaryDiseaseExacerbation)))
       {
         any.ChronicObstructivePulmonaryDiseaseExacerbation = Unload((SEChronicObstructivePulmonaryDiseaseExacerbation)action);
+        return any;
+      }
+      if (action.GetType().IsAssignableFrom(typeof(SEConsciousRespiration)))
+      {
+        any.ConsciousRespiration = Unload((SEConsciousRespiration)action);
+        return any;
+      }
+      if (action.GetType().IsAssignableFrom(typeof(SEConsumeNutrients)))
+      {
+        any.ConsumeNutrients = Unload((SEConsumeNutrients)action);
         return any;
       }
       if (action.GetType().IsAssignableFrom(typeof(SEDyspnea)))
@@ -197,6 +276,11 @@ namespace Pulse.CDM
         any.Hemorrhage = Unload((SEHemorrhage)action);
         return any;
       }
+      if (action.GetType().IsAssignableFrom(typeof(SEImpairedAlveolarExchangeExacerbation)))
+      {
+        any.ImpairedAlveolarExchangeExacerbation = Unload((SEImpairedAlveolarExchangeExacerbation)action);
+        return any;
+      }
       if (action.GetType().IsAssignableFrom(typeof(SEIntubation)))
       {
         any.Intubation = Unload((SEIntubation)action);
@@ -207,6 +291,11 @@ namespace Pulse.CDM
         any.LobarPneumoniaExacerbation = Unload((SELobarPneumoniaExacerbation)action);
         return any;
       }
+      if (action.GetType().IsAssignableFrom(typeof(SEMechanicalVentilation)))
+      {
+        any.MechanicalVentilation = Unload((SEMechanicalVentilation)action);
+        return any;
+      }
       if (action.GetType().IsAssignableFrom(typeof(SENeedleDecompression)))
       {
         any.NeedleDecompression = Unload((SENeedleDecompression)action);
@@ -215,6 +304,11 @@ namespace Pulse.CDM
       if (action.GetType().IsAssignableFrom(typeof(SEPericardialEffusion)))
       {
         any.PericardialEffusion = Unload((SEPericardialEffusion)action);
+        return any;
+      }
+      if (action.GetType().IsAssignableFrom(typeof(SEPulmonaryShuntExacerbation)))
+      {
+        any.PulmonaryShuntExacerbation = Unload((SEPulmonaryShuntExacerbation)action);
         return any;
       }
       if (action.GetType().IsAssignableFrom(typeof(SERespiratoryFatigue)))
@@ -245,6 +339,11 @@ namespace Pulse.CDM
       if (action.GetType().IsAssignableFrom(typeof(SETensionPneumothorax)))
       {
         any.TensionPneumothorax = Unload((SETensionPneumothorax)action);
+        return any;
+      }
+      if (action.GetType().IsAssignableFrom(typeof(SEUrinate)))
+      {
+        any.Urinate = Unload((SEUrinate)action);
         return any;
       }
 
@@ -454,6 +553,88 @@ namespace Pulse.CDM
     }
     #endregion
 
+    #region SEChestCompressionForce
+    public static void Load(pulse.cdm.bind.ChestCompressionForceData src, SEChestCompressionForce dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.ChestCompressionForceData src, SEChestCompressionForce dst)
+    {
+      Serialize(src.PatientAction, dst);
+      if (src.Force != null)
+        PBProperty.Load(src.Force, dst.GetForce());
+    }
+    public static pulse.cdm.bind.ChestCompressionForceData Unload(SEChestCompressionForce src)
+    {
+      pulse.cdm.bind.ChestCompressionForceData dst = new pulse.cdm.bind.ChestCompressionForceData();
+      Serialize(src, dst);
+      return dst;
+    }
+    public static void Serialize(SEChestCompressionForce src, pulse.cdm.bind.ChestCompressionForceData dst)
+    {
+      dst.PatientAction = new pulse.cdm.bind.PatientActionData();
+      Serialize(src, dst.PatientAction);
+      if (src.HasForce())
+        dst.Force = PBProperty.Unload(src.GetForce());
+    }
+    #endregion
+
+    #region SEChestCompressionForceScale
+    public static void Load(pulse.cdm.bind.ChestCompressionForceScaleData src, SEChestCompressionForceScale dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.ChestCompressionForceScaleData src, SEChestCompressionForceScale dst)
+    {
+      Serialize(src.PatientAction, dst);
+      if (src.ForcePeriod != null)
+        PBProperty.Load(src.ForcePeriod, dst.GetForcePeriod());
+      if (src.ForceScale != null)
+        PBProperty.Load(src.ForceScale, dst.GetForceScale());
+    }
+    public static pulse.cdm.bind.ChestCompressionForceScaleData Unload(SEChestCompressionForceScale src)
+    {
+      pulse.cdm.bind.ChestCompressionForceScaleData dst = new pulse.cdm.bind.ChestCompressionForceScaleData();
+      Serialize(src, dst);
+      return dst;
+    }
+    public static void Serialize(SEChestCompressionForceScale src, pulse.cdm.bind.ChestCompressionForceScaleData dst)
+    {
+      dst.PatientAction = new pulse.cdm.bind.PatientActionData();
+      Serialize(src, dst.PatientAction);
+      if (src.HasForcePeriod())
+        dst.ForcePeriod = PBProperty.Unload(src.GetForcePeriod());
+      if (src.HasForceScale())
+        dst.ForceScale = PBProperty.Unload(src.GetForceScale());
+    }
+    #endregion
+
+    #region SEChestOcclusiveDressing
+    public static void Load(pulse.cdm.bind.ChestOcclusiveDressingData src, SEChestOcclusiveDressing dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.ChestOcclusiveDressingData src, SEChestOcclusiveDressing dst)
+    {
+      Serialize(src.PatientAction, dst);
+      dst.SetSide((eSide)(int)src.Side);
+      dst.SetState((eSwitch)(int)src.State);
+    }
+    public static pulse.cdm.bind.ChestOcclusiveDressingData Unload(SEChestOcclusiveDressing src)
+    {
+      pulse.cdm.bind.ChestOcclusiveDressingData dst = new pulse.cdm.bind.ChestOcclusiveDressingData();
+      Serialize(src, dst);
+      return dst;
+    }
+    public static void Serialize(SEChestOcclusiveDressing src, pulse.cdm.bind.ChestOcclusiveDressingData dst)
+    {
+      dst.PatientAction = new pulse.cdm.bind.PatientActionData();
+      Serialize(src, dst.PatientAction);
+      dst.Side = (pulse.cdm.bind.eSide)(int)src.GetSide();
+      dst.State = (pulse.cdm.bind.eSwitch)(int)src.GetState();
+    }
+    #endregion
+
     #region SEChronicObstructivePulmonaryDiseaseExacerbation
     public static void Load(pulse.cdm.bind.ChronicObstructivePulmonaryDiseaseExacerbationData src, SEChronicObstructivePulmonaryDiseaseExacerbation dst)
     {
@@ -481,6 +662,220 @@ namespace Pulse.CDM
         dst.BronchitisSeverity = PBProperty.Unload(src.GetBronchitisSeverity());
       if (src.HasEmphysemaSeverity())
         dst.EmphysemaSeverity = PBProperty.Unload(src.GetEmphysemaSeverity());
+    }
+    #endregion
+
+    #region SEConsciousRespiration
+    public static void Load(pulse.cdm.bind.ConsciousRespirationData src, SEConsciousRespiration dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.ConsciousRespirationData src, SEConsciousRespiration dst)
+    {
+      Serialize(src.PatientAction, dst);
+      dst.SetStartImmediately(src.StartImmediately);
+      foreach (pulse.cdm.bind.AnyConsciousRespirationCommandData any in src.Command)
+      {
+        if (any.ForcedExhale != null)
+        {
+          SEForcedExhale c = new SEForcedExhale();
+          Load(any.ForcedExhale, c);
+          continue;
+        }
+        if (any.ForcedInhale != null)
+        {
+          SEForcedInhale c = new SEForcedInhale();
+          Load(any.ForcedInhale, c);
+          continue;
+        }
+        if (any.ForcedPause != null)
+        {
+          SEForcedPause c = new SEForcedPause();
+          Load(any.ForcedPause, c);
+          continue;
+        }
+        if (any.UseInhaler != null)
+        {
+          SEUseInhaler c = new SEUseInhaler();
+          Load(any.UseInhaler, c);
+          continue;
+        }
+      }
+    }
+    public static pulse.cdm.bind.ConsciousRespirationData Unload(SEConsciousRespiration src)
+    {
+      pulse.cdm.bind.ConsciousRespirationData dst = new pulse.cdm.bind.ConsciousRespirationData();
+      Serialize(src, dst);
+      return dst;
+    }
+    public static void Serialize(SEConsciousRespiration src, pulse.cdm.bind.ConsciousRespirationData dst)
+    {
+      dst.PatientAction = new pulse.cdm.bind.PatientActionData();
+      Serialize(src, dst.PatientAction);
+      dst.StartImmediately = src.StartImmediately();
+      foreach (SEConsciousRespirationCommand command in src.GetCommands())
+      {
+        pulse.cdm.bind.AnyConsciousRespirationCommandData any = new pulse.cdm.bind.AnyConsciousRespirationCommandData();
+        if (command.GetType().IsAssignableFrom(typeof(SEForcedExhale)))
+        {
+          any.ForcedExhale = Unload((SEForcedExhale)command);
+          continue;
+        }
+        if (command.GetType().IsAssignableFrom(typeof(SEForcedInhale)))
+        {
+          any.ForcedInhale = Unload((SEForcedInhale)command);
+          continue;
+        }
+        if (command.GetType().IsAssignableFrom(typeof(SEForcedPause)))
+        {
+          any.ForcedPause = Unload((SEForcedPause)command);
+          continue;
+        }
+        if (command.GetType().IsAssignableFrom(typeof(SEUseInhaler)))
+        {
+          any.UseInhaler = Unload((SEUseInhaler)command);
+          continue;
+        }
+        dst.Command.Add(any);
+      }
+    }
+
+    public static void Load(pulse.cdm.bind.ForcedExhaleData src, SEForcedExhale dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.ForcedExhaleData src, SEForcedExhale dst)
+    {
+      if (src.ExpiratoryReserveVolumeFraction != null)
+        PBProperty.Load(src.ExpiratoryReserveVolumeFraction, dst.GetExpiratoryReserveVolumeFraction());
+      if (src.ExhalePeriod != null)
+        PBProperty.Load(src.ExhalePeriod, dst.GetExhalePeriod());
+      if (src.HoldPeriod != null)
+        PBProperty.Load(src.HoldPeriod, dst.GetHoldPeriod());
+      if (src.ReleasePeriod != null)
+        PBProperty.Load(src.ReleasePeriod, dst.GetReleasePeriod());
+    }
+    public static pulse.cdm.bind.ForcedExhaleData Unload(SEForcedExhale src)
+    {
+      pulse.cdm.bind.ForcedExhaleData dst = new pulse.cdm.bind.ForcedExhaleData();
+      Serialize(src, dst);
+      return dst;
+    }
+    public static void Serialize(SEForcedExhale src, pulse.cdm.bind.ForcedExhaleData dst)
+    {
+      if (src.HasExpiratoryReserveVolumeFraction())
+        dst.ExpiratoryReserveVolumeFraction = PBProperty.Unload(src.GetExpiratoryReserveVolumeFraction());
+      if (src.HasExhalePeriod())
+        dst.ExhalePeriod = PBProperty.Unload(src.GetExhalePeriod());
+      if (src.HasHoldPeriod())
+        dst.HoldPeriod = PBProperty.Unload(src.GetHoldPeriod());
+      if (src.HasReleasePeriod())
+        dst.ReleasePeriod = PBProperty.Unload(src.GetReleasePeriod());
+    }
+
+    public static void Load(pulse.cdm.bind.ForcedInhaleData src, SEForcedInhale dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.ForcedInhaleData src, SEForcedInhale dst)
+    {
+      if (src.InspiratoryCapacityFraction != null)
+        PBProperty.Load(src.InspiratoryCapacityFraction, dst.GetInspiratoryCapacityFraction());
+      if (src.InhalePeriod != null)
+        PBProperty.Load(src.InhalePeriod, dst.GetInhalePeriod());
+      if (src.HoldPeriod != null)
+        PBProperty.Load(src.HoldPeriod, dst.GetHoldPeriod());
+      if (src.ReleasePeriod != null)
+        PBProperty.Load(src.ReleasePeriod, dst.GetReleasePeriod());
+    }
+    public static pulse.cdm.bind.ForcedInhaleData Unload(SEForcedInhale src)
+    {
+      pulse.cdm.bind.ForcedInhaleData dst = new pulse.cdm.bind.ForcedInhaleData();
+      Serialize(src, dst);
+      return dst;
+    }
+    public static void Serialize(SEForcedInhale src, pulse.cdm.bind.ForcedInhaleData dst)
+    {
+      if (src.HasInspiratoryCapacityFraction())
+        dst.InspiratoryCapacityFraction = PBProperty.Unload(src.GetInspiratoryCapacityFraction());
+      if (src.HasInhalePeriod())
+        dst.InhalePeriod = PBProperty.Unload(src.GetInhalePeriod());
+      if (src.HasHoldPeriod())
+        dst.HoldPeriod = PBProperty.Unload(src.GetHoldPeriod());
+      if (src.HasReleasePeriod())
+        dst.ReleasePeriod = PBProperty.Unload(src.GetReleasePeriod());
+    }
+
+    public static void Load(pulse.cdm.bind.ForcedPauseData src, SEForcedPause dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.ForcedPauseData src, SEForcedPause dst)
+    {
+      if (src.Period != null)
+        PBProperty.Load(src.Period, dst.GetPeriod());
+    }
+    public static pulse.cdm.bind.ForcedPauseData Unload(SEForcedPause src)
+    {
+      pulse.cdm.bind.ForcedPauseData dst = new pulse.cdm.bind.ForcedPauseData();
+      Serialize(src, dst);
+      return dst;
+    }
+    public static void Serialize(SEForcedPause src, pulse.cdm.bind.ForcedPauseData dst)
+    {
+      if (src.HasPeriod())
+        dst.Period = PBProperty.Unload(src.GetPeriod());
+    }
+
+    public static void Load(pulse.cdm.bind.UseInhalerData src, SEUseInhaler dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.UseInhalerData src, SEUseInhaler dst)
+    {
+     
+    }
+    public static pulse.cdm.bind.UseInhalerData Unload(SEUseInhaler src)
+    {
+      pulse.cdm.bind.UseInhalerData dst = new pulse.cdm.bind.UseInhalerData();
+      Serialize(src, dst);
+      return dst;
+    }
+    public static void Serialize(SEUseInhaler src, pulse.cdm.bind.UseInhalerData dst)
+    {
+      
+    }
+    #endregion
+
+    #region SEConsumeNutrients
+    public static void Load(pulse.cdm.bind.ConsumeNutrientsData src, SEConsumeNutrients dst)
+    {
+      dst.Clear();
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.ConsumeNutrientsData src, SEConsumeNutrients dst)
+    {
+      Serialize(src.PatientAction, dst);
+      if (src.Nutrition != null)
+        PBNutrition.Load(src.Nutrition, dst.GetNutrition());
+      else if (src.NutritionFile != null)
+        dst.SetNutritionFile(src.NutritionFile);
+    }
+
+    public static pulse.cdm.bind.ConsumeNutrientsData Unload(SEConsumeNutrients src)
+    {
+      pulse.cdm.bind.ConsumeNutrientsData dst = new pulse.cdm.bind.ConsumeNutrientsData();
+      Serialize(src, dst);
+      return dst;
+    }
+    static void Serialize(SEConsumeNutrients src, pulse.cdm.bind.ConsumeNutrientsData dst)
+    {
+      dst.PatientAction = new pulse.cdm.bind.PatientActionData();
+      Serialize(src, dst.PatientAction);
+      if (src.HasNutritionFile())
+        dst.NutritionFile = src.GetNutritionFile();
+      else if (src.HasNutrition())
+        dst.Nutrition = PBNutrition.Unload(src.GetNutrition());
     }
     #endregion
 
@@ -568,6 +963,40 @@ namespace Pulse.CDM
     }
     #endregion
 
+    #region SEImpairedAlveolarExchangeExacerbation
+    public static void Load(pulse.cdm.bind.ImpairedAlveolarExchangeExacerbationData src, SEImpairedAlveolarExchangeExacerbation dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.ImpairedAlveolarExchangeExacerbationData src, SEImpairedAlveolarExchangeExacerbation dst)
+    {
+      Serialize(src.PatientAction, dst);
+      if (src.ImpairedSurfaceArea != null)
+        PBProperty.Load(src.ImpairedSurfaceArea, dst.GetImpairedSurfaceArea());
+      if (src.ImpairedFraction != null)
+        PBProperty.Load(src.ImpairedFraction, dst.GetImpairedFraction());
+      if (src.Severity != null)
+        PBProperty.Load(src.Severity, dst.GetSeverity());
+    }
+    public static pulse.cdm.bind.ImpairedAlveolarExchangeExacerbationData Unload(SEImpairedAlveolarExchangeExacerbation src)
+    {
+      pulse.cdm.bind.ImpairedAlveolarExchangeExacerbationData dst = new pulse.cdm.bind.ImpairedAlveolarExchangeExacerbationData();
+      Serialize(src, dst);
+      return dst;
+    }
+    public static void Serialize(SEImpairedAlveolarExchangeExacerbation src, pulse.cdm.bind.ImpairedAlveolarExchangeExacerbationData dst)
+    {
+      dst.PatientAction = new pulse.cdm.bind.PatientActionData();
+      Serialize(src, dst.PatientAction);
+      if (src.HasImpairedSurfaceArea())
+        dst.ImpairedSurfaceArea = PBProperty.Unload(src.GetImpairedSurfaceArea());
+      if (src.HasImpairedFraction())
+        dst.ImpairedFraction = PBProperty.Unload(src.GetImpairedFraction());
+      if (src.HasSeverity())
+        dst.Severity = PBProperty.Unload(src.GetSeverity());
+    }
+    #endregion
+
     #region SEIntubation
     public static void Load(pulse.cdm.bind.IntubationData src, SEIntubation dst)
     {
@@ -626,6 +1055,60 @@ namespace Pulse.CDM
     }
     #endregion
 
+    #region SEMechanicalVentilation
+    public static void Load(pulse.cdm.bind.MechanicalVentilationData src, SEMechanicalVentilation dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.MechanicalVentilationData src, SEMechanicalVentilation dst)
+    {
+      Serialize(src.PatientAction, dst);
+      dst.SetState((eSwitch)(int)src.State);
+      if (src.Flow != null)
+        PBProperty.Load(src.Flow, dst.GetFlow());
+      if (src.Pressure != null)
+        PBProperty.Load(src.Pressure, dst.GetPressure());
+      foreach (pulse.cdm.bind.SubstanceFractionData sf in src.GasFraction)
+      {
+        PBProperty.Load(sf.Amount, dst.GetGasFraction(sf.Name).GetFractionAmount());
+      }
+      foreach (pulse.cdm.bind.SubstanceConcentrationData sc in src.Aerosol)
+      {
+        PBProperty.Load(sc.Concentration, dst.GetAerosol(sc.Name).GetConcentration());
+      }
+    }
+    public static pulse.cdm.bind.MechanicalVentilationData Unload(SEMechanicalVentilation src)
+    {
+      pulse.cdm.bind.MechanicalVentilationData dst = new pulse.cdm.bind.MechanicalVentilationData();
+      Serialize(src, dst);
+      return dst;
+    }
+    public static void Serialize(SEMechanicalVentilation src, pulse.cdm.bind.MechanicalVentilationData dst)
+    {
+      dst.PatientAction = new pulse.cdm.bind.PatientActionData();
+      Serialize(src, dst.PatientAction);
+      dst.State = (pulse.cdm.bind.eSwitch)(int)src.GetState();
+      if (src.HasFlow())
+        dst.Flow = PBProperty.Unload(src.GetFlow());
+      if (src.HasPressure())
+        dst.Pressure = PBProperty.Unload(src.GetPressure());
+      foreach (SESubstanceFraction aGas in src.GetGasFractions())
+      {
+        pulse.cdm.bind.SubstanceFractionData sf = new pulse.cdm.bind.SubstanceFractionData();
+        sf.Name = aGas.GetSubstance();
+        sf.Amount = PBProperty.Unload(aGas.GetFractionAmount());
+        dst.GasFraction.Add(sf);
+      }
+      foreach (SESubstanceConcentration aAerosol in src.GetAerosols())
+      {
+        pulse.cdm.bind.SubstanceConcentrationData sc = new pulse.cdm.bind.SubstanceConcentrationData();
+        sc.Name = aAerosol.GetSubstance();
+        sc.Concentration = PBProperty.Unload(aAerosol.GetConcentration());
+        dst.Aerosol.Add(sc);
+      }
+    }
+    #endregion
+
     #region SENeedleDecompression
     public static void Load(pulse.cdm.bind.NeedleDecompressionData src, SENeedleDecompression dst)
     {
@@ -676,6 +1159,32 @@ namespace Pulse.CDM
       Serialize(src, dst.PatientAction);
       if (src.HasEffusionRate())
         dst.EffusionRate = PBProperty.Unload(src.GetEffusionRate());
+    }
+    #endregion
+
+    #region SEPulmonaryShuntExacerbation
+    public static void Load(pulse.cdm.bind.PulmonaryShuntExacerbationData src, SEPulmonaryShuntExacerbation dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.PulmonaryShuntExacerbationData src, SEPulmonaryShuntExacerbation dst)
+    {
+      Serialize(src.PatientAction, dst);
+      if (src.Severity != null)
+        PBProperty.Load(src.Severity, dst.GetSeverity());
+    }
+    public static pulse.cdm.bind.PulmonaryShuntExacerbationData Unload(SEPulmonaryShuntExacerbation src)
+    {
+      pulse.cdm.bind.PulmonaryShuntExacerbationData dst = new pulse.cdm.bind.PulmonaryShuntExacerbationData();
+      Serialize(src, dst);
+      return dst;
+    }
+    public static void Serialize(SEPulmonaryShuntExacerbation src, pulse.cdm.bind.PulmonaryShuntExacerbationData dst)
+    {
+      dst.PatientAction = new pulse.cdm.bind.PatientActionData();
+      Serialize(src, dst.PatientAction);
+      if (src.HasSeverity())
+        dst.Severity = PBProperty.Unload(src.GetSeverity());
     }
     #endregion
 
@@ -869,6 +1378,28 @@ namespace Pulse.CDM
       dst.Side = (pulse.cdm.bind.eSide)(int)src.GetSide();
       if (src.HasSeverity())
         dst.Severity = PBProperty.Unload(src.GetSeverity());
+    }
+    #endregion
+
+    #region SEUrinate
+    public static void Load(pulse.cdm.bind.UrinateData src, SEUrinate dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.UrinateData src, SEUrinate dst)
+    {
+      Serialize(src.PatientAction, dst);
+    }
+    public static pulse.cdm.bind.UrinateData Unload(SEUrinate src)
+    {
+      pulse.cdm.bind.UrinateData dst = new pulse.cdm.bind.UrinateData();
+      Serialize(src, dst);
+      return dst;
+    }
+    public static void Serialize(SEUrinate src, pulse.cdm.bind.UrinateData dst)
+    {
+      dst.PatientAction = new pulse.cdm.bind.PatientActionData();
+      Serialize(src, dst.PatientAction);
     }
     #endregion
 

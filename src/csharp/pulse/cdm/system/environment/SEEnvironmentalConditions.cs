@@ -169,6 +169,7 @@ namespace Pulse.CDM
     {
       surrounding_type = st;
     }
+
     public SEScalarMassPerVolume GetAirDensity()
     {
       if (air_density == null)
