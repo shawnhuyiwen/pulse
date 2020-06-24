@@ -269,7 +269,7 @@ set(PULSE_JAVA_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/utilities/FileNameFilter.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/utilities/FileUtils.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/utilities/FindObjects.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/utilities/jniBridge.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/utilities/JNIBridge.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/utilities/Log.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/utilities/LogListener.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/utilities/Pair.java
