@@ -18,7 +18,7 @@
 #include "io/protobuf/PBEnvironment.h"
 
 
-SEEnvironmentalConditions::SEEnvironmentalConditions(SESubstanceManager& substances) : Loggable(substances.GetLogger()), m_Substances(substances)
+SEEnvironmentalConditions::SEEnvironmentalConditions(Logger* logger) : Loggable(logger)
 {
   m_SurroundingType = eSurroundingType::NullSurrounding;
 
@@ -58,26 +58,26 @@ void SEEnvironmentalConditions::Clear()
   m_cAmbientAerosols.clear();
 }
 
-void SEEnvironmentalConditions::Copy(const SEEnvironmentalConditions& src)
+void SEEnvironmentalConditions::Copy(const SEEnvironmentalConditions& src, const SESubstanceManager& subMgr)
 {
-  PBEnvironment::Copy(src, *this);
+  PBEnvironment::Copy(src, *this, subMgr);
 }
 
 bool SEEnvironmentalConditions::SerializeToString(std::string& output, SerializationFormat m) const
 {
   return PBEnvironment::SerializeToString(*this, output, m);
 }
-bool SEEnvironmentalConditions::SerializeToFile(const std::string& filename, SerializationFormat m) const
+bool SEEnvironmentalConditions::SerializeToFile(const std::string& filename) const
 {
-  return PBEnvironment::SerializeToFile(*this, filename, m);
+  return PBEnvironment::SerializeToFile(*this, filename);
 }
-bool SEEnvironmentalConditions::SerializeFromString(const std::string& src, SerializationFormat m)
+bool SEEnvironmentalConditions::SerializeFromString(const std::string& src, SerializationFormat m, const SESubstanceManager& subMgr)
 {
-  return PBEnvironment::SerializeFromString(src, *this, m);
+  return PBEnvironment::SerializeFromString(src, *this, m, subMgr);
 }
-bool SEEnvironmentalConditions::SerializeFromFile(const std::string& filename, SerializationFormat m)
+bool SEEnvironmentalConditions::SerializeFromFile(const std::string& filename, const SESubstanceManager& subMgr)
 {
-  return PBEnvironment::SerializeFromFile(filename, *this, m);
+  return PBEnvironment::SerializeFromFile(filename, *this, subMgr);
 }
 
 const SEScalar* SEEnvironmentalConditions::GetScalar(const std::string& name)
@@ -104,7 +104,7 @@ const SEScalar* SEEnvironmentalConditions::GetScalar(const std::string& name)
   return nullptr;
 }
 
-void SEEnvironmentalConditions::Merge(const SEEnvironmentalConditions& from)
+void SEEnvironmentalConditions::Merge(const SEEnvironmentalConditions& from, SESubstanceManager& subMgr)
 {
   if(from.m_SurroundingType != eSurroundingType::NullSurrounding)
     SetSurroundingType(from.m_SurroundingType);
@@ -124,22 +124,13 @@ void SEEnvironmentalConditions::Merge(const SEEnvironmentalConditions& from)
     double amt;
     double total = 0;
     RemoveAmbientGases();
-    SESubstance* sub;
+    const SESubstance* sub;
     SESubstanceFraction* sf;
     for (SESubstanceFraction* osf : from.m_AmbientGases)
     {
-      if (&m_Substances != &from.m_Substances)
-      {
-        sub = m_Substances.GetSubstance(osf->GetSubstance().GetName());
-        if (sub==nullptr)
-        {
-          std::stringstream ss;
-          ss << "Do not have substance : " << osf->GetSubstance().GetName();
-          Error(ss);
-        }
-      }
-      else
-        sub = &osf->GetSubstance();
+      sub = subMgr.GetSubstance(osf->GetSubstance().GetName());
+      if (sub==nullptr)
+        Error("Do not have substance : " + osf->GetSubstance().GetName());
 
       sf = new SESubstanceFraction(*sub);
       sf->GetFractionAmount().Set(osf->GetFractionAmount());
@@ -147,10 +138,10 @@ void SEEnvironmentalConditions::Merge(const SEEnvironmentalConditions& from)
       total += amt;
       m_AmbientGases.push_back(sf);
       m_cAmbientGases.push_back(sf);
-      m_Substances.AddActiveSubstance((SESubstance&)sf->m_Substance);
+      subMgr.AddActiveSubstance((SESubstance&)sf->m_Substance);
     }
     if (!SEScalar::IsValue(1, total))
-      Error("Environment Ambient Substance fractions do not sum to 1");
+      subMgr.Error("Environment Ambient Substance fractions do not sum to 1");
   }
 
   if (from.HasAmbientAerosol())
@@ -347,7 +338,7 @@ const std::vector<const SESubstanceFraction*>& SEEnvironmentalConditions::GetAmb
 {
   return m_cAmbientGases;
 }
-SESubstanceFraction& SEEnvironmentalConditions::GetAmbientGas(SESubstance& s)
+SESubstanceFraction& SEEnvironmentalConditions::GetAmbientGas(const SESubstance& s)
 {
   for (SESubstanceFraction* sf : m_AmbientGases)
   {
@@ -413,7 +404,7 @@ const std::vector<const SESubstanceConcentration*>& SEEnvironmentalConditions::G
 {
   return m_cAmbientAerosols;
 }
-SESubstanceConcentration& SEEnvironmentalConditions::GetAmbientAerosol(SESubstance& substance)
+SESubstanceConcentration& SEEnvironmentalConditions::GetAmbientAerosol(const SESubstance& substance)
 {
   for (SESubstanceConcentration* sc : m_AmbientAerosols)
   {

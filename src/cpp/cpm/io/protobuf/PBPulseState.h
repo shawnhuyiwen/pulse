@@ -15,8 +15,8 @@ public:
   static bool Serialize(const PULSE_BIND::StateData& src, PulseController& dst, const SEEngineConfiguration* config=nullptr);
   static bool Serialize(const PulseController& src, PULSE_BIND::StateData& dst);
   
-  static bool SerializeFromFile(const std::string& filename, PulseController& dst, SerializationFormat m, const SEEngineConfiguration* config=nullptr);
-  static bool SerializeToFile(const PulseController& src, const std::string& filename, SerializationFormat m);
+  static bool SerializeFromFile(const std::string& filename, PulseController& dst, const SEEngineConfiguration* config=nullptr);
+  static bool SerializeToFile(const PulseController& src, const std::string& filename);
 
   static bool SerializeFromString(const std::string& src, PulseController& dst, SerializationFormat m, const SEEngineConfiguration* config=nullptr);
   static bool SerializeToString(const PulseController& src, std::string& output, SerializationFormat m);

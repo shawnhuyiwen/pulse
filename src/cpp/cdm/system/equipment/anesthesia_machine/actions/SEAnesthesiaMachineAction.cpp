@@ -4,7 +4,7 @@
 #include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineAction.h"
 #include "substance/SESubstanceManager.h"
 
-SEAnesthesiaMachineAction::SEAnesthesiaMachineAction() : SEEquipmentAction()
+SEAnesthesiaMachineAction::SEAnesthesiaMachineAction(Logger* logger) : SEEquipmentAction(logger)
 {
 
 }

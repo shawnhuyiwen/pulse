@@ -14,8 +14,10 @@
 #include "controller/Substances.h"
 #include "physiology/Cardiovascular.h"
 
+#include "engine/SEOverrides.h"
 #include "engine/SEEngineTracker.h"
 #include "engine/SEDataRequestManager.h"
+#include "engine/SEPatientConfiguration.h"
 
 #include "substance/SESubstanceManager.h"
 #include "circuit/fluid/SEFluidCircuit.h"

@@ -33,7 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Google.Protobuf">
-      <HintPath>..\..\..\..\..\Builds\pulse-engine\External\protobuf\src\csharp\src\Google.Protobuf\bin\Debug\net45\Google.Protobuf.dll</HintPath>
+      <HintPath>..\..\..\..\..\Builds\pulse-engine\External\protobuf\src\csharp\src\Google.Protobuf\bin\Release\net45\Google.Protobuf.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -101,12 +101,21 @@
     <Compile Include="cdm\io\PBEvents.cs" />
     <Compile Include="cdm\io\PBLogMessages.cs" />
     <Compile Include="cdm\io\PBMechanicalVentilator.cs" />
+    <Compile Include="cdm\io\PBNutrition.cs" />
     <Compile Include="cdm\io\PBPatient.cs" />
     <Compile Include="cdm\io\PBPatientActions.cs" />
     <Compile Include="cdm\io\PBPatientConditions.cs" />
     <Compile Include="cdm\io\PBPatientConfiguration.cs" />
     <Compile Include="cdm\io\PBProperties.cs" />
     <Compile Include="cdm\patient\actions\SEAcuteRespiratoryDistressSyndromeExacerbation.cs" />
+    <Compile Include="cdm\patient\actions\SEConsciousRespiration.cs" />
+    <Compile Include="cdm\patient\actions\SEUrinate.cs" />
+    <Compile Include="cdm\patient\actions\SEPulmonaryShuntExacerbation.cs" />
+    <Compile Include="cdm\patient\actions\SEMechanicalVentilation.cs" />
+    <Compile Include="cdm\patient\actions\SEImpairedAlveolarExchangeExacerbation.cs" />
+    <Compile Include="cdm\patient\actions\SEConsumeNutrients.cs" />
+    <Compile Include="cdm\patient\actions\SEChestCompressionForceScale.cs" />
+    <Compile Include="cdm\patient\actions\SEChestCompressionForce.cs" />
     <Compile Include="cdm\patient\actions\SEAcuteStress.cs" />
     <Compile Include="cdm\patient\actions\SEAirwayObstruction.cs" />
     <Compile Include="cdm\patient\actions\SEAsthmaAttack.cs" />
@@ -127,8 +136,10 @@
     <Compile Include="cdm\patient\actions\SESubstanceCompoundInfusion.cs" />
     <Compile Include="cdm\patient\actions\SESubstanceInfusion.cs" />
     <Compile Include="cdm\patient\actions\SESupplementalOxygen.cs" />
+    <Compile Include="cdm\patient\actions\SEChestOcclusiveDressing.cs" />
     <Compile Include="cdm\patient\actions\SETensionPneumothorax.cs" />
     <Compile Include="cdm\patient\conditions\SEAcuteRespiratoryDistressSyndrome.cs" />
+    <Compile Include="cdm\patient\conditions\SEPulmonaryShunt.cs" />
     <Compile Include="cdm\patient\conditions\SEChronicAnemia.cs" />
     <Compile Include="cdm\patient\conditions\SEChronicHeartFailure.cs" />
     <Compile Include="cdm\patient\conditions\SEChronicObstructivePulmonaryDisease.cs" />
@@ -140,6 +151,7 @@
     <Compile Include="cdm\patient\conditions\SEPatientCondition.cs" />
     <Compile Include="cdm\patient\conditions\SEPulmonaryFibrosis.cs" />
     <Compile Include="cdm\patient\conditions\SESepsis.cs" />
+    <Compile Include="cdm\patient\SENutrition.cs" />
     <Compile Include="cdm\patient\SEPatient.cs" />
     <Compile Include="cdm\scalars\SEProperty.cs" />
     <Compile Include="cdm\scalars\SEScalar.cs" />
@@ -157,7 +169,9 @@
     <Compile Include="cdm\scalars\SEScalarMassPerTime.cs" />
     <Compile Include="cdm\scalars\SEScalarMassPerVolume.cs" />
     <Compile Include="cdm\scalars\SEScalarNegative1To1.cs" />
+    <Compile Include="cdm\scalars\SEScalarForce.cs" />
     <Compile Include="cdm\scalars\SEScalarPower.cs" />
+    <Compile Include="cdm\scalars\SEScalarPressureTimePerVolume.cs" />
     <Compile Include="cdm\scalars\SEScalarPressure.cs" />
     <Compile Include="cdm\scalars\SEScalarTemperature.cs" />
     <Compile Include="cdm\scalars\SEScalarTime.cs" />

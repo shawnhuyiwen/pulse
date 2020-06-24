@@ -20,7 +20,7 @@ void HowToSandbox()
   // Create a Pulse Engine and load the standard patient
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
   pe->GetLogger()->SetLogFile("./test_results/PulseSandbox.log");
-  if (!pe->SerializeFromFile("./states/StandardMale@0s.json", JSON))
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
@@ -30,7 +30,7 @@ void HowToSandbox()
   pe->GetLogger()->Info(std::stringstream() << "Respiration Rate : " << pe->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min) << "bpm");
 
   // Ok we are done with that patient, let's do another patient with the same engine
-  if (!pe->SerializeFromFile("./states/StandardMale@0s.json", JSON))
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;

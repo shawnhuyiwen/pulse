@@ -57,8 +57,8 @@ public:
       _file << _str_requested_level << out << std::endl;
   }
 
-  bool _log_to_console = true;
-  bool _log_to_file = true;
+  bool _log_to_console = false;
+  bool _log_to_file = false;
   Logger::Level _log_level = Logger::Level::Info;
   std::string _str_requested_level = "[INFO]";
   Logger::Level _last_requested_level = Logger::Level::Info;

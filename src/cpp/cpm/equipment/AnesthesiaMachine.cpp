@@ -48,7 +48,7 @@
 ========================
 */
 
-AnesthesiaMachine::AnesthesiaMachine(PulseData& data) : PulseAnesthesiaMachine(data.GetSubstances()), m_data(data)
+AnesthesiaMachine::AnesthesiaMachine(PulseData& data) : PulseAnesthesiaMachine(data.GetLogger()), m_data(data)
 {
   Clear();
 }
@@ -164,9 +164,9 @@ void AnesthesiaMachine::SetUp()
 void AnesthesiaMachine::StateChange()
 {
   if (HasLeftChamber() && GetLeftChamber().GetState() == eSwitch::On && GetLeftChamber().HasSubstance())
-    m_Substances.AddActiveSubstance(*m_LeftChamber->GetSubstance());
+    m_data.GetSubstances().AddActiveSubstance(*m_LeftChamber->GetSubstance());
   if (HasRightChamber() && GetRightChamber().GetState() == eSwitch::On && GetRightChamber().HasSubstance())
-    m_Substances.AddActiveSubstance(*m_RightChamber->GetSubstance());
+    m_data.GetSubstances().AddActiveSubstance(*m_RightChamber->GetSubstance());
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -284,7 +284,7 @@ void AnesthesiaMachine::PreProcess()
 {
   if (m_actions->HasAnesthesiaMachineConfiguration())
   {
-    ProcessConfiguration(*m_actions->GetAnesthesiaMachineConfiguration());
+    ProcessConfiguration(*m_actions->GetAnesthesiaMachineConfiguration(), m_data.GetSubstances());
     m_actions->RemoveAnesthesiaMachineConfiguration();
   }
   //Do nothing if the machine is off and not initialized

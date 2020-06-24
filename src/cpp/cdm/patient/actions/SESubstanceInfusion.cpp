@@ -9,7 +9,7 @@
 #include "properties/SEScalarMassPerVolume.h"
 #include "io/protobuf/PBPatientActions.h"
 
-SESubstanceInfusion::SESubstanceInfusion(const SESubstance& substance) : SESubstanceAdministration(), m_Substance(substance)
+SESubstanceInfusion::SESubstanceInfusion(const SESubstance& substance, Logger* logger) : SESubstanceAdministration(logger), m_Substance(substance)
 {
 
   m_Rate=nullptr;

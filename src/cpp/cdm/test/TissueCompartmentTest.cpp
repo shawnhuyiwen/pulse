@@ -154,5 +154,5 @@ void CommonDataModelTest::TissueCompartmentTest(const std::string& rptDirectory)
 
   testCase.GetDuration().SetValue(pTimer.GetElapsedTime_s("Serialization"), TimeUnit::s);
 
-  testReport.SerializeToFile(rptDirectory + "/TissueCompartmentTestReport.json",JSON);
+  testReport.SerializeToFile(rptDirectory + "/TissueCompartmentTestReport.json");
 }

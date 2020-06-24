@@ -14,7 +14,7 @@ class CDM_DECL SEConsciousRespiration : public SEPatientAction
   friend class PBPatientAction;//friend the serialization class
 public:
 
-  SEConsciousRespiration();
+  SEConsciousRespiration(Logger* logger=nullptr);
   virtual ~SEConsciousRespiration();
 
   virtual void Clear(); //clear memory

@@ -4,18 +4,17 @@
 
 #include "SEInhalerAction.h"
 class SEInhaler;
-class SESubstanceManager;
 
 class CDM_DECL SEInhalerConfiguration : public SEInhalerAction
 {
   friend class PBEquipmentAction;//friend the serialization class
 public:
 
-  SEInhalerConfiguration(SESubstanceManager& substances);
+  SEInhalerConfiguration(Logger* logger=nullptr);
   virtual ~SEInhalerConfiguration();
 
   virtual void Clear();
-  virtual void Copy(const SEInhalerConfiguration& src);
+  virtual void Copy(const SEInhalerConfiguration& src, const SESubstanceManager& subMgr);
   
   virtual bool IsValid() const;
 
@@ -31,7 +30,6 @@ public:
   virtual void ToString(std::ostream &str) const;
 
 protected:
-  SESubstanceManager&  m_Substances;
 
   std::string m_ConfigurationFile;
   SEInhaler*  m_Configuration;

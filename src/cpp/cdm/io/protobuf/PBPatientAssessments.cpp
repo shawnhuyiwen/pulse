@@ -32,13 +32,11 @@ bool PBPatientAssessment::SerializeToString(const SECompleteBloodCount& src, std
   PBPatientAssessment::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
-bool PBPatientAssessment::SerializeToFile(const SECompleteBloodCount& src, const std::string& filename, SerializationFormat m)
+bool PBPatientAssessment::SerializeToFile(const SECompleteBloodCount& src, const std::string& filename)
 {
   CDM_BIND::CompleteBloodCountData data;
   PBPatientAssessment::Serialize(src, data);
-  std::string content;
-  PBPatientAssessment::SerializeToString(src, content, m);
-  return WriteFile(content, filename, m);
+  return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
 
 void PBPatientAssessment::Load(const CDM_BIND::CompleteBloodCountData& src, SECompleteBloodCount& dst)
@@ -100,13 +98,11 @@ bool PBPatientAssessment::SerializeToString(const SEComprehensiveMetabolicPanel&
   PBPatientAssessment::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
-bool PBPatientAssessment::SerializeToFile(const SEComprehensiveMetabolicPanel& src, const std::string& filename, SerializationFormat m)
+bool PBPatientAssessment::SerializeToFile(const SEComprehensiveMetabolicPanel& src, const std::string& filename)
 {
   CDM_BIND::ComprehensiveMetabolicPanelData data;
   PBPatientAssessment::Serialize(src, data);
-  std::string content;
-  PBPatientAssessment::SerializeToString(src, content, m);
-  return WriteFile(content, filename, m);
+  return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
 
 void PBPatientAssessment::Load(const CDM_BIND::ComprehensiveMetabolicPanelData& src, SEComprehensiveMetabolicPanel& dst)
@@ -193,13 +189,11 @@ bool PBPatientAssessment::SerializeToString(const SEPulmonaryFunctionTest& src, 
   PBPatientAssessment::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
-bool PBPatientAssessment::SerializeToFile(const SEPulmonaryFunctionTest& src, const std::string& filename, SerializationFormat m)
+bool PBPatientAssessment::SerializeToFile(const SEPulmonaryFunctionTest& src, const std::string& filename)
 {
   CDM_BIND::PulmonaryFunctionTestData data;
   PBPatientAssessment::Serialize(src, data);
-  std::string content;
-  PBPatientAssessment::SerializeToString(src, content, m);
-  return WriteFile(content, filename, m);
+  return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
 
 
@@ -284,13 +278,11 @@ bool PBPatientAssessment::SerializeToString(const SEUrinalysis& src, std::string
   PBPatientAssessment::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
-bool PBPatientAssessment::SerializeToFile(const SEUrinalysis& src, const std::string& filename, SerializationFormat m)
+bool PBPatientAssessment::SerializeToFile(const SEUrinalysis& src, const std::string& filename)
 {
   CDM_BIND::UrinalysisData data;
   PBPatientAssessment::Serialize(src, data);
-  std::string content;
-  PBPatientAssessment::SerializeToString(src, content, m);
-  return WriteFile(content, filename, m);
+  return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
 
 void PBPatientAssessment::Load(const CDM_BIND::UrinalysisData& src, SEUrinalysis& dst)

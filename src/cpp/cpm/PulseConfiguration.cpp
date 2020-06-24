@@ -42,7 +42,7 @@
 #include "properties/SEScalarVolumePerTime.h"
 #include "io/protobuf/PBPulseConfiguration.h"
 
-PulseConfiguration::PulseConfiguration(SESubstanceManager& substances) : SEEngineConfiguration(substances.GetLogger()), m_Substances(substances)
+PulseConfiguration::PulseConfiguration(Logger* logger) : SEEngineConfiguration(logger)
 {
   m_TimeStep = nullptr;
   m_TimedStabilization = nullptr;
@@ -305,38 +305,41 @@ void PulseConfiguration::Clear()
   m_TissueEnabled = eSwitch::On;
 }
 
-void PulseConfiguration::Merge(const PulseConfiguration& src)
+void PulseConfiguration::Merge(const PulseConfiguration& src, SESubstanceManager& subMgr)
 {
-  PBPulseConfiguration::Merge(src, *this);
+  PBPulseConfiguration::Merge(src, *this, subMgr);
 }
 
 bool PulseConfiguration::SerializeToString(std::string& output, SerializationFormat m) const
 {
   return PBPulseConfiguration::SerializeToString(*this, output, m);
 }
-bool PulseConfiguration::SerializeToFile(const std::string& filename, SerializationFormat m) const
+bool PulseConfiguration::SerializeToFile(const std::string& filename) const
 {
-  return PBPulseConfiguration::SerializeToFile(*this, filename, m);
+  return PBPulseConfiguration::SerializeToFile(*this, filename);
 }
-bool PulseConfiguration::SerializeFromString(const std::string& src, SerializationFormat m)
+bool PulseConfiguration::SerializeFromString(const std::string& src, SerializationFormat m, SESubstanceManager& subMgr)
 {
-  return PBPulseConfiguration::SerializeFromString(src, *this, m);
+  return PBPulseConfiguration::SerializeFromString(src, *this, m, subMgr);
 }
-bool PulseConfiguration::SerializeFromFile(const std::string& filename, SerializationFormat m)
+bool PulseConfiguration::SerializeFromFile(const std::string& filename, SESubstanceManager& subMgr)
 {
-  return PBPulseConfiguration::SerializeFromFile(filename, *this, m);
+  return PBPulseConfiguration::SerializeFromFile(filename, *this, subMgr);
 }
 
-void PulseConfiguration::Initialize(const std::string& data_dir)
+void PulseConfiguration::Initialize(const std::string& dataDir, SESubstanceManager* subMgr)
 {
   Clear();
   m_WritePatientBaselineFile = eSwitch::Off;
 
   // Reset to default values
   GetTimeStep().SetValue(1.0 / 50.0, TimeUnit::s);
-  GetECGInterpolator().SerializeFromFile(data_dir+"/ecg/StandardECG.json",JSON,&GetTimeStep());
-  GetDynamicStabilization().SerializeFromFile(data_dir+"/config/DynamicStabilization.json",JSON);
-  //GetTimedStabilization().SerializeFromFile(data_dir+"/config/TimedStabilization.json",JSON);
+  if (!dataDir.empty())
+  {
+    GetECGInterpolator().SerializeFromFile(dataDir + "/ecg/StandardECG.json", &GetTimeStep());
+    GetDynamicStabilization().SerializeFromFile(dataDir + "/config/DynamicStabilization.json");
+    //GetTimedStabilization().SerializeFromFile(dataDir+"/config/TimedStabilization.json");
+  }
   //GetDynamicStabilization().TrackStabilization(eSwitch::On);// Hard coded override for debugging
 
   //Blood Chemistry
@@ -390,7 +393,8 @@ void PulseConfiguration::Initialize(const std::string& data_dir)
   GetAirSpecificHeat().SetValue(1.0035, HeatCapacitancePerMassUnit::kJ_Per_K_kg);
   GetMolarMassOfDryAir().SetValue(0.028964, MassPerAmountUnit::kg_Per_mol);
   GetMolarMassOfWaterVapor().SetValue(0.018016, MassPerAmountUnit::kg_Per_mol);
-  GetInitialEnvironmentalConditions().SerializeFromFile(data_dir+"/environments/Standard.json",JSON);
+  if (!dataDir.empty())
+    GetInitialEnvironmentalConditions().SerializeFromFile(dataDir +"/environments/Standard.json", *subMgr);
   GetWaterDensity().SetValue(1000, MassPerVolumeUnit::kg_Per_m3);
 
   // Gastrointestinal
@@ -400,7 +404,8 @@ void PulseConfiguration::Initialize(const std::string& data_dir)
   GetDefaultCarbohydrateDigestionRate().SetValue(0.87, MassPerTimeUnit::g_Per_min);// Go through 130g in about 2 hrs, glucose levels should return to basal 2hrs after that
   GetDefaultFatDigestionRate().SetValue(0.055, MassPerTimeUnit::g_Per_min);// Guyton (About 8hr to digest the fat in the default meal)
   GetDefaultProteinDigestionRate().SetValue(0.071, MassPerTimeUnit::g_Per_min);// Dangin2001Digestion (About 5hr to digest the protein in the default meal)
-  GetDefaultStomachContents().SerializeFromFile(data_dir+"/nutrition/Standard.json",JSON);// Refs are in the data spreadsheet
+  if (!dataDir.empty())
+    GetDefaultStomachContents().SerializeFromFile(dataDir +"/nutrition/Standard.json");// Refs are in the data spreadsheet
   GetFatAbsorptionFraction().SetValue(0.248);// Guyton p797 and the recommended daily value for saturated fat intake according to the AHA //TODO: Add this reference
   // We should be making 30 grams of urea per 100 grams of protein haussinger1990nitrogen
   GetProteinToUreaFraction().SetValue(0.405);// BUT, We should excrete 24.3 g/day on average. Guyton p 328. With an average intake of 60 g/day, that works out to approximately 40%. 
@@ -1248,7 +1253,7 @@ bool PulseConfiguration::HasInitialEnvironmentalConditions() const
 SEEnvironmentalConditions& PulseConfiguration::GetInitialEnvironmentalConditions()
 {
   if (m_InitialEnvironmentalConditions == nullptr)
-    m_InitialEnvironmentalConditions = new SEEnvironmentalConditions(m_Substances);
+    m_InitialEnvironmentalConditions = new SEEnvironmentalConditions(GetLogger());
   return *m_InitialEnvironmentalConditions;
 }
 const SEEnvironmentalConditions* PulseConfiguration::GetInitialEnvironmentalConditions() const

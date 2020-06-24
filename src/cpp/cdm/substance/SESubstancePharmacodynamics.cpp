@@ -25,11 +25,6 @@ SESubstancePharmacodynamics::SESubstancePharmacodynamics(Logger* logger) : Logga
 
 SESubstancePharmacodynamics::~SESubstancePharmacodynamics() 
 {
-  Clear();
-}
-
-void SESubstancePharmacodynamics::Clear()
-{
   SAFE_DELETE(m_Bronchodilation);
   SAFE_DELETE(m_DiastolicPressureModifier);
   SAFE_DELETE(m_EC50);
@@ -42,6 +37,23 @@ void SESubstancePharmacodynamics::Clear()
   SAFE_DELETE(m_SystolicPressureModifier);
   SAFE_DELETE(m_TidalVolumeModifier);
   SAFE_DELETE(m_TubularPermeabilityModifier);
+}
+
+void SESubstancePharmacodynamics::Clear()
+{
+  INVALIDATE_PROPERTY(m_Bronchodilation);
+  INVALIDATE_PROPERTY(m_DiastolicPressureModifier);
+  INVALIDATE_PROPERTY(m_EC50);
+  INVALIDATE_PROPERTY(m_EMaxShapeParameter);
+  INVALIDATE_PROPERTY(m_HeartRateModifier);
+  INVALIDATE_PROPERTY(m_NeuromuscularBlock);
+  if(m_PupillaryResponse!=nullptr)
+    m_PupillaryResponse->Clear();
+  INVALIDATE_PROPERTY(m_RespirationRateModifier);
+  INVALIDATE_PROPERTY(m_Sedation);
+  INVALIDATE_PROPERTY(m_SystolicPressureModifier);
+  INVALIDATE_PROPERTY(m_TidalVolumeModifier);
+  INVALIDATE_PROPERTY(m_TubularPermeabilityModifier);
 }
 
 bool SESubstancePharmacodynamics::IsValid() const

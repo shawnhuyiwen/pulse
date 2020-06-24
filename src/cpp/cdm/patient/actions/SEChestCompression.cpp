@@ -5,7 +5,7 @@
 #include "patient/actions/SEChestCompression.h"
 #include "io/protobuf/PBPatientActions.h"
 
-SEChestCompression::SEChestCompression() : SEPatientAction()
+SEChestCompression::SEChestCompression(Logger* logger) : SEPatientAction(logger)
 {
 
 }

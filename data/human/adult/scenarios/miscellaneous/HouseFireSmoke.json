@@ -371,7 +371,7 @@
         "Precision": 4
       },
       "Category": "LiquidCompartment",
-      "CompartmentName": "Mouth",
+      "CompartmentName": "Airway",
       "SubstanceName": "ForestFireParticulate",
       "PropertyName": "Concentration",
       "Unit": "ug/L"
@@ -425,7 +425,7 @@
         "Precision": 4
       },
       "Category": "LiquidCompartment",
-      "CompartmentName": "Mouth",
+      "CompartmentName": "Airway",
       "SubstanceName": "ForestFireParticulate",
       "PropertyName": "MassDeposited",
       "Unit": "ug"

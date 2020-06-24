@@ -7,7 +7,7 @@ class CDM_DECL SEAnesthesiaMachineOxygenWallPortPressureLoss : public SEAnesthes
 {
   friend class PBEquipmentAction;//friend the serialization class
 public:
-  SEAnesthesiaMachineOxygenWallPortPressureLoss();
+  SEAnesthesiaMachineOxygenWallPortPressureLoss(Logger* logger=nullptr);
   virtual ~SEAnesthesiaMachineOxygenWallPortPressureLoss();
 
   virtual void Clear();

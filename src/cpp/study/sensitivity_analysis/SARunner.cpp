@@ -152,11 +152,11 @@ bool SARunner::RunSimulationUntilStable(std::string const& outDir, pulse::study:
   pulse->GetLogger()->SetLogFile(outDir + "/" + cdm::to_string(sim.id()) + " - " + sim.name() + ".log");
 
   // TODO amb Clean this up (cfg should have a default ctor that makes its own Sub Mgr)
-  PulseConfiguration cfg(pulse->GetSubstanceManager());
+  PulseConfiguration cfg(pulse->GetLogger());
   cfg.SetBaroreceptorFeedback(eSwitch::Off);
   cfg.SetChemoreceptorFeedback(eSwitch::Off);
   pulse->SetConfigurationOverride(&cfg);
-  if (!pulse->SerializeFromFile("./states/StandardMale@0s.json", SerializationFormat::JSON))
+  if (!pulse->SerializeFromFile("./states/StandardMale@0s.json"))
     return false;
 
   // No logging to console (when threaded)
@@ -449,7 +449,7 @@ bool SARunner::RunSimulation(std::string const& outDir, pulse::study::bind::sens
   pulse->GetLogger()->SetLogFile(outDir + "/" + cdm::to_string(sim.id()) + " - " + sim.name() + ".log");
 
   // TODO amb Clean this up (cfg should have a default ctor that makes its own Sub Mgr)
-  PulseConfiguration cfg(pulse->GetSubstanceManager());
+  PulseConfiguration cfg(pulse->GetLogger());
   // Serialize Overrides
   PBAction::Load(sim.overrides(), cfg.GetInitialOverrides());
   //cfg.SetBaroreceptorFeedback(eSwitch::Off);
@@ -759,7 +759,7 @@ bool SARunner::SerializeToFile(pulse::study::bind::sensitivity_analysis::Simulat
   std::string content;
   if (!SerializeToString(src, content, f))
     return false;
-  return WriteFile(content, filename, SerializationFormat::JSON);
+  return WriteFile(content, filename);
 }
 bool SARunner::SerializeFromString(const std::string& src, pulse::study::bind::sensitivity_analysis::SimulationListData& dst, SerializationFormat f)
 {
@@ -778,8 +778,8 @@ bool SARunner::SerializeFromString(const std::string& src, pulse::study::bind::s
 }
 bool SARunner::SerializeFromFile(const std::string& filename, pulse::study::bind::sensitivity_analysis::SimulationListData& dst, SerializationFormat f)
 {
-  std::string content = ReadFile(filename, SerializationFormat::JSON);
-  if (content.empty())
+  std::string content;
+  if (ReadFile(filename, content))
   {
     Error("Unable to read file " + filename);
     return false;

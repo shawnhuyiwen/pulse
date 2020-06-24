@@ -8,7 +8,7 @@ class CDM_DECL SEAnesthesiaMachineSodaLimeFailure : public SEAnesthesiaMachineAc
   friend class PBEquipmentAction;//friend the serialization class
 public:
 
-  SEAnesthesiaMachineSodaLimeFailure();
+  SEAnesthesiaMachineSodaLimeFailure(Logger* logger=nullptr);
   virtual ~SEAnesthesiaMachineSodaLimeFailure();
 
   virtual void Clear();

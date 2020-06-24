@@ -53,8 +53,9 @@ public:
 
   virtual bool HasSubstanceQuantities() const;
   virtual bool HasSubstanceQuantity(const SESubstance& substance) const;
-  virtual SubstanceQuantityType* GetSubstanceQuantity(const SESubstance& substance) const;
-  virtual const std::vector<SubstanceQuantityType*>& GetSubstanceQuantities() const;
+  virtual SubstanceQuantityType* GetSubstanceQuantity(const SESubstance& substance);
+  virtual const SubstanceQuantityType* GetSubstanceQuantity(const SESubstance& substance) const;
+  virtual const std::vector<SubstanceQuantityType*>& GetSubstanceQuantities();
   virtual void ZeroSubstanceQuantities();
 
   virtual void AddLink(LinkType& link);

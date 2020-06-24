@@ -9,7 +9,7 @@ class CDM_DECL SEAirwayObstruction : public SEPatientAction
   friend class PBPatientAction;//friend the serialization class
 public:
 
-  SEAirwayObstruction();
+  SEAirwayObstruction(Logger* logger=nullptr);
   virtual ~SEAirwayObstruction();
 
   virtual void Clear();

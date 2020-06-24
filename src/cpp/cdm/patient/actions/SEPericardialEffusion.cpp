@@ -6,7 +6,7 @@
 #include "properties/SEScalarVolumePerTime.h"
 #include "io/protobuf/PBPatientActions.h"
 
-SEPericardialEffusion::SEPericardialEffusion() : SEPatientAction()
+SEPericardialEffusion::SEPericardialEffusion(Logger* logger) : SEPatientAction(logger)
 {
   m_EffusionRate = nullptr;
 }

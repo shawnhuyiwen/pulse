@@ -398,13 +398,13 @@
                 "Unit": "s"
               }
             },
-			"HoldPeriod": {
+            "HoldPeriod": {
               "ScalarTime": {
                 "Value": 0.25,
                 "Unit": "s"
               }
             },
-			"ReleasePeriod": {
+            "ReleasePeriod": {
               "ScalarTime": {
                 "Value": 0.05,
                 "Unit": "s"

@@ -48,12 +48,19 @@ protected:
   void SetConnection(eMechanicalVentilator_Connection c);
   void InvalidateConnection();
 
-  void CalculateVentilatorPressure();
-  void CalculateCyclePhase();
+  void ApplyBaseline();
+  void ApplyTarget();
+  void CalculateInspiration();
+  void CalculateExpiration();
+  void SetVentilatorPressure();
+  void SetResistances();
 
   // Serializable member variables (Set in Initialize and in schema)
   bool                  m_Inhaling;
   double                m_CurrentBreathingCycleTime_s;
+  double                m_PressureTarget_cmH2O;
+  double                m_PressureBaseline_cmH2O;
+  double                m_DriverPressure_cmH2O;
 
   // Stateless member variable (Set in SetUp())
   double                m_dt_s;

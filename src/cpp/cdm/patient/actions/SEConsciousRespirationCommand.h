@@ -4,12 +4,12 @@
 #pragma once
 #include "patient/actions/SEPatientAction.h"
 
-class CDM_DECL SEConsciousRespirationCommand
+class CDM_DECL SEConsciousRespirationCommand : public Loggable
 {
   friend class PBPatientAction;//friend the serialization class
 public:
 
-  SEConsciousRespirationCommand();
+  SEConsciousRespirationCommand(Logger* logger);
   virtual ~SEConsciousRespirationCommand();
 
   virtual void Clear(); //clear memory

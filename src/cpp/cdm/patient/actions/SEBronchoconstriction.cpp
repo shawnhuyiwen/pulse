@@ -6,7 +6,7 @@
 #include "properties/SEScalar0To1.h"
 #include "io/protobuf/PBPatientActions.h"
 
-SEBronchoconstriction::SEBronchoconstriction() : SEPatientAction()
+SEBronchoconstriction::SEBronchoconstriction(Logger* logger) : SEPatientAction(logger)
 {
   m_Severity=nullptr;
 }

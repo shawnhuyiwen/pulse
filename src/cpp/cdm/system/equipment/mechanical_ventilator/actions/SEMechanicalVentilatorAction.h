@@ -8,7 +8,7 @@ class CDM_DECL SEMechanicalVentilatorAction : public SEEquipmentAction
   friend class PBEquipmentAction;//friend the serialization class
 public:
 
-  SEMechanicalVentilatorAction();
+  SEMechanicalVentilatorAction(Logger* logger);
   virtual ~SEMechanicalVentilatorAction();
 
   virtual void Clear();

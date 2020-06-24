@@ -10,7 +10,7 @@
 #include "properties/SEScalarVolume.h"
 #include "io/protobuf/PBEquipmentActions.h"
 
-SEInhalerConfiguration::SEInhalerConfiguration(SESubstanceManager& substances) : SEInhalerAction(), m_Substances(substances)
+SEInhalerConfiguration::SEInhalerConfiguration(Logger* logger) : SEInhalerAction(logger)
 {
   m_Configuration = nullptr;
   InvalidateConfigurationFile();
@@ -28,9 +28,9 @@ void SEInhalerConfiguration::Clear()
   SAFE_DELETE(m_Configuration);
 }
 
-void SEInhalerConfiguration::Copy(const SEInhalerConfiguration& src)
+void SEInhalerConfiguration::Copy(const SEInhalerConfiguration& src, const SESubstanceManager& subMgr)
 {// Using Bindings to make a copy
-  PBEquipmentAction::Copy(src, *this);
+  PBEquipmentAction::Copy(src, *this, subMgr);
 }
 
 bool SEInhalerConfiguration::IsValid() const
@@ -46,7 +46,7 @@ SEInhaler& SEInhalerConfiguration::GetConfiguration()
 {
   m_ConfigurationFile = "";
   if (m_Configuration == nullptr)
-    m_Configuration = new SEInhaler(m_Substances);
+    m_Configuration = new SEInhaler(GetLogger());
   return *m_Configuration;
 }
 const SEInhaler* SEInhalerConfiguration::GetConfiguration() const

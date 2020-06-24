@@ -58,7 +58,7 @@ public:
   virtual bool HasSaturation() const;
   virtual SEScalar0To1& GetSaturation();
   virtual double GetSaturation() const;
-  virtual void SetHemoglobins(SESubstance& Hb, SESubstance& HbO2, SESubstance& HbCO2, SESubstance& HbO2CO2, SESubstance& HbCO);
+  virtual void SetHemoglobins(const SESubstance& Hb, const SESubstance& HbO2, const SESubstance& HbCO2, const SESubstance& HbO2CO2, const SESubstance& HbCO);
 
 protected:
   virtual void AddChild(SELiquidSubstanceQuantity& subQ);
@@ -85,9 +85,9 @@ protected:
   bool m_isCO;
   bool m_isCO2;
   // Inorder to caluclate a hierarchical saturation, we need these substances
-  SESubstance* m_Hb;
-  SESubstance* m_HbO2;
-  SESubstance* m_HbCO2;
-  SESubstance* m_HbO2CO2;
-  SESubstance* m_HbCO;
+  const SESubstance* m_Hb;
+  const SESubstance* m_HbO2;
+  const SESubstance* m_HbCO2;
+  const SESubstance* m_HbO2CO2;
+  const SESubstance* m_HbCO;
 };

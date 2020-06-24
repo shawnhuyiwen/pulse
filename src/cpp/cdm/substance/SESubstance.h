@@ -14,24 +14,22 @@ extern const std::string& eSubstance_State_Name(eSubstance_State m);
 class CDM_DECL SESubstance : public Loggable
 {
   friend class PBSubstance;//friend the serialization class
+  friend class SESubstanceManager;
+protected:
+  SESubstance(const std::string& name, Logger* logger);
 public:
-
-  SESubstance(Logger* logger);
   virtual ~SESubstance();
 
   virtual void Clear();
 
   bool SerializeToString(std::string& output, SerializationFormat m) const;
-  bool SerializeToFile(const std::string& filename, SerializationFormat m) const;
+  bool SerializeToFile(const std::string& filename) const;
   bool SerializeFromString(const std::string& src, SerializationFormat m);
-  bool SerializeFromFile(const std::string& filename, SerializationFormat m);
+  bool SerializeFromFile(const std::string& filename);
 
   virtual const SEScalar* GetScalar(const std::string& name);
   
   virtual std::string GetName() const;
-  virtual void SetName(const std::string& name);
-  virtual bool HasName() const;
-  virtual void InvalidateName();
 
   virtual eSubstance_State GetState() const;
   virtual void SetState(eSubstance_State state);

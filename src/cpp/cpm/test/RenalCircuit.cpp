@@ -8,6 +8,7 @@
 #include "controller/Circuits.h"
 #include "controller/Compartments.h"
 #include "controller/Substances.h"
+#include "physiology/Saturation.h"
 #include "PulseConfiguration.h"
 #include "physiology/Renal.h"
 
@@ -50,8 +51,11 @@ void PulseEngineTest::RenalCircuitAndTransportTest(const std::string& sTestDirec
   PulseController pc;
   pc.GetLogger()->SetLogFile(sTestDirectory + "/RenalCircuitAndTransportTest.log");
   SEPatient patient(pc.GetLogger());
-  patient.SerializeFromFile("./patients/StandardMale.json",JSON);
+  patient.SerializeFromFile("./patients/StandardMale.json");
   pc.SetupPatient(patient);
+  pc.GetSubstances().LoadSubstanceDirectory("./");
+  pc.GetSaturationCalculator().Setup();
+  pc.m_Config->Initialize("./");
   pc.m_Config->EnableRenal(eSwitch::On);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
@@ -178,8 +182,11 @@ void PulseEngineTest::RenalFeedbackTest(RenalFeedback feedback, const std::strin
   PulseController pc;
   pc.GetLogger()->SetLogFile(sTestDirectory + "/RenalFeedbackTest.log");
   SEPatient patient(pc.GetLogger());
-  patient.SerializeFromFile("./patients/StandardMale.json", JSON);
+  patient.SerializeFromFile("./patients/StandardMale.json");
   pc.SetupPatient(patient);
+  pc.GetSubstances().LoadSubstanceDirectory("./");
+  pc.GetSaturationCalculator().Setup();
+  pc.m_Config->Initialize("./");
   pc.m_Config->EnableRenal(eSwitch::On);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
@@ -494,8 +501,11 @@ void PulseEngineTest::RenalSystemTest(RenalSystems systemtest, const std::string
   PulseController pc;
   pc.GetLogger()->SetLogFile(sTestDirectory + "/RenalSystemTest.log");
   SEPatient patient(pc.GetLogger());
-  patient.SerializeFromFile("./patients/StandardMale.json", JSON);
+  patient.SerializeFromFile("./patients/StandardMale.json");
   pc.SetupPatient(patient);
+  pc.GetSubstances().LoadSubstanceDirectory("./");
+  pc.GetSaturationCalculator().Setup();
+  pc.m_Config->Initialize("./");
   pc.m_Config->EnableRenal(eSwitch::On);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();

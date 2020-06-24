@@ -918,8 +918,6 @@ void PBPhysiology::Serialize(const CDM_BIND::RespiratorySystemData& src, SERespi
     PBProperty::Load(src.transchestwallpressure(), dst.GetTransChestWallPressure());
   if (src.has_transmusclepressure())
     PBProperty::Load(src.transmusclepressure(), dst.GetTransMusclePressure());
-  if (src.has_totalpulmonaryventilation())
-    PBProperty::Load(src.totalpulmonaryventilation(), dst.GetTotalPulmonaryVentilation());
   if (src.has_transpulmonarypressure())
     PBProperty::Load(src.transpulmonarypressure(), dst.GetTranspulmonaryPressure());
   if (src.has_transrespiratorypressure())

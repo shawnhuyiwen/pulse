@@ -6,7 +6,7 @@
 #include "properties/SEScalar0To1.h"
 #include "io/protobuf/PBPatientConditions.h"
 
-SEChronicRenalStenosis::SEChronicRenalStenosis() : SEPatientCondition()
+SEChronicRenalStenosis::SEChronicRenalStenosis(Logger* logger) : SEPatientCondition(logger)
 {
   m_LeftKidneySeverity = nullptr;
   m_RightKidneySeverity = nullptr;

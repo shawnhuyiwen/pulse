@@ -35,6 +35,28 @@ class SEScalar():
     def __repr__(self):
         return " {} """.format(self._value)
 
+
+class SEScalarProperty:
+    __slots__ = ["_name", "_value", "_unit"]
+
+    def __init__(self, name: str, value: float, unit: str):
+        self._name = name
+        self._value = value
+        self._unit = unit
+    def get_name(self):
+        return self._name
+    def set_name(self, name: str):
+        self._name = name
+    def get_unit(self):
+        return self._unit
+    def set_unit(self, unit: str):
+        self._unit = unit
+    def get_value(self):
+        return self._value
+    def set_value(self, value: float):
+        self._value = value
+
+
 class SEScalar0To1(SEScalar):
     def set_value(self, value: float):
         if value>1.0 or value<0.0:
@@ -116,6 +138,53 @@ class SEScalarArea(SEScalarQuantity):
             self._units = units
         else:
             raise Exception("Provided argument must be a AreaUnit")
+
+
+class ForceUnit(SEScalarUnit):
+    @staticmethod
+    def from_string(string: str):
+        if string == ForceUnit.N.get_string():
+            return ForceUnit.N
+        if string == ForceUnit.lbf.get_string():
+            return ForceUnit.lbf
+        if string == ForceUnit.dyn.get_string():
+            return ForceUnit.dyn
+        raise Exception("No ForceUnit defined for " + string)
+ForceUnit.N = ForceUnit("N")
+ForceUnit.lbf = ForceUnit("lbf")
+ForceUnit.dyn = ForceUnit("dyn")
+class SEScalarForce(SEScalarQuantity):
+
+    def __init__(self, value: float = None, units: ForceUnit = None):
+        if value is None or units is None:
+            self.invalidate()
+        else:
+            self.set_value(value,units)
+
+    def set(self, scalar):
+        if isinstance(SEScalarForce, scalar):
+            self._value = scalar._value
+            self._units = scalar._units
+        else:
+            raise Exception("Provided argument must be a SEScalarForce")
+
+    def get_value(self, units: ForceUnit = None):
+        if self.is_valid() is False:
+            return None
+        if units is None:
+            return self._value
+        if self._units is units:
+            return self._value
+        else:
+            raise Exception("Unit converter not connected")
+
+    def set_value(self, value: float, units: ForceUnit):
+        if isinstance(units, ForceUnit):
+            self._value = value
+            self._units = units
+        else:
+            raise Exception("Provided argument must be a ForceUnit")
+
 
 class FrequencyUnit(SEScalarUnit):
     @staticmethod
@@ -772,26 +841,60 @@ class SEScalarPressure(SEScalarQuantity):
         else:
             raise Exception("Provided argument must be a PressureUnit")
 
-class SEScalarProperty:
-    __slots__ = ["_name", "_value", "_unit"]
 
-    def __init__(self, name: str, value: float, unit: str):
-        self._name = name
-        self._value = value
-        self._unit = unit
-    def get_name(self):
-        return self._name
-    def set_name(self, name: str):
-        self._name = name
-    def get_unit(self):
-        return self._unit
-    def set_unit(self, unit: str):
-        self._unit = unit
-    def get_value(self):
-        return self._value
-    def set_value(self, value: float):
-        self._value = value
+class PressureTimePerVolumeUnit(SEScalarUnit):
+    @staticmethod
+    def from_string(string: str):
+        if string == PressureTimePerVolumeUnit.cmH2O_s_Per_L.get_string():
+            return PressureTimePerVolumeUnit.cmH2O_s_Per_L
+        if string == PressureTimePerVolumeUnit.cmH2O_s_Per_mL.get_string():
+            return PressureTimePerVolumeUnit.cmH2O_s_Per_mL
+        if string == PressureTimePerVolumeUnit.mmHg_s_Per_mL.get_string():
+            return PressureTimePerVolumeUnit.mmHg_s_Per_mL
+        if string == PressureTimePerVolumeUnit.mmHg_min_Per_mL.get_string():
+            return PressureTimePerVolumeUnit.mmHg_min_Per_mL
+        if string == PressureTimePerVolumeUnit.mmHg_min_Per_L.get_string():
+            return PressureTimePerVolumeUnit.mmHg_min_Per_L
+        if string == PressureTimePerVolumeUnit.Pa_s_Per_m3.get_string():
+            return PressureTimePerVolumeUnit.Pa_s_Per_m3
+        raise Exception("No PressureTimePerVolumeUnit defined for " + string)
+PressureTimePerVolumeUnit.cmH2O_s_Per_L = PressureTimePerVolumeUnit("cmH2O s/L")
+PressureTimePerVolumeUnit.cmH2O_s_Per_mL = PressureTimePerVolumeUnit("cmH2O s/mL")
+PressureTimePerVolumeUnit.mmHg_s_Per_mL = PressureTimePerVolumeUnit("mmHg s/mL")
+PressureTimePerVolumeUnit.mmHg_min_Per_mL = PressureTimePerVolumeUnit("mmHg min/mL")
+PressureTimePerVolumeUnit.mmHg_min_Per_L = PressureTimePerVolumeUnit("mmHg min/L")
+PressureTimePerVolumeUnit.Pa_s_Per_m3 = PressureTimePerVolumeUnit("Pa s/m^3")
+class SEScalarPressureTimePerVolume(SEScalarQuantity):
 
+    def __init__(self, value: float = None, units: PressureTimePerVolumeUnit = None):
+        if value is None or units is None:
+            self.invalidate()
+        else:
+            self.set_value(value,units)
+
+    def set(self, scalar):
+        if isinstance(SEScalarPressureTimePerVolume, scalar):
+            self._value = scalar._value
+            self._units = scalar._units
+        else:
+            raise Exception("Provided argument must be a SEScalarPressureTimePerVolume")
+
+    def get_value(self, units: PressureTimePerVolumeUnit = None):
+        if self.is_valid() is False:
+            return None
+        if units is None:
+            return self._value
+        if self._units is units:
+            return self._value
+        else:
+            raise Exception("Unit converter not connected")
+
+    def set_value(self, value: float, units: PressureTimePerVolumeUnit):
+        if isinstance(units, PressureTimePerVolumeUnit):
+            self._value = value
+            self._units = units
+        else:
+            raise Exception("Provided argument must be a PressureTimePerVolumeUnit")
 
 
 class TemperatureUnit(SEScalarUnit):
@@ -892,55 +995,6 @@ class SEScalarTime(SEScalarQuantity):
             self._units = units
         else:
             raise Exception("Provided argument must be a TimeUnit")
-
-class ForceUnit(SEScalarUnit):
-    @staticmethod
-    def from_string(string: str):
-        if string == ForceUnit.N.get_string():
-            return ForceUnit.N
-        if string == ForceUnit.lbf.get_string():
-            return ForceUnit.lbf
-        if string == ForceUnit.dyn.get_string():
-            return ForceUnit.dyn
-        raise Exception("No ForceUnit defined for " + string)
-ForceUnit.N = ForceUnit("N")
-ForceUnit.lbf = ForceUnit("lbf")
-ForceUnit.dyn = ForceUnit("dyn")
-class SEScalarForce(SEScalarQuantity):
-
-    def __init__(self, value: float = None, units: ForceUnit = None):
-        if value is None or units is None:
-            self.invalidate()
-        else:
-            self.set_value(value,units)
-
-    def set(self, scalar):
-        if isinstance(SEScalarForce, scalar):
-            self._value = scalar._value
-            self._units = scalar._units
-        else:
-            raise Exception("Provided argument must be a SEScalarForce")
-
-    def get_value(self, units: ForceUnit = None):
-        if self.is_valid() is False:
-            return None
-        if units is None:
-            return self._value
-        if self._units is units:
-            return self._value
-        else:
-            raise Exception("Unit converter not connected")
-
-    def set_value(self, value: float, units: ForceUnit):
-        if isinstance(units, VolumeUnit):
-            self._value = value
-            self._units = units
-        else:
-            raise Exception("Provided argument must be a ForceUnit")
-
-
-
-
 
 class VolumeUnit(SEScalarUnit):
     @staticmethod

@@ -5,7 +5,7 @@
 #include "patient/actions/SENeedleDecompression.h"
 #include "io/protobuf/PBPatientActions.h"
 
-SENeedleDecompression::SENeedleDecompression() : SEPatientAction()
+SENeedleDecompression::SENeedleDecompression(Logger* logger) : SEPatientAction(logger)
 {
   m_State=eSwitch::Off;
   m_Side= eSide::NullSide;

@@ -22,7 +22,7 @@ void PBPulse::Serialize(const PULSE_BIND::ScenarioData& src, PulseScenario& dst)
   PBScenario::Serialize(src.scenario(), dst);
 
   if (src.has_configuration())
-    PBPulseConfiguration::Load(src.configuration(), dst.GetConfiguration());
+    PBPulseConfiguration::Load(src.configuration(), dst.GetConfiguration(), dst.GetSubstanceManager());
 }
 PULSE_BIND::ScenarioData* PBPulse::Unload(const PulseScenario& src)
 {
@@ -43,13 +43,11 @@ bool PBPulse::SerializeToString(const PulseScenario& src, std::string& output, S
   PBPulse::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
-bool PBPulse::SerializeToFile(const PulseScenario& src, const std::string& filename, SerializationFormat m)
+bool PBPulse::SerializeToFile(const PulseScenario& src, const std::string& filename)
 {
   PULSE_BIND::ScenarioData data;
   PBPulse::Serialize(src, data);
-  std::string content;
-  PBPulse::SerializeToString(src, content, m);
-  return WriteFile(content, filename, m);
+  return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
 
 bool PBPulse::SerializeFromString(const std::string& src, PulseScenario& dst, SerializationFormat m)
@@ -71,10 +69,13 @@ bool PBPulse::SerializeFromString(const std::string& src, PulseScenario& dst, Se
   dst.GetLogger()->Info("Successfully loaded scenario");
   return true;
 }
-bool PBPulse::SerializeFromFile(const std::string& filename, PulseScenario& dst, SerializationFormat m)
+bool PBPulse::SerializeFromFile(const std::string& filename, PulseScenario& dst)
 {
-  std::string content = ReadFile(filename, m);
-  if (content.empty())
-    return false;
-  return PBPulse::SerializeFromString(content, dst, m);
+  PULSE_BIND::ScenarioData data;
+  if (PBUtils::SerializeFromFile(filename, data, dst.GetLogger()))
+  {
+    PBPulse::Load(data, dst);
+    return true;
+  }
+  return PBScenario::SerializeFromFile(filename, dst);
 }

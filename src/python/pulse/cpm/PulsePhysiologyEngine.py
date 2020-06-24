@@ -2,7 +2,7 @@
 # See accompanying NOTICE file for details.
 import math, copy
 import PyPulse
-from pulse.cdm.patient import SEPatientConfiguration
+from pulse.cdm.patient import SEPatient, SEPatientConfiguration
 from pulse.cdm.engine import SEAction, eSerializationFormat, SEDataRequestManager, SEDataRequest
 from pulse.cdm.engine import IEventHandler, ILoggerForward
 from pulse.cdm.io.engine import serialize_actions_to_string, \
@@ -11,6 +11,7 @@ from pulse.cdm.io.engine import serialize_actions_to_string, \
                                 serialize_event_change_list_from_string, \
                                 serialize_active_event_list_from_string, \
                                 serialize_log_messages_from_string
+from pulse.cdm.io.patient import serialize_patient_from_string
 
 
 class PulsePhysiologyEngine:
@@ -31,32 +32,27 @@ class PulsePhysiologyEngine:
         # Timestep only gets set after on load/initialize
 
     def serialize_from_file(self, state_file: str,
-                                  data_request_mgr: SEDataRequestManager,
-                                  format: eSerializationFormat):
+                                  data_request_mgr: SEDataRequestManager):
         # Process requests and setup our results structure
-        drm = self._process_requests(data_request_mgr, format)
-        if format == eSerializationFormat.BINARY:
-            fmt = PyPulse.serialization_format.binary
-        else:
-            fmt = PyPulse.serialization_format.json
-        self._is_ready = self.__pulse.serialize_from_file(state_file, drm, fmt)
+        drm = self._process_requests(data_request_mgr, eSerializationFormat.JSON)
+        self._is_ready = self.__pulse.serialize_from_file(state_file, drm, PyPulse.serialization_format.json)
         self._dt_s = self.__pulse.get_timestep("s")
         if self._is_ready:
             self._pull(True)
         return self._is_ready
 
-    def serialize_to_file(self, state_file: str, format: eSerializationFormat):
+    def serialize_to_file(self, state_file: str):
         if self._is_ready:
-            return self.__pulse.serialize_to_file(state_file, format)
+            return self.__pulse.serialize_to_file(state_file)
         return False
 
 
     def serialize_from_string(self, state: str,
                                     data_request_mgr: SEDataRequestManager,
-                                    format: eSerializationFormat):
+                                    state_format: eSerializationFormat):
         # Process requests and setup our results structure
-        drm = self._process_requests(data_request_mgr, format)
-        if format == eSerializationFormat.BINARY:
+        drm = self._process_requests(data_request_mgr, state_format)
+        if state_format == eSerializationFormat.BINARY:
             fmt = PyPulse.serialization_format.binary
         else:
             fmt = PyPulse.serialization_format.json
@@ -82,6 +78,10 @@ class PulsePhysiologyEngine:
         if self._is_ready:
             self._pull(True)
         return self._is_ready
+
+    def get_initial_patient(self, dst: SEPatient):
+        stream = self.__pulse.get_initial_patient(PyPulse.serialization_format.json)
+        serialize_patient_from_string(stream, dst, eSerializationFormat.JSON)
 
     def set_event_handler(self, event_handler: IEventHandler):
         self._event_handler = event_handler

@@ -7,7 +7,7 @@
 #include "patient/conditions/SEPatientCondition.h"
 #include "system/environment/conditions/SEEnvironmentCondition.h"
 
-SECondition::SECondition() : Loggable()
+SECondition::SECondition(Logger* logger) : Loggable(logger)
 {
   m_Comment="";
 }

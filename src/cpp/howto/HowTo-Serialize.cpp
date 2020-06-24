@@ -35,7 +35,7 @@ void HowToSerialize()
   // This is a healty patient
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
   pe->GetLogger()->SetLogFile("./test_results/HowTo_Serialize.log");
-  if (!pe->SerializeFromFile("./states/Soldier@0s.json", JSON))
+  if (!pe->SerializeFromFile("./states/Soldier@0s.json"))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
@@ -96,5 +96,5 @@ void HowToSerialize()
 
   // Save this state out.
   // You an then load this state in your application
-  pe->SerializeToFile("./WoundedSoldier.json", SerializationFormat::JSON);
+  pe->SerializeToFile("./WoundedSoldier.json");
 }

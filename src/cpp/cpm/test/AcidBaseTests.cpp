@@ -44,6 +44,8 @@ void PulseEngineTest::AcidBaseMathTest(const std::string& rptDirectory)
 
   PulseController pc;
   pc.GetLogger()->SetLogFile(rptDirectory + "/AcidBaseMath.log");
+  pc.GetSubstances().LoadSubstanceDirectory("./");
+  pc.GetSaturationCalculator().Setup();
   SaturationCalculator& c = pc.GetSaturationCalculator();
   SESubstanceManager& subMgr = pc.GetSubstances();
 
@@ -288,6 +290,8 @@ void PulseEngineTest::AcidBaseFeedbackTest(const std::string& rptDirectory)
   DataTrack trk;
   PulseController pc;
   pc.GetLogger()->SetLogFile(rptDirectory + "/AcidBaseFeedback.log");
+  pc.GetSubstances().LoadSubstanceDirectory("./");
+  pc.GetSaturationCalculator().Setup();
   SaturationCalculator& c = pc.GetSaturationCalculator();
   SESubstanceManager& subMgr = pc.GetSubstances();
 
@@ -402,6 +406,8 @@ void PulseEngineTest::AcidBaseLimitsTest(const std::string& rptDirectory)
   DataTrack trk;
   PulseController pc;
   pc.GetLogger()->SetLogFile(rptDirectory + "/AcidBaseLimits.log");
+  pc.GetSubstances().LoadSubstanceDirectory("./");
+  pc.GetSaturationCalculator().Setup();
   SaturationCalculator& c = pc.GetSaturationCalculator();
   SESubstanceManager& subMgr = pc.GetSubstances();
 
@@ -599,6 +605,8 @@ void PulseEngineTest::AcidBaseExtremeTest(const std::string& rptDirectory)
   DataTrack trk;
   PulseController pc;
   pc.GetLogger()->SetLogFile(rptDirectory + "/AcidBaseExtreme.log");
+  pc.GetSubstances().LoadSubstanceDirectory("./");
+  pc.GetSaturationCalculator().Setup();
   SaturationCalculator& c = pc.GetSaturationCalculator();
   SESubstanceManager& subMgr = pc.GetSubstances();
 
@@ -1256,6 +1264,8 @@ void PulseEngineTest::AcidBaseBloodGasTests(const std::string& sOutputDirectory)
 {
   PulseController pc;
   pc.GetLogger()->SetLogFile(sOutputDirectory + "/AcidBaseBloodGasTests.log");
+  pc.GetSubstances().LoadSubstanceDirectory("./");
+  pc.GetSaturationCalculator().Setup();
 
   // Set up our test report
   SETestReport testReport = SETestReport(pc.GetLogger());
@@ -1274,5 +1284,5 @@ void PulseEngineTest::AcidBaseBloodGasTests(const std::string& sOutputDirectory)
   std::string results = sOutputDirectory + "/AcidBaseBloodGasTests.csv";
   pc.GetDataTrack().WriteTrackToFile(results.c_str());
 
-  testReport.SerializeToFile(sOutputDirectory + "/AcidBaseBloodGasTestsReport.json",JSON);
+  testReport.SerializeToFile(sOutputDirectory + "/AcidBaseBloodGasTestsReport.json");
 }

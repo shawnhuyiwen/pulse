@@ -9,7 +9,7 @@ class CDM_DECL SEUseInhaler : public SEConsciousRespirationCommand
 {
   friend class PBPatientAction;//friend the serialization class
   friend class SEConsciousRespiration;
-  SEUseInhaler();
+  SEUseInhaler(Logger* logger);
 public:
   virtual ~SEUseInhaler();
 

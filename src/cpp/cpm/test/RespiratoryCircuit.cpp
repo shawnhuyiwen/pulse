@@ -4,9 +4,10 @@
 
 #include "EngineTest.h"
 #include "controller/Controller.h"
-#include "controller/Substances.h"
 #include "controller/Circuits.h"
 #include "controller/Compartments.h"
+#include "controller/Substances.h"
+#include "physiology/Saturation.h"
 #include "PulseConfiguration.h"
 
 #include "patient/SEPatient.h"
@@ -47,8 +48,11 @@ void PulseEngineTest::RespiratoryCircuitAndTransportTest(RespiratoryConfiguratio
   PulseController pc;
   pc.GetLogger()->SetLogFile(sTestDirectory + "/RespiratoryCircuitAndTransportTest.log");
   SEPatient patient(pc.GetLogger());
-  patient.SerializeFromFile("./patients/StandardMale.json", JSON);
+  patient.SerializeFromFile("./patients/StandardMale.json");
   pc.SetupPatient(patient);
+  pc.GetSubstances().LoadSubstanceDirectory("./");
+  pc.GetSaturationCalculator().Setup();
+  pc.m_Config->Initialize("./");
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off); 
   pc.CreateCircuitsAndCompartments();
@@ -210,13 +214,16 @@ void PulseEngineTest::RespiratoryDriverTest(const std::string& sTestDirectory)
   PulseController pc;
   pc.GetLogger()->SetLogFile(sTestDirectory + "/RespiratoryDriverTest.log");
   SEPatient patient(pc.GetLogger());
-  patient.SerializeFromFile("./patients/StandardMale.json", JSON);
+  patient.SerializeFromFile("./patients/StandardMale.json");
   pc.SetupPatient(patient);
+  pc.GetSubstances().LoadSubstanceDirectory("./");
+  pc.GetSaturationCalculator().Setup();
+  pc.m_Config->Initialize("./");
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
-  SEEnvironmentalConditions env(pc.GetSubstances());
-  env.SerializeFromFile("./environments/Standard.json",JSON);
+  SEEnvironmentalConditions env(pc.GetLogger());
+  env.SerializeFromFile("./environments/Standard.json", pc.GetSubstances());
   SEGasCompartment* cEnv = pc.GetCompartments().GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
   for (SESubstanceFraction* subFrac : env.GetAmbientGases())
   {
@@ -234,7 +241,7 @@ void PulseEngineTest::RespiratoryDriverTest(const std::string& sTestDirectory)
   SEFluidCircuitPath* driverPressurePath = RespCircuit.GetPath(pulse::RespiratoryPath::EnvironmentToRespiratoryMuscle);
   SEFluidCircuitPath* rightPleuralToRespiratoryMuscle = RespCircuit.GetPath(pulse::RespiratoryPath::RightPleuralToRespiratoryMuscle);
   SEFluidCircuitPath* leftPleuralToRespiratoryMuscle = RespCircuit.GetPath(pulse::RespiratoryPath::LeftPleuralToRespiratoryMuscle);
-  SEFluidCircuitPath* mouthToCarina = RespCircuit.GetPath(pulse::RespiratoryPath::MouthToCarina);
+  SEFluidCircuitPath* AirwayToCarina = RespCircuit.GetPath(pulse::RespiratoryPath::AirwayToCarina);
   SEFluidCircuitPath* RightAlveoliToRightPleuralConnection = RespCircuit.GetPath(pulse::RespiratoryPath::RightAlveoliToRightPleuralConnection);
   SEFluidCircuitPath* LeftAlveoliToLeftPleuralConnection = RespCircuit.GetPath(pulse::RespiratoryPath::LeftAlveoliToLeftPleuralConnection);
   

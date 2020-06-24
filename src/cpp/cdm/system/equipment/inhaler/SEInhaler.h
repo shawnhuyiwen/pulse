@@ -13,15 +13,15 @@ class CDM_DECL SEInhaler : public SEEquipment
   friend class PBInhaler;//friend the serialization class
 public:
 
-  SEInhaler(SESubstanceManager& substances);
+  SEInhaler(Logger* logger);
   virtual ~SEInhaler();
 
   virtual void Clear();
 
   bool SerializeToString(std::string& output, SerializationFormat m) const;
-  bool SerializeToFile(const std::string& filename, SerializationFormat m) const;
-  bool SerializeFromString(const std::string& src, SerializationFormat m);
-  bool SerializeFromFile(const std::string& filename, SerializationFormat m);
+  bool SerializeToFile(const std::string& filename) const;
+  bool SerializeFromString(const std::string& src, SerializationFormat m, const SESubstanceManager& subMgr);
+  bool SerializeFromFile(const std::string& filename, const SESubstanceManager& subMgr);
 
   /** @name GetScalar
   *   @brief - A reflextion type call that will return the Scalar associated
@@ -40,8 +40,8 @@ protected:
   *            Engine specific methodology can then update their logic.
   */
   virtual void StateChange(){};
-  virtual void Merge(const SEInhaler& from);
-  virtual void ProcessConfiguration(SEInhalerConfiguration& config);
+  virtual void Merge(const SEInhaler& from, SESubstanceManager& subMgr);
+  virtual void ProcessConfiguration(SEInhalerConfiguration& config, SESubstanceManager& subMgr);
 
 public:
 
@@ -66,11 +66,9 @@ public:
 
 protected:
 
-  eSwitch          m_State;
+  eSwitch               m_State;
   SEScalarMass*         m_MeteredDose;
   SEScalar0To1*         m_NozzleLoss;
   SEScalarVolume*       m_SpacerVolume;
   const SESubstance*    m_Substance;
-
-  SESubstanceManager&   m_Substances;
 };

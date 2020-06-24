@@ -9,7 +9,7 @@ class CDM_DECL SETensionPneumothorax : public SEPatientAction
   friend class PBPatientAction;//friend the serialization class
 public:
 
-  SETensionPneumothorax();
+  SETensionPneumothorax(Logger* logger=nullptr);
   virtual ~SETensionPneumothorax();
 
   virtual void Clear(); //clear memory

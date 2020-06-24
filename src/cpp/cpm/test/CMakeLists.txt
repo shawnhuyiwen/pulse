@@ -10,6 +10,7 @@ add_library_ex(CommonPulseModelsTests
     ConditionsTest.cpp
     EngineTest.cpp
     FourCompartmentTest.cpp
+	MechanicalVentilatorCircuit.cpp
     MultiEngineTest.cpp
     NervousTests.cpp
     ReadScenarios.cpp

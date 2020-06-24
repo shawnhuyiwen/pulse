@@ -15,43 +15,69 @@ POP_PROTO_WARNINGS()
 #include "properties/SEScalarTime.h"
 #include "utils/FileUtils.h"
 
-void PBMechanicalVentilator::Load(const CDM_BIND::MechanicalVentilatorData& src, SEMechanicalVentilator& dst)
+void PBMechanicalVentilator::Load(const CDM_BIND::MechanicalVentilatorData& src, SEMechanicalVentilator& dst, const SESubstanceManager& subMgr)
 {
   dst.Clear();
-  PBMechanicalVentilator::Serialize(src, dst);
+  PBMechanicalVentilator::Serialize(src, dst, subMgr);
 }
-void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorData& src, SEMechanicalVentilator& dst)
+void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorData& src, SEMechanicalVentilator& dst, const SESubstanceManager& subMgr)
 {
-  if (src.has_breathprofile())
-  {
-    if(src.breathprofile().has_rate())
-      PBProperty::Load(src.breathprofile().rate(), dst.GetRespiratoryRate());
-    if (src.breathprofile().has_period())
-      PBProperty::Load(src.breathprofile().period(), dst.GetBreathPeriod());
-    if (src.breathprofile().has_inspiratoryexpiratoryratio())
-      PBProperty::Load(src.breathprofile().inspiratoryexpiratoryratio(), dst.GetInspiratoryExpiratoryRatio());
-  }
-  else if (src.has_inspiratoryexpiratoryperiod())
-  {
-    if (src.inspiratoryexpiratoryperiod().has_expiratoryperiod())
-      PBProperty::Load(src.inspiratoryexpiratoryperiod().expiratoryperiod(), dst.GetExpiratoryPeriod());
-    if (src.inspiratoryexpiratoryperiod().has_inspiratoryperiod())
-      PBProperty::Load(src.inspiratoryexpiratoryperiod().inspiratoryperiod(), dst.GetInspiratoryPeriod());
-  }
   dst.SetConnection((eMechanicalVentilator_Connection)src.connection());
-  dst.SetControl((eMechanicalVentilator_Control)src.control());
-  dst.SetDriverWaveform((eMechanicalVentilator_DriverWaveform)src.driverwaveform());
+
+  if (src.has_endotrachealtuberesistance())
+    PBProperty::Load(src.endotrachealtuberesistance(), dst.GetEndotrachealTubeResistance());
 
   if (src.has_positiveendexpiredpressure())
     PBProperty::Load(src.positiveendexpiredpressure(), dst.GetPositiveEndExpiredPressure());
+  if (src.has_functionalresidualcapacity())
+    PBProperty::Load(src.functionalresidualcapacity(), dst.GetFunctionalResidualCapacity());
+
+  if (src.has_expirationcycleflow())
+    PBProperty::Load(src.expirationcycleflow(), dst.GetExpirationCycleFlow());
+  if (src.has_expirationcyclepressure())
+    PBProperty::Load(src.expirationcyclepressure(), dst.GetExpirationCyclePressure());
+  if (src.has_expirationcycletime())
+    PBProperty::Load(src.expirationcycletime(), dst.GetExpirationCycleTime());
+
+  if (src.has_expirationtuberesistance())
+    PBProperty::Load(src.expirationtuberesistance(), dst.GetExpirationTubeResistance());
+  if (src.has_expirationvalveresistance())
+    PBProperty::Load(src.expirationvalveresistance(), dst.GetExpirationValveResistance());
+  dst.SetExpirationWaveform((eMechanicalVentilator_DriverWaveform)src.expirationwaveform());
+
+  if (src.has_inspirationlimitflow())
+    PBProperty::Load(src.inspirationlimitflow(), dst.GetInspirationLimitFlow());
+  if (src.has_inspirationlimitpressure())
+    PBProperty::Load(src.inspirationlimitpressure(), dst.GetInspirationLimitPressure());
+  if (src.has_inspirationlimitvolume())
+    PBProperty::Load(src.inspirationlimitvolume(), dst.GetInspirationLimitVolume());
+
+  if (src.has_inspirationpausetime())
+    PBProperty::Load(src.inspirationpausetime(), dst.GetInspirationPauseTime());
+
   if (src.has_peakinspiratorypressure())
     PBProperty::Load(src.peakinspiratorypressure(), dst.GetPeakInspiratoryPressure());
+  if (src.has_endtidalcarbondioxidepressure())
+    PBProperty::Load(src.endtidalcarbondioxidepressure(), dst.GetEndTidalCarbonDioxidePressure());
 
-  SESubstance* sub;
+  if (src.has_inspirationtriggerflow())
+    PBProperty::Load(src.inspirationtriggerflow(), dst.GetInspirationTriggerFlow());
+  if (src.has_inspirationtriggerpressure())
+    PBProperty::Load(src.inspirationtriggerpressure(), dst.GetInspirationTriggerPressure());
+  if (src.has_inspirationtriggertime())
+    PBProperty::Load(src.inspirationtriggertime(), dst.GetInspirationTriggerTime());
+
+  if (src.has_inspirationtuberesistance())
+    PBProperty::Load(src.inspirationtuberesistance(), dst.GetInspirationTubeResistance());
+  if (src.has_inspirationvalveresistance())
+    PBProperty::Load(src.inspirationvalveresistance(), dst.GetInspirationValveResistance());
+  dst.SetInspirationWaveform((eMechanicalVentilator_DriverWaveform)src.inspirationwaveform());
+
+  const SESubstance* sub;
   for (int i = 0; i < src.fractioninspiredgas_size(); i++)
   {
     const CDM_BIND::SubstanceFractionData& sfData = src.fractioninspiredgas()[i];
-    sub = dst.m_Substances.GetSubstance(sfData.name());
+    sub = subMgr.GetSubstance(sfData.name());
     if (sub == nullptr)
     {
       dst.Error("Ignoring a mechanical ventilator fraction inspired gas that was not found : " + sfData.name());
@@ -68,7 +94,7 @@ void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorData&
   for (int i = 0; i < src.concentrationinspiredaerosol_size(); i++)
   {
     const CDM_BIND::SubstanceConcentrationData& scData = src.concentrationinspiredaerosol()[i];
-    sub = dst.m_Substances.GetSubstance(scData.name());
+    sub = subMgr.GetSubstance(scData.name());
     if (sub == nullptr)
     {
       dst.Error("Ignoring an mechanical ventilator aerosol concentration that was not found : " + scData.name());
@@ -94,27 +120,55 @@ CDM_BIND::MechanicalVentilatorData* PBMechanicalVentilator::Unload(const SEMecha
 void PBMechanicalVentilator::Serialize(const SEMechanicalVentilator& src, CDM_BIND::MechanicalVentilatorData& dst)
 {
   dst.set_connection((CDM_BIND::MechanicalVentilatorData::eConnection)src.m_Connection);
-  dst.set_control((CDM_BIND::MechanicalVentilatorData::eControl)src.m_Control);
-  dst.set_driverwaveform((CDM_BIND::MechanicalVentilatorData::eDriverWaveform)src.m_DriverWaveform);
 
-  if ((src.HasBreathPeriod() || src.HasRespiratoryRate()) && src.HasInspiratoryExpiratoryRatio())
-  {
-    if (src.HasBreathPeriod())
-      dst.mutable_breathprofile()->set_allocated_period(PBProperty::Unload(*src.m_BreathPeriod));
-    else if (src.HasRespiratoryRate())
-      dst.mutable_breathprofile()->set_allocated_rate(PBProperty::Unload(*src.m_RespiratoryRate));
-    dst.mutable_breathprofile()->set_allocated_inspiratoryexpiratoryratio(PBProperty::Unload(*src.m_InspiratoryExpiratoryRatio));
-  }
-  else if (src.HasExpiratoryPeriod() && src.HasInspiratoryPeriod())
-  {
-    dst.mutable_inspiratoryexpiratoryperiod()->set_allocated_expiratoryperiod(PBProperty::Unload(*src.m_ExpiratoryPeriod));
-    dst.mutable_inspiratoryexpiratoryperiod()->set_allocated_inspiratoryperiod(PBProperty::Unload(*src.m_InspiratoryPeriod));
-  }
+  if (src.HasEndotrachealTubeResistance())
+    dst.set_allocated_endotrachealtuberesistance(PBProperty::Unload(*src.m_EndotrachealTubeResistance));
+
+  if (src.HasPositiveEndExpiredPressure())
+    dst.set_allocated_positiveendexpiredpressure(PBProperty::Unload(*src.m_PositiveEndExpiredPressure));
+  if (src.HasFunctionalResidualCapacity())
+    dst.set_allocated_functionalresidualcapacity(PBProperty::Unload(*src.m_FunctionalResidualCapacity));
+
+  if (src.HasExpirationCycleFlow())
+    dst.set_allocated_expirationcycleflow(PBProperty::Unload(*src.m_ExpirationCycleFlow));
+  if (src.HasExpirationCyclePressure())
+    dst.set_allocated_expirationcyclepressure(PBProperty::Unload(*src.m_ExpirationCyclePressure));
+  if (src.HasExpirationCycleTime())
+    dst.set_allocated_expirationcycletime(PBProperty::Unload(*src.m_ExpirationCycleTime));
+
+  if (src.HasExpirationTubeResistance())
+    dst.set_allocated_expirationtuberesistance(PBProperty::Unload(*src.m_ExpirationTubeResistance));
+  if (src.HasExpirationValveResistance())
+    dst.set_allocated_expirationvalveresistance(PBProperty::Unload(*src.m_ExpirationValveResistance));
+  dst.set_expirationwaveform((CDM_BIND::MechanicalVentilatorData::eDriverWaveform)src.m_ExpirationWaveform);
+
+  if (src.HasInspirationLimitFlow())
+    dst.set_allocated_inspirationlimitflow(PBProperty::Unload(*src.m_InspirationLimitFlow));
+  if (src.HasInspirationLimitPressure())
+    dst.set_allocated_inspirationlimitpressure(PBProperty::Unload(*src.m_InspirationLimitPressure));
+  if (src.HasInspirationLimitVolume())
+    dst.set_allocated_inspirationlimitvolume(PBProperty::Unload(*src.m_InspirationLimitVolume));
+
+  if (src.HasInspirationPauseTime())
+    dst.set_allocated_inspirationpausetime(PBProperty::Unload(*src.m_InspirationPauseTime));
 
   if (src.HasPeakInspiratoryPressure())
     dst.set_allocated_peakinspiratorypressure(PBProperty::Unload(*src.m_PeakInspiratoryPressure));
-  if (src.HasPositiveEndExpiredPressure())
-    dst.set_allocated_positiveendexpiredpressure(PBProperty::Unload(*src.m_PositiveEndExpiredPressure));
+  if (src.HasEndTidalCarbonDioxidePressure())
+    dst.set_allocated_endtidalcarbondioxidepressure(PBProperty::Unload(*src.m_EndTidalCarbonDioxidePressure));
+
+  if (src.HasInspirationTriggerFlow())
+    dst.set_allocated_inspirationtriggerflow(PBProperty::Unload(*src.m_InspirationTriggerFlow));
+  if (src.HasInspirationTriggerPressure())
+    dst.set_allocated_inspirationtriggerpressure(PBProperty::Unload(*src.m_InspirationTriggerPressure));
+  if (src.HasInspirationTriggerTime())
+    dst.set_allocated_inspirationtriggertime(PBProperty::Unload(*src.m_InspirationTriggerTime));
+
+  if (src.HasInspirationTubeResistance())
+    dst.set_allocated_inspirationtuberesistance(PBProperty::Unload(*src.m_InspirationTubeResistance));
+  if (src.HasInspirationValveResistance())
+    dst.set_allocated_inspirationvalveresistance(PBProperty::Unload(*src.m_InspirationValveResistance));
+  dst.set_inspirationwaveform((CDM_BIND::MechanicalVentilatorData::eDriverWaveform)src.m_InspirationWaveform);
 
   for (SESubstanceFraction* sf : src.m_FractionInspiredGases)
     dst.mutable_fractioninspiredgas()->AddAllocated(PBSubstance::Unload(*sf));
@@ -129,27 +183,26 @@ bool PBMechanicalVentilator::SerializeToString(const SEMechanicalVentilator& src
   PBMechanicalVentilator::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
-bool PBMechanicalVentilator::SerializeToFile(const SEMechanicalVentilator& src, const std::string& filename, SerializationFormat m)
+bool PBMechanicalVentilator::SerializeToFile(const SEMechanicalVentilator& src, const std::string& filename)
 {
   CDM_BIND::MechanicalVentilatorData data;
   PBMechanicalVentilator::Serialize(src, data);
-  std::string content;
-  PBMechanicalVentilator::SerializeToString(src, content, m);
-  return WriteFile(content, filename, m);
+  return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
 
-bool PBMechanicalVentilator::SerializeFromString(const std::string& src, SEMechanicalVentilator& dst, SerializationFormat m)
+bool PBMechanicalVentilator::SerializeFromString(const std::string& src, SEMechanicalVentilator& dst, SerializationFormat m, const SESubstanceManager& subMgr)
 {
   CDM_BIND::MechanicalVentilatorData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
     return false;
-  PBMechanicalVentilator::Load(data, dst);
+  PBMechanicalVentilator::Load(data, dst, subMgr);
   return true;
 }
-bool PBMechanicalVentilator::SerializeFromFile(const std::string& filename, SEMechanicalVentilator& dst, SerializationFormat m)
+bool PBMechanicalVentilator::SerializeFromFile(const std::string& filename, SEMechanicalVentilator& dst, const SESubstanceManager& subMgr)
 {
-  std::string content = ReadFile(filename, m);
-  if (content.empty())
+  CDM_BIND::MechanicalVentilatorData data;
+  if (!PBUtils::SerializeFromFile(filename, data, dst.GetLogger()))
     return false;
-  return PBMechanicalVentilator::SerializeFromString(content, dst, m);
+  PBMechanicalVentilator::Load(data, dst, subMgr);
+  return true;
 }

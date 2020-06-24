@@ -21,9 +21,9 @@ public:
   virtual void Copy(const SEPatient& src);
 
   bool SerializeToString(std::string& output, SerializationFormat m) const;
-  bool SerializeToFile(const std::string& filename, SerializationFormat m) const;
+  bool SerializeToFile(const std::string& filename) const;
   bool SerializeFromString(const std::string& src, SerializationFormat m);
-  bool SerializeFromFile(const std::string& filename, SerializationFormat m);
+  bool SerializeFromFile(const std::string& filename);
 
   /** @name GetScalar
   *   @brief - A reflextion type call that will return the Scalar associated

@@ -148,17 +148,17 @@ bool SETimedStabilization::SerializeToString(std::string& output, SerializationF
 {
   return PBEngine::SerializeToString(*this, output, m);
 }
-bool SETimedStabilization::SerializeToFile(const std::string& filename, SerializationFormat m) const
+bool SETimedStabilization::SerializeToFile(const std::string& filename) const
 {
-  return PBEngine::SerializeToFile(*this, filename, m);
+  return PBEngine::SerializeToFile(*this, filename);
 }
 bool SETimedStabilization::SerializeFromString(const std::string& src, SerializationFormat m)
 {
   return PBEngine::SerializeFromString(src, *this, m);
 }
-bool SETimedStabilization::SerializeFromFile(const std::string& filename, SerializationFormat m)
+bool SETimedStabilization::SerializeFromFile(const std::string& filename)
 {
-  return PBEngine::SerializeFromFile(filename, *this, m);
+  return PBEngine::SerializeFromFile(filename, *this);
 }
 
 bool SETimedStabilization::HasRestingStabilizationTime() const

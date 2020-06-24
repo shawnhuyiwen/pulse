@@ -4,7 +4,7 @@
 #include "system/equipment/inhaler/actions/SEInhalerAction.h"
 #include "substance/SESubstanceManager.h"
 
-SEInhalerAction::SEInhalerAction() : SEEquipmentAction()
+SEInhalerAction::SEInhalerAction(Logger* logger) : SEEquipmentAction(logger)
 {
 
 }

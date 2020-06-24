@@ -169,7 +169,7 @@ namespace pulse {
     DEFINE_STATIC_STRING(LeftPleural);
     DEFINE_STATIC_STRING(LeftPleuralConnection);
 
-    DEFINE_STATIC_STRING(Mouth);
+    DEFINE_STATIC_STRING(Airway);
 
     DEFINE_STATIC_STRING(RightAlveoli);
     DEFINE_STATIC_STRING(RightAlveoliLeak);
@@ -191,7 +191,7 @@ namespace pulse {
     DEFINE_STATIC_STRING(CarinaToRightAnatomicDeadSpace);
 
     DEFINE_STATIC_STRING(EnvironmentToLeftChestLeak);
-    DEFINE_STATIC_STRING(EnvironmentToMouth);
+    DEFINE_STATIC_STRING(EnvironmentToAirway);
     DEFINE_STATIC_STRING(EnvironmentToRightChestLeak);
 
     DEFINE_STATIC_STRING(LeftAlveoliLeakToLeftPleural);
@@ -204,8 +204,8 @@ namespace pulse {
     DEFINE_STATIC_STRING(LeftPleuralToEnvironment);
     DEFINE_STATIC_STRING(LeftPleuralToRespiratoryMuscle);
 
-    DEFINE_STATIC_STRING(MouthToCarina);
-    DEFINE_STATIC_STRING(MouthToStomach);
+    DEFINE_STATIC_STRING(AirwayToCarina);
+    DEFINE_STATIC_STRING(AirwayToStomach);
 
     DEFINE_STATIC_STRING(RightAlveoliLeakToRightPleural);
     DEFINE_STATIC_STRING(RightAlveoliToRightAlveoliLeak);
@@ -263,7 +263,7 @@ namespace pulse {
   class CombinedAnesthesiaMachinePath
   {
   public:
-    DEFINE_STATIC_STRING(ConnectionToMouth);
+    DEFINE_STATIC_STRING(ConnectionToAirway);
     DEFINE_STATIC_STRING(GroundConnection);
   };
 
@@ -280,7 +280,7 @@ namespace pulse {
   class MechanicalVentilationPath
   {
   public:
-    DEFINE_STATIC_STRING_EX(ConnectionToMouth, MechanicalVentilationConnectionToMouth);
+    DEFINE_STATIC_STRING_EX(ConnectionToAirway, MechanicalVentilationConnectionToAirway);
     DEFINE_STATIC_STRING_EX(GroundToConnection, MechanicalVentilationGroundToConnection);
   };
 
@@ -317,7 +317,7 @@ namespace pulse {
   class CombinedMechanicalVentilatorPath
   {
   public:
-    DEFINE_STATIC_STRING_EX(ConnectionToMouth, MechanicalVentilatorConnectionToMouth);
+    DEFINE_STATIC_STRING_EX(ConnectionToAirway, MechanicalVentilatorConnectionToAirway);
   };
 
   ///////////////////////////
@@ -334,7 +334,7 @@ namespace pulse {
   {
   public:
     DEFINE_STATIC_STRING_EX(EnvironmentToMouthpiece, EnvironmentToInhalerMouthpiece);
-    DEFINE_STATIC_STRING_EX(MouthpieceToMouth, InhalerMouthpieceToMouth);
+    DEFINE_STATIC_STRING_EX(MouthpieceToAirway, InhalerMouthpieceToAirway);
   };
 
   /////////////////////////////////
@@ -354,7 +354,7 @@ namespace pulse {
     DEFINE_STATIC_STRING(NasalCannulaPressure);
     DEFINE_STATIC_STRING(NasalCannulaOxygenInlet);
     DEFINE_STATIC_STRING(NasalCannulaSeal);
-    DEFINE_STATIC_STRING(NasalCannulaToMouth);
+    DEFINE_STATIC_STRING(NasalCannulaToAirway);
   };
 
   ///////////////////////////////////
@@ -380,7 +380,7 @@ namespace pulse {
     DEFINE_STATIC_STRING(NonRebreatherMaskSeal);
     DEFINE_STATIC_STRING(NonRebreatherMaskExhalationValves);
     DEFINE_STATIC_STRING(NonRebreatherMaskExhalation);
-    DEFINE_STATIC_STRING(NonRebreatherMaskToMouth);
+    DEFINE_STATIC_STRING(NonRebreatherMaskToAirway);
   };
 
   ////////////////////////////////
@@ -401,7 +401,7 @@ namespace pulse {
     DEFINE_STATIC_STRING(SimpleMaskOxygenInlet);
     DEFINE_STATIC_STRING(SimpleMaskSeal);
     DEFINE_STATIC_STRING(SimpleMaskPorts);
-    DEFINE_STATIC_STRING(SimpleMaskToMouth);
+    DEFINE_STATIC_STRING(SimpleMaskToAirway);
   };
 
   ///////////////////////////////////

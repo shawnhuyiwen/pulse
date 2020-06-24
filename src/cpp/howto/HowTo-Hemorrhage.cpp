@@ -40,7 +40,7 @@ void HowToHemorrhage()
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
   pe->GetLogger()->SetLogFile("./test_results/HowTo_Hemorrhage.log");
   pe->GetLogger()->Info("HowTo_Hemorrhage");
-  if (!pe->SerializeFromFile("./states/StandardMale@0s.json", JSON))
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
@@ -110,7 +110,7 @@ void HowToHemorrhage()
   // Patient is stabilizing, but not great
 
   // Let's administer a saline drip, we need to get saline from the substance maganer
-  SESubstanceCompound* saline = pe->GetSubstanceManager().GetCompound("Saline");
+  const SESubstanceCompound* saline = pe->GetSubstanceManager().GetCompound("Saline");
   SESubstanceCompoundInfusion iVSaline(*saline);
   iVSaline.GetBagVolume().SetValue(500,VolumeUnit::mL);//the total volume in the bag of Saline
   iVSaline.GetRate().SetValue(100,VolumePerTimeUnit::mL_Per_min);//The rate to admnister the compound in the bag in this case saline

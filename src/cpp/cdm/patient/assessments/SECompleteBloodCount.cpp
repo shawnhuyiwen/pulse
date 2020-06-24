@@ -46,9 +46,9 @@ bool SECompleteBloodCount::SerializeToString(std::string& output, SerializationF
 {
   return PBPatientAssessment::SerializeToString(*this, output, m);
 }
-bool SECompleteBloodCount::SerializeToFile(const std::string& filename, SerializationFormat m) const
+bool SECompleteBloodCount::SerializeToFile(const std::string& filename) const
 {
-  return PBPatientAssessment::SerializeToFile(*this, filename, m);
+  return PBPatientAssessment::SerializeToFile(*this, filename);
 }
 
 bool SECompleteBloodCount::HasHematocrit() const

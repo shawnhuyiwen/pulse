@@ -183,6 +183,14 @@ def serialize_actions_to_string(actions: [], fmt: eSerializationFormat):
                 serialize_cardiac_arrest_to_bind(action, any_action.PatientAction.CardiacArrest)
                 action_list.AnyAction.append(any_action)
                 continue
+            if isinstance(action, SEChestCompressionForce):
+                serialize_chest_compression_force_to_bind(action, any_action.PatientAction.ChestCompressionForce)
+                action_list.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SEChestCompressionForceScale):
+                serialize_chest_compression_force_scale_to_bind(action, any_action.PatientAction.ChestCompressionForceScale)
+                action_list.AnyAction.append(any_action)
+                continue
             if isinstance(action, SEChestOcclusiveDressing):
                 serialize_chest_occlusive_dressing_to_bind(action, any_action.PatientAction.ChestOcclusiveDressing)
                 action_list.AnyAction.append(any_action)
@@ -193,6 +201,10 @@ def serialize_actions_to_string(actions: [], fmt: eSerializationFormat):
                 continue
             if isinstance(action, SEConsciousRespiration):
                 serialize_conscious_respiration_to_bind(action, any_action.PatientAction.ConsciousRespiration)
+                action_list.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SEConsumeNutrients):
+                serialize_consume_nutrients_to_bind(action, any_action.PatientAction.ConsumeNutrients)
                 action_list.AnyAction.append(any_action)
                 continue
             if isinstance(action, SEDyspnea):
@@ -259,6 +271,10 @@ def serialize_actions_to_string(actions: [], fmt: eSerializationFormat):
                 serialize_tension_pneumothorax_to_bind(action, any_action.PatientAction.TensionPneumothorax)
                 action_list.AnyAction.append(any_action)
                 continue
+            if isinstance(action, SEUrinate):
+                serialize_urinate_to_bind(action, any_action.PatientAction.Urinate)
+                action_list.AnyAction.append(any_action)
+                continue
         if isinstance(action, SEEnvironmentAction):
             if isinstance(action, SEChangeEnvironmentalConditions):
                 serialize_change_environmental_conditions_to_bind(action, any_action.EnvironmentAction.ChangeEnvironmentalConditions)
@@ -281,8 +297,8 @@ def serialize_patient_configuration_to_string(src: SEPatientConfiguration, fmt: 
     serialize_patient_configuration_to_bind(src, dst)
     return json_format.MessageToJson(dst, True, True)
 
-def serialize_patient_configuration_to_file(src: SEPatientConfiguration, filename: str, fmt: eSerializationFormat):
-    string = serialize_patient_configuration_to_string(src, fmt)
+def serialize_patient_configuration_to_file(src: SEPatientConfiguration, filename: str):
+    string = serialize_patient_configuration_to_string(src, eSerializationFormat.JSON)
     file = open(filename, "w")
     n = file.write(string)
     file.close()
@@ -292,10 +308,10 @@ def serialize_patient_configuration_from_string(string: str, dst: SEPatientConfi
     json_format.Parse(string, src)
     serialize_patient_configuration_from_bind(src,dst)
 
-def serialize_patient_configuration_from_file(filename: str, dst: SEPatientConfiguration, fmt: eSerializationFormat):
+def serialize_patient_configuration_from_file(filename: str, dst: SEPatientConfiguration):
     with open(filename) as f:
         string = f.read()
-    serialize_patient_configuration_from_string(string, dst, fmt)
+    serialize_patient_configuration_from_string(string, dst, eSerializationFormat.JSON)
 
 def serialize_patient_configuration_to_bind(src: SEPatientConfiguration, dst: PatientConfigurationData):
     if src.has_patient():

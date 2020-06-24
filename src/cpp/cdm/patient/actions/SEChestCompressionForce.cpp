@@ -6,7 +6,7 @@
 #include "properties/SEScalarForce.h"
 #include "io/protobuf/PBPatientActions.h"
 
-SEChestCompressionForce::SEChestCompressionForce() : SEChestCompression()
+SEChestCompressionForce::SEChestCompressionForce(Logger* logger) : SEChestCompression(logger)
 {
   m_Force = nullptr;
 }

@@ -175,7 +175,7 @@ protected:
   SEPatientActionCollection* m_PatientActions;
   //Compartments
   SEGasCompartment* m_Environment;
-  SELiquidCompartment* m_AerosolMouth;
+  SELiquidCompartment* m_AerosolAirway;
   SELiquidCompartment* m_AerosolCarina;
   SELiquidCompartment* m_AerosolLeftAnatomicDeadSpace;
   SELiquidCompartment* m_AerosolLeftAlveolarDeadSpace;
@@ -201,7 +201,7 @@ protected:
   //Circuits
   SEFluidCircuit* m_RespiratoryCircuit;
   //Nodes
-  SEFluidCircuitNode* m_Mouth;
+  SEFluidCircuitNode* m_Airway;
   SEFluidCircuitNode* m_LeftAlveoli;
   SEFluidCircuitNode* m_LeftAnatomicDeadSpace;
   SEFluidCircuitNode* m_LeftAlveolarDeadSpace;
@@ -223,8 +223,8 @@ protected:
   SEFluidCircuitPath* m_LeftPleuralToRespiratoryMuscle;
   SEFluidCircuitPath* m_RightPleuralToRespiratoryMuscle;
   SEFluidCircuitPath* m_DriverPressurePath;
-  SEFluidCircuitPath* m_MouthToCarina;
-  SEFluidCircuitPath* m_MouthToStomach;
+  SEFluidCircuitPath* m_AirwayToCarina;
+  SEFluidCircuitPath* m_AirwayToStomach;
   SEFluidCircuitPath* m_EnvironmentToLeftChestLeak;
   SEFluidCircuitPath* m_EnvironmentToRightChestLeak;
   SEFluidCircuitPath* m_LeftAlveoliLeakToLeftPleural;
@@ -237,7 +237,7 @@ protected:
   SEFluidCircuitPath* m_RightPulmonaryCapillary;
   SEFluidCircuitPath* m_LeftPulmonaryArteriesToVeins;
   SEFluidCircuitPath* m_RightPulmonaryArteriesToVeins;
-  SEFluidCircuitPath* m_ConnectionToMouth;
+  SEFluidCircuitPath* m_ConnectionToAirway;
   SEFluidCircuitPath* m_GroundToConnection;
 
   SEFluidCircuitCalculator* m_Calculator;

@@ -17,7 +17,7 @@ public:
   PulseScenarioExec(Logger* logger);
   virtual ~PulseScenarioExec();
 
-  virtual bool ExecuteFile(PhysiologyEngine& engine, const std::string& scenarioFile, SerializationFormat f, const std::string& resultsFile, std::string const& dataDir = "./");
+  virtual bool ExecuteFile(PhysiologyEngine& engine, const std::string& scenarioFile, const std::string& resultsFile, std::string const& dataDir = "./");
   virtual bool Execute(PhysiologyEngine& engine, const std::string& scenario, SerializationFormat f, const std::string& resultsFile, std::string const& dataDir = "./");
   virtual bool Execute(PhysiologyEngine& engine, const PulseScenario& scenario, const std::string& resultsFile);
 

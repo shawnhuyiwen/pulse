@@ -70,6 +70,7 @@ void PulseEngineTest::FillFunctionMap()
   testFunction cardioTuneCircuitTest = &PulseEngineTest::TuneCardiovascularCircuitTest;
   testFunction respCTTest = &PulseEngineTest::RespiratoryCircuitAndTransportTest;
   testFunction anesthCTTest = &PulseEngineTest::AnesthesiaMachineCircuitAndTransportTest;
+  testFunction ventCTTest = &PulseEngineTest::MechanicalVentilatorCircuitAndTransportTest;
 
 
   bgeMap.insert(std::make_pair("ReadScenarios", &PulseEngineTest::ReadScenarios));
@@ -95,6 +96,9 @@ void PulseEngineTest::FillFunctionMap()
 
   bgeMap.insert(std::make_pair("AnesthesiaMachineCircuitAndTransportTest", anesthCTTest));
   bgeMap.insert(std::make_pair("RespiratoryWithAnesthesiaMachineCircuitAndTransportTest", &PulseEngineTest::RespiratoryWithAnesthesiaMachineCircuitAndTransportTest));
+
+  bgeMap.insert(std::make_pair("MechanicalVentilatorCircuitAndTransportTest", ventCTTest));
+  bgeMap.insert(std::make_pair("RespiratoryWithMechanicalVentilatorCircuitAndTransportTest", &PulseEngineTest::RespiratoryWithMechanicalVentilatorCircuitAndTransportTest));
 
   bgeMap.insert(std::make_pair("RespiratoryWithInhalerCircuitAndTransportTest", &PulseEngineTest::RespiratoryWithInhalerCircuitAndTransportTest));
 

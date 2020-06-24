@@ -23,7 +23,7 @@
 #include "substance/SESubstanceManager.h"
 #include "io/protobuf/PBEngine.h"
 
-SEConditionManager::SEConditionManager(SESubstanceManager& substances) : Loggable(substances.GetLogger()), m_Substances(substances)
+SEConditionManager::SEConditionManager(const SESubstanceManager& subMgr) : Loggable(subMgr.GetLogger()), m_Substances(subMgr)
 {
   m_ARDS = nullptr;
   m_Anemia = nullptr;
@@ -81,17 +81,17 @@ bool SEConditionManager::SerializeToString(std::string& output, SerializationFor
 {
   return PBEngine::SerializeToString(*this, output, m);
 }
-bool SEConditionManager::SerializeToFile(const std::string& filename, SerializationFormat m) const
+bool SEConditionManager::SerializeToFile(const std::string& filename) const
 {
-  return PBEngine::SerializeToFile(*this, filename, m);
+  return PBEngine::SerializeToFile(*this, filename);
 }
 bool SEConditionManager::SerializeFromString(const std::string& src, SerializationFormat m)
 {
   return PBEngine::SerializeFromString(src, *this, m);
 }
-bool SEConditionManager::SerializeFromFile(const std::string& filename, SerializationFormat m)
+bool SEConditionManager::SerializeFromFile(const std::string& filename)
 {
-  return PBEngine::SerializeFromFile(filename, *this, m);
+  return PBEngine::SerializeFromFile(filename, *this);
 }
 
 bool SEConditionManager::ProcessCondition(const SECondition& condition)
@@ -279,8 +279,8 @@ bool SEConditionManager::ProcessCondition(const SECondition& condition)
         Error("Cannot have multiple Initial Environmental conditions");
         return false;
       }
-      m_InitialEnvironmentalConditions = new SEInitialEnvironmentalConditions(m_Substances);
-      m_InitialEnvironmentalConditions->Copy(*ie);
+      m_InitialEnvironmentalConditions = new SEInitialEnvironmentalConditions(GetLogger());
+      m_InitialEnvironmentalConditions->Copy(*ie, m_Substances);
       return true;
     }
   }

@@ -6,7 +6,7 @@
 #include "properties/SEScalar0To1.h"
 #include "io/protobuf/PBPatientConditions.h"
 
-SESepsis::SESepsis() : SEPatientCondition()
+SESepsis::SESepsis(Logger* logger) : SEPatientCondition(logger)
 {
   m_Severity=nullptr;
 }

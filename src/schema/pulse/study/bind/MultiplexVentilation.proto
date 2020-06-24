@@ -1,6 +1,6 @@
 syntax = "proto3";
 package pulse.study.bind.multiplex_ventilation;
-option java_package = "pulse.study.bind.multiplex_ventilation";
+option java_package = "com.kitware.pulse.study.bind.multiplex_ventilation";
 option csharp_namespace = "pulse.study.bind.multiplex_ventilation";
 option optimize_for = SPEED;
 

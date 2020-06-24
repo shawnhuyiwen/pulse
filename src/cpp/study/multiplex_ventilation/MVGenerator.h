@@ -15,7 +15,7 @@ public:
   void SetPEEPIterations_cmH2O(int min, int max, int step);
   void SetImpairmentIterations(double min, double max, double step);
 
-  bool Run(const std::string& stateDir, const std::string listFilename, SerializationFormat f);
+  bool Run(const std::string& stateDir, const std::string listFilename);
 
   static bool StabilizeSpO2(PhysiologyEngine& eng);
   static bool GenerateStabilizedPatient(pulse::study::bind::multiplex_ventilation::PatientStateData& pData, bool logToConsole);
@@ -26,9 +26,9 @@ public:
   static double DefaultIERatio() { return 0.5; }
 protected:
   bool SerializeToString(pulse::study::bind::multiplex_ventilation::PatientStateListData& src, std::string& dst, SerializationFormat f) const;
-  bool SerializeToFile(pulse::study::bind::multiplex_ventilation::PatientStateListData& src, const std::string& filename, SerializationFormat f) const;
+  bool SerializeToFile(pulse::study::bind::multiplex_ventilation::PatientStateListData& src, const std::string& filename) const;
   bool SerializeFromString(const std::string& src, pulse::study::bind::multiplex_ventilation::PatientStateListData& dst, SerializationFormat f);
-  bool SerializeFromFile(const std::string& filename, SerializationFormat f);
+  bool SerializeFromFile(const std::string& filename);
 
   void GeneratePatientList();
   void ControllerLoop();

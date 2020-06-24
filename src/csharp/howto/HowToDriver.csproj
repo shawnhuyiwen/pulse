@@ -65,6 +65,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="HowTo_EngineUse.cs" />
+    <Compile Include="HowTo_MechanicalVentilator.cs" />
     <Compile Include="HowTo_Environment.cs" />
     <Compile Include="HowTo_PatientStates.cs" />
     <Compile Include="Program.cs" />

@@ -9,7 +9,7 @@ class CDM_DECL SEChronicRenalStenosis : public SEPatientCondition
   friend class PBPatientCondition;//friend the serialization class
 public:
 
-  SEChronicRenalStenosis();
+  SEChronicRenalStenosis(Logger* logger=nullptr);
   virtual ~SEChronicRenalStenosis();
 
   virtual void Clear(); //clear memory

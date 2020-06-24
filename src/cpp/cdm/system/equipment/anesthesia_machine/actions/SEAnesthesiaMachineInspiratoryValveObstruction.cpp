@@ -5,7 +5,7 @@
 #include "properties/SEScalar0To1.h"
 #include "io/protobuf/PBEquipmentActions.h"
 
-SEAnesthesiaMachineInspiratoryValveObstruction::SEAnesthesiaMachineInspiratoryValveObstruction() : SEAnesthesiaMachineAction()
+SEAnesthesiaMachineInspiratoryValveObstruction::SEAnesthesiaMachineInspiratoryValveObstruction(Logger* logger) : SEAnesthesiaMachineAction(logger)
 {
   m_Severity = nullptr;
 }

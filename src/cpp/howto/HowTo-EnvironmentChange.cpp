@@ -68,16 +68,16 @@ void HowToEnvironmentChange()
   }
   */
 
-  if (!pe->SerializeFromFile("./states/StandardMale@0s.json", JSON))
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
   }
 
   // Get some substances out we will use
-  SESubstance* N2 = pe->GetSubstanceManager().GetSubstance("Nitrogen");
-  SESubstance* O2 = pe->GetSubstanceManager().GetSubstance("Oxygen");
-  SESubstance* CO2 = pe->GetSubstanceManager().GetSubstance("CarbonDioxide");
+  const SESubstance* N2 = pe->GetSubstanceManager().GetSubstance("Nitrogen");
+  const SESubstance* O2 = pe->GetSubstanceManager().GetSubstance("Oxygen");
+  const SESubstance* CO2 = pe->GetSubstanceManager().GetSubstance("CarbonDioxide");
 
     // The tracker is responsible for advancing the engine time and outputting the data requests below at each time step
   HowToTracker tracker(*pe);
@@ -113,7 +113,7 @@ void HowToEnvironmentChange()
   // The patient is instantly submerged in 10 degree Celsius water. 
   // This causes an immediate drop in the skin temperature due to increased convective heat transfer from the skin surface. 
   // The core temperature follows the skin temperature, and the metabolic rate increases due to shivering.
-  SEChangeEnvironmentalConditions env(pe->GetSubstanceManager());
+  SEChangeEnvironmentalConditions env(pe->GetLogger());
   SEEnvironmentalConditions& conditions = env.GetEnvironmentalConditions();
   conditions.SetSurroundingType(eSurroundingType::Water);
   conditions.GetAirVelocity().SetValue(0, LengthPerTimeUnit::m_Per_s);

@@ -149,49 +149,33 @@ bool HRunner::RunSimulationUntilStable(std::string const& outDir, pulse::study::
   auto pulse = CreatePulseEngine();
   pulse->GetLogger()->SetLogFile(outDir + "/" + cdm::to_string(sim.id()) + " - " + sim.name() + ".log");
 
-  // TODO amb Clean this up (cfg should have a default ctor that makes its own Sub Mgr)
-  PulseConfiguration cfg(pulse->GetSubstanceManager());
-  cfg.SetBaroreceptorFeedback(eSwitch::Off);
-  cfg.SetChemoreceptorFeedback(eSwitch::Off);
-  pulse->SetConfigurationOverride(&cfg);
-  if (!pulse->SerializeFromFile("./states/StandardMale@0s.json", SerializationFormat::JSON))
-    return false;
-
   // No logging to console (when threaded)
   pulse->GetLogger()->LogToConsole(false);
   // Setup data requests
-  SESubstance* O2 = pulse->GetSubstanceManager().GetSubstance("Oxygen");
   pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
-  //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
   pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
   pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
-  //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartStrokeVolume", VolumeUnit::mL);
-  //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialCarbonDioxidePartialPressure", PressureUnit::mmHg);
   pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
   pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("IntracranialPressure", PressureUnit::mmHg);
   pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CerebralPerfusionPressure", PressureUnit::mmHg);
   pulse->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Brain, "Pressure", PressureUnit::mmHg);
   pulse->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Brain, "Volume", VolumeUnit::mL);
+  pulse->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Brain, "InFlow", VolumePerTimeUnit::mL_Per_min);
+  pulse->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Brain, "Oxygen", "PartialPressure");
   pulse->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::CerebrospinalFluidCompartment::IntracranialSpace, "Volume", VolumeUnit::mL);
   pulse->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::CerebrospinalFluidCompartment::IntracranialSpace, "Pressure", PressureUnit::mmHg);
-  pulse->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Brain, "InFlow", VolumePerTimeUnit::mL_Per_min);
-  pulse->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Brain, *O2, "PartialPressure");
-  //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryDiastolicArterialPressure", PressureUnit::mmHg);
-  //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryMeanArterialPressure", PressureUnit::mmHg);
-  //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryMeanCapillaryFlow", VolumePerTimeUnit::mL_Per_min);
-  //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonarySystolicArterialPressure", PressureUnit::mmHg);
-  //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
-  //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystemicVascularResistance", PressureTimePerVolumeUnit::mmHg_s_Per_mL);
   pulse->GetEngineTracker()->GetDataRequestManager().SetResultsFilename(outDir + "/" + cdm::to_string(sim.id()) + " - " + sim.name() + ".csv");
 
-  // Apply Overrides (Note using Force, as these values are locked (for good reason)
-  // But we know what we are doing, right?
-  PulseController* pc = ((PulseEngine*)pulse.get())->GetController();
-  SEFluidCircuit& cv = pc->GetCircuits().GetActiveCardiovascularCircuit();
-  SEFluidCircuitNode* csfNode = cv.GetNode(pulse::CerebrospinalFluidNode::IntracranialSpace2);
-  csfNode->GetVolumeBaseline().ForceValue(sim.intracranialspacevolume_ml(), VolumeUnit::mL);
-  SEFluidCircuitPath* csfPath = cv.GetPath(pulse::CerebrospinalFluidPath::IntracranialSpace1ToIntracranialSpace2);
-  csfPath->GetComplianceBaseline().ForceValue(sim.intracranialspacecompliance_ml_per_mmhg(), VolumePerPressureUnit::mL_Per_mmHg);
+  // Setup Circuit Overrides
+  PulseConfiguration cfg(pulse->GetLogger());
+  cfg.GetInitialOverrides().AddScalarProperty(pulse::CerebrospinalFluidNode::IntracranialSpace2, sim.intracranialspacevolume_ml(), VolumeUnit::mL);
+  cfg.GetInitialOverrides().AddScalarProperty(pulse::CerebrospinalFluidPath::IntracranialSpace1ToIntracranialSpace2, sim.intracranialspacecompliance_ml_per_mmhg(), VolumePerPressureUnit::mL_Per_mmHg);
+  pulse->SetConfigurationOverride(&cfg);
+
+  SEPatientConfiguration pc(pulse->GetSubstanceManager());
+  pc.SetPatientFile("./patients/StandardMale.json");
+  if (!pulse->InitializeEngine(pc))
+    return false;
 
   std::unordered_map<std::string, RunningAverages> runningAverages = 
   {
@@ -383,7 +367,7 @@ bool HRunner::SerializeToFile(pulse::study::bind::hydrocephalus::SimulationListD
   std::string content;
   if (!SerializeToString(src, content, f))
     return false;
-  return WriteFile(content, filename, SerializationFormat::JSON);
+  return WriteFile(content, filename);
 }
 bool HRunner::SerializeFromString(const std::string& src, pulse::study::bind::hydrocephalus::SimulationListData& dst, SerializationFormat f)
 {
@@ -402,8 +386,8 @@ bool HRunner::SerializeFromString(const std::string& src, pulse::study::bind::hy
 }
 bool HRunner::SerializeFromFile(const std::string& filename, pulse::study::bind::hydrocephalus::SimulationListData& dst, SerializationFormat f)
 {
-  std::string content = ReadFile(filename, SerializationFormat::JSON);
-  if (content.empty())
+  std::string content;
+  if (!ReadFile(filename, content))
   {
     Error("Unable to read file " + filename);
     return false;

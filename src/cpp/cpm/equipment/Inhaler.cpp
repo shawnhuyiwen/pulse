@@ -32,7 +32,7 @@ Constructors
 ========================
 */
 
-Inhaler::Inhaler(PulseData& data) : PulseInhaler(data.GetSubstances()), m_data(data)
+Inhaler::Inhaler(PulseData& data) : PulseInhaler(data.GetLogger()), m_data(data)
 {
   Clear();
 }
@@ -106,7 +106,7 @@ void Inhaler::PreProcess()
   {
     eSwitch state = GetState();
     SEInhalerConfiguration* config = m_data.GetActions().GetEquipmentActions().GetInhalerConfiguration();
-    ProcessConfiguration(*config);
+    ProcessConfiguration(*config, m_data.GetSubstances());
     m_data.GetActions().GetEquipmentActions().RemoveInhalerConfiguration();
     if (state != m_State)
     {

@@ -1,6 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
+using System.Collections.Generic;
+
 namespace Pulse.CDM
 {
   // TODO Substance Fractions and Concentrations!!!
@@ -15,99 +17,190 @@ namespace Pulse.CDM
       Tube
     }
     // Keep enums in sync with appropriate schema/cdm/MechanicalVentilator.proto file !!
-    public enum Control : int
-    {
-      NullControl = 0,/** Signals not provided, or no change */
-      PM_CMV
-    }
-    // Keep enums in sync with appropriate schema/cdm/MechanicalVentilator.proto file !!
     public enum DriverWaveform : int
     {
       NullDriverWaveform = 0,/** Signals not provided, or no change */
       Square
     }
 
-    protected SEScalarTime breathPeriod;
     protected Connection connection;
-    protected Control control;
-    protected DriverWaveform driverWaveform;
-    protected SEScalarTime expiratoryPeriod;
-    protected SEScalar inspiratoryExpiratoryRatio;
-    protected SEScalarTime inspiratoryPeriod;
-    protected SEScalarPressure peakInspiratoryPressure;
-    protected SEScalarPressure positiveEndExpiredPressure;
-    protected SEScalarFrequency respiratoryRate;
+    protected SEScalarPressureTimePerVolume endotracheal_tube_resistance;
+    protected SEScalarPressure positive_end_expired_pressure;
+    protected SEScalarPressure functional_residual_capacity;
+    protected SEScalarVolumePerTime expiration_cycle_flow;
+    protected SEScalarPressure expiration_cycle_pressure;
+    protected SEScalarTime expiration_cycle_time;
+    protected SEScalarPressureTimePerVolume expiration_tube_resistance;
+    protected SEScalarPressureTimePerVolume expiration_valve_resistance;
+    protected DriverWaveform expiration_waveform;
+    protected SEScalarVolumePerTime inspiration_limit_flow;
+    protected SEScalarPressure inspiration_limit_pressure;
+    protected SEScalarVolume inspiration_limit_volume;
+    protected SEScalarTime inspiration_pause_time;
+    protected SEScalarPressure peak_inpiratory_pressure;
+    protected SEScalarPressure end_tidal_carbon_dioxide_pressure;
+    protected SEScalarVolumePerTime inspiration_trigger_flow;
+    protected SEScalarPressure inspiration_trigger_pressure;
+    protected SEScalarTime inspiration_trigger_time;
+    protected SEScalarPressureTimePerVolume inspiration_tube_resistance;
+    protected SEScalarPressureTimePerVolume inspiration_valve_resistance;
+    protected DriverWaveform inspiration_waveform;
+
+    protected List<SESubstanceFraction> fraction_inspired_gases;
+    protected List<SESubstanceConcentration> concentration_inspired_aerosols;
 
     public SEMechanicalVentilator()
     {
-      breathPeriod = null;
       connection = Connection.NullConnection;
-      control = Control.NullControl;
-      driverWaveform = DriverWaveform.NullDriverWaveform;
-      expiratoryPeriod = null;
-      inspiratoryExpiratoryRatio = null;
-      inspiratoryPeriod = null;
-      peakInspiratoryPressure = null;
-      positiveEndExpiredPressure = null;
-      respiratoryRate = null;
+      endotracheal_tube_resistance = null;
+      positive_end_expired_pressure = null;
+      functional_residual_capacity = null;
+      expiration_cycle_flow = null;
+      expiration_cycle_pressure = null;
+      expiration_cycle_time = null;
+      expiration_tube_resistance = null;
+      expiration_valve_resistance = null;
+      expiration_waveform = DriverWaveform.NullDriverWaveform;
+
+
+      inspiration_limit_flow = null;
+      inspiration_limit_pressure = null;
+      inspiration_limit_volume = null;
+      inspiration_pause_time = null;
+      peak_inpiratory_pressure = null;
+      end_tidal_carbon_dioxide_pressure = null;
+      inspiration_trigger_flow = null;
+      inspiration_trigger_pressure = null;
+      inspiration_trigger_time = null;
+      inspiration_tube_resistance = null;
+      inspiration_valve_resistance = null;
+      inspiration_waveform = DriverWaveform.NullDriverWaveform;
+
+      this.fraction_inspired_gases = new List<SESubstanceFraction>();
+      this.concentration_inspired_aerosols = new List<SESubstanceConcentration>();
     }
 
     public override void Clear()
     {
       base.Clear();
-      if (breathPeriod != null)
-        breathPeriod.Invalidate();
       connection = Connection.NullConnection;
-      control = Control.NullControl;
-      driverWaveform = DriverWaveform.NullDriverWaveform;
-      if (expiratoryPeriod != null)
-        expiratoryPeriod.Invalidate();
-      if (inspiratoryExpiratoryRatio != null)
-        inspiratoryExpiratoryRatio.Invalidate();
-      if (inspiratoryPeriod != null)
-        inspiratoryPeriod.Invalidate();
-      if (peakInspiratoryPressure != null)
-        peakInspiratoryPressure.Invalidate();
-      if (positiveEndExpiredPressure != null)
-        positiveEndExpiredPressure.Invalidate();
-      if (respiratoryRate != null)
-        respiratoryRate.Invalidate();
+      if (endotracheal_tube_resistance != null)
+        endotracheal_tube_resistance.Invalidate();
+      if (positive_end_expired_pressure != null)
+        positive_end_expired_pressure.Invalidate();
+      if (functional_residual_capacity != null)
+        functional_residual_capacity.Invalidate();
+      if (expiration_cycle_flow != null)
+        expiration_cycle_flow.Invalidate();
+      if (expiration_cycle_pressure != null)
+        expiration_cycle_pressure.Invalidate();
+      if (expiration_cycle_time != null)
+        expiration_cycle_time.Invalidate();
+      if (expiration_tube_resistance != null)
+        expiration_tube_resistance.Invalidate();
+      if (expiration_valve_resistance != null)
+        expiration_valve_resistance.Invalidate();
+      expiration_waveform = DriverWaveform.NullDriverWaveform;
+
+
+      if (inspiration_limit_flow != null)
+        inspiration_limit_flow.Invalidate();
+      if (inspiration_limit_pressure != null)
+        inspiration_limit_pressure.Invalidate();
+      if (inspiration_limit_volume != null)
+        inspiration_limit_volume.Invalidate();
+      if (inspiration_pause_time != null)
+        inspiration_pause_time.Invalidate();
+      if (peak_inpiratory_pressure != null)
+        peak_inpiratory_pressure.Invalidate();
+      if (end_tidal_carbon_dioxide_pressure != null)
+        end_tidal_carbon_dioxide_pressure.Invalidate();
+      if (inspiration_trigger_flow != null)
+        inspiration_trigger_flow.Invalidate();
+      if (inspiration_trigger_pressure != null)
+        inspiration_trigger_pressure.Invalidate();
+      if (inspiration_trigger_time != null)
+        inspiration_trigger_time.Invalidate();
+      if (inspiration_tube_resistance != null)
+        inspiration_tube_resistance.Invalidate();
+      if (inspiration_valve_resistance != null)
+        inspiration_valve_resistance.Invalidate();
+      inspiration_waveform = DriverWaveform.NullDriverWaveform;
+
+      fraction_inspired_gases.Clear();
+      concentration_inspired_aerosols.Clear();
     }
 
     public void Copy(SEMechanicalVentilator from)
     {
       base.Copy(from);
-      if (from.HasBreathPeriod())
-        this.GetBreathPeriod().Set(from.GetBreathPeriod());
       if (from.connection != Connection.NullConnection)
         this.connection = from.connection;
-      if (from.control != Control.NullControl)
-        this.control = from.control;
-      if (from.driverWaveform != DriverWaveform.NullDriverWaveform)
-        this.driverWaveform = from.driverWaveform;
-      if (from.HasExpiratoryPeriod())
-        this.GetExpiratoryPeriod().Set(from.GetExpiratoryPeriod());
-      if (from.HasInspiratoryExpiratoryRatio())
-        this.GetInspiratoryExpiratoryRatio().Set(from.GetInspiratoryExpiratoryRatio());
-      if (from.HasInspiratoryPeriod())
-        this.GetInspiratoryPeriod().Set(from.GetInspiratoryPeriod());
-      if (from.HasPeakInspiratoryPressure())
-        this.GetPeakInspiratoryPressure().Set(from.GetPeakInspiratoryPressure());
+      if (from.HasEndotrachealTubeResistance())
+        this.GetEndotrachealTubeResistance().Set(from.GetEndotrachealTubeResistance());
       if (from.HasPositiveEndExpiredPressure())
         this.GetPositiveEndExpiredPressure().Set(from.GetPositiveEndExpiredPressure());
-      if (from.HasRespiratoryRate())
-        this.GetRespiratoryRate().Set(from.GetRespiratoryRate());
-    }
+      if (from.HasFunctionalResidualCapacity())
+        this.GetFunctionalResidualCapacity().Set(from.GetFunctionalResidualCapacity());
+      if (from.HasExpirationCycleFlow())
+        this.GetExpirationCycleFlow().Set(from.GetExpirationCycleFlow());
+      if (from.HasExpirationCyclePressure())
+        this.GetExpirationCyclePressure().Set(from.GetExpirationCyclePressure());
+      if (from.HasExpirationCycleTime())
+        this.GetExpirationCycleTime().Set(from.GetExpirationCycleTime());
+      if (from.HasExpirationTubeResistance())
+        this.GetExpirationTubeResistance().Set(from.GetExpirationTubeResistance());
+      if (from.HasExpirationValveResistance())
+        this.GetExpirationValveResistance().Set(from.GetExpirationValveResistance());
+      if (from.expiration_waveform != DriverWaveform.NullDriverWaveform)
+        this.expiration_waveform = from.expiration_waveform;
 
-    public SEScalarTime GetBreathPeriod()
-    {
-      if (breathPeriod == null)
-        breathPeriod = new SEScalarTime();
-      return breathPeriod;
-    }
-    public bool HasBreathPeriod()
-    {
-      return breathPeriod == null ? false : breathPeriod.IsValid();
+      if (from.HasInspirationLimitFlow())
+        this.GetInspirationLimitFlow().Set(from.GetInspirationLimitFlow());
+      if (from.HasInspirationLimitPressure())
+        this.GetInspirationLimitPressure().Set(from.GetInspirationLimitPressure());
+      if (from.HasInspirationLimitVolume())
+        this.GetInspirationLimitVolume().Set(from.GetInspirationLimitVolume());
+      if (from.HasInspirationPauseTime())
+        this.GetInspirationPauseTime().Set(from.GetInspirationPauseTime());
+      if (from.HasPeakInspiratoryPressure())
+        this.GetPeakInspiratoryPressure().Set(from.GetPeakInspiratoryPressure());
+      if (from.HasEndTidalCarbonDioxidePressure())
+        this.GetEndTidalCarbonDioxidePressure().Set(from.GetEndTidalCarbonDioxidePressure());
+      if (from.HasInspirationTriggerFlow())
+        this.GetInspirationTriggerFlow().Set(from.GetInspirationTriggerFlow());
+      if (from.HasInspirationTriggerPressure())
+        this.GetInspirationTriggerPressure().Set(from.GetInspirationTriggerPressure());
+      if (from.HasInspirationTriggerTime())
+        this.GetInspirationTriggerTime().Set(from.GetInspirationTriggerTime());
+      if (from.HasInspirationTubeResistance())
+        this.GetInspirationTubeResistance().Set(from.GetInspirationTubeResistance());
+      if (from.HasInspirationValveResistance())
+        this.GetInspirationValveResistance().Set(from.GetInspirationValveResistance());
+      if (from.inspiration_waveform != DriverWaveform.NullDriverWaveform)
+        this.inspiration_waveform = from.inspiration_waveform;
+
+      if (from.fraction_inspired_gases != null)
+      {
+        SESubstanceFraction mine;
+        foreach (SESubstanceFraction sf in from.fraction_inspired_gases)
+        {
+          mine = this.CreateFractionInspiredGas(sf.GetSubstance());
+          if (sf.HasFractionAmount())
+            mine.GetFractionAmount().Set(sf.GetFractionAmount());
+        }
+      }
+
+      if (from.concentration_inspired_aerosols != null)
+      {
+        SESubstanceConcentration mine;
+        foreach (SESubstanceConcentration sc in from.concentration_inspired_aerosols)
+        {
+          mine = this.CreateConcentrationInspiredAerosol(sc.GetSubstance());
+          if (sc.HasConcentration())
+            mine.GetConcentration().Set(sc.GetConcentration());
+        }
+      }
     }
 
     public Connection GetConnection()
@@ -123,111 +216,378 @@ namespace Pulse.CDM
       return connection != Connection.NullConnection;
     }
 
-    public Control GetControl()
+    public SEScalarPressureTimePerVolume GetEndotrachealTubeResistance()
     {
-      return control;
+      if (endotracheal_tube_resistance == null)
+        endotracheal_tube_resistance = new SEScalarPressureTimePerVolume();
+      return endotracheal_tube_resistance;
     }
-    public void SetControl(Control c)
+    public bool HasEndotrachealTubeResistance()
     {
-      control = c;
-    }
-    public bool HasControl()
-    {
-      return control != Control.NullControl;
-    }
-
-    public DriverWaveform GetDriverWaveform()
-    {
-      return driverWaveform;
-    }
-    public void SetDriverWaveform(DriverWaveform w)
-    {
-      driverWaveform = w;
-    }
-    public bool HasDriverWaveform()
-    {
-      return driverWaveform != DriverWaveform.NullDriverWaveform;
-    }
-
-    public SEScalarTime GetExpiratoryPeriod()
-    {
-      if (expiratoryPeriod == null)
-        expiratoryPeriod = new SEScalarTime();
-      return expiratoryPeriod;
-    }
-    public bool HasExpiratoryPeriod()
-    {
-      return expiratoryPeriod == null ? false : expiratoryPeriod.IsValid();
-    }
-
-    public SEScalar GetInspiratoryExpiratoryRatio()
-    {
-      if (inspiratoryExpiratoryRatio == null)
-        inspiratoryExpiratoryRatio = new SEScalar();
-      return inspiratoryExpiratoryRatio;
-    }
-    public bool HasInspiratoryExpiratoryRatio()
-    {
-      return inspiratoryExpiratoryRatio == null ? false : inspiratoryExpiratoryRatio.IsValid();
-    }
-
-    public SEScalarTime GetInspiratoryPeriod()
-    {
-      if (inspiratoryPeriod == null)
-        inspiratoryPeriod = new SEScalarTime();
-      return inspiratoryPeriod;
-    }
-    public bool HasInspiratoryPeriod()
-    {
-      return inspiratoryPeriod == null ? false : inspiratoryPeriod.IsValid();
-    }
-
-    public SEScalarPressure GetPeakInspiratoryPressure()
-    {
-      if (peakInspiratoryPressure == null)
-        peakInspiratoryPressure = new SEScalarPressure();
-      return peakInspiratoryPressure;
-    }
-    public bool HasPeakInspiratoryPressure()
-    {
-      return peakInspiratoryPressure == null ? false : peakInspiratoryPressure.IsValid();
+      return endotracheal_tube_resistance == null ? false : endotracheal_tube_resistance.IsValid();
     }
 
     public SEScalarPressure GetPositiveEndExpiredPressure()
     {
-      if (positiveEndExpiredPressure == null)
-        positiveEndExpiredPressure = new SEScalarPressure();
-      return positiveEndExpiredPressure;
+      if (positive_end_expired_pressure == null)
+        positive_end_expired_pressure = new SEScalarPressure();
+      return positive_end_expired_pressure;
     }
     public bool HasPositiveEndExpiredPressure()
     {
-      return positiveEndExpiredPressure == null ? false : positiveEndExpiredPressure.IsValid();
+      return positive_end_expired_pressure == null ? false : positive_end_expired_pressure.IsValid();
     }
 
-    public SEScalarFrequency GetRespiratoryRate()
+    public SEScalarPressure GetFunctionalResidualCapacity()
     {
-      if (respiratoryRate == null)
-        respiratoryRate = new SEScalarFrequency();
-      return respiratoryRate;
+      if (functional_residual_capacity == null)
+        functional_residual_capacity = new SEScalarPressure();
+      return functional_residual_capacity;
     }
-    public bool HasRespiratoryRate()
+    public bool HasFunctionalResidualCapacity()
     {
-      return respiratoryRate == null ? false : respiratoryRate.IsValid();
+      return functional_residual_capacity == null ? false : functional_residual_capacity.IsValid();
+    }
+
+    public SEScalarVolumePerTime GetExpirationCycleFlow()
+    {
+      if (expiration_cycle_flow == null)
+        expiration_cycle_flow = new SEScalarVolumePerTime();
+      return expiration_cycle_flow;
+    }
+    public bool HasExpirationCycleFlow()
+    {
+      return expiration_cycle_flow == null ? false : expiration_cycle_flow.IsValid();
+    }
+
+    public SEScalarPressure GetExpirationCyclePressure()
+    {
+      if (expiration_cycle_pressure == null)
+        expiration_cycle_pressure = new SEScalarPressure();
+      return expiration_cycle_pressure;
+    }
+    public bool HasExpirationCyclePressure()
+    {
+      return expiration_cycle_pressure == null ? false : expiration_cycle_pressure.IsValid();
+    }
+
+    public SEScalarTime GetExpirationCycleTime()
+    {
+      if (expiration_cycle_time == null)
+        expiration_cycle_time = new SEScalarTime();
+      return expiration_cycle_time;
+    }
+    public bool HasExpirationCycleTime()
+    {
+      return expiration_cycle_time == null ? false : expiration_cycle_time.IsValid();
+    }
+
+    public SEScalarPressureTimePerVolume GetExpirationTubeResistance()
+    {
+      if (expiration_tube_resistance == null)
+        expiration_tube_resistance = new SEScalarPressureTimePerVolume();
+      return expiration_tube_resistance;
+    }
+    public bool HasExpirationTubeResistance()
+    {
+      return expiration_tube_resistance == null ? false : expiration_tube_resistance.IsValid();
+    }
+
+    public SEScalarPressureTimePerVolume GetExpirationValveResistance()
+    {
+      if (expiration_valve_resistance == null)
+        expiration_valve_resistance = new SEScalarPressureTimePerVolume();
+      return expiration_valve_resistance;
+    }
+    public bool HasExpirationValveResistance()
+    {
+      return expiration_valve_resistance == null ? false : expiration_valve_resistance.IsValid();
+    }
+
+    public DriverWaveform GetExpirationWaveform()
+    {
+      return expiration_waveform;
+    }
+    public void SetExpirationWaveform(DriverWaveform w)
+    {
+      expiration_waveform = w;
+    }
+    public bool HasExpirationWaveform()
+    {
+      return expiration_waveform != DriverWaveform.NullDriverWaveform;
+    }
+
+    public SEScalarVolumePerTime GetInspirationLimitFlow()
+    {
+      if (inspiration_limit_flow == null)
+        inspiration_limit_flow = new SEScalarVolumePerTime();
+      return inspiration_limit_flow;
+    }
+    public bool HasInspirationLimitFlow()
+    {
+      return inspiration_limit_flow == null ? false : inspiration_limit_flow.IsValid();
+    }
+
+    public SEScalarPressure GetInspirationLimitPressure()
+    {
+      if (inspiration_limit_pressure == null)
+        inspiration_limit_pressure = new SEScalarPressure();
+      return inspiration_limit_pressure;
+    }
+    public bool HasInspirationLimitPressure()
+    {
+      return inspiration_limit_pressure == null ? false : inspiration_limit_pressure.IsValid();
+    }
+
+    public SEScalarVolume GetInspirationLimitVolume()
+    {
+      if (inspiration_limit_volume == null)
+        inspiration_limit_volume = new SEScalarVolume();
+      return inspiration_limit_volume;
+    }
+    public bool HasInspirationLimitVolume()
+    {
+      return inspiration_limit_volume == null ? false : inspiration_limit_volume.IsValid();
+    }
+
+    public SEScalarTime GetInspirationPauseTime()
+    {
+      if (inspiration_pause_time == null)
+        inspiration_pause_time = new SEScalarTime();
+      return inspiration_pause_time;
+    }
+    public bool HasInspirationPauseTime()
+    {
+      return inspiration_pause_time == null ? false : inspiration_pause_time.IsValid();
+    }
+
+    public SEScalarPressure GetPeakInspiratoryPressure()
+    {
+      if (peak_inpiratory_pressure == null)
+        peak_inpiratory_pressure = new SEScalarPressure();
+      return peak_inpiratory_pressure;
+    }
+    public bool HasPeakInspiratoryPressure()
+    {
+      return peak_inpiratory_pressure == null ? false : peak_inpiratory_pressure.IsValid();
+    }
+
+    public SEScalarPressure GetEndTidalCarbonDioxidePressure()
+    {
+      if (end_tidal_carbon_dioxide_pressure == null)
+        end_tidal_carbon_dioxide_pressure = new SEScalarPressure();
+      return end_tidal_carbon_dioxide_pressure;
+    }
+    public bool HasEndTidalCarbonDioxidePressure()
+    {
+      return end_tidal_carbon_dioxide_pressure == null ? false : end_tidal_carbon_dioxide_pressure.IsValid();
+    }
+
+    public SEScalarVolumePerTime GetInspirationTriggerFlow()
+    {
+      if (inspiration_trigger_flow == null)
+        inspiration_trigger_flow = new SEScalarVolumePerTime();
+      return inspiration_trigger_flow;
+    }
+    public bool HasInspirationTriggerFlow()
+    {
+      return inspiration_trigger_flow == null ? false : inspiration_trigger_flow.IsValid();
+    }
+
+    public SEScalarPressure GetInspirationTriggerPressure()
+    {
+      if (inspiration_trigger_pressure == null)
+        inspiration_trigger_pressure = new SEScalarPressure();
+      return inspiration_trigger_pressure;
+    }
+    public bool HasInspirationTriggerPressure()
+    {
+      return inspiration_trigger_pressure == null ? false : inspiration_trigger_pressure.IsValid();
+    }
+
+    public SEScalarTime GetInspirationTriggerTime()
+    {
+      if (inspiration_trigger_time == null)
+        inspiration_trigger_time = new SEScalarTime();
+      return inspiration_trigger_time;
+    }
+    public bool HasInspirationTriggerTime()
+    {
+      return inspiration_trigger_time == null ? false : inspiration_trigger_time.IsValid();
+    }
+
+    public SEScalarPressureTimePerVolume GetInspirationTubeResistance()
+    {
+      if (inspiration_tube_resistance == null)
+        inspiration_tube_resistance = new SEScalarPressureTimePerVolume();
+      return inspiration_tube_resistance;
+    }
+    public bool HasInspirationTubeResistance()
+    {
+      return inspiration_tube_resistance == null ? false : inspiration_tube_resistance.IsValid();
+    }
+
+    public SEScalarPressureTimePerVolume GetInspirationValveResistance()
+    {
+      if (inspiration_valve_resistance == null)
+        inspiration_valve_resistance = new SEScalarPressureTimePerVolume();
+      return inspiration_valve_resistance;
+    }
+    public bool HasInspirationValveResistance()
+    {
+      return inspiration_valve_resistance == null ? false : inspiration_valve_resistance.IsValid();
+    }
+
+
+    public DriverWaveform GetInspirationWaveform()
+    {
+      return inspiration_waveform;
+    }
+    public void SetInspirationWaveform(DriverWaveform w)
+    {
+      inspiration_waveform = w;
+    }
+    public bool HasInspirationWaveform()
+    {
+      return inspiration_waveform != DriverWaveform.NullDriverWaveform;
+    }
+
+
+    public SESubstanceFraction CreateFractionInspiredGas(string substance)
+    {
+      return GetFractionInspiredGas(substance);
+    }
+    public SESubstanceFraction GetFractionInspiredGas(string substance)
+    {
+      foreach (SESubstanceFraction sf in fraction_inspired_gases)
+      {
+        if (sf.GetSubstance() == substance)
+        {
+          return sf;
+        }
+      }
+      SESubstanceFraction nsf = new SESubstanceFraction(substance);
+      fraction_inspired_gases.Add(nsf);
+      return nsf;
+    }
+    public bool HasFractionInspiredGas()
+    {
+      return fraction_inspired_gases.Count != 0;
+    }
+    public bool HasFractionInspiredGas(string substance)
+    {
+      foreach (SESubstanceFraction sf in fraction_inspired_gases)
+      {
+        if (sf.GetSubstance() == substance)
+        {
+          return true;
+        }
+      }
+      return false;
+    }
+    public List<SESubstanceFraction> GetFractionInspiredGases()
+    {
+      return fraction_inspired_gases;
+    }
+    public void RemoveFractionInspiredGas(string substance)
+    {
+      foreach (SESubstanceFraction sf in fraction_inspired_gases)
+      {
+        if (sf.GetSubstance() == substance)
+        {
+          fraction_inspired_gases.Remove(sf);
+          return;
+        }
+      }
+    }
+    public void RemoveFractionInspiredGases()
+    {
+      fraction_inspired_gases.Clear();
+    }
+
+    public SESubstanceConcentration CreateConcentrationInspiredAerosol(string substance)
+    {
+      return GetConcentrationInspiredAerosol(substance);
+    }
+    public SESubstanceConcentration GetConcentrationInspiredAerosol(string substance)
+    {
+      foreach (SESubstanceConcentration sc in concentration_inspired_aerosols)
+      {
+        if (sc.GetSubstance() == substance)
+        {
+          return sc;
+        }
+      }
+      SESubstanceConcentration nsc = new SESubstanceConcentration(substance);
+      concentration_inspired_aerosols.Add(nsc);
+      return nsc;
+    }
+    public bool HasConcentrationInspiredAerosol()
+    {
+      return concentration_inspired_aerosols.Count != 0;
+    }
+    public bool HasConcentrationInspiredAerosol(string substance)
+    {
+      foreach (SESubstanceConcentration sc in concentration_inspired_aerosols)
+      {
+        if (sc.GetSubstance() == substance)
+        {
+          return true;
+        }
+      }
+      return false;
+    }
+    public List<SESubstanceConcentration> GetConcentrationInspiredAerosols()
+    {
+      return concentration_inspired_aerosols;
+    }
+    public void RemoveConcentrationInspiredAerosol(string substance)
+    {
+      foreach (SESubstanceConcentration sc in concentration_inspired_aerosols)
+      {
+        if (sc.GetSubstance() == substance)
+        {
+          concentration_inspired_aerosols.Remove(sc);
+          return;
+        }
+      }
+    }
+    public void RemoveConcentrationInspiredAerosols()
+    {
+      concentration_inspired_aerosols.Clear();
     }
 
     public override string ToString()
     {
-      return "Mechanical Ventilator"
-      + "\n\tBreathPeriod: " + GetBreathPeriod()
+      string str = "Mechanical Ventilator"
       + "\n\tConnection: " + (HasConnection() ? PBMechanicalVentilator.Connection_Name(GetConnection()) : "NotProvided")
-      + "\n\tConnection: " + (HasConnection() ? PBMechanicalVentilator.Connection_Name(GetConnection()) : "NotProvided")
-      + "\n\tConnection: " + (HasConnection() ? PBMechanicalVentilator.Connection_Name(GetConnection()) : "NotProvided")
-      + "\n\tExpiratoryPeriod: " + GetExpiratoryPeriod()
-      + "\n\tInspiratoryExpiratoryRatio: " + GetInspiratoryExpiratoryRatio()
-      + "\n\tInspiratoryPeriod: " + GetInspiratoryPeriod()
-      + "\n\tPeakInspiratoryPressure: " + GetPeakInspiratoryPressure()
-      + "\n\tPositiveEndExpiredPressure: " + GetPositiveEndExpiredPressure()
-      + "\n\tRespiratoryRate: " + GetRespiratoryRate();
+      + "\n\tEndotrachealTubeResistance: " + (HasEndotrachealTubeResistance() ? GetEndotrachealTubeResistance().ToString() : "Not Provided")
+      + "\n\tPositiveEndExpiredPressure: " + (HasPositiveEndExpiredPressure() ? GetPositiveEndExpiredPressure().ToString() : "Not Provided")
+      + "\n\tFunctionalResidualCapacity: " + (HasFunctionalResidualCapacity() ? GetFunctionalResidualCapacity().ToString() : "Not Provided")
+      + "\n\tExpirationCycleFlow: " + (HasExpirationCycleFlow() ? GetExpirationCycleFlow().ToString() : "Not Provided")
+      + "\n\tExpirationCyclePressure: " + (HasExpirationCyclePressure() ? GetExpirationCyclePressure().ToString() : "Not Provided")
+      + "\n\tExpirationCycleTime: " + (HasExpirationCycleTime() ? GetExpirationCycleTime().ToString() : "Not Provided")
+      + "\n\tExpirationTubeResistance: " + (HasExpirationTubeResistance() ? GetExpirationTubeResistance().ToString() : "Not Provided")
+      + "\n\tExpirationValveResistance: " + (HasExpirationValveResistance() ? GetExpirationValveResistance().ToString() : "Not Provided")
+      + "\n\tExpirationWaveform: " + (HasExpirationWaveform() ? PBMechanicalVentilator.DriverWaveform_Name(expiration_waveform) : "Not Provided")
+      + "\n\tInspirationLimitFlow: " + (HasInspirationLimitFlow() ? GetInspirationLimitFlow().ToString() : "Not Provided")
+      + "\n\tInspirationLimitPressure: " + (HasInspirationLimitPressure() ? GetInspirationLimitPressure().ToString() : "Not Provided")
+      + "\n\tInspirationLimitVolume: " + (HasInspirationLimitVolume() ? GetInspirationLimitVolume().ToString() : "Not Provided")
+      + "\n\tInspirationPauseTime: " + (HasInspirationPauseTime() ? GetInspirationPauseTime().ToString() : "Not Provided")
+      + "\n\tPeakInspiratoryPressure: " + (HasPeakInspiratoryPressure() ? GetPeakInspiratoryPressure().ToString() : "Not Provided")
+      + "\n\tEndTidalCarbonDioxidePressure: " + (HasEndTidalCarbonDioxidePressure() ? GetEndTidalCarbonDioxidePressure().ToString() : "Not Provided")
+      + "\n\tInspirationTriggerFlow: " + (HasInspirationTriggerFlow() ? GetInspirationTriggerFlow().ToString() : "Not Provided")
+      + "\n\tInspirationTriggerPressure: " + (HasInspirationTriggerPressure() ? GetInspirationTriggerPressure().ToString() : "Not Provided")
+      + "\n\tInspirationTriggerTime: " + (HasInspirationTriggerTime() ? GetInspirationTriggerTime().ToString() : "Not Provided")
+      + "\n\tInspirationTubeResistance: " + (HasInspirationTubeResistance() ? GetInspirationTubeResistance().ToString() : "Not Provided")
+      + "\n\tInspirationValveResistance: " + (HasInspirationValveResistance() ? GetInspirationValveResistance().ToString() : "Not Provided")
+      + "\n\tInspirationWaveform: " + (HasInspirationWaveform() ? PBMechanicalVentilator.DriverWaveform_Name(inspiration_waveform) : "Not Provided");
+      foreach (SESubstanceFraction sf in this.fraction_inspired_gases)
+        str += "\n\t" + sf.GetSubstance();
+      foreach (SESubstanceConcentration sc in this.concentration_inspired_aerosols)
+        str += "\n\t" + sc.GetSubstance();
+
+      return str;
     }
   }
 }

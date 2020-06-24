@@ -2,16 +2,11 @@
    See accompanying NOTICE file for details.*/
 
 #include <jni.h>
+#include <memory>
 #include <iostream>
 #include "PulsePhysiologyEngine.h"
-#include "controller/Engine.h"
-#include "scenario/SEScenarioExec.h"
-#include "engine/SEEventManager.h"
-#include "engine/SEAdvanceHandler.h"
 
-#include <memory>
-
-class PulseEngineJNI : public LoggerForward, public SEAdvanceHandler, public SEEventHandler
+class PulseEngineJNI : public PulseEngineThunk
 {
 public:
   PulseEngineJNI();
@@ -19,27 +14,14 @@ public:
 
   void Reset();
 
-  void ForwardDebug(const std::string&  msg, const std::string&  origin);
-  void ForwardInfo(const std::string&  msg, const std::string&  origin);
-  void ForwardWarning(const std::string&  msg, const std::string&  origin);
-  void ForwardError(const std::string&  msg, const std::string&  origin);
-  void ForwardFatal(const std::string&  msg, const std::string&  origin);
-  void PushData(double time_s);
+  void ForwardDebug(const std::string& msg, const std::string& origin) override;
+  void ForwardInfo(const std::string& msg, const std::string& origin) override;
+  void ForwardWarning(const std::string& msg, const std::string& origin) override;
+  void ForwardError(const std::string& msg, const std::string& origin) override;
+  void ForwardFatal(const std::string& msg, const std::string& origin) override;
 
-  void OnAdvance(double time_s);
-  void HandleEvent(eEvent type, bool active, const SEScalarTime* time = nullptr);
-
-  JNIEnv*    jniEnv;
-  jobject    jniObj;
-  DataTrack* trk;
-  PulseScenarioExec* exec;
-  bool       firstUpdate;
-  bool       forwardLogMessages;
-  bool       forwardEvents;
-  int        update_cnt;
-  int        updateFrequency_cnt;
-  std::unique_ptr<PulseEngine> eng;
-  
+  JNIEnv*   jniEnv;
+  jobject   jniObj;
   jmethodID jniDebugMethodID;
   jmethodID jniInfoMethodID;
   jmethodID jniWarnMethodID;

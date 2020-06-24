@@ -61,9 +61,9 @@ PulseThread::PulseThread(const std::string& logfile) : m_thread()
   // Create our engine with the standard patient
   m_pe = CreatePulseEngine();
   m_pe->GetLogger()->SetLogFile(logfile);
-  SESubstanceCompound* saline = m_pe->GetSubstanceManager().GetCompound("Saline");
+  const SESubstanceCompound* saline = m_pe->GetSubstanceManager().GetCompound("Saline");
 
-  if (!m_pe->SerializeFromFile("./states/StandardMale@0s.json", JSON))
+  if (!m_pe->SerializeFromFile("./states/StandardMale@0s.json"))
   {
     m_pe->GetLogger()->Error("Could not load state, check the error");
     return;

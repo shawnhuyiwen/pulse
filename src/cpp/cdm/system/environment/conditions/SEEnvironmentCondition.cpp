@@ -4,7 +4,7 @@
 #include "SEEnvironmentCondition.h"
 #include "substance/SESubstanceManager.h"
 
-SEEnvironmentCondition::SEEnvironmentCondition() : SECondition()
+SEEnvironmentCondition::SEEnvironmentCondition(Logger* logger) : SECondition(logger)
 {
 
 }

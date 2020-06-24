@@ -29,7 +29,7 @@ SEScenarioExec::~SEScenarioExec()
   SAFE_DELETE(m_Scenario);
 }
 
-bool SEScenarioExec::ExecuteFile(PhysiologyEngine& pe, const std::string& scenarioFile, SerializationFormat format, const std::string& resultsFile, const SEEngineConfiguration* ec, std::string const& dataDir)
+bool SEScenarioExec::ExecuteFile(PhysiologyEngine& pe, const std::string& scenarioFile, const std::string& resultsFile, const SEEngineConfiguration* ec, std::string const& dataDir)
 {
   try
   {
@@ -41,7 +41,7 @@ bool SEScenarioExec::ExecuteFile(PhysiologyEngine& pe, const std::string& scenar
 
     try
     {
-      m_Scenario->SerializeFromFile(scenarioFile,format);
+      m_Scenario->SerializeFromFile(scenarioFile);
     }
     catch (CommonDataModelException& ex)
     {
@@ -116,7 +116,7 @@ bool SEScenarioExec::Execute(PhysiologyEngine& pe, const SEScenario& scenario, c
     // Initialize the engine with a state or initial parameters
     if (scenario.HasEngineStateFile())
     {
-      pe.SerializeFromFile(scenario.GetEngineStateFile(),JSON);
+      pe.SerializeFromFile(scenario.GetEngineStateFile());
       // WE ARE OVERWRITING ANY DATA REQUESTS IN THE STATE WITH WHATS IN THE SCENARIO!!!
       // Make a copy of the data requests, note this clears out data requests from the engine
       pe.GetEngineTracker()->GetDataRequestManager().Copy(scenario.GetDataRequestManager(), pe.GetSubstanceManager());

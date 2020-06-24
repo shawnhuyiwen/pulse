@@ -7,7 +7,7 @@
 #include "properties/SEScalarVolumePerTime.h"
 #include "io/protobuf/PBPatientActions.h"
 
-SESupplementalOxygen::SESupplementalOxygen() : SEPatientAction()
+SESupplementalOxygen::SESupplementalOxygen(Logger* logger) : SEPatientAction(logger)
 {
   m_Device = eSupplementalOxygen_Device::None;
   m_Flow=nullptr;

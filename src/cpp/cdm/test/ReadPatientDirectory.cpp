@@ -32,12 +32,12 @@ void CommonDataModelTest::ReadPatientDirectory(const std::string& rptDirectory)
     {
       pTimer.Start(*it);
       SETestCase& testCase = testSuite.CreateTestCase();
-      logger.Info(it->c_str());        
-      if(!obj.SerializeFromFile(*it,JSON))
+      logger.Info(it->c_str());
+      if(!obj.SerializeFromFile(*it))
         testCase.AddFailure("Unable to load patient "+*it);
       testCase.GetDuration().SetValue(pTimer.GetElapsedTime_s("Case"), TimeUnit::s);
       testCase.SetName(obj.GetName());
     }
   }
-  testReport.SerializeToFile(rptDirectory +"/"+testName+"Report.json",JSON);
+  testReport.SerializeToFile(rptDirectory +"/"+testName+"Report.json");
 }
